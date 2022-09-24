@@ -5,13 +5,13 @@ body {
 
 table {
   background-color: black;
-  color: white;
+  color: lightgrey;
   border-collapse: collapse;
   width: 100%;
 }
 
 th, td {
-  border-bottom: 1px solid #909090;
+  border-bottom: 1px solid grey;
 }
 
 th {
@@ -21,7 +21,7 @@ th {
 
 thead th {
   text-align: center;
-  background-color: #106010;
+  background-color: darkgreen;
 }
 
 tbody th {
@@ -33,10 +33,10 @@ tbody td {
 }
 
 tr:hover {
-  background-color: #959595;
+  background-color: lightgrey;
   color: black;
 }
 
 tr:nth-child(4n-1), tr:nth-child(4n) {
-  background-color: #104010;
+  background-color: darkgrey;
 }
