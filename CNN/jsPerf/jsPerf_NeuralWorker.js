@@ -624,7 +624,7 @@ class HeightWidthDepth {
                 timeInfo.elapsed = timeInfo.end - timeInfo.begin;
                 timeInfo.elapsedTotal += timeInfo.elapsed;
               }
-              console.log( timeInfo );
+              console.log( timeInfo.toString() );
             }
 
             let resultFloat32Array;
