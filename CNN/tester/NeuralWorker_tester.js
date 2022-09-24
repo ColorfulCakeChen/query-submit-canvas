@@ -15,7 +15,8 @@ import * as NeuralWorker from "../NeuralDEvolution/NeuralWorker.js";
 import * as TestParams from "./Ref/TestParams.js";
 import * as ImageSourceBag from "./Ref/ImageSourceBag.js";
 import * as NumberImage from "./Ref/NumberImage.js";
-import * as BatchIdCalculator from "./BatchIdCalculator.js";
+//import * as BatchIdCalculator from "./BatchIdCalculator.js";
+import * as HTMLTable from "../Display/HTMLTable.js";
 
 /**
  * Test CNN NeuralWorker.
@@ -574,9 +575,24 @@ class HeightWidthDepth {
    *
    */
   async* tester( progressParent ) {
-
     let backendName = tf.getBackend();
     console.log( `NeuralWorker ( ${backendName} ) testing...` );
+
+    const ExecutionTimeInfoTimes = 10;
+
+    let htmlTableOperator;
+    {
+      const htmlTableId = "NeuralWorker_Performance_Table";
+      const digitsCount = 4;
+      htmlTableOperator
+        = HTMLTable.Operator.Pool.get_or_create_by( htmlTableId, digitsCount );
+
+      htmlTableOperator.Header_addRow( [
+        "Backend",
+        "NeuralWorker.Mode",
+        `ops/sec (${ExecutionTimeInfoTimes} runs sampled)`
+      ] );
+    }
 
     let progressRoot = progressParent.root_get();
 
@@ -600,7 +616,7 @@ class HeightWidthDepth {
           progressMax = this.testCaseMap.size;
           progressToAdvance.value_max_set( progressMax );
 
-          const timeInfo = new ExecutionTimeInfo( 10 );
+          const timeInfo = new ExecutionTimeInfo( ExecutionTimeInfoTimes );
           for ( testCase of this.testCaseMap.values() ) {
 
             // First time test the case. Release all other test cases' neural networks
@@ -625,7 +641,10 @@ class HeightWidthDepth {
                 timeInfo.elapsed = timeInfo.end - timeInfo.begin;
                 timeInfo.elapsedTotal += timeInfo.elapsed;
               }
-              console.log( timeInfo.toString() );
+              htmlTableOperator.Body_addRow( [
+                backendName, timeInfo.name, timeInfo.countPerSecond
+              ] );
+              //console.log( timeInfo.toString() );
             }
 
             let resultFloat32Array;
@@ -690,6 +709,12 @@ class HeightWidthDepth {
 
       //debugger;
       throw e;
+
+    } finally {
+      if ( htmlTableOperator ) {
+        htmlTableOperator.disposeResources_and_recycleToPool();
+        htmlTableOperator = null;
+      }
     }
 
     console.log( `NeuralWorker ( ${backendName} ) testing... Done.` );
