@@ -72,7 +72,9 @@ class HTMLTable_RowAppender extends Recyclable.Root {
   tHeader_append( dataArray ) {
     this.HTMLTableElement_ensure();
     HTMLTable_RowAppender.addOneLineCells.call( this,
-      this.htmlTableElement.tHead, dataArray );
+      this.htmlTableElement.tHead,
+      "th", // Table header always uses "th".
+      dataArray );
   }
 
   /**
@@ -82,7 +84,9 @@ class HTMLTable_RowAppender extends Recyclable.Root {
   tBodies_append( dataArray ) {
     this.HTMLTableElement_ensure();
     HTMLTable_RowAppender.addOneLineCells.call( this,
-      this.htmlTableElement.tBodies, dataArray );
+      this.htmlTableElement.tBodies,
+      "td", // Table body mainly uses "td" (except first column).
+      dataArray );
   }
 
   /**
@@ -90,29 +94,31 @@ class HTMLTable_RowAppender extends Recyclable.Root {
    *   The HTML DOM Node which will the new row will be inserted. For HTML table,
    * it could be .tHead or .tBodies or .tFoot.
    *
+   * @param {string} th_OR_td  "th" for table header, "td" for table body.
+   *   "th" for table header cell, "td" for table data cell.
+   *
    * @param {string[]|number[]} dataArray
    *   The data to be displaye 
    */
-  static addOneLineCells( htmlNode, dataArray ) {
+  static addOneLineCells( htmlNode, th_OR_td, dataArray ) {
     let oneLine = document.createElement( "tr" );
 
-    let th_OR_td; // "th" for table header cell, "td" for table data cell.
+    let cellElementName;
     let data, dataText;
     for ( let i = 0; i < dataArray.length; ++i ) {
       data = dataArray[ i ];
-
-      if ( 0 == i )
-        th_OR_td = "th"; // First column always use <th>
-      else
-        th_OR_td = "td";
-
-      let oneCell = document.createElement( th_OR_td );
 
       if ( typeof data === "number" )
         dataText = data.toFixed( this.digitsCount );
       else
         dataText = data;
 
+      if ( 0 == i )
+        cellElementName = "th"; // First column always use <th>
+      else
+        cellElementName = th_OR_td;
+
+      let oneCell = document.createElement( cellElementName );
       oneCell.appendChild( document.createTextNode( dataText ) );
       oneLine.appendChild( oneCell );
     }
