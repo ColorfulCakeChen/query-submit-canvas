@@ -472,8 +472,7 @@ class HeightWidthDepth {
         ] );
       }
     }
- 
-  
+   
     let progressRoot = progressParent.root_get();
 
     let progressMax = 10000; // Temporary progress max (because it is unkown here).
