@@ -488,7 +488,11 @@ class HeightWidthDepth {
 
           this.neuralWorker_PerformanceTest_init();
 
-          progressMax = this.testCaseMap.size;
+          progressMax = this.testCaseMap.size * (
+              1                      // for prepare_async() complete.
+            + ExecutionTimeInfoTimes // for performance test complete.
+            + 1                      // for NeuralWorker.Mode complete
+          );
           progressToAdvance.value_max_set( progressMax );
 
           const timeInfo = new ExecutionTimeInfo( ExecutionTimeInfoTimes );
@@ -501,6 +505,9 @@ class HeightWidthDepth {
               testCase.preparePromise = testCase.prepare_async();
               await testCase.preparePromise;
             }
+
+            progressToAdvance.value_advance(); // Every prepare_async() complete.
+            yield progressRoot;
 
             let resultFloat32ArrayArray;
 
@@ -515,6 +522,9 @@ class HeightWidthDepth {
                 timeInfo.end = Date.now();
                 timeInfo.elapsed = timeInfo.end - timeInfo.begin;
                 timeInfo.elapsedTotal += timeInfo.elapsed;
+
+                progressToAdvance.value_advance(); // Every performance test complete.
+                yield progressRoot;
               }
               htmlTableOperator.Body_addRow( [
                 backendName, timeInfo.name, timeInfo.countPerSecond
@@ -550,7 +560,7 @@ class HeightWidthDepth {
                 prefixMsg, lhsNumberArrayName, rhsNumberArrayName, postfixMsg );
             }
 
-            progressToAdvance.value_advance();
+            progressToAdvance.value_advance(); // Every NeuralWorker.Mode complete
             yield progressRoot;
           }
 
