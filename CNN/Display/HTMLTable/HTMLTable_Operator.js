@@ -23,7 +23,7 @@ class HTMLTable_Operator extends Recyclable.Root {
     HTMLTable_Operator, HTMLTable_Operator.setAsConstructor );
 
   /** */
-  constructor( htmlTableElementId, digitsCount = 2 ) {
+  constructor( htmlTableElementId, digitsCount = 4 ) {
     super();
     HTMLTable_Operator.setAsConstructor_self.call( this,
       htmlTableElementId, digitsCount );
@@ -52,26 +52,41 @@ class HTMLTable_Operator extends Recyclable.Root {
   }
 
   /** If .htmlTableElement undefined, preare it by .htmlTableElementId.  */
-  HTMLTableElement_ensure() {
+  Table_ensure() {
     if ( this.htmlTableElement )
-      return; // Already prepared readily.
-
+      return;
     if ( !document )
       return;
-  
     if ( !this.htmlTableElementId )
       return;
-  
     this.htmlTableElement = document.getElementById( this.htmlTableElementId );
+  }
+
+  /** Ensure table header. */
+  TableHeader_ensure() {
+    if ( this.htmlTableElement.tHead )
+      return;
+    this.Table_ensure();
+    let thead = document.createElement( "thead" );
+    this.htmlTableElement.appendChild( thead );
+  }
+
+  /* Ensure table body. */
+  TableBody_ensure() {
+    if ( this.htmlTableElement.tBodies )
+      return;
+    this.Table_ensure();
+    let tbody = document.createElement( "tbody" );
+    htmlTable.appendChild( tbody );
   }
 
   /**
    * @param {string[]|number[]} dataArray
    *   Append the data as the last row of the table header.
    */
-  tHeader_addRow( dataArray ) {
-    this.HTMLTableElement_ensure();
-    HTMLTable_Operator.addOneLineCells.call( this,
+  Header_addRow( dataArray ) {
+    this.TableHeader_ensure();
+    HTMLTable_Operator.Section_addRow.call( this,
       this.htmlTableElement.tHead,
       "th", // Table header always uses "th".
       dataArray );
@@ -81,9 +96,9 @@ class HTMLTable_Operator extends Recyclable.Root {
    * @param {string[]|number[]} dataArray
    *   Append the data as the last row of the table body.
    */
-  tBodies_addRow( dataArray ) {
-    this.HTMLTableElement_ensure();
-    HTMLTable_Operator.addOneLineCells.call( this,
+  Body_addRow( dataArray ) {
+    this.TableBody_ensure();
+    HTMLTable_Operator.Section_addRow.call( this,
       this.htmlTableElement.tBodies,
       "td", // Table body mainly uses "td" (except first column).
       dataArray );
@@ -100,7 +115,7 @@ class HTMLTable_Operator extends Recyclable.Root {
    * @param {string[]|number[]} dataArray
    *   The data to be displaye 
    */
-  static addOneLineCells( htmlNode, th_OR_td, dataArray ) {
+  static Section_addRow( htmlNode, th_OR_td, dataArray ) {
     let oneLine = document.createElement( "tr" );
 
     let cellElementName;
@@ -124,69 +139,6 @@ class HTMLTable_Operator extends Recyclable.Root {
     }
 
     htmlNode.appendChild( oneLine );
-  }
-
-}
-
-
-/**
- * Publish the profiles to HTML table.
- * 
- * @param {string}   strResultHTMLTableName  the HTML table name for display execution time.
- * @param {Object[]} profilesWebGL           the array of profiles for execution time of WebGL.
- * @param {Object[]} profilesWASM            the array of profiles for execution time of WASM.
- * @param {Object[]} profilesCPU             the array of profiles for execution time of CPU.
- */
- function publishProfiles( strResultHTMLTableName, profilesWebGL, profilesWASM, profilesCPU ) {
-
-  if ( !document )
-    return;
-
-  if ( !strResultHTMLTableName )
-    return;
-
-  let htmlTable = document.getElementById( strResultHTMLTableName );
-  if ( !htmlTable )
-    return;
-
-
-  let thead = document.createElement( "thead" );
-  let tbody = document.createElement( "tbody" );
-
-  htmlTable.appendChild( thead );
-  htmlTable.appendChild( tbody );
-
-  // Table header (top line).
-  addOneLineCells( thead, "th", [
-    "TestName",
-    "kernelMs", "wallMs",
-    //"newBytes", "newTensors", // If not zero, there is memory leak.
-    "peakBytes"
-  ] );
-
-  let digitsCount = 4;
-
-  let profileCount = profilesWebGL.length;
-  for ( let i = 0; i < profileCount; ++i ) {
-
-    let profileWebGL = profilesWebGL[ i ];
-//    let profileWASM = profilesWASM[ i ];
-
-    addOneLineCells( tbody, "td", [
-      `(${profileWebGL.backendName}) ${profileWebGL.title}`,
-      profileWebGL.kernelMs.toFixed( digitsCount ), profileWebGL.wallMs.toFixed( digitsCount ),
-      //profileWebGL.newBytes, profileWebGL.newTensors, // If not zero, there is memory leak.
-      profileWebGL.peakBytes
-    ] );
-
-    let profileCPU = profilesCPU[ i ];
-
-    addOneLineCells( tbody, "td", [
-      `(${profileCPU.backendName})`,
-      profileCPU.kernelMs.toFixed( digitsCount ), profileCPU.wallMs.toFixed( digitsCount ),
-      //"", "",
-      ""
-    ] );
   }
 
 }
