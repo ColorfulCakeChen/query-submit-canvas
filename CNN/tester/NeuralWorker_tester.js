@@ -1,4 +1,4 @@
-export { init, testCorrectness_asyncGenerator, disposeResources };
+export { init, disposeResources };
 export { tester };
 
 import * as Pool from "../util/Pool.js";
@@ -9,13 +9,10 @@ import * as TensorTools from "../util/TensorTools.js";
 import * as ValueDesc from "../Unpacker/ValueDesc.js";
 import * as Weights from "../Unpacker/Weights.js";
 import * as NeuralNet from "../Conv/NeuralNet.js";
-// import * as NeuralNet_Reference from "./Ref/NeuralNet_Reference.js";
-// import * as NeuralNet_TestParams from "./Ref/NeuralNet_TestParams.js";
 import * as NeuralWorker from "../NeuralDEvolution/NeuralWorker.js";
 import * as TestParams from "./Ref/TestParams.js";
 import * as ImageSourceBag from "./Ref/ImageSourceBag.js";
 import * as NumberImage from "./Ref/NumberImage.js";
-//import * as BatchIdCalculator from "./BatchIdCalculator.js";
 import * as HTMLTable from "../Display/HTMLTable.js";
 
 /**
@@ -412,15 +409,6 @@ class HeightWidthDepth {
   async testNeuralWorker_ByName( testCaseName ) {
     let testCase = this.testCaseMap.get( testCaseName );
 
-//!!! (2022/09/21 Remarked) check testCase.preparePromise instead.
-//     // First time test this case. Release all other test cases' neural networks
-//     // (so that there will be enough memory). Create the specified neural network.
-//     if ( !testCase.neuralWorkerProxies ) {
-//       this.neuralWorker_PerformanceTest_release_neuralWorkerProxies();
-//       testCase.preparePromise = testCase.prepare_async();
-//       await testCase.preparePromise;
-//     }
-
     // First time test this case. Release all other test cases' neural networks
     // (so that there will be enough memory). Create the specified neural network.
     if ( !testCase.preparePromise ) {
@@ -450,63 +438,6 @@ class HeightWidthDepth {
 
     let resultFloat32ArrayArray = await resultFloat32ArrayArrayPromise;
     return resultFloat32ArrayArray;
-  }
-
-  /** Testing whether the results of different implementation are the same. */
-  async* testCorrectness_asyncGenerator() {
-
-    PerformanceTestCase.randomTestWeightArray_create();
-
-    //!!! (2022/09/21 Temp Skipped) For speed up into performance testing.
-    //if ( 0 )
-    try {
-      let pool_all_issuedCount_before = Pool.All.issuedCount;
-
-      yield;
-
-      {
-        let memoryInfo_testCorrectness_before = tf.memory(); // Test memory leakage of imageSourceBag.
-
-        {
-          let progress = ValueMax.Percentage.Aggregate.Pool.get_or_create_by();
-          yield* this.tester( progress );
-
-          progress.disposeResources_and_recycleToPool();
-          progress = null;
-        }
-
-        let memoryInfo_testCorrectness_after = tf.memory();
-
-        if ( memoryInfo_testCorrectness_after.numTensors != memoryInfo_testCorrectness_before.numTensors )
-          throw Error(
-              `jsPerf_NeuralWorker.testCorrectness_asyncGenerator() memory leak. `
-            + `result tensor count (${memoryInfo_testCorrectness_after.numTensors}) `
-            + `should be (${memoryInfo_testCorrectness_before.numTensors} `
-          );
-      }
-
-      Pool.Asserter.assert_Pool_issuedCount(
-        "jsPerf_NeuralWorker.HeightWidthDepth.testCorrectness_asyncGenerator()",
-        pool_all_issuedCount_before );
-
-      yield;
-
-    } catch ( e ) {
-      let errorMsg = `jsPerf_NeuralWorker.testCorrectness_asyncGenerator(): `
-        + `${e}`;
-      console.log( errorMsg );
-      alert( errorMsg );
-      //debugger;
-      throw e;
-    }
-
-    try {
-      // After correctness testing done, create all NeuralNet for performance testing.
-      this.neuralWorker_PerformanceTest_init();
-    } catch ( e ) {
-      debugger;
-      throw e;
-    }
   }
 
   /**
@@ -666,10 +597,8 @@ class HeightWidthDepth {
 
 }
 
-
+/** */
 function init() {
-  //console.log("jsPerf_NeuralNet.js, init()");
-
   disposeResources();
 
   let depth = 4;
@@ -684,13 +613,7 @@ function init() {
   ];
 }
 
-async function* testCorrectness_asyncGenerator() {
-  for ( let i = 0; i < globalThis.testSet_All.length; ++i ) {
-    let testSet = globalThis.testSet_All[ i ];
-    yield* testSet.testCorrectness_asyncGenerator();
-  }
-}
-
+/** */
 function disposeResources() {
   if ( globalThis.testSet_All ) {
     for ( let i = 0; i < globalThis.testSet_All.length; ++i ) {
