@@ -447,11 +447,8 @@ class HeightWidthDepth {
    *   Some new progressToAdvance will be created and added to progressParent. The
    * created progressToAdvance will be increased when every time advanced. The
    * progressParent.root_get() will be returned when every time yield.
-   *
-   * @param {HTMLTable.Operator} htmlTableOperator
-   *   For output preformance result.
    */
-  async* tester( progressParent, htmlTableOperator ) {
+  async* tester( progressParent ) {
     let backendName = tf.getBackend();
     console.log( `NeuralWorker ( ${backendName} ) testing...` );
 
@@ -675,7 +672,7 @@ async function* tester( progressParent, backendName ) {
 
   for ( let i = 0; i < globalThis.testSet_All.length; ++i ) {
     let testSet = globalThis.testSet_All[ i ];
-    yield* testSet.tester( progressArray_for_testSet[ i ], htmlTableOperator );
+    yield* testSet.tester( progressArray_for_testSet[ i ] );
   }
 
   disposeResources();
