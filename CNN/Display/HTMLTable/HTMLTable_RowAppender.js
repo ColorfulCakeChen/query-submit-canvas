@@ -1,4 +1,4 @@
-export { HTMLTable_Appender as Appender };
+export { HTMLTable_RowAppender as RowAppender };
 
 import * as Pool from "../../util/Pool.js";
 import * as Recyclable from "../../util/Recyclable.js";
@@ -6,93 +6,58 @@ import * as Recyclable from "../../util/Recyclable.js";
 //!!! ...unfinished... (2022/09/24)
 
 /**
- * Appender table row into a HTMLTable.
+ * Append table row into a HTMLTable.
  *
  *
- * @member {string} strHTMLTableName
- *   the HTML table name for displaying data.
+ * @member {string} htmlTableElementId
+ *   the HTML table element id for displaying data.
  *
  */
-class HTMLTable_Appender extends Recyclable.Root {
+class HTMLTable_RowAppender extends Recyclable.Root {
 
   /**
-   * Used as default HTMLTable.Appender provider for conforming to Recyclable interface.
+   * Used as default HTMLTable.RowAppender provider for conforming to Recyclable interface.
    */
-  static Pool = new Pool.Root( "HTMLTable.Appender.Pool",
-    HTMLTable_Appender, HTMLTable_Appender.setAsConstructor );
+  static Pool = new Pool.Root( "HTMLTable.RowAppender.Pool",
+    HTMLTable_RowAppender, HTMLTable_RowAppender.setAsConstructor );
 
   /** */
-  constructor( weightsSpreadsheetId, weightsAPIKey, nNeuralWorker_ModeId ) {
+  constructor( htmlTableElementId ) {
     super();
-    HTMLTable_Appender.setAsConstructor_self.call( this,
-      weightsSpreadsheetId, weightsAPIKey, nNeuralWorker_ModeId
-    );
+    HTMLTable_RowAppender.setAsConstructor_self.call( this, htmlTableElementId );
   }
 
   /** @override */
   static setAsConstructor( weightsSpreadsheetId, weightsAPIKey, nNeuralWorker_ModeId ) {
     super.setAsConstructor();
-    HTMLTable_Appender.setAsConstructor_self.call( this,
-      weightsSpreadsheetId, weightsAPIKey, nNeuralWorker_ModeId
-    );
+    HTMLTable_RowAppender.setAsConstructor_self.call( this, htmlTableElementId );
     return this;
   }
 
   /** @override */
-  static setAsConstructor_self(
-    weightsSpreadsheetId, weightsAPIKey, nNeuralWorker_ModeId ) {
-
-    this.evolutionVersusSummary = DEvolution.VersusSummary.Pool.get_or_create_by(
-      weightsSpreadsheetId, weightsAPIKey );
-
-    this.workerProxies = NeuralWorker.Proxies.Pool.get_or_create_by(
-      nNeuralWorker_ModeId );
+  static setAsConstructor_self( htmlTableElementId ) {
+    this.htmlTableElementId = htmlTableElementId;
   }
 
   /** @override */
   disposeResources() {
-    this.workerProxies_dispose();
-    this.evolutionVersusSummary_dispose();
-
+    this.htmlTableElementId = undefined;
+    this.htmlTableElement = undefined;
     super.disposeResources();
   }
 
-  get weightsSpreadsheetId() {
-    return this.evolutionVersusSummary.weightsSpreadsheetId;
-  }
+  /** If .htmlTableElement undefined, preare it by .htmlTableElementId.  */
+  HTMLTableElement_ensure() {
+    if ( this.htmlTableElement )
+      return; // Already prepared readily.
 
-  get weightsAPIKey( ) {
-    return this.evolutionVersusSummary.weightsAPIKey;
-  }
-
-  get nNeuralWorker_ModeId() {
-    return this.workerProxies.nNeuralWorker_ModeId;
-  }
-
-  /** */
-  workerProxies_dispose() {
-    if ( this.workerProxies ) {
-      this.workerProxies.disposeResources_and_recycleToPool();
-      this.workerProxies = null;
-    }
-  }
-
-  /** */
-  evolutionVersusSummary_dispose() {
-    if ( this.evolutionVersusSummary ) {
-      this.evolutionVersusSummary.disposeResources_and_recycleToPool();
-      this.evolutionVersusSummary = null;
-    }
-  }
-
-  /** Load all differential evolution versus weights ranges. */
-  async evolutionVersusSummary_load_async() {
-
-    this.evolutionVersusSummary.rangeArray_load_async();
-
-//!!! ...unfinished... (2022/09/24)
-
-
+    if ( !document )
+      return;
+  
+    if ( !this.htmlTableElementId )
+      return;
+  
+    this.htmlTableElement = document.getElementById( this.htmlTableElementId );
   }
 
 }
