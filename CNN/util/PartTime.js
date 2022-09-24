@@ -58,7 +58,10 @@ function forOf( generator, callback, callbackDone, delayMilliseconds = 0 ) {
               callback( r.value );
               resolve( promiseTimeout() );
             }
-          });
+          } ).catch( ( reason ) => {
+            debugger;
+
+          } );
 
         // The generator is a usually sync generator, process its result.
         } else {
