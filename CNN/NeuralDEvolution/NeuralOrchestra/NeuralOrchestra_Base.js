@@ -113,7 +113,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
 
     // 2. If "webgl" failed, try backend "cpu".
     //
-    // Backend "cpu" has best performance with two web workers (NO_FILL).
+    // Backend "cpu" has best performance with two web workers (NO_FILL) by .applier().
     //
     initOkPromise = this.workerProxies.init_async( "cpu",
       NeuralWorker.Mode.Singleton.Ids.TWO_WORKER__ONE_SCALE__NO_FILL__APPLIER // (5) 
