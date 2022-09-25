@@ -88,13 +88,20 @@ import { Mode as NeuralWorker_Mode } from "./NeuralWorker_Mode.js";
  *   - TWO_WORKER_Xxx is better than ONE_WORKER_Xxx.
  *
  *     - This is especially true if your computer has multiple (i.e. >= 2) CPU
- *       because computation could be done parallelly by different CPU.
+ *         because computation could be done parallelly by different CPU.
  *
  *   - Xxx_APPLIER is far more better than Xxx_APPLY.
  * 
- *     - 
- * 
- *   - For backend "webgl", ONE_WORKER_Xxx is better than TWO_WORKER_Xxx.
+ *     - The possible reason is Xxx_APPLIER could deliver the 2nd computation to
+ *         another CPU more earlier than Xxx_APPLY.
+ *
+ *
+ * 2.2 Backend "webgl"
+ *
+ 
+!!! ...unfinished... (2022/09/25)
+
+ * , ONE_WORKER_Xxx is better than TWO_WORKER_Xxx.
  *
  * 
  *
