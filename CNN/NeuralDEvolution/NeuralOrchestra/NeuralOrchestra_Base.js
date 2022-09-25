@@ -33,31 +33,30 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     NeuralOrchestra_Base, NeuralOrchestra_Base.setAsConstructor );
 
   /** */
-  constructor( weightsSpreadsheetId, weightsAPIKey, nNeuralWorker_ModeId ) {
+  constructor( weightsSpreadsheetId, weightsAPIKey ) {
     super();
     NeuralOrchestra_Base.setAsConstructor_self.call( this,
-      weightsSpreadsheetId, weightsAPIKey, nNeuralWorker_ModeId
+      weightsSpreadsheetId, weightsAPIKey
     );
   }
 
   /** @override */
-  static setAsConstructor( weightsSpreadsheetId, weightsAPIKey, nNeuralWorker_ModeId ) {
+  static setAsConstructor( weightsSpreadsheetId, weightsAPIKey ) {
     super.setAsConstructor();
     NeuralOrchestra_Base.setAsConstructor_self.call( this,
-      weightsSpreadsheetId, weightsAPIKey, nNeuralWorker_ModeId
+      weightsSpreadsheetId, weightsAPIKey
     );
     return this;
   }
 
   /** @override */
   static setAsConstructor_self(
-    weightsSpreadsheetId, weightsAPIKey, nNeuralWorker_ModeId ) {
+    weightsSpreadsheetId, weightsAPIKey ) {
 
     this.evolutionVersusSummary = DEvolution.VersusSummary.Pool.get_or_create_by(
       weightsSpreadsheetId, weightsAPIKey );
 
-    this.workerProxies = NeuralWorker.Proxies.Pool.get_or_create_by(
-      nNeuralWorker_ModeId );
+    this.workerProxies = NeuralWorker.Proxies.Pool.get_or_create_by();
   }
 
   /** @override */
@@ -88,6 +87,18 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     }
   }
 
+  /** */
+  async workerProxies_init_async() {
+
+//!!! ...unfinished... (2022/09/25)  NeuralWorker.Mode.Singleton.Ids.
+//      - Try mode ONE_WORKER__ONE_SCALE__NO_FILL (0) with backend "webgl".
+//
+//      - If failed, try mode TWO_WORKER__ONE_SCALE__NO_FILL__APPLIER (5) with backend "cpu".
+//
+ 
+ !!! ...unfinished... (2022/09/25) 
+  }
+ 
   /** */
   evolutionVersusSummary_dispose() {
     if ( this.evolutionVersusSummary ) {
