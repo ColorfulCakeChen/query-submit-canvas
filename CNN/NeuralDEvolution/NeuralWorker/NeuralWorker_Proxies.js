@@ -225,7 +225,7 @@ class NeuralWorker_Proxies extends Recyclable.Root {
       // 1.0 Prepare container of all worker proxy.
       {
         if ( this.workerProxyArray )
-          this.workerProxyArray.clear(); // Release old worker proxy.
+          this.workerProxyArray.clear(); // Release old worker proxies.
         else
           this.workerProxyArray = Recyclable.OwnerArray.Pool.get_or_create_by();
 
