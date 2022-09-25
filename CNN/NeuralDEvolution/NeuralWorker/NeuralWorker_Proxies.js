@@ -102,11 +102,16 @@ import { Mode as NeuralWorker_Mode } from "./NeuralWorker_Mode.js";
  *
  *     - The possible reason is that the GPU is a shared resource among all web
  *         workers. Using more web workers is just wasting more time to transfer
- *         input image (and then use just the same one GPU to do the computation).
+ *         input image between web workers (and then they all use just the same
+ *         one GPU to do the computation).
  *
  *   - Xxx_APPLIER may or may not be better than Xxx_APPLY.
  *
  *     - The gain (if has) is not so obvious as in backend "cpu".
+ *
+ *     - The possible reason is that the 2nd worker needs wait for the GPU released
+ *         by the 1st worker no matter how early (how fast) the input image is
+ *         received by the 2nd worker (because the GPU is shared by all web workers).
  *
 
  
