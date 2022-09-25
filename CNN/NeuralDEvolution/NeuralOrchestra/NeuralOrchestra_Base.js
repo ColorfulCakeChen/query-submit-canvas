@@ -103,9 +103,9 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     //
     // Backend "webgl" has best performance with one web worker (NO_FILL).
     //
-    let initOkPromise = this.workerProxies.init_async(
-      NeuralWorker.Mode.Singleton.Ids.ONE_WORKER__ONE_SCALE__NO_FILL, // (0) 
-      "webgl" );
+    let initOkPromise = this.workerProxies.init_async( "webgl",
+      NeuralWorker.Mode.Singleton.Ids.ONE_WORKER__ONE_SCALE__NO_FILL // (0) 
+    );
  
     let initOk = await initOkPromise;
     if ( initOk )
@@ -115,9 +115,9 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     //
     // Backend "cpu" has best performance with two web workers (NO_FILL).
     //
-    initOkPromise = this.workerProxies.init_async(
-      NeuralWorker.Mode.Singleton.Ids.TWO_WORKER__ONE_SCALE__NO_FILL__APPLIER, // (5) 
-      "cpu" );
+    initOkPromise = this.workerProxies.init_async( "cpu",
+      NeuralWorker.Mode.Singleton.Ids.TWO_WORKER__ONE_SCALE__NO_FILL__APPLIER // (5) 
+    );
   
     initOk = await initOkPromise;
     return initOk;
