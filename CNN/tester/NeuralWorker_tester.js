@@ -187,6 +187,9 @@ class PerformanceTestCase extends Recyclable.Root {
         let bInitOk = neuralNet.init( progress,
           PerformanceTestCase.randomTestWeightArray, 0, neuralNetParams );
 
+        let strWeightCountInfo = neuralNet.toString_WeightCount();
+        console.log( `NeuralNet.${this.testCaseName}: ${strWeightCountInfo}.` );
+
         if ( false == bInitOk )
           throw Error( `Failed to initialize neuralNet object. ${neuralNet}` );
 
