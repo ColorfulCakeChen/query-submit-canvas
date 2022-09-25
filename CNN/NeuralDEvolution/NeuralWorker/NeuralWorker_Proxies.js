@@ -74,13 +74,12 @@ import { Mode as NeuralWorker_Mode } from "./NeuralWorker_Mode.js";
  *   - NO_FILL means the input image will not be filled any extra information (i.e.
  *       alignment mark) before it is processed by a neural network.
  *
- *     - Instead, it will simultaneously output results of both alignments (suppose 
- *         A and B). Half output channels are used if the neural network represents
- *         one alignment (e.g. A), the ohter half output channels are used if the
- *         neural network represents the other alignment (e.g. B).
+ *     - Instead, it will simultaneously output results of both alignments.
+ *         - For example, output 100 channels for alignment A and B.
+ *         - If the neural network represents alignment A, use output channels 0 - 49.
+ *         - If the neural network represents alignment B, use output channels 50 - 99.
  *
- *     - The cost are doubling the output channel count so that half output channels
- *         are for alignment A and the other half output channels are for alignment B.
+ *     - The cost are doubling the output channel count.
  *
  * At first glance, we might guess doubling output channel count should be slower.
  * The memory downloading/modifying/uploading, however, are even slower. In the result,
