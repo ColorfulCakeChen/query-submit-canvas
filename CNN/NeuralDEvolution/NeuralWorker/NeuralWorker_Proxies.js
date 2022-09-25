@@ -101,9 +101,9 @@ import { Mode as NeuralWorker_Mode } from "./NeuralWorker_Mode.js";
  *   - ONE_WORKER_Xxx is better than TWO_WORKER_Xxx.
  *
  *     - The possible reason is that the GPU is a shared resource among all web
- *         workers. Using more network workers just wastes more time transferring
- *         input images between network workers (and then, they still needs take
- *         turns to use the same one GPU for computation).
+ *         workers. Using more web workers just wastes more time transferring
+ *         input images between them (and then, they still needs take turns to
+ *         use the same one GPU for computation).
  *
  *   - Xxx_APPLIER may or may not be better than Xxx_APPLY.
  *
