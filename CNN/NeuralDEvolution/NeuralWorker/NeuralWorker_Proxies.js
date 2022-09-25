@@ -80,7 +80,7 @@ import { Mode as NeuralWorker_Mode } from "./NeuralWorker_Mode.js";
  *
  * At first glance, we might guess doubling output channel count should be slower.
  * The memory downloading/modifying/uploading, however, are even slower. In the result,
- * the NO_FILL's performance is comparable (if not better) to FILL.
+ * the NO_FILL's performance is comparable to (if not better than) FILL.
  *
  *
  * 2.1 Backend "cpu"
