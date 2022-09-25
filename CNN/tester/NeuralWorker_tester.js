@@ -335,7 +335,7 @@ class HeightWidthDepth {
       = ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID;
 
     let blockCountTotalRequested = 100; //50; //20; //10;
-    let output_channelCount = 4; //400; //300; //64;
+    let output_channelCount = 8; //4; //400; //300; //64;
     //let output_channelCount_twice = output_channelCount * 2; // For NO_FILL
 
     // ShuffleNetV2 uses twice block count to compensate reduced channel count.
