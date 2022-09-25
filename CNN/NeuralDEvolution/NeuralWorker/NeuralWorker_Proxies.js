@@ -109,9 +109,10 @@ import { Mode as NeuralWorker_Mode } from "./NeuralWorker_Mode.js";
  *
  *     - The gain (if has) is not so obvious as in backend "cpu".
  *
- *     - The possible reason is that the 2nd worker needs wait for the GPU released
- *         by the 1st worker no matter how early (how fast) the input image is
- *         received by the 2nd worker (because the GPU is shared by all web workers).
+ *     - The possible reason is that the 2nd worker needs wait for the GPU to be
+ *         released by the 1st worker no matter how early (how fast) the input
+ *         image is received by the 2nd worker (because the GPU is shared by
+ *         all web workers).
  *
 
  
