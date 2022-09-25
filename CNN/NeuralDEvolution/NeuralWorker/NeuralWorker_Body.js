@@ -2,7 +2,6 @@
 import * as Recyclable from "../../util/Recyclable.js";
 import * as ValueMax from "../../util/ValueMax.js";
 import * as AsyncWorker from "../../util/AsyncWorker.js";
-//import * as ValueDesc from "../../Unpacker/ValueDesc.js";
 import * as Weights from "../../Unpacker/Weights.js";
 import * as NeuralNet from "../../Conv/NeuralNet.js";
 import { tensorflowJsURL } from "./NeuralWorker_Common.js";
@@ -51,6 +50,10 @@ class NeuralWorker_Body extends AsyncWorker.Body {
    *   Specify which backend should be used by tensorflow.js library.
    */
   async* initWorker( workerId, backendName ) {
+
+    if ( this.neuralNetArray )
+      this.neuralNetArray.clear(); // Release old neural networks.
+
     this.workerId = workerId;
 
     let bInitOk = true;
