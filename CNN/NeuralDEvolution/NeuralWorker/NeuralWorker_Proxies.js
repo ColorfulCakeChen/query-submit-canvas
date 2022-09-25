@@ -62,8 +62,8 @@ import { Mode as NeuralWorker_Mode } from "./NeuralWorker_Mode.js";
  *
  * 2.0 FILL and NO_FILL
  *
- * How does a neural network know which alignment it represents? There are two methods:
- * FILL or NO_FILL.
+ * How does a neural network know which alignment (in a differential evolution versus)
+ * it represents? There are two methods: FILL or NO_FILL.
  *
  *   - FILL means the input image will be filled some information (i.e. alignment mark)
  *       before it is processed by a neural network.
