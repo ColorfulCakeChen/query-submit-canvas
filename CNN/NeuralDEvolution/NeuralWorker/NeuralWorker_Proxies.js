@@ -91,7 +91,7 @@ import { Mode as NeuralWorker_Mode } from "./NeuralWorker_Mode.js";
  *         because computation could be done parallelly by different CPU.
  *
  *   - Xxx_APPLIER is far more better than Xxx_APPLY.
- * 
+ *
  *     - This is because Xxx_APPLIER could deliver input image to another CPU
  *         (i.e. the 2nd computation) more earlier than Xxx_APPLY.
  *
@@ -101,7 +101,14 @@ import { Mode as NeuralWorker_Mode } from "./NeuralWorker_Mode.js";
  *   - ONE_WORKER_Xxx is better than TWO_WORKER_Xxx.
  *
  *     - The possible reason is that the GPU is a shared resource among all web
- *         workers.
+ *         workers. Using more web workers is just wasting more time to transfer
+ *         input image (and then use just the same one GPU to do the computation).
+ *
+ *   - Xxx_APPLIER may or may not be better than Xxx_APPLY.
+ *
+ *     - The gain (if has) is not so obvious as in backend "cpu".
+ *
+
  
 !!! ...unfinished... (2022/09/25)
 
