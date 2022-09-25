@@ -92,16 +92,19 @@ import { Mode as NeuralWorker_Mode } from "./NeuralWorker_Mode.js";
  *
  *   - Xxx_APPLIER is far more better than Xxx_APPLY.
  * 
- *     - The possible reason is Xxx_APPLIER could deliver the 2nd computation to
- *         another CPU more earlier than Xxx_APPLY.
+ *     - This is because Xxx_APPLIER could deliver input image to another CPU
+ *         (i.e. the 2nd computation) more earlier than Xxx_APPLY.
  *
  *
  * 2.2 Backend "webgl"
  *
+ *   - ONE_WORKER_Xxx is better than TWO_WORKER_Xxx.
+ *
+ *     - The possible reason is that the GPU is a shared resource among all web
+ *         workers.
  
 !!! ...unfinished... (2022/09/25)
 
- * , ONE_WORKER_Xxx is better than TWO_WORKER_Xxx.
  *
  * 
  *
