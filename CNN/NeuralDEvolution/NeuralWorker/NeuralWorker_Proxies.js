@@ -71,11 +71,12 @@ import { Mode as NeuralWorker_Mode } from "./NeuralWorker_Mode.js";
  *     - The cost are downloading input image from GPU to CPU, filling alignement mark,
  *         and upload it from CPU to GPU.
  *
- *   - NO_FILL means the input image will not be filled any extra information (i.e.
- *       alignment mark) before it is processed by a neural network.
+ *   - NO_FILL means the input image will not be filled any extra information
+ *       before it is processed by a neural network.
  *
- *     - Instead, it will simultaneously output results of both alignments.
- *         - For example, output 100 channels for alignment A and B.
+ *     - Instead, the neural networkt will simultaneously output results for both
+ *         alignments.
+ *         - For example, the neural network outputs 100 channels totally.
  *         - If the neural network represents alignment A, use output channels 0 - 49.
  *         - If the neural network represents alignment B, use output channels 50 - 99.
  *
