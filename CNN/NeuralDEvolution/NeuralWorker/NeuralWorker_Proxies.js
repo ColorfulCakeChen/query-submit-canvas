@@ -2,8 +2,6 @@ export { NeuralWorker_Proxies as Proxies };
 
 import * as Pool from "../../util/Pool.js";
 import * as Recyclable from "../../util/Recyclable.js";
-//import * as GSheets from "../../til/GSheets.js";
-//import * as ValueMax from "../../util/ValueMax.js";
 import * as NeuralNet from "../../Conv/NeuralNet.js";
 import { Proxy as NeuralWorker_Proxy } from "./NeuralWorker_Proxy.js";
 import { Mode as NeuralWorker_Mode } from "./NeuralWorker_Mode.js";
@@ -19,7 +17,10 @@ import { Mode as NeuralWorker_Mode } from "./NeuralWorker_Mode.js";
  * web worker serially.
  *
  *
- * 1. For NeuralWorker_Mode.Singleton.Ids.ONE_WORKER__Xxx
+ * 1. Idea
+ *
+ *
+ * 1.1 For NeuralWorker_Mode.Singleton.Ids.ONE_WORKER__Xxx
  *
  * Since it is slow to transfer data between CPU and GPU (for WebGL), it seems not
  * feasible to use multiple workers (which will transfer data between CPU and GPU
@@ -32,7 +33,7 @@ import { Mode as NeuralWorker_Mode } from "./NeuralWorker_Mode.js";
  * transferring between CPU and GPU.
  *
  *
- * 2. For NeuralWorker_Mode.Singleton.Ids.TWO_WORKER__Xxx
+ * 1.2 For NeuralWorker_Mode.Singleton.Ids.TWO_WORKER__Xxx
  * 
  * Every worker handles one neural network. When .ImageData_process_async() is called,
  * the input (usually a large memory block) will be transffered to the 1st worker to
@@ -51,6 +52,50 @@ import { Mode as NeuralWorker_Mode } from "./NeuralWorker_Mode.js";
  * Finally, this WorkerProxies collects all web workers' results in a promise. The
  * promise will resolve with an array of Float32Array. Every Float32Array is the
  * output of one neural network.
+ *
+ *
+ * 2. Experiments
+ *
+ * According to performance testing (i.e. NeuralWorker_tester.js), there are some
+ * observations.
+ *
+ *
+ * 2.0 FILL and NO_FILL
+ *
+ * How does a neural network know which alignment it represents? There are two methods:
+ * FILL or NO_FILL.
+ *
+ *   - FILL means the input image will be filled some information (i.e. alignment mark)
+ *       before it is processed by a neural network.
+ *
+ *     - The cost are downloading input image from GPU to CPU, filling alignement mark,
+ *         and upload from CPU to GPU.
+ *
+ *   - NO_FILL means the input image will not be filled any extra information (i.e.
+ *       alignment mark) before it is processed by a neural network.
+ *
+ *     - The cost are double the output channel count so that half output channels are
+ *         for alignemnt A and the other half output channels are for alignment B.
+ *
+ *
+ *
+ * 2.1 Backend "cpu"
+ *
+ *   - TWO_WORKER_Xxx is better than ONE_WORKER_Xxx.
+ *
+ *     - This is especially true if your computer has multiple (i.e. >= 2) CPU
+ *       because computation could be done parallelly by different CPU.
+ *
+ *   - Xxx_APPLIER is far more better than Xxx_APPLY.
+ * 
+ *     - 
+ * 
+ *   - For backend "webgl", ONE_WORKER_Xxx is better than TWO_WORKER_Xxx.
+ *
+ * 
+ *
+ *
+ *
  *
  *
  *
