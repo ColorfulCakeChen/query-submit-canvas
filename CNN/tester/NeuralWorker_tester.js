@@ -226,7 +226,9 @@ class PerformanceTestCase extends Recyclable.Root {
   /** */
   static randomTestWeightArray_create() {
     if ( !PerformanceTestCase.randomTestWeightArray ) {
-      const weightArrayLength = ( 100 * 1024 * 1024 );
+      //!!! (2022/09/25 Remarked) too large for mobile phone.
+      //const weightArrayLength = ( 100 * 1024 * 1024 );
+      const weightArrayLength = ( 10 * 1024 * 1024 );
       PerformanceTestCase.randomTestWeightArray = new Float32Array( weightArrayLength );
 
       RandTools.fill_numberArray(
