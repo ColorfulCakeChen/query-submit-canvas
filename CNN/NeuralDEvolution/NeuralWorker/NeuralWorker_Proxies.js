@@ -131,6 +131,10 @@ import { Mode as NeuralWorker_Mode } from "./NeuralWorker_Mode.js";
  *   The numeric identifier of neural worker mode (i.e.
  * NeuralWorker.Mode.Singleton.Ids.Xxx).
  *
+ * @member {string} backendName
+ *   Which backend (of tensorflow.js library) will be used web worker. Either "cpu"
+ * or "webgl".
+ *
  * @member {number} neuralNetCount
  *   There are how many neural networks created. It is always 2 (because of differential
  * evolution) no matter how totalWorkerCount is.
@@ -177,6 +181,7 @@ class NeuralWorker_Proxies extends Recyclable.Root {
     this.hardwareConcurrency = undefined;
     this.neuralNetCount = undefined;
 
+    this.backendName = undefined;
     this.nNeuralWorker_ModeId = undefined;
 
     super.disposeResources();
@@ -187,18 +192,16 @@ class NeuralWorker_Proxies extends Recyclable.Root {
    * one or two web worker(s).
    *
    *
-   * @param {string} backendName
-   *   Specify which backend should be used by tensorflow.js library.
-   *
    * @return {Promise}
    *   Return a promise:
    *   - Resolved to true, if success.
    *   - Resolved to false, if failed.
    */
-  async init_async( nNeuralWorker_ModeId, backendName = "webgl" ) {
+  async init_async( nNeuralWorker_ModeId, backendName ) {
 
     // 0.
     this.nNeuralWorker_ModeId = nNeuralWorker_ModeId;
+    this.backendName = backendName;
 
     this.neuralNetCount = 2; // Always two neural network (for differential evolution).
     this.hardwareConcurrency = navigator.hardwareConcurrency; // logical CPU count.

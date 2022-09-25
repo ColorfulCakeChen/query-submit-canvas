@@ -79,6 +79,10 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     return this.workerProxies.nNeuralWorker_ModeId;
   }
 
+  get backendName() {
+    return this.workerProxies.backendName;
+  }
+
   /** */
   workerProxies_dispose() {
     if ( this.workerProxies ) {
@@ -87,7 +91,12 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     }
   }
 
-  /** */
+  /**
+   * @return {Promise}
+   *   Return a promise:
+   *   - Resolved to true, if success.
+   *   - Resolved to false, if failed.
+   */
   async workerProxies_init_async() {
 
 //!!! ...unfinished... (2022/09/25)  NeuralWorker.Mode.Singleton.Ids.
@@ -96,7 +105,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
 //      - If failed, try mode TWO_WORKER__ONE_SCALE__NO_FILL__APPLIER (5) with backend "cpu".
 //
  
- !!! ...unfinished... (2022/09/25) 
+!!! ...unfinished... (2022/09/25) 
   }
  
   /** */
