@@ -199,8 +199,9 @@ class NeuralWorker_Body extends AsyncWorker.Body {
    * So, it might be suggested that:
    *
    *   - At UI worker (i.e. not here, e.g. during the game splash screen), create
-   *       NeuralWorker.Proxies and inform it create a dummy neural network (with
-   *       the same NeuralNet.Params which will be use later in the real run).
+   *       NeuralWorker.Proxies and inform all web workers create all dummy neural
+   *       networks (with the same NeuralNet.Params which will be use later in the
+   *       real run).
    *
    *   - This will compile shaders. It will also block the UI but has lesser hurt
    *       because the UI now is displaying a splash screen (i.e. users has already
