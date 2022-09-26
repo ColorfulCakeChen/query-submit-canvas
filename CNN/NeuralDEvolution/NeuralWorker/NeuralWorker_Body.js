@@ -212,10 +212,18 @@ class NeuralWorker_Body extends AsyncWorker.Body {
    *   - Later when real run:
    * 
    *     - Inform all web workers create all real neural networks.
-   * , there will be no UI blocking encountered (suppose
-   *       we always create neural network with same input/output tenser shape).
-   * 
-   *       - The same one NeuralWorker.Proxies and NeuralWorker.Proxy and
+   *
+   *     - This method will be called but the UI will not be blocked (because WebGL
+   *         shaders have been compiled in the previous game splash screen stage)
+   *
+   *       - This method is still worth to be called (although no WebGL sharders
+   *           needs to be compiled), because it will upload the neural network
+   *           tensors to GPU.
+   *
+   *       - Note1: The created neural network must have same input/output tenser
+   *           shape.
+   *
+   *       - Note2: The same one NeuralWorker.Proxies and NeuralWorker.Proxy and
    *           NeuralWorker.Body should be used. If the NeuralWorker.Body are
    *           created every time, the shaders will be re-compiled again and again.)
    * 
