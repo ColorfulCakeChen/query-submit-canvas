@@ -43,7 +43,7 @@ async function test_WorkerProxy_init( { workerProxy }, workerId ) {
     debugger;
   }
 
-  if ( initWorkerOk == false )
+  if ( !initWorkerOk )
     throw Error( `AsyncWorker_tester.testWorkerProxy(): `
       `workerId=${workerId}, initWorker failed.`
     );
