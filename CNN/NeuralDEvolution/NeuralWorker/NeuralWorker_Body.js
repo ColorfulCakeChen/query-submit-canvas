@@ -22,22 +22,10 @@ class NeuralWorker_Body extends AsyncWorker.Body {
 
   /** @override */
   async* disposeResources() {
-    if ( this.alignmentMarkValueArray ) {
-      this.alignmentMarkValueArray.disposeResources_and_recycleToPool();
-      this.alignmentMarkValueArray = null;
-    }
-
+    this.alignmentMarkArray_dispose();
     this.NeuralNetArray_dispose();
     this.workerId = undefined;
     yield *super.disposeResources();
-  }
-
-  /** Release the neural network. */
-  NeuralNetArray_dispose() {
-    if ( this.neuralNetArray ) {
-      this.neuralNetArray.disposeResources_and_recycleToPool();
-      this.neuralNetArray = null;
-    }
   }
 
   /**
@@ -214,10 +202,13 @@ class NeuralWorker_Body extends AsyncWorker.Body {
    *       every time, the shaders will be re-compiled again and again.)
    *
    */
-  static NeuralNetArray_dryRun_ifWebGL() {
+  static NeuralNetArray_compileShaders_uploadTensor???dryRun_ifWebGL() {
     let backendName = tf.getBackend();
     if ( backendName != "webgl" )
       return; // Only WebGL needs compile shaders.
+
+//!!! ...unfinished... (2022/09/15)
+// use tf.tidy().
 
     let neuralNet;
     let sourceTensor;
@@ -227,10 +218,16 @@ class NeuralWorker_Body extends AsyncWorker.Body {
         neuralNet = this.neuralNetArray[ i ];
         sourceTensor = tf.zeros( neuralNet.input_shape, "int32" );
 
+//!!! ...unfinished... (2022/09/15)
+// need parameter to control whether log time, even whether 2nd dryRun to compare time.
+
         // (2022/09/26 Remarked) For test compilation time.
         // let timeBegin = Date.now();
 
         outputTensor = neuralNet.apply( sourceTensor );
+
+//!!! ...unfinished... (2022/09/15)
+//  display neuralNetIndex
 
         // (2022/09/26 Remarked) For test compilation time.
         // let timeEnd = Date.now();
@@ -262,6 +259,14 @@ class NeuralWorker_Body extends AsyncWorker.Body {
     }
   }
 
+  /** Release the neural network. */
+  NeuralNetArray_dispose() {
+    if ( this.neuralNetArray ) {
+      this.neuralNetArray.disposeResources_and_recycleToPool();
+      this.neuralNetArray = null;
+    }
+  }
+
   /**
    * @param {integer[]} markValueArray
    *   An array of values representing every neural network playing which alignment.
@@ -276,19 +281,27 @@ class NeuralWorker_Body extends AsyncWorker.Body {
 
     // 0. Prepare container for all neural networks' mark value.
     {
-      if ( this.alignmentMarkValueArray )
-        this.alignmentMarkValueArray.length = markValueArray.length;
+      if ( this.alignmentMarkArray )
+        this.alignmentMarkArray.length = markValueArray.length;
       else
-        this.alignmentMarkValueArray
+        this.alignmentMarkArray
           = Recyclable.Array.Pool.get_or_create_by( markValueArray.length );
     }
 
     // 1. Copy the alignment mark values.
-    for ( let i = 0; i < this.alignmentMarkValueArray.length; ++i ) {
-      this.alignmentMarkValueArray[ i ] = markValueArray[ i ];
+    for ( let i = 0; i < this.alignmentMarkArray.length; ++i ) {
+      this.alignmentMarkArray[ i ] = markValueArray[ i ];
     }
 
     return { value: true };
+  }
+
+  /** Release the alignmentMarkArray. */
+  alignmentMarkArray_dispose() {
+    if ( this.alignmentMarkArray ) {
+      this.alignmentMarkArray.disposeResources_and_recycleToPool();
+      this.alignmentMarkArray = null;
+    }
   }
 
 
@@ -323,7 +336,7 @@ class NeuralWorker_Body extends AsyncWorker.Body {
     const markHeight = 3;
     const markWidth = 3;
 
-    const alignmentMarkValue = this.alignmentMarkValueArray[ neuralNetIndex ];
+    const alignmentMarkValue = this.alignmentMarkArray[ neuralNetIndex ];
 
     let neuralNet = this.neuralNetArray[ neuralNetIndex ];
     const arrayIndex_rowStrides = neuralNet.input_width * neuralNet.input_channelCount;
