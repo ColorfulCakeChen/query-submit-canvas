@@ -74,8 +74,11 @@ class AsyncWorker_Proxy extends Recyclable.Root {
       this.worker = null;
     }
 
-!!! ...unfinished... (2022/09/26)
-//should rejecct all pending Resulter.
+    // Since the web worker has been informed to be terminated, reject all
+    // Resulters' pending promises so that all awaiters (on these promises)
+    // will not be blocked forever.
+    this.the_processingId_Resulter_Map.reject_all_pending_by_errorReason(
+      AsyncWorker_Proxy.disposeResources_rejectReason );
 
     this.workerBlobObjectURL_dispose();
 
@@ -390,3 +393,6 @@ class AsyncWorker_Proxy extends Recyclable.Root {
 }
 
 AsyncWorker_Proxy.JS_MIME_TYPE_STRING = "text/javascript";
+
+AsyncWorker_Proxy.disposeResources_rejectReason
+  = "AsyncWorker.Proxy.disposeResources() is called.";

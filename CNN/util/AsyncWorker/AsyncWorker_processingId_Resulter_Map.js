@@ -178,7 +178,7 @@ class AsyncWorker_processingId_Resulter_Map {
    * Reject all pending PromiseResolveReject.
    *
    * This is usually used when an AsyncWorker will be terminated forcibly. Rejecting
-   * these pending promises could avoid the promises awaiter be blocked forever.
+   * these pending promises could avoid these promises' awaiters be blocked forever.
    *
    * @param {any} errorReason 
    *   The information of the rejecting.
