@@ -697,7 +697,7 @@ function disposeResources() {
  * progressParent.root_get() will be returned when every time yield.
  *
  */
-async function* tester( progressParent, backendName ) {
+async function* tester( progressParent, backendName, bAscent_or_Descent ) {
 
   // Ensure backend of tensorflow.js
   {
@@ -720,7 +720,7 @@ async function* tester( progressParent, backendName ) {
 
   for ( let i = 0; i < globalThis.testSet_All.length; ++i ) {
     let testSet = globalThis.testSet_All[ i ];
-    yield* testSet.tester( progressArray_for_testSet[ i ] );
+    yield* testSet.tester( progressArray_for_testSet[ i ], bAscent_or_Descent );
   }
 
   disposeResources();
