@@ -48,9 +48,12 @@ class AsyncWorker_Resulter {
       // 1. Always yield the first promise.
       thePromiseResolveReject = this.PromiseResolveRejectArray[ 0 ];
 
-      // 2. If it is a pending promise, yield it again and again (until it has been
-      //    fulfilled and handled by here).
+      // 2. If it is a pending promise, yield it.
       if ( thePromiseResolveReject.pending ) {
+
+        // In theory, when caller received a pending promise, it should await before
+        // call this .next() again. So, if the pending promise has been yielded
+        // before, this .next() should not be called again.
         if ( thePromiseResolveReject.hasBeenYielded_byResulter ) {
           throw Error( `AsyncWorker.Resulter.next(): `
             + `processingId=${processingId}. `
@@ -95,6 +98,11 @@ class AsyncWorker_Resulter {
     } while ( !resulterNext.done );
     return resulterNext.value;
   }
+
+
+//!!! ...unfinished... (2022/09/26)
+//should reject all pending Resulter.
+
 
 }
 
