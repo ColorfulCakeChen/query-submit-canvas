@@ -508,19 +508,6 @@ class HeightWidthDepth {
     let progressToAdvance = progressParent.child_add(
       ValueMax.Percentage.Concrete.Pool.get_or_create_by( progressMax ) );
 
-    // Control test ModeId direction.
-    let testCaseArray = [ ...this.testCaseMap.values() ];
-    let testCaseIndexBegin, testCaseIndexEnd, testCaseIndexStep;
-    if ( bAscent_or_Descent ) {
-      testCaseIndexBegin = 0;
-      testCaseIndexEnd = testCaseArray.length - 1;
-      testCaseIndexStep = +1;
-    } else {
-      testCaseIndexBegin = testCaseArray.length - 1;
-      testCaseIndexEnd = 0;
-      testCaseIndexStep = -1;
-    }
-
     let testCase;
     try {
       let pool_all_issuedCount_before = Pool.All.issuedCount;
@@ -540,6 +527,19 @@ class HeightWidthDepth {
             + 1                      // for NeuralWorker.Mode complete
           );
           progressToAdvance.value_max_set( progressMax );
+
+          // Control test ModeId direction.
+          let testCaseArray = [ ...this.testCaseMap.values() ];
+          let testCaseIndexBegin, testCaseIndexEnd, testCaseIndexStep;
+          if ( bAscent_or_Descent ) {
+            testCaseIndexBegin = 0;
+            testCaseIndexEnd = testCaseArray.length - 1;
+            testCaseIndexStep = +1;
+          } else {
+            testCaseIndexBegin = testCaseArray.length - 1;
+            testCaseIndexEnd = 0;
+            testCaseIndexStep = -1;
+          }
 
           const timeInfo = new ExecutionTimeInfo( ExecutionTimeInfoTimes );
           for ( let i = testCaseIndexBegin;
