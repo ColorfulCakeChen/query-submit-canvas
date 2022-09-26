@@ -109,6 +109,8 @@ class NeuralOrchestra_Base extends Recyclable.Root {
   }
 
   /**
+   * This method will block UI worker (because of compiling WebGL shaders), so it is
+   * suggested call this method during game splash screen displaying.
    *
    * @param {NeuralNet.ParamsBase} neuralNetParamsBase
    *   The neural network configuration. It will be used for both two neural networks.

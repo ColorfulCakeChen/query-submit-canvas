@@ -204,7 +204,7 @@ class NeuralWorker_Body extends AsyncWorker.Body {
    *
    * So, it might be suggested that:
    *
-   *   - At UI worker (i.e. not here) during the game splash screen:
+   *   - At UI worker (i.e. not here) during game splash screen displaying:
    * 
    *     - Create NeuralWorker.Proxies and inform all web workers create all dummy
    *         neural networks (with the same NeuralNet.Params which will be use
@@ -220,7 +220,7 @@ class NeuralWorker_Body extends AsyncWorker.Body {
    *     - Inform all web workers create all real neural networks.
    *
    *     - This method will be called but the UI will not be blocked (because WebGL
-   *         shaders have been compiled in the previous game splash screen stage)
+   *         shaders have been compiled during game splash screen displaying).
    *
    *       - This method is still worth to be called (although no WebGL sharders
    *           needs to be compiled), because it will upload the neural network
