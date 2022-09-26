@@ -115,6 +115,10 @@ class PerformanceTestCase extends Recyclable.Root {
       await tf.ready(); // Ensure tf.getBackend() workable.
       let backendName = tf.getBackend();
 
+//!!! ...unfinished... (2022/09/26)
+// should re-use web worker when re-init.
+// so that WebGL shaders needs not be re-compiled again.
+
       let neuralWorkerProxies = this.neuralWorkerProxies
         = NeuralWorker.Proxies.Pool.get_or_create_by();
 

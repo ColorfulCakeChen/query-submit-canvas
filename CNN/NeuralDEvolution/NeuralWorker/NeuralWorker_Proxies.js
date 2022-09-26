@@ -222,10 +222,6 @@ class NeuralWorker_Proxies extends Recyclable.Root {
     //
     let totalWorkerCount = NeuralWorker_Mode.workerCount_get( nNeuralWorker_ModeId );
 
-//!!! ...unfinished... (2022/09/26)
-// should re-use web worker when re-init.
-// so that WebGL shaders needs not be re-compiled again.
-
     // 1. Web workers.
     let initOkArray;
     {
@@ -263,6 +259,8 @@ class NeuralWorker_Proxies extends Recyclable.Root {
   }
 
   /**
+   * This method will try to re-use exsited web workers (so that WebGL shaders
+   * needs not be re-compiled again).
    * 
    * @param {integer} newLength
    *   The .workerProxyArray will become the speccified length (and have so many
