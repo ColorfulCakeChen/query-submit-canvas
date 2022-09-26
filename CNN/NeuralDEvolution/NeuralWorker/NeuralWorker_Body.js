@@ -164,7 +164,7 @@ class NeuralWorker_Body extends AsyncWorker.Body {
       }
 
       // compiling shaders if backend is webgl.
-      NeuralNetArray_compileShaders_uploadTensor_ifWebGL.call( this,
+      NeuralNetArray_compileShaders_uploadTensors_ifWebGL.call( this,
         bLogDryRunTime, bDryRunTwice );
 
       if ( bAllOk )
@@ -245,7 +245,7 @@ class NeuralWorker_Body extends AsyncWorker.Body {
    *   If true, the neural network will dry run twice.
    *
    */
-  static NeuralNetArray_compileShaders_uploadTensor_ifWebGL(
+  static NeuralNetArray_compileShaders_uploadTensors_ifWebGL(
     bLogDryRunTime, bDryRunTwice ) {
 
     let backendName = tf.getBackend();
@@ -253,55 +253,52 @@ class NeuralWorker_Body extends AsyncWorker.Body {
       return; // Only WebGL needs compile shaders.
 
 //!!! ...unfinished... (2022/09/15)
-// use tf.tidy().
+    tf.tidy( () => {
 
-    let neuralNet;
-    let sourceTensor;
-    let outputTensor;
-    for ( let i = 0; i < this.neuralNetArray.length; ++i ) {
-      try {
-        neuralNet = this.neuralNetArray[ i ];
-        sourceTensor = tf.zeros( neuralNet.input_shape, "int32" );
+      let neuralNet;
+      let sourceTensor;
+      let outputTensor;
+      for ( let i = 0; i < this.neuralNetArray.length; ++i ) {
+        try {
+          neuralNet = this.neuralNetArray[ i ];
+          sourceTensor = tf.zeros( neuralNet.input_shape, "int32" );
 
-//!!! ...unfinished... (2022/09/15)
-// need parameter to control whether log time, even whether 2nd dryRun to compare time.
+  //!!! ...unfinished... (2022/09/15)
+  // need parameter to control whether log time, even whether 2nd dryRun to compare time.
+          if ( bLogDryRunTime ) {
+            let timeBegin = Date.now();
 
-        // (2022/09/26 Remarked) For test compilation time.
-        // let timeBegin = Date.now();
+            outputTensor = neuralNet.apply( sourceTensor );
 
-        outputTensor = neuralNet.apply( sourceTensor );
+    //!!! ...unfinished... (2022/09/15)
+    //  display neuralNetIndex
 
-//!!! ...unfinished... (2022/09/15)
-//  display neuralNetIndex
+            let timeEnd = Date.now();
+            let timeElapsed = timeEnd - timeBegin;
+            console.log(
+                `NeuralWorker_Body.NeuralNetArray_compileShaders_uploadTensors_ifWebGL(): `
+              + `workerId=${this.workerId}, neuralNetIndex=${i}, timeElapsed=${timeElapsed}`
+            );
 
-        // (2022/09/26 Remarked) For test compilation time.
-        // let timeEnd = Date.now();
-        // let timeElapsed = timeEnd - timeBegin;
-        // console.log( `NeuralWorker_Body.NeuralNetArray_dryRun_ifWebGL(): `
-        //   + `workerId=${this.workerId}, timeElapsed=${timeElapsed}`
-        // );
+          } else {
+            outputTensor = neuralNet.apply( sourceTensor );
+          }
 
-      } catch ( e ) {
-        let errorMsg = `NeuralWorker_Body.NeuralNetArray_dryRun_ifWebGL(): `
-          + `workerId=${this.workerId}. ${e}`;
-        console.error( errorMsg );
-        //debugger;
-        throw e;
+        } catch ( e ) {
+          let errorMsg = `NeuralWorker_Body.NeuralNetArray_dryRun_ifWebGL(): `
+            + `workerId=${this.workerId}. ${e}`;
+          console.error( errorMsg );
+          //debugger;
+          throw e;
 
-      } finally {
-        if ( outputTensor ) {
-          outputTensor.dispose();
-          outputTensor = null;
-        }
-  
-        // In theory, it should already have been released by neural network. For
-        // avoiding memory leak (e.g. some exception when .apply()), release it again.
-        if ( sourceTensor ) {
-          sourceTensor.dispose();
-          sourceTensor = null;
+        } finally {
+          if ( outputTensor ) {
+            outputTensor.dispose();
+            outputTensor = null;
+          }
         }
       }
-    }
+    } );
   }
 
   /** Release the neural network. */

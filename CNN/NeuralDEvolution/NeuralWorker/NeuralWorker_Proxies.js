@@ -354,7 +354,7 @@ class NeuralWorker_Proxies extends Recyclable.Root {
         ( previousValue, currentValue ) => ( previousValue && currentValue ),
         true
       );
-  
+
     // 2. The only worker creates all neural networks.
     } else {
       createOk = await this.workerProxyArray[ 0 ].NeuralNetArray_create_async(
