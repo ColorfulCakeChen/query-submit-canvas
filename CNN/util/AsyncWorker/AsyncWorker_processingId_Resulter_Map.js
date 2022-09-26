@@ -200,9 +200,8 @@ class AsyncWorker_processingId_Resulter_Map {
       // Reject the current pending promise to the errorReason.
       currentPromiseResolveReject.errorReason_reject( errorReason );
 
-//!!! (2022/09/26 Temp Remarked)
       // Handle final promise.
-//      this.removeResulter_by_PromiseResolveReject_final( currentPromiseResolveReject );
+      this.removeResulter_by_PromiseResolveReject_final( currentPromiseResolveReject );
     }
   }
 
