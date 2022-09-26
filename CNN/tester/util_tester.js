@@ -43,6 +43,7 @@ function test() {
 
   async function* testerAll() {
 
+    let bAscent_or_Descent;
     bAscent_or_Descent = true; // Ascent
     yield* NeuralWorker_tester.tester( progress_NeuralWorker_tester_webgl,
       "webgl", bAscent_or_Descent );
