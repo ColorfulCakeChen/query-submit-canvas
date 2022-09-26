@@ -1,5 +1,6 @@
 export { tester };
 
+import * as PartTime from "../util/PartTime.js";
 import * as ValueMax from "../util/ValueMax.js";
 import { AsyncWorker_Proxy_tester } from "./AsyncWorker_Proxy_tester.js";
 
@@ -21,23 +22,18 @@ class NumberSequenceInfo {
 }
 
 /**
- * @return {Promise}
- *   Return a promise which will be resolved as specified value after specified
- * milliseconds.
- */
-function delayedValue( milliseconds, value ) {
-  return new Promise( ( resolve /*, reject*/ ) => {
-    setTimeout( () => resolve( value ), milliseconds );
-  } );
-}
-
-/**
  * Test a WorkerProxy's initialization.
  *
  * @param {AsyncWorker_Proxy_tester} workerProxy
  */
 async function test_WorkerProxy_init( { workerProxy }, workerId ) {
   let initWorkerPromise = workerProxy.initWorker_async( workerId );
+
+//!!! (2022/09/26) Test terminating worker when some resulter still has pending promises.
+  {
+    workerProxy.disposeResources_and_recycleToPool();
+  }
+
   let initWorkerOk = await initWorkerPromise;
   if ( initWorkerOk == false )
     throw Error( `AsyncWorker_tester.testWorkerProxy(): `
@@ -100,7 +96,7 @@ async function test_WorkerProxy_numberSequence(
   let numberResulterNext, done, value;
   do {
     if ( nextMilliseconds >= 0 )
-      await delayedValue( nextMilliseconds );
+      await PartTime.delayedValue( nextMilliseconds );
 
     let valueCountThisDelay = 0;
     do {
@@ -221,7 +217,7 @@ async function* tester( progressParent ) {
       = allNonBoost.workerProxy
       = interleave_Boost_NonBoost.workerProxy
       = AsyncWorker_Proxy_tester.Pool.get_or_create_by();
-  
+
     await test_WorkerProxy_init( allBoost, 1 );
 
     await Promise.all( [
