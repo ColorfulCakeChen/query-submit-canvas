@@ -74,6 +74,9 @@ class AsyncWorker_Proxy extends Recyclable.Root {
       this.worker = null;
     }
 
+!!! ...unfinished... (2022/09/26)
+//should rejecct all pending Resulter.
+
     this.workerBlobObjectURL_dispose();
 
     this.workerOptions = undefined;
