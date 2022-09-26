@@ -148,7 +148,7 @@ class PerformanceTestCase extends Recyclable.Root {
       }
 
       let bInitOk = await bInitOkPromise;
-      if ( false == bInitOk )
+      if ( !bInitOk )
         throw Error( `Failed to initialize neuralWorkerProxies object. `
           + `${neuralWorkerProxies}` );
 
@@ -159,7 +159,7 @@ class PerformanceTestCase extends Recyclable.Root {
         neuralNetParamsBaseArray, weightArrayBufferArray, bLogDryRunTime );
 
       let bCreateOk = await bCreateOkPromise;
-      if ( false == bCreateOk )
+      if ( !bCreateOk )
         throw Error( `Failed to create neural networks by neuralWorkerProxies. `
           + `${neuralWorkerProxies}` );
 

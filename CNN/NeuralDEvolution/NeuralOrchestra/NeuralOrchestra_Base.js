@@ -133,46 +133,12 @@ class NeuralOrchestra_Base extends Recyclable.Root {
  
     let initOk = await initOkPromise;
     if ( initOk ) {
-
-      // Neural network configuration will be copied (not transferred) to workers.
-      // So, it is not necessary to clone them. Just pass them directly.
-      let neuralNetParamsBaseArray
-        = [ this.neuralNetParamsBase, this.neuralNetParamsBase ];
-
-//!!! ...unfinished... (2022/09/26)
-      // Dummy neural network's weights.
-      //      
-      // Neural network weights will be transferred (not copied) to workers.
-      // So, new typed array should be created but they could use a shared
-      // ArrayBuffer to reduce memory since this is just a dummy weights
-      // array.
-      //
-      const weightArrayLength = ( 5 * 1024 * 1024 );
-      const weightArrayByteLength = weightArrayLength * Float32Array.BYTES_PER_ELEMENT;
-      let weightArrayBuffer = new ArrayBuffer( weightArrayByteLength );
-      let weightArrayBufferArray = [ weightArrayBuffer, weightArrayBuffer ];
-
-//!!! ...unfinished... (2022/09/26)
-// should create dummy neural networks in all web worker.
-// So that WebGL shaders could be compiled in advance.
-
-      // (2022//09/26 Remarked)
-      //const bLogDryRunTime = true; // For observing dry-run performance.
-      const bLogDryRunTime = false;
-      let bCreateOkPromise = this.workerProxies.NeuralNetArray_create_async(
-        neuralNetParamsBaseArray, weightArrayBufferArray, bLogDryRunTime );
-
-      let bCreateOk = await bCreateOkPromise;
-      if ( false == bCreateOk )
-        throw Error( `NeuralOrchestra_Base.workerProxies_init_async(): `
-          + `Failed to create neural networks by neuralWorkerProxies. `
-          + `${neuralWorkerProxies}`
-      );
-
-      return true;
+      let bCreateOk // For WebGL, compile WebGL shaders in advance.
+        = NeuralOrchestra_Base.workerProxies_compileShaders_async.call( this );
+      return bCreateOk;
     }
 
-    // 2. If "webgl" failed, try backend "cpu".
+    // 2. If backend "webgl" initialization failed, try backend "cpu".
     //
     // Backend "cpu" has best performance with two web workers (NO_FILL) by .applier().
     //
@@ -183,7 +149,47 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     initOk = await initOkPromise;
     return initOk;
   }
- 
+
+  /**
+   * Create dummy neural networks in all web worker to compile WebGL shaders in advance.
+   *
+   * @param {NeuralOrchestra_Base} this
+   */
+  static workerProxies_compileShaders_async() {
+
+    // Neural network configuration will be copied (not transferred) to workers.
+    // So, it is not necessary to clone them. Just pass them directly.
+    let neuralNetParamsBaseArray
+      = [ this.neuralNetParamsBase, this.neuralNetParamsBase ];
+
+    // Dummy neural network's weights.
+    //      
+    // Neural network weights will be transferred (not copied) to workers.
+    // So, new typed array should be created but they could use a shared
+    // ArrayBuffer to reduce memory since this is just a dummy weights
+    // array.
+    //
+    const weightArrayLength = ( 5 * 1024 * 1024 );
+    const weightArrayByteLength = weightArrayLength * Float32Array.BYTES_PER_ELEMENT;
+    let weightArrayBuffer = new ArrayBuffer( weightArrayByteLength );
+    let weightArrayBufferArray = [ weightArrayBuffer, weightArrayBuffer ];
+
+    // (2022//09/26 Remarked)
+    //const bLogDryRunTime = true; // For observing dry-run performance.
+    const bLogDryRunTime = false;
+    let bCreateOkPromise = this.workerProxies.NeuralNetArray_create_async(
+      neuralNetParamsBaseArray, weightArrayBufferArray, bLogDryRunTime );
+
+    let bCreateOk = await bCreateOkPromise;
+    if ( !bCreateOk )
+      throw Error( `NeuralOrchestra_Base.workerProxies_compileShaders_async(): `
+        + `Failed to create neural networks. `
+        + `${this.workerProxies}`
+    );
+
+    return bCreateOk;
+  }
+
   /** */
   evolutionVersusSummary_dispose() {
     if ( this.evolutionVersusSummary ) {
