@@ -170,8 +170,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     const weightArrayLength = ( 5 * 1024 * 1024 );
     const weightArrayByteLength = weightArrayLength * Float32Array.BYTES_PER_ELEMENT;
     let weightArrayBufferArray = [
-      new ArrayBuffer( weightArrayByteLength ),
-      new ArrayBuffer( weightArrayByteLength )
+      new ArrayBuffer( weightArrayByteLength ), new ArrayBuffer( weightArrayByteLength )
     ];
 
     // (2022//09/26 Remarked)
