@@ -84,15 +84,11 @@ class PerformanceTestCase extends Recyclable.Root {
     this.testCaseName = testCaseName;
     this.neuralNetParamsBase = neuralNetParamsBase;
     this.nNeuralWorker_ModeId = nNeuralWorker_ModeId;
-    this.neuralWorkerProxies = undefined;
   }
 
   /** @override */
   disposeResources() {
     this.preparePromise = undefined;
-
-    this.neuralWorkerProxies?.disposeResources_and_recycleToPool();
-    this.neuralWorkerProxies = null;
 
     this.neuralNetParamsBase?.disposeResources_and_recycleToPool();
     this.neuralNetParamsBase = null;
@@ -109,18 +105,14 @@ class PerformanceTestCase extends Recyclable.Root {
 
   /**
    * Create .neuralWorkerProxies
+   *
+   * @param {NeuralWorker.Proxies} neuralWorkerProxies
+   *   The shared neural worker proxies.
    */
-  async prepare_async() {
+  async prepare_async( neuralWorkerProxies ) {
     try {
       await tf.ready(); // Ensure tf.getBackend() workable.
       let backendName = tf.getBackend();
-
-//!!! ...unfinished... (2022/09/26)
-// should re-use web worker when re-init.
-// so that WebGL shaders needs not be re-compiled again.
-
-      let neuralWorkerProxies = this.neuralWorkerProxies
-        = NeuralWorker.Proxies.Pool.get_or_create_by();
 
       let bInitOkPromise = neuralWorkerProxies.init_async(
         backendName, this.nNeuralWorker_ModeId );
@@ -315,6 +307,8 @@ class HeightWidthDepth {
 
     this.disposeResources();
 
+    this.neuralWorkerProxies = NeuralWorker.Proxies.Pool.get_or_create_by();
+
     // Larger input image for performance testing.
     this.testPerformance_imageSourceBag
       = ImageSourceBag.Base.Pool.get_or_create_by( "int32" );
@@ -403,16 +397,19 @@ class HeightWidthDepth {
 
   }
 
-  /** Release testCase.neuralWorkerProxies, but keep testCase. */
-  neuralWorker_PerformanceTest_release_neuralWorkerProxies() {
+  /** Release testCase.preparePromise, but keep testCase. */
+  neuralWorker_PerformanceTest_release_preparePromise() {
     if ( this.testCaseMap ) {
       for ( let testCase of this.testCaseMap.values() ) {
-        if ( testCase.neuralWorkerProxies ) {
-          testCase.neuralWorkerProxies.disposeResources_and_recycleToPool();
-          testCase.neuralWorkerProxies = null;
 
-          testCase.preparePromise = null;
-        }
+//!!! (2022/09/26 Remarked) neuralWorkerProxies become shared.
+//         if ( testCase.neuralWorkerProxies ) {
+//           testCase.neuralWorkerProxies.disposeResources_and_recycleToPool();
+//           testCase.neuralWorkerProxies = null;
+//           testCase.preparePromise = null;
+//         }
+
+        testCase.preparePromise = null;
       }
     }
   }
@@ -429,6 +426,9 @@ class HeightWidthDepth {
       this.testPerformance_imageSourceBag.disposeResources_and_recycleToPool();
       this.testPerformance_imageSourceBag = null;
     }
+
+    this.neuralWorkerProxies?.disposeResources_and_recycleToPool();
+    this.neuralWorkerProxies = null;
   }
 
   /** Test .ImageData_process_async by Xxx */
@@ -438,8 +438,8 @@ class HeightWidthDepth {
     // First time test this case. Release all other test cases' neural networks
     // (so that there will be enough memory). Create the specified neural network.
     if ( !testCase.preparePromise ) {
-      this.neuralWorker_PerformanceTest_release_neuralWorkerProxies();
-      testCase.preparePromise = testCase.prepare_async();
+      this.neuralWorker_PerformanceTest_release_preparePromise();
+      testCase.preparePromise = testCase.prepare_async( this.neuralWorkerProxies );
     }
 
     // Note: Even if non-first time test this case, it is still necessary to wait for
@@ -549,8 +549,8 @@ class HeightWidthDepth {
             // First time test the case. Release all other test cases' neural networks
             // (so that there will be enough memory). Create the specified neural network.
             if ( !testCase.preparePromise ) {
-              this.neuralWorker_PerformanceTest_release_neuralWorkerProxies();
-              testCase.preparePromise = testCase.prepare_async();
+              this.neuralWorker_PerformanceTest_release_preparePromise();
+              testCase.preparePromise = testCase.prepare_async( this.neuralWorkerProxies );
               await testCase.preparePromise;
             }
 
