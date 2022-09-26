@@ -184,7 +184,7 @@ class AsyncWorker_processingId_Resulter_Map {
    *   The information of the rejecting.
    */
   reject_all_pending_by_errorReason( errorReason ) {
-    for ( let resulter of this.getResulter_by_processingId.values() ) {
+    for ( let resulter of this.map.values() ) {
       if ( resulter.PromiseResolveRejectArray.length <= 0 )
         continue; // No promised could be rejected. (should not happen)
 
