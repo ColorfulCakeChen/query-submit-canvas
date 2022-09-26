@@ -108,8 +108,14 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     );
  
     let initOk = await initOkPromise;
-    if ( initOk )
+    if ( initOk ) {
+
+//!!! ...unfinished... (2022/09/26)
+// should create dummy neural networks in all web worker.
+// So that WebGL shaders could be compiled in advance.
+
       return true;
+    }
 
     // 2. If "webgl" failed, try backend "cpu".
     //
