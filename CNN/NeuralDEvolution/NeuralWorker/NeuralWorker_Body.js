@@ -39,8 +39,14 @@ class NeuralWorker_Body extends AsyncWorker.Body {
    */
   async* initWorker( workerId, backendName ) {
 
-    if ( this.neuralNetArray )
-      this.neuralNetArray.clear(); // Release old neural networks.
+    // Clear resources.
+    {
+      if ( this.alignmentMarkArray )
+        this.alignmentMarkArray.length = 0;
+
+      if ( this.neuralNetArray )
+        this.neuralNetArray.clear(); // Release old neural networks.
+    }
 
     this.workerId = workerId;
 
