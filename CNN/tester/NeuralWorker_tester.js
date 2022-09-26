@@ -119,7 +119,7 @@ class PerformanceTestCase extends Recyclable.Root {
         = NeuralWorker.Proxies.Pool.get_or_create_by();
 
       let bInitOkPromise = neuralWorkerProxies.init_async(
-        this.nNeuralWorker_ModeId, backendName );
+        backendName, this.nNeuralWorker_ModeId );
 
       PerformanceTestCase.randomTestWeightArray_create();
 
