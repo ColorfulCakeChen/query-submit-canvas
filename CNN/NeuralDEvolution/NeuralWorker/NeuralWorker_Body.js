@@ -226,10 +226,18 @@ class NeuralWorker_Body extends AsyncWorker.Body {
    *       - Note2: The same one NeuralWorker.Proxies and NeuralWorker.Proxy and
    *           NeuralWorker.Body should be used. If the NeuralWorker.Body are
    *           created every time, the shaders will be re-compiled again and again.)
-   * 
+   *
+   *
+   * @param {boolean} bLogTime
+   *   If true, this method will measure the execution time and log to console. This
+   * is mainly for perfoamnce testing.
+   *
+   * @param {boolean} bTwiceRun
+   *   If true, this method will run the neural network twice. Thid is mainly for
+   * perfoamnce testing.
    *
    */
-  static NeuralNetArray_compileShaders_uploadTensor???dryRun_ifWebGL() {
+  static NeuralNetArray_compileShaders_uploadTensor_ifWebGL( bLogTime, bTwiceRun ) {
     let backendName = tf.getBackend();
     if ( backendName != "webgl" )
       return; // Only WebGL needs compile shaders.
