@@ -203,15 +203,15 @@ class NeuralWorker_Body extends AsyncWorker.Body {
    *       networks (with the same NeuralNet.Params which will be use later in the
    *       real run).
    *
-   *   - This will compile shaders. It will also block the UI but has lesser hurt
-   *       because the UI now is displaying a splash screen (i.e. users has already
-   *       expected the UI will be blocked).
+   *   - This will compile shaders (in every web workers). This will also block the
+   *       UI but has lesser hurt because the UI now is displaying a splash screen
+   *       (i.e. users has already expected the UI will be blocked).
    *
-   *   - At real run, there will be no UI blocking encountered because we always
-   *       create neural network with same input/output tenser shape. (Note: The
-   *       same NeuralWorker.Proxies and NeuralWorker.Proxy and NeuralWorker.Body
-   *       should be used. If a NeuralWorker.Body are created every time, the cache
-   *       will be empty.)
+   *   - Later (when real run), there will be no UI blocking encountered (suppose
+   *       we always create neural network with same input/output tenser shape.
+   *       (Note: The same one NeuralWorker.Proxies and NeuralWorker.Proxy and
+   *       NeuralWorker.Body should be used. If the NeuralWorker.Body are created
+   *       every time, the shaders will be re-compiled again and again.)
    *
    */
   static NeuralNetArray_dryRun_ifWebGL() {
