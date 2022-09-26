@@ -184,14 +184,9 @@ class AsyncWorker_processingId_Resulter_Map {
    *   The information of the rejecting.
    */
   reject_all_pending_by_errorReason( errorReason ) {
-
     for ( let resulter of this.getResulter_by_processingId.values() ) {
-
-//!!! ...unfinished... (2022/09/26)
-//should reject all pending Resulter.
-
       if ( resulter.PromiseResolveRejectArray.length <= 0 )
-        continue;
+        continue; // No promised could be rejected. (should not happen)
 
       // Always reject the last promise, because it is the only one promise which
       // is possible still pending.
@@ -200,16 +195,14 @@ class AsyncWorker_processingId_Resulter_Map {
         = resulter.PromiseResolveRejectArray[ lastArrayIndex ];
 
       if ( !currentPromiseResolveReject.pending )
-          continue;
+        continue; // A fulfilled promised can not be rejected.
 
       // Reject the current pending promise to the errorReason.
       currentPromiseResolveReject.errorReason_reject( errorReason );
 
-//!!! ??? remove during visiting?
-      // 3. Handle final promise.
+      // Handle final promise.
       this.removeResulter_by_PromiseResolveReject_final( currentPromiseResolveReject );
     }
-
   }
 
 }
