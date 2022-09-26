@@ -157,10 +157,15 @@ class NeuralOrchestra_Base extends Recyclable.Root {
    */
   static workerProxies_compileShaders_async() {
 
-    // Neural network configuration will be copied (not transferred) to workers.
-    // So, it is not necessary to clone them. Just pass them directly.
-    let neuralNetParamsBaseArray
-      = [ this.neuralNetParamsBase, this.neuralNetParamsBase ];
+    // Although neural network configuration will be copied (not transferred)
+    // to workers, they still be cloned because NeuralWorker.Proxy will keep
+    // (i.e. owned and destroyed) them.
+    let neuralNetParamsBaseArray;
+    {
+      let neuralNetParams0 = this.neuralNetParamsBase.clone();
+      let neuralNetParams1 = this.neuralNetParamsBase.clone();
+      neuralNetParamsBaseArray = [ neuralNetParams0, neuralNetParams1 ];
+    }
 
     // Dummy neural network's weights.
     //      
