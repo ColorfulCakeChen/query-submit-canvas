@@ -160,7 +160,8 @@ class NeuralWorker_Body extends AsyncWorker.Body {
       }
 
       // Compile shaders and upload tensor to GPU if backend is webgl.
-      NeuralNetArray_compileShaders_uploadTensors_ifWebGL.call( this, bLogDryRunTime );
+      NeuralWorker_Body.NeuralNetArray_compileShaders_uploadTensors_ifWebGL.call( this,
+        bLogDryRunTime );
 
       if ( bAllOk )
         return { value: true };
