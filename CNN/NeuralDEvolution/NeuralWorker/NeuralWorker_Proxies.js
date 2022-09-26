@@ -229,20 +229,12 @@ class NeuralWorker_Proxies extends Recyclable.Root {
     // 1. Web workers.
     let initOkArray;
     {
-      // 1.0 Prepare container of all worker proxy.
-      {
-        if ( this.workerProxyArray )
-          this.workerProxyArray.clear(); // Release old worker proxies.
-        else
-          this.workerProxyArray = Recyclable.OwnerArray.Pool.get_or_create_by();
+      // 1.0 Create workers.
+      this.workerProxyArray_length_ensure( totalWorkerCount );
 
-        this.workerProxyArray.length = totalWorkerCount;
-      }
-
-      // 1.1 Create workers.
+      // 1.1 Initialize workers.
       let initPromiseArray = new Array( totalWorkerCount );
       for ( let i = 0; i < totalWorkerCount; ++i ) {
-        this.workerProxyArray[ i ] = NeuralWorker_Proxy.Pool.get_or_create_by();
         initPromiseArray[ i ] = this.workerProxyArray[ i ].initWorker_async(
           i, backendName );
       }
@@ -303,9 +295,6 @@ class NeuralWorker_Proxies extends Recyclable.Root {
 
       this.workerProxyArray.length = newLength; // Shrink array.
     }
-
-
-//!!! ...unfinished... (2022/09/26)
   }
 
   /**
