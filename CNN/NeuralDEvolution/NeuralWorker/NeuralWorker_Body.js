@@ -81,11 +81,20 @@ class NeuralWorker_Body extends AsyncWorker.Body {
    *   An array of every neural network's weights. Every element  will be interpreted
    * as Float32Array.
    *
+   * @param {boolean} bLogDryRunTime
+   *   If true, the neural network dry-run time will be measured and logged to console.
+   *
+   * @param {boolean} bDryRunTwice
+   *   If true, the neural network will dry run twice.
+   *
    * @yield {boolean}
    *   - Yield { done: true, value: { value: true } }, if success.
    *   - Yield { done: true, value: { value: false } }, if failed.
    */
-  async* NeuralNetArray_create( neuralNetParamsBaseArray, weightArrayBufferArray ) {
+  async* NeuralNetArray_create(
+    neuralNetParamsBaseArray, weightArrayBufferArray,
+    bLogDryRunTime, bDryRunTwice
+  ) {
 
     // 0. Prepare container for all neural networks.
     {
@@ -155,7 +164,8 @@ class NeuralWorker_Body extends AsyncWorker.Body {
       }
 
       // compiling shaders if backend is webgl.
-      NeuralWorker_Body.NeuralNetArray_dryRun_ifWebGL.call( this );
+      NeuralNetArray_compileShaders_uploadTensor_ifWebGL.call( this,
+        bLogDryRunTime, bDryRunTwice );
 
       if ( bAllOk )
         return { value: true };
@@ -228,16 +238,16 @@ class NeuralWorker_Body extends AsyncWorker.Body {
    *           created every time, the shaders will be re-compiled again and again.)
    *
    *
-   * @param {boolean} bLogTime
-   *   If true, this method will measure the execution time and log to console. This
-   * is mainly for perfoamnce testing.
+   * @param {boolean} bLogDryRunTime
+   *   If true, the neural network dry-run time will be measured and logged to console.
    *
-   * @param {boolean} bTwiceRun
-   *   If true, this method will run the neural network twice. Thid is mainly for
-   * perfoamnce testing.
+   * @param {boolean} bDryRunTwice
+   *   If true, the neural network will dry run twice.
    *
    */
-  static NeuralNetArray_compileShaders_uploadTensor_ifWebGL( bLogTime, bTwiceRun ) {
+  static NeuralNetArray_compileShaders_uploadTensor_ifWebGL(
+    bLogDryRunTime, bDryRunTwice ) {
+
     let backendName = tf.getBackend();
     if ( backendName != "webgl" )
       return; // Only WebGL needs compile shaders.

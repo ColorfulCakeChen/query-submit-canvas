@@ -307,12 +307,21 @@ class NeuralWorker_Proxies extends Recyclable.Root {
    *   An array of every neural network's weights. Every element  will be interpreted
    * as Float32Array.
    *
+   * @param {boolean} bLogDryRunTime
+   *   If true, the neural network dry-run time will be measured and logged to console.
+   *
+   * @param {boolean} bDryRunTwice
+   *   If true, the neural network will dry run twice.
+   *
    * @return {Promise}
    *   Return a promise:
    *   - Resolved to true, if success.
    *   - Resolved to false, if failed.
    */
-  async NeuralNetArray_create_async( neuralNetParamsBaseArray, weightArrayBufferArray ) {
+  async NeuralNetArray_create_async(
+    neuralNetParamsBaseArray, weightArrayBufferArray,
+    bLogDryRunTime, bDryRunTwice
+  ) {
 
     if ( neuralNetParamsBaseArray.length != this.neuralNetCount )
       throw Error( `NeuralWorker.Proxies.NeuralNetArray_create_async(): `
@@ -334,7 +343,9 @@ class NeuralWorker_Proxies extends Recyclable.Root {
       let createPromiseArray = new Array( this.workerProxyArray.length );
       for ( let i = 0; i < this.workerProxyArray.length; ++i ) {
         createPromiseArray[ i ] = this.workerProxyArray[ i ].NeuralNetArray_create_async(
-          [ neuralNetParamsBaseArray[ i ] ], [ weightArrayBufferArray[ i ] ] );
+          [ neuralNetParamsBaseArray[ i ] ], [ weightArrayBufferArray[ i ] ],
+          bLogDryRunTime, bDryRunTwice
+        );
       }
 
       let createOkArray = await Promise.all( createPromiseArray );
@@ -347,7 +358,9 @@ class NeuralWorker_Proxies extends Recyclable.Root {
     // 2. The only worker creates all neural networks.
     } else {
       createOk = await this.workerProxyArray[ 0 ].NeuralNetArray_create_async(
-        neuralNetParamsBaseArray, weightArrayBufferArray );
+        neuralNetParamsBaseArray, weightArrayBufferArray,
+        bLogDryRunTime, bDryRunTwice
+      );
     }
 
     return createOk;
