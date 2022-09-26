@@ -119,12 +119,19 @@ class PerformanceTestCase extends Recyclable.Root {
 
       PerformanceTestCase.randomTestWeightArray_create();
 
-      let neuralNetParamsBaseArray;
-      {
-        let neuralNetParams0 = this.neuralNetParamsBase.clone();
-        let neuralNetParams1 = this.neuralNetParamsBase.clone();
-        neuralNetParamsBaseArray = [ neuralNetParams0, neuralNetParams1 ];
-      }
+//!!! (2022/09/26 Remarked)
+// Neural network configuration will be copied (not transferred) to workers.
+//       let neuralNetParamsBaseArray;
+//       {
+//         let neuralNetParams0 = this.neuralNetParamsBase.clone();
+//         let neuralNetParams1 = this.neuralNetParamsBase.clone();
+//         neuralNetParamsBaseArray = [ neuralNetParams0, neuralNetParams1 ];
+//       }
+
+      // Neural network configuration will be copied (not transferred) to workers.
+      // So, it is not necessary to clone them. Just pass them directly.
+      let neuralNetParamsBaseArray
+        = [ this.neuralNetParamsBase, this.neuralNetParamsBase ];
 
       let weightArrayBufferArray;
       {
