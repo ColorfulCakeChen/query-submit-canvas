@@ -207,6 +207,8 @@ class NeuralWorker_Body extends AsyncWorker.Body {
    *       because the UI now is displaying a splash screen (i.e. users has already
    *       expected the UI will be blocked).
    *
+   *   - At real run, there will be no UI blocking encountered because we always
+   *       create neural network with same input/output tenser shape.
    *
    */
   static NeuralNetArray_dryRun_ifWebGL() {
