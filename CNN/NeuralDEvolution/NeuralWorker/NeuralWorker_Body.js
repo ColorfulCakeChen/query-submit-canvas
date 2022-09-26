@@ -183,9 +183,31 @@ class NeuralWorker_Body extends AsyncWorker.Body {
     }
   }
 
+//!!! ...unfinished... (2022/09/26)
+
   /**
    * If backend is webgl, run the nueral network once for compiling shaders. This could
    * improve performance for the real run.
+   *
+   *   - The compilation will happend in main thread (i.e. UI worker) even if the
+   *       neural network runs at non-main web worker (i.e. here). That is, the
+   *       compiling always blocks the UI worker.
+   *
+   *   - The tensorflow.js will cache the compilied shaders for the same operations
+   *       with the same input/output tensor shape.
+   *
+   *
+   * So, it might be suggested that:
+   *
+   *   - At UI worker (i.e. not here, e.g. during the game splash screen), create
+   *       NeuralWorker.Proxies and inform it create a dummy neural network (with
+   *       the same NeuralNet.Params which will be use later in the real run).
+   *
+   *   - This will compile shaders. It will also block the UI but has lesser hurt
+   *       because the UI now is displaying a splash screen (i.e. users has already
+   *       expected the UI will be blocked).
+   *
+   *
    */
   static NeuralNetArray_dryRun_ifWebGL() {
     let backendName = tf.getBackend();
