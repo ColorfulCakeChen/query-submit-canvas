@@ -117,38 +117,20 @@ class PerformanceTestCase extends Recyclable.Root {
       let bInitOkPromise = neuralWorkerProxies.init_async(
         backendName, this.nNeuralWorker_ModeId );
 
-      let totalWorkerCount = neuralWorkerProxies.totalWorkerCount;
-
       PerformanceTestCase.randomTestWeightArray_create();
 
       let neuralNetParamsBaseArray;
       {
         let neuralNetParams0 = this.neuralNetParamsBase.clone();
-        neuralNetParamsBaseArray = [ neuralNetParams0 ];
-
-        if ( totalWorkerCount >= 2 ) {
-          let neuralNetParams1 = this.neuralNetParamsBase.clone();
-          neuralNetParamsBaseArray.push( neuralNetParams1 );
-        }
+        let neuralNetParams1 = this.neuralNetParamsBase.clone();
+        neuralNetParamsBaseArray = [ neuralNetParams0, neuralNetParams1 ];
       }
 
       let weightArrayBufferArray;
       {
         let weightArray0 = new Float32Array( PerformanceTestCase.randomTestWeightArray );
-        weightArrayBufferArray = [ weightArray0.buffer ];
-
-        if ( totalWorkerCount >= 2 ) {
-          let weightArray1 = new Float32Array( PerformanceTestCase.randomTestWeightArray );
-          weightArrayBufferArray.push( weightArray1.buffer );
-        }
-      }
-
-      let markValueArray;
-      {
-        markValueArray = [ 0 ]
-
-        if ( totalWorkerCount >= 2 )
-        markValueArray.push( 255 );
+        let weightArray1 = new Float32Array( PerformanceTestCase.randomTestWeightArray );
+        weightArrayBufferArray = [ weightArray0.buffer, weightArray1.buffer ];
       }
 
       let bInitOk = await bInitOkPromise;
@@ -166,6 +148,8 @@ class PerformanceTestCase extends Recyclable.Root {
 
       let bFill = this.NeuralWorker_Mode_bFill;
       if ( bFill ) {
+        let markValueArray = [ 0, 255 ];
+
         let bSetOkPromise
           = neuralWorkerProxies.alignmentMarkArray_setValue_async( markValueArray );
 
