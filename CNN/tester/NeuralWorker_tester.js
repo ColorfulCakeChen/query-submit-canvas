@@ -466,8 +466,6 @@ class HeightWidthDepth {
     return resultFloat32ArrayArray;
   }
 
-//!!! ...unfinished... (2022/09/26)
-
   /**
    * (Called by util_tester.js)
    *
