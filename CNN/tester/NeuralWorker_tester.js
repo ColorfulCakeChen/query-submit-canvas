@@ -120,8 +120,8 @@ class PerformanceTestCase extends Recyclable.Root {
       PerformanceTestCase.randomTestWeightArray_create();
 
       // Although neural network configuration will be copied (not transferred)
-      // to workers, they still be cloned because NeuralWorker.Proxy will keep
-      // (i.e. owned and destroyed) them.
+      // to workers, they still need be cloned because NeuralWorker.Proxy will
+      // keep (i.e. owned and destroyed) them.
       let neuralNetParamsBaseArray;
       {
         let neuralNetParams0 = this.neuralNetParamsBase.clone();
