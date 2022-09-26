@@ -178,34 +178,47 @@ class NeuralWorker_Body extends AsyncWorker.Body {
   }
 
   /**
-   * If backend is webgl, run the nueral network once for compiling shaders. This could
-   * improve performance for the real run.
+   * If backend is webgl, run the nueral network once for compiling shaders and
+   * uploading tensors to GPU. This could improve performance for the real run.
    *
-   *   - The compilation will happend in main thread (i.e. UI worker) even if the
-   *       neural network runs at non-main web worker (i.e. here). That is, the
-   *       compiling always blocks the UI worker.
+   * Note:
+   *
+   *   - The shader compilation will happend in main thread (i.e. UI worker) even
+   *       if the neural network runs at non-main web worker (i.e. here). That is,
+   *       the compiling always blocks the UI worker.
    *
    *   - The tensorflow.js library will cache the compilied shaders for the same
    *       operations with the same input/output tensor shape. (Note: They should
    *       be in the same web worker. Different web worker uses itself cache.)
    *
+   *   - Even the sharder has been compiled (i.e. operations with same input/output
+   *       tensor shape have been used before), this dry-run will still improve
+   *       performance for later real run because the neural network's filter
+   *       tensors will be uploaded to GPU.
    *
    * So, it might be suggested that:
    *
-   *   - At UI worker (i.e. not here, e.g. during the game splash screen), create
-   *       NeuralWorker.Proxies and inform all web workers create all dummy neural
-   *       networks (with the same NeuralNet.Params which will be use later in the
-   *       real run).
+   *   - At UI worker (i.e. not here) during the game splash screen:
+   * 
+   *     - Create NeuralWorker.Proxies and inform all web workers create all dummy
+   *         neural networks (with the same NeuralNet.Params which will be use
+   *         later in the real run).
    *
-   *   - This will compile shaders (in every web workers). This will also block the
-   *       UI but has lesser hurt because the UI now is displaying a splash screen
-   *       (i.e. users has already expected the UI will be blocked).
+   *     - This method will be called and it will compile shaders (in every web
+   *         workers). Although, the UI worker will always be blocked but it has
+   *         lesser hurt because the UI now is displaying a splash screen (i.e.
+   *         users has already expected the UI will be blocked).
    *
-   *   - Later (when real run), there will be no UI blocking encountered (suppose
-   *       we always create neural network with same input/output tenser shape.
-   *       (Note: The same one NeuralWorker.Proxies and NeuralWorker.Proxy and
-   *       NeuralWorker.Body should be used. If the NeuralWorker.Body are created
-   *       every time, the shaders will be re-compiled again and again.)
+   *   - Later when real run:
+   * 
+   *     - Inform all web workers create all real neural networks.
+   * , there will be no UI blocking encountered (suppose
+   *       we always create neural network with same input/output tenser shape).
+   * 
+   *       - The same one NeuralWorker.Proxies and NeuralWorker.Proxy and
+   *           NeuralWorker.Body should be used. If the NeuralWorker.Body are
+   *           created every time, the shaders will be re-compiled again and again.)
+   * 
    *
    */
   static NeuralNetArray_compileShaders_uploadTensor???dryRun_ifWebGL() {
