@@ -42,9 +42,9 @@ function test() {
     = new ValueMax.Receiver.HTMLProgress.createByTitle_or_getDummy( "TestProgressBar" );
 
   async function* testerAll() {
+    yield* AsyncWorker_tester.tester( progress_AsyncWorker_tester );
     yield* NeuralWorker_tester.tester( progress_NeuralWorker_tester_cpu, "cpu" );
     yield* NeuralWorker_tester.tester( progress_NeuralWorker_tester_webgl, "webgl" );
-    yield* AsyncWorker_tester.tester( progress_AsyncWorker_tester );
     yield* Base64ToUint8Array_tester.tester( progress_Base64ToUint8Array_tester );
     yield* GSheets_tester.tester( progress_GSheets_tester );
   }
