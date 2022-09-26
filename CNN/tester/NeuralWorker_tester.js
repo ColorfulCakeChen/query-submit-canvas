@@ -385,14 +385,6 @@ class HeightWidthDepth {
   neuralWorker_PerformanceTest_release_preparePromise() {
     if ( this.testCaseMap ) {
       for ( let testCase of this.testCaseMap.values() ) {
-
-//!!! (2022/09/26 Remarked) neuralWorkerProxies become shared.
-//         if ( testCase.neuralWorkerProxies ) {
-//           testCase.neuralWorkerProxies.disposeResources_and_recycleToPool();
-//           testCase.neuralWorkerProxies = null;
-//           testCase.preparePromise = null;
-//         }
-
         testCase.preparePromise = null;
       }
     }
@@ -438,7 +430,7 @@ class HeightWidthDepth {
     }
 
     let resultFloat32ArrayArrayPromise
-      = testCase.neuralWorkerProxies.ImageData_process_async( imageData );
+      = this.neuralWorkerProxies.ImageData_process_async( imageData );
 
     if ( imageData.data.length != 0 )
       throw Error( `jsPerf_NeuralWorker.testNeuralWorker_ByName(): `
