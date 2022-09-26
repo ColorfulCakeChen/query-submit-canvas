@@ -227,16 +227,17 @@ class NeuralWorker_Body extends AsyncWorker.Body {
         neuralNet = this.neuralNetArray[ i ];
         sourceTensor = tf.zeros( neuralNet.input_shape, "int32" );
 
-//!!! ...unfinished... (2022/09/26) Test compilation time.
-        let timeBegin = Date.now();
+        // (2022/09/26 Remarked) For test compilation time.
+        // let timeBegin = Date.now();
 
         outputTensor = neuralNet.apply( sourceTensor );
 
-        let timeEnd = Date.now();
-        let timeElapsed = timeEnd - timeBegin;
-        console.log( `NeuralWorker_Body.NeuralNetArray_dryRun_ifWebGL(): `
-          + `workerId=${this.workerId}, timeElapsed=${timeElapsed}`
-        );
+        // (2022/09/26 Remarked) For test compilation time.
+        // let timeEnd = Date.now();
+        // let timeElapsed = timeEnd - timeBegin;
+        // console.log( `NeuralWorker_Body.NeuralNetArray_dryRun_ifWebGL(): `
+        //   + `workerId=${this.workerId}, timeElapsed=${timeElapsed}`
+        // );
 
       } catch ( e ) {
         let errorMsg = `NeuralWorker_Body.NeuralNetArray_dryRun_ifWebGL(): `
