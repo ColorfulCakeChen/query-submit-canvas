@@ -271,6 +271,34 @@ class NeuralWorker_Proxies extends Recyclable.Root {
   }
 
   /**
+   * 
+   * @param {integer} newLength
+   *   The .workerProxyArray will become the speccified length (and have so many
+   * NeuralWorker.Proxy).
+   */
+  workerProxyArray_length_ensure( newLength ) {
+    // 1.
+    if ( !this.workerProxyArray )
+      this.workerProxyArray = Recyclable.OwnerArray.Pool.get_or_create_by();
+
+    // 2. Create more worker proxy.
+    if ( this.workerProxyArray.length < newLength ) {
+
+    // 3. Reduce worker proxy.
+    } else {
+
+    }
+
+//!!! ...unfinished... (2022/09/26)
+    if ( this.workerProxyArray )
+      this.workerProxyArray.clear(); // Release old worker proxies.
+
+    this.workerProxyArray.length = totalWorkerCount;
+
+//!!! ...unfinished... (2022/09/26)
+  }
+
+  /**
    * Create neural networks in the web worker body.
    *
    * @param {NeuralNet.ParamsBase[]} neuralNetParamsBaseArray
