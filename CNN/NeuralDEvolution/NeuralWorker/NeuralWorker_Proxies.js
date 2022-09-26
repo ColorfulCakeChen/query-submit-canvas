@@ -102,7 +102,7 @@ import { Mode as NeuralWorker_Mode } from "./NeuralWorker_Mode.js";
  *
  * 2.2 Backend "webgl"
  *
- *   - ONE_WORKER_Xxx is better than TWO_WORKER_Xxx.
+ *   - ONE_WORKER_Xxx is better than (at least, comparable to) TWO_WORKER_Xxx.
  *
  *     - The possible reason is that the GPU is a shared resource among all web
  *         workers. Using more web workers just wastes more time transferring
