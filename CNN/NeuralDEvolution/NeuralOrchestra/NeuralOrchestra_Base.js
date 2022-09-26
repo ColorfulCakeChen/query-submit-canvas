@@ -164,15 +164,15 @@ class NeuralOrchestra_Base extends Recyclable.Root {
 
     // Dummy neural network's weights.
     //      
-    // Neural network weights will be transferred (not copied) to workers.
-    // So, new typed array should be created but they could use a shared
-    // ArrayBuffer to reduce memory since this is just a dummy weights
-    // array.
+    // Neural network weights will be transferred (not copied) to workers. So,
+    // all new dummy array buffer should be created.
     //
     const weightArrayLength = ( 5 * 1024 * 1024 );
     const weightArrayByteLength = weightArrayLength * Float32Array.BYTES_PER_ELEMENT;
-    let weightArrayBuffer = new ArrayBuffer( weightArrayByteLength );
-    let weightArrayBufferArray = [ weightArrayBuffer, weightArrayBuffer ];
+    let weightArrayBufferArray = [
+      new ArrayBuffer( weightArrayByteLength ),
+      new ArrayBuffer( weightArrayByteLength )
+    ];
 
     // (2022//09/26 Remarked)
     //const bLogDryRunTime = true; // For observing dry-run performance.

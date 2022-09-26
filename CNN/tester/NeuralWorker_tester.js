@@ -135,16 +135,9 @@ class PerformanceTestCase extends Recyclable.Root {
 
       let weightArrayBufferArray;
       {
-//!!! (2022/09/26 Remarked) Using shared ArrayBuffer should be enough.
-//        let weightArray0 = new Float32Array( PerformanceTestCase.randomTestWeightArray );
-//        let weightArray1 = new Float32Array( PerformanceTestCase.randomTestWeightArray );
-//        weightArrayBufferArray = [ weightArray0.buffer, weightArray1.buffer ];
-
-        // Note: Using shared ArrayBuffer should be enough.
-        weightArrayBufferArray = [
-          PerformanceTestCase.randomTestWeightArray.buffer,
-          PerformanceTestCase.randomTestWeightArray.buffer
-        ];
+        let weightArray0 = new Float32Array( PerformanceTestCase.randomTestWeightArray );
+        let weightArray1 = new Float32Array( PerformanceTestCase.randomTestWeightArray );
+        weightArrayBufferArray = [ weightArray0.buffer, weightArray1.buffer ];
       }
 
       let bInitOk = await bInitOkPromise;
