@@ -29,10 +29,11 @@ class NumberSequenceInfo {
 async function test_WorkerProxy_init( { workerProxy }, workerId ) {
   let initWorkerPromise = workerProxy.initWorker_async( workerId );
 
-//!!! (2022/09/26) Test terminating worker when some resulter still has pending promises.
-  {
-    workerProxy.disposeResources_and_recycleToPool();
-  }
+  //!!! (2022/09/26 Remarked)
+  // Test terminating worker when some resulter still has pending promises.
+  // {
+  //   workerProxy.disposeResources_and_recycleToPool();
+  // }
 
   let initWorkerOk;
   try {
