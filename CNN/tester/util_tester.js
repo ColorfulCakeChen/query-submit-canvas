@@ -43,14 +43,16 @@ function test() {
 
   async function* testerAll() {
 
-    let bAscent_or_Descent;
-    bAscent_or_Descent = true; // Ascent
-    yield* NeuralWorker_tester.tester( progress_NeuralWorker_tester_webgl,
-      "webgl", bAscent_or_Descent );
+    {
+      let bAscent_or_Descent;
+      bAscent_or_Descent = false; // Descent
+      yield* NeuralWorker_tester.tester( progress_NeuralWorker_tester_webgl,
+        "webgl", bAscent_or_Descent );
 
-    bAscent_or_Descent = false; // Descent
-    yield* NeuralWorker_tester.tester( progress_NeuralWorker_tester_cpu,
-      "cpu", bAscent_or_Descent );
+      bAscent_or_Descent = true; // Ascent
+      yield* NeuralWorker_tester.tester( progress_NeuralWorker_tester_cpu,
+        "cpu", bAscent_or_Descent );
+     }
 
     yield* AsyncWorker_tester.tester( progress_AsyncWorker_tester );
     yield* Base64ToUint8Array_tester.tester( progress_Base64ToUint8Array_tester );
