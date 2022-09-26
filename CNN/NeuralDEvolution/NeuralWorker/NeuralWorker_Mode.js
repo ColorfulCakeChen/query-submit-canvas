@@ -21,34 +21,34 @@ class NeuralWorker_Mode extends Int {
   constructor() {
     super( 0, 6,
       {
-        ONE_WORKER__ONE_SCALE__FILL:     new NeuralWorker_Mode.Info(
+        ONE_WORKER__ONE_SCALE__FILL:             new NeuralWorker_Mode.Info(
           0, "ONE_WORKER__ONE_SCALE__FILL",           1,
           true, undefined ),
 
-        ONE_WORKER__ONE_SCALE__NO_FILL:  new NeuralWorker_Mode.Info(
+        ONE_WORKER__ONE_SCALE__NO_FILL:          new NeuralWorker_Mode.Info(
           1, "ONE_WORKER__ONE_SCALE__NO_FILL",          1,
           false, undefined ),
 
 
-        TWO_WORKER__ONE_SCALE__FILL__APPLY:     new NeuralWorker_Mode.Info(
+        TWO_WORKER__ONE_SCALE__FILL__APPLY:      new NeuralWorker_Mode.Info(
           2, "TWO_WORKER__ONE_SCALE__FILL__APPLY",      2,
           true,  true ),
 
-        TWO_WORKER__ONE_SCALE__FILL__APPLIER:     new NeuralWorker_Mode.Info(
+        TWO_WORKER__ONE_SCALE__FILL__APPLIER:    new NeuralWorker_Mode.Info(
           3, "TWO_WORKER__ONE_SCALE__FILL__APPLIER",    2,
           true, false ),
 
 
-        TWO_WORKER__ONE_SCALE__NO_FILL__APPLY:  new NeuralWorker_Mode.Info(
+        TWO_WORKER__ONE_SCALE__NO_FILL__APPLY:   new NeuralWorker_Mode.Info(
           4, "TWO_WORKER__ONE_SCALE__NO_FILL__APPLY",   2,
           false,  true ),
 
-        TWO_WORKER__ONE_SCALE__NO_FILL__APPLIER:  new NeuralWorker_Mode.Info(
+        TWO_WORKER__ONE_SCALE__NO_FILL__APPLIER: new NeuralWorker_Mode.Info(
           5, "TWO_WORKER__ONE_SCALE__NO_FILL__APPLIER", 2,
           false, false ),
 
 
-        TWO_WORKER__TWO_SCALE__NO_FILL:  new NeuralWorker_Mode.Info(
+        TWO_WORKER__TWO_SCALE__NO_FILL:          new NeuralWorker_Mode.Info(
           6, "TWO_WORKER__TWO_SCALE__NO_FILL",          2,
           false, undefined ),
       }

@@ -462,6 +462,8 @@ class HeightWidthDepth {
     return resultFloat32ArrayArray;
   }
 
+//!!! ...unfinished... (2022/09/26)
+
   /**
    * (Called by util_tester.js)
    *
@@ -469,8 +471,12 @@ class HeightWidthDepth {
    *   Some new progressToAdvance will be created and added to progressParent. The
    * created progressToAdvance will be increased when every time advanced. The
    * progressParent.root_get() will be returned when every time yield.
+   *
+   * @param {boolean} bAscent_or_Descent
+   *   - If true, test from largest NeuralWorker.Mode.Singleton.Ids.
+   *   - If false, test from smallest NeuralWorker.Mode.Singleton.Ids.
    */
-  async* tester( progressParent ) {
+  async* tester( progressParent, bAscent_or_Descent ) {
     let backendName = tf.getBackend();
     console.log( `NeuralWorker ( ${backendName} ) testing...` );
 
@@ -498,6 +504,18 @@ class HeightWidthDepth {
     let progressToAdvance = progressParent.child_add(
       ValueMax.Percentage.Concrete.Pool.get_or_create_by( progressMax ) );
 
+    let testCaseArray = [ ...this.testCaseMap.values() ];
+    let testCaseIndexBegin, testCaseIndexEnd, testCaseIndexStep;
+    if ( bAscent_or_Descent ) {
+      testCaseIndexBegin = 0;
+      testCaseIndexEnd = testCaseArray.length - 1;
+      testCaseIndexStep = +1;
+    } else {
+      testCaseIndexBegin = testCaseArray.length - 1;
+      testCaseIndexEnd = 0;
+      testCaseIndexStep = -1;
+    }
+
     let testCase;
     try {
       let pool_all_issuedCount_before = Pool.All.issuedCount;
@@ -519,7 +537,10 @@ class HeightWidthDepth {
           progressToAdvance.value_max_set( progressMax );
 
           const timeInfo = new ExecutionTimeInfo( ExecutionTimeInfoTimes );
-          for ( testCase of this.testCaseMap.values() ) {
+          for ( let i = testCaseIndexBegin;
+                i != testCaseIndexEnd; i += testCaseIndexStep ) {
+
+            testCase = testCaseArray[ i ];
 
             // First time test the case. Release all other test cases' neural networks
             // (so that there will be enough memory). Create the specified neural network.
