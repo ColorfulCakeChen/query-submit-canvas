@@ -277,15 +277,25 @@ class NeuralWorker_Proxies extends Recyclable.Root {
    * NeuralWorker.Proxy).
    */
   workerProxyArray_length_ensure( newLength ) {
-    // 1.
+    // 1. Prepare container.
     if ( !this.workerProxyArray )
       this.workerProxyArray = Recyclable.OwnerArray.Pool.get_or_create_by();
 
     // 2. Create more worker proxy.
     if ( this.workerProxyArray.length < newLength ) {
+      let deltaCount = newLength - this.workerProxyArray.length;
+      for ( let i = 0; i < deltaCount; ++i ) {
+        let workerProxy = NeuralWorker_Proxy.Pool.get_or_create_by();
+        this.workerProxyArray.push( workerProxy );
+      }
 
     // 3. Reduce worker proxy.
     } else {
+      let deltaCount = this.workerProxyArray.length - newLength;
+      for ( let i = 0; i < deltaCount; ++i ) {
+        let workerProxy = NeuralWorker_Proxy.Pool.get_or_create_by();
+        this.workerProxyArray.push( workerProxy );
+      }
 
     }
 
