@@ -507,11 +507,11 @@ class HeightWidthDepth {
           let testCaseIndexBegin, testCaseIndexEnd, testCaseIndexStep;
           if ( bAscent_or_Descent ) {
             testCaseIndexBegin = 0;
-            testCaseIndexEnd = testCaseArray.length - 1;
+            testCaseIndexEnd = testCaseArray.length; // (Exclusive)
             testCaseIndexStep = +1;
           } else {
             testCaseIndexBegin = testCaseArray.length - 1;
-            testCaseIndexEnd = 0;
+            testCaseIndexEnd = -1; // (Exclusive)
             testCaseIndexStep = -1;
           }
 
