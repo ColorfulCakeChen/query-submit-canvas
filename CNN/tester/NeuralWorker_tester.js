@@ -300,7 +300,7 @@ class HeightWidthDepth {
       = ImageSourceBag.Base.Pool.get_or_create_by( "int32" );
 
     {
-      const largerFactor = 10;
+      const largerFactor = 20; //10;
       let largerHeight = this.height * largerFactor;
       let largerWidth = this.width * largerFactor;
       let inputChannelCount = this.depth; // Must be 4;
