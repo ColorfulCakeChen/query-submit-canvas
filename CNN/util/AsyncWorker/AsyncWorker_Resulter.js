@@ -69,7 +69,7 @@ class AsyncWorker_Resulter {
 
     // 4. If the fulfilled promise has been returned by this resulter.next() before
     //    (i.e. It has been returned when it was still pending), try next promise
-    //    to avoid to yield/return duplicatedly.
+    //    so that iy will not be yielded/returned duplicatedly.
     //
     } while ( thePromiseResolveReject.hasBeenYielded_byResulter );
 
