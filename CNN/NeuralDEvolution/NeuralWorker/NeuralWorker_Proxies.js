@@ -128,7 +128,7 @@ import { Mode as NeuralWorker_Mode } from "./NeuralWorker_Mode.js";
  *
  *
  * @member {string} backendName
- *   Which backend (of tensorflow.js library) will be used web worker. Either "cpu"
+ *   Which backend (of tensorflow.js library) will be used by web worker. Either "cpu"
  * or "webgl".
  *
  * @member {number} nNeuralWorker_ModeId

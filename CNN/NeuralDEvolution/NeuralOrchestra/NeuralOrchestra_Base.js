@@ -19,9 +19,17 @@ import * as DEvolution from "../DEvolution.js";
  *   - If null, Google Visualization Table Query API will be used.
  *   - If not null, Google Sheets API v4 will be used.
  *
+ * @member {string} backendName
+ *   Which backend (of tensorflow.js library) is used by web worker. Either "cpu"
+ * or "webgl".
+ *
  * @member {number} nNeuralWorker_ModeId
  *   The numeric identifier of neural worker mode (i.e.
  * NeuralWorker.Mode.Singleton.Ids.Xxx).
+ *
+ * @member {NeuralNet.ParamsBase} neuralNetParamsBase
+ *   The neural network configuration. It will be used for both two neural networks.
+ * It will be kept (i.e. owned and destroyed) by this NeuralOrchetra object.
  *
  */
 class NeuralOrchestra_Base extends Recyclable.Root {
@@ -61,6 +69,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
 
   /** @override */
   disposeResources() {
+    this.neuralNetParamsBase_dispose();
     this.workerProxies_dispose();
     this.evolutionVersusSummary_dispose();
 
@@ -75,12 +84,20 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     return this.evolutionVersusSummary.weightsAPIKey;
   }
 
+  get backendName() {
+    return this.workerProxies.backendName;
+  }
+
   get nNeuralWorker_ModeId() {
     return this.workerProxies.nNeuralWorker_ModeId;
   }
 
-  get backendName() {
-    return this.workerProxies.backendName;
+  /** */
+  neuralNetParamsBase_dispose() {
+    if ( this.neuralNetParamsBase ) {
+      this.neuralNetParamsBase.disposeResources_and_recycleToPool();
+      this.neuralNetParamsBase = null;
+    }
   }
 
   /** */
@@ -93,22 +110,18 @@ class NeuralOrchestra_Base extends Recyclable.Root {
 
   /**
    *
-   * @param {NeuralNet.ParamsBase} neuralNetParamsBaseArray
-   *   An array of configurations for the neural network to be created. These
-   * configurations (exclude the array) will be owned (i.e. kept and destroyed)
-   * by this NeuralWorker.Proxy.
+   * @param {NeuralNet.ParamsBase} neuralNetParamsBase
+   *   The neural network configuration. It will be used for both two neural networks.
+   * It will be kept (i.e. owned and destroyed) by this NeuralOrchetra object.
    *
-   * @param {ArrayBuffer[]} weightArrayBufferArray
-   *   An array of every neural network's weights. Every element  will be interpreted
-   * as Float32Array.
-   *
-   * 
    * @return {Promise}
    *   Return a promise:
    *   - Resolved to true, if success.
    *   - Resolved to false, if failed.
    */
-  async workerProxies_init_async() {
+  async workerProxies_init_async( neuralNetParamsBase ) {
+    this.neuralNetParamsBase_dispose();
+    this.neuralNetParamsBase = neuralNetParamsBase;
 
     // 1. Try backend "webgl" first.
     //
@@ -121,9 +134,40 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     let initOk = await initOkPromise;
     if ( initOk ) {
 
+      // Neural network configuration will be copied (not transferred) to workers.
+      // So, it is not necessary to clone them. Just pass them directly.
+      let neuralNetParamsBaseArray
+        = [ this.neuralNetParamsBase, this.neuralNetParamsBase ];
+
+//!!! ...unfinished... (2022/09/26)
+      // Dummy neural network's weights.
+      //      
+      // Neural network weights will be transferred (not copied) to workers.
+      // So, new typed array should be created but they could use a shared
+      // ArrayBuffer to reduce memory since this is just a dummy weights
+      // array.
+      //
+      const weightArrayLength = ( 5 * 1024 * 1024 );
+      const weightArrayByteLength = weightArrayLength * Float32Array.BYTES_PER_ELEMENT;
+      let weightArrayBuffer = new ArrayBuffer( weightArrayByteLength );
+      let weightArrayBufferArray = [ weightArrayBuffer, weightArrayBuffer ];
+
 //!!! ...unfinished... (2022/09/26)
 // should create dummy neural networks in all web worker.
 // So that WebGL shaders could be compiled in advance.
+
+      // (2022//09/26 Remarked)
+      //const bLogDryRunTime = true; // For observing dry-run performance.
+      const bLogDryRunTime = false;
+      let bCreateOkPromise = this.workerProxies.NeuralNetArray_create_async(
+        neuralNetParamsBaseArray, weightArrayBufferArray, bLogDryRunTime );
+
+      let bCreateOk = await bCreateOkPromise;
+      if ( false == bCreateOk )
+        throw Error( `NeuralOrchestra_Base.workerProxies_init_async(): `
+          + `Failed to create neural networks by neuralWorkerProxies. `
+          + `${neuralWorkerProxies}`
+      );
 
       return true;
     }
