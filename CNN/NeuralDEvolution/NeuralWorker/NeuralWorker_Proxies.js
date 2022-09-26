@@ -294,8 +294,6 @@ class NeuralWorker_Proxies extends Recyclable.Root {
 
     // 3. Reduce worker proxy.
     } else {
-      let arrayIndexBegin = newLength;
-
       for ( let arrayIndex = ( this.workerProxyArray.length - 1 );
             arrayIndex >= newLength;
             --arrayIndex ) {
