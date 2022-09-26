@@ -508,6 +508,7 @@ class HeightWidthDepth {
     let progressToAdvance = progressParent.child_add(
       ValueMax.Percentage.Concrete.Pool.get_or_create_by( progressMax ) );
 
+    // Control test ModeId direction.
     let testCaseArray = [ ...this.testCaseMap.values() ];
     let testCaseIndexBegin, testCaseIndexEnd, testCaseIndexStep;
     if ( bAscent_or_Descent ) {
