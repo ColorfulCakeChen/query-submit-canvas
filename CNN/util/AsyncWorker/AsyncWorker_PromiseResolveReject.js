@@ -79,5 +79,6 @@ export { AsyncWorker_PromiseResolveReject as PromiseResolveReject };
       return true;
     return false; // i.e. resolved to false, or not fulfilled.
   }
+
 }
 

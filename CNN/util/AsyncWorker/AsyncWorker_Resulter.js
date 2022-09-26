@@ -99,10 +99,5 @@ class AsyncWorker_Resulter {
     return resulterNext.value;
   }
 
-
-//!!! ...unfinished... (2022/09/26)
-//should reject all pending Resulter.
-
-
 }
 

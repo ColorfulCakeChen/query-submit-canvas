@@ -174,76 +174,42 @@ class AsyncWorker_processingId_Resulter_Map {
     this.removeResulter_by_PromiseResolveReject_final( currentPromiseResolveReject );
   }
 
-//!!!
   /**
-   * Reject all (pending) resulter
+   * Reject all pending PromiseResolveReject.
+   *
+   * This is usually used when an AsyncWorker will be terminated forcibly. Rejecting
+   * these pending promises could avoid the promises awaiter be blocked forever.
    *
    * @param {any} errorReason 
+   *   The information of the rejecting.
    */
-  removeResulter_all_by_reject_all_by_errorReason( errorReason ) {
+  reject_all_pending_by_errorReason( errorReason ) {
+
+    for ( let resulter of this.getResulter_by_processingId.values() ) {
 
 //!!! ...unfinished... (2022/09/26)
 //should reject all pending Resulter.
 
-    let resulter = this.getResulter_by_processingId( processingId );
-    if ( !resulter )
-      throw Error(
-          `AsyncWorker.processingId_Resulter_Map.resolve_by_processingId_done_value(): `
-        + `processingId=${processingId}. `
-        + `The resulter does not exist.`
-      );
+      if ( resulter.PromiseResolveRejectArray.length <= 0 )
+        continue;
 
-    if ( resulter.PromiseResolveRejectArray.length <= 0 )
-      throw Error(
-          `AsyncWorker.processingId_Resulter_Map.resolve_by_processingId_done_value(): `
-        + `processingId=${processingId}. `
-        + `The resulter.PromiseResolveRejectArray should not be empty.`
-      );
+      // Always reject the last promise, because it is the only one promise which
+      // is possible still pending.
+      let lastArrayIndex = resulter.PromiseResolveRejectArray.length - 1;
+      let currentPromiseResolveReject
+        = resulter.PromiseResolveRejectArray[ lastArrayIndex ];
 
-    // Always resolve the last promise. (Assume it is pending.)
-    let lastArrayIndex = resulter.PromiseResolveRejectArray.length - 1;
-    let currentPromiseResolveReject = resulter.PromiseResolveRejectArray[ lastArrayIndex ];
+      if ( !currentPromiseResolveReject.pending )
+          continue;
 
-    if ( !currentPromiseResolveReject.pending )
-      throw Error(
-          `AsyncWorker.processingId_Resulter_Map.resolve_by_processingId_done_value(): `
-        + `processingId=${processingId}, lastArrayIndex=${lastArrayIndex}. `
-        + `The last element of PromiseResolveRejectArray should be pending.`
-      );
+      // Reject the current pending promise to the errorReason.
+      currentPromiseResolveReject.errorReason_reject( errorReason );
 
-    // 1. If the done is undefined, it means "reject". (i.e. neither false nor true).
-    if ( done == undefined ) {
-
-      // 1.1 Reject the current pending promise to the errorReason.
-      //     (In this case, the value represents errorReason.)
-      currentPromiseResolveReject.errorReason_reject( value );
-
-    // 2. Otherwise, it is a regular result message (i.e. either false (not done) or
-    //    true (done)).
-    } else {
-
-      // 2.1 Prepare next pending promise.
-
-      // 2.1.1 Since web worker says the processing is done, do not create any more
-      //       pending promise because the processing will have no more result coming
-      //       from web worker in the future.
-      if ( done ) {
-        // Do nothing.
-
-      // 2.1.2 The web worker says the processing is not yet completed, create a new
-      //       pending promise for the same processing for waiting future result from
-      //       web worker.
-      } else {
-        let nextPromiseResolveReject = new PromiseResolveReject( processingId );
-        resulter.PromiseResolveRejectArray.push( nextPromiseResolveReject );
-      }
-
-      // 2.2 Resolve the current pending promise to the specified value.
-      currentPromiseResolveReject.done_value_resolve( done, value );
+//!!! ??? remove during visiting?
+      // 3. Handle final promise.
+      this.removeResulter_by_PromiseResolveReject_final( currentPromiseResolveReject );
     }
 
-    // 3. Handle final promise.
-    this.removeResulter_by_PromiseResolveReject_final( currentPromiseResolveReject );
   }
 
 }
