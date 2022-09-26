@@ -308,10 +308,8 @@ class NeuralWorker_Proxies extends Recyclable.Root {
    * as Float32Array.
    *
    * @param {boolean} bLogDryRunTime
-   *   If true, the neural network dry-run time will be measured and logged to console.
-   *
-   * @param {boolean} bDryRunTwice
-   *   If true, the neural network will dry run twice.
+   *   If true, the neural network dry-run time will be measured twice and logged to
+   * console.
    *
    * @return {Promise}
    *   Return a promise:
@@ -319,9 +317,7 @@ class NeuralWorker_Proxies extends Recyclable.Root {
    *   - Resolved to false, if failed.
    */
   async NeuralNetArray_create_async(
-    neuralNetParamsBaseArray, weightArrayBufferArray,
-    bLogDryRunTime, bDryRunTwice
-  ) {
+    neuralNetParamsBaseArray, weightArrayBufferArray, bLogDryRunTime ) {
 
     if ( neuralNetParamsBaseArray.length != this.neuralNetCount )
       throw Error( `NeuralWorker.Proxies.NeuralNetArray_create_async(): `
@@ -344,7 +340,7 @@ class NeuralWorker_Proxies extends Recyclable.Root {
       for ( let i = 0; i < this.workerProxyArray.length; ++i ) {
         createPromiseArray[ i ] = this.workerProxyArray[ i ].NeuralNetArray_create_async(
           [ neuralNetParamsBaseArray[ i ] ], [ weightArrayBufferArray[ i ] ],
-          bLogDryRunTime, bDryRunTwice
+          bLogDryRunTime
         );
       }
 
@@ -359,7 +355,7 @@ class NeuralWorker_Proxies extends Recyclable.Root {
     } else {
       createOk = await this.workerProxyArray[ 0 ].NeuralNetArray_create_async(
         neuralNetParamsBaseArray, weightArrayBufferArray,
-        bLogDryRunTime, bDryRunTwice
+        bLogDryRunTime
       );
     }
 

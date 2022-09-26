@@ -96,10 +96,8 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
    * .byteLength will become zero).
    *
    * @param {boolean} bLogDryRunTime
-   *   If true, the neural network dry-run time will be measured and logged to console.
-   *
-   * @param {boolean} bDryRunTwice
-   *   If true, the neural network will dry run twice.
+   *   If true, the neural network dry-run time will be measured twice and logged to
+   * console.
    *
    * @return {Promise}
    *   Return a promise:
@@ -107,9 +105,7 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
    *   - Resolved to false, if failed.
    */
   NeuralNetArray_create_async(
-    neuralNetParamsBaseArray, weightArrayBufferArray,
-    bLogDryRunTime, bDryRunTwice
-  ) {
+    neuralNetParamsBaseArray, weightArrayBufferArray, bLogDryRunTime ) {
 
     // 1. Record neural network configuration.
     {
@@ -133,7 +129,7 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
     // 3. Inform web work to create neural networks.
     return this.createPromise_by_postCommandArgs(
       [ "NeuralNetArray_create", neuralNetParamsBaseArray, weightArrayBufferArray,
-        bLogDryRunTime, bDryRunTwice
+        bLogDryRunTime
       ],
       transferableObjectArray
     );

@@ -82,19 +82,15 @@ class NeuralWorker_Body extends AsyncWorker.Body {
    * as Float32Array.
    *
    * @param {boolean} bLogDryRunTime
-   *   If true, the neural network dry-run time will be measured and logged to console.
-   *
-   * @param {boolean} bDryRunTwice
-   *   If true, the neural network will dry run twice.
+   *   If true, the neural network dry-run time will be measured twice and logged to
+   * console.
    *
    * @yield {boolean}
    *   - Yield { done: true, value: { value: true } }, if success.
    *   - Yield { done: true, value: { value: false } }, if failed.
    */
   async* NeuralNetArray_create(
-    neuralNetParamsBaseArray, weightArrayBufferArray,
-    bLogDryRunTime, bDryRunTwice
-  ) {
+    neuralNetParamsBaseArray, weightArrayBufferArray, bLogDryRunTime ) {
 
     // 0. Prepare container for all neural networks.
     {
@@ -163,9 +159,8 @@ class NeuralWorker_Body extends AsyncWorker.Body {
         // }
       }
 
-      // compiling shaders if backend is webgl.
-      NeuralNetArray_compileShaders_uploadTensors_ifWebGL.call( this,
-        bLogDryRunTime, bDryRunTwice );
+      // Compile shaders and upload tensor to GPU if backend is webgl.
+      NeuralNetArray_compileShaders_uploadTensors_ifWebGL.call( this, bLogDryRunTime );
 
       if ( bAllOk )
         return { value: true };
@@ -239,20 +234,14 @@ class NeuralWorker_Body extends AsyncWorker.Body {
    *
    *
    * @param {boolean} bLogDryRunTime
-   *   If true, the neural network dry-run time will be measured and logged to console.
-   *
-   * @param {boolean} bDryRunTwice
-   *   If true, the neural network will dry run twice.
-   *
+   *   If true, the neural network dry-run time will be measured twice and logged to
+   * console.
    */
-  static NeuralNetArray_compileShaders_uploadTensors_ifWebGL(
-    bLogDryRunTime, bDryRunTwice ) {
-
+  static NeuralNetArray_compileShaders_uploadTensors_ifWebGL( bLogDryRunTime ) {
     let backendName = tf.getBackend();
     if ( backendName != "webgl" )
       return; // Only WebGL needs compile shaders.
 
-//!!! ...unfinished... (2022/09/15)
     tf.tidy( () => {
 
       let neuralNet;
@@ -261,26 +250,25 @@ class NeuralWorker_Body extends AsyncWorker.Body {
       for ( let i = 0; i < this.neuralNetArray.length; ++i ) {
         try {
           neuralNet = this.neuralNetArray[ i ];
-          sourceTensor = tf.zeros( neuralNet.input_shape, "int32" );
 
-  //!!! ...unfinished... (2022/09/15)
-  // need parameter to control whether log time, even whether 2nd dryRun to compare time.
           if ( bLogDryRunTime ) {
-            let timeBegin = Date.now();
+            const nDryRunTimes = 2;
+            for ( let j = 0; j < nDryRunTimes; ++j ) {
+              sourceTensor = tf.zeros( neuralNet.input_shape, "int32" );
 
-            outputTensor = neuralNet.apply( sourceTensor );
-
-    //!!! ...unfinished... (2022/09/15)
-    //  display neuralNetIndex
-
-            let timeEnd = Date.now();
-            let timeElapsed = timeEnd - timeBegin;
-            console.log(
-                `NeuralWorker_Body.NeuralNetArray_compileShaders_uploadTensors_ifWebGL(): `
-              + `workerId=${this.workerId}, neuralNetIndex=${i}, timeElapsed=${timeElapsed}`
-            );
+              let timeBegin = Date.now();
+              outputTensor = neuralNet.apply( sourceTensor );
+              let timeEnd = Date.now();
+              let timeElapsed = timeEnd - timeBegin;
+              console.log(
+                  `NeuralWorker_Body.NeuralNetArray_compileShaders_uploadTensors_ifWebGL(): `
+                + `workerId=${this.workerId}, neuralNetIndex=${i}, `
+                + `dryRunIndex=${j}, timeElapsed=${timeElapsed}`
+              );
+            }
 
           } else {
+            sourceTensor = tf.zeros( neuralNet.input_shape, "int32" );
             outputTensor = neuralNet.apply( sourceTensor );
           }
 
