@@ -183,8 +183,6 @@ class NeuralWorker_Body extends AsyncWorker.Body {
     }
   }
 
-//!!! ...unfinished... (2022/09/26)
-
   /**
    * If backend is webgl, run the nueral network once for compiling shaders. This could
    * improve performance for the real run.
@@ -225,11 +223,11 @@ class NeuralWorker_Body extends AsyncWorker.Body {
         sourceTensor = tf.zeros( neuralNet.input_shape, "int32" );
 
 //!!! ...unfinished... (2022/09/26) Test compilation time.
-        let timeBegin = Date.now;
+        let timeBegin = Date.now();
 
         outputTensor = neuralNet.apply( sourceTensor );
 
-        let timeEnd = Date.now;
+        let timeEnd = Date.now();
         let timeElapsed = timeEnd - timeBegin;
         console.log( `NeuralWorker_Body.NeuralNetArray_dryRun_ifWebGL(): `
           + `workerId=${this.workerId}, timeElapsed=${timeElapsed}`
