@@ -232,7 +232,7 @@ class NeuralWorker_Body extends AsyncWorker.Body {
         let timeEnd = Date.now;
         let timeElapsed = timeEnd - timeBegin;
         console.log( `NeuralWorker_Body.NeuralNetArray_dryRun_ifWebGL(): `
-          + `timeElapsed=${timeElapsed}
+          + `workerId=${this.workerId}, timeElapsed=${timeElapsed}`
         );
 
       } catch ( e ) {
