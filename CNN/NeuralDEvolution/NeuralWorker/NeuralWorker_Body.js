@@ -254,6 +254,7 @@ class NeuralWorker_Body extends AsyncWorker.Body {
 
           if ( bLogDryRunTime ) {
             const nDryRunTimes = 2;
+            let timeElapsedArray = new Array( nDryRunTimes );
             for ( let j = 0; j < nDryRunTimes; ++j ) {
               sourceTensor = tf.zeros( neuralNet.input_shape, "int32" );
 
@@ -261,12 +262,14 @@ class NeuralWorker_Body extends AsyncWorker.Body {
               outputTensor = neuralNet.apply( sourceTensor );
               let timeEnd = Date.now();
               let timeElapsed = timeEnd - timeBegin;
-              console.log(
-                  `NeuralWorker_Body.NeuralNetArray_compileShaders_uploadTensors_ifWebGL(): `
-                + `workerId=${this.workerId}, neuralNetIndex=${i}, `
-                + `dryRunIndex=${j}, timeElapsed=${timeElapsed}`
-              );
+              timeElapsedArray[ j ] = timeElapsed;
             }
+            console.log(
+                `NeuralWorker_Body.NeuralNetArray_compileShaders_uploadTensors_ifWebGL(): `
+              + `workerId=${this.workerId}, neuralNetIndex=${i}, `
+              + `timeElapsed0=${timeElapsedArray[ 0 ]}, `
+              + `timeElapsed1=${timeElapsedArray[ 1 ]}`
+            );
 
           } else {
             sourceTensor = tf.zeros( neuralNet.input_shape, "int32" );
