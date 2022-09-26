@@ -138,8 +138,9 @@ class PerformanceTestCase extends Recyclable.Root {
         throw Error( `Failed to initialize neuralWorkerProxies object. `
           + `${neuralWorkerProxies}` );
 
+      const bLogDryRunTime = true;
       let bCreateOkPromise = neuralWorkerProxies.NeuralNetArray_create_async(
-        neuralNetParamsBaseArray, weightArrayBufferArray );
+        neuralNetParamsBaseArray, weightArrayBufferArray, bLogDryRunTime );
 
       let bCreateOk = await bCreateOkPromise;
       if ( false == bCreateOk )
