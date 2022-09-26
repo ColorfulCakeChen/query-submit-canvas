@@ -34,7 +34,15 @@ async function test_WorkerProxy_init( { workerProxy }, workerId ) {
     workerProxy.disposeResources_and_recycleToPool();
   }
 
-  let initWorkerOk = await initWorkerPromise;
+  let initWorkerOk;
+  try {
+    initWorkerOk = await initWorkerPromise;
+  } catch ( e ) {
+    alert( e );
+    console.error( e );
+    debugger;
+  }
+
   if ( initWorkerOk == false )
     throw Error( `AsyncWorker_tester.testWorkerProxy(): `
       `workerId=${workerId}, initWorker failed.`
@@ -50,7 +58,7 @@ async function test_WorkerProxy_init( { workerProxy }, workerId ) {
   //   ] );
   // } catch ( e ) {
   //   //debugger;
-  //   console.log( e );
+  //   console.error( e );
   // }
 }
 
