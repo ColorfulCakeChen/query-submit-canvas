@@ -191,8 +191,9 @@ class NeuralWorker_Body extends AsyncWorker.Body {
    *       neural network runs at non-main web worker (i.e. here). That is, the
    *       compiling always blocks the UI worker.
    *
-   *   - The tensorflow.js will cache the compilied shaders for the same operations
-   *       with the same input/output tensor shape.
+   *   - The tensorflow.js library will cache the compilied shaders for the same
+   *       operations with the same input/output tensor shape. (Note: They should
+   *       be in the same web worker. Different web worker uses itself cache.)
    *
    *
    * So, it might be suggested that:
@@ -206,7 +207,10 @@ class NeuralWorker_Body extends AsyncWorker.Body {
    *       expected the UI will be blocked).
    *
    *   - At real run, there will be no UI blocking encountered because we always
-   *       create neural network with same input/output tenser shape.
+   *       create neural network with same input/output tenser shape. (Note: The
+   *       same NeuralWorker.Proxies and NeuralWorker.Proxy and NeuralWorker.Body
+   *       should be used. If a NeuralWorker.Body are created every time, the cache
+   *       will be empty.)
    *
    */
   static NeuralNetArray_dryRun_ifWebGL() {
