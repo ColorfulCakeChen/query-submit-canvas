@@ -142,7 +142,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
 
     vocabularyChannelCount = 8, //4,
     blockCountTotalRequested = 100, //200, //50, //20, //10,
-    output_channelCount = ( 6 * 2 ),
+    output_channelCount = 16,
   ) {
 
     // 1.
