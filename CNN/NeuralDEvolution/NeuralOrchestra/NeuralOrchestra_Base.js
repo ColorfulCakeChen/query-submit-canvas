@@ -230,7 +230,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
    *
    * @param {NeuralOrchestra_Base} this
    */
-  static workerProxies_compileShaders_async() {
+  static async workerProxies_compileShaders_async() {
 
     // Although neural network configuration will be copied (not transferred)
     // to workers, they still need be cloned because NeuralWorker.Proxy will
