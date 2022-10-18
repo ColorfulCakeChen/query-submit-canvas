@@ -2,6 +2,7 @@ export { NeuralOrchestra_Base as Base };
 
 import * as Pool from "../../util/Pool.js";
 import * as Recyclable from "../../util/Recyclable.js";
+import * as ValueDesc from "../../Unpacker/ValueDesc.js";
 import * as NeuralNet from "../../Conv/NeuralNet.js";
 import * as NeuralWorker from "../NeuralWorker.js";
 import * as DEvolution from "../DEvolution.js";
@@ -106,6 +107,50 @@ class NeuralOrchestra_Base extends Recyclable.Root {
       this.workerProxies.disposeResources_and_recycleToPool();
       this.workerProxies = null;
     }
+  }
+
+  /**
+   *   - Load all differential evolution versus weights ranges.
+   *   - Create workers and compile GPU shaders.
+   *
+   */
+  async init() {
+
+    // 1.
+    let networkPromise = this.evolutionVersusSummary_load_async();
+
+    // 2.
+    let neuralWorkPromise;
+    {
+      const input_height = 72;
+      const input_width = 128;
+      const input_channelCount = 4;
+
+      const vocabularyChannelCount = 8; //4;
+      const vocabularyCountPerInputChannel = 256;
+
+      const nConvStageType
+        = ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID;
+
+      const blockCountTotalRequested = 100; //200; //50; //20; //10;
+      const output_channelCount = 64; //8; //4; //400; //300; //64;
+
+      // The neuralNet should not keep-input-tensor because the input image is
+      // created from canvas in real time.
+      const bKeepInputTensor = false;
+
+      let neuralNetParamsBase = NeuralNet.ParamsBase.Pool.get_or_create_by(
+        input_height, input_width, input_channelCount,
+        vocabularyChannelCount, vocabularyCountPerInputChannel,
+        nConvStageType,
+        blockCountTotalRequested_ShuffleNet, output_channelCount, bKeepInputTensor
+      );
+
+      neuralWorkPromise = this.workerProxies_init_async( neuralNetParamsBase );
+    }
+
+    let allPromise = Promise.all( [ networkPromise, neuralWorkPromise ] );
+    return allPromise;
   }
 
   /**

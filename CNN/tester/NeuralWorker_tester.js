@@ -346,7 +346,7 @@ class HeightWidthDepth {
     //let blockCountTotalRequested_ShuffleNet = blockCountTotalRequested * 2;
     let blockCountTotalRequested_ShuffleNet = blockCountTotalRequested;
 
-    // The neuralNet performance testing should not keep-input-tensor becuse the
+    // The neuralNet performance testing should not keep-input-tensor because the
     // input image is created from canvas in real time.
     let bKeepInputTensor = false;
 
