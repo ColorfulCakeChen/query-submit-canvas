@@ -9,8 +9,7 @@ import * as RandTools from "../../util/RandTools.js";
  * Differential evolution summary information by downloading range list.
  *
  * @member {string} weightsSpreadsheetId
- *   The Google Sheets spreadsheetId of neural network weights. Every worker will
- * load weights from the spreadsheet to initialize one neural network.
+ *   The Google Sheets spreadsheetId of neural network weights.
  *
  * @member {string} weightsAPIKey
  *   The API key for accessing the Google Sheets spreadsheet of neural network weights.

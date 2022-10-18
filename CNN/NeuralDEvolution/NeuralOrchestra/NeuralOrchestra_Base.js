@@ -42,29 +42,20 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     NeuralOrchestra_Base, NeuralOrchestra_Base.setAsConstructor );
 
   /** */
-  constructor( weightsSpreadsheetId, weightsAPIKey ) {
+  constructor() {
     super();
-    NeuralOrchestra_Base.setAsConstructor_self.call( this,
-      weightsSpreadsheetId, weightsAPIKey
-    );
+    NeuralOrchestra_Base.setAsConstructor_self.call( this );
   }
 
   /** @override */
-  static setAsConstructor( weightsSpreadsheetId, weightsAPIKey ) {
+  static setAsConstructor() {
     super.setAsConstructor();
-    NeuralOrchestra_Base.setAsConstructor_self.call( this,
-      weightsSpreadsheetId, weightsAPIKey
-    );
+    NeuralOrchestra_Base.setAsConstructor_self.call( this );
     return this;
   }
 
   /** @override */
-  static setAsConstructor_self(
-    weightsSpreadsheetId, weightsAPIKey ) {
-
-    this.evolutionVersusSummary = DEvolution.VersusSummary.Pool.get_or_create_by(
-      weightsSpreadsheetId, weightsAPIKey );
-
+  static setAsConstructor_self() {
     this.workerProxies = NeuralWorker.Proxies.Pool.get_or_create_by();
   }
 
@@ -113,27 +104,64 @@ class NeuralOrchestra_Base extends Recyclable.Root {
    *   - Load all differential evolution versus weights ranges.
    *   - Create workers and compile GPU shaders.
    *
+   *
+   * @param {string} weightsSpreadsheetId
+   *   The Google Sheets spreadsheetId of neural network weights.
+   *
+   * @param {string} weightsAPIKey
+   *   The API key for accessing the Google Sheets spreadsheet of neural network weights.
+   * (Note: api key can not be changed after this object created.)
+   *   - If null, Google Visualization Table Query API will be used.
+   *   - If not null, Google Sheets API v4 will be used.
+   *
+   * @param {number} input_height
+   *   The input image's height.
+   *
+   * @param {number} input_width
+   *   The input image's width.
+   *
+   * @param {number} vocabularyChannelCount
+   *   In the embedding layer, every vocabulary will have how many embedding channels.
+   * Every input channel will be expanded into so many embedding channels. It could
+   * be viewed as embeddingChannelCountPerInputChannel. It must be ( >= 2 ) because
+   * it always has ( bEmbedVocabularyId == true ).
+   *
+   * @param {number} blockCountTotalRequested
+   *   How many blocks of the whole neural network are wanted. It will be spreaded to
+   * every stage. Note that every stage will have at least 2 blocks.
+   *
+   * @param {number} output_channelCount
+   *   The output tensor's channel count.
+   *
    */
-  async init() {
+  async init(
+    weightsSpreadsheetId, weightsAPIKey,
+
+    input_height = 72,
+    input_width = 128,
+
+    vocabularyChannelCount = 8, //4,
+    blockCountTotalRequested = 100, //200, //50, //20, //10,
+    output_channelCount = ( 6 * 2 ),
+  ) {
 
     // 1.
-    let networkPromise = this.evolutionVersusSummary_load_async();
+    let networkPromise
+      = this.evolutionVersusSummary_init_async( weightsSpreadsheetId, weightsAPIKey );
 
     // 2.
     let neuralWorkPromise;
     {
-      const input_height = 72;
-      const input_width = 128;
+      // Because image comes from canvas, the tf.browser.fromPixels() handle a RGBA
+      // 4 channels faster than RGB 3 channels input.
       const input_channelCount = 4;
 
-      const vocabularyChannelCount = 8; //4;
+      // For image, every RGBA input channel always has 256 (= 2 ** 8) possible values.
       const vocabularyCountPerInputChannel = 256;
 
+      // Always use the fastest convolution neural network architecture.
       const nConvStageType
         = ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID;
-
-      const blockCountTotalRequested = 100; //200; //50; //20; //10;
-      const output_channelCount = 64; //8; //4; //400; //300; //64;
 
       // The neuralNet should not keep-input-tensor because the input image is
       // created from canvas in real time.
@@ -250,13 +278,13 @@ class NeuralOrchestra_Base extends Recyclable.Root {
   }
 
   /** Load all differential evolution versus weights ranges. */
-  async evolutionVersusSummary_load_async() {
+  async evolutionVersusSummary_init_async( weightsSpreadsheetId, weightsAPIKey ) {
 
-    this.evolutionVersusSummary.rangeArray_load_async();
+    this.evolutionVersusSummary_dispose();
+    this.evolutionVersusSummary = DEvolution.VersusSummary.Pool.get_or_create_by(
+      weightsSpreadsheetId, weightsAPIKey );
 
-//!!! ...unfinished... (2022/09/21)
-
-
+    return this.evolutionVersusSummary.rangeArray_load_async();
   }
 
 }
