@@ -171,7 +171,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
         input_height, input_width, input_channelCount,
         vocabularyChannelCount, vocabularyCountPerInputChannel,
         nConvStageType,
-        blockCountTotalRequested_ShuffleNet, output_channelCount, bKeepInputTensor
+        blockCountTotalRequested, output_channelCount, bKeepInputTensor
       );
 
       neuralWorkPromise = this.workerProxies_init_async( neuralNetParamsBase );
