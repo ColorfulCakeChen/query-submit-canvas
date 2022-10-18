@@ -254,8 +254,8 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     ];
 
     // (2022//09/26 Remarked)
-    //const bLogDryRunTime = true; // For observing dry-run performance.
-    const bLogDryRunTime = false;
+    const bLogDryRunTime = true; // For observing dry-run performance and weight count.
+    //const bLogDryRunTime = false;
     let bCreateOkPromise = this.workerProxies.NeuralNetArray_create_async(
       neuralNetParamsBaseArray, weightArrayBufferArray, bLogDryRunTime );
 

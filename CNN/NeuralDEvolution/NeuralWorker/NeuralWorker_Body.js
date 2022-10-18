@@ -151,12 +151,12 @@ class NeuralWorker_Body extends AsyncWorker.Body {
         bAllOk = bAllOk && bInitOk;
         this.neuralNetArray[ i ] = neuralNet;
 
-        // (2022/09/17 Remarked) For Debug.
-        // {
-        //   let strWeightCountInfo = neuralNet.toString_WeightCount();
-        //   let logMsg = `NeuralWorker_Body.NeuralNet_create(): ${strWeightCountInfo}.`;
-        //   console.log( logMsg );
-        // }
+        // If need log dry-run time, also log neural network weight count.
+        if ( bLogDryRunTime ) {
+          let strWeightCountInfo = neuralNet.toString_WeightCount();
+          let logMsg = `NeuralWorker_Body.NeuralNet_create(): ${strWeightCountInfo}.`;
+          console.log( logMsg );
+        }
       }
 
       // Compile shaders and upload tensor to GPU if backend is webgl.
