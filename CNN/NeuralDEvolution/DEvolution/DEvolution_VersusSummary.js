@@ -144,6 +144,12 @@ class DEvolution_VersusSummary extends Recyclable.Root {
 
   /**
    * Load the next versus data.
+   *
+   *
+   * @return {Promise( boolean )}
+   *   Return a promise.
+   *   - It will resolve to true, if succeed.
+   *   - It will resolve to false, if failed.
    */
   async versus_next_load_async() {
 
@@ -155,10 +161,17 @@ class DEvolution_VersusSummary extends Recyclable.Root {
     let visitIndex = this.visitIndexArray[ this.visitCount ];
     let spreadsheetRange = this.rangeArray[ visitIndex ];
 
-//!!! ...unfinished... (2022/10/20)
     this.versus_dispose();
     this.versus = DEvolution_Versus.Pool.get_or_create_by();
-    this.versus.load_async( this.urlComposer, spreadsheetRange, this.textEncoder );
+    let bLoadOk = await this.versus.load_async(
+      this.urlComposer, spreadsheetRange, this.textEncoder );
+
+    if ( !bLoadOk )
+      return false;
+
+//!!! ...unfinished... (2022/10/20)
+    this.versus.parentChromosomeUint8Array;
+    this.versus.offspringChromosomeUint8Array;
   }
 
 }
