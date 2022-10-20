@@ -91,11 +91,11 @@ class DEvolution_Versus extends Recyclable.Root {
    *
    * @yield {Promise( boolean )}
    *   - Yield a promise resolves to { value: true, done: true } when successfully.
-   *       The .versusId, .parentChromosome, .offspringChromosome and .winCount will
-   *       be set.
+   *       The .versusId, .parentChromosome, .offspringChromosome and .winCount of
+   *       this will be set.
    *   - Yield a promise resolves to { value: false, done: true } when failed.
    */
-  async* loader( progressParent,
+  async* loader_async( progressParent,
     spreadsheetUrlComposer, spreadsheetRange, textEncoder ) {
 
     // 0.1
@@ -125,7 +125,9 @@ class DEvolution_Versus extends Recyclable.Root {
       spreadsheetUrlComposer.range_set( spreadsheetRange );
 
       let fetcherVersus
-        = this.urlComposer.JSON_ColumnMajorArrayArray_fetch_asyncGenerator( progressForDownload );
+        = spreadsheetUrlComposer.JSON_ColumnMajorArrayArray_fetch_asyncGenerator(
+            progressForDownload );
+
       versusArrayArray = yield* fetcherVersus;
       if ( !versusArrayArray )
         return false; // Download failure.
@@ -200,29 +202,33 @@ class DEvolution_Versus extends Recyclable.Root {
    * @return {Promise( boolean )}
    *   Return a promise.
    *   - It will resolve to true, if succeed. The .versusId, .parentChromosome,
-   *       .offspringChromosome and .winCount will be set. (and
-   *       progressParent.valuePercentage will be equal to 100).
-   *   - It will resolve to false, if failed. (and progressParent.valuePercentage
-   *       will be less than 100).
+   *       .offspringChromosome and .winCount of this will be set.
+   *   - It will resolve to false, if failed.
    */
-  async loadAsync( progressParent,
+  async load_async(
     spreadsheetUrlComposer, spreadsheetRange, textEncoder ) {
 
     let progress = ValueMax.Percentage.Aggregate.Pool.get_or_create_by();
 
-    let loader = this.loader( progressParent,
-      spreadsheetUrlComposer, spreadsheetRange, textEncoder);
+    try {
+      let loader_async = this.loader_async( progressParent,
+        spreadsheetUrlComposer, spreadsheetRange, textEncoder);
 
-    let bLoadOk;
-    let loaderNext;
-    do {
-      loaderNext = await loader.next();
-      if ( loaderNext.done == false ) {
-        //let progressRoot = loaderNext.value;
-      } else { // ( loaderNext.done == true )
-        bLoadOk = loaderNext.value;
-      }
-    } while ( loaderNext.done == false );
+      let bLoadOk;
+      let loaderNext;
+      do {
+        loaderNext = await loader_async.next();
+        if ( loaderNext.done == false ) {
+          //let progressRoot = loaderNext.value;
+        } else { // ( loaderNext.done == true )
+          bLoadOk = loaderNext.value;
+        }
+      } while ( loaderNext.done == false );
+
+    } finally {
+      progress.disposeResources_and_recycleToPool();
+      progress = null;
+    }
 
     return bLoadOk;
  }
