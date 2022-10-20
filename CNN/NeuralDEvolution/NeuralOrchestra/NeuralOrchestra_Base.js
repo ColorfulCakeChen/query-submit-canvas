@@ -32,6 +32,12 @@ import * as DEvolution from "../DEvolution.js";
  *   The neural network configuration. It will be used for both two neural networks.
  * It will be kept (i.e. owned and destroyed) by this NeuralOrchetra object.
  *
+ * @member {DEvolution.VersusSummary} evolutionVersusSummary
+ *   The downloaded versus summary of the differential evolution.
+ *
+ * @member {DEvolution.Versus} evolutionVersus
+ *   The downloaded current versus of the differential evolution.
+ *
  */
 class NeuralOrchestra_Base extends Recyclable.Root {
 
