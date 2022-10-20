@@ -301,8 +301,8 @@ class NeuralOrchestra_Base extends Recyclable.Root {
    *
    * @return {Promise( DEvolution.Versus )}
    *   Return a promise.
-   *   - It will resolve to a DEvolution.Versus object, if succeed.
-   *   - It will resolve to null, if failed.
+   *   - It will resolve to a true ???, if succeed.
+   *   - It will resolve to false ???, if failed.
    */
   async evolutionVersus_next_load_async() {
 
