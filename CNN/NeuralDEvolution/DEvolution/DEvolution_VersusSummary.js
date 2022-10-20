@@ -59,10 +59,16 @@ class DEvolution_VersusSummary extends Recyclable.Root {
   static setAsConstructor_self( weightsSpreadsheetId, weightsAPIKey ) {
     this.urlComposer = GSheets.UrlComposer.Pool.get_or_create_by(
       weightsSpreadsheetId, undefined, weightsAPIKey ); // range is undefined.
+
+    this.textEncoder = new TextEncoder();
   }
 
   /** @override */
   disposeResources() {
+
+    this.versus_dispose();
+
+    this.textEncoder = null;
 
     this.visitCount = undefined;
 
@@ -128,6 +134,14 @@ class DEvolution_VersusSummary extends Recyclable.Root {
     this.visitCount = 0; // Reset to zero after (re-)shuffled.
   }
 
+  /** */
+  versus_dispose() {
+    if ( this.versus ) {
+      this.versus.disposeResources_and_recycleToPool();
+      this.versus = null;
+    }
+  }
+
   /**
    * Load the next versus data.
    */
@@ -144,6 +158,11 @@ class DEvolution_VersusSummary extends Recyclable.Root {
 //
 //     let ???rangeArrayArray
 //       = this.urlComposer.JSON_ColumnMajorArrayArray_fetch_async();
+
+//!!! ...unfinished... (2022/10/20)
+    this.versus_dispose();
+    this.versus = DEvolution_Versus.Pool.get_or_create_by();
+    this.versus.load_async( this.urlComposer, ???, this.textEncoder );
   }
 
 }

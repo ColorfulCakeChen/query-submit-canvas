@@ -15,10 +15,10 @@ import { VersusId } from "./DEvolution_VersusId.js";
  * @member {DEvolution.VersusId} versusId
  *   The versus id (i.e. EntityNo_ParentGenerationNo_OffspringGenerationNo).
  *
- * @member {Uint8Array} parentChromosome
+ * @member {Uint8Array} parentChromosomeUint8Array
  *   The parent's chromosome of the entity of the versus.
  *
- * @member {Uint8Array} offspringChromosome
+ * @member {Uint8Array} offspringChromosomeUint8Array
  *   The offspring's chromosome of the entity of the versus.
  *
  * @member {number} winCount
@@ -53,8 +53,8 @@ class DEvolution_Versus extends Recyclable.Root {
   disposeResources() {
 
     this.winCount = undefined;
-    this.offspringChromosome = undefined;
-    this.parentChromosome = undefined;
+    this.offspringChromosomeUint8Array = undefined;
+    this.parentChromosomeUint8Array = undefined;
 
     if ( this.versusId ) {
       this.versusId.disposeResources_and_recycleToPool();
@@ -62,7 +62,7 @@ class DEvolution_Versus extends Recyclable.Root {
     }
 
     this.spreadsheetRange = undefined;
-   
+
     super.disposeResources();
   }
 
@@ -166,7 +166,7 @@ class DEvolution_Versus extends Recyclable.Root {
         parentChromosomeArray, textEncoder,
         Base64_skipLineCount, Base64_suspendByteCount
       );
-      this.parentChromosome = yield* parentChromosomeDecoder;
+      this.parentChromosomeUint8Array = yield* parentChromosomeDecoder;
     }
 
     // 2.3 offspring chromosome
@@ -177,7 +177,7 @@ class DEvolution_Versus extends Recyclable.Root {
         offspringChromosomeArray, textEncoder,
         Base64_skipLineCount, Base64_suspendByteCount
       );
-      this.offspringChromosome = yield* offspringChromosomeDecoder;
+      this.offspringChromosomeUint8Array = yield* offspringChromosomeDecoder;
     }
 
     // 2.4 parent chromosome's winCount
