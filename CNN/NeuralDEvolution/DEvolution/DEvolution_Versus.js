@@ -211,7 +211,7 @@ class DEvolution_Versus extends Recyclable.Root {
     let progress = ValueMax.Percentage.Aggregate.Pool.get_or_create_by();
 
     try {
-      let loader_async = this.loader_async( progressParent,
+      let loader_async = this.loader_async( progress,
         spreadsheetUrlComposer, spreadsheetRange, textEncoder);
 
       let bLoadOk;
