@@ -124,20 +124,26 @@ class GSheets_UrlComposer extends Recyclable.Root {
     let progress = ValueMax.Percentage.Aggregate.Pool.get_or_create_by();
 
     let resultColumnMajorArrayArray;
+    try {
+      let fetcher = this.JSON_ColumnMajorArrayArray_fetch_asyncGenerator( progress );
+      let fetcherNext;
+      do {
+        fetcherNext = await fetcher.next();
+        if ( fetcherNext.done == false ) {
+          //let progressRoot = fetcherNext.value;
+        } else { // ( fetcherNext.done == true )
+          resultColumnMajorArrayArray = fetcherNext.value;
+        }
+      } while ( fetcherNext.done == false );
 
-    let fetcher = this.JSON_ColumnMajorArrayArray_fetch_asyncGenerator( progress );
-    let fetcherNext;
-    do {
-      fetcherNext = await fetcher.next();
-      if ( fetcherNext.done == false ) {
-        //let progressRoot = fetcherNext.value;
-      } else { // ( fetcherNext.done == true )
-        resultColumnMajorArrayArray = fetcherNext.value;
-      }
-    } while ( fetcherNext.done == false );
+    } catch ( e ) {
+      console.error( e );
+      return null;
 
-    progress.disposeResources_and_recycleToPool();
-    progress = null;
+    } finally {
+      progress.disposeResources_and_recycleToPool();
+      progress = null;
+    }
 
     return resultColumnMajorArrayArray;
   }

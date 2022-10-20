@@ -61,6 +61,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
 
   /** @override */
   disposeResources() {
+    this.versus_dispose();
     this.neuralNetParamsBase_dispose();
     this.workerProxies_dispose();
     this.evolutionVersusSummary_dispose();
@@ -285,6 +286,30 @@ class NeuralOrchestra_Base extends Recyclable.Root {
       weightsSpreadsheetId, weightsAPIKey );
 
     return this.evolutionVersusSummary.rangeArray_load_async();
+  }
+
+  /** */
+  versus_dispose() {
+    if ( this.versus ) {
+      this.versus.disposeResources_and_recycleToPool();
+      this.versus = null;
+    }
+  }
+
+  /**
+   * Load the next versus data.
+   *
+   * @return {Promise( DEvolution.Versus )}
+   *   Return a promise.
+   *   - It will resolve to a DEvolution.Versus object, if succeed.
+   *   - It will resolve to null, if failed.
+   */
+  async versus_next_load_async() {
+
+//!!! ...unfinished... (2022/10/20)
+    this.versus_dispose();
+    this.evolutionVersusSummary.versus.parentChromosomeUint8Array;
+    this.evolutionVersusSummary.versus.offspringChromosomeUint8Array;
   }
 
 }

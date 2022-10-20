@@ -2,8 +2,9 @@ export { DEvolution_VersusSummary as VersusSummary };
 
 import * as Pool from "../../util/Pool.js";
 import * as Recyclable from "../../util/Recyclable.js";
-import * as GSheets from "../../util/GSheets.js";
+//import * as GSheets from "../../util/GSheets.js";
 import * as RandTools from "../../util/RandTools.js";
+import { Versus as DEvolution_Versus } from "./DEvolution_Versus.js";
 
 /**
  * Differential evolution summary information by downloading range list.
@@ -66,8 +67,6 @@ class DEvolution_VersusSummary extends Recyclable.Root {
   /** @override */
   disposeResources() {
 
-    this.versus_dispose();
-
     this.textEncoder = null;
 
     this.visitCount = undefined;
@@ -99,18 +98,37 @@ class DEvolution_VersusSummary extends Recyclable.Root {
     return this.urlComposer.apiKey;
   }
 
-  /** Load all evolution versus weights ranges. */
+  /**
+   * Load all evolution versus weights ranges.
+   *
+   * @return {Promise}
+   *   Return a promise:
+   *   - Resolved to true, if success.
+   *   - Resolved to false, if failed.
+   */
   async rangeArray_load_async() {
     // The summary is at the first column of the first (i.e. left most) sheet.
     const range = "A:A";
     this.urlComposer.range_set( range );
 
-    let rangeArrayArray = await this.urlComposer.JSON_ColumnMajorArrayArray_fetch_async();
+    try {
+      let rangeArrayArray
+        = await this.urlComposer.JSON_ColumnMajorArrayArray_fetch_async();
 
-    // Only the first column (i.e. column[ 0 ]) has range description string.
-    this.rangeArray = rangeArrayArray[ 0 ];
+      if ( !rangeArrayArray )
+        return false;
 
-    this.visitIndexArray_prepare();
+      // Only the first column (i.e. column[ 0 ]) has range description string.
+      this.rangeArray = rangeArrayArray[ 0 ];
+
+      this.visitIndexArray_prepare();
+
+    } catch ( e ) {
+      console.error( e );
+      return false;
+    }
+
+    return true;
   }
 
   /**
@@ -121,57 +139,76 @@ class DEvolution_VersusSummary extends Recyclable.Root {
     if ( !this.visitIndexArray )
       this.visitIndexArray = Recyclable.Array.Pool.get_or_create_by();
 
-    // Ordered indexes
-    if ( this.visitIndexArray.length != this.rangeArray.length ) {
-      this.visitIndexArray.length = this.rangeArray.length;
-      for ( let i = 0; i < this.visitIndexArray.length; ++i ) {
-        this.visitIndexArray[ i ] = i;
+    if ( this.rangeArray ) {
+
+      // Ordered indexes
+      {
+        this.visitIndexArray.length = this.rangeArray.length;
+        for ( let i = 0; i < this.visitIndexArray.length; ++i ) {
+          this.visitIndexArray[ i ] = i;
+        }
       }
-    }
 
-    // Shuffled indexes
-    RandTools.shuffle_Array( this.visitIndexArray );
-    this.visitCount = 0; // Reset to zero after (re-)shuffled.
-  }
+      // Shuffled indexes
+      RandTools.shuffle_Array( this.visitIndexArray );
+      this.visitCount = 0; // Reset to zero after (re-)shuffled.
 
-  /** */
-  versus_dispose() {
-    if ( this.versus ) {
-      this.versus.disposeResources_and_recycleToPool();
-      this.versus = null;
+    } else {
+      this.visitIndexArray.length = 0;
+      this.visitCount = undefined;
     }
   }
 
   /**
    * Load the next versus data.
    *
-   *
-   * @return {Promise( boolean )}
+   * @return {Promise( DEvolution.Versus )}
    *   Return a promise.
-   *   - It will resolve to true, if succeed.
-   *   - It will resolve to false, if failed.
+   *   - It will resolve to a DEvolution.Versus object, if succeed.
+   *   - It will resolve to null, if failed.
    */
   async versus_next_load_async() {
 
-    // If all versus data are visited, re-prepare a new random visiting list.
-    if ( this.visitCount >= this.visitIndexArray.length ) {
+    // If all versus data are visited (or .visitCount is undefiend), re-prepare a
+    // new random visiting list.
+    if (   ( !this.visitIndexArray )
+        || ( !( this.visitCount < this.visitIndexArray.length ) )
+       ) {
       this.visitIndexArray_prepare();
     }
+
+    if (   ( !( this.visitCount >= 0 ) )
+        || ( !( this.visitCount < this.visitIndexArray.length ) ) )
+      return false; // Illegal visitCount (e.g. undefined or too large).
+
+    if ( !this.rangeArray )
+      return false;
 
     let visitIndex = this.visitIndexArray[ this.visitCount ];
     let spreadsheetRange = this.rangeArray[ visitIndex ];
 
-    this.versus_dispose();
-    this.versus = DEvolution_Versus.Pool.get_or_create_by();
-    let bLoadOk = await this.versus.load_async(
-      this.urlComposer, spreadsheetRange, this.textEncoder );
+    let versus = DEvolution_Versus.Pool.get_or_create_by();
+    try {
+      let bLoadOk = await versus.load_async(
+        this.urlComposer, spreadsheetRange, this.textEncoder );
 
-    if ( !bLoadOk )
-      return false;
+      if ( !bLoadOk )
+        return null;
 
-//!!! ...unfinished... (2022/10/20)
-    this.versus.parentChromosomeUint8Array;
-    this.versus.offspringChromosomeUint8Array;
+    } catch ( e ) {
+      console.error( e );
+
+      if ( versus ) {
+        versus.disposeResources_and_recycleToPool();
+        versus = null;
+      }
+
+      return null;
+    }
+
+    ++this.visitCount;
+
+    return versus;
   }
 
 }

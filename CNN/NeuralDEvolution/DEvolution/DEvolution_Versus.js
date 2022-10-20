@@ -225,9 +225,15 @@ class DEvolution_Versus extends Recyclable.Root {
         }
       } while ( loaderNext.done == false );
 
+    } catch ( e ) {
+      console.error( e );
+      return false;
+
     } finally {
-      progress.disposeResources_and_recycleToPool();
-      progress = null;
+      if ( progress ) {
+        progress.disposeResources_and_recycleToPool();
+        progress = null;
+      }
     }
 
     return bLoadOk;
