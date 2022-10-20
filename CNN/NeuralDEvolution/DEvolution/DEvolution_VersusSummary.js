@@ -152,17 +152,13 @@ class DEvolution_VersusSummary extends Recyclable.Root {
       this.visitIndexArray_prepare();
     }
 
-//!!! ...unfinished... (2022/08/28)
-//     const range = ???;
-//     this.urlComposer.range_set( range );
-//
-//     let ???rangeArrayArray
-//       = this.urlComposer.JSON_ColumnMajorArrayArray_fetch_async();
+    let visitIndex = this.visitIndexArray[ this.visitCount ];
+    let spreadsheetRange = this.rangeArray[ visitIndex ];
 
 //!!! ...unfinished... (2022/10/20)
     this.versus_dispose();
     this.versus = DEvolution_Versus.Pool.get_or_create_by();
-    this.versus.load_async( this.urlComposer, ???, this.textEncoder );
+    this.versus.load_async( this.urlComposer, spreadsheetRange, this.textEncoder );
   }
 
 }
