@@ -61,7 +61,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
 
   /** @override */
   disposeResources() {
-    this.versus_dispose();
+    this.evolutionVersus_dispose();
     this.neuralNetParamsBase_dispose();
     this.workerProxies_dispose();
     this.evolutionVersusSummary_dispose();
@@ -289,10 +289,10 @@ class NeuralOrchestra_Base extends Recyclable.Root {
   }
 
   /** */
-  versus_dispose() {
-    if ( this.versus ) {
-      this.versus.disposeResources_and_recycleToPool();
-      this.versus = null;
+  evolutionVersus_dispose() {
+    if ( this.evolutionVersus ) {
+      this.evolutionVersus.disposeResources_and_recycleToPool();
+      this.evolutionVersus = null;
     }
   }
 
@@ -304,12 +304,19 @@ class NeuralOrchestra_Base extends Recyclable.Root {
    *   - It will resolve to a DEvolution.Versus object, if succeed.
    *   - It will resolve to null, if failed.
    */
-  async versus_next_load_async() {
+  async evolutionVersus_next_load_async() {
 
 //!!! ...unfinished... (2022/10/20)
-    this.versus_dispose();
-    this.evolutionVersusSummary.versus.parentChromosomeUint8Array;
-    this.evolutionVersusSummary.versus.offspringChromosomeUint8Array;
+    this.evolutionVersus_dispose();
+    this.evolutionVersus = await this.evolutionVersusSummary.versus_next_load_async();
+
+    if ( !this.evolutionVersus )
+      return false ???;
+
+    this.evolutionVersus.parentChromosomeUint8Array;
+    this.evolutionVersus.offspringChromosomeUint8Array;
+
+    return true ???;
   }
 
 }
