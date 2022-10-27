@@ -232,6 +232,10 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     return initOk;
   }
 
+//!!! ...unfinished... (2022/10/27)
+// Provide a function which could accept weight array and bLogDryRunTime.
+// And then, call NeuralNetArray_create_async().
+
   /**
    * Create dummy neural networks in all web worker to compile WebGL shaders in advance.
    *
