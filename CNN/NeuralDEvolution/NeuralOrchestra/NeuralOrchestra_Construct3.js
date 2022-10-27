@@ -58,30 +58,17 @@ class NeuralOrchestra_Construct3 extends Base {
    *       should be one of runtime.globalVars.Versus_Step_X_Yyy
    *
    *
-   *
-   *
-   *
-   *
-   *
-   *
-   *
    * @param {Object} runtime
    *   Construct3 game engine runtime.
    *
    */
   tick( runtime ) {
 
-//!!! ...unfinished... (2022/10/20)
-    runtime.globalVars.Versus_Step_0_DownloadWeights_Begin
-    runtime.globalVars.Versus_Step_1_DownloadWeights_Loading
-    runtime.globalVars.Versus_Step_2_DownloadWeights_End
-    runtime.globalVars.Versus_Step_3_ParentAlignment0_Begin
-    runtime.globalVars.Versus_Step_4_ParentAlignment0_Fighting
-    runtime.globalVars.Versus_Step_5_ParentAlignment0_End
-    runtime.globalVars.Versus_Step_6_ParentAlignment1_Begin
-    runtime.globalVars.Versus_Step_7_ParentAlignment1_Fighting
-    runtime.globalVars.Versus_Step_8_ParentAlignment1_End
+//!!! ...unfinished... (2022/10/27)
+    let pfnStep = NeuralOrchestra_Construct3.Versus_Step_Function_Array[
+      runtime.globalVars.Versus_Step_Current ];
 
+    pfnStep.call( this, runtime );
   }
 
   /**
@@ -89,12 +76,26 @@ class NeuralOrchestra_Construct3 extends Base {
    */
   static Versus_Step_0_DownloadWeights_Begin( runtime ) {
 
+//!!! ...unfinished... (2022/10/27)
+
+
   }
 
   /**
+   * When neural networks weights dowloading finished, the following variables will
+   * be set by this method:
+   *
+   *   - runtime.globalVars.Versus_EntityNo (string)
+   *   - runtime.globalVars.Versus_Parent_GenerationNo (string)
+   *   - runtime.globalVars.Versus_Offspring_GenerationNo (string)
+   *   - runtime.globalVars.Versus_Parent_WinCount (number)
+   *
    * @param {NeuralOrchestra_Construct3.Construct3} this
    */
   static Versus_Step_1_DownloadWeights_Loading( runtime ) {
+
+//!!! ...unfinished... (2022/10/27)
+
 
   }
 
@@ -103,12 +104,18 @@ class NeuralOrchestra_Construct3 extends Base {
    */
   static Versus_Step_2_DownloadWeights_End( runtime ) {
 
+//!!! ...unfinished... (2022/10/27)
+
+
   }
 
   /**
    * @param {NeuralOrchestra_Construct3.Construct3} this
    */
   static Versus_Step_3_ParentAlignment0_Begin( runtime ) {
+
+//!!! ...unfinished... (2022/10/27)
+
 
   }
   
@@ -117,12 +124,18 @@ class NeuralOrchestra_Construct3 extends Base {
    */
   static Versus_Step_4_ParentAlignment0_Fighting( runtime ) {
 
+//!!! ...unfinished... (2022/10/27)
+
+
   }
   
   /**
    * @param {NeuralOrchestra_Construct3.Construct3} this
    */
   static Versus_Step_5_ParentAlignment0_End( runtime ) {
+
+//!!! ...unfinished... (2022/10/27)
+
 
   }
   
@@ -131,12 +144,18 @@ class NeuralOrchestra_Construct3 extends Base {
    */
   static Versus_Step_6_ParentAlignment1_Begin( runtime ) {
 
+//!!! ...unfinished... (2022/10/27)
+
+
   }
   
   /**
    * @param {NeuralOrchestra_Construct3.Construct3} this
    */
   static Versus_Step_7_ParentAlignment1_Fighting( runtime ) {
+
+//!!! ...unfinished... (2022/10/27)
+
 
   }
   
@@ -156,6 +175,21 @@ class NeuralOrchestra_Construct3 extends Base {
    */
   static Versus_Step_8_ParentAlignment1_End( runtime ) {
 
+//!!! ...unfinished... (2022/10/27)
+
   }
 
 }
+
+/** */
+NeuralOrchestra_Construct3.Versus_Step_Function_Array = [
+  NeuralOrchestra_Construct3.Versus_Step_0_DownloadWeights_Begin,
+  NeuralOrchestra_Construct3.Versus_Step_1_DownloadWeights_Loading,
+  NeuralOrchestra_Construct3.Versus_Step_2_DownloadWeights_End,
+  NeuralOrchestra_Construct3.Versus_Step_3_ParentAlignment0_Begin,
+  NeuralOrchestra_Construct3.Versus_Step_4_ParentAlignment0_Fighting,
+  NeuralOrchestra_Construct3.Versus_Step_5_ParentAlignment0_End,
+  NeuralOrchestra_Construct3.Versus_Step_6_ParentAlignment1_Begin,
+  NeuralOrchestra_Construct3.Versus_Step_7_ParentAlignment1_Fighting,
+  NeuralOrchestra_Construct3.Versus_Step_8_ParentAlignment1_End,
+];
