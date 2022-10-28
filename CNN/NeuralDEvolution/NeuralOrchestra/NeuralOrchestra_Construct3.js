@@ -74,7 +74,7 @@ class NeuralOrchestra_Construct3 extends Base {
   /**
    * @param {NeuralOrchestra_Construct3.Construct3} this
    */
-  static Versus_Step_0_DownloadWeights_Begin( runtime ) {
+  static Versus_Step_00_DownloadWeights_Begin( runtime ) {
 
 //!!! ...unfinished... (2022/10/27)
 
@@ -92,7 +92,7 @@ class NeuralOrchestra_Construct3 extends Base {
    *
    * @param {NeuralOrchestra_Construct3.Construct3} this
    */
-  static Versus_Step_1_DownloadWeights_Loading( runtime ) {
+  static Versus_Step_01_DownloadWeights_Loading( runtime ) {
 
 //!!! ...unfinished... (2022/10/27)
 
@@ -102,7 +102,7 @@ class NeuralOrchestra_Construct3 extends Base {
   /**
    * @param {NeuralOrchestra_Construct3.Construct3} this
    */
-  static Versus_Step_2_DownloadWeights_End( runtime ) {
+  static Versus_Step_02_DownloadWeights_End( runtime ) {
 
 //!!! ...unfinished... (2022/10/27)
 
@@ -112,7 +112,38 @@ class NeuralOrchestra_Construct3 extends Base {
   /**
    * @param {NeuralOrchestra_Construct3.Construct3} this
    */
-  static Versus_Step_3_ParentAlignment0_Begin( runtime ) {
+  static Versus_Step_03_ParentAlignment0_WaitVersusInfo( runtime ) {
+
+//!!! ...unfinished... (2022/10/27)
+
+
+  }
+
+  /**
+   * @param {NeuralOrchestra_Construct3.Construct3} this
+   */
+  static Versus_Step_04_ParentAlignment0_WaitDrawingCanvas( runtime ) {
+
+//!!! ...unfinished... (2022/10/27)
+
+
+  }
+
+
+  /**
+   * @param {NeuralOrchestra_Construct3.Construct3} this
+   */
+  static Versus_Step_05_ParentAlignment0_Fighting( runtime ) {
+
+//!!! ...unfinished... (2022/10/27)
+
+
+  }
+
+  /**
+   * @param {NeuralOrchestra_Construct3.Construct3} this
+   */
+  static Versus_Step_06_ParentAlignment0_End( runtime ) {
 
 //!!! ...unfinished... (2022/10/27)
 
@@ -122,19 +153,9 @@ class NeuralOrchestra_Construct3 extends Base {
   /**
    * @param {NeuralOrchestra_Construct3.Construct3} this
    */
-  static Versus_Step_4_ParentAlignment0_Fighting( runtime ) {
+ static Versus_Step_07_ParentAlignment1_WaitVersusInfo( runtime ) {
 
-//!!! ...unfinished... (2022/10/27)
-
-
-  }
-  
-  /**
-   * @param {NeuralOrchestra_Construct3.Construct3} this
-   */
-  static Versus_Step_5_ParentAlignment0_End( runtime ) {
-
-//!!! ...unfinished... (2022/10/27)
+//!!! ...unfinished... (2022/10/28)
 
 
   }
@@ -142,23 +163,23 @@ class NeuralOrchestra_Construct3 extends Base {
   /**
    * @param {NeuralOrchestra_Construct3.Construct3} this
    */
-  static Versus_Step_6_ParentAlignment1_Begin( runtime ) {
+  static Versus_Step_08_ParentAlignment1_WaitDrawingCanvas( runtime ) {
 
 //!!! ...unfinished... (2022/10/27)
 
 
   }
-  
+
   /**
    * @param {NeuralOrchestra_Construct3.Construct3} this
    */
-  static Versus_Step_7_ParentAlignment1_Fighting( runtime ) {
+  static Versus_Step_09_ParentAlignment1_Fighting( runtime ) {
 
 //!!! ...unfinished... (2022/10/27)
 
 
   }
-  
+
   /**
    * This method will send versus result to game server.
    *
@@ -173,7 +194,7 @@ class NeuralOrchestra_Construct3 extends Base {
    *
    * @param {NeuralOrchestra_Construct3.Construct3} this
    */
-  static Versus_Step_8_ParentAlignment1_End( runtime ) {
+  static Versus_Step_10_ParentAlignment1_End( runtime ) {
 
 //!!! ...unfinished... (2022/10/28)
 // Perhaps, start downloading the next versus here, too.
@@ -184,13 +205,15 @@ class NeuralOrchestra_Construct3 extends Base {
 
 /** */
 NeuralOrchestra_Construct3.Versus_Step_Function_Array = [
-  NeuralOrchestra_Construct3.Versus_Step_0_DownloadWeights_Begin,
-  NeuralOrchestra_Construct3.Versus_Step_1_DownloadWeights_Loading,
-  NeuralOrchestra_Construct3.Versus_Step_2_DownloadWeights_End,
-  NeuralOrchestra_Construct3.Versus_Step_3_ParentAlignment0_Begin,
-  NeuralOrchestra_Construct3.Versus_Step_4_ParentAlignment0_Fighting,
-  NeuralOrchestra_Construct3.Versus_Step_5_ParentAlignment0_End,
-  NeuralOrchestra_Construct3.Versus_Step_6_ParentAlignment1_Begin,
-  NeuralOrchestra_Construct3.Versus_Step_7_ParentAlignment1_Fighting,
-  NeuralOrchestra_Construct3.Versus_Step_8_ParentAlignment1_End,
+  NeuralOrchestra_Construct3.Versus_Step_00_DownloadWeights_Begin,
+  NeuralOrchestra_Construct3.Versus_Step_01_DownloadWeights_Loading,
+  NeuralOrchestra_Construct3.Versus_Step_02_DownloadWeights_End,
+  NeuralOrchestra_Construct3.Versus_Step_03_ParentAlignment0_WaitVersusInfo,
+  NeuralOrchestra_Construct3.Versus_Step_04_ParentAlignment0_WaitDrawingCanvas,
+  NeuralOrchestra_Construct3.Versus_Step_05_ParentAlignment0_Fighting,
+  NeuralOrchestra_Construct3.Versus_Step_06_ParentAlignment0_End,
+  NeuralOrchestra_Construct3.Versus_Step_07_ParentAlignment1_WaitVersusInfo,
+  NeuralOrchestra_Construct3.Versus_Step_08_ParentAlignment1_WaitDrawingCanvas,
+  NeuralOrchestra_Construct3.Versus_Step_09_ParentAlignment1_Fighting,
+  NeuralOrchestra_Construct3.Versus_Step_10_ParentAlignment1_End,
 ];
