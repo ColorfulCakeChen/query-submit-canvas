@@ -121,6 +121,17 @@ class NeuralOrchestra_Base extends Recyclable.Root {
    *   - If null, Google Visualization Table Query API will be used.
    *   - If not null, Google Sheets API v4 will be used.
    *
+   *
+   * @param {string} measurement_id
+   *   The measurement id of stream of property of Google Analytics v4.
+   *
+   * @param {string} api_secret
+   *   The measurement api secret of stream of property of Google Analytics v4.
+   * 
+   * @param {string} client_id
+   *   The client id when sending measurement protocol.
+   *
+   *
    * @param {number} input_height
    *   The input image's height.
    *
@@ -144,6 +155,8 @@ class NeuralOrchestra_Base extends Recyclable.Root {
   async init(
     weightsSpreadsheetId, weightsAPIKey,
 
+    measurement_id, api_secret, client_id,
+
     input_height = 72,
     input_width = 128,
 
@@ -152,11 +165,11 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     output_channelCount = 16,
   ) {
 
-    // 1.
+    // 1. Versus Downloader.
     let networkPromise
       = this.evolutionVersusSummary_init_async( weightsSpreadsheetId, weightsAPIKey );
 
-    // 2.
+    // 2. Versus Neural Networks.
     let neuralWorkPromise;
     {
       // Because image comes from canvas, the tf.browser.fromPixels() handle a RGBA
@@ -182,6 +195,11 @@ class NeuralOrchestra_Base extends Recyclable.Root {
       );
 
       neuralWorkPromise = this.workerProxies_init_async( neuralNetParamsBase );
+    }
+
+    // 3. Versus Result Reporter
+    {
+      this.evolutionVersusSubmitter_init( measurement_id, api_secret, client_id );
     }
 
     let allPromise = Promise.all( [ networkPromise, neuralWorkPromise ] );
@@ -327,6 +345,23 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     this.evolutionVersus.offspringChromosomeUint8Array;
 
     return true ???;
+  }
+
+
+  /** */
+  evolutionVersusSubmitter_dispose() {
+    if ( this.evolutionVersusSubmitter ) {
+      this.evolutionVersusSubmitter.disposeResources_and_recycleToPool();
+      this.evolutionVersusSubmitter = null;
+    }
+  }
+
+  /** Create differential evolution versus result reporter. */
+  evolutionVersusSubmitter_init( measurement_id, api_secret, client_id ) {
+
+    this.evolutionVersusSubmitter_dispose();
+    this.evolutionVersusSubmitter = DEvolution.VersusSubmitter.Pool.get_or_create_by(
+      measurement_id, api_secret, client_id );
   }
 
 }
