@@ -8,10 +8,6 @@ function onOpen() {
     .addItem( "Copy ranges", "NamedRange_copy_from_source_to_target_" )
     .addItem( "Timer start", "timer_start_" )
     .addItem( "Timer stop", "timer_stop_" )
-    // .addSubMenu(
-    //   ui.createMenu( "Sub menu" )
-    //     .addItem( "Sub item1", "dummy" )
-    // )
     .addToUi();
 }
 
