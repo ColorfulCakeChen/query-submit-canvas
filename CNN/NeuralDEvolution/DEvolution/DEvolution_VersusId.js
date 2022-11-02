@@ -6,7 +6,8 @@ import * as NumberTools from "../../util/NumberTools.js";
 
 /**
  * @member {string} versusIdString
- *   The versus id string (e.g. EntityNo_ParentGenerationNo_OffspringGenerationNo).
+ *   The versus id string (e.g.
+ * EntityNo_ParentGenerationNo_OffspringGenerationNo_ParentWinCount).
  *
  * @member {string} entityNoString
  *   The entity id string of the versus.
@@ -26,6 +27,12 @@ import * as NumberTools from "../../util/NumberTools.js";
  * @member {number} offspringGenerationNo
  *   The offspring generation id number of the entity of the versus. It is a 0-base
  * integer.
+ *
+ * @member {string} parentWinCountString
+ *   The parent win count string of the entity of the versus.
+ *
+ * @member {number} parentWinCount
+ *   The parent win count number of the entity of the versus. It is a 0-base integer.
  */
 class DEvolution_VersusId extends Recyclable.Root {
 
@@ -55,6 +62,8 @@ class DEvolution_VersusId extends Recyclable.Root {
 
   /** @override */
   disposeResources() {
+    this.parentWinCount = undefined;
+    this.parentWinCountString = undefined;
     this.offspringGenerationNo = undefined;
     this.offspringGenerationNoString = undefined;
     this.parentGenerationNo = undefined;
@@ -68,20 +77,19 @@ class DEvolution_VersusId extends Recyclable.Root {
   /**
    *
    * @param {string} versusIdString
-   *   The versus id string (e.g. EntityNo_ParentGenerationNo_OffspringGenerationNo).
+   *   The versus id string (e.g.
+   * EntityNo_ParentGenerationNo_OffspringGenerationNo_ParentWinCount).
    */
   set_byVersusIdString( versusIdString ) {
 
-    // Split the versus id inside. Got id of entity, parentGeneration,
-    // offspringGeneration.
+    // Split the versus id.
     //
-    //   EntityNo_ParentGenerationNo_OffspringGenerationNo
+    //   EntityNo_ParentGenerationNo_OffspringGenerationNo_ParentWinCount
     //
     // They are separated by underline (_).
     let versusId_parts = versusIdString.split(
-      DEvolution_VersusId
-        .EntityNo_ParentGenerationNo_OffspringGenerationNo_SplittingRegExp,
-      3 // Just parse three parts.
+      DEvolution_VersusId.SplittingRegExp,
+      4 // Just parse four parts.
     );
 
     this.versusIdString = versusIdString;
@@ -91,10 +99,8 @@ class DEvolution_VersusId extends Recyclable.Root {
     this.parentGenerationNo = Number.parseInt( this.parentGenerationNoString, 10 );
     this.offspringGenerationNoString = versusId_parts[ 2 ];
     this.offspringGenerationNo = Number.parseInt( this.offspringGenerationNoString, 10 );
-
-//!!! ...unfinished... (2022/11/02)
-// WinCount in versus id.
-
+    this.parentWinCountString = versusId_parts[ 3 ];
+    this.parentWinCount = Number.parseInt( this.parentWinCountString, 10 );
   }
 
   /**
@@ -116,14 +122,18 @@ class DEvolution_VersusId extends Recyclable.Root {
     if ( this.offspringGenerationNo < 0 ) // generation id is 0-base.
       return false;
 
+    if ( !NumberTools.isInteger( this.parentWinCount ) )
+      return false;
+    if ( this.parentWinCount < 0 ) // win count is 0-base.
+      return false;
+
     return true;
   }
 
 }
 
 /**
- * Regular expression for splitting ids of entity, parent generation,
- * offspring generation.
+ * Regular expression for splitting entity id, parent generation number,
+ * offspring generation number, parent win count.
  */
-DEvolution_VersusId.EntityNo_ParentGenerationNo_OffspringGenerationNo_SplittingRegExp
-  = RegExp( "_", "g" );
+DEvolution_VersusId.SplittingRegExp = RegExp( "_", "g" );

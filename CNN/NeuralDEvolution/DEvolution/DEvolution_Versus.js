@@ -21,8 +21,6 @@ import { VersusId } from "./DEvolution_VersusId.js";
  * @member {Uint8Array} offspringChromosomeUint8Array
  *   The offspring's chromosome of the entity of the versus.
  *
- * @member {number} winCount
- *   The parent chromosome's winCount of the entity of the versus.
  */
 class DEvolution_Versus extends Recyclable.Root {
 
@@ -52,7 +50,6 @@ class DEvolution_Versus extends Recyclable.Root {
   /** @override */
   disposeResources() {
 
-    this.winCount = undefined;
     this.offspringChromosomeUint8Array = undefined;
     this.parentChromosomeUint8Array = undefined;
 
@@ -91,7 +88,7 @@ class DEvolution_Versus extends Recyclable.Root {
    *
    * @yield {Promise( boolean )}
    *   - Yield a promise resolves to { value: true, done: true } when successfully.
-   *       The .versusId, .parentChromosome, .offspringChromosome and .winCount of
+   *       The .versusId, .parentChromosome, and .offspringChromosome of
    *       this will be set.
    *   - Yield a promise resolves to { value: false, done: true } when failed.
    */
@@ -101,7 +98,6 @@ class DEvolution_Versus extends Recyclable.Root {
     // 0.1
     this.parentChromosome = undefined;
     this.offspringChromosome = undefined;
-    this.winCount = undefined;
 
     // 0.2 Prepare progress.
     let progressRoot = progressParent.root_get();
@@ -110,7 +106,7 @@ class DEvolution_Versus extends Recyclable.Root {
       ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
 
     let progressToAdvance = progressParent.child_add(
-      ValueMax.Percentage.Concrete.Pool.get_or_create_by( 2 ) ); // versusId and winCount
+      ValueMax.Percentage.Concrete.Pool.get_or_create_by( 1 ) ); // versusId
   
     let progressForParentChromosome = progressParent.child_add(
       ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
@@ -137,7 +133,6 @@ class DEvolution_Versus extends Recyclable.Root {
     const COLUMN_ID_versusId = 0;
     const COLUMN_ID_parentChromosome = 1;
     const COLUMN_ID_offspringChromosome = 2;
-    const COLUMN_ID_winCount = 3;
 
     const Base64_skipLineCount = 0;
     const Base64_suspendByteCount = 1024 * 1024;
@@ -180,21 +175,6 @@ class DEvolution_Versus extends Recyclable.Root {
       this.offspringChromosomeUint8Array = yield* offspringChromosomeDecoder;
     }
 
-//!!! ...unfinished... (2022/11/02)
-// WinCount in versus id.
-
-    // 2.4 parent chromosome's winCount
-    {
-      // Every row of the column should have the same winCount string. Just take first one.
-      let winCountString = versusArrayArray[ COLUMN_ID_winCount ][ 0 ];
-      this.winCount = Number.parseInt( this.winCountString, 10 );
-      if ( !NumberTools.isInteger( this.winCount ) )
-        return false;
-
-      progressToAdvance.value_advance();
-      yield progressRoot;
-    }
-
     return true;
   }
 
@@ -205,7 +185,7 @@ class DEvolution_Versus extends Recyclable.Root {
    * @return {Promise( boolean )}
    *   Return a promise.
    *   - It will resolve to true, if succeed. The .versusId, .parentChromosome,
-   *       .offspringChromosome and .winCount of this will be set.
+   *       and .offspringChromosome of this will be set.
    *   - It will resolve to false, if failed.
    */
   async load_async(
