@@ -91,6 +91,10 @@ class DEvolution_VersusId extends Recyclable.Root {
     this.parentGenerationNo = Number.parseInt( this.parentGenerationNoString, 10 );
     this.offspringGenerationNoString = versusId_parts[ 2 ];
     this.offspringGenerationNo = Number.parseInt( this.offspringGenerationNoString, 10 );
+
+//!!! ...unfinished... (2022/11/02)
+// WinCount in versus id.
+
   }
 
   /**

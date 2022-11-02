@@ -180,6 +180,9 @@ class DEvolution_Versus extends Recyclable.Root {
       this.offspringChromosomeUint8Array = yield* offspringChromosomeDecoder;
     }
 
+//!!! ...unfinished... (2022/11/02)
+// WinCount in versus id.
+
     // 2.4 parent chromosome's winCount
     {
       // Every row of the column should have the same winCount string. Just take first one.
