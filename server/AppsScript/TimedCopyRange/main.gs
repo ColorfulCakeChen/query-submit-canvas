@@ -112,7 +112,7 @@ function GA4_run_report_() {
         },
       }
     };
-  }    
+  }
 
   const report = AnalyticsData.Properties.runReport( request,
     `properties/${propertyId}` );
