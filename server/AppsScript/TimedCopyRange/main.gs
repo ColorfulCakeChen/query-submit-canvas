@@ -95,6 +95,7 @@ function GA4_run_report_() {
       endDate: "yesterday"
     },
     //limit: maxRowCount,
+    keepEmptyRows: true, // For fetching ( itemsPurchased == 0 ) items.
   };
 
   // Add in-list-filter for itemName.
