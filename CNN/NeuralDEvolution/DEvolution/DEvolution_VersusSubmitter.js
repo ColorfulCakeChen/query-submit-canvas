@@ -98,6 +98,7 @@ class DEvolution_VersusSubmitter extends Recyclable.Root {
 
     let postBody = {
       client_id: this.client_id, // (e.g. "XXXXXXXXXX.YYYYYYYYYY")
+      non_personalized_ads: true, // Because this information is not personalized.
       events: [ eventPurchase  ]
     };
 
