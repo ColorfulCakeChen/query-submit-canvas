@@ -169,6 +169,9 @@ function* lineSkipper_fromUint8Array( progressToAdvance,
 
 
 //!!! ...unfinished... (2022/12/02)
+// Perhaps, nextYieldValue should be named as nextYieldByteCount?
+
+//!!! ...unfinished... (2022/12/02)
 
   let sourceByteLength = sourceUint8Array.length;
   let sourceBytes = sourceUint8Array;
@@ -281,10 +284,11 @@ function* decoder_fromUint8Array( progressParent,
 
 
 //!!! ...unfinished... (2022/12/02) Use lineSkipper_fromUint8Array() instead.
+
+//!!! ...unfinished... (2022/12/02)
+// Perhaps, nextYieldValue should be named as nextYieldByteCount?
     
-    
-    
-    
+
   // It is important that the nextYieldValue is not greater than source length, so
   // that it can be used as boundary checking to reduce checking times and increase
   // performance.
