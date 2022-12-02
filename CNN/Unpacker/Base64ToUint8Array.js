@@ -101,7 +101,7 @@ function* decoder_fromStringOrStringArray(
 }
 
 /**
- * Generator for Base64 decoding from an ArrayBufffer.
+ * Generator for Base64 decoding from an ArrayBuffer.
  *
  * @param {ValueMax.Percentage.Aggregate} progressParent
  *   Some new progressToAdvance will be created and added to progressParent. The
