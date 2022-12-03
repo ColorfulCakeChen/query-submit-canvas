@@ -9,13 +9,8 @@ import * as ValueMax from "../util/ValueMax.js";
 
 const base64String = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 
-// Mapping table for eecoding Uint6 (i.e. [ 0, 63 ]) to Base64 character.
-const Base64EncodeTable_Uint6_to_Char = new Array( 64 );
-{
-  for ( let i = 0; i < base64String.length; ++i ) {
-    Base64EncodeTable_Uint6_to_CharCodePoint[ i ] = base64String.charAt( i );
-  }
-}
+// Mapping table for encoding Uint6 (i.e. [ 0, 63 ]) to Base64 character.
+const Base64EncodeTable_Uint6_to_Char = [ ...base64String ];
 
 // Mapping table for decoding Base64 character (code point) to Uint6 (i.e. [ 0, 63 ]).
 //
