@@ -3,7 +3,7 @@ export { ArrayBuffer_to_Uint8Array };
 export { Uint8Array_to_Uint8Array };
 
 import * as ValueMax from "../../util/ValueMax.js";
-import * as Table from "./Base64_Table.js";
+import * as Constant from "./Base64_Constant.js";
 
 
 /**
