@@ -26,7 +26,7 @@ const Base64DecodeTable_CharCodePoint_to_Uint6 = new Array( 256 );
 
   // For all legal base64 codes, using value between [ 0, 63 ].
   {
-    for ( let i = 0; i < base64String.length; ++i ) {
+    for ( let i = 0; i < Base64EncodeTable_Uint6_to_Char.length; ++i ) {
       let char = Base64EncodeTable_Uint6_to_Char[ i ]
       let charCodePoint = char.codePointAt( 0 );
       Base64DecodeTable_CharCodePoint_to_Uint6[ charCodePoint ] = i;
