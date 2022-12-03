@@ -9,24 +9,27 @@ import * as ValueMax from "../util/ValueMax.js";
 
 const base64String = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 
-// Mapping table for encoding Uint6 (i.e. [ 0, 63 ]) to Base64 character.
+/** Mapping table for encoding Uint6 (i.e. [ 0, 63 ]) to Base64 character. */
 const Base64EncodeTable_Uint6_to_Char = [ ...base64String ];
 
-// Mapping table for decoding Base64 character (code point) to Uint6 (i.e. [ 0, 63 ]).
-//
-// (Note: Using Array is faster than using Uint8Array().)
+/**
+ * Mapping table for decoding Base64 character (code point between [ 0, 255 ])
+ * to Uint6 (i.e. [ 0, 63 ]).
+ *
+ * (Note: Using Array is faster than using Uint8Array.)
+ */
 const Base64DecodeTable_CharCodePoint_to_Uint6 = new Array( 256 );
 {
   // For all non-base64 codes, using value greater than 63 (i.e. impossible base64)
   // for identifying them.
-  for ( let i = 0; i < Base64DecodeTable_CharCodePoint_to_Uint6.length; ++i )
-    Base64DecodeTable_CharCodePoint_to_Uint6[ i ] = 255;
+  Base64DecodeTable_CharCodePoint_to_Uint6.fill( 255 );
 
   // For all legal base64 codes, using value between [ 0, 63 ].
   {
     for ( let i = 0; i < base64String.length; ++i ) {
-      let characterCodePoint = base64String.codePointAt( i );
-      Base64DecodeTable_CharCodePoint_to_Uint6[ characterCodePoint ] = i;
+      let char = Base64EncodeTable_Uint6_to_Char[ i ]
+      let charCodePoint = char.codePointAt( 0 );
+      Base64DecodeTable_CharCodePoint_to_Uint6[ charCodePoint ] = i;
     }
 
     // Support decoding URL-safe base64 strings, as Node.js does.
