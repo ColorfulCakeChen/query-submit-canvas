@@ -117,7 +117,6 @@ function* ArrayBuffer_to_Uint8Array( progressParent,
   return base64DecodedUint8Array;
 }
 
-
 /**
  * Generator for line skipping specified lines from an Uint8Array.
  *
@@ -144,9 +143,6 @@ function* ArrayBuffer_to_Uint8Array( progressParent,
  */
 function* lineSkipper_fromUint8Array( progressToAdvance,
   sourceUint8Array, skipLineCount, suspendByteCount ) {
-
-
-//!!! ...unfinished... (2022/12/02)
 
   let sourceByteLength = sourceUint8Array.length;
   let sourceBytes = sourceUint8Array;
@@ -258,63 +254,69 @@ function* Uint8Array_to_Uint8Array( progressParent,
     ValueMax.Percentage.Concrete.Pool.get_or_create_by( sourceByteLength ) );
 
 
-//!!! ...unfinished... (2022/12/02) Use lineSkipper_fromUint8Array() instead.
+//!!! (2022/12/03 Remarked) Use lineSkipper_fromUint8Array() instead.
+//
+//   // It is important that the nextYieldByteCount is not greater than source length,
+//   // so that it can be used as boundary checking to reduce checking times and increase
+//   // performance.
+//   let nextYieldByteCount
+//     = Math.min( sourceByteLength, progressToAdvance.value + suspendByteCount );
+//
+//   // 1. Skip specified lines.
+//   {
+//     let skippedLineCount = 0;
+//
+//     while ( progressToAdvance.value < sourceByteLength ) {
+//       if ( skippedLineCount >= skipLineCount )
+//         break;                  // Already skip enough lines.
+//
+//       // (This inner loop combines both source and yield boundary checking. Reduce
+//       // checking to increase performance.) 
+//       while ( progressToAdvance.value < nextYieldByteCount ) {
+//         if ( skippedLineCount >= skipLineCount )
+//           break;                // Already skip enough lines.
+//
+//         let rawByte = sourceBytes[ progressToAdvance.value ];
+//         progressToAdvance.value_advance();
+//
+//         if ( 13 == rawByte ) {  // "\r" (carriage return; CR)
+//           ++skippedLineCount;   // One line is skipped.
+//
+//           // If a LF follows a CR, it is considered as CRLF sequence and viewed as
+//           // the same one line.
+//           //
+//           // Note: It may exceed the nextYieldByteCount boundary. But it should not
+//           //       exceed sourceByteLength.
+//           if (   ( progressToAdvance.value < sourceByteLength )
+//               && ( 10 == sourceBytes[ progressToAdvance.value ] )
+//              ) { 
+//             progressToAdvance.value_advance(); // Skip it.
+//           }
+//
+//         } else {
+//           if ( 10 == rawByte )  // "\n" (new line; LF)
+//             ++skippedLineCount; // One line is skipped. 
+//         }
+//       }
+//
+//       // Every suspendByteCount, release CPU time (and report progress).
+//       if ( progressToAdvance.value >= nextYieldByteCount ) {
+//         nextYieldByteCount
+//           = Math.min( sourceByteLength, progressToAdvance.value + suspendByteCount );
+//         yield progressRoot;
+//       }
+//     }
+//   }
 
-//!!! ...unfinished... (2022/12/02)
-// Perhaps, nextYieldByteCount should be named as nextYieldByteCount?
-    
-
-  // It is important that the nextYieldByteCount is not greater than source length, so
-  // that it can be used as boundary checking to reduce checking times and increase
-  // performance.
-  let nextYieldByteCount
-    = Math.min( sourceByteLength, progressToAdvance.value + suspendByteCount );
 
   // 1. Skip specified lines.
-  {
-    let skippedLineCount = 0;
 
-    while ( progressToAdvance.value < sourceByteLength ) {
-      if ( skippedLineCount >= skipLineCount )
-        break;                  // Already skip enough lines.
+  // It is important that the nextYieldByteCount is not greater than source length,
+  // so that it can be used as boundary checking to reduce checking times and increase
+  // performance.
+  let nextYieldByteCount = lineSkipper_fromUint8Array( progressToAdvance,
+    sourceUint8Array, skipLineCount, suspendByteCount );
 
-      // (This inner loop combines both source and yield boundary checking. Reduce
-      // checking to increase performance.) 
-      while ( progressToAdvance.value < nextYieldByteCount ) {
-        if ( skippedLineCount >= skipLineCount )
-          break;                // Already skip enough lines.
-
-        let rawByte = sourceBytes[ progressToAdvance.value ];
-        progressToAdvance.value_advance();
-
-        if ( 13 == rawByte ) {  // "\r" (carriage return; CR)
-          ++skippedLineCount;   // One line is skipped.
-
-          // If a LF follows a CR, it is considered as CRLF sequence and viewed as
-          // the same one line.
-          //
-          // Note: It may exceed the nextYieldByteCount boundary. But it should not
-          //       exceed sourceByteLength.
-          if (   ( progressToAdvance.value < sourceByteLength )
-              && ( 10 == sourceBytes[ progressToAdvance.value ] )
-             ) { 
-            progressToAdvance.value_advance(); // Skip it.
-          }
-
-        } else {
-          if ( 10 == rawByte )  // "\n" (new line; LF)
-            ++skippedLineCount; // One line is skipped. 
-        }
-      }
-
-      // Every suspendByteCount, release CPU time (and report progress).
-      if ( progressToAdvance.value >= nextYieldByteCount ) {
-        nextYieldByteCount
-          = Math.min( sourceByteLength, progressToAdvance.value + suspendByteCount );
-        yield progressRoot;
-      }
-    }
-  }
 
   // 2. Decode.
 
