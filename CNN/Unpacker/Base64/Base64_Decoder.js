@@ -351,7 +351,7 @@ function* Uint8Array_to_Uint8Array( progressParent,
           if ( progressToAdvance.value >= sourceByteLength )
             break nextYieldLoop; // Decoding is done. (Ignore last non-4-bytes.)
 
-          encoded_0 = Table.Decode_CharCodePoint_to_Uint6[
+          encoded_0 = Constant.DecodeTable_CharCodePoint_to_Uint6[
             sourceBytes[ progressToAdvance.value ] ];
           progressToAdvance.value_advance();
         } while ( 255 === encoded_0 );
@@ -364,7 +364,7 @@ function* Uint8Array_to_Uint8Array( progressParent,
           if ( progressToAdvance.value >= sourceByteLength )
             break nextYieldLoop; // Decoding is done. (Ignore last non-4-bytes.)
 
-          encoded_1 = Table.Decode_CharCodePoint_to_Uint6[
+          encoded_1 = Constant.DecodeTable_CharCodePoint_to_Uint6[
             sourceBytes[ progressToAdvance.value ] ];
           progressToAdvance.value_advance();
         } while ( 255 === encoded_1 );
@@ -377,7 +377,7 @@ function* Uint8Array_to_Uint8Array( progressParent,
           if ( progressToAdvance.value >= sourceByteLength )
             break nextYieldLoop; // Decoding is done. (Ignore last non-4-bytes.)
 
-          encoded_2 = Table.Decode_CharCodePoint_to_Uint6[
+          encoded_2 = Constant.DecodeTable_CharCodePoint_to_Uint6[
             sourceBytes[ progressToAdvance.value ] ];
           progressToAdvance.value_advance();
         } while ( 255 === encoded_2 );
@@ -390,7 +390,7 @@ function* Uint8Array_to_Uint8Array( progressParent,
           if ( progressToAdvance.value >= sourceByteLength )
             break nextYieldLoop; // Decoding is done. (Ignore last non-4-bytes.)
 
-          encoded_3 = Table.Decode_CharCodePoint_to_Uint6[
+          encoded_3 = Constant.DecodeTable_CharCodePoint_to_Uint6[
             sourceBytes[ progressToAdvance.value ] ];
           progressToAdvance.value_advance();
         } while ( 255 === encoded_3 );
