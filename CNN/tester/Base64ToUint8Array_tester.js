@@ -1,6 +1,6 @@
 export { tester };
 
-import * as Base64ToUint8Array from "../Unpacker/Base64ToUint8Array.js";
+import * as Base64 from "../Unpacker/Base64.js";
 import * as RandTools from "../util/RandTools.js";
 import * as ScriptLoader from "../util/ScriptLoader.js";
 import * as ValueMax from "../util/ValueMax.js";
@@ -137,7 +137,7 @@ function* tester( progressParent ) {
     let testCase = testCases[ i ];
     let progressChild = progressParent.children[ i ];
 
-    let decoder = Base64ToUint8Array.decoder_fromStringOrStringArray( progressChild,
+    let decoder = Base64.Decoder.StringOrStringArray_to_Uint8Array( progressChild,
       testCase.source_String_or_StringArray, tEncoder,
       testCase.skipLineCount, testCase.suspendByteCount );
 

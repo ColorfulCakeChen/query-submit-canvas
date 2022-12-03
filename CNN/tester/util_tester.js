@@ -43,6 +43,8 @@ function test() {
 
   async function* testerAll() {
 
+    yield* Base64ToUint8Array_tester.tester( progress_Base64ToUint8Array_tester );
+
     {
       let bAscent_or_Descent;
       bAscent_or_Descent = false; // Descent
@@ -55,7 +57,6 @@ function test() {
      }
 
     yield* AsyncWorker_tester.tester( progress_AsyncWorker_tester );
-    yield* Base64ToUint8Array_tester.tester( progress_Base64ToUint8Array_tester );
     yield* GSheets_tester.tester( progress_GSheets_tester );
   }
 
