@@ -314,9 +314,10 @@ function* Uint8Array_to_Uint8Array( progressParent,
   // It is important that the nextYieldByteCount is not greater than source length,
   // so that it can be used as boundary checking to reduce checking times and increase
   // performance.
-  let nextYieldByteCount = lineSkipper_fromUint8Array( progressToAdvance,
+  let lineSkipper = lineSkipper_fromUint8Array( progressToAdvance,
     sourceBytes, skipLineCount, suspendByteCount );
 
+  let nextYieldByteCount = yield *lineSkipper;
 
   // 2. Decode.
 
