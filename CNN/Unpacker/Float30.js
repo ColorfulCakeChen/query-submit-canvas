@@ -1,4 +1,5 @@
 
+import * as Base64 from "./Base64.js";
 
 /**
  * This is a scheme for encoding a floating-point number by 5 Base64 (i.e.
@@ -29,9 +30,9 @@ const coder_exponent_digit_count = 1;
 
 /**
  * The offset for exponent (of BASE64 encoded floating-point number) becoming
- * signed integer between [ -32, +31 ]. It always is 32 (=BASE64_CODE_COUNT()/2).
+ * signed integer between [ -32, +31 ]. It always is 32 (=Base64.Constant.CodeCount/2).
  */
-const coder_exponent_offset_to_sign = 64 / 2;
+const coder_exponent_offset_to_sign = Base64.Constant.CodeCount / 2;
 
 
 
@@ -48,7 +49,8 @@ const coder_significand_digit_count = 4;
  * floating-point number to/from Base64 string. It always is 16777215.
  * (= ( 64 ** 4 ) - 1 )
  */
-const coder_significand_unsigned_max = ( 64 ** coder_significand_digit_count ) - 1;
+const coder_significand_unsigned_max
+  = ( Base64.Constant.CodeCount ** coder_significand_digit_count ) - 1;
 
 /**
  * The offset value for significand value becoming signed value when encode/decode
