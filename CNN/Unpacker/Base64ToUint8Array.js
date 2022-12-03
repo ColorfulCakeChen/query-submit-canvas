@@ -1,3 +1,6 @@
+export { Base64EncodeTable_Uint6_to_Char };
+export { Base64DecodeTable_CharCodePoint_to_Uint6 };
+
 export { decoder_fromStringOrStringArray };
 export { decoder_fromArrayBuffer };
 export { decoder_fromUint8Array };
@@ -6,25 +9,35 @@ import * as ValueMax from "../util/ValueMax.js";
 
 const base64String = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 
-// Mapping table for base64 (as Uint8) to index.
-let table_base64_Uint8_to_index = new Array( 256 ); // Faster than using Uint8Array().
+// Mapping table for eecoding Uint6 (i.e. [ 0, 63 ]) to Base64 character.
+const Base64EncodeTable_Uint6_to_Char = new Array( 64 );
+{
+  for ( let i = 0; i < base64String.length; ++i ) {
+    Base64EncodeTable_Uint6_to_CharCodePoint[ i ] = base64String.charAt( i );
+  }
+}
+
+// Mapping table for decoding Base64 character (code point) to Uint6 (i.e. [ 0, 63 ]).
+//
+// (Note: Using Array is faster than using Uint8Array().)
+const Base64DecodeTable_CharCodePoint_to_Uint6 = new Array( 256 );
 {
   // For all non-base64 codes, using value greater than 63 (i.e. impossible base64)
   // for identifying them.
-  for ( let i = 0; i < table_base64_Uint8_to_index.length; ++i )
-    table_base64_Uint8_to_index[ i ] = 255;
+  for ( let i = 0; i < Base64DecodeTable_CharCodePoint_to_Uint6.length; ++i )
+    Base64DecodeTable_CharCodePoint_to_Uint6[ i ] = 255;
 
   // For all legal base64 codes, using value between [ 0, 63 ].
   {
     for ( let i = 0; i < base64String.length; ++i ) {
-      let codePoint = base64String.codePointAt( i );
-      table_base64_Uint8_to_index[ codePoint ] = i; 
+      let characterCodePoint = base64String.codePointAt( i );
+      Base64DecodeTable_CharCodePoint_to_Uint6[ characterCodePoint ] = i;
     }
 
     // Support decoding URL-safe base64 strings, as Node.js does.
     // See: https://en.wikipedia.org/wiki/Base64#URL_applications
-    table_base64_Uint8_to_index[ "-".charCodeAt( 0 ) ] = 62;
-    table_base64_Uint8_to_index[ "_".charCodeAt( 0 ) ] = 63;
+    Base64DecodeTable_CharCodePoint_to_Uint6[ "-".charCodeAt( 0 ) ] = 62;
+    Base64DecodeTable_CharCodePoint_to_Uint6[ "_".charCodeAt( 0 ) ] = 63;
   }
 }
 
@@ -375,7 +388,7 @@ function* decoder_fromUint8Array( progressParent,
             break nextYieldLoop; // Decoding is done. (Ignore last non-4-bytes.)
 
           encoded_0
-            = table_base64_Uint8_to_index[ sourceBytes[ progressToAdvance.value ] ];
+            = Base64DecodeTable_CharCodePoint_to_Uint6[ sourceBytes[ progressToAdvance.value ] ];
           progressToAdvance.value_advance();
         } while ( 255 === encoded_0 );
 
@@ -388,7 +401,7 @@ function* decoder_fromUint8Array( progressParent,
             break nextYieldLoop; // Decoding is done. (Ignore last non-4-bytes.)
 
           encoded_1
-            = table_base64_Uint8_to_index[ sourceBytes[ progressToAdvance.value ] ];
+            = Base64DecodeTable_CharCodePoint_to_Uint6[ sourceBytes[ progressToAdvance.value ] ];
           progressToAdvance.value_advance();
         } while ( 255 === encoded_1 );
 
@@ -401,7 +414,7 @@ function* decoder_fromUint8Array( progressParent,
             break nextYieldLoop; // Decoding is done. (Ignore last non-4-bytes.)
 
           encoded_2
-            = table_base64_Uint8_to_index[ sourceBytes[ progressToAdvance.value ] ];
+            = Base64DecodeTable_CharCodePoint_to_Uint6[ sourceBytes[ progressToAdvance.value ] ];
           progressToAdvance.value_advance();
         } while ( 255 === encoded_2 );
 
@@ -414,7 +427,7 @@ function* decoder_fromUint8Array( progressParent,
             break nextYieldLoop; // Decoding is done. (Ignore last non-4-bytes.)
 
           encoded_3
-            = table_base64_Uint8_to_index[ sourceBytes[ progressToAdvance.value ] ];
+            = Base64DecodeTable_CharCodePoint_to_Uint6[ sourceBytes[ progressToAdvance.value ] ];
           progressToAdvance.value_advance();
         } while ( 255 === encoded_3 );
 
