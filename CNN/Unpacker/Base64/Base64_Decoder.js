@@ -140,14 +140,11 @@ function* ArrayBuffer_to_Uint8Array( progressParent,
  *   Yield ( value = progressToAdvance.root_get() ) when ( done = false ).
  *
  * @yield {number}
- *   Yield ( value = nextYieldValue ) when ( done = true ).
+ *   Yield ( value = nextYieldByteCount ) when ( done = true ).
  */
 function* lineSkipper_fromUint8Array( progressToAdvance,
   sourceUint8Array, skipLineCount, suspendByteCount ) {
 
-
-//!!! ...unfinished... (2022/12/02)
-// Perhaps, nextYieldValue should be named as nextYieldByteCount?
 
 //!!! ...unfinished... (2022/12/02)
 
@@ -157,10 +154,10 @@ function* lineSkipper_fromUint8Array( progressToAdvance,
   // Initialize progress.
   let progressRoot = progressToAdvance.root_get();
 
-  // It is important that the nextYieldValue is not greater than source length, so
-  // that it can be used as boundary checking to reduce checking times and increase
+  // It is important that the nextYieldByteCount is not greater than source length,
+  // so that it can be used as boundary checking to reduce checking times and increase
   // performance.
-  let nextYieldValue
+  let nextYieldByteCount
     = Math.min( sourceByteLength, progressToAdvance.value + suspendByteCount );
 
   // 1. Skip specified lines.
@@ -173,7 +170,7 @@ function* lineSkipper_fromUint8Array( progressToAdvance,
 
       // (This inner loop combines both source and yield boundary checking. Reduce
       // checking to increase performance.) 
-      while ( progressToAdvance.value < nextYieldValue ) {
+      while ( progressToAdvance.value < nextYieldByteCount ) {
         if ( skippedLineCount >= skipLineCount )
           break;                // Already skip enough lines.
 
@@ -186,7 +183,7 @@ function* lineSkipper_fromUint8Array( progressToAdvance,
           // If a LF follows a CR, it is considered as CRLF sequence and viewed as
           // the same one line.
           //
-          // Note: It may exceed the nextYieldValue boundary. But it should not
+          // Note: It may exceed the nextYieldByteCount boundary. But it should not
           //       exceed sourceByteLength.
           if (   ( progressToAdvance.value < sourceByteLength )
               && ( 10 == sourceBytes[ progressToAdvance.value ] )
@@ -201,15 +198,15 @@ function* lineSkipper_fromUint8Array( progressToAdvance,
       }
 
       // Every suspendByteCount, release CPU time (and report progress).
-      if ( progressToAdvance.value >= nextYieldValue ) {
-        nextYieldValue
+      if ( progressToAdvance.value >= nextYieldByteCount ) {
+        nextYieldByteCount
           = Math.min( sourceByteLength, progressToAdvance.value + suspendByteCount );
         yield progressRoot;
       }
     }
   }
 
-  return nextYieldValue;
+  return nextYieldByteCount;
 }
 
 /**
@@ -264,13 +261,13 @@ function* Uint8Array_to_Uint8Array( progressParent,
 //!!! ...unfinished... (2022/12/02) Use lineSkipper_fromUint8Array() instead.
 
 //!!! ...unfinished... (2022/12/02)
-// Perhaps, nextYieldValue should be named as nextYieldByteCount?
+// Perhaps, nextYieldByteCount should be named as nextYieldByteCount?
     
 
-  // It is important that the nextYieldValue is not greater than source length, so
+  // It is important that the nextYieldByteCount is not greater than source length, so
   // that it can be used as boundary checking to reduce checking times and increase
   // performance.
-  let nextYieldValue
+  let nextYieldByteCount
     = Math.min( sourceByteLength, progressToAdvance.value + suspendByteCount );
 
   // 1. Skip specified lines.
@@ -283,7 +280,7 @@ function* Uint8Array_to_Uint8Array( progressParent,
 
       // (This inner loop combines both source and yield boundary checking. Reduce
       // checking to increase performance.) 
-      while ( progressToAdvance.value < nextYieldValue ) {
+      while ( progressToAdvance.value < nextYieldByteCount ) {
         if ( skippedLineCount >= skipLineCount )
           break;                // Already skip enough lines.
 
@@ -296,7 +293,7 @@ function* Uint8Array_to_Uint8Array( progressParent,
           // If a LF follows a CR, it is considered as CRLF sequence and viewed as
           // the same one line.
           //
-          // Note: It may exceed the nextYieldValue boundary. But it should not
+          // Note: It may exceed the nextYieldByteCount boundary. But it should not
           //       exceed sourceByteLength.
           if (   ( progressToAdvance.value < sourceByteLength )
               && ( 10 == sourceBytes[ progressToAdvance.value ] )
@@ -311,8 +308,8 @@ function* Uint8Array_to_Uint8Array( progressParent,
       }
 
       // Every suspendByteCount, release CPU time (and report progress).
-      if ( progressToAdvance.value >= nextYieldValue ) {
-        nextYieldValue
+      if ( progressToAdvance.value >= nextYieldByteCount ) {
+        nextYieldByteCount
           = Math.min( sourceByteLength, progressToAdvance.value + suspendByteCount );
         yield progressRoot;
       }
@@ -336,7 +333,7 @@ function* Uint8Array_to_Uint8Array( progressParent,
 
       // (This inner loop combines both source and yield boundary checking. Reducing
       // checking to increase performance.) 
-      while ( progressToAdvance.value < nextYieldValue ) {
+      while ( progressToAdvance.value < nextYieldByteCount ) {
 
         // Extract 4 source bytes. (A decode unit consists of 4 base64 encoded source
         // bytes.)
@@ -347,7 +344,7 @@ function* Uint8Array_to_Uint8Array( progressParent,
 
         let encoded_0;
         do {
-          // Note: It may exceed the nextYieldValue boundary. But it should not
+          // Note: It may exceed the nextYieldByteCount boundary. But it should not
           //       exceed sourceByteLength.
           if ( progressToAdvance.value >= sourceByteLength )
             break nextYieldLoop; // Decoding is done. (Ignore last non-4-bytes.)
@@ -360,7 +357,7 @@ function* Uint8Array_to_Uint8Array( progressParent,
 
         let encoded_1;
         do {
-          // Note: It may exceed the nextYieldValue boundary. But it should not
+          // Note: It may exceed the nextYieldByteCount boundary. But it should not
           //       exceed sourceByteLength.
           if ( progressToAdvance.value >= sourceByteLength )
             break nextYieldLoop; // Decoding is done. (Ignore last non-4-bytes.)
@@ -373,7 +370,7 @@ function* Uint8Array_to_Uint8Array( progressParent,
 
         let encoded_2;
         do {
-          // Note: It may exceed the nextYieldValue boundary. But it should not
+          // Note: It may exceed the nextYieldByteCount boundary. But it should not
           //       exceed sourceByteLength.
           if ( progressToAdvance.value >= sourceByteLength )
             break nextYieldLoop; // Decoding is done. (Ignore last non-4-bytes.)
@@ -386,7 +383,7 @@ function* Uint8Array_to_Uint8Array( progressParent,
 
         let encoded_3;
         do {
-          // Note: It may exceed the nextYieldValue boundary. But it should not
+          // Note: It may exceed the nextYieldByteCount boundary. But it should not
           //       exceed sourceByteLength.
           if ( progressToAdvance.value >= sourceByteLength )
             break nextYieldLoop; // Decoding is done. (Ignore last non-4-bytes.)
@@ -403,8 +400,8 @@ function* Uint8Array_to_Uint8Array( progressParent,
       }
 
       // Every suspendByteCount, release CPU time (and report progress).
-      if ( progressToAdvance.value >= nextYieldValue ) {
-        nextYieldValue
+      if ( progressToAdvance.value >= nextYieldByteCount ) {
+        nextYieldByteCount
           = Math.min( sourceByteLength, progressToAdvance.value + suspendByteCount );
         yield progressRoot;
       }
