@@ -29,10 +29,10 @@ function test() {
   let progress_GSheets_tester = progress.child_add(
     ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
 
-  let progress_AsyncWorker_tester = progress.child_add(
-    ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
-
 //!!! (2022/12/03 Temp Remarked) For speed up Base64 testing.
+  // let progress_AsyncWorker_tester = progress.child_add(
+  //   ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
+  //
   //let progress_NeuralWorker_tester_cpu = progress.child_add(
   //  ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
   //
