@@ -315,7 +315,7 @@ function* Uint8Array_to_Uint8Array( progressParent,
   // so that it can be used as boundary checking to reduce checking times and increase
   // performance.
   let nextYieldByteCount = lineSkipper_fromUint8Array( progressToAdvance,
-    sourceBase64Uint8Array, skipLineCount, suspendByteCount );
+    sourceBytes, skipLineCount, suspendByteCount );
 
 
   // 2. Decode.
