@@ -1,7 +1,6 @@
-
-export { decoder_fromStringOrStringArray };
-export { decoder_fromArrayBuffer };
-export { decoder_fromUint8Array };
+export { StringOrStringArray_to_Uint8Array };
+export { ArrayBuffer_to_Uint8Array };
+export { Uint8Array_to_Uint8Array };
 
 import * as ValueMax from "../../util/ValueMax.js";
 import * as Table from "./Base64_Table.js";
@@ -38,7 +37,7 @@ import * as Table from "./Base64_Table.js";
  * @yield {Uint8Array}
  *   Yield ( value = decoded data as Uint8Array ) when ( done = true ).
  */
-function* decoder_fromStringOrStringArray(
+function* StringOrStringArray_to_Uint8Array(
   progressParent,
   sourceBase64Encoded_String_or_StringArray, textEncoder,
   skipLineCount, suspendByteCount
@@ -72,7 +71,7 @@ function* decoder_fromStringOrStringArray(
   progressToAdvance.value_advance(); // 25%
   yield progressRoot;
 
-  let base64Decoder = decoder_fromUint8Array( progressParentNew,
+  let base64Decoder = Uint8Array_to_Uint8Array( progressParentNew,
     base64EncodedUint8Array, skipLineCount, suspendByteCount );
 
   let base64DecodedUint8Array = yield *base64Decoder;
@@ -107,11 +106,11 @@ function* decoder_fromStringOrStringArray(
  * @yield {Uint8Array}
  *   Yield ( value = decoded data as Uint8Array ) when ( done = true ).
  */
-function* decoder_fromArrayBuffer( progressParent,
+function* ArrayBuffer_to_Uint8Array( progressParent,
   sourceBase64ArrayBuffer, skipLineCount, suspendByteCount ) {
 
   let sourceBase64Uint8Array = new Uint8Array( sourceBase64ArrayBuffer );
-  let base64Decoder = decoder_fromUint8Array( progressParent,
+  let base64Decoder = Uint8Array_to_Uint8Array( progressParent,
     sourceBase64Uint8Array, skipLineCount, suspendByteCount );
 
   let base64DecodedUint8Array = yield *base64Decoder;
@@ -241,7 +240,7 @@ function* lineSkipper_fromUint8Array( progressToAdvance,
  * @yield {Uint8Array}
  *   Yield ( value = decoded data as Uint8Array ) when ( done = true ).
  */
-function* decoder_fromUint8Array( progressParent,
+function* Uint8Array_to_Uint8Array( progressParent,
   sourceBase64Uint8Array, skipLineCount, suspendByteCount ) {
 
   // 0. Initialize.
