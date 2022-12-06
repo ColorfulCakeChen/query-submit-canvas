@@ -28,10 +28,8 @@ export {
   UsePositiveMin
 };  
 
-export { ScientificNotation_Exponent };
-export { from_SignificandSigned_ExponentSignedCorrected };
-
 import * as Base64 from "./Base64.js";
+import * as Float30_Util from "./Float30_Util.js";
 
 /**
  * @file This is a scheme for encoding a floating-point number by 5 Base64 (i.e.
@@ -82,10 +80,10 @@ const CoderSignificandOffsetToSign = Math.ceil( CoderSignificandUnsignedMax / 2 
  * The exponent for the offset value for significand value becoming signed value
  * when encode/decode 30-bits floating-point number to/from Base64 string.
  * It always is 6
- * (= ScientificNotation_Exponent( Float30.Constant.CoderSignificandOffsetToSign ) )
+ * (= Float30_Util.ScientificNotation_Exponent( Float30.Constant.CoderSignificandOffsetToSign ) )
  */
 const CoderSignificandOffsetToSignedExponent
-  = ScientificNotation_Exponent( CoderSignificandOffsetToSign );
+  = Float30_Util.ScientificNotation_Exponent( CoderSignificandOffsetToSign );
 
 
 /**
@@ -180,7 +178,7 @@ const UseSignificandPositiveMaxMore = 10 ** Float30.Constant.UseSignificandDigit
  * actual use.
  *
  * It always is 9.9999900000000000E+031
- * (= Float30.Constant.from_SignificandSigned_ExponentSignedCorrected(
+ * (= Float30_Util.from_SignificandSigned_ExponentSignedCorrected(
  *      Float30.Constant.UseSignificandPositiveMax,
  *      Float30.Constant.UseExponentPositiveMax
  *        - Float30.Constant.UseSignificandFractionDigitCount))
@@ -199,13 +197,13 @@ const UsePositiveMax
  * The extra value is small but representable by floating-point number.
  *
  * It always is  1.0000000000000000E+032
- * (= Float30.Constant.from_SignificandSigned_ExponentSignedCorrected(
+ * (= Float30.Util.from_SignificandSigned_ExponentSignedCorrected(
  *      Float30.Constant.UseSignificandPositiveMaxMore,
  *      Float30.Constant.UseExponentPositiveMax
  *        - Float30.Constant.UseSignificandFractionDigitCount))
  */
 const UsePositiveMaxMore
-  = from_SignificandSigned_ExponentSignedCorrected(
+  = Float30_Util.from_SignificandSigned_ExponentSignedCorrected(
       UseSignificandPositiveMaxMore,
         UseExponentPositiveMax - UseSignificandFractionDigitCount );
   
@@ -214,62 +212,9 @@ const UsePositiveMaxMore
  * actual use.
  *
  * It always is 1.0000000000000000E-031
- * (= Float30.Constant.from_SignificandSigned_ExponentSignedCorrected(
+ * (= Float30.Util.from_SignificandSigned_ExponentSignedCorrected(
  *      1, -Float30.Constant.UseExponentPositiveMax ) )
  */
 const UsePositiveMin
-  = from_SignificandSigned_ExponentSignedCorrected( 1, -UseExponentPositiveMax );
-
-
-/**
- * For example, ScientificNotation_Exponent( -0.25 ) = -1
- *
- * @param {number} aNumber
- *   The number to be found out its exponent.
- *
- * @return {integer}
- *   Return an integer representing the exponent of the specified number when the
- * number is represented in normalized scientific notation (i.e. exponential notation).
- */
-function ScientificNotation_Exponent( aNumber ) {
-  if ( aNumber === 0 )
-    return 0; // For avoiding Math.log10( 0 ) which is -Infinity.
-
-  let exponent = Math.floor(
-    Math.log10(
-      Math.abs( aNumber ) // Because Math.log10() can not accept negative value.
-    )
-  );
-
-  return exponent;
-}
-
-
-/**
- * Generate a 30-bits floating-point number by a signed significand and a signed
- * and corrected exponent.
- *
- * @param {integer} significand_signed_n999999_p999999
- *   An signed (i.e. already minus Float30.Constant.CoderSignificandOffsetToSign)
- * integer representing significand value. It should be between [ -999999, 999999 ]
- * = [ -Float30.Constant.UseSignificandPositiveMax,
- * Float30.Constant.UseSignificandPositiveMax ].
- *
- * @param {integer} exponent_signed_n36_p26
- *   An signed (i.e. already minus Float30.Constant.CoderExponentOffsetToSign) and
- * corrected (i.e. already minus Float30.Constant.UseSignificandFractionDigitCount)
- * integer representing exponent value. It should be between [ -36, 26 ]
- * = [
- * -Float30.Constant.UseExponentPositiveMax
- *    - Float30.Constant.UseSignificandFractionDigitCount,
- *  Float30.Constant.UseExponentPositiveMax
- *    - Float30.Constant.UseSignificandFractionDigitCount
- * ]
- * = [ -31 - 5, 31 - 5 ].
- *
- */
-function from_SignificandSigned_ExponentSignedCorrected(
-  significand_signed_n999999_p999999, exponent_signed_n36_p26 ) {
-  return significand_signed_n999999_p999999 * (10 ** exponent_signed_n36_p26 );
-}
-
+  = Float30_Util.from_SignificandSigned_ExponentSignedCorrected(
+      1, -UseExponentPositiveMax );
