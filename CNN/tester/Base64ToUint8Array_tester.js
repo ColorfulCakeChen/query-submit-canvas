@@ -2,7 +2,6 @@ export { tester };
 
 import * as Base64 from "../Unpacker/Base64.js";
 import * as RandTools from "../util/RandTools.js";
-import * as ScriptLoader from "../util/ScriptLoader.js";
 import * as ValueMax from "../util/ValueMax.js";
 
 // This string will not fit to ASCII when base64 decoded. So can not be used to test. 
