@@ -5,17 +5,60 @@ import * as Float30 from "../Unpacker/Float30.js";
 //import * as RandTools from "../util/RandTools.js";
 import * as ValueMax from "../util/ValueMax.js";
 
+/** */
+class TestCase_Float30_Constant{
+  constructor( constantName, constantValue ) {
+    this.name = constantName;
+    this.value = constantValue;
+  }
+}
 
 /** */
-function testerConstant( progressParent ) {
+const Float30_Constant_Table = [
+  new TestCase_Float30_Constant( "CoderExponentDigitCount", ),
+  new TestCase_Float30_Constant( "CoderExponentOffsetToSign", ),
+  new TestCase_Float30_Constant( "CoderSignificandDigitCount", ),
+  new TestCase_Float30_Constant( "CoderSignificandUnsignedMax", ),
+  new TestCase_Float30_Constant( "CoderSignificandOffsetToSign", ),
+  new TestCase_Float30_Constant( "CoderSignificandOffsetToSignedExponent", ),
 
+  new TestCase_Float30_Constant( "StringSignificandCharCount", ),
+  new TestCase_Float30_Constant( "StringExponentCharCount", ),
+  new TestCase_Float30_Constant( "StringCharCount", ),
+  new TestCase_Float30_Constant( "NextStringCharCount", ),
+
+  new TestCase_Float30_Constant( "UseExponentPositiveMax", ),
+  new TestCase_Float30_Constant( "UseExponentPositiveMaxMore", ),
+
+  new TestCase_Float30_Constant( "UseSignificandDigitCount", ),
+  new TestCase_Float30_Constant( "UseSignificandFractionDigitCount", ),
+  new TestCase_Float30_Constant( "UseSignificandPositiveMax", ),
+  new TestCase_Float30_Constant( "UseSignificandPositiveMaxMore", ),
+
+  new TestCase_Float30_Constant( "UsePositiveMax", ),
+  new TestCase_Float30_Constant( "UsePositiveMaxMore", ),
+  new TestCase_Float30_Constant( "UsePositiveMin", ),
+];
+
+/** */
+function testerFloat30Constant( progressParent ) {
+
+  let progressRoot = progressParent.root_get();
   let progressToAdvance = progressParent.child_add(
-    ValueMax.Percentage.Concrete.Pool.get_or_create_by( 1 ) );
+    ValueMax.Percentage.Concrete.Pool.get_or_create_by( Float30_Constant_Table.length ) );
 
 //!!! ...unfinished... (2022/12/06)
+  for ( let i = 0; i < Float30_Constant_Table.length; ++i ) {
+    let testCase = Float30_Constant_Table[ i ];
+    if ( Float30.Constant[ testCase.name ] != testCase.value )
+      throw Error( `testerFloat30Constant(): `
+        + `Float30.Constant${testCase.name} ( ${Float30.Constant[ testCase.name ]} ) `
+        + `should be ( ${testCase.value} ).`
+      );
 
-
-  progressToAdvance.value_advance();
+    progressToAdvance.value_advance();
+    yield progressRoot;
+  }
 }
 
 /**
@@ -42,7 +85,7 @@ function* tester( progressParent ) {
     = progressParent.child_add( ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
 
   // 1.
-  yield *testerConstant( progressConstant );
+  yield *testerFloat30Constant( progressConstant );
 
   console.log( "Float30 decode testing... Done." );
 }
