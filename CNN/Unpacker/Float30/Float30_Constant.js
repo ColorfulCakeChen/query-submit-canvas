@@ -1,3 +1,4 @@
+export { ScientificNotation_Exponent };
 
 import * as Base64 from "./Base64.js";
 
@@ -54,12 +55,10 @@ const CoderSignificandOffsetToSign = Math.ceil( CoderSignificandUnsignedMax / 2 
  * The exponent for the offset value for significand value becoming signed value
  * when encode/decode 30-bits floating-point number to/from Base64 string.
  * It always is 6
-
-//!!! ...unfinished... (2022/12/06)
-
- * (= SCIENTIFIC_NOTATION_EXPONENT( Float30.Constant.CoderSignificandOffsetToSign ) )
+ * (= ScientificNotation_Exponent( Float30.Constant.CoderSignificandOffsetToSign ) )
  */
-const CoderSignificandOffsetToSignedExponent = ;
+const CoderSignificandOffsetToSignedExponent
+  = ScientificNotation_Exponent( CoderSignificandOffsetToSign );
 
 
 /**
@@ -191,3 +190,27 @@ const UseSignificandPositiveMax = UseSignificandPositiveMaxMore - 1;
  */
 const UseSignificandPositiveMaxMore = 10 ** Float30.Constant.UseSignificandDigitCount;
 
+
+
+/**
+ * For example, ScientificNotation_Exponent( -0.25 ) = -1
+ *
+ * @param {number} aNumber
+ *   The number to be found out its exponent.
+ *
+ * @return {integer}
+ *   Return an integer representing the exponent of the specified number when the
+ * number is represented in normalized scientific notation (i.e. exponential notation).
+ */
+function ScientificNotation_Exponent( aNumber ) {
+  if ( aNumber === 0 )
+    return 0; // For avoiding Math.log10( 0 ) which is -Infinity.
+
+  let exponent = Math.floor(
+    Math.log10(
+      Math.abs( aNumber ) // Because Math.log10() can not accept negative value.
+    )
+  );
+
+  return exponent;
+}
