@@ -106,20 +106,58 @@ const UseExponentPositiveMax = Base64.Constant.ValueDecodedMax - CoderExponentOf
  */
 const UseExponentPositiveMaxMore = UseExponentPositiveMax + 1;
 
+
+/**
+ * The digit count of the significand value in actual use. It always is 6
+ * (= Float30.Constant.CoderSignificandOffsetToSignedExponent)
+ */
+const UseSignificandDigitCount = CoderSignificandOffsetToSignedExponent;
+
+ /**
+  * The digit count of the fraction (i.e. below the decimal point) of the significand
+  * value in actual use.
+  *
+  * The signed significand is an integer but should be viewed as a floating-point
+  * number with this (10-base) exponent.
+  *
+   * It always is 5 (= Float30.Constant.CoderSignificandOffsetToSignedExponent - 1 )
+  */
+const UseSignificandFractionDigitCount = CoderSignificandOffsetToSignedExponent - 1;
+ 
+ /**
+  * The maximum positive value of the significand value of Base64 encoded 30-bits
+  * floating-point number in actual use.
+  *
+  * It always is 999999 (= Float30.Constant.UseSignificandPositiveMaxMore - 1 )
+  */
+const UseSignificandPositiveMax = UseSignificandPositiveMaxMore - 1;
+ 
+ /**
+  * A number which is a little larger than the maximum positive value of the significand
+  * value of Base64 encoded 30-bits floating-point number in actual use.
+  *
+  * It is mainly used for restricting a value not exceeding
+  * Float30.Constant.UseSignificandPositiveMax.
+  *
+  * It always is 1000000 (= 10 ** Float30.Constant.UseSignificandDigitCount)
+  */
+const UseSignificandPositiveMaxMore = 10 ** Float30.Constant.UseSignificandDigitCount;
+ 
+ 
 /**
  * The maximum positive value of Base64 encoded 30-bits floating-point number in
  * actual use.
  *
  * It always is 9.9999900000000000E+031
-
-//!!! ...unfinished... (2022/12/06)
-
- * (= FLOAT30_FROM__SIGNIFICAND_SIGNED__EXPONENT_SIGNED_CORRECTED(
- *      Float30.Constant.USE_SIGNIFICAND_POSITIVE_MAX(),
+ * (= Float30.Constant.from_SignificandSigned_ExponentSignedCorrected(
+ *      Float30.Constant.UseSignificandPositiveMax,
  *      Float30.Constant.UseExponentPositiveMax
- *        - Float30.Constant.USE_SIGNIFICAND_FRACTION_DIGIT_COUNT()))
+ *        - Float30.Constant.UseSignificandFractionDigitCount))
  */
-const UsePositiveMax = ;
+const UsePositiveMax
+  = from_SignificandSigned_ExponentSignedCorrected(
+      UseSignificandPositiveMax,
+        UseExponentPositiveMax - UseSignificandFractionDigitCount );
 
 /**
  * A number which is a little larger than the maximum positive value of 30-bits
@@ -130,62 +168,26 @@ const UsePositiveMax = ;
  * The extra value is small but representable by floating-point number.
  *
  * It always is  1.0000000000000000E+032
-
-//!!! ...unfinished... (2022/12/06)
-
- * (= FLOAT30_FROM__SIGNIFICAND_SIGNED__EXPONENT_SIGNED_CORRECTED(
- *      Float30.Constant.USE_SIGNIFICAND_POSITIVE_MAX_MORE(),
+ * (= Float30.Constant.from_SignificandSigned_ExponentSignedCorrected(
+ *      Float30.Constant.UseSignificandPositiveMaxMore,
  *      Float30.Constant.UseExponentPositiveMax
- *        - Float30.Constant.USE_SIGNIFICAND_FRACTION_DIGIT_COUNT()))
+ *        - Float30.Constant.UseSignificandFractionDigitCount))
  */
-const UsePositiveMaxMore = ;
-
+const UsePositiveMaxMore
+  = from_SignificandSigned_ExponentSignedCorrected(
+      UseSignificandPositiveMaxMore,
+        UseExponentPositiveMax - UseSignificandFractionDigitCount );
+  
 /**
  * The minimum positive value of Base64 encoded 30-bits floating-point number in
  * actual use.
  *
  * It always is 1.0000000000000000E-031
- * (= FLOAT30_FROM__SIGNIFICAND_SIGNED__EXPONENT_SIGNED_CORRECTED(
- *      1, -UseExponentPositiveMax ) )
+ * (= Float30.Constant.from_SignificandSigned_ExponentSignedCorrected(
+ *      1, -Float30.Constant.UseExponentPositiveMax ) )
  */
-const UsePositiveMin = ;
-
-/**
- * The digit count of the significand value in actual use. It always is 6
- * (= Float30.Constant.CoderSignificandOffsetToSignedExponent)
- */
-const UseSignificandDigitCount = CoderSignificandOffsetToSignedExponent;
-
-/**
- * The digit count of the fraction (i.e. below the decimal point) of the significand
- * value in actual use.
- *
- * The signed significand is an integer but should be viewed as a floating-point
- * number with this (10-base) exponent.
- *
-  * It always is 5 (= Float30.Constant.CoderSignificandOffsetToSignedExponent - 1 )
- */
-const UseSignificandFractionDigitCount = CoderSignificandOffsetToSignedExponent - 1;
-
-/**
- * The maximum positive value of the significand value of Base64 encoded 30-bits
- * floating-point number in actual use.
- *
- * It always is 999999 (= Float30.Constant.UseSignificandPositiveMaxMore - 1 )
- */
-const UseSignificandPositiveMax = UseSignificandPositiveMaxMore - 1;
-
-/**
- * A number which is a little larger than the maximum positive value of the significand
- * value of Base64 encoded 30-bits floating-point number in actual use.
- *
- * It is mainly used for restricting a value not exceeding
- * Float30.Constant.UseSignificandPositiveMax.
- *
- * It always is 1000000 (= 10 ** Float30.Constant.UseSignificandDigitCount)
- */
-const UseSignificandPositiveMaxMore = 10 ** Float30.Constant.UseSignificandDigitCount;
-
+const UsePositiveMin
+  = from_SignificandSigned_ExponentSignedCorrected( 1, -UseExponentPositiveMax );
 
 
 /**
@@ -232,7 +234,7 @@ function ScientificNotation_Exponent( aNumber ) {
  * = [ -31 - 5, 31 - 5 ].
  *
  */
-function from__SignificandSigned__ExponentSignedCorrected(
+function from_SignificandSigned_ExponentSignedCorrected(
   significand_signed_n999999_p999999,
   exponent_signed_n36_p26
 ) {
