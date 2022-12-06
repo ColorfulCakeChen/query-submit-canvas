@@ -2,7 +2,7 @@
 import * as Base64 from "./Base64.js";
 
 /**
- * This is a scheme for encoding a floating-point number by 5 Base64 (i.e.
+ * @file This is a scheme for encoding a floating-point number by 5 Base64 (i.e.
  * Uint6 [ 0, 63 ]) characters.
  *
  * Because 30 bits (= 5 * 6 bits ) are used to representing a floating-point
@@ -11,16 +11,8 @@ import * as Base64 from "./Base64.js";
  *   - The first 4 Base64 characters represents significand.
  *   - The last Base64 character represents exponent.
  *
- *
- *
- *
  */
 
-
-//!!! ...unfinished... (2022/12/03)
-
-
-//const use_significand_fraction_digit_count = ???;
 
 /**
  * The digit count of exponent value when encode/decode 30-bits floating-point
@@ -168,4 +160,34 @@ const UsePositiveMin = ;
  * (= Float30.Constant.CoderSignificandOffsetToSignedExponent)
  */
 const UseSignificandDigitCount = CoderSignificandOffsetToSignedExponent;
+
+/**
+ * The digit count of the fraction (i.e. below the decimal point) of the significand
+ * value in actual use.
+ *
+ * The signed significand is an integer but should be viewed as a floating-point
+ * number with this (10-base) exponent.
+ *
+  * It always is 5 (= Float30.Constant.CoderSignificandOffsetToSignedExponent - 1 )
+ */
+const UseSignificandFractionDigitCount = CoderSignificandOffsetToSignedExponent - 1;
+
+/**
+ * The maximum positive value of the significand value of Base64 encoded 30-bits
+ * floating-point number in actual use.
+ *
+ * It always is 999999 (= Float30.Constant.UseSignificandPositiveMaxMore - 1 )
+ */
+const UseSignificandPositiveMax = UseSignificandPositiveMaxMore - 1;
+
+/**
+ * A number which is a little larger than the maximum positive value of the significand
+ * value of Base64 encoded 30-bits floating-point number in actual use.
+ *
+ * It is mainly used for restricting a value not exceeding
+ * Float30.Constant.UseSignificandPositiveMax.
+ *
+ * It always is 1000000 (= 10 ** Float30.Constant.UseSignificandDigitCount)
+ */
+const UseSignificandPositiveMaxMore = 10 ** Float30.Constant.UseSignificandDigitCount;
 
