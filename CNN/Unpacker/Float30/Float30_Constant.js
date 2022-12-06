@@ -58,6 +58,17 @@ const CoderSignificandUnsignedMax
  */
 const CoderSignificandOffsetToSign = Math.ceil( CoderSignificandUnsignedMax / 2 );
 
+/**
+ * The exponent for the offset value for significand value becoming signed value
+ * when encode/decode 30-bits floating-point number to/from Base64 string.
+ * It always is 6
+
+//!!! ...unfinished... (2022/12/06)
+
+ * (= SCIENTIFIC_NOTATION_EXPONENT( Float30.Constant.CoderSignificandOffsetToSign ) )
+ */
+const CoderSignificandOffsetToSignedExponent = ;
+
 
 /**
  * The distance (i.e. character count) to the next BASE64 encoded 30-bits 
@@ -113,8 +124,48 @@ const UseExponentPositiveMaxMore = UseExponentPositiveMax + 1;
  * actual use.
  *
  * It always is 9.9999900000000000E+031
- * (=FLOAT30_FROM__SIGNIFICAND_SIGNED__EXPONENT_SIGNED_CORRECTED(FLOAT30_USE_SIGNIFICAND_POSITIVE_MAX(),FLOAT30_USE_EXPONENT_POSITIVE_MAX()-FLOAT30_USE_SIGNIFICAND_FRACTION_DIGIT_COUNT()))
+
+//!!! ...unfinished... (2022/12/06)
+
+ * (= FLOAT30_FROM__SIGNIFICAND_SIGNED__EXPONENT_SIGNED_CORRECTED(
+ *      Float30.Constant.USE_SIGNIFICAND_POSITIVE_MAX(),
+ *      Float30.Constant.UseExponentPositiveMax
+ *        - Float30.Constant.USE_SIGNIFICAND_FRACTION_DIGIT_COUNT()))
  */
 const UsePositiveMax = ;
 
+/**
+ * A number which is a little larger than the maximum positive value of 30-bits
+ * floating-point number.
+ *
+ * It is mainly used for restricting a value not exceeding Float30.Constant.UsePositiveMax.
+ *
+ * The extra value is small but representable by floating-point number.
+ *
+ * It always is  1.0000000000000000E+032
+
+//!!! ...unfinished... (2022/12/06)
+
+ * (= FLOAT30_FROM__SIGNIFICAND_SIGNED__EXPONENT_SIGNED_CORRECTED(
+ *      Float30.Constant.USE_SIGNIFICAND_POSITIVE_MAX_MORE(),
+ *      Float30.Constant.UseExponentPositiveMax
+ *        - Float30.Constant.USE_SIGNIFICAND_FRACTION_DIGIT_COUNT()))
+ */
+const UsePositiveMaxMore = ;
+
+/**
+ * The minimum positive value of Base64 encoded 30-bits floating-point number in
+ * actual use.
+ *
+ * It always is 1.0000000000000000E-031
+ * (= FLOAT30_FROM__SIGNIFICAND_SIGNED__EXPONENT_SIGNED_CORRECTED(
+ *      1, -UseExponentPositiveMax ) )
+ */
+const UsePositiveMin = ;
+
+/**
+ * The digit count of the significand value in actual use. It always is 6
+ * (= Float30.Constant.CoderSignificandOffsetToSignedExponent)
+ */
+const UseSignificandDigitCount = CoderSignificandOffsetToSignedExponent;
 
