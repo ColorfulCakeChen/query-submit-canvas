@@ -15,29 +15,30 @@ class TestCase_Float30_Constant{
 
 /** */
 const Float30_Constant_Table = [
-  new TestCase_Float30_Constant( "CoderExponentDigitCount", ),
-  new TestCase_Float30_Constant( "CoderExponentOffsetToSign", ),
-  new TestCase_Float30_Constant( "CoderSignificandDigitCount", ),
-  new TestCase_Float30_Constant( "CoderSignificandUnsignedMax", ),
-  new TestCase_Float30_Constant( "CoderSignificandOffsetToSign", ),
-  new TestCase_Float30_Constant( "CoderSignificandOffsetToSignedExponent", ),
+  new TestCase_Float30_Constant( "CoderExponentDigitCount", 1 ),
+  new TestCase_Float30_Constant( "CoderExponentOffsetToSign", 32 ),
 
-  new TestCase_Float30_Constant( "StringSignificandCharCount", ),
-  new TestCase_Float30_Constant( "StringExponentCharCount", ),
-  new TestCase_Float30_Constant( "StringCharCount", ),
-  new TestCase_Float30_Constant( "NextStringCharCount", ),
+  new TestCase_Float30_Constant( "CoderSignificandDigitCount", 4 ),
+  new TestCase_Float30_Constant( "CoderSignificandUnsignedMax", 16777215 ),
+  new TestCase_Float30_Constant( "CoderSignificandOffsetToSign", 8388608 ),
+  new TestCase_Float30_Constant( "CoderSignificandOffsetToSignedExponent", 6 ),
 
-  new TestCase_Float30_Constant( "UseExponentPositiveMax", ),
-  new TestCase_Float30_Constant( "UseExponentPositiveMaxMore", ),
+  new TestCase_Float30_Constant( "StringSignificandCharCount", 4 ),
+  new TestCase_Float30_Constant( "StringExponentCharCount", 1 ),
+  new TestCase_Float30_Constant( "StringCharCount", 5 ),
+  new TestCase_Float30_Constant( "NextStringCharCount", 5 ),
 
-  new TestCase_Float30_Constant( "UseSignificandDigitCount", ),
-  new TestCase_Float30_Constant( "UseSignificandFractionDigitCount", ),
-  new TestCase_Float30_Constant( "UseSignificandPositiveMax", ),
-  new TestCase_Float30_Constant( "UseSignificandPositiveMaxMore", ),
+  new TestCase_Float30_Constant( "UseExponentPositiveMax", 31 ),
+  new TestCase_Float30_Constant( "UseExponentPositiveMaxMore", 32 ),
 
-  new TestCase_Float30_Constant( "UsePositiveMax", ),
-  new TestCase_Float30_Constant( "UsePositiveMaxMore", ),
-  new TestCase_Float30_Constant( "UsePositiveMin", ),
+  new TestCase_Float30_Constant( "UseSignificandDigitCount", 6 ),
+  new TestCase_Float30_Constant( "UseSignificandFractionDigitCount", 5 ),
+  new TestCase_Float30_Constant( "UseSignificandPositiveMax", 999999 ),
+  new TestCase_Float30_Constant( "UseSignificandPositiveMaxMore", 1000000 ),
+
+  new TestCase_Float30_Constant( "UsePositiveMax", 9.99999E+31),
+  new TestCase_Float30_Constant( "UsePositiveMaxMore", 1E+32 ),
+  new TestCase_Float30_Constant( "UsePositiveMin", 1E-31 ),
 ];
 
 /** */

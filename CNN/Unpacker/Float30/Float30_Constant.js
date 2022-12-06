@@ -80,7 +80,8 @@ const CoderSignificandOffsetToSign = Math.ceil( CoderSignificandUnsignedMax / 2 
  * The exponent for the offset value for significand value becoming signed value
  * when encode/decode 30-bits floating-point number to/from Base64 string.
  * It always is 6
- * (= Float30_Util.ScientificNotation_Exponent( Float30.Constant.CoderSignificandOffsetToSign ) )
+ * (= Float30_Util.ScientificNotation_Exponent(
+ *      Float30.Constant.CoderSignificandOffsetToSign ) )
  */
 const CoderSignificandOffsetToSignedExponent
   = Float30_Util.ScientificNotation_Exponent( CoderSignificandOffsetToSign );
@@ -122,7 +123,8 @@ const NextStringCharCount = StringCharCount;
  * floating-point number in actual use. It always is 31
  * (= Base64.Constant.ValueDecodedMax - Float30.Constant.CoderExponentOffsetToSign)
  */
-const UseExponentPositiveMax = Base64.Constant.ValueDecodedMax - CoderExponentOffsetToSign;
+const UseExponentPositiveMax
+  = Base64.Constant.ValueDecodedMax - CoderExponentOffsetToSign;
 
 /**
  * A number which is a little larger than the maximum positive value of the exponent
@@ -162,7 +164,7 @@ const UseSignificandFractionDigitCount = CoderSignificandOffsetToSignedExponent 
  *
  * It always is 1000000 (= 10 ** Float30.Constant.UseSignificandDigitCount)
  */
-const UseSignificandPositiveMaxMore = 10 ** Float30.Constant.UseSignificandDigitCount;
+const UseSignificandPositiveMaxMore = 10 ** UseSignificandDigitCount;
 
 /**
  * The maximum positive value of the significand value of Base64 encoded 30-bits
