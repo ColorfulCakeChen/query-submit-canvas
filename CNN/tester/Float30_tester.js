@@ -54,14 +54,17 @@ function *testerFloat30Constant( progressParent ) {
 //!!! (2022/12/06)
 //    if ( Float30.Constant[ testCase.name ] != testCase.value )
 
-    if ( Math.abs( Float30.Constant[ testCase.name ] - testCase.value ) > Number.EPSILON )
-      throw Error( `testerFloat30Constant(): `
-        + `Float30.Constant.${testCase.name} ( ${Float30.Constant[ testCase.name ]} ) `
-        + `should be ( ${testCase.value} ).`
-      );
+    let delta = Math.abs( Float30.Constant[ testCase.name ] - testCase.value )
+    if ( delta <= Number.EPSILON ) {
+      progressToAdvance.value_advance();
+      yield progressRoot;
+      continue;
+    }
 
-    progressToAdvance.value_advance();
-    yield progressRoot;
+    throw Error( `testerFloat30Constant(): `
+      + `Float30.Constant.${testCase.name} ( ${Float30.Constant[ testCase.name ]} ) `
+      + `should be ( ${testCase.value} ).`
+    );
   }
 }
 
