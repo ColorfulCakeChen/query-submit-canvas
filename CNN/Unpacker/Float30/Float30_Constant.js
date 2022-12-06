@@ -210,3 +210,32 @@ function ScientificNotation_Exponent( aNumber ) {
 
   return exponent;
 }
+
+
+/**
+ * Generate a 30-bits floating-point number by a signed significand and a signed
+ * and corrected exponent.
+ *
+ * @param {integer} significand_signed_n999999_p999999
+ *   An signed (i.e. already minus Float30.Constant.CoderSignificandOffsetToSign)
+ * integer representing significand value. It should be between [ -999999, 999999 ]
+ * = [ -Float30.Constant.UseSignificandPositiveMax,
+ * Float30.Constant.UseSignificandPositiveMax ].
+ *
+ * @param {integer} exponent_signed_n36_p26
+ *   An signed (i.e. already minus Float30.Constant.CoderExponentOffsetToSign) and
+ * corrected (i.e. already minus Float30.Constant.UseSignificandFractionDigitCount)
+ * integer representing exponent value. It should be between [ -36, 26 ]
+ * = [
+ * -Float30.Constant.UseExponentPositiveMax - Float30.Constant.UseSignificandFractionDigitCount,
+ *  Float30.Constant.UseExponentPositiveMax - Float30.Constant.UseSignificandFractionDigitCount ]
+ * = [ -31 - 5, 31 - 5 ].
+ *
+ */
+function from__SignificandSigned__ExponentSignedCorrected(
+  significand_signed_n999999_p999999,
+  exponent_signed_n36_p26
+) {
+  return significand_signed_n999999_p999999 * (10 ** exponent_signed_n36_p26 );
+}
+
