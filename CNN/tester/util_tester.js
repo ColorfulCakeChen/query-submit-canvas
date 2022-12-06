@@ -48,8 +48,8 @@ function test() {
 
   async function* testerAll() {
 
-    yield* Base64ToUint8Array_tester.tester( progress_Base64ToUint8Array_tester );
     yield* Float30_tester.tester( progress_Float30_tester );
+    yield* Base64ToUint8Array_tester.tester( progress_Base64ToUint8Array_tester );
 
 //!!! (2022/12/03 Temp Remarked) For speed up Base64 testing.
     // {
