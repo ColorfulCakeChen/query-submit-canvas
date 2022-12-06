@@ -152,15 +152,7 @@ const UseSignificandDigitCount = CoderSignificandOffsetToSignedExponent;
  * It always is 5 (= Float30.Constant.CoderSignificandOffsetToSignedExponent - 1 )
  */
 const UseSignificandFractionDigitCount = CoderSignificandOffsetToSignedExponent - 1;
- 
-/**
- * The maximum positive value of the significand value of Base64 encoded 30-bits
- * floating-point number in actual use.
- *
- * It always is 999999 (= Float30.Constant.UseSignificandPositiveMaxMore - 1 )
- */
-const UseSignificandPositiveMax = UseSignificandPositiveMaxMore - 1;
- 
+
 /**
  * A number which is a little larger than the maximum positive value of the significand
  * value of Base64 encoded 30-bits floating-point number in actual use.
@@ -171,6 +163,14 @@ const UseSignificandPositiveMax = UseSignificandPositiveMaxMore - 1;
  * It always is 1000000 (= 10 ** Float30.Constant.UseSignificandDigitCount)
  */
 const UseSignificandPositiveMaxMore = 10 ** Float30.Constant.UseSignificandDigitCount;
+
+/**
+ * The maximum positive value of the significand value of Base64 encoded 30-bits
+ * floating-point number in actual use.
+ *
+ * It always is 999999 (= Float30.Constant.UseSignificandPositiveMaxMore - 1 )
+ */
+const UseSignificandPositiveMax = UseSignificandPositiveMaxMore - 1;
 
 
 /**
