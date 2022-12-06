@@ -186,7 +186,7 @@ const UseSignificandPositiveMax = UseSignificandPositiveMaxMore - 1;
  *        - Float30.Constant.UseSignificandFractionDigitCount))
  */
 const UsePositiveMax
-  = from_SignificandSigned_ExponentSignedCorrected(
+  = Float30_Util.from_SignificandSigned_ExponentSignedCorrected(
       UseSignificandPositiveMax,
         UseExponentPositiveMax - UseSignificandFractionDigitCount );
 
