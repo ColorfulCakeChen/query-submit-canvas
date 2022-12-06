@@ -41,13 +41,12 @@ const Float30_Constant_Table = [
 ];
 
 /** */
-function testerFloat30Constant( progressParent ) {
+function *testerFloat30Constant( progressParent ) {
 
   let progressRoot = progressParent.root_get();
   let progressToAdvance = progressParent.child_add(
     ValueMax.Percentage.Concrete.Pool.get_or_create_by( Float30_Constant_Table.length ) );
 
-//!!! ...unfinished... (2022/12/06)
   for ( let i = 0; i < Float30_Constant_Table.length; ++i ) {
     let testCase = Float30_Constant_Table[ i ];
     if ( Float30.Constant[ testCase.name ] != testCase.value )
