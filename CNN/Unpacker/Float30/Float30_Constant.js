@@ -28,7 +28,7 @@ export {
   UsePositiveMin
 };  
 
-import * as Base64 from "./Base64.js";
+import * as Base64 from "../Base64.js";
 import * as Float30_Util from "./Float30_Util.js";
 
 /**
