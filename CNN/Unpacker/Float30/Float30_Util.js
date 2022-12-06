@@ -12,7 +12,7 @@ const TenExpTable_n36_p26_offset = 36;
  * Please use ( m + TenExpTable_n36_p26_offset ) = ( m + 36 ) as array index of
  * TenExpTable_n36_p26[].
  */
-const TenExpTable_n36_p26 = new Array( 62 );
+const TenExpTable_n36_p26 = new Array( 63 );
 {
   for ( let i = 0; i < TenExpTable_n36_p26.length; ++i ) {
     let exponent = i - TenExpTable_n36_p26_offset;
