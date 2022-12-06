@@ -27,10 +27,6 @@ const CoderExponentDigitCount = 1;
  */
 const CoderExponentOffsetToSign = Base64.Constant.CodeCount / 2;
 
-
-
-//!!! ...unfinished... (2022/12/03)
-
 /**
  * The digit count of significand value when encode/decode 30-bits floating-point
  * number to/from Base64 string. It always is 4.
@@ -62,11 +58,16 @@ const CoderSignificandOffsetToSignedExponent
 
 
 /**
- * The distance (i.e. character count) to the next BASE64 encoded 30-bits 
- * floating-point number in a packed string. It always is 5
- * (= Float30.Constant.StringCharCount).
+ * The significand BASE64 character count for BASE64 encoded 30-bits 
+ * floating-point number. It always is 4.
  */
-const NextStringCharCount = StringCharCount;
+const StringSignificandCharCount = 4;
+
+/**
+ * The exponent BASE64 character count for BASE64 encoded 30-bits
+ * floating-point number. It always is 1.
+ */
+const StringExponentCharCount = 1;
 
 /**
  * The result string length (character count) for representing a BASE64 encoded
@@ -80,18 +81,13 @@ const NextStringCharCount = StringCharCount;
 const StringCharCount = StringSignificandCharCount + StringExponentCharCount;
 
 /**
- * The exponent BASE64 character count for BASE64 encoded 30-bits
- * floating-point number. It always is 1.
+ * The distance (i.e. character count) to the next BASE64 encoded 30-bits 
+ * floating-point number in a packed string. It always is 5
+ * (= Float30.Constant.StringCharCount).
  */
-const StringExponentCharCount = 1;
+const NextStringCharCount = StringCharCount;
 
-/**
- * The significand BASE64 character count for BASE64 encoded 30-bits 
- * floating-point number. It always is 4.
- */
-const StringSignificandCharCount = 4;
-
-
+ 
 /**
  * The maximum positive value of the exponent value of Base64 encoded 30-bits
  * floating-point number in actual use. It always is 31
