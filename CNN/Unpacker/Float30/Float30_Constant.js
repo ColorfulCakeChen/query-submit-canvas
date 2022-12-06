@@ -142,8 +142,8 @@ const UseSignificandPositiveMax = UseSignificandPositiveMaxMore - 1;
   * It always is 1000000 (= 10 ** Float30.Constant.UseSignificandDigitCount)
   */
 const UseSignificandPositiveMaxMore = 10 ** Float30.Constant.UseSignificandDigitCount;
- 
- 
+
+
 /**
  * The maximum positive value of Base64 encoded 30-bits floating-point number in
  * actual use.
@@ -229,15 +229,16 @@ function ScientificNotation_Exponent( aNumber ) {
  * corrected (i.e. already minus Float30.Constant.UseSignificandFractionDigitCount)
  * integer representing exponent value. It should be between [ -36, 26 ]
  * = [
- * -Float30.Constant.UseExponentPositiveMax - Float30.Constant.UseSignificandFractionDigitCount,
- *  Float30.Constant.UseExponentPositiveMax - Float30.Constant.UseSignificandFractionDigitCount ]
+ * -Float30.Constant.UseExponentPositiveMax
+ *    - Float30.Constant.UseSignificandFractionDigitCount,
+ *  Float30.Constant.UseExponentPositiveMax
+ *    - Float30.Constant.UseSignificandFractionDigitCount
+ * ]
  * = [ -31 - 5, 31 - 5 ].
  *
  */
 function from_SignificandSigned_ExponentSignedCorrected(
-  significand_signed_n999999_p999999,
-  exponent_signed_n36_p26
-) {
+  significand_signed_n999999_p999999, exponent_signed_n36_p26 ) {
   return significand_signed_n999999_p999999 * (10 ** exponent_signed_n36_p26 );
 }
 
