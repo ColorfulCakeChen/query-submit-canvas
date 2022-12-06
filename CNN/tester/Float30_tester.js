@@ -50,9 +50,13 @@ function *testerFloat30Constant( progressParent ) {
 
   for ( let i = 0; i < Float30_Constant_Table.length; ++i ) {
     let testCase = Float30_Constant_Table[ i ];
-    if ( Float30.Constant[ testCase.name ] != testCase.value )
+
+//!!! (2022/12/06)
+//    if ( Float30.Constant[ testCase.name ] != testCase.value )
+
+    if ( Math.abs( Float30.Constant[ testCase.name ] - testCase.value ) > Number.EPSILON )
       throw Error( `testerFloat30Constant(): `
-        + `Float30.Constant${testCase.name} ( ${Float30.Constant[ testCase.name ]} ) `
+        + `Float30.Constant.${testCase.name} ( ${Float30.Constant[ testCase.name ]} ) `
         + `should be ( ${testCase.value} ).`
       );
 

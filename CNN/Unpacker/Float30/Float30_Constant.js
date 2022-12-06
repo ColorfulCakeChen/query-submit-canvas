@@ -208,7 +208,7 @@ const UsePositiveMaxMore
   = Float30_Util.from_SignificandSigned_ExponentSignedCorrected(
       UseSignificandPositiveMaxMore,
         UseExponentPositiveMax - UseSignificandFractionDigitCount );
-  
+
 /**
  * The minimum positive value of Base64 encoded 30-bits floating-point number in
  * actual use.
