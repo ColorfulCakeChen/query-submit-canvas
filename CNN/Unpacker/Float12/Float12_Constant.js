@@ -42,6 +42,18 @@ import * as Base64 from "../Base64.js";
  *   - exponent: 6 bits.
  *   - fraction: 5 bits.
  *
+ *
+ *    bit                    bit
+ *     11                     0
+ *      s e e e e e e f f f f f 
+ *
+ *
+ * It is a shorter floating-point representation (especially similar to bfloat16).
+ * However, float12 is mainly used for storage (i.e. not for computation). So, it
+ * has no NaN value, no sub-normal value. It views the smallest value (i.e.
+ * exponent_unsigned = 0 and fraction_unsigned = 0) as 0 (since the value is closest
+ * to zero). 
+ *
  */
 
 
