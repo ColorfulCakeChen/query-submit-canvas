@@ -62,7 +62,7 @@ const CoderBitCount = CoderMostSignificantBitCount + CoderLeastSignificantBitCou
 
 /** The maximum 12-bits unsigned integer.
  *
- * It always is  4.0950000000000000E+003
+ * It always is 4095.
  */
 const UnsignedMax = ( ( 2 ** CoderBitCount ) - 1 );
 
