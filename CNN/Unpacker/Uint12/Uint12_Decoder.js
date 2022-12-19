@@ -21,7 +21,8 @@ import * as Uint12_Constant from "./Uint12_Constant.js";
  * base64_uint6_1.
  */
 function From_Base64Char_CodePoint_Two(
-           base64Char_codePoint_0, base64Char_codePoint_1 ) {
+  base64Char_codePoint_0, base64Char_codePoint_1 ) {
+
   return (
       ( Base64.Constant.DecodeTable_CharCodePoint_to_Uint6[ base64Char_codePoint_0 ]
           << Uint12_Constant.MostSignificantBitmaskLShiftCount )
