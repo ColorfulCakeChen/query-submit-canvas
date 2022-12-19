@@ -27,8 +27,8 @@ export {
   SignificandUnsignedMax,
 };
 
-import * as Base64 from "../../Base64.js";
-import * as Bitmask from "../../Bitmask.js";
+import * as Base64 from "../Base64.js";
+import * as Bitmask from "../Bitmask.js";
 
 /**
  * @file This is a scheme for encoding a floating-point number by 2 Base64 (i.e.

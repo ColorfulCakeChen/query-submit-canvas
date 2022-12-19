@@ -1,7 +1,7 @@
 export { Estimate_Exponent_Signed };
 export { Estimate_Significand_Signed };
 
-import * as Floa12_Constant from "./Floa12_Constant.js";
+import * as Floa12_Constant_Coder from "./Floa12_Constant_Coder.js";
 import * as Floa12_Util from "./Floa12_Util.js";
 
 /** Estimate the signed exponent integer of the specified number for 12-bits
@@ -51,6 +51,6 @@ function Estimate_Exponent_Signed( aNumber ) {
  */
 function Estimate_Significand_Signed( aNumber, exponent_signed ) {
   return Math.trunc(
-    aNumber * ( 2 ** ( Float12_Constant.Coder.FractionBitCount - exponent_signed ) )
+    aNumber * ( 2 ** ( Float12_Constant_Coder.FractionBitCount - exponent_signed ) )
   );
 }

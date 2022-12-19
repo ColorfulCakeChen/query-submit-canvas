@@ -1,4 +1,4 @@
-export * as Coder from "./Constant/Float12_Constant_Coder.js";
+export * as Coder from "./Float12_Constant_Coder.js";
 
 export { 
 };
