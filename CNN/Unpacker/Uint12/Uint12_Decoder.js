@@ -33,14 +33,14 @@ function From_Base64Char_CodePoint_Two(
 
 /**
  *
- * @param {string} base64_string
+ * @param {string} base64String
  *   A BASE64 encoded string (with two charcaters). It represents a BASE64 encoded
  * uint12 (12-bits unsigned integer).
  *
  * @return {integer}
  *   An uint12 (12-bits unsigned integer) value decoded from the base64_string.
  */
-function FromString( base64_string ) {
+function FromString( base64String ) {
   return From_Base64Char_Two(
-    base64_string.codePointAt( 0 ), base64_string.codePointAt( 1 ) );
+    base64String.codePointAt( 0 ), base64String.codePointAt( 1 ) );
 }
