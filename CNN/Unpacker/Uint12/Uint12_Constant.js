@@ -9,6 +9,8 @@ export {
 
   CoderBitCount,
 
+  UnsignedMax,
+
   StringCharCount,
   NextStringCharCount,
 };
@@ -56,6 +58,13 @@ const CoderMostSignificantBitmaskLShifted = Bitmaask.ByBitCount_LShifted(
  * It always is 12.
  */
 const CoderBitCount = CoderMostSignificantBitCount + CoderLeastSignificantBitCount;
+
+
+/** The maximum 12-bits unsigned integer.
+ *
+ * It always is  4.0950000000000000E+003
+ */
+const UnsignedMax = ( ( 2 ** CoderBitCount ) - 1 );
 
 
 /** The result string length (character count) for representing a BASE64 encoded
