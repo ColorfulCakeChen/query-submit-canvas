@@ -29,20 +29,42 @@ export {
 };  
 
 import * as Base64 from "../Base64.js";
-import * as Float30_Util from "./Float30_Util.js";
+//import * as Float12_Util from "./Float12_Util.js";
 
 /**
- * @file This is a scheme for encoding a floating-point number by 5 Base64 (i.e.
+ * @file This is a scheme for encoding a floating-point number by 2 Base64 (i.e.
  * Uint6 [ 0, 63 ]) characters.
  *
- * Because 30 bits (= 5 * 6 bits ) are used to representing a floating-point
- * number, so called float30.
+ * Because 12 bits (= 2 * 6 bits ) are used to representing a floating-point
+ * number, so called float12.
  *
- *   - The first 4 Base64 characters represents significand.
- *   - The last Base64 character represents exponent.
+ *   - sign: 1 bit.
+ *   - exponent: 6 bits.
+ *   - fraction: 5 bits.
  *
  */
 
+
+//!!! ...unfinished... (2022/12/19)
+
+
+
+
+
+
+/** The bit count of a 12-bits floating-point number.
+ *
+ * It always is 12.
+ */
+const CoderBitCount = CoderSignBitCount + CoderExponentBitCount + CoderFractionBitCount;
+
+
+
+
+
+
+
+//!!! ...unfinished... (2022/12/19) should be deprecated.
 
 /**
  * The digit count of exponent value when encode/decode 30-bits floating-point
