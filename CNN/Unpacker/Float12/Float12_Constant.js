@@ -59,6 +59,51 @@ import * as Bitmask from "../Bitmask.js";
 
 
 
+
+/** The fraction (of significand) bit count of a 12-bits floating-point number.
+ *
+ * It always is 5.
+ */
+const CoderFractionBitCount = 5;
+
+/** The fraction (of significand) bitmask (without left-shifted) of a 12-bits
+ * floating-point number.
+ *
+ * It always is 31 (=0b11111).
+ */
+const CoderFractionBitmask = Bitmask.ByBitCount( CoderFractionBitCount );
+
+/** The maximum representable fraction of a 12-bits floating-point number.
+ *
+ * It always is 31.
+ */
+const CoderFractionUnsignedMax = ( ( 2 ** CoderFractionBitCount ) - 1 );
+
+/** The minimum representable fraction of a 12-bits floating-point number.
+ *
+ * It always is 0.
+ */
+const CoderFractionUnsignedMin = 0;
+
+
+/** The implicit (of significand) bit count of a 12-bits floating-point number.
+ *
+ * It always is 1.
+ */
+const CoderImplicitBitCount = 1;
+
+The implicit (of significand) bitmask (without left-shifted) of a 12-bits floating-point number.
+
+It always is 1 (=0b1=BITMASK_BY_BIT_COUNT(FLOAT12_CODER_IMPLICIT_BIT_COUNT()))
+
+FLOAT12_CODER_IMPLICIT_BITMASK().
+
+
+//!!! ...unfinished... (2022/12/19)
+
+
+
+
 /** The exponent bit count of a 12-bits floating-point number. It always is 6. */
 const CoderExponentBitCount = 6;
 
@@ -81,6 +126,29 @@ const CoderExponentBitmaskLShiftCount = CoderFractionBitCount;
  */
 const CoderExponentBitmaskLShifted = Bitmaask.ByBitCount_LShifted(
   CoderExponentBitmask, CoderExponentBitmaskLShiftCount );
+
+/** The offset for exponent (of BASE64 encoded 12-bits floating-point number)
+ * becoming signed integer between [ -32, +31 ].
+ *
+ * It always is 32.
+ */
+const CoderExponentOffsetToSigned = ( ( 2 ** CoderExponentBitCount ) / 2 );
+
+/** The minimum negative value of the signed exponent value of a Base64 encoded
+ * 12-bits floating-point number.
+ *
+ * It always is -32.
+ */
+const CoderExponentNegativeMin = -CoderExponentOffsetToSigned;
+
+/** The maximum positive value of the signed exponent value of a Base64 encoded
+ * 12-bits floating-point number.
+ *
+ * It always is 31.
+ */
+const CoderExponentPositiveMax
+  = Base64.Constant.ValueDecodedMax - CoderExponentOffsetToSigned;
+
 
 
 
