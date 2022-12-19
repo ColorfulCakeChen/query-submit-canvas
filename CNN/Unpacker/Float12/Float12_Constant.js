@@ -161,6 +161,41 @@ const CoderExponentPositiveMax
   = Base64.Constant.ValueDecodedMax - CoderExponentOffsetToSigned;
 
 
+/** The sign bit count of a 12-bits floating-point number.
+ *
+ * It always is 1.
+ */
+const CoderSignBitCount = 1;
+
+/** The sign bitmask (without left-shifted) of a 12-bits floating-point number.
+ *
+ * It always is 1 (=0b1).
+ */
+const CoderSignBitmask = Bitmask.ByBitCount( CoderSignBitCount );
+
+/** The position (as left-shift count) of the sign bitmask of a 12-bits
+ * floating-point number.
+ *
+ * It always is 11.
+ */
+const CoderSignBitmaskLShiftCount = CoderExponentBitCount + CoderFractionBitCount;
+
+/** The sign bitmask (with left-shifted) of a 12-bits floating-point number.
+ *
+ * It always is 2048.
+ */
+const CoderSignBitmaskLShifted = Bitmask.ByBitCount_LShifted(
+  CoderSignBitCount, CoderSignBitmaskLShiftCount );
+
+
+  FLOAT12_CODER_SIGNIFICAND_BIT_COUNT().
+
+  The significand (i.e. implicit+fraction) bit count of a 12-bits floating-point number.
+  
+  It always is 6 (=FLOAT12_CODER_IMPLICIT_BIT_COUNT()+FLOAT12_CODER_FRACTION_BIT_COUNT()).
+
+
+
 
 
 //!!! ...unfinished... (2022/12/19)
