@@ -1,7 +1,6 @@
+export { From__ExponentSignedCorrected__SignificandSigned };
 
-
-
-//!!! ...unfinished... (2022/12/19)
+//import * as Float12_Constant_Coder from "./Float12_Constant_Coder.js";
 
 /**
  *
@@ -32,3 +31,7 @@ function From__ExponentSignedCorrected__SignificandSigned(
     significand_signed__n63_n32__p32_p63 * ( 2 ** exponent_signed_corrected_n37_p26 )
   );
 }
+
+
+//!!! ...unfinished... (2022/12/19)
+
