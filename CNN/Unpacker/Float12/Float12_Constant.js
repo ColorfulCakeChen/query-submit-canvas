@@ -188,13 +188,26 @@ const CoderSignBitmaskLShifted = Bitmask.ByBitCount_LShifted(
   CoderSignBitCount, CoderSignBitmaskLShiftCount );
 
 
-  FLOAT12_CODER_SIGNIFICAND_BIT_COUNT().
+/** The significand (i.e. implicit+fraction) bit count of a 12-bits floating-point
+ * number.
+ *
+ * It always is 6.
+ */
+const CoderSignificandBitCount = CoderImplicitBitCount + CoderFractionBitCount;
 
-  The significand (i.e. implicit+fraction) bit count of a 12-bits floating-point number.
-  
-  It always is 6 (=FLOAT12_CODER_IMPLICIT_BIT_COUNT()+FLOAT12_CODER_FRACTION_BIT_COUNT()).
+/** The maximum representable significand (i.e. implicit+fraction) of a 12-bits
+ * floating-point number.
+ *
+ * It always is 63.
+ */
+const CoderSignificandUnsignedMax = ( ( 2 ** CoderSignificandBitCount ) - 1 );
 
-
+/** The minimum representable significand (i.e. implicit+fraction) of a 12-bits
+ * floating-point number.
+ *
+ * It always is 32.
+ */
+const CoderSignificandUnsignedMin = CoderImplicitLShifted;
 
 
 
