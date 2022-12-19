@@ -4,7 +4,6 @@ export { FromString };
 import * as Base64 from "../Base64.js";
 import * as Uint12_Constant from "./Uint12_Constant.js";
 
-
 /**
  * 
  * Convert two Base64 encoded characters to a 12-bits unsigned integer.
@@ -29,7 +28,6 @@ function From_Base64Char_CodePoint_Two(
     | ( Base64.Constant.DecodeTable_CharCodePoint_to_Uint6[ base64Char_codePoint_1 ] )
   );
 }
-
 
 /**
  *
