@@ -92,16 +92,27 @@ const CoderFractionUnsignedMin = 0;
  */
 const CoderImplicitBitCount = 1;
 
-The implicit (of significand) bitmask (without left-shifted) of a 12-bits floating-point number.
+/** The implicit (of significand) bitmask (without left-shifted) of a 12-bits
+ * floating-point number.
+ *
+ * It always is 1 (=0b1).
+ */
+const CoderImplicitBitmask = Bitmask.ByBitCount( CoderImplicitBitCount );
 
-It always is 1 (=0b1=BITMASK_BY_BIT_COUNT(FLOAT12_CODER_IMPLICIT_BIT_COUNT()))
+/** The position (as left-shift count) of the implicit (of significand) bitmask of
+ * a 12-bits floating-point number.
+ *
+ * It always is 5.
+ */
+const CoderImplicitLShiftCount = CoderFractionBitCount;
 
-FLOAT12_CODER_IMPLICIT_BITMASK().
-
-
-//!!! ...unfinished... (2022/12/19)
-
-
+/** The implicit (of significand) bitmask (with left-shifted) of a 12-bits
+ * floating-point number.
+ *
+ * It always is 32.
+ */
+const CoderImplicitLShifted = Bitmask.ByBitCount_LShifted(
+  CoderImplicitBitCount, CoderImplicitLShiftCount );
 
 
 /** The exponent bit count of a 12-bits floating-point number. It always is 6. */
@@ -124,8 +135,8 @@ const CoderExponentBitmaskLShiftCount = CoderFractionBitCount;
  *
  * It always is 2016.
  */
-const CoderExponentBitmaskLShifted = Bitmaask.ByBitCount_LShifted(
-  CoderExponentBitmask, CoderExponentBitmaskLShiftCount );
+const CoderExponentBitmaskLShifted = Bitmask.ByBitCount_LShifted(
+  CoderExponentBitCount, CoderExponentBitmaskLShiftCount );
 
 /** The offset for exponent (of BASE64 encoded 12-bits floating-point number)
  * becoming signed integer between [ -32, +31 ].
