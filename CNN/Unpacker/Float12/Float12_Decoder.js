@@ -21,8 +21,8 @@ export { From__ExponentSignedCorrected__SignificandSigned };
  * Float12.Constant.Coder.SignificandUnsignedMax ].
  *
  * @return {number}
- *   A 12-bits floating-point number by the signed significand and the signed and
- * corrected exponent.
+ *   A 12-bits floating-point number by the signed and corrected exponent and the
+ * signed significand.
  */
 function From__ExponentSignedCorrected__SignificandSigned(
   exponent_signed_corrected_n37_p26, significand_signed__n63_n32__p32_p63 ) {
