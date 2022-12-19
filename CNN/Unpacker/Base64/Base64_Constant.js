@@ -1,7 +1,15 @@
+export { CoderBitCount };
 export { CodeCount };
 export { ValueDecodedMax };
 export { EncodeTable_Uint6_to_Char };
 export { DecodeTable_CharCodePoint_to_Uint6 };
+
+
+/**The bit count could be encoded by a Base64 character.
+ *
+ * It always is 6 (representing an unsigned integer (uint6)).
+ */
+const CoderBitCount = 6;
 
 
 /** How many codes used in BASE64 encoding. It always is 64. */
