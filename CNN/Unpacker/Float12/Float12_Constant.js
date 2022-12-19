@@ -29,6 +29,7 @@ export {
 };  
 
 import * as Base64 from "../Base64.js";
+import * as Bitmask from "../Bitmask.js";
 //import * as Float12_Util from "./Float12_Util.js";
 
 /**
@@ -50,11 +51,37 @@ import * as Base64 from "../Base64.js";
  *
  * It is a shorter floating-point representation (especially similar to bfloat16).
  * However, float12 is mainly used for storage (i.e. not for computation). So, it
- * has no NaN value, no sub-normal value. It views the smallest value (i.e.
- * exponent_unsigned = 0 and fraction_unsigned = 0) as 0 (since the value is closest
- * to zero). 
+ * has no NaN value, no sub-normal value. And it views the representable value
+ * which is closest to zero (i.e. exponent_unsigned = 0 and fraction_unsigned = 0)
+ * as 0 (this is different from standard floating-point representation).
  *
  */
+
+
+
+/** The exponent bit count of a 12-bits floating-point number. It always is 6. */
+const CoderExponentBitCount = 6;
+
+/** The exponent bitmask (without left-shifted) of a 12-bits floating-point number.
+ *
+ * It always is 63 (=0b111111).
+ */
+const CoderExponentBitmask = Bitmask.ByBitCount( CoderExponentBitCount );
+
+/** The position (as left-shift count) of the exponent bitmask of a 12-bits
+ * floating-point number.
+ *
+ * It always is 5.
+ */
+const CoderExponentBitmaskLShiftCount = CoderFractionBitCount;
+
+/** The exponent bitmask (with left-shifted) of a 12-bits floating-point number.
+ *
+ * It always is 2016.
+ */
+const CoderExponentBitmaskLShifted = Bitmaask.ByBitCount_LShifted(
+  CoderExponentBitmask, CoderExponentBitmaskLShiftCount );
+
 
 
 //!!! ...unfinished... (2022/12/19)
