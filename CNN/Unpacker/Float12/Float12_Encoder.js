@@ -1,8 +1,57 @@
+export { ScientificNotation_Exponent_10 };
+export { ScientificNotation_Exponent_2 };
 export { Estimate_Exponent_Signed };
 export { Estimate_Significand_Signed };
 
 import * as Floa12_Constant_Coder from "./Floa12_Constant_Coder.js";
-import * as Floa12_Util from "./Floa12_Util.js";
+
+/**
+ * For example, ScientificNotation_Exponent_10( -0.25 ) = -1
+ *
+ * @param {number} aNumber
+ *   The number to be found out its exponent.
+ *
+ * @return {integer}
+ *   Return a signed integer representing the base 10 exponent of the specified number
+ * when the number is represented in normalized scientific notation (i.e. exponential
+ * notation).
+ */
+function ScientificNotation_Exponent_10( aNumber ) {
+  if ( aNumber === 0 )
+    return 0; // For avoiding Math.log10( 0 ) which is -Infinity.
+
+  let exponent = Math.floor(
+    Math.log10(
+      Math.abs( aNumber ) // Because Math.log10() can not accept negative value.
+    )
+  );
+
+  return exponent;
+}
+
+/**
+ * For example, ScientificNotation_Exponent_2( -0.125 ) = -3
+ *
+ * @param {number} aNumber
+ *   The number to be found out its exponent.
+ *
+ * @return {integer}
+ *   Return a signed integer representing the base 2 exponent of the specified number
+ * when the number is represented in normalized scientific notation (i.e. exponential
+ * notation).
+ */
+function ScientificNotation_Exponent_2( aNumber ) {
+  if ( aNumber === 0 )
+    return 0; // For avoiding Math.log2( 0 ) which is -Infinity.
+
+  let exponent = Math.floor(
+    Math.log2(
+      Math.abs( aNumber ) // Because Math.log2() can not accept negative value.
+    )
+  );
+
+  return exponent;
+}
 
 /** Estimate the signed exponent integer of the specified number for 12-bits
  * floating-point number Base64 encoding.
@@ -23,7 +72,7 @@ import * as Floa12_Util from "./Floa12_Util.js";
  * notation).
  */
 function Estimate_Exponent_Signed( aNumber ) {
-  return Floa12_Util.ScientificNotation_Exponent_2( aNumber );
+  return ScientificNotation_Exponent_2( aNumber );
 }
 
 /** Estimate the signed significand integer of the specified number for 12-bits

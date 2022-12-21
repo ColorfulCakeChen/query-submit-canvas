@@ -5,5 +5,5 @@ export {
 
 // import * as Base64 from "../Base64.js";
 // import * as Bitmask from "../Bitmask.js";
-//import * as Float12_Util from "./Float12_Util.js";
+import * as Float12_Encoder from "./Float12_Encoder.js";
 
