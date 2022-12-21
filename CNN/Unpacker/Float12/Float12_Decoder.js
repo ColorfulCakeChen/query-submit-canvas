@@ -3,6 +3,7 @@ export { From_Sign_ExponentSigned_SignificandUnsigned };
 export { From_Sign_ExponentSigned_FractionUnsigned };
 export { From_Sign_ExponentUnsigned_FractionUnsigned };
 export { From_Sign_ExponentUnsigned_FractionUnsigned_Zeroable };
+export { From_Uint12 };
 
 import * as Float12_Constant_Coder from "./Float12_Constant_Coder.js";
 
@@ -144,6 +145,10 @@ function From_Sign_ExponentUnsigned_FractionUnsigned(
  * because that is the representable value which is closest to zero.
  *
  * It will call Float12.Decoder.From_Sign_ExponentUnsigned_FractionUnsigned().
+ *
+ * @return {number}
+ *   A 12-bits floating-point number by the sign bit, the unsigned exponent integer,
+ * and the unsigned fraction integer.
  */
 function From_Sign_ExponentUnsigned_FractionUnsigned_Zeroable(
   sign_0_1, exponent_unsigned_0_p63, fraction_unsigned_0_p31 ) {
@@ -153,6 +158,28 @@ function From_Sign_ExponentUnsigned_FractionUnsigned_Zeroable(
   else
     return From_Sign_ExponentUnsigned_FractionUnsigned(
       sign_0_1, exponent_unsigned_0_p63, fraction_unsigned_0_p31 );
+}
+
+/**
+ *
+ * It will call Float12.Decoder.From_Sign_ExponentUnsigned_FractionUnsigned_Zeroable().
+ * So uint12 zero will become float12 zero, too.
+ *
+ * @param {integer} uint12_value
+ *   The 12-bits unsigned integer to be viewed as float12.
+ *
+ * @return {number}
+ *   A 12-bits floating-point number by the 12-bits unsigned integer which will be
+ * destructured as sign, exponent, fraction of float12.
+ */
+function From_Uint12( uint12_value ) {
+  return From_Sign_ExponentUnsigned_FractionUnsigned_Zeroable(
+    ( ( uint12_value >> Float12_Constant_Coder.SignBitmaskLShiftCount )
+      & Float12_Constant_Coder.SignBitmask ),
+    ( ( uint12_value >> Float12_Constant_Coder.ExponentBitmaskLShiftCount )
+      & Float12_Constant_Coder.ExponentBitmask ),
+    ( uint12_value & Float12_Constant_Coder.FractionBitmask )
+  );
 }
 
 
