@@ -1,5 +1,6 @@
 export { From_ExponentSignedCorrected_SignificandSigned };
 export { From_Sign_ExponentSigned_SignificandUnsigned };
+export { From_Sign_ExponentSigned_FractionUnsigned };
 
 import * as Float12_Constant_Coder from "./Float12_Constant_Coder.js";
 
@@ -72,16 +73,35 @@ function From_Sign_ExponentSigned_SignificandUnsigned(
 }
 
 /**
- * Generate a 12-bits floating-point number by a sign bit, a signed exponent integer, and a unsigned fraction integer.
  *
  * It will call Float12.Decoder.From_Sgin_ExponentSigned_SignificandUnsigned().
+ *
+ * @param {integer} sign_0_1
+ *   The sign bit of the result value. It must be either 0 (for positive) or
+ * 1 (for negative).
+ *
+ * @param {integer} exponent_signed_n32_p31
+ *   An signed (i.e. already minus Float12.Constant.Coder.ExponentOffsetToSigned)
+ * integer representing exponent value. It should be between [ -32, 31 ] = [
+ * Float12.Constant.Coder.ExponentNegativeMin,
+ * Float12.Constant.Coder.ExponentPositiveMax ].
+ *
+ * @param {integer} fraction_unsigned_0_p31
+ *   An unsigned (i.e. already masked out sign bit) integer representing unsigned
+ * fraction value. It should be between [ 0, 31 ] = [
+ * Float12.Constant.Coder.FractionUnsignedMin,
+ * Float12.Constant.Coder.FractionUnsignedMax ].
+ *
+ * @return {number}
+ *   A 12-bits floating-point number by the sign bit, the signed exponent integer,
+ * and the unsigned fraction integer.
  */
-function From_Sign_ExponentSigned_FractionUnsigned() {
-
-
-//!!! ...unfinished... (2022/12/19)
-
-
+function From_Sign_ExponentSigned_FractionUnsigned(
+  sign_0_1, exponent_signed_n32_p31, fraction_unsigned_0_p31 ) {
+  return From_Sign_ExponentSigned_SignificandUnsigned(
+    sign_0_1, exponent_signed_n32_p31,
+    ( fraction_unsigned_0_p31 | Float12_Constant_Coder.ImplicitBitmaskLShifted )
+  );
 }
 
 //!!! ...unfinished... (2022/12/19)
