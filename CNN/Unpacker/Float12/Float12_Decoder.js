@@ -6,8 +6,8 @@ export { From_Sign_ExponentUnsigned_FractionUnsigned_Zeroable };
 export { From_Uint12 };
 export { FromString };
 
-import * as Float12_Constant_Coder from "./Float12_Constant_Coder.js";
 import * as Uint12 from "../Uint12.js";
+import * as Float12_Constant_Coder from "./Float12_Constant_Coder.js";
 
 /**
  *
@@ -60,7 +60,7 @@ function From_ExponentSignedCorrected_SignificandSigned(
  * Float12.Constant.Coder.SignificandUnsignedMax ].
  *
  * @return {number}
- *   A 12-bits floating-point number by the sign bit, the signed exponent integer,
+ *   A 12-bits floating-point number by the sign bit, the signed exponent integer
  * and the unsigned significand integer.
  */
 function From_Sign_ExponentSigned_SignificandUnsigned(
@@ -98,7 +98,7 @@ function From_Sign_ExponentSigned_SignificandUnsigned(
  * Float12.Constant.Coder.FractionUnsignedMax ].
  *
  * @return {number}
- *   A 12-bits floating-point number by the sign bit, the signed exponent integer,
+ *   A 12-bits floating-point number by the sign bit, the signed exponent integer
  * and the unsigned fraction integer.
  */
 function From_Sign_ExponentSigned_FractionUnsigned(
@@ -129,7 +129,7 @@ function From_Sign_ExponentSigned_FractionUnsigned(
  * Float12.Constant.Coder.FractionUnsignedMax ].
  *
  * @return {number}
- *   A 12-bits floating-point number by the sign bit, the unsigned exponent integer,
+ *   A 12-bits floating-point number by the sign bit, the unsigned exponent integer
  * and the unsigned fraction integer.
  */
 function From_Sign_ExponentUnsigned_FractionUnsigned(
@@ -149,7 +149,7 @@ function From_Sign_ExponentUnsigned_FractionUnsigned(
  * It will call Float12.Decoder.From_Sign_ExponentUnsigned_FractionUnsigned().
  *
  * @return {number}
- *   A 12-bits floating-point number by the sign bit, the unsigned exponent integer,
+ *   A 12-bits floating-point number by the sign bit, the unsigned exponent integer
  * and the unsigned fraction integer.
  */
 function From_Sign_ExponentUnsigned_FractionUnsigned_Zeroable(
@@ -194,6 +194,6 @@ function From_Uint12( uint12_value ) {
  *   A float12 (12-bits floating-point number) value decoded from the base64String.
  */
 function FromString( base64String ) {
-  let uint12_value = Uint12.FromString( base64String );
+  let uint12_value = Uint12.Decoder.FromString( base64String );
   return From_Uint12( uint12_value );
 }

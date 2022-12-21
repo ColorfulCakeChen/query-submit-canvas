@@ -5,11 +5,9 @@ export {
 
 };
 
- import * as Base64 from "../Base64.js";
-// import * as Bitmask from "../Bitmask.js";
+import * as Base64 from "../Base64.js";
 import * as Float12_Constant_Coder from "./Float12_Constant_Coder.js";
 import * as Float12_Decoder from "./Float12_Decoder.js";
-//import * as Float12_Encoder from "./Float12_Encoder.js";
 
 
 /**
@@ -110,5 +108,3 @@ const PositiveMinLess = Float12_Decoder.From_Sign_ExponentSigned_FractionUnsigne
   0,
   Float12_Constant_Coder.ExponentNegativeMin,
   0 );
-
-//!!! ...unfinished... (2022/12/21)
