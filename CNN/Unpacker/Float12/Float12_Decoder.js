@@ -181,7 +181,3 @@ function From_Uint12( uint12_value ) {
     ( uint12_value & Float12_Constant_Coder.FractionBitmask )
   );
 }
-
-
-//!!! ...unfinished... (2022/12/19)
-
