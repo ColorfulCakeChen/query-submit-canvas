@@ -190,7 +190,7 @@ function From_Uint12( uint12_value ) {
  *   A BASE64 encoded string (with two charcaters). It represents a BASE64 encoded
  * float12 (12-bits floating-point number).
  *
- * @return {integer}
+ * @return {number}
  *   A float12 (12-bits floating-point number) value decoded from the base64String.
  */
 function FromString( base64String ) {
