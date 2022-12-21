@@ -3,7 +3,7 @@ export { ScientificNotation_Exponent_2 };
 export { Estimate_Exponent_Signed };
 export { Estimate_Significand_Signed };
 
-import * as Floa12_Constant_Coder from "./Floa12_Constant_Coder.js";
+import * as Float12_Constant_Coder from "./Float12_Constant_Coder.js";
 
 /**
  * For example, ScientificNotation_Exponent_10( -0.25 ) = -1

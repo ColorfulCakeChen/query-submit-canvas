@@ -204,3 +204,11 @@ const SignificandUnsignedMin = ImplicitLShifted;
  * It always is 63.
  */
 const SignificandUnsignedMax = ( ( 2 ** SignificandBitCount ) - 1 );
+
+
+/**
+ * The bit count of a 12-bits floating-point number.
+ *
+ * It always is 12.
+ */
+const BitCount = SignBitCount + ExponentBitCount + FractionBitCount;
