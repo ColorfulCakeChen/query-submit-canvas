@@ -1,6 +1,8 @@
 export { From_ExponentSignedCorrected_SignificandSigned };
 export { From_Sign_ExponentSigned_SignificandUnsigned };
 export { From_Sign_ExponentSigned_FractionUnsigned };
+export { From_Sign_ExponentUnsigned_FractionUnsigned };
+export { From_Sign_ExponentUnsigned_FractionUnsigned_Zeroable };
 
 import * as Float12_Constant_Coder from "./Float12_Constant_Coder.js";
 
@@ -134,6 +136,23 @@ function From_Sign_ExponentUnsigned_FractionUnsigned(
     ( exponent_unsigned_0_p63 - Float12_Constant_Coder.ExponentOffsetToSigned ),
     fraction_unsigned_0_p31
   );
+}
+
+/**
+ * Similar to Float12.Decoder.From_Sign_ExponentUnsigned_FractionUnsigned() but it
+ * will return 0 if ( exponent_unsigned_0_p63 = 0 ) and ( fraction_unsigned_0_p31 = 0 )
+ * because that is the representable value which is closest to zero.
+ *
+ * It will call Float12.Decoder.From_Sign_ExponentUnsigned_FractionUnsigned().
+ */
+function From_Sign_ExponentUnsigned_FractionUnsigned_Zeroable(
+  sign_0_1, exponent_unsigned_0_p63, fraction_unsigned_0_p31 ) {
+
+  if ( ( exponent_unsigned_0_p63 == 0 ) && ( fraction_unsigned_0_p31 == 0 ) )
+    return 0;
+  else
+    return From_Sign_ExponentUnsigned_FractionUnsigned(
+      sign_0_1, exponent_unsigned_0_p63, fraction_unsigned_0_p31 );
 }
 
 
