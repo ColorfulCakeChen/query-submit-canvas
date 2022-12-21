@@ -54,5 +54,29 @@ const NegativeMin
  */
 const NegativeMinLess = NegativeMin - 1;
 
+/**
+ * The maximum positive value of a Base64 encoded 12-bits floating-point number.
+ *
+ * It always is  4.2278584320000000E+009
+ */
+const PositiveMax
+  = Float12_Decoder.From_Sign_ExponentSigned_FractionUnsigned(
+    0,
+    Float12_Constant_Coder.ExponentPositiveMax,
+    Float12_Constant_Coder.FractionUnsignedMax );
+
+/**
+ * A number which is a little larger than the maximum positive value of a 12-bits
+ * floating-point number.
+ *
+ * It is mainly used for restricting a value not exceeding
+ * Float12.Constant.PositiveMax.
+ *
+ * The extra value is small but representable by floating-point number.
+ *
+ * It always is  4.2278584330000000E+009
+ */
+const PositiveMaxMore = PositiveMax + 1;
+
 
 //!!! ...unfinished... (2022/12/21)
