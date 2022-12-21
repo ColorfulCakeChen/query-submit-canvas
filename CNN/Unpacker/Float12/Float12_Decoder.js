@@ -4,8 +4,10 @@ export { From_Sign_ExponentSigned_FractionUnsigned };
 export { From_Sign_ExponentUnsigned_FractionUnsigned };
 export { From_Sign_ExponentUnsigned_FractionUnsigned_Zeroable };
 export { From_Uint12 };
+export { FromString };
 
 import * as Float12_Constant_Coder from "./Float12_Constant_Coder.js";
+import * as Uint12 from "../Uint12.js";
 
 /**
  *
@@ -180,4 +182,18 @@ function From_Uint12( uint12_value ) {
       & Float12_Constant_Coder.ExponentBitmask ),
     ( uint12_value & Float12_Constant_Coder.FractionBitmask )
   );
+}
+
+/**
+ *
+ * @param {string} base64String
+ *   A BASE64 encoded string (with two charcaters). It represents a BASE64 encoded
+ * float12 (12-bits floating-point number).
+ *
+ * @return {integer}
+ *   A float12 (12-bits floating-point number) value decoded from the base64String.
+ */
+function FromString( base64String ) {
+  let uint12_value = Uint12.FromString( base64String );
+  return From_Uint12( uint12_value );
 }

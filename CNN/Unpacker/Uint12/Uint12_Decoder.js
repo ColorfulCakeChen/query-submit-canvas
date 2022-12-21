@@ -37,7 +37,7 @@ function From_Base64Char_CodePoint_Two(
  * uint12 (12-bits unsigned integer).
  *
  * @return {integer}
- *   An uint12 (12-bits unsigned integer) value decoded from the base64_string.
+ *   An uint12 (12-bits unsigned integer) value decoded from the base64String.
  */
 function FromString( base64String ) {
   return From_Base64Char_Two(
