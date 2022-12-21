@@ -104,5 +104,38 @@ function From_Sign_ExponentSigned_FractionUnsigned(
   );
 }
 
+/**
+ *
+ * It will call Float12.Decoder.From_Sign_ExponentSigned_FractionUnsigned().
+ *
+ * @param {integer} sign_0_1
+ *   The sign bit of the result value. It must be either 0 (for positive) or
+ * 1 (for negative).
+ *
+ * @param {integer} exponent_unsigned_0_p63
+ *   An unsigned (i.e. not yet minus Float12.Constant.Coder.ExponentOffsetToSigned)
+ * integer representing exponent value. It should be between [ 0, 63 ] = [
+ * 0, Base64.Constant.ValueDecodedMax ].
+ *
+ * @param {integer} fraction_unsigned_0_p31
+ *   An unsigned (i.e. already masked out sign bit) integer representing unsigned
+ * fraction value. It should be between [ 0, 31 ] = [
+ * Float12.Constant.Coder.FractionUnsignedMin,
+ * Float12.Constant.Coder.FractionUnsignedMax ].
+ *
+ * @return {number}
+ *   A 12-bits floating-point number by the sign bit, the unsigned exponent integer,
+ * and the unsigned fraction integer.
+ */
+function From_Sign_ExponentUnsigned_FractionUnsigned(
+  sign_0_1, exponent_unsigned_0_p63, fraction_unsigned_0_p31 ) {
+  return From_Sign_ExponentSigned_FractionUnsigned(
+    sign_0_1,
+    ( exponent_unsigned_0_p63 - Float12_Constant_Coder.ExponentOffsetToSigned ),
+    fraction_unsigned_0_p31
+  );
+}
+
+
 //!!! ...unfinished... (2022/12/19)
 
