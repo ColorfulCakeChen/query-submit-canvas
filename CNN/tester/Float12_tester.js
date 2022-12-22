@@ -221,7 +221,7 @@ function *testerFloat12DecodeEncode( progressParent ) {
       let Float12_decoded_value = Float12.Decoder.FromString( Float12_original_string );
       let Float12_encoded_string = Float12.Encoder.ToString( Float12_decoded_value );
 
-      if ( Float12_encoded_string == Float12_original_string ) {
+      if ( Float12_encoded_string === Float12_original_string ) {
         continue;
       }
 
