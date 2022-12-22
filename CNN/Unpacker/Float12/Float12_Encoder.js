@@ -135,8 +135,8 @@ function ToString_by_Sign_ExponentUnsigned_FractionUnsigned(
   sign_0_1, exponent_unsigned_0_p63, fraction_unsigned_0_p31 ) {
 
   return Uint12.Encoder.ToString(
-      ( sign_0_1 << Float12.Constant.Coder.SignBitmaskLShiftCount )
-    | ( exponent_unsigned_0_p63 << Float12.Constant.Coder.ExponentBitmaskLShiftCount )
+      ( sign_0_1 << Float12_Constant_Coder.SignBitmaskLShiftCount )
+    | ( exponent_unsigned_0_p63 << Float12_Constant_Coder.ExponentBitmaskLShiftCount )
     | fraction_unsigned_0_p31
   );
 }
@@ -174,27 +174,27 @@ function ToString_by_Number_ExponentSigned( aNumber, exponent_signed_n32_p31 ) {
 
   // 2.1 If exponent is less than minimum representable (exponent) value,
   //     use minimum representable exponent and fraction value.
-  if ( exponent_signed_n32_p31 < Float12.Constant.Coder.ExponentNegativeMin ) {
-    exponent_signed_n32_p31 = Float12.Constant.Coder.ExponentNegativeMin;
-    fraction_unsigned_0_p31 = Float12.Constant.Coder.FractionUnsignedMin;
+  if ( exponent_signed_n32_p31 < Float12_Constant_Coder.ExponentNegativeMin ) {
+    exponent_signed_n32_p31 = Float12_Constant_Coder.ExponentNegativeMin;
+    fraction_unsigned_0_p31 = Float12_Constant_Coder.FractionUnsignedMin;
 
   // 2.2 If exponent is greater than maximum representable (exponent) value,
   //     use maximum representable exponent and fraction value.
-  } else if ( exponent_signed_n32_p31 > Float12.Constant.Coder.ExponentPositiveMax ) {
-    exponent_signed_n32_p31 = Float12.Constant.Coder.ExponentPositiveMax;
-    fraction_unsigned_0_p31 = Float12.Constant.Coder.FractionUnsignedMax;
+  } else if ( exponent_signed_n32_p31 > Float12_Constant_Coder.ExponentPositiveMax ) {
+    exponent_signed_n32_p31 = Float12_Constant_Coder.ExponentPositiveMax;
+    fraction_unsigned_0_p31 = Float12_Constant_Coder.FractionUnsignedMax;
 
   // 2.3 Otherwise, find out significand by the exponent. And then, get fraction by
   //     masking out the implicit bit of the significand.
   } else {
     fraction_unsigned_0_p31
       = Math.abs( Estimate_Significand_Signed( aNumber, exponent_signed_n32_p31 ) )
-          & Float12.Constant.Coder.FractionBitmask;
+          & Float12_Constant_Coder.FractionBitmask;
   }
 
   // 3. Determine exponent_unsigned.
   let exponent_unsigned_0_p63
-    = exponent_signed_n32_p31 + Float12.Constant.Coder.ExponentOffsetToSigned;
+    = exponent_signed_n32_p31 + Float12_Constant_Coder.ExponentOffsetToSigned;
 
   // 4. Compose to string.
   return ToString_by_Sign_ExponentUnsigned_FractionUnsigned(
