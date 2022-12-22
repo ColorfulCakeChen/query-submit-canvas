@@ -4,7 +4,7 @@ export {
 
   CoderMostSignificantBitCount,
   CoderMostSignificantBitmask,
-  CodeMostSignificantBitmaskLShiftCount,
+  CoderMostSignificantBitmaskLShiftCount,
   CoderMostSignificantBitmaskLShifted,
 
   CoderBitCount,
@@ -43,14 +43,14 @@ const CoderMostSignificantBitmask = Bitmask.ByBitCount( CoderMostSignificantBitC
  *
  * It always is 6.
  */
-const CodeMostSignificantBitmaskLShiftCount = CoderLeastSignificantBitCount;
+const CoderMostSignificantBitmaskLShiftCount = CoderLeastSignificantBitCount;
 
 /** The most significant bitmask (with left-shifted) of a 12-bits unsigned integer.
  *
  * It always is 4032.
  */
 const CoderMostSignificantBitmaskLShifted = Bitmaask.ByBitCount_LShifted(
-  CoderMostSignificantBitmask, CodeMostSignificantBitmaskLShiftCount );
+  CoderMostSignificantBitmask, CoderMostSignificantBitmaskLShiftCount );
 
 
 /** The bit count of a 12-bits unsigned integer.

@@ -14,7 +14,7 @@ import * as Uint12_Constant from "./Uint12_Constant.js";
  */
 function ToString( uint12_value ) {
   let uint6_MSB
-    = ( uint12_value >> Uint12_Constant.MostSignificantBitmaskLShiftCount )
+    = ( uint12_value >> Uint12_Constant.CoderMostSignificantBitmaskLShiftCount )
       & Uint12_Constant.MostSignificantBitmask;
 
   let uint6_LSB = uint12_value & Uint12_Constant.LeastSignificantBitmask;

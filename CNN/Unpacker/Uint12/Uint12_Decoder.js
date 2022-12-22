@@ -25,7 +25,7 @@ function From_Base64Char_CodePoint_Two(
 
   return (
       ( Base64.Constant.DecodeTable_CharCodePoint_to_Uint6[ base64Char_codePoint_0 ]
-          << Uint12_Constant.MostSignificantBitmaskLShiftCount )
+          << Uint12_Constant.CoderMostSignificantBitmaskLShiftCount )
     | ( Base64.Constant.DecodeTable_CharCodePoint_to_Uint6[ base64Char_codePoint_1 ] )
   );
 }
