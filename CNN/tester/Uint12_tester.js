@@ -41,9 +41,6 @@ function *testerUint12Constant( progressParent ) {
   for ( let i = 0; i < Uint12_Constant_Table.length; ++i ) {
     let testCase = Uint12_Constant_Table[ i ];
 
-//!!! (2022/12/22 Remarked)
-    //let delta = Math.abs( Uint12.Constant[ testCase.name ] - testCase.value )
-    //if ( delta <= Number.EPSILON ) {
     if ( Uint12.Constant[ testCase.name ] == testCase.value ) {
       progressToAdvance.value_advance();
       yield progressRoot;
