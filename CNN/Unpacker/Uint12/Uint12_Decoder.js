@@ -32,6 +32,8 @@ function From_Base64Char_CodePoint_Two(
 
 /**
  *
+ * It will call Uint12.Decoder.From_Base64Char_CodePoint_Two().
+ *
  * @param {string} base64String
  *   A BASE64 encoded string (with two charcaters). It represents a BASE64 encoded
  * uint12 (12-bits unsigned integer).
@@ -40,6 +42,6 @@ function From_Base64Char_CodePoint_Two(
  *   An uint12 (12-bits unsigned integer) value decoded from the base64String.
  */
 function FromString( base64String ) {
-  return From_Base64Char_Two(
+  return From_Base64Char_CodePoint_Two(
     base64String.codePointAt( 0 ), base64String.codePointAt( 1 ) );
 }
