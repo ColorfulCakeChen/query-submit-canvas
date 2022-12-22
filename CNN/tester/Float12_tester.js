@@ -64,7 +64,7 @@ const Float12_Constant_Table = [
   new TestCase_Float12_Constant( "PositiveMax", 4227858432 ),
   new TestCase_Float12_Constant( "PositiveMaxMore", 4227858433 ),
 
-  new TestCase_Float12_Constant( "PositiveMin", 2.4010660126805300E-010 ),
+  new TestCase_Float12_Constant( "PositiveMin", 2.4010660126805305E-010 ),
   new TestCase_Float12_Constant( "PositiveMinLess", 2.3283064365387000E-010 ),
 ];
 
@@ -181,10 +181,11 @@ function *testerFloat12EncodeDecode( progressParent ) {
     let Float12_encoded_string = Float12.Encoder.ToString( testCase.originalValue );
     let Float12_decoded_value = Float12.Decoder.FromString( Float12_encoded_string );
 
-    let delta = Math.abs( Float12_decoded_value - testCase.decodedValue )
-    if ( delta <= Number.EPSILON ) {
 //!!! (2022/12/22 Remarked)
-    //if ( Float12_decoded_value === testCase.decodedValue ) {
+    // let delta = Math.abs( Float12_decoded_value - testCase.decodedValue )
+    // if ( delta <= Number.EPSILON ) {
+
+    if ( Float12_decoded_value === testCase.decodedValue ) {
       continue;
     }
 
