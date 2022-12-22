@@ -47,7 +47,7 @@ const Float12_Constant_Coder_Table = [
   new TestCase_Float12_Constant( "SignBitmaskLShiftCount", 11 ),
   new TestCase_Float12_Constant( "SignBitmaskLShifted", 2048 ),
 
-  new TestCase_Float12_Constant( "SignificandBitCount", 5 ),
+  new TestCase_Float12_Constant( "SignificandBitCount", 6 ),
   new TestCase_Float12_Constant( "SignificandUnsignedMin", 32 ),
   new TestCase_Float12_Constant( "SignificandUnsignedMax", 63 ),
 
@@ -123,7 +123,7 @@ function *testerFloat12Constant( progressParent ) {
 
   let progressRoot = progressParent.root_get();
   let progressToAdvance = progressParent.child_add(
-    ValueMax.Percentage.Concrete.Pool.get_or_create_by( testCaseCount ) );
+    ValueMax.Percentage.Concrete.Pool.get_or_create_by( 2 ) );
 
   // 1.
   for ( let i = 0; i < Float12_Constant_Coder_Table.length; ++i ) {
@@ -133,8 +133,6 @@ function *testerFloat12Constant( progressParent ) {
     //let delta = Math.abs( Float12.Constant[ testCase.name ] - testCase.value )
     //if ( delta <= Number.EPSILON ) {
     if ( Float12.Constant.Coder[ testCase.name ] == testCase.value ) {
-      progressToAdvance.value_advance();
-      yield progressRoot;
       continue;
     }
 
@@ -145,6 +143,9 @@ function *testerFloat12Constant( progressParent ) {
     );
   }
 
+  progressToAdvance.value_advance();
+  yield progressRoot;
+
   // 2.
   for ( let i = 0; i < Float12_Constant_Table.length; ++i ) {
     let testCase = Float12_Constant_Table[ i ];
@@ -153,8 +154,6 @@ function *testerFloat12Constant( progressParent ) {
     //let delta = Math.abs( Float12.Constant[ testCase.name ] - testCase.value )
     //if ( delta <= Number.EPSILON ) {
     if ( Float12.Constant[ testCase.name ] == testCase.value ) {
-      progressToAdvance.value_advance();
-      yield progressRoot;
       continue;
     }
 
@@ -163,6 +162,9 @@ function *testerFloat12Constant( progressParent ) {
       + `should be ( ${testCase.value} ).`
     );
   }
+
+  progressToAdvance.value_advance();
+  yield progressRoot;
 }
 
 /** */
@@ -203,8 +205,6 @@ function *testerFloat12DecodeEncode( progressParent ) {
 
   let progressRoot = progressParent.root_get();
   let progressToAdvance = progressParent.child_add(
-//!!! (2022/12/22 Remarked)
-//    ValueMax.Percentage.Concrete.Pool.get_or_create_by( testCaseCount ) );
     ValueMax.Percentage.Concrete.Pool.get_or_create_by( 1 ) );
 
   for ( let i = 0; i < Base64.Constant.EncodeTable_Uint6_to_Char.length; ++i ) {
@@ -218,9 +218,6 @@ function *testerFloat12DecodeEncode( progressParent ) {
       let Float12_encoded_string = Float12.Encoder.ToString( Float12_decoded_value );
 
       if ( Float12_encoded_string == Float12_original_string ) {
-//!!! (2022/12/22 Remarked)
-        // progressToAdvance.value_advance();
-        // yield progressRoot;
         continue;
       }
 
