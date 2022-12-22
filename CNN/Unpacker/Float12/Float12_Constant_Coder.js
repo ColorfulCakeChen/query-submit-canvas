@@ -109,7 +109,7 @@ const ImplicitLShiftCount = FractionBitCount;
  *
  * It always is 32.
  */
-const ImplicitLShifted = Bitmask.ByBitCount_LShifted(
+const ImplicitLShifted = Bitmask.ByBitCount_LShift(
   ImplicitBitCount, ImplicitLShiftCount );
 
 
@@ -133,7 +133,7 @@ const ExponentBitmaskLShiftCount = FractionBitCount;
  *
  * It always is 2016.
  */
-const ExponentBitmaskLShifted = Bitmask.ByBitCount_LShifted(
+const ExponentBitmaskLShifted = Bitmask.ByBitCount_LShift(
   ExponentBitCount, ExponentBitmaskLShiftCount );
 
 /** The offset for exponent (of BASE64 encoded 12-bits floating-point number)
@@ -182,7 +182,7 @@ const SignBitmaskLShiftCount = ExponentBitCount + FractionBitCount;
  *
  * It always is 2048.
  */
-const SignBitmaskLShifted = Bitmask.ByBitCount_LShifted(
+const SignBitmaskLShifted = Bitmask.ByBitCount_LShift(
   SignBitCount, SignBitmaskLShiftCount );
 
 
