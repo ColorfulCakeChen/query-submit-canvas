@@ -1,6 +1,6 @@
 export { tester };
 
-//import * as Base64 from "../Unpacker/Base64.js";
+import * as Base64 from "../Unpacker/Base64.js";
 import * as Uint12 from "../Unpacker/Uint12.js";
 //import * as RandTools from "../util/RandTools.js";
 import * as ValueMax from "../util/ValueMax.js";
@@ -57,6 +57,70 @@ function *testerUint12Constant( progressParent ) {
   }
 }
 
+/** */
+function *testerUint12EncodeDecode( progressParent ) {
+
+  let testCaseCount = ( 2 ** 12 ); // 4096
+
+  let progressRoot = progressParent.root_get();
+  let progressToAdvance = progressParent.child_add(
+    ValueMax.Percentage.Concrete.Pool.get_or_create_by( testCaseCount ) );
+
+  for ( let i = 0; i < 2 ** 12; ++i ) {
+
+    let Uint12_encoded_string = Uint12.Encoder.ToString( i );
+    let Uint12_decoded_value = Uint12.Decoder.FromString( Uint12_encoded_string );
+
+    if ( Uint12_decoded_value === i ) {
+      progressToAdvance.value_advance();
+      yield progressRoot;
+      continue;
+    }
+
+    throw Error( `testerUint12EncodeDecode(): `
+      + `( ${i} ) encoded as ( \"${Uint12_encoded_string}\" ), `
+      + `decoded as ( ${Uint12_decoded_value} ) `
+      + `should be the same as original.`
+    );
+  }
+}
+
+/** */
+function *testerUint12DecodeEncode( progressParent ) {
+
+  let testCaseCount
+    = Base64.Constant.EncodeTable_Uint6_to_Char.length
+        * Base64.Constant.EncodeTable_Uint6_to_Char.length;
+
+  let progressRoot = progressParent.root_get();
+  let progressToAdvance = progressParent.child_add(
+    ValueMax.Percentage.Concrete.Pool.get_or_create_by( testCaseCount ) );
+
+  for ( let i = 0; i < Base64.Constant.EncodeTable_Uint6_to_Char.length; ++i ) {
+    for ( let j = 0; j < Base64.Constant.EncodeTable_Uint6_to_Char.length; ++j ) {
+
+      let Uint12_original_string =
+         Base64.Constant.EncodeTable_Uint6_to_Char[ i ]
+       + Base64.Constant.EncodeTable_Uint6_to_Char[ j ];
+
+      let Uint12_decoded_value = Uint12.Decoder.FromString( Uint12_original_string );
+      let Uint12_encoded_string = Uint12.Encoder.ToString( Uint12_decoded_value );
+
+      if ( Uint12_encoded_string == Uint12_original_string ) {
+        progressToAdvance.value_advance();
+        yield progressRoot;
+        continue;
+      }
+
+      throw Error( `testerUint12DecodeEncode(): `
+        + `( \"${Uint12_original_string}\" ) decoded as ( ${Uint12_decoded_value} ), `
+        + `encoded as ( \"${Uint12_encoded_string}\" ) `
+        + `should be the same as original.`
+      );
+    }
+  }
+}
+
 /**
  *
  * @param {ValueMax.Percentage.Aggregate} progressParent
@@ -66,22 +130,27 @@ function *testerUint12Constant( progressParent ) {
  *
  */
 function* tester( progressParent ) {
-  console.log( "Uint12 decode testing..." );
-
-//!!! ...unfinished... (2022/12/06)
+  console.log( "Uint12 encode/decode testing..." );
 
   // 0. Prepare progressParent for every TestCase.
 
-//!!! ...unfinished... (2022/12/06)
-  // for ( let i = 0; i < testCases.length; ++i ) {
-  //   progressParent.child_add( ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
-  // }
-
   let progressConstant
+    = progressParent.child_add( ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
+
+  let progressEncodeDecode
+    = progressParent.child_add( ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
+
+  let progressDecodeEncode
     = progressParent.child_add( ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
 
   // 1.
   yield *testerUint12Constant( progressConstant );
 
-  console.log( "Uint12 decode testing... Done." );
+  // 2.
+  yield *testerUint12EncodeDecode( progressEncodeDecode );
+
+  // 3.
+  yield *testerUint12DecodeEncode( progressDecodeEncode );
+
+  console.log( "Uint12 encode/decode testing... Done." );
 }
