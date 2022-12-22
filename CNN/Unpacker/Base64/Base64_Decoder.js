@@ -1,6 +1,7 @@
 export { StringOrStringArray_to_Uint8Array };
 export { ArrayBuffer_to_Uint8Array };
 export { Uint8Array_to_Uint8Array };
+export { lineSkipper_fromUint8Array };
 
 import * as ValueMax from "../../util/ValueMax.js";
 import * as Base64_Constant from "./Base64_Constant.js";
