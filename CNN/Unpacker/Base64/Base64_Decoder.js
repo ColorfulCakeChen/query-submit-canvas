@@ -3,7 +3,7 @@ export { ArrayBuffer_to_Uint8Array };
 export { Uint8Array_to_Uint8Array };
 
 import * as ValueMax from "../../util/ValueMax.js";
-import * as Constant from "./Base64_Constant.js";
+import * as Base64_Constant from "./Base64_Constant.js";
 
 
 /**
@@ -296,7 +296,7 @@ function* Uint8Array_to_Uint8Array( progressParent,
           if ( progressToAdvance.value >= sourceByteLength )
             break nextYieldLoop; // Decoding is done. (Ignore last non-4-bytes.)
 
-          encoded_0 = Constant.DecodeTable_CharCodePoint_to_Uint6[
+          encoded_0 = Base64_Constant.DecodeTable_CharCodePoint_to_Uint6[
             sourceBytes[ progressToAdvance.value ] ];
           progressToAdvance.value_advance();
         } while ( 255 === encoded_0 );
@@ -309,7 +309,7 @@ function* Uint8Array_to_Uint8Array( progressParent,
           if ( progressToAdvance.value >= sourceByteLength )
             break nextYieldLoop; // Decoding is done. (Ignore last non-4-bytes.)
 
-          encoded_1 = Constant.DecodeTable_CharCodePoint_to_Uint6[
+          encoded_1 = Base64_Constant.DecodeTable_CharCodePoint_to_Uint6[
             sourceBytes[ progressToAdvance.value ] ];
           progressToAdvance.value_advance();
         } while ( 255 === encoded_1 );
@@ -322,7 +322,7 @@ function* Uint8Array_to_Uint8Array( progressParent,
           if ( progressToAdvance.value >= sourceByteLength )
             break nextYieldLoop; // Decoding is done. (Ignore last non-4-bytes.)
 
-          encoded_2 = Constant.DecodeTable_CharCodePoint_to_Uint6[
+          encoded_2 = Base64_Constant.DecodeTable_CharCodePoint_to_Uint6[
             sourceBytes[ progressToAdvance.value ] ];
           progressToAdvance.value_advance();
         } while ( 255 === encoded_2 );
@@ -335,7 +335,7 @@ function* Uint8Array_to_Uint8Array( progressParent,
           if ( progressToAdvance.value >= sourceByteLength )
             break nextYieldLoop; // Decoding is done. (Ignore last non-4-bytes.)
 
-          encoded_3 = Constant.DecodeTable_CharCodePoint_to_Uint6[
+          encoded_3 = Base64_Constant.DecodeTable_CharCodePoint_to_Uint6[
             sourceBytes[ progressToAdvance.value ] ];
           progressToAdvance.value_advance();
         } while ( 255 === encoded_3 );
