@@ -20,7 +20,7 @@ let testCases = [
 
 /**
  * (Note: Their length could be different, but content should be the same.
- * (i.e. the extra elements should all bew undefined))
+ * (i.e. the extra elements should be all undefined))
  */
 function array2d_compare_EQ( lhs, rhs ) {
 
