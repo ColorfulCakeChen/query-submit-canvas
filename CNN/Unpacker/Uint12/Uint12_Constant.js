@@ -50,7 +50,7 @@ const CoderMostSignificantBitmaskLShiftCount = CoderLeastSignificantBitCount;
  *
  * It always is 4032.
  */
-const CoderMostSignificantBitmaskLShifted = Bitmaask.ByBitCount_LShifted(
+const CoderMostSignificantBitmaskLShifted = Bitmask.ByBitCount_LShifted(
   CoderMostSignificantBitmask, CoderMostSignificantBitmaskLShiftCount );
 
 
