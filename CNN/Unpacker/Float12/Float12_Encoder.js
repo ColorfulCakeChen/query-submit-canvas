@@ -225,7 +225,7 @@ function ToString_by_Number_ExponentSigned( aNumber, exponent_signed_n32_p31 ) {
  */
 function ToString( aNumber ) {
 
-  // Encode 0 as the minimum representable (positive) 12-bits floating-point number.
+  // Encode 0 as the (positive) minimum representable 12-bits floating-point number.
   let exponent_signed_n32_p31;
   if ( aNumber === 0 )
     exponent_signed_n32_p31 = Float12_Constant_Coder.ExponentNegativeMin;
