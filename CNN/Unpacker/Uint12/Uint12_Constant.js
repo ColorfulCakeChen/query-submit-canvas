@@ -9,6 +9,7 @@ export {
 
   CoderBitCount,
 
+  UnsignedMin,
   UnsignedMax,
 
   StringCharCount,
@@ -59,6 +60,12 @@ const CoderMostSignificantBitmaskLShifted = Bitmaask.ByBitCount_LShifted(
  */
 const CoderBitCount = CoderMostSignificantBitCount + CoderLeastSignificantBitCount;
 
+
+/** The minimum 12-bits unsigned integer.
+ *
+ * It always is 0.
+ */
+const UnsignedMin = 0;
 
 /** The maximum 12-bits unsigned integer.
  *

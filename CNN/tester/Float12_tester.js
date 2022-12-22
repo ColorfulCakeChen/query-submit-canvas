@@ -2,6 +2,7 @@ export { tester };
 
 //import * as Base64 from "../Unpacker/Base64.js";
 import * as Float12 from "../Unpacker/Float12.js";
+import * as Uint12 from "../Unpacker/Uint12.js";
 //import * as RandTools from "../util/RandTools.js";
 import * as ValueMax from "../util/ValueMax.js";
 
@@ -51,11 +52,10 @@ function *testerFloat12Constant( progressParent ) {
   for ( let i = 0; i < Float12_Constant_Table.length; ++i ) {
     let testCase = Float12_Constant_Table[ i ];
 
-//!!! (2022/12/06)
-//    if ( Float12.Constant[ testCase.name ] != testCase.value )
-
-    let delta = Math.abs( Float12.Constant[ testCase.name ] - testCase.value )
-    if ( delta <= Number.EPSILON ) {
+//!!! (2022/12/22 Remarked)
+    //let delta = Math.abs( Float12.Constant[ testCase.name ] - testCase.value )
+    //if ( delta <= Number.EPSILON ) {
+    if ( Float12.Constant[ testCase.name ] == testCase.value ) {
       progressToAdvance.value_advance();
       yield progressRoot;
       continue;

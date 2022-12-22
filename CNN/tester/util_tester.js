@@ -4,6 +4,7 @@ import * as PartTime from "../util/PartTime.js";
 import * as Pool from "../util/Pool.js";
 import * as Base64ToUint8Array_tester from "./Base64ToUint8Array_tester.js";
 import * as Float12_tester from "./Float12_tester.js";
+import * as Uint12_tester from "./Uint12_tester.js";
 import * as GSheets_tester from "./GSheets_tester.js";
 import * as AsyncWorker_tester from "./AsyncWorker_tester.js";
 import * as NeuralWorker_tester from "./NeuralWorker_tester.js";
@@ -30,6 +31,9 @@ function test() {
   let progress_Float12_tester = progress.child_add(
     ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
 
+  let progress_Uint12_tester = progress.child_add(
+    ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
+
   let progress_GSheets_tester = progress.child_add(
     ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
 
@@ -48,6 +52,7 @@ function test() {
 
   async function* testerAll() {
 
+    yield* Uint12_tester.tester( progress_Uint12_tester );
     yield* Float12_tester.tester( progress_Float12_tester );
     yield* Base64ToUint8Array_tester.tester( progress_Base64ToUint8Array_tester );
 
