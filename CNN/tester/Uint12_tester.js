@@ -63,7 +63,7 @@ function *testerUint12EncodeDecode( progressParent ) {
   let progressToAdvance = progressParent.child_add(
     ValueMax.Percentage.Concrete.Pool.get_or_create_by( testCaseCount ) );
 
-  for ( let i = 0; i < 2 ** 12; ++i ) {
+  for ( let i = 0; i < testCaseCount; ++i ) {
 
     let Uint12_encoded_string = Uint12.Encoder.ToString( i );
     let Uint12_decoded_value = Uint12.Decoder.FromString( Uint12_encoded_string );
