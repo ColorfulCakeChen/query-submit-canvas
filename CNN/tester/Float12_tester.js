@@ -111,6 +111,42 @@ function *testerFloat12Constant( progressParent ) {
   }
 }
 
+/** */
+function *testerFloat12DecodeEncode( progressParent ) {
+
+  let testCaseCount
+    = Base64.Constant.EncodeTable_Uint6_to_Char.length
+        * Base64.Constant.EncodeTable_Uint6_to_Char.length;
+
+  let progressRoot = progressParent.root_get();
+  let progressToAdvance = progressParent.child_add(
+    ValueMax.Percentage.Concrete.Pool.get_or_create_by( testCaseCount ) );
+
+  for ( let i = 0; i < Base64.Constant.EncodeTable_Uint6_to_Char.length; ++i ) {
+    for ( let j = 0; j < Base64.Constant.EncodeTable_Uint6_to_Char.length; ++j ) {
+
+      let Float12_original_string =
+         Base64.Constant.EncodeTable_Uint6_to_Char[ i ]
+       + Base64.Constant.EncodeTable_Uint6_to_Char[ j ];
+
+      let Float12_decoded_value = Float12.Decoder.FromString( Float12_original_string );
+      let Float12_encoded_string = Float12.Encoder.ToString( Float12_decoded_value );
+
+      if ( Float12_encoded_string == Float12_original_string ) {
+        progressToAdvance.value_advance();
+        yield progressRoot;
+        continue;
+      }
+
+      throw Error( `testerFloat12DecodeEncode(): `
+        + `( \"${Float12_original_string}\" ) decoded as ( ${Float12_decoded_value} ), `
+        + `encoded as ( \"${Float12_encoded_string}\" ) `
+        + `should be the same as original.`
+      );
+    }
+  }
+}
+
 /**
  *
  * @param {ValueMax.Percentage.Aggregate} progressParent
@@ -120,9 +156,9 @@ function *testerFloat12Constant( progressParent ) {
  *
  */
 function* tester( progressParent ) {
-  console.log( "Float12 decode testing..." );
+  console.log( "Float12 encode/decode testing..." );
 
-//!!! ...unfinished... (2022/12/06)
+//!!! ...unfinished... (2022/12/22)
 
   // 0. Prepare progressParent for every TestCase.
 
@@ -134,8 +170,18 @@ function* tester( progressParent ) {
   let progressConstant
     = progressParent.child_add( ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
 
+  let progressDecodeEncode
+    = progressParent.child_add( ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
+
   // 1.
   yield *testerFloat12Constant( progressConstant );
 
-  console.log( "Float12 decode testing... Done." );
+  // 2.
+  yield *testerFloat12DecodeEncode( progressDecodeEncode );
+
+
+//!!! ...unfinished... (2022/12/22)
+// zero, less than min, greater than max
+
+  console.log( "Float12 encode/decode testing... Done." );
 }
