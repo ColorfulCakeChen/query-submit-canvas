@@ -7,7 +7,7 @@ export {
   ImplicitBitCount,
   ImplicitBitmask,
   ImplicitLShiftCount,
-  ImplicitLShifted,
+  ImplicitBitmaskLShiftCount,
 
   ExponentBitCount,
   ExponentBitmask,
@@ -102,7 +102,7 @@ const ImplicitBitmask = Bitmask.ByBitCount( ImplicitBitCount );
  *
  * It always is 5.
  */
-const ImplicitLShiftCount = FractionBitCount;
+const ImplicitBitmaskLShiftCount = FractionBitCount;
 
 /** The implicit (of significand) bitmask (with left-shifted) of a 12-bits
  * floating-point number.
