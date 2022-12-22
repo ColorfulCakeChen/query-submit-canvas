@@ -65,7 +65,7 @@ const Float12_Constant_Table = [
   new TestCase_Float12_Constant( "PositiveMaxMore", 4227858433 ),
 
   new TestCase_Float12_Constant( "PositiveMin", 2.4010660126805305E-010 ),
-  new TestCase_Float12_Constant( "PositiveMinLess", 2.3283064365387000E-010 ),
+  new TestCase_Float12_Constant( "PositiveMinLess", 2.3283064365386963E-010 ),
 ];
 
 /** */
