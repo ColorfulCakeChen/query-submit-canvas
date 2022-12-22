@@ -2,6 +2,8 @@ export { ScientificNotation_Exponent_10 };
 export { ScientificNotation_Exponent_2 };
 export { Estimate_Exponent_Signed };
 export { Estimate_Significand_Signed };
+export { ToString_by_Sign_ExponentUnsigned_FractionUnsigned };
+export { ToString_by_Number_ExponentSigned };
 
 import * as Uint12 from "../Uint12.js";
 import * as Float12_Constant_Coder from "./Float12_Constant_Coder.js";
@@ -136,6 +138,66 @@ function ToString_by_Sign_ExponentUnsigned_FractionUnsigned(
     | ( exponent_unsigned_0_p63 << Float12.Constant.Coder.ExponentBitmaskLShiftCount )
     | fraction_unsigned_0_p31
   );
+}
+
+/**
+ *
+ * It will call Float12.Encoder.ToString_by_Sign_ExponentUnsigned_FractionUnsigned().
+ *
+ * @param {number} aNumber
+ *   The 12-bits floating-point number to be encoded to Base64 string. It should be
+ * between [ Float12.Constant.NegativeMin, Float12.Constant.PositiveMax ].
+ *
+ * @param {integer} exponent_signed_n32_p31
+ *   An signed (i.e. not yet plus Float12.Constant.Coder.ExponentOffsetToSigned)
+ * integer representing exponent value. It should be between [ -32, 31 ] = [
+ * Float12.Constant.Coder.ExponentNegativeMin,
+ * Float12.Constant.Coder.ExponentPositiveMax ].
+ * It should be Float12.Encoder.Estimate_Exponent_Signed( number ).
+ *
+ * @return {string}
+ *   A Base64 encoded string (two characters) representing a 12-bits floating-point
+ * number by the number and its signed exponent.
+ */
+function ToString_by_Number_ExponentSigned( aNumber, exponent_signed_n32_p31 ) {
+
+  // 1. Extract sign bit.
+  let sign_0_1; 
+  if ( aNumber < 0 )
+    sign_0_1 = 1;
+  else
+    sign_0_1 = 0;
+
+  // 2. Adjust exponent_signed and extract fraction_unsigned.
+  let fraction_unsigned_0_p31;
+
+  // 2.1 If exponent is less than minimum representable (exponent) value,
+  //     use minimum representable exponent and fraction value.
+  if ( exponent_signed_n32_p31 < Float12.Constant.Coder.ExponentNegativeMin ) {
+    exponent_signed_n32_p31 = Float12.Constant.Coder.ExponentNegativeMin;
+    fraction_unsigned_0_p31 = Float12.Constant.Coder.FractionUnsignedMin;
+
+  // 2.2 If exponent is greater than maximum representable (exponent) value,
+  //     use maximum representable exponent and fraction value.
+  } else if ( exponent_signed_n32_p31 > Float12.Constant.Coder.ExponentPositiveMax ) {
+    exponent_signed_n32_p31 = Float12.Constant.Coder.ExponentPositiveMax;
+    fraction_unsigned_0_p31 = Float12.Constant.Coder.FractionUnsignedMax;
+
+  // 2.3 Otherwise, find out significand by the exponent. And then, get fraction by
+  //     masking out the implicit bit of the significand.
+  } else {
+    fraction_unsigned_0_p31
+      = Math.abs( Estimate_Significand_Signed( aNumber, exponent_signed_n32_p31 ) )
+          & Float12.Constant.Coder.FractionBitmask;
+  }
+
+  // 3. Determine exponent_unsigned.
+  let exponent_unsigned_0_p63
+    = exponent_signed_n32_p31 + Float12.Constant.Coder.ExponentOffsetToSigned;
+
+  // 4. Compose to string.
+  return ToString_by_Sign_ExponentUnsigned_FractionUnsigned(
+    sign_0_1, exponent_unsigned_0_p63, fraction_unsigned_0_p31 );
 }
 
 //!!! ...unfinished... (2022/12/22)
