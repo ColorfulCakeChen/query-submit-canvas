@@ -129,20 +129,13 @@ function Estimate_Significand_Signed( aNumber, exponent_signed ) {
  * number by the sign bit, the unsigned exponent and the unsigned fraction.
  */
 function ToString_by_Sign_ExponentUnsigned_FractionUnsigned(
-  sign_0_1, exponent_unsigned_0_p63, fraction_unsigned_0_p31
-) {
+  sign_0_1, exponent_unsigned_0_p63, fraction_unsigned_0_p31 ) {
 
   return Uint12.Encoder.ToString(
-    BITOR(
-      BITOR(
-        BITLSHIFT(sign_0_1,float12_coder_sign_bitmask_lshift_count),
-        BITLSHIFT(exponent_unsigned_0_p63,float12_coder_exponent_bitmask_lshift_count)
-      ),
-      fraction_unsigned_0_p31),
-    );
-
-//!!! ...unfinished... (2022/12/21)
-
+      ( sign_0_1 << Float12.Constant.Coder.SignBitmaskLShiftCount )
+    | ( exponent_unsigned_0_p63 << Float12.Constant.Coder.ExponentBitmaskLShiftCount )
+    | fraction_unsigned_0_p31
+  );
 }
 
-//!!! ...unfinished... (2022/12/21)
+//!!! ...unfinished... (2022/12/22)
