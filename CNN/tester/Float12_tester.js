@@ -181,7 +181,10 @@ function *testerFloat12EncodeDecode( progressParent ) {
     let Float12_encoded_string = Float12.Encoder.ToString( testCase.originalValue );
     let Float12_decoded_value = Float12.Decoder.FromString( Float12_encoded_string );
 
-    if ( Float12_decoded_value === testCase.decodedValue ) {
+    let delta = Math.abs( Float12_decoded_value - testCase.decodedValue )
+    if ( delta <= Number.EPSILON ) {
+//!!! (2022/12/22 Remarked)
+    //if ( Float12_decoded_value === testCase.decodedValue ) {
       progressToAdvance.value_advance();
       yield progressRoot;
       continue;
