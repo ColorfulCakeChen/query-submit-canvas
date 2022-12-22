@@ -31,16 +31,16 @@ function array2d_compare_EQ( lhs, rhs ) {
   const emptyArray = [];
 
   // Note: lhs or rhs may be undefined when all Google Sheets cells are empty.
-  lhs = ( lhs == undefined ) ? lhs : emptyArray;
-  rhs = ( rhs == undefined ) ? rhs : emptyArray;
+  lhs = ( lhs != undefined ) ? lhs : emptyArray;
+  rhs = ( rhs != undefined ) ? rhs : emptyArray;
 
   let max_i = Math.max( lhs.length, rhs.length );
   for ( let i = 0; i < max_i; ++i ) {
     let array1d_lhs = lhs[ i ];
     let array1d_rhs = rhs[ i ];
 
-    array1d_lhs = ( array1d_lhs == undefined ) ? array1d_lhs : emptyArray;
-    array1d_rhs = ( array1d_rhs == undefined ) ? array1d_rhs : emptyArray;
+    array1d_lhs = ( array1d_lhs != undefined ) ? array1d_lhs : emptyArray;
+    array1d_rhs = ( array1d_rhs != undefined ) ? array1d_rhs : emptyArray;
 
     let max_j = Math.max( array1d_lhs.length, array1d_rhs.length );
     for ( let j = 0; j < max_j; ++j ) {
