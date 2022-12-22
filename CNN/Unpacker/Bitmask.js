@@ -1,5 +1,5 @@
 export { ByBitCount };
-export { ByBitCountByBitCount_LShift };
+export { ByBitCount_LShift };
 
 
 /** 
