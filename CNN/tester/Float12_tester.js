@@ -14,6 +14,14 @@ class TestCase_Float12_Constant{
 }
 
 /** */
+class TestCase_Float12_EncodeDecode{
+  constructor( originalValue, decodedValue ) {
+    this.originalValue = originalValue;
+    this.decodedValue = decodedValue;
+  }
+}
+
+/** */
 const Float12_Constant_Coder_Table = [
   new TestCase_Float12_Constant( "FractionBitCount", 5 ),
   new TestCase_Float12_Constant( "FractionBitmask", 31 ),
@@ -59,6 +67,42 @@ const Float12_Constant_Table = [
 
   new TestCase_Float12_Constant( "PositiveMin", 2.4010660126805300E-010 ),
   new TestCase_Float12_Constant( "PositiveMinLess", 2.3283064365387000E-010 ),
+];
+
+/** */
+const Float12_EncodeDecode_Table = [
+  new TestCase_Float12_EncodeDecode( 0, 0 ),
+  new TestCase_Float12_EncodeDecode( -0, 0 ),
+
+
+  new TestCase_Float12_EncodeDecode(
+    Float12.Constant.NegativeMin, Float12.Constant.NegativeMin ),
+
+  new TestCase_Float12_EncodeDecode(
+    Float12.Constant.NegativeMinLess, Float12.Constant.NegativeMin ),
+
+  new TestCase_Float12_EncodeDecode(
+    Float12.Constant.NegativeMin - 1, Float12.Constant.NegativeMin ),
+
+
+  new TestCase_Float12_EncodeDecode(
+    Float12.Constant.PositiveMax, Float12.Constant.PositiveMax ),
+
+  new TestCase_Float12_EncodeDecode(
+    Float12.Constant.PositiveMaxMore, Float12.Constant.PositiveMax ),
+
+  new TestCase_Float12_EncodeDecode(
+    Float12.Constant.PositiveMax + 1, Float12.Constant.PositiveMax ),
+
+
+  new TestCase_Float12_EncodeDecode(
+    Float12.Constant.PositiveMin, Float12.Constant.PositiveMin ),
+  
+  new TestCase_Float12_EncodeDecode(
+    Float12.Constant.PositiveMinLess, 0 ),
+
+  new TestCase_Float12_EncodeDecode(
+    Float12.Constant.PositiveMin - Number.EPSILON, 0 ),
 ];
 
 /** */
@@ -112,6 +156,35 @@ function *testerFloat12Constant( progressParent ) {
 }
 
 /** */
+function *testerFloat12EncodeDecode( progressParent ) {
+
+  let testCaseCount = Float12_EncodeDecode_Table.length;
+
+  let progressRoot = progressParent.root_get();
+  let progressToAdvance = progressParent.child_add(
+    ValueMax.Percentage.Concrete.Pool.get_or_create_by( testCaseCount ) );
+
+  for ( let i = 0; i < Float12_EncodeDecode_Table.length; ++i ) {
+    let testCase = Float12_EncodeDecode_Table[ i ];
+
+    let Float12_encoded_string = Float12.Encoder.ToString( testCase.originalValue );
+    let Float12_decoded_value = Float12.Decoder.FromString( Float12_encoded_string );
+
+    if ( Float12_decoded_value === testCase.decodedValue ) {
+      progressToAdvance.value_advance();
+      yield progressRoot;
+      continue;
+    }
+
+    throw Error( `testerFlot12EncodeDecode(): `
+      + `( ${testCase.originalValue} ) encoded as ( \"${Float12_encoded_string}\" ), `
+      + `decoded as ( ${Float12_decoded_value} ) `
+      + `should be ( ${testCase.decodedValue} ).`
+    );
+  }
+}
+
+/** */
 function *testerFloat12DecodeEncode( progressParent ) {
 
   let testCaseCount
@@ -158,16 +231,12 @@ function *testerFloat12DecodeEncode( progressParent ) {
 function* tester( progressParent ) {
   console.log( "Float12 encode/decode testing..." );
 
-//!!! ...unfinished... (2022/12/22)
-
   // 0. Prepare progressParent for every TestCase.
 
-//!!! ...unfinished... (2022/12/06)
-  // for ( let i = 0; i < testCases.length; ++i ) {
-  //   progressParent.child_add( ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
-  // }
-
   let progressConstant
+    = progressParent.child_add( ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
+
+  let progressEncodeDecode
     = progressParent.child_add( ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
 
   let progressDecodeEncode
@@ -177,11 +246,10 @@ function* tester( progressParent ) {
   yield *testerFloat12Constant( progressConstant );
 
   // 2.
+  yield *testerFloat12DecodeEncode( progressEncodeDecode );
+
+  // 3.
   yield *testerFloat12DecodeEncode( progressDecodeEncode );
-
-
-//!!! ...unfinished... (2022/12/22)
-// zero, less than min, greater than max
 
   console.log( "Float12 encode/decode testing... Done." );
 }
