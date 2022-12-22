@@ -28,12 +28,17 @@ function array2d_compare_EQ( lhs, rhs ) {
   if ( ( lhs == null ) && ( rhs == null ) )
     return true;
 
-  let max_i = Math.max( lhs.length, rhs.length );
+  // Note: lhs or rhs may be undefined when all Google Sheets cells are empty.
+  let max_i = Math.max( ( lhs ? lhs.length : 0 ), ( rhs ? rhs.length : 0 ) );
+
   for ( let i = 0; i < max_i; ++i ) {
     let array1d_lhs = lhs[ i ];
     let array1d_rhs = rhs[ i ];
 
-    let max_j = Math.max( array1d_lhs.length, array1d_rhs.length );
+    let max_j = Math.max(
+      ( array1d_lhs ? array1d_lhs.length : 0 ),
+      ( array1d_rhs ? array1d_rhs.length : 0 ) );
+
     for ( let j = 0; j < max_j; ++j ) {
       if ( array1d_lhs[ j ] != array1d_rhs[ j ] )
         return false;
@@ -95,7 +100,7 @@ async function* tester( progressParent ) {
     let fetcher21 = tester2.JSON_ColumnMajorArrayArray_fetch_asyncGenerator( progress21 );
     let result21 = yield* fetcher21;
 
-!!! ...unfinished... (2022/12/22)
+//!!! ...unfinished... (2022/12/22)
 // If all cells are empty, GQViz got array with zero length.
 // But APIv4 got undefined.
 
