@@ -15,9 +15,9 @@ import * as Uint12_Constant from "./Uint12_Constant.js";
 function ToString( uint12_value ) {
   let uint6_MSB
     = ( uint12_value >> Uint12_Constant.CoderMostSignificantBitmaskLShiftCount )
-      & Uint12_Constant.MostSignificantBitmask;
+      & Uint12_Constant.CoderMostSignificantBitmask;
 
-  let uint6_LSB = uint12_value & Uint12_Constant.LeastSignificantBitmask;
+  let uint6_LSB = uint12_value & Uint12_Constant.CoderLeastSignificantBitmask;
 
   return `${
     Base64.Constant.EncodeTable_Uint6_to_Char[ uint6_MSB ]}${
