@@ -4,6 +4,7 @@ export { From_Sign_ExponentSigned_FractionUnsigned };
 export { From_Sign_ExponentUnsigned_FractionUnsigned };
 export { From_Sign_ExponentUnsigned_FractionUnsigned_Zeroable };
 export { From_Uint12 };
+export { From_Base64Char_CodePoint_Two };
 export { FromString };
 
 import * as Uint12 from "../Uint12.js";
@@ -184,6 +185,29 @@ function From_Uint12( uint12_value ) {
   );
 }
 
+
+/**
+ *
+ * @param {integer} base64Char_codePoint_0
+ *   A BASE64 encoded value (as a charcater's code point). It represents the
+ * most-significant bits.
+ *
+ * @param {integer} base64Char_codePoint_1
+ *   A BASE64 encoded value (as a charcater's code point). It represents the
+ * least-significant bits.
+ *
+ * @return {number}
+ *   A float12 (12-bits floating-point number) value decoded from the
+ * base64Char_codePoint_0 and base64Char_codePoint_1.
+ */
+function From_Base64Char_CodePoint_Two(
+  base64Char_codePoint_0, base64Char_codePoint_1 ) {
+
+  let uint12_value = Uint12.Decoder.From_Base64Char_CodePoint_Two(
+    base64Char_codePoint_0, base64Char_codePoint_1 );
+  return From_Uint12( uint12_value );
+}
+    
 /**
  *
  * @param {string} base64String

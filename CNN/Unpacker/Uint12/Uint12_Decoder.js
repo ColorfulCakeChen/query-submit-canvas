@@ -10,15 +10,15 @@ import * as Uint12_Constant from "./Uint12_Constant.js";
  *
  * @param {integer} base64Char_codePoint_0
  *   A BASE64 encoded value (as a charcater's code point). It represents the
- * most-significant digit.
+ * most-significant bits.
  *
  * @param {integer} base64Char_codePoint_1
  *   A BASE64 encoded value (as a charcater's code point). It represents the
- * least-significant digit.
+ * least-significant bits.
  *
  * @return {integer}
- *   An uint12 (12-bits unsigned integer) value decoded from the base64_uint6_0 and
- * base64_uint6_1.
+ *   An uint12 (12-bits unsigned integer) value decoded from the
+ * base64Char_codePoint_0 and base64Char_codePoint_1.
  */
 function From_Base64Char_CodePoint_Two(
   base64Char_codePoint_0, base64Char_codePoint_1 ) {
