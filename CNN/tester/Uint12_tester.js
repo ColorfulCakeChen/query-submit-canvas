@@ -36,14 +36,17 @@ function *testerUint12Constant( progressParent ) {
 
   let progressRoot = progressParent.root_get();
   let progressToAdvance = progressParent.child_add(
-    ValueMax.Percentage.Concrete.Pool.get_or_create_by( Uint12_Constant_Table.length ) );
+//!!! (2022/12/22 Remarked)
+//    ValueMax.Percentage.Concrete.Pool.get_or_create_by( Uint12_Constant_Table.length ) );
+    ValueMax.Percentage.Concrete.Pool.get_or_create_by( 1 ) );
 
   for ( let i = 0; i < Uint12_Constant_Table.length; ++i ) {
     let testCase = Uint12_Constant_Table[ i ];
 
     if ( Uint12.Constant[ testCase.name ] == testCase.value ) {
-      progressToAdvance.value_advance();
-      yield progressRoot;
+//!!! (2022/12/22 Remarked)
+      // progressToAdvance.value_advance();
+      // yield progressRoot;
       continue;
     }
 
@@ -52,6 +55,9 @@ function *testerUint12Constant( progressParent ) {
       + `should be ( ${testCase.value} ).`
     );
   }
+
+  progressToAdvance.value_advance();
+  yield progressRoot;
 }
 
 /** */
@@ -61,7 +67,9 @@ function *testerUint12EncodeDecode( progressParent ) {
 
   let progressRoot = progressParent.root_get();
   let progressToAdvance = progressParent.child_add(
-    ValueMax.Percentage.Concrete.Pool.get_or_create_by( testCaseCount ) );
+//!!! (2022/12/22 Remarked)
+//    ValueMax.Percentage.Concrete.Pool.get_or_create_by( testCaseCount ) );
+    ValueMax.Percentage.Concrete.Pool.get_or_create_by( 1 ) );
 
   for ( let i = 0; i < testCaseCount; ++i ) {
 
@@ -69,8 +77,9 @@ function *testerUint12EncodeDecode( progressParent ) {
     let Uint12_decoded_value = Uint12.Decoder.FromString( Uint12_encoded_string );
 
     if ( Uint12_decoded_value === i ) {
-      progressToAdvance.value_advance();
-      yield progressRoot;
+//!!! (2022/12/22 Remarked)
+      // progressToAdvance.value_advance();
+      // yield progressRoot;
       continue;
     }
 
@@ -80,6 +89,9 @@ function *testerUint12EncodeDecode( progressParent ) {
       + `should be the same as original.`
     );
   }
+
+  progressToAdvance.value_advance();
+  yield progressRoot;
 }
 
 /** */
@@ -91,7 +103,9 @@ function *testerUint12DecodeEncode( progressParent ) {
 
   let progressRoot = progressParent.root_get();
   let progressToAdvance = progressParent.child_add(
-    ValueMax.Percentage.Concrete.Pool.get_or_create_by( testCaseCount ) );
+//!!! (2022/12/22 Remarked)
+//    ValueMax.Percentage.Concrete.Pool.get_or_create_by( testCaseCount ) );
+    ValueMax.Percentage.Concrete.Pool.get_or_create_by( 1 ) );
 
   for ( let i = 0; i < Base64.Constant.EncodeTable_Uint6_to_Char.length; ++i ) {
     for ( let j = 0; j < Base64.Constant.EncodeTable_Uint6_to_Char.length; ++j ) {
@@ -104,8 +118,9 @@ function *testerUint12DecodeEncode( progressParent ) {
       let Uint12_encoded_string = Uint12.Encoder.ToString( Uint12_decoded_value );
 
       if ( Uint12_encoded_string == Uint12_original_string ) {
-        progressToAdvance.value_advance();
-        yield progressRoot;
+//!!! (2022/12/22 Remarked)
+        // progressToAdvance.value_advance();
+        // yield progressRoot;
         continue;
       }
 
@@ -116,6 +131,9 @@ function *testerUint12DecodeEncode( progressParent ) {
       );
     }
   }
+
+  progressToAdvance.value_advance();
+  yield progressRoot;
 }
 
 /**

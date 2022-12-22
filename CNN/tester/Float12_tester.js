@@ -203,7 +203,9 @@ function *testerFloat12DecodeEncode( progressParent ) {
 
   let progressRoot = progressParent.root_get();
   let progressToAdvance = progressParent.child_add(
-    ValueMax.Percentage.Concrete.Pool.get_or_create_by( testCaseCount ) );
+//!!! (2022/12/22 Remarked)
+//    ValueMax.Percentage.Concrete.Pool.get_or_create_by( testCaseCount ) );
+    ValueMax.Percentage.Concrete.Pool.get_or_create_by( 1 ) );
 
   for ( let i = 0; i < Base64.Constant.EncodeTable_Uint6_to_Char.length; ++i ) {
     for ( let j = 0; j < Base64.Constant.EncodeTable_Uint6_to_Char.length; ++j ) {
@@ -216,8 +218,9 @@ function *testerFloat12DecodeEncode( progressParent ) {
       let Float12_encoded_string = Float12.Encoder.ToString( Float12_decoded_value );
 
       if ( Float12_encoded_string == Float12_original_string ) {
-        progressToAdvance.value_advance();
-        yield progressRoot;
+//!!! (2022/12/22 Remarked)
+        // progressToAdvance.value_advance();
+        // yield progressRoot;
         continue;
       }
 
@@ -228,6 +231,9 @@ function *testerFloat12DecodeEncode( progressParent ) {
       );
     }
   }
+
+  progressToAdvance.value_advance();
+  yield progressRoot;
 }
 
 /**
