@@ -226,7 +226,7 @@ function *testerFloat12DecodeEncode( progressParent ) {
       }
 
       // The only allowable exception: -0 will be encoded as 0.
-      if (    ( "gA" == Float12_original_string ) // -0
+      if (    ( "gA" === Float12_original_string ) // -0
            && ( "AA" === Float12_encoded_string ) // 0
          ) {
           continue;
