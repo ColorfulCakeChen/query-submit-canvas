@@ -1,8 +1,17 @@
 export * as Coder from "./Float12_Constant_Coder.js";
 
 export {
-  NegativeMin,
+  StringCharCount,
+  NextStringCharCount,
 
+  NegativeMin,
+  NegativeMinLess,
+
+  PositiveMax,
+  PositiveMaxMore,
+
+  PositiveMin,
+  PositiveMinLess,
 };
 
 import * as Base64 from "../Base64.js";

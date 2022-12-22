@@ -25,6 +25,8 @@ export {
   SignificandBitCount,
   SignificandUnsignedMin,
   SignificandUnsignedMax,
+
+  BitCount
 };
 
 import * as Base64 from "../Base64.js";
