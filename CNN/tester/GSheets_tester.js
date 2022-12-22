@@ -36,8 +36,11 @@ function array2d_compare_EQ( lhs, rhs ) {
 
   let max_i = Math.max( lhs.length, rhs.length );
   for ( let i = 0; i < max_i; ++i ) {
-    let array1d_lhs = ( lhs ? lhs[ i ] : emptyArray );
-    let array1d_rhs = ( rhs ? rhs[ i ] : emptyArray );
+    let array1d_lhs = lhs[ i ];
+    let array1d_rhs = rhs[ i ];
+
+    array1d_lhs = ( array1d_lhs ? array1d_lhs : emptyArray );
+    array1d_rhs = ( array1d_rhs ? array1d_rhs : emptyArray );
 
     let max_j = Math.max( array1d_lhs.length, array1d_rhs.length );
     for ( let j = 0; j < max_j; ++j ) {
