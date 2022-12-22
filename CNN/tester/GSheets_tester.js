@@ -32,8 +32,8 @@ function array2d_compare_EQ( lhs, rhs ) {
   let max_i = Math.max( ( lhs ? lhs.length : 0 ), ( rhs ? rhs.length : 0 ) );
 
   for ( let i = 0; i < max_i; ++i ) {
-    let array1d_lhs = lhs[ i ];
-    let array1d_rhs = rhs[ i ];
+    let array1d_lhs = ( lhs ? lhs[ i ] : undefined );
+    let array1d_rhs = ( rhs ? rhs[ i ] : undefined );
 
     let max_j = Math.max(
       ( array1d_lhs ? array1d_lhs.length : 0 ),
