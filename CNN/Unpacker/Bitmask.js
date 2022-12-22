@@ -1,7 +1,6 @@
 export { ByBitCount };
 export { ByBitCount_LShift };
 
-
 /** 
  *
  * @param {integer} bitCount
@@ -13,7 +12,6 @@ export { ByBitCount_LShift };
 function ByBitCount( bitCount ) {
   return ( ( 2 ** bitCount ) - 1 );
 }
-
 
 /**
  *
