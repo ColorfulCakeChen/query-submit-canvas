@@ -30,9 +30,8 @@ const Float12_Constant_Coder_Table = [
 
   new TestCase_Float12_Constant( "ImplicitBitCount", 1 ),
   new TestCase_Float12_Constant( "ImplicitBitmask", 1 ),
-
-  new TestCase_Float12_Constant( "ImplicitLShiftCount", 5 ),
-  new TestCase_Float12_Constant( "ImplicitLShifted", 32 ),
+  new TestCase_Float12_Constant( "ImplicitBitmaskLShiftCount", 5 ),
+  new TestCase_Float12_Constant( "ImplicitBitmaskLShifted", 32 ),
 
   new TestCase_Float12_Constant( "ExponentBitCount", 6 ),
   new TestCase_Float12_Constant( "ExponentBitmask", 63 ),

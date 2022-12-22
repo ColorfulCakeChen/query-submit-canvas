@@ -6,8 +6,8 @@ export {
 
   ImplicitBitCount,
   ImplicitBitmask,
-  ImplicitLShiftCount,
   ImplicitBitmaskLShiftCount,
+  ImplicitBitmaskLShifted,
 
   ExponentBitCount,
   ExponentBitmask,
@@ -109,8 +109,8 @@ const ImplicitBitmaskLShiftCount = FractionBitCount;
  *
  * It always is 32.
  */
-const ImplicitLShifted = Bitmask.ByBitCount_LShift(
-  ImplicitBitCount, ImplicitLShiftCount );
+const ImplicitBitmaskLShifted = Bitmask.ByBitCount_LShift(
+  ImplicitBitCount, ImplicitBitmaskLShiftCount );
 
 
 /** The exponent bit count of a 12-bits floating-point number. It always is 6. */
@@ -198,7 +198,7 @@ const SignificandBitCount = ImplicitBitCount + FractionBitCount;
  *
  * It always is 32.
  */
-const SignificandUnsignedMin = ImplicitLShifted;
+const SignificandUnsignedMin = ImplicitBitmaskLShifted;
 
 /** The maximum representable significand (i.e. implicit+fraction) of a 12-bits
  * floating-point number.
