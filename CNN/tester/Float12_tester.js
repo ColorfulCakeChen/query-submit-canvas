@@ -173,7 +173,7 @@ function *testerFloat12EncodeDecode( progressParent ) {
 
   let progressRoot = progressParent.root_get();
   let progressToAdvance = progressParent.child_add(
-    ValueMax.Percentage.Concrete.Pool.get_or_create_by( testCaseCount ) );
+    ValueMax.Percentage.Concrete.Pool.get_or_create_by( 1 ) );
 
   for ( let i = 0; i < Float12_EncodeDecode_Table.length; ++i ) {
     let testCase = Float12_EncodeDecode_Table[ i ];
@@ -185,8 +185,6 @@ function *testerFloat12EncodeDecode( progressParent ) {
     if ( delta <= Number.EPSILON ) {
 //!!! (2022/12/22 Remarked)
     //if ( Float12_decoded_value === testCase.decodedValue ) {
-      progressToAdvance.value_advance();
-      yield progressRoot;
       continue;
     }
 
@@ -196,6 +194,9 @@ function *testerFloat12EncodeDecode( progressParent ) {
       + `should be ( ${testCase.decodedValue} ).`
     );
   }
+
+  progressToAdvance.value_advance();
+  yield progressRoot;
 }
 
 /** */
