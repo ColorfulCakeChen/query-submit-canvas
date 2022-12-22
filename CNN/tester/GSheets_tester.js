@@ -104,9 +104,8 @@ async function* tester( progressParent ) {
     let fetcher21 = tester2.JSON_ColumnMajorArrayArray_fetch_asyncGenerator( progress21 );
     let result21 = yield* fetcher21;
 
-//!!! ...unfinished... (2022/12/22)
-// If all cells are empty, GQViz got array with zero length.
-// But APIv4 got undefined.
+    // Note: If all cells are empty, GQViz got array with zero length.
+    //       But APIv4 got undefined.
 
     if ( !array2d_compare_EQ( result11, result21 ) )
       throw Error( `${result11} != ${result21}` );
