@@ -97,12 +97,22 @@ const Float12_EncodeDecode_Table = [
 
   new TestCase_Float12_EncodeDecode(
     Float12.Constant.PositiveMin, Float12.Constant.PositiveMin ),
-  
+
   new TestCase_Float12_EncodeDecode(
     Float12.Constant.PositiveMinLess, 0 ),
 
   new TestCase_Float12_EncodeDecode(
     Float12.Constant.PositiveMin - Number.EPSILON, 0 ),
+
+
+  new TestCase_Float12_EncodeDecode(
+    -Float12.Constant.PositiveMin, -Float12.Constant.PositiveMin ),
+
+  new TestCase_Float12_EncodeDecode(
+    -Float12.Constant.PositiveMinLess, 0 ),
+
+  new TestCase_Float12_EncodeDecode(
+    -Float12.Constant.PositiveMin + Number.EPSILON, 0 ),
 ];
 
 /** */
