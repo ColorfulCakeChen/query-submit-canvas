@@ -270,7 +270,7 @@ function* tester( progressParent ) {
   yield *testerFloat12Constant( progressConstant );
 
   // 2.
-  yield *testerFloat12DecodeEncode( progressEncodeDecode );
+  yield *testerFloat12EncodeDecode( progressEncodeDecode );
 
   // 3.
   yield *testerFloat12DecodeEncode( progressDecodeEncode );
