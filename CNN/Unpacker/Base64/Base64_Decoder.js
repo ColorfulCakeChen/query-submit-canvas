@@ -17,7 +17,7 @@ import * as Base64_Constant from "./Base64_Constant.js";
  * created progressToAdvance will be increased when every time advanced. The
  * progressParent.root_get() will be returned when every time yield.
  *
- * @param {string|string[]} sourceBase64Encoded_String_or_StringArray
+ * @param {string|string[]} source_Base64Encoded_String_or_StringArray
  *   A string whose content is Base64 encoded text. Or, a string array whose every
  * element is a Base64 encoded character.
  *
@@ -40,7 +40,7 @@ import * as Base64_Constant from "./Base64_Constant.js";
  */
 function* from_Base64_StringOrStringArray_to_Uint8Array(
   progressParent,
-  sourceBase64Encoded_String_or_StringArray, textEncoder,
+  source_Base64Encoded_String_or_StringArray, textEncoder,
   skipLineCount, suspendByteCount
 ) {
 
@@ -60,10 +60,10 @@ function* from_Base64_StringOrStringArray_to_Uint8Array(
     ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
 
   let base64EncodedStringLong;
-  if ( sourceBase64Encoded_String_or_StringArray instanceof Array )
-    base64EncodedStringLong = sourceBase64Encoded_String_or_StringArray.join( "" );
+  if ( source_Base64Encoded_String_or_StringArray instanceof Array )
+    base64EncodedStringLong = source_Base64Encoded_String_or_StringArray.join( "" );
   else
-    base64EncodedStringLong = sourceBase64Encoded_String_or_StringArray;
+    base64EncodedStringLong = source_Base64Encoded_String_or_StringArray;
 
   progressToAdvance.value_advance(); // 25%
   yield progressRoot;
