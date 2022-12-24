@@ -1,6 +1,6 @@
 export { StringOrStringArray_to_Uint8Array };
 export { ArrayBuffer_to_Uint8Array };
-export { Uint8Array_to_Uint8Array };
+export { from_Base64Char_CodePoint_Uint8Array_to_Uint8Array };
 export { lineSkipper_fromUint8Array };
 
 import * as ValueMax from "../../util/ValueMax.js";
@@ -18,8 +18,8 @@ import * as Base64_Constant from "./Base64_Constant.js";
  * progressParent.root_get() will be returned when every time yield.
  *
  * @param {string|string[]} sourceBase64Encoded_String_or_StringArray
- *   A string whose content is base64 encoded text. Or, a string array whose every
- * element is base64 encoded text.
+ *   A string whose content is Base64 encoded text. Or, a string array whose every
+ * element is a Base64 encoded character.
  *
  * @param {TextEncoder} textEncoder
  *   This TextEncoder will convert string to Uint8Array so that the Base64 decoder
@@ -72,7 +72,8 @@ function* StringOrStringArray_to_Uint8Array(
   progressToAdvance.value_advance(); // 25%
   yield progressRoot;
 
-  let base64Decoder = Uint8Array_to_Uint8Array( progressParentNew,
+  let base64Decoder = from_Base64Char_CodePoint_Uint8Array_to_Uint8Array(
+    progressParentNew,
     base64EncodedUint8Array, skipLineCount, suspendByteCount );
 
   let base64DecodedUint8Array = yield *base64Decoder;
@@ -87,13 +88,14 @@ function* StringOrStringArray_to_Uint8Array(
  * created progressToAdvance will be increased when every time advanced. The
  * progressParent.root_get() will be returned when every time yield.
  *
- * @param {ArrayBuffer} sourceBase64ArrayBuffer
- *   The input base64 data as ArrayBuffer. If the last bytes not enough 4 bytes, they
- * will be discarded (will not be decoded). If an input byte is not a legal base64
- * code (i.e. not A..Z, a..z, 0..9, +, /, -, _), the byte will be skipped (as if it
- * does not exist). So the input bytes can be separated by new line character (which
- * will be skipped and ignored).
- *
+ * @param {ArrayBuffer} source_Base64Char_CodePoint_ArrayBuffer
+ *   The input Base64 encoded value (as a Base64 charcater's code point) data as
+ * ArrayBuffer. If the last bytes not enough 4 bytes, they will be discarded (will
+ * not be decoded). If an input byte is not a legal Base64 code (i.e. not A..Z,
+ * a..z, 0..9, +, /, -, _), the byte will be skipped (as if it does not exist).
+ * So the input bytes can be separated by new line character (which will be skipped
+ * and ignored).
+
  * @param {Uint32} skipLineCount
  *   Skip how many lines in the source before decoding.
  *
@@ -108,11 +110,13 @@ function* StringOrStringArray_to_Uint8Array(
  *   Yield ( value = decoded data as Uint8Array ) when ( done = true ).
  */
 function* ArrayBuffer_to_Uint8Array( progressParent,
-  sourceBase64ArrayBuffer, skipLineCount, suspendByteCount ) {
+  source_Base64Char_CodePoint_ArrayBuffer, skipLineCount, suspendByteCount ) {
 
-  let sourceBase64Uint8Array = new Uint8Array( sourceBase64ArrayBuffer );
-  let base64Decoder = Uint8Array_to_Uint8Array( progressParent,
-    sourceBase64Uint8Array, skipLineCount, suspendByteCount );
+  let source_Base64Char_CodePoint_Uint8Array
+    = new Uint8Array( source_Base64Char_CodePoint_ArrayBuffer );
+
+  let base64Decoder = from_Base64Char_CodePoint_Uint8Array_to_Uint8Array( progressParent,
+    source_Base64Char_CodePoint_Uint8Array, skipLineCount, suspendByteCount );
 
   let base64DecodedUint8Array = yield *base64Decoder;
   return base64DecodedUint8Array;
@@ -209,17 +213,22 @@ function* lineSkipper_fromUint8Array( progressToAdvance,
 /**
  * Generator for Base64 decoding from an Uint8Array.
  *
+ * Every 4 elements of the source Uint8Array will be decoded into 3 elements of
+ * the result Uint8Array.
+ *
+ *
  * @param {ValueMax.Percentage.Aggregate} progressParent
  *   Some new progressToAdvance will be created and added to progressParent. The
  * created progressToAdvance will be increased when every time advanced. The
  * progressParent.root_get() will be returned when every time yield.
  *
- * @param {Uint8Array} sourceBase64Uint8Array
- *   The input base64 data as Uint8Array. If the last bytes not enough 4 bytes, they
- * will be discarded (will not be decoded). If an input byte is not a legal base64
- * code (i.e. not A..Z, a..z, 0..9, +, /, -, _), the byte will be skipped (as if it
- * does not exist). So the input bytes can be separated by new line character (which
- * will be skipped and ignored).
+ * @param {Uint8Array} source_Base64Char_CodePoint_Uint8Array
+ *   The input Base64 encoded value (as a Base64 charcater's code point) data as
+ * Uint8Array. If the last bytes not enough 4 bytes, they will be discarded (will
+ * not be decoded). If an input byte is not a legal Base64 code (i.e. not A..Z,
+ * a..z, 0..9, +, /, -, _), the byte will be skipped (as if it does not exist).
+ * So the input bytes can be separated by new line character (which will be skipped
+ * and ignored).
  *
  * @param {Uint32} skipLineCount
  *   Skip how many lines in the source before decoding.
@@ -234,8 +243,8 @@ function* lineSkipper_fromUint8Array( progressToAdvance,
  * @yield {Uint8Array}
  *   Yield ( value = decoded data as Uint8Array ) when ( done = true ).
  */
-function* Uint8Array_to_Uint8Array( progressParent,
-  sourceBase64Uint8Array, skipLineCount, suspendByteCount ) {
+function* from_Base64Char_CodePoint_Uint8Array_to_Uint8Array( progressParent,
+  source_Base64Char_CodePoint_Uint8Array, skipLineCount, suspendByteCount ) {
 
   // 0. Initialize.
 
@@ -246,8 +255,8 @@ function* Uint8Array_to_Uint8Array( progressParent,
   if ( ( suspendByteCount | 0 ) <= 0 )
     suspendByteCount = ( 10 * 1024 );
 
-  let sourceByteLength = sourceBase64Uint8Array.length;
-  let sourceBytes = sourceBase64Uint8Array;
+  let sourceByteLength = source_Base64Char_CodePoint_Uint8Array.length;
+  let sourceBytes = source_Base64Char_CodePoint_Uint8Array;
 
   // Initialize progress.
   let progressRoot = progressParent.root_get();
@@ -266,9 +275,13 @@ function* Uint8Array_to_Uint8Array( progressParent,
 
   // 2. Decode.
 
-  // Decoding base64 will result in a shorter data (about 75% (= 3 / 4) in size).
-  let possibleBase64ByteLength = ( sourceByteLength - progressToAdvance.value ); // Forget the skipped lines.
-  let targetByteLength = Math.ceil( possibleBase64ByteLength * 0.75 );
+  // Ignore the skipped lines.
+  let possibleBase64ByteCount = ( sourceByteLength - progressToAdvance.value );
+
+  // Decoding 4 Base64 characters into 3 uint8 will result in a shorter data
+  // (about 75% (= 3 / 4) in size).
+  let targetByteLength = Math.ceil( possibleBase64ByteCount * 0.75 );
+
   let targetArrayBuffer = new ArrayBuffer( targetByteLength );
   let targetBytes = new Uint8Array( targetArrayBuffer );
 
@@ -283,7 +296,7 @@ function* Uint8Array_to_Uint8Array( progressParent,
       // checking to increase performance.) 
       while ( progressToAdvance.value < nextYieldByteCount ) {
 
-        // Extract 4 source bytes. (A decode unit consists of 4 base64 encoded source
+        // Extract 4 source bytes. (A decode unit consists of 4 Base64 encoded source
         // bytes.)
         //
         // Although it is verbose to loop unrolling manually, it is far more faster
