@@ -1,11 +1,148 @@
+export { from_Base64Char_StringOrStringArray_by_GeneratorFunction };
+export { from_Base64Char_CodePoint_ArrayBuffer_by_GeneratorFunction };
+
 export { from_Base64Char_StringOrStringArray_to_Uint8Array };
 export { from_Base64Char_CodePoint_ArrayBuffer_to_Uint8Array };
 export { from_Base64Char_CodePoint_Uint8Array_to_Uint8Array };
+
 export { lineSkipper_fromUint8Array };
 
 import * as ValueMax from "../../util/ValueMax.js";
 import * as Base64_Constant from "./Base64_Constant.js";
 
+/**
+ * Generator for Base64 decoding from an array of Base64 encoded string.
+ *
+ * Join the string array, and convert to Uint8Array. And then, decode as Base64
+ * by generatorFunction.
+ *
+ * @param {ValueMax.Percentage.Aggregate} progressParent
+ *   Some new progressToAdvance will be created and added to progressParent. The
+ * created progressToAdvance will be increased when every time advanced. The
+ * progressParent.root_get() will be returned when every time yield.
+ *
+ * @param {string|string[]} source_Base64Char_String_or_StringArray
+ *   A string whose content is Base64 encoded text. Or, a string array whose every
+ * element is a Base64 encoded text.
+ *
+ * @param {TextEncoder} textEncoder
+ *   This TextEncoder will convert string to Uint8Array so that the Base64 decoder
+ * can work.
+ *
+ * @param {Uint32} skipLineCount
+ *   Skip how many lines in the source before decoding.
+ *
+ * @param {Uint32} suspendByteCount
+ *   Everytime so many bytes decoded, yield for releasing CPU time (and reporting
+ * progress). Default is ( 10 * 1024 ) bytes.
+ *
+ * @param {function*} generatorFunction
+ *   A generator function which accepts parameters ( progressParent,
+ * source_Base64Char_CodePoint_Uint8Array, skipLineCount, suspendByteCount ).
+ * It should:
+ *   - Yield ( value = progressParent.root_get() ) when ( done = false ).
+ *   - Yield ( value = decoded data ) when ( done = true ).
+ *
+ * @yield {ValueMax.Percentage.Aggregate}
+ *   Yield ( value = progressParent.root_get() ) when ( done = false ).
+ *
+ * @yield {any}
+ *   Yield ( value = decoded data of generatorFunction ) when ( done = true ).
+ */
+function* from_Base64Char_StringOrStringArray_by_GeneratorFunction(
+  progressParent,
+  source_Base64Char_String_or_StringArray, textEncoder,
+  skipLineCount, suspendByteCount,
+  generatorFunction
+) {
+
+  let progressRoot = progressParent.root_get();
+
+  // The ( progressToAdvance / progressParent ) ratio (50%) seems a little too large.
+  // But it is reasonable in fact because the string Array.join() and
+  // TextEncoder.encode() both will scan all input text. This is just the same as
+  // the Base64 decoder (i.e. scanning all input text).
+
+  // 50% for this function (i.e. Array.join() and TextEncoder.encode()).
+  let progressToAdvance = progressParent.child_add(
+    ValueMax.Percentage.Concrete.Pool.get_or_create_by( 2 ) );
+
+  // 50% for next sub function (i.e. Base64 decoder).
+  let progressParentNew = progressParent.child_add(
+    ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
+
+  let base64EncodedStringLong;
+  if ( source_Base64Char_String_or_StringArray instanceof Array )
+    base64EncodedStringLong = source_Base64Char_String_or_StringArray.join( "" );
+  else
+    base64EncodedStringLong = source_Base64Char_String_or_StringArray;
+
+  progressToAdvance.value_advance(); // 25%
+  yield progressRoot;
+
+  let source_Base64Char_CodePoint_Uint8Array
+    = textEncoder.encode( base64EncodedStringLong );
+
+  progressToAdvance.value_advance(); // 25%
+  yield progressRoot;
+
+  let base64Decoder = generatorFunction(
+    progressParentNew,
+    source_Base64Char_CodePoint_Uint8Array, skipLineCount, suspendByteCount );
+
+  let base64DecodedArray = yield *base64Decoder;
+  return base64DecodedArray;
+}
+
+/**
+ * Generator for Base64 decoding from an ArrayBuffer by generatorFunction.
+ *
+ * @param {ValueMax.Percentage.Aggregate} progressParent
+ *   Some new progressToAdvance will be created and added to progressParent. The
+ * created progressToAdvance will be increased when every time advanced. The
+ * progressParent.root_get() will be returned when every time yield.
+ *
+ * @param {ArrayBuffer} source_Base64Char_CodePoint_ArrayBuffer
+ *   The input Base64 encoded value (as a Base64 charcater's code point) data as
+ * ArrayBuffer. If the last bytes not enough 4 bytes, they will be discarded (will
+ * not be decoded). If an input byte is not a legal Base64 code (i.e. not A..Z,
+ * a..z, 0..9, +, /, -, _), the byte will be skipped (as if it does not exist).
+ * So the input bytes can be separated by new line character (which will be skipped
+ * and ignored).
+ *
+ * @param {Uint32} skipLineCount
+ *   Skip how many lines in the source before decoding.
+ *
+ * @param {Uint32} suspendByteCount
+ *   Everytime so many bytes decoded, yield for releasing CPU time (and reporting
+ * progress). Default is ( 10 * 1024 ) bytes.
+ *
+ * @param {function*} generatorFunction
+ *   A generator function which accepts parameters ( progressParent,
+ * source_Base64Char_CodePoint_Uint8Array, skipLineCount, suspendByteCount ).
+ * It should:
+ *   - Yield ( value = progressParent.root_get() ) when ( done = false ).
+ *   - Yield ( value = decoded data ) when ( done = true ).
+ *
+ * @yield {ValueMax.Percentage.Aggregate}
+ *   Yield ( value = progressParent.root_get() ) when ( done = false ).
+ *
+ * @yield {any}
+ *   Yield ( value = decoded data of generatorFunction ) when ( done = true ).
+ */
+function* from_Base64Char_CodePoint_ArrayBuffer_by_GeneratorFunction( progressParent,
+  source_Base64Char_CodePoint_ArrayBuffer, skipLineCount, suspendByteCount,
+  generatorFunction ) {
+
+  let source_Base64Char_CodePoint_Uint8Array
+    = new Uint8Array( source_Base64Char_CodePoint_ArrayBuffer );
+
+  let base64Decoder = generatorFunction( progressParent,
+    source_Base64Char_CodePoint_Uint8Array, skipLineCount, suspendByteCount );
+
+  let base64DecodedArray = yield *base64Decoder;
+  return base64DecodedArray;
+}
 
 /**
  * Generator for Base64 decoding from an array of Base64 encoded string.
@@ -43,41 +180,48 @@ function* from_Base64Char_StringOrStringArray_to_Uint8Array(
   source_Base64Char_String_or_StringArray, textEncoder,
   skipLineCount, suspendByteCount
 ) {
+  return yield* from_Base64Char_StringOrStringArray_by_GeneratorFunction(
+    progressParent,
+    source_Base64Char_String_or_StringArray, textEncoder,
+    skipLineCount, suspendByteCount,
+    from_Base64Char_CodePoint_Uint8Array_to_Uint8Array
+  );
 
-  let progressRoot = progressParent.root_get();
-
-  // The ( progressToAdvance / progressParent ) ratio (50%) seems a little too large.
-  // But it is reasonable in fact because the string Array.join() and
-  // TextEncoder.encode() both will scan all input text. This is just the same as
-  // the Base64 decoder (i.e. scanning all input text).
-
-  // 50% for this function (i.e. Array.join() and TextEncoder.encode()).
-  let progressToAdvance = progressParent.child_add(
-    ValueMax.Percentage.Concrete.Pool.get_or_create_by( 2 ) );
-
-  // 50% for next sub function (i.e. Base64 decoder).
-  let progressParentNew = progressParent.child_add(
-    ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
-
-  let base64EncodedStringLong;
-  if ( source_Base64Char_String_or_StringArray instanceof Array )
-    base64EncodedStringLong = source_Base64Char_String_or_StringArray.join( "" );
-  else
-    base64EncodedStringLong = source_Base64Char_String_or_StringArray;
-
-  progressToAdvance.value_advance(); // 25%
-  yield progressRoot;
-
-  let base64EncodedUint8Array = textEncoder.encode( base64EncodedStringLong );
-  progressToAdvance.value_advance(); // 25%
-  yield progressRoot;
-
-  let base64Decoder = from_Base64Char_CodePoint_Uint8Array_to_Uint8Array(
-    progressParentNew,
-    base64EncodedUint8Array, skipLineCount, suspendByteCount );
-
-  let base64DecodedUint8Array = yield *base64Decoder;
-  return base64DecodedUint8Array;
+// !!! (2022/12/24 Remarked) Use by_GeneratorFunction() instead.
+//   let progressRoot = progressParent.root_get();
+//
+//   // The ( progressToAdvance / progressParent ) ratio (50%) seems a little too large.
+//   // But it is reasonable in fact because the string Array.join() and
+//   // TextEncoder.encode() both will scan all input text. This is just the same as
+//   // the Base64 decoder (i.e. scanning all input text).
+//
+//   // 50% for this function (i.e. Array.join() and TextEncoder.encode()).
+//   let progressToAdvance = progressParent.child_add(
+//     ValueMax.Percentage.Concrete.Pool.get_or_create_by( 2 ) );
+//
+//   // 50% for next sub function (i.e. Base64 decoder).
+//   let progressParentNew = progressParent.child_add(
+//     ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
+//
+//   let base64EncodedStringLong;
+//   if ( source_Base64Char_String_or_StringArray instanceof Array )
+//     base64EncodedStringLong = source_Base64Char_String_or_StringArray.join( "" );
+//   else
+//     base64EncodedStringLong = source_Base64Char_String_or_StringArray;
+//
+//   progressToAdvance.value_advance(); // 25%
+//   yield progressRoot;
+//
+//   let source_Base64Char_CodePoint_Uint8Array = textEncoder.encode( base64EncodedStringLong );
+//   progressToAdvance.value_advance(); // 25%
+//   yield progressRoot;
+//
+//   let base64Decoder = from_Base64Char_CodePoint_Uint8Array_to_Uint8Array(
+//     progressParentNew,
+//     source_Base64Char_CodePoint_Uint8Array, skipLineCount, suspendByteCount );
+//
+//   let base64DecodedUint8Array = yield *base64Decoder;
+//   return base64DecodedUint8Array;
 }
 
 /**
@@ -95,7 +239,7 @@ function* from_Base64Char_StringOrStringArray_to_Uint8Array(
  * a..z, 0..9, +, /, -, _), the byte will be skipped (as if it does not exist).
  * So the input bytes can be separated by new line character (which will be skipped
  * and ignored).
-
+ *
  * @param {Uint32} skipLineCount
  *   Skip how many lines in the source before decoding.
  *
@@ -112,14 +256,21 @@ function* from_Base64Char_StringOrStringArray_to_Uint8Array(
 function* from_Base64Char_CodePoint_ArrayBuffer_to_Uint8Array( progressParent,
   source_Base64Char_CodePoint_ArrayBuffer, skipLineCount, suspendByteCount ) {
 
-  let source_Base64Char_CodePoint_Uint8Array
-    = new Uint8Array( source_Base64Char_CodePoint_ArrayBuffer );
+  return yield* from_Base64Char_CodePoint_ArrayBuffer_by_GeneratorFunction(
+    progressParent,
+    source_Base64Char_CodePoint_ArrayBuffer, skipLineCount, suspendByteCount,
+    from_Base64Char_CodePoint_Uint8Array_to_Uint8Array
+  );
 
-  let base64Decoder = from_Base64Char_CodePoint_Uint8Array_to_Uint8Array( progressParent,
-    source_Base64Char_CodePoint_Uint8Array, skipLineCount, suspendByteCount );
-
-  let base64DecodedUint8Array = yield *base64Decoder;
-  return base64DecodedUint8Array;
+// !!! (2022/12/24 Remarked) Use by_GeneratorFunction() instead.
+//   let source_Base64Char_CodePoint_Uint8Array
+//     = new Uint8Array( source_Base64Char_CodePoint_ArrayBuffer );
+//
+//   let base64Decoder = from_Base64Char_CodePoint_Uint8Array_to_Uint8Array( progressParent,
+//     source_Base64Char_CodePoint_Uint8Array, skipLineCount, suspendByteCount );
+//
+//   let base64DecodedUint8Array = yield *base64Decoder;
+//   return base64DecodedUint8Array;
 }
 
 /**
