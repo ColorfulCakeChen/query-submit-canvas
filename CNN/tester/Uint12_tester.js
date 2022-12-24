@@ -66,8 +66,8 @@ function *testerUint12EncodeDecode( progressParent ) {
 
   for ( let i = 0; i < testCaseCount; ++i ) {
 
-    let Uint12_encoded_string = Uint12.Encoder.toString( i );
-    let Uint12_decoded_value = Uint12.Decoder.fromString( Uint12_encoded_string );
+    let Uint12_encoded_string = Uint12.Encoder.to_String( i );
+    let Uint12_decoded_value = Uint12.Decoder.from_String( Uint12_encoded_string );
 
     if ( Uint12_decoded_value === i ) {
       continue;
@@ -102,8 +102,8 @@ function *testerUint12DecodeEncode( progressParent ) {
          Base64.Constant.EncodeTable_Uint6_to_Char[ i ]
        + Base64.Constant.EncodeTable_Uint6_to_Char[ j ];
 
-      let Uint12_decoded_value = Uint12.Decoder.fromString( Uint12_original_string );
-      let Uint12_encoded_string = Uint12.Encoder.toString( Uint12_decoded_value );
+      let Uint12_decoded_value = Uint12.Decoder.from_String( Uint12_original_string );
+      let Uint12_encoded_string = Uint12.Encoder.to_String( Uint12_decoded_value );
 
       if ( Uint12_encoded_string == Uint12_original_string ) {
         continue;

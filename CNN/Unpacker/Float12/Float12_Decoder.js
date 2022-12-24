@@ -5,7 +5,7 @@ export { from_Sign_ExponentUnsigned_FractionUnsigned };
 export { from_Sign_ExponentUnsigned_FractionUnsigned_Zeroable };
 export { from_Uint12 };
 export { from_Base64Char_CodePoint_Two };
-export { fromString };
+export { from_String };
 
 import * as Uint12 from "../Uint12.js";
 import * as Float12_Constant_Coder from "./Float12_Constant_Coder.js";
@@ -217,7 +217,7 @@ function from_Base64Char_CodePoint_Two(
  * @return {number}
  *   A float12 (12-bits floating-point number) value decoded from the base64String.
  */
-function fromString( base64String ) {
-  let uint12_value = Uint12.Decoder.fromString( base64String );
+function from_String( base64String ) {
+  let uint12_value = Uint12.Decoder.from_String( base64String );
   return from_Uint12( uint12_value );
 }
