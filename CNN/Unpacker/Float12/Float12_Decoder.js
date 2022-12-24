@@ -225,11 +225,8 @@ function from_String( base64String ) {
   return from_Uint12( uint12_value );
 }
 
-
-//!!! ...unfinshed... (2022/12/24)
-
 /**
- * Generator for Base64 decoding from an Uint8Array.
+ * Generator for Float12 decoding from a Base64 character code point Uint8Array.
  *
  * Every 2 elements of the source Uint8Array will be decoded into 1 element
  * (i.e. a float12; 12-bits floating-point number) of the result Float32Array.

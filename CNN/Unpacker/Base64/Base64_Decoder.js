@@ -211,7 +211,7 @@ function* lineSkipper_fromUint8Array( progressToAdvance,
 }
 
 /**
- * Generator for Base64 decoding from an Uint8Array.
+ * Generator for Base64 decoding from a Base64 character code point Uint8Array.
  *
  * Every 4 elements of the source Uint8Array will be decoded into 3 elements of
  * the result Uint8Array.
