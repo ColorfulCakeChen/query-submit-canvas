@@ -7,7 +7,7 @@ export { from_Uint12 };
 export { from_Base64Char_CodePoint_Two };
 export { from_String };
 export { from_Base64Char_CodePoint_Uint8Array_to_Float32Array };
-//export { from_String_or_StringArray_to_Float32Array };
+export { from_Base64Char_StringOrStringArray_to_Float32Array };
 
 import * as Base64 from "../Base64.js";
 import * as Uint12 from "../Uint12.js";
@@ -372,23 +372,49 @@ function* from_Base64Char_CodePoint_Uint8Array_to_Float32Array( progressParent,
   return resultBytes;
 }
 
-
-//!!! ...unfinshed... (2022/12/24)
-
 /**
+ * Generator for Base64 decoding from an array of Base64 encoded string.
  *
- * @param {string|string[]} base64StringArray
- *   A Base64 encoded string or Base64 encoded string array. It represents many
- * Base64 encoded float12 (12-bits floating-point number).
+ * Join the string array, convert to Uint8Array, decode as Base64, result in
+ * Float32Array.
  *
- * @return {Float32Array}
- *   A Float32Array for all float12 (12-bits floating-point number) values decoded
- * from the base64StringArray.
+ * @param {ValueMax.Percentage.Aggregate} progressParent
+ *   Some new progressToAdvance will be created and added to progressParent. The
+ * created progressToAdvance will be increased when every time advanced. The
+ * progressParent.root_get() will be returned when every time yield.
+ *
+ * @param {string|string[]} source_Base64Char_String_or_StringArray
+ *   A string whose content is Base64 encoded text. Or, a string array whose every
+ * element is a Base64 encoded text.
+ *
+ * @param {TextEncoder} textEncoder
+ *   This TextEncoder will convert string to Uint8Array so that the Base64 decoder
+ * can work.
+ *
+ * @param {Uint32} skipLineCount
+ *   Skip how many lines in the source before decoding.
+ *
+ * @param {Uint32} suspendByteCount
+ *   Everytime so many bytes decoded, yield for releasing CPU time (and reporting
+ * progress). Default is ( 10 * 1024 ) bytes.
+ *
+ * @yield {ValueMax.Percentage.Aggregate}
+ *   Yield ( value = progressParent.root_get() ) when ( done = false ).
+ *
+ * @yield {Float32Array}
+ *   Yield ( value = decoded data as Float32Array ) when ( done = true ).
  */
-function from_String_or_StringArray_to_Float32Array(
-  base64String_or_base64StringArray ) {
-
-//!!! ...unfinshed... (2022/12/24)
-
-
+function* from_Base64Char_StringOrStringArray_to_Float32Array(
+  progressParent,
+  source_Base64Char_String_or_StringArray, textEncoder,
+  skipLineCount, suspendByteCount
+) {
+  return yield*
+    Base646.Decoder.from_Base64Char_StringOrStringArray_by_GeneratorFunction(
+      progressParent,
+      source_Base64Char_String_or_StringArray, textEncoder,
+      skipLineCount, suspendByteCount,
+      from_Base64Char_CodePoint_Uint8Array_to_Float32Array
+    );
 }
+
