@@ -1,4 +1,4 @@
-export { ToString };
+export { toString };
 
 import * as Base64 from "../Base64.js";
 import * as Uint12_Constant from "./Uint12_Constant.js";
@@ -12,7 +12,7 @@ import * as Uint12_Constant from "./Uint12_Constant.js";
  * @return {string}
  *   A Base64 encoded string (two characters) representing a 12-bits unsigned integer.
  */
-function ToString( uint12_value ) {
+function toString( uint12_value ) {
   let uint6_MSB
     = ( uint12_value >> Uint12_Constant.CoderMostSignificantBitmaskLShiftCount )
       & Uint12_Constant.CoderMostSignificantBitmask;

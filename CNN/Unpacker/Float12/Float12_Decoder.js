@@ -1,11 +1,11 @@
-export { From_ExponentSignedCorrected_SignificandSigned };
-export { From_Sign_ExponentSigned_SignificandUnsigned };
-export { From_Sign_ExponentSigned_FractionUnsigned };
-export { From_Sign_ExponentUnsigned_FractionUnsigned };
-export { From_Sign_ExponentUnsigned_FractionUnsigned_Zeroable };
-export { From_Uint12 };
-export { From_Base64Char_CodePoint_Two };
-export { FromString };
+export { from_ExponentSignedCorrected_SignificandSigned };
+export { from_Sign_ExponentSigned_SignificandUnsigned };
+export { from_Sign_ExponentSigned_FractionUnsigned };
+export { from_Sign_ExponentUnsigned_FractionUnsigned };
+export { from_Sign_ExponentUnsigned_FractionUnsigned_Zeroable };
+export { from_Uint12 };
+export { from_Base64Char_CodePoint_Two };
+export { fromString };
 
 import * as Uint12 from "../Uint12.js";
 import * as Float12_Constant_Coder from "./Float12_Constant_Coder.js";
@@ -32,7 +32,7 @@ import * as Float12_Constant_Coder from "./Float12_Constant_Coder.js";
  *   A 12-bits floating-point number by the signed and corrected exponent and the
  * signed significand.
  */
-function From_ExponentSignedCorrected_SignificandSigned(
+function from_ExponentSignedCorrected_SignificandSigned(
   exponent_signed_corrected_n37_p26, significand_signed__n63_n32__p32_p63 ) {
 
   return (
@@ -42,7 +42,7 @@ function From_ExponentSignedCorrected_SignificandSigned(
 
 /**
  *
- * It will call Float12.Decoder.From_ExponentSignedCorrected_SignificandSigned().
+ * It will call Float12.Decoder.from_ExponentSignedCorrected_SignificandSigned().
  *
  * @param {integer} sign_0_1
  *   The sign bit of the result value. It must be either 0 (for positive) or
@@ -64,23 +64,23 @@ function From_ExponentSignedCorrected_SignificandSigned(
  *   A 12-bits floating-point number by the sign bit, the signed exponent integer
  * and the unsigned significand integer.
  */
-function From_Sign_ExponentSigned_SignificandUnsigned(
+function from_Sign_ExponentSigned_SignificandUnsigned(
   sign_0_1, exponent_signed_n32_p31, significand_unsigned_p32_p63 ) {
 
   let exponent_signed_corrected
     = exponent_signed_n32_p31 - Float12_Constant_Coder.FractionBitCount;
 
   if ( sign_0_1 == 0 ) // Positive
-    return From_ExponentSignedCorrected_SignificandSigned(
+    return from_ExponentSignedCorrected_SignificandSigned(
       exponent_signed_corrected, significand_unsigned_p32_p63 );
   else // Negative
-    return From_ExponentSignedCorrected_SignificandSigned(
+    return from_ExponentSignedCorrected_SignificandSigned(
       exponent_signed_corrected, -significand_unsigned_p32_p63 );
 }
 
 /**
  *
- * It will call Float12.Decoder.From_Sgin_ExponentSigned_SignificandUnsigned().
+ * It will call Float12.Decoder.from_Sgin_ExponentSigned_SignificandUnsigned().
  *
  * @param {integer} sign_0_1
  *   The sign bit of the result value. It must be either 0 (for positive) or
@@ -102,9 +102,9 @@ function From_Sign_ExponentSigned_SignificandUnsigned(
  *   A 12-bits floating-point number by the sign bit, the signed exponent integer
  * and the unsigned fraction integer.
  */
-function From_Sign_ExponentSigned_FractionUnsigned(
+function from_Sign_ExponentSigned_FractionUnsigned(
   sign_0_1, exponent_signed_n32_p31, fraction_unsigned_0_p31 ) {
-  return From_Sign_ExponentSigned_SignificandUnsigned(
+  return from_Sign_ExponentSigned_SignificandUnsigned(
     sign_0_1, exponent_signed_n32_p31,
     ( fraction_unsigned_0_p31 | Float12_Constant_Coder.ImplicitBitmaskLShifted )
   );
@@ -112,7 +112,7 @@ function From_Sign_ExponentSigned_FractionUnsigned(
 
 /**
  *
- * It will call Float12.Decoder.From_Sign_ExponentSigned_FractionUnsigned().
+ * It will call Float12.Decoder.from_Sign_ExponentSigned_FractionUnsigned().
  *
  * @param {integer} sign_0_1
  *   The sign bit of the result value. It must be either 0 (for positive) or
@@ -133,9 +133,9 @@ function From_Sign_ExponentSigned_FractionUnsigned(
  *   A 12-bits floating-point number by the sign bit, the unsigned exponent integer
  * and the unsigned fraction integer.
  */
-function From_Sign_ExponentUnsigned_FractionUnsigned(
+function from_Sign_ExponentUnsigned_FractionUnsigned(
   sign_0_1, exponent_unsigned_0_p63, fraction_unsigned_0_p31 ) {
-  return From_Sign_ExponentSigned_FractionUnsigned(
+  return from_Sign_ExponentSigned_FractionUnsigned(
     sign_0_1,
     ( exponent_unsigned_0_p63 - Float12_Constant_Coder.ExponentOffsetToSigned ),
     fraction_unsigned_0_p31
@@ -143,29 +143,29 @@ function From_Sign_ExponentUnsigned_FractionUnsigned(
 }
 
 /**
- * Similar to Float12.Decoder.From_Sign_ExponentUnsigned_FractionUnsigned() but it
+ * Similar to Float12.Decoder.from_Sign_ExponentUnsigned_FractionUnsigned() but it
  * will return 0 if ( exponent_unsigned_0_p63 = 0 ) and ( fraction_unsigned_0_p31 = 0 )
  * because that is the representable value which is closest to zero.
  *
- * It will call Float12.Decoder.From_Sign_ExponentUnsigned_FractionUnsigned().
+ * It will call Float12.Decoder.from_Sign_ExponentUnsigned_FractionUnsigned().
  *
  * @return {number}
  *   A 12-bits floating-point number by the sign bit, the unsigned exponent integer
  * and the unsigned fraction integer.
  */
-function From_Sign_ExponentUnsigned_FractionUnsigned_Zeroable(
+function from_Sign_ExponentUnsigned_FractionUnsigned_Zeroable(
   sign_0_1, exponent_unsigned_0_p63, fraction_unsigned_0_p31 ) {
 
   if ( ( exponent_unsigned_0_p63 == 0 ) && ( fraction_unsigned_0_p31 == 0 ) )
     return 0;
   else
-    return From_Sign_ExponentUnsigned_FractionUnsigned(
+    return from_Sign_ExponentUnsigned_FractionUnsigned(
       sign_0_1, exponent_unsigned_0_p63, fraction_unsigned_0_p31 );
 }
 
 /**
  *
- * It will call Float12.Decoder.From_Sign_ExponentUnsigned_FractionUnsigned_Zeroable().
+ * It will call Float12.Decoder.from_Sign_ExponentUnsigned_FractionUnsigned_Zeroable().
  * So uint12 zero will become float12 zero, too.
  *
  * @param {integer} uint12_value
@@ -175,8 +175,8 @@ function From_Sign_ExponentUnsigned_FractionUnsigned_Zeroable(
  *   A 12-bits floating-point number by the 12-bits unsigned integer which will be
  * destructured as sign, exponent, fraction of float12.
  */
-function From_Uint12( uint12_value ) {
-  return From_Sign_ExponentUnsigned_FractionUnsigned_Zeroable(
+function from_Uint12( uint12_value ) {
+  return from_Sign_ExponentUnsigned_FractionUnsigned_Zeroable(
     ( ( uint12_value >> Float12_Constant_Coder.SignBitmaskLShiftCount )
       & Float12_Constant_Coder.SignBitmask ),
     ( ( uint12_value >> Float12_Constant_Coder.ExponentBitmaskLShiftCount )
@@ -200,12 +200,12 @@ function From_Uint12( uint12_value ) {
  *   A float12 (12-bits floating-point number) value decoded from the
  * base64Char_codePoint_0 and base64Char_codePoint_1.
  */
-function From_Base64Char_CodePoint_Two(
+function from_Base64Char_CodePoint_Two(
   base64Char_codePoint_0, base64Char_codePoint_1 ) {
 
-  let uint12_value = Uint12.Decoder.From_Base64Char_CodePoint_Two(
+  let uint12_value = Uint12.Decoder.from_Base64Char_CodePoint_Two(
     base64Char_codePoint_0, base64Char_codePoint_1 );
-  return From_Uint12( uint12_value );
+  return from_Uint12( uint12_value );
 }
     
 /**
@@ -217,7 +217,7 @@ function From_Base64Char_CodePoint_Two(
  * @return {number}
  *   A float12 (12-bits floating-point number) value decoded from the base64String.
  */
-function FromString( base64String ) {
-  let uint12_value = Uint12.Decoder.FromString( base64String );
-  return From_Uint12( uint12_value );
+function fromString( base64String ) {
+  let uint12_value = Uint12.Decoder.fromString( base64String );
+  return from_Uint12( uint12_value );
 }

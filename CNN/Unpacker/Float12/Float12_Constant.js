@@ -42,7 +42,7 @@ const NextStringCharCount = StringCharCount;
  *
  * It always is -4.2278584320000000E+009
  */
-const NegativeMin = Float12_Decoder.From_Sign_ExponentSigned_FractionUnsigned(
+const NegativeMin = Float12_Decoder.from_Sign_ExponentSigned_FractionUnsigned(
   1,
   Float12_Constant_Coder.ExponentPositiveMax,
   Float12_Constant_Coder.FractionUnsignedMax );
@@ -65,7 +65,7 @@ const NegativeMinLess = NegativeMin - 1;
  *
  * It always is 4.2278584320000000E+009
  */
-const PositiveMax = Float12_Decoder.From_Sign_ExponentSigned_FractionUnsigned(
+const PositiveMax = Float12_Decoder.from_Sign_ExponentSigned_FractionUnsigned(
   0,
   Float12_Constant_Coder.ExponentPositiveMax,
   Float12_Constant_Coder.FractionUnsignedMax );
@@ -90,13 +90,13 @@ const PositiveMaxMore = PositiveMax + 1;
  * In fact, Float12.Constant.PositiveMinLess is the real minimum representable
  * positive value of a 12-bits floating-point number. However, it is used to
  * represent zero by
- * Float12.Decoder.From_Sign_ExponentUnsigned_FractionUnsigned_Zeroable(). The
+ * Float12.Decoder.from_Sign_ExponentUnsigned_FractionUnsigned_Zeroable(). The
  * number which is a little larger than Float12.Constant.PositiveMinLess is used
  * as this Float12.Constant.PositiveMin (i.e. fraction=1 instead of 0).
  *
  * It always is 2.4010660126805300E-010
  */
-const PositiveMin = Float12_Decoder.From_Sign_ExponentSigned_FractionUnsigned(
+const PositiveMin = Float12_Decoder.from_Sign_ExponentSigned_FractionUnsigned(
   0,
   Float12_Constant_Coder.ExponentNegativeMin,
   1 );
@@ -107,13 +107,13 @@ const PositiveMin = Float12_Decoder.From_Sign_ExponentSigned_FractionUnsigned(
  *
  * In fact, it is the real minimum representable positive value of a 12-bits
  * floating-point number. However, it is used to represent zero by
- * Float12.Decoder.From_Sign_ExponentUnsigned_FractionUnsigned_Zeroable(). So it
+ * Float12.Decoder.from_Sign_ExponentUnsigned_FractionUnsigned_Zeroable(). So it
  * should be viewed as a little smaller than the minimum positive value (i.e.
  * Float12.Constant.PositiveMin) of a 12-bits floating-point number in actual use.
  *
  * It always is 2.3283064365387000E-010
  */
-const PositiveMinLess = Float12_Decoder.From_Sign_ExponentSigned_FractionUnsigned(
+const PositiveMinLess = Float12_Decoder.from_Sign_ExponentSigned_FractionUnsigned(
   0,
   Float12_Constant_Coder.ExponentNegativeMin,
   0 );

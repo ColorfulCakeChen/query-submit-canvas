@@ -178,8 +178,8 @@ function *testerFloat12EncodeDecode( progressParent ) {
   for ( let i = 0; i < Float12_EncodeDecode_Table.length; ++i ) {
     let testCase = Float12_EncodeDecode_Table[ i ];
 
-    let Float12_encoded_string = Float12.Encoder.ToString( testCase.originalValue );
-    let Float12_decoded_value = Float12.Decoder.FromString( Float12_encoded_string );
+    let Float12_encoded_string = Float12.Encoder.toString( testCase.originalValue );
+    let Float12_decoded_value = Float12.Decoder.fromString( Float12_encoded_string );
 
 //!!! (2022/12/22 Remarked)
     // let delta = Math.abs( Float12_decoded_value - testCase.decodedValue )
@@ -218,8 +218,8 @@ function *testerFloat12DecodeEncode( progressParent ) {
          Base64.Constant.EncodeTable_Uint6_to_Char[ i ]
        + Base64.Constant.EncodeTable_Uint6_to_Char[ j ];
 
-      let Float12_decoded_value = Float12.Decoder.FromString( Float12_original_string );
-      let Float12_encoded_string = Float12.Encoder.ToString( Float12_decoded_value );
+      let Float12_decoded_value = Float12.Decoder.fromString( Float12_original_string );
+      let Float12_encoded_string = Float12.Encoder.toString( Float12_decoded_value );
 
       if ( Float12_encoded_string === Float12_original_string ) {
         continue;

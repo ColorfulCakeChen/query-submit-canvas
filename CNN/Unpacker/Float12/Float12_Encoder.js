@@ -2,9 +2,9 @@ export { ScientificNotation_Exponent_10 };
 export { ScientificNotation_Exponent_2 };
 export { Estimate_Exponent_Signed };
 export { Estimate_Significand_Signed };
-export { ToString_by_Sign_ExponentUnsigned_FractionUnsigned };
-export { ToString_by_Number_ExponentSigned };
-export { ToString };
+export { toString_by_Sign_ExponentUnsigned_FractionUnsigned };
+export { toString_by_Number_ExponentSigned };
+export { toString };
 
 import * as Uint12 from "../Uint12.js";
 import * as Float12_Constant_Coder from "./Float12_Constant_Coder.js";
@@ -110,7 +110,7 @@ function Estimate_Significand_Signed( aNumber, exponent_signed ) {
 
 /**
  *
- * It will call Uint12.Encoder.ToString().
+ * It will call Uint12.Encoder.toString().
  *
  * @param {integer} sign_0_1
  *   The sign bit of the original float12 value. It must be either 0 (for positive)
@@ -131,10 +131,10 @@ function Estimate_Significand_Signed( aNumber, exponent_signed ) {
  *   A Base64 encoded string (two characters) representing a 12-bits floating-point
  * number by the sign bit, the unsigned exponent and the unsigned fraction.
  */
-function ToString_by_Sign_ExponentUnsigned_FractionUnsigned(
+function toString_by_Sign_ExponentUnsigned_FractionUnsigned(
   sign_0_1, exponent_unsigned_0_p63, fraction_unsigned_0_p31 ) {
 
-  return Uint12.Encoder.ToString(
+  return Uint12.Encoder.toString(
       ( sign_0_1 << Float12_Constant_Coder.SignBitmaskLShiftCount )
     | ( exponent_unsigned_0_p63 << Float12_Constant_Coder.ExponentBitmaskLShiftCount )
     | fraction_unsigned_0_p31
@@ -143,7 +143,7 @@ function ToString_by_Sign_ExponentUnsigned_FractionUnsigned(
 
 /**
  *
- * It will call Float12.Encoder.ToString_by_Sign_ExponentUnsigned_FractionUnsigned().
+ * It will call Float12.Encoder.toString_by_Sign_ExponentUnsigned_FractionUnsigned().
  *
  * @param {number} aNumber
  *   The 12-bits floating-point number to be encoded to Base64 string. It should be
@@ -160,7 +160,7 @@ function ToString_by_Sign_ExponentUnsigned_FractionUnsigned(
  *   A Base64 encoded string (two characters) representing a 12-bits floating-point
  * number by the number and its signed exponent.
  */
-function ToString_by_Number_ExponentSigned( aNumber, exponent_signed_n32_p31 ) {
+function toString_by_Number_ExponentSigned( aNumber, exponent_signed_n32_p31 ) {
 
   // 1. Extract sign bit.
   let sign_0_1; 
@@ -197,13 +197,13 @@ function ToString_by_Number_ExponentSigned( aNumber, exponent_signed_n32_p31 ) {
     = exponent_signed_n32_p31 + Float12_Constant_Coder.ExponentOffsetToSigned;
 
   // 4. Compose to string.
-  return ToString_by_Sign_ExponentUnsigned_FractionUnsigned(
+  return toString_by_Sign_ExponentUnsigned_FractionUnsigned(
     sign_0_1, exponent_unsigned_0_p63, fraction_unsigned_0_p31 );
 }
 
 /**
  *
- * It will call Float12.Encoder.ToString_by_Number_ExponentSigned().
+ * It will call Float12.Encoder.toString_by_Number_ExponentSigned().
  *
  * Note1: It will restrict extracted signed exponent between [ -32, 31 ] = [
  *        Float12.Constant.Coder.ExponentNegativeMin,
@@ -212,7 +212,7 @@ function ToString_by_Number_ExponentSigned( aNumber, exponent_signed_n32_p31 ) {
  * Note2: If the specified number is 0, it will be encoded as
  *        ( exponent_signed = Float12.Constant.Coder.ExponentNegativeMin ) (i.e. -32)
  *        (accompanied with ( fraction = 0 ) ) so that
- *        Float12.Decoder.From_Sign_ExponentUnsigned_FractionUnsigned_Zeroable()
+ *        Float12.Decoder.from_Sign_ExponentUnsigned_FractionUnsigned_Zeroable()
  *        will view it as 0 when decoding.
  *
  * @param {number} aNumber
@@ -223,7 +223,7 @@ function ToString_by_Number_ExponentSigned( aNumber, exponent_signed_n32_p31 ) {
  *   A Base64 encoded string (two characters) representing a 12-bits floating-point
  * number.
  */
-function ToString( aNumber ) {
+function toString( aNumber ) {
 
   // Encode 0 as the (positive) minimum representable 12-bits floating-point number.
   let exponent_signed_n32_p31;
@@ -232,5 +232,5 @@ function ToString( aNumber ) {
   else
     exponent_signed_n32_p31 = Estimate_Exponent_Signed( aNumber );
 
-  return ToString_by_Number_ExponentSigned( aNumber, exponent_signed_n32_p31 );
+  return toString_by_Number_ExponentSigned( aNumber, exponent_signed_n32_p31 );
 }

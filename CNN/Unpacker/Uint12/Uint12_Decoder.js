@@ -1,5 +1,5 @@
-export { From_Base64Char_CodePoint_Two };
-export { FromString };
+export { from_Base64Char_CodePoint_Two };
+export { fromString };
 
 import * as Base64 from "../Base64.js";
 import * as Uint12_Constant from "./Uint12_Constant.js";
@@ -20,7 +20,7 @@ import * as Uint12_Constant from "./Uint12_Constant.js";
  *   An uint12 (12-bits unsigned integer) value decoded from the
  * base64Char_codePoint_0 and base64Char_codePoint_1.
  */
-function From_Base64Char_CodePoint_Two(
+function from_Base64Char_CodePoint_Two(
   base64Char_codePoint_0, base64Char_codePoint_1 ) {
 
   return (
@@ -32,7 +32,7 @@ function From_Base64Char_CodePoint_Two(
 
 /**
  *
- * It will call Uint12.Decoder.From_Base64Char_CodePoint_Two().
+ * It will call Uint12.Decoder.from_Base64Char_CodePoint_Two().
  *
  * @param {string} base64String
  *   A BASE64 encoded string (with two charcaters). It represents a BASE64 encoded
@@ -41,7 +41,7 @@ function From_Base64Char_CodePoint_Two(
  * @return {integer}
  *   An uint12 (12-bits unsigned integer) value decoded from the base64String.
  */
-function FromString( base64String ) {
-  return From_Base64Char_CodePoint_Two(
+function fromString( base64String ) {
+  return from_Base64Char_CodePoint_Two(
     base64String.codePointAt( 0 ), base64String.codePointAt( 1 ) );
 }
