@@ -291,7 +291,7 @@ function* from_Base64Char_CodePoint_Uint8Array_to_Float32Array( progressParent,
 
   // 2. Decode.
 
-  // Ignore the skipped lines.
+  // Exclude the skipped lines.
   let possibleBase64ByteCount = ( sourceByteLength - progressToAdvance.value );
 
   // Decoding 2 Base64 characters into 1 Float12 will result in a shorter data
