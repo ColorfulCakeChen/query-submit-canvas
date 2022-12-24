@@ -221,3 +221,23 @@ function from_String( base64String ) {
   let uint12_value = Uint12.Decoder.from_String( base64String );
   return from_Uint12( uint12_value );
 }
+
+
+//!!! ...unfinshed... (2022/12/24)
+
+/**
+ *
+ * @param {string} base64String
+ *   A BASE64 encoded string (with two charcaters). It represents a BASE64 encoded
+ * float12 (12-bits floating-point number).
+ *
+ * @return {number}
+ *   A float12 (12-bits floating-point number) value decoded from the base64String.
+ */
+function from_String_or_StringArray_to_Float32Array(
+  base64String_or_base64StringArray ) {
+
+//!!! ...unfinshed... (2022/12/24)
+
+
+}

@@ -1,7 +1,7 @@
-export { ScientificNotation_Exponent_10 };
-export { ScientificNotation_Exponent_2 };
-export { Estimate_Exponent_Signed };
-export { Estimate_Significand_Signed };
+export { scientificNotation_Exponent_10 };
+export { scientificNotation_Exponent_2 };
+export { estimate_Exponent_Signed };
+export { estimate_Significand_Signed };
 export { to_String_by_Sign_ExponentUnsigned_FractionUnsigned };
 export { to_String_by_Number_ExponentSigned };
 export { to_String };
@@ -10,7 +10,7 @@ import * as Uint12 from "../Uint12.js";
 import * as Float12_Constant_Coder from "./Float12_Constant_Coder.js";
 
 /**
- * For example, ScientificNotation_Exponent_10( -0.25 ) = -1
+ * For example, scientificNotation_Exponent_10( -0.25 ) = -1
  *
  * @param {number} aNumber
  *   The number to be found out its exponent.
@@ -20,7 +20,7 @@ import * as Float12_Constant_Coder from "./Float12_Constant_Coder.js";
  * when the number is represented in normalized scientific notation (i.e. exponential
  * notation).
  */
-function ScientificNotation_Exponent_10( aNumber ) {
+function scientificNotation_Exponent_10( aNumber ) {
   if ( aNumber === 0 )
     return 0; // For avoiding Math.log10( 0 ) which is -Infinity.
 
@@ -34,7 +34,7 @@ function ScientificNotation_Exponent_10( aNumber ) {
 }
 
 /**
- * For example, ScientificNotation_Exponent_2( -0.125 ) = -3
+ * For example, scientificNotation_Exponent_2( -0.125 ) = -3
  *
  * @param {number} aNumber
  *   The number to be found out its exponent.
@@ -44,7 +44,7 @@ function ScientificNotation_Exponent_10( aNumber ) {
  * when the number is represented in normalized scientific notation (i.e. exponential
  * notation).
  */
-function ScientificNotation_Exponent_2( aNumber ) {
+function scientificNotation_Exponent_2( aNumber ) {
   if ( aNumber === 0 )
     return 0; // For avoiding Math.log2( 0 ) which is -Infinity.
 
@@ -75,8 +75,8 @@ function ScientificNotation_Exponent_2( aNumber ) {
  * when the number is represented in normalized scientific notation (i.e. exponential
  * notation).
  */
-function Estimate_Exponent_Signed( aNumber ) {
-  return ScientificNotation_Exponent_2( aNumber );
+function estimate_Exponent_Signed( aNumber ) {
+  return scientificNotation_Exponent_2( aNumber );
 }
 
 /** Estimate the signed significand integer of the specified number for 12-bits
@@ -95,14 +95,14 @@ function Estimate_Exponent_Signed( aNumber ) {
  *   The number to be found out its significand.
  *
  * @param {number} exponent_signed
- *   The aNumber's exponent (i.e. Estimate_Exponent_Signed( aNumber )).
+ *   The aNumber's exponent (i.e. estimate_Exponent_Signed( aNumber )).
  *
  * @return {integer}
  *   Return a signed integer representing the base 2 significand of the specified number
  * when the number is represented in normalized scientific notation (i.e. exponential
  * notation).
  */
-function Estimate_Significand_Signed( aNumber, exponent_signed ) {
+function estimate_Significand_Signed( aNumber, exponent_signed ) {
   return Math.trunc(
     aNumber * ( 2 ** ( Float12_Constant_Coder.FractionBitCount - exponent_signed ) )
   );
@@ -154,7 +154,7 @@ function to_String_by_Sign_ExponentUnsigned_FractionUnsigned(
  * integer representing exponent value. It should be between [ -32, 31 ] = [
  * Float12.Constant.Coder.ExponentNegativeMin,
  * Float12.Constant.Coder.ExponentPositiveMax ].
- * It should be Float12.Encoder.Estimate_Exponent_Signed( number ).
+ * It should be Float12.Encoder.estimate_Exponent_Signed( number ).
  *
  * @return {string}
  *   A Base64 encoded string (two characters) representing a 12-bits floating-point
@@ -188,7 +188,7 @@ function to_String_by_Number_ExponentSigned( aNumber, exponent_signed_n32_p31 ) 
   //     masking out the implicit bit of the significand.
   } else {
     fraction_unsigned_0_p31
-      = Math.abs( Estimate_Significand_Signed( aNumber, exponent_signed_n32_p31 ) )
+      = Math.abs( estimate_Significand_Signed( aNumber, exponent_signed_n32_p31 ) )
           & Float12_Constant_Coder.FractionBitmask;
   }
 
@@ -217,7 +217,7 @@ function to_String_by_Number_ExponentSigned( aNumber, exponent_signed_n32_p31 ) 
  *
  * @param {number} aNumber
  *   The 12-bits floating-point number to be encoded to Base64 string. It should be
- * between [ Float12.NegativeMin, Float12.PositiveMax ].
+ * between [ Float12.Constant.NegativeMin, Float12.Constant.PositiveMax ].
  *
  * @return {string}
  *   A Base64 encoded string (two characters) representing a 12-bits floating-point
@@ -230,7 +230,24 @@ function to_String( aNumber ) {
   if ( aNumber === 0 )
     exponent_signed_n32_p31 = Float12_Constant_Coder.ExponentNegativeMin;
   else
-    exponent_signed_n32_p31 = Estimate_Exponent_Signed( aNumber );
+    exponent_signed_n32_p31 = estimate_Exponent_Signed( aNumber );
 
   return to_String_by_Number_ExponentSigned( aNumber, exponent_signed_n32_p31 );
+}
+
+
+
+//!!! ...unfinshed... (2022/12/24)
+/**
+ *
+ * @param {number[]} numberArray
+ *   The 12-bits floating-point number array to be encoded to Base64 string array.
+ * They should be between [ Float12.Constant.NegativeMin, Float12.Constant.PositiveMax ].
+ *
+ * @return {string}
+ *   A Base64 encoded string (two characters) representing a 12-bits floating-point
+ * number.
+ */
+function to_StringArray( numberArray ) {
+
 }
