@@ -5,6 +5,7 @@ export { estimate_Significand_Signed };
 export { to_String_by_Sign_ExponentUnsigned_FractionUnsigned };
 export { to_String_by_Number_ExponentSigned };
 export { to_String };
+export { to_String_from_NumberArray };
 
 import * as Uint12 from "../Uint12.js";
 import * as Float12_Constant_Coder from "./Float12_Constant_Coder.js";
@@ -245,9 +246,8 @@ function to_String( aNumber ) {
  * They should be between [ Float12.Constant.NegativeMin, Float12.Constant.PositiveMax ].
  *
  * @return {string}
- *   A Base64 encoded string (two characters) representing a 12-bits floating-point
- * number.
+ *   A Base64 encoded string representing all 12-bits floating-point numbers.
  */
-function to_StringArray( numberArray ) {
+function to_String_from_NumberArray( numberArray ) {
 
 }

@@ -6,6 +6,7 @@ export { from_Sign_ExponentUnsigned_FractionUnsigned_Zeroable };
 export { from_Uint12 };
 export { from_Base64Char_CodePoint_Two };
 export { from_String };
+export { from_String_or_StringArray_to_Float32Array };
 
 import * as Uint12 from "../Uint12.js";
 import * as Float12_Constant_Coder from "./Float12_Constant_Coder.js";
@@ -227,12 +228,13 @@ function from_String( base64String ) {
 
 /**
  *
- * @param {string} base64String
+ * @param {string|string[]} base64StringArray
  *   A BASE64 encoded string (with two charcaters). It represents a BASE64 encoded
  * float12 (12-bits floating-point number).
  *
- * @return {number}
- *   A float12 (12-bits floating-point number) value decoded from the base64String.
+ * @return {Float32Array}
+ *   A Float32Array for all float12 (12-bits floating-point number) values decoded
+ * from the base64StringArray.
  */
 function from_String_or_StringArray_to_Float32Array(
   base64String_or_base64StringArray ) {
