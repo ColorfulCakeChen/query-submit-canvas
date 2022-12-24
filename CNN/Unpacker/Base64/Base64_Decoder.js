@@ -1,5 +1,5 @@
-export { StringOrStringArray_to_Uint8Array };
-export { ArrayBuffer_to_Uint8Array };
+export { from_Base64_StringOrStringArray_to_Uint8Array };
+export { from_Base64Char_CodePoint_ArrayBuffer_to_Uint8Array };
 export { from_Base64Char_CodePoint_Uint8Array_to_Uint8Array };
 export { lineSkipper_fromUint8Array };
 
@@ -38,7 +38,7 @@ import * as Base64_Constant from "./Base64_Constant.js";
  * @yield {Uint8Array}
  *   Yield ( value = decoded data as Uint8Array ) when ( done = true ).
  */
-function* StringOrStringArray_to_Uint8Array(
+function* from_Base64_StringOrStringArray_to_Uint8Array(
   progressParent,
   sourceBase64Encoded_String_or_StringArray, textEncoder,
   skipLineCount, suspendByteCount
@@ -109,7 +109,7 @@ function* StringOrStringArray_to_Uint8Array(
  * @yield {Uint8Array}
  *   Yield ( value = decoded data as Uint8Array ) when ( done = true ).
  */
-function* ArrayBuffer_to_Uint8Array( progressParent,
+function* from_Base64Char_CodePoint_ArrayBuffer_to_Uint8Array( progressParent,
   source_Base64Char_CodePoint_ArrayBuffer, skipLineCount, suspendByteCount ) {
 
   let source_Base64Char_CodePoint_Uint8Array
