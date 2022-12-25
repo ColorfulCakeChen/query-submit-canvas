@@ -26,7 +26,7 @@ import * as Base64_Constant from "./Base64_Constant.js";
  * element is a Base64 encoded text.
  *
  * @param {TextEncoder} textEncoder
- *   This TextEncoder will convert string to Uint8Array so that the Base64 decoder
+ *   The TextEncoder for converting string to Uint8Array so that the Base64 decoder
  * can work.
  *
  * @param {Uint32} skipLineCount

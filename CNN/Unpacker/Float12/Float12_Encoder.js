@@ -2,9 +2,11 @@ export { scientificNotation_Exponent_10 };
 export { scientificNotation_Exponent_2 };
 export { estimate_Exponent_Signed };
 export { estimate_Significand_Signed };
-export { to_String_by_Sign_ExponentUnsigned_FractionUnsigned };
-export { to_String_by_Number_ExponentSigned };
+export { to_Uint8Array_BigEndian_by_Sign_ExponentUnsigned_FractionUnsigned };
+export { to_Uint8Array_BigEndian_by_Number_ExponentSigned };
+export { to_Uint8Array_BigEndian };
 export { to_String };
+export { to_Base64Char_CodePoint_Uint8Array_from_NumberArray };
 export { to_String_from_NumberArray };
 
 import * as Uint12 from "../Uint12.js";
@@ -111,7 +113,7 @@ function estimate_Significand_Signed( aNumber, exponent_signed ) {
 
 /**
  *
- * It will call Uint12.Encoder.to_String().
+ * It will call Uint12.Encoder.to_Uint8Array_BigEndian().
  *
  * @param {integer} sign_0_1
  *   The sign bit of the original float12 value. It must be either 0 (for positive)
@@ -128,23 +130,31 @@ function estimate_Significand_Signed( aNumber, exponent_signed ) {
  * Float12.Constant.Coder.FractionUnsignedMin,
  * Float12.Constant.Coder.FractionUnsignedMax ].
  *
- * @return {string}
- *   A Base64 encoded string (two characters) representing a 12-bits floating-point
- * number by the sign bit, the unsigned exponent and the unsigned fraction.
+ * @param {Uint8Array} targetUint8Array
+ *   The Uint8Array which will be filled two Base64 encoded characters (representing
+ * a 12-bits floating-point number by the sign bit, the unsigned exponent and the
+ * unsigned fraction).
+ *
+ * @param {integer} targetArrayIndex
+ *   The array index of targetUint8Array for filling the result two Base64 encoded
+ * characters (in big endian order).
  */
-function to_String_by_Sign_ExponentUnsigned_FractionUnsigned(
-  sign_0_1, exponent_unsigned_0_p63, fraction_unsigned_0_p31 ) {
+function to_Uint8Array_BigEndian_by_Sign_ExponentUnsigned_FractionUnsigned(
+  sign_0_1, exponent_unsigned_0_p63, fraction_unsigned_0_p31,
+  targetUint8Array, targetArrayIndex ) {
 
-  return Uint12.Encoder.to_String(
+  Uint12.Encoder.to_Uint8Array_BigEndian(
       ( sign_0_1 << Float12_Constant_Coder.SignBitmaskLShiftCount )
     | ( exponent_unsigned_0_p63 << Float12_Constant_Coder.ExponentBitmaskLShiftCount )
-    | fraction_unsigned_0_p31
+    | fraction_unsigned_0_p31,
+    targetUint8Array, targetArrayIndex
   );
 }
 
 /**
  *
- * It will call Float12.Encoder.to_String_by_Sign_ExponentUnsigned_FractionUnsigned().
+ * It will call
+ * Float12.Encoder.to_Uint8Array_BigEndian_by_Sign_ExponentUnsigned_FractionUnsigned().
  *
  * @param {number} aNumber
  *   The 12-bits floating-point number to be encoded to Base64 string. It should be
@@ -157,11 +167,17 @@ function to_String_by_Sign_ExponentUnsigned_FractionUnsigned(
  * Float12.Constant.Coder.ExponentPositiveMax ].
  * It should be Float12.Encoder.estimate_Exponent_Signed( number ).
  *
- * @return {string}
- *   A Base64 encoded string (two characters) representing a 12-bits floating-point
- * number by the number and its signed exponent.
+ * @param {Uint8Array} targetUint8Array
+ *   The Uint8Array which will be filled two Base64 encoded characters (representing
+ * a 12-bits floating-point number by the number and its signed exponent).
+ *
+ * @param {integer} targetArrayIndex
+ *   The array index of targetUint8Array for filling the result two Base64 encoded
+ * characters (in big endian order).
  */
-function to_String_by_Number_ExponentSigned( aNumber, exponent_signed_n32_p31 ) {
+function to_Uint8Array_BigEndian_by_Number_ExponentSigned(
+  aNumber, exponent_signed_n32_p31,
+  targetUint8Array, targetArrayIndex ) {
 
   // 1. Extract sign bit.
   let sign_0_1; 
@@ -198,13 +214,14 @@ function to_String_by_Number_ExponentSigned( aNumber, exponent_signed_n32_p31 ) 
     = exponent_signed_n32_p31 + Float12_Constant_Coder.ExponentOffsetToSigned;
 
   // 4. Compose to string.
-  return to_String_by_Sign_ExponentUnsigned_FractionUnsigned(
-    sign_0_1, exponent_unsigned_0_p63, fraction_unsigned_0_p31 );
+  return to_Uint8Array_BigEndian_by_Sign_ExponentUnsigned_FractionUnsigned(
+    sign_0_1, exponent_unsigned_0_p63, fraction_unsigned_0_p31,
+    targetUint8Array, targetArrayIndex );
 }
 
 /**
  *
- * It will call Float12.Encoder.to_String_by_Number_ExponentSigned().
+ * It will call Float12.Encoder.to_Uint8Array_BigEndian_by_Number_ExponentSigned().
  *
  * Note1: It will restrict extracted signed exponent between [ -32, 31 ] = [
  *        Float12.Constant.Coder.ExponentNegativeMin,
@@ -220,11 +237,15 @@ function to_String_by_Number_ExponentSigned( aNumber, exponent_signed_n32_p31 ) 
  *   The 12-bits floating-point number to be encoded to Base64 string. It should be
  * between [ Float12.Constant.NegativeMin, Float12.Constant.PositiveMax ].
  *
- * @return {string}
- *   A Base64 encoded string (two characters) representing a 12-bits floating-point
- * number.
+ * @param {Uint8Array} targetUint8Array
+ *   The Uint8Array which will be filled two Base64 encoded characters (representing
+ * a 12-bits floating-point number).
+ *
+ * @param {integer} targetArrayIndex
+ *   The array index of targetUint8Array for filling the result two Base64 encoded
+ * characters (in big endian order).
  */
-function to_String( aNumber ) {
+function to_Uint8Array_BigEndian( aNumber, targetUint8Array, targetArrayIndex ) {
 
   // Encode 0 as the (positive) minimum representable 12-bits floating-point number.
   let exponent_signed_n32_p31;
@@ -233,30 +254,45 @@ function to_String( aNumber ) {
   else
     exponent_signed_n32_p31 = estimate_Exponent_Signed( aNumber );
 
-  return to_String_by_Number_ExponentSigned( aNumber, exponent_signed_n32_p31 );
+  return to_Uint8Array_BigEndian_by_Number_ExponentSigned(
+    aNumber, exponent_signed_n32_p31,
+    targetUint8Array, targetArrayIndex );
 }
-
-
-
-//!!! ...unfinshed... (2022/12/25)
 
 /**
  *
- * @param {number[]} numberArray
- *   The 12-bits floating-point number array to be encoded to Base64 string array.
- * They should be between [ Float12.Constant.NegativeMin, Float12.Constant.PositiveMax ].
+ * It will call Float12.Encoder.to_Uint8Array_BigEndian().
+ *
+ * Note1: It will restrict extracted signed exponent between [ -32, 31 ] = [
+ *        Float12.Constant.Coder.ExponentNegativeMin,
+ *        Float12.Constant.Coder.ExponentPositiveMax ].
+ *
+ * Note2: If the specified number is 0, it will be encoded as
+ *        ( exponent_signed = Float12.Constant.Coder.ExponentNegativeMin ) (i.e. -32)
+ *        (accompanied with ( fraction = 0 ) ) so that
+ *        Float12.Decoder.from_Sign_ExponentUnsigned_FractionUnsigned_Zeroable()
+ *        will view it as 0 when decoding.
+ *
+ * @param {number} aNumber
+ *   The 12-bits floating-point number to be encoded to Base64 string. It should be
+ * between [ Float12.Constant.NegativeMin, Float12.Constant.PositiveMax ].
  *
  * @param {TextDecoder} textDecoder
- *   This TextDecoder will convert (Base64 character code point) Uint8Array to string.
+ *   The TextDecoder for converting (Base64 character code point) Uint8Array to string.
+ *
+ * @param {Uint8Array} tempUint8Array
+ *   A temporary Uint8Array which will be filled two Base64 encoded characters
+ * (representing a 12-bits floating-point number). It must have at least two
+ * elements.
  *
  * @return {string}
- *   A Base64 encoded string representing all 12-bits floating-point numbers.
+ *   A Base64 encoded string (two characters) representing a 12-bits floating-point
+ * number.
  */
-function to_String_from_NumberArray( numberArray ) {
-
-
-//!!! ...unfinshed... (2022/12/25)
-
+function to_String( aNumber, textDecoder, tempUint8Array ) {
+  to_Uint8Array_BigEndian( aNumber, tempUint8Array, 0 );
+  let resultString = textDecoder.decode( tempUint8Array )
+  return resultString;
 }
 
 /**
@@ -398,3 +434,29 @@ function* to_Base64Char_CodePoint_Uint8Array_from_NumberArray(
 
   return resultFloat32Array;
 }
+
+/**
+ *
+ * @param {number[]} numberArray
+ *   The 12-bits floating-point number array to be encoded to Base64 string array.
+ * They should be between [ Float12.Constant.NegativeMin, Float12.Constant.PositiveMax ].
+ *
+ * @param {TextDecoder} textDecoder
+ *   The TextDecoder for converting (Base64 character code point) Uint8Array to string.
+ *
+ * @param {Uint8Array} tempUint8Array
+ *   A temporary Uint8Array which will be filled two Base64 encoded characters
+ * (representing a 12-bits floating-point number). It must have at least
+ * ( 2 * numberArray.length ) elements. IF null, a new Uint8Array will be created
+ * and discarded.
+ *
+ * @return {string}
+ *   A Base64 encoded string representing all 12-bits floating-point numbers.
+ */
+function to_String_from_NumberArray( numberArray, textDecoder, tempUint8Array ) {
+
+
+//!!! ...unfinshed... (2022/12/25)
+  
+}
+  
