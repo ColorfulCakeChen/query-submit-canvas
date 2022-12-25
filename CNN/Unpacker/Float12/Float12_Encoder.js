@@ -238,7 +238,7 @@ function to_String( aNumber ) {
 
 
 
-//!!! ...unfinshed... (2022/12/24)
+//!!! ...unfinshed... (2022/12/25)
 /**
  *
  * @param {number[]} numberArray
@@ -250,4 +250,145 @@ function to_String( aNumber ) {
  */
 function to_String_from_NumberArray( numberArray ) {
 
+}
+
+/**
+ * Generator for encoding Float12 array to Base64 character code point Uint8Array.
+ *
+ * Every 1 element (i.e. a float12; 12-bits floating-point number) of the source
+ * number array will be encoded into 2 elements of the result Uint8Array.
+ *
+ *
+ * @param {ValueMax.Percentage.Aggregate} progressParent
+ *   Some new progressToAdvance will be created and added to progressParent. The
+ * created progressToAdvance will be increased when every time advanced. The
+ * progressParent.root_get() will be returned when every time yield.
+ *
+ * @param {number[]} source_numberArray
+ *   The 12-bits floating-point number array to be encoded to Base64 string array.
+ * They should be between [ Float12.Constant.NegativeMin, Float12.Constant.PositiveMax ].
+ *
+ * @param {Uint32} suspendByteCount
+ *   Everytime so many bytes decoded, yield for releasing CPU time (and reporting
+ * progress). Default is ( 10 * 1024 ) bytes.
+ *
+ * @yield {ValueMax.Percentage.Aggregate}
+ *   Yield ( value = progressParent.root_get() ) when ( done = false ).
+ *
+ * @yield {Uint8Array}
+ *   Yield ( value = Base64 encoded data (as Base64 charcaters' code point)
+ * as Uint8Array ) when ( done = true ).
+ */
+function* to_Base64Char_CodePoint_Uint8Array_from_NumberArray(
+  progressParent, source_numberArray, suspendByteCount ) {
+
+  // 0. Initialize.
+
+  // If undefined or null or negative or zero or less than 1, set to default.
+  //
+  // Note: Bitwising OR with zero is for converting to integer (if it is undefined
+  //       or null).
+  if ( ( suspendByteCount | 0 ) <= 0 )
+    suspendByteCount = ( 10 * 1024 );
+
+  let sourceElementCount = source_numberArray.length;
+  let sourceElements = source_numberArray;
+
+  // Initialize progress.
+  let progressRoot = progressParent.root_get();
+  let progressToAdvance = progressParent.child_add(
+    ValueMax.Percentage.Concrete.Pool.get_or_create_by( sourceElementCount ) );
+
+  // 1.
+
+  // It is important that the nextYieldElementCount is not greater than source length,
+  // so that it can be used as boundary checking to reduce checking times and increase
+  // performance.
+  let nextYieldElementCount
+    = Math.min( sourceElementCount, progressToAdvance.value + suspendByteCount );
+
+  // 2. Decode.
+
+  // Exclude the skipped lines.
+  let possibleSourceElementCount = ( sourceElementCount - progressToAdvance.value );
+
+  // Encoding 1 Float12 into 2 Base64 characters will result in a longer data
+  // (about 200% (= 2 / 1) in size).
+  let targetElementCount = Math.ceil( possibleSourceElementCount * 2 );
+
+  let targetUint8Array = new Uint8Array( targetElementCount );
+  //target_Base64Char_CodePoint_Uint8Array
+
+//!!! ...unfinshed... (2022/12/25)
+
+  let resultFloat32Count = 0;  // Accumulate the real result Float32 count.
+
+  {
+    while ( progressToAdvance.value < sourceByteLength ) {
+
+      nextYieldLoop:
+
+      // (This inner loop combines both source and yield boundary checking. Reducing
+      // checking to increase performance.) 
+      while ( progressToAdvance.value < nextYieldElementCount ) {
+
+        // Extract 2 source bytes. (A decode unit consists of 2 Base64 encoded source
+        // bytes.)
+        //
+        // Although it is verbose to loop unrolling manually, it is far more faster
+        // to use 2 local variables than use a 2-element normal array. (Note: the
+        // 2-element normal array is far more faster than a Uint8Array() again).
+
+        let encoded_0;
+        do {
+          // Note: It may exceed the nextYieldElementCount boundary. But it should not
+          //       exceed sourceByteLength.
+          if ( progressToAdvance.value >= sourceByteLength )
+            break nextYieldLoop; // Decoding is done. (Ignore last non-4-bytes.)
+
+          encoded_0 = Base64.Constant.DecodeTable_CharCodePoint_to_Uint6[
+            sourceBytes[ progressToAdvance.value ] ];
+          progressToAdvance.value_advance();
+        } while ( 255 === encoded_0 );
+
+
+        let encoded_1;
+        do {
+          // Note: It may exceed the nextYieldElementCount boundary. But it should not
+          //       exceed sourceByteLength.
+          if ( progressToAdvance.value >= sourceByteLength )
+            break nextYieldLoop; // Decoding is done. (Ignore last non-4-bytes.)
+
+          encoded_1 = Base64.Constant.DecodeTable_CharCodePoint_to_Uint6[
+            sourceBytes[ progressToAdvance.value ] ];
+          progressToAdvance.value_advance();
+        } while ( 255 === encoded_1 );
+
+
+        targetFloat32Array[ resultFloat32Count++ ]
+          = from_Base64Char_CodePoint_Two( encoded_0, encoded_1 );
+      }
+
+      // Every suspendByteCount, release CPU time (and report progress).
+      if ( progressToAdvance.value >= nextYieldElementCount ) {
+        nextYieldElementCount
+          = Math.min( sourceByteLength, progressToAdvance.value + suspendByteCount );
+        yield progressRoot;
+      }
+
+    }
+  }
+
+  // 3. Result.
+
+  // The resultFloat32Array is a sub-range of target buffer.
+  //
+  // Because the source may have some non-base64 codes which will be ignored,
+  // the length of resultFloat32Array may be less than targetFloat32Array.
+  let resultFloat32Array = new Float32Array(
+    targetFloat32Array.buffer, 0, resultFloat32Count );
+
+  yield progressRoot; // Report the progress has been done (100%).
+
+  return resultFloat32Array;
 }

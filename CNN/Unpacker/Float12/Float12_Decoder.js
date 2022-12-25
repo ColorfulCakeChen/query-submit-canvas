@@ -231,7 +231,7 @@ function from_String( base64String ) {
  * Every 2 elements of the source Uint8Array will be decoded into 1 element
  * (i.e. a float12; 12-bits floating-point number) of the result Float32Array.
  *
- * (Copied from Base.Decoder.from_Base64Char_CodePoint_Uint8Array_to_Uint8Array())
+ * (Copied from Base64.Decoder.from_Base64Char_CodePoint_Uint8Array_to_Uint8Array())
  *
  * @param {ValueMax.Percentage.Aggregate} progressParent
  *   Some new progressToAdvance will be created and added to progressParent. The
@@ -369,7 +369,7 @@ function* from_Base64Char_CodePoint_Uint8Array_to_Float32Array( progressParent,
 
   yield progressRoot; // Report the progress has been done (100%).
 
-  return resultBytes;
+  return resultFloat32Array;
 }
 
 /**
