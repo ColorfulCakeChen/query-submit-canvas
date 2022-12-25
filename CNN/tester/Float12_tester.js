@@ -5,6 +5,9 @@ import * as Float12 from "../Unpacker/Float12.js";
 //import * as RandTools from "../util/RandTools.js";
 import * as ValueMax from "../util/ValueMax.js";
 
+let g_textDecoder = new TextDecoder();
+let g_tempUint8Array = new Uint8Array( 2 );
+
 /** */
 class TestCase_Float12_Constant{
   constructor( constantName, constantValue ) {
@@ -178,7 +181,9 @@ function *testerFloat12EncodeDecode( progressParent ) {
   for ( let i = 0; i < Float12_EncodeDecode_Table.length; ++i ) {
     let testCase = Float12_EncodeDecode_Table[ i ];
 
-    let Float12_encoded_string = Float12.Encoder.to_String( testCase.originalValue );
+    let Float12_encoded_string = Float12.Encoder.to_String( testCase.originalValue,
+      g_textDecoder, g_tempUint8Array );
+
     let Float12_decoded_value = Float12.Decoder.from_String( Float12_encoded_string );
 
 //!!! (2022/12/22 Remarked)
@@ -219,7 +224,8 @@ function *testerFloat12DecodeEncode( progressParent ) {
        + Base64.Constant.EncodeTable_Uint6_to_Char[ j ];
 
       let Float12_decoded_value = Float12.Decoder.from_String( Float12_original_string );
-      let Float12_encoded_string = Float12.Encoder.to_String( Float12_decoded_value );
+      let Float12_encoded_string = Float12.Encoder.to_String( Float12_decoded_value,
+        g_textDecoder, g_tempUint8Array );
 
       if ( Float12_encoded_string === Float12_original_string ) {
         continue;

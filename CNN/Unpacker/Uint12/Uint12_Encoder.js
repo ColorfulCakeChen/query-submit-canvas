@@ -1,4 +1,4 @@
-export { to_Uint8Array };
+export { to_Uint8Array_BigEndian };
 export { to_String };
 
 import * as Base64 from "../Base64.js";
