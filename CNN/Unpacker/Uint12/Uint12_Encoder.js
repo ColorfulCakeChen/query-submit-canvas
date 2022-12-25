@@ -25,7 +25,7 @@ import * as Uint12_Constant from "./Uint12_Constant.js";
  *       significant bits of the uint12_value.
  *
  */
-function to_Uint8Array( uint12_value, targetUint8Array, targetArrayIndex ) {
+function to_Uint8Array_BigEndian( uint12_value, targetUint8Array, targetArrayIndex ) {
   let uint6_MSB
     = ( uint12_value >> Uint12_Constant.CoderMostSignificantBitmaskLShiftCount )
       & Uint12_Constant.CoderMostSignificantBitmask;
