@@ -318,9 +318,22 @@ function *testerFloat12EncodeDecodeArray( progressParent ) {
 
   let progressAggregateArray = new Array( progressAggregateArrayLength );
   for ( let i = 0; i < progressAggregateArrayLength; ++i ) {
-    progressAggregateArray[ i ] = progressParent.child_add(
+    let progressAggregate = progressAggregateArray[ i ] = progressParent.child_add(
       ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
-    }
+
+    // sub progress.
+    let progressEncodeArray_original = progressAggregate.child_add(
+      ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
+
+    let progressDecodeArray_original = progressAggregate.child_add(
+      ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
+
+    let progressEncodeArray_again = progressAggregate.child_add(
+      ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
+
+    let progressDecodeArray_again = progressAggregate.child_add(
+      ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
+  }
 
   let progressAggregateArrayIndex = -1;
 
@@ -336,17 +349,10 @@ function *testerFloat12EncodeDecodeArray( progressParent ) {
       let progressAggregate = progressAggregateArray[ progressAggregateArrayIndex ];
 
       // sub progress.
-      let progressEncodeArray_original = progressAggregate.child_add(
-        ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
-
-      let progressDecodeArray_original = progressAggregate.child_add(
-        ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
-  
-      let progressEncodeArray_again = progressAggregate.child_add(
-        ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
-
-      let progressDecodeArray_again = progressAggregate.child_add(
-        ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
+      let progressEncodeArray_original = progressAggregate.children[ 0 ];
+      let progressDecodeArray_original = progressAggregate.children[ 1 ];
+      let progressEncodeArray_again = progressAggregate.children[ 2 ];
+      let progressDecodeArray_again = progressAggregate.children[ 3 ];
 
       // Encode/Decode/Encode_again/Decode_again
       let Float12_encoded_string_original = yield*
