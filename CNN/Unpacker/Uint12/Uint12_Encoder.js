@@ -33,10 +33,10 @@ function to_Uint8Array_BigEndian( uint12_value, targetUint8Array, targetArrayInd
   let uint6_LSB = uint12_value & Uint12_Constant.CoderLeastSignificantBitmask;
 
   targetUint8Array[ targetArrayIndex ]
-    = Base64.Constant.EncodeTable_Uint6_to_Char[ uint6_MSB ];
+    = Base64.Constant.EncodeTable_Uint6_to_Uint8[ uint6_MSB ];
 
   targetUint8Array[ targetArrayIndex + 1 ]
-    = Base64.Constant.EncodeTable_Uint6_to_Char[ uint6_LSB ];
+    = Base64.Constant.EncodeTable_Uint6_to_Uint8[ uint6_LSB ];
 }
 
 /**

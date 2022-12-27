@@ -2,6 +2,7 @@ export { CoderBitCount };
 export { CodeCount };
 export { ValueDecodedMax };
 export { EncodeTable_Uint6_to_Char };
+export { EncodeTable_Uint6_to_Uint8 };
 export { DecodeTable_CharCodePoint_to_Uint6 };
 
 
@@ -23,6 +24,12 @@ const base64String = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz012345
 
 /** Mapping table for encoding Uint6 (i.e. [ 0, 63 ]) to Base64 character. */
 const EncodeTable_Uint6_to_Char = [ ...base64String ];
+
+/** Mapping table for encoding Uint6 (i.e. [ 0, 63 ]) to Base64 character's code
+ *  point (as Uint8).
+ */
+const EncodeTable_Uint6_to_Uint8
+  = ( new TextEncoder() ).encode( EncodeTable_Uint6_to_Char );
 
 /**
  * Mapping table for decoding Base64 character (code point between [ 0, 255 ])
