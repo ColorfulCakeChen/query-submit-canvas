@@ -5,32 +5,43 @@
     <link href="./PerformanceTable.css" rel="stylesheet" />
   </head>
   <body>
-    
-    <div>
-      <label for="SpreadsheetId">SpreadsheetId:</label>
-      <input id="SpreadsheetId" type="text" minlength="47" maxlength="255" size="50">
-    </div>
-    <div>
-      <input id="Download" type="button" value="Download">
-    </div>
 
-    <table id="VersusSummary_Table"></table>
+    <table>
+      <tr>
+        <th>SpreadsheetId</th>
+        <td>
+          <input id="SpreadsheetId" type="text" minlength="47" maxlength="255" size="50">
+          <input id="Download" type="button" value="Download">
+        </td>
+      </tr>
 
-    <div>
-      <label for="VersusId">VersusId:</label>
-      <textarea id="VersusId" rows="1" cols="50"></textarea>
-    </div>
+      <tr>
+        <table id="VersusSummary_Table"></table>
+      </tr>
 
-    <div>
-      <label for="VersusId">ParentChromosomes:</label>
-      <textarea id="ParentChromosomes" rows="1" cols="50"></textarea>
-    </div>
+      <tr>
+        <th>VersusId</th>
+        <td>
+          <textarea id="VersusId" rows="1" cols="50"></textarea>
+        </td>
+      </tr>
 
-    <div>
-      <label for="VersusId">OffspringChromosomes:</label>
-      <textarea id="OffspringChromosomes" rows="1" cols="50"></textarea>
-    </div>
+      <tr>
+        <th>ParentChromosomes</th>
+        <td>
+          <textarea id="ParentChromosomes" rows="10" cols="200" readonly></textarea>
+        </td>
+      </tr>
+
+      <tr>
+        <th>OffspringChromosomes</th>
+        <td>
+          <textarea id="OffspringChromosomes" rows="10" cols="200" readonly></textarea>
+        </td>
+      </tr>
+    </table>
 
     <script type="module" src="./Versus_tester.js"></script>
+
   </body>
 </html>
