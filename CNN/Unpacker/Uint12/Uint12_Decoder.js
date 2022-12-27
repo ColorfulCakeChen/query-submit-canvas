@@ -1,8 +1,34 @@
+export { from_Base64_DecodedValue_Two };
 export { from_Base64Char_CodePoint_Two };
 export { from_String };
 
 import * as Base64 from "../Base64.js";
 import * as Uint12_Constant from "./Uint12_Constant.js";
+
+/**
+ * 
+ * Convert two Base64 decoded values to a 12-bits unsigned integer.
+ *
+ * @param {integer} base64_decodedValue_0
+ *   A Base64 decoded value (i.e. integer between [ 0, 63 ]). It represents the
+ * most-significant bits.
+ *
+ * @param {integer} base64_decodedValue_1
+ *   A Base64 decoded value (i.e. integer between [ 0, 63 ]). It represents the
+ * least-significant bits.
+ *
+ * @return {integer}
+ *   An uint12 (12-bits unsigned integer) value decoded from the
+ * base64_decodedValue_0 and base64_decodedValue_1.
+ */
+function from_Base64_DecodedValue_Two(
+  base64_decodedValue_0, base64_decodedValue_1 ) {
+
+  return (
+      ( base64_decodedValue_0 << Uint12_Constant.CoderMostSignificantBitmaskLShiftCount )
+    | ( base64_decodedValue_1 )
+  );
+}
 
 /**
  * 
@@ -23,10 +49,9 @@ import * as Uint12_Constant from "./Uint12_Constant.js";
 function from_Base64Char_CodePoint_Two(
   base64Char_codePoint_0, base64Char_codePoint_1 ) {
 
-  return (
-      ( Base64.Constant.DecodeTable_CharCodePoint_to_Uint6[ base64Char_codePoint_0 ]
-          << Uint12_Constant.CoderMostSignificantBitmaskLShiftCount )
-    | ( Base64.Constant.DecodeTable_CharCodePoint_to_Uint6[ base64Char_codePoint_1 ] )
+  return from_Base64_DecodedValue_Two(
+    Base64.Constant.DecodeTable_CharCodePoint_to_Uint6[ base64Char_codePoint_0 ],
+    Base64.Constant.DecodeTable_CharCodePoint_to_Uint6[ base64Char_codePoint_1 ]
   );
 }
 

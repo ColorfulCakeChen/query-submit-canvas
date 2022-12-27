@@ -4,6 +4,7 @@ export { from_Sign_ExponentSigned_FractionUnsigned };
 export { from_Sign_ExponentUnsigned_FractionUnsigned };
 export { from_Sign_ExponentUnsigned_FractionUnsigned_Zeroable };
 export { from_Uint12 };
+export { from_Base64_DecodedValue_Two };
 export { from_Base64Char_CodePoint_Two };
 export { from_String };
 export { generator_generator_from_Base64Char_StringOrStringArray_to_Uint8Array };
@@ -189,6 +190,27 @@ function from_Uint12( uint12_value ) {
   );
 }
 
+/**
+ *
+ * @param {integer} base64_decodedValue_0
+ *   A Base64 decoded value (i.e. integer between [ 0, 63 ]). It represents the
+ * most-significant bits.
+ *
+ * @param {integer} base64_decodedValue_1
+ *   A Base64 decoded value (i.e. integer between [ 0, 63 ]). It represents the
+ * least-significant bits.
+ *
+ * @return {number}
+ *   A float12 (12-bits floating-point number) value decoded from the
+ * base64Char_codePoint_0 and base64Char_codePoint_1.
+ */
+function from_Base64_DecodedValue_Two(
+  base64_decodedValue_0, base64_decodedValue_1 ) {
+
+  let uint12_value = Uint12.Decoder.from_Base64_DecodedValue_Two(
+    base64_decodedValue_0, base64_decodedValue_1 );
+  return from_Uint12( uint12_value );
+}
 
 /**
  *
@@ -346,7 +368,7 @@ function* generator_generator_from_Base64Char_StringOrStringArray_to_Uint8Array(
 
 
         targetFloat32Array[ resultFloat32Count++ ]
-          = from_Base64Char_CodePoint_Two( encoded_0, encoded_1 );
+          = from_Base64_DecodedValue_Two( encoded_0, encoded_1 );
       }
 
       // Every suspendByteCount, release CPU time (and report progress).
@@ -418,4 +440,3 @@ function* generator_from_Base64Char_StringOrStringArray_to_Float32Array(
       generator_generator_from_Base64Char_StringOrStringArray_to_Uint8Array
     );
 }
-
