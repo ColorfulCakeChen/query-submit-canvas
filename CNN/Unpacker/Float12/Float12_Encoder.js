@@ -433,12 +433,16 @@ function* to_Base64Char_CodePoint_Uint8Array_from_NumberArray(
 
 /**
  *
- * @param {number[]} numberArray
+ * @param {number[]} source_numberArray
  *   The 12-bits floating-point number array to be encoded to Base64 string array.
  * They should be between [ Float12.Constant.NegativeMin, Float12.Constant.PositiveMax ].
  *
  * @param {TextDecoder} textDecoder
  *   The TextDecoder for converting (Base64 character code point) Uint8Array to string.
+ *
+ * @param {Uint32} suspendElementCount
+ *   Everytime so many elements encoded, yield for releasing CPU time (and reporting
+ * progress). Default is ( 10 * 1024 ) elements.
  *
  * @param {Uint8Array} tempUint8Array
  *   A temporary Uint8Array which will be filled two Base64 encoded characters
@@ -449,12 +453,12 @@ function* to_Base64Char_CodePoint_Uint8Array_from_NumberArray(
  * @return {string}
  *   A Base64 encoded string representing all 12-bits floating-point numbers.
  */
-function to_String_from_NumberArray( numberArray, textDecoder, tempUint8Array ) {
+function to_String_from_NumberArray(
+  source_numberArray, textDecoder, suspendElementCount, tempUint8Array ) {
 
-  let  to_Base64Char_CodePoint_Uint8Array_from_NumberArray(
-    progressParent, source_numberArray, suspendElementCount ) {
-  
-//!!! ...unfinshed... (2022/12/27)
-  
+  let intermediateUint8Array = to_Base64Char_CodePoint_Uint8Array_from_NumberArray(
+    progressParent, source_numberArray, suspendElementCount, tempUint8Array );
+
+  let resultString = textDecoder.decode( intermediateUint8Array )
+  return resultString;
 }
-  

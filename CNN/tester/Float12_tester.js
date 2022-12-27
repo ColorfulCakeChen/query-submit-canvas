@@ -291,8 +291,9 @@ function* tester( progressParent ) {
   // 3.
   yield *testerFloat12DecodeEncode( progressDecodeEncode );
 
-//!!! ...unfinished... (2022/12/24)
+//!!! ...unfinshed... (2022/12/27)
 // need test from_Base64Char_StringOrStringArray_to_Float32Array()
+// need test to_String_from_NumberArray()
 
   console.log( "Float12 encode/decode testing... Done." );
 }
