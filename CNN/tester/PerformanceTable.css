@@ -42,3 +42,8 @@ tr:hover {
 /* tr:nth-child(4n-1), tr:nth-child(4n) {
   background-color: darkgrey;
 } */
+
+input {
+  background-color: black;
+  color: lightgrey;
+}
