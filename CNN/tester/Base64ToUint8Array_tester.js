@@ -136,9 +136,11 @@ function* tester( progressParent ) {
     let testCase = testCases[ i ];
     let progressChild = progressParent.children[ i ];
 
-    let decoder = Base64.Decoder.generator_from_Base64Char_StringOrStringArray_to_Uint8Array( progressChild,
-      testCase.source_String_or_StringArray, tEncoder,
-      testCase.skipLineCount, testCase.suspendByteCount );
+    let decoder
+      = Base64.Decoder.generator_from_Base64Char_StringOrStringArray_to_Uint8Array(
+          progressChild,
+          testCase.source_String_or_StringArray, tEncoder,
+          testCase.skipLineCount, testCase.suspendByteCount );
 
     let r = yield* decoder;
 

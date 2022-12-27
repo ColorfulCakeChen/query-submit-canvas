@@ -9,6 +9,7 @@ export { to_String };
 export { generator_to_Base64Char_CodePoint_Uint8Array_from_NumberArray };
 export { generator_to_String_from_NumberArray };
 
+import * as ValueMax from "../../util/ValueMax.js";
 import * as Uint12 from "../Uint12.js";
 import * as Float12_Constant_Coder from "./Float12_Constant_Coder.js";
 

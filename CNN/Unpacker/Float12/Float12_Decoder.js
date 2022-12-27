@@ -9,6 +9,7 @@ export { from_String };
 export { generator_generator_from_Base64Char_StringOrStringArray_to_Uint8Array };
 export { generator_from_Base64Char_StringOrStringArray_to_Float32Array };
 
+import * as ValueMax from "../../util/ValueMax.js";
 import * as Base64 from "../Base64.js";
 import * as Uint12 from "../Uint12.js";
 import * as Float12_Constant_Coder from "./Float12_Constant_Coder.js";
