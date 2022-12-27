@@ -305,7 +305,6 @@ function *testerFloat12EncodeDecodeArray( progressParent ) {
 
   let suspendElementCountArray = [
     0,
-    15,
     Math.ceil( numberCount / 3 ),
     Math.ceil( numberCount / 2 ),
     numberCount,
