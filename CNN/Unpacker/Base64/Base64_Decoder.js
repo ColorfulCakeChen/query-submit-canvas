@@ -73,6 +73,8 @@ function* from_Base64Char_StringOrStringArray_by_GeneratorFunction(
 
   let base64EncodedStringLong;
   if ( source_Base64Char_String_or_StringArray instanceof Array )
+    // Note: If some element is undefined (or null), the String.join() still works
+    //       correctly (i.e. undefined (or null) will be just ignored).
     base64EncodedStringLong = source_Base64Char_String_or_StringArray.join( "" );
   else
     base64EncodedStringLong = source_Base64Char_String_or_StringArray;
