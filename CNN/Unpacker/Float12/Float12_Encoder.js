@@ -335,7 +335,7 @@ function* to_Base64Char_CodePoint_Uint8Array_from_NumberArray(
     suspendElementCount = ( 10 * 1024 );
 
   let sourceElementCount = source_numberArray.length;
-  let sourceElements = source_numberArray;
+  let sourceElementArray = source_numberArray;
 
   // Initialize progress.
   let progressRoot = progressParent.root_get();
@@ -352,12 +352,9 @@ function* to_Base64Char_CodePoint_Uint8Array_from_NumberArray(
 
   // 2. Decode.
 
-  // Exclude the skipped lines.
-  let possibleSourceElementCount = ( sourceElementCount - progressToAdvance.value );
-
   // Encoding 1 Float12 into 2 Base64 characters will result in a longer data
   // (about 200% (= 2 / 1) in size).
-  let targetUint8Count = Math.ceil( possibleSourceElementCount * 2 );
+  let targetUint8Count = sourceElementCount * 2;
 
   let targetUint8Array = new Uint8Array( targetUint8Count );
   //target_Base64Char_CodePoint_Uint8Array
@@ -365,6 +362,8 @@ function* to_Base64Char_CodePoint_Uint8Array_from_NumberArray(
   let resultUint8Count = 0;  // Accumulate the real result Uint8 count.
 
   {
+    let theNumber;
+
     while ( progressToAdvance.value < sourceElementCount ) {
 
       nextYieldLoop:
@@ -373,42 +372,17 @@ function* to_Base64Char_CodePoint_Uint8Array_from_NumberArray(
       // checking to increase performance.) 
       while ( progressToAdvance.value < nextYieldElementCount ) {
 
-//!!! ...unfinshed... (2022/12/25)
-
         // Extract 1 source element (i.e. a floating-point number).
-        //
-        // Although it is verbose to loop unrolling manually, it is far more faster
-        // to use 2 local variables than use a 2-element normal array. (Note: the
-        // 2-element normal array is far more faster than a Uint8Array() again).
+        theNumber = sourceElementArray[ progressToAdvance.value ];
 
-        let encoded_0;
-        do {
-          // Note: It may exceed the nextYieldElementCount boundary. But it should not
-          //       exceed sourceElementCount.
-          if ( progressToAdvance.value >= sourceElementCount )
-            break nextYieldLoop; // Decoding is done. (Ignore last non-4-bytes.)
+//!!! ...unfinshed... (2022/12/27) whether should replace NaN by 0?
+        // if ( Number.isNaN( theNumber ) )
+        //   theNumber = 0;
 
-          encoded_0 = Base64.Constant.DecodeTable_CharCodePoint_to_Uint6[
-            sourceBytes[ progressToAdvance.value ] ];
-          progressToAdvance.value_advance();
-        } while ( 255 === encoded_0 );
+        to_Uint8Array_BigEndian( theNumber, targetUint8Array, resultUint8Count );
+        resultUint8Count += 2;
 
-
-        let encoded_1;
-        do {
-          // Note: It may exceed the nextYieldElementCount boundary. But it should not
-          //       exceed sourceElementCount.
-          if ( progressToAdvance.value >= sourceElementCount )
-            break nextYieldLoop; // Decoding is done. (Ignore last non-4-bytes.)
-
-          encoded_1 = Base64.Constant.DecodeTable_CharCodePoint_to_Uint6[
-            sourceBytes[ progressToAdvance.value ] ];
-          progressToAdvance.value_advance();
-        } while ( 255 === encoded_1 );
-
-
-        targetFloat32Array[ resultFloat32Count++ ]
-          = from_Base64Char_CodePoint_Two( encoded_0, encoded_1 );
+        progressToAdvance.value_advance();
       }
 
       // Every suspendElementCount, release CPU time (and report progress).
@@ -417,22 +391,13 @@ function* to_Base64Char_CodePoint_Uint8Array_from_NumberArray(
           = Math.min( sourceElementCount, progressToAdvance.value + suspendElementCount );
         yield progressRoot;
       }
-
     }
   }
 
   // 3. Result.
-
-  // The resultFloat32Array is a sub-range of target buffer.
-  //
-  // Because the source may have some non-base64 codes which will be ignored,
-  // the length of resultFloat32Array may be less than targetFloat32Array.
-  let resultFloat32Array = new Float32Array(
-    targetFloat32Array.buffer, 0, resultFloat32Count );
-
   yield progressRoot; // Report the progress has been done (100%).
 
-  return resultFloat32Array;
+  return targetUint8Array;
 }
 
 /**

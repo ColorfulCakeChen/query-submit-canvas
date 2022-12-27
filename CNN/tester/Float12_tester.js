@@ -78,6 +78,9 @@ const Float12_EncodeDecode_Table = [
 
 
   new TestCase_Float12_EncodeDecode(
+    Number.NEGATIVE_INFINITY, Float12.Constant.NegativeMin ),
+
+  new TestCase_Float12_EncodeDecode(
     Float12.Constant.NegativeMin, Float12.Constant.NegativeMin ),
 
   new TestCase_Float12_EncodeDecode(
@@ -86,6 +89,9 @@ const Float12_EncodeDecode_Table = [
   new TestCase_Float12_EncodeDecode(
     Float12.Constant.NegativeMin - 1, Float12.Constant.NegativeMin ),
 
+
+  new TestCase_Float12_EncodeDecode(
+    Number.POSITIVE_INFINITY, Float12.Constant.PositiveMax ),
 
   new TestCase_Float12_EncodeDecode(
     Float12.Constant.PositiveMax, Float12.Constant.PositiveMax ),
@@ -115,6 +121,10 @@ const Float12_EncodeDecode_Table = [
 
   new TestCase_Float12_EncodeDecode(
     -Float12.Constant.PositiveMin + Number.EPSILON, 0 ),
+
+
+  new TestCase_Float12_EncodeDecode(
+    Number.NaN, Number.NaN ),
 ];
 
 /** */

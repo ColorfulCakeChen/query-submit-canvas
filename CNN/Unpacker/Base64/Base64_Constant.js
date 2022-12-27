@@ -28,8 +28,7 @@ const EncodeTable_Uint6_to_Char = [ ...base64String ];
 /** Mapping table for encoding Uint6 (i.e. [ 0, 63 ]) to Base64 character's code
  *  point (as Uint8).
  */
-const EncodeTable_Uint6_to_Uint8
-  = ( new TextEncoder() ).encode( base64String );
+const EncodeTable_Uint6_to_Uint8 = ( new TextEncoder() ).encode( base64String );
 
 /**
  * Mapping table for decoding Base64 character (code point between [ 0, 255 ])
