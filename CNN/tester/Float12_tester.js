@@ -330,7 +330,7 @@ function *testerFloat12EncodeDecodeArray( progressParent ) {
     let tempUint8Array = tempUint8ArrayArray[ i ];
 
     // Test different suspendElementCount.
-    for ( let j = 0; j < suspendElementCount.length; ++j ) {
+    for ( let j = 0; j < suspendElementCountArray.length; ++j ) {
       let suspendElementCount = suspendElementCountArray[ j ];
 
       ++progressAggregateArrayIndex;
