@@ -5,6 +5,19 @@ import * as Float12 from "../Unpacker/Float12.js";
 //import * as RandTools from "../util/RandTools.js";
 import * as ValueMax from "../util/ValueMax.js";
 
+/**
+ */
+function array1d_compare_EQ( array1d_lhs, array1d_rhs ) {
+
+  let max_i = Math.max( array1d_lhs.length, array1d_rhs.length );
+  for ( let i = 0; i < max_i; ++i ) {
+    if ( array1d_lhs[ i ] != array1d_rhs[ i ] )
+      return false;
+  }
+
+  return true;
+}
+
 let g_textDecoder = new TextDecoder();
 let g_tempUint8Array = new Uint8Array( 2 );
 
@@ -260,6 +273,130 @@ function *testerFloat12DecodeEncode( progressParent ) {
   yield progressRoot;
 }
 
+/** */
+function *testerFloat12EncodeDecodeArray( progressParent ) {
+
+  let numberCount = 100;
+
+  let tempUint8ArrayArray = [
+    null,                              // No temporary Uint8Array.
+    new Uint8Array( numberCount / 2 ), // temporary Uint8Array without enough length.
+    new Uint8Array( numberCount ),     // temporary Uint8Array with just enough length.
+    new Uint8Array( numberCount * 2 ), // temporary Uint8Array with too enough length.
+  ];
+
+  let numberArray_original = new Array( testCaseCount );
+  for ( let i = 0; i < numberCount; ++i ) {
+
+    // Between [ Float12.Constant.NegativeMinLess, Float12.Constant.PositiveMaxMore ].
+    let randomFloat12
+      = ( Math.random() * Float12.Constant.PositiveMaxMore * 2 )
+          - Float12.Constant.PositiveMaxMore;
+
+    numberArray_original[ i ] = randomFloat12;
+  }
+
+  let textDecoder = TextDecoder();
+  let textEncoder = TextEncoder();
+
+  let skipLineCount = 0;
+  let suspendByteCount = 0;
+
+  let suspendElementCountArray = [
+    0,
+    1,
+    Math.ceil( numberCount / 3 ),
+    Math.ceil( numberCount / 2 ),
+    numberCount,
+    Math.ceil( numberCount * 2 ),
+  ];
+
+  // Progress group.
+  let progressRoot = progressParent.root_get();
+
+  let progressAggregateArrayLength
+    = tempUint8ArrayArray.length * suspendElementCountArray.length;
+
+  let progressAggregateArray = new Array( progressAggregateArrayLength );
+  for ( let i = 0; i < progressAggregateArrayLength; ++i ) {
+    progressAggregateArray[ i ] = progressParent.child_add(
+      ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
+    }
+
+  let progressAggregateArrayIndex = -1;
+
+  // Test different temporary Uint8Array.
+  for ( let i = 0; i < tempUint8ArrayArray.length; ++i ) {
+    let tempUint8Array = tempUint8ArrayArray[ i ];
+
+    // Test different suspendElementCount.
+    for ( let j = 0; j < suspendElementCount.length; ++j ) {
+      let suspendElementCount = suspendElementCountArray[ j ];
+
+      ++progressAggregateArrayIndex;
+      let progressAggregate = progressAggregateArray[ progressAggregateArrayIndex ];
+
+      // sub progress.
+      let progressEncodeArray_original = progressAggregate.child_add(
+        ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
+
+      let progressDecodeArray_original = progressAggregate.child_add(
+        ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
+  
+      let progressEncodeArray_again = progressAggregate.child_add(
+        ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
+
+      let progressDecodeArray_again = progressAggregate.child_add(
+        ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
+
+      //
+      let Float12_encoded_string_original
+        = Float12.Encoder.to_String_from_NumberArray(
+            progressEncodeArray_original,
+            numberArray_original, textDecoder,
+            suspendElementCount,
+            tempUint8Array );
+
+      let Float12_decoded_value_array_original
+        = Float12.Decoder.from_Base64Char_StringOrStringArray_to_Float32Array(
+            progressDecodeArray_original,
+            Float12_encoded_string_original, textEncoder,
+            skipLineCount, suspendByteCount );
+
+      let Float12_encoded_string_again
+        = Float12.Encoder.to_String_from_NumberArray(
+            progressEncodeArray_again,
+            Float12_decoded_value_array_original, textDecoder,
+            suspendElementCount,
+            tempUint8Array );
+
+      let Float12_decoded_value_array_again
+        = Float12.Decoder.from_Base64Char_StringOrStringArray_to_Float32Array(
+            progressDecodeArray_again,
+            Float12_encoded_string_again, textEncoder,
+            skipLineCount, suspendByteCount );
+  
+      let bSame = array1d_compare_EQ(
+        Float12_decoded_value_array_again, Float12_decoded_value_array_original );
+
+      if ( bSame ) {
+        continue;
+      }
+
+      throw Error( `testerFloat12EncodeDecodeArray(): `
+        + `tempUint8ArrayArray[ ${i} ]=${ tempUint8ArrayArray[ i ] }, `
+        + `suspendElementCountArray[ ${j} ]=${ suspendElementCountArray[ j ] }, `
+        + `( ${Float12_decoded_value_array_original} ) encoded as `
+        + `( \"${Float12_encoded_string_again}\" ), `
+        + `decoded as ( ${Float12_decoded_value_array_again} ) `
+        + `should be the same.`
+      );
+    }
+  }
+
+  yield progressRoot;
+}
+
 /**
  *
  * @param {ValueMax.Percentage.Aggregate} progressParent
@@ -282,6 +419,9 @@ function* tester( progressParent ) {
   let progressDecodeEncode
     = progressParent.child_add( ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
 
+  let progressEncodeDecodeArray
+    = progressParent.child_add( ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
+
   // 1.
   yield *testerFloat12Constant( progressConstant );
 
@@ -291,9 +431,8 @@ function* tester( progressParent ) {
   // 3.
   yield *testerFloat12DecodeEncode( progressDecodeEncode );
 
-//!!! ...unfinshed... (2022/12/27)
-// need test from_Base64Char_StringOrStringArray_to_Float32Array()
-// need test to_String_from_NumberArray()
+  // 4.
+  yield *testerFloat12DecodeEncodeArray( progressDecodeEncodeArray );
 
   console.log( "Float12 encode/decode testing... Done." );
 }

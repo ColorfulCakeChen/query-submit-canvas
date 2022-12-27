@@ -348,7 +348,9 @@ function to_String( aNumber, textDecoder, tempUint8Array ) {
  * as Uint8Array (either tempUint8Array or a new Uint8Array) ) when ( done = true ).
  */
 function* to_Base64Char_CodePoint_Uint8Array_from_NumberArray(
-  progressParent, source_numberArray, suspendElementCount,
+  progressParent,
+  source_numberArray,
+  suspendElementCount,
   tempUint8Array ) {
 
   // 0. Initialize.
@@ -445,6 +447,11 @@ function* to_Base64Char_CodePoint_Uint8Array_from_NumberArray(
 
 /**
  *
+ * @param {ValueMax.Percentage.Aggregate} progressParent
+ *   Some new progressToAdvance will be created and added to progressParent. The
+ * created progressToAdvance will be increased when every time advanced. The
+ * progressParent.root_get() will be returned when every time yield.
+ *
  * @param {number[]} source_numberArray
  *   The 12-bits floating-point number array to be encoded to Base64 string array.
  * They should be between [ Float12.Constant.NegativeMin, Float12.Constant.PositiveMax ].
@@ -466,7 +473,10 @@ function* to_Base64Char_CodePoint_Uint8Array_from_NumberArray(
  *   A Base64 encoded string representing all 12-bits floating-point numbers.
  */
 function to_String_from_NumberArray(
-  source_numberArray, textDecoder, suspendElementCount, tempUint8Array ) {
+  progressParent,
+  source_numberArray, textDecoder,
+  suspendElementCount,
+  tempUint8Array ) {
 
   let intermediateUint8Array = to_Base64Char_CodePoint_Uint8Array_from_NumberArray(
     progressParent, source_numberArray, suspendElementCount, tempUint8Array );
