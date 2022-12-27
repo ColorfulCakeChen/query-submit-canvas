@@ -6,8 +6,8 @@ export { to_Uint8Array_BigEndian_by_Sign_ExponentUnsigned_FractionUnsigned };
 export { to_Uint8Array_BigEndian_by_Number_ExponentSigned };
 export { to_Uint8Array_BigEndian };
 export { to_String };
-export { to_Base64Char_CodePoint_Uint8Array_from_NumberArray };
-export { to_String_from_NumberArray };
+export { generator_to_Base64Char_CodePoint_Uint8Array_from_NumberArray };
+export { generator_to_String_from_NumberArray };
 
 import * as Uint12 from "../Uint12.js";
 import * as Float12_Constant_Coder from "./Float12_Constant_Coder.js";
@@ -347,7 +347,7 @@ function to_String( aNumber, textDecoder, tempUint8Array ) {
  *   Yield ( value = Base64 encoded data (as Base64 charcaters' code point)
  * as Uint8Array (either tempUint8Array or a new Uint8Array) ) when ( done = true ).
  */
-function* to_Base64Char_CodePoint_Uint8Array_from_NumberArray(
+function* generator_to_Base64Char_CodePoint_Uint8Array_from_NumberArray(
   progressParent,
   source_numberArray,
   suspendElementCount,
@@ -471,16 +471,39 @@ function* to_Base64Char_CodePoint_Uint8Array_from_NumberArray(
  *
  * @return {string}
  *   A Base64 encoded string representing all 12-bits floating-point numbers.
+ *
+ * @yield {ValueMax.Percentage.Aggregate}
+ *   Yield ( value = progressParent.root_get() ) when ( done = false ).
+ *
+ * @yield {string}
+ *   Yield ( value = A Base64 encoded string representing all 12-bits
+ * floating-point numbers ) when ( done = true ).
  */
-function to_String_from_NumberArray(
+function* generator_to_String_from_NumberArray(
   progressParent,
   source_numberArray, textDecoder,
   suspendElementCount,
   tempUint8Array ) {
 
-  let intermediateUint8Array = to_Base64Char_CodePoint_Uint8Array_from_NumberArray(
-    progressParent, source_numberArray, suspendElementCount, tempUint8Array );
+  // Initialize progress.
+  let progressRoot = progressParent.root_get();
 
+  let progressUint8Array = progressParent.child_add(
+    ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
+
+  let progressToAdvance = progressParent.child_add(
+    ValueMax.Percentage.Concrete.Pool.get_or_create_by( 1 ) );
+
+  // 1.
+  let intermediateUint8Array
+    = yield* generator_to_Base64Char_CodePoint_Uint8Array_from_NumberArray(
+        progressUint8Array, source_numberArray, suspendElementCount, tempUint8Array );
+
+  // 2.
   let resultString = textDecoder.decode( intermediateUint8Array )
+
+  progressToAdvance.value_advance();
+  yield progressRoot;
+
   return resultString;
 }

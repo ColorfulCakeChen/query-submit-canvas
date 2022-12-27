@@ -6,8 +6,8 @@ export { from_Sign_ExponentUnsigned_FractionUnsigned_Zeroable };
 export { from_Uint12 };
 export { from_Base64Char_CodePoint_Two };
 export { from_String };
-export { from_Base64Char_CodePoint_Uint8Array_to_Float32Array };
-export { from_Base64Char_StringOrStringArray_to_Float32Array };
+export { generator_generator_from_Base64Char_StringOrStringArray_to_Uint8Array };
+export { generator_from_Base64Char_StringOrStringArray_to_Float32Array };
 
 import * as Base64 from "../Base64.js";
 import * as Uint12 from "../Uint12.js";
@@ -231,7 +231,7 @@ function from_String( base64String ) {
  * Every 2 elements of the source Uint8Array will be decoded into 1 element
  * (i.e. a float12; 12-bits floating-point number) of the result Float32Array.
  *
- * (Copied from Base64.Decoder.from_Base64Char_CodePoint_Uint8Array_to_Uint8Array())
+ * (Copied from Base64.Decoder.generator_from_Base64Char_CodePoint_Uint8Array_to_Uint8Array())
  *
  * @param {ValueMax.Percentage.Aggregate} progressParent
  *   Some new progressToAdvance will be created and added to progressParent. The
@@ -259,7 +259,7 @@ function from_String( base64String ) {
  * @yield {Float32Array}
  *   Yield ( value = decoded data as Float32Array ) when ( done = true ).
  */
-function* from_Base64Char_CodePoint_Uint8Array_to_Float32Array( progressParent,
+function* generator_generator_from_Base64Char_StringOrStringArray_to_Uint8Array( progressParent,
   source_Base64Char_CodePoint_Uint8Array, skipLineCount, suspendByteCount ) {
 
   // 0. Initialize.
@@ -404,17 +404,17 @@ function* from_Base64Char_CodePoint_Uint8Array_to_Float32Array( progressParent,
  * @yield {Float32Array}
  *   Yield ( value = decoded data as Float32Array ) when ( done = true ).
  */
-function* from_Base64Char_StringOrStringArray_to_Float32Array(
+function* generator_from_Base64Char_StringOrStringArray_to_Float32Array(
   progressParent,
   source_Base64Char_String_or_StringArray, textEncoder,
   skipLineCount, suspendByteCount
 ) {
   return yield*
-    Base646.Decoder.from_Base64Char_StringOrStringArray_by_GeneratorFunction(
+    Base64.Decoder.generator_from_Base64Char_StringOrStringArray_by_GeneratorFunction(
       progressParent,
       source_Base64Char_String_or_StringArray, textEncoder,
       skipLineCount, suspendByteCount,
-      from_Base64Char_CodePoint_Uint8Array_to_Float32Array
+      generator_generator_from_Base64Char_StringOrStringArray_to_Uint8Array
     );
 }
 

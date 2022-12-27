@@ -350,31 +350,31 @@ function *testerFloat12EncodeDecodeArray( progressParent ) {
         ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
 
       // Encode/Decode/Encode_again/Decode_again
-      let Float12_encoded_string_original
-        = Float12.Encoder.to_String_from_NumberArray(
-            progressEncodeArray_original,
-            numberArray_original, textDecoder,
-            suspendElementCount,
-            tempUint8Array );
+      let Float12_encoded_string_original = yield*
+        Float12.Encoder.generator_to_String_from_NumberArray(
+          progressEncodeArray_original,
+          numberArray_original, textDecoder,
+          suspendElementCount,
+          tempUint8Array );
 
-      let Float12_decoded_value_array_original
-        = Float12.Decoder.from_Base64Char_StringOrStringArray_to_Float32Array(
-            progressDecodeArray_original,
-            Float12_encoded_string_original, textEncoder,
-            skipLineCount, suspendByteCount );
+      let Float12_decoded_value_array_original = yield*
+        Float12.Decoder.generator_from_Base64Char_StringOrStringArray_to_Float32Array(
+          progressDecodeArray_original,
+          Float12_encoded_string_original, textEncoder,
+          skipLineCount, suspendByteCount );
 
-      let Float12_encoded_string_again
-        = Float12.Encoder.to_String_from_NumberArray(
-            progressEncodeArray_again,
-            Float12_decoded_value_array_original, textDecoder,
-            suspendElementCount,
-            tempUint8Array );
+      let Float12_encoded_string_again = yield*
+        Float12.Encoder.generator_to_String_from_NumberArray(
+          progressEncodeArray_again,
+          Float12_decoded_value_array_original, textDecoder,
+          suspendElementCount,
+          tempUint8Array );
 
-      let Float12_decoded_value_array_again
-        = Float12.Decoder.from_Base64Char_StringOrStringArray_to_Float32Array(
-            progressDecodeArray_again,
-            Float12_encoded_string_again, textEncoder,
-            skipLineCount, suspendByteCount );
+      let Float12_decoded_value_array_again = yield*
+        Float12.Decoder.generator_from_Base64Char_StringOrStringArray_to_Float32Array(
+          progressDecodeArray_again,
+          Float12_encoded_string_again, textEncoder,
+          skipLineCount, suspendByteCount );
   
       // Compare
       let bSame = array1d_compare_EQ(
