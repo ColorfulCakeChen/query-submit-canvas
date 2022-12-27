@@ -43,7 +43,7 @@ tr:hover {
   background-color: darkgrey;
 } */
 
-input {
+input, textarea {
   background-color: black;
   color: lightgrey;
 }
