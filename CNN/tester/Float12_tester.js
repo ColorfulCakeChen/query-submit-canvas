@@ -296,8 +296,8 @@ function *testerFloat12EncodeDecodeArray( progressParent ) {
     numberArray_original[ i ] = randomFloat12;
   }
 
-  let textDecoder = TextDecoder();
-  let textEncoder = TextEncoder();
+  let textDecoder = new TextDecoder();
+  let textEncoder = new TextEncoder();
 
   let skipLineCount = 0;
   let suspendByteCount = 0;
