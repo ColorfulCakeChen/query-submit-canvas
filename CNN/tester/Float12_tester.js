@@ -5,18 +5,19 @@ import * as Float12 from "../Unpacker/Float12.js";
 //import * as RandTools from "../util/RandTools.js";
 import * as ValueMax from "../util/ValueMax.js";
 
-/**
- */
-function array1d_compare_EQ( array1d_lhs, array1d_rhs ) {
-
-  let max_i = Math.max( array1d_lhs.length, array1d_rhs.length );
-  for ( let i = 0; i < max_i; ++i ) {
-    if ( array1d_lhs[ i ] != array1d_rhs[ i ] )
-      return false;
-  }
-
-  return true;
-}
+//!!! (2022/12/27 Remarked) Unused
+// /**
+//  */
+// function array1d_compare_EQ( array1d_lhs, array1d_rhs ) {
+//
+//   let max_i = Math.max( array1d_lhs.length, array1d_rhs.length );
+//   for ( let i = 0; i < max_i; ++i ) {
+//     if ( array1d_lhs[ i ] != array1d_rhs[ i ] )
+//       return false;
+//   }
+//
+//   return true;
+// }
 
 let g_textDecoder = new TextDecoder();
 let g_tempUint8Array = new Uint8Array( 2 );
@@ -377,21 +378,33 @@ function *testerFloat12EncodeDecodeArray( progressParent ) {
           skipLineCount, suspendByteCount );
   
       // Compare
-      let bSame = array1d_compare_EQ(
-        Float12_decoded_value_array_again, Float12_decoded_value_array_original );
+      for ( let k = 0; k < numberCount; ++k ) {
+        if ( Float12_decoded_value_array_again[ k ]
+               == Float12_decoded_value_array_original[ k ] )
+          continue;
 
-      if ( bSame ) {
-        continue;
+        throw Error( `testerFloat12EncodeDecodeArray(): `
+          + `Float12_decoded_value_array_again[ ${k} ] ( `
+          + `${Float12_decoded_value_array_again} ) `
+
+          + `should be the same as `
+
+          + `Float12_decoded_value_array_original[ ${k} ] ( `
+          + `${Float12_decoded_value_array_original} ). `
+
+          + `tempUint8ArrayArray[ ${i} ]=${ tempUint8ArrayArray[ i ] }, `
+          + `suspendElementCountArray[ ${j} ]=${ suspendElementCountArray[ j ] }, `
+
+          + `Float12_decoded_value_array_original=[ `
+          + `${Float12_decoded_value_array_original} ], `
+
+          + `Float12_encoded_string_again=\"${Float12_encoded_string_again}\", `
+
+          + `Float12_decoded_value_array_again=[ `
+          + `${Float12_decoded_value_array_again} ].`
+        );
       }
-
-      throw Error( `testerFloat12EncodeDecodeArray(): `
-        + `tempUint8ArrayArray[ ${i} ]=${ tempUint8ArrayArray[ i ] }, `
-        + `suspendElementCountArray[ ${j} ]=${ suspendElementCountArray[ j ] }, `
-        + `( ${Float12_decoded_value_array_original} ) encoded as `
-        + `( \"${Float12_encoded_string_again}\" ), `
-        + `decoded as ( ${Float12_decoded_value_array_again} ) `
-        + `should be the same.`
-      );
+    
     }
   }
 
