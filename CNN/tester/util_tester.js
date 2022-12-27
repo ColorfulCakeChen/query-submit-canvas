@@ -38,14 +38,14 @@ function test() {
     ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
 
 //!!! (2022/12/03 Temp Remarked) For speed up Base64 testing.
-  // let progress_AsyncWorker_tester = progress.child_add(
-  //   ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
-  //
-  //let progress_NeuralWorker_tester_cpu = progress.child_add(
-  //  ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
-  //
-  //let progress_NeuralWorker_tester_webgl = progress.child_add(
-  //  ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
+  let progress_AsyncWorker_tester = progress.child_add(
+    ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
+  
+  let progress_NeuralWorker_tester_cpu = progress.child_add(
+   ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
+  
+  let progress_NeuralWorker_tester_webgl = progress.child_add(
+   ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
 
   let progressReceiver
     = new ValueMax.Receiver.HTMLProgress.createByTitle_or_getDummy( "TestProgressBar" );
@@ -57,19 +57,19 @@ function test() {
     yield* Base64ToUint8Array_tester.tester( progress_Base64ToUint8Array_tester );
 
 //!!! (2022/12/03 Temp Remarked) For speed up Base64 testing.
-    // {
-    //   let bAscent_or_Descent;
-    //   bAscent_or_Descent = false; // Descent
-    //   yield* NeuralWorker_tester.tester( progress_NeuralWorker_tester_webgl,
-    //     "webgl", bAscent_or_Descent );
-    //
-    //   bAscent_or_Descent = true; // Ascent
-    //   yield* NeuralWorker_tester.tester( progress_NeuralWorker_tester_cpu,
-    //     "cpu", bAscent_or_Descent );
-    //  }
+    {
+      let bAscent_or_Descent;
+      bAscent_or_Descent = false; // Descent
+      yield* NeuralWorker_tester.tester( progress_NeuralWorker_tester_webgl,
+        "webgl", bAscent_or_Descent );
+    
+      bAscent_or_Descent = true; // Ascent
+      yield* NeuralWorker_tester.tester( progress_NeuralWorker_tester_cpu,
+        "cpu", bAscent_or_Descent );
+     }
 
 //!!! (2022/12/03 Temp Remarked) For speed up Base64 testing.
-    //yield* AsyncWorker_tester.tester( progress_AsyncWorker_tester );
+    yield* AsyncWorker_tester.tester( progress_AsyncWorker_tester );
     yield* GSheets_tester.tester( progress_GSheets_tester );
   }
 
