@@ -285,7 +285,7 @@ function *testerFloat12EncodeDecodeArray( progressParent ) {
     new Uint8Array( numberCount * 2 ), // temporary Uint8Array with too enough length.
   ];
 
-  let numberArray_original = new Array( testCaseCount );
+  let numberArray_original = new Array( numberCount );
   for ( let i = 0; i < numberCount; ++i ) {
 
     // Between [ Float12.Constant.NegativeMinLess, Float12.Constant.PositiveMaxMore ].
