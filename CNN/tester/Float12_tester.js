@@ -394,7 +394,7 @@ function *testerFloat12EncodeDecodeArray( progressParent ) {
     }
   }
 
-  yield progressRoot;
+  //yield progressRoot;
 }
 
 /**
@@ -432,7 +432,7 @@ function* tester( progressParent ) {
   yield *testerFloat12DecodeEncode( progressDecodeEncode );
 
   // 4.
-  yield *testerFloat12DecodeEncodeArray( progressDecodeEncodeArray );
+  yield *testerFloat12EncodeDecodeArray( progressEncodeDecodeArray );
 
   console.log( "Float12 encode/decode testing... Done." );
 }
