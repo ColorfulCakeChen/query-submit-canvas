@@ -349,7 +349,7 @@ function *testerFloat12EncodeDecodeArray( progressParent ) {
       let progressDecodeArray_again = progressAggregate.child_add(
         ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
 
-      //
+      // Encode/Decode/Encode_again/Decode_again
       let Float12_encoded_string_original
         = Float12.Encoder.to_String_from_NumberArray(
             progressEncodeArray_original,
@@ -376,6 +376,7 @@ function *testerFloat12EncodeDecodeArray( progressParent ) {
             Float12_encoded_string_again, textEncoder,
             skipLineCount, suspendByteCount );
   
+      // Compare
       let bSame = array1d_compare_EQ(
         Float12_decoded_value_array_again, Float12_decoded_value_array_original );
 
