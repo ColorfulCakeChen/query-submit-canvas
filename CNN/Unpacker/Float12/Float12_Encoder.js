@@ -315,15 +315,27 @@ function to_String( aNumber, textDecoder, tempUint8Array ) {
  *   Everytime so many elements encoded, yield for releasing CPU time (and reporting
  * progress). Default is ( 10 * 1024 ) elements.
  *
+ * @param {Uint8Array} tempUint8Array
+ *   A temporary Uint8Array which will be filled two Base64 encoded characters
+ * (representing a 12-bits floating-point number). It must have at least
+ * ( 2 * source_numberArray.length ) elements.
+ *   - If not null:
+ *     - If size is too small, a new Uint8Array will be created and returned.
+ *     - If size is too large, a new Uint8Array will be created (with tempUint8Array's
+ *         internal ArrayBuffer) and returned.
+ *     - If size is just as needed, tempUint8Array will be used directly and returned.
+ *   - If null, a new Uint8Array will be created and returned.
+ *
  * @yield {ValueMax.Percentage.Aggregate}
  *   Yield ( value = progressParent.root_get() ) when ( done = false ).
  *
  * @yield {Uint8Array}
  *   Yield ( value = Base64 encoded data (as Base64 charcaters' code point)
- * as Uint8Array ) when ( done = true ).
+ * as Uint8Array (either tempUint8Array or a new Uint8Array) ) when ( done = true ).
  */
 function* to_Base64Char_CodePoint_Uint8Array_from_NumberArray(
-  progressParent, source_numberArray, suspendElementCount ) {
+  progressParent, source_numberArray, suspendElementCount,
+  tempUint8Array ) {
 
   // 0. Initialize.
 
@@ -355,9 +367,28 @@ function* to_Base64Char_CodePoint_Uint8Array_from_NumberArray(
   // Encoding 1 Float12 into 2 Base64 characters will result in a longer data
   // (about 200% (= 2 / 1) in size).
   let targetUint8Count = sourceElementCount * 2;
+  let targetUint8Array;
 
-  let targetUint8Array = new Uint8Array( targetUint8Count );
-  //target_Base64Char_CodePoint_Uint8Array
+  // 2.1 If a temporary Uint8Array is provided, use it if possible.
+  if ( tempUint8Array ) {
+
+    // 2.1.1 If provided temporary Uint8Array too small, create new one.
+    if ( tempUint8Array.length < targetUint8Count )
+      targetUint8Array = new Uint8Array( targetUint8Count );
+
+    // 2.1.2 If provided temporary Uint8Array too large, create one by provided
+    //       internal ArrayBuffer.
+    else if ( tempUint8Array.length > targetUint8Count )
+      targetUint8Array = new Uint8Array( tempUint8Array.buffer, 0, targetUint8Count );
+
+    // 2.1.3 If provided temporary Uint8Array just as needed size, use it directly.
+    else
+      targetUint8Array = tempUint8Array;
+
+  // 2.2 Since no temporary Uint8Array is provided, create new one.
+  } else {
+    targetUint8Array = new Uint8Array( targetUint8Count );
+  }
 
   let resultUint8Count = 0;  // Accumulate the real result Uint8 count.
 
@@ -412,7 +443,7 @@ function* to_Base64Char_CodePoint_Uint8Array_from_NumberArray(
  * @param {Uint8Array} tempUint8Array
  *   A temporary Uint8Array which will be filled two Base64 encoded characters
  * (representing a 12-bits floating-point number). It must have at least
- * ( 2 * numberArray.length ) elements. IF null, a new Uint8Array will be created
+ * ( 2 * numberArray.length ) elements. If null, a new Uint8Array will be created
  * and discarded.
  *
  * @return {string}
@@ -420,8 +451,10 @@ function* to_Base64Char_CodePoint_Uint8Array_from_NumberArray(
  */
 function to_String_from_NumberArray( numberArray, textDecoder, tempUint8Array ) {
 
-
-//!!! ...unfinshed... (2022/12/25)
+  let  to_Base64Char_CodePoint_Uint8Array_from_NumberArray(
+    progressParent, source_numberArray, suspendElementCount ) {
+  
+//!!! ...unfinshed... (2022/12/27)
   
 }
   
