@@ -1,5 +1,5 @@
 export { generator_from_Base64Char_StringOrStringArray_by_GeneratorFunction };
-export { generator_from_Base64Char_StringOrStringArray_by_GeneratorFunction };
+export { generator_from_Base64Char_CodePoint_ArrayBuffer_by_GeneratorFunction };
 
 export { generator_from_Base64Char_StringOrStringArray_to_Uint8Array };
 export { generator_from_Base64Char_CodePoint_ArrayBuffer_to_Uint8Array };
@@ -132,7 +132,8 @@ function* generator_from_Base64Char_StringOrStringArray_by_GeneratorFunction(
  * @yield {any}
  *   Yield ( value = decoded data of generatorFunction ) when ( done = true ).
  */
-function* generator_from_Base64Char_StringOrStringArray_by_GeneratorFunction( progressParent,
+function* generator_from_Base64Char_CodePoint_ArrayBuffer_by_GeneratorFunction(
+  progressParent,
   source_Base64Char_CodePoint_ArrayBuffer, skipLineCount, suspendByteCount,
   generatorFunction ) {
 
@@ -223,7 +224,7 @@ function* generator_from_Base64Char_StringOrStringArray_to_Uint8Array(
 function* generator_from_Base64Char_CodePoint_ArrayBuffer_to_Uint8Array( progressParent,
   source_Base64Char_CodePoint_ArrayBuffer, skipLineCount, suspendByteCount ) {
 
-  return yield* generator_from_Base64Char_StringOrStringArray_by_GeneratorFunction(
+  return yield* generator_from_Base64Char_CodePoint_ArrayBuffer_by_GeneratorFunction(
     progressParent,
     source_Base64Char_CodePoint_ArrayBuffer, skipLineCount, suspendByteCount,
     generator_from_Base64Char_CodePoint_Uint8Array_to_Uint8Array
