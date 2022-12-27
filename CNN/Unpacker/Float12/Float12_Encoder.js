@@ -63,11 +63,11 @@ function scientificNotation_Exponent_2( aNumber ) {
 /** Estimate the signed exponent integer of the specified number for 12-bits
  * floating-point number Base64 encoding.
  *
- * It just calls SCIENTIFIC_NOTATION_EXPONENT_2().
+ * It just calls scientificNotation_Exponent_2().
  *
  * Note: Although it seems more fair to use ROUND() than INT() in
- * SCIENTIFIC_NOTATION_EXPONENT_2(), using ROUND() may result in the most
- * (i.e. left most) significant bit of FLOAT12_ESTIMATE_SIGNIFICAND_SIGNED()
+ * scientificNotation_Exponent_2(), using ROUND() may result in the most
+ * (i.e. left most) significant bit of estimate_Significand_Signed()
  * not 1 (i.e. illegal significand value). So using INT() instead of ROUND().
  *
  * @param {number} aNumber
@@ -143,12 +143,14 @@ function to_Uint8Array_BigEndian_by_Sign_ExponentUnsigned_FractionUnsigned(
   sign_0_1, exponent_unsigned_0_p63, fraction_unsigned_0_p31,
   targetUint8Array, targetArrayIndex ) {
 
+  // Note: If aNumber is NaN, result will be ( uint12_value == 0 ).
+  let uint12_value
+    =   ( sign_0_1 << Float12_Constant_Coder.SignBitmaskLShiftCount )
+      | ( exponent_unsigned_0_p63 << Float12_Constant_Coder.ExponentBitmaskLShiftCount )
+      | fraction_unsigned_0_p31;
+
   Uint12.Encoder.to_Uint8Array_BigEndian(
-      ( sign_0_1 << Float12_Constant_Coder.SignBitmaskLShiftCount )
-    | ( exponent_unsigned_0_p63 << Float12_Constant_Coder.ExponentBitmaskLShiftCount )
-    | fraction_unsigned_0_p31,
-    targetUint8Array, targetArrayIndex
-  );
+    uint12_value, targetUint8Array, targetArrayIndex );
 }
 
 /**
@@ -180,6 +182,8 @@ function to_Uint8Array_BigEndian_by_Number_ExponentSigned(
   targetUint8Array, targetArrayIndex ) {
 
   // 1. Extract sign bit.
+  //
+  // Note: If aNumber is NaN, result will be ( sign_0_1 == 0 ).
   let sign_0_1; 
   if ( aNumber < 0 )
     sign_0_1 = 1;
@@ -203,6 +207,8 @@ function to_Uint8Array_BigEndian_by_Number_ExponentSigned(
 
   // 2.3 Otherwise, find out significand by the exponent. And then, get fraction by
   //     masking out the implicit bit of the significand.
+  //
+  // Note: If aNumber is NaN, result will be ( fraction_unsigned_0_p31 == 0 ).
   } else {
     fraction_unsigned_0_p31
       = Math.abs( estimate_Significand_Signed( aNumber, exponent_signed_n32_p31 ) )
@@ -236,6 +242,14 @@ function to_Uint8Array_BigEndian_by_Number_ExponentSigned(
  * @param {number} aNumber
  *   The 12-bits floating-point number to be encoded to Base64 string. It should be
  * between [ Float12.Constant.NegativeMin, Float12.Constant.PositiveMax ].
+ *
+ *   - If aNumber is NaN, the result will be the same as ( aNumber == 0 ).
+ *
+ *   - If aNumber is less than Float12.Constant.NegativeMin, the result will be
+ *       the same as ( aNumber == Float12.Constant.NegativeMin ).
+ *
+ *   - If aNumber is greater than Float12.Constant.PositiveMax, the result will be
+ *       the same as ( aNumber == Float12.Constant.PositiveMax ).
  *
  * @param {Uint8Array} targetUint8Array
  *   The Uint8Array which will be filled two Base64 encoded characters (representing
@@ -406,10 +420,8 @@ function* to_Base64Char_CodePoint_Uint8Array_from_NumberArray(
         // Extract 1 source element (i.e. a floating-point number).
         theNumber = sourceElementArray[ progressToAdvance.value ];
 
-//!!! ...unfinshed... (2022/12/27) whether should replace NaN by 0?
-        // if ( Number.isNaN( theNumber ) )
-        //   theNumber = 0;
-
+        // Enocde 1 floating-point number into 2 uint8 (as Base64 characters'
+        // code point).
         to_Uint8Array_BigEndian( theNumber, targetUint8Array, resultUint8Count );
         resultUint8Count += 2;
 

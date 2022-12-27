@@ -124,7 +124,7 @@ const Float12_EncodeDecode_Table = [
 
 
   new TestCase_Float12_EncodeDecode(
-    Number.NaN, Number.NaN ),
+    Number.NaN, 0 ),
 ];
 
 /** */
