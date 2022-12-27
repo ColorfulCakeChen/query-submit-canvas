@@ -385,15 +385,15 @@ function *testerFloat12EncodeDecodeArray( progressParent ) {
 
         throw Error( `testerFloat12EncodeDecodeArray(): `
           + `Float12_decoded_value_array_again[ ${k} ] ( `
-          + `${Float12_decoded_value_array_again} ) `
+          + `${Float12_decoded_value_array_again[ k ]} ) `
 
           + `should be the same as `
 
           + `Float12_decoded_value_array_original[ ${k} ] ( `
-          + `${Float12_decoded_value_array_original} ). `
+          + `${Float12_decoded_value_array_original[ k ]} ). `
 
-          + `tempUint8ArrayArray[ ${i} ]=${ tempUint8ArrayArray[ i ] }, `
-          + `suspendElementCountArray[ ${j} ]=${ suspendElementCountArray[ j ] }, `
+          + `tempUint8ArrayArray[ ${i} ]=${tempUint8ArrayArray[ i ]}, `
+          + `suspendElementCountArray[ ${j} ]=${suspendElementCountArray[ j ]}, `
 
           + `Float12_decoded_value_array_original=[ `
           + `${Float12_decoded_value_array_original} ], `
