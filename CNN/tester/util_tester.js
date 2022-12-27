@@ -12,7 +12,7 @@ import * as NeuralWorker_tester from "./NeuralWorker_tester.js";
 window.addEventListener( "load", event => {
   ScriptLoader
     .createPromise(
-      "https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@3.19.0/dist/tf.min.js" )
+      "https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.0.0/dist/tf.min.js" )
     .then( test );
 });
 

@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Versus Tester</title>
+    <link href="./PerformanceTable.css" rel="stylesheet" />
+  </head>
+  <body>
+    
+    <div>
+      <label for="SpreadsheetId">SpreadsheetId:</label>
+      <input id="SpreadsheetId" type="text" minlength="47" maxlength="255" size="50">
+    </div>
+    <div>
+      <input id="Download" type="button" value="Download">
+    </div>
+
+    <table id="VersusSummary_Table"></table>
+
+    <div>
+      <label for="VersusId">VersusId:</label>
+      <textarea id="VersusId" rows="1" cols="50"></textarea>
+    </div>
+
+    <div>
+      <label for="VersusId">ParentChromosomes:</label>
+      <textarea id="ParentChromosomes" rows="1" cols="50"></textarea>
+    </div>
+
+    <div>
+      <label for="VersusId">OffspringChromosomes:</label>
+      <textarea id="OffspringChromosomes" rows="1" cols="50"></textarea>
+    </div>
+
+    <script type="module" src="./Versus_tester.js"></script>
+  </body>
+</html>
