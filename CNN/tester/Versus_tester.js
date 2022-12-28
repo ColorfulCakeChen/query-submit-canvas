@@ -70,7 +70,7 @@ function VersusSummary_onDownload( bDownloadSummaryOk ) {
   let htmlTableOperator;
   {
     const htmlTableId = "VersusSummaryTable";
-    const digitsCount = 4;
+    const digitsCount = 0; // i.e. integer
     htmlTableOperator
       = HTMLTable.Operator.Pool.get_or_create_by( htmlTableId, digitsCount );
   }
