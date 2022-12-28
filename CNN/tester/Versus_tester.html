@@ -10,8 +10,8 @@
       <tr>
         <th scope="row">SpreadsheetId</th>
         <td>
-          <input id="SpreadsheetIdText" type="text" minlength="47" maxlength="255" size="50">
-          <button id="DownloadButton" type="button">Download</button>
+          <input id="SpreadsheetIdText" type="text" maxlength="150" size="50">
+          <button id="DownloadSummaryButton" type="button">Download Summary</button>
         </td>
       </tr>
 
@@ -19,6 +19,14 @@
         <th scope="row">VersusSummary</th>
         <td>
           <table id="VersusSummary_Table"></table>
+        </td>
+      </tr>
+
+      <tr>
+        <th scope="row">NextVersusId</th>
+        <td>
+          <input id="NextVersusIdText" type="text" maxlength="150" size="50" readonly>
+          <button id="DownloadVersusButton" type="button">Download Next Versus</button>
         </td>
       </tr>
 

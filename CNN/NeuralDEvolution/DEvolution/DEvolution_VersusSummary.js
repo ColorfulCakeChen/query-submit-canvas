@@ -160,14 +160,12 @@ class DEvolution_VersusSummary extends Recyclable.Root {
   }
 
   /**
-   * Load the next versus data.
-   *
-   * @return {Promise( DEvolution.Versus )}
-   *   Return a promise.
-   *   - It will resolve to a DEvolution.Versus object, if succeed.
-   *   - It will resolve to null, if failed.
+   * @return {number}
+   *   Return the current visit index (i.e. array index into .visitIndexArray[])
+   * according to .visitCount. It will also prepare .visitIndexArray[] if necessary.
+   * Return negative value if .visitCount is not legal or .rangeArray[] is not ready.
    */
-  async versus_next_load_async() {
+  visitIndex_get() {
 
     // If all versus data are visited (or .visitCount is undefiend), re-prepare a
     // new random visiting list.
@@ -179,12 +177,29 @@ class DEvolution_VersusSummary extends Recyclable.Root {
 
     if (   ( !( this.visitCount >= 0 ) )
         || ( !( this.visitCount < this.visitIndexArray.length ) ) )
-      return false; // Illegal visitCount (e.g. undefined or too large).
+      return -1; // Illegal visitCount (e.g. undefined or too large).
 
     if ( !this.rangeArray )
-      return false;
+      return -1; // No range could be visited.
 
     let visitIndex = this.visitIndexArray[ this.visitCount ];
+    return visitIndex;
+  }
+
+  /**
+   * Load the next versus data.
+   *
+   * @return {Promise( DEvolution.Versus )}
+   *   Return a promise.
+   *   - It will resolve to a DEvolution.Versus object, if succeed.
+   *   - It will resolve to null, if failed.
+   */
+  async versus_next_load_async() {
+
+    let visitIndex = this.visitIndex_get();
+    if ( visitIndex < 0 )
+      return false;
+
     let spreadsheetRange = this.rangeArray[ visitIndex ];
 
     let versus = DEvolution_Versus.Pool.get_or_create_by();
