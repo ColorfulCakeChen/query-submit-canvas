@@ -1,3 +1,4 @@
+import * as HTMLTable from "../Display/HTMLTable.js";
 import * as DEvolution from "../NeuralDEvolution/DEvolution.js";
 
 

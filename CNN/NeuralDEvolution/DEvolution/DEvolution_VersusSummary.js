@@ -87,7 +87,7 @@ class DEvolution_VersusSummary extends Recyclable.Root {
   }
 
   set weightsSpreadsheetId( spreadsheetId ) {
-    this.urlComposer.spreadsheetId_set( spreadsheetId );
+    this.urlComposer.spreadsheetId = spreadsheetId;
   }
 
   get weightsSpreadsheetId() {
