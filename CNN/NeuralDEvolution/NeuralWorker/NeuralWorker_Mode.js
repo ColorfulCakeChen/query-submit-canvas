@@ -22,7 +22,7 @@ class NeuralWorker_Mode extends Int {
     super( 0, 6,
       {
         ONE_WORKER__ONE_SCALE__FILL:             new NeuralWorker_Mode.Info(
-          0, "ONE_WORKER__ONE_SCALE__FILL",           1,
+          0, "ONE_WORKER__ONE_SCALE__FILL",             1,
           true, undefined ),
 
         ONE_WORKER__ONE_SCALE__NO_FILL:          new NeuralWorker_Mode.Info(

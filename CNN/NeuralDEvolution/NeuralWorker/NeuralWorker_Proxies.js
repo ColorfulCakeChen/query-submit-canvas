@@ -206,7 +206,7 @@ class NeuralWorker_Proxies extends Recyclable.Root {
     this.neuralNetCount = 2; // Always two neural network (for differential evolution).
     this.hardwareConcurrency = navigator.hardwareConcurrency; // logical CPU count.
 
-    // Two web workers are sufficient.
+    // (At most) Two web workers are sufficient.
     //
     // Although we might want to create as many web worker as logical CPU count, it
     // might not be necessary because our neural networks are learning by differential
