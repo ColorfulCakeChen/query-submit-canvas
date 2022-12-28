@@ -13,8 +13,8 @@ import { Mode as NeuralWorker_Mode } from "./NeuralWorker_Mode.js";
 /**
  * The container of WorkerProxy. It orchestrates these WorkerProxy. Especially, it
  * transfers (scaled) source image data to and from web worker. This could maximize
- * parallel computing under the restriction transferring source image data to every
- * web worker serially.
+ * parallel computing under the restriction of transferring source image data to
+ * every web worker serially.
  *
  *
  * 1. Idea
@@ -27,10 +27,10 @@ import { Mode as NeuralWorker_Mode } from "./NeuralWorker_Mode.js";
  * multiple times) to process both competition side of an diffential evolution
  * iteration.
  *
- * So these ONE_WORKER__Xxx mode combine two neural networks of both competition
- * sides in one web worker. Although they compute serially (not parallelly), they
- * still may be faster than compute them in two worker because the reduced memory
- * transferring between CPU and GPU.
+ * So these ONE_WORKER__Xxx modes combine two neural networks of both competition
+ * sides in one web worker. Although they compute serially (not parallelly), it
+ * may still be faster than computing them in two workers because the memory
+ * transferring between CPU and GPU is reduced.
  *
  *
  * 1.2 For NeuralWorker_Mode.Singleton.Ids.TWO_WORKER__Xxx
