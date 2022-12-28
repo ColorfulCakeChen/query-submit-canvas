@@ -33,8 +33,9 @@ function DownloadButton_onClick( event ) {
 /** */
 function VersusSummary_onDownload( bDownloadSummaryOk ) {
   if ( !bDownloadSummaryOk ) {
-    alert( `Faile to download VersusSummary from Google Sheets \"`
-      + `${g_VersusSummary.weightsSpreadsheetId}\".` );
+    let theSpreadsheetId = g_VersusSummary.weightsSpreadsheetId;
+    alert( `Faile to download VersusSummary from Google Sheets `
+      + `\"${theSpreadsheetId}\".` );
     return;
     // g_VersusSummary.disposeResources_and_recycleToPool();
     // g_VersusSummary = null;
