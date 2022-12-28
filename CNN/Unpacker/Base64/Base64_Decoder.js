@@ -352,7 +352,8 @@ function* lineSkipper_fromUint8Array( progressToAdvance,
  * @yield {Uint8Array}
  *   Yield ( value = decoded data as Uint8Array ) when ( done = true ).
  */
-function* generator_from_Base64Char_CodePoint_Uint8Array_to_Uint8Array( progressParent,
+function* generator_from_Base64Char_CodePoint_Uint8Array_to_Uint8Array(
+  progressParent,
   source_Base64Char_CodePoint_Uint8Array, skipLineCount, suspendByteCount ) {
 
   // 0. Initialize.

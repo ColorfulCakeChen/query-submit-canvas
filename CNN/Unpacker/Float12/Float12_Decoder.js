@@ -254,7 +254,8 @@ function from_String( base64String ) {
  * Every 2 elements of the source Uint8Array will be decoded into 1 element
  * (i.e. a float12; 12-bits floating-point number) of the result Float32Array.
  *
- * (Copied from Base64.Decoder.generator_from_Base64Char_CodePoint_Uint8Array_to_Uint8Array())
+ * (Copied from
+ * Base64.Decoder.generator_from_Base64Char_CodePoint_Uint8Array_to_Uint8Array())
  *
  * @param {ValueMax.Percentage.Aggregate} progressParent
  *   Some new progressToAdvance will be created and added to progressParent. The
@@ -282,7 +283,8 @@ function from_String( base64String ) {
  * @yield {Float32Array}
  *   Yield ( value = decoded data as Float32Array ) when ( done = true ).
  */
-function* generator_generator_from_Base64Char_StringOrStringArray_to_Uint8Array( progressParent,
+function* generator_generator_from_Base64Char_StringOrStringArray_to_Uint8Array(
+  progressParent,
   source_Base64Char_CodePoint_Uint8Array, skipLineCount, suspendByteCount ) {
 
   // 0. Initialize.
