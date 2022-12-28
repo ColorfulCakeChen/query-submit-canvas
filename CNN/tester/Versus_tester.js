@@ -67,6 +67,32 @@ function VersusSummary_onDownload( bDownloadSummaryOk ) {
 
   g_Contorls.NextVisitIndexText.value = g_VersusSummary.visitIndex_get();
 
-//!!! ...unfinished... (2022/12/28)
+  let htmlTableOperator;
+  {
+    const htmlTableId = "VersusSummaryTable";
+    const digitsCount = 4;
+    htmlTableOperator
+      = HTMLTable.Operator.Pool.get_or_create_by( htmlTableId, digitsCount );
+  }
+
+  try {
+    htmlTableOperator.Table_clear();
+
+    if ( !htmlTableOperator.Header_hasChild() ) {
+      htmlTableOperator.Header_addRow( [ "VersusIndex", "Range" ] );
+    }
+
+    for ( let i = 0; i < g_VersusSummary.rangeArray.length; ++i ) {
+      htmlTableOperator.Body_addRow( [
+        i, g_VersusSummary.rangeArray[ i ]
+      ] );
+    }
+
+  } finally {
+    if ( htmlTableOperator ) {
+      htmlTableOperator.disposeResources_and_recycleToPool();
+      htmlTableOperator = null;
+    }
+  }
 
 }

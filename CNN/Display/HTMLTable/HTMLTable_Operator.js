@@ -51,7 +51,7 @@ class HTMLTable_Operator extends Recyclable.Root {
     super.disposeResources();
   }
 
-  /** If .htmlTableElement undefined, preare it by .htmlTableElementId.  */
+  /** If .htmlTableElement undefined, preare it by .htmlTableElementId. */
   Table_ensure() {
     if ( this.htmlTableElement )
       return;
@@ -60,6 +60,12 @@ class HTMLTable_Operator extends Recyclable.Root {
     if ( !this.htmlTableElementId )
       return;
     this.htmlTableElement = document.getElementById( this.htmlTableElementId );
+  }
+
+  /** Remove all child nodes of the .htmlTableElement. */
+  Table_clear() {
+    this.Table_ensure();
+    this.htmlTableElement.replaceChildren();
   }
 
   /** Ensure table header. */
