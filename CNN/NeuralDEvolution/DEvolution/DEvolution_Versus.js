@@ -210,6 +210,8 @@ class DEvolution_Versus extends Recyclable.Root {
         }
       } while ( loaderNext.done == false );
 
+      return bLoadOk;
+
     } catch ( e ) {
       console.error( e );
       return false;
@@ -220,8 +222,6 @@ class DEvolution_Versus extends Recyclable.Root {
         progress = null;
       }
     }
-
-    return bLoadOk;
  }
 
 }
