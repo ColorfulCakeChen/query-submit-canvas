@@ -68,8 +68,8 @@ import { Mode as NeuralWorker_Mode } from "./NeuralWorker_Mode.js";
  *   - FILL means the input image will be filled some information (i.e. alignment mark)
  *       before it is processed by a neural network.
  *
- *     - The cost are downloading input image from GPU to CPU, filling alignement mark,
- *         and upload it from CPU to GPU.
+ *     - The cost are downloading input image from GPU to CPU, filling alignment mark,
+ *         and uploading it from CPU to GPU.
  *
  *   - NO_FILL means the input image will not be filled any extra information
  *       before it is processed by a neural network.
