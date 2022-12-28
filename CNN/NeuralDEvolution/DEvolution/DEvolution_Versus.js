@@ -159,6 +159,9 @@ class DEvolution_Versus extends Recyclable.Root {
     // 2.2 parent chromosome
     {
       let parentChromosomeArray = versusArrayArray?.[ COLUMN_ID_parentChromosome ];
+      if ( !parentChromosomeArray )
+        return false; // parent chromosome array is undefined.
+
       let parentChromosomeDecoder
         = Float12.Decoder.generator_from_Base64Char_StringOrStringArray_to_Float32Array(
             progressForParentChromosome,
@@ -171,6 +174,9 @@ class DEvolution_Versus extends Recyclable.Root {
     // 2.3 offspring chromosome
     {
       let offspringChromosomeArray = versusArrayArray?.[ COLUMN_ID_offspringChromosome ];
+      if ( !offspringChromosomeArray )
+        return false; // offspring chromosome array is undefined.
+
       let offspringChromosomeDecoder
         = Float12.Decoder.generator_from_Base64Char_StringOrStringArray_to_Float32Array(
             progressForOffspringChromosome,
