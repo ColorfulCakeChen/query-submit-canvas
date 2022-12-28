@@ -78,14 +78,24 @@ class GSheets_UrlComposer extends Recyclable.Root {
     super.disposeResources();
   }
 
-  /**  */
-  spreadsheetId_set( spreadsheetId ) {
-    return this.urlComposer.spreadsheetId_set( spreadsheetId );
+  /** @param {string} spreadsheetId  The Google Sheets' id. */
+  set spreadsheetId( spreadsheetId ) {
+    this.urlComposer.spreadsheetId_set( spreadsheetId );
   }
 
-  /**  */
-  range_set( range ) {
-    return this.urlComposer.range_set( range );
+  /** @return {string} The Google Sheets' id. */
+  get spreadsheetId() {
+    return this.urlComposer.spreadsheetId;
+  }
+
+  /** @param {string} range  The range inside the Google Sheets. */
+  set range( range ) {
+    this.urlComposer.range_set( range );
+  }
+
+  /** @return {string} The range inside the Google Sheets. */
+  get range() {
+    return this.urlComposer.range;
   }
 
   /**
