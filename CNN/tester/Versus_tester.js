@@ -5,7 +5,7 @@ window.addEventListener( "load", window_onLoad );
 
 /** */
 function window_onLoad( event ) {
-  let DownloadButton = document.querySelector( "DownloadButton" );
+  let DownloadButton = document.querySelector( "#DownloadButton" );
   DownloadButton.addEventListener( "click", DownloadButton_onClick );
 
 
