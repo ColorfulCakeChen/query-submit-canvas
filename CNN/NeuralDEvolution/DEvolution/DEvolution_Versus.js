@@ -157,7 +157,7 @@ class DEvolution_Versus extends Recyclable.Root {
     {
       let parentChromosomeArray = versusArrayArray[ COLUMN_ID_parentChromosome ];
       let parentChromosomeDecoder
-        = Float12.generator_from_Base64Char_StringOrStringArray_to_Float32Array(
+        = Float12.Decoder.generator_from_Base64Char_StringOrStringArray_to_Float32Array(
             progressForParentChromosome,
             parentChromosomeArray, textEncoder,
             Base64_skipLineCount, Base64_suspendByteCount
@@ -169,7 +169,7 @@ class DEvolution_Versus extends Recyclable.Root {
     {
       let offspringChromosomeArray = versusArrayArray[ COLUMN_ID_offspringChromosome ];
       let offspringChromosomeDecoder
-        = Float12.generator_from_Base64Char_StringOrStringArray_to_Float32Array(
+        = Float12.Decoder.generator_from_Base64Char_StringOrStringArray_to_Float32Array(
             progressForOffspringChromosome,
             offspringChromosomeArray, textEncoder,
             Base64_skipLineCount, Base64_suspendByteCount

@@ -31,8 +31,6 @@ function window_onLoad( event ) {
 
 /** */
 function DownloadSummaryButton_onClick( event ) {
-  //alert( "Hi" );
-
   let spreadsheetId = g_Contorls.SpreadsheetIdText.value;
   if ( !g_VersusSummary ) {
     g_VersusSummary = DEvolution.VersusSummary.Pool.get_or_create_by( spreadsheetId );
@@ -47,6 +45,7 @@ function DownloadSummaryButton_onClick( event ) {
 function VersusSummary_onDownload( bDownloadSummaryOk ) {
   if ( !bDownloadSummaryOk ) {
     g_Contorls.NextVisitIndexText.value = "";
+    g_Contorls.DownloadVersusButton.disable = true;
 
     let spreadsheetId = g_VersusSummary.weightsSpreadsheetId;
     alert( `Failed to download VersusSummary from Google Sheets `
@@ -57,6 +56,7 @@ function VersusSummary_onDownload( bDownloadSummaryOk ) {
   }
 
   g_Contorls.NextVisitIndexText.value = g_VersusSummary.visitIndex_get();
+  g_Contorls.DownloadVersusButton.disable = false;
 
   let htmlTableOperator;
   {
@@ -74,9 +74,7 @@ function VersusSummary_onDownload( bDownloadSummaryOk ) {
     }
 
     for ( let i = 0; i < g_VersusSummary.rangeArray.length; ++i ) {
-      htmlTableOperator.Body_addRow( [
-        i, g_VersusSummary.rangeArray[ i ]
-      ] );
+      htmlTableOperator.Body_addRow( [ i, g_VersusSummary.rangeArray[ i ] ] );
     }
 
   } finally {
