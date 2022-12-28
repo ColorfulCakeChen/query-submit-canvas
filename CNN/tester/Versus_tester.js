@@ -45,7 +45,7 @@ function DownloadSummaryButton_onClick( event ) {
 function VersusSummary_onDownload( bDownloadSummaryOk ) {
   if ( !bDownloadSummaryOk ) {
     g_Contorls.NextVisitIndexText.value = "";
-    g_Contorls.DownloadVersusButton.disable = true;
+    g_Contorls.DownloadVersusButton.disabled = true;
 
     let spreadsheetId = g_VersusSummary.weightsSpreadsheetId;
     alert( `Failed to download VersusSummary from Google Sheets `
@@ -56,7 +56,7 @@ function VersusSummary_onDownload( bDownloadSummaryOk ) {
   }
 
   g_Contorls.NextVisitIndexText.value = g_VersusSummary.visitIndex_get();
-  g_Contorls.DownloadVersusButton.disable = false;
+  g_Contorls.DownloadVersusButton.disabled = false;
 
   let htmlTableOperator;
   {
