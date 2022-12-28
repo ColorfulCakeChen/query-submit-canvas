@@ -382,7 +382,7 @@ class NeuralWorker_Proxies extends Recyclable.Root {
 
     let resultOk;
 
-    // 1. Every worker set one alignment mark value.
+    // 1. Every worker sets one alignment mark value.
     if ( this.workerProxyArray.length > 1 ) { // (i.e. two workers)
 
       let resultPromiseArray = new Array( this.workerProxyArray.length );
@@ -399,7 +399,7 @@ class NeuralWorker_Proxies extends Recyclable.Root {
         true
       );
   
-    // 2. The only worker sets all alignment mark values.
+    // 2. The only one worker sets all alignment mark values.
     } else {
       resultOk = await this.workerProxyArray[ 0 ].alignmentMarkArray_setValue_async(
         markValueArray );
