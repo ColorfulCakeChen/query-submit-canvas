@@ -10,23 +10,31 @@ let g_Contorls = {
 
   NextVisitIndexText: null,
   DownloadVersusButton: null,
+
+  VersusId: null,
+  ParentChromosomes: null,
+  OffspringChromosomes: null,
 };
 
 let g_VersusSummary;
 
 /** */
 function window_onLoad( event ) {
-  g_Contorls.SpreadsheetIdText = document.querySelector( "#SpreadsheetIdText" );
+  g_Contorls.SpreadsheetIdText = document.getElementById( "SpreadsheetIdText" );
 
-  g_Contorls.DownloadSummaryButton = document.querySelector( "#DownloadSummaryButton" );
+  g_Contorls.DownloadSummaryButton = document.getElementById( "DownloadSummaryButton" );
   g_Contorls.DownloadSummaryButton.addEventListener(
     "click", DownloadSummaryButton_onClick );
 
-  g_Contorls.NextVisitIndexText = document.querySelector( "#NextVisitIndexText" );
+  g_Contorls.NextVisitIndexText = document.getElementById( "NextVisitIndexText" );
 
-  g_Contorls.DownloadVersusButton = document.querySelector( "#DownloadVersusButton" );
+  g_Contorls.DownloadVersusButton = document.getElementById( "DownloadVersusButton" );
   g_Contorls.DownloadVersusButton.addEventListener(
     "click", DownloadVersusButton_onClick );
+
+  g_Contorls.VersusId = document.getElementById( "VersusId" );
+  g_Contorls.ParentChromosomes = document.getElementById( "ParentChromosomes" );
+  g_Contorls.OffspringChromosomes = document.getElementById( "OffspringChromosomes" );
 }
 
 /** */
@@ -90,21 +98,32 @@ function DownloadVersusButton_onClick( event ) {
   g_VersusSummary.versus_next_load_async().then( Versus_onDownload );
 }
 
-/** */
-function Versus_onDownload( bDownloadVersusOk ) {
+/**
+ * @param {DEvolution.versus} versus
+ *   The downloaded versus. null means downloading is failed. 
+ */
+function Versus_onDownload( versus ) {
   let visitIndex = g_VersusSummary.visitIndex_get();
   g_Contorls.NextVisitIndexText.value = visitIndex;
 
-  if ( !bDownloadVersusOk ) {
+  if ( !versus ) {
     let range = g_VersusSummary.rangeArray[ visitIndex ];
 
     let spreadsheetId = g_VersusSummary.weightsSpreadsheetId;
     alert( `Failed to download rangeArray[ ${visitIndex} ] = \"${range}\" `
       + `from Google Sheets \"${spreadsheetId}\".`
     );
+
+    g_Contorls.VersusId.textContent = "";
+    g_Contorls.ParentChromosomes.value = "";
+    g_Contorls.OffspringChromosomes.value = "";
+
     return;
   }
 
+  g_Contorls.VersusId.textContent = versus.versusId.versusIdString;
+  g_Contorls.ParentChromosomes.value = versus.parentChromosomeFloat32Array;
+  g_Contorls.OffspringChromosomes.value = versus.offspringChromosomeFloat32Array;
+ 
 //!!! ...unfinished... (2022/12/28)
-
 }
