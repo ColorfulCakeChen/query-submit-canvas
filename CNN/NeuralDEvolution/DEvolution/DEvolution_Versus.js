@@ -140,7 +140,10 @@ class DEvolution_Versus extends Recyclable.Root {
     // 2.1 versusId
     {
       // The first row of the first column should be the versusId string.
-      let versusIdString = versusArrayArray[ COLUMN_ID_versusId ][ 0 ];
+      let versusIdString = versusArrayArray?.[ COLUMN_ID_versusId ]?.[ 0 ];
+      if ( !versusIdString )
+        return false; // versusIdString is empty.
+
       if ( this.versusId )
         this.versusId.set_byVersusIdString( versusIdString );
       else
@@ -155,7 +158,7 @@ class DEvolution_Versus extends Recyclable.Root {
 
     // 2.2 parent chromosome
     {
-      let parentChromosomeArray = versusArrayArray[ COLUMN_ID_parentChromosome ];
+      let parentChromosomeArray = versusArrayArray?.[ COLUMN_ID_parentChromosome ];
       let parentChromosomeDecoder
         = Float12.Decoder.generator_from_Base64Char_StringOrStringArray_to_Float32Array(
             progressForParentChromosome,
@@ -167,7 +170,7 @@ class DEvolution_Versus extends Recyclable.Root {
 
     // 2.3 offspring chromosome
     {
-      let offspringChromosomeArray = versusArrayArray[ COLUMN_ID_offspringChromosome ];
+      let offspringChromosomeArray = versusArrayArray?.[ COLUMN_ID_offspringChromosome ];
       let offspringChromosomeDecoder
         = Float12.Decoder.generator_from_Base64Char_StringOrStringArray_to_Float32Array(
             progressForOffspringChromosome,
