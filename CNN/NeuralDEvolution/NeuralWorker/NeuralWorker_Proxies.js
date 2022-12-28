@@ -333,15 +333,16 @@ class NeuralWorker_Proxies extends Recyclable.Root {
 
     let createOk;
 
-    // 1. Every worker create one neural network.
+    // 1. Every worker creates one neural network.
     if ( this.workerProxyArray.length > 1 ) { // (i.e. two workers)
 
       let createPromiseArray = new Array( this.workerProxyArray.length );
       for ( let i = 0; i < this.workerProxyArray.length; ++i ) {
-        createPromiseArray[ i ] = this.workerProxyArray[ i ].NeuralNetArray_create_async(
-          [ neuralNetParamsBaseArray[ i ] ], [ weightArrayBufferArray[ i ] ],
-          bLogDryRunTime
-        );
+        createPromiseArray[ i ]
+          = this.workerProxyArray[ i ].NeuralNetArray_create_async(
+              [ neuralNetParamsBaseArray[ i ] ], [ weightArrayBufferArray[ i ] ],
+              bLogDryRunTime
+            );
       }
 
       let createOkArray = await Promise.all( createPromiseArray );
@@ -351,7 +352,7 @@ class NeuralWorker_Proxies extends Recyclable.Root {
         true
       );
 
-    // 2. The only worker creates all neural networks.
+    // 2. The only one worker creates all neural networks.
     } else {
       createOk = await this.workerProxyArray[ 0 ].NeuralNetArray_create_async(
         neuralNetParamsBaseArray, weightArrayBufferArray,
