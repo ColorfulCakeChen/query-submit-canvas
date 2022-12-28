@@ -4,7 +4,7 @@ import * as Pool from "../../util/Pool.js";
 import * as Recyclable from "../../util/Recyclable.js";
 import * as NumberTools from "../../util/NumberTools.js";
 import * as ValueMax from "../../util/ValueMax.js";
-import * as Base64ToUint8Array from "../../Unpacker/Base64ToUint8Array.js";
+import * as Float12 from "../../Unpacker/Float12.js";
 import { VersusId } from "./DEvolution_VersusId.js";
 
 /**
@@ -15,10 +15,10 @@ import { VersusId } from "./DEvolution_VersusId.js";
  * @member {DEvolution.VersusId} versusId
  *   The versus id (i.e. EntityNo_ParentGenerationNo_OffspringGenerationNo).
  *
- * @member {Uint8Array} parentChromosomeUint8Array
+ * @member {Float32Array} parentChromosomeFloat32Array
  *   The parent's chromosome of the entity of the versus.
  *
- * @member {Uint8Array} offspringChromosomeUint8Array
+ * @member {Float32Array} offspringChromosomeFloat32Array
  *   The offspring's chromosome of the entity of the versus.
  *
  */
@@ -50,8 +50,8 @@ class DEvolution_Versus extends Recyclable.Root {
   /** @override */
   disposeResources() {
 
-    this.offspringChromosomeUint8Array = undefined;
-    this.parentChromosomeUint8Array = undefined;
+    this.offspringChromosomeFloat32Array = undefined;
+    this.parentChromosomeFloat32Array = undefined;
 
     if ( this.versusId ) {
       this.versusId.disposeResources_and_recycleToPool();
@@ -156,23 +156,25 @@ class DEvolution_Versus extends Recyclable.Root {
     // 2.2 parent chromosome
     {
       let parentChromosomeArray = versusArrayArray[ COLUMN_ID_parentChromosome ];
-      let parentChromosomeDecoder = Base64ToUint8Array.decoder_fromStringOrStringArray(
-        progressForParentChromosome,
-        parentChromosomeArray, textEncoder,
-        Base64_skipLineCount, Base64_suspendByteCount
-      );
-      this.parentChromosomeUint8Array = yield* parentChromosomeDecoder;
+      let parentChromosomeDecoder
+        = Float12.generator_from_Base64Char_StringOrStringArray_to_Float32Array(
+            progressForParentChromosome,
+            parentChromosomeArray, textEncoder,
+            Base64_skipLineCount, Base64_suspendByteCount
+           );
+      this.parentChromosomeFloat32Array = yield* parentChromosomeDecoder;
     }
 
     // 2.3 offspring chromosome
     {
       let offspringChromosomeArray = versusArrayArray[ COLUMN_ID_offspringChromosome ];
-      let offspringChromosomeDecoder = Base64ToUint8Array.decoder_fromStringOrStringArray(
-        progressForOffspringChromosome,
-        offspringChromosomeArray, textEncoder,
-        Base64_skipLineCount, Base64_suspendByteCount
-      );
-      this.offspringChromosomeUint8Array = yield* offspringChromosomeDecoder;
+      let offspringChromosomeDecoder
+        = Float12.generator_from_Base64Char_StringOrStringArray_to_Float32Array(
+            progressForOffspringChromosome,
+            offspringChromosomeArray, textEncoder,
+            Base64_skipLineCount, Base64_suspendByteCount
+          );
+      this.offspringChromosomeFloat32Array = yield* offspringChromosomeDecoder;
     }
 
     return true;

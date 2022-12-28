@@ -2,7 +2,7 @@ export { DEvolution_VersusSummary as VersusSummary };
 
 import * as Pool from "../../util/Pool.js";
 import * as Recyclable from "../../util/Recyclable.js";
-//import * as GSheets from "../../util/GSheets.js";
+import * as GSheets from "../../util/GSheets.js";
 import * as RandTools from "../../util/RandTools.js";
 import { Versus as DEvolution_Versus } from "./DEvolution_Versus.js";
 
@@ -94,7 +94,7 @@ class DEvolution_VersusSummary extends Recyclable.Root {
     return this.urlComposer.spreadsheetId;
   }
 
-  get weightsAPIKey( ) {
+  get weightsAPIKey() {
     return this.urlComposer.apiKey;
   }
 

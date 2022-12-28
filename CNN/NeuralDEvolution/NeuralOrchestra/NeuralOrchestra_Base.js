@@ -341,8 +341,8 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     if ( !this.evolutionVersus )
       return false ???;
 
-    this.evolutionVersus.parentChromosomeUint8Array;
-    this.evolutionVersus.offspringChromosomeUint8Array;
+    this.evolutionVersus.parentChromosomeFloat32Array;
+    this.evolutionVersus.offspringChromosomeFloat32Array;
 
     return true ???;
   }
