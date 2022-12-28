@@ -25,6 +25,7 @@ function window_onLoad( event ) {
   g_Contorls.DownloadSummaryButton = document.getElementById( "DownloadSummaryButton" );
   g_Contorls.DownloadSummaryButton.addEventListener(
     "click", DownloadSummaryButton_onClick );
+  g_Contorls.DownloadSummaryButton.disabled = false;
 
   g_Contorls.NextVisitIndexText = document.getElementById( "NextVisitIndexText" );
 
