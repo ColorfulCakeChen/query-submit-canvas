@@ -33,23 +33,14 @@ function window_onLoad( event ) {
 function DownloadSummaryButton_onClick( event ) {
   //alert( "Hi" );
 
-  let theSpreadsheetId = g_Contorls.SpreadsheetIdText.value;
+  let spreadsheetId = g_Contorls.SpreadsheetIdText.value;
   if ( !g_VersusSummary ) {
-    g_VersusSummary = DEvolution.VersusSummary.Pool.get_or_create_by( theSpreadsheetId );
+    g_VersusSummary = DEvolution.VersusSummary.Pool.get_or_create_by( spreadsheetId );
   } else {
-    g_VersusSummary.weightsSpreadsheetId = theSpreadsheetId;
+    g_VersusSummary.weightsSpreadsheetId = spreadsheetId;
   }
 
   g_VersusSummary.rangeArray_load_async().then( VersusSummary_onDownload );
-}
-
-/** */
-function DownloadVersusButton_onClick( event ) {
-  //alert( "Hi" );
-
-//!!! ...unfinished... (2022/12/28)
-//g_VersusSummary.visitCount
-  g_Contorls.NextVisitIndexText.value = g_VersusSummary.visitIndex_get();
 }
 
 /** */
@@ -57,9 +48,9 @@ function VersusSummary_onDownload( bDownloadSummaryOk ) {
   if ( !bDownloadSummaryOk ) {
     g_Contorls.NextVisitIndexText.value = "";
 
-    let theSpreadsheetId = g_VersusSummary.weightsSpreadsheetId;
+    let spreadsheetId = g_VersusSummary.weightsSpreadsheetId;
     alert( `Failed to download VersusSummary from Google Sheets `
-      + `\"${theSpreadsheetId}\".` );
+      + `\"${spreadsheetId}\".` );
     return;
     // g_VersusSummary.disposeResources_and_recycleToPool();
     // g_VersusSummary = null;
@@ -94,5 +85,28 @@ function VersusSummary_onDownload( bDownloadSummaryOk ) {
       htmlTableOperator = null;
     }
   }
+}
+
+/** */
+function DownloadVersusButton_onClick( event ) {
+  g_VersusSummary.versus_next_load_async().then( Versus_onDownload );
+}
+
+/** */
+function Versus_onDownload( bDownloadVersusOk ) {
+  let visitIndex = g_VersusSummary.visitIndex_get();
+  g_Contorls.NextVisitIndexText.value = visitIndex;
+
+  if ( !bDownloadVersusOk ) {
+    let range = g_VersusSummary.rangeArray[ visitIndex ];
+
+    let spreadsheetId = g_VersusSummary.weightsSpreadsheetId;
+    alert( `Failed to download rangeArray[ ${visitIndex} ] = \"${range}\" `
+      + `from Google Sheets \"${spreadsheetId}\".`
+    );
+    return;
+  }
+
+//!!! ...unfinished... (2022/12/28)
 
 }
