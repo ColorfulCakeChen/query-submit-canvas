@@ -142,17 +142,26 @@ class GVizTQ_UrlComposer extends Recyclable.Root {
     return this;
   }
 
-  /**  */
-  spreadsheetId_set( spreadsheetId ) {
-    this.spreadsheetId = spreadsheetId;
-    return this;
-  }
-
-  /**  */
-  range_set( range ) {
-    this.range = range;
-    return this;
-  }
+//!!! (2022/12/28 Remarked)
+//   /** @param {string} spreadsheetId  The Google Sheets' id. */
+//   set spreadsheetId( spreadsheetId ) {
+//     this.spreadsheetId = spreadsheetId;
+//   }
+//
+//   /** @return {string} The Google Sheets' id. */
+//   get spreadsheetId() {
+//     return this.spreadsheetId;
+//   }
+//
+//   /** @param {string} range  The range inside the Google Sheets. */
+//   set range( range ) {
+//     this.range = range;
+//   }
+//
+//   /** @return {string} The range inside the Google Sheets. */
+//   get range() {
+//     return this.range;
+//   }
 
   /**
    * Generator for composing the URL (according this object's data members), downloading

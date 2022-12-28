@@ -96,11 +96,11 @@ async function* tester( progressParent ) {
   // Test change range.
   if ( result1 ) {
     let newRange = result1[ 0 ][ 0 ];
-    tester1.range_set( newRange );
+    tester1.range = newRange;
     let fetcher11 = tester1.JSON_ColumnMajorArrayArray_fetch_asyncGenerator( progress11 );
     let result11 = yield* fetcher11;
 
-    tester2.range_set( newRange );
+    tester2.range = newRange;
     let fetcher21 = tester2.JSON_ColumnMajorArrayArray_fetch_asyncGenerator( progress21 );
     let result21 = yield* fetcher21;
 

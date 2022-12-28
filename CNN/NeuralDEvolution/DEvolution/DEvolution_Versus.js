@@ -118,7 +118,7 @@ class DEvolution_Versus extends Recyclable.Root {
     let versusArrayArray;
     {
       this.spreadsheetRange = spreadsheetRange;
-      spreadsheetUrlComposer.range_set( spreadsheetRange );
+      spreadsheetUrlComposer.range = spreadsheetRange;
 
       let fetcherVersus
         = spreadsheetUrlComposer.JSON_ColumnMajorArrayArray_fetch_asyncGenerator(

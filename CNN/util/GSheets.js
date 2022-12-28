@@ -80,7 +80,7 @@ class GSheets_UrlComposer extends Recyclable.Root {
 
   /** @param {string} spreadsheetId  The Google Sheets' id. */
   set spreadsheetId( spreadsheetId ) {
-    this.urlComposer.spreadsheetId_set( spreadsheetId );
+    this.urlComposer.spreadsheetId = spreadsheetId;
   }
 
   /** @return {string} The Google Sheets' id. */
@@ -90,7 +90,7 @@ class GSheets_UrlComposer extends Recyclable.Root {
 
   /** @param {string} range  The range inside the Google Sheets. */
   set range( range ) {
-    this.urlComposer.range_set( range );
+    this.urlComposer.range = range;
   }
 
   /** @return {string} The range inside the Google Sheets. */

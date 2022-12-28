@@ -109,7 +109,7 @@ class DEvolution_VersusSummary extends Recyclable.Root {
   async rangeArray_load_async() {
     // The summary is at the first column of the first (i.e. left most) sheet.
     const range = "A:A";
-    this.urlComposer.range_set( range );
+    this.urlComposer.range = range;
 
     try {
       let rangeArrayArray
