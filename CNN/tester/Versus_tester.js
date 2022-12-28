@@ -39,6 +39,8 @@ function window_onLoad( event ) {
 
 /** */
 function DownloadSummaryButton_onClick( event ) {
+  g_Contorls.DownloadSummaryButton.disabled = true; // Prevent from many clicking quickly.
+
   let spreadsheetId = g_Contorls.SpreadsheetIdText.value;
   if ( !g_VersusSummary ) {
     g_VersusSummary = DEvolution.VersusSummary.Pool.get_or_create_by( spreadsheetId );
@@ -51,6 +53,8 @@ function DownloadSummaryButton_onClick( event ) {
 
 /** */
 function VersusSummary_onDownload( bDownloadSummaryOk ) {
+  g_Contorls.DownloadSummaryButton.disabled = false;
+
   if ( !bDownloadSummaryOk ) {
     g_Contorls.NextVisitIndexText.value = "";
     g_Contorls.DownloadVersusButton.disabled = true;
@@ -95,6 +99,7 @@ function VersusSummary_onDownload( bDownloadSummaryOk ) {
 
 /** */
 function DownloadVersusButton_onClick( event ) {
+  g_Contorls.DownloadVersusButton.disabled = true; // Prevent from many clicking quickly.
   g_VersusSummary.versus_next_load_async().then( Versus_onDownload );
 }
 
@@ -103,6 +108,8 @@ function DownloadVersusButton_onClick( event ) {
  *   The downloaded versus. null means downloading is failed. 
  */
 function Versus_onDownload( versus ) {
+  g_Contorls.DownloadVersusButton.disabled = false;
+
   let visitIndex = g_VersusSummary.visitIndex_get();
   g_Contorls.NextVisitIndexText.value = visitIndex;
 
