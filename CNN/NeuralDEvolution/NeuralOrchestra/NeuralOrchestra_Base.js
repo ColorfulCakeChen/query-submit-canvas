@@ -166,11 +166,11 @@ class NeuralOrchestra_Base extends Recyclable.Root {
   ) {
 
     // 1. Versus Downloader.
-    let networkPromise
+    let downloaderPromise
       = this.evolutionVersusSummary_init_async( weightsSpreadsheetId, weightsAPIKey );
 
-    // 2. Versus Neural Networks.
-    let neuralWorkPromise;
+    // 2. Versus Neural Workers.
+    let neuralWorkerPromise;
     {
       // Because image comes from canvas, the tf.browser.fromPixels() handle a RGBA
       // 4 channels faster than RGB 3 channels input.
@@ -194,7 +194,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
         blockCountTotalRequested, output_channelCount, bKeepInputTensor
       );
 
-      neuralWorkPromise = this.workerProxies_init_async( neuralNetParamsBase );
+      neuralWorkerPromise = this.workerProxies_init_async( neuralNetParamsBase );
     }
 
     // 3. Versus Result Reporter
@@ -202,13 +202,14 @@ class NeuralOrchestra_Base extends Recyclable.Root {
       this.evolutionVersusSubmitter_init( measurement_id, api_secret, client_id );
     }
 
-    let allPromise = Promise.all( [ networkPromise, neuralWorkPromise ] );
+    let allPromise = Promise.all( [ downloaderPromise, neuralWorkerPromise ] );
     return allPromise;
   }
 
   /**
-   * This method will block UI worker (because of compiling WebGL shaders), so it is
-   * suggested call this method during game splash screen displaying.
+   * This method will always block UI worker (because of compiling WebGL shaders)
+   * even if it is called in non-UI worker. So it is suggested to call this method
+   * during game splash screen displaying.
    *
    * @param {NeuralNet.ParamsBase} neuralNetParamsBase
    *   The neural network configuration. It will be used for both two neural networks.
