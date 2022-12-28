@@ -208,13 +208,13 @@ class NeuralWorker_Proxies extends Recyclable.Root {
 
     // Two web workers are sufficient.
     //
-    // Although we might want create as many web worker as logical CPU count, it might
-    // not need because our neural networks are learning by differential evolution.
-    // Differential evolution evaluates just two entities every time.
+    // Although we might want to create as many web worker as logical CPU count, it
+    // might not be necessary because our neural networks are learning by differential
+    // evolution. Differential evolution evaluates just two entities every time.
     //
-    // Note1: How could the two neural networks determine all the actions of so many
-    //        game objects? The method is to let the output of one neural network
-    //        contains all actions of all game objects.
+    // Note1: How could two neural networks determine all the actions of so many
+    //        game objects? The method is to let the output of every neural network
+    //        contains all actions of all game objects of all alignments.
     //
     // Note2: For NeuralWorker_Mode whose ( bFill == false ), only half of the output
     //        actions (i.e. actions of one alignment in the game world) will be used
