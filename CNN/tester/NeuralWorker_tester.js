@@ -431,7 +431,8 @@ class HeightWidthDepth {
 
     let imageData;
     {
-      let ctx = this.testCanvas.getContext( "2d" );
+      let contextAttributes = { willReadFrequently: true };
+      let ctx = this.testCanvas.getContext( "2d", contextAttributes );
       imageData = ctx.getImageData( 0, 0, this.testCanvas.width, this.testCanvas.height );
     }
 
