@@ -88,7 +88,8 @@ class GVizTQ_UrlComposer extends Recyclable.Root {
    */
   constructor(
     spreadsheetId,
-    range, headers = 0, responseHandler = null, sheetId = null, sheetName = null ) {
+    range, headers = 0, responseHandler = null, sheetId = null, sheetName = null
+  ) {
     super();
     GVizTQ_UrlComposer.setAsConstructor_self.call( this,
       spreadsheetId,
@@ -97,7 +98,10 @@ class GVizTQ_UrlComposer extends Recyclable.Root {
   }
 
   /** @override */
-  static setAsConstructor() {
+  static setAsConstructor(
+    spreadsheetId,
+    range, headers = 0, responseHandler = null, sheetId = null, sheetName = null
+  ) {
     super.setAsConstructor();
     GVizTQ_UrlComposer.setAsConstructor_self.call( this,
       spreadsheetId,
