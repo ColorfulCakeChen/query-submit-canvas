@@ -71,7 +71,7 @@ class Embedding_FiltersArray_One extends FiltersArray_Base {
    * Initialize this object.
    *
    * @return {boolean}
-   *   Return true, if successfully. Return false, if failed.
+   *   Return true, if succeeded. Return false, if failed.
    *
    */
   init( inputWeightArray, weightElementOffsetBegin ) {

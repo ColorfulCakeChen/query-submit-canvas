@@ -543,9 +543,9 @@ class Stage_Base extends Recyclable.Root {
    * until done.
    *
    * @return {boolean}
-   *   - Return true if successfully (and progressParent.valuePercentage will be equal
+   *   - Return true, if succeeded (and progressParent.valuePercentage will be equal
    *       to 100).
-   *   - Return false if failed (and progressParent.valuePercentage will be less than
+   *   - Return false, if failed (and progressParent.valuePercentage will be less than
    *       100).
    *
    * @see Block.Base.init()

@@ -86,7 +86,7 @@ class NeuralWorker_Body extends AsyncWorker.Body {
    * console.
    *
    * @yield {boolean}
-   *   - Yield { done: true, value: { value: true } }, if success.
+   *   - Yield { done: true, value: { value: true } }, if succeeded.
    *   - Yield { done: true, value: { value: false } }, if failed.
    */
   async* NeuralNetArray_create(

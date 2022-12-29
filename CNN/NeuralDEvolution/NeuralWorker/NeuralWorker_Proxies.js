@@ -194,7 +194,7 @@ class NeuralWorker_Proxies extends Recyclable.Root {
    *
    * @return {Promise}
    *   Return a promise:
-   *   - Resolved to true, if success.
+   *   - Resolved to true, if succeeded.
    *   - Resolved to false, if failed.
    */
   async init_async( backendName, nNeuralWorker_ModeId ) {
@@ -313,7 +313,7 @@ class NeuralWorker_Proxies extends Recyclable.Root {
    *
    * @return {Promise}
    *   Return a promise:
-   *   - Resolved to true, if success.
+   *   - Resolved to true, if succeeded.
    *   - Resolved to false, if failed.
    */
   async NeuralNetArray_create_async(
@@ -369,7 +369,7 @@ class NeuralWorker_Proxies extends Recyclable.Root {
    *
    * @return {Promise}
    *   Return a promise:
-   *   - Resolved to true, if success.
+   *   - Resolved to true, if succeeded.
    *   - Resolved to false, if failed.
    */
   async alignmentMarkArray_setValue_async( markValueArray ) {

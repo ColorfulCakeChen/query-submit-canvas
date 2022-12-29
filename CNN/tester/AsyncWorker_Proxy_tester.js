@@ -46,7 +46,7 @@ class AsyncWorker_Proxy_tester extends AsyncWorker.Proxy {
    *
    * @return {Promise}
    *   Return a promise:
-   *   - Resolved to true, if success.
+   *   - Resolved to true, if succeeded.
    *   - Resolved to false, if failed.
    */
   initWorker_async( workerId ) {

@@ -111,7 +111,7 @@ class Embedding_FiltersArray_Base extends Weights.Base( InferencedParams ) {
    * but it does assumes input's value bounds is [ 0, vocabularyCountPerInputChannel ].
    *
    * @return {boolean}
-   *   Return true, if successfully. Return false, if failed.
+   *   Return true, if succeeded. Return false, if failed.
    */
   init( inputWeightArray, weightElementOffsetBegin ) {
 

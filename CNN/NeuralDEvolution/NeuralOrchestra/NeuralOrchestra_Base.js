@@ -223,7 +223,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
    *
    * @return {Promise}
    *   Return a promise:
-   *   - Resolved to true, if success.
+   *   - Resolved to true, if succeeded.
    *   - Resolved to false, if failed.
    */
   async workerProxies_init_async( neuralNetParamsBase ) {

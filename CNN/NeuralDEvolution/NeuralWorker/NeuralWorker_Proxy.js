@@ -72,7 +72,7 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
    *
    * @return {Promise}
    *   Return a promise:
-   *   - Resolved to true, if success.
+   *   - Resolved to true, if succeeded.
    *   - Resolved to false, if failed.
    */
   initWorker_async( workerId, backendName ) {
@@ -101,7 +101,7 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
    *
    * @return {Promise}
    *   Return a promise:
-   *   - Resolved to true, if success.
+   *   - Resolved to true, if succeeded.
    *   - Resolved to false, if failed.
    */
   NeuralNetArray_create_async(
@@ -141,7 +141,7 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
    *
    * @return {Promise}
    *   Return a promise:
-   *   - Resolved to true, if success.
+   *   - Resolved to true, if succeeded.
    *   - Resolved to false, if failed.
    */
   alignmentMarkArray_setValue_async( markValueArray ) {
