@@ -10,7 +10,7 @@ importScripts( tensorflowJsURL ); // Load tensorflow.js library in global scope.
 
 /**
  * The implementation of a neural network web worker. It may own one or two neural
- * network.
+ * network(s).
  *
  */
 class NeuralWorker_Body extends AsyncWorker.Body {
