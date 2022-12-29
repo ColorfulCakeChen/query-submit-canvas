@@ -29,8 +29,8 @@ async function* tester( progressParent ) {
   let input_height = 72;
   let input_width = 128;
 
-  let vocabularyChannelCount = 8; //4,
-  let blockCountTotalRequested = 20;
+  let vocabularyChannelCount = 4; //8;
+  let blockCountTotalRequested = 30;
   let output_channelCount = 12;
 
   let neuralOrchestra = NeuralOrchestra.Base.Pool.get_or_create_by();
