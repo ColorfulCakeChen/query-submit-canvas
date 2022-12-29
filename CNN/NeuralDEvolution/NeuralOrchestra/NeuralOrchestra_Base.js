@@ -166,7 +166,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
   ) {
 
     // 1. Versus Downloader.
-    let downloaderPromise
+    let versusSummaryDownloaderPromise
       = this.evolutionVersusSummary_init_async( weightsSpreadsheetId, weightsAPIKey );
 
     // 2. Versus Neural Workers.
@@ -202,7 +202,8 @@ class NeuralOrchestra_Base extends Recyclable.Root {
       this.evolutionVersusSubmitter_init( measurement_id, api_secret, client_id );
     }
 
-    let allPromise = Promise.all( [ downloaderPromise, neuralWorkerPromise ] );
+    let allPromise = Promise.all( [
+      versusSummaryDownloaderPromise, neuralWorkerPromise ] );
     return allPromise;
   }
 
