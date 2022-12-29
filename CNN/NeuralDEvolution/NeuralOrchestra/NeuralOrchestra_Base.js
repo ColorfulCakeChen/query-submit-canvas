@@ -202,6 +202,11 @@ class NeuralOrchestra_Base extends Recyclable.Root {
       this.evolutionVersusSubmitter_init( measurement_id, api_secret, client_id );
     }
 
+    // 4.
+
+//!!! ...unfinished... (2022/12/29) AbortSignal.timeout()?
+// Re-try downloading if failed (e.g. timeout)
+
     let allPromise = Promise.all( [
       versusSummaryDownloaderPromise, neuralWorkerPromise ] );
     return allPromise;
