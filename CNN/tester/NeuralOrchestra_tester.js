@@ -29,7 +29,7 @@ async function* tester( progressParent ) {
   let input_height = 72;
   let input_width = 128;
 
-  let vocabularyChannelCount = 6; //8;
+  let vocabularyChannelCount = 8;
   let blockCountTotalRequested = 100;
   let output_channelCount = 12;
 
