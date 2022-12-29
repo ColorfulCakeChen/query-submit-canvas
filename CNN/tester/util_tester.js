@@ -2,6 +2,7 @@ import * as ScriptLoader from "../util/ScriptLoader.js";
 import * as ValueMax from "../util/ValueMax.js";
 import * as PartTime from "../util/PartTime.js";
 import * as Pool from "../util/Pool.js";
+import * as NeuralWorker from "../NeuralDEvolution/NeuralWorker.js";
 import * as Base64ToUint8Array_tester from "./Base64ToUint8Array_tester.js";
 import * as Float12_tester from "./Float12_tester.js";
 import * as Uint12_tester from "./Uint12_tester.js";
@@ -12,13 +13,14 @@ import * as NeuralOrchestra_tester from "./NeuralOrchestra_tester.js";
 
 window.addEventListener( "load", event => {
 
-  // (2022/12/29 Remarked) NeuralWorker_Body will load tensorflow.js by itself.
-  // ScriptLoader
-  //   .createPromise(
-  //     "https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.0.0/dist/tf.min.js" )
-  //   .then( test );
+  // Note: NeuralWorker_Common will load tensorflow.js by itself.
+  ScriptLoader
+    .createPromise(
+      NeuralWorker.Common.tensorflowJsURL
+//!!! (2022/12/29 Remarked) Use NeuralWorker.Common.tensorflowJsURL instead.
+//      "https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.0.0/dist/tf.min.js"
+    ).then( test );
 
-  test();
 });
 
 //const gTestNeuralWorker = false;
