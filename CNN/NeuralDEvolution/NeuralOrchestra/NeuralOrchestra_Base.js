@@ -11,14 +11,23 @@ import * as DEvolution from "../DEvolution.js";
  * Orchestrate neural networks with differential evolution.
  *
  *
- * @member {string} weightsSpreadsheetId
+ * @member {string} downloader_spreadsheetId
  *   The Google Sheets spreadsheetId of neural network weights. Every worker will
  * load weights from the spreadsheet to initialize one neural network.
  *
- * @member {string} weightsAPIKey
+ * @member {string} downloader_apiKey
  *   The API key for accessing the Google Sheets spreadsheet of neural network weights.
  *   - If null, Google Visualization Table Query API will be used.
  *   - If not null, Google Sheets API v4 will be used.
+ *
+ * @member {string} submitter_measurement_id
+ *   The measurement id of stream of property of Google Analytics v4.
+ *
+ * @member {string} submitter_api_secret
+ *   The measurement api secret of stream of property of Google Analytics v4.
+ * 
+ * @member {string} submitter_client_id
+ *   The client id when sending measurement protocol.
  *
  * @member {string} backendName
  *   Which backend (of tensorflow.js library) is used by web worker. Either "cpu"
@@ -75,12 +84,24 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     super.disposeResources();
   }
 
-  get weightsSpreadsheetId() {
+  get downloader_spreadsheetId() {
     return this.evolutionVersusSummary.weightsSpreadsheetId;
   }
 
-  get weightsAPIKey( ) {
+  get downloader_apiKey() {
     return this.evolutionVersusSummary.weightsAPIKey;
+  }
+
+  get submitter_measurement_id() {
+    return this.evolutionVersusSubmitter.measurement_id;
+  }
+
+  get submitter_api_secret() {
+    return this.evolutionVersusSubmitter.api_secret;
+  }
+
+  get submitter_client_id() {
+    return this.evolutionVersusSubmitter.client_id;
   }
 
   get backendName() {
@@ -112,23 +133,23 @@ class NeuralOrchestra_Base extends Recyclable.Root {
    *   - Create workers and compile GPU shaders.
    *
    *
-   * @param {string} weightsSpreadsheetId
+   * @param {string} downloader_spreadsheetId
    *   The Google Sheets spreadsheetId of neural network weights.
    *
-   * @param {string} weightsAPIKey
+   * @param {string} downloader_apiKey
    *   The API key for accessing the Google Sheets spreadsheet of neural network weights.
    * (Note: api key can not be changed after this object created.)
    *   - If null, Google Visualization Table Query API will be used.
    *   - If not null, Google Sheets API v4 will be used.
    *
    *
-   * @param {string} measurement_id
+   * @param {string} submitter_measurement_id
    *   The measurement id of stream of property of Google Analytics v4.
    *
-   * @param {string} api_secret
+   * @param {string} submitter_api_secret
    *   The measurement api secret of stream of property of Google Analytics v4.
    * 
-   * @param {string} client_id
+   * @param {string} submitter_client_id
    *   The client id when sending measurement protocol.
    *
    *
@@ -153,9 +174,9 @@ class NeuralOrchestra_Base extends Recyclable.Root {
    *
    */
   async init(
-    weightsSpreadsheetId, weightsAPIKey,
+    downloader_spreadsheetId, downloader_apiKey,
 
-    measurement_id, api_secret, client_id,
+    submitter_measurement_id, submitter_api_secret, submitter_client_id,
 
     input_height = 72,
     input_width = 128,
@@ -166,8 +187,8 @@ class NeuralOrchestra_Base extends Recyclable.Root {
   ) {
 
     // 1. Versus Downloader.
-    let versusSummaryDownloaderPromise
-      = this.evolutionVersusSummary_init_async( weightsSpreadsheetId, weightsAPIKey );
+    let versusSummaryDownloaderPromise = this.evolutionVersusSummary_init_async(
+      downloader_spreadsheetId, downloader_apiKey );
 
     // 2. Versus Neural Workers.
     let neuralWorkerPromise;
@@ -198,9 +219,8 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     }
 
     // 3. Versus Result Reporter
-    {
-      this.evolutionVersusSubmitter_init( measurement_id, api_secret, client_id );
-    }
+    this.evolutionVersusSubmitter_init(
+        submitter_measurement_id, submitter_api_secret, submitter_client_id );
 
     // 4.
 
@@ -407,11 +427,12 @@ class NeuralOrchestra_Base extends Recyclable.Root {
    *   - Resolved to true, if succeeded.
    *   - Resolved to false, if failed.
    */
-  async evolutionVersusSummary_init_async( weightsSpreadsheetId, weightsAPIKey ) {
+  async evolutionVersusSummary_init_async(
+    downloader_spreadsheetId, downloader_apiKey ) {
 
     this.evolutionVersusSummary_dispose();
     this.evolutionVersusSummary = DEvolution.VersusSummary.Pool.get_or_create_by(
-      weightsSpreadsheetId, weightsAPIKey );
+      downloader_spreadsheetId, downloader_apiKey );
 
     return this.evolutionVersusSummary.rangeArray_load_async();
   }
@@ -486,11 +507,12 @@ class NeuralOrchestra_Base extends Recyclable.Root {
   }
 
   /** Create differential evolution versus result reporter. */
-  evolutionVersusSubmitter_init( measurement_id, api_secret, client_id ) {
+  evolutionVersusSubmitter_init(
+    submitter_measurement_id, submitter_api_secret, submitter_client_id ) {
 
     this.evolutionVersusSubmitter_dispose();
     this.evolutionVersusSubmitter = DEvolution.VersusSubmitter.Pool.get_or_create_by(
-      measurement_id, api_secret, client_id );
+      submitter_measurement_id, submitter_api_secret, submitter_client_id );
   }
 
 }
