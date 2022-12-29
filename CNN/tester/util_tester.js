@@ -8,6 +8,7 @@ import * as Uint12_tester from "./Uint12_tester.js";
 import * as GSheets_tester from "./GSheets_tester.js";
 import * as AsyncWorker_tester from "./AsyncWorker_tester.js";
 import * as NeuralWorker_tester from "./NeuralWorker_tester.js";
+import * as NeuralOrchestra_tester from "./NeuralOrchestra_tester.js";
 
 window.addEventListener( "load", event => {
   ScriptLoader
@@ -52,10 +53,15 @@ function test() {
     ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
   }
 
+  let progress_NeuralOrchestra_tester = progress.child_add(
+    ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
+
   let progressReceiver
     = new ValueMax.Receiver.HTMLProgress.createByTitle_or_getDummy( "TestProgressBar" );
 
   async function* testerAll() {
+
+    yield* NeuralOrchestra_tester.tester( progress_NeuralOrchestra_tester );
 
     yield* Uint12_tester.tester( progress_Uint12_tester );
     yield* Float12_tester.tester( progress_Float12_tester );
