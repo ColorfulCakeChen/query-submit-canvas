@@ -172,8 +172,12 @@ class NeuralOrchestra_Base extends Recyclable.Root {
    * @param {number} output_channelCount
    *   The output tensor's channel count.
    *
+   * @return {Promise}
+   *   Return a promise.
+   *   - Resolved to true, if succeeded.
+   *   - Resolved to false, if failed.
    */
-  async init(
+  async init_async(
     downloader_spreadsheetId, downloader_apiKey,
 
     submitter_measurement_id, submitter_api_secret, submitter_client_id,

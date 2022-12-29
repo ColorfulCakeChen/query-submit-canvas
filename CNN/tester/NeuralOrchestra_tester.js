@@ -34,7 +34,7 @@ async function* tester( progressParent ) {
   let output_channelCount = 16;
 
   let neuralOrchestra = NeuralOrchestra.Base.Pool.get_or_create_by();
-  let initPromise = theNeuralOrchestra.init(
+  let bInitOkPromise = theNeuralOrchestra.init_async(
     downloader_spreadsheetId, downloader_apiKey,
     measurement_id, api_secret, client_id,
 
@@ -45,6 +45,12 @@ async function* tester( progressParent ) {
     blockCountTotalRequested,
     output_channelCount,
   );
+
+  let bInitOk = await bInitOkPromise;
+  if ( !bInitOk )
+    throw Error( `NeuralOrchestra_tester.tester(): `
+      + `theNeuralOrchestra.init_async() failed.`
+    );
 
 //!!! ...unfinished... (2022/12/29)
 
