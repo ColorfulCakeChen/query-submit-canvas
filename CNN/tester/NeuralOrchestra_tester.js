@@ -26,18 +26,24 @@ async function* tester( progressParent ) {
   let submitter_api_secret = ;
   let submitter_client_id = ;
 
-  // Without API key.
+  let input_height = 72;
+  let input_width = 128;
+
+  let vocabularyChannelCount = 8; //4,
+  let blockCountTotalRequested = 100; //200, //50, //20, //10,
+  let output_channelCount = 16;
+
   let neuralOrchestra = NeuralOrchestra.Base.Pool.get_or_create_by();
   let initPromise = theNeuralOrchestra.init(
     downloader_spreadsheetId, downloader_apiKey,
     measurement_id, api_secret, client_id,
 
-    input_height = 72,
-    input_width = 128,
+    input_height,
+    input_width,
 
-    vocabularyChannelCount = 8, //4,
-    blockCountTotalRequested = 100, //200, //50, //20, //10,
-    output_channelCount = 16,
+    vocabularyChannelCount,
+    blockCountTotalRequested,
+    output_channelCount,
   );
 
 //!!! ...unfinished... (2022/12/29)
