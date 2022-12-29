@@ -11,10 +11,11 @@ import * as NeuralWorker_tester from "./NeuralWorker_tester.js";
 import * as NeuralOrchestra_tester from "./NeuralOrchestra_tester.js";
 
 window.addEventListener( "load", event => {
-  ScriptLoader
-    .createPromise(
-      "https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.0.0/dist/tf.min.js" )
-    .then( test );
+  // (2022/12/29 Remarked) NeuralWorker_Body will load tensorflow.js by itself.
+  // ScriptLoader
+  //   .createPromise(
+  //     "https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.0.0/dist/tf.min.js" )
+  //   .then( test );
 });
 
 //const gTestNeuralWorker = false;
