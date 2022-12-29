@@ -36,7 +36,7 @@ async function* tester( progressParent ) {
   let neuralOrchestra = NeuralOrchestra.Base.Pool.get_or_create_by();
   let bInitOkPromise = neuralOrchestra.init_async(
     downloader_spreadsheetId, downloader_apiKey,
-    measurement_id, api_secret, client_id,
+    submitter_measurement_id, submitter_api_secret, submitter_client_id,
 
     input_height,
     input_width,
