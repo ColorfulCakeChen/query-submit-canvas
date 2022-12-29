@@ -13,19 +13,15 @@ import * as NeuralOrchestra_tester from "./NeuralOrchestra_tester.js";
 
 window.addEventListener( "load", event => {
 
-  // Note: NeuralWorker_Common will load tensorflow.js by itself.
+  // Note: NeuralWorker_Body will also load tensorflow.js by itself.
   ScriptLoader
-    .createPromise(
-      NeuralWorker.Common.tensorflowJsURL
-//!!! (2022/12/29 Remarked) Use NeuralWorker.Common.tensorflowJsURL instead.
-//      "https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.0.0/dist/tf.min.js"
-    ).then( test );
+    .createPromise( NeuralWorker.Common.tensorflowJsURL ).then( test );
 
 });
 
-//const gTestNeuralWorker = false;
+const gTestNeuralWorker = false;
 //!!! (2022/12/28 Temp Remarked) For speed up other testing.
-const gTestNeuralWorker = true;
+//const gTestNeuralWorker = true;
 
 function test() {
   console.log("util testing...");
