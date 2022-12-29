@@ -19,9 +19,9 @@ window.addEventListener( "load", event => {
 
 });
 
-const gTestNeuralWorker = false;
+// const gTestNeuralWorker = false;
 //!!! (2022/12/28 Temp Remarked) For speed up other testing.
-//const gTestNeuralWorker = true;
+const gTestNeuralWorker = true;
 
 function test() {
   console.log("util testing...");
