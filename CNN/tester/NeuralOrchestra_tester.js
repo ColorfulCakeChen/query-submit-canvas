@@ -34,7 +34,7 @@ async function* tester( progressParent ) {
   let output_channelCount = 16;
 
   let neuralOrchestra = NeuralOrchestra.Base.Pool.get_or_create_by();
-  let bInitOkPromise = theNeuralOrchestra.init_async(
+  let bInitOkPromise = neuralOrchestra.init_async(
     downloader_spreadsheetId, downloader_apiKey,
     measurement_id, api_secret, client_id,
 
