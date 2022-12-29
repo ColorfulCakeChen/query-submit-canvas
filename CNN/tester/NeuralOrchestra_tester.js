@@ -30,7 +30,7 @@ async function* tester( progressParent ) {
   let input_width = 128;
 
   let vocabularyChannelCount = 8; //4,
-  let blockCountTotalRequested = 100; //200, //50, //20, //10,
+  let blockCountTotalRequested = 50;
   let output_channelCount = 16;
 
   let neuralOrchestra = NeuralOrchestra.Base.Pool.get_or_create_by();
