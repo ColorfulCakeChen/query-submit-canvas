@@ -65,8 +65,6 @@ class NeuralWorker_Body extends AsyncWorker.Body {
 // What if failed when:
 //   - library (tensorflow.js) downloading
 //   - worker starting (also a kind of library downloading)
-//   - versus downloading
-//   - versus result sending
 //
 // Perhaps, needs a life-cycle manager to handle them gracefully.
 
