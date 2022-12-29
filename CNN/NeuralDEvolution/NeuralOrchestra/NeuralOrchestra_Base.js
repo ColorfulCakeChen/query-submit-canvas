@@ -257,26 +257,52 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     return initOk;
   }
 
-//!!! ...unfinished... (2022/10/27)
-// Provide a function which could accept weight array and bLogDryRunTime.
-// And then, call NeuralNetArray_create_async().
-
   /**
-   * Create dummy neural networks in all web worker to compile WebGL shaders in advance.
+   * Create dummy neural networks in all neural web workers to compile WebGL shaders
+   * in advance.
    *
    * @param {NeuralOrchestra_Base} this
    */
   static async workerProxies_compileShaders_async() {
 
-    // Although neural network configuration will be copied (not transferred)
-    // to workers, they still need be cloned because NeuralWorker.Proxy will
-    // keep (i.e. owned and destroyed) them.
-    let neuralNetParamsBaseArray;
-    {
-      let neuralNetParams0 = this.neuralNetParamsBase.clone();
-      let neuralNetParams1 = this.neuralNetParamsBase.clone();
-      neuralNetParamsBaseArray = [ neuralNetParams0, neuralNetParams1 ];
-    }
+//!!! (2022/12/29 Remarked) Call workerProxies_NeuralNetArray_create_async() instead.
+//
+//     // Although neural network configuration will be copied (not transferred)
+//     // to workers, they still need be cloned because NeuralWorker.Proxy will
+//     // keep (i.e. owned and destroyed) them.
+//     let neuralNetParamsBaseArray;
+//     {
+//       let neuralNetParams0 = this.neuralNetParamsBase.clone();
+//       let neuralNetParams1 = this.neuralNetParamsBase.clone();
+//       neuralNetParamsBaseArray = [ neuralNetParams0, neuralNetParams1 ];
+//     }
+//
+//     // Dummy neural network's weights.
+//     //      
+//     // Neural network weights will be transferred (not copied) to workers. So,
+//     // all new dummy array buffer should be created.
+//     //
+//     const weightArrayLength = ( 5 * 1024 * 1024 );
+//     const weightArrayByteLength = weightArrayLength * Float32Array.BYTES_PER_ELEMENT;
+//     let weightArrayBufferArray = [
+//       new ArrayBuffer( weightArrayByteLength ), new ArrayBuffer( weightArrayByteLength )
+//     ];
+//
+//     // (2022//09/26 Remarked)
+//     const bLogDryRunTime = true; // For observing dry-run performance and weight count.
+//     //const bLogDryRunTime = false;
+//     let bCreateOkPromise = this.workerProxies.NeuralNetArray_create_async(
+//       neuralNetParamsBaseArray, weightArrayBufferArray, bLogDryRunTime );
+//
+//     let bCreateOk = await bCreateOkPromise;
+//     if ( !bCreateOk )
+//       throw Error( `NeuralOrchestra_Base.workerProxies_compileShaders_async(): `
+//         + `Failed to create neural networks. `
+//         + `${this.workerProxies}`
+//     );
+//
+//     return bCreateOk;
+
 
     // Dummy neural network's weights.
     //      
@@ -292,12 +318,46 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     // (2022//09/26 Remarked)
     const bLogDryRunTime = true; // For observing dry-run performance and weight count.
     //const bLogDryRunTime = false;
+    return this.workerProxies_NeuralNetArray_create_async(
+      weightArrayBufferArray, bLogDryRunTime );
+  }
+
+  /**
+   * Create neural networks in all neural web workers.
+   *
+   * @param {ArrayBuffer[]} weightArrayBufferArray
+   *   An array of every neural network's weights. Every element will be interpreted
+   * as Float32Array. Every element will be transferred to web worker (i.e. their
+   * .byteLength will become zero).
+   *
+   * @param {boolean} bLogDryRunTime
+   *   If true, the neural network dry-run time will be measured twice and logged to
+   * console.
+   *
+   * @return {Promise}
+   *   Return a promise:
+   *   - Resolved to true, if succeeded.
+   *   - Resolved to false, if failed.
+   */
+  async workerProxies_NeuralNetArray_create_async(
+    weightArrayBufferArray, bLogDryRunTime ) {
+
+    // Although neural network configuration will be copied (not transferred)
+    // to workers, they still need be cloned because NeuralWorker.Proxy will
+    // keep (i.e. owned and destroyed) them.
+    let neuralNetParamsBaseArray;
+    {
+      let neuralNetParams0 = this.neuralNetParamsBase.clone();
+      let neuralNetParams1 = this.neuralNetParamsBase.clone();
+      neuralNetParamsBaseArray = [ neuralNetParams0, neuralNetParams1 ];
+    }
+
     let bCreateOkPromise = this.workerProxies.NeuralNetArray_create_async(
       neuralNetParamsBaseArray, weightArrayBufferArray, bLogDryRunTime );
 
     let bCreateOk = await bCreateOkPromise;
     if ( !bCreateOk )
-      throw Error( `NeuralOrchestra_Base.workerProxies_compileShaders_async(): `
+      throw Error( `NeuralOrchestra_Base.workerProxies_NeuralNetArray_create_async(): `
         + `Failed to create neural networks. `
         + `${this.workerProxies}`
     );
@@ -313,7 +373,13 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     }
   }
 
-  /** Load all differential evolution versus weights ranges. */
+  /** Load all differential evolution versus weights ranges.
+   *
+   * @return {Promise}
+   *   Return a promise:
+   *   - Resolved to true, if succeeded.
+   *   - Resolved to false, if failed.
+   */
   async evolutionVersusSummary_init_async( weightsSpreadsheetId, weightsAPIKey ) {
 
     this.evolutionVersusSummary_dispose();
@@ -336,8 +402,8 @@ class NeuralOrchestra_Base extends Recyclable.Root {
    *
    * @return {Promise( DEvolution.Versus )}
    *   Return a promise.
-   *   - It will resolve to a true ???, if succeed.
-   *   - It will resolve to false ???, if failed.
+   *   - Resolved to a true ???, if succeeded.
+   *   - Resolved to false ???, if failed.
    */
   async evolutionVersus_next_load_async() {
 
@@ -350,6 +416,8 @@ class NeuralOrchestra_Base extends Recyclable.Root {
 
     this.evolutionVersus.parentChromosomeFloat32Array;
     this.evolutionVersus.offspringChromosomeFloat32Array;
+
+//!!! ...unfinished... (2022/12/29)
 
     return true ???;
   }

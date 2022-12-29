@@ -191,14 +191,14 @@ class DEvolution_VersusSummary extends Recyclable.Root {
    *
    * @return {Promise( DEvolution.Versus )}
    *   Return a promise.
-   *   - It will resolve to a DEvolution.Versus object, if succeed.
-   *   - It will resolve to null, if failed.
+   *   - Resolved to a DEvolution.Versus object, if succeeded.
+   *   - Resolved to null, if failed.
    */
   async versus_next_load_async() {
 
     let visitIndex = this.visitIndex_get();
     if ( visitIndex < 0 )
-      return false;
+      return null;
 
     let spreadsheetRange = this.rangeArray[ visitIndex ];
 

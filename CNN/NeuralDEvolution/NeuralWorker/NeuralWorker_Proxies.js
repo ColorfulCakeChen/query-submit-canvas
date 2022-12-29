@@ -296,7 +296,7 @@ class NeuralWorker_Proxies extends Recyclable.Root {
   }
 
   /**
-   * Create neural networks in the web worker body.
+   * Create neural networks in all web workers' body.
    *
    * @param {NeuralNet.ParamsBase[]} neuralNetParamsBaseArray
    *   An array of configurations for the neural network to be created. These
@@ -304,8 +304,9 @@ class NeuralWorker_Proxies extends Recyclable.Root {
    * by this NeuralWorker.Proxy.
    *
    * @param {ArrayBuffer[]} weightArrayBufferArray
-   *   An array of every neural network's weights. Every element  will be interpreted
-   * as Float32Array.
+   *   An array of every neural network's weights. Every element will be interpreted
+   * as Float32Array. Every element will be transferred to web worker (i.e. their
+   * .byteLength will become zero).
    *
    * @param {boolean} bLogDryRunTime
    *   If true, the neural network dry-run time will be measured twice and logged to
