@@ -338,7 +338,7 @@ class HeightWidthDepth {
     let nConvStageType
       = ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID;
 
-    let blockCountTotalRequested = 160; //84; //128; //100;
+    let blockCountTotalRequested = 150; //84; //128; //100;
     let output_channelCount = 6; //12; //64; //8; //4; //400; //300; //64;
     //let output_channelCount_twice = output_channelCount * 2; // For NO_FILL
 
