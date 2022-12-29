@@ -432,8 +432,9 @@ class NeuralOrchestra_Base extends Recyclable.Root {
    *   - Resolved to true, if succeeded.
    *   - Resolved to false, if failed.
    */
-  async evolutionVersus_next_load__workerProxies_NeuralNetArray_create__async() {
+  async evolutionVersus_next_load__and__workerProxies_NeuralNetArray_create__async() {
 
+    // 1. Download versus.
     this.evolutionVersus_dispose();
     this.evolutionVersus = await this.evolutionVersusSummary.versus_next_load_async();
 
@@ -443,13 +444,15 @@ class NeuralOrchestra_Base extends Recyclable.Root {
 // If downloading is failed (e.g. timeout), display message and re-try downloading.
 
       // throw Error( `NeuralOrchestra_Base.`
-      //   + `evolutionVersus_next_load__workerProxies_NeuralNetArray_create__async(): `
+      //   + `evolutionVersus_next_load__and__workerProxies_NeuralNetArray_create__async(): `
       //   + `Failed to load next versus.`
       //   + `${this.workerProxies}`
       // );
 
       return false;
     }
+
+    // 2. Create neural networks.
 
     // Note: These Float32Array will be transferred to neural web workers (i.e.
     //       their .byteLength will become zero).
@@ -466,14 +469,13 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     let bCreateOk = await bCreateOkPromise;
     if ( !bCreateOk )
       throw Error( `NeuralOrchestra_Base.`
-        + `evolutionVersus_next_load__workerProxies_NeuralNetArray_create__async(): `
+        + `evolutionVersus_next_load__and__workerProxies_NeuralNetArray_create__async(): `
         + `Failed to create neural networks. `
         + `${this.workerProxies}`
       );
   
     return bCreateOk;
   }
-
 
   /** */
   evolutionVersusSubmitter_dispose() {
