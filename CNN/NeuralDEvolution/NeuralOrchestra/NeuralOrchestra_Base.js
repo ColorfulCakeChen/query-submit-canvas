@@ -318,8 +318,17 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     // (2022//09/26 Remarked)
     const bLogDryRunTime = true; // For observing dry-run performance and weight count.
     //const bLogDryRunTime = false;
-    return this.workerProxies_NeuralNetArray_create_async(
+    let bCreateOkPromise = this.workerProxies_NeuralNetArray_create_async(
       weightArrayBufferArray, bLogDryRunTime );
+
+    let bCreateOk = await bCreateOkPromise;
+    if ( !bCreateOk )
+      throw Error( `NeuralOrchestra_Base.workerProxies_compileShaders_async(): `
+        + `Failed to create neural networks. `
+        + `${this.workerProxies}`
+      );
+
+    return bCreateOk;
   }
 
   /**
@@ -355,14 +364,17 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     let bCreateOkPromise = this.workerProxies.NeuralNetArray_create_async(
       neuralNetParamsBaseArray, weightArrayBufferArray, bLogDryRunTime );
 
-    let bCreateOk = await bCreateOkPromise;
-    if ( !bCreateOk )
-      throw Error( `NeuralOrchestra_Base.workerProxies_NeuralNetArray_create_async(): `
-        + `Failed to create neural networks. `
-        + `${this.workerProxies}`
-    );
+    return bCreateOkPromise;
 
-    return bCreateOk;
+//!!! (2022/12/29 Remarked) Moved to caller.
+//     let bCreateOk = await bCreateOkPromise;
+//     if ( !bCreateOk )
+//       throw Error( `NeuralOrchestra_Base.workerProxies_NeuralNetArray_create_async(): `
+//         + `Failed to create neural networks. `
+//         + `${this.workerProxies}`
+//       );
+//
+//     return bCreateOk;
   }
 
   /** */
@@ -398,28 +410,53 @@ class NeuralOrchestra_Base extends Recyclable.Root {
   }
 
   /**
-   * Load the next versus data.
+   * Load the next versus data, and create neural networks by these versus data.
    *
-   * @return {Promise( DEvolution.Versus )}
+   * @return {Promise}
    *   Return a promise.
-   *   - Resolved to a true ???, if succeeded.
-   *   - Resolved to false ???, if failed.
+   *   - Resolved to true, if succeeded.
+   *   - Resolved to false, if failed.
    */
-  async evolutionVersus_next_load_async() {
+  async evolutionVersus_next_load__workerProxies_NeuralNetArray_create__async() {
 
-//!!! ...unfinished... (2022/10/20)
     this.evolutionVersus_dispose();
     this.evolutionVersus = await this.evolutionVersusSummary.versus_next_load_async();
 
-    if ( !this.evolutionVersus )
-      return false ???;
-
-    this.evolutionVersus.parentChromosomeFloat32Array;
-    this.evolutionVersus.offspringChromosomeFloat32Array;
+    if ( !this.evolutionVersus ) {
 
 //!!! ...unfinished... (2022/12/29)
+// If downloading is failed (e.g. timeout), display message and re-try downloading.
 
-    return true ???;
+      // throw Error( `NeuralOrchestra_Base.`
+      //   + `evolutionVersus_next_load__workerProxies_NeuralNetArray_create__async(): `
+      //   + `Failed to load next versus.`
+      //   + `${this.workerProxies}`
+      // );
+
+      return false;
+    }
+
+    // Note: These Float32Array will be transferred to neural web workers (i.e.
+    //       their .byteLength will become zero).
+    let weightArrayBufferArray = [
+      this.evolutionVersus.parentChromosomeFloat32Array,
+      this.evolutionVersus.offspringChromosomeFloat32Array
+    ];
+
+    // In real-run, no need to observe dry-run performance and weight count.
+    const bLogDryRunTime = false;
+    let bCreateOkPromise = this.workerProxies_NeuralNetArray_create_async(
+      weightArrayBufferArray, bLogDryRunTime );
+
+    let bCreateOk = await bCreateOkPromise;
+    if ( !bCreateOk )
+      throw Error( `NeuralOrchestra_Base.`
+        + `evolutionVersus_next_load__workerProxies_NeuralNetArray_create__async(): `
+        + `Failed to create neural networks. `
+        + `${this.workerProxies}`
+      );
+  
+    return bCreateOk;
   }
 
 
