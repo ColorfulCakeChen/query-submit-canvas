@@ -45,11 +45,13 @@ function test() {
   let progress_AsyncWorker_tester = progress.child_add(
     ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
 
+  let progress_NeuralWorker_tester_cpu;
+  let progress_NeuralWorker_tester_webgl;
   if ( gTestNeuralWorker ) {
-    let progress_NeuralWorker_tester_cpu = progress.child_add(
+    progress_NeuralWorker_tester_cpu = progress.child_add(
     ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
-    
-    let progress_NeuralWorker_tester_webgl = progress.child_add(
+
+    progress_NeuralWorker_tester_webgl = progress.child_add(
     ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
   }
 
