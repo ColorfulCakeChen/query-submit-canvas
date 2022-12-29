@@ -76,6 +76,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
 
   /** @override */
   disposeResources() {
+    this.evolutionVersusSubmitter_dispose();
     this.evolutionVersus_dispose();
     this.neuralNetParamsBase_dispose();
     this.workerProxies_dispose();
