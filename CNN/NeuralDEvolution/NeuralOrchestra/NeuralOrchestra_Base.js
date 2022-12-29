@@ -205,7 +205,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     // 4.
 
 //!!! ...unfinished... (2022/12/29) AbortSignal.timeout()?
-// Re-try downloading if failed (e.g. timeout)
+// If downloading is failed (e.g. timeout), display message and re-try downloading.
 
     let allPromise = Promise.all( [
       versusSummaryDownloaderPromise, neuralWorkerPromise ] );
