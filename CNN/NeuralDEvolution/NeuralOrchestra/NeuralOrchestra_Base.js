@@ -108,7 +108,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
   }
 
   /**
-   *   - Load all differential evolution versus weights ranges.
+   *   - Load all differential evolution versus weights ranges (i.e. versus summary).
    *   - Create workers and compile GPU shaders.
    *
    *
