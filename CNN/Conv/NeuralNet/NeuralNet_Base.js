@@ -410,9 +410,11 @@ class NeuralNet_Base extends Recyclable.Root {
    *   - Return false, if failed (and progressParent.valuePercentage will be less than
    *     100).
    */
-  init( progressParent, inputWeightArray, weightElementOffsetBegin, params, inputScaleBoundsArray0 ) {
+  init( progressParent, inputWeightArray, weightElementOffsetBegin, params ) {
 
-    let initer = this.initer( progressParent, inputWeightArray, weightElementOffsetBegin, params, inputScaleBoundsArray0 );
+    let initer = this.initer( progressParent,
+      inputWeightArray, weightElementOffsetBegin, params );
+
     let initerNext;
     do {
       initerNext = initer.next();
