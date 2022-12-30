@@ -16,12 +16,31 @@ import * as ImageSourceBag from "../jsPerf/Ref/ImageSourceBag.js";
 import * as NumberImage from "../jsPerf/Ref/NumberImage.js";
 import * as HTMLTable from "../Display/HTMLTable.js";
 
+let g_Controls = {
+  input_height_Text: null,
+  input_width_Text: null,
+  vocabularyChannelCount_Text: null,
+  blockCountTotalRequested_Text: null,
+  output_channelCount_per_alignment_Text: null,
+
+  InfoButton: null,
+  TestButton: null,
+};
+
 window.addEventListener( "load", event => {
 
   // Note: NeuralWorker_Body will also load tensorflow.js by itself.
-  ScriptLoader
-    .createPromise( NeuralWorker.Common.tensorflowJsURL ).then( tester_byUI );
+  ScriptLoader.createPromise( NeuralWorker.Common.tensorflowJsURL ).then( () => {
+    g_Controls.InfoButton.disabled = false;
+    g_Controls.TestButton.disabled = false;
+  });
 
+  for ( let p in g_Controls ) {
+    g_Controls[ p ] = document.getElementById( p );
+  }
+
+  g_Controls.InfoButton.addEventListener( "click", InfoButton_onClick );
+  g_Controls.TestButton.addEventListener( "click", TestButton_onClick );
 });
 
 /**
@@ -754,9 +773,41 @@ async function* testerBackendAll( progressParent,
 }
 
 /** */
-function tester_byUI() {
+function InfoButton_onClick( event ) {
+
+//!!! ...unfinished... (2022/12/30)
+
+
+}
+
+/** */
+function TestButton_onClick( event ) {
   console.log("NeuralWorker testing...");
-  let delayMilliseconds = 100;
+  const delayMilliseconds = 100;
+
+  g_Controls.InfoButton.disabled = true; // Prevent multiple clicks.
+  g_Controls.TestButton.disabled = true;
+
+  // Extract parameters from UI.
+  let input_height = Number.parseInt( g_Controls.input_height_Text.value );
+  g_Controls.input_height_Text.value = input_height;
+
+  let input_width = Number.parseInt( g_Controls.input_width_Text.value );
+  g_Controls.input_width_Text.value = input_width;
+
+  let vocabularyChannelCount
+    = Number.parseInt( g_Controls.vocabularyChannelCount_Text.value );
+  g_Controls.vocabularyChannelCount_Text.value = vocabularyChannelCount;
+
+  let blockCountTotalRequested
+    = Number.parseInt( g_Controls.blockCountTotalRequested_Text.value );
+  g_Controls.blockCountTotalRequested_Text.value = blockCountTotalRequested;
+
+  let output_channelCount_per_alignment
+    = Number.parseInt( g_Controls.output_channelCount_per_alignment_Text.value );
+  g_Controls.output_channelCount_per_alignment_Text.value
+    = output_channelCount_per_alignment;
+
 
   let pool_all_issuedCount_before = Pool.All.issuedCount;
 
@@ -769,15 +820,13 @@ function tester_byUI() {
   let progressReceiver
     = new ValueMax.Receiver.HTMLProgress.createByTitle_or_getDummy( "TestProgressBar" );
 
-//!!! ...unfinished... (2022/12/30)
-
   let tester = testerBackendAll( progress_NeuralWorker_tester,
-
-//!!! ...unfinished... (2022/12/30)
-// Extract parameters from UI.
-
+    input_height,
+    input_width,
+    vocabularyChannelCount,
+    blockCountTotalRequested,
+    output_channelCount_per_alignment,
   );
-    
 
   let testPromise = PartTime.forOf(
     tester,
@@ -787,16 +836,23 @@ function tester_byUI() {
     },
     () => { // Release resource.
 
-      if ( 100 != progress.valuePercentage )
-        throw Error( `NeuralWorker_tester.tester_byUI(): `
-          + `Progress (${progress.valuePercentage}) should be 100 `
-          + `after testing done.`);
+      g_Controls.InfoButton.disabled = false;
+      g_Controls.TestButton.disabled = false;
 
-      progress.disposeResources_and_recycleToPool();
-      progress = null;
+      try {
+        if ( 100 != progress.valuePercentage )
+          throw Error( `NeuralWorker_tester.tester_byUI(): `
+            + `Progress (${progress.valuePercentage}) should be 100 `
+            + `after testing done.`);
+
+      } finally {
+        progress.disposeResources_and_recycleToPool();
+        progress = null;
+      }
 
       Pool.Asserter.assert_Pool_issuedCount( "NeuralWorker_tester.tester_byUI()",
         pool_all_issuedCount_before );
+    
     },
     delayMilliseconds
   );
