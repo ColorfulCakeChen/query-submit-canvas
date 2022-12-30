@@ -17,7 +17,7 @@ class Same {
 
   /** @return {string} Return the string value. */
   getName_byId( value ) {
-    return value.toString();
+    return value?.toString();
   }
 }
 
@@ -40,7 +40,7 @@ class Bool {
 
   /** @return {string} Return the string value. */
   getName_byId( value ) {
-    return value.toString();
+    return value?.toString();
   }
 }
 
@@ -151,7 +151,7 @@ class Int {
     // Look up whether has name (e.g. "AVG", "MAX", "NONE").
     let name = this.integerToNameMap.get( integerValue );
     if ( null == name ) {
-      name = integerValue.toString();
+      name = integerValue?.toString();
     }
     return name;
   }
