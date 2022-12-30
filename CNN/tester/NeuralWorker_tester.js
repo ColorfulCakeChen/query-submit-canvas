@@ -16,12 +16,6 @@ import * as NumberImage from "../jsPerf/Ref/NumberImage.js";
 import * as HTMLTable from "../Display/HTMLTable.js";
 
 /**
- * Test CNN NeuralWorker.
- *
- * @see {@link https://www.measurethat.net/Benchmarks/Show/21143/23/colorfulcakechen-cnn-neuralworker-ce01f74239d7eff2b9e53}
- */
-
-/**
  * 
  */
 class ExecutionTimeInfo {
@@ -263,8 +257,25 @@ class HeightWidthDepth {
    * @param {number} height            image height
    * @param {number} width             image width
    * @param {number} depth             image channel count
+   *
+   * @param {number} output_channelCount_per_alignment
+   *   The output channel count of one alignment.
+   *
+   * @param {number} backendName
+   *   Run this test set under which backend of tensorflow.js
+   *
+   * @param {boolean} bAscent_or_Descent
+   *   - If true, test from largest NeuralWorker.Mode.Singleton.Ids.
+   *   - If false, test from smallest NeuralWorker.Mode.Singleton.Ids.
    */
-  constructor( height, width, depth ) {
+  constructor(
+    height, width, depth,
+
+    vocabularyChannelCount,
+    blockCountTotalRequested,
+    output_channelCount_per_alignment,
+  
+    backendName, bAscent_or_Descent ) {
 
     this.disposeResources();
 
@@ -272,7 +283,12 @@ class HeightWidthDepth {
     this.width = width;
     this.depth = depth;
 
-    this.valueCount = height * width * depth;
+    this.vocabularyChannelCount = vocabularyChannelCount;
+    this.blockCountTotalRequested = blockCountTotalRequested;
+    this.output_channelCount_per_alignment = output_channelCount_per_alignment;
+
+    this.backendName = backendName;
+    this.bAscent_or_Descent = bAscent_or_Descent;
   }
 
   disposeResources() {
@@ -333,18 +349,13 @@ class HeightWidthDepth {
     else
       this.testCaseMap = new Map();
 
-    let vocabularyChannelCount = 8; //6; //4;
-    let vocabularyCountPerInputChannel = 256;
-    let nConvStageType
+    const vocabularyCountPerInputChannel = 256;
+    const nConvStageType
       = ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID;
 
-    let blockCountTotalRequested = 84; //144; //128; //100;
-    let output_channelCount = 6; //12; //64; //8; //4; //400; //300; //64;
-    //let output_channelCount_twice = output_channelCount * 2; // For NO_FILL
-
     // ShuffleNetV2 uses twice block count to compensate reduced channel count.
-    //let blockCountTotalRequested_ShuffleNet = blockCountTotalRequested * 2;
-    let blockCountTotalRequested_ShuffleNet = blockCountTotalRequested;
+    //let blockCountTotalRequested_ShuffleNet = this.blockCountTotalRequested * 2;
+    const blockCountTotalRequested_ShuffleNet = this.blockCountTotalRequested;
 
     // The neuralNet performance testing should not keep-input-tensor because the
     // input image is created from canvas in real time.
@@ -368,16 +379,16 @@ class HeightWidthDepth {
 
       // Ensure NO_FILL has twice output channel count.
       let output_channelCount_real;
-      if ( theModeInfo.bFill )
-        output_channelCount_real = output_channelCount; // For FILL
-      else
-        output_channelCount_real = output_channelCount * 2; // For NO_FILL
+      if ( theModeInfo.bFill ) // For FILL
+        output_channelCount_real = this.output_channelCount_per_alignment;
+      else // For NO_FILL
+        output_channelCount_real = this.output_channelCount_per_alignment * 2;
 
       this.neuralWorker_PerformanceTest_addCase(
         theModeInfo.id, theModeInfo.nameForMessage,
         NeuralNet.ParamsBase.Pool.get_or_create_by(
           this.height, this.width, this.depth,
-          vocabularyChannelCount, vocabularyCountPerInputChannel,
+          this.vocabularyChannelCount, vocabularyCountPerInputChannel,
           nConvStageType,
           blockCountTotalRequested_ShuffleNet, output_channelCount_real, bKeepInputTensor
         ),
@@ -456,12 +467,20 @@ class HeightWidthDepth {
    *   Some new progressToAdvance will be created and added to progressParent. The
    * created progressToAdvance will be increased when every time advanced. The
    * progressParent.root_get() will be returned when every time yield.
-   *
-   * @param {boolean} bAscent_or_Descent
-   *   - If true, test from largest NeuralWorker.Mode.Singleton.Ids.
-   *   - If false, test from smallest NeuralWorker.Mode.Singleton.Ids.
    */
-  async* tester( progressParent, bAscent_or_Descent ) {
+  async* tester( progressParent ) {
+
+    // Ensure backend of tensorflow.js
+    {
+      await tf.ready(); // Ensure tf.getBackend() workable.
+  
+      let currentBackendName = tf.getBackend();
+      if ( currentBackendName != this.backendName ) {
+        let setBackendOkPromise = tf.setBackend( this.backendName );
+        let setBackendOk = await setBackendOkPromise;
+      }
+    }
+
     let backendName = tf.getBackend();
     console.log( `NeuralWorker ( ${backendName} ) testing...` );
 
@@ -512,7 +531,7 @@ class HeightWidthDepth {
           // Control test ModeId direction.
           let testCaseArray = [ ...this.testCaseMap.values() ];
           let testCaseIndexBegin, testCaseIndexEnd, testCaseIndexStep;
-          if ( bAscent_or_Descent ) {
+          if ( this.bAscent_or_Descent ) {
             testCaseIndexBegin = 0;
             testCaseIndexEnd = testCaseArray.length; // (Exclusive)
             testCaseIndexStep = +1;
@@ -637,36 +656,43 @@ class HeightWidthDepth {
 
 }
 
-/** */
-function init() {
-  disposeResources();
+/**
+ * (Called by tester())
+ *
+ * @param {ValueMax.Percentage.Aggregate} progressParent
+ *   Some new progressToAdvance will be created and added to progressParent. The
+ * created progressToAdvance will be increased when every time advanced. The
+ * progressParent.root_get() will be returned when every time yield.
+ *
+ */
+async function* testerBackend( progressParent,
+  input_height,
+  input_width,
 
-  let depth = 4;
+  vocabularyChannelCount,
+  blockCountTotalRequested,
+  output_channelCount_per_alignment,
+
+  backendName, bAscent_or_Descent,
+) {
+  const depth = 4;
 
   // Using mobile phone's resolution ( 1080 * 2160 ) will crash the computer.
   // Using ( 1 / 15 ) of computer screen ( 1080 * 1920 ) (i.e. ( 72 * 128 )).
-  globalThis.testSet_72x128x4 = new HeightWidthDepth( 72, 128, depth ); // height, width, depth
-  //globalThis.testSet_72x128x4 = new HeightWidthDepth( 72 * 3, 128 * 3, depth ); // height, width, depth
- 
-  globalThis.testSet_All = [
-    globalThis.testSet_72x128x4
-  ];
-}
+  let testSet = new HeightWidthDepth(
+    input_height, input_width, depth,
+    vocabularyChannelCount,
+    blockCountTotalRequested,
+    output_channelCount_per_alignment,
+    backendName, bAscent_or_Descent,
+  );
 
-/** */
-function disposeResources() {
-  if ( globalThis.testSet_All ) {
-    for ( let i = 0; i < globalThis.testSet_All.length; ++i ) {
-      let testSet = globalThis.testSet_All[ i ];
-      if ( testSet )
-        testSet.disposeResources();
-    }
+  let progress_for_testSet = progressParent.child_add(
+    ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
 
-    globalThis.testSet_All = null;
-  }
+  yield* testSet.tester( progress_for_testSet );
 
-  globalThis.testSet_72x128x4
-    = null;
+  testSet.disposeResources();
 }
 
 /**
@@ -678,31 +704,45 @@ function disposeResources() {
  * progressParent.root_get() will be returned when every time yield.
  *
  */
-async function* tester( progressParent, backendName, bAscent_or_Descent ) {
+async function* tester( progressParent,
+  input_height = 72,
+  input_width = 128,
 
-  // Ensure backend of tensorflow.js
+  vocabularyChannelCount = 6, //8, //4,
+  blockCountTotalRequested = 84, //100, //200, //50, //20, //10,
+  output_channelCount_per_alignment = 6,
+) {
+
+  let progress_NeuralWorker_tester_cpu = progressParent.child_add(
+    ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
+
+  let progress_NeuralWorker_tester_webgl = progressParent.child_add(
+    ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
+
+// let progressReceiver
+//   = new ValueMax.Receiver.HTMLProgress.createByTitle_or_getDummy( "TestProgressBar" );
+
   {
-    await tf.ready(); // Ensure tf.getBackend() workable.
+    let bAscent_or_Descent;
+    bAscent_or_Descent = false; // Descent
+    yield* testerBackend( progress_NeuralWorker_tester_webgl,
+      input_height,
+      input_width,
+      vocabularyChannelCount,
+      blockCountTotalRequested,
+      output_channelCount_per_alignment,
+      "webgl", bAscent_or_Descent,
+    );
 
-    let currentBackendName = tf.getBackend();
-    if ( currentBackendName != backendName ) {
-      let setBackendOkPromise = tf.setBackend( backendName );
-      let setBackendOk = await setBackendOkPromise;
-    }
+    bAscent_or_Descent = true; // Ascent
+    yield* testerBackend( progress_NeuralWorker_tester_cpu,
+      input_height,
+      input_width,
+      vocabularyChannelCount,
+      blockCountTotalRequested,
+      output_channelCount_per_alignment,
+      "cpu", bAscent_or_Descent,
+    );
   }
 
-  init();
-
-  let progressArray_for_testSet = new Array( globalThis.testSet_All.length );
-  for ( let i = 0; i < globalThis.testSet_All.length; ++i ) {
-    progressArray_for_testSet[ i ] = progressParent.child_add(
-      ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
-  }
-
-  for ( let i = 0; i < globalThis.testSet_All.length; ++i ) {
-    let testSet = globalThis.testSet_All[ i ];
-    yield* testSet.tester( progressArray_for_testSet[ i ], bAscent_or_Descent );
-  }
-
-  disposeResources();
 }

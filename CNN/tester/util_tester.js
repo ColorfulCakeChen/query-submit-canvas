@@ -47,14 +47,10 @@ function test() {
   let progress_AsyncWorker_tester = progress.child_add(
     ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
 
-  let progress_NeuralWorker_tester_cpu;
-  let progress_NeuralWorker_tester_webgl;
+  let progress_NeuralWorker_tester;
   if ( gTestNeuralWorker ) {
-    progress_NeuralWorker_tester_cpu = progress.child_add(
-    ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
-
-    progress_NeuralWorker_tester_webgl = progress.child_add(
-    ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
+    progress_NeuralWorker_tester = progress.child_add(
+      ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
   }
 
   let progress_NeuralOrchestra_tester = progress.child_add(
@@ -72,15 +68,7 @@ function test() {
     yield* Base64ToUint8Array_tester.tester( progress_Base64ToUint8Array_tester );
 
     if ( gTestNeuralWorker ) {
-
-      let bAscent_or_Descent;
-      bAscent_or_Descent = false; // Descent
-      yield* NeuralWorker_tester.tester( progress_NeuralWorker_tester_webgl,
-        "webgl", bAscent_or_Descent );
-    
-      bAscent_or_Descent = true; // Ascent
-      yield* NeuralWorker_tester.tester( progress_NeuralWorker_tester_cpu,
-        "cpu", bAscent_or_Descent );
+      yield* NeuralWorker_tester.tester( progress_NeuralWorker_tester );
     }
 
     yield* AsyncWorker_tester.tester( progress_AsyncWorker_tester );
