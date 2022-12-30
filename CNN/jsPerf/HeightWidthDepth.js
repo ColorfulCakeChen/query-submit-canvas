@@ -341,7 +341,7 @@ class HeightWidthDepth_Base {
       generator,
 
       // Report progress to UI.
-      ( valueMax ) => { this.progressReceiver.setValueMax_by_ValueMax( valueMax ); },
+      ( valueMax ) => { this.progressReceiver.setValueMax_by_ValueMaxObject( valueMax ); },
       delayMilliseconds
     );
 

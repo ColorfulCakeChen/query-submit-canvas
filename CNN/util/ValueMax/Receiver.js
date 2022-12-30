@@ -46,7 +46,7 @@ class HTMLProgress extends ValueMax_Receiver_Base {
    * Set HTMLProgressElement.value and HTMLProgressElement.max to
    * valueMax.valuePercentage and valueMax.maxPercentage.
    */
-  setValueMax_by_ValueMax( valueMax ) {
+  setValueMax_by_ValueMaxObject( valueMax ) {
     this.htmlProgress.value = valueMax.valuePercentage;
     this.htmlProgress.max = valueMax.maxPercentage;
   }
