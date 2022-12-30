@@ -86,13 +86,15 @@ import { Base } from "./Weights_Base.js";
    */
   constructor( paramDescSequenceArray, ...restArgs ) {
     super();
-    Weights_Params.setAsConstructor_self.call( this, paramDescSequenceArray, ...restArgs );
+    Weights_Params.setAsConstructor_self.call( this,
+      paramDescSequenceArray, ...restArgs );
    }
 
   /** @override */
   static setAsConstructor( paramDescSequenceArray, ...restArgs ) {
     super.setAsConstructor();
-    Weights_Params.setAsConstructor_self.call( this, paramDescSequenceArray, ...restArgs );
+    Weights_Params.setAsConstructor_self.call( this,
+      paramDescSequenceArray, ...restArgs );
     return this;
   }
 
@@ -102,7 +104,10 @@ import { Base } from "./Weights_Base.js";
     let parameterCount = paramDescSequenceArray.array.length;
 
     this.initValueArray = Recyclable.Array.Pool.get_or_create_by( parameterCount );
-    this.inputWeightArrayIndexArray = Recyclable.Array.Pool.get_or_create_by( parameterCount );
+
+    this.inputWeightArrayIndexArray
+      = Recyclable.Array.Pool.get_or_create_by( parameterCount );
+
     this.finalValueArray = Recyclable.Array.Pool.get_or_create_by( parameterCount );
 
     this.parameterCountExtracted = 0;
