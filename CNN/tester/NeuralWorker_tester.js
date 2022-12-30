@@ -717,7 +717,7 @@ async function* testerBackendAll( progressParent,
   input_height = 72,
   input_width = 128,
 
-  vocabularyChannelCount = 6, //8, //4,
+  vocabularyChannelCount = 8, //6, //4,
   blockCountTotalRequested = 84, //100, //200, //50, //20, //10,
   output_channelCount_per_alignment = 6,
 ) {
