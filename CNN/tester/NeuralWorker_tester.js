@@ -820,6 +820,17 @@ function TestButton_onClick( event ) {
   g_Controls.output_channelCount_per_alignment_Text.value
     = output_channelCount_per_alignment;
 
+  // Clear output table.
+  let htmlTableOperator;
+  {
+    const htmlTableId = "NeuralWorker_Performance_Table";
+    const digitsCount = 4;
+    htmlTableOperator
+      = HTMLTable.Operator.Pool.get_or_create_by( htmlTableId, digitsCount );
+
+    htmlTableOperator.Table_clear();
+  }  
+
 
   let pool_all_issuedCount_before = Pool.All.issuedCount;
 
