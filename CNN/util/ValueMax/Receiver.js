@@ -22,7 +22,7 @@ class ValueMax_Receiver_Base {
    * Inform the process is done.
    * @param {any} doneValue Any value.
    */
-  informDone(doneValue) {}
+  informDone( doneValue ) {}
 }
 
 /** Dummy receiver which discards all information. */
@@ -32,14 +32,21 @@ ValueMax_Receiver_Base.dummy = new ValueMax_Receiver_Base();
  * Report progress to HTMLProgressElement.
  */
 class HTMLProgress extends ValueMax_Receiver_Base {
-  /** @param {HTMLProgressElement} htmlProgress The HTMLProgressElement for reporting progress. can not null. */
-  constructor(htmlProgress) {
+
+  /**
+   * @param {HTMLProgressElement} htmlProgress
+   *   The HTMLProgressElement for reporting progress. can not null.
+   */
+  constructor( htmlProgress ) {
     super();
     this.htmlProgress = htmlProgress;
   }
 
-  /** Set HTMLProgressElement.value and HTMLProgressElement.max to valueMax.valuePercentage and valueMax.maxPercentage. */
-  setValueMax(valueMax) {
+  /**
+   * Set HTMLProgressElement.value and HTMLProgressElement.max to
+   * valueMax.valuePercentage and valueMax.maxPercentage.
+   */
+  setValueMax_by_ValueMax( valueMax ) {
     this.htmlProgress.value = valueMax.valuePercentage;
     this.htmlProgress.max = valueMax.maxPercentage;
   }

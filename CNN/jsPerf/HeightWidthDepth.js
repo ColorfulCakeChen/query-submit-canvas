@@ -10,20 +10,24 @@ import * as NeuralNets_ShareInput from "../Neural/Nets_ShareInput.js";
 class HeightWidthDepth_Base {
 
   /**
-   * @param {number} height      image height
-   * @param {number} width       image width
-   * @param {number} depth       image channel count
+   * @param {number} height  image height
+   * @param {number} width   image width
+   * @param {number} depth   image channel count
    *
    * @param {ValueMax.Percentage.Aggregate} progressToYield
-   *   Return this when every time yield. Usually, this is the container of the progressToAdvance.
+   *   Return this when every time yield. Usually, this is the container of the
+   * progressToAdvance.
    *
    * @param {ValueMax.Percentage.Concrete}  progressToAdvance
-   *   Increase this when every time advanced. It will be initialized to zero when decoder starting.
+   *   Increase this when every time advanced. It will be initialized to zero
+   * when decoder starting.
    *
    * @param {ValueMax.Receiver.Base}  progressReceiver
-   *   Every time the progress is advanced, progressReceiver.setValueMax( progressToYield ) will be called.
+   *   Every time the progress is advanced,
+   * progressReceiver.setValueMax( progressToYield ) will be called.
    */
-  constructor( height, width, depth, progressToYield, progressToAdvance, progressReceiver ) {
+  constructor(
+    height, width, depth, progressToYield, progressToAdvance, progressReceiver ) {
 
     let canvasChannelCount = this.canvasChannelCount = 4;
 
@@ -41,7 +45,9 @@ class HeightWidthDepth_Base {
 //    this.valueCount = height * width * depth;
     this.valueCount = height * width * canvasChannelCount;
 
-    this.targetSize = [ 1, 1 ]; // to 1x1. The final output always has height x width = 1 x 1 (i.e. only one pixel per channel)
+    // to 1x1. The final output always has height x width = 1 x 1
+    // (i.e. only one pixel per channel)
+    this.targetSize = [ 1, 1 ];
     let targetHeight = this.targetSize[ 0 ];
 
     // The filter size for achieving target size in one step.
@@ -65,7 +71,8 @@ class HeightWidthDepth_Base {
     this.testCnavas.height = height;
     this.testCnavas.width = width;
 
-    // [ stepCountPerBlock, bChannelShuffler, pointwise1ChannelCountRate, strAvgMaxConv, depthwiseFilterHeight, depthwiseChannelMultiplierBlock0Step0,
+    // [ stepCountPerBlock, bChannelShuffler, pointwise1ChannelCountRate,
+    // strAvgMaxConv, depthwiseFilterHeight, depthwiseChannelMultiplierBlock0Step0,
     // bBias, strActivationName ]
     this.testNeuralNetsSpecTable = [
 //      [  0, false, 1, "Conv", filterHeight_OneStep, depthwiseChannelMultiplierBlock0Step0,  true,     "cos" ],
@@ -111,7 +118,8 @@ class HeightWidthDepth_Base {
     // Create test filters.
     this.testNeuralNetsArray = this.testNeuralNetsSpecTable.map( ( filtersSpec, i ) => {
       let testNeuralNets = new NeuralNets_ShareInput.Base();
-      let config = new NeuralNets_ShareInput.Config( height, width, canvasChannelCount, ...filtersSpec );
+      let config = new NeuralNets_ShareInput.Config(
+        height, width, canvasChannelCount, ...filtersSpec );
       testNeuralNets.init( config );
       return testNeuralNets;
     });
@@ -190,9 +198,12 @@ class HeightWidthDepth_Base {
    * Generate all test cases' performance profile.
    * Testing whether the results of different implementation are the same.
    *
-   * @yield {ValueMax.Percentage.Aggregate or Object[]}
+   * @yield {ValueMax.Percentage.Aggregate}
    *   Yield ( value = progressToYield ) when ( done = false ).
-   *   Yield ( value = array of profile infomation { title, backendName, newBytes, newTensors, peakBytes, kernelMs, wallMs } ) when ( done = true ).
+   *
+   * @yield {Object[]}
+   *   Yield ( value = array of profile infomation { title, backendName,
+   * newBytes, newTensors, peakBytes, kernelMs, wallMs } ) when ( done = true ).
    */
   async * profilesGenerator() {
     let resultProfiles = [];
@@ -201,7 +212,8 @@ class HeightWidthDepth_Base {
     // Second pass is for performance profiling.
 
     if ( !this.dataTensor3d )
-      this.dataTensor3d = tf.browser.fromPixels( this.testCnavas, this.canvasChannelCount );
+      this.dataTensor3d = tf.browser.fromPixels(
+        this.testCnavas, this.canvasChannelCount );
 
     let tensor_FromPixels;
     {
@@ -209,16 +221,20 @@ class HeightWidthDepth_Base {
       yield* this.progressAdvanceYield();
 
       if ( 3 != tensor_FromPixels.rank )
-        throw Error( `${tensor_FromPixels.rank} != 3` );  // tensor3d
+        throw Error(
+          `${tensor_FromPixels.rank} != 3` );  // tensor3d
 
       if ( tensor_FromPixels.shape[ 0 ] != this.height )
-        throw Error( `fromPixels Height ${tensor_FromPixels.shape[ 0 ]} != ${this.height}` );
+        throw Error(
+          `fromPixels Height ${tensor_FromPixels.shape[ 0 ]} != ${this.height}` );
 
       if ( tensor_FromPixels.shape[ 1 ] != this.width )
-        throw Error( `fromPixels Width ${tensor_FromPixels.shape[ 1 ]} != ${this.width}` );
+        throw Error(
+          `fromPixels Width ${tensor_FromPixels.shape[ 1 ]} != ${this.width}` );
 
-      if ( tensor_FromPixels.shape[ 2 ] != 4 ),
-        throw Error( `fromPixels Depth ${tensor_FromPixels.shape[ 2 ]} != 4` );  // 4 channels.
+      if ( tensor_FromPixels.shape[ 2 ] != 4 )
+        throw Error(
+          `fromPixels Depth ${tensor_FromPixels.shape[ 2 ]} != 4` );  // 4 channels.
 
       tensor_FromPixels.dispose();
     }
@@ -238,7 +254,8 @@ class HeightWidthDepth_Base {
 //       if ( !tf.util.arraysEqual( quarterTensor_3x3_Stride2.shape, quarterTensor_ResizeBilinear.shape ) )
 //         throw Error( `DepthwiseConv2d_3x3_Stride2() != ResizeBilinear()` );
 
-      if ( !tf.util.arraysEqual( tensor_ResizeBilinear.shape, tensor_ResizeNearestNeighbor.shape ) )
+      if ( !tf.util.arraysEqual(
+              tensor_ResizeBilinear.shape, tensor_ResizeNearestNeighbor.shape ) )
         throw Error( `ResizeBilinear() != ResizeNearestNeighbor()` );
 
       tensor_ResizeNearestNeighbor.dispose();
@@ -253,10 +270,13 @@ class HeightWidthDepth_Base {
       testNeuralNets.apply_sync( this.testCnavas, tensorArray );
       let t = tensorArray[ 0 ];  // Assume only one neural network.
 
-      let originalChannelCount = ( t.shape[ 2 ] / testNeuralNets.neuralNetworkArray[ 0 ].totalChannelExpansionFactor );
+      let originalChannelCount
+        = ( t.shape[ 2 ]
+              / testNeuralNets.neuralNetworkArray[ 0 ].totalChannelExpansionFactor );
 
       if ( !tf.util.arraysEqual(
-             [ t.shape[ 0 ], t.shape[ 1 ], originalChannelCount ], tensor_ResizeBilinear.shape ) )
+             [ t.shape[ 0 ], t.shape[ 1 ], originalChannelCount ],
+             tensor_ResizeBilinear.shape ) )
         throw Error( `Shape ${testNeuralNets.name}() != ResizeBilinear()` );
 
       t.dispose();
@@ -268,13 +288,17 @@ class HeightWidthDepth_Base {
     // The above codes also compiles the codes.
     // Since the codes compiled, their execute time can be tested now.
 
-    resultProfiles.push( await this.logProfile( "FromPixels", this.test_FromPixels.bind( this ) ) );
+    resultProfiles.push(
+      await this.logProfile( "FromPixels", this.test_FromPixels.bind( this ) ) );
     yield* this.progressAdvanceYield();
 
-    resultProfiles.push( await this.logProfile( "ResizeNearestNeighbor", this.test_ResizeNearestNeighbor.bind( this ) ) );
+    resultProfiles.push(
+      await this.logProfile(
+        "ResizeNearestNeighbor", this.test_ResizeNearestNeighbor.bind( this ) ) );
     yield* this.progressAdvanceYield();
 
-    resultProfiles.push( await this.logProfile( "ResizeBilinear", this.test_ResizeBilinear.bind( this ) ) );
+    resultProfiles.push(
+      await this.logProfile( "ResizeBilinear", this.test_ResizeBilinear.bind( this ) ) );
     yield* this.progressAdvanceYield();
 
     // All test filters in array.
@@ -284,7 +308,8 @@ class HeightWidthDepth_Base {
       // Note: Do not return the result tensor so that need not to dispose them.
       resultProfiles.push(
         await this.logProfile(
-          testNeuralNets.neuralNetworkArray[ 0 ].structure, testNeuralNets.apply_sync.bind( testNeuralNets, this.testCnavas, null ) ) );
+          testNeuralNets.neuralNetworkArray[ 0 ].structure,
+          testNeuralNets.apply_sync.bind( testNeuralNets, this.testCnavas, null ) ) );
 
       yield* this.progressAdvanceYield();
     }
@@ -303,7 +328,8 @@ class HeightWidthDepth_Base {
    * Collect all test cases' performance profile.
    *
    * @return {Object[]}
-   *   Return array of profile infomation { title, backendName, newBytes, newTensors, peakBytes, kernelMs, wallMs }.
+   *   Return array of profile infomation { title, backendName, newBytes,
+   * newTensors, peakBytes, kernelMs, wallMs }.
    */
   async generateProfiles() {
     let tensorMemoryBefore = tf.memory();
@@ -313,7 +339,9 @@ class HeightWidthDepth_Base {
     let delayMilliseconds = 0;
     let resultProfiles = await PartTime.forOf(
       generator,
-      ( valueMax ) => { this.progressReceiver.setValueMax( valueMax ); }, // Report progress to UI.
+
+      // Report progress to UI.
+      ( valueMax ) => { this.progressReceiver.setValueMax_by_ValueMax( valueMax ); },
       delayMilliseconds
     );
 
@@ -324,18 +352,21 @@ class HeightWidthDepth_Base {
     // Detect memory leak.
     if ( tensorMemoryAfter.numBytes != tensorMemoryBefore.numBytes )
       throw Error(
-        `tensorMemoryAfter.numBytes (${tensorMemoryAfter.numBytes}) != tensorMemoryBefore.numBytes (${tensorMemoryBefore.numBytes})` );
+          `tensorMemoryAfter.numBytes (${tensorMemoryAfter.numBytes}) != `
+        + `tensorMemoryBefore.numBytes (${tensorMemoryBefore.numBytes})` );
 
     return resultProfiles;
   }
 
   /**
    * @return {Object}
-   *   Return profile infomation { title, backendName, newBytes, newTensors, peakBytes, kernelMs, wallMs }.
+   *   Return profile infomation { title, backendName, newBytes, newTensors,
+   * peakBytes, kernelMs, wallMs }.
    */
   async logProfile( title, func ) {
 
-    // Get backend name before the following promise. Otherwise, it may be changed when the function been executed.
+    // Get backend name before the following promise. Otherwise, it may be
+    // changed when the function been executed.
     let backendName = tf.getBackend();
 
     let profile = await tf.profile( func );
