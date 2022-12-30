@@ -180,10 +180,18 @@ class NeuralNet_Base extends Recyclable.Root {
       ;
 
     let progressRoot = progressParent.root_get();
-    let progressToAdvance = progressParent.child_add( ValueMax.Percentage.Concrete.Pool.get_or_create_by( progressMax ) ); // For parameters extracting.
-    let progressForEmbedding = progressParent.child_add( ValueMax.Percentage.Aggregate.Pool.get_or_create_by() ); // for embedding extracting.
-    let progressForStages = progressParent.child_add( ValueMax.Percentage.Aggregate.Pool.get_or_create_by() ); // for stage0, stage1, stage2, ... 
-    let progressForBlockFinal = progressParent.child_add( ValueMax.Percentage.Aggregate.Pool.get_or_create_by() ); // for blockFinal.
+
+    let progressToAdvance = progressParent.child_add(
+      ValueMax.Percentage.Concrete.Pool.get_or_create_by( progressMax ) ); // For parameters extracting.
+
+    let progressForEmbedding = progressParent.child_add(
+      ValueMax.Percentage.Aggregate.Pool.get_or_create_by() ); // for embedding extracting.
+
+    let progressForStages = progressParent.child_add(
+      ValueMax.Percentage.Aggregate.Pool.get_or_create_by() ); // for stage0, stage1, stage2, ... 
+
+    let progressForBlockFinal = progressParent.child_add(
+      ValueMax.Percentage.Aggregate.Pool.get_or_create_by() ); // for blockFinal.
 
     let stageParamsCreator;
     try {
