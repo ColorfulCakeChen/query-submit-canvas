@@ -786,14 +786,6 @@ async function* testerBackendAll( progressParent,
 }
 
 /** */
-function InfoButton_onClick( event ) {
-
-//!!! ...unfinished... (2022/12/30)
-
-
-}
-
-/** */
 function TestButton_onClick( event ) {
   console.log("NeuralWorker testing...");
   const delayMilliseconds = 100;
