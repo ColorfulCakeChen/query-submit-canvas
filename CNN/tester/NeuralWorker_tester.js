@@ -588,7 +588,8 @@ class HeightWidthDepth {
             // So they can be checked.
             let bFill = testCase.NeuralWorker_Mode_bFill;
             if ( !bFill ) {
-              resultFloat32Array = testCase.NeuralNet_try_result( this.testCanvas );
+//!!! (2022/12/30 Temp Remarked) For debug error message.
+//              resultFloat32Array = testCase.NeuralNet_try_result( this.testCanvas );
             }
 
             // First time test the case. Release all other test cases' neural networks
