@@ -35,8 +35,8 @@ function sleep( delayMilliseconds = 0 ) {
  * ( generator.next().done == true ). The generator will generate in part-time.
  * Just like a for..of loop but executes in part-time.
  *
- * This seems like for-await-of. This could accept synchronus or asynchronus generator,
- * while for-await-of only accepts asynchronus generator.
+ * This is a little similar to for-await-of. This could accept synchronus or
+ * asynchronus generator, while for-await-of only accepts asynchronus generator.
  *
  *
  * @param {iterator} generator
