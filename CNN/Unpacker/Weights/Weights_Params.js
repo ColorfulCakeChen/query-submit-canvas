@@ -108,14 +108,20 @@ import { Base } from "./Weights_Base.js";
     this.parameterCountExtracted = 0;
     for ( let i = 0; i < parameterCount; ++i ) {
       let paramDesc = paramDescSequenceArray.array[ i ];
-      let initValue = this.initValueArray[ i ] = restArgs[ i ]; // Collect all specified parameters.
 
-      // Collect what parameters should be extracted from input array (rather than use values in the .initValueArray).
-      // At the same time, its array index (into inputWeightArray) will also be recorded for extracting its value in the future.
+      // Collect all specified parameters.
+      let initValue = this.initValueArray[ i ] = restArgs[ i ];
+
+      // Collect what parameters should be extracted from input array (rather than
+      // use values in the .initValueArray). At the same time, its array index
+      // (into inputWeightArray) will also be recorded for extracting its value
+      // in the future.
       {
-        // A null value means it should be extracted from inputWeightArray. (i.e. by evolution)
+        // A null value means it should be extracted from inputWeightArray. (i.e.
+        // by evolution)
         //
-        // Note: This is different from ( !value ). If value is 0, ( !value ) is true but ( null == value ) is false.
+        // Note: This is different from ( !value ). If value is 0, ( !value ) is
+        //       true but ( null == value ) is false.
         //
         if ( null == initValue ) {
           // Record the index (into inputWeightArray[]).
@@ -123,8 +129,12 @@ import { Base } from "./Weights_Base.js";
           this.finalValueArray[ i ] = undefined;
           ++this.parameterCountExtracted;
 
-        } else {  // A non-null value means it is the parameter's value (which should also be adjusted).
-          this.inputWeightArrayIndexArray[ i ] = undefined; // Indicates this parameter needs not be extracted from inputWeightArray.
+        // A non-null value means it is the parameter's value (which should also
+        // be adjusted).
+        } else {
+          // Mark as undefined to indicate this parameter needs not be extracted
+          // from inputWeightArray.
+          this.inputWeightArrayIndexArray[ i ] = undefined;
           let adjustedValue = paramDesc.valueDesc.range.adjust( initValue );
           this.finalValueArray[ i ] = adjustedValue;
         }
@@ -172,15 +182,19 @@ import { Base } from "./Weights_Base.js";
 
     // Copy the adjusted extracted weights.
     //
-    // Do not modify the original array data, because the original data is necessary when backtracking (to try
-    // another neural network layer configuration.
+    // Do not modify the original array data, because the original data is necessary
+    // when backtracking (to try another neural network layer configuration.
 
-    // Extract (by evolution) values from array, convert them, and put back into copied array and copied map.
+    // Extract (by evolution) values from array, convert them, and put back into
+    // copied array and copied map.
     const parameterCount = this.parameterCount;
     for ( let i = 0; i < parameterCount; ++i ) {
       let inputWeightArrayIndex = this.inputWeightArrayIndexArray[ i ];
+
+      // Since this parameter has a specified value. No need to be extracted from
+      // inputWeightArray. (i.e. not by evolution)
       if ( inputWeightArrayIndex == undefined )
-        continue; // This parameter has a specified value. No need to be extracted from inputWeightArray. (i.e. not by evolution)
+        continue;
 
       let absoluteArrayIndex = weightElementOffsetBegin + inputWeightArrayIndex;
       let extractedValue = inputWeightArray[ absoluteArrayIndex ];
