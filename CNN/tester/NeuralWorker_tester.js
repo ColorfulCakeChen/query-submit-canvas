@@ -1,10 +1,12 @@
-export { tester };
+//export { tester };
 
 import * as Pool from "../util/Pool.js";
 import * as Recyclable from "../util/Recyclable.js";
-import * as ValueMax from "../util/ValueMax.js";
+import * as PartTime from "../util/PartTime.js";
 import * as RandTools from "../util/RandTools.js";
+import * as ScriptLoader from "../util/ScriptLoader.js";
 import * as TensorTools from "../util/TensorTools.js";
+import * as ValueMax from "../util/ValueMax.js";
 import * as ValueDesc from "../Unpacker/ValueDesc.js";
 import * as Weights from "../Unpacker/Weights.js";
 import * as NeuralNet from "../Conv/NeuralNet.js";
@@ -13,6 +15,14 @@ import * as TestParams from "../jsPerf/Ref/TestParams.js";
 import * as ImageSourceBag from "../jsPerf/Ref/ImageSourceBag.js";
 import * as NumberImage from "../jsPerf/Ref/NumberImage.js";
 import * as HTMLTable from "../Display/HTMLTable.js";
+
+window.addEventListener( "load", event => {
+
+  // Note: NeuralWorker_Body will also load tensorflow.js by itself.
+  ScriptLoader
+    .createPromise( NeuralWorker.Common.tensorflowJsURL ).then( tester_byUI );
+
+});
 
 /**
  * 
@@ -718,9 +728,6 @@ async function* tester( progressParent,
   let progress_NeuralWorker_tester_webgl = progressParent.child_add(
     ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
 
-// let progressReceiver
-//   = new ValueMax.Receiver.HTMLProgress.createByTitle_or_getDummy( "TestProgressBar" );
-
   {
     let bAscent_or_Descent;
     bAscent_or_Descent = false; // Descent
@@ -743,5 +750,65 @@ async function* tester( progressParent,
       "cpu", bAscent_or_Descent,
     );
   }
+
+}
+
+/** */
+function tester_byUI() {
+  console.log("NeuralWorker testing...");
+  let delayMilliseconds = 100;
+
+  let pool_all_issuedCount_before = Pool.All.issuedCount;
+
+  // Aggregate all progress about util_tester.
+  let progress = ValueMax.Percentage.Aggregate.Pool.get_or_create_by();
+
+  let progress_NeuralWorker_tester = progress.child_add(
+    ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
+
+  let progressReceiver
+    = new ValueMax.Receiver.HTMLProgress.createByTitle_or_getDummy( "TestProgressBar" );
+
+//!!! ...unfinished... (2022/12/30)
+
+  let tester = tester( progress_NeuralWorker_tester,
+
+//!!! ...unfinished... (2022/12/30)
+// Extract parameters from UI.
+
+  );
+    
+
+  let testPromise = PartTime.forOf(
+    tester,
+    ( progressRoot ) => {
+      progressReceiver.setValueMax( // Report progress to UI.
+        progressRoot.valuePercentage, progressRoot.maxPercentage );
+    },
+    () => { // Release resource.
+
+      if ( 100 != progress.valuePercentage )
+        throw Error( `NeuralWorker_tester.tester_byUI(): `
+          + `Progress (${progress.valuePercentage}) should be 100 `
+          + `after testing done.`);
+
+      progress.disposeResources_and_recycleToPool();
+      progress = null;
+
+      Pool.Asserter.assert_Pool_issuedCount( "NeuralWorker_tester.tester_byUI()",
+        pool_all_issuedCount_before );
+    },
+    delayMilliseconds
+  );
+
+  testPromise.then( value => {
+    console.log( "NeuralWorker testing... Done." );
+    //progressReceiver.informDone(r); // Inform UI progress done.
+
+  }).catch( reason => {
+    alert( reason );
+    console.error( reason );
+    //debugger;
+  });
 
 }
