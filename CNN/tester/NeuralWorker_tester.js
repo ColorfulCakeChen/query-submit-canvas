@@ -622,7 +622,7 @@ class HeightWidthDepth {
                 progressToAdvance.value_advance(); // Every performance test complete.
                 yield progressRoot;
               }
-              g_Controls.performanceTable_htmlTableOperatorhtmlTableOperator
+              g_Controls.performanceTable_htmlTableOperator
                 .Body_addRow( [
                   backendName, timeInfo.name, timeInfo.countPerSecond
                 ] );
