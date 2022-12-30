@@ -1,4 +1,3 @@
-export { init, disposeResources };
 export { tester };
 
 import * as Pool from "../util/Pool.js";
