@@ -40,14 +40,20 @@
           <input id="output_channelCount_per_alignment_Text" type="text" maxlength="4" size="4" value="6"/>
         </td>
       </tr>
+
+      <tr>
+        <td id="Info_TextArea" colspan="3">
+        <!-- textarea  rows="2" cols="100" readonly></textarea> -->
+        </td>
+      </tr>
+
     </table>
 
     <div>
       <button id="TestButton" type="button" disabled>Test</button>
-      <textarea id="Info_TextArea" rows="2" cols="150" readonly></textarea>
+      <progress title="TestProgressBar" max="100" value="0"></progress>
     </div>
 
-    <progress title="TestProgressBar" max="100" value="0"></progress>
     <table id="NeuralWorker_Performance_Table"></table>
     <script type="module" src="./NeuralWorker_tester.js"></script>
   </body>
