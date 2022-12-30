@@ -88,7 +88,7 @@ import { Base } from "./Weights_Base.js";
     super( ...restArgs );
     Weights_Params.setAsConstructor_self.call( this,
       paramDescSequenceArray, ...restArgs );
-   }
+  }
 
   /** @override */
   static setAsConstructor( paramDescSequenceArray, ...restArgs ) {
