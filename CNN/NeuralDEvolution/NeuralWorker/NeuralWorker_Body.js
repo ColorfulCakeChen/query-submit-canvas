@@ -139,8 +139,9 @@ class NeuralWorker_Body extends AsyncWorker.Body {
         if ( false == bInitOk )
           throw Error( `NeuralWorker_Body.NeuralNet_create(): `
             + `Failed to initialize neuralNetArray[ ${i} ] object. `
-            + `Progress ( ${progress.valuePercentage} ). `
-            + `${neuralNetParams}`
+            + `Progress ( ${progress.valuePercentage} ), `
+            + `neuralNetParams ( ${neuralNetParams} ), `
+            + `neuralNet( ${neuralNet} ).`
           );
 
         progress.disposeResources_and_recycleToPool();
