@@ -713,7 +713,7 @@ async function* testerBackend( progressParent,
  * progressParent.root_get() will be returned when every time yield.
  *
  */
-async function* tester( progressParent,
+async function* testerBackendAll( progressParent,
   input_height = 72,
   input_width = 128,
 
@@ -771,7 +771,7 @@ function tester_byUI() {
 
 //!!! ...unfinished... (2022/12/30)
 
-  let tester = tester( progress_NeuralWorker_tester,
+  let tester = testerBackendAll( progress_NeuralWorker_tester,
 
 //!!! ...unfinished... (2022/12/30)
 // Extract parameters from UI.
