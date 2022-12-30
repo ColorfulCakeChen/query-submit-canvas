@@ -492,7 +492,7 @@ class HeightWidthDepth {
       = this.neuralWorkerProxies.ImageData_process_async( imageData );
 
     if ( imageData.data.length != 0 )
-      throw Error( `jsPerf_NeuralWorker.testNeuralWorker_ByName(): `
+      throw Error( `NeuralWorker_tester.testNeuralWorker_ByName(): `
         + `imageData.data.length ( ${imageData.data.length} ) should be 0 `
         + `after transferred to worker.`
       );
@@ -659,18 +659,18 @@ class HeightWidthDepth {
         let memoryInfo_testCorrectness_after = tf.memory();
 
         if ( memoryInfo_testCorrectness_after.numTensors != memoryInfo_testCorrectness_before.numTensors )
-          throw Error( `jsPerf_NeuralWorker.tester() memory leak. `
+          throw Error( `NeuralWorker_tester.tester() memory leak. `
             + `result tensor count (${memoryInfo_testCorrectness_after.numTensors}) `
             + `should be (${memoryInfo_testCorrectness_before.numTensors} `
           );
       }
 
       Pool.Asserter.assert_Pool_issuedCount(
-        "jsPerf_NeuralWorker.tester()", pool_all_issuedCount_before );
+        "NeuralWorker_tester.tester()", pool_all_issuedCount_before );
 
     } catch ( e ) {
       let backendName = tf.getBackend();
-      let msg = `jsPerf_NeuralWorker.tester(): `
+      let msg = `NeuralWorker_tester.tester(): `
         + `backendName=${backendName}, `
         + `testCaseId=${testCase.testCaseId}, testCaseName=${testCase.testCaseName}. `
         + `${e}`;
