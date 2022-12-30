@@ -85,14 +85,14 @@ import { Base } from "./Weights_Base.js";
    *
    */
   constructor( paramDescSequenceArray, ...restArgs ) {
-    super();
+    super( ...restArgs );
     Weights_Params.setAsConstructor_self.call( this,
       paramDescSequenceArray, ...restArgs );
    }
 
   /** @override */
   static setAsConstructor( paramDescSequenceArray, ...restArgs ) {
-    super.setAsConstructor();
+    super.setAsConstructor( ...restArgs );
     Weights_Params.setAsConstructor_self.call( this,
       paramDescSequenceArray, ...restArgs );
     return this;
