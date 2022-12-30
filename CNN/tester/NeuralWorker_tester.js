@@ -221,7 +221,10 @@ class PerformanceTestCase extends Recyclable.Root {
         g_Controls.Info_TextArea.textContent = strWeightCountInfo;
 
         if ( false == bInitOk )
-          throw Error( `Failed to initialize neuralNet object. ${neuralNet}` );
+          throw Error( `Failed to initialize neuralNet object. `
+            + `neuralNetParams ( ${neuralNetParams} ), `
+            + `neuralNet ( ${neuralNet} ).`
+          );
 
         if ( 100 != progress.valuePercentage )
           throw Error(
