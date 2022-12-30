@@ -85,14 +85,18 @@ import { Base } from "./Weights_Base.js";
    *
    */
   constructor( paramDescSequenceArray, ...restArgs ) {
-    super( ...restArgs );
+//!!! (2022/12/30 Remarked) parent class' data member should be init by other methods.
+//    super( ...restArgs );
+    super();
     Weights_Params.setAsConstructor_self.call( this,
       paramDescSequenceArray, ...restArgs );
   }
 
   /** @override */
   static setAsConstructor( paramDescSequenceArray, ...restArgs ) {
-    super.setAsConstructor( ...restArgs );
+//!!! (2022/12/30 Remarked) parent class' data member should be init by other methods.
+//    super.setAsConstructor( ...restArgs );
+    super.setAsConstructor();
     Weights_Params.setAsConstructor_self.call( this,
       paramDescSequenceArray, ...restArgs );
     return this;
