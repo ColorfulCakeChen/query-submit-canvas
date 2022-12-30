@@ -8,7 +8,8 @@ import * as Float12_tester from "./Float12_tester.js";
 import * as Uint12_tester from "./Uint12_tester.js";
 import * as GSheets_tester from "./GSheets_tester.js";
 import * as AsyncWorker_tester from "./AsyncWorker_tester.js";
-import * as NeuralWorker_tester from "./NeuralWorker_tester.js";
+//!!! (2022/12/30 Remarked) Moved to itself's tester html.
+//import * as NeuralWorker_tester from "./NeuralWorker_tester.js";
 import * as NeuralOrchestra_tester from "./NeuralOrchestra_tester.js";
 
 window.addEventListener( "load", event => {
@@ -19,9 +20,10 @@ window.addEventListener( "load", event => {
 
 });
 
-// const gTestNeuralWorker = false;
-//!!! (2022/12/28 Temp Remarked) For speed up other testing.
-const gTestNeuralWorker = true;
+//!!! (2022/12/30 Remarked) Moved to itself's tester html.
+// // const gTestNeuralWorker = false;
+// //!!! (2022/12/28 Temp Remarked) For speed up other testing.
+// const gTestNeuralWorker = true;
 
 function test() {
   console.log("util testing...");
@@ -47,11 +49,12 @@ function test() {
   let progress_AsyncWorker_tester = progress.child_add(
     ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
 
-  let progress_NeuralWorker_tester;
-  if ( gTestNeuralWorker ) {
-    progress_NeuralWorker_tester = progress.child_add(
-      ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
-  }
+//!!! (2022/12/30 Remarked) Moved to itself's tester html.
+//   let progress_NeuralWorker_tester;
+//   if ( gTestNeuralWorker ) {
+//     progress_NeuralWorker_tester = progress.child_add(
+//       ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
+//   }
 
   let progress_NeuralOrchestra_tester = progress.child_add(
     ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
@@ -67,9 +70,10 @@ function test() {
     yield* Float12_tester.tester( progress_Float12_tester );
     yield* Base64ToUint8Array_tester.tester( progress_Base64ToUint8Array_tester );
 
-    if ( gTestNeuralWorker ) {
-      yield* NeuralWorker_tester.tester( progress_NeuralWorker_tester );
-    }
+//!!! (2022/12/30 Remarked) Moved to itself's tester html.
+//     if ( gTestNeuralWorker ) {
+//       yield* NeuralWorker_tester.tester( progress_NeuralWorker_tester );
+//     }
 
     yield* AsyncWorker_tester.tester( progress_AsyncWorker_tester );
     yield* GSheets_tester.tester( progress_GSheets_tester );
