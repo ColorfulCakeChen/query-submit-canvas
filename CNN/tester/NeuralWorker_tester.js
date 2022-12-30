@@ -201,6 +201,8 @@ class PerformanceTestCase extends Recyclable.Root {
       let progress, neuralNet;
       let outputTensor3d;
       try {
+        PerformanceTestCase.randomTestWeightArray_create();
+
         let neuralNetParams = NeuralNet.Params.get_or_create_by_NeuralNetParamsBase(
           this.neuralNetParamsBase );
 
