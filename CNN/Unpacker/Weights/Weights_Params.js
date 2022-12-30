@@ -10,41 +10,51 @@ import { Base } from "./Weights_Base.js";
  * The parameters for the weights of a neural network layer.
  *
  * @member {number} weightElementOffsetBegin
- *   The beginning position (i.e. array index) to extract from inputWeightsArray. If this value is negative, the extraction will
- * fail (i.e. ( bInitOk == false ) ).
+ *   The beginning position (i.e. array index) to extract from inputWeightsArray. If
+ * this value is negative, the extraction will fail (i.e. ( bInitOk == false ) ).
  *
  * @member {number} weightElementOffsetEnd
- *   The ending position (i.e. array index) after extracting from inputWeightsArray. It is not inclusive and can be used as the
- * beginning position of next (another) extraction. It is meaningful only if ( bInitOk == true ).
+ *   The ending position (i.e. array index) after extracting from inputWeightsArray.
+ * It is not inclusive and can be used as the beginning position of next (another)
+ * extraction. It is meaningful only if ( bInitOk == true ).
  *
  * @member {number} weightElementExtractedCount
  *   The same as parameterCountExtracted.
  *
  * @member {ParamDesc.SequenceArray} paramDescSequenceArray
- *   An array describes how many and what kinds of parameters should be extracted. It will be referenced (i.e. kept without cloned)
- * and will not be released by this ParamsInfo object.
+ *   An array describes how many and what kinds of parameters should be extracted.
+ * It will be referenced (i.e. kept without cloned) and will not be released by
+ * this ParamsInfo object.
  *
  * @member {number[]} initValueArray
- *   An number array records the parameter values which is specified by ...restArgs of constructor. If a parameter value is null,
- * it means the parameter should be extracted from inputWeightArray (i.e. by evolution). Otherwise, the parameter value is by
- * specifying (from constructor). This array itself is indexed by ParamDesc.Xxx.seqId.
+ *   An number array records the parameter values which is specified by ...restArgs
+ * of constructor. If a parameter value is null, it means the parameter should be
+ * extracted from inputWeightArray (i.e. by evolution). Otherwise, the parameter
+ * value is by specifying (from constructor). This array itself is indexed by
+ * ParamDesc.Xxx.seqId.
  *
  * @member {number[]} inputWeightArrayIndexArray
- *   A number array records where to extract parameters which is null in .initValueArray[]. Every element is the relative
- * array index into inputWeightArray[ weightElementOffsetBegin ]. This array itself is indexed by ParamDesc.Xxx.seqId.
+ *   A number array records where to extract parameters which is null in
+ * .initValueArray[]. Every element is the relative array index into
+ * inputWeightArray[ weightElementOffsetBegin ]. This array itself is indexed
+ * by ParamDesc.Xxx.seqId.
  *
  * @member {number[]} finalValueArray
- *   An number array records the parameter values which combined both by specifying (from constructor) and by evolution (from
- * inputWeightArray[]) and adjusted by ParamDesc.valueDesc.range.adjust(). This array itself is indexed by ParamDesc.Xxx.seqId.
+ *   An number array records the parameter values which combined both by specifying
+ * (from constructor) and by evolution (from inputWeightArray[]) and adjusted by
+ * ParamDesc.valueDesc.range.adjust(). This array itself is indexed by
+ * ParamDesc.Xxx.seqId.
  *
  * @member {number} parameterCountExtracted
- *   The count of the parameters extracted from inputWeightArray (i.e. by evolution). It should be the same as .weightElementExtractedCount.
- * Only meaningful if Params.init() successfully.
+ *   The count of the parameters extracted from inputWeightArray (i.e. by evolution).
+ * It should be the same as .weightElementExtractedCount. Only meaningful if
+ * Params.init() successfully.
  *
  * @member {number} parameterCount
- *   The count of the all parameters (both directly given (i.e. by specifying) and extracted from inputWeightArray (i.e. by evolution) ).
- * It should be always the same as ( aParamDescSequenceArray.array.length ). This is the total parameter count provided by this object if
- * Params.init() successfully.
+ *   The count of the all parameters (both directly given (i.e. by specifying) and
+ * extracted from inputWeightArray (i.e. by evolution) ). It should be always the
+ * same as ( aParamDescSequenceArray.array.length ). This is the total parameter
+ * count provided by this object if Params.init() successfully.
  *
  * @member {boolean} bInitOk
  *   If .init() success, it will be true.
@@ -57,18 +67,21 @@ import { Base } from "./Weights_Base.js";
   /**
    * Used as default Weights.Params provider for conforming to Recyclable interface.
    */
-  static Pool = new Pool.Root( "Weights.Params.Pool", Weights_Params, Weights_Params.setAsConstructor );
+  static Pool = new Pool.Root( "Weights.Params.Pool",
+    Weights_Params, Weights_Params.setAsConstructor );
 
   /**
    *
    * @param {any[]} restArgs
-   *   Describe the specified parameters value. They should be arranged as the order of paramDescSequenceArray. For every element:
+   *   Describe the specified parameters value. They should be arranged as the order
+   * of paramDescSequenceArray. For every element:
    *
-   *     - If ( null != value ), the returned value of paramDesc.range.adjust( value ) will be used as the parameter's
-   *         value. (i.e. by specifying)
+   *   - If ( null != value ), the returned value of paramDesc.range.adjust( value )
+   *       will be used as the parameter's value. (i.e. by specifying)
    *
-   *     - If ( null == value ), the parameter will be extracted from inputWeightArray. The returned value of
-   *         paramDesc.valueDesc.range.adjust( extractedValue ) will be used as the parameter's value. (i.e. by evolution)
+   *   - If ( null == value ), the parameter will be extracted from inputWeightArray.
+   *       The returned value of paramDesc.valueDesc.range.adjust( extractedValue )
+   *       will be used as the parameter's value. (i.e. by evolution)
    *
    */
   constructor( paramDescSequenceArray, ...restArgs ) {
