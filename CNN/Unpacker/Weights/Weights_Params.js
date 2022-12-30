@@ -185,7 +185,9 @@ import { Base } from "./Weights_Base.js";
   init( inputWeightArray, weightElementOffsetBegin ) {
 
     // Determine and check input weight array bounds.
-    let bBaseInitOk = super.init( inputWeightArray, weightElementOffsetBegin, this.parameterCountExtracted );
+    let bBaseInitOk = super.init(
+      inputWeightArray, weightElementOffsetBegin, this.parameterCountExtracted );
+
     if ( !bBaseInitOk )
       return false;
 

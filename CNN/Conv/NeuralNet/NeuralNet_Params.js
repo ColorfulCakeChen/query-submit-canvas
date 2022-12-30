@@ -157,7 +157,8 @@ class NeuralNet_Params extends Weights.Params( ParamsBase ) {
     );
 
 //!!! ...unfinished... (2022/12/30)
-// should do some thing like init()'s setup data member.
+// Q: should do some thing like init()'s setup data member.
+// A: No need. Because there will be some one call init().
 
     return neuralNetParams;
   }
