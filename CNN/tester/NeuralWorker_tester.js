@@ -703,6 +703,8 @@ class HeightWidthDepth {
  *
  */
 async function* testerBackend( progressParent,
+  largerFactor,
+
   input_height,
   input_width,
 
@@ -717,6 +719,7 @@ async function* testerBackend( progressParent,
   // Using mobile phone's resolution ( 1080 * 2160 ) will crash the computer.
   // Using ( 1 / 15 ) of computer screen ( 1080 * 1920 ) (i.e. ( 72 * 128 )).
   let testSet = new HeightWidthDepth(
+    largerFactor,
     input_height, input_width, depth,
     vocabularyChannelCount,
     blockCountTotalRequested,

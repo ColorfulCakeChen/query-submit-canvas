@@ -85,8 +85,8 @@ import { Base } from "./Weights_Base.js";
    *
    */
   constructor( paramDescSequenceArray, ...restArgs ) {
-//!!! (2022/12/30 Remarked) parent class' data member should be init by other methods.
-//    super( ...restArgs );
+    // Note: The restArgs is not passed to parent class here. The parent class'
+    //       data members should be initialized by other methods.
     super();
     Weights_Params.setAsConstructor_self.call( this,
       paramDescSequenceArray, ...restArgs );
@@ -94,8 +94,8 @@ import { Base } from "./Weights_Base.js";
 
   /** @override */
   static setAsConstructor( paramDescSequenceArray, ...restArgs ) {
-//!!! (2022/12/30 Remarked) parent class' data member should be init by other methods.
-//    super.setAsConstructor( ...restArgs );
+    // Note: The restArgs is not passed to parent class here. The parent class'
+    //       data members should be initialized by other methods.
     super.setAsConstructor();
     Weights_Params.setAsConstructor_self.call( this,
       paramDescSequenceArray, ...restArgs );

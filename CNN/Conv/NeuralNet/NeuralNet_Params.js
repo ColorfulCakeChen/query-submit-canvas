@@ -155,11 +155,6 @@ class NeuralNet_Params extends Weights.Params( ParamsBase ) {
       neuralNetParamsBase.output_channelCount,
       neuralNetParamsBase.bKeepInputTensor
     );
-
-//!!! ...unfinished... (2022/12/30)
-// Q: should do some thing like init()'s setup data member.
-// A: No need. Because there will be some one call init().
-
     return neuralNetParams;
   }
 
