@@ -23,15 +23,14 @@ let g_Controls = {
   blockCountTotalRequested_Text: null,
   output_channelCount_per_alignment_Text: null,
 
-  InfoButton: null,
   TestButton: null,
+  Info_TextArea: null,
 };
 
 window.addEventListener( "load", event => {
 
   // Note: NeuralWorker_Body will also load tensorflow.js by itself.
   ScriptLoader.createPromise( NeuralWorker.Common.tensorflowJsURL ).then( () => {
-    g_Controls.InfoButton.disabled = false;
     g_Controls.TestButton.disabled = false;
   });
 
@@ -39,7 +38,6 @@ window.addEventListener( "load", event => {
     g_Controls[ p ] = document.getElementById( p );
   }
 
-  g_Controls.InfoButton.addEventListener( "click", InfoButton_onClick );
   g_Controls.TestButton.addEventListener( "click", TestButton_onClick );
 });
 
@@ -212,7 +210,10 @@ class PerformanceTestCase extends Recyclable.Root {
           PerformanceTestCase.randomTestWeightArray, 0, neuralNetParams );
 
         let strWeightCountInfo = neuralNet.toString_WeightCount();
-        console.log( `NeuralNet.${this.testCaseName}: ${strWeightCountInfo}.` );
+        let strWeightCountInfoLonger
+          = `NeuralNet.${this.testCaseName}: ${strWeightCountInfo}.`;
+        console.log( strWeightCountInfoLonger );
+        g_Cotrols.Info_TextArea.value = strWeightCountInfoLonger;
 
         if ( false == bInitOk )
           throw Error( `Failed to initialize neuralNet object. ${neuralNet}` );
@@ -282,6 +283,10 @@ class PerformanceTestCase extends Recyclable.Root {
 class HeightWidthDepth {
 
   /**
+   * @param {number} largerFactor
+   *   Simulate the real input size
+   * as ( largerFactor * height ) * ( largerFactor * width ).
+   *
    * @param {number} height            image height
    * @param {number} width             image width
    * @param {number} depth             image channel count
@@ -297,6 +302,8 @@ class HeightWidthDepth {
    *   - If false, test from smallest NeuralWorker.Mode.Singleton.Ids.
    */
   constructor(
+    largerFactor,
+
     height, width, depth,
 
     vocabularyChannelCount,
@@ -306,6 +313,8 @@ class HeightWidthDepth {
     backendName, bAscent_or_Descent ) {
 
     this.disposeResources();
+
+    this.largerFactor = largerFactor;
 
     this.height = height;
     this.width = width;
@@ -348,9 +357,8 @@ class HeightWidthDepth {
       = ImageSourceBag.Base.Pool.get_or_create_by( "int32" );
 
     {
-      const largerFactor = 15; //20; //10;
-      let largerHeight = this.height * largerFactor;
-      let largerWidth = this.width * largerFactor;
+      let largerHeight = this.height * this.largerFactor;
+      let largerWidth = this.width * this.largerFactor;
       let inputChannelCount = this.depth; // Must be 4;
 
       this.testCanvas = document.createElement( "canvas" );
@@ -733,6 +741,8 @@ async function* testerBackend( progressParent,
  *
  */
 async function* testerBackendAll( progressParent,
+  largerFactor = 15,
+
   input_height = 72,
   input_width = 128,
 
@@ -751,6 +761,7 @@ async function* testerBackendAll( progressParent,
     let bAscent_or_Descent;
     bAscent_or_Descent = false; // Descent
     yield* testerBackend( progress_NeuralWorker_tester_webgl,
+      largerFactor,
       input_height,
       input_width,
       vocabularyChannelCount,
@@ -761,6 +772,7 @@ async function* testerBackendAll( progressParent,
 
     bAscent_or_Descent = true; // Ascent
     yield* testerBackend( progress_NeuralWorker_tester_cpu,
+      largerFactor,
       input_height,
       input_width,
       vocabularyChannelCount,
@@ -785,10 +797,12 @@ function TestButton_onClick( event ) {
   console.log("NeuralWorker testing...");
   const delayMilliseconds = 100;
 
-  g_Controls.InfoButton.disabled = true; // Prevent multiple clicks.
-  g_Controls.TestButton.disabled = true;
+  g_Controls.TestButton.disabled = true; // Prevent multiple clicks.
 
   // Extract parameters from UI.
+  let largerFactor = Number.parseInt( g_Controls.largerFactor_Text.value );
+  g_Controls.largerFactor_Text.value = largerFactor;
+  
   let input_height = Number.parseInt( g_Controls.input_height_Text.value );
   g_Controls.input_height_Text.value = input_height;
 
@@ -821,6 +835,7 @@ function TestButton_onClick( event ) {
     = new ValueMax.Receiver.HTMLProgress.createByTitle_or_getDummy( "TestProgressBar" );
 
   let tester = testerBackendAll( progress_NeuralWorker_tester,
+    largerFactor,
     input_height,
     input_width,
     vocabularyChannelCount,
@@ -836,7 +851,6 @@ function TestButton_onClick( event ) {
     },
     () => { // Release resource.
 
-      g_Controls.InfoButton.disabled = false;
       g_Controls.TestButton.disabled = false;
 
       try {
