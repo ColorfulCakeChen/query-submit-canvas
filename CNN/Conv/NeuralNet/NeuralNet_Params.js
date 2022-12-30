@@ -16,7 +16,7 @@ import { ParamsBase } from "./NeuralNet_ParamsBase.js";
  * @see Weight.Params
  *
  */
- class NeuralNet_Params extends Weights.Params( ParamsBase ) {
+class NeuralNet_Params extends Weights.Params( ParamsBase ) {
 
   /**
    * Used as default NeuralNet.Params provider for conforming to Recyclable interface.

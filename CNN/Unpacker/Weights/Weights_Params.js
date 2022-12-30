@@ -54,9 +54,6 @@ import { Base } from "./Weights_Base.js";
  let Weights_Params = ( ParentClass = Object ) =>
    class Weights_Params extends Base( ParentClass ) {
 
-//!!! (2022/07/30 Remarked) Become a function.
-//  class Weights_Params extends Root {
-
   /**
    * Used as default Weights.Params provider for conforming to Recyclable interface.
    */
