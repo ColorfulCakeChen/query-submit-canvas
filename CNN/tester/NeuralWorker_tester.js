@@ -24,8 +24,10 @@ let g_Controls = {
   blockCountTotalRequested_Text: null,
   output_channelCount_per_alignment_Text: null,
 
-  TestButton: null,
   Info_TextArea: null,
+  TestButton: null,
+
+  NeuralWorker_Performance_Table: null,
 };
 
 window.addEventListener( "load", event => {
@@ -525,15 +527,9 @@ class HeightWidthDepth {
 
     const ExecutionTimeInfoTimes = 10;
 
-    let htmlTableOperator;
     {
-      const htmlTableId = "NeuralWorker_Performance_Table";
-      const digitsCount = 4;
-      htmlTableOperator
-        = HTMLTable.Operator.Pool.get_or_create_by( htmlTableId, digitsCount );
-  
-      if ( !htmlTableOperator.Header_hasChild() ) {
-        htmlTableOperator.Header_addRow( [
+      if ( !g_Controls.performanceTable_htmlTableOperator.Header_hasChild() ) {
+        g_Controls.performanceTable_htmlTableOperator.Header_addRow( [
           "Backend",
           "NeuralWorker.Mode",
           `ops/sec (${ExecutionTimeInfoTimes} runs sampled)`
@@ -623,9 +619,10 @@ class HeightWidthDepth {
                 progressToAdvance.value_advance(); // Every performance test complete.
                 yield progressRoot;
               }
-              htmlTableOperator.Body_addRow( [
-                backendName, timeInfo.name, timeInfo.countPerSecond
-              ] );
+              g_Controls.performanceTable_htmlTableOperatorhtmlTableOperator
+                .Body_addRow( [
+                  backendName, timeInfo.name, timeInfo.countPerSecond
+                ] );
               //console.log( timeInfo.toString() );
             }
 
@@ -684,10 +681,6 @@ class HeightWidthDepth {
       throw e;
 
     } finally {
-      if ( htmlTableOperator ) {
-        htmlTableOperator.disposeResources_and_recycleToPool();
-        htmlTableOperator = null;
-      }
     }
   
     console.log( `NeuralWorker ( ${backendName} ) testing... Done.` );
@@ -795,6 +788,9 @@ function TestButton_onClick( event ) {
   console.log("NeuralWorker testing...");
   const delayMilliseconds = 100;
 
+  let pool_all_issuedCount_before = Pool.All.issuedCount;
+
+
   g_Controls.TestButton.disabled = true; // Prevent multiple clicks.
 
   // Extract parameters from UI.
@@ -820,19 +816,18 @@ function TestButton_onClick( event ) {
   g_Controls.output_channelCount_per_alignment_Text.value
     = output_channelCount_per_alignment;
 
-  // Clear output table.
-  let htmlTableOperator;
+  // Prepare output table.
   {
-    const htmlTableId = "NeuralWorker_Performance_Table";
-    const digitsCount = 4;
-    htmlTableOperator
-      = HTMLTable.Operator.Pool.get_or_create_by( htmlTableId, digitsCount );
+    if ( !g_Controls.performanceTable_htmlTableOperator ) {
+      const htmlTableId = "NeuralWorker_Performance_Table";
+      const digitsCount = 4;
+      g_Controls.performanceTable_htmlTableOperator
+        = HTMLTable.Operator.Pool.get_or_create_by( htmlTableId, digitsCount );
+    }
 
-    htmlTableOperator.Table_clear();
+    // Clear output table.
+    g_Controls.performanceTable_htmlTableOperator.Table_clear();
   }  
-
-
-  let pool_all_issuedCount_before = Pool.All.issuedCount;
 
   // Aggregate all progress about util_tester.
   let progress = ValueMax.Percentage.Aggregate.Pool.get_or_create_by();
@@ -871,6 +866,14 @@ function TestButton_onClick( event ) {
       } finally {
         progress.disposeResources_and_recycleToPool();
         progress = null;
+
+        // Release output table operator.
+        if ( g_Controls.performanceTable_htmlTableOperator ) {
+          g_Controls.performanceTable_htmlTableOperator
+            .disposeResources_and_recycleToPool();
+
+          g_Controls.performanceTable_htmlTableOperator = null;
+        }
       }
 
       Pool.Asserter.assert_Pool_issuedCount( "NeuralWorker_tester.tester_byUI()",
