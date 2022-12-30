@@ -213,7 +213,7 @@ Stage_Params.input_channelCount =             new ParamDesc.Int(                
 
 Stage_Params.nConvStageTypeId =               new ParamDesc.ConvStageType(      "nConvStageTypeId" );
 
-Stage_Params.blockCountRequested =            new ParamDesc.Int(                "blockCountRequested",        2, (  1 * 1024 ) );
+Stage_Params.blockCountRequested =            new ParamDesc.Int(                "blockCountRequested",        2, ( 10 * 1024 ) );
 Stage_Params.bPointwise1 =                    new ParamDesc.Bool(               "bPointwise1" );
 Stage_Params.depthwiseFilterHeight =          new ParamDesc.Int(                "depthwiseFilterHeight",      1, ( 10 * 1024 ) );
 Stage_Params.depthwiseFilterWidth =           new ParamDesc.Int(                "depthwiseFilterWidth",       2, ( 10 * 1024 ) );
