@@ -219,7 +219,6 @@ Stage_Params.depthwiseFilterHeight =          new ParamDesc.Int(                
 Stage_Params.depthwiseFilterWidth =           new ParamDesc.Int(                "depthwiseFilterWidth",       2, ( 10 * 1024 ) );
 
 Stage_Params.nSqueezeExcitationChannelCountDivisor = new ParamDesc.SqueezeExcitationChannelCountDivisor( "nSqueezeExcitationChannelCountDivisor" );
-//Stage_Params.bSqueezeExcitationPrefix =       new ParamDesc.Bool(               "bSqueezeExcitationPrefix" );
 
 Stage_Params.nActivationId =                  new ParamDesc.ActivationFunction( "nActivationId" );
 
