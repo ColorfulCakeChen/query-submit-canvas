@@ -17,6 +17,7 @@ import * as NumberImage from "../jsPerf/Ref/NumberImage.js";
 import * as HTMLTable from "../Display/HTMLTable.js";
 
 let g_Controls = {
+  largerFactor_Text: null,
   input_height_Text: null,
   input_width_Text: null,
   vocabularyChannelCount_Text: null,
