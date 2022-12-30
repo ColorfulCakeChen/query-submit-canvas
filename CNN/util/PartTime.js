@@ -17,7 +17,7 @@ function delayedValue( delayMilliseconds, value ) {
 }
 
 /**
- * A wrapper for setTimeout( , delayMilliseconds ).
+ * A wrapper for delayedValue( delayMilliseconds, undefined ).
  *
  * @param {integer} delayMilliseconds
  *   The delay time (in milliseconds) when the (returned) promise will be resolved.
