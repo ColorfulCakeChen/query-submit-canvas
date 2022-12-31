@@ -115,7 +115,8 @@ class Embedding_AddGatherReshape extends Base {
       // 2. Extract filters array
       theFiltersArray_One = FiltersArray_One.Pool.get_or_create_by(
         this.input_height, this.input_width, this.input_channelCount,
-        this.channelMultiplier, this.vocabularyCountPerInputChannel, this.bEmbedVocabularyId
+        this.channelMultiplier, this.vocabularyCountPerInputChannel,
+        this.bEmbedVocabularyId
       );
 
       if ( !theFiltersArray_One.init( inputWeightArray, this.weightElementOffsetEnd ) ) {
@@ -123,7 +124,7 @@ class Embedding_AddGatherReshape extends Base {
         return false;  // e.g. input array does not have enough data.
       }
       this.weightElementOffsetEnd = theFiltersArray_One.weightElementOffsetEnd;
-  
+
       this.output_scaleBoundsArray = theFiltersArray_One.output_scaleBoundsArray;
       theFiltersArray_One.output_scaleBoundsArray = null; // (Because ownership transferred.)
 

@@ -111,50 +111,50 @@ class Embedding_Base extends Recyclable.Base( ReturnOrClone.Root ) {
     let progressToAdvance = progressParent.child_add( ValueMax.Percentage.Concrete.Pool.get_or_create_by( progressMax ) ); // For parameters extracting.
 
     // 1. Extract parameters.
-    if ( !params )
-      return false;
+    try {
+      if ( !params )
+        return false;
 
-    if ( !params.init( inputWeightArray, weightElementOffsetBegin ) )
-      return false;  // e.g. input array does not have enough data.
-    this.weightElementOffsetEnd = params.weightElementOffsetEnd;
+      if ( !params.init( inputWeightArray, weightElementOffsetBegin ) )
+        return false;  // e.g. input array does not have enough data.
+      this.weightElementOffsetEnd = params.weightElementOffsetEnd;
 
-    // Get parameters' real (adjusted) values.
-    //
-    // Do not keep params in this.params so that the inputWeightArray could be released.
-    this.input_height = params.input_height;
-    this.input_width = params.input_width;
-    this.input_channelCount = params.input_channelCount;
-    this.channelMultiplier = params.channelMultiplier;
-    this.vocabularyCountPerInputChannel = params.vocabularyCountPerInputChannel;
-    this.bEmbedVocabularyId = params.bEmbedVocabularyId;
-    this.bKeepInputTensor = params.bKeepInputTensor;
+      // Get parameters' real (adjusted) values.
+      //
+      // Do not keep params in this.params so that the inputWeightArray could be released.
+      this.input_height = params.input_height;
+      this.input_width = params.input_width;
+      this.input_channelCount = params.input_channelCount;
+      this.channelMultiplier = params.channelMultiplier;
+      this.vocabularyCountPerInputChannel = params.vocabularyCountPerInputChannel;
+      this.bEmbedVocabularyId = params.bEmbedVocabularyId;
+      this.bKeepInputTensor = params.bKeepInputTensor;
 
-    // The parameters which are determined (inferenced) from the above parameters.
-    {
-      this.output_height = params.inferencedParams.output_height;
-      this.output_width = params.inferencedParams.output_width;
-      this.output_channelCount = params.inferencedParams.output_channelCount;
-      this.vocabularyIdMax = params.inferencedParams.vocabularyIdMax;
-      this.weightCountPerVocabularyTable_extracted = params.inferencedParams.weightCountPerVocabularyTable_extracted;
-      this.weightCountPerVocabularyTable = params.inferencedParams.weightCountPerVocabularyTable;
-      this.tensorWeightCountExtracted = params.inferencedParams.tensorWeightCountExtracted;
-      this.tensorWeightCountTotal = params.inferencedParams.tensorWeightCountTotal;
+      // The parameters which are determined (inferenced) from the above parameters.
+      {
+        this.output_height = params.inferencedParams.output_height;
+        this.output_width = params.inferencedParams.output_width;
+        this.output_channelCount = params.inferencedParams.output_channelCount;
+        this.vocabularyIdMax = params.inferencedParams.vocabularyIdMax;
+        this.weightCountPerVocabularyTable_extracted = params.inferencedParams.weightCountPerVocabularyTable_extracted;
+        this.weightCountPerVocabularyTable = params.inferencedParams.weightCountPerVocabularyTable;
+        this.tensorWeightCountExtracted = params.inferencedParams.tensorWeightCountExtracted;
+        this.tensorWeightCountTotal = params.inferencedParams.tensorWeightCountTotal;
+      }
+
+    } finally {
+      if ( params ) {
+        params.disposeResources_and_recycleToPool();
+        params = null;
+      }
     }
 
     progressToAdvance.value_advance();
     yield progressRoot;  // Parameters extracted. Report progress.
 
-    try {
+    this.bInitOk = true;
+    return true;
 
-      this.bInitOk = true;
-      return true;
-
-    } finally {
-      if ( params ) {
-        params.disposeResources_and_recycleToPool();
-        params = undefined;
-      }
-    }
   }
 
   /**
