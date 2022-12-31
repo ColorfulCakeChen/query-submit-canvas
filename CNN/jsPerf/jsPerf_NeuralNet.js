@@ -195,7 +195,8 @@ class HeightWidthDepth {
       let inputImage = this.testPerformance_imageSourceBag.getImage_by(
         largerHeight, largerWidth, inputChannelCount );
 
-      let ctx = this.testCanvas.getContext( "2d" );
+      let contextAttributes = { willReadFrequently: true };
+      let ctx = this.testCanvas.getContext( "2d", contextAttributes );
       let imageData = ctx.createImageData( largerHeight, largerWidth );
       for ( let i = 0; i < imageData.data.length; ++i ) {
         imageData.data[ i ] = inputImage.dataArray[ i ];
