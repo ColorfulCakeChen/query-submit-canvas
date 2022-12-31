@@ -849,42 +849,40 @@ function TestButton_onClick( event ) {
     output_channelCount_per_alignment,
   );
 
-  try {
+  let testPromise = PartTime.forOf( tester,
 
-    let testPromise = PartTime.forOf( tester,
+    // callback when ( done == false )
+    ( progressRoot ) => {
+      progressReceiver.setValueMax( // Report progress to UI.
+        progressRoot.valuePercentage, progressRoot.maxPercentage );
+    },
 
-      // callback when ( done == false )
-      ( progressRoot ) => {
-        progressReceiver.setValueMax( // Report progress to UI.
-          progressRoot.valuePercentage, progressRoot.maxPercentage );
-      },
+    // callback when ( done == true )
+    () => {
+      if ( 100 != progress.valuePercentage )
+        throw Error( `NeuralWorker_tester.tester_byUI(): `
+          + `Progress (${progress.valuePercentage}) should be 100 `
+          + `after testing done.`);
+    },
 
-      // callback when ( done == true )
-      () => {
-        if ( 100 != progress.valuePercentage )
-          throw Error( `NeuralWorker_tester.tester_byUI(): `
-            + `Progress (${progress.valuePercentage}) should be 100 `
-            + `after testing done.`);
-      },
+    delayMilliseconds
+  );
 
-      delayMilliseconds
-    );
+  testPromise.then( value => {
+    console.log( "NeuralWorker testing... Done." );
+    //progressReceiver.informDone(r); // Inform UI progress done.
 
-    testPromise.then( value => {
-      console.log( "NeuralWorker testing... Done." );
-      //progressReceiver.informDone(r); // Inform UI progress done.
+  }).catch( reason => {
+    alert( reason );
+    console.error( reason );
+    //debugger;
 
-    }).catch( reason => {
-      alert( reason );
-      console.error( reason );
-      //debugger;
-    });
-
-  } finally {
-
-    // Release resource.
-    progress.disposeResources_and_recycleToPool();
-    progress = null;
+  }).finally( () => { // Release resource.
+   
+    if ( progress ) {
+      progress.disposeResources_and_recycleToPool();
+      progress = null;
+    }
 
     // Release output table operator.
     if ( g_Controls.performanceTable_htmlTableOperator ) {
@@ -895,8 +893,9 @@ function TestButton_onClick( event ) {
     }
 
     g_Controls.TestButton.disabled = false;
-  }
 
-  Pool.Asserter.assert_Pool_issuedCount( "NeuralWorker_tester.tester_byUI()",
-    pool_all_issuedCount_before );
+    Pool.Asserter.assert_Pool_issuedCount( "NeuralWorker_tester.tester_byUI()",
+      pool_all_issuedCount_before );
+  });
+
 }
