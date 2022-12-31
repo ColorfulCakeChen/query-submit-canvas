@@ -549,20 +549,30 @@ class Block_Base extends Recyclable.Root {
     // 2.2 The pointwise1 convolution.
     if ( this.pointwise1ChannelCount > 0 ) {
 
-      let pointwise1 = Operation.Pointwise_SameWhenPassThrough.Pool.get_or_create_by(
-        this.operationArray.endingInput0,
-        this.pointwise1ChannelCount, this.pointwise1Bias, this.pointwise1ActivationId,
-        this.pointwise1_nHigherHalfDifferent,
-        this.pointwise1_outputChannelCount_lowerHalf,
-        0, // Default channelShuffler_inputGroupCount for pointwise1 is zero (never positive).
-        0  // Default channelShuffler_outputGroupCount for pointwise1 is zero (never positive).
-      );
+      let pointwise1;
+      try {
+        pointwise1 = Operation.Pointwise_SameWhenPassThrough.Pool.get_or_create_by(
+          this.operationArray.endingInput0,
+          this.pointwise1ChannelCount, this.pointwise1Bias, this.pointwise1ActivationId,
+          this.pointwise1_nHigherHalfDifferent,
+          this.pointwise1_outputChannelCount_lowerHalf,
+          0, // Default channelShuffler_inputGroupCount for pointwise1 is zero (never positive).
+          0  // Default channelShuffler_outputGroupCount for pointwise1 is zero (never positive).
+        );
 
-      if ( !pointwise1.init( inputWeightArray, this.weightElementOffsetEnd ) )
-        return false;  // e.g. input array does not have enough data.
-      this.weightElementOffsetEnd = pointwise1.weightElementOffsetEnd;
+        if ( !pointwise1.init( inputWeightArray, this.weightElementOffsetEnd ) )
+          return false;  // e.g. input array does not have enough data.
+        this.weightElementOffsetEnd = pointwise1.weightElementOffsetEnd;
 
-      this.operationArray.operation_append( pointwise1 );
+        this.operationArray.operation_append( pointwise1 );
+        pointwise1 = null;
+
+      } finally {
+        if ( pointwise1 ) {
+          pointwise1.disposeResources_and_recycleToPool();
+          pointwise1 = null;
+        }
+      }
     }
 
     progressToAdvance.value_advance();
@@ -578,60 +588,74 @@ class Block_Base extends Recyclable.Root {
     // Only if depthwise operation is requested and necessary, create them.
     if ( this.bDepthwiseRequestedAndNeeded ) {
 
-      // 3.1 The depthwise1 operation.
       let depthwise1;
-      {
-        depthwise1 = Operation.Depthwise_SameWhenPassThrough.Pool.get_or_create_by(
-          this.operationArray.endingInput0,
-          this.depthwise_AvgMax_Or_ChannelMultiplier, this.depthwiseFilterHeight, this.depthwiseFilterWidth,
-          this.depthwiseStridesPad, this.depthwiseBias, this.depthwiseActivationId,
-          this.depthwise1_nHigherHalfDifferent,
-          0, // No channelShuffler_inputGroupCount.
-          0, // No cannelShuffler_outputGroupCount.
-        );
-
-        if ( !depthwise1.init( inputWeightArray, this.weightElementOffsetEnd ) )
-          return false;  // e.g. input array does not have enough data.
-        this.weightElementOffsetEnd = depthwise1.weightElementOffsetEnd;
-      }
-
-      // 3.2 The depthwise2 operation.
-      //
-      // (i.e. ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_HEAD (2) )
-      //
-      // (i.e. ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21_HEAD (9) )
-      // (i.e. ShuffleNetV2_ByPointwise21's head with ( pointwise1ChannelCount >= 1 ))
-      //
       let depthwise2;
-      if ( this.bDepthwise2Requested ) {
+      try {
+        // 3.1 The depthwise1 operation.
+        {
+          depthwise1 = Operation.Depthwise_SameWhenPassThrough.Pool.get_or_create_by(
+            this.operationArray.endingInput0,
+            this.depthwise_AvgMax_Or_ChannelMultiplier, this.depthwiseFilterHeight, this.depthwiseFilterWidth,
+            this.depthwiseStridesPad, this.depthwiseBias, this.depthwiseActivationId,
+            this.depthwise1_nHigherHalfDifferent,
+            0, // No channelShuffler_inputGroupCount.
+            0, // No cannelShuffler_outputGroupCount.
+          );
 
-        // Q: Why does depthwise2 use the same configuration as depthwise1?
-        // A: To ensure both result have the same ( height, width ) so that could be inputted to concatenator). This is especially
-        //    true for StridesPad.
-        depthwise2 = Operation.Depthwise_SameWhenPassThrough.Pool.get_or_create_by(
-          depthwise2_input0,
-          this.depthwise_AvgMax_Or_ChannelMultiplier, this.depthwiseFilterHeight, this.depthwiseFilterWidth,
-          this.depthwiseStridesPad, this.depthwiseBias, this.depthwiseActivationId,
-          ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.NONE, // depthwise2 never has higher-half-different.
-          0, 0 // No channelShuffler_inputGroupCount, No channelShuffler_outputGroupCount.
-        );
+          if ( !depthwise1.init( inputWeightArray, this.weightElementOffsetEnd ) )
+            return false;  // e.g. input array does not have enough data.
+          this.weightElementOffsetEnd = depthwise1.weightElementOffsetEnd;
+        }
 
-        if ( !depthwise2.init( inputWeightArray, this.weightElementOffsetEnd ) )
-          return false;  // e.g. input array does not have enough data.
-        this.weightElementOffsetEnd = depthwise2.weightElementOffsetEnd;
-
-        // Note:
-        //   - If ( depthwise2.bExisted == true ), the depthwise2 is requested and created. It means ONE_INPUT_TWO_DEPTHWISE.
+        // 3.2 The depthwise2 operation.
         //
-        //   - If ( depthwise2.bExisted == false ), the depthwise2 is requested but not created. It means no depthwise operation
-        //     (i.e. ( depthwise_AvgMax_Or_ChannelMultiplier == 0 ). In this case, the depthwise2 should be short circuit to
-        //     inputTensor[ 0 ] (i.e. not inputTensor[ 1 ]).
+        // (i.e. ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_HEAD (2) )
+        //
+        // (i.e. ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21_HEAD (9) )
+        // (i.e. ShuffleNetV2_ByPointwise21's head with ( pointwise1ChannelCount >= 1 ))
+        //
+        if ( this.bDepthwise2Requested ) {
 
-      } else {
-        // Since the depthwise2 is not requested, it is always short circuit to input1 (i.e. not input0).
+          // Q: Why does depthwise2 use the same configuration as depthwise1?
+          // A: To ensure both result have the same ( height, width ) so that could be inputted to concatenator). This is especially
+          //    true for StridesPad.
+          depthwise2 = Operation.Depthwise_SameWhenPassThrough.Pool.get_or_create_by(
+            depthwise2_input0,
+            this.depthwise_AvgMax_Or_ChannelMultiplier, this.depthwiseFilterHeight, this.depthwiseFilterWidth,
+            this.depthwiseStridesPad, this.depthwiseBias, this.depthwiseActivationId,
+            ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.NONE, // depthwise2 never has higher-half-different.
+            0, 0 // No channelShuffler_inputGroupCount, No channelShuffler_outputGroupCount.
+          );
+
+          if ( !depthwise2.init( inputWeightArray, this.weightElementOffsetEnd ) )
+            return false;  // e.g. input array does not have enough data.
+          this.weightElementOffsetEnd = depthwise2.weightElementOffsetEnd;
+
+          // Note:
+          //   - If ( depthwise2.bExisted == true ), the depthwise2 is requested and created. It means ONE_INPUT_TWO_DEPTHWISE.
+          //
+          //   - If ( depthwise2.bExisted == false ), the depthwise2 is requested but not created. It means no depthwise operation
+          //     (i.e. ( depthwise_AvgMax_Or_ChannelMultiplier == 0 ). In this case, the depthwise2 should be short circuit to
+          //     inputTensor[ 0 ] (i.e. not inputTensor[ 1 ]).
+
+        } else {
+          // Since the depthwise2 is not requested, it is always short circuit to input1 (i.e. not input0).
+        }
+
+        this.operationArray.operation_append( depthwise1, depthwise2 );
+        depthwise1 = null;
+        depthwise2 = null;
+
+      } finally {
+        if ( depthwise1 ) {
+          depthwise1.disposeResources_and_recycleToPool();
+          depthwise1 = null;
+        }
+        if ( depthwise2 ) {
+          depthwise2.disposeResources_and_recycleToPool();
+          depthwise2 = null;
+        }
       }
-
-      this.operationArray.operation_append( depthwise1, depthwise2 );
 
     // Otherwise, the depthwise operation is either ( not requested ) or ( requested but not necessary ).
     // The later case could improve performance.
@@ -678,66 +702,80 @@ class Block_Base extends Recyclable.Root {
 
     // 6. The pointwise2 convolution.
     {
-      // 6.1 Pointwise20
-      //
-      // Note:
-      //   - When ( bHigherHalfDifferent == true ) and ( channelShuffler_outputGroupCount > 0 ), it means output channels will be shuffled.
-      //
-      //   - When ( pointwise20ChannelCount == 0 ), it usually means no pointwise20 (i.e. ( pointwise20.bExisted == false ) ).
-      //
-      //   - When both ( pointwise20ChannelCount == 0 ) and ( bHigherHalfDifferent == true )
-      //       and ( channelShuffler_outputGroupCount > 0 ), the pointwise20 will exist (i.e. ( pointwise20.bExisted == true ) ).
-      //       Otherwise, the output channels could not be shuffled. In this case, it will pass through all input to output,
-      //       but the output will be channel shuffled.
-      //
-      //       - However, this situation is difficult to be handled. We re-design Params so that the pointwise20ChannelCount is always
-      //           not zero.
-      //
-      let pointwise20 = Operation.Pointwise_SameWhenPassThrough.Pool.get_or_create_by(
-        this.operationArray.endingInput0,
-        this.pointwise20ChannelCount, this.pointwise20Bias, this.pointwise20ActivationId,
-        this.pointwise20_nHigherHalfDifferent, this.pointwise20_outputChannelCount_lowerHalf,
-        0, // No channelShuffler_inputGroupCount.
-        this.pointwise20_channelShuffler_outputGroupCount
-      );
-
-      if ( !pointwise20.init( inputWeightArray, this.weightElementOffsetEnd ) )
-        return false;  // e.g. input array does not have enough data.
-      this.weightElementOffsetEnd = pointwise20.weightElementOffsetEnd;
-
-      // 6.2 Pointwise21
+      let pointwise20;
       let pointwise21;
-      if ( this.pointwise21ChannelCount > 0 ) {
-
-        let pointwise21_input0;
-        {
-          if ( this.operationArray.endingInput1 )
-            pointwise21_input0 = this.operationArray.endingInput1; // If there is .endingInput1, use it as pointwise21's input.
-          else
-            pointwise21_input0 = this.operationArray.endingInput0;
-        }
-
-        pointwise21 = Operation.Pointwise_SameWhenPassThrough.Pool.get_or_create_by(
-          pointwise21_input0,
-          this.pointwise21ChannelCount, this.pointwise21Bias, this.pointwise21ActivationId,
+      try {
+        // 6.1 Pointwise20
+        //
+        // Note:
+        //   - When ( bHigherHalfDifferent == true ) and ( channelShuffler_outputGroupCount > 0 ), it means output channels will be shuffled.
+        //
+        //   - When ( pointwise20ChannelCount == 0 ), it usually means no pointwise20 (i.e. ( pointwise20.bExisted == false ) ).
+        //
+        //   - When both ( pointwise20ChannelCount == 0 ) and ( bHigherHalfDifferent == true )
+        //       and ( channelShuffler_outputGroupCount > 0 ), the pointwise20 will exist (i.e. ( pointwise20.bExisted == true ) ).
+        //       Otherwise, the output channels could not be shuffled. In this case, it will pass through all input to output,
+        //       but the output will be channel shuffled.
+        //
+        //       - However, this situation is difficult to be handled. We re-design Params so that the pointwise20ChannelCount is always
+        //           not zero.
+        //
+        pointwise20 = Operation.Pointwise_SameWhenPassThrough.Pool.get_or_create_by(
+          this.operationArray.endingInput0,
+          this.pointwise20ChannelCount, this.pointwise20Bias, this.pointwise20ActivationId,
           this.pointwise20_nHigherHalfDifferent, this.pointwise20_outputChannelCount_lowerHalf,
           0, // No channelShuffler_inputGroupCount.
           this.pointwise20_channelShuffler_outputGroupCount
         );
 
-        // Note: Strictly speaking, sometimes pointwise21 is dependent on depthwise2. But it does not matter for BoundsArraySet
-        // because depthwise1 and depthwise2 should have the same output value bounds.
-        //
-        if ( !pointwise21.init( inputWeightArray, this.weightElementOffsetEnd ) )
+        if ( !pointwise20.init( inputWeightArray, this.weightElementOffsetEnd ) )
           return false;  // e.g. input array does not have enough data.
-        this.weightElementOffsetEnd = pointwise21.weightElementOffsetEnd;
+        this.weightElementOffsetEnd = pointwise20.weightElementOffsetEnd;
 
-      } else { // Since pointwise21 is not requested (i.e. channel count is not positive), do not create the object for saving memory.
+        // 6.2 Pointwise21
+        if ( this.pointwise21ChannelCount > 0 ) {
+
+          let pointwise21_input0;
+          {
+            if ( this.operationArray.endingInput1 )
+              pointwise21_input0 = this.operationArray.endingInput1; // If there is .endingInput1, use it as pointwise21's input.
+            else
+              pointwise21_input0 = this.operationArray.endingInput0;
+          }
+
+          pointwise21 = Operation.Pointwise_SameWhenPassThrough.Pool.get_or_create_by(
+            pointwise21_input0,
+            this.pointwise21ChannelCount, this.pointwise21Bias, this.pointwise21ActivationId,
+            this.pointwise20_nHigherHalfDifferent, this.pointwise20_outputChannelCount_lowerHalf,
+            0, // No channelShuffler_inputGroupCount.
+            this.pointwise20_channelShuffler_outputGroupCount
+          );
+
+          // Note: Strictly speaking, sometimes pointwise21 is dependent on depthwise2. But it does not matter for BoundsArraySet
+          // because depthwise1 and depthwise2 should have the same output value bounds.
+          //
+          if ( !pointwise21.init( inputWeightArray, this.weightElementOffsetEnd ) )
+            return false;  // e.g. input array does not have enough data.
+          this.weightElementOffsetEnd = pointwise21.weightElementOffsetEnd;
+
+        } else { // Since pointwise21 is not requested (i.e. channel count is not positive), do not create the object for saving memory.
+        }
+
+        // 6.3 Pointwise2 (= Pointwise20 + Pointwise21 )
+        this.operationArray.operation_append( pointwise20, pointwise21 );
+        pointwise20 = null;
+        pointwise21 = null;
+
+      } finally {
+        if ( pointwise20 ) {
+          pointwise20.disposeResources_and_recycleToPool();
+          pointwise20 = null;
+        }
+        if ( pointwise21 ) {
+          pointwise21.disposeResources_and_recycleToPool();
+          pointwise21 = null;
+        }
       }
-
-      // 6.3 Pointwise2 (= Pointwise20 + Pointwise21 )
-
-      this.operationArray.operation_append( pointwise20, pointwise21 );
     }
 
     // 6.4
@@ -1108,62 +1146,90 @@ class Block_Base extends Recyclable.Root {
       const squeezeHigherHalfDifferent = ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.NONE  // (global) average pooling must be no higher-half-different.
 
       let squeezeDepthwise0;
-      {
-        squeezeDepthwise0 = Operation.Depthwise_ConstantWhenPassThrough.Pool.get_or_create_by(
-          this.operationArray.endingInput0,
-          squeezeAvgMax_Or_ChannelMultiplier, squeezeFilterHeight, squeezeFilterWidth, squeezeStridesPad,
-          squeezeBias, squeezeActivationId, squeezeHigherHalfDifferent,
-          0, 0, // No channelShuffler_inputGroupCount, No channelShuffler_outputGroupCount. Because avg pooling can not do it.
-        );
-
-        if ( !squeezeDepthwise0.init( inputWeightArray, this.weightElementOffsetEnd ) )
-          return false;  // e.g. input array does not have enough data.
-        this.weightElementOffsetEnd = squeezeDepthwise0.weightElementOffsetEnd;
-      }
-
       let squeezeDepthwise1;
-      if ( this.pointwise21ChannelCount > 0 ) {
-        squeezeDepthwise1 = Operation.Depthwise_ConstantWhenPassThrough.Pool.get_or_create_by(
-          this.operationArray.endingInput1 ? this.operationArray.endingInput1 : this.operationArray.endingInput0,
-          squeezeAvgMax_Or_ChannelMultiplier, squeezeFilterHeight, squeezeFilterWidth, squeezeStridesPad,
-          squeezeBias, squeezeActivationId, squeezeHigherHalfDifferent,
-          0, 0, // No channelShuffler_inputGroupCount, No channelShuffler_outputGroupCount. Because avg pooling can not do it.
-        );
+      try {
+        {
+          squeezeDepthwise0 = Operation.Depthwise_ConstantWhenPassThrough.Pool.get_or_create_by(
+            this.operationArray.endingInput0,
+            squeezeAvgMax_Or_ChannelMultiplier, squeezeFilterHeight, squeezeFilterWidth, squeezeStridesPad,
+            squeezeBias, squeezeActivationId, squeezeHigherHalfDifferent,
+            0, 0, // No channelShuffler_inputGroupCount, No channelShuffler_outputGroupCount. Because avg pooling can not do it.
+          );
 
-        if ( !squeezeDepthwise1.init( inputWeightArray, this.weightElementOffsetEnd ) )
-          return false;  // e.g. input array does not have enough data.
-        this.weightElementOffsetEnd = squeezeDepthwise1.weightElementOffsetEnd;
+          if ( !squeezeDepthwise0.init( inputWeightArray, this.weightElementOffsetEnd ) )
+            return false;  // e.g. input array does not have enough data.
+          this.weightElementOffsetEnd = squeezeDepthwise0.weightElementOffsetEnd;
+        }
+
+        if ( this.pointwise21ChannelCount > 0 ) {
+          squeezeDepthwise1 = Operation.Depthwise_ConstantWhenPassThrough.Pool.get_or_create_by(
+            this.operationArray.endingInput1 ? this.operationArray.endingInput1 : this.operationArray.endingInput0,
+            squeezeAvgMax_Or_ChannelMultiplier, squeezeFilterHeight, squeezeFilterWidth, squeezeStridesPad,
+            squeezeBias, squeezeActivationId, squeezeHigherHalfDifferent,
+            0, 0, // No channelShuffler_inputGroupCount, No channelShuffler_outputGroupCount. Because avg pooling can not do it.
+          );
+
+          if ( !squeezeDepthwise1.init( inputWeightArray, this.weightElementOffsetEnd ) )
+            return false;  // e.g. input array does not have enough data.
+          this.weightElementOffsetEnd = squeezeDepthwise1.weightElementOffsetEnd;
+        }
+
+        this.operationArray.operation_append( squeezeDepthwise0, squeezeDepthwise1 );
+        squeezeDepthwise0 = null;
+        squeezeDepthwise1 = null;
+
+      } finally {
+        if ( squeezeDepthwise0 ) {
+          squeezeDepthwise0.disposeResources_and_recycleToPool();
+          squeezeDepthwise0 = null;
+        }
+        if ( squeezeDepthwise1 ) {
+          squeezeDepthwise1.disposeResources_and_recycleToPool();
+          squeezeDepthwise1 = null;
+        }
       }
-
-      this.operationArray.operation_append( squeezeDepthwise0, squeezeDepthwise1 );
     }
 
     // 2. intermediatePointwise
     if ( bIntermediate ) {
 
       let intermediatePointwise0;
-      {
-        intermediatePointwise0 = Block_Base.SequeezeExcitation_intermediatePointwise_create_init.call( this,
-          this.operationArray.endingInput0,
-          this.squeezeExcitationActivationId, nPointwise_HigherHalfDifferent, inputWeightArray,
-          channelShuffler_outputGroupCount );
-
-        if ( !intermediatePointwise0 )
-          return false;  // e.g. input array does not have enough data.
-      }
-
       let intermediatePointwise1;
-      if ( this.pointwise21ChannelCount > 0 ) {
-        intermediatePointwise1 = Block_Base.SequeezeExcitation_intermediatePointwise_create_init.call( this,
-          this.operationArray.endingInput1 ? this.operationArray.endingInput1 : this.operationArray.endingInput0,
-          this.squeezeExcitationActivationId, nPointwise_HigherHalfDifferent, inputWeightArray,
-          channelShuffler_outputGroupCount );
+      try {
+        {
+          intermediatePointwise0 = Block_Base.SequeezeExcitation_intermediatePointwise_create_init.call( this,
+            this.operationArray.endingInput0,
+            this.squeezeExcitationActivationId, nPointwise_HigherHalfDifferent, inputWeightArray,
+            channelShuffler_outputGroupCount );
 
-        if ( !intermediatePointwise1 )
-          return false;  // e.g. input array does not have enough data.
+          if ( !intermediatePointwise0 )
+            return false;  // e.g. input array does not have enough data.
+        }
+
+        if ( this.pointwise21ChannelCount > 0 ) {
+          intermediatePointwise1 = Block_Base.SequeezeExcitation_intermediatePointwise_create_init.call( this,
+            this.operationArray.endingInput1 ? this.operationArray.endingInput1 : this.operationArray.endingInput0,
+            this.squeezeExcitationActivationId, nPointwise_HigherHalfDifferent, inputWeightArray,
+            channelShuffler_outputGroupCount );
+
+          if ( !intermediatePointwise1 )
+            return false;  // e.g. input array does not have enough data.
+        }
+
+        this.operationArray.operation_append( intermediatePointwise0, intermediatePointwise1 );
+        intermediatePointwise0 = null;
+        intermediatePointwise1 = null;
+
+      } finally {
+        if ( intermediatePointwise0 ) {
+          intermediatePointwise0.disposeResources_and_recycleToPool();
+          intermediatePointwise0 = null;
+        }
+        if ( intermediatePointwise1 ) {
+          intermediatePointwise1.disposeResources_and_recycleToPool();
+          intermediatePointwise1 = null;
+        }
       }
-
-      this.operationArray.operation_append( intermediatePointwise0, intermediatePointwise1 );
     }
 
     // 3. excitationPointwise
@@ -1175,44 +1241,61 @@ class Block_Base extends Recyclable.Root {
       const excitationPointwise_channelShuffler_inputGroupCount = channelShuffler_outputGroupCount;
 
       let excitationPointwise0;
-      {
-        const excitationPointwise0_outputChannelCount = input0.channelCount; // excitation's output should have same channel count as input.
-        const excitationPointwise0_outputChannelCount_lowerHalf = input0.channelCount_lowerHalf;
-        const excitationPointwise0_nActivationId = this.squeezeExcitationActivationId;
-
-        excitationPointwise0 = Operation.Pointwise_ConstantWhenPassThrough.Pool.get_or_create_by(
-          this.operationArray.endingInput0,
-          excitationPointwise0_outputChannelCount, excitationPointwise_bBias, excitationPointwise0_nActivationId,
-          nPointwise_HigherHalfDifferent, excitationPointwise0_outputChannelCount_lowerHalf,
-          excitationPointwise_channelShuffler_inputGroupCount,
-          channelShuffler_outputGroupCount // Keep the same output channels shuffling.
-        );
-
-        if ( !excitationPointwise0.init( inputWeightArray, this.weightElementOffsetEnd ) )
-          return false;  // e.g. input array does not have enough data.
-        this.weightElementOffsetEnd = excitationPointwise0.weightElementOffsetEnd;
-      }
-
       let excitationPointwise1;
-      if ( this.pointwise21ChannelCount > 0 ) {
-        const excitationPointwise1_outputChannelCount = input1.channelCount;
-        const excitationPointwise1_outputChannelCount_lowerHalf = input1.channelCount_lowerHalf;
-        const excitationPointwise1_nActivationId = this.squeezeExcitationActivationId;
+      try {
+        {
+          const excitationPointwise0_outputChannelCount = input0.channelCount; // excitation's output should have same channel count as input.
+          const excitationPointwise0_outputChannelCount_lowerHalf = input0.channelCount_lowerHalf;
+          const excitationPointwise0_nActivationId = this.squeezeExcitationActivationId;
 
-        excitationPointwise1 = Operation.Pointwise_ConstantWhenPassThrough.Pool.get_or_create_by(
-          this.operationArray.endingInput1 ? this.operationArray.endingInput1 : this.operationArray.endingInput0,
-          excitationPointwise1_outputChannelCount, excitationPointwise_bBias, excitationPointwise1_nActivationId,
-          nPointwise_HigherHalfDifferent, excitationPointwise1_outputChannelCount_lowerHalf,
-          excitationPointwise_channelShuffler_inputGroupCount,
-          channelShuffler_outputGroupCount // Keep the same output channels shuffling.
-        );
+          excitationPointwise0 = Operation.Pointwise_ConstantWhenPassThrough.Pool.get_or_create_by(
+            this.operationArray.endingInput0,
+            excitationPointwise0_outputChannelCount, excitationPointwise_bBias, excitationPointwise0_nActivationId,
+            nPointwise_HigherHalfDifferent, excitationPointwise0_outputChannelCount_lowerHalf,
+            excitationPointwise_channelShuffler_inputGroupCount,
+            channelShuffler_outputGroupCount // Keep the same output channels shuffling.
+          );
 
-        if ( !excitationPointwise1.init( inputWeightArray, this.weightElementOffsetEnd ) )
-          return false;  // e.g. input array does not have enough data.
-        this.weightElementOffsetEnd = excitationPointwise1.weightElementOffsetEnd;
+          if ( !excitationPointwise0.init( inputWeightArray, this.weightElementOffsetEnd ) ) {
+            excitationPointwise0.disposeResources_and_recycleToPool();
+            excitationPointwise0 = null;
+            return false;  // e.g. input array does not have enough data.
+          }
+          this.weightElementOffsetEnd = excitationPointwise0.weightElementOffsetEnd;
+        }
+
+        if ( this.pointwise21ChannelCount > 0 ) {
+          const excitationPointwise1_outputChannelCount = input1.channelCount;
+          const excitationPointwise1_outputChannelCount_lowerHalf = input1.channelCount_lowerHalf;
+          const excitationPointwise1_nActivationId = this.squeezeExcitationActivationId;
+
+          excitationPointwise1 = Operation.Pointwise_ConstantWhenPassThrough.Pool.get_or_create_by(
+            this.operationArray.endingInput1 ? this.operationArray.endingInput1 : this.operationArray.endingInput0,
+            excitationPointwise1_outputChannelCount, excitationPointwise_bBias, excitationPointwise1_nActivationId,
+            nPointwise_HigherHalfDifferent, excitationPointwise1_outputChannelCount_lowerHalf,
+            excitationPointwise_channelShuffler_inputGroupCount,
+            channelShuffler_outputGroupCount // Keep the same output channels shuffling.
+          );
+
+          if ( !excitationPointwise1.init( inputWeightArray, this.weightElementOffsetEnd ) )
+            return false;  // e.g. input array does not have enough data.
+          this.weightElementOffsetEnd = excitationPointwise1.weightElementOffsetEnd;
+        }
+
+        this.operationArray.operation_append( excitationPointwise0, excitationPointwise1 );
+        excitationPointwise0 = null;
+        excitationPointwise1 = null;
+
+      } finally {
+        if ( excitationPointwise0 ) {
+          excitationPointwise0.disposeResources_and_recycleToPool();
+          excitationPointwise0 = null;
+        }
+        if ( excitationPointwise1 ) {
+          excitationPointwise1.disposeResources_and_recycleToPool();
+          excitationPointwise1 = null;
+        }
       }
-
-      this.operationArray.operation_append( excitationPointwise0, excitationPointwise1 );
     }
 
     // 4. Mutiply
