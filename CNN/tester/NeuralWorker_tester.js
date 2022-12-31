@@ -894,7 +894,8 @@ function TestButton_onClick( event ) {
   }).finally( () => { // Release resource.
    
     if ( progress ) {
-      progress.disposeResources_and_recycleToPool();
+//!!! (2022/12/31 Temp Remarked) For test Pool.Asserter.assert_Pool_issuedCount
+//      progress.disposeResources_and_recycleToPool();
       progress = null;
     }
 
@@ -908,8 +909,16 @@ function TestButton_onClick( event ) {
 
     g_Controls.TestButton.disabled = false;
 
-    Pool.Asserter.assert_Pool_issuedCount( "NeuralWorker_tester.tester_byUI()",
-      pool_all_issuedCount_before );
+    try {
+      Pool.Asserter.assert_Pool_issuedCount( "NeuralWorker_tester.tester_byUI()",
+        pool_all_issuedCount_before );
+
+    } catch ( e ) {
+      console.log( msg );
+      alert( `${msg}` );
+      //debugger;
+      throw e;
+    }
   });
 
 }
