@@ -483,8 +483,8 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     // Note: These Float32Array will be transferred to neural web workers (i.e.
     //       their .byteLength will become zero).
     let weightArrayBufferArray = [
-      this.evolutionVersus.parentChromosomeFloat32Array,
-      this.evolutionVersus.offspringChromosomeFloat32Array
+      this.evolutionVersus.parentChromosomeFloat32Array.buffer,
+      this.evolutionVersus.offspringChromosomeFloat32Array.buffer
     ];
 
     // In real-run, no need to observe dry-run performance and weight count.
