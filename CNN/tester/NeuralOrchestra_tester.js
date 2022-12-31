@@ -22,8 +22,10 @@ async function* tester( progressParent ) {
   let downloader_spreadsheetId = "18YyEoy-OfSkODfw8wqBRApSrRnBTZpjRpRiwIKy8a0M";
   let downloader_apiKey = null;
 
-  let submitter_measurement_id = "G-8VC62N7VGB";
-  let submitter_api_secret = "sRcUgl6XSfOjX4qEES3Ttg";
+  // Note: These is a un-related measurement id of testing purpose for not
+  //       disturbing real measurement.
+  let submitter_measurement_id = "G-72GM1629JW";
+  let submitter_api_secret = "d-FBepWpQXOGaXmkdeqqiA";
   let submitter_client_id = Date.now();
 
   let input_height = 72;
