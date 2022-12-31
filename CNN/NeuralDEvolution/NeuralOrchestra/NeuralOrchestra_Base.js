@@ -225,7 +225,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
 
     // 3. Versus Result Reporter
     this.evolutionVersusSubmitter_init(
-        submitter_measurement_id, submitter_api_secret, submitter_client_id );
+      submitter_measurement_id, submitter_api_secret, submitter_client_id );
 
     // 4.
 
@@ -518,6 +518,22 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     this.evolutionVersusSubmitter_dispose();
     this.evolutionVersusSubmitter = DEvolution.VersusSubmitter.Pool.get_or_create_by(
       submitter_measurement_id, submitter_api_secret, submitter_client_id );
+  }
+
+  /**
+   * Submit the result of the last differential evolution versus to server.
+   *
+   * @param {number} nNegativeZeroPositive
+   *   The lose/draw/win value of the versus. (-1 or 0 or +1)
+   *     - -1 (if parent lose offspring)
+   *     -  0 (if parent draw offspring)
+   *     - +1 (if parent win offspring)
+   */
+  evolutionVersusSubmitter_send( nNegativeZeroPositive ) {
+    this.evolutionVersusSubmitter.send(
+      this.evolutionVersus.versusId.versusIdString,
+      nNegativeZeroPositive
+    );
   }
 
 }

@@ -1,5 +1,6 @@
 export { tester };
 
+import * as RandTools from "../util/RandTools.js";
 import * as ValueMax from "../util/ValueMax.js";
 import * as NeuralOrchestra from "../NeuralDEvolution/NeuralOrchestra.js";
 
@@ -37,8 +38,9 @@ async function* tester( progressParent ) {
 
   let neuralOrchestra;
   try {
+    // 1. Create and initialize.
     neuralOrchestra = NeuralOrchestra.Base.Pool.get_or_create_by();
-    let bInitOkPromise = neuralOrchestra.init_async(
+    let bInitOk = await neuralOrchestra.init_async(
       downloader_spreadsheetId, downloader_apiKey,
       submitter_measurement_id, submitter_api_secret, submitter_client_id,
 
@@ -50,13 +52,28 @@ async function* tester( progressParent ) {
       output_channelCount,
     );
 
-    let bInitOk = await bInitOkPromise;
     if ( !bInitOk )
       throw Error( `NeuralOrchestra_tester.tester(): `
-        + `theNeuralOrchestra.init_async() failed.`
+        + `neuralOrchestra.init_async() failed.`
       );
 
-//!!! ...unfinished... (2022/12/29)
+    // 2. Load a versus, and create neural networks.
+    let bLoadVersusAndCreateNeuralNetworkOk = await neuralOrchestra
+      .evolutionVersus_next_load__and__workerProxies_NeuralNetArray_create__async();
+
+    if ( !bLoadVersusAndCreateNeuralNetworkOk )
+    throw Error( `NeuralOrchestra_tester.tester(): `
+      + `neuralOrchestra`
+      + `.evolutionVersus_next_load__and__workerProxies_NeuralNetArray_create__async()`
+      + ` failed.`
+    );
+
+    // 3. Submit result.
+
+    // A random integer between [ -1, +1 ].
+    let nNegativeZeroPositive = RandTools.getRandomIntInclusive( -1, 1 );
+    neuralOrchestra.evolutionVersusSubmitter_send( nNegativeZeroPositive );
+
   } finally {
     if ( neuralOrchestra ) {
       neuralOrchestra.disposeResources_and_recycleToPool();
