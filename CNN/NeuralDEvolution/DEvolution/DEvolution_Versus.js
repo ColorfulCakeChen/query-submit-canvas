@@ -167,7 +167,7 @@ class DEvolution_Versus extends Recyclable.Root {
             progressForParentChromosome,
             parentChromosomeArray, textEncoder,
             Base64_skipLineCount, Base64_suspendByteCount
-           );
+          );
       this.parentChromosomeFloat32Array = yield* parentChromosomeDecoder;
     }
 
