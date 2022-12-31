@@ -711,25 +711,33 @@ async function* testerBackend( progressParent,
 
   backendName, bAscent_or_Descent,
 ) {
-  const depth = 4;
 
-  // Using mobile phone's resolution ( 1080 * 2160 ) will crash the computer.
-  // Using ( 1 / 15 ) of computer screen ( 1080 * 1920 ) (i.e. ( 72 * 128 )).
-  let testSet = new HeightWidthDepth(
-    largerFactor,
-    input_height, input_width, depth,
-    vocabularyChannelCount,
-    blockCountTotalRequested,
-    output_channelCount_per_alignment,
-    backendName, bAscent_or_Descent,
-  );
+  let testSet;
+  try {
+    const depth = 4;
 
-  let progress_for_testSet = progressParent.child_add(
-    ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
+    // Using mobile phone's resolution ( 1080 * 2160 ) will crash the computer.
+    // Using ( 1 / 15 ) of computer screen ( 1080 * 1920 ) (i.e. ( 72 * 128 )).
+    testSet = new HeightWidthDepth(
+      largerFactor,
+      input_height, input_width, depth,
+      vocabularyChannelCount,
+      blockCountTotalRequested,
+      output_channelCount_per_alignment,
+      backendName, bAscent_or_Descent,
+    );
 
-  yield* testSet.tester( progress_for_testSet );
+    let progress_for_testSet = progressParent.child_add(
+      ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
 
-  testSet.disposeResources();
+    yield* testSet.tester( progress_for_testSet );
+
+  } finally {
+    if ( testSet ) {
+      testSet.disposeResources();
+      testSet = null;
+    }
+  }
 }
 
 /**
