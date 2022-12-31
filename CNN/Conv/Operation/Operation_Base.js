@@ -35,9 +35,8 @@ import * as TensorPlaceholder from "../TensorPlaceholder.js";
  * which will destroy all inputs. Usually, sub-class should override this data member.
  *
  */
-let Operation_Base
-  = ( ParentClass = Object )
-      => class Operation_Base extends Recyclable.Base( ParentClass ) {
+let Operation_Base = ( ParentClass = Object ) => class Operation_Base
+  extends Recyclable.Base( ParentClass ) {
 
   /**
    * Used as default Operation.Root provider for conforming to Recyclable interface.
