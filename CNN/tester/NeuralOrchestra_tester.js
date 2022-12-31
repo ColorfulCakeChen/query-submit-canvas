@@ -35,29 +35,34 @@ async function* tester( progressParent ) {
   let blockCountTotalRequested = 84; //144;
   let output_channelCount = 12;
 
-  let neuralOrchestra = NeuralOrchestra.Base.Pool.get_or_create_by();
-  let bInitOkPromise = neuralOrchestra.init_async(
-    downloader_spreadsheetId, downloader_apiKey,
-    submitter_measurement_id, submitter_api_secret, submitter_client_id,
+  let neuralOrchestra;
+  try {
+    neuralOrchestra = NeuralOrchestra.Base.Pool.get_or_create_by();
+    let bInitOkPromise = neuralOrchestra.init_async(
+      downloader_spreadsheetId, downloader_apiKey,
+      submitter_measurement_id, submitter_api_secret, submitter_client_id,
 
-    input_height,
-    input_width,
+      input_height,
+      input_width,
 
-    vocabularyChannelCount,
-    blockCountTotalRequested,
-    output_channelCount,
-  );
-
-  let bInitOk = await bInitOkPromise;
-  if ( !bInitOk )
-    throw Error( `NeuralOrchestra_tester.tester(): `
-      + `theNeuralOrchestra.init_async() failed.`
+      vocabularyChannelCount,
+      blockCountTotalRequested,
+      output_channelCount,
     );
 
-//!!! ...unfinished... (2022/12/29)
+    let bInitOk = await bInitOkPromise;
+    if ( !bInitOk )
+      throw Error( `NeuralOrchestra_tester.tester(): `
+        + `theNeuralOrchestra.init_async() failed.`
+      );
 
-  neuralOrchestra.disposeResources_and_recycleToPool();
-  neuralOrchestra = null;
+//!!! ...unfinished... (2022/12/29)
+  } finally {
+    if ( neuralOrchestra ) {
+      neuralOrchestra.disposeResources_and_recycleToPool();
+      neuralOrchestra = null;
+    }
+  }
 
   progressToAdvance.value_advance(); // Every prepare_async() complete.
   yield progressRoot;
