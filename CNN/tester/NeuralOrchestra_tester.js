@@ -18,7 +18,7 @@ async function* tester( progressParent ) {
   let progressRoot = progressParent.root_get();
 
   let progressToAdvance = progressParent.child_add(
-    ValueMax.Percentage.Concrete.Pool.get_or_create_by( 1 ) );
+    ValueMax.Percentage.Concrete.Pool.get_or_create_by( 3 ) );
 
   let downloader_spreadsheetId = "18YyEoy-OfSkODfw8wqBRApSrRnBTZpjRpRiwIKy8a0M";
   let downloader_apiKey = null;
@@ -57,16 +57,22 @@ async function* tester( progressParent ) {
         + `neuralOrchestra.init_async() failed.`
       );
 
+    progressToAdvance.value_advance();
+    yield progressRoot;
+    
     // 2. Load a versus, and create neural networks.
     let bLoadVersusAndCreateNeuralNetworkOk = await neuralOrchestra
       .evolutionVersus_next_load__and__workerProxies_NeuralNetArray_create__async();
 
     if ( !bLoadVersusAndCreateNeuralNetworkOk )
-    throw Error( `NeuralOrchestra_tester.tester(): `
-      + `neuralOrchestra`
-      + `.evolutionVersus_next_load__and__workerProxies_NeuralNetArray_create__async()`
-      + ` failed.`
-    );
+      throw Error( `NeuralOrchestra_tester.tester(): `
+        + `neuralOrchestra`
+        + `.evolutionVersus_next_load__and__workerProxies_NeuralNetArray_create__async()`
+        + ` failed.`
+      );
+
+    progressToAdvance.value_advance();
+    yield progressRoot;
 
     // 3. Submit result.
 
@@ -74,15 +80,15 @@ async function* tester( progressParent ) {
     let nNegativeZeroPositive = RandTools.getRandomIntInclusive( -1, 1 );
     neuralOrchestra.evolutionVersusSubmitter_send( nNegativeZeroPositive );
 
+    progressToAdvance.value_advance();
+    yield progressRoot;
+
   } finally {
     if ( neuralOrchestra ) {
       neuralOrchestra.disposeResources_and_recycleToPool();
       neuralOrchestra = null;
     }
   }
-
-  progressToAdvance.value_advance(); // Every prepare_async() complete.
-  yield progressRoot;
 
   console.log( "NeuralOrchestra testing... Done." );
 }
