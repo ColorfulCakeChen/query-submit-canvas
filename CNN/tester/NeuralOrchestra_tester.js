@@ -25,8 +25,8 @@ async function* tester( progressParent ) {
 
   // Note: These is a un-related measurement id of testing purpose for not
   //       disturbing real measurement.
-  let submitter_measurement_id = "G-72GM1629JW";
-  let submitter_api_secret = "d-FBepWpQXOGaXmkdeqqiA";
+  let submitter_measurement_id = "G-DSQF4CQ57J";
+  let submitter_api_secret = "2hUH_0ZrS0Wk8eTlWqGMyg";
   let submitter_client_id = Date.now();
 
   let input_height = 72;
