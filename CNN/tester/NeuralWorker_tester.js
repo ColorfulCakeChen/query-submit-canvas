@@ -546,6 +546,7 @@ class HeightWidthDepth {
     let progressToAdvance = progressParent.child_add(
       ValueMax.Percentage.Concrete.Pool.get_or_create_by( progressMax ) );
 
+    let asserter_Equal;
     let testCase;
     try {
       let pool_all_issuedCount_before = Pool.All.issuedCount;
@@ -554,7 +555,7 @@ class HeightWidthDepth {
         let memoryInfo_testCorrectness_before = tf.memory(); // Test memory leakage of imageSourceBag.
 
         {
-          let asserter_Equal
+          asserter_Equal
             = TensorTools.Asserter_Equal.Pool.get_or_create_by( 0.01, 0.005 );
 
           this.neuralWorker_PerformanceTest_init();
@@ -683,6 +684,11 @@ class HeightWidthDepth {
       throw e;
 
     } finally {
+      if ( asserter_Equal ) {
+        asserter_Equal.disposeResources_and_recycleToPool();
+        asserter_Equal = null;
+      }
+
     }
   
     console.log( `NeuralWorker ( ${backendName} ) testing... Done.` );
