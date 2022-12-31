@@ -295,7 +295,8 @@ class NeuralNet_Base extends Recyclable.Root {
         if ( 0 == i ) { // Stage0.
           stageParamsCreator.configTo_beforeStage0();
         } else { // (i.e. stage1, 2, 3, ...)
-          stageParamsCreator.configTo_beforeStageN_exceptStage0( i, next_input_height, next_input_width, next_input_channelCount );
+          stageParamsCreator.configTo_beforeStageN_exceptStage0(
+            i, next_input_height, next_input_width, next_input_channelCount );
         }
 
         // StageLast. (Note: Stage0 may also be StageLast.) 
