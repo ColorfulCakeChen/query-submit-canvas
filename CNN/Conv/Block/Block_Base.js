@@ -1384,16 +1384,20 @@ class Block_Base extends Recyclable.Root {
     const intermediate_channelShuffler_inputGroupCount = channelShuffler_outputGroupCount;
 
 
-    let intermediatePointwise = Operation.Pointwise_ConstantWhenPassThrough.Pool.get_or_create_by(
-      inputTensorPlaceholder,
-      intermediate_outputChannelCount, intermediate_bBias, intermediate_nActivationId,
-      intermediate_nHigherHalfDifferent, intermediate_outputChannelCount_lowerHalf,
-      intermediate_channelShuffler_inputGroupCount,
-      channelShuffler_outputGroupCount // Keep the same output channels shuffling.
-    );
+    let intermediatePointwise
+      = Operation.Pointwise_ConstantWhenPassThrough.Pool.get_or_create_by(
+          inputTensorPlaceholder,
+          intermediate_outputChannelCount, intermediate_bBias, intermediate_nActivationId,
+          intermediate_nHigherHalfDifferent, intermediate_outputChannelCount_lowerHalf,
+          intermediate_channelShuffler_inputGroupCount,
+          channelShuffler_outputGroupCount // Keep the same output channels shuffling.
+        );
 
-    if ( !intermediatePointwise.init( inputWeightArray, this.weightElementOffsetEnd ) )
+    if ( !intermediatePointwise.init( inputWeightArray, this.weightElementOffsetEnd ) ) {
+      intermediatePointwise.disposeResources_and_recycleToPool();
+      intermediatePointwise = null;
       return null;  // e.g. input array does not have enough data.
+    }
     this.weightElementOffsetEnd = intermediatePointwise.weightElementOffsetEnd;
 
     return intermediatePointwise;
