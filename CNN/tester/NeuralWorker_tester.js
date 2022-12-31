@@ -910,10 +910,14 @@ function TestButton_onClick( event ) {
     g_Controls.TestButton.disabled = false;
 
     try {
-      Pool.Asserter.assert_Pool_issuedCount( "NeuralWorker_tester.tester_byUI()",
+      Pool.Asserter.assert_Pool_issuedCount(
+        "NeuralWorker_tester.TestButton_onClick()",
         pool_all_issuedCount_before );
 
     } catch ( e ) {
+      let msg = `NeuralWorker_tester.TestButton_onClick(): `
+        + `${e}`;
+
       console.log( msg );
       alert( `${msg}` );
       //debugger;
