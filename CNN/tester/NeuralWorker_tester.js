@@ -894,8 +894,7 @@ function TestButton_onClick( event ) {
   }).finally( () => { // Release resource.
    
     if ( progress ) {
-//!!! (2022/12/31 Temp Remarked) For test Pool.Asserter.assert_Pool_issuedCount
-//      progress.disposeResources_and_recycleToPool();
+      progress.disposeResources_and_recycleToPool();
       progress = null;
     }
 
@@ -907,7 +906,7 @@ function TestButton_onClick( event ) {
       g_Controls.performanceTable_htmlTableOperator = null;
     }
 
-    g_Controls.TestButton.disabled = false;
+    g_Controls.TestButton.disabled = false; // Re-enable UI.
 
     try {
       Pool.Asserter.assert_Pool_issuedCount(
