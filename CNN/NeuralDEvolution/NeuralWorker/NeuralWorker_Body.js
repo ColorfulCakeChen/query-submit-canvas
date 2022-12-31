@@ -133,7 +133,12 @@ class NeuralWorker_Body extends AsyncWorker.Body {
           neuralNetParamsBase );
 
         progress = ValueMax.Percentage.Aggregate.Pool.get_or_create_by();
-        let neuralNet = NeuralNet.Base.Pool.get_or_create_by();
+
+        // Note: Put into this.neuralNetArray[] so that it could be released
+        //       even if it's init failed and throw exception.
+        let neuralNet = this.neuralNetArray[ i ]
+          = NeuralNet.Base.Pool.get_or_create_by();
+
         let bInitOk = neuralNet.init( progress, inputWeightArray, 0, neuralNetParams );
 
         if ( false == bInitOk )
@@ -148,7 +153,6 @@ class NeuralWorker_Body extends AsyncWorker.Body {
         progress = null;
   
         bAllOk = bAllOk && bInitOk;
-        this.neuralNetArray[ i ] = neuralNet;
 
         // If need log dry-run time, also log neural network weight count.
         if ( bLogDryRunTime ) {
