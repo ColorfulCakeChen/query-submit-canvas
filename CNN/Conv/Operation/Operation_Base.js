@@ -437,25 +437,40 @@ let Operation_Base
   }
 
   /**
-   * Change this operation's input tensor placeholder. Also, register as the new input TensorPlaceholder's final user.
-   * If the new input tensor placeholder is undefined (or null), the corresponding this.input will be cleared to no input
+   * Change this operation's input tensor placeholder. Also, register as the new
+   * input TensorPlaceholder's final user. If the new input tensor placeholder is
+   * undefined (or null), the corresponding this.input will be cleared to no input
    * tensor placeholder.
    *
-   * Note: Because changing input tensor placeholder may cause complex effect, this method should be used carefully.
+   * Note: Because changing input tensor placeholder may cause complex effect,
+   *       this method should be used carefully.
    *
    *
-   * @param {Operation.Base} this            The operation to be modified.
-   * @param {TensorPlaceholder.Base} input0  The TensorPlaceholder object which will become this operation's 1st input.
-   * @param {TensorPlaceholder.Base} input1  The TensorPlaceholder object which will become this operation's 2nd input.
+   * @param {Operation.Base} this
+   *   The operation to be modified.
+   *
+   * @param {TensorPlaceholder.Base} input0
+   *   The TensorPlaceholder object which will become this operation's 1st input.
+   *
+   * @param {TensorPlaceholder.Base} input1
+   *   The TensorPlaceholder object which will become this operation's 2nd input.
    */
   static set_inputTensorPlaceholder0_inputTensorPlaceholder1( input0, input1 ) {
 
-    let newInput0 = Operation_Base.TensorPlaceholder_get_modified_for_set_input_from_old_to_new.call( this, this.input0, input0 );
-    if ( this.input0 != newInput0 ) // So that it could keep not existed if original does not existed.
+    let newInput0 = Operation_Base
+      .TensorPlaceholder_get_modified_for_set_input_from_old_to_new.call( this,
+        this.input0, input0 );
+
+    // So that it could keep not existed if original does not existed.
+    if ( this.input0 != newInput0 )
       this.input0 = newInput0;
 
-    let newInput1 = Operation_Base.TensorPlaceholder_get_modified_for_set_input_from_old_to_new.call( this, this.input1, input1 );
-    if ( this.input1 != newInput1 ) // So that it could keep not existed if original does not existed.
+    let newInput1 = Operation_Base
+      .TensorPlaceholder_get_modified_for_set_input_from_old_to_new.call( this,
+        this.input1, input1 );
+
+    // So that it could keep not existed if original does not existed.
+    if ( this.input1 != newInput1 )
       this.input1 = newInput1;
   }
 
@@ -463,8 +478,8 @@ let Operation_Base
    * Pass the input0 as output0 directly. Used for ( bKeepInputTensor == false ).
    *
    * @param {Base} this
-   *   The this.input0.realTensor should be viewed as already disposed by this method. However, in fact, it is returned as
-   * this.output0.realTensor directly.
+   *   The this.input0.realTensor should be viewed as already disposed by this
+   * method. However, in fact, it is returned as this.output0.realTensor directly.
    */
   static output0_return_input0_directly() {
     this.output0.realTensor = this.input0.realTensor;
@@ -474,8 +489,9 @@ let Operation_Base
    * Pass the cloned input0 as output0. Used for ( bKeepInputTensor == true ).
    *
    * @param {Base} this
-   *   The this.input0.realTensor should be viewed as kept (i.e. not disposed) by this method. However, in fact, it is cloned
-   * and returned as this.output0.realTensor.
+   *   The this.input0.realTensor should be viewed as kept (i.e. not disposed) by
+   * this method. However, in fact, it is cloned and returned as
+   * this.output0.realTensor.
    */
   static output0_return_input0_cloned() {
     this.output0.realTensor = this.input0.realTensor.clone();
@@ -491,8 +507,9 @@ let Operation_Base
 
 
 /**
- * Almost the same as Operation.Base class except its parent class is fixed to Object. In other words, caller can not specify the
- * parent class of Operation.Root (so it is named "Root" which can not have parent class).
+ * Almost the same as Operation.Base class except its parent class is fixed to
+ * Object. In other words, caller can not specify the parent class of
+ * Operation.Root (so it is named "Root" which can not have parent class).
  */
 class Root extends Operation_Base() {
 }
