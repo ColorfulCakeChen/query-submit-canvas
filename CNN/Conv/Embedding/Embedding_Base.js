@@ -154,7 +154,6 @@ class Embedding_Base extends Recyclable.Base( ReturnOrClone.Root ) {
 
     this.bInitOk = true;
     return true;
-
   }
 
   /**
