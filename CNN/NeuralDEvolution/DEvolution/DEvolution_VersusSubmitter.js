@@ -87,7 +87,8 @@ class DEvolution_VersusSubmitter extends Recyclable.Root {
     //     error (because it is an integer).
     //
     let itemVersusResult = {
-      item_name: versusIdString,
+      // item_name must be a string even if its content is number.
+      item_name: versusIdString.toString(),
       quantity: nNegativeZeroPositive,
     };
 
@@ -97,7 +98,8 @@ class DEvolution_VersusSubmitter extends Recyclable.Root {
     };
 
     let postBody = {
-      client_id: this.client_id.toString(), // (e.g. "XXXXXXXXXX.YYYYYYYYYY")
+      // client_id must be a string even if its content is number. (e.g. "XXXXXXXXXX.YYYYYYYYYY")
+      client_id: this.client_id.toString(),
       non_personalized_ads: true, // Because this information is not personalized.
       events: [ eventPurchase ]
     };
