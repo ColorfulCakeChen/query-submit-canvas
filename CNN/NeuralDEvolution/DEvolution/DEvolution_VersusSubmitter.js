@@ -89,7 +89,9 @@ class DEvolution_VersusSubmitter extends Recyclable.Root {
     let itemVersusResult = {
       // item_name must be a string even if its content is number.
       item_name: versusIdString.toString(),
-      quantity: nNegativeZeroPositive,
+
+      // quantity must be a number.
+      quantity: Number.parseInt( nNegativeZeroPositive ),
     };
 
     let eventPurchase = {
