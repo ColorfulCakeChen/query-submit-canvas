@@ -100,7 +100,8 @@ class DEvolution_VersusSubmitter extends Recyclable.Root {
     };
 
     let postBody = {
-      // client_id must be a string even if its content is number. (e.g. "XXXXXXXXXX.YYYYYYYYYY")
+      // client_id must be a string even if its content is number.
+      // (e.g. "XXXXXXXXXX.YYYYYYYYYY")
       client_id: this.client_id.toString(),
       non_personalized_ads: true, // Because this information is not personalized.
       events: [ eventPurchase ]
