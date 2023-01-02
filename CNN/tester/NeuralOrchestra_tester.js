@@ -23,8 +23,8 @@ async function* tester( progressParent ) {
   let downloader_spreadsheetId = "18YyEoy-OfSkODfw8wqBRApSrRnBTZpjRpRiwIKy8a0M";
   let downloader_apiKey = null;
 
-  // Note: These is a un-related measurement id of testing purpose for not
-  //       disturbing real measurement.
+  // Note: This is an un-related measurement id for testing purpose only. So that
+  //       this testing will not disturbing the real measurement.
   let submitter_measurement_id = "G-DSQF4CQ57J";
   let submitter_api_secret = "2hUH_0ZrS0Wk8eTlWqGMyg";
   let submitter_client_id = Date.now();
