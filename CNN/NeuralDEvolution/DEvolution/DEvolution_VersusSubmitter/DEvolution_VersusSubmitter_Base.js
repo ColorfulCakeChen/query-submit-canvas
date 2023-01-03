@@ -58,7 +58,7 @@ class DEvolution_VersusSubmitter_Base extends Recyclable.Root {
    */
   static createMeasurementUrl( measurement_id, api_secret ) {
     let url = `${DEvolution_VersusSubmitter_Base.urlBase}?measurement_id=${
-      this.measurement_id}&api_secret=${this.api_secret}`;
+      measurement_id}&api_secret=${api_secret}`;
 
     return url;
   }
