@@ -29,6 +29,7 @@ function test_DEvolution_VersusSubmitter_MultiMeasurementId_MultiEventName(
       evolutionVersusSubmitter
         .post_by_measurementId_versusId_NegativeZeroPositive(
           submitter_measurementId, evolutionVersusId, nNegativeZeroPositive );
+    }
   }
 
   if ( evolutionVersusSubmitter ) {
