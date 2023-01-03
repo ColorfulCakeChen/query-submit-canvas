@@ -113,7 +113,7 @@ class DEvolution_VersusSubmitter_Base extends Recyclable.Root {
       non_personalized_ads: true, // Because this information is not personalized.
       events: eventArray
     };
-  
+
     DEvolution_VersusSubmitter_Base.post_by_measurementId_apiSecret_bodyObject(
       measurementId, apiSecret, postBody );
   }
