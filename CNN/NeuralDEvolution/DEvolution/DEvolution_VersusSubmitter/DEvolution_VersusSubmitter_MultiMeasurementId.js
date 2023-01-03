@@ -12,7 +12,7 @@ import { Base as DEvolution_VersusSubmitter_Base }
  * @member {string} client_id
  *   The client id when sending measurement protocol.
  *
- * @member {string[][]} measurement_id__api_secret__array_array
+ * @member {string[][]} measurementId_apiSecret_array_array
  *   An array of string array. Every string array should have two elements as
  * [ measurement_id, api_secret ] for the streams of property of Google Analytics v4.
  */
@@ -29,36 +29,36 @@ class DEvolution_VersusSubmitter_MultiMeasurementId
     DEvolution_VersusSubmitter_MultiMeasurementId.setAsConstructor );
 
   /** */
-  constructor( client_id, measurement_id__api_secret__array_array ) {
+  constructor( client_id, measurementId_apiSecret_array_array ) {
     super( client_id );
     DEvolution_VersusSubmitter_MultiMeasurementId
       .setAsConstructor_self.call( this,
-        measurement_id__api_secret__array_array );
+        measurementId_apiSecret_array_array );
   }
 
   /** @override */
-  static setAsConstructor( client_id, measurement_id__api_secret__array_array ) {
+  static setAsConstructor( client_id, measurementId_apiSecret_array_array ) {
     super.setAsConstructor( client_id );
     DEvolution_VersusSubmitter_MultiMeasurementId
       .setAsConstructor_self.call( this,
-        measurement_id__api_secret__array_array );
+        measurementId_apiSecret_array_array );
     return this;
   }
 
   /** @override */
-  static setAsConstructor_self( measurement_id__api_secret__array_array ) {
-    this.measurement_id__api_secret__map = new Map(
-      measurement_id__api_secret__array_array );
+  static setAsConstructor_self( measurementId_apiSecret_array_array ) {
+    this.measurementId_apiSecret_map = new Map(
+      measurementId_apiSecret_array_array );
   }
 
   /** @override */
   disposeResources() {
-    this.measurement_id__api_secret__map = undefined;
+    this.measurementId_apiSecret_map = undefined;
     super.disposeResources();
   }
 
   /**
-   * The api_secret will be looked up from .measurement_id__api_secret__map
+   * The api_secret will be looked up from .measurementId_apiSecret_map
    *
    * @param {string} measurement_id
    *   The measurement id of stream of property of Google Analytics v4.
@@ -70,7 +70,7 @@ class DEvolution_VersusSubmitter_MultiMeasurementId
   post_by_measurementId_bodyObject(
     measurement_id, postBodyObject ) {
 
-    let api_secret = this.measurement_id__api_secret__map.get( measurement_id );
+    let api_secret = this.measurementId_apiSecret_map.get( measurement_id );
 
     DEvolution_VersusSubmitter_Base.post_by_measurementId_apiSecret_bodyObject(
       measurement_id, api_secret, postBodyObject );
