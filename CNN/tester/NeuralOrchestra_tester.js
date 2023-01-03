@@ -82,7 +82,8 @@ async function* tester( progressParent ) {
 
 
 //!!! (2023/01/03 Temp Testing)
-  {
+//!!! ...unfinished... (2023/01/03) Some event type seems sent failed.
+{
     test_DEvolution_VersusSubmitter_MultiMeasurementId_MultiEventName(
       submitter_clientId, submitter_measurementId, submitter_apiSecret );
   }
