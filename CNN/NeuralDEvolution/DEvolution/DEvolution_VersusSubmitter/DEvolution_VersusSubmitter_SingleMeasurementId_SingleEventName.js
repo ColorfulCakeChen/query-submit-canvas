@@ -102,16 +102,8 @@ class DEvolution_VersusSubmitter_SingleMeasurementId_SingleEventName
       params: { items: [ itemVersusResult ] }
     };
 
-    let postBody = {
-      // clientId must be a string even if its content is number.
-      // (e.g. "XXXXXXXXXX.YYYYYYYYYY")
-      client_id: this.clientId.toString(),
-      non_personalized_ads: true, // Because this information is not personalized.
-      events: [ eventPurchase ]
-    };
-
-    DEvolution_VersusSubmitter_Base.post_by_measurementId_apiSecret_bodyObject(
-      this.measurementId, this.apiSecret, postBody );
+    DEvolution_VersusSubmitter_Base.post_by_measurementId_apiSecret_eventArray(
+      this.measurementId, this.apiSecret, [ eventPurchase ] );
   }
 
 }
