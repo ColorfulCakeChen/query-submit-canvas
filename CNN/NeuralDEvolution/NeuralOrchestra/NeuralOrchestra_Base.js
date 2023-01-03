@@ -516,8 +516,9 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     submitter_measurement_id, submitter_api_secret, submitter_client_id ) {
 
     this.evolutionVersusSubmitter_dispose();
-    this.evolutionVersusSubmitter = DEvolution.VersusSubmitter.Pool.get_or_create_by(
-      submitter_measurement_id, submitter_api_secret, submitter_client_id );
+    this.evolutionVersusSubmitter = DEvolution.VersusSubmitter
+      .SingleMeasurementId_SingleEventName.Pool.get_or_create_by(
+        submitter_measurement_id, submitter_api_secret, submitter_client_id );
   }
 
   /**
