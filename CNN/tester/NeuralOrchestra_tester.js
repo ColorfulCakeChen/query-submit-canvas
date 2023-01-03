@@ -7,7 +7,7 @@ import * as NeuralOrchestra from "../NeuralDEvolution/NeuralOrchestra.js";
 
 /** */
 function test_DEvolution_VersusSubmitter_MultiMeasurementId_MultiEventName(
-  submitter_measurementId, submitter_apiSecret
+  submitter_clientId, submitter_measurementId, submitter_apiSecret
 ) {
 
   let evolutionVersusId;
@@ -84,7 +84,7 @@ async function* tester( progressParent ) {
 //!!! (2023/01/03 Temp Testing)
   {
     test_DEvolution_VersusSubmitter_MultiMeasurementId_MultiEventName(
-      submitter_measurementId, submitter_apiSecret );
+      submitter_clientId, submitter_measurementId, submitter_apiSecret );
   }
 
 
