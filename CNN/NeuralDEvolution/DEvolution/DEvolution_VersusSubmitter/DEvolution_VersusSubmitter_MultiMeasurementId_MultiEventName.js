@@ -103,47 +103,47 @@ DEvolution_VersusSubmitter_MultiMeasurementId_MultiEventName
   // Entity 0
   { name: "add_payment_info", params: { items: [] } },  // parent lose offspring
   { name: "add_shipping_info", params: { items: [] } }, // parent draw offspring
-  { name: "add_to_cart", params: { items: [] } },
+  { name: "add_to_cart", params: { items: [] } },       // parent win offspring
 
   // Entity 1
   { name: "add_to_wishlist", params: { items: [] } },   // parent lose offspring
   { name: "begin_checkout", params: { items: [] } },    // parent draw offspring
-  { name: "earn_virtual_currency", params: {} },
+  { name: "earn_virtual_currency", params: {} },        // parent win offspring
 
   // Entity 2
   { name: "generate_lead", params: {} },                // parent lose offspring
   { name: "join_group", params: {} },                   // parent draw offspring
-  { name: "level_up", params: {} },
+  { name: "level_up", params: {} },                     // parent win offspring
 
   // Entity 3
   { name: "login", params: {} },                        // parent lose offspring
-  { name: "post_score", params: {} },
-  { name: "purchase", params: { items: [] } },
+  { name: "post_score", params: {} },                   // parent draw offspring
+  { name: "purchase", params: { items: [] } },          // parent win offspring
 
   // Entity 4
   { name: "refund", params: { items: [] } },            // parent lose offspring
-  { name: "remove_from_cart", params: { items: [] } },
-  { name: "search", params: {} },
+  { name: "remove_from_cart", params: { items: [] } },  // parent draw offspring
+  { name: "search", params: {} },                       // parent win offspring
 
   // Entity 5
   { name: "select_content", params: {} },               // parent lose offspring
-  { name: "select_item", params: { items: [] } },
-  { name: "select_promotion", params: { items: [] } },
+  { name: "select_item", params: { items: [] } },       // parent draw offspring
+  { name: "select_promotion", params: { items: [] } },  // parent win offspring
 
   // Entity 6
   { name: "share", params: {} },                        // parent lose offspring
-  { name: "sign_up", params: {} },
-  { name: "spend_virtual_currency", params: {} },
+  { name: "sign_up", params: {} },                      // parent draw offspring
+  { name: "spend_virtual_currency", params: {} },       // parent win offspring
 
   // Entity 7
   { name: "tutorial_begin" },                           // parent lose offspring
-  { name: "tutorial_complete" },
-  { name: "unlock_achievement", params: {} },
+  { name: "tutorial_complete" },                        // parent draw offspring
+  { name: "unlock_achievement", params: {} },           // parent win offspring
 
   // Entity 8
   { name: "view_cart", params: { items: [] } },         // parent lose offspring
-  { name: "view_item", params: { items: [] } },
-  { name: "view_item_list", params: { items: [] } },
+  { name: "view_item", params: { items: [] } },         // parent draw offspring
+  { name: "view_item_list", params: { items: [] } },    // parent win offspring
 
   // Entity 9
   // { name: "view_promotion", params: { items: [] } },
