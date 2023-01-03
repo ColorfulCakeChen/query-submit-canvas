@@ -57,8 +57,8 @@ class DEvolution_VersusSubmitter_Base extends Recyclable.Root {
    *   The URL for sending to Google Analytics v4 measurement protocol.
    */
   static createMeasurementUrl( measurementId, apiSecret ) {
-    let url = `${DEvolution_VersusSubmitter_Base.urlBase}?measurementId=${
-      measurementId}&apiSecret=${apiSecret}`;
+    let url = `${DEvolution_VersusSubmitter_Base.urlBase}?measurement_id=${
+      measurementId}&api_secret=${apiSecret}`;
 
     return url;
   }
