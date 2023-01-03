@@ -22,7 +22,7 @@ function test_DEvolution_VersusSubmitter_MultiMeasurementId_MultiEventName(
 //!!! ...unfinished... (2023/01/03) should also test multiple measurementId.
 
     for ( let entityNo = 0; entityNo < 5; ++entityNo ) {
-      let fake_versusIdString = `${i}_0_0_0`;
+      let fake_versusIdString = `${entityNo}_0_0_0`;
       evolutionVersusId.set_byVersusIdString( fake_versusIdString );
 
       for ( let nNegativeZeroPositive = -1;
