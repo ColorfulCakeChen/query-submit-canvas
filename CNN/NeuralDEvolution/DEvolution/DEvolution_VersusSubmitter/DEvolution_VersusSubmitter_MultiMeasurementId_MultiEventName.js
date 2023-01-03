@@ -75,18 +75,15 @@ class DEvolution_VersusSubmitter_MultiMeasurementId_MultiEventName
   post_by_measurementId_versusId_NegativeZeroPositive(
     measurementId, versusId, nNegativeZeroPositive ) {
 
-//!!! ...unfinished... (2023/01/03)
+    // Ensure an integer between [ -1, +1 ].
+    nNegativeZeroPositive
+      = Math.min( Math.max( -1, Math.trunc( nNegativeZeroPositive ) ), 1 );
 
-    // An integer between [ 0, 4 ].
-    let entityNo = versusId.entityNo;
+    let entityNo = versusId.entityNo; // An integer between [ 0, 4 ].
+    let number_0_1_2 = nNegativeZeroPositive + 1; // An integer between [ 0, 2 ].
 
-    // An integer between [ 0, 2 ].
-    let number_0_1_2 = nNegativeZeroPositive + 1;
-
+    // The array index into eventObjectTable[].
     let eventObjectTableIndex = entityNo * ( number_0_1_2 + 1 );
-
-    // (e.g. EntityNo_ParentGenerationNo_OffspringGenerationNo).
-    //let versusIdString = versusId.versusIdString;
 
     let eventObject = DEvolution_VersusSubmitter_MultiMeasurementId_MultiEventName
       .eventObjectTable[ eventObjectTableIndex ];
@@ -97,6 +94,10 @@ class DEvolution_VersusSubmitter_MultiMeasurementId_MultiEventName
 
 }
 
+/**
+ * Every entity (in a versus) uses 3 event names to represent: parent lose,
+ * draw, offspring win.
+ */
 DEvolution_VersusSubmitter_MultiMeasurementId_MultiEventName
   .eventObjectTable = [
 
