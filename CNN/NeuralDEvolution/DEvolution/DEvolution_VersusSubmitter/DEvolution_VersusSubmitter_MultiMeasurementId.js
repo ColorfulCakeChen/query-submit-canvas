@@ -65,7 +65,7 @@ class DEvolution_VersusSubmitter_MultiMeasurementId
    *
    * @param {object[]} eventArray
    *   An array of Google Analytics v4 measurement protocol event objects which will
-   * be embeded into an post body object, be converted to string by JSON.stringify()
+   * be embeded into a post body object, be converted to string by JSON.stringify()
    * and then be sent to server by HTTP POST method.
    */
   post_by_measurementId_eventArray( measurementId, eventArray ) {
