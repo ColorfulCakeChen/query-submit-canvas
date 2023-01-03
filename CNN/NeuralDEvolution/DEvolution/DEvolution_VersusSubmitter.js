@@ -6,3 +6,6 @@ export { SingleMeasurementId_SingleEventName }
 
 export { MultiMeasurementId }
   from "./DEvolution_VersusSubmitter/DEvolution_VersusSubmitter_MultiMeasurementId.js";
+
+export { MultiMeasurementId_MultiEventName }
+  from "./DEvolution_VersusSubmitter/DEvolution_VersusSubmitter_MultiMeasurementId_MultiEventName.js";
