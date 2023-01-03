@@ -23,11 +23,11 @@ async function* tester( progressParent ) {
   let downloader_spreadsheetId = "18YyEoy-OfSkODfw8wqBRApSrRnBTZpjRpRiwIKy8a0M";
   let downloader_apiKey = null;
 
+  let submitter_client_id = Date.now();
   // Note: This is an un-related measurement id for testing purpose only. So that
   //       this testing will not disturbing the real measurement.
   let submitter_measurement_id = "G-DSQF4CQ57J";
   let submitter_api_secret = "2hUH_0ZrS0Wk8eTlWqGMyg";
-  let submitter_client_id = Date.now();
 
   let input_height = 72;
   let input_width = 128;
@@ -42,7 +42,7 @@ async function* tester( progressParent ) {
     neuralOrchestra = NeuralOrchestra.Base.Pool.get_or_create_by();
     let bInitOk = await neuralOrchestra.init_async(
       downloader_spreadsheetId, downloader_apiKey,
-      submitter_measurement_id, submitter_api_secret, submitter_client_id,
+      submitter_client_id, submitter_measurement_id, submitter_api_secret,
 
       input_height,
       input_width,

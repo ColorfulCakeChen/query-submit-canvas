@@ -20,15 +20,15 @@ import * as DEvolution from "../DEvolution.js";
  *   - If null, Google Visualization Table Query API will be used.
  *   - If not null, Google Sheets API v4 will be used.
  *
+ * @member {string} submitter_client_id
+ *   The client id when sending measurement protocol.
+ *
  * @member {string} submitter_measurement_id
  *   The measurement id of stream of property of Google Analytics v4.
  *
  * @member {string} submitter_api_secret
  *   The measurement api secret of stream of property of Google Analytics v4.
  * 
- * @member {string} submitter_client_id
- *   The client id when sending measurement protocol.
- *
  * @member {string} backendName
  *   Which backend (of tensorflow.js library) is used by web worker. Either "cpu"
  * or "webgl".
@@ -93,16 +93,16 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     return this.evolutionVersusSummary.weightsAPIKey;
   }
 
+  get submitter_client_id() {
+    return this.evolutionVersusSubmitter.client_id;
+  }
+
   get submitter_measurement_id() {
     return this.evolutionVersusSubmitter.measurement_id;
   }
 
   get submitter_api_secret() {
     return this.evolutionVersusSubmitter.api_secret;
-  }
-
-  get submitter_client_id() {
-    return this.evolutionVersusSubmitter.client_id;
   }
 
   get backendName() {
@@ -144,14 +144,14 @@ class NeuralOrchestra_Base extends Recyclable.Root {
    *   - If not null, Google Sheets API v4 will be used.
    *
    *
+   * @param {string} submitter_client_id
+   *   The client id when sending measurement protocol.
+   *
    * @param {string} submitter_measurement_id
    *   The measurement id of stream of property of Google Analytics v4.
    *
    * @param {string} submitter_api_secret
    *   The measurement api secret of stream of property of Google Analytics v4.
-   * 
-   * @param {string} submitter_client_id
-   *   The client id when sending measurement protocol.
    *
    *
    * @param {number} input_height
@@ -181,7 +181,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
   async init_async(
     downloader_spreadsheetId, downloader_apiKey,
 
-    submitter_measurement_id, submitter_api_secret, submitter_client_id,
+    submitter_client_id, submitter_measurement_id, submitter_api_secret,
 
     input_height = 72,
     input_width = 128,
@@ -225,7 +225,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
 
     // 3. Versus Result Reporter
     this.evolutionVersusSubmitter_init(
-      submitter_measurement_id, submitter_api_secret, submitter_client_id );
+      submitter_client_id, submitter_measurement_id, submitter_api_secret );
 
     // 4.
 
@@ -289,45 +289,6 @@ class NeuralOrchestra_Base extends Recyclable.Root {
    * @param {NeuralOrchestra_Base} this
    */
   static async workerProxies_compileShaders_async() {
-
-//!!! (2022/12/29 Remarked) Call workerProxies_NeuralNetArray_create_async() instead.
-//
-//     // Although neural network configuration will be copied (not transferred)
-//     // to workers, they still need be cloned because NeuralWorker.Proxy will
-//     // keep (i.e. owned and destroyed) them.
-//     let neuralNetParamsBaseArray;
-//     {
-//       let neuralNetParams0 = this.neuralNetParamsBase.clone();
-//       let neuralNetParams1 = this.neuralNetParamsBase.clone();
-//       neuralNetParamsBaseArray = [ neuralNetParams0, neuralNetParams1 ];
-//     }
-//
-//     // Dummy neural network's weights.
-//     //      
-//     // Neural network weights will be transferred (not copied) to workers. So,
-//     // all new dummy array buffer should be created.
-//     //
-//     const weightArrayLength = ( 5 * 1024 * 1024 );
-//     const weightArrayByteLength = weightArrayLength * Float32Array.BYTES_PER_ELEMENT;
-//     let weightArrayBufferArray = [
-//       new ArrayBuffer( weightArrayByteLength ), new ArrayBuffer( weightArrayByteLength )
-//     ];
-//
-//     // (2022//09/26 Remarked)
-//     const bLogDryRunTime = true; // For observing dry-run performance and weight count.
-//     //const bLogDryRunTime = false;
-//     let bCreateOkPromise = this.workerProxies.NeuralNetArray_create_async(
-//       neuralNetParamsBaseArray, weightArrayBufferArray, bLogDryRunTime );
-//
-//     let bCreateOk = await bCreateOkPromise;
-//     if ( !bCreateOk )
-//       throw Error( `NeuralOrchestra_Base.workerProxies_compileShaders_async(): `
-//         + `Failed to create neural networks. `
-//         + `${this.workerProxies}`
-//     );
-//
-//     return bCreateOk;
-
 
     // Dummy neural network's weights.
     //      
@@ -513,12 +474,12 @@ class NeuralOrchestra_Base extends Recyclable.Root {
 
   /** Create differential evolution versus result reporter. */
   evolutionVersusSubmitter_init(
-    submitter_measurement_id, submitter_api_secret, submitter_client_id ) {
+    submitter_client_id, submitter_measurement_id, submitter_api_secret ) {
 
     this.evolutionVersusSubmitter_dispose();
     this.evolutionVersusSubmitter = DEvolution.VersusSubmitter
       .SingleMeasurementId_SingleEventName.Pool.get_or_create_by(
-        submitter_measurement_id, submitter_api_secret, submitter_client_id );
+        submitter_client_id, submitter_measurement_id, submitter_api_secret );
   }
 
   /**

@@ -10,14 +10,14 @@ import { Base as DEvolution_VersusSubmitter_Base }
  * 
  *
  *
+ * @member {string} client_id
+ *   The client id when sending measurement protocol.
+ *
  * @member {string} measurement_id
  *   The measurement id of stream of property of Google Analytics v4.
  *
  * @member {string} api_secret
  *   The measurement api secret of stream of property of Google Analytics v4.
- * 
- * @member {string} client_id
- *   The client id when sending measurement protocol.
  */
 class DEvolution_VersusSubmitter_SingleMeasurementId_SingleEventName
   extends DEvolution_VersusSubmitter_Base {
@@ -32,7 +32,7 @@ class DEvolution_VersusSubmitter_SingleMeasurementId_SingleEventName
     DEvolution_VersusSubmitter_SingleMeasurementId_SingleEventName.setAsConstructor );
 
   /** */
-  constructor( measurement_id, api_secret, client_id ) {
+  constructor( client_id, measurement_id, api_secret ) {
     super( client_id );
     DEvolution_VersusSubmitter_SingleMeasurementId_SingleEventName
       .setAsConstructor_self.call( this,
@@ -40,7 +40,7 @@ class DEvolution_VersusSubmitter_SingleMeasurementId_SingleEventName
   }
 
   /** @override */
-  static setAsConstructor( measurement_id, api_secret, client_id ) {
+  static setAsConstructor( client_id, measurement_id, api_secret ) {
     super.setAsConstructor( client_id );
     DEvolution_VersusSubmitter_SingleMeasurementId_SingleEventName
       .setAsConstructor_self.call( this,
