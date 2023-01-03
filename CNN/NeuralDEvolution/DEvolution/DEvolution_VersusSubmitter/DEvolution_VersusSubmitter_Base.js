@@ -103,7 +103,7 @@ class DEvolution_VersusSubmitter_Base extends Recyclable.Root {
    * be embeded into a post body object, be converted to string by JSON.stringify()
    * and then be sent to server by HTTP POST method.
    */
-  static post_by_measurementId_apiSecret_eventArray(
+  post_by_measurementId_apiSecret_eventArray(
     measurementId, apiSecret, eventArray ) {
 
     let postBody = {
