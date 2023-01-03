@@ -74,9 +74,6 @@ class DEvolution_VersusSubmitter_SingleMeasurementId_SingleEventName
    */
   send( versusIdString, nNegativeZeroPositive ) {
 
-    let url = DEvolution_VersusSubmitter_Base.createMeasurementUrl(
-      this.measurement_id, this.api_secret );
-
     // Every versus result viewed as purchasing an item.
     //   - itemName is versus id
     //   - quantity is -1 or 0 or +1 representing versus result.
@@ -113,13 +110,8 @@ class DEvolution_VersusSubmitter_SingleMeasurementId_SingleEventName
       events: [ eventPurchase ]
     };
 
-    let postBodyString = JSON.stringify( postBody );
-    let options = {
-      method: "POST",
-      body: postBodyString
-    };
-
-    fetch( url, options );
+    DEvolution_VersusSubmitter_Base.post_by__measurement_id__api_secret__bodyObject(
+      this.measurement_id, this.api_secret, postBody );
   }
 
 }
