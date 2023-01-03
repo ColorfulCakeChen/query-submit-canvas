@@ -64,7 +64,10 @@ class DEvolution_VersusSubmitter_MultiMeasurementId_MultiEventName
    *   The measurement id of stream of property of Google Analytics v4.
    *
    * @param {DEvolution.VersusId} versusId
-   *   The differential evolution versus id.
+   *   The differential evolution versus id. The versusId.entityNo should between
+   * [ 0, 8 ] because Google Analytics v4 Measurement Protocol has 29 different
+   * event names. So there are at most 9 (= Math.floor( 29 / 3 ) ) entities could
+   * be represented.
    *
    * @param {number} nNegativeZeroPositive
    *   The lose/draw/win value of the versus. (-1 or 0 or +1)
@@ -75,15 +78,18 @@ class DEvolution_VersusSubmitter_MultiMeasurementId_MultiEventName
   post_by_measurementId_versusId_NegativeZeroPositive(
     measurementId, versusId, nNegativeZeroPositive ) {
 
-    // Ensure an integer between [ -1, +1 ].
+
+    // Ensure it is an integer between [ -1, +1 ].
     nNegativeZeroPositive
       = Math.min( Math.max( -1, Math.trunc( nNegativeZeroPositive ) ), 1 );
 
-    let entityNo = versusId.entityNo; // An integer between [ 0, 4 ].
-    let number_0_1_2 = nNegativeZeroPositive + 1; // An integer between [ 0, 2 ].
+    const entityNo = versusId.entityNo; // An integer between [ 0, 8 ].
+    const NegativeZeroPositiveKinds = 3; // ( -1, 0, +1 ) have 3 kinds.
+    const number_0_1_2 = nNegativeZeroPositive + 1; // An integer between [ 0, 2 ].
 
     // The array index into eventObjectTable[].
-    let eventObjectTableIndex = entityNo * ( number_0_1_2 + 1 );
+    let eventObjectTableIndex
+      = ( entityNo * NegativeZeroPositiveKinds ) + number_0_1_2;
 
     // A dummy event object (with correct event name, without any content)
     // represents the entityNo's versus result (lose, draw, win).
