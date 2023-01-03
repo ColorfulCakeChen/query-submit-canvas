@@ -5,6 +5,43 @@ import * as ValueMax from "../util/ValueMax.js";
 import * as DEvolution from "../DEvolution.js";
 import * as NeuralOrchestra from "../NeuralDEvolution/NeuralOrchestra.js";
 
+/** */
+function test_DEvolution_VersusSubmitter_MultiMeasurementId_MultiEventName(
+  submitter_measurementId, submitter_apiSecret
+) {
+
+  let evolutionVersusId = DEvolution.VersusId.Pool.get_or_create_by( "0_0_0_0");
+
+  let evolutionVersusSubmitter = DEvolution.VersusSubmitter
+    .MultiMeasurementId_MultiEventName.Pool.get_or_create_by(
+      submitter_clientId, [ [ submitter_measurementId, submitter_apiSecret ] ] );
+
+//!!! ...unfinished... (2023/01/03) should also test multiple measurementId.
+
+  for ( let entityNo = 0; entityNo < 5; ++entityNo ) {
+    let fake_versusIdString = `${i}_0_0_0`;
+    evolutionVersusId.set_byVersusIdString( fake_versusIdString );
+
+    for ( let nNegativeZeroPositive = -1;
+          nNegativeZeroPositive <= 1;
+          ++ nNegativeZeroPositive) {
+
+      evolutionVersusSubmitter
+        .post_by_measurementId_versusId_NegativeZeroPositive(
+          submitter_measurementId, evolutionVersusId, nNegativeZeroPositive );
+  }
+
+  if ( evolutionVersusSubmitter ) {
+    evolutionVersusSubmitter.disposeResources_and_recycleToPool();
+    evolutionVersusSubmitter = null;
+  }
+
+  if ( evolutionVersusId ) {
+    evolutionVersusId.disposeResources_and_recycleToPool();
+    evolutionVersusId = null;
+  }
+}
+
 /**
  *
  * @param {ValueMax.Percentage.Aggregate} progressParent
@@ -40,36 +77,8 @@ async function* tester( progressParent ) {
 
 //!!! (2023/01/03 Temp Testing)
   {
-    let evolutionVersusId = DEvolution.VersusId.Pool.get_or_create_by( "0_0_0_0");
-
-    let evolutionVersusSubmitter = DEvolution.VersusSubmitter
-      .MultiMeasurementId_MultiEventName.Pool.get_or_create_by(
-        submitter_clientId, [ [ submitter_measurementId, submitter_apiSecret ] ] );
-
-//!!! ...unfinished... (2023/01/03) should also test multiple measurementId.
-
-    for ( let entityNo = 0; entityNo < 5; ++entityNo ) {
-      let fake_versusIdString = `${i}_0_0_0`;
-      evolutionVersusId.set_byVersusIdString( fake_versusIdString );
-
-      for ( let nNegativeZeroPositive = -1;
-            nNegativeZeroPositive <= 1;
-            ++ nNegativeZeroPositive) {
-
-        evolutionVersusSubmitter
-          .post_by_measurementId_versusId_NegativeZeroPositive(
-            submitter_measurementId, evolutionVersusId, nNegativeZeroPositive );
-    }
-
-    if ( evolutionVersusSubmitter ) {
-      evolutionVersusSubmitter.disposeResources_and_recycleToPool();
-      evolutionVersusSubmitter = null;
-    }
-
-    if ( evolutionVersusId ) {
-      evolutionVersusId.disposeResources_and_recycleToPool();
-      evolutionVersusId = null;
-    }
+    test_DEvolution_VersusSubmitter_MultiMeasurementId_MultiEventName(
+      submitter_measurementId, submitter_apiSecret );
   }
 
 
