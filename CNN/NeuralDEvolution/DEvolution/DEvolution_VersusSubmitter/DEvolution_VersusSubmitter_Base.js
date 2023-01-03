@@ -75,7 +75,7 @@ class DEvolution_VersusSubmitter_Base extends Recyclable.Root {
    *   An object which will be converted to string by JSON.stringify() and then
    * be sent to server by HTTP POST method.
    */
-  static post_by__measurement_id__api_secret__bodyObject(
+  static post_by_measurementId_apiSecret_bodyObject(
     measurement_id, api_secret, postBodyObject ) {
 
     let url = DEvolution_VersusSubmitter_Base.createMeasurementUrl(

@@ -110,7 +110,7 @@ class DEvolution_VersusSubmitter_SingleMeasurementId_SingleEventName
       events: [ eventPurchase ]
     };
 
-    DEvolution_VersusSubmitter_Base.post_by__measurement_id__api_secret__bodyObject(
+    DEvolution_VersusSubmitter_Base.post_by_measurementId_apiSecret_bodyObject(
       this.measurement_id, this.api_secret, postBody );
   }
 

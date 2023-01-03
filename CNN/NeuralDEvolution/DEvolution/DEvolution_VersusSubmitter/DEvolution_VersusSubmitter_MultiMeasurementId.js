@@ -67,12 +67,12 @@ class DEvolution_VersusSubmitter_MultiMeasurementId
    *   An object which will be converted to string by JSON.stringify() and then
    * be sent to server by HTTP POST method.
    */
-  post_by__measurement_id__bodyObject(
+  post_by_measurementId_bodyObject(
     measurement_id, postBodyObject ) {
 
     let api_secret = this.measurement_id__api_secret__map.get( measurement_id );
 
-    DEvolution_VersusSubmitter_Base.post_by__measurement_id__api_secret__bodyObject(
+    DEvolution_VersusSubmitter_Base.post_by_measurementId_apiSecret_bodyObject(
       measurement_id, api_secret, postBodyObject );
   }
 
