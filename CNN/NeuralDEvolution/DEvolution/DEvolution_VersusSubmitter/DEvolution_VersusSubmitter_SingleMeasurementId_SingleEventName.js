@@ -34,15 +34,17 @@ class DEvolution_VersusSubmitter_SingleMeasurementId_SingleEventName
   /** */
   constructor( measurement_id, api_secret, client_id ) {
     super( client_id );
-    DEvolution_VersusSubmitter.setAsConstructor_self.call( this,
-      measurement_id, api_secret );
+    DEvolution_VersusSubmitter_SingleMeasurementId_SingleEventName
+      .setAsConstructor_self.call( this,
+        measurement_id, api_secret );
   }
 
   /** @override */
   static setAsConstructor( measurement_id, api_secret, client_id ) {
     super.setAsConstructor( client_id );
-    DEvolution_VersusSubmitter.setAsConstructor_self.call( this,
-      measurement_id, api_secret );
+    DEvolution_VersusSubmitter_SingleMeasurementId_SingleEventName
+      .setAsConstructor_self.call( this,
+        measurement_id, api_secret );
     return this;
   }
 
