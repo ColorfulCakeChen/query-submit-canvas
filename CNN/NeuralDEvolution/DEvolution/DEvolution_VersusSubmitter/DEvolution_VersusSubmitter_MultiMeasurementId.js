@@ -9,12 +9,12 @@ import { Base as DEvolution_VersusSubmitter_Base }
  * 
  *
  * 
- * @member {string} client_id
+ * @member {string} clientId
  *   The client id when sending measurement protocol.
  *
  * @member {string[][]} measurementId_apiSecret_array_array
  *   An array of string array. Every string array should have two elements as
- * [ measurement_id, api_secret ] for the streams of property of Google Analytics v4.
+ * [ measurementId, apiSecret ] for the streams of property of Google Analytics v4.
  */
 class DEvolution_VersusSubmitter_MultiMeasurementId
   extends DEvolution_VersusSubmitter_Base {
@@ -29,16 +29,16 @@ class DEvolution_VersusSubmitter_MultiMeasurementId
     DEvolution_VersusSubmitter_MultiMeasurementId.setAsConstructor );
 
   /** */
-  constructor( client_id, measurementId_apiSecret_array_array ) {
-    super( client_id );
+  constructor( clientId, measurementId_apiSecret_array_array ) {
+    super( clientId );
     DEvolution_VersusSubmitter_MultiMeasurementId
       .setAsConstructor_self.call( this,
         measurementId_apiSecret_array_array );
   }
 
   /** @override */
-  static setAsConstructor( client_id, measurementId_apiSecret_array_array ) {
-    super.setAsConstructor( client_id );
+  static setAsConstructor( clientId, measurementId_apiSecret_array_array ) {
+    super.setAsConstructor( clientId );
     DEvolution_VersusSubmitter_MultiMeasurementId
       .setAsConstructor_self.call( this,
         measurementId_apiSecret_array_array );
@@ -58,9 +58,9 @@ class DEvolution_VersusSubmitter_MultiMeasurementId
   }
 
   /**
-   * The api_secret will be looked up from .measurementId_apiSecret_map
+   * The apiSecret will be looked up from .measurementId_apiSecret_map
    *
-   * @param {string} measurement_id
+   * @param {string} measurementId
    *   The measurement id of stream of property of Google Analytics v4.
    *
    * @param {object} postBodyObject
@@ -68,12 +68,12 @@ class DEvolution_VersusSubmitter_MultiMeasurementId
    * be sent to server by HTTP POST method.
    */
   post_by_measurementId_bodyObject(
-    measurement_id, postBodyObject ) {
+    measurementId, postBodyObject ) {
 
-    let api_secret = this.measurementId_apiSecret_map.get( measurement_id );
+    let apiSecret = this.measurementId_apiSecret_map.get( measurementId );
 
     DEvolution_VersusSubmitter_Base.post_by_measurementId_apiSecret_bodyObject(
-      measurement_id, api_secret, postBodyObject );
+      measurementId, apiSecret, postBodyObject );
   }
 
 }

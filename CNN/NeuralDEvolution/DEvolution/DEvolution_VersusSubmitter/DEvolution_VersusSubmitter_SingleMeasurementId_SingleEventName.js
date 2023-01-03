@@ -10,13 +10,13 @@ import { Base as DEvolution_VersusSubmitter_Base }
  * 
  *
  *
- * @member {string} client_id
+ * @member {string} clientId
  *   The client id when sending measurement protocol.
  *
- * @member {string} measurement_id
+ * @member {string} measurementId
  *   The measurement id of stream of property of Google Analytics v4.
  *
- * @member {string} api_secret
+ * @member {string} apiSecret
  *   The measurement api secret of stream of property of Google Analytics v4.
  */
 class DEvolution_VersusSubmitter_SingleMeasurementId_SingleEventName
@@ -32,32 +32,32 @@ class DEvolution_VersusSubmitter_SingleMeasurementId_SingleEventName
     DEvolution_VersusSubmitter_SingleMeasurementId_SingleEventName.setAsConstructor );
 
   /** */
-  constructor( client_id, measurement_id, api_secret ) {
-    super( client_id );
+  constructor( clientId, measurementId, apiSecret ) {
+    super( clientId );
     DEvolution_VersusSubmitter_SingleMeasurementId_SingleEventName
       .setAsConstructor_self.call( this,
-        measurement_id, api_secret );
+        measurementId, apiSecret );
   }
 
   /** @override */
-  static setAsConstructor( client_id, measurement_id, api_secret ) {
-    super.setAsConstructor( client_id );
+  static setAsConstructor( clientId, measurementId, apiSecret ) {
+    super.setAsConstructor( clientId );
     DEvolution_VersusSubmitter_SingleMeasurementId_SingleEventName
       .setAsConstructor_self.call( this,
-        measurement_id, api_secret );
+        measurementId, apiSecret );
     return this;
   }
 
   /** @override */
-  static setAsConstructor_self( measurement_id, api_secret ) {
-    this.measurement_id = measurement_id;
-    this.api_secret = api_secret;
+  static setAsConstructor_self( measurementId, apiSecret ) {
+    this.measurementId = measurementId;
+    this.apiSecret = apiSecret;
   }
 
   /** @override */
   disposeResources() {
-    this.api_secret = undefined;
-    this.measurement_id = undefined;
+    this.apiSecret = undefined;
+    this.measurementId = undefined;
     super.disposeResources();
   }
 
@@ -103,15 +103,15 @@ class DEvolution_VersusSubmitter_SingleMeasurementId_SingleEventName
     };
 
     let postBody = {
-      // client_id must be a string even if its content is number.
+      // clientId must be a string even if its content is number.
       // (e.g. "XXXXXXXXXX.YYYYYYYYYY")
-      client_id: this.client_id.toString(),
+      clientId: this.clientId.toString(),
       non_personalized_ads: true, // Because this information is not personalized.
       events: [ eventPurchase ]
     };
 
     DEvolution_VersusSubmitter_Base.post_by_measurementId_apiSecret_bodyObject(
-      this.measurement_id, this.api_secret, postBody );
+      this.measurementId, this.apiSecret, postBody );
   }
 
 }

@@ -20,13 +20,13 @@ import * as DEvolution from "../DEvolution.js";
  *   - If null, Google Visualization Table Query API will be used.
  *   - If not null, Google Sheets API v4 will be used.
  *
- * @member {string} submitter_client_id
+ * @member {string} submitter_clientId
  *   The client id when sending measurement protocol.
  *
- * @member {string} submitter_measurement_id
+ * @member {string} submitter_measurementId
  *   The measurement id of stream of property of Google Analytics v4.
  *
- * @member {string} submitter_api_secret
+ * @member {string} submitter_apiSecret
  *   The measurement api secret of stream of property of Google Analytics v4.
  * 
  * @member {string} backendName
@@ -93,16 +93,16 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     return this.evolutionVersusSummary.weightsAPIKey;
   }
 
-  get submitter_client_id() {
-    return this.evolutionVersusSubmitter.client_id;
+  get submitter_clientId() {
+    return this.evolutionVersusSubmitter.clientId;
   }
 
-  get submitter_measurement_id() {
-    return this.evolutionVersusSubmitter.measurement_id;
+  get submitter_measurementId() {
+    return this.evolutionVersusSubmitter.measurementId;
   }
 
-  get submitter_api_secret() {
-    return this.evolutionVersusSubmitter.api_secret;
+  get submitter_apiSecret() {
+    return this.evolutionVersusSubmitter.apiSecret;
   }
 
   get backendName() {
@@ -144,13 +144,13 @@ class NeuralOrchestra_Base extends Recyclable.Root {
    *   - If not null, Google Sheets API v4 will be used.
    *
    *
-   * @param {string} submitter_client_id
+   * @param {string} submitter_clientId
    *   The client id when sending measurement protocol.
    *
-   * @param {string} submitter_measurement_id
+   * @param {string} submitter_measurementId
    *   The measurement id of stream of property of Google Analytics v4.
    *
-   * @param {string} submitter_api_secret
+   * @param {string} submitter_apiSecret
    *   The measurement api secret of stream of property of Google Analytics v4.
    *
    *
@@ -181,7 +181,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
   async init_async(
     downloader_spreadsheetId, downloader_apiKey,
 
-    submitter_client_id, submitter_measurement_id, submitter_api_secret,
+    submitter_clientId, submitter_measurementId, submitter_apiSecret,
 
     input_height = 72,
     input_width = 128,
@@ -225,7 +225,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
 
     // 3. Versus Result Reporter
     this.evolutionVersusSubmitter_init(
-      submitter_client_id, submitter_measurement_id, submitter_api_secret );
+      submitter_clientId, submitter_measurementId, submitter_apiSecret );
 
     // 4.
 
@@ -474,12 +474,12 @@ class NeuralOrchestra_Base extends Recyclable.Root {
 
   /** Create differential evolution versus result reporter. */
   evolutionVersusSubmitter_init(
-    submitter_client_id, submitter_measurement_id, submitter_api_secret ) {
+    submitter_clientId, submitter_measurementId, submitter_apiSecret ) {
 
     this.evolutionVersusSubmitter_dispose();
     this.evolutionVersusSubmitter = DEvolution.VersusSubmitter
       .SingleMeasurementId_SingleEventName.Pool.get_or_create_by(
-        submitter_client_id, submitter_measurement_id, submitter_api_secret );
+        submitter_clientId, submitter_measurementId, submitter_apiSecret );
   }
 
   /**

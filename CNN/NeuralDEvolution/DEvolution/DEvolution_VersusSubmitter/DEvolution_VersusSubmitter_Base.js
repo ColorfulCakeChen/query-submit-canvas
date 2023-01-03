@@ -6,7 +6,7 @@ import * as Recyclable from "../../../util/Recyclable.js";
 /**
  * The base class for DEvolution.VersusSubmitter.Xxx
  *
- * @member {string} client_id
+ * @member {string} clientId
  *   The client id when sending measurement protocol.
  */
 class DEvolution_VersusSubmitter_Base extends Recyclable.Root {
@@ -20,55 +20,55 @@ class DEvolution_VersusSubmitter_Base extends Recyclable.Root {
     DEvolution_VersusSubmitter_Base.setAsConstructor );
 
   /** */
-  constructor( client_id ) {
+  constructor( clientId ) {
     super();
     DEvolution_VersusSubmitter_Base.setAsConstructor_self.call( this,
-      client_id );
+      clientId );
   }
 
   /** @override */
-  static setAsConstructor( client_id ) {
+  static setAsConstructor( clientId ) {
     super.setAsConstructor();
     DEvolution_VersusSubmitter_Base.setAsConstructor_self.call( this,
-      client_id );
+      clientId );
     return this;
   }
 
   /** @override */
-  static setAsConstructor_self( client_id ) {
-    this.client_id = client_id;
+  static setAsConstructor_self( clientId ) {
+    this.clientId = clientId;
   }
 
   /** @override */
   disposeResources() {
-    this.client_id = undefined;
+    this.clientId = undefined;
     super.disposeResources();
   }
 
   /**
    *
-   * @param {string} measurement_id
+   * @param {string} measurementId
    *   The measurement id of stream of property of Google Analytics v4.
    *
-   * @param {string} api_secret
+   * @param {string} apiSecret
    *   The measurement api secret of stream of property of Google Analytics v4.
    *
    * @return {string}
    *   The URL for sending to Google Analytics v4 measurement protocol.
    */
-  static createMeasurementUrl( measurement_id, api_secret ) {
-    let url = `${DEvolution_VersusSubmitter_Base.urlBase}?measurement_id=${
-      measurement_id}&api_secret=${api_secret}`;
+  static createMeasurementUrl( measurementId, apiSecret ) {
+    let url = `${DEvolution_VersusSubmitter_Base.urlBase}?measurementId=${
+      measurementId}&apiSecret=${apiSecret}`;
 
     return url;
   }
 
   /**
    *
-   * @param {string} measurement_id
+   * @param {string} measurementId
    *   The measurement id of stream of property of Google Analytics v4.
    *
-   * @param {string} api_secret
+   * @param {string} apiSecret
    *   The measurement api secret of stream of property of Google Analytics v4.
    *
    * @param {object} postBodyObject
@@ -76,10 +76,10 @@ class DEvolution_VersusSubmitter_Base extends Recyclable.Root {
    * be sent to server by HTTP POST method.
    */
   static post_by_measurementId_apiSecret_bodyObject(
-    measurement_id, api_secret, postBodyObject ) {
+    measurementId, apiSecret, postBodyObject ) {
 
     let url = DEvolution_VersusSubmitter_Base.createMeasurementUrl(
-      measurement_id, api_secret );
+      measurementId, apiSecret );
 
     let postBodyString = JSON.stringify( postBodyObject );
     let options = {
