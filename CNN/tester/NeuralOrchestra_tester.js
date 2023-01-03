@@ -27,7 +27,7 @@ function test_DEvolution_VersusSubmitter_MultiMeasurementId_MultiEventName(
 
       for ( let nNegativeZeroPositive = -1;
             nNegativeZeroPositive <= 1;
-            ++ nNegativeZeroPositive) {
+            ++nNegativeZeroPositive) {
 
         evolutionVersusSubmitter
           .post_by_measurementId_versusId_NegativeZeroPositive(
