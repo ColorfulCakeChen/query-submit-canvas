@@ -492,8 +492,8 @@ class NeuralOrchestra_Base extends Recyclable.Root {
    *     - +1 (if parent win offspring)
    */
   evolutionVersusSubmitter_send( nNegativeZeroPositive ) {
-    this.evolutionVersusSubmitter.send(
-      this.evolutionVersus.versusId.versusIdString,
+    this.evolutionVersusSubmitter.post_by_versusId_NegativeZeroPositive(
+      this.evolutionVersus.versusId,
       nNegativeZeroPositive
     );
   }

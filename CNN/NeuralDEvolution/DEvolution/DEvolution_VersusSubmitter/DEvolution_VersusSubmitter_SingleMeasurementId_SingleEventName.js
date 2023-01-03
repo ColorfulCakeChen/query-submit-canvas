@@ -63,8 +63,8 @@ class DEvolution_VersusSubmitter_SingleMeasurementId_SingleEventName
 
   /**
    *
-   * @param {string} versusIdString
-   *   The versus id string. (e.g. EntityNo_ParentGenerationNo_OffspringGenerationNo).
+   * @param {DEvolution.VersusId} versusId
+   *   The differential evolution versus id.
    *
    * @param {number} nNegativeZeroPositive
    *   The lose/draw/win value of the versus. (-1 or 0 or +1)
@@ -72,7 +72,10 @@ class DEvolution_VersusSubmitter_SingleMeasurementId_SingleEventName
    *     -  0 (if parent draw offspring)
    *     - +1 (if parent win offspring)
    */
-  send( versusIdString, nNegativeZeroPositive ) {
+  post_by_versusId_NegativeZeroPositive( versusId, nNegativeZeroPositive ) {
+
+    // (e.g. EntityNo_ParentGenerationNo_OffspringGenerationNo).
+    let versusIdString = versusId.versusIdString;
 
     // Every versus result viewed as purchasing an item.
     //   - itemName is versus id
