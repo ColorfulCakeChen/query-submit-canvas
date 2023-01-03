@@ -85,11 +85,12 @@ class DEvolution_VersusSubmitter_MultiMeasurementId_MultiEventName
     // The array index into eventObjectTable[].
     let eventObjectTableIndex = entityNo * ( number_0_1_2 + 1 );
 
+    // A dummy event object (with correct event name, without any content)
+    // represents the entityNo's versus result (lose, draw, win).
     let eventObject = DEvolution_VersusSubmitter_MultiMeasurementId_MultiEventName
       .eventObjectTable[ eventObjectTableIndex ];
 
-    this.post_by_measurementId_event(
-      measurementId, eventObject );
+    this.post_by_measurementId_event( measurementId, eventObject );
   }
 
 }
