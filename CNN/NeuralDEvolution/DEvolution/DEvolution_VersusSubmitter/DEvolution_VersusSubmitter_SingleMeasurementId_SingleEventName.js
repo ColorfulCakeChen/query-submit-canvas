@@ -105,7 +105,7 @@ class DEvolution_VersusSubmitter_SingleMeasurementId_SingleEventName
     let postBody = {
       // clientId must be a string even if its content is number.
       // (e.g. "XXXXXXXXXX.YYYYYYYYYY")
-      clientId: this.clientId.toString(),
+      client_id: this.clientId.toString(),
       non_personalized_ads: true, // Because this information is not personalized.
       events: [ eventPurchase ]
     };
