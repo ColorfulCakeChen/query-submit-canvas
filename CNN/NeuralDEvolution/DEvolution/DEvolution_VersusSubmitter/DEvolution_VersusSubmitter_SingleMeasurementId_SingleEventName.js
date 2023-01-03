@@ -105,8 +105,8 @@ class DEvolution_VersusSubmitter_SingleMeasurementId_SingleEventName
       params: { items: [ itemVersusResult ] }
     };
 
-    this.post_by_measurementId_apiSecret_eventArray(
-      this.measurementId, this.apiSecret, [ eventPurchase ] );
+    this.post_by_measurementId_apiSecret_event(
+      this.measurementId, this.apiSecret, eventPurchase );
   }
 
 }

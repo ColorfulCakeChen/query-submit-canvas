@@ -70,8 +70,23 @@ class DEvolution_VersusSubmitter_MultiMeasurementId
    */
   post_by_measurementId_eventArray( measurementId, eventArray ) {
     let apiSecret = this.measurementId_apiSecret_map.get( measurementId );
-    DEvolution_VersusSubmitter_Base.post_by_measurementId_apiSecret_eventArray(
+    this.post_by_measurementId_apiSecret_eventArray(
       measurementId, apiSecret, eventArray );
+  }
+
+  /**
+   * The apiSecret will be looked up from .measurementId_apiSecret_map
+   *
+   * @param {string} measurementId
+   *   The measurement id of stream of property of Google Analytics v4.
+   *
+   * @param {object} event
+   *   A Google Analytics v4 measurement protocol event object which will
+   * be embeded into a post body object, be converted to string by JSON.stringify()
+   * and then be sent to server by HTTP POST method.
+   */
+  post_by_measurementId_event( measurementId, event ) {
+    this.post_by_measurementId_eventArray( measurementId, [ event ] );
   }
 
 }

@@ -118,6 +118,24 @@ class DEvolution_VersusSubmitter_Base extends Recyclable.Root {
       measurementId, apiSecret, postBody );
   }
 
+  /**
+   *
+   * @param {string} measurementId
+   *   The measurement id of stream of property of Google Analytics v4.
+   *
+   * @param {string} apiSecret
+   *   The measurement api secret of stream of property of Google Analytics v4.
+   *
+   * @param {object} event
+   *   A Google Analytics v4 measurement protocol event object which will
+   * be embeded into a post body object, be converted to string by JSON.stringify()
+   * and then be sent to server by HTTP POST method.
+   */
+  post_by_measurementId_apiSecret_event( measurementId, apiSecret, event ) {
+    this.post_by_measurementId_apiSecret_eventArray(
+      measurementId, apiSecret, [ event ] );
+  }
+
 }
 
 DEvolution_VersusSubmitter_Base.urlBase
