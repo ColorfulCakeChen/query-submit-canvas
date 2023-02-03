@@ -190,8 +190,10 @@ function GA4_run_realtime_report_() {
     // Accumulate purchased count of every reported item name (from event name).
     let itemName_to_itemPurchased_Map = new Map();
     {
+      let inputReportRowCount = report.rows.length;
+
       let rowIndex;
-      for ( rowIndex = 0; rowIndex < fillRowCount; ++rowIndex ) {
+      for ( rowIndex = 0; rowIndex < inputReportRowCount; ++rowIndex ) {
         let reportRow = report.rows[ rowIndex ];
 
         let eventName
@@ -214,8 +216,7 @@ function GA4_run_realtime_report_() {
         }
       }
 
-      let reportRowCount = report.rows.length;
-      console.log( `GA4_run_realtime_report_(): ${reportRowCount} rows extracted.` );
+      console.log( `GA4_run_realtime_report_(): ${inputReportRowCount} rows extracted.` );
     }
 
     let itemNameCount = itemName_to_itemPurchased_Map.size;
@@ -223,38 +224,18 @@ function GA4_run_realtime_report_() {
     let outputRows = new Array( maxRowCount );
     let fillRowCount = Math.min( maxRowCount, itemNameCount );
 
-    let rowIndex, columnIndex;
-    for ( rowIndex = 0; rowIndex < fillRowCount; ++rowIndex ) {
-      let reportRow = report.rows[ rowIndex ];
+    let rowIndex = 0, columnIndex;
+    for ( let itemName_itemPurchased of itemName_to_itemPurchased_Map ) {
+      if ( rowIndex >= fillRowCount )
+        break;
+
       let outputRow = outputRows[ rowIndex ] = new Array( maxColumnCount );
 
-      let eventName
-        = reportRow.dimensionValues[ dimension_columnIndex_eventName ].value;
-      let eventCount
-        = reportRow.metricValues[ metric_columnIndex_eventCount ].value;
-
-//!!! ...unfinished... (2023/02/03)
-      let unit_ItemName_ItemPurchased
-        = eventName_to_Unit_ItemName_ItemPurchased_Map.get( eventName );
-
-      let itemPurchased; // Accumulate item purchased count.
-      {
-        itemPurchased = itemName_to_itemPurchased_Map.get(
-          unit_ItemName_ItemPurchased.itemName );
-
-        if ( itemPurchased == undefined )
-          itemPurchased = 0;
-
-        //unit_ItemName_ItemPurchased.itemName;
-        itemPurchased += unit_ItemName_ItemPurchased.itemsPurchased * eventCount;
-      }
-
-//!!! ...unfinished... (2023/02/03)
       columnIndex = 0;
-      outputRow[ columnIndex++ ]
-        = reportRow.dimensionValues[ dimension_columnIndex_eventName ].value;
-      outputRow[ columnIndex++ ]
-        = reportRow.metricValues[ metric_columnIndex_eventCount ].value;
+      outputRow[ columnIndex++ ] = itemName_itemPurchased[ 0 ];
+      outputRow[ columnIndex++ ] = itemName_itemPurchased[ 1 ];
+
+      ++rowIndex;
     }
 
     const emptyColumns = new Array( maxColumnCount );
