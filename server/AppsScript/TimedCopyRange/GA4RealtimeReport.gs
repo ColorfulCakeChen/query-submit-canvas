@@ -67,7 +67,7 @@ class Unit_ItemName_ItemPurchased {
 }
 
 /** Run a GA4 realtime report to fetch data. */
-function GA4_run_realtime_report() {
+function GA4_run_realtime_report_() {
   let [ fetcherGA4PropertyId,
     fetcherGA4ItemNameInListFilterRangeName,
     fetcherGA4MeasurementIdListItemIndexCur,
