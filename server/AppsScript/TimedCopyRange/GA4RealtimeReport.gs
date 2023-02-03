@@ -37,26 +37,34 @@ function GA4_run_realtime_report_() {
   const maxRowCount = reportRowsRange.getNumRows();
   const maxColumnCount = reportRowsRange.getNumColumns();
 
-//!!! ...unfinished... (2023/02/03)
+  // Prepare the next measurement id index.
   {
     const measurementIdListItemIndexNext
       = ( measurementIdListItemIndexCur + 1 ) % measurementIdListItemCount;
 
-    fetcherGA4MeasurementIdListItemIndexCur.setValue( measurementIdListItemIndexNext );
+    fetcherGA4MeasurementIdListItemIndexCur.setValue(
+      measurementIdListItemIndexNext );
+
     console.log( `GA4_run_realtime_report_(): `
       + `Next measurement id index ${measurementIdListItemIndexNext}.` );
   }
 
   const request = {
-    dimensions: [ { name: "itemName" } ],
-    metrics: [ { name: "itemsPurchased" } ],
-    dateRanges: {
-      startDate: "yesterday",
-      //startDate: "30daysAgo",
-      endDate: "yesterday"
-    },
+    dimensions: [
+      { name: "eventName" }, { name: "minutesAgo" }, { name: "streamId" }
+    ],
+    metrics: [ { name: "eventCount" } ],
+
+    // Use default date range (i.e. the last 30 minutes) is enough.
+    // minuteRanges: [
+    //   {
+    //     "name": "0-29 minutes ago",
+    //     "startMinutesAgo": 29,
+    //     "endMinutesAgo": 0,
+    //   }
+    // ],
+
     //limit: maxRowCount,
-    keepEmptyRows: true, // For fetching ( itemsPurchased == 0 ) items.
   };
 
   // Add in-list-filter for stream id.
@@ -75,6 +83,7 @@ function GA4_run_realtime_report_() {
     };
   }
 
+//!!! ...unfinished... (2023/02/03)
   const report = AnalyticsData.Properties.runReport( request,
     `properties/${propertyId}` );
 
