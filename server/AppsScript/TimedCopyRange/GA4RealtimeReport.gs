@@ -83,10 +83,10 @@ function GA4_run_realtime_report_() {
     };
   }
 
-//!!! ...unfinished... (2023/02/03)
-  const report = AnalyticsData.Properties.runReport( request,
+  const report = AnalyticsData.Properties.runRealtimeReport( request,
     `properties/${propertyId}` );
 
+//!!! ...unfinished... (2023/02/03)
   // Extract headers.
   {
     let outputHeaders = [ [] ];
