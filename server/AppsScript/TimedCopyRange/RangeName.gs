@@ -43,4 +43,20 @@ const RANGE_NAME = {
       },
     }
   },
+
+  GA4: {
+    MEASUREMENT_ID: {
+      LIST: {
+        ITEM: {
+          INDEX_CUR: "GA4.MeasurementId.List.Item.Index.Cur",
+          COUNT: "GA4.MeasurementId.List.Item.Count",
+        },
+      },
+    },
+    STREAM_ID: {
+      LIST: {
+        STRING: "GA4.StreamId.List.String",
+      },
+    },
+  },
 };
