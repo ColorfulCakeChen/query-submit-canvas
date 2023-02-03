@@ -186,6 +186,7 @@ function GA4_run_realtime_report_() {
 
   // Extract rows.
   if ( !report.rows ) {
+    reportRowsRange.clear();
     console.log( "GA4_run_realtime_report_(): No rows returned." );
 
   } else {
@@ -305,4 +306,3 @@ function EventName_to_Unit_ItemName_ItemPurchased_Map_create_(
 
   return eventName_to_Unit_ItemName_ItemPurchased_Map;
 }
-

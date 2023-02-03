@@ -68,6 +68,7 @@ function GA4_run_core_report_() {
 
   // Extract rows.
   if ( !report.rows ) {
+    reportRowsRange.clear();
     console.log( "GA4_run_core_report_(): No rows returned." );
 
   } else {
