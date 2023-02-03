@@ -116,7 +116,7 @@ function GA4_run_realtime_report_() {
       measurementIdListItemIndexNext );
 
     console.log( `GA4_run_realtime_report_(): `
-      + `Next measurement id index ${measurementIdListItemIndexNext}.` );
+      + `Next measurement id index will be ${measurementIdListItemIndexNext}.` );
   }
 
   const request = {
