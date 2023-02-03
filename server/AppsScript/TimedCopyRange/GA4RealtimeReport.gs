@@ -165,15 +165,17 @@ function GA4_run_realtime_report_() {
   let metric_columnIndex_eventCount;
   {
     for ( let i = 0; i < report.dimensionHeaders.length; ++i ) {
-      if ( "eventName" !== report.dimensionHeaders[ i ].name )
-        continue;
-      dimension_columnIndex_eventName = i;
+      if ( "eventName" === report.dimensionHeaders[ i ].name ) {
+        dimension_columnIndex_eventName = i;
+        break;
+      }
     }
 
     for ( let i = 0; i < report.metricHeaders.length; ++i ) {
-      if ( "eventCount" !==  report.metricHeaders[ i ].name )
-        continue;
-      metric_columnIndex_eventCount = i;
+      if ( "eventCount" === report.metricHeaders[ i ].name ) {
+        metric_columnIndex_eventCount = i;
+        break;
+      }
     }
 
     // The headers are fixed as [ "itemName", "itemsPurchased" ] (i.e. not
