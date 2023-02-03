@@ -67,7 +67,7 @@ class Unit_ItemName_ItemPurchased {
 }
 
 /** Run a GA4 realtime report to fetch data. */
-function GA4_run_realtime_report_() {
+function GA4_run_realtime_report() {
   let [ fetcherGA4PropertyId,
     fetcherGA4ItemNameInListFilterRangeName,
     fetcherGA4MeasurementIdListItemIndexCur,
@@ -205,6 +205,8 @@ function GA4_run_realtime_report_() {
 
         let unit_ItemName_ItemPurchased
           = eventName_to_Unit_ItemName_ItemPurchased_Map.get( eventName );
+        if ( !unit_ItemName_ItemPurchased )
+          continue; // e.g. No item name is represented by the event name.
 
         let itemName = unit_ItemName_ItemPurchased.itemName;
         let itemPurchased;
