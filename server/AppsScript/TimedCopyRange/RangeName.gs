@@ -48,7 +48,9 @@ const RANGE_NAME = {
     MEASUREMENT_ID: {
       LIST: {
         ITEM: {
-          INDEX_CUR: "GA4.MeasurementId.List.Item.Index.Cur",
+          INDEX: {
+            CUR: "GA4.MeasurementId.List.Item.Index.Cur",
+          },
           COUNT: "GA4.MeasurementId.List.Item.Count",
         },
       },

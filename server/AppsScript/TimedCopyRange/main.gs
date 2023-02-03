@@ -65,8 +65,8 @@ function copierTimer_onTime_( e ) {
 
 /** Run a GA4 report to fetch data. */
 function GA4_run_report_() {
-  GA4_run_core_report_();
-  //GA4_run_realtime_report_()
+  //GA4_run_core_report_();
+  GA4_run_realtime_report_()
 }
 
 /**
