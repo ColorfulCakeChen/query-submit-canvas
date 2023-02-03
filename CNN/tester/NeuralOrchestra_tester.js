@@ -24,8 +24,11 @@ function test_DEvolution_VersusSubmitter_MultiMeasurementId_MultiEventName(
 //!!! ...unfinished... (2023/01/03) should also test multiple measurementId.
 
     // Test multiple measurementId randomly.
-    let submitter_measurementId = RandTools.getRandomIntInclusive(
+    let submitter_measurementId_index = RandTools.getRandomIntInclusive(
       0, measurementId_apiSecret_array_array.length - 1 );
+
+    let submitter_measurementId
+      = measurementId_apiSecret_array_array[ submitter_measurementId_index ][ 0 ];
 
     for ( let entityNo = 0; entityNo < 9; ++entityNo ) {
       let fake_versusIdString = `${entityNo}_0_0_0`;
