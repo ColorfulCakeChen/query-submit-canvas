@@ -5,9 +5,11 @@ import * as ValueMax from "../util/ValueMax.js";
 import * as DEvolution from "../NeuralDEvolution/DEvolution.js";
 import * as NeuralOrchestra from "../NeuralDEvolution/NeuralOrchestra.js";
 
-/** */
+/**
+ * 
+ */
 function test_DEvolution_VersusSubmitter_MultiMeasurementId_MultiEventName(
-  submitter_clientId, submitter_measurementId, submitter_apiSecret
+  submitter_clientId, measurementId_apiSecret_array_array
 ) {
 
   let evolutionVersusId;
@@ -17,9 +19,13 @@ function test_DEvolution_VersusSubmitter_MultiMeasurementId_MultiEventName(
 
     evolutionVersusSubmitter = DEvolution.VersusSubmitter
       .MultiMeasurementId_MultiEventName.Pool.get_or_create_by(
-        submitter_clientId, [ [ submitter_measurementId, submitter_apiSecret ] ] );
+        submitter_clientId, measurementId_apiSecret_array_array );
 
 //!!! ...unfinished... (2023/01/03) should also test multiple measurementId.
+
+    // Test multiple measurementId randomly.
+    let submitter_measurementId = RandTools.getRandomIntInclusive(
+      0, measurementId_apiSecret_array_array.length - 1 );
 
     for ( let entityNo = 0; entityNo < 9; ++entityNo ) {
       let fake_versusIdString = `${entityNo}_0_0_0`;
@@ -81,10 +87,20 @@ async function* tester( progressParent ) {
   let output_channelCount = 12;
 
 
-//!!! (2023/01/03 Temp Testing)
+//!!! (2023/02/03 Temp Testing)
   {
+    // Note: This is an un-related measurement id for testing purpose only. So that
+    //       this testing will not disturbing the real measurement.
+    const measurementId_apiSecret_array_array = [
+      [ "G-DSQF4CQ57J", "2hUH_0ZrS0Wk8eTlWqGMyg" ], // NeuralOrchestra_tester, 00
+      [ "G-T14M8JKR65", "oTlC1a7DSsSKFP5-_QaPuw" ], // NeuralOrchestra_tester, 01
+      [ "G-BC7FNNFP5B", "aJWWxywJTmKiMqmakqUTfA" ], // NeuralOrchestra_tester, 02
+      [ "G-8LKLKP7TT9", "b5_CCDM4QHecR-lVxTjPqw" ], // NeuralOrchestra_tester, 03
+      [ "G-T14M8JKR65", "ywGNhxdrTj2zDlMX6gYEiQ" ], // NeuralOrchestra_tester, 04
+    ];
+
     test_DEvolution_VersusSubmitter_MultiMeasurementId_MultiEventName(
-      submitter_clientId, submitter_measurementId, submitter_apiSecret );
+      submitter_clientId, measurementId_apiSecret_array_array );
   }
 
 
