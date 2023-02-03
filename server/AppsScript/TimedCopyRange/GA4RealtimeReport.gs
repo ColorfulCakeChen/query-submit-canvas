@@ -121,7 +121,12 @@ function GA4_run_realtime_report_() {
     EventName_to_ItemName_ItemPurchased_Map = new Map();
     for ( let i = 0; i < itemNameArray.length; ++i ) {
       let itemName = itemNameArray[ i ];
+      if ( !itemName )
+        continue; // Skip empty item name. (should not happen)
+
       let eventNameIndex = i * 3;
+      if ( ( eventNameIndex + 2 ) >= UsableEventNameArray.length )
+        break; // No more event name could be used to represent the item.
 
       EventName_to_ItemName_ItemPurchased_Map.set(
         UsableEventNameArray[ eventNameIndex + 0 ],
