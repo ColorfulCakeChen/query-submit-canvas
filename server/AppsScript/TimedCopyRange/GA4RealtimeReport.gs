@@ -57,9 +57,9 @@ const UsableEventNameArray = [
 ];
 
 /**
- * 
+ * The unit purchase count (i.e. -1, 0, +1) of an item.
  */
-class Fake_ItemName_ItemPurchased {
+class Unit_ItemName_ItemPurchased {
   constructor( itemName, itemsPurchased ) {
     this.itemName = itemName;
     this.itemsPurchased = itemsPurchased;
@@ -103,8 +103,8 @@ function GA4_run_realtime_report_() {
   const maxColumnCount = reportRowsRange.getNumColumns();
 
   // Create the Map from event name to item name and item purchased.
-  let EventName_to_ItemName_ItemPurchased_Map
-    = EventName_to_ItemName_ItemPurchased_Map_create_(
+  let eventName_to_Unit_ItemName_ItemPurchased_Map
+    = EventName_to_Unit_ItemName_ItemPurchased_Map_create_(
         fetcherGA4ItemNameInListFilterRangeName );
 
   // Prepare the next measurement id index.
@@ -122,8 +122,8 @@ function GA4_run_realtime_report_() {
   const request = {
     dimensions: [
       { name: "eventName" },
-      { name: "minutesAgo" },
-      { name: "streamId" }
+      // { name: "minutesAgo" },
+      // { name: "streamId" }
     ],
     metrics: [ { name: "eventCount" } ],
 
@@ -160,28 +160,61 @@ function GA4_run_realtime_report_() {
 
   // Extract headers.
   //
-  // The headers are fixed as [ "itemName", "itemsPurchased" ] (i.e. not
-  // directly from realtime report.
+  // Find out column index of event name and event count.
+  let dimension_columnIndex_eventName;
+  let metric_columnIndex_eventCount;
   {
-//!!! (2023/02/03 Remarked)
-    // let outputHeaders = [ [] ];
-    // for ( let i = 0; i < report.dimensionHeaders.length; ++i ) {
-    //   outputHeaders[ 0 ].push( report.dimensionHeaders[ i ].name )
-    // }
-    // for ( let i = 0; i < report.metricHeaders.length; ++i ) {
-    //   outputHeaders[ 0 ].push( report.metricHeaders[ i ].name )
-    // }
+    for ( let i = 0; i < report.dimensionHeaders.length; ++i ) {
+      if ( "eventName" !== report.dimensionHeaders[ i ].name )
+        continue;
+      dimension_columnIndex_eventName = i;
+    }
 
+    for ( let i = 0; i < report.metricHeaders.length; ++i ) {
+      if ( "eventCount" !==  report.metricHeaders[ i ].name )
+        continue;
+      metric_columnIndex_eventCount = i;
+    }
+
+    // The headers are fixed as [ "itemName", "itemsPurchased" ] (i.e. not
+    // directly from realtime report.
     let outputHeaders = [ [ "itemName", "itemsPurchased" ] ];
     reportHeadersRange.setValues( outputHeaders );
   }
 
-//!!! ...unfinished... (2023/02/03)
   // Extract rows.
   if ( !report.rows ) {
     console.log( "GA4_run_realtime_report_(): No rows returned." );
 
   } else {
+    // Accumulate purchased count of every reported item name (from event name).
+    let itemName_to_itemPurchased_Map = new Map();
+    {
+      let rowIndex;
+      for ( rowIndex = 0; rowIndex < fillRowCount; ++rowIndex ) {
+        let reportRow = report.rows[ rowIndex ];
+
+        let eventName
+          = reportRow.dimensionValues[ dimension_columnIndex_eventName ].value;
+        let eventCount
+          = reportRow.metricValues[ metric_columnIndex_eventCount ].value;
+
+        let unit_ItemName_ItemPurchased
+          = eventName_to_Unit_ItemName_ItemPurchased_Map.get( eventName );
+
+        let itemName = unit_ItemName_ItemPurchased.itemName;
+        let itemPurchased;
+        {
+          itemPurchased = itemName_to_itemPurchased_Map.get( itemName );
+          if ( itemPurchased == undefined )
+            itemPurchased = 0;
+
+          itemPurchased += unit_ItemName_ItemPurchased.itemsPurchased * eventCount;
+          itemName_to_itemPurchased_Map.set( itemName, itemPurchased );
+        }
+      }
+    }
+
     let reportRowCount = report.rows.length;
 
     let outputRows = new Array( maxRowCount );
@@ -191,11 +224,34 @@ function GA4_run_realtime_report_() {
     for ( rowIndex = 0; rowIndex < fillRowCount; ++rowIndex ) {
       let reportRow = report.rows[ rowIndex ];
       let outputRow = outputRows[ rowIndex ] = new Array( maxColumnCount );
+
+      let eventName
+        = reportRow.dimensionValues[ dimension_columnIndex_eventName ].value;
+      let eventCount
+        = reportRow.metricValues[ metric_columnIndex_eventCount ].value;
+
+//!!! ...unfinished... (2023/02/03)
+      let unit_ItemName_ItemPurchased
+        = eventName_to_Unit_ItemName_ItemPurchased_Map.get( eventName );
+
+      let itemPurchased; // Accumulate item purchased count.
+      {
+        itemPurchased = itemName_to_itemPurchased_Map.get(
+          unit_ItemName_ItemPurchased.itemName );
+
+        if ( itemPurchased == undefined )
+          itemPurchased = 0;
+
+        //unit_ItemName_ItemPurchased.itemName;
+        itemPurchased += unit_ItemName_ItemPurchased.itemsPurchased * eventCount;
+      }
+
+//!!! ...unfinished... (2023/02/03)
       columnIndex = 0;
-      for ( let i = 0; i < reportRow.dimensionValues.length; ++i, ++columnIndex )
-        outputRow[ columnIndex ] = reportRow.dimensionValues[ i ].value;
-      for ( let i = 0; i < reportRow.metricValues.length; ++i, ++columnIndex )
-        outputRow[ columnIndex ] = reportRow.metricValues[ i ].value;
+      outputRow[ columnIndex++ ]
+        = reportRow.dimensionValues[ dimension_columnIndex_eventName ].value;
+      outputRow[ columnIndex++ ]
+        = reportRow.metricValues[ metric_columnIndex_eventCount ].value;
     }
 
     const emptyColumns = new Array( maxColumnCount );
@@ -217,10 +273,10 @@ function GA4_run_realtime_report_() {
  * contain all legal item (i.e. versus entity) names (separated by vertical bar (|)).
  *
  * @return {Map}
- *   Map event name to item name and item purchased. Every entity (in a versus)
+ *   Map event name to Unit_ItemName_ItemPurchased. Every entity (in a versus)
  * uses 3 event names to represent: parent lose, draw, offspring win.
  */
-function EventName_to_ItemName_ItemPurchased_Map_create_(
+function EventName_to_Unit_ItemName_ItemPurchased_Map_create_(
   fetcherGA4ItemNameInListFilterRangeName
 ) {
   // Get all legal item names.
@@ -236,7 +292,7 @@ function EventName_to_ItemName_ItemPurchased_Map_create_(
 
   // Every entity (in a versus) uses 3 event names to represent: parent lose,
   // draw, offspring win.
-  let EventName_to_ItemName_ItemPurchased_Map = new Map();
+  let eventName_to_Unit_ItemName_ItemPurchased_Map = new Map();
   for ( let i = 0; i < itemNameArray.length; ++i ) {
     let itemName = itemNameArray[ i ];
     if ( !itemName )
@@ -246,19 +302,19 @@ function EventName_to_ItemName_ItemPurchased_Map_create_(
     if ( ( eventNameIndex + 2 ) >= UsableEventNameArray.length )
       break; // No more event name could be used to represent the item.
 
-    EventName_to_ItemName_ItemPurchased_Map.set(
+    eventName_to_Unit_ItemName_ItemPurchased_Map.set(
       UsableEventNameArray[ eventNameIndex + 0 ],
-      new Fake_ItemName_ItemPurchased( itemName, -1 ) ); // parent lose offspring
+      new Unit_ItemName_ItemPurchased( itemName, -1 ) ); // parent lose offspring
 
-    EventName_to_ItemName_ItemPurchased_Map.set(
+    eventName_to_Unit_ItemName_ItemPurchased_Map.set(
       UsableEventNameArray[ eventNameIndex + 1 ],
-      new Fake_ItemName_ItemPurchased( itemName,  0 ) ); // parent draw offspring
+      new Unit_ItemName_ItemPurchased( itemName,  0 ) ); // parent draw offspring
 
-    EventName_to_ItemName_ItemPurchased_Map.set(
+    eventName_to_Unit_ItemName_ItemPurchased_Map.set(
       UsableEventNameArray[ eventNameIndex + 2 ],
-      new Fake_ItemName_ItemPurchased( itemName, +1 ) ); // parent win offspring
+      new Unit_ItemName_ItemPurchased( itemName, +1 ) ); // parent win offspring
   }
 
-  return EventName_to_ItemName_ItemPurchased_Map;
+  return eventName_to_Unit_ItemName_ItemPurchased_Map;
 }
 
