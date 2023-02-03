@@ -103,7 +103,7 @@ function GA4_run_realtime_report_() {
   const maxColumnCount = reportRowsRange.getNumColumns();
 
   // Map event name to item name and item purchased 
-  let EventName_to_ItemName_NegativeZeroPositive_Map;
+  let EventName_to_ItemName_ItemPurchased_Map;
   {
     // Get all legal item names.
     let itemNameArray; 
@@ -118,20 +118,20 @@ function GA4_run_realtime_report_() {
 
     // Every entity (in a versus) uses 3 event names to represent: parent lose,
     // draw, offspring win.
-    EventName_to_ItemName_NegativeZeroPositive_Map = new Map();
+    EventName_to_ItemName_ItemPurchased_Map = new Map();
     for ( let i = 0; i < itemNameArray.length; ++i ) {
       let itemName = itemNameArray[ i ];
       let eventNameIndex = i * 3;
 
-      EventName_to_ItemName_NegativeZeroPositive_Map.set(
+      EventName_to_ItemName_ItemPurchased_Map.set(
         UsableEventNameArray[ eventNameIndex + 0 ],
         new Fake_ItemName_ItemPurchased( itemName, -1 ) ); // parent lose offspring
 
-      EventName_to_ItemName_NegativeZeroPositive_Map.set(
+      EventName_to_ItemName_ItemPurchased_Map.set(
         UsableEventNameArray[ eventNameIndex + 1 ],
         new Fake_ItemName_ItemPurchased( itemName,  0 ) ); // parent draw offspring
 
-      EventName_to_ItemName_NegativeZeroPositive_Map.set(
+      EventName_to_ItemName_ItemPurchased_Map.set(
         UsableEventNameArray[ eventNameIndex + 2 ],
         new Fake_ItemName_ItemPurchased( itemName, +1 ) ); // parent win offspring
     }
