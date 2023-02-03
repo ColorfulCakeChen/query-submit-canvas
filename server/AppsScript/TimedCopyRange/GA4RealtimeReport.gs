@@ -213,12 +213,15 @@ function GA4_run_realtime_report_() {
           itemName_to_itemPurchased_Map.set( itemName, itemPurchased );
         }
       }
+
+      let reportRowCount = report.rows.length;
+      console.log( `GA4_run_realtime_report_(): ${reportRowCount} rows extracted.` );
     }
 
-    let reportRowCount = report.rows.length;
+    let itemNameCount = itemName_to_itemPurchased_Map.size;
 
     let outputRows = new Array( maxRowCount );
-    let fillRowCount = Math.min( maxRowCount, reportRowCount );
+    let fillRowCount = Math.min( maxRowCount, itemNameCount );
 
     let rowIndex, columnIndex;
     for ( rowIndex = 0; rowIndex < fillRowCount; ++rowIndex ) {
@@ -259,9 +262,9 @@ function GA4_run_realtime_report_() {
       outputRows[ rowIndex ] = emptyColumns;
 
     reportRowsRange.setValues( outputRows );
-    console.log( `GA4_run_realtime_report_(): ${reportRowCount} rows extracted.` );
+      console.log( `GA4_run_realtime_report_(): ${itemNameCount} item names extracted.` );
 
-    if ( reportRowCount > maxRowCount )
+    if ( itemNameCount > maxRowCount )
       console.error( `GA4_run_realtime_report_(): Fetcher.Result.Rows is too small. `
         + `Only ${maxRowCount} rows filled.` );
   }
