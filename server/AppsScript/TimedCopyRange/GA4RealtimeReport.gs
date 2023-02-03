@@ -247,7 +247,7 @@ function GA4_run_realtime_report() {
       outputRows[ rowIndex ] = emptyColumns;
 
     reportRowsRange.setValues( outputRows );
-      console.log( `GA4_run_realtime_report_(): ${itemNameCount} item names extracted.` );
+    console.log( `GA4_run_realtime_report_(): ${itemNameCount} item names extracted.` );
 
     if ( itemNameCount > maxRowCount )
       console.error( `GA4_run_realtime_report_(): Fetcher.Result.Rows is too small. `
