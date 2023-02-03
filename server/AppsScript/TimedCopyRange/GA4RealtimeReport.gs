@@ -102,45 +102,10 @@ function GA4_run_realtime_report_() {
   const maxRowCount = reportRowsRange.getNumRows();
   const maxColumnCount = reportRowsRange.getNumColumns();
 
-  // Map event name to item name and item purchased 
-  let EventName_to_ItemName_ItemPurchased_Map;
-  {
-    // Get all legal item names.
-    let itemNameArray; 
-    if ( !fetcherGA4ItemNameInListFilterRangeName.isBlank() ) {
-      let [ itemNameInListFilter ] = ranges_getByNames_(
-        fetcherGA4ItemNameInListFilterRangeName.getValue() );
-      let itemNameInListFilterString = itemNameInListFilter.getValue();
-      itemNameArray = itemNameInListFilterString.split( "|" );
-    } else {
-      itemNameArray = []; // No item names. (should not happen)
-    }
-
-    // Every entity (in a versus) uses 3 event names to represent: parent lose,
-    // draw, offspring win.
-    EventName_to_ItemName_ItemPurchased_Map = new Map();
-    for ( let i = 0; i < itemNameArray.length; ++i ) {
-      let itemName = itemNameArray[ i ];
-      if ( !itemName )
-        continue; // Skip empty item name. (should not happen)
-
-      let eventNameIndex = i * 3;
-      if ( ( eventNameIndex + 2 ) >= UsableEventNameArray.length )
-        break; // No more event name could be used to represent the item.
-
-      EventName_to_ItemName_ItemPurchased_Map.set(
-        UsableEventNameArray[ eventNameIndex + 0 ],
-        new Fake_ItemName_ItemPurchased( itemName, -1 ) ); // parent lose offspring
-
-      EventName_to_ItemName_ItemPurchased_Map.set(
-        UsableEventNameArray[ eventNameIndex + 1 ],
-        new Fake_ItemName_ItemPurchased( itemName,  0 ) ); // parent draw offspring
-
-      EventName_to_ItemName_ItemPurchased_Map.set(
-        UsableEventNameArray[ eventNameIndex + 2 ],
-        new Fake_ItemName_ItemPurchased( itemName, +1 ) ); // parent win offspring
-    }
-  }
+  // Create the Map from event name to item name and item purchased.
+  let EventName_to_ItemName_ItemPurchased_Map
+    = EventName_to_ItemName_ItemPurchased_Map_create_(
+        fetcherGA4ItemNameInListFilterRangeName );
 
   // Prepare the next measurement id index.
   {
@@ -245,3 +210,55 @@ function GA4_run_realtime_report_() {
         + `Only ${maxRowCount} rows filled.` );
   }
 }
+
+/**
+ * @param {Range} fetcherGA4ItemNameInListFilterRangeName
+ *   A named range contains another range name. The indirect named range should
+ * contain all legal item (i.e. versus entity) names (separated by vertical bar (|)).
+ *
+ * @return {Map}
+ *   Map event name to item name and item purchased. Every entity (in a versus)
+ * uses 3 event names to represent: parent lose, draw, offspring win.
+ */
+function EventName_to_ItemName_ItemPurchased_Map_create_(
+  fetcherGA4ItemNameInListFilterRangeName
+) {
+  // Get all legal item names.
+  let itemNameArray; 
+  if ( !fetcherGA4ItemNameInListFilterRangeName.isBlank() ) {
+    let [ itemNameInListFilter ] = ranges_getByNames_(
+      fetcherGA4ItemNameInListFilterRangeName.getValue() );
+    let itemNameInListFilterString = itemNameInListFilter.getValue();
+    itemNameArray = itemNameInListFilterString.split( "|" );
+  } else {
+    itemNameArray = []; // No item names. (should not happen)
+  }
+
+  // Every entity (in a versus) uses 3 event names to represent: parent lose,
+  // draw, offspring win.
+  let EventName_to_ItemName_ItemPurchased_Map = new Map();
+  for ( let i = 0; i < itemNameArray.length; ++i ) {
+    let itemName = itemNameArray[ i ];
+    if ( !itemName )
+      continue; // Skip empty item name. (should not happen)
+
+    let eventNameIndex = i * 3;
+    if ( ( eventNameIndex + 2 ) >= UsableEventNameArray.length )
+      break; // No more event name could be used to represent the item.
+
+    EventName_to_ItemName_ItemPurchased_Map.set(
+      UsableEventNameArray[ eventNameIndex + 0 ],
+      new Fake_ItemName_ItemPurchased( itemName, -1 ) ); // parent lose offspring
+
+    EventName_to_ItemName_ItemPurchased_Map.set(
+      UsableEventNameArray[ eventNameIndex + 1 ],
+      new Fake_ItemName_ItemPurchased( itemName,  0 ) ); // parent draw offspring
+
+    EventName_to_ItemName_ItemPurchased_Map.set(
+      UsableEventNameArray[ eventNameIndex + 2 ],
+      new Fake_ItemName_ItemPurchased( itemName, +1 ) ); // parent win offspring
+  }
+
+  return EventName_to_ItemName_ItemPurchased_Map;
+}
+
