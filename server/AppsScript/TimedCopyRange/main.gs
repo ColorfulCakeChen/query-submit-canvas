@@ -80,10 +80,10 @@ function NamedRange_copy_from_source_to_target_( bCopyOnlyIfTargetBlank ) {
     RANGE_NAME.FC.COPIER.SOURCE.RANGE_NAMES, RANGE_NAME.FC.COPIER.TARGET.RANGE_NAMES );
 
   let sourceRangeNamesString = copierSourceRangeNames.getValue();
-  let sourceRangeNames = sourceRangeNamesString.split( "," );
+  let sourceRangeNames = sourceRangeNamesString.split( "\," );
 
   let targetRangeNamesString = copierTargetRangeNames.getValue();
-  let targetRangeNames = targetRangeNamesString.split( "," );
+  let targetRangeNames = targetRangeNamesString.split( "\," );
 
   for ( let i = 0; i < sourceRangeNames.length; ++i ) {
     let sourceRangeName = sourceRangeNames[ i ].trim();

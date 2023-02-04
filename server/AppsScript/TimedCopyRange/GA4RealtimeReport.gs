@@ -141,7 +141,7 @@ function GA4_run_realtime_report_() {
 
   // Add in-list-filter for stream id.
   {
-    let streamIdArray = streamIdListString.split( "|" );
+    let streamIdArray = streamIdListString.split( "\|" );
     let streamId = streamIdArray[ measurementIdListItemIndexCur ];
 
     request.dimensionFilter = {
@@ -274,7 +274,7 @@ function EventName_to_Unit_ItemName_ItemPurchased_Map_create_(
     let [ itemNameInListFilter ] = ranges_getByNames_(
       fetcherGA4ItemNameInListFilterRangeName.getValue() );
     let itemNameInListFilterString = itemNameInListFilter.getValue();
-    itemNameArray = itemNameInListFilterString.split( "|" );
+    itemNameArray = itemNameInListFilterString.split( "\|" );
   } else {
     itemNameArray = []; // No item names. (should not happen)
   }

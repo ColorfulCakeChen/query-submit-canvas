@@ -39,7 +39,7 @@ function GA4_run_core_report_() {
     let [ itemNameInListFilter ] = ranges_getByNames_(
       fetcherGA4ItemNameInListFilterRangeName.getValue() );
     let itemNameInListFilterString = itemNameInListFilter.getValue();
-    let itemNameArray = itemNameInListFilterString.split( "|" );
+    let itemNameArray = itemNameInListFilterString.split( "\|" );
     request.dimensionFilter = {
       filter: {
         fieldName: "itemName",
