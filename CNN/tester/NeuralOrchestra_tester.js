@@ -47,7 +47,8 @@ function test_DEvolution_VersusSubmitter_MultiMeasurementId_MultiEventName(
         // could be a little different for helping verifying more easily by eyes.
         const MAGIC_DIVISOR = 4;
         if ( ( eventIndex % MAGIC_DIVISOR ) == 0 ) {
-          let extraCount = Math.floor( eventIndex / MAGIC_DIVISOR ) + 1;
+          //let extraCount = Math.floor( eventIndex / MAGIC_DIVISOR ) + 1;
+          let extraCount = eventIndex + 1;
           for ( let i = 0; i < extraCount; ++i ) {
             evolutionVersusSubmitter
               .post_by_measurementId_versusId_NegativeZeroPositive(
