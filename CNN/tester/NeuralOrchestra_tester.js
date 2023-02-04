@@ -45,10 +45,14 @@ function test_DEvolution_VersusSubmitter_MultiMeasurementId_MultiEventName(
 
         // Every 4 events, post once more so that the result of every entity
         // could be a little different for helping verifying more easily by eyes.
-        if ( ( eventIndex % 4 ) == 0 ) {
-          evolutionVersusSubmitter
-            .post_by_measurementId_versusId_NegativeZeroPositive(
-              submitter_measurementId, evolutionVersusId, nNegativeZeroPositive );
+        const MAGIC_DIVISOR = 4;
+        if ( ( eventIndex % MAGIC_DIVISOR ) == 0 ) {
+          let extraCount = Math.floor( eventIndex / MAGIC_DIVISOR );
+          for ( let i = 0; i < extraCount; ++i ) {
+            evolutionVersusSubmitter
+              .post_by_measurementId_versusId_NegativeZeroPositive(
+                submitter_measurementId, evolutionVersusId, nNegativeZeroPositive );
+          }
         }
 
         ++eventIndex;
