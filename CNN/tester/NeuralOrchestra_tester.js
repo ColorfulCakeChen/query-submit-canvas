@@ -30,6 +30,7 @@ function test_DEvolution_VersusSubmitter_MultiMeasurementId_MultiEventName(
     let submitter_measurementId
       = measurementId_apiSecret_array_array[ submitter_measurementId_index ][ 0 ];
 
+    let eventIndex = 0;
     for ( let entityNo = 0; entityNo < 9; ++entityNo ) {
       let fake_versusIdString = `${entityNo}_0_0_0`;
       evolutionVersusId.set_byVersusIdString( fake_versusIdString );
@@ -41,6 +42,16 @@ function test_DEvolution_VersusSubmitter_MultiMeasurementId_MultiEventName(
         evolutionVersusSubmitter
           .post_by_measurementId_versusId_NegativeZeroPositive(
             submitter_measurementId, evolutionVersusId, nNegativeZeroPositive );
+
+        // Every 4 events, post once more so that the result of every entity
+        // could be a little different for helping verifying more easily by eyes.
+        if ( ( eventIndex % 4 ) == 0 ) {
+          evolutionVersusSubmitter
+            .post_by_measurementId_versusId_NegativeZeroPositive(
+              submitter_measurementId, evolutionVersusId, nNegativeZeroPositive );
+        }
+
+        ++eventIndex;
       }
     }
 
