@@ -8,6 +8,14 @@ import * as Recyclable from "../../../util/Recyclable.js";
  *
  * @member {string} clientId
  *   The client id when sending measurement protocol.
+
+//!!! ...unfinished... (2023/02/05)
+
+ * @member {Map} measurementId_to_apiSecret_map
+ *   A Map from measurementId (string) to apiSecret (string). It may not exist. If
+ * it exists, it is used only by .post_by_measurementId_eventArray() and
+ * .post_by_measurementId_event() for looking up apiSecret of the specified
+ * measurementId of the streams of property of Google Analytics v4.
  */
 class DEvolution_VersusSubmitter_Base extends Recyclable.Root {
 
@@ -41,7 +49,11 @@ class DEvolution_VersusSubmitter_Base extends Recyclable.Root {
 
   /** @override */
   disposeResources() {
+    if ( this.measurementId_to_apiSecret_map )
+      this.measurementId_to_apiSecret_map = undefined;
+
     this.clientId = undefined;
+
     super.disposeResources();
   }
 
@@ -90,6 +102,7 @@ class DEvolution_VersusSubmitter_Base extends Recyclable.Root {
     fetch( url, options );
   }
 
+
   /**
    *
    * @param {string} measurementId
@@ -134,6 +147,51 @@ class DEvolution_VersusSubmitter_Base extends Recyclable.Root {
   post_by_measurementId_apiSecret_event( measurementId, apiSecret, event ) {
     this.post_by_measurementId_apiSecret_eventArray(
       measurementId, apiSecret, [ event ] );
+  }
+
+
+  /**
+   * (Re-)create .measurementId_to_apiSecret_map
+   *
+   * @param {string[][]} measurementId_apiSecret_array_array
+   *   An array of string array. Every string array should have two elements as
+   * [ measurementId, apiSecret ] for the streams of property of Google Analytics v4.
+   */
+  measurementId_to_apiSecret_map_create( measurementId_apiSecret_array_array ) {
+    this.measurementId_to_apiSecret_map = new Map(
+      measurementId_apiSecret_array_array );
+  }
+
+  /**
+   * The apiSecret will be looked up from .measurementId_to_apiSecret_map
+   *
+   * @param {string} measurementId
+   *   The measurement id of stream of property of Google Analytics v4.
+   *
+   * @param {object[]} eventArray
+   *   An array of Google Analytics v4 measurement protocol event objects which will
+   * be embeded into a post body object, be converted to string by JSON.stringify()
+   * and then be sent to server by HTTP POST method.
+   */
+  post_by_measurementId_eventArray( measurementId, eventArray ) {
+    let apiSecret = this.measurementId_to_apiSecret_map.get( measurementId );
+    this.post_by_measurementId_apiSecret_eventArray(
+      measurementId, apiSecret, eventArray );
+  }
+
+  /**
+   * The apiSecret will be looked up from .measurementId_to_apiSecret_map
+   *
+   * @param {string} measurementId
+   *   The measurement id of stream of property of Google Analytics v4.
+   *
+   * @param {object} event
+   *   A Google Analytics v4 measurement protocol event object which will
+   * be embeded into a post body object, be converted to string by JSON.stringify()
+   * and then be sent to server by HTTP POST method.
+   */
+  post_by_measurementId_event( measurementId, event ) {
+    this.post_by_measurementId_eventArray( measurementId, [ event ] );
   }
 
 }

@@ -1,5 +1,4 @@
-export { DEvolution_VersusSubmitter_SingleMeasurementId_SingleEventName
-  as SingleMeasurementId_SingleEventName };
+export { DEvolution_VersusSubmitter_SingleEventName as SingleEventName };
 
 import * as Pool from "../../../util/Pool.js";
 import * as Recyclable from "../../../util/Recyclable.js";
@@ -10,16 +9,13 @@ import { Base as DEvolution_VersusSubmitter_Base }
  * 
  *
  *
- * @member {string} clientId
- *   The client id when sending measurement protocol.
- *
  * @member {string} measurementId
  *   The measurement id of stream of property of Google Analytics v4.
  *
  * @member {string} apiSecret
  *   The measurement api secret of stream of property of Google Analytics v4.
  */
-class DEvolution_VersusSubmitter_SingleMeasurementId_SingleEventName
+class DEvolution_VersusSubmitter_SingleEventName
   extends DEvolution_VersusSubmitter_Base {
 
   /**
@@ -28,13 +24,13 @@ class DEvolution_VersusSubmitter_SingleMeasurementId_SingleEventName
    */
   static Pool = new Pool.Root(
     "DEvolution.VersusSubmitter.SingleMeasurementId_SingleEventName.Pool",
-    DEvolution_VersusSubmitter_SingleMeasurementId_SingleEventName,
-    DEvolution_VersusSubmitter_SingleMeasurementId_SingleEventName.setAsConstructor );
+    DEvolution_VersusSubmitter_SingleEventName,
+    DEvolution_VersusSubmitter_SingleEventName.setAsConstructor );
 
   /** */
   constructor( clientId, measurementId, apiSecret ) {
     super( clientId );
-    DEvolution_VersusSubmitter_SingleMeasurementId_SingleEventName
+    DEvolution_VersusSubmitter_SingleEventName
       .setAsConstructor_self.call( this,
         measurementId, apiSecret );
   }
@@ -42,7 +38,7 @@ class DEvolution_VersusSubmitter_SingleMeasurementId_SingleEventName
   /** @override */
   static setAsConstructor( clientId, measurementId, apiSecret ) {
     super.setAsConstructor( clientId );
-    DEvolution_VersusSubmitter_SingleMeasurementId_SingleEventName
+    DEvolution_VersusSubmitter_SingleEventName
       .setAsConstructor_self.call( this,
         measurementId, apiSecret );
     return this;

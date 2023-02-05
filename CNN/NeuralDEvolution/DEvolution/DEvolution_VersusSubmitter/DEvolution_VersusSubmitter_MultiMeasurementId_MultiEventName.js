@@ -1,45 +1,38 @@
-export { DEvolution_VersusSubmitter_MultiMeasurementId_MultiEventName
-  as MultiMeasurementId_MultiEventName };
+export { DEvolution_VersusSubmitter_MultiEventName as MultiEventName };
 
 import * as Pool from "../../../util/Pool.js";
 import * as Recyclable from "../../../util/Recyclable.js";
-import { MultiMeasurementId as DEvolution_VersusSubmitter_MultiMeasurementId }
-  from "./DEvolution_VersusSubmitter_MultiMeasurementId.js";
+import { Base as DEvolution_VersusSubmitter_Base }
+  from "./DEvolution_VersusSubmitter_Base.js";
 
 /**
  * 
  *
  * 
- * @member {string} clientId
- *   The client id when sending measurement protocol.
- *
- * @member {string[][]} measurementId_apiSecret_array_array
- *   An array of string array. Every string array should have two elements as
- * [ measurementId, apiSecret ] for the streams of property of Google Analytics v4.
  */
-class DEvolution_VersusSubmitter_MultiMeasurementId_MultiEventName
-  extends DEvolution_VersusSubmitter_MultiMeasurementId {
+class DEvolution_VersusSubmitter_MultiEventName
+  extends DEvolution_VersusSubmitter_Base {
 
   /**
-   * Used as default DEvolution.VersusSubmitter.MultiMeasurementId_MultiEventName
+   * Used as default DEvolution.VersusSubmitter.MultiEventName
    * provider for conforming to Recyclable interface.
    */
   static Pool = new Pool.Root(
-    "DEvolution.VersusSubmitter.MultiMeasurementId_MultiEventName.Pool",
-    DEvolution_VersusSubmitter_MultiMeasurementId_MultiEventName,
-    DEvolution_VersusSubmitter_MultiMeasurementId_MultiEventName.setAsConstructor );
+    "DEvolution.VersusSubmitter.MultiEventName.Pool",
+    DEvolution_VersusSubmitter_MultiEventName,
+    DEvolution_VersusSubmitter_MultiEventName.setAsConstructor );
 
   /** */
   constructor( clientId, measurementId_apiSecret_array_array ) {
     super( clientId, measurementId_apiSecret_array_array );
-    DEvolution_VersusSubmitter_MultiMeasurementId_MultiEventName
+    DEvolution_VersusSubmitter_MultiEventName
       .setAsConstructor_self.call( this );
   }
 
   /** @override */
   static setAsConstructor( clientId, measurementId_apiSecret_array_array ) {
     super.setAsConstructor( clientId, measurementId_apiSecret_array_array );
-    DEvolution_VersusSubmitter_MultiMeasurementId_MultiEventName
+    DEvolution_VersusSubmitter_MultiEventName
       .setAsConstructor_self.call( this );
     return this;
   }
@@ -53,15 +46,15 @@ class DEvolution_VersusSubmitter_MultiMeasurementId_MultiEventName
     super.disposeResources();
   }
 
-
   /**
-   * Every versusId.entityNo and every nNegativeZeroPositive (-1 or 0 or +1) will use
-   * an different event name (and its event content is not important).
-   *
-   * The apiSecret will be looked up from .measurementId_apiSecret_map
+   * Every versusId.entityNo and every nNegativeZeroPositive (-1 or 0 or +1) will
+   * use an different event name (and its event content is not important).
    *
    * @param {string} measurementId
    *   The measurement id of stream of property of Google Analytics v4.
+   *
+   * @param {string} apiSecret
+   *   The measurement api secret of stream of property of Google Analytics v4.
    *
    * @param {DEvolution.VersusId} versusId
    *   The differential evolution versus id. The versusId.entityNo should between
@@ -75,9 +68,8 @@ class DEvolution_VersusSubmitter_MultiMeasurementId_MultiEventName
    *     -  0 (if parent draw offspring)
    *     - +1 (if parent win offspring)
    */
-  post_by_measurementId_versusId_NegativeZeroPositive(
-    measurementId, versusId, nNegativeZeroPositive ) {
-
+  post_by_measurementId_apiSecret_versusId_NegativeZeroPositive(
+    measurementId, apiSecret, versusId, nNegativeZeroPositive ) {
 
     // Ensure it is an integer between [ -1, +1 ].
     nNegativeZeroPositive
@@ -93,10 +85,11 @@ class DEvolution_VersusSubmitter_MultiMeasurementId_MultiEventName
 
     // A dummy event object (with correct event name, without any content)
     // represents the entityNo's versus result (lose, draw, win).
-    let eventObject = DEvolution_VersusSubmitter_MultiMeasurementId_MultiEventName
+    let eventObject = DEvolution_VersusSubmitter_MultiEventName
       .eventObjectTable[ eventObjectTableIndex ];
 
-    this.post_by_measurementId_event( measurementId, eventObject );
+    this.post_by_measurementId_apiSecret_event(
+      measurementId, apiSecret, eventObject );
   }
 
 }
@@ -105,8 +98,7 @@ class DEvolution_VersusSubmitter_MultiMeasurementId_MultiEventName
  * Every entity (in a versus) uses 3 event names to represent: parent lose,
  * draw, offspring win.
  */
-DEvolution_VersusSubmitter_MultiMeasurementId_MultiEventName
-  .eventObjectTable = [
+DEvolution_VersusSubmitter_MultiEventName.eventObjectTable = [
 
   // Entity 0
   { name: "add_payment_info", params: { items: [] } },  // parent lose offspring
