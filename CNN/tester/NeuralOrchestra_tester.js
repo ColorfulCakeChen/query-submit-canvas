@@ -95,10 +95,13 @@ async function* tester( progressParent ) {
   let downloader_apiKey = null;
 
   let submitter_clientId = Date.now();
-  // Note: This is an un-related measurement id for testing purpose only. So that
-  //       this testing will not disturbing the real measurement.
-  let submitter_measurementId = "G-DSQF4CQ57J";
-  let submitter_apiSecret = "2hUH_0ZrS0Wk8eTlWqGMyg";
+
+//!!! (2023/02/05 Remarked) They are inside downloaded versusId.
+//
+//   // Note: This is an un-related measurement id for testing purpose only. So that
+//   //       this testing will not disturbing the real measurement.
+//   let submitter_measurementId = "G-DSQF4CQ57J";
+//   let submitter_apiSecret = "2hUH_0ZrS0Wk8eTlWqGMyg";
 
   let input_height = 72;
   let input_width = 128;
@@ -131,7 +134,7 @@ async function* tester( progressParent ) {
     neuralOrchestra = NeuralOrchestra.Base.Pool.get_or_create_by();
     let bInitOk = await neuralOrchestra.init_async(
       downloader_spreadsheetId, downloader_apiKey,
-      submitter_clientId, submitter_measurementId, submitter_apiSecret,
+      submitter_clientId,
 
       input_height,
       input_width,
