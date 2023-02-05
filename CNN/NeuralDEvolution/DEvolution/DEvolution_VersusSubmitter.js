@@ -1,8 +1,8 @@
 export { Base }
   from "./DEvolution_VersusSubmitter/DEvolution_VersusSubmitter_Base.js";
 
-export { SingleMeasurementId_SingleEventName }
+export { SingleEventName }
   from "./DEvolution_VersusSubmitter/DEvolution_VersusSubmitter_SingleEventName.js";
 
-export { MultiMeasurementId_MultiEventName }
+export { MultiEventName }
   from "./DEvolution_VersusSubmitter/DEvolution_VersusSubmitter_MultiEventName.js";
