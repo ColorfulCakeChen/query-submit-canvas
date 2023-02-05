@@ -18,8 +18,11 @@ function test_DEvolution_VersusSubmitter_MultiEventName(
     evolutionVersusId = DEvolution.VersusId.Pool.get_or_create_by( "0_0_0_0");
 
     evolutionVersusSubmitter = DEvolution.VersusSubmitter
-      .MultiMeasurementId_MultiEventName.Pool.get_or_create_by(
-        submitter_clientId, measurementId_apiSecret_array_array );
+      .MultiEventName.Pool.get_or_create_by(
+        submitter_clientId );
+
+    evolutionVersusSubmitter.measurementId_to_apiSecret_map_create(
+      measurementId_apiSecret_array_array );
 
 //!!! ...unfinished... (2023/01/03) should also test multiple measurementId.
 
@@ -117,7 +120,7 @@ async function* tester( progressParent ) {
       [ "G-T14M8JKR65", "ywGNhxdrTj2zDlMX6gYEiQ" ], // NeuralOrchestra_tester, 04
     ];
 
-    test_DEvolution_VersusSubmitter_MultiMeasurementId_MultiEventName(
+    test_DEvolution_VersusSubmitter_MultiEventName(
       submitter_clientId, measurementId_apiSecret_array_array );
   }
 

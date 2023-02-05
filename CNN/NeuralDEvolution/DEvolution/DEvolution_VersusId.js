@@ -33,6 +33,12 @@ import * as NumberTools from "../../util/NumberTools.js";
  *
  * @member {number} parentWinCount
  *   The parent win count number of the entity of the versus. It is a 0-base integer.
+ *
+ * @member {string} measurementId
+ *   The measurement id of stream of property of Google Analytics v4.
+ *
+ * @member {string} apiSecret
+ *   The measurement api secret of stream of property of Google Analytics v4.
  */
 class DEvolution_VersusId extends Recyclable.Root {
 
@@ -62,6 +68,12 @@ class DEvolution_VersusId extends Recyclable.Root {
 
   /** @override */
   disposeResources() {
+    if ( this.apiSecret )
+      this.apiSecret = undefined;
+
+    if ( this.measurementId )
+      this.measurementId = undefined;
+
     this.parentWinCount = undefined;
     this.parentWinCountString = undefined;
     this.offspringGenerationNo = undefined;

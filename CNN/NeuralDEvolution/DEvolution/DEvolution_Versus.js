@@ -139,7 +139,13 @@ class DEvolution_Versus extends Recyclable.Root {
 
     // 2.1 versusId
     {
-      // The first row of the first column should be the versusId string.
+      // 2.1.0 Clear old information.
+      if ( this.versusId ) {
+        this.versusId.measurementId = undefined;
+        this.versusId.apiSecret = undefined;
+      }
+
+      // 2.1.1 The 1st row of the first column should be the versusId string.
       let versusIdString = versusArrayArray?.[ COLUMN_ID_versusId ]?.[ 0 ];
       if ( !versusIdString )
         return false; // versusIdString is empty.
@@ -151,6 +157,14 @@ class DEvolution_Versus extends Recyclable.Root {
 
       if ( !this.versusId.isValid() )
         return false; // versusId is illegal.
+
+      // 2.1.2 The 2nd row of the first column should be the GA4 measurement id.
+      let measurementIdString = versusArrayArray?.[ COLUMN_ID_versusId ]?.[ 1 ];
+      this.versusId.measurementId = measurementIdString; // may be undefined.
+
+      // 2.1.3 The 3rd row of the first column should be the GA4 measurement api secret.
+      let apiSecretString = versusArrayArray?.[ COLUMN_ID_versusId ]?.[ 2 ];
+      this.versusId.apiSecret = apiSecretString; // may be undefined.
 
       progressToAdvance.value_advance();
       yield progressRoot;

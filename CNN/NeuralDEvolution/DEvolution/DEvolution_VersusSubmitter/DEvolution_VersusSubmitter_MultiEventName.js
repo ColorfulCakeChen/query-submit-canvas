@@ -90,6 +90,35 @@ class DEvolution_VersusSubmitter_MultiEventName
     return eventObject;
   }
 
+  /**
+   * Every versusId.entityNo and every nNegativeZeroPositive (-1 or 0 or +1) will
+   * use an different event name (and its event content is not important).
+   *
+   * Note: The versusId.measurementId and versusId.apiSecret will be used.
+   *
+   *
+   * @param {DEvolution.VersusId} versusId
+   *   The differential evolution versus id. The versusId.entityNo should between
+   * [ 0, 8 ] because Google Analytics v4 Measurement Protocol has 29 different
+   * event names. So there are at most 9 (= Math.floor( 29 / 3 ) ) entities could
+   * be represented.
+   *
+   * @param {number} nNegativeZeroPositive
+   *   The lose/draw/win value of the versus. (-1 or 0 or +1)
+   *     - -1 (if parent lose offspring)
+   *     -  0 (if parent draw offspring)
+   *     - +1 (if parent win offspring)
+   */
+  post_by_versusId_NegativeZeroPositive(
+    versusId, nNegativeZeroPositive ) {
+
+    const eventObject = DEvolution_VersusSubmitter_MultiEventName
+      .eventObject_get_by_versusId_NegativeZeroPositive(
+        versusId, nNegativeZeroPositive );
+
+    this.post_by_measurementId_apiSecret_event(
+      versusId.measurementId, versusId.apiSecret, eventObject );
+  }
 
   /**
    * Every versusId.entityNo and every nNegativeZeroPositive (-1 or 0 or +1) will
