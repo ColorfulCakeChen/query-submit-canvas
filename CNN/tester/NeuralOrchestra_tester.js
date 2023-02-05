@@ -8,7 +8,7 @@ import * as NeuralOrchestra from "../NeuralDEvolution/NeuralOrchestra.js";
 /**
  * 
  */
-function test_DEvolution_VersusSubmitter_MultiMeasurementId_MultiEventName(
+function test_DEvolution_VersusSubmitter_MultiEventName(
   submitter_clientId, measurementId_apiSecret_array_array
 ) {
 

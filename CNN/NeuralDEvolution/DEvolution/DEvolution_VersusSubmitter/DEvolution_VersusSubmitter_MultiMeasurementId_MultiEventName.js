@@ -47,6 +47,51 @@ class DEvolution_VersusSubmitter_MultiEventName
   }
 
   /**
+   * A (re-used) dummy event object (with correct event name, but without
+   * any content) represents the entityNo's versus result (lose, draw, win).
+   *
+   * @param {DEvolution.VersusId} versusId
+   *   The differential evolution versus id. The versusId.entityNo should between
+   * [ 0, 8 ] because Google Analytics v4 Measurement Protocol has 29 different
+   * event names. So there are at most 9 (= Math.floor( 29 / 3 ) ) entities could
+   * be represented.
+   *
+   * @param {number} nNegativeZeroPositive
+   *   The lose/draw/win value of the versus. (-1 or 0 or +1)
+   *     - -1 (if parent lose offspring)
+   *     -  0 (if parent draw offspring)
+   *     - +1 (if parent win offspring)
+   *
+   * @return {object}
+   *   Return an event object (looked up from .eventObjectTable[]) representing the
+   * versusId.entityNo and nNegativeZeroPositive (-1 or 0 or +1). Its event name
+   * is important (and its event content is not important).
+   */
+  static eventObject_get_by_versusId_NegativeZeroPositive(
+    versusId, nNegativeZeroPositive ) {
+
+    // Ensure it is an integer between [ -1, +1 ].
+    nNegativeZeroPositive
+      = Math.min( Math.max( -1, Math.trunc( nNegativeZeroPositive ) ), 1 );
+
+    const entityNo = versusId.entityNo; // An integer between [ 0, 8 ].
+    const NegativeZeroPositiveKinds = 3; // ( -1, 0, +1 ) have 3 kinds.
+    const number_0_1_2 = nNegativeZeroPositive + 1; // An integer between [ 0, 2 ].
+
+    // The array index into eventObjectTable[].
+    let eventObjectTableIndex
+      = ( entityNo * NegativeZeroPositiveKinds ) + number_0_1_2;
+
+    // A (re-used) event object (with correct event name, without any content)
+    // represents the entityNo's versus result (lose, draw, win).
+    let eventObject = DEvolution_VersusSubmitter_MultiEventName
+      .eventObjectTable[ eventObjectTableIndex ];
+
+    return eventObject;
+  }
+
+
+  /**
    * Every versusId.entityNo and every nNegativeZeroPositive (-1 or 0 or +1) will
    * use an different event name (and its event content is not important).
    *
@@ -71,25 +116,45 @@ class DEvolution_VersusSubmitter_MultiEventName
   post_by_measurementId_apiSecret_versusId_NegativeZeroPositive(
     measurementId, apiSecret, versusId, nNegativeZeroPositive ) {
 
-    // Ensure it is an integer between [ -1, +1 ].
-    nNegativeZeroPositive
-      = Math.min( Math.max( -1, Math.trunc( nNegativeZeroPositive ) ), 1 );
-
-    const entityNo = versusId.entityNo; // An integer between [ 0, 8 ].
-    const NegativeZeroPositiveKinds = 3; // ( -1, 0, +1 ) have 3 kinds.
-    const number_0_1_2 = nNegativeZeroPositive + 1; // An integer between [ 0, 2 ].
-
-    // The array index into eventObjectTable[].
-    let eventObjectTableIndex
-      = ( entityNo * NegativeZeroPositiveKinds ) + number_0_1_2;
-
-    // A dummy event object (with correct event name, without any content)
-    // represents the entityNo's versus result (lose, draw, win).
-    let eventObject = DEvolution_VersusSubmitter_MultiEventName
-      .eventObjectTable[ eventObjectTableIndex ];
+    const eventObject = DEvolution_VersusSubmitter_MultiEventName
+      .eventObject_get_by_versusId_NegativeZeroPositive(
+        versusId, nNegativeZeroPositive );
 
     this.post_by_measurementId_apiSecret_event(
       measurementId, apiSecret, eventObject );
+  }
+
+  /**
+   * Every versusId.entityNo and every nNegativeZeroPositive (-1 or 0 or +1) will
+   * use an different event name (and its event content is not important).
+   *
+   * The apiSecret will be looked up from .measurementId_to_apiSecret_map
+   *
+   *
+   * @param {string} measurementId
+   *   The measurement id of stream of property of Google Analytics v4.
+   *
+   * @param {DEvolution.VersusId} versusId
+   *   The differential evolution versus id. The versusId.entityNo should between
+   * [ 0, 8 ] because Google Analytics v4 Measurement Protocol has 29 different
+   * event names. So there are at most 9 (= Math.floor( 29 / 3 ) ) entities could
+   * be represented.
+   *
+   * @param {number} nNegativeZeroPositive
+   *   The lose/draw/win value of the versus. (-1 or 0 or +1)
+   *     - -1 (if parent lose offspring)
+   *     -  0 (if parent draw offspring)
+   *     - +1 (if parent win offspring)
+   */
+  post_by_measurementId_versusId_NegativeZeroPositive(
+    measurementId,  versusId, nNegativeZeroPositive ) {
+
+    const eventObject = DEvolution_VersusSubmitter_MultiEventName
+      .eventObject_get_by_versusId_NegativeZeroPositive(
+        versusId, nNegativeZeroPositive );
+
+    this.post_by_measurementId_event(
+      measurementId, eventObject );
   }
 
 }
