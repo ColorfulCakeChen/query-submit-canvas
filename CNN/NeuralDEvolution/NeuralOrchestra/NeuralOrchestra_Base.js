@@ -115,6 +115,13 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     }
   }
 
+//!!! ...unfinished... (2023/02/10)
+// evolutionVersusSummaryDownloading
+//   - should begin before shader compiling.
+//   - its progress should be displayed after shader compiling and be combined
+//       with evolutionVersus downloading.
+//
+
   /**
    *   - Load all differential evolution versus weights ranges (i.e. versus summary).
    *   - Create workers and compile GPU shaders.
