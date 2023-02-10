@@ -8,7 +8,7 @@ export { HttpFetcher };
 //!!! ...unfinished... (2023/02/10)
 // Perhaps, if ( .lengthComputable == false ),
 // always set progressToAdvance.max = Math.max( ( 2 * ProgressEvent.loaded ), 1 )
-// i.e. 50% and (avoid 0)
+// i.e. looks like 50% and (avoid 0)
 //
 
 /**
