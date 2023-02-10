@@ -5,6 +5,12 @@ export { HttpFetcher };
 // A re-used XMLHttpRequest object (reset by abort() or open())?
 //
 
+//!!! ...unfinished... (2023/02/10)
+// Perhaps, if ( .lengthComputable == false ),
+// always set progressToAdvance.max = Math.max( ( 2 * ProgressEvent.loaded ), 1 )
+// i.e. 50% and (avoid 0)
+//
+
 /**
  *
  */
