@@ -8,6 +8,6 @@ export { HttpFetcher };
 /**
  *
  */
-class HttpFethcer {
+class HttpFetcher {
 
 }
