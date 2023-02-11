@@ -94,7 +94,7 @@ class AsyncWorker_processingId_Resulter_Map {
    *   - if ( done == true ), resolve the pending PromiseResolveReject.
    *
    *   - if ( done == false ), resolve the pending PromiseResolveReject. And
-   *       append a new pending PromiseResolveReject  for waiting future result
+   *       append a new pending PromiseResolveReject for waiting future result
    *       from WorkerBody.
    *
    * This method is the producer the processingId's PromiseResolveRejectArray.
