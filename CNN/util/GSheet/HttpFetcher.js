@@ -58,6 +58,23 @@ class HttpFetcher {
   createResulter_by_method_url_body( progressParent, method, url, body,
     timeoutMilliseconds = 0 ) {
 
+//!!! ...unfinished... (2023/02/11)
+    // Note: Although .progressToAdvance is recorded in this, it is not owned by
+    //       this HttpFetcher object. It should be destroyed by outside caller
+    //       (i.e. by progressParent).
+    //
+
+//!!! ...unfinished... (2023/02/11)
+    // let progressRoot = progressParent.root_get();
+
+    // this.progressToAdvance = progressParent.child_add(
+    //   ValueMax.Percentage.Concrete.Pool.get_or_create_by( ??? ) );
+
+//!!! ...unfinished... (2023/02/11)
+    // progressToAdvance.value_advance();
+    // yield progressRoot;
+
+
     // Prepare the processing's result's receiving queue before sending it.
     let resulter = this.the_processingId_Resulter_Map
       .createResulter_by_processingId( this.processingId );
