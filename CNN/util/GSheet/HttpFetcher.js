@@ -30,7 +30,7 @@ class HttpFetcher {
    * and expect result.
    *
    * @param {string} method
-   *   The HTTP request method to use, such as "GET", "POST".
+   *   The HTTP request method to use, e.g. "GET", "POST".
    *
    * @param {string} url
    *   A string representing the URL to send the request to.
