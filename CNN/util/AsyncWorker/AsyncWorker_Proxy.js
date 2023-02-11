@@ -314,8 +314,8 @@ class AsyncWorker_Proxy extends Recyclable.Root {
     ++this.processingId_next;
 
     // Prepare the processing's result's receiving queue before sending it.
-    let resulter = this.the_processingId_Resulter_Map.createResulter_by_processingId(
-      processingId );
+    let resulter = this.the_processingId_Resulter_Map
+      .createResulter_by_processingId( processingId );
 
     let processingId_commandArgs = [ processingId, ...commandArgs ];
     this.worker.postMessage( processingId_commandArgs, transferableObjectArray );
