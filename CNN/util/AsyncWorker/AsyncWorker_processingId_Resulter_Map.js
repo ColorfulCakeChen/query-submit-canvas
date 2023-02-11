@@ -97,7 +97,7 @@ class AsyncWorker_processingId_Resulter_Map {
    *       append a new pending PromiseResolveReject for waiting future result
    *       from WorkerBody.
    *
-   * This method is the producer of the processingId's PromiseResolveRejectArray.
+   * This method is the producer for the processingId's PromiseResolveRejectArray.
    *
    *
    * @param {number} processingId
