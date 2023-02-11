@@ -387,8 +387,8 @@ class AsyncWorker_Proxy extends Recyclable.Root {
     // ( e.data == [ processingId, done, value ] )
     let [ processingId, done, value ] = e.data;
 
-    this.the_processingId_Resulter_Map.resolve_or_reject_by_processingId_done_value(
-      processingId, done, value );
+    this.the_processingId_Resulter_Map
+      .resolve_or_reject_by_processingId_done_value( processingId, done, value );
   }
 
 }
