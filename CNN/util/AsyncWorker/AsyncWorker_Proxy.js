@@ -120,8 +120,9 @@ class AsyncWorker_Proxy extends Recyclable.Root {
 //     //  = AsyncWorker_Proxy.create_WorkerBodyStub_Codes_DataURI( workerModuleURL );
 //     //this.workerURL = workerDataURI;
 
-    // Use blob object URL as a workaround for cross origin web worker problem (which
-    // will be encountered when use WorkerBodyStub_URL or WorkerBodyStub_Codes_DataURI).
+    // Use blob object URL as a workaround for cross origin web worker problem
+    // (which will be encountered when use WorkerBodyStub_URL or
+    // WorkerBodyStub_Codes_DataURI).
     this.workerBlobObjectURL
       = AsyncWorker_Proxy.WorkerBodyStub_create_Codes_BlobObjectURL( workerModuleURL );
     this.workerURL = this.workerBlobObjectURL;
