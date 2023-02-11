@@ -204,9 +204,9 @@ class AsyncWorker_Proxy extends Recyclable.Root {
 //   }
 
   /**
-   * Create a data URI representing the main (i.e. body) javascript file of web worker.
-   * It is viewed as a classic javascript file (i.e. not an importable module). But
-   * it will load specified workerModuleURL as a module.
+   * Create a data URI representing the main (i.e. body) javascript file of web
+   * worker. It is viewed as a classic javascript file (i.e. not an importable
+   * module). But it will load specified workerModuleURL as a module.
    *
    * @param {string} workerModuleURL
    *   An (absolute) URL to a javascript module file. It will be imported
