@@ -47,7 +47,7 @@ class AsyncWorker_processingId_Resulter_Map {
 
   /**
    * 
-   * If the (not pending; fulfilled) promise was resolved to ( done == true )
+   * If the (not pending (i.e. fulfilled)) promise was resolved to ( done == true )
    * or rejected, there will be no more result received from the WorkerBody
    * in the future. So remove the resulter and its entire result queue (i.e.
    * PromiseResolveRejectArray) of the processing.
