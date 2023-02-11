@@ -110,7 +110,8 @@ class AsyncWorker_processingId_Resulter_Map {
    *
    * @param {any} value
    *   The result value of this step of the processing. If ( done == undefined ),
-   * this value represents errorReason.
+   * this value represents errorReason (of rejecting). Otherwise, it is the value
+   * of resolving.
    */
   resolve_or_reject_by_processingId_done_value( processingId, done, value ) {
     let resulter = this.getResulter_by_processingId( processingId );
