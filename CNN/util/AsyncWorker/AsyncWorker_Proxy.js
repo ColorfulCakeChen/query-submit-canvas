@@ -240,26 +240,26 @@ class AsyncWorker_Proxy extends Recyclable.Root {
 // What if loading workerModuleURL failed?
 // Re-try (but should inform this WorkerProxy and user).
   
-      // The codes do the following:
-      //
-      //   - Import the specified module URL.
-      //   - Create a temporary message queue.
-      //   - Collect all messages before
-      //       AsyncWorker_Proxy.onmessage_from_AsyncWorker_Body() be registered
-      //       as message handler.
-      //
-      let codes = ``
-        + `import( "${workerModuleURL}" );\n`
-        + `AsyncWorker_Body_temporaryMessageQueue = [];\n`
-        + `onmessage = ( e ) => {\n`
-        // + `  console.log( "Hello" );\n`
-        // + `  console.log( e );\n`
-        + `  AsyncWorker_Body_temporaryMessageQueue.push( e );\n`
-        + `}\n`
-        ;
-  
-      return codes;
-    }
+    // The codes do the following:
+    //
+    //   - Import the specified module URL.
+    //   - Create a temporary message queue.
+    //   - Collect all messages before
+    //       AsyncWorker_Proxy.onmessage_from_AsyncWorker_Body() be registered
+    //       as message handler.
+    //
+    let codes = ``
+      + `import( "${workerModuleURL}" );\n`
+      + `AsyncWorker_Body_temporaryMessageQueue = [];\n`
+      + `onmessage = ( e ) => {\n`
+      // + `  console.log( "Hello" );\n`
+      // + `  console.log( e );\n`
+      + `  AsyncWorker_Body_temporaryMessageQueue.push( e );\n`
+      + `}\n`
+      ;
+
+    return codes;
+  }
 
   /**
    * Send command and args (perhaps, with transferable object array) to WorkerBody
