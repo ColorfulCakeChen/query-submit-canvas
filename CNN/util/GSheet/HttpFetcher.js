@@ -26,9 +26,10 @@ class HttpFetcher {
    *
    */
   constructor( bLogEventToConsole ) {
+    this.bLogEventToConsole = bLogEventToConsole;
+
     this.the_processingId_Resulter_Map = new AsyncWorker.processingId_Resulter_Map();
     this.processingId = 0; // Always use 0 since there is only one processing.
-    this.bLogEventToConsole = bLogEventToConsole;
   }
 
   /**
