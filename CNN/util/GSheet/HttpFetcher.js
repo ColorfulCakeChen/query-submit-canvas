@@ -15,15 +15,20 @@ import * as ValueMax from "../ValueMax.js";
 
 /**
  *
+ *
+ * @param {boolean} bLogEventToConsole
+ *   If true, some debug message will be logged to console.
+ *
  */
 class HttpFetcher {
 
   /**
    *
    */
-  constructor() {
+  constructor( bLogEventToConsole ) {
     this.the_processingId_Resulter_Map = new AsyncWorker.processingId_Resulter_Map();
     this.processingId = 0; // Always use 0 since there is only one processing.
+    this.bLogEventToConsole = bLogEventToConsole;
   }
 
   /**
@@ -104,36 +109,48 @@ class HttpFetcher {
    * @param {HttpFetcher} this
    */
   static handle_abort( event ) {
+    if ( this.bLogEventToConsole )
+      console.log( `HttpFetcher: abort: ${ProgressEvent_toString( event )}` );
   }
 
   /**
    * @param {HttpFetcher} this
    */
   static handle_error( event ) {
+    if ( this.bLogEventToConsole )
+      console.log( `HttpFetcher: error: ${ProgressEvent_toString( event )}` );
   }
   
   /**
    * @param {HttpFetcher} this
    */
   static handle_load( event ) {
+    if ( this.bLogEventToConsole )
+      console.log( `HttpFetcher: load: ${ProgressEvent_toString( event )}` );
   }
 
   /**
    * @param {HttpFetcher} this
    */
   static handle_loadend( event ) {
+    if ( this.bLogEventToConsole )
+      console.log( `HttpFetcher: loadend: ${ProgressEvent_toString( event )}` );
   }
 
   /**
    * @param {HttpFetcher} this
    */
   static handle_loadstart( event ) {
+    if ( this.bLogEventToConsole )
+      console.log( `HttpFetcher: loadstart: ${ProgressEvent_toString( event )}` );
   }
 
   /**
    * @param {HttpFetcher} this
    */
   static handle_progress( event ) {
+    if ( this.bLogEventToConsole )
+      console.log( `HttpFetcher: progress: ${ProgressEvent_toString( event )}` );
   }
 
   /**
@@ -141,8 +158,34 @@ class HttpFetcher {
    */
   static handle_readystatechange() {
     let xhr = this.xhr;
-    if ( xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200 ) {
-      // Request finished. Do processing here.
+//   : 2,
+//   : 3,
+//   DONE: 4,
+
+    if ( xhr.readyState === XMLHttpRequest.UNSENT ) { // 0
+      if ( this.bLogEventToConsole )
+        console.log( `HttpFetcher: readystatechange: UNSENT ( 0 )` );
+
+    } else if ( xhr.readyState === XMLHttpRequest.OPENED ) { // 1
+      if ( this.bLogEventToConsole )
+        console.log( `HttpFetcher: readystatechange: OPENED ( 1 )` );
+
+    } else if ( xhr.readyState === XMLHttpRequest.HEADERS_RECEIVED ) { // 2
+      if ( this.bLogEventToConsole )
+        console.log( `HttpFetcher: readystatechange: HEADERS_RECEIVED ( 2 )` );
+
+    } else if ( xhr.readyState === XMLHttpRequest.LOADING ) { // 3
+      if ( this.bLogEventToConsole )
+        console.log( `HttpFetcher: readystatechange: LOADING ( 3 )` );
+
+    } else if ( xhr.readyState === XMLHttpRequest.DONE ) { // 4
+      if ( this.bLogEventToConsole )
+        console.log( `HttpFetcher: readystatechange: DONE ( 4 ), `
+          + `status=${xhr.status}` );
+
+      if ( xhr.status === 200 ) {
+        // Request finished. Do processing here.
+      }
     }
   }
 
@@ -150,6 +193,19 @@ class HttpFetcher {
    * @param {HttpFetcher} this
    */
   static handle_timeout( event ) {
+    if ( this.bLogEventToConsole )
+      console.log( `HttpFetcher: timeout: ${ProgressEvent_toString( event )}` );
+  }
+
+  /**
+   * @param {ProgressEvent} progressEvent
+   * @return {string} A string description lengthComputable, loaded, total.
+   */
+  static ProgressEvent_toString( progressEvent ) {
+    //let str = `${event.loaded} bytes transferred`;
+    let str = `lengthComputable=${progressEvent.lengthComputable}, `
+      + `loaded=${progressEvent.loaded}, total=${progressEvent.total}`;
+    return str;
   }
 
 }
