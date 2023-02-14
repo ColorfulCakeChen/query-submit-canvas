@@ -4,7 +4,7 @@ import * as AsyncWorker from "../AsyncWorker.js";
 import * as ValueMax from "../ValueMax.js";
 
 //!!! ...unfinished... (2023/02/14)
-// It is possible to use Promise.race() to implement request timeout.
+// It is also possible to use Promise.race() to implement request timeout.
 
 /**
  *
@@ -87,6 +87,10 @@ class HttpFetcher {
     xhr.open( method, url, true );
     xhr.timeout = timeoutMilliseconds;
     xhr.responseType = responseType;
+
+//!!! ...unfinished... (2023/02/14)
+// It is also possible to use Promise.race() to wrap all event callback (as promise)
+// instead of using AsyncWorker.Resulter
 
     xhr.onabort = HttpFetcher.handle_abort.bind( this );
     xhr.onerror = HttpFetcher.handle_error.bind( this );
