@@ -3,6 +3,9 @@ export { HttpFetcher };
 import * as AsyncWorker from "../AsyncWorker.js";
 import * as ValueMax from "../ValueMax.js";
 
+//!!! ...unfinished... (2023/02/14)
+// It is possible to use Promise.race() to implement request timeout.
+
 /**
  *
  *
