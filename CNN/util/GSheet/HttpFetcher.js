@@ -136,7 +136,7 @@ class HttpFetcher {
     this.xhr.addEventListener(
       eventName, eventCallback.bind( this, resolve, reject ),
 
-      // So that "progress" event could be re-registered many times.
+      // So that same event could be re-registered many times after event triggered.
       HttpFetcher.options_once
     );
   }
