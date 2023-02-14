@@ -54,18 +54,24 @@ class HttpFetcher {
    *   The time in milliseconds a request can take before automatically being
    * terminated. The default value is 0, which means there is no timeout.
    *
+   * @param {string} responseType
+   *   A string specifying what type of data the response contains. It could be
+   * "", "arraybuffer", "blob", "document", "json", "text". Default is "text".
+   *
    * @return {AsyncWorker.Resulter}
    *   Return an async generator for receving result from XMLHttpRequest.
    *   - Yield a promise resolves to { done: false, value: progressParent.root_get() }.
-   *   - Yield a promise resolves to { done: true, value: xhr.response (as text) }.
+   *   - Yield a promise resolves to { done: true, value: xhr.response }.
    *   - Yield a promise rejects to ProgressEvent. The ProgressEvent.type may be:
    *       - "abort"
    *       - "error"
    *       - "load": when ( status != 200 ) (e.g. 400 or 500).
    *       - "timeout"
    */
-  createResulter_by_method_url_body( progressParent, method, url, body,
-    timeoutMilliseconds = 0 ) {
+  createResulter_by_method_url_body( progressParent,
+    method, url, body,
+    timeoutMilliseconds = 0,
+    responseType = HttpFetcher.responseTypeDefault ) {
 
 //!!! ...unfinished... (2023/02/11)
     // Note: Although .progressToAdvance is recorded in this, it is not owned by
@@ -94,6 +100,7 @@ class HttpFetcher {
     const xhr = this.xhr = new XMLHttpRequest();
     xhr.open( method, url, true );
     xhr.timeout = timeoutMilliseconds;
+    xhr.responseType = responseType;
 
     xhr.onabort = HttpFetcher.handle_abort.bind( this );
     xhr.onerror = HttpFetcher.handle_error.bind( this );
@@ -224,6 +231,8 @@ class HttpFetcher {
 
 }
 
+
+HttpFetcher.responseTypeDefault = "text";
 
 //!!! (2023/02/11 Remarked) Already been defined in XMLHttpRequest.
 // /**
