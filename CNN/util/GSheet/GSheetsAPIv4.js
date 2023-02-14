@@ -143,7 +143,7 @@ class GSheetsAPIv4_UrlComposer extends Recyclable.Root {
           do {
             nextPromise = await httpResulter.next();
             if ( nextPromise.done ) {
-              responseText = value;
+              responseText = nextPromise.value;
               break;
             }
 
