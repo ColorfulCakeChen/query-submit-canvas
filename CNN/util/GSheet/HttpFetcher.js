@@ -92,6 +92,10 @@ class HttpFetcher {
 // It is also possible to use Promise.race() to wrap all event callback (as promise)
 // instead of using AsyncWorker.Resulter
 
+    HttpFetcher.Promise_create_by_this_callback.call(
+      this, "abort", HttpFetcher.handle_abort );
+
+
     xhr.onabort = HttpFetcher.handle_abort.bind( this );
     xhr.onerror = HttpFetcher.handle_error.bind( this );
     xhr.onload = HttpFetcher.handle_load.bind( this );
@@ -108,14 +112,43 @@ class HttpFetcher {
 
   /**
    * @param {HttpFetcher} this
+   *
+   * @param {string} eventName
+   *    The event name of eventCallback. e.g. "loadstart", "progress", "timeout".
+   *
+   * @param {function} eventCallback
+   *    The event handler function for the event name. It should accept parameters
+   * ( resolve, reject, event ).
    */
-  static handle_abort( event ) {
+  static Promise_create_by_this_callback( eventName, eventCallback ) {
+    return new Promise(
+      HttpFetcher.Promise_constructor_func.bind( this, eventName, eventCallback ) );
+  }
+
+  /**
+   * This function should be used as Promise constructor's parameter.
+   *
+   * @param {HttpFetcher} this
+   * @param {function} eventCallback
+   *    The function which will be called 
+   */
+  static Promise_constructor_func( eventName, eventCallback, resolve, reject ) {
+    this.xhr.addEventListener(
+      eventName, eventCallback.bind( this, resolve, reject ) );
+  }
+
+  /**
+   * @param {HttpFetcher} this
+   */
+  static handle_abort( resolve, reject, event ) {
     if ( this.bLogEventToConsole )
       console.log( `HttpFetcher: abort: `
         + `${HttpFetcher.ProgressEvent_toString( event )} `
         + `( ${this.url} )` );
 
     HttpFetcher.progressToAdvance_set_beforeDone.call( this, event );
+
+//!!! ...unfinished... (2023/02/14) use resolve and reject instead.
 
     this.the_processingId_Resulter_Map.resolve_or_reject_by_processingId_done_value(
       this.processingId, undefined, event );
@@ -131,6 +164,8 @@ class HttpFetcher {
         + `( ${this.url} )` );
 
     HttpFetcher.progressToAdvance_set_beforeDone.call( this, event );
+
+//!!! ...unfinished... (2023/02/14) use resolve and reject instead.
 
     this.the_processingId_Resulter_Map.resolve_or_reject_by_processingId_done_value(
       this.processingId, undefined, event );
@@ -149,6 +184,9 @@ class HttpFetcher {
         + `( ${this.url} )` );
 
     HttpFetcher.progressToAdvance_set_whenDone.call( this, event );
+
+//!!! ...unfinished... (2023/02/14) use resolve and reject instead.
+
 
     if ( xhr.status === 200 ) {
       // Load completely and successfully.
@@ -186,6 +224,9 @@ class HttpFetcher {
         + `( ${this.url} )` );
 
     HttpFetcher.progressToAdvance_set_beforeDone.call( this, event );
+
+//!!! ...unfinished... (2023/02/14) use resolve and reject instead.
+
 
     let progressRoot = this.progressParent.root_get();
     this.the_processingId_Resulter_Map.resolve_or_reject_by_processingId_done_value(
@@ -258,6 +299,9 @@ class HttpFetcher {
         + `( ${this.url} )` );
 
     HttpFetcher.progressToAdvance_set_beforeDone.call( this, event );
+
+//!!! ...unfinished... (2023/02/14) use resolve and reject instead.
+
 
     this.the_processingId_Resulter_Map.resolve_or_reject_by_processingId_done_value(
       this.processingId, undefined, event );
