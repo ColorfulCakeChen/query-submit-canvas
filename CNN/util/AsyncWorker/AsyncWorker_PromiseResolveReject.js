@@ -40,6 +40,8 @@ export { AsyncWorker_PromiseResolveReject as PromiseResolveReject };
       this.reject_internal = reject;
     });
 
+    // Note: It is also possible to use Promise.race() to detect the status
+    //       of a promise (without this .pending flag).
     this.pending = true;
     this.done = false;
 
