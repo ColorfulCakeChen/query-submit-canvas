@@ -78,6 +78,8 @@ class HttpFetcher {
     let resulter = this.the_processingId_Resulter_Map
       .createResulter_by_processingId( this.processingId );
 
+    this.url = url;
+
     const xhr = this.xhr = new XMLHttpRequest();
     xhr.open( method, url, true );
     xhr.timeout = timeoutMilliseconds;
@@ -103,7 +105,8 @@ class HttpFetcher {
   static handle_abort( event ) {
     if ( this.bLogEventToConsole )
       console.log( `HttpFetcher: abort: `
-        + `${HttpFetcher.ProgressEvent_toString( event )}` );
+        + `${HttpFetcher.ProgressEvent_toString( event )} `
+        + `( ${this.url} )` );
 
     HttpFetcher.progressToAdvance_set_beforeDone.call( this, event );
 
@@ -117,7 +120,8 @@ class HttpFetcher {
   static handle_error( event ) {
     if ( this.bLogEventToConsole )
       console.log( `HttpFetcher: error: `
-        + `${HttpFetcher.ProgressEvent_toString( event )}` );
+        + `${HttpFetcher.ProgressEvent_toString( event )} `
+        + `( ${this.url} )` );
 
     HttpFetcher.progressToAdvance_set_beforeDone.call( this, event );
 
@@ -134,7 +138,8 @@ class HttpFetcher {
     if ( this.bLogEventToConsole )
       console.log( `HttpFetcher: load: `
         + `${HttpFetcher.ProgressEvent_toString( event )}, `
-        + `status=${xhr.status}, statusText=\"${xhr.statusText}\"` );
+        + `status=${xhr.status}, statusText=\"${xhr.statusText}\" `
+        + `( ${this.url} )` );
 
     HttpFetcher.progressToAdvance_set_whenDone.call( this, event );
 
@@ -157,7 +162,8 @@ class HttpFetcher {
   static handle_loadend( event ) {
     if ( this.bLogEventToConsole )
       console.log( `HttpFetcher: loadend: `
-        + `${HttpFetcher.ProgressEvent_toString( event )}` );
+        + `${HttpFetcher.ProgressEvent_toString( event )} `
+        + `( ${this.url} )` );
 
     // Because this event happens after abort or error or load, it does not be
     // used by us.
@@ -169,7 +175,8 @@ class HttpFetcher {
   static handle_loadstart( event ) {
     if ( this.bLogEventToConsole )
       console.log( `HttpFetcher: loadstart: `
-        + `${HttpFetcher.ProgressEvent_toString( event )}` );
+        + `${HttpFetcher.ProgressEvent_toString( event )} `
+        + `( ${this.url} )` );
 
     HttpFetcher.progressToAdvance_set_beforeDone.call( this, event );
 
@@ -184,7 +191,8 @@ class HttpFetcher {
   static handle_progress( event ) {
     if ( this.bLogEventToConsole )
       console.log( `HttpFetcher: progress: `
-        + `${HttpFetcher.ProgressEvent_toString( event )}` );
+        + `${HttpFetcher.ProgressEvent_toString( event )} `
+        + `( ${this.url} )` );
 
     HttpFetcher.progressToAdvance_set_beforeDone.call( this, event );
 
@@ -201,24 +209,29 @@ class HttpFetcher {
 
     if ( xhr.readyState === XMLHttpRequest.UNSENT ) { // 0
       if ( this.bLogEventToConsole )
-        console.log( `HttpFetcher: readystatechange: UNSENT ( 0 )` );
+        console.log( `HttpFetcher: readystatechange: UNSENT ( 0 ) `
+          + `( ${this.url} )` );
 
     } else if ( xhr.readyState === XMLHttpRequest.OPENED ) { // 1
       if ( this.bLogEventToConsole )
-        console.log( `HttpFetcher: readystatechange: OPENED ( 1 )` );
+        console.log( `HttpFetcher: readystatechange: OPENED ( 1 ) `
+          + `( ${this.url} )` );
 
     } else if ( xhr.readyState === XMLHttpRequest.HEADERS_RECEIVED ) { // 2
       if ( this.bLogEventToConsole )
-        console.log( `HttpFetcher: readystatechange: HEADERS_RECEIVED ( 2 )` );
+        console.log( `HttpFetcher: readystatechange: HEADERS_RECEIVED ( 2 ) `
+          + `( ${this.url} )` );
 
     } else if ( xhr.readyState === XMLHttpRequest.LOADING ) { // 3
       if ( this.bLogEventToConsole )
-        console.log( `HttpFetcher: readystatechange: LOADING ( 3 )` );
+        console.log( `HttpFetcher: readystatechange: LOADING ( 3 ) `
+          + `( ${this.url} )` );
 
     } else if ( xhr.readyState === XMLHttpRequest.DONE ) { // 4
       if ( this.bLogEventToConsole )
         console.log( `HttpFetcher: readystatechange: DONE ( 4 ), `
-          + `status=${xhr.status}, statusText=\"${xhr.statusText}\"` );
+          + `status=${xhr.status}, statusText=\"${xhr.statusText}\" `
+          + `( ${this.url} )` );
 
       if ( xhr.status === 200 ) {
         // Request finished. Do processing here.
@@ -234,7 +247,8 @@ class HttpFetcher {
   static handle_timeout( event ) {
     if ( this.bLogEventToConsole )
       console.log( `HttpFetcher: timeout: `
-        + `${HttpFetcher.ProgressEvent_toString( event )}` );
+        + `${HttpFetcher.ProgressEvent_toString( event )} `
+        + `( ${this.url} )` );
 
     HttpFetcher.progressToAdvance_set_beforeDone.call( this, event );
 
