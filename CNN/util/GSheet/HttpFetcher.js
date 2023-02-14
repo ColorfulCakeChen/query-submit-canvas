@@ -122,6 +122,8 @@ class HttpFetcher {
     if ( this.bLogEventToConsole )
       console.log( `HttpFetcher: abort: ${ProgressEvent_toString( event )}` );
 
+    HttpFetcher.progressToAdvance_set_beforeDone.call( this, event );
+
 //!!! ...unfinished... (2023/02/14) reject
   }
 
@@ -131,6 +133,8 @@ class HttpFetcher {
   static handle_error( event ) {
     if ( this.bLogEventToConsole )
       console.log( `HttpFetcher: error: ${ProgressEvent_toString( event )}` );
+
+    HttpFetcher.progressToAdvance_set_beforeDone.call( this, event );
 
 //!!! ...unfinished... (2023/02/14) reject
   }
@@ -158,6 +162,9 @@ class HttpFetcher {
 
     } else {
       // Load completely but failed (e.g. ( status == 400 ) or ( status == 500 ) ).
+
+      // Viewed as not done.
+      HttpFetcher.progressToAdvance_set_beforeDone.call( this, event );
 
 //!!! ...unfinished... (2023/02/14) should reject promise.
 
@@ -250,6 +257,8 @@ class HttpFetcher {
   static handle_timeout( event ) {
     if ( this.bLogEventToConsole )
       console.log( `HttpFetcher: timeout: ${ProgressEvent_toString( event )}` );
+
+    HttpFetcher.progressToAdvance_set_beforeDone.call( this, event );
 
 //!!! ...unfinished... (2023/02/14) reject
 
