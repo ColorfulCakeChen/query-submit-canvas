@@ -89,7 +89,7 @@ async function* tester( progressParent ) {
   let testerError = GSheets.UrlComposer.Pool.get_or_create_by(
     spreadsheetId + "_not_exist", range );
 
-  let fetcherError = tester1.JSON_ColumnMajorArrayArray_fetch_asyncGenerator(
+  let fetcherError = testerError.JSON_ColumnMajorArrayArray_fetch_asyncGenerator(
     progressError, timeoutMilliseconds );
   let resultError = yield* fetcherError;
   
