@@ -63,6 +63,9 @@ function array2d_compare_EQ( lhs, rhs ) {
 async function* tester( progressParent ) {
   console.log( "GSheet download testing..." );
 
+  let progressError = progressParent.child_add(
+    ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
+
   let progress1 = progressParent.child_add(
     ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
 
@@ -82,6 +85,14 @@ async function* tester( progressParent ) {
 //!!! ...unfinished... (2023/02/14) timeout and re-try?
   const timeoutMilliseconds = 10 * 1000;
 
+  // Without API key, and error.
+  let testerError = GSheets.UrlComposer.Pool.get_or_create_by(
+    spreadsheetId + "_not_exist", range );
+
+  let fetcherError = tester1.JSON_ColumnMajorArrayArray_fetch_asyncGenerator(
+    progressError, timeoutMilliseconds );
+  let resultError = yield* fetcherError;
+  
   // Without API key.
   let tester1 = GSheets.UrlComposer.Pool.get_or_create_by( spreadsheetId, range );
   let fetcher1 = tester1.JSON_ColumnMajorArrayArray_fetch_asyncGenerator(
