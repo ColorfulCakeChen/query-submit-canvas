@@ -4,7 +4,7 @@ export { AsyncWorker_Resulter as Resulter };
 //import { processingId_Resulter_Map } from "./AsyncWorker_processingId_Resulter_Map.js";
 
 /**
- * An async generator as the consumer of the processingId's PromiseResolveRejectArray.
+ * An async iterator as the consumer of the processingId's PromiseResolveRejectArray.
  *
  * @member {PromiseResolveReject[]} PromiseResolveRejectArray
  *   All promises waiting for WorkerBody's result of the processing.
