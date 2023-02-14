@@ -125,6 +125,9 @@ class HttpFetcher {
     HttpFetcher.progressToAdvance_set_beforeDone.call( this, event );
 
 //!!! ...unfinished... (2023/02/14) reject
+    this.the_processingId_Resulter_Map
+      .resolve_or_reject_by_processingId_done_value(
+        this.processingId, undfined, event );
   }
 
   /**
@@ -137,6 +140,9 @@ class HttpFetcher {
     HttpFetcher.progressToAdvance_set_beforeDone.call( this, event );
 
 //!!! ...unfinished... (2023/02/14) reject
+    this.the_processingId_Resulter_Map
+      .resolve_or_reject_by_processingId_done_value(
+        this.processingId, undfined, event );
   }
   
   /**
@@ -160,6 +166,10 @@ class HttpFetcher {
       // yield progressRoot;
 
 //!!! ...unfinished... (2023/02/14) resolve
+      let progressRoot = this.progressParent.root_get();
+      this.the_processingId_Resulter_Map
+        .resolve_or_reject_by_processingId_done_value(
+          this.processingId, true, progressRoot );
 
     } else {
       // Load completely but failed (e.g. ( status == 400 ) or ( status == 500 ) ).
@@ -168,7 +178,9 @@ class HttpFetcher {
 //!!! ...unfinished... (2023/02/14) should reject promise.
 
 //!!! ...unfinished... (2023/02/14) reject
-
+      this.the_processingId_Resulter_Map
+        .resolve_or_reject_by_processingId_done_value(
+          this.processingId, undfined, event );
     }
   }
 
@@ -194,7 +206,10 @@ class HttpFetcher {
     // yield progressRoot;
 
 //!!! ...unfinished... (2023/02/14) resolve
-
+    let progressRoot = this.progressParent.root_get();
+    this.the_processingId_Resulter_Map
+      .resolve_or_reject_by_processingId_done_value(
+        this.processingId, false, progressRoot );
   }
 
   /**
@@ -212,7 +227,10 @@ class HttpFetcher {
 
 
 //!!! ...unfinished... (2023/02/14) resolve
-
+    let progressRoot = this.progressParent.root_get();
+    this.the_processingId_Resulter_Map
+      .resolve_or_reject_by_processingId_done_value(
+        this.processingId, false, progressRoot );
   }
 
   /**
@@ -260,6 +278,9 @@ class HttpFetcher {
     HttpFetcher.progressToAdvance_set_beforeDone.call( this, event );
 
 //!!! ...unfinished... (2023/02/14) reject
+    this.the_processingId_Resulter_Map
+      .resolve_or_reject_by_processingId_done_value(
+        this.processingId, undfined, event );
 
   }
 
