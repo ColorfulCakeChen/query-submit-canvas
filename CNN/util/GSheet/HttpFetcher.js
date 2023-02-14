@@ -57,9 +57,12 @@ class HttpFetcher {
    * @return {AsyncWorker.Resulter}
    *   Return an async generator for receving result from XMLHttpRequest.
    *   - Yield a promise resolves to { done: false, value: progressParent.root_get() }.
-   *   - Yield a promise resolves to { done: true, value: xhr.responseText }.
-   *   - Yield a promise rejects to ProgressEvent. The ProgressEvent.type may be
-   *       "abort", "error", "timeout".
+   *   - Yield a promise resolves to { done: true, value: xhr.response (as text) }.
+   *   - Yield a promise rejects to ProgressEvent. The ProgressEvent.type may be:
+   *       - "abort"
+   *       - "error"
+   *       - "load": when ( status != 200 ) (e.g. 400 or 500).
+   *       - "timeout"
 
 //!!! ...unfinished... (2023/02/14)
 // What about "load" but ( status != 200 ) (e.g. 400 or 500)?
