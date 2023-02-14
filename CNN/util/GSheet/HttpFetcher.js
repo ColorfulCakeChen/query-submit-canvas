@@ -134,7 +134,9 @@ class HttpFetcher {
    */
   static Promise_constructor_func( eventName, eventCallback, resolve, reject ) {
     this.xhr.addEventListener(
-      eventName, eventCallback.bind( this, resolve, reject ) );
+      eventName, eventCallback.bind( this, resolve, reject ),
+      HttpFetcher.once // So that "progress" event could be re-registered many times.
+    );
   }
 
   /**
@@ -375,3 +377,8 @@ HttpFetcher.responseTypeDefault = "text";
  * step gradually.
  */
 HttpFetcher.progressTotalFakeLarger = 10 * 1024;
+
+/** Used for .addEventListener() */
+HttpFetcher.once = {
+  once : true
+};
