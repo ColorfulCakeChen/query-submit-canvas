@@ -41,9 +41,6 @@ class HttpFetcher {
    * created progressToAdvance will be increased when every time advanced. The
    * progressParent.root_get() will be returned when every time yield.
    *
-   * @param {string} method
-   *   The HTTP request method to use, e.g. "GET", "POST".
-   *
    * @param {string} url
    *   A string representing the URL to send the request to.
    *
@@ -52,7 +49,10 @@ class HttpFetcher {
    *
    * @param {object} timeoutMilliseconds
    *   The time in milliseconds a request can take before automatically being
-   * terminated. The default value is 0, which means there is no timeout.
+   * terminated. Default is 0, which means there is no timeout.
+   *
+   * @param {string} method
+   *   The HTTP request method to use, e.g. "GET", "POST". Default is "GET".
    *
    * @param {string} responseType
    *   A string specifying what type of data the response contains. It could be
@@ -68,9 +68,11 @@ class HttpFetcher {
    *       - "load": when ( status != 200 ) (e.g. 400 or 500).
    *       - "timeout"
    */
-  createResulter_by_method_url_body( progressParent,
-    method, url, body,
+  createResulter_by_url_body_timeout_method_responseType(
+    progressParent,
+    url, body,
     timeoutMilliseconds = 0,
+    method = HttpFetcher.methodDefault,
     responseType = HttpFetcher.responseTypeDefault ) {
 
 //!!! ...unfinished... (2023/02/11)
@@ -231,17 +233,5 @@ class HttpFetcher {
 
 }
 
-
+HttpFetcher.methodDefault = "GET";
 HttpFetcher.responseTypeDefault = "text";
-
-//!!! (2023/02/11 Remarked) Already been defined in XMLHttpRequest.
-// /**
-//  * (Defining named constants for XMLHttpRequest.readyState)
-//  */
-// HttpFetcher.ReadyState = {
-//   UNSENT: 0,
-//   OPENED: 1,
-//   HEADERS_RECEIVED: 2,
-//   LOADING: 3,
-//   DONE: 4,
-// };
