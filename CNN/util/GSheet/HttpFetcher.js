@@ -147,7 +147,7 @@ class HttpFetcher {
       // Load completely and successfully.
       let progressRoot = this.progressParent.root_get();
       this.the_processingId_Resulter_Map.resolve_or_reject_by_processingId_done_value(
-        this.processingId, true, progressRoot );
+        this.processingId, true, xhr.response );
 
     } else {
       // Load completely but failed (e.g. ( status == 400 ) or ( status == 500 ) ).
