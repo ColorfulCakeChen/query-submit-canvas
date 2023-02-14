@@ -63,10 +63,6 @@ class HttpFetcher {
    *       - "error"
    *       - "load": when ( status != 200 ) (e.g. 400 or 500).
    *       - "timeout"
-
-//!!! ...unfinished... (2023/02/14)
-// What about "load" but ( status != 200 ) (e.g. 400 or 500)?
-
    */
   createResulter_by_method_url_body( progressParent, method, url, body,
     timeoutMilliseconds = 0 ) {
@@ -141,6 +137,9 @@ class HttpFetcher {
       // Request finished. Do processing here.
 
     } else {
+      // Load completely but failed (e.g. ( status == 400 ) or ( status == 500 ) ).
+
+//!!! ...unfinished... (2023/02/14) should reject promise.
 
     }
   }
