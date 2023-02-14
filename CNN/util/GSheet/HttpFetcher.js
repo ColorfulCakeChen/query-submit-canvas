@@ -132,7 +132,7 @@ class HttpFetcher {
   static handle_load( event ) {
     if ( this.bLogEventToConsole )
       console.log( `HttpFetcher: load: ${ProgressEvent_toString( event )}, `
-        + `status=${xhr.status}` );
+        + `status=${xhr.status}, statusText=${xhr.statusText}` );
 
     if ( xhr.status === 200 ) {
       // Request finished. Do processing here.
@@ -191,7 +191,7 @@ class HttpFetcher {
     } else if ( xhr.readyState === XMLHttpRequest.DONE ) { // 4
       if ( this.bLogEventToConsole )
         console.log( `HttpFetcher: readystatechange: DONE ( 4 ), `
-          + `status=${xhr.status}` );
+          + `status=${xhr.status}, statusText=${xhr.statusText}` );
 
       if ( xhr.status === 200 ) {
         // Request finished. Do processing here.
