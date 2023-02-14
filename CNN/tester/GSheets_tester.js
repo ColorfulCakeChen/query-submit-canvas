@@ -138,5 +138,8 @@ async function* tester( progressParent ) {
   tester1.disposeResources_and_recycleToPool();
   tester1 = null;
 
+  testerError.disposeResources_and_recycleToPool();
+  testerError = null;
+
   console.log( "GSheet download testing... Done." );
 }
