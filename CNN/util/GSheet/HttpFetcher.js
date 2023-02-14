@@ -20,9 +20,6 @@ class HttpFetcher {
    */
   constructor( bLogEventToConsole ) {
     this.bLogEventToConsole = bLogEventToConsole;
-
-    this.the_processingId_Resulter_Map = new AsyncWorker.processingId_Resulter_Map();
-    this.processingId = 0; // Always use 0 since there is only one processing.
   }
 
   /**
@@ -51,6 +48,9 @@ class HttpFetcher {
    *   A string specifying what type of data the response contains. It could be
    * "", "arraybuffer", "blob", "document", "json", "text". Default is "text".
    *
+
+//!!! ...unfinished... (2023/02/14)
+
    * @return {AsyncWorker.Resulter}
    *   Return an async iterator for receving result from XMLHttpRequest. Its .next():
    *   - Return a promise resolves to { done: false, value: progressParent.root_get() }.
@@ -61,7 +61,7 @@ class HttpFetcher {
    *       - "load": when ( status != 200 ) (e.g. 404 or 500).
    *       - "timeout"
    */
-  createResulter_by_url_body_timeout_method_responseType(
+  async* asyncGenerator_by_url_body_timeout_method_responseType(
     progressParent,
     url, body,
     timeoutMilliseconds = 0,
@@ -77,10 +77,6 @@ class HttpFetcher {
       ValueMax.Percentage.Concrete.Pool.get_or_create_by(
         HttpFetcher.progressTotalFakeLarger ) );
 
-    // Prepare the processing's result's receiving queue before sending it.
-    let resulter = this.the_processingId_Resulter_Map
-      .createResulter_by_processingId( this.processingId );
-
     this.url = url;
 
     const xhr = this.xhr = new XMLHttpRequest();
@@ -92,22 +88,59 @@ class HttpFetcher {
 // It is also possible to use Promise.race() to wrap all event callback (as promise)
 // instead of using AsyncWorker.Resulter
 
-    let abortPromise = HttpFetcher.Promise_create_by_eventName_eventCallback.call(
-      this, "abort", HttpFetcher.handle_abort );
+    // Prepare promises before sending it.
+    let abortPromise = HttpFetcher.Promise_create_by_eventName_eventCallback
+      .call( this, "abort", HttpFetcher.handle_abort );
 
+    let errorPromise = HttpFetcher.Promise_create_by_eventName_eventCallback
+      .call( this, "error", HttpFetcher.handle_error );
 
-    xhr.onabort = HttpFetcher.handle_abort.bind( this );
-    xhr.onerror = HttpFetcher.handle_error.bind( this );
-    xhr.onload = HttpFetcher.handle_load.bind( this );
-    xhr.onloadend = HttpFetcher.handle_loadend.bind( this );
-    xhr.onloadstart = HttpFetcher.handle_loadstart.bind( this );
-    xhr.onprogress = HttpFetcher.handle_progress.bind( this );
-    xhr.onreadystatechange = HttpFetcher.handle_readystatechange.bind( this );
-    xhr.ontimeout = HttpFetcher.handle_timeout.bind( this );
+    let loadPromise = HttpFetcher.Promise_create_by_eventName_eventCallback
+      .call( this, "load", HttpFetcher.handle_load );
 
+    let loadendPromise = HttpFetcher.Promise_create_by_eventName_eventCallback
+      .call( this, "loadend", HttpFetcher.handle_loadend );
+
+    let loadstartPromise = HttpFetcher.Promise_create_by_eventName_eventCallback
+      .call( this, "loadstart", HttpFetcher.handle_loadstart );
+
+    let progressPromise = HttpFetcher.Promise_create_by_eventName_eventCallback
+      .call( this, "progress", HttpFetcher.handle_progress );
+
+    let readystatechangePromise = HttpFetcher.Promise_create_by_eventName_eventCallback
+      .call( this, "readystatechange", HttpFetcher.handle_readystatechange );
+
+    let timeoutPromise = HttpFetcher.Promise_create_by_eventName_eventCallback
+      .call( this, "timeout", HttpFetcher.handle_readystatechange );
+
+    //
     xhr.send( body );
 
-    return resulter;
+    // Until done or failed.
+    let fulfilledPromise;
+    do {
+      let allPromise = Promise.race( [ abortPromise, errorPromise, loadPromise,
+      loadendPromise, loadstartPromise, progressPromise, readystatechangePromise,
+      timeoutPromise ] );
+
+      fulfilledPromise = await allPromise;
+
+      let progressRoot = this.progressParent.root_get();
+      yield progressRoot;
+
+      // progress event could happen many times.
+      if ( fulfilledPromise === progressPromise ) {
+        progressPromise = HttpFetcher.Promise_create_by_eventName_eventCallback
+          .call( this, "progress", HttpFetcher.handle_progress );
+
+      // readystatechange event could happen many times.
+      } else if ( fulfilledPromise === readystatechangePromise ) {
+        readystatechangePromise = HttpFetcher.Promise_create_by_eventName_eventCallback
+          .call( this, "readystatechange", HttpFetcher.handle_readystatechange );
+      }
+    } while ( fulfilledPromise !== loadPromise );
+
+    return xhr.response;
   }
 
   /**
@@ -161,7 +194,7 @@ class HttpFetcher {
   /**
    * @param {HttpFetcher} this
    */
-  static handle_error( event ) {
+  static handle_error( resolve, reject, event ) {
     if ( this.bLogEventToConsole )
       console.log( `HttpFetcher: error: `
         + `${HttpFetcher.ProgressEvent_toString( event )} `
@@ -178,7 +211,7 @@ class HttpFetcher {
   /**
    * @param {HttpFetcher} this
    */
-  static handle_load( event ) {
+  static handle_load( resolve, reject, event ) {
     let xhr = this.xhr;
 
     if ( this.bLogEventToConsole )
@@ -208,7 +241,7 @@ class HttpFetcher {
   /**
    * @param {HttpFetcher} this
    */
-  static handle_loadend( event ) {
+  static handle_loadend( resolve, reject, event ) {
     if ( this.bLogEventToConsole )
       console.log( `HttpFetcher: loadend: `
         + `${HttpFetcher.ProgressEvent_toString( event )} `
@@ -221,7 +254,7 @@ class HttpFetcher {
   /**
    * @param {HttpFetcher} this
    */
-  static handle_loadstart( event ) {
+  static handle_loadstart( resolve, reject, event ) {
     if ( this.bLogEventToConsole )
       console.log( `HttpFetcher: loadstart: `
         + `${HttpFetcher.ProgressEvent_toString( event )} `
@@ -240,7 +273,7 @@ class HttpFetcher {
   /**
    * @param {HttpFetcher} this
    */
-  static handle_progress( event ) {
+  static handle_progress( resolve, reject, event ) {
     if ( this.bLogEventToConsole )
       console.log( `HttpFetcher: progress: `
         + `${HttpFetcher.ProgressEvent_toString( event )} `
@@ -256,7 +289,7 @@ class HttpFetcher {
   /**
    * @param {HttpFetcher} this
    */
-  static handle_readystatechange() {
+  static handle_readystatechange( resolve, reject ) {
     let xhr = this.xhr;
 
     if ( xhr.readyState === XMLHttpRequest.UNSENT ) { // 0
@@ -296,7 +329,7 @@ class HttpFetcher {
   /**
    * @param {HttpFetcher} this
    */
-  static handle_timeout( event ) {
+  static handle_timeout( resolve, reject, event ) {
     if ( this.bLogEventToConsole )
       console.log( `HttpFetcher: timeout: `
         + `${HttpFetcher.ProgressEvent_toString( event )} `
