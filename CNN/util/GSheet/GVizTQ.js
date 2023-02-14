@@ -190,6 +190,10 @@ class GVizTQ_UrlComposer extends Recyclable.Root {
             progressFetcher, url, null, timeoutMilliseconds );
 
         try {
+
+//!!! ...unfinished... (2023/02/14) Perhaps, use:
+// responseText = yield* httpResulter;
+ 
           let nextPromise;
           do {
             nextPromise = await httpResulter.next();
