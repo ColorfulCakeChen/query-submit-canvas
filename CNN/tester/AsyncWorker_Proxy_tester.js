@@ -70,7 +70,7 @@ class AsyncWorker_Proxy_tester extends AsyncWorker.Proxy {
    *   Every so many value, generate so many values without delay intervalMilliseconds.
    *
    * @return {AsyncWorker.Resulter}
-   *   An async generator tracking the results of this method.
+   *   An async iterator tracking the results of this method.
    */
   number_sequence_asyncGenerator(
     intervalMilliseconds,

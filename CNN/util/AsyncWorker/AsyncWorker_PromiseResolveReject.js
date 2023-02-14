@@ -23,7 +23,7 @@ export { AsyncWorker_PromiseResolveReject as PromiseResolveReject };
  * either resolved ( done == true ) or rejected ( done == undefind ).)
  *
  * @member {Promise} promiseToYieldReturn
- *   The promise used as the yield/return of the processing's async generator
+ *   The promise used as the yield/return of the processing's async iterator
  * AsyncWorker.Resulter.
  *
  * @member {boolean} hasBeenYielded_byResulter

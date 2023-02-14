@@ -307,7 +307,7 @@ class AsyncWorker_Proxy extends Recyclable.Root {
    * can not be null).
    *
    * @return {AsyncWorker.Resulter}
-   *   Return an async generator for receving result from WorkerBody of the processing.
+   *   Return an async iterator for receving result from WorkerBody of the processing.
    */
   createResulter_by_postCommandArgs( commandArgs, transferableObjectArray ) {
     let processingId = this.processingId_next;

@@ -32,7 +32,7 @@ class AsyncWorker_processingId_Resulter_Map {
    *   The numeric identifier of the processing.
    *
    * @return {AsyncWorker.Resulter}
-   *   Return an async generator for receving result from WorkerBody of the processing.
+   *   Return an async iterator for receving result from WorkerBody of the processing.
    */
   createResulter_by_processingId( processingId ) {
     let resulter = new Resulter( processingId, this );

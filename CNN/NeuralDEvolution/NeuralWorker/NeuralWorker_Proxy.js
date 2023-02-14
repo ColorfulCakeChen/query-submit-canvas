@@ -224,7 +224,7 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
    *       into tensor3d, and then processed by neural network.
    *
    * @return {AsyncWorker.Resulter}
-   *   Return an async generator tracking the result of processing. It will yield two
+   *   Return an async iterator tracking the result of processing. It will yield two
    * times, the 1st is an Int32Array, the 2nd is a Float32Array.
    *
    * @yield {Int32Array}
@@ -288,7 +288,7 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
    *       into tensor3d, and then processed by neural network.
    *
    * @return {AsyncWorker.Resulter}
-   *   Return an async generator tracking the result of processing. It will yield two
+   *   Return an async iterator tracking the result of processing. It will yield two
    * times, the 1st is an Int32Array, the 2nd is a Float32Array.
    *
    * @yield {Int32Array}
@@ -385,7 +385,7 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
    *   - If false, the sourceImageData will not yielded. This is used for 2nd worker.
    *
    * @return {AsyncWorker.Resulter}
-   *   Return an async generator tracking the result of processing.
+   *   Return an async iterator tracking the result of processing.
    *   - If ( bFork == true ), it will yield two times, the 1st is an DataImage,
    *       the 2nd is a Float32Array.
    *   - If ( bFork == false ), it will yield only one times, the Float32Array.
