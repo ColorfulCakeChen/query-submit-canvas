@@ -92,7 +92,7 @@ class HttpFetcher {
 // It is also possible to use Promise.race() to wrap all event callback (as promise)
 // instead of using AsyncWorker.Resulter
 
-    HttpFetcher.Promise_create_by_this_callback.call(
+    let abortPromise = HttpFetcher.Promise_create_by_this_callback.call(
       this, "abort", HttpFetcher.handle_abort );
 
 
