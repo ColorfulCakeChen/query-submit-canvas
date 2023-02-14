@@ -82,13 +82,16 @@ class HttpFetcher {
     //
 
 //!!! ...unfinished... (2023/02/11)
-    // let progressRoot = progressParent.root_get();
+    this.progressParent = progressParent;
+    // let progressRoot = this.progressParent.root_get();
 
-    // this.progressToAdvance = progressParent.child_add(
-    //   ValueMax.Percentage.Concrete.Pool.get_or_create_by( ??? ) );
+    this.progressToAdvance = progressParent.child_add(
+      ValueMax.Percentage.Concrete.Pool.get_or_create_by( ??? ) );
 
 //!!! ...unfinished... (2023/02/11)
-    // progressToAdvance.value_advance();
+    // this.progressToAdvance.value_set( ??? );
+    // this.progressToAdvance.value_max_set( ??? );
+    // this.progressToAdvance.value_advance();
     // yield progressRoot;
 
 
@@ -237,3 +240,12 @@ class HttpFetcher {
 
 HttpFetcher.methodDefault = "GET";
 HttpFetcher.responseTypeDefault = "text";
+
+/**
+ * If ( ProgressEvent.lengthComputable == false ), it will be assumed that
+ * ProgressEvent.total = ProgressEvent.loaded + HttpFetcher.progressTotalFakeLarger.
+ *
+ * The purpose is to let progress percentage look like still increasing step by
+ * step gradually.
+ */
+HttpFetcher.progressTotalFakeLarger = 10 * 1024;
