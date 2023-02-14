@@ -198,6 +198,7 @@ class HttpFetcher {
       if ( xhr.status === 200 ) {
         // Request finished. Do processing here.
       } else {
+        // Load completely but failed (e.g. ( status == 400 ) or ( status == 500 ) ).
       }
     }
   }
