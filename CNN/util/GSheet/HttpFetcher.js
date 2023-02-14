@@ -149,11 +149,12 @@ class HttpFetcher {
       console.log( `HttpFetcher: load: ${ProgressEvent_toString( event )}, `
         + `status=${xhr.status}, statusText=\"${xhr.statusText}\"` );
 
+    HttpFetcher.progressToAdvance_set_whenDone.call( this, event );
+
     if ( xhr.status === 200 ) {
-      // Request finished. Do processing here.
+      // Load completely and successfully.
 
 //!!! ...unfinished... (2023/02/14)
-      HttpFetcher.progressToAdvance_set_whenDone.call( this, event );
 
       // let progressRoot = this.progressParent.root_get();
       // yield progressRoot;
@@ -163,8 +164,6 @@ class HttpFetcher {
     } else {
       // Load completely but failed (e.g. ( status == 400 ) or ( status == 500 ) ).
 
-      // Viewed as not done.
-      HttpFetcher.progressToAdvance_set_beforeDone.call( this, event );
 
 //!!! ...unfinished... (2023/02/14) should reject promise.
 
