@@ -138,6 +138,8 @@ class HttpFetcher {
    * @param {HttpFetcher} this
    */
   static handle_load( event ) {
+    let xhr = this.xhr;
+
     if ( this.bLogEventToConsole )
       console.log( `HttpFetcher: load: ${ProgressEvent_toString( event )}, `
         + `status=${xhr.status}, statusText=\"${xhr.statusText}\"` );
