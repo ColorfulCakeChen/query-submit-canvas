@@ -37,8 +37,8 @@ class HttpFetcher {
    * @param {object} body
    *   A body of data to be sent in the XHR request. It could be null.
    *
-   * @param {object} timeoutMilliseconds
-   *   The time in milliseconds a request can take before automatically being
+   * @param {number} timeoutMilliseconds
+   *   The time (in milliseconds) a request can take before automatically being
    * terminated. Default is 0, which means there is no timeout.
    *
    * @param {string} method

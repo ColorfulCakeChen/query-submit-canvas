@@ -3,6 +3,7 @@ export { GSheetsAPIv4_UrlComposer as UrlComposer };
 import * as Pool from "../Pool.js";
 import * as Recyclable from "../Recyclable.js";
 import * as ValueMax from "../ValueMax.js";
+import { HttpFetcher } from "./HttpFetcher.js";
 
 /**
  * Compose a URL for downloading cells data (as JSON) from a Google Sheets by using
@@ -95,7 +96,6 @@ class GSheetsAPIv4_UrlComposer extends Recyclable.Root {
     return this;
   }
 
-
   /**
    * Generator for composing the URL (according this object's data members), downloading
    * it as JSON format, extracting data as a two dimension (column-major) array.
@@ -105,6 +105,10 @@ class GSheetsAPIv4_UrlComposer extends Recyclable.Root {
    * created progressToAdvance will be increased when every time advanced. The
    * progressParent.root_get() will be returned when every time yield.
    *
+   * @param {number} timeoutMilliseconds
+   *   The time (in milliseconds) a request can take before automatically being
+   * terminated. Default is 0, which means there is no timeout.
+   *
    * @yield {Promise( ValueMax.Percentage.Aggregate )}
    *   Yield a promise resolves to { done: false, value: progressParent.root_get() }.
    *
@@ -113,26 +117,61 @@ class GSheetsAPIv4_UrlComposer extends Recyclable.Root {
    *       value: ( a two dimension (column-major) array ) } when successfully.
    *   - Yield a promise resolves to { done: true, value: null } when failed.
    */
-  async* JSON_ColumnMajorArrayArray_fetch_asyncGenerator( progressParent ) {
+  async* JSON_ColumnMajorArrayArray_fetch_asyncGenerator(
+    progressParent, timeoutMilliseconds ) {
+
     let progressRoot = progressParent.root_get();
+    let progressFetcher = progressParent.child_add(
+      ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
     let progressToAdvance = progressParent.child_add(
-      ValueMax.Percentage.Concrete.Pool.get_or_create_by( 3 ) );
+      ValueMax.Percentage.Concrete.Pool.get_or_create_by( 2 ) );
 
     try {
       // 1. Compose URL and download it as column-major JSON.
       let url = this.getUrl_forJSON( "COLUMNS" );
-      let response = await fetch( url );
 
-      progressToAdvance.value_advance(); // 33%
-      yield progressRoot;
+      let responseText;
+      {
+//!!! ...unfinished... (2023/02/14) timeout and re-try?
+//        const timeoutMilliseconds = 60 * 1000;
 
-      if ( !response.ok )
-        return null;
+        //let httpFetcher = new HttpFetcher();
+        let httpFetcher = new HttpFetcher( true );  // For debug.
+        let httpResulter = httpFetcher
+          .createResulter_by_url_body_timeout_method_responseType(
+            progressFetcher, url, null, timeoutMilliseconds );
+
+        try {
+          responseText = yield* httpResulter;
+
+          if ( !responseText )
+            return null; // should not happen.
+
+        } catch( e ) {
+
+//!!! ...unfinished... (2023/02/14) How to re-try download?
+          if ( e instanceof ProgressEvent ) {
+            if ( e.type === "abort" ) {
+
+            } else if ( e.type === "error" ) {
+
+            } else if ( e.type === "load" ) { // ( status != 200 ) (e.g. 404 or 500)
+
+            } else if ( e.type === "timeout" ) {
+
+            } else { // Unknown error.
+              throw e;
+            }
+
+            return null;
+          }
+        }
+      }
 
       // 2. Google Sheets API v4 returns JSON.
-      let json = await response.json();
+      let json = JSON.parse( responseText );
 
-      progressToAdvance.value_advance(); // 33%
+      progressToAdvance.value_advance();
       yield progressRoot;
 
       if ( !json )
@@ -141,7 +180,7 @@ class GSheetsAPIv4_UrlComposer extends Recyclable.Root {
       // 3. Since already downloaded as column major. Uses it directly.
       let ColumnMajorArrayArray = json.values;
 
-      progressToAdvance.value_advance(); // 33%
+      progressToAdvance.value_advance();
       yield progressRoot;
 
       return ColumnMajorArrayArray;
@@ -151,7 +190,7 @@ class GSheetsAPIv4_UrlComposer extends Recyclable.Root {
     }
   }
 
-// //!!! (2023/02/14 Remarked) Use XMLHttpRequest instead. (for progress)
+//!!! (2023/02/14 Remarked) Use XMLHttpRequest instead. (for progress)
 //   /**
 //    * Generator for composing the URL (according this object's data members), downloading
 //    * it as JSON format, extracting data as a two dimension (column-major) array.

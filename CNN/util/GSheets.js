@@ -1,4 +1,5 @@
 export { GSheets_UrlComposer as UrlComposer };
+export { HttpFetcher } from "./GSheet/HttpFetcher.js";
 
 import * as Pool from "./Pool.js";
 import * as Recyclable from "./Recyclable.js";
@@ -107,6 +108,10 @@ class GSheets_UrlComposer extends Recyclable.Root {
    * created progressToAdvance will be increased when every time advanced. The
    * progressParent.root_get() will be returned when every time yield.
    *
+   * @param {number} timeoutMilliseconds
+   *   The time (in milliseconds) a request can take before automatically being
+   * terminated. Default is 0, which means there is no timeout.
+   *
    * @yield {Promise( ValueMax.Percentage.Aggregate )}
    *   Yield a promise resolves to { value: progressParent.root_get(), done: false }.
    *
@@ -115,8 +120,11 @@ class GSheets_UrlComposer extends Recyclable.Root {
    *       done: true } when successfully.
    *   - Yield a promise resolves to { value: null, done: true } when failed.
    */
-  async* JSON_ColumnMajorArrayArray_fetch_asyncGenerator( progressParent ) {
-    let fetcher = this.urlComposer.JSON_ColumnMajorArrayArray_fetch_asyncGenerator( progressParent );
+  async* JSON_ColumnMajorArrayArray_fetch_asyncGenerator(
+    progressParent, timeoutMilliseconds ) {
+
+    let fetcher = this.urlComposer.JSON_ColumnMajorArrayArray_fetch_asyncGenerator(
+      progressParent, timeoutMilliseconds );
     let ColumnMajorArrayArray = yield *fetcher;
     return ColumnMajorArrayArray;
   }
@@ -124,6 +132,10 @@ class GSheets_UrlComposer extends Recyclable.Root {
   /**
    * Composing the URL (according to this object's data members), download
    * it as JSON format, extract data as a two dimension (column-major) array.
+   *
+   * @param {number} timeoutMilliseconds
+   *   The time (in milliseconds) a request can take before automatically being
+   * terminated. Default is 0, which means there is no timeout.
    *
    * @return {Promise( Array[] )}
    *   Return a promise.
@@ -135,7 +147,9 @@ class GSheets_UrlComposer extends Recyclable.Root {
 
     let resultColumnMajorArrayArray;
     try {
-      let fetcher = this.JSON_ColumnMajorArrayArray_fetch_asyncGenerator( progress );
+      let fetcher = this.JSON_ColumnMajorArrayArray_fetch_asyncGenerator(
+        progress, timeoutMilliseconds );
+
       let fetcherNext;
       do {
         fetcherNext = await fetcher.next();
