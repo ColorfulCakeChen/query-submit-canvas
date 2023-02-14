@@ -149,17 +149,10 @@ class HttpFetcher {
       // Request finished. Do processing here.
 
 //!!! ...unfinished... (2023/02/14)
-    if ( event.lengthComputable ) {
-      this.progressToAdvance.value_max_set( event.total );
-      this.progressToAdvance.value_set( event.loaded );
+      HttpFetcher.progressToAdvance_set_whenDone.call( this, event );
 
-    } else { // Complete the fake progress to 100%.
-      this.progressToAdvance.value_max_set( event.loaded );
-      this.progressToAdvance.value_set( event.loaded );
-    }
-
-    // let progressRoot = this.progressParent.root_get();
-    // yield progressRoot;
+      // let progressRoot = this.progressParent.root_get();
+      // yield progressRoot;
 
 //!!! ...unfinished... (2023/02/14) resolve
 
@@ -188,6 +181,12 @@ class HttpFetcher {
     if ( this.bLogEventToConsole )
       console.log( `HttpFetcher: loadstart: ${ProgressEvent_toString( event )}` );
 
+//!!! ...unfinished... (2023/02/14)
+    HttpFetcher.progressToAdvance_set_beforeDone.call( this, event );
+
+    // let progressRoot = this.progressParent.root_get();
+    // yield progressRoot;
+
 //!!! ...unfinished... (2023/02/14) resolve
 
   }
@@ -200,15 +199,7 @@ class HttpFetcher {
       console.log( `HttpFetcher: progress: ${ProgressEvent_toString( event )}` );
 
 //!!! ...unfinished... (2023/02/14)
-    if ( event.lengthComputable ) {
-      this.progressToAdvance.value_max_set( event.total );
-      this.progressToAdvance.value_set( event.loaded );
-
-    } else { // Fake an incremental never-100% progress percentage.
-      let fakeMax = event.loaded + HttpFetcher.progressTotalFakeLarger;
-      this.progressToAdvance.value_max_set( fakeMax );
-      this.progressToAdvance.value_set( event.loaded );
-    }
+    HttpFetcher.progressToAdvance_set_beforeDone.call( this, event );
 
     // let progressRoot = this.progressParent.root_get();
     // yield progressRoot;
@@ -264,8 +255,51 @@ class HttpFetcher {
 
   }
 
+
+  /**
+   * Called when progress not done (i.e. onloadstart(), onprogrss()).
+   *
+   * @param {HttpFetcher} this
+   *
+   * @param {ProgressEvent} progressEvent
+   *   The ProgressEvent to be used to set .progressToAdvance.
+   */
+  static progressToAdvance_set_beforeDone( progressEvent ) {
+    if ( progressEvent.lengthComputable ) {
+      this.progressToAdvance.value_max_set( progressEvent.total );
+      this.progressToAdvance.value_set( progressEvent.loaded );
+
+    } else { // Fake an incremental never-100% progress percentage.
+      let fakeMax = progressEvent.loaded + HttpFetcher.progressTotalFakeLarger;
+      this.progressToAdvance.value_max_set( fakeMax );
+      this.progressToAdvance.value_set( progressEvent.loaded );
+    }
+  }
+
+  /**
+   * Called when progress not done (i.e. onload()).
+   *
+   * @param {HttpFetcher} this
+   *
+   * @param {ProgressEvent} progressEvent
+   *   The ProgressEvent to be used to set .progressToAdvance.
+   */
+  static progressToAdvance_set_whenDone( progressEvent ) {
+    if ( event.lengthComputable ) {
+      this.progressToAdvance.value_max_set( event.total );
+      this.progressToAdvance.value_set( event.loaded );
+
+    } else { // Complete the fake progress to 100%.
+      this.progressToAdvance.value_max_set( event.loaded );
+      this.progressToAdvance.value_set( event.loaded );
+    }
+  }
+
+
   /**
    * @param {ProgressEvent} progressEvent
+   *   The ProgressEvent to be displayed.
+   *
    * @return {string} A string description lengthComputable, loaded, total.
    */
   static ProgressEvent_toString( progressEvent ) {
