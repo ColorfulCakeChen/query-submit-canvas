@@ -60,6 +60,10 @@ class HttpFetcher {
    *   - Yield a promise resolves to { done: true, value: xhr.responseText }.
    *   - Yield a promise rejects to ProgressEvent. The ProgressEvent.type may be
    *       "abort", "error", "timeout".
+
+//!!! ...unfinished... (2023/02/14)
+// What about "load" but ( status != 200 ) (e.g. 400 or 500)?
+
    */
   createResulter_by_method_url_body( progressParent, method, url, body,
     timeoutMilliseconds = 0 ) {
@@ -127,7 +131,15 @@ class HttpFetcher {
    */
   static handle_load( event ) {
     if ( this.bLogEventToConsole )
-      console.log( `HttpFetcher: load: ${ProgressEvent_toString( event )}` );
+      console.log( `HttpFetcher: load: ${ProgressEvent_toString( event )}, `
+        + `status=${xhr.status}` );
+
+    if ( xhr.status === 200 ) {
+      // Request finished. Do processing here.
+
+    } else {
+
+    }
   }
 
   /**
@@ -159,9 +171,6 @@ class HttpFetcher {
    */
   static handle_readystatechange() {
     let xhr = this.xhr;
-//   : 2,
-//   : 3,
-//   DONE: 4,
 
     if ( xhr.readyState === XMLHttpRequest.UNSENT ) { // 0
       if ( this.bLogEventToConsole )
@@ -186,6 +195,7 @@ class HttpFetcher {
 
       if ( xhr.status === 200 ) {
         // Request finished. Do processing here.
+      } else {
       }
     }
   }
