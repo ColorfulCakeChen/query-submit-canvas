@@ -65,7 +65,7 @@ class HttpFetcher {
    *   - Yield a promise rejects to ProgressEvent. The ProgressEvent.type may be:
    *       - "abort"
    *       - "error"
-   *       - "load": when ( status != 200 ) (e.g. 400 or 500).
+   *       - "load": when ( status != 200 ) (e.g. 404 or 500).
    *       - "timeout"
    */
   createResulter_by_url_body_timeout_method_responseType(
