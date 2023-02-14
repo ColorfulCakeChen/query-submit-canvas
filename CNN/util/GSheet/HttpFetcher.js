@@ -133,7 +133,7 @@ class HttpFetcher {
 
     if ( this.bLogEventToConsole )
       console.log( `HttpFetcher: load: `
-        + `${HttpFetcher.ProgressEvent_toString( event )}`
+        + `${HttpFetcher.ProgressEvent_toString( event )}, `
         + `status=${xhr.status}, statusText=\"${xhr.statusText}\"` );
 
     HttpFetcher.progressToAdvance_set_whenDone.call( this, event );
