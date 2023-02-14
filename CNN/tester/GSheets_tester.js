@@ -63,7 +63,10 @@ function array2d_compare_EQ( lhs, rhs ) {
 async function* tester( progressParent ) {
   console.log( "GSheet download testing..." );
 
-  let progressError = progressParent.child_add(
+  let progressNotExist1 = progressParent.child_add(
+    ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
+
+  let progressNotExist2 = progressParent.child_add(
     ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
 
   let progress1 = progressParent.child_add(
@@ -86,13 +89,24 @@ async function* tester( progressParent ) {
   const timeoutMilliseconds = 10 * 1000;
 
   // Without API key, and error.
-  let testerError = GSheets.UrlComposer.Pool.get_or_create_by(
+  let testerNotExist1 = GSheets.UrlComposer.Pool.get_or_create_by(
     spreadsheetId + "_not_exist", range );
 
-  let fetcherError = testerError.JSON_ColumnMajorArrayArray_fetch_asyncGenerator(
-    progressError, timeoutMilliseconds );
-  let resultError = yield* fetcherError;
-  
+  let fetcherNotExist1 = testerNotExist1
+    .JSON_ColumnMajorArrayArray_fetch_asyncGenerator(
+      progressNotExist1, timeoutMilliseconds );
+  let resultNotExist1 = yield* fetcherNotExist1;
+
+  // With API key, and error.
+  let testerNotExist2 = GSheets.UrlComposer.Pool.get_or_create_by(
+    spreadsheetId + "_not_exist", range, apiKey );
+
+  let fetcherNotExist2 = testerNotExist2
+    .JSON_ColumnMajorArrayArray_fetch_asyncGenerator(
+      progressNotExist2, timeoutMilliseconds );
+  let resultNotExist2 = yield* fetcherNotExist2;
+
+
   // Without API key.
   let tester1 = GSheets.UrlComposer.Pool.get_or_create_by( spreadsheetId, range );
   let fetcher1 = tester1.JSON_ColumnMajorArrayArray_fetch_asyncGenerator(
@@ -138,8 +152,11 @@ async function* tester( progressParent ) {
   tester1.disposeResources_and_recycleToPool();
   tester1 = null;
 
-  testerError.disposeResources_and_recycleToPool();
-  testerError = null;
+  testerNotExist2.disposeResources_and_recycleToPool();
+  testerNotExist2 = null;
+
+  testerNotExist1.disposeResources_and_recycleToPool();
+  testerNotExist1 = null;
 
   console.log( "GSheet download testing... Done." );
 }

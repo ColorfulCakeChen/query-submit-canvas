@@ -139,7 +139,18 @@ class GSheetsAPIv4_UrlComposer extends Recyclable.Root {
             progressFetcher, url, null, timeoutMilliseconds );
 
         try {
-          responseText = yield* httpResulter;
+          let nextPromise;
+          do {
+            nextPromise = await httpResulter.next();
+            if ( nextPromise.done ) {
+              responseText = value;
+              break;
+            }
+
+            //progressRoot = value;
+            yield progressRoot;
+
+          } while ( !nextPromise.done );
 
           if ( !responseText )
             return null; // should not happen.
