@@ -49,10 +49,10 @@ class HttpFetcher {
    * "", "arraybuffer", "blob", "document", "json", "text". Default is "text".
    *
    * @return {AsyncWorker.Resulter}
-   *   Return an async iterator for receving result from XMLHttpRequest. It will:
-   *   - Yield a promise resolves to { done: false, value: progressParent.root_get() }.
-   *   - Yield a promise resolves to { done: true, value: xhr.response }.
-   *   - Yield a promise rejects to ProgressEvent. The ProgressEvent.type may be:
+   *   Return an async iterator for receving result from XMLHttpRequest. Its .next():
+   *   - Return a promise resolves to { done: false, value: progressParent.root_get() }.
+   *   - Return a promise resolves to { done: true, value: xhr.response }.
+   *   - Return a promise rejects to ProgressEvent. The ProgressEvent.type may be:
    *       - "abort"
    *       - "error"
    *       - "load": when ( status != 200 ) (e.g. 404 or 500).
