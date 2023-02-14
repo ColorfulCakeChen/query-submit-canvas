@@ -3,16 +3,6 @@ export { HttpFetcher };
 import * as AsyncWorker from "../AsyncWorker.js";
 import * as ValueMax from "../ValueMax.js";
 
-//!!! ...unfinished... (2023/02/10)
-// A re-used XMLHttpRequest object (reset by abort() or open())?
-//
-
-//!!! ...unfinished... (2023/02/10)
-// Perhaps, if ( .lengthComputable == false ),
-// always set progressToAdvance.max = Math.max( ( 2 * ProgressEvent.loaded ), 1 )
-// i.e. looks like 50% and (avoid 0)
-//
-
 /**
  *
  *
@@ -84,14 +74,6 @@ class HttpFetcher {
       ValueMax.Percentage.Concrete.Pool.get_or_create_by(
         HttpFetcher.progressTotalFakeLarger ) );
 
-//!!! ...unfinished... (2023/02/11)
-    // this.progressToAdvance.value_set( ??? );
-    // this.progressToAdvance.value_max_set( ??? );
-    // this.progressToAdvance.value_advance();
-    // let progressRoot = this.progressParent.root_get();
-    // yield progressRoot;
-
-
     // Prepare the processing's result's receiving queue before sending it.
     let resulter = this.the_processingId_Resulter_Map
       .createResulter_by_processingId( this.processingId );
@@ -124,10 +106,8 @@ class HttpFetcher {
 
     HttpFetcher.progressToAdvance_set_beforeDone.call( this, event );
 
-//!!! ...unfinished... (2023/02/14) reject
-    this.the_processingId_Resulter_Map
-      .resolve_or_reject_by_processingId_done_value(
-        this.processingId, undfined, event );
+    this.the_processingId_Resulter_Map.resolve_or_reject_by_processingId_done_value(
+      this.processingId, undfined, event );
   }
 
   /**
@@ -139,10 +119,8 @@ class HttpFetcher {
 
     HttpFetcher.progressToAdvance_set_beforeDone.call( this, event );
 
-//!!! ...unfinished... (2023/02/14) reject
-    this.the_processingId_Resulter_Map
-      .resolve_or_reject_by_processingId_done_value(
-        this.processingId, undfined, event );
+    this.the_processingId_Resulter_Map.resolve_or_reject_by_processingId_done_value(
+      this.processingId, undfined, event );
   }
   
   /**
@@ -159,28 +137,14 @@ class HttpFetcher {
 
     if ( xhr.status === 200 ) {
       // Load completely and successfully.
-
-//!!! ...unfinished... (2023/02/14)
-
-      // let progressRoot = this.progressParent.root_get();
-      // yield progressRoot;
-
-//!!! ...unfinished... (2023/02/14) resolve
       let progressRoot = this.progressParent.root_get();
-      this.the_processingId_Resulter_Map
-        .resolve_or_reject_by_processingId_done_value(
-          this.processingId, true, progressRoot );
+      this.the_processingId_Resulter_Map.resolve_or_reject_by_processingId_done_value(
+        this.processingId, true, progressRoot );
 
     } else {
       // Load completely but failed (e.g. ( status == 400 ) or ( status == 500 ) ).
-
-
-//!!! ...unfinished... (2023/02/14) should reject promise.
-
-//!!! ...unfinished... (2023/02/14) reject
-      this.the_processingId_Resulter_Map
-        .resolve_or_reject_by_processingId_done_value(
-          this.processingId, undfined, event );
+      this.the_processingId_Resulter_Map.resolve_or_reject_by_processingId_done_value(
+        this.processingId, undfined, event );
     }
   }
 
@@ -190,6 +154,9 @@ class HttpFetcher {
   static handle_loadend( event ) {
     if ( this.bLogEventToConsole )
       console.log( `HttpFetcher: loadend: ${ProgressEvent_toString( event )}` );
+
+    // Because this event happens after abort or error or load, it does not be
+    // used by us.
   }
 
   /**
@@ -199,17 +166,11 @@ class HttpFetcher {
     if ( this.bLogEventToConsole )
       console.log( `HttpFetcher: loadstart: ${ProgressEvent_toString( event )}` );
 
-//!!! ...unfinished... (2023/02/14)
     HttpFetcher.progressToAdvance_set_beforeDone.call( this, event );
 
-    // let progressRoot = this.progressParent.root_get();
-    // yield progressRoot;
-
-//!!! ...unfinished... (2023/02/14) resolve
     let progressRoot = this.progressParent.root_get();
-    this.the_processingId_Resulter_Map
-      .resolve_or_reject_by_processingId_done_value(
-        this.processingId, false, progressRoot );
+    this.the_processingId_Resulter_Map.resolve_or_reject_by_processingId_done_value(
+      this.processingId, false, progressRoot );
   }
 
   /**
@@ -219,18 +180,11 @@ class HttpFetcher {
     if ( this.bLogEventToConsole )
       console.log( `HttpFetcher: progress: ${ProgressEvent_toString( event )}` );
 
-//!!! ...unfinished... (2023/02/14)
     HttpFetcher.progressToAdvance_set_beforeDone.call( this, event );
 
-    // let progressRoot = this.progressParent.root_get();
-    // yield progressRoot;
-
-
-//!!! ...unfinished... (2023/02/14) resolve
     let progressRoot = this.progressParent.root_get();
-    this.the_processingId_Resulter_Map
-      .resolve_or_reject_by_processingId_done_value(
-        this.processingId, false, progressRoot );
+    this.the_processingId_Resulter_Map.resolve_or_reject_by_processingId_done_value(
+      this.processingId, false, progressRoot );
   }
 
   /**
@@ -277,10 +231,8 @@ class HttpFetcher {
 
     HttpFetcher.progressToAdvance_set_beforeDone.call( this, event );
 
-//!!! ...unfinished... (2023/02/14) reject
-    this.the_processingId_Resulter_Map
-      .resolve_or_reject_by_processingId_done_value(
-        this.processingId, undfined, event );
+    this.the_processingId_Resulter_Map.resolve_or_reject_by_processingId_done_value(
+      this.processingId, undfined, event );
 
   }
 
