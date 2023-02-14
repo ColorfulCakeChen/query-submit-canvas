@@ -79,14 +79,19 @@ async function* tester( progressParent ) {
   let range = "A:A";
   let apiKey = "AIzaSyDQpdX3Z7297fkZ7M_jWdq7zjv_IIxpArU";
 
+//!!! ...unfinished... (2023/02/14) timeout and re-try?
+  const timeoutMilliseconds = 10 * 1000;
+
   // Without API key.
   let tester1 = GSheets.UrlComposer.Pool.get_or_create_by( spreadsheetId, range );
-  let fetcher1 = tester1.JSON_ColumnMajorArrayArray_fetch_asyncGenerator( progress1 );
+  let fetcher1 = tester1.JSON_ColumnMajorArrayArray_fetch_asyncGenerator(
+    progress1, timeoutMilliseconds );
   let result1 = yield* fetcher1;
 
   // With API key.
   let tester2 = GSheets.UrlComposer.Pool.get_or_create_by( spreadsheetId, range, apiKey );
-  let fetcher2 = tester2.JSON_ColumnMajorArrayArray_fetch_asyncGenerator( progress2 );
+  let fetcher2 = tester2.JSON_ColumnMajorArrayArray_fetch_asyncGenerator(
+    progress2, timeoutMilliseconds );
   let result2 = yield* fetcher2;
 
   // Compare results: should the same.
@@ -97,11 +102,13 @@ async function* tester( progressParent ) {
   if ( result1 ) {
     let newRange = result1[ 0 ][ 0 ];
     tester1.range = newRange;
-    let fetcher11 = tester1.JSON_ColumnMajorArrayArray_fetch_asyncGenerator( progress11 );
+    let fetcher11 = tester1.JSON_ColumnMajorArrayArray_fetch_asyncGenerator(
+      progress11, timeoutMilliseconds );
     let result11 = yield* fetcher11;
 
     tester2.range = newRange;
-    let fetcher21 = tester2.JSON_ColumnMajorArrayArray_fetch_asyncGenerator( progress21 );
+    let fetcher21 = tester2.JSON_ColumnMajorArrayArray_fetch_asyncGenerator(
+      progress21, timeoutMilliseconds );
     let result21 = yield* fetcher21;
 
     // Note: If all cells are empty, GQViz got array with zero length.

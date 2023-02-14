@@ -20,10 +20,9 @@ window.addEventListener( "load", event => {
 
 });
 
-//!!! (2022/12/30 Remarked) Moved to itself's tester html.
-// // const gTestNeuralWorker = false;
-// //!!! (2022/12/28 Temp Remarked) For speed up other testing.
-// const gTestNeuralWorker = true;
+ const gTestNeuralOrchestra = false;
+//!!! (2023/02/14 Temp Remarked) For speed up other testing.
+//const gTestNeuralOrchestra = true;
 
 function test() {
   console.log("util testing...");
@@ -49,34 +48,28 @@ function test() {
   let progress_AsyncWorker_tester = progress.child_add(
     ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
 
-//!!! (2022/12/30 Remarked) Moved to itself's tester html.
-//   let progress_NeuralWorker_tester;
-//   if ( gTestNeuralWorker ) {
-//     progress_NeuralWorker_tester = progress.child_add(
-//       ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
-//   }
-
-  let progress_NeuralOrchestra_tester = progress.child_add(
-    ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
+  let progress_NeuralOrchestra_tester;
+  if ( gTestNeuralOrchestra ) {
+    progress_NeuralOrchestra_tester = progress.child_add(
+      ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
+  }
 
   let progressReceiver
     = new ValueMax.Receiver.HTMLProgress.createByTitle_or_getDummy( "TestProgressBar" );
 
   async function* testerAll() {
 
-    yield* NeuralOrchestra_tester.tester( progress_NeuralOrchestra_tester );
+    yield* GSheets_tester.tester( progress_GSheets_tester );
+
+    if ( gTestNeuralOrchestra ) {
+      yield* NeuralOrchestra_tester.tester( progress_NeuralOrchestra_tester );
+    }
 
     yield* Uint12_tester.tester( progress_Uint12_tester );
     yield* Float12_tester.tester( progress_Float12_tester );
     yield* Base64ToUint8Array_tester.tester( progress_Base64ToUint8Array_tester );
 
-//!!! (2022/12/30 Remarked) Moved to itself's tester html.
-//     if ( gTestNeuralWorker ) {
-//       yield* NeuralWorker_tester.tester( progress_NeuralWorker_tester );
-//     }
-
     yield* AsyncWorker_tester.tester( progress_AsyncWorker_tester );
-    yield* GSheets_tester.tester( progress_GSheets_tester );
   }
 
   let tester = testerAll();
