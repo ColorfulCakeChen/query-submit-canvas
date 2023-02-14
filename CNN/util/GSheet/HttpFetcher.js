@@ -75,32 +75,26 @@ class HttpFetcher {
     method = HttpFetcher.methodDefault,
     responseType = HttpFetcher.responseTypeDefault ) {
 
-//!!! ...unfinished... (2023/02/11)
     // Note: Although .progressToAdvance is recorded in this, it is not owned by
     //       this HttpFetcher object. It should be destroyed by outside caller
     //       (i.e. by progressParent).
     //
-
-//!!! ...unfinished... (2023/02/11)
     this.progressParent = progressParent;
-    // let progressRoot = this.progressParent.root_get();
-
     this.progressToAdvance = progressParent.child_add(
-      ValueMax.Percentage.Concrete.Pool.get_or_create_by( ??? ) );
+      ValueMax.Percentage.Concrete.Pool.get_or_create_by(
+        HttpFetcher.progressTotalFakeLarger ) );
 
 //!!! ...unfinished... (2023/02/11)
     // this.progressToAdvance.value_set( ??? );
     // this.progressToAdvance.value_max_set( ??? );
     // this.progressToAdvance.value_advance();
+    // let progressRoot = this.progressParent.root_get();
     // yield progressRoot;
 
 
     // Prepare the processing's result's receiving queue before sending it.
     let resulter = this.the_processingId_Resulter_Map
       .createResulter_by_processingId( this.processingId );
-
-//!!! ...unfinished... (2023/02/11)
-// set up event listener and react into resulter.
 
     const xhr = this.xhr = new XMLHttpRequest();
     xhr.open( method, url, true );
@@ -127,6 +121,8 @@ class HttpFetcher {
   static handle_abort( event ) {
     if ( this.bLogEventToConsole )
       console.log( `HttpFetcher: abort: ${ProgressEvent_toString( event )}` );
+
+//!!! ...unfinished... (2023/02/14) reject
   }
 
   /**
@@ -135,6 +131,8 @@ class HttpFetcher {
   static handle_error( event ) {
     if ( this.bLogEventToConsole )
       console.log( `HttpFetcher: error: ${ProgressEvent_toString( event )}` );
+
+//!!! ...unfinished... (2023/02/14) reject
   }
   
   /**
@@ -150,10 +148,27 @@ class HttpFetcher {
     if ( xhr.status === 200 ) {
       // Request finished. Do processing here.
 
+//!!! ...unfinished... (2023/02/14)
+    if ( event.lengthComputable ) {
+      this.progressToAdvance.value_max_set( event.total );
+      this.progressToAdvance.value_set( event.loaded );
+
+    } else { // Complete the fake progress to 100%.
+      this.progressToAdvance.value_max_set( event.loaded );
+      this.progressToAdvance.value_set( event.loaded );
+    }
+
+    // let progressRoot = this.progressParent.root_get();
+    // yield progressRoot;
+
+//!!! ...unfinished... (2023/02/14) resolve
+
     } else {
       // Load completely but failed (e.g. ( status == 400 ) or ( status == 500 ) ).
 
 //!!! ...unfinished... (2023/02/14) should reject promise.
+
+//!!! ...unfinished... (2023/02/14) reject
 
     }
   }
@@ -172,6 +187,9 @@ class HttpFetcher {
   static handle_loadstart( event ) {
     if ( this.bLogEventToConsole )
       console.log( `HttpFetcher: loadstart: ${ProgressEvent_toString( event )}` );
+
+//!!! ...unfinished... (2023/02/14) resolve
+
   }
 
   /**
@@ -180,6 +198,24 @@ class HttpFetcher {
   static handle_progress( event ) {
     if ( this.bLogEventToConsole )
       console.log( `HttpFetcher: progress: ${ProgressEvent_toString( event )}` );
+
+//!!! ...unfinished... (2023/02/14)
+    if ( event.lengthComputable ) {
+      this.progressToAdvance.value_max_set( event.total );
+      this.progressToAdvance.value_set( event.loaded );
+
+    } else { // Fake an incremental never-100% progress percentage.
+      let fakeMax = event.loaded + HttpFetcher.progressTotalFakeLarger;
+      this.progressToAdvance.value_max_set( fakeMax );
+      this.progressToAdvance.value_set( event.loaded );
+    }
+
+    // let progressRoot = this.progressParent.root_get();
+    // yield progressRoot;
+
+
+//!!! ...unfinished... (2023/02/14) resolve
+
   }
 
   /**
@@ -223,6 +259,9 @@ class HttpFetcher {
   static handle_timeout( event ) {
     if ( this.bLogEventToConsole )
       console.log( `HttpFetcher: timeout: ${ProgressEvent_toString( event )}` );
+
+//!!! ...unfinished... (2023/02/14) reject
+
   }
 
   /**
