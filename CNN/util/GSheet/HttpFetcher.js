@@ -108,7 +108,7 @@ class HttpFetcher {
     HttpFetcher.progressToAdvance_set_beforeDone.call( this, event );
 
     this.the_processingId_Resulter_Map.resolve_or_reject_by_processingId_done_value(
-      this.processingId, undfined, event );
+      this.processingId, undefined, event );
   }
 
   /**
@@ -122,7 +122,7 @@ class HttpFetcher {
     HttpFetcher.progressToAdvance_set_beforeDone.call( this, event );
 
     this.the_processingId_Resulter_Map.resolve_or_reject_by_processingId_done_value(
-      this.processingId, undfined, event );
+      this.processingId, undefined, event );
   }
   
   /**
@@ -147,7 +147,7 @@ class HttpFetcher {
     } else {
       // Load completely but failed (e.g. ( status == 400 ) or ( status == 500 ) ).
       this.the_processingId_Resulter_Map.resolve_or_reject_by_processingId_done_value(
-        this.processingId, undfined, event );
+        this.processingId, undefined, event );
     }
   }
 
@@ -239,7 +239,7 @@ class HttpFetcher {
     HttpFetcher.progressToAdvance_set_beforeDone.call( this, event );
 
     this.the_processingId_Resulter_Map.resolve_or_reject_by_processingId_done_value(
-      this.processingId, undfined, event );
+      this.processingId, undefined, event );
 
   }
 
