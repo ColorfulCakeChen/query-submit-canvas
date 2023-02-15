@@ -210,7 +210,7 @@ class HttpFetcher {
     //       how many it is before this event.
 //!!! (2023/02/15 Temp Remarked)
 //    if ( event.loaded > 0 )
-      HttpFetcher.progressToAdvance_set_beforeDone.call( this, event );
+      HttpFetcher.progressToAdvance_set_whenDone.call( this, event );
 
     if ( this.bLogEventToConsole )
       console.log( `( ${this.url} ) HttpFetcher: abort: `
@@ -234,7 +234,7 @@ class HttpFetcher {
     //       how many it is before this event.
 //!!! (2023/02/15 Temp Remarked)
 //    if ( event.loaded > 0 )
-      HttpFetcher.progressToAdvance_set_beforeDone.call( this, event );
+      HttpFetcher.progressToAdvance_set_whenDone.call( this, event );
 
     if ( this.bLogEventToConsole )
       console.log( `( ${this.url} ) HttpFetcher: error: `
@@ -328,7 +328,7 @@ class HttpFetcher {
 
 //!!! (2023/02/15 Temp Remarked)
 //    if ( event.loaded > 0 )
-      HttpFetcher.progressToAdvance_set_beforeDone.call( this, event );
+      HttpFetcher.progressToAdvance_set_whenDone.call( this, event );
 
     if ( this.bLogEventToConsole )
       console.log( `( ${this.url} ) HttpFetcher: timeout: `
