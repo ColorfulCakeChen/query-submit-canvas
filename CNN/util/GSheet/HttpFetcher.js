@@ -208,7 +208,8 @@ class HttpFetcher {
     //
     // Note: According to experiment, the .loaded may become 0 no matter
     //       how many it is before this event.
-    if ( event.loaded > 0 )
+//!!! (2023/02/15 Temp Remarked)
+//    if ( event.loaded > 0 )
       HttpFetcher.progressToAdvance_set_beforeDone.call( this, event );
 
     if ( this.bLogEventToConsole )
@@ -231,7 +232,8 @@ class HttpFetcher {
     //
     // Note: According to experiment, the .loaded may become 0 no matter
     //       how many it is before this event.
-    if ( event.loaded > 0 )
+//!!! (2023/02/15 Temp Remarked)
+//    if ( event.loaded > 0 )
       HttpFetcher.progressToAdvance_set_beforeDone.call( this, event );
 
     if ( this.bLogEventToConsole )
@@ -323,7 +325,9 @@ class HttpFetcher {
     //
     // Note: According to experiment, the .loaded may become 0 no matter
     //       how many it is before this event.
-    if ( event.loaded > 0 )
+
+//!!! (2023/02/15 Temp Remarked)
+//    if ( event.loaded > 0 )
       HttpFetcher.progressToAdvance_set_beforeDone.call( this, event );
 
     if ( this.bLogEventToConsole )
