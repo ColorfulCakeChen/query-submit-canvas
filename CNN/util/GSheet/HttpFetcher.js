@@ -111,18 +111,21 @@ class HttpFetcher {
     this.timeoutPromise = HttpFetcher.Promise_create_by_eventName_eventCallback
       .call( this, "timeout", HttpFetcher.handle_readystatechange );
 
+    // All promises to be listened.
+    this.allPromiseSet = new Set( [
+      this.abortPromise, this.errorPromise, this.loadPromise,
+      //this.loadendPromise, // (2023/02/15 Remarked) Not used.
+      this.loadstartPromise,
+      this.progressPromise,
+      this.timeoutPromise
+    ] );
+
     // 3.
     xhr.send( body );
 
     // 4. Until done or failed.
     do {
-      let allPromise = Promise.race( [
-        this.abortPromise, this.errorPromise, this.loadPromise,
-        //this.loadendPromise, // (2023/02/15 Remarked) Not used.
-        this.loadstartPromise,
-        this.progressPromise,
-        this.timeoutPromise
-      ] );
+      let allPromise = Promise.race( this.allPromiseSet );
 
       // All succeeded promises resolve to progressRoot.
       // All failed promises reject to (i.e. throw exception of) ProgressEvent.
@@ -217,6 +220,9 @@ class HttpFetcher {
       // Load completely and successfully.
       resolve( this.progressRoot );
 
+      // For non-repeatable event, no longer listen on it.
+      this.allPromiseSet.delete( this.loadPromise );
+
     } else {
       // Load completely but failed (e.g. ( status == 400 ) or ( status == 500 ) ).
       reject( event );
@@ -234,6 +240,9 @@ class HttpFetcher {
 
     // Because this event happens after abort or error or load, it does not be
     // used by us.
+
+    // For non-repeatable event, no longer listen on it.
+    //this.allPromiseSet.delete( this.loadendPromise );
   }
 
   /**
@@ -247,6 +256,9 @@ class HttpFetcher {
 
     HttpFetcher.progressToAdvance_set_beforeDone.call( this, event );
     resolve( this.progressRoot );
+
+    // For non-repeatable event, no longer listen on it.
+    this.allPromiseSet.delete( this.loadstartPromise );
   }
 
   /**
@@ -261,10 +273,16 @@ class HttpFetcher {
     HttpFetcher.progressToAdvance_set_beforeDone.call( this, event );
     resolve( this.progressRoot );
 
-    // Because progress event could happen many times, re-generate a new promise
-    // for listening on it.
-    this.progressPromise = HttpFetcher.Promise_create_by_eventName_eventCallback
-      .call( this, "progress", HttpFetcher.handle_progress );
+    {
+      this.allPromiseSet.delete( this.progressPromise );
+
+      // Because progress event could happen many times, re-generate a new promise
+      // for listening on it.
+      this.progressPromise = HttpFetcher.Promise_create_by_eventName_eventCallback
+        .call( this, "progress", HttpFetcher.handle_progress );
+
+      this.allPromiseSet.add( this.progressPromise );
+    }
   }
 
   /**
