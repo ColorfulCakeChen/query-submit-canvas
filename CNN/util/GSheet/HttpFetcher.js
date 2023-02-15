@@ -220,11 +220,9 @@ class HttpFetcher {
 
     reject( event );
 
-//!!! ...unfinished... (2023/02/15 Temp Remarked) 
-// should be listened again to trigger exception?
-   // The non-repeatable failure event should still be listened on, so that it
-   // could trigger exception (by rejected promise).
-   this.allPromiseSet.delete( this.abortPromise );
+    // Note: The non-repeatable failure event should still be listened on
+    //       (i.e. should not removed from this.allPromiseSet), so that the
+    //       rejected promise could trigger exception.
   }
 
   /**
