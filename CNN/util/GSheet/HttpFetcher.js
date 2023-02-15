@@ -222,6 +222,9 @@ class HttpFetcher {
         + `progressToAdvance=${this.progressToAdvance.valuePercentage}%` );
 
     reject( event );
+
+    // No longer listen on non-repeatable event.
+    this.allPromiseSet.delete( this.abortPromise );
   }
 
   /**
@@ -242,6 +245,9 @@ class HttpFetcher {
         + `progressToAdvance=${this.progressToAdvance.valuePercentage}%` );
 
     reject( event );
+
+    // No longer listen on non-repeatable event.
+    this.allPromiseSet.delete( this.errorPromise );
   }
 
   /**
@@ -261,14 +267,13 @@ class HttpFetcher {
     if ( xhr.status === 200 ) {
       // Load completely and successfully.
       resolve( this.progressRoot );
-
-      // For non-repeatable event, no longer listen on it.
-      this.allPromiseSet.delete( this.loadPromise );
-
     } else {
       // Load completely but failed (e.g. ( status == 400 ) or ( status == 500 ) ).
       reject( event );
     }
+
+    // No longer listen on non-repeatable event.
+    this.allPromiseSet.delete( this.loadPromise );
   }
 
   /**
@@ -283,8 +288,8 @@ class HttpFetcher {
     // Because this event happens after abort or error or load, it does not be
     // used by us.
 
-    // For non-repeatable event, no longer listen on it.
-    //this.allPromiseSet.delete( this.loadendPromise );
+    // No longer listen on non-repeatable event.
+    this.allPromiseSet.delete( this.loadendPromise );
   }
 
   /**
@@ -300,7 +305,7 @@ class HttpFetcher {
 
     resolve( this.progressRoot );
 
-    // For non-repeatable event, no longer listen on it.
+    // No longer listen on non-repeatable event.
     this.allPromiseSet.delete( this.loadstartPromise );
   }
 
@@ -317,6 +322,7 @@ class HttpFetcher {
 
     resolve( this.progressRoot );
 
+    // Re-listen on repeatable event.
     {
       this.allPromiseSet.delete( this.progressPromise );
 
@@ -347,6 +353,9 @@ class HttpFetcher {
         + `progressToAdvance=${this.progressToAdvance.valuePercentage}%` );
 
     reject( event );
+
+    // No longer listen on non-repeatable event.
+    this.allPromiseSet.delete( this.timeoutPromise );
   }
 
 
