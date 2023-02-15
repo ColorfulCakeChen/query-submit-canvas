@@ -208,7 +208,13 @@ class HttpFetcher {
    * @param {HttpFetcher} this
    */
   static handle_abort( resolve, reject, event ) {
-    HttpFetcher.progressToAdvance_set_beforeDone.call( this, event );
+
+    // Adjust progressToAdvance only if there is enough information.
+    //
+    // Note: According to experiment, the .loaded may become 0 no matter
+    //       how many it is before this event.
+    if ( event.loaded > 0 )
+      HttpFetcher.progressToAdvance_set_beforeDone.call( this, event );
 
     if ( this.bLogEventToConsole )
       console.log( `( ${this.url} ) HttpFetcher: abort: `
@@ -222,7 +228,13 @@ class HttpFetcher {
    * @param {HttpFetcher} this
    */
   static handle_error( resolve, reject, event ) {
-    HttpFetcher.progressToAdvance_set_beforeDone.call( this, event );
+
+    // Adjust progressToAdvance only if there is enough information.
+    //
+    // Note: According to experiment, the .loaded may become 0 no matter
+    //       how many it is before this event.
+    if ( event.loaded > 0 )
+      HttpFetcher.progressToAdvance_set_beforeDone.call( this, event );
 
     if ( this.bLogEventToConsole )
       console.log( `( ${this.url} ) HttpFetcher: error: `
@@ -321,7 +333,13 @@ class HttpFetcher {
    * @param {HttpFetcher} this
    */
   static handle_timeout( resolve, reject, event ) {
-    HttpFetcher.progressToAdvance_set_beforeDone.call( this, event );
+
+    // Adjust progressToAdvance only if there is enough information.
+    //
+    // Note: According to experiment, the .loaded may become 0 no matter
+    //       how many it is before this event.
+    if ( event.loaded > 0 )
+      HttpFetcher.progressToAdvance_set_beforeDone.call( this, event );
 
     if ( this.bLogEventToConsole )
       console.log( `( ${this.url} ) HttpFetcher: timeout: `
