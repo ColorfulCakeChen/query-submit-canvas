@@ -3,9 +3,6 @@ export { HttpFetcher };
 import * as AsyncWorker from "../AsyncWorker.js";
 import * as ValueMax from "../ValueMax.js";
 
-//!!! ...unfinished... (2023/02/14)
-// It is also possible to use Promise.race() to implement request timeout.
-
 /**
  *
  *
@@ -48,18 +45,21 @@ class HttpFetcher {
    *   A string specifying what type of data the response contains. It could be
    * "", "arraybuffer", "blob", "document", "json", "text". Default is "text".
    *
-
-//!!! ...unfinished... (2023/02/14)
-
-   * @return {AsyncWorker.Resulter}
-   *   Return an async iterator for receving result from XMLHttpRequest. Its .next():
-   *   - Return a promise resolves to { done: false, value: progressParent.root_get() }.
-   *   - Return a promise resolves to { done: true, value: xhr.response }.
-   *   - Return a promise rejects to ProgressEvent. The ProgressEvent.type may be:
-   *       - "abort"
-   *       - "error"
-   *       - "load": when ( status != 200 ) (e.g. 404 or 500).
-   *       - "timeout"
+   * @return {AsyncGenerator}
+   *   Return an async generator for receving result from XMLHttpRequest.
+   *
+   * @yield {Promise( ValueMax.Percentage.Aggregate )}
+   *   Yield a promise resolves to { done: false, value: progressParent.root_get() }.
+   *
+   * @yield {Promise( object )}
+   *   Yield a promise resolves to { done: true, value: xhr.response }.
+   *
+   * @throws {ProgressEvent}
+   *   Yield a promise rejects to ProgressEvent. The ProgressEvent.type may be:
+   *     - "abort"
+   *     - "error"
+   *     - "load": when ( status != 200 ) (e.g. 404 or 500).
+   *     - "timeout"
    */
   async* asyncGenerator_by_url_body_timeout_method_responseType(
     progressParent,
