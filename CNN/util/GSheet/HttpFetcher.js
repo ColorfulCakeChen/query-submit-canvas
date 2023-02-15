@@ -369,7 +369,7 @@ HttpFetcher.responseTypeDefault = "text";
  * The purpose is to let progress percentage look like still increasing step by
  * step gradually.
  */
-HttpFetcher.progressTotalFakeLarger = 10 * 1024;
+HttpFetcher.progressTotalFakeLarger = 1024 * 1024;
 
 /** Used for .addEventListener() */
 HttpFetcher.addEventListener_options_once = {
