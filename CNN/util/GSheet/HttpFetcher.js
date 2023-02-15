@@ -131,9 +131,9 @@ class HttpFetcher {
       let progressRoot = await allPromise;
       yield progressRoot;
 
-//!!! ...unfinished... (2023/02/15)
-      // Not done, if ( status is not 200 )
-      // or ( .loadPromise still pending (i.e. still in waiting promises) ).
+      // Not done, if:
+      //   - ( status is not 200 ), or
+      //   - ( .loadPromise still pending (i.e. still in waiting promises) ).
       //
       // Note: Checking ( xhr.status !== 200 ) is not enough. The loading may
       //       still not be complete when status becomes 200.
@@ -238,10 +238,9 @@ class HttpFetcher {
 
     reject( event );
 
-//!!! ...unfinished... (2023/02/15 Temp Remarked) 
-// should be listened again to trigger exception?
-//    // No longer listen on non-repeatable event.
-//    this.allPromiseSet.delete( this.errorPromise );
+    // Note: The non-repeatable failure event should still be listened on
+    //       (i.e. should not removed from this.allPromiseSet), so that the
+    //       rejected promise could trigger exception.
   }
 
   /**
@@ -269,16 +268,10 @@ class HttpFetcher {
       // Load completely but failed (e.g. ( status == 400 ) or ( status == 500 ) ).
       reject( event );
 
-//!!! ...unfinished... (2023/02/15 Temp Remarked) 
-// should be listened again to trigger exception?
-//      // No longer listen on non-repeatable event.
-//      this.allPromiseSet.delete( this.loadPromise );
+      // Note: The non-repeatable failure event should still be listened on
+      //       (i.e. should not removed from this.allPromiseSet), so that the
+      //       rejected promise could trigger exception.
     }
-
-//!!! ...unfinished... (2023/02/15 Temp Remarked) 
-// should be listened again to trigger exception?
-//    // No longer listen on non-repeatable event.
-//    this.allPromiseSet.delete( this.loadPromise );
   }
 
   /**
@@ -337,10 +330,9 @@ class HttpFetcher {
 
     reject( event );
 
-//!!! ...unfinished... (2023/02/15 Temp Remarked) 
-// should be listened again to trigger exception?
-//    // No longer listen on non-repeatable event.
-//    this.allPromiseSet.delete( this.timeoutPromise );
+    // Note: The non-repeatable failure event should still be listened on
+    //       (i.e. should not removed from this.allPromiseSet), so that the
+    //       rejected promise could trigger exception.
   }
 
 
