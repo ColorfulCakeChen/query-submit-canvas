@@ -123,15 +123,14 @@ class HttpFetcher {
         this.progressPromise,
         this.timeoutPromise
       ] );
-  
-//!!! not a promise
+
       // All succeeded promises resolve to progressRoot.
       // All failed promises reject to (i.e. throw exception of) ProgressEvent.
       let progressRoot = await allPromise;
       yield progressRoot;
 
-//!!! ...unfinished... (2023/02/15) How to stop loop?
-    } while ( fulfilledPromise !== loadPromise );
+    // Stop if loading completely and successfully.
+    } while ( xhr.status !== 200 );
 
     // 5.
     return xhr.response;
