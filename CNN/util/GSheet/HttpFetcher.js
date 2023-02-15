@@ -243,7 +243,7 @@ class HttpFetcher {
 
     reject( event );
   }
-  
+
   /**
    * @param {HttpFetcher} this
    */
