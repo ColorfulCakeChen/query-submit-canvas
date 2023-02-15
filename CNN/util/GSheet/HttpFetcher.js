@@ -60,9 +60,9 @@ class HttpFetcher {
    *     - "error"
    *     - "load": when ( status != 200 ) (e.g. 404 or 500).
    *     - "timeout"
-   * Note: Although they represent the request is failed, however, it still report
-   * ( progressToAdvance.valuePercentage == 100 ) for representing the request
-   * already done (with failure, though).
+   * Note: Although they all represent the request is failed, however, the
+   * ( progressToAdvance.valuePercentage == 100 ) will still be reported for
+   * representing the request already done (with failure, though).
    */
   async* asyncGenerator_by_url_body_timeout_method_responseType(
     progressParent,
