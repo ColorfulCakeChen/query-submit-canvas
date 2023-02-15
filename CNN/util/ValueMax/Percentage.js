@@ -129,8 +129,8 @@ class ValueMax_Percentage_Concrete extends ValueMax_Percentage_Base {
    * always 100. The this.max, however, could be zero or any positive value.
    *   - If .max is negative, the valuePercentage will always be 0
    *       (to avoid Aggregate.valuePercentage immediately 100).
-   *   - If .max is zero, the valuePercentage will always be 100 (to avoid divide
-   *       by zero and avoid Aggregate.valuePercentage never 100).
+   *   - If .max is zero, the valuePercentage will always be 100 (to avoid
+   *       divide by zero and avoid Aggregate.valuePercentage never 100).
    */
   constructor( max = -1 ) {
     super();
