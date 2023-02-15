@@ -1,5 +1,6 @@
 export { GSheets_UrlComposer as UrlComposer };
 export { HttpFetcher } from "./GSheet/HttpFetcher.js";
+export { HttpRetryableFetcher } from "./GSheet/HttpRetryableFetcher.js";
 
 import * as Pool from "./Pool.js";
 import * as Recyclable from "./Recyclable.js";
