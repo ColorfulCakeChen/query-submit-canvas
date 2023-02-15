@@ -3,6 +3,7 @@ export { HttpFetcher };
 import * as ValueMax from "../ValueMax.js";
 
 /**
+ * Wrap XMLHttpRequest as an async generator.
  *
  *
  * @param {boolean} bLogEventToConsole
