@@ -60,6 +60,9 @@ class HttpFetcher {
    *     - "error"
    *     - "load": when ( status != 200 ) (e.g. 404 or 500).
    *     - "timeout"
+   * Note: Although they represent the request is failed, however, it still report
+   * ( progressToAdvance.valuePercentage == 100 ) for representing the request
+   * already done (with failure, though).
    */
   async* asyncGenerator_by_url_body_timeout_method_responseType(
     progressParent,
@@ -203,14 +206,7 @@ class HttpFetcher {
    * @param {HttpFetcher} this
    */
   static handle_abort( resolve, reject, event ) {
-
-    // Adjust progressToAdvance only if there is enough information.
-    //
-    // Note: According to experiment, the .loaded may become 0 no matter
-    //       how many it is before this event.
-//!!! (2023/02/15 Temp Remarked)
-//    if ( event.loaded > 0 )
-      HttpFetcher.progressToAdvance_set_whenDone.call( this, event );
+    HttpFetcher.progressToAdvance_set_whenDone.call( this, event );
 
     if ( this.bLogEventToConsole )
       console.log( `( ${this.url} ) HttpFetcher: abort: `
@@ -227,14 +223,7 @@ class HttpFetcher {
    * @param {HttpFetcher} this
    */
   static handle_error( resolve, reject, event ) {
-
-    // Adjust progressToAdvance only if there is enough information.
-    //
-    // Note: According to experiment, the .loaded may become 0 no matter
-    //       how many it is before this event.
-//!!! (2023/02/15 Temp Remarked)
-//    if ( event.loaded > 0 )
-      HttpFetcher.progressToAdvance_set_whenDone.call( this, event );
+    HttpFetcher.progressToAdvance_set_whenDone.call( this, event );
 
     if ( this.bLogEventToConsole )
       console.log( `( ${this.url} ) HttpFetcher: error: `
@@ -320,15 +309,7 @@ class HttpFetcher {
    * @param {HttpFetcher} this
    */
   static handle_timeout( resolve, reject, event ) {
-
-    // Adjust progressToAdvance only if there is enough information.
-    //
-    // Note: According to experiment, the .loaded may become 0 no matter
-    //       how many it is before this event.
-
-//!!! (2023/02/15 Temp Remarked)
-//    if ( event.loaded > 0 )
-      HttpFetcher.progressToAdvance_set_whenDone.call( this, event );
+    HttpFetcher.progressToAdvance_set_whenDone.call( this, event );
 
     if ( this.bLogEventToConsole )
       console.log( `( ${this.url} ) HttpFetcher: timeout: `
@@ -353,9 +334,13 @@ class HttpFetcher {
   static progressToAdvance_set_beforeDone( progressEvent ) {
     if ( progressEvent.lengthComputable ) {
 
-//!!! ...unfinished... (2023/02/15)
-// What if ( progressEvent.total == 0 )?
-
+      // Because:
+      //   - ValueMax.Percentage.Concrete will get ( .valuePercentage == 100 )
+      //       when ( .max == 0 ).
+      //
+      // So, even if ( progressEvent.total == 0 ), this function still
+      // could result in ( progressToAdvance.valuePercentage == 100 ) correctly.
+      //
       this.progressToAdvance.value_max_set( progressEvent.total );
       this.progressToAdvance.value_set( progressEvent.loaded );
 
@@ -367,7 +352,7 @@ class HttpFetcher {
   }
 
   /**
-   * Called when progress not done (i.e. onload()).
+   * Called when progress done (i.e. onabort(), onerror(), onload(), ontimeout()).
    *
    * @param {HttpFetcher} this
    *
@@ -375,19 +360,26 @@ class HttpFetcher {
    *   The ProgressEvent to be used to set .progressToAdvance.
    */
   static progressToAdvance_set_whenDone( progressEvent ) {
+
+    // Because:
+    //   - ValueMax.Percentage.Concrete will get ( .valuePercentage == 100 )
+    //       when ( .max == 0 ).
+    //
+    //   - According to experiment, the progressEvent.loaded may become 0
+    //       no matter how many it is before onabort() or onerror() or
+    //       ontimeout().
+    //
+    // So, no matter in which one of following cases, this function always
+    // could result in ( progressToAdvance.valuePercentage == 100 ):
+    //   - ( progressEvent.total == 0 ) when ( .lengthComputable == true )
+    //   - ( progressEvent.loaded == 0 ) when ( .lengthComputable == false )
+    //
+
     if ( event.lengthComputable ) {
-
-//!!! ...unfinished... (2023/02/15)
-// What if ( progressEvent.total == 0 )?
-
       this.progressToAdvance.value_max_set( event.total );
       this.progressToAdvance.value_set( event.loaded );
 
     } else { // Complete the fake progress to 100%.
-
-//!!! ...unfinished... (2023/02/15)
-// What if ( progressEvent.loaded == 0 )?
-
       this.progressToAdvance.value_max_set( event.loaded );
       this.progressToAdvance.value_set( event.loaded );
     }
