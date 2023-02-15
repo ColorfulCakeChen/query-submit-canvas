@@ -23,4 +23,7 @@ class HttpRetryableFetcher {
     this.bLogEventToConsole = bLogEventToConsole;
   }
 
+//!!! ...unfinished... (2023/02/15)
+// should use exponential back-off algorithm to re-try.
+
 }
