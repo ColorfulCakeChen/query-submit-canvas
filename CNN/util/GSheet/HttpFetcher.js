@@ -132,6 +132,10 @@ class HttpFetcher {
       let progressRoot = await allPromise;
       yield progressRoot;
 
+//!!! ...unfinished... (2023/02/15)
+// Only ( xhr.status !== 200 ) is still not enough.
+// should wait loadPromise resolved.
+
     // Stop if loading completely and successfully.
     } while ( xhr.status !== 200 );
 
