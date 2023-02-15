@@ -180,11 +180,13 @@ class HttpFetcher {
    * @param {HttpFetcher} this
    */
   static handle_abort( resolve, reject, event ) {
+    HttpFetcher.progressToAdvance_set_beforeDone.call( this, event );
+
     if ( this.bLogEventToConsole )
       console.log( `( ${this.url} ) HttpFetcher: abort: `
-        + `${HttpFetcher.ProgressEvent_toString( event )}` );
+        + `${HttpFetcher.ProgressEvent_toString( event )}, `
+        + `progressToAdvance=${this.progressToAdvance.valuePercentage}%` );
 
-    HttpFetcher.progressToAdvance_set_beforeDone.call( this, event );
     reject( event );
   }
 
@@ -192,11 +194,13 @@ class HttpFetcher {
    * @param {HttpFetcher} this
    */
   static handle_error( resolve, reject, event ) {
+    HttpFetcher.progressToAdvance_set_beforeDone.call( this, event );
+
     if ( this.bLogEventToConsole )
       console.log( `( ${this.url} ) HttpFetcher: error: `
-        + `${HttpFetcher.ProgressEvent_toString( event )}` );
+        + `${HttpFetcher.ProgressEvent_toString( event )}, `
+        + `progressToAdvance=${this.progressToAdvance.valuePercentage}%` );
 
-    HttpFetcher.progressToAdvance_set_beforeDone.call( this, event );
     reject( event );
   }
   
@@ -204,14 +208,15 @@ class HttpFetcher {
    * @param {HttpFetcher} this
    */
   static handle_load( resolve, reject, event ) {
+    HttpFetcher.progressToAdvance_set_whenDone.call( this, event );
+
     let xhr = this.xhr;
 
     if ( this.bLogEventToConsole )
       console.log( `( ${this.url} ) HttpFetcher: load: `
         + `${HttpFetcher.ProgressEvent_toString( event )}, `
-        + `status=${xhr.status}, statusText=\"${xhr.statusText}\"` );
-
-    HttpFetcher.progressToAdvance_set_whenDone.call( this, event );
+        + `status=${xhr.status}, statusText=\"${xhr.statusText}\", `
+        + `progressToAdvance=${this.progressToAdvance.valuePercentage}%` );
 
     if ( xhr.status === 200 ) {
       // Load completely and successfully.
@@ -232,7 +237,8 @@ class HttpFetcher {
   static handle_loadend( resolve, reject, event ) {
     if ( this.bLogEventToConsole )
       console.log( `( ${this.url} ) HttpFetcher: loadend: `
-        + `${HttpFetcher.ProgressEvent_toString( event )}` );
+        + `${HttpFetcher.ProgressEvent_toString( event )}, `
+        + `progressToAdvance=${this.progressToAdvance.valuePercentage}%` );
 
     // Because this event happens after abort or error or load, it does not be
     // used by us.
@@ -245,11 +251,13 @@ class HttpFetcher {
    * @param {HttpFetcher} this
    */
   static handle_loadstart( resolve, reject, event ) {
+    HttpFetcher.progressToAdvance_set_beforeDone.call( this, event );
+
     if ( this.bLogEventToConsole )
       console.log( `( ${this.url} ) HttpFetcher: loadstart: `
-        + `${HttpFetcher.ProgressEvent_toString( event )}` );
+        + `${HttpFetcher.ProgressEvent_toString( event )}, `
+        + `progressToAdvance=${this.progressToAdvance.valuePercentage}%` );
 
-    HttpFetcher.progressToAdvance_set_beforeDone.call( this, event );
     resolve( this.progressRoot );
 
     // For non-repeatable event, no longer listen on it.
@@ -260,11 +268,13 @@ class HttpFetcher {
    * @param {HttpFetcher} this
    */
   static handle_progress( resolve, reject, event ) {
+    HttpFetcher.progressToAdvance_set_beforeDone.call( this, event );
+
     if ( this.bLogEventToConsole )
       console.log( `( ${this.url} ) HttpFetcher: progress: `
-        + `${HttpFetcher.ProgressEvent_toString( event )}` );
+        + `${HttpFetcher.ProgressEvent_toString( event )}, `
+        + `progressToAdvance=${this.progressToAdvance.valuePercentage}%` );
 
-    HttpFetcher.progressToAdvance_set_beforeDone.call( this, event );
     resolve( this.progressRoot );
 
     {
@@ -283,11 +293,13 @@ class HttpFetcher {
    * @param {HttpFetcher} this
    */
   static handle_timeout( resolve, reject, event ) {
+    HttpFetcher.progressToAdvance_set_beforeDone.call( this, event );
+
     if ( this.bLogEventToConsole )
       console.log( `( ${this.url} ) HttpFetcher: timeout: `
-        + `${HttpFetcher.ProgressEvent_toString( event )}` );
+        + `${HttpFetcher.ProgressEvent_toString( event )}, `
+        + `progressToAdvance=${this.progressToAdvance.valuePercentage}%` );
 
-    HttpFetcher.progressToAdvance_set_beforeDone.call( this, event );
     reject( event );
   }
 
