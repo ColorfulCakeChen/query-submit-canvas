@@ -152,10 +152,10 @@ async function* tester( progressParent ) {
   tester1.disposeResources_and_recycleToPool();
   tester1 = null;
 
-  testerNotExist2.disposeResources_and_recycleToPool();
+  testerNotExist2?.disposeResources_and_recycleToPool();
   testerNotExist2 = null;
 
-  testerNotExist1.disposeResources_and_recycleToPool();
+  testerNotExist1?.disposeResources_and_recycleToPool();
   testerNotExist1 = null;
 
   console.log( "GSheet download testing... Done." );
