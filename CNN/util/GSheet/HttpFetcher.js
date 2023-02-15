@@ -222,8 +222,9 @@ class HttpFetcher {
 
 //!!! ...unfinished... (2023/02/15 Temp Remarked) 
 // should be listened again to trigger exception?
-//    // No longer listen on non-repeatable event.
-//    this.allPromiseSet.delete( this.abortPromise );
+   // The non-repeatable failure event should still be listened on, so that it
+   // could trigger exception (by rejected promise).
+   this.allPromiseSet.delete( this.abortPromise );
   }
 
   /**
@@ -263,7 +264,7 @@ class HttpFetcher {
       // Load completely and successfully.
       resolve( this.progressRoot );
 
-      // No longer listen on non-repeatable event.
+      // No longer listen on non-repeatable succeeded event.
       this.allPromiseSet.delete( this.loadPromise );
 
     } else {
@@ -295,7 +296,7 @@ class HttpFetcher {
 
     resolve( this.progressRoot );
 
-    // No longer listen on non-repeatable event.
+    // No longer listen on non-repeatable succeeded event.
     this.allPromiseSet.delete( this.loadstartPromise );
   }
 
@@ -312,7 +313,7 @@ class HttpFetcher {
 
     resolve( this.progressRoot );
 
-    // Re-listen on repeatable event.
+    // Re-listen on repeatable succeeded event.
     {
       this.allPromiseSet.delete( this.progressPromise );
 
