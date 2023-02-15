@@ -124,6 +124,7 @@ class HttpFetcher {
     xhr.send( body );
 
     // 4. Until done or failed.
+    let notDone;
     do {
       let allPromise = Promise.race( this.allPromiseSet );
 
@@ -132,16 +133,26 @@ class HttpFetcher {
       let progressRoot = await allPromise;
       yield progressRoot;
 
-//!!! ...unfinished... (2023/02/15)
-// Only ( xhr.status !== 200 ) is still not enough.
-// should wait loadPromise resolved.
+      // Not done, if .loadPromise still pending (i.e. still in waiting promises).
+      //
+      // Note: Checking ( xhr.status !== 200 ) is not enough. The loading may
+      //       still not be complete when status becomes 200.
+      notDone = this.allPromiseSet.has( this.loadPromise );
 
     // Stop if loading completely and successfully.
-    } while ( xhr.status !== 200 );
+    //
+    // Note: The other ways to leave this loop are throwing exceptions (e.g.
+    //       the pending promises rejected).
+    } while ( notDone );
 
     // (2023/02/15) For debug. (Not yet finished, while return.)
-    if ( 100 != this.progressToAdvance.valuePercentage )
-      debugger;
+    {
+      if ( 200 !== xhr.status )
+        debugger;
+
+      if ( 100 != this.progressToAdvance.valuePercentage )
+        debugger;
+    }
 
     // 5.
     return xhr.response;
