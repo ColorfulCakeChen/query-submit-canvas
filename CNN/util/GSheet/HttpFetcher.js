@@ -98,10 +98,6 @@ class HttpFetcher {
     this.loadPromise = HttpFetcher.Promise_create_by_eventName_eventCallback
       .call( this, "load", HttpFetcher.handle_load );
 
-    // (2023/02/15 Remarked) Not used.
-    // this.loadendPromise = HttpFetcher.Promise_create_by_eventName_eventCallback
-    //   .call( this, "loadend", HttpFetcher.handle_loadend );
-
     this.loadstartPromise = HttpFetcher.Promise_create_by_eventName_eventCallback
       .call( this, "loadstart", HttpFetcher.handle_loadstart );
 
@@ -114,7 +110,6 @@ class HttpFetcher {
     // All promises to be listened.
     this.allPromiseSet = new Set( [
       this.abortPromise, this.errorPromise, this.loadPromise,
-      //this.loadendPromise, // (2023/02/15 Remarked) Not used.
       this.loadstartPromise,
       this.progressPromise,
       this.timeoutPromise
@@ -274,22 +269,6 @@ class HttpFetcher {
 
     // No longer listen on non-repeatable event.
     this.allPromiseSet.delete( this.loadPromise );
-  }
-
-  /**
-   * @param {HttpFetcher} this
-   */
-  static handle_loadend( resolve, reject, event ) {
-    if ( this.bLogEventToConsole )
-      console.log( `( ${this.url} ) HttpFetcher: loadend: `
-        + `${HttpFetcher.ProgressEvent_toString( event )}, `
-        + `progressToAdvance=${this.progressToAdvance.valuePercentage}%` );
-
-    // Because this event happens after abort or error or load, it does not be
-    // used by us.
-
-    // No longer listen on non-repeatable event.
-    this.allPromiseSet.delete( this.loadendPromise );
   }
 
   /**
