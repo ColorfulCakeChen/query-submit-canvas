@@ -191,22 +191,21 @@ class GVizTQ_UrlComposer extends Recyclable.Root {
 
         try {
 
-//!!! ...unfinished... (2023/02/14) Perhaps, use:
-// responseText = yield* httpResulter;
- 
-          let nextPromise;
-          do {
-            nextPromise = await httpResulter.next();
-            if ( nextPromise.done ) {
-              responseText = nextPromise.value;
-              break;
-            }
+//!!! (2023/02/15 Remarked) Replaced by yield*
+//           let nextPromise;
+//           do {
+//             nextPromise = await httpResulter.next();
+//             if ( nextPromise.done ) {
+//               responseText = nextPromise.value;
+//               break;
+//             }
+//
+//             //progressRoot = value;
+//             yield progressRoot;
+//
+//           } while ( !nextPromise.done );
 
-            //progressRoot = value;
-            yield progressRoot;
-
-          } while ( !nextPromise.done );
-
+          responseText = yield* httpResulter;
           if ( !responseText )
             return null; // should not happen.
 
