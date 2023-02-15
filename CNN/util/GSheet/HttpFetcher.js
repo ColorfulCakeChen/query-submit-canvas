@@ -181,9 +181,8 @@ class HttpFetcher {
    */
   static handle_abort( resolve, reject, event ) {
     if ( this.bLogEventToConsole )
-      console.log( `HttpFetcher: abort: `
-        + `${HttpFetcher.ProgressEvent_toString( event )} `
-        + `( ${this.url} )` );
+      console.log( `( ${this.url} ) HttpFetcher: abort: `
+        + `${HttpFetcher.ProgressEvent_toString( event )}` );
 
     HttpFetcher.progressToAdvance_set_beforeDone.call( this, event );
     reject( event );
@@ -194,9 +193,8 @@ class HttpFetcher {
    */
   static handle_error( resolve, reject, event ) {
     if ( this.bLogEventToConsole )
-      console.log( `HttpFetcher: error: `
-        + `${HttpFetcher.ProgressEvent_toString( event )} `
-        + `( ${this.url} )` );
+      console.log( `( ${this.url} ) HttpFetcher: error: `
+        + `${HttpFetcher.ProgressEvent_toString( event )}` );
 
     HttpFetcher.progressToAdvance_set_beforeDone.call( this, event );
     reject( event );
@@ -209,10 +207,9 @@ class HttpFetcher {
     let xhr = this.xhr;
 
     if ( this.bLogEventToConsole )
-      console.log( `HttpFetcher: load: `
+      console.log( `( ${this.url} ) HttpFetcher: load: `
         + `${HttpFetcher.ProgressEvent_toString( event )}, `
-        + `status=${xhr.status}, statusText=\"${xhr.statusText}\" `
-        + `( ${this.url} )` );
+        + `status=${xhr.status}, statusText=\"${xhr.statusText}\"` );
 
     HttpFetcher.progressToAdvance_set_whenDone.call( this, event );
 
@@ -234,9 +231,8 @@ class HttpFetcher {
    */
   static handle_loadend( resolve, reject, event ) {
     if ( this.bLogEventToConsole )
-      console.log( `HttpFetcher: loadend: `
-        + `${HttpFetcher.ProgressEvent_toString( event )} `
-        + `( ${this.url} )` );
+      console.log( `( ${this.url} ) HttpFetcher: loadend: `
+        + `${HttpFetcher.ProgressEvent_toString( event )}` );
 
     // Because this event happens after abort or error or load, it does not be
     // used by us.
@@ -250,9 +246,8 @@ class HttpFetcher {
    */
   static handle_loadstart( resolve, reject, event ) {
     if ( this.bLogEventToConsole )
-      console.log( `HttpFetcher: loadstart: `
-        + `${HttpFetcher.ProgressEvent_toString( event )} `
-        + `( ${this.url} )` );
+      console.log( `( ${this.url} ) HttpFetcher: loadstart: `
+        + `${HttpFetcher.ProgressEvent_toString( event )}` );
 
     HttpFetcher.progressToAdvance_set_beforeDone.call( this, event );
     resolve( this.progressRoot );
@@ -266,9 +261,8 @@ class HttpFetcher {
    */
   static handle_progress( resolve, reject, event ) {
     if ( this.bLogEventToConsole )
-      console.log( `HttpFetcher: progress: `
-        + `${HttpFetcher.ProgressEvent_toString( event )} `
-        + `( ${this.url} )` );
+      console.log( `( ${this.url} ) HttpFetcher: progress: `
+        + `${HttpFetcher.ProgressEvent_toString( event )}` );
 
     HttpFetcher.progressToAdvance_set_beforeDone.call( this, event );
     resolve( this.progressRoot );
@@ -290,9 +284,8 @@ class HttpFetcher {
    */
   static handle_timeout( resolve, reject, event ) {
     if ( this.bLogEventToConsole )
-      console.log( `HttpFetcher: timeout: `
-        + `${HttpFetcher.ProgressEvent_toString( event )} `
-        + `( ${this.url} )` );
+      console.log( `( ${this.url} ) HttpFetcher: timeout: `
+        + `${HttpFetcher.ProgressEvent_toString( event )}` );
 
     HttpFetcher.progressToAdvance_set_beforeDone.call( this, event );
     reject( event );
