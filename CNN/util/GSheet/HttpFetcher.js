@@ -20,7 +20,7 @@ class HttpFetcher {
   }
 
   /**
-   * An async generator for sending a http request and tracking progress.
+   * An async generator for sending a http request and tracking its progress.
    *
    *
    * @param {ValueMax.Percentage.Aggregate} progressParent
