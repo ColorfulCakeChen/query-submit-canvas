@@ -6,8 +6,8 @@ import * as Pool from "../Pool.js";
 import * as Recyclable from "../Recyclable.js";
 
 /**
- * The base class for representing valuePercentage as number between [0, 100] inclusive.
- * Acceptable by Receiver.Base.
+ * The base class for representing valuePercentage as number between [0, 100]
+ * inclusive. Acceptable by Receiver.Base.
  *
  *   - The maxPercentage always returns 100.
  *   - The valuePercentage returns number between [ 0, 100 ] inclusive.
@@ -18,7 +18,8 @@ import * as Recyclable from "../Recyclable.js";
 class ValueMax_Percentage_Base extends Recyclable.Root {
 
   /**
-   * Used as default ValueMax.Percentage.Base provider for conforming to Recyclable interface.
+   * Used as default ValueMax.Percentage.Base provider for conforming
+   * to Recyclable interface.
    */
   static Pool = new Pool.Root( "ValueMax.Percentage.Base.Pool",
     ValueMax_Percentage_Base, ValueMax_Percentage_Base.setAsConstructor );
@@ -48,10 +49,10 @@ class ValueMax_Percentage_Base extends Recyclable.Root {
   disposeResources() {
 
     // In theory, here should remove this child object from parent (i.e. Aggregate)
-    // so that the parent will not dispose (and recycle) this child object once again.
-    // In fact, however, this is an expensive action (because a linear search should
-    // be done. So, the better choice is to dispose the whole tree from root object
-    // by caller to avoid this problem.
+    // so that the parent will not dispose (and recycle) this child object once
+    // again. In fact, however, this is an expensive action (because a linear
+    // search should be done. So, the better choice is to dispose the whole tree
+    // from root object by caller to avoid this problem.
     //
     //if ( this.parent ) {
     //  if ( this.parent instanceof ValueMax_Percentage_Aggregate ) {
@@ -76,8 +77,8 @@ class ValueMax_Percentage_Base extends Recyclable.Root {
   }
 
   /**
-   * Invalidate .valuePercentage_cached (i.e. let it become undefined). This method
-   * will invalidate parent's .valuePercentage_cached, too.
+   * Invalidate .valuePercentage_cached (i.e. let it become undefined). This
+   * method will invalidate parent's .valuePercentage_cached, too.
    */
   valuePercentage_cached_invalidate() {
     this.valuePercentage_cached = undefined;
@@ -103,8 +104,8 @@ class ValueMax_Percentage_Base extends Recyclable.Root {
 /**
  * Collect value and max and represents them as percentage.
  *
- * The Concrete.maxPercentage always returns 100. The Concrete.valuePercentage returns
- * number between [ 0, 100 ] inclusive.
+ * The Concrete.maxPercentage always returns 100. The Concrete.valuePercentage
+ * returns number between [ 0, 100 ] inclusive.
  *
  * @member {number} value
  *   A positive number between [ 0, max ]. Usually, caller will increase it.
@@ -115,7 +116,8 @@ class ValueMax_Percentage_Base extends Recyclable.Root {
 class ValueMax_Percentage_Concrete extends ValueMax_Percentage_Base {
 
   /**
-   * Used as default ValueMax.Percentage.Concrete provider for conforming to Recyclable interface.
+   * Used as default ValueMax.Percentage.Concrete provider for conforming
+   * to Recyclable interface.
    */
   static Pool = new Pool.Root( "ValueMax.Percentage.Concrete.Pool",
     ValueMax_Percentage_Concrete, ValueMax_Percentage_Concrete.setAsConstructor );
@@ -240,8 +242,8 @@ class ValueMax_Percentage_Concrete extends ValueMax_Percentage_Base {
 
 
 /**
- * Aggregate all children ( valuePercentage / maxPercentage ) and represents them as
- * percentage.
+ * Aggregate all children ( valuePercentage / maxPercentage ) and represents
+ * them as percentage.
  *
  * @member {Percentage.Base[]} children
  *   An array of Percentage.Base which will be aggregated. Their parent are set
@@ -250,7 +252,8 @@ class ValueMax_Percentage_Concrete extends ValueMax_Percentage_Base {
 class ValueMax_Percentage_Aggregate extends ValueMax_Percentage_Base {
 
   /**
-   * Used as default ValueMax.Percentage.Aggregate provider for conforming to Recyclable interface.
+   * Used as default ValueMax.Percentage.Aggregate provider for conforming
+   * to Recyclable interface.
    */
   static Pool = new Pool.Root( "ValueMax.Percentage.Aggregate.Pool",
     ValueMax_Percentage_Aggregate, ValueMax_Percentage_Aggregate.setAsConstructor );
@@ -337,7 +340,9 @@ class ValueMax_Percentage_Aggregate extends ValueMax_Percentage_Base {
   }
 
   /**
-   * @return {number} The sum of all children's ( valuePercentage / maxPercentage ) as number between [0, 100] inclusive.
+   * @return {number}
+   *   The sum of all children's ( valuePercentage / maxPercentage ) as
+   * number between [0, 100] inclusive.
    */
   get valuePercentage() {
     if ( this.valuePercentage_cached != undefined )
