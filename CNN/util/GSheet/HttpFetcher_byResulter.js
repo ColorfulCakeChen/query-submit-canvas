@@ -3,6 +3,8 @@ export { HttpFetcher_byResulter };
 import * as AsyncWorker from "../AsyncWorker.js";
 import * as ValueMax from "../ValueMax.js";
 
+//!!! ...unfinished... (2023/02/15) Deprecated. (HttpFetcher_byResulter)
+
 //!!! ...unfinished... (2023/02/14)
 // It is also possible to use Promise.race() to implement request timeout.
 

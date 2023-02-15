@@ -86,7 +86,7 @@ async function* tester( progressParent ) {
   let apiKey = "AIzaSyDQpdX3Z7297fkZ7M_jWdq7zjv_IIxpArU";
 
 //!!! ...unfinished... (2023/02/14) timeout and re-try?
-  const timeoutMilliseconds = 1 * 1000;
+  const timeoutMilliseconds = 2 * 1000;
   //const timeoutMilliseconds = 10 * 1000;
   //const timeoutMilliseconds = 0;
 
