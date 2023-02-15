@@ -147,11 +147,20 @@ class HttpFetcher {
 
     // (2023/02/15) For debug. (Not yet finished, while return.)
     {
-      if ( 200 !== xhr.status )
-        debugger;
+      if ( 200 !== xhr.status ) {
+        throw Error( `( ${this.url} ) `
+          + `HttpFetcher.asyncGenerator_by_url_body_timeout_method_responseType(): `
+          + `When done, `
+          + `xhr.status ( ${xhr.status} ) should be 200.` );
+      }
 
-      if ( 100 != this.progressToAdvance.valuePercentage )
-        debugger;
+      if ( 100 != this.progressToAdvance.valuePercentage ) {
+        throw Error( `( ${this.url} ) `
+          + `HttpFetcher.asyncGenerator_by_url_body_timeout_method_responseType(): `
+          + `When done, `
+          + `progressToAdvance.valuePercentage `
+          + `( ${this.progressToAdvance.valuePercentage} ) should be 100.` );
+      }
     }
 
     // 5.
