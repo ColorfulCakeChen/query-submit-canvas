@@ -131,14 +131,13 @@ class HttpFetcher {
       let progressRoot = await allPromise;
       yield progressRoot;
 
-//!!! ...unfinished... (2023/02/15)
-// should also check ( xhr.status === 200 )
-
-      // Not done, if .loadPromise still pending (i.e. still in waiting promises).
+      // Not done, if ( status is not 200 )
+      // or ( .loadPromise still pending (i.e. still in waiting promises) ).
       //
       // Note: Checking ( xhr.status !== 200 ) is not enough. The loading may
       //       still not be complete when status becomes 200.
-      notDone = this.allPromiseSet.has( this.loadPromise );
+      notDone =    ( xhr.status !== 200 )
+                || ( this.allPromiseSet.has( this.loadPromise ) );
 
     // Stop if loading completely and successfully.
     //
