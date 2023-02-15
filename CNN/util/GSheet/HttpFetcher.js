@@ -114,13 +114,23 @@ class HttpFetcher {
     let timeoutPromise = HttpFetcher.Promise_create_by_eventName_eventCallback
       .call( this, "timeout", HttpFetcher.handle_readystatechange );
 
+    let allPromise = Promise.race( [
+      abortPromise, errorPromise, loadPromise,
+      //loadendPromise, // (2023/02/15 Remarked) Not used.
+      loadstartPromise,
+      progressPromise,
+      //readystatechangePromise, // (2023/02/15 Remarked) Not used.
+      timeoutPromise
+    ] );
+
     // 3.
     xhr.send( body );
 
     // 4. Until done or failed.
     let fulfilledPromise;
     do {
-      let allPromise = Promise.race( [
+//!!! ...unfinished... (2023/02/15)  should  remove  non-repeated promise.
+      allPromise = Promise.race( [
         abortPromise, errorPromise, loadPromise,
         //loadendPromise, // (2023/02/15 Remarked) Not used.
         loadstartPromise,
