@@ -226,6 +226,9 @@ class GVizTQ_UrlComposer extends Recyclable.Root {
             }
 
             return null;
+
+          } else { // Unknown error.
+            throw e;
           }
         }
       }
