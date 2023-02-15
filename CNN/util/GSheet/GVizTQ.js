@@ -220,6 +220,7 @@ class GVizTQ_UrlComposer extends Recyclable.Root {
               throw e;
 
             } else if ( e.type === "load" ) { // ( status != 200 ) (e.g. 404 or 500)
+              throw e;
 
             } else if ( e.type === "timeout" ) {
               throw e;
