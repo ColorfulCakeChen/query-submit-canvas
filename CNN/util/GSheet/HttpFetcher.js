@@ -68,6 +68,8 @@ class HttpFetcher {
     method = HttpFetcher.methodDefault,
     responseType = HttpFetcher.responseTypeDefault ) {
 
+    // 0.
+
     // Note: Although .progressToAdvance is recorded in this, it is not owned by
     //       this HttpFetcher object. It should be destroyed by outside caller
     //       (i.e. by progressParent).
@@ -79,16 +81,13 @@ class HttpFetcher {
 
     this.url = url;
 
+    // 1.
     const xhr = this.xhr = new XMLHttpRequest();
     xhr.open( method, url, true );
     xhr.timeout = timeoutMilliseconds;
     xhr.responseType = responseType;
 
-//!!! ...unfinished... (2023/02/14)
-// It is also possible to use Promise.race() to wrap all event callback (as promise)
-// instead of using AsyncWorker.Resulter
-
-    // Prepare promises before sending it.
+    // 2. Prepare promises before sending it.
     let abortPromise = HttpFetcher.Promise_create_by_eventName_eventCallback
       .call( this, "abort", HttpFetcher.handle_abort );
 
@@ -98,8 +97,9 @@ class HttpFetcher {
     let loadPromise = HttpFetcher.Promise_create_by_eventName_eventCallback
       .call( this, "load", HttpFetcher.handle_load );
 
-    let loadendPromise = HttpFetcher.Promise_create_by_eventName_eventCallback
-      .call( this, "loadend", HttpFetcher.handle_loadend );
+    // (2023/02/15 Remarked) Not used.
+    // let loadendPromise = HttpFetcher.Promise_create_by_eventName_eventCallback
+    //   .call( this, "loadend", HttpFetcher.handle_loadend );
 
     let loadstartPromise = HttpFetcher.Promise_create_by_eventName_eventCallback
       .call( this, "loadstart", HttpFetcher.handle_loadstart );
@@ -107,21 +107,27 @@ class HttpFetcher {
     let progressPromise = HttpFetcher.Promise_create_by_eventName_eventCallback
       .call( this, "progress", HttpFetcher.handle_progress );
 
-    let readystatechangePromise = HttpFetcher.Promise_create_by_eventName_eventCallback
-      .call( this, "readystatechange", HttpFetcher.handle_readystatechange );
+    // (2023/02/15 Remarked) Not used.
+    // let readystatechangePromise = HttpFetcher.Promise_create_by_eventName_eventCallback
+    //   .call( this, "readystatechange", HttpFetcher.handle_readystatechange );
 
     let timeoutPromise = HttpFetcher.Promise_create_by_eventName_eventCallback
       .call( this, "timeout", HttpFetcher.handle_readystatechange );
 
-    //
+    // 3.
     xhr.send( body );
 
-    // Until done or failed.
+    // 4. Until done or failed.
     let fulfilledPromise;
     do {
-      let allPromise = Promise.race( [ abortPromise, errorPromise, loadPromise,
-      loadendPromise, loadstartPromise, progressPromise, readystatechangePromise,
-      timeoutPromise ] );
+      let allPromise = Promise.race( [
+        abortPromise, errorPromise, loadPromise,
+        //loadendPromise, // (2023/02/15 Remarked) Not used.
+        loadstartPromise,
+        progressPromise,
+        //readystatechangePromise, // (2023/02/15 Remarked) Not used.
+        timeoutPromise
+      ] );
 
       fulfilledPromise = await allPromise;
 
@@ -140,6 +146,7 @@ class HttpFetcher {
       }
     } while ( fulfilledPromise !== loadPromise );
 
+    // 5.
     return xhr.response;
   }
 
@@ -162,17 +169,23 @@ class HttpFetcher {
    * This function should be used as Promise constructor's parameter.
    *
    * @param {HttpFetcher} this
+   *
+   * @param {string} eventName
+   *    The event name of eventCallback. e.g. "loadstart", "progress", "timeout".
+   *
    * @param {function} eventCallback
-   *    The function which will be called 
+   *    The event handler function for the event name. It should accept parameters
+   * ( resolve, reject, event ).
    */
   static Promise_constructor_func( eventName, eventCallback, resolve, reject ) {
     this.xhr.addEventListener(
       eventName, eventCallback.bind( this, resolve, reject ),
 
       // So that same event could be re-registered many times after event triggered.
-      HttpFetcher.options_once
+      HttpFetcher.addEventListener_options_once
     );
   }
+
 
   /**
    * @param {HttpFetcher} this
@@ -184,11 +197,7 @@ class HttpFetcher {
         + `( ${this.url} )` );
 
     HttpFetcher.progressToAdvance_set_beforeDone.call( this, event );
-
-//!!! ...unfinished... (2023/02/14) use resolve and reject instead.
-
-    this.the_processingId_Resulter_Map.resolve_or_reject_by_processingId_done_value(
-      this.processingId, undefined, event );
+    reject( event );
   }
 
   /**
@@ -201,11 +210,7 @@ class HttpFetcher {
         + `( ${this.url} )` );
 
     HttpFetcher.progressToAdvance_set_beforeDone.call( this, event );
-
-//!!! ...unfinished... (2023/02/14) use resolve and reject instead.
-
-    this.the_processingId_Resulter_Map.resolve_or_reject_by_processingId_done_value(
-      this.processingId, undefined, event );
+    reject( event );
   }
   
   /**
@@ -222,19 +227,14 @@ class HttpFetcher {
 
     HttpFetcher.progressToAdvance_set_whenDone.call( this, event );
 
-//!!! ...unfinished... (2023/02/14) use resolve and reject instead.
-
-
     if ( xhr.status === 200 ) {
       // Load completely and successfully.
       let progressRoot = this.progressParent.root_get();
-      this.the_processingId_Resulter_Map.resolve_or_reject_by_processingId_done_value(
-        this.processingId, true, xhr.response );
+      resolve( xhr.response );
 
     } else {
       // Load completely but failed (e.g. ( status == 400 ) or ( status == 500 ) ).
-      this.the_processingId_Resulter_Map.resolve_or_reject_by_processingId_done_value(
-        this.processingId, undefined, event );
+      reject( event );
     }
   }
 
@@ -262,12 +262,8 @@ class HttpFetcher {
 
     HttpFetcher.progressToAdvance_set_beforeDone.call( this, event );
 
-//!!! ...unfinished... (2023/02/14) use resolve and reject instead.
-
-
     let progressRoot = this.progressParent.root_get();
-    this.the_processingId_Resulter_Map.resolve_or_reject_by_processingId_done_value(
-      this.processingId, false, progressRoot );
+    resolve( progressRoot );
   }
 
   /**
@@ -282,8 +278,7 @@ class HttpFetcher {
     HttpFetcher.progressToAdvance_set_beforeDone.call( this, event );
 
     let progressRoot = this.progressParent.root_get();
-    this.the_processingId_Resulter_Map.resolve_or_reject_by_processingId_done_value(
-      this.processingId, false, progressRoot );
+    resolve( progressRoot );
   }
 
   /**
@@ -336,13 +331,7 @@ class HttpFetcher {
         + `( ${this.url} )` );
 
     HttpFetcher.progressToAdvance_set_beforeDone.call( this, event );
-
-//!!! ...unfinished... (2023/02/14) use resolve and reject instead.
-
-
-    this.the_processingId_Resulter_Map.resolve_or_reject_by_processingId_done_value(
-      this.processingId, undefined, event );
-
+    reject( event );
   }
 
 
@@ -414,6 +403,6 @@ HttpFetcher.responseTypeDefault = "text";
 HttpFetcher.progressTotalFakeLarger = 10 * 1024;
 
 /** Used for .addEventListener() */
-HttpFetcher.options_once = {
+HttpFetcher.addEventListener_options_once = {
   once : true
 };
