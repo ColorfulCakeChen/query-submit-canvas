@@ -74,6 +74,7 @@ class HttpFetcher {
     //       this HttpFetcher object. It should be destroyed by outside caller
     //       (i.e. by progressParent).
     //
+    this.progressRoot = progressParent.root_get();
     this.progressParent = progressParent;
     this.progressToAdvance = progressParent.child_add(
       ValueMax.Percentage.Concrete.Pool.get_or_create_by(
@@ -88,62 +89,48 @@ class HttpFetcher {
     xhr.responseType = responseType;
 
     // 2. Prepare promises before sending it.
-    let abortPromise = HttpFetcher.Promise_create_by_eventName_eventCallback
+    this.abortPromise = HttpFetcher.Promise_create_by_eventName_eventCallback
       .call( this, "abort", HttpFetcher.handle_abort );
 
-    let errorPromise = HttpFetcher.Promise_create_by_eventName_eventCallback
+    this.errorPromise = HttpFetcher.Promise_create_by_eventName_eventCallback
       .call( this, "error", HttpFetcher.handle_error );
 
-    let loadPromise = HttpFetcher.Promise_create_by_eventName_eventCallback
+    this.loadPromise = HttpFetcher.Promise_create_by_eventName_eventCallback
       .call( this, "load", HttpFetcher.handle_load );
 
     // (2023/02/15 Remarked) Not used.
-    // let loadendPromise = HttpFetcher.Promise_create_by_eventName_eventCallback
+    // this.loadendPromise = HttpFetcher.Promise_create_by_eventName_eventCallback
     //   .call( this, "loadend", HttpFetcher.handle_loadend );
 
-    let loadstartPromise = HttpFetcher.Promise_create_by_eventName_eventCallback
+    this.loadstartPromise = HttpFetcher.Promise_create_by_eventName_eventCallback
       .call( this, "loadstart", HttpFetcher.handle_loadstart );
 
-    let progressPromise = HttpFetcher.Promise_create_by_eventName_eventCallback
+    this.progressPromise = HttpFetcher.Promise_create_by_eventName_eventCallback
       .call( this, "progress", HttpFetcher.handle_progress );
 
-    // (2023/02/15 Remarked) Not used.
-    // let readystatechangePromise = HttpFetcher.Promise_create_by_eventName_eventCallback
-    //   .call( this, "readystatechange", HttpFetcher.handle_readystatechange );
-
-    let timeoutPromise = HttpFetcher.Promise_create_by_eventName_eventCallback
+    this.timeoutPromise = HttpFetcher.Promise_create_by_eventName_eventCallback
       .call( this, "timeout", HttpFetcher.handle_readystatechange );
 
     // 3.
     xhr.send( body );
 
     // 4. Until done or failed.
-    let fulfilledPromise;
     do {
       let allPromise = Promise.race( [
-        abortPromise, errorPromise, loadPromise,
-        //loadendPromise, // (2023/02/15 Remarked) Not used.
-        loadstartPromise,
-        progressPromise,
-        //readystatechangePromise, // (2023/02/15 Remarked) Not used.
-        timeoutPromise
+        this.abortPromise, this.errorPromise, this.loadPromise,
+        //this.loadendPromise, // (2023/02/15 Remarked) Not used.
+        this.loadstartPromise,
+        this.progressPromise,
+        this.timeoutPromise
       ] );
   
-      fulfilledPromise = await allPromise;
-
-      let progressRoot = this.progressParent.root_get();
+//!!! not a promise
+      // All succeeded promises resolve to progressRoot.
+      // All failed promises reject to (i.e. throw exception of) ProgressEvent.
+      let progressRoot = await allPromise;
       yield progressRoot;
 
-      // progress event could happen many times.
-      if ( fulfilledPromise === progressPromise ) {
-        progressPromise = HttpFetcher.Promise_create_by_eventName_eventCallback
-          .call( this, "progress", HttpFetcher.handle_progress );
-
-      // readystatechange event could happen many times.
-      } else if ( fulfilledPromise === readystatechangePromise ) {
-        readystatechangePromise = HttpFetcher.Promise_create_by_eventName_eventCallback
-          .call( this, "readystatechange", HttpFetcher.handle_readystatechange );
-      }
+//!!! ...unfinished... (2023/02/15) How to stop loop?
     } while ( fulfilledPromise !== loadPromise );
 
     // 5.
@@ -229,8 +216,7 @@ class HttpFetcher {
 
     if ( xhr.status === 200 ) {
       // Load completely and successfully.
-      let progressRoot = this.progressParent.root_get();
-      resolve( xhr.response );
+      resolve( this.progressRoot );
 
     } else {
       // Load completely but failed (e.g. ( status == 400 ) or ( status == 500 ) ).
@@ -261,9 +247,7 @@ class HttpFetcher {
         + `( ${this.url} )` );
 
     HttpFetcher.progressToAdvance_set_beforeDone.call( this, event );
-
-    let progressRoot = this.progressParent.root_get();
-    resolve( progressRoot );
+    resolve( this.progressRoot );
   }
 
   /**
@@ -276,49 +260,12 @@ class HttpFetcher {
         + `( ${this.url} )` );
 
     HttpFetcher.progressToAdvance_set_beforeDone.call( this, event );
+    resolve( this.progressRoot );
 
-    let progressRoot = this.progressParent.root_get();
-    resolve( progressRoot );
-  }
-
-  /**
-   * @param {HttpFetcher} this
-   */
-  static handle_readystatechange( resolve, reject ) {
-    let xhr = this.xhr;
-
-    if ( xhr.readyState === XMLHttpRequest.UNSENT ) { // 0
-      if ( this.bLogEventToConsole )
-        console.log( `HttpFetcher: readystatechange: UNSENT ( 0 ) `
-          + `( ${this.url} )` );
-
-    } else if ( xhr.readyState === XMLHttpRequest.OPENED ) { // 1
-      if ( this.bLogEventToConsole )
-        console.log( `HttpFetcher: readystatechange: OPENED ( 1 ) `
-          + `( ${this.url} )` );
-
-    } else if ( xhr.readyState === XMLHttpRequest.HEADERS_RECEIVED ) { // 2
-      if ( this.bLogEventToConsole )
-        console.log( `HttpFetcher: readystatechange: HEADERS_RECEIVED ( 2 ) `
-          + `( ${this.url} )` );
-
-    } else if ( xhr.readyState === XMLHttpRequest.LOADING ) { // 3
-      if ( this.bLogEventToConsole )
-        console.log( `HttpFetcher: readystatechange: LOADING ( 3 ) `
-          + `( ${this.url} )` );
-
-    } else if ( xhr.readyState === XMLHttpRequest.DONE ) { // 4
-      if ( this.bLogEventToConsole )
-        console.log( `HttpFetcher: readystatechange: DONE ( 4 ), `
-          + `status=${xhr.status}, statusText=\"${xhr.statusText}\" `
-          + `( ${this.url} )` );
-
-      if ( xhr.status === 200 ) {
-        // Request finished. Do processing here.
-      } else {
-        // Load completely but failed (e.g. ( status == 400 ) or ( status == 500 ) ).
-      }
-    }
+    // Because progress event could happen many times, re-generate a new promise
+    // for listening on it.
+    this.progressPromise = HttpFetcher.Promise_create_by_eventName_eventCallback
+      .call( this, "progress", HttpFetcher.handle_progress );
   }
 
   /**
