@@ -135,6 +135,10 @@ class HttpFetcher {
     // Stop if loading completely and successfully.
     } while ( xhr.status !== 200 );
 
+    // (2023/02/15) For debug. (Not yet finished, while return.)
+    if ( 100 != this.progressToAdvance.valuePercentage )
+      debugger;
+
     // 5.
     return xhr.response;
   }
