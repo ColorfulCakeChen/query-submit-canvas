@@ -146,6 +146,7 @@ class HttpFetcher {
     // (2023/02/15) For debug. (Not yet finished, while return.)
     {
       if ( 200 !== xhr.status ) {
+        debugger;
         throw Error( `( ${this.url} ) `
           + `HttpFetcher.asyncGenerator_by_url_body_timeout_method_responseType(): `
           + `When done, `
@@ -153,6 +154,7 @@ class HttpFetcher {
       }
 
       if ( 100 != this.progressToAdvance.valuePercentage ) {
+        debugger;
         throw Error( `( ${this.url} ) `
           + `HttpFetcher.asyncGenerator_by_url_body_timeout_method_responseType(): `
           + `When done, `
