@@ -137,6 +137,9 @@ async function* tester( progressParent ) {
       progress21, timeoutMilliseconds );
     let result21 = yield* fetcher21;
 
+    if ( result11 == null )
+      throw Error( `result11( ${result11} ) should not be null.` );
+
     // Note: If all cells are empty, GQViz got array with zero length.
     //       But APIv4 got undefined.
 

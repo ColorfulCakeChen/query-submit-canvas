@@ -337,10 +337,6 @@ class HttpFetcher {
       this.progressToAdvance.value_set( progressEvent.loaded );
 
     } else { // Fake an incremental never-100% progress percentage.
-
-//!!! ...unfinished... (2023/02/15)
-// may use larger loaded difference as expected next chunk size.
-
       let fakeMax = progressEvent.loaded + HttpFetcher.progressTotalFakeLarger;
       this.progressToAdvance.value_max_set( fakeMax );
       this.progressToAdvance.value_set( progressEvent.loaded );
