@@ -1,6 +1,5 @@
 export { HttpFetcher };
 
-import * as AsyncWorker from "../AsyncWorker.js";
 import * as ValueMax from "../ValueMax.js";
 
 /**
