@@ -348,6 +348,10 @@ class HttpFetcher {
    */
   static progressToAdvance_set_beforeDone( progressEvent ) {
     if ( progressEvent.lengthComputable ) {
+
+//!!! ...unfinished... (2023/02/15)
+// What if ( progressEvent.total == 0 )?
+
       this.progressToAdvance.value_max_set( progressEvent.total );
       this.progressToAdvance.value_set( progressEvent.loaded );
 
@@ -368,10 +372,18 @@ class HttpFetcher {
    */
   static progressToAdvance_set_whenDone( progressEvent ) {
     if ( event.lengthComputable ) {
+
+//!!! ...unfinished... (2023/02/15)
+// What if ( progressEvent.total == 0 )?
+
       this.progressToAdvance.value_max_set( event.total );
       this.progressToAdvance.value_set( event.loaded );
 
     } else { // Complete the fake progress to 100%.
+
+//!!! ...unfinished... (2023/02/15)
+// What if ( progressEvent.loaded == 0 )?
+
       this.progressToAdvance.value_max_set( event.loaded );
       this.progressToAdvance.value_set( event.loaded );
     }
