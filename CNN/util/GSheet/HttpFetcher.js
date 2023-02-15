@@ -109,7 +109,7 @@ class HttpFetcher {
       .call( this, "progress", HttpFetcher.handle_progress );
 
     this.timeoutPromise = HttpFetcher.Promise_create_by_eventName_eventCallback
-      .call( this, "timeout", HttpFetcher.handle_readystatechange );
+      .call( this, "timeout", HttpFetcher.handle_timeout );
 
     // All promises to be listened.
     this.allPromiseSet = new Set( [
