@@ -163,12 +163,15 @@ class GSheetsAPIv4_UrlComposer extends Recyclable.Root {
 //!!! ...unfinished... (2023/02/14) How to re-try download?
           if ( e instanceof ProgressEvent ) {
             if ( e.type === "abort" ) {
+              throw e;
 
             } else if ( e.type === "error" ) {
+              throw e;
 
             } else if ( e.type === "load" ) { // ( status != 200 ) (e.g. 404 or 500)
 
             } else if ( e.type === "timeout" ) {
+              throw e;
 
             } else { // Unknown error.
               throw e;
