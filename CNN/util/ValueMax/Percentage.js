@@ -359,7 +359,7 @@ class ValueMax_Percentage_Aggregate extends ValueMax_Percentage_Base {
 
       let partMax = child.maxPercentage;
       if ( partMax <= 0 )
-        continue; // Skip illegal progress. (Note: maxPercentage should always be 100.)
+        continue; // Skip illegal progress. (maxPercentage should always be 100.)
 
       let partValue = child.valuePercentage;
 
