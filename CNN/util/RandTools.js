@@ -43,7 +43,7 @@ function getRandomIntInclusive( min, max ) {
  *
  * @param {number} exponentMax
  *   Either zero or a positive integer as the maximum exponent number for
- * truncating the exponent number.
+ * restricting the exponent number.
  *
  * @return {number}
  *   Return a random integer between [ 0, ( 2 ** Math.min( exponent, exponentMax ) ) ].
