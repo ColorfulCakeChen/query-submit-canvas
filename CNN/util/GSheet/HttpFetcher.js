@@ -219,6 +219,13 @@ class HttpFetcher {
    * @param {HttpFetcher} this
    */
   static handle_abort( resolve, reject, event ) {
+
+    // Stop listen progress timer if timer is used.
+    if ( this.bAdvanceProgressByTimer ) {
+//!!! ...unfinished... (2023/02/16)
+    }
+
+    // Advance progress to complete status (event if use timer).
     HttpFetcher.progressToAdvance_set_whenDone.call( this, event );
 
     if ( this.bLogEventToConsole )
@@ -237,6 +244,13 @@ class HttpFetcher {
    * @param {HttpFetcher} this
    */
   static handle_error( resolve, reject, event ) {
+
+    // Stop listen progress timer if timer is used.
+    if ( this.bAdvanceProgressByTimer ) {
+//!!! ...unfinished... (2023/02/16)
+    }
+
+    // Advance progress to complete status (event if use timer).
     HttpFetcher.progressToAdvance_set_whenDone.call( this, event );
 
     if ( this.bLogEventToConsole )
@@ -255,6 +269,13 @@ class HttpFetcher {
    * @param {HttpFetcher} this
    */
   static handle_load( resolve, reject, event ) {
+
+    // Stop listen progress timer if timer is used.
+    if ( this.bAdvanceProgressByTimer ) {
+//!!! ...unfinished... (2023/02/16)
+    }
+
+    // Advance progress to complete status (event if use timer).
     HttpFetcher.progressToAdvance_set_whenDone.call( this, event );
 
     let xhr = this.xhr;
@@ -339,6 +360,13 @@ class HttpFetcher {
    * @param {HttpFetcher} this
    */
   static handle_timeout( resolve, reject, event ) {
+
+    // Stop listen progress timer if timer is used.
+    if ( this.bAdvanceProgressByTimer ) {
+//!!! ...unfinished... (2023/02/16)
+    }
+
+    // Advance progress to complete status (event if use timer).
     HttpFetcher.progressToAdvance_set_whenDone.call( this, event );
 
     if ( this.bLogEventToConsole )
