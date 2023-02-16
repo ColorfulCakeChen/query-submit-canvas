@@ -42,7 +42,7 @@ function getRandomIntInclusive( min, max ) {
  * (i.e. The B in ( 2 ** B ) )
  *
  * @param {number} max
- *   The the maximum integer. (inclusive)
+ *   The the maximum integer of the result. (inclusive)
  *
  * @return {number}
  *   Return a random integer between [ 0, Math.min( ( 2 ** exponent ), max ) ].
