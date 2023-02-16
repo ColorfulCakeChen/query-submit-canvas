@@ -1,5 +1,6 @@
 export { HttpRetryableFetcher };
 
+import * as RandTools from "../RandTools.js";
 import * as ValueMax from "../ValueMax.js";
 import { HttpFetcher } from "./HttpFetcher.js";
 
@@ -31,7 +32,7 @@ class HttpRetryableFetcher {
 
 //!!! ...unfinished... (2023/02/15)
 // should use truncated exponential backoff algorithm to re-try.
-
-  static getTruncatedExponentialBackoff
+//
+// RandTools.getRandomInt_TruncatedBinaryExponent()
 
 }
