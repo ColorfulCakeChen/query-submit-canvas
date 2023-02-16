@@ -38,7 +38,7 @@ function getRandomIntInclusive( min, max ) {
  * Algorithm for randomized truncated (binary) exponential backoff.
  *
  * @param {number} exponent
- *   The exponent number of a two's power. (i.e. The B in ( 2 ** B ) )
+ *   The exponent number of a two's power. (i.e. the B in ( 2 ** B ) )
  * It should be either zero or a positive integer.
  *
  * @param {number} max
