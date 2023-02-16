@@ -3,6 +3,12 @@ export { HttpRetryableFetcher };
 import * as ValueMax from "../ValueMax.js";
 import { HttpFetcher } from "./HttpFetcher.js";
 
+
+//!!! ...unfinished... (2023/02/16)
+// Perhaps, re-try until specified time (in milliseconds) up (instead of
+// specified re-try times (in count)).
+
+
 /**
  * An async generator which could re-try HttpFetcher many times and reflect them
  * in progress percentage.
