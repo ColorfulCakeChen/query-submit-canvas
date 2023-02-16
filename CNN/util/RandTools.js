@@ -38,12 +38,12 @@ function getRandomIntInclusive( min, max ) {
  * Algorithm for randomized truncated (binary) exponential backoff.
  *
  * @param {number} exponent
- *   Either zero or a positive number for the exponent number of a two's power.
- * (i.e. the B in ( 2 ** B ) )
+ *   Either zero or a positive number (could be non-integer) for the exponent
+ * number of a two's power. (i.e. the B in ( 2 ** B ) )
  *
  * @param {number} exponentMax
- *   Either zero or a positive number as the maximum exponent number for
- * restricting the exponent number.
+ *   Either zero or a positive number (could be non-integer) as the maximum
+ * exponent number for restricting the exponent number.
  *
  * @return {number}
  *   Return a random integer between [ 0, ( 2 ** Math.min( exponent, exponentMax ) ) ].
