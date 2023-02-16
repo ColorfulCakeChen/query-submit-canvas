@@ -46,7 +46,7 @@ function getRandomIntInclusive( min, max ) {
  * truncating the exponent number.
  *
  * @return {number}
- *   Return a random integer between [ 0, Math.min( ( 2 ** exponent ), max ) ].
+ *   Return a random integer between [ 0, ( 2 ** Math.min( exponent, exponentMax ) ) ].
  */
 function getRandomInt_TruncatedBinaryExponent( exponent, exponentMax ) {
   let exponentRestricted = Math.min( exponent, exponentMax );
