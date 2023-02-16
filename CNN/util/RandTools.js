@@ -10,7 +10,7 @@ import * as Recyclable from "./Recyclable.js";
  * Return a random integer between [ minInt, ( minInt + kindsInt - 1 ) ]. (This
  * function comes from MDN's Math.random() example.)
  *
- * @param {integer} minInt   The the minimum integer. (inclusive)
+ * @param {integer} minInt   The minimum integer. (inclusive)
  * @param {integer} kindsInt How many kinds between minInt and maxInt (inclusive).
  */
 function getRandomIntInclusive_by_minInt_kindsInt( minInt, kindsInt ) {
@@ -21,8 +21,8 @@ function getRandomIntInclusive_by_minInt_kindsInt( minInt, kindsInt ) {
  * Return a random integer between min and max. (This function comes from MDN's
  * Math.random().)
  *
- * @param {number} min The the minimum integer. (inclusive)
- * @param {number} max The the maximum integer. (inclusive)
+ * @param {number} min The minimum integer. (inclusive)
+ * @param {number} max The maximum integer. (inclusive)
  */
 function getRandomIntInclusive( min, max ) {
   let minReal = Math.min( min, max );
@@ -42,15 +42,17 @@ function getRandomIntInclusive( min, max ) {
  * It should be either zero or a positive integer.
  *
  * @param {number} max
- *   The the maximum integer (inclusive). It is used to truncate the result.
+ *   The maximum integer (inclusive) for truncating the result. It should be
+ * a positive integer.
  *
  * @return {number}
  *   Return a random integer between [ 0, Math.min( ( 2 ** exponent ), max ) ].
  */
 function getRandomInt_TruncatedBinaryExponent( exponent, max ) {
-  let exponentPositiveInt = Math.abs( Math.trunc( exponent ) );
-  let powerInt = ( 2 ** exponentPositiveInt );
-  let powerIntMax = Math.min( powerInt, max );
+  let exponentZeroOrPositiveInt = Math.max( 0, Math.trunc( exponent ) );
+  let maxPositive = Math.max( 1, max );
+  let powerInt = ( 2 ** exponentZeroOrPositiveInt );
+  let powerIntMax = Math.min( powerInt, maxPositive );
   let randomInt = getRandomIntInclusive( 0, powerIntMax );
   return randomInt;
 }
