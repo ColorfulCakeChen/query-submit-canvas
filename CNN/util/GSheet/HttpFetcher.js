@@ -34,6 +34,10 @@ class HttpFetcher {
    * @param {object} body
    *   A body of data to be sent in the XHR request. It could be null.
    *
+
+//!!! ...unfinished... (2023/02/16)
+// If ( timeoutMilliseconds > 0 ), use timer to advance progressToAdvance.
+
    * @param {number} timeoutMilliseconds
    *   The time (in milliseconds) a request can take before automatically being
    * terminated. Default is 0, which means there is no timeout.
@@ -84,6 +88,10 @@ class HttpFetcher {
         HttpFetcher.progressTotalFakeLarger ) );
 
     this.url = url;
+
+//!!! ...unfinished... (2023/02/16)
+// If ( timeoutMilliseconds > 0 ), use timer to advance progressToAdvance.
+    this.bAdvanceProgressByTimer = ( timeoutMilliseconds > 0 );
 
     // 1.
     const xhr = this.xhr = new XMLHttpRequest();
