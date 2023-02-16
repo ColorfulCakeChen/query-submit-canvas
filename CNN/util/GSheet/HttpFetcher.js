@@ -90,7 +90,7 @@ class HttpFetcher {
     this.url = url;
 
 //!!! ...unfinished... (2023/02/16)
-// If ( timeoutMilliseconds > 0 ), use timer to advance progressToAdvance.
+    // If ( timeoutMilliseconds > 0 ), use timer to advance progressToAdvance.
     this.bAdvanceProgressByTimer = ( timeoutMilliseconds > 0 );
 
     // 1.
@@ -286,7 +286,12 @@ class HttpFetcher {
    * @param {HttpFetcher} this
    */
   static handle_loadstart( resolve, reject, event ) {
-    HttpFetcher.progressToAdvance_set_beforeDone.call( this, event );
+
+//!!! ...unfinished... (2023/02/16)
+    // Advance progress only if not use timer.
+    if ( !this.bAdvanceProgressByTimer ) {
+      HttpFetcher.progressToAdvance_set_beforeDone.call( this, event );
+    }
 
     if ( this.bLogEventToConsole )
       console.log( `( ${this.url} ) HttpFetcher: loadstart: `
@@ -303,7 +308,12 @@ class HttpFetcher {
    * @param {HttpFetcher} this
    */
   static handle_progress( resolve, reject, event ) {
-    HttpFetcher.progressToAdvance_set_beforeDone.call( this, event );
+
+//!!! ...unfinished... (2023/02/16)
+    // Advance progress only if not use timer.
+    if ( !this.bAdvanceProgressByTimer ) {
+      HttpFetcher.progressToAdvance_set_beforeDone.call( this, event );
+    }
 
     if ( this.bLogEventToConsole )
       console.log( `( ${this.url} ) HttpFetcher: progress: `
