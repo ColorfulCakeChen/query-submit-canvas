@@ -76,7 +76,20 @@ class HttpFetcher {
     responseType = HttpFetcher.responseTypeDefault ) {
 
     // 0.
+    let progressToAdvance_max_default;
 
+//!!! ...unfinished... (2023/02/16)
+    // 0.1 If ( timeoutMilliseconds > 0 ), use timer to advance progressToAdvance.
+    this.bAdvanceProgressByTimer = ( timeoutMilliseconds > 0 );
+
+    if ( this.bAdvanceProgressByTimer ) { // Use timeout time as progress target.
+      progressToAdvance_max_default = timeoutMilliseconds;
+    } else { // Use total content length (perhaps unknown) as progress target.
+      progressToAdvance_max_default = HttpFetcher.progressTotalFakeLarger;
+    }
+
+    // 0.2
+    //
     // Note: Although .progressToAdvance is recorded in this, it is not owned by
     //       this HttpFetcher object. It should be destroyed by outside caller
     //       (i.e. by progressParent).
@@ -85,13 +98,10 @@ class HttpFetcher {
     this.progressParent = progressParent;
     this.progressToAdvance = progressParent.child_add(
       ValueMax.Percentage.Concrete.Pool.get_or_create_by(
-        HttpFetcher.progressTotalFakeLarger ) );
+        progressToAdvance_max_default ) );
 
+    // 0.3
     this.url = url;
-
-//!!! ...unfinished... (2023/02/16)
-    // If ( timeoutMilliseconds > 0 ), use timer to advance progressToAdvance.
-    this.bAdvanceProgressByTimer = ( timeoutMilliseconds > 0 );
 
     // 1.
     const xhr = this.xhr = new XMLHttpRequest();
