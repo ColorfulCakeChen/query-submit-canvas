@@ -6,6 +6,9 @@ export { delayedValue, sleep, forOf };
  * @param {integer} delayMilliseconds
  *   The delay time (in milliseconds) when the (returned) promise will be resolved.
  *
+ * @param {any} value
+ *   The value which will be returned by the resolved promise.
+ *
  * @return {Promise}
  *   Return a promise which will be resolved as specified value after specified
  * milliseconds.

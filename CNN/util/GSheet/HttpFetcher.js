@@ -1,5 +1,6 @@
 export { HttpFetcher };
 
+//import * as PartTime from "../PartTime.js";
 import * as ValueMax from "../ValueMax.js";
 
 /**
@@ -128,6 +129,11 @@ class HttpFetcher {
     this.timeoutPromise = HttpFetcher.Promise_create_by_eventName_eventCallback
       .call( this, "timeout", HttpFetcher.handle_timeout );
 
+//!!! ...unfinished... (2023/02/16)
+    if ( this.bAdvanceProgressByTimer ) {
+      HttpFetcher.progressTimerPromise_create_and_set();
+    }
+
     // All promises to be listened.
     this.allPromiseSet = new Set( [
       this.abortPromise, this.errorPromise, this.loadPromise,
@@ -222,6 +228,70 @@ class HttpFetcher {
       // So that same event could be re-registered many times after event triggered.
       HttpFetcher.addEventListener_options_once
     );
+  }
+
+
+//!!! ...unfinished... (2023/02/16)
+
+  /**
+   * @param {HttpFetcher} this
+   *
+   * @param {integer} delayMilliseconds
+   *   The delay time (in milliseconds) when the (returned) promise will be resolved.
+   *
+   * @param {any} value
+   *   The value which will be passed into the timerCallback when the promise resolved.
+   *
+   * @param {function} timerCallback
+   *    The timer handler function. It should accept parameters
+   * ( resolve, reject, value ).
+   *
+   * @return {Promise}
+   *   Return a promise which will be resolved as specified value after specified
+   * milliseconds.
+   */
+  static progressTimerPromise_create_by_delayMilliseconds_value_timerCallback(
+    delayMilliseconds, value, timerCallback ) {
+    return new Promise(
+      HttpFetcher.timerPromise_constructor_func.bind( this,
+        delayMilliseconds, value, timerCallback ) );
+  }
+
+  /**
+   * This function should be used as Promise constructor's parameter.
+   *
+   * It will set this.progressTimerTimeoutId.
+   *
+   * @param {HttpFetcher} this
+   *
+   * @param {any} value
+   *   The value which will be passed into the timerCallback when the promise resolved.
+   *
+   * @param {function} timerCallback
+   *    The timer handler function. It should accept parameters
+   * ( resolve, reject, value ).
+   */
+  static progressTimerPromise_constructor_func(
+    delayMilliseconds, value, timerCallback,
+    resolve, reject ) {
+
+//!!! ...unfinished... (2023/02/16)
+// How and when to clearTimeout()?
+
+    this.progressTimerTimeoutId = setTimeout(
+      timerCallback.bind( this, resolve, reject, value ), delayMilliseconds );
+  }
+
+//!!! ...unfinished... (2023/02/16)
+  /**
+   * @param {HttpFetcher} this
+   */
+  static progressTimerPromise_create_and_set() {
+    const delayMilliseconds = 1000;
+    const value = delayMilliseconds;
+    this.progressTimerPromise = HttpFetcher
+      .progressTimerPromise_create_by_delayMilliseconds_value_timerCallback(
+        delayMilliseconds, value, ??? );
   }
 
 
