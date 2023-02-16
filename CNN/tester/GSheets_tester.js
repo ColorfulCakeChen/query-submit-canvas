@@ -89,7 +89,7 @@ async function* tester( progressParent ) {
   //const timeoutMilliseconds = 2 * 1000; // 2 seconds.
   //const timeoutMilliseconds = 10 * 1000; // 10 seconds.
   const timeoutMilliseconds = 2 * 60 * 1000; // 2 minutes.
-  //const timeoutMilliseconds = 0;
+  //const timeoutMilliseconds = 0; // no timeout.
 
   // Without API key, and error.
   let testerNotExist1 = GSheets.UrlComposer.Pool.get_or_create_by(
