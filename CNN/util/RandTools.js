@@ -38,11 +38,11 @@ function getRandomIntInclusive( min, max ) {
  * Algorithm for randomized truncated (binary) exponential backoff.
  *
  * @param {number} exponent
- *   Either zero or a positive integer for the exponent number of a two's power.
+ *   Either zero or a positive number for the exponent number of a two's power.
  * (i.e. the B in ( 2 ** B ) )
  *
  * @param {number} exponentMax
- *   Either zero or a positive integer as the maximum exponent number for
+ *   Either zero or a positive number as the maximum exponent number for
  * restricting the exponent number.
  *
  * @return {number}
@@ -50,9 +50,9 @@ function getRandomIntInclusive( min, max ) {
  */
 function getRandomInt_TruncatedBinaryExponent( exponent, exponentMax ) {
   let exponentRestricted = Math.min( exponent, exponentMax );
-  let exponentZeroOrPositiveInt = Math.max( 0, Math.trunc( exponentRestricted ) );
-  let powerInt = ( 2 ** exponentZeroOrPositiveInt );
-  let randomInt = getRandomIntInclusive( 0, powerInt );
+  let exponentZeroOrPositive = Math.max( 0, exponentRestricted );
+  let power = ( 2 ** exponentZeroOrPositive );
+  let randomInt = getRandomIntInclusive( 0, power );
   return randomInt;
 }
 
