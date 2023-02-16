@@ -1,4 +1,5 @@
 export { getRandomIntInclusive_by_minInt_kindsInt, getRandomIntInclusive };
+export { getRandomInt_TruncatedBinaryExponent };
 export { fill_numberArray, generate_numberArray };
 export { shuffle_Array };
 
@@ -31,6 +32,27 @@ function getRandomIntInclusive( min, max ) {
   let kindsInt = maxInt - minInt + 1;
   //return Math.floor( ( Math.random() * kindsInt ) + minInt );
   return getRandomIntInclusive_by_minInt_kindsInt( minInt, kindsInt );
+}
+
+/**
+ * Algorithm for random truncated (binary) exponential backoff.
+ *
+ * @param {number} exponent
+ *   The exponent number (a positive integer) of a two's power.
+ * (i.e. The B in ( 2 ** B ) )
+ *
+ * @param {number} max
+ *   The the maximum integer. (inclusive)
+ *
+ * @return {number}
+ *   Return a random integer between [ 0, Math.min( ( 2 ** exponent ), max ) ].
+ */
+function getRandomInt_TruncatedBinaryExponent( exponent, max ) {
+  let exponentPositiveInt = Math.abs( Math.trunc( exponent ) );
+  let powerInt = ( 2 ** exponentPositiveInt );
+  let powerIntMax = Math.min( powerInt, max );
+  let randomInt = getRandomIntInclusive( 0, powerIntMax );
+  return randomInt;
 }
 
 /**

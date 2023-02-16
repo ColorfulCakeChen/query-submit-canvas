@@ -32,4 +32,6 @@ class HttpRetryableFetcher {
 //!!! ...unfinished... (2023/02/15)
 // should use truncated exponential backoff algorithm to re-try.
 
+  static getTruncatedExponentialBackoff
+
 }
