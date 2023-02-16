@@ -161,12 +161,12 @@ class GSheetsAPIv4_UrlComposer extends Recyclable.Root {
               throw e;
 
             } else { // Unknown error.
+              console.error( e );
               throw e;
             }
 
-            return null;
-
           } else { // Unknown error.
+            console.error( e );
             throw e;
           }
         }
