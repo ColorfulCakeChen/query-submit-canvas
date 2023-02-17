@@ -256,7 +256,7 @@ class HttpFetcher {
    * @param {HttpFetcher} this
    */
   static progressTimerPromise_create_and_set() {
-    const delayMilliseconds = 1000;
+    const delayMilliseconds = 2000;
     const deltaValue = delayMilliseconds;
 
     this.progressTimerPromise = PartTime.Promise_create_by_setTimeout(
