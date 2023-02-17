@@ -129,18 +129,22 @@ class HttpFetcher {
     this.timeoutPromise = PartTime.Promise_create_by_addEventListener_once(
       xhr, "timeout", HttpFetcher.handle_timeout, this );
 
-//!!! ...unfinished... (2023/02/16)
     if ( this.bAdvanceProgressByTimer ) {
-      HttpFetcher.progressTimerPromise_create_and_set();
+      HttpFetcher.progressTimerPromise_create_and_set.call( this );
     }
 
     // All promises to be listened.
-    this.allPromiseSet = new Set( [
-      this.abortPromise, this.errorPromise, this.loadPromise,
-      this.loadstartPromise,
-      this.progressPromise,
-      this.timeoutPromise
-    ] );
+    {
+      this.allPromiseSet = new Set( [
+        this.abortPromise, this.errorPromise, this.loadPromise,
+        this.loadstartPromise,
+        this.progressPromise,
+        this.timeoutPromise
+      ] );
+
+      if ( this.progressTimerPromise )
+        this.allPromiseSet.add( this.progressTimerPromise );
+    }
 
     // 3.
     xhr.send( body );
@@ -194,6 +198,14 @@ class HttpFetcher {
     return xhr.response;
   }
 
+  /** Cancel current progressTimer (if exists). */
+  progressTimer_cancel() {
+    if ( this.progressTimerPromise ) {
+      this.progressTimerPromise.cancelTimer(); // Stop timer.
+      this.allPromiseSet.delete( this.progressTimerPromise ); // Stop listening.
+    }
+  }
+
 //!!! (2023/02/17 Remarked) Replaced by PartTime.Promise_create_by_addEventListener_once()
 //   /**
 //    * @param {HttpFetcher} this
@@ -236,19 +248,11 @@ class HttpFetcher {
    * @param {HttpFetcher} this
    */
   static progressTimerPromise_create_and_set() {
-
     const delayMilliseconds = 1000;
-    const value = delayMilliseconds;
-
-//!!! ...unfinished... (2023/02/17)
-// Use PartTime.Promise_create_by_setTimeout()
-
-//???!!! ...unfinished... (2023/02/17)
-    if ( this.progressTimerPromise )
-      this.progressTimerPromise.cancelTimer();
+    const deltaValue = delayMilliseconds;
 
     this.progressTimerPromise = PartTime.Promise_create_by_setTimeout(
-      delayMilliseconds, HttpFetcher.handle_progressTimer, this, value );
+      delayMilliseconds, HttpFetcher.handle_progressTimer, this, deltaValue );
   }
 
 
@@ -256,11 +260,7 @@ class HttpFetcher {
    * @param {HttpFetcher} this
    */
   static handle_abort( resolve, reject, event ) {
-
-    // Stop listen progress timer if timer is used.
-    if ( this.bAdvanceProgressByTimer ) {
-//!!! ...unfinished... (2023/02/16)
-    }
+    this.progressTimer_cancel(); // Stop listen progress timer (since completed).
 
     // Advance progress to complete status (event if use timer).
     HttpFetcher.progressToAdvance_set_whenDone.call( this, event );
@@ -281,11 +281,7 @@ class HttpFetcher {
    * @param {HttpFetcher} this
    */
   static handle_error( resolve, reject, event ) {
-
-    // Stop listen progress timer if timer is used.
-    if ( this.bAdvanceProgressByTimer ) {
-//!!! ...unfinished... (2023/02/16)
-    }
+    this.progressTimer_cancel(); // Stop listen progress timer (since completed).
 
     // Advance progress to complete status (event if use timer).
     HttpFetcher.progressToAdvance_set_whenDone.call( this, event );
@@ -306,11 +302,7 @@ class HttpFetcher {
    * @param {HttpFetcher} this
    */
   static handle_load( resolve, reject, event ) {
-
-    // Stop listen progress timer if timer is used.
-    if ( this.bAdvanceProgressByTimer ) {
-//!!! ...unfinished... (2023/02/16)
-    }
+    this.progressTimer_cancel(); // Stop listen progress timer (since completed).
 
     // Advance progress to complete status (event if use timer).
     HttpFetcher.progressToAdvance_set_whenDone.call( this, event );
@@ -345,8 +337,7 @@ class HttpFetcher {
    */
   static handle_loadstart( resolve, reject, event ) {
 
-//!!! ...unfinished... (2023/02/16)
-    // Advance progress only if not use timer.
+    // Advance progress only if progressTimer NOT used.
     if ( !this.bAdvanceProgressByTimer ) {
       HttpFetcher.progressToAdvance_set_beforeDone.call( this, event );
     }
@@ -367,8 +358,7 @@ class HttpFetcher {
    */
   static handle_progress( resolve, reject, event ) {
 
-//!!! ...unfinished... (2023/02/16)
-    // Advance progress only if not use timer.
+    // Advance progress only if progressTimer NOT used.
     if ( !this.bAdvanceProgressByTimer ) {
       HttpFetcher.progressToAdvance_set_beforeDone.call( this, event );
     }
@@ -384,8 +374,8 @@ class HttpFetcher {
     {
       this.allPromiseSet.delete( this.progressPromise );
 
-      // Because progress event could happen many times, re-generate a new promise
-      // for listening on it.
+      // Because progress event could happen many times, re-generate
+      // a new promise for listening on it.
       this.progressPromise = PartTime.Promise_create_by_addEventListener_once(
         this.xhr, "progress", HttpFetcher.handle_progress, this );
 
@@ -397,11 +387,7 @@ class HttpFetcher {
    * @param {HttpFetcher} this
    */
   static handle_timeout( resolve, reject, event ) {
-
-    // Stop listen progress timer if timer is used.
-    if ( this.bAdvanceProgressByTimer ) {
-//!!! ...unfinished... (2023/02/16)
-    }
+    this.progressTimer_cancel(); // Stop listen progress timer (since completed).
 
     // Advance progress to complete status (event if use timer).
     HttpFetcher.progressToAdvance_set_whenDone.call( this, event );
@@ -416,6 +402,34 @@ class HttpFetcher {
     // Note: The non-repeatable failure event should still be listened on
     //       (i.e. should not removed from this.allPromiseSet), so that the
     //       rejected promise could trigger exception.
+  }
+
+  /**
+   * @param {HttpFetcher} this
+   */
+  static handle_progressTimer( resolve, reject, deltaValue ) {
+
+    // Advance progress only if progressTimer used.
+    if ( this.bAdvanceProgressByTimer ) {
+      this.progressToAdvance.value_advance( deltaValue );
+    }
+
+    if ( this.bLogEventToConsole )
+      console.log( `( ${this.url} ) HttpFetcher: progressTimer: `
+        + `progressToAdvance=${this.progressToAdvance.valuePercentage}%` );
+
+    resolve( this.progressRoot );
+
+    // Re-listen on repeatable succeeded event.
+    {
+      this.allPromiseSet.delete( this.progressTimerPromise );
+
+      // Because progressTimer event could happen many times, re-generate
+      // a new promise for listening on it.
+      HttpFetcher.progressTimerPromise_create_and_set.call( this );
+
+      this.allPromiseSet.add( this.progressTimerPromise );
+    }
   }
 
 
