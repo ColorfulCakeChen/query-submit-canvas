@@ -256,6 +256,8 @@ class HttpFetcher {
    * @param {HttpFetcher} this
    */
   static progressTimerPromise_create_and_set() {
+    // Note: Too small delayMilliseconds may not good because the progress bar
+    //       may advance too little to be aware.
     const delayMilliseconds = 2000;
     const deltaValue = delayMilliseconds;
 
