@@ -1,5 +1,6 @@
 export { delayedValue, sleep };
 export { Promise_create_by_addEventListener_once };
+export { Promise_create_by_setTimeout };
 export { forOf };
 
 
@@ -79,7 +80,7 @@ function Promise_create_by_addEventListener_once_executor(
  * event listenr should be re-registered (to gain another Promise) after event
  * triggered if the event is expected to be happened may times.)
  *
- * @param {Promise}
+ * @return {Promise}
  *   Return a newly created Promise. It will be settled by the eventCallback
  * (by calling resolveFunc or rejectFunc).
  */
@@ -94,8 +95,46 @@ function Promise_create_by_addEventListener_once(
 
 //!!! ...unfinished... (2023/02/17)
 
+/**
+ *
+ * @param {integer} delayMilliseconds
+ *   The delay time (in milliseconds) when the (returned) promise will be resolved.
+ *
+ * @param {function} timeoutCallback
+ *    The event handler function for the event name. It should accept parameters
+ * ( resolveFunc, rejectFunc, value ). The resolveFunc and rejectFunc come from
+ * the returned Promise. The values come from the parameters of this 
+ * Promise_create_by_setInterval() function.
+ *
+ * @param {any} thisArg
+ *    The "this" value when binding timeoutCallback with
+ * ( thisArg, resolveFunc, rejectFunc ).
+ *
+ * @param {any} value
+ *   The value which will be passed into the timeoutCallback when the timer
+ * expires (if the timer has not been canceled by .cancelTimer()).
+ *
+ * @return {Promise}
+ *   Return a newly created Promise. It will be settled by the timeoutCallback
+ * (by calling resolveFunc or rejectFunc). The returned Promise will have the
+ * following properties:
+ *   - .timeoutId: could be used to call clearTimeout().
+ *   - .cancelTimer(): Call it (without any parameter) to cancel the timer.
+ */
+function Promise_create_by_setTimeout(
+  delayMilliseconds, timeoutCallback, thisArg, value ) {
 
+  let timeoutId;
+  let p = new Promise( ( resolve, reject ) => {
+    timeoutId = setTimeout(
+      timeoutCallback.bind( thisArg, resolve, reject ), delayMilliseconds, value );
+  } );
 
+  p.timeoutId = timeoutId;
+  p.cancelTimer = clearTimeout.bind( null, timeoutId );
+
+  return p;
+}
 
 
 /**
