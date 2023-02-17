@@ -96,7 +96,7 @@ async function* tester( progressParent ) {
 
   // Without API key, and error.
   let testerNotExist1 = GSheets.UrlComposer.Pool.get_or_create_by(
-    spreadsheetId + "_not_exist", range, bLogFetcherEventToConsole );
+    bLogFetcherEventToConsole, spreadsheetId + "_not_exist", range );
 
   let fetcherNotExist1 = testerNotExist1
     .JSON_ColumnMajorArrayArray_fetch_asyncGenerator(
@@ -105,7 +105,7 @@ async function* tester( progressParent ) {
 
   // With API key, and error.
   let testerNotExist2 = GSheets.UrlComposer.Pool.get_or_create_by(
-    spreadsheetId + "_not_exist", range, apiKey, bLogFetcherEventToConsole );
+    bLogFetcherEventToConsole, spreadsheetId + "_not_exist", range, apiKey );
 
   let fetcherNotExist2 = testerNotExist2
     .JSON_ColumnMajorArrayArray_fetch_asyncGenerator(
@@ -121,14 +121,14 @@ async function* tester( progressParent ) {
 
   // Without API key.
   let tester1 = GSheets.UrlComposer.Pool.get_or_create_by(
-    spreadsheetId, range, bLogFetcherEventToConsole );
+    bLogFetcherEventToConsole, spreadsheetId, range );
   let fetcher1 = tester1.JSON_ColumnMajorArrayArray_fetch_asyncGenerator(
     progress1, timeoutMilliseconds );
   let result1 = yield* fetcher1;
 
   // With API key.
   let tester2 = GSheets.UrlComposer.Pool.get_or_create_by(
-    spreadsheetId, range, apiKey, bLogFetcherEventToConsole );
+    bLogFetcherEventToConsole, spreadsheetId, range, apiKey );
   let fetcher2 = tester2.JSON_ColumnMajorArrayArray_fetch_asyncGenerator(
     progress2, timeoutMilliseconds );
   let result2 = yield* fetcher2;
