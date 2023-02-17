@@ -244,7 +244,7 @@ class HttpFetcher {
 // Use PartTime.Promise_create_by_setTimeout()
 
     if ( this.progressTimerPromise )
-    this.progressTimerPromise.cancelTimer();
+      this.progressTimerPromise.cancelTimer();
 
     this.progressTimerPromise = PartTime.Promise_create_by_setTimeout(
       delayMilliseconds, HttpFetcher.handle_progressTimer, this, value );
