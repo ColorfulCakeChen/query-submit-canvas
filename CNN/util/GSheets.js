@@ -23,6 +23,9 @@ class GSheets_UrlComposer extends Recyclable.Root {
    * If no sheet name in the range's A1 notation, the first (most left) visible sheet
    * inside the spreadsheet will be used.
    *
+   * @param {boolean} bLogFetcherEventToConsole
+   *   If true, some debug messages of HttpFetcher will be logged to console.
+   *
    * @param {string} spreadsheetId
    *   The identifier (the component after the "https://docs.google.com/spreadsheets/d/")
    * of the spreadsheet to be accessed.
@@ -42,37 +45,35 @@ class GSheets_UrlComposer extends Recyclable.Root {
    *   - If null, Google Visualization Table Query API will be used.
    *   - If not null, Google Sheets API v4 will be used.
    *
-   * @param {boolean} bLogFetcherEventToConsole
-   *   If true, some debug messages of HttpFetcher will be logged to console.
-   *
    * @see {@link https://developers.google.com/sheets/api/guides/concepts}
    */
-  constructor( spreadsheetId, range, apiKey, bLogFetcherEventToConsole ) {
+  constructor( bLogFetcherEventToConsole, spreadsheetId, range, apiKey ) {
     super();
     GSheets_UrlComposer.setAsConstructor_self.call( this,
-      spreadsheetId, range, apiKey, bLogFetcherEventToConsole
+      bLogFetcherEventToConsole, spreadsheetId, range, apiKey
     );
   }
 
   /** @override */
-  static setAsConstructor( spreadsheetId, range, apiKey ) {
+  static setAsConstructor(
+    bLogFetcherEventToConsole, spreadsheetId, range, apiKey ) {
     super.setAsConstructor();
     GSheets_UrlComposer.setAsConstructor_self.call( this,
-      spreadsheetId, range, apiKey, bLogFetcherEventToConsole
+      bLogFetcherEventToConsole, spreadsheetId, range, apiKey
     );
     return this;
   }
 
   /** @override */
   static setAsConstructor_self(
-    spreadsheetId, range, apiKey, bLogFetcherEventToConsole ) {
+    bLogFetcherEventToConsole, spreadsheetId, range, apiKey ) {
 
     if ( apiKey != null ) {
       this.urlComposer = GSheetsAPIv4.UrlComposer.Pool.get_or_create_by(
-        spreadsheetId, range, apiKey, bLogFetcherEventToConsole );
+        bLogFetcherEventToConsole, spreadsheetId, range, apiKey );
     } else {
       this.urlComposer = GVizTQ.UrlComposer.Pool.get_or_create_by(
-        spreadsheetId, range, bLogFetcherEventToConsole );
+        bLogFetcherEventToConsole, spreadsheetId, range );
     }
   }
 

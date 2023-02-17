@@ -31,6 +31,9 @@ class GSheetsAPIv4_UrlComposer extends Recyclable.Root {
    * If no sheet name in the range's A1 notation, the first (most left) visible sheet
    * inside the spreadsheet will be used.
    *
+   * @param {boolean} bLogFetcherEventToConsole
+   *   If true, some debug messages of HttpFetcher will be logged to console.
+   *
    * @param {string} spreadsheetId
    *   The identifier (the component after the "https://docs.google.com/spreadsheets/d/")
    * of the spreadsheet to be accessed.
@@ -48,42 +51,40 @@ class GSheetsAPIv4_UrlComposer extends Recyclable.Root {
    * @param {string} apiKey
    *   The API key string for accessing the spreadsheet.
    *
-   * @param {boolean} bLogFetcherEventToConsole
-   *   If true, some debug messages of HttpFetcher will be logged to console.
-   *
    * @see {@link https://developers.google.com/sheets/api/guides/concepts}
    * @see {@link https://developers.google.com/sheets/api/reference/rest/v4/spreadsheets.values/get}
    * @see {@link https://developers.google.com/sheets/api/reference/rest/v4/spreadsheets.values}
    */
-  constructor( spreadsheetId, range, apiKey, bLogFetcherEventToConsole ) {
+  constructor( bLogFetcherEventToConsole, spreadsheetId, range, apiKey ) {
     super();
     GSheetsAPIv4_UrlComposer.setAsConstructor_self.call( this,
-      spreadsheetId, range, apiKey, bLogFetcherEventToConsole
+      bLogFetcherEventToConsole, spreadsheetId, range, apiKey
     );
   }
 
   /** @override */
-  static setAsConstructor( spreadsheetId, range, apiKey ) {
+  static setAsConstructor(
+    bLogFetcherEventToConsole, spreadsheetId, range, apiKey ) {
     super.setAsConstructor();
     GSheetsAPIv4_UrlComposer.setAsConstructor_self.call( this,
-      spreadsheetId, range, apiKey, bLogFetcherEventToConsole
+      bLogFetcherEventToConsole, spreadsheetId, range, apiKey
     );
     return this;
   }
 
   /** @override */
   static setAsConstructor_self(
-    spreadsheetId, range, apiKey, bLogFetcherEventToConsole ) {
-    this.set_by_spreadsheetId_range_apiKey( spreadsheetId, range, apiKey );
-    this.bLogFetcherEventToConsole = bLogFetcherEventToConsole;
+    bLogFetcherEventToConsole, spreadsheetId, range, apiKey ) {
+      this.bLogFetcherEventToConsole = bLogFetcherEventToConsole;
+      this.set_by_spreadsheetId_range_apiKey( spreadsheetId, range, apiKey );
   }
 
   /** @override */
   disposeResources() {
-    this.bLogFetcherEventToConsole = undefined;
     this.apiKey = undefined;
     this.range = undefined;
     this.spreadsheetId = undefined;
+    this.bLogFetcherEventToConsole = undefined;
     super.disposeResources();
   }
 

@@ -112,6 +112,12 @@ async function* tester( progressParent ) {
       progressNotExist2, timeoutMilliseconds );
   let resultNotExist2 = yield* fetcherNotExist2;
 
+  testerNotExist2?.disposeResources_and_recycleToPool();
+  testerNotExist2 = null;
+
+  testerNotExist1?.disposeResources_and_recycleToPool();
+  testerNotExist1 = null;
+
 
   // Without API key.
   let tester1 = GSheets.UrlComposer.Pool.get_or_create_by(
@@ -162,12 +168,6 @@ async function* tester( progressParent ) {
 
   tester1.disposeResources_and_recycleToPool();
   tester1 = null;
-
-  testerNotExist2?.disposeResources_and_recycleToPool();
-  testerNotExist2 = null;
-
-  testerNotExist1?.disposeResources_and_recycleToPool();
-  testerNotExist1 = null;
 
   console.log( "GSheet download testing... Done." );
 }

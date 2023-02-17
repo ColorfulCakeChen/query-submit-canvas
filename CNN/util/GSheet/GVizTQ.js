@@ -51,6 +51,9 @@ class GVizTQ_UrlComposer extends Recyclable.Root {
    * If sheetId is null, sheetName is null, and no sheet name in the range's A1
    * notation, the first (most left) visible sheet inside the spreadsheet will be used.
    *
+   * @param {boolean} bLogFetcherEventToConsole
+   *   If true, some debug messages of HttpFetcher will be logged to console.
+   *
    * @param {string} spreadsheetId
    *   The identifier (the component after the "https://docs.google.com/spreadsheets/d/")
    * of the spreadsheet to be accessed.
@@ -64,9 +67,6 @@ class GVizTQ_UrlComposer extends Recyclable.Root {
    *       last rows.
    *   - "'Name has space'!7:10" refers to the rows 7 to 10 of sheet named "Name has
    *       space".
-   *
-   * @param {boolean} bLogFetcherEventToConsole
-   *   If true, some debug messages of HttpFetcher will be logged to console.
    *
    * @param {number} headers
    *   The component after the "headers=". It means how many header rows. It should be
@@ -91,32 +91,32 @@ class GVizTQ_UrlComposer extends Recyclable.Root {
    * @see {@link https://developers.google.com/chart/interactive/docs/querylanguage}
    */
   constructor(
+    bLogFetcherEventToConsole,
     spreadsheetId,
     range,
-    bLogFetcherEventToConsole,
     headers = 0, responseHandler = null, sheetId = null, sheetName = null
   ) {
     super();
     GVizTQ_UrlComposer.setAsConstructor_self.call( this,
+      bLogFetcherEventToConsole,
       spreadsheetId,
       range,
-      bLogFetcherEventToConsole,
       headers, responseHandler, sheetId, sheetName
     );
   }
 
   /** @override */
   static setAsConstructor(
+    bLogFetcherEventToConsole,
     spreadsheetId,
     range,
-    bLogFetcherEventToConsole,
     headers = 0, responseHandler = null, sheetId = null, sheetName = null
   ) {
     super.setAsConstructor();
     GVizTQ_UrlComposer.setAsConstructor_self.call( this,
+      bLogFetcherEventToConsole,
       spreadsheetId,
       range,
-      bLogFetcherEventToConsole,
       headers, responseHandler, sheetId, sheetName
     );
     return this;
@@ -124,16 +124,16 @@ class GVizTQ_UrlComposer extends Recyclable.Root {
 
   /** @override */
   static setAsConstructor_self(
+    bLogFetcherEventToConsole,
     spreadsheetId,
     range,
-    bLogFetcherEventToConsole,
     headers, responseHandler, sheetId, sheetName
   ) {
+    this.bLogFetcherEventToConsole = bLogFetcherEventToConsole;
     this.set_by_spreadsheetId_range_headers_responseHandler_sheetId_sheetName(
       spreadsheetId,
       range, headers, responseHandler, sheetId, sheetName
     );
-    this.bLogFetcherEventToConsole = bLogFetcherEventToConsole;
   }
 
   /** @override */
@@ -142,9 +142,9 @@ class GVizTQ_UrlComposer extends Recyclable.Root {
     this.sheetId = undefined;
     this.responseHandler = undefined;
     this.headers = undefined;
-    this.bLogFetcherEventToConsole = undefined;
     this.range = undefined;
     this.spreadsheetId = undefined;
+    this.bLogFetcherEventToConsole = undefined;
     super.disposeResources();
   }
 
