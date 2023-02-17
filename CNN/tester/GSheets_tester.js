@@ -91,7 +91,8 @@ async function* tester( progressParent ) {
 //!!! ...unfinished... (2023/02/14) timeout and re-try?
   //const timeoutMilliseconds = 2 * 1000; // 2 seconds.
   //const timeoutMilliseconds = 10 * 1000; // 10 seconds.
-  const timeoutMilliseconds = 2 * 60 * 1000; // 2 minutes.
+  //const timeoutMilliseconds = 2 * 60 * 1000; // 2 minutes.
+  const timeoutMilliseconds = 3 * 60 * 1000; // 3 minutes.
   //const timeoutMilliseconds = 0; // no timeout.
 
   // Without API key, and error.
