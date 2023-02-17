@@ -22,16 +22,19 @@ window.addEventListener( "load", event => {
 
 /** */
 const gTestSwitch = {
+
+  // Base64ToUint8Array: true,
+
+  // Float12: true,
+  // Uint12: true,
+
   GSheets: true,
+
+  // AsyncWorker: true,
 
 //!!! (2023/02/14 Temp Remarked) For speed up other testing.
   //NeuralOrchestra: true,
 
-  // Uint12: true,
-  // Float12: true,
-  // Base64ToUint8Array: true,
-
-  // AsyncWorker: true,
 };
 
 
@@ -70,7 +73,7 @@ function test() {
       ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
 
   let progress_NeuralOrchestra_tester;
-  if ( gTestNeuralOrchestra ) {
+  if ( gTestSwitch.NeuralOrchestra ) {
     progress_NeuralOrchestra_tester = progress.child_add(
       ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
   }
