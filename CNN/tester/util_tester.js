@@ -20,9 +20,20 @@ window.addEventListener( "load", event => {
 
 });
 
- const gTestNeuralOrchestra = false;
+/** */
+const gTestSwitch = {
+  GSheets: true,
+
 //!!! (2023/02/14 Temp Remarked) For speed up other testing.
-//const gTestNeuralOrchestra = true;
+  //NeuralOrchestra: true,
+
+  // Uint12: true,
+  // Float12: true,
+  // Base64ToUint8Array: true,
+
+  // AsyncWorker: true,
+};
+
 
 function test() {
   console.log("util testing...");
@@ -33,20 +44,30 @@ function test() {
   // Aggregate all progress about util_tester.
   let progress = ValueMax.Percentage.Aggregate.Pool.get_or_create_by();
 
-  let progress_Base64ToUint8Array_tester = progress.child_add(
-    ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
+  let progress_Base64ToUint8Array_tester;
+  if ( gTestSwitch.Base64ToUint8Array )
+    progress_Base64ToUint8Array_tester = progress.child_add(
+      ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
 
-  let progress_Float12_tester = progress.child_add(
-    ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
+  let progress_Float12_testerl
+  if ( gTestSwitch.Float12 )
+    progress_Float12_tester = progress.child_add(
+      ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
 
-  let progress_Uint12_tester = progress.child_add(
-    ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
+  let progress_Uint12_tester;
+  if ( gTestSwitch.Uint12 )
+    progress_Uint12_tester = progress.child_add(
+      ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
 
-  let progress_GSheets_tester = progress.child_add(
-    ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
+  let progress_GSheets_tester;
+  if ( gTestSwitch.GSheets )
+    progress_GSheets_tester = progress.child_add(
+      ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
 
-  let progress_AsyncWorker_tester = progress.child_add(
-    ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
+  let progress_AsyncWorker_tester;
+  if ( gTestSwitch.AsyncWorker )
+    progress_AsyncWorker_tester = progress.child_add(
+      ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
 
   let progress_NeuralOrchestra_tester;
   if ( gTestNeuralOrchestra ) {
@@ -59,17 +80,23 @@ function test() {
 
   async function* testerAll() {
 
-    yield* GSheets_tester.tester( progress_GSheets_tester );
+    if ( gTestSwitch.Base64ToUint8Array )
+      yield* Base64ToUint8Array_tester.tester( progress_Base64ToUint8Array_tester );
 
-    if ( gTestNeuralOrchestra ) {
+    if ( gTestSwitch.Float12 )
+      yield* Float12_tester.tester( progress_Float12_tester );
+
+    if ( gTestSwitch.Uint12 )
+      yield* Uint12_tester.tester( progress_Uint12_tester );
+
+    if ( gTestSwitch.GSheets )
+      yield* GSheets_tester.tester( progress_GSheets_tester );
+
+    if ( gTestSwitch.AsyncWorker )
+      yield* AsyncWorker_tester.tester( progress_AsyncWorker_tester );
+
+    if ( gTestSwitch.NeuralOrchestra )
       yield* NeuralOrchestra_tester.tester( progress_NeuralOrchestra_tester );
-    }
-
-    yield* Uint12_tester.tester( progress_Uint12_tester );
-    yield* Float12_tester.tester( progress_Float12_tester );
-    yield* Base64ToUint8Array_tester.tester( progress_Base64ToUint8Array_tester );
-
-    yield* AsyncWorker_tester.tester( progress_AsyncWorker_tester );
   }
 
   let tester = testerAll();
