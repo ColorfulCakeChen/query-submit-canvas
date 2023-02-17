@@ -1,6 +1,6 @@
 export { HttpFetcher };
 
-//import * as PartTime from "../PartTime.js";
+import * as PartTime from "../PartTime.js";
 import * as ValueMax from "../ValueMax.js";
 
 /**
@@ -111,23 +111,23 @@ class HttpFetcher {
     xhr.responseType = responseType;
 
     // 2. Prepare promises before sending it.
-    this.abortPromise = HttpFetcher.Promise_create_by_eventName_eventCallback
-      .call( this, "abort", HttpFetcher.handle_abort );
+    this.abortPromise = PartTime.Promise_create_by_addEventListener_once(
+      xhr, "abort", HttpFetcher.handle_abort, this );
 
-    this.errorPromise = HttpFetcher.Promise_create_by_eventName_eventCallback
-      .call( this, "error", HttpFetcher.handle_error );
+    this.errorPromise = PartTime.Promise_create_by_addEventListener_once(
+      xhr, "error", HttpFetcher.handle_error, this );
 
-    this.loadPromise = HttpFetcher.Promise_create_by_eventName_eventCallback
-      .call( this, "load", HttpFetcher.handle_load );
+    this.loadPromise = PartTime.Promise_create_by_addEventListener_once(
+      xhr, "load", HttpFetcher.handle_load, this );
 
-    this.loadstartPromise = HttpFetcher.Promise_create_by_eventName_eventCallback
-      .call( this, "loadstart", HttpFetcher.handle_loadstart );
+    this.loadstartPromise = PartTime.Promise_create_by_addEventListener_once(
+      xhr, "loadstart", HttpFetcher.handle_loadstart, this );
 
-    this.progressPromise = HttpFetcher.Promise_create_by_eventName_eventCallback
-      .call( this, "progress", HttpFetcher.handle_progress );
+    this.progressPromise = PartTime.Promise_create_by_addEventListener_once(
+      xhr, "progress", HttpFetcher.handle_progress, this );
 
-    this.timeoutPromise = HttpFetcher.Promise_create_by_eventName_eventCallback
-      .call( this, "timeout", HttpFetcher.handle_timeout );
+    this.timeoutPromise = PartTime.Promise_create_by_addEventListener_once(
+      xhr, "timeout", HttpFetcher.handle_timeout, this );
 
 //!!! ...unfinished... (2023/02/16)
     if ( this.bAdvanceProgressByTimer ) {
@@ -194,41 +194,42 @@ class HttpFetcher {
     return xhr.response;
   }
 
-  /**
-   * @param {HttpFetcher} this
-   *
-   * @param {string} eventName
-   *    The event name of eventCallback. e.g. "loadstart", "progress", "timeout".
-   *
-   * @param {function} eventCallback
-   *    The event handler function for the event name. It should accept parameters
-   * ( resolve, reject, event ).
-   */
-  static Promise_create_by_eventName_eventCallback( eventName, eventCallback ) {
-    return new Promise(
-      HttpFetcher.Promise_constructor_func.bind( this, eventName, eventCallback ) );
-  }
-
-  /**
-   * This function should be used as Promise constructor's parameter.
-   *
-   * @param {HttpFetcher} this
-   *
-   * @param {string} eventName
-   *    The event name of eventCallback. e.g. "loadstart", "progress", "timeout".
-   *
-   * @param {function} eventCallback
-   *    The event handler function for the event name. It should accept parameters
-   * ( resolve, reject, event ).
-   */
-  static Promise_constructor_func( eventName, eventCallback, resolve, reject ) {
-    this.xhr.addEventListener(
-      eventName, eventCallback.bind( this, resolve, reject ),
-
-      // So that same event could be re-registered many times after event triggered.
-      HttpFetcher.addEventListener_options_once
-    );
-  }
+//!!! (2023/02/17 Remarked) Replaced by PartTime.Promise_create_by_addEventListener_once()
+//   /**
+//    * @param {HttpFetcher} this
+//    *
+//    * @param {string} eventName
+//    *    The event name of eventCallback. e.g. "loadstart", "progress", "timeout".
+//    *
+//    * @param {function} eventCallback
+//    *    The event handler function for the event name. It should accept parameters
+//    * ( resolve, reject, event ).
+//    */
+//   static Promise_create_by_eventName_eventCallback( eventName, eventCallback ) {
+//     return new Promise(
+//       HttpFetcher.Promise_constructor_func.bind( this, eventName, eventCallback ) );
+//   }
+//
+//   /**
+//    * This function should be used as Promise constructor's parameter.
+//    *
+//    * @param {HttpFetcher} this
+//    *
+//    * @param {string} eventName
+//    *    The event name of eventCallback. e.g. "loadstart", "progress", "timeout".
+//    *
+//    * @param {function} eventCallback
+//    *    The event handler function for the event name. It should accept parameters
+//    * ( resolve, reject, event ).
+//    */
+//   static Promise_constructor_func( eventName, eventCallback, resolve, reject ) {
+//     this.xhr.addEventListener(
+//       eventName, eventCallback.bind( this, resolve, reject ),
+//
+//       // So that same event could be re-registered many times after event triggered.
+//       HttpFetcher.addEventListener_options_once
+//     );
+//   }
 
 
 //!!! ...unfinished... (2023/02/16)
@@ -429,8 +430,8 @@ class HttpFetcher {
 
       // Because progress event could happen many times, re-generate a new promise
       // for listening on it.
-      this.progressPromise = HttpFetcher.Promise_create_by_eventName_eventCallback
-        .call( this, "progress", HttpFetcher.handle_progress );
+      this.progressPromise = PartTime.Promise_create_by_addEventListener_once(
+        this.xhr, "progress", HttpFetcher.handle_progress, this );
 
       this.allPromiseSet.add( this.progressPromise );
     }
