@@ -552,7 +552,8 @@ HttpFetcher.responseTypeDefault = "text";
  */
 HttpFetcher.progressTotalFakeLarger = 1024 * 1024;
 
-/** Used for .addEventListener() */
-HttpFetcher.addEventListener_options_once = {
-  once : true
-};
+//!!! (2023/02/17 Remarked) Replaced by PartTime.Promise_create_by_addEventListener_once()
+// /** Used for .addEventListener() */
+// HttpFetcher.addEventListener_options_once = {
+//   once : true
+// };
