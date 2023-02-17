@@ -35,13 +35,21 @@ class HttpFetcher {
    * @param {object} body
    *   A body of data to be sent in the XHR request. It could be null.
    *
-
-//!!! ...unfinished... (2023/02/16)
-// If ( timeoutMilliseconds > 0 ), use timer to advance progressToAdvance.
-
    * @param {number} timeoutMilliseconds
    *   The time (in milliseconds) a request can take before automatically being
    * terminated. Default is 0, which means there is no timeout.
+   *
+   *   - If zero, the progressToAdvance will be advanced by ProgressEvent(
+   *       .type = "progress" ).
+   *     - This is good if ( .lengthComputable == true ) and network smooth.
+   *     - This is bad if ( .lengthComputable == false ) (i.e. progress can not
+   *         be calculated by .loaded / .total) or network congested (i.e.
+   *         there will be a long pending (no responded in UI)).
+   *
+   *   - If not zero, the progressToAdvance will be advanced by a timer.
+   *       Although this is a kind of fake progress, it provides better user
+   *       experience because progress bar is still advancing even if network
+   *       congested or server busy.
    *
    * @param {string} method
    *   The HTTP request method to use, e.g. "GET", "POST". Default is "GET".
