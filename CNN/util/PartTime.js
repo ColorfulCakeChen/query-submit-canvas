@@ -110,8 +110,8 @@ function Promise_create_by_addEventListener_once(
  *    The "this" value when binding timeoutCallback with
  * ( thisArg, resolveFunc, rejectFunc ).
  *
- * @param {any} value
- *   The value which will be passed into the timeoutCallback when the timer
+ * @param {any[]} values
+ *   The values which will be passed into the timeoutCallback when the timer
  * expires (if the timer has not been canceled by .cancelTimer()).
  *
  * @return {Promise}
@@ -122,12 +122,13 @@ function Promise_create_by_addEventListener_once(
  *   - .cancelTimer(): Call it (without any parameter) to cancel the timer.
  */
 function Promise_create_by_setTimeout(
-  delayMilliseconds, timeoutCallback, thisArg, value ) {
+  delayMilliseconds, timeoutCallback, thisArg, ...values ) {
 
   let timeoutId;
   let p = new Promise( ( resolve, reject ) => {
     timeoutId = setTimeout(
-      timeoutCallback.bind( thisArg, resolve, reject ), delayMilliseconds, value );
+      timeoutCallback.bind( thisArg, resolve, reject ),
+      delayMilliseconds, ...values );
   } );
 
   p.timeoutId = timeoutId;
