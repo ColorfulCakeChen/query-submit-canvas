@@ -93,7 +93,6 @@ function Promise_create_by_addEventListener_once(
   return new Promise( executor );
 }
 
-//!!! ...unfinished... (2023/02/17)
 
 /**
  *
@@ -199,42 +198,6 @@ function forOf( generator, callback, callbackDone, delayMilliseconds = 0 ) {
       }, delayMilliseconds );
     } );
   }
-
-//!!! (2022/09/24) Use await instead.
-//   function promiseTimeout() {
-//     return new Promise( ( resolve, reject ) => {
-//       setTimeout( () => {
-//         let result = generator.next();
-//
-//         // If the result is a promise (i.e. the generator is an async generator).
-//         if ( result instanceof Promise ) {
-//           result.then( ( r ) => {  // Wait it resolved, then process it as sync generator.
-//             if ( r.done ) {
-//               callbackDone( r.value );
-//               resolve( r.value );
-//             } else {
-//               callback( r.value );
-//               resolve( promiseTimeout() );
-//             }
-//           } ).catch( ( reason ) => {
-//             debugger;
-//
-//           } );
-//
-//         // The generator is a sync generator, process its result.
-//         } else {
-//           if ( result.done ) {
-//             callbackDone( r.value );
-//             resolve( result.value );
-//           } else {
-//             callback( result.value );
-//             resolve( promiseTimeout() );
-//           }
-//         }
-//
-//       }, delayMilliseconds);
-//     });
-//   }
 
   return promiseTimeout();
 }

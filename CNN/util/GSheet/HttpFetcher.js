@@ -8,7 +8,7 @@ import * as ValueMax from "../ValueMax.js";
  *
  *
  * @param {boolean} bLogEventToConsole
- *   If true, some debug message will be logged to console.
+ *   If true, some debug messages will be logged to console.
  *
  */
 class HttpFetcher {

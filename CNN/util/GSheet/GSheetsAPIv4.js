@@ -48,14 +48,17 @@ class GSheetsAPIv4_UrlComposer extends Recyclable.Root {
    * @param {string} apiKey
    *   The API key string for accessing the spreadsheet.
    *
+   * @param {boolean} bLogFetcherEventToConsole
+   *   If true, some debug messages of HttpFetcher will be logged to console.
+   *
    * @see {@link https://developers.google.com/sheets/api/guides/concepts}
    * @see {@link https://developers.google.com/sheets/api/reference/rest/v4/spreadsheets.values/get}
    * @see {@link https://developers.google.com/sheets/api/reference/rest/v4/spreadsheets.values}
    */
-  constructor( spreadsheetId, range, apiKey ) {
+  constructor( spreadsheetId, range, apiKey, bLogFetcherEventToConsole ) {
     super();
     GSheetsAPIv4_UrlComposer.setAsConstructor_self.call( this,
-      spreadsheetId, range, apiKey
+      spreadsheetId, range, apiKey, bLogFetcherEventToConsole
     );
   }
 
@@ -63,18 +66,21 @@ class GSheetsAPIv4_UrlComposer extends Recyclable.Root {
   static setAsConstructor( spreadsheetId, range, apiKey ) {
     super.setAsConstructor();
     GSheetsAPIv4_UrlComposer.setAsConstructor_self.call( this,
-      spreadsheetId, range, apiKey
+      spreadsheetId, range, apiKey, bLogFetcherEventToConsole
     );
     return this;
   }
 
   /** @override */
-  static setAsConstructor_self( spreadsheetId, range, apiKey ) {
+  static setAsConstructor_self(
+    spreadsheetId, range, apiKey, bLogFetcherEventToConsole ) {
     this.set_by_spreadsheetId_range_apiKey( spreadsheetId, range, apiKey );
+    this.bLogFetcherEventToConsole = bLogFetcherEventToConsole;
   }
 
   /** @override */
   disposeResources() {
+    this.bLogFetcherEventToConsole = undefined;
     this.apiKey = undefined;
     this.range = undefined;
     this.spreadsheetId = undefined;
@@ -132,9 +138,7 @@ class GSheetsAPIv4_UrlComposer extends Recyclable.Root {
 
       let responseText;
       {
-        // const bLogEventToConsole = false;
-        const bLogEventToConsole = true; // For debug.
-        let httpFetcher = new HttpFetcher( bLogEventToConsole );
+        let httpFetcher = new HttpFetcher( this.bLogFetcherEventToConsole );
         let httpResulter = httpFetcher
           .asyncGenerator_by_url_body_timeout_method_responseType(
             progressFetcher, url, null, timeoutMilliseconds );

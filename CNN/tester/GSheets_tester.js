@@ -85,6 +85,9 @@ async function* tester( progressParent ) {
   let range = "A:A";
   let apiKey = "AIzaSyDQpdX3Z7297fkZ7M_jWdq7zjv_IIxpArU";
 
+  // const bLogFetcherEventToConsole = false;
+  const bLogFetcherEventToConsole = true; // For debug.
+
 //!!! ...unfinished... (2023/02/14) timeout and re-try?
   //const timeoutMilliseconds = 2 * 1000; // 2 seconds.
   //const timeoutMilliseconds = 10 * 1000; // 10 seconds.
@@ -93,7 +96,7 @@ async function* tester( progressParent ) {
 
   // Without API key, and error.
   let testerNotExist1 = GSheets.UrlComposer.Pool.get_or_create_by(
-    spreadsheetId + "_not_exist", range );
+    spreadsheetId + "_not_exist", range, bLogFetcherEventToConsole );
 
   let fetcherNotExist1 = testerNotExist1
     .JSON_ColumnMajorArrayArray_fetch_asyncGenerator(
@@ -102,7 +105,7 @@ async function* tester( progressParent ) {
 
   // With API key, and error.
   let testerNotExist2 = GSheets.UrlComposer.Pool.get_or_create_by(
-    spreadsheetId + "_not_exist", range, apiKey );
+    spreadsheetId + "_not_exist", range, apiKey, bLogFetcherEventToConsole );
 
   let fetcherNotExist2 = testerNotExist2
     .JSON_ColumnMajorArrayArray_fetch_asyncGenerator(
@@ -111,13 +114,15 @@ async function* tester( progressParent ) {
 
 
   // Without API key.
-  let tester1 = GSheets.UrlComposer.Pool.get_or_create_by( spreadsheetId, range );
+  let tester1 = GSheets.UrlComposer.Pool.get_or_create_by(
+    spreadsheetId, range, bLogFetcherEventToConsole );
   let fetcher1 = tester1.JSON_ColumnMajorArrayArray_fetch_asyncGenerator(
     progress1, timeoutMilliseconds );
   let result1 = yield* fetcher1;
 
   // With API key.
-  let tester2 = GSheets.UrlComposer.Pool.get_or_create_by( spreadsheetId, range, apiKey );
+  let tester2 = GSheets.UrlComposer.Pool.get_or_create_by(
+    spreadsheetId, range, apiKey, bLogFetcherEventToConsole );
   let fetcher2 = tester2.JSON_ColumnMajorArrayArray_fetch_asyncGenerator(
     progress2, timeoutMilliseconds );
   let result2 = yield* fetcher2;
