@@ -243,6 +243,7 @@ class HttpFetcher {
 //!!! ...unfinished... (2023/02/17)
 // Use PartTime.Promise_create_by_setTimeout()
 
+//???!!! ...unfinished... (2023/02/17)
     if ( this.progressTimerPromise )
       this.progressTimerPromise.cancelTimer();
 
