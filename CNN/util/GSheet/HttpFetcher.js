@@ -120,7 +120,7 @@ class HttpFetcher {
    * ( progressToAdvance.valuePercentage == 100 ) will still be reported for
    * representing the request already done (with failure, though).
    */
-  async* asyncGenerator_by_url_body_timeout_method_responseType(
+  async* asyncGenerator_by_url_timeout_retry_responseType_method_body(
     progressParent,
     url,
 
@@ -137,6 +137,8 @@ class HttpFetcher {
 
 //!!! ...unfinished... (2023/02/18)
     // 0.
+    this.progressParent = progressParent;
+    this.progressRoot = progressParent.root_get();
 
     this.url = url;
 
@@ -182,8 +184,6 @@ class HttpFetcher {
     //       this HttpFetcher object. It should be destroyed by outside caller
     //       (i.e. by progressParent).
     //
-    this.progressRoot = progressParent.root_get();
-    this.progressParent = progressParent;
     this.progressToAdvance = progressParent.child_add(
       ValueMax.Percentage.Concrete.Pool.get_or_create_by(
         progressToAdvance_max_default ) );
