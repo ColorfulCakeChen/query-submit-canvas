@@ -157,6 +157,8 @@ class HttpFetcher {
     this.retryWaitingMillisecondsCur = undefined;
 
 //!!! ...unfinished... (2023/02/18)
+// some init should be put into retry loop.
+
     // this.retryWaitingMillisecondsMax
     //   = RandTools.getRandomInt_TruncatedBinaryExponent(
     //     this.retryTimesCur, this.retryWaitingMillisecondsExponentMax );
@@ -192,19 +194,19 @@ class HttpFetcher {
       ValueMax.Percentage.Concrete.Pool.get_or_create_by(
         progressToAdvance_max_default ) );
 
-    // 1.
-    const xhr = this.xhr = new XMLHttpRequest();
 
 //!!!
     let bRetry;
     do {
+      // 2.
       try {
-
+        // 2.1
+        const xhr = this.xhr = new XMLHttpRequest();
         xhr.open( method, url, true );
         xhr.timeout = loadingMillisecondsMax;
         xhr.responseType = responseType;
 
-        // 2. Prepare promises before sending it.
+        // 2.2 Prepare promises before sending it.
         this.abortPromise = PartTime.Promise_create_by_addEventListener_once(
           xhr, "abort", HttpFetcher.handle_abort, this );
 
@@ -240,10 +242,10 @@ class HttpFetcher {
             this.allPromiseSet.add( this.progressTimerPromise );
         }
 
-        // 3.
+        // 2.3
         xhr.send( body );
 
-        // 4. Until done or failed.
+        // 2.4 Until done or failed.
         let notDone;
         do {
           let allPromise = Promise.race( this.allPromiseSet );
@@ -270,35 +272,41 @@ class HttpFetcher {
 
         bRetry = false; // No need to retry, since request is succeeded.
 
+      // 3. Determine whether should retry.
       } catch( e ) {
 
-//!!! ...unfinished... (2023/02/18) How to re-try download?
-        // Retry only if recognized exception and still has retry times.
+        // 3.1 Retry only if recognized exception and still has retry times.
         if (   ( e instanceof ProgressEvent )
             && (   ( e.type === "abort" )
                 || ( e.type === "error" )
                 || ( e.type === "load" ) // ( status != 200 ) (e.g. 404 or 500)
                 || ( e.type === "timeout" ) )
            ) { 
-          bRetry = this.shouldRetryRequest();
-          if ( !bRetry ) { // Run out of retry times.
+          let bRetryTimesRunOut = this.retryTimes_isRunOut();
+          if ( bRetryTimesRunOut ) { // 3.1.1 Run out of retry times.
+            bRetry = false;
+            console.error( e );
             throw e;
+
           } else {
-            ++this.retryTimesCur; // Retry one more time.
+            bRetry = true;
+            ++this.retryTimesCur; // 3.1.2 Retry one more time.
           }
 
-        } else { // Unknown error. (Never retry for unknown error.)
+        } else { // 3.2 Unknown error. (Never retry for unknown error.)
+          bRetry = false;
           console.error( e );
           throw e;
         }
       }
 
-//!!!
-
-    } while ( bRetry??? );
+    } while ( bRetry );
   
-    // (2023/02/15) For debug. (Not yet finished, while return.)
+    // 4. 
+    // (2023/02/15) For debug.
+    // (When execution to here, the request should been finished successfully.)
     {
+      // 4.1
       if ( 200 !== xhr.status ) {
         //debugger;
         throw Error( `( ${this.url} ) `
@@ -307,6 +315,7 @@ class HttpFetcher {
           + `xhr.status ( ${xhr.status} ) should be 200.` );
       }
 
+      // 4.2
       if ( 100 != this.progressToAdvance.valuePercentage ) {
         //debugger;
         throw Error( `( ${this.url} ) `
@@ -317,17 +326,17 @@ class HttpFetcher {
       }
     }
 
-    // 5.
+    // 5. Return the successfully downloaded result.
     return xhr.response;
   }
 
-  /** @return {boolean} Return true, if not yet reach maximum retry times.  */
-  shouldRetryRequest() {
+  /** @return {boolean} Return true, if not yet reach maximum retry times. */
+  retryTimes_isRunOut() {
     if ( this.retryTimesMax < 0 )
-      return true; // Retry forever.
+      return false; // Never run out, since retry forever.
     if ( this.retryTimesCur < this.retryTimesMax )
-      return true; // Still has retry times.
-    return false; // Run out of retry times.
+      return false; // Still has retry times.
+    return true; // Run out of retry times.
   }
 
   /** Cancel current progressTimer (if exists). */
