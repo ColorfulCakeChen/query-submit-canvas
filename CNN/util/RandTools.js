@@ -39,7 +39,8 @@ function getRandomIntInclusive( min, max ) {
  *
  * @param {number} exponent
  *   Either zero or a positive number (could be non-integer) for the exponent
- * number of a two's power. (i.e. the B in ( 2 ** B ) )
+ * number of a two's power. (i.e. the B in ( 2 ** B ) ) Usually, this is the
+ * current retry times in a exponential backoff algorithm.
  *
  * @param {number} exponentMax
  *   Either zero or a positive number (could be non-integer) as the maximum

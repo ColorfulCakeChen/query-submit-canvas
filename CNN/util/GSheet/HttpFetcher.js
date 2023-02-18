@@ -1,6 +1,7 @@
 export { HttpFetcher };
 
 import * as PartTime from "../PartTime.js";
+import * as RandTools from "../RandTools.js";
 import * as ValueMax from "../ValueMax.js";
 
 /**
@@ -50,13 +51,14 @@ import * as ValueMax from "../ValueMax.js";
  * @member {number} retryTimesCur
  *   How many times has been retried.
  *
- * @member {number} retryWaitingExponentMax
+ * @member {number} retryWaitingMillisecondsExponentMax
  *   The maximum exponent (for two's power; i.e. the B of ( 2 ** B ) ) of waiting
  * time for retry. It is only used if ( retryTimesMax > 0 ).
  *
  * @member {number} retryWaitingMillisecondsMax
  *   The maximum time (in milliseconds) of waiting for retry. It is only used
- * if ( retryTimesMax > 0 ). It is calculated from retryWaitingExponentMax.
+ * if ( retryTimesMax > 0 ). It is calculated from
+ * retryWaitingMillisecondsExponentMax.
  *
  * @member {number} retryWaitingMillisecondsCur
  *   The current time (in milliseconds) of waiting for retry. It is only used
@@ -122,12 +124,11 @@ class HttpFetcher {
     progressParent,
     url,
 
-//!!! ...unfinished... (2023/02/18)
     loadingMillisecondsMax = 0,
     loadingMillisecondsInterval = ( 20 * 1000 ),
 
     retryTimesMax = 0,
-    retryWaitingExponentMax = 6,
+    retryWaitingMillisecondsExponentMax = 6,
 
     responseType = HttpFetcher.responseTypeDefault,
     method = HttpFetcher.methodDefault,
@@ -135,28 +136,34 @@ class HttpFetcher {
   ) {
 
 //!!! ...unfinished... (2023/02/18)
-    //
+    // 0.
+
     this.url = url;
 
     this.loadingMillisecondsMax = loadingMillisecondsMax;
-    this.loadingMillisecondsInterval;
-    this.loadingMillisecondsCur;
+    this.loadingMillisecondsInterval = loadingMillisecondsInterval;
+    this.loadingMillisecondsCur = undefined;
 
     this.retryTimesMax = ( retryTimesMax >= 0 ) ? retryTimesMax : 0;
     this.retryTimesCur = 0;
-    this.retryWaitingExponentMax = retryWaitingExponentMax;
-    this.retryWaitingMillisecondsMax;
-    this.retryWaitingMillisecondsCur;
+    this.retryWaitingMillisecondsExponentMax = retryWaitingMillisecondsExponentMax;
+    this.retryWaitingMillisecondsMax = undefined;
+    this.retryWaitingMillisecondsCur = undefined;
+
+//!!! ...unfinished... (2023/02/18)
+    // this.retryWaitingMillisecondsMax
+    //   = RandTools.getRandomInt_TruncatedBinaryExponent(
+    //     this.retryTimesCur, this.retryWaitingMillisecondsExponentMax );
 
     this.responseType = responseType;
     this.method = method;
     this.body = body;
 
-    this.contentLoaded;
-    this.contentTotal;
+    this.contentLoaded = undefined;
+    this.contentTotal = undefined;
 
-    // 0.
-
+//!!! ...unfinished... (2023/02/18)
+    //
     let progressToAdvance_max_default;
 
 //!!! ...unfinished... (2023/02/16)
@@ -282,43 +289,6 @@ class HttpFetcher {
       this.allPromiseSet.delete( this.progressTimerPromise ); // Stop listening.
     }
   }
-
-//!!! (2023/02/17 Remarked) Replaced by PartTime.Promise_create_by_addEventListener_once()
-//   /**
-//    * @param {HttpFetcher} this
-//    *
-//    * @param {string} eventName
-//    *    The event name of eventCallback. e.g. "loadstart", "progress", "timeout".
-//    *
-//    * @param {function} eventCallback
-//    *    The event handler function for the event name. It should accept parameters
-//    * ( resolve, reject, event ).
-//    */
-//   static Promise_create_by_eventName_eventCallback( eventName, eventCallback ) {
-//     return new Promise(
-//       HttpFetcher.Promise_constructor_func.bind( this, eventName, eventCallback ) );
-//   }
-//
-//   /**
-//    * This function should be used as Promise constructor's parameter.
-//    *
-//    * @param {HttpFetcher} this
-//    *
-//    * @param {string} eventName
-//    *    The event name of eventCallback. e.g. "loadstart", "progress", "timeout".
-//    *
-//    * @param {function} eventCallback
-//    *    The event handler function for the event name. It should accept parameters
-//    * ( resolve, reject, event ).
-//    */
-//   static Promise_constructor_func( eventName, eventCallback, resolve, reject ) {
-//     this.xhr.addEventListener(
-//       eventName, eventCallback.bind( this, resolve, reject ),
-//
-//       // So that same event could be re-registered many times after event triggered.
-//       HttpFetcher.addEventListener_options_once
-//     );
-//   }
 
 
   /**
@@ -601,9 +571,3 @@ HttpFetcher.responseTypeDefault = "text";
  * step gradually.
  */
 HttpFetcher.progressTotalFakeLarger = 1024 * 1024;
-
-//!!! (2023/02/17 Remarked) Replaced by PartTime.Promise_create_by_addEventListener_once()
-// /** Used for .addEventListener() */
-// HttpFetcher.addEventListener_options_once = {
-//   once : true
-// };

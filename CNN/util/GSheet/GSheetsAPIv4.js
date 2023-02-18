@@ -142,7 +142,7 @@ class GSheetsAPIv4_UrlComposer extends Recyclable.Root {
         let httpFetcher = new HttpFetcher( this.bLogFetcherEventToConsole );
         let httpResulter = httpFetcher
           .asyncGenerator_by_url_body_timeout_method_responseType(
-            progressFetcher, url, null, timeoutMilliseconds );
+            progressFetcher, url, timeoutMilliseconds );
 
         try {
           responseText = yield* httpResulter;
