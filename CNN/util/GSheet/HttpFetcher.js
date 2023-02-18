@@ -29,9 +29,11 @@ import * as ValueMax from "../ValueMax.js";
  *       experience because progress bar is still advancing even if network
  *       congested or server busy.
  *
- * @member {number} loadingMillisecondsInterval = ( 30 * 1000 ),
-    // Note: Too small delayMilliseconds may not look good because the progress
-    //       bar may advance too little to be aware.
+ * @member {number} loadingMillisecondsInterval
+ *   The interval time (in milliseconds) for advancing the loadingMillisecondsCur.
+ * Although smaller interval may provide smoother progress advancing, however, too
+ * small interval (relative to loadingMillisecondsMax) may not look good because
+ * the progress bar may advance too little to be aware by eyes.
  *
  * @member {number} loadingMillisecondsCur
  *   The current time (in milliseconds) of loading. It is only used if
@@ -129,7 +131,7 @@ class HttpFetcher {
 
     responseType = HttpFetcher.responseTypeDefault,
     method = HttpFetcher.methodDefault,
-    body,
+    body
   ) {
 
 //!!! ...unfinished... (2023/02/18)
