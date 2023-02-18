@@ -195,7 +195,7 @@ class HttpFetcher {
         progressToAdvance_max_default ) );
 
 
-//!!!
+//!!! ...unfinished... (2023/02/18)
     let bRetry;
     do {
       // 2.
@@ -283,14 +283,14 @@ class HttpFetcher {
                 || ( e.type === "timeout" ) )
            ) { 
           let bRetryTimesRunOut = this.retryTimes_isRunOut();
-          if ( bRetryTimesRunOut ) { // 3.1.1 Run out of retry times.
-            bRetry = false;
+          if ( bRetryTimesRunOut ) {
+            bRetry = false; // 3.1.1 Can not retry, because run out of retry times.
             console.error( e );
             throw e;
 
           } else {
-            bRetry = true;
-            ++this.retryTimesCur; // 3.1.2 Retry one more time.
+            bRetry = true; // 3.1.2 Retry one more time.
+            ++this.retryTimesCur;
           }
 
         } else { // 3.2 Unknown error. (Never retry for unknown error.)
