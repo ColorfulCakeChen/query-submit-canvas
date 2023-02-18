@@ -42,11 +42,15 @@ import * as ValueMax from "../ValueMax.js";
  *
  * @member {number} retryTimesMax
  *   Retry request so many times at most when request failed (no matter what
- * reason).
- *   - If not positive value, there will be no re-try (i.e. failed immediately once
- *       not success).
- *   - If positive value, there will be some waiting time before next re-try (i.e.
- *       truncated binary exponential backoff algorithm).
+ * reason). Noe that there will be some waiting time before next re-try (i.e.
+ * truncated binary exponential backoff algorithm).
+ *
+ *   - Negative value means retry infinite times (i.e. retry forever until
+ *       success).
+ *
+ *   - Zero means never retry (i.e. failed immediately once not success).
+ *
+ *   - Positive value means retry so many times at most.
  *
  * @member {number} retryTimesCur
  *   How many times has been retried.
@@ -146,7 +150,7 @@ class HttpFetcher {
     this.loadingMillisecondsInterval = loadingMillisecondsInterval;
     this.loadingMillisecondsCur = undefined;
 
-    this.retryTimesMax = ( retryTimesMax >= 0 ) ? retryTimesMax : 0;
+    this.retryTimesMax = retryTimesMax;
     this.retryTimesCur = 0;
     this.retryWaitingMillisecondsExponentMax = retryWaitingMillisecondsExponentMax;
     this.retryWaitingMillisecondsMax = undefined;
@@ -190,74 +194,109 @@ class HttpFetcher {
 
     // 1.
     const xhr = this.xhr = new XMLHttpRequest();
-    xhr.open( method, url, true );
-    xhr.timeout = loadingMillisecondsMax;
-    xhr.responseType = responseType;
 
-    // 2. Prepare promises before sending it.
-    this.abortPromise = PartTime.Promise_create_by_addEventListener_once(
-      xhr, "abort", HttpFetcher.handle_abort, this );
-
-    this.errorPromise = PartTime.Promise_create_by_addEventListener_once(
-      xhr, "error", HttpFetcher.handle_error, this );
-
-    this.loadPromise = PartTime.Promise_create_by_addEventListener_once(
-      xhr, "load", HttpFetcher.handle_load, this );
-
-    this.loadstartPromise = PartTime.Promise_create_by_addEventListener_once(
-      xhr, "loadstart", HttpFetcher.handle_loadstart, this );
-
-    this.progressPromise = PartTime.Promise_create_by_addEventListener_once(
-      xhr, "progress", HttpFetcher.handle_progress, this );
-
-    this.timeoutPromise = PartTime.Promise_create_by_addEventListener_once(
-      xhr, "timeout", HttpFetcher.handle_timeout, this );
-
-    if ( this.bAdvanceProgressByTimer ) {
-      HttpFetcher.progressTimerPromise_create_and_set.call( this );
-    }
-
-    // All promises to be listened.
-    {
-      this.allPromiseSet = new Set( [
-        this.abortPromise, this.errorPromise, this.loadPromise,
-        this.loadstartPromise,
-        this.progressPromise,
-        this.timeoutPromise
-      ] );
-
-      if ( this.progressTimerPromise )
-        this.allPromiseSet.add( this.progressTimerPromise );
-    }
-
-    // 3.
-    xhr.send( body );
-
-    // 4. Until done or failed.
-    let notDone;
+//!!!
+    let bRetry;
     do {
-      let allPromise = Promise.race( this.allPromiseSet );
+      try {
 
-      // All succeeded promises resolve to progressRoot.
-      // All failed promises reject to (i.e. throw exception of) ProgressEvent.
-      let progressRoot = await allPromise;
-      yield progressRoot;
+        xhr.open( method, url, true );
+        xhr.timeout = loadingMillisecondsMax;
+        xhr.responseType = responseType;
 
-      // Not done, if:
-      //   - ( status is not 200 ), or
-      //   - ( .loadPromise still pending (i.e. still in waiting promises) ).
-      //
-      // Note: Checking ( xhr.status !== 200 ) is not enough. The loading may
-      //       still not be complete when status becomes 200.
-      notDone =    ( xhr.status !== 200 )
-                || ( this.allPromiseSet.has( this.loadPromise ) );
+        // 2. Prepare promises before sending it.
+        this.abortPromise = PartTime.Promise_create_by_addEventListener_once(
+          xhr, "abort", HttpFetcher.handle_abort, this );
 
-    // Stop if loading completely and successfully.
-    //
-    // Note: The other ways to leave this loop are throwing exceptions (e.g.
-    //       the pending promises rejected).
-    } while ( notDone );
+        this.errorPromise = PartTime.Promise_create_by_addEventListener_once(
+          xhr, "error", HttpFetcher.handle_error, this );
 
+        this.loadPromise = PartTime.Promise_create_by_addEventListener_once(
+          xhr, "load", HttpFetcher.handle_load, this );
+
+        this.loadstartPromise = PartTime.Promise_create_by_addEventListener_once(
+          xhr, "loadstart", HttpFetcher.handle_loadstart, this );
+
+        this.progressPromise = PartTime.Promise_create_by_addEventListener_once(
+          xhr, "progress", HttpFetcher.handle_progress, this );
+
+        this.timeoutPromise = PartTime.Promise_create_by_addEventListener_once(
+          xhr, "timeout", HttpFetcher.handle_timeout, this );
+
+        if ( this.bAdvanceProgressByTimer ) {
+          HttpFetcher.progressTimerPromise_create_and_set.call( this );
+        }
+
+        // All promises to be listened.
+        {
+          this.allPromiseSet = new Set( [
+            this.abortPromise, this.errorPromise, this.loadPromise,
+            this.loadstartPromise,
+            this.progressPromise,
+            this.timeoutPromise
+          ] );
+
+          if ( this.progressTimerPromise )
+            this.allPromiseSet.add( this.progressTimerPromise );
+        }
+
+        // 3.
+        xhr.send( body );
+
+        // 4. Until done or failed.
+        let notDone;
+        do {
+          let allPromise = Promise.race( this.allPromiseSet );
+
+          // All succeeded promises resolve to progressRoot.
+          // All failed promises reject to (i.e. throw exception of) ProgressEvent.
+          let progressRoot = await allPromise;
+          yield progressRoot;
+
+          // Not done, if:
+          //   - ( status is not 200 ), or
+          //   - ( .loadPromise still pending (i.e. still in waiting promises) ).
+          //
+          // Note: Checking ( xhr.status !== 200 ) is not enough. The loading may
+          //       still not be complete when status becomes 200.
+          notDone =    ( xhr.status !== 200 )
+                    || ( this.allPromiseSet.has( this.loadPromise ) );
+
+        // Stop if loading completely and successfully.
+        //
+        // Note: The other ways to leave this loop are throwing exceptions (e.g.
+        //       the pending promises rejected).
+        } while ( notDone );
+
+        bRetry = false; // No need to retry, since request is succeeded.
+
+      } catch( e ) {
+
+//!!! ...unfinished... (2023/02/18) How to re-try download?
+        // Retry only if recognized exception and still has retry times.
+        if (   ( e instanceof ProgressEvent )
+            && (   ( e.type === "abort" )
+                || ( e.type === "error" )
+                || ( e.type === "load" ) // ( status != 200 ) (e.g. 404 or 500)
+                || ( e.type === "timeout" ) )
+           ) { 
+          bRetry = this.shouldRetryRequest();
+          if ( !bRetry ) { // Run out of retry times.
+            throw e;
+          } else {
+            ++this.retryTimesCur; // Retry one more time.
+          }
+
+        } else { // Unknown error. (Never retry for unknown error.)
+          console.error( e );
+          throw e;
+        }
+      }
+
+//!!!
+
+    } while ( bRetry??? );
+  
     // (2023/02/15) For debug. (Not yet finished, while return.)
     {
       if ( 200 !== xhr.status ) {
@@ -280,6 +319,15 @@ class HttpFetcher {
 
     // 5.
     return xhr.response;
+  }
+
+  /** @return {boolean} Return true, if not yet reach maximum retry times.  */
+  shouldRetryRequest() {
+    if ( this.retryTimesMax < 0 )
+      return true; // Retry forever.
+    if ( this.retryTimesCur < this.retryTimesMax )
+      return true; // Still has retry times.
+    return false; // Run out of retry times.
   }
 
   /** Cancel current progressTimer (if exists). */
@@ -315,7 +363,7 @@ class HttpFetcher {
     HttpFetcher.progressToAdvance_set_whenDone.call( this, event );
 
     if ( this.bLogEventToConsole )
-      console.log( `( ${this.url} ) HttpFetcher: abort: `
+      console.warn( `( ${this.url} ) HttpFetcher: abort: `
         + `${HttpFetcher.ProgressEvent_toString( event )}, `
         + `progressToAdvance=${this.progressToAdvance.valuePercentage}%` );
 
@@ -336,7 +384,7 @@ class HttpFetcher {
     HttpFetcher.progressToAdvance_set_whenDone.call( this, event );
 
     if ( this.bLogEventToConsole )
-      console.log( `( ${this.url} ) HttpFetcher: error: `
+      console.warn( `( ${this.url} ) HttpFetcher: error: `
         + `${HttpFetcher.ProgressEvent_toString( event )}, `
         + `progressToAdvance=${this.progressToAdvance.valuePercentage}%` );
 
@@ -358,14 +406,18 @@ class HttpFetcher {
 
     let xhr = this.xhr;
 
+    let logMsg;
     if ( this.bLogEventToConsole )
-      console.log( `( ${this.url} ) HttpFetcher: load: `
+      logMsg = `( ${this.url} ) HttpFetcher: load: `
         + `${HttpFetcher.ProgressEvent_toString( event )}, `
         + `status=${xhr.status}, statusText=\"${xhr.statusText}\", `
-        + `progressToAdvance=${this.progressToAdvance.valuePercentage}%` );
+        + `progressToAdvance=${this.progressToAdvance.valuePercentage}%`;
 
     if ( xhr.status === 200 ) {
       // Load completely and successfully.
+      if ( this.bLogEventToConsole )
+        console.log( logMsg );
+
       resolve( this.progressRoot );
 
       // No longer listen on non-repeatable succeeded event.
@@ -373,6 +425,9 @@ class HttpFetcher {
 
     } else {
       // Load completely but failed (e.g. ( status == 400 ) or ( status == 500 ) ).
+      if ( this.bLogEventToConsole )
+        console.warn( logMsg );
+
       reject( event );
 
       // Note: The non-repeatable failure event should still be listened on
@@ -442,7 +497,7 @@ class HttpFetcher {
     HttpFetcher.progressToAdvance_set_whenDone.call( this, event );
 
     if ( this.bLogEventToConsole )
-      console.log( `( ${this.url} ) HttpFetcher: timeout: `
+      console.warn( `( ${this.url} ) HttpFetcher: timeout: `
         + `${HttpFetcher.ProgressEvent_toString( event )}, `
         + `progressToAdvance=${this.progressToAdvance.valuePercentage}%` );
 
