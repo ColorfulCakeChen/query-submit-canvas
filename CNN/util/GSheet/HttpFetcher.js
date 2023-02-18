@@ -10,24 +10,32 @@ import * as ValueMax from "../ValueMax.js";
  * @member {boolean} bLogEventToConsole
  *   If true, some debug messages will be logged to console.
  *
- * @member {number} contentLoaded
- *   The loaded length of content (i.e. ProgressEvent.loaded).
+ * @member {string} url
+ *   A string representing the URL to send the request to.
  *
- * @member {number} contentTotal
- *   The total length of content (i.e. ProgressEvent.total). If
- * ( ProgressEvent.lengthComputable == false ), it will be zero.
- * 
+ * @member {number} loadingMillisecondsMax
+ *   The maximum time (in milliseconds) a request can take before automatically
+ * being terminated. Default is 0, which means there is no timeout.
+ *
+ *   - If zero, the progressToAdvance will be advanced by ProgressEvent(
+ *       .type = "progress" ).
+ *     - This is good if ( .lengthComputable == true ) and network smooth.
+ *     - This is bad if ( .lengthComputable == false ) (i.e. progress can not
+ *         be calculated by .loaded / .total) or network congested (i.e.
+ *         there will be a long pending (no responded in UI)).
+ *
+ *   - If not zero, the progressToAdvance will be advanced by a timer.
+ *       Although this is a kind of fake progress, it provides better user
+ *       experience because progress bar is still advancing even if network
+ *       congested or server busy.
+ *
  * @member {number} loadingMillisecondsInterval = ( 30 * 1000 ),
     // Note: Too small delayMilliseconds may not look good because the progress
     //       bar may advance too little to be aware.
  *
- * @member {number} loadingMillisecondsMax
- *   The maximum time (in milliseconds) of loading. It is only used if
- * ( timeoutMilliseconds > 0 ).
- *
  * @member {number} loadingMillisecondsCur
  *   The current time (in milliseconds) of loading. It is only used if
- * ( timeoutMilliseconds > 0 ).
+ * ( loadingMillisecondsMax > 0 ).
  *
  * @member {number} retryTimesMax
  *   Retry request so many times at most when request failed (no matter what
@@ -52,6 +60,24 @@ import * as ValueMax from "../ValueMax.js";
  *   The current time (in milliseconds) of waiting for retry. It is only used
  * if ( retryTimesMax > 0 ).
  *
+ * @member {string} responseType
+ *   A string specifying what type of data the response contains. It could be
+ * "", "arraybuffer", "blob", "document", "json", "text". Default is "text".
+ *
+ * @member {string} method
+ *   The HTTP request method to use, e.g. "GET", "POST". Default is "GET".
+ *
+ * @member {object} body
+ *   The data to be sent in the XHR request. It could be null. Usually, it is
+ * not null only if method is not "GET".
+ *
+ * @member {number} contentLoaded
+ *   The loaded length of content (i.e. ProgressEvent.loaded).
+ *
+ * @member {number} contentTotal
+ *   The total length of content (i.e. ProgressEvent.total). If
+ * ( ProgressEvent.lengthComputable == false ), it will be zero.
+ * 
  */
 class HttpFetcher {
 
@@ -70,35 +96,6 @@ class HttpFetcher {
    *   Some new progressToAdvance will be created and added to progressParent. The
    * created progressToAdvance will be increased when every time advanced. The
    * progressParent.root_get() will be returned when every time yield.
-   *
-   * @param {string} url
-   *   A string representing the URL to send the request to.
-   *
-   * @param {object} body
-   *   A body of data to be sent in the XHR request. It could be null.
-   *
-   * @param {number} timeoutMilliseconds
-   *   The time (in milliseconds) a request can take before automatically being
-   * terminated. Default is 0, which means there is no timeout.
-   *
-   *   - If zero, the progressToAdvance will be advanced by ProgressEvent(
-   *       .type = "progress" ).
-   *     - This is good if ( .lengthComputable == true ) and network smooth.
-   *     - This is bad if ( .lengthComputable == false ) (i.e. progress can not
-   *         be calculated by .loaded / .total) or network congested (i.e.
-   *         there will be a long pending (no responded in UI)).
-   *
-   *   - If not zero, the progressToAdvance will be advanced by a timer.
-   *       Although this is a kind of fake progress, it provides better user
-   *       experience because progress bar is still advancing even if network
-   *       congested or server busy.
-   *
-   * @param {string} method
-   *   The HTTP request method to use, e.g. "GET", "POST". Default is "GET".
-   *
-   * @param {string} responseType
-   *   A string specifying what type of data the response contains. It could be
-   * "", "arraybuffer", "blob", "document", "json", "text". Default is "text".
    *
    * @return {AsyncGenerator}
    *   Return an async generator for receving result from XMLHttpRequest.
@@ -121,41 +118,51 @@ class HttpFetcher {
    */
   async* asyncGenerator_by_url_body_timeout_method_responseType(
     progressParent,
-    url, body,
-    timeoutMilliseconds = 0,
+    url,
 
 //!!! ...unfinished... (2023/02/18)
+    loadingMillisecondsMax = 0,
     loadingMillisecondsInterval = ( 20 * 1000 ),
 
     retryTimesMax = 0,
     retryWaitingExponentMax = 6,
 
+    responseType = HttpFetcher.responseTypeDefault,
     method = HttpFetcher.methodDefault,
-    responseType = HttpFetcher.responseTypeDefault ) {
+    body,
+  ) {
 
 //!!! ...unfinished... (2023/02/18)
-    this.contentLoaded;
-    this.contentTotal;
+    //
+    this.url = url;
 
+    this.loadingMillisecondsMax = loadingMillisecondsMax;
     this.loadingMillisecondsInterval;
     this.loadingMillisecondsCur;
-    this.loadingMillisecondsMax;
 
     this.retryTimesMax = ( retryTimesMax >= 0 ) ? retryTimesMax : 0;
     this.retryTimesCur = 0;
     this.retryWaitingExponentMax = retryWaitingExponentMax;
-    this.retryWaitingMillisecondsCur;
     this.retryWaitingMillisecondsMax;
+    this.retryWaitingMillisecondsCur;
+
+    this.responseType = responseType;
+    this.method = method;
+    this.body = body;
+
+    this.contentLoaded;
+    this.contentTotal;
 
     // 0.
+
     let progressToAdvance_max_default;
 
 //!!! ...unfinished... (2023/02/16)
-    // 0.1 If ( timeoutMilliseconds > 0 ), use timer to advance progressToAdvance.
-    this.bAdvanceProgressByTimer = ( timeoutMilliseconds > 0 );
+    // 0.1 If ( loadingMillisecondsMax > 0 ), use timer to advance progressToAdvance.
+    this.bAdvanceProgressByTimer = ( loadingMillisecondsMax > 0 );
 
     if ( this.bAdvanceProgressByTimer ) { // Use timeout time as progress target.
-      progressToAdvance_max_default = timeoutMilliseconds;
+      progressToAdvance_max_default = loadingMillisecondsMax;
     } else { // Use total content length (perhaps unknown) as progress target.
       progressToAdvance_max_default = HttpFetcher.progressTotalFakeLarger;
     }
@@ -172,13 +179,10 @@ class HttpFetcher {
       ValueMax.Percentage.Concrete.Pool.get_or_create_by(
         progressToAdvance_max_default ) );
 
-    // 0.3
-    this.url = url;
-
     // 1.
     const xhr = this.xhr = new XMLHttpRequest();
     xhr.open( method, url, true );
-    xhr.timeout = timeoutMilliseconds;
+    xhr.timeout = loadingMillisecondsMax;
     xhr.responseType = responseType;
 
     // 2. Prepare promises before sending it.
