@@ -7,8 +7,50 @@ import * as ValueMax from "../ValueMax.js";
  * Wrap XMLHttpRequest as an async generator.
  *
  *
- * @param {boolean} bLogEventToConsole
+ * @member {boolean} bLogEventToConsole
  *   If true, some debug messages will be logged to console.
+ *
+ * @member {number} contentLoaded
+ *   The loaded length of content (i.e. ProgressEvent.loaded).
+ *
+ * @member {number} contentTotal
+ *   The total length of content (i.e. ProgressEvent.total). If
+ * ( ProgressEvent.lengthComputable == false ), it will be zero.
+ * 
+ * @member {number} loadingMillisecondsInterval = ( 30 * 1000 ),
+    // Note: Too small delayMilliseconds may not look good because the progress
+    //       bar may advance too little to be aware.
+ *
+ * @member {number} loadingMillisecondsMax
+ *   The maximum time (in milliseconds) of loading. It is only used if
+ * ( timeoutMilliseconds > 0 ).
+ *
+ * @member {number} loadingMillisecondsCur
+ *   The current time (in milliseconds) of loading. It is only used if
+ * ( timeoutMilliseconds > 0 ).
+ *
+ * @member {number} retryTimesMax
+ *   Retry request so many times at most when request failed (no matter what
+ * reason).
+ *   - If not positive value, there will be no re-try (i.e. failed immediately once
+ *       not success).
+ *   - If positive value, there will be some waiting time before next re-try (i.e.
+ *       truncated binary exponential backoff algorithm).
+ *
+ * @member {number} retryTimesCur
+ *   How many times has been retried.
+ *
+ * @member {number} retryWaitingExponentMax
+ *   The maximum exponent (for two's power; i.e. the B of ( 2 ** B ) ) of waiting
+ * time for retry. It is only used if ( retryTimesMax > 0 ).
+ *
+ * @member {number} retryWaitingMillisecondsMax
+ *   The maximum time (in milliseconds) of waiting for retry. It is only used
+ * if ( retryTimesMax > 0 ). It is calculated from retryWaitingExponentMax.
+ *
+ * @member {number} retryWaitingMillisecondsCur
+ *   The current time (in milliseconds) of waiting for retry. It is only used
+ * if ( retryTimesMax > 0 ).
  *
  */
 class HttpFetcher {
@@ -81,8 +123,29 @@ class HttpFetcher {
     progressParent,
     url, body,
     timeoutMilliseconds = 0,
+
+//!!! ...unfinished... (2023/02/18)
+    loadingMillisecondsInterval = ( 20 * 1000 ),
+
+    retryTimesMax = 0,
+    retryWaitingExponentMax = 6,
+
     method = HttpFetcher.methodDefault,
     responseType = HttpFetcher.responseTypeDefault ) {
+
+//!!! ...unfinished... (2023/02/18)
+    this.contentLoaded;
+    this.contentTotal;
+
+    this.loadingMillisecondsInterval;
+    this.loadingMillisecondsCur;
+    this.loadingMillisecondsMax;
+
+    this.retryTimesMax = ( retryTimesMax >= 0 ) ? retryTimesMax : 0;
+    this.retryTimesCur = 0;
+    this.retryWaitingExponentMax = retryWaitingExponentMax;
+    this.retryWaitingMillisecondsCur;
+    this.retryWaitingMillisecondsMax;
 
     // 0.
     let progressToAdvance_max_default;
@@ -258,7 +321,7 @@ class HttpFetcher {
   static progressTimerPromise_create_and_set() {
     // Note: Too small delayMilliseconds may not look good because the progress
     //       bar may advance too little to be aware.
-    const delayMilliseconds = 30 * 1000; //5000;
+    const delayMilliseconds = this.loadingMillisecondsInterval; //30 * 1000; //5000;
     const deltaValue = delayMilliseconds;
 
     this.progressTimerPromise = PartTime.Promise_create_by_setTimeout(
