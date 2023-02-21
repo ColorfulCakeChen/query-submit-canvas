@@ -267,7 +267,6 @@ class HttpFetcher {
 
   /** Abort the loading (or waiting). */
   abort() {
-
     {
       if ( this.xhr )
         this.xhr.abort();
@@ -282,18 +281,6 @@ class HttpFetcher {
       this.progressRetryWaiting.value_max_set( 0 );
       this.progressRetryWaiting.value_set( 0 );
     }
-  
-//!!! ...unfinished... (2023/02/21)
-// If loading is abort (not error, not loading failed), should:
-//   - bDone = true;
-//   - this.retryWaitingTimer_cancel();
-//   - reject( ProgressEvent( .type == "abort" ) )
-//
-
-    // {
-    //   throw Error( `( ${this.url} ) HttpFetcher.abort(): `
-    //     + `Unknown state when abort() is called.` );
-    // }
   }
 
 
@@ -303,27 +290,36 @@ class HttpFetcher {
       return false; // Never run out, since retry forever.
     if ( this.retryTimesCur < this.retryTimesMax )
       return false; // Still has retry times.
-    return true; // Run out of retry times.
+    return true; // Run out of retry times. (Include never retry.)
   }
 
   /** */
   retryWaitingMilliseconds_init() {
-    // Either (< 0) forever retry, or (> 0) limited-times retry.
-    if ( this.retryTimesMax != 0 ) {
+
+    // No need (or can not) retry.
+    if ( this.retryTimes_isRunOut() ) {
+      this.retryWaitingMillisecondsMax = 0; // i.e. always ( .valuePercentage == 100% )
+      this.retryWaitingMillisecondsCur = undefined;
+
+    // Still could retry.
+    } else {
       this.retryWaitingMillisecondsMax
         = 1000 * RandTools.getRandomInt_TruncatedBinaryExponent(
             this.retryTimesCur, this.retryWaitingMillisecondsExponentMax );
 
       this.retryWaitingMillisecondsCur = 0;
-
-    } else { // ( this.retryTimesMax == 0 ), never retry.
-      this.retryWaitingMillisecondsMax = 0;
-      this.retryWaitingMillisecondsCur = undefined;
     }
   }
 
-//!!! ...unfinished... (2023/02/21)
-// What about retry waiting timer?
+  /** Cancel current retryWaitingTimer (if exists). */
+  retryWaitingTimer_cancel() {
+    if ( this.retryWaitingTimerPromise ) {
+      this.retryWaitingTimerPromise.cancelTimer(); // Stop timer.
+      this.allPromiseSet.delete( this.retryWaitingTimerPromise ); // Stop listening.
+      this.retryWaitingTimerPromise = null;
+    }
+  }
+
 
   /**
    * @return {boolean}
@@ -342,34 +338,6 @@ class HttpFetcher {
       this.loadingTimerPromise.cancelTimer(); // Stop timer.
       this.allPromiseSet.delete( this.loadingTimerPromise ); // Stop listening.
       this.loadingTimerPromise = null;
-    }
-  }
-
-  /** Cancel current retryWaitingTimer (if exists). */
-  retryWaitingTimer_cancel() {
-    if ( this.retryWaitingTimerPromise ) {
-      this.retryWaitingTimerPromise.cancelTimer(); // Stop timer.
-      this.allPromiseSet.delete( this.retryWaitingTimerPromise ); // Stop listening.
-      this.retryWaitingTimerPromise = null;
-    }
-  }
-
-
-  /**
-   * @return {number} Return what the progressLoading.value should be.
-   */
-  progressLoading_value_calculate() {
-
-//!!! ...unfinished... (2023/02/21)
-  }
-
-  /**
-   * @return {number} Return what the progressLoading.max should be.
-   */
-  progressLoading_max_calculate() {
-//!!! ...unfinished... (2023/02/21)
-    if ( this.loadingTimer_isUsed ) { // Use timeout time as progress target.
-      progressLoading_max_default = loadingMillisecondsMax;
     }
   }
 
