@@ -178,6 +178,10 @@ class HttpFetcher {
     this.progressRetryWaiting = progressParent.child_add(
       ValueMax.Percentage.Concrete.Pool.get_or_create_by( arbitraryNonZero ) );
 
+    // 0.4
+    this.bAbort = false;
+
+    //
     let bRetry;
     let responseText;
     do {
@@ -234,16 +238,8 @@ class HttpFetcher {
 
         // 3. Throw exception if not retry.
         if ( !bRetry ) {
-
-//!!! ...unfinished... (2023/02/21)
-// If loading is abort (not error, not loading failed), should:
-//   - this.retryWaitingTimer_cancel();
-//   - reject( ProgressEvent( .type == "abort" ) )
-//
-
           // Since no retry, the retry waiting timer should be completed to 100%
           HttpFetcher.progressRetryWaiting_set_whenDone.call( this );
-
           console.error( e );
           throw e;
         }
@@ -252,13 +248,9 @@ class HttpFetcher {
       // 4. Waiting before retry (for truncated exponential backoff algorithm).
       if ( bRetry ) {
         yield* HttpFetcher.asyncGenerator_by_retryWaiting.call( this );
-
-//!!! ...unfinished... (2023/02/21)
-// If user abort, should set bRetry to false.
-
       }
 
-    } while ( bRetry );
+    } while ( bRetry && ( this.bAbort == false ) );
 
     // 5. Return the successfully downloaded result.
     return responseText;
@@ -267,6 +259,8 @@ class HttpFetcher {
 
   /** Abort the loading (or waiting). */
   abort() {
+    this.bAbort = true;
+
     {
       if ( this.xhr )
         this.xhr.abort();
