@@ -240,6 +240,46 @@ class HttpFetcher {
     return true; // Run out of retry times.
   }
 
+//!!! ...unfinished... (2023/02/21)
+// What about retry waiting timer?
+
+  /**
+   * @return {boolean}
+   *   Return true, if ( loadingMillisecondsMax > 0 ), which means using timer to
+   * advance progressToAdvance.
+   */
+  get progressTimer_isUsed() {
+    if ( loadingMillisecondsMax > 0 )
+      return true;
+    return false;
+  }
+
+  /** Cancel current progressTimer (if exists). */
+  progressTimer_cancel() {
+    if ( this.progressTimerPromise ) {
+      this.progressTimerPromise.cancelTimer(); // Stop timer.
+      this.allPromiseSet.delete( this.progressTimerPromise ); // Stop listening.
+    }
+  }
+
+
+  /**
+   * @return {number} Return what the progressToAdvance.value should be.
+   */
+  progressToAdvance_value_calculate() {
+
+//!!! ...unfinished... (2023/02/21)
+  }
+
+  /**
+   * @return {number} Return what the progressToAdvance.max should be.
+   */
+  progressToAdvance_max_calculate() {
+//!!! ...unfinished... (2023/02/21)
+    if ( this.progressTimer_isUsed ) { // Use timeout time as progress target.
+      progressToAdvance_max_default = loadingMillisecondsMax;
+    }
+  }
 
   /**
    * An async generator for sending a http request and tracking its progress
@@ -305,10 +345,7 @@ class HttpFetcher {
     // 0.2
     let progressToAdvance_max_default;
 
-    // If ( loadingMillisecondsMax > 0 ), use timer to advance progressToAdvance.
-    this.bAdvanceProgressByTimer = ( loadingMillisecondsMax > 0 );
-
-    if ( this.bAdvanceProgressByTimer ) { // Use timeout time as progress target.
+    if ( this.progressTimer_isUsed ) { // Use timeout time as progress target.
       progressToAdvance_max_default = loadingMillisecondsMax;
       this.loadingMillisecondsCur = 0;
     } else { // Use total content length (perhaps unknown) as progress target.
@@ -350,7 +387,7 @@ class HttpFetcher {
     this.timeoutPromise = PartTime.Promise_create_by_addEventListener_once(
       xhr, "timeout", HttpFetcher.handle_timeout, this );
 
-    if ( this.bAdvanceProgressByTimer ) {
+    if ( this.progressTimer_isUsed ) {
       HttpFetcher.progressTimerPromise_create_and_set.call( this );
     }
 
@@ -421,15 +458,6 @@ class HttpFetcher {
 
     // 5. Return the successfully downloaded result.
     return xhr.response;
-  }
-
-
-  /** Cancel current progressTimer (if exists). */
-  progressTimer_cancel() {
-    if ( this.progressTimerPromise ) {
-      this.progressTimerPromise.cancelTimer(); // Stop timer.
-      this.allPromiseSet.delete( this.progressTimerPromise ); // Stop listening.
-    }
   }
 
 
@@ -536,7 +564,7 @@ class HttpFetcher {
   static handle_loadstart( resolve, reject, event ) {
 
     // Advance progress only if progressTimer NOT used.
-    if ( !this.bAdvanceProgressByTimer ) {
+    if ( !this.progressTimer_isUsed ) {
       HttpFetcher.progressToAdvance_set_beforeDone.call( this, event );
     }
 
@@ -557,7 +585,7 @@ class HttpFetcher {
   static handle_progress( resolve, reject, event ) {
 
     // Advance progress only if progressTimer NOT used.
-    if ( !this.bAdvanceProgressByTimer ) {
+    if ( !this.progressTimer_isUsed ) {
       HttpFetcher.progressToAdvance_set_beforeDone.call( this, event );
     }
 
@@ -609,7 +637,7 @@ class HttpFetcher {
     this.loadingMillisecondsCur += deltaValue;
 
     // Advance progress only if progressTimer used.
-    if ( this.bAdvanceProgressByTimer ) {
+    if ( this.progressTimer_isUsed ) {
       // this.progressToAdvance.value_advance( deltaValue );
       this.progressToAdvance.value_set( this.loadingMillisecondsCur );
     }
