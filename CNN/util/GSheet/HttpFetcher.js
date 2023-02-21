@@ -166,13 +166,12 @@ class HttpFetcher {
     this.progressRetryWaiting = progressParent.child_add(
       ValueMax.Percentage.Concrete.Pool.get_or_create_by( arbitraryNonZero ) );
 
-    // 1.
     let bRetry;
     let responseText;
     do {
       this.retryWaitingMilliseconds_init();
 
-      // 1.1
+      // 1.
       try {
         responseText = yield* HttpFetcher
           .asyncGenerator_by_url_timeout_responseType_method_body.call(
@@ -190,8 +189,13 @@ class HttpFetcher {
         // No need to retry, since request is succeeded (when executed to here).
         bRetry = false;
 
-      // 1.2 Determine whether should retry.
+      // 2. Determine whether should retry.
       } catch( e ) {
+
+        if ( e instanceof ProgressEvent ) {
+
+          // 2.1 
+          if ( e.type === "abort" ) {
 
 //!!! ...unfinished... (2023/02/21)
 // If loading is abort (not error, not loading failed), should:
@@ -199,29 +203,38 @@ class HttpFetcher {
 //   - reject( ProgressEvent( .type == "abort" ) )
 //
 
-        // 1.2.1 Retry only if recognized exception and still has retry times.
-        if (   ( e instanceof ProgressEvent )
-            && (   ( e.type === "abort" )
-                || ( e.type === "error" )
-                || ( e.type === "load" ) // ( status != 200 ) (e.g. 404 or 500)
-                || ( e.type === "timeout" ) )
-           ) { 
-          let bRetryTimesRunOut = this.retryTimes_isRunOut();
-          if ( bRetryTimesRunOut ) {
-            bRetry = false; // 3.1.1 Can not retry, because run out of retry times.
+          // 2.2 Retry only if recognized exception and still has retry times.
+          } else if (   ( e.type === "error" )
+                     || ( e.type === "load" ) // ( status != 200 ) (e.g. 404 or 500)
+                     || ( e.type === "timeout" ) ) { 
+
+            let bRetryTimesRunOut = this.retryTimes_isRunOut();
+            if ( bRetryTimesRunOut ) {
+              bRetry = false; // 3.1.1 Can not retry, because run out of retry times.
+
+  //!!! ...unfinished... (2023/02/21)
+  // should complete the retry waiting timer to 100%
+
+              console.error( e );
+              throw e;
+
+            // 2.3
+            } else {
+              bRetry = true; // 3.1.2 Retry one more time.
+              ++this.retryTimesCur;
+            }
+
+          } else { // 2.4 Unknown ProgressEvent. (Never retry for unknown error.)
+            bRetry = false;
 
 //!!! ...unfinished... (2023/02/21)
 // should complete the retry waiting timer to 100%
 
             console.error( e );
             throw e;
-
-          } else {
-            bRetry = true; // 3.1.2 Retry one more time.
-            ++this.retryTimesCur;
           }
 
-        } else { // 1.2.2 Unknown error. (Never retry for unknown error.)
+        } else { // 2.5 Unknown error. (Never retry for unknown error.)
           bRetry = false;
 
 //!!! ...unfinished... (2023/02/21)
