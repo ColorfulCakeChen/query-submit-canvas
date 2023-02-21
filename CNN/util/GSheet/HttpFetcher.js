@@ -145,12 +145,6 @@ class HttpFetcher {
     this.progressParent = progressParent;
     this.progressRoot = progressParent.root_get();
 
-    this.url = url;
-
-    this.loadingMillisecondsMax = loadingMillisecondsMax;
-    this.loadingMillisecondsInterval = loadingMillisecondsInterval;
-    this.loadingMillisecondsCur = undefined;
-
     this.retryTimesMax = retryTimesMax;
     this.retryTimesCur = 0;
     this.retryWaitingMillisecondsExponentMax = retryWaitingMillisecondsExponentMax;
@@ -158,18 +152,10 @@ class HttpFetcher {
     this.retryWaitingMillisecondsCur = undefined;
 
 //!!! ...unfinished... (2023/02/18)
-// some init should be put into retry loop.
 
     // this.retryWaitingMillisecondsMax
     //   = RandTools.getRandomInt_TruncatedBinaryExponent(
     //     this.retryTimesCur, this.retryWaitingMillisecondsExponentMax );
-
-    this.responseType = responseType;
-    this.method = method;
-    this.body = body;
-
-    this.contentLoaded = undefined;
-    this.contentTotal = undefined;
 
 //!!! ...unfinished... (2023/02/18)
     //
@@ -439,7 +425,6 @@ class HttpFetcher {
   }
 
 
-  
   /**
    * @param {HttpFetcher} this
    */
