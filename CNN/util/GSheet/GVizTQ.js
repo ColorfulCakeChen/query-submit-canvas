@@ -200,7 +200,7 @@ class GVizTQ_UrlComposer extends Recyclable.Root {
       {
         let httpFetcher = new HttpFetcher( this.bLogFetcherEventToConsole );
         let httpResulter = httpFetcher
-          .asyncGenerator_by_url_timeout_retry_responseType_method_body(
+          .asyncGenerator_by_progressParent_url_timeout_retry_responseType_method_body(
             progressFetcher, url, timeoutMilliseconds );
 
         try {
