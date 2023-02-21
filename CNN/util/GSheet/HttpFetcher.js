@@ -257,17 +257,25 @@ class HttpFetcher {
    *   Return true, if ( loadingMillisecondsMax > 0 ), which means using timer to
    * advance progressToAdvance.
    */
-  get progressTimer_isUsed() {
+  get loadingTimer_isUsed() {
     if ( loadingMillisecondsMax > 0 )
       return true;
     return false;
   }
 
-  /** Cancel current progressTimer (if exists). */
-  progressTimer_cancel() {
-    if ( this.progressTimerPromise ) {
-      this.progressTimerPromise.cancelTimer(); // Stop timer.
-      this.allPromiseSet.delete( this.progressTimerPromise ); // Stop listening.
+  /** Cancel current loadingTimer (if exists). */
+  loadingTimer_cancel() {
+    if ( this.loadingTimerPromise ) {
+      this.loadingTimerPromise.cancelTimer(); // Stop timer.
+      this.allPromiseSet.delete( this.loadingTimerPromise ); // Stop listening.
+    }
+  }
+
+  /** Cancel current retryWaitingTimer (if exists). */
+  retryWaitingTimer_cancel() {
+    if ( this.retryWaitingTimerPromise ) {
+      this.retryWaitingTimerPromise.cancelTimer(); // Stop timer.
+      this.allPromiseSet.delete( this.retryWaitingTimerPromise ); // Stop listening.
     }
   }
 
@@ -285,7 +293,7 @@ class HttpFetcher {
    */
   progressToAdvance_max_calculate() {
 //!!! ...unfinished... (2023/02/21)
-    if ( this.progressTimer_isUsed ) { // Use timeout time as progress target.
+    if ( this.loadingTimer_isUsed ) { // Use timeout time as progress target.
       progressToAdvance_max_default = loadingMillisecondsMax;
     }
   }
@@ -351,10 +359,12 @@ class HttpFetcher {
     this.body = body;
 
 //!!! ...unfinished... (2023/02/21)
+// What about retry waiting timer?
+
     // 0.2
     let progressToAdvance_max_default;
 
-    if ( this.progressTimer_isUsed ) { // Use timeout time as progress target.
+    if ( this.loadingTimer_isUsed ) { // Use timeout time as progress target.
       progressToAdvance_max_default = loadingMillisecondsMax;
       this.loadingMillisecondsCur = 0;
     } else { // Use total content length (perhaps unknown) as progress target.
@@ -396,9 +406,11 @@ class HttpFetcher {
     this.timeoutPromise = PartTime.Promise_create_by_addEventListener_once(
       xhr, "timeout", HttpFetcher.handle_timeout, this );
 
-    if ( this.progressTimer_isUsed ) {
-      HttpFetcher.progressTimerPromise_create_and_set.call( this );
+    if ( this.loadingTimer_isUsed ) {
+      HttpFetcher.loadingTimerPromise_create_and_set.call( this );
     }
+
+//!!! ...unfinished... (2023/02/21) retryWaitingTimePromise?
 
     // All promises to be listened.
     {
@@ -409,8 +421,8 @@ class HttpFetcher {
         this.timeoutPromise
       ] );
 
-      if ( this.progressTimerPromise )
-        this.allPromiseSet.add( this.progressTimerPromise );
+      if ( this.loadingTimerPromise )
+        this.allPromiseSet.add( this.loadingTimerPromise );
     }
 
     // 2.3
@@ -473,14 +485,23 @@ class HttpFetcher {
   /**
    * @param {HttpFetcher} this
    */
-  static progressTimerPromise_create_and_set() {
-    // Note: Too small delayMilliseconds may not look good because the progress
-    //       bar may advance too little to be aware.
-    const delayMilliseconds = this.loadingMillisecondsInterval; //30 * 1000; //5000;
+  static loadingTimerPromise_create_and_set() {
+    const delayMilliseconds = this.loadingMillisecondsInterval;
     const deltaValue = delayMilliseconds;
 
-    this.progressTimerPromise = PartTime.Promise_create_by_setTimeout(
-      delayMilliseconds, HttpFetcher.handle_progressTimer, this, deltaValue );
+    this.loadingTimerPromise = PartTime.Promise_create_by_setTimeout(
+      delayMilliseconds, HttpFetcher.handle_loadingTimer, this, deltaValue );
+  }
+
+  /**
+   * @param {HttpFetcher} this
+   */
+  static retryWaitingTimerPromise_create_and_set() {
+    const delayMilliseconds = this.retryWaitingMillisecondsMax;
+    const deltaValue = delayMilliseconds;
+
+    this.retryWaitingTimerPromise = PartTime.Promise_create_by_setTimeout(
+      delayMilliseconds, HttpFetcher.handle_retryWaitingTimer, this, deltaValue );
   }
 
 
@@ -488,7 +509,10 @@ class HttpFetcher {
    * @param {HttpFetcher} this
    */
   static handle_abort( resolve, reject, event ) {
-    this.progressTimer_cancel(); // Stop listen progress timer (since completed).
+    this.loadingTimer_cancel(); // Stop listen progress timer (since completed).
+
+//!!! ...unfinished... (2023/02/21)
+//    this.retryWaitingTimer_cancel();
 
     // Advance progress to complete status (event if use timer).
     HttpFetcher.progressToAdvance_set_whenDone.call( this, event );
@@ -509,7 +533,11 @@ class HttpFetcher {
    * @param {HttpFetcher} this
    */
   static handle_error( resolve, reject, event ) {
-    this.progressTimer_cancel(); // Stop listen progress timer (since completed).
+    this.loadingTimer_cancel(); // Stop listen progress timer (since completed).
+
+//!!! ...unfinished... (2023/02/21)
+//    this.retryWaitingTimer_cancel();
+
 
     // Advance progress to complete status (event if use timer).
     HttpFetcher.progressToAdvance_set_whenDone.call( this, event );
@@ -530,7 +558,11 @@ class HttpFetcher {
    * @param {HttpFetcher} this
    */
   static handle_load( resolve, reject, event ) {
-    this.progressTimer_cancel(); // Stop listen progress timer (since completed).
+    this.loadingTimer_cancel(); // Stop listen progress timer (since completed).
+
+//!!! ...unfinished... (2023/02/21)
+//    this.retryWaitingTimer_cancel();
+
 
     // Advance progress to complete status (event if use timer).
     HttpFetcher.progressToAdvance_set_whenDone.call( this, event );
@@ -572,8 +604,8 @@ class HttpFetcher {
    */
   static handle_loadstart( resolve, reject, event ) {
 
-    // Advance progress only if progressTimer NOT used.
-    if ( !this.progressTimer_isUsed ) {
+    // Advance progress only if loadingTimer NOT used.
+    if ( !this.loadingTimer_isUsed ) {
       HttpFetcher.progressToAdvance_set_beforeDone.call( this, event );
     }
 
@@ -593,8 +625,8 @@ class HttpFetcher {
    */
   static handle_progress( resolve, reject, event ) {
 
-    // Advance progress only if progressTimer NOT used.
-    if ( !this.progressTimer_isUsed ) {
+    // Advance progress only if loadingTimer NOT used.
+    if ( !this.loadingTimer_isUsed ) {
       HttpFetcher.progressToAdvance_set_beforeDone.call( this, event );
     }
 
@@ -622,7 +654,11 @@ class HttpFetcher {
    * @param {HttpFetcher} this
    */
   static handle_timeout( resolve, reject, event ) {
-    this.progressTimer_cancel(); // Stop listen progress timer (since completed).
+    this.loadingTimer_cancel(); // Stop listen progress timer (since completed).
+
+//!!! ...unfinished... (2023/02/21)
+//    this.retryWaitingTimer_cancel();
+
 
     // Advance progress to complete status (event if use timer).
     HttpFetcher.progressToAdvance_set_whenDone.call( this, event );
@@ -642,31 +678,62 @@ class HttpFetcher {
   /**
    * @param {HttpFetcher} this
    */
-  static handle_progressTimer( resolve, reject, deltaValue ) {
+  static handle_loadingTimer( resolve, reject, deltaValue ) {
     this.loadingMillisecondsCur += deltaValue;
 
-    // Advance progress only if progressTimer used.
-    if ( this.progressTimer_isUsed ) {
+    // Advance progress only if loadingTimer used.
+    if ( this.loadingTimer_isUsed ) {
       // this.progressToAdvance.value_advance( deltaValue );
       this.progressToAdvance.value_set( this.loadingMillisecondsCur );
     }
 
     if ( this.bLogEventToConsole )
-      console.log( `( ${this.url} ) HttpFetcher: progressTimer: `
+      console.log( `( ${this.url} ) HttpFetcher: loadingTimer: `
         + `loadingMillisecondsCur=${this.loadingMillisecondsCur}, `
         + `progressToAdvance=${this.progressToAdvance.valuePercentage}%` );
 
     resolve( this.progressRoot );
 
     // Re-listen on repeatable succeeded event.
+    //
+    // Because loadingTimer event could happen many times, re-generate
+    // a new promise for listening on it.
     {
-      this.allPromiseSet.delete( this.progressTimerPromise );
+      this.allPromiseSet.delete( this.loadingTimerPromise );
+      HttpFetcher.loadingTimerPromise_create_and_set.call( this );
+      this.allPromiseSet.add( this.loadingTimerPromise );
+    }
+  }
 
-      // Because progressTimer event could happen many times, re-generate
-      // a new promise for listening on it.
-      HttpFetcher.progressTimerPromise_create_and_set.call( this );
+  /**
+   * @param {HttpFetcher} this
+   */
+  static handle_retryWaitingTimer( resolve, reject, deltaValue ) {
+    this.retryWaitingMillisecondsCur += deltaValue;
 
-      this.allPromiseSet.add( this.progressTimerPromise );
+//!!! ...unfinished... (2023/02/21)
+!!!
+    // Advance progress only if loadingTimer used.
+    if ( this.loadingTimer_isUsed ) {
+      // this.progressToAdvance.value_advance( deltaValue );
+      this.progressToAdvance.value_set( this.loadingMillisecondsCur );
+    }
+
+    if ( this.bLogEventToConsole )
+      console.log( `( ${this.url} ) HttpFetcher: retryWaitingTimer: `
+        + `retryWaitingMillisecondsCur=${this.retryWaitingMillisecondsCur}, `
+        + `progressToAdvance=${this.progressToAdvance.valuePercentage}%` );
+
+    resolve( this.progressRoot );
+
+    // Re-listen on repeatable succeeded event.
+    //
+    // Because retryWaitingTimer event could happen many times, re-generate
+    // a new promise for listening on it.
+    {
+      this.allPromiseSet.delete( this.retryWaitingTimerPromise );
+      HttpFetcher.retryWaitingTimerPromise_create_and_set.call( this );
+      this.allPromiseSet.add( this.retryWaitingTimerPromise );
     }
   }
 
