@@ -194,14 +194,9 @@ class HttpFetcher {
 
         if ( e instanceof ProgressEvent ) {
 
-          // 2.1 Never retry
+          // 2.1 Never retry for user abort.
           if ( e.type === "abort" ) {
-
-//!!! ...unfinished... (2023/02/21)
-// If loading is abort (not error, not loading failed), should:
-//   - this.retryWaitingTimer_cancel();
-//   - reject( ProgressEvent( .type == "abort" ) )
-//
+            bRetry = false;
 
           // 2.2 Retry only if recognized exception and still has retry times.
           } else if (   ( e.type === "error" )
@@ -212,12 +207,6 @@ class HttpFetcher {
             if ( bRetryTimesRunOut ) {
               bRetry = false; // 2.2.1 Can not retry, because run out of retry times.
 
-  //!!! ...unfinished... (2023/02/21)
-  // should complete the retry waiting timer to 100%
-
-              console.error( e );
-              throw e;
-
             } else {
               bRetry = true; // 2.2.2 Retry one more time.
               ++this.retryTimesCur;
@@ -225,28 +214,30 @@ class HttpFetcher {
 
           } else { // 2.3 Unknown ProgressEvent. (Never retry for unknown error.)
             bRetry = false;
-
-//!!! ...unfinished... (2023/02/21)
-// should complete the retry waiting timer to 100%
-
-            console.error( e );
-            throw e;
           }
 
         } else { // 2.4 Unknown error. (Never retry for unknown error.)
           bRetry = false;
-
-//!!! ...unfinished... (2023/02/21)
-// should complete the retry waiting timer to 100%
-
-          console.error( e );
-          throw e;
         }
       }
 
       // 1.3 Waiting before retry (for truncated exponential backoff algorithm).
       if ( bRetry ) {
         yield* HttpFetcher.asyncGenerator_by_retryWaiting.call( this );
+
+      } else {
+
+//!!! ...unfinished... (2023/02/21)
+// If loading is abort (not error, not loading failed), should:
+//   - this.retryWaitingTimer_cancel();
+//   - reject( ProgressEvent( .type == "abort" ) )
+//
+
+        // Since no retry, the retry waiting timer should be completed to 100%
+        HttpFetcher.progressRetryWaiting_set_whenDone.call( this );
+
+        console.error( e );
+        throw e;
       }
 
     } while ( bRetry );
