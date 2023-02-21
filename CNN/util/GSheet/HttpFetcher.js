@@ -174,12 +174,11 @@ class HttpFetcher {
     this.progressToAdvance = progressParent.child_add(
       ValueMax.Percentage.Concrete.Pool.get_or_create_by( arbitraryNonZero ) );
 
-
-//!!! ...unfinished... (2023/02/21)
+    // 1.
     let bRetry;
     let responseText;
     do {
-      // 2.
+      // 1.1
       try {
         responseText = yield* HttpFetcher
           .asyncGenerator_by_progressToAdvnace_url_timeout_responseType_method_body
@@ -195,14 +194,13 @@ class HttpFetcher {
             body
           );
 
-//!!! ...unfinished... (2023/02/21)
         // No need to retry, since request is succeeded (when executed to here).
         bRetry = false;
 
-      // 3. Determine whether should retry.
+      // 1.2 Determine whether should retry.
       } catch( e ) {
 
-        // 3.1 Retry only if recognized exception and still has retry times.
+        // 1.2.1 Retry only if recognized exception and still has retry times.
         if (   ( e instanceof ProgressEvent )
             && (   ( e.type === "abort" )
                 || ( e.type === "error" )
@@ -220,7 +218,7 @@ class HttpFetcher {
             ++this.retryTimesCur;
           }
 
-        } else { // 3.2 Unknown error. (Never retry for unknown error.)
+        } else { // 1.2.2 Unknown error. (Never retry for unknown error.)
           bRetry = false;
           console.error( e );
           throw e;
@@ -229,7 +227,7 @@ class HttpFetcher {
 
     } while ( bRetry );
 
-    // 5. Return the successfully downloaded result.
+    // 2. Return the successfully downloaded result.
     return responseText;
   }
 
@@ -289,6 +287,8 @@ class HttpFetcher {
   ) {
 
     // 0.
+
+    // 0.1
     this.progressRoot = progressToAdvnace.root_get();
 
     this.url = url;
@@ -301,13 +301,11 @@ class HttpFetcher {
     this.method = method;
     this.body = body;
 
-//!!!
-//!!! ...unfinished... (2023/02/18)
-    //
+//!!! ...unfinished... (2023/02/21)
+    // 0.2
     let progressToAdvance_max_default;
 
-//!!! ...unfinished... (2023/02/16)
-    // 0.1 If ( loadingMillisecondsMax > 0 ), use timer to advance progressToAdvance.
+    // If ( loadingMillisecondsMax > 0 ), use timer to advance progressToAdvance.
     this.bAdvanceProgressByTimer = ( loadingMillisecondsMax > 0 );
 
     if ( this.bAdvanceProgressByTimer ) { // Use timeout time as progress target.
@@ -316,17 +314,10 @@ class HttpFetcher {
     } else { // Use total content length (perhaps unknown) as progress target.
       progressToAdvance_max_default = HttpFetcher.progressTotalFakeLarger;
     }
-
-    // 0.2
-    //
-    // Note: Although .progressToAdvance is recorded in this, it is not owned by
-    //       this HttpFetcher object. It should be destroyed by outside caller
-    //       (i.e. by progressParent).
-    //
+ 
     this.progressToAdvance.value_max_set( progressToAdvance_max_default );
 
-
-//!!! ...unfinished... (2023/02/21)
+    // 0.3
     this.contentLoaded = undefined;
     this.contentTotal = undefined;
 
@@ -652,6 +643,9 @@ class HttpFetcher {
    *   The ProgressEvent to be used to set .progressToAdvance.
    */
   static progressToAdvance_set_beforeDone( progressEvent ) {
+    this.contentLoaded = progressEvent.loaded;
+    this.contentTotal = progressEvent.total;
+
     if ( progressEvent.lengthComputable ) {
 
       // Because:
@@ -680,6 +674,8 @@ class HttpFetcher {
    *   The ProgressEvent to be used to set .progressToAdvance.
    */
   static progressToAdvance_set_whenDone( progressEvent ) {
+    this.contentLoaded = progressEvent.loaded;
+    this.contentTotal = progressEvent.total;
 
     // Because:
     //   - ValueMax.Percentage.Concrete will get ( .valuePercentage == 100 )
