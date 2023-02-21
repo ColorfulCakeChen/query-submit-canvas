@@ -140,7 +140,6 @@ class HttpFetcher {
     body
   ) {
 
-//!!! ...unfinished... (2023/02/18)
     // 0.
 
     // 0.1
@@ -151,16 +150,7 @@ class HttpFetcher {
     this.retryTimesMax = retryTimesMax;
     this.retryTimesCur = 0;
     this.retryWaitingMillisecondsExponentMax = retryWaitingMillisecondsExponentMax;
-    this.retryWaitingMillisecondsMax = undefined;
-    this.retryWaitingMillisecondsCur = undefined;
 
-//!!! ...unfinished... (2023/02/18)
-
-    // this.retryWaitingMillisecondsMax
-    //   = RandTools.getRandomInt_TruncatedBinaryExponent(
-    //     this.retryTimesCur, this.retryWaitingMillisecondsExponentMax );
-
-//!!! ...unfinished... (2023/02/21)
     // 0.3
     //
     // Note1: Although .progressToAdvance is recorded in this, it is not owned by
@@ -178,6 +168,8 @@ class HttpFetcher {
     let bRetry;
     let responseText;
     do {
+      this.retryWaitingMilliseconds_init();
+
       // 1.1
       try {
         responseText = yield* HttpFetcher
@@ -238,6 +230,23 @@ class HttpFetcher {
     if ( this.retryTimesCur < this.retryTimesMax )
       return false; // Still has retry times.
     return true; // Run out of retry times.
+  }
+
+//!!! ...unfinished... (2023/02/21)
+  /** */
+  retryWaitingMilliseconds_init() {
+    // Either (< 0) forever retry, or (> 0) limited-times retry.
+    if ( this.retryTimesMax != 0 ) {
+      this.retryWaitingMillisecondsMax
+        = 1000 * RandTools.getRandomInt_TruncatedBinaryExponent(
+            this.retryTimesCur, this.retryWaitingMillisecondsExponentMax );
+
+      this.retryWaitingMillisecondsCur = 0;
+
+    } else { // ( this.retryTimesMax == 0 ), never retry.
+      this.retryWaitingMillisecondsMax = 0;
+      this.retryWaitingMillisecondsCur = undefined;
+    }
   }
 
 //!!! ...unfinished... (2023/02/21)
