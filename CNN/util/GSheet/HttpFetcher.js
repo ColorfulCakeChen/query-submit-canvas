@@ -189,7 +189,8 @@ class HttpFetcher {
       // 2.
       try {
         responseText = yield* HttpFetcher
-          .asyncGenerator_by_progressToAdvnace_url_timeout_responseType_method_body(
+          .asyncGenerator_by_progressToAdvnace_url_timeout_responseType_method_body
+          .call(
             this.progressToAdvance,
             url,
 
