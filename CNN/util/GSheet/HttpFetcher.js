@@ -66,6 +66,13 @@ import * as ValueMax from "../ValueMax.js";
  * if ( retryTimesMax > 0 ). It is calculated from
  * retryWaitingMillisecondsExponentMax.
  *
+ * @member {number} retryWaitingMillisecondsInterval
+ *   The interval time (in milliseconds) for advancing the
+ * retryWaitingMillisecondsCur. Although smaller interval may provide smoother
+ * progress advancing, however, too small interval (relative to
+ * retryWaitingMillisecondsMax) may not look good because
+ * the progress bar may advance too little to be aware by eyes.
+ *
  * @member {number} retryWaitingMillisecondsCur
  *   The current time (in milliseconds) of waiting for retry. It is only used
  * if ( retryTimesMax > 0 ).
@@ -137,6 +144,7 @@ class HttpFetcher {
 
     retryTimesMax = 0,
     retryWaitingMillisecondsExponentMax = 6,
+    retryWaitingMillisecondsInterval = ( 1000 ),
 
     responseType = HttpFetcher.responseTypeDefault,
     method = HttpFetcher.methodDefault,
@@ -153,6 +161,7 @@ class HttpFetcher {
     this.retryTimesMax = retryTimesMax;
     this.retryTimesCur = 0;
     this.retryWaitingMillisecondsExponentMax = retryWaitingMillisecondsExponentMax;
+    this.retryWaitingMillisecondsInterval = retryWaitingMillisecondsInterval;
 
     // 0.3
     //
@@ -599,7 +608,7 @@ class HttpFetcher {
    * @param {HttpFetcher} this
    */
   static retryWaitingTimerPromise_create_and_set() {
-    const delayMilliseconds = this.retryWaitingMillisecondsMax;
+    const delayMilliseconds = this.retryWaitingMillisecondsInterval;
     const deltaValue = delayMilliseconds;
 
     this.retryWaitingTimerPromise = PartTime.Promise_create_by_setTimeout(
