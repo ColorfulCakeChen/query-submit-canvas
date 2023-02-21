@@ -312,6 +312,7 @@ class HttpFetcher {
 
     if ( this.bAdvanceProgressByTimer ) { // Use timeout time as progress target.
       progressToAdvance_max_default = loadingMillisecondsMax;
+      this.loadingMillisecondsCur = 0;
     } else { // Use total content length (perhaps unknown) as progress target.
       progressToAdvance_max_default = HttpFetcher.progressTotalFakeLarger;
     }
@@ -614,14 +615,17 @@ class HttpFetcher {
    * @param {HttpFetcher} this
    */
   static handle_progressTimer( resolve, reject, deltaValue ) {
+    this.loadingMillisecondsCur += deltaValue;
 
     // Advance progress only if progressTimer used.
     if ( this.bAdvanceProgressByTimer ) {
-      this.progressToAdvance.value_advance( deltaValue );
+      // this.progressToAdvance.value_advance( deltaValue );
+      this.progressToAdvance.value_set( this.loadingMillisecondsCur );
     }
 
     if ( this.bLogEventToConsole )
       console.log( `( ${this.url} ) HttpFetcher: progressTimer: `
+        + `loadingMillisecondsCur=${this.loadingMillisecondsCur}, `
         + `progressToAdvance=${this.progressToAdvance.valuePercentage}%` );
 
     resolve( this.progressRoot );
