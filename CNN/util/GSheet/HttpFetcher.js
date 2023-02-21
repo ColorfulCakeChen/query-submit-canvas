@@ -261,7 +261,7 @@ class HttpFetcher {
   }
 
 
-  /** */
+  /** Abort the loading (or waiting). */
   abort() {
 
     if ( ??? ) {
@@ -278,10 +278,9 @@ class HttpFetcher {
 //
 
     } else {
-
-
+      throw Error( `( ${this.url} ) HttpFetcher.abort(): `
+        + `Unknown state when abort() is called.` );
     }
-
   }
 
 
