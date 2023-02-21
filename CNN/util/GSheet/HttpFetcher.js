@@ -298,7 +298,8 @@ class HttpFetcher {
 
     // No need (or can not) retry.
     if ( this.retryTimes_isRunOut() ) {
-      this.retryWaitingMillisecondsMax = 0; // i.e. always ( .valuePercentage == 100% )
+      // So that always ( .progressRetryWaiting.valuePercentage == 100% )
+      this.retryWaitingMillisecondsMax = 0;
       this.retryWaitingMillisecondsCur = undefined;
 
     // Still could retry.
