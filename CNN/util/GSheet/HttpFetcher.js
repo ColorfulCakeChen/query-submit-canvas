@@ -221,10 +221,11 @@ class HttpFetcher {
         }
       }
 
-      // 1.3 Waiting before retry (for truncated exponential backoff algorithm).
+      // 3. Waiting before retry (for truncated exponential backoff algorithm).
       if ( bRetry ) {
         yield* HttpFetcher.asyncGenerator_by_retryWaiting.call( this );
 
+      // 4. Throw exception if not retry.
       } else {
 
 //!!! ...unfinished... (2023/02/21)
@@ -242,7 +243,7 @@ class HttpFetcher {
 
     } while ( bRetry );
 
-    // 2. Return the successfully downloaded result.
+    // 5. Return the successfully downloaded result.
     return responseText;
   }
 
