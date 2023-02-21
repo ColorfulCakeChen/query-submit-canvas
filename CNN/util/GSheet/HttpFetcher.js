@@ -194,7 +194,7 @@ class HttpFetcher {
 
         if ( e instanceof ProgressEvent ) {
 
-          // 2.1 
+          // 2.1 Never retry
           if ( e.type === "abort" ) {
 
 //!!! ...unfinished... (2023/02/21)
@@ -210,7 +210,7 @@ class HttpFetcher {
 
             let bRetryTimesRunOut = this.retryTimes_isRunOut();
             if ( bRetryTimesRunOut ) {
-              bRetry = false; // 3.1.1 Can not retry, because run out of retry times.
+              bRetry = false; // 2.2.1 Can not retry, because run out of retry times.
 
   //!!! ...unfinished... (2023/02/21)
   // should complete the retry waiting timer to 100%
@@ -218,13 +218,12 @@ class HttpFetcher {
               console.error( e );
               throw e;
 
-            // 2.3
             } else {
-              bRetry = true; // 3.1.2 Retry one more time.
+              bRetry = true; // 2.2.2 Retry one more time.
               ++this.retryTimesCur;
             }
 
-          } else { // 2.4 Unknown ProgressEvent. (Never retry for unknown error.)
+          } else { // 2.3 Unknown ProgressEvent. (Never retry for unknown error.)
             bRetry = false;
 
 //!!! ...unfinished... (2023/02/21)
@@ -234,7 +233,7 @@ class HttpFetcher {
             throw e;
           }
 
-        } else { // 2.5 Unknown error. (Never retry for unknown error.)
+        } else { // 2.4 Unknown error. (Never retry for unknown error.)
           bRetry = false;
 
 //!!! ...unfinished... (2023/02/21)
