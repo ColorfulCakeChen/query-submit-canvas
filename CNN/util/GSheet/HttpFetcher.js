@@ -170,6 +170,7 @@ class HttpFetcher {
     let bRetry;
     let responseText;
     do {
+      this.retryWaitingMilliseconds_init();
 
       // 1.1
       try {
@@ -507,6 +508,10 @@ class HttpFetcher {
    * asyncGenerator_by_progressParent_url_timeout_retry_responseType_method_body())
    *
    *
+   * @param {HttpFetcher} this
+   *   - this.retryWaitingMillisecondsMax
+   *   - this.retryWaitingMillisecondsCur
+   *
    * @param {ValueMax.Percentage.Concrete} progressToAdvance
    *   This progressToAdvance will be increased when every time advanced. The
    * progressToAdvance.root_get() will be returned when every time yield.
@@ -519,139 +524,40 @@ class HttpFetcher {
    *   Yield a promise resolves to { done: true,
    * value: progressToAdvance.root_get() }.
    */
-  static async*
-    asyncGenerator_by_progressToAdvnace_retryWaiting(
-      progressToAdvnace,
-    ) {
+  static async* asyncGenerator_by_progressToAdvnace_retryWaiting(
+    progressToAdvnace ) {
 
     // 0.
-
-    // 0.1
     this.progressRoot = progressToAdvnace.root_get();
+    this.progressToAdvance.value_max_set( this.retryWaitingMillisecondsMax );
 
-    this.retryWaitingMilliseconds_init();
-
-//!!! ...unfinished... (2023/02/21)
-// What about retry waiting timer?
-!!!
-    // 0.2
-    let progressToAdvance_max_default;
-
-    if ( this.loadingTimer_isUsed ) { // Use timeout time as progress target.
-      progressToAdvance_max_default = loadingMillisecondsMax;
-      this.loadingMillisecondsCur = 0;
-    } else { // Use total content length (perhaps unknown) as progress target.
-      progressToAdvance_max_default = HttpFetcher.progressTotalFakeLarger;
-    }
- 
-    this.progressToAdvance.value_max_set( progressToAdvance_max_default );
-
-    // 0.3
-    this.contentLoaded = undefined;
-    this.contentTotal = undefined;
-
-
-//!!! ...unfinished... (2023/02/21)
-    // 2.
-
-    // 2.1
-    const xhr = this.xhr = new XMLHttpRequest();
-    xhr.open( method, url, true );
-    xhr.timeout = loadingMillisecondsMax;
-    xhr.responseType = responseType;
-
-    // 2.2 Prepare promises before sending it.
-    this.abortPromise = PartTime.Promise_create_by_addEventListener_once(
-      xhr, "abort", HttpFetcher.handle_abort, this );
-
-    this.errorPromise = PartTime.Promise_create_by_addEventListener_once(
-      xhr, "error", HttpFetcher.handle_error, this );
-
-    this.loadPromise = PartTime.Promise_create_by_addEventListener_once(
-      xhr, "load", HttpFetcher.handle_load, this );
-
-    this.loadstartPromise = PartTime.Promise_create_by_addEventListener_once(
-      xhr, "loadstart", HttpFetcher.handle_loadstart, this );
-
-    this.progressPromise = PartTime.Promise_create_by_addEventListener_once(
-      xhr, "progress", HttpFetcher.handle_progress, this );
-
-    this.timeoutPromise = PartTime.Promise_create_by_addEventListener_once(
-      xhr, "timeout", HttpFetcher.handle_timeout, this );
-
-    if ( this.loadingTimer_isUsed ) {
-      HttpFetcher.loadingTimerPromise_create_and_set.call( this );
-    }
-
-//!!! ...unfinished... (2023/02/21) retryWaitingTimePromise?
+    // 1.
+    HttpFetcher.retryWaitingTimerPromise_create_and_set.call( this );
 
     // All promises to be listened.
     {
       this.allPromiseSet = new Set( [
-        this.abortPromise, this.errorPromise, this.loadPromise,
-        this.loadstartPromise,
-        this.progressPromise,
-        this.timeoutPromise
+        this.retryWaitingTimerPromise
       ] );
-
-      if ( this.loadingTimerPromise )
-        this.allPromiseSet.add( this.loadingTimerPromise );
     }
 
-    // 2.3
-    xhr.send( body );
-
-    // 2.4 Until done or failed.
+    // 2. Until done.
     let notDone;
     do {
       let allPromise = Promise.race( this.allPromiseSet );
 
       // All succeeded promises resolve to progressRoot.
-      // All failed promises reject to (i.e. throw exception of) ProgressEvent.
       let progressRoot = await allPromise;
       yield progressRoot;
 
       // Not done, if:
-      //   - ( status is not 200 ), or
-      //   - ( .loadPromise still pending (i.e. still in waiting promises) ).
+      //   - .retryWaitingTimerPromise still pending.
       //
-      // Note: Checking ( xhr.status !== 200 ) is not enough. The loading may
-      //       still not be complete when status becomes 200.
-      notDone =    ( xhr.status !== 200 )
-                || ( this.allPromiseSet.has( this.loadPromise ) );
+      notDone = ( this.allPromiseSet.has( this.retryWaitingTimerPromise ) );
 
-    // Stop if loading completely and successfully.
-    //
-    // Note: The other ways to leave this loop are throwing exceptions (e.g.
-    //       the pending promises rejected).
-    } while ( notDone );
+    } while ( notDone ); // Stop if retry waiting completely.
 
-    // 4. 
-    // (2023/02/15) For debug.
-    // (When execution to here, the request should been finished successfully.)
-    {
-      // 4.1
-      if ( 200 !== xhr.status ) {
-        //debugger;
-        throw Error( `( ${this.url} ) HttpFetcher.`
-          + `asyncGenerator_by_progressToAdvnace_url_timeout_responseType_method_body(): `
-          + `When done, `
-          + `xhr.status ( ${xhr.status} ) should be 200.` );
-      }
-
-      // 4.2
-      if ( 100 != this.progressToAdvance.valuePercentage ) {
-        //debugger;
-        throw Error( `( ${this.url} ) HttpFetcher.`
-          + `asyncGenerator_by_progressToAdvnace_url_timeout_responseType_method_body(): `
-          + `When done, `
-          + `progressToAdvance.valuePercentage `
-          + `( ${this.progressToAdvance.valuePercentage} ) should be 100.` );
-      }
-    }
-
-    // 5. Return the successfully downloaded result.
-    return xhr.response;
+    return this.progressRoot; // 3. Return the total progress.
   }
 
 
