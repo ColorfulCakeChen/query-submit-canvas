@@ -153,29 +153,30 @@ class HttpFetcher {
 
     // 0.3
     //
-    // Note1: Although .progressToAdvance is recorded in this, it is not owned by
-    //        this HttpFetcher object. It should be destroyed by outside caller
-    //        (i.e. by progressParent).
+    // Note1: Although .progressLoading and progressRetryWaiting is recorded in
+    //        this, they are not owned by this HttpFetcher object. They should
+    //        be destroyed by outside caller (i.e. by progressParent).
     //
-    // Note2: The .progressToAdvance.max is set arbitrarily here. Its value will
-    //        be changed dynamically.
+    // Note2: Their .max are set arbitrarily here. Their value will be changed
+    //        dynamically.
     //
     const arbitraryNonZero = 1;
-    this.progressToAdvance = progressParent.child_add(
+    this.progressLoading = progressParent.child_add(
+      ValueMax.Percentage.Concrete.Pool.get_or_create_by( arbitraryNonZero ) );
+    this.progressRetryWaiting = progressParent.child_add(
       ValueMax.Percentage.Concrete.Pool.get_or_create_by( arbitraryNonZero ) );
 
     // 1.
     let bRetry;
     let responseText;
     do {
-      this.retryWaitingMilliseconds_init();
 
       // 1.1
       try {
         responseText = yield* HttpFetcher
           .asyncGenerator_by_progressToAdvnace_url_timeout_responseType_method_body
           .call(
-            this.progressToAdvance,
+            this.progressLoading,
             url,
 
             loadingMillisecondsMax,
@@ -202,6 +203,10 @@ class HttpFetcher {
           let bRetryTimesRunOut = this.retryTimes_isRunOut();
           if ( bRetryTimesRunOut ) {
             bRetry = false; // 3.1.1 Can not retry, because run out of retry times.
+
+//!!! ...unfinished... (2023/02/21)
+// should complete the retry waiting timer to 100%
+
             console.error( e );
             throw e;
 
@@ -212,9 +217,22 @@ class HttpFetcher {
 
         } else { // 1.2.2 Unknown error. (Never retry for unknown error.)
           bRetry = false;
+
+//!!! ...unfinished... (2023/02/21)
+// should complete the retry waiting timer to 100%
+
           console.error( e );
           throw e;
         }
+      }
+
+      // 1.3 Waiting before retry (for truncated exponential backoff algorithm).
+      if ( bRetry ) {
+        yield* HttpFetcher
+          .asyncGenerator_by_progressToAdvnace_retryWaiting
+          .call(
+            this.progressRetryWaiting,
+          );
       }
 
     } while ( bRetry );
@@ -332,16 +350,16 @@ class HttpFetcher {
    */
   static async*
     asyncGenerator_by_progressToAdvnace_url_timeout_responseType_method_body(
-    progressToAdvnace,
-    url,
+      progressToAdvnace,
+      url,
 
-    loadingMillisecondsMax,
-    loadingMillisecondsInterval,
+      loadingMillisecondsMax,
+      loadingMillisecondsInterval,
 
-    responseType,
-    method,
-    body
-  ) {
+      responseType,
+      method,
+      body
+    ) {
 
     // 0.
 
@@ -361,6 +379,161 @@ class HttpFetcher {
 //!!! ...unfinished... (2023/02/21)
 // What about retry waiting timer?
 
+    // 0.2
+    let progressToAdvance_max_default;
+
+    if ( this.loadingTimer_isUsed ) { // Use timeout time as progress target.
+      progressToAdvance_max_default = loadingMillisecondsMax;
+      this.loadingMillisecondsCur = 0;
+    } else { // Use total content length (perhaps unknown) as progress target.
+      progressToAdvance_max_default = HttpFetcher.progressTotalFakeLarger;
+    }
+ 
+    this.progressToAdvance.value_max_set( progressToAdvance_max_default );
+
+    // 0.3
+    this.contentLoaded = undefined;
+    this.contentTotal = undefined;
+
+
+//!!! ...unfinished... (2023/02/21)
+    // 2.
+
+    // 2.1
+    const xhr = this.xhr = new XMLHttpRequest();
+    xhr.open( method, url, true );
+    xhr.timeout = loadingMillisecondsMax;
+    xhr.responseType = responseType;
+
+    // 2.2 Prepare promises before sending it.
+    this.abortPromise = PartTime.Promise_create_by_addEventListener_once(
+      xhr, "abort", HttpFetcher.handle_abort, this );
+
+    this.errorPromise = PartTime.Promise_create_by_addEventListener_once(
+      xhr, "error", HttpFetcher.handle_error, this );
+
+    this.loadPromise = PartTime.Promise_create_by_addEventListener_once(
+      xhr, "load", HttpFetcher.handle_load, this );
+
+    this.loadstartPromise = PartTime.Promise_create_by_addEventListener_once(
+      xhr, "loadstart", HttpFetcher.handle_loadstart, this );
+
+    this.progressPromise = PartTime.Promise_create_by_addEventListener_once(
+      xhr, "progress", HttpFetcher.handle_progress, this );
+
+    this.timeoutPromise = PartTime.Promise_create_by_addEventListener_once(
+      xhr, "timeout", HttpFetcher.handle_timeout, this );
+
+    if ( this.loadingTimer_isUsed ) {
+      HttpFetcher.loadingTimerPromise_create_and_set.call( this );
+    }
+
+//!!! ...unfinished... (2023/02/21) retryWaitingTimePromise?
+
+    // All promises to be listened.
+    {
+      this.allPromiseSet = new Set( [
+        this.abortPromise, this.errorPromise, this.loadPromise,
+        this.loadstartPromise,
+        this.progressPromise,
+        this.timeoutPromise
+      ] );
+
+      if ( this.loadingTimerPromise )
+        this.allPromiseSet.add( this.loadingTimerPromise );
+    }
+
+    // 2.3
+    xhr.send( body );
+
+    // 2.4 Until done or failed.
+    let notDone;
+    do {
+      let allPromise = Promise.race( this.allPromiseSet );
+
+      // All succeeded promises resolve to progressRoot.
+      // All failed promises reject to (i.e. throw exception of) ProgressEvent.
+      let progressRoot = await allPromise;
+      yield progressRoot;
+
+      // Not done, if:
+      //   - ( status is not 200 ), or
+      //   - ( .loadPromise still pending (i.e. still in waiting promises) ).
+      //
+      // Note: Checking ( xhr.status !== 200 ) is not enough. The loading may
+      //       still not be complete when status becomes 200.
+      notDone =    ( xhr.status !== 200 )
+                || ( this.allPromiseSet.has( this.loadPromise ) );
+
+    // Stop if loading completely and successfully.
+    //
+    // Note: The other ways to leave this loop are throwing exceptions (e.g.
+    //       the pending promises rejected).
+    } while ( notDone );
+
+    // 4. 
+    // (2023/02/15) For debug.
+    // (When execution to here, the request should been finished successfully.)
+    {
+      // 4.1
+      if ( 200 !== xhr.status ) {
+        //debugger;
+        throw Error( `( ${this.url} ) HttpFetcher.`
+          + `asyncGenerator_by_progressToAdvnace_url_timeout_responseType_method_body(): `
+          + `When done, `
+          + `xhr.status ( ${xhr.status} ) should be 200.` );
+      }
+
+      // 4.2
+      if ( 100 != this.progressToAdvance.valuePercentage ) {
+        //debugger;
+        throw Error( `( ${this.url} ) HttpFetcher.`
+          + `asyncGenerator_by_progressToAdvnace_url_timeout_responseType_method_body(): `
+          + `When done, `
+          + `progressToAdvance.valuePercentage `
+          + `( ${this.progressToAdvance.valuePercentage} ) should be 100.` );
+      }
+    }
+
+    // 5. Return the successfully downloaded result.
+    return xhr.response;
+  }
+
+
+  /**
+   * An async generator for tracking retry waiting timer progress.
+   *
+   * (This method is called by
+   * asyncGenerator_by_progressParent_url_timeout_retry_responseType_method_body())
+   *
+   *
+   * @param {ValueMax.Percentage.Concrete} progressToAdvance
+   *   This progressToAdvance will be increased when every time advanced. The
+   * progressToAdvance.root_get() will be returned when every time yield.
+   *
+   * @yield {Promise( ValueMax.Percentage.Aggregate )}
+   *   Yield a promise resolves to { done: false,
+   * value: progressToAdvance.root_get() }.
+   *
+   * @yield {Promise( object )}
+   *   Yield a promise resolves to { done: true,
+   * value: progressToAdvance.root_get() }.
+   */
+  static async*
+    asyncGenerator_by_progressToAdvnace_retryWaiting(
+      progressToAdvnace,
+    ) {
+
+    // 0.
+
+    // 0.1
+    this.progressRoot = progressToAdvnace.root_get();
+
+    this.retryWaitingMilliseconds_init();
+
+//!!! ...unfinished... (2023/02/21)
+// What about retry waiting timer?
+!!!
     // 0.2
     let progressToAdvance_max_default;
 
