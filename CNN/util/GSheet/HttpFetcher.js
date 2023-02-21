@@ -142,9 +142,12 @@ class HttpFetcher {
 
 //!!! ...unfinished... (2023/02/18)
     // 0.
+
+    // 0.1
     this.progressParent = progressParent;
     this.progressRoot = progressParent.root_get();
 
+    // 0.2
     this.retryTimesMax = retryTimesMax;
     this.retryTimesCur = 0;
     this.retryWaitingMillisecondsExponentMax = retryWaitingMillisecondsExponentMax;
@@ -157,29 +160,19 @@ class HttpFetcher {
     //   = RandTools.getRandomInt_TruncatedBinaryExponent(
     //     this.retryTimesCur, this.retryWaitingMillisecondsExponentMax );
 
-//!!! ...unfinished... (2023/02/18)
+//!!! ...unfinished... (2023/02/21)
+    // 0.3
     //
-    let progressToAdvance_max_default;
-
-//!!! ...unfinished... (2023/02/16)
-    // 0.1 If ( loadingMillisecondsMax > 0 ), use timer to advance progressToAdvance.
-    this.bAdvanceProgressByTimer = ( loadingMillisecondsMax > 0 );
-
-    if ( this.bAdvanceProgressByTimer ) { // Use timeout time as progress target.
-      progressToAdvance_max_default = loadingMillisecondsMax;
-    } else { // Use total content length (perhaps unknown) as progress target.
-      progressToAdvance_max_default = HttpFetcher.progressTotalFakeLarger;
-    }
-
-    // 0.2
+    // Note1: Although .progressToAdvance is recorded in this, it is not owned by
+    //        this HttpFetcher object. It should be destroyed by outside caller
+    //        (i.e. by progressParent).
     //
-    // Note: Although .progressToAdvance is recorded in this, it is not owned by
-    //       this HttpFetcher object. It should be destroyed by outside caller
-    //       (i.e. by progressParent).
+    // Note2: The .progressToAdvance.max is set arbitrarily here. Its value will
+    //        be changed dynamically.
     //
+    const arbitraryNonZero = 1;
     this.progressToAdvance = progressParent.child_add(
-      ValueMax.Percentage.Concrete.Pool.get_or_create_by(
-        progressToAdvance_max_default ) );
+      ValueMax.Percentage.Concrete.Pool.get_or_create_by( arbitraryNonZero ) );
 
 
 //!!! ...unfinished... (2023/02/21)
@@ -295,7 +288,6 @@ class HttpFetcher {
     body
   ) {
 
-//!!! ...unfinished... (2023/02/21)
     // 0.
     this.progressRoot = progressToAdvnace.root_get();
 
@@ -305,15 +297,38 @@ class HttpFetcher {
     this.loadingMillisecondsInterval = loadingMillisecondsInterval;
     this.loadingMillisecondsCur = undefined;
 
-//!!! ...unfinished... (2023/02/21)
-
     this.responseType = responseType;
     this.method = method;
     this.body = body;
 
+//!!!
+//!!! ...unfinished... (2023/02/18)
+    //
+    let progressToAdvance_max_default;
+
+//!!! ...unfinished... (2023/02/16)
+    // 0.1 If ( loadingMillisecondsMax > 0 ), use timer to advance progressToAdvance.
+    this.bAdvanceProgressByTimer = ( loadingMillisecondsMax > 0 );
+
+    if ( this.bAdvanceProgressByTimer ) { // Use timeout time as progress target.
+      progressToAdvance_max_default = loadingMillisecondsMax;
+    } else { // Use total content length (perhaps unknown) as progress target.
+      progressToAdvance_max_default = HttpFetcher.progressTotalFakeLarger;
+    }
+
+    // 0.2
+    //
+    // Note: Although .progressToAdvance is recorded in this, it is not owned by
+    //       this HttpFetcher object. It should be destroyed by outside caller
+    //       (i.e. by progressParent).
+    //
+    this.progressToAdvance.value_max_set( progressToAdvance_max_default );
+
+
 //!!! ...unfinished... (2023/02/21)
     this.contentLoaded = undefined;
     this.contentTotal = undefined;
+
 
 //!!! ...unfinished... (2023/02/21)
     // 2.
