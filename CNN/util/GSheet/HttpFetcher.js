@@ -251,6 +251,31 @@ class HttpFetcher {
     return responseText;
   }
 
+
+  /** */
+  abort() {
+
+    if ( ??? ) {
+      this.xhr.abort();
+
+    } else if ( ??? ) {
+      this.retryWaitingTimer_cancel();
+
+//!!! ...unfinished... (2023/02/21)
+// If loading is abort (not error, not loading failed), should:
+//   - bDone = true;
+//   - this.retryWaitingTimer_cancel();
+//   - reject( ProgressEvent( .type == "abort" ) )
+//
+
+    } else {
+
+
+    }
+
+  }
+
+
   /** @return {boolean} Return true, if not yet reach maximum retry times. */
   retryTimes_isRunOut() {
     if ( this.retryTimesMax < 0 )
