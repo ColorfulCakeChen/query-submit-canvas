@@ -145,7 +145,7 @@ class HttpFetcher {
 
     // 0.1
     this.progressParent = progressParent;
-    this.progressRoot = progressParent.root_get();
+    //this.progressRoot = progressParent.root_get();
 
     // 0.2
     this.retryTimesMax = retryTimesMax;
