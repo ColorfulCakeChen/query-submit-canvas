@@ -252,6 +252,10 @@ class HttpFetcher {
       // 4. Waiting before retry (for truncated exponential backoff algorithm).
       if ( bRetry ) {
         yield* HttpFetcher.asyncGenerator_by_retryWaiting.call( this );
+
+//!!! ...unfinished... (2023/02/21)
+// If user abort, should set bRetry to false.
+
       }
 
     } while ( bRetry );
@@ -264,12 +268,21 @@ class HttpFetcher {
   /** Abort the loading (or waiting). */
   abort() {
 
-    if ( ??? ) {
-      this.xhr.abort();
+    {
+      if ( this.xhr )
+        this.xhr.abort();
 
-    } else if ( ??? ) {
+      this.progressLoading.value_max_set( 0 );
+      this.progressLoading.value_set( 0 );
+    }
+
+    {
       this.retryWaitingTimer_cancel();
 
+      this.progressRetryWaiting.value_max_set( 0 );
+      this.progressRetryWaiting.value_set( 0 );
+    }
+  
 //!!! ...unfinished... (2023/02/21)
 // If loading is abort (not error, not loading failed), should:
 //   - bDone = true;
@@ -277,10 +290,10 @@ class HttpFetcher {
 //   - reject( ProgressEvent( .type == "abort" ) )
 //
 
-    } else {
-      throw Error( `( ${this.url} ) HttpFetcher.abort(): `
-        + `Unknown state when abort() is called.` );
-    }
+    // {
+    //   throw Error( `( ${this.url} ) HttpFetcher.abort(): `
+    //     + `Unknown state when abort() is called.` );
+    // }
   }
 
 
@@ -328,6 +341,7 @@ class HttpFetcher {
     if ( this.loadingTimerPromise ) {
       this.loadingTimerPromise.cancelTimer(); // Stop timer.
       this.allPromiseSet.delete( this.loadingTimerPromise ); // Stop listening.
+      this.loadingTimerPromise = null;
     }
   }
 
@@ -336,6 +350,7 @@ class HttpFetcher {
     if ( this.retryWaitingTimerPromise ) {
       this.retryWaitingTimerPromise.cancelTimer(); // Stop timer.
       this.allPromiseSet.delete( this.retryWaitingTimerPromise ); // Stop listening.
+      this.retryWaitingTimerPromise = null;
     }
   }
 
@@ -582,7 +597,7 @@ class HttpFetcher {
       yield progressRoot;
 
       // Not done, if:
-      //   - .retryWaitingTimerPromise still pending.
+      //   - .retryWaitingTimerPromise still exists.
       //
       notDone = ( this.allPromiseSet.has( this.retryWaitingTimerPromise ) );
 
@@ -805,20 +820,22 @@ class HttpFetcher {
   static handle_retryWaitingTimer( resolve, reject, deltaValue ) {
     this.retryWaitingMillisecondsCur += deltaValue;
 
-    let bDone;
-    if ( this.retryWaitingMillisecondsCur < this.retryWaitingMillisecondsMax ) {
-
 //!!! ...unfinished... (2023/02/21)
-// If loading is abort (not error, not loading failed), should:
-//   - bDone = true;
-//   - this.retryWaitingTimer_cancel();
-//   - reject( ProgressEvent( .type == "abort" ) )
-//
+    let bAbort;
+    let bDone;
+    if ( this.allPromiseSet.has( this.retryWaitingTimerPromise ) ) {
+      bAbort = false;
 
-      bDone = false;
-
+      // Since user not abort, checking time whether exceeds.
+      if ( this.retryWaitingMillisecondsCur < this.retryWaitingMillisecondsMax ) {
+        bDone = false;
+      } else {
+        bDone = true;
+      }
+        
     } else {
-      bDone = true;
+      bAbort = true; // User abort.
+      bDone = true; // abort is also a kind of done.
     }
 
     if ( bDone )
@@ -838,7 +855,6 @@ class HttpFetcher {
 //   - reject( ProgressEvent( .type == "abort" ) )
 //
 
-    let bAbort = ???;
     if ( bAbort )
       resolve( ???ProgressEvent );
     else
@@ -854,6 +870,9 @@ class HttpFetcher {
         // Re-generate a new promise for listening on it.
         HttpFetcher.retryWaitingTimerPromise_create_and_set.call( this );
         this.allPromiseSet.add( this.retryWaitingTimerPromise );
+
+      } else {
+        this.retryWaitingTimerPromise = null;
       }
     }
   }
