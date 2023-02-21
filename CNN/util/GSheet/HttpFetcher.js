@@ -41,9 +41,11 @@ import * as ValueMax from "../ValueMax.js";
  * ( loadingMillisecondsMax > 0 ).
  *
  * @member {number} retryTimesMax
- *   Retry request so many times at most when request failed (no matter what
- * reason). Noe that there will be some waiting time before next re-try (i.e.
- * truncated binary exponential backoff algorithm).
+ *   Retry request so many times at most when request failed (ProgressEvent
+ * is error, or load without status 200, or timeout). Note1: Never retry if
+ * ( ProgressEvent is abort ) or ( unknown error ). Note2: there will be some
+ * waiting time before next re-try (i.e. truncated (binary) exponential backoff
+ * algorithm).
  *
  *   - Negative value means retry infinite times (i.e. retry forever until
  *       success).
