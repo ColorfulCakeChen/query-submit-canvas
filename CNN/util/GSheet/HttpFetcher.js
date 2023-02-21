@@ -18,14 +18,14 @@ import * as ValueMax from "../ValueMax.js";
  *   The maximum time (in milliseconds) a request can take before automatically
  * being terminated. Default is 0, which means there is no timeout.
  *
- *   - If zero, the progressToAdvance will be advanced by ProgressEvent(
+ *   - If zero, the progressLoading will be advanced by ProgressEvent(
  *       .type = "progress" ).
  *     - This is good if ( .lengthComputable == true ) and network smooth.
  *     - This is bad if ( .lengthComputable == false ) (i.e. progress can not
  *         be calculated by .loaded / .total) or network congested (i.e.
  *         there will be a long pending (no responded in UI)).
  *
- *   - If not zero, the progressToAdvance will be advanced by a timer.
+ *   - If not zero, the progressLoading will be advanced by a timer.
  *       Although this is a kind of fake progress, it provides better user
  *       experience because progress bar is still advancing even if network
  *       congested or server busy.
@@ -102,8 +102,8 @@ class HttpFetcher {
    *
    *
    * @param {ValueMax.Percentage.Aggregate} progressParent
-   *   Some new progressToAdvance will be created and added to progressParent. The
-   * created progressToAdvance will be increased when every time advanced. The
+   *   Some new progressLoading will be created and added to progressParent. The
+   * created progressLoading will be increased when every time advanced. The
    * progressParent.root_get() will be returned when every time yield.
    *
    * @return {AsyncGenerator}
@@ -122,7 +122,7 @@ class HttpFetcher {
    *     - "load": when ( status != 200 ) (e.g. 404 or 500).
    *     - "timeout"
    * Note: Although they all represent the request is failed, however, the
-   * ( progressToAdvance.valuePercentage == 100 ) will still be reported for
+   * ( progressLoading.valuePercentage == 100 ) will still be reported for
    * representing the request already done (with failure, though).
    */
   async* asyncGenerator_by_progressParent_url_timeout_retry_responseType_method_body(
@@ -144,7 +144,7 @@ class HttpFetcher {
 
     // 0.1
     this.progressParent = progressParent;
-    //this.progressRoot = progressParent.root_get();
+    this.progressRoot = progressParent.root_get();
 
     // 0.2
     this.retryTimesMax = retryTimesMax;
@@ -175,9 +175,8 @@ class HttpFetcher {
       // 1.1
       try {
         responseText = yield* HttpFetcher
-          .asyncGenerator_by_progressToAdvnace_url_timeout_responseType_method_body
-          .call(
-            this.progressLoading,
+          .asyncGenerator_by_url_timeout_responseType_method_body.call(
+            this,
             url,
 
             loadingMillisecondsMax,
@@ -229,11 +228,7 @@ class HttpFetcher {
 
       // 1.3 Waiting before retry (for truncated exponential backoff algorithm).
       if ( bRetry ) {
-        yield* HttpFetcher
-          .asyncGenerator_by_progressToAdvnace_retryWaiting
-          .call(
-            this.progressRetryWaiting,
-          );
+        yield* HttpFetcher.asyncGenerator_by_retryWaiting.call( this );
       }
 
     } while ( bRetry );
@@ -274,7 +269,7 @@ class HttpFetcher {
   /**
    * @return {boolean}
    *   Return true, if ( loadingMillisecondsMax > 0 ), which means using timer to
-   * advance progressToAdvance.
+   * advance progressLoading.
    */
   get loadingTimer_isUsed() {
     if ( loadingMillisecondsMax > 0 )
@@ -300,20 +295,20 @@ class HttpFetcher {
 
 
   /**
-   * @return {number} Return what the progressToAdvance.value should be.
+   * @return {number} Return what the progressLoading.value should be.
    */
-  progressToAdvance_value_calculate() {
+  progressLoading_value_calculate() {
 
 //!!! ...unfinished... (2023/02/21)
   }
 
   /**
-   * @return {number} Return what the progressToAdvance.max should be.
+   * @return {number} Return what the progressLoading.max should be.
    */
-  progressToAdvance_max_calculate() {
+  progressLoading_max_calculate() {
 //!!! ...unfinished... (2023/02/21)
     if ( this.loadingTimer_isUsed ) { // Use timeout time as progress target.
-      progressToAdvance_max_default = loadingMillisecondsMax;
+      progressLoading_max_default = loadingMillisecondsMax;
     }
   }
 
@@ -325,16 +320,20 @@ class HttpFetcher {
    * asyncGenerator_by_progressParent_url_timeout_retry_responseType_method_body())
    *
    *
-   * @param {ValueMax.Percentage.Concrete} progressToAdvance
-   *   This progressToAdvance will be increased when every time advanced. The
-   * progressToAdvance.root_get() will be returned when every time yield.
+   * @param {HttpFetcher} this
+   *   - this.retryWaitingMillisecondsMax
+   *   - this.retryWaitingMillisecondsCur
+   *   - this.progressRoot
+   *
+   * @param {ValueMax.Percentage.Concrete} this.progressLoading
+   *   This .progressLoading will be increased when every time advanced. The
+   * this.progressRoot will be returned when every time yield.
    *
    * @return {AsyncGenerator}
    *   Return an async generator for receving result from XMLHttpRequest.
    *
    * @yield {Promise( ValueMax.Percentage.Aggregate )}
-   *   Yield a promise resolves to { done: false,
-   * value: progressToAdvance.root_get() }.
+   *   Yield a promise resolves to { done: false, value: this.progressRoot }.
    *
    * @yield {Promise( object )}
    *   Yield a promise resolves to { done: true, value: xhr.response }.
@@ -346,12 +345,10 @@ class HttpFetcher {
    *     - "load": when ( status != 200 ) (e.g. 404 or 500).
    *     - "timeout"
    * Note: Although they all represent the request is failed, however, the
-   * ( progressToAdvance.valuePercentage == 100 ) will still be reported for
+   * ( .progressLoading.valuePercentage == 100 ) will still be reported for
    * representing the request already done (with failure, though).
    */
-  static async*
-    asyncGenerator_by_progressToAdvnace_url_timeout_responseType_method_body(
-      progressToAdvnace,
+  static async* asyncGenerator_by_url_timeout_responseType_method_body(
       url,
 
       loadingMillisecondsMax,
@@ -365,8 +362,6 @@ class HttpFetcher {
     // 0.
 
     // 0.1
-    this.progressRoot = progressToAdvnace.root_get();
-
     this.url = url;
 
     this.loadingMillisecondsMax = loadingMillisecondsMax;
@@ -381,16 +376,16 @@ class HttpFetcher {
 // What about retry waiting timer?
 
     // 0.2
-    let progressToAdvance_max_default;
+    let progressLoading_max_default;
 
     if ( this.loadingTimer_isUsed ) { // Use timeout time as progress target.
-      progressToAdvance_max_default = loadingMillisecondsMax;
+      progressLoading_max_default = loadingMillisecondsMax;
       this.loadingMillisecondsCur = 0;
     } else { // Use total content length (perhaps unknown) as progress target.
-      progressToAdvance_max_default = HttpFetcher.progressTotalFakeLarger;
+      progressLoading_max_default = HttpFetcher.progressTotalFakeLarger;
     }
  
-    this.progressToAdvance.value_max_set( progressToAdvance_max_default );
+    this.progressLoading.value_max_set( progressLoading_max_default );
 
     // 0.3
     this.contentLoaded = undefined;
@@ -480,19 +475,19 @@ class HttpFetcher {
       if ( 200 !== xhr.status ) {
         //debugger;
         throw Error( `( ${this.url} ) HttpFetcher.`
-          + `asyncGenerator_by_progressToAdvnace_url_timeout_responseType_method_body(): `
+          + `asyncGenerator_by_url_timeout_responseType_method_body(): `
           + `When done, `
           + `xhr.status ( ${xhr.status} ) should be 200.` );
       }
 
       // 4.2
-      if ( 100 != this.progressToAdvance.valuePercentage ) {
+      if ( 100 != this.progressLoading.valuePercentage ) {
         //debugger;
         throw Error( `( ${this.url} ) HttpFetcher.`
-          + `asyncGenerator_by_progressToAdvnace_url_timeout_responseType_method_body(): `
+          + `asyncGenerator_by_url_timeout_responseType_method_body(): `
           + `When done, `
-          + `progressToAdvance.valuePercentage `
-          + `( ${this.progressToAdvance.valuePercentage} ) should be 100.` );
+          + `progressLoading.valuePercentage `
+          + `( ${this.progressLoading.valuePercentage} ) should be 100.` );
       }
     }
 
@@ -511,25 +506,22 @@ class HttpFetcher {
    * @param {HttpFetcher} this
    *   - this.retryWaitingMillisecondsMax
    *   - this.retryWaitingMillisecondsCur
+   *   - this.progressRoot
    *
-   * @param {ValueMax.Percentage.Concrete} progressToAdvance
-   *   This progressToAdvance will be increased when every time advanced. The
-   * progressToAdvance.root_get() will be returned when every time yield.
+   * @param {ValueMax.Percentage.Concrete} this.progressRetryWaiting
+   *   This .progressRetryWaiting will be increased when every time advanced. The
+   * this.progressRoot will be returned when every time yield.
    *
    * @yield {Promise( ValueMax.Percentage.Aggregate )}
-   *   Yield a promise resolves to { done: false,
-   * value: progressToAdvance.root_get() }.
+   *   Yield a promise resolves to { done: false, value: this.progressRoot }.
    *
    * @yield {Promise( object )}
-   *   Yield a promise resolves to { done: true,
-   * value: progressToAdvance.root_get() }.
+   *   Yield a promise resolves to { done: true, value: this.progressRoot }.
    */
-  static async* asyncGenerator_by_progressToAdvnace_retryWaiting(
-    progressToAdvnace ) {
+  static async* asyncGenerator_by_retryWaiting() {
 
     // 0.
-    this.progressRoot = progressToAdvnace.root_get();
-    this.progressToAdvance.value_max_set( this.retryWaitingMillisecondsMax );
+    this.progressRetryWaiting.value_max_set( this.retryWaitingMillisecondsMax );
 
     // 1.
     HttpFetcher.retryWaitingTimerPromise_create_and_set.call( this );
@@ -594,12 +586,12 @@ class HttpFetcher {
 //    this.retryWaitingTimer_cancel();
 
     // Advance progress to complete status (event if use timer).
-    HttpFetcher.progressToAdvance_set_whenDone.call( this, event );
+    HttpFetcher.progressLoading_set_whenDone.call( this, event );
 
     if ( this.bLogEventToConsole )
       console.warn( `( ${this.url} ) HttpFetcher: abort: `
         + `${HttpFetcher.ProgressEvent_toString( event )}, `
-        + `progressToAdvance=${this.progressToAdvance.valuePercentage}%` );
+        + `progressLoading=${this.progressLoading.valuePercentage}%` );
 
     reject( event );
 
@@ -619,12 +611,12 @@ class HttpFetcher {
 
 
     // Advance progress to complete status (event if use timer).
-    HttpFetcher.progressToAdvance_set_whenDone.call( this, event );
+    HttpFetcher.progressLoading_set_whenDone.call( this, event );
 
     if ( this.bLogEventToConsole )
       console.warn( `( ${this.url} ) HttpFetcher: error: `
         + `${HttpFetcher.ProgressEvent_toString( event )}, `
-        + `progressToAdvance=${this.progressToAdvance.valuePercentage}%` );
+        + `progressLoading=${this.progressLoading.valuePercentage}%` );
 
     reject( event );
 
@@ -644,7 +636,7 @@ class HttpFetcher {
 
 
     // Advance progress to complete status (event if use timer).
-    HttpFetcher.progressToAdvance_set_whenDone.call( this, event );
+    HttpFetcher.progressLoading_set_whenDone.call( this, event );
 
     let xhr = this.xhr;
 
@@ -653,7 +645,7 @@ class HttpFetcher {
       logMsg = `( ${this.url} ) HttpFetcher: load: `
         + `${HttpFetcher.ProgressEvent_toString( event )}, `
         + `status=${xhr.status}, statusText=\"${xhr.statusText}\", `
-        + `progressToAdvance=${this.progressToAdvance.valuePercentage}%`;
+        + `progressLoading=${this.progressLoading.valuePercentage}%`;
 
     if ( xhr.status === 200 ) {
       // Load completely and successfully.
@@ -685,13 +677,13 @@ class HttpFetcher {
 
     // Advance progress only if loadingTimer NOT used.
     if ( !this.loadingTimer_isUsed ) {
-      HttpFetcher.progressToAdvance_set_beforeDone.call( this, event );
+      HttpFetcher.progressLoading_set_beforeDone.call( this, event );
     }
 
     if ( this.bLogEventToConsole )
       console.log( `( ${this.url} ) HttpFetcher: loadstart: `
         + `${HttpFetcher.ProgressEvent_toString( event )}, `
-        + `progressToAdvance=${this.progressToAdvance.valuePercentage}%` );
+        + `progressLoading=${this.progressLoading.valuePercentage}%` );
 
     resolve( this.progressRoot );
 
@@ -706,13 +698,13 @@ class HttpFetcher {
 
     // Advance progress only if loadingTimer NOT used.
     if ( !this.loadingTimer_isUsed ) {
-      HttpFetcher.progressToAdvance_set_beforeDone.call( this, event );
+      HttpFetcher.progressLoading_set_beforeDone.call( this, event );
     }
 
     if ( this.bLogEventToConsole )
       console.log( `( ${this.url} ) HttpFetcher: progress: `
         + `${HttpFetcher.ProgressEvent_toString( event )}, `
-        + `progressToAdvance=${this.progressToAdvance.valuePercentage}%` );
+        + `progressLoading=${this.progressLoading.valuePercentage}%` );
 
     resolve( this.progressRoot );
 
@@ -740,12 +732,12 @@ class HttpFetcher {
 
 
     // Advance progress to complete status (event if use timer).
-    HttpFetcher.progressToAdvance_set_whenDone.call( this, event );
+    HttpFetcher.progressLoading_set_whenDone.call( this, event );
 
     if ( this.bLogEventToConsole )
       console.warn( `( ${this.url} ) HttpFetcher: timeout: `
         + `${HttpFetcher.ProgressEvent_toString( event )}, `
-        + `progressToAdvance=${this.progressToAdvance.valuePercentage}%` );
+        + `progressLoading=${this.progressLoading.valuePercentage}%` );
 
     reject( event );
 
@@ -762,14 +754,14 @@ class HttpFetcher {
 
     // Advance progress only if loadingTimer used.
     if ( this.loadingTimer_isUsed ) {
-      // this.progressToAdvance.value_advance( deltaValue );
-      this.progressToAdvance.value_set( this.loadingMillisecondsCur );
+      // this.progressLoading.value_advance( deltaValue );
+      this.progressLoading.value_set( this.loadingMillisecondsCur );
     }
 
     if ( this.bLogEventToConsole )
       console.log( `( ${this.url} ) HttpFetcher: loadingTimer: `
         + `loadingMillisecondsCur=${this.loadingMillisecondsCur}, `
-        + `progressToAdvance=${this.progressToAdvance.valuePercentage}%` );
+        + `progressLoading=${this.progressLoading.valuePercentage}%` );
 
     resolve( this.progressRoot );
 
@@ -794,14 +786,14 @@ class HttpFetcher {
 !!!
     // Advance progress only if loadingTimer used.
     if ( this.loadingTimer_isUsed ) {
-      // this.progressToAdvance.value_advance( deltaValue );
-      this.progressToAdvance.value_set( this.loadingMillisecondsCur );
+      // this.progressRetryWaiting.value_advance( deltaValue );
+      this.progressRetryWaiting.value_set( this.retryWaitingMillisecondsCur );
     }
 
     if ( this.bLogEventToConsole )
       console.log( `( ${this.url} ) HttpFetcher: retryWaitingTimer: `
         + `retryWaitingMillisecondsCur=${this.retryWaitingMillisecondsCur}, `
-        + `progressToAdvance=${this.progressToAdvance.valuePercentage}%` );
+        + `progressRetryWaiting=${this.progressRetryWaiting.valuePercentage}%` );
 
     resolve( this.progressRoot );
 
@@ -823,9 +815,9 @@ class HttpFetcher {
    * @param {HttpFetcher} this
    *
    * @param {ProgressEvent} progressEvent
-   *   The ProgressEvent to be used to set .progressToAdvance.
+   *   The ProgressEvent to be used to set .progressLoading.
    */
-  static progressToAdvance_set_beforeDone( progressEvent ) {
+  static progressLoading_set_beforeDone( progressEvent ) {
     this.contentLoaded = progressEvent.loaded;
     this.contentTotal = progressEvent.total;
 
@@ -836,15 +828,15 @@ class HttpFetcher {
       //       when ( .max == 0 ).
       //
       // So, even if ( progressEvent.total == 0 ), this function still
-      // could result in ( progressToAdvance.valuePercentage == 100 ) correctly.
+      // could result in ( progressLoading.valuePercentage == 100 ) correctly.
       //
-      this.progressToAdvance.value_max_set( progressEvent.total );
-      this.progressToAdvance.value_set( progressEvent.loaded );
+      this.progressLoading.value_max_set( progressEvent.total );
+      this.progressLoading.value_set( progressEvent.loaded );
 
     } else { // Fake an incremental never-100% progress percentage.
       let fakeMax = progressEvent.loaded + HttpFetcher.progressTotalFakeLarger;
-      this.progressToAdvance.value_max_set( fakeMax );
-      this.progressToAdvance.value_set( progressEvent.loaded );
+      this.progressLoading.value_max_set( fakeMax );
+      this.progressLoading.value_set( progressEvent.loaded );
     }
   }
 
@@ -854,9 +846,9 @@ class HttpFetcher {
    * @param {HttpFetcher} this
    *
    * @param {ProgressEvent} progressEvent
-   *   The ProgressEvent to be used to set .progressToAdvance.
+   *   The ProgressEvent to be used to set .progressLoading.
    */
-  static progressToAdvance_set_whenDone( progressEvent ) {
+  static progressLoading_set_whenDone( progressEvent ) {
     this.contentLoaded = progressEvent.loaded;
     this.contentTotal = progressEvent.total;
 
@@ -869,18 +861,18 @@ class HttpFetcher {
     //       ontimeout().
     //
     // So, no matter in which one of following cases, this function always
-    // could result in ( progressToAdvance.valuePercentage == 100 ):
+    // could result in ( progressLoading.valuePercentage == 100 ):
     //   - ( progressEvent.total == 0 ) when ( .lengthComputable == true )
     //   - ( progressEvent.loaded == 0 ) when ( .lengthComputable == false )
     //
 
     if ( event.lengthComputable ) {
-      this.progressToAdvance.value_max_set( event.total );
-      this.progressToAdvance.value_set( event.loaded );
+      this.progressLoading.value_max_set( event.total );
+      this.progressLoading.value_set( event.loaded );
 
     } else { // Complete the fake progress to 100%.
-      this.progressToAdvance.value_max_set( event.loaded );
-      this.progressToAdvance.value_set( event.loaded );
+      this.progressLoading.value_max_set( event.loaded );
+      this.progressLoading.value_set( event.loaded );
     }
   }
 
