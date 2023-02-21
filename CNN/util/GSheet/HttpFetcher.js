@@ -385,9 +385,6 @@ class HttpFetcher {
     this.method = method;
     this.body = body;
 
-//!!! ...unfinished... (2023/02/21)
-// What about retry waiting timer?
-
     // 0.2
     let progressLoading_max_default;
 
@@ -404,8 +401,6 @@ class HttpFetcher {
     this.contentLoaded = undefined;
     this.contentTotal = undefined;
 
-
-//!!! ...unfinished... (2023/02/21)
     // 2.
 
     // 2.1
@@ -593,9 +588,6 @@ class HttpFetcher {
   static handle_abort( resolve, reject, event ) {
     this.loadingTimer_cancel(); // Stop listen progress timer (since completed).
 
-//!!! ...unfinished... (2023/02/21)
-//    this.retryWaitingTimer_cancel();
-
     // Advance progress to complete status (event if use timer).
     HttpFetcher.progressLoading_set_whenDone.call( this, event );
 
@@ -617,10 +609,6 @@ class HttpFetcher {
   static handle_error( resolve, reject, event ) {
     this.loadingTimer_cancel(); // Stop listen progress timer (since completed).
 
-//!!! ...unfinished... (2023/02/21)
-//    this.retryWaitingTimer_cancel();
-
-
     // Advance progress to complete status (event if use timer).
     HttpFetcher.progressLoading_set_whenDone.call( this, event );
 
@@ -641,10 +629,6 @@ class HttpFetcher {
    */
   static handle_load( resolve, reject, event ) {
     this.loadingTimer_cancel(); // Stop listen progress timer (since completed).
-
-//!!! ...unfinished... (2023/02/21)
-//    this.retryWaitingTimer_cancel();
-
 
     // Advance progress to complete status (event if use timer).
     HttpFetcher.progressLoading_set_whenDone.call( this, event );
@@ -738,10 +722,6 @@ class HttpFetcher {
   static handle_timeout( resolve, reject, event ) {
     this.loadingTimer_cancel(); // Stop listen progress timer (since completed).
 
-//!!! ...unfinished... (2023/02/21)
-//    this.retryWaitingTimer_cancel();
-
-
     // Advance progress to complete status (event if use timer).
     HttpFetcher.progressLoading_set_whenDone.call( this, event );
 
@@ -765,7 +745,6 @@ class HttpFetcher {
 
     // Advance progress only if loadingTimer used.
     if ( this.loadingTimer_isUsed ) {
-      // this.progressLoading.value_advance( deltaValue );
       this.progressLoading.value_set( this.loadingMillisecondsCur );
     }
 
