@@ -97,6 +97,9 @@ async function* tester( progressParent ) {
   const timeoutMilliseconds = 30 * 60 * 1000; // 30 minutes.
   //const timeoutMilliseconds = 0; // no timeout.
 
+//!!! ...unfinished... (2023/02/21)
+// How to test .abort() in loading and in retry waiting?
+
   // Without API key, and error.
   let testerNotExist1 = GSheets.UrlComposer.Pool.get_or_create_by(
     bLogFetcherEventToConsole, spreadsheetId + "_not_exist", range );
