@@ -193,6 +193,12 @@ class HttpFetcher {
       // 1.2 Determine whether should retry.
       } catch( e ) {
 
+//!!! ...unfinished... (2023/02/21)
+// If loading is abort (not error, not loading failed), should:
+//   - this.retryWaitingTimer_cancel();
+//   - reject( ProgressEvent( .type == "abort" ) )
+//
+
         // 1.2.1 Retry only if recognized exception and still has retry times.
         if (   ( e instanceof ProgressEvent )
             && (   ( e.type === "abort" )
@@ -782,35 +788,62 @@ class HttpFetcher {
   static handle_retryWaitingTimer( resolve, reject, deltaValue ) {
     this.retryWaitingMillisecondsCur += deltaValue;
 
+    let bDone;
+    if ( this.retryWaitingMillisecondsCur < this.retryWaitingMillisecondsMax ) {
+
 //!!! ...unfinished... (2023/02/21)
-!!!
-    // Advance progress only if loadingTimer used.
-    if ( this.loadingTimer_isUsed ) {
-      // this.progressRetryWaiting.value_advance( deltaValue );
-      this.progressRetryWaiting.value_set( this.retryWaitingMillisecondsCur );
+// If loading is abort (not error, not loading failed), should:
+//   - bDone = true;
+//   - this.retryWaitingTimer_cancel();
+//   - reject( ProgressEvent( .type == "abort" ) )
+//
+
+      bDone = false;
+
+    } else {
+      bDone = true;
     }
+
+    if ( bDone )
+      HttpFetcher.progressRetryWaiting_set_whenDone.call( this );
+    else
+      HttpFetcher.progressRetryWaiting_set_beforeDone.call( this );
 
     if ( this.bLogEventToConsole )
       console.log( `( ${this.url} ) HttpFetcher: retryWaitingTimer: `
         + `retryWaitingMillisecondsCur=${this.retryWaitingMillisecondsCur}, `
         + `progressRetryWaiting=${this.progressRetryWaiting.valuePercentage}%` );
 
-    resolve( this.progressRoot );
+
+//!!! ...unfinished... (2023/02/21)
+// If loading is abort (not error, not loading failed), should:
+//   - this.retryWaitingTimer_cancel();
+//   - reject( ProgressEvent( .type == "abort" ) )
+//
+
+    let bAbort = ???;
+    if ( bAbort )
+      resolve( ???ProgressEvent );
+    else
+      resolve( this.progressRoot );
 
     // Re-listen on repeatable succeeded event.
     //
-    // Because retryWaitingTimer event could happen many times, re-generate
-    // a new promise for listening on it.
     {
       this.allPromiseSet.delete( this.retryWaitingTimerPromise );
-      HttpFetcher.retryWaitingTimerPromise_create_and_set.call( this );
-      this.allPromiseSet.add( this.retryWaitingTimerPromise );
+
+      // Before retryWaitingTimer done, its event could happen many times.
+      if ( this.retryWaitingMillisecondsCur < this.retryWaitingMillisecondsMax ) {
+        // Re-generate a new promise for listening on it.
+        HttpFetcher.retryWaitingTimerPromise_create_and_set.call( this );
+        this.allPromiseSet.add( this.retryWaitingTimerPromise );
+      }
     }
   }
 
 
   /**
-   * Called when progress not done (i.e. onloadstart(), onprogrss()).
+   * Called when loading progress not done (i.e. onloadstart(), onprogrss()).
    *
    * @param {HttpFetcher} this
    *
@@ -841,7 +874,8 @@ class HttpFetcher {
   }
 
   /**
-   * Called when progress done (i.e. onabort(), onerror(), onload(), ontimeout()).
+   * Called when loading progress done (i.e. onabort(), onerror(), onload(),
+   * ontimeout()).
    *
    * @param {HttpFetcher} this
    *
@@ -874,6 +908,27 @@ class HttpFetcher {
       this.progressLoading.value_max_set( event.loaded );
       this.progressLoading.value_set( event.loaded );
     }
+  }
+
+
+  /**
+   * Called when retry waiting progress not done.
+   *
+   * @param {HttpFetcher} this
+   */
+  static progressRetryWaiting_set_beforeDone() {
+    this.progressRetryWaiting.value_max_set( this.retryWaitingMillisecondsMax );
+    this.progressRetryWaiting.value_set( this.retryWaitingMillisecondsCur );
+  }
+
+  /**
+   * Called when retry waiting progress done.
+   *
+   * @param {HttpFetcher} this
+   */
+  static progressRetryWaiting_set_whenDone() {
+    this.progressRetryWaiting.value_max_set( this.retryWaitingMillisecondsMax );
+    this.progressRetryWaiting.value_set( this.retryWaitingMillisecondsMax );
   }
 
 
