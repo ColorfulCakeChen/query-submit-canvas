@@ -791,11 +791,23 @@ class HttpFetcher {
   static handle_loadingTimer( resolve, reject, deltaValue ) {
     this.loadingMillisecondsCur += deltaValue;
 
+    // 1.
     // Advance progress only if loadingTimer used.
     if ( this.loadingTimer_isUsed ) {
       this.progressLoading.value_set( this.loadingMillisecondsCur );
     }
 
+    // 2.
+    let bAbort;
+    if ( this.allPromiseSet.has( this.loadingTimerPromise ) ) {
+      bAbort = false;
+
+    // User abort. (i.e. .loadingTimer_cancel() is called)
+    } else {
+      bAbort = true;
+    }
+
+    // 3.
     if ( this.bLogEventToConsole )
       console.log( `( ${this.url} ) HttpFetcher: loadingTimer: `
         + `loadingMillisecondsCur=${this.loadingMillisecondsCur}, `
@@ -804,13 +816,19 @@ class HttpFetcher {
     resolve( this.progressRoot );
 
     // Re-listen on repeatable succeeded event.
-    //
-    // Because loadingTimer event could happen many times, re-generate
-    // a new promise for listening on it.
     {
       this.allPromiseSet.delete( this.loadingTimerPromise );
-      HttpFetcher.loadingTimerPromise_create_and_set.call( this );
-      this.allPromiseSet.add( this.loadingTimerPromise );
+
+      // If user abort, no need to re-generate promise.
+      if ( bAbort ) {
+        this.loadingTimerPromise = null;
+
+      // Before loadingTimer done, its event could happen many times.
+      } else {
+        // Re-generate a new promise for listening on it.
+        HttpFetcher.loadingTimerPromise_create_and_set.call( this );
+        this.allPromiseSet.add( this.loadingTimerPromise );
+      }
     }
   }
 
@@ -820,7 +838,7 @@ class HttpFetcher {
   static handle_retryWaitingTimer( resolve, reject, deltaValue ) {
     this.retryWaitingMillisecondsCur += deltaValue;
 
-//!!! ...unfinished... (2023/02/21)
+    // 1.
     let bAbort;
     let bDone;
     if ( this.allPromiseSet.has( this.retryWaitingTimerPromise ) ) {
@@ -832,47 +850,42 @@ class HttpFetcher {
       } else {
         bDone = true;
       }
-        
+
+    // User abort. (i.e. .retryWaitingTimer_cancel() is called)
     } else {
-      bAbort = true; // User abort.
+      bAbort = true;
       bDone = true; // abort is also a kind of done.
     }
 
+    // 2.
     if ( bDone )
       HttpFetcher.progressRetryWaiting_set_whenDone.call( this );
     else
       HttpFetcher.progressRetryWaiting_set_beforeDone.call( this );
 
+    // 3.
     if ( this.bLogEventToConsole )
       console.log( `( ${this.url} ) HttpFetcher: retryWaitingTimer: `
         + `retryWaitingMillisecondsCur=${this.retryWaitingMillisecondsCur}, `
         + `progressRetryWaiting=${this.progressRetryWaiting.valuePercentage}%` );
 
+    // 4.
+    // Note: Even if aborted, still resolve the progress.
+    resolve( this.progressRoot );
 
-//!!! ...unfinished... (2023/02/21)
-// If loading is abort (not error, not loading failed), should:
-//   - this.retryWaitingTimer_cancel();
-//   - reject( ProgressEvent( .type == "abort" ) )
-//
-
-    if ( bAbort )
-      resolve( ???ProgressEvent );
-    else
-      resolve( this.progressRoot );
-
-    // Re-listen on repeatable succeeded event.
-    //
+    // 5. Re-listen on repeatable succeeded event.
     {
       this.allPromiseSet.delete( this.retryWaitingTimerPromise );
 
+      // If done (include user abort), no need to re-generate promise.
+      if ( bDone ) {
+        this.retryWaitingTimerPromise = null;
+
       // Before retryWaitingTimer done, its event could happen many times.
-      if ( this.retryWaitingMillisecondsCur < this.retryWaitingMillisecondsMax ) {
+      } else {
         // Re-generate a new promise for listening on it.
         HttpFetcher.retryWaitingTimerPromise_create_and_set.call( this );
         this.allPromiseSet.add( this.retryWaitingTimerPromise );
-
-      } else {
-        this.retryWaitingTimerPromise = null;
       }
     }
   }
