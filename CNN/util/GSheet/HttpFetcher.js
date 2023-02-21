@@ -219,14 +219,9 @@ class HttpFetcher {
         } else { // 2.4 Unknown error. (Never retry for unknown error.)
           bRetry = false;
         }
-      }
 
-      // 3. Waiting before retry (for truncated exponential backoff algorithm).
-      if ( bRetry ) {
-        yield* HttpFetcher.asyncGenerator_by_retryWaiting.call( this );
-
-      // 4. Throw exception if not retry.
-      } else {
+        // 3. Throw exception if not retry.
+        if ( !bRetry ) {
 
 //!!! ...unfinished... (2023/02/21)
 // If loading is abort (not error, not loading failed), should:
@@ -234,11 +229,17 @@ class HttpFetcher {
 //   - reject( ProgressEvent( .type == "abort" ) )
 //
 
-        // Since no retry, the retry waiting timer should be completed to 100%
-        HttpFetcher.progressRetryWaiting_set_whenDone.call( this );
+          // Since no retry, the retry waiting timer should be completed to 100%
+          HttpFetcher.progressRetryWaiting_set_whenDone.call( this );
 
-        console.error( e );
-        throw e;
+          console.error( e );
+          throw e;
+        }
+      }
+
+      // 4. Waiting before retry (for truncated exponential backoff algorithm).
+      if ( bRetry ) {
+        yield* HttpFetcher.asyncGenerator_by_retryWaiting.call( this );
       }
 
     } while ( bRetry );
