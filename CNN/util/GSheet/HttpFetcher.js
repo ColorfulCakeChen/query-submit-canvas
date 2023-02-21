@@ -96,6 +96,7 @@ class HttpFetcher {
    */
   constructor( bLogEventToConsole ) {
     this.bLogEventToConsole = bLogEventToConsole;
+    this.allPromiseSet = new Set();
   }
 
   /**
@@ -259,7 +260,6 @@ class HttpFetcher {
     return true; // Run out of retry times.
   }
 
-//!!! ...unfinished... (2023/02/21)
   /** */
   retryWaitingMilliseconds_init() {
     // Either (< 0) forever retry, or (> 0) limited-times retry.
@@ -437,17 +437,16 @@ class HttpFetcher {
       HttpFetcher.loadingTimerPromise_create_and_set.call( this );
     }
 
-//!!! ...unfinished... (2023/02/21) retryWaitingTimePromise?
-
     // All promises to be listened.
     {
-      this.allPromiseSet = new Set( [
-        this.abortPromise, this.errorPromise, this.loadPromise,
-        this.loadstartPromise,
-        this.progressPromise,
-        this.timeoutPromise
-      ] );
-
+      this.allPromiseSet.clear();
+      this.allPromiseSet.add( this.abortPromise );
+      this.allPromiseSet.add( this.errorPromise );
+      this.allPromiseSet.add( this.loadPromise );
+      this.allPromiseSet.add( this.loadstartPromise );
+      this.allPromiseSet.add( this.progressPromise );
+      this.allPromiseSet.add( this.timeoutPromise );
+      
       if ( this.loadingTimerPromise )
         this.allPromiseSet.add( this.loadingTimerPromise );
     }
@@ -541,9 +540,8 @@ class HttpFetcher {
 
     // All promises to be listened.
     {
-      this.allPromiseSet = new Set( [
-        this.retryWaitingTimerPromise
-      ] );
+      this.allPromiseSet.clear();
+      this.allPromiseSet.add( this.retryWaitingTimerPromise );
     }
 
     // 2. Until done.
