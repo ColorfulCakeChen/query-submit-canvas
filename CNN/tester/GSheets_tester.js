@@ -108,12 +108,12 @@ class TestCase {
       nextResult = await fetcher.next();
 
       if ( !nextResult.done ) {
-        yield nextResult.value;
-        ++yieldTimes;
-
         if ( yieldTimes === this.abortAfterWhichYield ) {
           urlComposer.abort();
         }
+
+        yield nextResult.value;
+        ++yieldTimes;
       }    
 
     } while ( !nextResult.done );
