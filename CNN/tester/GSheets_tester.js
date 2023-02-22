@@ -212,7 +212,7 @@ class TestCase {
   toString() {
     let str =
         `testCaseId=${this.testCaseId}, `
-      + `spreadsheetId_postfix=${this.spreadsheetId_postfix}, `
+      + `spreadsheetId_postfix=\"{this.spreadsheetId_postfix}\", `
       + `loadingMillisecondsMax=${this.loadingMillisecondsMax}, `
       + `retryTimesMax=${this.retryTimesMax}, `
       + `abortAfterWhichYield=${this.abortAfterWhichYield}, `
@@ -242,13 +242,13 @@ const gTestCaseArray = [
 
   // Test ProgressEvent timeout.
   // (no retry)
-  new TestCase(  8, "",  2 * 1000, 0, -1,  true ),
+  new TestCase(  8, "",  2 * 1000, 0, -1, false ),
   new TestCase(  9, "",  2 * 1000, 0,  0, false ),
   new TestCase( 10, "",  2 * 1000, 0,  1, false ),
   new TestCase( 11, "",  2 * 1000, 0,  2, false ),
 
   // (two retry)
-  new TestCase( 12, "",  2 * 1000, 2, -1,  true ),
+  new TestCase( 12, "",  2 * 1000, 2, -1, false ),
   new TestCase( 13, "",  2 * 1000, 2,  0, false ),
   new TestCase( 14, "",  2 * 1000, 2,  1, false ),
   new TestCase( 15, "",  2 * 1000, 2,  2, false ),
