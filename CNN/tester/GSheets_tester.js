@@ -331,7 +331,10 @@ async function* tester( progressParent ) {
           + `progressParent.valuePercentage (${progressParent.valuePercentage} ) `
           + `should not be 100.` );
 
-      // For failed network request (e.g. abort, error, load witho tatus 200,
+//!!! ...unfinished... (2023/02/22)
+// This will clear out previous succeeded network request.
+
+      // For failed network request (e.g. abort, error, load without tatus 200,
       // timeout), drop its (not 100%) progress so that the toal progress could
       // still 100% after final succeeded network request.
       //
@@ -339,6 +342,7 @@ async function* tester( progressParent ) {
       // a succeeded network request.)
       //
       progressParent.child_disposeAll();
+
     }
   }
 
