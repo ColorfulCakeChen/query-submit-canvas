@@ -236,7 +236,19 @@ class GSheetsAPIv4_UrlComposer extends Recyclable.Root {
       return ColumnMajorArrayArray;
 
     } catch ( e ) {
-      return null;
+      if (   ( e instanceof ProgressEvent )
+          && (   ( e.type === "abort" )
+              || ( e.type === "error" )
+              || ( e.type === "load" )
+              || ( e.type === "timeout" )
+             )
+         ) { // XMLHttpRequest related exception is possible and acceptable.
+         return null;
+
+      } else { // Unknown error, should be said loundly.
+        //console.error( e );
+        throw e;
+      }
     }
   }
 
