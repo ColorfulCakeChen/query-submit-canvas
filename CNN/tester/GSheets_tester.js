@@ -110,7 +110,7 @@ class TestCase {
 
       if ( !nextResult.done ) {
         if ( yieldTimes === this.abortAfterWhichYield ) {
-          urlComposer.httpFetcher.abort();
+          urlComposer.abort();
         }
       }    
 

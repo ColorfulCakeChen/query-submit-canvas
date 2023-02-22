@@ -179,4 +179,9 @@ class GSheets_UrlComposer extends Recyclable.Root {
     return resultColumnMajorArrayArray;
   }
 
+  /** Abort the loading (or waiting). */
+  abort() {
+    this.urlComposer?.abort();
+  }
+
 }

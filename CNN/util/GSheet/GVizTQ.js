@@ -296,6 +296,11 @@ class GVizTQ_UrlComposer extends Recyclable.Root {
     }
   }
 
+  /** Abort the loading (or waiting). */
+  abort() {
+    this.httpFetcher?.abort();
+  }
+
 // //!!! (2023/02/14 Remarked) Use XMLHttpRequest instead. (for progress)
 //   /**
 //    * Generator for composing the URL (according this object's data members), downloading
