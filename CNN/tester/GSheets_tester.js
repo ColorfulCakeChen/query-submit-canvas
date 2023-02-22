@@ -344,16 +344,14 @@ async function* tester( progressParent ) {
           + `progressTestCase.valuePercentage (${progressTestCase.valuePercentage} ) `
           + `should not be 100.` );
 
-//!!! ...unfinished... (2023/02/22)
-// This will clear out previous succeeded network request.
-
       // For failed network request (e.g. abort, error, load without tatus 200,
       // timeout), drop its (not 100%) progress so that the total progress could
       // still 100% (suppose that there at least one TestCase (e.g. the last
       // TestCase) is succeeded).
       //
-      // Note: This dropping will look like progress advancing because every
-      //       progressTestCase become larger in the progressParent.
+      // Note: This dropping will also change progressParent.valuePercentage
+      //       (may increase or decrease).
+      //
       progressParent.child_dispose( progressTestCase );
     }
   }
