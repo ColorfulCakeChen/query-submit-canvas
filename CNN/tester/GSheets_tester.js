@@ -41,6 +41,7 @@ function array2d_compare_EQ( lhs, rhs ) {
  * 
  */
 class TestCase {
+
   /**
    * 
    * @param {string} spreadsheetId_postfix
@@ -228,6 +229,9 @@ class TestCase {
 // loadingMillisecondsMax, retryTimesMax, abortAfterWhichYield, bShouldProgress100
 //
 const gTestCaseArray = [
+
+//!!! ...unfinished... (2023/02/22)
+// How to ensure calling .abort() during retry waiting?
 
   // Test ProgressEvent load without status 200.
   // (no retry)
