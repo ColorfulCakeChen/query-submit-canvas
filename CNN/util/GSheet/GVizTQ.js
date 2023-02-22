@@ -182,9 +182,10 @@ class GVizTQ_UrlComposer extends Recyclable.Root {
    *   Retry request so many times at most when request failed (ProgressEvent
    * is error, or load without status 200, or timeout).
    *
-   * @param {number} retryWaitingMillisecondsExponentMax
-   *   The maximum exponent (for two's power; i.e. the B of ( 2 ** B ) ) of waiting
-   * time for retry. It is only used if ( retryTimesMax > 0 ).
+   * @param {number} retryWaitingSecondsExponentMax
+   *   The maximum exponent (for two's power; i.e. the B of ( 2 ** B ) ) of retry
+   * waiting time (in seconds, not in milliseconds). It is only used if
+   * ( retryTimesMax > 0 ).
    *
    * @member {number} retryWaitingMillisecondsInterval
    *   The interval time (in milliseconds) for advancing retryWaitingMillisecondsCur.
@@ -204,7 +205,7 @@ class GVizTQ_UrlComposer extends Recyclable.Root {
     loadingMillisecondsInterval,
 
     retryTimesMax,
-    retryWaitingMillisecondsExponentMax,
+    retryWaitingSecondsExponentMax,
     retryWaitingMillisecondsInterval,
   ) {
 
@@ -229,7 +230,7 @@ class GVizTQ_UrlComposer extends Recyclable.Root {
             loadingMillisecondsInterval,
         
             retryTimesMax,
-            retryWaitingMillisecondsExponentMax,
+            retryWaitingSecondsExponentMax,
             retryWaitingMillisecondsInterval
           );
 

@@ -38,6 +38,158 @@ function array2d_compare_EQ( lhs, rhs ) {
 }
 
 /**
+ * Try to load differential evolution summary and one of versus.
+ */
+async function* tester_Summary_and_Versus(
+  progressParent,
+
+  spreadsheetId,
+  range,
+  apiKey,
+
+  bLogFetcherEventToConsole,
+
+  loadingMillisecondsMax,
+  loadingMillisecondsInterval,
+
+  retryTimesMax,
+  retryWaitingSecondsExponentMax,
+  retryWaitingMillisecondsInterval,
+) {
+
+  let progress1 = progressParent.child_add(
+    ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
+
+  let progress11 = progressParent.child_add(
+    ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
+
+  let progress2 = progressParent.child_add(
+    ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
+
+  let progress21 = progressParent.child_add(
+    ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
+
+
+//!!! ...unfinished... (2023/02/21)
+// How to test .abort() in loading and in retry waiting?
+
+
+  // Without API key.
+  let tester1 = GSheets.UrlComposer.Pool.get_or_create_by(
+    bLogFetcherEventToConsole, spreadsheetId, range );
+
+  let fetcher1 = tester1.JSON_ColumnMajorArrayArray_fetch_asyncGenerator(
+    progress1,
+
+    loadingMillisecondsMax,
+    loadingMillisecondsInterval,
+  
+    retryTimesMax,
+    retryWaitingSecondsExponentMax,
+    retryWaitingMillisecondsInterval
+  );
+
+  let result1 = yield* fetcher1;
+
+  // With API key.
+  let tester2 = GSheets.UrlComposer.Pool.get_or_create_by(
+    bLogFetcherEventToConsole, spreadsheetId, range, apiKey );
+
+  let fetcher2 = tester2.JSON_ColumnMajorArrayArray_fetch_asyncGenerator(
+    progress2,
+
+    loadingMillisecondsMax,
+    loadingMillisecondsInterval,
+  
+    retryTimesMax,
+    retryWaitingSecondsExponentMax,
+    retryWaitingMillisecondsInterval
+  );
+
+  let result2 = yield* fetcher2;
+
+  // Compare results: should the same.
+  if ( !array2d_compare_EQ( result1, result2 ) )
+    throw Error( `${result1} != ${result2}` );
+
+  // Test change range.
+  if ( result1 ) {
+    let newRange = result1[ 0 ][ 0 ];
+    tester1.range = newRange;
+    let fetcher11 = tester1.JSON_ColumnMajorArrayArray_fetch_asyncGenerator(
+      progress11, timeoutMilliseconds );
+    let result11 = yield* fetcher11;
+
+    tester2.range = newRange;
+    let fetcher21 = tester2.JSON_ColumnMajorArrayArray_fetch_asyncGenerator(
+      progress21, timeoutMilliseconds );
+    let result21 = yield* fetcher21;
+
+    if ( result11 == null )
+      throw Error( `result11( ${result11} ) should not be null.` );
+
+    // Note: If all cells are empty, GQViz got array with zero length.
+    //       But APIv4 got undefined.
+
+    if ( !array2d_compare_EQ( result11, result21 ) )
+      throw Error( `${result11} != ${result21}` );
+
+  } else {
+    // (e.g. the nework is offline.)
+  }
+
+  tester2.disposeResources_and_recycleToPool();
+  tester2 = null;
+
+  tester1.disposeResources_and_recycleToPool();
+  tester1 = null;
+}
+
+/**
+ * 
+ */
+class TestCase {
+  /**
+   * 
+   * @param {string} spreadsheetId_postfix
+   *   The extra string appended to the end of spreadsheetId.
+   *
+   * @param {number} loadingMillisecondsMax
+   *   - zero: no timeout.
+   *   - positive: has timeout.
+   *
+   * @param {number} retryTimesMax 
+   *   - negative: infinite retry.
+   *   - zero: no retry.
+   *   - positive: has retry.
+   *
+   * @param {number} abortAfterWhichYield
+   *   - negative: never call .abort().
+   *   - zero or positive: call .abort() after which times yield.
+   *
+   * @param {boolean} bShouldProgress100
+   *   True means the test should result in ( progressParent.valuePercentage == 100 ).
+   */
+  constructor(
+    spreadsheetId_postfix,
+    loadingMillisecondsMax,
+    retryTimesMax,
+    abortAfterWhichYield,
+    bShouldProgress100
+  ) {
+    this.spreadsheetId_postfix = spreadsheetId_postfix;
+    this.loadingMillisecondsMax = loadingMillisecondsMax;
+    this.retryTimesMax = retryTimesMax;
+    this.abortAfterWhichYield = abortAfterWhichYield;
+    this.bShouldProgress100 = bShouldProgress100;
+  }
+}
+
+const gTestCaseArray = [
+  new TestCase( "_not_exist", 10 * 1000, 1, false, false ),
+];
+
+/**
  *
  * @param {ValueMax.Percentage.Aggregate} progressParent
  *   Some new progressToAdvance will be created and added to progressParent. The
@@ -48,6 +200,66 @@ function array2d_compare_EQ( lhs, rhs ) {
 async function* tester( progressParent ) {
   console.log( "GSheet download testing..." );
 
+  let spreadsheetId = "18YyEoy-OfSkODfw8wqBRApSrRnBTZpjRpRiwIKy8a0M";
+  let range = "A:A";
+  let apiKey = "AIzaSyDQpdX3Z7297fkZ7M_jWdq7zjv_IIxpArU";
+
+  // const bLogFetcherEventToConsole = false;
+  const bLogFetcherEventToConsole = true; // For debug.
+
+  const loadingMillisecondsInterval = 1 * 1000;
+
+  const retryWaitingSecondsExponentMax = 6; // i.e. < 64 seconds
+  const retryWaitingMillisecondsInterval,
+
+  for ( let i = 0; i < gTestCaseArray.length; ++i ) {
+    let testCase = gTestCaseArray[ i ];
+
+    ,
+    ,
+    testCase.abortAfterWhichYield,
+    testCase.bShouldProgress100
+
+//!!!
+    let spreadsheetId_test = spreadsheetId + testCase.spreadsheetId_postfix;
+    yield* tester_Summary_and_Versus(
+      progressParent,
+
+      spreadsheetId_test, range, apiKey,
+
+      bLogFetcherEventToConsole,
+
+      testCase.loadingMillisecondsMax,
+      loadingMillisecondsInterval,
+
+      testCase.retryTimesMax,
+      retryWaitingSecondsExponentMax,
+      retryWaitingMillisecondsInterval,
+    );
+
+    progressParent.child_disposeAll();
+
+
+  }
+
+//!!! ...unfinished... (2023/02/14) timeout and re-try?
+  //const loadingMillisecondsMax = 2 * 1000; // 2 seconds.
+  //const loadingMillisecondsMax = 10 * 1000; // 10 seconds.
+  //const loadingMillisecondsMax = 2 * 60 * 1000; // 2 minutes.
+  //const loadingMillisecondsMax = 3 * 60 * 1000; // 3 minutes.
+  //const loadingMillisecondsMax = 10 * 60 * 1000; // 10 minutes.
+  const loadingMillisecondsMax = 30 * 60 * 1000; // 30 minutes.
+  //const loadingMillisecondsMax = 0; // no timeout.
+
+  const loadingMillisecondsInterval;
+
+  retryTimesMax,
+  retryWaitingSecondsExponentMax,
+  retryWaitingMillisecondsInterval,
+
+
+
+//!!!
   let progressNotExist1 = progressParent.child_add(
     ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
 
@@ -66,24 +278,11 @@ async function* tester( progressParent ) {
   let progress21 = progressParent.child_add(
     ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
 
-  let spreadsheetId = "18YyEoy-OfSkODfw8wqBRApSrRnBTZpjRpRiwIKy8a0M";
-  let range = "A:A";
-  let apiKey = "AIzaSyDQpdX3Z7297fkZ7M_jWdq7zjv_IIxpArU";
-
-  // const bLogFetcherEventToConsole = false;
-  const bLogFetcherEventToConsole = true; // For debug.
-
-//!!! ...unfinished... (2023/02/14) timeout and re-try?
-  //const timeoutMilliseconds = 2 * 1000; // 2 seconds.
-  //const timeoutMilliseconds = 10 * 1000; // 10 seconds.
-  //const timeoutMilliseconds = 2 * 60 * 1000; // 2 minutes.
-  //const timeoutMilliseconds = 3 * 60 * 1000; // 3 minutes.
-  //const timeoutMilliseconds = 10 * 60 * 1000; // 10 minutes.
-  const timeoutMilliseconds = 30 * 60 * 1000; // 30 minutes.
-  //const timeoutMilliseconds = 0; // no timeout.
-
 //!!! ...unfinished... (2023/02/21)
 // How to test .abort() in loading and in retry waiting?
+
+//!!! ...unfinished... (2023/02/22)
+// simulate network offline.
 
   // Without API key, and error.
   let testerNotExist1 = GSheets.UrlComposer.Pool.get_or_create_by(

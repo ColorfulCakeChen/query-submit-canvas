@@ -57,14 +57,20 @@ import * as ValueMax from "../ValueMax.js";
  * @member {number} retryTimesCur
  *   How many times has been retried.
  *
- * @member {number} retryWaitingMillisecondsExponentMax
- *   The maximum exponent (for two's power; i.e. the B of ( 2 ** B ) ) of waiting
- * time for retry. It is only used if ( retryTimesMax > 0 ).
+ * @member {number} retryWaitingSecondsExponentMax
+ *   The maximum exponent (for two's power; i.e. the B of ( 2 ** B ) ) of retry
+ * waiting time (in seconds, not in milliseconds). It is only used if
+ * ( retryTimesMax > 0 ). For example,
+ *   - 0 means ( 2 ** 0 ) = 1 second.
+ *   - 1 means ( 2 ** 1 ) = 2 seconds
+ *   - 2 means ( 2 ** 2 ) = 4 seconds
+ *   - ...
+ *   - 6 means ( 2 ** 6 ) = 64 seconds.
  *
  * @member {number} retryWaitingMillisecondsMax
  *   The maximum time (in milliseconds) of waiting for retry. It is only used
  * if ( retryTimesMax > 0 ). It is calculated from
- * retryWaitingMillisecondsExponentMax.
+ * retryWaitingSecondsExponentMax.
  *
  * @member {number} retryWaitingMillisecondsInterval
  *   The interval time (in milliseconds) for advancing retryWaitingMillisecondsCur.
@@ -142,7 +148,7 @@ class HttpFetcher {
     loadingMillisecondsInterval = ( 20 * 1000 ),
 
     retryTimesMax = 0,
-    retryWaitingMillisecondsExponentMax = 6,
+    retryWaitingSecondsExponentMax = 6,
     retryWaitingMillisecondsInterval = ( 1000 ),
 
     responseType = HttpFetcher.responseTypeDefault,
@@ -159,7 +165,7 @@ class HttpFetcher {
     // 0.2
     this.retryTimesMax = retryTimesMax;
     this.retryTimesCur = 0;
-    this.retryWaitingMillisecondsExponentMax = retryWaitingMillisecondsExponentMax;
+    this.retryWaitingSecondsExponentMax = retryWaitingSecondsExponentMax;
     this.retryWaitingMillisecondsInterval = retryWaitingMillisecondsInterval;
 
     // 0.3
@@ -299,7 +305,7 @@ class HttpFetcher {
     } else {
       this.retryWaitingMillisecondsMax
         = 1000 * RandTools.getRandomInt_TruncatedBinaryExponent(
-            this.retryTimesCur, this.retryWaitingMillisecondsExponentMax );
+            this.retryTimesCur, this.retryWaitingSecondsExponentMax );
 
       this.retryWaitingMillisecondsCur = 0;
     }
