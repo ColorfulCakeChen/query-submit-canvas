@@ -63,12 +63,14 @@ class TestCase {
    *   True means the test should result in ( progressParent.valuePercentage == 100 ).
    */
   constructor(
+    testCaseId,
     spreadsheetId_postfix,
     loadingMillisecondsMax,
     retryTimesMax,
     abortAfterWhichYield,
     bShouldProgress100
   ) {
+    this.testCaseId = testCaseId;
     this.spreadsheetId_postfix = spreadsheetId_postfix;
     this.loadingMillisecondsMax = loadingMillisecondsMax;
     this.retryTimesMax = retryTimesMax;
@@ -209,7 +211,8 @@ class TestCase {
   /** */
   toString() {
     let str =
-        `spreadsheetId_postfix=${this.spreadsheetId_postfix}, `
+        `testCaseId=${this.testCaseId}, `
+      + `spreadsheetId_postfix=${this.spreadsheetId_postfix}, `
       + `loadingMillisecondsMax=${loadingMillisecondsMax}, `
       + `retryTimesMax=${retryTimesMax}, `
       + `abortAfterWhichYield=${abortAfterWhichYield}, `
@@ -223,13 +226,13 @@ class TestCase {
 // loadingMillisecondsMax, retryTimesMax, abortAfterWhichYield, bShouldProgress100
 //
 const gTestCaseArray = [
-  new TestCase( "_not_exist", 10 * 1000, 1, -1, false ),
-  new TestCase( "_not_exist", 10 * 1000, 1,  0, false ),
-  new TestCase( "_not_exist", 10 * 1000, 1,  1, false ),
+  new TestCase(  0, "_not_exist", 10 * 1000, 1, -1, false ),
+  new TestCase(  1, "_not_exist", 10 * 1000, 1,  0, false ),
+  new TestCase(  2, "_not_exist", 10 * 1000, 1,  1, false ),
 
-  new TestCase( "", 30 * 1000, 1, -1,  true ),
-  new TestCase( "", 30 * 1000, 1,  0, false ),
-  new TestCase( "", 30 * 1000, 1,  1, false ),
+  new TestCase(  3, "", 30 * 1000, 1, -1,  true ),
+  new TestCase(  4, "", 30 * 1000, 1,  0, false ),
+  new TestCase(  5, "", 30 * 1000, 1,  1, false ),
 ];
 
 /**
