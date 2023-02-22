@@ -244,22 +244,22 @@ const gTestCaseArray = [
 
   // Test ProgressEvent timeout.
   // (no retry)
-  new TestCase(  8, "",  1 * 1000, 0, -1, false ),
-  new TestCase(  9, "",  1 * 1000, 0,  0, false ),
-  new TestCase( 10, "",  1 * 1000, 0,  1, false ),
-  new TestCase( 11, "",  1 * 1000, 0,  2, false ),
+  new TestCase(  8, "",  0.01 * 1000, 0, -1, false ),
+  new TestCase(  9, "",  0.01 * 1000, 0,  0, false ),
+  new TestCase( 10, "",  0.01 * 1000, 0,  1, false ),
+  new TestCase( 11, "",  0.01 * 1000, 0,  2, false ),
 
   // (no retry)
-  new TestCase( 12, "",  1 * 1000, 1, -1, false ),
-  new TestCase( 13, "",  1 * 1000, 1,  0, false ),
-  new TestCase( 14, "",  1 * 1000, 1,  1, false ),
-  new TestCase( 15, "",  1 * 1000, 1,  2, false ),
+  new TestCase( 12, "",  0.01 * 1000, 1, -1, false ),
+  new TestCase( 13, "",  0.01 * 1000, 1,  0, false ),
+  new TestCase( 14, "",  0.01 * 1000, 1,  1, false ),
+  new TestCase( 15, "",  0.01 * 1000, 1,  2, false ),
 
   // (two retry)
-  new TestCase( 16, "",  1 * 1000, 2, -1, false ),
-  new TestCase( 17, "",  1 * 1000, 2,  0, false ),
-  new TestCase( 18, "",  1 * 1000, 2,  1, false ),
-  new TestCase( 19, "",  1 * 1000, 2,  2, false ),
+  new TestCase( 16, "",  0.01 * 1000, 2, -1, false ),
+  new TestCase( 17, "",  0.01 * 1000, 2,  0, false ),
+  new TestCase( 18, "",  0.01 * 1000, 2,  1, false ),
+  new TestCase( 19, "",  0.01 * 1000, 2,  2, false ),
 
   // Test abort or succeeded.
   // (one retry)
