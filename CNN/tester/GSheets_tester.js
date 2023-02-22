@@ -190,12 +190,12 @@ class TestCase {
       urlComposer2.range = newRange;
       let result21 = yield* this.urlComposer_fetcher( urlComposer2, progress21 );
 
-      if ( result11 == null )
-        throw Error( `result11( ${result11} ) should not be null.` );
+      //!!! (2023/02/22 Remarked) It is possible null (e.g. test .abort()).
+      // if ( result11 == null )
+      //   throw Error( `result11( ${result11} ) should not be null.` );
 
       // Note: If all cells are empty, GQViz got array with zero length.
       //       But APIv4 got undefined.
-
       if ( !array2d_compare_EQ( result11, result21 ) )
         throw Error( `${result11} != ${result21}` );
 
