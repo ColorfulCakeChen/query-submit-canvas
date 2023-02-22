@@ -212,7 +212,7 @@ class TestCase {
   toString() {
     let str =
         `testCaseId=${this.testCaseId}, `
-      + `spreadsheetId_postfix=\"{this.spreadsheetId_postfix}\", `
+      + `spreadsheetId_postfix=\"${this.spreadsheetId_postfix}\", `
       + `loadingMillisecondsMax=${this.loadingMillisecondsMax}, `
       + `retryTimesMax=${this.retryTimesMax}, `
       + `abortAfterWhichYield=${this.abortAfterWhichYield}, `
