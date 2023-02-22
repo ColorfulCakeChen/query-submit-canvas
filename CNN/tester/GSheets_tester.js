@@ -229,10 +229,12 @@ const gTestCaseArray = [
   new TestCase(  0, "_not_exist", 10 * 1000, 1, -1, false ),
   new TestCase(  1, "_not_exist", 10 * 1000, 1,  0, false ),
   new TestCase(  2, "_not_exist", 10 * 1000, 1,  1, false ),
+  new TestCase(  3, "_not_exist", 10 * 1000, 1,  2, false ),
 
-  new TestCase(  3, "", 30 * 1000, 1, -1,  true ),
-  new TestCase(  4, "", 30 * 1000, 1,  0, false ),
-  new TestCase(  5, "", 30 * 1000, 1,  1, false ),
+  new TestCase(  4, "", 30 * 1000, 1, -1,  true ),
+  new TestCase(  5, "", 30 * 1000, 1,  0, false ),
+  new TestCase(  6, "", 30 * 1000, 1,  1, false ),
+  new TestCase(  7, "", 30 * 1000, 1,  2, false ),
 ];
 
 /**
