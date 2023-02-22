@@ -117,6 +117,11 @@ function test() {
           + `Progress (${progress.valuePercentage}) should be 100 `
           + `after testing done.`);
 
+      if ( 100 != progressReceiver.getValue() )
+        throw Error( `util_tester.test(): `
+          + `ProgressReceiver.getValue() (${progressReceiver.getValue()}) `
+          + `should be 100 after testing done.`);
+
       progress.disposeResources_and_recycleToPool();
       progress = null;
 

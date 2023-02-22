@@ -9,9 +9,19 @@ class ValueMax_Receiver_Base {
   setValueMax( value, max ) {}
 
   /**
+   * @return {number} The current value.
+   */
+  getValue() {}
+
+  /**
    * @param {number} value The current value.
    */
   setValue( value ) {}
+
+  /**
+   * @return {number} The maximum value.
+   */
+  getMax() {}
 
   /**
    * @param {number} max   The maximum value.
@@ -61,12 +71,22 @@ class HTMLProgress extends ValueMax_Receiver_Base {
     this.htmlProgress.max = max;
   }
 
+  /** @override */
+  getValue() {
+    return this.htmlProgress.value;
+  }
+
   /**
    * Set HTMLProgressElement.value to value.
    * @param {number} value The current value.
    */
   setValue( value ) {
     this.htmlProgress.value = value;
+  }
+
+  /** @override */
+  getMax() {
+    return this.htmlProgress.max;
   }
 
   /**
