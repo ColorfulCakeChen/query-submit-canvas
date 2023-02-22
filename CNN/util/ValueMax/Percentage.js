@@ -307,6 +307,49 @@ class ValueMax_Percentage_Aggregate extends ValueMax_Percentage_Base {
   }
 
   /**
+   * @param {Percentage.Base} child
+   *   The direct child Percentage.Base object to be detached. If found,
+   * remove it from this Percentage.Aggregate, clear its .parent (but not
+   * dispose it).
+   *
+   * @return {boolean}
+   *   Return true, if succeeded. Return false, if not found.
+   */
+  child_detach( child ) {
+    let bFound = false;
+
+    for ( let i = 0; i < this.children.length; ++i ) {
+      if ( child !== this.children[ i ] )
+        continue;
+
+      bFound = true;
+      child.parent = null;
+      this.children.splice( i, 1 );
+      break;
+    }
+
+    this.valuePercentage_cached_invalidate();
+    return bFound;
+  }
+
+  /**
+   * @param {Percentage.Base} child
+   *   The direct child Percentage.Base object to be disposed. If found,
+   * remove it from this Percentage.Aggregate, clear its .parent, and
+   * dispose it.
+   *
+   * @return {boolean}
+   *   Return true, if succeeded. Return false, if not found.
+   */
+  child_dispose( child ) {
+    if ( this.child_detach( child ) ) {
+      child.disposeResources_and_recycleToPool();
+      return true;
+    }
+    return false;
+  }
+
+  /**
    *   - Remove all children (clear their .parent, but not dispose them).
    *   - Invalidate .valuePercentage_cached.
    *
