@@ -179,8 +179,15 @@ class HttpFetcher {
     const arbitraryNonZero = 1;
     this.progressLoading = progressParent.child_add(
       ValueMax.Percentage.Concrete.Pool.get_or_create_by( arbitraryNonZero ) );
-    this.progressRetryWaiting = progressParent.child_add(
-      ValueMax.Percentage.Concrete.Pool.get_or_create_by( arbitraryNonZero ) );
+
+    {
+      // If retry times is run out at begining, it means no retry at all.
+      if ( retryTimes_isRunOut() )
+        this.progressRetryWaiting = undefined;
+      else
+        this.progressRetryWaiting = progressParent.child_add(
+          ValueMax.Percentage.Concrete.Pool.get_or_create_by( arbitraryNonZero ) );
+    }
 
     // 0.4
     this.bAbort = false;
@@ -269,15 +276,19 @@ class HttpFetcher {
       if ( this.xhr )
         this.xhr.abort();
 
-      this.progressLoading.value_max_set( 0 );
-      this.progressLoading.value_set( 0 );
+      if ( this.progressLoading ) {
+        this.progressLoading.value_max_set( 0 );
+        this.progressLoading.value_set( 0 );
+      }
     }
 
     {
       this.retryWaitingTimer_cancel();
 
-      this.progressRetryWaiting.value_max_set( 0 );
-      this.progressRetryWaiting.value_set( 0 );
+      if ( this.progressRetryWaiting ) {
+        this.progressRetryWaiting.value_max_set( 0 );
+        this.progressRetryWaiting.value_set( 0 );
+      }
     }
   }
 
@@ -933,8 +944,10 @@ class HttpFetcher {
    * @param {HttpFetcher} this
    */
   static progressRetryWaiting_set_beforeDone() {
-    this.progressRetryWaiting.value_max_set( this.retryWaitingMillisecondsMax );
-    this.progressRetryWaiting.value_set( this.retryWaitingMillisecondsCur );
+    if ( this.progressRetryWaiting ) {
+      this.progressRetryWaiting.value_max_set( this.retryWaitingMillisecondsMax );
+      this.progressRetryWaiting.value_set( this.retryWaitingMillisecondsCur );
+    }
   }
 
   /**
@@ -943,8 +956,10 @@ class HttpFetcher {
    * @param {HttpFetcher} this
    */
   static progressRetryWaiting_set_whenDone() {
-    this.progressRetryWaiting.value_max_set( this.retryWaitingMillisecondsMax );
-    this.progressRetryWaiting.value_set( this.retryWaitingMillisecondsMax );
+    if ( this.progressRetryWaiting ) {
+      this.progressRetryWaiting.value_max_set( this.retryWaitingMillisecondsMax );
+      this.progressRetryWaiting.value_set( this.retryWaitingMillisecondsMax );
+    }
   }
 
 
