@@ -296,8 +296,17 @@ async function* tester( progressParent ) {
   const retryWaitingSecondsExponentMax = 6; // i.e. ( <= 64 seconds )
   const retryWaitingMillisecondsInterval = 10 * 1000;
 
+  // Every test case has its own progressParent.
+  let progressTestCaseArray = new Array( gTestCaseArray.length );
+  for ( let i = 0; i < gTestCaseArray.length; ++i ) {
+    progressTestCaseArray[ i ] = progressParent.child_add(
+      ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
+  }
+
+  // Try every test case.
   for ( let i = 0; i < gTestCaseArray.length; ++i ) {
     let testCase = gTestCaseArray[ i ];
+    let progressTestCase = progressTestCaseArray[ i ];
 
     if ( bLogFetcherEventToConsole ) {
       console.log(`testCase={ ${testCase.toString()} }` );
@@ -305,7 +314,7 @@ async function* tester( progressParent ) {
 
     let spreadsheetId_test = spreadsheetId + testCase.spreadsheetId_postfix;
     let testGenerator = testCase.tester_Summary_and_Versus(
-      progressParent,
+      progressTestCase,
 
       spreadsheetId_test, range, apiKey,
 
@@ -321,32 +330,31 @@ async function* tester( progressParent ) {
 
     if ( testCase.bShouldProgress100 ) {
 
-      if ( progressParent.valuePercentage != 100 )
+      if ( progressTestCase.valuePercentage != 100 )
         throw Error( `GSheets_tester.tester(): `
           + `testCase={ ${testCase.toString()} }, `
-          + `progressParent.valuePercentage (${progressParent.valuePercentage} ) `
+          + `progressTestCase.valuePercentage (${progressTestCase.valuePercentage} ) `
           + `should be 100.` );
 
     } else {
 
-      if ( progressParent.valuePercentage == 100 )
+      if ( progressTestCase.valuePercentage == 100 )
         throw Error( `GSheets_tester.tester(): `
           + `testCase={ ${testCase.toString()} }, `
-          + `progressParent.valuePercentage (${progressParent.valuePercentage} ) `
+          + `progressTestCase.valuePercentage (${progressTestCase.valuePercentage} ) `
           + `should not be 100.` );
 
 //!!! ...unfinished... (2023/02/22)
 // This will clear out previous succeeded network request.
 
       // For failed network request (e.g. abort, error, load without tatus 200,
-      // timeout), drop its (not 100%) progress so that the toal progress could
-      // still 100% after final succeeded network request.
+      // timeout), drop its (not 100%) progress so that the total progress could
+      // still 100% (suppose that there at least one TestCase (e.g. the last
+      // TestCase) is succeeded).
       //
-      // (So, there must be at least one TestCase (e.g. the last TestCase) is
-      // a succeeded network request.)
-      //
-      progressParent.child_disposeAll();
-
+      // Note: This dropping will look like progress advancing because every
+      //       progressTestCase become larger in the progressParent.
+      progressParent.child_dispose( progressTestCase );
     }
   }
 
