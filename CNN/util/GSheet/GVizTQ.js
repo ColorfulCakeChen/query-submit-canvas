@@ -239,37 +239,42 @@ class GVizTQ_UrlComposer extends Recyclable.Root {
             retryWaitingMillisecondsInterval
           );
 
-        try {
-          responseText = yield* httpResulter;
-          if ( !responseText )
-            return null; // should not happen.
+        responseText = yield* httpResulter;
+        if ( !responseText )
+          return null; // should not happen.
 
-        } catch( e ) {
-
-//!!! ...unfinished... (2023/02/14) How to re-try download?
-          if ( e instanceof ProgressEvent ) {
-            if ( e.type === "abort" ) {
-              throw e;
-
-            } else if ( e.type === "error" ) {
-              throw e;
-
-            } else if ( e.type === "load" ) { // ( status != 200 ) (e.g. 404 or 500)
-              throw e;
-
-            } else if ( e.type === "timeout" ) {
-              throw e;
-
-            } else { // Unknown error.
-              console.error( e );
-              throw e;
-            }
-
-          } else { // Unknown error.
-            console.error( e );
-            throw e;
-          }
-        }
+//!!! (2023/02/22 Remarked) Retry logic has been inside HttpFetcher.
+//         try {
+//           responseText = yield* httpResulter;
+//           if ( !responseText )
+//             return null; // should not happen.
+//
+//         } catch( e ) {
+//
+// //!!! ...unfinished... (2023/02/14) How to re-try download?
+//           if ( e instanceof ProgressEvent ) {
+//             if ( e.type === "abort" ) {
+//               throw e;
+//
+//             } else if ( e.type === "error" ) {
+//               throw e;
+//
+//             } else if ( e.type === "load" ) { // ( status != 200 ) (e.g. 404 or 500)
+//               throw e;
+//
+//             } else if ( e.type === "timeout" ) {
+//               throw e;
+//
+//             } else { // Unknown error.
+//               console.error( e );
+//               throw e;
+//             }
+//
+//           } else { // Unknown error.
+//             console.error( e );
+//             throw e;
+//           }
+//         }
       }
 
       // 2. Google Visualization Table Query returns JSONP (not JSON).
