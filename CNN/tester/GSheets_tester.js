@@ -106,10 +106,10 @@ class TestCase {
     let yieldTimes = 0;
     do {
       nextResult = await fetcher.next();
-      ++yieldTimes;
 
       if ( !nextResult.done ) {
         yield nextResult.value;
+        ++yieldTimes;
 
         if ( yieldTimes === this.abortAfterWhichYield ) {
           urlComposer.abort();
