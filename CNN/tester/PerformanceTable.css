@@ -4,6 +4,10 @@ body {
   color: lightgrey;
 }
 
+progress {
+  width:100%;
+}
+
 table {
   background-color: black;
   color: lightgrey;
