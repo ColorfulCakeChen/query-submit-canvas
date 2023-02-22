@@ -231,11 +231,13 @@ class TestCase {
 const gTestCaseArray = [
 
   // Test ProgressEvent load without status 200.
-  // (no retry)
-  new TestCase(  0, "_not_exist", 10 * 1000, 0, -1, false ),
-  new TestCase(  1, "_not_exist", 10 * 1000, 0,  0, false ),
-  new TestCase(  2, "_not_exist", 10 * 1000, 0,  1, false ),
-  new TestCase(  3, "_not_exist", 10 * 1000, 0,  2, false ),
+
+//!!! (2023/02/22 Temp Remarked) For test retry waiting.
+//   // (no retry)
+//   new TestCase(  0, "_not_exist", 10 * 1000, 0, -1, false ),
+//   new TestCase(  1, "_not_exist", 10 * 1000, 0,  0, false ),
+//   new TestCase(  2, "_not_exist", 10 * 1000, 0,  1, false ),
+//   new TestCase(  3, "_not_exist", 10 * 1000, 0,  2, false ),
 
   // (one retry)
   new TestCase(  4, "_not_exist", 10 * 1000, 1, -1, false ),
@@ -243,31 +245,42 @@ const gTestCaseArray = [
   new TestCase(  6, "_not_exist", 10 * 1000, 1,  1, false ),
   new TestCase(  7, "_not_exist", 10 * 1000, 1,  2, false ),
 
-  // Test ProgressEvent timeout.
-  // (no retry)
-  new TestCase(  8, "",  0.01 * 1000, 0, -1, false ),
-  new TestCase(  9, "",  0.01 * 1000, 0,  0, false ),
-  new TestCase( 10, "",  0.01 * 1000, 0,  1, false ),
-  new TestCase( 11, "",  0.01 * 1000, 0,  2, false ),
+  // (two retry)
+  new TestCase(  8, "_not_exist", 10 * 1000, 2, -1, false ),
+  new TestCase(  9, "_not_exist", 10 * 1000, 2,  0, false ),
+  new TestCase( 10, "_not_exist", 10 * 1000, 2,  1, false ),
+  new TestCase( 11, "_not_exist", 10 * 1000, 2,  2, false ),
 
-  // (no retry)
-  new TestCase( 12, "",  0.01 * 1000, 1, -1, false ),
-  new TestCase( 13, "",  0.01 * 1000, 1,  0, false ),
-  new TestCase( 14, "",  0.01 * 1000, 1,  1, false ),
-  new TestCase( 15, "",  0.01 * 1000, 1,  2, false ),
+  // Test ProgressEvent timeout.
+
+//!!! (2023/02/22 Temp Remarked) For test retry waiting.
+//   // (no retry)
+//   new TestCase( 12, "",  0.01 * 1000, 0, -1, false ),
+//   new TestCase( 13, "",  0.01 * 1000, 0,  0, false ),
+//   new TestCase( 14, "",  0.01 * 1000, 0,  1, false ),
+//   new TestCase( 15, "",  0.01 * 1000, 0,  2, false ),
+
+  // (one retry)
+  new TestCase( 16, "",  0.01 * 1000, 1, -1, false ),
+  new TestCase( 17, "",  0.01 * 1000, 1,  0, false ),
+  new TestCase( 18, "",  0.01 * 1000, 1,  1, false ),
+  new TestCase( 19, "",  0.01 * 1000, 1,  2, false ),
 
   // (two retry)
-  new TestCase( 16, "",  0.01 * 1000, 2, -1, false ),
-  new TestCase( 17, "",  0.01 * 1000, 2,  0, false ),
-  new TestCase( 18, "",  0.01 * 1000, 2,  1, false ),
-  new TestCase( 19, "",  0.01 * 1000, 2,  2, false ),
+  new TestCase( 20, "",  0.01 * 1000, 2, -1, false ),
+  new TestCase( 21, "",  0.01 * 1000, 2,  0, false ),
+  new TestCase( 22, "",  0.01 * 1000, 2,  1, false ),
+  new TestCase( 23, "",  0.01 * 1000, 2,  2, false ),
 
   // Test abort or succeeded.
   // (one retry)
-  new TestCase( 20, "", 30 * 1000, 1, -1,  true ),
-  new TestCase( 21, "", 30 * 1000, 1,  0, false ),
-  new TestCase( 22, "", 30 * 1000, 1,  1, false ),
-  new TestCase( 23, "", 30 * 1000, 1,  2, false ),
+  new TestCase( 24, "", 30 * 1000, 1, -1,  true ),
+  new TestCase( 25, "", 30 * 1000, 1,  0, false ),
+  new TestCase( 26, "", 30 * 1000, 1,  1, false ),
+  new TestCase( 27, "", 30 * 1000, 1,  2, false ),
+
+//!!! ...unfinished... (2023/02/22)
+// should test infinite retry.
 ];
 
 /**
