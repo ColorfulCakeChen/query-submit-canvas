@@ -118,8 +118,8 @@ function test() {
           + `after testing done.`);
 
 //!!! (2023/02/22) seems needs display progress one more time when done.
-      progressReceiver.setValueMax( // Report progress to UI.
-        progress.valuePercentage, progress.maxPercentage );
+//       progressReceiver.setValueMax( // Report progress to UI.
+//         progress.valuePercentage, progress.maxPercentage );
   
       progress.disposeResources_and_recycleToPool();
       progress = null;
