@@ -38,6 +38,10 @@ import { HttpFetcher } from "./HttpFetcher.js";
  * @example
  * https://docs.google.com/spreadsheets/d/18YyEoy-OfSkODfw8wqBRApSrRnBTZpjRpRiwIKy8a0M/gviz/tq?range='Evolution.Param'!B17&headers=0&tqx=out:csv
  *
+ *
+ * @member {HttpFetcher} httpFetcher
+ *   The current (or last) fetcher of the http request. It could be used to
+ * call .abort().
  */
 class GVizTQ_UrlComposer extends Recyclable.Root {
 
@@ -138,6 +142,7 @@ class GVizTQ_UrlComposer extends Recyclable.Root {
 
   /** @override */
   disposeResources() {
+    this.httpFetcher = undefined;
     this.sheetName = undefined;
     this.sheetId = undefined;
     this.responseHandler = undefined;
@@ -221,8 +226,8 @@ class GVizTQ_UrlComposer extends Recyclable.Root {
 
       let responseText;
       {
-        let httpFetcher = new HttpFetcher( this.bLogFetcherEventToConsole );
-        let httpResulter = httpFetcher
+        this.httpFetcher = new HttpFetcher( this.bLogFetcherEventToConsole );
+        let httpResulter = this.httpFetcher
           .asyncGenerator_by_progressParent_url_timeout_retry_responseType_method_body(
             progressFetcher, url,
 

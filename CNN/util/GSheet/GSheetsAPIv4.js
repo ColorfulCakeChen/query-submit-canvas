@@ -18,6 +18,10 @@ import { HttpFetcher } from "./HttpFetcher.js";
  * https://sheets.googleapis.com/v4/spreadsheets/18YyEoy-OfSkODfw8wqBRApSrRnBTZpjRpRiwIKy8a0M/values/A:A?majorDimension=COLUMNS&key=AIzaSyDQpdX3Z7297fkZ7M_jWdq7zjv_IIxpArU
  * https://sheets.googleapis.com/v4/spreadsheets/18YyEoy-OfSkODfw8wqBRApSrRnBTZpjRpRiwIKy8a0M/values/Evolution.Param!A:B?key=AIzaSyDQpdX3Z7297fkZ7M_jWdq7zjv_IIxpArU
  *
+ *
+ * @member {HttpFetcher} httpFetcher
+ *   The current (or last) fetcher of the http request. It could be used to
+ * call .abort().
  */
 class GSheetsAPIv4_UrlComposer extends Recyclable.Root {
 
@@ -81,6 +85,7 @@ class GSheetsAPIv4_UrlComposer extends Recyclable.Root {
 
   /** @override */
   disposeResources() {
+    this.httpFetcher = undefined;
     this.apiKey = undefined;
     this.range = undefined;
     this.spreadsheetId = undefined;
@@ -162,8 +167,8 @@ class GSheetsAPIv4_UrlComposer extends Recyclable.Root {
 
       let responseText;
       {
-        let httpFetcher = new HttpFetcher( this.bLogFetcherEventToConsole );
-        let httpResulter = httpFetcher
+        this.httpFetcher = new HttpFetcher( this.bLogFetcherEventToConsole );
+        let httpResulter = this.httpFetcher
           .asyncGenerator_by_progressParent_url_timeout_retry_responseType_method_body(
             progressFetcher, url,
 

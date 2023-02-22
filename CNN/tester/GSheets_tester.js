@@ -39,6 +39,66 @@ function array2d_compare_EQ( lhs, rhs ) {
 
 /**
  * Try to load differential evolution summary and one of versus.
+ *
+ * @param {GSheets.UrlComposer} urlComposer
+ *   The urlComposer.JSON_ColumnMajorArrayArray_fetch_asyncGenerator() will be
+ * called and advanced until done.
+ *
+ * @param {number} abortAfterWhichYield
+ *   - negative: never call .abort().
+ *   - zero or positive: call .abort() after which times yield.
+ *
+ * @return {Array[]}
+ *   - Return ( a two dimension (column-major) array ) when successfully.
+ *   - Return null when failed.
+ */
+async function* urlComposer_fetcher(
+  urlComposer,
+
+  progressParent,
+
+  loadingMillisecondsMax,
+  loadingMillisecondsInterval,
+
+  retryTimesMax,
+  retryWaitingSecondsExponentMax,
+  retryWaitingMillisecondsInterval
+) {
+
+  let fetcher = urlComposer.JSON_ColumnMajorArrayArray_fetch_asyncGenerator(
+    progressParent,
+
+    loadingMillisecondsMax,
+    loadingMillisecondsInterval,
+  
+    retryTimesMax,
+    retryWaitingSecondsExponentMax,
+    retryWaitingMillisecondsInterval
+  );
+
+  let nextResult;
+  let yieldTimes = 0;
+  do {
+    nextResult = await fetcher.next();
+    ++yieldTimes;
+
+    if ( !nextResult.done ) {
+      if ( yieldTimes === abortAfterWhichYield ) {
+        urlComposer.httpFetcher.abort();
+      }
+    }    
+
+  } while ( !nextResult.done );
+
+  return nextResult.value;
+}
+
+/**
+ * Try to load differential evolution summary and one of versus.
+ *
+ * @param {number} abortAfterWhichYield
+ *   - negative: never call .abort().
+ *   - zero or positive: call .abort() after which times yield.
  */
 async function* tester_Summary_and_Versus(
   progressParent,
@@ -55,6 +115,8 @@ async function* tester_Summary_and_Versus(
   retryTimesMax,
   retryWaitingSecondsExponentMax,
   retryWaitingMillisecondsInterval,
+
+  abortAfterWhichYield,
 ) {
 
   let progress1 = progressParent.child_add(
@@ -69,16 +131,14 @@ async function* tester_Summary_and_Versus(
   let progress21 = progressParent.child_add(
     ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
 
-
 //!!! ...unfinished... (2023/02/21)
 // How to test .abort() in loading and in retry waiting?
 
-
   // Without API key.
-  let tester1 = GSheets.UrlComposer.Pool.get_or_create_by(
+  let urlComposer1 = GSheets.UrlComposer.Pool.get_or_create_by(
     bLogFetcherEventToConsole, spreadsheetId, range );
 
-  let fetcher1 = tester1.JSON_ColumnMajorArrayArray_fetch_asyncGenerator(
+  let result1 = yield* urlComposer_fetcher( urlComposer1,
     progress1,
 
     loadingMillisecondsMax,
@@ -89,13 +149,11 @@ async function* tester_Summary_and_Versus(
     retryWaitingMillisecondsInterval
   );
 
-  let result1 = yield* fetcher1;
-
   // With API key.
-  let tester2 = GSheets.UrlComposer.Pool.get_or_create_by(
+  let urlComposer2 = GSheets.UrlComposer.Pool.get_or_create_by(
     bLogFetcherEventToConsole, spreadsheetId, range, apiKey );
 
-  let fetcher2 = tester2.JSON_ColumnMajorArrayArray_fetch_asyncGenerator(
+  let result2 = yield* urlComposer_fetcher( urlComposer2,
     progress2,
 
     loadingMillisecondsMax,
@@ -106,8 +164,6 @@ async function* tester_Summary_and_Versus(
     retryWaitingMillisecondsInterval
   );
 
-  let result2 = yield* fetcher2;
-
   // Compare results: should the same.
   if ( !array2d_compare_EQ( result1, result2 ) )
     throw Error( `${result1} != ${result2}` );
@@ -115,15 +171,30 @@ async function* tester_Summary_and_Versus(
   // Test change range.
   if ( result1 ) {
     let newRange = result1[ 0 ][ 0 ];
-    tester1.range = newRange;
-    let fetcher11 = tester1.JSON_ColumnMajorArrayArray_fetch_asyncGenerator(
-      progress11, timeoutMilliseconds );
-    let result11 = yield* fetcher11;
 
-    tester2.range = newRange;
-    let fetcher21 = tester2.JSON_ColumnMajorArrayArray_fetch_asyncGenerator(
-      progress21, timeoutMilliseconds );
-    let result21 = yield* fetcher21;
+    urlComposer1.range = newRange;
+    let result11 = yield* urlComposer_fetcher( urlComposer1,
+      progress11,
+
+      loadingMillisecondsMax,
+      loadingMillisecondsInterval,
+    
+      retryTimesMax,
+      retryWaitingSecondsExponentMax,
+      retryWaitingMillisecondsInterval
+    );
+
+    urlComposer2.range = newRange;
+    let result21 = yield* urlComposer_fetcher( urlComposer2,
+      progress21,
+
+      loadingMillisecondsMax,
+      loadingMillisecondsInterval,
+    
+      retryTimesMax,
+      retryWaitingSecondsExponentMax,
+      retryWaitingMillisecondsInterval
+    );
 
     if ( result11 == null )
       throw Error( `result11( ${result11} ) should not be null.` );
@@ -138,11 +209,11 @@ async function* tester_Summary_and_Versus(
     // (e.g. the nework is offline.)
   }
 
-  tester2.disposeResources_and_recycleToPool();
-  tester2 = null;
+  urlComposer2.disposeResources_and_recycleToPool();
+  urlComposer2 = null;
 
-  tester1.disposeResources_and_recycleToPool();
-  tester1 = null;
+  urlComposer1.disposeResources_and_recycleToPool();
+  urlComposer1 = null;
 }
 
 /**
@@ -207,10 +278,10 @@ async function* tester( progressParent ) {
   // const bLogFetcherEventToConsole = false;
   const bLogFetcherEventToConsole = true; // For debug.
 
-  const loadingMillisecondsInterval = 1 * 1000;
+  const loadingMillisecondsInterval = 10 * 1000;
 
   const retryWaitingSecondsExponentMax = 6; // i.e. ( <= 64 seconds )
-  const retryWaitingMillisecondsInterval = 1 * 1000;
+  const retryWaitingMillisecondsInterval = 10 * 1000;
 
   for ( let i = 0; i < gTestCaseArray.length; ++i ) {
     let testCase = gTestCaseArray[ i ];
@@ -235,15 +306,15 @@ async function* tester( progressParent ) {
     let yieldTimes = 0;
     do {
       nextResult = await testGenerator.next();
-
       ++yieldTimes;
 
-      if ( yieldTimes === testCase.abortAfterWhichYield ) {
+      if ( !nextResult.done ) {
+        if ( yieldTimes === testCase.abortAfterWhichYield ) {
 
 //!!! ...unfinished... (2023/02/22)
-      }
-  
-  
+        }
+      }    
+
     } while ( !nextResult.done );
 
 
