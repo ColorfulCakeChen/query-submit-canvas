@@ -288,7 +288,7 @@ async function* tester( progressParent ) {
     let testCase = gTestCaseArray[ i ];
 
     if ( bLogFetcherEventToConsole ) {
-      console.log( `testCaseId=${testCase.testCaseId}` );
+      console.log(`testCase={ ${testCase.toString()} }` );
     }
 
     let spreadsheetId_test = spreadsheetId + testCase.spreadsheetId_postfix;
