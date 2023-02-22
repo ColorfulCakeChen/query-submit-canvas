@@ -182,7 +182,7 @@ class HttpFetcher {
 
     {
       // If retry times is run out at begining, it means no retry at all.
-      if ( retryTimes_isRunOut() )
+      if ( this.retryTimes_isRunOut() )
         this.progressRetryWaiting = undefined;
       else
         this.progressRetryWaiting = progressParent.child_add(
