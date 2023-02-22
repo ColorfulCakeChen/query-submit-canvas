@@ -213,10 +213,10 @@ class TestCase {
     let str =
         `testCaseId=${this.testCaseId}, `
       + `spreadsheetId_postfix=${this.spreadsheetId_postfix}, `
-      + `loadingMillisecondsMax=${loadingMillisecondsMax}, `
-      + `retryTimesMax=${retryTimesMax}, `
-      + `abortAfterWhichYield=${abortAfterWhichYield}, `
-      + `bShouldProgress100=${bShouldProgress100}`
+      + `loadingMillisecondsMax=${this.loadingMillisecondsMax}, `
+      + `retryTimesMax=${this.retryTimesMax}, `
+      + `abortAfterWhichYield=${this.abortAfterWhichYield}, `
+      + `bShouldProgress100=${this.bShouldProgress100}`
     return str;
   }
 }
@@ -286,6 +286,10 @@ async function* tester( progressParent ) {
 
   for ( let i = 0; i < gTestCaseArray.length; ++i ) {
     let testCase = gTestCaseArray[ i ];
+
+    if ( bLogFetcherEventToConsole ) {
+      console.log( `testCaseId=${testCase.testCaseId}` );
+    }
 
     let spreadsheetId_test = spreadsheetId + testCase.spreadsheetId_postfix;
     let testGenerator = testCase.tester_Summary_and_Versus(
