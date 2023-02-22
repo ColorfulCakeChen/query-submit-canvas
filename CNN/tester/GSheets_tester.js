@@ -300,6 +300,7 @@ async function* tester( progressParent ) {
   const retryWaitingMillisecondsInterval = 10 * 1000;
 
   // Every test case has its own progressParent.
+  let progressRoot = progressParent.root_get();
   let progressTestCaseArray = new Array( gTestCaseArray.length );
   for ( let i = 0; i < gTestCaseArray.length; ++i ) {
     progressTestCaseArray[ i ] = progressParent.child_add(
@@ -352,10 +353,12 @@ async function* tester( progressParent ) {
       // still 100% (suppose that there at least one TestCase (e.g. the last
       // TestCase) is succeeded).
       //
-      // Note: This dropping will also change progressParent.valuePercentage
-      //       (may increase or decrease).
-      //
       progressParent.child_dispose( progressTestCase );
+
+      // Because the above dropping will also change progressParent.valuePercentage
+      // (may increase or decrease), it is necessary to inform outside.
+      //
+      yield progressRoot;
     }
   }
 
