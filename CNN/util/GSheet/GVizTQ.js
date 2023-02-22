@@ -171,9 +171,23 @@ class GVizTQ_UrlComposer extends Recyclable.Root {
    * created progressToAdvance will be increased when every time advanced. The
    * progressParent.root_get() will be returned when every time yield.
    *
-   * @param {number} timeoutMilliseconds
-   *   The time (in milliseconds) a request can take before automatically being
-   * terminated. Default is 0, which means there is no timeout.
+   * @param {number} loadingMillisecondsMax
+   *   The maximum time (in milliseconds) a request can take before automatically
+   * being terminated. Default is 0, which means there is no timeout.
+   *
+   * @param {number} loadingMillisecondsInterval
+   *   The interval time (in milliseconds) for advancing the loadingMillisecondsCur.
+   *
+   * @param {number} retryTimesMax
+   *   Retry request so many times at most when request failed (ProgressEvent
+   * is error, or load without status 200, or timeout).
+   *
+   * @param {number} retryWaitingMillisecondsExponentMax
+   *   The maximum exponent (for two's power; i.e. the B of ( 2 ** B ) ) of waiting
+   * time for retry. It is only used if ( retryTimesMax > 0 ).
+   *
+   * @member {number} retryWaitingMillisecondsInterval
+   *   The interval time (in milliseconds) for advancing retryWaitingMillisecondsCur.
    *
    * @yield {Promise( ValueMax.Percentage.Aggregate )}
    *   Yield a promise resolves to { value: progressParent.root_get(), done: false }.
@@ -184,7 +198,15 @@ class GVizTQ_UrlComposer extends Recyclable.Root {
    *   - Yield a promise resolves to { done: true, value: null } when failed.
    */
   async* JSON_ColumnMajorArrayArray_fetch_asyncGenerator(
-    progressParent, timeoutMilliseconds ) {
+    progressParent,
+
+    loadingMillisecondsMax,
+    loadingMillisecondsInterval,
+
+    retryTimesMax,
+    retryWaitingMillisecondsExponentMax,
+    retryWaitingMillisecondsInterval,
+  ) {
 
     let progressRoot = progressParent.root_get();
     let progressFetcher = progressParent.child_add(
@@ -201,7 +223,15 @@ class GVizTQ_UrlComposer extends Recyclable.Root {
         let httpFetcher = new HttpFetcher( this.bLogFetcherEventToConsole );
         let httpResulter = httpFetcher
           .asyncGenerator_by_progressParent_url_timeout_retry_responseType_method_body(
-            progressFetcher, url, timeoutMilliseconds );
+            progressFetcher, url,
+
+            loadingMillisecondsMax,
+            loadingMillisecondsInterval,
+        
+            retryTimesMax,
+            retryWaitingMillisecondsExponentMax,
+            retryWaitingMillisecondsInterval
+          );
 
         try {
           responseText = yield* httpResulter;

@@ -3,21 +3,6 @@ export { tester };
 import * as GSheets from "../util/GSheets.js";
 import * as ValueMax from "../util/ValueMax.js";
 
-/*
-class TestCase {
-  constructor( spreadsheetId, range, apiKey ) {
-    this.source = source;
-    this.skipLineCount = skipLineCount;
-    this.result = result;
-    this.suspendByteCount = suspendByteCount;
-    this.note = note;
-  }
-}
-
-let testCases = [
-  new TestCase( tEncoder.encode(base64EncodedStrings_extra[ 0]), 1, emptyUint8Array, undefined, "Empty. Not enough lines." ),
-*/
-
 /**
  * (Note: Their length could be different, but content should be the same.
  * (i.e. the extra elements should be all undefined))

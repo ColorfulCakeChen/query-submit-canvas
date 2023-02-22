@@ -67,11 +67,10 @@ import * as ValueMax from "../ValueMax.js";
  * retryWaitingMillisecondsExponentMax.
  *
  * @member {number} retryWaitingMillisecondsInterval
- *   The interval time (in milliseconds) for advancing the
- * retryWaitingMillisecondsCur. Although smaller interval may provide smoother
- * progress advancing, however, too small interval (relative to
- * retryWaitingMillisecondsMax) may not look good because
- * the progress bar may advance too little to be aware by eyes.
+ *   The interval time (in milliseconds) for advancing retryWaitingMillisecondsCur.
+ * Although smaller interval may provide smoother progress advancing, however,
+ * too small interval (relative to retryWaitingMillisecondsMax) may not look good
+ * because the progress bar may advance too little to be aware by eyes.
  *
  * @member {number} retryWaitingMillisecondsCur
  *   The current time (in milliseconds) of waiting for retry. It is only used
