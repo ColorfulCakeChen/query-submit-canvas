@@ -964,6 +964,25 @@ class HttpFetcher {
 
 
   /**
+   * @param {object} e
+   *   An exception object to be checked.
+   *
+   * @return {boolean}
+   *   Return true, if e is XMLHttpRequest related exception. */
+  static Exception_is_ProgressEvent_abort_error_load_timeout( e ) {
+    if (   ( e instanceof ProgressEvent )
+    && (   ( e.type === "abort" )
+        || ( e.type === "error" )
+        || ( e.type === "load" )
+        || ( e.type === "timeout" )
+       )
+   ) {
+     return true;
+   }
+   return false;  
+  }
+
+  /**
    * @param {ProgressEvent} progressEvent
    *   The ProgressEvent to be displayed.
    *
