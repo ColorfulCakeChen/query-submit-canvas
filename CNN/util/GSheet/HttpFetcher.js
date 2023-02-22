@@ -69,8 +69,7 @@ import * as ValueMax from "../ValueMax.js";
  *
  * @member {number} retryWaitingMillisecondsMax
  *   The maximum time (in milliseconds) of waiting for retry. It is only used
- * if ( retryTimesMax > 0 ). It is calculated from
- * retryWaitingSecondsExponentMax.
+ * if ( retryTimesMax > 0 ). It is calculated from retryWaitingSecondsExponentMax.
  *
  * @member {number} retryWaitingMillisecondsInterval
  *   The interval time (in milliseconds) for advancing retryWaitingMillisecondsCur.

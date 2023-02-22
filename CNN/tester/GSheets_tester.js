@@ -209,20 +209,14 @@ async function* tester( progressParent ) {
 
   const loadingMillisecondsInterval = 1 * 1000;
 
-  const retryWaitingSecondsExponentMax = 6; // i.e. < 64 seconds
-  const retryWaitingMillisecondsInterval,
+  const retryWaitingSecondsExponentMax = 6; // i.e. ( <= 64 seconds )
+  const retryWaitingMillisecondsInterval = 1 * 1000;
 
   for ( let i = 0; i < gTestCaseArray.length; ++i ) {
     let testCase = gTestCaseArray[ i ];
 
-    ,
-    ,
-    testCase.abortAfterWhichYield,
-    testCase.bShouldProgress100
-
-//!!!
     let spreadsheetId_test = spreadsheetId + testCase.spreadsheetId_postfix;
-    yield* tester_Summary_and_Versus(
+    let testGenerator = tester_Summary_and_Versus(
       progressParent,
 
       spreadsheetId_test, range, apiKey,
@@ -236,6 +230,25 @@ async function* tester( progressParent ) {
       retryWaitingSecondsExponentMax,
       retryWaitingMillisecondsInterval,
     );
+
+    let nextResult;
+    let yieldTimes = 0;
+    do {
+      nextResult = await testGenerator.next();
+
+      ++yieldTimes;
+
+      if ( yieldTimes === testCase.abortAfterWhichYield ) {
+
+//!!! ...unfinished... (2023/02/22)
+      }
+  
+  
+    } while ( !nextResult.done );
+
+
+//!!! ...unfinished... (2023/02/22)
+    testCase.bShouldProgress100
 
     progressParent.child_disposeAll();
 
