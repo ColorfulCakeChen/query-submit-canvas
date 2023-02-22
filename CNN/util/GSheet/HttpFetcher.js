@@ -326,7 +326,7 @@ class HttpFetcher {
    * advance progressLoading.
    */
   get loadingTimer_isUsed() {
-    if ( loadingMillisecondsMax > 0 )
+    if ( this.loadingMillisecondsMax > 0 )
       return true;
     return false;
   }
