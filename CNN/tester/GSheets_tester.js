@@ -146,7 +146,6 @@ class TestCase {
       else
         ++nextTimes_loading;
 
-//!!!
       // When changing between loading and retry waiting.
       if ( bRetryWaitingPrevious != bRetryWaitingCurrent ) {
         bRetryWaitingPrevious = bRetryWaitingCurrent;
@@ -158,21 +157,8 @@ class TestCase {
           nextTimes_loading = 0;
       }
 
-//!!! ...unfinished... (2023/02/23)
-// Should test .abort() at this time.
-
-//!!! ...unfinished... (2023/02/23)
-//this.abortDuringRetryWaiting
-// Should test .abort() during retry waiting.
-// ( urlComposer.retryWaitingTimer_isCounting() == true )
-
       if ( !nextResult.done ) {
-        if ( nextTimesForAbort === this.abortAfterHowManyNext ) {
-          urlComposer.abort();
-        }
-
         yield nextResult.value;
-
       }
 
     } while ( !nextResult.done );
