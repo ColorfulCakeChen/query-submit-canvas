@@ -127,7 +127,7 @@ class TestCase {
 
         yield nextResult.value;
         ++yieldTimes;
-      }    
+      }
 
     } while ( !nextResult.done );
 
