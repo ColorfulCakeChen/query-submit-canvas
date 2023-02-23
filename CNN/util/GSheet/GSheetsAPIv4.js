@@ -184,7 +184,7 @@ class GSheetsAPIv4_UrlComposer extends Recyclable.Root {
             retryWaitingMillisecondsInterval
           );
 
-        // Abort immediately if caller request to abort before HttpFetcher created.
+        // Abort immediately if caller requests to abort before HttpFetcher created.
         if ( this.bAbort )
           this.httpFetcher.abort();
 
