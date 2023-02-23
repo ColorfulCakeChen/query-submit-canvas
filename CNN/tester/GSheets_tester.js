@@ -56,6 +56,9 @@ class TestCase {
    *   - zero: no retry.
    *   - positive: has retry.
    *
+   * @param {boolean} abortBeforeFetching
+   *   True means call .abort() before HttpFetcher created.
+   *
    * @param {boolean} abortDuringRetryWaiting
    *   True means call .abort() during retry waiting. False means call .abort()
    * during loading.
@@ -73,6 +76,7 @@ class TestCase {
     spreadsheetId_postfix,
     loadingMillisecondsMax,
     retryTimesMax,
+    abortBeforeFetching,
     abortDuringRetryWaiting,
     abortAfterHowManyNext,
     bShouldProgress100
@@ -81,6 +85,7 @@ class TestCase {
     this.spreadsheetId_postfix = spreadsheetId_postfix;
     this.loadingMillisecondsMax = loadingMillisecondsMax;
     this.retryTimesMax = retryTimesMax;
+    this.abortBeforeFetching = abortBeforeFetching;
     this.abortDuringRetryWaiting = abortDuringRetryWaiting;
     this.abortAfterHowManyNext = abortAfterHowManyNext;
     this.bShouldProgress100 = bShouldProgress100;
@@ -99,10 +104,9 @@ class TestCase {
    */
   async* urlComposer_fetcher( urlComposer, progressParent ) {
 
-
-//!!! ...unfinished... (2023/02/23)
-// Should test .abort() at this time.
-
+    if ( this.abortBeforeFetching ) { // Test .abort() before HttpFetcher created.
+      urlComposer.abort();
+    }
 
     let fetcher = urlComposer.JSON_ColumnMajorArrayArray_fetch_asyncGenerator(
       progressParent,
@@ -258,6 +262,7 @@ class TestCase {
       + `spreadsheetId_postfix=\"${this.spreadsheetId_postfix}\", `
       + `loadingMillisecondsMax=${this.loadingMillisecondsMax}, `
       + `retryTimesMax=${this.retryTimesMax}, `
+      + `abortBeforeFetching=${this.abortBeforeFetching}, `
       + `abortDuringRetryWaiting=${this.abortDuringRetryWaiting}, `
       + `abortAfterHowManyNext=${this.abortAfterHowManyNext}, `
       + `bShouldProgress100=${this.bShouldProgress100}`
@@ -268,7 +273,8 @@ class TestCase {
 //
 // spreadsheetId_postfix,
 // loadingMillisecondsMax, retryTimesMax,
-// abortDuringRetryWaiting, abortAfterHowManyNext, bShouldProgress100
+// abortBeforeFetching, abortDuringRetryWaiting, abortAfterHowManyNext,
+// bShouldProgress100
 //
 const gTestCaseArray = [
 
@@ -279,50 +285,50 @@ const gTestCaseArray = [
 
 //!!! (2023/02/22 Temp Remarked) For test retry waiting.
 //   // (no retry)
-//   new TestCase(  0, "_not_exist", 10 * 1000, 0, false, -1, false ),
-//   new TestCase(  1, "_not_exist", 10 * 1000, 0, false,  0, false ),
-//   new TestCase(  2, "_not_exist", 10 * 1000, 0, false,  1, false ),
-//   new TestCase(  3, "_not_exist", 10 * 1000, 0, false,  2, false ),
+//   new TestCase(  0, "_not_exist", 10 * 1000, 0, false, false, -1, false ),
+//   new TestCase(  1, "_not_exist", 10 * 1000, 0, false, false,  0, false ),
+//   new TestCase(  2, "_not_exist", 10 * 1000, 0, false, false,  1, false ),
+//   new TestCase(  3, "_not_exist", 10 * 1000, 0, false, false,  2, false ),
 
   // (one retry)
-  new TestCase(  4, "_not_exist", 10 * 1000, 1, false, -1, false ),
-  new TestCase(  5, "_not_exist", 10 * 1000, 1, false,  0, false ),
-  new TestCase(  6, "_not_exist", 10 * 1000, 1, false,  1, false ),
-  new TestCase(  7, "_not_exist", 10 * 1000, 1, false,  2, false ),
+  new TestCase(  4, "_not_exist", 10 * 1000, 1, false, false, -1, false ),
+  new TestCase(  5, "_not_exist", 10 * 1000, 1, false, false,  0, false ),
+  new TestCase(  6, "_not_exist", 10 * 1000, 1, false, false,  1, false ),
+  new TestCase(  7, "_not_exist", 10 * 1000, 1, false, false,  2, false ),
 
   // (two retry)
-  new TestCase(  8, "_not_exist", 10 * 1000, 2, false, -1, false ),
-  new TestCase(  9, "_not_exist", 10 * 1000, 2, false,  0, false ),
-  new TestCase( 10, "_not_exist", 10 * 1000, 2, false,  1, false ),
-  new TestCase( 11, "_not_exist", 10 * 1000, 2, false,  2, false ),
+  new TestCase(  8, "_not_exist", 10 * 1000, 2, false, false, -1, false ),
+  new TestCase(  9, "_not_exist", 10 * 1000, 2, false, false,  0, false ),
+  new TestCase( 10, "_not_exist", 10 * 1000, 2, false, false,  1, false ),
+  new TestCase( 11, "_not_exist", 10 * 1000, 2, false, false,  2, false ),
 
   // Test ProgressEvent timeout.
 
 //!!! (2023/02/22 Temp Remarked) For test retry waiting.
 //   // (no retry)
-//   new TestCase( 12, "",  0.01 * 1000, 0, false, -1, false ),
-//   new TestCase( 13, "",  0.01 * 1000, 0, false,  0, false ),
-//   new TestCase( 14, "",  0.01 * 1000, 0, false,  1, false ),
-//   new TestCase( 15, "",  0.01 * 1000, 0, false,  2, false ),
+//   new TestCase( 12, "",  0.01 * 1000, 0, false, false, -1, false ),
+//   new TestCase( 13, "",  0.01 * 1000, 0, false, false,  0, false ),
+//   new TestCase( 14, "",  0.01 * 1000, 0, false, false,  1, false ),
+//   new TestCase( 15, "",  0.01 * 1000, 0, false, false,  2, false ),
 
   // (one retry)
-  new TestCase( 16, "",  0.01 * 1000, 1, false, -1, false ),
-  new TestCase( 17, "",  0.01 * 1000, 1, false,  0, false ),
-  new TestCase( 18, "",  0.01 * 1000, 1, false,  1, false ),
-  new TestCase( 19, "",  0.01 * 1000, 1, false,  2, false ),
+  new TestCase( 16, "",  0.01 * 1000, 1, false, false, -1, false ),
+  new TestCase( 17, "",  0.01 * 1000, 1, false, false,  0, false ),
+  new TestCase( 18, "",  0.01 * 1000, 1, false, false,  1, false ),
+  new TestCase( 19, "",  0.01 * 1000, 1, false, false,  2, false ),
 
   // (two retry)
-  new TestCase( 20, "",  0.01 * 1000, 2, false, -1, false ),
-  new TestCase( 21, "",  0.01 * 1000, 2, false,  0, false ),
-  new TestCase( 22, "",  0.01 * 1000, 2, false,  1, false ),
-  new TestCase( 23, "",  0.01 * 1000, 2, false,  2, false ),
+  new TestCase( 20, "",  0.01 * 1000, 2, false, false, -1, false ),
+  new TestCase( 21, "",  0.01 * 1000, 2, false, false,  0, false ),
+  new TestCase( 22, "",  0.01 * 1000, 2, false, false,  1, false ),
+  new TestCase( 23, "",  0.01 * 1000, 2, false, false,  2, false ),
 
   // Test abort or succeeded.
   // (one retry)
-  new TestCase( 24, "", 30 * 1000, 1, false, -1,  true ),
-  new TestCase( 25, "", 30 * 1000, 1, false,  0, false ),
-  new TestCase( 26, "", 30 * 1000, 1, false,  1, false ),
-  new TestCase( 27, "", 30 * 1000, 1, false,  2, false ),
+  new TestCase( 24, "", 30 * 1000, 1, false, false, -1,  true ),
+  new TestCase( 25, "", 30 * 1000, 1, false, false,  0, false ),
+  new TestCase( 26, "", 30 * 1000, 1, false, false,  1, false ),
+  new TestCase( 27, "", 30 * 1000, 1, false, false,  2, false ),
 
 //!!! ...unfinished... (2023/02/22)
 // should test infinite retry.
