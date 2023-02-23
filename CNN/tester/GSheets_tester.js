@@ -140,25 +140,21 @@ class TestCase {
       nextResult = await fetcher.next();
       bRetryWaitingNow = urlComposer.retryWaitingTimer_isCounting();
 
-      // Accumulate how many times the .next() is called.
-      if ( bRetryWaitingNow )
-        ++nextTimes_retryWaiting;
-      else
-        ++nextTimes_loading;
-
 //!!!
-      if ( this.abortDuringRetryWaiting ) {
-        if ( bRetryWaitingNow )
-          ++nextTimesForAbort;
-      } else {
-
-      }
-
       // Reset nextTimes_Xxx when changing between loading and retry waiting.
       if ( bRetryWaitingPrevious != bRetryWaitingNow ) {
         bRetryWaitingPrevious = bRetryWaitingNow;
-        nextTimes_loading = 0;
-        nextTimes_retryWaiting = 0;
+
+        if ( bRetryWaitingNow )
+          nextTimes_retryWaiting = 0;
+        else
+          nextTimes_loading = 0;
+
+      } else { // Otherwise, accumulate how many times the .next() is called.
+        if ( bRetryWaitingNow )
+          ++nextTimes_retryWaiting;
+        else
+          ++nextTimes_loading;
       }
 
 //!!! ...unfinished... (2023/02/23)
