@@ -219,6 +219,15 @@ class GSheetsAPIv4_UrlComposer extends Recyclable.Root {
     }
   }
 
+  /**
+   * @return {boolean} Return true, if .httpFetcher now is during retry waiting.
+   */
+  retryWaitingTimer_isCounting() {
+    if ( this.httpFetcher )
+      return this.httpFetcher.retryWaitingTimer_isCounting();
+    return false;
+  }
+
   /** Abort the loading (or waiting). */
   abort() {
     this.httpFetcher?.abort();
