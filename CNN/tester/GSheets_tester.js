@@ -121,7 +121,8 @@ class TestCase {
     let nextTimes_loading = 0, nextTimes_retryWaiting = 0;
     do {
 
-      // Call .abort() if .next() has been called as specified times.
+      // Call .abort() if .next() has been called as specified times
+      // in specified phase.
       if ( this.abortAfterHowManyNext >= 0 ) {
         if ( bRetryWaitingCurrent ) {
           if ( this.abortDuringRetryWaiting )
