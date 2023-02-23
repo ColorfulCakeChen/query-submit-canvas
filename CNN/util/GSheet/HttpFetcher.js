@@ -575,10 +575,6 @@ class HttpFetcher {
    */
   static async* asyncGenerator_by_retryWaiting() {
 
-//!!! ...unfinished... (2023/02/23)
-// What if .abort() at this time?
-// How to generate a ProgressEvent( abort )?
-
     // 0.
     this.progressRetryWaiting.value_max_set( this.retryWaitingMillisecondsMax );
 
@@ -600,10 +596,17 @@ class HttpFetcher {
       let progressRoot = await allPromise;
       yield progressRoot;
 
+//!!! ...unfinished... (2023/02/23)
+// What if .abort() at this time?
+// How to stop waiting immediately?
+// What the progress.value should be?
+
       // Not done, if:
+      //   - HttpFetcher.abort() is not called.
       //   - .retryWaitingTimerPromise still exists.
       //
-      notDone = ( this.allPromiseSet.has( this.retryWaitingTimerPromise ) );
+      notDone =    ( !this.bAbort )
+                && ( this.allPromiseSet.has( this.retryWaitingTimerPromise ) );
 
     } while ( notDone ); // Stop if retry waiting completely.
 
