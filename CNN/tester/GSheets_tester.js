@@ -92,6 +92,11 @@ class TestCase {
    */
   async* urlComposer_fetcher( urlComposer, progressParent ) {
 
+
+//!!! ...unfinished... (2023/02/23)
+// Should test .abort() at this time.
+
+
     let fetcher = urlComposer.JSON_ColumnMajorArrayArray_fetch_asyncGenerator(
       progressParent,
 
@@ -106,7 +111,14 @@ class TestCase {
     let nextResult;
     let yieldTimes = 0;
     do {
+
+//!!! ...unfinished... (2023/02/23)
+// Should test .abort() at this time.
+
       nextResult = await fetcher.next();
+
+//!!! ...unfinished... (2023/02/23)
+// Should test .abort() at this time.
 
       if ( !nextResult.done ) {
         if ( yieldTimes === this.abortAfterWhichYield ) {
@@ -118,6 +130,10 @@ class TestCase {
       }    
 
     } while ( !nextResult.done );
+
+//!!! ...unfinished... (2023/02/23)
+// Should test .abort() at this time.
+
 
     return nextResult.value;
   }
