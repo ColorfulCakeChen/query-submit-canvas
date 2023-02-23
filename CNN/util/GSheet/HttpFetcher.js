@@ -180,17 +180,19 @@ class HttpFetcher {
     // Note2: Their .max are set arbitrarily here. Their value will be changed
     //        dynamically.
     //
-    const arbitraryNonZero = 1;
-    this.progressLoading = progressParent.child_add(
-      ValueMax.Percentage.Concrete.Pool.get_or_create_by( arbitraryNonZero ) );
-
     {
-      // If retry times is run out at begining, it means no retry at all.
-      if ( this.retryTimes_isRunOut() )
-        this.progressRetryWaiting = undefined;
-      else
-        this.progressRetryWaiting = progressParent.child_add(
-          ValueMax.Percentage.Concrete.Pool.get_or_create_by( arbitraryNonZero ) );
+      const arbitraryNonZero = 1;
+      this.progressLoading = progressParent.child_add(
+        ValueMax.Percentage.Concrete.Pool.get_or_create_by( arbitraryNonZero ) );
+
+      {
+        // If retry times is run out at begining, it means no retry at all.
+        if ( this.retryTimes_isRunOut() )
+          this.progressRetryWaiting = undefined;
+        else
+          this.progressRetryWaiting = progressParent.child_add(
+            ValueMax.Percentage.Concrete.Pool.get_or_create_by( arbitraryNonZero ) );
+      }
     }
 
     //
