@@ -314,7 +314,7 @@ class HttpFetcher {
    * @return {boolean}
    *   Return true, if now is during retry waiting.
    */
-  retryWaitingTimer_isWorking() {
+  retryWaitingTimer_isCounting() {
     if ( this.retryWaitingTimerPromise )
       return true;
     return false;
