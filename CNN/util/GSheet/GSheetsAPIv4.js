@@ -22,6 +22,9 @@ import { HttpFetcher } from "./HttpFetcher.js";
  * @member {HttpFetcher} httpFetcher
  *   The current (or last) fetcher of the http request. It could be used to
  * call .abort().
+ *
+ * @member {boolean} bAbort
+ *   If true, it means .abort() is called.
  */
 class GSheetsAPIv4_UrlComposer extends Recyclable.Root {
 
@@ -85,6 +88,7 @@ class GSheetsAPIv4_UrlComposer extends Recyclable.Root {
 
   /** @override */
   disposeResources() {
+    this.bAbort = undefined;
     this.httpFetcher = undefined;
     this.apiKey = undefined;
     this.range = undefined;
@@ -180,6 +184,10 @@ class GSheetsAPIv4_UrlComposer extends Recyclable.Root {
             retryWaitingMillisecondsInterval
           );
 
+        // Abort immediately if caller request to abort before HttpFetcher created.
+        if ( this.bAbort )
+          this.httpFetcher.abort();
+
         responseText = yield* httpResulter;
         if ( !responseText )
           return null; // should not happen.
@@ -230,6 +238,7 @@ class GSheetsAPIv4_UrlComposer extends Recyclable.Root {
 
   /** Abort the loading (or waiting). */
   abort() {
+    this.bAbort = true;
     this.httpFetcher?.abort();
   }
 
