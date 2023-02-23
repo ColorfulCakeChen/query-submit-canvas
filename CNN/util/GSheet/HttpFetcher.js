@@ -364,6 +364,17 @@ class HttpFetcher {
   }
 
   /**
+   * @return {boolean}
+   *   Return true, if ( this.loadingTimer_isUsed == true ) and ( now is during
+   * loading ).
+   */
+  loadingTimer_isCounting() {
+    if ( this.loadingTimerPromise )
+      return true;
+    return false;
+  }
+
+  /**
    * Cancel current loadingTimer (if exists).
    *
    * @param {HttpFetcher} this
