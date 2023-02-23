@@ -122,7 +122,7 @@ class TestCase {
 
 //!!! ...unfinished... (2023/02/23)
 // Should test .abort() during retry waiting.
-// .retryWaitingTimer_isCounting()
+// ( urlComposer.retryWaitingTimer_isCounting() == true )
 
       if ( !nextResult.done ) {
         if ( yieldTimes === this.abortAfterWhichYield ) {
