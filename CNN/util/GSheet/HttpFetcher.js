@@ -100,9 +100,7 @@ import * as ValueMax from "../ValueMax.js";
  * ( ProgressEvent.lengthComputable == false ), it will be zero.
  *
  * @member {boolean} bAbort
- *   If true, it means .abort() is called (after
- * .asyncGenerator_by_progressParent_url_timeout_retry_responseType_method_body()
- * has been called).
+ *   If true, it means .abort() is called.
  */
 class HttpFetcher {
 
