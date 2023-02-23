@@ -294,20 +294,7 @@ class HttpFetcher {
       }
     }
 
-//!!! ...unfinished... (2023/02/23)
-// What if .abort() at this time?
-// How to stop waiting immediately?
-// What the progress.value should be?
-
-
-    {
-      this.retryWaitingTimer_cancel();
-
-      if ( this.progressRetryWaiting ) {
-        this.progressRetryWaiting.value_max_set( 0 );
-        this.progressRetryWaiting.value_set( 0 );
-      }
-    }
+    this.retryWaitingTimer_cancel();
   }
 
 
