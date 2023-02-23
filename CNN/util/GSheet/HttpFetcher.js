@@ -591,7 +591,7 @@ class HttpFetcher {
     // Although, it seems no chance to execute to here if aborted.
     //
     if ( this.bAbort ) {
-      return this.progressRoot; // 3. Return the total progress.
+      return this.progressRoot;
     }
 
     // 1.
