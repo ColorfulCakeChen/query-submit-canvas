@@ -341,31 +341,31 @@ class HttpFetcher {
 
   /** Cancel current retryWaitingTimer (if exists). */
   retryWaitingTimer_cancel() {
-    if ( this.retryWaitingTimerPromise ) {
+    if ( !this.retryWaitingTimerPromise )
+      return;
 
-      this.retryWaitingTimerPromise.cancelTimer(); // Stop timer.
-      this.allPromiseSet.delete( this.retryWaitingTimerPromise ); // Stop listening.
+    this.retryWaitingTimerPromise.cancelTimer(); // Stop timer.
+    this.allPromiseSet.delete( this.retryWaitingTimerPromise ); // Stop listening.
 
-      // Canceling retry timer may result in
-      //   - .handle_retryWaitingTimer() never be called.
-      //       So, let the retry waiting progress done (100%) here.
-      //
-      //   - .asyncGenerator_by_retryWaiting() be blocked forever.
-      //       So, resolve the retry waiting promise here.
-      //
-      {
-        HttpFetcher.progressRetryWaiting_set_whenDone.call( this );
+    // Canceling retry timer may result in
+    //   - .handle_retryWaitingTimer() never be called.
+    //       So, let the retry waiting progress done (100%) here.
+    //
+    //   - .asyncGenerator_by_retryWaiting() be blocked forever.
+    //       So, resolve the retry waiting promise here.
+    //
+    {
+      HttpFetcher.progressRetryWaiting_set_whenDone.call( this );
 
-        if ( this.bLogEventToConsole )
-          console.log( `( ${this.url} ) HttpFetcher: retryWaitingTimer_cancel(): `
-            + `progressRetryWaiting=${this.progressRetryWaiting.valuePercentage}%` );
+      if ( this.bLogEventToConsole )
+        console.log( `( ${this.url} ) HttpFetcher: retryWaitingTimer_cancel(): `
+          + `progressRetryWaiting=${this.progressRetryWaiting.valuePercentage}%` );
 
-        // Note: Even if aborted, still resolve the progress.
-        this.retryWaitingTimerPromise.resolve( this.progressRoot );
-      }
-
-      this.retryWaitingTimerPromise = null;
+      // Note: Even if aborted, still resolve the progress.
+      this.retryWaitingTimerPromise.resolve( this.progressRoot );
     }
+
+    this.retryWaitingTimerPromise = null;
   }
 
 
@@ -382,11 +382,12 @@ class HttpFetcher {
 
   /** Cancel current loadingTimer (if exists). */
   loadingTimer_cancel() {
-    if ( this.loadingTimerPromise ) {
-      this.loadingTimerPromise.cancelTimer(); // Stop timer.
-      this.allPromiseSet.delete( this.loadingTimerPromise ); // Stop listening.
-      this.loadingTimerPromise = null;
-    }
+    if ( !this.loadingTimerPromise )
+      return;
+
+    this.loadingTimerPromise.cancelTimer(); // Stop timer.
+    this.allPromiseSet.delete( this.loadingTimerPromise ); // Stop listening.
+    this.loadingTimerPromise = null;
   }
 
   /**
