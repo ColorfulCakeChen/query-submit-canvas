@@ -200,6 +200,10 @@ class HttpFetcher {
 
       // 1.
       try {
+
+//!!! ...unfinished... (2023/02/23)
+// What if .abort() at this time?
+
         responseText = yield* HttpFetcher
           .asyncGenerator_by_url_timeout_responseType_method_body.call(
             this,
@@ -258,7 +262,15 @@ class HttpFetcher {
 
       // 4. Waiting before retry (for truncated exponential backoff algorithm).
       if ( bRetry ) {
+
+//!!! ...unfinished... (2023/02/23)
+// What if .abort() at this time?
+
         yield* HttpFetcher.asyncGenerator_by_retryWaiting.call( this );
+
+//!!! ...unfinished... (2023/02/23)
+// What if .abort() at this time?
+
       }
 
     } while ( bRetry && ( this.bAbort == false ) );
@@ -429,6 +441,9 @@ class HttpFetcher {
 
     // 2.
 
+//!!! ...unfinished... (2023/02/23)
+// What if .abort() at this time?
+
     // 2.1
     const xhr = this.xhr = new XMLHttpRequest();
     xhr.open( method, url, true );
@@ -552,6 +567,10 @@ class HttpFetcher {
    *   Yield a promise resolves to { done: true, value: this.progressRoot }.
    */
   static async* asyncGenerator_by_retryWaiting() {
+
+//!!! ...unfinished... (2023/02/23)
+// What if .abort() at this time?
+// How to generate a ProgressEvent( abort )?
 
     // 0.
     this.progressRetryWaiting.value_max_set( this.retryWaitingMillisecondsMax );
