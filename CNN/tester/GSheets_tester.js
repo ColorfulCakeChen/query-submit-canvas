@@ -38,6 +38,59 @@ function array2d_compare_EQ( lhs, rhs ) {
 }
 
 /**
+ *
+ * @member {boolean} beforeFetching
+ *   True means call .abort() before HttpFetcher created.
+ *
+ * @member {boolean} duringRetryWaiting
+ *   True means call .abort() during retry waiting. False means call .abort()
+ * during loading.
+ *
+ * @member {number} afterHowManyNext
+ *   - negative: never call .abort() during loading or retry waiting.
+ *   - zero or positive: call .abort() after how many .next() is called during
+ *       loading or retry waiting (according to duringRetryWaiting).
+ */
+class AbortTestMode {
+  /** */
+  constructor( beforeFetching, duringRetryWaiting, afterHowManyNext ) {
+    this.beforeFetching = beforeFetching;
+    this.duringRetryWaiting = duringRetryWaiting;
+    this.afterHowManyNext = afterHowManyNext;
+  }
+
+  /** */
+  toString() {
+    let str =
+        `beforeFetching=${this.beforeFetching}, `
+      + `duringRetryWaiting=${this.duringRetryWaiting}, `
+      + `afterHowManyNext=${this.afterHowManyNext}`
+    return str;
+  }
+
+  /**
+   * @param {number} number_N1_6
+   *   - negative: never call .abort().
+   *   - 0: call .abort() before HttpFetcher created.
+   *   - 1: call .abort() during loading when .next() is called 0 times.
+   *   - 2: call .abort() during loading when .next() is called 1 times.
+   *   - 3: call .abort() during loading when .next() is called 2 times.
+   *   - 4: call .abort() during retry waiting when .next() is called 0 times.
+   *   - 5: call .abort() during retry waiting when .next() is called 1 times.
+   *   - 6: call .abort() during retry waiting when .next() is called 2 times.
+   */
+  static create_by_number_N1_6( number_N1_6 ) {
+    if ( number_N1_6 < 0 ) {
+      return new AbortTestMode( false, false, -1 );
+    } else if ( number_N1_6 == 0 ) {
+      return new AbortTestMode( true, false, -1 );
+    } else {
+      return new AbortTestMode( false, true, ( number_N1_6 - 1 ) % 3 );
+    }
+  }
+}
+
+/**
  * 
  */
 class TestCase {
@@ -56,17 +109,8 @@ class TestCase {
    *   - zero: no retry.
    *   - positive: has retry.
    *
-   * @param {boolean} abortBeforeFetching
-   *   True means call .abort() before HttpFetcher created.
-   *
-   * @param {boolean} abortDuringRetryWaiting
-   *   True means call .abort() during retry waiting. False means call .abort()
-   * during loading.
-   *
-   * @param {number} abortAfterHowManyNext
-   *   - negative: never call .abort().
-   *   - zero or positive: call .abort() after how many .next() is called during
-   *       loading or retry waiting (according to abortDuringRetryWaiting).
+   * @param {AbortTestMode} abortTestMode
+   *   The mode for testing .abort().
    *
    * @param {boolean} bShouldProgress100
    *   True means the test should result in ( progressParent.valuePercentage == 100 ).
@@ -76,19 +120,14 @@ class TestCase {
     spreadsheetId_postfix,
     loadingMillisecondsMax,
     retryTimesMax,
-    abortBeforeFetching,
-    abortDuringRetryWaiting,
-    abortAfterHowManyNext,
+    abortTestMode,
     bShouldProgress100
   ) {
     this.testCaseId = testCaseId;
     this.spreadsheetId_postfix = spreadsheetId_postfix;
     this.loadingMillisecondsMax = loadingMillisecondsMax;
     this.retryTimesMax = retryTimesMax;
-    this.abortBeforeFetching = abortBeforeFetching;
-    this.abortDuringRetryWaiting = abortDuringRetryWaiting;
-    this.abortAfterHowManyNext = abortAfterHowManyNext;
-    this.bShouldProgress100 = bShouldProgress100;
+    this.abortTestMode = abortTestMode;
   }
 
   /**
@@ -104,7 +143,8 @@ class TestCase {
    */
   async* urlComposer_fetcher( urlComposer, progressParent ) {
 
-    if ( this.abortBeforeFetching ) { // Test .abort() before HttpFetcher created.
+    // Test .abort() before HttpFetcher created.
+    if ( this.abortTestMode.beforeFetching ) {
       urlComposer.abort();
     }
 
@@ -127,14 +167,14 @@ class TestCase {
 
       // Call .abort() if .next() has been called as specified times
       // in specified phase.
-      if ( this.abortAfterHowManyNext >= 0 ) {
+      if ( this.abortTestMode.afterHowManyNext >= 0 ) {
         if ( bRetryWaitingCurrent ) {
-          if ( this.abortDuringRetryWaiting )
-            if ( nextTimes_retryWaiting === this.abortAfterHowManyNext )
+          if ( this.abortTestMode.duringRetryWaiting )
+            if ( nextTimes_retryWaiting === this.abortTestMode.afterHowManyNext )
               urlComposer.abort();
         } else {
-          if ( !this.abortDuringRetryWaiting )
-            if ( nextTimes_loading === this.abortAfterHowManyNext )
+          if ( !this.abortTestMode.duringRetryWaiting )
+            if ( nextTimes_loading === this.abortTestMode.afterHowManyNext )
               urlComposer.abort();
         }
       }
@@ -172,9 +212,6 @@ class TestCase {
   /**
    * Try to load differential evolution summary and one of versus.
    *
-   * @param {number} abortAfterHowManyNext
-   *   - negative: never call .abort().
-   *   - zero or positive: call .abort() after which times yield.
    */
   async* tester_Summary_and_Versus(
     progressParent,
@@ -262,19 +299,44 @@ class TestCase {
       + `spreadsheetId_postfix=\"${this.spreadsheetId_postfix}\", `
       + `loadingMillisecondsMax=${this.loadingMillisecondsMax}, `
       + `retryTimesMax=${this.retryTimesMax}, `
-      + `abortBeforeFetching=${this.abortBeforeFetching}, `
-      + `abortDuringRetryWaiting=${this.abortDuringRetryWaiting}, `
-      + `abortAfterHowManyNext=${this.abortAfterHowManyNext}, `
+      + `abortTestMode={ ${this.abortTestMode} }, `
       + `bShouldProgress100=${this.bShouldProgress100}`
     return str;
+  }
+
+  /** */
+  static createArray_by(
+    testCaseId_begin,
+    spreadsheetId_postfix,
+    loadingMillisecondsMax,
+    bShouldProgress100
+   ) {
+
+    let arrayIndex = 0;
+    let testCaseArray = new Array( ??? );
+    for ( let i = 0; i < testCaseArray.length; ++i ) {
+
+      for ( let j = -1; j <= 6; ++j ) { // All kinds of AbortTestMode.
+        let testCaseId = testCaseId_begin + arrayIndex;
+        let abortTestMode = AbortTestMode.create_by_number_N1_6( j );
+
+//!!! ...unfinished... (2023/02/23)
+// retryTimesMax ???
+
+        let testCase = new TestCase( testCaseId, spreadsheetId_postfix,
+          loadingMillisecondsMax, retryTimesMax, abortTestMode, false??? );
+
+        testCaseArray[ arrayIndex ] = testCase;
+        ++arrayIndex;
+      }
+
+    }
   }
 }
 
 //
 // spreadsheetId_postfix,
-// loadingMillisecondsMax, retryTimesMax,
-// abortBeforeFetching, abortDuringRetryWaiting, abortAfterHowManyNext,
-// bShouldProgress100
+// loadingMillisecondsMax, retryTimesMax, abortTestMode, bShouldProgress100
 //
 const gTestCaseArray = [
 
@@ -285,6 +347,8 @@ const gTestCaseArray = [
 
 //!!! (2023/02/22 Temp Remarked) For test retry waiting.
 //   // (no retry)
+//   new TestCase(  0, "_not_exist", 10 * 1000, 0, AbortTestMode.create_by_number_N1_6(?), false ),
+//   new TestCase(  0, "_not_exist", 10 * 1000, 0,  true, false, -1, false ),
 //   new TestCase(  0, "_not_exist", 10 * 1000, 0, false, false, -1, false ),
 //   new TestCase(  1, "_not_exist", 10 * 1000, 0, false, false,  0, false ),
 //   new TestCase(  2, "_not_exist", 10 * 1000, 0, false, false,  1, false ),
