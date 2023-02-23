@@ -98,7 +98,11 @@ import * as ValueMax from "../ValueMax.js";
  * @member {number} contentTotal
  *   The total length of content (i.e. ProgressEvent.total). If
  * ( ProgressEvent.lengthComputable == false ), it will be zero.
- * 
+ *
+ * @member {boolean} bAbort
+ *   If true, it means .abort() is called (after
+ * .asyncGenerator_by_progressParent_url_timeout_retry_responseType_method_body()
+ * has been called).
  */
 class HttpFetcher {
 
@@ -200,10 +204,6 @@ class HttpFetcher {
 
       // 1.
       try {
-
-//!!! ...unfinished... (2023/02/23)
-// What if .abort() at this time?
-
         responseText = yield* HttpFetcher
           .asyncGenerator_by_url_timeout_responseType_method_body.call(
             this,
@@ -273,7 +273,7 @@ class HttpFetcher {
 
       }
 
-    } while ( bRetry && ( this.bAbort == false ) );
+    } while ( bRetry && ( !this.bAbort ) );
 
     // 5. Return the successfully downloaded result.
     return responseText;
@@ -441,9 +441,6 @@ class HttpFetcher {
 
     // 2.
 
-//!!! ...unfinished... (2023/02/23)
-// What if .abort() at this time?
-
     // 2.1
     const xhr = this.xhr = new XMLHttpRequest();
     xhr.open( method, url, true );
@@ -489,6 +486,16 @@ class HttpFetcher {
 
     // 2.3
     xhr.send( body );
+
+    // Abort immediately if caller requests. (For example, HttpFetcher.abort()
+    // may be called during retry waiting.)
+    //
+    // Note: Calling xhr.abort() only has effect after xhr.send(). Calling
+    //       xhr.abort() before xhr.send() has no effect.
+    //
+    if ( this.bAbort ) {
+      xhr.abort();
+    }
 
     // 2.4 Until done or failed.
     let notDone;
