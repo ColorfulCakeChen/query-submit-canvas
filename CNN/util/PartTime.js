@@ -117,18 +117,27 @@ function Promise_create_by_addEventListener_once(
  *   Return a newly created Promise. It will be settled by the timeoutCallback
  * (by calling resolveFunc or rejectFunc). The returned Promise will have the
  * following properties:
+ *   - .resolve(): Call it to resolve the promise.
+ *   - .reject(): Call it to reject the promise.
  *   - .timeoutId: could be used to call clearTimeout().
  *   - .cancelTimer(): Call it (without any parameter) to cancel the timer.
  */
 function Promise_create_by_setTimeout(
   delayMilliseconds, timeoutCallback, thisArg, ...values ) {
 
+  let resolveFunc, rejectFunc;
   let timeoutId;
+
   let p = new Promise( ( resolve, reject ) => {
+    resolveFunc = resolve;
+    rejectFunc = reject;
     timeoutId = setTimeout(
       timeoutCallback.bind( thisArg, resolve, reject ),
       delayMilliseconds, ...values );
   } );
+
+  p.resolve = resolveFunc;
+  p.reject = rejectFunc;
 
   p.timeoutId = timeoutId;
   p.cancelTimer = clearTimeout.bind( null, timeoutId );

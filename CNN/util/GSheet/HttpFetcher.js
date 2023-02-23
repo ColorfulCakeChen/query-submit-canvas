@@ -294,6 +294,12 @@ class HttpFetcher {
       }
     }
 
+//!!! ...unfinished... (2023/02/23)
+// What if .abort() at this time?
+// How to stop waiting immediately?
+// What the progress.value should be?
+
+
     {
       this.retryWaitingTimer_cancel();
 
@@ -336,8 +342,28 @@ class HttpFetcher {
   /** Cancel current retryWaitingTimer (if exists). */
   retryWaitingTimer_cancel() {
     if ( this.retryWaitingTimerPromise ) {
+
       this.retryWaitingTimerPromise.cancelTimer(); // Stop timer.
       this.allPromiseSet.delete( this.retryWaitingTimerPromise ); // Stop listening.
+
+      // Canceling retry timer may result in
+      //   - .handle_retryWaitingTimer() never be called.
+      //       So, let the retry waiting progress done (100%) here.
+      //
+      //   - .asyncGenerator_by_retryWaiting() be blocked forever.
+      //       So, resolve the retry waiting promise here.
+      //
+      {
+        HttpFetcher.progressRetryWaiting_set_whenDone.call( this );
+
+        if ( this.bLogEventToConsole )
+          console.log( `( ${this.url} ) HttpFetcher: retryWaitingTimer_cancel(): `
+            + `progressRetryWaiting=${this.progressRetryWaiting.valuePercentage}%` );
+
+        // Note: Even if aborted, still resolve the progress.
+        this.retryWaitingTimerPromise.resolve( this.progressRoot );
+      }
+
       this.retryWaitingTimerPromise = null;
     }
   }
@@ -848,7 +874,8 @@ class HttpFetcher {
     // 1.
     let bAbort;
     let bDone;
-    if ( this.allPromiseSet.has( this.retryWaitingTimerPromise ) ) {
+    if (   ( !this.bAbort )
+        && ( this.allPromiseSet.has( this.retryWaitingTimerPromise ) ) ) {
       bAbort = false;
 
       // Since user not abort, checking time whether exceeds.
@@ -858,7 +885,7 @@ class HttpFetcher {
         bDone = true;
       }
 
-    // User abort. (i.e. .retryWaitingTimer_cancel() is called)
+    // User abort. (i.e. .abort() or .retryWaitingTimer_cancel() is called)
     } else {
       bAbort = true;
       bDone = true; // abort is also a kind of done.
