@@ -193,14 +193,11 @@ class HttpFetcher {
           ValueMax.Percentage.Concrete.Pool.get_or_create_by( arbitraryNonZero ) );
     }
 
-    // 0.4
-    this.bAbort = false;
-
     //
     let bRetry;
     let responseText;
     do {
-      this.retryWaitingMilliseconds_init();
+      HttpFetcher.retryWaitingMilliseconds_init.call( this );
 
       // 1.
       try {
@@ -265,6 +262,7 @@ class HttpFetcher {
 
 //!!! ...unfinished... (2023/02/23)
 // What if .abort() at this time?
+//this.bAbort;
 
         yield* HttpFetcher.asyncGenerator_by_retryWaiting.call( this );
 
@@ -294,7 +292,7 @@ class HttpFetcher {
       }
     }
 
-    this.retryWaitingTimer_cancel();
+    HttpFetcher.retryWaitingTimer_cancel.call( this );
   }
 
 
@@ -307,8 +305,10 @@ class HttpFetcher {
     return true; // Run out of retry times. (Include never retry.)
   }
 
-  /** */
-  retryWaitingMilliseconds_init() {
+  /**
+   * @param {HttpFetcher} this
+   */
+  static retryWaitingMilliseconds_init() {
 
     // No need (or can not) retry.
     if ( this.retryTimes_isRunOut() ) {
@@ -326,8 +326,11 @@ class HttpFetcher {
     }
   }
 
-  /** Cancel current retryWaitingTimer (if exists). */
-  retryWaitingTimer_cancel() {
+  /** Cancel current retryWaitingTimer (if exists).
+   *
+   * @param {HttpFetcher} this
+   */
+ static retryWaitingTimer_cancel() {
     if ( !this.retryWaitingTimerPromise )
       return;
 
@@ -366,8 +369,12 @@ class HttpFetcher {
     return false;
   }
 
-  /** Cancel current loadingTimer (if exists). */
-  loadingTimer_cancel() {
+  /**
+   * Cancel current loadingTimer (if exists).
+   *
+   * @param {HttpFetcher} this
+   */
+  static loadingTimer_cancel() {
     if ( !this.loadingTimerPromise )
       return;
 
@@ -649,7 +656,8 @@ class HttpFetcher {
    * @param {HttpFetcher} this
    */
   static handle_abort( resolve, reject, event ) {
-    this.loadingTimer_cancel(); // Stop listen progress timer (since completed).
+    // Stop listen progress timer (since completed).
+    HttpFetcher.loadingTimer_cancel.call( this );
 
     // Advance progress to complete status (event if use timer).
     HttpFetcher.progressLoading_set_whenDone.call( this, event );
@@ -670,7 +678,8 @@ class HttpFetcher {
    * @param {HttpFetcher} this
    */
   static handle_error( resolve, reject, event ) {
-    this.loadingTimer_cancel(); // Stop listen progress timer (since completed).
+    // Stop listen progress timer (since completed).
+    HttpFetcher.loadingTimer_cancel.call( this );
 
     // Advance progress to complete status (event if use timer).
     HttpFetcher.progressLoading_set_whenDone.call( this, event );
@@ -691,7 +700,8 @@ class HttpFetcher {
    * @param {HttpFetcher} this
    */
   static handle_load( resolve, reject, event ) {
-    this.loadingTimer_cancel(); // Stop listen progress timer (since completed).
+    // Stop listen progress timer (since completed).
+    HttpFetcher.loadingTimer_cancel.call( this );
 
     // Advance progress to complete status (event if use timer).
     HttpFetcher.progressLoading_set_whenDone.call( this, event );
@@ -783,7 +793,8 @@ class HttpFetcher {
    * @param {HttpFetcher} this
    */
   static handle_timeout( resolve, reject, event ) {
-    this.loadingTimer_cancel(); // Stop listen progress timer (since completed).
+    // Stop listen progress timer (since completed).
+    HttpFetcher.loadingTimer_cancel.call( this );
 
     // Advance progress to complete status (event if use timer).
     HttpFetcher.progressLoading_set_whenDone.call( this, event );
@@ -814,10 +825,11 @@ class HttpFetcher {
 
     // 2.
     let bAbort;
-    if ( this.allPromiseSet.has( this.loadingTimerPromise ) ) {
+    if (   ( !this.bAbort )
+        && ( this.allPromiseSet.has( this.loadingTimerPromise ) ) ) {
       bAbort = false;
 
-    // User abort. (i.e. .loadingTimer_cancel() is called)
+    // User abort. (i.e. .abort() or .loadingTimer_cancel() is called)
     } else {
       bAbort = true;
     }
