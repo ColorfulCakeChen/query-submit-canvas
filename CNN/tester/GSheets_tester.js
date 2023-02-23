@@ -60,10 +60,10 @@ class TestCase {
    *   True means call .abort() during retry waiting. False means call .abort()
    * during loading.
    *
-   * @param {number} abortAfterWhichYield
+   * @param {number} abortAfterHowManyNext
    *   - negative: never call .abort().
-   *   - zero or positive: call .abort() after which times yield of loading or
-   *       retry waiting (according to abortDuringRetryWaiting).
+   *   - zero or positive: call .abort() after how many .next() is called during
+   *       loading or retry waiting (according to abortDuringRetryWaiting).
    *
    * @param {boolean} bShouldProgress100
    *   True means the test should result in ( progressParent.valuePercentage == 100 ).
@@ -74,7 +74,7 @@ class TestCase {
     loadingMillisecondsMax,
     retryTimesMax,
     abortDuringRetryWaiting,
-    abortAfterWhichYield,
+    abortAfterHowManyNext,
     bShouldProgress100
   ) {
     this.testCaseId = testCaseId;
@@ -82,7 +82,7 @@ class TestCase {
     this.loadingMillisecondsMax = loadingMillisecondsMax;
     this.retryTimesMax = retryTimesMax;
     this.abortDuringRetryWaiting = abortDuringRetryWaiting;
-    this.abortAfterWhichYield = abortAfterWhichYield;
+    this.abortAfterHowManyNext = abortAfterHowManyNext;
     this.bShouldProgress100 = bShouldProgress100;
   }
 
@@ -116,14 +116,50 @@ class TestCase {
     );
 
     let nextResult;
-    let yieldTimes = 0;
+    let bRetryWaitingPrevious = urlComposer.retryWaitingTimer_isCounting();
+    let bRetryWaitingNow = bRetryWaitingPrevious;
+    let nextTimes_loading = 0, nextTimes_retryWaiting = 0;
     do {
 
 //!!! ...unfinished... (2023/02/23)
 // Should test .abort() at this time.
 //this.abortDuringRetryWaiting
 
+      // Call .abort() if .next() has been called as specified times.
+      if ( this.abortAfterHowManyNext >= 0 ) {
+        if ( bRetryWaitingNow ) {
+          if ( nextTimes_retryWaiting === this.abortAfterHowManyNext )
+            urlComposer.abort();
+        } else {
+          if ( nextTimes_loading === this.abortAfterHowManyNext )
+            urlComposer.abort();
+        }
+      }
+
+      // Call .next()
       nextResult = await fetcher.next();
+      bRetryWaitingNow = urlComposer.retryWaitingTimer_isCounting();
+
+      // Accumulate how many times the .next() is called.
+      if ( bRetryWaitingNow )
+        ++nextTimes_retryWaiting;
+      else
+        ++nextTimes_loading;
+
+//!!!
+      if ( this.abortDuringRetryWaiting ) {
+        if ( bRetryWaitingNow )
+          ++nextTimesForAbort;
+      } else {
+
+      }
+
+      // Reset nextTimes_Xxx when changing between loading and retry waiting.
+      if ( bRetryWaitingPrevious != bRetryWaitingNow ) {
+        bRetryWaitingPrevious = bRetryWaitingNow;
+        nextTimes_loading = 0;
+        nextTimes_retryWaiting = 0;
+      }
 
 //!!! ...unfinished... (2023/02/23)
 // Should test .abort() at this time.
@@ -134,12 +170,12 @@ class TestCase {
 // ( urlComposer.retryWaitingTimer_isCounting() == true )
 
       if ( !nextResult.done ) {
-        if ( yieldTimes === this.abortAfterWhichYield ) {
+        if ( nextTimesForAbort === this.abortAfterHowManyNext ) {
           urlComposer.abort();
         }
 
         yield nextResult.value;
-        ++yieldTimes;
+
       }
 
     } while ( !nextResult.done );
@@ -153,7 +189,7 @@ class TestCase {
   /**
    * Try to load differential evolution summary and one of versus.
    *
-   * @param {number} abortAfterWhichYield
+   * @param {number} abortAfterHowManyNext
    *   - negative: never call .abort().
    *   - zero or positive: call .abort() after which times yield.
    */
@@ -247,7 +283,7 @@ class TestCase {
       + `loadingMillisecondsMax=${this.loadingMillisecondsMax}, `
       + `retryTimesMax=${this.retryTimesMax}, `
       + `abortDuringRetryWaiting=${this.abortDuringRetryWaiting}, `
-      + `abortAfterWhichYield=${this.abortAfterWhichYield}, `
+      + `abortAfterHowManyNext=${this.abortAfterHowManyNext}, `
       + `bShouldProgress100=${this.bShouldProgress100}`
     return str;
   }
@@ -256,7 +292,7 @@ class TestCase {
 //
 // spreadsheetId_postfix,
 // loadingMillisecondsMax, retryTimesMax,
-// abortDuringRetryWaiting, abortAfterWhichYield, bShouldProgress100
+// abortDuringRetryWaiting, abortAfterHowManyNext, bShouldProgress100
 //
 const gTestCaseArray = [
 
