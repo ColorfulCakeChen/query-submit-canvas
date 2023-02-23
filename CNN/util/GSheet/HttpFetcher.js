@@ -194,68 +194,75 @@ class HttpFetcher {
     }
 
     //
-    let bRetry;
-    let responseText;
-    do {
-      HttpFetcher.retryWaitingMilliseconds_init.call( this );
+    try {
+      let bRetry;
+      let responseText;
+      do {
+        HttpFetcher.retryWaitingMilliseconds_init.call( this );
 
-      // 1.
-      try {
-        responseText = yield* HttpFetcher
-          .asyncGenerator_by_url_timeout_responseType_method_body.call(
-            this, url,
-            loadingMillisecondsMax, loadingMillisecondsInterval,
-            responseType, method, body
-          );
+        // 1.
+        try {
+          responseText = yield* HttpFetcher
+            .asyncGenerator_by_url_timeout_responseType_method_body.call(
+              this, url,
+              loadingMillisecondsMax, loadingMillisecondsInterval,
+              responseType, method, body
+            );
 
-        // No need to retry, since request is succeeded (when executed to here).
-        bRetry = false;
+          // No need to retry, since request is succeeded (when executed to here).
+          bRetry = false;
 
-      // 2. Determine whether should retry.
-      } catch( e ) {
+        // 2. Determine whether should retry.
+        } catch( e ) {
 
-        if ( e instanceof ProgressEvent ) {
+          if ( e instanceof ProgressEvent ) {
 
-          // 2.1 Never retry for user abort.
-          if ( e.type === "abort" ) {
-            bRetry = false;
+            // 2.1 Never retry for user abort.
+            if ( e.type === "abort" ) {
+              bRetry = false;
 
-          // 2.2 Retry only if recognized exception and still has retry times.
-          } else if (   ( e.type === "error" )
-                     || ( e.type === "load" ) // ( status != 200 ) (e.g. 404 or 500)
-                     || ( e.type === "timeout" ) ) { 
+            // 2.2 Retry only if recognized exception and still has retry times.
+            } else if (   ( e.type === "error" )
+                      || ( e.type === "load" ) // ( status != 200 ) (e.g. 404 or 500)
+                      || ( e.type === "timeout" ) ) { 
 
-            let bRetryTimesRunOut = this.retryTimes_isRunOut();
-            if ( bRetryTimesRunOut ) {
-              bRetry = false; // 2.2.1 Can not retry, because run out of retry times.
+              let bRetryTimesRunOut = this.retryTimes_isRunOut();
+              if ( bRetryTimesRunOut ) {
+                bRetry = false; // 2.2.1 Can not retry, because run out of retry times.
 
-            } else {
-              bRetry = true; // 2.2.2 Retry one more time.
-              ++this.retryTimesCur;
+              } else {
+                bRetry = true; // 2.2.2 Retry one more time.
+                ++this.retryTimesCur;
+              }
+
+            } else { // 2.3 Unknown ProgressEvent. (Never retry for unknown error.)
+              bRetry = false;
             }
 
-          } else { // 2.3 Unknown ProgressEvent. (Never retry for unknown error.)
+          } else { // 2.4 Unknown error. (Never retry for unknown error.)
             bRetry = false;
           }
 
-        } else { // 2.4 Unknown error. (Never retry for unknown error.)
-          bRetry = false;
+          // 3. Throw exception if not retry.
+          if ( !bRetry ) {
+            // Since no retry, the retry waiting timer should be completed to 100%
+            HttpFetcher.progressRetryWaiting_set_whenDone.call( this );
+            throw e;
+          }
         }
 
-        // 3. Throw exception if not retry.
-        if ( !bRetry ) {
-          // Since no retry, the retry waiting timer should be completed to 100%
-          HttpFetcher.progressRetryWaiting_set_whenDone.call( this );
-          throw e;
+        // 4. Waiting before retry (for truncated exponential backoff algorithm).
+        if ( bRetry ) {
+          yield* HttpFetcher.asyncGenerator_by_retryWaiting.call( this );
         }
-      }
 
-      // 4. Waiting before retry (for truncated exponential backoff algorithm).
-      if ( bRetry ) {
-        yield* HttpFetcher.asyncGenerator_by_retryWaiting.call( this );
-      }
+      } while ( bRetry && ( !this.bAbort ) );
 
-    } while ( bRetry && ( !this.bAbort ) );
+    } finally {
+      // Ensure this async generator will not be aborted by default when it is
+      // called in the next time.
+      this.bAbort = false;
+    }
 
     // 5. Return the successfully downloaded result.
     return responseText;

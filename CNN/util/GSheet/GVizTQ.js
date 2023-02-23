@@ -285,6 +285,11 @@ class GVizTQ_UrlComposer extends Recyclable.Root {
         //console.error( e );
         throw e;
       }
+
+    } finally {
+      // Ensure this async generator will not be aborted by default when it is
+      // called in the next time.
+      this.bAbort = false;
     }
   }
 
