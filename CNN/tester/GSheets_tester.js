@@ -121,18 +121,16 @@ class TestCase {
     let nextTimes_loading = 0, nextTimes_retryWaiting = 0;
     do {
 
-//!!! ...unfinished... (2023/02/23)
-// Should test .abort() at this time.
-//this.abortDuringRetryWaiting
-
       // Call .abort() if .next() has been called as specified times.
       if ( this.abortAfterHowManyNext >= 0 ) {
         if ( bRetryWaitingCurrent ) {
-          if ( nextTimes_retryWaiting === this.abortAfterHowManyNext )
-            urlComposer.abort();
+          if ( this.abortDuringRetryWaiting )
+            if ( nextTimes_retryWaiting === this.abortAfterHowManyNext )
+              urlComposer.abort();
         } else {
-          if ( nextTimes_loading === this.abortAfterHowManyNext )
-            urlComposer.abort();
+          if ( !this.abortDuringRetryWaiting )
+            if ( nextTimes_loading === this.abortAfterHowManyNext )
+              urlComposer.abort();
         }
       }
 
@@ -208,9 +206,6 @@ class TestCase {
 
     let progress21 = progressParent.child_add(
       ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
-
-  //!!! ...unfinished... (2023/02/21)
-  // How to test .abort() in loading and in retry waiting?
 
     // Without API key.
     let urlComposer1 = GSheets.UrlComposer.Pool.get_or_create_by(
