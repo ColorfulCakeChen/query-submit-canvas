@@ -117,7 +117,7 @@ class TestCase {
 
     let nextResult;
     let bRetryWaitingPrevious = urlComposer.retryWaitingTimer_isCounting();
-    let bRetryWaitingNow = bRetryWaitingPrevious;
+    let bRetryWaitingCurrent = bRetryWaitingPrevious;
     let nextTimes_loading = 0, nextTimes_retryWaiting = 0;
     do {
 
@@ -127,7 +127,7 @@ class TestCase {
 
       // Call .abort() if .next() has been called as specified times.
       if ( this.abortAfterHowManyNext >= 0 ) {
-        if ( bRetryWaitingNow ) {
+        if ( bRetryWaitingCurrent ) {
           if ( nextTimes_retryWaiting === this.abortAfterHowManyNext )
             urlComposer.abort();
         } else {
@@ -138,20 +138,21 @@ class TestCase {
 
       // Call .next()
       nextResult = await fetcher.next();
-      bRetryWaitingNow = urlComposer.retryWaitingTimer_isCounting();
+      bRetryWaitingCurrent = urlComposer.retryWaitingTimer_isCounting();
 
-      // Accumulate how many times the .next() is called (according to PREVIOUS phase).
+      // Accumulate how many times .next() is called (according to PREVIOUS phase).
       if ( bRetryWaitingPrevious )
         ++nextTimes_retryWaiting;
       else
         ++nextTimes_loading;
 
 //!!!
-      // Reset nextTimes_Xxx when changing between loading and retry waiting.
-      if ( bRetryWaitingPrevious != bRetryWaitingNow ) {
-        bRetryWaitingPrevious = bRetryWaitingNow;
+      // When changing between loading and retry waiting.
+      if ( bRetryWaitingPrevious != bRetryWaitingCurrent ) {
+        bRetryWaitingPrevious = bRetryWaitingCurrent;
 
-        if ( bRetryWaitingNow )
+        // Reset nextTimes_Xxx (according to CURRENT phase).
+        if ( bRetryWaitingCurrent )
           nextTimes_retryWaiting = 0;
         else
           nextTimes_loading = 0;
