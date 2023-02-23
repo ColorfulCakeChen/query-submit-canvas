@@ -347,7 +347,7 @@ class HttpFetcher {
     this.retryWaitingTimerPromise.cancelTimer(); // Stop timer.
     this.allPromiseSet.delete( this.retryWaitingTimerPromise ); // Stop listening.
 
-    // Canceling retry timer may result in
+    // Canceling retry timer may result in:
     //   - .handle_retryWaitingTimer() never be called.
     //       So, let the retry waiting progress done (100%) here.
     //
@@ -361,7 +361,6 @@ class HttpFetcher {
         console.log( `( ${this.url} ) HttpFetcher: retryWaitingTimer_cancel(): `
           + `progressRetryWaiting=${this.progressRetryWaiting.valuePercentage}%` );
 
-      // Note: Even if aborted, still resolve the progress.
       this.retryWaitingTimerPromise.resolve( this.progressRoot );
     }
 
@@ -622,11 +621,6 @@ class HttpFetcher {
       // All succeeded promises resolve to progressRoot.
       let progressRoot = await allPromise;
       yield progressRoot;
-
-//!!! ...unfinished... (2023/02/23)
-// What if .abort() at this time?
-// How to stop waiting immediately?
-// What the progress.value should be?
 
       // Not done, if:
       //   - HttpFetcher.abort() is not called.
