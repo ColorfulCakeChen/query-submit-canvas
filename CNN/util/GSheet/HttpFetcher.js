@@ -259,16 +259,7 @@ class HttpFetcher {
 
       // 4. Waiting before retry (for truncated exponential backoff algorithm).
       if ( bRetry ) {
-
-//!!! ...unfinished... (2023/02/23)
-// What if .abort() at this time?
-//this.bAbort;
-
         yield* HttpFetcher.asyncGenerator_by_retryWaiting.call( this );
-
-//!!! ...unfinished... (2023/02/23)
-// What if .abort() at this time?
-
       }
 
     } while ( bRetry && ( !this.bAbort ) );
@@ -595,10 +586,18 @@ class HttpFetcher {
    */
   static async* asyncGenerator_by_retryWaiting() {
 
-    // 0.
-    this.progressRetryWaiting.value_max_set( this.retryWaitingMillisecondsMax );
+    // 0. Abort immediately if caller requests.
+    //
+    // Although, it seems no chance to execute to here if aborted.
+    //
+    if ( this.bAbort ) {
+      return this.progressRoot; // 3. Return the total progress.
+    }
 
     // 1.
+    this.progressRetryWaiting.value_max_set( this.retryWaitingMillisecondsMax );
+
+    // 2.
     HttpFetcher.retryWaitingTimerPromise_create_and_set.call( this );
 
     // All promises to be listened.
@@ -607,7 +606,7 @@ class HttpFetcher {
       this.allPromiseSet.add( this.retryWaitingTimerPromise );
     }
 
-    // 2. Until done.
+    // 3. Until done.
     let notDone;
     do {
       let allPromise = Promise.race( this.allPromiseSet );
@@ -625,7 +624,7 @@ class HttpFetcher {
 
     } while ( notDone ); // Stop if retry waiting completely.
 
-    return this.progressRoot; // 3. Return the total progress.
+    return this.progressRoot; // 4. Return the total progress.
   }
 
 
