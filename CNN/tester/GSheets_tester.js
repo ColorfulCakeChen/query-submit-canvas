@@ -246,6 +246,9 @@ class TestCase {
 //
 const gTestCaseArray = [
 
+//!!! ...unfinished... (2023/02/21)
+// should also ( loadingMillisecondsMax == 0 )
+
   // Test ProgressEvent load without status 200.
 
 //!!! (2023/02/22 Temp Remarked) For test retry waiting.
