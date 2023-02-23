@@ -203,15 +203,9 @@ class HttpFetcher {
       try {
         responseText = yield* HttpFetcher
           .asyncGenerator_by_url_timeout_responseType_method_body.call(
-            this,
-            url,
-
-            loadingMillisecondsMax,
-            loadingMillisecondsInterval,
-
-            responseType,
-            method,
-            body
+            this, url,
+            loadingMillisecondsMax, loadingMillisecondsInterval,
+            responseType, method, body
           );
 
         // No need to retry, since request is succeeded (when executed to here).
@@ -411,14 +405,8 @@ class HttpFetcher {
    */
   static async* asyncGenerator_by_url_timeout_responseType_method_body(
       url,
-
-      loadingMillisecondsMax,
-      loadingMillisecondsInterval,
-
-      responseType,
-      method,
-      body
-    ) {
+      loadingMillisecondsMax, loadingMillisecondsInterval,
+      responseType, method, body ) {
 
     // 0.
 
