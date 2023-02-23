@@ -252,7 +252,6 @@ class HttpFetcher {
         if ( !bRetry ) {
           // Since no retry, the retry waiting timer should be completed to 100%
           HttpFetcher.progressRetryWaiting_set_whenDone.call( this );
-          //console.error( e );
           throw e;
         }
       }
