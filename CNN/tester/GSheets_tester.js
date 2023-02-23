@@ -162,9 +162,6 @@ class TestCase {
 
     } while ( !nextResult.done );
 
-//!!! ...unfinished... (2023/02/23)
-// Should test .abort() at this time.
-
     return nextResult.value;
   }
 
