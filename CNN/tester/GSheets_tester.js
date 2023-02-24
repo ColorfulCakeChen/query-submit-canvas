@@ -59,12 +59,22 @@ class AbortTestMode {
     this.afterHowManyNext = afterHowManyNext;
   }
 
+  /** @return {boolean} Return true, if .abort() will be called at some time. */
+  get willAbort() {
+    if ( this.beforeFetching )
+      return true;
+    if ( this.afterHowManyNext >= 0 )
+      return true;
+    return false;
+  }
+
   /** */
   toString() {
     let str =
         `beforeFetching=${this.beforeFetching}, `
       + `duringRetryWaiting=${this.duringRetryWaiting}, `
-      + `afterHowManyNext=${this.afterHowManyNext}`
+      + `afterHowManyNext=${this.afterHowManyNext}, `
+      + `willAbort=${this.willAbort}`
     return str;
   }
 
@@ -311,16 +321,16 @@ class TestCase {
 /** */
 class TestCaseArray extends Array {
   /**
-   * @param {TestCase[]} o_testCaseArray
-   *   The array which all created TestCase will be appended to.
+   * @param {boolean} bShouldProgress100Default
+   *   - True means the test case is expected to be succeeded if .abort() is not
+   *       called.
+   *   - False means the test case is expected to be failed even if .abort() is
+   *       not called.
    *
    * @return {TestCaseArray} Return this for cascading appending.
    */
   append_by(
-    spreadsheetId_postfix,
-    loadingMillisecondsMax,
-    bShouldProgress100
-  ) {
+    spreadsheetId_postfix, loadingMillisecondsMax, bShouldProgress100Default ) {
 
     const retryTimesMax_begin = 0; // No retry
     const retryTimesMax_end_inclusive = 2;
@@ -330,6 +340,8 @@ class TestCaseArray extends Array {
     const abortTestMode_number_end_inclusive = 6;
 
     let testCaseId;
+    let abortTestMode;
+    let bShouldProgress100;
 
     for (
         let retryTimesMax = retryTimesMax_begin;
@@ -342,12 +354,16 @@ class TestCaseArray extends Array {
         ++abortTestMode_number ) {
 
         testCaseId = o_testCaseArray.length;
+        abortTestMode = AbortTestMode.create_by_number_N1_6( abortTestMode_number );
 
-        let abortTestMode =
-          AbortTestMode.create_by_number_N1_6( abortTestMode_number );
+        // If the test case includes .abort(), it should never be succeeded.
+        if ( abortTestMode.willAbort )
+          bShouldProgress100 = false;
+        else
+          bShouldProgress100 = bShouldProgress100Default;
 
         let testCase = new TestCase( testCaseId, spreadsheetId_postfix,
-          loadingMillisecondsMax, retryTimesMax, abortTestMode, false??? );
+          loadingMillisecondsMax, retryTimesMax, abortTestMode, bShouldProgress100 );
 
         this.push( testCase );
       }
