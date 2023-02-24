@@ -1,5 +1,6 @@
 export { tester };
 
+import * as HttpRequest from "../HttpRequest.js";
 import * as GSheets from "../util/GSheets.js";
 import * as ValueMax from "../util/ValueMax.js";
 
@@ -172,14 +173,16 @@ class TestCase {
       urlComposer.abort();
     }
 
-    let fetcher = urlComposer.JSON_ColumnMajorArrayArray_fetch_asyncGenerator(
-      progressParent,
+    let params_loading_retryWaiting = new HttpRequest.Params_loading_retryWaiting(
       this.loadingMillisecondsMax,
       this.loadingMillisecondsInterval,
       this.retryTimesMax,
       this.retryWaitingSecondsExponentMax,
       this.retryWaitingMillisecondsInterval
     );
+
+    let fetcher = urlComposer.JSON_ColumnMajorArrayArray_fetch_asyncGenerator(
+      progressParent, params_loading_retryWaiting );
 
     let nextResult;
     let bRetryWaitingPrevious = urlComposer.retryWaitingTimer_isCounting();
