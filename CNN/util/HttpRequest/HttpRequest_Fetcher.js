@@ -1004,15 +1004,15 @@ class HttpRequest_Fetcher {
    *   Return true, if e is XMLHttpRequest related exception. */
   static Exception_is_ProgressEvent_abort_error_load_timeout( e ) {
     if (   ( e instanceof ProgressEvent )
-    && (   ( e.type === "abort" )
-        || ( e.type === "error" )
-        || ( e.type === "load" )
-        || ( e.type === "timeout" )
-       )
-   ) {
-     return true;
-   }
-   return false;  
+        && (   ( e.type === "abort" )
+            || ( e.type === "error" )
+            || ( e.type === "load" )
+            || ( e.type === "timeout" )
+           )
+       ) {
+      return true;
+    }
+    return false;  
   }
 
   /**
