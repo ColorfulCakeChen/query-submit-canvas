@@ -386,17 +386,19 @@ class TestCaseArray extends Array {
 const gTestCaseArray = new TestCaseArray();
 {
 
-//!!! ...unfinished... (2023/02/21)
-// should also ( loadingMillisecondsMax == 0 )
+//!!! ...unfinished... (2023/02/24)
+// should test ProgressEvent error. (how?)
 
 //!!! ...unfinished... (2023/02/22)
 // should test infinite retry.
 
 //!!! ...unfinished... (2023/02/24)
   gTestCaseArray
-    .append_by( "_not_exist",   10 * 1000, false ) // Test load without status 200.
-    .append_by( "",           0.01 * 1000, false ) // Test timeout.
-    .append_by( "",             30 * 1000,  true ) // Test succeeded.
+    .append_by( "_not_exist",   10 * 1000, false ) // load (status != 200).
+    .append_by( "_not_exist",    0 * 1000, false ) // load (status != 200). (no timeout)
+    .append_by( "",           0.01 * 1000, false ) // timeout.
+    .append_by( "",             30 * 1000,  true ) // succeeded.
+    .append_by( "",              0 * 1000,  true ) // succeeded. (no timeout)
     ;
 }
 
