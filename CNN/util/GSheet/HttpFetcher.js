@@ -601,6 +601,11 @@ class HttpFetcher {
    */
   static async* asyncGenerator_by_retryWaiting() {
 
+    if ( this.bLogEventToConsole )
+      console.log( `( ${this.url} ) HttpFetcher: asyncGenerator_by_retryWaiting(): `
+        + `retryWaitingMillisecondsCur=${this.retryWaitingMillisecondsCur}, `
+        + `progressRetryWaiting=${this.progressRetryWaiting.valuePercentage}%` );
+
     // 0. Abort immediately if caller requests.
     //
     // Although, it seems no chance to execute to here if aborted.
