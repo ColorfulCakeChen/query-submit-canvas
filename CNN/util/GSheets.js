@@ -114,7 +114,8 @@ class GSheets_UrlComposer extends Recyclable.Root {
    * progressParent.root_get() will be returned when every time yield.
    *
    * @param {HttpRequest.Params_loading_retryWaiting} params_loading_retryWaiting
-   *   The parameters for loading timeout and retry waiting time.
+   *   The parameters for loading timeout and retry waiting time. It will be kept
+   * but not modified by this object.
    *
    * @yield {Promise( ValueMax.Percentage.Aggregate )}
    *   Yield a promise resolves to { value: progressParent.root_get(), done: false }.
@@ -139,7 +140,8 @@ class GSheets_UrlComposer extends Recyclable.Root {
    * it as JSON format, extract data as a two dimension (column-major) array.
    *
    * @param {HttpRequest.Params_loading_retryWaiting} params_loading_retryWaiting
-   *   The parameters for loading timeout and retry waiting time.
+   *   The parameters for loading timeout and retry waiting time. It will be kept
+   * but not modified by this object.
    *
    * @return {Promise( Array[] )}
    *   Return a promise.

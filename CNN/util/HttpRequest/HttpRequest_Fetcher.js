@@ -16,8 +16,9 @@ import { Params_loading_retryWaiting }
  * @member {string} url
  *   A string representing the URL to send the request to.
  *
- * @member {Params_loading_retryWaiting} params_loading_retryWaiting
- *   The parameters for loading timeout and retry waiting time.
+ * @member {HttpRequest.Params_loading_retryWaiting} params_loading_retryWaiting
+ *   The parameters for loading timeout and retry waiting time. It will be kept
+ * but not modified by this object.
  *
  * @member {number} loadingMillisecondsCur
  *   The current time (in milliseconds) of loading. It is only used if
