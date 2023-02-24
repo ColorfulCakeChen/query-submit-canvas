@@ -315,6 +315,10 @@ class TestCase {
     const retryTimesMax_begin = 0; // No retry
     const retryTimesMax_end_inclusive = 2;
 
+    // All kinds of AbortTestMode.
+    const abortTestMode_number_begin = -1;
+    const abortTestMode_number_end_inclusive = 6;
+
     let arrayIndex = 0;
     let testCaseArray = new Array( ??? );
     for ( let i = 0; i < testCaseArray.length; ++i ) {
@@ -324,9 +328,14 @@ class TestCase {
          retryTimesMax <= retryTimesMax_end_inclusive;
          ++retryTimesMax ) {
 
-        for ( let j = -1; j <= 6; ++j ) { // All kinds of AbortTestMode.
+        for (
+          let abortTestMode_number = abortTestMode_number_begin;
+          abortTestMode_number <= abortTestMode_number_end_inclusive;
+          ++abortTestMode_number ) {
+
           let testCaseId = testCaseId_begin + arrayIndex;
-          let abortTestMode = AbortTestMode.create_by_number_N1_6( j );
+          let abortTestMode =
+            AbortTestMode.create_by_number_N1_6( abortTestMode_number );
 
           let testCase = new TestCase( testCaseId, spreadsheetId_postfix,
             loadingMillisecondsMax, retryTimesMax, abortTestMode, false??? );
