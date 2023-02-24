@@ -499,7 +499,7 @@ class HttpRequest_Fetcher {
       //   - ( .loadPromise still pending (i.e. still in waiting promises) ).
       //
       // Note: Checking ( xhr.status !== 200 ) is not enough. The loading may
-      //       still not be complete when status becomes 200.
+      //       still not yet complete when status becomes 200.
       notDone =    ( xhr.status !== 200 )
                 || ( this.allPromiseSet.has( this.loadPromise ) );
 
