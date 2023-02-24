@@ -306,17 +306,21 @@ class TestCase {
       + `bShouldProgress100=${this.bShouldProgress100}`
     return str;
   }
+}
 
+/** */
+class TestCaseArray extends Array {
   /**
    * @param {TestCase[]} o_testCaseArray
    *   The array which all created TestCase will be appended to.
+   *
+   * @return {TestCaseArray} Return this for cascading appending.
    */
-  static createIntoArray_by(
-    o_testCaseArray,
+  append_by(
     spreadsheetId_postfix,
     loadingMillisecondsMax,
     bShouldProgress100
-   ) {
+  ) {
 
     const retryTimesMax_begin = 0; // No retry
     const retryTimesMax_end_inclusive = 2;
@@ -345,7 +349,7 @@ class TestCase {
         let testCase = new TestCase( testCaseId, spreadsheetId_postfix,
           loadingMillisecondsMax, retryTimesMax, abortTestMode, false??? );
 
-        testCaseArray.push( testCase );
+        this.push( testCase );
       }
     }
 
@@ -354,15 +358,20 @@ class TestCase {
 // If the request is the last and expected to be succeeded,
 // its retryTimesMax should be negative (i.e. infinite retry).
 
+    return this;
   }
-
 }
 
 //
-// spreadsheetId_postfix,
-// loadingMillisecondsMax, retryTimesMax, abortTestMode, bShouldProgress100
+// spreadsheetId_postfix, loadingMillisecondsMax, bShouldProgress100
 //
-const gTestCaseArray = [
+const gTestCaseArray = new TestCaseArray();
+{
+//!!! ...unfinished... (2023/02/24)
+  gTestCaseArray
+    .append_by( "_not_exist", 10 * 1000, ??? )
+    ;
+}
 
 //!!! ...unfinished... (2023/02/21)
 // should also ( loadingMillisecondsMax == 0 )
