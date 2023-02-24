@@ -526,9 +526,6 @@ async function* tester( progressParent ) {
   }
 
 //!!! ...unfinished... (2023/02/22)
-// How to ensure calling .abort() during retry waiting?
-
-//!!! ...unfinished... (2023/02/22)
 // Calling .abort() will not cause retry...
 
 //!!! ...unfinished... (2023/02/22)

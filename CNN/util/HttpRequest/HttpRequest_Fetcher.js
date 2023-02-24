@@ -239,7 +239,13 @@ class HttpRequest_Fetcher {
     return this.params_loading_retryWaiting.retryWaitingMillisecondsInterval;
   }
 
-  /** Abort the loading (or waiting). */
+  /**
+   * Abort the loading (or waiting).
+   *
+   * Note: Calling .abort() will not cause retry. While other failure (e.g.
+   * error, load without status 200, timeout) will cause retry (if
+   * .retryTimesMax != 0).
+   */
   abort() {
     this.bAbort = true;
 
