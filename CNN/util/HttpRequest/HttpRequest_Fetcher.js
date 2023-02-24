@@ -1,101 +1,10 @@
-export { Parameters_loading_retryWaiting };
-export { HttpFetcher };
+export { HttpRequest_Fetcher as Fetcher };
 
 import * as PartTime from "../PartTime.js";
 import * as RandTools from "../RandTools.js";
 import * as ValueMax from "../ValueMax.js";
-
-/**
- * The parameters for HttpFetcher's loading timeout and retry waiting time.
- *
- *
- * @member {number} loadingMillisecondsMax
- *   The maximum time (in milliseconds) a request can take before automatically
- * being terminated. Default is 0, which means there is no timeout.
- *
- *   - If zero, the progressLoading will be advanced by ProgressEvent(
- *       .type = "progress" ).
- *     - This is good if ( .lengthComputable == true ) and network smooth.
- *     - This is bad if ( .lengthComputable == false ) (i.e. progress can not
- *         be calculated by .loaded / .total) or network congested (i.e.
- *         there will be a long pending (no responded in UI)).
- *
- *   - If not zero, the progressLoading will be advanced by a timer.
- *       Although this is a kind of fake progress, it provides better user
- *       experience because progress bar is still advancing even if network
- *       congested or server busy.
- *
- * @member {number} loadingMillisecondsInterval
- *   The interval time (in milliseconds) for advancing the loadingMillisecondsCur.
- * Although smaller interval may provide smoother progress advancing, however, too
- * small interval (relative to loadingMillisecondsMax) may not look good because
- * the progress bar may advance too little to be aware by eyes.
- *
- * @member {number} loadingMillisecondsCur
- *   The current time (in milliseconds) of loading. It is only used if
- * ( loadingMillisecondsMax > 0 ).
- *
- * @member {number} retryTimesMax
- *   Retry request so many times at most when request failed (ProgressEvent
- * is error, or load without status 200, or timeout). Note1: Never retry if
- * ( ProgressEvent is abort ) or ( unknown error ). Note2: There will be some
- * waiting time before next re-try (i.e. truncated (binary) exponential backoff
- * algorithm).
- *
- *   - Negative value means retry infinite times (i.e. retry forever until
- *       success).
- *
- *   - Zero means never retry (i.e. failed immediately once not success).
- *
- *   - Positive value means retry so many times at most.
- *
- * @member {number} retryTimesCur
- *   How many times has been retried.
- *
- * @member {number} retryWaitingSecondsExponentMax
- *   The maximum exponent (for two's power; i.e. the B of ( 2 ** B ) ) of retry
- * waiting time (in seconds, not in milliseconds). It is only used if
- * ( retryTimesMax > 0 ). For example,
- *   - 0 means ( 2 ** 0 ) = 1 second.
- *   - 1 means ( 2 ** 1 ) = 2 seconds
- *   - 2 means ( 2 ** 2 ) = 4 seconds
- *   - ...
- *   - 6 means ( 2 ** 6 ) = 64 seconds.
- *
- * @member {number} retryWaitingMillisecondsMax
- *   The maximum time (in milliseconds) of waiting for retry. It is only used
- * if ( retryTimesMax > 0 ). It is calculated from retryWaitingSecondsExponentMax.
- *
- * @member {number} retryWaitingMillisecondsInterval
- *   The interval time (in milliseconds) for advancing retryWaitingMillisecondsCur.
- * Although smaller interval may provide smoother progress advancing, however,
- * too small interval (relative to retryWaitingMillisecondsMax) may not look good
- * because the progress bar may advance too little to be aware by eyes.
- *
- * @member {number} retryWaitingMillisecondsCur
- *   The current time (in milliseconds) of waiting for retry. It is only used
- * if ( retryTimesMax > 0 ).
- */
-class Parameters_loading_retryWaiting {
-  /** */
-  constructor(
-    loadingMillisecondsMax = 0,
-    loadingMillisecondsInterval = ( 20 * 1000 ),
-
-    retryTimesMax = 0,
-    retryWaitingSecondsExponentMax = 6,
-    retryWaitingMillisecondsInterval = ( 1000 ),
-  ) {
-    this.loadingMillisecondsMax = loadingMillisecondsMax;
-    this.loadingMillisecondsInterval = loadingMillisecondsInterval;
-
-    this.retryTimesMax = retryTimesMax;
-    this.retryTimesCur = 0;
-    this.retryWaitingSecondsExponentMax = retryWaitingSecondsExponentMax;
-    this.retryWaitingMillisecondsInterval = retryWaitingMillisecondsInterval;
-  }
-}
-
+import { Params_loading_retryWaiting }
+  from "./HttpRequest_Params_loading_retryWaiting.js";
 
 /**
  * Wrap XMLHttpRequest as an async generator.
@@ -195,7 +104,7 @@ class Parameters_loading_retryWaiting {
  * @member {boolean} bAbort
  *   If true, it means .abort() is called.
  */
-class HttpFetcher {
+class HttpRequest_Fetcher {
 
   /**
    *
@@ -248,8 +157,8 @@ class HttpFetcher {
     retryWaitingSecondsExponentMax = 6,
     retryWaitingMillisecondsInterval = ( 1000 ),
 
-    responseType = HttpFetcher.responseTypeDefault,
-    method = HttpFetcher.methodDefault,
+    responseType = HttpRequest_Fetcher.responseTypeDefault,
+    method = HttpRequest_Fetcher.methodDefault,
     body
   ) {
 
@@ -268,8 +177,8 @@ class HttpFetcher {
     // 0.3
     //
     // Note1: Although .progressLoading and progressRetryWaiting is recorded in
-    //        this, they are not owned by this HttpFetcher object. They should
-    //        be destroyed by outside caller (i.e. by progressParent).
+    //        this, they are not owned by this HttpRequest_Fetcher object. They
+    //        should be destroyed by outside caller (i.e. by progressParent).
     //
     // Note2: Their .max are set arbitrarily here. Their value will be changed
     //        dynamically.
@@ -294,11 +203,11 @@ class HttpFetcher {
       let bRetry;
       let responseText;
       do {
-        HttpFetcher.retryWaitingMilliseconds_init.call( this );
+        HttpRequest_Fetcher.retryWaitingMilliseconds_init.call( this );
 
         // 1.
         try {
-          responseText = yield* HttpFetcher
+          responseText = yield* HttpRequest_Fetcher
             .asyncGenerator_by_url_timeout_responseType_method_body.call(
               this, url,
               loadingMillisecondsMax, loadingMillisecondsInterval,
@@ -342,14 +251,14 @@ class HttpFetcher {
           // 3. Throw exception if not retry.
           if ( !bRetry ) {
             // Since no retry, the retry waiting timer should be completed to 100%
-            HttpFetcher.progressRetryWaiting_set_whenDone.call( this );
+            HttpRequest_Fetcher.progressRetryWaiting_set_whenDone.call( this );
             throw e;
           }
         }
 
         // 4. Waiting before retry (for truncated exponential backoff algorithm).
         if ( bRetry ) {
-          yield* HttpFetcher.asyncGenerator_by_retryWaiting.call( this );
+          yield* HttpRequest_Fetcher.asyncGenerator_by_retryWaiting.call( this );
         }
 
       } while ( bRetry && ( !this.bAbort ) );
@@ -379,7 +288,7 @@ class HttpFetcher {
       }
     }
 
-    HttpFetcher.retryWaitingTimer_cancel.call( this );
+    HttpRequest_Fetcher.retryWaitingTimer_cancel.call( this );
   }
 
 
@@ -393,7 +302,7 @@ class HttpFetcher {
   }
 
   /**
-   * @param {HttpFetcher} this
+   * @param {HttpRequest_Fetcher} this
    */
   static retryWaitingMilliseconds_init() {
 
@@ -425,7 +334,7 @@ class HttpFetcher {
 
   /** Cancel current retryWaitingTimer (if exists).
    *
-   * @param {HttpFetcher} this
+   * @param {HttpRequest_Fetcher} this
    */
  static retryWaitingTimer_cancel() {
     if ( !this.retryWaitingTimerPromise )
@@ -442,10 +351,10 @@ class HttpFetcher {
     //       So, resolve the retry waiting promise here.
     //
     {
-      HttpFetcher.progressRetryWaiting_set_whenDone.call( this );
+      HttpRequest_Fetcher.progressRetryWaiting_set_whenDone.call( this );
 
       if ( this.bLogEventToConsole )
-        console.log( `( ${this.url} ) HttpFetcher: retryWaitingTimer_cancel(): `
+        console.log( `( ${this.url} ) HttpRequest_Fetcher: retryWaitingTimer_cancel(): `
           + `retryWaitingMillisecondsCur=${this.retryWaitingMillisecondsCur}, `
           + `progressRetryWaiting=${this.progressRetryWaiting.valuePercentage}%` );
 
@@ -481,7 +390,7 @@ class HttpFetcher {
   /**
    * Cancel current loadingTimer (if exists).
    *
-   * @param {HttpFetcher} this
+   * @param {HttpRequest_Fetcher} this
    */
   static loadingTimer_cancel() {
     if ( !this.loadingTimerPromise )
@@ -500,7 +409,7 @@ class HttpFetcher {
    * asyncGenerator_by_progressParent_url_timeout_retry_responseType_method_body())
    *
    *
-   * @param {HttpFetcher} this
+   * @param {HttpRequest_Fetcher} this
    *   - this.retryWaitingMillisecondsMax
    *   - this.retryWaitingMillisecondsCur
    *   - this.progressRoot
@@ -553,7 +462,7 @@ class HttpFetcher {
       progressLoading_max_default = loadingMillisecondsMax;
       this.loadingMillisecondsCur = 0;
     } else { // Use total content length (perhaps unknown) as progress target.
-      progressLoading_max_default = HttpFetcher.progressTotalFakeLarger;
+      progressLoading_max_default = HttpRequest_Fetcher.progressTotalFakeLarger;
     }
  
     this.progressLoading.value_max_set( progressLoading_max_default );
@@ -572,25 +481,25 @@ class HttpFetcher {
 
     // 2.2 Prepare promises before sending it.
     this.abortPromise = PartTime.Promise_create_by_addEventListener_once(
-      xhr, "abort", HttpFetcher.handle_abort, this );
+      xhr, "abort", HttpRequest_Fetcher.handle_abort, this );
 
     this.errorPromise = PartTime.Promise_create_by_addEventListener_once(
-      xhr, "error", HttpFetcher.handle_error, this );
+      xhr, "error", HttpRequest_Fetcher.handle_error, this );
 
     this.loadPromise = PartTime.Promise_create_by_addEventListener_once(
-      xhr, "load", HttpFetcher.handle_load, this );
+      xhr, "load", HttpRequest_Fetcher.handle_load, this );
 
     this.loadstartPromise = PartTime.Promise_create_by_addEventListener_once(
-      xhr, "loadstart", HttpFetcher.handle_loadstart, this );
+      xhr, "loadstart", HttpRequest_Fetcher.handle_loadstart, this );
 
     this.progressPromise = PartTime.Promise_create_by_addEventListener_once(
-      xhr, "progress", HttpFetcher.handle_progress, this );
+      xhr, "progress", HttpRequest_Fetcher.handle_progress, this );
 
     this.timeoutPromise = PartTime.Promise_create_by_addEventListener_once(
-      xhr, "timeout", HttpFetcher.handle_timeout, this );
+      xhr, "timeout", HttpRequest_Fetcher.handle_timeout, this );
 
     if ( this.loadingTimer_isUsed ) {
-      HttpFetcher.loadingTimerPromise_create_and_set.call( this );
+      HttpRequest_Fetcher.loadingTimerPromise_create_and_set.call( this );
     }
 
     // All promises to be listened.
@@ -610,8 +519,8 @@ class HttpFetcher {
     // 2.3
     xhr.send( body );
 
-    // Abort immediately if caller requests. (For example, HttpFetcher.abort()
-    // may be called during retry waiting.)
+    // Abort immediately if caller requests. (For example,
+    // HttpRequest_Fetcher.abort() may be called during retry waiting.)
     //
     // Note: Calling xhr.abort() only has effect after xhr.send(). Calling
     //       xhr.abort() before xhr.send() has no effect.
@@ -652,8 +561,8 @@ class HttpFetcher {
       // 4.1
       if ( 200 !== xhr.status ) {
         //debugger;
-        throw Error( `( ${this.url} ) HttpFetcher.`
-          + `asyncGenerator_by_url_timeout_responseType_method_body(): `
+        throw Error( `( ${this.url} ) HttpRequest_Fetcher`
+          + `.asyncGenerator_by_url_timeout_responseType_method_body(): `
           + `When done, `
           + `xhr.status ( ${xhr.status} ) should be 200.` );
       }
@@ -661,8 +570,8 @@ class HttpFetcher {
       // 4.2
       if ( 100 != this.progressLoading.valuePercentage ) {
         //debugger;
-        throw Error( `( ${this.url} ) HttpFetcher.`
-          + `asyncGenerator_by_url_timeout_responseType_method_body(): `
+        throw Error( `( ${this.url} ) HttpRequest_Fetcher`
+          + `.asyncGenerator_by_url_timeout_responseType_method_body(): `
           + `When done, `
           + `progressLoading.valuePercentage `
           + `( ${this.progressLoading.valuePercentage} ) should be 100.` );
@@ -681,7 +590,7 @@ class HttpFetcher {
    * asyncGenerator_by_progressParent_url_timeout_retry_responseType_method_body())
    *
    *
-   * @param {HttpFetcher} this
+   * @param {HttpRequest_Fetcher} this
    *   - this.retryWaitingMillisecondsMax
    *   - this.retryWaitingMillisecondsCur
    *   - this.progressRoot
@@ -699,7 +608,8 @@ class HttpFetcher {
   static async* asyncGenerator_by_retryWaiting() {
 
     if ( this.bLogEventToConsole )
-      console.log( `( ${this.url} ) HttpFetcher: asyncGenerator_by_retryWaiting(): `
+      console.log( `( ${this.url} ) HttpRequest_Fetcher: `
+        + `asyncGenerator_by_retryWaiting(): `
         + `retryWaitingMillisecondsCur=${this.retryWaitingMillisecondsCur}, `
         + `progressRetryWaiting=${this.progressRetryWaiting.valuePercentage}%` );
 
@@ -715,7 +625,7 @@ class HttpFetcher {
     this.progressRetryWaiting.value_max_set( this.retryWaitingMillisecondsMax );
 
     // 2.
-    HttpFetcher.retryWaitingTimerPromise_create_and_set.call( this );
+    HttpRequest_Fetcher.retryWaitingTimerPromise_create_and_set.call( this );
 
     // All promises to be listened.
     {
@@ -733,7 +643,7 @@ class HttpFetcher {
       yield progressRoot;
 
       // Not done, if:
-      //   - HttpFetcher.abort() is not called.
+      //   - HttpRequest_Fetcher.abort() is not called.
       //   - .retryWaitingTimerPromise still exists.
       //
       notDone =    ( !this.bAbort )
@@ -746,41 +656,43 @@ class HttpFetcher {
 
 
   /**
-   * @param {HttpFetcher} this
+   * @param {HttpRequest_Fetcher} this
    */
   static loadingTimerPromise_create_and_set() {
     const delayMilliseconds = this.loadingMillisecondsInterval;
     const deltaValue = delayMilliseconds;
 
     this.loadingTimerPromise = PartTime.Promise_create_by_setTimeout(
-      delayMilliseconds, HttpFetcher.handle_loadingTimer, this, deltaValue );
+      delayMilliseconds, HttpRequest_Fetcher.handle_loadingTimer,
+      this, deltaValue );
   }
 
   /**
-   * @param {HttpFetcher} this
+   * @param {HttpRequest_Fetcher} this
    */
   static retryWaitingTimerPromise_create_and_set() {
     const delayMilliseconds = this.retryWaitingMillisecondsInterval;
     const deltaValue = delayMilliseconds;
 
     this.retryWaitingTimerPromise = PartTime.Promise_create_by_setTimeout(
-      delayMilliseconds, HttpFetcher.handle_retryWaitingTimer, this, deltaValue );
+      delayMilliseconds, HttpRequest_Fetcher.handle_retryWaitingTimer,
+      this, deltaValue );
   }
 
 
   /**
-   * @param {HttpFetcher} this
+   * @param {HttpRequest_Fetcher} this
    */
   static handle_abort( resolve, reject, event ) {
     // Stop listen progress timer (since completed).
-    HttpFetcher.loadingTimer_cancel.call( this );
+    HttpRequest_Fetcher.loadingTimer_cancel.call( this );
 
     // Advance progress to complete status (event if use timer).
-    HttpFetcher.progressLoading_set_whenDone.call( this, event );
+    HttpRequest_Fetcher.progressLoading_set_whenDone.call( this, event );
 
     if ( this.bLogEventToConsole )
-      console.warn( `( ${this.url} ) HttpFetcher: abort: `
-        + `${HttpFetcher.ProgressEvent_toString( event )}, `
+      console.warn( `( ${this.url} ) HttpRequest_Fetcher: abort: `
+        + `${HttpRequest_Fetcher.ProgressEvent_toString( event )}, `
         + `progressLoading=${this.progressLoading.valuePercentage}%` );
 
     reject( event );
@@ -791,18 +703,18 @@ class HttpFetcher {
   }
 
   /**
-   * @param {HttpFetcher} this
+   * @param {HttpRequest_Fetcher} this
    */
   static handle_error( resolve, reject, event ) {
     // Stop listen progress timer (since completed).
-    HttpFetcher.loadingTimer_cancel.call( this );
+    HttpRequest_Fetcher.loadingTimer_cancel.call( this );
 
     // Advance progress to complete status (event if use timer).
-    HttpFetcher.progressLoading_set_whenDone.call( this, event );
+    HttpRequest_Fetcher.progressLoading_set_whenDone.call( this, event );
 
     if ( this.bLogEventToConsole )
-      console.warn( `( ${this.url} ) HttpFetcher: error: `
-        + `${HttpFetcher.ProgressEvent_toString( event )}, `
+      console.warn( `( ${this.url} ) HttpRequest_Fetcher: error: `
+        + `${HttpRequest_Fetcher.ProgressEvent_toString( event )}, `
         + `progressLoading=${this.progressLoading.valuePercentage}%` );
 
     reject( event );
@@ -813,21 +725,21 @@ class HttpFetcher {
   }
 
   /**
-   * @param {HttpFetcher} this
+   * @param {HttpRequest_Fetcher} this
    */
   static handle_load( resolve, reject, event ) {
     // Stop listen progress timer (since completed).
-    HttpFetcher.loadingTimer_cancel.call( this );
+    HttpRequest_Fetcher.loadingTimer_cancel.call( this );
 
     // Advance progress to complete status (event if use timer).
-    HttpFetcher.progressLoading_set_whenDone.call( this, event );
+    HttpRequest_Fetcher.progressLoading_set_whenDone.call( this, event );
 
     let xhr = this.xhr;
 
     let logMsg;
     if ( this.bLogEventToConsole )
-      logMsg = `( ${this.url} ) HttpFetcher: load: `
-        + `${HttpFetcher.ProgressEvent_toString( event )}, `
+      logMsg = `( ${this.url} ) HttpRequest_Fetcher: load: `
+        + `${HttpRequest_Fetcher.ProgressEvent_toString( event )}, `
         + `status=${xhr.status}, statusText=\"${xhr.statusText}\", `
         + `progressLoading=${this.progressLoading.valuePercentage}%`;
 
@@ -855,18 +767,18 @@ class HttpFetcher {
   }
 
   /**
-   * @param {HttpFetcher} this
+   * @param {HttpRequest_Fetcher} this
    */
   static handle_loadstart( resolve, reject, event ) {
 
     // Advance progress only if loadingTimer NOT used.
     if ( !this.loadingTimer_isUsed ) {
-      HttpFetcher.progressLoading_set_beforeDone.call( this, event );
+      HttpRequest_Fetcher.progressLoading_set_beforeDone.call( this, event );
     }
 
     if ( this.bLogEventToConsole )
-      console.log( `( ${this.url} ) HttpFetcher: loadstart: `
-        + `${HttpFetcher.ProgressEvent_toString( event )}, `
+      console.log( `( ${this.url} ) HttpRequest_Fetcher: loadstart: `
+        + `${HttpRequest_Fetcher.ProgressEvent_toString( event )}, `
         + `progressLoading=${this.progressLoading.valuePercentage}%` );
 
     resolve( this.progressRoot );
@@ -876,18 +788,18 @@ class HttpFetcher {
   }
 
   /**
-   * @param {HttpFetcher} this
+   * @param {HttpRequest_Fetcher} this
    */
   static handle_progress( resolve, reject, event ) {
 
     // Advance progress only if loadingTimer NOT used.
     if ( !this.loadingTimer_isUsed ) {
-      HttpFetcher.progressLoading_set_beforeDone.call( this, event );
+      HttpRequest_Fetcher.progressLoading_set_beforeDone.call( this, event );
     }
 
     if ( this.bLogEventToConsole )
-      console.log( `( ${this.url} ) HttpFetcher: progress: `
-        + `${HttpFetcher.ProgressEvent_toString( event )}, `
+      console.log( `( ${this.url} ) HttpRequest_Fetcher: progress: `
+        + `${HttpRequest_Fetcher.ProgressEvent_toString( event )}, `
         + `progressLoading=${this.progressLoading.valuePercentage}%` );
 
     resolve( this.progressRoot );
@@ -899,25 +811,25 @@ class HttpFetcher {
       // Because progress event could happen many times, re-generate
       // a new promise for listening on it.
       this.progressPromise = PartTime.Promise_create_by_addEventListener_once(
-        this.xhr, "progress", HttpFetcher.handle_progress, this );
+        this.xhr, "progress", HttpRequest_Fetcher.handle_progress, this );
 
       this.allPromiseSet.add( this.progressPromise );
     }
   }
 
   /**
-   * @param {HttpFetcher} this
+   * @param {HttpRequest_Fetcher} this
    */
   static handle_timeout( resolve, reject, event ) {
     // Stop listen progress timer (since completed).
-    HttpFetcher.loadingTimer_cancel.call( this );
+    HttpRequest_Fetcher.loadingTimer_cancel.call( this );
 
     // Advance progress to complete status (event if use timer).
-    HttpFetcher.progressLoading_set_whenDone.call( this, event );
+    HttpRequest_Fetcher.progressLoading_set_whenDone.call( this, event );
 
     if ( this.bLogEventToConsole )
-      console.warn( `( ${this.url} ) HttpFetcher: timeout: `
-        + `${HttpFetcher.ProgressEvent_toString( event )}, `
+      console.warn( `( ${this.url} ) HttpRequest_Fetcher: timeout: `
+        + `${HttpRequest_Fetcher.ProgressEvent_toString( event )}, `
         + `progressLoading=${this.progressLoading.valuePercentage}%` );
 
     reject( event );
@@ -928,7 +840,7 @@ class HttpFetcher {
   }
 
   /**
-   * @param {HttpFetcher} this
+   * @param {HttpRequest_Fetcher} this
    */
   static handle_loadingTimer( resolve, reject, deltaValue ) {
     this.loadingMillisecondsCur += deltaValue;
@@ -952,7 +864,7 @@ class HttpFetcher {
 
     // 3.
     if ( this.bLogEventToConsole )
-      console.log( `( ${this.url} ) HttpFetcher: loadingTimer: `
+      console.log( `( ${this.url} ) HttpRequest_Fetcher: loadingTimer: `
         + `loadingMillisecondsCur=${this.loadingMillisecondsCur}, `
         + `progressLoading=${this.progressLoading.valuePercentage}%` );
 
@@ -969,14 +881,14 @@ class HttpFetcher {
       // Before loadingTimer done, its event could happen many times.
       } else {
         // Re-generate a new promise for listening on it.
-        HttpFetcher.loadingTimerPromise_create_and_set.call( this );
+        HttpRequest_Fetcher.loadingTimerPromise_create_and_set.call( this );
         this.allPromiseSet.add( this.loadingTimerPromise );
       }
     }
   }
 
   /**
-   * @param {HttpFetcher} this
+   * @param {HttpRequest_Fetcher} this
    */
   static handle_retryWaitingTimer( resolve, reject, deltaValue ) {
     this.retryWaitingMillisecondsCur += deltaValue;
@@ -1003,13 +915,13 @@ class HttpFetcher {
 
     // 2.
     if ( bDone )
-      HttpFetcher.progressRetryWaiting_set_whenDone.call( this );
+      HttpRequest_Fetcher.progressRetryWaiting_set_whenDone.call( this );
     else
-      HttpFetcher.progressRetryWaiting_set_beforeDone.call( this );
+      HttpRequest_Fetcher.progressRetryWaiting_set_beforeDone.call( this );
 
     // 3.
     if ( this.bLogEventToConsole )
-      console.log( `( ${this.url} ) HttpFetcher: retryWaitingTimer: `
+      console.log( `( ${this.url} ) HttpRequest_Fetcher: retryWaitingTimer: `
         + `retryWaitingMillisecondsCur=${this.retryWaitingMillisecondsCur}, `
         + `progressRetryWaiting=${this.progressRetryWaiting.valuePercentage}%` );
 
@@ -1028,7 +940,7 @@ class HttpFetcher {
       // Before retryWaitingTimer done, its event could happen many times.
       } else {
         // Re-generate a new promise for listening on it.
-        HttpFetcher.retryWaitingTimerPromise_create_and_set.call( this );
+        HttpRequest_Fetcher.retryWaitingTimerPromise_create_and_set.call( this );
         this.allPromiseSet.add( this.retryWaitingTimerPromise );
       }
     }
@@ -1038,7 +950,7 @@ class HttpFetcher {
   /**
    * Called when loading progress not done (i.e. onloadstart(), onprogrss()).
    *
-   * @param {HttpFetcher} this
+   * @param {HttpRequest_Fetcher} this
    *
    * @param {ProgressEvent} progressEvent
    *   The ProgressEvent to be used to set .progressLoading.
@@ -1060,7 +972,7 @@ class HttpFetcher {
       this.progressLoading.value_set( progressEvent.loaded );
 
     } else { // Fake an incremental never-100% progress percentage.
-      let fakeMax = progressEvent.loaded + HttpFetcher.progressTotalFakeLarger;
+      let fakeMax = progressEvent.loaded + HttpRequest_Fetcher.progressTotalFakeLarger;
       this.progressLoading.value_max_set( fakeMax );
       this.progressLoading.value_set( progressEvent.loaded );
     }
@@ -1070,7 +982,7 @@ class HttpFetcher {
    * Called when loading progress done (i.e. onabort(), onerror(), onload(),
    * ontimeout()).
    *
-   * @param {HttpFetcher} this
+   * @param {HttpRequest_Fetcher} this
    *
    * @param {ProgressEvent} progressEvent
    *   The ProgressEvent to be used to set .progressLoading.
@@ -1107,7 +1019,7 @@ class HttpFetcher {
   /**
    * Called when retry waiting progress not done.
    *
-   * @param {HttpFetcher} this
+   * @param {HttpRequest_Fetcher} this
    */
   static progressRetryWaiting_set_beforeDone() {
     if ( this.progressRetryWaiting ) {
@@ -1119,7 +1031,7 @@ class HttpFetcher {
   /**
    * Called when retry waiting progress done.
    *
-   * @param {HttpFetcher} this
+   * @param {HttpRequest_Fetcher} this
    */
   static progressRetryWaiting_set_whenDone() {
     if ( this.progressRetryWaiting ) {
@@ -1163,14 +1075,15 @@ class HttpFetcher {
 
 }
 
-HttpFetcher.methodDefault = "GET";
-HttpFetcher.responseTypeDefault = "text";
+HttpRequest_Fetcher.methodDefault = "GET";
+HttpRequest_Fetcher.responseTypeDefault = "text";
 
 /**
  * If ( ProgressEvent.lengthComputable == false ), it will be assumed that
- * ProgressEvent.total = ProgressEvent.loaded + HttpFetcher.progressTotalFakeLarger.
+ * ProgressEvent.total
+ *   = ProgressEvent.loaded + HttpRequest_Fetcher.progressTotalFakeLarger.
  *
  * The purpose is to let progress percentage look like still increasing step by
  * step gradually.
  */
-HttpFetcher.progressTotalFakeLarger = 1024 * 1024;
+HttpRequest_Fetcher.progressTotalFakeLarger = 1024 * 1024;
