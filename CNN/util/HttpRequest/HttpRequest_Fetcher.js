@@ -315,7 +315,8 @@ class HttpRequest_Fetcher {
       HttpRequest_Fetcher.progressRetryWaiting_set_whenDone.call( this );
 
       if ( this.bLogEventToConsole )
-        console.log( `( ${this.url} ) HttpRequest_Fetcher: retryWaitingTimer_cancel(): `
+        console.log( `( ${this.url} ) HttpRequest_Fetcher: `
+          + `retryWaitingTimer: cancel: `
           + `retryTimesCur=${this.retryTimesCur}, `
           + `retryWaitingMillisecondsCur=${this.retryWaitingMillisecondsCur}, `
           + `retryWaitingMillisecondsMax=${this.retryWaitingMillisecondsMax}, `
@@ -553,7 +554,7 @@ class HttpRequest_Fetcher {
 
     if ( this.bLogEventToConsole )
       console.log( `( ${this.url} ) HttpRequest_Fetcher: `
-        + `asyncGenerator_by_retryWaiting(): `
+        + `retryWaitingTimer: start: `
         + `retryTimesCur=${this.retryTimesCur}, `
         + `retryWaitingMillisecondsCur=${this.retryWaitingMillisecondsCur}, `
         + `retryWaitingMillisecondsMax=${this.retryWaitingMillisecondsMax}, `
@@ -867,7 +868,8 @@ class HttpRequest_Fetcher {
 
     // 3.
     if ( this.bLogEventToConsole )
-      console.log( `( ${this.url} ) HttpRequest_Fetcher: retryWaitingTimer: `
+      console.log( `( ${this.url} ) HttpRequest_Fetcher: `
+        + `retryWaitingTimer: progress: `
         + `retryTimesCur=${this.retryTimesCur}, `
         + `retryWaitingMillisecondsCur=${this.retryWaitingMillisecondsCur}, `
         + `retryWaitingMillisecondsMax=${this.retryWaitingMillisecondsMax}, `
