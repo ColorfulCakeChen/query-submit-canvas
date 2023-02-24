@@ -612,7 +612,6 @@ class HttpRequest_Fetcher {
   static loadingTimerPromise_create_and_set() {
     const delayMilliseconds = this.loadingMillisecondsInterval;
     const deltaValue = delayMilliseconds;
-
     this.loadingTimerPromise = PartTime.Promise_create_by_setTimeout(
       delayMilliseconds, HttpRequest_Fetcher.handle_loadingTimer,
       this, deltaValue );
@@ -624,7 +623,6 @@ class HttpRequest_Fetcher {
   static retryWaitingTimerPromise_create_and_set() {
     const delayMilliseconds = this.retryWaitingMillisecondsInterval;
     const deltaValue = delayMilliseconds;
-
     this.retryWaitingTimerPromise = PartTime.Promise_create_by_setTimeout(
       delayMilliseconds, HttpRequest_Fetcher.handle_retryWaitingTimer,
       this, deltaValue );
@@ -1016,13 +1014,10 @@ class HttpRequest_Fetcher {
   }
 
   /**
-   * @param {ProgressEvent} progressEvent
-   *   The ProgressEvent to be displayed.
-   *
+   * @param {ProgressEvent} progressEvent  The ProgressEvent to be displayed.
    * @return {string} A string description lengthComputable, loaded, total.
    */
   static ProgressEvent_toString( progressEvent ) {
-    //let str = `${event.loaded} bytes transferred`;
     let str = `lengthComputable=${progressEvent.lengthComputable}, `
       + `loaded=${progressEvent.loaded}, total=${progressEvent.total}`;
     return str;
