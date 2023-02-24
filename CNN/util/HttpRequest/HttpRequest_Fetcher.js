@@ -272,7 +272,7 @@ class HttpRequest_Fetcher {
    *   Return true, if ( .loadingTimer_isUsed == true ) and ( now is during
    * loading ).
    */
-  loadingTimer_isCounting() {
+  get loadingTimer_isCounting() {
     if ( this.loadingTimerPromise )
       return true;
     return false;
