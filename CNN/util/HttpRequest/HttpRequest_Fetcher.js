@@ -500,8 +500,15 @@ class HttpRequest_Fetcher {
       //
       // Note: Checking ( xhr.status !== 200 ) is not enough. The loading may
       //       still not yet complete when status becomes 200.
-      notDone =    ( xhr.status !== 200 )
-                || ( this.allPromiseSet.has( this.loadPromise ) );
+
+//!!! (2023/02/24 Remarked)
+// It seems that xhr.status may changed from 200 to 0 when load done.
+// So, checking this.allPromiseSet.has( this.loadPromise ) purely.
+//
+//       notDone =    ( xhr.status !== 200 )
+//                 || ( this.allPromiseSet.has( this.loadPromise ) );
+
+      notDone = ( this.allPromiseSet.has( this.loadPromise ) );
 
     // Stop if loading completely and successfully.
     //
