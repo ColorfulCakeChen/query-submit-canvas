@@ -494,20 +494,28 @@ class HttpRequest_Fetcher {
       let progressRoot = await allPromise;
       yield progressRoot;
 
-      // Not done, if:
-      //   - ( status is not 200 ), or
-      //   - ( .loadPromise still pending (i.e. still in waiting promises) ).
-      //
-      // Note: Checking ( xhr.status !== 200 ) is not enough. The loading may
-      //       still not yet complete when status becomes 200.
-
 //!!! (2023/02/24 Remarked)
-// If .abort() is called, xhr.status will be changed (from 200) to 0 even if
-// the load is succeeded. So, checking .allPromiseSet.has( .loadPromise ) purely.
+// If .abort() is called, xhr.status will be changed (from 200) to 0 even
+// if loading is succeeded. So, do not check xhr.status whether 200.
+// Just check .allPromiseSet.has( .loadPromise ) purely.
 //
+//       // Not done, if:
+//       //   - ( status is not 200 ), or
+//       //   - ( .loadPromise still pending (i.e. still in waiting promises) ).
+//       //
+//       // Note: Checking ( xhr.status !== 200 ) is not enough. The loading may
+//       //       still not yet complete when status becomes 200.
 //       notDone =    ( xhr.status !== 200 )
 //                 || ( this.allPromiseSet.has( this.loadPromise ) );
 
+      // Not done, if:
+      //   - ( .loadPromise still pending (i.e. still in waiting promises) ).
+      //
+      // Note: If .abort() is called, xhr.status will be changed (from 200)
+      //       to 0 even if loading is succeeded. So,
+      //         - Do not check ( xhr.status !== 200 ).
+      //         - Just check .allPromiseSet.has( .loadPromise ) purely.
+      //
       notDone = ( this.allPromiseSet.has( this.loadPromise ) );
 
     // Stop if loading completely and successfully.
@@ -520,14 +528,18 @@ class HttpRequest_Fetcher {
     // (2023/02/15) For debug.
     // (When execution to here, the request should have finished successfully.)
     {
-      // 2.1
-      if ( 200 !== xhr.status ) {
-        //debugger;
-        throw Error( `( ${this.url} ) HttpRequest_Fetcher`
-          + `.asyncGenerator_by_url_timeout_responseType_method_body(): `
-          + `When done, `
-          + `xhr.status ( ${xhr.status} ) should be 200.` );
-      }
+      // (2023/02/24 Remarked)
+      // If .abort() is called, xhr.status will be changed (from 200) to 0 even
+      // if loading is succeeded. So, do not check xhr.status whether 200.
+      //
+      // // 2.1
+      // if ( 200 !== xhr.status ) {
+      //   //debugger;
+      //   throw Error( `( ${this.url} ) HttpRequest_Fetcher`
+      //     + `.asyncGenerator_by_url_timeout_responseType_method_body(): `
+      //     + `When done, `
+      //     + `xhr.status ( ${xhr.status} ) should be 200.` );
+      // }
 
       // 2.2
       if ( 100 != this.progressLoading.valuePercentage ) {
