@@ -165,7 +165,7 @@ class GSheetsAPIv4_UrlComposer extends Recyclable.Root {
 
         responseText = yield* httpResulter;
         if ( !responseText )
-          return null; // should not happen.
+          return null;
       }
 
 
