@@ -198,9 +198,13 @@ class HttpRequest_Fetcher {
           }
         }
 
-        // 4. Waiting before retry (for truncated exponential backoff algorithm).
+        // 4.
         if ( bRetry ) {
+          // If retry, waiting before it (i.e. truncated exponential backoff algorithm).
           yield* HttpRequest_Fetcher.asyncGenerator_by_retryWaiting.call( this );
+        } else {
+          // If no retry, the retry waiting timer should be completed to 100%
+          HttpRequest_Fetcher.progressRetryWaiting_set_whenDone.call( this );
         }
 
       } while ( bRetry && ( !this.bAbort ) );
