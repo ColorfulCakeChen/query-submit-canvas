@@ -19,6 +19,10 @@ import * as ValueMax from "../ValueMax.js";
  * https://sheets.googleapis.com/v4/spreadsheets/18YyEoy-OfSkODfw8wqBRApSrRnBTZpjRpRiwIKy8a0M/values/Evolution.Param!A:B?key=AIzaSyDQpdX3Z7297fkZ7M_jWdq7zjv_IIxpArU
  *
  *
+ * @member {string} spreadsheetUrlPrefix
+ *   Usually, it is GSheetsAPIv4_UrlComposer.spreadsheetUrlPrefix. But it may be
+ * modified (e.g. for testing ProgressEvent error).
+ *
  * @member {HttpRequest.Fetcher} httpRequestFetcher
  *   The current (or last) fetcher of the http request. It could be used to
  * call .abort().

@@ -39,6 +39,10 @@ import * as ValueMax from "../ValueMax.js";
  * https://docs.google.com/spreadsheets/d/18YyEoy-OfSkODfw8wqBRApSrRnBTZpjRpRiwIKy8a0M/gviz/tq?range='Evolution.Param'!B17&headers=0&tqx=out:csv
  *
  *
+ * @member {string} spreadsheetUrlPrefix
+ *   Usually, it is GVizTQ_UrlComposer.spreadsheetUrlPrefix. But it may be
+ * modified (e.g. for testing ProgressEvent error).
+ *
  * @member {HttpRequest.Fetcher} httpRequestFetcher
  *   The current (or last) fetcher of the http request. It could be used to
  * call .abort().
