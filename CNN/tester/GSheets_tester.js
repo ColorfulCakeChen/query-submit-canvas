@@ -1,6 +1,6 @@
 export { tester };
 
-import * as HttpRequest from "../HttpRequest.js";
+import * as HttpRequest from "../util/HttpRequest.js";
 import * as GSheets from "../util/GSheets.js";
 import * as ValueMax from "../util/ValueMax.js";
 
