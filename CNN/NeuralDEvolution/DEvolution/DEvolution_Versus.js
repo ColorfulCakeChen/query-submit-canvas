@@ -2,9 +2,10 @@ export { DEvolution_Versus as Versus };
 
 import * as Pool from "../../util/Pool.js";
 import * as Recyclable from "../../util/Recyclable.js";
+import * as Float12 from "../../Unpacker/Float12.js";
+// import * as HttpRequest from "../HttpRequest.js";
 import * as NumberTools from "../../util/NumberTools.js";
 import * as ValueMax from "../../util/ValueMax.js";
-import * as Float12 from "../../Unpacker/Float12.js";
 import { VersusId } from "./DEvolution_VersusId.js";
 
 /**
@@ -119,6 +120,9 @@ class DEvolution_Versus extends Recyclable.Root {
     {
       this.spreadsheetRange = spreadsheetRange;
       spreadsheetUrlComposer.range = spreadsheetRange;
+
+//!!! ...unfinished... (2023/02/24)
+// {HttpRequest.Params_loading_retryWaiting} params_loading_retryWaiting
 
       let fetcherVersus
         = spreadsheetUrlComposer.JSON_ColumnMajorArrayArray_fetch_asyncGenerator(

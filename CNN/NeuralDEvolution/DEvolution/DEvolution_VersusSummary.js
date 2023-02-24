@@ -3,6 +3,7 @@ export { DEvolution_VersusSummary as VersusSummary };
 import * as Pool from "../../util/Pool.js";
 import * as Recyclable from "../../util/Recyclable.js";
 import * as GSheets from "../../util/GSheets.js";
+import * as HttpRequest from "../HttpRequest.js";
 import * as RandTools from "../../util/RandTools.js";
 import { Versus as DEvolution_Versus } from "./DEvolution_Versus.js";
 
@@ -112,6 +113,10 @@ class DEvolution_VersusSummary extends Recyclable.Root {
     this.urlComposer.range = range;
 
     try {
+
+//!!! ...unfinished... (2023/02/24)
+// {HttpRequest.Params_loading_retryWaiting} params_loading_retryWaiting
+
       let rangeArrayArray
         = await this.urlComposer.JSON_ColumnMajorArrayArray_fetch_async();
 
