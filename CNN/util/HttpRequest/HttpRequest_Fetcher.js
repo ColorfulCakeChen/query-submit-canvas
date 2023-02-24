@@ -16,72 +16,23 @@ import { Params_loading_retryWaiting }
  * @member {string} url
  *   A string representing the URL to send the request to.
  *
- * @member {number} loadingMillisecondsMax
- *   The maximum time (in milliseconds) a request can take before automatically
- * being terminated. Default is 0, which means there is no timeout.
- *
- *   - If zero, the progressLoading will be advanced by ProgressEvent(
- *       .type = "progress" ).
- *     - This is good if ( .lengthComputable == true ) and network smooth.
- *     - This is bad if ( .lengthComputable == false ) (i.e. progress can not
- *         be calculated by .loaded / .total) or network congested (i.e.
- *         there will be a long pending (no responded in UI)).
- *
- *   - If not zero, the progressLoading will be advanced by a timer.
- *       Although this is a kind of fake progress, it provides better user
- *       experience because progress bar is still advancing even if network
- *       congested or server busy.
- *
- * @member {number} loadingMillisecondsInterval
- *   The interval time (in milliseconds) for advancing the loadingMillisecondsCur.
- * Although smaller interval may provide smoother progress advancing, however, too
- * small interval (relative to loadingMillisecondsMax) may not look good because
- * the progress bar may advance too little to be aware by eyes.
+ * @member {Params_loading_retryWaiting} params_loading_retryWaiting
+ *   The parameters for loading timeout and retry waiting time.
  *
  * @member {number} loadingMillisecondsCur
  *   The current time (in milliseconds) of loading. It is only used if
- * ( loadingMillisecondsMax > 0 ).
- *
- * @member {number} retryTimesMax
- *   Retry request so many times at most when request failed (ProgressEvent
- * is error, or load without status 200, or timeout). Note1: Never retry if
- * ( ProgressEvent is abort ) or ( unknown error ). Note2: There will be some
- * waiting time before next re-try (i.e. truncated (binary) exponential backoff
- * algorithm).
- *
- *   - Negative value means retry infinite times (i.e. retry forever until
- *       success).
- *
- *   - Zero means never retry (i.e. failed immediately once not success).
- *
- *   - Positive value means retry so many times at most.
+ * ( .loadingMillisecondsMax > 0 ).
  *
  * @member {number} retryTimesCur
  *   How many times has been retried.
  *
- * @member {number} retryWaitingSecondsExponentMax
- *   The maximum exponent (for two's power; i.e. the B of ( 2 ** B ) ) of retry
- * waiting time (in seconds, not in milliseconds). It is only used if
- * ( retryTimesMax > 0 ). For example,
- *   - 0 means ( 2 ** 0 ) = 1 second.
- *   - 1 means ( 2 ** 1 ) = 2 seconds
- *   - 2 means ( 2 ** 2 ) = 4 seconds
- *   - ...
- *   - 6 means ( 2 ** 6 ) = 64 seconds.
- *
  * @member {number} retryWaitingMillisecondsMax
  *   The maximum time (in milliseconds) of waiting for retry. It is only used
- * if ( retryTimesMax > 0 ). It is calculated from retryWaitingSecondsExponentMax.
- *
- * @member {number} retryWaitingMillisecondsInterval
- *   The interval time (in milliseconds) for advancing retryWaitingMillisecondsCur.
- * Although smaller interval may provide smoother progress advancing, however,
- * too small interval (relative to retryWaitingMillisecondsMax) may not look good
- * because the progress bar may advance too little to be aware by eyes.
+ * if ( .retryTimesMax > 0 ). It is calculated from .retryWaitingSecondsExponentMax.
  *
  * @member {number} retryWaitingMillisecondsCur
  *   The current time (in milliseconds) of waiting for retry. It is only used
- * if ( retryTimesMax > 0 ).
+ * if ( .retryTimesMax > 0 ).
  *
  * @member {string} responseType
  *   A string specifying what type of data the response contains. It could be
@@ -146,17 +97,7 @@ class HttpRequest_Fetcher {
   async* asyncGenerator_by_progressParent_url_timeout_retry_responseType_method_body(
     progressParent,
     url,
-
-//!!! ...unfinished... (2023/02/24)
-// Parameters_loading_retryWaiting
-
-    loadingMillisecondsMax = 0,
-    loadingMillisecondsInterval = ( 20 * 1000 ),
-
-    retryTimesMax = 0,
-    retryWaitingSecondsExponentMax = 6,
-    retryWaitingMillisecondsInterval = ( 1000 ),
-
+    params_loading_retryWaiting,
     responseType = HttpRequest_Fetcher.responseTypeDefault,
     method = HttpRequest_Fetcher.methodDefault,
     body
@@ -169,12 +110,16 @@ class HttpRequest_Fetcher {
     this.progressRoot = progressParent.root_get();
 
     // 0.2
-    this.retryTimesMax = retryTimesMax;
-    this.retryTimesCur = 0;
-    this.retryWaitingSecondsExponentMax = retryWaitingSecondsExponentMax;
-    this.retryWaitingMillisecondsInterval = retryWaitingMillisecondsInterval;
+    this.url = url;
+    this.params_loading_retryWaiting = params_loading_retryWaiting;
+    this.responseType = responseType;
+    this.method = method;
+    this.body = body;
 
     // 0.3
+    this.retryTimesCur = 0;
+
+    // 0.4
     //
     // Note1: Although .progressLoading and progressRetryWaiting is recorded in
     //        this, they are not owned by this HttpRequest_Fetcher object. They
@@ -208,11 +153,7 @@ class HttpRequest_Fetcher {
         // 1.
         try {
           responseText = yield* HttpRequest_Fetcher
-            .asyncGenerator_by_url_timeout_responseType_method_body.call(
-              this, url,
-              loadingMillisecondsMax, loadingMillisecondsInterval,
-              responseType, method, body
-            );
+            .asyncGenerator_by_url_timeout_responseType_method_body.call( this );
 
           // No need to retry, since request is succeeded (when executed to here).
           bRetry = false;
@@ -273,6 +214,25 @@ class HttpRequest_Fetcher {
     return responseText;
   }
 
+  get loadingMillisecondsMax() {
+    return this.params_loading_retryWaiting.loadingMillisecondsMax;
+  }
+
+  get loadingMillisecondsInterval() {
+    return this.params_loading_retryWaiting.loadingMillisecondsInterval;
+  }
+
+  get retryTimesMax() {
+    return this.params_loading_retryWaiting.retryTimesMax;
+  }
+
+  get retryWaitingSecondsExponentMax() {
+    return this.params_loading_retryWaiting.retryWaitingSecondsExponentMax;
+  }
+
+  get retryWaitingMillisecondsInterval() {
+    return this.params_loading_retryWaiting.retryWaitingMillisecondsInterval;
+  }
 
   /** Abort the loading (or waiting). */
   abort() {
@@ -356,6 +316,7 @@ class HttpRequest_Fetcher {
       if ( this.bLogEventToConsole )
         console.log( `( ${this.url} ) HttpRequest_Fetcher: retryWaitingTimer_cancel(): `
           + `retryWaitingMillisecondsCur=${this.retryWaitingMillisecondsCur}, `
+          + `retryWaitingMillisecondsMax=${this.retryWaitingMillisecondsMax}, `
           + `progressRetryWaiting=${this.progressRetryWaiting.valuePercentage}%` );
 
       this.retryWaitingTimerPromise.resolve( this.progressRoot );
@@ -367,8 +328,8 @@ class HttpRequest_Fetcher {
 
   /**
    * @return {boolean}
-   *   Return true, if ( loadingMillisecondsMax > 0 ), which means using timer to
-   * advance progressLoading.
+   *   Return true, if ( .loadingMillisecondsMax > 0 ), which means using timer
+   * to advance progressLoading.
    */
   get loadingTimer_isUsed() {
     if ( this.loadingMillisecondsMax > 0 )
@@ -378,7 +339,7 @@ class HttpRequest_Fetcher {
 
   /**
    * @return {boolean}
-   *   Return true, if ( this.loadingTimer_isUsed == true ) and ( now is during
+   *   Return true, if ( .loadingTimer_isUsed == true ) and ( now is during
    * loading ).
    */
   loadingTimer_isCounting() {
@@ -410,9 +371,6 @@ class HttpRequest_Fetcher {
    *
    *
    * @param {HttpRequest_Fetcher} this
-   *   - this.retryWaitingMillisecondsMax
-   *   - this.retryWaitingMillisecondsCur
-   *   - this.progressRoot
    *
    * @param {ValueMax.Percentage.Concrete} this.progressLoading
    *   This .progressLoading will be increased when every time advanced. The
@@ -437,25 +395,11 @@ class HttpRequest_Fetcher {
    * ( .progressLoading.valuePercentage == 100 ) will still be reported for
    * representing the request already done (with failure, though).
    */
-  static async* asyncGenerator_by_url_timeout_responseType_method_body(
-    url,
-    loadingMillisecondsMax, loadingMillisecondsInterval,
-    responseType, method, body ) {
+  static async* asyncGenerator_by_url_timeout_responseType_method_body() {
 
     // 0.
 
     // 0.1
-    this.url = url;
-
-    this.loadingMillisecondsMax = loadingMillisecondsMax;
-    this.loadingMillisecondsInterval = loadingMillisecondsInterval;
-    this.loadingMillisecondsCur = undefined;
-
-    this.responseType = responseType;
-    this.method = method;
-    this.body = body;
-
-    // 0.2
     let progressLoading_max_default;
 
     if ( this.loadingTimer_isUsed ) { // Use timeout time as progress target.
@@ -463,11 +407,12 @@ class HttpRequest_Fetcher {
       this.loadingMillisecondsCur = 0;
     } else { // Use total content length (perhaps unknown) as progress target.
       progressLoading_max_default = HttpRequest_Fetcher.progressTotalFakeLarger;
+      this.loadingMillisecondsCur = undefined;
     }
  
     this.progressLoading.value_max_set( progressLoading_max_default );
 
-    // 0.3
+    // 0.2
     this.contentLoaded = undefined;
     this.contentTotal = undefined;
 
@@ -591,9 +536,6 @@ class HttpRequest_Fetcher {
    *
    *
    * @param {HttpRequest_Fetcher} this
-   *   - this.retryWaitingMillisecondsMax
-   *   - this.retryWaitingMillisecondsCur
-   *   - this.progressRoot
    *
    * @param {ValueMax.Percentage.Concrete} this.progressRetryWaiting
    *   This .progressRetryWaiting will be increased when every time advanced. The
@@ -611,6 +553,7 @@ class HttpRequest_Fetcher {
       console.log( `( ${this.url} ) HttpRequest_Fetcher: `
         + `asyncGenerator_by_retryWaiting(): `
         + `retryWaitingMillisecondsCur=${this.retryWaitingMillisecondsCur}, `
+        + `retryWaitingMillisecondsMax=${this.retryWaitingMillisecondsMax}, `
         + `progressRetryWaiting=${this.progressRetryWaiting.valuePercentage}%` );
 
     // 0. Abort immediately if caller requests.
@@ -923,6 +866,7 @@ class HttpRequest_Fetcher {
     if ( this.bLogEventToConsole )
       console.log( `( ${this.url} ) HttpRequest_Fetcher: retryWaitingTimer: `
         + `retryWaitingMillisecondsCur=${this.retryWaitingMillisecondsCur}, `
+        + `retryWaitingMillisecondsMax=${this.retryWaitingMillisecondsMax}, `
         + `progressRetryWaiting=${this.progressRetryWaiting.valuePercentage}%` );
 
     // 4.

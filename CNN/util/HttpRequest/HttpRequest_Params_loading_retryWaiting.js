@@ -71,7 +71,8 @@ export { HttpRequest_Params_loading_retryWaiting as Params_loading_retryWaiting 
  *   The current time (in milliseconds) of waiting for retry. It is only used
  * if ( retryTimesMax > 0 ).
  */
-class Parameters_loading_retryWaiting {
+class HttpRequest_Params_loading_retryWaiting {
+
   /** */
   constructor(
     loadingMillisecondsMax = 0,
@@ -88,4 +89,5 @@ class Parameters_loading_retryWaiting {
     this.retryWaitingSecondsExponentMax = retryWaitingSecondsExponentMax;
     this.retryWaitingMillisecondsInterval = retryWaitingMillisecondsInterval;
   }
+
 }
