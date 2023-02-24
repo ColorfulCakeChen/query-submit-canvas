@@ -95,7 +95,15 @@ class AbortTestMode {
     } else if ( number_N1_6 == 0 ) {
       return new AbortTestMode( true, false, -1 );
     } else {
-      return new AbortTestMode( false, true, ( number_N1_6 - 1 ) % 3 );
+      const number_0_5 = ( number_N1_6 - 1 );
+      const afterHowManyNextKinds = 3;
+      let afterHowManyNext = number_0_5 % afterHowManyNextKinds;
+
+      const number_0_or_3 = ( number_0_5 - afterHowManyNext );
+      const number_0_or_1 = ( number_0_or_3 / afterHowManyNextKinds );
+      let duringRetryWaiting = ( number_0_or_1 == 1 );
+
+      return new AbortTestMode( false, duringRetryWaiting, afterHowManyNext );
     }
   }
 }
