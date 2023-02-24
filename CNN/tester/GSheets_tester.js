@@ -329,7 +329,8 @@ class TestCase {
   toString() {
     let str =
         `testCaseId=${this.testCaseId}, `
-      + `spreadsheetUrlPrefix=\"${this.spreadsheetUrlPrefix}\", `
+      + `spreadsheetUrlPrefix=${
+          spreadsheetUrlPrefix ? `\"${this.spreadsheetUrlPrefix}\"` : null }, `
       + `spreadsheetId_postfix=\"${this.spreadsheetId_postfix}\", `
       + `loadingMillisecondsMax=${this.loadingMillisecondsMax}, `
       + `retryTimesMax=${this.retryTimesMax}, `
