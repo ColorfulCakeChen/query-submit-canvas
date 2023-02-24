@@ -316,6 +316,7 @@ class HttpRequest_Fetcher {
 
       if ( this.bLogEventToConsole )
         console.log( `( ${this.url} ) HttpRequest_Fetcher: retryWaitingTimer_cancel(): `
+          + `retryTimesCur=${this.retryTimesCur}, `
           + `retryWaitingMillisecondsCur=${this.retryWaitingMillisecondsCur}, `
           + `retryWaitingMillisecondsMax=${this.retryWaitingMillisecondsMax}, `
           + `progressRetryWaiting=${this.progressRetryWaiting.valuePercentage}%` );
@@ -553,6 +554,7 @@ class HttpRequest_Fetcher {
     if ( this.bLogEventToConsole )
       console.log( `( ${this.url} ) HttpRequest_Fetcher: `
         + `asyncGenerator_by_retryWaiting(): `
+        + `retryTimesCur=${this.retryTimesCur}, `
         + `retryWaitingMillisecondsCur=${this.retryWaitingMillisecondsCur}, `
         + `retryWaitingMillisecondsMax=${this.retryWaitingMillisecondsMax}, `
         + `progressRetryWaiting=${this.progressRetryWaiting.valuePercentage}%` );
@@ -866,6 +868,7 @@ class HttpRequest_Fetcher {
     // 3.
     if ( this.bLogEventToConsole )
       console.log( `( ${this.url} ) HttpRequest_Fetcher: retryWaitingTimer: `
+        + `retryTimesCur=${this.retryTimesCur}, `
         + `retryWaitingMillisecondsCur=${this.retryWaitingMillisecondsCur}, `
         + `retryWaitingMillisecondsMax=${this.retryWaitingMillisecondsMax}, `
         + `progressRetryWaiting=${this.progressRetryWaiting.valuePercentage}%` );
