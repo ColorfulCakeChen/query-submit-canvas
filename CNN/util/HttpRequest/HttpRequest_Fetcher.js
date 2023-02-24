@@ -869,7 +869,8 @@ class HttpRequest_Fetcher {
     // 3.
     if ( this.bLogEventToConsole )
       console.log( `( ${this.url} ) HttpRequest_Fetcher: `
-        + `retryWaitingTimer: progress: `
+        + `retryWaitingTimer: `
+        + `${ bDone ? "done" : "progress" }: `
         + `retryTimesCur=${this.retryTimesCur}, `
         + `retryWaitingMillisecondsCur=${this.retryWaitingMillisecondsCur}, `
         + `retryWaitingMillisecondsMax=${this.retryWaitingMillisecondsMax}, `
