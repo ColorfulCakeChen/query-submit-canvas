@@ -417,8 +417,8 @@ const gTestCaseArray = new TestCaseArray();
 // should test ProgressEvent error. (how?)
 
   gTestCaseArray
-    .append_by( "_error://", "", 10 * 1000, false ) // error. (Invalid URL)
-    .append_by( "_error://", "",  0 * 1000, false ) // error. (Invalid URL) (no timeout)
+    .append_by( "https://", "", 10 * 1000, false ) // error. (Invalid URL)
+    .append_by( "https://", "",  0 * 1000, false ) // error. (Invalid URL) (no timeout)
     .append_by( null, "_none",   10 * 1000, false ) // load (status != 200).
     .append_by( null, "_none",    0 * 1000, false ) // load (status != 200). (no timeout)
     .append_by( null, "",      0.01 * 1000, false ) // timeout.
