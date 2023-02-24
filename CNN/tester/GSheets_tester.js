@@ -153,6 +153,14 @@ class TestCase {
     this.retryTimesMax = retryTimesMax;
     this.abortTestMode = abortTestMode;
     this.bShouldProgress100 = bShouldProgress100;
+
+    this.params_loading_retryWaiting = new HttpRequest.Params_loading_retryWaiting(
+      this.loadingMillisecondsMax,
+      this.loadingMillisecondsInterval,
+      this.retryTimesMax,
+      this.retryWaitingSecondsExponentMax,
+      this.retryWaitingMillisecondsInterval
+    );
   }
 
   /**
@@ -173,16 +181,8 @@ class TestCase {
       urlComposer.abort();
     }
 
-    let params_loading_retryWaiting = new HttpRequest.Params_loading_retryWaiting(
-      this.loadingMillisecondsMax,
-      this.loadingMillisecondsInterval,
-      this.retryTimesMax,
-      this.retryWaitingSecondsExponentMax,
-      this.retryWaitingMillisecondsInterval
-    );
-
     let fetcher = urlComposer.JSON_ColumnMajorArrayArray_fetch_asyncGenerator(
-      progressParent, params_loading_retryWaiting );
+      progressParent, this.params_loading_retryWaiting );
 
     let nextResult;
     let bRetryWaitingPrevious = urlComposer.retryWaitingTimer_isCounting();
