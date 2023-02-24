@@ -41,7 +41,7 @@ function array2d_compare_EQ( lhs, rhs ) {
 /**
  *
  * @member {boolean} beforeFetching
- *   True means call .abort() before HttpFetcher created.
+ *   True means call .abort() before HttpRequest.Fetcher created.
  *
  * @member {boolean} duringRetryWaiting
  *   True means call .abort() during retry waiting. False means call .abort()
@@ -82,7 +82,7 @@ class AbortTestMode {
   /**
    * @param {number} number_N1_6
    *   - negative: never call .abort().
-   *   - 0: call .abort() before HttpFetcher created.
+   *   - 0: call .abort() before HttpRequest.Fetcher created.
    *   - 1: call .abort() during loading when .next() is called 0 times.
    *   - 2: call .abort() during loading when .next() is called 1 times.
    *   - 3: call .abort() during loading when .next() is called 2 times.
@@ -176,7 +176,7 @@ class TestCase {
    */
   async* urlComposer_fetcher( urlComposer, progressParent ) {
 
-    // Test .abort() before HttpFetcher created.
+    // Test .abort() before HttpRequest.Fetcher created.
     if ( this.abortTestMode.beforeFetching ) {
       urlComposer.abort();
     }

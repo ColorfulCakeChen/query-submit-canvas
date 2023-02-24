@@ -22,7 +22,7 @@ class GSheets_UrlComposer extends Recyclable.Root {
    * inside the spreadsheet will be used.
    *
    * @param {boolean} bLogFetcherEventToConsole
-   *   If true, some debug messages of HttpFetcher will be logged to console.
+   *   If true, some debug messages of HttpRequest.Fetcher will be logged to console.
    *
    * @param {string} spreadsheetId
    *   The identifier (the component after the "https://docs.google.com/spreadsheets/d/")

@@ -59,7 +59,7 @@ class GVizTQ_UrlComposer extends Recyclable.Root {
    * notation, the first (most left) visible sheet inside the spreadsheet will be used.
    *
    * @param {boolean} bLogFetcherEventToConsole
-   *   If true, some debug messages of HttpFetcher will be logged to console.
+   *   If true, some debug messages of HttpRequest.Fetcher will be logged to console.
    *
    * @param {string} spreadsheetId
    *   The identifier (the component after the "https://docs.google.com/spreadsheets/d/")
@@ -217,7 +217,8 @@ class GVizTQ_UrlComposer extends Recyclable.Root {
           .asyncGenerator_by_progressParent_url_timeout_retry_responseType_method_body(
             progressFetcher, url, params_loading_retryWaiting );
 
-        // Abort immediately if caller requests to abort before HttpFetcher created.
+        // Abort immediately if caller requests to abort before
+        // HttpRequest.Fetcher created.
         if ( this.bAbort )
           this.httpRequestFetcher.abort();
 
@@ -251,7 +252,8 @@ class GVizTQ_UrlComposer extends Recyclable.Root {
       return ColumnMajorArrayArray;
 
     } catch ( e ) {
-      if ( HttpFetcher.Exception_is_ProgressEvent_abort_error_load_timeout( e ) ) {
+      if ( HttpRequest.Fetcher
+             .Exception_is_ProgressEvent_abort_error_load_timeout( e ) ) {
         // XMLHttpRequest related exception is possible and acceptable.
         return null;
 
