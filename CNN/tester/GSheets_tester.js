@@ -393,8 +393,11 @@ const gTestCaseArray = new TestCaseArray();
 //!!! ...unfinished... (2023/02/24)
 // should test ProgressEvent error. (how?)
 
-//!!! ...unfinished... (2023/02/24)
   gTestCaseArray
+    .append_by( "%",            10 * 1000, false ) // error. (Invalid URL)
+    .append_by( "%",             0 * 1000, false ) // error. (Invalid URL) (no timeout)
+    // .append_by( "?",            10 * 1000, false ) // error. (Invalid URL)
+    // .append_by( "&",            10 * 1000, false ) // error.
     .append_by( "_not_exist",   10 * 1000, false ) // load (status != 200).
     .append_by( "_not_exist",    0 * 1000, false ) // load (status != 200). (no timeout)
     .append_by( "",           0.01 * 1000, false ) // timeout.
@@ -497,9 +500,6 @@ async function* tester( progressParent ) {
 
 //!!! ...unfinished... (2023/02/22)
 // How to test error and re-try?
-
-//!!! ...unfinished... (2023/02/21)
-// How to test .abort() in loading and in retry waiting?
 
 //!!! ...unfinished... (2023/02/22)
 // simulate network offline.
