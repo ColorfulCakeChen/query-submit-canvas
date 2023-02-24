@@ -136,6 +136,7 @@ class GVizTQ_UrlComposer extends Recyclable.Root {
     range,
     headers, responseHandler, sheetId, sheetName
   ) {
+    this.spreadsheetUrlPrefix = GVizTQ_UrlComposer.spreadsheetUrlPrefix;
     this.bLogFetcherEventToConsole = bLogFetcherEventToConsole;
     this.set_by_spreadsheetId_range_headers_responseHandler_sheetId_sheetName(
       spreadsheetId,
@@ -154,6 +155,7 @@ class GVizTQ_UrlComposer extends Recyclable.Root {
     this.range = undefined;
     this.spreadsheetId = undefined;
     this.bLogFetcherEventToConsole = undefined;
+    this.spreadsheetUrlPrefix = undefined;
     super.disposeResources();
   }
 
@@ -386,7 +388,7 @@ class GVizTQ_UrlComposer extends Recyclable.Root {
   getUrl_forFormat( outputFormat ) {
     // Because sheetId could be 0, it should be checked by comparing to null directly
     // (i.e. should not use ( !this.sheetId )).
-    let url = `${GVizTQ_UrlComposer.spreadsheetUrlPrefix}/${
+    let url = `${this.spreadsheetUrlPrefix}/${
       encodeURIComponent(this.spreadsheetId)}/${
 
       GVizTQ_UrlComposer.GoogleVisualizationTableQueryUrlPostfix}?tqx=version:${

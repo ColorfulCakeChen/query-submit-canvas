@@ -115,8 +115,9 @@ class TestCase {
 
   /**
    * 
-   * @param {string} spreadsheetId_prefix
-   *   The extra string prepended to the end of spreadsheetId.
+   * @param {string} spreadsheetUrlPrefix
+   *   The spreadsheet url (for testing ProgressEvent error). If null, use default
+   * (correct) url.
    *
    * @param {string} spreadsheetId_postfix
    *   The extra string appended to the end of spreadsheetId.
@@ -138,14 +139,14 @@ class TestCase {
    */
   constructor(
     testCaseId,
-    spreadsheetId_prefix, spreadsheetId_postfix,
+    spreadsheetUrlPrefix, spreadsheetId_postfix,
     loadingMillisecondsMax,
     retryTimesMax,
     abortTestMode,
     bShouldProgress100
   ) {
     this.testCaseId = testCaseId;
-    this.spreadsheetId_prefix = spreadsheetId_prefix;
+    this.spreadsheetUrlPrefix = spreadsheetUrlPrefix;
     this.spreadsheetId_postfix = spreadsheetId_postfix;
     this.loadingMillisecondsMax = loadingMillisecondsMax;
     this.retryTimesMax = retryTimesMax;
@@ -273,11 +274,17 @@ class TestCase {
     let urlComposer1 = GSheets.UrlComposer.Pool.get_or_create_by(
       bLogFetcherEventToConsole, spreadsheetId, range );
 
+    if ( this.spreadsheetUrlPrefix )
+      urlComposer1.urlComposer1.spreadsheetUrlPrefix = this.spreadsheetUrlPrefix;
+
     let result1 = yield* this.urlComposer_fetcher( urlComposer1, progress1 );
 
     // With API key.
     let urlComposer2 = GSheets.UrlComposer.Pool.get_or_create_by(
       bLogFetcherEventToConsole, spreadsheetId, range, apiKey );
+
+    if ( this.spreadsheetUrlPrefix )
+      urlComposer2.urlComposer1.spreadsheetUrlPrefix = this.spreadsheetUrlPrefix;
 
     let result2 = yield* this.urlComposer_fetcher( urlComposer2, progress2 );
 
@@ -321,7 +328,7 @@ class TestCase {
   toString() {
     let str =
         `testCaseId=${this.testCaseId}, `
-      + `spreadsheetId_prefix=\"${this.spreadsheetId_prefix}\", `
+      + `spreadsheetUrlPrefix=\"${this.spreadsheetUrlPrefix}\", `
       + `spreadsheetId_postfix=\"${this.spreadsheetId_postfix}\", `
       + `loadingMillisecondsMax=${this.loadingMillisecondsMax}, `
       + `retryTimesMax=${this.retryTimesMax}, `
@@ -343,7 +350,7 @@ class TestCaseArray extends Array {
    * @return {TestCaseArray} Return this for cascading appending.
    */
   append_by(
-    spreadsheetId_prefix, spreadsheetId_postfix,
+    spreadsheetUrlPrefix, spreadsheetId_postfix,
     loadingMillisecondsMax, bShouldProgress100Default ) {
 
     const retryTimesMax_begin = -1; // infinite retry.
@@ -388,7 +395,7 @@ class TestCaseArray extends Array {
         }
 
         let testCase = new TestCase( testCaseId,
-          spreadsheetId_prefix, spreadsheetId_postfix,
+          spreadsheetUrlPrefix, spreadsheetId_postfix,
           loadingMillisecondsMax, retryTimesMax, abortTestMode, bShouldProgress100 );
 
         this.push( testCase );
@@ -400,7 +407,7 @@ class TestCaseArray extends Array {
 }
 
 //
-// spreadsheetId_prefix, spreadsheetId_postfix,
+// spreadsheetUrlPrefix, spreadsheetId_postfix,
 // loadingMillisecondsMax, bShouldProgress100Default
 //
 const gTestCaseArray = new TestCaseArray();
@@ -410,16 +417,13 @@ const gTestCaseArray = new TestCaseArray();
 // should test ProgressEvent error. (how?)
 
   gTestCaseArray
-    // .append_by( "&", "",            10 * 1000, false ) // error. (Invalid URL)
-    .append_by( "%", "",            10 * 1000, false ) // error. (Invalid URL)
-    // .append_by( "?", "",            10 * 1000, false ) // error. (Invalid URL)
-    .append_by( "%", "",             0 * 1000, false ) // error. (Invalid URL) (no timeout)
-
-    .append_by( "", "_not_exist",   10 * 1000, false ) // load (status != 200).
-    .append_by( "", "_not_exist",    0 * 1000, false ) // load (status != 200). (no timeout)
-    .append_by( "", "",           0.01 * 1000, false ) // timeout.
-    .append_by( "", "",             30 * 1000,  true ) // succeeded.
-    .append_by( "", "",              0 * 1000,  true ) // succeeded. (no timeout)
+    .append_by( "_error_://", "",     10 * 1000, false ) // error. (Invalid URL)
+    .append_by( "_error_://", "",      0 * 1000, false ) // error. (Invalid URL) (no timeout)
+    .append_by( null, "_not_exist",   10 * 1000, false ) // load (status != 200).
+    .append_by( null, "_not_exist",    0 * 1000, false ) // load (status != 200). (no timeout)
+    .append_by( null, "",           0.01 * 1000, false ) // timeout.
+    .append_by( null, "",             30 * 1000,  true ) // succeeded.
+    .append_by( null, "",              0 * 1000,  true ) // succeeded. (no timeout)
     ;
 }
 
@@ -463,8 +467,7 @@ async function* tester( progressParent ) {
       console.log(`\ntestCase={ ${testCase.toString()} }` );
     }
 
-    let spreadsheetId_test = testCase.spreadsheetId_prefix
-      + spreadsheetId + testCase.spreadsheetId_postfix;
+    let spreadsheetId_test = spreadsheetId + testCase.spreadsheetId_postfix;
 
     let testGenerator = testCase.tester_Summary_and_Versus(
       progressTestCase,

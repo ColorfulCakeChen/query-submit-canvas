@@ -82,6 +82,7 @@ class GSheetsAPIv4_UrlComposer extends Recyclable.Root {
   /** @override */
   static setAsConstructor_self(
     bLogFetcherEventToConsole, spreadsheetId, range, apiKey ) {
+      this.spreadsheetUrlPrefix = GSheetsAPIv4_UrlComposer.spreadsheetUrlPrefix;
       this.bLogFetcherEventToConsole = bLogFetcherEventToConsole;
       this.set_by_spreadsheetId_range_apiKey( spreadsheetId, range, apiKey );
   }
@@ -94,6 +95,7 @@ class GSheetsAPIv4_UrlComposer extends Recyclable.Root {
     this.range = undefined;
     this.spreadsheetId = undefined;
     this.bLogFetcherEventToConsole = undefined;
+    this.spreadsheetUrlPrefix = undefined;
     super.disposeResources();
   }
 
@@ -312,7 +314,7 @@ class GSheetsAPIv4_UrlComposer extends Recyclable.Root {
    * @return {string} The url for downloading the target as json format.
    */
   getUrl_forJSON( majorDimension = null ) {
-    let url = `${GSheetsAPIv4_UrlComposer.spreadsheetUrlPrefix}/${
+    let url = `${this.spreadsheetUrlPrefix}/${
       encodeURIComponent(this.spreadsheetId)}/values/${
       encodeURIComponent(this.range)}?${
       ( majorDimension != null ) ? `majorDimension=${
