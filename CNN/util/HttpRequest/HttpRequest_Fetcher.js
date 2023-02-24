@@ -151,7 +151,7 @@ class HttpRequest_Fetcher {
       do {
         HttpRequest_Fetcher.retryWaitingMilliseconds_init.call( this );
 
-        // 1.
+        // 1. Try to load.
         try {
           responseText = yield* HttpRequest_Fetcher
             .asyncGenerator_by_url_timeout_responseType_method_body.call( this );
