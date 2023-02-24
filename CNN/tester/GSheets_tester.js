@@ -412,18 +412,14 @@ class TestCaseArray extends Array {
 //
 const gTestCaseArray = new TestCaseArray();
 {
-
-//!!! ...unfinished... (2023/02/24)
-// should test ProgressEvent error. (how?)
-
   gTestCaseArray
-    .append_by( "http://none", "", 10 * 1000, false ) // error. (Invalid URL)
-    .append_by( "http://none", "",  0 * 1000, false ) // error. (Invalid URL) (no timeout)
-    .append_by( null, "_none",     10 * 1000, false ) // load (status != 200).
-    .append_by( null, "_none",      0 * 1000, false ) // load (status != 200). (no timeout)
-    .append_by( null, "",        0.01 * 1000, false ) // timeout.
-    .append_by( null, "",          30 * 1000,  true ) // succeeded.
-    .append_by( null, "",           0 * 1000,  true ) // succeeded. (no timeout)
+    .append_by( "https:/", "",   10 * 1000, false ) // error. (Invalid URL)
+    .append_by( "https:/", "",    0 * 1000, false ) // error. (Invalid URL) (no timeout)
+    .append_by( null, "_none",   10 * 1000, false ) // load (status != 200).
+    .append_by( null, "_none",    0 * 1000, false ) // load (status != 200). (no timeout)
+    .append_by( null, "",      0.01 * 1000, false ) // timeout.
+    .append_by( null, "",        30 * 1000,  true ) // succeeded.
+    .append_by( null, "",         0 * 1000,  true ) // succeeded. (no timeout)
     ;
 }
 
@@ -518,10 +514,7 @@ async function* tester( progressParent ) {
 // How to ensure calling .abort() during retry waiting?
 
 //!!! ...unfinished... (2023/02/22)
-// Calling .abort() wil not cause retry...
-
-//!!! ...unfinished... (2023/02/22)
-// How to test error and re-try?
+// Calling .abort() will not cause retry...
 
 //!!! ...unfinished... (2023/02/22)
 // simulate network offline.
