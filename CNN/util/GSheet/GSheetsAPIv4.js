@@ -124,7 +124,7 @@ class GSheetsAPIv4_UrlComposer extends Recyclable.Root {
    * created progressToAdvance will be increased when every time advanced. The
    * progressParent.root_get() will be returned when every time yield.
    *
-   * @param {Params_loading_retryWaiting} params_loading_retryWaiting
+   * @param {HttpRequest.Params_loading_retryWaiting} params_loading_retryWaiting
    *   The parameters for loading timeout and retry waiting time.
    *
    * @yield {Promise( ValueMax.Percentage.Aggregate )}
