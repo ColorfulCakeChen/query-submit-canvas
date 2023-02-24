@@ -304,9 +304,12 @@ class TestCase {
     return str;
   }
 
-  /** */
-  static createArray_by(
-    testCaseId_begin,
+  /**
+   * @param {TestCase[]} o_testCaseArray
+   *   The array which all created TestCase will be appended to.
+   */
+  static createIntoArray_by(
+    o_testCaseArray,
     spreadsheetId_postfix,
     loadingMillisecondsMax,
     bShouldProgress100
@@ -319,30 +322,27 @@ class TestCase {
     const abortTestMode_number_begin = -1;
     const abortTestMode_number_end_inclusive = 6;
 
-    let arrayIndex = 0;
-    let testCaseArray = new Array( ??? );
-    for ( let i = 0; i < testCaseArray.length; ++i ) {
+    let testCaseId;
+
+    for (
+        let retryTimesMax = retryTimesMax_begin;
+        retryTimesMax <= retryTimesMax_end_inclusive;
+        ++retryTimesMax ) {
 
       for (
-         let retryTimesMax = retryTimesMax_begin;
-         retryTimesMax <= retryTimesMax_end_inclusive;
-         ++retryTimesMax ) {
+        let abortTestMode_number = abortTestMode_number_begin;
+        abortTestMode_number <= abortTestMode_number_end_inclusive;
+        ++abortTestMode_number ) {
 
-        for (
-          let abortTestMode_number = abortTestMode_number_begin;
-          abortTestMode_number <= abortTestMode_number_end_inclusive;
-          ++abortTestMode_number ) {
+        testCaseId = o_testCaseArray.length;
 
-          let testCaseId = testCaseId_begin + arrayIndex;
-          let abortTestMode =
-            AbortTestMode.create_by_number_N1_6( abortTestMode_number );
+        let abortTestMode =
+          AbortTestMode.create_by_number_N1_6( abortTestMode_number );
 
-          let testCase = new TestCase( testCaseId, spreadsheetId_postfix,
-            loadingMillisecondsMax, retryTimesMax, abortTestMode, false??? );
+        let testCase = new TestCase( testCaseId, spreadsheetId_postfix,
+          loadingMillisecondsMax, retryTimesMax, abortTestMode, false??? );
 
-          testCaseArray[ arrayIndex ] = testCase;
-          ++arrayIndex;
-        }
+        testCaseArray.push( testCase );
       }
     }
 
