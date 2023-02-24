@@ -136,7 +136,7 @@ class HttpRequest_Fetcher {
 
       {
         // If retry times is run out at begining, it means no retry at all.
-        if ( this.retryTimes_isRunOut() )
+        if ( this.retryTimes_isRunOut )
           this.progressRetryWaiting = undefined;
         else
           this.progressRetryWaiting = progressParent.child_add(
@@ -173,7 +173,7 @@ class HttpRequest_Fetcher {
                        || ( e.type === "load" ) // ( status != 200 ) (e.g. 404 or 500)
                        || ( e.type === "timeout" ) ) { 
 
-              let bRetryTimesRunOut = this.retryTimes_isRunOut();
+              let bRetryTimesRunOut = this.retryTimes_isRunOut;
               if ( bRetryTimesRunOut ) {
                 bRetry = false; // 2.2.1 Can not retry, because run out of retry times.
 
@@ -293,7 +293,7 @@ class HttpRequest_Fetcher {
   }
 
   /** @return {boolean} Return true, if not yet reach maximum retry times. */
-  retryTimes_isRunOut() {
+  get retryTimes_isRunOut() {
     if ( this.retryTimesMax < 0 )
       return false; // Never run out, since retry forever.
     if ( this.retryTimesCur < this.retryTimesMax )
@@ -307,7 +307,7 @@ class HttpRequest_Fetcher {
   static retryWaitingMilliseconds_init() {
 
     // No need (or can not) retry.
-    if ( this.retryTimes_isRunOut() ) {
+    if ( this.retryTimes_isRunOut ) {
       // So that always ( .progressRetryWaiting.valuePercentage == 100% )
       this.retryWaitingMillisecondsMax = 0;
       this.retryWaitingMillisecondsCur = undefined;
