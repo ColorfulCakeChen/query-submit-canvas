@@ -463,7 +463,7 @@ class HttpRequest_Fetcher {
     }
 
     // 2.3
-    xhr.send( body );
+    xhr.send( this.body );
 
     // Abort immediately if caller requests. (For example,
     // HttpRequest_Fetcher.abort() may be called during retry waiting.)
