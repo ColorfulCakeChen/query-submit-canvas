@@ -128,6 +128,7 @@ class TestCase {
     this.loadingMillisecondsMax = loadingMillisecondsMax;
     this.retryTimesMax = retryTimesMax;
     this.abortTestMode = abortTestMode;
+    this.bShouldProgress100 = bShouldProgress100;
   }
 
   /**
@@ -272,9 +273,11 @@ class TestCase {
       urlComposer2.range = newRange;
       let result21 = yield* this.urlComposer_fetcher( urlComposer2, progress21 );
 
-      //!!! (2023/02/22 Remarked) It is possible null (e.g. test .abort()).
-      // if ( result11 == null )
-      //   throw Error( `result11( ${result11} ) should not be null.` );
+      if ( this.bShouldProgress100 ) // If the request is expected to succeeded,
+        if ( result11 == null )      // it should have non-null result.
+          throw Error( `result11( ${result11} ) should not be null `
+            + `when ( .bShouldProgress100 == true ).`
+          );
 
       // Note: If all cells are empty, GQViz got array with zero length.
       //       But APIv4 got undefined.
