@@ -423,15 +423,15 @@ class HttpRequest_Fetcher {
     this.contentLoaded = undefined;
     this.contentTotal = undefined;
 
-    // 2.
+    // 1.
 
-    // 2.1
+    // 1.1
     const xhr = this.xhr = new XMLHttpRequest();
     xhr.open( this.method, this.url, true );
     xhr.timeout = this.loadingMillisecondsMax;
     xhr.responseType = this.responseType;
 
-    // 2.2 Prepare promises before sending it.
+    // 1.2 Prepare promises before sending it.
     this.abortPromise = PartTime.Promise_create_by_addEventListener_once(
       xhr, "abort", HttpRequest_Fetcher.handle_abort, this );
 
@@ -468,7 +468,7 @@ class HttpRequest_Fetcher {
         this.allPromiseSet.add( this.loadingTimerPromise );
     }
 
-    // 2.3
+    // 1.3
     xhr.send( this.body );
 
     // Abort immediately if caller requests. (For example,
@@ -481,7 +481,7 @@ class HttpRequest_Fetcher {
       xhr.abort();
     }
 
-    // 2.4 Until done or failed.
+    // 1.4 Until done or failed.
     let notDone;
     do {
       let allPromise = Promise.race( this.allPromiseSet );
@@ -506,11 +506,11 @@ class HttpRequest_Fetcher {
     //       the pending promises rejected).
     } while ( notDone );
 
-    // 4. 
+    // 2. 
     // (2023/02/15) For debug.
-    // (When execution to here, the request should been finished successfully.)
+    // (When execution to here, the request should have finished successfully.)
     {
-      // 4.1
+      // 2.1
       if ( 200 !== xhr.status ) {
         //debugger;
         throw Error( `( ${this.url} ) HttpRequest_Fetcher`
@@ -519,7 +519,7 @@ class HttpRequest_Fetcher {
           + `xhr.status ( ${xhr.status} ) should be 200.` );
       }
 
-      // 4.2
+      // 2.2
       if ( 100 != this.progressLoading.valuePercentage ) {
         //debugger;
         throw Error( `( ${this.url} ) HttpRequest_Fetcher`
@@ -530,7 +530,7 @@ class HttpRequest_Fetcher {
       }
     }
 
-    // 5. Return the successfully downloaded result.
+    // 3. Return the successfully downloaded result.
     return xhr.response;
   }
 
