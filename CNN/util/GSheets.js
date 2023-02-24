@@ -182,9 +182,9 @@ class GSheets_UrlComposer extends Recyclable.Root {
    * @return {boolean}
    *    Return true, if .urlComposer.httpFetcher now is during retry waiting.
    */
-  retryWaitingTimer_isCounting() {
+  get retryWaitingTimer_isCounting() {
     if ( this.urlComposer )
-      return this.urlComposer.retryWaitingTimer_isCounting();
+      return this.urlComposer.retryWaitingTimer_isCounting;
     return false;
   }
 

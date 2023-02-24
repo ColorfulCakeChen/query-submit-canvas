@@ -256,6 +256,41 @@ class HttpRequest_Fetcher {
     HttpRequest_Fetcher.retryWaitingTimer_cancel.call( this );
   }
 
+  /**
+   * @return {boolean}
+   *   Return true, if ( .loadingMillisecondsMax > 0 ), which means using timer
+   * to advance progressLoading.
+   */
+  get loadingTimer_isUsed() {
+    if ( this.loadingMillisecondsMax > 0 )
+      return true;
+    return false;
+  }
+
+  /**
+   * @return {boolean}
+   *   Return true, if ( .loadingTimer_isUsed == true ) and ( now is during
+   * loading ).
+   */
+  loadingTimer_isCounting() {
+    if ( this.loadingTimerPromise )
+      return true;
+    return false;
+  }
+
+  /**
+   * Cancel current loadingTimer (if exists).
+   *
+   * @param {HttpRequest_Fetcher} this
+   */
+  static loadingTimer_cancel() {
+    if ( !this.loadingTimerPromise )
+      return;
+
+    this.loadingTimerPromise.cancelTimer(); // Stop timer.
+    this.allPromiseSet.delete( this.loadingTimerPromise ); // Stop listening.
+    this.loadingTimerPromise = null;
+  }
 
   /** @return {boolean} Return true, if not yet reach maximum retry times. */
   retryTimes_isRunOut() {
@@ -288,10 +323,9 @@ class HttpRequest_Fetcher {
   }
 
   /**
-   * @return {boolean}
-   *   Return true, if now is during retry waiting.
+   * @return {boolean} Return true, if now is during retry waiting.
    */
-  retryWaitingTimer_isCounting() {
+  get retryWaitingTimer_isCounting() {
     if ( this.retryWaitingTimerPromise )
       return true;
     return false;
@@ -330,43 +364,6 @@ class HttpRequest_Fetcher {
     }
 
     this.retryWaitingTimerPromise = null;
-  }
-
-
-  /**
-   * @return {boolean}
-   *   Return true, if ( .loadingMillisecondsMax > 0 ), which means using timer
-   * to advance progressLoading.
-   */
-  get loadingTimer_isUsed() {
-    if ( this.loadingMillisecondsMax > 0 )
-      return true;
-    return false;
-  }
-
-  /**
-   * @return {boolean}
-   *   Return true, if ( .loadingTimer_isUsed == true ) and ( now is during
-   * loading ).
-   */
-  loadingTimer_isCounting() {
-    if ( this.loadingTimerPromise )
-      return true;
-    return false;
-  }
-
-  /**
-   * Cancel current loadingTimer (if exists).
-   *
-   * @param {HttpRequest_Fetcher} this
-   */
-  static loadingTimer_cancel() {
-    if ( !this.loadingTimerPromise )
-      return;
-
-    this.loadingTimerPromise.cancelTimer(); // Stop timer.
-    this.allPromiseSet.delete( this.loadingTimerPromise ); // Stop listening.
-    this.loadingTimerPromise = null;
   }
 
   /**
@@ -533,7 +530,6 @@ class HttpRequest_Fetcher {
     // 3. Return the successfully downloaded result.
     return xhr.response;
   }
-
 
   /**
    * An async generator for tracking retry waiting timer progress.

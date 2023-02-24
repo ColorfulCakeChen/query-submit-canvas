@@ -269,9 +269,9 @@ class GVizTQ_UrlComposer extends Recyclable.Root {
   /**
    * @return {boolean} Return true, if .httpRequestFetcher now is during retry waiting.
    */
-  retryWaitingTimer_isCounting() {
+  get retryWaitingTimer_isCounting() {
     if ( this.httpRequestFetcher )
-      return this.httpRequestFetcher.retryWaitingTimer_isCounting();
+      return this.httpRequestFetcher.retryWaitingTimer_isCounting;
     return false;
   }
 
