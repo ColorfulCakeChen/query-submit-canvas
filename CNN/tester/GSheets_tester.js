@@ -275,7 +275,7 @@ class TestCase {
       bLogFetcherEventToConsole, spreadsheetId, range );
 
     if ( this.spreadsheetUrlPrefix )
-      urlComposer1.urlComposer1.spreadsheetUrlPrefix = this.spreadsheetUrlPrefix;
+      urlComposer1.urlComposer.spreadsheetUrlPrefix = this.spreadsheetUrlPrefix;
 
     let result1 = yield* this.urlComposer_fetcher( urlComposer1, progress1 );
 
@@ -284,7 +284,7 @@ class TestCase {
       bLogFetcherEventToConsole, spreadsheetId, range, apiKey );
 
     if ( this.spreadsheetUrlPrefix )
-      urlComposer2.urlComposer1.spreadsheetUrlPrefix = this.spreadsheetUrlPrefix;
+      urlComposer2.urlComposer.spreadsheetUrlPrefix = this.spreadsheetUrlPrefix;
 
     let result2 = yield* this.urlComposer_fetcher( urlComposer2, progress2 );
 
