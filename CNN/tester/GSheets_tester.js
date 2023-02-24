@@ -385,13 +385,26 @@ class TestCaseArray extends Array {
         if ( abortTestMode.willAbort ) {
           bShouldProgress100 = false;
 
+          // Even if with .abort(), if the test case expected to be failed, do not
+          // infinite retry if .abort() is called in loading phase after the 2nd
+          // .next().
+          //
+          // The reason is that the request may be always failed before .abort()
+          // is called so that the retry will be forever.
+          //
+          if ( retryTimesMax < 0 ) // infinite retry
+            if ( !abortTestMode.beforeFetching ) // (Note: if .abort() immediately, ok)
+              if ( !abortTestMode.duringRetryWaiting ) // in loading phase.
+                if ( abortTestMode.afterHowManyNext >= 2 ) // too late to .abort()
+                  continue; // Otherwise, the test case may never end.
+
         } else {
           bShouldProgress100 = bShouldProgress100Default;
 
           // If the test case expected to be failed, do not infinite retry without
           // .abort().
-          if ( !bShouldProgress100 )
-            if ( retryTimesMax < 0 ) // infinite retry
+          if ( retryTimesMax < 0 ) // infinite retry
+            if ( !bShouldProgress100 )
               continue; // Otherwise, the test case will never end.
         }
 
