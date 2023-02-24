@@ -404,7 +404,7 @@ class HttpRequest_Fetcher {
     let progressLoading_max_default;
 
     if ( this.loadingTimer_isUsed ) { // Use timeout time as progress target.
-      progressLoading_max_default = loadingMillisecondsMax;
+      progressLoading_max_default = this.loadingMillisecondsMax;
       this.loadingMillisecondsCur = 0;
     } else { // Use total content length (perhaps unknown) as progress target.
       progressLoading_max_default = HttpRequest_Fetcher.progressTotalFakeLarger;
@@ -421,9 +421,9 @@ class HttpRequest_Fetcher {
 
     // 2.1
     const xhr = this.xhr = new XMLHttpRequest();
-    xhr.open( method, url, true );
-    xhr.timeout = loadingMillisecondsMax;
-    xhr.responseType = responseType;
+    xhr.open( this.method, this.url, true );
+    xhr.timeout = this.loadingMillisecondsMax;
+    xhr.responseType = this.responseType;
 
     // 2.2 Prepare promises before sending it.
     this.abortPromise = PartTime.Promise_create_by_addEventListener_once(
