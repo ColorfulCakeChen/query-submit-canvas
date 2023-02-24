@@ -356,7 +356,7 @@ class TestCaseArray extends Array {
         abortTestMode_number <= abortTestMode_number_end_inclusive;
         ++abortTestMode_number ) {
 
-        testCaseId = o_testCaseArray.length;
+        testCaseId = this.length;
         abortTestMode = AbortTestMode.create_by_number_N1_6( abortTestMode_number );
 
         // If the test case includes .abort(), it should never be succeeded.
