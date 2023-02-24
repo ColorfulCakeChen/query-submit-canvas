@@ -144,10 +144,10 @@ class HttpRequest_Fetcher {
       }
     }
 
-    //
+    // load-wait-retry
+    let responseText;
     try {
       let bRetry;
-      let responseText;
       do {
         HttpRequest_Fetcher.retryWaitingMilliseconds_init.call( this );
 
