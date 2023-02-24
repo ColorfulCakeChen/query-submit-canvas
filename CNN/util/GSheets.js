@@ -113,6 +113,9 @@ class GSheets_UrlComposer extends Recyclable.Root {
    * created progressToAdvance will be increased when every time advanced. The
    * progressParent.root_get() will be returned when every time yield.
    *
+   * @param {Params_loading_retryWaiting} params_loading_retryWaiting
+   *   The parameters for loading timeout and retry waiting time.
+   *
    * @yield {Promise( ValueMax.Percentage.Aggregate )}
    *   Yield a promise resolves to { value: progressParent.root_get(), done: false }.
    *
@@ -122,22 +125,10 @@ class GSheets_UrlComposer extends Recyclable.Root {
    *   - Yield a promise resolves to { value: null, done: true } when failed.
    */
   async* JSON_ColumnMajorArrayArray_fetch_asyncGenerator(
-    progressParent,
-    loadingMillisecondsMax,
-    loadingMillisecondsInterval,
-    retryTimesMax,
-    retryWaitingSecondsExponentMax,
-    retryWaitingMillisecondsInterval
-  ) {
+    progressParent, params_loading_retryWaiting ) {
 
     let fetcher = this.urlComposer.JSON_ColumnMajorArrayArray_fetch_asyncGenerator(
-      progressParent,
-      loadingMillisecondsMax,
-      loadingMillisecondsInterval,
-      retryTimesMax,
-      retryWaitingSecondsExponentMax,
-      retryWaitingMillisecondsInterval
-    );
+      progressParent, params_loading_retryWaiting );
 
     let ColumnMajorArrayArray = yield *fetcher;
     return ColumnMajorArrayArray;
@@ -147,30 +138,21 @@ class GSheets_UrlComposer extends Recyclable.Root {
    * Composing the URL (according to this object's data members), download
    * it as JSON format, extract data as a two dimension (column-major) array.
    *
+   * @param {Params_loading_retryWaiting} params_loading_retryWaiting
+   *   The parameters for loading timeout and retry waiting time.
+   *
    * @return {Promise( Array[] )}
    *   Return a promise.
    *   - It will resolve to ( a two dimension (column-major) array ) when successful.
    *   - It will resolve to ( null ) when failed.
    */
-  async JSON_ColumnMajorArrayArray_fetch_async(
-    loadingMillisecondsMax,
-    loadingMillisecondsInterval,
-    retryTimesMax,
-    retryWaitingSecondsExponentMax,
-    retryWaitingMillisecondsInterval
-  ) {
+  async JSON_ColumnMajorArrayArray_fetch_async( params_loading_retryWaiting ) {
     let progress = ValueMax.Percentage.Aggregate.Pool.get_or_create_by();
 
     let resultColumnMajorArrayArray;
     try {
       let fetcher = this.JSON_ColumnMajorArrayArray_fetch_asyncGenerator(
-        progress,
-        loadingMillisecondsMax,
-        loadingMillisecondsInterval,
-        retryTimesMax,
-        retryWaitingSecondsExponentMax,
-        retryWaitingMillisecondsInterval
-      );
+        progress, params_loading_retryWaiting );
 
       let fetcherNext;
       do {

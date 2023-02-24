@@ -169,8 +169,8 @@ class HttpRequest_Fetcher {
 
             // 2.2 Retry only if recognized exception and still has retry times.
             } else if (   ( e.type === "error" )
-                      || ( e.type === "load" ) // ( status != 200 ) (e.g. 404 or 500)
-                      || ( e.type === "timeout" ) ) { 
+                       || ( e.type === "load" ) // ( status != 200 ) (e.g. 404 or 500)
+                       || ( e.type === "timeout" ) ) { 
 
               let bRetryTimesRunOut = this.retryTimes_isRunOut();
               if ( bRetryTimesRunOut ) {

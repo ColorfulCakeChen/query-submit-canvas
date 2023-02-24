@@ -2,8 +2,8 @@ export { GVizTQ_UrlComposer as UrlComposer };
 
 import * as Pool from "../Pool.js";
 import * as Recyclable from "../Recyclable.js";
+import * as HttpRequest from "../HttpRequest.js";
 import * as ValueMax from "../ValueMax.js";
-import { HttpFetcher } from "./HttpFetcher.js";
 
 /**
  * Compose a URL for downloading cells data (as JSON or .CSV format) from a Google
@@ -39,7 +39,7 @@ import { HttpFetcher } from "./HttpFetcher.js";
  * https://docs.google.com/spreadsheets/d/18YyEoy-OfSkODfw8wqBRApSrRnBTZpjRpRiwIKy8a0M/gviz/tq?range='Evolution.Param'!B17&headers=0&tqx=out:csv
  *
  *
- * @member {HttpFetcher} httpFetcher
+ * @member {HttpRequest.Fetcher} httpRequestFetcher
  *   The current (or last) fetcher of the http request. It could be used to
  * call .abort().
  *
@@ -147,7 +147,7 @@ class GVizTQ_UrlComposer extends Recyclable.Root {
   /** @override */
   disposeResources() {
     this.bAbort = undefined;
-    this.httpFetcher = undefined;
+    this.httpRequestFetcher = undefined;
     this.sheetName = undefined;
     this.sheetId = undefined;
     this.responseHandler = undefined;
@@ -174,33 +174,17 @@ class GVizTQ_UrlComposer extends Recyclable.Root {
   }
 
   /**
-   * Generator for composing the URL (according this object's data members), downloading
-   * it as JSON format, extracting data as a two dimension (column-major) array.
+   * Generator for composing the URL (according this object's data members),
+   * downloading it as JSON format, extracting data as a two dimension
+   * (column-major) array.
    *
    * @param {ValueMax.Percentage.Aggregate} progressParent
    *   Some new progressToAdvance will be created and added to progressParent. The
    * created progressToAdvance will be increased when every time advanced. The
    * progressParent.root_get() will be returned when every time yield.
    *
-   * @param {number} loadingMillisecondsMax
-   *   The maximum time (in milliseconds) a request can take before automatically
-   * being terminated. Default is 0, which means there is no timeout.
-   *
-   * @param {number} loadingMillisecondsInterval
-   *   The interval time (in milliseconds) for advancing the loadingMillisecondsCur.
-   *
-   * @param {number} retryTimesMax
-   *   Retry request so many times at most when request failed (ProgressEvent
-   * is error, or load without status 200, or timeout). (Please see also
-   * HttpFetcher.retryTimesMax)
-   *
-   * @param {number} retryWaitingSecondsExponentMax
-   *   The maximum exponent (for two's power; i.e. the B of ( 2 ** B ) ) of retry
-   * waiting time (in seconds, not in milliseconds). It is only used if
-   * ( retryTimesMax > 0 ).
-   *
-   * @member {number} retryWaitingMillisecondsInterval
-   *   The interval time (in milliseconds) for advancing retryWaitingMillisecondsCur.
+   * @param {Params_loading_retryWaiting} params_loading_retryWaiting
+   *   The parameters for loading timeout and retry waiting time.
    *
    * @yield {Promise( ValueMax.Percentage.Aggregate )}
    *   Yield a promise resolves to { value: progressParent.root_get(), done: false }.
@@ -211,13 +195,7 @@ class GVizTQ_UrlComposer extends Recyclable.Root {
    *   - Yield a promise resolves to { done: true, value: null } when failed.
    */
   async* JSON_ColumnMajorArrayArray_fetch_asyncGenerator(
-    progressParent,
-    loadingMillisecondsMax,
-    loadingMillisecondsInterval,
-    retryTimesMax,
-    retryWaitingSecondsExponentMax,
-    retryWaitingMillisecondsInterval
-  ) {
+    progressParent, params_loading_retryWaiting ) {
 
     let progressRoot = progressParent.root_get();
     let progressFetcher = progressParent.child_add(
@@ -231,22 +209,16 @@ class GVizTQ_UrlComposer extends Recyclable.Root {
 
       let responseText;
       {
-        this.httpFetcher = new HttpFetcher( this.bLogFetcherEventToConsole );
-        let httpResulter = this.httpFetcher
-          .asyncGenerator_by_progressParent_url_timeout_retry_responseType_method_body(
-            progressFetcher, url,
+        this.httpRequestFetcher
+          = new HttpRequest.Fetcher( this.bLogFetcherEventToConsole );
 
-            loadingMillisecondsMax,
-            loadingMillisecondsInterval,
-        
-            retryTimesMax,
-            retryWaitingSecondsExponentMax,
-            retryWaitingMillisecondsInterval
-          );
+        let httpResulter = this.httpRequestFetcher
+          .asyncGenerator_by_progressParent_url_timeout_retry_responseType_method_body(
+            progressFetcher, url, params_loading_retryWaiting );
 
         // Abort immediately if caller requests to abort before HttpFetcher created.
         if ( this.bAbort )
-          this.httpFetcher.abort();
+          this.httpRequestFetcher.abort();
 
         responseText = yield* httpResulter;
         if ( !responseText )
@@ -295,18 +267,18 @@ class GVizTQ_UrlComposer extends Recyclable.Root {
   }
 
   /**
-   * @return {boolean} Return true, if .httpFetcher now is during retry waiting.
+   * @return {boolean} Return true, if .httpRequestFetcher now is during retry waiting.
    */
   retryWaitingTimer_isCounting() {
-    if ( this.httpFetcher )
-      return this.httpFetcher.retryWaitingTimer_isCounting();
+    if ( this.httpRequestFetcher )
+      return this.httpRequestFetcher.retryWaitingTimer_isCounting();
     return false;
   }
 
   /** Abort the loading (or waiting). */
   abort() {
     this.bAbort = true;
-    this.httpFetcher?.abort();
+    this.httpRequestFetcher?.abort();
   }
 
 // //!!! (2023/02/14 Remarked) Use XMLHttpRequest instead. (for progress)
