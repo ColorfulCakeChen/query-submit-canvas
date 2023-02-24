@@ -130,7 +130,8 @@ class GSheetsAPIv4_UrlComposer extends Recyclable.Root {
    *
    * @param {number} retryTimesMax
    *   Retry request so many times at most when request failed (ProgressEvent
-   * is error, or load without status 200, or timeout).
+   * is error, or load without status 200, or timeout). (Please see also
+   * HttpFetcher.retryTimesMax)
    *
    * @param {number} retryWaitingSecondsExponentMax
    *   The maximum exponent (for two's power; i.e. the B of ( 2 ** B ) ) of retry

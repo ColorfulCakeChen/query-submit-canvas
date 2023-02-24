@@ -43,7 +43,7 @@ import * as ValueMax from "../ValueMax.js";
  * @member {number} retryTimesMax
  *   Retry request so many times at most when request failed (ProgressEvent
  * is error, or load without status 200, or timeout). Note1: Never retry if
- * ( ProgressEvent is abort ) or ( unknown error ). Note2: there will be some
+ * ( ProgressEvent is abort ) or ( unknown error ). Note2: There will be some
  * waiting time before next re-try (i.e. truncated (binary) exponential backoff
  * algorithm).
  *
