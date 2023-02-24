@@ -332,8 +332,10 @@ class TestCaseArray extends Array {
   append_by(
     spreadsheetId_postfix, loadingMillisecondsMax, bShouldProgress100Default ) {
 
-    const retryTimesMax_begin = 0; // No retry
-    const retryTimesMax_end_inclusive = 2;
+//!!! (2023/02/22 Temp Remarked) For test retry waiting.
+    // const retryTimesMax_begin = 0; // No retry.
+    const retryTimesMax_begin = 1; // one retry.
+    const retryTimesMax_end_inclusive = 2; // two retry.
 
     // All kinds of AbortTestMode.
     const abortTestMode_number_begin = -1;
@@ -379,73 +381,24 @@ class TestCaseArray extends Array {
 }
 
 //
-// spreadsheetId_postfix, loadingMillisecondsMax, bShouldProgress100
+// spreadsheetId_postfix, loadingMillisecondsMax, bShouldProgress100Default
 //
 const gTestCaseArray = new TestCaseArray();
 {
-//!!! ...unfinished... (2023/02/24)
-  gTestCaseArray
-    .append_by( "_not_exist", 10 * 1000, ??? )
-    ;
-}
 
 //!!! ...unfinished... (2023/02/21)
 // should also ( loadingMillisecondsMax == 0 )
 
-  // Test ProgressEvent load without status 200.
-
-//!!! (2023/02/22 Temp Remarked) For test retry waiting.
-//   // (no retry)
-//   new TestCase(  0, "_not_exist", 10 * 1000, 0, AbortTestMode.create_by_number_N1_6(?), false ),
-//   new TestCase(  0, "_not_exist", 10 * 1000, 0,  true, false, -1, false ),
-//   new TestCase(  0, "_not_exist", 10 * 1000, 0, false, false, -1, false ),
-//   new TestCase(  1, "_not_exist", 10 * 1000, 0, false, false,  0, false ),
-//   new TestCase(  2, "_not_exist", 10 * 1000, 0, false, false,  1, false ),
-//   new TestCase(  3, "_not_exist", 10 * 1000, 0, false, false,  2, false ),
-
-  // (one retry)
-  new TestCase(  4, "_not_exist", 10 * 1000, 1, false, false, -1, false ),
-  new TestCase(  5, "_not_exist", 10 * 1000, 1, false, false,  0, false ),
-  new TestCase(  6, "_not_exist", 10 * 1000, 1, false, false,  1, false ),
-  new TestCase(  7, "_not_exist", 10 * 1000, 1, false, false,  2, false ),
-
-  // (two retry)
-  new TestCase(  8, "_not_exist", 10 * 1000, 2, false, false, -1, false ),
-  new TestCase(  9, "_not_exist", 10 * 1000, 2, false, false,  0, false ),
-  new TestCase( 10, "_not_exist", 10 * 1000, 2, false, false,  1, false ),
-  new TestCase( 11, "_not_exist", 10 * 1000, 2, false, false,  2, false ),
-
-  // Test ProgressEvent timeout.
-
-//!!! (2023/02/22 Temp Remarked) For test retry waiting.
-//   // (no retry)
-//   new TestCase( 12, "",  0.01 * 1000, 0, false, false, -1, false ),
-//   new TestCase( 13, "",  0.01 * 1000, 0, false, false,  0, false ),
-//   new TestCase( 14, "",  0.01 * 1000, 0, false, false,  1, false ),
-//   new TestCase( 15, "",  0.01 * 1000, 0, false, false,  2, false ),
-
-  // (one retry)
-  new TestCase( 16, "",  0.01 * 1000, 1, false, false, -1, false ),
-  new TestCase( 17, "",  0.01 * 1000, 1, false, false,  0, false ),
-  new TestCase( 18, "",  0.01 * 1000, 1, false, false,  1, false ),
-  new TestCase( 19, "",  0.01 * 1000, 1, false, false,  2, false ),
-
-  // (two retry)
-  new TestCase( 20, "",  0.01 * 1000, 2, false, false, -1, false ),
-  new TestCase( 21, "",  0.01 * 1000, 2, false, false,  0, false ),
-  new TestCase( 22, "",  0.01 * 1000, 2, false, false,  1, false ),
-  new TestCase( 23, "",  0.01 * 1000, 2, false, false,  2, false ),
-
-  // Test abort or succeeded.
-  // (one retry)
-  new TestCase( 24, "", 30 * 1000, 1, false, false, -1,  true ),
-  new TestCase( 25, "", 30 * 1000, 1, false, false,  0, false ),
-  new TestCase( 26, "", 30 * 1000, 1, false, false,  1, false ),
-  new TestCase( 27, "", 30 * 1000, 1, false, false,  2, false ),
-
 //!!! ...unfinished... (2023/02/22)
 // should test infinite retry.
-];
+
+//!!! ...unfinished... (2023/02/24)
+  gTestCaseArray
+    .append_by( "_not_exist",   10 * 1000, false ) // Test load without status 200.
+    .append_by( "",           0.01 * 1000, false ) // Test timeout.
+    .append_by( "",             30 * 1000,  true ) // Test succeeded.
+    ;
+}
 
 /**
  *
