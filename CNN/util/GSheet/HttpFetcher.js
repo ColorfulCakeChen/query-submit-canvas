@@ -350,6 +350,7 @@ class HttpFetcher {
 
       if ( this.bLogEventToConsole )
         console.log( `( ${this.url} ) HttpFetcher: retryWaitingTimer_cancel(): `
+          + `retryWaitingMillisecondsCur=${this.retryWaitingMillisecondsCur}, `
           + `progressRetryWaiting=${this.progressRetryWaiting.valuePercentage}%` );
 
       this.retryWaitingTimerPromise.resolve( this.progressRoot );
