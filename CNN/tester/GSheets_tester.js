@@ -332,13 +332,14 @@ class TestCaseArray extends Array {
   append_by(
     spreadsheetId_postfix, loadingMillisecondsMax, bShouldProgress100Default ) {
 
+    const retryTimesMax_begin = -1; // infinite retry.
 //!!! (2023/02/22 Temp Remarked) For test retry waiting.
-    // const retryTimesMax_begin = 0; // No retry.
-    const retryTimesMax_begin = 1; // one retry.
+    // const retryTimesMax_begin = 0; // no retry.
+    // const retryTimesMax_begin = 1; // one retry.
     const retryTimesMax_end_inclusive = 2; // two retry.
 
     // All kinds of AbortTestMode.
-    const abortTestMode_number_begin = -1;
+    const abortTestMode_number_begin = -1; // never .abort()
     const abortTestMode_number_end_inclusive = 6;
 
     let testCaseId;
@@ -359,10 +360,18 @@ class TestCaseArray extends Array {
         abortTestMode = AbortTestMode.create_by_number_N1_6( abortTestMode_number );
 
         // If the test case includes .abort(), it should never be succeeded.
-        if ( abortTestMode.willAbort )
+        if ( abortTestMode.willAbort ) {
           bShouldProgress100 = false;
-        else
+
+        } else {
           bShouldProgress100 = bShouldProgress100Default;
+
+          // If the test case expected to be failed, do not infinite retry without
+          // .abort().
+          if ( !bShouldProgress100 )
+            if ( retryTimesMax < 0 ) // infinite retry
+              continue; // Otherwise, the test case will never end.
+        }
 
         let testCase = new TestCase( testCaseId, spreadsheetId_postfix,
           loadingMillisecondsMax, retryTimesMax, abortTestMode, bShouldProgress100 );
@@ -370,11 +379,6 @@ class TestCaseArray extends Array {
         this.push( testCase );
       }
     }
-
-//!!! ...unfinished... (2023/02/24)
-// retryTimesMax ???
-// If the request is the last and expected to be succeeded,
-// its retryTimesMax should be negative (i.e. infinite retry).
 
     return this;
   }
@@ -388,9 +392,6 @@ const gTestCaseArray = new TestCaseArray();
 
 //!!! ...unfinished... (2023/02/24)
 // should test ProgressEvent error. (how?)
-
-//!!! ...unfinished... (2023/02/22)
-// should test infinite retry.
 
 //!!! ...unfinished... (2023/02/24)
   gTestCaseArray
