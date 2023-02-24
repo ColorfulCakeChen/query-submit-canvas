@@ -451,7 +451,7 @@ async function* tester( progressParent ) {
     let progressTestCase = progressTestCaseArray[ i ];
 
     if ( bLogFetcherEventToConsole ) {
-      console.log(`testCase={ ${testCase.toString()} }` );
+      console.log(`\ntestCase={ ${testCase.toString()} }` );
     }
 
     let spreadsheetId_test = spreadsheetId + testCase.spreadsheetId_postfix;
