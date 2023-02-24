@@ -115,6 +115,9 @@ class TestCase {
 
   /**
    * 
+   * @param {string} spreadsheetId_prefix
+   *   The extra string prepended to the end of spreadsheetId.
+   *
    * @param {string} spreadsheetId_postfix
    *   The extra string appended to the end of spreadsheetId.
    *
@@ -135,13 +138,14 @@ class TestCase {
    */
   constructor(
     testCaseId,
-    spreadsheetId_postfix,
+    spreadsheetId_prefix, spreadsheetId_postfix,
     loadingMillisecondsMax,
     retryTimesMax,
     abortTestMode,
     bShouldProgress100
   ) {
     this.testCaseId = testCaseId;
+    this.spreadsheetId_prefix = spreadsheetId_prefix;
     this.spreadsheetId_postfix = spreadsheetId_postfix;
     this.loadingMillisecondsMax = loadingMillisecondsMax;
     this.retryTimesMax = retryTimesMax;
@@ -317,6 +321,7 @@ class TestCase {
   toString() {
     let str =
         `testCaseId=${this.testCaseId}, `
+      + `spreadsheetId_prefix=\"${this.spreadsheetId_prefix}\", `
       + `spreadsheetId_postfix=\"${this.spreadsheetId_postfix}\", `
       + `loadingMillisecondsMax=${this.loadingMillisecondsMax}, `
       + `retryTimesMax=${this.retryTimesMax}, `
@@ -338,7 +343,8 @@ class TestCaseArray extends Array {
    * @return {TestCaseArray} Return this for cascading appending.
    */
   append_by(
-    spreadsheetId_postfix, loadingMillisecondsMax, bShouldProgress100Default ) {
+    spreadsheetId_prefix, spreadsheetId_postfix,
+    loadingMillisecondsMax, bShouldProgress100Default ) {
 
     const retryTimesMax_begin = -1; // infinite retry.
 //!!! (2023/02/22 Temp Remarked) For test retry waiting.
@@ -381,7 +387,8 @@ class TestCaseArray extends Array {
               continue; // Otherwise, the test case will never end.
         }
 
-        let testCase = new TestCase( testCaseId, spreadsheetId_postfix,
+        let testCase = new TestCase( testCaseId,
+          spreadsheetId_prefix, spreadsheetId_postfix,
           loadingMillisecondsMax, retryTimesMax, abortTestMode, bShouldProgress100 );
 
         this.push( testCase );
@@ -393,7 +400,8 @@ class TestCaseArray extends Array {
 }
 
 //
-// spreadsheetId_postfix, loadingMillisecondsMax, bShouldProgress100Default
+// spreadsheetId_prefix, spreadsheetId_postfix,
+// loadingMillisecondsMax, bShouldProgress100Default
 //
 const gTestCaseArray = new TestCaseArray();
 {
@@ -402,16 +410,16 @@ const gTestCaseArray = new TestCaseArray();
 // should test ProgressEvent error. (how?)
 
   gTestCaseArray
-    //.append_by( "&",            10 * 1000, false ) // error. (Invalid URL)
-    // .append_by( "%",            10 * 1000, false ) // error. (Invalid URL)
-    .append_by( "?",            10 * 1000, false ) // error. (Invalid URL)
-    .append_by( "%",             0 * 1000, false ) // error. (Invalid URL) (no timeout)
+    .append_by( "&", "",            10 * 1000, false ) // error. (Invalid URL)
+    // .append_by( "%", "",            10 * 1000, false ) // error. (Invalid URL)
+    // .append_by( "?", "",            10 * 1000, false ) // error. (Invalid URL)
+    .append_by( "%", "",             0 * 1000, false ) // error. (Invalid URL) (no timeout)
 
-    .append_by( "_not_exist",   10 * 1000, false ) // load (status != 200).
-    .append_by( "_not_exist",    0 * 1000, false ) // load (status != 200). (no timeout)
-    .append_by( "",           0.01 * 1000, false ) // timeout.
-    .append_by( "",             30 * 1000,  true ) // succeeded.
-    .append_by( "",              0 * 1000,  true ) // succeeded. (no timeout)
+    .append_by( "", "_not_exist",   10 * 1000, false ) // load (status != 200).
+    .append_by( "", "_not_exist",    0 * 1000, false ) // load (status != 200). (no timeout)
+    .append_by( "", "",           0.01 * 1000, false ) // timeout.
+    .append_by( "", "",             30 * 1000,  true ) // succeeded.
+    .append_by( "", "",              0 * 1000,  true ) // succeeded. (no timeout)
     ;
 }
 
@@ -455,7 +463,9 @@ async function* tester( progressParent ) {
       console.log(`\ntestCase={ ${testCase.toString()} }` );
     }
 
-    let spreadsheetId_test = spreadsheetId + testCase.spreadsheetId_postfix;
+    let spreadsheetId_test = testCase.spreadsheetId_prefix
+      + spreadsheetId + testCase.spreadsheetId_postfix;
+
     let testGenerator = testCase.tester_Summary_and_Versus(
       progressTestCase,
 
