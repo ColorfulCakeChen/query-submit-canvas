@@ -225,12 +225,9 @@ class GVizTQ_UrlComposer extends Recyclable.Root {
         responseText = yield* httpResulter;
         if ( !responseText )
           return null;
+
+      // Note: It has no effect if .abort() is called after here.
       }
-
-
-//!!! ...unfinished... (2023/02/23)
-// What if .abort() at this time?
-
 
       // 2. Google Visualization Table Query returns JSONP (not JSON).
       //    Try to evaluate it as JSON.

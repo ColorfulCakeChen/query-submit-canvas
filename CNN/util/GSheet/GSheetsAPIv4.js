@@ -166,12 +166,9 @@ class GSheetsAPIv4_UrlComposer extends Recyclable.Root {
         responseText = yield* httpResulter;
         if ( !responseText )
           return null;
+
+      // Note: It has no effect if .abort() is called after here.
       }
-
-
-//!!! ...unfinished... (2023/02/23)
-// What if .abort() at this time?
-
 
       // 2. Google Sheets API v4 returns JSON.
       let json = JSON.parse( responseText );
