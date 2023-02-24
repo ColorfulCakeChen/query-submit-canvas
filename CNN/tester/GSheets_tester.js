@@ -312,26 +312,38 @@ class TestCase {
     bShouldProgress100
    ) {
 
+    const retryTimesMax_begin = 0; // No retry
+    const retryTimesMax_end_inclusive = 2;
+
     let arrayIndex = 0;
     let testCaseArray = new Array( ??? );
     for ( let i = 0; i < testCaseArray.length; ++i ) {
 
-      for ( let j = -1; j <= 6; ++j ) { // All kinds of AbortTestMode.
-        let testCaseId = testCaseId_begin + arrayIndex;
-        let abortTestMode = AbortTestMode.create_by_number_N1_6( j );
+      for (
+         let retryTimesMax = retryTimesMax_begin;
+         retryTimesMax <= retryTimesMax_end_inclusive;
+         ++retryTimesMax ) {
 
-//!!! ...unfinished... (2023/02/23)
-// retryTimesMax ???
+        for ( let j = -1; j <= 6; ++j ) { // All kinds of AbortTestMode.
+          let testCaseId = testCaseId_begin + arrayIndex;
+          let abortTestMode = AbortTestMode.create_by_number_N1_6( j );
 
-        let testCase = new TestCase( testCaseId, spreadsheetId_postfix,
-          loadingMillisecondsMax, retryTimesMax, abortTestMode, false??? );
+          let testCase = new TestCase( testCaseId, spreadsheetId_postfix,
+            loadingMillisecondsMax, retryTimesMax, abortTestMode, false??? );
 
-        testCaseArray[ arrayIndex ] = testCase;
-        ++arrayIndex;
+          testCaseArray[ arrayIndex ] = testCase;
+          ++arrayIndex;
+        }
       }
-
     }
+
+//!!! ...unfinished... (2023/02/24)
+// retryTimesMax ???
+// If the request is the last and expected to be succeeded,
+// its retryTimesMax should be negative (i.e. infinite retry).
+
   }
+
 }
 
 //
