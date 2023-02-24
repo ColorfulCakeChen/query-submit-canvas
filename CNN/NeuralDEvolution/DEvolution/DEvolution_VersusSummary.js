@@ -3,7 +3,7 @@ export { DEvolution_VersusSummary as VersusSummary };
 import * as Pool from "../../util/Pool.js";
 import * as Recyclable from "../../util/Recyclable.js";
 import * as GSheets from "../../util/GSheets.js";
-import * as HttpRequest from "../HttpRequest.js";
+import * as HttpRequest from "../util/HttpRequest.js";
 import * as RandTools from "../../util/RandTools.js";
 import { Versus as DEvolution_Versus } from "./DEvolution_Versus.js";
 

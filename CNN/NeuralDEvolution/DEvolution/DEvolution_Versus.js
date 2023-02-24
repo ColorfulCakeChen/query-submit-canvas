@@ -3,7 +3,7 @@ export { DEvolution_Versus as Versus };
 import * as Pool from "../../util/Pool.js";
 import * as Recyclable from "../../util/Recyclable.js";
 import * as Float12 from "../../Unpacker/Float12.js";
-// import * as HttpRequest from "../HttpRequest.js";
+// import * as HttpRequest from "../util/HttpRequest.js";
 import * as NumberTools from "../../util/NumberTools.js";
 import * as ValueMax from "../../util/ValueMax.js";
 import { VersusId } from "./DEvolution_VersusId.js";
