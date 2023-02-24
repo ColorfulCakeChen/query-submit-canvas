@@ -174,10 +174,8 @@ class TestCase {
 
     let fetcher = urlComposer.JSON_ColumnMajorArrayArray_fetch_asyncGenerator(
       progressParent,
-
       this.loadingMillisecondsMax,
       this.loadingMillisecondsInterval,
-    
       this.retryTimesMax,
       this.retryWaitingSecondsExponentMax,
       this.retryWaitingMillisecondsInterval

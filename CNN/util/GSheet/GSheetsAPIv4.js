@@ -153,13 +153,11 @@ class GSheetsAPIv4_UrlComposer extends Recyclable.Root {
    */
   async* JSON_ColumnMajorArrayArray_fetch_asyncGenerator(
     progressParent,
-
     loadingMillisecondsMax,
     loadingMillisecondsInterval,
-
     retryTimesMax,
     retryWaitingSecondsExponentMax,
-    retryWaitingMillisecondsInterval,
+    retryWaitingMillisecondsInterval
   ) {
 
     let progressRoot = progressParent.root_get();
