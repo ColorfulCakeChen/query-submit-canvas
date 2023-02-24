@@ -502,8 +502,8 @@ class HttpRequest_Fetcher {
       //       still not yet complete when status becomes 200.
 
 //!!! (2023/02/24 Remarked)
-// It seems that xhr.status may changed from 200 to 0 when load done.
-// So, checking this.allPromiseSet.has( this.loadPromise ) purely.
+// If .abort() is called, xhr.status will be changed (from 200) to 0 even if
+// the load is succeeded. So, checking .allPromiseSet.has( .loadPromise ) purely.
 //
 //       notDone =    ( xhr.status !== 200 )
 //                 || ( this.allPromiseSet.has( this.loadPromise ) );
