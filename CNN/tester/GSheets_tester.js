@@ -410,8 +410,8 @@ const gTestCaseArray = new TestCaseArray();
 // should test ProgressEvent error. (how?)
 
   gTestCaseArray
-    .append_by( "&", "",            10 * 1000, false ) // error. (Invalid URL)
-    // .append_by( "%", "",            10 * 1000, false ) // error. (Invalid URL)
+    // .append_by( "&", "",            10 * 1000, false ) // error. (Invalid URL)
+    .append_by( "%", "",            10 * 1000, false ) // error. (Invalid URL)
     // .append_by( "?", "",            10 * 1000, false ) // error. (Invalid URL)
     .append_by( "%", "",             0 * 1000, false ) // error. (Invalid URL) (no timeout)
 
