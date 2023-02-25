@@ -351,7 +351,7 @@ class TestCase {
    */
   bShouldProgress100_by( abortTestMode ) {
     if ( !this.bShouldProgress100Default )
-      return false; // Never succeeded, if it is expected failed.
+      return false; // Never succeeded, since it is expected failed.
 
     // Since expected succeeded, it should be succeeded if not want to abort.
     if ( !abortTestMode.wantAbort )
