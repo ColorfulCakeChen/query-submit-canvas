@@ -533,7 +533,8 @@ async function* tester( progressParent ) {
 
 //!!! (2023/02/25 Remarked) For test response quickly.
 //  const loadingMillisecondsInterval = 10 * 1000;
-  const loadingMillisecondsInterval = 1 * 1000;
+  const loadingMillisecondsInterval = 5 * 1000;
+//  const loadingMillisecondsInterval = 1 * 1000;
 
   const retryWaitingSecondsExponentMax = 6; // i.e. ( <= 64 seconds )
 //!!! (2023/02/25 Remarked) For test response quickly.
