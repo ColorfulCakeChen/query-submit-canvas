@@ -221,14 +221,6 @@ class TestCase {
     this.retryTimesMax = retryTimesMax;
     this.abortTestMode = abortTestMode;
     this.bShouldProgress100 = bShouldProgress100;
-
-    this.params_loading_retryWaiting = new HttpRequest.Params_loading_retryWaiting(
-      this.loadingMillisecondsMax,
-      this.loadingMillisecondsInterval,
-      this.retryTimesMax,
-      this.retryWaitingSecondsExponentMax,
-      this.retryWaitingMillisecondsInterval
-    );
   }
 
   /**
@@ -249,8 +241,16 @@ class TestCase {
       urlComposer.abort();
     }
 
+    let params_loading_retryWaiting = new HttpRequest.Params_loading_retryWaiting(
+      this.loadingMillisecondsMax,
+      this.loadingMillisecondsInterval,
+      this.retryTimesMax,
+      this.retryWaitingSecondsExponentMax,
+      this.retryWaitingMillisecondsInterval
+    );
+
     let fetcher = urlComposer.JSON_ColumnMajorArrayArray_fetch_asyncGenerator(
-      progressParent, this.params_loading_retryWaiting );
+      progressParent, params_loading_retryWaiting );
 
     let nextResult;
     let bRetryWaitingPrevious = urlComposer.retryWaitingTimer_isCounting;
@@ -424,9 +424,6 @@ class TestCaseArray extends Array {
     loadingMillisecondsMax, bShouldProgress100Default ) {
 
     const retryTimesMax_begin = -1; // infinite retry.
-//!!! (2023/02/22 Temp Remarked) For test retry waiting.
-    // const retryTimesMax_begin = 0; // no retry.
-    // const retryTimesMax_begin = 1; // one retry.
     const retryTimesMax_end_inclusive = 2; // two retry.
 
     // All kinds of AbortTestMode.
@@ -484,35 +481,6 @@ class TestCaseArray extends Array {
                 continue; // Otherwise, the test case may never end.
           }
         }
-
-//!!! (2023/02/25 Remarked) Old wrong codes.
-//
-//         // If the test case includes .abort(), it should never be succeeded.
-//         if ( abortTestMode.wantAbort ) {
-//
-//
-//           // Even if with .abort(), if the test case expected to be failed, do not
-//           // infinite retry if .abort() is called in loading phase after the 2nd
-//           // .next().
-//           //
-//           // The reason is that the request may be always failed before .abort()
-//           // is called so that the retry will be forever.
-//           //
-//           if ( retryTimesMax < 0 ) // infinite retry
-//             if ( !abortTestMode.beforeFetching ) // (Note: if .abort() immediately, ok)
-//               if ( !abortTestMode.duringRetryWaiting ) // in loading phase.
-//                 if ( abortTestMode.afterHowManyNext >= 2 ) // too late to .abort()
-//                   continue; // Otherwise, the test case may never end.
-//
-//         } else {
-//           bShouldProgress100 = bShouldProgress100Default;
-//
-//           // If the test case expected to be failed, do not infinite retry without
-//           // .abort().
-//           if ( retryTimesMax < 0 ) // infinite retry
-//             if ( !bShouldProgress100 )
-//               continue; // Otherwise, the test case will never end.
-//         }
 
         let testCase = new TestCase( testCaseId,
           spreadsheetUrlPrefix, spreadsheetId_postfix,
