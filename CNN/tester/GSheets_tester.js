@@ -361,7 +361,7 @@ class TestCase {
     // during retry waiting phase.
     //
     // The reason is that it never reaches retry waiting phase because it will
-    // be succeeded before retry waiting phase.
+    // have been succeeded before retry waiting phase.
     if ( abortTestMode.wantAbort_DuringRetryWaiting )
       return true;
 
