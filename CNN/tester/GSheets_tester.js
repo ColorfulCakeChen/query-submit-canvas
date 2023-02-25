@@ -505,11 +505,11 @@ const gTestCaseArray = new TestCaseArray();
     .append_by( null, "",         0 * 1000,  true ) // succeeded. (no timeout)
 
 //!!! (2023/02/25 Temp Remarked) For test long pending of succeeded loading.
-//     .append_by( "https:/", "",   10 * 1000, false ) // error. (Invalid URL)
-//     .append_by( "https:/", "",    0 * 1000, false ) // error. (Invalid URL) (no timeout)
-//     .append_by( null, "_none",   10 * 1000, false ) // load (status != 200).
-//     .append_by( null, "_none",    0 * 1000, false ) // load (status != 200). (no timeout)
-//     .append_by( null, "",      0.01 * 1000, false ) // timeout.
+    .append_by( "https:/", "",   10 * 1000, false ) // error. (Invalid URL)
+    .append_by( "https:/", "",    0 * 1000, false ) // error. (Invalid URL) (no timeout)
+    .append_by( null, "_none",   10 * 1000, false ) // load (status != 200).
+    .append_by( null, "_none",    0 * 1000, false ) // load (status != 200). (no timeout)
+    .append_by( null, "",      0.01 * 1000, false ) // timeout.
     ;
 }
 
@@ -531,14 +531,9 @@ async function* tester( progressParent ) {
   // const bLogFetcherEventToConsole = false;
   const bLogFetcherEventToConsole = true; // For debug.
 
-//!!! (2023/02/25 Remarked) For test response quickly.
-//  const loadingMillisecondsInterval = 10 * 1000;
   const loadingMillisecondsInterval = 5 * 1000;
-//  const loadingMillisecondsInterval = 1 * 1000;
 
   const retryWaitingSecondsExponentMax = 6; // i.e. ( <= 64 seconds )
-//!!! (2023/02/25 Remarked) For test response quickly.
-//  const retryWaitingMillisecondsInterval = 10 * 1000;
   const retryWaitingMillisecondsInterval = 1 * 1000;
 
   // Every test case has its own progressParent.
