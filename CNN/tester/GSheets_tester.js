@@ -529,10 +529,14 @@ async function* tester( progressParent ) {
   // const bLogFetcherEventToConsole = false;
   const bLogFetcherEventToConsole = true; // For debug.
 
-  const loadingMillisecondsInterval = 10 * 1000;
+//!!! (2023/02/25 Remarked) For test response quickly.
+//  const loadingMillisecondsInterval = 10 * 1000;
+  const loadingMillisecondsInterval = 1 * 1000;
 
   const retryWaitingSecondsExponentMax = 6; // i.e. ( <= 64 seconds )
-  const retryWaitingMillisecondsInterval = 10 * 1000;
+//!!! (2023/02/25 Remarked) For test response quickly.
+//  const retryWaitingMillisecondsInterval = 10 * 1000;
+  const retryWaitingMillisecondsInterval = 1 * 1000;
 
   // Every test case has its own progressParent.
   let progressRoot = progressParent.root_get();
