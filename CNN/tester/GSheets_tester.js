@@ -501,8 +501,8 @@ class TestCaseArray extends Array {
 const gTestCaseArray = new TestCaseArray();
 {
   gTestCaseArray
-    .append_by( null, "",         0 * 1000,  true ) // succeeded. (no timeout)
     .append_by( null, "",        60 * 1000,  true ) // succeeded.
+    .append_by( null, "",         0 * 1000,  true ) // succeeded. (no timeout)
 
 //!!! (2023/02/25 Temp Remarked) For test long pending of succeeded loading.
 //     .append_by( "https:/", "",   10 * 1000, false ) // error. (Invalid URL)
