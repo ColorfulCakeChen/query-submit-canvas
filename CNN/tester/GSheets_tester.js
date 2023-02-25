@@ -353,15 +353,19 @@ class TestCase {
     if ( !this.bShouldProgress100Default )
       return false; // Never succeeded, if it is expected failed.
 
-    // Since expected succeeded, it should be succeeded if not abort.
+    // Since expected succeeded, it should be succeeded if not want to abort.
     if ( !abortTestMode.wantAbort )
       return true;
 
-    // Since expected succeeded, it should be succeeded if not abort.
-//!!!
+    // Since expected succeeded, it should be succeeded event if want to abort
+    // during retry waiting phase.
+    //
+    // The reason is that it never reaches retry waiting phase because it will
+    // be succeeded before retry waiting phase.
     if ( abortTestMode.wantAbort_DuringRetryWaiting )
       return true;
 
+    // Otherwise, the test case will be failed (by being aborted).
     return false;
   }
 
