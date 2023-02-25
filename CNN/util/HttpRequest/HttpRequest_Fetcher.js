@@ -460,15 +460,26 @@ class HttpRequest_Fetcher {
     // All promises to be listened.
     {
       this.allPromiseSet.clear();
+
+//!!! ...unfinished... (2023/02/25)
+// Try let .loadingTimerPromise before .progressPromise
+// so that progress by timer could be advanced smoother.
+      if ( this.loadingTimerPromise )
+        this.allPromiseSet.add( this.loadingTimerPromise );
+
       this.allPromiseSet.add( this.abortPromise );
       this.allPromiseSet.add( this.errorPromise );
       this.allPromiseSet.add( this.loadPromise );
       this.allPromiseSet.add( this.loadstartPromise );
       this.allPromiseSet.add( this.progressPromise );
       this.allPromiseSet.add( this.timeoutPromise );
-      
-      if ( this.loadingTimerPromise )
-        this.allPromiseSet.add( this.loadingTimerPromise );
+
+//!!! (2023/02/25 Temp Remarked)
+// Try let .loadingTimerPromise before .progressPromise
+// so that progress by timer could be advanced smoother.
+//
+//       if ( this.loadingTimerPromise )
+//         this.allPromiseSet.add( this.loadingTimerPromise );
     }
 
     // 1.3
