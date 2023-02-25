@@ -461,11 +461,12 @@ class HttpRequest_Fetcher {
     {
       this.allPromiseSet.clear();
 
-//!!! ...unfinished... (2023/02/25) testing
-// Let .loadingTimerPromise before .progressPromise
-// so that progress by timer could be advanced smoother.
-      if ( this.loadingTimerPromise )
-        this.allPromiseSet.add( this.loadingTimerPromise );
+//!!! (2023/02/25 Added and Remarked) seems no effect.
+// //!!! ...unfinished... (2023/02/25) testing
+// // Let .loadingTimerPromise before .progressPromise
+// // so that progress by timer could be advanced smoother.
+//       if ( this.loadingTimerPromise )
+//         this.allPromiseSet.add( this.loadingTimerPromise );
 
       this.allPromiseSet.add( this.abortPromise );
       this.allPromiseSet.add( this.errorPromise );
@@ -478,8 +479,8 @@ class HttpRequest_Fetcher {
 // Let .loadingTimerPromise before .progressPromise
 // so that progress by timer could be advanced smoother.
 //
-//       if ( this.loadingTimerPromise )
-//         this.allPromiseSet.add( this.loadingTimerPromise );
+      if ( this.loadingTimerPromise )
+        this.allPromiseSet.add( this.loadingTimerPromise );
     }
 
     // 1.3
@@ -862,32 +863,34 @@ class HttpRequest_Fetcher {
       // Before loadingTimer done, its event could happen many times.
       } else {
 
-//!!! ...unfinished... (2023/02/25) testing
-// Let .loadingTimerPromise before .progressPromise
-// so that progress by timer could be advanced smoother.
-        let bReAddProgressPromise;
-        {
-          if (   ( this.progressPromise )
-              && ( this.allPromiseSet.has( this.progressPromise ) ) )
-            bReAddProgressPromise = true;
-          else
-            bReAddProgressPromise = false;
-
-          if ( bReAddProgressPromise )
-            this.allPromiseSet.delete( this.progressPromise );
-        }
+//!!! (2023/02/25 Added and Remarked) seems no effect.
+// //!!! ...unfinished... (2023/02/25) testing
+// // Let .loadingTimerPromise before .progressPromise
+// // so that progress by timer could be advanced smoother.
+//         let bReAddProgressPromise;
+//         {
+//           if (   ( this.progressPromise )
+//               && ( this.allPromiseSet.has( this.progressPromise ) ) )
+//             bReAddProgressPromise = true;
+//           else
+//             bReAddProgressPromise = false;
+//
+//           if ( bReAddProgressPromise )
+//             this.allPromiseSet.delete( this.progressPromise );
+//         }
 
         // Re-generate a new promise for listening on it.
         HttpRequest_Fetcher.loadingTimerPromise_create_and_set.call( this );
         this.allPromiseSet.add( this.loadingTimerPromise );
 
+//!!! (2023/02/25 Added and Remarked) seems no effect.
 //!!! ...unfinished... (2023/02/25) testing
 // Let .loadingTimerPromise before .progressPromise
-// so that progress by timer could be advanced smoother.
-        {
-          if ( bReAddProgressPromise )
-            this.allPromiseSet.add( this.progressPromise );
-        }
+// // so that progress by timer could be advanced smoother.
+//         {
+//           if ( bReAddProgressPromise )
+//             this.allPromiseSet.add( this.progressPromise );
+//         }
       }
     }
   }
