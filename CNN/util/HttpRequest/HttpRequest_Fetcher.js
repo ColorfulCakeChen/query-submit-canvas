@@ -823,6 +823,7 @@ class HttpRequest_Fetcher {
     if ( this.bLogEventToConsole )
       console.log( `( ${this.url} ) HttpRequest_Fetcher: loadingTimer: `
         + `loadingMillisecondsCur=${this.loadingMillisecondsCur}, `
+        + `loadingMillisecondsMax=${this.loadingMillisecondsMax}, `
         + `progressLoading=${this.progressLoading.valuePercentage}%` );
 
     resolve( this.progressRoot );
