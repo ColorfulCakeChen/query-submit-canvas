@@ -60,8 +60,11 @@ class AbortTestMode {
     this.afterHowManyNext = afterHowManyNext;
   }
 
-  /** @return {boolean} Return true, if .abort() will be called at some time. */
-  get willAbort() {
+  /**
+   * @return {boolean}
+   *   Return true, if .abort() is wanted to be called at some time.
+   */
+  get wantAbort() {
     if ( this.beforeFetching )
       return true;
     if ( this.afterHowManyNext >= 0 )
@@ -75,7 +78,7 @@ class AbortTestMode {
         `beforeFetching=${this.beforeFetching}, `
       + `duringRetryWaiting=${this.duringRetryWaiting}, `
       + `afterHowManyNext=${this.afterHowManyNext}, `
-      + `willAbort=${this.willAbort}`
+      + `wantAbort=${this.wantAbort}`
     return str;
   }
 
@@ -383,7 +386,7 @@ class TestCaseArray extends Array {
         abortTestMode = AbortTestMode.create_by_number_N1_6( abortTestMode_number );
 
         // If the test case includes .abort(), it should never be succeeded.
-        if ( abortTestMode.willAbort ) {
+        if ( abortTestMode.wantAbort ) {
           bShouldProgress100 = false;
 
           // Even if with .abort(), if the test case expected to be failed, do not
