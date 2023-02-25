@@ -75,7 +75,20 @@ class AbortTestMode {
 
   /**
    * @return {boolean}
-   *   Return true, if .abort() is wanted to be called during retry waiting time.
+   *   Return true, if .abort() is wanted to be called during loading phase.
+   */
+  get wantAbort_DuringLoading() {
+    if ( this.beforeFetching )
+      return false;
+    if ( this.afterHowManyNext >= 0 )
+      if ( !this.duringRetryWaiting )
+        return true;
+    return false;
+  }
+
+  /**
+   * @return {boolean}
+   *   Return true, if .abort() is wanted to be called during retry waiting phase.
    */
   get wantAbort_DuringRetryWaiting() {
     if ( this.beforeFetching )
