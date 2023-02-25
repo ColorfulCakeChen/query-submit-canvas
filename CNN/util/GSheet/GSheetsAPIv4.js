@@ -149,23 +149,25 @@ class GSheetsAPIv4_UrlComposer extends Recyclable.Root {
     let progressToAdvance = progressParent.child_add(
       ValueMax.Percentage.Concrete.Pool.get_or_create_by( 2 ) );
 
+    let httpRequestFetcher;
     try {
       // 1. Compose URL and download it as column-major JSON.
       let url = this.getUrl_forJSON( "COLUMNS" );
 
       let responseText;
       {
-        this.httpRequestFetcher
+        // (Record in this so that its .abort() could be called by outside caller.)
+        httpRequestFetcher = this.httpRequestFetcher
           = new HttpRequest.Fetcher( this.bLogFetcherEventToConsole );
 
-        let httpResulter = this.httpRequestFetcher
+        let httpResulter = httpRequestFetcher
           .asyncGenerator_by_progressParent_url_timeout_retry_responseType_method_body(
             progressFetcher, url, params_loading_retryWaiting );
 
         // Abort immediately if caller requests to abort before
         // HttpRequest.Fetcher created.
         if ( this.bAbort )
-          this.httpRequestFetcher.abort();
+          httpRequestFetcher.abort();
 
         responseText = yield* httpResulter;
         if ( !responseText )
@@ -203,6 +205,10 @@ class GSheetsAPIv4_UrlComposer extends Recyclable.Root {
       }
 
     } finally {
+      // Release the fetcher which is used by this async generator.
+      if ( this.httpRequestFetcher === httpRequestFetcher )
+        this.httpRequestFetcher = undefined;
+
       // Ensure this async generator will not be aborted by default when it is
       // called in the next time.
       this.bAbort = false;
