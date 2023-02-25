@@ -3,7 +3,7 @@ export { HttpRequest_Fetcher as Fetcher };
 import * as PartTime from "../PartTime.js";
 import * as RandTools from "../RandTools.js";
 import * as ValueMax from "../ValueMax.js";
-import { Params_loading_retryWaiting }
+import { Params_loading_retryWaiting as HttpRequest_Params_loading_retryWaiting }
   from "./HttpRequest_Params_loading_retryWaiting.js";
 
 /**
@@ -98,7 +98,10 @@ class HttpRequest_Fetcher {
   async* asyncGenerator_by_progressParent_url_timeout_retry_responseType_method_body(
     progressParent,
     url,
-    params_loading_retryWaiting,
+
+    params_loading_retryWaiting
+      = HttpRequest_Fetcher.params_loading_retryWaiting_default,
+
     responseType = HttpRequest_Fetcher.responseTypeDefault,
     method = HttpRequest_Fetcher.methodDefault,
     body
@@ -1033,6 +1036,9 @@ class HttpRequest_Fetcher {
   }
 
 }
+
+HttpRequest_Fetcher.params_loading_retryWaiting_default
+  = new HttpRequest_Params_loading_retryWaiting();
 
 HttpRequest_Fetcher.methodDefault = "GET";
 HttpRequest_Fetcher.responseTypeDefault = "text";
