@@ -353,15 +353,16 @@ class TestCase {
     if ( !this.bShouldProgress100Default )
       return false; // Never succeeded, if it is expected failed.
 
+    // Since expected succeeded, it should be succeeded if not abort.
     if ( !abortTestMode.wantAbort )
-      return true; // should be succeeded, since expected succeeded and not abort.
+      return true;
 
+    // Since expected succeeded, it should be succeeded if not abort.
 //!!!
     if ( abortTestMode.wantAbort_DuringRetryWaiting )
       return true;
-    else
-      return false;
 
+    return false;
   }
 
   /** */
