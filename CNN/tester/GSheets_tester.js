@@ -121,7 +121,6 @@ class AbortTestMode {
     //
     // The reason is that the request may always have been succeeded before
     // .abort() is called.
-    //
     if ( this.wantAbort_DuringLoading ) // in loading phase.
       if ( this.afterHowManyNext >= 2 ) // too late to .abort()
         return true;
