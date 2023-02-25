@@ -398,9 +398,28 @@ class TestCaseArray extends Array {
         testCaseId = this.length;
         abortTestMode = AbortTestMode.create_by_number_N1_6( abortTestMode_number );
 
+//!!! ...unfinished... (2023/02/25)
+//wantAbort_DuringRetryWaiting
+
+        if ( bShouldProgress100Default ) {
+
+          if ( abortTestMode.wantAbort ) {
+            if ( abortTestMode.wantAbort_DuringRetryWaiting )
+              bShouldProgress100 = true;
+            else
+              bShouldProgress100 = false;
+
+          } else {
+            bShouldProgress100 = true;
+          }
+
+        } else {
+          bShouldProgress100 = false;
+        }
+
         // If the test case includes .abort(), it should never be succeeded.
         if ( abortTestMode.wantAbort ) {
-          bShouldProgress100 = false;
+
 
           // Even if with .abort(), if the test case expected to be failed, do not
           // infinite retry if .abort() is called in loading phase after the 2nd
