@@ -444,34 +444,55 @@ class TestCaseArray extends Array {
         bShouldProgress100
           = abortTestMode.bShouldProgress100_by( bShouldProgress100Default );
 
-//!!! ...unfinished... (2023/02/25)
+        if ( !bShouldProgress100 ) { // The test case expected to be failed.
+          if ( retryTimesMax < 0 ) { // Infinite retry.
 
-        // If the test case includes .abort(), it should never be succeeded.
-        if ( abortTestMode.wantAbort ) {
-
-
-          // Even if with .abort(), if the test case expected to be failed, do not
-          // infinite retry if .abort() is called in loading phase after the 2nd
-          // .next().
-          //
-          // The reason is that the request may be always failed before .abort()
-          // is called so that the retry will be forever.
-          //
-          if ( retryTimesMax < 0 ) // infinite retry
-            if ( !abortTestMode.beforeFetching ) // (Note: if .abort() immediately, ok)
-              if ( !abortTestMode.duringRetryWaiting ) // in loading phase.
-                if ( abortTestMode.afterHowManyNext >= 2 ) // too late to .abort()
-                  continue; // Otherwise, the test case may never end.
-
-        } else {
-          bShouldProgress100 = bShouldProgress100Default;
-
-          // If the test case expected to be failed, do not infinite retry without
-          // .abort().
-          if ( retryTimesMax < 0 ) // infinite retry
-            if ( !bShouldProgress100 )
+            // If the test case expected to be failed, do not infinite retry
+            // without .abort().
+            if ( !abortTestMode.wantAbort )
               continue; // Otherwise, the test case will never end.
+
+            // Even if with .abort(), if the test case expected to be failed,
+            // do not infinite retry if .abort() is called in loading phase
+            // after the 2nd .next().
+            //
+            // The reason is that the request may be always failed before
+            // .abort() is called so that the retry will be forever.
+            //
+            if ( abortTestMode.wantAbort_DuringLoading ) // in loading phase.
+              if ( abortTestMode.afterHowManyNext >= 2 ) // too late to .abort()
+                continue; // Otherwise, the test case may never end.
+          }
         }
+
+//!!! (2023/02/25 Remarked) Old wrong codes.
+//
+//         // If the test case includes .abort(), it should never be succeeded.
+//         if ( abortTestMode.wantAbort ) {
+//
+//
+//           // Even if with .abort(), if the test case expected to be failed, do not
+//           // infinite retry if .abort() is called in loading phase after the 2nd
+//           // .next().
+//           //
+//           // The reason is that the request may be always failed before .abort()
+//           // is called so that the retry will be forever.
+//           //
+//           if ( retryTimesMax < 0 ) // infinite retry
+//             if ( !abortTestMode.beforeFetching ) // (Note: if .abort() immediately, ok)
+//               if ( !abortTestMode.duringRetryWaiting ) // in loading phase.
+//                 if ( abortTestMode.afterHowManyNext >= 2 ) // too late to .abort()
+//                   continue; // Otherwise, the test case may never end.
+//
+//         } else {
+//           bShouldProgress100 = bShouldProgress100Default;
+//
+//           // If the test case expected to be failed, do not infinite retry without
+//           // .abort().
+//           if ( retryTimesMax < 0 ) // infinite retry
+//             if ( !bShouldProgress100 )
+//               continue; // Otherwise, the test case will never end.
+//         }
 
         let testCase = new TestCase( testCaseId,
           spreadsheetUrlPrefix, spreadsheetId_postfix,
