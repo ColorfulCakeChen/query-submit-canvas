@@ -9,6 +9,8 @@ import { Params_loading_retryWaiting as HttpRequest_Params_loading_retryWaiting 
 /**
  * Wrap XMLHttpRequest as an async generator.
  *
+ * Note: When retry, the progressParent.valuePercentage will backward to 0%
+ *       to restart.
  *
  * @member {boolean} bLogEventToConsole
  *   If true, some debug messages will be logged to console.
