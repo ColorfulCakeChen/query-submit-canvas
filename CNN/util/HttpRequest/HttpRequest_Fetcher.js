@@ -461,8 +461,8 @@ class HttpRequest_Fetcher {
     {
       this.allPromiseSet.clear();
 
-//!!! ...unfinished... (2023/02/25)
-// Try let .loadingTimerPromise before .progressPromise
+//!!! ...unfinished... (2023/02/25) testing
+// Let .loadingTimerPromise before .progressPromise
 // so that progress by timer could be advanced smoother.
       if ( this.loadingTimerPromise )
         this.allPromiseSet.add( this.loadingTimerPromise );
@@ -475,7 +475,7 @@ class HttpRequest_Fetcher {
       this.allPromiseSet.add( this.timeoutPromise );
 
 //!!! (2023/02/25 Temp Remarked)
-// Try let .loadingTimerPromise before .progressPromise
+// Let .loadingTimerPromise before .progressPromise
 // so that progress by timer could be advanced smoother.
 //
 //       if ( this.loadingTimerPromise )
@@ -861,9 +861,33 @@ class HttpRequest_Fetcher {
 
       // Before loadingTimer done, its event could happen many times.
       } else {
+
+//!!! ...unfinished... (2023/02/25) testing
+// Let .loadingTimerPromise before .progressPromise
+// so that progress by timer could be advanced smoother.
+        let bReAddProgressPromise;
+        {
+          if (   ( this.progressPromise )
+              && ( this.allPromiseSet.has( this.progressPromise ) ) )
+            bReAddProgressPromise = true;
+          else
+            bReAddProgressPromise = false;
+
+          if ( bReAddProgressPromise )
+            this.allPromiseSet.delete( this.progressPromise );
+        }
+
         // Re-generate a new promise for listening on it.
         HttpRequest_Fetcher.loadingTimerPromise_create_and_set.call( this );
         this.allPromiseSet.add( this.loadingTimerPromise );
+
+//!!! ...unfinished... (2023/02/25) testing
+// Let .loadingTimerPromise before .progressPromise
+// so that progress by timer could be advanced smoother.
+        {
+          if ( bReAddProgressPromise )
+            this.allPromiseSet.add( this.progressPromise );
+        }
       }
     }
   }
