@@ -75,8 +75,8 @@ class HttpRequest_Params_loading_retryWaiting {
 
   /** */
   constructor(
-    loadingMillisecondsMax = 0,
-    loadingMillisecondsInterval = ( 20 * 1000 ),
+    loadingMillisecondsMax = ( 60 * 1000 ),
+    loadingMillisecondsInterval = ( 5 * 1000 ),
 
     retryTimesMax = 0,
     retryWaitingSecondsExponentMax = 6,
