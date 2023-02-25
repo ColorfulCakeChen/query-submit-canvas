@@ -428,25 +428,10 @@ class TestCaseArray extends Array {
         testCaseId = this.length;
         abortTestMode = AbortTestMode.create_by_number_N1_6( abortTestMode_number );
 
+        bShouldProgress100
+          = abortTestMode.bShouldProgress100_by( bShouldProgress100Default );
+
 //!!! ...unfinished... (2023/02/25)
-//wantAbort_DuringRetryWaiting
-        bShouldProgress100 = bShouldProgress100_by
-!!!
-        if ( bShouldProgress100Default ) {
-
-          if ( abortTestMode.wantAbort ) {
-            if ( abortTestMode.wantAbort_DuringRetryWaiting )
-              bShouldProgress100 = true;
-            else
-              bShouldProgress100 = false;
-
-          } else {
-            bShouldProgress100 = true;
-          }
-
-        } else {
-          bShouldProgress100 = false;
-        }
 
         // If the test case includes .abort(), it should never be succeeded.
         if ( abortTestMode.wantAbort ) {
