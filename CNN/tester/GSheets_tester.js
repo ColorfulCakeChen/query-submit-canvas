@@ -39,6 +39,7 @@ function array2d_compare_EQ( lhs, rhs ) {
 }
 
 /**
+ * Whether and when to call .abort().
  *
  * @member {boolean} beforeFetching
  *   True means call .abort() before HttpRequest.Fetcher created.
@@ -82,6 +83,35 @@ class AbortTestMode {
     if ( this.afterHowManyNext >= 0 )
       if ( this.duringRetryWaiting )
         return true;
+    return false;
+  }
+
+  /**
+   * @param  {boolean} bShouldProgress100Default
+   *   Whether the test case is expected to be succeeded by default.
+   *
+   * @return {boolean}
+   *   Return whether the test case is expected to be succeeded according to
+   * bShouldProgress100Default and this .abort() calling mode.
+   */
+  bShouldProgress100_by( bShouldProgress100Default ) {
+    if ( !bShouldProgress100Default )
+      return false; // Never succeeded, since it is expected failed.
+
+    // Since expected succeeded, the test case should be succeeded if we do
+    // not want to abort it.
+    if ( !this.wantAbort )
+      return true;
+
+    // Since expected succeeded, the test case should be succeeded event if
+    // we want to abort during retry waiting phase.
+    //
+    // The reason is that the test case never reaches retry waiting phase
+    // because it will have been succeeded before retry waiting phase.
+    if ( this.wantAbort_DuringRetryWaiting )
+      return true;
+
+    // Otherwise, the test case will be failed (by being aborted).
     return false;
   }
 
@@ -341,34 +371,6 @@ class TestCase {
     urlComposer1 = null;
   }
 
-  /**
-   * @param  {AbortTestMode} abortTestMode
-   *   When and whether to call .abort().
-   *
-   * @return {boolean}
-   *   Return whether this test case is expected to be succeeded according to
-   * .bShouldProgress100Default and .abort() calling mode.
-   */
-  bShouldProgress100_by( abortTestMode ) {
-    if ( !this.bShouldProgress100Default )
-      return false; // Never succeeded, since it is expected failed.
-
-    // Since expected succeeded, it should be succeeded if not want to abort.
-    if ( !abortTestMode.wantAbort )
-      return true;
-
-    // Since expected succeeded, it should be succeeded event if want to abort
-    // during retry waiting phase.
-    //
-    // The reason is that it never reaches retry waiting phase because it will
-    // have been succeeded before retry waiting phase.
-    if ( abortTestMode.wantAbort_DuringRetryWaiting )
-      return true;
-
-    // Otherwise, the test case will be failed (by being aborted).
-    return false;
-  }
-
   /** */
   toString() {
     let str =
@@ -428,7 +430,8 @@ class TestCaseArray extends Array {
 
 //!!! ...unfinished... (2023/02/25)
 //wantAbort_DuringRetryWaiting
-
+        bShouldProgress100 = bShouldProgress100_by
+!!!
         if ( bShouldProgress100Default ) {
 
           if ( abortTestMode.wantAbort ) {
