@@ -455,22 +455,15 @@ class TestCaseArray extends Array {
 
         if ( bShouldProgress100 ) {
 
-//!!! ...unfinished... (2023/02/25)
-
-          // Even if with .abort(), if the test case expected to be failed,
-          // do not infinite retry if .abort() is called in loading phase
-          // after the 2nd .next().
+          // If the test case will be succeeded even with .abort(), there
+          // is not necessary to test it.
           //
-          // The reason is that the request may be always failed before
-          // .abort() is called so that the retry will be forever.
-          //
-          if ( abortTestMode.wantAbort_DuringLoading ) // in loading phase.
-            if ( abortTestMode.afterHowManyNext >= 2 ) // too late to .abort()
-              continue; // Otherwise, the test case may never end.
+          // It means the .abort() has no chance to be called before the test
+          // case succeeded. So, it is just the same as testing without .abort()
+          // which has already been tested by other test case.
+          if ( abortTestMode.wantAbort )
+            continue; // Otherwise, the test case will be test duplicately.
 
-          if ( abortTestMode.wantAbort_DuringRetryWaiting ) // in retry waiting phase.
-            continue; // Otherwise, the test case may never end.
- 
         } else { // The test case expected to be failed.
           if ( retryTimesMax < 0 ) { // Infinite retry.
 
