@@ -461,13 +461,6 @@ class HttpRequest_Fetcher {
     {
       this.allPromiseSet.clear();
 
-//!!! (2023/02/25 Added and Remarked) seems no effect.
-// //!!! ...unfinished... (2023/02/25) testing
-// // Let .loadingTimerPromise before .progressPromise
-// // so that progress by timer could be advanced smoother.
-//       if ( this.loadingTimerPromise )
-//         this.allPromiseSet.add( this.loadingTimerPromise );
-
       this.allPromiseSet.add( this.abortPromise );
       this.allPromiseSet.add( this.errorPromise );
       this.allPromiseSet.add( this.loadPromise );
@@ -475,10 +468,6 @@ class HttpRequest_Fetcher {
       this.allPromiseSet.add( this.progressPromise );
       this.allPromiseSet.add( this.timeoutPromise );
 
-//!!! (2023/02/25 Temp Remarked)
-// Let .loadingTimerPromise before .progressPromise
-// so that progress by timer could be advanced smoother.
-//
       if ( this.loadingTimerPromise )
         this.allPromiseSet.add( this.loadingTimerPromise );
     }
@@ -505,20 +494,6 @@ class HttpRequest_Fetcher {
       // All failed promises reject to (i.e. throw exception of) ProgressEvent.
       let progressRoot = await allPromise;
       yield progressRoot;
-
-//!!! (2023/02/24 Remarked)
-// If .abort() is called, xhr.status will be changed (from 200) to 0 even
-// if loading is succeeded. So, do not check xhr.status whether 200.
-// Just check .allPromiseSet.has( .loadPromise ) purely.
-//
-//       // Not done, if:
-//       //   - ( status is not 200 ), or
-//       //   - ( .loadPromise still pending (i.e. still in waiting promises) ).
-//       //
-//       // Note: Checking ( xhr.status !== 200 ) is not enough. The loading may
-//       //       still not yet complete when status becomes 200.
-//       notDone =    ( xhr.status !== 200 )
-//                 || ( this.allPromiseSet.has( this.loadPromise ) );
 
       // Not done, if:
       //   - ( .loadPromise still pending (i.e. still in waiting promises) ).
@@ -862,35 +837,9 @@ class HttpRequest_Fetcher {
 
       // Before loadingTimer done, its event could happen many times.
       } else {
-
-//!!! (2023/02/25 Added and Remarked) seems no effect.
-// //!!! ...unfinished... (2023/02/25) testing
-// // Let .loadingTimerPromise before .progressPromise
-// // so that progress by timer could be advanced smoother.
-//         let bReAddProgressPromise;
-//         {
-//           if (   ( this.progressPromise )
-//               && ( this.allPromiseSet.has( this.progressPromise ) ) )
-//             bReAddProgressPromise = true;
-//           else
-//             bReAddProgressPromise = false;
-//
-//           if ( bReAddProgressPromise )
-//             this.allPromiseSet.delete( this.progressPromise );
-//         }
-
         // Re-generate a new promise for listening on it.
         HttpRequest_Fetcher.loadingTimerPromise_create_and_set.call( this );
         this.allPromiseSet.add( this.loadingTimerPromise );
-
-//!!! (2023/02/25 Added and Remarked) seems no effect.
-//!!! ...unfinished... (2023/02/25) testing
-// Let .loadingTimerPromise before .progressPromise
-// // so that progress by timer could be advanced smoother.
-//         {
-//           if ( bReAddProgressPromise )
-//             this.allPromiseSet.add( this.progressPromise );
-//         }
       }
     }
   }
