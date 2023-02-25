@@ -341,6 +341,29 @@ class TestCase {
     urlComposer1 = null;
   }
 
+  /**
+   * @param  {AbortTestMode} abortTestMode
+   *   When and whether to call .abort().
+   *
+   * @return {boolean}
+   *   Return whether this test case is expected to be succeeded according to
+   * .bShouldProgress100Default and .abort() calling mode.
+   */
+  bShouldProgress100_by( abortTestMode ) {
+    if ( !this.bShouldProgress100Default )
+      return false; // Never succeeded, if it is expected failed.
+
+    if ( !abortTestMode.wantAbort )
+      return true; // should be succeeded, since expected succeeded and not abort.
+
+//!!!
+    if ( abortTestMode.wantAbort_DuringRetryWaiting )
+      return true;
+    else
+      return false;
+
+  }
+
   /** */
   toString() {
     let str =
