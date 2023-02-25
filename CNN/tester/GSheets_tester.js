@@ -72,6 +72,19 @@ class AbortTestMode {
     return false;
   }
 
+  /**
+   * @return {boolean}
+   *   Return true, if .abort() is wanted to be called during retry waiting time.
+   */
+  get wantAbort_DuringRetryWaiting() {
+    if ( this.beforeFetching )
+      return false;
+    if ( this.afterHowManyNext >= 0 )
+      if ( this.duringRetryWaiting )
+        return true;
+    return false;
+  }
+
   /** */
   toString() {
     let str =
