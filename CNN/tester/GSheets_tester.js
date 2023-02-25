@@ -116,7 +116,7 @@ class AbortTestMode {
     if ( !this.wantAbort )
       return true;
 
-    // Since expected succeeded, the test case should be succeeded event if
+    // Since expected succeeded, the test case should be succeeded even if
     // we want to abort during retry waiting phase.
     //
     // The reason is that the test case never reaches retry waiting phase
