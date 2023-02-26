@@ -122,6 +122,25 @@ class NeuralOrchestra_Base extends Recyclable.Root {
 //       with evolutionVersus downloading.
 //
 
+//!!! ...unfinished... (2023/02/26)
+// asyncGenerator_VersusSummary_Loader()
+// set flag bVersusSummary_loaded = true when done.
+// (For letting construct.net to detect inside runtime.tick())
+//
+// asyncGenerator_Versus_Loader()
+// set flag bVersus_loaded = true when done.
+// (For letting construct.net to detect inside runtime.tick())
+//
+// asyncGenerator_VersusSummary_Versus_Loader()
+// call asyncGenerator_VersusSummary_Loader() and then asyncGenerator_Versus_Loader().
+//
+// async_neuralWorker_initer()
+// call asyncGenerator_VersusSummary_Versus_Loader() too.
+// It will be resolved when neuralWorker initialized.
+// But the asyncGenerator_VersusSummary_Versus_Loader() should continue
+// to be passed the next construct.net runtime state to continue loading.
+//
+
   /**
    *   - Load all differential evolution versus weights ranges (i.e. versus summary).
    *   - Create workers and compile GPU shaders.
