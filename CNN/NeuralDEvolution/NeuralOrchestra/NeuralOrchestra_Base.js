@@ -124,11 +124,13 @@ class NeuralOrchestra_Base extends Recyclable.Root {
 
 //!!! ...unfinished... (2023/02/26)
 // asyncGenerator_VersusSummary_Loader()
-// set flag bVersusSummary_loaded = true when done.
+// set flag ( bVersusSummary_loaded = true )
+// or ( progressVersusSummaryLoading.valuePercentage == 100 ) when done.
 // (For letting construct.net to detect inside runtime.tick())
 //
 // asyncGenerator_Versus_Loader()
-// set flag bVersus_loaded = true when done.
+// set flag ( bVersus_loaded = true )
+// or ( progressVersusLoading.valuePercentage == 100 ) when done.
 // (For letting construct.net to detect inside runtime.tick())
 //
 // asyncGenerator_VersusSummary_Versus_Loader()
