@@ -118,8 +118,8 @@ class DEvolution_VersusSummary extends Recyclable.Root {
    *
    * @yield {Promise( boolean )}
    *   Yield a promise:
-   *   - Resolves to { done: true, value: true }, if succeeded.
-   *   - Resolves to { done: true, value: false }, if failed.
+   *   - Resolved to { done: true, value: true }, if succeeded.
+   *   - Resolved to { done: true, value: false }, if failed.
    *
    * @throws {ProgressEvent}
    *   Yield a promise rejects to ProgressEvent.
@@ -211,15 +211,39 @@ class DEvolution_VersusSummary extends Recyclable.Root {
   }
 
   /**
-   * Load the next versus data.
+   * An async generator for loading the next versus data of differential evolution
+   * versus.
    *
-   * @return {Promise( DEvolution.Versus )}
-   *   Return a promise.
-   *   - Resolved to a DEvolution.Versus object, if succeeded.
-   *   - Resolved to null, if failed.
+   * @param {ValueMax.Percentage.Aggregate} progressParent
+   *   Some new progressToAdvance will be created and added to progressParent. The
+   * created progressToAdvance will be increased when every time advanced. The
+   * progressParent.root_get() will be returned when every time yield.
+   *
+   * @param {HttpRequest.Params_loading_retryWaiting} params_loading_retryWaiting
+   *   The parameters for loading timeout and retry waiting time. It will be kept
+   * but not modified by this object.
+   *
+   * @yield {Promise( ValueMax.Percentage.Aggregate )}
+   *   Yield a promise resolves to { done: false, value: progressParent.root_get() }.
+   *
+   * @yield {Promise( DEvolution.Versus )}
+   *   Yield a promise:
+   *   - Resolved to { done: true, value: DEvolution.Versus }, if succeeded.
+   *   - Resolved to { done: true, value: null }, if failed.
+   *
+   * @throws {ProgressEvent}
+   *   Yield a promise rejects to ProgressEvent.
    */
-  async versus_next_load_async() {
+  async* versus_next_load_asyncGenerator(
+    progressParent, params_loading_retryWaiting ) {
 
+    let progressRoot = progressParent.root_get();
+    let progressFetcher = progressParent.child_add(
+      ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
+    let progressToAdvance = progressParent.child_add(
+      ValueMax.Percentage.Concrete.Pool.get_or_create_by( 1 ) );
+
+//!!! ...unfinished... (2023/03/06)
     let visitIndex = this.visitIndex_get();
     if ( visitIndex < 0 )
       return null;
