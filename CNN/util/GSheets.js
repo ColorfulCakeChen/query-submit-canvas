@@ -9,6 +9,9 @@ import * as ValueMax from "./ValueMax.js";
 
 /**
  * Fetch data from Google Sheets.
+ *
+ * @member {boolean} bLogFetcherEventToConsole
+ *   If true, some debug messages of HttpRequest.Fetcher will be logged to console.
  */
 class GSheets_UrlComposer extends Recyclable.Root {
 
@@ -21,9 +24,6 @@ class GSheets_UrlComposer extends Recyclable.Root {
   /**
    * If no sheet name in the range's A1 notation, the first (most left) visible sheet
    * inside the spreadsheet will be used.
-   *
-   * @param {boolean} bLogFetcherEventToConsole
-   *   If true, some debug messages of HttpRequest.Fetcher will be logged to console.
    *
    * @param {string} spreadsheetId
    *   The identifier (the component after the "https://docs.google.com/spreadsheets/d/")
@@ -46,33 +46,31 @@ class GSheets_UrlComposer extends Recyclable.Root {
    *
    * @see {@link https://developers.google.com/sheets/api/guides/concepts}
    */
-  constructor( bLogFetcherEventToConsole, spreadsheetId, range, apiKey ) {
+  constructor( spreadsheetId, range, apiKey ) {
     super();
     GSheets_UrlComposer.setAsConstructor_self.call( this,
-      bLogFetcherEventToConsole, spreadsheetId, range, apiKey
+      spreadsheetId, range, apiKey
     );
   }
 
   /** @override */
-  static setAsConstructor(
-    bLogFetcherEventToConsole, spreadsheetId, range, apiKey ) {
+  static setAsConstructor( spreadsheetId, range, apiKey ) {
     super.setAsConstructor();
     GSheets_UrlComposer.setAsConstructor_self.call( this,
-      bLogFetcherEventToConsole, spreadsheetId, range, apiKey
+      spreadsheetId, range, apiKey
     );
     return this;
   }
 
   /** @override */
-  static setAsConstructor_self(
-    bLogFetcherEventToConsole, spreadsheetId, range, apiKey ) {
+  static setAsConstructor_self( spreadsheetId, range, apiKey ) {
 
     if ( apiKey != null ) {
       this.urlComposer = GSheetsAPIv4.UrlComposer.Pool.get_or_create_by(
-        bLogFetcherEventToConsole, spreadsheetId, range, apiKey );
+        spreadsheetId, range, apiKey );
     } else {
       this.urlComposer = GVizTQ.UrlComposer.Pool.get_or_create_by(
-        bLogFetcherEventToConsole, spreadsheetId, range );
+        spreadsheetId, range );
     }
   }
 
@@ -179,6 +177,19 @@ class GSheets_UrlComposer extends Recyclable.Root {
 
     return resultColumnMajorArrayArray;
   }
+
+
+  set bLogFetcherEventToConsole( bLogFetcherEventToConsole ) {
+    if ( this.urlComposer )
+      this.urlComposer.bLogFetcherEventToConsole = bLogFetcherEventToConsole;
+  }
+
+  get bLogFetcherEventToConsole() {
+    if ( this.urlComposer )
+      return this.urlComposer.bLogFetcherEventToConsole;
+    return false;
+  }
+
 
   /**
    * @return {boolean}

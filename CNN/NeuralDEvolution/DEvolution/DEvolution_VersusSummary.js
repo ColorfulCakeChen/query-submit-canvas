@@ -20,6 +20,9 @@ import { Versus as DEvolution_Versus } from "./DEvolution_Versus.js";
  *   - If null, Google Visualization Table Query API will be used.
  *   - If not null, Google Sheets API v4 will be used.
  *
+ * @member {boolean} bLogFetcherEventToConsole
+ *   If true, some debug messages of HttpRequest.Fetcher will be logged to console.
+ *
  * @member {string[]} rangeArray
  *   A string array. Every element is the spreadsheet range description string for an
  * evolution versus (i.e. parent versus offspring).
@@ -60,12 +63,6 @@ class DEvolution_VersusSummary extends Recyclable.Root {
 
   /** @override */
   static setAsConstructor_self( weightsSpreadsheetId, weightsAPIKey ) {
-
-//!!! ...unfinished... (2023/03/06)
-// needs bLogFetcherEventToConsole
-//
-//    ( bLogFetcherEventToConsole, spreadsheetId, range, apiKey )
-
     this.urlComposer = GSheets.UrlComposer.Pool.get_or_create_by(
       weightsSpreadsheetId, undefined, weightsAPIKey ); // range is undefined.
 
@@ -94,6 +91,7 @@ class DEvolution_VersusSummary extends Recyclable.Root {
     super.disposeResources();
   }
 
+
   set weightsSpreadsheetId( spreadsheetId ) {
     this.urlComposer.spreadsheetId = spreadsheetId;
   }
@@ -102,9 +100,23 @@ class DEvolution_VersusSummary extends Recyclable.Root {
     return this.urlComposer.spreadsheetId;
   }
 
+
   get weightsAPIKey() {
     return this.urlComposer.apiKey;
   }
+
+
+  set bLogFetcherEventToConsole( bLogFetcherEventToConsole ) {
+    if ( this.urlComposer )
+      this.urlComposer.bLogFetcherEventToConsole = bLogFetcherEventToConsole;
+  }
+
+  get bLogFetcherEventToConsole() {
+    if ( this.urlComposer )
+      return this.urlComposer.bLogFetcherEventToConsole;
+    return false;
+  }
+
 
   /**
    * An async generator for loading all differential evolution versus weights

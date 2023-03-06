@@ -23,6 +23,9 @@ import * as ValueMax from "../ValueMax.js";
  *   Usually, it is GSheetsAPIv4_UrlComposer.spreadsheetUrlPrefix. But it may be
  * modified (e.g. for testing ProgressEvent error).
  *
+ * @member {boolean} bLogFetcherEventToConsole
+ *   If true, some debug messages of HttpRequest.Fetcher will be logged to console.
+ *
  * @member {HttpRequest.Fetcher} httpRequestFetcher
  *   The current (or last) fetcher of the http request. It could be used to
  * call .abort().
@@ -41,9 +44,6 @@ class GSheetsAPIv4_UrlComposer extends Recyclable.Root {
   /**
    * If no sheet name in the range's A1 notation, the first (most left) visible sheet
    * inside the spreadsheet will be used.
-   *
-   * @param {boolean} bLogFetcherEventToConsole
-   *   If true, some debug messages of HttpRequest.Fetcher will be logged to console.
    *
    * @param {string} spreadsheetId
    *   The identifier (the component after the "https://docs.google.com/spreadsheets/d/")
@@ -66,29 +66,27 @@ class GSheetsAPIv4_UrlComposer extends Recyclable.Root {
    * @see {@link https://developers.google.com/sheets/api/reference/rest/v4/spreadsheets.values/get}
    * @see {@link https://developers.google.com/sheets/api/reference/rest/v4/spreadsheets.values}
    */
-  constructor( bLogFetcherEventToConsole, spreadsheetId, range, apiKey ) {
+  constructor( spreadsheetId, range, apiKey ) {
     super();
     GSheetsAPIv4_UrlComposer.setAsConstructor_self.call( this,
-      bLogFetcherEventToConsole, spreadsheetId, range, apiKey
+      spreadsheetId, range, apiKey
     );
   }
 
   /** @override */
-  static setAsConstructor(
-    bLogFetcherEventToConsole, spreadsheetId, range, apiKey ) {
+  static setAsConstructor( spreadsheetId, range, apiKey ) {
     super.setAsConstructor();
     GSheetsAPIv4_UrlComposer.setAsConstructor_self.call( this,
-      bLogFetcherEventToConsole, spreadsheetId, range, apiKey
+      spreadsheetId, range, apiKey
     );
     return this;
   }
 
   /** @override */
-  static setAsConstructor_self(
-    bLogFetcherEventToConsole, spreadsheetId, range, apiKey ) {
-      this.spreadsheetUrlPrefix = GSheetsAPIv4_UrlComposer.spreadsheetUrlPrefix;
-      this.bLogFetcherEventToConsole = bLogFetcherEventToConsole;
-      this.set_by_spreadsheetId_range_apiKey( spreadsheetId, range, apiKey );
+  static setAsConstructor_self( spreadsheetId, range, apiKey ) {
+    this.spreadsheetUrlPrefix = GSheetsAPIv4_UrlComposer.spreadsheetUrlPrefix;
+    this.bLogFetcherEventToConsole = false;
+    this.set_by_spreadsheetId_range_apiKey( spreadsheetId, range, apiKey );
   }
 
   /** @override */

@@ -43,6 +43,9 @@ import * as ValueMax from "../ValueMax.js";
  *   Usually, it is GVizTQ_UrlComposer.spreadsheetUrlPrefix. But it may be
  * modified (e.g. for testing ProgressEvent error).
  *
+ * @member {boolean} bLogFetcherEventToConsole
+ *   If true, some debug messages of HttpRequest.Fetcher will be logged to console.
+ *
  * @member {HttpRequest.Fetcher} httpRequestFetcher
  *   The current (or last) fetcher of the http request. It could be used to
  * call .abort().
@@ -61,9 +64,6 @@ class GVizTQ_UrlComposer extends Recyclable.Root {
   /**
    * If sheetId is null, sheetName is null, and no sheet name in the range's A1
    * notation, the first (most left) visible sheet inside the spreadsheet will be used.
-   *
-   * @param {boolean} bLogFetcherEventToConsole
-   *   If true, some debug messages of HttpRequest.Fetcher will be logged to console.
    *
    * @param {string} spreadsheetId
    *   The identifier (the component after the "https://docs.google.com/spreadsheets/d/")
@@ -102,32 +102,24 @@ class GVizTQ_UrlComposer extends Recyclable.Root {
    * @see {@link https://developers.google.com/chart/interactive/docs/querylanguage}
    */
   constructor(
-    bLogFetcherEventToConsole,
-    spreadsheetId,
-    range,
+    spreadsheetId, range,
     headers = 0, responseHandler = null, sheetId = null, sheetName = null
   ) {
     super();
     GVizTQ_UrlComposer.setAsConstructor_self.call( this,
-      bLogFetcherEventToConsole,
-      spreadsheetId,
-      range,
+      spreadsheetId, range,
       headers, responseHandler, sheetId, sheetName
     );
   }
 
   /** @override */
   static setAsConstructor(
-    bLogFetcherEventToConsole,
-    spreadsheetId,
-    range,
+    spreadsheetId, range,
     headers = 0, responseHandler = null, sheetId = null, sheetName = null
   ) {
     super.setAsConstructor();
     GVizTQ_UrlComposer.setAsConstructor_self.call( this,
-      bLogFetcherEventToConsole,
-      spreadsheetId,
-      range,
+      spreadsheetId, range,
       headers, responseHandler, sheetId, sheetName
     );
     return this;
@@ -135,13 +127,11 @@ class GVizTQ_UrlComposer extends Recyclable.Root {
 
   /** @override */
   static setAsConstructor_self(
-    bLogFetcherEventToConsole,
-    spreadsheetId,
-    range,
+    spreadsheetId, range,
     headers, responseHandler, sheetId, sheetName
   ) {
     this.spreadsheetUrlPrefix = GVizTQ_UrlComposer.spreadsheetUrlPrefix;
-    this.bLogFetcherEventToConsole = bLogFetcherEventToConsole;
+    this.bLogFetcherEventToConsole = false;
     this.set_by_spreadsheetId_range_headers_responseHandler_sheetId_sheetName(
       spreadsheetId,
       range, headers, responseHandler, sheetId, sheetName
