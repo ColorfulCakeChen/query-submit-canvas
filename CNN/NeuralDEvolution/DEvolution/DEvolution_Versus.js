@@ -253,8 +253,15 @@ class DEvolution_Versus extends Recyclable.Root {
       return bLoadOk;
 
     } catch ( e ) {
-      console.error( e );
-      return false;
+      if ( HttpRequest.Fetcher
+             .Exception_is_ProgressEvent_abort_error_load_timeout( e ) ) {
+        // XMLHttpRequest related exception is possible and acceptable.
+        return false;
+
+      } else { // Unknown error, should be said loundly.
+        //console.error( e );
+        throw e;
+      }
 
     } finally {
       if ( progress ) {
@@ -262,6 +269,6 @@ class DEvolution_Versus extends Recyclable.Root {
         progress = null;
       }
     }
- }
+  }
 
 }

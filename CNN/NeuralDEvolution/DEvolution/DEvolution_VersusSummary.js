@@ -276,6 +276,65 @@ class DEvolution_VersusSummary extends Recyclable.Root {
     return versus;
   }
 
+  /**
+   * Load this object by calling load_asyncGenerator() and advance the generator
+   * by loop until done.
+   *
+     /**
+   * An async generator for loading the next versus data of differential evolution
+   * versus weights.
+   *
+   * @param {HttpRequest.Params_loading_retryWaiting} params_loading_retryWaiting
+   *   The parameters for loading timeout and retry waiting time. It will be kept
+   * but not modified by this object.
+   *
+   * @return {Promise( DEvolution.Versus )}
+   *   Return a promise:
+   *   - Resolved to DEvolution.Versus, if succeeded.
+   *   - Resolved to null, if failed.
+   *
+   * @throws {ProgressEvent}
+   *   Yield a promise rejects to ProgressEvent.
+   */
+  async versus_next_load_async( params_loading_retryWaiting ) {
+    let progress = ValueMax.Percentage.Aggregate.Pool.get_or_create_by();
+
+    try {
+      let loader_async = this.versus_next_load_asyncGenerator( progress,
+        params_loading_retryWaiting );
+
+      let versus;
+      let loaderNext;
+      do {
+        loaderNext = await loader_async.next();
+        if ( loaderNext.done == false ) {
+          //let progressRoot = loaderNext.value;
+        } else { // ( loaderNext.done == true )
+          versus = loaderNext.value;
+        }
+      } while ( loaderNext.done == false );
+
+      return versus;
+
+    } catch ( e ) {
+      if ( HttpRequest.Fetcher
+             .Exception_is_ProgressEvent_abort_error_load_timeout( e ) ) {
+        // XMLHttpRequest related exception is possible and acceptable.
+        return null;
+
+      } else { // Unknown error, should be said loundly.
+        //console.error( e );
+        throw e;
+      }
+
+    } finally {
+      if ( progress ) {
+        progress.disposeResources_and_recycleToPool();
+        progress = null;
+      }
+    }
+  }
+
 }
 
 /** The summary is at the first column of the first (i.e. left most) sheet. */
