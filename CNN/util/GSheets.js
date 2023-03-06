@@ -4,6 +4,7 @@ import * as Pool from "./Pool.js";
 import * as Recyclable from "./Recyclable.js";
 import * as GVizTQ from "./GSheet/GVizTQ.js";
 import * as GSheetsAPIv4 from "./GSheet/GSheetsAPIv4.js";
+import * as HttpRequest from "./HttpRequest.js";
 import * as ValueMax from "./ValueMax.js";
 
 /**
@@ -171,8 +172,15 @@ class GSheets_UrlComposer extends Recyclable.Root {
       } while ( fetcherNext.done == false );
 
     } catch ( e ) {
-      console.error( e );
-      return null;
+      if ( HttpRequest.Fetcher
+             .Exception_is_ProgressEvent_abort_error_load_timeout( e ) ) {
+        // XMLHttpRequest related exception is possible and acceptable.
+        return null;
+
+      } else { // Unknown error, should be said loundly.
+        //console.error( e );
+        throw e;
+      }
 
     } finally {
       progress.disposeResources_and_recycleToPool();
