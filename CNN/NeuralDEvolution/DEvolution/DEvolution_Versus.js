@@ -223,9 +223,9 @@ class DEvolution_Versus extends Recyclable.Root {
    *
    * @return {Promise( boolean )}
    *   Return a promise.
-   *   - It will resolve to true, if succeeded. The .versusId, .parentChromosome,
+   *   - Resolved to true, if succeeded. The .versusId, .parentChromosome,
    *       and .offspringChromosome of this will be set.
-   *   - It will resolve to false, if failed.
+   *   - Resolved to false, if failed.
    */
   async load_async(
     spreadsheetUrlComposer, spreadsheetRange,
