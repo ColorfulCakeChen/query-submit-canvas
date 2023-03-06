@@ -228,15 +228,16 @@ class DEvolution_Versus extends Recyclable.Root {
    *   - It will resolve to false, if failed.
    */
   async load_async(
-    spreadsheetUrlComposer, spreadsheetRange, textEncoder ) {
-
-//!!! ...unfinished... (2023/03/06)
+    spreadsheetUrlComposer, spreadsheetRange,
+    params_loading_retryWaiting,
+    textEncoder ) {
 
     let progress = ValueMax.Percentage.Aggregate.Pool.get_or_create_by();
 
     try {
       let loader_async = this.load_asyncGenerator( progress,
-        spreadsheetUrlComposer, spreadsheetRange, textEncoder);
+        spreadsheetUrlComposer, spreadsheetRange,
+        params_loading_retryWaiting, textEncoder );
 
       let bLoadOk;
       let loaderNext;
