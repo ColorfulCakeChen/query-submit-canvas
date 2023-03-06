@@ -140,8 +140,10 @@ class DEvolution_VersusSummary extends Recyclable.Root {
       progressFetcher, params_loading_retryWaiting );
 
     let rangeArrayArray = yield *fetcher;
-    if ( !rangeArrayArray )
+    if ( !rangeArrayArray ) {
+      this.rangeArray = null;
       return false;
+    }
 
     // Only the first column (i.e. column[ 0 ]) has range description string.
     this.rangeArray = rangeArrayArray[ 0 ];
