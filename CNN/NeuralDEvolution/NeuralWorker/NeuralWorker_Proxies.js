@@ -523,6 +523,7 @@ class NeuralWorker_Proxies extends Recyclable.Root {
         + `${NeuralWorker.Mode.Singleton.getName_byId( this.nNeuralWorker_ModeId )}`
         + `(${this.nNeuralWorker_ModeId}), `
       + `neuralNetCount=${this.neuralNetCount}, `
+      + `hardwareConcurrency=${this.hardwareConcurrency}, `
       + `totalWorkerCount=${this.totalWorkerCount}`
     ;
     return str;
