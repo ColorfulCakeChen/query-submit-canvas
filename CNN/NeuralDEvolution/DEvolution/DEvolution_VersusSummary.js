@@ -69,20 +69,20 @@ class DEvolution_VersusSummary extends Recyclable.Root {
   /** @override */
   disposeResources() {
 
-    this.textEncoder = null;
+    this.textEncoder = undefined;
 
     this.visitCount = undefined;
 
     if ( this.visitIndexArray ) {
       this.visitIndexArray.disposeResources_and_recycleToPool();
-      this.visitIndexArray = null;
+      this.visitIndexArray = undefined;
     }
 
-    this.rangeArray = null; // (normal array, just nullifiy it.)
+    this.rangeArray = undefined; // (normal array, just nullifiy it.)
 
     if ( this.urlComposer ) {
       this.urlComposer.disposeResources_and_recycleToPool();
-      this.urlComposer = null;
+      this.urlComposer = undefined;
     }
 
     super.disposeResources();
