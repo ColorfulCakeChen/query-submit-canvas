@@ -213,7 +213,7 @@ class DEvolution_VersusSummary extends Recyclable.Root {
 
   /**
    * An async generator for loading the next versus data of differential evolution
-   * versus.
+   * versus weights.
    *
    * @param {ValueMax.Percentage.Aggregate} progressParent
    *   Some new progressToAdvance will be created and added to progressParent. The
@@ -238,11 +238,12 @@ class DEvolution_VersusSummary extends Recyclable.Root {
   async* versus_next_load_asyncGenerator(
     progressParent, params_loading_retryWaiting ) {
 
-    let progressRoot = progressParent.root_get();
-    let progressFetcher = progressParent.child_add(
-      ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
-    let progressToAdvance = progressParent.child_add(
-      ValueMax.Percentage.Concrete.Pool.get_or_create_by( 1 ) );
+//!!! ...unfinished... (2023/03/06)
+    // let progressRoot = progressParent.root_get();
+    // let progressFetcher = progressParent.child_add(
+    //   ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
+    // let progressToAdvance = progressParent.child_add(
+    //   ValueMax.Percentage.Concrete.Pool.get_or_create_by( 1 ) );
 
 //!!! ...unfinished... (2023/03/06)
     let visitIndex = this.visitIndex_get();

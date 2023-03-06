@@ -3,7 +3,7 @@ export { DEvolution_Versus as Versus };
 import * as Pool from "../../util/Pool.js";
 import * as Recyclable from "../../util/Recyclable.js";
 import * as Float12 from "../../Unpacker/Float12.js";
-// import * as HttpRequest from "../../util/HttpRequest.js";
+import * as HttpRequest from "../../util/HttpRequest.js";
 import * as NumberTools from "../../util/NumberTools.js";
 import * as ValueMax from "../../util/ValueMax.js";
 import { VersusId } from "./DEvolution_VersusId.js";
@@ -65,7 +65,8 @@ class DEvolution_Versus extends Recyclable.Root {
   }
 
   /**
-   * Load the versus data from specified spreadsheet range.
+   * An async generator for loading the differential evolution versus weights
+   * from specified spreadsheet range.
    *
    * @param {ValueMax.Percentage.Aggregate} progressParent
    *   Some new progressToAdvance will be created and added to progressParent. The
@@ -81,20 +82,32 @@ class DEvolution_Versus extends Recyclable.Root {
    *   The range description string for downloading this versus data.
    * (e.g. "Evolution!AH57:AK58")
    *
+   * @param {HttpRequest.Params_loading_retryWaiting} params_loading_retryWaiting
+   *   The parameters for loading timeout and retry waiting time. It will be kept
+   * but not modified by this object.
+   *
    * @param {TextEncoder} textEncoder
    *   For converting text string to Uint8Array.
    *
    * @yield {Promise( ValueMax.Percentage.Aggregate )}
-   *   Yield a promise resolves to { value: progressParent.root_get(), done: false }.
+   *   Yield a promise resolves to { done: false, value: progressParent.root_get() }.
    *
    * @yield {Promise( boolean )}
-   *   - Yield a promise resolves to { value: true, done: true } when successfully.
+   *   Yield a promise:
+   *   - Resolved to { done: true, value: true }, if succeeded.
    *       The .versusId, .parentChromosome, and .offspringChromosome of
    *       this will be set.
-   *   - Yield a promise resolves to { value: false, done: true } when failed.
+   *   - Resolved to { done: true, value: false }, if failed.
+   *
+   * @throws {ProgressEvent}
+   *   Yield a promise rejects to ProgressEvent.
    */
-  async* loader_async( progressParent,
-    spreadsheetUrlComposer, spreadsheetRange, textEncoder ) {
+  async* load_asyncGenerator( progressParent,
+    spreadsheetUrlComposer, spreadsheetRange,
+    params_loading_retryWaiting,
+    textEncoder ) {
+
+//!!! ...unfinished... (2023/03/06)
 
     // 0.1
     this.parentChromosome = undefined;
@@ -208,8 +221,8 @@ class DEvolution_Versus extends Recyclable.Root {
   }
 
   /**
-   * Load this object by calling loader() and advance the generator by loop
-   * until done.
+   * Load this object by calling load_asyncGenerator() and advance the generator
+   * by loop until done.
    *
    * @return {Promise( boolean )}
    *   Return a promise.
@@ -220,10 +233,12 @@ class DEvolution_Versus extends Recyclable.Root {
   async load_async(
     spreadsheetUrlComposer, spreadsheetRange, textEncoder ) {
 
+//!!! ...unfinished... (2023/03/06)
+
     let progress = ValueMax.Percentage.Aggregate.Pool.get_or_create_by();
 
     try {
-      let loader_async = this.loader_async( progress,
+      let loader_async = this.load_asyncGenerator( progress,
         spreadsheetUrlComposer, spreadsheetRange, textEncoder);
 
       let bLoadOk;
