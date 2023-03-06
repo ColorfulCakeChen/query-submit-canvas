@@ -387,6 +387,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     return theFloat32ArrayArrayPromise;
   }
 
+
   /** */
   devolutionVersusSummary_dispose() {
     if ( this.devolutionVersusSummary ) {
@@ -411,6 +412,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
 
     return this.devolutionVersusSummary.rangeArray_load_async();
   }
+
 
   /** */
   devolutionVersus_dispose() {
@@ -482,9 +484,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
   }
 
   /** Create differential evolution versus result reporter. */
-  devolutionVersusSubmitter_init(
-    submitter_clientId ) {
-
+  devolutionVersusSubmitter_init( submitter_clientId ) {
     this.devolutionVersusSubmitter_dispose();
     this.devolutionVersusSubmitter = DEvolution.VersusSubmitter
       .MultiEventName.Pool.get_or_create_by( submitter_clientId );

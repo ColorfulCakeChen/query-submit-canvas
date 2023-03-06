@@ -198,6 +198,9 @@ class GVizTQ_UrlComposer extends Recyclable.Root {
    *   - Yield a promise resolves to { done: true,
    *       value: ( a two dimension (column-major) array ) } when successfully.
    *   - Yield a promise resolves to { done: true, value: null } when failed.
+   *
+   * @throws {ProgressEvent}
+   *   Yield a promise rejects to ProgressEvent.
    */
   async* JSON_ColumnMajorArrayArray_fetch_asyncGenerator(
     progressParent, params_loading_retryWaiting ) {

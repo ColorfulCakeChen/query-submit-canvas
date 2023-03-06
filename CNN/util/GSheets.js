@@ -105,8 +105,9 @@ class GSheets_UrlComposer extends Recyclable.Root {
   }
 
   /**
-   * Generator for composing the URL (according this object's data members), downloading
-   * it as JSON format, extracting data as a two dimension (column-major) array.
+   * An async generator for composing the URL (according this object's data
+   * members), downloading it as JSON format, extracting data as a two dimension
+   * (column-major) array.
    *
    * @param {ValueMax.Percentage.Aggregate} progressParent
    *   Some new progressToAdvance will be created and added to progressParent. The
@@ -124,6 +125,9 @@ class GSheets_UrlComposer extends Recyclable.Root {
    *   - Yield a promise resolves to { value: ( a two dimension (column-major) array ),
    *       done: true } when successfully.
    *   - Yield a promise resolves to { value: null, done: true } when failed.
+   *
+   * @throws {ProgressEvent}
+   *   Yield a promise rejects to ProgressEvent.
    */
   async* JSON_ColumnMajorArrayArray_fetch_asyncGenerator(
     progressParent, params_loading_retryWaiting ) {
