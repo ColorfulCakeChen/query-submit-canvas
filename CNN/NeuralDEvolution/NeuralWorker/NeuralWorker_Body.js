@@ -163,8 +163,8 @@ class NeuralWorker_Body extends AsyncWorker.Body {
       }
 
       // Compile shaders and upload tensor to GPU if backend is webgl.
-      NeuralWorker_Body.NeuralNetArray_compileShaders_uploadTensors_ifWebGL.call( this,
-        bLogDryRunTime );
+      NeuralWorker_Body.NeuralNetArray_compileShaders_uploadTensors_ifWebGL.call(
+        this, bLogDryRunTime );
 
       if ( bAllOk )
         return { value: true };
@@ -347,8 +347,8 @@ class NeuralWorker_Body extends AsyncWorker.Body {
 // this neural network. (i.e. become recurrent neural network.)
 
   /**
-   * This method will fill some part of the image by alignment mark value so that the
-   * neural network could distunguish which alignment it represents.
+   * This method will fill some part of the image by alignment mark value so that
+   * the neural network could distunguish which alignment it represents.
    * 
    * Usually, this method should be called Before converting Int32Array to tf.tensor.
    *
@@ -356,19 +356,20 @@ class NeuralWorker_Body extends AsyncWorker.Body {
    *   Which neural network's alignment mark value will be used.
    *
    * @param {Int32Array} imageInt32Array
-   *   It is viewed as an image whose size ( height, width, channelCount ) should match
-   * this.neuralNet's [ input_height, input_width, input_channelCount ].
+   *   It is viewed as an image whose size ( height, width, channelCount ) should
+   * match this.neuralNet's [ input_height, input_width, input_channelCount ].
    */
   static alignmentMark_fillTo_Image_Int32Array( neuralNetIndex, imageInt32Array ) {
 
-    // Q: Why fill top-left ( 3 * 3 ) pixels? Why not just fill top-left ( 1 * 1 ) pixel?
+    // Q: Why fill top-left ( 3 * 3 ) pixels? Why not just fill top-left
+    //      ( 1 * 1 ) pixel?
     // A: NeuralNet mainly uses ( 3 * 3 ) depthwise filter.
     //
-    //      - If alignment mark just occupies ( 1 * 1 ) pixel, it could only be detected
-    //          a special depthwise filter.
+    //   - If alignment mark just occupies ( 1 * 1 ) pixel, it could only be
+    //       detected by a special depthwise filter.
     //
-    //      - If alignment mark occupies ( 3 * 3 ) pixel, it could be detected by most
-    //          kinds of depthwise filter easily.
+    //   - If alignment mark occupies ( 3 * 3 ) pixel, it could be detected by
+    //       most kinds of depthwise filter easily.
     //
     const markHeight = 3;
     const markWidth = 3;
@@ -1024,8 +1025,8 @@ class NeuralWorker_Body extends AsyncWorker.Body {
         outputTensor = null;
       }
 
-      // In theory, it should already have been released by neural network. For avoiding
-      // memory leak (e.g. some exception when .apply()), release it again.
+      // In theory, it should already have been released by neural network. For
+      // avoiding memory leak (e.g. some exception when .apply()), release it again.
       if ( scaledSourceTensor ) {
         scaledSourceTensor.dispose();
         scaledSourceTensor = null;
