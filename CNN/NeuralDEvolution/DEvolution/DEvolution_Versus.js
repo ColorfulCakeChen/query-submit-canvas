@@ -239,17 +239,12 @@ class DEvolution_Versus extends Recyclable.Root {
         spreadsheetUrlComposer, spreadsheetRange,
         params_loading_retryWaiting, textEncoder );
 
-      let bLoadOk;
       let loaderNext;
       do {
         loaderNext = await loader_async.next();
-        if ( loaderNext.done == false ) {
-          //let progressRoot = loaderNext.value;
-        } else { // ( loaderNext.done == true )
-          bLoadOk = loaderNext.value;
-        }
       } while ( loaderNext.done == false );
 
+      let bLoadOk = loaderNext.value;
       return bLoadOk;
 
     } catch ( e ) {

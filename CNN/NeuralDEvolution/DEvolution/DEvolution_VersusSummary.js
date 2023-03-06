@@ -303,17 +303,12 @@ class DEvolution_VersusSummary extends Recyclable.Root {
       let loader_async = this.versus_next_load_asyncGenerator( progress,
         params_loading_retryWaiting );
 
-      let versus;
       let loaderNext;
       do {
         loaderNext = await loader_async.next();
-        if ( loaderNext.done == false ) {
-          //let progressRoot = loaderNext.value;
-        } else { // ( loaderNext.done == true )
-          versus = loaderNext.value;
-        }
       } while ( loaderNext.done == false );
 
+      let versus = loaderNext.value;
       return versus;
 
     } catch ( e ) {
