@@ -238,40 +238,44 @@ class DEvolution_VersusSummary extends Recyclable.Root {
   async* versus_next_load_asyncGenerator(
     progressParent, params_loading_retryWaiting ) {
 
-//!!! ...unfinished... (2023/03/06)
-    // let progressRoot = progressParent.root_get();
-    // let progressFetcher = progressParent.child_add(
-    //   ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
-    // let progressToAdvance = progressParent.child_add(
-    //   ValueMax.Percentage.Concrete.Pool.get_or_create_by( 1 ) );
-
-//!!! ...unfinished... (2023/03/06)
     let visitIndex = this.visitIndex_get();
     if ( visitIndex < 0 )
       return null;
 
     let spreadsheetRange = this.rangeArray[ visitIndex ];
 
+    let bLoadOk;
     let versus = DEvolution_Versus.Pool.get_or_create_by();
     try {
-      let bLoadOk = await versus.load_async(
-        this.urlComposer, spreadsheetRange, this.textEncoder );
+      let versusLoader = load_asyncGenerator( progressParent,
+        this.urlComposer, spreadsheetRange,
+        params_loading_retryWaiting,
+        this.textEncoder );
 
-      if ( !bLoadOk )
-        return null;
+      bLoadOk = yield* versusLoader;
+
+      if ( bLoadOk ) // Increase visit count, only if loaded sucessfully.
+        ++this.visitCount;
 
     } catch ( e ) {
-      console.error( e );
-
-      if ( versus ) {
-        versus.disposeResources_and_recycleToPool();
-        versus = null;
+      if ( HttpRequest.Fetcher
+             .Exception_is_ProgressEvent_abort_error_load_timeout( e ) ) {
+        // XMLHttpRequest related exception is possible and acceptable.
+        return null;
+  
+      } else { // Unknown error, should be said loundly.
+        //console.error( e );
+        throw e;
       }
 
-      return null;
+    } finally {
+      if ( !bLoadOk ) { // Release, since failed to load.
+        if ( versus ) {
+          versus.disposeResources_and_recycleToPool();
+          versus = null;
+        }
+      }
     }
-
-    ++this.visitCount;
 
     return versus;
   }

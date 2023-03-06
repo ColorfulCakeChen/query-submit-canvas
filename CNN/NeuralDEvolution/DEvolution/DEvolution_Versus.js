@@ -56,7 +56,7 @@ class DEvolution_Versus extends Recyclable.Root {
 
     if ( this.versusId ) {
       this.versusId.disposeResources_and_recycleToPool();
-      this.versusId = undefined;
+      this.versusId = null;
     }
 
     this.spreadsheetRange = undefined;
