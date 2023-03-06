@@ -418,8 +418,8 @@ class NeuralWorker_Body extends AsyncWorker.Body {
    *   The source image data to be processed.
    *
    *   - Its shape needs not match this.neuralNet's [ input_height,
-   *       input_width, input_channelCount ] because it will be scaled to the correct
-   *       shape before passed into the neural network.
+   *       input_width, input_channelCount ] because it will be scaled to the
+   *       correct shape before passed into the neural network.
    *
    * @param {boolean} bFill
    *   If true, the source Int32Array will be filled by alignment mark before be
@@ -428,9 +428,9 @@ class NeuralWorker_Body extends AsyncWorker.Body {
    *
    * @yield {Float32Array[]}
    *   Resolve to { done: true, value: { value: [ Float32Array, Float32Array ],
-   * transferableObjectArray: [ Float32Array.buffer, Float32Array.buffer ] }. The value
-   * is an array of Float32Array representing all neural networks' result whose channel
-   * count is this.neuralNetArray[].output_channelCount.
+   * transferableObjectArray: [ Float32Array.buffer, Float32Array.buffer ] }.
+   * The value is an array of Float32Array representing all neural networks'
+   * result whose channel count is this.neuralNetArray[].output_channelCount.
    */
   async* ONE_WORKER__ONE_SCALE__ImageData_process( sourceImageData, bFill ) {
 
@@ -450,10 +450,11 @@ class NeuralWorker_Body extends AsyncWorker.Body {
               || (  bFill && !scaledInt32Array )
             ) {
             try {
-              scaledSourceTensor= neuralNet.create_ScaledSourceTensor_from_PixelData(
-                sourceImageData,
-                true // ( bForceInt32 == true )
-              );
+              scaledSourceTensor
+                = neuralNet.create_ScaledSourceTensor_from_PixelData(
+                    sourceImageData,
+                    true // ( bForceInt32 == true )
+                  );
 
               if ( bFill ) {
                 scaledInt32Array = scaledSourceTensor.dataSync();
@@ -468,8 +469,9 @@ class NeuralWorker_Body extends AsyncWorker.Body {
               throw e;
 
             } finally {
-              // If need fill alignment mark, the source tensor will be re-created for
-              // every neural network, the scaled source tensor needs not be kept.
+              // If need fill alignment mark, the source tensor will be
+              // re-created for every neural network, the scaled source
+              // tensor needs not be kept.
               if ( bFill && scaledSourceTensor ) {
                 scaledSourceTensor.dispose();
                 scaledSourceTensor = null;
@@ -497,7 +499,8 @@ class NeuralWorker_Body extends AsyncWorker.Body {
               sourceTensor = scaledSourceTensor.clone();
             }
 
-            // 2.2 Process source tensor. (The sourceTensor will be released (in theroy).)
+            // 2.2 Process source tensor. (The sourceTensor will be released
+            //     (in theroy).)
             outputTensor = neuralNet.apply( sourceTensor );
 
             // 2.3 Record result promise.
@@ -559,8 +562,8 @@ class NeuralWorker_Body extends AsyncWorker.Body {
    *     - NeuralWorker_Mode.Singleton.Ids.TWO_WORKER__ONE_SCALE__FILL__APPLIER (3)
    *     - The 1st worker calls this method.
    *
-   *   - It will download scaled Int32Array from GPU memory. And post it back to
-   *         WorkerProxy.
+   *   - It will download scaled Int32Array from GPU memory. And post it back
+   *       to WorkerProxy.
    *
    *   - Fill alignment mark of this neural network, upload to GPU and process it.
    *
@@ -569,14 +572,15 @@ class NeuralWorker_Body extends AsyncWorker.Body {
    *   The source image data to be processed.
    *
    *   - Its shape needs not match this.neuralNet[ 0 ]'s [ input_height,
-   *       input_width, input_channelCount ] because it will be scaled to the correct
-   *       shape before passed into the neural network.
+   *       input_width, input_channelCount ] because it will be scaled to the
+   *       correct shape before passed into the neural network.
    *
-   *   - This usually is called for the 1st web worker in chain. The scaled Int32Array
-   *       will be transferred back to WorkerProxy for the 2nd web worker.
+   *   - This usually is called for the 1st web worker in chain. The scaled
+   *       Int32Array will be transferred back to WorkerProxy for the 2nd
+   *       web worker.
    *
-   *   - The scaled Int32Array will be filled by alignment mark, and then converted
-   *       into tensor3d, and then processed by neural network.
+   *   - The scaled Int32Array will be filled by alignment mark, and then
+   *       converted into tensor3d, and then processed by neural network.
    *
    * @param {boolean} bApply_or_Applier
    *   - If true, use neuralNet.apply().
@@ -698,8 +702,8 @@ class NeuralWorker_Body extends AsyncWorker.Body {
         outputTensor = null;
       }
 
-      // In theory, it should already have been released by neural network. For avoiding
-      // memory leak (e.g. some exception when .apply()), release it again.
+      // In theory, it should already have been released by neural network. For
+      // avoiding memory leak (e.g. some exception when .apply()), release it again.
       if ( sourceTensor ) {
         sourceTensor.dispose();
         sourceTensor = null;
@@ -719,8 +723,8 @@ class NeuralWorker_Body extends AsyncWorker.Body {
    *     - NeuralWorker_Mode.Singleton.Ids.TWO_WORKER__ONE_SCALE__NO_FILL__APPLIER (5)
    *     - The 1st worker calls this method.
    *
-   *   - It will download scaled Int32Array from GPU memory. And post it back to
-   *         WorkerProxy.
+   *   - It will download scaled Int32Array from GPU memory. And post it back
+   *       to WorkerProxy.
    *
    *   - No Fill alignment mark of this neural network, no upload to GPU,
    *       just process the scaled tensor directly.
@@ -730,14 +734,15 @@ class NeuralWorker_Body extends AsyncWorker.Body {
    *   The source image data to be processed.
    *
    *   - Its shape needs not match this.neuralNet[ 0 ]'s [ input_height,
-   *       input_width, input_channelCount ] because it will be scaled to the correct
-   *       shape before passed into the neural network.
+   *       input_width, input_channelCount ] because it will be scaled to the
+   *       correct shape before passed into the neural network.
    *
-   *   - This usually is called for the 1st web worker in chain. The scaled Int32Array
-   *       will be transferred back to WorkerProxy for the 2nd web worker.
+   *   - This usually is called for the 1st web worker in chain. The scaled
+   *       Int32Array will be transferred back to WorkerProxy for the 2nd web
+   *       worker.
    *
-   *   - The scaled tensor (without filling alignment mark) will be processed by
-   *       neural network directly.
+   *   - The scaled tensor (without filling alignment mark) will be processed
+   *       by neural network directly.
    *
    * @param {boolean} bApply_or_Applier
    *   - If true, use neuralNet.apply().
@@ -745,15 +750,15 @@ class NeuralWorker_Body extends AsyncWorker.Body {
    *
    * @yield {Int32Array}
    *   Resolve to { done: false, value: { value: Int32Array,
-   * transferableObjectArray: [ Int32Array.buffer ] }. The value is an Int32Array
-   * representing the scaled image data whose shape is this.neuralNet[ 0 ]'s
-   * [ input_height, input_width, input_channelCount ].
+   * transferableObjectArray: [ Int32Array.buffer ] }. The value is an
+   * Int32Array representing the scaled image data whose shape is
+   * this.neuralNet[ 0 ]'s [ input_height, input_width, input_channelCount ].
    *
    * @yield {Float32Array}
    *   Resolve to { done: true, value: { value: Float32Array,
-   * transferableObjectArray: [ Float32Array.buffer ] }. The value is a Float32Array
-   * representing the neural network's result whose channel count is
-   * this.neuralNet[ 0 ].output_channelCount.
+   * transferableObjectArray: [ Float32Array.buffer ] }. The value is a
+   * Float32Array representing the neural network's result whose channel
+   * count is this.neuralNet[ 0 ].output_channelCount.
    */
   async* TWO_WORKER__ONE_SCALE__NO_FILL__step0_ImageData_process(
     sourceImageData, bApply_or_Applier ) {
@@ -842,8 +847,8 @@ class NeuralWorker_Body extends AsyncWorker.Body {
         outputTensor = null;
       }
 
-      // In theory, it should already have been released by neural network. For avoiding
-      // memory leak (e.g. some exception when .apply()), release it again.
+      // In theory, it should already have been released by neural network. For
+      // avoiding memory leak (e.g. some exception when .apply()), release it again.
       if ( scaledSourceTensor ) {
         scaledSourceTensor.dispose();
         scaledSourceTensor = null;
