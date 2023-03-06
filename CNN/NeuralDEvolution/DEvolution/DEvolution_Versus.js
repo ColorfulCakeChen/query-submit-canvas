@@ -107,8 +107,6 @@ class DEvolution_Versus extends Recyclable.Root {
     params_loading_retryWaiting,
     textEncoder ) {
 
-//!!! ...unfinished... (2023/03/06)
-
     // 0.1
     this.parentChromosome = undefined;
     this.offspringChromosome = undefined;
@@ -134,12 +132,11 @@ class DEvolution_Versus extends Recyclable.Root {
       this.spreadsheetRange = spreadsheetRange;
       spreadsheetUrlComposer.range = spreadsheetRange;
 
-//!!! ...unfinished... (2023/02/24)
-// {HttpRequest.Params_loading_retryWaiting} params_loading_retryWaiting
+//!!! ...unfinished... (2023/03/06)
 
       let fetcherVersus
         = spreadsheetUrlComposer.JSON_ColumnMajorArrayArray_fetch_asyncGenerator(
-            progressForDownload );
+            progressForDownload, params_loading_retryWaiting );
 
       versusArrayArray = yield* fetcherVersus;
       if ( !versusArrayArray )
