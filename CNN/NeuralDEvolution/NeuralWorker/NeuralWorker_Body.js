@@ -31,8 +31,8 @@ class NeuralWorker_Body extends AsyncWorker.Body {
   /**
    *
    * @param {number} workerId
-   *   A non-negative integer represents this worker's id. The id of the first worker
-   * should be 0.
+   *   A non-negative integer represents this worker's id. The id of the first
+   * worker should be 0.
    *
    * @param {string} backendName
    *   Specify which backend should be used by tensorflow.js library.
@@ -73,15 +73,16 @@ class NeuralWorker_Body extends AsyncWorker.Body {
 
   /**
    * @param {Object[]} neuralNetParamsBaseArray
-   *   An array of object. Every element is an object looks like NeuralNet.ParamsBase.
+   *   An array of object. Every element is an object looks like
+   * NeuralNet.ParamsBase.
    *
    * @param {ArrayBuffer[]} weightArrayBufferArray
-   *   An array of every neural network's weights. Every element  will be interpreted
-   * as Float32Array.
+   *   An array of every neural network's weights. Every element  will be
+   * interpreted as Float32Array.
    *
    * @param {boolean} bLogDryRunTime
-   *   If true, the neural network dry-run time will be measured twice and logged to
-   * console.
+   *   If true, the neural network dry-run time will be measured twice and
+   * logged to console.
    *
    * @yield {boolean}
    *   - Yield { done: true, value: { value: true } }, if succeeded.
@@ -125,8 +126,8 @@ class NeuralWorker_Body extends AsyncWorker.Body {
             = Weights.Base.ValueBounds.Float32Array_RestrictedClone( aFloat32Array );
         }
 
-        // In web worker, the input of neural network will not be used by others. Force
-        // the neural network release its input tensor.
+        // In web worker, the input of neural network will not be used by others.
+        // Force the neural network release its input tensor.
         neuralNetParamsBase.bKeepInputTensor = false;
 
         let neuralNetParams = NeuralNet.Params.get_or_create_by_NeuralNetParamsBase(
