@@ -256,7 +256,7 @@ class DEvolution_VersusSummary extends Recyclable.Root {
       throw e; // Unknown error, should be said loundly.
 
     } finally {
-      if ( !bLoadOk ) { // Release, since failed to load.
+      if ( !bLoadOk ) { // Release, if failed to load.
         if ( versus ) {
           versus.disposeResources_and_recycleToPool();
           versus = null;
