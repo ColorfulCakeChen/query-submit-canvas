@@ -134,8 +134,7 @@ class DEvolution_VersusSummary extends Recyclable.Root {
       ValueMax.Percentage.Concrete.Pool.get_or_create_by( 1 ) );
 
     // The summary is at the first column of the first (i.e. left most) sheet.
-    const range = "A:A";
-    this.urlComposer.range = range;
+    this.urlComposer.range = DEvolution_VersusSummary.spreadsheetRange;
 
     let fetcher = this.urlComposer.JSON_ColumnMajorArrayArray_fetch_asyncGenerator(
       progressFetcher, params_loading_retryWaiting );
@@ -275,3 +274,6 @@ class DEvolution_VersusSummary extends Recyclable.Root {
   }
 
 }
+
+/** The summary is at the first column of the first (i.e. left most) sheet. */
+DEvolution_VersusSummary.spreadsheetRange = "A:A";
