@@ -126,9 +126,6 @@ class GSheets_UrlComposer extends Recyclable.Root {
    *   - Yield a promise resolves to { value: ( a two dimension (column-major) array ),
    *       done: true } when successfully.
    *   - Yield a promise resolves to { value: null, done: true } when failed.
-   *
-   * @throws {ProgressEvent}
-   *   Yield a promise rejects to ProgressEvent.
    */
   async* JSON_ColumnMajorArrayArray_fetch_asyncGenerator(
     progressParent, params_loading_retryWaiting ) {
@@ -172,15 +169,8 @@ class GSheets_UrlComposer extends Recyclable.Root {
       } while ( fetcherNext.done == false );
 
     } catch ( e ) {
-      if ( HttpRequest.Fetcher
-             .Exception_is_ProgressEvent_abort_error_load_timeout( e ) ) {
-        // XMLHttpRequest related exception is possible and acceptable.
-        return null;
-
-      } else { // Unknown error, should be said loundly.
-        //console.error( e );
-        throw e;
-      }
+      //console.error( e );
+      throw e; // Unknown error, should be said loundly.
 
     } finally {
       progress.disposeResources_and_recycleToPool();

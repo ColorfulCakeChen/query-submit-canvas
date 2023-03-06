@@ -120,9 +120,6 @@ class DEvolution_VersusSummary extends Recyclable.Root {
    *   Yield a promise:
    *   - Resolved to { done: true, value: true }, if succeeded.
    *   - Resolved to { done: true, value: false }, if failed.
-   *
-   * @throws {ProgressEvent}
-   *   Yield a promise rejects to ProgressEvent.
    */
   async* rangeArray_load_asyncGenerator(
     progressParent, params_loading_retryWaiting ) {
@@ -231,9 +228,6 @@ class DEvolution_VersusSummary extends Recyclable.Root {
    *   Yield a promise:
    *   - Resolved to { done: true, value: DEvolution.Versus }, if succeeded.
    *   - Resolved to { done: true, value: null }, if failed.
-   *
-   * @throws {ProgressEvent}
-   *   Yield a promise rejects to ProgressEvent.
    */
   async* versus_next_load_asyncGenerator(
     progressParent, params_loading_retryWaiting ) {
@@ -258,15 +252,8 @@ class DEvolution_VersusSummary extends Recyclable.Root {
         ++this.visitCount;
 
     } catch ( e ) {
-      if ( HttpRequest.Fetcher
-             .Exception_is_ProgressEvent_abort_error_load_timeout( e ) ) {
-        // XMLHttpRequest related exception is possible and acceptable.
-        return null;
-  
-      } else { // Unknown error, should be said loundly.
-        //console.error( e );
-        throw e;
-      }
+      //console.error( e );
+      throw e; // Unknown error, should be said loundly.
 
     } finally {
       if ( !bLoadOk ) { // Release, since failed to load.
@@ -296,9 +283,6 @@ class DEvolution_VersusSummary extends Recyclable.Root {
    *   Return a promise:
    *   - Resolved to DEvolution.Versus, if succeeded.
    *   - Resolved to null, if failed.
-   *
-   * @throws {ProgressEvent}
-   *   Yield a promise rejects to ProgressEvent.
    */
   async versus_next_load_async( params_loading_retryWaiting ) {
     let progress = ValueMax.Percentage.Aggregate.Pool.get_or_create_by();
@@ -316,15 +300,8 @@ class DEvolution_VersusSummary extends Recyclable.Root {
       return versus;
 
     } catch ( e ) {
-      if ( HttpRequest.Fetcher
-             .Exception_is_ProgressEvent_abort_error_load_timeout( e ) ) {
-        // XMLHttpRequest related exception is possible and acceptable.
-        return null;
-
-      } else { // Unknown error, should be said loundly.
-        //console.error( e );
-        throw e;
-      }
+      //console.error( e );
+      throw e; // Unknown error, should be said loundly.
 
     } finally {
       if ( progress ) {

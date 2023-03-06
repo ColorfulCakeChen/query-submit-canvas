@@ -98,9 +98,6 @@ class DEvolution_Versus extends Recyclable.Root {
    *       The .versusId, .parentChromosome, and .offspringChromosome of
    *       this will be set.
    *   - Resolved to { done: true, value: false }, if failed.
-   *
-   * @throws {ProgressEvent}
-   *   Yield a promise rejects to ProgressEvent.
    */
   async* load_asyncGenerator( progressParent,
     spreadsheetUrlComposer, spreadsheetRange,
@@ -125,7 +122,7 @@ class DEvolution_Versus extends Recyclable.Root {
 
     let progressForOffspringChromosome = progressParent.child_add(
       ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
-  
+
     // 1. download from remote.
     let versusArrayArray;
     {
@@ -248,15 +245,8 @@ class DEvolution_Versus extends Recyclable.Root {
       return bLoadOk;
 
     } catch ( e ) {
-      if ( HttpRequest.Fetcher
-             .Exception_is_ProgressEvent_abort_error_load_timeout( e ) ) {
-        // XMLHttpRequest related exception is possible and acceptable.
-        return false;
-
-      } else { // Unknown error, should be said loundly.
-        //console.error( e );
-        throw e;
-      }
+      //console.error( e );
+      throw e; // Unknown error, should be said loundly.
 
     } finally {
       if ( progress ) {
