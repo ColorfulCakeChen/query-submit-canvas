@@ -123,24 +123,26 @@ class NeuralOrchestra_Base extends Recyclable.Root {
 //
 
 //!!! ...unfinished... (2023/02/26)
-// asyncGenerator_VersusSummary_Loader()
+// devolutionVersusSummary_load_asyncGenerator()
 // set flag ( bVersusSummary_loaded = true )
 // or ( progressVersusSummaryLoading.valuePercentage == 100 ) when done.
 // (For letting construct.net to detect inside runtime.tick())
 //
-// asyncGenerator_Versus_Loader()
+// devolutionVersus_load_asyncGenerator()
 // set flag ( bVersus_loaded = true )
 // or ( progressVersusLoading.valuePercentage == 100 ) when done.
 // (For letting construct.net to detect inside runtime.tick())
 //
-// asyncGenerator_VersusSummary_Versus_Loader()
-// call asyncGenerator_VersusSummary_Loader() and then asyncGenerator_Versus_Loader().
+// devolution_VersusSummary_Versus_load_asyncGenerator()
+// call devolutionVersusSummary_load_asyncGenerator()
+// and then devolutionVersus_load_asyncGenerator().
 //
 // async_neuralWorker_initer()
-// call asyncGenerator_VersusSummary_Versus_Loader() too.
+// call devolution_VersusSummary_Versus_load_asyncGenerator() too.
 // It will be resolved when neuralWorker initialized.
-// But the asyncGenerator_VersusSummary_Versus_Loader() should continue
-// to be passed the next construct.net runtime state to continue loading.
+// But the devolution_VersusSummary_Versus_load_asyncGenerator()
+// should continue to be passed the next construct.net runtime state to
+// continue loading.
 //
 
   /**
