@@ -184,31 +184,33 @@ class DEvolution_Versus extends Recyclable.Root {
 
     // 2.2 parent chromosome
     {
-      let parentChromosomeArray = versusArrayArray?.[ COLUMN_ID_parentChromosome ];
+      let parentChromosomeArray
+        = versusArrayArray?.[ COLUMN_ID_parentChromosome ];
       if ( !parentChromosomeArray )
         return false; // parent chromosome array is undefined.
 
-      let parentChromosomeDecoder
-        = Float12.Decoder.generator_from_Base64Char_StringOrStringArray_to_Float32Array(
-            progressForParentChromosome,
-            parentChromosomeArray, textEncoder,
-            Base64_skipLineCount, Base64_suspendByteCount
-          );
+      let parentChromosomeDecoder = Float12.Decoder
+        .generator_from_Base64Char_StringOrStringArray_to_Float32Array(
+          progressForParentChromosome,
+          parentChromosomeArray, textEncoder,
+          Base64_skipLineCount, Base64_suspendByteCount
+        );
       this.parentChromosomeFloat32Array = yield* parentChromosomeDecoder;
     }
 
     // 2.3 offspring chromosome
     {
-      let offspringChromosomeArray = versusArrayArray?.[ COLUMN_ID_offspringChromosome ];
+      let offspringChromosomeArray
+        = versusArrayArray?.[ COLUMN_ID_offspringChromosome ];
       if ( !offspringChromosomeArray )
         return false; // offspring chromosome array is undefined.
 
-      let offspringChromosomeDecoder
-        = Float12.Decoder.generator_from_Base64Char_StringOrStringArray_to_Float32Array(
-            progressForOffspringChromosome,
-            offspringChromosomeArray, textEncoder,
-            Base64_skipLineCount, Base64_suspendByteCount
-          );
+      let offspringChromosomeDecoder = Float12.Decoder
+        .generator_from_Base64Char_StringOrStringArray_to_Float32Array(
+          progressForOffspringChromosome,
+          offspringChromosomeArray, textEncoder,
+          Base64_skipLineCount, Base64_suspendByteCount
+        );
       this.offspringChromosomeFloat32Array = yield* offspringChromosomeDecoder;
     }
 
