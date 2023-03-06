@@ -60,6 +60,12 @@ class DEvolution_VersusSummary extends Recyclable.Root {
 
   /** @override */
   static setAsConstructor_self( weightsSpreadsheetId, weightsAPIKey ) {
+
+//!!! ...unfinished... (2023/03/06)
+// needs bLogFetcherEventToConsole
+//
+//    ( bLogFetcherEventToConsole, spreadsheetId, range, apiKey )
+
     this.urlComposer = GSheets.UrlComposer.Pool.get_or_create_by(
       weightsSpreadsheetId, undefined, weightsAPIKey ); // range is undefined.
 
