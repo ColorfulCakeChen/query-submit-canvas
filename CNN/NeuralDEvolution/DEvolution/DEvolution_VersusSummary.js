@@ -127,40 +127,30 @@ class DEvolution_VersusSummary extends Recyclable.Root {
   async* rangeArray_load_asyncGenerator(
     progressParent, params_loading_retryWaiting ) {
 
-//!!! ...unfinished... (2023/03/06)
-
-  // let progressRoot = progressParent.root_get();
-  // let progressFetcher = progressParent.child_add(
-  //   ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
-  // let progressToAdvance = progressParent.child_add(
-  //   ValueMax.Percentage.Concrete.Pool.get_or_create_by( 2 ) );
-
+    let progressRoot = progressParent.root_get();
+    let progressFetcher = progressParent.child_add(
+      ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
+    let progressToAdvance = progressParent.child_add(
+      ValueMax.Percentage.Concrete.Pool.get_or_create_by( 1 ) );
 
     // The summary is at the first column of the first (i.e. left most) sheet.
     const range = "A:A";
     this.urlComposer.range = range;
 
-    try {
+    let fetcher = this.urlComposer.JSON_ColumnMajorArrayArray_fetch_asyncGenerator(
+      progressFetcher, params_loading_retryWaiting );
 
-//!!! ...unfinished... (2023/02/24)
-// {HttpRequest.Params_loading_retryWaiting} params_loading_retryWaiting
-
-      let rangeArrayArray
-        = await this.urlComposer.JSON_ColumnMajorArrayArray_fetch_asyncGenerator(
-            ???, params_loading_retryWaiting );
-
-      if ( !rangeArrayArray )
-        return false;
-
-      // Only the first column (i.e. column[ 0 ]) has range description string.
-      this.rangeArray = rangeArrayArray[ 0 ];
-
-      this.visitIndexArray_prepare();
-
-    } catch ( e ) {
-      console.error( e );
+    let rangeArrayArray = yield *fetcher;
+    if ( !rangeArrayArray )
       return false;
-    }
+
+    // Only the first column (i.e. column[ 0 ]) has range description string.
+    this.rangeArray = rangeArrayArray[ 0 ];
+
+    this.visitIndexArray_prepare();
+
+    progressToAdvance.value_advance();
+    yield progressRoot;
 
     return true;
   }
