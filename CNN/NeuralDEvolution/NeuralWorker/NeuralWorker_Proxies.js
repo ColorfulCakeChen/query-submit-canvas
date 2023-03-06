@@ -128,16 +128,16 @@ import { Mode as NeuralWorker_Mode } from "./NeuralWorker_Mode.js";
  *
  *
  * @member {string} backendName
- *   Which backend (of tensorflow.js library) will be used by web worker. Either "cpu"
- * or "webgl".
+ *   Which backend (of tensorflow.js library) will be used by web worker. Either
+ * "cpu" or "webgl".
  *
  * @member {number} nNeuralWorker_ModeId
  *   The numeric identifier of neural worker mode (i.e.
  * NeuralWorker.Mode.Singleton.Ids.Xxx).
  *
  * @member {number} neuralNetCount
- *   There are how many neural networks created. It is always 2 (because of differential
- * evolution) no matter how totalWorkerCount is.
+ *   There are how many neural networks created. It is always 2 (because of
+ * differential evolution) no matter how totalWorkerCount is.
  *
  * @member {number} totalWorkerCount
  *   There are how many web worker(s) created.
@@ -513,6 +513,19 @@ class NeuralWorker_Proxies extends Recyclable.Root {
 
   get totalWorkerCount() {
     return this.workerProxyArray.length;
+  }
+
+  /** */
+  toString() {
+    let str = 
+        `backendName=${this.backendName}, `
+      + `nNeuralWorker_ModeId=`
+        + `${NeuralWorker.Mode.Singleton.getName_byId( this.nNeuralWorker_ModeId )}`
+        + `(${this.nNeuralWorker_ModeId}), `
+      + `neuralNetCount=${this.neuralNetCount}, `
+      + `totalWorkerCount=${this.totalWorkerCount}`
+    ;
+    return str;
   }
 
 }

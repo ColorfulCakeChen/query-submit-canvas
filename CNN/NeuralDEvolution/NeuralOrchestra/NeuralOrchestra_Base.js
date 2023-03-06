@@ -320,7 +320,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     if ( !bCreateOk )
       throw Error( `NeuralOrchestra_Base.workerProxies_compileShaders_async(): `
         + `Failed to create neural networks. `
-        + `${this.workerProxies}`
+        + `workerProxies={ ${this.workerProxies} }`
       );
 
     return bCreateOk;
@@ -469,7 +469,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
       throw Error( `NeuralOrchestra_Base.`
         + `devolutionVersus_next_load__and__workerProxies_NeuralNetArray_create__async(): `
         + `Failed to create neural networks. `
-        + `${this.workerProxies}`
+        + `workerProxies={ ${this.workerProxies} }`
       );
   
     return bCreateOk;
