@@ -161,7 +161,7 @@ class GSheetsAPIv4_UrlComposer extends Recyclable.Root {
           = new HttpRequest.Fetcher( this.bLogFetcherEventToConsole );
 
         let httpResulter = httpRequestFetcher
-          .asyncGenerator_by_progressParent_url_timeout_retry_responseType_method_body(
+          .url_fetch_asyncGenerator(
             progressFetcher, url, params_loading_retryWaiting );
 
         // Abort immediately if caller requests to abort before

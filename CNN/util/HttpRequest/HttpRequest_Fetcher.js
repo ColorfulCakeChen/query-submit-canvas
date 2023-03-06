@@ -97,7 +97,7 @@ class HttpRequest_Fetcher {
    * ( progressLoading.valuePercentage == 100 ) will still be reported for
    * representing the request already done (with failure, though).
    */
-  async* asyncGenerator_by_progressParent_url_timeout_retry_responseType_method_body(
+  async* url_fetch_asyncGenerator(
     progressParent,
     url,
 
@@ -159,7 +159,7 @@ class HttpRequest_Fetcher {
         // 1. Try to load.
         try {
           responseText
-            = yield* HttpRequest_Fetcher.asyncGenerator_loading.call( this );
+            = yield* HttpRequest_Fetcher.load_asyncGenerator.call( this );
 
           // No need to retry, since request is succeeded (when executed to here).
           bRetry = false;
@@ -206,7 +206,7 @@ class HttpRequest_Fetcher {
         // 4.
         if ( bRetry ) {
           // If retry, waiting before it (i.e. truncated exponential backoff algorithm).
-          yield* HttpRequest_Fetcher.asyncGenerator_retryWaiting.call( this );
+          yield* HttpRequest_Fetcher.retryWait_asyncGenerator.call( this );
         } else {
           // If no retry, the retry waiting timer should be completed to 100%
           HttpRequest_Fetcher.progressRetryWaiting_set_whenDone.call( this );
@@ -357,7 +357,7 @@ class HttpRequest_Fetcher {
     //   - .handle_retryWaitingTimer() never be called.
     //       So, let the retry waiting progress done (100%) here.
     //
-    //   - .asyncGenerator_retryWaiting() be blocked forever.
+    //   - .retryWait_asyncGenerator() be blocked forever.
     //       So, resolve the retry waiting promise here.
     //
     {
@@ -381,8 +381,7 @@ class HttpRequest_Fetcher {
    * An async generator for sending a http request and tracking its progress
    * (without retry).
    *
-   * (This method is called by
-   * asyncGenerator_by_progressParent_url_timeout_retry_responseType_method_body())
+   * (This method is called by url_fetch_asyncGenerator())
    *
    *
    * @param {HttpRequest_Fetcher} this
@@ -410,7 +409,7 @@ class HttpRequest_Fetcher {
    * ( .progressLoading.valuePercentage == 100 ) will still be reported for
    * representing the request already done (with failure, though).
    */
-  static async* asyncGenerator_loading() {
+  static async* load_asyncGenerator() {
 
     // 0.
 
@@ -528,7 +527,7 @@ class HttpRequest_Fetcher {
       // if ( 200 !== xhr.status ) {
       //   //debugger;
       //   throw Error( `( ${this.url} ) HttpRequest_Fetcher`
-      //     + `.asyncGenerator_loading(): `
+      //     + `.load_asyncGenerator(): `
       //     + `When done, `
       //     + `xhr.status ( ${xhr.status} ) should be 200.` );
       // }
@@ -537,7 +536,7 @@ class HttpRequest_Fetcher {
       if ( 100 != this.progressLoading.valuePercentage ) {
         //debugger;
         throw Error( `( ${this.url} ) HttpRequest_Fetcher`
-          + `.asyncGenerator_loading(): `
+          + `.load_asyncGenerator(): `
           + `When done, `
           + `progressLoading.valuePercentage `
           + `( ${this.progressLoading.valuePercentage} ) should be 100.` );
@@ -551,8 +550,7 @@ class HttpRequest_Fetcher {
   /**
    * An async generator for tracking retry waiting timer progress.
    *
-   * (This method is called by
-   * asyncGenerator_by_progressParent_url_timeout_retry_responseType_method_body())
+   * (This method is called by url_fetch_asyncGenerator())
    *
    *
    * @param {HttpRequest_Fetcher} this
@@ -567,7 +565,7 @@ class HttpRequest_Fetcher {
    * @yield {Promise( object )}
    *   Yield a promise resolves to { done: true, value: this.progressRoot }.
    */
-  static async* asyncGenerator_retryWaiting() {
+  static async* retryWait_asyncGenerator() {
 
     if ( this.bLogEventToConsole )
       console.log( `( ${this.url} ) HttpRequest_Fetcher: `
