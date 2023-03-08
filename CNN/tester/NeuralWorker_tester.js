@@ -224,7 +224,7 @@ class PerformanceTestCase extends Recyclable.Root {
           = `NeuralNet.${this.testCaseName}: ${strWeightCountInfo}.`;
 
         console.log( `nConvStageTypeName=`
-          + `${neuralNetParams.nConvStageTypeName_with_Id}, `
+          + `${this.neuralNetParamsBase.nConvStageTypeName_with_Id}, `
           + strWeightCountInfoLong );
 
         g_Controls.Info_TextArea.textContent = strWeightCountInfo;
