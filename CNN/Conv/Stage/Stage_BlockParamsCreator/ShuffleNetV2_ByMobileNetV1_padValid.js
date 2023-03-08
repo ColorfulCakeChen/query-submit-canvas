@@ -18,6 +18,11 @@ import { ShuffleNetV2_ByMobileNetV1 } from "./ShuffleNetV2_ByMobileNetV1.js";
  *    But the issue does not exist when ( strides = 2, pad = "same" ) or
  *    ( pad = "valid" ) in those platforms.
  *
+ *      - (2023/03/08) Note: The above problem (in mobile phone Moto e40) seems gone.
+ *          So, It needs not worry to use ShuffleNetV2_ByMobileNetV1. After all,
+ *          using this ShuffleNetV2_ByMobileNetV1_padValid has some drawback (see
+ *          the following).
+ *
  * For achieving ShuffleNetV2 with depthwise padding "valid",
  * ShuffleNetV2_ByMobileNetV1 is necessary because other ShuffleNetV2_ByXxx
  * (with depthwise padding "same") could not concatenate two channel groups which
