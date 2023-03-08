@@ -48,10 +48,13 @@ import { ShuffleNetV2_ByMobileNetV1 } from "./ShuffleNetV2_ByMobileNetV1.js";
 class ShuffleNetV2_ByMobileNetV1_padValid extends ShuffleNetV2_ByMobileNetV1 {
 
   /**
-   * Used as default Stage.BlockParamsCreator.ShuffleNetV2_ByMobileNetV1_padValid provider for conforming to Recyclable interface.
+   * Used as default Stage.BlockParamsCreator.ShuffleNetV2_ByMobileNetV1_padValid
+   * provider for conforming to Recyclable interface.
    */
-  static Pool = new Pool.Root( "Stage.BlockParamsCreator.ShuffleNetV2_ByMobileNetV1_padValid.Pool",
-    ShuffleNetV2_ByMobileNetV1_padValid, ShuffleNetV2_ByMobileNetV1_padValid.setAsConstructor );
+  static Pool = new Pool.Root(
+    "Stage.BlockParamsCreator.ShuffleNetV2_ByMobileNetV1_padValid.Pool",
+    ShuffleNetV2_ByMobileNetV1_padValid,
+    ShuffleNetV2_ByMobileNetV1_padValid.setAsConstructor );
 
   /**
    */
