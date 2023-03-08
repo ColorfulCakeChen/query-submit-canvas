@@ -257,8 +257,10 @@ class NeuralOrchestra_Base extends Recyclable.Root {
    * during game splash screen displaying.
    *
    * @param {NeuralNet.ParamsBase} neuralNetParamsBase
-   *   The neural network configuration. It will be used for both two neural networks.
-   * It will be kept (i.e. owned and destroyed) by this NeuralOrchetra object.
+   *   The neural network configuration. It will be used for both two neural
+   * networks. It will be kept (i.e. owned and destroyed) by this NeuralOrchetra
+   * object. Its .nConvStageTypeId may be modified according to which backend
+   * (webgl or cpu) is used finally for gaining the best performance.
    *
    * @return {Promise}
    *   Return a promise:
@@ -294,13 +296,11 @@ class NeuralOrchestra_Base extends Recyclable.Root {
 
     // 1. Try backend "webgl" first.
     //
-    // Backend "webgl" has best performance with one web worker (NO_FILL).
+    // Backend "webgl" has best performance with SHUFFLE_NET_V2_BY_MOBILE_NET_V1 (5)
+    // and one web worker (NO_FILL).
     //
     {
-      if ( ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2
-             === neuralNetParamsBase.nConvStageTypeId ) // (4)
-        neuralNetParamsBase.nConvStageTypeId
-          = ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1; // (5)
+      neuralNetParamsBase.nConvStageTypeId_adjust_for_backend_webgl_if_ShuffleNetV2();
 
       initOkPromise = this.workerProxies.init_async( "webgl",
         NeuralWorker.Mode.Singleton.Ids.ONE_WORKER__ONE_SCALE__NO_FILL // (0) 
@@ -316,13 +316,11 @@ class NeuralOrchestra_Base extends Recyclable.Root {
 
     // 2. If backend "webgl" initialization failed, try backend "cpu".
     //
-    // Backend "cpu" has best performance with two web workers (NO_FILL) by .applier().
+    // Backend "cpu" has best performance with SHUFFLE_NET_V2 (4)
+    // and two web workers (NO_FILL) by .applier().
     //
     {
-      if ( ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1
-             === neuralNetParamsBase.nConvStageTypeId ) // (5)
-        neuralNetParamsBase.nConvStageTypeId
-          = ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2; // (4)
+      neuralNetParamsBase.nConvStageTypeId_adjust_for_backend_cpu_if_ShuffleNetV2();
 
       initOkPromise = this.workerProxies.init_async( "cpu",
         NeuralWorker.Mode.Singleton.Ids.TWO_WORKER__ONE_SCALE__NO_FILL__APPLIER // (5) 

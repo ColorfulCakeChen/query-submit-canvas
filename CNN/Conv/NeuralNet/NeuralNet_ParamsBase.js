@@ -211,6 +211,49 @@ class NeuralNet_ParamsBase extends Recyclable.Root {
     return ValueDesc.ConvStageType.Singleton.getName_byId( this.nConvStageTypeId );
   }
 
+
+  /**
+   * Set nConvStageTypeId to SHUFFLE_NET_V2 (4) if
+   * it is SHUFFLE_NET_V2_BY_MOBILE_NET_V1 (5) now.
+   *
+   *
+   * Note:
+   *
+   * The following two convolution neural network architectures use the same
+   * filter weights and produce the same result (except some floating-point
+   * accumulation error):
+   *   - ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2 (4)
+   *   - ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1 (5)
+   *
+   * However, they have different performance advantage in different backend.
+   *
+   *   - If backend is CPU, SHUFFLE_NET_V2 (4) is faster than
+   *       SHUFFLE_NET_V2_BY_MOBILE_NET_V1 (5). In fact, it is the fastest
+   *       convolution neural network architecture in backend CPU.
+   *
+   *   - If backend is WEBGL, SHUFFLE_NET_V2_BY_MOBILE_NET_V1 (5) is faster
+   *       than SHUFFLE_NET_V2 (4).
+   *
+   */
+  nConvStageTypeId_adjust_for_backend_cpu_if_ShuffleNetV2() {
+    if ( ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1
+            === this.nConvStageTypeId ) // (5)
+      this.nConvStageTypeId
+        = ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2; // (4)
+  }
+
+  /**
+   * Set nConvStageTypeId to SHUFFLE_NET_V2_BY_MOBILE_NET_V1 (5) if
+   * it is SHUFFLE_NET_V2 (4) now.
+   */
+  nConvStageTypeId_adjust_for_backend_webgl_if_ShuffleNetV2() {
+    if ( ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2
+            === this.nConvStageTypeId ) // (4)
+      this.nConvStageTypeId
+        = ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1; // (5)
+  }
+
+
   /** @override */
   toString() {
     let str = ``
