@@ -215,20 +215,6 @@ class NeuralOrchestra_Base extends Recyclable.Root {
       // For image, every RGBA input channel always has 256 (= 2 ** 8) possible values.
       const vocabularyCountPerInputChannel = 256;
 
-      // (2023/03/08 Remarked) Use SHUFFLE_NET_V2_BY_MOBILE_NET_V1 instead.
-      // const nConvStageType
-      //   = ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID;
-
-//!!! ...unfinished... (2023/03/08)
-// If backend is WEBGL,
-//   use ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1 // (5)
-//
-// Perhaps, if backend is CPU,
-//   use ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2 (4).
-// Because they use the same filter weights and is faster in backend CPU.
-// In fact, it is the fastest convolution neural network architecture in backend CPU.
-//
-
       // Use faster convolution neural network architecture.
       //
       // Although using SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID (6) is even
@@ -283,30 +269,68 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     this.neuralNetParamsBase_dispose();
     this.neuralNetParamsBase = neuralNetParamsBase;
 
+    // Note:
+    //
+    // The following two convolution neural network architectures use the same
+    // filter weights and produce the same result (except some floating-point
+    // accumulation error):
+    //   - ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2 (4)
+    //   - ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1 (5)
+    //
+    // However, they have different performance advantage in different backend.
+    //
+    //   - If backend is CPU, SHUFFLE_NET_V2 (4) is faster than
+    //       SHUFFLE_NET_V2_BY_MOBILE_NET_V1 (5). In fact, it is the fastest
+    //       convolution neural network architecture in backend CPU.
+    //
+    //   - If backend is WEBGL, SHUFFLE_NET_V2_BY_MOBILE_NET_V1 (5) is faster
+    //       than SHUFFLE_NET_V2 (4).
+    //
+    // So, this method will adjust to the best architecture according to backend.
+    //
+
+    let initOkPromise;
+    let initOk;
+
     // 1. Try backend "webgl" first.
     //
     // Backend "webgl" has best performance with one web worker (NO_FILL).
     //
-    let initOkPromise = this.workerProxies.init_async( "webgl",
-      NeuralWorker.Mode.Singleton.Ids.ONE_WORKER__ONE_SCALE__NO_FILL // (0) 
-    );
- 
-    let initOk = await initOkPromise;
-    if ( initOk ) {
-      let bCreateOk // For WebGL, compile WebGL shaders in advance.
-        = NeuralOrchestra_Base.workerProxies_compileShaders_async.call( this );
-      return bCreateOk;
+    {
+      if ( ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2
+             === neuralNetParamsBase.nConvStageTypeId ) // (4)
+        neuralNetParamsBase.nConvStageTypeId
+          = ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1; // (5)
+
+      initOkPromise = this.workerProxies.init_async( "webgl",
+        NeuralWorker.Mode.Singleton.Ids.ONE_WORKER__ONE_SCALE__NO_FILL // (0) 
+      );
+  
+      initOk = await initOkPromise;
+      if ( initOk ) {
+        let bCreateOk // For WebGL, compile WebGL shaders in advance.
+          = NeuralOrchestra_Base.workerProxies_compileShaders_async.call( this );
+        return bCreateOk;
+      }
     }
 
     // 2. If backend "webgl" initialization failed, try backend "cpu".
     //
     // Backend "cpu" has best performance with two web workers (NO_FILL) by .applier().
     //
-    initOkPromise = this.workerProxies.init_async( "cpu",
-      NeuralWorker.Mode.Singleton.Ids.TWO_WORKER__ONE_SCALE__NO_FILL__APPLIER // (5) 
-    );
-  
-    initOk = await initOkPromise;
+    {
+      if ( ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1
+             === neuralNetParamsBase.nConvStageTypeId ) // (5)
+        neuralNetParamsBase.nConvStageTypeId
+          = ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2; // (4)
+
+      initOkPromise = this.workerProxies.init_async( "cpu",
+        NeuralWorker.Mode.Singleton.Ids.TWO_WORKER__ONE_SCALE__NO_FILL__APPLIER // (5) 
+      );
+
+      initOk = await initOkPromise;
+    }
+
     return initOk;
   }
 
