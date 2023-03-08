@@ -6,8 +6,8 @@ import * as ValueDesc from "../../../Unpacker/ValueDesc.js";
 import { ShuffleNetV2_ByMobileNetV1 } from "./ShuffleNetV2_ByMobileNetV1.js";
 
 /**
- * This class is almost the same as ShuffleNetV2_ByMobileNetV1 except the depthwise
- * convolution's padding is "valid" (instead of "same").
+ * This class is almost the same as ShuffleNetV2_ByMobileNetV1 except the
+ * depthwise convolution's padding is "valid" (instead of "same").
  *
  *
  * 1. Reason
