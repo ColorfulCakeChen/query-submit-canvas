@@ -395,8 +395,14 @@ class HeightWidthDepth {
       this.testCaseMap = new Map();
 
     const vocabularyCountPerInputChannel = 256;
+
+    // (2023/03/08 Remarked) Use SHUFFLE_NET_V2_BY_MOBILE_NET_V1 instead.
+    // const nConvStageType
+    //   = ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID; // (6)
+
+    // Use ( pad = same ) so that edge pixels will not be dropped.
     const nConvStageType
-      = ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID;
+      = ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1; // (5)
 
     // ShuffleNetV2 uses twice block count to compensate reduced channel count.
     //let blockCountTotalRequested_ShuffleNet = this.blockCountTotalRequested * 2;
