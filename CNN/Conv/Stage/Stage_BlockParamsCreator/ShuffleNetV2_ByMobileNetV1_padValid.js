@@ -26,9 +26,9 @@ import { ShuffleNetV2_ByMobileNetV1 } from "./ShuffleNetV2_ByMobileNetV1.js";
  *
  * 2. Drawback
  *
- * The disadvantage is that the right-most and bottom-most pixels will be dropped
- * when pass-through the higher half of depthwise convolution due to padding
- * "valid".
+ * The disadvantage is that the left-most, top-most, right-most and bottom-most
+ * pixels will be dropped when pass-through the higher half of depthwise
+ * convolution due to padding "valid".
  *
  *
  * 2.1 Drawback and 1D data
