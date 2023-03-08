@@ -220,7 +220,7 @@ class PerformanceTestCase extends Recyclable.Root {
           PerformanceTestCase.randomTestWeightArray, 0, neuralNetParams );
 
         let strWeightCountInfo = neuralNet.toString_WeightCount();
-        let strWeightCountInfo_withConvType = `${strWeightCountInfo}. `
+        let strWeightCountInfo_withConvType = `${strWeightCountInfo}, `
           + `nConvStageTypeName=`
           + `${this.neuralNetParamsBase.nConvStageTypeName_with_Id}.`
           ;
