@@ -644,13 +644,15 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
                       if ( inChannelPartInfo.bPassThrough ) { // For pass-through half channels.
                         if ( inChannelPartInfo.isPassThrough_FilterPosition_NonZero( effectFilterY, effectFilterX ) ) {
 
-                          this.filtersArray[ filterIndex ] = filterValuePassThrough; // The only one filter position (in the pass-through part) may have non-zero value.
+                          // The only one filter position (in the pass-through part) may have non-zero value.
+                          this.filtersArray[ filterIndex ] = filterValuePassThrough;
                           tBounds
                             .set_byBoundsArray( this.boundsArraySet.afterUndoPreviousActivationEscaping, inChannel )
                             .multiply_byN( thePassThroughStyleInfo.filterValue );
 
                         } else {
-                          this.filtersArray[ filterIndex ] = 0; // All other filter positions (in the pass-through part) are zero.
+                          // All other filter positions (in the pass-through part) are zero.
+                          this.filtersArray[ filterIndex ] = 0;
                           tBounds.set_byN( 0 );
                         }
 
