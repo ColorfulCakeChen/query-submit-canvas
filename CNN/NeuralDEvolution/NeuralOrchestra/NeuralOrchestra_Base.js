@@ -271,26 +271,6 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     this.neuralNetParamsBase_dispose();
     this.neuralNetParamsBase = neuralNetParamsBase;
 
-    // Note:
-    //
-    // The following two convolution neural network architectures use the same
-    // filter weights and produce the same result (except some floating-point
-    // accumulation error):
-    //   - ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2 (4)
-    //   - ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1 (5)
-    //
-    // However, they have different performance advantage in different backend.
-    //
-    //   - If backend is CPU, SHUFFLE_NET_V2 (4) is faster than
-    //       SHUFFLE_NET_V2_BY_MOBILE_NET_V1 (5). In fact, it is the fastest
-    //       convolution neural network architecture in backend CPU.
-    //
-    //   - If backend is WEBGL, SHUFFLE_NET_V2_BY_MOBILE_NET_V1 (5) is faster
-    //       than SHUFFLE_NET_V2 (4).
-    //
-    // So, this method will adjust to the best architecture according to backend.
-    //
-
     let initOkPromise;
     let initOk;
 
