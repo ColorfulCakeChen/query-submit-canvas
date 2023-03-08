@@ -220,18 +220,20 @@ class PerformanceTestCase extends Recyclable.Root {
           PerformanceTestCase.randomTestWeightArray, 0, neuralNetParams );
 
         let strWeightCountInfo = neuralNet.toString_WeightCount();
-        let strWeightCountInfoLong = `NeuralNet.${this.testCaseName}: `
-          + `${strWeightCountInfo}. `
+        let strWeightCountInfo_withConvType = `${strWeightCountInfo}. `
           + `nConvStageTypeName=`
           + `${this.neuralNetParamsBase.nConvStageTypeName_with_Id}.`
           ;
 
+        let strWeightCountInfoLong = `NeuralNet.${this.testCaseName}: `
+          + `${strWeightCountInfo_withConvType}`;
+
         console.log( strWeightCountInfoLong );
 
-        if ( g_Controls.Info_TextArea.textContent.indexof( strWeightCountInfo ) < 0 ) {
+        if ( g_Controls.Info_TextArea.textContent.indexOf( strWeightCountInfo ) < 0 ) {
           if ( g_Controls.Info_TextArea.textContent.length > 0 )
             g_Controls.Info_TextArea.textContent += "\n";
-          g_Controls.Info_TextArea.textContent += strWeightCountInfo;
+          g_Controls.Info_TextArea.textContent += strWeightCountInfo_withConvType;
         }
 
         if ( false == bInitOk )
