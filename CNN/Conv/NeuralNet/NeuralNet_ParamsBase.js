@@ -207,10 +207,21 @@ class NeuralNet_ParamsBase extends Recyclable.Root {
     return Block.ParamsBase;
   }
 
+  /**
+   * @return {string}
+   *  e.g. "SHUFFLE_NET_V2_BY_MOBILE_NET_V1"
+   */
   get nConvStageTypeName() {
     return ValueDesc.ConvStageType.Singleton.getName_byId( this.nConvStageTypeId );
   }
 
+  /**
+   * @return {string}
+   *  e.g. "SHUFFLE_NET_V2_BY_MOBILE_NET_V1(5)"
+   */
+  get nConvStageTypeName_with_Id() {
+    return `${this.nConvStageTypeName}(${this.nConvStageTypeId})`;
+  }
 
   /**
    * Set nConvStageTypeId to SHUFFLE_NET_V2 (4) if
@@ -263,7 +274,7 @@ class NeuralNet_ParamsBase extends Recyclable.Root {
       + `vocabularyChannelCount=${this.vocabularyChannelCount}, `
       + `vocabularyCountPerInputChannel=${this.vocabularyCountPerInputChannel}, `
 
-      + `nConvStageTypeName=${this.nConvStageTypeName}(${this.nConvStageTypeId}), `
+      + `nConvStageTypeName=${this.nConvStageTypeName_with_Id}, `
 
       + `blockCountTotalRequested=${this.blockCountTotalRequested}, `
 

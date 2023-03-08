@@ -137,6 +137,11 @@ class PerformanceTestCase extends Recyclable.Root {
       await tf.ready(); // Ensure tf.getBackend() workable.
       let backendName = tf.getBackend();
 
+      if ( backendName === "webgl" )
+        neuralNetParamsBase.nConvStageTypeId_adjust_for_backend_webgl_if_ShuffleNetV2();
+      else if ( backendName === "cpu" )
+        neuralNetParamsBase.nConvStageTypeId_adjust_for_backend_cpu_if_ShuffleNetV2();
+
       let bInitOkPromise = neuralWorkerProxies.init_async(
         backendName, this.nNeuralWorker_ModeId );
 
@@ -217,7 +222,11 @@ class PerformanceTestCase extends Recyclable.Root {
         let strWeightCountInfo = neuralNet.toString_WeightCount();
         let strWeightCountInfoLong
           = `NeuralNet.${this.testCaseName}: ${strWeightCountInfo}.`;
-        console.log( strWeightCountInfoLong );
+
+        console.log( `nConvStageTypeName=`
+          + `${neuralNetParams.nConvStageTypeName_with_Id}, `
+          + strWeightCountInfoLong );
+
         g_Controls.Info_TextArea.textContent = strWeightCountInfo;
 
         if ( false == bInitOk )
