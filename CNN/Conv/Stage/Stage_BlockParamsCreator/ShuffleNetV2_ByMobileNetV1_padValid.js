@@ -18,10 +18,10 @@ import { ShuffleNetV2_ByMobileNetV1 } from "./ShuffleNetV2_ByMobileNetV1.js";
  *    But the issue does not exist when ( strides = 2, pad = "same" ) or
  *    ( pad = "valid" ) in those platforms.
  *
- * For achieving ShuffleNetV2 with depthwise padding "valid", ShuffleNetV2_ByMobileNetV1
- * is necessary because other ShuffleNetV2_ByXxx (with depthwise padding "same")
- * could not concatenate two channel groups which have different image size (due
- * to padding "valid").
+ * For achieving ShuffleNetV2 with depthwise padding "valid",
+ * ShuffleNetV2_ByMobileNetV1 is necessary because other ShuffleNetV2_ByXxx
+ * (with depthwise padding "same") could not concatenate two channel groups which
+ * have different image size (due to padding "valid").
  *
  *
  * 2. Drawback
