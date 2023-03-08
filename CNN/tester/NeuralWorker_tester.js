@@ -220,14 +220,19 @@ class PerformanceTestCase extends Recyclable.Root {
           PerformanceTestCase.randomTestWeightArray, 0, neuralNetParams );
 
         let strWeightCountInfo = neuralNet.toString_WeightCount();
-        let strWeightCountInfoLong
-          = `NeuralNet.${this.testCaseName}: ${strWeightCountInfo}.`;
-
-        console.log( `${strWeightCountInfoLong} `
+        let strWeightCountInfoLong = `NeuralNet.${this.testCaseName}: `
+          + `${strWeightCountInfo}. `
           + `nConvStageTypeName=`
-          + `${this.neuralNetParamsBase.nConvStageTypeName_with_Id}.` );
+          + `${this.neuralNetParamsBase.nConvStageTypeName_with_Id}.`
+          ;
 
-        g_Controls.Info_TextArea.textContent = strWeightCountInfo;
+        console.log( strWeightCountInfoLong );
+
+        if ( g_Controls.Info_TextArea.textContent.indexof( strWeightCountInfo ) < 0 ) {
+          if ( g_Controls.Info_TextArea.textContent.length > 0 )
+            g_Controls.Info_TextArea.textContent += "\n";
+          g_Controls.Info_TextArea.textContent += strWeightCountInfo;
+        }
 
         if ( false == bInitOk )
           throw Error( `Failed to initialize neuralNet object. `
@@ -829,6 +834,7 @@ function TestButton_onClick( event ) {
 
 
   g_Controls.TestButton.disabled = true; // Prevent multiple clicks.
+  g_Controls.Info_TextArea.textContent = "";
 
   // Extract parameters from UI.
   let largerFactor = Number.parseInt( g_Controls.largerFactor_Text.value );
