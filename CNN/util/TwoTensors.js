@@ -9,7 +9,9 @@ export { filtersTensor4d_biasesTensor3d };
  * @return {Class}
  *   Return a sub-class of Base.
  */
-let filtersTensor4d_biasesTensor3d = ( ParentClass = Object )  => class filtersTensor4d_biasesTensor3d extends ParentClass {
+let filtersTensor4d_biasesTensor3d
+  = ( ParentClass = Object ) => class filtersTensor4d_biasesTensor3d
+      extends ParentClass {
 
   /**
    *

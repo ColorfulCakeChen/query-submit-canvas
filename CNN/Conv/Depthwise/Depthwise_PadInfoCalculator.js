@@ -46,38 +46,47 @@ import * as ValueDesc from "../../Unpacker/ValueDesc.js";
  * @member {number} outputElementCountY   Output image elements count per height (= ( outputWidth * outputChannelCount ) ).
  * @member {number} outputElementCount    Output image elements count (= ( outputHeight * outputElementCountY ) ).
  */
-let PadInfoCalculator = ( ParentClass = Object ) => class PadInfoCalculator extends Recyclable.Base( ParentClass ) {
+let PadInfoCalculator = ( ParentClass = Object ) => class PadInfoCalculator
+  extends Recyclable.Base( ParentClass ) {
 
   /**
-   * Used as default Depthwise.PadInfoCalculator provider for conforming to Recyclable interface.
+   * Used as default Depthwise.PadInfoCalculator provider for conforming to
+   * Recyclable interface.
    */
-  static Pool = new Pool.Root( "Depthwise.PadInfoCalculator.Pool", PadInfoCalculator, PadInfoCalculator.setAsConstructor );
+  static Pool = new Pool.Root( "Depthwise.PadInfoCalculator.Pool",
+    PadInfoCalculator, PadInfoCalculator.setAsConstructor );
 
   /**
    *
    */
   constructor(
-    inputHeight, inputWidth, inputChannelCount, AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad, ...restArgs ) {
+    inputHeight, inputWidth, inputChannelCount,
+    AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad, ...restArgs ) {
 
     super( ...restArgs );
     PadInfoCalculator.setAsConstructor_self.call( this,
-      inputHeight, inputWidth, inputChannelCount, AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad );
+      inputHeight, inputWidth, inputChannelCount,
+      AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad );
   }
 
   /** @override */
   static setAsConstructor(
-     inputHeight, inputWidth, inputChannelCount, AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad, ...restArgs ) {
+    inputHeight, inputWidth, inputChannelCount,
+    AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad, ...restArgs ) {
 
     super.setAsConstructor.apply( this, restArgs );
     PadInfoCalculator.setAsConstructor_self.call( this,
-      inputHeight, inputWidth, inputChannelCount, AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad );
+      inputHeight, inputWidth, inputChannelCount,
+      AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad );
     return this;
   }
 
   /** @override */
   static setAsConstructor_self(
-    inputHeight, inputWidth, inputChannelCount, AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad ) {
-    this.set( inputHeight, inputWidth, inputChannelCount, AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad );
+    inputHeight, inputWidth, inputChannelCount,
+    AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad ) {
+    this.set( inputHeight, inputWidth, inputChannelCount,
+      AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad );
   }
 
   /** @override */
@@ -130,7 +139,9 @@ let PadInfoCalculator = ( ParentClass = Object ) => class PadInfoCalculator exte
   /**
    *
    */
-  set( inputHeight, inputWidth, inputChannelCount, AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad ) {
+  set( inputHeight, inputWidth, inputChannelCount,
+    AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad ) {
+
     this.inputHeight = inputHeight;
     this.inputWidth = inputWidth;
     this.inputChannelCount = inputChannelCount;
@@ -142,8 +153,10 @@ let PadInfoCalculator = ( ParentClass = Object ) => class PadInfoCalculator exte
 //!!! ...unfinished... (2021/03/17) What about ( filterHeight <= 0 ) or ( filterWidth <= 0 )?
 
     this.channelMultiplier = AvgMax_Or_ChannelMultiplier;
-    if (   ( ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.AVG === AvgMax_Or_ChannelMultiplier )
-        || ( ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.MAX === AvgMax_Or_ChannelMultiplier ) ) {
+    if (   ( ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.AVG
+               === AvgMax_Or_ChannelMultiplier )
+        || ( ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.MAX
+               === AvgMax_Or_ChannelMultiplier ) ) {
       this.channelMultiplier = 1;
     }
 
@@ -152,8 +165,10 @@ let PadInfoCalculator = ( ParentClass = Object ) => class PadInfoCalculator exte
     // Strides and Padding.
     this.stridesPadInfo = ValueDesc.StridesPad.Singleton.getInfo_byId( stridesPad );
     {
-      if ( !this.stridesPadInfo ) { // If not found, using default which could let add-input-to-output possible.
-        this.stridesPadInfo = ValueDesc.StridesPad.Singleton.getInfo_byId( ValueDesc.StridesPad.Singleton.Ids.STRIDES_1_PAD_SAME );
+      // If not found, using default which could let add-input-to-output possible.
+      if ( !this.stridesPadInfo ) {
+        this.stridesPadInfo = ValueDesc.StridesPad.Singleton.getInfo_byId(
+          ValueDesc.StridesPad.Singleton.Ids.STRIDES_1_PAD_SAME );
       }
 
       this.strides = this.stridesPadInfo.strides;
@@ -173,7 +188,8 @@ let PadInfoCalculator = ( ParentClass = Object ) => class PadInfoCalculator exte
     this.effectFilterWidth =  this.dilationWidth  * ( this.filterWidth  - 1 ) + 1;
     this.effectFilterSize = this.effectFilterHeight * this.effectFilterWidth;
 
-    // (The following codes for output image height and width and padding calculation are copied from
+    // (The following codes for output image height and width and padding calculation
+    // are copied from
     // https://github.com/tensorflow/tfjs/blob/tfjs-v3.8.0/tfjs-core/src/ops/conv_util.ts)
     {
       // Determine output image height and width without padding.
@@ -347,8 +363,10 @@ let PadInfoCalculator = ( ParentClass = Object ) => class PadInfoCalculator exte
 
 
 /**
- * Almost the same as Depthwise.PadInfoCalculator class except its parent class is fixed to Object. In other words, caller can not
- * specify the parent class of Depthwise.PadInfoCalculatorRoot (so it is named "Root" which can not have parent class).
+ * Almost the same as Depthwise.PadInfoCalculator class except its parent class
+ * is fixed to Object. In other words, caller can not specify the parent class
+ * of Depthwise.PadInfoCalculatorRoot (so it is named "Root" which can not have
+ * parent class).
  */
 class PadInfoCalculatorRoot extends PadInfoCalculator() {
 }

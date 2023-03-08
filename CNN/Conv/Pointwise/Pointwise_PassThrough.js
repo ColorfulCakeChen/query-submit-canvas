@@ -58,7 +58,8 @@ import * as MultiLayerMap from "../../util/MultiLayerMap.js";
  *   The pass-through biases array.
  */
 let PassThrough_FiltersArray_BiasesArray
-  = ( ParentClass = Object ) => class PassThrough_FiltersArray_BiasesArray extends Recyclable.Base( ParentClass ) {
+  = ( ParentClass = Object ) => class PassThrough_FiltersArray_BiasesArray
+      extends Recyclable.Base( ParentClass ) {
 
   /**
    * Used as default Pointwise.PassThrough_FiltersArray_BiasesArray provider for conforming to Recyclable interface.

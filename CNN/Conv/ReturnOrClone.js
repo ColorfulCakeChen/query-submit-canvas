@@ -6,7 +6,8 @@ import * as ValueDesc from "../Unpacker/ValueDesc.js";
  * Provide return_input_directly() and keep_input_return_copy.
  *
  */
-let ReturnOrClone_Base = ( ParentClass = Object ) => class ReturnOrClone_Base extends ParentClass {
+let ReturnOrClone_Base = ( ParentClass = Object ) => class ReturnOrClone_Base
+  extends ParentClass {
 
   /**
    *

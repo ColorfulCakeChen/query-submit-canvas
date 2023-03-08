@@ -56,7 +56,8 @@ import { PadInfoCalculator } from "./Depthwise_PadInfoCalculator.js";
  * @see PadInfoCalculator
  */
 let PassThrough_FiltersArray_BiasesArray
-  = ( ParentClass = Object ) => class PassThrough_FiltersArray_BiasesArray extends PadInfoCalculator( ParentClass ) {
+  = ( ParentClass = Object ) => class PassThrough_FiltersArray_BiasesArray
+      extends PadInfoCalculator( ParentClass ) {
 
   /**
    * Used as default Depthwise.PassThrough_FiltersArray_BiasesArray provider for conforming to Recyclable interface.
