@@ -435,7 +435,8 @@ class HeightWidthDepth {
           this.height, this.width, this.depth,
           this.vocabularyChannelCount, vocabularyCountPerInputChannel,
           nConvStageType,
-          blockCountTotalRequested_ShuffleNet, output_channelCount_real, bKeepInputTensor
+          blockCountTotalRequested_ShuffleNet, output_channelCount_real,
+          bKeepInputTensor
         ),
         theModeInfo.id
       );
@@ -480,15 +481,16 @@ class HeightWidthDepth {
       testCase.preparePromise = testCase.prepare_async( this.neuralWorkerProxies );
     }
 
-    // Note: Even if non-first time test this case, it is still necessary to wait for
-    //       its initialization completely (which is doing/done by this case's first
-    //       time testing).
+    // Note: Even if non-first time test this case, it is still necessary to wait
+    //       for its initialization completely (which is doing/done by this case's
+    //       first time testing).
     await testCase.preparePromise;
 
     let imageData;
     {
       let ctx = this.testCanvas.getContext( "2d" );
-      imageData = ctx.getImageData( 0, 0, this.testCanvas.width, this.testCanvas.height );
+      imageData = ctx.getImageData(
+        0, 0, this.testCanvas.width, this.testCanvas.height );
     }
 
     let resultFloat32ArrayArrayPromise
@@ -552,7 +554,8 @@ class HeightWidthDepth {
       let pool_all_issuedCount_before = Pool.All.issuedCount;
 
       {
-        let memoryInfo_testCorrectness_before = tf.memory(); // Test memory leakage of imageSourceBag.
+        // Test memory leakage of imageSourceBag.
+        let memoryInfo_testCorrectness_before = tf.memory();
 
         {
           asserter_Equal
@@ -595,11 +598,13 @@ class HeightWidthDepth {
               resultFloat32Array = testCase.NeuralNet_try_result( this.testCanvas );
             }
 
-            // First time test the case. Release all other test cases' neural networks
-            // (so that there will be enough memory). Create the specified neural network.
+            // First time test the case. Release all other test cases' neural
+            // networks (so that there will be enough memory). Create the
+            // specified neural network.
             if ( !testCase.preparePromise ) {
               this.neuralWorker_PerformanceTest_release_preparePromise();
-              testCase.preparePromise = testCase.prepare_async( this.neuralWorkerProxies );
+              testCase.preparePromise
+                = testCase.prepare_async( this.neuralWorkerProxies );
               await testCase.preparePromise;
             }
 
@@ -614,7 +619,8 @@ class HeightWidthDepth {
               timeInfo.elapsedTotal = 0;
               for ( let i = 0; i < timeInfo.times; ++i ) {
                 timeInfo.begin = Date.now();
-                let testByNamePromise = this.testNeuralWorker_ByName( testCase.testCaseName );
+                let testByNamePromise
+                  = this.testNeuralWorker_ByName( testCase.testCaseName );
                 resultFloat32ArrayArray = await testByNamePromise;
                 timeInfo.end = Date.now();
                 timeInfo.elapsed = timeInfo.end - timeInfo.begin;
@@ -660,7 +666,8 @@ class HeightWidthDepth {
 
         let memoryInfo_testCorrectness_after = tf.memory();
 
-        if ( memoryInfo_testCorrectness_after.numTensors != memoryInfo_testCorrectness_before.numTensors )
+        if ( memoryInfo_testCorrectness_after.numTensors
+               != memoryInfo_testCorrectness_before.numTensors )
           throw Error( `NeuralWorker_tester.tester() memory leak. `
             + `result tensor count (${memoryInfo_testCorrectness_after.numTensors}) `
             + `should be (${memoryInfo_testCorrectness_before.numTensors} `
