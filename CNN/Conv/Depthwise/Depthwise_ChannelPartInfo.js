@@ -12,7 +12,8 @@ import * as Recyclable from "../../util/Recyclable.js";
  * @member {number} inputChannelCount
  *   This ChannelPart includes how many input channels.
  *
- * @member {number} effectFilterY_passThrough, effectFilterX_passThrough
+ * @member {number} effectFilterY_passThrough
+ * @member {number} effectFilterX_passThrough
  *   For pass-through filters, there is only one position (inside the effect
  * depthwise filter) with non-zero value. All other positions of the filters
  * should be zero.
