@@ -27,14 +27,15 @@ import { ShuffleNetV2_ByMobileNetV1 } from "./ShuffleNetV2_ByMobileNetV1.js";
  * 2. Drawback
  *
  * The disadvantage is that the right-most and bottom-most pixels will be dropped
- * when pass-through the higher half of depthwise convolution due to padding "valid".
+ * when pass-through the higher half of depthwise convolution due to padding
+ * "valid".
  *
  *
  * 2.1 Drawback and 1D data
  *
- * Although 1D data (e.g. voice) has only one line (i.e. the only bottom-most data)
- * which should not be dropped (otherwise, all data are dropped), this disadvantage
- * will not be a diaster for 1D data.
+ * Although 1D data (e.g. voice) has only one line (i.e. the only bottom-most
+ * data) which should not be dropped (otherwise, all data are dropped), this
+ * disadvantage will not be a diaster for 1D data.
  *
  * The reason is that depthwise filter size (in some direction) can not be larger
  * than input data size (in that diecrtion). For 1D data, this means that only
