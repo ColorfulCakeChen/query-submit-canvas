@@ -230,12 +230,12 @@ class Stage_InferencedParams extends Recyclable.Root {
  * Mapping nConvStageTypeId (number as array index) to BlockParamsCreator class object.
  */
 Stage_InferencedParams.nConvStageTypeId_to_BlockParamsCreator_ClassArray = [
-  BlockParamsCreator.MobileNetV1,                         // ValueDesc.ConvStageType.Ids.MOBILE_NET_V1 (0)
-  BlockParamsCreator.MobileNetV1_padValid,                // ValueDesc.ConvStageType.Ids.MOBILE_NET_V1_PAD_VALID (1)
-  BlockParamsCreator.MobileNetV2_Thin,                    // ValueDesc.ConvStageType.Ids.MOBILE_NET_V2_THIN (2)
-  BlockParamsCreator.MobileNetV2,                         // ValueDesc.ConvStageType.Ids.MOBILE_NET_V2 (3)
-  BlockParamsCreator.ShuffleNetV2,                        // ValueDesc.ConvStageType.Ids.SHUFFLE_NET_V2 (4)
-  BlockParamsCreator.ShuffleNetV2_ByMobileNetV1,          // ValueDesc.ConvStageType.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1 (5)
-  BlockParamsCreator.ShuffleNetV2_ByMobileNetV1_padValid, // ValueDesc.ConvStageType.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID (6)
-  BlockParamsCreator.ShuffleNetV2_ByPointwise21,          // ValueDesc.ConvStageType.Ids.SHUFFLE_NET_V2_BY_POINTWISE21 (7)
+  BlockParamsCreator.MobileNetV1,                         // ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V1 (0)
+  BlockParamsCreator.MobileNetV1_padValid,                // ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V1_PAD_VALID (1)
+  BlockParamsCreator.MobileNetV2_Thin,                    // ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V2_THIN (2)
+  BlockParamsCreator.MobileNetV2,                         // ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V2 (3)
+  BlockParamsCreator.ShuffleNetV2,                        // ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2 (4)
+  BlockParamsCreator.ShuffleNetV2_ByMobileNetV1,          // ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1 (5)
+  BlockParamsCreator.ShuffleNetV2_ByMobileNetV1_padValid, // ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID (6)
+  BlockParamsCreator.ShuffleNetV2_ByPointwise21,          // ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21 (7)
 ];

@@ -215,9 +215,28 @@ class NeuralOrchestra_Base extends Recyclable.Root {
       // For image, every RGBA input channel always has 256 (= 2 ** 8) possible values.
       const vocabularyCountPerInputChannel = 256;
 
-      // Always use the fastest convolution neural network architecture.
+      // (2023/03/08 Remarked) Use SHUFFLE_NET_V2_BY_MOBILE_NET_V1 instead.
+      // const nConvStageType
+      //   = ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID;
+
+//!!! ...unfinished... (2023/03/08)
+// If backend is WEBGL,
+//   use ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1 // (5)
+//
+// Perhaps, if backend is CPU,
+//   use ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2 (4).
+// Because they use the same filter weights and is faster in backend CPU.
+// In fact, it is the fastest convolution neural network architecture in backend CPU.
+//
+
+      // Use faster convolution neural network architecture.
+      //
+      // Although using SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID (6) is even
+      // faster, however, using SHUFFLE_NET_V2_BY_MOBILE_NET_V1 (5) is safer
+      // because it will not drop the edge pixels of the image to be processed.
+      //
       const nConvStageType
-        = ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID;
+        = ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1; // (5)
 
       // The neuralNet should not keep-input-tensor because the input image is
       // created from canvas in real time.
