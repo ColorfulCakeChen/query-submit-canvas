@@ -298,7 +298,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
       initOkPromise = this.workerProxies.init_async( "webgl",
         NeuralWorker.Mode.Singleton.Ids.ONE_WORKER__ONE_SCALE__NO_FILL // (0) 
       );
-  
+
       initOk = await initOkPromise;
       if ( initOk ) {
         let bCreateOk // For WebGL, compile WebGL shaders in advance.
