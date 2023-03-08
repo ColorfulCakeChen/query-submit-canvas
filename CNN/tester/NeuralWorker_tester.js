@@ -604,15 +604,6 @@ class HeightWidthDepth {
 
             testCase = testCaseArray[ i ];
 
-            let resultFloat32Array;
-
-            // For NO_FILL mode, the result should be the same as local simulation.
-            // So they can be checked.
-            let bFill = testCase.NeuralWorker_Mode_bFill;
-            if ( !bFill ) {
-              resultFloat32Array = testCase.NeuralNet_try_result( this.testCanvas );
-            }
-
             // First time test the case. Release all other test cases' neural
             // networks (so that there will be enough memory). Create the
             // specified neural network.
@@ -650,7 +641,15 @@ class HeightWidthDepth {
               //console.log( timeInfo.toString() );
             }
 
+            // For NO_FILL mode, the result should be the same as local simulation.
+            // So they can be checked.
+            let bFill = testCase.NeuralWorker_Mode_bFill;
             if ( !bFill ) {
+              // NeuralNet_try_result() shoul be called after prepare_async() so that
+              // the nConvStageTypeId has been adjusted.
+              let resultFloat32Array
+                = testCase.NeuralNet_try_result( this.testCanvas );
+
               let lhsNumberArray = resultFloat32ArrayArray[ 0 ];
               let rhsNumberArray = resultFloat32Array;
               let prefixMsg = "NeuralNet";
