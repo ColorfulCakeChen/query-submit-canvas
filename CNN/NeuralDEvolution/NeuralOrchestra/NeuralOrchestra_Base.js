@@ -11,6 +11,19 @@ import * as DEvolution from "../DEvolution.js";
  * Orchestrate neural networks with differential evolution.
  *
  *
+ * A possible 250K filter weights configuration:
+ *   - input_height = 72
+ *   - input_width = 131 (= ( 128 + 3 ) )
+ *   - vocabularyChannelCount = 4
+ *   - blockCountTotalRequested = 39
+ *   - output_channelCount = 64
+ *
+ * It will get ( stageCount = 3 ). The extra 3 pixels of input_width are used
+ * for recurrent feedback (i.e. the neural network output of the previous game
+ * tick).
+ *
+ *
+ *
  * @member {string} downloader_spreadsheetId
  *   The Google Sheets spreadsheetId of neural network weights. Every worker will
  * load weights from the spreadsheet to initialize one neural network.
@@ -194,11 +207,11 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     submitter_clientId,
 
     input_height = 72,
-    input_width = 128,
+    input_width = 131, // = ( 128 + 3 ),
 
-    vocabularyChannelCount = 8, //4,
-    blockCountTotalRequested = 100, //200, //50, //20, //10,
-    output_channelCount = 16,
+    vocabularyChannelCount = 4, //8
+    blockCountTotalRequested = 39, //100, //200, //50, //20, //10,
+    output_channelCount = 64, //16,
   ) {
 
     // 1. Versus Downloader.
