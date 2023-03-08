@@ -19,15 +19,15 @@ import { ShuffleNetV2_ByMobileNetV1 } from "./ShuffleNetV2_ByMobileNetV1.js";
  *    ( pad = "valid" ) in those platforms.
  *
  * For achieving ShuffleNetV2 with depthwise padding "valid", ShuffleNetV2_ByMobileNetV1
- * is necessary because other ShuffleNetV2_ByXxx (with depthwise padding "same") could
- * not concatenate two channel groups whic have different image size (due to padding
- * "valid").
+ * is necessary because other ShuffleNetV2_ByXxx (with depthwise padding "same")
+ * could not concatenate two channel groups whic have different image size (due
+ * to padding "valid").
  *
  *
  * 2. Drawback
  *
- * The disadvantage is that the right-most and bottom-most pixels will be dropped when
- * pass-through the higher half of depthwise convolution due to padding "valid".
+ * The disadvantage is that the right-most and bottom-most pixels will be dropped
+ * when pass-through the higher half of depthwise convolution due to padding "valid".
  *
  *
  * 2.1 Drawback and 1D data
@@ -36,13 +36,13 @@ import { ShuffleNetV2_ByMobileNetV1 } from "./ShuffleNetV2_ByMobileNetV1.js";
  * which should not be dropped (otherwise, all data are dropped), this disadvantage
  * will not be a diaster for 1D data.
  *
- * The reason is that depthwise filter size (in some direction) can not be larger than
- * input data size (in that diecrtion). For 1D data, this means that only depthwise
- * convolution with ( depthwiseFilterHeight == 1 ) could be used.
+ * The reason is that depthwise filter size (in some direction) can not be larger
+ * than input data size (in that diecrtion). For 1D data, this means that only
+ * depthwise convolution with ( depthwiseFilterHeight == 1 ) could be used.
  *
- * When filter size is 1 (in some direction), the output size (in that direction) will
- * always be the same as input even if ( pad = "valid" ). So, the only one bottom-most
- * data will not be dropped diasterly.
+ * When filter size is 1 (in some direction), the output size (in that direction)
+ * will always be the same as input even if ( pad = "valid" ). So, the only one
+ * bottom-most data will not be dropped diasterly.
  *
  */
 class ShuffleNetV2_ByMobileNetV1_padValid extends ShuffleNetV2_ByMobileNetV1 {
@@ -82,7 +82,8 @@ class ShuffleNetV2_ByMobileNetV1_padValid extends ShuffleNetV2_ByMobileNetV1 {
 
   /** @override */
   configTo_beforeBlock0() {
-    super.configTo_beforeBlock0(); // Block0 is almost the same as ShuffleNetV2_ByMobileNetV1.
+    // Block0 is almost the same as ShuffleNetV2_ByMobileNetV1.
+    super.configTo_beforeBlock0();
 
     // Except padding is "valid" (not "same").
     this.depthwiseStridesPad = ValueDesc.StridesPad.Singleton.Ids.STRIDES_2_PAD_VALID;
@@ -90,7 +91,8 @@ class ShuffleNetV2_ByMobileNetV1_padValid extends ShuffleNetV2_ByMobileNetV1 {
 
   /** @override */
   configTo_beforeBlockN_exceptBlock0( blockIndex, input_height, input_width ) {
-    super.configTo_beforeBlockN_exceptBlock0( blockIndex, input_height, input_width ); // Block1, 2, 3, ... are almost the same as ShuffleNetV2_ByMobileNetV1.
+    // Block1, 2, 3, ... are almost the same as ShuffleNetV2_ByMobileNetV1.
+    super.configTo_beforeBlockN_exceptBlock0( blockIndex, input_height, input_width );
 
     // Except padding is "valid" (not "same").
     this.depthwiseStridesPad = ValueDesc.StridesPad.Singleton.Ids.STRIDES_1_PAD_VALID;
@@ -98,7 +100,8 @@ class ShuffleNetV2_ByMobileNetV1_padValid extends ShuffleNetV2_ByMobileNetV1 {
 
   /** @override */
   configTo_beforeBlockLast() {
-    super.configTo_beforeBlockLast(); // BlockLast is the same as ShuffleNetV2_ByMobileNetV1.
+    // BlockLast is the same as ShuffleNetV2_ByMobileNetV1.
+    super.configTo_beforeBlockLast();
   }
 }
 
