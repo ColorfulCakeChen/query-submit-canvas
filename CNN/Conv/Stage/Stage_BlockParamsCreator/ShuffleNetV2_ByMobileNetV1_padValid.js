@@ -20,7 +20,7 @@ import { ShuffleNetV2_ByMobileNetV1 } from "./ShuffleNetV2_ByMobileNetV1.js";
  *
  * For achieving ShuffleNetV2 with depthwise padding "valid", ShuffleNetV2_ByMobileNetV1
  * is necessary because other ShuffleNetV2_ByXxx (with depthwise padding "same")
- * could not concatenate two channel groups whic have different image size (due
+ * could not concatenate two channel groups which have different image size (due
  * to padding "valid").
  *
  *
