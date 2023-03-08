@@ -322,10 +322,16 @@ class Stage_TestParams_Base extends TestParams.Base {
       //   false
       // ],
 
-      // (2022/05/05) Note: WASM seems not correct when tf.pool() or tf.depthwiseConv2d() with ( depthwiseFilterWidth == 1 ).
+      // (2022/05/05)
+      // Note: WASM seems not correct when tf.pool() or
+      //       tf.depthwiseConv2d() with ( depthwiseFilterWidth == 1 ).
 //!!! (2022/07/22 Remarked) to avoid depthwise filter 1 x N or N x 1
-      depthwiseFilterHeight: [ Stage.Params.depthwiseFilterHeight.valueDesc.range.min, depthwiseFilterMaxSize ],
-      depthwiseFilterWidth: [ Stage.Params.depthwiseFilterWidth.valueDesc.range.min, depthwiseFilterMaxSize ],
+      depthwiseFilterHeight: [
+        Stage.Params.depthwiseFilterHeight.valueDesc.range.min,
+        depthwiseFilterMaxSize ],
+      depthwiseFilterWidth: [
+        Stage.Params.depthwiseFilterWidth.valueDesc.range.min,
+        depthwiseFilterMaxSize ],
 //!!! (2022/08/04 Temp Remarked) For speed-up debug.
       // depthwiseFilterHeight: [ 2, depthwiseFilterMaxSize ],
       // depthwiseFilterWidth: [ 2, depthwiseFilterMaxSize ],
@@ -347,13 +353,15 @@ class Stage_TestParams_Base extends TestParams.Base {
       //   ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.EXCITATION
       // ],
 
-      // Must have ActivationFunction (i.e. can not be NONE). Otherwise, it easily results in infinity value because of multiple block.
+      // Must have ActivationFunction (i.e. can not be NONE). Otherwise, it easily
+      // results in infinity value because of multiple block.
       //
       nActivationId:
         // undefined,
         // [ ValueDesc.ActivationFunction.Singleton.range.min + 0, ValueDesc.ActivationFunction.Singleton.range.min + 1 ],
         // [ ValueDesc.ActivationFunction.Singleton.range.min + 0, ValueDesc.ActivationFunction.Singleton.range.min + 0 ],
-        [ ValueDesc.ActivationFunction.Singleton.range.min + 1, ValueDesc.ActivationFunction.Singleton.range.min + 1 ],
+        [ ValueDesc.ActivationFunction.Singleton.range.min + 1,
+          ValueDesc.ActivationFunction.Singleton.range.min + 1 ],
 
 //      bKeepInputTensor: undefined,
 //!!! (2022/08/04 Temp Remarked) For speed-up debug.
@@ -369,22 +377,23 @@ class Stage_TestParams_Base extends TestParams.Base {
 
     // All the parameters to be tried.
     //
-    // Note: The order of these element could be adjusted to change testing order. The last element will be tested (changed) first.
+    // Note: The order of these element could be adjusted to change testing order.
+    //       The last element will be tested (changed) first.
     let paramDescConfigArray = [
-      new TestParams.ParamDescConfig( Stage.Params.input_height,                   valueOutMinMax.input_height ),
-      new TestParams.ParamDescConfig( Stage.Params.input_width,                    valueOutMinMax.input_width ),
-      new TestParams.ParamDescConfig( Stage.Params.input_channelCount,             valueOutMinMax.input_channelCount ),
-      new TestParams.ParamDescConfig( Stage.Params.nConvStageTypeId,               valueOutMinMax.nConvStageTypeId ),
-      new TestParams.ParamDescConfig( Stage.Params.blockCountRequested,            valueOutMinMax.blockCountRequested ),
-      new TestParams.ParamDescConfig( Stage.Params.bPointwise1,                    valueOutMinMax.bPointwise1 ),
-      new TestParams.ParamDescConfig( Stage.Params.depthwiseFilterHeight,          valueOutMinMax.depthwiseFilterHeight ),
-      new TestParams.ParamDescConfig( Stage.Params.depthwiseFilterWidth,           valueOutMinMax.depthwiseFilterWidth ),
+      new TestParams.ParamDescConfig( Stage.Params.input_height,          valueOutMinMax.input_height ),
+      new TestParams.ParamDescConfig( Stage.Params.input_width,           valueOutMinMax.input_width ),
+      new TestParams.ParamDescConfig( Stage.Params.input_channelCount,    valueOutMinMax.input_channelCount ),
+      new TestParams.ParamDescConfig( Stage.Params.nConvStageTypeId,      valueOutMinMax.nConvStageTypeId ),
+      new TestParams.ParamDescConfig( Stage.Params.blockCountRequested,   valueOutMinMax.blockCountRequested ),
+      new TestParams.ParamDescConfig( Stage.Params.bPointwise1,           valueOutMinMax.bPointwise1 ),
+      new TestParams.ParamDescConfig( Stage.Params.depthwiseFilterHeight, valueOutMinMax.depthwiseFilterHeight ),
+      new TestParams.ParamDescConfig( Stage.Params.depthwiseFilterWidth,  valueOutMinMax.depthwiseFilterWidth ),
 
       new TestParams.ParamDescConfig( Stage.Params.nSqueezeExcitationChannelCountDivisor,
-                                                                                   valueOutMinMax.nSqueezeExcitationChannelCountDivisor ),
+                                                                          valueOutMinMax.nSqueezeExcitationChannelCountDivisor ),
 
-      new TestParams.ParamDescConfig( Stage.Params.nActivationId,                  valueOutMinMax.nActivationId ),
-      new TestParams.ParamDescConfig( Stage.Params.bKeepInputTensor,               valueOutMinMax.bKeepInputTensor ),
+      new TestParams.ParamDescConfig( Stage.Params.nActivationId,         valueOutMinMax.nActivationId ),
+      new TestParams.ParamDescConfig( Stage.Params.bKeepInputTensor,      valueOutMinMax.bKeepInputTensor ),
     ];
 
     yield *Stage_TestParams_Base.ParamsGenerator.call( this, paramDescConfigArray );
@@ -396,7 +405,8 @@ class Stage_TestParams_Base extends TestParams.Base {
 /**
  * The order when generate inputWeightArray[].
  *
- * This order could not be changed arbitrarily. It must be the same as the parameter extracting order of Stage.initer().
+ * This order could not be changed arbitrarily. It must be the same as the
+ * parameter extracting order of Stage.initer().
  */
 Stage_TestParams_Base.paramsNameOrderArray_Basic = [
   Stage.Params.input_height.paramName,
