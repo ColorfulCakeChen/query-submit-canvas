@@ -138,9 +138,9 @@ class PerformanceTestCase extends Recyclable.Root {
       let backendName = tf.getBackend();
 
       if ( backendName === "webgl" )
-        neuralNetParamsBase.nConvStageTypeId_adjust_for_backend_webgl_if_ShuffleNetV2();
+        this.neuralNetParamsBase.nConvStageTypeId_adjust_for_backend_webgl_if_ShuffleNetV2();
       else if ( backendName === "cpu" )
-        neuralNetParamsBase.nConvStageTypeId_adjust_for_backend_cpu_if_ShuffleNetV2();
+        this.neuralNetParamsBase.nConvStageTypeId_adjust_for_backend_cpu_if_ShuffleNetV2();
 
       let bInitOkPromise = neuralWorkerProxies.init_async(
         backendName, this.nNeuralWorker_ModeId );
