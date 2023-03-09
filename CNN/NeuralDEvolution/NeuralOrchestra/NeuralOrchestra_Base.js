@@ -25,20 +25,22 @@ import * as DEvolution from "../DEvolution.js";
  * its performancce is slower (i.e. can not achieve 2 times per second).
  *
  *
- * 1.1 A possible 250K filter weights configuration:
+ * 1.1 Configuration_4_39
  *
  *   - vocabularyChannelCount = 4
  *   - blockCountTotalRequested = 39
  *
- * It will get ( stageCount = 3 ).
+ * It will get ( stageCount = 3 ). Its performance in backend webgl is faster
+ * than Configuration_2_52.
  *
  *
- * 1.2 Another possible 250K filter weights configuration:
+ * 1.2 Configuration_2_52
  *
  *   - vocabularyChannelCount = 2
  *   - blockCountTotalRequested = 52
  *
- * It will get ( stageCount = 4 ).
+ * It will get ( stageCount = 4 ). Its performance in backend cpu is faster
+ * than Configuration_4_39.
  *
  *
  *
