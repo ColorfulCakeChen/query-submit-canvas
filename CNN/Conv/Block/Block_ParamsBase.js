@@ -17,7 +17,8 @@ class Block_ParamsBase extends Recyclable.Root {
   /**
    * Used as default Block.ParamsBase provider for conforming to Recyclable interface.
    */
-  static Pool = new Pool.Root( "Block.ParamsBase.Pool", Block_ParamsBase, Block_ParamsBase.setAsConstructor );
+  static Pool = new Pool.Root( "Block.ParamsBase.Pool",
+    Block_ParamsBase, Block_ParamsBase.setAsConstructor );
 
   /**
    */
@@ -25,7 +26,8 @@ class Block_ParamsBase extends Recyclable.Root {
     input0_height, input0_width, input0_channelCount,
     nConvBlockTypeId,
     pointwise1ChannelCount,
-    depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad,
+    depthwise_AvgMax_Or_ChannelMultiplier,
+    depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad,
     depthwiseActivationId,
     pointwise20ChannelCount, pointwise20ActivationId,
     nSqueezeExcitationChannelCountDivisor, bSqueezeExcitationPrefix,
@@ -37,7 +39,8 @@ class Block_ParamsBase extends Recyclable.Root {
       input0_height, input0_width, input0_channelCount,
       nConvBlockTypeId,
       pointwise1ChannelCount,
-      depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad,
+      depthwise_AvgMax_Or_ChannelMultiplier,
+      depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad,
       depthwiseActivationId,
       pointwise20ChannelCount, pointwise20ActivationId,
       nSqueezeExcitationChannelCountDivisor, bSqueezeExcitationPrefix,
@@ -51,7 +54,8 @@ class Block_ParamsBase extends Recyclable.Root {
     input0_height, input0_width, input0_channelCount,
     nConvBlockTypeId,
     pointwise1ChannelCount,
-    depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad,
+    depthwise_AvgMax_Or_ChannelMultiplier,
+    depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad,
     depthwiseActivationId,
     pointwise20ChannelCount, pointwise20ActivationId,
     nSqueezeExcitationChannelCountDivisor, bSqueezeExcitationPrefix,
@@ -63,7 +67,8 @@ class Block_ParamsBase extends Recyclable.Root {
       input0_height, input0_width, input0_channelCount,
       nConvBlockTypeId,
       pointwise1ChannelCount,
-      depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad,
+      depthwise_AvgMax_Or_ChannelMultiplier,
+      depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad,
       depthwiseActivationId,
       pointwise20ChannelCount, pointwise20ActivationId,
       nSqueezeExcitationChannelCountDivisor, bSqueezeExcitationPrefix,
@@ -78,7 +83,8 @@ class Block_ParamsBase extends Recyclable.Root {
     input0_height, input0_width, input0_channelCount,
     nConvBlockTypeId,
     pointwise1ChannelCount,
-    depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad,
+    depthwise_AvgMax_Or_ChannelMultiplier,
+    depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad,
     depthwiseActivationId,
     pointwise20ChannelCount, pointwise20ActivationId,
     nSqueezeExcitationChannelCountDivisor, bSqueezeExcitationPrefix,
@@ -107,7 +113,8 @@ class Block_ParamsBase extends Recyclable.Root {
   disposeResources() {
     this.inferencedParams_dispose();
 
-    this.channelShuffler = null; // Just nullify it, because it is not owned by this block parameters.
+    // Just nullify it, because it is not owned by this block parameters.
+    this.channelShuffler = null;
 
     this.input0_height = undefined;
     this.input0_width = undefined;
@@ -144,7 +151,8 @@ class Block_ParamsBase extends Recyclable.Root {
       this.input0_height, this.input0_width, this.input0_channelCount,
       this.nConvBlockTypeId,
       this.pointwise1ChannelCount,
-      this.depthwise_AvgMax_Or_ChannelMultiplier, this.depthwiseFilterHeight, this.depthwiseFilterWidth,
+      this.depthwise_AvgMax_Or_ChannelMultiplier,
+      this.depthwiseFilterHeight, this.depthwiseFilterWidth,
       this.depthwiseStridesPad, this.depthwiseActivationId,
       this.pointwise20ChannelCount, this.pointwise20ActivationId,
       this.nSqueezeExcitationChannelCountDivisor, this.bSqueezeExcitationPrefix,
@@ -165,7 +173,8 @@ class Block_ParamsBase extends Recyclable.Root {
   }
 
   get depthwise_AvgMax_Or_ChannelMultiplier_Name() {
-    return ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.getName_byId( this.depthwise_AvgMax_Or_ChannelMultiplier );
+    return ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.getName_byId(
+      this.depthwise_AvgMax_Or_ChannelMultiplier );
   }
 
   /** The inferencedParams.depthwiseFilterHeight_modified is considered*/
@@ -189,15 +198,18 @@ class Block_ParamsBase extends Recyclable.Root {
   }
 
   get depthwiseActivationName() {
-    return ValueDesc.ActivationFunction.Singleton.getName_byId( this.depthwiseActivationId );
+    return ValueDesc.ActivationFunction.Singleton.getName_byId(
+      this.depthwiseActivationId );
   }
 
   get pointwise20ActivationName() {
-    return ValueDesc.ActivationFunction.Singleton.getName_byId( this.pointwise20ActivationId );
+    return ValueDesc.ActivationFunction.Singleton.getName_byId(
+      this.pointwise20ActivationId );
   }
 
   get nSqueezeExcitationChannelCountDivisorName() {
-    return ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.getName_byId( this.nSqueezeExcitationChannelCountDivisor );
+    return ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.getName_byId(
+      this.nSqueezeExcitationChannelCountDivisor );
   }
 
   get nActivationName() {
@@ -221,7 +233,8 @@ class Block_ParamsBase extends Recyclable.Root {
   get output0_channelCount() {
     switch ( this.nConvBlockTypeId ) {
       case ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_TAIL:
-        return ( this.pointwise20ChannelCount + this.inferencedParams.input1_channelCount );
+        return ( this.pointwise20ChannelCount
+                   + this.inferencedParams.input1_channelCount );
         break;
 
       default:
@@ -253,7 +266,8 @@ class Block_ParamsBase extends Recyclable.Root {
       + `input0_channelCount=${this.input0_channelCount}, `
 
       + `output_height=${this.output_height}, output_width=${this.output_width}, `
-      + `output0_channelCount=${this.output0_channelCount}, output1_channelCount=${this.output1_channelCount}, `
+      + `output0_channelCount=${this.output0_channelCount}, `
+      + `output1_channelCount=${this.output1_channelCount}, `
       + `output_channelCount=${this.output_channelCount}, `
 
       + `nConvBlockTypeName=${this.nConvBlockTypeName}(${this.nConvBlockTypeId}), `
@@ -267,11 +281,14 @@ class Block_ParamsBase extends Recyclable.Root {
       + `depthwiseFilterHeight_real=${this.depthwiseFilterHeight_real}, `
       + `depthwiseFilterWidth_real=${this.depthwiseFilterWidth_real}, `
 
-      + `depthwiseStridesPad=${this.depthwiseStridesPadName}(${this.depthwiseStridesPad}), `
-      + `depthwiseActivationName=${this.depthwiseActivationName}(${this.depthwiseActivationId}), `
+      + `depthwiseStridesPad=`
+        + `${this.depthwiseStridesPadName}(${this.depthwiseStridesPad}), `
+      + `depthwiseActivationName=`
+        + `${this.depthwiseActivationName}(${this.depthwiseActivationId}), `
 
       + `pointwise20ChannelCount=${this.pointwise20ChannelCount}, `
-      + `pointwise20ActivationName=${this.pointwise20ActivationName}(${this.pointwise20ActivationId}), `
+      + `pointwise20ActivationName=`
+        + `${this.pointwise20ActivationName}(${this.pointwise20ActivationId}), `
 
       + `nSqueezeExcitationChannelCountDivisorName=`
         + `${this.nSqueezeExcitationChannelCountDivisorName}`
