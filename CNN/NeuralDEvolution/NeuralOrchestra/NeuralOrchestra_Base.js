@@ -193,14 +193,14 @@ class NeuralOrchestra_Base extends Recyclable.Root {
    *   The input image's width.
    *
    * @param {number} vocabularyChannelCount
-   *   In the embedding layer, every vocabulary will have how many embedding channels.
-   * Every input channel will be expanded into so many embedding channels. It could
-   * be viewed as embeddingChannelCountPerInputChannel. It must be ( >= 2 ) because
-   * it always has ( bEmbedVocabularyId == true ).
+   *   In the embedding layer, every vocabulary will have how many embedding
+   * channels. Every input channel will be expanded into so many embedding
+   * channels. It could be viewed as embeddingChannelCountPerInputChannel.
+   * It must be ( >= 2 ) because it always has ( bEmbedVocabularyId == true ).
    *
    * @param {number} blockCountTotalRequested
-   *   How many blocks of the whole neural network are wanted. It will be spreaded to
-   * every stage. Note that every stage will have at least 2 blocks.
+   *   How many blocks of the whole neural network are wanted. It will be
+   * spreaded to every stage. Note that every stage will have at least 2 blocks.
    *
    * @param {number} output_channelCount
    *   The output tensor's channel count.
