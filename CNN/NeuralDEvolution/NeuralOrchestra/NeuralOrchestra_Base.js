@@ -158,6 +158,15 @@ class NeuralOrchestra_Base extends Recyclable.Root {
 // continue loading.
 //
 
+
+//!!! ...unfinished... (2023/03/09)
+// versusSummary_or_versus_load_promise
+// versusSummary_or_versus_load_progress
+//
+// workerProxies_init_promise
+//
+
+
   /**
    *   - Load all differential evolution versus weights ranges (i.e. versus summary).
    *   - Create workers and compile GPU shaders.
