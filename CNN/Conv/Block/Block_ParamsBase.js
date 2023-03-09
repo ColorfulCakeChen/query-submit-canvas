@@ -164,7 +164,7 @@ class Block_ParamsBase extends Recyclable.Root {
     return ValueDesc.ConvBlockType.Singleton.getName_byId( this.nConvBlockTypeId );
   }
 
-  /** The inferencedParams.pointwise1ChannelCount_modified is considered*/
+  /** The inferencedParams.pointwise1ChannelCount_modified is considered. */
   get pointwise1ChannelCount_real() {
     if ( this.inferencedParams.pointwise1ChannelCount_modified != undefined )
       return this.inferencedParams.pointwise1ChannelCount_modified;
@@ -177,7 +177,7 @@ class Block_ParamsBase extends Recyclable.Root {
       this.depthwise_AvgMax_Or_ChannelMultiplier );
   }
 
-  /** The inferencedParams.depthwiseFilterHeight_modified is considered*/
+  /** The inferencedParams.depthwiseFilterHeight_modified is considered. */
   get depthwiseFilterHeight_real() {
     if ( this.inferencedParams.depthwiseFilterHeight_modified != undefined )
       return this.inferencedParams.depthwiseFilterHeight_modified;
@@ -185,7 +185,7 @@ class Block_ParamsBase extends Recyclable.Root {
       return this.depthwiseFilterHeight;
   }
 
-  /** The inferencedParams.depthwiseFilterWidth_modified is considered*/
+  /** The inferencedParams.depthwiseFilterWidth_modified is considered. */
   get depthwiseFilterWidth_real() {
     if ( this.inferencedParams.depthwiseFilterWidth_modified != undefined )
       return this.inferencedParams.depthwiseFilterWidth_modified;
