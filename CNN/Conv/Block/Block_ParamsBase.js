@@ -278,7 +278,7 @@ class Block_ParamsBase extends Recyclable.Root {
         + `(${this.nSqueezeExcitationChannelCountDivisor}), `
 
       + `bKeepInputTensor=${this.bKeepInputTensor}, `
-      + `${this.inferencedParams}`
+      + `inferencedParams={ ${this.inferencedParams} }`
     ;
 
     return str;

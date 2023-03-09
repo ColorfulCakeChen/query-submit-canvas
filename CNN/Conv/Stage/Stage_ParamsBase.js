@@ -173,7 +173,7 @@ import { InferencedParams } from "./Stage_InferencedParams.js";
       + `nActivationName=${this.nActivationName}(${this.nActivationId}), `
       + `bKeepInputTensor=${this.bKeepInputTensor}, `
 
-      + `${this.inferencedParams}`
+      + `inferencedParams={ ${this.inferencedParams} }`
     ;
 
     return str;

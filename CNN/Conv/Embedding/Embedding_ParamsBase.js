@@ -102,7 +102,7 @@ class Embedding_ParamsBase extends Recyclable.Root {
       + `vocabularyCountPerInputChannel=${this.vocabularyCountPerInputChannel}, `
       + `bEmbedVocabularyId=${this.bEmbedVocabularyId}, `
       + `bKeepInputTensor=${this.bKeepInputTensor}, `
-      + `${this.inferencedParams}`
+      + `inferencedParams={ ${this.inferencedParams} }`
     ;
     return str;
   }
