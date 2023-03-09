@@ -147,9 +147,14 @@ class NeuralWorker_Body extends AsyncWorker.Body {
             + `Failed to initialize neuralNetArray[ ${i} ] object. `
             + `progress.valuePercentage=${progress.valuePercentage}, `
 
-            // Note: Because neuralNetParams has been destroyed by
-            // NeuralNet.Base.init(), log neuralNetParamsBase instead.
-            + `neuralNetParamsBase={ ${neuralNetParamsBase} }, `
+            // Note1: Because neuralNetParams has been destroyed by
+            //        NeuralNet.Base.init(), log neuralNetParamsBase instead.
+            //
+            // Note2: Because neuralNetParamsBase looks like (but not)
+            //        NeuralNet.ParamsBase, call .toString explicitly.
+            + `neuralNetParamsBase={ `
+              + `${NeuralNet.ParamsBase.toString.call( neuralNetParamsBase )} }, `
+
             + `neuralNet={ ${neuralNet} }.`
           );
 
