@@ -10,31 +10,37 @@ import * as StageParamsCreator from "./NeuralNet_StageParamsCreator.js";
  * All properties inferenced from NeuralNet.Params.
  *
  * @member {boolean} bEmbedVocabularyId
- *   If true, one of embedding channels will be an auto-generated vocabulary id (i.e. 0, 1, 2, ...). So only
- * ( channelMultiplier - 1 ) embedding channels will be extracted from inputWeightArray. The extra vocabulary id
- * channel achieves residual connection. Residual connection means apply_and_destroy_or_keep() will append (concatenate)
- * input to output. Since apply_and_destroy_or_keep()'s input is just vocabulary id (one channel or multiple channels),
- * pre-embedded vocabulary id inside the embedding table acheives the same effect by less computation (but more memory).
+ *   If true, one of embedding channels will be an auto-generated vocabulary id
+ * (i.e. 0, 1, 2, ...). So only ( channelMultiplier - 1 ) embedding channels will
+ * be extracted from inputWeightArray. The extra vocabulary id channel achieves
+ * residual connection. Residual connection means apply_and_destroy_or_keep() will
+ * append (concatenate) input to output. Since apply_and_destroy_or_keep()'s input
+ * is just vocabulary id (one channel or multiple channels), pre-embedded vocabulary
+ * id inside the embedding table acheives the same effect by less computation (but
+ * more memory).
  *
  * @member {number} stageCount
- *   How many stages inside this neural network. It is ( >= 1 ).
- * Every stage will halve height, halve width, double channel count.
+ *   How many stages inside this neural network. It is ( >= 1 ). Every stage will
+ * halve height, halve width, double channel count.
  *
  * @member {number} blockCountPerStage
  *   How many blocks inside every stage. It is ( >= 2 ).
  *
  * @member {number} blockCountTotal
- *   How many blocks in the whole neural network. (= ( stageCount * blockCountPerStage ) ).
- * It is greater than or equal to blockCountTotalRequested.
+ *   How many blocks in the whole neural network.
+ * (= ( stageCount * blockCountPerStage ) ). It is greater than or equal to
+ * blockCountTotalRequested.
  *
  * @member {Stage.ParamsBase[]} stageParamsArray
  *   The stages parameters of this neural network. It will be created only if
- * ( neuralNetParamsBase.inferencedParams_embeddingParams_stageParamsArray_needed() == true ).
+ * ( neuralNetParamsBase.inferencedParams_embeddingParams_stageParamsArray_needed()
+ * == true ).
  *
  * @member {Block.ParamsBase} blockFinalParams
- *   The parameter of this neural network's final block (for squish output shape to
- * [ 1, 1, output_channelCount ]. It will be created only if
- * ( neuralNetParamsBase.inferencedParams_embeddingParams_stageParamsArray_needed() == true ).
+ *   The parameter of this neural network's final block (for squish output shape
+ * to [ 1, 1, output_channelCount ]. It will be created only if
+ * ( neuralNetParamsBase.inferencedParams_embeddingParams_stageParamsArray_needed()
+ * == true ).
  *
  * @member {number} stageLast_output_height
  *   The stageLast's output image's height of this neural network.
@@ -56,7 +62,8 @@ import * as StageParamsCreator from "./NeuralNet_StageParamsCreator.js";
 class NeuralNet_InferencedParams extends Recyclable.Root {
 
   /**
-   * Used as default NeuralNet.InferencedParams provider for conforming to Recyclable interface.
+   * Used as default NeuralNet.InferencedParams provider for conforming to
+   * Recyclable interface.
    */
   static Pool = new Pool.Root( "NeuralNet.InferencedParams.Pool",
     NeuralNet_InferencedParams, NeuralNet_InferencedParams.setAsConstructor );
@@ -181,7 +188,9 @@ class NeuralNet_InferencedParams extends Recyclable.Root {
       let StageParamsClass = neuralNetParamsBase.StageParamsClass_get();
 
       // Create every stage.
-      stageParamsCreator = NeuralNet_InferencedParams.create_StageParamsCreator_byNeuralNetParams( neuralNetParamsBase );
+      stageParamsCreator
+        = NeuralNet_InferencedParams.create_StageParamsCreator_byNeuralNetParams(
+            neuralNetParamsBase );
       stageParamsCreator.determine_stageCount_blockCountPerStage();
 
       this.stageCount = stageParamsCreator.stageCount;
@@ -206,8 +215,9 @@ class NeuralNet_InferencedParams extends Recyclable.Root {
           stageParamsCreator.configTo_beforeStageLast();
         }
 
+        // Create current stage.
         stageParams = this.stageParamsArray[ i ]
-          = stageParamsCreator.create_StageParams( StageParamsClass ); // Create current stage.
+          = stageParamsCreator.create_StageParams( StageParamsClass );
 
         stageParams.inferencedParams_create();
 
@@ -216,12 +226,21 @@ class NeuralNet_InferencedParams extends Recyclable.Root {
         next_input_channelCount = stageParams.inferencedParams.output_channelCount;
       }
 
-      this.stageParams0 = this.stageParamsArray[ 0 ]; // Shortcut to the first stage.
-      this.stageParamsLast = this.stageParamsArray[ this.stageParamsArray.length - 1 ]; // Shortcut to the last stage.
+      // Shortcut to the first stage.
+      this.stageParams0 = this.stageParamsArray[ 0 ];
 
-      this.stageLast_output_height = this.stageParamsLast.inferencedParams.output_height;
-      this.stageLast_output_width = this.stageParamsLast.inferencedParams.output_width;
-      this.stageLast_output_channelCount = this.stageParamsLast.inferencedParams.output_channelCount;
+      // Shortcut to the last stage.
+      this.stageParamsLast
+        = this.stageParamsArray[ this.stageParamsArray.length - 1 ];
+
+      this.stageLast_output_height
+        = this.stageParamsLast.inferencedParams.output_height;
+
+      this.stageLast_output_width
+        = this.stageParamsLast.inferencedParams.output_width;
+
+      this.stageLast_output_channelCount
+        = this.stageParamsLast.inferencedParams.output_channelCount;
 
       // BlockFinal
       {
@@ -244,7 +263,8 @@ class NeuralNet_InferencedParams extends Recyclable.Root {
 
     } finally {
       if ( stageParamsCreator ) {
-        stageParamsCreator.channelShuffler = null; // (Because ownership has been transferred to this Stage object.)
+        // (Because ownership has been transferred to this Stage object.)        
+        stageParamsCreator.channelShuffler = null;
         stageParamsCreator.disposeResources_and_recycleToPool();
         stageParamsCreator = null;
       }
@@ -256,17 +276,14 @@ class NeuralNet_InferencedParams extends Recyclable.Root {
    *   The NeuralNet.ParamsBase object to be referenced.
    *
    * @return {NeuralNet.StageParamsCreator.Base}
-   *   Return newly created NeuralNet.StageParamsCreator.Xxx object according to neuralNetParams.nConvStageTypeId.
+   *   Return newly created NeuralNet.StageParamsCreator.Xxx object according
+   * to neuralNetParams.nConvStageTypeId.
    */
   static create_StageParamsCreator_byNeuralNetParams( neuralNetParams ) {
 
-//!!! (2022/08/17 Remarked) determined by NeuralNet_StageParamsCreator_Base.
-    // if ( neuralNetParams.stageCountRequested < 1 )
-    //   throw Error( `NeuralNet.InferencedParams.Base.create_StageParamsCreator_byNeuralNetParams(): `
-    //     + `neuralNetParams.stageCountRequested ( ${neuralNetParams.stageCountRequested} ) must be >= 1.` );
-
     // Currently, only one kind of NeuralNet.StageParamsCreator could be used.
-    let aStageParamsCreator = StageParamsCreator.Base.Pool.get_or_create_by( neuralNetParams );
+    let aStageParamsCreator = StageParamsCreator.Base.Pool.get_or_create_by(
+      neuralNetParams );
 
     return aStageParamsCreator;
   }
@@ -276,7 +293,8 @@ class NeuralNet_InferencedParams extends Recyclable.Root {
   }
 
   get nSqueezeExcitationChannelCountDivisorName() {
-    return ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.getName_byId( this.nSqueezeExcitationChannelCountDivisor );
+    return ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.getName_byId(
+      this.nSqueezeExcitationChannelCountDivisor );
   }
 
   /** @override */

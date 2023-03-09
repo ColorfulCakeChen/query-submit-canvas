@@ -153,7 +153,7 @@ class NeuralWorker_Body extends AsyncWorker.Body {
             // Note2: Because neuralNetParamsBase looks like (but not)
             //        NeuralNet.ParamsBase, call .toString explicitly.
             + `neuralNetParamsBase={ `
-              + `${NeuralNet.ParamsBase.toString.call( neuralNetParamsBase )} }, `
+              + `${NeuralNet.ParamsBase.prototype.toString.call( neuralNetParamsBase )} }, `
 
             + `neuralNet={ ${neuralNet} }.`
           );

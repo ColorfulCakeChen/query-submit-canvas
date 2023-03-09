@@ -281,7 +281,7 @@ class NeuralNet_ParamsBase extends Recyclable.Root {
       + `output_channelCount=${this.output_channelCount}, `
 
       + `bKeepInputTensor=${this.bKeepInputTensor}, `
-      + `${this.inferencedParams}`
+      + `inferencedParams={ ${this.inferencedParams} }`
     ;
     return str;
   }
