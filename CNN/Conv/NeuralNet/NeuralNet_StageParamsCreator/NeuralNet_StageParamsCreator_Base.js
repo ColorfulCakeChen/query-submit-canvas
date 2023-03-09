@@ -166,13 +166,15 @@ class NeuralNet_StageParamsCreator_Base extends Recyclable.Root {
   }
 
   /**
-   * Called before stageLast is about to be created. Sub-class could override this method to adjust data members.
+   * Called before stageLast is about to be created. Sub-class could override
+   * this method to adjust data members.
    */
   configTo_beforeStageLast() {
   }
 
   /**
-   * Called before blockFinal is about to be created. It will create .blockFinalParams.
+   * Called before blockFinal is about to be created. It will create
+   * .blockFinalParams.
    *
    * Sub-class could override this method to adjust data members.
    *
@@ -220,14 +222,14 @@ class NeuralNet_StageParamsCreator_Base extends Recyclable.Root {
     const nSqueezeExcitationChannelCountDivisor
       = this.nSqueezeExcitationChannelCountDivisor;
 
-    // Final block is non-MobileNetV2 (in fact, is MobileNetV1) always uses postfix
-    // squeeze-and-excitation.
+    // Final block is non-MobileNetV2 (in fact, is MobileNetV1). So, it always
+    // uses postfix squeeze-and-excitation.
     const bSqueezeExcitationPrefix = false;
 
     const nActivationId = this.nActivationId;
 
-    // Final block always disposes input because there is always a stageLast in front
-    // of it to be responsible for keep-input-tensor (if needs).
+    // Final block always disposes input because there is always a stageLast in
+    // front of it to be responsible for keep-input-tensor (if needs).
     const bKeepInputTensor = false;
 
 
@@ -236,7 +238,8 @@ class NeuralNet_StageParamsCreator_Base extends Recyclable.Root {
       input0_height, input0_width, input0_channelCount,
       nConvBlockTypeId,
       pointwise1ChannelCount,
-      depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad,
+      depthwise_AvgMax_Or_ChannelMultiplier,
+      depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad,
       depthwiseActivationId,
       pointwise20ChannelCount, pointwise20ActivationId,
       nSqueezeExcitationChannelCountDivisor, bSqueezeExcitationPrefix,
@@ -253,7 +256,8 @@ class NeuralNet_StageParamsCreator_Base extends Recyclable.Root {
   }
 
   get nSqueezeExcitationChannelCountDivisorName() {
-    return ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.getName_byId( this.nSqueezeExcitationChannelCountDivisor );
+    return ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.getName_byId(
+      this.nSqueezeExcitationChannelCountDivisor );
   }
 
   get nActivationName() {

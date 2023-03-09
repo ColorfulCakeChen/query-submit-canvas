@@ -25,7 +25,8 @@ class NeuralNet_Params extends Weights.Params( ParamsBase ) {
     NeuralNet_Params, NeuralNet_Params.setAsConstructor );
 
   /**
-   * If a parameter's value is null, it will be extracted from inputWeightArray (i.e. by evolution).
+   * If a parameter's value is null, it will be extracted from inputWeightArray
+   * (i.e. by evolution).
    *
    */
   constructor(
@@ -162,24 +163,26 @@ class NeuralNet_Params extends Weights.Params( ParamsBase ) {
 
 
 // Define parameter descriptions.
-NeuralNet_Params.input_height =                   new ParamDesc.Int(  "input_height",                   1, ( 10 * 1024 ) );
-NeuralNet_Params.input_width =                    new ParamDesc.Int(  "input_width",                    1, ( 10 * 1024 ) );
-NeuralNet_Params.input_channelCount =             new ParamDesc.Int(  "input_channelCount",             1, ( 10 * 1024 ) );
+NeuralNet_Params.input_height =             new ParamDesc.Int(  "input_height",                   1, ( 10 * 1024 ) );
+NeuralNet_Params.input_width =              new ParamDesc.Int(  "input_width",                    1, ( 10 * 1024 ) );
+NeuralNet_Params.input_channelCount =       new ParamDesc.Int(  "input_channelCount",             1, ( 10 * 1024 ) );
 
-NeuralNet_Params.vocabularyChannelCount =         new ParamDesc.Int(  "vocabularyChannelCount",         2, (  1 * 1024 ) );
-NeuralNet_Params.vocabularyCountPerInputChannel = new ParamDesc.Int(  "vocabularyCountPerInputChannel", 1, ( 2 ** 24 ) );
+NeuralNet_Params.vocabularyChannelCount =   new ParamDesc.Int(  "vocabularyChannelCount",         2, (  1 * 1024 ) );
+NeuralNet_Params.vocabularyCountPerInputChannel
+                                          = new ParamDesc.Int(  "vocabularyCountPerInputChannel", 1, ( 2 ** 24 ) );
 
-NeuralNet_Params.nConvStageTypeId =               new ParamDesc.ConvStageType( "nConvStageTypeId" );
+NeuralNet_Params.nConvStageTypeId =         new ParamDesc.ConvStageType( "nConvStageTypeId" );
 
-NeuralNet_Params.blockCountTotalRequested =       new ParamDesc.Int(  "blockCountTotalRequested",       2, ( 10 * 1024 ) );
+NeuralNet_Params.blockCountTotalRequested = new ParamDesc.Int(  "blockCountTotalRequested",       2, ( 10 * 1024 ) );
 
-NeuralNet_Params.output_channelCount =            new ParamDesc.Int(  "output_channelCount",            1, ( 10 * 1024 ) );
+NeuralNet_Params.output_channelCount =      new ParamDesc.Int(  "output_channelCount",            1, ( 10 * 1024 ) );
 
-NeuralNet_Params.bKeepInputTensor =               new ParamDesc.Bool( "bKeepInputTensor" );
+NeuralNet_Params.bKeepInputTensor =         new ParamDesc.Bool( "bKeepInputTensor" );
 
 
 /**
- * Define the order of these parameters. (Fills ParamDesc.Xxx.seqId according to this array's order.)
+ * Define the order of these parameters. (Fills ParamDesc.Xxx.seqId according to
+ * this array's order.)
  */
 NeuralNet_Params.SequenceArray = new ParamDesc.SequenceArray( [
   NeuralNet_Params.input_height,

@@ -10,7 +10,8 @@ import { ParamsBase } from "./Stage_ParamsBase.js";
 
 //!!! ...unfinished... (2022/05/28)
 //
-// Add parameter bPointwise2SqueezeExcitationAtStageEnd control whether this stage's final block's pointwise2 should have
+// Add parameter bPointwise2SqueezeExcitationAtStageEnd control whether
+// this stage's final block's pointwise2 should have
 // squeeze-and-excitation.
 //
 
@@ -207,22 +208,23 @@ class Stage_Params extends Weights.Params( ParamsBase ) {
 
 
 // Define parameter descriptions.
-Stage_Params.input_height =                   new ParamDesc.Int(                "input_height",               1, ( 10 * 1024 ) );
-Stage_Params.input_width =                    new ParamDesc.Int(                "input_width",                1, ( 10 * 1024 ) );
-Stage_Params.input_channelCount =             new ParamDesc.Int(                "input_channelCount",         1, ( 10 * 1024 ) );
+Stage_Params.input_height =          new ParamDesc.Int(                "input_height",          1, ( 10 * 1024 ) );
+Stage_Params.input_width =           new ParamDesc.Int(                "input_width",           1, ( 10 * 1024 ) );
+Stage_Params.input_channelCount =    new ParamDesc.Int(                "input_channelCount",    1, ( 10 * 1024 ) );
 
-Stage_Params.nConvStageTypeId =               new ParamDesc.ConvStageType(      "nConvStageTypeId" );
+Stage_Params.nConvStageTypeId =      new ParamDesc.ConvStageType(      "nConvStageTypeId" );
 
-Stage_Params.blockCountRequested =            new ParamDesc.Int(                "blockCountRequested",        2, ( 10 * 1024 ) );
-Stage_Params.bPointwise1 =                    new ParamDesc.Bool(               "bPointwise1" );
-Stage_Params.depthwiseFilterHeight =          new ParamDesc.Int(                "depthwiseFilterHeight",      1, ( 10 * 1024 ) );
-Stage_Params.depthwiseFilterWidth =           new ParamDesc.Int(                "depthwiseFilterWidth",       2, ( 10 * 1024 ) );
+Stage_Params.blockCountRequested =   new ParamDesc.Int(                "blockCountRequested",   2, ( 10 * 1024 ) );
+Stage_Params.bPointwise1 =           new ParamDesc.Bool(               "bPointwise1" );
+Stage_Params.depthwiseFilterHeight = new ParamDesc.Int(                "depthwiseFilterHeight", 1, ( 10 * 1024 ) );
+Stage_Params.depthwiseFilterWidth =  new ParamDesc.Int(                "depthwiseFilterWidth",  2, ( 10 * 1024 ) );
 
-Stage_Params.nSqueezeExcitationChannelCountDivisor = new ParamDesc.SqueezeExcitationChannelCountDivisor( "nSqueezeExcitationChannelCountDivisor" );
+Stage_Params.nSqueezeExcitationChannelCountDivisor
+                                   = new ParamDesc.SqueezeExcitationChannelCountDivisor( "nSqueezeExcitationChannelCountDivisor" );
 
-Stage_Params.nActivationId =                  new ParamDesc.ActivationFunction( "nActivationId" );
+Stage_Params.nActivationId =         new ParamDesc.ActivationFunction( "nActivationId" );
 
-Stage_Params.bKeepInputTensor =               new ParamDesc.Bool(               "bKeepInputTensor" );
+Stage_Params.bKeepInputTensor =      new ParamDesc.Bool(               "bKeepInputTensor" );
 
 
 

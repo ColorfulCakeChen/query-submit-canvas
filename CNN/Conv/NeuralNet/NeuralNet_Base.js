@@ -181,14 +181,17 @@ class NeuralNet_Base extends Recyclable.Root {
 
     let progressRoot = progressParent.root_get();
 
+    // For parameters extracting.
     let progressToAdvance = progressParent.child_add(
-      ValueMax.Percentage.Concrete.Pool.get_or_create_by( progressMax ) ); // For parameters extracting.
+      ValueMax.Percentage.Concrete.Pool.get_or_create_by( progressMax ) );
 
+    // For embedding extracting.
     let progressForEmbedding = progressParent.child_add(
-      ValueMax.Percentage.Aggregate.Pool.get_or_create_by() ); // for embedding extracting.
+      ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
 
+    // For stage0, stage1, stage2, ... 
     let progressForStages = progressParent.child_add(
-      ValueMax.Percentage.Aggregate.Pool.get_or_create_by() ); // for stage0, stage1, stage2, ... 
+      ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
 
     let progressForBlockFinal = progressParent.child_add(
       ValueMax.Percentage.Aggregate.Pool.get_or_create_by() ); // for blockFinal.
@@ -356,9 +359,9 @@ class NeuralNet_Base extends Recyclable.Root {
         let blockFinalParams = stageParamsCreator.blockFinalParams;
         stageParamsCreator.blockFinalParams = null; // (Because ownship has transferrred.)
 
-        // No matter stageLast uses what kinds of block, there is always no higher and
-        // lower half in the final block. So nullify them. (Otherwise, Block.Base
-        // creation will be failed.)
+        // No matter stageLast uses what kinds of block, there is always no higher
+        // and lower half in the final block. So nullify them. (Otherwise,
+        // Block.Base creation will be failed.)
         next_input_ScaleBoundsArray_or_TensorPlaceholder.channelCount_lowerHalf = undefined;
         next_input_ScaleBoundsArray_or_TensorPlaceholder.channelCount_higherHalf = undefined;
 
