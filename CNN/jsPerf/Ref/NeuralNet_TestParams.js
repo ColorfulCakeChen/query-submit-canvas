@@ -20,7 +20,8 @@ import * as Block_TestParams from "./Block_TestParams.js";
 class NeuralNet_TestParams_Base extends TestParams.Base {
 
   /**
-   * Used as default NeuralNet_TestParams.Base provider for conforming to Recyclable interface.
+   * Used as default NeuralNet_TestParams.Base provider for conforming to
+   * Recyclable interface.
    */
   static Pool = new Pool.Root( "NeuralNet_TestParams.Base.Pool",
     NeuralNet_TestParams_Base, NeuralNet_TestParams_Base.setAsConstructor );
@@ -115,7 +116,8 @@ class NeuralNet_TestParams_Base extends TestParams.Base {
       bKeepInputTensor
     );
 
-    Object.assign( this.in, this.out ); // So that all parameters are by specified (none is by evolution).
+    // So that all parameters are by specified (none is by evolution).
+    Object.assign( this.in, this.out );
 
     let weightElementOffsetBegin = 0;
     return this.set_byParamsNumberArrayObject_ParamsOut( weightElementOffsetBegin );
@@ -127,15 +129,17 @@ class NeuralNet_TestParams_Base extends TestParams.Base {
    *   - this.out.inferencedParams
    *
    * @param {object} this.in.paramsNumberArrayObject
-   *   Pass in an object. The result will be put into this object. It is a map from a string name (e.g. parameter name) to a number array.
-   * The name should be one of Base.paramsNameOrderArray[] elements.
+   *   Pass in an object. The result will be put into this object. It is a map from
+   * a string name (e.g. parameter name) to a number array. The name should be one
+   * of Base.paramsNameOrderArray[] elements.
    *
    * @param {NeuralNet.ParamsBase} this.out
    *   An object which will be the final result of NeuralNet.Params.
    *
    * @param {number} weightElementOffsetBegin
-   *   Offset how many elements (4 bytes per element) at the beginning of the result inputWeightArray.
-   * The this.in.byteOffsetBegin will be ( 4 * weightElementOffsetBegin ).
+   *   Offset how many elements (4 bytes per element) at the beginning of the result
+   * inputWeightArray. The this.in.byteOffsetBegin will be
+   * ( 4 * weightElementOffsetBegin ).
    *
    * @return {NeuralNet_TestParams_Base}
    *   Return this object self.
@@ -171,7 +175,8 @@ class NeuralNet_TestParams_Base extends TestParams.Base {
     this.stageArray.clear();
     this.stageArray.length = stageParamsArray.length;
 
-    for ( let i = 0; i < stageParamsArray.length; ++i ) { // Stage0, 1, 2, 3, ..., StageLast.
+    // Stage0, 1, 2, 3, ..., StageLast.
+    for ( let i = 0; i < stageParamsArray.length; ++i ) {
       let stageParams = stageParamsArray[ i ];
 
       let stageTestParams = Stage_TestParams.Base.Pool.get_or_create_by( this.id );
@@ -187,7 +192,9 @@ class NeuralNet_TestParams_Base extends TestParams.Base {
       );
 
       this.stageArray[ i ] = stageTestParams;
-      this.in.paramsNumberArrayObject.push( stageTestParams.in_weights.weightArray ); // Place every stage's parameters in sequence.
+
+      // Place every stage's parameters in sequence.
+      this.in.paramsNumberArrayObject.push( stageTestParams.in_weights.weightArray );
     }
 
     // 3. blockFinal
@@ -200,12 +207,15 @@ class NeuralNet_TestParams_Base extends TestParams.Base {
       this.blockFinal?.disposeResources_and_recycleToPool();
       this.blockFinal = blockTestParams;
 
-      this.in.paramsNumberArrayObject.push( blockTestParams.in_weights.weightArray ); // Place final block's parameters in sequence.
+      // Place final block's parameters in sequence.
+      this.in.paramsNumberArrayObject.push( blockTestParams.in_weights.weightArray );
     }
 
-    // 4. Pack all parameters, look-up tables weights into a (pre-allocated and re-used) NumberArray.
+    // 4. Pack all parameters, look-up tables weights into a (pre-allocated and
+    //    re-used) NumberArray.
     this.in_weights.set_byConcat(
-      NeuralNet_TestParams_Base.paramsNameOrderArray_Basic, this.in.paramsNumberArrayObject, weightElementOffsetBegin );
+      NeuralNet_TestParams_Base.paramsNameOrderArray_Basic,
+      this.in.paramsNumberArrayObject, weightElementOffsetBegin );
 
     { // 5. Release temporary intermediate array for reducing memory usage.
       for ( let i = 0; i < this.stageArray.length; ++i ) {
@@ -238,7 +248,8 @@ class NeuralNet_TestParams_Base extends TestParams.Base {
   onYield_before() {
 
     // For testing not start at the offset 0.
-    let weightElementOffsetBegin = RandTools.getRandomIntInclusive( 0, 3 ); // Skip a random un-used element count.
+    // Skip a random un-used element count.
+    let weightElementOffsetBegin = RandTools.getRandomIntInclusive( 0, 3 );
 
     this.set_byParamsNumberArrayObject_ParamsOut( weightElementOffsetBegin );
   }
@@ -260,11 +271,13 @@ class NeuralNet_TestParams_Base extends TestParams.Base {
    * Responsible for generating testing paramters combinations.
    *
    * @yield {Base}
-   *   Yield this object itself. The returned object (it is this object itself) should not be modified because it will be re-used.
+   *   Yield this object itself. The returned object (it is this object itself)
+   * should not be modified because it will be re-used.
    */
   * ParamsGenerator() {
 
-    // Restrict some parameter's large kinds. Otherwise, too many combination will be generated.
+    // Restrict some parameter's large kinds. Otherwise, too many combination
+    // will be generated.
     let valueOutMinMax = this.valueOutMinMax = {
       input_height: [ 3, 5 ],
       input_width: [ 3, 5 ],
@@ -285,20 +298,21 @@ class NeuralNet_TestParams_Base extends TestParams.Base {
       ],
 
       // (2022/08/16) Note: Mobile Moto e40 seems necessary pad=valid to work.
+      // (2023/03/09) Note: Mobile Moto e40 seems pad=same also workable.
 
       //!!! (2022/08/16 Temp Remarked) For mobile phone Moto e40 could pass testing.
-      // nConvStageTypeId: [
-      //   NeuralNet.Params.nConvStageTypeId.valueDesc.range.min,
-      //   NeuralNet.Params.nConvStageTypeId.valueDesc.range.max
-      // ],
+      nConvStageTypeId: [
+        NeuralNet.Params.nConvStageTypeId.valueDesc.range.min,
+        NeuralNet.Params.nConvStageTypeId.valueDesc.range.max
+      ],
       // nConvStageTypeId: [
       //   ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID, // (6)
       //   ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID // (6)
       // ],
-      nConvStageTypeId: [
-        ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1, // (5)
-        ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID // (6)
-      ],
+      // nConvStageTypeId: [
+      //   ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1, // (5)
+      //   ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID // (6)
+      // ],
 
       blockCountTotalRequested: [
         NeuralNet.Params.blockCountTotalRequested.valueDesc.range.min,
