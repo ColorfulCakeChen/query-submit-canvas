@@ -176,8 +176,8 @@ class NeuralOrchestra_Base extends Recyclable.Root {
    *   The Google Sheets spreadsheetId of neural network weights.
    *
    * @param {string} downloader_apiKey
-   *   The API key for accessing the Google Sheets spreadsheet of neural network weights.
-   * (Note: api key can not be changed after this object created.)
+   *   The API key for accessing the Google Sheets spreadsheet of neural network
+   * weights. (Note: api key can not be changed after this object created.)
    *   - If null, Google Visualization Table Query API will be used.
    *   - If not null, Google Sheets API v4 will be used.
    *
