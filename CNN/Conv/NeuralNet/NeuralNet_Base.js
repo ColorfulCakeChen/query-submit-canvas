@@ -487,7 +487,8 @@ class NeuralNet_Base extends Recyclable.Root {
   }
 
   /**
-   * Release all ScaleBoundsArray (inside tensor placeholder) except .stage0.inputX and .stageLast.outputX
+   * Release all ScaleBoundsArray (inside tensor placeholder) except
+   * .stage0.inputX and .stageLast.outputX
    *
    * This could reduce memory footprint by releasing unused scale bounds array.
    */
@@ -499,12 +500,14 @@ class NeuralNet_Base extends Recyclable.Root {
     if ( this.stageCount <= 1 )
       return; // No intermediate stage exists.
 
-    { // 1. Release stageLast's inputs' ScaleBoundsArray. (Note: .stageLast.outputX are kept.)
+    { // 1. Release stageLast's inputs' ScaleBoundsArray. (Note:
+      //    .stageLast.outputX are kept.)
       this.stageLast.input1?.ScaleBoundsArray_dispose();
       this.stageLast.input0.ScaleBoundsArray_dispose();
     }
 
-    // 2. Release intermediate (i.e. except stage0 and stageLast) stages' inputs' and outputs' ScaleBoundsArray.
+    // 2. Release intermediate (i.e. except stage0 and stageLast) stages'
+    //    inputs' and outputs' ScaleBoundsArray.
     for ( let i = ( this.stageArray.length - 2 ); i >= 1; --i ) {
       let stage = this.stageArray[ i ];
       stage.output1?.ScaleBoundsArray_dispose();
@@ -513,7 +516,8 @@ class NeuralNet_Base extends Recyclable.Root {
       stage.input0.ScaleBoundsArray_dispose();
     }
 
-    { // 3. Release stage0's outputs' ScaleBoundsArray. (Note: .stage0.inputX are kept.)
+    { // 3. Release stage0's outputs' ScaleBoundsArray.
+      //    (Note: .stage0.inputX are kept.)
       this.stage0.output1?.ScaleBoundsArray_dispose();
       this.stage0.output0.ScaleBoundsArray_dispose();
     }
@@ -590,17 +594,19 @@ class NeuralNet_Base extends Recyclable.Root {
     do {
       applierNext = applier.next();
 
-    // When ( false == applierNext.done ), the ( applierNext.value ) will be this.progressApply.root_get().
+    // When ( false == applierNext.done ), the ( applierNext.value ) will
+    // be this.progressApply.root_get().
     } while ( !applierNext.done );
 
-    // When ( true == applierNext.done ), the ( applierNext.value ) will be outputTensor.
+    // When ( true == applierNext.done ), the ( applierNext.value ) will
+    // be outputTensor.
     let outputTensor = applierNext.value;
     return outputTensor;
   }
 
   /**
-   * Create a tensor3d from source (e.g. canvas). Its size will be confirmed (by scaling)
-   * to this neural network's acceptable input [ height, width ].
+   * Create a tensor3d from source (e.g. canvas). Its size will be confirmed
+   * (by scaling) to this neural network's acceptable input [ height, width ].
    *
    * @param {Uint8Array|ImageData|ImageBitmap|HTMLImageElement|HTMLCanvasElement|HTMLVideoElement} sourcePixelData
    *   The image or canvas which provides image.
