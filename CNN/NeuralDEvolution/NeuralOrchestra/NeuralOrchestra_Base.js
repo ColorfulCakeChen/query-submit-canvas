@@ -23,6 +23,15 @@ import * as DEvolution from "../DEvolution.js";
  * tick).
  *
  *
+ * Another possible 250K filter weights configuration:
+ *   - input_height = 72
+ *   - input_width = 131 (= ( 128 + 3 ) )
+ *   - vocabularyChannelCount = 2
+ *   - blockCountTotalRequested = 52
+ *   - output_channelCount = 64
+ *
+ * It will get ( stageCount = 4 ).
+ *
  *
  * @member {string} downloader_spreadsheetId
  *   The Google Sheets spreadsheetId of neural network weights. Every worker will
