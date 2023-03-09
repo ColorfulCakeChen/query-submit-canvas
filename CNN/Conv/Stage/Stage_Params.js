@@ -25,62 +25,72 @@ class Stage_Params extends Weights.Params( ParamsBase ) {
   /**
    * Used as default Stage.Params provider for conforming to Recyclable interface.
    */
-  static Pool = new Pool.Root( "Stage.Params.Pool", Stage_Params, Stage_Params.setAsConstructor );
+  static Pool = new Pool.Root( "Stage.Params.Pool",
+    Stage_Params, Stage_Params.setAsConstructor );
 
   /**
-   * If a parameter's value is null, it will be extracted from inputWeightArray (i.e. by evolution).
+   * If a parameter's value is null, it will be extracted from inputWeightArray
+   * (i.e. by evolution).
    *
    * @param {number} input_height
-   *   The height of the source image which will be processed by apply(). If null, it will be extracted from
-   * inputWeightArray (i.e. by evolution).
+   *   The height of the source image which will be processed by apply(). If
+   * null, it will be extracted from inputWeightArray (i.e. by evolution).
    *
    * @param {number} input_width
-   *   The width of the source image which will be processed by apply(). If null, it will be extracted from
-   * inputWeightArray (i.e. by evolution).
+   *   The width of the source image which will be processed by apply(). If
+   * null, it will be extracted from inputWeightArray (i.e. by evolution).
    *
    * @param {number} input_channelCount
-   *   The depth (channel count) of the source image. It may be the output channel count of the previous convolution stage, so
-   * it could be large. If null, it will be extracted from inputWeightArray (i.e. by evolution).
+   *   The depth (channel count) of the source image. It may be the output
+   * channel count of the previous convolution stage, so it could be large.
+   * If null, it will be extracted from inputWeightArray (i.e. by evolution).
    *
    * @param {number} nConvStageTypeId
-   *   The convolution stage type (ValueDesc.ConvStageType.Singleton.Ids.Xxx). If null, it will be extracted from inputWeightArray
-   * (i.e. by evolution).
+   *   The convolution stage type (ValueDesc.ConvStageType.Singleton.Ids.Xxx).
+   * If null, it will be extracted from inputWeightArray (i.e. by evolution).
    *
    
 //!!! ...unfinished... (2022/06/25)
-// Perhaps, just like the ( height, width ) halving and channel count doubling by evey stage,
-// the block count could be doubled by evey stage.
+// Perhaps, just like the ( height, width ) halving and channel count doubling
+// by evey stage, the block count could be doubled by evey stage.
 
    * @param {number} blockCountRequested
    *   How many blocks inside this stage are wanted.
    *   - If null, it will be extracted from inputWeightArray (i.e. by evolution).
-   *   - It must be ( >= 2 ). Because this stage will use one tf.depthwiseConv2d( strides = 2, pad = "same" ) to shrink
-   *       (i.e. to halve height x width) and use ( blockCountRequested - 1 ) times tf.depthwiseConv2d( strides = 1, pad = "same" )
-   *       until the stage end. These can not be achieved by only one block. So there is at least two blocks.
+   *   - It must be ( >= 2 ). Because this stage will use one
+   *       tf.depthwiseConv2d( strides = 2, pad = "same" ) to shrink (i.e. to
+   *       halve height x width) and use ( blockCountRequested - 1 ) times
+   *       tf.depthwiseConv2d( strides = 1, pad = "same" ) until the stage end.
+   *       These can not be achieved by only one block. So there is at least
+   *       two blocks.
    *
    * @param {boolean} bPointwise1
-   *   If false, there will be no pointwise1 (i.e. the 1st pointwise convolution).If null, it will be extracted from inputWeightArray
-   * (i.e. by evolution).
+   *   If false, there will be no pointwise1 (i.e. the 1st pointwise convolution).
+   * If null, it will be extracted from inputWeightArray (i.e. by evolution).
    *
    * @param {number} depthwiseFilterHeight
-   *   The height of depthwise convolution's filter. At least 1 (so that 1D data could be processed). If null, it will be extracted
-   * from inputWeightArray (i.e. by evolution).
+   *   The height of depthwise convolution's filter. At least 1 (so that 1D data
+   * could be processed). If null, it will be extracted from inputWeightArray
+   * (i.e. by evolution).
    *
    * @param {number} depthwiseFilterWidth
-   *   The width of depthwise convolution's filter. At least 2 (so that meaningless ( 1 * 1 ) could be avoided). If null, it will
-   * be extracted from inputWeightArray (i.e. by evolution).
+   *   The width of depthwise convolution's filter. At least 2 (so that meaningless
+   * ( 1 * 1 ) could be avoided). If null, it will be extracted from
+   * inputWeightArray (i.e. by evolution).
    *
    * @param {number} nSqueezeExcitationChannelCountDivisor
-   *   An integer represents the channel count divisor for squeeze-and-excitation's intermediate pointwise convolution channel count.
+   *   An integer represents the channel count divisor for squeeze-and-excitation's
+   * intermediate pointwise convolution channel count.
    * (ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.Xx)
    *
    * @param {number} nActivationId
-   *   The activation function id (ValueDesc.ActivationFunction.Singleton.Ids.Xxx) after every convolution. If null, it will be
-   * extracted from inputWeightArray (i.e. by evolution).
+   *   The activation function id (ValueDesc.ActivationFunction.Singleton.Ids.Xxx)
+   * after every convolution. If null, it will be extracted from inputWeightArray
+   * (i.e. by evolution).
    *
    * @param {boolean} bKeepInputTensor
-   *   If true, apply() will not dispose inputTensor (i.e. will be kept). If null, it will be extracted from
-   * inputWeightArray (i.e. by evolution).
+   *   If true, apply() will not dispose inputTensor (i.e. will be kept). If null,
+   * it will be extracted from inputWeightArray (i.e. by evolution).
    *
    */
   constructor(
@@ -97,12 +107,15 @@ class Stage_Params extends Weights.Params( ParamsBase ) {
     // Q: Why the depthwiseChannelMultiplierBlock0 is not listed as a parameter?
     // A: After considering the following reasons, it is worth to drop this parameter.
     //
-    //   - In reality, it is almost no reason to use only avg/max pooling to compose a stage because it keep too little information
-    //     for the next stage.
+    //   - In reality, it is almost no reason to use only avg/max pooling to compose
+    //       a stage because it keep too little information for the next stage.
     //
-    //   - If depthwiseChannelMultiplierBlock0 is specified as Params.depthwiseChannelMultiplierBlock0.valueDesc.Ids.NONE (0), the input
-    //     image will not be shrinked a little (for ( blockCountRequested <= 1 )) or will not be halven (for ( blockCountRequested >= 2 ).
-    //     If it is still a parameter it should be forced to 1 at least (always needs depthwise operation) in this case.
+    //   - If depthwiseChannelMultiplierBlock0 is specified as
+    //       Params.depthwiseChannelMultiplierBlock0.valueDesc.Ids.NONE (0), the
+    //       input image will be neither shrinked a little (as
+    //       ( blockCountRequested <= 1 )) nor halven (as ( blockCountRequested >= 2 ).
+    //       If it is still a parameter it should be forced to 1 at least (always
+    //       needs depthwise operation) in this case.
     //
 
     super(
@@ -229,7 +242,8 @@ Stage_Params.bKeepInputTensor =      new ParamDesc.Bool(               "bKeepInp
 
 
 /**
- * Define the order of these parameters. (Fills ParamDesc.Xxx.seqId according to this array's order.)
+ * Define the order of these parameters. (Fills ParamDesc.Xxx.seqId according to
+ * this array's order.)
  */
 Stage_Params.SequenceArray = new ParamDesc.SequenceArray( [
   Stage_Params.input_height,
