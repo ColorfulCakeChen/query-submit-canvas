@@ -11,26 +11,35 @@ import * as DEvolution from "../DEvolution.js";
  * Orchestrate neural networks with differential evolution.
  *
  *
- * A possible 250K filter weights configuration:
+ * 1. Configuration for 250K filter weights and executing 2 times per second
+ *
  *   - input_height = 72
  *   - input_width = 131 (= ( 128 + 3 ) )
+ *   - output_channelCount = 64
+ *
+ * The extra 3 pixels of input_width are used for recurrent feedback (i.e. the
+ * neural network output of the previous game tick).
+ *
+ * The ( output_channelCount = 64 ) is important. If it is lesser (e.g. 32),
+ * the stageCount will also be lesser. Because image is shrinked less times,
+ * its performancce is slower (i.e. can not achieve 2 times per second).
+ *
+ *
+ * 1.1 A possible 250K filter weights configuration:
+ *
  *   - vocabularyChannelCount = 4
  *   - blockCountTotalRequested = 39
- *   - output_channelCount = 64
  *
- * It will get ( stageCount = 3 ). The extra 3 pixels of input_width are used
- * for recurrent feedback (i.e. the neural network output of the previous game
- * tick).
+ * It will get ( stageCount = 3 ).
  *
  *
- * Another possible 250K filter weights configuration:
- *   - input_height = 72
- *   - input_width = 131 (= ( 128 + 3 ) )
+ * 1.2 Another possible 250K filter weights configuration:
+ *
  *   - vocabularyChannelCount = 2
  *   - blockCountTotalRequested = 52
- *   - output_channelCount = 64
  *
  * It will get ( stageCount = 4 ).
+ *
  *
  *
  * @member {string} downloader_spreadsheetId
