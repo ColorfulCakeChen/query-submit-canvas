@@ -27,6 +27,8 @@ let g_Controls = {
   Info_TextArea: null,
   TestButton: null,
 
+  TestProgressBar: null,
+
   NeuralWorker_Performance_Table: null,
 };
 
@@ -880,9 +882,6 @@ function TestButton_onClick( event ) {
   let progress_NeuralWorker_tester = progress.child_add(
     ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
 
-  let progressReceiver
-    = new ValueMax.Receiver.HTMLProgress.createByTitle_or_getDummy( "TestProgressBar" );
-
   let tester = testerBackendAll( progress_NeuralWorker_tester,
     largerFactor,
     input_height,
@@ -891,6 +890,10 @@ function TestButton_onClick( event ) {
     blockCountTotalRequested,
     output_channelCount_per_alignment,
   );
+
+  let progressReceiver
+    = new ValueMax.Receiver.HTMLProgress( g_Controls.TestProgressBar );
+  progressReceiver.setValue( 0 );
 
   let testPromise = PartTime.forOf( tester,
 
