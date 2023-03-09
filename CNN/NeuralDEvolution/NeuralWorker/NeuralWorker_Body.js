@@ -271,8 +271,8 @@ class NeuralWorker_Body extends AsyncWorker.Body {
               let timeElapsed = timeEnd - timeBegin;
               timeElapsedArray[ j ] = timeElapsed;
             }
-            console.log(
-                `NeuralWorker_Body.NeuralNetArray_compileShaders_uploadTensors_ifWebGL(): `
+            console.log( `NeuralWorker_Body`
+              + `.NeuralNetArray_compileShaders_uploadTensors_ifWebGL(): `
               + `workerId=${this.workerId}, neuralNetIndex=${i}, `
               + `timeElapsed0=${timeElapsedArray[ 0 ]}, `
               + `timeElapsed1=${timeElapsedArray[ 1 ]}`
