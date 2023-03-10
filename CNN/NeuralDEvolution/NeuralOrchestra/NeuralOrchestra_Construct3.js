@@ -100,7 +100,7 @@ class NeuralOrchestra_Construct3 extends Base {
 // If downloading is failed (e.g. timeout), display message and re-try downloading.
 
 //!!! ...unfinished... (2023/03/10)
-// Perhaps, check this.loadingProgress
+// Perhaps, check this.versus_load_progress
 // (may be loading versusSummary + versus, or loading versus only.)
 
   }

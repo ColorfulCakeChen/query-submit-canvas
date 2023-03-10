@@ -118,7 +118,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     this.neuralNetParamsBase_dispose();
     this.workerProxies_dispose();
     this.versusSummary_dispose();
-    this.versusSummary_and_versus_load_progress_dispose();
+    this.versus_load_progress_dispose();
     this.params_loading_retryWaiting = undefined;
 
     super.disposeResources();
@@ -162,10 +162,10 @@ class NeuralOrchestra_Base extends Recyclable.Root {
   }
 
   /** */
-  versusSummary_and_versus_load_progress_dispose() {
-    if ( this.versusSummary_and_versus_load_progress ) {
-      this.versusSummary_and_versus_load_progress.disposeResources_and_recycleToPool();
-      this.versusSummary_and_versus_load_progress = null;
+  versus_load_progress_dispose() {
+    if ( this.versus_load_progress ) {
+      this.versus_load_progress.disposeResources_and_recycleToPool();
+      this.versus_load_progress = null;
     }
   }
 
@@ -211,7 +211,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
 //!!! ...unfinished... (2023/03/09)
 // versusSummary_load_promise
 // versusSummary_and_versus_load_promise
-// versusSummary_and_versus_load_progress
+// versus_load_progress
 //
 // versus_load_promise
 // versus_load_progress
@@ -279,11 +279,13 @@ class NeuralOrchestra_Base extends Recyclable.Root {
 //!!! ...unfinished... (2023/03/10)
 
     // 1. Versus Downloader.
+
+    // 1.1
     this.downloader_spreadsheetId = downloader_spreadsheetId;
     this.downloader_apiKey = downloader_apiKey;
 
-    this.versusSummary_and_versus_load_promise
-      = this.versusSummary_and_versus_load_async( ??? );
+    // 1.2
+    this.versus_load_promise = this.versus_load_async();
 
     // 2. Neural Workers.
     {
@@ -522,8 +524,9 @@ class NeuralOrchestra_Base extends Recyclable.Root {
   }
 
   /**
-   * Load all differential evolution versus weights ranges. And then, load one
-   * versus.
+   * Call .versus_load_asyncGenerator() internally.
+   *
+   * It will create .versus_load_progress.
    *
    * @return {Promise( boolean )}
    *   Return a promise:
@@ -532,28 +535,44 @@ class NeuralOrchestra_Base extends Recyclable.Root {
    */
   async versus_load_async() {
 
-    if ( this.versusSummary_and_versus_load_progress )
-      this.versusSummary_and_versus_load_progress.child_disposeAll();
+    // 0. Prepare progress.
+    if ( this.versus_load_progress )
+      this.versus_load_progress.child_disposeAll();
     else
-      this.versusSummary_and_versus_load_progress
+      this.versus_load_progress
         = ValueMax.Percentage.Aggregate.Pool.get_or_create_by()
 
-    let progressRoot = progressParent.root_get();
-    let progressFetcher = progressParent.child_add(
-      ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
-    let progressToAdvance = progressParent.child_add(
-      ValueMax.Percentage.Concrete.Pool.get_or_create_by( 1 ) );
-
-
 //!!! ...unfinished... (2023/03/10)
-    this.versusSummary_load_asyncGenerator
+    // 1. 
+    try {
+      let loader_async
+        = this.versus_load_asyncGenerator( this.versus_load_progress );
 
+      let loaderNext;
+      do {
+        loaderNext = await loader_async.next();
+      } while ( loaderNext.done == false );
+
+      let bLoadOk = loaderNext.value;
+      return bLoadOk;
+
+    } catch ( e ) {
+      //console.error( e );
+      throw e; // Unknown error, should be said loundly.
+
+    } finally {
+    }
   }
 
   /**
    *   - Load all differential evolution versus weights ranges (if not yet loaded).
+   *     - Record in .versusSummary
+   *
    *   - Load one versus.
+   *     - Record in .versus
+   *
    *   - Create neural networks by the versus data.
+   *     - Record in .workerProxies
    *
    *
    * @param {ValueMax.Percentage.Aggregate} progressParent
