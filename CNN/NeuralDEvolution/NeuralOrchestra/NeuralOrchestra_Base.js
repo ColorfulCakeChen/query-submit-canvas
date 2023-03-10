@@ -272,7 +272,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
    *   The output tensor's channel count.
    *
    * @return {Promise}
-   *   Return a promise.
+   *   Return a promise (i.e. the .workerProxies_init_promise).
    *   - Resolved to true, if succeeded.
    *       - The neural workers have been created and GPU shaders have been
    *           compiled.
@@ -346,14 +346,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     this.versusSubmitter_init( submitter_clientId );
 
     // 4.
-
-//!!! ...unfinished... (2022/12/29) AbortSignal.timeout()?
-// If downloading is failed (e.g. timeout), display message and re-try downloading.
-
-    let allPromise = Promise.all( [
-      ???this.versusSummary_or_versus_load_promise,
-      this.workerProxies_init_promise ] );
-    return allPromise;
+    return this.workerProxies_init_promise;
   }
 
   /**
