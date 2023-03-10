@@ -63,6 +63,9 @@ import * as DEvolution from "../DEvolution.js";
  *   - If null, Google Visualization Table Query API will be used.
  *   - If not null, Google Sheets API v4 will be used.
  *
+ * @member {boolean} bLogFetcherEventToConsole
+ *   If true, some debug messages of HttpRequest.Fetcher will be logged to console.
+ *
  * @member {string} submitter_clientId
  *   The client id when sending measurement protocol.
  *
@@ -253,8 +256,8 @@ class NeuralOrchestra_Base extends Recyclable.Root {
    *   - Resolved to false, if failed.
    */
   async init_async(
-    downloader_spreadsheetId, downloader_apiKey,
-
+    downloader_spreadsheetId, downloader_apiKey, bLogFetcherEventToConsole,
+   
     submitter_clientId,
 
     input_height = 72,
@@ -270,6 +273,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     // 1.1
     this.downloader_spreadsheetId = downloader_spreadsheetId;
     this.downloader_apiKey = downloader_apiKey;
+    this.bLogFetcherEventToConsole = bLogFetcherEventToConsole;
 
     // 1.2 Load (versus summary and) versus. Create neural networks.
     this.versus_load_async__record_promise();
@@ -623,6 +627,10 @@ class NeuralOrchestra_Base extends Recyclable.Root {
       } else {
         this.versusSummary = DEvolution.VersusSummary.Pool.get_or_create_by(
           this.downloader_spreadsheetId, this.downloader_apiKey );
+
+        this.versusSummary.bLogFetcherEventToConsole
+          = this.bLogFetcherEventToConsole;
+
         versusSummary_needLoad = true;
       }
 

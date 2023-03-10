@@ -23,6 +23,7 @@ async function* tester( progressParent ) {
 
   let downloader_spreadsheetId = "18YyEoy-OfSkODfw8wqBRApSrRnBTZpjRpRiwIKy8a0M";
   let downloader_apiKey = null;
+  let bLogFetcherEventToConsole = true;
 
   let submitter_clientId = Date.now();
 
@@ -45,7 +46,7 @@ async function* tester( progressParent ) {
     // 1. Create and initialize.
     neuralOrchestra = NeuralOrchestra.Base.Pool.get_or_create_by();
     let bInitOk = await neuralOrchestra.init_async(
-      downloader_spreadsheetId, downloader_apiKey,
+      downloader_spreadsheetId, downloader_apiKey, bLogFetcherEventToConsole,
       submitter_clientId,
 
       input_height,
