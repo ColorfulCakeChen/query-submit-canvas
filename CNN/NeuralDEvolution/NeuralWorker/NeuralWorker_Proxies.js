@@ -211,8 +211,8 @@ class NeuralWorker_Proxies extends Recyclable.Root {
   }
 
   /**
-   * Initialize this worker proxy controller. It will create two neural networks in
-   * one or two web worker(s).
+   * Initialize this worker proxy controller. It will create two neural networks
+   * in one or two web worker(s).
    *
    *
    * @return {Promise}
@@ -231,17 +231,18 @@ class NeuralWorker_Proxies extends Recyclable.Root {
 
     // (At most) Two web workers are sufficient.
     //
-    // Although we might want to create as many web worker as logical CPU count, it
-    // might not be necessary because our neural networks are learning by differential
-    // evolution. Differential evolution evaluates just two entities every time.
+    // Although we might want to create as many web worker as logical CPU count,
+    // it might not be necessary because our neural networks are learning by
+    // differential evolution. Differential evolution evaluates just two entities
+    // every time.
     //
     // Note1: How could two neural networks determine all the actions of so many
-    //        game objects? The method is to let the output of every neural network
-    //        contains all actions of all game objects of all alignments.
+    //        game objects? The method is to let the output of every neural
+    //        network contains all actions of all game objects of all alignments.
     //
-    // Note2: For NeuralWorker_Mode whose ( bFill == false ), only half of the output
-    //        actions (i.e. actions of one alignment in the game world) will be used
-    //        in one time.
+    // Note2: For NeuralWorker_Mode whose ( bFill == false ), only half of the
+    //        output actions (i.e. actions of one alignment in the game world)
+    //        will be used in one time.
     //
     let totalWorkerCount = NeuralWorker_Mode.workerCount_get( nNeuralWorker_ModeId );
 
