@@ -546,7 +546,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     if ( !workerProxies_initOk )
       throw Error( `NeuralOrchestra_Base.`
         + `versus_next_load__and__workerProxies_NeuralNetArray_create__async(): `
-        + `Failed to initialize neural web workers. `
+        + `Failed to initialize NeuralWorker.Proxies. `
         + `workerProxies={ ${this.workerProxies} }`
       );
 
