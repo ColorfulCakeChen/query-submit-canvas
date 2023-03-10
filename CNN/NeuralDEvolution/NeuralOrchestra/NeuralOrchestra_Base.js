@@ -488,6 +488,9 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     this.versusSummary_dispose();
     this.versusSummary = DEvolution.VersusSummary.Pool.get_or_create_by(
       downloader_spreadsheetId, downloader_apiKey );
+//!!!
+      // rangeArray_load_asyncGenerator
+      // progressParent, params_loading_retryWaiting )
 
     return this.versusSummary.rangeArray_load_async();
   }
@@ -537,6 +540,9 @@ class NeuralOrchestra_Base extends Recyclable.Root {
       this.versus.parentChromosomeFloat32Array.buffer,
       this.versus.offspringChromosomeFloat32Array.buffer
     ];
+
+//!!! ...unfinished... (2023/03/10)
+// What if this.workerProxies_init_promise not yet resolved?
 
     // In real-run, no need to observe dry-run performance and weight count.
     const bLogDryRunTime = false;
