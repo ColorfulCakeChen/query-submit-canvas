@@ -375,6 +375,9 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     // Neural network weights will be transferred (not copied) to workers. So,
     // all new dummy array buffer should be created.
     //
+    // Note: The dummy array size should not too large (e.g. larger than
+    //       ( 10 * 1024 * 1024 )). Otherwise, it will fail in mobile phone.
+    //
     const weightArrayLength = ( 5 * 1024 * 1024 );
     const weightArrayByteLength = weightArrayLength * Float32Array.BYTES_PER_ELEMENT;
     let weightArrayBufferArray = [
