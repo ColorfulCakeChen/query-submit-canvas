@@ -254,7 +254,8 @@ class NeuralOrchestra_Base extends Recyclable.Root {
    *         compiled.
    *     - But the versus summary and versus may still be loading (i.e. not
    *         yet complete). The neural networks may also still not be created
-   *         (since they need the versus data).
+   *         (since they need the versus data). Please check .versus_load_promise
+   *         and versus_load_progress to determine whether complete.
    * 
    *   - Resolved to false, if failed.
    */
