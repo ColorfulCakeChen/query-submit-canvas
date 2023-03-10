@@ -92,8 +92,8 @@ import * as DEvolution from "../DEvolution.js";
  * @member {Promise( boolean )} versus_load_promise
  *   The promise of whether .versus_load_progress still be advancing.
  *   - If settled, the .versus_load_progress has been stopped.
- *   - If resolved to true, all the loading and creating are succeeded.
- *
+ *   - If resolved to true, it means versus summary loaded, versus loaded, and
+ *       neural networks created.
  */
 class NeuralOrchestra_Base extends Recyclable.Root {
 
@@ -260,7 +260,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     this.downloader_apiKey = downloader_apiKey;
 
     // 1.2 Load (versus summary and) versus. Create neural networks.
-    this.versus_load_promise = this.versus_load_async();
+    this.versus_load_async__record_promise();
 
     // Note: Here does not wait for loading complete. Continue to create
     //       neural workers and compile GPU shaders because they all
@@ -483,6 +483,18 @@ class NeuralOrchestra_Base extends Recyclable.Root {
       this.versus.disposeResources_and_recycleToPool();
       this.versus = null;
     }
+  }
+
+  /**
+   * Call .versus_load_async() and record the returned promise in
+   * .versus_load_promise.
+   *
+   * @return {Promise( boolean )}
+   *   Return this.versus_load_promise
+   */
+  versus_load_async__record_promise() {
+    this.versus_load_promise = this.versus_load_async();
+    return this.versus_load_promise;
   }
 
   /**
