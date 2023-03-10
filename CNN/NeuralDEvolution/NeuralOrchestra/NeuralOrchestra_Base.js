@@ -704,7 +704,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
             this, weightArrayBufferArray, bLogDryRunTime );
 
       neuralNet_createOk = await neuralNet_create_promise;
-      if ( !bCreateOk )
+      if ( !neuralNet_createOk )
         throw Error( `NeuralOrchestra.Base.versus_load_asyncGenerator(): `
           + `Failed to create neural networks. `
           + `workerProxies={ ${this.workerProxies} }`
