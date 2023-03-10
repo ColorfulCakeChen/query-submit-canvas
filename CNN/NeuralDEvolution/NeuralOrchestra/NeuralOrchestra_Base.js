@@ -579,6 +579,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
         + `should not be executed multiple times simultaneously.`
       );
 
+    let neuralNet_bCreateOk;
     try {
       // 0.
 
@@ -667,22 +668,28 @@ class NeuralOrchestra_Base extends Recyclable.Root {
       let bCreateOkPromise = this.workerProxies_NeuralNetArray_create_async(
         weightArrayBufferArray, bLogDryRunTime );
 
-      let bCreateOk = await bCreateOkPromise;
+      neuralNet_bCreateOk = await bCreateOkPromise;
       if ( !bCreateOk )
         throw Error( `NeuralOrchestra.Base.versus_load_asyncGenerator(): `
           + `Failed to create neural networks. `
           + `workerProxies={ ${this.workerProxies} }`
         );
-    
-      progressToAdvance.value_advance();
-      yield progressRoot;
-
-      return bCreateOk;
 
     } finally {
       // 4. So that this generrator could be executed again.
       this.versus_load_asyncGenerator_running = false;
     }
+
+    // 5. Advance progress to 100% only if neural networks created successfully
+    //    and .versus_load_asyncGenerator_running has been set to false (so
+    //    that caller can re-execute this generator immediately when progress
+    //    become 100%).
+    if ( neuralNet_bCreateOk ) {
+      progressToAdvance.value_advance();
+      yield progressRoot;
+    }
+
+    return neuralNet_bCreateOk;
   }
 
 
