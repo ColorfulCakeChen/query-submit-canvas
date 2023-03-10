@@ -443,7 +443,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
 
     let bCreateOk = await bCreateOkPromise;
     if ( !bCreateOk )
-      throw Error( `NeuralOrchestra_Base.workerProxies_compileShaders_async(): `
+      throw Error( `NeuralOrchestra.Base.workerProxies_compileShaders_async(): `
         + `Failed to create neural networks. `
         + `workerProxies={ ${this.workerProxies} }`
       );
@@ -485,16 +485,6 @@ class NeuralOrchestra_Base extends Recyclable.Root {
       neuralNetParamsBaseArray, weightArrayBufferArray, bLogDryRunTime );
 
     return bCreateOkPromise;
-
-//!!! (2022/12/29 Remarked) Moved to caller.
-//     let bCreateOk = await bCreateOkPromise;
-//     if ( !bCreateOk )
-//       throw Error( `NeuralOrchestra_Base.workerProxies_NeuralNetArray_create_async(): `
-//         + `Failed to create neural networks. `
-//         + `workerProxies={ ${this.workerProxies} }`
-//       );
-//
-//     return bCreateOk;
   }
 
   /**
