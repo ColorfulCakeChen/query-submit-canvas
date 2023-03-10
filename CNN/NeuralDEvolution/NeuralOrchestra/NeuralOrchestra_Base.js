@@ -188,48 +188,6 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     }
   }
 
-//!!! ...unfinished... (2023/02/10)
-// versusSummaryDownloading
-//   - should begin before shader compiling.
-//   - its progress should be displayed after shader compiling and be combined
-//       with versus downloading.
-//
-
-//!!! ...unfinished... (2023/02/26)
-// versusSummary_load_asyncGenerator()
-// set flag ( bVersusSummary_loaded = true )
-// or ( progressVersusSummaryLoading.valuePercentage == 100 ) when done.
-// (For letting construct.net to detect inside runtime.tick())
-//
-// versus_load_asyncGenerator()
-// set flag ( bVersus_loaded = true )
-// or ( progressVersusLoading.valuePercentage == 100 ) when done.
-// (For letting construct.net to detect inside runtime.tick())
-//
-// devolution_VersusSummary_Versus_load_asyncGenerator()
-// call versusSummary_load_asyncGenerator()
-// and then versus_load_asyncGenerator().
-//
-// async_neuralWorker_initer()
-// call devolution_VersusSummary_Versus_load_asyncGenerator() too.
-// It will be resolved when neuralWorker initialized.
-// But the devolution_VersusSummary_Versus_load_asyncGenerator()
-// should continue to be passed the next construct.net runtime state to
-// continue loading.
-//
-
-
-//!!! ...unfinished... (2023/03/09)
-// versusSummary_load_promise
-// versusSummary_and_versus_load_promise
-// versus_load_progress
-//
-// versus_load_promise
-// versus_load_progress
-//
-// workerProxies_init_promise
-//
-
 
   /**
    *   - Load all differential evolution versus weights ranges (i.e. versus summary).
@@ -274,11 +232,11 @@ class NeuralOrchestra_Base extends Recyclable.Root {
    * @return {Promise}
    *   Return a promise (i.e. the .workerProxies_init_promise).
    *   - Resolved to true, if succeeded.
-   *       - The neural workers have been created and GPU shaders have been
-   *           compiled.
-   *       - But the versus summary and versus may still be loading (i.e. not
-   *           yet complete). The neural networks may also still not be created
-   *           (since they need the versus data).
+   *     - The neural workers have been created and GPU shaders have been
+   *         compiled.
+   *     - But the versus summary and versus may still be loading (i.e. not
+   *         yet complete). The neural networks may also still not be created
+   *         (since they need the versus data).
    * 
    *   - Resolved to false, if failed.
    */
@@ -535,6 +493,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
    * @return {Promise( boolean )}
    *   Return a promise:
    *   - Resolved to true, if succeeded.
+   *     - Versus summary and versus are loaded. Neural networks are created.
    *   - Resolved to false, if failed.
    */
   async versus_load_async() {
@@ -546,7 +505,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
       this.versus_load_progress
         = ValueMax.Percentage.Aggregate.Pool.get_or_create_by()
 
-    // 1. Load versus summary, versus. Create neural networks.
+    // 1. Load versus summary and versus. Create neural networks.
     try {
       let loader_async
         = this.versus_load_asyncGenerator( this.versus_load_progress );
