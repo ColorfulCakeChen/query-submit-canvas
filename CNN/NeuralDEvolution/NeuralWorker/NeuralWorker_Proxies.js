@@ -24,7 +24,7 @@ import { Mode as NeuralWorker_Mode } from "./NeuralWorker_Mode.js";
  *
  * Since it is slow to transfer data between CPU and GPU (for WebGL), it seems not
  * feasible to use multiple workers (which will transfer data between CPU and GPU
- * multiple times) to process both competition side of an diffential evolution
+ * multiple times) to process both competition side of a diffential evolution
  * iteration.
  *
  * So these ONE_WORKER__Xxx modes combine two neural networks of both competition
