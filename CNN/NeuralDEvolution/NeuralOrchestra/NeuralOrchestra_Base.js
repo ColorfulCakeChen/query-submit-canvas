@@ -100,10 +100,10 @@ import * as DEvolution from "../DEvolution.js";
  *   - If settled, the .versus_load_progress has been stopped.
  *   - If resolved to true, it means versus summary loaded, versus loaded, and
  *       neural networks created.
- * 
+ *
  * @member {boolean} versus_load_asyncGenerator_running
- *   If true, there has been a .versus_load_asyncGenerator() executing. Please
- * wait become ( .versus_load_asyncGenerator_running == false ) to call another
+ *   If true, a .versus_load_asyncGenerator() is just executing. Please wait
+ * for .versus_load_asyncGenerator_running becoming to false to call another
  * .versus_load_asyncGenerator().
  */
 class NeuralOrchestra_Base extends Recyclable.Root {
