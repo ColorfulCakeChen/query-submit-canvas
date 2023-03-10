@@ -263,20 +263,20 @@ class DEvolution_VersusSummary extends Recyclable.Root {
     if ( visitIndex < 0 )
       return null;
 
-    let spreadsheetRange = this.rangeArray[ visitIndex ];
-
-    let bLoadOk;
+    let versus_loadOk;
     let versus;
     try {
+      let spreadsheetRange = this.rangeArray[ visitIndex ];
+
       versus = DEvolution_Versus.Pool.get_or_create_by();
       let versusLoader = versus.load_asyncGenerator( progressParent,
         this.urlComposer, spreadsheetRange,
         params_loading_retryWaiting,
         this.textEncoder );
 
-      bLoadOk = yield* versusLoader;
+      versus_loadOk = yield* versusLoader;
 
-      if ( bLoadOk ) // Increase visit count, only if loaded sucessfully.
+      if ( versus_loadOk ) // Increase visit count, only if loaded sucessfully.
         ++this.visitCount;
 
     } catch ( e ) {
@@ -284,7 +284,7 @@ class DEvolution_VersusSummary extends Recyclable.Root {
       throw e; // Unknown error, should be said loundly.
 
     } finally {
-      if ( !bLoadOk ) { // Release, if failed to load.
+      if ( !versus_loadOk ) { // Release, if failed to load.
         if ( versus ) {
           versus.disposeResources_and_recycleToPool();
           versus = null;
