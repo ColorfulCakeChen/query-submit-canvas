@@ -417,8 +417,9 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     // (2022//09/26 Remarked)
     const bLogDryRunTime = true; // For observing dry-run performance and weight count.
     //const bLogDryRunTime = false;
-    let neuralNet_create_promise = this.workerProxies_NeuralNetArray_create_async(
-      weightArrayBufferArray, bLogDryRunTime );
+    let neuralNet_create_promise
+      = NeuralOrchestra_Base.workerProxies_NeuralNetArray_create_async.call(
+        this, weightArrayBufferArray, bLogDryRunTime );
 
     let bCreateOk = await neuralNet_create_promise;
     if ( !bCreateOk )
@@ -432,6 +433,8 @@ class NeuralOrchestra_Base extends Recyclable.Root {
 
   /**
    * Create neural networks in all neural web workers.
+   *
+   * @param {NeuralOrchestra_Base} this
    *
    * @param {ArrayBuffer[]} weightArrayBufferArray
    *   An array of every neural network's weights. Every element will be interpreted
@@ -447,7 +450,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
    *   - Resolved to true, if succeeded.
    *   - Resolved to false, if failed.
    */
-  async workerProxies_NeuralNetArray_create_async(
+  static async workerProxies_NeuralNetArray_create_async(
     weightArrayBufferArray, bLogDryRunTime ) {
 
     // Although neural network configuration will be copied (not transferred)
@@ -690,8 +693,8 @@ class NeuralOrchestra_Base extends Recyclable.Root {
       // In real-run, no need to observe dry-run performance and weight count.
       const bLogDryRunTime = false;
       let neuralNet_create_promise
-        = this.workerProxies_NeuralNetArray_create_async(
-            weightArrayBufferArray, bLogDryRunTime );
+        = NeuralOrchestra_Base.workerProxies_NeuralNetArray_create_async.call(
+            this, weightArrayBufferArray, bLogDryRunTime );
 
       neuralNet_createOk = await neuralNet_create_promise;
       if ( !bCreateOk )
