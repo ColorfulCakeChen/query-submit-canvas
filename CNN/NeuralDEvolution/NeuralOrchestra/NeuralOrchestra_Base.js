@@ -17,12 +17,20 @@ import * as DEvolution from "../DEvolution.js";
  *   - input_width = 131 (= ( 128 + 3 ) )
  *   - output_channelCount = 64
  *
- * The extra 3 pixels of input_width are used for recurrent feedback (i.e. the
- * neural network output of the previous game tick).
+ * The extra +3 pixels of input_width are used for recurrent feedback (i.e.
+ * the neural network output of the previous game tick).
  *
- * The ( output_channelCount = 64 ) is important. If it is lesser (e.g. 32),
- * the stageCount will also be lesser. Because image is shrinked less times,
- * its performancce is slower (i.e. can not achieve 2 times per second).
+ * The ( output_channelCount = 64 ) is important.
+ *
+ *   - If it is lesser (e.g. 32), the stageCount will also be lesser. Because
+ *       image is shrinked less times, its performancce is slower (i.e. can not
+ *       achieve 2 times per second). Although its filter weights will also be
+ *       lesser.
+ *
+ *   - If it is more (e.g. 128), the stageCount will also be more. Because
+ *       image is shrinked more times, its performancce is faster (i.e. can
+ *       exceed 2 times per second). However, its filter weights will also be
+ *       more (than 250K).
  *
  *
  * 1.1 Configuration_4_39
