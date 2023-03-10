@@ -205,6 +205,10 @@ class NeuralOrchestra_Construct3 extends Base {
 //!!! ...unfinished... (2022/10/28)
 // Perhaps, start downloading the next versus here, too.
 
+//!!! ...unfinished... (2023/03/10)
+// Perhaps, call this.versus_next_load_async(),
+// and then change state to Versus_Step_00_DownloadWeights_Begin.
+
   }
 
 }
