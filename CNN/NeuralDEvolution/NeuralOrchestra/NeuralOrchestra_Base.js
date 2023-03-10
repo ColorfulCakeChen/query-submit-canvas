@@ -83,6 +83,17 @@ import * as DEvolution from "../DEvolution.js";
  * @member {DEvolution.Versus} versus
  *   The downloaded current versus of the differential evolution.
  *
+ * 
+ * @member {ValueMax.Percentage.Aggregate} versus_load_progress
+ *   The progress of loading versus summary, loading versus, creating neural
+ * networks. If ( .versus_load_progress.valuePercentage == 100 ), all the
+ * loading and creating has done.
+ * 
+ * @member {Promise( boolean )} versus_load_promise
+ *   The promise of whether .versus_load_progress still be advancing.
+ *   - If settled, the .versus_load_progress has been stopped.
+ *   - If resolved to true, all the loading and creating are succeeded.
+ *
  */
 class NeuralOrchestra_Base extends Recyclable.Root {
 
