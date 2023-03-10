@@ -301,7 +301,11 @@ class NeuralWorker_Proxies extends Recyclable.Root {
       let arrayIndexBegin = this.workerProxyArray.length;
 
       this.workerProxyArray.length = newLength; // Enlarge array.
-      for ( let i = 0, arrayIndex = arrayIndexBegin; i < deltaCount; ++i, ++arrayIndex ) {
+      for (
+        let i = 0, arrayIndex = arrayIndexBegin;
+        i < deltaCount;
+        ++i, ++arrayIndex ) {
+
         let workerProxy = NeuralWorker_Proxy.Pool.get_or_create_by();
         this.workerProxyArray[ arrayIndex ] = workerProxy;
       }
@@ -328,13 +332,13 @@ class NeuralWorker_Proxies extends Recyclable.Root {
    * by this NeuralWorker.Proxy.
    *
    * @param {ArrayBuffer[]} weightArrayBufferArray
-   *   An array of every neural network's weights. Every element will be interpreted
-   * as Float32Array. Every element will be transferred to web worker (i.e. their
-   * .byteLength will become zero).
+   *   An array of every neural network's weights. Every element will be
+   * interpreted as Float32Array. Every element will be transferred to web worker
+   * (i.e. their .byteLength will become zero).
    *
    * @param {boolean} bLogDryRunTime
-   *   If true, the neural network dry-run time will be measured twice and logged to
-   * console.
+   *   If true, the neural network dry-run time will be measured twice and logged
+   * to console.
    *
    * @return {Promise}
    *   Return a promise:
@@ -390,7 +394,8 @@ class NeuralWorker_Proxies extends Recyclable.Root {
 
   /**
    * @param {integer[]} markValueArray
-   *   An array of values representing every neural network playing which alignment.
+   *   An array of values representing every neural network playing which
+   * alignment.
    *
    * @return {Promise}
    *   Return a promise:
@@ -426,8 +431,9 @@ class NeuralWorker_Proxies extends Recyclable.Root {
   
     // 2. The only one worker sets all alignment mark values.
     } else {
-      resultOk = await this.workerProxyArray[ 0 ].alignmentMarkArray_setValue_async(
-        markValueArray );
+      resultOk
+        = await this.workerProxyArray[ 0 ].alignmentMarkArray_setValue_async(
+            markValueArray );
     }
 
     return resultOk;
@@ -481,7 +487,9 @@ class NeuralWorker_Proxies extends Recyclable.Root {
 
   /** */
   static async apply__TWO_WORKER__ONE_SCALE__FILL__or__NO_FILL( sourceImageData ) {
-    let modeInfo = NeuralWorker_Mode.Singleton.getInfo_byId( this.nNeuralWorker_ModeId );
+    let modeInfo
+      = NeuralWorker_Mode.Singleton.getInfo_byId( this.nNeuralWorker_ModeId );
+
     let bFill = modeInfo.bFill;
     let bApply_or_Applier = modeInfo.bApply_or_Applier;
 
