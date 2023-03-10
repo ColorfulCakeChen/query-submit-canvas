@@ -47,14 +47,14 @@ function test() {
   // Aggregate all progress about util_tester.
   let progress = ValueMax.Percentage.Aggregate.Pool.get_or_create_by();
 
-  for ( let testGeneratorFunc of gTestGeneratorMap.keys() ) {
+  for ( let testGeneratorFunc of gTestGeneratorFuncMap.keys() ) {
     let progress_tester = progress.child_add(
       ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
 
-    gTestGeneratorMap.set( testGeneratorFunc, progress_tester );
+    gTestGeneratorFuncMap.set( testGeneratorFunc, progress_tester );
   }
 
-//!!! (2023/03/10 Remarked) Replaced by gTestGeneratorMap.
+//!!! (2023/03/10 Remarked) Replaced by gTestGeneratorFuncMap.
 //   let progress_Base64ToUint8Array_tester;
 //   if ( gTestSwitch.Base64ToUint8Array )
 //     progress_Base64ToUint8Array_tester = progress.child_add(
@@ -95,11 +95,11 @@ function test() {
 
   async function* testerAll() {
 
-    for ( let [ testGeneratorFunc, progress_tester ] of gTestGeneratorMap ) {
+    for ( let [ testGeneratorFunc, progress_tester ] of gTestGeneratorFuncMap ) {
       yield* testGeneratorFunc( progress_tester );
     }
   
-//!!! (2023/03/10 Remarked) Replaced by gTestGeneratorMap.
+//!!! (2023/03/10 Remarked) Replaced by gTestGeneratorFuncMap.
 //     if ( gTestSwitch.Base64ToUint8Array )
 //       yield* Base64ToUint8Array_tester.tester( progress_Base64ToUint8Array_tester );
 //
