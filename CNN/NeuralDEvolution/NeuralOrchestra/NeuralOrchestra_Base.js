@@ -141,13 +141,13 @@ class NeuralOrchestra_Base extends Recyclable.Root {
   /** @override */
   disposeResources() {
     this.versusResultSubmitter_dispose();
-    this.versus_dispose();
-    this.neuralNetParamsBase_dispose();
-    this.workerProxies_dispose();
-    this.versusSummary_dispose();
     this.versus_load_progress_dispose();
     this.versus_load_asyncGenerator_running = undefined;
     this.versus_load_async_running = undefined;
+    this.versus_dispose();
+    this.versusSummary_dispose();
+    this.neuralNetParamsBase_dispose();
+    this.workerProxies_dispose();
     this.params_loading_retryWaiting = undefined;
 
     super.disposeResources();
@@ -183,18 +183,18 @@ class NeuralOrchestra_Base extends Recyclable.Root {
   }
 
   /** */
-  versus_load_progress_dispose() {
-    if ( this.versus_load_progress ) {
-      this.versus_load_progress.disposeResources_and_recycleToPool();
-      this.versus_load_progress = null;
-    }
-  }
-
-  /** */
   neuralNetParamsBase_dispose() {
     if ( this.neuralNetParamsBase ) {
       this.neuralNetParamsBase.disposeResources_and_recycleToPool();
       this.neuralNetParamsBase = null;
+    }
+  }
+
+  /** */
+  versus_load_progress_dispose() {
+    if ( this.versus_load_progress ) {
+      this.versus_load_progress.disposeResources_and_recycleToPool();
+      this.versus_load_progress = null;
     }
   }
 
