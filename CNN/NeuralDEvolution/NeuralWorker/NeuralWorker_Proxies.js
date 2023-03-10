@@ -476,7 +476,14 @@ class NeuralWorker_Proxies extends Recyclable.Root {
     }
   }
 
-  /** */
+  /**
+   * @param {ImageData} sourceImageData
+   *   The input image datat which will be processed by neural workers.
+   *
+   * @return {Promise( Float32Array[] )}
+   *   Return a promise resolved to an array [ Float32Array, Float32Array ]
+   * representing the (pair) neural networks' results.
+   */
   static async apply__ONE_WORKER__ONE_SCALE__FILL__or__NO_FILL( sourceImageData ) {
     let bFill = NeuralWorker_Mode.bFill_get( this.nNeuralWorker_ModeId );
 
@@ -487,7 +494,14 @@ class NeuralWorker_Proxies extends Recyclable.Root {
     return worker0_value_Float32ArrayArray;
   }
 
-  /** */
+  /**
+   * @param {ImageData} sourceImageData
+   *   The input image datat which will be processed by neural workers.
+   *
+   * @return {Promise( Float32Array[] )}
+   *   Return a promise resolved to an array [ Float32Array, Float32Array ]
+   * representing the (pair) neural networks' results.
+   */
   static async apply__TWO_WORKER__ONE_SCALE__FILL__or__NO_FILL( sourceImageData ) {
     let modeInfo
       = NeuralWorker_Mode.Singleton.getInfo_byId( this.nNeuralWorker_ModeId );
@@ -521,7 +535,14 @@ class NeuralWorker_Proxies extends Recyclable.Root {
     return [ worker0_value_Float32Array, worker1_value_Float32Array ];
   }
 
-  /** */
+  /**
+   * @param {ImageData} sourceImageData
+   *   The input image datat which will be processed by neural workers.
+   *
+   * @return {Promise( Float32Array[] )}
+   *   Return a promise resolved to an array [ Float32Array, Float32Array ]
+   * representing the (pair) neural networks' results.
+   */
   static async apply__TWO_WORKER__TWO_SCALE__NO_FILL( sourceImageData ) {
     const worker0_bFork = true;
     let worker0_resulter = this.workerProxyArray[ 0 ]

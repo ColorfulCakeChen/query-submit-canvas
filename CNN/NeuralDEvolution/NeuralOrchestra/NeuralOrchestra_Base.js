@@ -450,7 +450,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
    *
    * @return {Promise( Float32Array[] )}
    *   Return a promise resolved to an array [ Float32Array, Float32Array ]
-   * representing the neural networks' results.
+   * representing the (pair) neural networks' results.
    */
   async workerProxies_ImageData_process_async( sourceImageData ) {
     let theFloat32ArrayArrayPromise
