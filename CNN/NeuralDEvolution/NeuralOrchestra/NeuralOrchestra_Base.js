@@ -153,14 +153,6 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     super.disposeResources();
   }
 
-  get downloader_spreadsheetId() {
-    return this.versusSummary.weightsSpreadsheetId;
-  }
-
-  get downloader_apiKey() {
-    return this.versusSummary.weightsAPIKey;
-  }
-
   get submitter_clientId() {
     return this.versusResultSubmitter.clientId;
   }
