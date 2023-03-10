@@ -23,6 +23,7 @@ async function* tester( progressParent ) {
 
   let downloader_spreadsheetId = "18YyEoy-OfSkODfw8wqBRApSrRnBTZpjRpRiwIKy8a0M";
   let downloader_apiKey = null;
+  // let bLogFetcherEventToConsole = false;
   let bLogFetcherEventToConsole = true;
 
   let submitter_clientId = Date.now();
