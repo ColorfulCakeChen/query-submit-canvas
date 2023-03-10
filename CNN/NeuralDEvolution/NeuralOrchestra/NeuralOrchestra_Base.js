@@ -163,7 +163,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
 
   /** */
   versusSummary_and_versus_load_progress_dispose() {
-    if ( this.versusSummary_and_versus_load_progress )
+    if ( this.versusSummary_and_versus_load_progress ) {
       this.versusSummary_and_versus_load_progress.disposeResources_and_recycleToPool();
       this.versusSummary_and_versus_load_progress = null;
     }
