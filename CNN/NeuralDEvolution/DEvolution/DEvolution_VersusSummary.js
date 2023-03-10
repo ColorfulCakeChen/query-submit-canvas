@@ -296,10 +296,9 @@ class DEvolution_VersusSummary extends Recyclable.Root {
   }
 
   /**
-   * Load this object by calling load_asyncGenerator() and advance the generator
-   * by loop until done.
+   * Load this object by calling .versus_next_load_asyncGenerator() and advance
+   * the generator by looping until done.
    *
-     /**
    * An async generator for loading the next versus data of differential evolution
    * versus weights.
    *
