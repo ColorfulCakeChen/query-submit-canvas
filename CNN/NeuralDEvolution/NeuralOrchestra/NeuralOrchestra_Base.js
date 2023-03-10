@@ -118,6 +118,8 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     this.neuralNetParamsBase_dispose();
     this.workerProxies_dispose();
     this.versusSummary_dispose();
+    this.versusSummary_and_versus_load_progress_dispose();
+    this.params_loading_retryWaiting = undefined;
 
     super.disposeResources();
   }
@@ -160,18 +162,18 @@ class NeuralOrchestra_Base extends Recyclable.Root {
   }
 
   /** */
-  neuralNetParamsBase_dispose() {
-    if ( this.neuralNetParamsBase ) {
-      this.neuralNetParamsBase.disposeResources_and_recycleToPool();
-      this.neuralNetParamsBase = null;
+  versusSummary_and_versus_load_progress_dispose() {
+    if ( this.versusSummary_and_versus_load_progress )
+      this.versusSummary_and_versus_load_progress.disposeResources_and_recycleToPool();
+      this.versusSummary_and_versus_load_progress = null;
     }
   }
 
   /** */
-  workerProxies_dispose() {
-    if ( this.workerProxies ) {
-      this.workerProxies.disposeResources_and_recycleToPool();
-      this.workerProxies = null;
+  neuralNetParamsBase_dispose() {
+    if ( this.neuralNetParamsBase ) {
+      this.neuralNetParamsBase.disposeResources_and_recycleToPool();
+      this.neuralNetParamsBase = null;
     }
   }
 
@@ -207,8 +209,12 @@ class NeuralOrchestra_Base extends Recyclable.Root {
 
 
 //!!! ...unfinished... (2023/03/09)
-// versusSummary_or_versus_load_promise
-// versusSummary_or_versus_load_progress
+// versusSummary_load_promise
+// versusSummary_and_versus_load_promise
+// versusSummary_and_versus_load_progress
+//
+// versus_load_promise
+// versus_load_progress
 //
 // workerProxies_init_promise
 //
@@ -271,8 +277,9 @@ class NeuralOrchestra_Base extends Recyclable.Root {
   ) {
 
     // 1. Versus Downloader.
-    this.versusSummary_or_versus_load_promise = this.versusSummary_load_async(
-      downloader_spreadsheetId, downloader_apiKey );
+    this.versusSummary_and_versus_load_promise
+      = this.versusSummary_and_versus_load_async(
+          downloader_spreadsheetId, downloader_apiKey );
 
     // 2. Neural Workers.
     {
@@ -485,14 +492,14 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     return theFloat32ArrayArrayPromise;
   }
 
-
   /** */
-  versusSummary_dispose() {
-    if ( this.versusSummary ) {
-      this.versusSummary.disposeResources_and_recycleToPool();
-      this.versusSummary = null;
+  workerProxies_dispose() {
+    if ( this.workerProxies ) {
+      this.workerProxies.disposeResources_and_recycleToPool();
+      this.workerProxies = null;
     }
   }
+
 
   /**
    * Load all differential evolution versus weights ranges. And then, load one
@@ -506,11 +513,26 @@ class NeuralOrchestra_Base extends Recyclable.Root {
   async versusSummary_and_versus_load_async(
     downloader_spreadsheetId, downloader_apiKey ) {
 
+    if ( this.versusSummary_and_versus_load_progress )
+      this.versusSummary_and_versus_load_progress.child_disposeAll();
+    else
+      this.versusSummary_and_versus_load_progress
+        = ValueMax.Percentage.Aggregate.Pool.get_or_create_by()
+
+    let progressRoot = progressParent.root_get();
+    let progressFetcher = progressParent.child_add(
+      ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
+    let progressToAdvance = progressParent.child_add(
+      ValueMax.Percentage.Concrete.Pool.get_or_create_by( 1 ) );
+
+
 //!!! ...unfinished... (2023/03/10)
+    this.versusSummary_load_asyncGenerator
 
   }
 
-  /** Load all differential evolution versus weights ranges.
+  /**
+   * Load all differential evolution versus weights ranges.
    *
    * @param {ValueMax.Percentage.Aggregate} progressParent
    *   Some new progressToAdvance will be created and added to progressParent. The
@@ -532,21 +554,20 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     this.versusSummary = DEvolution.VersusSummary.Pool.get_or_create_by(
       downloader_spreadsheetId, downloader_apiKey );
 
-//!!!
-    this.versusSummary.rangeArray_load_asyncGenerator(
+    let loadOk = yield *this.versusSummary.rangeArray_load_asyncGenerator(
       progressParent, this.params_loading_retryWaiting );
 
-    return this.versusSummary.rangeArray_load_async();
+    return loadOk;
   }
-
 
   /** */
-  versus_dispose() {
-    if ( this.versus ) {
-      this.versus.disposeResources_and_recycleToPool();
-      this.versus = null;
+  versusSummary_dispose() {
+    if ( this.versusSummary ) {
+      this.versusSummary.disposeResources_and_recycleToPool();
+      this.versusSummary = null;
     }
   }
+
 
   /**
    * Load the next versus data, and create neural networks by these versus data.
@@ -559,11 +580,34 @@ class NeuralOrchestra_Base extends Recyclable.Root {
   async versus_next_load__and__workerProxies_NeuralNetArray_create__async() {
 
 //!!! ...unfinished... (2023/03/10)
-//this.params_loading_retryWaiting
+  }
+    
+  /**
+   * Load the next versus data, and create neural networks by these versus data.
+   *
+   * @param {ValueMax.Percentage.Aggregate} progressParent
+   *   Some new progressToAdvance will be created and added to progressParent. The
+   * created progressToAdvance will be increased when every time advanced. The
+   * progressParent.root_get() will be returned when every time yield.
+   *
+   * @yield {Promise( ValueMax.Percentage.Aggregate )}
+   *   Yield a promise resolves to { done: false, value: progressParent.root_get() }.
+   *
+   * @yield {Promise( boolean )}
+   *   Yield a promise:
+   *   - Resolved to { done: true, value: true }, if succeeded.
+   *   - Resolved to { done: true, value: false }, if failed.
+   */
+  async* versus_next_load__and__workerProxies_NeuralNetArray_create__asyncGenerator(
+    progressParent ) {
+
+//!!! ...unfinished... (2023/03/10)
+// should await versusSummary loaded.
 
     // 1. Download versus.
     this.versus_dispose();
-    this.versus = await this.versusSummary.versus_next_load_async();
+    this.versus = await this.versusSummary.versus_next_load_asyncGenerator(
+      ???, this.params_loading_retryWaiting );
 
     if ( !this.versus ) {
 
@@ -617,12 +661,13 @@ class NeuralOrchestra_Base extends Recyclable.Root {
   }
 
   /** */
-  versusSubmitter_dispose() {
-    if ( this.versusSubmitter ) {
-      this.versusSubmitter.disposeResources_and_recycleToPool();
-      this.versusSubmitter = null;
+  versus_dispose() {
+    if ( this.versus ) {
+      this.versus.disposeResources_and_recycleToPool();
+      this.versus = null;
     }
   }
+
 
   /** Create differential evolution versus result reporter. */
   versusSubmitter_init( submitter_clientId ) {
@@ -643,6 +688,14 @@ class NeuralOrchestra_Base extends Recyclable.Root {
   versusSubmitter_send( nNegativeZeroPositive ) {
     this.versusSubmitter.post_by_versusId_NegativeZeroPositive(
       this.versus.versusId, nNegativeZeroPositive );
+  }
+
+  /** */
+  versusSubmitter_dispose() {
+    if ( this.versusSubmitter ) {
+      this.versusSubmitter.disposeResources_and_recycleToPool();
+      this.versusSubmitter = null;
+    }
   }
 
 }
