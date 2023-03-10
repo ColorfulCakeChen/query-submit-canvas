@@ -145,7 +145,8 @@ import { Mode as NeuralWorker_Mode } from "./NeuralWorker_Mode.js";
  *
  *   - Try mode ONE_WORKER__ONE_SCALE__NO_FILL (0) with backend "webgl".
  *
- *   - If failed, try mode TWO_WORKER__ONE_SCALE__NO_FILL__APPLIER (5) with backend "cpu".
+ *   - If failed, try mode TWO_WORKER__ONE_SCALE__NO_FILL__APPLIER (5) with
+ *       backend "cpu".
  *
  *
  *
