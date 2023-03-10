@@ -95,8 +95,8 @@ class DEvolution_Versus extends Recyclable.Root {
    * @yield {Promise( boolean )}
    *   Yield a promise:
    *   - Resolved to { done: true, value: true }, if succeeded.
-   *       The .versusId, .parentChromosome, and .offspringChromosome of
-   *       this will be set.
+   *       The .versusId, .parentChromosomeFloat32Array, and
+   *       .offspringChromosomeFloat32Array of this will be set.
    *   - Resolved to { done: true, value: false }, if failed.
    */
   async* load_asyncGenerator( progressParent,
@@ -105,8 +105,8 @@ class DEvolution_Versus extends Recyclable.Root {
     textEncoder ) {
 
     // 0.1
-    this.parentChromosome = undefined;
-    this.offspringChromosome = undefined;
+    this.parentChromosomeFloat32Array = undefined;
+    this.offspringChromosomeFloat32Array = undefined;
 
     // 0.2 Prepare progress.
     let progressRoot = progressParent.root_get();
@@ -220,8 +220,9 @@ class DEvolution_Versus extends Recyclable.Root {
    *
    * @return {Promise( boolean )}
    *   Return a promise.
-   *   - Resolved to true, if succeeded. The .versusId, .parentChromosome,
-   *       and .offspringChromosome of this will be set.
+   *   - Resolved to true, if succeeded. The .versusId,
+   *       .parentChromosomeFloat32Array, and .offspringChromosomeFloat32Array
+   *       of this will be set.
    *   - Resolved to false, if failed.
    */
   async load_async(
