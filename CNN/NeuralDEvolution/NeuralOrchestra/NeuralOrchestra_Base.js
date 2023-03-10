@@ -2,6 +2,7 @@ export { NeuralOrchestra_Base as Base };
 
 import * as Pool from "../../util/Pool.js";
 import * as Recyclable from "../../util/Recyclable.js";
+import * as HttpRequest from "../../util/HttpRequest.js";
 import * as ValueDesc from "../../Unpacker/ValueDesc.js";
 import * as NeuralNet from "../../Conv/NeuralNet.js";
 import * as NeuralWorker from "../NeuralWorker.js";
@@ -106,6 +107,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
 
   /** @override */
   static setAsConstructor_self() {
+    this.params_loading_retryWaiting_create();
     this.workerProxies = NeuralWorker.Proxies.Pool.get_or_create_by();
   }
 
@@ -138,6 +140,23 @@ class NeuralOrchestra_Base extends Recyclable.Root {
 
   get nNeuralWorker_ModeId() {
     return this.workerProxies.nNeuralWorker_ModeId;
+  }
+
+  /** Create .params_loading_retryWaiting */
+  params_loading_retryWaiting_create() {
+    const loadingMillisecondsMax = ( 60 * 1000 );
+    const loadingMillisecondsInterval = ( 5 * 1000 );
+
+    const retryTimesMax = -1; // retry infinite times
+    const retryWaitingSecondsExponentMax = 6; // i.e. ( 2 ** 6 ) = 64 seconds
+    const retryWaitingMillisecondsInterval = ( 1000 );
+
+    this.params_loading_retryWaiting
+      = new HttpRequest.Params_loading_retryWaiting(
+          loadingMillisecondsMax, loadingMillisecondsInterval,
+          retryTimesMax,
+          retryWaitingSecondsExponentMax, retryWaitingMillisecondsInterval
+        );
   }
 
   /** */
@@ -475,22 +494,47 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     }
   }
 
-  /** Load all differential evolution versus weights ranges.
+  /**
+   * Load all differential evolution versus weights ranges. And then, load one
+   * versus.
    *
-   * @return {Promise}
+   * @return {Promise( boolean )}
    *   Return a promise:
    *   - Resolved to true, if succeeded.
    *   - Resolved to false, if failed.
    */
-  async versusSummary_load_async(
+  async versusSummary_and_versus_load_async(
     downloader_spreadsheetId, downloader_apiKey ) {
+
+//!!! ...unfinished... (2023/03/10)
+
+  }
+
+  /** Load all differential evolution versus weights ranges.
+   *
+   * @param {ValueMax.Percentage.Aggregate} progressParent
+   *   Some new progressToAdvance will be created and added to progressParent. The
+   * created progressToAdvance will be increased when every time advanced. The
+   * progressParent.root_get() will be returned when every time yield.
+   *
+   * @yield {Promise( ValueMax.Percentage.Aggregate )}
+   *   Yield a promise resolves to { done: false, value: progressParent.root_get() }.
+   *
+   * @yield {Promise( boolean )}
+   *   Yield a promise:
+   *   - Resolved to { done: true, value: true }, if succeeded.
+   *   - Resolved to { done: true, value: false }, if failed.
+   */
+  async* versusSummary_load_asyncGenerator(
+    progressParent, downloader_spreadsheetId, downloader_apiKey ) {
 
     this.versusSummary_dispose();
     this.versusSummary = DEvolution.VersusSummary.Pool.get_or_create_by(
       downloader_spreadsheetId, downloader_apiKey );
+
 //!!!
-      // rangeArray_load_asyncGenerator
-      // progressParent, params_loading_retryWaiting )
+    this.versusSummary.rangeArray_load_asyncGenerator(
+      progressParent, this.params_loading_retryWaiting );
 
     return this.versusSummary.rangeArray_load_async();
   }
@@ -513,6 +557,9 @@ class NeuralOrchestra_Base extends Recyclable.Root {
    *   - Resolved to false, if failed.
    */
   async versus_next_load__and__workerProxies_NeuralNetArray_create__async() {
+
+//!!! ...unfinished... (2023/03/10)
+//this.params_loading_retryWaiting
 
     // 1. Download versus.
     this.versus_dispose();

@@ -26,10 +26,6 @@ export { HttpRequest_Params_loading_retryWaiting as Params_loading_retryWaiting 
  * small interval (relative to loadingMillisecondsMax) may not look good because
  * the progress bar may advance too little to be aware by eyes.
  *
- * @member {number} loadingMillisecondsCur
- *   The current time (in milliseconds) of loading. It is only used if
- * ( loadingMillisecondsMax > 0 ).
- *
  * @member {number} retryTimesMax
  *   Retry request so many times at most when request failed (ProgressEvent
  * is error, or load without status 200, or timeout). Note1: Never retry if
@@ -44,9 +40,6 @@ export { HttpRequest_Params_loading_retryWaiting as Params_loading_retryWaiting 
  *
  *   - Positive value means retry so many times at most.
  *
- * @member {number} retryTimesCur
- *   How many times has been retried.
- *
  * @member {number} retryWaitingSecondsExponentMax
  *   The maximum exponent (for two's power; i.e. the B of ( 2 ** B ) ) of retry
  * waiting time (in seconds, not in milliseconds). It is only used if
@@ -57,19 +50,11 @@ export { HttpRequest_Params_loading_retryWaiting as Params_loading_retryWaiting 
  *   - ...
  *   - 6 means ( 2 ** 6 ) = 64 seconds.
  *
- * @member {number} retryWaitingMillisecondsMax
- *   The maximum time (in milliseconds) of waiting for retry. It is only used
- * if ( retryTimesMax > 0 ). It is calculated from retryWaitingSecondsExponentMax.
- *
  * @member {number} retryWaitingMillisecondsInterval
  *   The interval time (in milliseconds) for advancing retryWaitingMillisecondsCur.
  * Although smaller interval may provide smoother progress advancing, however,
  * too small interval (relative to retryWaitingMillisecondsMax) may not look good
  * because the progress bar may advance too little to be aware by eyes.
- *
- * @member {number} retryWaitingMillisecondsCur
- *   The current time (in milliseconds) of waiting for retry. It is only used
- * if ( retryTimesMax > 0 ).
  */
 class HttpRequest_Params_loading_retryWaiting {
 
