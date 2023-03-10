@@ -63,7 +63,20 @@ async function* tester( progressParent ) {
 
     progressToAdvance.value_advance();
     yield progressRoot;
-    
+
+    // 
+    await neuralOrchestra.versus_load_promise;
+
+    if ( 100 !== neuralOrchestra.versus_load_progress.valuePercentage )
+      throw Error( `NeuralOrchestra_tester.tester(): `
+        + `neuralOrchestra.versus_load_progress.valuePercentage (`
+        + `${neuralOrchestra.versus_load_progress.valuePercentage}) `
+        + `should be 100.`
+      );
+
+
+//!!! ...unfinished... (2023/03/10)
+// 
     // 2. Load a versus, and create neural networks.
     let bLoadVersusAndCreateNeuralNetworkOk = await neuralOrchestra
       .evolutionVersus_next_load__and__workerProxies_NeuralNetArray_create__async();
