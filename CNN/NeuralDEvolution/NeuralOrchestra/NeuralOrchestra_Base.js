@@ -101,6 +101,11 @@ import * as DEvolution from "../DEvolution.js";
  *   - If resolved to true, it means versus summary loaded, versus loaded, and
  *       neural networks created.
  *
+ * @member {boolean} versus_load_async_running
+ *   If true, a .versus_load_async() is just executing. Please wait
+ * for .versus_load_async_running becoming to false to call another
+ * .versus_load_async().
+ *
  * @member {boolean} versus_load_asyncGenerator_running
  *   If true, a .versus_load_asyncGenerator() is just executing. Please wait
  * for .versus_load_asyncGenerator_running becoming to false to call another
@@ -142,6 +147,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     this.versusSummary_dispose();
     this.versus_load_progress_dispose();
     this.versus_load_asyncGenerator_running = undefined;
+    this.versus_load_async_running = undefined;
     this.params_loading_retryWaiting = undefined;
 
     super.disposeResources();
@@ -525,15 +531,22 @@ class NeuralOrchestra_Base extends Recyclable.Root {
    */
   async versus_load_async() {
 
-    // 0. Prepare progress.
-    if ( this.versus_load_progress )
-      this.versus_load_progress.child_disposeAll();
-    else
-      this.versus_load_progress
-        = ValueMax.Percentage.Aggregate.Pool.get_or_create_by()
+    if ( this.versus_load_async_running )
+      throw Error( `NeuralOrchestra.Base.versus_load_async(): `
+        + `should not be executed multiple times simultaneously.`
+      );
 
-    // 1. Load versus summary and versus. Create neural networks.
     try {
+      this.versus_load_async_running = true;
+
+      // 0. Prepare progress.
+      if ( this.versus_load_progress )
+        this.versus_load_progress.child_disposeAll();
+      else
+        this.versus_load_progress
+          = ValueMax.Percentage.Aggregate.Pool.get_or_create_by()
+
+      // 1. Load versus summary and versus. Create neural networks.
       let loader_async
         = this.versus_load_asyncGenerator( this.versus_load_progress );
 
@@ -550,6 +563,8 @@ class NeuralOrchestra_Base extends Recyclable.Root {
       throw e; // Unknown error, should be said loundly.
 
     } finally {
+      // 2. So that this async method could be executed again.
+      this.versus_load_async_running = false;
     }
   }
 
@@ -685,7 +700,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
         );
 
     } finally {
-      // 4. So that this generrator could be executed again.
+      // 4. So that this generator could be executed again.
       this.versus_load_asyncGenerator_running = false;
     }
 
