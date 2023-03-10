@@ -83,12 +83,18 @@ import * as DEvolution from "../DEvolution.js";
  * @member {DEvolution.Versus} versus
  *   The downloaded current versus of the differential evolution.
  *
- * 
+ * @member {Promise( boolean )} workerProxies_init_promise
+ *   The promise of .workerProxies_init_async().
+ *   - Resolved to true, if succeeded.
+ *     - The neural workers have been created and GPU shaders have been
+ *         compiled.
+ *   - Resolved to false, if failed.
+ *
  * @member {ValueMax.Percentage.Aggregate} versus_load_progress
  *   The progress of loading versus summary, loading versus, creating neural
  * networks. If ( .versus_load_progress.valuePercentage == 100 ), all the
  * loading and creating has done.
- * 
+ *
  * @member {Promise( boolean )} versus_load_promise
  *   The promise of whether .versus_load_progress still be advancing.
  *   - If settled, the .versus_load_progress has been stopped.
@@ -303,7 +309,8 @@ class NeuralOrchestra_Base extends Recyclable.Root {
       );
 
       this.workerProxies_init_promise
-        = this.workerProxies_init_async( neuralNetParamsBase );
+        = NeuralOrchestra_Base.workerProxies_init_async.call( this,
+            neuralNetParamsBase );
     }
 
     // 3. Versus Result Reporter
@@ -318,6 +325,8 @@ class NeuralOrchestra_Base extends Recyclable.Root {
    * even if it is called in non-UI worker. So it is suggested to call this method
    * during game splash screen displaying.
    *
+   * @param {NeuralOrchestra_Base} this
+   *
    * @param {NeuralNet.ParamsBase} neuralNetParamsBase
    *   The neural network configuration. It will be used for both two neural
    * networks. It will be kept (i.e. owned and destroyed) by this NeuralOrchetra
@@ -329,7 +338,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
    *   - Resolved to true, if succeeded.
    *   - Resolved to false, if failed.
    */
-  async workerProxies_init_async( neuralNetParamsBase ) {
+  static async workerProxies_init_async( neuralNetParamsBase ) {
     this.neuralNetParamsBase_dispose();
     this.neuralNetParamsBase = neuralNetParamsBase;
 
