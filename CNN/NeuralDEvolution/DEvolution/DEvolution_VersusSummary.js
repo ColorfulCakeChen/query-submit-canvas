@@ -35,7 +35,7 @@ import { Versus as DEvolution_Versus } from "./DEvolution_Versus.js";
  *   So many versus data has been visited. It is the next index into
  * .visitIndexArray[].
  *
- * @member {boolean} bLoaded
+ * @member {boolean} loadOk
  *   If true, the .rangeArray[] has been ready.
  */
 class DEvolution_VersusSummary extends Recyclable.Root {
@@ -121,7 +121,7 @@ class DEvolution_VersusSummary extends Recyclable.Root {
     return false;
   }
 
-  get bLoaded() {
+  get loadOk() {
     if ( this.rangeArray )
       return true;
     return false;

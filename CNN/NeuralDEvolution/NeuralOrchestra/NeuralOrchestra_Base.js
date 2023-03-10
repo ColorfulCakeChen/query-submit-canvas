@@ -613,7 +613,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
       // 0.2 Determine whether necessary to load versus summary.
       let versusSummary_needLoad;
       if ( this.versusSummary ) {
-        if ( this.versusSummary.bLoaded ) {
+        if ( this.versusSummary.loadOk ) {
           versusSummary_needLoad = false; // Already loaded.
         } else {
           versusSummary_needLoad = true;
