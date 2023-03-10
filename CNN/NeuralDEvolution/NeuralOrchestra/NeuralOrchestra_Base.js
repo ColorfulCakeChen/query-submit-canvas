@@ -609,6 +609,8 @@ class NeuralOrchestra_Base extends Recyclable.Root {
         + `should not be executed multiple times simultaneously.`
       );
 
+    let progressRoot;
+    let progressToAdvance;
     let neuralNet_createOk;
     try {
       // 0.
@@ -635,7 +637,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
       }
 
       // 0.3 Prepare progress.
-      let progressRoot = progressParent.root_get();
+      progressRoot = progressParent.root_get();
 
       let progressVersusSummary;
       if ( versusSummary_needLoad ) {
@@ -646,7 +648,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
       let progressVersus = progressParent.child_add(
         ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
 
-      let progressToAdvance = progressParent.child_add(
+      progressToAdvance = progressParent.child_add(
         ValueMax.Percentage.Concrete.Pool.get_or_create_by( 2 ) );
 
       // 1. Load versus summary.
