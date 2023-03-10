@@ -20,7 +20,7 @@ window.addEventListener( "load", event => {
 });
 
 /** Map from test generator function to boolean or ValueMax.Percentage.Aggregate */
-const gTestGeneratorFuncMap = new Map(
+const gTestGeneratorFuncMap = new Map( [
 
   // [ Base64ToUint8Array_tester.tester, true ],
 
@@ -35,7 +35,7 @@ const gTestGeneratorFuncMap = new Map(
 //!!! (2023/02/14 Temp Remarked) For speed up other testing.
   // [ NeuralOrchestra_tester.tester, true ],
 
-);
+] );
 
 
 function test() {
