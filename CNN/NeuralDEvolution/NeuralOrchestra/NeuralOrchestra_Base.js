@@ -258,11 +258,12 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     // 2. Versus Neural Workers.
     let neuralWorkerPromise;
     {
-      // Because image comes from canvas, the tf.browser.fromPixels() handle a RGBA
-      // 4 channels faster than RGB 3 channels input.
+      // Because image comes from canvas, the tf.browser.fromPixels() handle a
+      // RGBA 4 channels faster than RGB 3 channels input.
       const input_channelCount = 4;
 
-      // For image, every RGBA input channel always has 256 (= 2 ** 8) possible values.
+      // For image, every RGBA input channel always has 256 (= 2 ** 8) possible
+      // values.
       const vocabularyCountPerInputChannel = 256;
 
       // Use faster convolution neural network architecture.
