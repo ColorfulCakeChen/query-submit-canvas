@@ -295,15 +295,13 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     output_channelCount = 64, //16,
   ) {
 
-//!!! ...unfinished... (2023/03/10)
-
-    // 1. Versus Downloader.
+    // 1.
 
     // 1.1
     this.downloader_spreadsheetId = downloader_spreadsheetId;
     this.downloader_apiKey = downloader_apiKey;
 
-    // 1.2 Load (versus summary and) versus.
+    // 1.2 Load (versus summary and) versus. Create neural networks.
     this.versus_load_promise = this.versus_load_async();
 
     // Note: Here does not wait for loading complete. Continue to create
