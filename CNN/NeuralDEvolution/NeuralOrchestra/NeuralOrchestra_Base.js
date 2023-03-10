@@ -542,8 +542,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
       this.versus_load_progress
         = ValueMax.Percentage.Aggregate.Pool.get_or_create_by()
 
-//!!! ...unfinished... (2023/03/10)
-    // 1. 
+    // 1. Load versus summary, versus. Create neural networks.
     try {
       let loader_async
         = this.versus_load_asyncGenerator( this.versus_load_progress );
