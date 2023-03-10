@@ -266,8 +266,9 @@ class DEvolution_VersusSummary extends Recyclable.Root {
     let spreadsheetRange = this.rangeArray[ visitIndex ];
 
     let bLoadOk;
-    let versus = DEvolution_Versus.Pool.get_or_create_by();
+    let versus;
     try {
+      versus = DEvolution_Versus.Pool.get_or_create_by();
       let versusLoader = versus.load_asyncGenerator( progressParent,
         this.urlComposer, spreadsheetRange,
         params_loading_retryWaiting,
