@@ -650,6 +650,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     //
 
 //!!! ...unfinished... (2023/03/10)
+// whether report progress for creating neural network?
 
     // In real-run, no need to observe dry-run performance and weight count.
     const bLogDryRunTime = false;
