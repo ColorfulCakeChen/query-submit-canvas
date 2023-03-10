@@ -1,11 +1,11 @@
-export { Base64Char_StringOrStringArray_generator_by_GeneratorFunction };
-export { Base64Char_CodePoint_ArrayBuffer_generator_by_GeneratorFunction };
+export { from_Base64Char_StringOrStringArray_generator_by_GeneratorFunction };
+export { from_Base64Char_CodePoint_ArrayBuffer_generator_by_GeneratorFunction };
 
 export { Base64Char_StringOrStringArray_to_Uint8Array_generator };
 export { Base64Char_CodePoint_ArrayBuffer_to_Uint8Array_generator };
 export { Base64Char_CodePoint_Uint8Array_to_Uint8Array_generator };
 
-export { lineSkipper_fromUint8Array };
+export { lineSkipper_from_Uint8Array };
 
 import * as ValueMax from "../../util/ValueMax.js";
 import * as Base64_Constant from "./Base64_Constant.js";
@@ -49,7 +49,7 @@ import * as Base64_Constant from "./Base64_Constant.js";
  * @yield {any}
  *   Yield ( value = decoded data of generatorFunction ) when ( done = true ).
  */
-function* Base64Char_StringOrStringArray_generator_by_GeneratorFunction(
+function* from_Base64Char_StringOrStringArray_generator_by_GeneratorFunction(
   progressParent,
   source_Base64Char_String_or_StringArray, textEncoder,
   skipLineCount, suspendByteCount,
@@ -132,7 +132,7 @@ function* Base64Char_StringOrStringArray_generator_by_GeneratorFunction(
  * @yield {any}
  *   Yield ( value = decoded data of generatorFunction ) when ( done = true ).
  */
-function* Base64Char_CodePoint_ArrayBuffer_generator_by_GeneratorFunction(
+function* from_Base64Char_CodePoint_ArrayBuffer_generator_by_GeneratorFunction(
   progressParent,
   source_Base64Char_CodePoint_ArrayBuffer, skipLineCount, suspendByteCount,
   generatorFunction ) {
@@ -184,7 +184,7 @@ function* Base64Char_StringOrStringArray_to_Uint8Array_generator(
   source_Base64Char_String_or_StringArray, textEncoder,
   skipLineCount, suspendByteCount
 ) {
-  return yield* Base64Char_StringOrStringArray_generator_by_GeneratorFunction(
+  return yield* from_Base64Char_StringOrStringArray_generator_by_GeneratorFunction(
     progressParent,
     source_Base64Char_String_or_StringArray, textEncoder,
     skipLineCount, suspendByteCount,
@@ -224,7 +224,7 @@ function* Base64Char_StringOrStringArray_to_Uint8Array_generator(
 function* Base64Char_CodePoint_ArrayBuffer_to_Uint8Array_generator( progressParent,
   source_Base64Char_CodePoint_ArrayBuffer, skipLineCount, suspendByteCount ) {
 
-  return yield* Base64Char_CodePoint_ArrayBuffer_generator_by_GeneratorFunction(
+  return yield* from_Base64Char_CodePoint_ArrayBuffer_generator_by_GeneratorFunction(
     progressParent,
     source_Base64Char_CodePoint_ArrayBuffer, skipLineCount, suspendByteCount,
     Base64Char_CodePoint_Uint8Array_to_Uint8Array_generator
@@ -255,7 +255,7 @@ function* Base64Char_CodePoint_ArrayBuffer_to_Uint8Array_generator( progressPare
  * @yield {number}
  *   Yield ( value = nextYieldByteCount ) when ( done = true ).
  */
-function* lineSkipper_fromUint8Array( progressToAdvance,
+function* lineSkipper_from_Uint8Array( progressToAdvance,
   sourceUint8Array, skipLineCount, suspendByteCount ) {
 
   let sourceByteLength = sourceUint8Array.length;
@@ -378,7 +378,7 @@ function* Base64Char_CodePoint_Uint8Array_to_Uint8Array_generator(
   // It is important that the nextYieldByteCount is not greater than source length,
   // so that it can be used as boundary checking to reduce checking times and increase
   // performance.
-  let lineSkipper = lineSkipper_fromUint8Array( progressToAdvance,
+  let lineSkipper = lineSkipper_from_Uint8Array( progressToAdvance,
     sourceBytes, skipLineCount, suspendByteCount );
 
   let nextYieldByteCount = yield *lineSkipper;
