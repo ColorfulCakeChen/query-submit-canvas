@@ -166,9 +166,10 @@ import { Mode as NeuralWorker_Mode } from "./NeuralWorker_Mode.js";
  *   There are how many web worker(s) created.
  *
  * @member {function} ImageData_process_async
- *   This is a data member which is a pointer to a function. The function accepts
- * ImageData as input. It returns a promise resolved to an array
- * [ Float32Array, Float32Array ] representing the neural networks' results.
+ *   This is a data member which is a pointer to a function. The function
+ * accepts ImageData as input. It returns a promise resolved to an array
+ * [ Float32Array, Float32Array ] representing the (pair) neural networks'
+ * results.
  */
 class NeuralWorker_Proxies extends Recyclable.Root {
 
