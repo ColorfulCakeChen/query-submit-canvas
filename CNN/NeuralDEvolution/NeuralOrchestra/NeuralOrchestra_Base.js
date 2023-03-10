@@ -233,7 +233,9 @@ class NeuralOrchestra_Base extends Recyclable.Root {
 
   /**
    *   - Load all differential evolution versus weights ranges (i.e. versus summary).
-   *   - Create workers and compile GPU shaders.
+   *   - Load one versus.
+   *   - Create neural workers and compile GPU shaders.
+   *   - Create neural networks.
    *
    *
    * @param {string} downloader_spreadsheetId
@@ -272,6 +274,12 @@ class NeuralOrchestra_Base extends Recyclable.Root {
    * @return {Promise}
    *   Return a promise.
    *   - Resolved to true, if succeeded.
+   *       - The neural workers have been created and GPU shaders have been
+   *           compiled.
+   *       - But the versus summary and versus may still be loading (i.e. not
+   *           yet complete). The neural networks may also still not be created
+   *           (since they need the versus data).
+   * 
    *   - Resolved to false, if failed.
    */
   async init_async(
@@ -295,8 +303,12 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     this.downloader_spreadsheetId = downloader_spreadsheetId;
     this.downloader_apiKey = downloader_apiKey;
 
-    // 1.2
+    // 1.2 Load (versus summary and) versus.
     this.versus_load_promise = this.versus_load_async();
+
+    // Note: Here does not wait for loading complete. Continue to create
+    //       neural workers and compile GPU shaders because they all
+    //       take time but can be done in parallel.
 
     // 2. Neural Workers.
     {
