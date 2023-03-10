@@ -252,11 +252,10 @@ class NeuralOrchestra_Base extends Recyclable.Root {
   ) {
 
     // 1. Versus Downloader.
-    let versusSummaryDownloaderPromise = this.versusSummary_init_async(
+    this.versusSummary_or_versus_load_promise = this.versusSummary_init_async(
       downloader_spreadsheetId, downloader_apiKey );
 
-    // 2. Versus Neural Workers.
-    let neuralWorkerPromise;
+    // 2. Neural Workers.
     {
       // Because image comes from canvas, the tf.browser.fromPixels() handle a
       // RGBA 4 channels faster than RGB 3 channels input.
@@ -286,7 +285,8 @@ class NeuralOrchestra_Base extends Recyclable.Root {
         blockCountTotalRequested, output_channelCount, bKeepInputTensor
       );
 
-      neuralWorkerPromise = this.workerProxies_init_async( neuralNetParamsBase );
+      this.workerProxies_init_promise
+        = this.workerProxies_init_async( neuralNetParamsBase );
     }
 
     // 3. Versus Result Reporter
@@ -298,7 +298,8 @@ class NeuralOrchestra_Base extends Recyclable.Root {
 // If downloading is failed (e.g. timeout), display message and re-try downloading.
 
     let allPromise = Promise.all( [
-      versusSummaryDownloaderPromise, neuralWorkerPromise ] );
+      ???this.versusSummary_or_versus_load_promise,
+      this.workerProxies_init_promise ] );
     return allPromise;
   }
 
