@@ -68,12 +68,12 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
   }
 
   /**
-   * Initialize this worker proxy. It will create one web worker and inform it to
-   * create one neural network.
+   * Initialize this worker proxy. It will create one web worker and inform it
+   * to initialize (e.g. load library), but not yet to create neural network.
    *
    * @param {number} workerId
-   *   This id of this worker proxy (and web worker). This is the array index in the
-   * parent container (i.e. WorkerProxies).
+   *   This id of this worker proxy (and web worker). This is the array index
+   * in the parent container (i.e. WorkerProxies).
    *
    * @param {string} backendName
    *   Specify which backend should be used by tensorflow.js library.
@@ -99,13 +99,13 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
    * by this NeuralWorker.Proxy.
    *
    * @param {ArrayBuffer[]} weightArrayBufferArray
-   *   An array of every neural network's weights. Every element will be interpreted
-   * as Float32Array. Every element will be transferred to web worker (i.e. their
-   * .byteLength will become zero).
+   *   An array of every neural network's weights. Every element will be
+   * interpreted as Float32Array. Every element will be transferred to web
+   * worker (i.e. their .byteLength will become zero).
    *
    * @param {boolean} bLogDryRunTime
-   *   If true, the neural network dry-run time will be measured twice and logged to
-   * console.
+   *   If true, the neural network dry-run time will be measured twice and
+   * logged to console.
    *
    * @return {Promise}
    *   Return a promise:
@@ -136,7 +136,8 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
 
     // 3. Inform web work to create neural networks.
     return this.createPromise_by_postCommandArgs(
-      [ "NeuralNetArray_create", neuralNetParamsBaseArray, weightArrayBufferArray,
+      [ "NeuralNetArray_create",
+        neuralNetParamsBaseArray, weightArrayBufferArray,
         bLogDryRunTime
       ],
       transferableObjectArray
@@ -145,7 +146,8 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
 
   /**
    * @param {integer[]} markValueArray
-   *   An array of values representing every neural network playing which alignment.
+   *   An array of values representing every neural network playing which
+   * alignment.
    *
    * @return {Promise}
    *   Return a promise:
@@ -160,7 +162,8 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
 
 
   /**
-   * Process input image data by all (suppose two) neural networks in this web worker.
+   * Process input image data by all (suppose two) neural networks in this web
+   * worker.
    *
    * This method is used for:
    *   - One web worker. The worker has two neural networks.
@@ -193,8 +196,8 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
    * without filling alignment mark.
    *
    * @return {Promise}
-   *   Return a promise resolved to an array [ Float32Array, Float32Array ] representing
-   * the neural networks' result.
+   *   Return a promise resolved to an array [ Float32Array, Float32Array ]
+   * representing the neural networks' result.
    */
   ONE_WORKER__ONE_SCALE__ImageData_process_async( sourceImageData, bFill ) {
     const bFork = false;
@@ -222,18 +225,19 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
    *   The source image data to be processed.
    *
    *   - Its shape needs not match this.neuralNetParamsBase's [ input_height,
-   *       input_width, input_channelCount ] because it will be scaled to the correct
-   *       shape before passed into the neural network.
+   *       input_width, input_channelCount ] because it will be scaled to the
+   *       correct shape before passed into the neural network.
    *
-   *   - This usually is called for the 1st web worker in chain. The scaled Int32Array
-   *       will be transferred back to WorkerProxy for the 2nd web worker.
+   *   - This usually is called for the 1st web worker in chain. The scaled
+   *       Int32Array will be transferred back to WorkerProxy for the 2nd web
+   *       worker.
    *
-   *   - The scaled Int32Array will be filled by alignment mark, and then converted
-   *       into tensor3d, and then processed by neural network.
+   *   - The scaled Int32Array will be filled by alignment mark, and then
+   *       converted into tensor3d, and then processed by neural network.
    *
    * @return {AsyncWorker.Resulter}
-   *   Return an async iterator tracking the result of processing. It will yield two
-   * times, the 1st is an Int32Array, the 2nd is a Float32Array.
+   *   Return an async iterator tracking the result of processing. It will yield
+   * two times, the 1st is an Int32Array, the 2nd is a Float32Array.
    *
    * @yield {Int32Array}
    *   Resolve to { done: false, value: Int32Array }. The value is an Int32Array
@@ -273,31 +277,33 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
    *   The source image data to be processed.
    *
    *   - Its shape needs not match this.neuralNet[ 0 ]'s [ input_height,
-   *       input_width, input_channelCount ] because it will be scaled to the correct
-   *       shape before passed into the neural network.
+   *       input_width, input_channelCount ] because it will be scaled to the
+   *       correct shape before passed into the neural network.
    *
-   *   - This usually is called for the 1st web worker in chain. The scaled Int32Array
-   *       will be transferred back to WorkerProxy for the 2nd web worker.
+   *   - This usually is called for the 1st web worker in chain. The scaled
+   *       Int32Array will be transferred back to WorkerProxy for the 2nd web
+   *       worker.
    *
-   *   - The scaled tensor (without filling alignment mark) will be processed by
-   *       neural network directly.   *
+   *   - The scaled tensor (without filling alignment mark) will be processed
+   *       by neural network directly.
    *
    * @param {ImageData} sourceImageData
    *   The source image data to be processed.
    *
    *   - Its shape needs not match this.neuralNetParamsBase's [ input_height,
-   *       input_width, input_channelCount ] because it will be scaled to the correct
-   *       shape before passed into the neural network.
+   *       input_width, input_channelCount ] because it will be scaled to the 
+   *      correct shape before passed into the neural network.
    *
-   *   - This usually is called for the 1st web worker in chain. The scaled Int32Array
-   *       will be transferred back to WorkerProxy for the 2nd web worker.
+   *   - This usually is called for the 1st web worker in chain. The scaled
+   *       Int32Array will be transferred back to WorkerProxy for the 2nd web
+   *       worker.
    *
-   *   - The scaled Int32Array will be filled by alignment mark, and then converted
-   *       into tensor3d, and then processed by neural network.
+   *   - The scaled Int32Array will be filled by alignment mark, and then
+   *       converted into tensor3d, and then processed by neural network.
    *
    * @return {AsyncWorker.Resulter}
-   *   Return an async iterator tracking the result of processing. It will yield two
-   * times, the 1st is an Int32Array, the 2nd is a Float32Array.
+   *   Return an async iterator tracking the result of processing. It will yield
+   * two times, the 1st is an Int32Array, the 2nd is a Float32Array.
    *
    * @yield {Int32Array}
    *   Resolve to { done: false, value: Int32Array }. The value is an Int32Array
@@ -326,8 +332,8 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
    *     - NeuralWorker_Mode.Singleton.Ids.TWO_WORKER__ONE_SCALE__NO_FILL__APPLIER (5)
    *     - The 2nd worker calls this method.
    *
-   *   - (may or may not) Fill alignment mark of this neural network, upload to GPU
-   *       and process it.
+   *   - (may or may not) Fill alignment mark of this neural network, upload to
+   *       GPU and process it.
    *
    *
    * @param {Int32Array} sourceInt32Array
@@ -347,8 +353,8 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
    * without filling alignment mark.
    *
    * @return {Promise}
-   *   Return a promise resolved to a Float32Array representing the neural network's
-   * result.
+   *   Return a promise resolved to a Float32Array representing the neural
+   * network's result.
    */
   TWO_WORKER__ONE_SCALE__step1_Int32Array_process_async( sourceInt32Array, bFill ) {
     return this.createPromise_by_postCommandArgs(
@@ -367,8 +373,8 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
    *       - The 2nd worker uses ( bFork == false ).
    *
    *   - Both workers scale source image data by themselves.
-   *     - Advantage: The 1st worker needs not wait for downloading scaled Int32Array
-   *         from GPU memory.
+   *     - Advantage: The 1st worker needs not wait for downloading scaled
+   *         Int32Array from GPU memory.
    *     - Disadvantage: The source image data is scaled twice.
    *
    *   - No alignment mark filling.
@@ -390,7 +396,8 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
    *   - If true, the sourceImageData will be yielded as an ImageData.
    *       This is used for 1st worker.
    *
-   *   - If false, the sourceImageData will not yielded. This is used for 2nd worker.
+   *   - If false, the sourceImageData will not yielded. This is used for 2nd
+   *       worker.
    *
    * @return {AsyncWorker.Resulter}
    *   Return an async iterator tracking the result of processing.
