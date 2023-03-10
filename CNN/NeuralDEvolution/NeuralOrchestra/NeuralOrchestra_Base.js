@@ -541,8 +541,17 @@ class NeuralOrchestra_Base extends Recyclable.Root {
       this.versus.offspringChromosomeFloat32Array.buffer
     ];
 
+    // Before creating neural network, the neural web workers should be ready.
+    let workerProxies_initOk = await this.workerProxies_init_promise;
+    if ( !workerProxies_initOk )
+      throw Error( `NeuralOrchestra_Base.`
+        + `versus_next_load__and__workerProxies_NeuralNetArray_create__async(): `
+        + `Failed to initialize neural web workers. `
+        + `workerProxies={ ${this.workerProxies} }`
+      );
+
 //!!! ...unfinished... (2023/03/10)
-// What if this.workerProxies_init_promise not yet resolved?
+// How to report progress?
 
     // In real-run, no need to observe dry-run performance and weight count.
     const bLogDryRunTime = false;
