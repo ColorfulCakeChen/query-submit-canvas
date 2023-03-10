@@ -641,8 +641,15 @@ class NeuralOrchestra_Base extends Recyclable.Root {
         + `workerProxies={ ${this.workerProxies} }`
       );
 
+    // Q: Whether it needs to advance progress for awaiting NeuralWorker.Proxies
+    //    initialization.
+    // A: Not necessary. If the waiting is long, it means screen still displaying
+    //    splash (i.e. user still does not see the progress advancing). If the
+    //    waiting is resolved, it means user (has seen the progress bar advancing
+    //    but) will not feel any delay.
+    //
+
 //!!! ...unfinished... (2023/03/10)
-// How to report progress?
 
     // In real-run, no need to observe dry-run performance and weight count.
     const bLogDryRunTime = false;
