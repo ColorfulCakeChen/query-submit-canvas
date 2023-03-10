@@ -1,10 +1,10 @@
-export { DEvolution_VersusSubmitter_Base as Base };
+export { DEvolution_VersusResultSubmitter_Base as Base };
 
 import * as Pool from "../../../util/Pool.js";
 import * as Recyclable from "../../../util/Recyclable.js";
 
 /**
- * The base class for DEvolution.VersusSubmitter.Xxx
+ * The base class for DEvolution.VersusResultSubmitter.Xxx
  *
  * @member {string} clientId
  *   The client id when sending measurement protocol.
@@ -17,27 +17,27 @@ import * as Recyclable from "../../../util/Recyclable.js";
  * .post_by_measurementId_event() for looking up apiSecret of the specified
  * measurementId of the streams of property of Google Analytics v4.
  */
-class DEvolution_VersusSubmitter_Base extends Recyclable.Root {
+class DEvolution_VersusResultSubmitter_Base extends Recyclable.Root {
 
   /**
-   * Used as default DEvolution.VersusSubmitter.Base provider for conforming
+   * Used as default DEvolution.VersusResultSubmitter.Base provider for conforming
    * to Recyclable interface.
    */
-  static Pool = new Pool.Root( "DEvolution.VersusSubmitter.Base.Pool",
-    DEvolution_VersusSubmitter_Base,
-    DEvolution_VersusSubmitter_Base.setAsConstructor );
+  static Pool = new Pool.Root( "DEvolution.VersusResultSubmitter.Base.Pool",
+    DEvolution_VersusResultSubmitter_Base,
+    DEvolution_VersusResultSubmitter_Base.setAsConstructor );
 
   /** */
   constructor( clientId ) {
     super();
-    DEvolution_VersusSubmitter_Base.setAsConstructor_self.call( this,
+    DEvolution_VersusResultSubmitter_Base.setAsConstructor_self.call( this,
       clientId );
   }
 
   /** @override */
   static setAsConstructor( clientId ) {
     super.setAsConstructor();
-    DEvolution_VersusSubmitter_Base.setAsConstructor_self.call( this,
+    DEvolution_VersusResultSubmitter_Base.setAsConstructor_self.call( this,
       clientId );
     return this;
   }
@@ -69,7 +69,7 @@ class DEvolution_VersusSubmitter_Base extends Recyclable.Root {
    *   The URL for sending to Google Analytics v4 measurement protocol.
    */
   static createMeasurementUrl( measurementId, apiSecret ) {
-    let url = `${DEvolution_VersusSubmitter_Base.urlBase}?measurement_id=${
+    let url = `${DEvolution_VersusResultSubmitter_Base.urlBase}?measurement_id=${
       measurementId}&api_secret=${apiSecret}`;
 
     return url;
@@ -90,7 +90,7 @@ class DEvolution_VersusSubmitter_Base extends Recyclable.Root {
   static post_by_measurementId_apiSecret_bodyObject(
     measurementId, apiSecret, postBodyObject ) {
 
-    let url = DEvolution_VersusSubmitter_Base.createMeasurementUrl(
+    let url = DEvolution_VersusResultSubmitter_Base.createMeasurementUrl(
       measurementId, apiSecret );
 
     let postBodyString = JSON.stringify( postBodyObject );
@@ -127,7 +127,7 @@ class DEvolution_VersusSubmitter_Base extends Recyclable.Root {
       events: eventArray
     };
 
-    DEvolution_VersusSubmitter_Base.post_by_measurementId_apiSecret_bodyObject(
+    DEvolution_VersusResultSubmitter_Base.post_by_measurementId_apiSecret_bodyObject(
       measurementId, apiSecret, postBody );
   }
 
@@ -196,5 +196,5 @@ class DEvolution_VersusSubmitter_Base extends Recyclable.Root {
 
 }
 
-DEvolution_VersusSubmitter_Base.urlBase
+DEvolution_VersusResultSubmitter_Base.urlBase
   = "https://www.google-analytics.com/mp/collect";

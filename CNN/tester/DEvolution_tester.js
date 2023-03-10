@@ -16,7 +16,7 @@ function test_DEvolution_VersusSubmitter_MultiEventName(
   try {
     evolutionVersusId = DEvolution.VersusId.Pool.get_or_create_by( "0_0_0_0");
 
-    evolutionVersusSubmitter = DEvolution.VersusSubmitter
+    evolutionVersusSubmitter = DEvolution.VersusResultSubmitter
       .MultiEventName.Pool.get_or_create_by(
         submitter_clientId );
 
