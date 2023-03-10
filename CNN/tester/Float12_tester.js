@@ -361,7 +361,7 @@ function *testerFloat12EncodeDecodeArray( progressParent ) {
           tempUint8Array );
 
       let Float12_decoded_value_array_original = yield*
-        Float12.Decoder.generator_from_Base64Char_StringOrStringArray_to_Float32Array(
+        Float12.Decoder.Base64Char_StringOrStringArray_to_Float32Array_generator(
           progressDecodeArray_original,
           Float12_encoded_string_original, textEncoder,
           skipLineCount, suspendByteCount );
@@ -374,7 +374,7 @@ function *testerFloat12EncodeDecodeArray( progressParent ) {
           tempUint8Array );
 
       let Float12_decoded_value_array_again = yield*
-        Float12.Decoder.generator_from_Base64Char_StringOrStringArray_to_Float32Array(
+        Float12.Decoder.Base64Char_StringOrStringArray_to_Float32Array_generator(
           progressDecodeArray_again,
           Float12_encoded_string_again, textEncoder,
           skipLineCount, suspendByteCount );

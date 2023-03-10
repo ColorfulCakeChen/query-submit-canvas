@@ -7,8 +7,8 @@ export { from_Uint12 };
 export { from_Base64_DecodedValue_Two };
 export { from_Base64Char_CodePoint_Two };
 export { from_String };
-export { generator_Base64Char_StringOrStringArray_to_Uint8Array_generator };
-export { generator_from_Base64Char_StringOrStringArray_to_Float32Array };
+export { Base64Char_CodePoint_Uint8Array_to_Float32Array_generator };
+export { Base64Char_StringOrStringArray_to_Float32Array_generator };
 
 import * as ValueMax from "../../util/ValueMax.js";
 import * as Base64 from "../Base64.js";
@@ -283,7 +283,7 @@ function from_String( base64String ) {
  * @yield {Float32Array}
  *   Yield ( value = decoded data as Float32Array ) when ( done = true ).
  */
-function* generator_Base64Char_StringOrStringArray_to_Uint8Array_generator(
+function* Base64Char_CodePoint_Uint8Array_to_Float32Array_generator(
   progressParent,
   source_Base64Char_CodePoint_Uint8Array, skipLineCount, suspendByteCount ) {
 
@@ -309,7 +309,7 @@ function* generator_Base64Char_StringOrStringArray_to_Uint8Array_generator(
   // It is important that the nextYieldByteCount is not greater than source length,
   // so that it can be used as boundary checking to reduce checking times and increase
   // performance.
-  let lineSkipper = Base64.Decoder.lineSkipper_from_Uint8Array( progressToAdvance,
+  let lineSkipper = Base64.Decoder.lineSkipper_fromUint8Array( progressToAdvance,
     sourceBytes, skipLineCount, suspendByteCount );
 
   let nextYieldByteCount = yield *lineSkipper;
@@ -429,16 +429,16 @@ function* generator_Base64Char_StringOrStringArray_to_Uint8Array_generator(
  * @yield {Float32Array}
  *   Yield ( value = decoded data as Float32Array ) when ( done = true ).
  */
-function* generator_from_Base64Char_StringOrStringArray_to_Float32Array(
+function* Base64Char_StringOrStringArray_to_Float32Array_generator(
   progressParent,
   source_Base64Char_String_or_StringArray, textEncoder,
   skipLineCount, suspendByteCount
 ) {
   return yield*
-    Base64.Decoder.generator_from_Base64Char_StringOrStringArray_by_GeneratorFunction(
+    Base64.Decoder.from_Base64Char_StringOrStringArray_generator_by_GeneratorFunction(
       progressParent,
       source_Base64Char_String_or_StringArray, textEncoder,
       skipLineCount, suspendByteCount,
-      generator_Base64Char_StringOrStringArray_to_Uint8Array_generator
+      Base64Char_CodePoint_Uint8Array_to_Float32Array_generator
     );
 }
