@@ -252,7 +252,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
   ) {
 
     // 1. Versus Downloader.
-    this.versusSummary_or_versus_load_promise = this.versusSummary_init_async(
+    this.versusSummary_or_versus_load_promise = this.versusSummary_load_async(
       downloader_spreadsheetId, downloader_apiKey );
 
     // 2. Neural Workers.
@@ -482,7 +482,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
    *   - Resolved to true, if succeeded.
    *   - Resolved to false, if failed.
    */
-  async versusSummary_init_async(
+  async versusSummary_load_async(
     downloader_spreadsheetId, downloader_apiKey ) {
 
     this.versusSummary_dispose();
