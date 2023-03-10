@@ -34,13 +34,16 @@ import { Versus as DEvolution_Versus } from "./DEvolution_Versus.js";
  * @member {number} visitCount
  *   So many versus data has been visited. It is the next index into
  * .visitIndexArray[].
+ *
+ * @member {boolean} bLoaded
+ *   If true, the .rangeArray[] has been ready.
  */
 class DEvolution_VersusSummary extends Recyclable.Root {
 
   /**
    * Used as default DEvolution.rangeArray provider for conforming to Recyclable interface.
    */
-  static Pool = new Pool.Root( "DEvolution.rangeArray.Pool",
+  static Pool = new Pool.Root( "DEvolution.VersusSummary.Pool",
     DEvolution_VersusSummary, DEvolution_VersusSummary.setAsConstructor );
 
   /**
@@ -117,6 +120,11 @@ class DEvolution_VersusSummary extends Recyclable.Root {
     return false;
   }
 
+  get bLoaded() {
+    if ( this.rangeArray )
+      return true;
+    return false;
+  }
 
   /**
    * An async generator for loading all differential evolution versus weights

@@ -276,10 +276,14 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     output_channelCount = 64, //16,
   ) {
 
+//!!! ...unfinished... (2023/03/10)
+
     // 1. Versus Downloader.
+    this.downloader_spreadsheetId = downloader_spreadsheetId;
+    this.downloader_apiKey = downloader_apiKey;
+
     this.versusSummary_and_versus_load_promise
-      = this.versusSummary_and_versus_load_async(
-          downloader_spreadsheetId, downloader_apiKey );
+      = this.versusSummary_and_versus_load_async( ??? );
 
     // 2. Neural Workers.
     {
@@ -501,6 +505,22 @@ class NeuralOrchestra_Base extends Recyclable.Root {
   }
 
 
+  /** */
+  versusSummary_dispose() {
+    if ( this.versusSummary ) {
+      this.versusSummary.disposeResources_and_recycleToPool();
+      this.versusSummary = null;
+    }
+  }
+
+  /** */
+  versus_dispose() {
+    if ( this.versus ) {
+      this.versus.disposeResources_and_recycleToPool();
+      this.versus = null;
+    }
+  }
+
   /**
    * Load all differential evolution versus weights ranges. And then, load one
    * versus.
@@ -510,8 +530,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
    *   - Resolved to true, if succeeded.
    *   - Resolved to false, if failed.
    */
-  async versusSummary_and_versus_load_async(
-    downloader_spreadsheetId, downloader_apiKey ) {
+  async versusSummary_and_versus_load_async() {
 
     if ( this.versusSummary_and_versus_load_progress )
       this.versusSummary_and_versus_load_progress.child_disposeAll();
@@ -532,7 +551,10 @@ class NeuralOrchestra_Base extends Recyclable.Root {
   }
 
   /**
-   * Load all differential evolution versus weights ranges.
+   *   - Load all differential evolution versus weights ranges (if not yet loaded).
+   *   - Load one versus.
+   *   - Create neural networks by the versus data.
+   *
    *
    * @param {ValueMax.Percentage.Aggregate} progressParent
    *   Some new progressToAdvance will be created and added to progressParent. The
@@ -547,67 +569,61 @@ class NeuralOrchestra_Base extends Recyclable.Root {
    *   - Resolved to { done: true, value: true }, if succeeded.
    *   - Resolved to { done: true, value: false }, if failed.
    */
-  async* versusSummary_load_asyncGenerator(
-    progressParent, downloader_spreadsheetId, downloader_apiKey ) {
+  async* versus_load_asyncGenerator( progressParent ) {
 
-    this.versusSummary_dispose();
-    this.versusSummary = DEvolution.VersusSummary.Pool.get_or_create_by(
-      downloader_spreadsheetId, downloader_apiKey );
+//!!! ...unfinished... (2023/03/10)
+    // 0.
 
-    let loadOk = yield *this.versusSummary.rangeArray_load_asyncGenerator(
-      progressParent, this.params_loading_retryWaiting );
-
-    return loadOk;
-  }
-
-  /** */
-  versusSummary_dispose() {
+    // 0.1 Determine whether necessary to load versus summary.
+    let versusSummary_bNeedLoad;
     if ( this.versusSummary ) {
-      this.versusSummary.disposeResources_and_recycleToPool();
-      this.versusSummary = null;
+      if ( this.versusSummary.bLoaded ) {
+        versusSummary_bNeedLoad = false; // Already loaded.
+      } else {
+        versusSummary_bNeedLoad = true;
+      }
+    } else {
+      this.versusSummary = DEvolution.VersusSummary.Pool.get_or_create_by(
+        this.downloader_spreadsheetId, this.downloader_apiKey );
+      versusSummary_bNeedLoad = true;
     }
-  }
 
+    // 0.2 Prepare progress.
+    let progressRoot = progressParent.root_get();
 
-  /**
-   * Load the next versus data, and create neural networks by these versus data.
-   *
-   * @return {Promise}
-   *   Return a promise.
-   *   - Resolved to true, if succeeded.
-   *   - Resolved to false, if failed.
-   */
-  async versus_next_load__and__workerProxies_NeuralNetArray_create__async() {
+    let progressVersusSummary;
+    if ( versusSummary_bNeedLoad ) {
+      progressVersusSummary = progressParent.child_add(
+        ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
+    }
 
-//!!! ...unfinished... (2023/03/10)
-  }
-    
-  /**
-   * Load the next versus data, and create neural networks by these versus data.
-   *
-   * @param {ValueMax.Percentage.Aggregate} progressParent
-   *   Some new progressToAdvance will be created and added to progressParent. The
-   * created progressToAdvance will be increased when every time advanced. The
-   * progressParent.root_get() will be returned when every time yield.
-   *
-   * @yield {Promise( ValueMax.Percentage.Aggregate )}
-   *   Yield a promise resolves to { done: false, value: progressParent.root_get() }.
-   *
-   * @yield {Promise( boolean )}
-   *   Yield a promise:
-   *   - Resolved to { done: true, value: true }, if succeeded.
-   *   - Resolved to { done: true, value: false }, if failed.
-   */
-  async* versus_next_load__and__workerProxies_NeuralNetArray_create__asyncGenerator(
-    progressParent ) {
+    let progressVersus = progressParent.child_add(
+      ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
+
+    let progressToAdvance = progressParent.child_add(
+      ValueMax.Percentage.Concrete.Pool.get_or_create_by( 1 ) );
+
+    // 1. 
+
+    if ( versusSummary_bNeedLoad ) {
+      let versusSummary_loadOk
+        = yield *this.versusSummary.rangeArray_load_asyncGenerator(
+            progressParent, this.params_loading_retryWaiting );
+  
+      if ( !versusSummary_loadOk )
+        throw Error( `NeuralOrchestra.Base.versus_load_asyncGenerator(): `
+          + `Failed to load DEvolution.VersusSummary.rangeArray`
+        );
+    }
+
+    // return ???loadOk;
 
 //!!! ...unfinished... (2023/03/10)
-// should await versusSummary loaded.
 
     // 1. Download versus.
     this.versus_dispose();
-    this.versus = await this.versusSummary.versus_next_load_asyncGenerator(
-      ???, this.params_loading_retryWaiting );
+    this.versus = yield* this.versusSummary.versus_next_load_asyncGenerator(
+      progressVersus, this.params_loading_retryWaiting );
 
     if ( !this.versus ) {
 
@@ -666,14 +682,6 @@ class NeuralOrchestra_Base extends Recyclable.Root {
       );
   
     return bCreateOk;
-  }
-
-  /** */
-  versus_dispose() {
-    if ( this.versus ) {
-      this.versus.disposeResources_and_recycleToPool();
-      this.versus = null;
-    }
   }
 
 
