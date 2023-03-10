@@ -19,7 +19,7 @@ async function* tester( progressParent ) {
   let progressRoot = progressParent.root_get();
 
   let progressToAdvance = progressParent.child_add(
-    ValueMax.Percentage.Concrete.Pool.get_or_create_by( 5 ) );
+    ValueMax.Percentage.Concrete.Pool.get_or_create_by( 6 ) );
 
   let downloader_spreadsheetId = "18YyEoy-OfSkODfw8wqBRApSrRnBTZpjRpRiwIKy8a0M";
   let downloader_apiKey = null;
@@ -70,8 +70,12 @@ async function* tester( progressParent ) {
     for ( let loadCount = 0; loadCount < loadCountMax; ++loadCount ) {
 
       // 2.0 Try another versus loading and neural networks creating.
-      if ( loadCount > 0 )
+      if ( loadCount > 0 ) {
         neuralOrchestra.versus_load_async__record_promise();
+
+//!!! ...unfinished... (2023/03/10)
+// should test re-entrance failed.
+      }
 
       // 2.1 Wait for versus summary loaded, versus loaded, and neural networks
       //     created.
