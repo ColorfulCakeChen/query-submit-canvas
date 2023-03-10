@@ -517,7 +517,8 @@ class NeuralOrchestra_Base extends Recyclable.Root {
    *   Return this.versus_load_promise
    */
   versus_load_async__record_promise() {
-    this.versus_load_promise = this.versus_load_async();
+    this.versus_load_promise
+      = NeuralOrchestra_Base.versus_load_async.call( this );
     return this.versus_load_promise;
   }
 
@@ -526,13 +527,15 @@ class NeuralOrchestra_Base extends Recyclable.Root {
    *
    * It will create .versus_load_progress.
    *
+   * @param {NeuralOrchestra_Base} this
+   *
    * @return {Promise( boolean )}
    *   Return a promise:
    *   - Resolved to true, if succeeded.
    *     - Versus summary and versus are loaded. Neural networks are created.
    *   - Resolved to false, if failed.
    */
-  async versus_load_async() {
+  static async versus_load_async() {
 
     if ( this.versus_load_async_running )
       throw Error( `NeuralOrchestra.Base.versus_load_async(): `
@@ -550,8 +553,8 @@ class NeuralOrchestra_Base extends Recyclable.Root {
           = ValueMax.Percentage.Aggregate.Pool.get_or_create_by()
 
       // 1. Load versus summary and versus. Create neural networks.
-      let loader_async
-        = this.versus_load_asyncGenerator( this.versus_load_progress );
+      let loader_async = NeuralOrchestra_Base.versus_load_asyncGenerator.call(
+        this, this.versus_load_progress );
 
       let loaderNext;
       do {
@@ -586,6 +589,8 @@ class NeuralOrchestra_Base extends Recyclable.Root {
    * Please do that after the executing generator done.
    *
    *
+   * @param {NeuralOrchestra_Base} this
+   *
    * @param {ValueMax.Percentage.Aggregate} progressParent
    *   Some new progressToAdvance will be created and added to progressParent. The
    * created progressToAdvance will be increased when every time advanced. The
@@ -599,7 +604,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
    *   - Resolved to { done: true, value: true }, if succeeded.
    *   - Resolved to { done: true, value: false }, if failed.
    */
-  async* versus_load_asyncGenerator( progressParent ) {
+  static async* versus_load_asyncGenerator( progressParent ) {
 
     if ( this.versus_load_asyncGenerator_running )
       throw Error( `NeuralOrchestra.Base.versus_load_asyncGenerator(): `
