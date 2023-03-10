@@ -11,16 +11,16 @@ function test_DEvolution_VersusResultSubmitter_MultiEventName(
   submitter_clientId, measurementId_apiSecret_array_array
 ) {
 
-  let evolutionVersusId;
-  let evolutionVersusResultSubmitter;
+  let versusId;
+  let versusResultSubmitter;
   try {
-    evolutionVersusId = DEvolution.VersusId.Pool.get_or_create_by( "0_0_0_0");
+    versusId = DEvolution.VersusId.Pool.get_or_create_by( "0_0_0_0");
 
-    evolutionVersusResultSubmitter = DEvolution.VersusResultSubmitter
+    versusResultSubmitter = DEvolution.VersusResultSubmitter
       .MultiEventName.Pool.get_or_create_by(
         submitter_clientId );
 
-    evolutionVersusResultSubmitter.measurementId_to_apiSecret_map_create(
+    versusResultSubmitter.measurementId_to_apiSecret_map_create(
       measurementId_apiSecret_array_array );
 
 //!!! ...unfinished... (2023/01/03) should also test multiple measurementId.
@@ -35,15 +35,15 @@ function test_DEvolution_VersusResultSubmitter_MultiEventName(
     let eventIndex = 0;
     for ( let entityNo = 0; entityNo < 9; ++entityNo ) {
       let fake_versusIdString = `${entityNo}_0_0_0`;
-      evolutionVersusId.set_byVersusIdString( fake_versusIdString );
+      versusId.set_byVersusIdString( fake_versusIdString );
 
       for ( let nNegativeZeroPositive = -1;
             nNegativeZeroPositive <= 1;
             ++nNegativeZeroPositive) {
 
-        evolutionVersusResultSubmitter
+        versusResultSubmitter
           .post_by_measurementId_versusId_NegativeZeroPositive(
-            submitter_measurementId, evolutionVersusId, nNegativeZeroPositive );
+            submitter_measurementId, versusId, nNegativeZeroPositive );
 
         // Every 4 events, post once more so that the result of every entity
         // could be a little different for helping verifying more easily by eyes.
@@ -51,9 +51,9 @@ function test_DEvolution_VersusResultSubmitter_MultiEventName(
         if ( ( eventIndex % MAGIC_DIVISOR ) == 0 ) {
           let extraCount = Math.floor( eventIndex / MAGIC_DIVISOR ) + 1;
           for ( let i = 0; i < extraCount; ++i ) {
-            evolutionVersusResultSubmitter
+            versusResultSubmitter
               .post_by_measurementId_versusId_NegativeZeroPositive(
-                submitter_measurementId, evolutionVersusId, nNegativeZeroPositive );
+                submitter_measurementId, versusId, nNegativeZeroPositive );
           }
         }
 
@@ -62,14 +62,14 @@ function test_DEvolution_VersusResultSubmitter_MultiEventName(
     }
 
   } finally {
-    if ( evolutionVersusResultSubmitter ) {
-      evolutionVersusResultSubmitter.disposeResources_and_recycleToPool();
-      evolutionVersusResultSubmitter = null;
+    if ( versusResultSubmitter ) {
+      versusResultSubmitter.disposeResources_and_recycleToPool();
+      versusResultSubmitter = null;
     }
 
-    if ( evolutionVersusId ) {
-      evolutionVersusId.disposeResources_and_recycleToPool();
-      evolutionVersusId = null;
+    if ( versusId ) {
+      versusId.disposeResources_and_recycleToPool();
+      versusId = null;
     }
   }
 }
