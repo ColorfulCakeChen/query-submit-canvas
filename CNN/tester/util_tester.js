@@ -35,7 +35,7 @@ const gTestGeneratorFuncMap = new Map(
 //!!! (2023/02/14 Temp Remarked) For speed up other testing.
   [ NeuralOrchestra_tester.tester, true ],
 
-};
+);
 
 
 function test() {
