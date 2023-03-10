@@ -19,7 +19,7 @@ async function* tester( progressParent ) {
   let progressRoot = progressParent.root_get();
 
   let progressToAdvance = progressParent.child_add(
-    ValueMax.Percentage.Concrete.Pool.get_or_create_by( 9 ) );
+    ValueMax.Percentage.Concrete.Pool.get_or_create_by( 7 ) );
 
   let downloader_spreadsheetId = "18YyEoy-OfSkODfw8wqBRApSrRnBTZpjRpRiwIKy8a0M";
   let downloader_apiKey = null;
@@ -73,16 +73,14 @@ async function* tester( progressParent ) {
       if ( loadCount > 0 ) {
         neuralOrchestra.versus_load_async__record_promise();
 
-//!!! ...unfinished... (2023/03/10)
-// should test re-entrance failed.
-        try {
+        try { // Test: Re-entrance should throw exception.
           neuralOrchestra.versus_load_async()
         } catch ( e ) {
           progressToAdvance.value_advance();
           yield progressRoot;
         }
 
-        try {
+        try { // Test: Re-entrance should throw exception.
           neuralOrchestra.versus_load_asyncGenerator().next()
         } catch ( e ) {
           progressToAdvance.value_advance();
