@@ -58,35 +58,38 @@ import { Mode as NeuralWorker_Mode } from "./NeuralWorker_Mode.js";
  *
  * 2. Experiments
  *
- * According to performance testing (i.e. NeuralWorker_tester.js), there are some
- * observations.
+ * According to performance testing (i.e. NeuralWorker_tester.js), there are
+ * some observations.
  *
  *
  * 2.0 FILL and NO_FILL
  *
- * How does a neural network know which alignment (in a differential evolution versus)
- * it represents? There are two methods: FILL or NO_FILL.
+ * How does a neural network know which alignment (in a differential evolution
+ * versus) it represents? There are two methods: FILL or NO_FILL.
  *
- *   - FILL means the input image will be filled some information (i.e. alignment mark)
- *       before it is processed by a neural network.
+ *   - FILL means the input image will be filled some information (i.e.
+ *       alignment mark) before it is processed by a neural network.
  *
- *     - The cost are downloading input image from GPU to CPU, filling alignment mark,
- *         and uploading it from CPU to GPU.
+ *     - The cost are downloading input image from GPU to CPU, filling alignment
+ *         mark, and uploading it from CPU to GPU.
  *
  *   - NO_FILL means the input image will not be filled any extra information
  *       before it is processed by a neural network.
  *
- *     - Instead, the neural networkt will simultaneously output results for both
- *         alignments.
+ *     - Instead, the neural networkt will simultaneously output results for
+ *         both alignments.
  *         - For example, the neural network outputs 100 channels totally.
- *         - If the neural network represents alignment A, use output channels 0 - 49.
- *         - If the neural network represents alignment B, use output channels 50 - 99.
+ *         - If the neural network represents alignment A,
+ *             use output channels 0 - 49.
+ *         - If the neural network represents alignment B,
+ *             use output channels 50 - 99.
  *
  *     - The cost are doubling the output channel count.
  *
- * At first glance, we might guess doubling output channel count should be slower.
- * The memory downloading/modifying/uploading, however, are even slower. In the result,
- * the NO_FILL's performance is comparable to (if not better than) FILL.
+ * At first glance, we might guess doubling output channel count should be
+ * slower. The memory downloading/modifying/uploading, however, are even slower.
+ * In the result, the NO_FILL's performance is comparable to (if not better
+ * than) FILL.
  *
  *
  * 2.1 Backend "cpu"
