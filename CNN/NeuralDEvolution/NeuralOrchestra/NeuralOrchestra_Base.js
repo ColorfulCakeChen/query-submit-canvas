@@ -571,7 +571,6 @@ class NeuralOrchestra_Base extends Recyclable.Root {
    */
   async* versus_load_asyncGenerator( progressParent ) {
 
-//!!! ...unfinished... (2023/03/10)
     // 0.
 
     // 0.1 Determine whether necessary to load versus summary.
@@ -603,12 +602,11 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     let progressToAdvance = progressParent.child_add(
       ValueMax.Percentage.Concrete.Pool.get_or_create_by( 1 ) );
 
-    // 1. 
-
+    // 1. Load versus summary.
     if ( versusSummary_bNeedLoad ) {
       let versusSummary_loadOk
         = yield *this.versusSummary.rangeArray_load_asyncGenerator(
-            progressParent, this.params_loading_retryWaiting );
+            progressVersusSummary, this.params_loading_retryWaiting );
   
       if ( !versusSummary_loadOk )
         throw Error( `NeuralOrchestra.Base.versus_load_asyncGenerator(): `
@@ -616,11 +614,8 @@ class NeuralOrchestra_Base extends Recyclable.Root {
         );
     }
 
-    // return ???loadOk;
-
 //!!! ...unfinished... (2023/03/10)
-
-    // 1. Download versus.
+    // 2. Download versus.
     this.versus_dispose();
     this.versus = yield* this.versusSummary.versus_next_load_asyncGenerator(
       progressVersus, this.params_loading_retryWaiting );
