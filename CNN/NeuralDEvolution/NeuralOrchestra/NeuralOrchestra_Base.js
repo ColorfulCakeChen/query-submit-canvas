@@ -379,9 +379,12 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     //       ( 10 * 1024 * 1024 )). Otherwise, it will fail in mobile phone.
     //
     const weightArrayLength = ( 5 * 1024 * 1024 );
-    const weightArrayByteLength = weightArrayLength * Float32Array.BYTES_PER_ELEMENT;
+    const weightArrayByteLength
+      = weightArrayLength * Float32Array.BYTES_PER_ELEMENT;
+
     let weightArrayBufferArray = [
-      new ArrayBuffer( weightArrayByteLength ), new ArrayBuffer( weightArrayByteLength )
+      new ArrayBuffer( weightArrayByteLength ),
+      new ArrayBuffer( weightArrayByteLength )
     ];
 
     // (2022//09/26 Remarked)
