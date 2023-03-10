@@ -1,9 +1,9 @@
-export { generator_from_Base64Char_StringOrStringArray_by_GeneratorFunction };
-export { generator_from_Base64Char_CodePoint_ArrayBuffer_by_GeneratorFunction };
+export { Base64Char_StringOrStringArray_generator_by_GeneratorFunction };
+export { Base64Char_CodePoint_ArrayBuffer_generator_by_GeneratorFunction };
 
-export { generator_from_Base64Char_StringOrStringArray_to_Uint8Array };
-export { generator_from_Base64Char_CodePoint_ArrayBuffer_to_Uint8Array };
-export { generator_from_Base64Char_CodePoint_Uint8Array_to_Uint8Array };
+export { Base64Char_StringOrStringArray_to_Uint8Array_generator };
+export { Base64Char_CodePoint_ArrayBuffer_to_Uint8Array_generator };
+export { Base64Char_CodePoint_Uint8Array_to_Uint8Array_generator };
 
 export { lineSkipper_fromUint8Array };
 
@@ -49,7 +49,7 @@ import * as Base64_Constant from "./Base64_Constant.js";
  * @yield {any}
  *   Yield ( value = decoded data of generatorFunction ) when ( done = true ).
  */
-function* generator_from_Base64Char_StringOrStringArray_by_GeneratorFunction(
+function* Base64Char_StringOrStringArray_generator_by_GeneratorFunction(
   progressParent,
   source_Base64Char_String_or_StringArray, textEncoder,
   skipLineCount, suspendByteCount,
@@ -132,7 +132,7 @@ function* generator_from_Base64Char_StringOrStringArray_by_GeneratorFunction(
  * @yield {any}
  *   Yield ( value = decoded data of generatorFunction ) when ( done = true ).
  */
-function* generator_from_Base64Char_CodePoint_ArrayBuffer_by_GeneratorFunction(
+function* Base64Char_CodePoint_ArrayBuffer_generator_by_GeneratorFunction(
   progressParent,
   source_Base64Char_CodePoint_ArrayBuffer, skipLineCount, suspendByteCount,
   generatorFunction ) {
@@ -179,16 +179,16 @@ function* generator_from_Base64Char_CodePoint_ArrayBuffer_by_GeneratorFunction(
  * @yield {Uint8Array}
  *   Yield ( value = decoded data as Uint8Array ) when ( done = true ).
  */
-function* generator_from_Base64Char_StringOrStringArray_to_Uint8Array(
+function* Base64Char_StringOrStringArray_to_Uint8Array_generator(
   progressParent,
   source_Base64Char_String_or_StringArray, textEncoder,
   skipLineCount, suspendByteCount
 ) {
-  return yield* generator_from_Base64Char_StringOrStringArray_by_GeneratorFunction(
+  return yield* Base64Char_StringOrStringArray_generator_by_GeneratorFunction(
     progressParent,
     source_Base64Char_String_or_StringArray, textEncoder,
     skipLineCount, suspendByteCount,
-    generator_from_Base64Char_CodePoint_Uint8Array_to_Uint8Array
+    Base64Char_CodePoint_Uint8Array_to_Uint8Array_generator
   );
 }
 
@@ -221,13 +221,13 @@ function* generator_from_Base64Char_StringOrStringArray_to_Uint8Array(
  * @yield {Uint8Array}
  *   Yield ( value = decoded data as Uint8Array ) when ( done = true ).
  */
-function* generator_from_Base64Char_CodePoint_ArrayBuffer_to_Uint8Array( progressParent,
+function* Base64Char_CodePoint_ArrayBuffer_to_Uint8Array_generator( progressParent,
   source_Base64Char_CodePoint_ArrayBuffer, skipLineCount, suspendByteCount ) {
 
-  return yield* generator_from_Base64Char_CodePoint_ArrayBuffer_by_GeneratorFunction(
+  return yield* Base64Char_CodePoint_ArrayBuffer_generator_by_GeneratorFunction(
     progressParent,
     source_Base64Char_CodePoint_ArrayBuffer, skipLineCount, suspendByteCount,
-    generator_from_Base64Char_CodePoint_Uint8Array_to_Uint8Array
+    Base64Char_CodePoint_Uint8Array_to_Uint8Array_generator
   );
 }
 
@@ -352,7 +352,7 @@ function* lineSkipper_fromUint8Array( progressToAdvance,
  * @yield {Uint8Array}
  *   Yield ( value = decoded data as Uint8Array ) when ( done = true ).
  */
-function* generator_from_Base64Char_CodePoint_Uint8Array_to_Uint8Array(
+function* Base64Char_CodePoint_Uint8Array_to_Uint8Array_generator(
   progressParent,
   source_Base64Char_CodePoint_Uint8Array, skipLineCount, suspendByteCount ) {
 

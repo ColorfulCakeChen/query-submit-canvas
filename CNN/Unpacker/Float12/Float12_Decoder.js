@@ -7,7 +7,7 @@ export { from_Uint12 };
 export { from_Base64_DecodedValue_Two };
 export { from_Base64Char_CodePoint_Two };
 export { from_String };
-export { generator_generator_from_Base64Char_StringOrStringArray_to_Uint8Array };
+export { generator_Base64Char_StringOrStringArray_to_Uint8Array_generator };
 export { generator_from_Base64Char_StringOrStringArray_to_Float32Array };
 
 import * as ValueMax from "../../util/ValueMax.js";
@@ -255,7 +255,7 @@ function from_String( base64String ) {
  * (i.e. a float12; 12-bits floating-point number) of the result Float32Array.
  *
  * (Copied from
- * Base64.Decoder.generator_from_Base64Char_CodePoint_Uint8Array_to_Uint8Array())
+ * Base64.Decoder.Base64Char_CodePoint_Uint8Array_to_Uint8Array_generator())
  *
  * @param {ValueMax.Percentage.Aggregate} progressParent
  *   Some new progressToAdvance will be created and added to progressParent. The
@@ -283,7 +283,7 @@ function from_String( base64String ) {
  * @yield {Float32Array}
  *   Yield ( value = decoded data as Float32Array ) when ( done = true ).
  */
-function* generator_generator_from_Base64Char_StringOrStringArray_to_Uint8Array(
+function* generator_Base64Char_StringOrStringArray_to_Uint8Array_generator(
   progressParent,
   source_Base64Char_CodePoint_Uint8Array, skipLineCount, suspendByteCount ) {
 
@@ -439,6 +439,6 @@ function* generator_from_Base64Char_StringOrStringArray_to_Float32Array(
       progressParent,
       source_Base64Char_String_or_StringArray, textEncoder,
       skipLineCount, suspendByteCount,
-      generator_generator_from_Base64Char_StringOrStringArray_to_Uint8Array
+      generator_Base64Char_StringOrStringArray_to_Uint8Array_generator
     );
 }
