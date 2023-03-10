@@ -99,6 +99,10 @@ class NeuralOrchestra_Construct3 extends Base {
 //!!! ...unfinished... (2022/12/29) AbortSignal.timeout()?
 // If downloading is failed (e.g. timeout), display message and re-try downloading.
 
+//!!! ...unfinished... (2023/03/10)
+// Perhaps, check this.loadingProgress
+// (may be loading versusSummary + versus, or loading versus only.)
+
   }
 
   /**
