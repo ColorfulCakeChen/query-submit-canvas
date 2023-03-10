@@ -76,10 +76,10 @@ import * as DEvolution from "../DEvolution.js";
  *   The neural network configuration. It will be used for both two neural networks.
  * It will be kept (i.e. owned and destroyed) by this NeuralOrchetra object.
  *
- * @member {DEvolution.VersusSummary} devolutionVersusSummary
+ * @member {DEvolution.VersusSummary} versusSummary
  *   The downloaded versus summary of the differential evolution.
  *
- * @member {DEvolution.Versus} devolutionVersus
+ * @member {DEvolution.Versus} versus
  *   The downloaded current versus of the differential evolution.
  *
  */
@@ -111,25 +111,25 @@ class NeuralOrchestra_Base extends Recyclable.Root {
 
   /** @override */
   disposeResources() {
-    this.devolutionVersusSubmitter_dispose();
-    this.devolutionVersus_dispose();
+    this.versusSubmitter_dispose();
+    this.versus_dispose();
     this.neuralNetParamsBase_dispose();
     this.workerProxies_dispose();
-    this.devolutionVersusSummary_dispose();
+    this.versusSummary_dispose();
 
     super.disposeResources();
   }
 
   get downloader_spreadsheetId() {
-    return this.devolutionVersusSummary.weightsSpreadsheetId;
+    return this.versusSummary.weightsSpreadsheetId;
   }
 
   get downloader_apiKey() {
-    return this.devolutionVersusSummary.weightsAPIKey;
+    return this.versusSummary.weightsAPIKey;
   }
 
   get submitter_clientId() {
-    return this.devolutionVersusSubmitter.clientId;
+    return this.versusSubmitter.clientId;
   }
 
   get backendName() {
@@ -157,26 +157,26 @@ class NeuralOrchestra_Base extends Recyclable.Root {
   }
 
 //!!! ...unfinished... (2023/02/10)
-// devolutionVersusSummaryDownloading
+// versusSummaryDownloading
 //   - should begin before shader compiling.
 //   - its progress should be displayed after shader compiling and be combined
-//       with devolutionVersus downloading.
+//       with versus downloading.
 //
 
 //!!! ...unfinished... (2023/02/26)
-// devolutionVersusSummary_load_asyncGenerator()
+// versusSummary_load_asyncGenerator()
 // set flag ( bVersusSummary_loaded = true )
 // or ( progressVersusSummaryLoading.valuePercentage == 100 ) when done.
 // (For letting construct.net to detect inside runtime.tick())
 //
-// devolutionVersus_load_asyncGenerator()
+// versus_load_asyncGenerator()
 // set flag ( bVersus_loaded = true )
 // or ( progressVersusLoading.valuePercentage == 100 ) when done.
 // (For letting construct.net to detect inside runtime.tick())
 //
 // devolution_VersusSummary_Versus_load_asyncGenerator()
-// call devolutionVersusSummary_load_asyncGenerator()
-// and then devolutionVersus_load_asyncGenerator().
+// call versusSummary_load_asyncGenerator()
+// and then versus_load_asyncGenerator().
 //
 // async_neuralWorker_initer()
 // call devolution_VersusSummary_Versus_load_asyncGenerator() too.
@@ -252,7 +252,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
   ) {
 
     // 1. Versus Downloader.
-    let versusSummaryDownloaderPromise = this.devolutionVersusSummary_init_async(
+    let versusSummaryDownloaderPromise = this.versusSummary_init_async(
       downloader_spreadsheetId, downloader_apiKey );
 
     // 2. Versus Neural Workers.
@@ -289,7 +289,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     }
 
     // 3. Versus Result Reporter
-    this.devolutionVersusSubmitter_init( submitter_clientId );
+    this.versusSubmitter_init( submitter_clientId );
 
     // 4.
 
@@ -460,10 +460,10 @@ class NeuralOrchestra_Base extends Recyclable.Root {
 
 
   /** */
-  devolutionVersusSummary_dispose() {
-    if ( this.devolutionVersusSummary ) {
-      this.devolutionVersusSummary.disposeResources_and_recycleToPool();
-      this.devolutionVersusSummary = null;
+  versusSummary_dispose() {
+    if ( this.versusSummary ) {
+      this.versusSummary.disposeResources_and_recycleToPool();
+      this.versusSummary = null;
     }
   }
 
@@ -474,22 +474,22 @@ class NeuralOrchestra_Base extends Recyclable.Root {
    *   - Resolved to true, if succeeded.
    *   - Resolved to false, if failed.
    */
-  async devolutionVersusSummary_init_async(
+  async versusSummary_init_async(
     downloader_spreadsheetId, downloader_apiKey ) {
 
-    this.devolutionVersusSummary_dispose();
-    this.devolutionVersusSummary = DEvolution.VersusSummary.Pool.get_or_create_by(
+    this.versusSummary_dispose();
+    this.versusSummary = DEvolution.VersusSummary.Pool.get_or_create_by(
       downloader_spreadsheetId, downloader_apiKey );
 
-    return this.devolutionVersusSummary.rangeArray_load_async();
+    return this.versusSummary.rangeArray_load_async();
   }
 
 
   /** */
-  devolutionVersus_dispose() {
-    if ( this.devolutionVersus ) {
-      this.devolutionVersus.disposeResources_and_recycleToPool();
-      this.devolutionVersus = null;
+  versus_dispose() {
+    if ( this.versus ) {
+      this.versus.disposeResources_and_recycleToPool();
+      this.versus = null;
     }
   }
 
@@ -501,19 +501,19 @@ class NeuralOrchestra_Base extends Recyclable.Root {
    *   - Resolved to true, if succeeded.
    *   - Resolved to false, if failed.
    */
-  async devolutionVersus_next_load__and__workerProxies_NeuralNetArray_create__async() {
+  async versus_next_load__and__workerProxies_NeuralNetArray_create__async() {
 
     // 1. Download versus.
-    this.devolutionVersus_dispose();
-    this.devolutionVersus = await this.devolutionVersusSummary.versus_next_load_async();
+    this.versus_dispose();
+    this.versus = await this.versusSummary.versus_next_load_async();
 
-    if ( !this.devolutionVersus ) {
+    if ( !this.versus ) {
 
 //!!! ...unfinished... (2022/12/29)
 // If downloading is failed (e.g. timeout), display message and re-try downloading.
 
       // throw Error( `NeuralOrchestra_Base.`
-      //   + `devolutionVersus_next_load__and__workerProxies_NeuralNetArray_create__async(): `
+      //   + `versus_next_load__and__workerProxies_NeuralNetArray_create__async(): `
       //   + `Failed to load next versus.`
       //   + `workerProxies={ ${this.workerProxies} }`
       // );
@@ -526,8 +526,8 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     // Note: These Float32Array will be transferred to neural web workers (i.e.
     //       their .byteLength will become zero).
     let weightArrayBufferArray = [
-      this.devolutionVersus.parentChromosomeFloat32Array.buffer,
-      this.devolutionVersus.offspringChromosomeFloat32Array.buffer
+      this.versus.parentChromosomeFloat32Array.buffer,
+      this.versus.offspringChromosomeFloat32Array.buffer
     ];
 
     // In real-run, no need to observe dry-run performance and weight count.
@@ -538,7 +538,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     let bCreateOk = await bCreateOkPromise;
     if ( !bCreateOk )
       throw Error( `NeuralOrchestra_Base.`
-        + `devolutionVersus_next_load__and__workerProxies_NeuralNetArray_create__async(): `
+        + `versus_next_load__and__workerProxies_NeuralNetArray_create__async(): `
         + `Failed to create neural networks. `
         + `workerProxies={ ${this.workerProxies} }`
       );
@@ -547,17 +547,17 @@ class NeuralOrchestra_Base extends Recyclable.Root {
   }
 
   /** */
-  devolutionVersusSubmitter_dispose() {
-    if ( this.devolutionVersusSubmitter ) {
-      this.devolutionVersusSubmitter.disposeResources_and_recycleToPool();
-      this.devolutionVersusSubmitter = null;
+  versusSubmitter_dispose() {
+    if ( this.versusSubmitter ) {
+      this.versusSubmitter.disposeResources_and_recycleToPool();
+      this.versusSubmitter = null;
     }
   }
 
   /** Create differential evolution versus result reporter. */
-  devolutionVersusSubmitter_init( submitter_clientId ) {
-    this.devolutionVersusSubmitter_dispose();
-    this.devolutionVersusSubmitter = DEvolution.VersusSubmitter
+  versusSubmitter_init( submitter_clientId ) {
+    this.versusSubmitter_dispose();
+    this.versusSubmitter = DEvolution.VersusSubmitter
       .MultiEventName.Pool.get_or_create_by( submitter_clientId );
   }
 
@@ -570,9 +570,9 @@ class NeuralOrchestra_Base extends Recyclable.Root {
    *     -  0 (if parent draw offspring)
    *     - +1 (if parent win offspring)
    */
-  devolutionVersusSubmitter_send( nNegativeZeroPositive ) {
-    this.devolutionVersusSubmitter.post_by_versusId_NegativeZeroPositive(
-      this.devolutionVersus.versusId, nNegativeZeroPositive );
+  versusSubmitter_send( nNegativeZeroPositive ) {
+    this.versusSubmitter.post_by_versusId_NegativeZeroPositive(
+      this.versus.versusId, nNegativeZeroPositive );
   }
 
 }
