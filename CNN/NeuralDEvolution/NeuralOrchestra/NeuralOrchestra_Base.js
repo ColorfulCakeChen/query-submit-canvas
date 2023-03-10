@@ -140,7 +140,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
 
   /** @override */
   disposeResources() {
-    this.versusSubmitter_dispose();
+    this.versusResultSubmitter_dispose();
     this.versus_dispose();
     this.neuralNetParamsBase_dispose();
     this.workerProxies_dispose();
@@ -162,7 +162,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
   }
 
   get submitter_clientId() {
-    return this.versusSubmitter.clientId;
+    return this.versusResultSubmitter.clientId;
   }
 
   get backendName() {
@@ -321,7 +321,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     }
 
     // 3. Versus Result Reporter
-    this.versusSubmitter_init( submitter_clientId );
+    this.versusResultSubmitter_init( submitter_clientId );
 
     // 4.
     return this.workerProxies_init_promise;
@@ -728,9 +728,9 @@ class NeuralOrchestra_Base extends Recyclable.Root {
 
 
   /** Create differential evolution versus result reporter. */
-  versusSubmitter_init( submitter_clientId ) {
-    this.versusSubmitter_dispose();
-    this.versusSubmitter = DEvolution.VersusSubmitter
+  versusResultSubmitter_init( submitter_clientId ) {
+    this.versusResultSubmitter_dispose();
+    this.versusResultSubmitter = DEvolution.VersusResultSubmitter
       .MultiEventName.Pool.get_or_create_by( submitter_clientId );
   }
 
@@ -743,16 +743,16 @@ class NeuralOrchestra_Base extends Recyclable.Root {
    *     -  0 (if parent draw offspring)
    *     - +1 (if parent win offspring)
    */
-  versusSubmitter_send( nNegativeZeroPositive ) {
-    this.versusSubmitter.post_by_versusId_NegativeZeroPositive(
+  versusResultSubmitter_send( nNegativeZeroPositive ) {
+    this.versusResultSubmitter.post_by_versusId_NegativeZeroPositive(
       this.versus.versusId, nNegativeZeroPositive );
   }
 
   /** */
-  versusSubmitter_dispose() {
-    if ( this.versusSubmitter ) {
-      this.versusSubmitter.disposeResources_and_recycleToPool();
-      this.versusSubmitter = null;
+  versusResultSubmitter_dispose() {
+    if ( this.versusResultSubmitter ) {
+      this.versusResultSubmitter.disposeResources_and_recycleToPool();
+      this.versusResultSubmitter = null;
     }
   }
 

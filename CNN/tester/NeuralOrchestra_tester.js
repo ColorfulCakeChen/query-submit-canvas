@@ -114,7 +114,7 @@ async function* tester( progressParent ) {
 
       // A random integer between [ -1, +1 ].
       let nNegativeZeroPositive = RandTools.getRandomIntInclusive( -1, 1 );
-      neuralOrchestra.versusSubmitter_send( nNegativeZeroPositive );
+      neuralOrchestra.versusResultSubmitter_send( nNegativeZeroPositive );
 
       progressToAdvance.value_advance();
       yield progressRoot;

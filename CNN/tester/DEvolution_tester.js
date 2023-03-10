@@ -7,20 +7,20 @@ import * as DEvolution from "../NeuralDEvolution/DEvolution.js";
 /**
  * 
  */
-function test_DEvolution_VersusSubmitter_MultiEventName(
+function test_DEvolution_VersusResultSubmitter_MultiEventName(
   submitter_clientId, measurementId_apiSecret_array_array
 ) {
 
   let evolutionVersusId;
-  let evolutionVersusSubmitter;
+  let evolutionVersusResultSubmitter;
   try {
     evolutionVersusId = DEvolution.VersusId.Pool.get_or_create_by( "0_0_0_0");
 
-    evolutionVersusSubmitter = DEvolution.VersusResultSubmitter
+    evolutionVersusResultSubmitter = DEvolution.VersusResultSubmitter
       .MultiEventName.Pool.get_or_create_by(
         submitter_clientId );
 
-    evolutionVersusSubmitter.measurementId_to_apiSecret_map_create(
+    evolutionVersusResultSubmitter.measurementId_to_apiSecret_map_create(
       measurementId_apiSecret_array_array );
 
 //!!! ...unfinished... (2023/01/03) should also test multiple measurementId.
@@ -41,7 +41,7 @@ function test_DEvolution_VersusSubmitter_MultiEventName(
             nNegativeZeroPositive <= 1;
             ++nNegativeZeroPositive) {
 
-        evolutionVersusSubmitter
+        evolutionVersusResultSubmitter
           .post_by_measurementId_versusId_NegativeZeroPositive(
             submitter_measurementId, evolutionVersusId, nNegativeZeroPositive );
 
@@ -51,7 +51,7 @@ function test_DEvolution_VersusSubmitter_MultiEventName(
         if ( ( eventIndex % MAGIC_DIVISOR ) == 0 ) {
           let extraCount = Math.floor( eventIndex / MAGIC_DIVISOR ) + 1;
           for ( let i = 0; i < extraCount; ++i ) {
-            evolutionVersusSubmitter
+            evolutionVersusResultSubmitter
               .post_by_measurementId_versusId_NegativeZeroPositive(
                 submitter_measurementId, evolutionVersusId, nNegativeZeroPositive );
           }
@@ -62,9 +62,9 @@ function test_DEvolution_VersusSubmitter_MultiEventName(
     }
 
   } finally {
-    if ( evolutionVersusSubmitter ) {
-      evolutionVersusSubmitter.disposeResources_and_recycleToPool();
-      evolutionVersusSubmitter = null;
+    if ( evolutionVersusResultSubmitter ) {
+      evolutionVersusResultSubmitter.disposeResources_and_recycleToPool();
+      evolutionVersusResultSubmitter = null;
     }
 
     if ( evolutionVersusId ) {
@@ -103,7 +103,7 @@ async function* tester( progressParent ) {
       [ "G-T14M8JKR65", "ywGNhxdrTj2zDlMX6gYEiQ" ], // NeuralOrchestra_tester, 04
     ];
 
-    test_DEvolution_VersusSubmitter_MultiEventName(
+    test_DEvolution_VersusResultSubmitter_MultiEventName(
       submitter_clientId, measurementId_apiSecret_array_array );
   }
 
