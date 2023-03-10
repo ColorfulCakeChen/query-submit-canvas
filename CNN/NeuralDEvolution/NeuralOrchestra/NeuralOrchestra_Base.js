@@ -454,7 +454,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
    */
   async workerProxies_ImageData_process_async( sourceImageData ) {
     let theFloat32ArrayArrayPromise
-      = this.workerProxies.NeuralNetArray_create_async( sourceImageData );
+      = this.workerProxies.ImageData_process_async( sourceImageData );
     return theFloat32ArrayArrayPromise;
   }
 
