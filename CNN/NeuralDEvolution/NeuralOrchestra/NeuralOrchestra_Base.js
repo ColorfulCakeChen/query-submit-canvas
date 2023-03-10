@@ -153,18 +153,6 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     super.disposeResources();
   }
 
-  get submitter_clientId() {
-    return this.versusResultSubmitter.clientId;
-  }
-
-  get backendName() {
-    return this.workerProxies.backendName;
-  }
-
-  get nNeuralWorker_ModeId() {
-    return this.workerProxies.nNeuralWorker_ModeId;
-  }
-
   /** Create .params_loading_retryWaiting */
   params_loading_retryWaiting_create() {
     const loadingMillisecondsMax = ( 60 * 1000 );
@@ -180,6 +168,18 @@ class NeuralOrchestra_Base extends Recyclable.Root {
           retryTimesMax,
           retryWaitingSecondsExponentMax, retryWaitingMillisecondsInterval
         );
+  }
+
+  get submitter_clientId() {
+    return this.versusResultSubmitter.clientId;
+  }
+
+  get backendName() {
+    return this.workerProxies.backendName;
+  }
+
+  get nNeuralWorker_ModeId() {
+    return this.workerProxies.nNeuralWorker_ModeId;
   }
 
   /** */
