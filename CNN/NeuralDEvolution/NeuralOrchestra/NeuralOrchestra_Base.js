@@ -680,7 +680,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
       return bCreateOk;
 
     } finally {
-      // 4. So that this method could be called again.
+      // 4. So that this generrator could be executed again.
       this.versus_load_asyncGenerator_running = false;
     }
   }
