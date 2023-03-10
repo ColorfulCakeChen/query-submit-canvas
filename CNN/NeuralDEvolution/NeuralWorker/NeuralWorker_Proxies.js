@@ -62,7 +62,7 @@ import { Mode as NeuralWorker_Mode } from "./NeuralWorker_Mode.js";
  * some observations.
  *
  *
- * 2.0 FILL and NO_FILL
+ * 2.1 FILL and NO_FILL
  *
  * How does a neural network know which alignment (in a differential evolution
  * versus) it represents? There are two methods: FILL or NO_FILL.
@@ -76,7 +76,7 @@ import { Mode as NeuralWorker_Mode } from "./NeuralWorker_Mode.js";
  *   - NO_FILL means the input image will not be filled any extra information
  *       before it is processed by a neural network.
  *
- *     - Instead, the neural networkt will simultaneously output results for
+ *     - Instead, the neural network will simultaneously output results for
  *         both alignments.
  *         - For example, the neural network outputs 100 channels totally.
  *         - If the neural network represents alignment A,
@@ -87,12 +87,29 @@ import { Mode as NeuralWorker_Mode } from "./NeuralWorker_Mode.js";
  *     - The cost are doubling the output channel count.
  *
  * At first glance, we might guess doubling output channel count should be
- * slower. The memory downloading/modifying/uploading, however, are even slower.
- * In the result, the NO_FILL's performance is comparable to (if not better
- * than) FILL.
+ * slower. The memory downloading/modifying/uploading, however, are even
+ * slower. In the result, the NO_FILL's performance is comparable to (if not
+ * better than) FILL.
  *
  *
- * 2.1 Backend "cpu"
+ * 2.2 (Pre-fill) recurrent information
+ *
+ * Except alignment mark, if recurrent feedback information (i.e. the previous
+ * step's output of the neural network) is wanted, here is a possible method
+ * without filling by neural network itself:
+ *
+ *   - Let DrawingCanvas be larger than Viewport.
+ *
+ *   - Arrange some 1 * 1 size TiledBackground (with pure white (RGBA all 255)
+ *       image) world objects inside the DrawingCanvas (so that they visible
+ *       by neural network ) but outside the Viewport (so that they are invisible
+ *       by user).
+ *
+ *   - Use these TiledBackground world objects' color (RGB) and opacity (A) to
+ *       express recurrent feedback information.
+ *
+ *
+ * 2.3 Backend "cpu"
  *
  *   - TWO_WORKER_Xxx is better than ONE_WORKER_Xxx.
  *
@@ -105,7 +122,7 @@ import { Mode as NeuralWorker_Mode } from "./NeuralWorker_Mode.js";
  *         (i.e. the 2nd computation) more earlier than Xxx_APPLY.
  *
  *
- * 2.2 Backend "webgl"
+ * 2.4 Backend "webgl"
  *
  *   - ONE_WORKER_Xxx is better than (at least, comparable to) TWO_WORKER_Xxx.
  *
