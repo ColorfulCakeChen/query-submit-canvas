@@ -41,7 +41,8 @@ import { Versus as DEvolution_Versus } from "./DEvolution_Versus.js";
 class DEvolution_VersusSummary extends Recyclable.Root {
 
   /**
-   * Used as default DEvolution.rangeArray provider for conforming to Recyclable interface.
+   * Used as default DEvolution.VersusSummary provider for conforming to
+   * Recyclable interface.
    */
   static Pool = new Pool.Root( "DEvolution.VersusSummary.Pool",
     DEvolution_VersusSummary, DEvolution_VersusSummary.setAsConstructor );
