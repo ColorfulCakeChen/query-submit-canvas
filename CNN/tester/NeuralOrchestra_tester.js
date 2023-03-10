@@ -37,9 +37,9 @@ async function* tester( progressParent ) {
   let input_height = 72;
   let input_width = 128;
 
-  let vocabularyChannelCount = 8; //6;
-  let blockCountTotalRequested = 84; //144;
-  let output_channelCount = 12;
+  let vocabularyChannelCount = 4; //8; //6;
+  let blockCountTotalRequested = 39; //84; //144;
+  let output_channelCount = 64; //12;
 
   let neuralOrchestra;
   try {
