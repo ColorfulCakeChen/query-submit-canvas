@@ -94,6 +94,11 @@ import * as DEvolution from "../DEvolution.js";
  *   - If settled, the .versus_load_progress has been stopped.
  *   - If resolved to true, it means versus summary loaded, versus loaded, and
  *       neural networks created.
+ * 
+ * @member {boolean} versus_load_asyncGenerator_running
+ *   If true, there has been a .versus_load_asyncGenerator() executing. Please
+ * wait become ( .versus_load_asyncGenerator_running == false ) to call another
+ * .versus_load_asyncGenerator().
  */
 class NeuralOrchestra_Base extends Recyclable.Root {
 
@@ -130,6 +135,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     this.workerProxies_dispose();
     this.versusSummary_dispose();
     this.versus_load_progress_dispose();
+    this.versus_load_asyncGenerator_running = undefined;
     this.params_loading_retryWaiting = undefined;
 
     super.disposeResources();
@@ -549,6 +555,10 @@ class NeuralOrchestra_Base extends Recyclable.Root {
    *     - Record in .workerProxies
    *
    *
+   * If this generator is executing, it should not create another same generator.
+   * Please do that after the executing generator done.
+   *
+   *
    * @param {ValueMax.Percentage.Aggregate} progressParent
    *   Some new progressToAdvance will be created and added to progressParent. The
    * created progressToAdvance will be increased when every time advanced. The
@@ -564,101 +574,115 @@ class NeuralOrchestra_Base extends Recyclable.Root {
    */
   async* versus_load_asyncGenerator( progressParent ) {
 
-    // 0.
+    if ( this.versus_load_asyncGenerator_running )
+      throw Error( `NeuralOrchestra.Base.versus_load_asyncGenerator(): `
+        + `should not be executed multiple times simultaneously.`
+      );
 
-    // 0.1 Determine whether necessary to load versus summary.
-    let versusSummary_bNeedLoad;
-    if ( this.versusSummary ) {
-      if ( this.versusSummary.bLoaded ) {
-        versusSummary_bNeedLoad = false; // Already loaded.
+    try {
+      // 0.
+
+      // 0.1 Prevent re-entrance.
+      this.versus_load_asyncGenerator_running = true;
+
+      // 0.2 Determine whether necessary to load versus summary.
+      let versusSummary_bNeedLoad;
+      if ( this.versusSummary ) {
+        if ( this.versusSummary.bLoaded ) {
+          versusSummary_bNeedLoad = false; // Already loaded.
+        } else {
+          versusSummary_bNeedLoad = true;
+        }
       } else {
+        this.versusSummary = DEvolution.VersusSummary.Pool.get_or_create_by(
+          this.downloader_spreadsheetId, this.downloader_apiKey );
         versusSummary_bNeedLoad = true;
       }
-    } else {
-      this.versusSummary = DEvolution.VersusSummary.Pool.get_or_create_by(
-        this.downloader_spreadsheetId, this.downloader_apiKey );
-      versusSummary_bNeedLoad = true;
-    }
 
-    // 0.2 Prepare progress.
-    let progressRoot = progressParent.root_get();
+      // 0.3 Prepare progress.
+      let progressRoot = progressParent.root_get();
 
-    let progressVersusSummary;
-    if ( versusSummary_bNeedLoad ) {
-      progressVersusSummary = progressParent.child_add(
+      let progressVersusSummary;
+      if ( versusSummary_bNeedLoad ) {
+        progressVersusSummary = progressParent.child_add(
+          ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
+      }
+
+      let progressVersus = progressParent.child_add(
         ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
-    }
 
-    let progressVersus = progressParent.child_add(
-      ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
+      let progressToAdvance = progressParent.child_add(
+        ValueMax.Percentage.Concrete.Pool.get_or_create_by( 2 ) );
 
-    let progressToAdvance = progressParent.child_add(
-      ValueMax.Percentage.Concrete.Pool.get_or_create_by( 2 ) );
+      // 1. Load versus summary.
+      if ( versusSummary_bNeedLoad ) {
+        let versusSummary_loadOk
+          = yield *this.versusSummary.rangeArray_load_asyncGenerator(
+              progressVersusSummary, this.params_loading_retryWaiting );
+    
+        if ( !versusSummary_loadOk ) {
+          throw Error( `NeuralOrchestra.Base.versus_load_asyncGenerator(): `
+            + `Failed to load DEvolution.VersusSummary.rangeArray.`
+          );
+          return false;
+        }
+      }
 
-    // 1. Load versus summary.
-    if ( versusSummary_bNeedLoad ) {
-      let versusSummary_loadOk
-        = yield *this.versusSummary.rangeArray_load_asyncGenerator(
-            progressVersusSummary, this.params_loading_retryWaiting );
-  
-      if ( !versusSummary_loadOk ) {
+      // 2. Load versus.
+      this.versus_dispose();
+      this.versus = yield* this.versusSummary.versus_next_load_asyncGenerator(
+        progressVersus, this.params_loading_retryWaiting );
+
+      if ( !this.versus ) {
         throw Error( `NeuralOrchestra.Base.versus_load_asyncGenerator(): `
-          + `Failed to load DEvolution.VersusSummary.rangeArray.`
+          + `Failed to load DEvolution.Versus.`
         );
         return false;
       }
+
+      // 3. Create neural networks.
+
+      // Note: These Float32Array will be transferred to neural web workers (i.e.
+      //       their .byteLength will become zero).
+      let weightArrayBufferArray = [
+        this.versus.parentChromosomeFloat32Array.buffer,
+        this.versus.offspringChromosomeFloat32Array.buffer
+      ];
+
+      // 3.1 Before creating neural network, the neural web workers should be ready.
+      let workerProxies_initOk = await this.workerProxies_init_promise;
+      if ( !workerProxies_initOk )
+        throw Error( `NeuralOrchestra.Base.versus_load_asyncGenerator(): `
+          + `Failed to initialize NeuralWorker.Proxies. `
+          + `workerProxies={ ${this.workerProxies} }`
+        );
+
+      progressToAdvance.value_advance();
+      yield progressRoot;
+
+      // 3.2 Create neural networks.
+
+      // In real-run, no need to observe dry-run performance and weight count.
+      const bLogDryRunTime = false;
+      let bCreateOkPromise = this.workerProxies_NeuralNetArray_create_async(
+        weightArrayBufferArray, bLogDryRunTime );
+
+      let bCreateOk = await bCreateOkPromise;
+      if ( !bCreateOk )
+        throw Error( `NeuralOrchestra.Base.versus_load_asyncGenerator(): `
+          + `Failed to create neural networks. `
+          + `workerProxies={ ${this.workerProxies} }`
+        );
+    
+      progressToAdvance.value_advance();
+      yield progressRoot;
+
+      return bCreateOk;
+
+    } finally {
+      // 4. So that this method could be called again.
+      this.versus_load_asyncGenerator_running = false;
     }
-
-    // 2. Load versus.
-    this.versus_dispose();
-    this.versus = yield* this.versusSummary.versus_next_load_asyncGenerator(
-      progressVersus, this.params_loading_retryWaiting );
-
-    if ( !this.versus ) {
-      throw Error( `NeuralOrchestra.Base.versus_load_asyncGenerator(): `
-        + `Failed to load DEvolution.Versus.`
-      );
-      return false;
-    }
-
-    // 3. Create neural networks.
-
-    // Note: These Float32Array will be transferred to neural web workers (i.e.
-    //       their .byteLength will become zero).
-    let weightArrayBufferArray = [
-      this.versus.parentChromosomeFloat32Array.buffer,
-      this.versus.offspringChromosomeFloat32Array.buffer
-    ];
-
-    // 3.1 Before creating neural network, the neural web workers should be ready.
-    let workerProxies_initOk = await this.workerProxies_init_promise;
-    if ( !workerProxies_initOk )
-      throw Error( `NeuralOrchestra.Base.versus_load_asyncGenerator(): `
-        + `Failed to initialize NeuralWorker.Proxies. `
-        + `workerProxies={ ${this.workerProxies} }`
-      );
-
-    progressToAdvance.value_advance();
-    yield progressRoot;
-
-    // 3.2 Create neural networks.
-
-    // In real-run, no need to observe dry-run performance and weight count.
-    const bLogDryRunTime = false;
-    let bCreateOkPromise = this.workerProxies_NeuralNetArray_create_async(
-      weightArrayBufferArray, bLogDryRunTime );
-
-    let bCreateOk = await bCreateOkPromise;
-    if ( !bCreateOk )
-      throw Error( `NeuralOrchestra.Base.versus_load_asyncGenerator(): `
-        + `Failed to create neural networks. `
-        + `workerProxies={ ${this.workerProxies} }`
-      );
-  
-    progressToAdvance.value_advance();
-    yield progressRoot;
-  
-    return bCreateOk;
   }
 
 
