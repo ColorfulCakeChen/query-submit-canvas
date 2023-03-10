@@ -309,7 +309,7 @@ function* Base64Char_CodePoint_Uint8Array_to_Float32Array_generator(
   // It is important that the nextYieldByteCount is not greater than source length,
   // so that it can be used as boundary checking to reduce checking times and increase
   // performance.
-  let lineSkipper = Base64.Decoder.lineSkipper_fromUint8Array( progressToAdvance,
+  let lineSkipper = Base64.Decoder.lineSkipper_from_Uint8Array( progressToAdvance,
     sourceBytes, skipLineCount, suspendByteCount );
 
   let nextYieldByteCount = yield *lineSkipper;
