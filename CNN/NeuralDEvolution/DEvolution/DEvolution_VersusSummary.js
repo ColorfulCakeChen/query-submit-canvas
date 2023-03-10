@@ -313,9 +313,9 @@ class DEvolution_VersusSummary extends Recyclable.Root {
    *   - Resolved to null, if failed.
    */
   async versus_next_load_async( params_loading_retryWaiting ) {
-    let progress = ValueMax.Percentage.Aggregate.Pool.get_or_create_by();
-
+    let progress;
     try {
+      progress = ValueMax.Percentage.Aggregate.Pool.get_or_create_by();
       let loader_async = this.versus_next_load_asyncGenerator( progress,
         params_loading_retryWaiting );
 
