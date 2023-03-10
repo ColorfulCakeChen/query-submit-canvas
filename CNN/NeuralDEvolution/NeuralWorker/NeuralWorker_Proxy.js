@@ -14,15 +14,23 @@ import * as NeuralNet from "../../Conv/NeuralNet.js";
 //
 // Perhaps, needs a life-cycle manager to handle them gracefully.
 
+
 /**
- * Hold the worker and its related promise map. It is a wrapper of a neural network
- * web worker for handling and communicating easily.
+ * Hold the worker and its related promise map. It is a wrapper of a neural
+ * network web worker for handling and communicating easily.
+ *
+ * Note: Every neural network web worker can handle multiple (usually, one
+ *       or two) neural network(s). Because sometimes it is more efficient
+ *       to handle all neural networks in one web woker than in multiple web
+ *       workers.
+ *
  *
  */
 class NeuralWorker_Proxy extends AsyncWorker.Proxy {
 
   /**
-   * Used as default NeuralWorker.Proxy provider for conforming to Recyclable interface.
+   * Used as default NeuralWorker.Proxy provider for conforming to Recyclable
+   * interface.
    */
   static Pool = new Pool.Root( "NeuralWorker.Proxy.Pool",
     NeuralWorker_Proxy, NeuralWorker_Proxy.setAsConstructor );
