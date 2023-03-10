@@ -417,10 +417,10 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     // (2022//09/26 Remarked)
     const bLogDryRunTime = true; // For observing dry-run performance and weight count.
     //const bLogDryRunTime = false;
-    let bCreateOkPromise = this.workerProxies_NeuralNetArray_create_async(
+    let neuralNet_create_promise = this.workerProxies_NeuralNetArray_create_async(
       weightArrayBufferArray, bLogDryRunTime );
 
-    let bCreateOk = await bCreateOkPromise;
+    let bCreateOk = await neuralNet_create_promise;
     if ( !bCreateOk )
       throw Error( `NeuralOrchestra.Base.workerProxies_compileShaders_async(): `
         + `Failed to create neural networks. `
@@ -460,10 +460,10 @@ class NeuralOrchestra_Base extends Recyclable.Root {
       neuralNetParamsBaseArray = [ neuralNetParams0, neuralNetParams1 ];
     }
 
-    let bCreateOkPromise = this.workerProxies.NeuralNetArray_create_async(
+    let neuralNet_create_promise = this.workerProxies.NeuralNetArray_create_async(
       neuralNetParamsBaseArray, weightArrayBufferArray, bLogDryRunTime );
 
-    return bCreateOkPromise;
+    return neuralNet_create_promise;
   }
 
   /**
@@ -603,7 +603,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
         + `should not be executed multiple times simultaneously.`
       );
 
-    let neuralNet_bCreateOk;
+    let neuralNet_createOk;
     try {
       // 0.
 
@@ -611,24 +611,24 @@ class NeuralOrchestra_Base extends Recyclable.Root {
       this.versus_load_asyncGenerator_running = true;
 
       // 0.2 Determine whether necessary to load versus summary.
-      let versusSummary_bNeedLoad;
+      let versusSummary_needLoad;
       if ( this.versusSummary ) {
         if ( this.versusSummary.bLoaded ) {
-          versusSummary_bNeedLoad = false; // Already loaded.
+          versusSummary_needLoad = false; // Already loaded.
         } else {
-          versusSummary_bNeedLoad = true;
+          versusSummary_needLoad = true;
         }
       } else {
         this.versusSummary = DEvolution.VersusSummary.Pool.get_or_create_by(
           this.downloader_spreadsheetId, this.downloader_apiKey );
-        versusSummary_bNeedLoad = true;
+        versusSummary_needLoad = true;
       }
 
       // 0.3 Prepare progress.
       let progressRoot = progressParent.root_get();
 
       let progressVersusSummary;
-      if ( versusSummary_bNeedLoad ) {
+      if ( versusSummary_needLoad ) {
         progressVersusSummary = progressParent.child_add(
           ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
       }
@@ -640,7 +640,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
         ValueMax.Percentage.Concrete.Pool.get_or_create_by( 2 ) );
 
       // 1. Load versus summary.
-      if ( versusSummary_bNeedLoad ) {
+      if ( versusSummary_needLoad ) {
         let versusSummary_loadOk
           = yield *this.versusSummary.rangeArray_load_asyncGenerator(
               progressVersusSummary, this.params_loading_retryWaiting );
@@ -689,10 +689,11 @@ class NeuralOrchestra_Base extends Recyclable.Root {
 
       // In real-run, no need to observe dry-run performance and weight count.
       const bLogDryRunTime = false;
-      let bCreateOkPromise = this.workerProxies_NeuralNetArray_create_async(
-        weightArrayBufferArray, bLogDryRunTime );
+      let neuralNet_create_promise
+        = this.workerProxies_NeuralNetArray_create_async(
+            weightArrayBufferArray, bLogDryRunTime );
 
-      neuralNet_bCreateOk = await bCreateOkPromise;
+      neuralNet_createOk = await neuralNet_create_promise;
       if ( !bCreateOk )
         throw Error( `NeuralOrchestra.Base.versus_load_asyncGenerator(): `
           + `Failed to create neural networks. `
@@ -708,12 +709,12 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     //    and .versus_load_asyncGenerator_running has been set to false (so
     //    that caller can re-execute this generator immediately when progress
     //    become 100%).
-    if ( neuralNet_bCreateOk ) {
+    if ( neuralNet_createOk ) {
       progressToAdvance.value_advance();
       yield progressRoot;
     }
 
-    return neuralNet_bCreateOk;
+    return neuralNet_createOk;
   }
 
 
