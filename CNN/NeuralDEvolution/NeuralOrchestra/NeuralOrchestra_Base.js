@@ -363,8 +363,8 @@ class NeuralOrchestra_Base extends Recyclable.Root {
   }
 
   /**
-   * Create dummy neural networks in all neural web workers to compile WebGL shaders
-   * in advance.
+   * Create dummy neural networks in all neural web workers to compile WebGL
+   * shaders in advance.
    *
    * @param {NeuralOrchestra_Base} this
    */
