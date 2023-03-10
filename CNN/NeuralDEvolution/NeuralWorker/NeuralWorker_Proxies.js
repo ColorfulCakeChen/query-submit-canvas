@@ -173,7 +173,8 @@ import { Mode as NeuralWorker_Mode } from "./NeuralWorker_Mode.js";
 class NeuralWorker_Proxies extends Recyclable.Root {
 
   /**
-   * Used as default NeuralWorker.Proxies provider for conforming to Recyclable interface.
+   * Used as default NeuralWorker.Proxies provider for conforming to Recyclable
+   * interface.
    */
   static Pool = new Pool.Root( "NeuralWorker.Proxies.Pool",
     NeuralWorker_Proxies, NeuralWorker_Proxies.setAsConstructor );
