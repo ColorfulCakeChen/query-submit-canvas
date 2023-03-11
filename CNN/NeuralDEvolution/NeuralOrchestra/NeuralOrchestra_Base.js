@@ -372,11 +372,10 @@ class NeuralOrchestra_Base extends Recyclable.Root {
           output_channelCount );
 
         // Note: The .workerProxies_init_promise will also be set.
-        let workerProxies_init_promise = NeuralOrchestra_Base
-          .workerProxies_init_async__record_promise.call( this );
+        NeuralOrchestra_Base.workerProxies_init_async__record_promise.call( this );
 
         // Note: The .workerProxies_initOk will also be set.
-        let workerProxies_initOk = await workerProxies_init_promise;
+        let workerProxies_initOk = await this.workerProxies_init_promise;
         if ( !workerProxies_initOk )
           throw Error( `NeuralOrchestra.Base.init_async(): `
             + `Failed to initialize NeuralWorker.Proxies. `
