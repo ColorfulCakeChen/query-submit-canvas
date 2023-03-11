@@ -47,12 +47,15 @@ async function* tester( progressParent ) {
 
   // Loop for init, load, send.
   let neuralOrchestraIndex = 0;
+
+  // Test: re-create.
   for ( let createCount = 0; createCount < createCountMax; ++createCountMax ) {
 
     let neuralOrchestra;
     try {
       neuralOrchestra = NeuralOrchestra.Base.Pool.get_or_create_by();
 
+      // Test: re-init (without re-create).
       for ( let initCount = 0; initCount < initCountMax; ++initCountMax ) {
 
         let progressCreateOrInit = progressCreateOrInitArray[ neuralOrchestraIndex ];
