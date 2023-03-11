@@ -381,7 +381,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
           output_channelCount );
 
         // Note: The .workerProxies_init_promise will also be set.
-        NeuralOrchestra_Base.workerProxies_init_async__record_promise.call( this );
+        NeuralOrchestra_Base.workerProxies_init_promise_create.call( this );
 
         // Note: The .workerProxies_initOk will also be set.
         let workerProxies_initOk = await this.workerProxies_init_promise;
@@ -472,7 +472,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
           output_channelCount );
 
         // Note: The .workerProxies_init_promise will also be set.
-        NeuralOrchestra_Base.workerProxies_init_async__record_promise.call( this );
+        NeuralOrchestra_Base.workerProxies_init_promise_create.call( this );
 
 //!!! ...unfinished... (2023/03/11)
         Promise.race();
@@ -511,7 +511,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
    * @return {Promise( boolean )}
    *   Return this.workerProxies_init_promise
    */
-  static workerProxies_init_async__record_promise() {
+  static workerProxies_init_promise_create() {
     this.workerProxies_init_promise
       = NeuralOrchestra_Base.workerProxies_init_async.call( this );
     return this.workerProxies_init_promise;
