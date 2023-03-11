@@ -826,6 +826,10 @@ class NeuralOrchestra_Base extends Recyclable.Root {
 
 //!!! ...unfinished... (2023/03/11)
 // Perhaps, prepare outside.
+      if ( !this.versus_loader_async )
+        throw Error( `NeuralOrchestra.Base.versus_load_async(): `
+          + `this.versus_loader_async should have already existed.` );
+
 
       // 0. Prepare progress.
       if ( this.versus_load_progress )
