@@ -331,7 +331,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
    */
   async init_async(
     downloader_spreadsheetId, downloader_apiKey, bLogFetcherEventToConsole,
-   
+
     sender_clientId,
 
     input_height = 72,
