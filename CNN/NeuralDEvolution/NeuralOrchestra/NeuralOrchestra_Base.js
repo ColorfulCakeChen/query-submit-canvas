@@ -87,6 +87,16 @@ import * as DEvolution from "../DEvolution.js";
  * @member {DEvolution.Versus} versus
  *   The downloaded current versus of the differential evolution.
  *
+ *
+ * @member {boolean} init_running
+ *   If true, a .init_async() is still executing. Please wait it becoming to
+ * false if wanting to call again.
+ *
+ *
+ * @member {boolean} workerProxies_init_running
+ *   If true, a .workerProxies_init_async() is still executing. Please wait
+ * it becoming to false if wanting to call again.
+ *
  * @member {Promise( boolean )} workerProxies_init_promise
  *   The promise of .workerProxies_init_async().
  *   - Resolved to true, if succeeded.
@@ -94,10 +104,14 @@ import * as DEvolution from "../DEvolution.js";
  *         compiled.
  *   - Resolved to false, if failed.
  *
- * @member {ValueMax.Percentage.Aggregate} versus_load_progress
- *   The progress of loading versus summary, loading versus, creating neural
- * networks. If ( .versus_load_progress.valuePercentage == 100 ), all the
- * loading and creating has done.
+ *
+ * @member {boolean} versus_load_async_running
+ *   If true, a .versus_load_async() is still executing. Please wait it becoming
+ * to false if wanting to call again.
+ *
+ * @member {boolean} versus_load_asyncGenerator_running
+ *   If true, a .versus_load_asyncGenerator() is still executing. Please wait
+ * it becoming to false if wanting to call again.
  *
  * @member {Promise( boolean )} versus_load_promise
  *   The promise of whether .versus_load_progress still be advancing.
@@ -105,15 +119,10 @@ import * as DEvolution from "../DEvolution.js";
  *   - If resolved to true, it means versus summary loaded, versus loaded, and
  *       neural networks created.
  *
- * @member {boolean} versus_load_async_running
- *   If true, a .versus_load_async() is just executing. Please wait
- * for .versus_load_async_running becoming to false to call another
- * .versus_load_async().
- *
- * @member {boolean} versus_load_asyncGenerator_running
- *   If true, a .versus_load_asyncGenerator() is just executing. Please wait
- * for .versus_load_asyncGenerator_running becoming to false to call another
- * .versus_load_asyncGenerator().
+ * @member {ValueMax.Percentage.Aggregate} versus_load_progress
+ *   The progress of loading versus summary, loading versus, creating neural
+ * networks. If ( .versus_load_progress.valuePercentage == 100 ), all the
+ * loading and creating has done.
  */
 class NeuralOrchestra_Base extends Recyclable.Root {
 
@@ -150,8 +159,10 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     this.versus_load_async_running = undefined;
     this.versus_dispose();
     this.versusSummary_dispose();
+    this.workerProxies_init_running = undefined;
     this.neuralNetParamsBase_dispose();
     this.workerProxies_dispose();
+    this.init_running = undefined;
     this.params_loading_retryWaiting = undefined;
 
     super.disposeResources();
@@ -268,61 +279,74 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     output_channelCount = 64, //16,
   ) {
 
-//!!! ...unfinished... (2023/03/11) What if re-entrtance?
-
-    // 1.
-
-    // 1.1
-    this.downloader_spreadsheetId = downloader_spreadsheetId;
-    this.downloader_apiKey = downloader_apiKey;
-    this.bLogFetcherEventToConsole = bLogFetcherEventToConsole;
-
-    // 1.2 Load (versus summary and) versus. Create neural networks.
-    this.versus_load_async__record_promise();
-
-    // Note: Here does not wait for loading complete. Continue to create
-    //       neural workers and compile GPU shaders because they all
-    //       take time but can be done in parallel.
-
-    // 2. Neural Workers.
-    {
-      // Because image comes from canvas, the tf.browser.fromPixels() handle a
-      // RGBA 4 channels faster than RGB 3 channels input.
-      const input_channelCount = 4;
-
-      // For image, every RGBA input channel always has 256 (= 2 ** 8) possible
-      // values.
-      const vocabularyCountPerInputChannel = 256;
-
-      // Use faster convolution neural network architecture.
-      //
-      // Although using SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID (6) is even
-      // faster, however, using SHUFFLE_NET_V2_BY_MOBILE_NET_V1 (5) is safer
-      // because it will not drop the edge pixels of the image to be processed.
-      //
-      const nConvStageType
-        = ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1; // (5)
-
-      // The neuralNet should not keep-input-tensor because the input image is
-      // created from canvas in real time.
-      const bKeepInputTensor = false;
-
-      let neuralNetParamsBase = NeuralNet.ParamsBase.Pool.get_or_create_by(
-        input_height, input_width, input_channelCount,
-        vocabularyChannelCount, vocabularyCountPerInputChannel,
-        nConvStageType,
-        blockCountTotalRequested, output_channelCount, bKeepInputTensor
+    if ( this.init_running )
+      throw Error( `NeuralOrchestra.Base.init_async(): `
+        + `should not be executed multiple times simultaneously.`
       );
 
-      this.workerProxies_init_promise
-        = NeuralOrchestra_Base.workerProxies_init_async.call( this,
-            neuralNetParamsBase );
+//!!! ...unfinished... (2023/03/11) What if re-entrtance?
+
+    try {
+      this.init_running = true;
+
+      // 1.
+
+      // 1.1
+      this.downloader_spreadsheetId = downloader_spreadsheetId;
+      this.downloader_apiKey = downloader_apiKey;
+      this.bLogFetcherEventToConsole = bLogFetcherEventToConsole;
+
+      // 1.2 Load (versus summary and) versus. Create neural networks.
+      this.versus_load_async__record_promise();
+
+      // Note: Here does not wait for loading complete. Continue to create
+      //       neural workers and compile GPU shaders because they all
+      //       take time but can be done in parallel.
+
+      // 2. Neural Workers.
+      {
+        // Because image comes from canvas, the tf.browser.fromPixels() handle a
+        // RGBA 4 channels faster than RGB 3 channels input.
+        const input_channelCount = 4;
+
+        // For image, every RGBA input channel always has 256 (= 2 ** 8) possible
+        // values.
+        const vocabularyCountPerInputChannel = 256;
+
+        // Use faster convolution neural network architecture.
+        //
+        // Although using SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID (6) is even
+        // faster, however, using SHUFFLE_NET_V2_BY_MOBILE_NET_V1 (5) is safer
+        // because it will not drop the edge pixels of the image to be processed.
+        //
+        const nConvStageType
+          = ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1; // (5)
+
+        // The neuralNet should not keep-input-tensor because the input image is
+        // created from canvas in real time.
+        const bKeepInputTensor = false;
+
+        let neuralNetParamsBase = NeuralNet.ParamsBase.Pool.get_or_create_by(
+          input_height, input_width, input_channelCount,
+          vocabularyChannelCount, vocabularyCountPerInputChannel,
+          nConvStageType,
+          blockCountTotalRequested, output_channelCount, bKeepInputTensor
+        );
+
+        this.workerProxies_init_promise
+          = NeuralOrchestra_Base.workerProxies_init_async.call( this,
+              neuralNetParamsBase );
+      }
+
+      // 3. Versus Result Reporter
+      this.versusResultSender_init( sender_clientId );
+
+    } finally {
+      // 4. So that this async method could be executed again.
+      this.init_running = false;
     }
 
-    // 3. Versus Result Reporter
-    this.versusResultSender_init( sender_clientId );
-
-    // 4.
+    // 5.
     return this.workerProxies_init_promise;
   }
 
@@ -346,50 +370,62 @@ class NeuralOrchestra_Base extends Recyclable.Root {
    */
   static async workerProxies_init_async( neuralNetParamsBase ) {
 
-//!!! ...unfinished... (2023/03/11) What if re-entrtance?
+    if ( this.workerProxies_init_running )
+      throw Error( `NeuralOrchestra.Base.workerProxies_init_async(): `
+        + `should not be executed multiple times simultaneously.`
+      );
 
-    this.neuralNetParamsBase_dispose();
-    this.neuralNetParamsBase = neuralNetParamsBase;
-
-    let initOkPromise;
     let initOk;
+    try {
+      this.workerProxies_init_running = true;
 
-    // 1. Try backend "webgl" first.
-    //
-    // Backend "webgl" has best performance with SHUFFLE_NET_V2_BY_MOBILE_NET_V1 (5)
-    // and one web worker (NO_FILL).
-    //
-    {
-      neuralNetParamsBase.nConvStageTypeId_adjust_for_backend_webgl_if_ShuffleNetV2();
+      this.neuralNetParamsBase_dispose();
+      this.neuralNetParamsBase = neuralNetParamsBase;
 
-      initOkPromise = this.workerProxies.init_async( "webgl",
-        NeuralWorker.Mode.Singleton.Ids.ONE_WORKER__ONE_SCALE__NO_FILL // (0) 
-      );
+      let initOkPromise;
 
-      initOk = await initOkPromise;
-      if ( initOk ) {
-        let bCreateOk // For WebGL, compile WebGL shaders in advance.
-          = NeuralOrchestra_Base.workerProxies_compileShaders_async.call( this );
-        return bCreateOk;
+      // 1. Try backend "webgl" first.
+      //
+      // Backend "webgl" has best performance with SHUFFLE_NET_V2_BY_MOBILE_NET_V1 (5)
+      // and one web worker (NO_FILL).
+      //
+      {
+        neuralNetParamsBase.nConvStageTypeId_adjust_for_backend_webgl_if_ShuffleNetV2();
+
+        initOkPromise = this.workerProxies.init_async( "webgl",
+          NeuralWorker.Mode.Singleton.Ids.ONE_WORKER__ONE_SCALE__NO_FILL // (0) 
+        );
+
+        initOk = await initOkPromise;
+        if ( initOk ) { // For WebGL, compile WebGL shaders in advance.
+          let compilePromise
+            = NeuralOrchestra_Base.workerProxies_compileShaders_async.call( this );
+
+          let compileOk = await compilePromise;
+          return compileOk;
+        }
       }
+
+      // 2. If backend "webgl" initialization failed, try backend "cpu".
+      //
+      // Backend "cpu" has best performance with SHUFFLE_NET_V2 (4)
+      // and two web workers (NO_FILL) by .applier().
+      //
+      {
+        neuralNetParamsBase.nConvStageTypeId_adjust_for_backend_cpu_if_ShuffleNetV2();
+
+        initOkPromise = this.workerProxies.init_async( "cpu",
+          NeuralWorker.Mode.Singleton.Ids.TWO_WORKER__ONE_SCALE__NO_FILL__APPLIER // (5) 
+        );
+
+        initOk = await initOkPromise;
+        return initOk;
+      }
+
+    } finally {
+      // 3. So that this async method could be executed again.
+      this.workerProxies_init_running = false;
     }
-
-    // 2. If backend "webgl" initialization failed, try backend "cpu".
-    //
-    // Backend "cpu" has best performance with SHUFFLE_NET_V2 (4)
-    // and two web workers (NO_FILL) by .applier().
-    //
-    {
-      neuralNetParamsBase.nConvStageTypeId_adjust_for_backend_cpu_if_ShuffleNetV2();
-
-      initOkPromise = this.workerProxies.init_async( "cpu",
-        NeuralWorker.Mode.Singleton.Ids.TWO_WORKER__ONE_SCALE__NO_FILL__APPLIER // (5) 
-      );
-
-      initOk = await initOkPromise;
-    }
-
-    return initOk;
   }
 
   /**
@@ -399,9 +435,6 @@ class NeuralOrchestra_Base extends Recyclable.Root {
    * @param {NeuralOrchestra_Base} this
    */
   static async workerProxies_compileShaders_async() {
-
-//!!! ...unfinished... (2023/03/11) What if re-entrtance?
-
 
     // Dummy neural network's weights.
     //      
@@ -427,14 +460,14 @@ class NeuralOrchestra_Base extends Recyclable.Root {
       = NeuralOrchestra_Base.workerProxies_NeuralNetArray_create_async.call(
         this, weightArrayBufferArray, bLogDryRunTime );
 
-    let bCreateOk = await neuralNet_create_promise;
-    if ( !bCreateOk )
+    let createOk = await neuralNet_create_promise;
+    if ( !createOk )
       throw Error( `NeuralOrchestra.Base.workerProxies_compileShaders_async(): `
         + `Failed to create neural networks. `
         + `workerProxies={ ${this.workerProxies} }`
       );
 
-    return bCreateOk;
+    return createOk;
   }
 
   /**
