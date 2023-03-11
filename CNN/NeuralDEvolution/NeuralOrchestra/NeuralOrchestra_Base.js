@@ -285,7 +285,8 @@ class NeuralOrchestra_Base extends Recyclable.Root {
 // Leave .versus_load_asyncGenerator() in data member.
 // So that outside caller can continue to yield* it.
 //
-
+// Let .init_async() calls .init_asyncGenerator()
+//
 
   /**
    *   - Load all differential evolution versus weights ranges (i.e. versus summary).
