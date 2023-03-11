@@ -355,6 +355,12 @@ class NeuralOrchestra_Base extends Recyclable.Root {
       throw Error( `NeuralOrchestra.Base.init_async(): `
         + `should not be executed multiple times simultaneously.` );
 
+//!!! ...unfinished... (2023/03/11)
+// should call .init_asyncGenerator()
+// and wrap the uncompleted .versus_loader_async to a .versus_load_promise
+//
+
+
     try {
       this.init_async_running = true;
       this.initOk = false;
@@ -445,7 +451,6 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     try {
       this.init_asyncGenerator_running = true;
 
-//!!! ...unfinished... (2023/03/11)
       this.initOk = false;
 
       // 0.
@@ -527,8 +532,6 @@ class NeuralOrchestra_Base extends Recyclable.Root {
             allPromiseSet.add( loader_next );
           }
 
-//!!! ...unfinished... (2023/03/11)
-
         // If .workerProxies_init_promise resolved.
         // (Note: The .workerProxies_initOk will also be set.)
         } else {
@@ -555,7 +558,8 @@ class NeuralOrchestra_Base extends Recyclable.Root {
       // 3. Versus Result Reporter
       this.versusResultSender_init( sender_clientId );
 
-???
+//!!! ...unfinished... (2023/03/11)
+
       this.initOk = true;
       return this.initOk;
 
