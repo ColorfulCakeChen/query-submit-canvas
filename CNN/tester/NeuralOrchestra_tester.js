@@ -61,7 +61,7 @@ async function* tester( progressParent ) {
         let progressCreateOrInit = progressCreateOrInitArray[ neuralOrchestraIndex ];
         let progressToAdvance = progressCreateOrInit.child_add(
         ValueMax.Percentage.Concrete.Pool.get_or_create_by( 8 ) );
-    
+
         // 1. Create and initialize.
         let initPromise = neuralOrchestra.init_async(
           downloader_spreadsheetId, downloader_apiKey, bLogFetcherEventToConsole,
@@ -86,21 +86,18 @@ async function* tester( progressParent ) {
         let initOk = await initPromise;
         if ( !initOk )
           throw Error( `NeuralOrchestra_tester.tester(): `
-            + `neuralOrchestra.init_async() failed.`
-          );
+            + `neuralOrchestra.init_async() failed.` );
 
         if ( !neuralOrchestra.initOk )
           throw Error( `NeuralOrchestra_tester.tester(): `
             + `neuralOrchestra.initOk (${neuralOrchestra.initOk}) `
-            + `should be true.`
-          );
+            + `should be true.` );
 
         if ( !neuralOrchestra.workerProxies_initOk )
           throw Error( `NeuralOrchestra_tester.tester(): `
             + `neuralOrchestra.workerProxies_initOk `
             + `(${neuralOrchestra.workerProxies_initOk}) `
-            + `should be true.`
-          );
+            + `should be true.` );
 
         progressToAdvance.value_advance();
         yield progressRoot;
@@ -137,19 +134,16 @@ async function* tester( progressParent ) {
             throw Error( `NeuralOrchestra_tester.tester(): `
               + `neuralOrchestra.versus_load_progress.valuePercentage (`
               + `${neuralOrchestra.versus_load_progress.valuePercentage}) `
-              + `should be 100.`
-            );
+              + `should be 100.` );
 
           if ( !neuralOrchestra.versus_loadOk )
             throw Error( `NeuralOrchestra_tester.tester(): `
               + `neuralOrchestra.versus_loadOk (${neuralOrchestra.versus_loadOk}) `
-              + `should be true.`
-            );
+              + `should be true.` );
 
           if ( !versus_loadOk )
             throw Error( `NeuralOrchestra_tester.tester(): `
-              + `versus_loadOk (${versus_loadOk}) should be true.`
-            );
+              + `versus_loadOk (${versus_loadOk}) should be true.` );
 
           progressToAdvance.value_advance();
           yield progressRoot;
