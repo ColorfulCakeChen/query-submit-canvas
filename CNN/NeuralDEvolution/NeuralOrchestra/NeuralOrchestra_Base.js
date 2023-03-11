@@ -163,18 +163,24 @@ class NeuralOrchestra_Base extends Recyclable.Root {
   /** @override */
   disposeResources() {
     this.versusResultSender_dispose();
+
     this.versus_load_progress_dispose();
+    this.versus_load_promise = undefined;
     this.versus_loadOk = undefined;
     this.versus_load_asyncGenerator_running = undefined;
     this.versus_load_async_running = undefined;
     this.versus_dispose();
     this.versusSummary_dispose();
+
+    this.workerProxies_init_promise = undefined;
     this.workerProxies_initOk = undefined;
     this.workerProxies_init_running = undefined;
     this.neuralNetParamsBase_dispose();
     this.workerProxies_dispose();
+
     this.initOk = undefined;
     this.init_running = undefined;
+
     this.params_loading_retryWaiting = undefined;
 
     super.disposeResources();
@@ -344,12 +350,13 @@ class NeuralOrchestra_Base extends Recyclable.Root {
           blockCountTotalRequested, output_channelCount, bKeepInputTensor
         );
 
-        this.workerProxies_init_promise
-          = NeuralOrchestra_Base.workerProxies_init_async.call( this,
-              neuralNetParamsBase );
+        // Note: The .workerProxies_init_promise will also be set.
+        let workerProxies_init_promise
+          = NeuralOrchestra_Base.workerProxies_init_async__record_promise.call(
+              this, neuralNetParamsBase );
 
         // Note: The .workerProxies_initOk will also be set.
-        let workerProxies_initOk = await this.workerProxies_init_promise;
+        let workerProxies_initOk = await workerProxies_init_promise;
         if ( !workerProxies_initOk )
           throw Error( `NeuralOrchestra.Base.init_async(): `
             + `Failed to initialize NeuralWorker.Proxies. `
@@ -367,6 +374,24 @@ class NeuralOrchestra_Base extends Recyclable.Root {
       // 4. So that this async method could be executed again.
       this.init_running = false;
     }
+  }
+
+  /**
+   * Call .workerProxies_init_async() and record the returned promise in
+   * .workerProxies_init_promise.
+   *
+   * @param {NeuralOrchestra_Base} this
+   *
+   * @param {NeuralNet.ParamsBase} neuralNetParamsBase
+   *
+   * @return {Promise( boolean )}
+   *   Return this.workerProxies_init_promise
+   */
+  static workerProxies_init_async__record_promise( neuralNetParamsBase ) {
+    this.workerProxies_init_promise
+      = NeuralOrchestra_Base.workerProxies_init_async.call( this,
+        neuralNetParamsBase );
+    return this.workerProxies_init_promise;
   }
 
   /**
