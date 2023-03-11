@@ -453,8 +453,13 @@ class NeuralOrchestra_Base extends Recyclable.Root {
       this.downloader_apiKey = downloader_apiKey;
       this.bLogFetcherEventToConsole = bLogFetcherEventToConsole;
 
+      let progressRoot = progressParent.root_get();
+      let allPromiseSet = new Set();
+
       // 1. Load (versus summary and) versus. Create neural networks.
       this.versus_loader_async_create( progressParent );
+
+      allPromiseSet.add( );
 
 //!!! ...unfinished... (2023/03/11)
 
@@ -475,21 +480,65 @@ class NeuralOrchestra_Base extends Recyclable.Root {
         NeuralOrchestra_Base.workerProxies_init_promise_create.call( this );
 
 //!!! ...unfinished... (2023/03/11)
-        Promise.race();
-
 
         // Note: The .workerProxies_initOk will also be set.
         let workerProxies_initOk = await this.workerProxies_init_promise;
         if ( !workerProxies_initOk )
-          throw Error( `NeuralOrchestra.Base.init_async(): `
+          throw Error( `NeuralOrchestra.Base.init_asyncGenerator(): `
             + `Failed to initialize NeuralWorker.Proxies. `
             + `workerProxies={ ${this.workerProxies} }`
           );
       }
 
+//!!! ...unfinished... (2023/03/11)
+      let notDone;
+      do {
+        let allPromise = Promise.race( allPromiseSet );
+
+        // If .workerProxies_init_promise resolved, got a boolean value.
+        // If .versus_loader_async.next() resolved, got an { done, value } object.
+        let object_or_boolean = await allPromise;
+
+        // .versus_loader_async.next() resolved.
+        if ( object_or_boolean instanceof Object ) {
+          let object = object_or_boolean;
+          if ( object.done ) {
+
+//!!! ...unfinished... (2023/03/11)
+// should not execute to here
+// because .versus_loader_async waits .workerProxies_init_promise internally.
+
+            let versus_loadOk = object.value;
+            if ( versus_loadOk != this.versus_loadOk )
+              throw Error( `NeuralOrchestra.Base.init_asyncGenerator(): `
+                + `versus_loadOk ( ${versus_loadOk} ) `
+                + `should be the same as `
+                + `this.versus_loadOk ( ${this.versus_loadOk} ).`
+              );
+          }
+
+          yield progressRoot???;
+
+        // If .workerProxies_init_promise resolved.
+        } else {
+          let workerProxies_initOk = object_or_boolean; // should be a boolean value.
+          if ( workerProxies_initOk != this.workerProxies_initOk )
+          throw Error( `NeuralOrchestra.Base.init_asyncGenerator(): `
+            + `workerProxies_initOk ( ${workerProxies_initOk} ) `
+            + `should be the same as `
+            + `this.workerProxies_initOk ( ${this.workerProxies_initOk} ).`
+          );
+
+          notDone = false; // i.e. initialization is done.
+        }
+
+      } while ( notDone );
+
+
       // 3. Versus Result Reporter
       this.versusResultSender_init( sender_clientId );
 
+???
       this.initOk = true;
       return this.initOk;
 
