@@ -414,8 +414,18 @@ class NeuralOrchestra_Base extends Recyclable.Root {
 //
 // Let .init_async() calls .init_asyncGenerator()
 //
-  /** */
+
+  /**
+   * 
+   *
+   * @param {ValueMax.Percentage.Aggregate} progressParent
+   *   Some new progressToAdvance will be created and added to progressParent. The
+   * created progressToAdvance will be increased when every time advanced. The
+   * progressParent.root_get() will be returned when every time yield.
+   */
   async* init_asyncGenerator(
+    progressParent,
+
     downloader_spreadsheetId, downloader_apiKey, bLogFetcherEventToConsole,
 
     sender_clientId,
@@ -444,7 +454,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
       this.bLogFetcherEventToConsole = bLogFetcherEventToConsole;
 
       // 1. Load (versus summary and) versus. Create neural networks.
-      this.versus_loader_async = this.versus_load_asyncGenerator();
+      this.versus_loader_async_create( progressParent );
 
 //!!! ...unfinished... (2023/03/11)
 
