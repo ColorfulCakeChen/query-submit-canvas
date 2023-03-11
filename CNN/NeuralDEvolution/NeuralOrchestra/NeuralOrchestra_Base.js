@@ -505,7 +505,6 @@ class NeuralOrchestra_Base extends Recyclable.Root {
                 + `this.versus_loadOk ( ${this.versus_loadOk} ).`
               );
 
-//!!! ...unfinished... (2023/03/11)
             // In theory, it should not execute to here because
             // .versus_loader_async waits .workerProxies_init_promise internally.
             throw Error( `NeuralOrchestra.Base.init_asyncGenerator(): `
@@ -515,12 +514,15 @@ class NeuralOrchestra_Base extends Recyclable.Root {
             );
 
           } else {
-            yield progressRoot???;
+            // let progressRoot = object.value;
+            yield progressRoot;
 
             allPromiseSet.delete( loader_next );
             loader_next = this.versus_loader_async.next();
             allPromiseSet.add( loader_next );
           }
+
+//!!! ...unfinished... (2023/03/11)
 
         // If .workerProxies_init_promise resolved.
         // (Note: The .workerProxies_initOk will also be set.)
