@@ -365,7 +365,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
       this.bLogFetcherEventToConsole = bLogFetcherEventToConsole;
 
       // 1. Load (versus summary and) versus. Create neural networks.
-      this.versus_load_async__record_promise();
+      this.versus_load_promise_create();
 
       // Note: Here does not wait for loading complete. Continue to create
       //       neural workers and compile GPU shaders because they all
@@ -716,7 +716,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
    * @return {Promise( boolean )}
    *   Return this.versus_load_promise
    */
-  versus_load_async__record_promise() {
+  versus_load_promise_create() {
     this.versus_load_promise
       = NeuralOrchestra_Base.versus_load_async.call( this );
     return this.versus_load_promise;
@@ -752,12 +752,11 @@ class NeuralOrchestra_Base extends Recyclable.Root {
           = ValueMax.Percentage.Aggregate.Pool.get_or_create_by()
 
       // 1. Load versus summary and versus. Create neural networks.
-      let loader_async = NeuralOrchestra_Base.versus_load_asyncGenerator.call(
-        this, this.versus_load_progress );
+      this.versus_loader_async_create( this.versus_load_progress );
 
       let loaderNext;
       do {
-        loaderNext = await loader_async.next();
+        loaderNext = await this.versus_loader_async.next();
       } while ( loaderNext.done == false );
 
       let bLoadOk = loaderNext.value;
@@ -771,6 +770,20 @@ class NeuralOrchestra_Base extends Recyclable.Root {
       // 2. So that this async method could be executed again.
       this.versus_load_async_running = false;
     }
+  }
+
+  /**
+   * Create .versus_loader_async
+   *
+   * @param {ValueMax.Percentage.Aggregate} progressParent
+   *   Some new progressToAdvance will be created and added to progressParent. The
+   * created progressToAdvance will be increased when every time advanced. The
+   * progressParent.root_get() will be returned when every time yield.
+   */
+  versus_loader_async_create( progressParent ) {
+    this.versus_loader_async
+      = NeuralOrchestra_Base.versus_load_asyncGenerator.call(
+          this, progressParent );
   }
 
   /**

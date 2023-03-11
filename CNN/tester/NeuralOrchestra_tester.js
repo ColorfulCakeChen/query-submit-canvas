@@ -126,7 +126,7 @@ async function* tester( progressParent ) {
 
           // 2.0 Try another versus loading and neural networks creating.
           if ( loadCount > 0 ) {
-            neuralOrchestra.versus_load_async__record_promise();
+            neuralOrchestra.versus_load_promise_create();
 
             try { // Test: Re-entrance should throw exception.
               await NeuralOrchestra.Base.versus_load_async.call( neuralOrchestra );
