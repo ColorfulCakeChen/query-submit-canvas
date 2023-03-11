@@ -277,6 +277,14 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     }
   }
 
+
+  /** */
+  versus_load_progress_create() {
+    this.versus_load_progress_dispose();
+    this.versus_load_progress
+      = ValueMax.Percentage.Aggregate.Pool.get_or_create_by();
+  }
+
   /** */
   versus_load_progress_dispose() {
     if ( this.versus_load_progress ) {
@@ -793,21 +801,43 @@ class NeuralOrchestra_Base extends Recyclable.Root {
    * Call .versus_load_async() and record the returned promise in
    * .versus_load_promise.
    *
+   * @param {AsyncGenerator} this.versus_loader_async
+   *   - If .versus_loader_async does not exist, a new .versus_load_progress
+   *       and .versus_loader_async will be created.
+   *
+   *   - If .versus_loader_async has already existed (i.e. not null), it will
+   *       be used directly (and no extra progress object will be created too).
+   *       (Usually, this case is used by init_async().)
+   *
    * @return {Promise( boolean )}
    *   Return this.versus_load_promise
    */
   versus_load_promise_create() {
+
+    if ( !this.versus_loader_async ) {
+      this.versus_load_progress_create();
+      this.versus_loader_async_create( this.versus_load_progress );
+    }
+
     this.versus_load_promise
       = NeuralOrchestra_Base.versus_load_async.call( this );
     return this.versus_load_promise;
   }
 
   /**
+
+//!!! ...unfinished... (2023/03/11)
+// Perhaps, prepare outside.
+
    * Call .versus_load_asyncGenerator() internally.
    *
    * It will create .versus_load_progress.
    *
    * @param {NeuralOrchestra_Base} this
+   *
+   * @param {AsyncGenerator} this.versus_loader_async
+   *   The .versus_loader_async should have already existed (i.e. not null). It
+   * will be .next() until done by this async method.
    *
    * @return {Promise( boolean )}
    *   Return a promise:
@@ -825,18 +855,18 @@ class NeuralOrchestra_Base extends Recyclable.Root {
       this.versus_load_async_running = true;
 
 //!!! ...unfinished... (2023/03/11)
-// Perhaps, prepare outside.
       if ( !this.versus_loader_async )
         throw Error( `NeuralOrchestra.Base.versus_load_async(): `
           + `this.versus_loader_async should have already existed.` );
 
+//!!! ...unfinished... (2023/03/11)
+// Perhaps, prepare outside.
 
       // 0. Prepare progress.
       if ( this.versus_load_progress )
         this.versus_load_progress.child_disposeAll();
       else
-        this.versus_load_progress
-          = ValueMax.Percentage.Aggregate.Pool.get_or_create_by()
+        this.versus_load_progress_create();
 
 //!!! ...unfinished... (2023/03/11)
 // Perhaps, prepare outside.
