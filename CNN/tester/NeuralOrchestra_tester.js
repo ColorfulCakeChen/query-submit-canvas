@@ -28,7 +28,8 @@ async function* tester( progressParent ) {
 
   let vocabularyChannelCount = 4; //8; //6;
   let blockCountTotalRequested = 39; //84; //144;
-  let output_channelCount = 64; //12;
+  let output_channelCount_per_alignment = 64; //12;
+  let output_channelCount = output_channelCount_per_alignment * 2;
 
 
   let createCountMax = 2; // Try create NeuralOrchestra twice.
