@@ -88,15 +88,19 @@ import * as DEvolution from "../DEvolution.js";
  *   The downloaded current versus of the differential evolution.
  *
  *
- * @member {boolean} init_running
+ * @member {boolean} init_async_running
  *   If true, a .init_async() is still executing. Please wait it becoming to
  * false if wanting to call again.
+ *
+ * @member {boolean} init_asyncGenerator_running
+ *   If true, a .init_asyncGenerator() is still executing. Please wait it
+ * becoming to false if wanting to call again.
  *
  * @member {boolean} initOk
  *   If true, a .init_async() has been executed and succeeded.
  *
  *
- * @member {boolean} workerProxies_init_running
+ * @member {boolean} workerProxies_init_async_running
  *   If true, a .workerProxies_init_async() is still executing. Please wait
  * it becoming to false if wanting to call again.
  *
@@ -124,6 +128,9 @@ import * as DEvolution from "../DEvolution.js";
  *   - If settled, the .versus_load_progress has been stopped.
  *   - If resolved to true, it means versus summary loaded, versus loaded, and
  *       neural networks created.
+ *
+ * @member {AsyncGenerator} versus_loader_async
+ *   A .versus_load_asyncGenerator() instance.
  *
  * @member {ValueMax.Percentage.Aggregate} versus_load_progress
  *   The progress of loading versus summary, loading versus, creating neural
@@ -167,6 +174,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
 
     this.versus_load_progress_dispose();
     this.versus_load_promise = undefined;
+    this.versus_loader_async = undefined;
     this.versus_loadOk = undefined;
     this.versus_load_asyncGenerator_running = undefined;
     this.versus_load_async_running = undefined;
@@ -175,12 +183,13 @@ class NeuralOrchestra_Base extends Recyclable.Root {
 
     this.workerProxies_init_promise = undefined;
     this.workerProxies_initOk = undefined;
-    this.workerProxies_init_running = undefined;
+    this.workerProxies_init_async_running = undefined;
     this.neuralNetParamsBase_dispose();
     this.workerProxies_dispose();
 
     this.initOk = undefined;
-    this.init_running = undefined;
+    this.init_asyncGenerator_running = undefined;
+    this.init_async_running = undefined;
 
     this.bLogFetcherEventToConsole = undefined;
     this.downloader_apiKey = undefined;
@@ -277,17 +286,6 @@ class NeuralOrchestra_Base extends Recyclable.Root {
   }
 
 
-//!!! ...unfinished... (2023/03/11)
-// Perhaps, add .init_asyncGenerator() calls
-// .versus_load_asyncGenerator() and .workerProxies_init_async().
-//
-// .init_asyncGenerator() done when Promise.race() .workerProxies_init_promise resolved.
-// Leave .versus_load_asyncGenerator() in data member.
-// So that outside caller can continue to yield* it.
-//
-// Let .init_async() calls .init_asyncGenerator()
-//
-
   /**
    *   - Load all differential evolution versus weights ranges (i.e. versus summary).
    *   - Load one versus.
@@ -353,12 +351,12 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     output_channelCount = 64, //16,
   ) {
 
-    if ( this.init_running )
+    if ( this.init_async_running )
       throw Error( `NeuralOrchestra.Base.init_async(): `
         + `should not be executed multiple times simultaneously.` );
 
     try {
-      this.init_running = true;
+      this.init_async_running = true;
       this.initOk = false;
 
       // 0.
@@ -402,9 +400,96 @@ class NeuralOrchestra_Base extends Recyclable.Root {
 
     } finally {
       // 4. So that this async method could be executed again.
-      this.init_running = false;
+      this.init_async_running = false;
     }
   }
+
+//!!! ...unfinished... (2023/03/11)
+// Perhaps, add .init_asyncGenerator() calls
+// .versus_load_asyncGenerator() and .workerProxies_init_async().
+//
+// .init_asyncGenerator() done when Promise.race() .workerProxies_init_promise resolved.
+// Leave .versus_load_asyncGenerator() in data member.
+// So that outside caller can continue to yield* it.
+//
+// Let .init_async() calls .init_asyncGenerator()
+//
+  /** */
+  async* init_asyncGenerator(
+    downloader_spreadsheetId, downloader_apiKey, bLogFetcherEventToConsole,
+
+    sender_clientId,
+
+    input_height = 72,
+    input_width = 131, // = ( 128 + 3 ),
+
+    vocabularyChannelCount = 4, //8
+    blockCountTotalRequested = 39, //100, //200, //50, //20, //10,
+    output_channelCount = 64, //16,
+  ) {
+
+    if ( this.init_asyncGenerator_running )
+      throw Error( `NeuralOrchestra.Base.init_asyncGenerator(): `
+        + `should not be executed multiple times simultaneously.` );
+
+    try {
+      this.init_asyncGenerator_running = true;
+
+//!!! ...unfinished... (2023/03/11)
+      this.initOk = false;
+
+      // 0.
+      this.downloader_spreadsheetId = downloader_spreadsheetId;
+      this.downloader_apiKey = downloader_apiKey;
+      this.bLogFetcherEventToConsole = bLogFetcherEventToConsole;
+
+      // 1. Load (versus summary and) versus. Create neural networks.
+      this.versus_loader_async = this.versus_load_asyncGenerator();
+
+//!!! ...unfinished... (2023/03/11)
+
+      // Note: Here does not wait for loading complete. Continue to create
+      //       neural workers and compile GPU shaders because they all
+      //       take time but can be done in parallel.
+
+      // 2. Neural Workers.
+      {
+        // It will be used by .workerProxies_init_async()
+        NeuralOrchestra_Base.neuralNetParamsBase_create.call( this,
+          input_height, input_width,
+          vocabularyChannelCount,
+          blockCountTotalRequested,
+          output_channelCount );
+
+        // Note: The .workerProxies_init_promise will also be set.
+        NeuralOrchestra_Base.workerProxies_init_async__record_promise.call( this );
+
+//!!! ...unfinished... (2023/03/11)
+        Promise.race();
+
+
+        // Note: The .workerProxies_initOk will also be set.
+        let workerProxies_initOk = await this.workerProxies_init_promise;
+        if ( !workerProxies_initOk )
+          throw Error( `NeuralOrchestra.Base.init_async(): `
+            + `Failed to initialize NeuralWorker.Proxies. `
+            + `workerProxies={ ${this.workerProxies} }`
+          );
+      }
+
+      // 3. Versus Result Reporter
+      this.versusResultSender_init( sender_clientId );
+
+      this.initOk = true;
+      return this.initOk;
+
+    } finally {
+      // 4. So that this async generator could be executed again.
+      this.init_asyncGenerator_running = false;
+    }
+  }
+
+
 
   /**
    * Call .workerProxies_init_async() and record the returned promise in
@@ -442,13 +527,13 @@ class NeuralOrchestra_Base extends Recyclable.Root {
    */
   static async workerProxies_init_async() {
 
-    if ( this.workerProxies_init_running )
+    if ( this.workerProxies_init_async_running )
       throw Error( `NeuralOrchestra.Base.workerProxies_init_async(): `
         + `should not be executed multiple times simultaneously.` );
 
     let initOk;
     try {
-      this.workerProxies_init_running = true;
+      this.workerProxies_init_async_running = true;
       this.workerProxies_initOk = false;
 
       let neuralNetParamsBase = this.neuralNetParamsBase;
@@ -498,7 +583,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
 
     } finally {
       // 3. So that this async method could be executed again.
-      this.workerProxies_init_running = false;
+      this.workerProxies_init_async_running = false;
     }
   }
 
@@ -829,7 +914,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
         );
 
     } finally {
-      // 4. So that this generator could be executed again.
+      // 4. So that this async generator could be executed again.
       this.versus_load_asyncGenerator_running = false;
     }
 
