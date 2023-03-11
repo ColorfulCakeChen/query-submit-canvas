@@ -364,6 +364,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
 
       // 2. Neural Workers.
       {
+        // It will be used by .workerProxies_init_async()
         NeuralOrchestra_Base.neuralNetParamsBase_create.call( this,
           input_height, input_width, vocabularyChannelCount,
           blockCountTotalRequested, output_channelCount );
