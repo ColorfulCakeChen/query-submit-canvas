@@ -483,6 +483,9 @@ class NeuralOrchestra_Base extends Recyclable.Root {
       }
 
 //!!! ...unfinished... (2023/03/11)
+
+      // Wait NeuralWorker.Proxies initialization to complete, and
+      // advance DEvolution.Versus loading simultaneously.
       let workerProxies_init_done = false;
       do {
         let allPromise = Promise.race( allPromiseSet );
@@ -513,6 +516,8 @@ class NeuralOrchestra_Base extends Recyclable.Root {
               + `.workerProxies_init_promise`
             );
 
+          // DEvolution.Versus has been loaded a little. Report progress
+          // and schedule to wait for it to load next a little.
           } else {
             // let progressRoot = object.value;
             yield progressRoot;
@@ -535,7 +540,6 @@ class NeuralOrchestra_Base extends Recyclable.Root {
               + `this.workerProxies_initOk ( ${this.workerProxies_initOk} ).`
             );
 
-          // Initialization is done. (Although .versus_loader_async not yet done.)
           workerProxies_init_done = true;
 
           if ( !workerProxies_initOk )
