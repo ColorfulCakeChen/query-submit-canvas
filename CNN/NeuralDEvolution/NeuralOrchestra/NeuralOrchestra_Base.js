@@ -349,8 +349,13 @@ class NeuralOrchestra_Base extends Recyclable.Root {
         output_channelCount
       );
     
+      let initer_next;
+      do {
+        initer_next = await initer_async.next();
+      } while ( !initer_next.done );
+
       // (Note: The .initOk will also be set.)
-      let initOk = yield* initer_async;
+      let initOk = initer_next.value;
       if ( initOk != this.initOk )
         throw Error( `NeuralOrchestra.Base.init_async(): `
           + `initOk ( ${initOk} ) `
@@ -819,13 +824,8 @@ class NeuralOrchestra_Base extends Recyclable.Root {
   }
 
   /**
-
-//!!! ...unfinished... (2023/03/11)
-// Perhaps, prepare outside.
-
-   * Call .versus_load_asyncGenerator() internally.
+   * Call .versus_loader_async.next() until done.
    *
-   * It will create .versus_load_progress.
    *
    * @param {NeuralOrchestra_Base} this
    *
