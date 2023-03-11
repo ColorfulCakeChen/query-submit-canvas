@@ -830,8 +830,9 @@ class NeuralOrchestra_Base extends Recyclable.Root {
    * @param {NeuralOrchestra_Base} this
    *
    * @param {AsyncGenerator} this.versus_loader_async
-   *   The .versus_loader_async should have already existed (i.e. not null). It
-   * will be .next() until done by this async method.
+   *   - The .versus_loader_async should have already existed (i.e. not null).
+   *       It will be .next() until done by this async method.
+   *   - The .versus_loader_async will be clear to null when this method done.
    *
    * @return {Promise( boolean )}
    *   Return a promise:
@@ -848,25 +849,9 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     try {
       this.versus_load_async_running = true;
 
-//!!! ...unfinished... (2023/03/11)
       if ( !this.versus_loader_async )
         throw Error( `NeuralOrchestra.Base.versus_load_async(): `
           + `this.versus_loader_async should have already existed.` );
-
-//!!! ...unfinished... (2023/03/11)
-// Perhaps, prepare outside.
-
-      // 0. Prepare progress.
-      if ( this.versus_load_progress )
-        this.versus_load_progress.child_disposeAll();
-      else
-        this.versus_load_progress_create();
-
-//!!! ...unfinished... (2023/03/11)
-// Perhaps, prepare outside.
-
-      // 1. Load versus summary and versus. Create neural networks.
-      this.versus_loader_async_create( this.versus_load_progress );
 
       let loaderNext;
       do {
@@ -884,7 +869,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
       // 2. So that this async method could be executed again.
       this.versus_load_async_running = false;
 
-//!!! ...unfinished... (2023/03/11)
+      // Prevent a completed loader to be re-used.
       this.versus_loader_async = null;
     }
   }
