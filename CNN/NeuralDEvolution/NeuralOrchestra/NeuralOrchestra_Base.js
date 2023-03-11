@@ -342,8 +342,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
 
     if ( this.init_running )
       throw Error( `NeuralOrchestra.Base.init_async(): `
-        + `should not be executed multiple times simultaneously.`
-      );
+        + `should not be executed multiple times simultaneously.` );
 
     try {
       this.init_running = true;
@@ -432,8 +431,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
 
     if ( this.workerProxies_init_running )
       throw Error( `NeuralOrchestra.Base.workerProxies_init_async(): `
-        + `should not be executed multiple times simultaneously.`
-      );
+        + `should not be executed multiple times simultaneously.` );
 
     let initOk;
     try {
@@ -643,8 +641,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
 
     if ( this.versus_load_async_running )
       throw Error( `NeuralOrchestra.Base.versus_load_async(): `
-        + `should not be executed multiple times simultaneously.`
-      );
+        + `should not be executed multiple times simultaneously.` );
 
     try {
       this.versus_load_async_running = true;
@@ -712,8 +709,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
 
     if ( this.versus_load_asyncGenerator_running )
       throw Error( `NeuralOrchestra.Base.versus_load_asyncGenerator(): `
-        + `should not be executed multiple times simultaneously.`
-      );
+        + `should not be executed multiple times simultaneously.` );
 
     let progressRoot;
     let progressToAdvance;
