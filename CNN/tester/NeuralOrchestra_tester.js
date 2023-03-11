@@ -70,6 +70,19 @@ async function* tester( progressParent ) {
         + `neuralOrchestra.init_async() failed.`
       );
 
+    if ( !neuralOrchestra.initOk )
+      throw Error( `NeuralOrchestra_tester.tester(): `
+        + `neuralOrchestra.initOk (${neuralOrchestra.initOk}) `
+        + `should be true.`
+      );
+
+    if ( !neuralOrchestra.workerProxies_initOk )
+      throw Error( `NeuralOrchestra_tester.tester(): `
+        + `neuralOrchestra.workerProxies_initOk `
+        + `(${neuralOrchestra.workerProxies_initOk}) `
+        + `should be true.`
+      );
+
     progressToAdvance.value_advance();
     yield progressRoot;
 
@@ -100,7 +113,7 @@ async function* tester( progressParent ) {
 
       // 2.1 Wait for versus summary loaded, versus loaded, and neural networks
       //     created.
-      let versus_load_ok = await neuralOrchestra.versus_load_promise;
+      let versus_loadOk = await neuralOrchestra.versus_load_promise;
       if ( 100 !== neuralOrchestra.versus_load_progress.valuePercentage )
         throw Error( `NeuralOrchestra_tester.tester(): `
           + `neuralOrchestra.versus_load_progress.valuePercentage (`
@@ -108,9 +121,15 @@ async function* tester( progressParent ) {
           + `should be 100.`
         );
 
-      if ( !versus_load_ok )
+      if ( !neuralOrchestra.versus_loadOk )
         throw Error( `NeuralOrchestra_tester.tester(): `
-          + `versus_load_ok (${versus_load_ok}) should be true.`
+          + `neuralOrchestra.versus_loadOk (${neuralOrchestra.versus_loadOk}) `
+          + `should be true.`
+        );
+
+      if ( !versus_loadOk )
+        throw Error( `NeuralOrchestra_tester.tester(): `
+          + `versus_loadOk (${versus_loadOk}) should be true.`
         );
 
       progressToAdvance.value_advance();
