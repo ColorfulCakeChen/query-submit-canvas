@@ -233,10 +233,13 @@ class NeuralOrchestra_Base extends Recyclable.Root {
    * @param {NeuralOrchestra_Base} this
    */
   static neuralNetParamsBase_create(
-    input_height, input_width,
-    vocabularyChannelCount,
-    blockCountTotalRequested,
-    output_channelCount ) {
+    input_height = 72,
+    input_width = 131, // = ( 128 + 3 ),
+
+    vocabularyChannelCount = 4, //8
+    blockCountTotalRequested = 39, //100, //200, //50, //20, //10,
+    output_channelCount = 64 //16
+  ) {
 
     this.neuralNetParamsBase_dispose();
 
@@ -295,10 +298,102 @@ class NeuralOrchestra_Base extends Recyclable.Root {
 
 
   /**
+   * Call .init_asyncGenerator() and .versus_load_promise_create() internally.
+   *
+   *
+   * @return {Promise}
+   *   Return a promise (i.e. the .workerProxies_init_promise).
+   *   - Resolved to true, if succeeded.
+   *     - The neural workers have been created and GPU shaders have been
+   *         compiled.
+   *     - But the versus summary and versus may still be loading (i.e. not
+   *         yet complete). The neural networks may also still not be created
+   *         (since they need the versus data). Please check .versus_load_promise
+   *         or .versus_load_progress or .versus_loadOk to determine whether
+   *         complete.
+   * 
+   *   - Resolved to false, if failed.
+   */
+  async init_async(
+    downloader_spreadsheetId, downloader_apiKey, bLogFetcherEventToConsole,
+
+    sender_clientId,
+
+    input_height,
+    input_width,
+
+    vocabularyChannelCount,
+    blockCountTotalRequested,
+    output_channelCount
+  ) {
+
+    if ( this.init_async_running )
+      throw Error( `NeuralOrchestra.Base.init_async(): `
+        + `should not be executed multiple times simultaneously.` );
+
+    try {
+      this.init_async_running = true;
+
+      // 1. Use internal independent progress.
+      this.versus_load_progress_create();
+
+      // 2. Start to load (versus summary and) versus, initialize
+      //    NeuralWorker.Proxies, and create neural networks.
+      let initer_async = this.init_asyncGenerator(
+        this.versus_load_progress,
+        downloader_spreadsheetId, downloader_apiKey, bLogFetcherEventToConsole,
+        sender_clientId,
+        input_height, input_width,
+        vocabularyChannelCount,
+        blockCountTotalRequested,
+        output_channelCount
+      );
+    
+      // (Note: The .initOk will also be set.)
+      let initOk = yield* initer_async;
+      if ( initOk != this.initOk )
+        throw Error( `NeuralOrchestra.Base.init_async(): `
+          + `initOk ( ${initOk} ) `
+          + `should be the same as `
+          + `this.initOk ( ${this.initOk} ).`
+        );
+
+      // 3. Continue to load (versus summary and) versus and create neural
+      //    networks.
+      //
+      // Note: It is not be awaited here. Caller should .versus_load_promise
+      this.versus_load_promise_create();
+
+      return this.initOk;
+
+    } finally {
+      // 4. So that this async method could be executed again.
+      this.init_async_running = false;
+    }
+  }
+
+//!!! ...unfinished... (2023/03/11)
+// Perhaps, add .init_asyncGenerator() calls
+// .versus_load_asyncGenerator() and .workerProxies_init_async().
+//
+// .init_asyncGenerator() done when Promise.race() .workerProxies_init_promise resolved.
+// Leave .versus_load_asyncGenerator() in data member.
+// So that outside caller can continue to yield* it.
+//
+// Let .init_async() calls .init_asyncGenerator()
+//
+
+  /**
    *   - Load all differential evolution versus weights ranges (i.e. versus summary).
    *   - Load one versus.
    *   - Create neural workers and compile GPU shaders.
    *   - Create neural networks.
+   *
+   *
+   * @param {ValueMax.Percentage.Aggregate} progressParent
+   *   Some new progressToAdvance will be created and added to progressParent. The
+   * created progressToAdvance will be increased when every time advanced. The
+   * progressParent.root_get() will be returned when every time yield.
    *
    *
    * @param {string} downloader_spreadsheetId
@@ -334,108 +429,22 @@ class NeuralOrchestra_Base extends Recyclable.Root {
    * @param {number} output_channelCount
    *   The output tensor's channel count.
    *
-   * @return {Promise}
-   *   Return a promise (i.e. the .workerProxies_init_promise).
-   *   - Resolved to true, if succeeded.
+   *
+   * @yield {Promise( ValueMax.Percentage.Aggregate )}
+   *   Yield a promise resolves to { done: false, value: progressParent.root_get() }.
+   *
+   * @yield {Promise( boolean )}
+   *   Yield a promise:
+   *   - Resolved to { done: true, value: true }, if succeeded.
    *     - The neural workers have been created and GPU shaders have been
    *         compiled.
    *     - But the versus summary and versus may still be loading (i.e. not
    *         yet complete). The neural networks may also still not be created
-   *         (since they need the versus data). Please check .versus_load_promise
-   *         and versus_load_progress to determine whether complete.
+   *         (since they need the versus data). Please check .versus_loader_async
+   *         or .versus_load_progress or .versus_loadOk to determine whether
+   *         complete.
    * 
-   *   - Resolved to false, if failed.
-   */
-  async init_async(
-    downloader_spreadsheetId, downloader_apiKey, bLogFetcherEventToConsole,
-
-    sender_clientId,
-
-    input_height = 72,
-    input_width = 131, // = ( 128 + 3 ),
-
-    vocabularyChannelCount = 4, //8
-    blockCountTotalRequested = 39, //100, //200, //50, //20, //10,
-    output_channelCount = 64, //16,
-  ) {
-
-    if ( this.init_async_running )
-      throw Error( `NeuralOrchestra.Base.init_async(): `
-        + `should not be executed multiple times simultaneously.` );
-
-//!!! ...unfinished... (2023/03/11)
-// should call .init_asyncGenerator()
-// and wrap the uncompleted .versus_loader_async to a .versus_load_promise
-//
-
-
-    try {
-      this.init_async_running = true;
-      this.initOk = false;
-
-      // 0.
-      this.downloader_spreadsheetId = downloader_spreadsheetId;
-      this.downloader_apiKey = downloader_apiKey;
-      this.bLogFetcherEventToConsole = bLogFetcherEventToConsole;
-
-      // 1. Load (versus summary and) versus. Create neural networks.
-      this.versus_load_promise_create();
-
-      // Note: Here does not wait for loading complete. Continue to create
-      //       neural workers and compile GPU shaders because they all
-      //       take time but can be done in parallel.
-
-      // 2. Neural Workers.
-      {
-        // It will be used by .workerProxies_init_async()
-        NeuralOrchestra_Base.neuralNetParamsBase_create.call( this,
-          input_height, input_width,
-          vocabularyChannelCount,
-          blockCountTotalRequested,
-          output_channelCount );
-
-        // Note: The .workerProxies_init_promise will also be set.
-        NeuralOrchestra_Base.workerProxies_init_promise_create.call( this );
-
-        // Note: The .workerProxies_initOk will also be set.
-        let workerProxies_initOk = await this.workerProxies_init_promise;
-        if ( !workerProxies_initOk )
-          throw Error( `NeuralOrchestra.Base.init_async(): `
-            + `Failed to initialize NeuralWorker.Proxies. `
-            + `workerProxies={ ${this.workerProxies} }`
-          );
-      }
-
-      // 3. Versus Result Reporter
-      this.versusResultSender_init( sender_clientId );
-
-      this.initOk = true;
-      return this.initOk;
-
-    } finally {
-      // 4. So that this async method could be executed again.
-      this.init_async_running = false;
-    }
-  }
-
-//!!! ...unfinished... (2023/03/11)
-// Perhaps, add .init_asyncGenerator() calls
-// .versus_load_asyncGenerator() and .workerProxies_init_async().
-//
-// .init_asyncGenerator() done when Promise.race() .workerProxies_init_promise resolved.
-// Leave .versus_load_asyncGenerator() in data member.
-// So that outside caller can continue to yield* it.
-//
-// Let .init_async() calls .init_asyncGenerator()
-//
-
-  /**
-   * 
-   *
-   * @param {ValueMax.Percentage.Aggregate} progressParent
-   *   Some new progressToAdvance will be created and added to progressParent. The
-   * created progressToAdvance will be increased when every time advanced. The
-   * progressParent.root_get() will be returned when every time yield.
+   *   - Resolved to { done: true, value: false }, if failed.
    */
   async* init_asyncGenerator(
     progressParent,
@@ -444,12 +453,12 @@ class NeuralOrchestra_Base extends Recyclable.Root {
 
     sender_clientId,
 
-    input_height = 72,
-    input_width = 131, // = ( 128 + 3 ),
+    input_height,
+    input_width,
 
-    vocabularyChannelCount = 4, //8
-    blockCountTotalRequested = 39, //100, //200, //50, //20, //10,
-    output_channelCount = 64, //16,
+    vocabularyChannelCount,
+    blockCountTotalRequested,
+    output_channelCount
   ) {
 
     if ( this.init_asyncGenerator_running )
@@ -937,7 +946,9 @@ class NeuralOrchestra_Base extends Recyclable.Root {
    * @yield {Promise( boolean )}
    *   Yield a promise:
    *   - Resolved to { done: true, value: true }, if succeeded.
+   *     - .versus_loadOk will also be set to true.
    *   - Resolved to { done: true, value: false }, if failed.
+   *     - .versus_loadOk will also be set to false.
    */
   static async* versus_load_asyncGenerator( progressParent ) {
 
@@ -950,7 +961,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     let neuralNet_createOk;
     try {
       // 0.
-      this.versus_loadOk = false;
+      this.versus_loadOk = undefined;
 
       // 0.1 Prevent re-entrance.
       this.versus_load_asyncGenerator_running = true;
@@ -1063,6 +1074,9 @@ class NeuralOrchestra_Base extends Recyclable.Root {
 
       progressToAdvance.value_advance();
       yield progressRoot;
+
+    } else {
+      this.versus_loadOk = false;
     }
 
     return this.versus_loadOk;
