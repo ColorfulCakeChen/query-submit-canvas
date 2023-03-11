@@ -268,6 +268,8 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     output_channelCount = 64, //16,
   ) {
 
+//!!! ...unfinished... (2023/03/11) What if re-entrtance?
+
     // 1.
 
     // 1.1
@@ -343,6 +345,9 @@ class NeuralOrchestra_Base extends Recyclable.Root {
    *   - Resolved to false, if failed.
    */
   static async workerProxies_init_async( neuralNetParamsBase ) {
+
+//!!! ...unfinished... (2023/03/11) What if re-entrtance?
+
     this.neuralNetParamsBase_dispose();
     this.neuralNetParamsBase = neuralNetParamsBase;
 
@@ -394,6 +399,9 @@ class NeuralOrchestra_Base extends Recyclable.Root {
    * @param {NeuralOrchestra_Base} this
    */
   static async workerProxies_compileShaders_async() {
+
+//!!! ...unfinished... (2023/03/11) What if re-entrtance?
+
 
     // Dummy neural network's weights.
     //      
