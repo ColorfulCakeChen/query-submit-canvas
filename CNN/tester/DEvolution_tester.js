@@ -7,30 +7,30 @@ import * as DEvolution from "../NeuralDEvolution/DEvolution.js";
 /**
  * 
  */
-function test_DEvolution_VersusResultSubmitter_MultiEventName(
-  submitter_clientId, measurementId_apiSecret_array_array
+function test_DEvolution_VersusResultSender_MultiEventName(
+  sender_clientId, measurementId_apiSecret_array_array
 ) {
 
   let versusId;
-  let versusResultSubmitter;
+  let versusResultSender;
   try {
     versusId = DEvolution.VersusId.Pool.get_or_create_by( "0_0_0_0");
 
-    versusResultSubmitter = DEvolution.VersusResultSubmitter
+    versusResultSender = DEvolution.VersusResultSender
       .MultiEventName.Pool.get_or_create_by(
-        submitter_clientId );
+        sender_clientId );
 
-    versusResultSubmitter.measurementId_to_apiSecret_map_create(
+    versusResultSender.measurementId_to_apiSecret_map_create(
       measurementId_apiSecret_array_array );
 
 //!!! ...unfinished... (2023/01/03) should also test multiple measurementId.
 
     // Test multiple measurementId randomly.
-    let submitter_measurementId_index = RandTools.getRandomIntInclusive(
+    let sender_measurementId_index = RandTools.getRandomIntInclusive(
       0, measurementId_apiSecret_array_array.length - 1 );
 
-    let submitter_measurementId
-      = measurementId_apiSecret_array_array[ submitter_measurementId_index ][ 0 ];
+    let sender_measurementId
+      = measurementId_apiSecret_array_array[ sender_measurementId_index ][ 0 ];
 
     let eventIndex = 0;
     for ( let entityNo = 0; entityNo < 9; ++entityNo ) {
@@ -41,9 +41,9 @@ function test_DEvolution_VersusResultSubmitter_MultiEventName(
             nNegativeZeroPositive <= 1;
             ++nNegativeZeroPositive) {
 
-        versusResultSubmitter
+        versusResultSender
           .post_by_measurementId_versusId_NegativeZeroPositive(
-            submitter_measurementId, versusId, nNegativeZeroPositive );
+            sender_measurementId, versusId, nNegativeZeroPositive );
 
         // Every 4 events, post once more so that the result of every entity
         // could be a little different for helping verifying more easily by eyes.
@@ -51,9 +51,9 @@ function test_DEvolution_VersusResultSubmitter_MultiEventName(
         if ( ( eventIndex % MAGIC_DIVISOR ) == 0 ) {
           let extraCount = Math.floor( eventIndex / MAGIC_DIVISOR ) + 1;
           for ( let i = 0; i < extraCount; ++i ) {
-            versusResultSubmitter
+            versusResultSender
               .post_by_measurementId_versusId_NegativeZeroPositive(
-                submitter_measurementId, versusId, nNegativeZeroPositive );
+                sender_measurementId, versusId, nNegativeZeroPositive );
           }
         }
 
@@ -62,9 +62,9 @@ function test_DEvolution_VersusResultSubmitter_MultiEventName(
     }
 
   } finally {
-    if ( versusResultSubmitter ) {
-      versusResultSubmitter.disposeResources_and_recycleToPool();
-      versusResultSubmitter = null;
+    if ( versusResultSender ) {
+      versusResultSender.disposeResources_and_recycleToPool();
+      versusResultSender = null;
     }
 
     if ( versusId ) {
@@ -90,7 +90,7 @@ async function* tester( progressParent ) {
   let progressToAdvance = progressParent.child_add(
     ValueMax.Percentage.Concrete.Pool.get_or_create_by( 1 ) );
 
-  let submitter_clientId = Date.now();
+  let sender_clientId = Date.now();
 
   {
     // Note: This is an un-related measurement id for testing purpose only. So that
@@ -103,8 +103,8 @@ async function* tester( progressParent ) {
       [ "G-T14M8JKR65", "ywGNhxdrTj2zDlMX6gYEiQ" ], // NeuralOrchestra_tester, 04
     ];
 
-    test_DEvolution_VersusResultSubmitter_MultiEventName(
-      submitter_clientId, measurementId_apiSecret_array_array );
+    test_DEvolution_VersusResultSender_MultiEventName(
+      sender_clientId, measurementId_apiSecret_array_array );
   }
 
   progressToAdvance.value_advance();

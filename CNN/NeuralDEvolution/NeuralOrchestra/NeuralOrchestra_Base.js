@@ -66,7 +66,7 @@ import * as DEvolution from "../DEvolution.js";
  * @member {boolean} bLogFetcherEventToConsole
  *   If true, some debug messages of HttpRequest.Fetcher will be logged to console.
  *
- * @member {string} submitter_clientId
+ * @member {string} sender_clientId
  *   The client id when sending measurement protocol.
  *
  * @member {string} backendName
@@ -144,7 +144,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
 
   /** @override */
   disposeResources() {
-    this.versusResultSubmitter_dispose();
+    this.versusResultSender_dispose();
     this.versus_load_progress_dispose();
     this.versus_load_asyncGenerator_running = undefined;
     this.versus_load_async_running = undefined;
@@ -157,8 +157,8 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     super.disposeResources();
   }
 
-  get submitter_clientId() {
-    return this.versusResultSubmitter.clientId;
+  get sender_clientId() {
+    return this.versusResultSender.clientId;
   }
 
   get backendName() {
@@ -220,7 +220,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
    *   - If not null, Google Sheets API v4 will be used.
    *
    *
-   * @param {string} submitter_clientId
+   * @param {string} sender_clientId
    *   The client id when sending measurement protocol.
    *
    *
@@ -258,7 +258,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
   async init_async(
     downloader_spreadsheetId, downloader_apiKey, bLogFetcherEventToConsole,
    
-    submitter_clientId,
+    sender_clientId,
 
     input_height = 72,
     input_width = 131, // = ( 128 + 3 ),
@@ -320,7 +320,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     }
 
     // 3. Versus Result Reporter
-    this.versusResultSubmitter_init( submitter_clientId );
+    this.versusResultSender_init( sender_clientId );
 
     // 4.
     return this.workerProxies_init_promise;
@@ -739,10 +739,10 @@ class NeuralOrchestra_Base extends Recyclable.Root {
 
 
   /** Create differential evolution versus result reporter. */
-  versusResultSubmitter_init( submitter_clientId ) {
-    this.versusResultSubmitter_dispose();
-    this.versusResultSubmitter = DEvolution.VersusResultSubmitter
-      .MultiEventName.Pool.get_or_create_by( submitter_clientId );
+  versusResultSender_init( sender_clientId ) {
+    this.versusResultSender_dispose();
+    this.versusResultSender = DEvolution.VersusResultSender
+      .MultiEventName.Pool.get_or_create_by( sender_clientId );
   }
 
   /**
@@ -754,16 +754,16 @@ class NeuralOrchestra_Base extends Recyclable.Root {
    *     -  0 (if parent draw offspring)
    *     - +1 (if parent win offspring)
    */
-  versusResultSubmitter_send( nNegativeZeroPositive ) {
-    this.versusResultSubmitter.post_by_versusId_NegativeZeroPositive(
+  versusResultSender_send( nNegativeZeroPositive ) {
+    this.versusResultSender.post_by_versusId_NegativeZeroPositive(
       this.versus.versusId, nNegativeZeroPositive );
   }
 
   /** */
-  versusResultSubmitter_dispose() {
-    if ( this.versusResultSubmitter ) {
-      this.versusResultSubmitter.disposeResources_and_recycleToPool();
-      this.versusResultSubmitter = null;
+  versusResultSender_dispose() {
+    if ( this.versusResultSender ) {
+      this.versusResultSender.disposeResources_and_recycleToPool();
+      this.versusResultSender = null;
     }
   }
 

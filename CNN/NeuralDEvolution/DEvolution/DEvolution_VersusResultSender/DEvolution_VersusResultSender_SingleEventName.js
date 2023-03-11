@@ -1,9 +1,9 @@
-export { DEvolution_VersusResultSubmitter_SingleEventName as SingleEventName };
+export { DEvolution_VersusResultSender_SingleEventName as SingleEventName };
 
 import * as Pool from "../../../util/Pool.js";
 import * as Recyclable from "../../../util/Recyclable.js";
-import { Base as DEvolution_VersusResultSubmitter_Base }
-  from "./DEvolution_VersusResultSubmitter_Base.js";
+import { Base as DEvolution_VersusResultSender_Base }
+  from "./DEvolution_VersusResultSender_Base.js";
 
 /**
  * 
@@ -15,22 +15,22 @@ import { Base as DEvolution_VersusResultSubmitter_Base }
  * @member {string} apiSecret
  *   The measurement api secret of stream of property of Google Analytics v4.
  */
-class DEvolution_VersusResultSubmitter_SingleEventName
-  extends DEvolution_VersusResultSubmitter_Base {
+class DEvolution_VersusResultSender_SingleEventName
+  extends DEvolution_VersusResultSender_Base {
 
   /**
-   * Used as default DEvolution.VersusResultSubmitter.SingleEventName
+   * Used as default DEvolution.VersusResultSender.SingleEventName
    * provider for conforming to Recyclable interface.
    */
   static Pool = new Pool.Root(
-    "DEvolution.VersusResultSubmitter.SingleEventName.Pool",
-    DEvolution_VersusResultSubmitter_SingleEventName,
-    DEvolution_VersusResultSubmitter_SingleEventName.setAsConstructor );
+    "DEvolution.VersusResultSender.SingleEventName.Pool",
+    DEvolution_VersusResultSender_SingleEventName,
+    DEvolution_VersusResultSender_SingleEventName.setAsConstructor );
 
   /** */
   constructor( clientId, measurementId, apiSecret ) {
     super( clientId );
-    DEvolution_VersusResultSubmitter_SingleEventName
+    DEvolution_VersusResultSender_SingleEventName
       .setAsConstructor_self.call( this,
         measurementId, apiSecret );
   }
@@ -38,7 +38,7 @@ class DEvolution_VersusResultSubmitter_SingleEventName
   /** @override */
   static setAsConstructor( clientId, measurementId, apiSecret ) {
     super.setAsConstructor( clientId );
-    DEvolution_VersusResultSubmitter_SingleEventName
+    DEvolution_VersusResultSender_SingleEventName
       .setAsConstructor_self.call( this,
         measurementId, apiSecret );
     return this;

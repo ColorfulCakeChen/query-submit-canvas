@@ -1,38 +1,38 @@
-export { DEvolution_VersusResultSubmitter_MultiEventName as MultiEventName };
+export { DEvolution_VersusResultSender_MultiEventName as MultiEventName };
 
 import * as Pool from "../../../util/Pool.js";
 import * as Recyclable from "../../../util/Recyclable.js";
-import { Base as DEvolution_VersusResultSubmitter_Base }
-  from "./DEvolution_VersusResultSubmitter_Base.js";
+import { Base as DEvolution_VersusResultSender_Base }
+  from "./DEvolution_VersusResultSender_Base.js";
 
 /**
  * 
  *
  * 
  */
-class DEvolution_VersusResultSubmitter_MultiEventName
-  extends DEvolution_VersusResultSubmitter_Base {
+class DEvolution_VersusResultSender_MultiEventName
+  extends DEvolution_VersusResultSender_Base {
 
   /**
-   * Used as default DEvolution.VersusResultSubmitter.MultiEventName
+   * Used as default DEvolution.VersusResultSender.MultiEventName
    * provider for conforming to Recyclable interface.
    */
   static Pool = new Pool.Root(
-    "DEvolution.VersusResultSubmitter.MultiEventName.Pool",
-    DEvolution_VersusResultSubmitter_MultiEventName,
-    DEvolution_VersusResultSubmitter_MultiEventName.setAsConstructor );
+    "DEvolution.VersusResultSender.MultiEventName.Pool",
+    DEvolution_VersusResultSender_MultiEventName,
+    DEvolution_VersusResultSender_MultiEventName.setAsConstructor );
 
   /** */
   constructor( clientId, measurementId_apiSecret_array_array ) {
     super( clientId, measurementId_apiSecret_array_array );
-    DEvolution_VersusResultSubmitter_MultiEventName
+    DEvolution_VersusResultSender_MultiEventName
       .setAsConstructor_self.call( this );
   }
 
   /** @override */
   static setAsConstructor( clientId, measurementId_apiSecret_array_array ) {
     super.setAsConstructor( clientId, measurementId_apiSecret_array_array );
-    DEvolution_VersusResultSubmitter_MultiEventName
+    DEvolution_VersusResultSender_MultiEventName
       .setAsConstructor_self.call( this );
     return this;
   }
@@ -84,7 +84,7 @@ class DEvolution_VersusResultSubmitter_MultiEventName
 
     // A (re-used) event object (with correct event name, without any content)
     // represents the entityNo's versus result (lose, draw, win).
-    let eventObject = DEvolution_VersusResultSubmitter_MultiEventName
+    let eventObject = DEvolution_VersusResultSender_MultiEventName
       .eventObjectTable[ eventObjectTableIndex ];
 
     return eventObject;
@@ -112,7 +112,7 @@ class DEvolution_VersusResultSubmitter_MultiEventName
   post_by_versusId_NegativeZeroPositive(
     versusId, nNegativeZeroPositive ) {
 
-    const eventObject = DEvolution_VersusResultSubmitter_MultiEventName
+    const eventObject = DEvolution_VersusResultSender_MultiEventName
       .eventObject_get_by_versusId_NegativeZeroPositive(
         versusId, nNegativeZeroPositive );
 
@@ -145,7 +145,7 @@ class DEvolution_VersusResultSubmitter_MultiEventName
   post_by_measurementId_apiSecret_versusId_NegativeZeroPositive(
     measurementId, apiSecret, versusId, nNegativeZeroPositive ) {
 
-    const eventObject = DEvolution_VersusResultSubmitter_MultiEventName
+    const eventObject = DEvolution_VersusResultSender_MultiEventName
       .eventObject_get_by_versusId_NegativeZeroPositive(
         versusId, nNegativeZeroPositive );
 
@@ -178,7 +178,7 @@ class DEvolution_VersusResultSubmitter_MultiEventName
   post_by_measurementId_versusId_NegativeZeroPositive(
     measurementId,  versusId, nNegativeZeroPositive ) {
 
-    const eventObject = DEvolution_VersusResultSubmitter_MultiEventName
+    const eventObject = DEvolution_VersusResultSender_MultiEventName
       .eventObject_get_by_versusId_NegativeZeroPositive(
         versusId, nNegativeZeroPositive );
 
@@ -192,7 +192,7 @@ class DEvolution_VersusResultSubmitter_MultiEventName
  * Every entity (in a versus) uses 3 event names to represent: parent lose,
  * draw, offspring win.
  */
-DEvolution_VersusResultSubmitter_MultiEventName.eventObjectTable = [
+DEvolution_VersusResultSender_MultiEventName.eventObjectTable = [
 
   // Entity 0
   { name: "add_payment_info", params: { items: [] } },  // parent lose offspring

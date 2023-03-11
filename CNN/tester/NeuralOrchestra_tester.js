@@ -26,7 +26,7 @@ async function* tester( progressParent ) {
   // let bLogFetcherEventToConsole = false;
   let bLogFetcherEventToConsole = true;
 
-  let submitter_clientId = Date.now();
+  let sender_clientId = Date.now();
 
   let input_height = 72;
   let input_width = 128;
@@ -41,7 +41,7 @@ async function* tester( progressParent ) {
     neuralOrchestra = NeuralOrchestra.Base.Pool.get_or_create_by();
     let bInitOk = await neuralOrchestra.init_async(
       downloader_spreadsheetId, downloader_apiKey, bLogFetcherEventToConsole,
-      submitter_clientId,
+      sender_clientId,
 
       input_height,
       input_width,
@@ -109,7 +109,7 @@ async function* tester( progressParent ) {
 
       // A random integer between [ -1, +1 ].
       let nNegativeZeroPositive = RandTools.getRandomIntInclusive( -1, 1 );
-      neuralOrchestra.versusResultSubmitter_send( nNegativeZeroPositive );
+      neuralOrchestra.versusResultSender_send( nNegativeZeroPositive );
 
       progressToAdvance.value_advance();
       yield progressRoot;
