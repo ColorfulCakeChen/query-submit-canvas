@@ -277,6 +277,16 @@ class NeuralOrchestra_Base extends Recyclable.Root {
   }
 
 
+//!!! ...unfinished... (2023/03/11)
+// Perhaps, add .init_asyncGenerator() calls
+// .versus_load_asyncGenerator() and .workerProxies_init_async().
+//
+// .init_asyncGenerator() done when Promise.race() .workerProxies_init_promise resolved.
+// Leave .versus_load_asyncGenerator() in data member.
+// So that outside caller can continue to yield* it.
+//
+
+
   /**
    *   - Load all differential evolution versus weights ranges (i.e. versus summary).
    *   - Load one versus.
