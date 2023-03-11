@@ -61,11 +61,11 @@ async function* tester( progressParent ) {
       for ( let p in neuralOrchestra ) {
         let propertyValue = neuralOrchestra[ p ];
         if ( propertyValue != undefined )
-          if ( propertyValue != neuralOrchestra.params_loading_retryWaiting )
-            if ( propertyValue != neuralOrchestra.workerProxies )
-              throw Error( `NeuralOrchestra_tester.tester(): `
-                + `neuralOrchestra.${p} (${neuralOrchestra[ p ]}) `
-                + `should be undefined.` );
+          if (   ( propertyValue != neuralOrchestra.params_loading_retryWaiting )
+              && ( propertyValue != neuralOrchestra.workerProxies ) )
+            throw Error( `NeuralOrchestra_tester.tester(): `
+              + `neuralOrchestra.${p} (${neuralOrchestra[ p ]}) `
+              + `should be undefined.` );
       }
   
       // Test: re-init (without re-create).
