@@ -535,7 +535,8 @@ class NeuralOrchestra_Base extends Recyclable.Root {
               + `this.workerProxies_initOk ( ${this.workerProxies_initOk} ).`
             );
 
-          notDone = false; // i.e. initialization is done.
+          // Initialization is done. (Although .versus_loader_async not yet done.)
+          notDone = false;
 
           if ( !workerProxies_initOk )
             throw Error( `NeuralOrchestra.Base.init_asyncGenerator(): `
