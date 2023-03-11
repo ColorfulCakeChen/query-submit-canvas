@@ -459,7 +459,8 @@ class NeuralOrchestra_Base extends Recyclable.Root {
       // 1. Load (versus summary and) versus. Create neural networks.
       this.versus_loader_async_create( progressParent );
 
-      allPromiseSet.add( );
+      let loader_next = this.versus_loader_async.next();
+      allPromiseSet.add( loader_next );
 
 //!!! ...unfinished... (2023/03/11)
 
@@ -480,14 +481,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
         NeuralOrchestra_Base.workerProxies_init_promise_create.call( this );
 
 //!!! ...unfinished... (2023/03/11)
-
-        // Note: The .workerProxies_initOk will also be set.
-        let workerProxies_initOk = await this.workerProxies_init_promise;
-        if ( !workerProxies_initOk )
-          throw Error( `NeuralOrchestra.Base.init_asyncGenerator(): `
-            + `Failed to initialize NeuralWorker.Proxies. `
-            + `workerProxies={ ${this.workerProxies} }`
-          );
+        allPromiseSet.add( this.workerProxies_init_promise );
       }
 
 //!!! ...unfinished... (2023/03/11)
@@ -515,6 +509,11 @@ class NeuralOrchestra_Base extends Recyclable.Root {
                 + `should be the same as `
                 + `this.versus_loadOk ( ${this.versus_loadOk} ).`
               );
+
+          } else {
+            allPromiseSet.delete( loader_next );
+            loader_next = this.versus_loader_async.next();
+            allPromiseSet.add( loader_next );
           }
 
           yield progressRoot???;
@@ -523,13 +522,20 @@ class NeuralOrchestra_Base extends Recyclable.Root {
         } else {
           let workerProxies_initOk = object_or_boolean; // should be a boolean value.
           if ( workerProxies_initOk != this.workerProxies_initOk )
-          throw Error( `NeuralOrchestra.Base.init_asyncGenerator(): `
-            + `workerProxies_initOk ( ${workerProxies_initOk} ) `
-            + `should be the same as `
-            + `this.workerProxies_initOk ( ${this.workerProxies_initOk} ).`
-          );
+            throw Error( `NeuralOrchestra.Base.init_asyncGenerator(): `
+              + `workerProxies_initOk ( ${workerProxies_initOk} ) `
+              + `should be the same as `
+              + `this.workerProxies_initOk ( ${this.workerProxies_initOk} ).`
+            );
 
           notDone = false; // i.e. initialization is done.
+
+          // Note: The .workerProxies_initOk will also be set.
+          if ( !workerProxies_initOk )
+            throw Error( `NeuralOrchestra.Base.init_asyncGenerator(): `
+              + `Failed to initialize NeuralWorker.Proxies. `
+              + `workerProxies={ ${this.workerProxies} }`
+            );
         }
 
       } while ( notDone );
