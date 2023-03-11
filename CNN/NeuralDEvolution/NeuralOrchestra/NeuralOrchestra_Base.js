@@ -468,7 +468,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
       //       neural workers and compile GPU shaders because they all
       //       take time but can be done in parallel.
 
-      // 2. Neural Workers.
+      // 2. Initialize NeuralWorker.Proxies
       {
         // It will be used by .workerProxies_init_async()
         NeuralOrchestra_Base.neuralNetParamsBase_create.call( this,
@@ -477,10 +477,8 @@ class NeuralOrchestra_Base extends Recyclable.Root {
           blockCountTotalRequested,
           output_channelCount );
 
-        // Note: The .workerProxies_init_promise will also be set.
         NeuralOrchestra_Base.workerProxies_init_promise_create.call( this );
 
-//!!! ...unfinished... (2023/03/11)
         allPromiseSet.add( this.workerProxies_init_promise );
       }
 
