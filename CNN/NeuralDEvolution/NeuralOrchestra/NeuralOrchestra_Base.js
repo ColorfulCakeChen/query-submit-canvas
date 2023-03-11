@@ -502,6 +502,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
 // should not execute to here
 // because .versus_loader_async waits .workerProxies_init_promise internally.
 
+            // (Note: The .versus_loadOk will also be set.)
             let versus_loadOk = object.value;
             if ( versus_loadOk != this.versus_loadOk )
               throw Error( `NeuralOrchestra.Base.init_asyncGenerator(): `
@@ -519,6 +520,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
           yield progressRoot???;
 
         // If .workerProxies_init_promise resolved.
+        // (Note: The .workerProxies_initOk will also be set.)
         } else {
           let workerProxies_initOk = object_or_boolean; // should be a boolean value.
           if ( workerProxies_initOk != this.workerProxies_initOk )
@@ -530,7 +532,6 @@ class NeuralOrchestra_Base extends Recyclable.Root {
 
           notDone = false; // i.e. initialization is done.
 
-          // Note: The .workerProxies_initOk will also be set.
           if ( !workerProxies_initOk )
             throw Error( `NeuralOrchestra.Base.init_asyncGenerator(): `
               + `Failed to initialize NeuralWorker.Proxies. `
