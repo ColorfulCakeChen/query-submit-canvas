@@ -1017,8 +1017,17 @@ class NeuralOrchestra_Base extends Recyclable.Root {
 
       // 3.2 Create neural networks.
 
-      // In real-run, no need to observe dry-run performance and weight count.
-      const bLogDryRunTime = false;
+      let bLogDryRunTime;
+      {
+        // If log message is required, observe dry-run performance and weight count.
+        if ( this.bLogFetcherEventToConsole )
+          bLogDryRunTime = true;
+
+        // In real-run, no need to observe dry-run performance and weight count.
+        else
+          bLogDryRunTime = false;
+      }
+
       let neuralNet_create_promise
         = NeuralOrchestra_Base.workerProxies_NeuralNetArray_create_async.call(
             this, weightArrayBufferArray, bLogDryRunTime );
