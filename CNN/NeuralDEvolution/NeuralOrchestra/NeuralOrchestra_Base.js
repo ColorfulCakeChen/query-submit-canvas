@@ -372,17 +372,6 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     }
   }
 
-//!!! ...unfinished... (2023/03/11)
-// Perhaps, add .init_asyncGenerator() calls
-// .versus_load_asyncGenerator() and .workerProxies_init_async().
-//
-// .init_asyncGenerator() done when Promise.race() .workerProxies_init_promise resolved.
-// Leave .versus_load_asyncGenerator() in data member.
-// So that outside caller can continue to yield* it.
-//
-// Let .init_async() calls .init_asyncGenerator()
-//
-
   /**
    *   - Load all differential evolution versus weights ranges (i.e. versus summary).
    *   - Load one versus.
@@ -484,12 +473,6 @@ class NeuralOrchestra_Base extends Recyclable.Root {
       let loader_next = this.versus_loader_async.next();
       allPromiseSet.add( loader_next );
 
-//!!! ...unfinished... (2023/03/11)
-
-      // Note: Here does not wait for loading complete. Continue to create
-      //       neural workers and compile GPU shaders because they all
-      //       take time but can be done in parallel.
-
       // 2. Initialize NeuralWorker.Proxies
       {
         // It will be used by .workerProxies_init_async()
@@ -504,19 +487,23 @@ class NeuralOrchestra_Base extends Recyclable.Root {
         allPromiseSet.add( this.workerProxies_init_promise );
       }
 
-//!!! ...unfinished... (2023/03/11)
-
-      // Wait NeuralWorker.Proxies initialization to complete, and
-      // advance DEvolution.Versus loading simultaneously.
+      // 3. Wait NeuralWorker.Proxies initialization to complete, and
+      //    advance DEvolution.Versus loading simultaneously.
+      //
+      // Note: Here does not wait for loading complete. Continue to create
+      //       neural workers and compile GPU shaders because they all
+      //       take time but can be done in parallel.
       let workerProxies_init_done = false;
       do {
-        let allPromise = Promise.race( allPromiseSet );
 
+        // 3.1
+        //
         // If .versus_loader_async.next() resolved, got an { done, value } object.
         // If .workerProxies_init_promise resolved, got a boolean value.
+        let allPromise = Promise.race( allPromiseSet );
         let object_or_boolean = await allPromise;
 
-        // .versus_loader_async.next() resolved.
+        // 3.2 .versus_loader_async.next() resolved.
         if ( object_or_boolean instanceof Object ) {
           let object = object_or_boolean;
           if ( object.done ) {
@@ -549,8 +536,8 @@ class NeuralOrchestra_Base extends Recyclable.Root {
             allPromiseSet.add( loader_next );
           }
 
-        // If .workerProxies_init_promise resolved.
-        // (Note: The .workerProxies_initOk will also be set.)
+        // 3.3 .workerProxies_init_promise resolved.
+        //     (Note: The .workerProxies_initOk will also be set.)
         } else {
           let workerProxies_initOk = object_or_boolean; // should be a boolean value.
           if ( workerProxies_initOk != this.workerProxies_initOk )
@@ -571,17 +558,15 @@ class NeuralOrchestra_Base extends Recyclable.Root {
 
       } while ( !workerProxies_init_done );
 
-
-      // 3. Versus Result Reporter
+      // 4. Versus Result Reporter
       this.versusResultSender_init( sender_clientId );
 
-//!!! ...unfinished... (2023/03/11)
-
+      // 5.
       this.initOk = true;
       return this.initOk;
 
     } finally {
-      // 4. So that this async generator could be executed again.
+      // 6. So that this async generator could be executed again.
       this.init_asyncGenerator_running = false;
     }
   }
