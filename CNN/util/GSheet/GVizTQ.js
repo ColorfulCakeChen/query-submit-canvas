@@ -131,7 +131,6 @@ class GVizTQ_UrlComposer extends Recyclable.Root {
     headers, responseHandler, sheetId, sheetName
   ) {
     this.spreadsheetUrlPrefix = GVizTQ_UrlComposer.spreadsheetUrlPrefix;
-    this.bLogFetcherEventToConsole = false;
     this.set_by_spreadsheetId_range_headers_responseHandler_sheetId_sheetName(
       spreadsheetId,
       range, headers, responseHandler, sheetId, sheetName

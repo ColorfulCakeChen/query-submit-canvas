@@ -85,7 +85,6 @@ class GSheetsAPIv4_UrlComposer extends Recyclable.Root {
   /** @override */
   static setAsConstructor_self( spreadsheetId, range, apiKey ) {
     this.spreadsheetUrlPrefix = GSheetsAPIv4_UrlComposer.spreadsheetUrlPrefix;
-    this.bLogFetcherEventToConsole = false;
     this.set_by_spreadsheetId_range_apiKey( spreadsheetId, range, apiKey );
   }
 
