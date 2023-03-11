@@ -55,6 +55,16 @@ async function* tester( progressParent ) {
     try {
       neuralOrchestra = NeuralOrchestra.Base.Pool.get_or_create_by();
 
+      // Check: For a new NeuralOrchestra, only .workerProxies should exist.
+      for ( let p in neuralOrchestra ) {
+        let propertyValue = neuralOrchestra[ p ];
+        if ( propertyValue )
+          if ( propertyValue != neuralOrchestra.workerProxies )
+            throw Error( `NeuralOrchestra_tester.tester(): `
+              + `neuralOrchestra.${p} (${neuralOrchestra[ p ]}) `
+              + `should be undefined.` );
+      }
+  
       // Test: re-init (without re-create).
       for ( let initCount = 0; initCount < initCountMax; ++initCount ) {
 

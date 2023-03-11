@@ -181,13 +181,17 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     this.initOk = undefined;
     this.init_running = undefined;
 
+    this.bLogFetcherEventToConsole = undefined;
+    this.downloader_apiKey = undefined;
+    this.downloader_spreadsheetId = undefined;
+
     this.params_loading_retryWaiting = undefined;
 
     super.disposeResources();
   }
 
   get sender_clientId() {
-    return this.versusResultSender.clientId;
+    return this.versusResultSender?.clientId;
   }
 
   get backendName() {
