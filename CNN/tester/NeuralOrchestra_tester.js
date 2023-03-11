@@ -19,7 +19,7 @@ async function* tester( progressParent ) {
   let progressRoot = progressParent.root_get();
 
   let progressToAdvance = progressParent.child_add(
-    ValueMax.Percentage.Concrete.Pool.get_or_create_by( 7 ) );
+    ValueMax.Percentage.Concrete.Pool.get_or_create_by( 8 ) );
 
   let downloader_spreadsheetId = "18YyEoy-OfSkODfw8wqBRApSrRnBTZpjRpRiwIKy8a0M";
   let downloader_apiKey = null;
@@ -39,7 +39,7 @@ async function* tester( progressParent ) {
   try {
     // 1. Create and initialize.
     neuralOrchestra = NeuralOrchestra.Base.Pool.get_or_create_by();
-    let bInitOk = await neuralOrchestra.init_async(
+    let initPromise = neuralOrchestra.init_async(
       downloader_spreadsheetId, downloader_apiKey, bLogFetcherEventToConsole,
       sender_clientId,
 
@@ -48,10 +48,24 @@ async function* tester( progressParent ) {
 
       vocabularyChannelCount,
       blockCountTotalRequested,
-      output_channelCount,
+      output_channelCount
     );
 
-    if ( !bInitOk )
+    try { // Test: Re-entrance .init_async() should throw exception.
+      let initFailedPromise = await neuralOrchestra.init_async(
+        downloader_spreadsheetId, downloader_apiKey, bLogFetcherEventToConsole,
+        sender_clientId,
+        input_height, input_width,
+        vocabularyChannelCount, blockCountTotalRequested, output_channelCount
+      );
+  
+    } catch ( e ) {
+      progressToAdvance.value_advance();
+      yield progressRoot;
+    }
+
+    let initOk = await initPromise;
+    if ( !initOk )
       throw Error( `NeuralOrchestra_tester.tester(): `
         + `neuralOrchestra.init_async() failed.`
       );

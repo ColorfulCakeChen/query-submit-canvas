@@ -151,6 +151,8 @@ class DEvolution_VersusSummary extends Recyclable.Root {
   async* rangeArray_load_asyncGenerator(
     progressParent, params_loading_retryWaiting ) {
 
+//!!! ...unfinished... (2023/03/11) What if re-entrtance?
+
     let progressRoot = progressParent.root_get();
     let progressFetcher = progressParent.child_add(
       ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
@@ -259,6 +261,8 @@ class DEvolution_VersusSummary extends Recyclable.Root {
   async* versus_next_load_asyncGenerator(
     progressParent, params_loading_retryWaiting ) {
 
+//!!! ...unfinished... (2023/03/11) What if re-entrtance?
+
     let visitIndex = this.visitIndex_get();
     if ( visitIndex < 0 )
       return null;
@@ -312,6 +316,9 @@ class DEvolution_VersusSummary extends Recyclable.Root {
    *   - Resolved to null, if failed.
    */
   async versus_next_load_async( params_loading_retryWaiting ) {
+
+//!!! ...unfinished... (2023/03/11) What if re-entrtance?
+
     let progress;
     try {
       progress = ValueMax.Percentage.Aggregate.Pool.get_or_create_by();

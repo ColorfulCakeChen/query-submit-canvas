@@ -104,6 +104,8 @@ class DEvolution_Versus extends Recyclable.Root {
     params_loading_retryWaiting,
     textEncoder ) {
 
+//!!! ...unfinished... (2023/03/11) What if re-entrtance?
+
     // 0.1
     this.parentChromosomeFloat32Array = undefined;
     this.offspringChromosomeFloat32Array = undefined;

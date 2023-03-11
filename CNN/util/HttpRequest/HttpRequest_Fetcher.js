@@ -109,6 +109,8 @@ class HttpRequest_Fetcher {
     body
   ) {
 
+//!!! ...unfinished... (2023/03/11) What if re-entrtance?
+
     // 0.
 
     // 0.1

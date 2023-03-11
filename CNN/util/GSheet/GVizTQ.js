@@ -192,6 +192,8 @@ class GVizTQ_UrlComposer extends Recyclable.Root {
   async* JSON_ColumnMajorArrayArray_fetch_asyncGenerator(
     progressParent, params_loading_retryWaiting ) {
 
+//!!! ...unfinished... (2023/03/11) What if re-entrtance?
+
     let progressRoot = progressParent.root_get();
     let progressFetcher = progressParent.child_add(
       ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );

@@ -284,8 +284,6 @@ class NeuralOrchestra_Base extends Recyclable.Root {
         + `should not be executed multiple times simultaneously.`
       );
 
-//!!! ...unfinished... (2023/03/11) What if re-entrtance?
-
     try {
       this.init_running = true;
 

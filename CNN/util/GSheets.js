@@ -128,6 +128,8 @@ class GSheets_UrlComposer extends Recyclable.Root {
   async* JSON_ColumnMajorArrayArray_fetch_asyncGenerator(
     progressParent, params_loading_retryWaiting ) {
 
+//!!! ...unfinished... (2023/03/11) What if re-entrtance?
+
     let fetcher = this.urlComposer.JSON_ColumnMajorArrayArray_fetch_asyncGenerator(
       progressParent, params_loading_retryWaiting );
 
@@ -149,6 +151,9 @@ class GSheets_UrlComposer extends Recyclable.Root {
    *   - It will resolve to ( null ) when failed.
    */
   async JSON_ColumnMajorArrayArray_fetch_async( params_loading_retryWaiting ) {
+
+//!!! ...unfinished... (2023/03/11) What if re-entrtance?
+
     let progress = ValueMax.Percentage.Aggregate.Pool.get_or_create_by();
 
     let resultColumnMajorArrayArray;
