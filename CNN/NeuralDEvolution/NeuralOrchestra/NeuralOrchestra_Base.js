@@ -824,12 +824,18 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     try {
       this.versus_load_async_running = true;
 
+//!!! ...unfinished... (2023/03/11)
+// Perhaps, prepare outside.
+
       // 0. Prepare progress.
       if ( this.versus_load_progress )
         this.versus_load_progress.child_disposeAll();
       else
         this.versus_load_progress
           = ValueMax.Percentage.Aggregate.Pool.get_or_create_by()
+
+//!!! ...unfinished... (2023/03/11)
+// Perhaps, prepare outside.
 
       // 1. Load versus summary and versus. Create neural networks.
       this.versus_loader_async_create( this.versus_load_progress );
@@ -849,6 +855,9 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     } finally {
       // 2. So that this async method could be executed again.
       this.versus_load_async_running = false;
+
+//!!! ...unfinished... (2023/03/11)
+      this.versus_loader_async = null;
     }
   }
 
