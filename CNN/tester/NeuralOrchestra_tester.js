@@ -124,14 +124,15 @@ async function* tester( progressParent ) {
             neuralOrchestra.versus_load_async__record_promise();
 
             try { // Test: Re-entrance should throw exception.
-              NeuralOrchestra.Base.versus_load_async.call( neuralOrchestra );
+              await NeuralOrchestra.Base.versus_load_async.call( neuralOrchestra );
             } catch ( e ) {
               progressToAdvance.value_advance();
               yield progressRoot;
             }
 
             try { // Test: Re-entrance should throw exception.
-              NeuralOrchestra.Base.versus_load_asyncGenerator.call( neuralOrchestra )
+              await NeuralOrchestra.Base.versus_load_asyncGenerator
+                .call( neuralOrchestra )
                 .next();
             } catch ( e ) {
               progressToAdvance.value_advance();
