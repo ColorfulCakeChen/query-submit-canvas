@@ -224,8 +224,10 @@ class NeuralOrchestra_Base extends Recyclable.Root {
    * @param {NeuralOrchestra_Base} this
    */
   static neuralNetParamsBase_create(
-    input_height, input_width, vocabularyChannelCount,
-    blockCountTotalRequested, output_channelCount ) {
+    input_height, input_width,
+    vocabularyChannelCount,
+    blockCountTotalRequested,
+    output_channelCount ) {
 
     this.neuralNetParamsBase_dispose();
 
@@ -366,8 +368,10 @@ class NeuralOrchestra_Base extends Recyclable.Root {
       {
         // It will be used by .workerProxies_init_async()
         NeuralOrchestra_Base.neuralNetParamsBase_create.call( this,
-          input_height, input_width, vocabularyChannelCount,
-          blockCountTotalRequested, output_channelCount );
+          input_height, input_width,
+          vocabularyChannelCount,
+          blockCountTotalRequested,
+          output_channelCount );
 
         // Note: The .workerProxies_init_promise will also be set.
         let workerProxies_init_promise = NeuralOrchestra_Base
