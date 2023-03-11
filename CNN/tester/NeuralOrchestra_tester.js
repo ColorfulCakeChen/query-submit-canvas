@@ -58,7 +58,7 @@ async function* tester( progressParent ) {
       // Check: For a new NeuralOrchestra, only .workerProxies should exist.
       for ( let p in neuralOrchestra ) {
         let propertyValue = neuralOrchestra[ p ];
-        if ( propertyValue )
+        if ( propertyValue != undefined )
           if ( propertyValue != neuralOrchestra.workerProxies )
             throw Error( `NeuralOrchestra_tester.tester(): `
               + `neuralOrchestra.${p} (${neuralOrchestra[ p ]}) `
