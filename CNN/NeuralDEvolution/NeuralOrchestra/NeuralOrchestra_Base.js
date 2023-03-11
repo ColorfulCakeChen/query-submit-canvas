@@ -487,18 +487,14 @@ class NeuralOrchestra_Base extends Recyclable.Root {
       do {
         let allPromise = Promise.race( allPromiseSet );
 
-        // If .workerProxies_init_promise resolved, got a boolean value.
         // If .versus_loader_async.next() resolved, got an { done, value } object.
+        // If .workerProxies_init_promise resolved, got a boolean value.
         let object_or_boolean = await allPromise;
 
         // .versus_loader_async.next() resolved.
         if ( object_or_boolean instanceof Object ) {
           let object = object_or_boolean;
           if ( object.done ) {
-
-//!!! ...unfinished... (2023/03/11)
-// should not execute to here
-// because .versus_loader_async waits .workerProxies_init_promise internally.
 
             // (Note: The .versus_loadOk will also be set.)
             let versus_loadOk = object.value;
@@ -509,13 +505,22 @@ class NeuralOrchestra_Base extends Recyclable.Root {
                 + `this.versus_loadOk ( ${this.versus_loadOk} ).`
               );
 
+//!!! ...unfinished... (2023/03/11)
+            // In theory, it should not execute to here because
+            // .versus_loader_async waits .workerProxies_init_promise internally.
+            throw Error( `NeuralOrchestra.Base.init_asyncGenerator(): `
+              + `.versus_loader_async `
+              + `should not be done before `
+              + `.workerProxies_init_promise`
+            );
+
           } else {
+            yield progressRoot???;
+
             allPromiseSet.delete( loader_next );
             loader_next = this.versus_loader_async.next();
             allPromiseSet.add( loader_next );
           }
-
-          yield progressRoot???;
 
         // If .workerProxies_init_promise resolved.
         // (Note: The .workerProxies_initOk will also be set.)
