@@ -37,10 +37,10 @@ async function* tester( progressParent ) {
   // Prepare progress list.
   let progressRoot = progressParent.root_get();
   let progressCreateOrInitArray = new Array();
-  for ( let createCount = 0; createCount < createCountMax; ++createCountMax ) {
-    for ( let initCount = 0; initCount < initCountMax; ++initCountMax ) {
+  for ( let createCount = 0; createCount < createCountMax; ++createCount ) {
+    for ( let initCount = 0; initCount < initCountMax; ++initCount ) {
       let progressCreateOrInit = progressParent.child_add(
-            ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
+        ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
       progressCreateOrInitArray.push( progressCreateOrInit );
     }
   }
@@ -49,14 +49,14 @@ async function* tester( progressParent ) {
   let neuralOrchestraIndex = 0;
 
   // Test: re-create.
-  for ( let createCount = 0; createCount < createCountMax; ++createCountMax ) {
+  for ( let createCount = 0; createCount < createCountMax; ++createCount ) {
 
     let neuralOrchestra;
     try {
       neuralOrchestra = NeuralOrchestra.Base.Pool.get_or_create_by();
 
       // Test: re-init (without re-create).
-      for ( let initCount = 0; initCount < initCountMax; ++initCountMax ) {
+      for ( let initCount = 0; initCount < initCountMax; ++initCount ) {
 
         let progressCreateOrInit = progressCreateOrInitArray[ neuralOrchestraIndex ];
         let progressToAdvance = progressCreateOrInit.child_add(
