@@ -119,6 +119,10 @@ async function* tester( progressParent ) {
         const loadCountMax = 2;
         for ( let loadCount = 0; loadCount < loadCountMax; ++loadCount ) {
 
+//!!! ...unfinished... (2023/03/11)
+// How to display neuralOrchestra.versus_load_progress?
+// How to integrate it into progressCreateOrInit?
+
           // 2.0 Try another versus loading and neural networks creating.
           if ( loadCount > 0 ) {
             neuralOrchestra.versus_load_async__record_promise();
