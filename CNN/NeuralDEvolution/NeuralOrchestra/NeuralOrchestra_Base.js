@@ -92,10 +92,16 @@ import * as DEvolution from "../DEvolution.js";
  *   If true, a .init_async() is still executing. Please wait it becoming to
  * false if wanting to call again.
  *
+ * @member {boolean} initOk
+ *   If true, a .init_async() has been executed and succeeded.
+ *
  *
  * @member {boolean} workerProxies_init_running
  *   If true, a .workerProxies_init_async() is still executing. Please wait
  * it becoming to false if wanting to call again.
+ *
+ * @member {boolean} workerProxies_initOk
+ *   If true, a .workerProxies_init_async() has been executed and succeeded.
  *
  * @member {Promise( boolean )} workerProxies_init_promise
  *   The promise of .workerProxies_init_async().
@@ -123,6 +129,9 @@ import * as DEvolution from "../DEvolution.js";
  *   The progress of loading versus summary, loading versus, creating neural
  * networks. If ( .versus_load_progress.valuePercentage == 100 ), all the
  * loading and creating has done.
+ *
+ * @member {boolean} versus_loadOk
+ *   If true, a .versus_load_asyncGenerator() has been executed and succeeded.
  */
 class NeuralOrchestra_Base extends Recyclable.Root {
 
@@ -155,13 +164,16 @@ class NeuralOrchestra_Base extends Recyclable.Root {
   disposeResources() {
     this.versusResultSender_dispose();
     this.versus_load_progress_dispose();
+    this.versus_loadOk = undefined;
     this.versus_load_asyncGenerator_running = undefined;
     this.versus_load_async_running = undefined;
     this.versus_dispose();
     this.versusSummary_dispose();
+    this.workerProxies_initOk = undefined;
     this.workerProxies_init_running = undefined;
     this.neuralNetParamsBase_dispose();
     this.workerProxies_dispose();
+    this.initOk = undefined;
     this.init_running = undefined;
     this.params_loading_retryWaiting = undefined;
 
@@ -286,6 +298,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
 
     try {
       this.init_running = true;
+      this.initOk = false;
 
       // 1.
 
@@ -334,18 +347,26 @@ class NeuralOrchestra_Base extends Recyclable.Root {
         this.workerProxies_init_promise
           = NeuralOrchestra_Base.workerProxies_init_async.call( this,
               neuralNetParamsBase );
+
+        // Note: The .workerProxies_initOk will also be set.
+        let workerProxies_initOk = await this.workerProxies_init_promise;
+        if ( !workerProxies_initOk )
+          throw Error( `NeuralOrchestra.Base.init_async(): `
+            + `Failed to initialize NeuralWorker.Proxies. `
+            + `workerProxies={ ${this.workerProxies} }`
+          );
       }
 
       // 3. Versus Result Reporter
       this.versusResultSender_init( sender_clientId );
 
+      this.initOk = true;
+      return this.initOk;
+
     } finally {
       // 4. So that this async method could be executed again.
       this.init_running = false;
     }
-
-    // 5.
-    return this.workerProxies_init_promise;
   }
 
   /**
@@ -376,6 +397,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     let initOk;
     try {
       this.workerProxies_init_running = true;
+      this.workerProxies_initOk = false;
 
       this.neuralNetParamsBase_dispose();
       this.neuralNetParamsBase = neuralNetParamsBase;
@@ -400,7 +422,9 @@ class NeuralOrchestra_Base extends Recyclable.Root {
             = NeuralOrchestra_Base.workerProxies_compileShaders_async.call( this );
 
           let compileOk = await compilePromise;
-          return compileOk;
+
+          this.workerProxies_initOk = compileOk;
+          return this.workerProxies_initOk;
         }
       }
 
@@ -417,7 +441,8 @@ class NeuralOrchestra_Base extends Recyclable.Root {
         );
 
         initOk = await initOkPromise;
-        return initOk;
+        this.workerProxies_initOk = initOk;
+        return this.workerProxies_initOk;
       }
 
     } finally {
@@ -653,6 +678,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     let neuralNet_createOk;
     try {
       // 0.
+      this.versus_loadOk = false;
 
       // 0.1 Prevent re-entrance.
       this.versus_load_asyncGenerator_running = true;
@@ -761,11 +787,13 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     //    that caller can re-execute this generator immediately when progress
     //    become 100%).
     if ( neuralNet_createOk ) {
+      this.versus_loadOk = true;
+
       progressToAdvance.value_advance();
       yield progressRoot;
     }
 
-    return neuralNet_createOk;
+    return this.versus_loadOk;
   }
 
 
