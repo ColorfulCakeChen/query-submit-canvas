@@ -350,14 +350,12 @@ class NeuralOrchestra_Base extends Recyclable.Root {
       this.init_running = true;
       this.initOk = false;
 
-      // 1.
-
-      // 1.1
+      // 0.
       this.downloader_spreadsheetId = downloader_spreadsheetId;
       this.downloader_apiKey = downloader_apiKey;
       this.bLogFetcherEventToConsole = bLogFetcherEventToConsole;
 
-      // 1.2 Load (versus summary and) versus. Create neural networks.
+      // 1. Load (versus summary and) versus. Create neural networks.
       this.versus_load_async__record_promise();
 
       // Note: Here does not wait for loading complete. Continue to create
