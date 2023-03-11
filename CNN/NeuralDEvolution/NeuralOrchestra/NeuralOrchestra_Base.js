@@ -136,7 +136,8 @@ import * as DEvolution from "../DEvolution.js";
 class NeuralOrchestra_Base extends Recyclable.Root {
 
   /**
-   * Used as default NeuralOrchestra.Base provider for conforming to Recyclable interface.
+   * Used as default NeuralOrchestra.Base provider for conforming to
+   * Recyclable interface.
    */
   static Pool = new Pool.Root( "NeuralOrchestra.Base.Pool",
     NeuralOrchestra_Base, NeuralOrchestra_Base.setAsConstructor );
@@ -217,6 +218,44 @@ class NeuralOrchestra_Base extends Recyclable.Root {
           retryTimesMax,
           retryWaitingSecondsExponentMax, retryWaitingMillisecondsInterval
         );
+  }
+
+  /**
+   * @param {NeuralOrchestra_Base} this
+   */
+  static neuralNetParamsBase_create(
+    input_height, input_width, vocabularyChannelCount,
+    blockCountTotalRequested, output_channelCount ) {
+
+    this.neuralNetParamsBase_dispose();
+
+    // Because image comes from canvas, the tf.browser.fromPixels() handle a
+    // RGBA 4 channels faster than RGB 3 channels input.
+    const input_channelCount = 4;
+
+    // For image, every RGBA input channel always has 256 (= 2 ** 8) possible
+    // values.
+    const vocabularyCountPerInputChannel = 256;
+
+    // Use faster convolution neural network architecture.
+    //
+    // Although using SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID (6) is even
+    // faster, however, using SHUFFLE_NET_V2_BY_MOBILE_NET_V1 (5) is safer
+    // because it will not drop the edge pixels of the image to be processed.
+    //
+    const nConvStageType
+      = ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1; // (5)
+
+    // The neuralNet should not keep-input-tensor because the input image is
+    // created from canvas in real time.
+    const bKeepInputTensor = false;
+
+    this.neuralNetParamsBase = NeuralNet.ParamsBase.Pool.get_or_create_by(
+      input_height, input_width, input_channelCount,
+      vocabularyChannelCount, vocabularyCountPerInputChannel,
+      nConvStageType,
+      blockCountTotalRequested, output_channelCount, bKeepInputTensor
+    );
   }
 
   /** */
@@ -326,38 +365,13 @@ class NeuralOrchestra_Base extends Recyclable.Root {
 
       // 2. Neural Workers.
       {
-        // Because image comes from canvas, the tf.browser.fromPixels() handle a
-        // RGBA 4 channels faster than RGB 3 channels input.
-        const input_channelCount = 4;
-
-        // For image, every RGBA input channel always has 256 (= 2 ** 8) possible
-        // values.
-        const vocabularyCountPerInputChannel = 256;
-
-        // Use faster convolution neural network architecture.
-        //
-        // Although using SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID (6) is even
-        // faster, however, using SHUFFLE_NET_V2_BY_MOBILE_NET_V1 (5) is safer
-        // because it will not drop the edge pixels of the image to be processed.
-        //
-        const nConvStageType
-          = ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1; // (5)
-
-        // The neuralNet should not keep-input-tensor because the input image is
-        // created from canvas in real time.
-        const bKeepInputTensor = false;
-
-        let neuralNetParamsBase = NeuralNet.ParamsBase.Pool.get_or_create_by(
-          input_height, input_width, input_channelCount,
-          vocabularyChannelCount, vocabularyCountPerInputChannel,
-          nConvStageType,
-          blockCountTotalRequested, output_channelCount, bKeepInputTensor
-        );
+        NeuralOrchestra_Base.neuralNetParamsBase_create.call( this,
+          input_height, input_width, vocabularyChannelCount,
+          blockCountTotalRequested, output_channelCount );
 
         // Note: The .workerProxies_init_promise will also be set.
-        let workerProxies_init_promise
-          = NeuralOrchestra_Base.workerProxies_init_async__record_promise.call(
-              this, neuralNetParamsBase );
+        let workerProxies_init_promise = NeuralOrchestra_Base
+          .workerProxies_init_async__record_promise.call( this );
 
         // Note: The .workerProxies_initOk will also be set.
         let workerProxies_initOk = await workerProxies_init_promise;
@@ -385,16 +399,14 @@ class NeuralOrchestra_Base extends Recyclable.Root {
    * .workerProxies_init_promise.
    *
    * @param {NeuralOrchestra_Base} this
-   *
-   * @param {NeuralNet.ParamsBase} neuralNetParamsBase
+   * @param {NeuralNet.ParamsBase} this.neuralNetParamsBase
    *
    * @return {Promise( boolean )}
    *   Return this.workerProxies_init_promise
    */
-  static workerProxies_init_async__record_promise( neuralNetParamsBase ) {
+  static workerProxies_init_async__record_promise() {
     this.workerProxies_init_promise
-      = NeuralOrchestra_Base.workerProxies_init_async.call( this,
-        neuralNetParamsBase );
+      = NeuralOrchestra_Base.workerProxies_init_async.call( this );
     return this.workerProxies_init_promise;
   }
 
@@ -405,7 +417,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
    *
    * @param {NeuralOrchestra_Base} this
    *
-   * @param {NeuralNet.ParamsBase} neuralNetParamsBase
+   * @param {NeuralNet.ParamsBase} this.neuralNetParamsBase
    *   The neural network configuration. It will be used for both two neural
    * networks. It will be kept (i.e. owned and destroyed) by this NeuralOrchetra
    * object. Its .nConvStageTypeId may be modified according to which backend
@@ -416,7 +428,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
    *   - Resolved to true, if succeeded.
    *   - Resolved to false, if failed.
    */
-  static async workerProxies_init_async( neuralNetParamsBase ) {
+  static async workerProxies_init_async() {
 
     if ( this.workerProxies_init_running )
       throw Error( `NeuralOrchestra.Base.workerProxies_init_async(): `
@@ -428,8 +440,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
       this.workerProxies_init_running = true;
       this.workerProxies_initOk = false;
 
-      this.neuralNetParamsBase_dispose();
-      this.neuralNetParamsBase = neuralNetParamsBase;
+      let neuralNetParamsBase = this.neuralNetParamsBase;
 
       let initOkPromise;
 
@@ -485,6 +496,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
    * shaders in advance.
    *
    * @param {NeuralOrchestra_Base} this
+   * @param {NeuralNet.ParamsBase} this.neuralNetParamsBase
    */
   static async workerProxies_compileShaders_async() {
 
@@ -526,6 +538,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
    * Create neural networks in all neural web workers.
    *
    * @param {NeuralOrchestra_Base} this
+   * @param {NeuralNet.ParamsBase} this.neuralNetParamsBase
    *
    * @param {ArrayBuffer[]} weightArrayBufferArray
    *   An array of every neural network's weights. Every element will be interpreted
