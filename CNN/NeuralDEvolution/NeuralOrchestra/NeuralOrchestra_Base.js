@@ -483,7 +483,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
       }
 
 //!!! ...unfinished... (2023/03/11)
-      let notDone;
+      let workerProxies_init_done = false;
       do {
         let allPromise = Promise.race( allPromiseSet );
 
@@ -536,7 +536,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
             );
 
           // Initialization is done. (Although .versus_loader_async not yet done.)
-          notDone = false;
+          workerProxies_init_done = true;
 
           if ( !workerProxies_initOk )
             throw Error( `NeuralOrchestra.Base.init_asyncGenerator(): `
@@ -545,7 +545,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
             );
         }
 
-      } while ( notDone );
+      } while ( !workerProxies_init_done );
 
 
       // 3. Versus Result Reporter
