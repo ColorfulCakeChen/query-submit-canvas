@@ -1027,14 +1027,19 @@ class NeuralOrchestra_Base extends Recyclable.Root {
 
       // 3. Create neural networks.
 
-      // Note: These Float32Array will be transferred to neural web workers (i.e.
-      //       their .byteLength will become zero).
+      // Note: These Float32Array will be transferred to neural web workers
+      //       (i.e. their .byteLength will become zero).
       let weightArrayBufferArray = [
         this.versus.parentChromosomeFloat32Array.buffer,
         this.versus.offspringChromosomeFloat32Array.buffer
       ];
 
-      // 3.1 Before creating neural network, the neural web workers should be ready.
+      // 3.1 Before creating neural networks, the neural web workers should
+      //     be ready.
+      //
+      // Note: This is why .versus_loader_async is impossible to complete
+      //       before .workerProxies_init_promise complete inside
+      //       .init_asyncGenerator().
       let workerProxies_initOk = await this.workerProxies_init_promise;
       if ( !workerProxies_initOk )
         throw Error( `NeuralOrchestra.Base.versus_load_asyncGenerator(): `
