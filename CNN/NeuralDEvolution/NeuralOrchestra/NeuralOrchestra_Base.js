@@ -576,6 +576,19 @@ class NeuralOrchestra_Base extends Recyclable.Root {
   }
 
 
+  /** */
+  workerProxies_create() {
+    this.workerProxies_dispose();
+    this.workerProxies = NeuralWorker.Proxies.Pool.get_or_create_by();
+  }
+
+  /** */
+  workerProxies_dispose() {
+    if ( this.workerProxies ) {
+      this.workerProxies.disposeResources_and_recycleToPool();
+      this.workerProxies = null;
+    }
+  }
 
   /**
    * Call .workerProxies_init_async() and record the returned promise in
@@ -768,20 +781,6 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     let theFloat32ArrayArrayPromise
       = this.workerProxies.ImageData_process_async( sourceImageData );
     return theFloat32ArrayArrayPromise;
-  }
-
-  /** */
-  workerProxies_create() {
-    this.workerProxies_dispose();
-    this.workerProxies = NeuralWorker.Proxies.Pool.get_or_create_by();
-  }
-
-  /** */
-  workerProxies_dispose() {
-    if ( this.workerProxies ) {
-      this.workerProxies.disposeResources_and_recycleToPool();
-      this.workerProxies = null;
-    }
   }
 
 
