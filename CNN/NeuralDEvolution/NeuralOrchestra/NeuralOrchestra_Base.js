@@ -488,7 +488,6 @@ class NeuralOrchestra_Base extends Recyclable.Root {
           output_channelCount );
 
         NeuralOrchestra_Base.workerProxies_init_promise_create.call( this );
-
         allPromiseSet.add( this.workerProxies_init_promise );
       }
 
