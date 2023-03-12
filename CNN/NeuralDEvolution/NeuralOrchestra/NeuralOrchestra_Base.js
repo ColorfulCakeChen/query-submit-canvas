@@ -24,18 +24,18 @@ import * as DEvolution from "../DEvolution.js";
  * 1.1 
  *
  *   - Initialize (and also load one versus):
- *     - Call and await .init_async(). After it resolved to true,
+ *     - Call and await .init_async(). After it resolved to true, go to 1.1.1
  *
- *   - Load another versus: call .versus_load_promise_create().
- *     - await .versus_load_promise, or
- *     - check .versus_load_progress.valuePercentage until become 100, or
- *     - check .versus_loadOk until become true.
+ *   - Load another versus:
+ *     - Call .versus_load_promise_create(), and go to 1.1.1
  *
  * 1.1.1
+ *
  *   - Await versus and neural networks by:
  *     - await .versus_load_promise (which is created inside .init_async()), or
  *     - check .versus_load_progress.valuePercentage until become 100, or
  *     - check .versus_loadOk until become true.
+ *
  *   - Call and await .workerProxies_ImageData_process_async() 
  *
  *
