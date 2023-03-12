@@ -57,12 +57,11 @@ async function* tester( progressParent ) {
       neuralOrchestra = NeuralOrchestra.Base.Pool.get_or_create_by();
 
       // Check: For a new NeuralOrchestra, only .params_loading_retryWaiting
-      //        and .workerProxies should exist.
+      //        should exist.
       for ( let p in neuralOrchestra ) {
         let propertyValue = neuralOrchestra[ p ];
         if ( propertyValue != undefined )
-          if (   ( propertyValue != neuralOrchestra.params_loading_retryWaiting )
-              && ( propertyValue != neuralOrchestra.workerProxies ) )
+          if ( propertyValue != neuralOrchestra.params_loading_retryWaiting )
             throw Error( `NeuralOrchestra_tester.tester(): `
               + `neuralOrchestra.${p} (${neuralOrchestra[ p ]}) `
               + `should be undefined.` );
