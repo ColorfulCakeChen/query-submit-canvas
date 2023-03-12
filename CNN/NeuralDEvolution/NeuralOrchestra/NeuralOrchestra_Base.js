@@ -563,7 +563,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
 
       } while ( !workerProxies_init_done );
 
-      // 4. Versus Result Reporter
+      // 4. Create Versus Result Reporter
       this.versusResultSender_init( sender_clientId );
 
       // 5.
