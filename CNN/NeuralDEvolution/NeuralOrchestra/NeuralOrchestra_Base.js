@@ -494,9 +494,9 @@ class NeuralOrchestra_Base extends Recyclable.Root {
       // 3. Wait NeuralWorker.Proxies initialization to complete, and
       //    advance DEvolution.Versus loading simultaneously.
       //
-      // Note: Here does not wait for loading complete. Continue to create
-      //       neural workers and compile GPU shaders because they all
-      //       take time but can be done in parallel.
+      // Note: Here does not wait for DEvolution.Versus loading complete.
+      //       Here mainly waits for neural workers creating and GPU shaders
+      //       compiling to complete. However, here let they going in parallel.
       let workerProxies_init_done = false;
       do {
 
