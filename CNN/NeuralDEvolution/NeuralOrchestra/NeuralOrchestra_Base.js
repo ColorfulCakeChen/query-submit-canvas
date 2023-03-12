@@ -13,7 +13,29 @@ import * as DEvolution from "../DEvolution.js";
  * Orchestrate neural networks with differential evolution.
  *
  *
- * 1. Configuration for 250K filter weights and executing 2 times per second
+ * 1. Usage
+ *
+ * There are mainly two using methods.
+ *
+ *
+ * 1.1 
+ *
+ *   - Call and await .init_async()
+ *   - After it resolved to true,
+ *     - await .versus_load_promise (which is created inside .init_async()), or
+ *     - check .versus_load_progress.valuePercentage until become 100, or
+ *     - check .versus_loadOk until become true.
+ *
+ *
+ * 1.2
+ *         (since they need the versus data). Please check .versus_loader_async
+ *          or .versus_loadOk to determine whether
+ *         complete.
+ *
+ *  .versus_load_progress is not used.
+ *
+ *
+ * 2. Configuration for 250K filter weights and executing 2 times per second
  *
  *   - input_height = 72
  *   - input_width = 131 (= ( 128 + 3 ) )
@@ -35,7 +57,7 @@ import * as DEvolution from "../DEvolution.js";
  *       more (than 250K).
  *
  *
- * 1.1 Configuration_4_39
+ * 2.1 Configuration_4_39
  *
  *   - vocabularyChannelCount = 4
  *   - blockCountTotalRequested = 39
@@ -44,7 +66,7 @@ import * as DEvolution from "../DEvolution.js";
  * than Configuration_2_52.
  *
  *
- * 1.2 Configuration_2_52
+ * 2.2 Configuration_2_52
  *
  *   - vocabularyChannelCount = 2
  *   - blockCountTotalRequested = 52
@@ -418,8 +440,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
    *     - But the versus summary and versus may still be loading (i.e. not
    *         yet complete). The neural networks may also still not be created
    *         (since they need the versus data). Please check .versus_loader_async
-   *         or .versus_load_progress or .versus_loadOk to determine whether
-   *         complete.
+   *         or .versus_loadOk to determine whether complete.
    * 
    *   - Resolved to { done: true, value: false }, if failed.
    */
