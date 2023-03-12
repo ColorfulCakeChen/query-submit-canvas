@@ -563,7 +563,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
       } while ( !workerProxies_init_done );
 
       // 4. Create Versus Result Reporter
-      this.versusResultSender_init( sender_clientId );
+      this.versusResultSender_create( sender_clientId );
 
       // 5.
       this.initOk = true;
@@ -1089,7 +1089,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
 
 
   /** Create differential evolution versus result reporter. */
-  versusResultSender_init( sender_clientId ) {
+  versusResultSender_create( sender_clientId ) {
     this.versusResultSender_dispose();
     this.versusResultSender = DEvolution.VersusResultSender
       .MultiEventName.Pool.get_or_create_by( sender_clientId );
