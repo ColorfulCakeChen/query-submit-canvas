@@ -1116,16 +1116,5 @@ class NeuralOrchestra_Base extends Recyclable.Root {
       this.versusResultSender = null;
     }
   }
-
-
-!!! ...unfinished... (2023/03/12)
-  /** */
-  isRunning() {
-    init_async_running
-    init_asyncGenerator_running
-    workerProxies_init_async_running
-    versus_load_async_running
-    versus_load_asyncGenerator_running
-  }
  
 }
