@@ -801,13 +801,15 @@ class NeuralOrchestra_Base extends Recyclable.Root {
   }
 
 
-  /** Use .downloader_spreadsheetId, .downloader_apiKey, .bLogFetcherEventToConsole */
-  versusSummary_create() {
+  /** */
+  versusSummary_create(
+    downloader_spreadsheetId, downloader_apiKey, bLogFetcherEventToConsole ) {
+
     this.versusSummary_dispose();
     this.versusSummary = DEvolution.VersusSummary.Pool.get_or_create_by(
-      this.downloader_spreadsheetId, this.downloader_apiKey );
+      downloader_spreadsheetId, downloader_apiKey );
 
-    this.versusSummary.bLogFetcherEventToConsole = this.bLogFetcherEventToConsole;
+    this.versusSummary.bLogFetcherEventToConsole = bLogFetcherEventToConsole;
   }
 
   /** */
@@ -976,7 +978,9 @@ class NeuralOrchestra_Base extends Recyclable.Root {
           versusSummary_needLoad = true;
         }
       } else {
-        this.versusSummary_create();
+        this.versusSummary_create(
+          this.downloader_spreadsheetId, this.downloader_apiKey,
+          this.bLogFetcherEventToConsole );
         versusSummary_needLoad = true;
       }
 
