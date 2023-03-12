@@ -280,22 +280,6 @@ class NeuralOrchestra_Base extends Recyclable.Root {
   }
 
 
-  /** */
-  versus_load_progress_create() {
-    this.versus_load_progress_dispose();
-    this.versus_load_progress
-      = ValueMax.Percentage.Aggregate.Pool.get_or_create_by();
-  }
-
-  /** */
-  versus_load_progress_dispose() {
-    if ( this.versus_load_progress ) {
-      this.versus_load_progress.disposeResources_and_recycleToPool();
-      this.versus_load_progress = null;
-    }
-  }
-
-
   /**
    * Call .init_asyncGenerator() and .versus_load_promise_create() internally.
    *
@@ -458,6 +442,17 @@ class NeuralOrchestra_Base extends Recyclable.Root {
       throw Error( `NeuralOrchestra.Base.init_asyncGenerator(): `
         + `should not be executed multiple times simultaneously.` );
 
+    if ( this.workerProxies_init_async_running )
+      throw Error( `NeuralOrchestra.Base.init_asyncGenerator(): `
+        + `should not be executed while `
+        + `NeuralWorker.Proxies is still initializing.` );
+
+    if (   ( this.versus_load_async_running )
+        || ( this.versus_load_asyncGenerator_running ) )
+      throw Error( `NeuralOrchestra.Base.init_asyncGenerator(): `
+        + `should not be executed while `
+        + `DEvolution.VersusSummary or DEvolution.Versus is still loading.` );
+      
     try {
       this.init_asyncGenerator_running = true;
 
@@ -789,6 +784,23 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     }
   }
 
+
+  /** */
+  versus_load_progress_create() {
+    this.versus_load_progress_dispose();
+    this.versus_load_progress
+      = ValueMax.Percentage.Aggregate.Pool.get_or_create_by();
+  }
+
+  /** */
+  versus_load_progress_dispose() {
+    if ( this.versus_load_progress ) {
+      this.versus_load_progress.disposeResources_and_recycleToPool();
+      this.versus_load_progress = null;
+    }
+  }
+
+
   /** Use .downloader_spreadsheetId, .downloader_apiKey, .bLogFetcherEventToConsole */
   versusSummary_create() {
     this.versusSummary_dispose();
@@ -805,6 +817,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
       this.versusSummary = null;
     }
   }
+
 
   /** */
   versus_dispose() {
@@ -1104,4 +1117,15 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     }
   }
 
+
+!!! ...unfinished... (2023/03/12)
+  /** */
+  isRunning() {
+    init_async_running
+    init_asyncGenerator_running
+    workerProxies_init_async_running
+    versus_load_async_running
+    versus_load_asyncGenerator_running
+  }
+ 
 }
