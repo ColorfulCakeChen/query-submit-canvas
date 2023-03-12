@@ -23,29 +23,59 @@ import * as DEvolution from "../DEvolution.js";
  *
  * 1.1 
  *
- *   - Initialize (and also load one versus):
- *     - call and await .init_async(). After it resolved to true, go to 1.1.1
- *
- *   - Load another versus:
- *     - call .versus_load_promise_create(), and go to 1.1.1
  *
  * 1.1.1
  *
+ *   - Initialize (and also load one versus):
+ *     - call and await .init_async(). After it resolved to true, go to 1.1.2
+ *
+ *   - Load another versus:
+ *     - call .versus_load_promise_create(), and go to 1.1.2
+ *
+ *
+ * 1.1.2
+ *
  *   - Wait for versus loaded and neural networks created:
- *     - await .versus_load_promise (which is created inside .init_async()), or
+ *     - await .versus_load_promise, or
  *     - check .versus_load_progress.valuePercentage until become 100, or
  *     - check .versus_loadOk until become true.
  *
- *   - Process image:
- *     - call and await .workerProxies_ImageData_process_async() 
+ *   - Process image, and report versus result:
+ *     - call and await .workerProxies_ImageData_process_async()
+ *     - call versusResultSender_send()
  *
  *
  * 1.2
- *         (since they need the versus data). Please check .versus_loader_async
- *          or .versus_loadOk to determine whether
- *         complete.
  *
- *  .versus_load_progress is not used.
+
+!!! ...unfinished... (2023/03/12)
+
+ *
+ * 1.2.1
+ *
+ *   - Initialize (and also load one versus):
+ *     - call .init_asyncGeneraotr() with yourself progressParent.
+ *     - .next() until { done: true, value: true }, go to 1.2.2
+ *
+ *   - Load another versus:
+ *     - call .versus_load_asyncGenerator() with yourself progressParent.
+ *     - .next() until { done: true, value: true }, go to 1.2.2
+ *
+ *
+ * 1.2.2
+ *
+
+!!! ...unfinished... (2023/03/12)
+
+ *   - Wait for versus loaded and neural networks created:
+ *     - await .versus_loader_async (which is created inside .init_asyncGeneraotr()), or
+ *     - (.versus_load_progress is not used), or
+ *     - check .versus_loadOk until become true.
+ *
+ *   - Process image, and report versus result:
+ *     - call and await .workerProxies_ImageData_process_async()
+ *     - call versusResultSender_send()
+ *
  *
  *
  * 2. Configuration for 250K filter weights and executing 2 times per second
