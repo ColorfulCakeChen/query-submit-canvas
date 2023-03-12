@@ -21,7 +21,7 @@ import * as DEvolution from "../DEvolution.js";
 !!! ...unfinished... (2023/03/12)
 
  *
- * 1.1 
+ * 1.1 Without yourself progressParent
  *
  *
  * 1.1.1
@@ -44,7 +44,7 @@ import * as DEvolution from "../DEvolution.js";
  *   - go to 1.3
  *
  *
- * 1.2
+ * 1.2 With yourself progressParent
  *
  *
  * 1.2.1
