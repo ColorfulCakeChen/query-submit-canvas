@@ -41,10 +41,7 @@ import * as DEvolution from "../DEvolution.js";
  *     - await .versus_load_promise, or
  *     - check .versus_loadOk until become true, or
  *     - check .versus_load_progress.valuePercentage until become 100.
- *
- *   - Process image, and report versus result:
- *     - call and await .workerProxies_ImageData_process_async()
- *     - call versusResultSender_send()
+ *   - go to 1.3
  *
  *
  * 1.2
@@ -67,10 +64,13 @@ import * as DEvolution from "../DEvolution.js";
  *     - .versus_loader_async.next() until { done: true, value: true }, or
  *     - check .versus_loadOk until become true.
  *     - (.versus_load_progress is not used. It should be null.)
+ *   - go to 1.3
  *
- *   - Process image, and report versus result:
- *     - call and await .workerProxies_ImageData_process_async()
- *     - call versusResultSender_send()
+ *
+ * 1.3 Process image, and report versus result
+ *
+ *   - call and await .workerProxies_ImageData_process_async()
+ *   - call versusResultSender_send()
  *
  *
  * 2. Configuration for 250K filter weights and executing 2 times per second
