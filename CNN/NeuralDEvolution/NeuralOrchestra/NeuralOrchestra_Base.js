@@ -521,6 +521,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
                 + `this.versus_loadOk ( ${this.versus_loadOk} ).`
               );
 
+            // 3.2.1
             // In theory, it should not execute to here because
             // .versus_loader_async waits .workerProxies_init_promise internally.
             throw Error( `NeuralOrchestra.Base.init_asyncGenerator(): `
@@ -529,8 +530,8 @@ class NeuralOrchestra_Base extends Recyclable.Root {
               + `.workerProxies_init_promise`
             );
 
-          // DEvolution.Versus has been loaded a little. Report progress
-          // and schedule to wait for it to load next a little.
+          // 3.2.2 DEvolution.Versus has been loaded a little. Report progress
+          //       and schedule to wait it to load next a little.
           } else {
             // let progressRoot = object.value;
             yield progressRoot;
