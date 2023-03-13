@@ -23,7 +23,8 @@ class TestCase {
     this.vocabularyChannelCount = 4; //8; //6;
     this.blockCountTotalRequested = 39; //84; //144;
     this.output_channelCount_per_alignment = 64; //12;
-    this.output_channelCount = output_channelCount_per_alignment * 2;
+
+    this.output_channelCount = this.output_channelCount_per_alignment * 2;
   }
 
   /** */
