@@ -1137,8 +1137,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
         + `should not be executed multiple times simultaneously.` );
 
     if (   ( !this.init_asyncGenerator_running )
-        || ( !this.initOk )
-       )
+        || ( !this.initOk ) )
       throw Error( `NeuralOrchestra.Base.versus_load_asyncGenerator(): `
         + `should be executed `
         + `either during initializing `
