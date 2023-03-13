@@ -171,7 +171,7 @@ class TestCase {
 
   /** */
   async* test_create_init_load_process_send_asyncGenerator(
-    progressParent, neuralOrchestra, initCountMax ) {
+    progressParent, initCountMax ) {
 
     // Prepare progress list.
     let progressRoot = progressParent.root_get();
@@ -236,7 +236,6 @@ async function* tester( progressParent ) {
 
 
   let createCountMax = 2; // Try create NeuralOrchestra twice.
-  let initCountMax = 2; // Try init NeuralOrchestra twice.
 
   // Prepare progress list.
   // let progressRoot = progressParent.root_get();
@@ -254,7 +253,7 @@ async function* tester( progressParent ) {
     let progressCreateInitLoadProcessSend
       = progressCreateInitLoadProcessSendArray[ createCount ];
     yield* testCase.test_create_init_load_process_send_asyncGenerator(
-      progressCreateInitLoadProcessSend, neuralOrchestra, initCountMax );
+      progressCreateInitLoadProcessSend, initCountMax );
   }
 
   console.log( "NeuralOrchestra testing... Done." );
