@@ -238,14 +238,25 @@ class TestCase {
         }
       }
 
+//!!! ...unfinished... (2023/03/13)
+// Try before illegal .versus_loader created.
+      // Test: versus_load before init. (should exception.)
+      try {
+        await neuralOrchestra.versus_load_promise_create();
+      } catch ( e ) {
+        if ( String.prototype.indexOf.call( e.message,
+               ".versus_load_async():" ) > 0 ) {
+          progressToAdvance.value_advance();
+          yield progressRoot;
+        } else {
+          throw e; // Unknown error, said loudly.
+        }
+      }
+
+
       // Test: versus_loader before init. (should exception.)
       try {
         await neuralOrchestra.versus_loader_create().next();
-
-//!!! ...unfinished... (2023/03/13) Problem:
-// Although an exception will be threw, the illegal .versus_loader
-// has still been still created.
-
       } catch ( e ) {
         if ( String.prototype.indexOf.call( e.message,
                ".versus_load_asyncGenerator():" ) > 0 ) {
@@ -259,18 +270,8 @@ class TestCase {
       // Test: versus_load before init. (should exception.)
       try {
         await neuralOrchestra.versus_load_promise_create();
-
-//!!! ...unfinished... (2023/03/13)
-// an illegal (completed) .versus_loader may be used.
-// and then no exception will be thrown.
-
       } catch ( e ) {
         if ( String.prototype.indexOf.call( e.message,
-//               ".versus_load_asyncGenerator():" ) > 0 ) {
-
-//!!! ...unfinished... (2023/03/13)
-// an illegal .versus_loader may be used.
-
                ".versus_load_async():" ) > 0 ) {
           progressToAdvance.value_advance();
           yield progressRoot;

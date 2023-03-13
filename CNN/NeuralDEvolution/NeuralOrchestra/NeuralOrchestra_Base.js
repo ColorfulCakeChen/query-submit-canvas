@@ -1101,13 +1101,6 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     this.versus_loader = NeuralOrchestra_Base.versus_load_asyncGenerator.call(
       this, progressParent );
     return this.versus_loader;
-
-
-//!!! ...unfinished... (2023/03/13) Problem:
-// Even if this.versus_loader.next() throw an exception, the illegal
-// .versus_loader has still been created.
-
-
   }
 
   /**
