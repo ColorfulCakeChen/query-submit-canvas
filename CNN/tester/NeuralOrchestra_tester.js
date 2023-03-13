@@ -194,7 +194,7 @@ class TestCase {
     }
 
     let progressToAdvance = progressParent.child_add(
-      ValueMax.Percentage.Concrete.Pool.get_or_create_by( 4 ) );
+      ValueMax.Percentage.Concrete.Pool.get_or_create_by( 5 ) );
 
     //
     let neuralOrchestra;
@@ -212,7 +212,7 @@ class TestCase {
               + `should be undefined.` );
       }
 
-      // Test: send before init. (should exception.)
+      // Test: send before .init. (should exception.)
       try {
         neuralOrchestra.versusResultSender_send();
       } catch ( e ) {
@@ -225,7 +225,7 @@ class TestCase {
         }
       }
 
-      // Test: process before init. (should exception.)
+      // Test: process before .init. (should exception.)
       try {
         await neuralOrchestra.workerProxies_ImageData_process_async();
       } catch ( e ) {
@@ -238,14 +238,13 @@ class TestCase {
         }
       }
 
-//!!! ...unfinished... (2023/03/13)
-// Try before illegal .versus_loader created.
-      // Test: versus_load before init. (should exception.)
+      // Test: versus_load before .init
+      //       and before .versus_loader_create. (should exception.)
       try {
         await neuralOrchestra.versus_load_promise_create();
       } catch ( e ) {
         if ( String.prototype.indexOf.call( e.message,
-               ".versus_load_async():" ) > 0 ) {
+               ".versus_load_asyncGenerator():" ) > 0 ) {
           progressToAdvance.value_advance();
           yield progressRoot;
         } else {
@@ -253,8 +252,7 @@ class TestCase {
         }
       }
 
-
-      // Test: versus_loader before init. (should exception.)
+      // Test: versus_loader before .init. (should exception.)
       try {
         await neuralOrchestra.versus_loader_create().next();
       } catch ( e ) {
@@ -267,7 +265,8 @@ class TestCase {
         }
       }
 
-      // Test: versus_load before init. (should exception.)
+      // Test: versus_load before .init
+      //       but after .versus_loader_create. (should exception.)
       try {
         await neuralOrchestra.versus_load_promise_create();
       } catch ( e ) {
