@@ -57,6 +57,8 @@ class TestCase {
                ".versus_load_async():" ) > 0 ) {
           progressToAdvance.value_advance();
           yield progressRoot;
+        } else {
+          throw e; // Unknown error, said loudly.
         }
       }
 
@@ -69,6 +71,8 @@ class TestCase {
                ".versus_load_asyncGenerator():" ) > 0 ) {
           progressToAdvance.value_advance();
           yield progressRoot;
+        } else {
+          throw e; // Unknown error, said loudly.
         }
       }
 
@@ -141,6 +145,8 @@ class TestCase {
              ".init_async():" ) > 0 ) {
         progressToAdvance.value_advance();
         yield progressRoot;
+      } else {
+        throw e; // Unknown error, said loudly.
       }
     }
 
@@ -214,6 +220,8 @@ class TestCase {
                ".versusResultSender_send():" ) > 0 ) {
           progressToAdvance.value_advance();
           yield progressRoot;
+        } else {
+          throw e; // Unknown error, said loudly.
         }
       }
 
@@ -225,6 +233,8 @@ class TestCase {
                ".workerProxies_ImageData_process_async():" ) > 0 ) {
           progressToAdvance.value_advance();
           yield progressRoot;
+        } else {
+          throw e; // Unknown error, said loudly.
         }
       }
 
@@ -236,6 +246,8 @@ class TestCase {
                ".versus_load_asyncGenerator():" ) > 0 ) {
           progressToAdvance.value_advance();
           yield progressRoot;
+        } else {
+          throw e; // Unknown error, said loudly.
         }
       }
 
@@ -247,6 +259,8 @@ class TestCase {
                ".versus_load_async():" ) > 0 ) {
           progressToAdvance.value_advance();
           yield progressRoot;
+        } else {
+          throw e; // Unknown error, said loudly.
         }
       }
 
