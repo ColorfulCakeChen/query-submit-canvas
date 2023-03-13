@@ -1151,13 +1151,11 @@ class NeuralOrchestra_Base extends Recyclable.Root {
         let versusSummary_loadOk
           = yield *this.versusSummary.rangeArray_load_asyncGenerator(
               progressVersusSummary, this.params_loading_retryWaiting );
-    
-        if ( !versusSummary_loadOk ) {
+
+        if ( !versusSummary_loadOk )
           throw Error( `NeuralOrchestra.Base.versus_load_asyncGenerator(): `
             + `Failed to load DEvolution.VersusSummary.rangeArray.`
           );
-          return false;
-        }
       }
 
       // 2. Load versus.
@@ -1165,12 +1163,10 @@ class NeuralOrchestra_Base extends Recyclable.Root {
       this.versus = yield* this.versusSummary.versus_next_load_asyncGenerator(
         progressVersus, this.params_loading_retryWaiting );
 
-      if ( !this.versus ) {
+      if ( !this.versus )
         throw Error( `NeuralOrchestra.Base.versus_load_asyncGenerator(): `
           + `Failed to load DEvolution.Versus.`
         );
-        return false;
-      }
 
       // 3. Create neural networks.
 
