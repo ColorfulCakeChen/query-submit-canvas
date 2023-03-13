@@ -1253,6 +1253,17 @@ class NeuralOrchestra_Base extends Recyclable.Root {
   /**
    * Submit the result of the last differential evolution versus to server.
    *
+   *
+   * Note: The resolved .workerProxies_ImageData_process_async() is an
+   *       Float32Array[].
+   *
+   *   - Which one is parent (chromosome) neural network's output?
+   *     - Float32Array[ 0 ]
+   *
+   *   - Which one is offspring (chromosome) neural network's output?
+   *     - Float32Array[ 1 ]
+   *
+   *
    * @param {number} nNegativeZeroPositive
    *   The lose/draw/win value of the versus. (-1 or 0 or +1)
    *     - -1 (if parent lose offspring)
