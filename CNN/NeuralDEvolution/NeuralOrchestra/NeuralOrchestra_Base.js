@@ -227,27 +227,27 @@ class NeuralOrchestra_Base extends Recyclable.Root {
 
   /** @override */
   static setAsConstructor_self() {
-    this.params_loading_retryWaiting_create();
+    NeuralOrchestra_Base.params_loading_retryWaiting_create.call( this );
   }
 
   /** @override */
   disposeResources() {
-    this.versusResultSender_dispose();
+    NeuralOrchestra_Base.versusResultSender_dispose.call( this );
 
-    this.versus_load_progress_dispose();
+    NeuralOrchestra_Base.versus_load_progress_dispose.call( this );
     this.versus_load_promise = undefined;
     this.versus_loader_async = undefined;
     this.versus_loadOk = undefined;
     this.versus_load_asyncGenerator_running = undefined;
     this.versus_load_async_running = undefined;
-    this.versus_dispose();
-    this.versusSummary_dispose();
+    NeuralOrchestra_Base.versus_dispose.call( this );
+    NeuralOrchestra_Base.versusSummary_dispose.call( this );
 
     this.workerProxies_init_promise = undefined;
     this.workerProxies_initOk = undefined;
     this.workerProxies_init_async_running = undefined;
-    this.neuralNetParamsBase_dispose();
-    this.workerProxies_dispose();
+    NeuralOrchestra_Base.neuralNetParamsBase_dispose.call( this );
+    NeuralOrchestra_Base.workerProxies_dispose.call( this );
 
     this.initOk = undefined;
     this.init_asyncGenerator_running = undefined;
@@ -274,8 +274,12 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     return this.workerProxies.nNeuralWorker_ModeId;
   }
 
-  /** Create .params_loading_retryWaiting */
-  params_loading_retryWaiting_create() {
+  /**
+   * Create .params_loading_retryWaiting
+   *
+   * @param {NeuralOrchestra_Base} this
+   */
+  static params_loading_retryWaiting_create() {
     const loadingMillisecondsMax = ( 60 * 1000 );
     const loadingMillisecondsInterval = ( 5 * 1000 );
 
@@ -303,7 +307,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     output_channelCount = 64 //16
   ) {
 
-    this.neuralNetParamsBase_dispose();
+    NeuralOrchestra_Base.neuralNetParamsBase_dispose.call( this );
 
     // Because image comes from canvas, the tf.browser.fromPixels() handle a
     // RGBA 4 channels faster than RGB 3 channels input.
@@ -334,8 +338,10 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     );
   }
 
-  /** */
-  neuralNetParamsBase_dispose() {
+  /**
+   * @param {NeuralOrchestra_Base} this
+   */
+  static neuralNetParamsBase_dispose() {
     if ( this.neuralNetParamsBase ) {
       this.neuralNetParamsBase.disposeResources_and_recycleToPool();
       this.neuralNetParamsBase = null;
@@ -381,7 +387,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
       this.init_async_running = true;
 
       // 1. Use internal independent progress.
-      this.versus_load_progress_create();
+      NeuralOrchestra_Base.versus_load_progress_create.call( this );
 
       // 2. Start to load (versus summary and) versus, initialize
       //    NeuralWorker.Proxies, and create neural networks.
@@ -526,8 +532,8 @@ class NeuralOrchestra_Base extends Recyclable.Root {
       this.bLogFetcherEventToConsole = bLogFetcherEventToConsole;
 
       // Note: Here should not call .versus_load_progress_dispose().
-      this.versus_dispose();
-      this.versusSummary_dispose();
+      NeuralOrchestra_Base.versus_dispose.call( this );
+      NeuralOrchestra_Base.versusSummary_dispose.call( this );
 
       let progressRoot = progressParent.root_get();
       let allPromiseSet = new Set();
@@ -547,7 +553,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
           blockCountTotalRequested,
           output_channelCount );
 
-        this.workerProxies_create();
+          NeuralOrchestra_Base.workerProxies_create.call( this );
         NeuralOrchestra_Base.workerProxies_init_promise_create.call( this );
         allPromiseSet.add( this.workerProxies_init_promise );
       }
@@ -625,7 +631,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
       } while ( !workerProxies_init_done );
 
       // 4. Create Versus Result Reporter
-      this.versusResultSender_create( sender_clientId );
+      NeuralOrchestra_Base.versusResultSender_create.call( this, sender_clientId );
 
       // 5.
       this.initOk = true;
@@ -638,14 +644,18 @@ class NeuralOrchestra_Base extends Recyclable.Root {
   }
 
 
-  /** */
-  workerProxies_create() {
-    this.workerProxies_dispose();
+  /**
+   * @param {NeuralOrchestra_Base} this
+   */
+  static workerProxies_create() {
+    NeuralOrchestra_Base.workerProxies_dispose.call( this );
     this.workerProxies = NeuralWorker.Proxies.Pool.get_or_create_by();
   }
 
-  /** */
-  workerProxies_dispose() {
+  /**
+   * @param {NeuralOrchestra_Base} this
+   */
+  static workerProxies_dispose() {
     if ( this.workerProxies ) {
       this.workerProxies.disposeResources_and_recycleToPool();
       this.workerProxies = null;
@@ -840,21 +850,41 @@ class NeuralOrchestra_Base extends Recyclable.Root {
    * representing the (pair) neural networks' results.
    */
   async workerProxies_ImageData_process_async( sourceImageData ) {
+
+//!!! ...unfinished... (2023/03/13)
+// should check the following?
+//
+// init_async_running
+// init_asyncGenerator_running
+// initOk
+// workerProxies_init_async_running
+// workerProxies_initOk
+// versus_load_async_running
+// versus_load_asyncGenerator_running
+// versus_loadOk
+//
+// ???workerProxies_ImageData_process_async_running
+//
+
     let theFloat32ArrayArrayPromise
       = this.workerProxies.ImageData_process_async( sourceImageData );
     return theFloat32ArrayArrayPromise;
   }
 
 
-  /** */
-  versus_load_progress_create() {
-    this.versus_load_progress_dispose();
+  /**
+   * @param {NeuralOrchestra_Base} this
+   */
+  static versus_load_progress_create() {
+    NeuralOrchestra_Base.versus_load_progress_dispose.call( this );
     this.versus_load_progress
       = ValueMax.Percentage.Aggregate.Pool.get_or_create_by();
   }
 
-  /** */
-  versus_load_progress_dispose() {
+  /**
+   * @param {NeuralOrchestra_Base} this
+   */
+  static versus_load_progress_dispose() {
     if ( this.versus_load_progress ) {
       this.versus_load_progress.disposeResources_and_recycleToPool();
       this.versus_load_progress = null;
@@ -862,19 +892,23 @@ class NeuralOrchestra_Base extends Recyclable.Root {
   }
 
 
-  /** */
-  versusSummary_create(
+  /**
+   * @param {NeuralOrchestra_Base} this
+   */
+  static versusSummary_create(
     downloader_spreadsheetId, downloader_apiKey, bLogFetcherEventToConsole ) {
 
-    this.versusSummary_dispose();
+    NeuralOrchestra_Base.versusSummary_dispose.call( this );
     this.versusSummary = DEvolution.VersusSummary.Pool.get_or_create_by(
       downloader_spreadsheetId, downloader_apiKey );
 
     this.versusSummary.bLogFetcherEventToConsole = bLogFetcherEventToConsole;
   }
 
-  /** */
-  versusSummary_dispose() {
+  /**
+   * @param {NeuralOrchestra_Base} this
+   */
+  static versusSummary_dispose() {
     if ( this.versusSummary ) {
       this.versusSummary.disposeResources_and_recycleToPool();
       this.versusSummary = null;
@@ -882,8 +916,10 @@ class NeuralOrchestra_Base extends Recyclable.Root {
   }
 
 
-  /** */
-  versus_dispose() {
+  /**
+   * @param {NeuralOrchestra_Base} this
+   */
+  static versus_dispose() {
     if ( this.versus ) {
       this.versus.disposeResources_and_recycleToPool();
       this.versus = null;
@@ -894,22 +930,28 @@ class NeuralOrchestra_Base extends Recyclable.Root {
    * Call .versus_load_async() and record the returned promise in
    * .versus_load_promise.
    *
+   *
    * @param {AsyncGenerator} this.versus_loader_async
    *   - If .versus_loader_async does not exist, a new .versus_load_progress
    *       and .versus_loader_async will be created.
+   *       (Usually, this case is used when you want to load the next versus
+   *       without yourself progressParent.)
    *
    *   - If .versus_loader_async has already existed (i.e. not null), it will
    *       be used directly (and no extra progress object will be created too).
-   *       (Usually, this case is used by init_async().)
+   *       (Usually, this case is used by .init_async().)
    *
    * @return {Promise( boolean )}
    *   Return this.versus_load_promise
    */
   versus_load_promise_create() {
 
+    // Case 1: Outside caller calls this method.
     if ( !this.versus_loader_async ) {
-      this.versus_load_progress_create();
+      NeuralOrchestra_Base.versus_load_progress_create.call( this );
       this.versus_loader_async_create( this.versus_load_progress );
+
+    // Case 2: .init_async() calls this method.
     }
 
     this.versus_load_promise
@@ -1039,7 +1081,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
           versusSummary_needLoad = true;
         }
       } else {
-        this.versusSummary_create(
+        NeuralOrchestra_Base.versusSummary_create.call( this,
           this.downloader_spreadsheetId, this.downloader_apiKey,
           this.bLogFetcherEventToConsole );
         versusSummary_needLoad = true;
@@ -1075,7 +1117,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
       }
 
       // 2. Load versus.
-      this.versus_dispose();
+      NeuralOrchestra_Base.versus_dispose.call( this );
       this.versus = yield* this.versusSummary.versus_next_load_asyncGenerator(
         progressVersus, this.params_loading_retryWaiting );
 
@@ -1158,9 +1200,12 @@ class NeuralOrchestra_Base extends Recyclable.Root {
   }
 
 
-  /** Create differential evolution versus result reporter. */
-  versusResultSender_create( sender_clientId ) {
-    this.versusResultSender_dispose();
+  /**
+   * Create differential evolution versus result reporter.
+   * @param {NeuralOrchestra_Base} this
+   */
+  static versusResultSender_create( sender_clientId ) {
+    NeuralOrchestra_Base.versusResultSender_dispose.call( this );
     this.versusResultSender = DEvolution.VersusResultSender
       .MultiEventName.Pool.get_or_create_by( sender_clientId );
   }
@@ -1175,12 +1220,30 @@ class NeuralOrchestra_Base extends Recyclable.Root {
    *     - +1 (if parent win offspring)
    */
   versusResultSender_send( nNegativeZeroPositive ) {
+
+//!!! ...unfinished... (2023/03/13)
+// should check the following?
+//
+// init_async_running
+// init_asyncGenerator_running
+// initOk
+// workerProxies_init_async_running
+// workerProxies_initOk
+// versus_load_async_running
+// versus_load_asyncGenerator_running
+// versus_loadOk
+//
+// ???workerProxies_ImageData_process_async_running
+//
+
     this.versusResultSender.post_by_versusId_NegativeZeroPositive(
       this.versus.versusId, nNegativeZeroPositive );
   }
 
-  /** */
-  versusResultSender_dispose() {
+  /**
+   * @param {NeuralOrchestra_Base} this
+   */
+  static versusResultSender_dispose() {
     if ( this.versusResultSender ) {
       this.versusResultSender.disposeResources_and_recycleToPool();
       this.versusResultSender = null;

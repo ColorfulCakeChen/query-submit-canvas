@@ -66,7 +66,12 @@ async function* tester( progressParent ) {
               + `neuralOrchestra.${p} (${neuralOrchestra[ p ]}) `
               + `should be undefined.` );
       }
-  
+
+//!!! ...unfinished... (2023/03/13)
+// Test: .workerProxies_ImageData_process_async(),
+// .versus_load_promise_create(), .versus_loader_async_create()
+// before init
+
       // Test: re-init (without re-create).
       for ( let initCount = 0; initCount < initCountMax; ++initCount ) {
 
