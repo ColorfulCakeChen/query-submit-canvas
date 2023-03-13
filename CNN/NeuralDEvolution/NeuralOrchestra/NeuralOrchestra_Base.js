@@ -63,7 +63,7 @@ import * as DEvolution from "../DEvolution.js";
  *   - Wait for versus loaded and neural networks created:
  *     - .versus_loader_async.next() until { done: true, value: true }, or
  *     - check .versus_loadOk until become true.
- *     - (.versus_load_progress is not used. It should be null.)
+ *     - (.versus_load_progress is not used.)
  *   - go to 1.3
  *
  *
@@ -196,6 +196,9 @@ import * as DEvolution from "../DEvolution.js";
  *   The progress of loading versus summary, loading versus, creating neural
  * networks. If ( .versus_load_progress.valuePercentage == 100 ), all the
  * loading and creating has done.
+ *   - It is used only if .init_async() is called.
+ *   - If .init_asyncGenerator() is called directly, itself progressParent
+ *       parameter will be used instead.
  *
  * @member {boolean} versus_loadOk
  *   If true, a .versus_load_asyncGenerator() has been executed and succeeded.
@@ -522,7 +525,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
       this.downloader_apiKey = downloader_apiKey;
       this.bLogFetcherEventToConsole = bLogFetcherEventToConsole;
 
-      this.versus_load_progress_dispose();
+      // Note: Here should not call .versus_load_progress_dispose().
       this.versus_dispose();
       this.versusSummary_dispose();
 
