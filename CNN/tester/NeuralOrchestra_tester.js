@@ -118,7 +118,7 @@ class TestCase {
     let progressToAdvance = progressParent.child_add(
     ValueMax.Percentage.Concrete.Pool.get_or_create_by( 2 ) );
 
-    // 1. Create and initialize.
+    // 1. Initialize.
     let initPromise = neuralOrchestra.init_async(
       this.downloader_spreadsheetId, this.downloader_apiKey,
       this.bLogFetcherEventToConsole,
@@ -169,6 +169,56 @@ class TestCase {
     }
   }
 
+  /** */
+  async* test_create_init_load_process_send_asyncGenerator(
+    progressParent, neuralOrchestra, initCountMax ) {
+
+    // Prepare progress list.
+    let progressRoot = progressParent.root_get();
+    let progressInitLoadProcessSendArray = new Array( initCountMax );
+    for ( let initCount = 0; initCount < initCountMax; ++initCount ) {
+      progressInitLoadProcessSendArray[ initCount ]
+        = progressParent.child_add(
+            ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
+    }
+
+    //
+    let neuralOrchestra;
+    try {
+      neuralOrchestra = NeuralOrchestra.Base.Pool.get_or_create_by();
+
+      // Check: For a new NeuralOrchestra, only .params_loading_retryWaiting
+      //        should exist.
+      for ( let p in neuralOrchestra ) {
+        let propertyValue = neuralOrchestra[ p ];
+        if ( propertyValue != undefined )
+          if ( propertyValue != neuralOrchestra.params_loading_retryWaiting )
+            throw Error( `NeuralOrchestra_tester.tester(): `
+              + `neuralOrchestra.${p} (${neuralOrchestra[ p ]}) `
+              + `should be undefined.` );
+      }
+
+  //!!! ...unfinished... (2023/03/13)
+  // Test: .workerProxies_ImageData_process_async(),
+  // .versus_load_promise_create(), .versus_loader_async_create()
+  // before init
+
+      // Test: re-init (without re-create).
+      for ( let initCount = 0; initCount < initCountMax; ++initCount ) {
+        let progressInitLoadProcessSend
+          = progressInitLoadProcessSendArray[ initCount ];
+        yield* this.test_init_load_process_send_asyncGenerator(
+          progressInitLoadProcessSend, neuralOrchestra );
+      }
+
+    } finally {
+      if ( neuralOrchestra ) {
+        neuralOrchestra.disposeResources_and_recycleToPool();
+        neuralOrchestra = null;
+      }
+    }
+  }
+
 }
 
 /**
@@ -189,58 +239,22 @@ async function* tester( progressParent ) {
   let initCountMax = 2; // Try init NeuralOrchestra twice.
 
   // Prepare progress list.
-  let progressRoot = progressParent.root_get();
-  let progressCreateOrInitArray = new Array();
+  // let progressRoot = progressParent.root_get();
+  let progressCreateInitLoadProcessSendArray = new Array( createCountMax );
   for ( let createCount = 0; createCount < createCountMax; ++createCount ) {
-    for ( let initCount = 0; initCount < initCountMax; ++initCount ) {
-      let progressCreateOrInit = progressParent.child_add(
-        ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
-      progressCreateOrInitArray.push( progressCreateOrInit );
-    }
+    progressCreateInitLoadProcessSendArray[ createCount ]
+      = progressParent.child_add(
+          ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
   }
 
   // Loop for init, load, send.
-  let neuralOrchestraIndex = 0;
 
   // Test: re-create.
   for ( let createCount = 0; createCount < createCountMax; ++createCount ) {
-
-    let neuralOrchestra;
-    try {
-      neuralOrchestra = NeuralOrchestra.Base.Pool.get_or_create_by();
-
-      // Check: For a new NeuralOrchestra, only .params_loading_retryWaiting
-      //        should exist.
-      for ( let p in neuralOrchestra ) {
-        let propertyValue = neuralOrchestra[ p ];
-        if ( propertyValue != undefined )
-          if ( propertyValue != neuralOrchestra.params_loading_retryWaiting )
-            throw Error( `NeuralOrchestra_tester.tester(): `
-              + `neuralOrchestra.${p} (${neuralOrchestra[ p ]}) `
-              + `should be undefined.` );
-      }
-
-//!!! ...unfinished... (2023/03/13)
-// Test: .workerProxies_ImageData_process_async(),
-// .versus_load_promise_create(), .versus_loader_async_create()
-// before init
-
-      // Test: re-init (without re-create).
-      for ( let initCount = 0; initCount < initCountMax; ++initCount ) {
-
-        let progressCreateOrInit = progressCreateOrInitArray[ neuralOrchestraIndex ];
-        yield* testCase.test_init_load_process_send_asyncGenerator(
-          progressCreateOrInit, neuralOrchestra );
-
-        ++neuralOrchestraIndex;
-      }
-
-    } finally {
-      if ( neuralOrchestra ) {
-        neuralOrchestra.disposeResources_and_recycleToPool();
-        neuralOrchestra = null;
-      }
-    }
+    let progressCreateInitLoadProcessSend
+      = progressCreateInitLoadProcessSendArray[ createCount ];
+    yield* testCase.test_create_init_load_process_send_asyncGenerator(
+      progressCreateInitLoadProcessSend, neuralOrchestra, initCountMax );
   }
 
   console.log( "NeuralOrchestra testing... Done." );
