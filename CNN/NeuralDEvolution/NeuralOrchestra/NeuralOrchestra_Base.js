@@ -360,6 +360,14 @@ class NeuralOrchestra_Base extends Recyclable.Root {
    * Call .init_asyncGenerator() and .versus_load_promise_create() internally.
    *
    *
+   * Note1: Although this is an async method, it will always block main worker
+   *        (i.e. UI worker). (Please see also .init_asyncGenerator() explanation.)
+   *
+   * Note2: For the same reason, after this async method resolved, continue to
+   *        await .versus_load_promise will not block main worker. (Please see
+   *        also .init_asyncGenerator() explanation.)
+   *
+   *
    * @return {Promise}
    *   Return a promise (i.e. the .workerProxies_init_promise).
    *   - Resolved to true, if succeeded.
@@ -442,6 +450,16 @@ class NeuralOrchestra_Base extends Recyclable.Root {
    *   - Load one versus.
    *   - Create neural workers and compile GPU shaders.
    *   - Create neural networks.
+   *
+   *
+   * Note1: Although this is an async generator, it will always block main worker
+   *        (i.e. UI worker) due to GPU shader compiling no matter it is called
+   *        in which web worker. So, it is highly recommended to call it when
+   *        display a static splash screen.
+   *
+   * Note2: After this async generator done, continue to .versus_loader.next()
+   *        which will not block main worker. So, it is recommended to do that
+   *        with an animated screen for displaying loading progress.
    *
    *
    * @param {ValueMax.Percentage.Aggregate} progressParent
