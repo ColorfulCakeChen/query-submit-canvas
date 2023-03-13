@@ -73,7 +73,7 @@ function test() {
     tester,
     ( progressRoot ) => {
 
-      // Detect progress back-track.
+      // (For Debug) Detect progress back-track.
       if ( bDetectProgressBacktrack ) {
         let uiProgessValue = progressReceiver.getValue();
         if ( progressRoot.valuePercentage < uiProgessValue ) {
