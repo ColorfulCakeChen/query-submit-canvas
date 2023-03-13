@@ -131,10 +131,16 @@ class TestCase {
   async* test_init_load_process_send_asyncGenerator(
     progressParent, neuralOrchestra ) {
 
+    const loadCountMax = this.loadCountMax;
+
     let progressRoot = progressParent.root_get();
 
-    let progressLoadProcessSend = progressParent.child_add(
-      ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
+    let progressLoadProcessSendArray = new Array( loadCountMax );
+    for ( let loadCount = 0; loadCount < loadCountMax; ++loadCount ) {
+      progressLoadProcessSendArray[ loadCount ]
+        = progressParent.child_add(
+            ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
+    }
 
     let progressToAdvance = progressParent.child_add(
     ValueMax.Percentage.Concrete.Pool.get_or_create_by( 2 ) );
@@ -186,9 +192,9 @@ class TestCase {
 
     // 2. Try loading twice. One is by init_async() internally. The other is by
     //    calling .versus_load_async() directly.
-    const loadCountMax = this.loadCountMax;
     for ( let loadCount = 0; loadCount < loadCountMax; ++loadCount ) {
       let bTryLoad = ( loadCount > 0 );
+      let progressLoadProcessSend = progressLoadProcessSendArray[ loadCount ];
       yield* this.test_load_process_send_asyncGenerator(
         progressLoadProcessSend, neuralOrchestra, bTryLoad );
     }
