@@ -15,11 +15,9 @@ import * as DEvolution from "../DEvolution.js";
  *
  * 1. Usage
  *
- * There are mainly two using methods.
+ * There are mainly two using methods according to whether you want provide
+ * yourself progressParent.
  *
-
-!!! ...unfinished... (2023/03/12)
-
  *
  * 1.1 Without yourself progressParent
  *
