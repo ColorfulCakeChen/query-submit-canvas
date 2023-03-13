@@ -1136,7 +1136,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
       throw Error( `NeuralOrchestra.Base.versus_load_asyncGenerator(): `
         + `should not be executed multiple times simultaneously.` );
 
-    // Prevent the nueral networks from be changed during they are processing.
+    // Prevent the nueral networks from being changed during they are processing.
     if ( this.workerProxies_ImageData_process_async_running )
       throw Error( `NeuralOrchestra.Base.versus_load_asyncGenerator(): `
         + `should not be executed while `
