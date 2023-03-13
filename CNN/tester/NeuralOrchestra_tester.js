@@ -25,6 +25,10 @@ class TestCase {
     this.output_channelCount_per_alignment = 64; //12;
 
     this.output_channelCount = this.output_channelCount_per_alignment * 2;
+
+
+    this.createCountMax = 2; // Try create NeuralOrchestra twice.
+    this.initCountMax = 2;   // Try init NeuralOrchestra twice.
   }
 
   /**
@@ -170,8 +174,8 @@ class TestCase {
   }
 
   /** */
-  async* test_create_init_load_process_send_asyncGenerator(
-    progressParent, initCountMax ) {
+  async* test_create_init_load_process_send_asyncGenerator( progressParent ) {
+    const initCountMax = this.initCountMax;
 
     // Prepare progress list.
     let progressRoot = progressParent.root_get();
@@ -219,6 +223,30 @@ class TestCase {
     }
   }
 
+  /** */
+  async* test_asyncGenerator( progressParent ) {
+    const createCountMax = this.createCountMax;
+
+    // Prepare progress list.
+    // let progressRoot = progressParent.root_get();
+    let progressCreateInitLoadProcessSendArray = new Array( createCountMax );
+    for ( let createCount = 0; createCount < createCountMax; ++createCount ) {
+      progressCreateInitLoadProcessSendArray[ createCount ]
+        = progressParent.child_add(
+            ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
+    }
+
+    // Loop for init, load, send.
+
+    // Test: re-create.
+    for ( let createCount = 0; createCount < createCountMax; ++createCount ) {
+      let progressCreateInitLoadProcessSend
+        = progressCreateInitLoadProcessSendArray[ createCount ];
+      yield* this.test_create_init_load_process_send_asyncGenerator(
+        progressCreateInitLoadProcessSend );
+    }
+  }
+
 }
 
 /**
@@ -233,29 +261,7 @@ async function* tester( progressParent ) {
   console.log( "NeuralOrchestra testing..." );
 
   let testCase = new TestCase();
-
-
-  let createCountMax = 2; // Try create NeuralOrchestra twice.
-  let initCountMax = 2;   // Try init NeuralOrchestra twice.
-
-  // Prepare progress list.
-  // let progressRoot = progressParent.root_get();
-  let progressCreateInitLoadProcessSendArray = new Array( createCountMax );
-  for ( let createCount = 0; createCount < createCountMax; ++createCount ) {
-    progressCreateInitLoadProcessSendArray[ createCount ]
-      = progressParent.child_add(
-          ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
-  }
-
-  // Loop for init, load, send.
-
-  // Test: re-create.
-  for ( let createCount = 0; createCount < createCountMax; ++createCount ) {
-    let progressCreateInitLoadProcessSend
-      = progressCreateInitLoadProcessSendArray[ createCount ];
-    yield* testCase.test_create_init_load_process_send_asyncGenerator(
-      progressCreateInitLoadProcessSend, initCountMax );
-  }
+  yield* testCase.test_asyncGenerator( progressParent );
 
   console.log( "NeuralOrchestra testing... Done." );
 }
