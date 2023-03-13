@@ -37,7 +37,7 @@ class TestCase {
   async* test_load_process_send_asyncGenerator(
     progressParent, neuralOrchestra, bTryLoad ) {
 
-    let progressRoot = progressToAdvance.root_get();
+    let progressRoot = progressParent.root_get();
     let progressToAdvance = progressParent.child_add(
       ValueMax.Percentage.Concrete.Pool.get_or_create_by( 4 ) );
   
