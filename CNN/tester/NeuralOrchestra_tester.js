@@ -135,7 +135,7 @@ class TestCase {
 
     try { // Test: Re-entrance .init_async() should throw exception.
       let initFailedPromise = await neuralOrchestra.init_async();
-  
+
     } catch ( e ) {
       if ( String.prototype.indexOf.call( e.message,
              ".init_async():" ) > 0 ) {
@@ -167,7 +167,6 @@ class TestCase {
     //    calling .versus_load_async() directly.
     const loadCountMax = this.loadCountMax;
     for ( let loadCount = 0; loadCount < loadCountMax; ++loadCount ) {
-
       let bTryLoad = ( loadCount > 0 );
       yield* this.test_load_process_send_asyncGenerator(
         progressLoadProcessSend, neuralOrchestra, bTryLoad );
@@ -180,12 +179,16 @@ class TestCase {
 
     // Prepare progress list.
     let progressRoot = progressParent.root_get();
+
     let progressInitLoadProcessSendArray = new Array( initCountMax );
     for ( let initCount = 0; initCount < initCountMax; ++initCount ) {
       progressInitLoadProcessSendArray[ initCount ]
         = progressParent.child_add(
             ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
     }
+
+    let progressToAdvance = progressParent.child_add(
+      ValueMax.Percentage.Concrete.Pool.get_or_create_by( ???4 ) );
 
     //
     let neuralOrchestra;
@@ -203,10 +206,54 @@ class TestCase {
               + `should be undefined.` );
       }
 
-  //!!! ...unfinished... (2023/03/13)
-  // Test: .workerProxies_ImageData_process_async(),
-  // .versus_load_promise_create(), .versus_loader_async_create()
-  // before init
+      // Test: send before init. (should exception.)
+      try {
+        neuralOrchestra.versusResultSender_send();
+      } catch ( e ) {
+        if ( String.prototype.indexOf.call( e.message,
+               ".versusResultSender_send():" ) > 0 ) {
+          progressToAdvance.value_advance();
+          yield progressRoot;
+        }
+      }
+
+      // Test: process before init. (should exception.)
+      try {
+        await neuralOrchestra.workerProxies_ImageData_process_async();
+      } catch ( e ) {
+        if ( String.prototype.indexOf.call( e.message,
+               ".workerProxies_ImageData_process_async():" ) > 0 ) {
+          progressToAdvance.value_advance();
+          yield progressRoot;
+        }
+      }
+
+      // Test: versus_loader before init. (should exception.)
+      try {
+        await neuralOrchestra.versus_loader_async_create().next();
+      } catch ( e ) {
+        if ( String.prototype.indexOf.call( e.message,
+               ".versus_load_asyncGenerator():" ) > 0 ) {
+          progressToAdvance.value_advance();
+          yield progressRoot;
+        }
+      }
+
+      // Test: versus_load before init. (should exception.)
+      try {
+        await neuralOrchestra.versus_load_promise_create();
+      } catch ( e ) {
+        if ( String.prototype.indexOf.call( e.message,
+               ".versus_load_async():" ) > 0 ) {
+          progressToAdvance.value_advance();
+          yield progressRoot;
+        }
+      }
+
+//!!! ...unfinished... (2023/03/13)
+// Test: .workerProxies_ImageData_process_async(),
+// .versus_load_promise_create(), .versus_loader_async_create()
+// before init
 
       // Test: re-init (without re-create).
       for ( let initCount = 0; initCount < initCountMax; ++initCount ) {

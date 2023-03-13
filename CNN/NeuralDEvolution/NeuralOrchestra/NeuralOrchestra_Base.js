@@ -995,7 +995,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
    *       (Usually, this case is used by .init_async().)
    *
    * @return {Promise( boolean )}
-   *   Return this.versus_load_promise
+   *   Return the newly created this.versus_load_promise
    */
   versus_load_promise_create() {
 
@@ -1070,6 +1070,9 @@ class NeuralOrchestra_Base extends Recyclable.Root {
    *   Some new progressToAdvance will be created and added to progressParent. The
    * created progressToAdvance will be increased when every time advanced. The
    * progressParent.root_get() will be returned when every time yield.
+   *
+   * @return {AsyncGenerator}
+   *   Return the newly created this.versus_loader_async
    */
   versus_loader_async_create( progressParent ) {
     this.versus_loader_async
