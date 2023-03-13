@@ -242,7 +242,7 @@ class TestCase {
       try {
         await neuralOrchestra.versus_loader_create().next();
 
-//!!! (2023/03/13) Problem:
+//!!! ...unfinished... (2023/03/13) Problem:
 // Although an exception will be threw, the illegal .versus_loader
 // has still been still created.
 
@@ -262,7 +262,10 @@ class TestCase {
       } catch ( e ) {
         if ( String.prototype.indexOf.call( e.message,
 //               ".versus_load_asyncGenerator():" ) > 0 ) {
-//!!! (2023/03/13)
+
+//!!! ...unfinished... (2023/03/13)
+// an illegal .versus_loader may be used.
+
                ".versus_load_async():" ) > 0 ) {
           progressToAdvance.value_advance();
           yield progressRoot;
