@@ -54,72 +54,13 @@ function test() {
     gTestGeneratorFuncMap.set( testGeneratorFunc, progress_tester );
   }
 
-//!!! (2023/03/10 Remarked) Replaced by gTestGeneratorFuncMap.
-//   let progress_Base64ToUint8Array_tester;
-//   if ( gTestSwitch.Base64ToUint8Array )
-//     progress_Base64ToUint8Array_tester = progress.child_add(
-//       ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
-//
-//   let progress_Float12_testerl
-//   if ( gTestSwitch.Float12 )
-//     progress_Float12_tester = progress.child_add(
-//       ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
-//
-//   let progress_Uint12_tester;
-//   if ( gTestSwitch.Uint12 )
-//     progress_Uint12_tester = progress.child_add(
-//       ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
-//
-//   let progress_GSheets_tester;
-//   if ( gTestSwitch.GSheets )
-//     progress_GSheets_tester = progress.child_add(
-//       ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
-//
-//   let progress_AsyncWorker_tester;
-//   if ( gTestSwitch.AsyncWorker )
-//     progress_AsyncWorker_tester = progress.child_add(
-//       ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
-//
-//   let progress_DEvolution_tester;
-//   if ( gTestSwitch.DEvolution )
-//     progress_DEvolution_tester = progress.child_add(
-//       ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
-//  
-//   let progress_NeuralOrchestra_tester;
-//   if ( gTestSwitch.NeuralOrchestra )
-//     progress_NeuralOrchestra_tester = progress.child_add(
-//       ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
-
   let progressReceiver
     = new ValueMax.Receiver.HTMLProgress.createByTitle_or_getDummy( "TestProgressBar" );
 
   async function* testerAll() {
-
     for ( let [ testGeneratorFunc, progress_tester ] of gTestGeneratorFuncMap ) {
       yield* testGeneratorFunc( progress_tester );
     }
-  
-//!!! (2023/03/10 Remarked) Replaced by gTestGeneratorFuncMap.
-//     if ( gTestSwitch.Base64ToUint8Array )
-//       yield* Base64ToUint8Array_tester.tester( progress_Base64ToUint8Array_tester );
-//
-//     if ( gTestSwitch.Float12 )
-//       yield* Float12_tester.tester( progress_Float12_tester );
-//
-//     if ( gTestSwitch.Uint12 )
-//       yield* Uint12_tester.tester( progress_Uint12_tester );
-//
-//     if ( gTestSwitch.GSheets )
-//       yield* GSheets_tester.tester( progress_GSheets_tester );
-//
-//     if ( gTestSwitch.AsyncWorker )
-//       yield* AsyncWorker_tester.tester( progress_AsyncWorker_tester );
-//
-//     if ( gTestSwitch.DEvolution )
-//       yield* DEvolution_tester.tester( progress_DEvolution_tester );
-//
-//     if ( gTestSwitch.NeuralOrchestra )
-//       yield* NeuralOrchestra_tester.tester( progress_NeuralOrchestra_tester );
   }
 
   let tester = testerAll();
@@ -127,6 +68,13 @@ function test() {
   let testPromise = PartTime.forOf(
     tester,
     ( progressRoot ) => {
+
+      // Detect progress back-track.
+      let uiProgessValue = progressReceiver.getValue();
+      if ( progressRoot.valuePercentage < uiProgessValue ) {
+        debugger;
+      }
+
       progressReceiver.setValueMax( // Report progress to UI.
         progressRoot.valuePercentage, progressRoot.maxPercentage );
     },
