@@ -33,6 +33,8 @@ class TestCase {
   async* test_load_process_send_asyncGenerator(
     progressToAdvance, neuralOrchestra, bTryLoad ) {
 
+    let progressRoot = progressToAdvance.root_get();
+
 //!!! ...unfinished... (2023/03/11)
 // How to display neuralOrchestra.versus_load_progress?
 // How to integrate it into progressCreateOrInit?
@@ -102,6 +104,7 @@ class TestCase {
   async* test_init_load_process_send_asyncGenerator(
     progressParent, neuralOrchestra ) {
 
+    let progressRoot = progressParent.root_get();
     let progressToAdvance = progressParent.child_add(
     ValueMax.Percentage.Concrete.Pool.get_or_create_by( 8 ) );
 
