@@ -119,7 +119,8 @@ import * as DEvolution from "../DEvolution.js";
  * load weights from the spreadsheet to initialize one neural network.
  *
  * @member {string} downloader_apiKey
- *   The API key for accessing the Google Sheets spreadsheet of neural network weights.
+ *   The API key for accessing the Google Sheets spreadsheet of neural network
+ * weights.
  *   - If null, Google Visualization Table Query API will be used.
  *   - If not null, Google Sheets API v4 will be used.
  *
@@ -138,8 +139,9 @@ import * as DEvolution from "../DEvolution.js";
  * NeuralWorker.Mode.Singleton.Ids.Xxx).
  *
  * @member {NeuralNet.ParamsBase} neuralNetParamsBase
- *   The neural network configuration. It will be used for both two neural networks.
- * It will be kept (i.e. owned and destroyed) by this NeuralOrchetra object.
+ *   The neural network configuration. It will be used for both two neural
+ * networks. It will be kept (i.e. owned and destroyed) by this
+ * NeuralOrchetra object.
  *
  * @member {DEvolution.VersusSummary} versusSummary
  *   The downloaded versus summary of the differential evolution.
@@ -149,12 +151,12 @@ import * as DEvolution from "../DEvolution.js";
  *
  *
  * @member {boolean} init_async_running
- *   If true, a .init_async() is still executing. Please wait it becoming to
+ *   If true, a .init_async() is still executing. Please wait it becoming
  * false if wanting to call again.
  *
  * @member {boolean} init_asyncGenerator_running
  *   If true, a .init_asyncGenerator() is still executing. Please wait it
- * becoming to false if wanting to call again.
+ * becoming false if wanting to call again.
  *
  * @member {boolean} initOk
  *   If true, a .init_async() has been executed and succeeded.
@@ -162,7 +164,7 @@ import * as DEvolution from "../DEvolution.js";
  *
  * @member {boolean} workerProxies_init_async_running
  *   If true, a .workerProxies_init_async() is still executing. Please wait
- * it becoming to false if wanting to call again.
+ * it becoming false if wanting to call again.
  *
  * @member {boolean} workerProxies_initOk
  *   If true, a .workerProxies_init_async() has been executed and succeeded.
@@ -175,13 +177,18 @@ import * as DEvolution from "../DEvolution.js";
  *   - Resolved to false, if failed.
  *
  *
+ * @member {boolean} workerProxies_ImageData_process_async_running
+ *   If true, a .workerProxies_ImageData_process_async() is still executing.
+ * Please wait it becoming false if wanting to call again.
+ *
+ *
  * @member {boolean} versus_load_async_running
  *   If true, a .versus_load_async() is still executing. Please wait it becoming
- * to false if wanting to call again.
+ * false if wanting to call again.
  *
  * @member {boolean} versus_load_asyncGenerator_running
  *   If true, a .versus_load_asyncGenerator() is still executing. Please wait
- * it becoming to false if wanting to call again.
+ * it becoming false if wanting to call again.
  *
  * @member {Promise( boolean )} versus_load_promise
  *   The promise of whether .versus_load_progress still be advancing.
@@ -242,6 +249,8 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     this.versus_load_async_running = undefined;
     NeuralOrchestra_Base.versus_dispose.call( this );
     NeuralOrchestra_Base.versusSummary_dispose.call( this );
+
+    this.workerProxies_ImageData_process_async_running = undefined;
 
     this.workerProxies_init_promise = undefined;
     this.workerProxies_initOk = undefined;
@@ -515,6 +524,11 @@ class NeuralOrchestra_Base extends Recyclable.Root {
         + `should not be executed while `
         + `NeuralWorker.Proxies is still initializing.` );
 
+    if ( this.workerProxies_ImageData_process_async_running )
+      throw Error( `NeuralOrchestra.Base.init_asyncGenerator(): `
+        + `should not be executed while `
+        + `NeuralWorker.Proxies is still processing image.` );
+
     if (   ( this.versus_load_async_running )
         || ( this.versus_load_asyncGenerator_running ) )
       throw Error( `NeuralOrchestra.Base.init_asyncGenerator(): `
@@ -702,6 +716,11 @@ class NeuralOrchestra_Base extends Recyclable.Root {
       throw Error( `NeuralOrchestra.Base.workerProxies_init_async(): `
         + `should not be executed multiple times simultaneously.` );
 
+    if ( this.workerProxies_ImageData_process_async_running )
+      throw Error( `NeuralOrchestra.Base.workerProxies_init_async(): `
+        + `should not be executed while `
+        + `NeuralWorker.Proxies is still processing image.` );
+
     let initOk;
     try {
       this.workerProxies_init_async_running = true;
@@ -766,6 +785,11 @@ class NeuralOrchestra_Base extends Recyclable.Root {
    * @param {NeuralNet.ParamsBase} this.neuralNetParamsBase
    */
   static async workerProxies_compileShaders_async() {
+
+    if ( this.workerProxies_ImageData_process_async_running )
+      throw Error( `NeuralOrchestra.Base.workerProxies_compileShaders_async(): `
+        + `should not be executed while `
+        + `NeuralWorker.Proxies is still processing image.` );
 
     // Dummy neural network's weights.
     //      
@@ -851,6 +875,10 @@ class NeuralOrchestra_Base extends Recyclable.Root {
    */
   async workerProxies_ImageData_process_async( sourceImageData ) {
 
+    if ( this.workerProxies_ImageData_process_async_running )
+      throw Error( `NeuralOrchestra.Base.workerProxies_ImageData_process_async(): `
+        + `should not be executed multiple times simultaneously.` );
+
 //!!! ...unfinished... (2023/03/13)
 // should check the following?
 //
@@ -866,9 +894,19 @@ class NeuralOrchestra_Base extends Recyclable.Root {
 // ???workerProxies_ImageData_process_async_running
 //
 
-    let theFloat32ArrayArrayPromise
-      = this.workerProxies.ImageData_process_async( sourceImageData );
-    return theFloat32ArrayArrayPromise;
+    try {
+      this.workerProxies_ImageData_process_async_running = true;
+
+      // 1.
+      let theFloat32ArrayArrayPromise
+        = this.workerProxies.ImageData_process_async( sourceImageData );
+
+      return theFloat32ArrayArrayPromise;
+
+    } finally {
+      // 2. So that this async method could be executed again.
+      this.workerProxies_ImageData_process_async_running = false;
+    }
   }
 
 
@@ -1061,6 +1099,12 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     if ( this.versus_load_asyncGenerator_running )
       throw Error( `NeuralOrchestra.Base.versus_load_asyncGenerator(): `
         + `should not be executed multiple times simultaneously.` );
+
+    // Prevent the nueral networks be changed during they are processing image.
+    if ( this.workerProxies_ImageData_process_async_running )
+      throw Error( `NeuralOrchestra.Base.versus_load_asyncGenerator(): `
+        + `should not be executed while `
+        + `NeuralWorker.Proxies is still processing image.` );
 
     let progressRoot;
     let progressToAdvance;
