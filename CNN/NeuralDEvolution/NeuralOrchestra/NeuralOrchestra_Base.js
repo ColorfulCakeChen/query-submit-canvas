@@ -1072,10 +1072,6 @@ class NeuralOrchestra_Base extends Recyclable.Root {
       let bLoadOk = loaderNext.value;
       return bLoadOk;
 
-    } catch ( e ) {
-      //console.error( e );
-      throw e; // Unknown error, should be said loundly.
-
     } finally {
       // 2. So that this async method could be executed again.
       this.versus_load_async_running = false;
