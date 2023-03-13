@@ -998,8 +998,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
   }
 
   /**
-   * Call .versus_load_async() and record the returned promise in
-   * .versus_load_promise.
+   * Create .versus_load_promise (an instance of .versus_load_async()).
    *
    *
    * @param {AsyncGenerator} this.versus_loader
@@ -1082,7 +1081,8 @@ class NeuralOrchestra_Base extends Recyclable.Root {
   }
 
   /**
-   * Create .versus_loader
+   * Create .versus_loader (an instance of .versus_load_asyncGenerator()).
+   *
    *
    * @param {ValueMax.Percentage.Aggregate} progressParent
    *   Some new progressToAdvance will be created and added to progressParent. The
