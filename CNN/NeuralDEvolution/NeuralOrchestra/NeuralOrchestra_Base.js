@@ -590,6 +590,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
 
         // 3.2 .versus_loader_async.next() resolved.
         if ( object_or_boolean instanceof Object ) {
+
           let object = object_or_boolean;
           if ( object.done ) {
 
@@ -881,20 +882,15 @@ class NeuralOrchestra_Base extends Recyclable.Root {
       throw Error( `NeuralOrchestra.Base.workerProxies_ImageData_process_async(): `
         + `should not be executed multiple times simultaneously.` );
 
-//!!! ...unfinished... (2023/03/13)
-// should check the following?
-//
-// init_async_running
-// init_asyncGenerator_running
-// initOk
-// workerProxies_init_async_running
-// workerProxies_initOk
-// versus_load_async_running
-// versus_load_asyncGenerator_running
-// versus_loadOk
-//
-// ???workerProxies_ImageData_process_async_running
-//
+    if ( !this.initOk )
+      throw Error( `NeuralOrchestra.Base.workerProxies_ImageData_process_async(): `
+        + `should be executed only if `
+        + `this.initOk ( ${this.initOk} ) is true.` );
+
+    if ( !this.versus_loadOk )
+      throw Error( `NeuralOrchestra.Base.workerProxies_ImageData_process_async(): `
+        + `should be executed only if `
+        + `this.versus_loadOk ( ${this.versus_loadOk} ) is true.` );
 
     try {
       this.workerProxies_ImageData_process_async_running = true;
