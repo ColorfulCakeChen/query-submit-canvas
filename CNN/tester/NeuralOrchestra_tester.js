@@ -5,6 +5,142 @@ import * as ValueMax from "../util/ValueMax.js";
 import * as DEvolution from "../NeuralDEvolution/DEvolution.js";
 import * as NeuralOrchestra from "../NeuralDEvolution/NeuralOrchestra.js";
 
+/** */
+class TestCase {
+
+  /** */
+  constructor() {
+    this.downloader_spreadsheetId = "18YyEoy-OfSkODfw8wqBRApSrRnBTZpjRpRiwIKy8a0M";
+    this.downloader_apiKey = null;
+    // this.bLogFetcherEventToConsole = false;
+    this.bLogFetcherEventToConsole = true;
+  
+    this.sender_clientId = Date.now();
+  
+    this.input_height = 72;
+    this.input_width = 128;
+  
+    this.vocabularyChannelCount = 4; //8; //6;
+    this.blockCountTotalRequested = 39; //84; //144;
+    this.output_channelCount_per_alignment = 64; //12;
+    this.output_channelCount = output_channelCount_per_alignment * 2;
+  }
+
+  /** */
+  async* test_init_load_process_asyncGenerator( progressParent, neuralOrchestra ) {
+    let progressToAdvance = progressParent.child_add(
+    ValueMax.Percentage.Concrete.Pool.get_or_create_by( 8 ) );
+
+    // 1. Create and initialize.
+    let initPromise = neuralOrchestra.init_async(
+      this.downloader_spreadsheetId, this.downloader_apiKey,
+      this.bLogFetcherEventToConsole,
+      this.sender_clientId,
+      this.input_height, this.input_width,
+      this.vocabularyChannelCount, this.blockCountTotalRequested,
+      this.output_channelCount
+    );
+
+    try { // Test: Re-entrance .init_async() should throw exception.
+      let initFailedPromise = await neuralOrchestra.init_async();
+  
+    } catch ( e ) {
+      if ( e.message.indexof( ".init_async():" ) > 0 ) {
+        progressToAdvance.value_advance();
+        yield progressRoot;
+      }
+    }
+
+    let initOk = await initPromise;
+    if ( !initOk )
+      throw Error( `NeuralOrchestra_tester.tester(): `
+        + `neuralOrchestra.init_async() failed.` );
+
+    if ( !neuralOrchestra.initOk )
+      throw Error( `NeuralOrchestra_tester.tester(): `
+        + `neuralOrchestra.initOk (${neuralOrchestra.initOk}) `
+        + `should be true.` );
+
+    if ( !neuralOrchestra.workerProxies_initOk )
+      throw Error( `NeuralOrchestra_tester.tester(): `
+        + `neuralOrchestra.workerProxies_initOk `
+        + `(${neuralOrchestra.workerProxies_initOk}) `
+        + `should be true.` );
+
+    progressToAdvance.value_advance();
+    yield progressRoot;
+
+    // 2. Try loading twice. One is by init_async() internally. The other is by
+    //    calling .versus_load_async() directly.
+    const loadCountMax = 2;
+    for ( let loadCount = 0; loadCount < loadCountMax; ++loadCount ) {
+
+//!!! ...unfinished... (2023/03/11)
+// How to display neuralOrchestra.versus_load_progress?
+// How to integrate it into progressCreateOrInit?
+
+      // 2.0 Try another versus loading and neural networks creating.
+      if ( loadCount > 0 ) {
+        neuralOrchestra.versus_load_promise_create();
+
+        try { // Test: Re-entrance should throw exception.
+          await NeuralOrchestra.Base.versus_load_async.call( neuralOrchestra );
+        } catch ( e ) {
+          if ( e.message.indexof( ".versus_load_async():" ) > 0 ) {
+            progressToAdvance.value_advance();
+            yield progressRoot;
+          }
+        }
+
+        try { // Test: Re-entrance should throw exception.
+          await NeuralOrchestra.Base.versus_load_asyncGenerator
+            .call( neuralOrchestra )
+            .next();
+        } catch ( e ) {
+          if ( e.message.indexof( ".versus_load_asyncGenerator():" ) > 0 ) {
+            progressToAdvance.value_advance();
+            yield progressRoot;
+          }
+        }
+      }
+
+      // 2.1 Wait for versus summary loaded, versus loaded, and neural networks
+      //     created.
+      let versus_loadOk = await neuralOrchestra.versus_load_promise;
+      if ( 100 !== neuralOrchestra.versus_load_progress.valuePercentage )
+        throw Error( `NeuralOrchestra_tester.tester(): `
+          + `neuralOrchestra.versus_load_progress.valuePercentage (`
+          + `${neuralOrchestra.versus_load_progress.valuePercentage}) `
+          + `should be 100.` );
+
+      if ( !neuralOrchestra.versus_loadOk )
+        throw Error( `NeuralOrchestra_tester.tester(): `
+          + `neuralOrchestra.versus_loadOk (${neuralOrchestra.versus_loadOk}) `
+          + `should be true.` );
+
+      if ( !versus_loadOk )
+        throw Error( `NeuralOrchestra_tester.tester(): `
+          + `versus_loadOk (${versus_loadOk}) should be true.` );
+
+      progressToAdvance.value_advance();
+      yield progressRoot;
+
+//!!! ...unfinished... (2023/03/10)
+// should test ImageProcess.
+
+      // 2.2 Submit result.
+
+      // A random integer between [ -1, +1 ].
+      let nNegativeZeroPositive = RandTools.getRandomIntInclusive( -1, 1 );
+      neuralOrchestra.versusResultSender_send( nNegativeZeroPositive );
+
+      progressToAdvance.value_advance();
+      yield progressRoot;
+    }
+  }
+
+}
+
 /**
  *
  * @param {ValueMax.Percentage.Aggregate} progressParent
@@ -16,20 +152,7 @@ import * as NeuralOrchestra from "../NeuralDEvolution/NeuralOrchestra.js";
 async function* tester( progressParent ) {
   console.log( "NeuralOrchestra testing..." );
 
-  let downloader_spreadsheetId = "18YyEoy-OfSkODfw8wqBRApSrRnBTZpjRpRiwIKy8a0M";
-  let downloader_apiKey = null;
-  // let bLogFetcherEventToConsole = false;
-  let bLogFetcherEventToConsole = true;
-
-  let sender_clientId = Date.now();
-
-  let input_height = 72;
-  let input_width = 128;
-
-  let vocabularyChannelCount = 4; //8; //6;
-  let blockCountTotalRequested = 39; //84; //144;
-  let output_channelCount_per_alignment = 64; //12;
-  let output_channelCount = output_channelCount_per_alignment * 2;
+  let testCase = new TestCase();
 
 
   let createCountMax = 2; // Try create NeuralOrchestra twice.
@@ -76,112 +199,8 @@ async function* tester( progressParent ) {
       for ( let initCount = 0; initCount < initCountMax; ++initCount ) {
 
         let progressCreateOrInit = progressCreateOrInitArray[ neuralOrchestraIndex ];
-        let progressToAdvance = progressCreateOrInit.child_add(
-        ValueMax.Percentage.Concrete.Pool.get_or_create_by( 8 ) );
-
-        // 1. Create and initialize.
-        let initPromise = neuralOrchestra.init_async(
-          downloader_spreadsheetId, downloader_apiKey, bLogFetcherEventToConsole,
-          sender_clientId,
-          input_height, input_width,
-          vocabularyChannelCount, blockCountTotalRequested, output_channelCount
-        );
-
-        try { // Test: Re-entrance .init_async() should throw exception.
-          let initFailedPromise = await neuralOrchestra.init_async(
-            downloader_spreadsheetId, downloader_apiKey, bLogFetcherEventToConsole,
-            sender_clientId,
-            input_height, input_width,
-            vocabularyChannelCount, blockCountTotalRequested, output_channelCount
-          );
-      
-        } catch ( e ) {
-          progressToAdvance.value_advance();
-          yield progressRoot;
-        }
-
-        let initOk = await initPromise;
-        if ( !initOk )
-          throw Error( `NeuralOrchestra_tester.tester(): `
-            + `neuralOrchestra.init_async() failed.` );
-
-        if ( !neuralOrchestra.initOk )
-          throw Error( `NeuralOrchestra_tester.tester(): `
-            + `neuralOrchestra.initOk (${neuralOrchestra.initOk}) `
-            + `should be true.` );
-
-        if ( !neuralOrchestra.workerProxies_initOk )
-          throw Error( `NeuralOrchestra_tester.tester(): `
-            + `neuralOrchestra.workerProxies_initOk `
-            + `(${neuralOrchestra.workerProxies_initOk}) `
-            + `should be true.` );
-
-        progressToAdvance.value_advance();
-        yield progressRoot;
-
-        // 2. Try loading twice. One is by init_async() internally. The other is by
-        //    calling .versus_load_async() directly.
-        const loadCountMax = 2;
-        for ( let loadCount = 0; loadCount < loadCountMax; ++loadCount ) {
-
-//!!! ...unfinished... (2023/03/11)
-// How to display neuralOrchestra.versus_load_progress?
-// How to integrate it into progressCreateOrInit?
-
-          // 2.0 Try another versus loading and neural networks creating.
-          if ( loadCount > 0 ) {
-            neuralOrchestra.versus_load_promise_create();
-
-            try { // Test: Re-entrance should throw exception.
-              await NeuralOrchestra.Base.versus_load_async.call( neuralOrchestra );
-            } catch ( e ) {
-              progressToAdvance.value_advance();
-              yield progressRoot;
-            }
-
-            try { // Test: Re-entrance should throw exception.
-              await NeuralOrchestra.Base.versus_load_asyncGenerator
-                .call( neuralOrchestra )
-                .next();
-            } catch ( e ) {
-              progressToAdvance.value_advance();
-              yield progressRoot;
-            }
-          }
-
-          // 2.1 Wait for versus summary loaded, versus loaded, and neural networks
-          //     created.
-          let versus_loadOk = await neuralOrchestra.versus_load_promise;
-          if ( 100 !== neuralOrchestra.versus_load_progress.valuePercentage )
-            throw Error( `NeuralOrchestra_tester.tester(): `
-              + `neuralOrchestra.versus_load_progress.valuePercentage (`
-              + `${neuralOrchestra.versus_load_progress.valuePercentage}) `
-              + `should be 100.` );
-
-          if ( !neuralOrchestra.versus_loadOk )
-            throw Error( `NeuralOrchestra_tester.tester(): `
-              + `neuralOrchestra.versus_loadOk (${neuralOrchestra.versus_loadOk}) `
-              + `should be true.` );
-
-          if ( !versus_loadOk )
-            throw Error( `NeuralOrchestra_tester.tester(): `
-              + `versus_loadOk (${versus_loadOk}) should be true.` );
-
-          progressToAdvance.value_advance();
-          yield progressRoot;
-
-    //!!! ...unfinished... (2023/03/10)
-    // should test ImageProcess.
-
-          // 2.2 Submit result.
-
-          // A random integer between [ -1, +1 ].
-          let nNegativeZeroPositive = RandTools.getRandomIntInclusive( -1, 1 );
-          neuralOrchestra.versusResultSender_send( nNegativeZeroPositive );
-
-          progressToAdvance.value_advance();
-          yield progressRoot;
-        }
+        yield* testCase.test_init_load_process_asyncGenerator(
+          progressCreateOrInit, neuralOrchestra );
 
         ++neuralOrchestraIndex;
       }
