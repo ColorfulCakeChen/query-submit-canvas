@@ -29,6 +29,7 @@ class TestCase {
 
     this.createCountMax = 2; // Try create NeuralOrchestra twice.
     this.initCountMax = 2;   // Try init NeuralOrchestra twice.
+    this.loadCountMax = 2;
   }
 
   /**
@@ -164,7 +165,7 @@ class TestCase {
 
     // 2. Try loading twice. One is by init_async() internally. The other is by
     //    calling .versus_load_async() directly.
-    const loadCountMax = 2;
+    const loadCountMax = this.loadCountMax;
     for ( let loadCount = 0; loadCount < loadCountMax; ++loadCount ) {
 
       let bTryLoad = ( loadCount > 0 );
