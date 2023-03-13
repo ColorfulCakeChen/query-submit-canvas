@@ -31,10 +31,12 @@ class TestCase {
    * @param {boolean} bTryLoad  If true, loading before processing and sending.
    */
   async* test_load_process_send_asyncGenerator(
-    progressToAdvance, neuralOrchestra, bTryLoad ) {
+    progressParent, neuralOrchestra, bTryLoad ) {
 
     let progressRoot = progressToAdvance.root_get();
-
+    let progressToAdvance = progressParent.child_add(
+      ValueMax.Percentage.Concrete.Pool.get_or_create_by( 4 ) );
+  
 //!!! ...unfinished... (2023/03/11)
 // How to display neuralOrchestra.versus_load_progress?
 // How to integrate it into progressCreateOrInit?
@@ -64,6 +66,10 @@ class TestCase {
           yield progressRoot;
         }
       }
+
+    } else { // ( bTryLoad == false )
+      progressToAdvance.value_advance( 2 );
+      yield progressRoot;
     }
 
     // 2.1 Wait for versus summary loaded, versus loaded, and neural networks
@@ -105,8 +111,12 @@ class TestCase {
     progressParent, neuralOrchestra ) {
 
     let progressRoot = progressParent.root_get();
+
+    let progressLoadProcessSend = progressParent.child_add(
+      ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
+
     let progressToAdvance = progressParent.child_add(
-    ValueMax.Percentage.Concrete.Pool.get_or_create_by( 8 ) );
+    ValueMax.Percentage.Concrete.Pool.get_or_create_by( 2 ) );
 
     // 1. Create and initialize.
     let initPromise = neuralOrchestra.init_async(
@@ -155,7 +165,7 @@ class TestCase {
 
       let bTryLoad = ( loadCount > 0 );
       yield* this.test_load_process_send_asyncGenerator(
-        progressToAdvance, neuralOrchestra, bTryLoad );
+        progressLoadProcessSend, neuralOrchestra, bTryLoad );
     }
   }
 
