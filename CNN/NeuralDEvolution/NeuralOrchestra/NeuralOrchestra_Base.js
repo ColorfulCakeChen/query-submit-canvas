@@ -1064,9 +1064,10 @@ class NeuralOrchestra_Base extends Recyclable.Root {
         loaderNext = await this.versus_loader.next();
       } while ( loaderNext.done == false );
 
-//!!! ...unfinished.. (2023/03/13)
-// If ( loaderNext.value === undefined ),
-// the .versus_loader may be illegal (e.g. has been throw exception).
+      // The result should be either true or false. It should not be undefined.
+      if ( loaderNext.value === undefined )
+        throw Error( `NeuralOrchestra.Base.versus_load_async(): `
+          + `this.versus_loader is illegal (e.g. has thrown exception).` );
 
       let bLoadOk = loaderNext.value;
       return bLoadOk;
