@@ -872,6 +872,8 @@ class NeuralOrchestra_Base extends Recyclable.Root {
    * @return {Promise( Float32Array[] )}
    *   Return a promise resolved to an array [ Float32Array, Float32Array ]
    * representing the (pair) neural networks' results.
+   *   - Float32Array[ 0 ] is parent (chromosome) neural network's output.
+   *   - Float32Array[ 1 ] is offspring (chromosome) neural network's output.
    */
   async workerProxies_ImageData_process_async( sourceImageData ) {
 
