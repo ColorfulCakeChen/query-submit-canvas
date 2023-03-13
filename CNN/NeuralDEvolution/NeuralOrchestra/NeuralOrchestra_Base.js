@@ -1027,6 +1027,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
 
     this.versus_load_promise
       = NeuralOrchestra_Base.versus_load_async.call( this );
+
     return this.versus_load_promise;
   }
 
@@ -1082,7 +1083,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
   }
 
   /**
-   * Create .versus_loader
+   * Create .versus_loader (an instance of .versus_load_asyncGenerator()).
    *
    * @param {ValueMax.Percentage.Aggregate} progressParent
    *   Some new progressToAdvance will be created and added to progressParent. The
