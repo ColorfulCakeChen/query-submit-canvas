@@ -230,7 +230,7 @@ class TestCase {
 
       // Test: versus_loader before init. (should exception.)
       try {
-        await neuralOrchestra.versus_loader_async_create().next();
+        await neuralOrchestra.versus_loader_create().next();
       } catch ( e ) {
         if ( String.prototype.indexOf.call( e.message,
                ".versus_load_asyncGenerator():" ) > 0 ) {
