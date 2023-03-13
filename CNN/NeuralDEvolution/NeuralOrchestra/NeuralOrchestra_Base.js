@@ -393,6 +393,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
         + `should not be executed multiple times simultaneously.` );
 
     try {
+      // 0. Prevent re-entrance.
       this.init_async_running = true;
 
       // 1. Use internal independent progress.
@@ -536,19 +537,23 @@ class NeuralOrchestra_Base extends Recyclable.Root {
         + `DEvolution.VersusSummary or DEvolution.Versus is still loading.` );
       
     try {
-      this.init_asyncGenerator_running = true;
-
+      // 0.
       this.initOk = false;
 
-      // 0.
+      // 0.1 Prevent re-entrance.
+      this.init_asyncGenerator_running = true;
+
+      // 0.2
       this.downloader_spreadsheetId = downloader_spreadsheetId;
       this.downloader_apiKey = downloader_apiKey;
       this.bLogFetcherEventToConsole = bLogFetcherEventToConsole;
 
+      // 0.3
       // Note: Here should not call .versus_load_progress_dispose().
       NeuralOrchestra_Base.versus_dispose.call( this );
       NeuralOrchestra_Base.versusSummary_dispose.call( this );
 
+      // 0.4
       let progressRoot = progressParent.root_get();
       let allPromiseSet = new Set();
 
@@ -724,11 +729,14 @@ class NeuralOrchestra_Base extends Recyclable.Root {
 
     let initOk;
     try {
-      this.workerProxies_init_async_running = true;
+      // 0.
       this.workerProxies_initOk = false;
 
-      let neuralNetParamsBase = this.neuralNetParamsBase;
+      // 0.1 Prevent re-entrance.
+      this.workerProxies_init_async_running = true;
 
+      // 0.2
+      let neuralNetParamsBase = this.neuralNetParamsBase;
       let initOkPromise;
 
       // 1. Try backend "webgl" first.
@@ -829,6 +837,11 @@ class NeuralOrchestra_Base extends Recyclable.Root {
   /**
    * Create neural networks in all neural web workers.
    *
+   * This method is called by:
+   *   - either .workerProxies_compileShaders_async(),
+   *   - or .versus_load_asyncGenerator().
+   *
+   *
    * @param {NeuralOrchestra_Base} this
    * @param {NeuralNet.ParamsBase} this.neuralNetParamsBase
    *
@@ -848,6 +861,11 @@ class NeuralOrchestra_Base extends Recyclable.Root {
    */
   static async workerProxies_NeuralNetArray_create_async(
     weightArrayBufferArray, bLogDryRunTime ) {
+
+    if ( this.workerProxies_ImageData_process_async_running )
+      throw Error( `NeuralOrchestra.Base.workerProxies_NeuralNetArray_create_async(): `
+        + `should not be executed while `
+        + `NeuralWorker.Proxies is still processing image.` );
 
     // Although neural network configuration will be copied (not transferred)
     // to workers, they still need be cloned because NeuralWorker.Proxy will
@@ -893,6 +911,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
         + `this.versus_loadOk ( ${this.versus_loadOk} ) is true.` );
 
     try {
+      // 0. Prevent re-entrance.
       this.workerProxies_ImageData_process_async_running = true;
 
       // 1.
@@ -1270,31 +1289,17 @@ class NeuralOrchestra_Base extends Recyclable.Root {
    */
   versusResultSender_send( nNegativeZeroPositive ) {
 
+    // Prevent from .versusResultSender not existed.
     if ( !this.initOk )
       throw Error( `NeuralOrchestra.Base.versusResultSender_send(): `
         + `should be executed only if `
         + `this.initOk ( ${this.initOk} ) is true.` );
 
+    // Prevent from .versus not existed.
     if ( !this.versus_loadOk )
       throw Error( `NeuralOrchestra.Base.versusResultSender_send(): `
         + `should be executed only if `
         + `this.versus_loadOk ( ${this.versus_loadOk} ) is true.` );
-
-
-//!!! ...unfinished... (2023/03/13)
-// should check the following?
-//
-// init_async_running
-// init_asyncGenerator_running
-// initOk
-// workerProxies_init_async_running
-// workerProxies_initOk
-// versus_load_async_running
-// versus_load_asyncGenerator_running
-// versus_loadOk
-//
-// ???workerProxies_ImageData_process_async_running
-//
 
     this.versusResultSender.post_by_versusId_NegativeZeroPositive(
       this.versus.versusId, nNegativeZeroPositive );
