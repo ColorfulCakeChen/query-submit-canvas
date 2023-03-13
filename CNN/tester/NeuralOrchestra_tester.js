@@ -236,6 +236,7 @@ async function* tester( progressParent ) {
 
 
   let createCountMax = 2; // Try create NeuralOrchestra twice.
+  let initCountMax = 2;   // Try init NeuralOrchestra twice.
 
   // Prepare progress list.
   // let progressRoot = progressParent.root_get();
