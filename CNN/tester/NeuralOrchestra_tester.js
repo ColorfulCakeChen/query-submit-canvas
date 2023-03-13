@@ -46,6 +46,10 @@ class TestCase {
 // How to display neuralOrchestra.versus_load_progress?
 // How to integrate it into progressCreateOrInit?
 
+
+//!!! ...unfinished... (2023/03/13)
+// should .versus_load_promise_create() and .versus_loader_create()
+
     // 2.0 Try another versus loading and neural networks creating.
     if ( bTryLoad ) {
       neuralOrchestra.versus_load_promise_create();
@@ -105,6 +109,14 @@ class TestCase {
 //!!! ...unfinished... (2023/03/10)
 // should test ImageProcess.
 
+
+//!!! ...unfinished... (2023/03/13)
+// should try
+// .init_async() and .init_asyncGenerator() and
+// .versus_load_promise_create() and .versus_loader_create()
+// during ImageProcess
+// 
+
     // 2.2 Submit result.
 
     // A random integer between [ -1, +1 ].
@@ -126,6 +138,9 @@ class TestCase {
 
     let progressToAdvance = progressParent.child_add(
     ValueMax.Percentage.Concrete.Pool.get_or_create_by( 2 ) );
+
+//!!! ...unfinished... (2023/03/13)
+// should .init_async() and .init_asyncGenerator()
 
     // 1. Initialize.
     let initPromise = neuralOrchestra.init_async(
