@@ -1096,6 +1096,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     this.versus_loader
       = NeuralOrchestra_Base.versus_load_asyncGenerator.call(
           this, progressParent );
+    return this.versus_loader;
   }
 
   /**
