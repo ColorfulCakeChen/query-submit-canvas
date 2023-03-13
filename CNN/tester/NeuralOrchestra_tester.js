@@ -188,7 +188,7 @@ class TestCase {
     }
 
     let progressToAdvance = progressParent.child_add(
-      ValueMax.Percentage.Concrete.Pool.get_or_create_by( ???4 ) );
+      ValueMax.Percentage.Concrete.Pool.get_or_create_by( 4 ) );
 
     //
     let neuralOrchestra;
@@ -249,11 +249,6 @@ class TestCase {
           yield progressRoot;
         }
       }
-
-//!!! ...unfinished... (2023/03/13)
-// Test: .workerProxies_ImageData_process_async(),
-// .versus_load_promise_create(), .versus_loader_async_create()
-// before init
 
       // Test: re-init (without re-create).
       for ( let initCount = 0; initCount < initCountMax; ++initCount ) {
