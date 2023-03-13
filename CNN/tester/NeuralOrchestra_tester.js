@@ -44,7 +44,8 @@ class TestCase {
       try { // Test: Re-entrance should throw exception.
         await NeuralOrchestra.Base.versus_load_async.call( neuralOrchestra );
       } catch ( e ) {
-        if ( e.message.indexof( ".versus_load_async():" ) > 0 ) {
+        if ( String.prototype.indexOf.call(
+               e.message, ".versus_load_async():" ) > 0 ) {
           progressToAdvance.value_advance();
           yield progressRoot;
         }
@@ -55,7 +56,8 @@ class TestCase {
           .call( neuralOrchestra )
           .next();
       } catch ( e ) {
-        if ( e.message.indexof( ".versus_load_asyncGenerator():" ) > 0 ) {
+        if ( String.prototype.indexOf.call(
+               e.message, ".versus_load_asyncGenerator():" ) > 0 ) {
           progressToAdvance.value_advance();
           yield progressRoot;
         }
@@ -117,7 +119,8 @@ class TestCase {
       let initFailedPromise = await neuralOrchestra.init_async();
   
     } catch ( e ) {
-      if ( e.message.indexof( ".init_async():" ) > 0 ) {
+      if ( String.prototype.indexOf.call(
+             e.message, ".init_async():" ) > 0 ) {
         progressToAdvance.value_advance();
         yield progressRoot;
       }
