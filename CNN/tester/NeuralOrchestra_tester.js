@@ -236,8 +236,6 @@ class TestCase {
             ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
     }
 
-    // Loop for init, load, send.
-
     // Test: re-create.
     for ( let createCount = 0; createCount < createCountMax; ++createCount ) {
       let progressCreateInitLoadProcessSend
