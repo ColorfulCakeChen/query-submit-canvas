@@ -213,7 +213,7 @@ async function* tester( progressParent ) {
       for ( let initCount = 0; initCount < initCountMax; ++initCount ) {
 
         let progressCreateOrInit = progressCreateOrInitArray[ neuralOrchestraIndex ];
-        yield* testCase.test_init_load_process_asyncGenerator(
+        yield* testCase.test_init_load_process_send_asyncGenerator(
           progressCreateOrInit, neuralOrchestra );
 
         ++neuralOrchestraIndex;
