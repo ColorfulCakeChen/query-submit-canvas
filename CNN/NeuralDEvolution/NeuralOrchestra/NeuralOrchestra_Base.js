@@ -1043,7 +1043,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
       // 2. So that this async method could be executed again.
       this.versus_load_async_running = false;
 
-      // Prevent a completed loader to be re-used.
+      // Prevent a finished versus loader to be re-used.
       this.versus_loader_async = null;
     }
   }
