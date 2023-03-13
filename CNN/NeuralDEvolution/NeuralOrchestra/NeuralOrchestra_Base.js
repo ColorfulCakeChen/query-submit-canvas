@@ -1064,6 +1064,10 @@ class NeuralOrchestra_Base extends Recyclable.Root {
         loaderNext = await this.versus_loader.next();
       } while ( loaderNext.done == false );
 
+//!!! ...unfinished.. (2023/03/13)
+// If ( loaderNext.value === undefined ),
+// the .versus_loader may be illegal (e.g. has been throw exception).
+
       let bLoadOk = loaderNext.value;
       return bLoadOk;
 

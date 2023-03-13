@@ -259,6 +259,11 @@ class TestCase {
       // Test: versus_load before init. (should exception.)
       try {
         await neuralOrchestra.versus_load_promise_create();
+
+//!!! ...unfinished... (2023/03/13)
+// an illegal (completed) .versus_loader may be used.
+// and then no exception will be thrown.
+
       } catch ( e ) {
         if ( String.prototype.indexOf.call( e.message,
 //               ".versus_load_asyncGenerator():" ) > 0 ) {
