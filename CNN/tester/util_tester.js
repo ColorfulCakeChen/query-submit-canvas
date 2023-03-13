@@ -63,6 +63,10 @@ function test() {
     }
   }
 
+  // Whether detect progress back-track.
+  // let bDetectProgressBacktrack = false;
+  let bDetectProgressBacktrack = true;
+
   let tester = testerAll();
 
   let testPromise = PartTime.forOf(
@@ -70,9 +74,11 @@ function test() {
     ( progressRoot ) => {
 
       // Detect progress back-track.
-      let uiProgessValue = progressReceiver.getValue();
-      if ( progressRoot.valuePercentage < uiProgessValue ) {
-        debugger;
+      if ( bDetectProgressBacktrack ) {
+        let uiProgessValue = progressReceiver.getValue();
+        if ( progressRoot.valuePercentage < uiProgessValue ) {
+          debugger;
+        }
       }
 
       progressReceiver.setValueMax( // Report progress to UI.
