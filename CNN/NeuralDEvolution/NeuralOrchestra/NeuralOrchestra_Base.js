@@ -37,8 +37,8 @@ import * as DEvolution from "../DEvolution.js";
  *
  *   - Wait for versus loaded and neural networks created:
  *     - await .versus_load_promise, or
- *     - check .versus_loadOk until become true, or
- *     - check .versus_load_progress.valuePercentage until become 100.
+ *     - check .versus_loadOk asynchronously until become true, or
+ *     - check .versus_load_progress.valuePercentage asynchronously until become 100.
  *   - go to 1.3
  *
  *
@@ -49,7 +49,7 @@ import * as DEvolution from "../DEvolution.js";
  *
  *   - Initialize (and also load one versus):
  *     - call .init_asyncGeneraotr() with yourself progressParent.
- *     - .next() until { done: true, value: true }, go to 1.2.2
+ *     - await .next() until { done: true, value: true }, go to 1.2.2
  *
  *   - Load another versus:
  *     - call .versus_loader_create() with yourself progressParent.
@@ -59,8 +59,8 @@ import * as DEvolution from "../DEvolution.js";
  * 1.2.2
  *
  *   - Wait for versus loaded and neural networks created:
- *     - .versus_loader.next() until { done: true, value: true }, or
- *     - check .versus_loadOk until become true.
+ *     - await .versus_loader.next() until { done: true, value: true }, or
+ *     - check .versus_loadOk asynchronously until become true.
  *     - (.versus_load_progress is not used.)
  *   - go to 1.3
  *
