@@ -22,46 +22,46 @@ import * as DEvolution from "../DEvolution.js";
  * 1.1 Without yourself progressParent
  *
  *
- * 1.1.1
+ * 1.1.1 Initialize (and also load one versus)
  *
- *   - Initialize (and also load one versus):
- *     - call and await .init_async().
- *     - After it resolved to true, go to 1.1.2
- *
- *   - Load another versus:
- *     - call .versus_load_promise_create()
- *     - go to 1.1.2
+ *   - call and await .init_async().
+ *   - After it resolved to true, go to 1.1.3
  *
  *
- * 1.1.2
+ * 1.1.2 Load another versus
  *
- *   - Wait for versus loaded and neural networks created:
- *     - await .versus_load_promise, or
- *     - check .versus_loadOk asynchronously until become true, or
- *     - check .versus_load_progress.valuePercentage asynchronously until become 100.
+ *   - call .versus_load_promise_create()
+ *   - go to 1.1.3
+ *
+ *
+ * 1.1.3 Wait for versus loaded and neural networks created
+ *
+ *   - await .versus_load_promise, or
+ *   - check .versus_loadOk asynchronously until become true, or
+ *   - check .versus_load_progress.valuePercentage asynchronously until become 100.
  *   - go to 1.3
  *
  *
  * 1.2 With yourself progressParent
  *
  *
- * 1.2.1
+ * 1.2.1 Initialize (and also load one versus)
  *
- *   - Initialize (and also load one versus):
- *     - call .init_asyncGeneraotr() with yourself progressParent.
- *     - await .next() until { done: true, value: true }, go to 1.2.2
- *
- *   - Load another versus:
- *     - call .versus_loader_create() with yourself progressParent.
- *     - go to 1.2.2
+ *   - call .init_asyncGeneraotr() with yourself progressParent.
+ *   - await .next() until { done: true, value: true }, go to 1.2.3
  *
  *
- * 1.2.2
+ * 1.2.2 Load another versus
  *
- *   - Wait for versus loaded and neural networks created:
- *     - await .versus_loader.next() until { done: true, value: true }, or
- *     - check .versus_loadOk asynchronously until become true.
- *     - (.versus_load_progress is not used.)
+ *   - call .versus_loader_create() with yourself progressParent.
+ *   - go to 1.2.3
+ *
+ *
+ * 1.2.3 Wait for versus loaded and neural networks created
+ *
+ *   - await .versus_loader.next() until { done: true, value: true }, or
+ *   - check .versus_loadOk asynchronously until become true.
+ *   - (.versus_load_progress is not used.)
  *   - go to 1.3
  *
  *
@@ -69,6 +69,7 @@ import * as DEvolution from "../DEvolution.js";
  *
  *   - call and await .workerProxies_ImageData_process_async()
  *   - call versusResultSender_send()
+ *   - go to 1.1.2 or 1.2.2 (Load another versus)
  *
  *
  * 2. Configuration for 250K filter weights and executing 2 times per second
