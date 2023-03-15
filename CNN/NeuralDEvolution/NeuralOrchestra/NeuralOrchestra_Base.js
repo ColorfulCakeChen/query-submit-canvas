@@ -1034,7 +1034,8 @@ class NeuralOrchestra_Base extends Recyclable.Root {
           + `if not called by .init_async().` );
       }
 
-    // 1.2 Outside caller calls this method.
+    // 1.2 Outside caller calls this method (after previous .versus_loader
+    //     has completed).
     } else {
       NeuralOrchestra_Base.versus_load_progress_create.call( this );
       this.versus_loader_create( this.versus_load_progress );
