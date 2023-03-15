@@ -36,11 +36,12 @@ class TestCase {
    * @param {boolean} bTryLoad  If true, loading before processing and sending.
    */
   async* test_load_process_send_asyncGenerator(
-    progressParent, neuralOrchestra, bTryLoad ) {
+    progressParent, neuralOrchestra,
+    bTryLoad, b_load_asyncGenerator ) {
 
     let progressRoot = progressParent.root_get();
     let progressToAdvance = progressParent.child_add(
-      ValueMax.Percentage.Concrete.Pool.get_or_create_by( 4 ) );
+      ValueMax.Percentage.Concrete.Pool.get_or_create_by( 6 ) );
   
 //!!! ...unfinished... (2023/03/11)
 // How to display neuralOrchestra.versus_load_progress?
@@ -52,20 +53,23 @@ class TestCase {
 
     // 2.0 Try another versus loading and neural networks creating.
     if ( bTryLoad ) {
-      neuralOrchestra.versus_load_promise_create();
 
-    } else { // ( bTryLoad == false )
-      progressToAdvance.value_advance( 2 );
-      yield progressRoot;
+      if ( b_load_asyncGenerator ) {
+
+//!!! ...unfinished... (2023/03/15)
+// b_load_asyncGenerator
+
+      } else {
+        neuralOrchestra.versus_load_promise_create();
+      }
+
     }
 
-!!!
-
-    try { // Test: Re-entrance should throw exception.
+    try { // Test: Reenter .load_async() should throw exception.
       await neuralOrchestra.versus_load_promise_create();
     } catch ( e ) {
       if ( String.prototype.indexOf.call( e.message,
-              ".versus_load_promise_create():" ) > 0 ) {
+             ".versus_load_promise_create():" ) > 0 ) {
 //!!! (2023/03/15 Remarked)
 //               ".versus_load_async():" ) > 0 ) {
         progressToAdvance.value_advance();
@@ -75,11 +79,11 @@ class TestCase {
       }
     }
 
-    try { // Test: Re-entrance should throw exception.
+    try { // Test: Reenter .load_asyncGenerator() should throw exception.
       await neuralOrchestra.versus_loader_create().next();
     } catch ( e ) {
       if ( String.prototype.indexOf.call( e.message,
-              ".versus_loader_create():" ) > 0 ) {
+             ".versus_loader_create():" ) > 0 ) {
 //!!! (2023/03/15 Remarked)
 //               ".versus_load_asyncGenerator():" ) > 0 ) {
         progressToAdvance.value_advance();
@@ -89,13 +93,12 @@ class TestCase {
       }
     }
 
-!!!
     // Test: send before versus loaded. (should exception.)
     try {
       neuralOrchestra.versusResultSender_send();
     } catch ( e ) {
       if ( String.prototype.indexOf.call( e.message,
-              ".versusResultSender_send():" ) > 0 ) {
+             ".versusResultSender_send():" ) > 0 ) {
         progressToAdvance.value_advance();
         yield progressRoot;
       } else {
@@ -108,7 +111,7 @@ class TestCase {
       await neuralOrchestra.workerProxies_ImageData_process_async();
     } catch ( e ) {
       if ( String.prototype.indexOf.call( e.message,
-              ".workerProxies_ImageData_process_async():" ) > 0 ) {
+             ".workerProxies_ImageData_process_async():" ) > 0 ) {
         progressToAdvance.value_advance();
         yield progressRoot;
       } else {
@@ -119,7 +122,17 @@ class TestCase {
 
     // 2.1 Wait for versus summary loaded, versus loaded, and neural networks
     //     created.
-    let versus_loadOk = await neuralOrchestra.versus_load_promise;
+
+    let versus_loadOk;
+    if ( b_load_asyncGenerator ) {
+
+//!!! ...unfinished... (2023/03/15)
+// b_load_asyncGenerator
+      
+    } else {
+      versus_loadOk = await neuralOrchestra.versus_load_promise;
+    }      
+
     if ( 100 !== neuralOrchestra.versus_load_progress.valuePercentage )
       throw Error( `NeuralOrchestra_tester.tester(): `
         + `neuralOrchestra.versus_load_progress.valuePercentage (`
@@ -139,7 +152,7 @@ class TestCase {
     yield progressRoot;
 
 //!!! ...unfinished... (2023/03/10)
-// should test ImageProcess.
+// should test ImageProcess. and Reenter ImageProcess.
 
 
 //!!! ...unfinished... (2023/03/13)
@@ -209,10 +222,10 @@ class TestCase {
         this.output_channelCount
       );
 
-    // Re-entrance test: try .init_asyncGenerator() and then init_async()
+    // Test: Reenter try .init_asyncGenerator() and then init_async()
     if ( b_reenter_first_init_asyncGenerator ) {
 
-      try { // Test: Re-entrance .init_asyncGenerator() should throw exception.
+      try { // Test: Reenter .init_asyncGenerator() should throw exception.
         await neuralOrchestra.init_asyncGenerator().next();
       } catch ( e ) {
         if ( String.prototype.indexOf.call( e.message,
@@ -224,7 +237,7 @@ class TestCase {
         }
       }
 
-      try { // Test: Re-entrance .init_async() should throw exception.
+      try { // Test: Reenter .init_async() should throw exception.
         await neuralOrchestra.init_async();
       } catch ( e ) {
         if ( String.prototype.indexOf.call( e.message,
@@ -236,10 +249,10 @@ class TestCase {
         }
       }
 
-    // Re-entrance test: try .init_async() and then init_asyncGenerator()
+    // Test: Reenter try .init_async() and then init_asyncGenerator()
     } else {
 
-      try { // Test: Re-entrance .init_async() should throw exception.
+      try { // Test: Reenter .init_async() should throw exception.
         await neuralOrchestra.init_async();
       } catch ( e ) {
         if ( String.prototype.indexOf.call( e.message,
@@ -251,7 +264,7 @@ class TestCase {
         }
       }
 
-      try { // Test: Re-entrance .init_asyncGenerator() should throw exception.
+      try { // Test: Reenter .init_asyncGenerator() should throw exception.
         await neuralOrchestra.init_asyncGenerator().next();
       } catch ( e ) {
         if ( String.prototype.indexOf.call( e.message,
