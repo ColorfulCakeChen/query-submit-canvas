@@ -30,6 +30,9 @@ class TestCase {
     this.createCountBase = 2; // Try create NeuralOrchestra twice.
     this.initCountBase = 2;   // Try init NeuralOrchestra twice.
     this.loadCountBase = 2;
+
+    this.sourceImageData
+      = new ImageData( this.input_width, this.input_height );
   }
 
   /**
@@ -196,6 +199,9 @@ class TestCase {
 
 //!!! ...unfinished... (2023/03/10)
 // should test ImageProcess. and Reenter ImageProcess.
+
+    // neuralOrchestra.workerProxies_NeuralNetArray_create_async(
+    //   this.sourceImageData );
 
 
 //!!! ...unfinished... (2023/03/13)
