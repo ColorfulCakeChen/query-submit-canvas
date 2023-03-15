@@ -131,11 +131,17 @@ class TestCase {
 
   /** */
   async* test_init_load_process_send_asyncGenerator(
-    progressParent, neuralOrchestra ) {
+    progressParent, neuralOrchestra, b_init_asyncGenerator ) {
 
     const loadCountMax = this.loadCountMax;
 
     let progressRoot = progressParent.root_get();
+
+    let progressInit;
+    if ( b_init_asyncGenerator )
+      progressInit
+        = progressParent.child_add(
+            ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
 
     let progressLoadProcessSendArray = new Array( loadCountMax );
     for ( let loadCount = 0; loadCount < loadCountMax; ++loadCount ) {
@@ -145,24 +151,36 @@ class TestCase {
     }
 
     let progressToAdvance = progressParent.child_add(
-    ValueMax.Percentage.Concrete.Pool.get_or_create_by( 2 ) );
+    ValueMax.Percentage.Concrete.Pool.get_or_create_by( 3 ) );
 
 //!!! ...unfinished... (2023/03/13)
 // should .init_async() and .init_asyncGenerator()
 
     // 1. Initialize.
-    let initPromise = neuralOrchestra.init_async(
-      this.downloader_spreadsheetId, this.downloader_apiKey,
-      this.bLogFetcherEventToConsole,
-      this.sender_clientId,
-      this.input_height, this.input_width,
-      this.vocabularyChannelCount, this.blockCountTotalRequested,
-      this.output_channelCount
-    );
+    let initer_async;
+    let initPromise;
+    if ( b_init_asyncGenerator )
+      initer_async = neuralOrchestra.init_asyncGenerator(
+        progressInit,
+        this.downloader_spreadsheetId, this.downloader_apiKey,
+        this.bLogFetcherEventToConsole,
+        this.sender_clientId,
+        this.input_height, this.input_width,
+        this.vocabularyChannelCount, this.blockCountTotalRequested,
+        this.output_channelCount
+      );
+    else
+      initPromise = neuralOrchestra.init_async(
+        this.downloader_spreadsheetId, this.downloader_apiKey,
+        this.bLogFetcherEventToConsole,
+        this.sender_clientId,
+        this.input_height, this.input_width,
+        this.vocabularyChannelCount, this.blockCountTotalRequested,
+        this.output_channelCount
+      );
 
     try { // Test: Re-entrance .init_async() should throw exception.
-      let initFailedPromise = await neuralOrchestra.init_async();
-
+      await neuralOrchestra.init_async();
     } catch ( e ) {
       if ( String.prototype.indexOf.call( e.message,
              ".init_async():" ) > 0 ) {
@@ -173,7 +191,30 @@ class TestCase {
       }
     }
 
-    let initOk = await initPromise;
+    try { // Test: Re-entrance .init_asyncGenerator() should throw exception.
+      await neuralOrchestra.init_asyncGenerator().next();
+    } catch ( e ) {
+      if ( String.prototype.indexOf.call( e.message,
+             ".init_asyncGenerator():" ) > 0 ) {
+        progressToAdvance.value_advance();
+        yield progressRoot;
+      } else {
+        throw e; // Unknown error, said loudly.
+      }
+    }
+
+    let initOk;
+    if ( b_init_asyncGenerator ) {
+      let ininterNext;
+      do {
+        ininterNext = await initer_async.next();
+      } while ( !ininterNext.done );
+      initOk = ininterNext.value;
+
+    } else {
+      initOk = await initPromise;
+    }
+
     if ( !initOk )
       throw Error( `NeuralOrchestra_tester.tester(): `
         + `neuralOrchestra.init_async() failed.` );
