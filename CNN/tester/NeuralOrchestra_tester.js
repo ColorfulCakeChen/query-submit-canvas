@@ -54,38 +54,68 @@ class TestCase {
     if ( bTryLoad ) {
       neuralOrchestra.versus_load_promise_create();
 
-      try { // Test: Re-entrance should throw exception.
-        await neuralOrchestra.versus_load_promise_create();
-      } catch ( e ) {
-        if ( String.prototype.indexOf.call( e.message,
-               ".versus_load_promise_create():" ) > 0 ) {
-//!!! (2023/03/15 Remarked)
-//               ".versus_load_async():" ) > 0 ) {
-          progressToAdvance.value_advance();
-          yield progressRoot;
-        } else {
-          throw e; // Unknown error, said loudly.
-        }
-      }
-
-      try { // Test: Re-entrance should throw exception.
-        await neuralOrchestra.versus_loader_create().next();
-      } catch ( e ) {
-        if ( String.prototype.indexOf.call( e.message,
-               ".versus_loader_create():" ) > 0 ) {
-//!!! (2023/03/15 Remarked)
-//               ".versus_load_asyncGenerator():" ) > 0 ) {
-          progressToAdvance.value_advance();
-          yield progressRoot;
-        } else {
-          throw e; // Unknown error, said loudly.
-        }
-      }
-
     } else { // ( bTryLoad == false )
       progressToAdvance.value_advance( 2 );
       yield progressRoot;
     }
+
+!!!
+
+    try { // Test: Re-entrance should throw exception.
+      await neuralOrchestra.versus_load_promise_create();
+    } catch ( e ) {
+      if ( String.prototype.indexOf.call( e.message,
+              ".versus_load_promise_create():" ) > 0 ) {
+//!!! (2023/03/15 Remarked)
+//               ".versus_load_async():" ) > 0 ) {
+        progressToAdvance.value_advance();
+        yield progressRoot;
+      } else {
+        throw e; // Unknown error, said loudly.
+      }
+    }
+
+    try { // Test: Re-entrance should throw exception.
+      await neuralOrchestra.versus_loader_create().next();
+    } catch ( e ) {
+      if ( String.prototype.indexOf.call( e.message,
+              ".versus_loader_create():" ) > 0 ) {
+//!!! (2023/03/15 Remarked)
+//               ".versus_load_asyncGenerator():" ) > 0 ) {
+        progressToAdvance.value_advance();
+        yield progressRoot;
+      } else {
+        throw e; // Unknown error, said loudly.
+      }
+    }
+
+!!!
+    // Test: send before versus loaded. (should exception.)
+    try {
+      neuralOrchestra.versusResultSender_send();
+    } catch ( e ) {
+      if ( String.prototype.indexOf.call( e.message,
+              ".versusResultSender_send():" ) > 0 ) {
+        progressToAdvance.value_advance();
+        yield progressRoot;
+      } else {
+        throw e; // Unknown error, said loudly.
+      }
+    }
+
+    // Test: process before versus loaded. (should exception.)
+    try {
+      await neuralOrchestra.workerProxies_ImageData_process_async();
+    } catch ( e ) {
+      if ( String.prototype.indexOf.call( e.message,
+              ".workerProxies_ImageData_process_async():" ) > 0 ) {
+        progressToAdvance.value_advance();
+        yield progressRoot;
+      } else {
+        throw e; // Unknown error, said loudly.
+      }
+    }
+
 
     // 2.1 Wait for versus summary loaded, versus loaded, and neural networks
     //     created.
@@ -135,15 +165,16 @@ class TestCase {
     b_init_asyncGenerator, b_reenter_first_init_asyncGenerator ) {
 
 //!!! ...unfinished... (2023/03/15)
+// b_load_asyncGenerator
+
     const loadCountMax = this.loadCountBase * 1;
 
     let progressRoot = progressParent.root_get();
 
     let progressInit;
     if ( b_init_asyncGenerator )
-      progressInit
-        = progressParent.child_add(
-            ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
+      progressInit = progressParent.child_add(
+        ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
 
     let progressLoadProcessSendArray = new Array( loadCountMax );
     for ( let loadCount = 0; loadCount < loadCountMax; ++loadCount ) {
@@ -153,7 +184,7 @@ class TestCase {
     }
 
     let progressToAdvance = progressParent.child_add(
-    ValueMax.Percentage.Concrete.Pool.get_or_create_by( 3 ) );
+    ValueMax.Percentage.Concrete.Pool.get_or_create_by( 5 ) );
 
     // 1. Initialize.
     let initer_async;
@@ -230,6 +261,32 @@ class TestCase {
         } else {
           throw e; // Unknown error, said loudly.
         }
+      }
+    }
+
+    // Test: send before init ok. (should exception.)
+    try {
+      neuralOrchestra.versusResultSender_send();
+    } catch ( e ) {
+      if ( String.prototype.indexOf.call( e.message,
+              ".versusResultSender_send():" ) > 0 ) {
+        progressToAdvance.value_advance();
+        yield progressRoot;
+      } else {
+        throw e; // Unknown error, said loudly.
+      }
+    }
+
+    // Test: process before init ok. (should exception.)
+    try {
+      await neuralOrchestra.workerProxies_ImageData_process_async();
+    } catch ( e ) {
+      if ( String.prototype.indexOf.call( e.message,
+              ".workerProxies_ImageData_process_async():" ) > 0 ) {
+        progressToAdvance.value_advance();
+        yield progressRoot;
+      } else {
+        throw e; // Unknown error, said loudly.
       }
     }
 
