@@ -179,6 +179,12 @@ class TestCase {
         this.output_channelCount
       );
 
+//!!! ...unfinished... (2023/03/13)
+// Re-entrance test should test:
+//   - try .init_async() and then init_asyncGenerator()
+//   - try .init_asyncGenerator() and then init_async()
+//
+
     try { // Test: Re-entrance .init_async() should throw exception.
       await neuralOrchestra.init_async();
     } catch ( e ) {
