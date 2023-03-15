@@ -1027,7 +1027,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
         // Do nothing.
 
       // 1.1.2 Only if .init_async() calls this method, the .versus_loader
-      //       could exist.
+      //       could have exists.
       } else {
         throw Error( `NeuralOrchestra.Base.versus_load_promise_create(): `
           + `this.versus_loader should be null, `
