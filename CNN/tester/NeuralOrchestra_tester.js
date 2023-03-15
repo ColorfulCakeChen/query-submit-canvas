@@ -131,7 +131,8 @@ class TestCase {
 
   /** */
   async* test_init_load_process_send_asyncGenerator(
-    progressParent, neuralOrchestra, b_init_asyncGenerator ) {
+    progressParent, neuralOrchestra,
+    b_init_asyncGenerator, b_reenter_first_init_asyncGenerator ) {
 
     const loadCountMax = this.loadCountMax;
 
@@ -179,33 +180,58 @@ class TestCase {
         this.output_channelCount
       );
 
-//!!! ...unfinished... (2023/03/13)
-// Re-entrance test should test:
-//   - try .init_async() and then init_asyncGenerator()
-//   - try .init_asyncGenerator() and then init_async()
-//
+    // Re-entrance test: try .init_asyncGenerator() and then init_async()
+    if ( b_reenter_first_init_asyncGenerator ) {
 
-    try { // Test: Re-entrance .init_async() should throw exception.
-      await neuralOrchestra.init_async();
-    } catch ( e ) {
-      if ( String.prototype.indexOf.call( e.message,
-             ".init_async():" ) > 0 ) {
-        progressToAdvance.value_advance();
-        yield progressRoot;
-      } else {
-        throw e; // Unknown error, said loudly.
+      try { // Test: Re-entrance .init_asyncGenerator() should throw exception.
+        await neuralOrchestra.init_asyncGenerator().next();
+      } catch ( e ) {
+        if ( String.prototype.indexOf.call( e.message,
+              ".init_asyncGenerator():" ) > 0 ) {
+          progressToAdvance.value_advance();
+          yield progressRoot;
+        } else {
+          throw e; // Unknown error, said loudly.
+        }
       }
-    }
 
-    try { // Test: Re-entrance .init_asyncGenerator() should throw exception.
-      await neuralOrchestra.init_asyncGenerator().next();
-    } catch ( e ) {
-      if ( String.prototype.indexOf.call( e.message,
-             ".init_asyncGenerator():" ) > 0 ) {
-        progressToAdvance.value_advance();
-        yield progressRoot;
-      } else {
-        throw e; // Unknown error, said loudly.
+      try { // Test: Re-entrance .init_async() should throw exception.
+        await neuralOrchestra.init_async();
+      } catch ( e ) {
+        if ( String.prototype.indexOf.call( e.message,
+              ".init_async():" ) > 0 ) {
+          progressToAdvance.value_advance();
+          yield progressRoot;
+        } else {
+          throw e; // Unknown error, said loudly.
+        }
+      }
+
+    // Re-entrance test: try .init_async() and then init_asyncGenerator()
+    } else {
+
+      try { // Test: Re-entrance .init_async() should throw exception.
+        await neuralOrchestra.init_async();
+      } catch ( e ) {
+        if ( String.prototype.indexOf.call( e.message,
+              ".init_async():" ) > 0 ) {
+          progressToAdvance.value_advance();
+          yield progressRoot;
+        } else {
+          throw e; // Unknown error, said loudly.
+        }
+      }
+
+      try { // Test: Re-entrance .init_asyncGenerator() should throw exception.
+        await neuralOrchestra.init_asyncGenerator().next();
+      } catch ( e ) {
+        if ( String.prototype.indexOf.call( e.message,
+              ".init_asyncGenerator():" ) > 0 ) {
+          progressToAdvance.value_advance();
+          yield progressRoot;
+        } else {
+          throw e; // Unknown error, said loudly.
+        }
       }
     }
 
