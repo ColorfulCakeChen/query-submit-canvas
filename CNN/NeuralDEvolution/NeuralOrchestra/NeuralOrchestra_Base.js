@@ -1096,7 +1096,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     } finally {
       // 2. So that this async method could be executed again.
       this.versus_load_async_running = false;
-
+!!!
       // Prevent a finished versus loader to be re-used.
       this.versus_loader = null;
     }
@@ -1115,6 +1115,12 @@ class NeuralOrchestra_Base extends Recyclable.Root {
    *   Return the newly created this.versus_loader
    */
   versus_loader_create( progressParent ) {
+
+    if ( this.versus_loader ) {
+      throw Error( `NeuralOrchestra.Base.versus_loader_create(): `
+        + `this.versus_loader should be null. `
+        + `Please wait .versus_loader to complete if wanting to call again.` );
+
     this.versus_loader = NeuralOrchestra_Base.versus_load_asyncGenerator.call(
       this, progressParent );
     return this.versus_loader;
@@ -1286,6 +1292,10 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     } finally {
       // 4. So that this async generator could be executed again.
       this.versus_load_asyncGenerator_running = false;
+
+      // So that .versus_loader_create() could be called again.
+      // Prevent a finished versus loader to be re-used.
+      this.versus_loader = null;
     }
 
     // 5. Advance progress to 100% only if neural networks created successfully
