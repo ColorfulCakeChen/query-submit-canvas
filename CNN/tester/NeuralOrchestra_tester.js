@@ -165,15 +165,22 @@ class TestCase {
       } while ( !loaderNext.done );
       versus_loadOk = loaderNext.value;
 
+      // Note: In .load_asyncGenerator(), .versus_load_progress is not used.
+      if ( 100 !== progressLoad.valuePercentage )
+        throw Error( `NeuralOrchestra_tester.tester(): `
+          + `progressLoad.valuePercentage (`
+          + `${progressLoad.valuePercentage}) `
+          + `should be 100.` );
+
     } else {
       versus_loadOk = await neuralOrchestra.versus_load_promise;
-    }      
 
-    if ( 100 !== neuralOrchestra.versus_load_progress.valuePercentage )
-      throw Error( `NeuralOrchestra_tester.tester(): `
-        + `neuralOrchestra.versus_load_progress.valuePercentage (`
-        + `${neuralOrchestra.versus_load_progress.valuePercentage}) `
-        + `should be 100.` );
+      if ( 100 !== neuralOrchestra.versus_load_progress.valuePercentage )
+        throw Error( `NeuralOrchestra_tester.tester(): `
+          + `neuralOrchestra.versus_load_progress.valuePercentage (`
+          + `${neuralOrchestra.versus_load_progress.valuePercentage}) `
+          + `should be 100.` );
+    }      
 
     if ( !neuralOrchestra.versus_loadOk )
       throw Error( `NeuralOrchestra_tester.tester(): `
