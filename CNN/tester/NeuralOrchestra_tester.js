@@ -337,6 +337,11 @@ class TestCase {
             ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
     }
 
+
+//!!! ...unfinished... (2023/03/15)
+// should specify use .init_async() or .init_asyncGenerator() first.
+
+
     // Test: re-create.
     for ( let createCount = 0; createCount < createCountMax; ++createCount ) {
       let progressCreateInitLoadProcessSend
