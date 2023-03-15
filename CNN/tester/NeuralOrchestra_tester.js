@@ -220,9 +220,6 @@ class TestCase {
     progressParent, neuralOrchestra,
     b_init_asyncGenerator, b_reenter_first_init_asyncGenerator ) {
 
-//!!! ...unfinished... (2023/03/15)
-// b_load_asyncGenerator, b_reenter_first_load_asyncGenerator
-
     const loadCountMax = this.loadCountBase
       * 2 // b_load_asyncGenerator
       * 2 // b_reenter_first_load_asyncGenerator
