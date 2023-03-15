@@ -27,9 +27,9 @@ class TestCase {
     this.output_channelCount = this.output_channelCount_per_alignment * 2;
 
 
-    this.createCountMax = 2; // Try create NeuralOrchestra twice.
-    this.initCountMax = 2;   // Try init NeuralOrchestra twice.
-    this.loadCountMax = 2;
+    this.createCountBase = 2; // Try create NeuralOrchestra twice.
+    this.initCountBase = 2;   // Try init NeuralOrchestra twice.
+    this.loadCountBase = 2;
   }
 
   /**
@@ -134,7 +134,8 @@ class TestCase {
     progressParent, neuralOrchestra,
     b_init_asyncGenerator, b_reenter_first_init_asyncGenerator ) {
 
-    const loadCountMax = this.loadCountMax;
+//!!! ...unfinished... (2023/03/15)
+    const loadCountMax = this.loadCountBase * 1;
 
     let progressRoot = progressParent.root_get();
 
@@ -153,9 +154,6 @@ class TestCase {
 
     let progressToAdvance = progressParent.child_add(
     ValueMax.Percentage.Concrete.Pool.get_or_create_by( 3 ) );
-
-//!!! ...unfinished... (2023/03/13)
-// should .init_async() and .init_asyncGenerator()
 
     // 1. Initialize.
     let initer_async;
@@ -282,8 +280,15 @@ class TestCase {
 
   /** */
   async* test_create_init_load_process_send_asyncGenerator(
-    progressParent, b_init_asyncGenerator_first ) {
-    const initCountMax = this.initCountMax;
+    progressParent, b_init_asyncGenerator_first
+  ) {
+
+
+//!!! ...unfinished... (2023/03/15)
+// b_init_asyncGenerator, b_reenter_first_init_asyncGenerator
+
+//!!! ...unfinished... (2023/03/15)
+    const initCountMax = this.initCountBase * 1;
 
     // Prepare progress list.
     let progressRoot = progressParent.root_get();
@@ -383,6 +388,9 @@ class TestCase {
         }
       }
 
+//!!! ...unfinished... (2023/03/15)
+// b_init_asyncGenerator, b_reenter_first_init_asyncGenerator
+
 //!!! ...unfinished... (2023/03/15) b_init_asyncGenerator_first
 
 //!!! ...unfinished... (2023/03/15)
@@ -410,7 +418,9 @@ class TestCase {
 
   /** */
   async* test_asyncGenerator( progressParent ) {
-    const createCountMax = this.createCountMax;
+
+//!!! ...unfinished... (2023/03/15)
+    const createCountMax = this.createCountBase * 1;
 
     // Prepare progress list.
     // let progressRoot = progressParent.root_get();
