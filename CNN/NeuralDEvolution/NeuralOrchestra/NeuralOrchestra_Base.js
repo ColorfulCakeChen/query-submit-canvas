@@ -1017,14 +1017,30 @@ class NeuralOrchestra_Base extends Recyclable.Root {
    */
   versus_load_promise_create() {
 
-    // Case 1: Outside caller calls this method.
-    if ( !this.versus_loader ) {
+    // 1.
+
+    // 1.1
+    if ( this.versus_loader ) {
+
+      // 1.1.1 Fine, because .init_async() calls this method.
+      if ( this.init_async_running ) {
+        // Do nothing.
+
+      // 1.1.2 Only if .init_async() calls this method, the .versus_loader
+      //       could exist.
+      } else {
+        throw Error( `NeuralOrchestra.Base.versus_load_promise_create(): `
+          + `this.versus_loader should be null, `
+          + `if not called by .init_async().` );
+      }
+
+    // 1.2 Outside caller calls this method.
+    } else {
       NeuralOrchestra_Base.versus_load_progress_create.call( this );
       this.versus_loader_create( this.versus_load_progress );
-
-    // Case 2: .init_async() calls this method.
     }
 
+    // 2.
     this.versus_load_promise
       = NeuralOrchestra_Base.versus_load_async.call( this );
     return this.versus_load_promise;

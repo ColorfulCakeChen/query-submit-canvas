@@ -206,7 +206,8 @@ class TestCase {
   }
 
   /** */
-  async* test_create_init_load_process_send_asyncGenerator( progressParent ) {
+  async* test_create_init_load_process_send_asyncGenerator(
+    progressParent, b_init_asyncGenerator_first ) {
     const initCountMax = this.initCountMax;
 
     // Prepare progress list.
@@ -305,13 +306,19 @@ class TestCase {
         }
       }
 
+//!!! ...unfinished... (2023/03/15) b_init_asyncGenerator_first
+
 //!!! ...unfinished... (2023/03/15)
 // should specify use .init_async() or .init_asyncGenerator()
+
+      let b_init_asyncGenerator;
+      // if ( b_init_asyncGenerator_first )
 
       // Test: re-init (without re-create).
       for ( let initCount = 0; initCount < initCountMax; ++initCount ) {
         let progressInitLoadProcessSend
           = progressInitLoadProcessSendArray[ initCount ];
+
         yield* this.test_init_load_process_send_asyncGenerator(
           progressInitLoadProcessSend, neuralOrchestra );
       }
@@ -337,17 +344,24 @@ class TestCase {
             ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
     }
 
+!!! need more progress
+    // Test: use .init_async() or .init_asyncGenerator() first.
+    let b_init_asyncGenerator_first = false;
+    for (
+      let init_asyncGenerator_first__or__init_async_first = 0;
+      init_asyncGenerator_first__or__init_async_first < 2;
+      ++init_asyncGenerator_first__or__init_async_first ) {
 
-//!!! ...unfinished... (2023/03/15)
-// should specify use .init_async() or .init_asyncGenerator() first.
+      // Test: re-create.
+      for ( let createCount = 0; createCount < createCountMax; ++createCount ) {
+        let progressCreateInitLoadProcessSend
+          = progressCreateInitLoadProcessSendArray[ createCount ];
+        yield* this.test_create_init_load_process_send_asyncGenerator(
+          progressCreateInitLoadProcessSend,
+          b_init_asyncGenerator_first );
+      }
 
-
-    // Test: re-create.
-    for ( let createCount = 0; createCount < createCountMax; ++createCount ) {
-      let progressCreateInitLoadProcessSend
-        = progressCreateInitLoadProcessSendArray[ createCount ];
-      yield* this.test_create_init_load_process_send_asyncGenerator(
-        progressCreateInitLoadProcessSend );
+      b_init_asyncGenerator_first = !b_init_asyncGenerator_first;
     }
   }
 
