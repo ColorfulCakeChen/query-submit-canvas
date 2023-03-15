@@ -58,7 +58,9 @@ class TestCase {
         await neuralOrchestra.versus_load_promise_create();
       } catch ( e ) {
         if ( String.prototype.indexOf.call( e.message,
-               ".versus_load_async():" ) > 0 ) {
+               ".versus_load_promise_create():" ) > 0 ) {
+//!!! (2023/03/15 Remarked)
+//               ".versus_load_async():" ) > 0 ) {
           progressToAdvance.value_advance();
           yield progressRoot;
         } else {
@@ -70,7 +72,9 @@ class TestCase {
         await neuralOrchestra.versus_loader_create().next();
       } catch ( e ) {
         if ( String.prototype.indexOf.call( e.message,
-               ".versus_load_asyncGenerator():" ) > 0 ) {
+               ".versus_loader_create():" ) > 0 ) {
+//!!! (2023/03/15 Remarked)
+//               ".versus_load_asyncGenerator():" ) > 0 ) {
           progressToAdvance.value_advance();
           yield progressRoot;
         } else {
