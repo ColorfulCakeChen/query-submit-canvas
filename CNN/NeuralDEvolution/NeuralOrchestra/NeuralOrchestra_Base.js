@@ -1055,7 +1055,6 @@ class NeuralOrchestra_Base extends Recyclable.Root {
    * @param {AsyncGenerator} this.versus_loader
    *   - The .versus_loader should have already existed (i.e. not null).
    *       It will be .next() until done by this async method.
-   *   - The .versus_loader will be clear to null when this method done.
    *
    * @return {Promise( boolean )}
    *   Return a promise:
@@ -1096,9 +1095,6 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     } finally {
       // 2. So that this async method could be executed again.
       this.versus_load_async_running = false;
-!!!
-      // Prevent a finished versus loader to be re-used.
-      this.versus_loader = null;
     }
   }
 
@@ -1116,7 +1112,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
    */
   versus_loader_create( progressParent ) {
 
-    if ( this.versus_loader ) {
+    if ( this.versus_loader )
       throw Error( `NeuralOrchestra.Base.versus_loader_create(): `
         + `this.versus_loader should be null. `
         + `Please wait .versus_loader to complete if wanting to call again.` );
@@ -1142,6 +1138,9 @@ class NeuralOrchestra_Base extends Recyclable.Root {
    *
    *
    * @param {NeuralOrchestra_Base} this
+   *
+   * @param {AsyncGenerator} this.versus_loader
+   *   The .versus_loader will be clear to null when this generator done.
    *
    * @param {ValueMax.Percentage.Aggregate} progressParent
    *   Some new progressToAdvance will be created and added to progressParent. The
