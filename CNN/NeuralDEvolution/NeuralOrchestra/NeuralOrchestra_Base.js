@@ -1116,7 +1116,8 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     if ( this.versus_loader )
       throw Error( `NeuralOrchestra.Base.versus_loader_create(): `
         + `this.versus_loader should be null. `
-        + `Please wait .versus_loader to complete if wanting to call again.` );
+        + `Please wait previous .versus_loader to complete `
+        + `if wanting to call again.` );
 
     this.versus_loader = NeuralOrchestra_Base.versus_load_asyncGenerator.call(
       this, progressParent );
