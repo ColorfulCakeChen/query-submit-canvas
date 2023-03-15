@@ -1082,9 +1082,9 @@ class NeuralOrchestra_Base extends Recyclable.Root {
       } while ( loaderNext.done == false );
 
       // The result should be either true or false. If result is undefined,
-      // the generator has been terminated previously by throwing exception.
-      // So, continue to throw exception to inform caller the generator is
-      // illegal.
+      // the generator may have been terminated previously by throwing
+      // exception. So, continue to throw exception to inform caller the
+      // generator is illegal.
       if ( loaderNext.value === undefined )
         throw Error( `NeuralOrchestra.Base.versus_load_async(): `
           + `this.versus_loader is illegal `
