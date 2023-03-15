@@ -287,8 +287,10 @@ class TestCase {
 //!!! ...unfinished... (2023/03/15)
 // b_init_asyncGenerator, b_reenter_first_init_asyncGenerator
 
-//!!! ...unfinished... (2023/03/15)
-    const initCountMax = this.initCountBase * 1;
+    const initCountMax = this.initCountBase
+     * 2 // b_init_asyncGenerator
+     * 2 // b_reenter_first_init_asyncGenerator
+    ;
 
     // Prepare progress list.
     let progressRoot = progressParent.root_get();
@@ -400,12 +402,28 @@ class TestCase {
       // if ( b_init_asyncGenerator_first )
 
       // Test: re-init (without re-create).
-      for ( let initCount = 0; initCount < initCountMax; ++initCount ) {
-        let progressInitLoadProcessSend
-          = progressInitLoadProcessSendArray[ initCount ];
 
-        yield* this.test_init_load_process_send_asyncGenerator(
-          progressInitLoadProcessSend, neuralOrchestra );
+//!!! ...unfinished... (2023/03/15)
+      for (
+        let b_init_asyncGenerator = 0;
+        b_init_asyncGenerator < 2;
+        ++b_init_asyncGenerator ) {
+
+        for (
+          let b_reenter_first_init_asyncGenerator = 0;
+          b_reenter_first_init_asyncGenerator < 2;
+          ++b_reenter_first_init_asyncGenerator ) {
+
+          for ( let initCount = 0; initCount < initCountMax; ++initCount ) {
+            let progressInitLoadProcessSend
+              = progressInitLoadProcessSendArray[ initCount ];
+
+            yield* this.test_init_load_process_send_asyncGenerator(
+              progressInitLoadProcessSend, neuralOrchestra,
+              b_init_asyncGenerator, b_reenter_first_init_asyncGenerator
+            );
+          }
+        }
       }
 
     } finally {
