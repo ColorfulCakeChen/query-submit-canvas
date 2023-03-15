@@ -283,9 +283,9 @@ class TestCase {
     progressParent, b_init_asyncGenerator_first ) {
 
     const initCountMax = this.initCountBase
-     * 2 // b_init_asyncGenerator
-     * 2 // b_reenter_first_init_asyncGenerator
-    ;
+      * 2 // b_init_asyncGenerator
+      * 2 // b_reenter_first_init_asyncGenerator
+      ;
 
     // Prepare progress list.
     let progressRoot = progressParent.root_get();
@@ -388,17 +388,19 @@ class TestCase {
       let b_init_asyncGenerator;
       let b_reenter_first_init_asyncGenerator;
 
-      // Test: re-init (without re-create).
+      // Test: use .init_async() or .init_asyncGenerator().
       for (
         let n_init_asyncGenerator = 0;
         n_init_asyncGenerator < 2;
         ++n_init_asyncGenerator ) {
 
+        // Test: reenter .init_async() or .init_asyncGenerator() first.
         for (
           let n_reenter_first_init_asyncGenerator = 0;
           n_reenter_first_init_asyncGenerator < 2;
           ++n_reenter_first_init_asyncGenerator ) {
 
+          // Test: re-init (without re-create).
           for ( let initCount = 0; initCount < initCountMax; ++initCount ) {
             let progressInitLoadProcessSend
               = progressInitLoadProcessSendArray[ initCount ];
@@ -432,7 +434,9 @@ class TestCase {
 //!!! ...unfinished... (2023/03/15) b_init_asyncGenerator_first
 
 //!!! ...unfinished... (2023/03/15)
-    const createCountMax = this.createCountBase * 1;
+    const createCountMax = this.createCountBase
+      * 2 // b_init_asyncGenerator_first
+      ;
 
     // Prepare progress list.
     // let progressRoot = progressParent.root_get();
@@ -443,13 +447,16 @@ class TestCase {
             ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
     }
 
-!!! need more progress
+//!!! ...unfinished... (2023/03/15)
+
     // Test: use .init_async() or .init_asyncGenerator() first.
-    let b_init_asyncGenerator_first = false;
+    let b_init_asyncGenerator_first;
     for (
-      let init_asyncGenerator_first__or__init_async_first = 0;
-      init_asyncGenerator_first__or__init_async_first < 2;
-      ++init_asyncGenerator_first__or__init_async_first ) {
+      let n_init_asyncGenerator_first = 0;
+      n_init_asyncGenerator_first < 2;
+      ++n_init_asyncGenerator_first ) {
+
+      b_init_asyncGenerator_first = ( n_init_asyncGenerator_first != 0 );
 
       // Test: re-create.
       for ( let createCount = 0; createCount < createCountMax; ++createCount ) {
