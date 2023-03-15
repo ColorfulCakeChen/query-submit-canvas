@@ -190,6 +190,11 @@ class TestCase {
     progressToAdvance.value_advance();
     yield progressRoot;
 
+
+//!!! ...unfinished... (2023/03/15)
+// should specify use .versus_load_promise_create() or .versus_loader_create()
+
+
     // 2. Try loading twice. One is by init_async() internally. The other is by
     //    calling .versus_load_async() directly.
     for ( let loadCount = 0; loadCount < loadCountMax; ++loadCount ) {
@@ -299,6 +304,9 @@ class TestCase {
           throw e; // Unknown error, said loudly.
         }
       }
+
+//!!! ...unfinished... (2023/03/15)
+// should specify use .init_async() or .init_asyncGenerator()
 
       // Test: re-init (without re-create).
       for ( let initCount = 0; initCount < initCountMax; ++initCount ) {
