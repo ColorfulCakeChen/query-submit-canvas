@@ -55,7 +55,7 @@ class TestCase {
       neuralOrchestra.versus_load_promise_create();
 
       try { // Test: Re-entrance should throw exception.
-        await NeuralOrchestra.Base.versus_load_async.call( neuralOrchestra );
+        await neuralOrchestra.versus_load_promise_create();
       } catch ( e ) {
         if ( String.prototype.indexOf.call( e.message,
                ".versus_load_async():" ) > 0 ) {
@@ -67,9 +67,7 @@ class TestCase {
       }
 
       try { // Test: Re-entrance should throw exception.
-        await NeuralOrchestra.Base.versus_load_asyncGenerator
-          .call( neuralOrchestra )
-          .next();
+        await neuralOrchestra.versus_loader_create().next();
       } catch ( e ) {
         if ( String.prototype.indexOf.call( e.message,
                ".versus_load_asyncGenerator():" ) > 0 ) {
