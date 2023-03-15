@@ -75,8 +75,7 @@ class TestCase {
       try { // Test: Reenter .load_asyncGenerator() should throw exception.
         await neuralOrchestra.versus_loader_create().next();
       } catch ( e ) {
-        if ( String.prototype.indexOf.call( e.message,
-               ".versus_loader_create():" ) > 0 ) {
+        if ( e.message.indexOf( ".versus_loader_create():" ) > 0 ) {
   //!!! (2023/03/15 Remarked)
   //               ".versus_load_asyncGenerator():" ) > 0 ) {
           progressToAdvance.value_advance();
@@ -89,8 +88,7 @@ class TestCase {
       try { // Test: Reenter .load_async() should throw exception.
         await neuralOrchestra.versus_load_promise_create();
       } catch ( e ) {
-        if ( String.prototype.indexOf.call( e.message,
-               ".versus_load_promise_create():" ) > 0 ) {
+        if ( e.message.indexOf( ".versus_load_promise_create():" ) > 0 ) {
   //!!! (2023/03/15 Remarked)
   //               ".versus_load_async():" ) > 0 ) {
           progressToAdvance.value_advance();
@@ -106,8 +104,7 @@ class TestCase {
       try { // Test: Reenter .load_async() should throw exception.
         await neuralOrchestra.versus_load_promise_create();
       } catch ( e ) {
-        if ( String.prototype.indexOf.call( e.message,
-               ".versus_load_promise_create():" ) > 0 ) {
+        if ( e.message.indexOf( ".versus_load_promise_create():" ) > 0 ) {
   //!!! (2023/03/15 Remarked)
   //               ".versus_load_async():" ) > 0 ) {
           progressToAdvance.value_advance();
@@ -120,8 +117,7 @@ class TestCase {
       try { // Test: Reenter .load_asyncGenerator() should throw exception.
         await neuralOrchestra.versus_loader_create().next();
       } catch ( e ) {
-        if ( String.prototype.indexOf.call( e.message,
-               ".versus_loader_create():" ) > 0 ) {
+        if ( e.message.indexOf( ".versus_loader_create():" ) > 0 ) {
   //!!! (2023/03/15 Remarked)
   //               ".versus_load_asyncGenerator():" ) > 0 ) {
           progressToAdvance.value_advance();
@@ -137,8 +133,7 @@ class TestCase {
     try {
       neuralOrchestra.versusResultSender_send();
     } catch ( e ) {
-      if ( String.prototype.indexOf.call( e.message,
-             ".versusResultSender_send():" ) > 0 ) {
+      if ( e.message.indexOf( ".versusResultSender_send():" ) > 0 ) {
         progressToAdvance.value_advance();
         yield progressRoot;
       } else {
@@ -150,8 +145,7 @@ class TestCase {
     try {
       await neuralOrchestra.workerProxies_ImageData_process_async();
     } catch ( e ) {
-      if ( String.prototype.indexOf.call( e.message,
-             ".workerProxies_ImageData_process_async():" ) > 0 ) {
+      if ( e.message.indexOf( ".workerProxies_ImageData_process_async():" ) > 0 ) {
         progressToAdvance.value_advance();
         yield progressRoot;
       } else {
@@ -165,10 +159,12 @@ class TestCase {
 
     let versus_loadOk;
     if ( b_load_asyncGenerator ) {
+      let loaderNext;
+      do {
+        loaderNext = await neuralOrchestra.versus_loader.next();
+      } while ( !loaderNext.done );
+      versus_loadOk = loaderNext.value;
 
-//!!! ...unfinished... (2023/03/15)
-// b_load_asyncGenerator
-      
     } else {
       versus_loadOk = await neuralOrchestra.versus_load_promise;
     }      
@@ -268,8 +264,7 @@ class TestCase {
       try { // Test: Reenter .init_asyncGenerator() should throw exception.
         await neuralOrchestra.init_asyncGenerator().next();
       } catch ( e ) {
-        if ( String.prototype.indexOf.call( e.message,
-              ".init_asyncGenerator():" ) > 0 ) {
+        if ( e.message.indexOf( ".init_asyncGenerator():" ) > 0 ) {
           progressToAdvance.value_advance();
           yield progressRoot;
         } else {
@@ -280,8 +275,7 @@ class TestCase {
       try { // Test: Reenter .init_async() should throw exception.
         await neuralOrchestra.init_async();
       } catch ( e ) {
-        if ( String.prototype.indexOf.call( e.message,
-              ".init_async():" ) > 0 ) {
+        if ( e.message.indexOf( ".init_async():" ) > 0 ) {
           progressToAdvance.value_advance();
           yield progressRoot;
         } else {
@@ -295,8 +289,7 @@ class TestCase {
       try { // Test: Reenter .init_async() should throw exception.
         await neuralOrchestra.init_async();
       } catch ( e ) {
-        if ( String.prototype.indexOf.call( e.message,
-              ".init_async():" ) > 0 ) {
+        if ( e.message.indexOf( ".init_async():" ) > 0 ) {
           progressToAdvance.value_advance();
           yield progressRoot;
         } else {
@@ -307,8 +300,7 @@ class TestCase {
       try { // Test: Reenter .init_asyncGenerator() should throw exception.
         await neuralOrchestra.init_asyncGenerator().next();
       } catch ( e ) {
-        if ( String.prototype.indexOf.call( e.message,
-              ".init_asyncGenerator():" ) > 0 ) {
+        if ( e.message.indexOf( ".init_asyncGenerator():" ) > 0 ) {
           progressToAdvance.value_advance();
           yield progressRoot;
         } else {
@@ -321,8 +313,7 @@ class TestCase {
     try {
       neuralOrchestra.versusResultSender_send();
     } catch ( e ) {
-      if ( String.prototype.indexOf.call( e.message,
-              ".versusResultSender_send():" ) > 0 ) {
+      if ( e.message.indexOf( ".versusResultSender_send():" ) > 0 ) {
         progressToAdvance.value_advance();
         yield progressRoot;
       } else {
@@ -334,8 +325,7 @@ class TestCase {
     try {
       await neuralOrchestra.workerProxies_ImageData_process_async();
     } catch ( e ) {
-      if ( String.prototype.indexOf.call( e.message,
-              ".workerProxies_ImageData_process_async():" ) > 0 ) {
+      if ( e.message.indexOf( ".workerProxies_ImageData_process_async():" ) > 0 ) {
         progressToAdvance.value_advance();
         yield progressRoot;
       } else {
@@ -430,8 +420,7 @@ class TestCase {
       try {
         neuralOrchestra.versusResultSender_send();
       } catch ( e ) {
-        if ( String.prototype.indexOf.call( e.message,
-               ".versusResultSender_send():" ) > 0 ) {
+        if ( e.message.indexOf( ".versusResultSender_send():" ) > 0 ) {
           progressToAdvance.value_advance();
           yield progressRoot;
         } else {
@@ -443,8 +432,7 @@ class TestCase {
       try {
         await neuralOrchestra.workerProxies_ImageData_process_async();
       } catch ( e ) {
-        if ( String.prototype.indexOf.call( e.message,
-               ".workerProxies_ImageData_process_async():" ) > 0 ) {
+        if ( e.message.indexOf( ".workerProxies_ImageData_process_async():" ) > 0 ) {
           progressToAdvance.value_advance();
           yield progressRoot;
         } else {
@@ -457,8 +445,7 @@ class TestCase {
       try {
         await neuralOrchestra.versus_load_promise_create();
       } catch ( e ) {
-        if ( String.prototype.indexOf.call( e.message,
-               ".versus_load_asyncGenerator():" ) > 0 ) {
+        if ( e.message.indexOf( ".versus_load_asyncGenerator():" ) > 0 ) {
           progressToAdvance.value_advance();
           yield progressRoot;
         } else {
@@ -470,8 +457,7 @@ class TestCase {
       try {
         await neuralOrchestra.versus_loader_create().next();
       } catch ( e ) {
-        if ( String.prototype.indexOf.call( e.message,
-               ".versus_load_asyncGenerator():" ) > 0 ) {
+        if ( e.message.indexOf( ".versus_load_asyncGenerator():" ) > 0 ) {
           progressToAdvance.value_advance();
           yield progressRoot;
         } else {
@@ -484,8 +470,7 @@ class TestCase {
       try {
         await neuralOrchestra.versus_load_promise_create();
       } catch ( e ) {
-        if ( String.prototype.indexOf.call( e.message,
-               ".versus_load_promise_create():" ) > 0 ) {
+        if ( e.message.indexOf( ".versus_load_promise_create():" ) > 0 ) {
 //!!! (2023/03/15 Remarked)
 //               ".versus_load_async():" ) > 0 ) {
           progressToAdvance.value_advance();
