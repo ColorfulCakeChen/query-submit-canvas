@@ -36,8 +36,8 @@ class TestCase {
    * @param {boolean} bTryLoad  If true, loading before processing and sending.
    */
   async* test_load_process_send_asyncGenerator(
-    progressParent, neuralOrchestra,
-    bTryLoad, b_load_asyncGenerator ) {
+    progressParent, neuralOrchestra, bTryLoad,
+    b_load_asyncGenerator, b_reenter_first_load_asyncGenerator ) {
 
     let progressRoot = progressParent.root_get();
     let progressToAdvance = progressParent.child_add(
@@ -65,32 +65,68 @@ class TestCase {
 
     }
 
-    try { // Test: Reenter .load_async() should throw exception.
-      await neuralOrchestra.versus_load_promise_create();
-    } catch ( e ) {
-      if ( String.prototype.indexOf.call( e.message,
-             ".versus_load_promise_create():" ) > 0 ) {
-//!!! (2023/03/15 Remarked)
-//               ".versus_load_async():" ) > 0 ) {
-        progressToAdvance.value_advance();
-        yield progressRoot;
-      } else {
-        throw e; // Unknown error, said loudly.
+    // Test: Reenter try .load_asyncGenerator() and then .load_async()
+    if ( b_reenter_first_load_asyncGenerator ) {
+  
+      try { // Test: Reenter .load_asyncGenerator() should throw exception.
+        await neuralOrchestra.versus_loader_create().next();
+      } catch ( e ) {
+        if ( String.prototype.indexOf.call( e.message,
+               ".versus_loader_create():" ) > 0 ) {
+  //!!! (2023/03/15 Remarked)
+  //               ".versus_load_asyncGenerator():" ) > 0 ) {
+          progressToAdvance.value_advance();
+          yield progressRoot;
+        } else {
+          throw e; // Unknown error, said loudly.
+        }
       }
-    }
 
-    try { // Test: Reenter .load_asyncGenerator() should throw exception.
-      await neuralOrchestra.versus_loader_create().next();
-    } catch ( e ) {
-      if ( String.prototype.indexOf.call( e.message,
-             ".versus_loader_create():" ) > 0 ) {
-//!!! (2023/03/15 Remarked)
-//               ".versus_load_asyncGenerator():" ) > 0 ) {
-        progressToAdvance.value_advance();
-        yield progressRoot;
-      } else {
-        throw e; // Unknown error, said loudly.
+      try { // Test: Reenter .load_async() should throw exception.
+        await neuralOrchestra.versus_load_promise_create();
+      } catch ( e ) {
+        if ( String.prototype.indexOf.call( e.message,
+               ".versus_load_promise_create():" ) > 0 ) {
+  //!!! (2023/03/15 Remarked)
+  //               ".versus_load_async():" ) > 0 ) {
+          progressToAdvance.value_advance();
+          yield progressRoot;
+        } else {
+          throw e; // Unknown error, said loudly.
+        }
       }
+  
+    // Test: Reenter try .load_async() and then .load_asyncGenerator()
+    } else {
+
+      try { // Test: Reenter .load_async() should throw exception.
+        await neuralOrchestra.versus_load_promise_create();
+      } catch ( e ) {
+        if ( String.prototype.indexOf.call( e.message,
+               ".versus_load_promise_create():" ) > 0 ) {
+  //!!! (2023/03/15 Remarked)
+  //               ".versus_load_async():" ) > 0 ) {
+          progressToAdvance.value_advance();
+          yield progressRoot;
+        } else {
+          throw e; // Unknown error, said loudly.
+        }
+      }
+  
+      try { // Test: Reenter .load_asyncGenerator() should throw exception.
+        await neuralOrchestra.versus_loader_create().next();
+      } catch ( e ) {
+        if ( String.prototype.indexOf.call( e.message,
+               ".versus_loader_create():" ) > 0 ) {
+  //!!! (2023/03/15 Remarked)
+  //               ".versus_load_asyncGenerator():" ) > 0 ) {
+          progressToAdvance.value_advance();
+          yield progressRoot;
+        } else {
+          throw e; // Unknown error, said loudly.
+        }
+      }
+  
     }
 
     // Test: send before versus loaded. (should exception.)
@@ -178,7 +214,7 @@ class TestCase {
     b_init_asyncGenerator, b_reenter_first_init_asyncGenerator ) {
 
 //!!! ...unfinished... (2023/03/15)
-// b_load_asyncGenerator
+// b_load_asyncGenerator, b_reenter_first_load_asyncGenerator
 
     const loadCountMax = this.loadCountBase * 1;
 
@@ -222,7 +258,7 @@ class TestCase {
         this.output_channelCount
       );
 
-    // Test: Reenter try .init_asyncGenerator() and then init_async()
+    // Test: Reenter try .init_asyncGenerator() and then .init_async()
     if ( b_reenter_first_init_asyncGenerator ) {
 
       try { // Test: Reenter .init_asyncGenerator() should throw exception.
@@ -249,7 +285,7 @@ class TestCase {
         }
       }
 
-    // Test: Reenter try .init_async() and then init_asyncGenerator()
+    // Test: Reenter try .init_async() and then .init_asyncGenerator()
     } else {
 
       try { // Test: Reenter .init_async() should throw exception.
