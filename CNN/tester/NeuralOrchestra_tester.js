@@ -280,12 +280,7 @@ class TestCase {
 
   /** */
   async* test_create_init_load_process_send_asyncGenerator(
-    progressParent, b_init_asyncGenerator_first
-  ) {
-
-
-//!!! ...unfinished... (2023/03/15)
-// b_init_asyncGenerator, b_reenter_first_init_asyncGenerator
+    progressParent, b_init_asyncGenerator_first ) {
 
     const initCountMax = this.initCountBase
      * 2 // b_init_asyncGenerator
@@ -390,33 +385,30 @@ class TestCase {
         }
       }
 
-//!!! ...unfinished... (2023/03/15)
-// b_init_asyncGenerator, b_reenter_first_init_asyncGenerator
-
-//!!! ...unfinished... (2023/03/15) b_init_asyncGenerator_first
-
-//!!! ...unfinished... (2023/03/15)
-// should specify use .init_async() or .init_asyncGenerator()
-
       let b_init_asyncGenerator;
-      // if ( b_init_asyncGenerator_first )
+      let b_reenter_first_init_asyncGenerator;
 
       // Test: re-init (without re-create).
-
-//!!! ...unfinished... (2023/03/15)
       for (
-        let b_init_asyncGenerator = 0;
-        b_init_asyncGenerator < 2;
-        ++b_init_asyncGenerator ) {
+        let n_init_asyncGenerator = 0;
+        n_init_asyncGenerator < 2;
+        ++n_init_asyncGenerator ) {
 
         for (
-          let b_reenter_first_init_asyncGenerator = 0;
-          b_reenter_first_init_asyncGenerator < 2;
-          ++b_reenter_first_init_asyncGenerator ) {
+          let n_reenter_first_init_asyncGenerator = 0;
+          n_reenter_first_init_asyncGenerator < 2;
+          ++n_reenter_first_init_asyncGenerator ) {
 
           for ( let initCount = 0; initCount < initCountMax; ++initCount ) {
             let progressInitLoadProcessSend
               = progressInitLoadProcessSendArray[ initCount ];
+
+            b_init_asyncGenerator = ( n_init_asyncGenerator != 0 );
+            if ( b_init_asyncGenerator_first )
+              b_init_asyncGenerator = !b_init_asyncGenerator;
+
+            b_reenter_first_init_asyncGenerator
+              = ( n_reenter_first_init_asyncGenerator != 0 );
 
             yield* this.test_init_load_process_send_asyncGenerator(
               progressInitLoadProcessSend, neuralOrchestra,
@@ -436,6 +428,8 @@ class TestCase {
 
   /** */
   async* test_asyncGenerator( progressParent ) {
+
+//!!! ...unfinished... (2023/03/15) b_init_asyncGenerator_first
 
 //!!! ...unfinished... (2023/03/15)
     const createCountMax = this.createCountBase * 1;
