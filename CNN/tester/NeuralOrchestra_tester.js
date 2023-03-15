@@ -40,6 +40,15 @@ class TestCase {
     b_load_asyncGenerator, b_reenter_first_load_asyncGenerator ) {
 
     let progressRoot = progressParent.root_get();
+
+    let progressload;
+    if ( bTryLoad ) {
+      if ( b_load_asyncGenerator ) {
+        progressload = progressParent.child_add(
+          ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
+      }
+    }
+
     let progressToAdvance = progressParent.child_add(
       ValueMax.Percentage.Concrete.Pool.get_or_create_by( 6 ) );
   
@@ -53,16 +62,11 @@ class TestCase {
 
     // 2.0 Try another versus loading and neural networks creating.
     if ( bTryLoad ) {
-
       if ( b_load_asyncGenerator ) {
-
-//!!! ...unfinished... (2023/03/15)
-// b_load_asyncGenerator
-
+        neuralOrchestra.versus_loader_create( progressload );
       } else {
         neuralOrchestra.versus_load_promise_create();
       }
-
     }
 
     // Test: Reenter try .load_asyncGenerator() and then .load_async()
