@@ -92,14 +92,17 @@ class TestCase {
     // Note: In the following testing, when await, the
     //       .workerProxies_ImageData_process_async() may have been completed.
     //       So, processing one more time before every testing if necessary.
+    function reprocess_if_not_processing() {
+      if ( !neuralOrchestra.workerProxies_ImageData_process_async_running )
+        processPromise = neuralOrchestra.workerProxies_ImageData_process_async(
+          this.ImageData_create() );
+    }
 
     // Test: Reenter .workerProxies_ImageData_process_async()
     //       should throw exception.
     try {
       ++this.testId;
-      if ( !neuralOrchestra.workerProxies_ImageData_process_async_running )
-        processPromise = neuralOrchestra.workerProxies_ImageData_process_async(
-          this.ImageData_create() );
+      reprocess_if_not_processing();
       await neuralOrchestra.workerProxies_ImageData_process_async();
     } catch ( e ) {
       if ( e.message.indexOf( ".workerProxies_ImageData_process_async():" ) > 0 ) {
@@ -113,9 +116,7 @@ class TestCase {
     // Test: .init_asyncGenerator() during processing should throw exception.
     try {
       ++this.testId;
-      if ( !neuralOrchestra.workerProxies_ImageData_process_async_running )
-        processPromise = neuralOrchestra.workerProxies_ImageData_process_async(
-          this.ImageData_create() );
+      reprocess_if_not_processing();
       await neuralOrchestra.init_asyncGenerator().next();
     } catch ( e ) {
       if ( e.message.indexOf( ".init_asyncGenerator():" ) > 0 ) {
@@ -129,9 +130,7 @@ class TestCase {
     // Test: .init_async() during processing should throw exception.
     try {
       ++this.testId;
-      if ( !neuralOrchestra.workerProxies_ImageData_process_async_running )
-        processPromise = neuralOrchestra.workerProxies_ImageData_process_async(
-          this.ImageData_create() );
+      reprocess_if_not_processing();
       await neuralOrchestra.init_async();
     } catch ( e ) {
       if ( e.message.indexOf( ".init_async():" ) > 0 ) {
@@ -145,9 +144,7 @@ class TestCase {
     // Test: .versus_load_asyncGenerator() during processing should throw exception.
     try {
       ++this.testId;
-      if ( !neuralOrchestra.workerProxies_ImageData_process_async_running )
-        processPromise = neuralOrchestra.workerProxies_ImageData_process_async(
-          this.ImageData_create() );
+      reprocess_if_not_processing();
       await neuralOrchestra.versus_loader_create().next();
     } catch ( e ) {
       if ( e.message.indexOf( ".versus_loader_create():" ) > 0 ) {
@@ -160,9 +157,8 @@ class TestCase {
 
     // Test: .versus_load_async() during processing should throw exception.
     try {
-      if ( !neuralOrchestra.workerProxies_ImageData_process_async_running )
-        processPromise = neuralOrchestra.workerProxies_ImageData_process_async(
-          this.ImageData_create() );
+      ++this.testId;
+      reprocess_if_not_processing();
       await neuralOrchestra.versus_load_promise_create();
     } catch ( e ) {
       if ( e.message.indexOf( ".versus_load_promise_create():" ) > 0 ) {
