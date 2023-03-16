@@ -68,14 +68,12 @@ class TestCase {
       ValueMax.Percentage.Concrete.Pool.get_or_create_by( 8 ) );
 
     // 1. Process image.
+    let processPromise;
 
-    // Because ImageData.data.buffer will be transferred (i.e. not copied) to
-    // web worker, it should be re-created every time.
-    let sourceImageData = this.ImageData_create();
-
-    let processPromise
-      = neuralOrchestra.workerProxies_ImageData_process_async(
-          sourceImageData );
+    // Note: Because ImageData.data.buffer will be transferred (i.e. not
+    //       copied) to web worker, it should be re-created every time.
+    processPromise = neuralOrchestra.workerProxies_ImageData_process_async(
+      this.ImageData_create() );
 
     if ( neuralOrchestra.workerProxies_ImageData_process_async_running ) {
       progressToAdvance.value_advance();
@@ -90,92 +88,82 @@ class TestCase {
 
     // In the following testing, when await, the
     // .workerProxies_ImageData_process_async() may have been completed. So,
-    // only test if ( .workerProxies_ImageData_process_async_running == true ).
+    // processing one more time before every testing if needed.
 
     // Test: Reenter .workerProxies_ImageData_process_async()
     //       should throw exception.
-    if ( neuralOrchestra.workerProxies_ImageData_process_async_running ) {
-      try {
-        await neuralOrchestra.workerProxies_ImageData_process_async();
-      } catch ( e ) {
-        if ( e.message.indexOf( ".workerProxies_ImageData_process_async():" ) > 0 ) {
-          progressToAdvance.value_advance();
-          yield progressRoot;
-        } else {
-          throw e; // Unknown error, said loudly.
-        }
+    try {
+      if ( !neuralOrchestra.workerProxies_ImageData_process_async_running )
+        processPromise = neuralOrchestra.workerProxies_ImageData_process_async(
+          this.ImageData_create() );
+      await neuralOrchestra.workerProxies_ImageData_process_async();
+    } catch ( e ) {
+      if ( e.message.indexOf( ".workerProxies_ImageData_process_async():" ) > 0 ) {
+        progressToAdvance.value_advance();
+        yield progressRoot;
+      } else {
+        throw e; // Unknown error, said loudly.
       }
-    } else {
-      progressToAdvance.value_advance();
-      yield progressRoot;
     }
 
     // Test: .init_asyncGenerator() during processing should throw exception.
-    if ( neuralOrchestra.workerProxies_ImageData_process_async_running ) {
-      try {
-        await neuralOrchestra.init_asyncGenerator().next();
-      } catch ( e ) {
-        if ( e.message.indexOf( ".init_asyncGenerator():" ) > 0 ) {
-          progressToAdvance.value_advance();
-          yield progressRoot;
-        } else {
-          throw e; // Unknown error, said loudly.
-        }
+    try {
+      if ( !neuralOrchestra.workerProxies_ImageData_process_async_running )
+        processPromise = neuralOrchestra.workerProxies_ImageData_process_async(
+          this.ImageData_create() );
+      await neuralOrchestra.init_asyncGenerator().next();
+    } catch ( e ) {
+      if ( e.message.indexOf( ".init_asyncGenerator():" ) > 0 ) {
+        progressToAdvance.value_advance();
+        yield progressRoot;
+      } else {
+        throw e; // Unknown error, said loudly.
       }
-    } else {
-      progressToAdvance.value_advance();
-      yield progressRoot;
     }
 
     // Test: .init_async() during processing should throw exception.
-    if ( neuralOrchestra.workerProxies_ImageData_process_async_running ) {
-      try {
-        await neuralOrchestra.init_async();
-      } catch ( e ) {
-        if ( e.message.indexOf( ".init_async():" ) > 0 ) {
-          progressToAdvance.value_advance();
-          yield progressRoot;
-        } else {
-          throw e; // Unknown error, said loudly.
-        }
+    try {
+      if ( !neuralOrchestra.workerProxies_ImageData_process_async_running )
+        processPromise = neuralOrchestra.workerProxies_ImageData_process_async(
+          this.ImageData_create() );
+      await neuralOrchestra.init_async();
+    } catch ( e ) {
+      if ( e.message.indexOf( ".init_async():" ) > 0 ) {
+        progressToAdvance.value_advance();
+        yield progressRoot;
+      } else {
+        throw e; // Unknown error, said loudly.
       }
-    } else {
-      progressToAdvance.value_advance();
-      yield progressRoot;
     }
 
     // Test: .versus_load_asyncGenerator() during processing should throw exception.
-    if ( neuralOrchestra.workerProxies_ImageData_process_async_running ) {
-      try {
-        await neuralOrchestra.versus_loader_create().next();
-      } catch ( e ) {
-        if ( e.message.indexOf( ".versus_loader_create():" ) > 0 ) {
-          progressToAdvance.value_advance();
-          yield progressRoot;
-        } else {
-          throw e; // Unknown error, said loudly.
-        }
+    try {
+      if ( !neuralOrchestra.workerProxies_ImageData_process_async_running )
+        processPromise = neuralOrchestra.workerProxies_ImageData_process_async(
+          this.ImageData_create() );
+      await neuralOrchestra.versus_loader_create().next();
+    } catch ( e ) {
+      if ( e.message.indexOf( ".versus_loader_create():" ) > 0 ) {
+        progressToAdvance.value_advance();
+        yield progressRoot;
+      } else {
+        throw e; // Unknown error, said loudly.
       }
-    } else {
-      progressToAdvance.value_advance();
-      yield progressRoot;
     }
 
     // Test: .versus_load_async() during processing should throw exception.
-    if ( neuralOrchestra.workerProxies_ImageData_process_async_running ) {
-      try {
-        await neuralOrchestra.versus_load_promise_create();
-      } catch ( e ) {
-        if ( e.message.indexOf( ".versus_load_promise_create():" ) > 0 ) {
-          progressToAdvance.value_advance();
-          yield progressRoot;
-        } else {
-          throw e; // Unknown error, said loudly.
-        }
+    try {
+      if ( !neuralOrchestra.workerProxies_ImageData_process_async_running )
+        processPromise = neuralOrchestra.workerProxies_ImageData_process_async(
+          this.ImageData_create() );
+      await neuralOrchestra.versus_load_promise_create();
+    } catch ( e ) {
+      if ( e.message.indexOf( ".versus_load_promise_create():" ) > 0 ) {
+        progressToAdvance.value_advance();
+        yield progressRoot;
+      } else {
+        throw e; // Unknown error, said loudly.
       }
-    } else {
-      progressToAdvance.value_advance();
-      yield progressRoot;
     }
 
     // 2. Wait for image processed.
