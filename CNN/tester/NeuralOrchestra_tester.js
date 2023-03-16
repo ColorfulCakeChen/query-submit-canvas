@@ -26,10 +26,11 @@ class TestCase {
 
     this.output_channelCount = this.output_channelCount_per_alignment * 2;
 
-
     this.createCountBase = 2; // Try create NeuralOrchestra twice.
     this.initCountBase = 2;   // Try init NeuralOrchestra twice.
     this.loadCountBase = 2;
+
+    this.testId = undefined;
   }
 
   /**
@@ -61,6 +62,7 @@ class TestCase {
    *
    */
   async* test_process_send_asyncGenerator( progressParent, neuralOrchestra ) {
+    ++this.testId;
 
     let progressRoot = progressParent.root_get();
 
@@ -76,11 +78,12 @@ class TestCase {
       this.ImageData_create() );
 
     if ( neuralOrchestra.workerProxies_ImageData_process_async_running ) {
+      ++this.testId;
       progressToAdvance.value_advance();
       yield progressRoot;
     } else {
       throw Error( `NeuralOrchestra_tester.TestCase`
-        + `.test_process_send_asyncGenerator(): `
+        + `.test_process_send_asyncGenerator(): testId=${this.testId}, `
         + `neuralOrchestra.workerProxies_ImageData_process_async_running=`
         + `${neuralOrchestra.workerProxies_ImageData_process_async_running} `
         + `should be true.` );
@@ -93,6 +96,7 @@ class TestCase {
     // Test: Reenter .workerProxies_ImageData_process_async()
     //       should throw exception.
     try {
+      ++this.testId;
       if ( !neuralOrchestra.workerProxies_ImageData_process_async_running )
         processPromise = neuralOrchestra.workerProxies_ImageData_process_async(
           this.ImageData_create() );
@@ -101,13 +105,14 @@ class TestCase {
       if ( e.message.indexOf( ".workerProxies_ImageData_process_async():" ) > 0 ) {
         progressToAdvance.value_advance();
         yield progressRoot;
-      } else {
-        throw e; // Unknown error, said loudly.
+      } else { // Unknown error, said loudly.
+        throw Error( `NeuralOrchestra: testId=${this.testId}.`, { cause: e } );
       }
     }
 
     // Test: .init_asyncGenerator() during processing should throw exception.
     try {
+      ++this.testId;
       if ( !neuralOrchestra.workerProxies_ImageData_process_async_running )
         processPromise = neuralOrchestra.workerProxies_ImageData_process_async(
           this.ImageData_create() );
@@ -116,13 +121,14 @@ class TestCase {
       if ( e.message.indexOf( ".init_asyncGenerator():" ) > 0 ) {
         progressToAdvance.value_advance();
         yield progressRoot;
-      } else {
-        throw e; // Unknown error, said loudly.
+      } else { // Unknown error, said loudly.
+        throw Error( `NeuralOrchestra: testId=${this.testId}.`, { cause: e } );
       }
     }
 
     // Test: .init_async() during processing should throw exception.
     try {
+      ++this.testId;
       if ( !neuralOrchestra.workerProxies_ImageData_process_async_running )
         processPromise = neuralOrchestra.workerProxies_ImageData_process_async(
           this.ImageData_create() );
@@ -131,13 +137,14 @@ class TestCase {
       if ( e.message.indexOf( ".init_async():" ) > 0 ) {
         progressToAdvance.value_advance();
         yield progressRoot;
-      } else {
-        throw e; // Unknown error, said loudly.
+      } else { // Unknown error, said loudly.
+        throw Error( `NeuralOrchestra: testId=${this.testId}.`, { cause: e } );
       }
     }
 
     // Test: .versus_load_asyncGenerator() during processing should throw exception.
     try {
+      ++this.testId;
       if ( !neuralOrchestra.workerProxies_ImageData_process_async_running )
         processPromise = neuralOrchestra.workerProxies_ImageData_process_async(
           this.ImageData_create() );
@@ -146,8 +153,8 @@ class TestCase {
       if ( e.message.indexOf( ".versus_loader_create():" ) > 0 ) {
         progressToAdvance.value_advance();
         yield progressRoot;
-      } else {
-        throw e; // Unknown error, said loudly.
+      } else { // Unknown error, said loudly.
+        throw Error( `NeuralOrchestra: testId=${this.testId}.`, { cause: e } );
       }
     }
 
@@ -161,30 +168,31 @@ class TestCase {
       if ( e.message.indexOf( ".versus_load_promise_create():" ) > 0 ) {
         progressToAdvance.value_advance();
         yield progressRoot;
-      } else {
-        throw e; // Unknown error, said loudly.
+      } else { // Unknown error, said loudly.
+        throw Error( `NeuralOrchestra: testId=${this.testId}.`, { cause: e } );
       }
     }
 
     // 2. Wait for image processed.
+    ++this.testId;
     let Float32ArrayArray = await processPromise;
 
     if ( 2 != Float32ArrayArray.length )
       throw Error( `NeuralOrchestra_tester.TestCase`
-        + `.test_process_send_asyncGenerator(): `
+        + `.test_process_send_asyncGenerator(): testId=${this.testId}, `
         + `Float32ArrayArray.length=${Float32ArrayArray.length} `
         + `should be 2.` );
 
     if ( Float32ArrayArray[ 0 ].length != this.output_channelCount )
       throw Error( `NeuralOrchestra_tester.TestCase`
-        + `.test_process_send_asyncGenerator(): `
+        + `.test_process_send_asyncGenerator(): testId=${this.testId}, `
         + `Float32ArrayArray[ 0 ].length=${Float32ArrayArray[ 0 ].length} `
         + `should be the same as `
         + `.output_channelCount ( ${this.output_channelCount}.` );
 
     if ( Float32ArrayArray[ 1 ].length != this.output_channelCount )
       throw Error( `NeuralOrchestra_tester.TestCase`
-        + `.test_process_send_asyncGenerator(): `
+        + `.test_process_send_asyncGenerator(): testId=${this.testId}, `
         + `Float32ArrayArray[ 1 ].length=${Float32ArrayArray[ 1 ].length} `
         + `should be the same as `
         + `.output_channelCount ( ${this.output_channelCount}.` );
@@ -193,6 +201,7 @@ class TestCase {
     yield progressRoot;
 
     // 3. Submit result.
+    ++this.testId;
 
     // A random integer between [ -1, +1 ].
     let nNegativeZeroPositive = RandTools.getRandomIntInclusive( -1, 1 );
@@ -208,6 +217,8 @@ class TestCase {
   async* test_load_process_send_asyncGenerator(
     progressParent, neuralOrchestra, bTryLoad,
     b_load_asyncGenerator, b_reenter_first_load_asyncGenerator ) {
+
+    ++this.testId;
 
     let progressRoot = progressParent.root_get();
 
@@ -228,6 +239,7 @@ class TestCase {
 
     // 1. Try another versus loading and neural networks creating.
     if ( bTryLoad ) {
+      ++this.testId;
       if ( b_load_asyncGenerator ) {
         neuralOrchestra.versus_loader_create( progressload );
       } else {
@@ -239,24 +251,26 @@ class TestCase {
     if ( b_reenter_first_load_asyncGenerator ) {
 
       try { // Test: Reenter .versus_load_asyncGenerator() should throw exception.
+        ++this.testId;
         await neuralOrchestra.versus_loader_create().next();
       } catch ( e ) {
         if ( e.message.indexOf( ".versus_loader_create():" ) > 0 ) {
           progressToAdvance.value_advance();
           yield progressRoot;
-        } else {
-          throw e; // Unknown error, said loudly.
+        } else { // Unknown error, said loudly.
+          throw Error( `NeuralOrchestra: testId=${this.testId}.`, { cause: e } );
         }
       }
 
       try { // Test: Reenter .versus_load_async() should throw exception.
+        ++this.testId;
         await neuralOrchestra.versus_load_promise_create();
       } catch ( e ) {
         if ( e.message.indexOf( ".versus_load_promise_create():" ) > 0 ) {
           progressToAdvance.value_advance();
           yield progressRoot;
-        } else {
-          throw e; // Unknown error, said loudly.
+        } else { // Unknown error, said loudly.
+          throw Error( `NeuralOrchestra: testId=${this.testId}.`, { cause: e } );
         }
       }
 
@@ -264,24 +278,26 @@ class TestCase {
     } else {
 
       try { // Test: Reenter .versus_load_async() should throw exception.
+        ++this.testId;
         await neuralOrchestra.versus_load_promise_create();
       } catch ( e ) {
         if ( e.message.indexOf( ".versus_load_promise_create():" ) > 0 ) {
           progressToAdvance.value_advance();
           yield progressRoot;
-        } else {
-          throw e; // Unknown error, said loudly.
+        } else { // Unknown error, said loudly.
+          throw Error( `NeuralOrchestra: testId=${this.testId}.`, { cause: e } );
         }
       }
 
       try { // Test: Reenter .versus_load_asyncGenerator() should throw exception.
+        ++this.testId;
         await neuralOrchestra.versus_loader_create().next();
       } catch ( e ) {
         if ( e.message.indexOf( ".versus_loader_create():" ) > 0 ) {
           progressToAdvance.value_advance();
           yield progressRoot;
-        } else {
-          throw e; // Unknown error, said loudly.
+        } else { // Unknown error, said loudly.
+          throw Error( `NeuralOrchestra: testId=${this.testId}.`, { cause: e } );
         }
       }
 
@@ -289,30 +305,33 @@ class TestCase {
 
     // Test: send before versus loaded. (should exception.)
     try {
+      ++this.testId;
       neuralOrchestra.versusResultSender_send();
     } catch ( e ) {
       if ( e.message.indexOf( ".versusResultSender_send():" ) > 0 ) {
         progressToAdvance.value_advance();
         yield progressRoot;
-      } else {
-        throw e; // Unknown error, said loudly.
+      } else { // Unknown error, said loudly.
+        throw Error( `NeuralOrchestra: testId=${this.testId}.`, { cause: e } );
       }
     }
 
     // Test: process before versus loaded. (should exception.)
     try {
+      ++this.testId;
       await neuralOrchestra.workerProxies_ImageData_process_async();
     } catch ( e ) {
       if ( e.message.indexOf( ".workerProxies_ImageData_process_async():" ) > 0 ) {
         progressToAdvance.value_advance();
         yield progressRoot;
-      } else {
-        throw e; // Unknown error, said loudly.
+      } else { // Unknown error, said loudly.
+        throw Error( `NeuralOrchestra: testId=${this.testId}.`, { cause: e } );
       }
     }
 
     // 2. Wait for versus summary loaded, versus loaded, and neural networks
     //    created.
+    ++this.testId;
     let versus_loadOk;
     if ( b_load_asyncGenerator ) {
       let loaderNext;
@@ -324,7 +343,7 @@ class TestCase {
       // Note: In .load_asyncGenerator(), .versus_load_progress is not used.
       if ( 100 !== progressLoad.valuePercentage )
         throw Error( `NeuralOrchestra_tester.TestCase`
-          + `.test_load_process_send_asyncGenerator(): `
+          + `.test_load_process_send_asyncGenerator(): testId=${this.testId}, `
           + `progressLoad.valuePercentage (`
           + `${progressLoad.valuePercentage}) `
           + `should be 100.` );
@@ -334,7 +353,7 @@ class TestCase {
 
       if ( 100 !== neuralOrchestra.versus_load_progress.valuePercentage )
         throw Error( `NeuralOrchestra_tester.TestCase`
-          + `.test_load_process_send_asyncGenerator(): `
+          + `.test_load_process_send_asyncGenerator(): testId=${this.testId}, `
           + `neuralOrchestra.versus_load_progress.valuePercentage (`
           + `${neuralOrchestra.versus_load_progress.valuePercentage}) `
           + `should be 100.` );
@@ -342,13 +361,13 @@ class TestCase {
 
     if ( !neuralOrchestra.versus_loadOk )
       throw Error( `NeuralOrchestra_tester.TestCase`
-        + `.test_load_process_send_asyncGenerator(): `
+        + `.test_load_process_send_asyncGenerator(): testId=${this.testId}, `
         + `neuralOrchestra.versus_loadOk (${neuralOrchestra.versus_loadOk}) `
         + `should be true.` );
 
     if ( !versus_loadOk )
       throw Error( `NeuralOrchestra_tester.TestCase`
-        + `.test_load_process_send_asyncGenerator(): `
+        + `.test_load_process_send_asyncGenerator(): testId=${this.testId}, `
         + `versus_loadOk (${versus_loadOk}) should be true.` );
 
     progressToAdvance.value_advance();
@@ -363,6 +382,8 @@ class TestCase {
   async* test_init_load_process_send_asyncGenerator(
     progressParent, neuralOrchestra,
     b_init_asyncGenerator, b_reenter_first_init_asyncGenerator ) {
+
+    ++this.testId;
 
     const loadCountMax = this.loadCountBase
       * 2 // b_load_asyncGenerator
@@ -387,6 +408,7 @@ class TestCase {
     ValueMax.Percentage.Concrete.Pool.get_or_create_by( 5 ) );
 
     // 1. Initialize.
+    ++this.testId;
     let initer_async;
     let initPromise;
     if ( b_init_asyncGenerator )
@@ -413,24 +435,26 @@ class TestCase {
     if ( b_reenter_first_init_asyncGenerator ) {
 
       try { // Test: Reenter .init_asyncGenerator() should throw exception.
+        ++this.testId;
         await neuralOrchestra.init_asyncGenerator().next();
       } catch ( e ) {
         if ( e.message.indexOf( ".init_asyncGenerator():" ) > 0 ) {
           progressToAdvance.value_advance();
           yield progressRoot;
-        } else {
-          throw e; // Unknown error, said loudly.
+        } else { // Unknown error, said loudly.
+          throw Error( `NeuralOrchestra: testId=${this.testId}.`, { cause: e } );
         }
       }
 
       try { // Test: Reenter .init_async() should throw exception.
+        ++this.testId;
         await neuralOrchestra.init_async();
       } catch ( e ) {
         if ( e.message.indexOf( ".init_async():" ) > 0 ) {
           progressToAdvance.value_advance();
           yield progressRoot;
-        } else {
-          throw e; // Unknown error, said loudly.
+        } else { // Unknown error, said loudly.
+          throw Error( `NeuralOrchestra: testId=${this.testId}.`, { cause: e } );
         }
       }
 
@@ -438,52 +462,57 @@ class TestCase {
     } else {
 
       try { // Test: Reenter .init_async() should throw exception.
+        ++this.testId;
         await neuralOrchestra.init_async();
       } catch ( e ) {
         if ( e.message.indexOf( ".init_async():" ) > 0 ) {
           progressToAdvance.value_advance();
           yield progressRoot;
-        } else {
-          throw e; // Unknown error, said loudly.
+        } else { // Unknown error, said loudly.
+          throw Error( `NeuralOrchestra: testId=${this.testId}.`, { cause: e } );
         }
       }
 
       try { // Test: Reenter .init_asyncGenerator() should throw exception.
+        ++this.testId;
         await neuralOrchestra.init_asyncGenerator().next();
       } catch ( e ) {
         if ( e.message.indexOf( ".init_asyncGenerator():" ) > 0 ) {
           progressToAdvance.value_advance();
           yield progressRoot;
-        } else {
-          throw e; // Unknown error, said loudly.
+        } else { // Unknown error, said loudly.
+          throw Error( `NeuralOrchestra: testId=${this.testId}.`, { cause: e } );
         }
       }
     }
 
     // Test: send before init ok. (should exception.)
     try {
+      ++this.testId;
       neuralOrchestra.versusResultSender_send();
     } catch ( e ) {
       if ( e.message.indexOf( ".versusResultSender_send():" ) > 0 ) {
         progressToAdvance.value_advance();
         yield progressRoot;
-      } else {
-        throw e; // Unknown error, said loudly.
+      } else { // Unknown error, said loudly.
+        throw Error( `NeuralOrchestra: testId=${this.testId}.`, { cause: e } );
       }
     }
 
     // Test: process before init ok. (should exception.)
     try {
+      ++this.testId;
       await neuralOrchestra.workerProxies_ImageData_process_async();
     } catch ( e ) {
       if ( e.message.indexOf( ".workerProxies_ImageData_process_async():" ) > 0 ) {
         progressToAdvance.value_advance();
         yield progressRoot;
-      } else {
-        throw e; // Unknown error, said loudly.
+      } else { // Unknown error, said loudly.
+        throw Error( `NeuralOrchestra: testId=${this.testId}.`, { cause: e } );
       }
     }
 
+    ++this.testId;
     let initOk;
     if ( b_init_asyncGenerator ) {
       let ininterNext;
@@ -558,6 +587,8 @@ class TestCase {
     b_before_init_first_load_asyncGenerator,
     b_init_asyncGenerator_first ) {
 
+    ++this.testId;
+
     const initCountMax = this.initCountBase
       * 2 // b_init_asyncGenerator
       * 2 // b_reenter_first_init_asyncGenerator
@@ -601,25 +632,27 @@ class TestCase {
 
       // 1.3 Test: send before .init. (should exception.)
       try {
+        ++this.testId;
         neuralOrchestra.versusResultSender_send();
       } catch ( e ) {
         if ( e.message.indexOf( ".versusResultSender_send():" ) > 0 ) {
           progressToAdvance.value_advance();
           yield progressRoot;
-        } else {
-          throw e; // Unknown error, said loudly.
+        } else { // Unknown error, said loudly.
+          throw Error( `NeuralOrchestra: testId=${this.testId}.`, { cause: e } );
         }
       }
 
       // 1.4 Test: process before .init. (should exception.)
       try {
+        ++this.testId;
         await neuralOrchestra.workerProxies_ImageData_process_async();
       } catch ( e ) {
         if ( e.message.indexOf( ".workerProxies_ImageData_process_async():" ) > 0 ) {
           progressToAdvance.value_advance();
           yield progressRoot;
-        } else {
-          throw e; // Unknown error, said loudly.
+        } else { // Unknown error, said loudly.
+          throw Error( `NeuralOrchestra: testId=${this.testId}.`, { cause: e } );
         }
       }
 
@@ -631,38 +664,41 @@ class TestCase {
 
         // Test: versus_loader before .init. (should exception.)
         try {
+          ++this.testId;
           await neuralOrchestra.versus_loader_create().next();
         } catch ( e ) {
           if ( e.message.indexOf( ".versus_loader_create():" ) > 0 ) {
             progressToAdvance.value_advance();
             yield progressRoot;
-          } else {
-            throw e; // Unknown error, said loudly.
+          } else { // Unknown error, said loudly.
+            throw Error( `NeuralOrchestra: testId=${this.testId}.`, { cause: e } );
           }
         }
 
         // Test: versus_load before .init
         //       and before .versus_loader_create. (should exception.)
         try {
+          ++this.testId;
           await neuralOrchestra.versus_load_promise_create();
         } catch ( e ) {
           if ( e.message.indexOf( ".versus_load_promise_create():" ) > 0 ) {
             progressToAdvance.value_advance();
             yield progressRoot;
-          } else {
-            throw e; // Unknown error, said loudly.
+          } else { // Unknown error, said loudly.
+            throw Error( `NeuralOrchestra: testId=${this.testId}.`, { cause: e } );
           }
         }
 
         // Test: versus_loader before .init. (should exception.)
         try {
+          ++this.testId;
           await neuralOrchestra.versus_loader_create().next();
         } catch ( e ) {
           if ( e.message.indexOf( ".versus_loader_create():" ) > 0 ) {
             progressToAdvance.value_advance();
             yield progressRoot;
-          } else {
-            throw e; // Unknown error, said loudly.
+          } else { // Unknown error, said loudly.
+            throw Error( `NeuralOrchestra: testId=${this.testId}.`, { cause: e } );
           }
         }
 
@@ -673,38 +709,41 @@ class TestCase {
         // Test: versus_load before .init
         //       and before .versus_loader_create. (should exception.)
         try {
+          ++this.testId;
           await neuralOrchestra.versus_load_promise_create();
         } catch ( e ) {
           if ( e.message.indexOf( ".versus_load_promise_create():" ) > 0 ) {
             progressToAdvance.value_advance();
             yield progressRoot;
-          } else {
-            throw e; // Unknown error, said loudly.
+          } else { // Unknown error, said loudly.
+            throw Error( `NeuralOrchestra: testId=${this.testId}.`, { cause: e } );
           }
         }
 
         // Test: versus_loader before .init. (should exception.)
         try {
+          ++this.testId;
           await neuralOrchestra.versus_loader_create().next();
         } catch ( e ) {
           if ( e.message.indexOf( ".versus_loader_create():" ) > 0 ) {
             progressToAdvance.value_advance();
             yield progressRoot;
-          } else {
-            throw e; // Unknown error, said loudly.
+          } else { // Unknown error, said loudly.
+            throw Error( `NeuralOrchestra: testId=${this.testId}.`, { cause: e } );
           }
         }
 
         // Test: versus_load before .init
         //       but after .versus_loader_create. (should exception.)
         try {
+          ++this.testId;
           await neuralOrchestra.versus_load_promise_create();
         } catch ( e ) {
           if ( e.message.indexOf( ".versus_load_promise_create():" ) > 0 ) {
             progressToAdvance.value_advance();
             yield progressRoot;
-          } else {
-            throw e; // Unknown error, said loudly.
+          } else { // Unknown error, said loudly.
+            throw Error( `NeuralOrchestra: testId=${this.testId}.`, { cause: e } );
           }
         }
       }
@@ -755,6 +794,7 @@ class TestCase {
 
   /** */
   async* test_asyncGenerator( progressParent ) {
+    this.testId = 0;
 
     const createCountMax = this.createCountBase
       * 2 // b_before_init_first_load_asyncGenerator
