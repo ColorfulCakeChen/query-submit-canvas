@@ -523,7 +523,9 @@ class TestCase {
 
   /** */
   async* test_create_init_load_process_send_asyncGenerator(
-    progressParent, b_init_asyncGenerator_first ) {
+    progressParent,
+    b_before_init_first_load_asyncGenerator,
+    b_init_asyncGenerator_first ) {
 
     const initCountMax = this.initCountBase
       * 2 // b_init_asyncGenerator
@@ -546,10 +548,13 @@ class TestCase {
     //
     let neuralOrchestra;
     try {
+      // 1. Create.
+
+      // 1.1
       neuralOrchestra = NeuralOrchestra.Base.Pool.get_or_create_by();
 
-      // Check: For a new NeuralOrchestra, only .params_loading_retryWaiting
-      //        should exist.
+      // 1.2 Check: For a new NeuralOrchestra, only .params_loading_retryWaiting
+      //            should exist.
       for ( let p in neuralOrchestra ) {
         let propertyValue = neuralOrchestra[ p ];
         if ( propertyValue != undefined )
@@ -560,7 +565,7 @@ class TestCase {
               + `should be undefined.` );
       }
 
-      // Test: send before .init. (should exception.)
+      // 1.3 Test: send before .init. (should exception.)
       try {
         neuralOrchestra.versusResultSender_send();
       } catch ( e ) {
@@ -572,7 +577,7 @@ class TestCase {
         }
       }
 
-      // Test: process before .init. (should exception.)
+      // 1.4 Test: process before .init. (should exception.)
       try {
         await neuralOrchestra.workerProxies_ImageData_process_async();
       } catch ( e ) {
@@ -584,60 +589,105 @@ class TestCase {
         }
       }
 
-//!!! ...unfinished... (2023/03/16)
-// Try .versus_load_async(), .versus_load_asyncGenerator(), .versus_load_async()
-// Try .versus_load_asyncGenerator(), .versus_load_async(), .versus_load_asyncGenerator()
+      // 1.5
 
-      // Test: versus_load before .init
-      //       and before .versus_loader_create. (should exception.)
-      try {
-        await neuralOrchestra.versus_load_promise_create();
-      } catch ( e ) {
-        if ( e.message.indexOf( ".versus_load_asyncGenerator():" ) > 0 ) {
-          progressToAdvance.value_advance();
-          yield progressRoot;
-        } else {
-          throw e; // Unknown error, said loudly.
+      // 1.5.1 Test: Try .versus_load_asyncGenerator(), .versus_load_async(),
+      //             .versus_load_asyncGenerator()
+      if ( b_before_init_first_load_asyncGenerator ) {
+
+        // Test: versus_loader before .init. (should exception.)
+        try {
+          await neuralOrchestra.versus_loader_create().next();
+        } catch ( e ) {
+          if ( e.message.indexOf( ".versus_load_asyncGenerator():" ) > 0 ) {
+            progressToAdvance.value_advance();
+            yield progressRoot;
+          } else {
+            throw e; // Unknown error, said loudly.
+          }
+        }
+
+        // Test: versus_load before .init
+        //       and before .versus_loader_create. (should exception.)
+        try {
+          await neuralOrchestra.versus_load_promise_create();
+        } catch ( e ) {
+          if ( e.message.indexOf( ".versus_load_asyncGenerator():" ) > 0 ) {
+            progressToAdvance.value_advance();
+            yield progressRoot;
+          } else {
+            throw e; // Unknown error, said loudly.
+          }
+        }
+
+        // Test: versus_loader before .init. (should exception.)
+        try {
+          await neuralOrchestra.versus_loader_create().next();
+        } catch ( e ) {
+          if ( e.message.indexOf( ".versus_load_asyncGenerator():" ) > 0 ) {
+            progressToAdvance.value_advance();
+            yield progressRoot;
+          } else {
+            throw e; // Unknown error, said loudly.
+          }
+        }
+
+      // 1.5.2 Test: Try .versus_load_async(), .versus_load_asyncGenerator(),
+      //             .versus_load_async()
+      } else {
+
+        // Test: versus_load before .init
+        //       and before .versus_loader_create. (should exception.)
+        try {
+          await neuralOrchestra.versus_load_promise_create();
+        } catch ( e ) {
+          if ( e.message.indexOf( ".versus_load_asyncGenerator():" ) > 0 ) {
+            progressToAdvance.value_advance();
+            yield progressRoot;
+          } else {
+            throw e; // Unknown error, said loudly.
+          }
+        }
+
+        // Test: versus_loader before .init. (should exception.)
+        try {
+          await neuralOrchestra.versus_loader_create().next();
+        } catch ( e ) {
+          if ( e.message.indexOf( ".versus_load_asyncGenerator():" ) > 0 ) {
+            progressToAdvance.value_advance();
+            yield progressRoot;
+          } else {
+            throw e; // Unknown error, said loudly.
+          }
+        }
+
+        // Test: versus_load before .init
+        //       but after .versus_loader_create. (should exception.)
+        try {
+          await neuralOrchestra.versus_load_promise_create();
+        } catch ( e ) {
+          if ( e.message.indexOf( ".versus_load_promise_create():" ) > 0 ) {
+  //!!! (2023/03/15 Remarked)
+  //               ".versus_load_async():" ) > 0 ) {
+            progressToAdvance.value_advance();
+            yield progressRoot;
+          } else {
+            throw e; // Unknown error, said loudly.
+          }
         }
       }
 
-      // Test: versus_loader before .init. (should exception.)
-      try {
-        await neuralOrchestra.versus_loader_create().next();
-      } catch ( e ) {
-        if ( e.message.indexOf( ".versus_load_asyncGenerator():" ) > 0 ) {
-          progressToAdvance.value_advance();
-          yield progressRoot;
-        } else {
-          throw e; // Unknown error, said loudly.
-        }
-      }
-
-      // Test: versus_load before .init
-      //       but after .versus_loader_create. (should exception.)
-      try {
-        await neuralOrchestra.versus_load_promise_create();
-      } catch ( e ) {
-        if ( e.message.indexOf( ".versus_load_promise_create():" ) > 0 ) {
-//!!! (2023/03/15 Remarked)
-//               ".versus_load_async():" ) > 0 ) {
-          progressToAdvance.value_advance();
-          yield progressRoot;
-        } else {
-          throw e; // Unknown error, said loudly.
-        }
-      }
-
-      let b_init_asyncGenerator;
-      let b_reenter_first_init_asyncGenerator;
+      // 2. Initialize, load, process, send.
 
       // Test: use .init_async() or .init_asyncGenerator().
+      let b_init_asyncGenerator;
       for (
         let n_init_asyncGenerator = 0;
         n_init_asyncGenerator < 2;
         ++n_init_asyncGenerator ) {
 
         // Test: reenter .init_async() or .init_asyncGenerator() first.
+        let b_reenter_first_init_asyncGenerator;
         for (
           let n_reenter_first_init_asyncGenerator = 0;
           n_reenter_first_init_asyncGenerator < 2;
@@ -675,6 +725,7 @@ class TestCase {
   async* test_asyncGenerator( progressParent ) {
 
     const createCountMax = this.createCountBase
+      * 2 // b_before_init_first_load_asyncGenerator
       * 2 // b_init_asyncGenerator_first
       ;
 
@@ -687,25 +738,36 @@ class TestCase {
             ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
     }
 
-    // Test: use .init_async() or .init_asyncGenerator() first.
-    let b_init_asyncGenerator_first;
+    // Test: use .versus_load_async() or .versus_load_asyncGenerator() first
+    //       before init.
+    let b_before_init_first_load_asyncGenerator;
     for (
-      let n_init_asyncGenerator_first = 0;
-      n_init_asyncGenerator_first < 2;
-      ++n_init_asyncGenerator_first ) {
+      let n_before_init_first_load_asyncGenerator = 0;
+      n_before_init_first_load_asyncGenerator < 2;
+      ++n_before_init_first_load_asyncGenerator ) {
 
-      b_init_asyncGenerator_first = ( n_init_asyncGenerator_first != 0 );
+      b_before_init_first_load_asyncGenerator
+        = ( n_before_init_first_load_asyncGenerator != 0 );
 
-      // Test: re-create.
-      for ( let createCount = 0; createCount < createCountMax; ++createCount ) {
-        let progressCreateInitLoadProcessSend
-          = progressCreateInitLoadProcessSendArray[ createCount ];
-        yield* this.test_create_init_load_process_send_asyncGenerator(
-          progressCreateInitLoadProcessSend,
-          b_init_asyncGenerator_first );
+      // Test: use .init_async() or .init_asyncGenerator() first.
+      let b_init_asyncGenerator_first;
+      for (
+        let n_init_asyncGenerator_first = 0;
+        n_init_asyncGenerator_first < 2;
+        ++n_init_asyncGenerator_first ) {
+
+        b_init_asyncGenerator_first = ( n_init_asyncGenerator_first != 0 );
+
+        // Test: re-create.
+        for ( let createCount = 0; createCount < createCountMax; ++createCount ) {
+          let progressCreateInitLoadProcessSend
+            = progressCreateInitLoadProcessSendArray[ createCount ];
+          yield* this.test_create_init_load_process_send_asyncGenerator(
+            progressCreateInitLoadProcessSend,
+            b_before_init_first_load_asyncGenerator,
+            b_init_asyncGenerator_first );
+        }
       }
-
-      b_init_asyncGenerator_first = !b_init_asyncGenerator_first;
     }
   }
 
