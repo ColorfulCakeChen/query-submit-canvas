@@ -200,6 +200,10 @@ import * as DEvolution from "../DEvolution.js";
  *   - If resolved to true, it means versus summary loaded, versus loaded, and
  *       neural networks created.
  *
+ * @member {boolean} versus_loader_valid
+ *   If true, .versus_loader is still running. If false, .versus_loader should
+ * has been completed and should not be used.
+ *
  * @member {AsyncGenerator} versus_loader
  *   A .versus_load_asyncGenerator() instance.
  *
@@ -247,6 +251,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
 
     NeuralOrchestra_Base.versus_load_progress_dispose.call( this );
     this.versus_load_promise = undefined;
+    this.versus_loader_valid = undefined;
     this.versus_loader = undefined;
     this.versus_loadOk = undefined;
     this.versus_load_asyncGenerator_running = undefined;
@@ -980,14 +985,11 @@ class NeuralOrchestra_Base extends Recyclable.Root {
         + `should be executed only if `
         + `this.initOk ( ${this.initOk} ) is true.` );
 
-!!! ...unfinished... (2023/03/16)
-should check .versus_loader_creatable instead.
-
-//!!! (2023/03/16 Remarked) Check .versus_loadOk should be enough.
-//     if ( this.versus_loader )
-//       throw Error( `NeuralOrchestra.Base.workerProxies_ImageData_process_async(): `
-//         + `should be executed only if `
-//         + `this.versus_loader complete.` );
+    if ( this.versus_loader_valid )
+      throw Error( `NeuralOrchestra.Base.workerProxies_ImageData_process_async(): `
+        + `should be executed only if `
+        + `this.versus_loader complete `
+        + `(this.versus_loader_valid ( ${this.versus_loader_valid} ) is false).` );
 
     if ( !this.versus_loadOk )
       throw Error( `NeuralOrchestra.Base.workerProxies_ImageData_process_async(): `
@@ -1110,11 +1112,7 @@ should check .versus_loader_creatable instead.
     // 1.
 
     // 1.1
-
-!!! ...unfinished... (2023/03/16)
-should check .versus_loader_creatable instead.
-
-    if ( this.versus_loader ) {
+    if ( this.versus_loader_valid ) {
 
       // 1.1.1 Fine, because .init_async() calls this method.
       if ( this.init_async_running ) {
@@ -1238,14 +1236,12 @@ should check .versus_loader_creatable instead.
    */
   versus_loader_create( progressParent, delayMilliseconds ) {
 
-!!! ...unfinished... (2023/03/16)
-should check .versus_loader_creatable instead.
-
-    if ( this.versus_loader )
+    if ( this.versus_loader_valid )
       throw Error( `NeuralOrchestra.Base.versus_loader_create(): `
         + `this.versus_loader should be null. `
         + `Please wait previous .versus_loader to complete `
-        + `if wanting to call again.` );
+        + `(wait this.versus_loader_valid ( ${this.versus_loader_valid} ) `
+        + `becoming false) if wanting to call again.` );
 
     if ( !this.initRunning_or_initOk )
       throw Error( `NeuralOrchestra.Base.versus_loader_create(): `
@@ -1262,10 +1258,9 @@ should check .versus_loader_creatable instead.
     this.versus_loader = NeuralOrchestra_Base.versus_load_asyncGenerator.call(
       this, progressParent, delayMilliseconds );
 
-    // Clear .versus_loadOk to undefined immediately so that outside
-    // caller (including .workerProxies_ImageData_process_async() and
-    // .versusResultSender_send()) can check it.
-    this.versus_loadOk = undefined;
+    // So that outside caller (including .workerProxies_ImageData_process_async()
+    // and .versusResultSender_send()) can check it.
+    this.versus_loader_valid = true;
 
     return this.versus_loader;
   }
@@ -1452,13 +1447,16 @@ should check .versus_loader_creatable instead.
       // 4. So that this async generator could be executed again.
       this.versus_load_asyncGenerator_running = false;
 
-!!! ...unfinished... (2023/03/16)
+
+//!!! (2023/03/16 Remarked) set .versus_loader_valid instead.
+//
 // Problem: When caller wants to .next() it, the .versus_loader may
 // have been clear to null.
+//       // So that .versus_loader_create() could be called again.
+//       // Prevent a finished versus loader to be re-used.
+//       this.versus_loader = null;
 
-      // So that .versus_loader_create() could be called again.
-      // Prevent a finished versus loader to be re-used.
-      this.versus_loader = null;
+      this.versus_loader_valid = false;
     }
 
     // 5. Advance progress to 100% only if neural networks created successfully
