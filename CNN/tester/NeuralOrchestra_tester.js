@@ -86,9 +86,9 @@ class TestCase {
         + `should be true.` );
     }
 
-    // In the following testing, when await, the
-    // .workerProxies_ImageData_process_async() may have been completed. So,
-    // processing one more time before every testing if needed.
+    // Note: In the following testing, when await, the
+    //       .workerProxies_ImageData_process_async() may have been completed.
+    //       So, processing one more time before every testing if necessary.
 
     // Test: Reenter .workerProxies_ImageData_process_async()
     //       should throw exception.
