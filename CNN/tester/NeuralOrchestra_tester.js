@@ -507,8 +507,6 @@ class TestCase {
           let bTryLoad = ( loadCount > 0 );
 
           b_load_asyncGenerator = ( n_load_asyncGenerator != 0 );
-          if ( b_load_asyncGenerator_first )
-            b_load_asyncGenerator = !b_load_asyncGenerator;
 
           b_reenter_first_load_asyncGenerator
             = ( n_reenter_first_load_asyncGenerator != 0 );
