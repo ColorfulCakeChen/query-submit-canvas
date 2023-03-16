@@ -64,8 +64,8 @@ function test() {
   }
 
   // Whether detect progress back-track.
-  // let bDetectProgressBacktrack = false;
-  let bDetectProgressBacktrack = true;
+  let bDetectProgressBacktrack = false;
+  // let bDetectProgressBacktrack = true;
 
   let tester = testerAll();
 
