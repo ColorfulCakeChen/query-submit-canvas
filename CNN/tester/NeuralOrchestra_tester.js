@@ -165,7 +165,7 @@ class TestCase {
     ++this.testId;
     let Float32ArrayArray;
     try {
-      let Float32ArrayArray = await processPromise;
+      Float32ArrayArray = await processPromise;
     } catch ( e ) { // Unknown error, said loudly.
       throw Error( `NeuralOrchestra: testId=${this.testId}. ${e}`, { cause: e } );
     }
