@@ -239,7 +239,7 @@ class TestCase {
 
     // Test: Reenter try .versus_load_asyncGenerator() and then .load_async()
     if ( b_reenter_first_load_asyncGenerator ) {
-  
+
       try { // Test: Reenter .versus_load_asyncGenerator() should throw exception.
         await neuralOrchestra.versus_loader_create().next();
       } catch ( e ) {
@@ -275,7 +275,7 @@ class TestCase {
           throw e; // Unknown error, said loudly.
         }
       }
-  
+
       try { // Test: Reenter .versus_load_asyncGenerator() should throw exception.
         await neuralOrchestra.versus_loader_create().next();
       } catch ( e ) {
@@ -286,7 +286,7 @@ class TestCase {
           throw e; // Unknown error, said loudly.
         }
       }
-  
+
     }
 
     // Test: send before versus loaded. (should exception.)
