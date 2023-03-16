@@ -543,7 +543,7 @@ class TestCase {
     }
 
     let progressToAdvance = progressParent.child_add(
-      ValueMax.Percentage.Concrete.Pool.get_or_create_by( 5 ) );
+      ValueMax.Percentage.Concrete.Pool.get_or_create_by( 6 ) );
 
     //
     let neuralOrchestra;
@@ -564,6 +564,9 @@ class TestCase {
               + `neuralOrchestra.${p} (${neuralOrchestra[ p ]}) `
               + `should be undefined.` );
       }
+
+      progressToAdvance.value_advance();
+      yield progressRoot;
 
       // 1.3 Test: send before .init. (should exception.)
       try {
