@@ -30,20 +30,31 @@ class TestCase {
     this.createCountBase = 2; // Try create NeuralOrchestra twice.
     this.initCountBase = 2;   // Try init NeuralOrchestra twice.
     this.loadCountBase = 2;
+  }
 
-    {
-      const input_channelCount = 4; // i.e. RGBA
-      const valueBegin = 0, valueStep = 1;
-      const randomOffsetMin = -1, randomOffsetMax = 1;
-      const divisorForRemainder = 256; //( 2 ** 26 );
+  /**
+   * Because ImageData.data.buffer (and sourceNumberArray.buffer) will be
+   * transferred (i.e. not copied) to web worker when
+   * .workerProxies_ImageData_process_async(), they should be re-created
+   * every time.
+   */
+  ImageData_create() {
+    const input_channelCount = 4; // i.e. RGBA
+    const valueBegin = 0, valueStep = 1;
+    const randomOffsetMin = -1, randomOffsetMax = 1;
+    const divisorForRemainder = 256; //( 2 ** 26 );
 
-      let elementCount = this.input_width * this.input_height * input_channelCount;
-      this.sourceNumberArray = new Uint8ClampedArray( elementCount );
-      RandTools.fill_numberArray( this.sourceNumberArray,
-        this.input_height, this.input_width, input_channelCount,
-        valueBegin, valueStep,
-        randomOffsetMin, randomOffsetMax, divisorForRemainder );
-    }
+    let elementCount = this.input_width * this.input_height * input_channelCount;
+    let sourceNumberArray = new Uint8ClampedArray( elementCount );
+    RandTools.fill_numberArray( this.sourceNumberArray,
+      this.input_height, this.input_width, input_channelCount,
+      valueBegin, valueStep,
+      randomOffsetMin, randomOffsetMax, divisorForRemainder );
+
+    let sourceImageData = new ImageData(
+      sourceNumberArray, this.input_width, this.input_height );
+
+    return sourceImageData;
   }
 
   /**
@@ -60,8 +71,7 @@ class TestCase {
 
     // Because ImageData.data.buffer will be transferred (i.e. not copied) to
     // web worker, it should be re-created every time.
-    let sourceImageData = new ImageData(
-      this.sourceNumberArray, this.input_width, this.input_height );
+    let sourceImageData = this.ImageData_create();
 
     let processPromise
       = neuralOrchestra.workerProxies_ImageData_process_async(
