@@ -177,17 +177,17 @@ class TestCase {
         + `Float32ArrayArray.length=${Float32ArrayArray.length} `
         + `should be 2.` );
 
-    if ( Float32Array[ 0 ].length != this.output_channelCount )
+    if ( Float32ArrayArray[ 0 ].length != this.output_channelCount )
       throw Error( `NeuralOrchestra_tester.TestCase`
         + `.test_process_send_asyncGenerator(): `
-        + `Float32Array[ 0 ].length=${Float32Array[ 0 ].length} `
+        + `Float32ArrayArray[ 0 ].length=${Float32ArrayArray[ 0 ].length} `
         + `should be the same as `
         + `.output_channelCount ( ${this.output_channelCount}.` );
 
-    if ( Float32Array[ 1 ].length != this.output_channelCount )
+    if ( Float32ArrayArray[ 1 ].length != this.output_channelCount )
       throw Error( `NeuralOrchestra_tester.TestCase`
         + `.test_process_send_asyncGenerator(): `
-        + `Float32Array[ 1 ].length=${Float32Array[ 1 ].length} `
+        + `Float32ArrayArray[ 1 ].length=${Float32ArrayArray[ 1 ].length} `
         + `should be the same as `
         + `.output_channelCount ( ${this.output_channelCount}.` );
 
