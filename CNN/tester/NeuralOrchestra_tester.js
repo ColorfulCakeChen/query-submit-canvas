@@ -71,7 +71,7 @@ class TestCase {
     //       should throw exception.
     try {
 //!!! (2023/03/16 Remarked)
-// If await, the .workerProxies_ImageData_process_async() may be completed.
+// If await, the .workerProxies_ImageData_process_async() may have been completed.
 //      await neuralOrchestra.workerProxies_ImageData_process_async();
       neuralOrchestra.workerProxies_ImageData_process_async();
     } catch ( e ) {
@@ -86,7 +86,7 @@ class TestCase {
     // Test: .init_asyncGenerator() during processing should throw exception.
     try {
 //!!! (2023/03/16 Remarked)
-// If await, the .workerProxies_ImageData_process_async() may be completed.
+// If await, the .workerProxies_ImageData_process_async() may have been completed.
 //      await neuralOrchestra.init_asyncGenerator().next();
       neuralOrchestra.init_asyncGenerator().next();
     } catch ( e ) {
@@ -101,7 +101,7 @@ class TestCase {
     // Test: .init_async() during processing should throw exception.
     try {
 //!!! (2023/03/16 Remarked)
-// If await, the .workerProxies_ImageData_process_async() may be completed.
+// If await, the .workerProxies_ImageData_process_async() may have been completed.
 //      await neuralOrchestra.init_async();
       neuralOrchestra.init_async();
     } catch ( e ) {
@@ -116,7 +116,7 @@ class TestCase {
     // Test: .versus_load_asyncGenerator() during processing should throw exception.
     try {
 //!!! (2023/03/16 Remarked)
-// If await, the .workerProxies_ImageData_process_async() may be completed.
+// If await, the .workerProxies_ImageData_process_async() may have been completed.
 //      await neuralOrchestra.versus_loader_create().next();
       neuralOrchestra.versus_loader_create().next();
     } catch ( e ) {
@@ -131,7 +131,7 @@ class TestCase {
     // Test: .versus_load_async() during processing should throw exception.
     try {
 //!!! (2023/03/16 Remarked)
-// If await, the .workerProxies_ImageData_process_async() may be completed.
+// If await, the .workerProxies_ImageData_process_async() may have been completed.
 //      await neuralOrchestra.versus_load_promise_create();
       neuralOrchestra.versus_load_promise_create();
     } catch ( e ) {
