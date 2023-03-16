@@ -43,7 +43,7 @@ class TestCase {
         this.height, this.width, channelCount,
         valueBegin, valueStep,
         randomOffsetMin, randomOffsetMax, divisorForRemainder);
-    
+
       this.sourceImageData
         = new ImageData( numberArray, this.input_width, this.input_height );
     }
