@@ -980,10 +980,14 @@ class NeuralOrchestra_Base extends Recyclable.Root {
         + `should be executed only if `
         + `this.initOk ( ${this.initOk} ) is true.` );
 
-    if ( this.versus_loader )
-      throw Error( `NeuralOrchestra.Base.workerProxies_ImageData_process_async(): `
-        + `should be executed only if `
-        + `this.versus_loader complete.` );
+!!! ...unfinished... (2023/03/16)
+should check .versus_loader_creatable instead.
+
+//!!! (2023/03/16 Remarked) Check .versus_loadOk should be enough.
+//     if ( this.versus_loader )
+//       throw Error( `NeuralOrchestra.Base.workerProxies_ImageData_process_async(): `
+//         + `should be executed only if `
+//         + `this.versus_loader complete.` );
 
     if ( !this.versus_loadOk )
       throw Error( `NeuralOrchestra.Base.workerProxies_ImageData_process_async(): `
@@ -1106,6 +1110,10 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     // 1.
 
     // 1.1
+
+!!! ...unfinished... (2023/03/16)
+should check .versus_loader_creatable instead.
+
     if ( this.versus_loader ) {
 
       // 1.1.1 Fine, because .init_async() calls this method.
@@ -1230,6 +1238,9 @@ class NeuralOrchestra_Base extends Recyclable.Root {
    */
   versus_loader_create( progressParent, delayMilliseconds ) {
 
+!!! ...unfinished... (2023/03/16)
+should check .versus_loader_creatable instead.
+
     if ( this.versus_loader )
       throw Error( `NeuralOrchestra.Base.versus_loader_create(): `
         + `this.versus_loader should be null. `
@@ -1251,14 +1262,10 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     this.versus_loader = NeuralOrchestra_Base.versus_load_asyncGenerator.call(
       this, progressParent, delayMilliseconds );
 
-!!!
-    // Let .versus_loadOk be setup (i.e. cleared to undefined) so that outside
+    // Clear .versus_loadOk to undefined immediately so that outside
     // caller (including .workerProxies_ImageData_process_async() and
     // .versusResultSender_send()) can check it.
-    //
-    // Note: This works because we know the versus loader will not be completed
-    //       in just one step.
-    await this.versus_loader.next();
+    this.versus_loadOk = undefined;
 
     return this.versus_loader;
   }
