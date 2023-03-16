@@ -443,6 +443,11 @@ class NeuralOrchestra_Base extends Recyclable.Root {
       // 1. Use internal independent progress.
       NeuralOrchestra_Base.versus_load_progress_create.call( this );
 
+
+!!! ...unfinished... (2023/03/16)
+// What if re-init? The this.versus_loader will become another object.
+
+
       // 2. Start to load (versus summary and) versus, initialize
       //    NeuralWorker.Proxies, and create neural networks.
       let initer_async = this.init_asyncGenerator(
@@ -622,6 +627,11 @@ class NeuralOrchestra_Base extends Recyclable.Root {
       let sleepPromise;
       if ( delayMilliseconds > 0 )
         sleepPromise = PartTime.sleep( delayMilliseconds );
+
+
+!!! ...unfinished... (2023/03/16)
+// What if re-init? The this.versus_loader will become another object.
+
 
       // 1. Load (versus summary and) versus. Create neural networks.
       this.versus_loader_create( progressParent );
@@ -1182,6 +1192,9 @@ class NeuralOrchestra_Base extends Recyclable.Root {
 
 !!! ...unfinished... (2023/03/16)
 //check ( this.versus_loader_valid ) ?
+
+!!! ...unfinished... (2023/03/16)
+// What if re-init? The this.versus_loader will become another object.
 
       // 1.
       if ( !this.versus_loader )
