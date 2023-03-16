@@ -536,6 +536,12 @@ class TestCase {
     yield progressRoot;
 
     // 2.
+
+    // Test: loading multiple times. The first time is by above .init_asyncXxx()
+    //       internally. The others (after 2nd times) are by calling
+    //       .versus_loadXxx() by .test_load_process_send_asyncGenerator().
+    let nLoadProcessSendCount = 0;
+
     let b_load_asyncGenerator;
     let b_reenter_first_load_asyncGenerator;
 
@@ -551,11 +557,9 @@ class TestCase {
         n_reenter_first_load_asyncGenerator < 2;
         ++n_reenter_first_load_asyncGenerator ) {
 
-        // Test: loading twice. One is by .init_asyncXxx() internally. The other
-        //       is by calling .versus_loadXxx() directly.
         for ( let loadCount = 0; loadCount < loadCountMax; ++loadCount ) {
           let progressLoadProcessSend = progressLoadProcessSendArray[ loadCount ];
-          let bTryLoad = ( loadCount > 0 );
+          let bTryLoad = ( nLoadProcessSendCount > 0 );
 
           b_load_asyncGenerator = ( n_load_asyncGenerator != 0 );
 
@@ -565,6 +569,8 @@ class TestCase {
           yield* this.test_load_process_send_asyncGenerator(
             progressLoadProcessSend, neuralOrchestra, bTryLoad,
             b_load_asyncGenerator, b_reenter_first_load_asyncGenerator );
+
+          ++nLoadProcessSendCount;
         }
       }
     }
