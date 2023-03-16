@@ -39,8 +39,8 @@ class TestCase {
 
       let elementCount = this.input_width * this.input_height * channelCount;
       let numberArray = new Uint8ClampedArray( elementCount );
-      RandTools.fill_numberArray( numberArray,
-        height, width, channelCount,
+      this.( numberArray,
+        this.height, this.width, channelCount,
         valueBegin, valueStep,
         randomOffsetMin, randomOffsetMax, divisorForRemainder);
     
