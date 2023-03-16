@@ -543,6 +543,11 @@ class TestCase {
     //       .versus_loadXxx() by .test_load_process_send_asyncGenerator().
     let nLoadProcessSendCount = 0;
 
+//!!! ...unfinished... (2023/03/16)
+// It seems that
+// b_load_asyncGenerator and b_reenter_first_load_asyncGenerator
+// should be placed to outside .test_create_init_load_process_send_asyncGenerator()
+
     let b_load_asyncGenerator;
     let b_reenter_first_load_asyncGenerator;
 
