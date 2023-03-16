@@ -106,7 +106,7 @@ class TestCase {
         progressToAdvance.value_advance();
         yield progressRoot;
       } else { // Unknown error, said loudly.
-        throw Error( `NeuralOrchestra: testId=${this.testId}.`, { cause: e } );
+        throw Error( `NeuralOrchestra: testId=${this.testId}. ${e}`, { cause: e } );
       }
     }
 
@@ -122,7 +122,7 @@ class TestCase {
         progressToAdvance.value_advance();
         yield progressRoot;
       } else { // Unknown error, said loudly.
-        throw Error( `NeuralOrchestra: testId=${this.testId}.`, { cause: e } );
+        throw Error( `NeuralOrchestra: testId=${this.testId}. ${e}`, { cause: e } );
       }
     }
 
@@ -138,7 +138,7 @@ class TestCase {
         progressToAdvance.value_advance();
         yield progressRoot;
       } else { // Unknown error, said loudly.
-        throw Error( `NeuralOrchestra: testId=${this.testId}.`, { cause: e } );
+        throw Error( `NeuralOrchestra: testId=${this.testId}. ${e}`, { cause: e } );
       }
     }
 
@@ -154,7 +154,7 @@ class TestCase {
         progressToAdvance.value_advance();
         yield progressRoot;
       } else { // Unknown error, said loudly.
-        throw Error( `NeuralOrchestra: testId=${this.testId}.`, { cause: e } );
+        throw Error( `NeuralOrchestra: testId=${this.testId}. ${e}`, { cause: e } );
       }
     }
 
@@ -169,7 +169,7 @@ class TestCase {
         progressToAdvance.value_advance();
         yield progressRoot;
       } else { // Unknown error, said loudly.
-        throw Error( `NeuralOrchestra: testId=${this.testId}.`, { cause: e } );
+        throw Error( `NeuralOrchestra: testId=${this.testId}. ${e}`, { cause: e } );
       }
     }
 
@@ -258,7 +258,7 @@ class TestCase {
           progressToAdvance.value_advance();
           yield progressRoot;
         } else { // Unknown error, said loudly.
-          throw Error( `NeuralOrchestra: testId=${this.testId}.`, { cause: e } );
+          throw Error( `NeuralOrchestra: testId=${this.testId}. ${e}`, { cause: e } );
         }
       }
 
@@ -270,7 +270,7 @@ class TestCase {
           progressToAdvance.value_advance();
           yield progressRoot;
         } else { // Unknown error, said loudly.
-          throw Error( `NeuralOrchestra: testId=${this.testId}.`, { cause: e } );
+          throw Error( `NeuralOrchestra: testId=${this.testId}. ${e}`, { cause: e } );
         }
       }
 
@@ -285,7 +285,7 @@ class TestCase {
           progressToAdvance.value_advance();
           yield progressRoot;
         } else { // Unknown error, said loudly.
-          throw Error( `NeuralOrchestra: testId=${this.testId}.`, { cause: e } );
+          throw Error( `NeuralOrchestra: testId=${this.testId}. ${e}`, { cause: e } );
         }
       }
 
@@ -297,7 +297,7 @@ class TestCase {
           progressToAdvance.value_advance();
           yield progressRoot;
         } else { // Unknown error, said loudly.
-          throw Error( `NeuralOrchestra: testId=${this.testId}.`, { cause: e } );
+          throw Error( `NeuralOrchestra: testId=${this.testId}. ${e}`, { cause: e } );
         }
       }
 
@@ -312,7 +312,7 @@ class TestCase {
         progressToAdvance.value_advance();
         yield progressRoot;
       } else { // Unknown error, said loudly.
-        throw Error( `NeuralOrchestra: testId=${this.testId}.`, { cause: e } );
+        throw Error( `NeuralOrchestra: testId=${this.testId}. ${e}`, { cause: e } );
       }
     }
 
@@ -325,7 +325,7 @@ class TestCase {
         progressToAdvance.value_advance();
         yield progressRoot;
       } else { // Unknown error, said loudly.
-        throw Error( `NeuralOrchestra: testId=${this.testId}.`, { cause: e } );
+        throw Error( `NeuralOrchestra: testId=${this.testId}. ${e}`, { cause: e } );
       }
     }
 
@@ -442,7 +442,7 @@ class TestCase {
           progressToAdvance.value_advance();
           yield progressRoot;
         } else { // Unknown error, said loudly.
-          throw Error( `NeuralOrchestra: testId=${this.testId}.`, { cause: e } );
+          throw Error( `NeuralOrchestra: testId=${this.testId}. ${e}`, { cause: e } );
         }
       }
 
@@ -454,7 +454,7 @@ class TestCase {
           progressToAdvance.value_advance();
           yield progressRoot;
         } else { // Unknown error, said loudly.
-          throw Error( `NeuralOrchestra: testId=${this.testId}.`, { cause: e } );
+          throw Error( `NeuralOrchestra: testId=${this.testId}. ${e}`, { cause: e } );
         }
       }
 
@@ -469,7 +469,7 @@ class TestCase {
           progressToAdvance.value_advance();
           yield progressRoot;
         } else { // Unknown error, said loudly.
-          throw Error( `NeuralOrchestra: testId=${this.testId}.`, { cause: e } );
+          throw Error( `NeuralOrchestra: testId=${this.testId}. ${e}`, { cause: e } );
         }
       }
 
@@ -481,7 +481,7 @@ class TestCase {
           progressToAdvance.value_advance();
           yield progressRoot;
         } else { // Unknown error, said loudly.
-          throw Error( `NeuralOrchestra: testId=${this.testId}.`, { cause: e } );
+          throw Error( `NeuralOrchestra: testId=${this.testId}. ${e}`, { cause: e } );
         }
       }
     }
@@ -495,7 +495,7 @@ class TestCase {
         progressToAdvance.value_advance();
         yield progressRoot;
       } else { // Unknown error, said loudly.
-        throw Error( `NeuralOrchestra: testId=${this.testId}.`, { cause: e } );
+        throw Error( `NeuralOrchestra: testId=${this.testId}. ${e}`, { cause: e } );
       }
     }
 
@@ -508,7 +508,7 @@ class TestCase {
         progressToAdvance.value_advance();
         yield progressRoot;
       } else { // Unknown error, said loudly.
-        throw Error( `NeuralOrchestra: testId=${this.testId}.`, { cause: e } );
+        throw Error( `NeuralOrchestra: testId=${this.testId}. ${e}`, { cause: e } );
       }
     }
 
@@ -639,7 +639,7 @@ class TestCase {
           progressToAdvance.value_advance();
           yield progressRoot;
         } else { // Unknown error, said loudly.
-          throw Error( `NeuralOrchestra: testId=${this.testId}.`, { cause: e } );
+          throw Error( `NeuralOrchestra: testId=${this.testId}. ${e}`, { cause: e } );
         }
       }
 
@@ -652,7 +652,7 @@ class TestCase {
           progressToAdvance.value_advance();
           yield progressRoot;
         } else { // Unknown error, said loudly.
-          throw Error( `NeuralOrchestra: testId=${this.testId}.`, { cause: e } );
+          throw Error( `NeuralOrchestra: testId=${this.testId}. ${e}`, { cause: e } );
         }
       }
 
@@ -671,7 +671,7 @@ class TestCase {
             progressToAdvance.value_advance();
             yield progressRoot;
           } else { // Unknown error, said loudly.
-            throw Error( `NeuralOrchestra: testId=${this.testId}.`, { cause: e } );
+            throw Error( `NeuralOrchestra: testId=${this.testId}. ${e}`, { cause: e } );
           }
         }
 
@@ -685,7 +685,7 @@ class TestCase {
             progressToAdvance.value_advance();
             yield progressRoot;
           } else { // Unknown error, said loudly.
-            throw Error( `NeuralOrchestra: testId=${this.testId}.`, { cause: e } );
+            throw Error( `NeuralOrchestra: testId=${this.testId}. ${e}`, { cause: e } );
           }
         }
 
@@ -698,7 +698,7 @@ class TestCase {
             progressToAdvance.value_advance();
             yield progressRoot;
           } else { // Unknown error, said loudly.
-            throw Error( `NeuralOrchestra: testId=${this.testId}.`, { cause: e } );
+            throw Error( `NeuralOrchestra: testId=${this.testId}. ${e}`, { cause: e } );
           }
         }
 
@@ -716,7 +716,7 @@ class TestCase {
             progressToAdvance.value_advance();
             yield progressRoot;
           } else { // Unknown error, said loudly.
-            throw Error( `NeuralOrchestra: testId=${this.testId}.`, { cause: e } );
+            throw Error( `NeuralOrchestra: testId=${this.testId}. ${e}`, { cause: e } );
           }
         }
 
@@ -729,7 +729,7 @@ class TestCase {
             progressToAdvance.value_advance();
             yield progressRoot;
           } else { // Unknown error, said loudly.
-            throw Error( `NeuralOrchestra: testId=${this.testId}.`, { cause: e } );
+            throw Error( `NeuralOrchestra: testId=${this.testId}. ${e}`, { cause: e } );
           }
         }
 
@@ -743,7 +743,7 @@ class TestCase {
             progressToAdvance.value_advance();
             yield progressRoot;
           } else { // Unknown error, said loudly.
-            throw Error( `NeuralOrchestra: testId=${this.testId}.`, { cause: e } );
+            throw Error( `NeuralOrchestra: testId=${this.testId}. ${e}`, { cause: e } );
           }
         }
       }
