@@ -210,10 +210,10 @@ class TestCase {
 
     let progressRoot = progressParent.root_get();
 
-    let progressload;
+    let progressLoad;
     if ( bTryLoad ) {
       if ( b_load_asyncGenerator ) {
-        progressload = progressParent.child_add(
+        progressLoad = progressParent.child_add(
           ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
       }
     }
@@ -228,7 +228,7 @@ class TestCase {
     // 1. Try another versus loading and neural networks creating.
     if ( bTryLoad ) {
       if ( b_load_asyncGenerator ) {
-        neuralOrchestra.versus_loader_create( progressload, this.delayMilliseconds );
+        neuralOrchestra.versus_loader_create( progressLoad, this.delayMilliseconds );
       } else {
         neuralOrchestra.versus_load_promise_create( this.delayMilliseconds );
       }
