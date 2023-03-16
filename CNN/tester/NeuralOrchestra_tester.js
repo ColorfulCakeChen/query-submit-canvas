@@ -72,8 +72,8 @@ class TestCase {
     try {
 //!!! (2023/03/16 Remarked)
 // If await, the .workerProxies_ImageData_process_async() may have been completed.
-//      await neuralOrchestra.workerProxies_ImageData_process_async();
-      neuralOrchestra.workerProxies_ImageData_process_async();
+      await neuralOrchestra.workerProxies_ImageData_process_async();
+//      neuralOrchestra.workerProxies_ImageData_process_async();
     } catch ( e ) {
       if ( e.message.indexOf( ".workerProxies_ImageData_process_async():" ) > 0 ) {
         progressToAdvance.value_advance();
@@ -87,8 +87,8 @@ class TestCase {
     try {
 //!!! (2023/03/16 Remarked)
 // If await, the .workerProxies_ImageData_process_async() may have been completed.
-//      await neuralOrchestra.init_asyncGenerator().next();
-      neuralOrchestra.init_asyncGenerator().next();
+      await neuralOrchestra.init_asyncGenerator().next();
+//      neuralOrchestra.init_asyncGenerator().next();
     } catch ( e ) {
       if ( e.message.indexOf( ".init_asyncGenerator():" ) > 0 ) {
         progressToAdvance.value_advance();
@@ -102,8 +102,8 @@ class TestCase {
     try {
 //!!! (2023/03/16 Remarked)
 // If await, the .workerProxies_ImageData_process_async() may have been completed.
-//      await neuralOrchestra.init_async();
-      neuralOrchestra.init_async();
+      await neuralOrchestra.init_async();
+//      neuralOrchestra.init_async();
     } catch ( e ) {
       if ( e.message.indexOf( ".init_async():" ) > 0 ) {
         progressToAdvance.value_advance();
@@ -117,8 +117,8 @@ class TestCase {
     try {
 //!!! (2023/03/16 Remarked)
 // If await, the .workerProxies_ImageData_process_async() may have been completed.
-//      await neuralOrchestra.versus_loader_create().next();
-      neuralOrchestra.versus_loader_create().next();
+      await neuralOrchestra.versus_loader_create().next();
+//      neuralOrchestra.versus_loader_create().next();
     } catch ( e ) {
       if ( e.message.indexOf( ".versus_loader_create():" ) > 0 ) {
         progressToAdvance.value_advance();
@@ -132,8 +132,8 @@ class TestCase {
     try {
 //!!! (2023/03/16 Remarked)
 // If await, the .workerProxies_ImageData_process_async() may have been completed.
-//      await neuralOrchestra.versus_load_promise_create();
-      neuralOrchestra.versus_load_promise_create();
+      await neuralOrchestra.versus_load_promise_create();
+//      neuralOrchestra.versus_load_promise_create();
     } catch ( e ) {
       if ( e.message.indexOf( ".versus_load_promise_create():" ) > 0 ) {
         progressToAdvance.value_advance();
