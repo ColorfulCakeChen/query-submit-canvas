@@ -70,7 +70,10 @@ class TestCase {
     // Test: Reenter .workerProxies_ImageData_process_async()
     //       should throw exception.
     try {
-      await neuralOrchestra.workerProxies_ImageData_process_async();
+//!!! (2023/03/16 Remarked)
+// If await, the .workerProxies_ImageData_process_async() may be completed.
+//      await neuralOrchestra.workerProxies_ImageData_process_async();
+      neuralOrchestra.workerProxies_ImageData_process_async();
     } catch ( e ) {
       if ( e.message.indexOf( ".workerProxies_ImageData_process_async():" ) > 0 ) {
         progressToAdvance.value_advance();
@@ -82,7 +85,10 @@ class TestCase {
 
     // Test: .init_asyncGenerator() during processing should throw exception.
     try {
-      await neuralOrchestra.init_asyncGenerator().next();
+//!!! (2023/03/16 Remarked)
+// If await, the .workerProxies_ImageData_process_async() may be completed.
+//      await neuralOrchestra.init_asyncGenerator().next();
+      neuralOrchestra.init_asyncGenerator().next();
     } catch ( e ) {
       if ( e.message.indexOf( ".init_asyncGenerator():" ) > 0 ) {
         progressToAdvance.value_advance();
@@ -94,7 +100,10 @@ class TestCase {
 
     // Test: .init_async() during processing should throw exception.
     try {
-      await neuralOrchestra.init_async();
+//!!! (2023/03/16 Remarked)
+// If await, the .workerProxies_ImageData_process_async() may be completed.
+//      await neuralOrchestra.init_async();
+      neuralOrchestra.init_async();
     } catch ( e ) {
       if ( e.message.indexOf( ".init_asyncGenerator():" ) > 0 ) {
         progressToAdvance.value_advance();
@@ -106,7 +115,10 @@ class TestCase {
 
     // Test: .versus_load_asyncGenerator() during processing should throw exception.
     try {
-      await neuralOrchestra.versus_loader_create().next();
+//!!! (2023/03/16 Remarked)
+// If await, the .workerProxies_ImageData_process_async() may be completed.
+//      await neuralOrchestra.versus_loader_create().next();
+      neuralOrchestra.versus_loader_create().next();
     } catch ( e ) {
       if ( e.message.indexOf( ".versus_load_asyncGenerator():" ) > 0 ) {
         progressToAdvance.value_advance();
@@ -118,7 +130,10 @@ class TestCase {
 
     // Test: .versus_load_async() during processing should throw exception.
     try {
-      await neuralOrchestra.versus_load_promise_create();
+//!!! (2023/03/16 Remarked)
+// If await, the .workerProxies_ImageData_process_async() may be completed.
+//      await neuralOrchestra.versus_load_promise_create();
+      neuralOrchestra.versus_load_promise_create();
     } catch ( e ) {
       if ( e.message.indexOf( ".versus_load_asyncGenerator():" ) > 0 ) {
         progressToAdvance.value_advance();
