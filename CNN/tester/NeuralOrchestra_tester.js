@@ -32,15 +32,15 @@ class TestCase {
     this.loadCountBase = 2;
 
     {
-      const channelCount = 4; // i.e. RGBA
+      const input_channelCount = 4; // i.e. RGBA
       const valueBegin = 0, valueStep = 1;
       const randomOffsetMin = -1, randomOffsetMax = 1;
       const divisorForRemainder = 256; //( 2 ** 26 );
 
-      let elementCount = this.input_width * this.input_height * channelCount;
+      let elementCount = this.input_width * this.input_height * input_channelCount;
       let numberArray = new Uint8ClampedArray( elementCount );
       RandTools.fill_numberArray( numberArray,
-        this.height, this.width, channelCount,
+        this.input_height, this.input_width, input_channelCount,
         valueBegin, valueStep,
         randomOffsetMin, randomOffsetMax, divisorForRemainder);
 
