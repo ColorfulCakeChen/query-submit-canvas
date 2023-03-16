@@ -328,12 +328,13 @@ class TestCase {
       versus_loadOk = loaderNext.value;
 
       // Note: In .load_asyncGenerator(), .versus_load_progress is not used.
-      if ( 100 !== progressLoad.valuePercentage )
-        throw Error( `NeuralOrchestra_tester.TestCase`
-          + `.test_load_process_send_asyncGenerator(): testId=${this.testId}, `
-          + `progressLoad.valuePercentage (`
-          + `${progressLoad.valuePercentage}) `
-          + `should be 100.` );
+      if ( bTryLoad )
+        if ( 100 !== progressLoad.valuePercentage )
+          throw Error( `NeuralOrchestra_tester.TestCase`
+            + `.test_load_process_send_asyncGenerator(): testId=${this.testId}, `
+            + `progressLoad.valuePercentage (`
+            + `${progressLoad.valuePercentage}) `
+            + `should be 100.` );
 
     } else {
       versus_loadOk = await neuralOrchestra.versus_load_promise;
