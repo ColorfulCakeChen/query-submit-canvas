@@ -31,6 +31,11 @@ class TestCase {
     this.loadCountBase = 2;
 
     this.testId = undefined; // For debug.
+
+    // In the reentrance testing, when try await, the async method may have
+    // been completed. To prevent they complete too fast to test, add some
+    // delay time.
+    this.delayMilliseconds = 1 * 1000;
   }
 
   /**
@@ -74,8 +79,9 @@ class TestCase {
 
     // Note: Because ImageData.data.buffer will be transferred (i.e. not
     //       copied) to web worker, it should be re-created every time.
+    let sourceImageData = this.ImageData_create();
     processPromise = neuralOrchestra.workerProxies_ImageData_process_async(
-      this.ImageData_create() );
+      sourceImageData, this.delayMilliseconds );
 
     if ( neuralOrchestra.workerProxies_ImageData_process_async_running ) {
       ++this.testId;
@@ -89,20 +95,10 @@ class TestCase {
         + `should be true.` );
     }
 
-    // Note: In the following testing, when await, the
-    //       .workerProxies_ImageData_process_async() may have been completed.
-    //       So, processing one more time before every testing if necessary.
-    let reprocess_if_not_processing = () => {
-      if ( !neuralOrchestra.workerProxies_ImageData_process_async_running )
-        processPromise = neuralOrchestra.workerProxies_ImageData_process_async(
-          this.ImageData_create() );
-    }
-
     // Test: Reenter .workerProxies_ImageData_process_async()
     //       should throw exception.
     try {
       ++this.testId;
-      reprocess_if_not_processing();
       await neuralOrchestra.workerProxies_ImageData_process_async();
     } catch ( e ) {
       if ( e.message.indexOf( ".workerProxies_ImageData_process_async():" ) > 0 ) {
@@ -116,7 +112,6 @@ class TestCase {
     // Test: .init_asyncGenerator() during processing should throw exception.
     try {
       ++this.testId;
-      reprocess_if_not_processing();
       await neuralOrchestra.init_asyncGenerator().next();
     } catch ( e ) {
       if ( e.message.indexOf( ".init_asyncGenerator():" ) > 0 ) {
@@ -130,7 +125,6 @@ class TestCase {
     // Test: .init_async() during processing should throw exception.
     try {
       ++this.testId;
-      reprocess_if_not_processing();
       await neuralOrchestra.init_async();
     } catch ( e ) {
       if ( e.message.indexOf( ".init_async():" ) > 0 ) {
@@ -144,7 +138,6 @@ class TestCase {
     // Test: .versus_load_asyncGenerator() during processing should throw exception.
     try {
       ++this.testId;
-      reprocess_if_not_processing();
       await neuralOrchestra.versus_loader_create().next();
     } catch ( e ) {
       if ( e.message.indexOf( ".versus_loader_create():" ) > 0 ) {
@@ -158,7 +151,6 @@ class TestCase {
     // Test: .versus_load_async() during processing should throw exception.
     try {
       ++this.testId;
-      reprocess_if_not_processing();
       await neuralOrchestra.versus_load_promise_create();
     } catch ( e ) {
       if ( e.message.indexOf( ".versus_load_promise_create():" ) > 0 ) {
@@ -236,22 +228,9 @@ class TestCase {
     // 1. Try another versus loading and neural networks creating.
     if ( bTryLoad ) {
       if ( b_load_asyncGenerator ) {
-        neuralOrchestra.versus_loader_create( progressload );
+        neuralOrchestra.versus_loader_create( progressload, this.delayMilliseconds );
       } else {
-        neuralOrchestra.versus_load_promise_create();
-      }
-    }
-
-    // Note: In the following testing, when await, the .versus_load_async() or
-    //       .versus_load_asyncGenerator() may have been completed.
-    //       So, loading one more time before every testing if necessary.
-    let reload_if_not_loading = () => {
-      if ( b_load_asyncGenerator ) {
-        if ( !neuralOrchestra.versus_load_asyncGenerator_running )
-          neuralOrchestra.versus_loader_create( progressload );
-      } else {
-        if ( !neuralOrchestra.versus_load_async_running )
-          neuralOrchestra.versus_load_promise_create();
+        neuralOrchestra.versus_load_promise_create( this.delayMilliseconds );
       }
     }
 
@@ -260,7 +239,6 @@ class TestCase {
 
       try { // Test: Reenter .versus_load_asyncGenerator() should throw exception.
         ++this.testId;
-        reload_if_not_loading();
         await neuralOrchestra.versus_loader_create().next();
       } catch ( e ) {
         if ( e.message.indexOf( ".versus_loader_create():" ) > 0 ) {
@@ -273,7 +251,6 @@ class TestCase {
 
       try { // Test: Reenter .versus_load_async() should throw exception.
         ++this.testId;
-        reload_if_not_loading();
         await neuralOrchestra.versus_load_promise_create();
       } catch ( e ) {
         if ( e.message.indexOf( ".versus_load_promise_create():" ) > 0 ) {
@@ -289,7 +266,6 @@ class TestCase {
 
       try { // Test: Reenter .versus_load_async() should throw exception.
         ++this.testId;
-        reload_if_not_loading();
         await neuralOrchestra.versus_load_promise_create();
       } catch ( e ) {
         if ( e.message.indexOf( ".versus_load_promise_create():" ) > 0 ) {
@@ -302,7 +278,6 @@ class TestCase {
 
       try { // Test: Reenter .versus_load_asyncGenerator() should throw exception.
         ++this.testId;
-        reload_if_not_loading();
         await neuralOrchestra.versus_loader_create().next();
       } catch ( e ) {
         if ( e.message.indexOf( ".versus_loader_create():" ) > 0 ) {
@@ -318,7 +293,6 @@ class TestCase {
     // Test: send before versus loaded. (should exception.)
     try {
       ++this.testId;
-      reload_if_not_loading();
       neuralOrchestra.versusResultSender_send();
     } catch ( e ) {
       if ( e.message.indexOf( ".versusResultSender_send():" ) > 0 ) {
@@ -332,7 +306,6 @@ class TestCase {
     // Test: process before versus loaded. (should exception.)
     try {
       ++this.testId;
-      reload_if_not_loading();
       await neuralOrchestra.workerProxies_ImageData_process_async();
     } catch ( e ) {
       if ( e.message.indexOf( ".workerProxies_ImageData_process_async():" ) > 0 ) {
@@ -433,7 +406,8 @@ class TestCase {
         this.sender_clientId,
         this.input_height, this.input_width,
         this.vocabularyChannelCount, this.blockCountTotalRequested,
-        this.output_channelCount
+        this.output_channelCount,
+        this.delayMilliseconds
       );
     else
       initPromise = neuralOrchestra.init_async(
@@ -442,7 +416,8 @@ class TestCase {
         this.sender_clientId,
         this.input_height, this.input_width,
         this.vocabularyChannelCount, this.blockCountTotalRequested,
-        this.output_channelCount
+        this.output_channelCount,
+        this.delayMilliseconds
       );
 
     // Test: Reenter try .init_asyncGenerator() and then .init_async()

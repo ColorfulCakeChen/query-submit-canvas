@@ -380,7 +380,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
    *
    * @param {number} delayMilliseconds
    *   If positive, this async method will complete at least after so many
-   * milliseconds. Mainly used for debug.
+   * milliseconds. Mainly used when testing.
    *
    * @return {Promise}
    *   Return a promise (i.e. the .workerProxies_init_promise).
@@ -536,7 +536,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
    *
    * @param {number} delayMilliseconds
    *   If positive, this async generator will complete at least after so many
-   * milliseconds. Mainly used for debug.
+   * milliseconds. Mainly used when testing.
    *
    *
    * @yield {Promise( ValueMax.Percentage.Aggregate )}
@@ -960,7 +960,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
    *
    * @param {number} delayMilliseconds
    *   If positive, this async method will complete at least after so many
-   * milliseconds. Mainly used for debug.
+   * milliseconds. Mainly used when testing.
    *
    * @return {Promise( Float32Array[] )}
    *   Return a promise resolved to an array [ Float32Array, Float32Array ]
@@ -1085,7 +1085,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
    *
    * @param {number} delayMilliseconds
    *   If positive, the async method will complete at least after so many
-   * milliseconds. Mainly used for debug.
+   * milliseconds. Mainly used when testing.
    *
    * @return {Promise( boolean )}
    *   Return the newly created this.versus_load_promise
@@ -1146,7 +1146,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
    *
    * @param {number} delayMilliseconds
    *   If positive, this async method will complete at least after so many
-   * milliseconds. Mainly used for debug.
+   * milliseconds. Mainly used when testing.
    *
    * @return {Promise( boolean )}
    *   Return a promise:
@@ -1218,7 +1218,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
    *
    * @param {number} delayMilliseconds
    *   If positive, the async generator will complete at least after so many
-   * milliseconds. Mainly used for debug.
+   * milliseconds. Mainly used when testing.
    *
    * @return {AsyncGenerator}
    *   Return the newly created this.versus_loader
@@ -1275,7 +1275,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
    *
    * @param {number} delayMilliseconds
    *   If positive, this async generator will complete at least after so many
-   * milliseconds. Mainly used for debug.
+   * milliseconds. Mainly used when testing.
    *
    * @yield {Promise( ValueMax.Percentage.Aggregate )}
    *   Yield a promise resolves to { done: false, value: progressParent.root_get() }.
