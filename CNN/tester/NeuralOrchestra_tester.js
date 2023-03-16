@@ -163,7 +163,12 @@ class TestCase {
 
     // 2. Wait for image processed.
     ++this.testId;
-    let Float32ArrayArray = await processPromise;
+    let Float32ArrayArray;
+    try {
+      let Float32ArrayArray = await processPromise;
+    } catch ( e ) { // Unknown error, said loudly.
+      throw Error( `NeuralOrchestra: testId=${this.testId}. ${e}`, { cause: e } );
+    }
 
     if ( 2 != Float32ArrayArray.length )
       throw Error( `NeuralOrchestra_tester.TestCase`
@@ -320,32 +325,36 @@ class TestCase {
     //    created.
     ++this.testId;
     let versus_loadOk;
-    if ( b_load_asyncGenerator ) {
-      let loaderNext;
-      do {
-        loaderNext = await neuralOrchestra.versus_loader.next();
-      } while ( !loaderNext.done );
-      versus_loadOk = loaderNext.value;
+    try {
+      if ( b_load_asyncGenerator ) {
+        let loaderNext;
+        do {
+          loaderNext = await neuralOrchestra.versus_loader.next();
+        } while ( !loaderNext.done );
+        versus_loadOk = loaderNext.value;
 
-      // Note: In .load_asyncGenerator(), .versus_load_progress is not used.
-      if ( bTryLoad )
-        if ( 100 !== progressLoad.valuePercentage )
+        // Note: In .load_asyncGenerator(), .versus_load_progress is not used.
+        if ( bTryLoad )
+          if ( 100 !== progressLoad.valuePercentage )
+            throw Error( `NeuralOrchestra_tester.TestCase`
+              + `.test_load_process_send_asyncGenerator(): testId=${this.testId}, `
+              + `progressLoad.valuePercentage (`
+              + `${progressLoad.valuePercentage}) `
+              + `should be 100.` );
+
+      } else {
+        versus_loadOk = await neuralOrchestra.versus_load_promise;
+
+        if ( 100 !== neuralOrchestra.versus_load_progress.valuePercentage )
           throw Error( `NeuralOrchestra_tester.TestCase`
             + `.test_load_process_send_asyncGenerator(): testId=${this.testId}, `
-            + `progressLoad.valuePercentage (`
-            + `${progressLoad.valuePercentage}) `
+            + `neuralOrchestra.versus_load_progress.valuePercentage (`
+            + `${neuralOrchestra.versus_load_progress.valuePercentage}) `
             + `should be 100.` );
-
-    } else {
-      versus_loadOk = await neuralOrchestra.versus_load_promise;
-
-      if ( 100 !== neuralOrchestra.versus_load_progress.valuePercentage )
-        throw Error( `NeuralOrchestra_tester.TestCase`
-          + `.test_load_process_send_asyncGenerator(): testId=${this.testId}, `
-          + `neuralOrchestra.versus_load_progress.valuePercentage (`
-          + `${neuralOrchestra.versus_load_progress.valuePercentage}) `
-          + `should be 100.` );
-    }      
+      }      
+    } catch ( e ) { // Unknown error, said loudly.
+      throw Error( `NeuralOrchestra: testId=${this.testId}. ${e}`, { cause: e } );
+    }
 
     if ( !neuralOrchestra.versus_loadOk )
       throw Error( `NeuralOrchestra_tester.TestCase`
@@ -503,15 +512,19 @@ class TestCase {
 
     ++this.testId;
     let initOk;
-    if ( b_init_asyncGenerator ) {
-      let ininterNext;
-      do {
-        ininterNext = await initer_async.next();
-      } while ( !ininterNext.done );
-      initOk = ininterNext.value;
+    try {
+      if ( b_init_asyncGenerator ) {
+        let ininterNext;
+        do {
+          ininterNext = await initer_async.next();
+        } while ( !ininterNext.done );
+        initOk = ininterNext.value;
 
-    } else {
-      initOk = await initPromise;
+      } else {
+        initOk = await initPromise;
+      }
+    } catch ( e ) { // Unknown error, said loudly.
+      throw Error( `NeuralOrchestra: testId=${this.testId}. ${e}`, { cause: e } );
     }
 
     if ( !initOk )
