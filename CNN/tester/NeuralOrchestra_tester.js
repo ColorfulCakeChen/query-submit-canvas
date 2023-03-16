@@ -239,11 +239,23 @@ class TestCase {
 
     // 1. Try another versus loading and neural networks creating.
     if ( bTryLoad ) {
-      ++this.testId;
       if ( b_load_asyncGenerator ) {
         neuralOrchestra.versus_loader_create( progressload );
       } else {
         neuralOrchestra.versus_load_promise_create();
+      }
+    }
+
+    // Note: In the following testing, when await, the .versus_load_async() or
+    //       .versus_load_asyncGenerator() may have been completed.
+    //       So, loading one more time before every testing if necessary.
+    function reload_if_not_loading() {
+      if ( b_load_asyncGenerator ) {
+        if ( !neuralOrchestra.versus_load_asyncGenerator_running )
+          neuralOrchestra.versus_loader_create( progressload );
+      } else {
+        if ( !neuralOrchestra.versus_load_async_running )
+          neuralOrchestra.versus_load_promise_create();
       }
     }
 
@@ -252,6 +264,7 @@ class TestCase {
 
       try { // Test: Reenter .versus_load_asyncGenerator() should throw exception.
         ++this.testId;
+        reload_if_not_loading();
         await neuralOrchestra.versus_loader_create().next();
       } catch ( e ) {
         if ( e.message.indexOf( ".versus_loader_create():" ) > 0 ) {
@@ -264,6 +277,7 @@ class TestCase {
 
       try { // Test: Reenter .versus_load_async() should throw exception.
         ++this.testId;
+        reload_if_not_loading();
         await neuralOrchestra.versus_load_promise_create();
       } catch ( e ) {
         if ( e.message.indexOf( ".versus_load_promise_create():" ) > 0 ) {
@@ -279,6 +293,7 @@ class TestCase {
 
       try { // Test: Reenter .versus_load_async() should throw exception.
         ++this.testId;
+        reload_if_not_loading();
         await neuralOrchestra.versus_load_promise_create();
       } catch ( e ) {
         if ( e.message.indexOf( ".versus_load_promise_create():" ) > 0 ) {
@@ -291,6 +306,7 @@ class TestCase {
 
       try { // Test: Reenter .versus_load_asyncGenerator() should throw exception.
         ++this.testId;
+        reload_if_not_loading();
         await neuralOrchestra.versus_loader_create().next();
       } catch ( e ) {
         if ( e.message.indexOf( ".versus_loader_create():" ) > 0 ) {
@@ -306,6 +322,7 @@ class TestCase {
     // Test: send before versus loaded. (should exception.)
     try {
       ++this.testId;
+      reload_if_not_loading();
       neuralOrchestra.versusResultSender_send();
     } catch ( e ) {
       if ( e.message.indexOf( ".versusResultSender_send():" ) > 0 ) {
@@ -319,6 +336,7 @@ class TestCase {
     // Test: process before versus loaded. (should exception.)
     try {
       ++this.testId;
+      reload_if_not_loading();
       await neuralOrchestra.workerProxies_ImageData_process_async();
     } catch ( e ) {
       if ( e.message.indexOf( ".workerProxies_ImageData_process_async():" ) > 0 ) {
