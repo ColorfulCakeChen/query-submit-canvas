@@ -92,7 +92,7 @@ class TestCase {
     // Note: In the following testing, when await, the
     //       .workerProxies_ImageData_process_async() may have been completed.
     //       So, processing one more time before every testing if necessary.
-    function reprocess_if_not_processing() {
+    let reprocess_if_not_processing = () => {
       if ( !neuralOrchestra.workerProxies_ImageData_process_async_running )
         processPromise = neuralOrchestra.workerProxies_ImageData_process_async(
           this.ImageData_create() );
@@ -245,7 +245,7 @@ class TestCase {
     // Note: In the following testing, when await, the .versus_load_async() or
     //       .versus_load_asyncGenerator() may have been completed.
     //       So, loading one more time before every testing if necessary.
-    function reload_if_not_loading() {
+    let reload_if_not_loading = () => {
       if ( b_load_asyncGenerator ) {
         if ( !neuralOrchestra.versus_load_asyncGenerator_running )
           neuralOrchestra.versus_loader_create( progressload );
