@@ -1138,7 +1138,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
 
     // 2.
     this.versus_load_promise
-      = NeuralOrchestra_Base.versus_load_async.call( this );
+      = NeuralOrchestra_Base.versus_load_async.call( this, delayMilliseconds );
     return this.versus_load_promise;
   }
 
