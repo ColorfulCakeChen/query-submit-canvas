@@ -980,6 +980,11 @@ class NeuralOrchestra_Base extends Recyclable.Root {
         + `should be executed only if `
         + `this.initOk ( ${this.initOk} ) is true.` );
 
+    if ( this.versus_loader )
+      throw Error( `NeuralOrchestra.Base.workerProxies_ImageData_process_async(): `
+        + `should be executed only if `
+        + `this.versus_loader complete.` );
+
     if ( !this.versus_loadOk )
       throw Error( `NeuralOrchestra.Base.workerProxies_ImageData_process_async(): `
         + `should be executed only if `
