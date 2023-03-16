@@ -1437,7 +1437,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
 
 !!! ...unfinished... (2023/03/16)
 // Problem: When caller wants to .next() it, the .versus_loader may
-// have been car to null.
+// have been clear to null.
 
       // So that .versus_loader_create() could be called again.
       // Prevent a finished versus loader to be re-used.
