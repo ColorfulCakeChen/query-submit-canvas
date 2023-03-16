@@ -43,11 +43,7 @@ class TestCase {
     let progressRoot = progressParent.root_get();
 
     let progressToAdvance = progressParent.child_add(
-      ValueMax.Percentage.Concrete.Pool.get_or_create_by( 50 ) );
-
-
-//!!! ...unfinished... (2023/03/10)
-// should test ImageProcess. and Reenter ImageProcess.
+      ValueMax.Percentage.Concrete.Pool.get_or_create_by( 7 ) );
 
     // 1.
     let processPromise
@@ -67,6 +63,29 @@ class TestCase {
       }
     }
 
+    // Test: .init_asyncGenerator() during processing should throw exception.
+    try {
+      await neuralOrchestra.init_asyncGenerator().next();
+    } catch ( e ) {
+      if ( e.message.indexOf( ".init_asyncGenerator():" ) > 0 ) {
+        progressToAdvance.value_advance();
+        yield progressRoot;
+      } else {
+        throw e; // Unknown error, said loudly.
+      }
+    }
+
+    // Test: .init_async() during processing should throw exception.
+    try {
+      await neuralOrchestra.init_async();
+    } catch ( e ) {
+      if ( e.message.indexOf( ".init_asyncGenerator():" ) > 0 ) {
+        progressToAdvance.value_advance();
+        yield progressRoot;
+      } else {
+        throw e; // Unknown error, said loudly.
+      }
+    }
 
     // Test: .versus_load_asyncGenerator() during processing should throw exception.
     try {
@@ -91,16 +110,6 @@ class TestCase {
         throw e; // Unknown error, said loudly.
       }
     }
-
-
-
-//!!! ...unfinished... (2023/03/13)
-// should try
-// .init_async() and .init_asyncGenerator() and
-// .versus_load_promise_create() and .versus_loader_create()
-// during ImageProcess
-// 
-
 
     // 2. Wait for image processed.
     let Float32ArrayArray = await processPromise;
@@ -136,7 +145,6 @@ class TestCase {
 
     progressToAdvance.value_advance();
     yield progressRoot;
-
   }
 
   /**
