@@ -589,7 +589,7 @@ class TestCase {
         }
       }
 
-      // 1.5
+      // 1.5 Test: load before .init. (should exception.)
 
       // 1.5.1 Test: Try .versus_load_asyncGenerator(), .versus_load_async(),
       //             .versus_load_asyncGenerator()
