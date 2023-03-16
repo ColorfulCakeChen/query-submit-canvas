@@ -34,7 +34,7 @@ class TestCase {
     {
       const channelCount = 4; // i.e. RGBA
       const valueBegin = 0, valueStep = 1;
-      const randomOffsetMin = 0, randomOffsetMax = 0;
+      const randomOffsetMin = -1, randomOffsetMax = 1;
       const divisorForRemainder = 256; //( 2 ** 26 );
 
       let elementCount = this.input_width * this.input_height * channelCount;
