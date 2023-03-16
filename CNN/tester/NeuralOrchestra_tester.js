@@ -120,7 +120,7 @@ class TestCase {
 //      await neuralOrchestra.versus_loader_create().next();
       neuralOrchestra.versus_loader_create().next();
     } catch ( e ) {
-      if ( e.message.indexOf( ".versus_load_asyncGenerator():" ) > 0 ) {
+      if ( e.message.indexOf( ".versus_loader_create():" ) > 0 ) {
         progressToAdvance.value_advance();
         yield progressRoot;
       } else {
@@ -135,7 +135,7 @@ class TestCase {
 //      await neuralOrchestra.versus_load_promise_create();
       neuralOrchestra.versus_load_promise_create();
     } catch ( e ) {
-      if ( e.message.indexOf( ".versus_load_asyncGenerator():" ) > 0 ) {
+      if ( e.message.indexOf( ".versus_load_promise_create():" ) > 0 ) {
         progressToAdvance.value_advance();
         yield progressRoot;
       } else {
