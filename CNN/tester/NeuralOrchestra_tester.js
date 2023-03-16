@@ -369,14 +369,13 @@ class TestCase {
   /** */
   async* test_init_load_process_send_asyncGenerator(
     progressParent, neuralOrchestra,
-    b_init_asyncGenerator, b_reenter_first_init_asyncGenerator ) {
+    b_init_asyncGenerator, b_reenter_first_init_asyncGenerator,
+    b_load_asyncGenerator, b_reenter_first_load_asyncGenerator
+  ) {
 
     ++this.testId;
 
-    const nLoadProcessSendCountMax = this.loadCountBase
-      * 2 // b_load_asyncGenerator
-      * 2 // b_reenter_first_load_asyncGenerator
-      ;
+    const nLoadProcessSendCountMax = this.loadCountBase;
 
     let progressRoot = progressParent.root_get();
 
@@ -536,51 +535,23 @@ class TestCase {
     progressToAdvance.value_advance();
     yield progressRoot;
 
-    // 2.
-
-    // Test: loading multiple times. The first time is by above .init_asyncXxx()
-    //       internally. The others (after 2nd times) are by calling
-    //       .versus_loadXxx() by .test_load_process_send_asyncGenerator().
+    // 2. Load, process, send.
     let nLoadProcessSendCount = 0;
 
-//!!! ...unfinished... (2023/03/16)
-// It seems that
-// b_load_asyncGenerator and b_reenter_first_load_asyncGenerator
-// should be placed to outside .test_create_init_load_process_send_asyncGenerator()
+    for ( let loadCount = 0; loadCount < this.loadCountBase; ++loadCount ) {
+      let progressLoadProcessSend
+        = progressLoadProcessSendArray[ nLoadProcessSendCount ];
 
-    let b_load_asyncGenerator;
-    let b_reenter_first_load_asyncGenerator;
+      // Test: loading multiple times. The first time is by above .init_asyncXxx()
+      //       internally. The others (after 2nd times) are by calling
+      //       .versus_loadXxx() by .test_load_process_send_asyncGenerator().
+      let bTryLoad = ( nLoadProcessSendCount > 0 );
 
-    // Test: use .versus_load_async() or .versus_load_asyncGenerator().
-    for (
-      let n_load_asyncGenerator = 0;
-      n_load_asyncGenerator < 2;
-      ++n_load_asyncGenerator ) {
+      yield* this.test_load_process_send_asyncGenerator(
+        progressLoadProcessSend, neuralOrchestra, bTryLoad,
+        b_load_asyncGenerator, b_reenter_first_load_asyncGenerator );
 
-      // Test: reenter .versus_load_async() or .versus_load_asyncGenerator() first.
-      for (
-        let n_reenter_first_load_asyncGenerator = 0;
-        n_reenter_first_load_asyncGenerator < 2;
-        ++n_reenter_first_load_asyncGenerator ) {
-
-        for ( let loadCount = 0; loadCount < this.loadCountBase; ++loadCount ) {
-          let progressLoadProcessSend
-            = progressLoadProcessSendArray[ nLoadProcessSendCount ];
-
-          let bTryLoad = ( nLoadProcessSendCount > 0 );
-
-          b_load_asyncGenerator = ( n_load_asyncGenerator != 0 );
-
-          b_reenter_first_load_asyncGenerator
-            = ( n_reenter_first_load_asyncGenerator != 0 );
-
-          yield* this.test_load_process_send_asyncGenerator(
-            progressLoadProcessSend, neuralOrchestra, bTryLoad,
-            b_load_asyncGenerator, b_reenter_first_load_asyncGenerator );
-
-          ++nLoadProcessSendCount;
-        }
-      }
+      ++nLoadProcessSendCount;
     }
   }
 
@@ -595,6 +566,9 @@ class TestCase {
     const nInitLoadProcessSendMax = this.initCountBase
       * 2 // b_init_asyncGenerator
       * 2 // b_reenter_first_init_asyncGenerator
+
+      * 2 // b_load_asyncGenerator
+      * 2 // b_reenter_first_load_asyncGenerator
       ;
 
     // Prepare progress list.
@@ -761,6 +735,10 @@ class TestCase {
         n_init_asyncGenerator < 2;
         ++n_init_asyncGenerator ) {
 
+        b_init_asyncGenerator = ( n_init_asyncGenerator != 0 );
+        if ( b_init_asyncGenerator_first )
+          b_init_asyncGenerator = !b_init_asyncGenerator;
+
         // Test: reenter .init_async() or .init_asyncGenerator() first.
         let b_reenter_first_init_asyncGenerator;
         for (
@@ -768,24 +746,42 @@ class TestCase {
           n_reenter_first_init_asyncGenerator < 2;
           ++n_reenter_first_init_asyncGenerator ) {
 
-          // Test: re-init (without re-create).
-          for ( let initCount = 0; initCount < this.initCountBase; ++initCount ) {
-            let progressInitLoadProcessSend
-              = progressInitLoadProcessSendArray[ nInitLoadProcessSend ];
+          b_reenter_first_init_asyncGenerator
+            = ( n_reenter_first_init_asyncGenerator != 0 );
 
-            b_init_asyncGenerator = ( n_init_asyncGenerator != 0 );
-            if ( b_init_asyncGenerator_first )
-              b_init_asyncGenerator = !b_init_asyncGenerator;
+          // Test: use .versus_load_async() or .versus_load_asyncGenerator().
+          let b_load_asyncGenerator;
+          for (
+            let n_load_asyncGenerator = 0;
+            n_load_asyncGenerator < 2;
+            ++n_load_asyncGenerator ) {
 
-            b_reenter_first_init_asyncGenerator
-              = ( n_reenter_first_init_asyncGenerator != 0 );
+            b_load_asyncGenerator = ( n_load_asyncGenerator != 0 );
 
-            yield* this.test_init_load_process_send_asyncGenerator(
-              progressInitLoadProcessSend, neuralOrchestra,
-              b_init_asyncGenerator, b_reenter_first_init_asyncGenerator
-            );
+            // Test: reenter .versus_load_async() or .versus_load_asyncGenerator() first.
+            let b_reenter_first_load_asyncGenerator;
+            for (
+              let n_reenter_first_load_asyncGenerator = 0;
+              n_reenter_first_load_asyncGenerator < 2;
+              ++n_reenter_first_load_asyncGenerator ) {
 
-            ++nInitLoadProcessSend;
+              b_reenter_first_load_asyncGenerator
+                = ( n_reenter_first_load_asyncGenerator != 0 );
+     
+              // Test: re-init (without re-create).
+              for ( let initCount = 0; initCount < this.initCountBase; ++initCount ) {
+                let progressInitLoadProcessSend
+                  = progressInitLoadProcessSendArray[ nInitLoadProcessSend ];
+
+                yield* this.test_init_load_process_send_asyncGenerator(
+                  progressInitLoadProcessSend, neuralOrchestra,
+                  b_init_asyncGenerator, b_reenter_first_init_asyncGenerator,
+                  b_load_asyncGenerator, b_reenter_first_load_asyncGenerator
+                );
+
+                ++nInitLoadProcessSend;
+              }
+            }
           }
         }
       }
