@@ -3,6 +3,7 @@ export { NeuralOrchestra_Base as Base };
 import * as Pool from "../../util/Pool.js";
 import * as Recyclable from "../../util/Recyclable.js";
 import * as HttpRequest from "../../util/HttpRequest.js";
+import * as PartTime from "../../util/PartTime.js";
 import * as ValueMax from "../../util/ValueMax.js";
 import * as ValueDesc from "../../Unpacker/ValueDesc.js";
 import * as NeuralNet from "../../Conv/NeuralNet.js";
@@ -377,6 +378,10 @@ class NeuralOrchestra_Base extends Recyclable.Root {
    *        also .init_asyncGenerator() explanation.)
    *
    *
+   * @param {number} delayMilliseconds
+   *   If positive, this async method will complete at least after so many
+   * milliseconds. Mainly used for debug.
+   *
    * @return {Promise}
    *   Return a promise (i.e. the .workerProxies_init_promise).
    *   - Resolved to true, if succeeded.
@@ -400,7 +405,9 @@ class NeuralOrchestra_Base extends Recyclable.Root {
 
     vocabularyChannelCount,
     blockCountTotalRequested,
-    output_channelCount
+    output_channelCount,
+
+    delayMilliseconds
   ) {
 
     if ( this.init_async_running )
@@ -527,6 +534,11 @@ class NeuralOrchestra_Base extends Recyclable.Root {
    *   The output tensor's channel count.
    *
    *
+   * @param {number} delayMilliseconds
+   *   If positive, this async generator will complete at least after so many
+   * milliseconds. Mainly used for debug.
+   *
+   *
    * @yield {Promise( ValueMax.Percentage.Aggregate )}
    *   Yield a promise resolves to { done: false, value: progressParent.root_get() }.
    *
@@ -554,7 +566,9 @@ class NeuralOrchestra_Base extends Recyclable.Root {
 
     vocabularyChannelCount,
     blockCountTotalRequested,
-    output_channelCount
+    output_channelCount,
+
+    delayMilliseconds
   ) {
 
     if ( this.init_asyncGenerator_running )
@@ -597,6 +611,11 @@ class NeuralOrchestra_Base extends Recyclable.Root {
       // 0.4
       let progressRoot = progressParent.root_get();
       let allPromiseSet = new Set();
+
+      // 0.5
+      let sleepPromise;
+      if ( delayMilliseconds > 0 )
+        sleepPromise = PartTime.sleep( delayMilliseconds );
 
       // 1. Load (versus summary and) versus. Create neural networks.
 
@@ -700,6 +719,11 @@ class NeuralOrchestra_Base extends Recyclable.Root {
 
       // 5.
       this.initOk = true;
+
+      // 6.
+      if ( sleepPromise )
+        await sleepPromise;
+
       return this.initOk;
 
     } finally {
@@ -934,13 +958,18 @@ class NeuralOrchestra_Base extends Recyclable.Root {
    * @param {ImageData} sourceImageData
    *   The input image datat which will be processed by neural workers.
    *
+   * @param {number} delayMilliseconds
+   *   If positive, this async method will complete at least after so many
+   * milliseconds. Mainly used for debug.
+   *
    * @return {Promise( Float32Array[] )}
    *   Return a promise resolved to an array [ Float32Array, Float32Array ]
    * representing the (pair) neural networks' results.
    *   - Float32Array[ 0 ] is parent (chromosome) neural network's output.
    *   - Float32Array[ 1 ] is offspring (chromosome) neural network's output.
    */
-  async workerProxies_ImageData_process_async( sourceImageData ) {
+  async workerProxies_ImageData_process_async(
+    sourceImageData, delayMilliseconds ) {
 
     if ( this.workerProxies_ImageData_process_async_running )
       throw Error( `NeuralOrchestra.Base.workerProxies_ImageData_process_async(): `
@@ -957,14 +986,26 @@ class NeuralOrchestra_Base extends Recyclable.Root {
         + `this.versus_loadOk ( ${this.versus_loadOk} ) is true.` );
 
     try {
-      // 0. Prevent re-entrance.
+      // 0.
+
+      // 0.1 Prevent re-entrance.
       this.workerProxies_ImageData_process_async_running = true;
+
+      // 0.2
+      let sleepPromise;
+      if ( delayMilliseconds > 0 )
+        sleepPromise = PartTime.sleep( delayMilliseconds );
 
       // 1.
       let theFloat32ArrayArrayPromise
         = this.workerProxies.ImageData_process_async( sourceImageData );
 
       let theFloat32ArrayArray = await theFloat32ArrayArrayPromise;
+
+      // 2.
+      if ( sleepPromise )
+        await sleepPromise;
+
       return theFloat32ArrayArray;
 
     } finally {
@@ -1042,10 +1083,14 @@ class NeuralOrchestra_Base extends Recyclable.Root {
    *       be used directly (and no extra progress object will be created too).
    *       (Usually, this case is used by .init_async().)
    *
+   * @param {number} delayMilliseconds
+   *   If positive, the async method will complete at least after so many
+   * milliseconds. Mainly used for debug.
+   *
    * @return {Promise( boolean )}
    *   Return the newly created this.versus_load_promise
    */
-  versus_load_promise_create() {
+  versus_load_promise_create( delayMilliseconds ) {
 
     // Prevent the nueral networks from being changed during they are processing.
     if ( this.workerProxies_ImageData_process_async_running )
@@ -1080,7 +1125,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
           + `after being initialized successfully.` );
 
       NeuralOrchestra_Base.versus_load_progress_create.call( this );
-      this.versus_loader_create( this.versus_load_progress );
+      this.versus_loader_create( this.versus_load_progress, delayMilliseconds );
     }
 
     // 2.
@@ -1099,20 +1144,31 @@ class NeuralOrchestra_Base extends Recyclable.Root {
    *   - The .versus_loader should have already existed (i.e. not null).
    *       It will be .next() until done by this async method.
    *
+   * @param {number} delayMilliseconds
+   *   If positive, this async method will complete at least after so many
+   * milliseconds. Mainly used for debug.
+   *
    * @return {Promise( boolean )}
    *   Return a promise:
    *   - Resolved to true, if succeeded.
    *     - Versus summary and versus are loaded. Neural networks are created.
    *   - Resolved to false, if failed.
    */
-  static async versus_load_async() {
+  static async versus_load_async( delayMilliseconds ) {
 
     if ( this.versus_load_async_running )
       throw Error( `NeuralOrchestra.Base.versus_load_async(): `
         + `should not be executed multiple times simultaneously.` );
 
     try {
+      // 0.
       this.versus_load_async_running = true;
+
+      let sleepPromise;
+      if ( delayMilliseconds > 0 )
+        sleepPromise = PartTime.sleep( delayMilliseconds );
+
+      // 1.
 
       // Keep it in local variable because .versus_load_asyncGenerator() will
       // clear .versus_loader to null at the end but before return (i.e.
@@ -1138,6 +1194,11 @@ class NeuralOrchestra_Base extends Recyclable.Root {
           + `(e.g. has been terminated previously by throwing exception).` );
 
       let bLoadOk = loaderNext.value;
+
+      // 3.
+      if ( sleepPromise )
+        await sleepPromise;
+
       return bLoadOk;
 
     } finally {
@@ -1155,10 +1216,14 @@ class NeuralOrchestra_Base extends Recyclable.Root {
    * created progressToAdvance will be increased when every time advanced. The
    * progressParent.root_get() will be returned when every time yield.
    *
+   * @param {number} delayMilliseconds
+   *   If positive, the async generator will complete at least after so many
+   * milliseconds. Mainly used for debug.
+   *
    * @return {AsyncGenerator}
    *   Return the newly created this.versus_loader
    */
-  versus_loader_create( progressParent ) {
+  versus_loader_create( progressParent, delayMilliseconds ) {
 
     if ( this.versus_loader )
       throw Error( `NeuralOrchestra.Base.versus_loader_create(): `
@@ -1179,7 +1244,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
         + `NeuralWorker.Proxies is still processing image.` );
 
     this.versus_loader = NeuralOrchestra_Base.versus_load_asyncGenerator.call(
-      this, progressParent );
+      this, progressParent, delayMilliseconds );
     return this.versus_loader;
   }
 
@@ -1208,6 +1273,10 @@ class NeuralOrchestra_Base extends Recyclable.Root {
    * created progressToAdvance will be increased when every time advanced. The
    * progressParent.root_get() will be returned when every time yield.
    *
+   * @param {number} delayMilliseconds
+   *   If positive, this async generator will complete at least after so many
+   * milliseconds. Mainly used for debug.
+   *
    * @yield {Promise( ValueMax.Percentage.Aggregate )}
    *   Yield a promise resolves to { done: false, value: progressParent.root_get() }.
    *
@@ -1218,7 +1287,8 @@ class NeuralOrchestra_Base extends Recyclable.Root {
    *   - Resolved to { done: true, value: false }, if failed.
    *     - .versus_loadOk will also be set to false.
    */
-  static async* versus_load_asyncGenerator( progressParent ) {
+  static async* versus_load_asyncGenerator(
+    progressParent, delayMilliseconds ) {
 
     if ( this.versus_load_asyncGenerator_running )
       throw Error( `NeuralOrchestra.Base.versus_load_asyncGenerator(): `
@@ -1275,6 +1345,11 @@ class NeuralOrchestra_Base extends Recyclable.Root {
 
       progressToAdvance = progressParent.child_add(
         ValueMax.Percentage.Concrete.Pool.get_or_create_by( 2 ) );
+
+      // 0.4
+      let sleepPromise;
+      if ( delayMilliseconds > 0 )
+        sleepPromise = PartTime.sleep( delayMilliseconds );
 
       // 1. Load versus summary.
       if ( versusSummary_needLoad ) {
@@ -1346,6 +1421,10 @@ class NeuralOrchestra_Base extends Recyclable.Root {
           + `Failed to create neural networks. `
           + `workerProxies={ ${this.workerProxies} }`
         );
+
+      // 4.
+      if ( sleepPromise )
+        await sleepPromise;
 
     } finally {
       // 4. So that this async generator could be executed again.
