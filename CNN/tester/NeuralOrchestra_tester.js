@@ -54,20 +54,19 @@ class TestCase {
       = neuralOrchestra.workerProxies_NeuralNetArray_create_async(
           this.sourceImageData );
 
-    try { // Test: Reenter .load_asyncGenerator() should throw exception.
-      await neuralOrchestra.versus_loader_create().next();
+    // Test: Reenter .workerProxies_NeuralNetArray_create_async()
+    //       should throw exception.
+    try {
+      await neuralOrchestra.workerProxies_NeuralNetArray_create_async();
     } catch ( e ) {
-      if ( e.message.indexOf( ".versus_loader_create():" ) > 0 ) {
-//!!! (2023/03/15 Remarked)
-//               ".versus_load_asyncGenerator():" ) > 0 ) {
+      if ( e.message.indexOf( ".workerProxies_NeuralNetArray_create_async():" ) > 0 ) {
         progressToAdvance.value_advance();
         yield progressRoot;
       } else {
         throw e; // Unknown error, said loudly.
       }
     }
-    
-    
+
 
 //!!! ...unfinished... (2023/03/13)
 // should try
