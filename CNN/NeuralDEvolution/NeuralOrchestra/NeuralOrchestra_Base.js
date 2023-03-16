@@ -201,8 +201,9 @@ import * as DEvolution from "../DEvolution.js";
  *       neural networks created.
  *
  * @member {boolean} versus_loader_valid
- *   If true, .versus_loader is still running. If false, .versus_loader should
- * has been completed and should not be used.
+ *   - If true, .versus_loader is still running (even if
+ *       ( .versus_load_asyncGenerator_running == false ) ).
+ *   - If false, .versus_loader is completed.
  *
  * @member {AsyncGenerator} versus_loader
  *   A .versus_load_asyncGenerator() instance.
