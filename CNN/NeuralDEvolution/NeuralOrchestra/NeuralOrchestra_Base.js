@@ -1160,7 +1160,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
         + `should be executed `
         + `either during initializing `
         + `or after being initialized successfully.` );
-  
+
     // Prevent the nueral networks from being changed during they are processing.
     if ( this.workerProxies_ImageData_process_async_running )
       throw Error( `NeuralOrchestra.Base.versus_loader_create(): `
