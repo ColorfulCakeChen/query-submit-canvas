@@ -30,7 +30,7 @@ class TestCase {
     this.initCountBase = 2;   // Try init NeuralOrchestra twice.
     this.loadCountBase = 2;
 
-    this.testId = undefined;
+    this.testId = undefined; // For debug.
   }
 
   /**
