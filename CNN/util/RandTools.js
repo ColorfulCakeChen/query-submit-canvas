@@ -47,7 +47,8 @@ function getRandomIntInclusive( min, max ) {
  * exponent number for restricting the exponent number.
  *
  * @return {number}
- *   Return a random integer between [ 0, ( 2 ** Math.min( exponent, exponentMax ) ) ].
+ *   Return a random integer between
+ * [ 0, ( 2 ** Math.min( exponent, exponentMax ) ) ].
  */
 function getRandomInt_TruncatedBinaryExponent( exponent, exponentMax ) {
   let exponentRestricted = Math.min( exponent, exponentMax );
@@ -58,13 +59,14 @@ function getRandomInt_TruncatedBinaryExponent( exponent, exponentMax ) {
 }
 
 /**
- * This method will try to let neighbor channel's value bounds has obviously more
- * different.
+ * This method will try to let neighbor channel's value bounds has obviously
+ * more different.
  *
  *
  * @param {number[]|Recyclable.NumberArray_withBounds} io_numberArray
- *   The number array to be filled. If it is an instance of Recyclable.NumberArray_withBounds,
- * its .boundsArray_byChannel will be filled.
+ *   The number array to be filled. If it is an instance of
+ * Recyclable.NumberArray_withBounds, its .boundsArray_byChannel will be
+ * filled.
  *
  * @param {number} height        The length of axis0 of the io_numberArray.
  * @param {number} width         The length of axis1 of the io_numberArray.
@@ -77,16 +79,16 @@ function getRandomInt_TruncatedBinaryExponent( exponent, exponentMax ) {
  *   The incremental value of every next filled value in the sequence.
  *
  * @param {number} randomOffsetMin
- *   Every element of the generated number array will been shifted from the sequence id between
- * [ randomOffsetMin, randomOffsetMax ] (inclusive) randomly.
+ *   Every element of the generated number array will been shifted from the
+ * sequence id between [ randomOffsetMin, randomOffsetMax ] (inclusive) randomly.
  *
  * @param {number} randomOffsetMax
- *   Every element of the generated number array will been shifted from the sequence id between
- * [ randomOffsetMin, randomOffsetMax ] (inclusive) randomly.
+ *   Every element of the generated number array will been shifted from the
+ * sequence id between [ randomOffsetMin, randomOffsetMax ] (inclusive) randomly.
  *
  * @param {number} divisorForRemainder
- *   The generated value will be divided by divisorForRemainder. The remainder will be the real
- * output value. This is used for restricted the value bounds.
+ *   The generated value will be divided by divisorForRemainder. The remainder
+ * will be the real output value. This is used for restricted the value bounds.
  *
  * @return {number[]|Recyclable.NumberArray_withBounds}
  *   Return the io_numberArray.

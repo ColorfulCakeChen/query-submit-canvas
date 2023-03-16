@@ -31,8 +31,22 @@ class TestCase {
     this.initCountBase = 2;   // Try init NeuralOrchestra twice.
     this.loadCountBase = 2;
 
-    this.sourceImageData
-      = new ImageData( this.input_width, this.input_height );
+    {
+      const channelCount = 4; // i.e. RGBA
+      const valueBegin = 0, valueStep = 1;
+      const randomOffsetMin = 0, randomOffsetMax = 0;
+      const divisorForRemainder = 256; //( 2 ** 26 );
+
+      let elementCount = this.input_width * this.input_height * channelCount;
+      let numberArray = new Uint8ClampedArray( elementCount );
+      RandTools.fill_numberArray( numberArray,
+        height, width, channelCount,
+        valueBegin, valueStep,
+        randomOffsetMin, randomOffsetMax, divisorForRemainder);
+    
+      this.sourceImageData
+        = new ImageData( numberArray, this.input_width, this.input_height );
+    }
   }
 
   /**
