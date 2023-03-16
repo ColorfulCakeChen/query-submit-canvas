@@ -584,6 +584,10 @@ class TestCase {
         }
       }
 
+//!!! ...unfinished... (2023/03/16)
+// Try .versus_load_async(), .versus_load_asyncGenerator(), .versus_load_async()
+// Try .versus_load_asyncGenerator(), .versus_load_async(), .versus_load_asyncGenerator()
+
       // Test: versus_load before .init
       //       and before .versus_loader_create. (should exception.)
       try {
