@@ -557,8 +557,10 @@ class TestCase {
         n_reenter_first_load_asyncGenerator < 2;
         ++n_reenter_first_load_asyncGenerator ) {
 
-        for ( let loadCount = 0; loadCount < loadCountMax; ++loadCount ) {
-          let progressLoadProcessSend = progressLoadProcessSendArray[ loadCount ];
+        for ( let loadCount = 0; loadCount < this.loadCountBase; ++loadCount ) {
+          let progressLoadProcessSend
+            = progressLoadProcessSendArray[ nLoadProcessSendCount ];
+
           let bTryLoad = ( nLoadProcessSendCount > 0 );
 
           b_load_asyncGenerator = ( n_load_asyncGenerator != 0 );
