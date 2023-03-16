@@ -1250,6 +1250,16 @@ class NeuralOrchestra_Base extends Recyclable.Root {
 
     this.versus_loader = NeuralOrchestra_Base.versus_load_asyncGenerator.call(
       this, progressParent, delayMilliseconds );
+
+!!!
+    // Let .versus_loadOk be setup (i.e. cleared to undefined) so that outside
+    // caller (including .workerProxies_ImageData_process_async() and
+    // .versusResultSender_send()) can check it.
+    //
+    // Note: This works because we know the versus loader will not be completed
+    //       in just one step.
+    await this.versus_loader.next();
+
     return this.versus_loader;
   }
 
