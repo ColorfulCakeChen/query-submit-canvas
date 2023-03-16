@@ -963,7 +963,8 @@ class NeuralOrchestra_Base extends Recyclable.Root {
       let theFloat32ArrayArrayPromise
         = this.workerProxies.ImageData_process_async( sourceImageData );
 
-      return theFloat32ArrayArrayPromise;
+      let theFloat32ArrayArray = await theFloat32ArrayArrayPromise;
+      return theFloat32ArrayArray;
 
     } finally {
       // 2. So that this async method could be executed again.
