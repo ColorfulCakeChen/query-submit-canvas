@@ -202,6 +202,10 @@ class TestCase {
 
     progressToAdvance.value_advance();
     yield progressRoot;
+
+!!! ...unfinished... (2023/03/16)
+//check ( 100 === progressToAdvance.valuePercentage ).
+    
   }
 
   /**
@@ -373,6 +377,10 @@ class TestCase {
     // 3. Test processing image and sending versus result.
     yield *this.test_process_send_asyncGenerator(
       progressProcessSend, neuralOrchestra );
+
+!!! ...unfinished... (2023/03/16)
+//check ( 100 === progressToAdvance.valuePercentage ).
+    
   }
 
   /** */
@@ -566,6 +574,10 @@ class TestCase {
 
       ++nLoadProcessSendCount;
     }
+
+!!! ...unfinished... (2023/03/16)
+//check ( 100 === progressToAdvance.valuePercentage ).
+    
   }
 
   /** */
@@ -805,6 +817,10 @@ class TestCase {
         neuralOrchestra = null;
       }
     }
+
+!!! ...unfinished... (2023/03/16)
+//check ( 100 === progressToAdvance.valuePercentage ).
+    
   }
 
   /** */
