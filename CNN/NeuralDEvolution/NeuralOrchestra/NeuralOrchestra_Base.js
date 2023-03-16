@@ -1138,7 +1138,11 @@ class NeuralOrchestra_Base extends Recyclable.Root {
 
     // 2.
     this.versus_load_promise
-      = NeuralOrchestra_Base.versus_load_async.call( this, delayMilliseconds );
+
+//!!! ...unfinished... (2023/03/16)
+//should add delayMilliseconds
+      = NeuralOrchestra_Base.versus_load_async.call( this );
+//      = NeuralOrchestra_Base.versus_load_async.call( this, delayMilliseconds );
     return this.versus_load_promise;
   }
 
@@ -1175,6 +1179,9 @@ class NeuralOrchestra_Base extends Recyclable.Root {
       let sleepPromise;
       if ( delayMilliseconds > 0 )
         sleepPromise = PartTime.sleep( delayMilliseconds );
+
+!!! ...unfinished... (2023/03/16)
+//check ( this.versus_loader_valid ) ?
 
       // 1.
       if ( !this.versus_loader )
