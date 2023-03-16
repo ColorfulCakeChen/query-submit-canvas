@@ -399,6 +399,22 @@ class NeuralOrchestra_Base extends Recyclable.Root {
       throw Error( `NeuralOrchestra.Base.init_async(): `
         + `should not be executed multiple times simultaneously.` );
 
+    if ( this.workerProxies_init_async_running )
+      throw Error( `NeuralOrchestra.Base.init_async(): `
+        + `should not be executed while `
+        + `NeuralWorker.Proxies is still initializing.` );
+
+    if ( this.workerProxies_ImageData_process_async_running )
+      throw Error( `NeuralOrchestra.Base.init_async(): `
+        + `should not be executed while `
+        + `NeuralWorker.Proxies is still processing image.` );
+
+    if (   ( this.versus_load_async_running )
+        || ( this.versus_load_asyncGenerator_running ) )
+      throw Error( `NeuralOrchestra.Base.init_async(): `
+        + `should not be executed while `
+        + `DEvolution.VersusSummary or DEvolution.Versus is still loading.` );
+
     try {
       // 0. Prevent re-entrance.
       this.init_async_running = true;
@@ -552,7 +568,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
       throw Error( `NeuralOrchestra.Base.init_asyncGenerator(): `
         + `should not be executed while `
         + `DEvolution.VersusSummary or DEvolution.Versus is still loading.` );
-      
+
     try {
       // 0.
       this.initOk = false;
@@ -1171,7 +1187,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
       throw Error( `NeuralOrchestra.Base.versus_load_asyncGenerator(): `
         + `should be executed `
         + `either during initializing `
-        + `or after initialization successful.` );
+        + `or after initializing successfully.` );
 
     // Prevent the nueral networks from being changed during they are processing.
     if ( this.workerProxies_ImageData_process_async_running )

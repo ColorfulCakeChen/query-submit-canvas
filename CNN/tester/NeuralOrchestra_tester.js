@@ -68,6 +68,32 @@ class TestCase {
     }
 
 
+    // Test: .versus_load_asyncGenerator() during processing should throw exception.
+    try {
+      await neuralOrchestra.versus_loader_create().next();
+    } catch ( e ) {
+      if ( e.message.indexOf( ".versus_load_asyncGenerator():" ) > 0 ) {
+        progressToAdvance.value_advance();
+        yield progressRoot;
+      } else {
+        throw e; // Unknown error, said loudly.
+      }
+    }
+
+    // Test: .versus_load_async() during processing should throw exception.
+    try {
+      await neuralOrchestra.versus_load_promise_create();
+    } catch ( e ) {
+      if ( e.message.indexOf( ".versus_load_asyncGenerator():" ) > 0 ) {
+        progressToAdvance.value_advance();
+        yield progressRoot;
+      } else {
+        throw e; // Unknown error, said loudly.
+      }
+    }
+
+
+
 //!!! ...unfinished... (2023/03/13)
 // should try
 // .init_async() and .init_asyncGenerator() and
@@ -146,10 +172,10 @@ class TestCase {
       }
     }
 
-    // Test: Reenter try .load_asyncGenerator() and then .load_async()
+    // Test: Reenter try .versus_load_asyncGenerator() and then .load_async()
     if ( b_reenter_first_load_asyncGenerator ) {
   
-      try { // Test: Reenter .load_asyncGenerator() should throw exception.
+      try { // Test: Reenter .versus_load_asyncGenerator() should throw exception.
         await neuralOrchestra.versus_loader_create().next();
       } catch ( e ) {
         if ( e.message.indexOf( ".versus_loader_create():" ) > 0 ) {
@@ -162,7 +188,7 @@ class TestCase {
         }
       }
 
-      try { // Test: Reenter .load_async() should throw exception.
+      try { // Test: Reenter .versus_load_async() should throw exception.
         await neuralOrchestra.versus_load_promise_create();
       } catch ( e ) {
         if ( e.message.indexOf( ".versus_load_promise_create():" ) > 0 ) {
@@ -174,11 +200,11 @@ class TestCase {
           throw e; // Unknown error, said loudly.
         }
       }
-  
-    // Test: Reenter try .load_async() and then .load_asyncGenerator()
+
+    // Test: Reenter try .versus_load_async() and then .load_asyncGenerator()
     } else {
 
-      try { // Test: Reenter .load_async() should throw exception.
+      try { // Test: Reenter .versus_load_async() should throw exception.
         await neuralOrchestra.versus_load_promise_create();
       } catch ( e ) {
         if ( e.message.indexOf( ".versus_load_promise_create():" ) > 0 ) {
@@ -191,7 +217,7 @@ class TestCase {
         }
       }
   
-      try { // Test: Reenter .load_asyncGenerator() should throw exception.
+      try { // Test: Reenter .versus_load_asyncGenerator() should throw exception.
         await neuralOrchestra.versus_loader_create().next();
       } catch ( e ) {
         if ( e.message.indexOf( ".versus_loader_create():" ) > 0 ) {
@@ -230,10 +256,8 @@ class TestCase {
       }
     }
 
-
     // 2. Wait for versus summary loaded, versus loaded, and neural networks
     //    created.
-
     let versus_loadOk;
     if ( b_load_asyncGenerator ) {
       let loaderNext;
@@ -442,13 +466,13 @@ class TestCase {
     let b_load_asyncGenerator;
     let b_reenter_first_load_asyncGenerator;
 
-    // Test: use .load_async() or .load_asyncGenerator().
+    // Test: use .versus_load_async() or .versus_load_asyncGenerator().
     for (
       let n_load_asyncGenerator = 0;
       n_load_asyncGenerator < 2;
       ++n_load_asyncGenerator ) {
 
-      // Test: reenter .load_async() or .load_asyncGenerator() first.
+      // Test: reenter .versus_load_async() or .versus_load_asyncGenerator() first.
       for (
         let n_reenter_first_load_asyncGenerator = 0;
         n_reenter_first_load_asyncGenerator < 2;
@@ -624,9 +648,6 @@ class TestCase {
   /** */
   async* test_asyncGenerator( progressParent ) {
 
-//!!! ...unfinished... (2023/03/15) b_init_asyncGenerator_first
-
-//!!! ...unfinished... (2023/03/15)
     const createCountMax = this.createCountBase
       * 2 // b_init_asyncGenerator_first
       ;
@@ -639,8 +660,6 @@ class TestCase {
         = progressParent.child_add(
             ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
     }
-
-//!!! ...unfinished... (2023/03/15)
 
     // Test: use .init_async() or .init_asyncGenerator() first.
     let b_init_asyncGenerator_first;
