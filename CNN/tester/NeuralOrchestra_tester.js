@@ -38,14 +38,11 @@ class TestCase {
       const divisorForRemainder = 256; //( 2 ** 26 );
 
       let elementCount = this.input_width * this.input_height * input_channelCount;
-      let numberArray = new Uint8ClampedArray( elementCount );
-      RandTools.fill_numberArray( numberArray,
+      this.sourceNumberArray = new Uint8ClampedArray( elementCount );
+      RandTools.fill_numberArray( this.sourceNumberArray,
         this.input_height, this.input_width, input_channelCount,
         valueBegin, valueStep,
-        randomOffsetMin, randomOffsetMax, divisorForRemainder);
-
-      this.sourceImageData
-        = new ImageData( numberArray, this.input_width, this.input_height );
+        randomOffsetMin, randomOffsetMax, divisorForRemainder );
     }
   }
 
@@ -59,7 +56,13 @@ class TestCase {
     let progressToAdvance = progressParent.child_add(
       ValueMax.Percentage.Concrete.Pool.get_or_create_by( 7 ) );
 
-    // 1.
+    // 1. Process image.
+
+    // Because ImageData.data.buffer will be transferred (i.e. not copied) to
+    // web worker, it should be re-created every time.
+    let sourceImageData = new ImageData(
+      this.sourceNumberArray, this.input_width, this.input_height );
+
     let processPromise
       = neuralOrchestra.workerProxies_ImageData_process_async(
           this.sourceImageData );
