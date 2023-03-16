@@ -624,13 +624,9 @@ class NeuralOrchestra_Base extends Recyclable.Root {
         sleepPromise = PartTime.sleep( delayMilliseconds );
 
       // 1. Load (versus summary and) versus. Create neural networks.
+      this.versus_loader_create( progressParent );
 
-      // Keep it in local variable because .versus_load_asyncGenerator() will
-      // clear .versus_loader to null at the end but before return (i.e.
-      // before { done: true } ).
-      let versus_loader = this.versus_loader_create( progressParent );
-
-      let loader_next = versus_loader.next();
+      let loader_next = this.versus_loader.next();
       allPromiseSet.add( loader_next );
 
       // 2. Initialize NeuralWorker.Proxies
@@ -694,7 +690,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
             yield progressRoot;
 
             allPromiseSet.delete( loader_next );
-            loader_next = versus_loader.next();
+            loader_next = this.versus_loader.next();
             allPromiseSet.add( loader_next );
           }
 
@@ -733,7 +729,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
       return this.initOk;
 
     } finally {
-      // 6. So that this async generator could be executed again.
+      // 7. So that this async generator could be executed again.
       this.init_asyncGenerator_running = false;
     }
   }
@@ -1021,7 +1017,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
       return theFloat32ArrayArray;
 
     } finally {
-      // 2. So that this async method could be executed again.
+      // 3. So that this async method could be executed again.
       this.workerProxies_ImageData_process_async_running = false;
     }
   }
@@ -1181,19 +1177,13 @@ class NeuralOrchestra_Base extends Recyclable.Root {
         sleepPromise = PartTime.sleep( delayMilliseconds );
 
       // 1.
-
-      // Keep it in local variable because .versus_load_asyncGenerator() will
-      // clear .versus_loader to null at the end but before return (i.e.
-      // before { done: true } ).
-      let versus_loader = this.versus_loader;
-
-      if ( !versus_loader )
+      if ( !this.versus_loader )
         throw Error( `NeuralOrchestra.Base.versus_load_async(): `
           + `this.versus_loader should have already existed.` );
 
       let loaderNext;
       do {
-        loaderNext = await versus_loader.next();
+        loaderNext = await this.versus_loader.next();
       } while ( loaderNext.done == false );
 
       // The result should be either true or false. If result is undefined,
@@ -1207,14 +1197,14 @@ class NeuralOrchestra_Base extends Recyclable.Root {
 
       let bLoadOk = loaderNext.value;
 
-      // 3.
+      // 2.
       if ( sleepPromise )
         await sleepPromise;
 
       return bLoadOk;
 
     } finally {
-      // 2. So that this async method could be executed again.
+      // 3. So that this async method could be executed again.
       this.versus_load_async_running = false;
     }
   }
@@ -1445,7 +1435,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
         await sleepPromise;
 
     } finally {
-      // 4. So that this async generator could be executed again.
+      // 5. So that this async generator could be executed again.
       this.versus_load_asyncGenerator_running = false;
 
 
