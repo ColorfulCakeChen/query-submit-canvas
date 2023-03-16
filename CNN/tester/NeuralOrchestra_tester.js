@@ -65,7 +65,7 @@ class TestCase {
 
     let processPromise
       = neuralOrchestra.workerProxies_ImageData_process_async(
-          this.sourceImageData );
+          sourceImageData );
 
     // Test: Reenter .workerProxies_ImageData_process_async()
     //       should throw exception.
