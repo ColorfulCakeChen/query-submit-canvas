@@ -599,9 +599,13 @@ class NeuralOrchestra_Base extends Recyclable.Root {
       let allPromiseSet = new Set();
 
       // 1. Load (versus summary and) versus. Create neural networks.
-      this.versus_loader_create( progressParent );
 
-      let loader_next = this.versus_loader.next();
+      // Keep it in local variable because .versus_load_asyncGenerator() will
+      // clear .versus_loader to null at the end but before return (i.e.
+      // before { done: true } ).
+      let versus_loader = this.versus_loader_create( progressParent );
+
+      let loader_next = versus_loader.next();
       allPromiseSet.add( loader_next );
 
       // 2. Initialize NeuralWorker.Proxies
@@ -665,7 +669,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
             yield progressRoot;
 
             allPromiseSet.delete( loader_next );
-            loader_next = this.versus_loader.next();
+            loader_next = versus_loader.next();
             allPromiseSet.add( loader_next );
           }
 
@@ -1108,13 +1112,18 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     try {
       this.versus_load_async_running = true;
 
-      if ( !this.versus_loader )
+      // Keep it in local variable because .versus_load_asyncGenerator() will
+      // clear .versus_loader to null at the end but before return (i.e.
+      // before { done: true } ).
+      let versus_loader = this.versus_loader;
+
+      if ( !versus_loader )
         throw Error( `NeuralOrchestra.Base.versus_load_async(): `
           + `this.versus_loader should have already existed.` );
 
       let loaderNext;
       do {
-        loaderNext = await this.versus_loader.next();
+        loaderNext = await versus_loader.next();
       } while ( loaderNext.done == false );
 
       // The result should be either true or false. If result is undefined,
