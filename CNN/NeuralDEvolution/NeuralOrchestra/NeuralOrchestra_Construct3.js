@@ -183,6 +183,13 @@ class NeuralOrchestra_Construct3 extends Base {
 
 //!!! ...unfinished... (2022/10/27)
 
+//!!! ...unfinished... (2023/03/16)
+// Q: How to convert neural network output floating-point number to
+//    control signal (i.e. 0 or 1)?
+// A: Using remainder operation (e.g. ( output % 2 ) ) seems relying
+//    the least significant bit (i.e. bit 0) too much. Perhaps, using
+//    threshold (e.g. ( >= 2 ) or ( < 2 ) ) is better.
+//
 
   }
 
