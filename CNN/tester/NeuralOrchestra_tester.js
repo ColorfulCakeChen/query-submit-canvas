@@ -105,7 +105,7 @@ class TestCase {
 //      await neuralOrchestra.init_async();
       neuralOrchestra.init_async();
     } catch ( e ) {
-      if ( e.message.indexOf( ".init_asyncGenerator():" ) > 0 ) {
+      if ( e.message.indexOf( ".init_async():" ) > 0 ) {
         progressToAdvance.value_advance();
         yield progressRoot;
       } else {
