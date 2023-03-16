@@ -36,6 +36,85 @@ class TestCase {
   }
 
   /**
+   *
+   */
+  async* test_process_send_asyncGenerator( progressParent, neuralOrchestra ) {
+
+    let progressRoot = progressParent.root_get();
+
+    let progressToAdvance = progressParent.child_add(
+      ValueMax.Percentage.Concrete.Pool.get_or_create_by( 50 ) );
+
+
+//!!! ...unfinished... (2023/03/10)
+// should test ImageProcess. and Reenter ImageProcess.
+
+    // 1.
+    let processPromise
+      = neuralOrchestra.workerProxies_NeuralNetArray_create_async(
+          this.sourceImageData );
+
+    try { // Test: Reenter .load_asyncGenerator() should throw exception.
+      await neuralOrchestra.versus_loader_create().next();
+    } catch ( e ) {
+      if ( e.message.indexOf( ".versus_loader_create():" ) > 0 ) {
+//!!! (2023/03/15 Remarked)
+//               ".versus_load_asyncGenerator():" ) > 0 ) {
+        progressToAdvance.value_advance();
+        yield progressRoot;
+      } else {
+        throw e; // Unknown error, said loudly.
+      }
+    }
+    
+    
+
+//!!! ...unfinished... (2023/03/13)
+// should try
+// .init_async() and .init_asyncGenerator() and
+// .versus_load_promise_create() and .versus_loader_create()
+// during ImageProcess
+// 
+
+
+    // 2. Wait for image processed.
+    let Float32ArrayArray = await processPromise;
+
+    if ( 2 != Float32ArrayArray.length )
+      throw Error( `NeuralOrchestra_tester.TestCase`
+        + `.test_process_send_asyncGenerator(): `
+        + `Float32ArrayArray.length=${Float32ArrayArray.length} `
+        + `should be 2.` );
+
+    if ( Float32Array[ 0 ].length != this.output_channelCount )
+      throw Error( `NeuralOrchestra_tester.TestCase`
+        + `.test_process_send_asyncGenerator(): `
+        + `Float32Array[ 0 ].length=${Float32Array[ 0 ].length} `
+        + `should be the same as `
+        + `.output_channelCount ( ${this.output_channelCount}.` );
+
+    if ( Float32Array[ 1 ].length != this.output_channelCount )
+      throw Error( `NeuralOrchestra_tester.TestCase`
+        + `.test_process_send_asyncGenerator(): `
+        + `Float32Array[ 1 ].length=${Float32Array[ 1 ].length} `
+        + `should be the same as `
+        + `.output_channelCount ( ${this.output_channelCount}.` );
+
+    progressToAdvance.value_advance();
+    yield progressRoot;
+
+    // 3. Submit result.
+
+    // A random integer between [ -1, +1 ].
+    let nNegativeZeroPositive = RandTools.getRandomIntInclusive( -1, 1 );
+    neuralOrchestra.versusResultSender_send( nNegativeZeroPositive );
+
+    progressToAdvance.value_advance();
+    yield progressRoot;
+
+  }
+
+  /**
    * @param {boolean} bTryLoad  If true, loading before processing and sending.
    */
   async* test_load_process_send_asyncGenerator(
@@ -52,18 +131,14 @@ class TestCase {
       }
     }
 
-    let progressToAdvance = progressParent.child_add(
-      ValueMax.Percentage.Concrete.Pool.get_or_create_by( 6 ) );
+    let progressProcessSend = progressParent.child_add(
+      ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
   
-//!!! ...unfinished... (2023/03/11)
-// How to display neuralOrchestra.versus_load_progress?
-// How to integrate it into progressCreateOrInit?
+    let progressToAdvance = progressParent.child_add(
+      ValueMax.Percentage.Concrete.Pool.get_or_create_by( 5 ) );
 
 
-//!!! ...unfinished... (2023/03/13)
-// should .versus_load_promise_create() and .versus_loader_create()
-
-    // 2.0 Try another versus loading and neural networks creating.
+    // 1. Try another versus loading and neural networks creating.
     if ( bTryLoad ) {
       if ( b_load_asyncGenerator ) {
         neuralOrchestra.versus_loader_create( progressload );
@@ -157,8 +232,8 @@ class TestCase {
     }
 
 
-    // 2.1 Wait for versus summary loaded, versus loaded, and neural networks
-    //     created.
+    // 2. Wait for versus summary loaded, versus loaded, and neural networks
+    //    created.
 
     let versus_loadOk;
     if ( b_load_asyncGenerator ) {
@@ -170,7 +245,8 @@ class TestCase {
 
       // Note: In .load_asyncGenerator(), .versus_load_progress is not used.
       if ( 100 !== progressLoad.valuePercentage )
-        throw Error( `NeuralOrchestra_tester.tester(): `
+        throw Error( `NeuralOrchestra_tester.TestCase`
+          + `.test_load_process_send_asyncGenerator(): `
           + `progressLoad.valuePercentage (`
           + `${progressLoad.valuePercentage}) `
           + `should be 100.` );
@@ -179,46 +255,30 @@ class TestCase {
       versus_loadOk = await neuralOrchestra.versus_load_promise;
 
       if ( 100 !== neuralOrchestra.versus_load_progress.valuePercentage )
-        throw Error( `NeuralOrchestra_tester.tester(): `
+        throw Error( `NeuralOrchestra_tester.TestCase`
+          + `.test_load_process_send_asyncGenerator(): `
           + `neuralOrchestra.versus_load_progress.valuePercentage (`
           + `${neuralOrchestra.versus_load_progress.valuePercentage}) `
           + `should be 100.` );
     }      
 
     if ( !neuralOrchestra.versus_loadOk )
-      throw Error( `NeuralOrchestra_tester.tester(): `
+      throw Error( `NeuralOrchestra_tester.TestCase`
+        + `.test_load_process_send_asyncGenerator(): `
         + `neuralOrchestra.versus_loadOk (${neuralOrchestra.versus_loadOk}) `
         + `should be true.` );
 
     if ( !versus_loadOk )
-      throw Error( `NeuralOrchestra_tester.tester(): `
+      throw Error( `NeuralOrchestra_tester.TestCase`
+        + `.test_load_process_send_asyncGenerator(): `
         + `versus_loadOk (${versus_loadOk}) should be true.` );
 
     progressToAdvance.value_advance();
     yield progressRoot;
 
-//!!! ...unfinished... (2023/03/10)
-// should test ImageProcess. and Reenter ImageProcess.
-
-    // neuralOrchestra.workerProxies_NeuralNetArray_create_async(
-    //   this.sourceImageData );
-
-
-//!!! ...unfinished... (2023/03/13)
-// should try
-// .init_async() and .init_asyncGenerator() and
-// .versus_load_promise_create() and .versus_loader_create()
-// during ImageProcess
-// 
-
-    // 2.2 Submit result.
-
-    // A random integer between [ -1, +1 ].
-    let nNegativeZeroPositive = RandTools.getRandomIntInclusive( -1, 1 );
-    neuralOrchestra.versusResultSender_send( nNegativeZeroPositive );
-
-    progressToAdvance.value_advance();
-    yield progressRoot;
+    // 3. Test processing image and sending versus result.
+    yield *this.test_process_send_asyncGenerator(
+      progressProcessSend, neuralOrchestra );
   }
 
   /** */
@@ -359,16 +419,19 @@ class TestCase {
     }
 
     if ( !initOk )
-      throw Error( `NeuralOrchestra_tester.tester(): `
+      throw Error( `NeuralOrchestra_tester.TestCase`
+        + `.test_init_load_process_send_asyncGenerator(): `
         + `neuralOrchestra.init_async() failed.` );
 
     if ( !neuralOrchestra.initOk )
-      throw Error( `NeuralOrchestra_tester.tester(): `
+      throw Error( `NeuralOrchestra_tester.TestCase`
+        + `.test_init_load_process_send_asyncGenerator(): `
         + `neuralOrchestra.initOk (${neuralOrchestra.initOk}) `
         + `should be true.` );
 
     if ( !neuralOrchestra.workerProxies_initOk )
-      throw Error( `NeuralOrchestra_tester.tester(): `
+      throw Error( `NeuralOrchestra_tester.TestCase`
+        + `.test_init_load_process_send_asyncGenerator(): `
         + `neuralOrchestra.workerProxies_initOk `
         + `(${neuralOrchestra.workerProxies_initOk}) `
         + `should be true.` );
@@ -446,7 +509,8 @@ class TestCase {
         let propertyValue = neuralOrchestra[ p ];
         if ( propertyValue != undefined )
           if ( propertyValue != neuralOrchestra.params_loading_retryWaiting )
-            throw Error( `NeuralOrchestra_tester.tester(): `
+              throw Error( `NeuralOrchestra_tester.TestCase`
+              + `.test_create_init_load_process_send_asyncGenerator(): `
               + `neuralOrchestra.${p} (${neuralOrchestra[ p ]}) `
               + `should be undefined.` );
       }
