@@ -61,15 +61,15 @@ class TestCase {
 
     // 1.
     let processPromise
-      = neuralOrchestra.workerProxies_NeuralNetArray_create_async(
+      = neuralOrchestra.workerProxies_ImageData_process_async(
           this.sourceImageData );
 
-    // Test: Reenter .workerProxies_NeuralNetArray_create_async()
+    // Test: Reenter .workerProxies_ImageData_process_async()
     //       should throw exception.
     try {
-      await neuralOrchestra.workerProxies_NeuralNetArray_create_async();
+      await neuralOrchestra.workerProxies_ImageData_process_async();
     } catch ( e ) {
-      if ( e.message.indexOf( ".workerProxies_NeuralNetArray_create_async():" ) > 0 ) {
+      if ( e.message.indexOf( ".workerProxies_ImageData_process_async():" ) > 0 ) {
         progressToAdvance.value_advance();
         yield progressRoot;
       } else {
