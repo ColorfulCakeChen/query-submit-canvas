@@ -372,7 +372,7 @@ class TestCase {
 
     ++this.testId;
 
-    const loadCountMax = this.loadCountBase
+    const nLoadProcessSendCountMax = this.loadCountBase
       * 2 // b_load_asyncGenerator
       * 2 // b_reenter_first_load_asyncGenerator
       ;
@@ -384,8 +384,8 @@ class TestCase {
       progressInit = progressParent.child_add(
         ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
 
-    let progressLoadProcessSendArray = new Array( loadCountMax );
-    for ( let loadCount = 0; loadCount < loadCountMax; ++loadCount ) {
+    let progressLoadProcessSendArray = new Array( nLoadProcessSendCountMax );
+    for ( let loadCount = 0; loadCount < nLoadProcessSendCountMax; ++loadCount ) {
       progressLoadProcessSendArray[ loadCount ]
         = progressParent.child_add(
             ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
@@ -586,7 +586,7 @@ class TestCase {
 
     ++this.testId;
 
-    const initCountMax = this.initCountBase
+    const nInitLoadProcessSendMax = this.initCountBase
       * 2 // b_init_asyncGenerator
       * 2 // b_reenter_first_init_asyncGenerator
       ;
@@ -594,8 +594,8 @@ class TestCase {
     // Prepare progress list.
     let progressRoot = progressParent.root_get();
 
-    let progressInitLoadProcessSendArray = new Array( initCountMax );
-    for ( let initCount = 0; initCount < initCountMax; ++initCount ) {
+    let progressInitLoadProcessSendArray = new Array( nInitLoadProcessSendMax );
+    for ( let initCount = 0; initCount < nInitLoadProcessSendMax; ++initCount ) {
       progressInitLoadProcessSendArray[ initCount ]
         = progressParent.child_add(
             ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
@@ -746,6 +746,7 @@ class TestCase {
       }
 
       // 2. Initialize, load, process, send.
+      let nInitLoadProcessSend = 0;
 
       // Test: use .init_async() or .init_asyncGenerator().
       let b_init_asyncGenerator;
@@ -762,9 +763,9 @@ class TestCase {
           ++n_reenter_first_init_asyncGenerator ) {
 
           // Test: re-init (without re-create).
-          for ( let initCount = 0; initCount < initCountMax; ++initCount ) {
+          for ( let initCount = 0; initCount < this.initCountBase; ++initCount ) {
             let progressInitLoadProcessSend
-              = progressInitLoadProcessSendArray[ initCount ];
+              = progressInitLoadProcessSendArray[ nInitLoadProcessSend ];
 
             b_init_asyncGenerator = ( n_init_asyncGenerator != 0 );
             if ( b_init_asyncGenerator_first )
@@ -777,6 +778,8 @@ class TestCase {
               progressInitLoadProcessSend, neuralOrchestra,
               b_init_asyncGenerator, b_reenter_first_init_asyncGenerator
             );
+
+            ++nInitLoadProcessSend;
           }
         }
       }
