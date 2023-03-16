@@ -1155,6 +1155,18 @@ class NeuralOrchestra_Base extends Recyclable.Root {
         + `Please wait previous .versus_loader to complete `
         + `if wanting to call again.` );
 
+    if ( !this.initRunning_or_initOk )
+      throw Error( `NeuralOrchestra.Base.versus_loader_create(): `
+        + `should be executed `
+        + `either during initializing `
+        + `or after being initialized successfully.` );
+  
+    // Prevent the nueral networks from being changed during they are processing.
+    if ( this.workerProxies_ImageData_process_async_running )
+      throw Error( `NeuralOrchestra.Base.versus_loader_create(): `
+        + `should not be executed while `
+        + `NeuralWorker.Proxies is still processing image.` );
+
     this.versus_loader = NeuralOrchestra_Base.versus_load_asyncGenerator.call(
       this, progressParent );
     return this.versus_loader;
