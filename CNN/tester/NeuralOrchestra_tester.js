@@ -35,7 +35,9 @@ class TestCase {
     // In the reentrance testing, when try await, the async method may have
     // been completed. To prevent they complete too fast to test, add some
     // delay time.
-    this.delayMilliseconds = 2 * 1000;
+//!!! (2023/03/17 Remarked) seems no longer necessary.
+//    this.delayMilliseconds = 2 * 1000;
+    this.delayMilliseconds = 0;
   }
 
   /**
