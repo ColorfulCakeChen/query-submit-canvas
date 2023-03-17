@@ -1320,8 +1320,8 @@ class NeuralOrchestra_Base extends Recyclable.Root {
    */
   versus_load_promise_create( delayMilliseconds ) {
 
+    const funcNameInMessage = "versus_load_promise_create";
     { // Checking pre-condition.
-      const funcNameInMessage = "versus_load_promise_create";
 
       NeuralOrchestra.Base.throw_if_an_old_still_running.call( this,
         this.versus_load_async_running, funcNameInMessage );
@@ -1350,13 +1350,9 @@ class NeuralOrchestra_Base extends Recyclable.Root {
       }
 
     // 1.2 Outside caller calls this method (after previous .versus_loader
-    //     has completed).
+    //     has completed and .init_asyncXxx() succeeded).
     } else {
-
-      if ( !this.initOk )
-        throw Error( `NeuralOrchestra.Base.versus_load_promise_create(): `
-          + `should be executed `
-          + `after being initialized successfully.` );
+      NeuralOrchestra.Base.throw_if_not_initOk.call( this, funcNameInMessage );
 
       NeuralOrchestra_Base.versus_load_progress_create.call( this );
       this.versus_loader_create( this.versus_load_progress, delayMilliseconds );
@@ -1397,21 +1393,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
       NeuralOrchestra.Base.throw_call_another_if_false.call( this,
         this.versus_load_async_running, funcNameInMessage,
         "versus_load_promise_create" );
-
-!!!
-      NeuralOrchestra.Base.throw_if_initializing.call( this, funcNameInMessage );
-      NeuralOrchestra.Base.throw_if_workerProxies_initializing.call( this,
-        funcNameInMessage );
-      NeuralOrchestra.Base.throw_if_not_initOk.call( this, funcNameInMessage );
-      NeuralOrchestra.Base.throw_if_versus_loading.call( this, funcNameInMessage );
-      NeuralOrchestra.Base.throw_if_not_versus_loadOk.call( this, funcNameInMessage );
     }
-
-!!!
-    if ( !this.versus_loader_valid )
-      throw Error( `NeuralOrchestra.Base.versus_load_async(): `
-        + `this.versus_loader_valid ( ${this.versus_loader_valid} ) `
-        + `should be true.` );
 
     try {
       // 0.
