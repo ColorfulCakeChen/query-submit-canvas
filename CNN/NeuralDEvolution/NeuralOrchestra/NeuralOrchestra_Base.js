@@ -1035,13 +1035,11 @@ class NeuralOrchestra_Base extends Recyclable.Root {
    * Call .imageData_process_async() and record the returned
    * promise in .imageData_process_promise.
    *
-   * @param {NeuralOrchestra_Base} this
-   *
    * @return {Promise( Float32Array[] )}
    *   Return this.imageData_process_promise which is an instance
    * of .imageData_process_async().
    */
-  static imageData_process_promise_create(
+  imageData_process_promise_create(
     sourceImageData, delayMilliseconds ) {
 
     { // Checking pre-condition.
