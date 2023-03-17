@@ -949,9 +949,12 @@ class NeuralOrchestra_Base extends Recyclable.Root {
    */
   static workerProxies_init_promise_create() {
 
-    if ( this.workerProxies_init_async_running )
-      throw Error( `NeuralOrchestra.Base.workerProxies_init_promise_create(): `
-        + `An old .workerProxies_init_async() is still running.` );
+    { // Checking pre-condition.
+      const funcNameInMessage = "workerProxies_init_promise_create";
+
+      NeuralOrchestra.Base.throw_if_an_old_still_running.call( this,
+        this.workerProxies_init_async_running, funcNameInMessage );
+    }
 
     this.workerProxies_init_async_running = true;
     this.workerProxies_init_promise
@@ -979,15 +982,16 @@ class NeuralOrchestra_Base extends Recyclable.Root {
    */
   static async workerProxies_init_async() {
 
-    if ( !this.workerProxies_init_async_running )
-      throw Error( `NeuralOrchestra.Base.workerProxies_init_async(): `
-        + `Please call .workerProxies_init_promise_create() instead.` );
+    { // Checking pre-condition.
+      const funcNameInMessage = "workerProxies_init_async";
 
-!!!
-    // NeuralOrchestra.Base.throw_if_workerProxies_initializing.call(
-    //   this, funcNameInMessage );
-    NeuralOrchestra.Base.throw_if_workerProxies_ImageData_processing.call(
-      this, "workerProxies_init_async" );
+      NeuralOrchestra.Base.throw_call_another_if_false.call( this,
+        this.workerProxies_init_async_running, funcNameInMessage,
+        "workerProxies_init_promise_create" );
+
+      NeuralOrchestra.Base.throw_if_workerProxies_ImageData_processing.call(
+        this, funcNameInMessage );
+    }
 
     let initOk;
     try {
