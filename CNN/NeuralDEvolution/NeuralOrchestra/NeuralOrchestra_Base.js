@@ -447,6 +447,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     NeuralOrchestra.Base.throw_if_versus_loading.call( this, funcNameInMessage );
   }
 
+
   /**
    * Call .init_async() and record the returned promise in .init_promise.
    *
@@ -467,7 +468,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
         + `An old .init_async() is still running.` );
 
     NeuralOrchestra.Base.throw_if_workerProxies_busy_or_versus_loading.call(
-      this, "init_async" );
+      this, "init_promise_create" );
 
     this.init_async_running = true;
     this.init_promise = NeuralOrchestra_Base.init_async.call( this,
@@ -479,7 +480,6 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     );
     return this.init_promise;
   }
-
 
   /**
    * Call .init_asyncGenerator() and .versus_load_promise_create() internally.
@@ -574,15 +574,9 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     }
   }
 
-!!!
   /**
    * Create .initer (an instance of .init_asyncGenerator()).
    *
-   *
-   * @param {ValueMax.Percentage.Aggregate} progressParent
-   *   Some new progressToAdvance will be created and added to progressParent. The
-   * created progressToAdvance will be increased when every time advanced. The
-   * progressParent.root_get() will be returned when every time yield.
    *
    * @return {AsyncGenerator}
    *   Return this.initer
@@ -599,11 +593,8 @@ class NeuralOrchestra_Base extends Recyclable.Root {
       throw Error( `NeuralOrchestra.Base.initer_create(): `
         + `An old .initer_create() is still running.` );
 
-    // Prevent the nueral networks from being changed during they are processing.
-    if ( this.workerProxies_ImageData_process_async_running )
-      throw Error( `NeuralOrchestra.Base.versus_loader_create(): `
-        + `should not be executed while `
-        + `NeuralWorker.Proxies is still processing image.` );
+    NeuralOrchestra.Base.throw_if_workerProxies_busy_or_versus_loading.call(
+      this, "initer_create" );
 
     this.init_asyncGenerator_running = true;
     this.initer = NeuralOrchestra_Base.init_asyncGenerator.call( this,
