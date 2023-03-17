@@ -245,6 +245,12 @@ class TestCase {
       }
     }
 
+    if ( neuralOrchestra.versus_loadOk !== undefined )
+      throw Error( `NeuralOrchestra_tester.TestCase`
+        + `.test_load_process_send_asyncGenerator(): `
+        + `neuralOrchestra.versus_loadOk ( ${neuralOrchestra.versus_loadOk} ) `
+        + `should be undefined.` );
+
     // Test: Reenter try .versus_load_asyncGenerator() and then .load_async()
     if ( b_reenter_first_load_asyncGenerator ) {
 
@@ -440,6 +446,12 @@ class TestCase {
         this.output_channelCount,
         this.delayMilliseconds
       );
+
+    if ( neuralOrchestra.initOk !== undefined )
+      throw Error( `NeuralOrchestra_tester.TestCase`
+        + `.test_init_load_process_send_asyncGenerator(): `
+        + `neuralOrchestra.initOk ( ${neuralOrchestra.initOk} ) `
+        + `should be undefined.` );
 
     // Test: Reenter try .init_asyncGenerator() and then .init_async()
     if ( b_reenter_first_init_asyncGenerator ) {
