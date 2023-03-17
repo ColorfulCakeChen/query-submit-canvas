@@ -151,7 +151,7 @@ class TestCase {
     // Test: .versus_load_async() during processing should throw exception.
     try {
       ++this.testId;
-      await neuralOrchestra.versus_load_promise_create();
+      neuralOrchestra.versus_load_promise_create();
     } catch ( e ) {
       if ( e.message.indexOf( ".versus_load_promise_create():" ) > 0 ) {
         progressToAdvance.value_advance();
@@ -268,7 +268,7 @@ class TestCase {
 
       try { // Test: Reenter .versus_load_async() should throw exception.
         ++this.testId;
-        await neuralOrchestra.versus_load_promise_create();
+        neuralOrchestra.versus_load_promise_create();
       } catch ( e ) {
         if ( e.message.indexOf( ".versus_load_promise_create():" ) > 0 ) {
           progressToAdvance.value_advance();
@@ -283,7 +283,7 @@ class TestCase {
 
       try { // Test: Reenter .versus_load_async() should throw exception.
         ++this.testId;
-        await neuralOrchestra.versus_load_promise_create();
+        neuralOrchestra.versus_load_promise_create();
       } catch ( e ) {
         if ( e.message.indexOf( ".versus_load_promise_create():" ) > 0 ) {
           progressToAdvance.value_advance();
@@ -699,7 +699,7 @@ class TestCase {
         //       and before .versus_loader_create. (should exception.)
         try {
           ++this.testId;
-          await neuralOrchestra.versus_load_promise_create();
+          neuralOrchestra.versus_load_promise_create();
         } catch ( e ) {
           if ( e.message.indexOf( ".versus_load_promise_create():" ) > 0 ) {
             progressToAdvance.value_advance();
@@ -730,7 +730,7 @@ class TestCase {
         //       and before .versus_loader_create. (should exception.)
         try {
           ++this.testId;
-          await neuralOrchestra.versus_load_promise_create();
+          neuralOrchestra.versus_load_promise_create();
         } catch ( e ) {
           if ( e.message.indexOf( ".versus_load_promise_create():" ) > 0 ) {
             progressToAdvance.value_advance();
@@ -757,7 +757,7 @@ class TestCase {
         //       but after .versus_loader_create. (should exception.)
         try {
           ++this.testId;
-          await neuralOrchestra.versus_load_promise_create();
+          neuralOrchestra.versus_load_promise_create();
         } catch ( e ) {
           if ( e.message.indexOf( ".versus_load_promise_create():" ) > 0 ) {
             progressToAdvance.value_advance();
