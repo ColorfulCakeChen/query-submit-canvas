@@ -1465,6 +1465,10 @@ class NeuralOrchestra_Base extends Recyclable.Root {
 
       return loadOk;
 
+    } catch ( e ) {
+      this.versus_loadOk = false;
+      throw e;
+
     } finally {
       // 3. So that this async method could be executed again.
       this.versus_load_async_running = false;
