@@ -1699,6 +1699,10 @@ class NeuralOrchestra_Base extends Recyclable.Root {
       if ( sleepPromise )
         await sleepPromise;
 
+    } catch ( e ) {
+      this.versus_loadOk = false;
+      throw e;
+
     } finally {
       // 5. So that this async generator could be executed again.
       this.versus_load_asyncGenerator_running = false;
