@@ -203,9 +203,11 @@ class TestCase {
     progressToAdvance.value_advance();
     yield progressRoot;
 
-!!! ...unfinished... (2023/03/16)
-//check ( 100 === progressToAdvance.valuePercentage ).
-    
+    if ( 100 !== progressToAdvance.valuePercentage )
+      throw Error( `NeuralOrchestra_tester.TestCase`
+        + `.test_process_send_asyncGenerator(): testId=${this.testId}, `
+        + `progressToAdvance.valuePercentage `
+          +  `( ${progressToAdvance.valuePercentage} ) should 100.` );
   }
 
   /**
@@ -378,9 +380,11 @@ class TestCase {
     yield *this.test_process_send_asyncGenerator(
       progressProcessSend, neuralOrchestra );
 
-!!! ...unfinished... (2023/03/16)
-//check ( 100 === progressToAdvance.valuePercentage ).
-    
+    if ( 100 !== progressToAdvance.valuePercentage )
+      throw Error( `NeuralOrchestra_tester.TestCase`
+        + `.test_load_process_send_asyncGenerator(): testId=${this.testId}, `
+        + `progressToAdvance.valuePercentage `
+          +  `( ${progressToAdvance.valuePercentage} ) should 100.` );
   }
 
   /** */
@@ -575,9 +579,11 @@ class TestCase {
       ++nLoadProcessSendCount;
     }
 
-!!! ...unfinished... (2023/03/16)
-//check ( 100 === progressToAdvance.valuePercentage ).
-    
+    if ( 100 !== progressToAdvance.valuePercentage )
+      throw Error( `NeuralOrchestra_tester.TestCase`
+        + `.test_init_load_process_send_asyncGenerator(): testId=${this.testId}, `
+        + `progressToAdvance.valuePercentage `
+          +  `( ${progressToAdvance.valuePercentage} ) should 100.` );
   }
 
   /** */
@@ -818,9 +824,13 @@ class TestCase {
       }
     }
 
-!!! ...unfinished... (2023/03/16)
-//check ( 100 === progressToAdvance.valuePercentage ).
-    
+    if ( 100 !== progressToAdvance.valuePercentage )
+      throw Error( `NeuralOrchestra_tester.TestCase`
+        + `.test_create_init_load_process_send_asyncGenerator(): `
+        + `testId=${this.testId}, `
+        + `progressToAdvance.valuePercentage `
+          +  `( ${progressToAdvance.valuePercentage} ) should 100.` );
+
   }
 
   /** */
