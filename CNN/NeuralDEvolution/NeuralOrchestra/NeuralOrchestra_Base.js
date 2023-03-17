@@ -174,6 +174,14 @@ All .Xxx_running should be set to true inside a synchronous function
 but be cleared to false inside a async function.
 
 
+!!! ...unfinished... (2023/03/17)
+.workerProxies_ImageData_process_promise
+.workerProxies_ImageData_process_async_running
+
+.init_promise
+.initer
+
+
  * @member {boolean} workerProxies_init_async_running
  *   If true, a .workerProxies_init_async() is still executing. Please wait
  * it becoming false if wanting to call again.
@@ -269,7 +277,6 @@ class NeuralOrchestra_Base extends Recyclable.Root {
 
     NeuralOrchestra_Base.versus_load_progress_dispose.call( this );
     this.versus_load_promise = undefined;
-    this.versus_loader_valid = undefined;
     this.versus_loader = undefined;
     this.versus_loadOk = undefined;
     this.versus_load_asyncGenerator_running = undefined;
@@ -277,6 +284,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     NeuralOrchestra_Base.versus_dispose.call( this );
     NeuralOrchestra_Base.versusSummary_dispose.call( this );
 
+    this.workerProxies_ImageData_process_promise = undefined;
     this.workerProxies_ImageData_process_async_running = undefined;
 
     this.workerProxies_init_promise = undefined;
@@ -285,6 +293,8 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     NeuralOrchestra_Base.neuralNetParamsBase_dispose.call( this );
     NeuralOrchestra_Base.workerProxies_dispose.call( this );
 
+    this.init_promise = undefined;
+    this.initer = undefined;
     this.initOk = undefined;
     this.init_asyncGenerator_running = undefined;
     this.init_async_running = undefined;
@@ -390,6 +400,54 @@ class NeuralOrchestra_Base extends Recyclable.Root {
 
 
   /**
+   * @param {NeuralOrchestra_Base} this
+   * @param {string} funcNameInMessage   The caller function name. (e.g. init_async)
+   */
+  static throw_if_initializing( funcNameInMessage ) {
+    if (   ( this.init_async_running )
+        || ( this.init_asyncGenerator_running ) )
+      throw Error( `NeuralOrchestra.Base.${funcNameInMessage}(): `
+        + `should not be executed during initializing.` );
+  }
+
+  /**
+   * @param {NeuralOrchestra_Base} this
+   * @param {string} funcNameInMessage   The caller function name. (e.g. init_async)
+   */
+  static throw_if_workerProxies_busy( funcNameInMessage ) {
+    if ( this.workerProxies_init_async_running )
+      throw Error( `NeuralOrchestra.Base.${funcNameInMessage}(): `
+        + `should not be executed while `
+        + `NeuralWorker.Proxies is still initializing.` );
+
+    if ( this.workerProxies_ImageData_process_async_running )
+      throw Error( `NeuralOrchestra.Base.${funcNameInMessage}(): `
+        + `should not be executed while `
+        + `NeuralWorker.Proxies is still processing image.` );
+  }
+
+  /**
+   * @param {NeuralOrchestra_Base} this
+   * @param {string} funcNameInMessage   The caller function name. (e.g. init_async)
+   */
+  static throw_if_versus_loading( funcNameInMessage ) {
+    if (   ( this.versus_load_async_running )
+        || ( this.versus_load_asyncGenerator_running ) )
+      throw Error( `NeuralOrchestra.Base.${funcNameInMessage}(): `
+        + `should not be executed while `
+        + `DEvolution.VersusSummary or DEvolution.Versus is still loading.` );
+  }
+
+  /**
+   * @param {NeuralOrchestra_Base} this
+   * @param {string} funcNameInMessage   The caller function name. (e.g. init_async)
+   */
+  static throw_if_workerProxies_busy_or_versus_loading( funcNameInMessage ) {
+    NeuralOrchestra.Base.throw_if_workerProxies_busy.call( this, funcNameInMessage );
+    NeuralOrchestra.Base.throw_if_versus_loading.call( this, funcNameInMessage );
+  }
+
+  /**
    * Call .init_async() and record the returned promise in .init_promise.
    *
    * @param {NeuralOrchestra_Base} this
@@ -407,6 +465,9 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     if ( this.init_async_running )
       throw Error( `NeuralOrchestra.Base.init_promise_create(): `
         + `An old .init_async() is still running.` );
+
+    NeuralOrchestra.Base.throw_if_workerProxies_busy_or_versus_loading.call(
+      this, "init_async" );
 
     this.init_async_running = true;
     this.init_promise = NeuralOrchestra_Base.init_async.call( this,
@@ -460,27 +521,10 @@ class NeuralOrchestra_Base extends Recyclable.Root {
       throw Error( `NeuralOrchestra.Base.init_async(): `
         + `should not be executed multiple times simultaneously.` );
 
-    if ( this.workerProxies_init_async_running )
-      throw Error( `NeuralOrchestra.Base.init_async(): `
-        + `should not be executed while `
-        + `NeuralWorker.Proxies is still initializing.` );
-
-    if ( this.workerProxies_ImageData_process_async_running )
-      throw Error( `NeuralOrchestra.Base.init_async(): `
-        + `should not be executed while `
-        + `NeuralWorker.Proxies is still processing image.` );
-
-    if (   ( this.versus_load_async_running )
-        || ( this.versus_load_asyncGenerator_running )
-        || ( this.versus_loader_valid ) )
-      throw Error( `NeuralOrchestra.Base.init_async(): `
-        + `should not be executed while `
-        + `DEvolution.VersusSummary or DEvolution.Versus is still loading.` );
+    NeuralOrchestra.Base.throw_if_workerProxies_busy_or_versus_loading.call(
+      this, "init_async" );
 
     try {
-      // 0. Prevent re-entrance.
-      this.init_async_running = true;
-
       // 1. Use internal independent progress.
       NeuralOrchestra_Base.versus_load_progress_create.call( this );
 
@@ -529,6 +573,49 @@ class NeuralOrchestra_Base extends Recyclable.Root {
       this.init_async_running = false;
     }
   }
+
+!!!
+  /**
+   * Create .initer (an instance of .init_asyncGenerator()).
+   *
+   *
+   * @param {ValueMax.Percentage.Aggregate} progressParent
+   *   Some new progressToAdvance will be created and added to progressParent. The
+   * created progressToAdvance will be increased when every time advanced. The
+   * progressParent.root_get() will be returned when every time yield.
+   *
+   * @return {AsyncGenerator}
+   *   Return this.initer
+   */
+  initer_create(
+    progressParent,
+    downloader_spreadsheetId, downloader_apiKey, bLogFetcherEventToConsole,
+    sender_clientId,
+    input_height, input_width,
+    vocabularyChannelCount, blockCountTotalRequested, output_channelCount,
+    delayMilliseconds ) {
+
+    if ( this.init_asyncGenerator_running )
+      throw Error( `NeuralOrchestra.Base.initer_create(): `
+        + `An old .initer_create() is still running.` );
+
+    // Prevent the nueral networks from being changed during they are processing.
+    if ( this.workerProxies_ImageData_process_async_running )
+      throw Error( `NeuralOrchestra.Base.versus_loader_create(): `
+        + `should not be executed while `
+        + `NeuralWorker.Proxies is still processing image.` );
+
+    this.init_asyncGenerator_running = true;
+    this.initer = NeuralOrchestra_Base.init_asyncGenerator.call( this,
+      progressParent, 
+      downloader_spreadsheetId, downloader_apiKey, bLogFetcherEventToConsole,
+      sender_clientId,
+      input_height, input_width,
+      vocabularyChannelCount, blockCountTotalRequested, output_channelCount,
+      delayMilliseconds );
+    return this.initer;
+  }
+
 
   /**
    *   - Load all differential evolution versus weights ranges (i.e. versus summary).
@@ -607,20 +694,12 @@ class NeuralOrchestra_Base extends Recyclable.Root {
    * 
    *   - Resolved to { done: true, value: false }, if failed.
    */
-  async* init_asyncGenerator(
+  static async* init_asyncGenerator(
     progressParent,
-
     downloader_spreadsheetId, downloader_apiKey, bLogFetcherEventToConsole,
-
     sender_clientId,
-
-    input_height,
-    input_width,
-
-    vocabularyChannelCount,
-    blockCountTotalRequested,
-    output_channelCount,
-
+    input_height, input_width,
+    vocabularyChannelCount, blockCountTotalRequested, output_channelCount,
     delayMilliseconds
   ) {
 
