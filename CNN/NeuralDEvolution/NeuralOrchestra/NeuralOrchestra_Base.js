@@ -507,6 +507,10 @@ class NeuralOrchestra_Base extends Recyclable.Root {
           + `this.initOk ( ${this.initOk} ).`
         );
 
+
+!!! ...unfinished... (2023/03/17)
+// call .versus_loader_create_without_checking_precondition() instead?
+
       // 3. Continue to load (versus summary and) versus and create neural
       //    networks.
       //
