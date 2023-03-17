@@ -1010,8 +1010,8 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     if (   ( this.init_async_running )
         || ( this.init_asyncGenerator_running ) )
       throw Error( `NeuralOrchestra.Base.workerProxies_ImageData_process_async(): `
-        + `should not be executed while `
-        + `DEvolution.VersusSummary or DEvolution.Versus is still loading.` );
+        + `should not be executed `
+        + `during initializing.` );
 
     if ( this.workerProxies_init_async_running )
       throw Error( `NeuralOrchestra.Base.workerProxies_ImageData_process_async(): `
