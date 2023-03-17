@@ -482,9 +482,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
         downloader_spreadsheetId, downloader_apiKey, bLogFetcherEventToConsole,
         sender_clientId,
         input_height, input_width,
-        vocabularyChannelCount,
-        blockCountTotalRequested,
-        output_channelCount,
+        vocabularyChannelCount, blockCountTotalRequested, output_channelCount,
         delayMilliseconds
       );
     
@@ -1043,7 +1041,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
    *   Return this.workerProxies_ImageData_process_promise which is an instance
    * of .workerProxies_ImageData_process_async().
    */
-  async workerProxies_ImageData_process_promise_create(
+  static workerProxies_ImageData_process_promise_create(
     sourceImageData, delayMilliseconds ) {
 
     { // Checking pre-condition.
