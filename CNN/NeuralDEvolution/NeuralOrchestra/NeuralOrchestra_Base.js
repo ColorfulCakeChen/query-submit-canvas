@@ -1151,6 +1151,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     return neuralNet_createOk;
   }
 
+
   /**
    * Call .workerProxies_ImageData_process_async() and record the returned
    * promise in .workerProxies_ImageData_process_promise.
@@ -1163,39 +1164,28 @@ class NeuralOrchestra_Base extends Recyclable.Root {
   async workerProxies_ImageData_process_promise_create(
     sourceImageData, delayMilliseconds ) {
 
-!!!
     { // Checking pre-condition.
-      const funcNameInMessage = "workerProxies_init_promise_create";
+      const funcNameInMessage = "workerProxies_ImageData_process_promise_create";
 
       NeuralOrchestra.Base.throw_if_an_old_still_running.call( this,
-        this.workerProxies_init_async_running, funcNameInMessage );
+        this.workerProxies_ImageData_process_async_running, funcNameInMessage );
+
+      NeuralOrchestra.Base.throw_if_initializing.call( this, funcNameInMessage );
+
+      NeuralOrchestra.Base.throw_if_workerProxies_initializing.call(
+        this, funcNameInMessage );
+
+      NeuralOrchestra.Base.throw_if_not_initOk.call( this, funcNameInMessage );
+
+      NeuralOrchestra.Base.throw_if_versus_loading.call( this, funcNameInMessage );
+      NeuralOrchestra.Base.throw_if_not_versus_loadOk.call( this, funcNameInMessage );
     }
 
-
-!!!
-    const funcNameInMessage = "workerProxies_ImageData_process_promise_create";
-    if ( this.init_async_running )
-      throw Error( `NeuralOrchestra.Base.${funcNameInMessage}: `
-        + `An old .workerProxies_ImageData_process_async() is still running.` );
-!!!
-    NeuralOrchestra.Base.throw_if_workerProxies_busy_or_versus_loading.call(
-      this, "workerProxies_ImageData_process_promise_create" );
-
-    NeuralOrchestra.Base.throw_if_initializing( funcNameInMessage );
-    NeuralOrchestra.Base.throw_if_workerProxies_busy_or_versus_loading( funcNameInMessage );
-    NeuralOrchestra.Base.throw_if_not_initOk( funcNameInMessage )
-    NeuralOrchestra.Base.throw_if_not_versus_loadOk( funcNameInMessage )
-    
-      
-    this.init_async_running = true;
-    this.init_promise = NeuralOrchestra_Base.init_async.call( this,
-      downloader_spreadsheetId, downloader_apiKey, bLogFetcherEventToConsole,
-      sender_clientId,
-      input_height, input_width,
-      vocabularyChannelCount, blockCountTotalRequested, output_channelCount,
-      delayMilliseconds
-    );
-    return this.init_promise;
+    this.workerProxies_ImageData_process_async_running = true;
+    this.workerProxies_ImageData_process_promise
+      = NeuralOrchestra_Base.workerProxies_ImageData_process_async.call( this,
+          sourceImageData, delayMilliseconds );
+    return this.workerProxies_ImageData_process_promise;
   }
 
   /**
