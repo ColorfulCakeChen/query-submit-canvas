@@ -835,8 +835,8 @@ class TestCase {
           +  `( ${progressToAdvance.valuePercentage} ) should 100.` );
 
     } catch ( e ) {
-      throw e;
       debugger;
+      throw e;
 
     } finally {
       if ( neuralOrchestra ) {
