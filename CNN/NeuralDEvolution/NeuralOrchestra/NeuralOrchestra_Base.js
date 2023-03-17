@@ -406,6 +406,9 @@ class NeuralOrchestra_Base extends Recyclable.Root {
       NeuralOrchestra_Base.throw_if_an_old_still_running.call( this,
         this.init_async_running, funcNameInMessage );
 
+      // If .init_asyncGenerator() running, throw, too.
+      NeuralOrchestra_Base.throw_if_initializing.call( this, funcNameInMessage );
+
       NeuralOrchestra_Base.throw_if_workerProxies_busy_or_versus_loading.call(
         this, funcNameInMessage );
     }
@@ -548,6 +551,9 @@ class NeuralOrchestra_Base extends Recyclable.Root {
 
       NeuralOrchestra_Base.throw_if_an_old_still_running.call( this,
         this.init_asyncGenerator_running, funcNameInMessage );
+
+      // If .init_async() running, throw, too.
+      NeuralOrchestra_Base.throw_if_initializing.call( this, funcNameInMessage );
 
       NeuralOrchestra_Base.throw_if_workerProxies_busy_or_versus_loading.call(
         this, funcNameInMessage );
@@ -1250,6 +1256,10 @@ class NeuralOrchestra_Base extends Recyclable.Root {
 
       NeuralOrchestra_Base.versus_load_progress_create.call( this );
       this.versus_loader_create( this.versus_load_progress, delayMilliseconds );
+
+
+!!! ...unfinished... (2023/03/17)
+// seems still set to undefined here because .versus_loader is not excuted immediately.
 
       // Note: Here should not modify .versus_loadOk because
       //       .versus_loader_create() and .versus_load_asyncGenerator() will do.
