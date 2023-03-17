@@ -552,8 +552,10 @@ class NeuralOrchestra_Base extends Recyclable.Root {
       NeuralOrchestra_Base.throw_if_an_old_still_running.call( this,
         this.init_asyncGenerator_running, funcNameInMessage );
 
-      // If .init_async() running, throw, too.
-      NeuralOrchestra_Base.throw_if_initializing.call( this, funcNameInMessage );
+//!!! (2023/03/17 Remarked)
+// This is possible because .init_async() calls .init_asyncGenerator().
+//       // If .init_async() running, throw, too.
+//       NeuralOrchestra_Base.throw_if_initializing.call( this, funcNameInMessage );
 
       NeuralOrchestra_Base.throw_if_workerProxies_busy_or_versus_loading.call(
         this, funcNameInMessage );
