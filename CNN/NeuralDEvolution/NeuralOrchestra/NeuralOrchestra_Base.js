@@ -169,7 +169,8 @@ import * as DEvolution from "../DEvolution.js";
 
 !!! ...unfinished... (2023/03/17)
 Deprecreate .XXXer_valid
-All .Xxx_running should be set to true inside a sync function, 
+All .Xxx_running should be set to true inside a synchronous function
+(so that it can prevent the synchronous function from being called again), 
 but be cleared to false inside a async function.
 
 
