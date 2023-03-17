@@ -68,7 +68,7 @@ import * as DEvolution from "../DEvolution.js";
  *
  * 1.3 Process image, and report versus result
  *
- *   - call and await .workerProxies_ImageData_process_promise_create()
+ *   - call and await .imageData_process_promise_create()
  *   - call versusResultSender_send()
  *   - go to 1.1.2 or 1.2.2 (Load another versus)
  *
@@ -185,13 +185,13 @@ import * as DEvolution from "../DEvolution.js";
  *   If true, a .workerProxies_init_async() has been executed and succeeded.
  *
  *
- * @member {boolean} workerProxies_ImageData_process_async_running
- *   If true, a .workerProxies_ImageData_process_async() is still executing.
+ * @member {boolean} imageData_process_async_running
+ *   If true, a .imageData_process_async() is still executing.
  * Please wait it becoming false if wanting to call
- * .workerProxies_ImageData_process_promise_create() again.
+ * .imageData_process_promise_create() again.
  *
- * @member {Promise( Float32Array[] )} workerProxies_ImageData_process_promise
- *   The result of .workerProxies_ImageData_process_promise_create().
+ * @member {Promise( Float32Array[] )} imageData_process_promise
+ *   The result of .imageData_process_promise_create().
  *
  *
  * @member {boolean} versus_load_async_running
@@ -270,8 +270,8 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     NeuralOrchestra_Base.versus_dispose.call( this );
     NeuralOrchestra_Base.versusSummary_dispose.call( this );
 
-    this.workerProxies_ImageData_process_promise = undefined;
-    this.workerProxies_ImageData_process_async_running = undefined;
+    this.imageData_process_promise = undefined;
+    this.imageData_process_async_running = undefined;
 
     this.workerProxies_init_promise = undefined;
     this.workerProxies_initOk = undefined;
@@ -867,7 +867,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
         this.workerProxies_init_async_running, funcNameInMessage,
         "workerProxies_init_promise_create" );
 
-      NeuralOrchestra_Base.throw_if_workerProxies_ImageData_processing.call(
+      NeuralOrchestra_Base.throw_if_imageData_processing.call(
         this, funcNameInMessage );
     }
 
@@ -940,7 +940,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     { // Checking pre-condition.
       const funcNameInMessage = "workerProxies_compileShaders_async";
 
-      NeuralOrchestra_Base.throw_if_workerProxies_ImageData_processing.call(
+      NeuralOrchestra_Base.throw_if_imageData_processing.call(
         this, funcNameInMessage );
     }
 
@@ -1009,7 +1009,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     { // Checking pre-condition.
       const funcNameInMessage = "workerProxies_NeuralNetArray_create_async";
 
-      NeuralOrchestra_Base.throw_if_workerProxies_ImageData_processing.call(
+      NeuralOrchestra_Base.throw_if_imageData_processing.call(
         this, funcNameInMessage );
     }
 
@@ -1032,23 +1032,23 @@ class NeuralOrchestra_Base extends Recyclable.Root {
 
 
   /**
-   * Call .workerProxies_ImageData_process_async() and record the returned
-   * promise in .workerProxies_ImageData_process_promise.
+   * Call .imageData_process_async() and record the returned
+   * promise in .imageData_process_promise.
    *
    * @param {NeuralOrchestra_Base} this
    *
    * @return {Promise( Float32Array[] )}
-   *   Return this.workerProxies_ImageData_process_promise which is an instance
-   * of .workerProxies_ImageData_process_async().
+   *   Return this.imageData_process_promise which is an instance
+   * of .imageData_process_async().
    */
-  static workerProxies_ImageData_process_promise_create(
+  static imageData_process_promise_create(
     sourceImageData, delayMilliseconds ) {
 
     { // Checking pre-condition.
-      const funcNameInMessage = "workerProxies_ImageData_process_promise_create";
+      const funcNameInMessage = "imageData_process_promise_create";
 
       NeuralOrchestra_Base.throw_if_an_old_still_running.call( this,
-        this.workerProxies_ImageData_process_async_running, funcNameInMessage );
+        this.imageData_process_async_running, funcNameInMessage );
 
       NeuralOrchestra_Base.throw_if_initializing.call( this, funcNameInMessage );
       NeuralOrchestra_Base.throw_if_workerProxies_initializing.call( this,
@@ -1058,11 +1058,11 @@ class NeuralOrchestra_Base extends Recyclable.Root {
       NeuralOrchestra_Base.throw_if_not_versus_loadOk.call( this, funcNameInMessage );
     }
 
-    this.workerProxies_ImageData_process_async_running = true;
-    this.workerProxies_ImageData_process_promise
-      = NeuralOrchestra_Base.workerProxies_ImageData_process_async.call( this,
+    this.imageData_process_async_running = true;
+    this.imageData_process_promise
+      = NeuralOrchestra_Base.imageData_process_async.call( this,
           sourceImageData, delayMilliseconds );
-    return this.workerProxies_ImageData_process_promise;
+    return this.imageData_process_promise;
   }
 
   /**
@@ -1080,15 +1080,15 @@ class NeuralOrchestra_Base extends Recyclable.Root {
    *   - Float32Array[ 0 ] is parent (chromosome) neural network's output.
    *   - Float32Array[ 1 ] is offspring (chromosome) neural network's output.
    */
-  static async workerProxies_ImageData_process_async(
+  static async imageData_process_async(
     sourceImageData, delayMilliseconds ) {
 
     { // Checking pre-condition.
-      const funcNameInMessage = "workerProxies_ImageData_process_async";
+      const funcNameInMessage = "imageData_process_async";
 
       NeuralOrchestra_Base.throw_call_another_if_false.call( this,
-        this.workerProxies_ImageData_process_async_running, funcNameInMessage,
-        "workerProxies_ImageData_process_promise_create" );
+        this.imageData_process_async_running, funcNameInMessage,
+        "imageData_process_promise_create" );
 
       NeuralOrchestra_Base.throw_if_initializing.call( this, funcNameInMessage );
       NeuralOrchestra_Base.throw_if_workerProxies_initializing.call( this,
@@ -1118,7 +1118,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
 
     } finally {
       // 3. So that this async method could be executed again.
-      this.workerProxies_ImageData_process_async_running = false;
+      this.imageData_process_async_running = false;
     }
   }
 
@@ -1208,7 +1208,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
         this.versus_load_async_running, funcNameInMessage );
 
       // Prevent the nueral networks from being changed during they are processing.
-      NeuralOrchestra_Base.throw_if_workerProxies_ImageData_processing.call(
+      NeuralOrchestra_Base.throw_if_imageData_processing.call(
         this, funcNameInMessage );
     }
 
@@ -1363,7 +1363,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
           funcNameInMessage );
 
       // Prevent the nueral networks from being changed during they are processing.
-      NeuralOrchestra_Base.throw_if_workerProxies_ImageData_processing.call(
+      NeuralOrchestra_Base.throw_if_imageData_processing.call(
         this, funcNameInMessage );
     }
 
@@ -1428,7 +1428,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
           funcNameInMessage );
 
       // Prevent the nueral networks from being changed during they are processing.
-      NeuralOrchestra_Base.throw_if_workerProxies_ImageData_processing.call(
+      NeuralOrchestra_Base.throw_if_imageData_processing.call(
         this, funcNameInMessage );
     }
 
@@ -1589,7 +1589,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
    * Submit the result of the last differential evolution versus to server.
    *
    *
-   * Note: The resolved .workerProxies_ImageData_process_async() is an
+   * Note: The resolved .imageData_process_async() is an
    *       Float32Array[].
    *
    *   - Which one is parent (chromosome) neural network's output?
@@ -1684,8 +1684,8 @@ class NeuralOrchestra_Base extends Recyclable.Root {
    * @param {NeuralOrchestra_Base} this
    * @param {string} funcNameInMessage   The caller function name. (e.g. init_async)
    */
-  static throw_if_workerProxies_ImageData_processing( funcNameInMessage ) {
-    if ( this.workerProxies_ImageData_process_async_running )
+  static throw_if_imageData_processing( funcNameInMessage ) {
+    if ( this.imageData_process_async_running )
       throw Error( `NeuralOrchestra.Base.${funcNameInMessage}(): `
         + `should not be executed while `
         + `NeuralWorker.Proxies is still processing image.` );
@@ -1698,7 +1698,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
   static throw_if_workerProxies_busy( funcNameInMessage ) {
     NeuralOrchestra_Base.throw_if_workerProxies_initializing.call(
       this, funcNameInMessage );
-    NeuralOrchestra_Base.throw_if_workerProxies_ImageData_processing.call(
+    NeuralOrchestra_Base.throw_if_imageData_processing.call(
       this, funcNameInMessage );
   }
 
