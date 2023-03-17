@@ -1058,8 +1058,12 @@ class NeuralOrchestra_Base extends Recyclable.Root {
    */
   static async workerProxies_compileShaders_async() {
 
-    NeuralOrchestra.Base.throw_if_workerProxies_ImageData_processing.call(
-      this, "workerProxies_compileShaders_async" );
+    { // Checking pre-condition.
+      const funcNameInMessage = "workerProxies_compileShaders_async";
+
+      NeuralOrchestra.Base.throw_if_workerProxies_ImageData_processing.call(
+        this, funcNameInMessage );
+    }
 
     // Dummy neural network's weights.
     //      
@@ -1123,8 +1127,12 @@ class NeuralOrchestra_Base extends Recyclable.Root {
   static async workerProxies_NeuralNetArray_create_async(
     weightArrayBufferArray, bLogDryRunTime ) {
 
-    NeuralOrchestra.Base.throw_if_workerProxies_ImageData_processing.call(
-      this, "workerProxies_NeuralNetArray_create_async" );
+    { // Checking pre-condition.
+      const funcNameInMessage = "workerProxies_NeuralNetArray_create_async";
+
+      NeuralOrchestra.Base.throw_if_workerProxies_ImageData_processing.call(
+        this, funcNameInMessage );
+    }
 
     // Although neural network configuration will be copied (not transferred)
     // to workers, they still need be cloned because NeuralWorker.Proxy will
@@ -1155,6 +1163,16 @@ class NeuralOrchestra_Base extends Recyclable.Root {
   async workerProxies_ImageData_process_promise_create(
     sourceImageData, delayMilliseconds ) {
 
+!!!
+    { // Checking pre-condition.
+      const funcNameInMessage = "workerProxies_init_promise_create";
+
+      NeuralOrchestra.Base.throw_if_an_old_still_running.call( this,
+        this.workerProxies_init_async_running, funcNameInMessage );
+    }
+
+
+!!!
     const funcNameInMessage = "workerProxies_ImageData_process_promise_create";
     if ( this.init_async_running )
       throw Error( `NeuralOrchestra.Base.${funcNameInMessage}: `
