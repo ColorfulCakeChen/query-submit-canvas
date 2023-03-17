@@ -112,9 +112,9 @@ class TestCase {
     // Test: .init_asyncGenerator() during processing should throw exception.
     try {
       ++this.testId;
-      await neuralOrchestra.init_asyncGenerator().next();
+      neuralOrchestra.initer_create();
     } catch ( e ) {
-      if ( e.message.indexOf( ".init_asyncGenerator():" ) > 0 ) {
+      if ( e.message.indexOf( ".initer_create():" ) > 0 ) {
         progressToAdvance.value_advance();
         yield progressRoot;
       } else { // Unknown error, said loudly.
@@ -458,9 +458,9 @@ class TestCase {
 
       try { // Test: Reenter .init_asyncGenerator() should throw exception.
         ++this.testId;
-        await neuralOrchestra.init_asyncGenerator().next();
+        neuralOrchestra.initer_create();
       } catch ( e ) {
-        if ( e.message.indexOf( ".init_asyncGenerator():" ) > 0 ) {
+        if ( e.message.indexOf( ".initer_create():" ) > 0 ) {
           progressToAdvance.value_advance();
           yield progressRoot;
         } else { // Unknown error, said loudly.
@@ -497,9 +497,9 @@ class TestCase {
 
       try { // Test: Reenter .init_asyncGenerator() should throw exception.
         ++this.testId;
-        await neuralOrchestra.init_asyncGenerator().next();
+        neuralOrchestra.initer_create();
       } catch ( e ) {
-        if ( e.message.indexOf( ".init_asyncGenerator():" ) > 0 ) {
+        if ( e.message.indexOf( ".initer_create():" ) > 0 ) {
           progressToAdvance.value_advance();
           yield progressRoot;
         } else { // Unknown error, said loudly.
