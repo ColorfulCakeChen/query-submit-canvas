@@ -1169,14 +1169,10 @@ class NeuralOrchestra_Base extends Recyclable.Root {
 
       NeuralOrchestra.Base.throw_if_an_old_still_running.call( this,
         this.workerProxies_ImageData_process_async_running, funcNameInMessage );
-
       NeuralOrchestra.Base.throw_if_initializing.call( this, funcNameInMessage );
-
-      NeuralOrchestra.Base.throw_if_workerProxies_initializing.call(
-        this, funcNameInMessage );
-
+      NeuralOrchestra.Base.throw_if_workerProxies_initializing.call( this,
+        funcNameInMessage );
       NeuralOrchestra.Base.throw_if_not_initOk.call( this, funcNameInMessage );
-
       NeuralOrchestra.Base.throw_if_versus_loading.call( this, funcNameInMessage );
       NeuralOrchestra.Base.throw_if_not_versus_loadOk.call( this, funcNameInMessage );
     }
@@ -1206,60 +1202,25 @@ class NeuralOrchestra_Base extends Recyclable.Root {
   static async workerProxies_ImageData_process_async(
     sourceImageData, delayMilliseconds ) {
 
-    if ( this.workerProxies_ImageData_process_async_running )
-      throw Error( `NeuralOrchestra.Base.workerProxies_ImageData_process_async(): `
-        + `should not be executed multiple times simultaneously.` );
+    { // Checking pre-condition.
+      const funcNameInMessage = "workerProxies_ImageData_process_async";
 
+      NeuralOrchestra.Base.throw_call_another_if_false.call( this,
+        this.workerProxies_ImageData_process_async_running, funcNameInMessage,
+        "workerProxies_ImageData_process_promise_create" );
 
-!!!
-    // NeuralOrchestra.Base.throw_if_workerProxies_initializing.call(
-    //   this, funcNameInMessage );
-    // NeuralOrchestra.Base.throw_if_workerProxies_ImageData_processing.call(
-    //   this, "workerProxies_NeuralNetArray_create_async" );
-
-!!! ...unfinished... (2023/03/17)
-// What if .init_asyncGenerator() has been called
-// but .next() has not been called?
-//
-// In this case, ( this.init_asyncGenerator_running == false )
-// and ( this.initOk == true ). The following can NOT discover this case!
-
-    if (   ( this.init_async_running )
-        || ( this.init_asyncGenerator_running ) )
-      throw Error( `NeuralOrchestra.Base.workerProxies_ImageData_process_async(): `
-        + `should not be executed during initializing.` );
-
-    if ( this.workerProxies_init_async_running )
-      throw Error( `NeuralOrchestra.Base.workerProxies_ImageData_process_async(): `
-        + `should be executed only if `
-        + `this.workerProxies_init_async_running `
-          + `( ${this.workerProxies_init_async_running} ) is false.` );
-
-    if ( !this.initOk )
-      throw Error( `NeuralOrchestra.Base.workerProxies_ImageData_process_async(): `
-        + `should be executed only if `
-        + `this.initOk ( ${this.initOk} ) is true.` );
-
-!!!
-    if (   ( this.versus_load_async_running )
-        || ( this.versus_load_asyncGenerator_running )
-        || ( this.versus_loader_valid ) )
-      throw Error( `NeuralOrchestra.Base.workerProxies_ImageData_process_async(): `
-        + `should not be executed while `
-        + `DEvolution.VersusSummary or DEvolution.Versus is still loading.` );
-
-    if ( !this.versus_loadOk )
-      throw Error( `NeuralOrchestra.Base.workerProxies_ImageData_process_async(): `
-        + `should be executed only if `
-        + `this.versus_loadOk ( ${this.versus_loadOk} ) is true.` );
+      NeuralOrchestra.Base.throw_if_an_old_still_running.call( this,
+        this.workerProxies_ImageData_process_async_running, funcNameInMessage );
+      NeuralOrchestra.Base.throw_if_initializing.call( this, funcNameInMessage );
+      NeuralOrchestra.Base.throw_if_workerProxies_initializing.call( this,
+        funcNameInMessage );
+      NeuralOrchestra.Base.throw_if_not_initOk.call( this, funcNameInMessage );
+      NeuralOrchestra.Base.throw_if_versus_loading.call( this, funcNameInMessage );
+      NeuralOrchestra.Base.throw_if_not_versus_loadOk.call( this, funcNameInMessage );
+    }
 
     try {
       // 0.
-
-      // 0.1 Prevent re-entrance.
-      this.workerProxies_ImageData_process_async_running = true;
-
-      // 0.2
       let sleepPromise;
       if ( delayMilliseconds > 0 )
         sleepPromise = PartTime.sleep( delayMilliseconds );
