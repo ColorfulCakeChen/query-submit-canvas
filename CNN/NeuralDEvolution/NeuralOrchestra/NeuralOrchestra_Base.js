@@ -1356,9 +1356,8 @@ class NeuralOrchestra_Base extends Recyclable.Root {
       NeuralOrchestra_Base.throw_if_an_old_still_running.call( this,
         this.versus_load_asyncGenerator_running, funcNameInMessage );
 
-      NeuralOrchestra.Base
-        .throw_if_not_init_asyncGenerator_running_or_not_initOk.call( this,
-          funcNameInMessage );
+      NeuralOrchestra_Base.throw_if_not_init_asyncGenerator_running_or_not_initOk
+        .call( this, funcNameInMessage );
 
       // Prevent the nueral networks from being changed during they are processing.
       NeuralOrchestra_Base.throw_if_imageData_processing.call(
@@ -1421,9 +1420,8 @@ class NeuralOrchestra_Base extends Recyclable.Root {
         this.versus_load_asyncGenerator_running, funcNameInMessage,
         "versus_loader_create" );
 
-      NeuralOrchestra.Base
-        .throw_if_not_init_asyncGenerator_running_or_not_initOk.call( this,
-          funcNameInMessage );
+      NeuralOrchestra_Base.throw_if_not_init_asyncGenerator_running_or_not_initOk
+        .call( this, funcNameInMessage );
 
       // Prevent the nueral networks from being changed during they are processing.
       NeuralOrchestra_Base.throw_if_imageData_processing.call(
