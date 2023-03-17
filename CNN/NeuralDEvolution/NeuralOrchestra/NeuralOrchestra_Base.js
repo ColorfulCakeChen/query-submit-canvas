@@ -461,8 +461,8 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     vocabularyChannelCount, blockCountTotalRequested, output_channelCount,
     delayMilliseconds ) {
 
+    const funcNameInMessage = "init_async";
     { // Checking pre-condition.
-      const funcNameInMessage = "init_async";
 
       NeuralOrchestra_Base.throw_call_another_if_false.call( this,
         this.init_async_running, funcNameInMessage, "init_promise_create" );
@@ -477,7 +477,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
 
       // 2. Start to load (versus summary and) versus, initialize
       //    NeuralWorker.Proxies, and create neural networks.
-      this.initer_create(
+      let initer = this.initer_create(
         this.versus_load_progress,
         downloader_spreadsheetId, downloader_apiKey, bLogFetcherEventToConsole,
         sender_clientId,
@@ -488,13 +488,18 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     
       let initerNext;
       do {
-        initerNext = await this.initer.next();
+
+        if ( initer !== this.initer )
+          throw Error( `NeuralOrchestra.Base.${funcNameInMessage}(): `
+            + `this.initer should not be changed.` );
+
+        initerNext = await initer.next();
       } while ( !initerNext.done );
 
       // (Note: The .initOk will also be set.)
       let initOk = initerNext.value;
       if ( initOk != this.initOk )
-        throw Error( `NeuralOrchestra.Base.init_async(): `
+        throw Error( `NeuralOrchestra.Base.${funcNameInMessage}(): `
           + `initOk ( ${initOk} ) `
           + `should be the same as `
           + `this.initOk ( ${this.initOk} ).`
@@ -1300,7 +1305,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
           throw Error( `NeuralOrchestra.Base.${funcNameInMessage}(): `
             + `this.versus_loader should not be changed.` );
 
-        loaderNext = await this.versus_loader.next();
+        loaderNext = await versus_loader.next();
       } while ( loaderNext.done == false );
 
       // The result should be either true or false. If result is undefined,
