@@ -199,8 +199,14 @@ class TestCase {
     ++this.testId;
 
     // A random integer between [ -1, +1 ].
-    let nNegativeZeroPositive = RandTools.getRandomIntInclusive( -1, 1 );
-    neuralOrchestra.versusResultSender_send( nNegativeZeroPositive );
+    try {
+      let nNegativeZeroPositive = RandTools.getRandomIntInclusive( -1, 1 );
+      neuralOrchestra.versusResultSender_send( nNegativeZeroPositive );
+
+    } catch ( e ) {
+      debugger;
+      throw e;
+    }
 
     progressToAdvance.value_advance();
     yield progressRoot;
