@@ -125,9 +125,9 @@ class TestCase {
     // Test: .init_async() during processing should throw exception.
     try {
       ++this.testId;
-      await neuralOrchestra.init_async();
+      neuralOrchestra.init_promise_create();
     } catch ( e ) {
-      if ( e.message.indexOf( ".init_async():" ) > 0 ) {
+    if ( e.message.indexOf( ".init_promise_create():" ) > 0 ) {
         progressToAdvance.value_advance();
         yield progressRoot;
       } else { // Unknown error, said loudly.
@@ -470,9 +470,9 @@ class TestCase {
 
       try { // Test: Reenter .init_async() should throw exception.
         ++this.testId;
-        await neuralOrchestra.init_async();
+        neuralOrchestra.init_promise_create();
       } catch ( e ) {
-        if ( e.message.indexOf( ".init_async():" ) > 0 ) {
+        if ( e.message.indexOf( ".init_promise_create():" ) > 0 ) {
           progressToAdvance.value_advance();
           yield progressRoot;
         } else { // Unknown error, said loudly.
@@ -485,9 +485,9 @@ class TestCase {
 
       try { // Test: Reenter .init_async() should throw exception.
         ++this.testId;
-        await neuralOrchestra.init_async();
+        neuralOrchestra.init_promise_create();
       } catch ( e ) {
-        if ( e.message.indexOf( ".init_async():" ) > 0 ) {
+        if ( e.message.indexOf( ".init_promise_create():" ) > 0 ) {
           progressToAdvance.value_advance();
           yield progressRoot;
         } else { // Unknown error, said loudly.
