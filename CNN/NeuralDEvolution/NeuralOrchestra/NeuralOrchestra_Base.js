@@ -156,14 +156,15 @@ import * as DEvolution from "../DEvolution.js";
  *
  * @member {boolean} init_async_running
  *   If true, a .init_async() is still executing. Please wait it becoming
- * false if wanting to call again.
+ * false if wanting to call .init_promise_create() again.
  *
  * @member {boolean} init_asyncGenerator_running
  *   If true, a .init_asyncGenerator() is still executing. Please wait it
- * becoming false if wanting to call again.
+ * becoming false if wanting to call .initer_create() again.
  *
  * @member {boolean} initOk
- *   If true, a .init_async() has been executed and succeeded.
+ *   If true, a .init_async() or .init_asyncGenerator() has been executed
+ * and succeeded.
  *
  *
 
@@ -554,6 +555,8 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     }
 
     this.init_async_running = true;
+    this.initOk = undefined;
+
     this.init_promise = NeuralOrchestra_Base.init_async.call( this,
       downloader_spreadsheetId, downloader_apiKey, bLogFetcherEventToConsole,
       sender_clientId,
@@ -686,6 +689,8 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     }
 
     this.init_asyncGenerator_running = true;
+    this.initOk = undefined;
+
     this.initer = NeuralOrchestra_Base.init_asyncGenerator.call( this,
       progressParent, 
       downloader_spreadsheetId, downloader_apiKey, bLogFetcherEventToConsole,
@@ -794,23 +799,22 @@ class NeuralOrchestra_Base extends Recyclable.Root {
 
     try {
       // 0.
-      this.initOk = false;
 
-      // 0.2
+      // 0.1
       this.downloader_spreadsheetId = downloader_spreadsheetId;
       this.downloader_apiKey = downloader_apiKey;
       this.bLogFetcherEventToConsole = bLogFetcherEventToConsole;
 
-      // 0.3
+      // 0.2
       // Note: Here should not call .versus_load_progress_dispose().
       NeuralOrchestra_Base.versus_dispose.call( this );
       NeuralOrchestra_Base.versusSummary_dispose.call( this );
 
-      // 0.4
+      // 0.3
       let progressRoot = progressParent.root_get();
       let allPromiseSet = new Set();
 
-      // 0.5
+      // 0.4
       let sleepPromise;
       if ( delayMilliseconds > 0 )
         sleepPromise = PartTime.sleep( delayMilliseconds );
@@ -925,6 +929,10 @@ class NeuralOrchestra_Base extends Recyclable.Root {
 
       return this.initOk;
 
+    } catch ( e ) {
+      this.initOk = false;
+      throw e;
+
     } finally {
       // 7. So that this async generator could be executed again.
       this.init_asyncGenerator_running = false;
@@ -970,6 +978,8 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     }
 
     this.workerProxies_init_async_running = true;
+    this.workerProxies_initOk = undefined;
+
     this.workerProxies_init_promise
       = NeuralOrchestra_Base.workerProxies_init_async.call( this );
     return this.workerProxies_init_promise;
@@ -1009,9 +1019,6 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     let initOk;
     try {
       // 0.
-      this.workerProxies_initOk = false;
-
-      // 0.2
       let neuralNetParamsBase = this.neuralNetParamsBase;
       let initOkPromise;
 
@@ -1055,6 +1062,10 @@ class NeuralOrchestra_Base extends Recyclable.Root {
         this.workerProxies_initOk = initOk;
         return this.workerProxies_initOk;
       }
+
+    } catch ( e ) {
+      this.workerProxies_initOk = false;
+      throw e;
 
     } finally {
       // 3. So that this async method could be executed again.
@@ -1362,6 +1373,9 @@ class NeuralOrchestra_Base extends Recyclable.Root {
           + `should be false, if not called by .init_async().` );
       }
 
+      // Note: .versus_loadOk should not be modified here because
+      //       .versus_load_asyncGenerator() is running.
+
     // 1.2 Outside caller calls this method (after previous .versus_loader
     //     has completed and .init_asyncXxx() succeeded).
     } else {
@@ -1369,6 +1383,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
 
       NeuralOrchestra_Base.versus_load_progress_create.call( this );
       this.versus_loader_create( this.versus_load_progress, delayMilliseconds );
+      // Note: .versus_loader_create() will set .versus_loadOk to undefined.
     }
 
     // 2.
@@ -1400,8 +1415,8 @@ class NeuralOrchestra_Base extends Recyclable.Root {
    */
   static async versus_load_async( delayMilliseconds ) {
 
+    const funcNameInMessage = "versus_load_async";
     { // Checking pre-condition.
-      const funcNameInMessage = "versus_load_async";
 
       NeuralOrchestra.Base.throw_call_another_if_false.call( this,
         this.versus_load_async_running, funcNameInMessage,
@@ -1419,7 +1434,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
 
       // 1.
       if ( !this.versus_loader )
-        throw Error( `NeuralOrchestra.Base.versus_load_async(): `
+        throw Error( `NeuralOrchestra.Base.${funcNameInMessage}(): `
           + `this.versus_loader should have already existed.` );
 
       let loaderNext;
@@ -1432,17 +1447,23 @@ class NeuralOrchestra_Base extends Recyclable.Root {
       // exception. So, continue to throw exception to inform caller the
       // generator is illegal.
       if ( loaderNext.value === undefined )
-        throw Error( `NeuralOrchestra.Base.versus_load_async(): `
+        throw Error( `NeuralOrchestra.Base.${funcNameInMessage}(): `
           + `this.versus_loader is illegal `
           + `(e.g. has been terminated previously by throwing exception).` );
 
-      let bLoadOk = loaderNext.value;
+      let loadOk = loaderNext.value;
+      if ( loadOk != this.versus_loadOk )
+        throw Error( `NeuralOrchestra.Base.${funcNameInMessage}(): `
+          + `loadOk ( ${loadOk} ) `
+          + `should be the same as `
+          + `this.versus_loadOk ( ${this.versus_loadOk} ).`
+        );
 
       // 2.
       if ( sleepPromise )
         await sleepPromise;
 
-      return bLoadOk;
+      return loadOk;
 
     } finally {
       // 3. So that this async method could be executed again.
@@ -1484,6 +1505,8 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     }
 
     this.versus_load_asyncGenerator_running = true;
+    this.versus_loadOk = undefined;
+
     this.versus_loader = NeuralOrchestra_Base.versus_load_asyncGenerator.call(
       this, progressParent, delayMilliseconds );
     return this.versus_loader;
@@ -1551,7 +1574,6 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     let neuralNet_createOk;
     try {
       // 0.
-      this.versus_loadOk = undefined;
 
       // 0.1 Determine whether necessary to load versus summary.
       let versusSummary_needLoad;
