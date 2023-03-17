@@ -173,14 +173,6 @@ import * as DEvolution from "../DEvolution.js";
  * and succeeded.
  *
  *
-
-!!! ...unfinished... (2023/03/17)
-Deprecreate .XXXer_valid
-All .Xxx_running should be set to true inside a synchronous function
-(so that it can prevent the synchronous function from being called again), 
-but be cleared to false inside a async function.
-
-
  * @member {boolean} workerProxies_init_async_running
  *   If true, a .workerProxies_init_async() is still executing. Please wait
  * it becoming false if wanting to call .workerProxies_init_promise_create()
@@ -188,46 +180,30 @@ but be cleared to false inside a async function.
  *
  * @member {Promise( boolean )} workerProxies_init_promise
  *   The result of .workerProxies_init_promise_create().
- *   The promise of .workerProxies_init_async().
- *   - Resolved to true, if succeeded.
- *     - The neural workers have been created and GPU shaders have been
- *         compiled.
- *   - Resolved to false, if failed.
  *
  * @member {boolean} workerProxies_initOk
  *   If true, a .workerProxies_init_async() has been executed and succeeded.
  *
  *
-!!! ...unfinished... (2023/03/17)
-.workerProxies_ImageData_process_promise
-.workerProxies_ImageData_process_async_running
-
-
  * @member {boolean} workerProxies_ImageData_process_async_running
  *   If true, a .workerProxies_ImageData_process_async() is still executing.
- * Please wait it becoming false if wanting to call again.
+ * Please wait it becoming false if wanting to call
+ * .workerProxies_ImageData_process_promise_create() again.
+ *
+ * @member {Promise( Float32Array[] )} workerProxies_ImageData_process_promise
+ *   The result of .workerProxies_ImageData_process_promise_create().
  *
  *
  * @member {boolean} versus_load_async_running
  *   If true, a .versus_load_async() is still executing. Please wait it becoming
- * false if wanting to call again.
+ * false if wanting to call .versus_load_promise_create() again.
  *
  * @member {boolean} versus_load_asyncGenerator_running
  *   If true, a .versus_load_asyncGenerator() is still executing. Please wait
- * it becoming false if wanting to call again.
+ * it becoming false if wanting to call .versus_loader_create() again.
  *
  * @member {Promise( boolean )} versus_load_promise
- *   The promise of whether .versus_load_progress still be advancing.
- *   - If settled, the .versus_load_progress has been stopped.
- *   - If resolved to true, it means versus summary loaded, versus loaded, and
- *       neural networks created.
- *
-
-!!!
- * @member {boolean} versus_loader_valid
- *   - If true, .versus_loader is still running (even if
- *       ( .versus_load_asyncGenerator_running == false ) ).
- *   - If false, .versus_loader is completed.
+ *   The result of .versus_load_promise_create().
  *
  * @member {AsyncGenerator} versus_loader
  *   The result of .versus_loader_create(). An instance of
@@ -238,11 +214,12 @@ but be cleared to false inside a async function.
  * networks. If ( .versus_load_progress.valuePercentage == 100 ), all the
  * loading and creating has done.
  *   - It is used only if .init_async() is called.
- *   - If .init_asyncGenerator() is called directly, itself progressParent
+ *   - If .init_asyncGenerator() is called directly, its progressParent
  *       parameter will be used instead.
  *
  * @member {boolean} versus_loadOk
- *   If true, a .versus_load_asyncGenerator() has been executed and succeeded.
+ *   If true, a .versus_load_async() or .versus_load_asyncGenerator() has been
+ * executed and succeeded.
  */
 class NeuralOrchestra_Base extends Recyclable.Root {
 
@@ -1432,6 +1409,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
    *   - Resolved to true, if succeeded.
    *     - Versus summary and versus are loaded. Neural networks are created.
    *   - Resolved to false, if failed.
+   *   - When settled, the .versus_load_progress has been stopped.
    */
   static async versus_load_async( delayMilliseconds ) {
 
