@@ -1474,13 +1474,13 @@ class NeuralOrchestra_Base extends Recyclable.Root {
       NeuralOrchestra.Base.throw_if_an_old_still_running.call( this,
         this.versus_load_asyncGenerator_running, funcNameInMessage );
 
-      // Prevent the nueral networks from being changed during they are processing.
-      NeuralOrchestra.Base.throw_if_workerProxies_ImageData_processing.call(
-        this, funcNameInMessage );
-
       NeuralOrchestra.Base
         .throw_if_not_init_asyncGenerator_running_or_not_initOk.call( this,
           funcNameInMessage );
+
+      // Prevent the nueral networks from being changed during they are processing.
+      NeuralOrchestra.Base.throw_if_workerProxies_ImageData_processing.call(
+        this, funcNameInMessage );
     }
 
     this.versus_load_asyncGenerator_running = true;
@@ -1528,24 +1528,24 @@ class NeuralOrchestra_Base extends Recyclable.Root {
    *   - Resolved to { done: true, value: false }, if failed.
    *     - .versus_loadOk will also be set to false.
    */
-  static async* versus_load_asyncGenerator(
-    progressParent, delayMilliseconds ) {
+  static async* versus_load_asyncGenerator( progressParent, delayMilliseconds ) {
 
-    if ( this.versus_load_asyncGenerator_running )
-      throw Error( `NeuralOrchestra.Base.versus_load_asyncGenerator(): `
-        + `should not be executed multiple times simultaneously.` );
+    { // Checking pre-condition.
+      const funcNameInMessage = "versus_load_asyncGenerator";
 
-    if ( !this.init_asyncGenerator_running_or_initOk )
-      throw Error( `NeuralOrchestra.Base.versus_load_asyncGenerator(): `
-        + `should be executed `
-        + `either during initializing `
-        + `or after being initialized successfully.` );
+      NeuralOrchestra.Base.throw_call_another_if_false.call( this,
+        this.versus_load_asyncGenerator_running, funcNameInMessage,
+        "versus_loader_create" );
 
-    // Prevent the nueral networks from being changed during they are processing.
-    if ( this.workerProxies_ImageData_process_async_running )
-      throw Error( `NeuralOrchestra.Base.versus_load_asyncGenerator(): `
-        + `should not be executed while `
-        + `NeuralWorker.Proxies is still processing image.` );
+
+      NeuralOrchestra.Base
+        .throw_if_not_init_asyncGenerator_running_or_not_initOk.call( this,
+          funcNameInMessage );
+
+      // Prevent the nueral networks from being changed during they are processing.
+      NeuralOrchestra.Base.throw_if_workerProxies_ImageData_processing.call(
+        this, funcNameInMessage );
+    }
 
     let progressRoot;
     let progressToAdvance;
