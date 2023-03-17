@@ -390,6 +390,37 @@ class NeuralOrchestra_Base extends Recyclable.Root {
 
 
   /**
+   * Call .init_async() and record the returned promise in .init_promise.
+   *
+   * @param {NeuralOrchestra_Base} this
+   *
+   * @return {Promise( boolean )}
+   *   Return this.init_promise
+   */
+  init_promise_create(
+    downloader_spreadsheetId, downloader_apiKey, bLogFetcherEventToConsole,
+    sender_clientId,
+    input_height, input_width,
+    vocabularyChannelCount, blockCountTotalRequested, output_channelCount,
+    delayMilliseconds ) {
+
+    if ( this.init_async_running )
+      throw Error( `NeuralOrchestra.Base.init_promise_create(): `
+        + `An old .init_async() is still running.` );
+
+    this.init_async_running = true;
+    this.init_promise = NeuralOrchestra_Base.init_async.call( this,
+      downloader_spreadsheetId, downloader_apiKey, bLogFetcherEventToConsole,
+      sender_clientId,
+      input_height, input_width,
+      vocabularyChannelCount, blockCountTotalRequested, output_channelCount,
+      delayMilliseconds
+    );
+    return this.init_promise;
+  }
+
+
+  /**
    * Call .init_asyncGenerator() and .versus_load_promise_create() internally.
    *
    *
@@ -418,7 +449,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
    * 
    *   - Resolved to false, if failed.
    */
-  async init_async(
+  static async init_async(
     downloader_spreadsheetId, downloader_apiKey, bLogFetcherEventToConsole,
 
     sender_clientId,
@@ -795,6 +826,13 @@ class NeuralOrchestra_Base extends Recyclable.Root {
    *   Return this.workerProxies_init_promise
    */
   static workerProxies_init_promise_create() {
+
+    if ( this.workerProxies_init_async_running )
+      throw Error( `NeuralOrchestra.Base.workerProxies_init_promise_create(): `
+        + `An old .workerProxies_init_async() is still running.` );
+
+    this.workerProxies_init_async_running = true;
+
     this.workerProxies_init_promise
       = NeuralOrchestra_Base.workerProxies_init_async.call( this );
     return this.workerProxies_init_promise;
@@ -833,9 +871,6 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     try {
       // 0.
       this.workerProxies_initOk = false;
-
-      // 0.1 Prevent re-entrance.
-      this.workerProxies_init_async_running = true;
 
       // 0.2
       let neuralNetParamsBase = this.neuralNetParamsBase;
