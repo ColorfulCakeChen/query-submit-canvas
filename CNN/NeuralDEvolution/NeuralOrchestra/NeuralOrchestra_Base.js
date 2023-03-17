@@ -386,133 +386,6 @@ class NeuralOrchestra_Base extends Recyclable.Root {
 
 
   /**
-   * @param {NeuralOrchestra_Base} this
-   * @param {string} funcNameInMessage   The caller function name. (e.g. init_async)
-   */
-  static throw_if_initializing( funcNameInMessage ) {
-    if (   ( this.init_async_running )
-        || ( this.init_asyncGenerator_running ) )
-      throw Error( `NeuralOrchestra.Base.${funcNameInMessage}(): `
-        + `should not be executed during initializing.` );
-  }
-
-  /**
-   * @param {NeuralOrchestra_Base} this
-   * @param {string} funcNameInMessage   The caller function name. (e.g. init_async)
-   */
-  static throw_if_not_initOk( funcNameInMessage ) {
-    if ( !this.initOk )
-      throw Error( `NeuralOrchestra.Base.${funcNameInMessage}(): `
-        + `should be executed only if `
-        + `this.initOk ( ${this.initOk} ) is true.` );
-  }
-
-  /**
-   * @param {NeuralOrchestra_Base} this
-   * @param {string} funcNameInMessage   The caller function name. (e.g. init_async)
-   */
-  static throw_if_not_init_asyncGenerator_running_or_not_initOk(
-    funcNameInMessage ) {
-    if ( !this.init_asyncGenerator_running_or_initOk )
-      throw Error( `NeuralOrchestra.Base.${funcNameInMessage}(): `
-        + `should be executed `
-        + `either during initializing `
-        + `or after being initialized successfully.` );
-  }
-
-  /**
-   * @param {NeuralOrchestra_Base} this
-   * @param {string} funcNameInMessage   The caller function name. (e.g. init_async)
-   */
-  static throw_if_workerProxies_initializing( funcNameInMessage ) {
-    if ( this.workerProxies_init_async_running )
-      throw Error( `NeuralOrchestra.Base.${funcNameInMessage}(): `
-        + `should not be executed while `
-        + `NeuralWorker.Proxies is still initializing.` );
-  }
-
-  /**
-   * @param {NeuralOrchestra_Base} this
-   * @param {string} funcNameInMessage   The caller function name. (e.g. init_async)
-   */
-  static throw_if_workerProxies_ImageData_processing( funcNameInMessage ) {
-    if ( this.workerProxies_ImageData_process_async_running )
-      throw Error( `NeuralOrchestra.Base.${funcNameInMessage}(): `
-        + `should not be executed while `
-        + `NeuralWorker.Proxies is still processing image.` );
-  }
-
-  /**
-   * @param {NeuralOrchestra_Base} this
-   * @param {string} funcNameInMessage   The caller function name. (e.g. init_async)
-   */
-  static throw_if_workerProxies_busy( funcNameInMessage ) {
-    NeuralOrchestra_Base.throw_if_workerProxies_initializing.call(
-      this, funcNameInMessage );
-    NeuralOrchestra_Base.throw_if_workerProxies_ImageData_processing.call(
-      this, funcNameInMessage );
-  }
-
-  /**
-   * @param {NeuralOrchestra_Base} this
-   * @param {string} funcNameInMessage   The caller function name. (e.g. init_async)
-   */
-  static throw_if_versus_loading( funcNameInMessage ) {
-    if (   ( this.versus_load_async_running )
-        || ( this.versus_load_asyncGenerator_running ) )
-      throw Error( `NeuralOrchestra.Base.${funcNameInMessage}(): `
-        + `should not be executed while `
-        + `DEvolution.VersusSummary or DEvolution.Versus is still loading.` );
-  }
-
-  /**
-   * @param {NeuralOrchestra_Base} this
-   * @param {string} funcNameInMessage   The caller function name. (e.g. init_async)
-   */
-  static throw_if_not_versus_loadOk( funcNameInMessage ) {
-    if ( !this.versus_loadOk )
-      throw Error( `NeuralOrchestra.Base.${funcNameInMessage}(): `
-        + `should be executed only if `
-        + `this.versus_loadOk ( ${this.versus_loadOk} ) is true.` );
-  }
-
-  /**
-   * @param {NeuralOrchestra_Base} this
-   * @param {string} funcNameInMessage   The caller function name. (e.g. init_async)
-   */
-  static throw_if_workerProxies_busy_or_versus_loading( funcNameInMessage ) {
-    NeuralOrchestra_Base.throw_if_workerProxies_busy.call( this, funcNameInMessage );
-    NeuralOrchestra_Base.throw_if_versus_loading.call( this, funcNameInMessage );
-  }
-
-  /**
-   * @param {NeuralOrchestra_Base} this
-   * @param {boolean} b_still_running    If true, throw exception.
-   * @param {string} funcNameInMessage   The caller function name. (e.g. init_async)
-   */
-  static throw_if_an_old_still_running( b_still_running, funcNameInMessage ) {
-    if ( b_still_running )
-      throw Error( `NeuralOrchestra.Base.${funcNameInMessage}: `
-        + `An old .${funcNameInMessage}() is still running.` );
-  }
-
-  /**
-   * @param {NeuralOrchestra_Base} this
-   * @param {boolean} b                  If false, throw exception.
-   * @param {string} funcNameInMessage   The caller function name. (e.g. init_async)
-   * @param {string} funcNameShouldBeCalledInMessage
-   *   The function name which should be called instead. (e.g. init_promise_create)
-   */
-  static throw_call_another_if_false(
-    b, funcNameInMessage, funcNameShouldBeCalledInMessage ) {
-
-    if ( !b )
-      throw Error( `NeuralOrchestra.Base.${funcNameInMessage}: `
-        + `Please call .${funcNameShouldBeCalledInMessage}() instead.` );
-  }
-
-
-  /**
    * Call .init_async() and record the returned promise in .init_promise.
    *
    * @param {NeuralOrchestra_Base} this
@@ -604,23 +477,24 @@ class NeuralOrchestra_Base extends Recyclable.Root {
 
       // 2. Start to load (versus summary and) versus, initialize
       //    NeuralWorker.Proxies, and create neural networks.
-      let initer_async = this.init_asyncGenerator(
+      this.initer_create(
         this.versus_load_progress,
         downloader_spreadsheetId, downloader_apiKey, bLogFetcherEventToConsole,
         sender_clientId,
         input_height, input_width,
         vocabularyChannelCount,
         blockCountTotalRequested,
-        output_channelCount
+        output_channelCount,
+        delayMilliseconds
       );
     
-      let initer_next;
+      let initerNext;
       do {
-        initer_next = await initer_async.next();
-      } while ( !initer_next.done );
+        initerNext = await this.initer.next();
+      } while ( !initerNext.done );
 
       // (Note: The .initOk will also be set.)
-      let initOk = initer_next.value;
+      let initOk = initerNext.value;
       if ( initOk != this.initOk )
         throw Error( `NeuralOrchestra.Base.init_async(): `
           + `initOk ( ${initOk} ) `
@@ -1759,6 +1633,133 @@ class NeuralOrchestra_Base extends Recyclable.Root {
       this.versusResultSender.disposeResources_and_recycleToPool();
       this.versusResultSender = null;
     }
+  }
+
+
+  /**
+   * @param {NeuralOrchestra_Base} this
+   * @param {string} funcNameInMessage   The caller function name. (e.g. init_async)
+   */
+  static throw_if_initializing( funcNameInMessage ) {
+    if (   ( this.init_async_running )
+        || ( this.init_asyncGenerator_running ) )
+      throw Error( `NeuralOrchestra.Base.${funcNameInMessage}(): `
+        + `should not be executed during initializing.` );
+  }
+
+  /**
+   * @param {NeuralOrchestra_Base} this
+   * @param {string} funcNameInMessage   The caller function name. (e.g. init_async)
+   */
+  static throw_if_not_initOk( funcNameInMessage ) {
+    if ( !this.initOk )
+      throw Error( `NeuralOrchestra.Base.${funcNameInMessage}(): `
+        + `should be executed only if `
+        + `this.initOk ( ${this.initOk} ) is true.` );
+  }
+
+  /**
+   * @param {NeuralOrchestra_Base} this
+   * @param {string} funcNameInMessage   The caller function name. (e.g. init_async)
+   */
+  static throw_if_not_init_asyncGenerator_running_or_not_initOk(
+    funcNameInMessage ) {
+    if ( !this.init_asyncGenerator_running_or_initOk )
+      throw Error( `NeuralOrchestra.Base.${funcNameInMessage}(): `
+        + `should be executed `
+        + `either during initializing `
+        + `or after being initialized successfully.` );
+  }
+
+  /**
+   * @param {NeuralOrchestra_Base} this
+   * @param {string} funcNameInMessage   The caller function name. (e.g. init_async)
+   */
+  static throw_if_workerProxies_initializing( funcNameInMessage ) {
+    if ( this.workerProxies_init_async_running )
+      throw Error( `NeuralOrchestra.Base.${funcNameInMessage}(): `
+        + `should not be executed while `
+        + `NeuralWorker.Proxies is still initializing.` );
+  }
+
+  /**
+   * @param {NeuralOrchestra_Base} this
+   * @param {string} funcNameInMessage   The caller function name. (e.g. init_async)
+   */
+  static throw_if_workerProxies_ImageData_processing( funcNameInMessage ) {
+    if ( this.workerProxies_ImageData_process_async_running )
+      throw Error( `NeuralOrchestra.Base.${funcNameInMessage}(): `
+        + `should not be executed while `
+        + `NeuralWorker.Proxies is still processing image.` );
+  }
+
+  /**
+   * @param {NeuralOrchestra_Base} this
+   * @param {string} funcNameInMessage   The caller function name. (e.g. init_async)
+   */
+  static throw_if_workerProxies_busy( funcNameInMessage ) {
+    NeuralOrchestra_Base.throw_if_workerProxies_initializing.call(
+      this, funcNameInMessage );
+    NeuralOrchestra_Base.throw_if_workerProxies_ImageData_processing.call(
+      this, funcNameInMessage );
+  }
+
+  /**
+   * @param {NeuralOrchestra_Base} this
+   * @param {string} funcNameInMessage   The caller function name. (e.g. init_async)
+   */
+  static throw_if_versus_loading( funcNameInMessage ) {
+    if (   ( this.versus_load_async_running )
+        || ( this.versus_load_asyncGenerator_running ) )
+      throw Error( `NeuralOrchestra.Base.${funcNameInMessage}(): `
+        + `should not be executed while `
+        + `DEvolution.VersusSummary or DEvolution.Versus is still loading.` );
+  }
+
+  /**
+   * @param {NeuralOrchestra_Base} this
+   * @param {string} funcNameInMessage   The caller function name. (e.g. init_async)
+   */
+  static throw_if_not_versus_loadOk( funcNameInMessage ) {
+    if ( !this.versus_loadOk )
+      throw Error( `NeuralOrchestra.Base.${funcNameInMessage}(): `
+        + `should be executed only if `
+        + `this.versus_loadOk ( ${this.versus_loadOk} ) is true.` );
+  }
+
+  /**
+   * @param {NeuralOrchestra_Base} this
+   * @param {string} funcNameInMessage   The caller function name. (e.g. init_async)
+   */
+  static throw_if_workerProxies_busy_or_versus_loading( funcNameInMessage ) {
+    NeuralOrchestra_Base.throw_if_workerProxies_busy.call( this, funcNameInMessage );
+    NeuralOrchestra_Base.throw_if_versus_loading.call( this, funcNameInMessage );
+  }
+
+  /**
+   * @param {NeuralOrchestra_Base} this
+   * @param {boolean} b_still_running    If true, throw exception.
+   * @param {string} funcNameInMessage   The caller function name. (e.g. init_async)
+   */
+  static throw_if_an_old_still_running( b_still_running, funcNameInMessage ) {
+    if ( b_still_running )
+      throw Error( `NeuralOrchestra.Base.${funcNameInMessage}: `
+        + `An old .${funcNameInMessage}() is still running.` );
+  }
+
+  /**
+   * @param {NeuralOrchestra_Base} this
+   * @param {boolean} b                  If false, throw exception.
+   * @param {string} funcNameInMessage   The caller function name. (e.g. init_async)
+   * @param {string} funcNameShouldBeCalledInMessage
+   *   The function name which should be called instead. (e.g. init_promise_create)
+   */
+  static throw_call_another_if_false(
+    b, funcNameInMessage, funcNameShouldBeCalledInMessage ) {
+
+    if ( !b )
+      throw Error( `NeuralOrchestra.Base.${funcNameInMessage}: `
+        + `Please call .${funcNameShouldBeCalledInMessage}() instead.` );
   }
  
 }
