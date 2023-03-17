@@ -649,8 +649,8 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     delayMilliseconds
   ) {
 
+    const funcNameInMessage = "init_asyncGenerator";
     { // Checking pre-condition.
-      const funcNameInMessage = "init_asyncGenerator";
 
       NeuralOrchestra_Base.throw_call_another_if_false.call( this,
         this.init_asyncGenerator_running, funcNameInMessage, "initer_create" );
@@ -682,9 +682,9 @@ class NeuralOrchestra_Base extends Recyclable.Root {
         sleepPromise = PartTime.sleep( delayMilliseconds );
 
       // 1. Load (versus summary and) versus. Create neural networks.
-      this.versus_loader_create( progressParent );
+      versus_loader = this.versus_loader_create( progressParent );
 
-      let loader_next = this.versus_loader.next();
+      let loader_next = versus_loader.next();
       allPromiseSet.add( loader_next );
 
       // 2. Initialize NeuralWorker.Proxies
@@ -726,7 +726,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
             // (Note: The .versus_loadOk will also be set.)
             let versus_loadOk = object.value;
             if ( versus_loadOk != this.versus_loadOk )
-              throw Error( `NeuralOrchestra.Base.init_asyncGenerator(): `
+              throw Error( `NeuralOrchestra.Base.${funcNameInMessage}(): `
                 + `versus_loadOk ( ${versus_loadOk} ) `
                 + `should be the same as `
                 + `this.versus_loadOk ( ${this.versus_loadOk} ).`
@@ -735,7 +735,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
             // 3.2.1
             // In theory, it should not execute to here because
             // .versus_loader waits .workerProxies_init_promise internally.
-            throw Error( `NeuralOrchestra.Base.init_asyncGenerator(): `
+            throw Error( `NeuralOrchestra.Base.${funcNameInMessage}(): `
               + `.versus_loader `
               + `should not be done before `
               + `.workerProxies_init_promise`
@@ -747,8 +747,12 @@ class NeuralOrchestra_Base extends Recyclable.Root {
             // let progressRoot = object.value;
             yield progressRoot;
 
+            if ( versus_loader !== this.versus_loader )
+              throw Error( `NeuralOrchestra.Base.${funcNameInMessage}(): `
+                + `this.versus_loader should not be changed.` );
+   
             allPromiseSet.delete( loader_next );
-            loader_next = this.versus_loader.next();
+            loader_next = versus_loader.next();
             allPromiseSet.add( loader_next );
           }
 
