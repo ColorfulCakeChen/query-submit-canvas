@@ -414,12 +414,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     }
 
     this.init_async_running = true;
-
-!!! ...unfinished... (2023/03/17)
-// seems still set to undefined here because .init_async() is not executed immediately.
-
-    // Note: Here should not modify .initOk because .initer_create() and
-    //       .init_asyncGenerator() will do.
+    this.initOk = undefined;
 
     this.init_promise = NeuralOrchestra_Base.init_async.call( this,
       downloader_spreadsheetId, downloader_apiKey, bLogFetcherEventToConsole,
@@ -1259,12 +1254,8 @@ class NeuralOrchestra_Base extends Recyclable.Root {
       NeuralOrchestra_Base.versus_load_progress_create.call( this );
       this.versus_loader_create( this.versus_load_progress, delayMilliseconds );
 
-
-!!! ...unfinished... (2023/03/17)
-// seems still set to undefined here because .versus_loader is not executed immediately.
-
-      // Note: Here should not modify .versus_loadOk because
-      //       .versus_loader_create() and .versus_load_asyncGenerator() will do.
+      // Note: Here needs not set .versus_loadOk to undefined because
+      //       .versus_loader_create() has done it.
     }
 
     // 2.
