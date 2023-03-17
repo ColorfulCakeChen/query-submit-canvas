@@ -412,6 +412,9 @@ class NeuralOrchestra_Base extends Recyclable.Root {
 
     this.init_async_running = true;
 
+!!! ...unfinished... (2023/03/17)
+// seems still set to undefined here because .init_async() is not excuted immediately.
+
     // Note: Here should not modify .initOk because .initer_create() and
     //       .init_asyncGenerator() will do.
 
