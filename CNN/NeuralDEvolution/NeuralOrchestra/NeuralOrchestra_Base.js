@@ -1169,6 +1169,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
 
       NeuralOrchestra.Base.throw_if_an_old_still_running.call( this,
         this.workerProxies_ImageData_process_async_running, funcNameInMessage );
+
       NeuralOrchestra.Base.throw_if_initializing.call( this, funcNameInMessage );
       NeuralOrchestra.Base.throw_if_workerProxies_initializing.call( this,
         funcNameInMessage );
@@ -1209,8 +1210,6 @@ class NeuralOrchestra_Base extends Recyclable.Root {
         this.workerProxies_ImageData_process_async_running, funcNameInMessage,
         "workerProxies_ImageData_process_promise_create" );
 
-      NeuralOrchestra.Base.throw_if_an_old_still_running.call( this,
-        this.workerProxies_ImageData_process_async_running, funcNameInMessage );
       NeuralOrchestra.Base.throw_if_initializing.call( this, funcNameInMessage );
       NeuralOrchestra.Base.throw_if_workerProxies_initializing.call( this,
         funcNameInMessage );
