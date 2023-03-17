@@ -836,6 +836,7 @@ class TestCase {
 
     } catch ( e ) {
       throw e;
+      debugger;
 
     } finally {
       if ( neuralOrchestra ) {
