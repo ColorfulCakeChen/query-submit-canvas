@@ -1537,7 +1537,6 @@ class NeuralOrchestra_Base extends Recyclable.Root {
         this.versus_load_asyncGenerator_running, funcNameInMessage,
         "versus_loader_create" );
 
-
       NeuralOrchestra.Base
         .throw_if_not_init_asyncGenerator_running_or_not_initOk.call( this,
           funcNameInMessage );
@@ -1669,7 +1668,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
       this.versus_load_asyncGenerator_running = false;
     }
 
-    // 5. Advance progress to 100% only if neural networks created successfully
+    // 6. Advance progress to 100% only if neural networks created successfully
     //    and .versus_load_asyncGenerator_running has been set to false (so
     //    that caller can re-execute this generator immediately when progress
     //    become 100%).
