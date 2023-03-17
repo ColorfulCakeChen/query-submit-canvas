@@ -1256,6 +1256,10 @@ class NeuralOrchestra_Base extends Recyclable.Root {
       NeuralOrchestra_Base.throw_if_an_old_still_running.call( this,
         this.versus_load_async_running, funcNameInMessage );
 
+
+!!! ...unfinished... (2023/03/17)
+// should check not initializing, not versus loading
+
       // Prevent the nueral networks from being changed during they are processing.
       NeuralOrchestra_Base.throw_if_imageData_processing.call(
         this, funcNameInMessage );
@@ -1295,6 +1299,10 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     }
 
     // 2.
+
+!!! ...unfinished... (2023/03/17)
+// should move to .versus_loader_create_without_checking_precondition()
+
     this.versus_load_async_running = true;
     this.versus_load_promise
       = NeuralOrchestra_Base.versus_load_async.call( this, delayMilliseconds );
@@ -1413,6 +1421,9 @@ class NeuralOrchestra_Base extends Recyclable.Root {
       NeuralOrchestra_Base.throw_if_an_old_still_running.call( this,
         this.versus_load_asyncGenerator_running, funcNameInMessage );
 
+!!! ...unfinished... (2023/03/17)
+// should check not initializing, not versus loading
+
       NeuralOrchestra_Base.throw_if_not_init_asyncGenerator_running_or_not_initOk
         .call( this, funcNameInMessage );
 
@@ -1420,6 +1431,9 @@ class NeuralOrchestra_Base extends Recyclable.Root {
       NeuralOrchestra_Base.throw_if_imageData_processing.call(
         this, funcNameInMessage );
     }
+
+!!! ...unfinished... (2023/03/17)
+// should move to .versus_loader_create_without_checking_precondition()
 
     this.versus_load_asyncGenerator_running = true;
     this.versus_loadOk = undefined;
