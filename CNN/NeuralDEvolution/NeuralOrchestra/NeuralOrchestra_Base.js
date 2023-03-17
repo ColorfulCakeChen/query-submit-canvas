@@ -248,6 +248,15 @@ class NeuralOrchestra_Base extends Recyclable.Root {
 
   /** @override */
   disposeResources() {
+
+    // Alert if .versus_loader (perhaps, with .versus_load_promise) still running.
+    if ( this.versus_loader_valid )
+      throw Error( `NeuralOrchestra.Base.disposeResources(): `
+        + `this.versus_loader_valid ( ${this.versus_loader_valid} ) `
+        + `should be false. `
+        + `Please wait previous .versus_loader to complete `
+        + `if wanting to dispose.` );
+
     NeuralOrchestra_Base.versusResultSender_dispose.call( this );
 
     NeuralOrchestra_Base.versus_load_progress_dispose.call( this );
@@ -431,7 +440,8 @@ class NeuralOrchestra_Base extends Recyclable.Root {
         + `NeuralWorker.Proxies is still processing image.` );
 
     if (   ( this.versus_load_async_running )
-        || ( this.versus_load_asyncGenerator_running ) )
+        || ( this.versus_load_asyncGenerator_running )
+        || ( this.versus_loader_valid ) )
       throw Error( `NeuralOrchestra.Base.init_async(): `
         + `should not be executed while `
         + `DEvolution.VersusSummary or DEvolution.Versus is still loading.` );
@@ -444,8 +454,9 @@ class NeuralOrchestra_Base extends Recyclable.Root {
       NeuralOrchestra_Base.versus_load_progress_create.call( this );
 
 
-!!! ...unfinished... (2023/03/16)
+//!!! ...unfinished... (2023/03/16)
 // What if re-init? The this.versus_loader will become another object.
+// A: The .versus_loader_valid checking should be enough.
 
 
       // 2. Start to load (versus summary and) versus, initialize
@@ -597,7 +608,8 @@ class NeuralOrchestra_Base extends Recyclable.Root {
         + `NeuralWorker.Proxies is still processing image.` );
 
     if (   ( this.versus_load_async_running )
-        || ( this.versus_load_asyncGenerator_running ) )
+        || ( this.versus_load_asyncGenerator_running )
+        || ( this.versus_loader_valid ) )
       throw Error( `NeuralOrchestra.Base.init_asyncGenerator(): `
         + `should not be executed while `
         + `DEvolution.VersusSummary or DEvolution.Versus is still loading.` );
@@ -629,8 +641,9 @@ class NeuralOrchestra_Base extends Recyclable.Root {
         sleepPromise = PartTime.sleep( delayMilliseconds );
 
 
-!!! ...unfinished... (2023/03/16)
+//!!! ...unfinished... (2023/03/16)
 // What if re-init? The this.versus_loader will become another object.
+// A: The .versus_loader_valid checking should be enough.
 
 
       // 1. Load (versus summary and) versus. Create neural networks.
@@ -648,7 +661,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
           blockCountTotalRequested,
           output_channelCount );
 
-          NeuralOrchestra_Base.workerProxies_create.call( this );
+        NeuralOrchestra_Base.workerProxies_create.call( this );
         NeuralOrchestra_Base.workerProxies_init_promise_create.call( this );
         allPromiseSet.add( this.workerProxies_init_promise );
       }
@@ -987,16 +1000,37 @@ class NeuralOrchestra_Base extends Recyclable.Root {
       throw Error( `NeuralOrchestra.Base.workerProxies_ImageData_process_async(): `
         + `should not be executed multiple times simultaneously.` );
 
+!!! ...unfinished... (2023/03/17)
+// What if .init_asyncGenerator() has been called
+// but .next() has not been called?
+//
+// In this case, ( this.init_asyncGenerator_running == false )
+// and ( this.initOk == true ). The following can NOT discover this case!
+
+    if (   ( this.init_async_running )
+        || ( this.init_asyncGenerator_running ) )
+      throw Error( `NeuralOrchestra.Base.workerProxies_ImageData_process_async(): `
+        + `should not be executed while `
+        + `DEvolution.VersusSummary or DEvolution.Versus is still loading.` );
+
+    if ( this.workerProxies_init_async_running )
+      throw Error( `NeuralOrchestra.Base.workerProxies_ImageData_process_async(): `
+        + `should be executed only if `
+        + `this.workerProxies_init_async_running `
+          + `( ${this.workerProxies_init_async_running} ) is false.` );
+
     if ( !this.initOk )
       throw Error( `NeuralOrchestra.Base.workerProxies_ImageData_process_async(): `
         + `should be executed only if `
         + `this.initOk ( ${this.initOk} ) is true.` );
 
-    if ( this.versus_loader_valid )
+!!!
+    if (   ( this.versus_load_async_running )
+        || ( this.versus_load_asyncGenerator_running )
+        || ( this.versus_loader_valid ) )
       throw Error( `NeuralOrchestra.Base.workerProxies_ImageData_process_async(): `
-        + `should be executed only if `
-        + `this.versus_loader complete `
-        + `(this.versus_loader_valid ( ${this.versus_loader_valid} ) is false).` );
+        + `should not be executed while `
+        + `DEvolution.VersusSummary or DEvolution.Versus is still loading.` );
 
     if ( !this.versus_loadOk )
       throw Error( `NeuralOrchestra.Base.workerProxies_ImageData_process_async(): `
@@ -1129,8 +1163,8 @@ class NeuralOrchestra_Base extends Recyclable.Root {
       //       could have existed.
       } else {
         throw Error( `NeuralOrchestra.Base.versus_load_promise_create(): `
-          + `this.versus_loader should be null, `
-          + `if not called by .init_async().` );
+          + `this.versus_loader_valid ( ${this.versus_loader_valid} ) `
+          + `should be false, if not called by .init_async().` );
       }
 
     // 1.2 Outside caller calls this method (after previous .versus_loader
@@ -1148,11 +1182,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
 
     // 2.
     this.versus_load_promise
-
-//!!! ...unfinished... (2023/03/16)
-//should add delayMilliseconds
-      = NeuralOrchestra_Base.versus_load_async.call( this );
-//      = NeuralOrchestra_Base.versus_load_async.call( this, delayMilliseconds );
+      = NeuralOrchestra_Base.versus_load_async.call( this, delayMilliseconds );
     return this.versus_load_promise;
   }
 
@@ -1181,6 +1211,11 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     if ( this.versus_load_async_running )
       throw Error( `NeuralOrchestra.Base.versus_load_async(): `
         + `should not be executed multiple times simultaneously.` );
+
+    if ( !this.versus_loader_valid )
+      throw Error( `NeuralOrchestra.Base.versus_load_async(): `
+        + `this.versus_loader_valid ( ${this.versus_loader_valid} ) `
+        + `should be true.` );
 
     try {
       // 0.
@@ -1249,9 +1284,10 @@ class NeuralOrchestra_Base extends Recyclable.Root {
 
     if ( this.versus_loader_valid )
       throw Error( `NeuralOrchestra.Base.versus_loader_create(): `
-        + `this.versus_loader should be null. `
+        + `this.versus_loader_valid ( ${this.versus_loader_valid} ) `
+        + `should be false. `
         + `Please wait previous .versus_loader to complete `
-        + `(wait this.versus_loader_valid ( ${this.versus_loader_valid} ) `
+        + `(i.e. wait this.versus_loader_valid ( ${this.versus_loader_valid} ) `
         + `becoming false) if wanting to call again.` );
 
     if ( !this.initRunning_or_initOk )
