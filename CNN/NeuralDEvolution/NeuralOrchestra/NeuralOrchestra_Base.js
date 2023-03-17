@@ -1320,15 +1320,16 @@ class NeuralOrchestra_Base extends Recyclable.Root {
    */
   versus_load_promise_create( delayMilliseconds ) {
 
-    if ( this.versus_load_async_running )
-      throw Error( `NeuralOrchestra.Base.versus_load_promise_create(): `
-        + `An old .versus_load_async() is still running.` );
+    { // Checking pre-condition.
+      const funcNameInMessage = "versus_load_promise_create";
 
-    // Prevent the nueral networks from being changed during they are processing.
-    if ( this.workerProxies_ImageData_process_async_running )
-      throw Error( `NeuralOrchestra.Base.versus_load_promise_create(): `
-        + `should not be executed while `
-        + `NeuralWorker.Proxies is still processing image.` );
+      NeuralOrchestra.Base.throw_if_an_old_still_running.call( this,
+        this.versus_load_async_running, funcNameInMessage );
+
+      // Prevent the nueral networks from being changed during they are processing.
+      NeuralOrchestra.Base.throw_if_workerProxies_ImageData_processing.call(
+        this, funcNameInMessage );
+    }
 
     // 1.
 
