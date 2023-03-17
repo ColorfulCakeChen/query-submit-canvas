@@ -101,8 +101,7 @@ class TestCase {
       ++this.testId;
       neuralOrchestra.imageData_process_promise_create();
     } catch ( e ) {
-      if ( e.message.indexOf(
-             ".imageData_process_promise_create():" ) > 0 ) {
+      if ( e.message.indexOf( ".imageData_process_promise_create():" ) > 0 ) {
         progressToAdvance.value_advance();
         yield progressRoot;
       } else { // Unknown error, said loudly.
@@ -326,8 +325,7 @@ class TestCase {
       ++this.testId;
       neuralOrchestra.imageData_process_promise_create();
     } catch ( e ) {
-      if ( e.message.indexOf(
-             ".imageData_process_promise_create():" ) > 0 ) {
+      if ( e.message.indexOf( ".imageData_process_promise_create():" ) > 0 ) {
         progressToAdvance.value_advance();
         yield progressRoot;
       } else { // Unknown error, said loudly.
@@ -528,8 +526,7 @@ class TestCase {
       ++this.testId;
       neuralOrchestra.imageData_process_promise_create();
     } catch ( e ) {
-      if ( e.message.indexOf(
-             ".imageData_process_promise_create():" ) > 0 ) {
+      if ( e.message.indexOf( ".imageData_process_promise_create():" ) > 0 ) {
         progressToAdvance.value_advance();
         yield progressRoot;
       } else { // Unknown error, said loudly.
@@ -671,8 +668,7 @@ class TestCase {
         ++this.testId;
         neuralOrchestra.imageData_process_promise_create();
       } catch ( e ) {
-        if ( e.message.indexOf(
-               ".imageData_process_promise_create():" ) > 0 ) {
+        if ( e.message.indexOf( ".imageData_process_promise_create():" ) > 0 ) {
           progressToAdvance.value_advance();
           yield progressRoot;
         } else { // Unknown error, said loudly.
