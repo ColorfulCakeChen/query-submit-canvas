@@ -423,10 +423,8 @@ class TestCase {
 
     // 1. Initialize.
     ++this.testId;
-    let initer_async;
-    let initPromise;
     if ( b_init_asyncGenerator )
-      initer_async = neuralOrchestra.init_asyncGenerator(
+      neuralOrchestra.initer_create(
         progressInit,
         this.downloader_spreadsheetId, this.downloader_apiKey,
         this.bLogFetcherEventToConsole,
@@ -437,7 +435,7 @@ class TestCase {
         this.delayMilliseconds
       );
     else
-      initPromise = neuralOrchestra.init_async(
+      neuralOrchestra.init_promise_create(
         this.downloader_spreadsheetId, this.downloader_apiKey,
         this.bLogFetcherEventToConsole,
         this.sender_clientId,
@@ -540,12 +538,12 @@ class TestCase {
       if ( b_init_asyncGenerator ) {
         let ininterNext;
         do {
-          ininterNext = await initer_async.next();
+          ininterNext = await neuralOrchestra.initer.next();
         } while ( !ininterNext.done );
         initOk = ininterNext.value;
 
       } else {
-        initOk = await initPromise;
+        initOk = await neuralOrchestra.init_promise;
       }
     } catch ( e ) { // Unknown error, said loudly.
       throw Error( `NeuralOrchestra: testId=${this.testId}. ${e}`, { cause: e } );
