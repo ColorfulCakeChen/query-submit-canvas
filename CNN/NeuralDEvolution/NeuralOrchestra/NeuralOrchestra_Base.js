@@ -478,15 +478,16 @@ class NeuralOrchestra_Base extends Recyclable.Root {
 
       // 2. Start to load (versus summary and) versus, initialize
       //    NeuralWorker.Proxies, and create neural networks.
-      let initer = this.initer_create(
-        this.versus_load_progress,
-        downloader_spreadsheetId, downloader_apiKey, bLogFetcherEventToConsole,
-        sender_clientId,
-        input_height, input_width,
-        vocabularyChannelCount, blockCountTotalRequested, output_channelCount,
-        delayMilliseconds
-      );
-    
+      let initer = NeuralOrchestra_Base
+        .initer_create_without_checking_precondition.call( this,
+          this.versus_load_progress,
+          downloader_spreadsheetId, downloader_apiKey, bLogFetcherEventToConsole,
+          sender_clientId,
+          input_height, input_width,
+          vocabularyChannelCount, blockCountTotalRequested, output_channelCount,
+          delayMilliseconds
+        );
+
       let initerNext;
       do {
 
@@ -554,14 +555,42 @@ class NeuralOrchestra_Base extends Recyclable.Root {
       NeuralOrchestra_Base.throw_if_an_old_still_running.call( this,
         this.init_asyncGenerator_running, funcNameInMessage );
 
-//!!! (2023/03/17 Remarked)
-// This is possible because .init_async() calls .init_asyncGenerator().
-//       // If .init_async() running, throw, too.
-//       NeuralOrchestra_Base.throw_if_initializing.call( this, funcNameInMessage );
+      // If .init_async() running, throw, too.
+      NeuralOrchestra_Base.throw_if_initializing.call( this, funcNameInMessage );
 
       NeuralOrchestra_Base.throw_if_workerProxies_busy_or_versus_loading.call(
         this, funcNameInMessage );
     }
+
+    return NeuralOrchestra_Base
+      .initer_create_without_checking_precondition.call( this,
+        progressParent, 
+        downloader_spreadsheetId, downloader_apiKey, bLogFetcherEventToConsole,
+        sender_clientId,
+        input_height, input_width,
+        vocabularyChannelCount, blockCountTotalRequested, output_channelCount,
+        delayMilliseconds );
+  }
+
+  /**
+   * Create .initer (an instance of .init_asyncGenerator()).
+   * 
+   * Called by .init_async() and .initer_create(). It does not check
+   * precondition.
+   *
+   *
+   * @param {NeuralOrchestra_Base} this
+   *
+   * @return {AsyncGenerator}
+   *   Return this.initer which is an instance of .init_asyncGenerator().
+   */
+  static initer_create_without_checking_precondition(
+    progressParent,
+    downloader_spreadsheetId, downloader_apiKey, bLogFetcherEventToConsole,
+    sender_clientId,
+    input_height, input_width,
+    vocabularyChannelCount, blockCountTotalRequested, output_channelCount,
+    delayMilliseconds ) {
 
     this.init_asyncGenerator_running = true;
     this.initOk = undefined;
