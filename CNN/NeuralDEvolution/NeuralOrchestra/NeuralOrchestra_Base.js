@@ -658,6 +658,11 @@ class NeuralOrchestra_Base extends Recyclable.Root {
 
       return this.initOk;
 
+    } catch ( e ) {
+      // Note: Here should not modify .initOk because .init_asyncGenerator()
+      //       will do.
+      throw e;
+
     } finally {
       // 4. So that this async method could be executed again.
       this.init_async_running = false;
@@ -1470,8 +1475,8 @@ class NeuralOrchestra_Base extends Recyclable.Root {
       return loadOk;
 
     } catch ( e ) {
-      // Note: Here should not set .versus_loadOk because
-      //       .versus_load_asyncGenerator() will set it.
+      // Note: Here should not modify .versus_loadOk because
+      //       .versus_load_asyncGenerator() will do.
       throw e;
 
     } finally {
