@@ -138,8 +138,8 @@ import * as DEvolution from "../DEvolution.js";
  *   The numeric identifier of neural worker mode (i.e.
  * NeuralWorker.Mode.Singleton.Ids.Xxx).
  *
- * @member {boolean} initRunning_or_initOk
- *   If true, it means either during initializing or after bein initialized
+ * @member {boolean} init_asyncGenerator_running_or_initOk
+ *   If true, it means either during initializing or after being initialized
  * successfully.
  * 
  * @member {NeuralNet.ParamsBase} neuralNetParamsBase
@@ -322,7 +322,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     return this.workerProxies.nNeuralWorker_ModeId;
   }
 
-  get initRunning_or_initOk() {
+  get init_asyncGenerator_running_or_initOk() {
     return ( this.init_asyncGenerator_running ) || ( this.initOk );
   }
 
@@ -421,6 +421,19 @@ class NeuralOrchestra_Base extends Recyclable.Root {
       throw Error( `NeuralOrchestra.Base.${funcNameInMessage}(): `
         + `should be executed only if `
         + `this.initOk ( ${this.initOk} ) is true.` );
+  }
+
+  /**
+   * @param {NeuralOrchestra_Base} this
+   * @param {string} funcNameInMessage   The caller function name. (e.g. init_async)
+   */
+  static throw_if_not_init_asyncGenerator_running_or_not_initOk(
+    funcNameInMessage ) {
+    if ( !this.init_asyncGenerator_running_or_initOk )
+      throw Error( `NeuralOrchestra.Base.${funcNameInMessage}(): `
+        + `should be executed `
+        + `either during initializing `
+        + `or after being initialized successfully.` );
   }
 
   /**
@@ -1455,21 +1468,20 @@ class NeuralOrchestra_Base extends Recyclable.Root {
    */
   versus_loader_create( progressParent, delayMilliseconds ) {
 
-    if ( this.versus_load_asyncGenerator_running )
-      throw Error( `NeuralOrchestra.Base.versus_loader_create(): `
-        + `An old .versus_load_asyncGenerator() is still running.` );
+    { // Checking pre-condition.
+      const funcNameInMessage = "versus_loader_create";
 
-    if ( !this.initRunning_or_initOk )
-      throw Error( `NeuralOrchestra.Base.versus_loader_create(): `
-        + `should be executed `
-        + `either during initializing `
-        + `or after being initialized successfully.` );
+      NeuralOrchestra.Base.throw_if_an_old_still_running.call( this,
+        this.versus_load_asyncGenerator_running, funcNameInMessage );
 
-    // Prevent the nueral networks from being changed during they are processing.
-    if ( this.workerProxies_ImageData_process_async_running )
-      throw Error( `NeuralOrchestra.Base.versus_loader_create(): `
-        + `should not be executed while `
-        + `NeuralWorker.Proxies is still processing image.` );
+      // Prevent the nueral networks from being changed during they are processing.
+      NeuralOrchestra.Base.throw_if_workerProxies_ImageData_processing.call(
+        this, funcNameInMessage );
+
+      NeuralOrchestra.Base
+        .throw_if_not_init_asyncGenerator_running_or_not_initOk.call( this,
+          funcNameInMessage );
+    }
 
     this.versus_load_asyncGenerator_running = true;
     this.versus_loader = NeuralOrchestra_Base.versus_load_asyncGenerator.call(
@@ -1523,7 +1535,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
       throw Error( `NeuralOrchestra.Base.versus_load_asyncGenerator(): `
         + `should not be executed multiple times simultaneously.` );
 
-    if ( !this.initRunning_or_initOk )
+    if ( !this.init_asyncGenerator_running_or_initOk )
       throw Error( `NeuralOrchestra.Base.versus_load_asyncGenerator(): `
         + `should be executed `
         + `either during initializing `
