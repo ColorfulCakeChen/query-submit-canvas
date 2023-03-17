@@ -1301,7 +1301,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     // 2.
 
 !!! ...unfinished... (2023/03/17)
-// should move to .versus_loader_create_without_checking_precondition()
+// should move to .versus_load_promise_create_without_checking_precondition()
 
     this.versus_load_async_running = true;
     this.versus_load_promise
