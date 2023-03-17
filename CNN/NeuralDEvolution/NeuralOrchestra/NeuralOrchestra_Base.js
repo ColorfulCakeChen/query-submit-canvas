@@ -1737,7 +1737,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
    */
   static throw_if_an_old_still_running( b_still_running, funcNameInMessage ) {
     if ( b_still_running )
-      throw Error( `NeuralOrchestra.Base.${funcNameInMessage}: `
+      throw Error( `NeuralOrchestra.Base.${funcNameInMessage}(): `
         + `An old .${funcNameInMessage}() is still running.` );
   }
 
@@ -1752,7 +1752,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     b, funcNameInMessage, funcNameShouldBeCalledInMessage ) {
 
     if ( !b )
-      throw Error( `NeuralOrchestra.Base.${funcNameInMessage}: `
+      throw Error( `NeuralOrchestra.Base.${funcNameInMessage}(): `
         + `Please call .${funcNameShouldBeCalledInMessage}() instead.` );
   }
  
