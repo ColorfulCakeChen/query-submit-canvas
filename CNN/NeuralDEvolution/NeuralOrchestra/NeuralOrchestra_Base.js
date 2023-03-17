@@ -1050,8 +1050,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     if (   ( this.init_async_running )
         || ( this.init_asyncGenerator_running ) )
       throw Error( `NeuralOrchestra.Base.workerProxies_ImageData_process_async(): `
-        + `should not be executed `
-        + `during initializing.` );
+        + `should not be executed during initializing.` );
 
     if ( this.workerProxies_init_async_running )
       throw Error( `NeuralOrchestra.Base.workerProxies_ImageData_process_async(): `
@@ -1574,6 +1573,11 @@ class NeuralOrchestra_Base extends Recyclable.Root {
    *     - +1 (if parent win offspring)
    */
   versusResultSender_send( nNegativeZeroPositive ) {
+
+    if (   ( this.init_async_running )
+        || ( this.init_asyncGenerator_running ) )
+      throw Error( `NeuralOrchestra.Base.versusResultSender_send(): `
+        + `should not be executed during initializing.` );
 
     // Prevent from .versusResultSender not existed.
     if ( !this.initOk )
