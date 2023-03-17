@@ -517,9 +517,9 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     vocabularyChannelCount, blockCountTotalRequested, output_channelCount,
     delayMilliseconds ) {
 
-    if ( this.init_async_running )
+    if ( !this.init_async_running )
       throw Error( `NeuralOrchestra.Base.init_async(): `
-        + `should not be executed multiple times simultaneously.` );
+        + `Please call .init_promise_create() instead.` );
 
     NeuralOrchestra.Base.throw_if_workerProxies_busy_or_versus_loading.call(
       this, "init_async" );
@@ -574,6 +574,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     }
   }
 
+
   /**
    * Create .initer (an instance of .init_asyncGenerator()).
    *
@@ -606,7 +607,6 @@ class NeuralOrchestra_Base extends Recyclable.Root {
       delayMilliseconds );
     return this.initer;
   }
-
 
   /**
    *   - Load all differential evolution versus weights ranges (i.e. versus summary).
@@ -694,33 +694,16 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     delayMilliseconds
   ) {
 
-    if ( this.init_asyncGenerator_running )
+    if ( !this.init_asyncGenerator_running )
       throw Error( `NeuralOrchestra.Base.init_asyncGenerator(): `
-        + `should not be executed multiple times simultaneously.` );
+        + `Please call .initer_create() instead.` );
 
-    if ( this.workerProxies_init_async_running )
-      throw Error( `NeuralOrchestra.Base.init_asyncGenerator(): `
-        + `should not be executed while `
-        + `NeuralWorker.Proxies is still initializing.` );
-
-    if ( this.workerProxies_ImageData_process_async_running )
-      throw Error( `NeuralOrchestra.Base.init_asyncGenerator(): `
-        + `should not be executed while `
-        + `NeuralWorker.Proxies is still processing image.` );
-
-    if (   ( this.versus_load_async_running )
-        || ( this.versus_load_asyncGenerator_running )
-        || ( this.versus_loader_valid ) )
-      throw Error( `NeuralOrchestra.Base.init_asyncGenerator(): `
-        + `should not be executed while `
-        + `DEvolution.VersusSummary or DEvolution.Versus is still loading.` );
+    NeuralOrchestra.Base.throw_if_workerProxies_busy_or_versus_loading.call(
+      this, "init_asyncGenerator" );
 
     try {
       // 0.
       this.initOk = false;
-
-      // 0.1 Prevent re-entrance.
-      this.init_asyncGenerator_running = true;
 
       // 0.2
       this.downloader_spreadsheetId = downloader_spreadsheetId;
