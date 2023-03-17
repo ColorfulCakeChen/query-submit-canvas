@@ -451,18 +451,10 @@ class NeuralOrchestra_Base extends Recyclable.Root {
    */
   static async init_async(
     downloader_spreadsheetId, downloader_apiKey, bLogFetcherEventToConsole,
-
     sender_clientId,
-
-    input_height,
-    input_width,
-
-    vocabularyChannelCount,
-    blockCountTotalRequested,
-    output_channelCount,
-
-    delayMilliseconds
-  ) {
+    input_height, input_width,
+    vocabularyChannelCount, blockCountTotalRequested, output_channelCount,
+    delayMilliseconds ) {
 
     if ( this.init_async_running )
       throw Error( `NeuralOrchestra.Base.init_async(): `
@@ -832,7 +824,6 @@ class NeuralOrchestra_Base extends Recyclable.Root {
         + `An old .workerProxies_init_async() is still running.` );
 
     this.workerProxies_init_async_running = true;
-
     this.workerProxies_init_promise
       = NeuralOrchestra_Base.workerProxies_init_async.call( this );
     return this.workerProxies_init_promise;
@@ -1021,6 +1012,12 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     return neuralNet_createOk;
   }
 
+!!!
+  if ( this.init_async_running )
+  throw Error( `NeuralOrchestra.Base.init_promise_create(): `
+    + `An old .init_async() is still running.` );
+
+
   /**
    *
    * @param {ImageData} sourceImageData
@@ -1187,6 +1184,12 @@ class NeuralOrchestra_Base extends Recyclable.Root {
    */
   versus_load_promise_create( delayMilliseconds ) {
 
+    if ( this.versus_load_async_running )
+      throw Error( `NeuralOrchestra.Base.versus_load_promise_create(): `
+        + `An old .versus_load_async() is still running.` );
+
+    this.versus_load_async_running = true;
+
     // Prevent the nueral networks from being changed during they are processing.
     if ( this.workerProxies_ImageData_process_async_running )
       throw Error( `NeuralOrchestra.Base.versus_load_promise_create(): `
@@ -1196,7 +1199,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     // 1.
 
     // 1.1
-    if ( this.versus_loader_valid ) {
+    if ( this.versus_load_asyncGenerator_running ) {
 
       // 1.1.1 Fine, because .init_async() calls this method.
       if ( this.init_async_running ) {
@@ -1206,7 +1209,8 @@ class NeuralOrchestra_Base extends Recyclable.Root {
       //       could have existed.
       } else {
         throw Error( `NeuralOrchestra.Base.versus_load_promise_create(): `
-          + `this.versus_loader_valid ( ${this.versus_loader_valid} ) `
+          + `this.versus_load_asyncGenerator_running `
+            + `( ${this.versus_load_asyncGenerator_running} ) `
           + `should be false, if not called by .init_async().` );
       }
 
@@ -1262,7 +1266,6 @@ class NeuralOrchestra_Base extends Recyclable.Root {
 
     try {
       // 0.
-      this.versus_load_async_running = true;
 
       let sleepPromise;
       if ( delayMilliseconds > 0 )
