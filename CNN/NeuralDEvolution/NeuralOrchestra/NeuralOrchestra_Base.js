@@ -254,8 +254,8 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     { // Checking pre-condition.
       const funcNameInMessage = "disposeResources";
 
-      NeuralOrchestra.Base.throw_if_initializing.call( this, funcNameInMessage );
-      NeuralOrchestra.Base.throw_if_workerProxies_busy_or_versus_loading.call(
+      NeuralOrchestra_Base.throw_if_initializing.call( this, funcNameInMessage );
+      NeuralOrchestra_Base.throw_if_workerProxies_busy_or_versus_loading.call(
         this, funcNameInMessage );
     }
 
@@ -447,9 +447,9 @@ class NeuralOrchestra_Base extends Recyclable.Root {
    * @param {string} funcNameInMessage   The caller function name. (e.g. init_async)
    */
   static throw_if_workerProxies_busy( funcNameInMessage ) {
-    NeuralOrchestra.Base.throw_if_workerProxies_initializing.call(
+    NeuralOrchestra_Base.throw_if_workerProxies_initializing.call(
       this, funcNameInMessage );
-    NeuralOrchestra.Base.throw_if_workerProxies_ImageData_processing.call(
+    NeuralOrchestra_Base.throw_if_workerProxies_ImageData_processing.call(
       this, funcNameInMessage );
   }
 
@@ -481,8 +481,8 @@ class NeuralOrchestra_Base extends Recyclable.Root {
    * @param {string} funcNameInMessage   The caller function name. (e.g. init_async)
    */
   static throw_if_workerProxies_busy_or_versus_loading( funcNameInMessage ) {
-    NeuralOrchestra.Base.throw_if_workerProxies_busy.call( this, funcNameInMessage );
-    NeuralOrchestra.Base.throw_if_versus_loading.call( this, funcNameInMessage );
+    NeuralOrchestra_Base.throw_if_workerProxies_busy.call( this, funcNameInMessage );
+    NeuralOrchestra_Base.throw_if_versus_loading.call( this, funcNameInMessage );
   }
 
   /**
@@ -530,10 +530,10 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     { // Checking pre-condition.
       const funcNameInMessage = "init_promise_create";
 
-      NeuralOrchestra.Base.throw_if_an_old_still_running.call( this,
+      NeuralOrchestra_Base.throw_if_an_old_still_running.call( this,
         this.init_async_running, funcNameInMessage );
 
-      NeuralOrchestra.Base.throw_if_workerProxies_busy_or_versus_loading.call(
+      NeuralOrchestra_Base.throw_if_workerProxies_busy_or_versus_loading.call(
         this, funcNameInMessage );
     }
 
@@ -591,10 +591,10 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     { // Checking pre-condition.
       const funcNameInMessage = "init_async";
 
-      NeuralOrchestra.Base.throw_call_another_if_false.call( this,
+      NeuralOrchestra_Base.throw_call_another_if_false.call( this,
         this.init_async_running, funcNameInMessage, "init_promise_create" );
 
-      NeuralOrchestra.Base.throw_if_workerProxies_busy_or_versus_loading.call(
+      NeuralOrchestra_Base.throw_if_workerProxies_busy_or_versus_loading.call(
         this, "init_async" );
     }
 
@@ -666,10 +666,10 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     { // Checking pre-condition.
       const funcNameInMessage = "initer_create";
 
-      NeuralOrchestra.Base.throw_if_an_old_still_running.call( this,
+      NeuralOrchestra_Base.throw_if_an_old_still_running.call( this,
         this.init_asyncGenerator_running, funcNameInMessage );
 
-      NeuralOrchestra.Base.throw_if_workerProxies_busy_or_versus_loading.call(
+      NeuralOrchestra_Base.throw_if_workerProxies_busy_or_versus_loading.call(
         this, funcNameInMessage );
     }
 
@@ -775,10 +775,10 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     { // Checking pre-condition.
       const funcNameInMessage = "init_asyncGenerator";
 
-      NeuralOrchestra.Base.throw_call_another_if_false.call( this,
+      NeuralOrchestra_Base.throw_call_another_if_false.call( this,
         this.init_asyncGenerator_running, funcNameInMessage, "initer_create" );
 
-      NeuralOrchestra.Base.throw_if_workerProxies_busy_or_versus_loading.call(
+      NeuralOrchestra_Base.throw_if_workerProxies_busy_or_versus_loading.call(
         this, funcNameInMessage );
     }
 
@@ -954,7 +954,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     { // Checking pre-condition.
       const funcNameInMessage = "workerProxies_init_promise_create";
 
-      NeuralOrchestra.Base.throw_if_an_old_still_running.call( this,
+      NeuralOrchestra_Base.throw_if_an_old_still_running.call( this,
         this.workerProxies_init_async_running, funcNameInMessage );
     }
 
@@ -991,11 +991,11 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     { // Checking pre-condition.
       const funcNameInMessage = "workerProxies_init_async";
 
-      NeuralOrchestra.Base.throw_call_another_if_false.call( this,
+      NeuralOrchestra_Base.throw_call_another_if_false.call( this,
         this.workerProxies_init_async_running, funcNameInMessage,
         "workerProxies_init_promise_create" );
 
-      NeuralOrchestra.Base.throw_if_workerProxies_ImageData_processing.call(
+      NeuralOrchestra_Base.throw_if_workerProxies_ImageData_processing.call(
         this, funcNameInMessage );
     }
 
@@ -1068,7 +1068,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     { // Checking pre-condition.
       const funcNameInMessage = "workerProxies_compileShaders_async";
 
-      NeuralOrchestra.Base.throw_if_workerProxies_ImageData_processing.call(
+      NeuralOrchestra_Base.throw_if_workerProxies_ImageData_processing.call(
         this, funcNameInMessage );
     }
 
@@ -1137,7 +1137,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     { // Checking pre-condition.
       const funcNameInMessage = "workerProxies_NeuralNetArray_create_async";
 
-      NeuralOrchestra.Base.throw_if_workerProxies_ImageData_processing.call(
+      NeuralOrchestra_Base.throw_if_workerProxies_ImageData_processing.call(
         this, funcNameInMessage );
     }
 
@@ -1175,15 +1175,15 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     { // Checking pre-condition.
       const funcNameInMessage = "workerProxies_ImageData_process_promise_create";
 
-      NeuralOrchestra.Base.throw_if_an_old_still_running.call( this,
+      NeuralOrchestra_Base.throw_if_an_old_still_running.call( this,
         this.workerProxies_ImageData_process_async_running, funcNameInMessage );
 
-      NeuralOrchestra.Base.throw_if_initializing.call( this, funcNameInMessage );
-      NeuralOrchestra.Base.throw_if_workerProxies_initializing.call( this,
+      NeuralOrchestra_Base.throw_if_initializing.call( this, funcNameInMessage );
+      NeuralOrchestra_Base.throw_if_workerProxies_initializing.call( this,
         funcNameInMessage );
-      NeuralOrchestra.Base.throw_if_not_initOk.call( this, funcNameInMessage );
-      NeuralOrchestra.Base.throw_if_versus_loading.call( this, funcNameInMessage );
-      NeuralOrchestra.Base.throw_if_not_versus_loadOk.call( this, funcNameInMessage );
+      NeuralOrchestra_Base.throw_if_not_initOk.call( this, funcNameInMessage );
+      NeuralOrchestra_Base.throw_if_versus_loading.call( this, funcNameInMessage );
+      NeuralOrchestra_Base.throw_if_not_versus_loadOk.call( this, funcNameInMessage );
     }
 
     this.workerProxies_ImageData_process_async_running = true;
@@ -1214,16 +1214,16 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     { // Checking pre-condition.
       const funcNameInMessage = "workerProxies_ImageData_process_async";
 
-      NeuralOrchestra.Base.throw_call_another_if_false.call( this,
+      NeuralOrchestra_Base.throw_call_another_if_false.call( this,
         this.workerProxies_ImageData_process_async_running, funcNameInMessage,
         "workerProxies_ImageData_process_promise_create" );
 
-      NeuralOrchestra.Base.throw_if_initializing.call( this, funcNameInMessage );
-      NeuralOrchestra.Base.throw_if_workerProxies_initializing.call( this,
+      NeuralOrchestra_Base.throw_if_initializing.call( this, funcNameInMessage );
+      NeuralOrchestra_Base.throw_if_workerProxies_initializing.call( this,
         funcNameInMessage );
-      NeuralOrchestra.Base.throw_if_not_initOk.call( this, funcNameInMessage );
-      NeuralOrchestra.Base.throw_if_versus_loading.call( this, funcNameInMessage );
-      NeuralOrchestra.Base.throw_if_not_versus_loadOk.call( this, funcNameInMessage );
+      NeuralOrchestra_Base.throw_if_not_initOk.call( this, funcNameInMessage );
+      NeuralOrchestra_Base.throw_if_versus_loading.call( this, funcNameInMessage );
+      NeuralOrchestra_Base.throw_if_not_versus_loadOk.call( this, funcNameInMessage );
     }
 
     try {
@@ -1332,11 +1332,11 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     const funcNameInMessage = "versus_load_promise_create";
     { // Checking pre-condition.
 
-      NeuralOrchestra.Base.throw_if_an_old_still_running.call( this,
+      NeuralOrchestra_Base.throw_if_an_old_still_running.call( this,
         this.versus_load_async_running, funcNameInMessage );
 
       // Prevent the nueral networks from being changed during they are processing.
-      NeuralOrchestra.Base.throw_if_workerProxies_ImageData_processing.call(
+      NeuralOrchestra_Base.throw_if_workerProxies_ImageData_processing.call(
         this, funcNameInMessage );
     }
 
@@ -1364,7 +1364,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     // 1.2 Outside caller calls this method (after previous .versus_loader
     //     has completed and .init_asyncXxx() succeeded).
     } else {
-      NeuralOrchestra.Base.throw_if_not_initOk.call( this, funcNameInMessage );
+      NeuralOrchestra_Base.throw_if_not_initOk.call( this, funcNameInMessage );
 
       NeuralOrchestra_Base.versus_load_progress_create.call( this );
       this.versus_loader_create( this.versus_load_progress, delayMilliseconds );
@@ -1406,7 +1406,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     const funcNameInMessage = "versus_load_async";
     { // Checking pre-condition.
 
-      NeuralOrchestra.Base.throw_call_another_if_false.call( this,
+      NeuralOrchestra_Base.throw_call_another_if_false.call( this,
         this.versus_load_async_running, funcNameInMessage,
         "versus_load_promise_create" );
     }
@@ -1483,7 +1483,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     { // Checking pre-condition.
       const funcNameInMessage = "versus_loader_create";
 
-      NeuralOrchestra.Base.throw_if_an_old_still_running.call( this,
+      NeuralOrchestra_Base.throw_if_an_old_still_running.call( this,
         this.versus_load_asyncGenerator_running, funcNameInMessage );
 
       NeuralOrchestra.Base
@@ -1491,7 +1491,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
           funcNameInMessage );
 
       // Prevent the nueral networks from being changed during they are processing.
-      NeuralOrchestra.Base.throw_if_workerProxies_ImageData_processing.call(
+      NeuralOrchestra_Base.throw_if_workerProxies_ImageData_processing.call(
         this, funcNameInMessage );
     }
 
@@ -1547,7 +1547,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     { // Checking pre-condition.
       const funcNameInMessage = "versus_load_asyncGenerator";
 
-      NeuralOrchestra.Base.throw_call_another_if_false.call( this,
+      NeuralOrchestra_Base.throw_call_another_if_false.call( this,
         this.versus_load_asyncGenerator_running, funcNameInMessage,
         "versus_loader_create" );
 
@@ -1556,7 +1556,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
           funcNameInMessage );
 
       // Prevent the nueral networks from being changed during they are processing.
-      NeuralOrchestra.Base.throw_if_workerProxies_ImageData_processing.call(
+      NeuralOrchestra_Base.throw_if_workerProxies_ImageData_processing.call(
         this, funcNameInMessage );
     }
 
@@ -1739,12 +1739,12 @@ class NeuralOrchestra_Base extends Recyclable.Root {
       const funcNameInMessage = "versusResultSender_send";
 
       // Prevent from .versusResultSender not existed.
-      NeuralOrchestra.Base.throw_if_initializing.call( this, funcNameInMessage );
-      NeuralOrchestra.Base.throw_if_not_initOk.call( this, funcNameInMessage );
+      NeuralOrchestra_Base.throw_if_initializing.call( this, funcNameInMessage );
+      NeuralOrchestra_Base.throw_if_not_initOk.call( this, funcNameInMessage );
 
       // Prevent from .versus not existed.
-      NeuralOrchestra.Base.throw_if_versus_loading.call( this, funcNameInMessage );
-      NeuralOrchestra.Base.throw_if_not_versus_loadOk.call( this, funcNameInMessage );
+      NeuralOrchestra_Base.throw_if_versus_loading.call( this, funcNameInMessage );
+      NeuralOrchestra_Base.throw_if_not_versus_loadOk.call( this, funcNameInMessage );
     }
 
     this.versusResultSender.post_by_versusId_NegativeZeroPositive(
