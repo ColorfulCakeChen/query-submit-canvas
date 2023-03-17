@@ -99,7 +99,7 @@ class TestCase {
     //       should throw exception.
     try {
       ++this.testId;
-      await neuralOrchestra.workerProxies_ImageData_process_promise_create();
+      neuralOrchestra.workerProxies_ImageData_process_promise_create();
     } catch ( e ) {
       if ( e.message.indexOf(
              ".workerProxies_ImageData_process_promise_create():" ) > 0 ) {
@@ -324,7 +324,7 @@ class TestCase {
     // Test: process before versus loaded. (should exception.)
     try {
       ++this.testId;
-      await neuralOrchestra.workerProxies_ImageData_process_promise_create();
+      neuralOrchestra.workerProxies_ImageData_process_promise_create();
     } catch ( e ) {
       if ( e.message.indexOf(
              ".workerProxies_ImageData_process_promise_create():" ) > 0 ) {
@@ -526,7 +526,7 @@ class TestCase {
     // Test: process before init ok. (should exception.)
     try {
       ++this.testId;
-      await neuralOrchestra.workerProxies_ImageData_process_promise_create();
+      neuralOrchestra.workerProxies_ImageData_process_promise_create();
     } catch ( e ) {
       if ( e.message.indexOf(
              ".workerProxies_ImageData_process_promise_create():" ) > 0 ) {
@@ -669,7 +669,7 @@ class TestCase {
       // 1.4 Test: process before .init. (should exception.)
       try {
         ++this.testId;
-        await neuralOrchestra.workerProxies_ImageData_process_promise_create();
+        neuralOrchestra.workerProxies_ImageData_process_promise_create();
       } catch ( e ) {
         if ( e.message.indexOf(
                ".workerProxies_ImageData_process_promise_create():" ) > 0 ) {
