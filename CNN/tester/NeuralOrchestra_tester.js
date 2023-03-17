@@ -35,6 +35,9 @@ class TestCase {
     // In the reentrance testing, when try await, the async method may have
     // been completed. To prevent they complete too fast to test, add some
     // delay time.
+    //
+    // This is especially true for imageData_process_Xxx() which executues
+    // in another web worker (real parallelly).
     this.delayMilliseconds = 2 * 1000;
   }
 
