@@ -166,6 +166,13 @@ import * as DEvolution from "../DEvolution.js";
  *   If true, a .init_async() has been executed and succeeded.
  *
  *
+
+!!! ...unfinished... (2023/03/17)
+Deprecreate .XXXer_valid
+All .Xxx_running should be set to true inside a sync function, 
+but be cleared to false inside a async function.
+
+
  * @member {boolean} workerProxies_init_async_running
  *   If true, a .workerProxies_init_async() is still executing. Please wait
  * it becoming false if wanting to call again.
