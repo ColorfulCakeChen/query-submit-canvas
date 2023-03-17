@@ -163,7 +163,7 @@ import * as DEvolution from "../DEvolution.js";
  * becoming false if wanting to call .initer_create() again.
  *
  * @member {Promise( boolean )} init_promise
- *   The result of .init_create_promise().
+ *   The result of .init_promise_create().
  *
  * @member {AsyncGenerator} initer
  *   The result of .initer_create(). An instance of .init_asyncGenerator().
@@ -181,30 +181,28 @@ All .Xxx_running should be set to true inside a synchronous function
 but be cleared to false inside a async function.
 
 
-!!! ...unfinished... (2023/03/17)
-.workerProxies_ImageData_process_promise
-.workerProxies_ImageData_process_async_running
-
-.init_promise
-.initer
-
-
  * @member {boolean} workerProxies_init_async_running
  *   If true, a .workerProxies_init_async() is still executing. Please wait
  * it becoming false if wanting to call .workerProxies_init_promise_create()
  * again.
  *
- * @member {boolean} workerProxies_initOk
- *   If true, a .workerProxies_init_async() has been executed and succeeded.
- *
  * @member {Promise( boolean )} workerProxies_init_promise
+ *   The result of .workerProxies_init_promise_create().
  *   The promise of .workerProxies_init_async().
  *   - Resolved to true, if succeeded.
  *     - The neural workers have been created and GPU shaders have been
  *         compiled.
  *   - Resolved to false, if failed.
  *
+ * @member {boolean} workerProxies_initOk
+ *   If true, a .workerProxies_init_async() has been executed and succeeded.
  *
+ *
+!!! ...unfinished... (2023/03/17)
+.workerProxies_ImageData_process_promise
+.workerProxies_ImageData_process_async_running
+
+
  * @member {boolean} workerProxies_ImageData_process_async_running
  *   If true, a .workerProxies_ImageData_process_async() is still executing.
  * Please wait it becoming false if wanting to call again.
@@ -543,7 +541,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
    * @param {NeuralOrchestra_Base} this
    *
    * @return {Promise( boolean )}
-   *   Return this.init_promise
+   *   Return this.init_promise which is an instance of .init_async().
    */
   init_promise_create(
     downloader_spreadsheetId, downloader_apiKey, bLogFetcherEventToConsole,
@@ -683,7 +681,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
    *
    *
    * @return {AsyncGenerator}
-   *   Return this.initer
+   *   Return this.initer which is an instance of .init_asyncGenerator().
    */
   initer_create(
     progressParent,
@@ -981,7 +979,8 @@ class NeuralOrchestra_Base extends Recyclable.Root {
    * @param {NeuralNet.ParamsBase} this.neuralNetParamsBase
    *
    * @return {Promise( boolean )}
-   *   Return this.workerProxies_init_promise
+   *   Return this.workerProxies_init_promise which is an instance of
+   * .workerProxies_init_async().
    */
   static workerProxies_init_promise_create() {
 
@@ -1016,6 +1015,8 @@ class NeuralOrchestra_Base extends Recyclable.Root {
    * @return {Promise}
    *   Return a promise:
    *   - Resolved to true, if succeeded.
+   *     - The neural workers have been created and GPU shaders have been
+   *         compiled.
    *   - Resolved to false, if failed.
    */
   static async workerProxies_init_async() {
@@ -1198,7 +1199,8 @@ class NeuralOrchestra_Base extends Recyclable.Root {
    * @param {NeuralOrchestra_Base} this
    *
    * @return {Promise( Float32Array[] )}
-   *   Return this.workerProxies_ImageData_process_promise
+   *   Return this.workerProxies_ImageData_process_promise which is an instance
+   * of .workerProxies_ImageData_process_async().
    */
   async workerProxies_ImageData_process_promise_create(
     sourceImageData, delayMilliseconds ) {
@@ -1355,7 +1357,8 @@ class NeuralOrchestra_Base extends Recyclable.Root {
    * milliseconds. Mainly used when testing.
    *
    * @return {Promise( boolean )}
-   *   Return the newly created this.versus_load_promise
+   *   Return the newly created this.versus_load_promise which is an instance
+   * of .versus_load_async().
    */
   versus_load_promise_create( delayMilliseconds ) {
 
@@ -1507,7 +1510,8 @@ class NeuralOrchestra_Base extends Recyclable.Root {
    * milliseconds. Mainly used when testing.
    *
    * @return {AsyncGenerator}
-   *   Return the newly created this.versus_loader
+   *   Return the newly created this.versus_loader which is an instance of
+   * .versus_load_asyncGenerator().
    */
   versus_loader_create( progressParent, delayMilliseconds ) {
 
