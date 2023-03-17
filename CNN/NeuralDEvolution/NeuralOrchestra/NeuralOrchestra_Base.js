@@ -216,6 +216,8 @@ but be cleared to false inside a async function.
  *   - If resolved to true, it means versus summary loaded, versus loaded, and
  *       neural networks created.
  *
+
+!!!
  * @member {boolean} versus_loader_valid
  *   - If true, .versus_loader is still running (even if
  *       ( .versus_load_asyncGenerator_running == false ) ).
@@ -265,13 +267,13 @@ class NeuralOrchestra_Base extends Recyclable.Root {
   /** @override */
   disposeResources() {
 
-    // Alert if .versus_loader (perhaps, with .versus_load_promise) still running.
-    if ( this.versus_loader_valid )
-      throw Error( `NeuralOrchestra.Base.disposeResources(): `
-        + `this.versus_loader_valid ( ${this.versus_loader_valid} ) `
-        + `should be false. `
-        + `Please wait previous .versus_loader to complete `
-        + `if wanting to dispose.` );
+    { // Checking pre-condition.
+      const funcNameInMessage = "disposeResources";
+
+      NeuralOrchestra.Base.throw_if_initializing.call( this, funcNameInMessage );
+      NeuralOrchestra.Base.throw_if_workerProxies_busy_or_versus_loading.call(
+        this, funcNameInMessage );
+    }
 
     NeuralOrchestra_Base.versusResultSender_dispose.call( this );
 
@@ -602,7 +604,6 @@ class NeuralOrchestra_Base extends Recyclable.Root {
 
 //!!! ...unfinished... (2023/03/16)
 // What if re-init? The this.versus_loader will become another object.
-// A: The .versus_loader_valid checking should be enough.
 
 
       // 2. Start to load (versus summary and) versus, initialize
@@ -804,7 +805,6 @@ class NeuralOrchestra_Base extends Recyclable.Root {
 
 //!!! ...unfinished... (2023/03/16)
 // What if re-init? The this.versus_loader will become another object.
-// A: The .versus_loader_valid checking should be enough.
 
 
       // 1. Load (versus summary and) versus. Create neural networks.
@@ -1391,10 +1391,23 @@ class NeuralOrchestra_Base extends Recyclable.Root {
    */
   static async versus_load_async( delayMilliseconds ) {
 
-    if ( this.versus_load_async_running )
-      throw Error( `NeuralOrchestra.Base.versus_load_async(): `
-        + `should not be executed multiple times simultaneously.` );
+    { // Checking pre-condition.
+      const funcNameInMessage = "versus_load_async";
 
+      NeuralOrchestra.Base.throw_call_another_if_false.call( this,
+        this.versus_load_async_running, funcNameInMessage,
+        "versus_load_promise_create" );
+
+!!!
+      NeuralOrchestra.Base.throw_if_initializing.call( this, funcNameInMessage );
+      NeuralOrchestra.Base.throw_if_workerProxies_initializing.call( this,
+        funcNameInMessage );
+      NeuralOrchestra.Base.throw_if_not_initOk.call( this, funcNameInMessage );
+      NeuralOrchestra.Base.throw_if_versus_loading.call( this, funcNameInMessage );
+      NeuralOrchestra.Base.throw_if_not_versus_loadOk.call( this, funcNameInMessage );
+    }
+
+!!!
     if ( !this.versus_loader_valid )
       throw Error( `NeuralOrchestra.Base.versus_load_async(): `
         + `this.versus_loader_valid ( ${this.versus_loader_valid} ) `
