@@ -25,7 +25,7 @@ import * as DEvolution from "../DEvolution.js";
  *
  * 1.1.1 Initialize (and also load one versus)
  *
- *   - call and await .init_async().
+ *   - call and await .init_promise_create().
  *   - After it resolved to true, go to 1.1.3
  *
  *
@@ -48,7 +48,7 @@ import * as DEvolution from "../DEvolution.js";
  *
  * 1.2.1 Initialize (and also load one versus)
  *
- *   - call .init_asyncGeneraotr() with yourself progressParent.
+ *   - call .initer_create() with yourself progressParent.
  *   - await .next() until { done: true, value: true }, go to 1.2.3
  *
  *
@@ -62,13 +62,13 @@ import * as DEvolution from "../DEvolution.js";
  *
  *   - await .versus_loader.next() until { done: true, value: true }, or
  *   - check .versus_loadOk asynchronously until become true.
- *   - (.versus_load_progress is not used.)
+ *   - (.versus_load_progress is not used in this case.)
  *   - go to 1.3
  *
  *
  * 1.3 Process image, and report versus result
  *
- *   - call and await .workerProxies_ImageData_process_async()
+ *   - call and await .workerProxies_ImageData_process_promise_create()
  *   - call versusResultSender_send()
  *   - go to 1.1.2 or 1.2.2 (Load another versus)
  *
@@ -162,6 +162,12 @@ import * as DEvolution from "../DEvolution.js";
  *   If true, a .init_asyncGenerator() is still executing. Please wait it
  * becoming false if wanting to call .initer_create() again.
  *
+ * @member {Promise( boolean )} init_promise
+ *   The result of .init_create_promise().
+ *
+ * @member {AsyncGenerator} initer
+ *   The result of .initer_create(). An instance of .init_asyncGenerator().
+ *
  * @member {boolean} initOk
  *   If true, a .init_async() or .init_asyncGenerator() has been executed
  * and succeeded.
@@ -185,7 +191,8 @@ but be cleared to false inside a async function.
 
  * @member {boolean} workerProxies_init_async_running
  *   If true, a .workerProxies_init_async() is still executing. Please wait
- * it becoming false if wanting to call again.
+ * it becoming false if wanting to call .workerProxies_init_promise_create()
+ * again.
  *
  * @member {boolean} workerProxies_initOk
  *   If true, a .workerProxies_init_async() has been executed and succeeded.
@@ -225,7 +232,8 @@ but be cleared to false inside a async function.
  *   - If false, .versus_loader is completed.
  *
  * @member {AsyncGenerator} versus_loader
- *   A .versus_load_asyncGenerator() instance.
+ *   The result of .versus_loader_create(). An instance of
+ * .versus_load_asyncGenerator().
  *
  * @member {ValueMax.Percentage.Aggregate} versus_load_progress
  *   The progress of loading versus summary, loading versus, creating neural
