@@ -527,7 +527,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
   }
 
 
-!!! ...unfinished... (2023/03/17)
+//!!! ...unfinished... (2023/03/17)
 // Let .init_async() and .initer_create() call another .initer_create_internal().
 // So that .initer_create() can check .throw_if_initializing().
 //
@@ -1273,7 +1273,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
       // 1.1.2 Only if .init_async() calls this method, the .versus_loader
       //       could have existed.
       } else {
-        throw Error( `NeuralOrchestra.Base.versus_load_promise_create(): `
+        throw Error( `NeuralOrchestra.Base.${funcNameInMessage}(): `
           + `this.versus_load_asyncGenerator_running `
             + `( ${this.versus_load_asyncGenerator_running} ) `
           + `should be false, if not called by .init_async().` );
