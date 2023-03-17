@@ -1291,6 +1291,9 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     } else {
       NeuralOrchestra_Base.throw_if_not_initOk.call( this, funcNameInMessage );
 
+!!! ...unfinished... (2023/03/17)
+// call .versus_loader_create_without_checking_precondition() instead?
+
       NeuralOrchestra_Base.versus_load_progress_create.call( this );
       this.versus_loader_create( this.versus_load_progress, delayMilliseconds );
 
