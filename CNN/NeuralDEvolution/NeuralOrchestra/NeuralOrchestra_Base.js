@@ -1718,22 +1718,17 @@ class NeuralOrchestra_Base extends Recyclable.Root {
    */
   versusResultSender_send( nNegativeZeroPositive ) {
 
-    if (   ( this.init_async_running )
-        || ( this.init_asyncGenerator_running ) )
-      throw Error( `NeuralOrchestra.Base.versusResultSender_send(): `
-        + `should not be executed during initializing.` );
+    { // Checking pre-condition.
+      const funcNameInMessage = "versusResultSender_send";
 
-    // Prevent from .versusResultSender not existed.
-    if ( !this.initOk )
-      throw Error( `NeuralOrchestra.Base.versusResultSender_send(): `
-        + `should be executed only if `
-        + `this.initOk ( ${this.initOk} ) is true.` );
+      // Prevent from .versusResultSender not existed.
+      NeuralOrchestra.Base.throw_if_initializing.call( this, funcNameInMessage );
+      NeuralOrchestra.Base.throw_if_not_initOk.call( this, funcNameInMessage );
 
-    // Prevent from .versus not existed.
-    if ( !this.versus_loadOk )
-      throw Error( `NeuralOrchestra.Base.versusResultSender_send(): `
-        + `should be executed only if `
-        + `this.versus_loadOk ( ${this.versus_loadOk} ) is true.` );
+      // Prevent from .versus not existed.
+      NeuralOrchestra.Base.throw_if_versus_loading.call( this, funcNameInMessage );
+      NeuralOrchestra.Base.throw_if_not_versus_loadOk.call( this, funcNameInMessage );
+    }
 
     this.versusResultSender.post_by_versusId_NegativeZeroPositive(
       this.versus.versusId, nNegativeZeroPositive );
