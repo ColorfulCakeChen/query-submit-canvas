@@ -414,16 +414,44 @@ class NeuralOrchestra_Base extends Recyclable.Root {
    * @param {NeuralOrchestra_Base} this
    * @param {string} funcNameInMessage   The caller function name. (e.g. init_async)
    */
-  static throw_if_workerProxies_busy( funcNameInMessage ) {
+  static throw_if_not_initOk( funcNameInMessage ) {
+    if ( !this.initOk )
+      throw Error( `NeuralOrchestra.Base.${funcNameInMessage}(): `
+        + `should be executed only if `
+        + `this.initOk ( ${this.initOk} ) is true.` );
+  }
+
+  /**
+   * @param {NeuralOrchestra_Base} this
+   * @param {string} funcNameInMessage   The caller function name. (e.g. init_async)
+   */
+  static throw_if_workerProxies_initializing( funcNameInMessage ) {
     if ( this.workerProxies_init_async_running )
       throw Error( `NeuralOrchestra.Base.${funcNameInMessage}(): `
         + `should not be executed while `
         + `NeuralWorker.Proxies is still initializing.` );
+  }
 
+  /**
+   * @param {NeuralOrchestra_Base} this
+   * @param {string} funcNameInMessage   The caller function name. (e.g. init_async)
+   */
+  static throw_if_workerProxies_ImageData_processing( funcNameInMessage ) {
     if ( this.workerProxies_ImageData_process_async_running )
       throw Error( `NeuralOrchestra.Base.${funcNameInMessage}(): `
         + `should not be executed while `
         + `NeuralWorker.Proxies is still processing image.` );
+  }
+
+  /**
+   * @param {NeuralOrchestra_Base} this
+   * @param {string} funcNameInMessage   The caller function name. (e.g. init_async)
+   */
+  static throw_if_workerProxies_busy( funcNameInMessage ) {
+    NeuralOrchestra.Base.throw_if_workerProxies_initializing.call(
+      this, funcNameInMessage );
+    NeuralOrchestra.Base.throw_if_workerProxies_ImageData_processing.call(
+      this, funcNameInMessage );
   }
 
   /**
@@ -442,9 +470,46 @@ class NeuralOrchestra_Base extends Recyclable.Root {
    * @param {NeuralOrchestra_Base} this
    * @param {string} funcNameInMessage   The caller function name. (e.g. init_async)
    */
+  static throw_if_not_versus_loadOk( funcNameInMessage ) {
+    if ( !this.versus_loadOk )
+      throw Error( `NeuralOrchestra.Base.${funcNameInMessage}(): `
+        + `should be executed only if `
+        + `this.versus_loadOk ( ${this.versus_loadOk} ) is true.` );
+  }
+
+  /**
+   * @param {NeuralOrchestra_Base} this
+   * @param {string} funcNameInMessage   The caller function name. (e.g. init_async)
+   */
   static throw_if_workerProxies_busy_or_versus_loading( funcNameInMessage ) {
     NeuralOrchestra.Base.throw_if_workerProxies_busy.call( this, funcNameInMessage );
     NeuralOrchestra.Base.throw_if_versus_loading.call( this, funcNameInMessage );
+  }
+
+  /**
+   * @param {NeuralOrchestra_Base} this
+   * @param {boolean} b_still_running    If true, throw exception.
+   * @param {string} funcNameInMessage   The caller function name. (e.g. init_async)
+   */
+  static throw_if_an_old_still_running( b_still_running, funcNameInMessage ) {
+    if ( b_still_running )
+      throw Error( `NeuralOrchestra.Base.${funcNameInMessage}: `
+        + `An old .${funcNameInMessage}() is still running.` );
+  }
+
+  /**
+   * @param {NeuralOrchestra_Base} this
+   * @param {boolean} b                  If false, throw exception.
+   * @param {string} funcNameInMessage   The caller function name. (e.g. init_async)
+   * @param {string} funcNameShouldBeCalledInMessage
+   *   The function name which should be called instead. (e.g. init_promise_create)
+   */
+  static throw_call_another_if_false(
+    b, funcNameInMessage, funcNameShouldBeCalledInMessage ) {
+
+    if ( !b )
+      throw Error( `NeuralOrchestra.Base.${funcNameInMessage}: `
+        + `Please call .${funcNameShouldBeCalledInMessage}() instead.` );
   }
 
 
@@ -463,12 +528,15 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     vocabularyChannelCount, blockCountTotalRequested, output_channelCount,
     delayMilliseconds ) {
 
-    if ( this.init_async_running )
-      throw Error( `NeuralOrchestra.Base.init_promise_create(): `
-        + `An old .init_async() is still running.` );
+    { // Checking pre-condition.
+      const funcNameInMessage = "init_promise_create";
 
-    NeuralOrchestra.Base.throw_if_workerProxies_busy_or_versus_loading.call(
-      this, "init_promise_create" );
+      NeuralOrchestra.Base.throw_if_an_old_still_running.call( this,
+        this.init_async_running, funcNameInMessage );
+
+      NeuralOrchestra.Base.throw_if_workerProxies_busy_or_versus_loading.call(
+        this, funcNameInMessage );
+    }
 
     this.init_async_running = true;
     this.init_promise = NeuralOrchestra_Base.init_async.call( this,
@@ -517,12 +585,15 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     vocabularyChannelCount, blockCountTotalRequested, output_channelCount,
     delayMilliseconds ) {
 
-    if ( !this.init_async_running )
-      throw Error( `NeuralOrchestra.Base.init_async(): `
-        + `Please call .init_promise_create() instead.` );
+    { // Checking pre-condition.
+      const funcNameInMessage = "init_async";
 
-    NeuralOrchestra.Base.throw_if_workerProxies_busy_or_versus_loading.call(
-      this, "init_async" );
+      NeuralOrchestra.Base.throw_call_another_if_false.call( this,
+        this.init_async_running, funcNameInMessage, "init_promise_create" );
+
+      NeuralOrchestra.Base.throw_if_workerProxies_busy_or_versus_loading.call(
+        this, "init_async" );
+    }
 
     try {
       // 1. Use internal independent progress.
@@ -590,12 +661,15 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     vocabularyChannelCount, blockCountTotalRequested, output_channelCount,
     delayMilliseconds ) {
 
-    if ( this.init_asyncGenerator_running )
-      throw Error( `NeuralOrchestra.Base.initer_create(): `
-        + `An old .initer_create() is still running.` );
+    { // Checking pre-condition.
+      const funcNameInMessage = "initer_create";
 
-    NeuralOrchestra.Base.throw_if_workerProxies_busy_or_versus_loading.call(
-      this, "initer_create" );
+      NeuralOrchestra.Base.throw_if_an_old_still_running.call( this,
+        this.init_asyncGenerator_running, funcNameInMessage );
+
+      NeuralOrchestra.Base.throw_if_workerProxies_busy_or_versus_loading.call(
+        this, funcNameInMessage );
+    }
 
     this.init_asyncGenerator_running = true;
     this.initer = NeuralOrchestra_Base.init_asyncGenerator.call( this,
@@ -694,12 +768,15 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     delayMilliseconds
   ) {
 
-    if ( !this.init_asyncGenerator_running )
-      throw Error( `NeuralOrchestra.Base.init_asyncGenerator(): `
-        + `Please call .initer_create() instead.` );
+    { // Checking pre-condition.
+      const funcNameInMessage = "init_asyncGenerator";
 
-    NeuralOrchestra.Base.throw_if_workerProxies_busy_or_versus_loading.call(
-      this, "init_asyncGenerator" );
+      NeuralOrchestra.Base.throw_call_another_if_false.call( this,
+        this.init_asyncGenerator_running, funcNameInMessage, "initer_create" );
+
+      NeuralOrchestra.Base.throw_if_workerProxies_busy_or_versus_loading.call(
+        this, funcNameInMessage );
+    }
 
     try {
       // 0.
@@ -902,14 +979,15 @@ class NeuralOrchestra_Base extends Recyclable.Root {
    */
   static async workerProxies_init_async() {
 
-    if ( this.workerProxies_init_async_running )
+    if ( !this.workerProxies_init_async_running )
       throw Error( `NeuralOrchestra.Base.workerProxies_init_async(): `
-        + `should not be executed multiple times simultaneously.` );
+        + `Please call .workerProxies_init_promise_create() instead.` );
 
-    if ( this.workerProxies_ImageData_process_async_running )
-      throw Error( `NeuralOrchestra.Base.workerProxies_init_async(): `
-        + `should not be executed while `
-        + `NeuralWorker.Proxies is still processing image.` );
+!!!
+    // NeuralOrchestra.Base.throw_if_workerProxies_initializing.call(
+    //   this, funcNameInMessage );
+    NeuralOrchestra.Base.throw_if_workerProxies_ImageData_processing.call(
+      this, "workerProxies_init_async" );
 
     let initOk;
     try {
@@ -976,10 +1054,8 @@ class NeuralOrchestra_Base extends Recyclable.Root {
    */
   static async workerProxies_compileShaders_async() {
 
-    if ( this.workerProxies_ImageData_process_async_running )
-      throw Error( `NeuralOrchestra.Base.workerProxies_compileShaders_async(): `
-        + `should not be executed while `
-        + `NeuralWorker.Proxies is still processing image.` );
+    NeuralOrchestra.Base.throw_if_workerProxies_ImageData_processing.call(
+      this, "workerProxies_compileShaders_async" );
 
     // Dummy neural network's weights.
     //      
@@ -1043,10 +1119,8 @@ class NeuralOrchestra_Base extends Recyclable.Root {
   static async workerProxies_NeuralNetArray_create_async(
     weightArrayBufferArray, bLogDryRunTime ) {
 
-    if ( this.workerProxies_ImageData_process_async_running )
-      throw Error( `NeuralOrchestra.Base.workerProxies_NeuralNetArray_create_async(): `
-        + `should not be executed while `
-        + `NeuralWorker.Proxies is still processing image.` );
+    NeuralOrchestra.Base.throw_if_workerProxies_ImageData_processing.call(
+      this, "workerProxies_NeuralNetArray_create_async" );
 
     // Although neural network configuration will be copied (not transferred)
     // to workers, they still need be cloned because NeuralWorker.Proxy will
@@ -1065,11 +1139,42 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     return neuralNet_createOk;
   }
 
-!!!
-  if ( this.init_async_running )
-  throw Error( `NeuralOrchestra.Base.init_promise_create(): `
-    + `An old .init_async() is still running.` );
+  /**
+   * Call .workerProxies_ImageData_process_async() and record the returned
+   * promise in .workerProxies_ImageData_process_promise.
+   *
+   * @param {NeuralOrchestra_Base} this
+   *
+   * @return {Promise( Float32Array[] )}
+   *   Return this.workerProxies_ImageData_process_promise
+   */
+  async workerProxies_ImageData_process_promise_create(
+    sourceImageData, delayMilliseconds ) {
 
+    const funcNameInMessage = "workerProxies_ImageData_process_promise_create";
+    if ( this.init_async_running )
+      throw Error( `NeuralOrchestra.Base.${funcNameInMessage}: `
+        + `An old .workerProxies_ImageData_process_async() is still running.` );
+!!!
+    NeuralOrchestra.Base.throw_if_workerProxies_busy_or_versus_loading.call(
+      this, "workerProxies_ImageData_process_promise_create" );
+
+    NeuralOrchestra.Base.throw_if_initializing( funcNameInMessage );
+    NeuralOrchestra.Base.throw_if_workerProxies_busy_or_versus_loading( funcNameInMessage );
+    NeuralOrchestra.Base.throw_if_not_initOk( funcNameInMessage )
+    NeuralOrchestra.Base.throw_if_not_versus_loadOk( funcNameInMessage )
+    
+      
+    this.init_async_running = true;
+    this.init_promise = NeuralOrchestra_Base.init_async.call( this,
+      downloader_spreadsheetId, downloader_apiKey, bLogFetcherEventToConsole,
+      sender_clientId,
+      input_height, input_width,
+      vocabularyChannelCount, blockCountTotalRequested, output_channelCount,
+      delayMilliseconds
+    );
+    return this.init_promise;
+  }
 
   /**
    *
@@ -1086,12 +1191,19 @@ class NeuralOrchestra_Base extends Recyclable.Root {
    *   - Float32Array[ 0 ] is parent (chromosome) neural network's output.
    *   - Float32Array[ 1 ] is offspring (chromosome) neural network's output.
    */
-  async workerProxies_ImageData_process_async(
+  static async workerProxies_ImageData_process_async(
     sourceImageData, delayMilliseconds ) {
 
     if ( this.workerProxies_ImageData_process_async_running )
       throw Error( `NeuralOrchestra.Base.workerProxies_ImageData_process_async(): `
         + `should not be executed multiple times simultaneously.` );
+
+
+!!!
+    // NeuralOrchestra.Base.throw_if_workerProxies_initializing.call(
+    //   this, funcNameInMessage );
+    // NeuralOrchestra.Base.throw_if_workerProxies_ImageData_processing.call(
+    //   this, "workerProxies_NeuralNetArray_create_async" );
 
 !!! ...unfinished... (2023/03/17)
 // What if .init_asyncGenerator() has been called
