@@ -797,7 +797,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
             if ( versus_loader !== this.versus_loader )
               throw Error( `NeuralOrchestra.Base.${funcNameInMessage}(): `
                 + `this.versus_loader should not be changed.` );
-   
+
             allPromiseSet.delete( loaderNext );
             loaderNext = versus_loader.next();
             allPromiseSet.add( loaderNext );
@@ -825,12 +825,21 @@ class NeuralOrchestra_Base extends Recyclable.Root {
 
       } while ( !workerProxies_init_done );
 
-!!! ...unfinished... (2023/03/18)
-// It is necessary to continue await loaderNext in the allPromiseSet.
-// Otherwise, the versus_loader.next() will be called one more time
-// by outside caller (including .init_async()).
-//
-// prepend_asyncGenerator()
+      // 3.4 The (unresolved) loaderNext should continue to be awaited. 
+      //
+      // Otherwise, the versus_loader.next() will be called one more time
+      // by outside caller (including .init_async()).
+      {
+        if ( versus_loader !== this.versus_loader )
+          throw Error( `NeuralOrchestra.Base.${funcNameInMessage}(): `
+            + `this.versus_loader should not be changed.` );
+
+        // Replace .versus_loader by a new asyn generator which will yield
+        // the loaderNext first. Just like push the loaderNext back to the
+        // original .versus_loader.
+        this.versus_loader = PartTime.prepend_asyncGenerator(
+          loaderNext, versus_loader );
+      }
 
       // 4. Create Versus Result Reporter
       NeuralOrchestra_Base.versusResultSender_create.call( this, sender_clientId );
