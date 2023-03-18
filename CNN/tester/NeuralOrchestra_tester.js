@@ -350,6 +350,8 @@ class TestCase {
 
 !!! ...unfinished... (2023/03/18)
 // What if ( b_init_asyncGenerator != b_load_asyncGenerator )?
+// if ( bTryLoad == false ), should according to init method determine
+// use .versus_load_promise or versus_loader
 
       if ( b_load_asyncGenerator ) {
         let loaderNext;
