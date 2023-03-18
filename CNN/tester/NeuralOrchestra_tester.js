@@ -351,6 +351,7 @@ class TestCase {
         let loaderNext;
         do {
 
+          //!!! (2023/03/18 Temp Added)
           if ( !neuralOrchestra.versus_loader )
             debugger; // Why it is null?
 
