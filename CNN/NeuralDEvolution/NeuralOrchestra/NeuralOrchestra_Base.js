@@ -49,7 +49,7 @@ import * as DEvolution from "../DEvolution.js";
  * 1.2.1 Initialize (and also load one versus)
  *
  *   - call .initer_create() with yourself progressParent.
- *   - await .next() until { done: true, value: true }, go to 1.2.3
+ *   - await .next() until { done: true, value: versus_loader }, go to 1.2.3
  *
  *
  * 1.2.2 Load another versus
