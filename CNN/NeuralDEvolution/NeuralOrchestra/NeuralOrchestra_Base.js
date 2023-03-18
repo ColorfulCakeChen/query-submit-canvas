@@ -1422,6 +1422,9 @@ class NeuralOrchestra_Base extends Recyclable.Root {
   /**
    * Create .versus_loader (an instance of .versus_load_asyncGenerator()).
    *
+   * When wanting to load the next versus with yourself progressParent, call
+   * this method and call .next() until { done: true }.
+   *
    *
    * @param {ValueMax.Percentage.Aggregate} progressParent
    *   Some new progressToAdvance will be created and added to progressParent. The
