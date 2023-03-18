@@ -1534,9 +1534,9 @@ class NeuralOrchestra_Base extends Recyclable.Root {
         this.versus_load_asyncGenerator_running, funcNameInMessage,
         "versus_loader_create" );
 
-!!! (2023/03/18 Remarked) seems not so.
-      NeuralOrchestra_Base.throw_if_not_init_asyncGenerator_running_or_not_initOk
-        .call( this, funcNameInMessage );
+//!!! (2023/03/18 Remarked) seems not so.
+//       NeuralOrchestra_Base.throw_if_not_init_asyncGenerator_running_or_not_initOk
+//         .call( this, funcNameInMessage );
 
       // Prevent the nueral networks from being changed during they are processing.
       NeuralOrchestra_Base.throw_if_imageData_processing.call(
