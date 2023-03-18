@@ -150,11 +150,16 @@ function Promise_create_by_setTimeout(
  *
  * @param {Promise} prependNextPromise
  *   A promise which will resolves to an object { done, value }.
- *   - If resolved to { done: false, value }, the asyncGenerator will be
- *       continued 
+ *
+ *   - If resolved to { done: false, value }, the value will be yielded. And
+ *       then the asyncGenerator will be used to continue to yield.
+ *
+ *   - If resolved to { done: true, value }, the value will be returned. And
+ *       then the asyncGenerator will be ignored totally.
  *
  * @param {AsyncGenerator} asyncGenerator
- *
+ *   An asynchronous generator after prependNextPromise resolved to
+ * { done: false, value }.
  */
 async function* prepend_asyncGenerator(
 !!!
