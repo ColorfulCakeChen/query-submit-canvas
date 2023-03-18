@@ -347,6 +347,10 @@ class TestCase {
     ++this.testId;
     let versus_loadOk;
     try {
+
+!!! ...unfinished... (2023/03/18)
+// What if ( b_init_asyncGenerator != b_load_asyncGenerator )?
+
       if ( b_load_asyncGenerator ) {
         let loaderNext;
         do {
