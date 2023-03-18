@@ -830,7 +830,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
 // Otherwise, the versus_loader.next() will be called one more time
 // by outside caller (including .init_async()).
 //
-// look_ahead_asyncGenerator()
+// prepend_asyncGenerator()
 
       // 4. Create Versus Result Reporter
       NeuralOrchestra_Base.versusResultSender_create.call( this, sender_clientId );

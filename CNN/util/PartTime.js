@@ -1,6 +1,7 @@
 export { delayedValue, sleep };
 export { Promise_create_by_addEventListener_once };
 export { Promise_create_by_setTimeout };
+export { prepend_asyncGenerator };
 export { forOf };
 
 
@@ -145,6 +146,19 @@ function Promise_create_by_setTimeout(
   return p;
 }
 
+/**
+ *
+ * @param {Promise} prependNextPromise
+ *   A promise which will resolves to an object { done, value }.
+ *   - If resolved to { done: false, value }, the asyncGenerator will be
+ *       continued 
+ *
+ * @param {AsyncGenerator} asyncGenerator
+ *
+ */
+async function* prepend_asyncGenerator(
+!!!
+)
 
 /**
  * Periodically call generator.next() by setTimeout() until
