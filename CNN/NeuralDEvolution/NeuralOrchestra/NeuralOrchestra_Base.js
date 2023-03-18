@@ -1263,6 +1263,10 @@ class NeuralOrchestra_Base extends Recyclable.Root {
    * Create .versus_load_promise (an instance of .versus_load_async()).
    *
    *
+
+!!! ...unfinished... (2023/03/18)
+// should not record in .versus_loader
+
    * @param {AsyncGenerator} this.versus_loader
    *   A new .versus_load_progress and .versus_loader will be created.
    *
@@ -1520,6 +1524,10 @@ class NeuralOrchestra_Base extends Recyclable.Root {
 
     this.versus_load_asyncGenerator_running = true;
     this.versus_loadOk = undefined;
+
+
+!!! ...unfinished... (2023/03/18)
+// should not always record in this.versus_loader
 
     this.versus_loader = NeuralOrchestra_Base.versus_load_asyncGenerator.call(
       this, progressParent, delayMilliseconds );
