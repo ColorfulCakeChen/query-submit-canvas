@@ -1523,8 +1523,8 @@ class NeuralOrchestra_Base extends Recyclable.Root {
    */
   static async* versus_load_asyncGenerator( progressParent, delayMilliseconds ) {
 
+    const funcNameInMessage = "versus_load_asyncGenerator";
     { // Checking pre-condition.
-      const funcNameInMessage = "versus_load_asyncGenerator";
 
       NeuralOrchestra_Base.throw_call_another_if_false.call( this,
         this.versus_load_asyncGenerator_running, funcNameInMessage,
@@ -1583,7 +1583,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
               progressVersusSummary, this.params_loading_retryWaiting );
 
         if ( !versusSummary_loadOk )
-          throw Error( `NeuralOrchestra.Base.versus_load_asyncGenerator(): `
+          throw Error( `NeuralOrchestra.Base.${funcNameInMessage}(): `
             + `Failed to load DEvolution.VersusSummary.rangeArray.`
           );
       }
@@ -1594,7 +1594,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
         progressVersus, this.params_loading_retryWaiting );
 
       if ( !this.versus )
-        throw Error( `NeuralOrchestra.Base.versus_load_asyncGenerator(): `
+        throw Error( `NeuralOrchestra.Base.${funcNameInMessage}(): `
           + `Failed to load DEvolution.Versus.`
         );
 
@@ -1615,7 +1615,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
       //       .init_asyncGenerator().
       let workerProxies_initOk = await this.workerProxies_init_promise;
       if ( !workerProxies_initOk )
-        throw Error( `NeuralOrchestra.Base.versus_load_asyncGenerator(): `
+        throw Error( `NeuralOrchestra.Base.${funcNameInMessage}(): `
           + `Failed to initialize NeuralWorker.Proxies. `
           + `workerProxies={ ${this.workerProxies} }`
         );
@@ -1642,7 +1642,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
 
       neuralNet_createOk = await neuralNet_create_promise;
       if ( !neuralNet_createOk )
-        throw Error( `NeuralOrchestra.Base.versus_load_asyncGenerator(): `
+        throw Error( `NeuralOrchestra.Base.${funcNameInMessage}(): `
           + `Failed to create neural networks. `
           + `workerProxies={ ${this.workerProxies} }`
         );
@@ -1674,6 +1674,12 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     } else {
       this.versus_loadOk = false;
     }
+
+    if ( this.versus_loadOk == undefined )
+      throw Error( `NeuralOrchestra.Base.${funcNameInMessage}(): `
+        + `this.versus_loadOk ( { ${this.versus_loadOk} } ) `
+        + `should be either false or true.`
+      );
 
     return this.versus_loadOk;
   }
