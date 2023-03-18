@@ -731,8 +731,8 @@ class NeuralOrchestra_Base extends Recyclable.Root {
         .versus_loader_create_without_checking_precondition.call( this,
           progressParent, delayMilliseconds );
 
-      let loader_next = versus_loader.next();
-      allPromiseSet.add( loader_next );
+      let loaderNext = versus_loader.next();
+      allPromiseSet.add( loaderNext );
 
       // 2. Initialize NeuralWorker.Proxies
       {
@@ -798,9 +798,9 @@ class NeuralOrchestra_Base extends Recyclable.Root {
               throw Error( `NeuralOrchestra.Base.${funcNameInMessage}(): `
                 + `this.versus_loader should not be changed.` );
    
-            allPromiseSet.delete( loader_next );
-            loader_next = versus_loader.next();
-            allPromiseSet.add( loader_next );
+            allPromiseSet.delete( loaderNext );
+            loaderNext = versus_loader.next();
+            allPromiseSet.add( loaderNext );
           }
 
         // 3.3 .workerProxies_init_promise resolved.
@@ -826,7 +826,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
       } while ( !workerProxies_init_done );
 
 !!! ...unfinished... (2023/03/18)
-// It is necessary to continue await loader_next in the allPromiseSet.
+// It is necessary to continue await loaderNext in the allPromiseSet.
 // Otherwise, the versus_loader.next() will be called one more time
 // by outside caller (including .init_async()).
 //
