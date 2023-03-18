@@ -158,11 +158,16 @@ function Promise_create_by_setTimeout(
  *       then the asyncGenerator will be ignored totally.
  *
  * @param {AsyncGenerator} asyncGenerator
- *   An asynchronous generator after prependNextPromise resolved to
- * { done: false, value }.
+ *   An asynchronous generator which will be used to after prependNextPromise
+ * resolved to { done: false, value }.
  */
-async function* prepend_asyncGenerator(
-!!!
+async function* prepend_asyncGenerator( prependNextPromise, asyncGenerator ) {
+
+  let theNext = await prependNextPromise;
+  if ( theNext.done )
+    return theNext.value;
+
+//!!!
 )
 
 /**
