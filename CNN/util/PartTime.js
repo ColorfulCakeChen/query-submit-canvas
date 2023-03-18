@@ -147,6 +147,9 @@ function Promise_create_by_setTimeout(
 }
 
 /**
+ * Prepend the specified promise to the specified async generator. It looks
+ * like push the promise back to the async generator.
+ *
  *
  * @param {Promise} prependNextPromise
  *   A promise which will resolves to an object { done, value }.
