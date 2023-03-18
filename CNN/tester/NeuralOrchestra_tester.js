@@ -353,11 +353,6 @@ class TestCase {
           loaderNext = await neuralOrchestra.versus_loader.next();
         } while ( !loaderNext.done );
         versus_loadOk = loaderNext.value;
-!!!
-        if ( loaderNext.value === undefined )
-        throw Error( `NeuralOrchestra.Base.${funcNameInMessage}(): `
-          + `this.versus_loader is illegal `
-          + `(e.g. has been terminated previously by throwing exception).` );
 
         // Note: In .load_asyncGenerator(), .versus_load_progress is not used.
         if ( bTryLoad )
@@ -467,7 +462,7 @@ class TestCase {
 
     if ( neuralOrchestra.initOk !== undefined )
       throw Error( `NeuralOrchestra_tester.TestCase`
-        + `.test_init_load_process_send_asyncGenerator(): `
+        + `.test_init_load_process_send_asyncGenerator(): testId=${this.testId}, `
         + `neuralOrchestra.initOk ( ${neuralOrchestra.initOk} ) `
         + `should be undefined.` );
 
@@ -571,7 +566,7 @@ class TestCase {
 
     if ( initOk != true ) // undefined is also not acceptable.
       throw Error( `NeuralOrchestra_tester.TestCase`
-        + `.test_init_load_process_send_asyncGenerator(): `
+        + `.test_init_load_process_send_asyncGenerator(): testId=${this.testId}, `
         + `neuralOrchestra.init_async() failed.` );
 
     if ( neuralOrchestra.initOk != true ) // undefined is also not acceptable.
