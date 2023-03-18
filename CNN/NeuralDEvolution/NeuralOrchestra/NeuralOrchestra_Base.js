@@ -1524,7 +1524,8 @@ class NeuralOrchestra_Base extends Recyclable.Root {
   static async* versus_load_asyncGenerator( progressParent, delayMilliseconds ) {
 
     const funcNameInMessage = "versus_load_asyncGenerator";
-    { // Checking pre-condition.
+
+    try { // Checking pre-condition.
 
       NeuralOrchestra_Base.throw_call_another_if_false.call( this,
         this.versus_load_asyncGenerator_running, funcNameInMessage,
@@ -1533,6 +1534,10 @@ class NeuralOrchestra_Base extends Recyclable.Root {
       // Prevent the nueral networks from being changed during they are processing.
       NeuralOrchestra_Base.throw_if_imageData_processing.call( this,
         funcNameInMessage );
+
+    } catch ( e ) { // For Debug.
+      debugger;
+      throw e;
     }
 
     let progressRoot;
