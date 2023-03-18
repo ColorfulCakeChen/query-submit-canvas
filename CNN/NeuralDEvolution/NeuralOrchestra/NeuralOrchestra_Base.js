@@ -535,13 +535,6 @@ class NeuralOrchestra_Base extends Recyclable.Root {
   }
 
 
-//!!! ...unfinished... (2023/03/17)
-// Let .init_async() and .initer_create() call another .initer_create_internal().
-// So that .initer_create() can check .throw_if_initializing().
-//
-// Perhaps, .versus_load_async() and .versus_loader_create() should'
-// do the same arrange.
-
   /**
    * Create .initer (an instance of .init_asyncGenerator()).
    *
