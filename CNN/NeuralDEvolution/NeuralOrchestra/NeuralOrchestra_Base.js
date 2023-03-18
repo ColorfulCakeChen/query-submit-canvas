@@ -1378,14 +1378,20 @@ class NeuralOrchestra_Base extends Recyclable.Root {
         sleepPromise = PartTime.sleep( delayMilliseconds );
 
       // 1.
-      let versus_loader = this.versus_loader
+      let versus_loader = this.versus_loader;
       if ( !versus_loader )
         throw Error( `NeuralOrchestra.Base.${funcNameInMessage}(): `
           + `this.versus_loader should have already existed.` );
 
+//!!! ...unfinished... (2023/03/18)
+// Prevent outside call .versus_loader.next()
+      this.versus_loader = null;
+
       let loaderNext;
       do {
 
+//!!! (2023/03/18 Temp Remarked)
+// Since .versus_loader has been cleared to null.
         if ( versus_loader !== this.versus_loader )
           throw Error( `NeuralOrchestra.Base.${funcNameInMessage}(): `
             + `this.versus_loader should not be changed.` );
