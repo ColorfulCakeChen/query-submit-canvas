@@ -138,9 +138,12 @@ import * as DEvolution from "../DEvolution.js";
  *   The numeric identifier of neural worker mode (i.e.
  * NeuralWorker.Mode.Singleton.Ids.Xxx).
  *
- * @member {boolean} init_asyncGenerator_running_or_initOk
- *   If true, it means either during initializing or after being initialized
- * successfully.
+
+// !!! (2023/03/18 Remarked) seems not necessary.
+//  * @member {boolean} init_asyncGenerator_running_or_initOk
+//  *   If true, it means either during initializing or after being initialized
+//  * successfully.
+
  * 
  * @member {NeuralNet.ParamsBase} neuralNetParamsBase
  *   The neural network configuration. It will be used for both two neural
@@ -306,9 +309,10 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     return this.workerProxies.nNeuralWorker_ModeId;
   }
 
-  get init_asyncGenerator_running_or_initOk() {
-    return ( this.init_asyncGenerator_running ) || ( this.initOk );
-  }
+//!!! (2023/03/18 Remarked) seems not necessary.
+//   get init_asyncGenerator_running_or_initOk() {
+//     return ( this.init_asyncGenerator_running ) || ( this.initOk );
+//   }
 
   /**
    * Create .params_loading_retryWaiting
@@ -1440,19 +1444,16 @@ class NeuralOrchestra_Base extends Recyclable.Root {
       NeuralOrchestra_Base.throw_if_an_old_still_running.call( this,
         this.versus_load_asyncGenerator_running, funcNameInMessage );
 
-!!! ...unfinished... (2023/03/17)
-// should check not initializing, not versus loading
+      NeuralOrchestra_Base.throw_if_initializing.call( this, funcNameInMessage );
+      NeuralOrchestra_Base.throw_if_not_initOk.call( this, funcNameInMessage );
 
-      NeuralOrchestra_Base.throw_if_not_init_asyncGenerator_running_or_not_initOk
-        .call( this, funcNameInMessage );
+      NeuralOrchestra_Base.throw_if_versus_loading.call( this, funcNameInMessage );
 
       // Prevent the nueral networks from being changed during they are processing.
       NeuralOrchestra_Base.throw_if_imageData_processing.call(
         this, funcNameInMessage );
     }
 
-//!!! ...unfinished... (2023/03/17)
-// should move to .versus_loader_create_without_checking_precondition()
     return NeuralOrchestra_Base
       .versus_loader_create_without_checking_precondition.call( this,
         progressParent, delayMilliseconds );
@@ -1530,6 +1531,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
         this.versus_load_asyncGenerator_running, funcNameInMessage,
         "versus_loader_create" );
 
+!!! (2023/03/18 Remarked) seems not so.
       NeuralOrchestra_Base.throw_if_not_init_asyncGenerator_running_or_not_initOk
         .call( this, funcNameInMessage );
 
@@ -1762,18 +1764,19 @@ class NeuralOrchestra_Base extends Recyclable.Root {
         + `this.initOk ( ${this.initOk} ) is true.` );
   }
 
-  /**
-   * @param {NeuralOrchestra_Base} this
-   * @param {string} funcNameInMessage   The caller function name. (e.g. init_async)
-   */
-  static throw_if_not_init_asyncGenerator_running_or_not_initOk(
-    funcNameInMessage ) {
-    if ( !this.init_asyncGenerator_running_or_initOk )
-      throw Error( `NeuralOrchestra.Base.${funcNameInMessage}(): `
-        + `should be executed `
-        + `either during initializing `
-        + `or after being initialized successfully.` );
-  }
+//!!! (2023/03/18 Remarked) seems not necessary.
+//   /**
+//    * @param {NeuralOrchestra_Base} this
+//    * @param {string} funcNameInMessage   The caller function name. (e.g. init_async)
+//    */
+//   static throw_if_not_init_asyncGenerator_running_or_not_initOk(
+//     funcNameInMessage ) {
+//     if ( !this.init_asyncGenerator_running_or_initOk )
+//       throw Error( `NeuralOrchestra.Base.${funcNameInMessage}(): `
+//         + `should be executed `
+//         + `either during initializing `
+//         + `or after being initialized successfully.` );
+//   }
 
   /**
    * @param {NeuralOrchestra_Base} this
