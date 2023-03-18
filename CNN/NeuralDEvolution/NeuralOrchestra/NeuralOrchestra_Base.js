@@ -872,10 +872,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
       if ( sleepPromise )
         await sleepPromise;
 
-!!! ...unfinished... (2023/03/18)
-// should return versus_loader
-
-      return this.initOk;
+      return versus_loader_prepended;
 
     } catch ( e ) {
       debugger;
