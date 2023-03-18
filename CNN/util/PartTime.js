@@ -162,13 +162,13 @@ function Promise_create_by_setTimeout(
  * resolved to { done: false, value }.
  */
 async function* prepend_asyncGenerator( prependNextPromise, asyncGenerator ) {
+  let prependNext = await prependNextPromise;
+  if ( prependNext.done )
+    return prependNext.value;
 
-  let theNext = await prependNextPromise;
-  if ( theNext.done )
-    return theNext.value;
-
-//!!!
-)
+  let result = yield* asyncGenerator;
+  return result;
+}
 
 /**
  * Periodically call generator.next() by setTimeout() until
