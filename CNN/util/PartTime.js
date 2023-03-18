@@ -165,6 +165,8 @@ async function* prepend_asyncGenerator( prependNextPromise, asyncGenerator ) {
   let prependNext = await prependNextPromise;
   if ( prependNext.done )
     return prependNext.value;
+  else
+    yield prependNext.value;
 
   let result = yield* asyncGenerator;
   return result;
