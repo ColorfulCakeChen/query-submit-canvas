@@ -1525,6 +1525,8 @@ class NeuralOrchestra_Base extends Recyclable.Root {
 
     const funcNameInMessage = "versus_load_asyncGenerator";
 
+//!!! ...unfinished... (2023/03/18)
+// Under testing for finding out why return undefined.
     try { // Checking pre-condition.
 
       NeuralOrchestra_Base.throw_call_another_if_false.call( this,
@@ -1666,7 +1668,8 @@ class NeuralOrchestra_Base extends Recyclable.Root {
       this.versus_load_asyncGenerator_running = false;
     }
 
-
+//!!! ...unfinished... (2023/03/18)
+// Under testing for finding out why return undefined.
     try {
 
       // 6. Advance progress to 100% only if neural networks created successfully
