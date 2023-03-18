@@ -443,8 +443,9 @@ class NeuralOrchestra_Base extends Recyclable.Root {
    *
    *
    * @param {number} delayMilliseconds
-   *   If positive, this async method will complete at least after so many
-   * milliseconds. Mainly used when testing.
+   *   Mainly used when testing. If positive, this async method will complete
+   * at least after so many milliseconds. Otherwise (negative or zero or
+   * undefined), no extra delay.
    *
    * @return {Promise}
    *   Return a promise (i.e. the .workerProxies_init_promise).
@@ -671,8 +672,9 @@ class NeuralOrchestra_Base extends Recyclable.Root {
    *
    *
    * @param {number} delayMilliseconds
-   *   If positive, this async generator will complete at least after so many
-   * milliseconds. Mainly used when testing.
+   *   Mainly used when testing. If positive, this async method will complete
+   * at least after so many milliseconds. Otherwise (negative or zero or
+   * undefined), no extra delay.
    *
    *
    * @yield {Promise( ValueMax.Percentage.Aggregate )}
@@ -1130,8 +1132,9 @@ class NeuralOrchestra_Base extends Recyclable.Root {
    *   The input image datat which will be processed by neural workers.
    *
    * @param {number} delayMilliseconds
-   *   If positive, this async method will complete at least after so many
-   * milliseconds. Mainly used when testing.
+   *   Mainly used when testing. If positive, this async method will complete
+   * at least after so many milliseconds. Otherwise (negative or zero or
+   * undefined), no extra delay.
    *
    * @return {Promise( Float32Array[] )}
    *   Return a promise resolved to an array [ Float32Array, Float32Array ]
@@ -1251,8 +1254,9 @@ class NeuralOrchestra_Base extends Recyclable.Root {
    *       (Usually, this case is used by .init_async().)
    *
    * @param {number} delayMilliseconds
-   *   If positive, the async method will complete at least after so many
-   * milliseconds. Mainly used when testing.
+   *   Mainly used when testing. If positive, this async method will complete
+   * at least after so many milliseconds. Otherwise (negative or zero or
+   * undefined), no extra delay.
    *
    * @return {Promise( boolean )}
    *   Return the newly created this.versus_load_promise which is an instance
@@ -1333,8 +1337,9 @@ class NeuralOrchestra_Base extends Recyclable.Root {
    *       It will be .next() until done by this async method.
    *
    * @param {number} delayMilliseconds
-   *   If positive, this async method will complete at least after so many
-   * milliseconds. Mainly used when testing.
+   *   Mainly used when testing. If positive, this async method will complete
+   * at least after so many milliseconds. Otherwise (negative or zero or
+   * undefined), no extra delay.
    *
    * @return {Promise( boolean )}
    *   Return a promise:
@@ -1431,8 +1436,9 @@ class NeuralOrchestra_Base extends Recyclable.Root {
    * progressParent.root_get() will be returned when every time yield.
    *
    * @param {number} delayMilliseconds
-   *   If positive, the async generator will complete at least after so many
-   * milliseconds. Mainly used when testing.
+   *   Mainly used when testing. If positive, this async method will complete
+   * at least after so many milliseconds. Otherwise (negative or zero or
+   * undefined), no extra delay.
    *
    * @return {AsyncGenerator}
    *   Return the newly created this.versus_loader which is an instance of
@@ -1511,8 +1517,9 @@ class NeuralOrchestra_Base extends Recyclable.Root {
    * progressParent.root_get() will be returned when every time yield.
    *
    * @param {number} delayMilliseconds
-   *   If positive, this async generator will complete at least after so many
-   * milliseconds. Mainly used when testing.
+   *   Mainly used when testing. If positive, this async method will complete
+   * at least after so many milliseconds. Otherwise (negative or zero or
+   * undefined), no extra delay.
    *
    * @yield {Promise( ValueMax.Percentage.Aggregate )}
    *   Yield a promise resolves to { done: false, value: progressParent.root_get() }.
