@@ -496,6 +496,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
       let initerNext;
       do {
 
+//!!! ...unfinished... (2023/03/18) Is it possible not to record in this.initer?
         if ( initer !== this.initer )
           throw Error( `NeuralOrchestra.Base.${funcNameInMessage}(): `
             + `this.initer should not be changed.` );
@@ -504,12 +505,19 @@ class NeuralOrchestra_Base extends Recyclable.Root {
       } while ( !initerNext.done );
 
       // (Note: The .initOk will also be set.)
-      let initOk = initerNext.value;
-      if ( initOk != this.initOk )
+      let versus_loader = initerNext.value;
+
+      if ( ( versus_loader != undefined ) != this.initOk )
         throw Error( `NeuralOrchestra.Base.${funcNameInMessage}(): `
-          + `initOk ( ${initOk} ) `
+          + `( versus_loader ( ${versus_loader} ) != undefined ) `
           + `should be the same as `
           + `this.initOk ( ${this.initOk} ).`
+        );
+
+      if ( !versus_loader )
+        throw Error( `NeuralOrchestra.Base.${funcNameInMessage}(): `
+          + `versus_loader ( ${versus_loader} ) `
+          + `should not be undefined.`
         );
 
       // 3. Continue to load (versus summary and) versus and create neural
@@ -517,12 +525,9 @@ class NeuralOrchestra_Base extends Recyclable.Root {
       //
       // Note: It is not be awaited here. Caller is responsible for awaiting
       //       .versus_load_promise
-
-!!! ...unfinished... (2023/03/18)
-// should pass in versus_loader
       NeuralOrchestra_Base
         .versus_load_promise_create_without_checking_precondition.call( this,
-          delayMilliseconds );
+          versus_loader, delayMilliseconds );
 
       return this.initOk;
 
@@ -1342,26 +1347,21 @@ class NeuralOrchestra_Base extends Recyclable.Root {
    *
    *
    * @param {NeuralOrchestra_Base} this
-   * @param {AsyncGenerator} this.versus_loader
+   *
+   * @param {AsyncGenerator} versus_loader
+   *   The async generator (an instance of .versus_load_asyncGenerator()) to
+   * be wrapped by the created promise.
    *
    * @return {Promise( boolean )}
    *   Return the newly created this.versus_load_promise which is an instance
    * of .versus_load_async().
    */
-
-!!! ...unfinished... (2023/03/18)
-// should pass in versus_loader
-
   static versus_load_promise_create_without_checking_precondition(
-    delayMilliseconds ) {
+    versus_loader, delayMilliseconds ) {
 
     this.versus_load_async_running = true;
-    this.versus_load_promise
-
-!!! ...unfinished... (2023/03/18)
-// should pass in versus_loader
-
-      = NeuralOrchestra_Base.versus_load_async.call( this, delayMilliseconds );
+    this.versus_load_promise = NeuralOrchestra_Base.versus_load_async.call(
+      this, versus_loader, delayMilliseconds );
     return this.versus_load_promise;
   }
 
@@ -1371,9 +1371,10 @@ class NeuralOrchestra_Base extends Recyclable.Root {
    *
    * @param {NeuralOrchestra_Base} this
    *
-   * @param {AsyncGenerator} this.versus_loader
-   *   - The .versus_loader should have already existed (i.e. not null).
-   *       It will be .next() until done by this async method.
+   * @param {AsyncGenerator} versus_loader
+   *   The async generator (an instance of .versus_load_asyncGenerator()) to
+   * be wrapped by the created promise. It will be .next() until done by this
+   * async method.
    *
    * @param {number} delayMilliseconds
    *   Mainly used when testing. If positive, this async method will complete
@@ -1387,11 +1388,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
    *   - Resolved to false, if failed.
    *   - When settled, the .versus_load_progress has been stopped.
    */
-
-!!! ...unfinished... (2023/03/18)
-// should pass in versus_loader
-
-  static async versus_load_async( delayMilliseconds ) {
+  static async versus_load_async( versus_loader, delayMilliseconds ) {
 
     const funcNameInMessage = "versus_load_async";
     { // Checking pre-condition.
@@ -1412,29 +1409,12 @@ class NeuralOrchestra_Base extends Recyclable.Root {
         sleepPromise = PartTime.sleep( delayMilliseconds );
 
       // 1.
-
-
-!!! ...unfinished... (2023/03/18)
-// should use passed-in versus_loader
-
-      let versus_loader = this.versus_loader;
       if ( !versus_loader )
         throw Error( `NeuralOrchestra.Base.${funcNameInMessage}(): `
           + `this.versus_loader should have already existed.` );
 
-//!!! ...unfinished... (2023/03/18)
-// Prevent outside call .versus_loader.next()
-      this.versus_loader = null;
-
       let loaderNext;
       do {
-
-//!!! (2023/03/18 Temp Remarked)
-// Since .versus_loader has been cleared to null.
-//         if ( versus_loader !== this.versus_loader )
-//           throw Error( `NeuralOrchestra.Base.${funcNameInMessage}(): `
-//             + `this.versus_loader should not be changed.` );
-
         loaderNext = await versus_loader.next();
       } while ( !loaderNext.done );
 
@@ -1444,7 +1424,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
       // generator is illegal.
       if ( loaderNext.value === undefined )
         throw Error( `NeuralOrchestra.Base.${funcNameInMessage}(): `
-          + `this.versus_loader is illegal `
+          + `versus_loader is illegal `
           + `(e.g. has been terminated previously by throwing exception).` );
 
       let loadOk = loaderNext.value;
