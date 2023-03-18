@@ -353,6 +353,11 @@ class TestCase {
           loaderNext = await neuralOrchestra.versus_loader.next();
         } while ( !loaderNext.done );
         versus_loadOk = loaderNext.value;
+!!!
+        if ( loaderNext.value === undefined )
+        throw Error( `NeuralOrchestra.Base.${funcNameInMessage}(): `
+          + `this.versus_loader is illegal `
+          + `(e.g. has been terminated previously by throwing exception).` );
 
         // Note: In .load_asyncGenerator(), .versus_load_progress is not used.
         if ( bTryLoad )
@@ -377,16 +382,22 @@ class TestCase {
       throw Error( `NeuralOrchestra: testId=${this.testId}. ${e}`, { cause: e } );
     }
 
-    if ( !neuralOrchestra.versus_loadOk )
+    if ( neuralOrchestra.versus_loadOk != true ) // undefined is also not acceptable.
       throw Error( `NeuralOrchestra_tester.TestCase`
         + `.test_load_process_send_asyncGenerator(): testId=${this.testId}, `
         + `neuralOrchestra.versus_loadOk (${neuralOrchestra.versus_loadOk}) `
         + `should be true.` );
 
-    if ( !versus_loadOk )
+    if ( versus_loadOk != true ) // undefined is also not acceptable.
       throw Error( `NeuralOrchestra_tester.TestCase`
         + `.test_load_process_send_asyncGenerator(): testId=${this.testId}, `
         + `versus_loadOk (${versus_loadOk}) should be true.` );
+
+    if ( versus_loadOk != neuralOrchestra.versus_loadOk )
+      throw Error( `NeuralOrchestra_tester.TestCase`
+        + `.test_load_process_send_asyncGenerator(): testId=${this.testId}, `
+        + `versus_loadOk ( ${versus_loadOk} ) should be same as `
+        + `neuralOrchestra.versus_loadOk ( ${neuralOrchestra.versus_loadOk} ) ` );
 
     progressToAdvance.value_advance();
     yield progressRoot;
@@ -558,20 +569,26 @@ class TestCase {
       throw Error( `NeuralOrchestra: testId=${this.testId}. ${e}`, { cause: e } );
     }
 
-    if ( !initOk )
+    if ( initOk != true ) // undefined is also not acceptable.
       throw Error( `NeuralOrchestra_tester.TestCase`
         + `.test_init_load_process_send_asyncGenerator(): `
         + `neuralOrchestra.init_async() failed.` );
 
-    if ( !neuralOrchestra.initOk )
+    if ( neuralOrchestra.initOk != true ) // undefined is also not acceptable.
       throw Error( `NeuralOrchestra_tester.TestCase`
-        + `.test_init_load_process_send_asyncGenerator(): `
-        + `neuralOrchestra.initOk (${neuralOrchestra.initOk}) `
+        + `.test_init_load_process_send_asyncGenerator(): testId=${this.testId}, `
+        + `neuralOrchestra.initOk ( ${neuralOrchestra.initOk} ) `
         + `should be true.` );
 
-    if ( !neuralOrchestra.workerProxies_initOk )
+    if ( initOk != neuralOrchestra.initOk )
       throw Error( `NeuralOrchestra_tester.TestCase`
-        + `.test_init_load_process_send_asyncGenerator(): `
+        + `.test_init_load_process_send_asyncGenerator(): testId=${this.testId}, `
+        + `initOk ( ${initOk} ) should be same as `
+        + `neuralOrchestra.initOk ( ${neuralOrchestra.initOk} ) ` );
+
+    if ( neuralOrchestra.workerProxies_initOk != true ) // undefined is also not acceptable.
+      throw Error( `NeuralOrchestra_tester.TestCase`
+        + `.test_init_load_process_send_asyncGenerator(): testId=${this.testId}, `
         + `neuralOrchestra.workerProxies_initOk `
         + `(${neuralOrchestra.workerProxies_initOk}) `
         + `should be true.` );
