@@ -517,6 +517,9 @@ class NeuralOrchestra_Base extends Recyclable.Root {
       //
       // Note: It is not be awaited here. Caller is responsible for awaiting
       //       .versus_load_promise
+
+!!! ...unfinished... (2023/03/18)
+// should pass in versus_loader
       NeuralOrchestra_Base
         .versus_load_promise_create_without_checking_precondition.call( this,
           delayMilliseconds );
@@ -1313,6 +1316,10 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     }
 
     // 2.
+
+!!! ...unfinished... (2023/03/18)
+// should pass in versus_loader
+
     return NeuralOrchestra_Base
       .versus_load_promise_create_without_checking_precondition.call( this,
         delayMilliseconds );
@@ -1332,11 +1339,19 @@ class NeuralOrchestra_Base extends Recyclable.Root {
    *   Return the newly created this.versus_load_promise which is an instance
    * of .versus_load_async().
    */
+
+!!! ...unfinished... (2023/03/18)
+// should pass in versus_loader
+
   static versus_load_promise_create_without_checking_precondition(
     delayMilliseconds ) {
 
     this.versus_load_async_running = true;
     this.versus_load_promise
+
+!!! ...unfinished... (2023/03/18)
+// should pass in versus_loader
+
       = NeuralOrchestra_Base.versus_load_async.call( this, delayMilliseconds );
     return this.versus_load_promise;
   }
@@ -1363,6 +1378,10 @@ class NeuralOrchestra_Base extends Recyclable.Root {
    *   - Resolved to false, if failed.
    *   - When settled, the .versus_load_progress has been stopped.
    */
+
+!!! ...unfinished... (2023/03/18)
+// should pass in versus_loader
+
   static async versus_load_async( delayMilliseconds ) {
 
     const funcNameInMessage = "versus_load_async";
@@ -1384,6 +1403,11 @@ class NeuralOrchestra_Base extends Recyclable.Root {
         sleepPromise = PartTime.sleep( delayMilliseconds );
 
       // 1.
+
+
+!!! ...unfinished... (2023/03/18)
+// should use passed-in versus_loader
+
       let versus_loader = this.versus_loader;
       if ( !versus_loader )
         throw Error( `NeuralOrchestra.Base.${funcNameInMessage}(): `
