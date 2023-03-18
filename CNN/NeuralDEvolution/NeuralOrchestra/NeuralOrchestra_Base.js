@@ -929,8 +929,8 @@ class NeuralOrchestra_Base extends Recyclable.Root {
         this.workerProxies_init_async_running, funcNameInMessage,
         "workerProxies_init_promise_create" );
 
-      NeuralOrchestra_Base.throw_if_imageData_processing.call(
-        this, funcNameInMessage );
+      NeuralOrchestra_Base.throw_if_imageData_processing.call( this,
+        funcNameInMessage );
     }
 
     let initOk;
@@ -1002,8 +1002,8 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     { // Checking pre-condition.
       const funcNameInMessage = "workerProxies_compileShaders_async";
 
-      NeuralOrchestra_Base.throw_if_imageData_processing.call(
-        this, funcNameInMessage );
+      NeuralOrchestra_Base.throw_if_imageData_processing.call( this,
+        funcNameInMessage );
     }
 
     // Dummy neural network's weights.
@@ -1071,8 +1071,8 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     { // Checking pre-condition.
       const funcNameInMessage = "workerProxies_NeuralNetArray_create_async";
 
-      NeuralOrchestra_Base.throw_if_imageData_processing.call(
-        this, funcNameInMessage );
+      NeuralOrchestra_Base.throw_if_imageData_processing.call( this,
+        funcNameInMessage );
     }
 
     // Although neural network configuration will be copied (not transferred)
@@ -1269,15 +1269,17 @@ class NeuralOrchestra_Base extends Recyclable.Root {
       NeuralOrchestra_Base.throw_if_an_old_still_running.call( this,
         this.versus_load_async_running, funcNameInMessage );
 
+      NeuralOrchestra_Base.throw_if_initializing.call( this, funcNameInMessage );
+      NeuralOrchestra_Base.throw_if_not_initOk.call( this, funcNameInMessage );
 
-!!! ...unfinished... (2023/03/17)
-// should check not initializing, not versus loading
+      NeuralOrchestra_Base.throw_if_versus_loading.call( this, funcNameInMessage );
 
       // Prevent the nueral networks from being changed during they are processing.
-      NeuralOrchestra_Base.throw_if_imageData_processing.call(
-        this, funcNameInMessage );
+      NeuralOrchestra_Base.throw_if_imageData_processing.call( this,
+        funcNameInMessage );
     }
 
+!!!
     // 1.
 
     // 1.1
@@ -1477,8 +1479,8 @@ class NeuralOrchestra_Base extends Recyclable.Root {
       NeuralOrchestra_Base.throw_if_versus_loading.call( this, funcNameInMessage );
 
       // Prevent the nueral networks from being changed during they are processing.
-      NeuralOrchestra_Base.throw_if_imageData_processing.call(
-        this, funcNameInMessage );
+      NeuralOrchestra_Base.throw_if_imageData_processing.call( this,
+        funcNameInMessage );
     }
 
     return NeuralOrchestra_Base
@@ -1564,8 +1566,8 @@ class NeuralOrchestra_Base extends Recyclable.Root {
 //         .call( this, funcNameInMessage );
 
       // Prevent the nueral networks from being changed during they are processing.
-      NeuralOrchestra_Base.throw_if_imageData_processing.call(
-        this, funcNameInMessage );
+      NeuralOrchestra_Base.throw_if_imageData_processing.call( this,
+        funcNameInMessage );
     }
 
     let progressRoot;
@@ -1833,10 +1835,10 @@ class NeuralOrchestra_Base extends Recyclable.Root {
    * @param {string} funcNameInMessage   The caller function name. (e.g. init_async)
    */
   static throw_if_workerProxies_busy( funcNameInMessage ) {
-    NeuralOrchestra_Base.throw_if_workerProxies_initializing.call(
-      this, funcNameInMessage );
-    NeuralOrchestra_Base.throw_if_imageData_processing.call(
-      this, funcNameInMessage );
+    NeuralOrchestra_Base.throw_if_workerProxies_initializing.call( this,
+      funcNameInMessage );
+    NeuralOrchestra_Base.throw_if_imageData_processing.call( this,
+      funcNameInMessage );
   }
 
   /**
