@@ -1264,14 +1264,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
    *
    *
    * @param {AsyncGenerator} this.versus_loader
-   *   - If .versus_loader does not exist, a new .versus_load_progress
-   *       and .versus_loader will be created.
-   *       (Usually, this case is used when you want to load the next versus
-   *       without yourself progressParent.)
-   *
-   *   - If .versus_loader has already existed (i.e. not null), it will
-   *       be used directly (and no extra progress object will be created too).
-   *       (Usually, this case is used by .init_async().)
+   *   A new .versus_load_progress and .versus_loader will be created.
    *
    * @param {number} delayMilliseconds
    *   Mainly used when testing. If positive, this async method will complete
