@@ -1279,49 +1279,19 @@ class NeuralOrchestra_Base extends Recyclable.Root {
         funcNameInMessage );
     }
 
-!!!
     // 1.
-
-    // 1.1
-    if ( this.versus_load_asyncGenerator_running ) {
-
-      // 1.1.1 Fine, because .init_async() calls this method.
-      if ( this.init_async_running ) {
-        // Do nothing.
-
-      // 1.1.2 Only if .init_async() calls this method, the .versus_loader
-      //       could have existed.
-      } else {
-        throw Error( `NeuralOrchestra.Base.${funcNameInMessage}(): `
-          + `this.versus_load_asyncGenerator_running `
-            + `( ${this.versus_load_asyncGenerator_running} ) `
-          + `should be false, if not called by .init_async().` );
-      }
-
-      // Note: Here should not modify .versus_loadOk because
-      //       .versus_load_asyncGenerator() is running.
-
-    // 1.2 Outside caller calls this method (after previous .versus_loader
-    //     has completed and .init_asyncXxx() succeeded).
-    } else {
-      NeuralOrchestra_Base.throw_if_not_initOk.call( this, funcNameInMessage );
-
-!!! ...unfinished... (2023/03/17)
-// call .versus_loader_create_without_checking_precondition() instead?
-
-// !!!
+    {
       // Use internal independent progress.
       NeuralOrchestra_Base.versus_load_progress_create.call( this );
 
-!!! ...unfinished... (2023/03/18)
-      let versus_loader = NeuralOrchestra_Base
+      // Prepare .versus_loader
+      NeuralOrchestra_Base
         .versus_loader_create_without_checking_precondition.call( this,
           this.versus_load_progress, delayMilliseconds );
 
-      // this.versus_loader_create( this.versus_load_progress, delayMilliseconds );
-
       // Note: Here needs not set .versus_loadOk to undefined because
-      //       .versus_loader_create() has done it.
+      //       .versus_loader_create_without_checking_precondition() has
+      //       done it.
     }
 
     // 2.
