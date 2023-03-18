@@ -1320,7 +1320,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
       NeuralOrchestra_Base.versus_load_progress_create.call( this );
 
       // Prepare .versus_loader
-      NeuralOrchestra_Base
+      let versus_loader = NeuralOrchestra_Base
         .versus_loader_create_without_checking_precondition.call( this,
           this.versus_load_progress, delayMilliseconds );
 
@@ -1330,13 +1330,9 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     }
 
     // 2.
-
-!!! ...unfinished... (2023/03/18)
-// should pass in versus_loader
-
     return NeuralOrchestra_Base
       .versus_load_promise_create_without_checking_precondition.call( this,
-        delayMilliseconds );
+        versus_loader, delayMilliseconds );
   }
 
   /**
@@ -1503,16 +1499,18 @@ class NeuralOrchestra_Base extends Recyclable.Root {
   }
 
   /**
-   * Create .versus_loader (an instance of .versus_load_asyncGenerator()).
+   * Create an instance of .versus_load_asyncGenerator().
    * 
    * Called by .init_asyncGenerator(), .versus_load_async() and
-   * .versus_loader_create(). It does not check precondition.
+   * .versus_loader_create().
+   *
+   * It does not check precondition. It does not record in .versus_loader
    *
    *
    * @param {NeuralOrchestra_Base} this
    *
    * @return {AsyncGenerator}
-   *   Return the newly created this.versus_loader which is an instance of
+   *   Return the newly created versus_loader which is an instance of
    * .versus_load_asyncGenerator().
    */
   static versus_loader_create_without_checking_precondition(
@@ -1521,13 +1519,9 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     this.versus_load_asyncGenerator_running = true;
     this.versus_loadOk = undefined;
 
-
-!!! ...unfinished... (2023/03/18)
-// should not always record in this.versus_loader
-
-    this.versus_loader = NeuralOrchestra_Base.versus_load_asyncGenerator.call(
+    let versus_loader = NeuralOrchestra_Base.versus_load_asyncGenerator.call(
       this, progressParent, delayMilliseconds );
-    return this.versus_loader;
+    return versus_loader;
   }
 
   /**
