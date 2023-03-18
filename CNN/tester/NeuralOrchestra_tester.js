@@ -350,6 +350,10 @@ class TestCase {
       if ( b_load_asyncGenerator ) {
         let loaderNext;
         do {
+
+          if ( !neuralOrchestra.versus_loader )
+            debugger; // Why it is null?
+
           loaderNext = await neuralOrchestra.versus_loader.next();
         } while ( !loaderNext.done );
         versus_loadOk = loaderNext.value;
