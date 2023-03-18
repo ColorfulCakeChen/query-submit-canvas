@@ -1392,9 +1392,9 @@ class NeuralOrchestra_Base extends Recyclable.Root {
 
 //!!! (2023/03/18 Temp Remarked)
 // Since .versus_loader has been cleared to null.
-        if ( versus_loader !== this.versus_loader )
-          throw Error( `NeuralOrchestra.Base.${funcNameInMessage}(): `
-            + `this.versus_loader should not be changed.` );
+//         if ( versus_loader !== this.versus_loader )
+//           throw Error( `NeuralOrchestra.Base.${funcNameInMessage}(): `
+//             + `this.versus_loader should not be changed.` );
 
         loaderNext = await versus_loader.next();
       } while ( !loaderNext.done );
