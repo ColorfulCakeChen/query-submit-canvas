@@ -731,8 +731,9 @@ class NeuralOrchestra_Base extends Recyclable.Root {
 
 !!! ...unfinished... (2023/03/17)
 // call .versus_loader_create_without_checking_precondition() instead?
-
-      versus_loader = this.versus_loader_create( progressParent );
+      versus_loader = NeuralOrchestra_Base
+        .versus_loader_create_without_checking_precondition.call( this,
+          progressParent, delayMilliseconds );
 
       let loader_next = versus_loader.next();
       allPromiseSet.add( loader_next );
@@ -1357,6 +1358,13 @@ class NeuralOrchestra_Base extends Recyclable.Root {
       if ( delayMilliseconds > 0 )
         sleepPromise = PartTime.sleep( delayMilliseconds );
 
+!!! ...unfinished... (2023/03/18)
+// call .versus_loader_create_without_checking_precondition() instead?
+      NeuralOrchestra_Base.versus_load_progress_create.call( this );
+      NeuralOrchestra_Base
+        .versus_loader_create_without_checking_precondition.call( this,
+          this.versus_load_progress, delayMilliseconds );
+
       // 1.
       let versus_loader = this.versus_loader;
       if ( !versus_loader )
@@ -1443,8 +1451,28 @@ class NeuralOrchestra_Base extends Recyclable.Root {
         this, funcNameInMessage );
     }
 
-!!! ...unfinished... (2023/03/17)
+//!!! ...unfinished... (2023/03/17)
 // should move to .versus_loader_create_without_checking_precondition()
+    return NeuralOrchestra_Base
+      .versus_loader_create_without_checking_precondition.call( this,
+        progressParent, delayMilliseconds );
+  }
+
+  /**
+   * Create .versus_loader (an instance of .versus_load_asyncGenerator()).
+   * 
+   * Called by .init_asyncGenerator(), .versus_load_async() and
+   * .versus_loader_create(). It does not check precondition.
+   *
+   *
+   * @param {NeuralOrchestra_Base} this
+   *
+   * @return {AsyncGenerator}
+   *   Return the newly created this.versus_loader which is an instance of
+   * .versus_load_asyncGenerator().
+   */
+  static versus_loader_create_without_checking_precondition(
+    progressParent, delayMilliseconds ) {
 
     this.versus_load_asyncGenerator_running = true;
     this.versus_loadOk = undefined;
