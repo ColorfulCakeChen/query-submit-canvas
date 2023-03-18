@@ -1372,7 +1372,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
             + `this.versus_loader should not be changed.` );
 
         loaderNext = await versus_loader.next();
-      } while ( loaderNext.done == false );
+      } while ( !loaderNext.done );
 
       // The result should be either true or false. If result is undefined,
       // the generator may have been terminated previously by throwing
