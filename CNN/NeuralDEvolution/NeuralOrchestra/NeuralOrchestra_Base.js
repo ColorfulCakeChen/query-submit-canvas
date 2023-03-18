@@ -676,17 +676,22 @@ class NeuralOrchestra_Base extends Recyclable.Root {
    * @yield {Promise( ValueMax.Percentage.Aggregate )}
    *   Yield a promise resolves to { done: false, value: progressParent.root_get() }.
    *
-   * @yield {Promise( boolean )}
+   * @yield {Promise( AsyncGenerator )}
    *   Yield a promise:
-   *   - Resolved to { done: true, value: true }, if succeeded.
+   *   - Resolved to { done: true, value: versus_loader }, if succeeded.
+   *     - The this.initOk will be true.
    *     - The neural workers have been created and GPU shaders have been
    *         compiled.
    *     - But the versus summary and versus may still be loading (i.e. not
-   *         yet complete). The neural networks may also still not be created
-   *         (since they need the versus data). Please check .versus_loader
-   *         or .versus_loadOk to determine whether complete.
-   * 
-   *   - Resolved to { done: true, value: false }, if failed.
+   *         yet complete).
+   *       - The neural networks may also still not be created (since they
+   *           need the versus data).
+   *       - Please asynchronously check the returned value (versus_loader
+   *           which is an instance of .versus_load_asyncGenerator()) or
+   *           .versus_loadOk to determine whether completed.
+   *
+   *   - Resolved to { done: true, value: undefined }, if failed.
+   *     - The this.initOk will be false.
    */
   static async* init_asyncGenerator(
     progressParent,
@@ -803,9 +808,10 @@ class NeuralOrchestra_Base extends Recyclable.Root {
             // let progressRoot = object.value;
             yield progressRoot;
 
-            if ( versus_loader !== this.versus_loader )
-              throw Error( `NeuralOrchestra.Base.${funcNameInMessage}(): `
-                + `this.versus_loader should not be changed.` );
+//!!! (2023/03/18 Remarked) No longer record in .versus_loader directly.
+//             if ( versus_loader !== this.versus_loader )
+//               throw Error( `NeuralOrchestra.Base.${funcNameInMessage}(): `
+//                 + `this.versus_loader should not be changed.` );
 
             allPromiseSet.delete( loaderNext );
             loaderNext = versus_loader.next();
@@ -838,15 +844,21 @@ class NeuralOrchestra_Base extends Recyclable.Root {
       //
       // Otherwise, the versus_loader.next() will be called one more time
       // by outside caller (including .init_async()).
+      let versus_loader_prepended;
       {
-        if ( versus_loader !== this.versus_loader )
-          throw Error( `NeuralOrchestra.Base.${funcNameInMessage}(): `
-            + `this.versus_loader should not be changed.` );
+
+//!!! (2023/03/18 Remarked) No longer record in .versus_loader directly.
+//         if ( versus_loader !== this.versus_loader )
+//           throw Error( `NeuralOrchestra.Base.${funcNameInMessage}(): `
+//             + `this.versus_loader should not be changed.` );
 
         // Replace .versus_loader by a new asyn generator which will yield
         // the loaderNext first. Just like push the loaderNext back to the
         // original .versus_loader.
-        this.versus_loader = PartTime.prepend_asyncGenerator(
+
+//!!! (2023/03/18 Remarked) No longer record in .versus_loader directly.
+//        this.versus_loader = PartTime.prepend_asyncGenerator(
+        versus_loader_prepended = PartTime.prepend_asyncGenerator(
           loaderNext, versus_loader );
       }
 
@@ -859,6 +871,9 @@ class NeuralOrchestra_Base extends Recyclable.Root {
       // 6.
       if ( sleepPromise )
         await sleepPromise;
+
+!!! ...unfinished... (2023/03/18)
+// should return versus_loader
 
       return this.initOk;
 
