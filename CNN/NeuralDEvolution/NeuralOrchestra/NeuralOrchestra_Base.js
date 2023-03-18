@@ -169,6 +169,11 @@ import * as DEvolution from "../DEvolution.js";
  *   If true, a .init_asyncGenerator() is still executing. Please wait it
  * becoming false if wanting to call .initer_create() again.
  *
+
+//!!! ...unfinished... (2023/03/18)
+// Perhaps, .initer, .init_promise, .versus_load_promise also not
+// be recorded in this.
+
  * @member {Promise( boolean )} init_promise
  *   The result of .init_promise_create().
  *
@@ -209,13 +214,19 @@ import * as DEvolution from "../DEvolution.js";
  *   If true, a .versus_load_asyncGenerator() is still executing. Please wait
  * it becoming false if wanting to call .versus_loader_create() again.
  *
+
+//!!! ...unfinished... (2023/03/18)
+// Perhaps, .initer, .init_promise, .versus_load_promise also not
+// be recorded in this.
+
  * @member {Promise( boolean )} versus_load_promise
  *   The result of .versus_load_promise_create().
  *
  * @member {AsyncGenerator} versus_loader
  *   The result of .versus_loader_create(). An instance of
  * .versus_load_asyncGenerator().
- *
+
+
  * @member {ValueMax.Percentage.Aggregate} versus_load_progress
  *   The progress of loading versus summary, loading versus, creating neural
  * networks. If ( .versus_load_progress.valuePercentage == 100 ), all the
