@@ -10,6 +10,10 @@ import * as NeuralNet from "../../Conv/NeuralNet.js";
 import * as NeuralWorker from "../NeuralWorker.js";
 import * as DEvolution from "../DEvolution.js";
 
+//!!! ...unfinished... (2023/03/18)
+// Perhaps, .initer, .init_promise, .versus_load_promise also not
+// be recorded in this.
+
 /**
  * Orchestrate neural networks with differential evolution.
  *
