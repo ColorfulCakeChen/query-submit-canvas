@@ -218,6 +218,10 @@ import * as DEvolution from "../DEvolution.js";
 //!!! ...unfinished... (2023/03/18)
 // Perhaps, .initer, .init_promise, .versus_load_promise also not
 // be recorded in this.
+//
+// It seems that .versus_load_promise must be kept because .init_async()
+// can not returning a not-awaited promise.
+
 
  * @member {Promise( boolean )} versus_load_promise
  *   The result of .versus_load_promise_create().
