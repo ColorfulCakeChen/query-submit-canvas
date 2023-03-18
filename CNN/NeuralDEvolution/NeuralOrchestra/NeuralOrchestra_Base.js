@@ -1468,7 +1468,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
    * undefined), no extra delay.
    *
    * @return {AsyncGenerator}
-   *   Return the newly created this.versus_loader which is an instance of
+   *   Return the newly created versus_loader which is an instance of
    * .versus_load_asyncGenerator().
    */
   versus_loader_create( progressParent, delayMilliseconds ) {
@@ -1489,13 +1489,10 @@ class NeuralOrchestra_Base extends Recyclable.Root {
         funcNameInMessage );
     }
 
-
-!!! ...unfinished... (2023/03/18)
-// should record in this.versus_loader
-
-    return NeuralOrchestra_Base
+    let versus_loader = NeuralOrchestra_Base
       .versus_loader_create_without_checking_precondition.call( this,
         progressParent, delayMilliseconds );
+    return versus_loader;
   }
 
   /**
