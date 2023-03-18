@@ -60,7 +60,7 @@ import * as DEvolution from "../DEvolution.js";
  *
  * 1.2.3 Wait for versus loaded and neural networks created
  *
- *   - await .versus_loader.next() until { done: true, value: true }, or
+ *   - await versus_loader.next() until { done: true, value: true }, or
  *   - check .versus_loadOk asynchronously until become true.
  *   - (.versus_load_progress is not used in this case.)
  *   - go to 1.3
@@ -266,7 +266,8 @@ class NeuralOrchestra_Base extends Recyclable.Root {
 
     NeuralOrchestra_Base.versus_load_progress_dispose.call( this );
     this.versus_load_promise = undefined;
-    this.versus_loader = undefined;
+//!!! (2023/03/18 Remarked) No longer record in .versus_loader directly.
+//    this.versus_loader = undefined;
     this.versus_loadOk = undefined;
     this.versus_load_asyncGenerator_running = undefined;
     this.versus_load_async_running = undefined;
@@ -627,7 +628,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
    *        in which web worker. So, it is highly recommended to call it when
    *        display a static splash screen.
    *
-   * Note2: After this async generator done, continue to .versus_loader.next()
+   * Note2: After this async generator done, continue to versus_loader.next()
    *        which will not block main worker. So, it is recommended to do that
    *        with an animated screen for displaying loading progress.
    *
@@ -778,12 +779,12 @@ class NeuralOrchestra_Base extends Recyclable.Root {
 
         // 3.1
         //
-        // If .versus_loader.next() resolved, got an { done, value } object.
+        // If versus_loader.next() resolved, got an { done, value } object.
         // If .workerProxies_init_promise resolved, got a boolean value.
         let allPromise = Promise.race( allPromiseSet );
         let object_or_boolean = await allPromise;
 
-        // 3.2 .versus_loader.next() resolved.
+        // 3.2 versus_loader.next() resolved.
         if ( object_or_boolean instanceof Object ) {
 
           let object = object_or_boolean;
@@ -800,9 +801,9 @@ class NeuralOrchestra_Base extends Recyclable.Root {
 
             // 3.2.1
             // In theory, it should not execute to here because
-            // .versus_loader waits .workerProxies_init_promise internally.
+            // versus_loader waits .workerProxies_init_promise internally.
             throw Error( `NeuralOrchestra.Base.${funcNameInMessage}(): `
-              + `.versus_loader `
+              + `versus_loader `
               + `should not be done before `
               + `.workerProxies_init_promise`
             );
@@ -1280,13 +1281,6 @@ class NeuralOrchestra_Base extends Recyclable.Root {
    * Create .versus_load_promise (an instance of .versus_load_async()).
    *
    *
-
-!!! ...unfinished... (2023/03/18)
-// should not record in .versus_loader
-
-   * @param {AsyncGenerator} this.versus_loader
-   *   A new .versus_load_progress and .versus_loader will be created.
-   *
    * @param {number} delayMilliseconds
    *   Mainly used when testing. If positive, this async method will complete
    * at least after so many milliseconds. Otherwise (negative or zero or
@@ -1319,7 +1313,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
       // Use internal independent progress.
       NeuralOrchestra_Base.versus_load_progress_create.call( this );
 
-      // Prepare .versus_loader
+      // Prepare versus_loader
       let versus_loader = NeuralOrchestra_Base
         .versus_loader_create_without_checking_precondition.call( this,
           this.versus_load_progress, delayMilliseconds );
@@ -1362,7 +1356,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
   }
 
   /**
-   * Call .versus_loader.next() until done.
+   * Call versus_loader.next() until done.
    *
    *
    * @param {NeuralOrchestra_Base} this
@@ -1407,7 +1401,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
       // 1.
       if ( !versus_loader )
         throw Error( `NeuralOrchestra.Base.${funcNameInMessage}(): `
-          + `this.versus_loader should have already existed.` );
+          + `versus_loader should have already existed.` );
 
       let loaderNext;
       do {
@@ -1451,7 +1445,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
 
 
   /**
-   * Create .versus_loader (an instance of .versus_load_asyncGenerator()).
+   * Create versus_loader (an instance of .versus_load_asyncGenerator()).
    *
    * When wanting to load the next versus with yourself progressParent, call
    * this method and call .next() until { done: true }.
@@ -1537,9 +1531,6 @@ class NeuralOrchestra_Base extends Recyclable.Root {
    *
    *
    * @param {NeuralOrchestra_Base} this
-   *
-   * @param {AsyncGenerator} this.versus_loader
-   *   The .versus_loader will be clear to null when this generator done.
    *
    * @param {ValueMax.Percentage.Aggregate} progressParent
    *   Some new progressToAdvance will be created and added to progressParent. The
@@ -1657,7 +1648,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
       // 3.1 Before creating neural networks, the neural web workers should
       //     be ready.
       //
-      // Note: This is why .versus_loader is impossible to complete
+      // Note: This is why versus_loader is impossible to complete
       //       before .workerProxies_init_promise complete inside
       //       .init_asyncGenerator().
       let workerProxies_initOk = await this.workerProxies_init_promise;
