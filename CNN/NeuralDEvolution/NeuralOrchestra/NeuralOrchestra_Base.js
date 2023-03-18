@@ -1351,6 +1351,8 @@ class NeuralOrchestra_Base extends Recyclable.Root {
       NeuralOrchestra_Base.throw_call_another_if_false.call( this,
         this.versus_load_async_running, funcNameInMessage,
         "versus_load_promise_create" );
+
+!!! ...unfinished... (2023/03/18)
     }
 
     try {
@@ -1359,15 +1361,14 @@ class NeuralOrchestra_Base extends Recyclable.Root {
       if ( delayMilliseconds > 0 )
         sleepPromise = PartTime.sleep( delayMilliseconds );
 
-!!! ...unfinished... (2023/03/18)
-// call .versus_loader_create_without_checking_precondition() instead?
+      // 1. Use internal independent progress.
       NeuralOrchestra_Base.versus_load_progress_create.call( this );
-      NeuralOrchestra_Base
+
+      // 2.
+      let versus_loader = NeuralOrchestra_Base
         .versus_loader_create_without_checking_precondition.call( this,
           this.versus_load_progress, delayMilliseconds );
 
-      // 1.
-      let versus_loader = this.versus_loader;
       if ( !versus_loader )
         throw Error( `NeuralOrchestra.Base.${funcNameInMessage}(): `
           + `this.versus_loader should have already existed.` );
@@ -1399,7 +1400,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
           + `this.versus_loadOk ( ${this.versus_loadOk} ).`
         );
 
-      // 2.
+      // 3.
       if ( sleepPromise )
         await sleepPromise;
 
@@ -1411,10 +1412,11 @@ class NeuralOrchestra_Base extends Recyclable.Root {
       throw e;
 
     } finally {
-      // 3. So that this async method could be executed again.
+      // 4. So that this async method could be executed again.
       this.versus_load_async_running = false;
     }
   }
+
 
   /**
    * Create .versus_loader (an instance of .versus_load_asyncGenerator()).
