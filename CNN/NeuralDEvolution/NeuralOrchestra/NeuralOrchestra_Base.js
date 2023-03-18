@@ -1666,26 +1666,34 @@ class NeuralOrchestra_Base extends Recyclable.Root {
       this.versus_load_asyncGenerator_running = false;
     }
 
-    // 6. Advance progress to 100% only if neural networks created successfully
-    //    and .versus_load_asyncGenerator_running has been set to false (so
-    //    that caller can re-execute this generator immediately when progress
-    //    become 100%).
-    if ( neuralNet_createOk ) {
-      this.versus_loadOk = true;
 
-      progressToAdvance.value_advance();
-      yield progressRoot;
+    try {
 
-    } else {
-      this.versus_loadOk = false;
+      // 6. Advance progress to 100% only if neural networks created successfully
+      //    and .versus_load_asyncGenerator_running has been set to false (so
+      //    that caller can re-execute this generator immediately when progress
+      //    become 100%).
+      if ( neuralNet_createOk ) {
+        this.versus_loadOk = true;
+
+        progressToAdvance.value_advance();
+        yield progressRoot;
+
+      } else {
+        this.versus_loadOk = false;
+      }
+
+      if ( this.versus_loadOk == undefined )
+        throw Error( `NeuralOrchestra.Base.${funcNameInMessage}(): `
+          + `this.versus_loadOk ( { ${this.versus_loadOk} } ) `
+          + `should be either false or true.`
+        );
+
+    } catch ( e ) { // For Debug.
+      debugger;
+      throw e;
     }
-
-    if ( this.versus_loadOk == undefined )
-      throw Error( `NeuralOrchestra.Base.${funcNameInMessage}(): `
-        + `this.versus_loadOk ( { ${this.versus_loadOk} } ) `
-        + `should be either false or true.`
-      );
-
+  
     return this.versus_loadOk;
   }
 
