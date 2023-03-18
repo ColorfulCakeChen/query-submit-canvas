@@ -524,6 +524,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
       return this.initOk;
 
     } catch ( e ) {
+      debugger;
       // Note: Here should not modify .initOk because .init_asyncGenerator()
       //       will do.
       throw e;
@@ -837,6 +838,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
       return this.initOk;
 
     } catch ( e ) {
+      debugger;
       this.initOk = false;
       throw e;
 
@@ -974,6 +976,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
       }
 
     } catch ( e ) {
+      debugger;
       this.workerProxies_initOk = false;
       throw e;
 
@@ -1398,6 +1401,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
       return loadOk;
 
     } catch ( e ) {
+      debugger;
       // Note: Here should not modify .versus_loadOk because
       //       .versus_load_asyncGenerator() will do.
       throw e;
@@ -1648,6 +1652,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
         await sleepPromise;
 
     } catch ( e ) {
+      debugger;
       this.versus_loadOk = false;
       throw e;
 
