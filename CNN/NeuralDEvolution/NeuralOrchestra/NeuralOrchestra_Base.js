@@ -329,11 +329,6 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     return this.workerProxies.nNeuralWorker_ModeId;
   }
 
-//!!! (2023/03/18 Remarked) seems not necessary.
-//   get init_asyncGenerator_running_or_initOk() {
-//     return ( this.init_asyncGenerator_running ) || ( this.initOk );
-//   }
-
   /**
    * Create .params_loading_retryWaiting
    *
@@ -1576,9 +1571,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
 
     const funcNameInMessage = "versus_load_asyncGenerator";
 
-//!!! ...unfinished... (2023/03/18)
-// Under testing for finding out why return undefined.
-    try { // Checking pre-condition.
+    { // Checking pre-condition.
 
       NeuralOrchestra_Base.throw_call_another_if_false.call( this,
         this.versus_load_asyncGenerator_running, funcNameInMessage,
@@ -1587,10 +1580,6 @@ class NeuralOrchestra_Base extends Recyclable.Root {
       // Prevent the nueral networks from being changed during they are processing.
       NeuralOrchestra_Base.throw_if_imageData_processing.call( this,
         funcNameInMessage );
-
-    } catch ( e ) { // For Debug.
-      debugger;
-      throw e;
     }
 
     let progressRoot;
@@ -1719,35 +1708,20 @@ class NeuralOrchestra_Base extends Recyclable.Root {
       this.versus_load_asyncGenerator_running = false;
     }
 
-//!!! ...unfinished... (2023/03/18)
-// Under testing for finding out why return undefined.
-    try {
+    // 6. Advance progress to 100% only if neural networks created successfully
+    //    and .versus_load_asyncGenerator_running has been set to false (so
+    //    that caller can re-execute this generator immediately when progress
+    //    become 100%).
+    if ( neuralNet_createOk ) {
+      this.versus_loadOk = true;
 
-      // 6. Advance progress to 100% only if neural networks created successfully
-      //    and .versus_load_asyncGenerator_running has been set to false (so
-      //    that caller can re-execute this generator immediately when progress
-      //    become 100%).
-      if ( neuralNet_createOk ) {
-        this.versus_loadOk = true;
+      progressToAdvance.value_advance();
+      yield progressRoot;
 
-        progressToAdvance.value_advance();
-        yield progressRoot;
-
-      } else {
-        this.versus_loadOk = false;
-      }
-
-      if ( this.versus_loadOk == undefined )
-        throw Error( `NeuralOrchestra.Base.${funcNameInMessage}(): `
-          + `this.versus_loadOk ( { ${this.versus_loadOk} } ) `
-          + `should be either false or true.`
-        );
-
-    } catch ( e ) { // For Debug.
-      debugger;
-      throw e;
+    } else {
+      this.versus_loadOk = false;
     }
-  
+
     return this.versus_loadOk;
   }
 
@@ -1837,20 +1811,6 @@ class NeuralOrchestra_Base extends Recyclable.Root {
         + `should be executed only if `
         + `this.initOk ( ${this.initOk} ) is true.` );
   }
-
-//!!! (2023/03/18 Remarked) seems not necessary.
-//   /**
-//    * @param {NeuralOrchestra_Base} this
-//    * @param {string} funcNameInMessage   The caller function name. (e.g. init_async)
-//    */
-//   static throw_if_not_init_asyncGenerator_running_or_not_initOk(
-//     funcNameInMessage ) {
-//     if ( !this.init_asyncGenerator_running_or_initOk )
-//       throw Error( `NeuralOrchestra.Base.${funcNameInMessage}(): `
-//         + `should be executed `
-//         + `either during initializing `
-//         + `or after being initialized successfully.` );
-//   }
 
   /**
    * @param {NeuralOrchestra_Base} this
