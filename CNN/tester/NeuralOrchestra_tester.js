@@ -220,14 +220,23 @@ class TestCase {
   }
 
   /**
-   * @param {boolean} bTryLoad  If true, loading before processing and sending.
+   * @param {AsyncGenerator} versus_loader
+   * @param {AsyncGenerator} versus_load_promise
    */
   async* test_load_process_send_asyncGenerator(
-    progressParent, neuralOrchestra, bTryLoad,
+    progressParent, neuralOrchestra,
+    versus_loader, versus_load_promise,
     b_load_asyncGenerator, b_reenter_first_load_asyncGenerator ) {
 
     ++this.testId;
 
+    // Use versus_load_promise and versus_loader to define bTryLoad.
+    let bTryLoad;
+    if ( ( !versus_loader ) && ( !versus_load_promise ) )
+      bTryLoad = true; // i.e. loading before processing and sending.
+    else
+      bTryLoad = false; // i.e. has been loading.
+    
     let progressRoot = progressParent.root_get();
 
     let progressLoad;
@@ -248,9 +257,11 @@ class TestCase {
     // 1. Try another versus loading and neural networks creating.
     if ( bTryLoad ) {
       if ( b_load_asyncGenerator ) {
-        neuralOrchestra.versus_loader_create( progressLoad, this.delayMilliseconds );
+        versus_loader = neuralOrchestra.versus_loader_create(
+          progressLoad, this.delayMilliseconds );
       } else {
-        neuralOrchestra.versus_load_promise_create( this.delayMilliseconds );
+        versus_load_promise = neuralOrchestra.versus_load_promise_create(
+          this.delayMilliseconds );
       }
     }
 
@@ -347,21 +358,10 @@ class TestCase {
     ++this.testId;
     let versus_loadOk;
     try {
-
-!!! ...unfinished... (2023/03/18)
-// What if ( b_init_asyncGenerator != b_load_asyncGenerator )?
-// if ( bTryLoad == false ), should according to init method determine
-// use .versus_load_promise or versus_loader
-
-      if ( b_load_asyncGenerator ) {
+      if ( versus_loader ) {
         let loaderNext;
         do {
-
-          //!!! (2023/03/18 Temp Added)
-          if ( !neuralOrchestra.versus_loader )
-            debugger; // Why it is null?
-
-          loaderNext = await neuralOrchestra.versus_loader.next();
+          loaderNext = await versus_loader.next();
         } while ( !loaderNext.done );
         versus_loadOk = loaderNext.value;
 
@@ -375,7 +375,7 @@ class TestCase {
               + `should be 100.` );
 
       } else {
-        versus_loadOk = await neuralOrchestra.versus_load_promise;
+        versus_loadOk = await versus_load_promise;
 
         if ( 100 !== neuralOrchestra.versus_load_progress.valuePercentage )
           throw Error( `NeuralOrchestra_tester.TestCase`
@@ -449,8 +449,10 @@ class TestCase {
 
     // 1. Initialize.
     ++this.testId;
+    let initer;
+    let init_promise;
     if ( b_init_asyncGenerator )
-      neuralOrchestra.initer_create(
+      initer = neuralOrchestra.initer_create(
         progressInit,
         this.downloader_spreadsheetId, this.downloader_apiKey,
         this.bLogFetcherEventToConsole,
@@ -461,7 +463,7 @@ class TestCase {
         this.delayMilliseconds
       );
     else
-      neuralOrchestra.init_promise_create(
+      init_promise = neuralOrchestra.init_promise_create(
         this.downloader_spreadsheetId, this.downloader_apiKey,
         this.bLogFetcherEventToConsole,
         this.sender_clientId,
@@ -560,14 +562,15 @@ class TestCase {
 
     ++this.testId;
     let versus_loader;
+    let versus_load_promise;
     let initOk;
     try {
       if ( b_init_asyncGenerator ) {
-        let ininterNext;
+        let initerNext;
         do {
-          ininterNext = await neuralOrchestra.initer.next();
-        } while ( !ininterNext.done );
-        versus_loader = ininterNext.value;
+          initerNext = await initer.next();
+        } while ( !initerNext.done );
+        versus_loader = initerNext.value;
 
         if ( ( versus_loader != undefined ) != neuralOrchestra.initOk )
           throw Error( `NeuralOrchestra_tester.TestCase`
@@ -585,7 +588,8 @@ class TestCase {
           );
 
       } else {
-        initOk = await neuralOrchestra.init_promise;
+        initOk = await init_promise;
+        versus_load_promise = neuralOrchestra.versus_load_promise;
 
         if ( initOk != neuralOrchestra.initOk )
           throw Error( `NeuralOrchestra_tester.TestCase`
@@ -625,19 +629,13 @@ class TestCase {
       let progressLoadProcessSend
         = progressLoadProcessSendArray[ nLoadProcessSendCount ];
 
-!!!...unfinished... (2023/03/19)
-// Use versus_load_promise and versus_loader instead of bTryLoad.
-// When ( !versus_load_promise ) and ( !versus_loader ),
-// means ( bTryLoad == true )
-//
-
       // Test: loading multiple times. The first time is by above .init_asyncXxx()
       //       internally. The others (after 2nd times) are by calling
-      //       .versus_loadXxx() by .test_load_process_send_asyncGenerator().
-      let bTryLoad = ( nLoadProcessSendCount > 0 );
-
+      //       .versus_loader_create() or .versus_load_promise_create()
+      //       by .test_load_process_send_asyncGenerator().
       yield* this.test_load_process_send_asyncGenerator(
-        progressLoadProcessSend, neuralOrchestra, bTryLoad,
+        progressLoadProcessSend, neuralOrchestra,
+        versus_loader, versus_load_promise,
         b_load_asyncGenerator, b_reenter_first_load_asyncGenerator );
 
       ++nLoadProcessSendCount;
