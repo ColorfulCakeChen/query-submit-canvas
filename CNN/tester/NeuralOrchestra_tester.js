@@ -202,8 +202,14 @@ class TestCase {
     // A random integer between [ -1, +1 ].
     try {
       let nNegativeZeroPositive = RandTools.getRandomIntInclusive( -1, 1 );
-      neuralOrchestra.versusResultSender_send( nNegativeZeroPositive );
+      let sendOk = neuralOrchestra.versusResultSender_send(
+        nNegativeZeroPositive );
 
+      if ( !sendOk )
+        throw Error( `NeuralOrchestra_tester.TestCase`
+          + `.test_process_send_asyncGenerator(): testId=${this.testId}, `
+          + `sendOk ( ${sendOk} ) should be true.` );
+          
     } catch ( e ) {
       debugger;
       throw e;
