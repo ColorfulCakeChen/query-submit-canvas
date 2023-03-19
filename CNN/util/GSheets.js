@@ -130,6 +130,10 @@ class GSheets_UrlComposer extends Recyclable.Root {
 
 //!!! ...unfinished... (2023/03/11) What if re-entrtance?
 
+//!!! ...unfinished... (2023/03/19) For debug. why become undefined.
+    if ( !spreadsheetId )
+      debugger;
+
     let fetcher = this.urlComposer.JSON_ColumnMajorArrayArray_fetch_asyncGenerator(
       progressParent, params_loading_retryWaiting );
 
