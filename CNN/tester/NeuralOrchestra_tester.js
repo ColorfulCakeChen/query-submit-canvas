@@ -638,6 +638,9 @@ class TestCase {
         versus_loader, versus_load_promise,
         b_load_asyncGenerator, b_reenter_first_load_asyncGenerator );
 
+      // After first time loading (by .init_Xxx()), clear them so that loading again.
+      versus_loader = versus_load_promise = null;
+
       ++nLoadProcessSendCount;
     }
 
