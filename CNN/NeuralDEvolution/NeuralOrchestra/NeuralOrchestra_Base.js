@@ -1781,6 +1781,9 @@ class NeuralOrchestra_Base extends Recyclable.Root {
    *     - -1 (if parent lose offspring)
    *     -  0 (if parent draw offspring)
    *     - +1 (if parent win offspring)
+   *
+   * @return {booelan}
+   *   Return false, if internet disconnected.
    */
   versusResultSender_send( nNegativeZeroPositive ) {
 
@@ -1796,8 +1799,15 @@ class NeuralOrchestra_Base extends Recyclable.Root {
       NeuralOrchestra_Base.throw_if_not_versus_loadOk.call( this, funcNameInMessage );
     }
 
-    this.versusResultSender.post_by_versusId_NegativeZeroPositive(
-      this.versus.versusId, nNegativeZeroPositive );
+    try {
+      this.versusResultSender.post_by_versusId_NegativeZeroPositive(
+        this.versus.versusId, nNegativeZeroPositive );
+      return true;
+  
+    } catch ( e ) { // e.g. Internet disconnected.
+      console.error( e );
+      return false; // So that outside caller can continue to execute.
+    }
   }
 
   /**
