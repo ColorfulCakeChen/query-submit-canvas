@@ -1766,7 +1766,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
    * Submit the result of the last differential evolution versus to server.
    *
    *
-   * Note: The resolved .imageData_process_async() is an
+   * Note1: The resolved .imageData_process_async() is an
    *       Float32Array[].
    *
    *   - Which one is parent (chromosome) neural network's output?
@@ -1776,14 +1776,16 @@ class NeuralOrchestra_Base extends Recyclable.Root {
    *     - Float32Array[ 1 ]
    *
    *
+   * Note2: If failed (e.g. Internet disconnected), the result may not be sent
+   *        but caller of this method will not know that and will not be
+   *        affected because the exception is thrown asynchronously.
+   *
+   *
    * @param {number} nNegativeZeroPositive
    *   The lose/draw/win value of the versus. (-1 or 0 or +1)
    *     - -1 (if parent lose offspring)
    *     -  0 (if parent draw offspring)
    *     - +1 (if parent win offspring)
-   *
-   * @return {booelan}
-   *   Return false, if failed (e.g. internet disconnected).
    */
   versusResultSender_send( nNegativeZeroPositive ) {
 
@@ -1799,15 +1801,8 @@ class NeuralOrchestra_Base extends Recyclable.Root {
       NeuralOrchestra_Base.throw_if_not_versus_loadOk.call( this, funcNameInMessage );
     }
 
-    try {
-      this.versusResultSender.post_by_versusId_NegativeZeroPositive(
-        this.versus.versusId, nNegativeZeroPositive );
-      return true;
-  
-    } catch ( e ) { // e.g. Internet disconnected.
-      console.error( e );
-      return false; // So that outside caller can continue to execute.
-    }
+    this.versusResultSender.post_by_versusId_NegativeZeroPositive(
+      this.versus.versusId, nNegativeZeroPositive );
   }
 
   /**

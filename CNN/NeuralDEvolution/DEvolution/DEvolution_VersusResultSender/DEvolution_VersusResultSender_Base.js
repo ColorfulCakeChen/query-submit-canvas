@@ -76,6 +76,10 @@ class DEvolution_VersusResultSender_Base extends Recyclable.Root {
   }
 
   /**
+   * Note: If failed (e.g. Internet disconnected), the result may not be sent
+   *       but caller of this method will not know that and will not be
+   *       affected because the exception is thrown asynchronously.
+   *
    *
    * @param {string} measurementId
    *   The measurement id of stream of property of Google Analytics v4.
@@ -99,6 +103,9 @@ class DEvolution_VersusResultSender_Base extends Recyclable.Root {
       body: postBodyString
     };
 
+    // Note: The sending is asynchronous. So, even if it is failed (i.e.
+    //       throws exception (e.g. because internet didsconnected)),
+    //       the outside caller will not be informed and will not be affected.
     fetch( url, options );
   }
 
