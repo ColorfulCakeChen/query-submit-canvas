@@ -1328,12 +1328,13 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     }
 
     // 1.
+    let versus_loader;
     {
       // Use internal independent progress.
       NeuralOrchestra_Base.versus_load_progress_create.call( this );
 
       // Prepare versus_loader
-      let versus_loader = NeuralOrchestra_Base
+      versus_loader = NeuralOrchestra_Base
         .versus_loader_create_without_checking_precondition.call( this,
           this.versus_load_progress, delayMilliseconds );
 
