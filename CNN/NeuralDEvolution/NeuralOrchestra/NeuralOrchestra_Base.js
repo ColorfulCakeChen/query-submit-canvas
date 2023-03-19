@@ -11,8 +11,8 @@ import * as NeuralWorker from "../NeuralWorker.js";
 import * as DEvolution from "../DEvolution.js";
 
 //!!! ...unfinished... (2023/03/18)
-// Perhaps, .initer, .init_promise, .versus_load_promise also not
-// be recorded in this.
+// Perhaps, .initer, .init_promise also not be recorded in this.
+// (but .versus_load_promise seems necessary)
 
 /**
  * Orchestrate neural networks with differential evolution.
