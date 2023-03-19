@@ -905,19 +905,27 @@ class TestCase {
   async* test_asyncGenerator( progressParent ) {
     this.testId = 0;
 
-    const createCountMax = this.createCountBase
+    const nCreateInitLoadProcessSendMax = this.createCountBase
       * 2 // b_before_init_first_load_asyncGenerator
       * 2 // b_init_asyncGenerator_first
       ;
 
-    // Prepare progress list.
+    // 1. Prepare progress list.
     // let progressRoot = progressParent.root_get();
-    let progressCreateInitLoadProcessSendArray = new Array( createCountMax );
-    for ( let createCount = 0; createCount < createCountMax; ++createCount ) {
+    let progressCreateInitLoadProcessSendArray
+      = new Array( nCreateInitLoadProcessSend );
+
+    for (
+      let createCount = 0;
+      createCount < nCreateInitLoadProcessSend;
+      ++createCount ) {
       progressCreateInitLoadProcessSendArray[ createCount ]
         = progressParent.child_add(
             ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
     }
+
+    // 2. Create, initialize, load, process, send.
+    let nCreateInitLoadProcessSend = 0;
 
     // Test: use .versus_load_async() or .versus_load_asyncGenerator() first
     //       before init.
@@ -940,13 +948,19 @@ class TestCase {
         b_init_asyncGenerator_first = ( n_init_asyncGenerator_first != 0 );
 
         // Test: re-create.
-        for ( let createCount = 0; createCount < createCountMax; ++createCount ) {
+        for (
+          let createCount = 0;
+          createCount < this.createCountBase;
+          ++createCount ) {
+
           let progressCreateInitLoadProcessSend
-            = progressCreateInitLoadProcessSendArray[ createCount ];
+            = progressCreateInitLoadProcessSendArray[ nCreateInitLoadProcessSend ];
           yield* this.test_create_init_load_process_send_asyncGenerator(
             progressCreateInitLoadProcessSend,
             b_before_init_first_load_asyncGenerator,
             b_init_asyncGenerator_first );
+
+          ++nCreateInitLoadProcessSend;
         }
       }
     }
