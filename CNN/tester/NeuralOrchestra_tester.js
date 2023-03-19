@@ -913,9 +913,9 @@ class TestCase {
     // 1. Prepare progress list.
     // let progressRoot = progressParent.root_get();
     let progressCreateInitLoadProcessSendArray
-      = new Array( nCreateInitLoadProcessSend );
+      = new Array( nCreateInitLoadProcessSendMax );
 
-    for ( let i = 0; i < nCreateInitLoadProcessSend; ++i ) {
+    for ( let i = 0; i < nCreateInitLoadProcessSendMax; ++i ) {
       progressCreateInitLoadProcessSendArray[ i ]
         = progressParent.child_add(
             ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
