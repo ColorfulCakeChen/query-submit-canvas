@@ -1783,7 +1783,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
    *     - +1 (if parent win offspring)
    *
    * @return {booelan}
-   *   Return false, if internet disconnected.
+   *   Return false, if failed (e.g. internet disconnected).
    */
   versusResultSender_send( nNegativeZeroPositive ) {
 
