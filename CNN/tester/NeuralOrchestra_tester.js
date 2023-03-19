@@ -671,8 +671,8 @@ class TestCase {
     let progressRoot = progressParent.root_get();
 
     let progressInitLoadProcessSendArray = new Array( nInitLoadProcessSendMax );
-    for ( let initCount = 0; initCount < nInitLoadProcessSendMax; ++initCount ) {
-      progressInitLoadProcessSendArray[ initCount ]
+    for ( let i = 0; i < nInitLoadProcessSendMax; ++i ) {
+      progressInitLoadProcessSendArray[ i ]
         = progressParent.child_add(
             ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
     }
@@ -915,11 +915,8 @@ class TestCase {
     let progressCreateInitLoadProcessSendArray
       = new Array( nCreateInitLoadProcessSend );
 
-    for (
-      let createCount = 0;
-      createCount < nCreateInitLoadProcessSend;
-      ++createCount ) {
-      progressCreateInitLoadProcessSendArray[ createCount ]
+    for ( let i = 0; i < nCreateInitLoadProcessSend; ++i ) {
+      progressCreateInitLoadProcessSendArray[ i ]
         = progressParent.child_add(
             ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
     }
@@ -954,7 +951,9 @@ class TestCase {
           ++createCount ) {
 
           let progressCreateInitLoadProcessSend
-            = progressCreateInitLoadProcessSendArray[ nCreateInitLoadProcessSend ];
+            = progressCreateInitLoadProcessSendArray[
+                nCreateInitLoadProcessSend ];
+
           yield* this.test_create_init_load_process_send_asyncGenerator(
             progressCreateInitLoadProcessSend,
             b_before_init_first_load_asyncGenerator,
