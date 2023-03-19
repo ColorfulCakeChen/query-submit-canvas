@@ -203,7 +203,7 @@ class TestCase {
     try {
       let nNegativeZeroPositive = RandTools.getRandomIntInclusive( -1, 1 );
       neuralOrchestra.versusResultSender_send( nNegativeZeroPositive );
-          
+
     } catch ( e ) {
       debugger;
       throw e;
