@@ -438,8 +438,8 @@ class TestCase {
         ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
 
     let progressLoadProcessSendArray = new Array( nLoadProcessSendCountMax );
-    for ( let loadCount = 0; loadCount < nLoadProcessSendCountMax; ++loadCount ) {
-      progressLoadProcessSendArray[ loadCount ]
+    for ( let i = 0; i < nLoadProcessSendCountMax; ++i ) {
+      progressLoadProcessSendArray[ i ]
         = progressParent.child_add(
             ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
     }
