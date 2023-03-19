@@ -625,6 +625,12 @@ class TestCase {
       let progressLoadProcessSend
         = progressLoadProcessSendArray[ nLoadProcessSendCount ];
 
+!!!...unfinished... (2023/03/19)
+// Use versus_load_promise and versus_loader instead of bTryLoad.
+// When ( !versus_load_promise ) and ( !versus_loader ),
+// means ( bTryLoad == true )
+//
+
       // Test: loading multiple times. The first time is by above .init_asyncXxx()
       //       internally. The others (after 2nd times) are by calling
       //       .versus_loadXxx() by .test_load_process_send_asyncGenerator().
