@@ -1777,13 +1777,13 @@ class NeuralOrchestra_Base extends Recyclable.Root {
 
 !!! ...unfinished... (2023/03/20)
 // Check current time Date.now() and the versus downloaded time.
-// If the interval is greater than 2 hours (i.e. 120 minutes), just
+// If the interval is greater than one half hours (90 minutes), just
 // discard the versus result silently (i.e. do not send it to server).
 //
 // Because Google Analytics Realtime Report can only collect the last
-// half hour (i.e. 30 minutes) event, A versus downloaded 1 hour ago is
-// considered expired. Sending result of expired versus to server may
-// confuse server.
+// half-hour (30 minutes) or one hour (60 minutes; premium vesion) event,
+// A versus downloaded one half hours (90 minutes) ago is considered
+// expired. Sending result of expired versus to server may confuse server.
 //
 
     this.versusResultSender.post_by_versusId_NegativeZeroPositive(
