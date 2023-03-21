@@ -292,8 +292,7 @@ class TestCase {
    */
   async* test_load_process_send_asyncGenerator(
     progressParent, neuralOrchestra,
-    versus_loader, versus_load_promise,
-    delayPromise,
+    versus_loader, versus_load_promise, delayPromise,
     b_load_asyncGenerator, b_reenter_first_load_asyncGenerator ) {
 
     ++this.testId;
@@ -709,7 +708,7 @@ class TestCase {
       //       by .test_load_process_send_asyncGenerator().
       yield* this.test_load_process_send_asyncGenerator(
         progressLoadProcessSend, neuralOrchestra,
-        versus_loader, versus_load_promise,
+        versus_loader, versus_load_promise, delayPromise,
         b_load_asyncGenerator, b_reenter_first_load_asyncGenerator );
 
       // After first time loading (by .init_Xxx()), clear them so that loading again.
