@@ -1790,7 +1790,8 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     // versus result (i.e. do not send it to server) and log a warning message
     // (because this should not be a usual case).
     //
-    // Note: Sending result of expired versus to server may confuse server.
+    // Note: Sending result of expired versus to server will increase the
+    //       possibility of confusing server.
     if ( bExpired ) {
       let versusIdString = this.versus.versusId.versusIdString;
       console.warn( `NeuralOrchestra.Base.${funcNameInMessage}(): `
