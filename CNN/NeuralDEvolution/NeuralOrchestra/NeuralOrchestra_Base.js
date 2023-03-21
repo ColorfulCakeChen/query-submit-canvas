@@ -10,6 +10,20 @@ import * as NeuralNet from "../../Conv/NeuralNet.js";
 import * as NeuralWorker from "../NeuralWorker.js";
 import * as DEvolution from "../DEvolution.js";
 
+//!!! ...unfinishe... (2023/03/21)
+// Replace delayMilliseconds by delayPromise.
+
+
+//!!! ...unfinishe... (2023/03/21)
+// Only if ( this.initOk === undefined ), init_asyncXxx() can be called.
+// Prevent from being re-initialized. So that unit testing can be accelerated.
+
+
+//!!! ...unfinishe... (2023/03/21)
+// Pass workerProxies_init_promise into versus_load_asyncGenerator().
+// It can be null. If null, this.initOk must be true.
+
+
 /**
  * Orchestrate neural networks with differential evolution.
  *
