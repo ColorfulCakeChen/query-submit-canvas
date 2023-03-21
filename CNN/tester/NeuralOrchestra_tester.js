@@ -1,5 +1,6 @@
 export { tester };
 
+import * as PartTime from "../../util/PartTime.js";
 import * as RandTools from "../util/RandTools.js";
 import * as ValueMax from "../util/ValueMax.js";
 import * as DEvolution from "../NeuralDEvolution/DEvolution.js";
@@ -32,13 +33,23 @@ class TestCase {
 
     this.testId = undefined; // For debug.
 
-    // In the reentrance testing, when try await, the async method may have
-    // been completed. To prevent they complete too fast to test, add some
-    // delay time.
+//!!! (2023/03/21 Remarked) Replaced by Promise_resolvable_rejectable_create().
+//     // In the reentrance testing, when try await, the async method may have
+//     // been completed. To prevent they complete too fast to test, add some
+//     // delay time.
+//     //
+//     // This is especially true for imageData_process_Xxx() which executues
+//     // in another web worker (real parallelly).
+//     this.delayMilliseconds = 2 * 1000;
+
+    // Note:
     //
-    // This is especially true for imageData_process_Xxx() which executues
-    // in another web worker (real parallelly).
-    this.delayMilliseconds = 2 * 1000;
+    // In the reentrance testing, when try await, the async method may have
+    // been completed. This is especially true for imageData_process_Xxx()
+    // which executues in another web worker (real parallelly).
+    //
+    // To prevent they complete too fast to test, add some delay by
+    // PartTime.Promise_resolvable_rejectable_create().
   }
 
   /**

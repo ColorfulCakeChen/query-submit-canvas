@@ -1,6 +1,7 @@
 export { delayedValue, sleep };
 export { Promise_create_by_addEventListener_once };
 export { Promise_create_by_setTimeout };
+export { Promise_resolvable_rejectable_create };
 export { prepend_asyncGenerator };
 export { forOf };
 
@@ -145,6 +146,30 @@ function Promise_create_by_setTimeout(
 
   return p;
 }
+
+
+/**
+ *
+ * @return {Promise}
+ *   Return a newly created Promise. It could be settled by calling the
+ * following methods:
+ *   - .resolve(): Call it to resolve the promise.
+ *   - .reject(): Call it to reject the promise.
+ */
+function Promise_resolvable_rejectable_create() {
+  let resolveFunc, rejectFunc;
+
+  let p = new Promise( ( resolve, reject ) => {
+    resolveFunc = resolve;
+    rejectFunc = reject;
+  } );
+
+  p.resolve = resolveFunc;
+  p.reject = rejectFunc;
+
+  return p;
+}
+
 
 /**
  * Prepend the specified promise to the specified async generator. It looks
