@@ -3,6 +3,7 @@ export { NeuralOrchestra_Base as Base };
 import * as Pool from "../../util/Pool.js";
 import * as Recyclable from "../../util/Recyclable.js";
 import * as HttpRequest from "../../util/HttpRequest.js";
+import * as PartTime from "../../util/PartTime.js";
 import * as ValueMax from "../../util/ValueMax.js";
 import * as ValueDesc from "../../Unpacker/ValueDesc.js";
 import * as NeuralNet from "../../Conv/NeuralNet.js";
