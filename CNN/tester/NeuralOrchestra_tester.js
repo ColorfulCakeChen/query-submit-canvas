@@ -288,18 +288,19 @@ class TestCase {
   /**
    * @param {AsyncGenerator} versus_loader
    * @param {AsyncGenerator} versus_load_promise
-   * @param {Promise} delayPromise
+   * @param {Promise} versus_loader_delayPromise
    */
   async* test_load_process_send_asyncGenerator(
     progressParent, neuralOrchestra,
-    versus_loader, versus_load_promise, delayPromise,
+    versus_loader, versus_load_promise, versus_loader_delayPromise,
     b_load_asyncGenerator, b_reenter_first_load_asyncGenerator ) {
 
     ++this.testId;
 
     // Use versus_load_promise and versus_loader to define bTryLoad.
     let bTryLoad;
-    if ( ( !versus_loader ) && ( !versus_load_promise ) && ( !delayPromise ) )
+    if (   ( !versus_loader ) && ( !versus_load_promise )
+        && ( !versus_loader_delayPromise ) )
       bTryLoad = true; // i.e. loading before processing and sending.
     else
       bTryLoad = false; // i.e. has been loading.
@@ -323,13 +324,15 @@ class TestCase {
 
     // 1. Try another versus loading and neural networks creating.
     if ( bTryLoad ) {
-      delayPromise = PartTime.Promise_resolvable_rejectable_create();
+      versus_loader_delayPromise
+        = PartTime.Promise_resolvable_rejectable_create();
+
       if ( b_load_asyncGenerator ) {
         versus_loader = neuralOrchestra.versus_loader_create(
-          progressLoad, delayPromise );
+          progressLoad, versus_loader_delayPromise );
       } else {
         versus_load_promise = neuralOrchestra.versus_load_promise_create(
-          delayPromise );
+          versus_loader_delayPromise );
       }
     }
 
@@ -426,7 +429,7 @@ class TestCase {
     ++this.testId;
     let versus_loadOk;
     try {
-      delayPromise.resolve();
+      versus_loader_delayPromise.resolve();
 
       if ( versus_loader ) {
         let loaderNext;
@@ -519,9 +522,13 @@ class TestCase {
 
     // 1. Initialize.
     ++this.testId;
+
+    let initer_delayPromise = PartTime.Promise_resolvable_rejectable_create();
+    let versus_loader_delayPromise = PartTime.Promise_resolvable_rejectable_create();
+
     let initer;
     let init_promise;
-    let delayPromise = PartTime.Promise_resolvable_rejectable_create();
+
     if ( b_init_asyncGenerator )
       initer = neuralOrchestra.initer_create(
         progressInit,
@@ -531,7 +538,7 @@ class TestCase {
         this.input_height, this.input_width,
         this.vocabularyChannelCount, this.blockCountTotalRequested,
         this.output_channelCount,
-        delayPromise
+        initer_delayPromise, versus_loader_delayPromise
       );
     else
       init_promise = neuralOrchestra.init_promise_create(
@@ -541,7 +548,7 @@ class TestCase {
         this.input_height, this.input_width,
         this.vocabularyChannelCount, this.blockCountTotalRequested,
         this.output_channelCount,
-        delayPromise
+        initer_delayPromise, versus_loader_delayPromise
       );
 
     if ( neuralOrchestra.initOk !== undefined )
@@ -636,7 +643,7 @@ class TestCase {
     let versus_load_promise;
     let initOk;
     try {
-      delayPromise.resolve();
+      initer_delayPromise.resolve();
 
       if ( b_init_asyncGenerator ) {
         let initerNext;
@@ -708,11 +715,11 @@ class TestCase {
       //       by .test_load_process_send_asyncGenerator().
       yield* this.test_load_process_send_asyncGenerator(
         progressLoadProcessSend, neuralOrchestra,
-        versus_loader, versus_load_promise, delayPromise,
+        versus_loader, versus_load_promise, versus_loader_delayPromise,
         b_load_asyncGenerator, b_reenter_first_load_asyncGenerator );
 
       // After first time loading (by .init_Xxx()), clear them so that loading again.
-      versus_loader = versus_load_promise = delayPromise = null;
+      versus_loader = versus_load_promise = versus_loader_delayPromise = null;
 
       ++nLoadProcessSendCount;
     }

@@ -379,7 +379,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     sender_clientId,
     input_height, input_width,
     vocabularyChannelCount, blockCountTotalRequested, output_channelCount,
-    delayPromise ) {
+    initer_delayPromise, versus_loader_delayPromise ) {
 
     { // Checking pre-condition.
       const funcNameInMessage = "init_promise_create";
@@ -402,7 +402,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
       sender_clientId,
       input_height, input_width,
       vocabularyChannelCount, blockCountTotalRequested, output_channelCount,
-      delayPromise
+      initer_delayPromise, versus_loader_delayPromise
     );
     return init_promise;
   }
