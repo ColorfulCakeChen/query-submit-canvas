@@ -142,13 +142,6 @@ import * as DEvolution from "../DEvolution.js";
  *   The numeric identifier of neural worker mode (i.e.
  * NeuralWorker.Mode.Singleton.Ids.Xxx).
  *
-
-// !!! (2023/03/18 Remarked) seems not necessary.
-//  * @member {boolean} init_asyncGenerator_running_or_initOk
-//  *   If true, it means either during initializing or after being initialized
-//  * successfully.
-
- * 
  * @member {NeuralNet.ParamsBase} neuralNetParamsBase
  *   The neural network configuration. It will be used for both two neural
  * networks. It will be kept (i.e. owned and destroyed) by this
@@ -174,9 +167,6 @@ import * as DEvolution from "../DEvolution.js";
 // Perhaps, .initer, .init_promise, .versus_load_promise also not
 // be recorded in this.
 
- * @member {Promise( boolean )} init_promise
- *   The result of .init_promise_create().
- *
  * @member {AsyncGenerator} initer
  *   The result of .initer_create(). An instance of .init_asyncGenerator().
  *
@@ -285,8 +275,6 @@ class NeuralOrchestra_Base extends Recyclable.Root {
 
     NeuralOrchestra_Base.versus_load_progress_dispose.call( this );
     this.versus_load_promise = undefined;
-//!!! (2023/03/18 Remarked) No longer record in .versus_loader directly.
-//    this.versus_loader = undefined;
     this.versus_loadOk = undefined;
     this.versus_load_asyncGenerator_running = undefined;
     this.versus_load_async_running = undefined;
@@ -302,7 +290,6 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     NeuralOrchestra_Base.neuralNetParamsBase_dispose.call( this );
     NeuralOrchestra_Base.workerProxies_dispose.call( this );
 
-    this.init_promise = undefined;
     this.initer = undefined;
     this.initOk = undefined;
     this.init_asyncGenerator_running = undefined;
@@ -405,12 +392,12 @@ class NeuralOrchestra_Base extends Recyclable.Root {
 
 
   /**
-   * Call .init_async() and record the returned promise in .init_promise.
+   * Call .init_async() and return init_promise.
    *
    * @param {NeuralOrchestra_Base} this
    *
    * @return {Promise( boolean )}
-   *   Return this.init_promise which is an instance of .init_async().
+   *   Return init_promise which is an instance of .init_async().
    */
   init_promise_create(
     downloader_spreadsheetId, downloader_apiKey, bLogFetcherEventToConsole,
@@ -435,14 +422,14 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     this.init_async_running = true;
     this.initOk = undefined;
 
-    this.init_promise = NeuralOrchestra_Base.init_async.call( this,
+    let init_promise = NeuralOrchestra_Base.init_async.call( this,
       downloader_spreadsheetId, downloader_apiKey, bLogFetcherEventToConsole,
       sender_clientId,
       input_height, input_width,
       vocabularyChannelCount, blockCountTotalRequested, output_channelCount,
       delayMilliseconds
     );
-    return this.init_promise;
+    return init_promise;
   }
 
   /**
@@ -463,7 +450,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
    * undefined), no extra delay.
    *
    * @return {Promise}
-   *   Return a promise (i.e. the .workerProxies_init_promise).
+   *   Return a promise (i.e. init_promise).
    *   - Resolved to true, if succeeded.
    *     - The neural workers have been created and GPU shaders have been
    *         compiled.
@@ -828,11 +815,6 @@ class NeuralOrchestra_Base extends Recyclable.Root {
             // let progressRoot = object.value;
             yield progressRoot;
 
-//!!! (2023/03/18 Remarked) No longer record in .versus_loader directly.
-//             if ( versus_loader !== this.versus_loader )
-//               throw Error( `NeuralOrchestra.Base.${funcNameInMessage}(): `
-//                 + `this.versus_loader should not be changed.` );
-
             allPromiseSet.delete( loaderNext );
             loaderNext = versus_loader.next();
             allPromiseSet.add( loaderNext );
@@ -866,18 +848,9 @@ class NeuralOrchestra_Base extends Recyclable.Root {
       // by outside caller (including .init_async()).
       let versus_loader_prepended;
       {
-
-//!!! (2023/03/18 Remarked) No longer record in .versus_loader directly.
-//         if ( versus_loader !== this.versus_loader )
-//           throw Error( `NeuralOrchestra.Base.${funcNameInMessage}(): `
-//             + `this.versus_loader should not be changed.` );
-
         // Replace .versus_loader by a new asyn generator which will yield
         // the loaderNext first. Just like push the loaderNext back to the
         // original .versus_loader.
-
-//!!! (2023/03/18 Remarked) No longer record in .versus_loader directly.
-//        this.versus_loader = PartTime.prepend_asyncGenerator(
         versus_loader_prepended = PartTime.prepend_asyncGenerator(
           loaderNext, versus_loader );
       }
