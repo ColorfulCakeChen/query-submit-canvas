@@ -162,14 +162,6 @@ import * as DEvolution from "../DEvolution.js";
  *   If true, a .init_asyncGenerator() is still executing. Please wait it
  * becoming false if wanting to call .initer_create() again.
  *
-
-//!!! ...unfinished... (2023/03/18)
-// Perhaps, .initer, .init_promise, .versus_load_promise also not
-// be recorded in this.
-
- * @member {AsyncGenerator} initer
- *   The result of .initer_create(). An instance of .init_asyncGenerator().
- *
  * @member {boolean} initOk
  *   If true, a .init_async() or .init_asyncGenerator() has been executed
  * and succeeded.
@@ -290,7 +282,6 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     NeuralOrchestra_Base.neuralNetParamsBase_dispose.call( this );
     NeuralOrchestra_Base.workerProxies_dispose.call( this );
 
-    this.initer = undefined;
     this.initOk = undefined;
     this.init_asyncGenerator_running = undefined;
     this.init_async_running = undefined;
@@ -497,12 +488,6 @@ class NeuralOrchestra_Base extends Recyclable.Root {
 
       let initerNext;
       do {
-
-//!!! ...unfinished... (2023/03/18) Is it possible not to record in this.initer?
-        if ( initer !== this.initer )
-          throw Error( `NeuralOrchestra.Base.${funcNameInMessage}(): `
-            + `this.initer should not be changed.` );
-
         initerNext = await initer.next();
       } while ( !initerNext.done );
 
@@ -547,11 +532,11 @@ class NeuralOrchestra_Base extends Recyclable.Root {
 
 
   /**
-   * Create .initer (an instance of .init_asyncGenerator()).
+   * Create initer (an instance of .init_asyncGenerator()).
    *
    *
    * @return {AsyncGenerator}
-   *   Return this.initer which is an instance of .init_asyncGenerator().
+   *   Return initer which is an instance of .init_asyncGenerator().
    */
   initer_create(
     progressParent,
@@ -585,7 +570,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
   }
 
   /**
-   * Create .initer (an instance of .init_asyncGenerator()).
+   * Create initer (an instance of .init_asyncGenerator()).
    * 
    * Called by .init_async() and .initer_create(). It does not check
    * precondition.
@@ -594,7 +579,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
    * @param {NeuralOrchestra_Base} this
    *
    * @return {AsyncGenerator}
-   *   Return this.initer which is an instance of .init_asyncGenerator().
+   *   Return initer which is an instance of .init_asyncGenerator().
    */
   static initer_create_without_checking_precondition(
     progressParent,
@@ -607,14 +592,14 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     this.init_asyncGenerator_running = true;
     this.initOk = undefined;
 
-    this.initer = NeuralOrchestra_Base.init_asyncGenerator.call( this,
+    let initer = NeuralOrchestra_Base.init_asyncGenerator.call( this,
       progressParent, 
       downloader_spreadsheetId, downloader_apiKey, bLogFetcherEventToConsole,
       sender_clientId,
       input_height, input_width,
       vocabularyChannelCount, blockCountTotalRequested, output_channelCount,
       delayMilliseconds );
-    return this.initer;
+    return initer;
   }
 
   /**
