@@ -3,27 +3,16 @@ export { NeuralOrchestra_Base as Base };
 import * as Pool from "../../util/Pool.js";
 import * as Recyclable from "../../util/Recyclable.js";
 import * as HttpRequest from "../../util/HttpRequest.js";
-//!!! (2023/03/21 Remarked)
-//import * as PartTime from "../../util/PartTime.js";
 import * as ValueMax from "../../util/ValueMax.js";
 import * as ValueDesc from "../../Unpacker/ValueDesc.js";
 import * as NeuralNet from "../../Conv/NeuralNet.js";
 import * as NeuralWorker from "../NeuralWorker.js";
 import * as DEvolution from "../DEvolution.js";
 
-//!!! ...unfinishe... (2023/03/21)
-// Replace delayMilliseconds by delayPromise.
-// So that it can be controllable when unit testing.
-
 
 //!!! ...unfinishe... (2023/03/21)
 // Only if ( this.initOk === undefined ), init_asyncXxx() can be called.
 // Prevent from being re-initialized. So that unit testing can be accelerated.
-
-
-//!!! ...unfinishe... (2023/03/21)
-// Pass workerProxies_init_promise into versus_load_asyncGenerator().
-// It can be null. If null, this.initOk must be true.
 
 
 /**
@@ -395,7 +384,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     sender_clientId,
     input_height, input_width,
     vocabularyChannelCount, blockCountTotalRequested, output_channelCount,
-    delayMilliseconds ) {
+    delayPromise ) {
 
     { // Checking pre-condition.
       const funcNameInMessage = "init_promise_create";
@@ -418,7 +407,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
       sender_clientId,
       input_height, input_width,
       vocabularyChannelCount, blockCountTotalRequested, output_channelCount,
-      delayMilliseconds
+      delayPromise
     );
     return init_promise;
   }
@@ -435,10 +424,9 @@ class NeuralOrchestra_Base extends Recyclable.Root {
    *        also .init_asyncGenerator() explanation.)
    *
    *
-   * @param {number} delayMilliseconds
-   *   Mainly used when testing. If positive, this async method will complete
-   * at least after so many milliseconds. Otherwise (negative or zero or
-   * undefined), no extra delay.
+   * @param {Promise} delayPromise
+   *   Mainly used when unit testing. If not null, this async method will await
+   * it before complete. If null or undefined, no extra delay awaiting.
    *
    * @return {Promise}
    *   Return a promise (i.e. init_promise).
@@ -458,7 +446,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     sender_clientId,
     input_height, input_width,
     vocabularyChannelCount, blockCountTotalRequested, output_channelCount,
-    delayMilliseconds ) {
+    delayPromise ) {
 
     const funcNameInMessage = "init_async";
     { // Checking pre-condition.
@@ -483,7 +471,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
           sender_clientId,
           input_height, input_width,
           vocabularyChannelCount, blockCountTotalRequested, output_channelCount,
-          delayMilliseconds
+          delayPromise
         );
 
       let initerNext;
@@ -514,7 +502,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
       //       .versus_load_promise
       NeuralOrchestra_Base
         .versus_load_promise_create_without_checking_precondition.call( this,
-          versus_loader, delayMilliseconds );
+          versus_loader, delayPromise );
 
       return this.initOk;
 
@@ -544,7 +532,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     sender_clientId,
     input_height, input_width,
     vocabularyChannelCount, blockCountTotalRequested, output_channelCount,
-    delayMilliseconds ) {
+    delayPromise ) {
 
     { // Checking pre-condition.
       const funcNameInMessage = "initer_create";
@@ -566,7 +554,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
         sender_clientId,
         input_height, input_width,
         vocabularyChannelCount, blockCountTotalRequested, output_channelCount,
-        delayMilliseconds );
+        delayPromise );
   }
 
   /**
@@ -587,7 +575,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     sender_clientId,
     input_height, input_width,
     vocabularyChannelCount, blockCountTotalRequested, output_channelCount,
-    delayMilliseconds ) {
+    delayPromise ) {
 
     this.init_asyncGenerator_running = true;
     this.initOk = undefined;
@@ -598,7 +586,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
       sender_clientId,
       input_height, input_width,
       vocabularyChannelCount, blockCountTotalRequested, output_channelCount,
-      delayMilliseconds );
+      delayPromise );
     return initer;
   }
 
@@ -659,10 +647,9 @@ class NeuralOrchestra_Base extends Recyclable.Root {
    *   The output tensor's channel count.
    *
    *
-   * @param {number} delayMilliseconds
-   *   Mainly used when testing. If positive, this async method will complete
-   * at least after so many milliseconds. Otherwise (negative or zero or
-   * undefined), no extra delay.
+   * @param {Promise} delayPromise
+   *   Mainly used when unit testing. If not null, this async generator will
+   * await it before complete. If null or undefined, no extra delay awaiting.
    *
    *
    * @yield {Promise( ValueMax.Percentage.Aggregate )}
@@ -691,7 +678,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     sender_clientId,
     input_height, input_width,
     vocabularyChannelCount, blockCountTotalRequested, output_channelCount,
-    delayMilliseconds
+    delayPromise
   ) {
 
     const funcNameInMessage = "init_asyncGenerator";
@@ -721,11 +708,6 @@ class NeuralOrchestra_Base extends Recyclable.Root {
       let progressRoot = progressParent.root_get();
       let allPromiseSet = new Set();
 
-      // 0.4
-      let sleepPromise;
-      if ( delayMilliseconds > 0 )
-        sleepPromise = PartTime.sleep( delayMilliseconds );
-
       // 1. Initialize NeuralWorker.Proxies
       let workerProxies_init_promise;
       {
@@ -747,7 +729,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
       // 2. Load (versus summary and) versus. Create neural networks.
       let versus_loader = NeuralOrchestra_Base
         .versus_loader_create_without_checking_precondition.call( this,
-          progressParent, workerProxies_init_promise, delayMilliseconds );
+          progressParent, workerProxies_init_promise, delayPromise );
 
       let loaderNext = versus_loader.next();
       allPromiseSet.add( loaderNext );
@@ -845,8 +827,8 @@ class NeuralOrchestra_Base extends Recyclable.Root {
       this.initOk = true;
 
       // 6.
-      if ( sleepPromise )
-        await sleepPromise;
+      if ( delayPromise )
+        await delayPromise;
 
       return versus_loader_prepended;
 
@@ -1108,8 +1090,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
    *   Return imageData_process_promise which is an instance
    * of .imageData_process_async().
    */
-  imageData_process_promise_create(
-    sourceImageData, delayMilliseconds ) {
+  imageData_process_promise_create( sourceImageData, delayPromise ) {
 
     { // Checking pre-condition.
       const funcNameInMessage = "imageData_process_promise_create";
@@ -1128,7 +1109,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     this.imageData_process_async_running = true;
     let imageData_process_promise
       = NeuralOrchestra_Base.imageData_process_async.call( this,
-          sourceImageData, delayMilliseconds );
+          sourceImageData, delayPromise );
     return imageData_process_promise;
   }
 
@@ -1137,10 +1118,9 @@ class NeuralOrchestra_Base extends Recyclable.Root {
    * @param {ImageData} sourceImageData
    *   The input image datat which will be processed by neural workers.
    *
-   * @param {number} delayMilliseconds
-   *   Mainly used when testing. If positive, this async method will complete
-   * at least after so many milliseconds. Otherwise (negative or zero or
-   * undefined), no extra delay.
+   * @param {Promise} delayPromise
+   *   Mainly used when unit testing. If not null, this async method will await
+   * it before complete. If null or undefined, no extra delay awaiting.
    *
    * @return {Promise( Float32Array[] )}
    *   Return a promise resolved to an array [ Float32Array, Float32Array ]
@@ -1148,8 +1128,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
    *   - Float32Array[ 0 ] is parent (chromosome) neural network's output.
    *   - Float32Array[ 1 ] is offspring (chromosome) neural network's output.
    */
-  static async imageData_process_async(
-    sourceImageData, delayMilliseconds ) {
+  static async imageData_process_async( sourceImageData, delayPromise ) {
 
     { // Checking pre-condition.
       const funcNameInMessage = "imageData_process_async";
@@ -1167,11 +1146,6 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     }
 
     try {
-      // 0.
-      let sleepPromise;
-      if ( delayMilliseconds > 0 )
-        sleepPromise = PartTime.sleep( delayMilliseconds );
-
       // 1.
       let theFloat32ArrayArrayPromise
         = this.workerProxies.ImageData_process_async( sourceImageData );
@@ -1179,8 +1153,8 @@ class NeuralOrchestra_Base extends Recyclable.Root {
       let theFloat32ArrayArray = await theFloat32ArrayArrayPromise;
 
       // 2.
-      if ( sleepPromise )
-        await sleepPromise;
+      if ( delayPromise )
+        await delayPromise;
 
       return theFloat32ArrayArray;
 
@@ -1249,16 +1223,15 @@ class NeuralOrchestra_Base extends Recyclable.Root {
    * Create .versus_load_promise (an instance of .versus_load_async()).
    *
    *
-   * @param {number} delayMilliseconds
-   *   Mainly used when testing. If positive, this async method will complete
-   * at least after so many milliseconds. Otherwise (negative or zero or
-   * undefined), no extra delay.
+   * @param {Promise} delayPromise
+   *   Mainly used when unit testing. If not null, the async method will
+   * await it before complete. If null or undefined, no extra delay awaiting.
    *
    * @return {Promise( boolean )}
    *   Return the newly created this.versus_load_promise which is an instance
    * of .versus_load_async().
    */
-  versus_load_promise_create( delayMilliseconds ) {
+  versus_load_promise_create( delayPromise ) {
 
     const funcNameInMessage = "versus_load_promise_create";
     { // Checking pre-condition.
@@ -1287,7 +1260,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
       versus_loader = NeuralOrchestra_Base
         .versus_loader_create_without_checking_precondition.call( this,
           this.versus_load_progress,
-          workerProxies_init_promise, delayMilliseconds );
+          workerProxies_init_promise, delayPromise );
 
       // Note: Here needs not set .versus_loadOk to undefined because
       //       .versus_loader_create_without_checking_precondition() has
@@ -1297,7 +1270,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     // 2.
     return NeuralOrchestra_Base
       .versus_load_promise_create_without_checking_precondition.call( this,
-        versus_loader, delayMilliseconds );
+        versus_loader, delayPromise );
   }
 
   /**
@@ -1318,11 +1291,11 @@ class NeuralOrchestra_Base extends Recyclable.Root {
    * of .versus_load_async().
    */
   static versus_load_promise_create_without_checking_precondition(
-    versus_loader, delayMilliseconds ) {
+    versus_loader, delayPromise ) {
 
     this.versus_load_async_running = true;
     this.versus_load_promise = NeuralOrchestra_Base.versus_load_async.call(
-      this, versus_loader, delayMilliseconds );
+      this, versus_loader, delayPromise );
     return this.versus_load_promise;
   }
 
@@ -1337,10 +1310,9 @@ class NeuralOrchestra_Base extends Recyclable.Root {
    * be wrapped by the created promise. It will be .next() until done by this
    * async method.
    *
-   * @param {number} delayMilliseconds
-   *   Mainly used when testing. If positive, this async method will complete
-   * at least after so many milliseconds. Otherwise (negative or zero or
-   * undefined), no extra delay.
+   * @param {Promise} delayPromise
+   *   Mainly used when unit testing. If not null, this async method will await
+   * it before complete. If null or undefined, no extra delay awaiting.
    *
    * @return {Promise( boolean )}
    *   Return a promise:
@@ -1349,7 +1321,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
    *   - Resolved to false, if failed.
    *   - When settled, the .versus_load_progress has been stopped.
    */
-  static async versus_load_async( versus_loader, delayMilliseconds ) {
+  static async versus_load_async( versus_loader, delayPromise ) {
 
     const funcNameInMessage = "versus_load_async";
     { // Checking pre-condition.
@@ -1364,11 +1336,6 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     }
 
     try {
-      // 0.
-      let sleepPromise;
-      if ( delayMilliseconds > 0 )
-        sleepPromise = PartTime.sleep( delayMilliseconds );
-
       // 1.
       if ( !versus_loader )
         throw Error( `NeuralOrchestra.Base.${funcNameInMessage}(): `
@@ -1397,8 +1364,8 @@ class NeuralOrchestra_Base extends Recyclable.Root {
         );
 
       // 2.
-      if ( sleepPromise )
-        await sleepPromise;
+      if ( delayPromise )
+        await delayPromise;
 
       return loadOk;
 
@@ -1427,16 +1394,15 @@ class NeuralOrchestra_Base extends Recyclable.Root {
    * created progressToAdvance will be increased when every time advanced. The
    * progressParent.root_get() will be returned when every time yield.
    *
-   * @param {number} delayMilliseconds
-   *   Mainly used when testing. If positive, this async method will complete
-   * at least after so many milliseconds. Otherwise (negative or zero or
-   * undefined), no extra delay.
+   * @param {Promise} delayPromise
+   *   Mainly used when unit testing. If not null, the async generator will
+   * await it before complete. If null or undefined, no extra delay awaiting.
    *
    * @return {AsyncGenerator}
    *   Return the newly created versus_loader which is an instance of
    * .versus_load_asyncGenerator().
    */
-  versus_loader_create( progressParent, delayMilliseconds ) {
+  versus_loader_create( progressParent, delayPromise ) {
 
     { // Checking pre-condition.
       const funcNameInMessage = "versus_loader_create";
@@ -1457,7 +1423,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     const workerProxies_init_promise = null; // For outside caller.
     let versus_loader = NeuralOrchestra_Base
       .versus_loader_create_without_checking_precondition.call( this,
-        progressParent, workerProxies_init_promise, delayMilliseconds );
+        progressParent, workerProxies_init_promise, delayPromise );
     return versus_loader;
   }
 
@@ -1477,13 +1443,13 @@ class NeuralOrchestra_Base extends Recyclable.Root {
    * .versus_load_asyncGenerator().
    */
   static versus_loader_create_without_checking_precondition(
-    progressParent, workerProxies_init_promise, delayMilliseconds ) {
+    progressParent, workerProxies_init_promise, delayPromise ) {
 
     this.versus_load_asyncGenerator_running = true;
     this.versus_loadOk = undefined;
 
     let versus_loader = NeuralOrchestra_Base.versus_load_asyncGenerator.call(
-      this, progressParent, workerProxies_init_promise, delayMilliseconds );
+      this, progressParent, workerProxies_init_promise, delayPromise );
     return versus_loader;
   }
 
@@ -1516,10 +1482,9 @@ class NeuralOrchestra_Base extends Recyclable.Root {
    *   - If null, the .initOk must have been true.
    *     - This case is used by .versus_loader_create() (i.e. outside caller).
    *
-   * @param {number} delayMilliseconds
-   *   Mainly used when testing. If positive, this async method will complete
-   * at least after so many milliseconds. Otherwise (negative or zero or
-   * undefined), no extra delay.
+   * @param {Promise} delayPromise
+   *   Mainly used when unit testing. If not null, this async generator will
+   * await it before complete. If null or undefined, no extra delay awaiting.
    *
    * @yield {Promise( ValueMax.Percentage.Aggregate )}
    *   Yield a promise resolves to { done: false, value: progressParent.root_get() }.
@@ -1532,7 +1497,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
    *     - .versus_loadOk will also be set to false.
    */
   static async* versus_load_asyncGenerator(
-    progressParent, workerProxies_init_promise, delayMilliseconds ) {
+    progressParent, workerProxies_init_promise, delayPromise ) {
 
     const funcNameInMessage = "versus_load_asyncGenerator";
 
@@ -1592,11 +1557,6 @@ class NeuralOrchestra_Base extends Recyclable.Root {
 
       progressToAdvance = progressParent.child_add(
         ValueMax.Percentage.Concrete.Pool.get_or_create_by( 2 ) );
-
-      // 0.3
-      let sleepPromise;
-      if ( delayMilliseconds > 0 )
-        sleepPromise = PartTime.sleep( delayMilliseconds );
 
       // 1. Load versus summary.
       if ( versusSummary_needLoad ) {
@@ -1676,8 +1636,8 @@ class NeuralOrchestra_Base extends Recyclable.Root {
         );
 
       // 4.
-      if ( sleepPromise )
-        await sleepPromise;
+      if ( delayPromise )
+        await delayPromise;
 
     } catch ( e ) {
       debugger;
