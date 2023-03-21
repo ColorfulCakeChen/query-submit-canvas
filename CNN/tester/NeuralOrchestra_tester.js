@@ -936,11 +936,11 @@ class TestCase {
       }
 
       if ( 100 !== progressToAdvance.valuePercentage )
-      throw Error( `NeuralOrchestra_tester.TestCase`
-        + `.test_create_init_load_process_send_asyncGenerator(): `
-        + `testId=${this.testId}, `
-        + `progressToAdvance.valuePercentage `
-          +  `( ${progressToAdvance.valuePercentage} ) should 100.` );
+        throw Error( `NeuralOrchestra_tester.TestCase`
+          + `.test_create_init_load_process_send_asyncGenerator(): `
+          + `testId=${this.testId}, `
+          + `progressToAdvance.valuePercentage `
+            +  `( ${progressToAdvance.valuePercentage} ) should 100.` );
 
     } catch ( e ) {
       debugger;
