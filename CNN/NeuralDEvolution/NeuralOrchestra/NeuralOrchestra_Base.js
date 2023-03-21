@@ -420,7 +420,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
    *
    *
    * @param {Promise} initer_delayPromise
-   *   Mainly used when unit testing. If not null, this async generator will
+   *   Mainly used when unit testing. If not null, this async method will
    * await it before complete. If null or undefined, no extra delay awaiting.
    *
    * @param {Promise} versus_loader_delayPromise
