@@ -184,10 +184,7 @@ import * as DEvolution from "../DEvolution.js";
  * Please wait it becoming false if wanting to call
  * .imageData_process_promise_create() again.
  *
- * @member {Promise( Float32Array[] )} imageData_process_promise
- *   The result of .imageData_process_promise_create().
- *
- *
+ * 
  * @member {boolean} versus_load_async_running
  *   If true, a .versus_load_async() is still executing. Please wait it becoming
  * false if wanting to call .versus_load_promise_create() again.
@@ -273,7 +270,6 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     NeuralOrchestra_Base.versus_dispose.call( this );
     NeuralOrchestra_Base.versusSummary_dispose.call( this );
 
-    this.imageData_process_promise = undefined;
     this.imageData_process_async_running = undefined;
 
     this.workerProxies_init_promise = undefined;
@@ -1099,11 +1095,10 @@ class NeuralOrchestra_Base extends Recyclable.Root {
 
 
   /**
-   * Call .imageData_process_async() and record the returned
-   * promise in .imageData_process_promise.
+   * Call .imageData_process_async() and return imageData_process_promise.
    *
    * @return {Promise( Float32Array[] )}
-   *   Return this.imageData_process_promise which is an instance
+   *   Return imageData_process_promise which is an instance
    * of .imageData_process_async().
    */
   imageData_process_promise_create(
@@ -1124,10 +1119,10 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     }
 
     this.imageData_process_async_running = true;
-    this.imageData_process_promise
+    let imageData_process_promise
       = NeuralOrchestra_Base.imageData_process_async.call( this,
           sourceImageData, delayMilliseconds );
-    return this.imageData_process_promise;
+    return imageData_process_promise;
   }
 
   /**
