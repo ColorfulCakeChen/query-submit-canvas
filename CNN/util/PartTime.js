@@ -215,7 +215,7 @@ async function forOf( generator, callback, callbackDone, delayMilliseconds = 0 )
   do {
     sleepPromise = sleep( delayMilliseconds );
     await sleepPromise;
-  
+
     generatorNext = generator.next();
 
     // If generatorNext is a promise (i.e. the generator is an async generator).
