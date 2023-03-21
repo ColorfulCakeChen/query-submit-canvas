@@ -175,6 +175,12 @@ async function* prepend_asyncGenerator( prependNextPromise, asyncGenerator ) {
   return result;
 }
 
+
+/** */
+function forOf_timeoutCallback() {
+  
+}
+
 /**
  * Periodically call generator.next() by setTimeout() until
  * ( generator.next().done == true ). The generator will generate in part-time.
@@ -202,40 +208,72 @@ async function* prepend_asyncGenerator( prependNextPromise, asyncGenerator ) {
  *   A promise resolved with the ( generator.next().value ) when
  * ( generator.next().done == true ).
  */
-function forOf( generator, callback, callbackDone, delayMilliseconds = 0 ) {
+async function forOf( generator, callback, callbackDone, delayMilliseconds = 0 ) {
+  let sleepPromise;
+  let generatorNext;
+  let r;
+  do {
+    sleepPromise = sleep( delayMilliseconds );
+    await sleepPromise;
+  
+    generatorNext = generator.next();
 
-  function promiseTimeout() {
-    return new Promise( ( resolve, reject ) => {
-      setTimeout( async () => {
-        try {
-          let generatorNext = generator.next();
-          let r;
+    // If generatorNext is a promise (i.e. the generator is an async generator).
+    // Wait it resolved, then process it as sync generator.
+    if ( generatorNext instanceof Promise ) {
+      r = await generatorNext;
 
-          // If generatorNext is a promise (i.e. the generator is an async generator).
-          // Wait it resolved, then process it as sync generator.
-          if ( generatorNext instanceof Promise ) {
-            r = await generatorNext;
+    // Otherwise, the generator is a sync generator, process the generatorNext.
+    } else {
+      r = generatorNext;
+    }
 
-          // Otherwise, the generator is a sync generator, process the generatorNext.
-          } else {
-            r = generatorNext;
-          }
+    if ( r.done ) {
+      callbackDone( r.value );
+    } else {
+      callback( r.value );
+    }
 
-          if ( r.done ) {
-            callbackDone( r.value );
-            resolve( r.value );
-          } else {
-            callback( r.value );
-            resolve( promiseTimeout() );
-          }
+  } while ( !r.done );
 
-        } catch ( reason ) {
-          reject( reason );
-        }
-
-      }, delayMilliseconds );
-    } );
-  }
-
-  return promiseTimeout();
+  return ( r.value );
 }
+
+//!!! (2023/03/21 Remarked) Old Codes. Replaced by async function.
+// function forOf( generator, callback, callbackDone, delayMilliseconds = 0 ) {
+//
+//   function promiseTimeout() {
+//     return new Promise( ( resolve, reject ) => {
+//       setTimeout( async () => {
+//         try {
+//           let generatorNext = generator.next();
+//           let r;
+//
+//           // If generatorNext is a promise (i.e. the generator is an async generator).
+//           // Wait it resolved, then process it as sync generator.
+//           if ( generatorNext instanceof Promise ) {
+//             r = await generatorNext;
+//
+//           // Otherwise, the generator is a sync generator, process the generatorNext.
+//           } else {
+//             r = generatorNext;
+//           }
+//
+//           if ( r.done ) {
+//             callbackDone( r.value );
+//             resolve( r.value );
+//           } else {
+//             callback( r.value );
+//             resolve( promiseTimeout() );
+//           }
+//
+//         } catch ( reason ) {
+//           reject( reason );
+//         }
+//
+//       }, delayMilliseconds );
+//     } );
+//   }
+//
+//   return promiseTimeout();
+// }
