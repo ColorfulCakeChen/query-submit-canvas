@@ -75,7 +75,7 @@ class TestCase {
     let progressRoot = progressParent.root_get();
 
     let progressToAdvance = progressParent.child_add(
-      ValueMax.Percentage.Concrete.Pool.get_or_create_by( 8 ) );
+      ValueMax.Percentage.Concrete.Pool.get_or_create_by( 10 ) );
 
     // 1. Process image.
     let processPromise;
@@ -221,6 +221,9 @@ class TestCase {
             + `.test_process_send_asyncGenerator(): testId=${this.testId}, `
             + `.versusResultSender_send() should not try to send the result `
             + `of an expired versus.` );
+
+          progressToAdvance.value_advance();
+          yield progressRoot;
         }
 
         { // Fake an undefined timestamp.
@@ -234,6 +237,9 @@ class TestCase {
             + `.test_process_send_asyncGenerator(): testId=${this.testId}, `
             + `.versusResultSender_send() should not try to send the result `
             + `of a versus with undefined timestamp.` );
+
+          progressToAdvance.value_advance();
+          yield progressRoot;
         }
 
         { // Normal timestamp.
@@ -248,6 +254,9 @@ class TestCase {
             + `.test_process_send_asyncGenerator(): testId=${this.testId}, `
             + `.versusResultSender_send() should try to send the result `
             + `of an non-expired versus.` );
+
+          progressToAdvance.value_advance();
+          yield progressRoot;
         }
       }
 
@@ -255,9 +264,6 @@ class TestCase {
       debugger;
       throw e;
     }
-
-    progressToAdvance.value_advance();
-    yield progressRoot;
 
     if ( 100 !== progressToAdvance.valuePercentage )
       throw Error( `NeuralOrchestra_tester.TestCase`
