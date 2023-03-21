@@ -727,12 +727,6 @@ class NeuralOrchestra_Base extends Recyclable.Root {
         sleepPromise = PartTime.sleep( delayMilliseconds );
 
       // 1. Load (versus summary and) versus. Create neural networks.
-
-//!!! ...unfinished... (2023/03/18)
-// Is it possible not to record in this.versus_loader?
-// Just return versus_loader as this init_asuncGenerator returned value.
-// In order to prevent outside caller misuse it.
-
       let versus_loader = NeuralOrchestra_Base
         .versus_loader_create_without_checking_precondition.call( this,
           progressParent, delayMilliseconds );
@@ -833,9 +827,9 @@ class NeuralOrchestra_Base extends Recyclable.Root {
       // by outside caller (including .init_async()).
       let versus_loader_prepended;
       {
-        // Replace .versus_loader by a new asyn generator which will yield
+        // Replace versus_loader by a new asyn generator which will yield
         // the loaderNext first. Just like push the loaderNext back to the
-        // original .versus_loader.
+        // original versus_loader.
         versus_loader_prepended = PartTime.prepend_asyncGenerator(
           loaderNext, versus_loader );
       }
