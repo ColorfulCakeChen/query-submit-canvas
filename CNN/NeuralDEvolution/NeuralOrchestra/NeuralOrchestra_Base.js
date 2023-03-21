@@ -1795,9 +1795,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     if ( bExpired ) {
       let versusIdString = this.versus.versusId.versusIdString;
       console.warn( `NeuralOrchestra.Base.${funcNameInMessage}(): `
-        + `versus ( { versusIdString=${versusIdString} } ) is expired. `
-        + `Its result will not be sent to server.`
-      );
+        + `versus ( { versusIdString=\"${versusIdString}\" } ) is expired.` );
       return false;
     }
 
