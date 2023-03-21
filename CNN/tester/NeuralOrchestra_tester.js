@@ -218,9 +218,9 @@ class TestCase {
 
           if ( bWillTrySend )
             throw Error( `NeuralOrchestra_tester.TestCase`
-            + `.test_process_send_asyncGenerator(): testId=${this.testId}, `
-            + `.versusResultSender_send() should not try to send the result `
-            + `of an expired versus.` );
+              + `.test_process_send_asyncGenerator(): testId=${this.testId}, `
+              + `.versusResultSender_send() should not try to send the result `
+              + `of an expired versus.` );
 
           progressToAdvance.value_advance();
           yield progressRoot;
@@ -234,9 +234,9 @@ class TestCase {
 
           if ( bWillTrySend )
             throw Error( `NeuralOrchestra_tester.TestCase`
-            + `.test_process_send_asyncGenerator(): testId=${this.testId}, `
-            + `.versusResultSender_send() should not try to send the result `
-            + `of a versus with undefined timestamp.` );
+              + `.test_process_send_asyncGenerator(): testId=${this.testId}, `
+              + `.versusResultSender_send() should not try to send the result `
+              + `of a versus with undefined timestamp.` );
 
           progressToAdvance.value_advance();
           yield progressRoot;
@@ -251,9 +251,9 @@ class TestCase {
 
           if ( !bWillTrySend )
             throw Error( `NeuralOrchestra_tester.TestCase`
-            + `.test_process_send_asyncGenerator(): testId=${this.testId}, `
-            + `.versusResultSender_send() should try to send the result `
-            + `of an non-expired versus.` );
+              + `.test_process_send_asyncGenerator(): testId=${this.testId}, `
+              + `.versusResultSender_send() should try to send the result `
+              + `of an non-expired versus.` );
 
           progressToAdvance.value_advance();
           yield progressRoot;
