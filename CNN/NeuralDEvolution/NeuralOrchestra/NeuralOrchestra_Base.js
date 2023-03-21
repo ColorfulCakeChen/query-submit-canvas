@@ -12,6 +12,7 @@ import * as DEvolution from "../DEvolution.js";
 
 //!!! ...unfinishe... (2023/03/21)
 // Replace delayMilliseconds by delayPromise.
+// So that it can be controllable when unit testing.
 
 
 //!!! ...unfinishe... (2023/03/21)
