@@ -1783,7 +1783,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     }
 
     // Check current time and the versus downloaded time.
-    let nowMilliseconds = Date.now();
+    let nowTimeMilliseconds = Date.now();
     let bExpired = this.versus.isExpired_byNowTime( nowTimeMilliseconds );
 
     // If the interval is too long so that the versus is expired, discard the
