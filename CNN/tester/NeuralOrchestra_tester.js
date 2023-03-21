@@ -208,7 +208,7 @@ class TestCase {
       {
         let backupLoadTimestampMilliseconds
           = neuralOrchestra.versus.loadTimestampMilliseconds;
-        
+
         { // Fake an older timestamp.
           neuralOrchestra.versus.loadTimestampMilliseconds
             = Date.now() - DEvolution.Versus.expireIntervalMilliseconds - 1;
