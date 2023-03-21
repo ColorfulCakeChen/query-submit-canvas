@@ -202,7 +202,54 @@ class TestCase {
     // A random integer between [ -1, +1 ].
     try {
       let nNegativeZeroPositive = RandTools.getRandomIntInclusive( -1, 1 );
-      neuralOrchestra.versusResultSender_send( nNegativeZeroPositive );
+      let bWillTrySend;
+
+      // Test: versus expired.
+      {
+        let backupLoadTimestampMilliseconds
+          = neuralOrchestra.versus.loadTimestampMilliseconds;
+        
+        { // Fake an older timestamp.
+          neuralOrchestra.versus.loadTimestampMilliseconds
+            = Date.now() - DEvolution.Versus.expireIntervalMilliseconds - 1;
+
+          bWillTrySend = neuralOrchestra.versusResultSender_send(
+            nNegativeZeroPositive );
+
+          if ( bWillTrySend )
+            throw Error( `NeuralOrchestra_tester.TestCase`
+            + `.test_process_send_asyncGenerator(): testId=${this.testId}, `
+            + `.versusResultSender_send() should not try to send the result `
+            + `of an expired versus.` );
+        }
+
+        { // Fake an undefined timestamp.
+          neuralOrchestra.versus.loadTimestampMilliseconds = undefined;
+
+          bWillTrySend = neuralOrchestra.versusResultSender_send(
+            nNegativeZeroPositive );
+
+          if ( bWillTrySend )
+            throw Error( `NeuralOrchestra_tester.TestCase`
+            + `.test_process_send_asyncGenerator(): testId=${this.testId}, `
+            + `.versusResultSender_send() should not try to send the result `
+            + `of a versus with undefined timestamp.` );
+        }
+
+        { // Normal timestamp.
+          neuralOrchestra.versus.loadTimestampMilliseconds
+            = backupLoadTimestampMilliseconds;
+
+          bWillTrySend = neuralOrchestra.versusResultSender_send(
+            nNegativeZeroPositive );
+
+          if ( !bWillTrySend )
+            throw Error( `NeuralOrchestra_tester.TestCase`
+            + `.test_process_send_asyncGenerator(): testId=${this.testId}, `
+            + `.versusResultSender_send() should try to send the result `
+            + `of an non-expired versus.` );
+        }
+      }
 
     } catch ( e ) {
       debugger;
