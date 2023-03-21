@@ -1740,7 +1740,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
    * Submit the result of the last differential evolution versus to server.
    *
    *
-   * Note1: The resolved .imageData_process_async() is an
+   * Note: The resolved .imageData_process_async() is an
    *       Float32Array[].
    *
    *   - Which one is parent (chromosome) neural network's output?
@@ -1750,21 +1750,28 @@ class NeuralOrchestra_Base extends Recyclable.Root {
    *     - Float32Array[ 1 ]
    *
    *
-   * Note2: If failed (e.g. Internet disconnected), the result may not be sent
-   *        but caller of this method will not know that and will not be
-   *        affected because the exception is thrown asynchronously.
-   *
-   *
    * @param {number} nNegativeZeroPositive
    *   The lose/draw/win value of the versus. (-1 or 0 or +1)
    *     - -1 (if parent lose offspring)
    *     -  0 (if parent draw offspring)
    *     - +1 (if parent win offspring)
+   *
+   * @return {boolean}
+   *   - Return true, if the versus is not expired and the specified result
+   *       will be tried to send to server.
+   *     - This does not means the sending is succeeded. It is still possible
+   *         failed (e.g. Internet disconnected). However, even if sending
+   *         is failed, the caller of this method will not be informed and will
+   *         not be affected because the exception is thrown asynchronously.
+   *
+   *   - Return false, if the versus is expired. The specified result will
+   *       not be sent. It will be just discarded to prenvent server from
+   *       being confused.
    */
   versusResultSender_send( nNegativeZeroPositive ) {
 
+    const funcNameInMessage = "versusResultSender_send";
     { // Checking pre-condition.
-      const funcNameInMessage = "versusResultSender_send";
 
       // Prevent from .versusResultSender not existed.
       NeuralOrchestra_Base.throw_if_initializing.call( this, funcNameInMessage );
@@ -1775,19 +1782,27 @@ class NeuralOrchestra_Base extends Recyclable.Root {
       NeuralOrchestra_Base.throw_if_not_versus_loadOk.call( this, funcNameInMessage );
     }
 
-!!! ...unfinished... (2023/03/20)
-// Check current time Date.now() and the versus downloaded time.
-// If the interval is greater than one half hours (90 minutes), just
-// discard the versus result silently (i.e. do not send it to server).
-//
-// Because Google Analytics Realtime Report can only collect the last
-// half-hour (30 minutes) or one hour (60 minutes; premium vesion) event,
-// A versus downloaded one half hours (90 minutes) ago is considered
-// expired. Sending result of expired versus to server may confuse server.
-//
+    // Check current time and the versus downloaded time.
+    let nowMilliseconds = Date.now();
+    let bExpired = this.versus.isExpired_byNowTime( nowTimeMilliseconds );
+
+    // If the interval is too long so that the versus is expired, discard the
+    // versus result (i.e. do not send it to server) and log a warning message
+    // (because this should not be a usual case).
+    //
+    // Note: Sending result of expired versus to server may confuse server.
+    if ( bExpired ) {
+      let versusIdString = this.versus.versusId.versusIdString;
+      console.warn( `NeuralOrchestra.Base.${funcNameInMessage}(): `
+        + `versus ( { versusIdString=${versusIdString} } ) is expired. `
+        + `Its result will not be sent to server.`
+      );
+      return false;
+    }
 
     this.versusResultSender.post_by_versusId_NegativeZeroPositive(
       this.versus.versusId, nNegativeZeroPositive );
+    return true;
   }
 
   /**

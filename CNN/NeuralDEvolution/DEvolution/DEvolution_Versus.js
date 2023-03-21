@@ -22,6 +22,8 @@ import { VersusId } from "./DEvolution_VersusId.js";
  * @member {Float32Array} offspringChromosomeFloat32Array
  *   The offspring's chromosome of the entity of the versus.
  *
+ * @member {number} loadTimestampMilliseconds
+ *   The time (Date.now()) when this versus is loaded completely.
  */
 class DEvolution_Versus extends Recyclable.Root {
 
@@ -51,6 +53,7 @@ class DEvolution_Versus extends Recyclable.Root {
   /** @override */
   disposeResources() {
 
+    this.loadTimestampMilliseconds = undefined;
     this.offspringChromosomeFloat32Array = undefined;
     this.parentChromosomeFloat32Array = undefined;
 
@@ -62,6 +65,40 @@ class DEvolution_Versus extends Recyclable.Root {
     this.spreadsheetRange = undefined;
 
     super.disposeResources();
+  }
+
+  /**
+   * Check current time and this versus downloaded time. If the interval is
+   * too long, it is considered as expired.
+   *
+   * @param {number} nowTimeMilliseconds
+   *   The current time (in milliseconds). Usually, it is Date.now().
+   *
+   * @return {boolean}
+   *   Return true, if this versus should be considered as expired.
+   */
+  isExpired_byNowTime( nowTimeMilliseconds ) {
+
+    let deltaTimeMilliseconds
+      = nowTimeMilliseconds - this.loadTimestampMilliseconds;
+
+    let bExpired = DEvolution_Versus.isExpired_byDeltaTime.call( this,
+      deltaTimeMilliseconds );
+
+    return bExpired;
+  }
+
+  /**
+   * @param {number} deltaTimeMilliseconds
+   *   How long (in milliseconds) has been gone after this versus is loaded.
+   *
+   * @return {boolean}
+   *   Return true, if this versus should be considered as expired.
+   */
+  static isExpired_byDeltaTime( deltaTimeMilliseconds ) {
+    if ( deltaTimeMilliseconds < DEvolution_Versus.expireIntervalMilliseconds )
+      return false;
+    return true;
   }
 
   /**
@@ -109,6 +146,7 @@ class DEvolution_Versus extends Recyclable.Root {
     // 0.1
     this.parentChromosomeFloat32Array = undefined;
     this.offspringChromosomeFloat32Array = undefined;
+    this.loadTimestampMilliseconds = undefined;
 
     // 0.2 Prepare progress.
     let progressRoot = progressParent.root_get();
@@ -213,6 +251,8 @@ class DEvolution_Versus extends Recyclable.Root {
       this.offspringChromosomeFloat32Array = yield* offspringChromosomeDecoder;
     }
 
+    //3.
+    this.loadTimestampMilliseconds = Date.now();
     return true;
   }
 
@@ -260,3 +300,16 @@ class DEvolution_Versus extends Recyclable.Root {
   }
 
 }
+
+/**
+ * Define how long (in milliseconds) a versus (after it is downloaded) should
+ * be considered as expired.
+ *
+ * Because Google Analytics Realtime Report can only collect the last
+ * half an hour (30 minutes) or one hour (60 minutes; premium vesion) event,
+ * A versus downloaded one half hours (90 minutes) ago could be considered
+ * as expired definitely.
+ * 
+ * Sending result of expired versus to server may confuse server.
+ */
+DEvolution_Versus.expireIntervalMilliseconds = 90 * 60 * 1000;
