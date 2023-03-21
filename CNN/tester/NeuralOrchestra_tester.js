@@ -1,6 +1,6 @@
 export { tester };
 
-import * as PartTime from "../../util/PartTime.js";
+import * as PartTime from "../util/PartTime.js";
 import * as RandTools from "../util/RandTools.js";
 import * as ValueMax from "../util/ValueMax.js";
 import * as DEvolution from "../NeuralDEvolution/DEvolution.js";
