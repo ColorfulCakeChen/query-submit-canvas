@@ -242,6 +242,9 @@ class AsyncWorker_Proxy extends Recyclable.Root {
 
 //!!! ...unfinished... (2023/03/22)
 // Perhaps, use (binary) exponential back-off waiting and retry.
+//
+// Experiment result: It seems that retry importing does not work
+// even network connection has been recovery.
 
     // The codes do the following:
     //
