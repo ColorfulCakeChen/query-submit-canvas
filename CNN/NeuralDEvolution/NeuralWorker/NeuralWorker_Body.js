@@ -1,5 +1,3 @@
-export default NeuralWorker_Body;
-
 // import * as Pool from "../../util/Pool.js";
 import * as Recyclable from "../../util/Recyclable.js";
 import * as ValueMax from "../../util/ValueMax.js";
@@ -26,7 +24,7 @@ import { tensorflowJsURL } from "./NeuralWorker_Common.js";
  * network(s).
  *
  */
-class NeuralWorker_Body extends AsyncWorker.Body {
+export default class NeuralWorker_Body extends AsyncWorker.Body {
 
   /** */
   constructor() {
