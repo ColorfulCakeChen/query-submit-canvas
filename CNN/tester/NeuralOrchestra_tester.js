@@ -19,10 +19,10 @@ class TestCase {
       bLogFetcherEventToConsole: true,
 
       sender_clientId: Date.now(),
-    
+
       input_height: 72,
       input_width: 128,
-    
+
       vocabularyChannelCount: 4, //8, //6,
       blockCountTotalRequested: 39, //84, //144,
       output_channelCount_per_alignment: 64, //12,
@@ -37,15 +37,6 @@ class TestCase {
     this.loadCountBase = 2;
 
     this.testId = undefined; // For debug.
-
-//!!! (2023/03/21 Remarked) Replaced by Promise_resolvable_rejectable_create().
-//     // In the reentrance testing, when try await, the async method may have
-//     // been completed. To prevent they complete too fast to test, add some
-//     // delay time.
-//     //
-//     // This is especially true for imageData_process_Xxx() which executues
-//     // in another web worker (real parallelly).
-//     this.delayMilliseconds = 2 * 1000;
 
     // Note:
     //

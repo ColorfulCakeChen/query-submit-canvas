@@ -256,6 +256,16 @@ class TestCase {
     let fetcher = urlComposer.JSON_ColumnMajorArrayArray_fetcher_create(
       progressParent, params_loading_retryWaiting );
 
+    if ( !urlComposer.fetch_asyncGenerator_running )
+      throw Error( `GSheets_tester.TestCase`
+        + `.urlComposer_fetcher(): testCaseId=${this.testCaseId}, `
+        + `urlComposer.fetch_asyncGenerator_running=`
+        + `${urlComposer.fetch_asyncGenerator_running} `
+        + `should be true.` );
+
+//!!! ...unfinished... (2023/03/22)
+// Test reenter.
+
     let nextResult;
     let bRetryWaitingPrevious = urlComposer.retryWaitingTimer_isCounting;
     let bRetryWaitingCurrent = bRetryWaitingPrevious;
