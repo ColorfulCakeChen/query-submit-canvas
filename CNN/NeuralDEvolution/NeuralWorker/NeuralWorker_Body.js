@@ -30,8 +30,7 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
       // prefetch this NeuralWorker_Body because importScripts() can not be
       // called in javascript module (where NeruralWorker_Proxy usually reside
       // in).
-      //
-      importScripts( tensorflowJsURL ); // Load tensorflow.js library in global scope.
+      importScripts( tensorflowJsURL ); // Load tensorflow.js library.
 
       // Prevent from import tensorflow.js many times.
       NeuralWorker_Body.tensorflowJs_imported = true;
