@@ -30,6 +30,9 @@ import * as ValueMax from "./ValueMax.js";
  *   - It is used only if .JSON_ColumnMajorArrayArray_fetch_async() is called.
  *   - If .JSON_ColumnMajorArrayArray_fetch_asyncGenerator() is called directly,
  *       its progressParent parameter will be used instead.
+ *
+ * @member {boolean} retryWaitingTimer_isCounting
+ *   If true, the .urlComposer.httpFetcher now is during retry waiting.
  */
 class GSheets_UrlComposer extends Recyclable.Root {
 
@@ -108,6 +111,7 @@ class GSheets_UrlComposer extends Recyclable.Root {
     super.disposeResources();
   }
 
+
   /** @param {string} spreadsheetId  The Google Sheets' id. */
   set spreadsheetId( spreadsheetId ) {
     this.urlComposer.spreadsheetId = spreadsheetId;
@@ -117,6 +121,7 @@ class GSheets_UrlComposer extends Recyclable.Root {
   get spreadsheetId() {
     return this.urlComposer.spreadsheetId;
   }
+
 
   /** @param {string} range  The range inside the Google Sheets. */
   set range( range ) {
@@ -129,10 +134,26 @@ class GSheets_UrlComposer extends Recyclable.Root {
   }
 
 
+  set bLogFetcherEventToConsole( bLogFetcherEventToConsole ) {
+    if ( this.urlComposer )
+      this.urlComposer.bLogFetcherEventToConsole = bLogFetcherEventToConsole;
+  }
+
+  get bLogFetcherEventToConsole() {
+    if ( this.urlComposer )
+      return this.urlComposer.bLogFetcherEventToConsole;
+    return false;
+  }
+
+
+  get retryWaitingTimer_isCounting() {
+    if ( this.urlComposer )
+      return this.urlComposer.retryWaitingTimer_isCounting;
+    return false;
+  }
+
+
   /**
-   * Create JSON_ColumnMajorArrayArray_fetch_promise (an instance of
-   * .JSON_ColumnMajorArrayArray_fetch_async()).
-   *
    *
    * @param {HttpRequest.Params_loading_retryWaiting} params_loading_retryWaiting
    *   The parameters for loading timeout and retry waiting time. It will be kept
@@ -146,7 +167,8 @@ class GSheets_UrlComposer extends Recyclable.Root {
    *   Return the newly created JSON_ColumnMajorArrayArray_fetch_promise which
    * is an instance of .JSON_ColumnMajorArrayArray_fetch_async().
    */
-  JSON_ColumnMajorArrayArray_fetch_promise_create( delayPromise ) {
+  JSON_ColumnMajorArrayArray_fetch_promise_create(
+    params_loading_retryWaiting, delayPromise ) {
 
     { // Checking pre-condition.
       const funcNameInMessage = "JSON_ColumnMajorArrayArray_fetch_promise_create";
@@ -367,28 +389,6 @@ class GSheets_UrlComposer extends Recyclable.Root {
     }
   }
 
-
-  set bLogFetcherEventToConsole( bLogFetcherEventToConsole ) {
-    if ( this.urlComposer )
-      this.urlComposer.bLogFetcherEventToConsole = bLogFetcherEventToConsole;
-  }
-
-  get bLogFetcherEventToConsole() {
-    if ( this.urlComposer )
-      return this.urlComposer.bLogFetcherEventToConsole;
-    return false;
-  }
-
-
-  /**
-   * @return {boolean}
-   *    Return true, if .urlComposer.httpFetcher now is during retry waiting.
-   */
-  get retryWaitingTimer_isCounting() {
-    if ( this.urlComposer )
-      return this.urlComposer.retryWaitingTimer_isCounting;
-    return false;
-  }
 
   /**
    * Abort the loading (or waiting).
