@@ -154,6 +154,8 @@ class GSheets_UrlComposer extends Recyclable.Root {
 
 
   /**
+   * Note: The this.fetch_progress will record progress of this method.
+   *
    *
    * @param {HttpRequest.Params_loading_retryWaiting} params_loading_retryWaiting
    *   The parameters for loading timeout and retry waiting time. It will be kept
