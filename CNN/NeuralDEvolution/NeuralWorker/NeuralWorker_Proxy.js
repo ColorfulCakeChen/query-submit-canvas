@@ -5,6 +5,13 @@ import * as Recyclable from "../../util/Recyclable.js";
 import * as AsyncWorker from "../../util/AsyncWorker.js";
 import * as NeuralNet from "../../Conv/NeuralNet.js";
 
+//!!! ...unfinished... (2023/03/22)
+// Although here (NeuralWorker_Proxy) will not use NeuralWorker_Body
+// directly, prefetching it to cache it in disk. So that the web
+// worker could still be created even if internet disconnected later.
+//
+import { NeuralWorker_Body } from "./NeuralWorker_Body.js";
+
 //!!! ...unfinished... (2022/09/15)
 // What if failed when:
 //   - library (tensorflow.js) downloading
