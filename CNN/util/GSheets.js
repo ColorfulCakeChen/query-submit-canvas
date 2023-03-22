@@ -347,17 +347,15 @@ class GSheets_UrlComposer extends Recyclable.Root {
         "JSON_ColumnMajorArrayArray_fetcher_create" );
     }
 
-//!!! ...unfinished... (2023/03/11) What if re-entrtance?
-//this.fetch_asyncGenerator_running = ???;
-
     try {
+      // 1.
       let fetcher = this.urlComposer
         .JSON_ColumnMajorArrayArray_fetch_asyncGenerator(
           progressParent, params_loading_retryWaiting );
 
       let ColumnMajorArrayArray = yield *fetcher;
 
-      //
+      // 2.
       if ( delayPromise )
         await delayPromise;
 
@@ -368,10 +366,9 @@ class GSheets_UrlComposer extends Recyclable.Root {
       throw e;
 
     } finally {
-      // So that this async generator could be executed again.
+      // 3. So that this async generator could be executed again.
       this.fetch_asyncGenerator_running = false;
     }
-
   }
 
 
