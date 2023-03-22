@@ -64,8 +64,15 @@ function test() {
   }
 
   // Whether detect progress back-track.
-  // let bDetectProgressBacktrack = false;
-  let bDetectProgressBacktrack = true;
+  let bDetectProgressBacktrack;
+  {
+    //bDetectProgressBacktrack = false;
+    bDetectProgressBacktrack = true;
+
+    // HttpRequest.Fetcher will back-track progress.
+    if ( gTestGeneratorFuncMap.get( GSheets_tester.tester ) )
+      bDetectProgressBacktrack = false;
+  }
 
   let tester = testerAll();
 
