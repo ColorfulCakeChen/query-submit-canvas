@@ -175,15 +175,21 @@ class AsyncWorker_Proxy extends Recyclable.Root {
 // Re-try (but should inform this WorkerProxy and user).
 
 
-//!!! ...unfinished... (2023/03/22)
-// Perhaps, use (binary) exponential back-off waiting and retry.
-//
-// Experiment result: It seems that retry importing does not work
-// even network connection has been recovery.
+    // Q: What if loading workerModuleURL failed (e.g. Internet disconnected)?
+    // A: Although it can use (binary) exponential back-off waiting and retry,
+    //    however, it seems that retry importing does not work even network
+    //    connection has been recovery.
+    //
+    // A possible solution is prefetching all these modules in Xxx_Proxy side.
+    // Then, even if Internet disconnected when creating worker body, they
+    // can still be loaded from disk cache (by browser automatically).
+    //
+
 
     // The codes do the following:
     //
     //   - Import the specified module URL.
+    //   - Create a singleton instance of worker body class.
     //   - Create a temporary message queue.
     //   - Collect all messages before
     //       AsyncWorker_Proxy.onmessage_from_AsyncWorker_Body() be registered
@@ -191,62 +197,11 @@ class AsyncWorker_Proxy extends Recyclable.Root {
     //
     let codes = ``
       + `( async () => {\n`
-      + `  function sleep( delayMilliseconds ) {\n`
-      + `    return new Promise( ( resolve ) => {\n`
-      + `      setTimeout( () => resolve(), delayMilliseconds );\n`
-      + `    } );\n`
-      + `  }\n`
-      + `\n`
-      + `  function getRandomIntInclusive_by_minInt_kindsInt( minInt, kindsInt ) {\n`
-      + `    return Math.floor( ( Math.random() * kindsInt ) + minInt );\n`
-      + `  }\n`
-      + `\n`
-      + `  function getRandomIntInclusive( min, max ) {\n`
-      + `    let minReal = Math.min( min, max );\n`
-      + `    let maxReal = Math.max( min, max );\n`
-      + `    let minInt = Math.ceil( minReal );\n`
-      + `    let maxInt  = Math.floor( maxReal );\n`
-      + `    let kindsInt = maxInt - minInt + 1;\n`
-      + `    return getRandomIntInclusive_by_minInt_kindsInt( minInt, kindsInt );\n`
-      + `  }\n`
-      + `\n`
-      + `  function getRandomInt_TruncatedBinaryExponent( exponent, exponentMax ) {\n`
-      + `    let exponentRestricted = Math.min( exponent, exponentMax );\n`
-      + `    let exponentZeroOrPositive = Math.max( 0, exponentRestricted );\n`
-      + `    let power = ( 2 ** exponentZeroOrPositive );\n`
-      + `    let randomInt = getRandomIntInclusive( 0, power );\n`
-      + `    return randomInt;\n`
-      + `  }\n`
-      + `\n`
-      + `  function importBody() {\n`
-      + `    const workerModuleURL = "${workerModuleURL}";\n`
-      + `    let importPromise = import( workerModuleURL );\n`
-      + `    return importPromise;\n`
-      + `  }\n`
-      + `\n`
-      + `  const retryWaitingSecondsExponentMax = 6;\n`
-      + `  let retryTimesCur = 0;\n`
-      + `  let importDone = false;\n`
-      + `  let importModule;\n`
-      + `  do {\n`
-      + `    try {\n`
-      + `      let importPromise = importBody();\n`
-      + `      importModule = await importPromise;\n`
-      + `      importDone = true;\n`
-      + `    } catch ( e ) {\n`
-      // + `      debugger;\n`
-      + `      ++retryTimesCur;\n`
-      + `      let retryWaitingMillisecondsMax\n`
-      + `            = 1000 * getRandomInt_TruncatedBinaryExponent(\n`
-      + `                retryTimesCur, retryWaitingSecondsExponentMax );\n`
-      + `      console.log( \`Wait \${retryWaitingMillisecondsMax} milliseconds...\` );\n`
-      + `      await sleep( retryWaitingMillisecondsMax );\n`
-      + `      console.log( \`Retry import worker body...\` );\n`
-      + `    }\n`
-      + `  } while ( !importDone );\n`
+      + `  const workerModuleURL = "${workerModuleURL}";\n`
+      + `  let importPromise = import( workerModuleURL );\n`
+      + `  let importModule = await importPromise;\n`
       + `  importModule.default.Singleton = new importModule.default();\n`
       + `} )();\n`
-      + `\n`
       + `AsyncWorker_Body_temporaryMessageQueue = [];\n`
       + `onmessage = ( e ) => {\n`
       // + `  console.log( "Hello" );\n`
@@ -255,7 +210,14 @@ class AsyncWorker_Proxy extends Recyclable.Root {
       + `}\n`
       ;
 
-//!!! (2023/03/22) Old Codes.
+
+//!!! (2023/03/22 Added and Remarked) Not workable old codes.
+// //!!! ...unfinished... (2023/03/22)
+// // Perhaps, use (binary) exponential back-off waiting and retry.
+// //
+// // Experiment result: It seems that retry importing does not work
+// // even network connection has been recovery.
+//
 //     // The codes do the following:
 //     //
 //     //   - Import the specified module URL.
@@ -266,11 +228,62 @@ class AsyncWorker_Proxy extends Recyclable.Root {
 //     //
 //     let codes = ``
 //       + `( async () => {\n`
-//       + `  const workerModuleURL = "${workerModuleURL}";\n`
-//       + `  let importPromise = import( workerModuleURL );\n`
-//       + `  let importModule = await importPromise;\n`
+//       + `  function sleep( delayMilliseconds ) {\n`
+//       + `    return new Promise( ( resolve ) => {\n`
+//       + `      setTimeout( () => resolve(), delayMilliseconds );\n`
+//       + `    } );\n`
+//       + `  }\n`
+//       + `\n`
+//       + `  function getRandomIntInclusive_by_minInt_kindsInt( minInt, kindsInt ) {\n`
+//       + `    return Math.floor( ( Math.random() * kindsInt ) + minInt );\n`
+//       + `  }\n`
+//       + `\n`
+//       + `  function getRandomIntInclusive( min, max ) {\n`
+//       + `    let minReal = Math.min( min, max );\n`
+//       + `    let maxReal = Math.max( min, max );\n`
+//       + `    let minInt = Math.ceil( minReal );\n`
+//       + `    let maxInt  = Math.floor( maxReal );\n`
+//       + `    let kindsInt = maxInt - minInt + 1;\n`
+//       + `    return getRandomIntInclusive_by_minInt_kindsInt( minInt, kindsInt );\n`
+//       + `  }\n`
+//       + `\n`
+//       + `  function getRandomInt_TruncatedBinaryExponent( exponent, exponentMax ) {\n`
+//       + `    let exponentRestricted = Math.min( exponent, exponentMax );\n`
+//       + `    let exponentZeroOrPositive = Math.max( 0, exponentRestricted );\n`
+//       + `    let power = ( 2 ** exponentZeroOrPositive );\n`
+//       + `    let randomInt = getRandomIntInclusive( 0, power );\n`
+//       + `    return randomInt;\n`
+//       + `  }\n`
+//       + `\n`
+//       + `  function importBody() {\n`
+//       + `    const workerModuleURL = "${workerModuleURL}";\n`
+//       + `    let importPromise = import( workerModuleURL );\n`
+//       + `    return importPromise;\n`
+//       + `  }\n`
+//       + `\n`
+//       + `  const retryWaitingSecondsExponentMax = 6;\n`
+//       + `  let retryTimesCur = 0;\n`
+//       + `  let importDone = false;\n`
+//       + `  let importModule;\n`
+//       + `  do {\n`
+//       + `    try {\n`
+//       + `      let importPromise = importBody();\n`
+//       + `      importModule = await importPromise;\n`
+//       + `      importDone = true;\n`
+//       + `    } catch ( e ) {\n`
+//       // + `      debugger;\n`
+//       + `      ++retryTimesCur;\n`
+//       + `      let retryWaitingMillisecondsMax\n`
+//       + `            = 1000 * getRandomInt_TruncatedBinaryExponent(\n`
+//       + `                retryTimesCur, retryWaitingSecondsExponentMax );\n`
+//       + `      console.log( \`Wait \${retryWaitingMillisecondsMax} milliseconds...\` );\n`
+//       + `      await sleep( retryWaitingMillisecondsMax );\n`
+//       + `      console.log( \`Retry import worker body...\` );\n`
+//       + `    }\n`
+//       + `  } while ( !importDone );\n`
 //       + `  importModule.default.Singleton = new importModule.default();\n`
 //       + `} )();\n`
+//       + `\n`
 //       + `AsyncWorker_Body_temporaryMessageQueue = [];\n`
 //       + `onmessage = ( e ) => {\n`
 //       // + `  console.log( "Hello" );\n`
