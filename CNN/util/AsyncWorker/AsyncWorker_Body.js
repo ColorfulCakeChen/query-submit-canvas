@@ -19,7 +19,8 @@ class AsyncWorker_Body {
     globalThis.onmessage
       = AsyncWorker_Body.onmessage_from_AsyncWorker_Proxy.bind( this );
 
-    // Process all messages received before this AsyncWorker_Body object created.
+    // Process all messages which are received before this AsyncWorker_Body
+    // object created.
     setTimeout( 
       this.globalThis_temporaryMessageQueue_processMessages.bind( this ),
       0
