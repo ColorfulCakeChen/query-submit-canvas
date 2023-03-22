@@ -6,6 +6,10 @@ import * as ValueMax from "../ValueMax.js";
 import { Params_loading_retryWaiting as HttpRequest_Params_loading_retryWaiting }
   from "./HttpRequest_Params_loading_retryWaiting.js";
 
+
+//!!! ...unfinished... (2023/03/23)
+// Perhaps, test this Fetcher by fetching tensorflow.js.
+
 /**
  * Wrap XMLHttpRequest as an async generator.
  *

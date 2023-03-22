@@ -13,6 +13,10 @@ import * as NotUsed from "./NeuralWorker_Body.js";
 
 //!!! ...unfinished... (2023/03/23)
 // How to prefetch tensorflow.js?
+// Perhaps, use HttpRequest.Fetcher() to prefetch tensorflow.js.
+// Because here (NeuralWorker_Proxy) usually in inside a javascript
+// module (which can not call importScripts() to prefetch tensorflow.js).
+//
 //importScripts( tensorflowJsURL ); // Load tensorflow.js library in global scope.
 // because can not executed inside type="module"
 //import { tensorflowJsURL } from "./NeuralWorker_Common.js";
