@@ -10,6 +10,7 @@ import * as NeuralNet from "../../Conv/NeuralNet.js";
 // directly, prefetching it to cache it in disk. So that the web
 // worker could still be created even if internet disconnected later.
 //
+import { tensorflowJsURL } from "./NeuralWorker_Common.js";
 import * as NotUsed from "./NeuralWorker_Body.js";
 
 //!!! ...unfinished... (2023/03/23)
