@@ -426,7 +426,6 @@ class GSheets_UrlComposer extends Recyclable.Root {
   }
 
 
-
   /**
    * @param {GSheets_UrlComposer} this
    * @param {string} funcNameInMessage   The caller function name. (e.g. init_async)
