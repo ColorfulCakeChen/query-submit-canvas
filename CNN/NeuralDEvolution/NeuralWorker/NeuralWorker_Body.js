@@ -1061,4 +1061,9 @@ class NeuralWorker_Body extends AsyncWorker.Body {
 
 }
 
+//!!! ...unfinished... (2023/03/23)
+// Perhaps, do not create singleton instance here.
+// It should be moved to WorkerBodyStub.
+// Otherwise, an instance will be created unexpectedly when
+// NeruralWorker_Proxy prefetching.
 NeuralWorker_Body.Singleton = new NeuralWorker_Body(); // Create worker body.
