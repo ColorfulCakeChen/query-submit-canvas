@@ -68,15 +68,19 @@ class TestCase {
     const randomOffsetMin = -1, randomOffsetMax = 1;
     const divisorForRemainder = 256; //( 2 ** 26 );
 
-    let elementCount = this.input_width * this.input_height * input_channelCount;
+    let elementCount
+      = this.init_parameters.input_width * this.init_parameters.input_height
+          * input_channelCount;
+
     let sourceNumberArray = new Uint8ClampedArray( elementCount );
     RandTools.fill_numberArray( sourceNumberArray,
-      this.input_height, this.input_width, input_channelCount,
+      this.init_parameters.input_height, this.init_parameters.input_width,
+      input_channelCount,
       valueBegin, valueStep,
       randomOffsetMin, randomOffsetMax, divisorForRemainder );
 
-    let sourceImageData = new ImageData(
-      sourceNumberArray, this.input_width, this.input_height );
+    let sourceImageData = new ImageData( sourceNumberArray,
+      this.init_parameters.input_width, this.init_parameters.input_height );
 
     return sourceImageData;
   }
