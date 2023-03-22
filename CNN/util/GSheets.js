@@ -23,6 +23,13 @@ import * as ValueMax from "./ValueMax.js";
  *   If true, a .JSON_ColumnMajorArrayArray_fetch_asyncGenerator() is still
  * executing. Please wait it becoming false if wanting to call
  * .JSON_ColumnMajorArrayArray_fetch_asyncGenerator() again.
+ *
+ * @member {ValueMax.Percentage.Aggregate} fetch_progress
+ *   The progress of fetching. If ( .fetch_progress.valuePercentage == 100 ),
+ * the fetching has done.
+ *   - It is used only if .JSON_ColumnMajorArrayArray_fetch_async() is called.
+ *   - If .JSON_ColumnMajorArrayArray_fetch_asyncGenerator() is called directly,
+ *       its progressParent parameter will be used instead.
  */
 class GSheets_UrlComposer extends Recyclable.Root {
 
@@ -87,6 +94,8 @@ class GSheets_UrlComposer extends Recyclable.Root {
 
   /** @override */
   disposeResources() {
+
+    GSheets_UrlComposer.fetch_progress_dispose.call( this );
     this.fetch_asyncGenerator_running = undefined;
     this.fetch_async_running = undefined;
 
@@ -123,11 +132,15 @@ class GSheets_UrlComposer extends Recyclable.Root {
    * .JSON_ColumnMajorArrayArray_fetch_async()).
    *
    *
+   * @param {HttpRequest.Params_loading_retryWaiting} params_loading_retryWaiting
+   *   The parameters for loading timeout and retry waiting time. It will be kept
+   * but not modified by this object.
+   *
    * @param {Promise} delayPromise
    *   Mainly used when unit testing. If not null, the async method will
    * await it before complete. If null or undefined, no extra delay awaiting.
    *
-   * @return {Promise( boolean )}
+   * @return {Promise( Array[] )}
    *   Return the newly created JSON_ColumnMajorArrayArray_fetch_promise which
    * is an instance of .JSON_ColumnMajorArrayArray_fetch_async().
    */
@@ -145,21 +158,19 @@ class GSheets_UrlComposer extends Recyclable.Root {
 //!!! ...unfinished... (2023/03/11) What if re-entrtance?
 
     // 1.
-    let versus_loader;
+    let fetcher;
     {
       // Use internal independent progress.
       GSheets_UrlComposer.versus_load_progress_create.call( this );
 
-      // Prepare versus_loader
-      const workerProxies_init_promise = null; // For outside caller.
-      versus_loader = GSheets_UrlComposer
-        .versus_loader_create_without_checking_precondition.call( this,
-          this.versus_load_progress,
-          workerProxies_init_promise, delayPromise );
+//!!!
+//      let progress = ValueMax.Percentage.Aggregate.Pool.get_or_create_by();
 
-      // Note: Here needs not set .versus_loadOk to undefined because
-      //       .versus_loader_create_without_checking_precondition() has
-      //       done it.
+      // Prepare fetcher
+      fetcher = GSheets_UrlComposer
+        .JSON_ColumnMajorArrayArray_fetcher_create_without_checking_precondition
+        .call( this,
+          this.fetch_progress, params_loading_retryWaiting, delayPromise );
     }
 
     // 2.
@@ -177,40 +188,41 @@ class GSheets_UrlComposer extends Recyclable.Root {
    *
    * @param {GSheets_UrlComposer} this
    *
-   * @param {AsyncGenerator} versus_loader
-   *   The async generator (an instance of .versus_load_asyncGenerator()) to
-   * be wrapped by the created promise.
+   * @param {AsyncGenerator} fetcher
+   *   The async generator (an instance of
+   * .JSON_ColumnMajorArrayArray_fetch_asyncGenerator()) to be wrapped by the
+   * created promise.
    *
-   * @return {Promise( boolean )}
-   *   Return the newly created this.versus_load_promise which is an instance
-   * of .versus_load_async().
+   * @return {Promise( Array[] )}
+   *   Return the newly created JSON_ColumnMajorArrayArray_fetch_promise which
+   * is an instance of .JSON_ColumnMajorArrayArray_fetch_async().
    */
-  static versus_load_promise_create_without_checking_precondition(
-    versus_loader ) {
+  static JSON_ColumnMajorArrayArray_fetch_promise_create_without_checking_precondition(
+    fetcher ) {
 
 //!!! ...unfinished... (2023/03/11) What if re-entrtance?
 
-    this.versus_load_async_running = true;
-    this.versus_load_promise = GSheets_UrlComposer.versus_load_async.call(
-      this, versus_loader );
-    return this.versus_load_promise;
+    this.fetch_async_running = true;
+    let fetch_promise = GSheets_UrlComposer
+      .JSON_ColumnMajorArrayArray_fetch_async.call( this, fetcher );
+    return JSON_ColumnMajorArrayArray_fetch_promise;
   }
 
   /**
    * Composing the URL (according to this object's data members), download
    * it as JSON format, extract data as a two dimension (column-major) array.
    *
-   * @param {HttpRequest.Params_loading_retryWaiting} params_loading_retryWaiting
-   *   The parameters for loading timeout and retry waiting time. It will be kept
-   * but not modified by this object.
+   * @param {AsyncGenerator} fetcher
+   *   The async generator (an instance of
+   * .JSON_ColumnMajorArrayArray_fetch_asyncGenerator()) to be wrapped by the
+   * created promise.
    *
    * @return {Promise( Array[] )}
    *   Return a promise.
    *   - Resolved to ( a two dimension (column-major) array ) when successful.
    *   - Resolved to ( null ) when failed.
    */
-  static async JSON_ColumnMajorArrayArray_fetch_async(
-    params_loading_retryWaiting ) {
+  static async JSON_ColumnMajorArrayArray_fetch_async( fetcher ) {
 
     const funcNameInMessage = "JSON_ColumnMajorArrayArray_fetch_async";
     { // Checking pre-condition.
@@ -225,10 +237,9 @@ class GSheets_UrlComposer extends Recyclable.Root {
     let progress;
     let resultColumnMajorArrayArray;
     try {
-      let progress = ValueMax.Percentage.Aggregate.Pool.get_or_create_by();
-
-      let fetcher = this.JSON_ColumnMajorArrayArray_fetch_asyncGenerator(
-        progress, params_loading_retryWaiting );
+      if ( !fetcher )
+        throw Error( `GSheets.UrlComposer.${funcNameInMessage}(): `
+          + `fetcher should have already existed.` );
 
       let fetcherNext;
       do {
@@ -246,6 +257,7 @@ class GSheets_UrlComposer extends Recyclable.Root {
       throw e; // Unknown error, should be said loundly.
 
     } finally {
+!!!
       if ( progress ) {
         progress.disposeResources_and_recycleToPool();
         progress = null;
@@ -413,6 +425,27 @@ class GSheets_UrlComposer extends Recyclable.Root {
    */
   abort() {
     this.urlComposer?.abort();
+  }
+
+
+
+  /**
+   * @param {GSheets_UrlComposer} this
+   */
+  static fetch_progress_create() {
+    GSheets_UrlComposer.fetch_progress_dispose.call( this );
+    this.fetch_progress
+      = ValueMax.Percentage.Aggregate.Pool.get_or_create_by();
+  }
+
+  /**
+   * @param {GSheets_UrlComposer} this
+   */
+  static versus_load_progress_dispose() {
+    if ( this.fetch_progress ) {
+      this.fetch_progress.disposeResources_and_recycleToPool();
+      this.fetch_progress = null;
+    }
   }
 
 
