@@ -283,15 +283,21 @@ class AsyncWorker_Proxy extends Recyclable.Root {
       + `  const workerModuleURL = "${workerModuleURL}";\n`
       + `  const retryWaitingSecondsExponentMax = 6;\n`
       + `  let retryTimesCur = 0;\n`
-      + `  let retryWaitingMillisecondsMax\n`
-      + `    = 1000 * getRandomInt_TruncatedBinaryExponent(\n`
-      + `        retryTimesCur, retryWaitingSecondsExponentMax );\n`
-
-      + `  try {\n`
-      + `    await import( workerModuleURL );\n`
-      + `  } catch ( e ) {\n`
-      + `    debugger;\n`
-      + `  }\n`
+      + `  let importDone = false;\n`
+      + `  do {\n`
+      + `    try {\n`
+      + `      await import( workerModuleURL );\n`
+      + `      importDone = true;\n`
+      + `    } catch ( e ) {\n`
+      + `      debugger;\n`
+      + `      let retryWaitingMillisecondsMax\n`
+      + `            = 1000 * getRandomInt_TruncatedBinaryExponent(\n`
+      + `                retryTimesCur, retryWaitingSecondsExponentMax );\n`
+      + `      console.log( \`Wait \${retryWaitingMillisecondsMax} milliseconds...\` );\n`
+      + `      await sleep( retryWaitingMillisecondsMax );\n`
+      + `      console.log( \`Retry import worker body...\` );\n`
+      + `    }\n`
+      + `  } while ( !importDone );\n`
       + `} )();\n`
       + `\n`
       + `AsyncWorker_Body_temporaryMessageQueue = [];\n`
