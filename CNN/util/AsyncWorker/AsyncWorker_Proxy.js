@@ -253,13 +253,47 @@ class AsyncWorker_Proxy extends Recyclable.Root {
     //
     let codes = ``
       + `( async () => {\n`
+      + `  function sleep( delayMilliseconds ) {\n`
+      + `    return new Promise( ( resolve ) => {\n`
+      + `      setTimeout( () => resolve(), delayMilliseconds );\n`
+      + `    } );\n`
+      + `  }\n`
+      + `\n`
+      + `  function getRandomIntInclusive_by_minInt_kindsInt( minInt, kindsInt ) {\n`
+      + `    return Math.floor( ( Math.random() * kindsInt ) + minInt );\n`
+      + `  }\n`
+      + `\n`
+      + `  function getRandomIntInclusive( min, max ) {\n`
+      + `    let minReal = Math.min( min, max );\n`
+      + `    let maxReal = Math.max( min, max );\n`
+      + `    let minInt = Math.ceil( minReal );\n`
+      + `    let maxInt  = Math.floor( maxReal );\n`
+      + `    let kindsInt = maxInt - minInt + 1;\n`
+      + `    return getRandomIntInclusive_by_minInt_kindsInt( minInt, kindsInt );\n`
+      + `  }\n`
+      + `\n`
+      + `  function getRandomInt_TruncatedBinaryExponent( exponent, exponentMax ) {\n`
+      + `    let exponentRestricted = Math.min( exponent, exponentMax );\n`
+      + `    let exponentZeroOrPositive = Math.max( 0, exponentRestricted );\n`
+      + `    let power = ( 2 ** exponentZeroOrPositive );\n`
+      + `    let randomInt = getRandomIntInclusive( 0, power );\n`
+      + `    return randomInt;\n`
+      + `  }\n`
+      + `\n`
       + `  const workerModuleURL = "${workerModuleURL}";\n`
+      + `  const retryWaitingSecondsExponentMax = 6;\n`
+      + `  let retryTimesCur = 0;\n`
+      + `  let retryWaitingMillisecondsMax\n`
+      + `    = 1000 * getRandomInt_TruncatedBinaryExponent(\n`
+      + `        retryTimesCur, retryWaitingSecondsExponentMax );\n`
+
       + `  try {\n`
       + `    await import( workerModuleURL );\n`
       + `  } catch ( e ) {\n`
       + `    debugger;\n`
       + `  }\n`
       + `} )();\n`
+      + `\n`
       + `AsyncWorker_Body_temporaryMessageQueue = [];\n`
       + `onmessage = ( e ) => {\n`
       // + `  console.log( "Hello" );\n`

@@ -6,6 +6,10 @@ import * as Weights from "../../Unpacker/Weights.js";
 import * as NeuralNet from "../../Conv/NeuralNet.js";
 import { tensorflowJsURL } from "./NeuralWorker_Common.js";
 
+//!!! ...unfinished... (2023/03/22)
+// What if failed when:
+//   - library (tensorflow.js) downloading
+
 importScripts( tensorflowJsURL ); // Load tensorflow.js library in global scope.
 
 /**
