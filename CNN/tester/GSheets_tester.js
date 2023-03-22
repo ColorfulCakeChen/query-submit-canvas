@@ -249,6 +249,10 @@ class TestCase {
       this.retryWaitingMillisecondsInterval
     );
 
+//!!! ...unfinished... (2023/03/22)
+// should test .JSON_ColumnMajorArrayArray_fetcher_create()
+// and .JSON_ColumnMajorArrayArray_fetch_promise_create()
+
     let fetcher = urlComposer.JSON_ColumnMajorArrayArray_fetcher_create(
       progressParent, params_loading_retryWaiting );
 
