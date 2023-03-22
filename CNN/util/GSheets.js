@@ -117,6 +117,85 @@ class GSheets_UrlComposer extends Recyclable.Root {
     return this.urlComposer.range;
   }
 
+
+  /**
+   * Create JSON_ColumnMajorArrayArray_fetch_promise (an instance of
+   * .JSON_ColumnMajorArrayArray_fetch_async()).
+   *
+   *
+   * @param {Promise} delayPromise
+   *   Mainly used when unit testing. If not null, the async method will
+   * await it before complete. If null or undefined, no extra delay awaiting.
+   *
+   * @return {Promise( boolean )}
+   *   Return the newly created JSON_ColumnMajorArrayArray_fetch_promise which
+   * is an instance of .JSON_ColumnMajorArrayArray_fetch_async().
+   */
+  JSON_ColumnMajorArrayArray_fetch_promise_create( delayPromise ) {
+
+    const funcNameInMessage = "JSON_ColumnMajorArrayArray_fetch_promise_create";
+    { // Checking pre-condition.
+
+      GSheets_UrlComposer.throw_if_an_old_still_running.call( this,
+        this.fetch_async_running, funcNameInMessage );
+
+      GSheets_UrlComposer.throw_if_fetching.call( this, funcNameInMessage );
+    }
+
+//!!! ...unfinished... (2023/03/11) What if re-entrtance?
+
+    // 1.
+    let versus_loader;
+    {
+      // Use internal independent progress.
+      GSheets_UrlComposer.versus_load_progress_create.call( this );
+
+      // Prepare versus_loader
+      const workerProxies_init_promise = null; // For outside caller.
+      versus_loader = GSheets_UrlComposer
+        .versus_loader_create_without_checking_precondition.call( this,
+          this.versus_load_progress,
+          workerProxies_init_promise, delayPromise );
+
+      // Note: Here needs not set .versus_loadOk to undefined because
+      //       .versus_loader_create_without_checking_precondition() has
+      //       done it.
+    }
+
+    // 2.
+    return GSheets_UrlComposer
+      .versus_load_promise_create_without_checking_precondition.call( this,
+        versus_loader );
+  }
+
+  /**
+   * Create .versus_load_promise (an instance of .versus_load_async()).
+   *
+   * Called by .init_async() and .versus_load_promise_create(). It does not
+   * check precondition.
+   *
+   *
+   * @param {GSheets_UrlComposer} this
+   *
+   * @param {AsyncGenerator} versus_loader
+   *   The async generator (an instance of .versus_load_asyncGenerator()) to
+   * be wrapped by the created promise.
+   *
+   * @return {Promise( boolean )}
+   *   Return the newly created this.versus_load_promise which is an instance
+   * of .versus_load_async().
+   */
+  static versus_load_promise_create_without_checking_precondition(
+    versus_loader ) {
+
+//!!! ...unfinished... (2023/03/11) What if re-entrtance?
+
+    this.versus_load_async_running = true;
+    this.versus_load_promise = GSheets_UrlComposer.versus_load_async.call(
+      this, versus_loader );
+    return this.versus_load_promise;
+  }
+
   /**
    * Composing the URL (according to this object's data members), download
    * it as JSON format, extract data as a two dimension (column-major) array.
@@ -130,7 +209,8 @@ class GSheets_UrlComposer extends Recyclable.Root {
    *   - Resolved to ( a two dimension (column-major) array ) when successful.
    *   - Resolved to ( null ) when failed.
    */
-  async JSON_ColumnMajorArrayArray_fetch_async( params_loading_retryWaiting ) {
+  static async JSON_ColumnMajorArrayArray_fetch_async(
+    params_loading_retryWaiting ) {
 
     const funcNameInMessage = "JSON_ColumnMajorArrayArray_fetch_async";
     { // Checking pre-condition.
@@ -192,6 +272,10 @@ class GSheets_UrlComposer extends Recyclable.Root {
    *   The parameters for loading timeout and retry waiting time. It will be kept
    * but not modified by this object.
    *
+   * @param {Promise} delayPromise
+   *   Mainly used when unit testing. If not null, this async generator will
+   * await it before complete. If null or undefined, no extra delay awaiting.
+   *
    * @yield {Promise( ValueMax.Percentage.Aggregate )}
    *   Yield a promise resolves to { value: progressParent.root_get(), done: false }.
    *
@@ -201,19 +285,42 @@ class GSheets_UrlComposer extends Recyclable.Root {
    *       value: ( a two dimension (column-major) array ) } when successfully.
    *   - Resolved to { done: true, value: null } when failed.
    */
-  async* JSON_ColumnMajorArrayArray_fetch_asyncGenerator(
-    progressParent, params_loading_retryWaiting ) {
+  static async* JSON_ColumnMajorArrayArray_fetch_asyncGenerator(
+    progressParent, params_loading_retryWaiting, delayPromise ) {
+
+    { // Checking pre-condition.
+      const funcNameInMessage = "JSON_ColumnMajorArrayArray_fetch_asyncGenerator";
+
+      GSheets_UrlComposer.throw_call_another_if_false.call( this,
+        this.fetch_asyncGenerator_running, funcNameInMessage,
+        "JSON_ColumnMajorArrayArray_fetcher_create" );
+    }
 
 //!!! ...unfinished... (2023/03/11) What if re-entrtance?
 //this.fetch_asyncGenerator_running = ???;
 
+    try {
+      let fetcher = this.urlComposer
+        .JSON_ColumnMajorArrayArray_fetch_asyncGenerator(
+          progressParent, params_loading_retryWaiting );
 
-    let fetcher = this.urlComposer
-      .JSON_ColumnMajorArrayArray_fetch_asyncGenerator(
-        progressParent, params_loading_retryWaiting );
+      let ColumnMajorArrayArray = yield *fetcher;
 
-    let ColumnMajorArrayArray = yield *fetcher;
-    return ColumnMajorArrayArray;
+      //
+      if ( delayPromise )
+        await delayPromise;
+
+      return ColumnMajorArrayArray;
+
+    } catch ( e ) {
+      //debugger;
+      throw e;
+
+    } finally {
+      // So that this async generator could be executed again.
+      this.fetch_asyncGenerator_running = false;
+    }
+
   }
 
 
