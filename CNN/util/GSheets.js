@@ -406,7 +406,6 @@ class GSheets_UrlComposer extends Recyclable.Root {
   }
 
 
-
   /**
    * @param {GSheets_UrlComposer} this
    */
