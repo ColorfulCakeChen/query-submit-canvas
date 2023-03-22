@@ -5,18 +5,17 @@ import * as Recyclable from "../../util/Recyclable.js";
 import * as AsyncWorker from "../../util/AsyncWorker.js";
 import * as NeuralNet from "../../Conv/NeuralNet.js";
 
-//!!! ...unfinished... (2023/03/22)
 // Although here (NeuralWorker_Proxy) will not use NeuralWorker_Body
 // directly, prefetching it to cache it in disk. So that the web
-// worker could still be created even if internet disconnected later.
-//
-import { tensorflowJsURL } from "./NeuralWorker_Common.js";
+// worker could still be created (from disk cache) even if internet
+// disconnected later.
 import * as NotUsed from "./NeuralWorker_Body.js";
 
 //!!! ...unfinished... (2023/03/23)
 // How to prefetch tensorflow.js?
 //importScripts( tensorflowJsURL ); // Load tensorflow.js library in global scope.
 // because can not executed inside type="module"
+//import { tensorflowJsURL } from "./NeuralWorker_Common.js";
 
 
 //!!! ...unfinished... (2022/09/15)
