@@ -267,6 +267,9 @@ class TestCase {
     let fetcher = urlComposer.JSON_ColumnMajorArrayArray_fetcher_create(
       progressFetch, params_loading_retryWaiting, delayPromise );
 
+//!!! ...unfinished... (2023/03/22)
+// What if .JSON_ColumnMajorArrayArray_fetch_promise_create()
+
     if ( !urlComposer.fetch_asyncGenerator_running )
       throw Error( `GSheets_tester.TestCase`
         + `.urlComposer_fetcher(): testCaseId=${this.testCaseId}, `
@@ -355,6 +358,20 @@ class TestCase {
       }
 
     } while ( !nextResult.done );
+
+    if ( urlComposer.fetch_async_running )
+      throw Error( `GSheets_tester.TestCase`
+        + `.urlComposer_fetcher(): testCaseId=${this.testCaseId}, `
+        + `urlComposer.fetch_async_running=`
+        + `${urlComposer.fetch_async_running} `
+        + `should be false.` );
+
+    if ( urlComposer.fetch_asyncGenerator_running )
+      throw Error( `GSheets_tester.TestCase`
+        + `.urlComposer_fetcher(): testCaseId=${this.testCaseId}, `
+        + `urlComposer.fetch_asyncGenerator_running=`
+        + `${urlComposer.fetch_asyncGenerator_running} `
+        + `should be false.` );
 
     if ( 100 !== progressToAdvance.valuePercentage )
       throw Error( `GSheets_tester.TestCase`
