@@ -40,8 +40,8 @@ import * as ValueMax from "../ValueMax.js";
  *
  *
  * @member {string} spreadsheetUrlPrefix
- *   Usually, it is GVizTQ_UrlComposer.spreadsheetUrlPrefix. But it may be
- * modified (e.g. for testing ProgressEvent error).
+ *   - If null, GVizTQ_UrlComposer.spreadsheetUrlPrefix will be used.
+ *   - If not null, it will be used (usually for unit testing ProgressEvent error).
  *
  * @member {boolean} bLogFetcherEventToConsole
  *   If true, some debug messages of HttpRequest.Fetcher will be logged to console.
@@ -130,7 +130,6 @@ class GVizTQ_UrlComposer extends Recyclable.Root {
     spreadsheetId, range,
     headers, responseHandler, sheetId, sheetName
   ) {
-    this.spreadsheetUrlPrefix = GVizTQ_UrlComposer.spreadsheetUrlPrefix;
     this.set_by_spreadsheetId_range_headers_responseHandler_sheetId_sheetName(
       spreadsheetId,
       range, headers, responseHandler, sheetId, sheetName
@@ -363,9 +362,19 @@ class GVizTQ_UrlComposer extends Recyclable.Root {
    * @return {string} The url for downloading the target as specified format.
    */
   getUrl_forFormat( outputFormat ) {
+
+    // 1. Determine url prefix.
+    let spreadsheetUrlPrefix;
+    if ( this.spreadsheetUrlPrefix )
+      spreadsheetUrlPrefix = this.spreadsheetUrlPrefix;
+    else
+      spreadsheetUrlPrefix = GVizTQ_UrlComposer.spreadsheetUrlPrefix;
+
+    // 2. Composite url.
+
     // Because sheetId could be 0, it should be checked by comparing to null directly
     // (i.e. should not use ( !this.sheetId )).
-    let url = `${this.spreadsheetUrlPrefix}/${
+    let url = `${spreadsheetUrlPrefix}/${
       encodeURIComponent(this.spreadsheetId)}/${
 
       GVizTQ_UrlComposer.GoogleVisualizationTableQueryUrlPostfix}?tqx=version:${

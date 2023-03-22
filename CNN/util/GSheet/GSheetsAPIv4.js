@@ -20,8 +20,8 @@ import * as ValueMax from "../ValueMax.js";
  *
  *
  * @member {string} spreadsheetUrlPrefix
- *   Usually, it is GSheetsAPIv4_UrlComposer.spreadsheetUrlPrefix. But it may be
- * modified (e.g. for testing ProgressEvent error).
+ *   - If null, GVizTQ_UrlComposer.spreadsheetUrlPrefix will be used.
+ *   - If not null, it will be used (usually for unit testing ProgressEvent error).
  *
  * @member {boolean} bLogFetcherEventToConsole
  *   If true, some debug messages of HttpRequest.Fetcher will be logged to console.
@@ -84,7 +84,6 @@ class GSheetsAPIv4_UrlComposer extends Recyclable.Root {
 
   /** @override */
   static setAsConstructor_self( spreadsheetId, range, apiKey ) {
-    this.spreadsheetUrlPrefix = GSheetsAPIv4_UrlComposer.spreadsheetUrlPrefix;
     this.set_by_spreadsheetId_range_apiKey( spreadsheetId, range, apiKey );
   }
 
@@ -299,7 +298,16 @@ class GSheetsAPIv4_UrlComposer extends Recyclable.Root {
    * @return {string} The url for downloading the target as json format.
    */
   getUrl_forJSON( majorDimension = null ) {
-    let url = `${this.spreadsheetUrlPrefix}/${
+
+    // 1. Determine url prefix.
+    let spreadsheetUrlPrefix;
+    if ( this.spreadsheetUrlPrefix )
+      spreadsheetUrlPrefix = this.spreadsheetUrlPrefix;
+    else
+      spreadsheetUrlPrefix = GSheetsAPIv4_UrlComposer.spreadsheetUrlPrefix;
+
+    // 2. Composite url.
+    let url = `${spreadsheetUrlPrefix}/${
       encodeURIComponent(this.spreadsheetId)}/values/${
       encodeURIComponent(this.range)}?${
       ( majorDimension != null ) ? `majorDimension=${
