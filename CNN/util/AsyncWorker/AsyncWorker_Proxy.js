@@ -289,7 +289,7 @@ class AsyncWorker_Proxy extends Recyclable.Root {
       + `      await import( workerModuleURL );\n`
       + `      importDone = true;\n`
       + `    } catch ( e ) {\n`
-      + `      debugger;\n`
+      // + `      debugger;\n`
       + `      let retryWaitingMillisecondsMax\n`
       + `            = 1000 * getRandomInt_TruncatedBinaryExponent(\n`
       + `                retryTimesCur, retryWaitingSecondsExponentMax );\n`
