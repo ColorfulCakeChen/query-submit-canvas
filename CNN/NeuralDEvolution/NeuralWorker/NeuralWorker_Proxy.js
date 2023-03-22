@@ -12,6 +12,12 @@ import * as NeuralNet from "../../Conv/NeuralNet.js";
 //
 import * as NotUsed from "./NeuralWorker_Body.js";
 
+//!!! ...unfinished... (2023/03/23)
+// How to prefetch tensorflow.js?
+//importScripts( tensorflowJsURL ); // Load tensorflow.js library in global scope.
+// because can not executed inside type="module"
+
+
 //!!! ...unfinished... (2022/09/15)
 // What if failed when:
 //   - library (tensorflow.js) downloading
