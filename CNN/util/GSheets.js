@@ -161,7 +161,7 @@ class GSheets_UrlComposer extends Recyclable.Root {
     let fetcher;
     {
       // Use internal independent progress.
-      GSheets_UrlComposer.versus_load_progress_create.call( this );
+      GSheets_UrlComposer.fetch_progress_create.call( this );
 
       // Prepare fetcher
       fetcher = GSheets_UrlComposer
@@ -171,36 +171,14 @@ class GSheets_UrlComposer extends Recyclable.Root {
     }
 
     // 2.
-    return GSheets_UrlComposer
-      .JSON_ColumnMajorArrayArray_fetch_promise_create_without_checking_precondition
-      .call( this, fetcher );
-  }
+    let fetch_promise;
+    {
+      this.fetch_async_running = true;
+      fetch_promise = GSheets_UrlComposer
+        .JSON_ColumnMajorArrayArray_fetch_async.call( this, fetcher );
+    }
 
-  /**
-   * Create .versus_load_promise (an instance of .versus_load_async()).
-   *
-   * Called by .init_async() and .versus_load_promise_create(). It does not
-   * check precondition.
-   *
-   *
-   * @param {GSheets_UrlComposer} this
-   *
-   * @param {AsyncGenerator} fetcher
-   *   The async generator (an instance of
-   * .JSON_ColumnMajorArrayArray_fetch_asyncGenerator()) to be wrapped by the
-   * created promise.
-   *
-   * @return {Promise( Array[] )}
-   *   Return the newly created JSON_ColumnMajorArrayArray_fetch_promise which
-   * is an instance of .JSON_ColumnMajorArrayArray_fetch_async().
-   */
-  static JSON_ColumnMajorArrayArray_fetch_promise_create_without_checking_precondition(
-    fetcher ) {
-
-    this.fetch_async_running = true;
-    let fetch_promise = GSheets_UrlComposer
-      .JSON_ColumnMajorArrayArray_fetch_async.call( this, fetcher );
-    return JSON_ColumnMajorArrayArray_fetch_promise;
+    return fetch_promise;
   }
 
   /**
@@ -282,30 +260,16 @@ class GSheets_UrlComposer extends Recyclable.Root {
       GSheets_UrlComposer.throw_if_fetching.call( this, funcNameInMessage );
     }
 
-    let fetcher = GSheets_UrlComposer
-      .JSON_ColumnMajorArrayArray_fetcher_create_without_checking_precondition
-      .call( this, progressParent, params_loading_retryWaiting, delayPromise );
-    return fetcher;
-  }
+    // 1.
+    let fetcher;
+    {
+      this.fetch_asyncGenerator_running = true;
 
-  /**
-   * Create an instance of .JSON_ColumnMajorArrayArray_fetch_asyncGenerator().
-   *
-   *
-   * @param {GSheets_UrlComposer} this
-   *
-   * @return {AsyncGenerator}
-   *   Return the newly created JSON_ColumnMajorArrayArray_fetcher which is an
-   * instance of .JSON_ColumnMajorArrayArray_fetch_asyncGenerator().
-   */
-  static JSON_ColumnMajorArrayArray_fetcher_create_without_checking_precondition(
-    progressParent, params_loading_retryWaiting, delayPromise ) {
+      fetcher = GSheets_UrlComposer
+        .JSON_ColumnMajorArrayArray_fetch_asyncGenerator.call( this,
+          progressParent, params_loading_retryWaiting, delayPromise );
+    }
 
-    this.fetch_asyncGenerator_running = true;
-
-    let fetcher = GSheets_UrlComposer
-      .JSON_ColumnMajorArrayArray_fetch_asyncGenerator.call( this,
-        progressParent, params_loading_retryWaiting, delayPromise );
     return fetcher;
   }
 
