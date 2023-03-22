@@ -28,7 +28,7 @@ class TestCase {
       output_channelCount_per_alignment: 64, //12,
 
       get output_channelCount() {
-        return this.init_parameters.output_channelCount_per_alignment * 2;
+        return this.output_channelCount_per_alignment * 2;
       }
     };
 
