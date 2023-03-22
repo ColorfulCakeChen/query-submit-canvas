@@ -49,14 +49,15 @@ import * as AsyncWorker_Checker from "./AsyncWorker_Checker.js";
  * postCommand_and_expectResult() call will use a new id.
  *
  * @member {processingId_Resulter_Map} the_processingId_Resulter_Map
- *   Every worker has a result pending promise map. The key of the map is processing
- * id. The value of the map is a AsyncWorker.Resulter.
+ *   Every worker has a result pending promise map. The key of the map is
+ * processing id. The value of the map is a AsyncWorker.Resulter.
  *
  */
 class AsyncWorker_Proxy extends Recyclable.Root {
 
   /**
-   * Used as default AsyncWorker.Proxy provider for conforming to Recyclable interface.
+   * Used as default AsyncWorker.Proxy provider for conforming to Recyclable
+   * interface.
    */
   static Pool = new Pool.Root( "AsyncWorker.Proxy.Pool",
     AsyncWorker_Proxy, AsyncWorker_Proxy.setAsConstructor );
@@ -301,26 +302,27 @@ class AsyncWorker_Proxy extends Recyclable.Root {
   }
 
   /**
-   * Send command and args (perhaps, with transferable object array) to WorkerBody
-   * and expect the final result.
+   * Send command and args (perhaps, with transferable object array) to
+   * WorkerBody and expect the final result.
    *
    * @param {Array} commandArgs
    *   An array (i.e. [ comand, ...args ]) which will be sent to the WorkerBody.
    *
-   *   - The command is a string which is the WorkerBody's method function to be
-   *       called.
+   *   - The command is a string which is the WorkerBody's method function to
+   *       be called.
    *
-   *   - The args is an array which will be destructured into multiple arguments
-   *       and passed into the WorkerBody's method function.
+   *   - The args is an array which will be destructured into multiple
+   *       arguments and passed into the WorkerBody's method function.
    *
    * @param {Array} transferableObjectArray
-   *   The transferable object array when postMessage. It could be undefined (but
-   * can not be null).
+   *   The transferable object array when postMessage. It could be undefined
+   * (but can not be null).
    *
    * @return {Promise}
-   *   Return a promise resolved to the final value of the processing's resulter
-   * from WorkerBody. (i.e. Only the Xxx of { done: true, value: Xxx } resolved.
-   * All other intermediate result { done: false, value: Yyy } are discarded.)
+   *   Return a promise resolved to the final value of the processing's
+   * resulter from WorkerBody. (i.e. Only the Xxx of { done: true, value: Xxx }
+   * resolved. All other intermediate result { done: false, value: Yyy } are
+   * discarded.)
    */
   createPromise_by_postCommandArgs( commandArgs, transferableObjectArray ) {
     let resulter = this.createResulter_by_postCommandArgs(
@@ -358,9 +360,11 @@ class AsyncWorker_Proxy extends Recyclable.Root {
       .createResulter_by_processingId( processingId );
 
     let processingId_commandArgs = [ processingId, ...commandArgs ];
-    this.worker.postMessage( processingId_commandArgs, transferableObjectArray );
+    this.worker.postMessage(
+      processingId_commandArgs, transferableObjectArray );
 
-    // Check large objects are transferred (rather than copied) to ensure performance.
+    // Check large objects are transferred (rather than copied) to ensure
+    // performance.
     {
       let bTransferred = AsyncWorker_Checker
         .ImageData_ArrayBuffer_TypedArray_isTransferred( commandArgs );
