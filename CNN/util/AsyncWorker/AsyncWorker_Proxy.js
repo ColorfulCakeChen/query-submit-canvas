@@ -239,7 +239,10 @@ class AsyncWorker_Proxy extends Recyclable.Root {
 //!!! ...unfinished... (2022/09/15)
 // What if loading workerModuleURL failed?
 // Re-try (but should inform this WorkerProxy and user).
-  
+
+//!!! ...unfinished... (2023/03/22)
+// Perhaps, use (binary) exponential back-off waiting and retry.
+
     // The codes do the following:
     //
     //   - Import the specified module URL.

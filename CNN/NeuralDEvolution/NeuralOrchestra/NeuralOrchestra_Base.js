@@ -11,7 +11,7 @@ import * as NeuralWorker from "../NeuralWorker.js";
 import * as DEvolution from "../DEvolution.js";
 
 
-//!!! ...unfinishe... (2023/03/21)
+//!!! ...unfinished... (2023/03/21)
 // Only if ( this.initOk === undefined ), init_asyncXxx() can be called.
 // Prevent from being re-initialized. So that unit testing can be accelerated.
 
