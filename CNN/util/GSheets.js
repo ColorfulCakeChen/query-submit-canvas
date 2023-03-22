@@ -148,8 +148,8 @@ class GSheets_UrlComposer extends Recyclable.Root {
    */
   JSON_ColumnMajorArrayArray_fetch_promise_create( delayPromise ) {
 
-    const funcNameInMessage = "JSON_ColumnMajorArrayArray_fetch_promise_create";
     { // Checking pre-condition.
+      const funcNameInMessage = "JSON_ColumnMajorArrayArray_fetch_promise_create";
 
       GSheets_UrlComposer.throw_if_an_old_still_running.call( this,
         this.fetch_async_running, funcNameInMessage );
@@ -214,8 +214,9 @@ class GSheets_UrlComposer extends Recyclable.Root {
    */
   static async JSON_ColumnMajorArrayArray_fetch_async( fetcher ) {
 
-    const funcNameInMessage = "JSON_ColumnMajorArrayArray_fetch_async";
     { // Checking pre-condition.
+      const funcNameInMessage = "JSON_ColumnMajorArrayArray_fetch_async";
+
       GSheets_UrlComposer.throw_call_another_if_false.call( this,
         this.fetch_async_running, funcNameInMessage,
         "JSON_ColumnMajorArrayArray_fetch_promise_create" );
@@ -344,11 +345,11 @@ class GSheets_UrlComposer extends Recyclable.Root {
 
     try {
       // 1.
-      let fetcher = this.urlComposer
+      let fetcher_underlie = this.urlComposer
         .JSON_ColumnMajorArrayArray_fetch_asyncGenerator(
           progressParent, params_loading_retryWaiting );
 
-      let ColumnMajorArrayArray = yield *fetcher;
+      let ColumnMajorArrayArray = yield *fetcher_underlie;
 
       // 2.
       if ( delayPromise )
