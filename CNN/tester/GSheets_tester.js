@@ -242,6 +242,14 @@ class TestCase {
       urlComposer.abort();
     }
 
+//    let progressRoot = progressParent.root_get();
+
+    let progressFetch = progressParent.child_add(
+      ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
+
+    let progressToAdvance = progressParent.child_add(
+      ValueMax.Percentage.Concrete.Pool.get_or_create_by( 2 ) );
+
     let params_loading_retryWaiting = new HttpRequest.Params_loading_retryWaiting(
       this.loadingMillisecondsMax,
       this.loadingMillisecondsInterval,
@@ -257,7 +265,7 @@ class TestCase {
     let delayPromise = PartTime.Promise_resolvable_rejectable_create();
 
     let fetcher = urlComposer.JSON_ColumnMajorArrayArray_fetcher_create(
-      progressParent, params_loading_retryWaiting, delayPromise );
+      progressFetch, params_loading_retryWaiting, delayPromise );
 
     if ( !urlComposer.fetch_asyncGenerator_running )
       throw Error( `GSheets_tester.TestCase`
@@ -275,6 +283,8 @@ class TestCase {
         urlComposer.JSON_ColumnMajorArrayArray_fetch_promise_create();
       } catch ( e ) {
         if ( e.message.indexOf( ".JSON_ColumnMajorArrayArray_fetch_promise_create():" ) > 0 ) {
+          progressToAdvance.value_advance();
+          yield progressRoot;
         } else { // Unknown error, said loudly.
           throw Error( `GSheets_tester.TestCase.urlComposer_fetcher(): `
             + `testCaseId=${this.testCaseId}, ${e}`, { cause: e } );
@@ -287,6 +297,8 @@ class TestCase {
         urlComposer.JSON_ColumnMajorArrayArray_fetcher_create();
       } catch ( e ) {
         if ( e.message.indexOf( ".JSON_ColumnMajorArrayArray_fetcher_create():" ) > 0 ) {
+          progressToAdvance.value_advance();
+          yield progressRoot;
         } else { // Unknown error, said loudly.
           throw Error( `GSheets_tester.TestCase.urlComposer_fetcher(): `
             + `testCaseId=${this.testCaseId}, ${e}`, { cause: e } );
@@ -343,6 +355,12 @@ class TestCase {
       }
 
     } while ( !nextResult.done );
+
+    if ( 100 !== progressToAdvance.valuePercentage )
+      throw Error( `GSheets_tester.TestCase`
+        + `.urlComposer_fetcher(): testCaseId=${this.testCaseId}, `
+        + `progressToAdvance.valuePercentage `
+          +  `( ${progressToAdvance.valuePercentage} ) should 100.` );
 
     return nextResult.value;
   }
