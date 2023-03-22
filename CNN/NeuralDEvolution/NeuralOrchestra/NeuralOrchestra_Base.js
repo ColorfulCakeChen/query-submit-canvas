@@ -613,20 +613,6 @@ class NeuralOrchestra_Base extends Recyclable.Root {
    * progressParent.root_get() will be returned when every time yield.
    *
    *
-   * @param {string} downloader_spreadsheetId
-   *   The Google Sheets spreadsheetId of neural network weights.
-   *
-   * @param {string} downloader_apiKey
-   *   The API key for accessing the Google Sheets spreadsheet of neural network
-   * weights. (Note: api key can not be changed after this object created.)
-   *   - If null, Google Visualization Table Query API will be used.
-   *   - If not null, Google Sheets API v4 will be used.
-   *
-   *
-   * @param {string} sender_clientId
-   *   The client id when sending measurement protocol.
-   *
-   *
    * @param {number} input_height
    *   The input image's height.
    *
