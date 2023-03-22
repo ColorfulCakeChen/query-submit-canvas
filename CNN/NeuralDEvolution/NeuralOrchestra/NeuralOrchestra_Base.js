@@ -15,6 +15,10 @@ import * as DEvolution from "../DEvolution.js";
 // Only if ( this.initOk === undefined ), init_asyncXxx() can be called.
 // Prevent from being re-initialized. So that unit testing can be accelerated.
 
+//!!! ...unfinishe... (2023/03/22)
+// Perhaps, accept output_channelCount_per_alignment
+// and calculate output_channelCount.
+
 
 /**
  * Orchestrate neural networks with differential evolution.
