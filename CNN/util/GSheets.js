@@ -11,7 +11,18 @@ import * as ValueMax from "./ValueMax.js";
  * Fetch data from Google Sheets.
  *
  * @member {boolean} bLogFetcherEventToConsole
- *   If true, some debug messages of HttpRequest.Fetcher will be logged to console.
+ *   If true, some debug messages of HttpRequest.Fetcher will be logged to
+ * console.
+ *
+ * @member {boolean} fetch_async_running
+ *   If true, a .JSON_ColumnMajorArrayArray_fetch_async() is still executing.
+ * Please wait it becoming false if wanting to call
+ * .JSON_ColumnMajorArrayArray_fetch_async() again.
+ *
+ * @member {boolean} fetch_asyncGenerator_running
+ *   If true, a .JSON_ColumnMajorArrayArray_fetch_asyncGenerator() is still
+ * executing. Please wait it becoming false if wanting to call
+ * .JSON_ColumnMajorArrayArray_fetch_asyncGenerator() again.
  */
 class GSheets_UrlComposer extends Recyclable.Root {
 
@@ -76,6 +87,9 @@ class GSheets_UrlComposer extends Recyclable.Root {
 
   /** @override */
   disposeResources() {
+    this.fetch_asyncGenerator_running = undefined;
+    this.fetch_async_running = undefined;
+
     if ( this.urlComposer ) {
       this.urlComposer.disposeResources_and_recycleToPool();
       this.urlComposer = null;
@@ -104,6 +118,67 @@ class GSheets_UrlComposer extends Recyclable.Root {
   }
 
   /**
+   * Composing the URL (according to this object's data members), download
+   * it as JSON format, extract data as a two dimension (column-major) array.
+   *
+   * @param {HttpRequest.Params_loading_retryWaiting} params_loading_retryWaiting
+   *   The parameters for loading timeout and retry waiting time. It will be kept
+   * but not modified by this object.
+   *
+   * @return {Promise( Array[] )}
+   *   Return a promise.
+   *   - Resolved to ( a two dimension (column-major) array ) when successful.
+   *   - Resolved to ( null ) when failed.
+   */
+  async JSON_ColumnMajorArrayArray_fetch_async( params_loading_retryWaiting ) {
+
+    const funcNameInMessage = "JSON_ColumnMajorArrayArray_fetch_async";
+    { // Checking pre-condition.
+      GSheets_UrlComposer.throw_call_another_if_false.call( this,
+        this.fetch_async_running, funcNameInMessage,
+        "JSON_ColumnMajorArrayArray_fetch_promise_create" );
+    }
+
+//!!! ...unfinished... (2023/03/11) What if re-entrtance?
+//    this.fetch_async_running = ???;
+
+    let progress;
+    let resultColumnMajorArrayArray;
+    try {
+      let progress = ValueMax.Percentage.Aggregate.Pool.get_or_create_by();
+
+      let fetcher = this.JSON_ColumnMajorArrayArray_fetch_asyncGenerator(
+        progress, params_loading_retryWaiting );
+
+      let fetcherNext;
+      do {
+        fetcherNext = await fetcher.next();
+        if ( fetcherNext.done == false ) {
+          //let progressRoot = fetcherNext.value;
+        } else { // ( fetcherNext.done == true )
+          resultColumnMajorArrayArray = fetcherNext.value;
+        }
+      } while ( fetcherNext.done == false );
+
+    } catch ( e ) {
+      //console.error( e );
+      //debugger;
+      throw e; // Unknown error, should be said loundly.
+
+    } finally {
+      if ( progress ) {
+        progress.disposeResources_and_recycleToPool();
+        progress = null;
+      }
+
+      // So that this async method could be executed again.
+      this.fetch_async_running = false;
+    }
+
+    return resultColumnMajorArrayArray;
+  }
+
+  /**
    * An async generator for composing the URL (according this object's data
    * members), downloading it as JSON format, extracting data as a two dimension
    * (column-major) array.
@@ -121,70 +196,24 @@ class GSheets_UrlComposer extends Recyclable.Root {
    *   Yield a promise resolves to { value: progressParent.root_get(), done: false }.
    *
    * @yield {Promise( Array[] )}
-   *   - Yield a promise resolves to { value: ( a two dimension (column-major) array ),
-   *       done: true } when successfully.
-   *   - Yield a promise resolves to { value: null, done: true } when failed.
+   *   Yield a promise
+   *   - Resolved to { done: true,
+   *       value: ( a two dimension (column-major) array ) } when successfully.
+   *   - Resolved to { done: true, value: null } when failed.
    */
   async* JSON_ColumnMajorArrayArray_fetch_asyncGenerator(
     progressParent, params_loading_retryWaiting ) {
 
 //!!! ...unfinished... (2023/03/11) What if re-entrtance?
+//this.fetch_asyncGenerator_running = ???;
 
-//!!! ...unfinished... (2023/03/19) For debug. why become undefined.
-    if ( !this.spreadsheetId )
-      debugger;
 
-    let fetcher = this.urlComposer.JSON_ColumnMajorArrayArray_fetch_asyncGenerator(
-      progressParent, params_loading_retryWaiting );
+    let fetcher = this.urlComposer
+      .JSON_ColumnMajorArrayArray_fetch_asyncGenerator(
+        progressParent, params_loading_retryWaiting );
 
     let ColumnMajorArrayArray = yield *fetcher;
     return ColumnMajorArrayArray;
-  }
-
-  /**
-   * Composing the URL (according to this object's data members), download
-   * it as JSON format, extract data as a two dimension (column-major) array.
-   *
-   * @param {HttpRequest.Params_loading_retryWaiting} params_loading_retryWaiting
-   *   The parameters for loading timeout and retry waiting time. It will be kept
-   * but not modified by this object.
-   *
-   * @return {Promise( Array[] )}
-   *   Return a promise.
-   *   - It will resolve to ( a two dimension (column-major) array ) when successful.
-   *   - It will resolve to ( null ) when failed.
-   */
-  async JSON_ColumnMajorArrayArray_fetch_async( params_loading_retryWaiting ) {
-
-//!!! ...unfinished... (2023/03/11) What if re-entrtance?
-
-    let progress = ValueMax.Percentage.Aggregate.Pool.get_or_create_by();
-
-    let resultColumnMajorArrayArray;
-    try {
-      let fetcher = this.JSON_ColumnMajorArrayArray_fetch_asyncGenerator(
-        progress, params_loading_retryWaiting );
-
-      let fetcherNext;
-      do {
-        fetcherNext = await fetcher.next();
-        if ( fetcherNext.done == false ) {
-          //let progressRoot = fetcherNext.value;
-        } else { // ( fetcherNext.done == true )
-          resultColumnMajorArrayArray = fetcherNext.value;
-        }
-      } while ( fetcherNext.done == false );
-
-    } catch ( e ) {
-      //console.error( e );
-      throw e; // Unknown error, should be said loundly.
-
-    } finally {
-      progress.disposeResources_and_recycleToPool();
-      progress = null;
-    }
-
-    return resultColumnMajorArrayArray;
   }
 
 
@@ -219,6 +248,45 @@ class GSheets_UrlComposer extends Recyclable.Root {
    */
   abort() {
     this.urlComposer?.abort();
+  }
+
+
+
+  /**
+   * @param {GSheets_UrlComposer} this
+   * @param {string} funcNameInMessage   The caller function name. (e.g. init_async)
+   */
+  static throw_if_fetching( funcNameInMessage ) {
+    if (   ( this.fetch_async_running )
+        || ( this.fetch_asyncGenerator_running ) )
+      throw Error( `GSheets.UrlComposer.${funcNameInMessage}(): `
+        + `should not be executed while still fetching.` );
+  }
+
+  /**
+   * @param {GSheets_UrlComposer} this
+   * @param {boolean} b_still_running    If true, throw exception.
+   * @param {string} funcNameInMessage   The caller function name. (e.g. init_async)
+   */
+  static throw_if_an_old_still_running( b_still_running, funcNameInMessage ) {
+    if ( b_still_running )
+      throw Error( `GSheets.UrlComposer.${funcNameInMessage}(): `
+        + `An old .${funcNameInMessage}() is still running.` );
+  }
+
+  /**
+   * @param {GSheets_UrlComposer} this
+   * @param {boolean} b                  If false, throw exception.
+   * @param {string} funcNameInMessage   The caller function name. (e.g. init_async)
+   * @param {string} funcNameShouldBeCalledInMessage
+   *   The function name which should be called instead. (e.g. init_promise_create)
+   */
+  static throw_call_another_if_false(
+    b, funcNameInMessage, funcNameShouldBeCalledInMessage ) {
+
+    if ( !b )
+      throw Error( `GSheets.UrlComposer.${funcNameInMessage}(): `
+        + `Please call .${funcNameShouldBeCalledInMessage}() instead.` );
   }
 
 }

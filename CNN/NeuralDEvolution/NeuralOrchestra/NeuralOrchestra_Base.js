@@ -222,10 +222,6 @@ import * as DEvolution from "../DEvolution.js";
  * @member {Promise( boolean )} versus_load_promise
  *   The result of .versus_load_promise_create().
  *
- * @member {AsyncGenerator} versus_loader
- *   The result of .versus_loader_create(). An instance of
- * .versus_load_asyncGenerator().
- *
  * @member {ValueMax.Percentage.Aggregate} versus_load_progress
  *   The progress of loading versus summary, loading versus, creating neural
  * networks. If ( .versus_load_progress.valuePercentage == 100 ), all the
@@ -1907,5 +1903,5 @@ class NeuralOrchestra_Base extends Recyclable.Root {
       throw Error( `NeuralOrchestra.Base.${funcNameInMessage}(): `
         + `Please call .${funcNameShouldBeCalledInMessage}() instead.` );
   }
- 
+
 }
