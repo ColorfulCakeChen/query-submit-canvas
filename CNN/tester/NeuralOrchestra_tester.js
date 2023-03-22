@@ -24,7 +24,7 @@ class TestCase {
     this.vocabularyChannelCount = 4; //8; //6;
     this.blockCountTotalRequested = 39; //84; //144;
     this.output_channelCount_per_alignment = 64; //12;
-
+!!!
     this.output_channelCount = this.output_channelCount_per_alignment * 2;
 
     this.createCountBase = 2; // Try create NeuralOrchestra twice.
@@ -699,6 +699,21 @@ class TestCase {
         + `(${neuralOrchestra.workerProxies_initOk}) `
         + `should be true.` );
 
+//!!! ...unfinished... (2023/03/22) Test the following:
+//
+//         this.downloader_spreadsheetId, this.downloader_apiKey,
+//         this.bLogFetcherEventToConsole,
+//         this.sender_clientId,
+//
+//         this.input_height = 72;
+//         this.input_width = 128;
+//    
+//         this.vocabularyChannelCount = 4; //8; //6;
+//         this.blockCountTotalRequested = 39; //84; //144;
+//         this.output_channelCount_per_alignment = 64; //12;
+//     !!!
+//         this.output_channelCount = this.output_channelCount_per_alignment * 2;
+    
     progressToAdvance.value_advance();
     yield progressRoot;
 

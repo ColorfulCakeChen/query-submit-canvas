@@ -15,10 +15,6 @@ import * as DEvolution from "../DEvolution.js";
 // Only if ( this.initOk === undefined ), init_asyncXxx() can be called.
 // Prevent from being re-initialized. So that unit testing can be accelerated.
 
-//!!! ...unfinishe... (2023/03/22)
-// Perhaps, accept output_channelCount_per_alignment
-// and calculate output_channelCount.
-
 
 /**
  * Orchestrate neural networks with differential evolution.
@@ -87,12 +83,13 @@ import * as DEvolution from "../DEvolution.js";
  *
  *   - input_height = 72
  *   - input_width = 131 (= ( 128 + 3 ) )
- *   - output_channelCount = 64
+ *   - output_channelCount_per_alignment = 64
+ *   - (i.e. output_channelCount = 64 * 2 = 128)
  *
  * The extra +3 pixels of input_width are used for recurrent feedback (i.e.
  * the neural network output of the previous game tick).
  *
- * The ( output_channelCount = 64 ) is important.
+ * The ( output_channelCount_per_alignment = 64 ) is important.
  *
  *   - If it is lesser (e.g. 32), the stageCount will also be lesser. Because
  *       image is shrinked less times, its performancce is slower (i.e. can not
@@ -137,8 +134,34 @@ import * as DEvolution from "../DEvolution.js";
  * @member {boolean} bLogFetcherEventToConsole
  *   If true, some debug messages of HttpRequest.Fetcher will be logged to console.
  *
+ *
  * @member {string} sender_clientId
  *   The client id when sending measurement protocol.
+ *
+ *
+ * @member {number} input_height
+ *   The input image's height.
+ *
+ * @member {number} input_width
+ *   The input image's width.
+ *
+ * @member {number} vocabularyChannelCount
+ *   In the embedding layer, every vocabulary will have how many embedding
+ * channels. Every input channel will be expanded into so many embedding
+ * channels. It could be viewed as embeddingChannelCountPerInputChannel.
+ * It must be ( >= 2 ) because it always has ( bEmbedVocabularyId == true ).
+ *
+ * @member {number} blockCountTotalRequested
+ *   How many blocks of the whole neural network are wanted. It will be
+ * spreaded to every stage. Note that every stage will have at least 2 blocks.
+ *
+ * @member {number} output_channelCount_per_alignment
+ *   The output tensor's channel count for one alignment of the versus. It is
+ * half the output tensor's channel count.
+ * 
+ * @member {number} output_channelCount
+ *   The output tensor's channel count. (= output_channelCount_per_alignment * 2)
+ *
  *
  * @member {string} backendName
  *   Which backend (of tensorflow.js library) is used by web worker. Either "cpu"
@@ -274,6 +297,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     this.init_asyncGenerator_running = undefined;
     this.init_async_running = undefined;
 
+    this.output_channelCount_per_alignment = undefined;
     this.bLogFetcherEventToConsole = undefined;
     this.downloader_apiKey = undefined;
     this.downloader_spreadsheetId = undefined;
@@ -287,12 +311,32 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     return this.versusResultSender?.clientId;
   }
 
+  get input_height() {
+    return this.neuralNetParamsBase?.input_height;
+  }
+
+  get input_width() {
+    return this.neuralNetParamsBase?.input_width;
+  }
+
+  get vocabularyChannelCount() {
+    return this.neuralNetParamsBase?.vocabularyChannelCount;
+  }
+
+  get blockCountTotalRequested() {
+    return this.neuralNetParamsBase?.blockCountTotalRequested;
+  }
+
+  get output_channelCount() {
+    return this.neuralNetParamsBase?.output_channelCount;
+  }
+
   get backendName() {
-    return this.workerProxies.backendName;
+    return this.workerProxies?.backendName;
   }
 
   get nNeuralWorker_ModeId() {
-    return this.workerProxies.nNeuralWorker_ModeId;
+    return this.workerProxies?.nNeuralWorker_ModeId;
   }
 
   /**
@@ -325,7 +369,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
 
     vocabularyChannelCount = 4, //8
     blockCountTotalRequested = 39, //100, //200, //50, //20, //10,
-    output_channelCount = 64 //16
+    output_channelCount = 64 * 2 //16
   ) {
 
     NeuralOrchestra_Base.neuralNetParamsBase_dispose.call( this );
@@ -382,7 +426,8 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     downloader_spreadsheetId, downloader_apiKey, bLogFetcherEventToConsole,
     sender_clientId,
     input_height, input_width,
-    vocabularyChannelCount, blockCountTotalRequested, output_channelCount,
+    vocabularyChannelCount,
+    blockCountTotalRequested, output_channelCount_per_alignment,
     initer_delayPromise, versus_loader_delayPromise ) {
 
     { // Checking pre-condition.
@@ -405,7 +450,8 @@ class NeuralOrchestra_Base extends Recyclable.Root {
       downloader_spreadsheetId, downloader_apiKey, bLogFetcherEventToConsole,
       sender_clientId,
       input_height, input_width,
-      vocabularyChannelCount, blockCountTotalRequested, output_channelCount,
+      vocabularyChannelCount,
+      blockCountTotalRequested, output_channelCount_per_alignment,
       initer_delayPromise, versus_loader_delayPromise
     );
     return init_promise;
@@ -449,7 +495,8 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     downloader_spreadsheetId, downloader_apiKey, bLogFetcherEventToConsole,
     sender_clientId,
     input_height, input_width,
-    vocabularyChannelCount, blockCountTotalRequested, output_channelCount,
+    vocabularyChannelCount,
+    blockCountTotalRequested, output_channelCount_per_alignment,
     initer_delayPromise, versus_loader_delayPromise ) {
 
     const funcNameInMessage = "init_async";
@@ -474,7 +521,8 @@ class NeuralOrchestra_Base extends Recyclable.Root {
           downloader_spreadsheetId, downloader_apiKey, bLogFetcherEventToConsole,
           sender_clientId,
           input_height, input_width,
-          vocabularyChannelCount, blockCountTotalRequested, output_channelCount,
+          vocabularyChannelCount,
+          blockCountTotalRequested, output_channelCount_per_alignment,
           initer_delayPromise, versus_loader_delayPromise
         );
 
@@ -535,7 +583,8 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     downloader_spreadsheetId, downloader_apiKey, bLogFetcherEventToConsole,
     sender_clientId,
     input_height, input_width,
-    vocabularyChannelCount, blockCountTotalRequested, output_channelCount,
+    vocabularyChannelCount,
+    blockCountTotalRequested, output_channelCount_per_alignment,
     initer_delayPromise, versus_loader_delayPromise ) {
 
     { // Checking pre-condition.
@@ -557,7 +606,8 @@ class NeuralOrchestra_Base extends Recyclable.Root {
         downloader_spreadsheetId, downloader_apiKey, bLogFetcherEventToConsole,
         sender_clientId,
         input_height, input_width,
-        vocabularyChannelCount, blockCountTotalRequested, output_channelCount,
+        vocabularyChannelCount,
+        blockCountTotalRequested, output_channelCount_per_alignment,
         initer_delayPromise, versus_loader_delayPromise );
   }
 
@@ -578,7 +628,8 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     downloader_spreadsheetId, downloader_apiKey, bLogFetcherEventToConsole,
     sender_clientId,
     input_height, input_width,
-    vocabularyChannelCount, blockCountTotalRequested, output_channelCount,
+    vocabularyChannelCount,
+    blockCountTotalRequested, output_channelCount_per_alignment,
     initer_delayPromise, versus_loader_delayPromise ) {
 
     this.init_asyncGenerator_running = true;
@@ -589,7 +640,8 @@ class NeuralOrchestra_Base extends Recyclable.Root {
       downloader_spreadsheetId, downloader_apiKey, bLogFetcherEventToConsole,
       sender_clientId,
       input_height, input_width,
-      vocabularyChannelCount, blockCountTotalRequested, output_channelCount,
+      vocabularyChannelCount,
+      blockCountTotalRequested, output_channelCount_per_alignment,
       initer_delayPromise, versus_loader_delayPromise );
     return initer;
   }
@@ -615,26 +667,6 @@ class NeuralOrchestra_Base extends Recyclable.Root {
    *   Some new progressToAdvance will be created and added to progressParent. The
    * created progressToAdvance will be increased when every time advanced. The
    * progressParent.root_get() will be returned when every time yield.
-   *
-   *
-   * @param {number} input_height
-   *   The input image's height.
-   *
-   * @param {number} input_width
-   *   The input image's width.
-   *
-   * @param {number} vocabularyChannelCount
-   *   In the embedding layer, every vocabulary will have how many embedding
-   * channels. Every input channel will be expanded into so many embedding
-   * channels. It could be viewed as embeddingChannelCountPerInputChannel.
-   * It must be ( >= 2 ) because it always has ( bEmbedVocabularyId == true ).
-   *
-   * @param {number} blockCountTotalRequested
-   *   How many blocks of the whole neural network are wanted. It will be
-   * spreaded to every stage. Note that every stage will have at least 2 blocks.
-   *
-   * @param {number} output_channelCount
-   *   The output tensor's channel count.
    *
    *
    * @param {Promise} initer_delayPromise
@@ -672,7 +704,8 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     downloader_spreadsheetId, downloader_apiKey, bLogFetcherEventToConsole,
     sender_clientId,
     input_height, input_width,
-    vocabularyChannelCount, blockCountTotalRequested, output_channelCount,
+    vocabularyChannelCount,
+    blockCountTotalRequested, output_channelCount_per_alignment,
     initer_delayPromise, versus_loader_delayPromise
   ) {
 
@@ -693,6 +726,11 @@ class NeuralOrchestra_Base extends Recyclable.Root {
       this.downloader_spreadsheetId = downloader_spreadsheetId;
       this.downloader_apiKey = downloader_apiKey;
       this.bLogFetcherEventToConsole = bLogFetcherEventToConsole;
+      this.output_channelCount_per_alignment = output_channelCount_per_alignment;
+
+      // Because NO_FILL NeuralWorker.Mode will be used, the real
+      // output_channelCount will be twice of output_channelCount_per_alignment.
+      let output_channelCount = output_channelCount_per_alignment * 2;
 
       // 0.2
       // Note: Here should not call .versus_load_progress_dispose().
@@ -930,7 +968,8 @@ class NeuralOrchestra_Base extends Recyclable.Root {
       // and one web worker (NO_FILL).
       //
       {
-        neuralNetParamsBase.nConvStageTypeId_adjust_for_backend_webgl_if_ShuffleNetV2();
+        neuralNetParamsBase
+          .nConvStageTypeId_adjust_for_backend_webgl_if_ShuffleNetV2();
 
         initOkPromise = this.workerProxies.init_async( "webgl",
           NeuralWorker.Mode.Singleton.Ids.ONE_WORKER__ONE_SCALE__NO_FILL // (0) 
@@ -954,7 +993,8 @@ class NeuralOrchestra_Base extends Recyclable.Root {
       // and two web workers (NO_FILL) by .applier().
       //
       {
-        neuralNetParamsBase.nConvStageTypeId_adjust_for_backend_cpu_if_ShuffleNetV2();
+        neuralNetParamsBase
+          .nConvStageTypeId_adjust_for_backend_cpu_if_ShuffleNetV2();
 
         initOkPromise = this.workerProxies.init_async( "cpu",
           NeuralWorker.Mode.Singleton.Ids.TWO_WORKER__ONE_SCALE__NO_FILL__APPLIER // (5) 
