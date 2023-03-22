@@ -226,12 +226,8 @@ class GSheets_UrlComposer extends Recyclable.Root {
         "JSON_ColumnMajorArrayArray_fetch_promise_create" );
     }
 
-//!!! ...unfinished... (2023/03/11) What if re-entrtance?
-//    this.fetch_async_running = ???;
-
-    let progress;
-    let resultColumnMajorArrayArray;
     try {
+      // 1.
       if ( !fetcher )
         throw Error( `GSheets.UrlComposer.${funcNameInMessage}(): `
           + `fetcher should have already existed.` );
@@ -239,12 +235,10 @@ class GSheets_UrlComposer extends Recyclable.Root {
       let fetcherNext;
       do {
         fetcherNext = await fetcher.next();
-        if ( fetcherNext.done == false ) {
-          //let progressRoot = fetcherNext.value;
-        } else { // ( fetcherNext.done == true )
-          resultColumnMajorArrayArray = fetcherNext.value;
-        }
-      } while ( fetcherNext.done == false );
+      } while ( !fetcherNext.done );
+
+      let resultColumnMajorArrayArray = fetcherNext.value;
+      return resultColumnMajorArrayArray;
 
     } catch ( e ) {
       //console.error( e );
@@ -252,17 +246,9 @@ class GSheets_UrlComposer extends Recyclable.Root {
       throw e; // Unknown error, should be said loundly.
 
     } finally {
-!!!
-      if ( progress ) {
-        progress.disposeResources_and_recycleToPool();
-        progress = null;
-      }
-
-      // So that this async method could be executed again.
+      // 2. So that this async method could be executed again.
       this.fetch_async_running = false;
     }
-
-    return resultColumnMajorArrayArray;
   }
 
 
