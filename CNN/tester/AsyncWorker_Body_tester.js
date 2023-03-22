@@ -5,7 +5,7 @@ import * as PartTime from "../util/PartTime.js";
  * The implementation of a neural network web worker.
  *
  */
-class AsyncWorker_Body_tester extends AsyncWorker.Body {
+export default class AsyncWorker_Body_tester extends AsyncWorker.Body {
 
   /** */
   constructor() {
@@ -87,5 +87,3 @@ class AsyncWorker_Body_tester extends AsyncWorker.Body {
   }
 
 }
-
-AsyncWorker_Body_tester.Singleton = new AsyncWorker_Body_tester(); // Create worker body.
