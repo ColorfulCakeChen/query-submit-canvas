@@ -26,10 +26,11 @@ class TestCase {
       vocabularyChannelCount: 4, //8, //6,
       blockCountTotalRequested: 39, //84, //144,
       output_channelCount_per_alignment: 64, //12,
-    };
 
-    this.init_parameters.output_channelCount
-      = this.init_parameters.output_channelCount_per_alignment * 2;
+      get output_channelCount() {
+        return this.init_parameters.output_channelCount_per_alignment * 2;
+      }
+    };
 
     this.createCountBase = 2; // Try create NeuralOrchestra twice.
     this.initCountBase = 2;   // Try init NeuralOrchestra twice.
