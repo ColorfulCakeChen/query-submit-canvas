@@ -153,6 +153,17 @@ class GSheets_UrlComposer extends Recyclable.Root {
   }
 
 
+//!!! ...unfinished... (2023/03/22)
+// Could these methods be put to common base class:
+// .JSON_ColumnMajorArrayArray_fetch_promise_create()
+// .JSON_ColumnMajorArrayArray_fetch_promise_create_without_checking_precondition()
+// .JSON_ColumnMajorArrayArray_fetch_async()
+// .JSON_ColumnMajorArrayArray_fetcher_create()
+// .JSON_ColumnMajorArrayArray_fetcher_create_without_checking_precondition()
+//
+// shared with GSheetsAPIv4 and GVizTQ
+
+
   /**
    * Note: The this.fetch_progress will record progress of this method.
    *
