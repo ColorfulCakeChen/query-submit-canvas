@@ -347,6 +347,9 @@ class TestCase {
       urlComposer1.urlComposer.spreadsheetUrlPrefix = this.spreadsheetUrlPrefix;
 
     urlComposer1.bLogFetcherEventToConsole = bLogFetcherEventToConsole;
+
+//!!! ...unfinished... (2023/03/22) should test re-entrtance preventing.
+
     let result1 = yield* this.urlComposer_fetcher( urlComposer1, progress1 );
 
     // With API key.
@@ -357,6 +360,9 @@ class TestCase {
       urlComposer2.urlComposer.spreadsheetUrlPrefix = this.spreadsheetUrlPrefix;
 
     urlComposer2.bLogFetcherEventToConsole = bLogFetcherEventToConsole;
+
+//!!! ...unfinished... (2023/03/22) should test re-entrtance preventing.
+
     let result2 = yield* this.urlComposer_fetcher( urlComposer2, progress2 );
 
     // Compare results: should the same.
