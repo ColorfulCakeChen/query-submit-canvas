@@ -104,6 +104,11 @@ class AsyncWorker_Proxy extends Recyclable.Root {
   /**
    * @param {AsyncWorker_Proxy} this
    *   The worker proxy.
+   *
+   * @param {string} workerModuleURL
+   *   The URL of the worker body class. The class must be exported as
+   * default. An instance of the worker body class (e.g. NeuralWorker_Body)
+   * will be created in the web worker.
    */
   static createWorker_byModuleURL( workerModuleURL ) {
     this.workerModuleURL = workerModuleURL;
@@ -240,6 +245,7 @@ class AsyncWorker_Proxy extends Recyclable.Root {
 // What if loading workerModuleURL failed?
 // Re-try (but should inform this WorkerProxy and user).
 
+
 //!!! ...unfinished... (2023/03/22)
 // Perhaps, use (binary) exponential back-off waiting and retry.
 //
@@ -292,10 +298,11 @@ class AsyncWorker_Proxy extends Recyclable.Root {
       + `  const retryWaitingSecondsExponentMax = 6;\n`
       + `  let retryTimesCur = 0;\n`
       + `  let importDone = false;\n`
+      + `  let importedModule;\n`
       + `  do {\n`
       + `    try {\n`
       + `      let importPromise = importBody();\n`
-      + `      await importPromise;\n`
+      + `      importedModule = await importPromise;\n`
       + `      importDone = true;\n`
       + `    } catch ( e ) {\n`
       // + `      debugger;\n`
@@ -308,6 +315,7 @@ class AsyncWorker_Proxy extends Recyclable.Root {
       + `      console.log( \`Retry import worker body...\` );\n`
       + `    }\n`
       + `  } while ( !importDone );\n`
+      + `  importedModule.default..Singleton = new importedModule.default();\n`
       + `} )();\n`
       + `\n`
       + `AsyncWorker_Body_temporaryMessageQueue = [];\n`

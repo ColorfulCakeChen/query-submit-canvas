@@ -1,3 +1,5 @@
+export default NeuralWorker_Body;
+
 // import * as Pool from "../../util/Pool.js";
 import * as Recyclable from "../../util/Recyclable.js";
 import * as ValueMax from "../../util/ValueMax.js";
@@ -1085,7 +1087,7 @@ class NeuralWorker_Body extends AsyncWorker.Body {
 // It should be moved to WorkerBodyStub.
 // Otherwise, an instance will be created unexpectedly when
 // NeruralWorker_Proxy prefetching.
-NeuralWorker_Body.Singleton = new NeuralWorker_Body(); // Create worker body.
+//NeuralWorker_Body.Singleton = new NeuralWorker_Body(); // Create worker body.
 
 /** If true, tensorflow.js has been loaded. */
 NeuralWorker_Body.tensorflowJs_imported = false;
