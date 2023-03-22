@@ -23,13 +23,21 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
 
     if ( !NeuralWorker_Body.tensorflowJs_imported ) {
 
-      // Q: Why not importScripts() at global scope?
-      // A: So that NeruralWorker_Proxy could prefetch this NeuralWorker_Body.
+      // Q1: Why not importScripts() at global scope?
+      // A1: So that NeruralWorker_Proxy could prefetch this NeuralWorker_Body.
       //
       // If place it at global scope, NeruralWorker_Proxy will be failed to
       // prefetch this NeuralWorker_Body because importScripts() can not be
       // called in javascript module (where NeruralWorker_Proxy usually reside
       // in).
+      //
+      //
+      // Q2: Why NeruralWorker_Proxy needs prefetch this NeuralWorker_Body?
+      // A2: So that this NeuralWorker_Body.js can be placed in disk cache.
+      //     So that NeuralWorker_Body can be created even if Internet
+      //     disconnected.
+      //
+
       importScripts( tensorflowJsURL ); // Load tensorflow.js library.
 
       // Prevent from import tensorflow.js many times.
