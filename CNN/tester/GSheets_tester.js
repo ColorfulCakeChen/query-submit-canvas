@@ -267,33 +267,36 @@ class TestCase {
         + `should be true.` );
 
 //!!! ...unfinished... (2023/03/22)
-// Test reenter.
-
-    // Test: Reenter .JSON_ColumnMajorArrayArray_fetch_promise_create()
-    //       should throw exception.
-    try {
-      urlComposer.JSON_ColumnMajorArrayArray_fetch_promise_create();
-    } catch ( e ) {
-      if ( e.message.indexOf( ".JSON_ColumnMajorArrayArray_fetch_promise_create():" ) > 0 ) {
-      } else { // Unknown error, said loudly.
-        throw Error( `GSheets_tester.TestCase.urlComposer_fetcher(): `
-          + `testCaseId=${this.testCaseId}, ${e}`, { cause: e } );
+    // Test reenter.
+    {
+      // Test: Reenter .JSON_ColumnMajorArrayArray_fetch_promise_create()
+      //       should throw exception.
+      try {
+        urlComposer.JSON_ColumnMajorArrayArray_fetch_promise_create();
+      } catch ( e ) {
+        if ( e.message.indexOf( ".JSON_ColumnMajorArrayArray_fetch_promise_create():" ) > 0 ) {
+        } else { // Unknown error, said loudly.
+          throw Error( `GSheets_tester.TestCase.urlComposer_fetcher(): `
+            + `testCaseId=${this.testCaseId}, ${e}`, { cause: e } );
+        }
       }
+
+      // Test: Reenter .JSON_ColumnMajorArrayArray_fetcher_create()
+      //       should throw exception.
+      try {
+        urlComposer.JSON_ColumnMajorArrayArray_fetcher_create();
+      } catch ( e ) {
+        if ( e.message.indexOf( ".JSON_ColumnMajorArrayArray_fetcher_create():" ) > 0 ) {
+        } else { // Unknown error, said loudly.
+          throw Error( `GSheets_tester.TestCase.urlComposer_fetcher(): `
+            + `testCaseId=${this.testCaseId}, ${e}`, { cause: e } );
+        }
+      }
+
+      delayPromise.resolve();
     }
 
-    // Test: Reenter .JSON_ColumnMajorArrayArray_fetcher_create()
-    //       should throw exception.
-    try {
-      urlComposer.JSON_ColumnMajorArrayArray_fetcher_create();
-    } catch ( e ) {
-      if ( e.message.indexOf( ".JSON_ColumnMajorArrayArray_fetcher_create():" ) > 0 ) {
-      } else { // Unknown error, said loudly.
-        throw Error( `GSheets_tester.TestCase.urlComposer_fetcher(): `
-          + `testCaseId=${this.testCaseId}, ${e}`, { cause: e } );
-      }
-    }
-
-
+    //
     let nextResult;
     let bRetryWaitingPrevious = urlComposer.retryWaitingTimer_isCounting;
     let bRetryWaitingCurrent = bRetryWaitingPrevious;
