@@ -14,7 +14,10 @@ import * as AsyncWorker_Checker from "./AsyncWorker_Checker.js";
  */
 class AsyncWorker_Body {
 
-  /** It will register callback for handling messages sent from AsyncWorker_Proxy. */
+  /**
+   * It will register callback for handling messages sent from
+   * AsyncWorker_Proxy.
+   */
   constructor() {
     globalThis.onmessage
       = AsyncWorker_Body.onmessage_from_AsyncWorker_Proxy.bind( this );
@@ -137,7 +140,8 @@ class AsyncWorker_Body {
           let resultData = [ processingId, done, value ];
           postMessage( resultData, transferableObjectArray );
 
-          // Check large objects are transferred (rather than copied) to ensure performance.
+          // Check large objects are transferred (rather than copied) to
+          // ensure performance.
           {
             let bTransferred = AsyncWorker_Checker
               .ImageData_ArrayBuffer_TypedArray_isTransferred( value );
