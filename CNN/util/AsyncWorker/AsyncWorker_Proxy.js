@@ -252,13 +252,13 @@ class AsyncWorker_Proxy extends Recyclable.Root {
     //       as message handler.
     //
     let codes = ``
-      + `(async () => {\n`
+      + `( async () => {\n`
       + `  const workerModuleURL = "${workerModuleURL}";\n`
       + `  try {\n`
       + `    await import( workerModuleURL );\n`
       + `  } catch ( e ) {\n`
       + `    debugger;\n`
-      + `  };\n`
+      + `  }\n`
       + `} )();\n`
       + `AsyncWorker_Body_temporaryMessageQueue = [];\n`
       + `onmessage = ( e ) => {\n`
