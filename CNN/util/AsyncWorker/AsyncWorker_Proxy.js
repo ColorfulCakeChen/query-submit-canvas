@@ -11,9 +11,35 @@ import * as AsyncWorker_Checker from "./AsyncWorker_Checker.js";
  * Hold the worker and its related promise map. It is a wrapper of a neural network
  * web worker for handling and communicating easily.
  *
+ *
+ * 1. Web Worker Body Stub
+ *
+ * In module (non-classic) web worker, static import is available. But the
+ * function importScripts() will not be avbailable. For solving this
+ * problem, using classic (non-module) web worker so that some global
+ * library (e.g. tensorflow.js) can be loaded by importScripts(). And use
+ * dynamic import() to load ourselves modules because import() can be used
+ * in classic (non-module) script.
+ *
+ *
+ * 2. Prefectch
+ *
+ * Q: What if failed when loading workerModuleURL (e.g. Internet disconnected)?
+ * A: Although it can use (binary) exponential back-off waiting and retry,
+ *    however, it seems that retry importing does not work even network
+ *    connection has been recovery.
+ *
+ * A possible solution is prefetching all these modules in Xxx_Proxy side.
+ * Then, even if Internet disconnected when creating worker body, they
+ * can still be loaded from disk cache (by browser automatically).
+ *
+ *
+ *
  * @member {string} workerModuleURL
- *   The (absolute) javascript module URL which will be loaded (asynchronously) by
- * worker body (stub).
+ *   The (absolute) module URL of the worker body class. It will be loaded
+ * (asynchronously) by web worker body stub. The class must be exported as
+ * default. An instance of the worker body class (e.g. NeuralWorker_Body) will
+ * be created and put in its .Singleton (e.g. NeuralWorker_Body.Singleton).
  *
  * @member {Worker} worker
  *   The worker.
@@ -104,11 +130,6 @@ class AsyncWorker_Proxy extends Recyclable.Root {
   /**
    * @param {AsyncWorker_Proxy} this
    *   The worker proxy.
-   *
-   * @param {string} workerModuleURL
-   *   The URL of the worker body class. The class must be exported as
-   * default. An instance of the worker body class (e.g. NeuralWorker_Body)
-   * will be created in the web worker.
    */
   static createWorker_byModuleURL( workerModuleURL ) {
     this.workerModuleURL = workerModuleURL;
@@ -138,52 +159,36 @@ class AsyncWorker_Proxy extends Recyclable.Root {
   }
 
   /**
-   * Create a data URI representing the main (i.e. body) javascript file of web
-   * worker. It is viewed as a classic javascript file (i.e. not an importable
-   * module). But it will load specified workerModuleURL as a module.
-   *
-   * @param {string} workerModuleURL
-   *   An (absolute) URL to a javascript module file. It will be imported
-   * (asynchronously) by this generated classic javascript file (as a dataURI).
+   * @return {string}
+   *   Return a newly created BlobObjectURL string representing the main (i.e.
+   * web worker body stub) javascript file of web worker. It is viewed as a
+   * classic javascript file (i.e. not an importable module). But it will load
+   * specified workerModuleURL as a module.
    */
   static WorkerBodyStub_create_Codes_BlobObjectURL( workerModuleURL ) {
-    let codes = AsyncWorker_Proxy.WorkerBodyStub_create_Codes_String( workerModuleURL );
-    let blob = new Blob( [ codes ], { type: AsyncWorker_Proxy.JS_MIME_TYPE_STRING } );
+    let codes = AsyncWorker_Proxy
+      .WorkerBodyStub_create_Codes_String( workerModuleURL );
+
+    let blob = new Blob( [ codes ],
+      { type: AsyncWorker_Proxy.JS_MIME_TYPE_STRING } );
+
     let workerBlobObjectURL = URL.createObjectURL( blob );
     return workerBlobObjectURL;
   }
 
   /**
-   * In module (non-classic) web worker, static import is available. But the function
-   * importScripts() will not be avbailable. For solving this problem, using
-   * classic (non-module) web worker so that some global library (e.g. tensorflow.js)
-   * can be loaded by importScripts(). And use dynamic import() to load ourselves
-   * modules because import() can be used in classic (non-module) script.
-   *
-   * @param {string} workerModuleURL
-   *   An (absolute) URL to a javascript module file. It will be imported
-   * (asynchronously) by this generated classic javascript file (as a dataURI).
    *
    * @return {string}
-   *   Return javascript codes string representing the main (i.e. body) javascript
-   * file of web worker.
+   *   Return a javascript codes string representing the main (i.e. web worker
+   * body stub) javascript file of web worker. It is viewed as a classic
+   * javascript file (i.e. not an importable module). But it will load
+   * specified workerModuleURL as a module.
    */
   static WorkerBodyStub_create_Codes_String( workerModuleURL ) {
 
 //!!! ...unfinished... (2022/09/15)
 // What if loading workerModuleURL failed?
 // Re-try (but should inform this WorkerProxy and user).
-
-
-    // Q: What if loading workerModuleURL failed (e.g. Internet disconnected)?
-    // A: Although it can use (binary) exponential back-off waiting and retry,
-    //    however, it seems that retry importing does not work even network
-    //    connection has been recovery.
-    //
-    // A possible solution is prefetching all these modules in Xxx_Proxy side.
-    // Then, even if Internet disconnected when creating worker body, they
-    // can still be loaded from disk cache (by browser automatically).
-    //
 
 
     // The codes do the following:
@@ -324,24 +329,25 @@ class AsyncWorker_Proxy extends Recyclable.Root {
   }
 
   /**
-   * Send command and args (perhaps, with transferable object array) to WorkerBody
-   * and expect result.
+   * Send command and args (perhaps, with transferable object array) to
+   * WorkerBody and expect result.
    *
    * @param {Array} commandArgs
    *   An array (i.e. [ comand, ...args ]) which will be sent to the WorkerBody.
    *
-   *   - The command is a string which is the WorkerBody's method function to be
-   *       called.
+   *   - The command is a string which is the WorkerBody's method function to
+   *       be called.
    *
-   *   - The args is an array which will be destructured into multiple arguments
-   *       and passed into the WorkerBody's method function.
+   *   - The args is an array which will be destructured into multiple
+   *       arguments and passed into the WorkerBody's method function.
    *
    * @param {Array} transferableObjectArray
-   *   The transferable object array when postMessage. It could be undefined (but
-   * can not be null).
+   *   The transferable object array when postMessage. It could be undefined
+   * (but can not be null).
    *
    * @return {AsyncWorker.Resulter}
-   *   Return an async iterator for receving result from WorkerBody of the processing.
+   *   Return an async iterator for receving result from WorkerBody of the
+   * processing.
    */
   createResulter_by_postCommandArgs( commandArgs, transferableObjectArray ) {
     let processingId = this.processingId_next;
@@ -371,27 +377,31 @@ class AsyncWorker_Proxy extends Recyclable.Root {
   }
 
   /**
-   * Send command and args (perhaps, with transferable object array) to WorkerBody
-   * without expecting result. (i.e. fire-and-forget)
+   * Send command and args (perhaps, with transferable object array) to
+   * WorkerBody without expecting result. (i.e. fire-and-forget)
    *
    * @param {Array} commandArgs
    *   An array (i.e. [ comand, ...args ]) which will be sent to the WorkerBody.
    *
-   *   - The command is a string which is the WorkerBody's method function to be
-   *       called.
+   *   - The command is a string which is the WorkerBody's method function to
+   *       be called.
    *
-   *   - The args is an array which will be destructured into multiple arguments
-   *       and passed into the WorkerBody's method function.
+   *   - The args is an array which will be destructured into multiple
+   *       arguments and passed into the WorkerBody's method function.
    *
    * @param {Array} transferableObjectArray
-   *   The transferable object array when postMessage. It could be undefined (but
-   * can not be null).
+   *   The transferable object array when postMessage. It could be undefined
+   * (but can not be null).
    */
   postCommandArgs( commandArgs, transferableObjectArray ) {
-    let processingId_commandArgs = [ undefined, ...commandArgs ]; // no processingId.
-    this.worker.postMessage( processingId_commandArgs, transferableObjectArray );
+    // Note: no processingId.
+    let processingId_commandArgs = [ undefined, ...commandArgs ];
 
-    // Check large objects are transferred (rather than copied) to ensure performance.
+    this.worker.postMessage(
+      processingId_commandArgs, transferableObjectArray );
+
+    // Check large objects are transferred (rather than copied) to ensure
+    // performance.
     {
       let bTransferred = AsyncWorker_Checker
         .ImageData_ArrayBuffer_TypedArray_isTransferred( commandArgs );
@@ -406,23 +416,23 @@ class AsyncWorker_Proxy extends Recyclable.Root {
   }
 
   /**
-   * Dispatch messages come from the owned web worker. Please register this method
-   * as this WorkerProxy's Worker.onmessage.
+   * Dispatch messages come from the owned web worker. Please register this
+   * method as this WorkerProxy's Worker.onmessage.
    *
    * @param {AsyncWorker_Proxy} this
    *   The "this" should be binded to this AsyncWorker_Proxy object.
    */
   static onmessage_from_AsyncWorker_Body( e ) {
 
-    // If the web worker source is blob object URL, revoke it after worker created
-    // successfully for release resource.
+    // If the web worker source is blob object URL, revoke it after worker
+    // created successfully for release resource.
     this.workerBlobObjectURL_dispose();
 
     // ( e.data == [ processingId, done, value ] )
     let [ processingId, done, value ] = e.data;
 
-    this.the_processingId_Resulter_Map
-      .resolve_or_reject_by_processingId_done_value( processingId, done, value );
+    this.the_processingId_Resulter_Map .resolve_or_reject_by_processingId_done_value(
+        processingId, done, value );
   }
 
 }
