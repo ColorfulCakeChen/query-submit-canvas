@@ -286,7 +286,8 @@ class AsyncWorker_Proxy extends Recyclable.Root {
       + `  let importDone = false;\n`
       + `  do {\n`
       + `    try {\n`
-      + `      await import( workerModuleURL );\n`
+      + `      let importPromise = import( workerModuleURL );\n`
+      + `      await import;\n`
       + `      importDone = true;\n`
       + `    } catch ( e ) {\n`
       // + `      debugger;\n`
