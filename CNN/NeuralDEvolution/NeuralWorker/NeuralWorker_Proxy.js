@@ -10,7 +10,7 @@ import * as NeuralNet from "../../Conv/NeuralNet.js";
 // directly, prefetching it to cache it in disk. So that the web
 // worker could still be created even if internet disconnected later.
 //
-import { NeuralWorker_Body } from "./NeuralWorker_Body.js";
+import * as NotUsed from "./NeuralWorker_Body.js";
 
 //!!! ...unfinished... (2022/09/15)
 // What if failed when:
