@@ -249,7 +249,7 @@ class TestCase {
       this.retryWaitingMillisecondsInterval
     );
 
-    let fetcher = urlComposer.JSON_ColumnMajorArrayArray_fetch_asyncGenerator(
+    let fetcher = urlComposer.JSON_ColumnMajorArrayArray_fetcher_create(
       progressParent, params_loading_retryWaiting );
 
     let nextResult;
