@@ -419,7 +419,7 @@ class GSheets_UrlComposer extends Recyclable.Root {
   /**
    * @param {GSheets_UrlComposer} this
    */
-  static versus_load_progress_dispose() {
+  static fetch_progress_dispose() {
     if ( this.fetch_progress ) {
       this.fetch_progress.disposeResources_and_recycleToPool();
       this.fetch_progress = null;
