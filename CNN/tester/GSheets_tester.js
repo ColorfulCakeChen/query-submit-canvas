@@ -242,13 +242,15 @@ class TestCase {
       urlComposer.abort();
     }
 
-//    let progressRoot = progressParent.root_get();
+
+    let progressRoot = progressParent.root_get();
 
     let progressFetch = progressParent.child_add(
       ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
 
     let progressToAdvance = progressParent.child_add(
       ValueMax.Percentage.Concrete.Pool.get_or_create_by( 2 ) );
+
 
     let params_loading_retryWaiting = new HttpRequest.Params_loading_retryWaiting(
       this.loadingMillisecondsMax,
