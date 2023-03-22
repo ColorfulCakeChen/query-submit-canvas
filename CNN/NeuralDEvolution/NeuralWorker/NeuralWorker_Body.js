@@ -10,15 +10,6 @@ import { tensorflowJsURL } from "./NeuralWorker_Common.js";
 // What if failed when:
 //   - library (tensorflow.js) downloading
 
-
-//!!! ...unfinished... (2023/03/23)
-// For NeruralWorker_Proxy could prefetch this module,
-// move importScripts() (which can not be called in module)
-// into NeuralWorker_Body???
-//
-// How to avoid importScripts() many times?
-//importScripts( tensorflowJsURL ); // Load tensorflow.js library in global scope.
-
 /**
  * The implementation of a neural network web worker. It may own one or two neural
  * network(s).
@@ -31,11 +22,15 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
     super(); // register callback for handling messages sent from NeuralWorker_Proxy.
 
     if ( !NeuralWorker_Body.tensorflowJs_imported ) {
-//!!! ...unfinished... (2023/03/23)
-// For NeruralWorker_Proxy could prefetch this module,
-// move importScripts() (which can not be called in module)
-// into NeuralWorker_Body???
-//
+
+      // Q: Why not importScripts() at global scope?
+      // A: So that NeruralWorker_Proxy could prefetch this NeuralWorker_Body.
+      //
+      // If place it at global scope, NeruralWorker_Proxy will be failed to
+      // prefetch this NeuralWorker_Body because importScripts() can not be
+      // called in javascript module (where NeruralWorker_Proxy usually reside
+      // in).
+      //
       importScripts( tensorflowJsURL ); // Load tensorflow.js library in global scope.
 
       // Prevent from import tensorflow.js many times.
