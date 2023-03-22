@@ -1,7 +1,8 @@
 export { tester };
 
-import * as HttpRequest from "../util/HttpRequest.js";
 import * as GSheets from "../util/GSheets.js";
+import * as HttpRequest from "../util/HttpRequest.js";
+import * as PartTime from "../util/PartTime.js";
 import * as ValueMax from "../util/ValueMax.js";
 
 /**
@@ -253,8 +254,10 @@ class TestCase {
 // should test .JSON_ColumnMajorArrayArray_fetcher_create()
 // and .JSON_ColumnMajorArrayArray_fetch_promise_create()
 
+    let delayPromise = PartTime.Promise_resolvable_rejectable_create();
+
     let fetcher = urlComposer.JSON_ColumnMajorArrayArray_fetcher_create(
-      progressParent, params_loading_retryWaiting );
+      progressParent, params_loading_retryWaiting, delayPromise );
 
     if ( !urlComposer.fetch_asyncGenerator_running )
       throw Error( `GSheets_tester.TestCase`
@@ -265,6 +268,31 @@ class TestCase {
 
 //!!! ...unfinished... (2023/03/22)
 // Test reenter.
+
+    // Test: Reenter .JSON_ColumnMajorArrayArray_fetch_promise_create()
+    //       should throw exception.
+    try {
+      urlComposer.JSON_ColumnMajorArrayArray_fetch_promise_create();
+    } catch ( e ) {
+      if ( e.message.indexOf( ".JSON_ColumnMajorArrayArray_fetch_promise_create():" ) > 0 ) {
+      } else { // Unknown error, said loudly.
+        throw Error( `GSheets_tester.TestCase.urlComposer_fetcher(): `
+          + `testCaseId=${this.testCaseId}, ${e}`, { cause: e } );
+      }
+    }
+
+    // Test: Reenter .JSON_ColumnMajorArrayArray_fetcher_create()
+    //       should throw exception.
+    try {
+      urlComposer.JSON_ColumnMajorArrayArray_fetcher_create();
+    } catch ( e ) {
+      if ( e.message.indexOf( ".JSON_ColumnMajorArrayArray_fetcher_create():" ) > 0 ) {
+      } else { // Unknown error, said loudly.
+        throw Error( `GSheets_tester.TestCase.urlComposer_fetcher(): `
+          + `testCaseId=${this.testCaseId}, ${e}`, { cause: e } );
+      }
+    }
+
 
     let nextResult;
     let bRetryWaitingPrevious = urlComposer.retryWaitingTimer_isCounting;
