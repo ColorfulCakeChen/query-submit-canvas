@@ -315,7 +315,7 @@ class AsyncWorker_Proxy extends Recyclable.Root {
       + `      console.log( \`Retry import worker body...\` );\n`
       + `    }\n`
       + `  } while ( !importDone );\n`
-      + `  importedModule.default..Singleton = new importedModule.default();\n`
+      + `  importedModule.default.Singleton = new importedModule.default();\n`
       + `} )();\n`
       + `\n`
       + `AsyncWorker_Body_temporaryMessageQueue = [];\n`
