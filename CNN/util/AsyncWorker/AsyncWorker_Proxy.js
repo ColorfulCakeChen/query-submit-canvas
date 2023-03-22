@@ -252,7 +252,11 @@ class AsyncWorker_Proxy extends Recyclable.Root {
     //       as message handler.
     //
     let codes = ``
-      + `import( "${workerModuleURL}" );\n`
+      + `try {\n`
+      + `  await import( "${workerModuleURL}" );\n`
+      + `} catch ( e ) {\n`
+      + `  debugger;\n`
+      + `}\n`
       + `AsyncWorker_Body_temporaryMessageQueue = [];\n`
       + `onmessage = ( e ) => {\n`
       // + `  console.log( "Hello" );\n`
@@ -260,6 +264,25 @@ class AsyncWorker_Proxy extends Recyclable.Root {
       + `  AsyncWorker_Body_temporaryMessageQueue.push( e );\n`
       + `}\n`
       ;
+
+//!!! (2023/03/22) Old Codes.
+//     // The codes do the following:
+//     //
+//     //   - Import the specified module URL.
+//     //   - Create a temporary message queue.
+//     //   - Collect all messages before
+//     //       AsyncWorker_Proxy.onmessage_from_AsyncWorker_Body() be registered
+//     //       as message handler.
+//     //
+//     let codes = ``
+//       + `import( "${workerModuleURL}" );\n`
+//       + `AsyncWorker_Body_temporaryMessageQueue = [];\n`
+//       + `onmessage = ( e ) => {\n`
+//       // + `  console.log( "Hello" );\n`
+//       // + `  console.log( e );\n`
+//       + `  AsyncWorker_Body_temporaryMessageQueue.push( e );\n`
+//       + `}\n`
+//       ;
 
     return codes;
   }
