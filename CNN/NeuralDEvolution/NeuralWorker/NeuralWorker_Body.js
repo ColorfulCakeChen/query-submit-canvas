@@ -10,7 +10,14 @@ import { tensorflowJsURL } from "./NeuralWorker_Common.js";
 // What if failed when:
 //   - library (tensorflow.js) downloading
 
-importScripts( tensorflowJsURL ); // Load tensorflow.js library in global scope.
+
+//!!! ...unfinished... (2023/03/23)
+// For NeruralWorker_Proxy could prefetch this module,
+// move importScripts() (which can not be called in module)
+// into NeuralWorker_Body???
+//
+// How to avoid importScripts() many times?
+//importScripts( tensorflowJsURL ); // Load tensorflow.js library in global scope.
 
 /**
  * The implementation of a neural network web worker. It may own one or two neural
@@ -22,6 +29,18 @@ class NeuralWorker_Body extends AsyncWorker.Body {
   /** */
   constructor() {
     super(); // register callback for handling messages sent from NeuralWorker_Proxy.
+
+    if ( !NeuralWorker_Body.tensorflowJs_imported ) {
+//!!! ...unfinished... (2023/03/23)
+// For NeruralWorker_Proxy could prefetch this module,
+// move importScripts() (which can not be called in module)
+// into NeuralWorker_Body???
+//
+      importScripts( tensorflowJsURL ); // Load tensorflow.js library in global scope.
+
+      // Prevent from import tensorflow.js many times.
+      NeuralWorker_Body.tensorflowJs_imported = true;
+    }
   }
 
   /** @override */
@@ -1067,3 +1086,6 @@ class NeuralWorker_Body extends AsyncWorker.Body {
 // Otherwise, an instance will be created unexpectedly when
 // NeruralWorker_Proxy prefetching.
 NeuralWorker_Body.Singleton = new NeuralWorker_Body(); // Create worker body.
+
+/** If true, tensorflow.js has been loaded. */
+NeuralWorker_Body.tensorflowJs_imported = false;
