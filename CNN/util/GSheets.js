@@ -34,22 +34,24 @@ import * as ValueMax from "./ValueMax.js";
 class GSheets_UrlComposer extends Recyclable.Root {
 
   /**
-   * Used as default GSheets.UrlComposer provider for conforming to Recyclable interface.
+   * Used as default GSheets.UrlComposer provider for conforming to Recyclable
+   * interface.
    */
   static Pool = new Pool.Root( "GSheets.UrlComposer.Pool",
     GSheets_UrlComposer, GSheets_UrlComposer.setAsConstructor );
 
   /**
-   * If no sheet name in the range's A1 notation, the first (most left) visible sheet
-   * inside the spreadsheet will be used.
+   * If no sheet name in the range's A1 notation, the first (most left) visible
+   * sheet inside the spreadsheet will be used.
    *
    * @param {string} spreadsheetId
-   *   The identifier (the component after the "https://docs.google.com/spreadsheets/d/")
-   * of the spreadsheet to be accessed.
+   *   The identifier (the component after the
+   * "https://docs.google.com/spreadsheets/d/") of the spreadsheet to be
+   * accessed.
    *
    * @param {string} range
-   *   The cells' A1 notation. It describes the (name and) range of the sheet inside
-   * the spreadsheet.
+   *   The cells' A1 notation. It describes the (name and) range of the sheet
+   * inside the spreadsheet.
    *   - "A1" refers to one cell of the first (most left) visible sheet.
    *   - "B2:C5" refers to cells of a rectangle of the first (most left) visible sheet.
    *   - "Books!D8:D" refers to the column D of sheet named "Books" from rows 8 to the
@@ -155,16 +157,11 @@ class GSheets_UrlComposer extends Recyclable.Root {
       GSheets_UrlComposer.throw_if_fetching.call( this, funcNameInMessage );
     }
 
-//!!! ...unfinished... (2023/03/11) What if re-entrtance?
-
     // 1.
     let fetcher;
     {
       // Use internal independent progress.
       GSheets_UrlComposer.versus_load_progress_create.call( this );
-
-//!!!
-//      let progress = ValueMax.Percentage.Aggregate.Pool.get_or_create_by();
 
       // Prepare fetcher
       fetcher = GSheets_UrlComposer
@@ -175,8 +172,8 @@ class GSheets_UrlComposer extends Recyclable.Root {
 
     // 2.
     return GSheets_UrlComposer
-      .versus_load_promise_create_without_checking_precondition.call( this,
-        versus_loader );
+      .JSON_ColumnMajorArrayArray_fetch_promise_create_without_checking_precondition
+      .call( this, fetcher );
   }
 
   /**
@@ -199,8 +196,6 @@ class GSheets_UrlComposer extends Recyclable.Root {
    */
   static JSON_ColumnMajorArrayArray_fetch_promise_create_without_checking_precondition(
     fetcher ) {
-
-//!!! ...unfinished... (2023/03/11) What if re-entrtance?
 
     this.fetch_async_running = true;
     let fetch_promise = GSheets_UrlComposer
