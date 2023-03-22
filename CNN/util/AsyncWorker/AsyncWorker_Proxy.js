@@ -227,11 +227,11 @@ class AsyncWorker_Proxy extends Recyclable.Root {
       + `  const retryWaitingSecondsExponentMax = 6;\n`
       + `  let retryTimesCur = 0;\n`
       + `  let importDone = false;\n`
-      + `  let importedModule;\n`
+      + `  let importModule;\n`
       + `  do {\n`
       + `    try {\n`
       + `      let importPromise = importBody();\n`
-      + `      importedModule = await importPromise;\n`
+      + `      importModule = await importPromise;\n`
       + `      importDone = true;\n`
       + `    } catch ( e ) {\n`
       // + `      debugger;\n`
@@ -244,7 +244,7 @@ class AsyncWorker_Proxy extends Recyclable.Root {
       + `      console.log( \`Retry import worker body...\` );\n`
       + `    }\n`
       + `  } while ( !importDone );\n`
-      + `  importedModule.default.Singleton = new importedModule.default();\n`
+      + `  importModule.default.Singleton = new importModule.default();\n`
       + `} )();\n`
       + `\n`
       + `AsyncWorker_Body_temporaryMessageQueue = [];\n`
