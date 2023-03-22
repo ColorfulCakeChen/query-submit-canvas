@@ -11,21 +11,25 @@ class TestCase {
 
   /** */
   constructor() {
-    this.downloader_spreadsheetId = "18YyEoy-OfSkODfw8wqBRApSrRnBTZpjRpRiwIKy8a0M";
-    this.downloader_apiKey = null;
-    // this.bLogFetcherEventToConsole = false;
-    this.bLogFetcherEventToConsole = true;
-  
-    this.sender_clientId = Date.now();
-  
-    this.input_height = 72;
-    this.input_width = 128;
-  
-    this.vocabularyChannelCount = 4; //8; //6;
-    this.blockCountTotalRequested = 39; //84; //144;
-    this.output_channelCount_per_alignment = 64; //12;
-!!!
-    this.output_channelCount = this.output_channelCount_per_alignment * 2;
+    this.init_parameters = {
+      downloader_spreadsheetId: "18YyEoy-OfSkODfw8wqBRApSrRnBTZpjRpRiwIKy8a0M",
+      downloader_apiKey: null,
+
+      // bLogFetcherEventToConsole: false,
+      bLogFetcherEventToConsole: true,
+
+      sender_clientId: Date.now(),
+    
+      input_height: 72,
+      input_width: 128,
+    
+      vocabularyChannelCount: 4, //8, //6,
+      blockCountTotalRequested: 39, //84, //144,
+      output_channelCount_per_alignment: 64, //12,
+    };
+
+    this.init_parameters.output_channelCount
+      = this.init_parameters.output_channelCount_per_alignment * 2;
 
     this.createCountBase = 2; // Try create NeuralOrchestra twice.
     this.initCountBase = 2;   // Try init NeuralOrchestra twice.
@@ -192,19 +196,19 @@ class TestCase {
         + `Float32ArrayArray.length=${Float32ArrayArray.length} `
         + `should be 2.` );
 
-    if ( Float32ArrayArray[ 0 ].length != this.output_channelCount )
+    if ( Float32ArrayArray[ 0 ].length != this.init_parameters.output_channelCount )
       throw Error( `NeuralOrchestra_tester.TestCase`
         + `.test_process_send_asyncGenerator(): testId=${this.testId}, `
         + `Float32ArrayArray[ 0 ].length=${Float32ArrayArray[ 0 ].length} `
         + `should be the same as `
-        + `.output_channelCount ( ${this.output_channelCount}.` );
+        + `.output_channelCount ( ${this.init_parameters.output_channelCount}.` );
 
-    if ( Float32ArrayArray[ 1 ].length != this.output_channelCount )
+    if ( Float32ArrayArray[ 1 ].length != this.init_parameters.output_channelCount )
       throw Error( `NeuralOrchestra_tester.TestCase`
         + `.test_process_send_asyncGenerator(): testId=${this.testId}, `
         + `Float32ArrayArray[ 1 ].length=${Float32ArrayArray[ 1 ].length} `
         + `should be the same as `
-        + `.output_channelCount ( ${this.output_channelCount}.` );
+        + `.output_channelCount ( ${this.init_parameters.output_channelCount}.` );
 
     progressToAdvance.value_advance();
     yield progressRoot;
@@ -532,22 +536,26 @@ class TestCase {
     if ( b_init_asyncGenerator )
       initer = neuralOrchestra.initer_create(
         progressInit,
-        this.downloader_spreadsheetId, this.downloader_apiKey,
-        this.bLogFetcherEventToConsole,
-        this.sender_clientId,
-        this.input_height, this.input_width,
-        this.vocabularyChannelCount, this.blockCountTotalRequested,
-        this.output_channelCount,
+        this.init_parameters.downloader_spreadsheetId,
+        this.init_parameters.downloader_apiKey,
+        this.init_parameters.bLogFetcherEventToConsole,
+        this.init_parameters.sender_clientId,
+        this.init_parameters.input_height, this.init_parameters.input_width,
+        this.init_parameters.vocabularyChannelCount,
+        this.init_parameters.blockCountTotalRequested,
+        this.init_parameters.output_channelCount_per_alignment,
         initer_delayPromise, versus_loader_delayPromise
       );
     else
       init_promise = neuralOrchestra.init_promise_create(
-        this.downloader_spreadsheetId, this.downloader_apiKey,
-        this.bLogFetcherEventToConsole,
-        this.sender_clientId,
-        this.input_height, this.input_width,
-        this.vocabularyChannelCount, this.blockCountTotalRequested,
-        this.output_channelCount,
+        this.init_parameters.downloader_spreadsheetId,
+        this.init_parameters.downloader_apiKey,
+        this.init_parameters.bLogFetcherEventToConsole,
+        this.init_parameters.sender_clientId,
+        this.init_parameters.input_height, this.init_parameters.input_width,
+        this.init_parameters.vocabularyChannelCount,
+        this.init_parameters.blockCountTotalRequested,
+        this.init_parameters.output_channelCount_per_alignment,
         initer_delayPromise, versus_loader_delayPromise
       );
 
@@ -696,24 +704,20 @@ class TestCase {
       throw Error( `NeuralOrchestra_tester.TestCase`
         + `.test_init_load_process_send_asyncGenerator(): testId=${this.testId}, `
         + `neuralOrchestra.workerProxies_initOk `
-        + `(${neuralOrchestra.workerProxies_initOk}) `
+        + `( ${neuralOrchestra.workerProxies_initOk} ) `
         + `should be true.` );
 
-//!!! ...unfinished... (2023/03/22) Test the following:
-//
-//         this.downloader_spreadsheetId, this.downloader_apiKey,
-//         this.bLogFetcherEventToConsole,
-//         this.sender_clientId,
-//
-//         this.input_height = 72;
-//         this.input_width = 128;
-//    
-//         this.vocabularyChannelCount = 4; //8; //6;
-//         this.blockCountTotalRequested = 39; //84; //144;
-//         this.output_channelCount_per_alignment = 64; //12;
-//     !!!
-//         this.output_channelCount = this.output_channelCount_per_alignment * 2;
-    
+    // Check properties of init_asyncXxx().
+    for ( let initParameterName in this.init_parameters ) {
+      if ( neuralOrchestra[ initParameterName ]
+             != this.init_parameters[ initParameterName ] )
+        throw Error( `NeuralOrchestra_tester.TestCase`
+          + `.test_init_load_process_send_asyncGenerator(): testId=${this.testId}, `
+          + `neuralOrchestra.${initParameterName} `
+          + `( ${neuralOrchestra[ initParameterName ]} ) `
+          + `should be ( ${this.init_parameters[ initParameterName ]} ).` );
+    }
+
     progressToAdvance.value_advance();
     yield progressRoot;
 
