@@ -280,13 +280,18 @@ class AsyncWorker_Proxy extends Recyclable.Root {
       + `    return randomInt;\n`
       + `  }\n`
       + `\n`
-      + `  const workerModuleURL = "${workerModuleURL}";\n`
+      + `  function importBody() {\n`
+      + `    const workerModuleURL = "${workerModuleURL}";\n`
+      + `    let importPromise = import( workerModuleURL );\n`
+      + `    return importPromise;\n`
+      + `  }\n`
+      + `\n`
       + `  const retryWaitingSecondsExponentMax = 6;\n`
       + `  let retryTimesCur = 0;\n`
       + `  let importDone = false;\n`
       + `  do {\n`
       + `    try {\n`
-      + `      let importPromise = import( workerModuleURL );\n`
+      + `      let importPromise = importBody();\n`
       + `      await importPromise;\n`
       + `      importDone = true;\n`
       + `    } catch ( e ) {\n`
