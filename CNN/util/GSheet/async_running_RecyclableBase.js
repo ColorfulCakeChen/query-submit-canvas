@@ -14,6 +14,11 @@ import { async_running_Base } from "./async_running_Base.js";
  *
  *
  *
+ * @member {boolean} async_running
+ *   If true, a .Xxx_async() is still executing. Please wait it becoming false
+ * if wanting to call .Xxx_async() again. From outside caller's view, this
+ * property is represented by a getter named as name_of_async_running.
+ *
 
 //!!! ...unfinished... (2023/03/23)
 
@@ -36,6 +41,17 @@ let async_running_RecyclableBase
    */
   static Pool = new Pool.Root( "async_running_RecyclableBase.Pool",
     async_running_RecyclableBase, async_running_RecyclableBase.setAsConstructor );
+
+  // Whether an async method executing.
+  #async_running;
+
+  // getters' names.
+  #getter_name_of_async_running;
+
+  // Property descriptor for the getters (as enumerable read-only properties).
+  static propertyDescriptor_of_async_running = 
+    { get() { return this.#async_running; }, enumerable: true };
+
 
   /**
    *
@@ -60,12 +76,28 @@ let async_running_RecyclableBase
   /** @override */
   static setAsConstructor_self( name_prefix ) {
 
+    this.#getter_name_of_async_running
+      = `${name_prefix}_async_running`;
+
+    // Define read-only properties (for the two flags) as the specified names.
+    {
+      Reflect.defineProperty( this,
+        this.#getter_name_of_async_running,
+        async_running_RecyclableBase.propertyDescriptor_async_running );
+    }
+
 //!!! ...unfinished... (2023/03/23)
 
   }
 
   /** @override */
   disposeResources() {
+
+    Reflect.deleteProperty( this, this.#getter_name_of_async_running );
+
+    this.#getter_name_of_async_running = undefined;
+
+    this.#async_running = undefined;
 
 //!!! ...unfinished... (2023/03/23)
 

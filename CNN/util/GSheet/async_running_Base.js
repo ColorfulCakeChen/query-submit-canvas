@@ -12,11 +12,6 @@ import * as ValueMax from "./ValueMax.js";
  *
  *
  *
- * @member {boolean} async_running
- *   If true, a .Xxx_async() is still executing. Please wait it becoming false
- * if wanting to call .Xxx_async() again. From outside caller's view, this
- * property is represented by a getter named as name_of_async_running.
- *
  * @member {boolean} asyncGenerator_running
  *   If true, a .Xxx_asyncGenerator() is still executing. Please wait it
  * becoming false if wanting to call .Xxx_asyncGenerator() again. From outside
@@ -37,28 +32,14 @@ let async_running_Base
   = ( ParentClass = Object ) => class async_running_Base
       extends ParentClass {
 
-//!!! (2023/03/23 Remarked)
-//      extends Recyclable.Base( ParentClass ) {
-//
-//   /**
-//    * Used as default async_running_Base provider for conforming to
-//    * Recyclable interface.
-//    */
-//   static Pool = new Pool.Root( "async_running_Base.Pool",
-//     async_running_Base, async_running_Base.setAsConstructor );
 
+  // Whether an async generator executing.
+  #asyncGenerator_running;
 
-  #async_running;           // Whether an async method executing.
-  #asyncGenerator_running;  // Whether an async generator executing.
-
-  // Record the getters' names.
-  #getter_name_of_async_running;
+  // the getters' names.
   #getter_name_of_asyncGenerator_running;
 
   // Property descriptor for the getters (as enumerable read-only properties).
-  static propertyDescriptor_of_async_running = 
-    { get() { return this.#async_running; }, enumerable: true };
-
   static propertyDescriptor_asyncGenerator_running = 
     { get() { return this.#asyncGenerator_running; }, enumerable: true };
 
@@ -86,18 +67,11 @@ let async_running_Base
   /** @override */
   static setAsConstructor_self( name_prefix ) {
 
-    this.#getter_name_of_async_running
-      = `${name_prefix}_async_running`;
-
     this.#getter_name_of_asyncGenerator_running
       = `${name_prefix}_asyncGenerator_running`;
 
     // Define read-only properties (for the two flags) as the specified names.
     {
-      Reflect.defineProperty( this,
-        this.#getter_name_of_async_running,
-        async_running_Base.propertyDescriptor_async_running );
-
       Reflect.defineProperty( this,
         this.#getter_name_of_asyncGenerator_running,
         async_running_Base.propertyDescriptor_asyncGenerator_running );
@@ -108,13 +82,10 @@ let async_running_Base
   disposeResources() {
 
     Reflect.deleteProperty( this, this.#getter_name_of_asyncGenerator_running );
-    Reflect.deleteProperty( this, this.#getter_name_of_async_running );
 
     this.#getter_name_of_asyncGenerator_running = undefined;
-    this.#getter_name_of_async_running = undefined;
 
     this.#asyncGenerator_running = undefined;
-    this.#async_running = undefined;
 
     // If parent class has the same method, call it.    
     if ( super.disposeResources instanceof Function )
@@ -123,28 +94,6 @@ let async_running_Base
 
 
 //!!! ...unfinished... (2023/03/23)
-// Problem: these will force async_running_Base inheriting from Recyclable.
-//
-// Perhaps, separate to another class async_running_RecyclableBase.
-
-  /**
-   * @param {GSheets_UrlComposer} this
-   */
-  static fetch_progress_create() {
-    GSheets_UrlComposer.fetch_progress_dispose.call( this );
-    this.fetch_progress
-      = ValueMax.Percentage.Aggregate.Pool.get_or_create_by();
-  }
-
-  /**
-   * @param {GSheets_UrlComposer} this
-   */
-  static fetch_progress_dispose() {
-    if ( this.fetch_progress ) {
-      this.fetch_progress.disposeResources_and_recycleToPool();
-      this.fetch_progress = null;
-    }
-  }
 
 
 //!!! ...unfinished... (2023/03/23)
