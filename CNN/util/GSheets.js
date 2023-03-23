@@ -175,6 +175,16 @@ class GSheets_UrlComposer extends Recyclable.Root {
 //    .anyNonStaitcSharedPropertiesOfParentClassOfMostDerivedClass
 
 
+//!!! ...unfinished... (2023/03/23)
+// class AA {
+//   #fetch_async_running;
+//   constructor() {
+//     Reflect.defineProperty( this,
+//       "fetch_async_running",
+//       { get: () => { return this.#fetch_async_running }, enumerable: true } );
+//   }
+// }
+
   /**
    * Note: The this.fetch_progress will record progress of this method.
    *
