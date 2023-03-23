@@ -181,7 +181,7 @@ class GSheets_UrlComposer extends Recyclable.Root {
 //   constructor() {
 //     Reflect.defineProperty( this,
 //       "fetch_async_running",
-//       { get: () => { return this.#fetch_async_running }, enumerable: true } );
+//       { get() { return this.#fetch_async_running }, enumerable: true } );
 //   }
 // }
 
