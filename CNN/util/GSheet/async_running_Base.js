@@ -12,16 +12,20 @@ import * as ValueMax from "./ValueMax.js";
  *
  *
  *
- * @member {boolean} fetch_async_running
- *   If true, a .JSON_ColumnMajorArrayArray_fetch_async() is still executing.
- * Please wait it becoming false if wanting to call
- * .JSON_ColumnMajorArrayArray_fetch_async() again.
+ * @member {boolean} async_running
+ *   If true, a .Xxx_async() is still executing. Please wait it becoming false
+ * if wanting to call .Xxx_async() again. From outside caller's view, this
+ * property is represented by a getter named as name_of_async_running.
  *
- * @member {boolean} this.name_of_asyncGenerator_running
- *   If true, a .JSON_ColumnMajorArrayArray_fetch_asyncGenerator() is still
- * executing. Please wait it becoming false if wanting to call
- * .JSON_ColumnMajorArrayArray_fetch_asyncGenerator() again.
+ * @member {boolean} asyncGenerator_running
+ *   If true, a .Xxx_asyncGenerator() is still executing. Please wait it
+ * becoming false if wanting to call .Xxx_asyncGenerator() again. From outside
+ * caller's view, this property is represented by a getter named as
+ * name_of_asyncGenerator_running.
  *
+
+//!!! ...unfinished... (2023/03/23)
+
  * @member {ValueMax.Percentage.Aggregate} fetch_progress
  *   The progress of fetching. If ( .fetch_progress.valuePercentage == 100 ),
  * the fetching has done.
@@ -100,8 +104,8 @@ let async_running_Base
   /** @override */
   disposeResources() {
 
-    Reflect.deleteProperty( this, this.#name_of_async_running );
     Reflect.deleteProperty( this, this.#name_of_asyncGenerator_running );
+    Reflect.deleteProperty( this, this.#name_of_async_running );
 
     // If parent class has the same method, call it.    
     if ( super.disposeResources instanceof Function )
