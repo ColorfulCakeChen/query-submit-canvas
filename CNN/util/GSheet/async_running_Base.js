@@ -123,6 +123,29 @@ let async_running_Base
 
 
 //!!! ...unfinished... (2023/03/23)
+// Problem: these will force async_running_Base inheriting from Recyclable.
+
+  /**
+   * @param {GSheets_UrlComposer} this
+   */
+  static fetch_progress_create() {
+    GSheets_UrlComposer.fetch_progress_dispose.call( this );
+    this.fetch_progress
+      = ValueMax.Percentage.Aggregate.Pool.get_or_create_by();
+  }
+
+  /**
+   * @param {GSheets_UrlComposer} this
+   */
+  static fetch_progress_dispose() {
+    if ( this.fetch_progress ) {
+      this.fetch_progress.disposeResources_and_recycleToPool();
+      this.fetch_progress = null;
+    }
+  }
+
+
+//!!! ...unfinished... (2023/03/23)
 // These methods' names should also be specified by caller.
 //
 // Xxx_promise_create()
