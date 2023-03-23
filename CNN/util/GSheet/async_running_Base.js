@@ -19,7 +19,7 @@ let async_running_Base = ( ParentClass = Object ) =>
    * Recyclable interface.
    */
   static Pool = new Pool.Root( "async_running_Base.Pool",
-  async_running_Base, async_running_Base.setAsConstructor );
+    async_running_Base, async_running_Base.setAsConstructor );
 
   /**
    *
