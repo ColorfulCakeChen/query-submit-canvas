@@ -124,6 +124,8 @@ let async_running_Base
 
 //!!! ...unfinished... (2023/03/23)
 // Problem: these will force async_running_Base inheriting from Recyclable.
+//
+// Perhaps, separate to another class async_running_RecyclableBase.
 
   /**
    * @param {GSheets_UrlComposer} this
