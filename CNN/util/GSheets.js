@@ -165,9 +165,13 @@ class GSheets_UrlComposer extends Recyclable.Root {
 // Use new.target get MostDerivedClass in constructor.
 // Reflect.getPrototypeOf( this ).constructor.name
 // Reflect.getPrototypeOf( this ).constructor.anyStaticPropertiesOfMostDerivedClass
+// Reflect.getPrototypeOf( this ).anyInstancePropertiesOfMostDerivedClass
 //
 // Reflect.getPrototypeOf( Reflect.getPrototypeOf( this ) ).constructor
 //    .anyStaticPropertiesOfParentClassOfMostDerivedClass
+//
+// Reflect.getPrototypeOf( Reflect.getPrototypeOf( this ) )
+//    .anyInstancePropertiesOfParentClassOfMostDerivedClass
 
 
   /**
