@@ -21,12 +21,6 @@ import * as ValueMax from "./ValueMax.js";
 
 //!!! ...unfinished... (2023/03/23)
 
- * @member {ValueMax.Percentage.Aggregate} fetch_progress
- *   The progress of fetching. If ( .fetch_progress.valuePercentage == 100 ),
- * the fetching has done.
- *   - It is used only if .JSON_ColumnMajorArrayArray_fetch_async() is called.
- *   - If .JSON_ColumnMajorArrayArray_fetch_asyncGenerator() is called directly,
- *       its progressParent parameter will be used instead.
  */
 let async_running_Base
   = ( ParentClass = Object ) => class async_running_Base
@@ -95,6 +89,102 @@ let async_running_Base
 
 //!!! ...unfinished... (2023/03/23)
 
+  /**
+   * Create JSON_ColumnMajorArrayArray_fetcher (an instance of
+   * .JSON_ColumnMajorArrayArray_fetch_asyncGenerator()).
+   *
+   *
+   * @param {ValueMax.Percentage.Aggregate} progressParent
+   *   Some new progressToAdvance will be created and added to progressParent. The
+   * created progressToAdvance will be increased when every time advanced. The
+   * progressParent.root_get() will be returned when every time yield.
+   *
+   * @param {Promise} delayPromise
+   *   Mainly used when unit testing. If not null, the async generator will
+   * await it before complete. If null or undefined, no extra delay awaiting.
+   *
+   * @return {AsyncGenerator}
+   *   Return the newly created JSON_ColumnMajorArrayArray_fetcher which is an
+   * instance of .JSON_ColumnMajorArrayArray_fetch_asyncGenerator().
+   */
+  asyncGenerator_create( ...restArgs ) {
+
+//!!! ...unfinished... (2023/03/23)
+
+    { // Checking pre-condition.
+      const funcNameInMessage = "JSON_ColumnMajorArrayArray_fetcher_create";
+
+      GSheets_UrlComposer.throw_if_an_old_still_running.call( this,
+        this.fetch_asyncGenerator_running, funcNameInMessage );
+
+      GSheets_UrlComposer.throw_if_fetching.call( this, funcNameInMessage );
+    }
+
+    let fetcher = GSheets_UrlComposer
+      .JSON_ColumnMajorArrayArray_fetcher_create_without_checking_precondition
+      .call( this, progressParent, params_loading_retryWaiting, delayPromise );
+    return fetcher;
+  }
+
+  /**
+   * Create an instance of .JSON_ColumnMajorArrayArray_fetch_asyncGenerator().
+   *
+   *
+   * @param {GSheets_UrlComposer} this
+   *
+   * @return {AsyncGenerator}
+   *   Return the newly created JSON_ColumnMajorArrayArray_fetcher which is an
+   * instance of .JSON_ColumnMajorArrayArray_fetch_asyncGenerator().
+   */
+  static JSON_ColumnMajorArrayArray_fetcher_create_without_checking_precondition(
+    progressParent, params_loading_retryWaiting, delayPromise ) {
+
+    this.fetch_asyncGenerator_running = true;
+
+    let fetcher = GSheets_UrlComposer
+      .JSON_ColumnMajorArrayArray_fetch_asyncGenerator.call( this,
+        progressParent, params_loading_retryWaiting, delayPromise );
+    return fetcher;
+  }
+
+
+
+  /**
+   * @param {GSheets_UrlComposer} this
+   * @param {string} funcNameInMessage   The caller function name. (e.g. init_async)
+   */
+  static throw_if_fetching( funcNameInMessage ) {
+    if (   ( this.fetch_async_running )
+        || ( this.fetch_asyncGenerator_running ) )
+      throw Error( `GSheets.UrlComposer.${funcNameInMessage}(): `
+        + `should not be executed while still fetching.` );
+  }
+
+  /**
+   * @param {GSheets_UrlComposer} this
+   * @param {boolean} b_still_running    If true, throw exception.
+   * @param {string} funcNameInMessage   The caller function name. (e.g. init_async)
+   */
+  static throw_if_an_old_still_running( b_still_running, funcNameInMessage ) {
+    if ( b_still_running )
+      throw Error( `GSheets.UrlComposer.${funcNameInMessage}(): `
+        + `An old .${funcNameInMessage}() is still running.` );
+  }
+
+  /**
+   * @param {GSheets_UrlComposer} this
+   * @param {boolean} b                  If false, throw exception.
+   * @param {string} funcNameInMessage   The caller function name. (e.g. init_async)
+   * @param {string} funcNameShouldBeCalledInMessage
+   *   The function name which should be called instead. (e.g. init_promise_create)
+   */
+  static throw_call_another_if_false(
+    b, funcNameInMessage, funcNameShouldBeCalledInMessage ) {
+
+    if ( !b )
+      throw Error( `GSheets.UrlComposer.${funcNameInMessage}(): `
+        + `Please call .${funcNameShouldBeCalledInMessage}() instead.` );
+  }
 
 //!!! ...unfinished... (2023/03/23)
 // These methods' names should also be specified by caller.
