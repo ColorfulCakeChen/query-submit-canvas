@@ -130,8 +130,8 @@ let async_running_Base
 // Xxx_promise_create()
 // Xxxer_create()
 //
-// Is it possible use javascript computed property names
-// to define these static method? (in this.constructor)
+// Define static method as property of this.constructor
+// Define non-static shared method as property of this.constructor.prototype
 }
 
 
