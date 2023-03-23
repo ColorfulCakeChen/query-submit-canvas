@@ -62,8 +62,6 @@ let async_running_Base
   static propertyDescriptor_asyncGenerator_running = 
     { get() { return this.#asyncGenerator_running; }, enumerable: true };
 
-//!!! ...unfinished... (2023/03/23)
-// let the name of getters are specified.
 
   /**
    *
@@ -106,8 +104,6 @@ let async_running_Base
       Reflect.defineProperty( this, name_of_asyncGenerator_running,
         async_running_Base.propertyDescriptor_asyncGenerator_running );
     }
-
-//!!! ...unfinished... (2023/03/23)
   }
 
   /** @override */
@@ -126,6 +122,13 @@ let async_running_Base
     if ( super.disposeResources instanceof Function )
       super.disposeResources();
   }
+
+
+//!!! ...unfinished... (2023/03/23)
+// These methods' names should also be specified by caller.
+//
+// Xxx_promise_create()
+// Xxxer_create()
 
 }
 
