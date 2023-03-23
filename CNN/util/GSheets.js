@@ -163,6 +163,7 @@ class GSheets_UrlComposer extends Recyclable.Root {
 //
 // shared with GSheetsAPIv4 and GVizTQ (and HttpRequest.Fetcher).
 // Use new.target get MostDerivedClass in constructor.
+// Reflect.getPrototypeOf( this ).constructor.name
 
 
   /**
