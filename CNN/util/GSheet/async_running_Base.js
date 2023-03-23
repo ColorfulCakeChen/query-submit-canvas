@@ -28,7 +28,7 @@ let async_running_Base = ( ParentClass = Object ) =>
 
     super( ...restArgs );
     async_running_Base.setAsConstructor_self.call( this,
-      );
+    );
   }
 
   /** @override */
@@ -36,7 +36,7 @@ let async_running_Base = ( ParentClass = Object ) =>
 
     super.setAsConstructor.apply( this, restArgs );
     async_running_Base.setAsConstructor_self.call( this,
-      );
+    );
     return this;
   }
 
