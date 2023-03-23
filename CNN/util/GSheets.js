@@ -166,13 +166,13 @@ class GSheets_UrlComposer extends Recyclable.Root {
 // Reflect.getPrototypeOf( this ).constructor.name
 //
 // Reflect.getPrototypeOf( this ).constructor.anyStaticPropertiesOfMostDerivedClass
-// Reflect.getPrototypeOf( this ).anyNonStaitcMethodsOfMostDerivedClass
+// Reflect.getPrototypeOf( this ).anyNonStaitcSharedPropertiesOfMostDerivedClass
 //
 // Reflect.getPrototypeOf( Reflect.getPrototypeOf( this ) ).constructor
 //    .anyStaticPropertiesOfParentClassOfMostDerivedClass
 //
 // Reflect.getPrototypeOf( Reflect.getPrototypeOf( this ) )
-//    .anyNonStaitcMethodsOfParentClassOfMostDerivedClass
+//    .anyNonStaitcSharedPropertiesOfParentClassOfMostDerivedClass
 
 
   /**
