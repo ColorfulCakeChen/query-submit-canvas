@@ -48,8 +48,8 @@ let async_running_Base
 //     async_running_Base, async_running_Base.setAsConstructor );
 
 
-  #async_running;
-  #asyncGenerator_running;
+  #async_running;           // Whether an async method executing.
+  #asyncGenerator_running;  // Whether an async generator executing.
 
   // Record the getters' names.
   #name_of_async_running;
