@@ -162,6 +162,7 @@ class GSheets_UrlComposer extends Recyclable.Root {
 // .JSON_ColumnMajorArrayArray_fetcher_create_without_checking_precondition()
 //
 // shared with GSheetsAPIv4 and GVizTQ (and HttpRequest.Fetcher).
+// Use new.target get MostDerivedClass in constructor.
 
 
   /**
