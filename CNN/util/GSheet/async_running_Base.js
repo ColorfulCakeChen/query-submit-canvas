@@ -55,6 +55,13 @@ let async_running_Base
   #name_of_async_running;
   #name_of_asyncGenerator_running;
 
+  // Property descriptor for the getters.
+  static propertyDescriptor_of_async_running = 
+    { get() { return this.#async_running; }, enumerable: true };
+
+  static propertyDescriptor_asyncGenerator_running = 
+    { get() { return this.#asyncGenerator_running; }, enumerable: true };
+
 //!!! ...unfinished... (2023/03/23)
 // let the name of getters are specified.
 
@@ -91,14 +98,16 @@ let async_running_Base
     this.#name_of_async_running = name_of_async_running;
     this.#name_of_asyncGenerator_running = name_of_asyncGenerator_running;
 
-    // Define 
+    // Define read-only properties (for the two flags) as the specified names.
+    {
+      Reflect.defineProperty( this, name_of_async_running,
+        async_running_Base.propertyDescriptor_async_running );
+
+      Reflect.defineProperty( this, name_of_asyncGenerator_running,
+        async_running_Base.propertyDescriptor_asyncGenerator_running );
+    }
 
 //!!! ...unfinished... (2023/03/23)
-    Reflect.defineProperty( this, name_of_async_running,
-      { get() { return this.#async_running; }, enumerable: true } );
-
-    Reflect.defineProperty( this, name_of_asyncGenerator_running,
-      { get() { return this.#asyncGenerator_running; }, enumerable: true } );
   }
 
   /** @override */
