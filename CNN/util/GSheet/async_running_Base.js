@@ -55,7 +55,7 @@ let async_running_Base
   #name_of_async_running;
   #name_of_asyncGenerator_running;
 
-  // Property descriptor for the getters.
+  // Property descriptor for the getters (as enumerable read-only properties).
   static propertyDescriptor_of_async_running = 
     { get() { return this.#async_running; }, enumerable: true };
 
