@@ -52,8 +52,8 @@ let async_running_Base
   #asyncGenerator_running;  // Whether an async generator executing.
 
   // Record the getters' names.
-  #name_of_async_running;
-  #name_of_asyncGenerator_running;
+  #getter_name_of_async_running;
+  #getter_name_of_asyncGenerator_running;
 
   // Property descriptor for the getters (as enumerable read-only properties).
   static propertyDescriptor_of_async_running = 
@@ -65,43 +65,41 @@ let async_running_Base
 
   /**
    *
-   * @param {string} name_of_async_running
-   *   The getter method name of async_running flag.
-   *
-   * @param {string} name_of_asyncGenerator_running
-   *   The getter method name of asyncGenerator_running flag.
+   * @param {string} name_prefix
+   *   The prefix for all async operations and flags. (e.g. "init" or "fetch"
+   * or "versus_load")
    */
-  constructor(
-    name_of_async_running, name_of_asyncGenerator_running, ...restArgs ) {
+  constructor( name_prefix, ...restArgs ) {
 
     super( ...restArgs );
-    async_running_Base.setAsConstructor_self.call( this,
-      name_of_async_running, name_of_asyncGenerator_running );
+    async_running_Base.setAsConstructor_self.call( this, name_prefix );
   }
 
   /** @override */
-  static setAsConstructor(
-    name_of_async_running, name_of_asyncGenerator_running, ...restArgs ) {
+  static setAsConstructor( name_prefix, ...restArgs ) {
 
     super.setAsConstructor.apply( this, restArgs );
-    async_running_Base.setAsConstructor_self.call( this,
-      name_of_async_running, name_of_asyncGenerator_running );
+    async_running_Base.setAsConstructor_self.call( this, name_prefix );
     return this;
   }
 
   /** @override */
-  static setAsConstructor_self(
-    name_of_async_running, name_of_asyncGenerator_running ) {
+  static setAsConstructor_self( name_prefix ) {
 
-    this.#name_of_async_running = name_of_async_running;
-    this.#name_of_asyncGenerator_running = name_of_asyncGenerator_running;
+    this.#getter_name_of_async_running
+      = `${name_prefix}_async_running`;
+
+    this.#getter_name_of_asyncGenerator_running
+      = `${name_prefix}_asyncGenerator_running`;
 
     // Define read-only properties (for the two flags) as the specified names.
     {
-      Reflect.defineProperty( this, name_of_async_running,
+      Reflect.defineProperty( this,
+        this.#getter_name_of_async_running,
         async_running_Base.propertyDescriptor_async_running );
 
-      Reflect.defineProperty( this, name_of_asyncGenerator_running,
+      Reflect.defineProperty( this,
+        this.#getter_name_of_asyncGenerator_running,
         async_running_Base.propertyDescriptor_asyncGenerator_running );
     }
   }
