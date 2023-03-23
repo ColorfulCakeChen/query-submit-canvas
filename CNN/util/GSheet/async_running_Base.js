@@ -107,6 +107,12 @@ let async_running_Base
     Reflect.deleteProperty( this, this.#name_of_asyncGenerator_running );
     Reflect.deleteProperty( this, this.#name_of_async_running );
 
+    this.#name_of_asyncGenerator_running = undefined;
+    this.#name_of_async_running = undefined;
+
+    this.#asyncGenerator_running = undefined;
+    this.#async_running = undefined;
+
     // If parent class has the same method, call it.    
     if ( super.disposeResources instanceof Function )
       super.disposeResources();
