@@ -107,11 +107,11 @@ let async_running_Base
   /** @override */
   disposeResources() {
 
-    Reflect.deleteProperty( this, this.#name_of_asyncGenerator_running );
-    Reflect.deleteProperty( this, this.#name_of_async_running );
+    Reflect.deleteProperty( this, this.#getter_name_of_asyncGenerator_running );
+    Reflect.deleteProperty( this, this.#getter_name_of_async_running );
 
-    this.#name_of_asyncGenerator_running = undefined;
-    this.#name_of_async_running = undefined;
+    this.#getter_name_of_asyncGenerator_running = undefined;
+    this.#getter_name_of_async_running = undefined;
 
     this.#asyncGenerator_running = undefined;
     this.#async_running = undefined;
