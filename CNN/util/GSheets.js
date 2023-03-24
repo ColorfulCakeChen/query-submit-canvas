@@ -15,25 +15,41 @@ import * as ValueMax from "./ValueMax.js";
  *   If true, some debug messages of HttpRequest.Fetcher will be logged to
  * console.
  *
- * @member {boolean} fetch_async_running
- *   If true, a .JSON_ColumnMajorArrayArray_fetch_async() is still executing.
- * Please wait it becoming false if wanting to call
- * .JSON_ColumnMajorArrayArray_fetch_async() again.
+ * @member {boolean} JSON_ColumnMajorArrayArray_fetch_asyncPromise_running
+ *   If true, a JSON_ColumnMajorArrayArray_fetch_asyncPromise is
+ * still executing. Please wait it becoming false if wanting to call
+ * .JSON_ColumnMajorArrayArray_fetch_asyncPromise_create() again.
  *
- * @member {boolean} fetch_asyncGenerator_running
- *   If true, a .JSON_ColumnMajorArrayArray_fetch_asyncGenerator() is still
- * executing. Please wait it becoming false if wanting to call
- * .JSON_ColumnMajorArrayArray_fetch_asyncGenerator() again.
+ * @member {boolean} JSON_ColumnMajorArrayArray_fetch_asyncGenerator_running
+ *   If true, a JSON_ColumnMajorArrayArray_fetch_asyncGenerator is
+ * still executing. Please wait it becoming false if wanting to call
+ * .JSON_ColumnMajorArrayArray_fetch_asyncGenerator_create() again.
  *
- * @member {ValueMax.Percentage.Aggregate} fetch_progress
- *   The progress of fetching. If ( .fetch_progress.valuePercentage == 100 ),
+ * @member {ValueMax.Percentage.Aggregate} JSON_ColumnMajorArrayArray_fetch_asyncPromise_progress
+ *   The progress of JSON_ColumnMajorArrayArray_fetch_asyncPromise. If
+ * ( .JSON_ColumnMajorArrayArray_fetch_asyncPromise_progress.valuePercentage == 100 ),
  * the fetching has done.
  *   - It is used only if .JSON_ColumnMajorArrayArray_fetch_async() is called.
  *   - If .JSON_ColumnMajorArrayArray_fetch_asyncGenerator() is called directly,
  *       its progressParent parameter will be used instead.
  *
+ *   - It is used only if .JSON_ColumnMajorArrayArray_fetch_asyncPromise_create()
+ *       is called.
+ *   - It is not used if .JSON_ColumnMajorArrayArray_fetch_asyncGenerator_create()
+ *       is called directly. In this case, its progressParent parameter will be
+ *       used instead.
+ *
  * @member {boolean} retryWaitingTimer_isCounting
  *   If true, the .urlComposer.httpFetcher now is during retry waiting.
+ *
+
+!!! ...unfinished... (2023/03/24)
+
+ * @member {Function} JSON_ColumnMajorArrayArray_fetch_asyncPromise_create
+ *   A method accepts ( params_loading_retryWaiting, delayPromise ).
+
+ * @member {Function} JSON_ColumnMajorArrayArray_fetch_asyncGenerator_create
+ *   A method accepts ( progressParent, params_loading_retryWaiting, delayPromise ).
  */
 
 //!!! (2023/03/24 Remarked) Use AsyncGuarder instead.
@@ -166,39 +182,7 @@ class GSheets_UrlComposer extends AsyncGuarder.RecyclableRoot {
   }
 
 
-//!!! ...unfinished... (2023/03/22)
-// Could these methods be put to common base class:
-// .JSON_ColumnMajorArrayArray_fetch_promise_create()
-// .JSON_ColumnMajorArrayArray_fetch_promise_create_without_checking_precondition()
-// .JSON_ColumnMajorArrayArray_fetch_async()
-// .JSON_ColumnMajorArrayArray_fetcher_create()
-// .JSON_ColumnMajorArrayArray_fetcher_create_without_checking_precondition()
-//
-// shared with GSheetsAPIv4 and GVizTQ (and HttpRequest.Fetcher).
-// Use new.target get MostDerivedClass in constructor.
-// Reflect.getPrototypeOf( this ).constructor.name
-//
-// Reflect.getPrototypeOf( this ).constructor.anyStaticPropertiesOfMostDerivedClass
-// Reflect.getPrototypeOf( this ).anyNonStaitcSharedPropertiesOfMostDerivedClass
-//
-// Reflect.getPrototypeOf( Reflect.getPrototypeOf( this ) ).constructor
-//    .anyStaticPropertiesOfParentClassOfMostDerivedClass
-//
-// Reflect.getPrototypeOf( Reflect.getPrototypeOf( this ) )
-//    .anyNonStaitcSharedPropertiesOfParentClassOfMostDerivedClass
-
-
-//!!! ...unfinished... (2023/03/23)
-// class AA {
-//   #fetch_async_running;
-//   constructor() {
-//     Reflect.defineProperty( this,
-//       "fetch_async_running",
-//       { get() { return this.#fetch_async_running; }, enumerable: true } );
-//   }
-// }
-
-// //!!! (2023/03/24 Remarked) Use AsyncGuarder instead.
+//!!! (2023/03/24 Remarked) Use AsyncGuarder instead.
 //   /**
 //    * Note: The this.fetch_progress will record progress of this method.
 //    *
@@ -217,35 +201,35 @@ class GSheets_UrlComposer extends AsyncGuarder.RecyclableRoot {
 //    */
 //   JSON_ColumnMajorArrayArray_fetch_promise_create(
 //     params_loading_retryWaiting, delayPromise ) {
-
+//
 //     { // Checking pre-condition.
 //       const funcNameInMessage = "JSON_ColumnMajorArrayArray_fetch_promise_create";
-
+//
 //       GSheets_UrlComposer.throw_if_an_old_still_running.call( this,
 //         this.fetch_async_running, funcNameInMessage );
-
+//
 //       GSheets_UrlComposer.throw_if_fetching.call( this, funcNameInMessage );
 //     }
-
+//
 //     // 1.
 //     let fetcher;
 //     {
 //       // Use internal independent progress.
 //       GSheets_UrlComposer.fetch_progress_create.call( this );
-
+//
 //       // Prepare fetcher
 //       fetcher = GSheets_UrlComposer
 //         .JSON_ColumnMajorArrayArray_fetcher_create_without_checking_precondition
 //         .call( this,
 //           this.fetch_progress, params_loading_retryWaiting, delayPromise );
 //     }
-
+//
 //     // 2.
 //     return GSheets_UrlComposer
 //       .JSON_ColumnMajorArrayArray_fetch_promise_create_without_checking_precondition
 //       .call( this, fetcher );
 //   }
-
+//
 //   /**
 //    *
 //    * @param {GSheets_UrlComposer} this
@@ -261,13 +245,13 @@ class GSheets_UrlComposer extends AsyncGuarder.RecyclableRoot {
 //    */
 //   static JSON_ColumnMajorArrayArray_fetch_promise_create_without_checking_precondition(
 //     fetcher ) {
-
+//
 //     this.fetch_async_running = true;
 //     let fetch_promise = GSheets_UrlComposer
 //       .JSON_ColumnMajorArrayArray_fetch_async.call( this, fetcher );
 //     return JSON_ColumnMajorArrayArray_fetch_promise;
 //   }
-
+//
 //   /**
 //    * Composing the URL (according to this object's data members), download
 //    * it as JSON format, extract data as a two dimension (column-major) array.
@@ -283,41 +267,41 @@ class GSheets_UrlComposer extends AsyncGuarder.RecyclableRoot {
 //    *   - Resolved to ( null ) when failed.
 //    */
 //   static async JSON_ColumnMajorArrayArray_fetch_async( fetcher ) {
-
+//
 //     { // Checking pre-condition.
 //       const funcNameInMessage = "JSON_ColumnMajorArrayArray_fetch_async";
-
+//
 //       GSheets_UrlComposer.throw_call_another_if_false.call( this,
 //         this.fetch_async_running, funcNameInMessage,
 //         "JSON_ColumnMajorArrayArray_fetch_promise_create" );
 //     }
-
+//
 //     try {
 //       // 1.
 //       if ( !fetcher )
 //         throw Error( `GSheets.UrlComposer.${funcNameInMessage}(): `
 //           + `fetcher should have already existed.` );
-
+//
 //       let fetcherNext;
 //       do {
 //         fetcherNext = await fetcher.next();
 //       } while ( !fetcherNext.done );
-
+//
 //       let resultColumnMajorArrayArray = fetcherNext.value;
 //       return resultColumnMajorArrayArray;
-
+//
 //     } catch ( e ) {
 //       //console.error( e );
 //       //debugger;
 //       throw e; // Unknown error, should be said loundly.
-
+//
 //     } finally {
 //       // 2. So that this async method could be executed again.
 //       this.fetch_async_running = false;
 //     }
 //   }
-
-
+//
+//
 //   /**
 //    * Create JSON_ColumnMajorArrayArray_fetcher (an instance of
 //    * .JSON_ColumnMajorArrayArray_fetch_asyncGenerator()).
@@ -338,22 +322,22 @@ class GSheets_UrlComposer extends AsyncGuarder.RecyclableRoot {
 //    */
 //   JSON_ColumnMajorArrayArray_fetcher_create(
 //     progressParent, params_loading_retryWaiting, delayPromise ) {
-
+//
 //     { // Checking pre-condition.
 //       const funcNameInMessage = "JSON_ColumnMajorArrayArray_fetcher_create";
-
+//
 //       GSheets_UrlComposer.throw_if_an_old_still_running.call( this,
 //         this.fetch_asyncGenerator_running, funcNameInMessage );
-
+//
 //       GSheets_UrlComposer.throw_if_fetching.call( this, funcNameInMessage );
 //     }
-
+//
 //     let fetcher = GSheets_UrlComposer
 //       .JSON_ColumnMajorArrayArray_fetcher_create_without_checking_precondition
 //       .call( this, progressParent, params_loading_retryWaiting, delayPromise );
 //     return fetcher;
 //   }
-
+//
 //   /**
 //    * Create an instance of .JSON_ColumnMajorArrayArray_fetch_asyncGenerator().
 //    *
@@ -366,9 +350,9 @@ class GSheets_UrlComposer extends AsyncGuarder.RecyclableRoot {
 //    */
 //   static JSON_ColumnMajorArrayArray_fetcher_create_without_checking_precondition(
 //     progressParent, params_loading_retryWaiting, delayPromise ) {
-
+//
 //     this.fetch_asyncGenerator_running = true;
-
+//
 //     let fetcher = GSheets_UrlComposer
 //       .JSON_ColumnMajorArrayArray_fetch_asyncGenerator.call( this,
 //         progressParent, params_loading_retryWaiting, delayPromise );
@@ -405,13 +389,14 @@ class GSheets_UrlComposer extends AsyncGuarder.RecyclableRoot {
   static async* JSON_ColumnMajorArrayArray_fetch_asyncGenerator(
     progressParent, params_loading_retryWaiting, delayPromise ) {
 
-    { // Checking pre-condition.
-      const funcNameInMessage = "JSON_ColumnMajorArrayArray_fetch_asyncGenerator";
-
-      GSheets_UrlComposer.throw_call_another_if_false.call( this,
-        this.fetch_asyncGenerator_running, funcNameInMessage,
-        "JSON_ColumnMajorArrayArray_fetcher_create" );
-    }
+//!!! (2023/03/24 Remarked) Use AsyncGuarder instead.
+//     { // Checking pre-condition.
+//       const funcNameInMessage = "JSON_ColumnMajorArrayArray_fetch_asyncGenerator";
+//
+//       GSheets_UrlComposer.throw_call_another_if_false.call( this,
+//         this.fetch_asyncGenerator_running, funcNameInMessage,
+//         "JSON_ColumnMajorArrayArray_fetcher_create" );
+//     }
 
     try {
       // 1.
@@ -432,8 +417,11 @@ class GSheets_UrlComposer extends AsyncGuarder.RecyclableRoot {
       throw e;
 
     } finally {
-      // 3. So that this async generator could be executed again.
-      this.fetch_asyncGenerator_running = false;
+
+//!!! (2023/03/24 Remarked) Use AsyncGuarder instead.
+//       // 3. So that this async generator could be executed again.
+//       this.fetch_asyncGenerator_running = false;
+
     }
   }
 
@@ -450,61 +438,62 @@ class GSheets_UrlComposer extends AsyncGuarder.RecyclableRoot {
   }
 
 
-  /**
-   * @param {GSheets_UrlComposer} this
-   */
-  static fetch_progress_create() {
-    GSheets_UrlComposer.fetch_progress_dispose.call( this );
-    this.fetch_progress
-      = ValueMax.Percentage.Aggregate.Pool.get_or_create_by();
-  }
+//!!! (2023/03/24 Remarked) Use AsyncGuarder instead.
+//   /**
+//    * @param {GSheets_UrlComposer} this
+//    */
+//   static fetch_progress_create() {
+//     GSheets_UrlComposer.fetch_progress_dispose.call( this );
+//     this.fetch_progress
+//       = ValueMax.Percentage.Aggregate.Pool.get_or_create_by();
+//   }
 
-  /**
-   * @param {GSheets_UrlComposer} this
-   */
-  static fetch_progress_dispose() {
-    if ( this.fetch_progress ) {
-      this.fetch_progress.disposeResources_and_recycleToPool();
-      this.fetch_progress = null;
-    }
-  }
+//   /**
+//    * @param {GSheets_UrlComposer} this
+//    */
+//   static fetch_progress_dispose() {
+//     if ( this.fetch_progress ) {
+//       this.fetch_progress.disposeResources_and_recycleToPool();
+//       this.fetch_progress = null;
+//     }
+//   }
 
 
-  /**
-   * @param {GSheets_UrlComposer} this
-   * @param {string} funcNameInMessage   The caller function name. (e.g. init_async)
-   */
-  static throw_if_fetching( funcNameInMessage ) {
-    if (   ( this.fetch_async_running )
-        || ( this.fetch_asyncGenerator_running ) )
-      throw Error( `GSheets.UrlComposer.${funcNameInMessage}(): `
-        + `should not be executed while still fetching.` );
-  }
+//   /**
+//    * @param {GSheets_UrlComposer} this
+//    * @param {string} funcNameInMessage   The caller function name. (e.g. init_async)
+//    */
+//   static throw_if_fetching( funcNameInMessage ) {
+//     if (   ( this.fetch_async_running )
+//         || ( this.fetch_asyncGenerator_running ) )
+//       throw Error( `GSheets.UrlComposer.${funcNameInMessage}(): `
+//         + `should not be executed while still fetching.` );
+//   }
 
-  /**
-   * @param {GSheets_UrlComposer} this
-   * @param {boolean} b_still_running    If true, throw exception.
-   * @param {string} funcNameInMessage   The caller function name. (e.g. init_async)
-   */
-  static throw_if_an_old_still_running( b_still_running, funcNameInMessage ) {
-    if ( b_still_running )
-      throw Error( `GSheets.UrlComposer.${funcNameInMessage}(): `
-        + `An old .${funcNameInMessage}() is still running.` );
-  }
+//   /**
+//    * @param {GSheets_UrlComposer} this
+//    * @param {boolean} b_still_running    If true, throw exception.
+//    * @param {string} funcNameInMessage   The caller function name. (e.g. init_async)
+//    */
+//   static throw_if_an_old_still_running( b_still_running, funcNameInMessage ) {
+//     if ( b_still_running )
+//       throw Error( `GSheets.UrlComposer.${funcNameInMessage}(): `
+//         + `An old .${funcNameInMessage}() is still running.` );
+//   }
 
-  /**
-   * @param {GSheets_UrlComposer} this
-   * @param {boolean} b                  If false, throw exception.
-   * @param {string} funcNameInMessage   The caller function name. (e.g. init_async)
-   * @param {string} funcNameShouldBeCalledInMessage
-   *   The function name which should be called instead. (e.g. init_promise_create)
-   */
-  static throw_call_another_if_false(
-    b, funcNameInMessage, funcNameShouldBeCalledInMessage ) {
+//   /**
+//    * @param {GSheets_UrlComposer} this
+//    * @param {boolean} b                  If false, throw exception.
+//    * @param {string} funcNameInMessage   The caller function name. (e.g. init_async)
+//    * @param {string} funcNameShouldBeCalledInMessage
+//    *   The function name which should be called instead. (e.g. init_promise_create)
+//    */
+//   static throw_call_another_if_false(
+//     b, funcNameInMessage, funcNameShouldBeCalledInMessage ) {
 
-    if ( !b )
-      throw Error( `GSheets.UrlComposer.${funcNameInMessage}(): `
-        + `Please call .${funcNameShouldBeCalledInMessage}() instead.` );
-  }
+//     if ( !b )
+//       throw Error( `GSheets.UrlComposer.${funcNameInMessage}(): `
+//         + `Please call .${funcNameShouldBeCalledInMessage}() instead.` );
+//   }
 
 }
