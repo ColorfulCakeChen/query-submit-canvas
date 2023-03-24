@@ -86,6 +86,10 @@ let asyncGenerator_Guardian_RecyclableBase
     this.#getter_name_of_async_running
       = `${name_prefix}_async_running`;
 
+
+    this.#name_of_asyncGenerator_create_without_checking_precondition
+      = `${name_prefix}_asyncGenerator_create_without_checking_precondition`;
+
     // Define read-only properties (for the two flags) as the specified names.
     {
       Reflect.defineProperty( this,
