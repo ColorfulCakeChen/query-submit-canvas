@@ -41,8 +41,15 @@ function AsyncGuarder_RecyclableBase(
   const name_of_asyncPromise_guarded
     = `${name_prefix}_asyncPromise_guarded`;
 
+
   const name_of_asyncPromise_progress
     = `${name_prefix}_asyncPromise_progress`;
+
+  const name_of_asyncPromise_progress_create
+    = `${name_prefix}_asyncPromise_progress_create`;
+
+  const name_of_asyncPromise_progress_dispose
+    = `${name_prefix}_asyncPromise_progress_dispose`;
 
 
   // These static methods are defined in parent class (i.e. AsyncGuarder_Base),
@@ -163,8 +170,9 @@ function AsyncGuarder_RecyclableBase(
     /**
      * @param {AsyncGuarder_RecyclableBase} this
      */
-    static asyncPromise_progress_create() {
-      AsyncGuarder_RecyclableBase.asyncPromise_progress_dispose.call( this );
+    static [ name_of_asyncPromise_progress_create ]() {
+      AsyncGuarder_RecyclableBase
+        [ name_of_asyncPromise_progress_dispose ].call( this );
       this.#asyncPromise_progress
         = ValueMax.Percentage.Aggregate.Pool.get_or_create_by();
     }
@@ -172,7 +180,7 @@ function AsyncGuarder_RecyclableBase(
     /**
      * @param {AsyncGuarder_RecyclableBase} this
      */
-    static asyncPromise_progress_dispose() {
+    static [ name_of_asyncPromise_progress_dispose ]() {
       if ( this.#asyncPromise_progress ) {
         this.#asyncPromise_progress.disposeResources_and_recycleToPool();
         this.#asyncPromise_progress = null;
@@ -181,7 +189,8 @@ function AsyncGuarder_RecyclableBase(
 
 
     /**
-     * Create Xxx_async (an auto-loop instance of guarded underlied asyn generator).
+     * Create Xxx_asyncPromise (an auto-looping instance of guarded underlied
+     * async generator).
      *
      * Note: The this.#asyncPromise_progress will record progress of this method.
      *
@@ -208,7 +217,7 @@ function AsyncGuarder_RecyclableBase(
       let asyncGenerator;
       {
         // Use internal independent progress.
-        AsyncGuarder_RecyclableBase.asyncPromise_progress_create
+        AsyncGuarder_RecyclableBase[ name_of_asyncPromise_progress_create ]
           .call( this );
 
         // Prepare asyncGenerator
