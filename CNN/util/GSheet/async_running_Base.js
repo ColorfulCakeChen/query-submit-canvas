@@ -9,16 +9,17 @@ import * as ValueMax from "./ValueMax.js";
 //!!! ...unfinished... (2023/03/23)
 
 /**
+ * A wrapper class for preventing an underlied async generator from being
+ * reentered.
  *
  *
- *
- * @member {AsyncGeneratorFunction} underlie_asyncGenerator_func
- *   The function to create underlie async generator which wants to be guarded
- * by the .Xxx_asyncGenerator_running boolean flag.
+ * @member {AsyncGeneratorFunction} underlied_asyncGenerator_func
+ *   The function to create a underlied async generator which wants to be
+ * guarded by the .Xxx_asyncGenerator_running boolean flag.
  *
  * @member {boolean} Xxx_asyncGenerator_running
- *   If true, a underlie async generator (i.e. .Xxx_asyncGenerator()) is still
- * executing. Please wait it becoming false if wanting to call
+ *   If true, a underlied async generator (i.e. .Xxx_asyncGenerator_guarded())
+ * is still executing. Please wait it becoming false if wanting to call
  * .Xxx_asyncGenerator_create() again. The Xxx is name_prefix.
  *
 
@@ -29,7 +30,7 @@ let async_running_Base
   = ( ParentClass = Object ) => class async_running_Base
       extends ParentClass {
 
-  #underlie_asyncGenerator_func;
+  #underlied_asyncGenerator_func;
 
   // Whether an async generator executing.
   #asyncGenerator_running;
@@ -50,28 +51,28 @@ let async_running_Base
    * or "versus_load")
    */
   constructor(
-    name_prefix, underlie_asyncGenerator_func, ...restArgs ) {
+    name_prefix, underlied_asyncGenerator_func, ...restArgs ) {
 
     super( ...restArgs );
     async_running_Base.setAsConstructor_self.call( this,
-      name_prefix, underlie_asyncGenerator_func );
+      name_prefix, underlied_asyncGenerator_func );
   }
 
   /** @override */
   static setAsConstructor(
-    name_prefix, underlie_asyncGenerator_func, ...restArgs ) {
+    name_prefix, underlied_asyncGenerator_func, ...restArgs ) {
 
     super.setAsConstructor.apply( this, restArgs );
     async_running_Base.setAsConstructor_self.call( this,
-      name_prefix, underlie_asyncGenerator_func );
+      name_prefix, underlied_asyncGenerator_func );
     return this;
   }
 
   /** @override */
-  static setAsConstructor_self( name_prefix, underlie_asyncGenerator_func ) {
+  static setAsConstructor_self( name_prefix, underlied_asyncGenerator_func ) {
 
 //!!! ...unfinished... (2023/03/24)    
-//    underlie_asyncGenerator_func
+//    underlied_asyncGenerator_func
 
     this.#getter_name_of_asyncGenerator_running
       = `${name_prefix}_asyncGenerator_running`;
@@ -163,14 +164,14 @@ let async_running_Base
 
 //!!!
   /**
-   * Property descriptor for guarded underlie async generator.
+   * Property descriptor for guarded underlied async generator.
    *
-   * @param {AsyncGenerator} underlie_asyncGenerator
-   *   The underlie async generator which wants to be guarded by the
+   * @param {AsyncGenerator} underlied_asyncGenerator
+   *   The underlied async generator which wants to be guarded by the
    * .Xxx_asyncGenerator_running boolean flag.
    */
   static propertyDescriptor_asyncGenerator_guarded = { value: async* (
-    underlie_asyncGenerator ) {
+    underlied_asyncGenerator ) {
 
     { // Checking pre-condition.
       const funcNameInMessage = "JSON_ColumnMajorArrayArray_fetch_asyncGenerator";
@@ -182,11 +183,11 @@ let async_running_Base
 
     try {
       // 1.
-      let fetcher_underlie = this.urlComposer
+      let fetcher_underlied = this.urlComposer
         .JSON_ColumnMajorArrayArray_fetch_asyncGenerator(
           progressParent, params_loading_retryWaiting );
 
-      let ColumnMajorArrayArray = yield *fetcher_underlie;
+      let ColumnMajorArrayArray = yield *fetcher_underlied;
 
       // 2.
       if ( delayPromise )
