@@ -261,16 +261,17 @@ class TestCase {
     );
 
 //!!! ...unfinished... (2023/03/22)
-// should test .JSON_ColumnMajorArrayArray_fetcher_create()
-// and .JSON_ColumnMajorArrayArray_fetch_promise_create()
+// should test .JSON_ColumnMajorArrayArray_fetch_asyncGenerator_create()
+// and .JSON_ColumnMajorArrayArray_fetch_asyncPromise_create()
 
     let delayPromise = PartTime.Promise_resolvable_rejectable_create();
 
-    let fetcher = urlComposer.JSON_ColumnMajorArrayArray_fetcher_create(
-      progressFetch, params_loading_retryWaiting, delayPromise );
+    let fetcher = urlComposer
+      .JSON_ColumnMajorArrayArray_fetch_asyncGenerator_create(
+        progressFetch, params_loading_retryWaiting, delayPromise );
 
 //!!! ...unfinished... (2023/03/22)
-// What if .JSON_ColumnMajorArrayArray_fetch_promise_create()
+// What if .JSON_ColumnMajorArrayArray_fetch_asyncPromise_create()
 
     if ( !urlComposer.fetch_asyncGenerator_running )
       throw Error( `GSheets_tester.TestCase`
@@ -282,12 +283,13 @@ class TestCase {
 //!!! ...unfinished... (2023/03/22)
     // Test reenter.
     {
-      // Test: Reenter .JSON_ColumnMajorArrayArray_fetch_promise_create()
+      // Test: Reenter .JSON_ColumnMajorArrayArray_fetch_asyncPromise_create()
       //       should throw exception.
       try {
-        urlComposer.JSON_ColumnMajorArrayArray_fetch_promise_create();
+        urlComposer.JSON_ColumnMajorArrayArray_fetch_asyncPromise_create();
       } catch ( e ) {
-        if ( e.message.indexOf( ".JSON_ColumnMajorArrayArray_fetch_promise_create():" ) > 0 ) {
+        if ( e.message.indexOf(
+               ".JSON_ColumnMajorArrayArray_fetch_asyncPromise_create():" ) > 0 ) {
           progressToAdvance.value_advance();
           yield progressRoot;
         } else { // Unknown error, said loudly.
@@ -296,12 +298,13 @@ class TestCase {
         }
       }
 
-      // Test: Reenter .JSON_ColumnMajorArrayArray_fetcher_create()
+      // Test: Reenter .JSON_ColumnMajorArrayArray_fetch_asyncGenerator_create()
       //       should throw exception.
       try {
-        urlComposer.JSON_ColumnMajorArrayArray_fetcher_create();
+        urlComposer.JSON_ColumnMajorArrayArray_fetch_asyncGenerator_create();
       } catch ( e ) {
-        if ( e.message.indexOf( ".JSON_ColumnMajorArrayArray_fetcher_create():" ) > 0 ) {
+        if ( e.message.indexOf(
+               ".JSON_ColumnMajorArrayArray_fetch_asyncGenerator_create():" ) > 0 ) {
           progressToAdvance.value_advance();
           yield progressRoot;
         } else { // Unknown error, said loudly.
