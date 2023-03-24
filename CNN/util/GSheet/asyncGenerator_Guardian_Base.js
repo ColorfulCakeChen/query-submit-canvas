@@ -6,9 +6,6 @@ import * as Pool from "../../util/Pool.js";
 //import * as Recyclable from "../../util/Recyclable.js";
 //import * as ValueMax from "./ValueMax.js";
 
-
-//!!! ...unfinished... (2023/03/23)
-
 /**
  * A wrapper class for preventing an underlied async generator from being
  * reentered.
@@ -28,10 +25,6 @@ import * as Pool from "../../util/Pool.js";
  *   A method for creating the underlied async generator. If an old instnace
  * is still executing, it will throw exception.
  *
-
-//!!! ...unfinished... (2023/03/24)
-
- *
  * @member {Function} Xxx_throw_if_async_or_asyncGenerator_running
  *   A static method for throwing excption if .XXX_async_running or
  * .XXX_asyncGenerator_running is true.
@@ -50,6 +43,7 @@ let asyncGenerator_Guardian_Base
   #name_of_async_running;
   #name_of_asyncGenerator_running;
   #name_of_asyncGenerator_create;
+  #name_of_asyncGenerator_create_without_checking_precondition;
   #name_of_asyncGenerator_guarded;
   #name_of_throw_if_async_or_asyncGenerator_running
 
@@ -100,6 +94,9 @@ let asyncGenerator_Guardian_Base
     this.#name_of_asyncGenerator_create
       = `${name_prefix}_asyncGenerator_create`;
 
+    this.#name_of_asyncGenerator_create_without_checking_precondition
+      = `${name_prefix}_asyncGenerator_create_without_checking_precondition`;
+
     this.#name_of_asyncGenerator_guarded
       = `${name_prefix}_asyncGenerator_guarded`;
 
@@ -125,6 +122,19 @@ let asyncGenerator_Guardian_Base
 
     // Define static (i.e. this.constructor's) properties.
     {
+
+//!!! ...unfinished... (2023/03/24)    
+// needs Xxx_asyncGenerator_create_without_checking_precondition().
+  /**
+   * Property descriptor for Xxx_throw_if_async_or_asyncGenerator_running().
+   */
+
+      // Xxx_throw_if_async_or_asyncGenerator_running()
+      Reflect.defineProperty( this.constructor,
+        this.#name_of_asyncGenerator_create_without_checking_precondition,
+        asyncGenerator_Guardian_Base
+          .propertyDescriptor_of_asyncGenerator_create_without_checking_precondition );
+
       // Xxx_throw_if_async_or_asyncGenerator_running()
       Reflect.defineProperty( this.constructor,
         this.#name_of_throw_if_async_or_asyncGenerator_running,
@@ -141,12 +151,16 @@ let asyncGenerator_Guardian_Base
     Reflect.deleteProperty( this,
       this.#name_of_throw_if_async_or_asyncGenerator_running );
 
+    Reflect.deleteProperty( this,
+      this.#name_of_asyncGenerator_create_without_checking_precondition );
+
     Reflect.deleteProperty( this, this.#name_of_asyncGenerator_create );
 
     Reflect.deleteProperty( this, this.#name_of_asyncGenerator_running );
 
     this.#name_of_throw_if_async_or_asyncGenerator_running = undefined;
     this.#name_of_asyncGenerator_guarded = undefined;
+    this.#name_of_asyncGenerator_create_without_checking_precondition = undefined;
     this.#name_of_asyncGenerator_create = undefined;
     this.#name_of_asyncGenerator_running = undefined;
     this.#name_of_async_running = undefined;
@@ -199,6 +213,14 @@ let asyncGenerator_Guardian_Base
   }
 
   /**
+   * Property descriptor for Xxx_throw_if_async_or_asyncGenerator_running().
+   */
+  static propertyDescriptor_of_asyncGenerator_create_without_checking_precondition = {
+    value: asyncGenerator_Guardian_Base
+             .asyncGenerator_create_without_checking_precondition
+  };
+
+  /**
    *
    * @param {asyncGenerator_Guardian_Base} this
    *
@@ -247,7 +269,7 @@ let asyncGenerator_Guardian_Base
 
 
   /**
-   * Property descriptor for throw_if_Xxx_async_or_asyncGenerator_running().
+   * Property descriptor for Xxx_throw_if_async_or_asyncGenerator_running().
    */
   static propertyDescriptor_of_throw_if_async_or_asyncGenerator_running = {
     value: asyncGenerator_Guardian_Base.throw_if_async_or_asyncGenerator_running

@@ -6,18 +6,20 @@ import * as Recyclable from "../../util/Recyclable.js";
 import * as ValueMax from "./ValueMax.js";
 import { asyncGenerator_Guardian_Base } from "./asyncGenerator_Guardian_Base.js";
 
-
-//!!! ...unfinished... (2023/03/23)
-
 /**
+ * A recyclable wrapper class for preventing an underlied async generator from
+ * being reentered.
  *
  *
  *
+ * @member {boolean} Xxx_async_running
+ *   If true, a underlied async method (i.e. .Xxx_async()) is still executing.
+ * Please wait it becoming false if wanting to call .Xxx_promise_create()
+ * again. The Xxx is name_prefix.
  *
- * @member {boolean} async_running
- *   If true, a .Xxx_async() is still executing. Please wait it becoming false
- * if wanting to call .Xxx_async() again. From outside caller's view, this
- * property is represented by a getter named as name_of_async_running.
+ * @member {Function} Xxx_promise_create
+ *   A method for creating the underlied async method. If an old instnace
+ * is still executing, it will throw exception.
  *
 
 //!!! ...unfinished... (2023/03/23)
@@ -60,22 +62,26 @@ let asyncGenerator_Guardian_RecyclableBase
    *   The prefix for all async operations and flags. (e.g. "init" or "fetch"
    * or "versus_load")
    */
-  constructor( name_prefix, ...restArgs ) {
+  constructor(
+    name_prefix, underlied_asyncGenerator_func, ...restArgs ) {
 
-    super( name_prefix, ...restArgs );
-    asyncGenerator_Guardian_RecyclableBase.setAsConstructor_self.call( this, name_prefix );
+    super( name_prefix, underlied_asyncGenerator_func, ...restArgs );
+    asyncGenerator_Guardian_RecyclableBase.setAsConstructor_self.call( this,
+      name_prefix, underlied_asyncGenerator_func );
   }
 
   /** @override */
-  static setAsConstructor( name_prefix, ...restArgs ) {
+  static setAsConstructor( name_prefix, underlied_asyncGenerator_func, ...restArgs ) {
 
-    super.setAsConstructor.call( this, name_prefix,...restArgs );
-    asyncGenerator_Guardian_RecyclableBase.setAsConstructor_self.call( this, name_prefix );
+    super.setAsConstructor.call( this,
+      name_prefix, underlied_asyncGenerator_func, ...restArgs );
+    asyncGenerator_Guardian_RecyclableBase.setAsConstructor_self.call( this,
+      name_prefix, underlied_asyncGenerator_func );
     return this;
   }
 
   /** @override */
-  static setAsConstructor_self( name_prefix ) {
+  static setAsConstructor_self( name_prefix, underlied_asyncGenerator_func ) {
 
     this.#getter_name_of_async_running
       = `${name_prefix}_async_running`;
