@@ -128,8 +128,6 @@ let asyncGenerator_Guardian_Base
   /** @override */
   disposeResources() {
 
-//!!! ...unfinished... (2023/03/24)
-
     Reflect.deleteProperty( this,
       this.#name_of_throw_if_asyncPromise_or_asyncGenerator_running );
 
@@ -303,8 +301,6 @@ let asyncGenerator_Guardian_Base
       throw Error( `${mostDerivedClassName}.${funcNameInMessage}(): `
         + `Please call .${funcNameShouldBeCalledInMessage}() instead.` );
   }
-
-//!!! ...unfinished... (2023/03/24)
 
 }
 
