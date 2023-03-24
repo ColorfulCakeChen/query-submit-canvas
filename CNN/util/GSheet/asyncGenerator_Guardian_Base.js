@@ -15,7 +15,8 @@ import * as ValueMax from "./ValueMax.js";
  *
  * @member {AsyncGeneratorFunction} underlied_asyncGenerator_func
  *   The function to create a underlied async generator which wants to be
- * guarded by the .Xxx_asyncGenerator_running boolean flag.
+ * guarded by the .Xxx_asyncGenerator_running boolean flag. It will be called
+ * with thisArg as "this".
  *
  * @member {boolean} Xxx_asyncGenerator_running
  *   If true, a underlied async generator (i.e. .Xxx_asyncGenerator_guarded())
