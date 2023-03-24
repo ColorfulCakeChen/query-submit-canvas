@@ -14,20 +14,17 @@ import { asyncGenerator_Guardian_Base } from "./asyncGenerator_Guardian_Base.js"
  *
  * @member {boolean} Xxx_async_running
  *   If true, a underlied async method (i.e. .Xxx_async()) is still executing.
- * Please wait it becoming false if wanting to call .Xxx_promise_create()
+ * Please wait it becoming false if wanting to call .Xxx_asyncPromise_create()
  * again. The Xxx is name_prefix.
  *
- * @member {Function} Xxx_promise_create
+ * @member {Function} Xxx_asyncPromise_create
  *   A method for creating the underlied async method. If an old instnace
  * is still executing, it will throw exception.
  *
-
-//!!! ...unfinished... (2023/03/23)
-
  * @member {ValueMax.Percentage.Aggregate} Xxx_async_progress
  *   The progress of .Xxx_async(). If ( .Xxx_async_progress.valuePercentage == 100 ),
  * the .Xxx_async() has done.
- *   - It is used only if .Xxx_promise_create() is called.
+ *   - It is used only if .Xxx_asyncPromise_create() is called.
  *   - It is not used if .Xxx_asyncGenerator_create() is called directly. In this
  *       case, its progressParent parameter will be used instead.
  */
@@ -47,7 +44,7 @@ let asyncGenerator_Guardian_RecyclableBase
   #async_progress;
 
   #name_of_async_running;
-  #name_of_promise_create;
+  #name_of_asyncPromise_create;
 
   #name_of_async_progress;
 
@@ -90,8 +87,8 @@ let asyncGenerator_Guardian_RecyclableBase
     this.#name_of_async_running
       = `${name_prefix}_async_running`;
 
-    this.#name_of_promise_create
-      = `${name_prefix}_promise_create`;
+    this.#name_of_asyncPromise_create
+      = `${name_prefix}_asyncPromise_create`;
 
     this.#name_of_async_progress
       = `${name_prefix}_async_progress`;
@@ -113,11 +110,11 @@ let asyncGenerator_Guardian_RecyclableBase
 
     // Define shared instance (i.e. this.constructor.prototype's) properties.
     {
-      // Xxx_promise_create()
+      // Xxx_asyncPromise_create()
       Reflect.defineProperty( this.constructor.prototype,
-        this.#name_of_promise_create,
+        this.#name_of_asyncPromise_create,
         asyncGenerator_Guardian_RecyclableBase
-          .propertyDescriptor_of_promise_create );
+          .propertyDescriptor_of_asyncPromise_create );
     }
 
     // Define static (i.e. this.constructor's) properties.
@@ -130,11 +127,11 @@ let asyncGenerator_Guardian_RecyclableBase
   disposeResources() {
 
     Reflect.deleteProperty( this, this.#name_of_async_progress );
-    Reflect.deleteProperty( this, this.#name_of_promise_create );
+    Reflect.deleteProperty( this, this.#name_of_asyncPromise_create );
     Reflect.deleteProperty( this, this.#name_of_async_running );
 
     this.#name_of_async_progress = undefined;
-    this.#name_of_promise_create = undefined;
+    this.#name_of_asyncPromise_create = undefined;
     this.#name_of_async_running = undefined;
 
     asyncGenerator_Guardian_RecyclableBase.async_progress_dispose.call( this );
@@ -184,10 +181,10 @@ let asyncGenerator_Guardian_RecyclableBase
 
 
   /**
-   * Property descriptor for Xxx_promise_create().
+   * Property descriptor for Xxx_asyncPromise_create().
    */
-  static propertyDescriptor_of_promise_create = {
-    value: asyncGenerator_Guardian_Base.promise_create
+  static propertyDescriptor_of_asyncPromise_create = {
+    value: asyncGenerator_Guardian_Base.asyncPromise_create
   };
 
   /**
@@ -197,14 +194,14 @@ let asyncGenerator_Guardian_RecyclableBase
    *
    *
    * @return {Promise}
-   *   Return the newly created .Xxx_async() promise.
+   *   Return the newly created .guarded_async() promise.
    */
-  static promise_create( ...restArgs ) {
+  static asyncPromise_create( ...restArgs ) {
 
     // Note: The .throw_if_Xxx() static methods are defined in the parent classs.
 
     { // Checking pre-condition.
-      const funcNameInMessage = this.#name_of_promise_create;
+      const funcNameInMessage = this.#name_of_asyncPromise_create;
 
       asyncGenerator_Guardian_RecyclableBase.throw_if_an_old_still_running
         .call( this, this.#async_running, funcNameInMessage );
@@ -232,31 +229,28 @@ let asyncGenerator_Guardian_RecyclableBase
 //!!! ...unfinished... (2023/03/24)
     // 2.
     return GSheets_UrlComposer
-      .JSON_ColumnMajorArrayArray_fetch_promise_create_without_checking_precondition
+      .JSON_ColumnMajorArrayArray_fetch_asyncPromise_create_without_checking_precondition
       .call( this, fetcher );
   }
 
 //!!! ...unfinished... (2023/03/24)
   /**
    *
-   * @param {GSheets_UrlComposer} this
+   * @param {asyncGenerator_Guardian_Base} this
    *
-   * @param {AsyncGenerator} fetcher
+   * @param {AsyncGenerator} asyncGenerator
    *   The async generator (an instance of
-   * .JSON_ColumnMajorArrayArray_fetch_asyncGenerator()) to be wrapped by the
+   * .guarded_underlined_asyncGenerator()) to be wrapped by the
    * created promise.
    *
-   * @return {Promise( Array[] )}
-   *   Return the newly created JSON_ColumnMajorArrayArray_fetch_promise which
-   * is an instance of .JSON_ColumnMajorArrayArray_fetch_async().
+   * @return {Promise}
+   *   Return the newly created .guarded_async() promise.
    */
-  static JSON_ColumnMajorArrayArray_fetch_promise_create_without_checking_precondition(
-    fetcher ) {
-
-    this.fetch_async_running = true;
-    let fetch_promise = GSheets_UrlComposer
-      .JSON_ColumnMajorArrayArray_fetch_async.call( this, fetcher );
-    return JSON_ColumnMajorArrayArray_fetch_promise;
+  static asyncPromise_create_without_checking_precondition( asyncGenerator ) {
+    this.#async_running = true;
+    let asyncPromise = asyncGenerator_Guardian_Base.guarded_async.call( this,
+      asyncGenerator );
+    return asyncPromise;
   }
 
 //!!! ...unfinished... (2023/03/24)
@@ -274,14 +268,14 @@ let asyncGenerator_Guardian_RecyclableBase
    *   - Resolved to ( a two dimension (column-major) array ) when successful.
    *   - Resolved to ( null ) when failed.
    */
-  static async JSON_ColumnMajorArrayArray_fetch_async( fetcher ) {
+  static async guarded_async( fetcher ) {
 
     { // Checking pre-condition.
       const funcNameInMessage = "JSON_ColumnMajorArrayArray_fetch_async";
 
       GSheets_UrlComposer.throw_call_another_if_false.call( this,
         this.fetch_async_running, funcNameInMessage,
-        "JSON_ColumnMajorArrayArray_fetch_promise_create" );
+        "JSON_ColumnMajorArrayArray_fetch_asyncPromise_create" );
     }
 
     try {

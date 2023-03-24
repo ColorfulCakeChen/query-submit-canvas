@@ -242,7 +242,7 @@ let asyncGenerator_Guardian_Base
     this.#asyncGenerator_running = true;
     let asyncGenerator = asyncGenerator_Guardian_Base
       .guarded_underlined_asyncGenerator.apply( this, restArgs );
-    return fetcher;
+    return asyncGenerator;
   }
 
   /**
