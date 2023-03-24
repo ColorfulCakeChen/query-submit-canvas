@@ -1,10 +1,10 @@
 export { asyncGenerator_Guardian_Base };
 export { asyncGenerator_Guardian_Root };
 
+import * as ClassHierarchyTools from "../../util/ClassHierarchyTools.js";
 import * as Pool from "../../util/Pool.js";
 //import * as Recyclable from "../../util/Recyclable.js";
 //import * as ValueMax from "./ValueMax.js";
-import * as ClassHierarchyTools from "../../util/ClassHierarchyTools.js";
 
 
 //!!! ...unfinished... (2023/03/23)
@@ -263,6 +263,7 @@ let asyncGenerator_Guardian_Base
   static throw_call_another_if_false(
     b, funcNameInMessage, funcNameShouldBeCalledInMessage ) {
 
+      ClassHierarchyTools.
 //!!! ...unfinished... (2023/03/24)    
 
     if ( !b )

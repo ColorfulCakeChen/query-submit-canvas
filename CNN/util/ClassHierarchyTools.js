@@ -19,9 +19,21 @@ function MostDerived_Prototype( x ) {
  * @param {Object} x
  *   The object to be queried.
  *
+ * @return {Function}
+ *   Return the class (i.e. constructor function) of the most derived
+ * class which the object x belongs to.
+ */
+function MostDerived_Class( x ) {
+  return x.constructor;
+}
+
+/**
+ * @param {Object} x
+ *   The object to be queried.
+ *
  * @return {string}
- *   Return the class name of the most derived class (which
- * is a sub-class of this class) of the object x.
+ *   Return the class name of the most derived class which the object x
+ * belongs to.
  */
 function MostDerived_ClassName( x ) {
   return x.constructor.name;
@@ -32,7 +44,8 @@ function MostDerived_ClassName( x ) {
  *   The object to be queried.
  *
  * @return {Object}
- *   Return the prototype of the 2nd most derived prototype of the object x.
+ *   Return the prototype of the 2nd most derived prototype which the object
+ * x belongs to.
  */
 function SecondMostDerived_Prototype( x ) {
   return Reflect.getPrototypeOf( x.constructor ).prototype;
@@ -44,7 +57,7 @@ function SecondMostDerived_Prototype( x ) {
  *
  * @return {Function}
  *   Return the class (i.e. constructor function) of the 2nd most derived
- * class of the object x.
+ * class which the object x belongs to.
  */
 function SecondMostDerived_Class( x ) {
   return SecondMostDerived_Prototype( x ).constructor;
@@ -56,7 +69,7 @@ function SecondMostDerived_Class( x ) {
  *
  * @return {string}
  *   Return the class (i.e. constructor function) name of the 2nd most
- * derived class of the object x.
+ * derived class which the object x belongs to.
  */
 function SecondMostDerived_ClassName( x ) {
   return SecondMostDerived_Class( x ).name;
