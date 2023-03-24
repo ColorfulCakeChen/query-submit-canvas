@@ -359,4 +359,3 @@ let asyncGenerator_Guardian_Base
  */
 class asyncGenerator_Guardian_Root extends asyncGenerator_Guardian_Base() {
 }
-

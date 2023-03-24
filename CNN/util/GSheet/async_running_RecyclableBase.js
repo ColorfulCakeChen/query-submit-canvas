@@ -188,12 +188,11 @@ let asyncGenerator_Guardian_RecyclableBase
 
 
 /**
- * Almost the same as asyncGenerator_Guardian_RecyclableBase class except its parent class
- * is fixed to Object. In other words, caller can not specify the parent class
- * of asyncGenerator_Guardian_RecyclableRoot (so it is named "Root" which can not have
- * parent class).
+ * Almost the same as asyncGenerator_Guardian_RecyclableBase class except its
+ * parent class is fixed to Object. In other words, caller can not specify the
+ * parent class of asyncGenerator_Guardian_RecyclableRoot (so it is named
+ * "Root" which can not have parent class).
  */
 class asyncGenerator_Guardian_RecyclableRoot
   extends asyncGenerator_Guardian_RecyclableBase() {
 }
-
