@@ -176,7 +176,6 @@ let asyncGenerator_Guardian_RecyclableBase
   }
 
 
-//!!! ...unfinished... (2023/03/24)
   /**
    * Property descriptor for Xxx_promise_create().
    */
@@ -196,14 +195,17 @@ let asyncGenerator_Guardian_RecyclableBase
   static promise_create( ...restArgs ) {
 
     { // Checking pre-condition.
-      const funcNameInMessage = "JSON_ColumnMajorArrayArray_fetch_promise_create";
+      const funcNameInMessage = this.#name_of_promise_create;
 
-      GSheets_UrlComposer.throw_if_an_old_still_running.call( this,
-        this.fetch_async_running, funcNameInMessage );
+      asyncGenerator_Guardian_RecyclableBase.throw_if_an_old_still_running
+        .call( this, this.#async_running, funcNameInMessage );
 
-      GSheets_UrlComposer.throw_if_fetching.call( this, funcNameInMessage );
+      asyncGenerator_Guardian_RecyclableBase
+        .throw_if_async_or_asyncGenerator_running
+        .call( this, funcNameInMessage );
     }
 
+//!!! ...unfinished... (2023/03/24)
     // 1.
     let fetcher;
     {
