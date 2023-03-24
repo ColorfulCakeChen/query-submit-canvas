@@ -51,7 +51,7 @@ function AsyncGuarder_Base(
     = `${name_prefix}_asyncGenerator_guarded`;
 
   const name_of_throw_if_asyncPromise_or_asyncGenerator_running
-    = `throw_if_${name_prefix}_asyncPromise_or_asyncGenerator_running`;
+    = `${name_prefix}_throw_if_asyncPromise_or_asyncGenerator_running`;
 
   return (
 
@@ -76,25 +76,15 @@ function AsyncGuarder_Base(
    *   A method for creating the underlied async generator. If an old instnace
    * is still executing, it will throw exception.
    *
-   * @member {Function} throw_if_Xxx_asyncPromise_or_asyncGenerator_running
-   *   A static method for throwing excption if .XXX_asyncPromise_running or
-   * .XXX_asyncGenerator_running is true.
+   * @member {Function} Xxx_throw_if_asyncPromise_or_asyncGenerator_running
+   *   A static method for throwing excption if .Xxx_asyncPromise_running or
+   * .Xxx_asyncGenerator_running is true.
    *
    */
   class AsyncGuarder_Base extends ParentClass {
 
     #asyncGenerator_running;
 
-  //!!! (2023/03/24 Remarked) Replaced by computed property names.
-  //  #underlied_asyncGenerator_func;
-  //
-  //   #name_of_asyncPromise_running;
-  //   #name_of_asyncGenerator_running;
-  //   #name_of_asyncGenerator_create;
-  //   #name_of_asyncGenerator_guarded;
-  //   #name_of_throw_if_asyncPromise_or_asyncGenerator_running;
-
-//!!! ...unfinshed... (2023/03/24) seems not so necessary.
     static [ name_of_underlied_asyncGenerator_func ]
       = underlied_asyncGenerator_func;
 
@@ -102,14 +92,12 @@ function AsyncGuarder_Base(
      *
      */
     constructor( ...restArgs ) {
-
       super( ...restArgs );
       AsyncGuarder_Base.setAsConstructor_self.call( this );
     }
 
     /** @override */
     static setAsConstructor( ...restArgs ) {
-
       super.setAsConstructor.apply( this, restArgs );
       AsyncGuarder_Base.setAsConstructor_self.call( this );
       return this;
@@ -230,7 +218,7 @@ function AsyncGuarder_Base(
           this.#asyncGenerator_running, funcNameInMessage,
           name_of_asyncGenerator_create );
       }
-!!!
+
       try {
         // 1.
         let underlied_asyncGenerator = AsyncGuarder_Base
@@ -254,7 +242,7 @@ function AsyncGuarder_Base(
      * @param {AsyncGuarder_Base} this
      * @param {string} funcNameInMessage   The caller function name. (e.g. init_async)
      */
-    static [ `throw_if_${name_prefix}_asyncPromise_or_asyncGenerator_running` ](
+    static [ name_of_throw_if_asyncPromise_or_asyncGenerator_running ](
       funcNameInMessage ) {
 
       const mostDerivedClassName
