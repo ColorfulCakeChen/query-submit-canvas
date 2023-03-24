@@ -1,6 +1,6 @@
-export { ParentPrototype_of_Class };
-export { ParentClass_of_Class };
-export { ParentClassName_of_Class };
+export { Parent_Prototype_of_Class };
+export { Parent_Class_of_Class };
+export { Parent_ClassName_of_Class };
 
 export { MostDerived_Prototype_of_Instance };
 export { MostDerived_Class_of_Instance };
@@ -14,7 +14,7 @@ export { MostDerived_ClassName_of_Instance };
  * @return {Object}
  *   Return the prototype of the parent class which the aClass inherits from.
  */
-function ParentPrototype_of_Class( aClass ) {
+function Parent_Prototype_of_Class( aClass ) {
   return Reflect.getPrototypeOf( aClass ).prototype;
 }
 
@@ -26,8 +26,8 @@ function ParentPrototype_of_Class( aClass ) {
  *   Return the parent class (i.e. constructor function) which the aClass
  * inherits from.
  */
-function ParentClass_of_Class( aClass ) {
-  return ParentPrototype_of_Class( aClass ).constructor;
+function Parent_Class_of_Class( aClass ) {
+  return Parent_Prototype_of_Class( aClass ).constructor;
 }
 
 /**
@@ -38,8 +38,8 @@ function ParentClass_of_Class( aClass ) {
  *   Return the parent class (i.e. constructor function) name which the aClass
  * inherits from.
  */
-function ParentClassName_of_Class( aClass ) {
-  return ParentClass_of_Class( aClass ).name;
+function Parent_ClassName_of_Class( aClass ) {
+  return Parent_Class_of_Class( aClass ).name;
 }
 
 
