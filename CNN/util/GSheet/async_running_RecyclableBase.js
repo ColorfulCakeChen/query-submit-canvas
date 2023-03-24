@@ -1,10 +1,10 @@
-export { async_running_RecyclableBase };
-export { async_running_RecyclableRoot };
+export { asyncGenerator_Guardian_RecyclableBase };
+export { asyncGenerator_Guardian_RecyclableRoot };
 
 import * as Pool from "../../util/Pool.js";
 import * as Recyclable from "../../util/Recyclable.js";
 import * as ValueMax from "./ValueMax.js";
-import { async_running_Base } from "./async_running_Base.js";
+import { asyncGenerator_Guardian_Base } from "./asyncGenerator_Guardian_Base.js";
 
 
 //!!! ...unfinished... (2023/03/23)
@@ -29,18 +29,19 @@ import { async_running_Base } from "./async_running_Base.js";
  *   - If .JSON_ColumnMajorArrayArray_fetch_asyncGenerator() is called directly,
  *       its progressParent parameter will be used instead.
  */
-let async_running_RecyclableBase
-  = ( ParentClass = Object ) => class async_running_RecyclableBase
-      extends async_running_Base( Recyclable.Base( ParentClass ) ) {
+let asyncGenerator_Guardian_RecyclableBase
+  = ( ParentClass = Object ) => class asyncGenerator_Guardian_RecyclableBase
+      extends asyncGenerator_Guardian_Base( Recyclable.Base( ParentClass ) ) {
 
 //!!! (2023/03/23 Remarked)
 
   /**
-   * Used as default async_running_RecyclableBase provider for conforming to
-   * Recyclable interface.
+   * Used as default asyncGenerator_Guardian_RecyclableBase provider for
+   * conforming to Recyclable interface.
    */
-  static Pool = new Pool.Root( "async_running_RecyclableBase.Pool",
-    async_running_RecyclableBase, async_running_RecyclableBase.setAsConstructor );
+  static Pool = new Pool.Root( "asyncGenerator_Guardian_RecyclableBase.Pool",
+    asyncGenerator_Guardian_RecyclableBase,
+    asyncGenerator_Guardian_RecyclableBase.setAsConstructor );
 
   // Whether an async method executing.
   #async_running;
@@ -62,14 +63,14 @@ let async_running_RecyclableBase
   constructor( name_prefix, ...restArgs ) {
 
     super( name_prefix, ...restArgs );
-    async_running_RecyclableBase.setAsConstructor_self.call( this, name_prefix );
+    asyncGenerator_Guardian_RecyclableBase.setAsConstructor_self.call( this, name_prefix );
   }
 
   /** @override */
   static setAsConstructor( name_prefix, ...restArgs ) {
 
     super.setAsConstructor.call( this, name_prefix,...restArgs );
-    async_running_RecyclableBase.setAsConstructor_self.call( this, name_prefix );
+    asyncGenerator_Guardian_RecyclableBase.setAsConstructor_self.call( this, name_prefix );
     return this;
   }
 
@@ -83,7 +84,7 @@ let async_running_RecyclableBase
     {
       Reflect.defineProperty( this,
         this.#getter_name_of_async_running,
-        async_running_RecyclableBase.propertyDescriptor_async_running );
+        asyncGenerator_Guardian_RecyclableBase.propertyDescriptor_async_running );
     }
 
 //!!! ...unfinished... (2023/03/23)
@@ -108,9 +109,9 @@ let async_running_RecyclableBase
 
 
 //!!! ...unfinished... (2023/03/23)
-// Problem: these will force async_running_Base inheriting from Recyclable.
+// Problem: these will force asyncGenerator_Guardian_Base inheriting from Recyclable.
 //
-// Perhaps, separate to another class async_running_RecyclableBase.
+// Perhaps, separate to another class asyncGenerator_Guardian_RecyclableBase.
 
   /**
    * @param {GSheets_UrlComposer} this
@@ -144,11 +145,12 @@ let async_running_RecyclableBase
 
 
 /**
- * Almost the same as async_running_RecyclableBase class except its parent class
+ * Almost the same as asyncGenerator_Guardian_RecyclableBase class except its parent class
  * is fixed to Object. In other words, caller can not specify the parent class
- * of async_running_RecyclableRoot (so it is named "Root" which can not have
+ * of asyncGenerator_Guardian_RecyclableRoot (so it is named "Root" which can not have
  * parent class).
  */
-class async_running_RecyclableRoot extends async_running_RecyclableBase() {
+class asyncGenerator_Guardian_RecyclableRoot
+  extends asyncGenerator_Guardian_RecyclableBase() {
 }
 

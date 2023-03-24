@@ -1,5 +1,5 @@
-export { async_running_Base };
-export { async_running_Root };
+export { asyncGenerator_Guardian_Base };
+export { asyncGenerator_Guardian_Root };
 
 import * as Pool from "../../util/Pool.js";
 //import * as Recyclable from "../../util/Recyclable.js";
@@ -26,8 +26,8 @@ import * as ValueMax from "./ValueMax.js";
 //!!! ...unfinished... (2023/03/23)
 
  */
-let async_running_Base
-  = ( ParentClass = Object ) => class async_running_Base
+let asyncGenerator_Guardian_Base
+  = ( ParentClass = Object ) => class asyncGenerator_Guardian_Base
       extends ParentClass {
 
   #underlied_asyncGenerator_func;
@@ -54,7 +54,7 @@ let async_running_Base
     name_prefix, underlied_asyncGenerator_func, ...restArgs ) {
 
     super( ...restArgs );
-    async_running_Base.setAsConstructor_self.call( this,
+    asyncGenerator_Guardian_Base.setAsConstructor_self.call( this,
       name_prefix, underlied_asyncGenerator_func );
   }
 
@@ -63,7 +63,7 @@ let async_running_Base
     name_prefix, underlied_asyncGenerator_func, ...restArgs ) {
 
     super.setAsConstructor.apply( this, restArgs );
-    async_running_Base.setAsConstructor_self.call( this,
+    asyncGenerator_Guardian_Base.setAsConstructor_self.call( this,
       name_prefix, underlied_asyncGenerator_func );
     return this;
   }
@@ -81,7 +81,7 @@ let async_running_Base
     {
       Reflect.defineProperty( this,
         this.#getter_name_of_asyncGenerator_running,
-        async_running_Base.propertyDescriptor_asyncGenerator_running );
+        asyncGenerator_Guardian_Base.propertyDescriptor_asyncGenerator_running );
     }
   }
 
@@ -256,11 +256,11 @@ let async_running_Base
 
 
 /**
- * Almost the same as async_running_Base class except its parent class
+ * Almost the same as asyncGenerator_Guardian_Base class except its parent class
  * is fixed to Object. In other words, caller can not specify the parent class
- * of async_running_Root (so it is named "Root" which can not have
+ * of asyncGenerator_Guardian_Root (so it is named "Root" which can not have
  * parent class).
  */
-class async_running_Root extends async_running_Base() {
+class asyncGenerator_Guardian_Root extends asyncGenerator_Guardian_Base() {
 }
 
