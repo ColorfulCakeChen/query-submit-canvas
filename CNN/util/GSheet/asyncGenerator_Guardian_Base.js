@@ -102,6 +102,7 @@ let asyncGenerator_Guardian_Base
   /** @override */
   disposeResources() {
 
+    Reflect.deleteProperty( this, this.#name_of_guarded_asyncGenerator );
     Reflect.deleteProperty( this, this.#name_of_asyncGenerator_running );
 
     this.#name_of_guarded_asyncGenerator = undefined;
