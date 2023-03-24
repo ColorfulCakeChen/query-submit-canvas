@@ -224,7 +224,7 @@ let asyncGenerator_Guardian_RecyclableBase
       //       defined in the parent classs.
       asyncGenerator = asyncGenerator_Guardian_RecyclableBase
         .asyncGenerator_create_without_checking_precondition
-        .call( this, this.fetch_progress, ...restArgs );
+        .call( this, this.#async_progress, ...restArgs );
     }
 
 //!!! ...unfinished... (2023/03/24)
