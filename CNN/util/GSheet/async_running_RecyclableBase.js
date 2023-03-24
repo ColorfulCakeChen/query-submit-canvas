@@ -46,10 +46,12 @@ let asyncGenerator_Guardian_RecyclableBase
     asyncGenerator_Guardian_RecyclableBase.setAsConstructor );
 
   #async_running;
+  #async_progress;
 
   #name_of_async_running;
-  #name_of_asyncGenerator_create;
+  #name_of_promise_create;
 
+  #name_of_async_progress;
 
   /**
    *
@@ -84,12 +86,20 @@ let asyncGenerator_Guardian_RecyclableBase
     this.#name_of_promise_create
       = `${name_prefix}_promise_create`;
 
+    this.#name_of_async_progress
+      = `${name_prefix}_async_progress`;
+
     // Define read-only and enumerable instance (i.e. this.Xxx) properties.
     {
       // Xxx_async_running
       Reflect.defineProperty( this,
         this.#name_of_async_running,
-        asyncGenerator_Guardian_RecyclableBase.propertyDescriptor_async_running );
+        asyncGenerator_Guardian_RecyclableBase.propertyDescriptor_of_async_running );
+
+      // Xxx_async_progress`;
+      Reflect.defineProperty( this,
+        this.#name_of_async_progress,
+        asyncGenerator_Guardian_RecyclableBase.propertyDescriptor_of_async_progress );
     }
 
 //!!! ...unfinished... (2023/03/24)
@@ -111,13 +121,15 @@ let asyncGenerator_Guardian_RecyclableBase
   /** @override */
   disposeResources() {
 
-    asyncGenerator_Guardian_RecyclableBase.async_progress_dispose.call( this );
-
+    Reflect.deleteProperty( this, this.#name_of_async_progress );
     Reflect.deleteProperty( this, this.#name_of_promise_create );
     Reflect.deleteProperty( this, this.#name_of_async_running );
 
+    this.#name_of_async_progress = undefined;
     this.#name_of_promise_create = undefined;
     this.#name_of_async_running = undefined;
+
+    asyncGenerator_Guardian_RecyclableBase.async_progress_dispose.call( this );
 
     this.#async_running = undefined;
 
@@ -128,18 +140,27 @@ let asyncGenerator_Guardian_RecyclableBase
       super.disposeResources();
   }
 
+  /**
+   * Property descriptor for Xxx_async_running.
+   * (as enumerable read-only properties).
+   */
+  static propertyDescriptor_of_async_running = 
+    { get() { return this.#async_running; }, enumerable: true };
 
-//!!! ...unfinished... (2023/03/23)
-// Problem: these will force asyncGenerator_Guardian_Base inheriting from Recyclable.
-//
-// Perhaps, separate to another class asyncGenerator_Guardian_RecyclableBase.
+
+  /**
+   * Property descriptor for Xxx_async_progress.
+   * (as enumerable read-only properties).
+   */
+  static propertyDescriptor_of_async_progress = 
+    { get() { return this.#async_progress; }, enumerable: true };
 
   /**
    * @param {asyncGenerator_Guardian_RecyclableBase} this
    */
   static async_progress_create() {
     asyncGenerator_Guardian_RecyclableBase.async_progress_dispose.call( this );
-    this.async_progress
+    this.#async_progress
       = ValueMax.Percentage.Aggregate.Pool.get_or_create_by();
   }
 
@@ -147,9 +168,9 @@ let asyncGenerator_Guardian_RecyclableBase
    * @param {asyncGenerator_Guardian_RecyclableBase} this
    */
   static async_progress_dispose() {
-    if ( this.async_progress ) {
-      this.async_progress.disposeResources_and_recycleToPool();
-      this.async_progress = null;
+    if ( this.#async_progress ) {
+      this.#async_progress.disposeResources_and_recycleToPool();
+      this.#async_progress = null;
     }
   }
 

@@ -111,7 +111,7 @@ let asyncGenerator_Guardian_Base
       // Xxx_asyncGenerator_running
       Reflect.defineProperty( this,
         this.#name_of_asyncGenerator_running,
-        asyncGenerator_Guardian_Base.propertyDescriptor_asyncGenerator_running );
+        asyncGenerator_Guardian_Base.propertyDescriptor_of_asyncGenerator_running );
     }
 
     // Define shared instance (i.e. this.constructor.prototype's) properties.
@@ -179,12 +179,14 @@ let asyncGenerator_Guardian_Base
       super.disposeResources();
   }
 
+
   /**
    * Property descriptor for Xxx_asyncGenerator_running.
    * (as enumerable read-only properties).
    */
-  static propertyDescriptor_asyncGenerator_running = 
+  static propertyDescriptor_of_asyncGenerator_running = 
     { get() { return this.#asyncGenerator_running; }, enumerable: true };
+
 
   /**
    * Property descriptor for Xxx_asyncGenerator_create().
