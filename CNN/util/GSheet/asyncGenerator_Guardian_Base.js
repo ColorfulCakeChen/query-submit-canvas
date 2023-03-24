@@ -36,10 +36,8 @@ let asyncGenerator_Guardian_Base
 
   #underlied_asyncGenerator_func;
 
-  // Whether an async generator executing.
   #asyncGenerator_running;
 
-  // the properties' names.
   #name_of_async_running;
   #name_of_asyncGenerator_running;
   #name_of_asyncGenerator_create;
@@ -49,7 +47,7 @@ let asyncGenerator_Guardian_Base
 //  #name_of_asyncGenerator_create_without_checking_precondition;
 
   #name_of_asyncGenerator_guarded;
-  #name_of_throw_if_async_or_asyncGenerator_running
+  #name_of_throw_if_async_or_asyncGenerator_running;
 
 
   /**
@@ -79,7 +77,6 @@ let asyncGenerator_Guardian_Base
   /** @override */
   static setAsConstructor_self( name_prefix, underlied_asyncGenerator_func ) {
 
-//!!! ...unfinished... (2023/03/24)    
     this.#underlied_asyncGenerator_func = underlied_asyncGenerator_func;
 
     // Note:

@@ -45,15 +45,10 @@ let asyncGenerator_Guardian_RecyclableBase
     asyncGenerator_Guardian_RecyclableBase,
     asyncGenerator_Guardian_RecyclableBase.setAsConstructor );
 
-  // Whether an async method executing.
   #async_running;
 
-  // getters' names.
-  #getter_name_of_async_running;
-
-  // Property descriptor for the getters (as enumerable read-only properties).
-  static propertyDescriptor_of_async_running = 
-    { get() { return this.#async_running; }, enumerable: true };
+  #name_of_async_running;
+  #name_of_asyncGenerator_create;
 
 
   /**
@@ -83,30 +78,44 @@ let asyncGenerator_Guardian_RecyclableBase
   /** @override */
   static setAsConstructor_self( name_prefix, underlied_asyncGenerator_func ) {
 
-    this.#getter_name_of_async_running
+    this.#name_of_async_running
       = `${name_prefix}_async_running`;
 
+    this.#name_of_promise_create
+      = `${name_prefix}_promise_create`;
 
-    this.#name_of_asyncGenerator_create_without_checking_precondition
-      = `${name_prefix}_asyncGenerator_create_without_checking_precondition`;
-
-    // Define read-only properties (for the two flags) as the specified names.
+    // Define read-only and enumerable instance (i.e. this.Xxx) properties.
     {
+      // Xxx_async_running
       Reflect.defineProperty( this,
-        this.#getter_name_of_async_running,
+        this.#name_of_async_running,
         asyncGenerator_Guardian_RecyclableBase.propertyDescriptor_async_running );
     }
 
-//!!! ...unfinished... (2023/03/23)
+//!!! ...unfinished... (2023/03/24)
+    // Define shared instance (i.e. this.constructor.prototype's) properties.
+    {
+      // Xxx_promise_create()
+      Reflect.defineProperty( this.constructor.prototype,
+        this.#name_of_promise_create,
+        asyncGenerator_Guardian_RecyclableBase
+          .propertyDescriptor_of_promise_create );
+    }
+
+    // Define static (i.e. this.constructor's) properties.
+    {
+    }
 
   }
 
   /** @override */
   disposeResources() {
 
-    Reflect.deleteProperty( this, this.#getter_name_of_async_running );
+    Reflect.deleteProperty( this, this.#name_of_promise_create );
+    Reflect.deleteProperty( this, this.#name_of_async_running );
 
-    this.#getter_name_of_async_running = undefined;
+    this.#name_of_promise_create = undefined;
+    this.#name_of_async_running = undefined;
 
     this.#async_running = undefined;
 
