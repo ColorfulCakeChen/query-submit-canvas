@@ -5,72 +5,74 @@ export { SecondMostDerived_Class };
 export { SecondMostDerived_ClassName };
 
 /**
- * @param {Object} x
+ * @param {Object} anObject
  *   The object to be queried.
  *
  * @return {Object}
- *   Return the prototype of the most derived prototype of the object x.
+ *   Return the prototype of the most derived prototype of the object
+ * instance anObject.
  */
-function MostDerived_Prototype( x ) {
-  return x.constructor.prototype; // The same as Reflect.getPrototypeOf( x )
+function MostDerived_Prototype_of_instance( anObject ) {
+  // The same as Reflect.getPrototypeOf( anObject )
+  return anObject.constructor.prototype;
 }
 
 /**
- * @param {Object} x
+ * @param {Object} anObject
  *   The object to be queried.
  *
  * @return {Function}
  *   Return the class (i.e. constructor function) of the most derived
- * class which the object x belongs to.
+ * class which the object instance anObject belongs to.
  */
-function MostDerived_Class( x ) {
-  return x.constructor;
+function MostDerived_Class( anObject ) {
+  return anObject.constructor;
 }
 
 /**
- * @param {Object} x
+ * @param {Object} anObject
  *   The object to be queried.
  *
  * @return {string}
- *   Return the class name of the most derived class which the object x
- * belongs to.
+ *   Return the class name of the most derived class which the object instance
+ * anObject belongs to.
  */
-function MostDerived_ClassName( x ) {
-  return x.constructor.name;
+function MostDerived_ClassName( anObject ) {
+  return anObject.constructor.name;
 }
 
 /**
- * @param {Object} x
+ * @param {Object} anObject
  *   The object to be queried.
  *
  * @return {Object}
  *   Return the prototype of the 2nd most derived prototype which the object
- * x belongs to.
+ * instance anObject belongs to.
  */
-function SecondMostDerived_Prototype( x ) {
-  return Reflect.getPrototypeOf( x.constructor ).prototype;
+function SecondMostDerived_Prototype( anObject ) {
+  return Reflect.getPrototypeOf( anObject.constructor ).prototype;
 }
 
 /**
- * @param {Object} x
+ * @param {Object} anObject
  *   The object to be queried.
  *
  * @return {Function}
  *   Return the class (i.e. constructor function) of the 2nd most derived
- * class which the object x belongs to.
+ * class which the object instance anObject belongs to.
  */
-function SecondMostDerived_Class( x ) {
-  return SecondMostDerived_Prototype( x ).constructor;
+function SecondMostDerived_Class( anObject ) {
+  return SecondMostDerived_Prototype( anObject ).constructor;
 }
 
 /**
- * @param {Object} x
+ * @param {Object} anObject
  *   The object to be queried.
  *
  * @return {string}
  *   Return the class (i.e. constructor function) name of the 2nd most
- * derived class which the object x belongs to.
+ * derived class which the object instance anObject belongs to.
  */
-function SecondMostDerived_ClassName( x ) {
-  return SecondMostDerived_Class( x ).name;
+function SecondMostDerived_ClassName( anObject ) {
+  return SecondMostDerived_Class( anObject ).name;
 }
