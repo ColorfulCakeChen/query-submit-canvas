@@ -12,11 +12,14 @@ import * as ValueMax from "./ValueMax.js";
  *
  *
  *
- * @member {boolean} asyncGenerator_running
- *   If true, a .Xxx_asyncGenerator() is still executing. Please wait it
- * becoming false if wanting to call .Xxx_asyncGenerator() again. From outside
- * caller's view, this property is represented by a getter named as
- * name_of_asyncGenerator_running.
+ * @member {AsyncGeneratorFunction} underlie_asyncGenerator_func
+ *   The function to create underlie async generator which wants to be guarded
+ * by the .Xxx_asyncGenerator_running boolean flag.
+ *
+ * @member {boolean} Xxx_asyncGenerator_running
+ *   If true, a underlie async generator (i.e. .Xxx_asyncGenerator()) is still
+ * executing. Please wait it becoming false if wanting to call
+ * .Xxx_asyncGenerator_create() again. The Xxx is name_prefix.
  *
 
 //!!! ...unfinished... (2023/03/23)
@@ -26,6 +29,7 @@ let async_running_Base
   = ( ParentClass = Object ) => class async_running_Base
       extends ParentClass {
 
+  #underlie_asyncGenerator_func;
 
   // Whether an async generator executing.
   #asyncGenerator_running;
@@ -38,28 +42,36 @@ let async_running_Base
     { get() { return this.#asyncGenerator_running; }, enumerable: true };
 
 
+
   /**
    *
    * @param {string} name_prefix
    *   The prefix for all async operations and flags. (e.g. "init" or "fetch"
    * or "versus_load")
    */
-  constructor( name_prefix, ...restArgs ) {
+  constructor(
+    name_prefix, underlie_asyncGenerator_func, ...restArgs ) {
 
     super( ...restArgs );
-    async_running_Base.setAsConstructor_self.call( this, name_prefix );
+    async_running_Base.setAsConstructor_self.call( this,
+      name_prefix, underlie_asyncGenerator_func );
   }
 
   /** @override */
-  static setAsConstructor( name_prefix, ...restArgs ) {
+  static setAsConstructor(
+    name_prefix, underlie_asyncGenerator_func, ...restArgs ) {
 
     super.setAsConstructor.apply( this, restArgs );
-    async_running_Base.setAsConstructor_self.call( this, name_prefix );
+    async_running_Base.setAsConstructor_self.call( this,
+      name_prefix, underlie_asyncGenerator_func );
     return this;
   }
 
   /** @override */
-  static setAsConstructor_self( name_prefix ) {
+  static setAsConstructor_self( name_prefix, underlie_asyncGenerator_func ) {
+
+//!!! ...unfinished... (2023/03/24)    
+//    underlie_asyncGenerator_func
 
     this.#getter_name_of_asyncGenerator_running
       = `${name_prefix}_asyncGenerator_running`;
@@ -126,6 +138,7 @@ let async_running_Base
     return fetcher;
   }
 
+//!!!
   /**
    * Create an instance of .JSON_ColumnMajorArrayArray_fetch_asyncGenerator().
    *
@@ -147,6 +160,50 @@ let async_running_Base
     return fetcher;
   }
 
+
+//!!!
+  /**
+   * Property descriptor for guarded underlie async generator.
+   *
+   * @param {AsyncGenerator} underlie_asyncGenerator
+   *   The underlie async generator which wants to be guarded by the
+   * .Xxx_asyncGenerator_running boolean flag.
+   */
+  static propertyDescriptor_asyncGenerator_guarded = { value: async* (
+    underlie_asyncGenerator ) {
+
+    { // Checking pre-condition.
+      const funcNameInMessage = "JSON_ColumnMajorArrayArray_fetch_asyncGenerator";
+
+      GSheets_UrlComposer.throw_call_another_if_false.call( this,
+        this.fetch_asyncGenerator_running, funcNameInMessage,
+        "JSON_ColumnMajorArrayArray_fetcher_create" );
+    }
+
+    try {
+      // 1.
+      let fetcher_underlie = this.urlComposer
+        .JSON_ColumnMajorArrayArray_fetch_asyncGenerator(
+          progressParent, params_loading_retryWaiting );
+
+      let ColumnMajorArrayArray = yield *fetcher_underlie;
+
+      // 2.
+      if ( delayPromise )
+        await delayPromise;
+
+      return ColumnMajorArrayArray;
+
+    } catch ( e ) {
+      //debugger;
+      throw e;
+
+    } finally {
+      // 3. So that this async generator could be executed again.
+      this.fetch_asyncGenerator_running = false;
+    }
+  }
+  };
 
 
   /**
