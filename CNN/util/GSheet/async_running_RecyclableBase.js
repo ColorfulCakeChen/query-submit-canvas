@@ -121,9 +121,8 @@ let asyncGenerator_Guardian_RecyclableBase
     }
 
     // Define static (i.e. this.constructor's) properties.
-    {
-//!!! ...unfinished... (2023/03/24)
-    }
+    // {
+    // }
   }
 
   /** @override */
@@ -141,8 +140,6 @@ let asyncGenerator_Guardian_RecyclableBase
     asyncGenerator_Guardian_RecyclableBase.asyncPromise_progress_dispose.call( this );
 
     this.#asyncPromise_running = undefined;
-
-//!!! ...unfinished... (2023/03/23)
 
     // If parent class has the same method, call it.    
     if ( super.disposeResources instanceof Function )
@@ -270,7 +267,7 @@ let asyncGenerator_Guardian_RecyclableBase
    *   Return a promise resolved to .value of asyncGenerator.next()
    * { done: true, value }.
    */
-  static async guarded_async( fetcher ) {
+  static async guarded_async( asyncGenerator ) {
 
     // Note: The .throw_if_Xxx() static methods are defined in the parent classs.
 
@@ -283,20 +280,15 @@ let asyncGenerator_Guardian_RecyclableBase
         this.#name_of_asyncPromise_create );
     }
 
-//!!! ...unfinished... (2023/03/24)
     try {
       // 1.
-      if ( !fetcher )
-        throw Error( `GSheets.UrlComposer.${funcNameInMessage}(): `
-          + `fetcher should have already existed.` );
-
-      let fetcherNext;
+      let asyncGeneratorNext;
       do {
-        fetcherNext = await fetcher.next();
-      } while ( !fetcherNext.done );
+        asyncGeneratorNext = await asyncGenerator.next();
+      } while ( !asyncGeneratorNext.done );
 
-      let resultColumnMajorArrayArray = fetcherNext.value;
-      return resultColumnMajorArrayArray;
+      let result = asyncGeneratorNext.value;
+      return result;
 
     } catch ( e ) {
       //console.error( e );
@@ -305,7 +297,7 @@ let asyncGenerator_Guardian_RecyclableBase
 
     } finally {
       // 2. So that this async method could be executed again.
-      this.fetch_asyncPromise_running = false;
+      this.#asyncPromise_running = false;
     }
   }
 
