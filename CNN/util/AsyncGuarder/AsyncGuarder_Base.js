@@ -1,5 +1,5 @@
-export { async_Guardian_Base };
-export { async_Guardian_Root };
+export { AsyncGuarder_Base };
+export { AsyncGuarder_Root };
 
 import * as ClassHierarchyTools from "../../util/ClassHierarchyTools.js";
 import * as Pool from "../../util/Pool.js";
@@ -32,8 +32,8 @@ import * as Pool from "../../util/Pool.js";
  * .XXX_asyncGenerator_running is true.
  *
  */
-let async_Guardian_Base
-  = ( ParentClass = Object ) => class async_Guardian_Base
+let AsyncGuarder_Base
+  = ( ParentClass = Object ) => class AsyncGuarder_Base
       extends ParentClass {
 
   #underlied_asyncGenerator_func;
@@ -57,7 +57,7 @@ let async_Guardian_Base
     name_prefix, underlied_asyncGenerator_func, ...restArgs ) {
 
     super( ...restArgs );
-    async_Guardian_Base.setAsConstructor_self.call( this,
+    AsyncGuarder_Base.setAsConstructor_self.call( this,
       name_prefix, underlied_asyncGenerator_func );
   }
 
@@ -66,7 +66,7 @@ let async_Guardian_Base
     name_prefix, underlied_asyncGenerator_func, ...restArgs ) {
 
     super.setAsConstructor.apply( this, restArgs );
-    async_Guardian_Base.setAsConstructor_self.call( this,
+    AsyncGuarder_Base.setAsConstructor_self.call( this,
       name_prefix, underlied_asyncGenerator_func );
     return this;
   }
@@ -79,8 +79,8 @@ let async_Guardian_Base
     // Note:
     //
     // Although the property .Xxx_asyncPromise_running will not be created by this
-    // async_Guardian_Base class (it will be created by sub-class
-    // async_Guardian_RecyclableBase), however, this class will
+    // AsyncGuarder_Base class (it will be created by sub-class
+    // AsyncGuarder_RecyclableBase), however, this class will
     // try to check the property. So, its name should still be prepared.
     //
     this.#name_of_asyncPromise_running
@@ -103,7 +103,7 @@ let async_Guardian_Base
       // Xxx_asyncGenerator_running
       Reflect.defineProperty( this,
         this.#name_of_asyncGenerator_running,
-        async_Guardian_Base.propertyDescriptor_of_asyncGenerator_running );
+        AsyncGuarder_Base.propertyDescriptor_of_asyncGenerator_running );
     }
 
     // Define shared instance (i.e. this.constructor.prototype's) properties.
@@ -111,7 +111,7 @@ let async_Guardian_Base
       // Xxx_asyncGenerator_create()
       Reflect.defineProperty( this.constructor.prototype,
         this.#name_of_asyncGenerator_create,
-        async_Guardian_Base
+        AsyncGuarder_Base
           .propertyDescriptor_of_asyncGenerator_create );
     }
 
@@ -120,7 +120,7 @@ let async_Guardian_Base
       // Xxx_throw_if_asyncPromise_or_asyncGenerator_running()
       Reflect.defineProperty( this.constructor,
         this.#name_of_throw_if_asyncPromise_or_asyncGenerator_running,
-        async_Guardian_Base
+        AsyncGuarder_Base
           .propertyDescriptor_of_throw_if_asyncPromise_or_asyncGenerator_running );
     }
   }
@@ -163,7 +163,7 @@ let async_Guardian_Base
    * Property descriptor for Xxx_asyncGenerator_create().
    */
   static propertyDescriptor_of_asyncGenerator_create = {
-    value: async_Guardian_Base.asyncGenerator_create
+    value: AsyncGuarder_Base.asyncGenerator_create
   };
 
   /**
@@ -177,14 +177,14 @@ let async_Guardian_Base
     { // Checking pre-condition.
       const funcNameInMessage = this.#name_of_asyncGenerator_create;
 
-      async_Guardian_Base.throw_if_an_old_still_running.call( this,
+      AsyncGuarder_Base.throw_if_an_old_still_running.call( this,
         this.#asyncGenerator_running, funcNameInMessage );
 
-      async_Guardian_Base.throw_if_asyncPromise_or_asyncGenerator_running
+      AsyncGuarder_Base.throw_if_asyncPromise_or_asyncGenerator_running
         .call( this, funcNameInMessage );
     }
 
-    let asyncGenerator = async_Guardian_Base
+    let asyncGenerator = AsyncGuarder_Base
       .asyncGenerator_create_without_checking_precondition
       .apply( this, restArgs );
     return asyncGenerator;
@@ -192,14 +192,14 @@ let async_Guardian_Base
 
   /**
    *
-   * @param {async_Guardian_Base} this
+   * @param {AsyncGuarder_Base} this
    *
    * @return {AsyncGenerator}
    *   Return the newly created instance of .guarded_underlined_asyncGenerator().
    */
   static asyncGenerator_create_without_checking_precondition( ...restArgs ) {
     this.#asyncGenerator_running = true;
-    let asyncGenerator = async_Guardian_Base
+    let asyncGenerator = AsyncGuarder_Base
       .guarded_underlined_asyncGenerator.apply( this, restArgs );
     return asyncGenerator;
   }
@@ -207,14 +207,14 @@ let async_Guardian_Base
   /**
    * The guarded underlied async generator.
    *
-   * @param {async_Guardian_Base} this
+   * @param {AsyncGuarder_Base} this
    */
   static async* guarded_underlined_asyncGenerator( ...restArgs ) {
 
     { // Checking pre-condition.
       const funcNameInMessage = this.#name_of_asyncGenerator_guarded;
 
-      async_Guardian_Base.throw_call_another_if_false.call( this,
+      AsyncGuarder_Base.throw_call_another_if_false.call( this,
         this.#asyncGenerator_running, funcNameInMessage,
         this.#name_of_asyncGenerator_create );
     }
@@ -242,12 +242,12 @@ let async_Guardian_Base
    * Property descriptor for Xxx_throw_if_asyncPromise_or_asyncGenerator_running().
    */
   static propertyDescriptor_of_throw_if_asyncPromise_or_asyncGenerator_running = {
-    value: async_Guardian_Base
+    value: AsyncGuarder_Base
              .throw_if_asyncPromise_or_asyncGenerator_running
   };
 
   /**
-   * @param {async_Guardian_Base} this
+   * @param {AsyncGuarder_Base} this
    * @param {string} funcNameInMessage   The caller function name. (e.g. init_async)
    */
   static throw_if_asyncPromise_or_asyncGenerator_running(
@@ -270,7 +270,7 @@ let async_Guardian_Base
   }
 
   /**
-   * @param {async_Guardian_Base} this
+   * @param {AsyncGuarder_Base} this
    * @param {boolean} b_still_running    If true, throw exception.
    * @param {string} funcNameInMessage   The caller function name. (e.g. init_async)
    */
@@ -285,7 +285,7 @@ let async_Guardian_Base
   }
 
   /**
-   * @param {async_Guardian_Base} this
+   * @param {AsyncGuarder_Base} this
    * @param {boolean} b                  If false, throw exception.
    * @param {string} funcNameInMessage   The caller function name. (e.g. init_async)
    * @param {string} funcNameShouldBeCalledInMessage
@@ -306,10 +306,10 @@ let async_Guardian_Base
 
 
 /**
- * Almost the same as async_Guardian_Base class except its parent
+ * Almost the same as AsyncGuarder_Base class except its parent
  * class is fixed to Object. In other words, caller can not specify the parent
- * class of async_Guardian_Root (so it is named "Root" which can not
+ * class of AsyncGuarder_Root (so it is named "Root" which can not
  * have parent class).
  */
-class async_Guardian_Root extends async_Guardian_Base() {
+class AsyncGuarder_Root extends AsyncGuarder_Base() {
 }
