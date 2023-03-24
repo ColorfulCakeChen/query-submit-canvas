@@ -45,7 +45,6 @@ let asyncGenerator_Guardian_RecyclableBase
 
   #name_of_asyncPromise_running;
   #name_of_asyncPromise_create;
-
   #name_of_asyncPromise_progress;
 
 
@@ -226,11 +225,10 @@ let asyncGenerator_Guardian_RecyclableBase
           this.#asyncPromise_progress, ...restArgs );
     }
 
-//!!! ...unfinished... (2023/03/24)
     // 2.
-    return GSheets_UrlComposer
-      .JSON_ColumnMajorArrayArray_fetch_asyncPromise_create_without_checking_precondition
-      .call( this, fetcher );
+    return asyncGenerator_Guardian_RecyclableBase
+      .asyncPromise_create_without_checking_precondition
+      .call( this, asyncGenerator );
   }
 
 //!!! ...unfinished... (2023/03/24)
