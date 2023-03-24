@@ -212,7 +212,7 @@ function AsyncGuarder_Base(
 
       this.#asyncGenerator_running = true;
       let asyncGenerator = AsyncGuarder_Base
-        .guarded_underlined_asyncGenerator.apply( this, restArgs );
+        [ name_of_asyncGenerator_guarded ].apply( this, restArgs );
       return asyncGenerator;
     }
 
@@ -221,20 +221,20 @@ function AsyncGuarder_Base(
      *
      * @param {AsyncGuarder_Base} this
      */
-    static async* guarded_underlined_asyncGenerator( ...restArgs ) {
+    static async* [ name_of_asyncGenerator_guarded ]( ...restArgs ) {
 
       { // Checking pre-condition.
-        const funcNameInMessage = this.#name_of_asyncGenerator_guarded;
+        const funcNameInMessage = name_of_asyncGenerator_guarded;
 
         AsyncGuarder_Base.throw_call_another_if_false.call( this,
           this.#asyncGenerator_running, funcNameInMessage,
-          this.#name_of_asyncGenerator_create );
+          name_of_asyncGenerator_create );
       }
-
+!!!
       try {
         // 1.
-        let underlied_asyncGenerator
-          = this.#underlied_asyncGenerator_func.apply( this, restArgs );
+        let underlied_asyncGenerator = AsyncGuarder_Base
+          [ name_of_underlied_asyncGenerator_func ].apply( this, restArgs );
 
         let result = yield *underlied_asyncGenerator;
         return result;
