@@ -41,10 +41,10 @@ let asyncGenerator_Guardian_Base
   #asyncGenerator_running;
 
   // the properties' names.
+  #name_of_async_running;
   #name_of_asyncGenerator_running;
   #name_of_asyncGenerator_create;
   #name_of_asyncGenerator_guarded;
-
 
 
   /**
@@ -76,6 +76,16 @@ let asyncGenerator_Guardian_Base
 
 //!!! ...unfinished... (2023/03/24)    
     this.#underlied_asyncGenerator_func = underlied_asyncGenerator_func;
+
+    // Note:
+    //
+    // Although the property .Xxx_async_running will not be created by this
+    // asyncGenerator_Guardian_Base class (it will be created by sub-class
+    // asyncGenerator_Guardian_RecyclableBase), however, this class will
+    // try to check the property. So, its name should still be prepared.
+    //
+    this.#name_of_async_running
+      = `${name_prefix}_async_running`;
 
     this.#name_of_asyncGenerator_running
       = `${name_prefix}_asyncGenerator_running`;
@@ -125,6 +135,7 @@ let asyncGenerator_Guardian_Base
     this.#name_of_asyncGenerator_guarded = undefined;
     this.#name_of_asyncGenerator_create = undefined;
     this.#name_of_asyncGenerator_running = undefined;
+    this.#name_of_async_running = undefined;
 
     this.#asyncGenerator_running = undefined;
 
@@ -165,7 +176,7 @@ let asyncGenerator_Guardian_Base
 
 //!!! ...unfinished... (2023/03/24)
 
-        asyncGenerator_Guardian_Base.throw_if_fetching.call( this,
+        asyncGenerator_Guardian_Base.throw_if_running.call( this,
           funcNameInMessage );
     }
 
@@ -223,21 +234,28 @@ let asyncGenerator_Guardian_Base
   }
 
 
+//!!! ...unfinished... (2023/03/24)
+// Perhaps, these static methods throw_Xxx() need renamed static properties.
+
   /**
    * @param {asyncGenerator_Guardian_Base} this
    * @param {string} funcNameInMessage   The caller function name. (e.g. init_async)
    */
-  static throw_if_fetching( funcNameInMessage ) {
+  static throw_if_running( funcNameInMessage ) {
 
     const mostDerivedClassName
       = ClassHierarchyTools.MostDerived_ClassName_of_Instance( this );
 
-//!!! ...unfinished... (2023/03/24)    
+    // Note: Property .Xxx_async_running is created by sub-class (if exists).
+    let b_async_running = this[ this.#name_of_async_running ];
 
-    if (   ( this.#async_running )
+    if (   ( b_async_running )
         || ( this.#asyncGenerator_running ) )
       throw Error( `${mostDerivedClassName}.${funcNameInMessage}(): `
-        + `should not be executed while still fetching.` );
+        + `should not be executed while `
+        + `.${this.#name_of_async_running}() or `
+        + `.${this.#name_of_asyncGenerator_running}() `
+        + `still running.` );
   }
 
   /**
@@ -273,6 +291,8 @@ let asyncGenerator_Guardian_Base
         + `Please call .${funcNameShouldBeCalledInMessage}() instead.` );
   }
 
+//!!! ...unfinished... (2023/03/24)
+
 //!!! ...unfinished... (2023/03/23)
 // These methods' names should also be specified by caller.
 //
@@ -285,10 +305,10 @@ let asyncGenerator_Guardian_Base
 
 
 /**
- * Almost the same as asyncGenerator_Guardian_Base class except its parent class
- * is fixed to Object. In other words, caller can not specify the parent class
- * of asyncGenerator_Guardian_Root (so it is named "Root" which can not have
- * parent class).
+ * Almost the same as asyncGenerator_Guardian_Base class except its parent
+ * class is fixed to Object. In other words, caller can not specify the parent
+ * class of asyncGenerator_Guardian_Root (so it is named "Root" which can not
+ * have parent class).
  */
 class asyncGenerator_Guardian_Root extends asyncGenerator_Guardian_Base() {
 }
