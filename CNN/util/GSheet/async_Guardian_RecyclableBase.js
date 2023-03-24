@@ -1,10 +1,10 @@
-export { asyncGenerator_Guardian_RecyclableBase };
-export { asyncGenerator_Guardian_RecyclableRoot };
+export { async_Guardian_RecyclableBase };
+export { async_Guardian_RecyclableRoot };
 
 import * as Pool from "../../util/Pool.js";
 import * as Recyclable from "../../util/Recyclable.js";
 import * as ValueMax from "./ValueMax.js";
-import { asyncGenerator_Guardian_Base } from "./asyncGenerator_Guardian_Base.js";
+import { async_Guardian_Base } from "./async_Guardian_Base.js";
 
 /**
  * A recyclable wrapper class for preventing an underlied async generator from
@@ -28,17 +28,17 @@ import { asyncGenerator_Guardian_Base } from "./asyncGenerator_Guardian_Base.js"
  *   - It is not used if .Xxx_asyncGenerator_create() is called directly. In this
  *       case, its progressParent parameter will be used instead.
  */
-let asyncGenerator_Guardian_RecyclableBase
-  = ( ParentClass = Object ) => class asyncGenerator_Guardian_RecyclableBase
-      extends asyncGenerator_Guardian_Base( Recyclable.Base( ParentClass ) ) {
+let async_Guardian_RecyclableBase
+  = ( ParentClass = Object ) => class async_Guardian_RecyclableBase
+      extends async_Guardian_Base( Recyclable.Base( ParentClass ) ) {
 
   /**
-   * Used as default asyncGenerator_Guardian_RecyclableBase provider for
+   * Used as default async_Guardian_RecyclableBase provider for
    * conforming to Recyclable interface.
    */
-  static Pool = new Pool.Root( "asyncGenerator_Guardian_RecyclableBase.Pool",
-    asyncGenerator_Guardian_RecyclableBase,
-    asyncGenerator_Guardian_RecyclableBase.setAsConstructor );
+  static Pool = new Pool.Root( "async_Guardian_RecyclableBase.Pool",
+    async_Guardian_RecyclableBase,
+    async_Guardian_RecyclableBase.setAsConstructor );
 
 
   #asyncPromise_running;
@@ -67,7 +67,7 @@ let asyncGenerator_Guardian_RecyclableBase
     name_prefix, underlied_asyncGenerator_func, ...restArgs ) {
 
     super( name_prefix, underlied_asyncGenerator_func, ...restArgs );
-    asyncGenerator_Guardian_RecyclableBase.setAsConstructor_self.call( this,
+    async_Guardian_RecyclableBase.setAsConstructor_self.call( this,
       name_prefix, underlied_asyncGenerator_func );
   }
 
@@ -77,7 +77,7 @@ let asyncGenerator_Guardian_RecyclableBase
 
     super.setAsConstructor.call( this,
       name_prefix, underlied_asyncGenerator_func, ...restArgs );
-    asyncGenerator_Guardian_RecyclableBase.setAsConstructor_self.call( this,
+    async_Guardian_RecyclableBase.setAsConstructor_self.call( this,
       name_prefix, underlied_asyncGenerator_func );
     return this;
   }
@@ -102,13 +102,13 @@ let asyncGenerator_Guardian_RecyclableBase
       // Xxx_asyncPromise_running
       Reflect.defineProperty( this,
         this.#name_of_asyncPromise_running,
-        asyncGenerator_Guardian_RecyclableBase
+        async_Guardian_RecyclableBase
           .propertyDescriptor_of_asyncPromise_running );
 
       // Xxx_asyncPromise_progress
       Reflect.defineProperty( this,
         this.#name_of_asyncPromise_progress,
-        asyncGenerator_Guardian_RecyclableBase
+        async_Guardian_RecyclableBase
           .propertyDescriptor_of_asyncPromise_progress );
     }
 
@@ -117,7 +117,7 @@ let asyncGenerator_Guardian_RecyclableBase
       // Xxx_asyncPromise_create()
       Reflect.defineProperty( this.constructor.prototype,
         this.#name_of_asyncPromise_create,
-        asyncGenerator_Guardian_RecyclableBase
+        async_Guardian_RecyclableBase
           .propertyDescriptor_of_asyncPromise_create );
     }
 
@@ -138,7 +138,7 @@ let asyncGenerator_Guardian_RecyclableBase
     this.#name_of_asyncPromise_create = undefined;
     this.#name_of_asyncPromise_running = undefined;
 
-    asyncGenerator_Guardian_RecyclableBase.asyncPromise_progress_dispose.call( this );
+    async_Guardian_RecyclableBase.asyncPromise_progress_dispose.call( this );
 
     this.#asyncPromise_running = undefined;
 
@@ -163,16 +163,16 @@ let asyncGenerator_Guardian_RecyclableBase
     { get() { return this.#asyncPromise_progress; }, enumerable: true };
 
   /**
-   * @param {asyncGenerator_Guardian_RecyclableBase} this
+   * @param {async_Guardian_RecyclableBase} this
    */
   static asyncPromise_progress_create() {
-    asyncGenerator_Guardian_RecyclableBase.asyncPromise_progress_dispose.call( this );
+    async_Guardian_RecyclableBase.asyncPromise_progress_dispose.call( this );
     this.#asyncPromise_progress
       = ValueMax.Percentage.Aggregate.Pool.get_or_create_by();
   }
 
   /**
-   * @param {asyncGenerator_Guardian_RecyclableBase} this
+   * @param {async_Guardian_RecyclableBase} this
    */
   static asyncPromise_progress_dispose() {
     if ( this.#asyncPromise_progress ) {
@@ -186,7 +186,7 @@ let asyncGenerator_Guardian_RecyclableBase
    * Property descriptor for Xxx_asyncPromise_create().
    */
   static propertyDescriptor_of_asyncPromise_create = {
-    value: asyncGenerator_Guardian_Base.asyncPromise_create
+    value: async_Guardian_RecyclableBase.asyncPromise_create
   };
 
   /**
@@ -205,10 +205,10 @@ let asyncGenerator_Guardian_RecyclableBase
     { // Checking pre-condition.
       const funcNameInMessage = this.#name_of_asyncPromise_create;
 
-      asyncGenerator_Guardian_RecyclableBase.throw_if_an_old_still_running
+      async_Guardian_RecyclableBase.throw_if_an_old_still_running
         .call( this, this.#asyncPromise_running, funcNameInMessage );
 
-      asyncGenerator_Guardian_RecyclableBase
+      async_Guardian_RecyclableBase
         .throw_if_asyncPromise_or_asyncGenerator_running
         .call( this, funcNameInMessage );
     }
@@ -217,27 +217,27 @@ let asyncGenerator_Guardian_RecyclableBase
     let asyncGenerator;
     {
       // Use internal independent progress.
-      asyncGenerator_Guardian_RecyclableBase.asyncPromise_progress_create
+      async_Guardian_RecyclableBase.asyncPromise_progress_create
         .call( this );
 
       // Prepare asyncGenerator
       //
       // Note: The .asyncGenerator_create_without_checking_precondition() is
       //       defined in the parent classs.
-      asyncGenerator = asyncGenerator_Guardian_RecyclableBase
+      asyncGenerator = async_Guardian_RecyclableBase
         .asyncGenerator_create_without_checking_precondition.call( this,
           this.#asyncPromise_progress, ...restArgs );
     }
 
     // 2.
-    return asyncGenerator_Guardian_RecyclableBase
+    return async_Guardian_RecyclableBase
       .asyncPromise_create_without_checking_precondition
       .call( this, asyncGenerator );
   }
 
   /**
    *
-   * @param {asyncGenerator_Guardian_RecyclableBase} this
+   * @param {async_Guardian_RecyclableBase} this
    *
    * @param {AsyncGenerator} asyncGenerator
    *   The async generator (an instance of
@@ -249,15 +249,16 @@ let asyncGenerator_Guardian_RecyclableBase
    */
   static asyncPromise_create_without_checking_precondition( asyncGenerator ) {
     this.#asyncPromise_running = true;
-    let asyncPromise = asyncGenerator_Guardian_Base.guarded_async.call( this,
-      asyncGenerator );
+    let asyncPromise
+      = async_Guardian_RecyclableBase.guarded_async.call( this,
+          asyncGenerator );
     return asyncPromise;
   }
 
   /**
    * The guarded async method for looping the underlied async generator.
    *
-   * @param {asyncGenerator_Guardian_RecyclableBase} this
+   * @param {async_Guardian_RecyclableBase} this
    *
    * @param {AsyncGenerator} asyncGenerator
    *   The async generator (an instance of
@@ -275,7 +276,7 @@ let asyncGenerator_Guardian_RecyclableBase
     { // Checking pre-condition.
       const funcNameInMessage = this.#name_of_asyncPromise_guarded;
 
-      asyncGenerator_Guardian_RecyclableBase.throw_call_another_if_false.call(
+      async_Guardian_RecyclableBase.throw_call_another_if_false.call(
         this,
         this.asyncPromise_running, funcNameInMessage,
         this.#name_of_asyncPromise_create );
@@ -306,11 +307,11 @@ let asyncGenerator_Guardian_RecyclableBase
 
 
 /**
- * Almost the same as asyncGenerator_Guardian_RecyclableBase class except its
+ * Almost the same as async_Guardian_RecyclableBase class except its
  * parent class is fixed to Object. In other words, caller can not specify the
- * parent class of asyncGenerator_Guardian_RecyclableRoot (so it is named
+ * parent class of async_Guardian_RecyclableRoot (so it is named
  * "Root" which can not have parent class).
  */
-class asyncGenerator_Guardian_RecyclableRoot
-  extends asyncGenerator_Guardian_RecyclableBase() {
+class async_Guardian_RecyclableRoot
+  extends async_Guardian_RecyclableBase() {
 }
