@@ -38,8 +38,8 @@ let asyncGenerator_Guardian_Base
 
   // the properties' names.
   #name_of_asyncGenerator_running;
-  #name_of_guarded_asyncGenerator;
   #name_of_asyncGenerator_create;
+  #name_of_guarded_asyncGenerator;
 
   // Property descriptor for the getters (as enumerable read-only properties).
   static propertyDescriptor_asyncGenerator_running = 
@@ -133,27 +133,13 @@ let asyncGenerator_Guardian_Base
   }
 
 
-//!!! ...unfinished... (2023/03/23)
-
   /**
-   * Create JSON_ColumnMajorArrayArray_fetcher (an instance of
-   * .JSON_ColumnMajorArrayArray_fetch_asyncGenerator()).
+   * Property descriptor for Xxx_asyncGenerator_create().
    *
-   *
-   * @param {ValueMax.Percentage.Aggregate} progressParent
-   *   Some new progressToAdvance will be created and added to progressParent. The
-   * created progressToAdvance will be increased when every time advanced. The
-   * progressParent.root_get() will be returned when every time yield.
-   *
-   * @param {Promise} delayPromise
-   *   Mainly used when unit testing. If not null, the async generator will
-   * await it before complete. If null or undefined, no extra delay awaiting.
-   *
-   * @return {AsyncGenerator}
-   *   Return the newly created JSON_ColumnMajorArrayArray_fetcher which is an
-   * instance of .JSON_ColumnMajorArrayArray_fetch_asyncGenerator().
+   * @param {asyncGenerator_Guardian_Base} this
    */
-  asyncGenerator_create( ...restArgs ) {
+  static propertyDescriptor_of_asyncGenerator_create = {
+    value( ...restArgs ) {
 
 //!!! ...unfinished... (2023/03/23)
 
@@ -174,62 +160,63 @@ let asyncGenerator_Guardian_Base
 
 //!!!
   /**
-   * Property descriptor for Xxx_asyncGenerator_create().
    *
    * @param {asyncGenerator_Guardian_Base} this
+   *
+   * @return {AsyncGenerator}
+   *   Return the newly created instance of .guarded_underlined_asyncGenerator().
    */
-  static propertyDescriptor_of_asyncGenerator_create = {
-    value(
+  static asyncGenerator_create_without_checking_precondition( ...restArgs ) {
+
+    this.#asyncGenerator_running = true;
+
+    let asyncGenerator = asyncGenerator_Guardian_Base
+      .guarded_underlined_asyncGenerator.apply( this, restArgs );
+    return fetcher;
+  }
+
 //!!! ...unfinished... (2023/03/24)    
-      progressParent, params_loading_retryWaiting, delayPromise ) {
-
-      this.#asyncGenerator_running = true;
-
-      let fetcher = GSheets_UrlComposer
-        .JSON_ColumnMajorArrayArray_fetch_asyncGenerator.call( this,
-          progressParent, params_loading_retryWaiting, delayPromise );
-      return fetcher;
-    }
-  };
+//   /**
+//    * Property descriptor for guarded underlied async generator.
+//    */
+//   static propertyDescriptor_of_guarded_asyncGenerator = {
+//     value: asyncGenerator_Guardian_Base.guarded_asyncGenerator
+//   };
 
   /**
-   * Property descriptor for guarded underlied async generator.
+   * The guarded underlied async generator.
    *
    * @param {asyncGenerator_Guardian_Base} this
    */
-  static propertyDescriptor_of_guarded_asyncGenerator = {
-    async* value( ...restArgs ) {
+  static async* guarded_underlined_asyncGenerator( ...restArgs ) {
 
 //!!! ...unfinished... (2023/03/24)    
 
-      { // Checking pre-condition.
-        const funcNameInMessage = this.#name_of_guarded_asyncGenerator;
+    { // Checking pre-condition.
+      const funcNameInMessage = this.#name_of_guarded_asyncGenerator;
 
-        GSheets_UrlComposer.throw_call_another_if_false.call( this,
-          this.fetch_asyncGenerator_running, funcNameInMessage,
-          "JSON_ColumnMajorArrayArray_fetcher_create" );
-      }
-
-      try {
-
-        // 1.
-        let underlied_asyncGenerator
-          = this.#underlied_asyncGenerator_func.apply( this, restArgs );
-
-        let result = yield *underlied_asyncGenerator;
-        return result;
-
-      } catch ( e ) {
-        //debugger;
-        throw e;
-
-      } finally {
-  //!!! ...unfinished... (2023/03/24)    
-        // 2. So that this async generator could be executed again.
-        this.#asyncGenerator_running = false;
-      }
+      GSheets_UrlComposer.throw_call_another_if_false.call( this,
+        this.#asyncGenerator_running, funcNameInMessage,
+        this.#name_of_asyncGenerator_create );
     }
-  };
+
+    try {
+      // 1.
+      let underlied_asyncGenerator
+        = this.#underlied_asyncGenerator_func.apply( this, restArgs );
+
+      let result = yield *underlied_asyncGenerator;
+      return result;
+
+    } catch ( e ) {
+      //debugger;
+      throw e;
+
+    } finally {
+      // 2. So that this async generator could be executed again.
+      this.#asyncGenerator_running = false;
+    }
+  }
 
 
   /**
