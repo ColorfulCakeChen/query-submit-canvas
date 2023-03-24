@@ -33,8 +33,9 @@ import * as Pool from "../Pool.js";
  *
  */
 let AsyncGuarder_Base
-  = ( ParentClass = Object ) => class AsyncGuarder_Base
-      extends ParentClass {
+  = ( name_prefix, underlied_asyncGenerator_func, ParentClass = Object ) =>
+      class AsyncGuarder_Base
+        extends ParentClass {
 
   #underlied_asyncGenerator_func;
 
@@ -105,6 +106,14 @@ let AsyncGuarder_Base
         this.#name_of_asyncGenerator_running,
         AsyncGuarder_Base.propertyDescriptor_of_asyncGenerator_running );
     }
+
+!!! ...unfinished... (2023/03/22)
+// shared instance (i.e. this.constructor.prototype's) properties
+// static (i.e. this.constructor's) properties
+// should not defineProperty() by every instance.
+//
+// They should be defined as computed named property. 
+
 
     // Define shared instance (i.e. this.constructor.prototype's) properties.
     {

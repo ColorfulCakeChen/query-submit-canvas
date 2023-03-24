@@ -30,8 +30,9 @@ import { Base as AsyncGuarder_Base } from "./AsyncGuarder_Base.js";
  *       its progressParent parameter will be used instead.
  */
 let AsyncGuarder_RecyclableBase
-  = ( ParentClass = Object ) => class AsyncGuarder_RecyclableBase
-      extends AsyncGuarder_Base( Recyclable.Base( ParentClass ) ) {
+  = ( name_prefix, underlied_asyncGenerator_func, ParentClass = Object ) =>
+      class AsyncGuarder_RecyclableBase
+        extends AsyncGuarder_Base( Recyclable.Base( ParentClass ) ) {
 
   /**
    * Used as default AsyncGuarder_RecyclableBase provider for
@@ -112,6 +113,13 @@ let AsyncGuarder_RecyclableBase
         AsyncGuarder_RecyclableBase
           .propertyDescriptor_of_asyncPromise_progress );
     }
+
+!!! ...unfinished... (2023/03/22)
+// shared instance (i.e. this.constructor.prototype's) properties
+// static (i.e. this.constructor's) properties
+// should not defineProperty() by every instance.
+//
+// They should be defined as computed named property. 
 
     // Define shared instance (i.e. this.constructor.prototype's) properties.
     {
