@@ -23,7 +23,10 @@ import * as ValueMax from "./ValueMax.js";
  * is still executing. Please wait it becoming false if wanting to call
  * .Xxx_asyncGenerator_create() again. The Xxx is name_prefix.
  *
-
+ * @member {Function} Xxx_asyncGenerator_create
+ *   A method to create the underlied async generator. If an old instnace is
+ * still executing, it will throw exception.
+ *
 //!!! ...unfinished... (2023/03/23)
 
  */
@@ -114,6 +117,7 @@ let asyncGenerator_Guardian_Base
     Reflect.deleteProperty( this, this.#name_of_asyncGenerator_running );
 
     this.#name_of_asyncGenerator_guarded = undefined;
+    this.#name_of_asyncGenerator_create = undefined;
     this.#name_of_asyncGenerator_running = undefined;
 
     this.#asyncGenerator_running = undefined;
@@ -140,17 +144,17 @@ let asyncGenerator_Guardian_Base
    * @return {AsyncGenerator}
    *   Return the newly created instance of .guarded_underlined_asyncGenerator().
    */
-  asyncGenerator_create( ...restArgs ) {
-
-//!!! ...unfinished... (2023/03/23)
+  static asyncGenerator_create( ...restArgs ) {
 
     { // Checking pre-condition.
       const funcNameInMessage = this.#name_of_asyncGenerator_create;
 
-      GSheets_UrlComposer.throw_if_an_old_still_running.call( this,
+//!!! ...unfinished... (2023/03/24)
+
+      asyncGenerator_Guardian_Base.throw_if_an_old_still_running.call( this,
         this.fetch_asyncGenerator_running, funcNameInMessage );
 
-      GSheets_UrlComposer.throw_if_fetching.call( this, funcNameInMessage );
+        asyncGenerator_Guardian_Base.throw_if_fetching.call( this, funcNameInMessage );
     }
 
     let asyncGenerator = asyncGenerator_Guardian_Base
@@ -180,10 +184,10 @@ let asyncGenerator_Guardian_Base
    */
   static async* guarded_underlined_asyncGenerator( ...restArgs ) {
 
-//!!! ...unfinished... (2023/03/24)    
-
     { // Checking pre-condition.
       const funcNameInMessage = this.#name_of_asyncGenerator_guarded;
+
+//!!! ...unfinished... (2023/03/24)
 
       GSheets_UrlComposer.throw_call_another_if_false.call( this,
         this.#asyncGenerator_running, funcNameInMessage,
@@ -214,6 +218,9 @@ let asyncGenerator_Guardian_Base
    * @param {string} funcNameInMessage   The caller function name. (e.g. init_async)
    */
   static throw_if_fetching( funcNameInMessage ) {
+
+//!!! ...unfinished... (2023/03/24)    
+
     if (   ( this.fetch_async_running )
         || ( this.fetch_asyncGenerator_running ) )
       throw Error( `GSheets.UrlComposer.${funcNameInMessage}(): `
@@ -226,6 +233,9 @@ let asyncGenerator_Guardian_Base
    * @param {string} funcNameInMessage   The caller function name. (e.g. init_async)
    */
   static throw_if_an_old_still_running( b_still_running, funcNameInMessage ) {
+
+//!!! ...unfinished... (2023/03/24)    
+
     if ( b_still_running )
       throw Error( `GSheets.UrlComposer.${funcNameInMessage}(): `
         + `An old .${funcNameInMessage}() is still running.` );
@@ -240,6 +250,8 @@ let asyncGenerator_Guardian_Base
    */
   static throw_call_another_if_false(
     b, funcNameInMessage, funcNameShouldBeCalledInMessage ) {
+
+//!!! ...unfinished... (2023/03/24)    
 
     if ( !b )
       throw Error( `GSheets.UrlComposer.${funcNameInMessage}(): `
