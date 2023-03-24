@@ -1,5 +1,4 @@
 export { AsyncGuarder_RecyclableBase as RecyclableBase };
-export { AsyncGuarder_RecyclableRoot as RecyclableRoot};
 
 import * as Pool from "../Pool.js";
 import * as Recyclable from "../Recyclable.js";
@@ -305,16 +304,4 @@ function AsyncGuarder_RecyclableBase(
     }
   } );
 
-}
-
-
-/**
- * Almost the same as AsyncGuarder_RecyclableBase class except its
- * parent class is fixed to Object. In other words, caller can not specify the
- * parent class of AsyncGuarder_RecyclableRoot (so it is named
- * "Root" which can not have parent class).
- */
-class AsyncGuarder_RecyclableRoot
-  extends AsyncGuarder_RecyclableBase(
-    name_prefix, underlied_asyncGenerator_func ) {
 }

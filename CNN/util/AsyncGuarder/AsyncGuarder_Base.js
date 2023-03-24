@@ -1,5 +1,4 @@
 export { AsyncGuarder_Base as Base };
-export { AsyncGuarder_Root as Root };
 
 import * as ClassHierarchyTools from "../ClassHierarchyTools.js";
 import * as Pool from "../Pool.js";
@@ -298,16 +297,4 @@ function AsyncGuarder_Base(
     }
 
   } );
-}
-
-
-/**
- * Almost the same as AsyncGuarder_Base class except its parent
- * class is fixed to Object. In other words, caller can not specify the parent
- * class of AsyncGuarder_Root (so it is named "Root" which can not
- * have parent class).
- */
-class AsyncGuarder_Root
-  extends AsyncGuarder_Base(
-    name_prefix, underlied_asyncGenerator_func ) {
 }
