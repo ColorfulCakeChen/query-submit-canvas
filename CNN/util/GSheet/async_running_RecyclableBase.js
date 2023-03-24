@@ -12,7 +12,7 @@ import { asyncGenerator_Guardian_Base } from "./asyncGenerator_Guardian_Base.js"
  *
  *
  *
- * @member {boolean} Xxx_async_running
+ * @member {boolean} Xxx_asyncPromise_running
  *   If true, a underlied async method (i.e. .Xxx_async()) is still executing.
  * Please wait it becoming false if wanting to call .Xxx_asyncPromise_create()
  * again. The Xxx is name_prefix.
@@ -40,10 +40,10 @@ let asyncGenerator_Guardian_RecyclableBase
     asyncGenerator_Guardian_RecyclableBase,
     asyncGenerator_Guardian_RecyclableBase.setAsConstructor );
 
-  #async_running;
+  #asyncPromise_running;
   #async_progress;
 
-  #name_of_async_running;
+  #name_of_asyncPromise_running;
   #name_of_asyncPromise_create;
 
   #name_of_async_progress;
@@ -84,8 +84,8 @@ let asyncGenerator_Guardian_RecyclableBase
   /** @override */
   static setAsConstructor_self( name_prefix, underlied_asyncGenerator_func ) {
 
-    this.#name_of_async_running
-      = `${name_prefix}_async_running`;
+    this.#name_of_asyncPromise_running
+      = `${name_prefix}_asyncPromise_running`;
 
     this.#name_of_asyncPromise_create
       = `${name_prefix}_asyncPromise_create`;
@@ -95,11 +95,11 @@ let asyncGenerator_Guardian_RecyclableBase
 
     // Define read-only and enumerable instance (i.e. this.Xxx) properties.
     {
-      // Xxx_async_running
+      // Xxx_asyncPromise_running
       Reflect.defineProperty( this,
-        this.#name_of_async_running,
+        this.#name_of_asyncPromise_running,
         asyncGenerator_Guardian_RecyclableBase
-          .propertyDescriptor_of_async_running );
+          .propertyDescriptor_of_asyncPromise_running );
 
       // Xxx_async_progress
       Reflect.defineProperty( this,
@@ -128,15 +128,15 @@ let asyncGenerator_Guardian_RecyclableBase
 
     Reflect.deleteProperty( this, this.#name_of_async_progress );
     Reflect.deleteProperty( this, this.#name_of_asyncPromise_create );
-    Reflect.deleteProperty( this, this.#name_of_async_running );
+    Reflect.deleteProperty( this, this.#name_of_asyncPromise_running );
 
     this.#name_of_async_progress = undefined;
     this.#name_of_asyncPromise_create = undefined;
-    this.#name_of_async_running = undefined;
+    this.#name_of_asyncPromise_running = undefined;
 
     asyncGenerator_Guardian_RecyclableBase.async_progress_dispose.call( this );
 
-    this.#async_running = undefined;
+    this.#asyncPromise_running = undefined;
 
 //!!! ...unfinished... (2023/03/23)
 
@@ -146,11 +146,11 @@ let asyncGenerator_Guardian_RecyclableBase
   }
 
   /**
-   * Property descriptor for Xxx_async_running.
+   * Property descriptor for Xxx_asyncPromise_running.
    * (as enumerable read-only properties).
    */
-  static propertyDescriptor_of_async_running = 
-    { get() { return this.#async_running; }, enumerable: true };
+  static propertyDescriptor_of_asyncPromise_running = 
+    { get() { return this.#asyncPromise_running; }, enumerable: true };
 
 
   /**
@@ -204,7 +204,7 @@ let asyncGenerator_Guardian_RecyclableBase
       const funcNameInMessage = this.#name_of_asyncPromise_create;
 
       asyncGenerator_Guardian_RecyclableBase.throw_if_an_old_still_running
-        .call( this, this.#async_running, funcNameInMessage );
+        .call( this, this.#asyncPromise_running, funcNameInMessage );
 
       asyncGenerator_Guardian_RecyclableBase
         .throw_if_asyncPromise_or_asyncGenerator_running
@@ -247,7 +247,7 @@ let asyncGenerator_Guardian_RecyclableBase
    *   Return the newly created .guarded_async() promise.
    */
   static asyncPromise_create_without_checking_precondition( asyncGenerator ) {
-    this.#async_running = true;
+    this.#asyncPromise_running = true;
     let asyncPromise = asyncGenerator_Guardian_Base.guarded_async.call( this,
       asyncGenerator );
     return asyncPromise;
@@ -274,7 +274,7 @@ let asyncGenerator_Guardian_RecyclableBase
       const funcNameInMessage = "JSON_ColumnMajorArrayArray_fetch_async";
 
       GSheets_UrlComposer.throw_call_another_if_false.call( this,
-        this.fetch_async_running, funcNameInMessage,
+        this.fetch_asyncPromise_running, funcNameInMessage,
         "JSON_ColumnMajorArrayArray_fetch_asyncPromise_create" );
     }
 
@@ -299,7 +299,7 @@ let asyncGenerator_Guardian_RecyclableBase
 
     } finally {
       // 2. So that this async method could be executed again.
-      this.fetch_async_running = false;
+      this.fetch_asyncPromise_running = false;
     }
   }
 

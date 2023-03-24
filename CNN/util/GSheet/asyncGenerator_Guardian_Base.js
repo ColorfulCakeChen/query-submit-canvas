@@ -283,19 +283,22 @@ let asyncGenerator_Guardian_Base
    * Property descriptor for Xxx_throw_if_asyncPromise_or_asyncGenerator_running().
    */
   static propertyDescriptor_of_throw_if_asyncPromise_or_asyncGenerator_running = {
-    value: asyncGenerator_Guardian_Base.throw_if_asyncPromise_or_asyncGenerator_running
+    value: asyncGenerator_Guardian_Base
+             .throw_if_asyncPromise_or_asyncGenerator_running
   };
 
   /**
    * @param {asyncGenerator_Guardian_Base} this
    * @param {string} funcNameInMessage   The caller function name. (e.g. init_async)
    */
-  static throw_if_asyncPromise_or_asyncGenerator_running( funcNameInMessage ) {
+  static throw_if_asyncPromise_or_asyncGenerator_running(
+    funcNameInMessage ) {
 
     const mostDerivedClassName
       = ClassHierarchyTools.MostDerived_ClassName_of_Instance( this );
 
-    // Note: Property .Xxx_asyncPromise_running is created by sub-class (if exists).
+    // Note: Property .Xxx_asyncPromise_running is created by sub-class
+    //       (if exists).
     let b_asyncPromise_running = this[ this.#name_of_asyncPromise_running ];
 
     if (   ( b_asyncPromise_running )
