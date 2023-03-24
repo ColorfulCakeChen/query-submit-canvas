@@ -176,7 +176,7 @@ let asyncGenerator_Guardian_Base
 
 //!!! ...unfinished... (2023/03/24)
 
-        asyncGenerator_Guardian_Base.throw_if_running.call( this,
+        asyncGenerator_Guardian_Base.throw_if_async_or_asyncGenerator_running.call( this,
           funcNameInMessage );
     }
 
@@ -241,7 +241,7 @@ let asyncGenerator_Guardian_Base
    * @param {asyncGenerator_Guardian_Base} this
    * @param {string} funcNameInMessage   The caller function name. (e.g. init_async)
    */
-  static throw_if_running( funcNameInMessage ) {
+  static throw_if_async_or_asyncGenerator_running( funcNameInMessage ) {
 
     const mostDerivedClassName
       = ClassHierarchyTools.MostDerived_ClassName_of_Instance( this );
