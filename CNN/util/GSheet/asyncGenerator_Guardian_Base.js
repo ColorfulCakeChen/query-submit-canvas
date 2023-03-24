@@ -340,14 +340,6 @@ let asyncGenerator_Guardian_Base
 
 //!!! ...unfinished... (2023/03/24)
 
-//!!! ...unfinished... (2023/03/23)
-// These methods' names should also be specified by caller.
-//
-// Xxx_promise_create()
-// Xxxer_create()
-//
-// Define static method as property of this.constructor
-// Define non-static shared method as property of this.constructor.prototype
 }
 
 

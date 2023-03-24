@@ -97,7 +97,7 @@ let asyncGenerator_Guardian_RecyclableBase
         asyncGenerator_Guardian_RecyclableBase
           .propertyDescriptor_of_async_running );
 
-      // Xxx_async_progress`;
+      // Xxx_async_progress
       Reflect.defineProperty( this,
         this.#name_of_async_progress,
         asyncGenerator_Guardian_RecyclableBase
@@ -176,14 +176,126 @@ let asyncGenerator_Guardian_RecyclableBase
   }
 
 
-//!!! ...unfinished... (2023/03/23)
-// These methods' names should also be specified by caller.
-//
-// Xxx_promise_create()
-// Xxxer_create()
-//
-// Define static method as property of this.constructor
-// Define non-static shared method as property of this.constructor.prototype
+//!!! ...unfinished... (2023/03/24)
+  /**
+   * Property descriptor for Xxx_promise_create().
+   */
+  static propertyDescriptor_of_promise_create = {
+    value: asyncGenerator_Guardian_Base.promise_create
+  };
+
+  /**
+   * Create Xxx_async (an auto-loop instance of guarded underlied asyn generator).
+   *
+   * Note: The this.#async_progress will record progress of this method.
+   *
+   *
+   * @return {Promise}
+   *   Return the newly created .Xxx_async() promise.
+   */
+  static promise_create( ...restArgs ) {
+
+    { // Checking pre-condition.
+      const funcNameInMessage = "JSON_ColumnMajorArrayArray_fetch_promise_create";
+
+      GSheets_UrlComposer.throw_if_an_old_still_running.call( this,
+        this.fetch_async_running, funcNameInMessage );
+
+      GSheets_UrlComposer.throw_if_fetching.call( this, funcNameInMessage );
+    }
+
+    // 1.
+    let fetcher;
+    {
+      // Use internal independent progress.
+      GSheets_UrlComposer.fetch_progress_create.call( this );
+
+      // Prepare fetcher
+      fetcher = GSheets_UrlComposer
+        .JSON_ColumnMajorArrayArray_fetcher_create_without_checking_precondition
+        .call( this,
+          this.fetch_progress, params_loading_retryWaiting, delayPromise );
+    }
+
+    // 2.
+    return GSheets_UrlComposer
+      .JSON_ColumnMajorArrayArray_fetch_promise_create_without_checking_precondition
+      .call( this, fetcher );
+  }
+
+//!!! ...unfinished... (2023/03/24)
+  /**
+   *
+   * @param {GSheets_UrlComposer} this
+   *
+   * @param {AsyncGenerator} fetcher
+   *   The async generator (an instance of
+   * .JSON_ColumnMajorArrayArray_fetch_asyncGenerator()) to be wrapped by the
+   * created promise.
+   *
+   * @return {Promise( Array[] )}
+   *   Return the newly created JSON_ColumnMajorArrayArray_fetch_promise which
+   * is an instance of .JSON_ColumnMajorArrayArray_fetch_async().
+   */
+  static JSON_ColumnMajorArrayArray_fetch_promise_create_without_checking_precondition(
+    fetcher ) {
+
+    this.fetch_async_running = true;
+    let fetch_promise = GSheets_UrlComposer
+      .JSON_ColumnMajorArrayArray_fetch_async.call( this, fetcher );
+    return JSON_ColumnMajorArrayArray_fetch_promise;
+  }
+
+//!!! ...unfinished... (2023/03/24)
+  /**
+   * Composing the URL (according to this object's data members), download
+   * it as JSON format, extract data as a two dimension (column-major) array.
+   *
+   * @param {AsyncGenerator} fetcher
+   *   The async generator (an instance of
+   * .JSON_ColumnMajorArrayArray_fetch_asyncGenerator()) to be wrapped by the
+   * created promise.
+   *
+   * @return {Promise( Array[] )}
+   *   Return a promise.
+   *   - Resolved to ( a two dimension (column-major) array ) when successful.
+   *   - Resolved to ( null ) when failed.
+   */
+  static async JSON_ColumnMajorArrayArray_fetch_async( fetcher ) {
+
+    { // Checking pre-condition.
+      const funcNameInMessage = "JSON_ColumnMajorArrayArray_fetch_async";
+
+      GSheets_UrlComposer.throw_call_another_if_false.call( this,
+        this.fetch_async_running, funcNameInMessage,
+        "JSON_ColumnMajorArrayArray_fetch_promise_create" );
+    }
+
+    try {
+      // 1.
+      if ( !fetcher )
+        throw Error( `GSheets.UrlComposer.${funcNameInMessage}(): `
+          + `fetcher should have already existed.` );
+
+      let fetcherNext;
+      do {
+        fetcherNext = await fetcher.next();
+      } while ( !fetcherNext.done );
+
+      let resultColumnMajorArrayArray = fetcherNext.value;
+      return resultColumnMajorArrayArray;
+
+    } catch ( e ) {
+      //console.error( e );
+      //debugger;
+      throw e; // Unknown error, should be said loundly.
+
+    } finally {
+      // 2. So that this async method could be executed again.
+      this.fetch_async_running = false;
+    }
+  }
+
 }
 
 
