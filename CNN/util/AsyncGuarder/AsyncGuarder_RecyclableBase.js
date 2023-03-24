@@ -342,5 +342,6 @@ function AsyncGuarder_RecyclableBase(
  * "Root" which can not have parent class).
  */
 class AsyncGuarder_RecyclableRoot
-  extends AsyncGuarder_RecyclableBase() {
+  extends AsyncGuarder_RecyclableBase(
+    name_prefix, underlied_asyncGenerator_func ) {
 }

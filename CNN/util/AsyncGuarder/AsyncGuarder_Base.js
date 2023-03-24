@@ -304,5 +304,7 @@ function AsyncGuarder_Base(
  * class of AsyncGuarder_Root (so it is named "Root" which can not
  * have parent class).
  */
-class AsyncGuarder_Root extends AsyncGuarder_Base() {
+class AsyncGuarder_Root
+  extends AsyncGuarder_Base(
+    name_prefix, underlied_asyncGenerator_func ) {
 }
