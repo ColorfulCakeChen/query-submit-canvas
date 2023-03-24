@@ -4,7 +4,7 @@ export { AsyncGuarder_RecyclableRoot as RecyclableRoot};
 import * as Pool from "../../util/Pool.js";
 import * as Recyclable from "../../util/Recyclable.js";
 import * as ValueMax from "./ValueMax.js";
-import { AsyncGuarder_Base } from "./AsyncGuarder_Base.js";
+import { Base as AsyncGuarder_Base } from "./AsyncGuarder_Base.js";
 
 /**
  * A recyclable wrapper class for preventing an underlied async generator from
