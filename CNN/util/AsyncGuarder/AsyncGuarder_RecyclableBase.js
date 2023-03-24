@@ -1,9 +1,9 @@
 export { AsyncGuarder_RecyclableBase as RecyclableBase };
 export { AsyncGuarder_RecyclableRoot as RecyclableRoot};
 
-import * as Pool from "../util/Pool.js";
-import * as Recyclable from "../util/Recyclable.js";
-import * as ValueMax from "../util/ValueMax.js";
+import * as Pool from "../Pool.js";
+import * as Recyclable from "../Recyclable.js";
+import * as ValueMax from "../ValueMax.js";
 import { Base as AsyncGuarder_Base } from "./AsyncGuarder_Base.js";
 
 /**
