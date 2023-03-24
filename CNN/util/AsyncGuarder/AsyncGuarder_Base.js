@@ -44,6 +44,9 @@ function AsyncGuarder_Base(
   const name_of_asyncGenerator_create
     = `${name_prefix}_asyncGenerator_create`;
 
+  const name_of_asyncGenerator_create_without_checking_precondition
+    = `${name_prefix}_asyncGenerator_create_without_checking_precondition`;
+
   const name_of_asyncGenerator_guarded
     = `${name_prefix}_asyncGenerator_guarded`;
 
@@ -57,11 +60,7 @@ function AsyncGuarder_Base(
    * reentered.
    *
    *
-   * @member {string} name_prefix
-   *   The prefix for all async operations and flags. (e.g. "init" or "fetch"
-   * or "versus_load")
-   *
-   * @member {AsyncGeneratorFunction} underlied_asyncGenerator_func
+   * @member {AsyncGeneratorFunction} Xxx_underlied_asyncGenerator_func
    *   A private property recording the function to create a underlied async
    * generator which wants to be guarded by the .Xxx_asyncGenerator_running
    * boolean flag.
@@ -95,111 +94,72 @@ function AsyncGuarder_Base(
   //   #name_of_asyncGenerator_guarded;
   //   #name_of_throw_if_asyncPromise_or_asyncGenerator_running;
 
+//!!! ...unfinshed... (2023/03/24) seems not so necessary.
     static [ name_of_underlied_asyncGenerator_func ]
       = underlied_asyncGenerator_func;
 
     /**
      *
      */
-    constructor(
-      name_prefix, underlied_asyncGenerator_func, ...restArgs ) {
+    constructor( ...restArgs ) {
 
       super( ...restArgs );
-      AsyncGuarder_Base.setAsConstructor_self.call( this,
-        name_prefix, underlied_asyncGenerator_func );
+      AsyncGuarder_Base.setAsConstructor_self.call( this );
     }
 
     /** @override */
-    static setAsConstructor(
-      name_prefix, underlied_asyncGenerator_func, ...restArgs ) {
+    static setAsConstructor( ...restArgs ) {
 
       super.setAsConstructor.apply( this, restArgs );
-      AsyncGuarder_Base.setAsConstructor_self.call( this,
-        name_prefix, underlied_asyncGenerator_func );
+      AsyncGuarder_Base.setAsConstructor_self.call( this );
       return this;
     }
 
     /** @override */
-    static setAsConstructor_self( name_prefix, underlied_asyncGenerator_func ) {
-
-      this.#underlied_asyncGenerator_func = underlied_asyncGenerator_func;
-
-      // Note:
-      //
-      // Although the property .Xxx_asyncPromise_running will not be created by this
-      // AsyncGuarder_Base class (it will be created by sub-class
-      // AsyncGuarder_RecyclableBase), however, this class will
-      // try to check the property. So, its name should still be prepared.
-      //
-      this.#name_of_asyncPromise_running
-        = `${name_prefix}_asyncPromise_running`;
-
-      this.#name_of_asyncGenerator_running
-        = `${name_prefix}_asyncGenerator_running`;
-
-      this.#name_of_asyncGenerator_create
-        = `${name_prefix}_asyncGenerator_create`;
-
-      this.#name_of_asyncGenerator_guarded
-        = `${name_prefix}_asyncGenerator_guarded`;
-
-      this.#name_of_throw_if_asyncPromise_or_asyncGenerator_running
-        = `throw_if_${name_prefix}_asyncPromise_or_asyncGenerator_running`;
+    static setAsConstructor_self() {
 
       // Define read-only and enumerable instance (i.e. this.Xxx) properties.
       {
         // Xxx_asyncGenerator_running
         Reflect.defineProperty( this,
-          this.#name_of_asyncGenerator_running,
+          name_of_asyncGenerator_running,
           AsyncGuarder_Base.propertyDescriptor_of_asyncGenerator_running );
       }
 
-  !!! ...unfinished... (2023/03/22)
-  // shared instance (i.e. this.constructor.prototype's) properties
-  // static (i.e. this.constructor's) properties
-  // should not defineProperty() by every instance.
-  //
-  // They should be defined as computed named property. 
-
-
-      // Define shared instance (i.e. this.constructor.prototype's) properties.
-      {
-        // Xxx_asyncGenerator_create()
-        Reflect.defineProperty( this.constructor.prototype,
-          this.#name_of_asyncGenerator_create,
-          AsyncGuarder_Base
-            .propertyDescriptor_of_asyncGenerator_create );
-      }
-
-      // Define static (i.e. this.constructor's) properties.
-      {
-        // Xxx_throw_if_asyncPromise_or_asyncGenerator_running()
-        Reflect.defineProperty( this.constructor,
-          this.#name_of_throw_if_asyncPromise_or_asyncGenerator_running,
-          AsyncGuarder_Base
-            .propertyDescriptor_of_throw_if_asyncPromise_or_asyncGenerator_running );
-      }
+//!!! (2023/03/24 Remarked) Replaced by computed property names.
+//   !!! ...unfinished... (2023/03/22)
+//   // shared instance (i.e. this.constructor.prototype's) properties
+//   // static (i.e. this.constructor's) properties
+//   // should not defineProperty() by every instance.
+//   //
+//   // They should be defined as computed named property. 
+//
+//
+//       // Define shared instance (i.e. this.constructor.prototype's) properties.
+//       {
+//         // Xxx_asyncGenerator_create()
+//         Reflect.defineProperty( this.constructor.prototype,
+//           this.#name_of_asyncGenerator_create,
+//           AsyncGuarder_Base
+//             .propertyDescriptor_of_asyncGenerator_create );
+//       }
+//
+//       // Define static (i.e. this.constructor's) properties.
+//       {
+//         // Xxx_throw_if_asyncPromise_or_asyncGenerator_running()
+//         Reflect.defineProperty( this.constructor,
+//           this.#name_of_throw_if_asyncPromise_or_asyncGenerator_running,
+//           AsyncGuarder_Base
+//             .propertyDescriptor_of_throw_if_asyncPromise_or_asyncGenerator_running );
+//       }
     }
 
     /** @override */
     disposeResources() {
 
-      Reflect.deleteProperty( this,
-        this.#name_of_throw_if_asyncPromise_or_asyncGenerator_running );
-
-      Reflect.deleteProperty( this, this.#name_of_asyncGenerator_create );
-
-      Reflect.deleteProperty( this, this.#name_of_asyncGenerator_running );
-
-      this.#name_of_throw_if_asyncPromise_or_asyncGenerator_running = undefined;
-      this.#name_of_asyncGenerator_guarded = undefined;
-      this.#name_of_asyncGenerator_create = undefined;
-      this.#name_of_asyncGenerator_running = undefined;
-      this.#name_of_asyncPromise_running = undefined;
+      Reflect.deleteProperty( this, name_of_asyncGenerator_running );
 
       this.#asyncGenerator_running = undefined;
-
-      this.#underlied_asyncGenerator_func = undefined;
 
       // If parent class has the same method, call it.    
       if ( super.disposeResources instanceof Function )
@@ -216,32 +176,26 @@ function AsyncGuarder_Base(
 
 
     /**
-     * Property descriptor for Xxx_asyncGenerator_create().
-     */
-    static propertyDescriptor_of_asyncGenerator_create = {
-      value: AsyncGuarder_Base.asyncGenerator_create
-    };
-
-    /**
      * Create Xxx_asyncGenerator (an instance of guarded underlied asyn generator).
      *
      * @return {AsyncGenerator}
      *   Return the newly created instance of .guarded_underlined_asyncGenerator().
      */
-    static asyncGenerator_create( ...restArgs ) {
+    [ name_of_asyncGenerator_create ]( ...restArgs ) {
 
       { // Checking pre-condition.
-        const funcNameInMessage = this.#name_of_asyncGenerator_create;
+        const funcNameInMessage = name_of_asyncGenerator_create;
 
         AsyncGuarder_Base.throw_if_an_old_still_running.call( this,
           this.#asyncGenerator_running, funcNameInMessage );
 
-        AsyncGuarder_Base.throw_if_asyncPromise_or_asyncGenerator_running
+        AsyncGuarder_Base
+          [ name_of_throw_if_asyncPromise_or_asyncGenerator_running ]
           .call( this, funcNameInMessage );
       }
 
       let asyncGenerator = AsyncGuarder_Base
-        .asyncGenerator_create_without_checking_precondition
+        [ name_of_asyncGenerator_create_without_checking_precondition ]
         .apply( this, restArgs );
       return asyncGenerator;
     }
@@ -253,7 +207,9 @@ function AsyncGuarder_Base(
      * @return {AsyncGenerator}
      *   Return the newly created instance of .guarded_underlined_asyncGenerator().
      */
-    static asyncGenerator_create_without_checking_precondition( ...restArgs ) {
+    static [ name_of_asyncGenerator_create_without_checking_precondition ](
+      ...restArgs ) {
+
       this.#asyncGenerator_running = true;
       let asyncGenerator = AsyncGuarder_Base
         .guarded_underlined_asyncGenerator.apply( this, restArgs );
