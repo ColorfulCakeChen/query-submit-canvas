@@ -133,13 +133,33 @@ let asyncGenerator_Guardian_Base
   }
 
 
+//!!! ...unfinished... (2023/03/24)    
   /**
    * Property descriptor for Xxx_asyncGenerator_create().
-   *
-   * @param {asyncGenerator_Guardian_Base} this
    */
   static propertyDescriptor_of_asyncGenerator_create = {
-    value( ...restArgs ) {
+    value: asyncGenerator_Guardian_Base.asyncGenerator
+  };
+
+  /**
+   * Create JSON_ColumnMajorArrayArray_fetcher (an instance of
+   * .JSON_ColumnMajorArrayArray_fetch_asyncGenerator()).
+   *
+   *
+   * @param {ValueMax.Percentage.Aggregate} progressParent
+   *   Some new progressToAdvance will be created and added to progressParent. The
+   * created progressToAdvance will be increased when every time advanced. The
+   * progressParent.root_get() will be returned when every time yield.
+   *
+   * @param {Promise} delayPromise
+   *   Mainly used when unit testing. If not null, the async generator will
+   * await it before complete. If null or undefined, no extra delay awaiting.
+   *
+   * @return {AsyncGenerator}
+   *   Return the newly created JSON_ColumnMajorArrayArray_fetcher which is an
+   * instance of .JSON_ColumnMajorArrayArray_fetch_asyncGenerator().
+   */
+  asyncGenerator( ...restArgs ) {
 
 //!!! ...unfinished... (2023/03/23)
 
@@ -152,13 +172,12 @@ let asyncGenerator_Guardian_Base
       GSheets_UrlComposer.throw_if_fetching.call( this, funcNameInMessage );
     }
 
-    let fetcher = GSheets_UrlComposer
-      .JSON_ColumnMajorArrayArray_fetcher_create_without_checking_precondition
-      .call( this, progressParent, params_loading_retryWaiting, delayPromise );
-    return fetcher;
+    let asyncGenerator = asyncGenerator_Guardian_Base
+      .asyncGenerator_create_without_checking_precondition
+      .apply( this, restArgs );
+    return asyncGenerator;
   }
 
-//!!!
   /**
    *
    * @param {asyncGenerator_Guardian_Base} this
@@ -167,21 +186,11 @@ let asyncGenerator_Guardian_Base
    *   Return the newly created instance of .guarded_underlined_asyncGenerator().
    */
   static asyncGenerator_create_without_checking_precondition( ...restArgs ) {
-
     this.#asyncGenerator_running = true;
-
     let asyncGenerator = asyncGenerator_Guardian_Base
       .guarded_underlined_asyncGenerator.apply( this, restArgs );
     return fetcher;
   }
-
-//!!! ...unfinished... (2023/03/24)    
-//   /**
-//    * Property descriptor for guarded underlied async generator.
-//    */
-//   static propertyDescriptor_of_guarded_asyncGenerator = {
-//     value: asyncGenerator_Guardian_Base.guarded_asyncGenerator
-//   };
 
   /**
    * The guarded underlied async generator.
