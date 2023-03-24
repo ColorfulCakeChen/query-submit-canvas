@@ -3,7 +3,7 @@ export { asyncGenerator_Guardian_Root };
 
 import * as Pool from "../../util/Pool.js";
 //import * as Recyclable from "../../util/Recyclable.js";
-import * as ValueMax from "./ValueMax.js";
+//import * as ValueMax from "./ValueMax.js";
 
 
 //!!! ...unfinished... (2023/03/23)
@@ -97,13 +97,22 @@ let asyncGenerator_Guardian_Base
         asyncGenerator_Guardian_Base.propertyDescriptor_asyncGenerator_running );
     }
 
-    // Define static (i.e. this.constructor's) properties.
+    // Define shared instance (i.e. this.constructor.prototype's) properties.
     {
-      // Xxx_asyncGenerator_guarded_create
-      Reflect.defineProperty( this.constructor,
+      // Xxx_asyncGenerator_create
+      Reflect.defineProperty( this.constructor.prototype,
         this.#name_of_asyncGenerator_create,
         asyncGenerator_Guardian_Base
           .propertyDescriptor_of_asyncGenerator_create );
+    }
+
+    // Define static (i.e. this.constructor's) properties.
+    {
+      // // throw_???
+      // Reflect.defineProperty( this.constructor,
+      //   this.#???,
+      //   asyncGenerator_Guardian_Base
+      //     .propertyDescriptor_of_??? );
     }
   }
 
