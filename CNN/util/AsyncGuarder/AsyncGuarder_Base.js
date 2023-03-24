@@ -1,10 +1,10 @@
 export { AsyncGuarder_Base as Base };
 export { AsyncGuarder_Root as Root };
 
-import * as ClassHierarchyTools from "../../util/ClassHierarchyTools.js";
-import * as Pool from "../../util/Pool.js";
-//import * as Recyclable from "../../util/Recyclable.js";
-//import * as ValueMax from "./ValueMax.js";
+import * as ClassHierarchyTools from "../util/ClassHierarchyTools.js";
+import * as Pool from "../util/Pool.js";
+//import * as Recyclable from "../util/Recyclable.js";
+//import * as ValueMax from "../util/ValueMax.js";
 
 /**
  * A wrapper class for preventing an underlied async generator from being
