@@ -44,10 +44,6 @@ let asyncGenerator_Guardian_Base
   #name_of_asyncGenerator_create;
   #name_of_asyncGenerator_guarded;
 
-  // Property descriptor for the getters (as enumerable read-only properties).
-  static propertyDescriptor_asyncGenerator_running = 
-    { get() { return this.#asyncGenerator_running; }, enumerable: true };
-
 
 
   /**
@@ -138,6 +134,12 @@ let asyncGenerator_Guardian_Base
       super.disposeResources();
   }
 
+  /**
+   * Property descriptor for Xxx_asyncGenerator_running.
+   * (as enumerable read-only properties).
+   */
+  static propertyDescriptor_asyncGenerator_running = 
+    { get() { return this.#asyncGenerator_running; }, enumerable: true };
 
 //!!! ...unfinished... (2023/03/24)    
   /**
@@ -221,6 +223,17 @@ let asyncGenerator_Guardian_Base
     }
   }
 
+
+// Use new.target get MostDerivedClass in constructor.
+// Reflect.getPrototypeOf( this ).constructor.name
+  /**
+   * @return {string}
+   *   Return the class name of the most derived class (which
+   * is a sub-class of this )
+   */
+  static MostDerivedClass_getName() {
+    return this.constructor.name;
+  }
 
   /**
    * @param {GSheets_UrlComposer} this
