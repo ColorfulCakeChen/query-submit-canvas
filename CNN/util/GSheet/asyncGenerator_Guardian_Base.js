@@ -39,7 +39,7 @@ let asyncGenerator_Guardian_Base
   // the properties' names.
   #name_of_asyncGenerator_running;
   #name_of_asyncGenerator_create;
-  #name_of_guarded_asyncGenerator;
+  #name_of_asyncGenerator_guarded;
 
   // Property descriptor for the getters (as enumerable read-only properties).
   static propertyDescriptor_asyncGenerator_running = 
@@ -83,8 +83,8 @@ let asyncGenerator_Guardian_Base
     this.#name_of_asyncGenerator_create
       = `${name_prefix}_asyncGenerator_create`;
 
-    this.#name_of_guarded_asyncGenerator
-      = `${name_prefix}_guarded_asyncGenerator`;
+    this.#name_of_asyncGenerator_guarded
+      = `${name_prefix}_asyncGenerator_guarded`;
 
     // Define read-only and enumerable instance (i.e. this.Xxx) properties.
     {
@@ -96,31 +96,24 @@ let asyncGenerator_Guardian_Base
 
     // Define static (i.e. this.constructor's) properties.
     {
-      // Xxx_guarded_asyncGenerator_create
+      // Xxx_asyncGenerator_guarded_create
       Reflect.defineProperty( this.constructor,
         this.#name_of_asyncGenerator_create,
         asyncGenerator_Guardian_Base
           .propertyDescriptor_of_asyncGenerator_create );
-
-      // Xxx_guarded_asyncGenerator
-      Reflect.defineProperty( this.constructor,
-        this.#name_of_guarded_asyncGenerator,
-        asyncGenerator_Guardian_Base
-          .propertyDescriptor_of_guarded_asyncGenerator );
     }
   }
 
   /** @override */
   disposeResources() {
 
-    Reflect.deleteProperty( this, this.#name_of_guarded_asyncGenerator );
     Reflect.deleteProperty( this, this.#name_of_asyncGenerator_create );
 
 //!!! ...unfinished... (2023/03/24)    
     
     Reflect.deleteProperty( this, this.#name_of_asyncGenerator_running );
 
-    this.#name_of_guarded_asyncGenerator = undefined;
+    this.#name_of_asyncGenerator_guarded = undefined;
     this.#name_of_asyncGenerator_running = undefined;
 
     this.#asyncGenerator_running = undefined;
@@ -138,33 +131,21 @@ let asyncGenerator_Guardian_Base
    * Property descriptor for Xxx_asyncGenerator_create().
    */
   static propertyDescriptor_of_asyncGenerator_create = {
-    value: asyncGenerator_Guardian_Base.asyncGenerator
+    value: asyncGenerator_Guardian_Base.asyncGenerator_create
   };
 
   /**
-   * Create JSON_ColumnMajorArrayArray_fetcher (an instance of
-   * .JSON_ColumnMajorArrayArray_fetch_asyncGenerator()).
-   *
-   *
-   * @param {ValueMax.Percentage.Aggregate} progressParent
-   *   Some new progressToAdvance will be created and added to progressParent. The
-   * created progressToAdvance will be increased when every time advanced. The
-   * progressParent.root_get() will be returned when every time yield.
-   *
-   * @param {Promise} delayPromise
-   *   Mainly used when unit testing. If not null, the async generator will
-   * await it before complete. If null or undefined, no extra delay awaiting.
+   * Create Xxx_asyncGenerator (an instance of guarded underlied asyn generator).
    *
    * @return {AsyncGenerator}
-   *   Return the newly created JSON_ColumnMajorArrayArray_fetcher which is an
-   * instance of .JSON_ColumnMajorArrayArray_fetch_asyncGenerator().
+   *   Return the newly created instance of .guarded_underlined_asyncGenerator().
    */
-  asyncGenerator( ...restArgs ) {
+  asyncGenerator_create( ...restArgs ) {
 
 //!!! ...unfinished... (2023/03/23)
 
     { // Checking pre-condition.
-      const funcNameInMessage = "JSON_ColumnMajorArrayArray_fetcher_create";
+      const funcNameInMessage = this.#name_of_asyncGenerator_create;
 
       GSheets_UrlComposer.throw_if_an_old_still_running.call( this,
         this.fetch_asyncGenerator_running, funcNameInMessage );
@@ -202,7 +183,7 @@ let asyncGenerator_Guardian_Base
 //!!! ...unfinished... (2023/03/24)    
 
     { // Checking pre-condition.
-      const funcNameInMessage = this.#name_of_guarded_asyncGenerator;
+      const funcNameInMessage = this.#name_of_asyncGenerator_guarded;
 
       GSheets_UrlComposer.throw_call_another_if_false.call( this,
         this.#asyncGenerator_running, funcNameInMessage,
