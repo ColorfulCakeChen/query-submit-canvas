@@ -1,5 +1,5 @@
-export { AsyncGuarder_RecyclableBase };
-export { AsyncGuarder_RecyclableRoot };
+export { AsyncGuarder_RecyclableBase as RecyclableBase };
+export { AsyncGuarder_RecyclableRoot as RecyclableRoot};
 
 import * as Pool from "../../util/Pool.js";
 import * as Recyclable from "../../util/Recyclable.js";

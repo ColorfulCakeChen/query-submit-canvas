@@ -1,5 +1,5 @@
-export { AsyncGuarder_Base };
-export { AsyncGuarder_Root };
+export { AsyncGuarder_Base as Base };
+export { AsyncGuarder_Root as Root };
 
 import * as ClassHierarchyTools from "../../util/ClassHierarchyTools.js";
 import * as Pool from "../../util/Pool.js";
