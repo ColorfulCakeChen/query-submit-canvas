@@ -15,29 +15,21 @@ import * as ValueMax from "./ValueMax.js";
  *   If true, some debug messages of HttpRequest.Fetcher will be logged to
  * console.
  *
- * @member {boolean} JSON_ColumnMajorArrayArray_fetch_asyncPromise_running
- *   If true, a JSON_ColumnMajorArrayArray_fetch_asyncPromise is
- * still executing. Please wait it becoming false if wanting to call
- * .JSON_ColumnMajorArrayArray_fetch_asyncPromise_create() again.
+ * @member {boolean} fetch_asyncPromise_running
+ *   If true, a fetch_asyncPromise is still executing. Please wait it becoming
+ * false if wanting to call .fetch_asyncPromise_create() again.
  *
- * @member {boolean} JSON_ColumnMajorArrayArray_fetch_asyncGenerator_running
- *   If true, a JSON_ColumnMajorArrayArray_fetch_asyncGenerator is
- * still executing. Please wait it becoming false if wanting to call
- * .JSON_ColumnMajorArrayArray_fetch_asyncGenerator_create() again.
+ * @member {boolean} fetch_asyncGenerator_running
+ *   If true, a fetch_asyncGenerator is still executing. Please wait it
+ * becoming false if wanting to call .fetch_asyncGenerator_create() again.
  *
- * @member {ValueMax.Percentage.Aggregate} JSON_ColumnMajorArrayArray_fetch_asyncPromise_progress
- *   The progress of JSON_ColumnMajorArrayArray_fetch_asyncPromise. If
- * ( .JSON_ColumnMajorArrayArray_fetch_asyncPromise_progress.valuePercentage == 100 ),
- * the fetching has done.
- *   - It is used only if .JSON_ColumnMajorArrayArray_fetch_async() is called.
- *   - If .JSON_ColumnMajorArrayArray_fetch_asyncGenerator() is called directly,
- *       its progressParent parameter will be used instead.
- *
- *   - It is used only if .JSON_ColumnMajorArrayArray_fetch_asyncPromise_create()
- *       is called.
- *   - It is not used if .JSON_ColumnMajorArrayArray_fetch_asyncGenerator_create()
- *       is called directly. In this case, its progressParent parameter will be
- *       used instead.
+ * @member {ValueMax.Percentage.Aggregate} fetch_asyncPromise_progress
+ *   The progress of fetch_asyncPromise. If
+ * ( .fetch_asyncPromise_progress.valuePercentage == 100 ), the fetching has
+ * done.
+ *   - It is used only if .fetch_asyncPromise_create() is called.
+ *   - It is not used if .fetch_asyncGenerator_create() is called. In this
+ *       case, its progressParent parameter will be used instead.
  *
  * @member {boolean} retryWaitingTimer_isCounting
  *   If true, the .urlComposer.httpFetcher now is during retry waiting.
@@ -45,10 +37,10 @@ import * as ValueMax from "./ValueMax.js";
 
 !!! ...unfinished... (2023/03/24)
 
- * @member {Function} JSON_ColumnMajorArrayArray_fetch_asyncPromise_create
+ * @member {Function} fetch_asyncPromise_create
  *   A method accepts ( params_loading_retryWaiting, delayPromise ).
 
- * @member {Function} JSON_ColumnMajorArrayArray_fetch_asyncGenerator_create
+ * @member {Function} fetch_asyncGenerator_create
  *   A method accepts ( progressParent, params_loading_retryWaiting, delayPromise ).
  */
 
@@ -92,7 +84,7 @@ class GSheets_UrlComposer extends AsyncGuarder.RecyclableRoot {
   constructor( spreadsheetId, range, apiKey ) {
 
 //!!! ...unfinished... (2023/03/24) Use AsyncGuarder.
-    super( "JSON_ColumnMajorArrayArray_fetch",
+    super( "fetch",
       GSheets_UrlComposer.JSON_ColumnMajorArrayArray_fetch_asyncGenerator );
 
     GSheets_UrlComposer.setAsConstructor_self.call( this,
@@ -104,7 +96,7 @@ class GSheets_UrlComposer extends AsyncGuarder.RecyclableRoot {
   static setAsConstructor( spreadsheetId, range, apiKey ) {
 
 //!!! ...unfinished... (2023/03/24) Use AsyncGuarder.
-    super.setAsConstructor( "JSON_ColumnMajorArrayArray_fetch",
+    super.setAsConstructor( "fetch",
       GSheets_UrlComposer.JSON_ColumnMajorArrayArray_fetch_asyncGenerator );
 
     GSheets_UrlComposer.setAsConstructor_self.call( this,

@@ -228,7 +228,7 @@ class TestCase {
    * Try to load differential evolution summary and one of versus.
    *
    * @param {GSheets.UrlComposer} urlComposer
-   *   The urlComposer.JSON_ColumnMajorArrayArray_fetch_asyncGenerator() will be
+   *   The urlComposer.fetch_asyncGenerator() will be
    * called and advanced until done.
    *
    * @return {Array[]}
@@ -261,17 +261,17 @@ class TestCase {
     );
 
 //!!! ...unfinished... (2023/03/22)
-// should test .JSON_ColumnMajorArrayArray_fetch_asyncGenerator_create()
-// and .JSON_ColumnMajorArrayArray_fetch_asyncPromise_create()
+// should test .Generator_create()
+// and .fetch_asyncPromise_create()
 
     let delayPromise = PartTime.Promise_resolvable_rejectable_create();
 
     let fetcher = urlComposer
-      .JSON_ColumnMajorArrayArray_fetch_asyncGenerator_create(
+      .fetch_asyncGenerator_create(
         progressFetch, params_loading_retryWaiting, delayPromise );
 
 //!!! ...unfinished... (2023/03/22)
-// What if .JSON_ColumnMajorArrayArray_fetch_asyncPromise_create()
+// What if .fetch_asyncPromise_create()
 
     if ( !urlComposer.fetch_asyncGenerator_running )
       throw Error( `GSheets_tester.TestCase`
@@ -283,13 +283,13 @@ class TestCase {
 //!!! ...unfinished... (2023/03/22)
     // Test reenter.
     {
-      // Test: Reenter .JSON_ColumnMajorArrayArray_fetch_asyncPromise_create()
+      // Test: Reenter .fetch_asyncPromise_create()
       //       should throw exception.
       try {
-        urlComposer.JSON_ColumnMajorArrayArray_fetch_asyncPromise_create();
+        urlComposer.fetch_asyncPromise_create();
       } catch ( e ) {
         if ( e.message.indexOf(
-               ".JSON_ColumnMajorArrayArray_fetch_asyncPromise_create():" ) > 0 ) {
+               ".fetch_asyncPromise_create():" ) > 0 ) {
           progressToAdvance.value_advance();
           yield progressRoot;
         } else { // Unknown error, said loudly.
@@ -298,13 +298,13 @@ class TestCase {
         }
       }
 
-      // Test: Reenter .JSON_ColumnMajorArrayArray_fetch_asyncGenerator_create()
+      // Test: Reenter .fetch_asyncGenerator_create()
       //       should throw exception.
       try {
-        urlComposer.JSON_ColumnMajorArrayArray_fetch_asyncGenerator_create();
+        urlComposer.fetch_asyncGenerator_create();
       } catch ( e ) {
         if ( e.message.indexOf(
-               ".JSON_ColumnMajorArrayArray_fetch_asyncGenerator_create():" ) > 0 ) {
+               ".fetch_asyncGenerator_create():" ) > 0 ) {
           progressToAdvance.value_advance();
           yield progressRoot;
         } else { // Unknown error, said loudly.
