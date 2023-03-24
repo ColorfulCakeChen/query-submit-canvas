@@ -156,7 +156,7 @@ let asyncGenerator_Guardian_Base
   static JSON_ColumnMajorArrayArray_fetcher_create_without_checking_precondition(
     progressParent, params_loading_retryWaiting, delayPromise ) {
 
-    this.fetch_asyncGenerator_running = true;
+    this.#asyncGenerator_running = true;
 
     let fetcher = GSheets_UrlComposer
       .JSON_ColumnMajorArrayArray_fetch_asyncGenerator.call( this,
@@ -173,46 +173,38 @@ let asyncGenerator_Guardian_Base
    *   The underlied async generator which wants to be guarded by the
    * .Xxx_asyncGenerator_running boolean flag.
    */
-  static propertyDescriptor_asyncGenerator_guarded = { value: async* (
-    ...restArgs ) {
+  static propertyDescriptor_asyncGenerator_guarded = { value:
+    async* ( ...restArgs ) {
 
-//!!! ...unfinished... (2023/03/24)    
+  //!!! ...unfinished... (2023/03/24)    
 
-    { // Checking pre-condition.
-      const funcNameInMessage = "JSON_ColumnMajorArrayArray_fetch_asyncGenerator";
+      { // Checking pre-condition.
+        const funcNameInMessage = "JSON_ColumnMajorArrayArray_fetch_asyncGenerator";
 
-      GSheets_UrlComposer.throw_call_another_if_false.call( this,
-        this.fetch_asyncGenerator_running, funcNameInMessage,
-        "JSON_ColumnMajorArrayArray_fetcher_create" );
+        GSheets_UrlComposer.throw_call_another_if_false.call( this,
+          this.fetch_asyncGenerator_running, funcNameInMessage,
+          "JSON_ColumnMajorArrayArray_fetcher_create" );
+      }
+
+      try {
+
+        // 1.
+        let underlied_asyncGenerator
+          = this.#underlied_asyncGenerator_func.apply( this, restArgs );
+
+        let result = yield *underlied_asyncGenerator;
+        return result;
+
+      } catch ( e ) {
+        //debugger;
+        throw e;
+
+      } finally {
+  //!!! ...unfinished... (2023/03/24)    
+        // 2. So that this async generator could be executed again.
+        this.#asyncGenerator_running = false;
+      }
     }
-
-    try {
-
-//!!! ...unfinished... (2023/03/24)    
-      this.#underlied_asyncGenerator_func.apply( this, restArgs );
-
-      // 1.
-      let fetcher_underlied = this.urlComposer
-        .JSON_ColumnMajorArrayArray_fetch_asyncGenerator(
-          progressParent, params_loading_retryWaiting );
-
-      let ColumnMajorArrayArray = yield *fetcher_underlied;
-
-      // 2.
-      if ( delayPromise )
-        await delayPromise;
-
-      return ColumnMajorArrayArray;
-
-    } catch ( e ) {
-      //debugger;
-      throw e;
-
-    } finally {
-      // 3. So that this async generator could be executed again.
-      this.fetch_asyncGenerator_running = false;
-    }
-  }
   };
 
 
