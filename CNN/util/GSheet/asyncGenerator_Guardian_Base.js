@@ -236,8 +236,8 @@ let asyncGenerator_Guardian_Base
 
 //!!! ...unfinished... (2023/03/24)    
 
-    if (   ( this.fetch_async_running )
-        || ( this.fetch_asyncGenerator_running ) )
+    if (   ( this.#async_running )
+        || ( this.#asyncGenerator_running ) )
       throw Error( `${mostDerivedClassName}.${funcNameInMessage}(): `
         + `should not be executed while still fetching.` );
   }
