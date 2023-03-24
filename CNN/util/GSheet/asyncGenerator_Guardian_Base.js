@@ -174,8 +174,8 @@ let asyncGenerator_Guardian_Base
    *   The underlied async generator which wants to be guarded by the
    * .Xxx_asyncGenerator_running boolean flag.
    */
-  static propertyDescriptor_asyncGenerator_guarded = { value:
-    async* ( ...restArgs ) {
+  static propertyDescriptor_asyncGenerator_guarded = {
+    async* value( ...restArgs ) {
 
   //!!! ...unfinished... (2023/03/24)    
 
