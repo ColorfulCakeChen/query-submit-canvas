@@ -1,11 +1,14 @@
 export { ParentPrototype_of_Class };
 export { ParentClass_of_Class };
+export { ParentClassName_of_Class };
 
-export { MostDerived_Prototype };
-export { MostDerived_ClassName };
-export { SecondMostDerived_Prototype };
-export { SecondMostDerived_Class };
-export { SecondMostDerived_ClassName };
+export { MostDerived_Prototype_of_Instance };
+export { MostDerived_Class_of_Instance };
+export { MostDerived_ClassName_of_Instance };
+
+export { SecondMostDerived_Prototype_of_Instance };
+export { SecondMostDerived_Class_of_Instance };
+export { SecondMostDerived_ClassName_of_Instance };
 
 
 /**
@@ -29,6 +32,18 @@ function ParentPrototype_of_Class( aClass ) {
  */
 function ParentClass_of_Class( aClass ) {
   return ParentPrototype_of_Class( aClass ).constructor;
+}
+
+/**
+ * @param {Function} aClass
+ *   The constructor function (e.g. anObject.constructor) to be queried.
+ *
+ * @return {string}
+ *   Return the parent class (i.e. constructor function) name which the aClass
+ * inherits from.
+ */
+function ParentClassName_of_Class( aClass ) {
+  return ParentClass_of_Class( aClass ).name;
 }
 
 
