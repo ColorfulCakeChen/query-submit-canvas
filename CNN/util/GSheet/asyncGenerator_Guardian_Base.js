@@ -39,6 +39,7 @@ let asyncGenerator_Guardian_Base
   // the properties' names.
   #name_of_asyncGenerator_running;
   #name_of_guarded_asyncGenerator;
+  #name_of_asyncGenerator_create;
 
   // Property descriptor for the getters (as enumerable read-only properties).
   static propertyDescriptor_asyncGenerator_running = 
@@ -79,12 +80,15 @@ let asyncGenerator_Guardian_Base
     this.#name_of_asyncGenerator_running
       = `${name_prefix}_asyncGenerator_running`;
 
+    this.#name_of_asyncGenerator_create
+      = `${name_prefix}_asyncGenerator_create`;
+
     this.#name_of_guarded_asyncGenerator
       = `${name_prefix}_guarded_asyncGenerator`;
 
-    // Define read-only and enumerable instance properties.
+    // Define read-only and enumerable instance (i.e. this.Xxx) properties.
     {
-      // Xxx_asyncGenerator_running.
+      // Xxx_asyncGenerator_running
       Reflect.defineProperty( this,
         this.#name_of_asyncGenerator_running,
         asyncGenerator_Guardian_Base.propertyDescriptor_asyncGenerator_running );
@@ -92,10 +96,17 @@ let asyncGenerator_Guardian_Base
 
     // Define static (i.e. this.constructor's) properties.
     {
-      // Xxx_guarded__asyncGenerator.
+      // Xxx_guarded_asyncGenerator_create
+      Reflect.defineProperty( this.constructor,
+        this.#name_of_asyncGenerator_create,
+        asyncGenerator_Guardian_Base
+          .propertyDescriptor_of_asyncGenerator_create );
+
+      // Xxx_guarded_asyncGenerator
       Reflect.defineProperty( this.constructor,
         this.#name_of_guarded_asyncGenerator,
-        asyncGenerator_Guardian_Base.propertyDescriptor_guarded_asyncGenerator );
+        asyncGenerator_Guardian_Base
+          .propertyDescriptor_of_guarded_asyncGenerator );
     }
   }
 
@@ -103,6 +114,10 @@ let asyncGenerator_Guardian_Base
   disposeResources() {
 
     Reflect.deleteProperty( this, this.#name_of_guarded_asyncGenerator );
+    Reflect.deleteProperty( this, this.#name_of_asyncGenerator_create );
+
+//!!! ...unfinished... (2023/03/24)    
+    
     Reflect.deleteProperty( this, this.#name_of_asyncGenerator_running );
 
     this.#name_of_guarded_asyncGenerator = undefined;
@@ -110,7 +125,6 @@ let asyncGenerator_Guardian_Base
 
     this.#asyncGenerator_running = undefined;
 
-//!!! ...unfinished... (2023/03/24)    
     this.#underlied_asyncGenerator_func = undefined;
 
     // If parent class has the same method, call it.    
@@ -160,40 +174,36 @@ let asyncGenerator_Guardian_Base
 
 //!!!
   /**
-   * Create an instance of .JSON_ColumnMajorArrayArray_fetch_asyncGenerator().
+   * Property descriptor for Xxx_asyncGenerator_create().
    *
-   *
-   * @param {GSheets_UrlComposer} this
-   *
-   * @return {AsyncGenerator}
-   *   Return the newly created JSON_ColumnMajorArrayArray_fetcher which is an
-   * instance of .JSON_ColumnMajorArrayArray_fetch_asyncGenerator().
+   * @param {asyncGenerator_Guardian_Base} this
    */
-  static JSON_ColumnMajorArrayArray_fetcher_create_without_checking_precondition(
-    progressParent, params_loading_retryWaiting, delayPromise ) {
+  static propertyDescriptor_of_asyncGenerator_create = {
+    value(
+//!!! ...unfinished... (2023/03/24)    
+      progressParent, params_loading_retryWaiting, delayPromise ) {
 
-    this.#asyncGenerator_running = true;
+      this.#asyncGenerator_running = true;
 
-    let fetcher = GSheets_UrlComposer
-      .JSON_ColumnMajorArrayArray_fetch_asyncGenerator.call( this,
-        progressParent, params_loading_retryWaiting, delayPromise );
-    return fetcher;
-  }
+      let fetcher = GSheets_UrlComposer
+        .JSON_ColumnMajorArrayArray_fetch_asyncGenerator.call( this,
+          progressParent, params_loading_retryWaiting, delayPromise );
+      return fetcher;
+    }
+  };
 
-
-//!!!
   /**
    * Property descriptor for guarded underlied async generator.
    *
    * @param {asyncGenerator_Guardian_Base} this
    */
-  static propertyDescriptor_guarded_asyncGenerator = {
+  static propertyDescriptor_of_guarded_asyncGenerator = {
     async* value( ...restArgs ) {
 
-  //!!! ...unfinished... (2023/03/24)    
+//!!! ...unfinished... (2023/03/24)    
 
       { // Checking pre-condition.
-        const funcNameInMessage = "JSON_ColumnMajorArrayArray_fetch_asyncGenerator";
+        const funcNameInMessage = this.#name_of_guarded_asyncGenerator;
 
         GSheets_UrlComposer.throw_call_another_if_false.call( this,
           this.fetch_asyncGenerator_running, funcNameInMessage,
