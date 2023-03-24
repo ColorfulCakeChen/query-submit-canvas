@@ -22,11 +22,12 @@ import { Base as AsyncGuarder_Base } from "./AsyncGuarder_Base.js";
  * is still executing, it will throw exception.
  *
  * @member {ValueMax.Percentage.Aggregate} Xxx_asyncPromise_progress
- *   The progress of .Xxx_async(). If ( .Xxx_asyncPromise_progress.valuePercentage == 100 ),
- * the .Xxx_async() has done.
+ *   The progress of .Xxx_async(). If
+ * ( .Xxx_asyncPromise_progress.valuePercentage == 100 ), the .Xxx_async() has
+ * done.
  *   - It is used only if .Xxx_asyncPromise_create() is called.
- *   - It is not used if .Xxx_asyncGenerator_create() is called directly. In this
- *       case, its progressParent parameter will be used instead.
+ *   - It is not used if .Xxx_asyncGenerator_create() is called directly. In
+ *       this case, its progressParent parameter will be used instead.
  */
 let AsyncGuarder_RecyclableBase
   = ( ParentClass = Object ) => class AsyncGuarder_RecyclableBase
