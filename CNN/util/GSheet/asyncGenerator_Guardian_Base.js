@@ -161,12 +161,13 @@ let asyncGenerator_Guardian_Base
     { // Checking pre-condition.
       const funcNameInMessage = this.#name_of_asyncGenerator_create;
 
+      asyncGenerator_Guardian_Base.throw_if_an_old_still_running.call( this,
+        this.#asyncGenerator_running, funcNameInMessage );
+
 //!!! ...unfinished... (2023/03/24)
 
-      asyncGenerator_Guardian_Base.throw_if_an_old_still_running.call( this,
-        this.fetch_asyncGenerator_running, funcNameInMessage );
-
-        asyncGenerator_Guardian_Base.throw_if_fetching.call( this, funcNameInMessage );
+        asyncGenerator_Guardian_Base.throw_if_fetching.call( this,
+          funcNameInMessage );
     }
 
     let asyncGenerator = asyncGenerator_Guardian_Base
@@ -199,9 +200,7 @@ let asyncGenerator_Guardian_Base
     { // Checking pre-condition.
       const funcNameInMessage = this.#name_of_asyncGenerator_guarded;
 
-//!!! ...unfinished... (2023/03/24)
-
-      GSheets_UrlComposer.throw_call_another_if_false.call( this,
+      asyncGenerator_Guardian_Base.throw_call_another_if_false.call( this,
         this.#asyncGenerator_running, funcNameInMessage,
         this.#name_of_asyncGenerator_create );
     }
@@ -226,7 +225,7 @@ let asyncGenerator_Guardian_Base
 
 
   /**
-   * @param {GSheets_UrlComposer} this
+   * @param {asyncGenerator_Guardian_Base} this
    * @param {string} funcNameInMessage   The caller function name. (e.g. init_async)
    */
   static throw_if_fetching( funcNameInMessage ) {
@@ -243,7 +242,7 @@ let asyncGenerator_Guardian_Base
   }
 
   /**
-   * @param {GSheets_UrlComposer} this
+   * @param {asyncGenerator_Guardian_Base} this
    * @param {boolean} b_still_running    If true, throw exception.
    * @param {string} funcNameInMessage   The caller function name. (e.g. init_async)
    */
@@ -252,15 +251,13 @@ let asyncGenerator_Guardian_Base
     const mostDerivedClassName
       = ClassHierarchyTools.MostDerived_ClassName_of_Instance( this );
 
-//!!! ...unfinished... (2023/03/24)    
-
     if ( b_still_running )
       throw Error( `${mostDerivedClassName}.${funcNameInMessage}(): `
         + `An old .${funcNameInMessage}() is still running.` );
   }
 
   /**
-   * @param {GSheets_UrlComposer} this
+   * @param {asyncGenerator_Guardian_Base} this
    * @param {boolean} b                  If false, throw exception.
    * @param {string} funcNameInMessage   The caller function name. (e.g. init_async)
    * @param {string} funcNameShouldBeCalledInMessage
@@ -271,8 +268,6 @@ let asyncGenerator_Guardian_Base
 
     const mostDerivedClassName
       = ClassHierarchyTools.MostDerived_ClassName_of_Instance( this );
-
-//!!! ...unfinished... (2023/03/24)    
 
     if ( !b )
       throw Error( `${mostDerivedClassName}.${funcNameInMessage}(): `
