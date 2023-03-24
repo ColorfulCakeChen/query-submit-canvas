@@ -4,6 +4,7 @@ export { asyncGenerator_Guardian_Root };
 import * as Pool from "../../util/Pool.js";
 //import * as Recyclable from "../../util/Recyclable.js";
 //import * as ValueMax from "./ValueMax.js";
+import * as ClassHierarchyTools from "../../util/ClassHierarchyTools.js";
 
 
 //!!! ...unfinished... (2023/03/23)
@@ -221,53 +222,6 @@ let asyncGenerator_Guardian_Base
       // 2. So that this async generator could be executed again.
       this.#asyncGenerator_running = false;
     }
-  }
-
-
-  /**
-   * @return {Object}
-   *   Return the prototype of the most derived prototype of "this" object.
-   */
-  static MostDerived_Prototype() {
-    // The same as Reflect.getPrototypeOf( this )
-    return this.constructor.prototype;
-  }
-
-  /**
-   * @return {string}
-   *   Return the class name of the most derived class (which
-   * is a sub-class of this class) of "this" object.
-   */
-  static MostDerived_ClassName() {
-    return this.constructor.name;
-  }
-
-  /**
-   * @return {Object}
-   *   Return the prototype of the 2nd most derived prototype of "this" object.
-   */
-  static SecondMostDerived_Prototype() {
-    return Reflect.getPrototypeOf( this.constructor ).prototype;
-  }
-
-  /**
-   * @return {Function}
-   *   Return the class (i.e. constructor function) of the 2nd most derived
-   * class of "this" object.
-   */
-  static SecondMostDerived_Class() {
-    return asyncGenerator_Guardian_Base
-      .SecondMostDerived_Prototype.call( this ).constructor;
-  }
-
-  /**
-   * @return {string}
-   *   Return the class (i.e. constructor function) name of the 2nd most
-   * derived class of "this" object.
-   */
-  static SecondMostDerived_ClassName() {
-    return asyncGenerator_Guardian_Base
-      .SecondMostDerived_Class.call( this ).name;
   }
 
 
