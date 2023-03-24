@@ -231,11 +231,14 @@ let asyncGenerator_Guardian_Base
    */
   static throw_if_fetching( funcNameInMessage ) {
 
+    const mostDerivedClassName
+      = ClassHierarchyTools.MostDerived_ClassName_of_Instance( this );
+
 //!!! ...unfinished... (2023/03/24)    
 
     if (   ( this.fetch_async_running )
         || ( this.fetch_asyncGenerator_running ) )
-      throw Error( `GSheets.UrlComposer.${funcNameInMessage}(): `
+      throw Error( `${mostDerivedClassName}.${funcNameInMessage}(): `
         + `should not be executed while still fetching.` );
   }
 
@@ -246,10 +249,13 @@ let asyncGenerator_Guardian_Base
    */
   static throw_if_an_old_still_running( b_still_running, funcNameInMessage ) {
 
+    const mostDerivedClassName
+      = ClassHierarchyTools.MostDerived_ClassName_of_Instance( this );
+
 //!!! ...unfinished... (2023/03/24)    
 
     if ( b_still_running )
-      throw Error( `GSheets.UrlComposer.${funcNameInMessage}(): `
+      throw Error( `${mostDerivedClassName}.${funcNameInMessage}(): `
         + `An old .${funcNameInMessage}() is still running.` );
   }
 
@@ -263,11 +269,13 @@ let asyncGenerator_Guardian_Base
   static throw_call_another_if_false(
     b, funcNameInMessage, funcNameShouldBeCalledInMessage ) {
 
-      ClassHierarchyTools.
+    const mostDerivedClassName
+      = ClassHierarchyTools.MostDerived_ClassName_of_Instance( this );
+
 //!!! ...unfinished... (2023/03/24)    
 
     if ( !b )
-      throw Error( `GSheets.UrlComposer.${funcNameInMessage}(): `
+      throw Error( `${mostDerivedClassName}.${funcNameInMessage}(): `
         + `Please call .${funcNameShouldBeCalledInMessage}() instead.` );
   }
 
