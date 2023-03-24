@@ -207,7 +207,7 @@ let asyncGenerator_Guardian_RecyclableBase
         .call( this, this.#async_running, funcNameInMessage );
 
       asyncGenerator_Guardian_RecyclableBase
-        .throw_if_async_or_asyncGenerator_running
+        .throw_if_asyncPromise_or_asyncGenerator_running
         .call( this, funcNameInMessage );
     }
 

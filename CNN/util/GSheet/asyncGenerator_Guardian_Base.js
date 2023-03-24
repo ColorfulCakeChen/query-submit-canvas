@@ -27,8 +27,8 @@ import * as Pool from "../../util/Pool.js";
  *   A method for creating the underlied async generator. If an old instnace
  * is still executing, it will throw exception.
  *
- * @member {Function} Xxx_throw_if_async_or_asyncGenerator_running
- *   A static method for throwing excption if .XXX_async_running or
+ * @member {Function} Xxx_throw_if_asyncPromise_or_asyncGenerator_running
+ *   A static method for throwing excption if .XXX_asyncPromise_running or
  * .XXX_asyncGenerator_running is true.
  *
  */
@@ -40,7 +40,7 @@ let asyncGenerator_Guardian_Base
 
   #asyncGenerator_running;
 
-  #name_of_async_running;
+  #name_of_asyncPromise_running;
   #name_of_asyncGenerator_running;
   #name_of_asyncGenerator_create;
 
@@ -49,7 +49,7 @@ let asyncGenerator_Guardian_Base
 //  #name_of_asyncGenerator_create_without_checking_precondition;
 
   #name_of_asyncGenerator_guarded;
-  #name_of_throw_if_async_or_asyncGenerator_running;
+  #name_of_throw_if_asyncPromise_or_asyncGenerator_running;
 
 
   /**
@@ -83,13 +83,13 @@ let asyncGenerator_Guardian_Base
 
     // Note:
     //
-    // Although the property .Xxx_async_running will not be created by this
+    // Although the property .Xxx_asyncPromise_running will not be created by this
     // asyncGenerator_Guardian_Base class (it will be created by sub-class
     // asyncGenerator_Guardian_RecyclableBase), however, this class will
     // try to check the property. So, its name should still be prepared.
     //
-    this.#name_of_async_running
-      = `${name_prefix}_async_running`;
+    this.#name_of_asyncPromise_running
+      = `${name_prefix}_asyncPromise_running`;
 
     this.#name_of_asyncGenerator_running
       = `${name_prefix}_asyncGenerator_running`;
@@ -105,8 +105,8 @@ let asyncGenerator_Guardian_Base
     this.#name_of_asyncGenerator_guarded
       = `${name_prefix}_asyncGenerator_guarded`;
 
-    this.#name_of_throw_if_async_or_asyncGenerator_running
-      = `${name_prefix}_throw_if_async_or_asyncGenerator_running`;
+    this.#name_of_throw_if_asyncPromise_or_asyncGenerator_running
+      = `${name_prefix}_throw_if_asyncPromise_or_asyncGenerator_running`;
 
     // Define read-only and enumerable instance (i.e. this.Xxx) properties.
     {
@@ -130,17 +130,17 @@ let asyncGenerator_Guardian_Base
 
 //!!! (2023/03/24 Remarked)
 // sub-class should call .asyncGenerator_create_without_checking_precondition() directly.
-//       // Xxx_throw_if_async_or_asyncGenerator_running()
+//       // Xxx_throw_if_asyncPromise_or_asyncGenerator_running()
 //       Reflect.defineProperty( this.constructor,
 //         this.#name_of_asyncGenerator_create_without_checking_precondition,
 //         asyncGenerator_Guardian_Base
 //           .propertyDescriptor_of_asyncGenerator_create_without_checking_precondition );
 
-      // Xxx_throw_if_async_or_asyncGenerator_running()
+      // Xxx_throw_if_asyncPromise_or_asyncGenerator_running()
       Reflect.defineProperty( this.constructor,
-        this.#name_of_throw_if_async_or_asyncGenerator_running,
+        this.#name_of_throw_if_asyncPromise_or_asyncGenerator_running,
         asyncGenerator_Guardian_Base
-          .propertyDescriptor_of_throw_if_async_or_asyncGenerator_running );
+          .propertyDescriptor_of_throw_if_asyncPromise_or_asyncGenerator_running );
     }
   }
 
@@ -150,7 +150,7 @@ let asyncGenerator_Guardian_Base
 //!!! ...unfinished... (2023/03/24)
 
     Reflect.deleteProperty( this,
-      this.#name_of_throw_if_async_or_asyncGenerator_running );
+      this.#name_of_throw_if_asyncPromise_or_asyncGenerator_running );
 
 //!!! (2023/03/24 Remarked)
 // sub-class should call .asyncGenerator_create_without_checking_precondition() directly.
@@ -161,7 +161,7 @@ let asyncGenerator_Guardian_Base
 
     Reflect.deleteProperty( this, this.#name_of_asyncGenerator_running );
 
-    this.#name_of_throw_if_async_or_asyncGenerator_running = undefined;
+    this.#name_of_throw_if_asyncPromise_or_asyncGenerator_running = undefined;
     this.#name_of_asyncGenerator_guarded = undefined;
 
 //!!! (2023/03/24 Remarked)
@@ -170,7 +170,7 @@ let asyncGenerator_Guardian_Base
 
     this.#name_of_asyncGenerator_create = undefined;
     this.#name_of_asyncGenerator_running = undefined;
-    this.#name_of_async_running = undefined;
+    this.#name_of_asyncPromise_running = undefined;
 
     this.#asyncGenerator_running = undefined;
 
@@ -211,7 +211,7 @@ let asyncGenerator_Guardian_Base
       asyncGenerator_Guardian_Base.throw_if_an_old_still_running.call( this,
         this.#asyncGenerator_running, funcNameInMessage );
 
-      asyncGenerator_Guardian_Base.throw_if_async_or_asyncGenerator_running
+      asyncGenerator_Guardian_Base.throw_if_asyncPromise_or_asyncGenerator_running
         .call( this, funcNameInMessage );
     }
 
@@ -224,7 +224,7 @@ let asyncGenerator_Guardian_Base
 //!!! (2023/03/24 Remarked)
 // sub-class should call .asyncGenerator_create_without_checking_precondition() directly.
 //   /**
-//    * Property descriptor for Xxx_throw_if_async_or_asyncGenerator_running().
+//    * Property descriptor for Xxx_throw_if_asyncPromise_or_asyncGenerator_running().
 //    */
 //   static propertyDescriptor_of_asyncGenerator_create_without_checking_precondition = {
 //     value: asyncGenerator_Guardian_Base
@@ -280,29 +280,29 @@ let asyncGenerator_Guardian_Base
 
 
   /**
-   * Property descriptor for Xxx_throw_if_async_or_asyncGenerator_running().
+   * Property descriptor for Xxx_throw_if_asyncPromise_or_asyncGenerator_running().
    */
-  static propertyDescriptor_of_throw_if_async_or_asyncGenerator_running = {
-    value: asyncGenerator_Guardian_Base.throw_if_async_or_asyncGenerator_running
+  static propertyDescriptor_of_throw_if_asyncPromise_or_asyncGenerator_running = {
+    value: asyncGenerator_Guardian_Base.throw_if_asyncPromise_or_asyncGenerator_running
   };
 
   /**
    * @param {asyncGenerator_Guardian_Base} this
    * @param {string} funcNameInMessage   The caller function name. (e.g. init_async)
    */
-  static throw_if_async_or_asyncGenerator_running( funcNameInMessage ) {
+  static throw_if_asyncPromise_or_asyncGenerator_running( funcNameInMessage ) {
 
     const mostDerivedClassName
       = ClassHierarchyTools.MostDerived_ClassName_of_Instance( this );
 
-    // Note: Property .Xxx_async_running is created by sub-class (if exists).
-    let b_async_running = this[ this.#name_of_async_running ];
+    // Note: Property .Xxx_asyncPromise_running is created by sub-class (if exists).
+    let b_asyncPromise_running = this[ this.#name_of_asyncPromise_running ];
 
-    if (   ( b_async_running )
+    if (   ( b_asyncPromise_running )
         || ( this.#asyncGenerator_running ) )
       throw Error( `${mostDerivedClassName}.${funcNameInMessage}(): `
         + `should not be executed while `
-        + `.${this.#name_of_async_running}() or `
+        + `.${this.#name_of_asyncPromise_running}() or `
         + `.${this.#name_of_asyncGenerator_running}() `
         + `still running.` );
   }
