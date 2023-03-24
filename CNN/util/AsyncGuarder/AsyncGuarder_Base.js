@@ -7,8 +7,8 @@ import * as Pool from "../Pool.js";
 //import * as ValueMax from "../ValueMax.js";
 
 /**
- * A wrapper class for preventing an underlied async generator from being
- * reentered.
+ * Return a wrapper class for preventing an underlied async generator from
+ * being reentered.
  *
  *
  * @param {string} name_prefix
