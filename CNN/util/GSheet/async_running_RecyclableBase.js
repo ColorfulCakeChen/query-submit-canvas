@@ -24,12 +24,12 @@ import { asyncGenerator_Guardian_Base } from "./asyncGenerator_Guardian_Base.js"
 
 //!!! ...unfinished... (2023/03/23)
 
- * @member {ValueMax.Percentage.Aggregate} fetch_progress
- *   The progress of fetching. If ( .fetch_progress.valuePercentage == 100 ),
- * the fetching has done.
- *   - It is used only if .JSON_ColumnMajorArrayArray_fetch_async() is called.
- *   - If .JSON_ColumnMajorArrayArray_fetch_asyncGenerator() is called directly,
- *       its progressParent parameter will be used instead.
+ * @member {ValueMax.Percentage.Aggregate} Xxx_async_progress
+ *   The progress of .Xxx_async(). If ( .Xxx_async_progress.valuePercentage == 100 ),
+ * the .Xxx_async() has done.
+ *   - It is used only if .Xxx_promise_create() is called.
+ *   - If .Xxx_asyncGenerator_create() is called directly, its progressParent
+ *       parameter will be used instead.
  */
 let asyncGenerator_Guardian_RecyclableBase
   = ( ParentClass = Object ) => class asyncGenerator_Guardian_RecyclableBase
@@ -111,6 +111,8 @@ let asyncGenerator_Guardian_RecyclableBase
   /** @override */
   disposeResources() {
 
+    asyncGenerator_Guardian_RecyclableBase.async_progress_dispose.call( this );
+
     Reflect.deleteProperty( this, this.#name_of_promise_create );
     Reflect.deleteProperty( this, this.#name_of_async_running );
 
@@ -133,21 +135,21 @@ let asyncGenerator_Guardian_RecyclableBase
 // Perhaps, separate to another class asyncGenerator_Guardian_RecyclableBase.
 
   /**
-   * @param {GSheets_UrlComposer} this
+   * @param {asyncGenerator_Guardian_RecyclableBase} this
    */
-  static fetch_progress_create() {
-    GSheets_UrlComposer.fetch_progress_dispose.call( this );
-    this.fetch_progress
+  static async_progress_create() {
+    asyncGenerator_Guardian_RecyclableBase.async_progress_dispose.call( this );
+    this.async_progress
       = ValueMax.Percentage.Aggregate.Pool.get_or_create_by();
   }
 
   /**
-   * @param {GSheets_UrlComposer} this
+   * @param {asyncGenerator_Guardian_RecyclableBase} this
    */
-  static fetch_progress_dispose() {
-    if ( this.fetch_progress ) {
-      this.fetch_progress.disposeResources_and_recycleToPool();
-      this.fetch_progress = null;
+  static async_progress_dispose() {
+    if ( this.async_progress ) {
+      this.async_progress.disposeResources_and_recycleToPool();
+      this.async_progress = null;
     }
   }
 
