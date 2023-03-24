@@ -45,13 +45,13 @@ function AsyncGuarder_RecyclableBase(
     = `${name_prefix}_asyncPromise_progress`;
 
 
-  /** Note:
-   *
-   * Although static method .throw_if_asyncPromise_or_asyncGenerator_running()
-   * is defined in parent class (i.e. AsyncGuarder_Base), however, it will be
-   * called by this sub-class (i.e. AsyncGuarder_RecyclableBase). So, its name
-   * should still be prepared.
-   */
+  // These static methods are defined in parent class (i.e. AsyncGuarder_Base),
+  // however, they will be called by this sub-class (i.e.
+  // AsyncGuarder_RecyclableBase). So, their names should still be prepared.
+
+  const name_of_asyncGenerator_create_without_checking_precondition
+    = `${name_prefix}_asyncGenerator_create_without_checking_precondition`;
+
   const name_of_throw_if_asyncPromise_or_asyncGenerator_running
     = `${name_prefix}_throw_if_asyncPromise_or_asyncGenerator_running`;
 
@@ -207,23 +207,20 @@ function AsyncGuarder_RecyclableBase(
       // 1.
       let asyncGenerator;
       {
-!!!
         // Use internal independent progress.
         AsyncGuarder_RecyclableBase.asyncPromise_progress_create
           .call( this );
 
         // Prepare asyncGenerator
-        //
-        // Note: The .asyncGenerator_create_without_checking_precondition() is
-        //       defined in the parent classs.
         asyncGenerator = AsyncGuarder_RecyclableBase
-          .asyncGenerator_create_without_checking_precondition.call( this,
+          [ name_of_asyncGenerator_create_without_checking_precondition ]
+          .call( this,
             this.#asyncPromise_progress, ...restArgs );
       }
 
       // 2.
       return AsyncGuarder_RecyclableBase
-        .asyncPromise_create_without_checking_precondition
+        [ name_of_asyncPromise_create_without_checking_precondition ]
         .call( this, asyncGenerator );
     }
 
@@ -239,11 +236,12 @@ function AsyncGuarder_RecyclableBase(
      * @return {Promise}
      *   Return the newly created .guarded_async() promise.
      */
-    static asyncPromise_create_without_checking_precondition( asyncGenerator ) {
+    static [ name_of_asyncPromise_create_without_checking_precondition ](
+      asyncGenerator ) {
+
       this.#asyncPromise_running = true;
-      let asyncPromise
-        = AsyncGuarder_RecyclableBase.guarded_async.call( this,
-            asyncGenerator );
+      let asyncPromise = AsyncGuarder_RecyclableBase
+        [ name_of_asyncPromise_guarded ].call( this, asyncGenerator );
       return asyncPromise;
     }
 
@@ -261,7 +259,7 @@ function AsyncGuarder_RecyclableBase(
      *   Return a promise resolved to .value of asyncGenerator.next()
      * { done: true, value }.
      */
-    static async guarded_async( asyncGenerator ) {
+    static async [ name_of_asyncPromise_guarded ]( asyncGenerator ) {
 
       // Note: The .throw_if_Xxx() static methods are defined in the parent classs.
 
