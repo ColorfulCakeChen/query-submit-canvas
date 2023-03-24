@@ -25,11 +25,17 @@ import * as Pool from "../../util/Pool.js";
  * .Xxx_asyncGenerator_create() again. The Xxx is name_prefix.
  *
  * @member {Function} Xxx_asyncGenerator_create
- *   A method to create the underlied async generator. If an old instnace is
- * still executing, it will throw exception.
+ *   A method for creating the underlied async generator. If an old instnace
+ * is still executing, it will throw exception.
  *
-//!!! ...unfinished... (2023/03/23)
 
+//!!! ...unfinished... (2023/03/24)
+
+ *
+ * @member {Function} Xxx_throw_if_async_or_asyncGenerator_running
+ *   A static method for throwing excption if .XXX_async_running or
+ * .XXX_asyncGenerator_running is true.
+ *
  */
 let asyncGenerator_Guardian_Base
   = ( ParentClass = Object ) => class asyncGenerator_Guardian_Base
@@ -45,6 +51,7 @@ let asyncGenerator_Guardian_Base
   #name_of_asyncGenerator_running;
   #name_of_asyncGenerator_create;
   #name_of_asyncGenerator_guarded;
+  #name_of_throw_if_async_or_asyncGenerator_running
 
 
   /**
@@ -96,6 +103,9 @@ let asyncGenerator_Guardian_Base
     this.#name_of_asyncGenerator_guarded
       = `${name_prefix}_asyncGenerator_guarded`;
 
+    this.#name_of_throw_if_async_or_asyncGenerator_running
+      = `${name_prefix}_throw_if_async_or_asyncGenerator_running`;
+
     // Define read-only and enumerable instance (i.e. this.Xxx) properties.
     {
       // Xxx_asyncGenerator_running
@@ -106,7 +116,7 @@ let asyncGenerator_Guardian_Base
 
     // Define shared instance (i.e. this.constructor.prototype's) properties.
     {
-      // Xxx_asyncGenerator_create
+      // Xxx_asyncGenerator_create()
       Reflect.defineProperty( this.constructor.prototype,
         this.#name_of_asyncGenerator_create,
         asyncGenerator_Guardian_Base
@@ -115,23 +125,27 @@ let asyncGenerator_Guardian_Base
 
     // Define static (i.e. this.constructor's) properties.
     {
-      // // throw_???
-      // Reflect.defineProperty( this.constructor,
-      //   this.#???,
-      //   asyncGenerator_Guardian_Base
-      //     .propertyDescriptor_of_??? );
+      // Xxx_throw_if_async_or_asyncGenerator_running()
+      Reflect.defineProperty( this.constructor,
+        this.#name_of_throw_if_async_or_asyncGenerator_running,
+        asyncGenerator_Guardian_Base
+          .propertyDescriptor_of_throw_if_async_or_asyncGenerator_running );
     }
   }
 
   /** @override */
   disposeResources() {
 
+//!!! ...unfinished... (2023/03/24)
+
+    Reflect.deleteProperty( this,
+      this.#name_of_throw_if_async_or_asyncGenerator_running );
+
     Reflect.deleteProperty( this, this.#name_of_asyncGenerator_create );
 
-//!!! ...unfinished... (2023/03/24)    
-    
     Reflect.deleteProperty( this, this.#name_of_asyncGenerator_running );
 
+    this.#name_of_throw_if_async_or_asyncGenerator_running = undefined;
     this.#name_of_asyncGenerator_guarded = undefined;
     this.#name_of_asyncGenerator_create = undefined;
     this.#name_of_asyncGenerator_running = undefined;
@@ -234,8 +248,12 @@ let asyncGenerator_Guardian_Base
   }
 
 
-//!!! ...unfinished... (2023/03/24)
-// Perhaps, these static methods throw_Xxx() need renamed static properties.
+  /**
+   * Property descriptor for throw_if_Xxx_async_or_asyncGenerator_running().
+   */
+  static propertyDescriptor_of_throw_if_async_or_asyncGenerator_running = {
+    value: asyncGenerator_Guardian_Base.throw_if_async_or_asyncGenerator_running
+  };
 
   /**
    * @param {asyncGenerator_Guardian_Base} this
