@@ -135,8 +135,8 @@ function AsyncGuarder_RecyclableBase(
     /** @override */
     disposeResources() {
 
-      Reflect.deleteProperty( this, this.#name_of_asyncPromise_progress );
-      Reflect.deleteProperty( this, this.#name_of_asyncPromise_running );
+      Reflect.deleteProperty( this, name_of_asyncPromise_progress );
+      Reflect.deleteProperty( this, name_of_asyncPromise_running );
 
       AsyncGuarder_RecyclableBase.asyncPromise_progress_dispose.call( this );
       this.#asyncPromise_running = undefined;
@@ -214,8 +214,7 @@ function AsyncGuarder_RecyclableBase(
         // Prepare asyncGenerator
         asyncGenerator = AsyncGuarder_RecyclableBase
           [ name_of_asyncGenerator_create_without_checking_precondition ]
-          .call( this,
-            this.#asyncPromise_progress, ...restArgs );
+          .call( this, this.#asyncPromise_progress, ...restArgs );
       }
 
       // 2.
@@ -271,7 +270,7 @@ function AsyncGuarder_RecyclableBase(
           this.asyncPromise_running, funcNameInMessage,
           name_of_asyncPromise_create );
       }
-!!!
+
       try {
         // 1.
         let asyncGeneratorNext;

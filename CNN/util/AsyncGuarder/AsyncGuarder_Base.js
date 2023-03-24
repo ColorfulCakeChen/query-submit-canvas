@@ -250,14 +250,14 @@ function AsyncGuarder_Base(
 
       // Note: Property .Xxx_asyncPromise_running is created by sub-class
       //       (if exists).
-      let b_asyncPromise_running = this[ this.#name_of_asyncPromise_running ];
+      let b_asyncPromise_running = this[ name_of_asyncPromise_running ];
 
       if (   ( b_asyncPromise_running )
           || ( this.#asyncGenerator_running ) )
         throw Error( `${mostDerivedClassName}.${funcNameInMessage}(): `
           + `should not be executed while `
-          + `.${this.#name_of_asyncPromise_running}() or `
-          + `.${this.#name_of_asyncGenerator_running}() `
+          + `.${name_of_asyncPromise_running}() or `
+          + `.${name_of_asyncGenerator_running}() `
           + `still running.` );
     }
 
