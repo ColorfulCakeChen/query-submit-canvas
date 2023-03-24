@@ -36,8 +36,9 @@ let asyncGenerator_Guardian_Base
   // Whether an async generator executing.
   #asyncGenerator_running;
 
-  // the getters' names.
-  #getter_name_of_asyncGenerator_running;
+  // the properties' names.
+  #name_of_asyncGenerator_running;
+  #name_of_guarded_asyncGenerator;
 
   // Property descriptor for the getters (as enumerable read-only properties).
   static propertyDescriptor_asyncGenerator_running = 
@@ -75,23 +76,36 @@ let asyncGenerator_Guardian_Base
 //!!! ...unfinished... (2023/03/24)    
     this.#underlied_asyncGenerator_func = underlied_asyncGenerator_func;
 
-    this.#getter_name_of_asyncGenerator_running
+    this.#name_of_asyncGenerator_running
       = `${name_prefix}_asyncGenerator_running`;
 
-    // Define read-only properties (for the two flags) as the specified names.
+    this.#name_of_guarded_asyncGenerator
+      = `${name_prefix}_guarded_asyncGenerator`;
+
+    // Define read-only and enumerable instance properties.
     {
+      // Xxx_asyncGenerator_running.
       Reflect.defineProperty( this,
-        this.#getter_name_of_asyncGenerator_running,
+        this.#name_of_asyncGenerator_running,
         asyncGenerator_Guardian_Base.propertyDescriptor_asyncGenerator_running );
+    }
+
+    // Define static (i.e. this.constructor's) properties.
+    {
+      // Xxx_guarded__asyncGenerator.
+      Reflect.defineProperty( this.constructor,
+        this.#name_of_guarded_asyncGenerator,
+        asyncGenerator_Guardian_Base.propertyDescriptor_guarded_asyncGenerator );
     }
   }
 
   /** @override */
   disposeResources() {
 
-    Reflect.deleteProperty( this, this.#getter_name_of_asyncGenerator_running );
+    Reflect.deleteProperty( this, this.#name_of_asyncGenerator_running );
 
-    this.#getter_name_of_asyncGenerator_running = undefined;
+    this.#name_of_guarded_asyncGenerator = undefined;
+    this.#name_of_asyncGenerator_running = undefined;
 
     this.#asyncGenerator_running = undefined;
 
@@ -170,11 +184,9 @@ let asyncGenerator_Guardian_Base
   /**
    * Property descriptor for guarded underlied async generator.
    *
-   * @param {AsyncGenerator} underlied_asyncGenerator
-   *   The underlied async generator which wants to be guarded by the
-   * .Xxx_asyncGenerator_running boolean flag.
+   * @param {asyncGenerator_Guardian_Base} this
    */
-  static propertyDescriptor_asyncGenerator_guarded = {
+  static propertyDescriptor_guarded_asyncGenerator = {
     async* value( ...restArgs ) {
 
   //!!! ...unfinished... (2023/03/24)    
