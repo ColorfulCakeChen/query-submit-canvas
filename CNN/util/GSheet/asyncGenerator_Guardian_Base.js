@@ -72,7 +72,7 @@ let asyncGenerator_Guardian_Base
   static setAsConstructor_self( name_prefix, underlied_asyncGenerator_func ) {
 
 //!!! ...unfinished... (2023/03/24)    
-//    underlied_asyncGenerator_func
+    this.#underlied_asyncGenerator_func = underlied_asyncGenerator_func;
 
     this.#getter_name_of_asyncGenerator_running
       = `${name_prefix}_asyncGenerator_running`;
@@ -93,6 +93,9 @@ let asyncGenerator_Guardian_Base
     this.#getter_name_of_asyncGenerator_running = undefined;
 
     this.#asyncGenerator_running = undefined;
+
+//!!! ...unfinished... (2023/03/24)    
+    this.#underlied_asyncGenerator_func = undefined;
 
     // If parent class has the same method, call it.    
     if ( super.disposeResources instanceof Function )
@@ -171,7 +174,9 @@ let asyncGenerator_Guardian_Base
    * .Xxx_asyncGenerator_running boolean flag.
    */
   static propertyDescriptor_asyncGenerator_guarded = { value: async* (
-    underlied_asyncGenerator ) {
+    ...restArgs ) {
+
+//!!! ...unfinished... (2023/03/24)    
 
     { // Checking pre-condition.
       const funcNameInMessage = "JSON_ColumnMajorArrayArray_fetch_asyncGenerator";
@@ -182,6 +187,10 @@ let asyncGenerator_Guardian_Base
     }
 
     try {
+
+//!!! ...unfinished... (2023/03/24)    
+      this.#underlied_asyncGenerator_func.apply( this, restArgs );
+
       // 1.
       let fetcher_underlied = this.urlComposer
         .JSON_ColumnMajorArrayArray_fetch_asyncGenerator(
