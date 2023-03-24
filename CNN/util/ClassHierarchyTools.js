@@ -25,7 +25,7 @@ function MostDerived_Prototype_of_instance( anObject ) {
  *   Return the class (i.e. constructor function) of the most derived
  * class which the object instance anObject belongs to.
  */
-function MostDerived_Class( anObject ) {
+function MostDerived_Class_of_instance( anObject ) {
   return anObject.constructor;
 }
 
@@ -37,7 +37,7 @@ function MostDerived_Class( anObject ) {
  *   Return the class name of the most derived class which the object instance
  * anObject belongs to.
  */
-function MostDerived_ClassName( anObject ) {
+function MostDerived_ClassName_of_instance( anObject ) {
   return anObject.constructor.name;
 }
 
@@ -49,7 +49,7 @@ function MostDerived_ClassName( anObject ) {
  *   Return the prototype of the 2nd most derived prototype which the object
  * instance anObject belongs to.
  */
-function SecondMostDerived_Prototype( anObject ) {
+function SecondMostDerived_Prototype_of_instance( anObject ) {
   return Reflect.getPrototypeOf( anObject.constructor ).prototype;
 }
 
@@ -61,7 +61,7 @@ function SecondMostDerived_Prototype( anObject ) {
  *   Return the class (i.e. constructor function) of the 2nd most derived
  * class which the object instance anObject belongs to.
  */
-function SecondMostDerived_Class( anObject ) {
+function SecondMostDerived_Class_of_instance( anObject ) {
   return SecondMostDerived_Prototype( anObject ).constructor;
 }
 
@@ -73,6 +73,6 @@ function SecondMostDerived_Class( anObject ) {
  *   Return the class (i.e. constructor function) name of the 2nd most
  * derived class which the object instance anObject belongs to.
  */
-function SecondMostDerived_ClassName( anObject ) {
+function SecondMostDerived_ClassName_of_instance( anObject ) {
   return SecondMostDerived_Class( anObject ).name;
 }
