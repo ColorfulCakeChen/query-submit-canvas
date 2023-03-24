@@ -28,14 +28,12 @@ import { asyncGenerator_Guardian_Base } from "./asyncGenerator_Guardian_Base.js"
  *   The progress of .Xxx_async(). If ( .Xxx_async_progress.valuePercentage == 100 ),
  * the .Xxx_async() has done.
  *   - It is used only if .Xxx_promise_create() is called.
- *   - If .Xxx_asyncGenerator_create() is called directly, its progressParent
- *       parameter will be used instead.
+ *   - It is not used if .Xxx_asyncGenerator_create() is called directly. In this
+ *       case, its progressParent parameter will be used instead.
  */
 let asyncGenerator_Guardian_RecyclableBase
   = ( ParentClass = Object ) => class asyncGenerator_Guardian_RecyclableBase
       extends asyncGenerator_Guardian_Base( Recyclable.Base( ParentClass ) ) {
-
-//!!! (2023/03/23 Remarked)
 
   /**
    * Used as default asyncGenerator_Guardian_RecyclableBase provider for
@@ -53,11 +51,19 @@ let asyncGenerator_Guardian_RecyclableBase
 
   #name_of_async_progress;
 
+
   /**
    *
    * @param {string} name_prefix
    *   The prefix for all async operations and flags. (e.g. "init" or "fetch"
    * or "versus_load")
+   *
+   * @param {AsyncGeneratorFunction} underlied_asyncGenerator_func
+   *   A private property recording the function to create a underlied async
+   * generator which wants to be guarded by the .Xxx_asyncGenerator_running
+   * boolean flag.
+   *   - It will be called with thisArg as "this".
+   *   - Its 1st parameter must be progressParent (ValueMax.Percentage.Aggregate).
    */
   constructor(
     name_prefix, underlied_asyncGenerator_func, ...restArgs ) {
@@ -68,7 +74,8 @@ let asyncGenerator_Guardian_RecyclableBase
   }
 
   /** @override */
-  static setAsConstructor( name_prefix, underlied_asyncGenerator_func, ...restArgs ) {
+  static setAsConstructor(
+    name_prefix, underlied_asyncGenerator_func, ...restArgs ) {
 
     super.setAsConstructor.call( this,
       name_prefix, underlied_asyncGenerator_func, ...restArgs );
@@ -205,20 +212,22 @@ let asyncGenerator_Guardian_RecyclableBase
         .call( this, funcNameInMessage );
     }
 
-//!!! ...unfinished... (2023/03/24)
     // 1.
-    let fetcher;
+    let asyncGenerator;
     {
       // Use internal independent progress.
-      GSheets_UrlComposer.fetch_progress_create.call( this );
+      asyncGenerator_Guardian_RecyclableBase.async_progress_create.call( this );
 
-      // Prepare fetcher
-      fetcher = GSheets_UrlComposer
-        .JSON_ColumnMajorArrayArray_fetcher_create_without_checking_precondition
-        .call( this,
-          this.fetch_progress, params_loading_retryWaiting, delayPromise );
+      // Prepare asyncGenerator
+      //
+      // Note: The .asyncGenerator_create_without_checking_precondition() is
+      //       defined in the parent classs.
+      asyncGenerator = asyncGenerator_Guardian_RecyclableBase
+        .asyncGenerator_create_without_checking_precondition
+        .call( this, this.fetch_progress, ...restArgs );
     }
 
+//!!! ...unfinished... (2023/03/24)
     // 2.
     return GSheets_UrlComposer
       .JSON_ColumnMajorArrayArray_fetch_promise_create_without_checking_precondition

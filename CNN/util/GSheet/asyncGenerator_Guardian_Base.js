@@ -14,7 +14,9 @@ import * as Pool from "../../util/Pool.js";
  * @member {AsyncGeneratorFunction} underlied_asyncGenerator_func
  *   A private property recording the function to create a underlied async
  * generator which wants to be guarded by the .Xxx_asyncGenerator_running
- * boolean flag. It will be called with thisArg as "this".
+ * boolean flag.
+ *   - It will be called with thisArg as "this".
+ *   - Its 1st parameter must be progressParent (ValueMax.Percentage.Aggregate).
  *
  * @member {boolean} Xxx_asyncGenerator_running
  *   If true, a underlied async generator (i.e. .Xxx_asyncGenerator_guarded())
