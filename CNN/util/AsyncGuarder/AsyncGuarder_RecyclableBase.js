@@ -35,11 +35,25 @@ function AsyncGuarder_RecyclableBase(
   const name_of_asyncPromise_create
     = `${name_prefix}_asyncPromise_create`;
 
+  const name_of_asyncPromise_create_without_checking_precondition
+    = `${name_prefix}_asyncPromise_create_without_checking_precondition`;
+
   const name_of_asyncPromise_guarded
     = `${name_prefix}_asyncPromise_guarded`;
 
   const name_of_asyncPromise_progress
     = `${name_prefix}_asyncPromise_progress`;
+
+
+  /** Note:
+   *
+   * Although static method .throw_if_asyncPromise_or_asyncGenerator_running()
+   * is defined in parent class (i.e. AsyncGuarder_Base), however, it will be
+   * called by this sub-class (i.e. AsyncGuarder_RecyclableBase). So, its name
+   * should still be prepared.
+   */
+  const name_of_throw_if_asyncPromise_or_asyncGenerator_running
+    = `${name_prefix}_throw_if_asyncPromise_or_asyncGenerator_running`;
 
 
   return (
@@ -102,6 +116,7 @@ function AsyncGuarder_RecyclableBase(
     /** @override */
     static setAsConstructor_self() {
 
+!!!
       // Define read-only and enumerable instance (i.e. this.Xxx) properties.
       {
         // Xxx_asyncPromise_running

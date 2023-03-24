@@ -27,7 +27,7 @@ function AsyncGuarder_Base(
 
   const name_of_underlied_asyncGenerator_func
     = `${name_prefix}_underlied_asyncGenerator_func`;
-    
+
   /** Note:
    *
    * Although the property .Xxx_asyncPromise_running will not be created by
