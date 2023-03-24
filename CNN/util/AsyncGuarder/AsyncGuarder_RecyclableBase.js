@@ -116,62 +116,32 @@ function AsyncGuarder_RecyclableBase(
     /** @override */
     static setAsConstructor_self() {
 
-!!!
       // Define read-only and enumerable instance (i.e. this.Xxx) properties.
       {
         // Xxx_asyncPromise_running
         Reflect.defineProperty( this,
-          this.#name_of_asyncPromise_running,
+          name_of_asyncPromise_running,
           AsyncGuarder_RecyclableBase
             .propertyDescriptor_of_asyncPromise_running );
 
         // Xxx_asyncPromise_progress
         Reflect.defineProperty( this,
-          this.#name_of_asyncPromise_progress,
+          name_of_asyncPromise_progress,
           AsyncGuarder_RecyclableBase
             .propertyDescriptor_of_asyncPromise_progress );
       }
-
-  !!! ...unfinished... (2023/03/22)
-  // shared instance (i.e. this.constructor.prototype's) properties
-  // static (i.e. this.constructor's) properties
-  // should not defineProperty() by every instance.
-  //
-  // They should be defined as computed named property. 
-
-      // Define shared instance (i.e. this.constructor.prototype's) properties.
-      {
-        // Xxx_asyncPromise_create()
-        Reflect.defineProperty( this.constructor.prototype,
-          this.#name_of_asyncPromise_create,
-          AsyncGuarder_RecyclableBase
-            .propertyDescriptor_of_asyncPromise_create );
-      }
-
-      // Define static (i.e. this.constructor's) properties.
-      // {
-      // }
     }
 
     /** @override */
     disposeResources() {
 
       Reflect.deleteProperty( this, this.#name_of_asyncPromise_progress );
-      Reflect.deleteProperty( this, this.#name_of_asyncPromise_create );
       Reflect.deleteProperty( this, this.#name_of_asyncPromise_running );
 
-      this.#name_of_asyncPromise_progress = undefined;
-      this.#name_of_asyncPromise_guarded = undefined;
-      this.#name_of_asyncPromise_create = undefined;
-      this.#name_of_asyncPromise_running = undefined;
-
       AsyncGuarder_RecyclableBase.asyncPromise_progress_dispose.call( this );
-
       this.#asyncPromise_running = undefined;
 
-      // If parent class has the same method, call it.    
-      if ( super.disposeResources instanceof Function )
-        super.disposeResources();
+      super.disposeResources();
     }
 
 
@@ -211,13 +181,6 @@ function AsyncGuarder_RecyclableBase(
 
 
     /**
-     * Property descriptor for Xxx_asyncPromise_create().
-     */
-    static propertyDescriptor_of_asyncPromise_create = {
-      value: AsyncGuarder_RecyclableBase.asyncPromise_create
-    };
-
-    /**
      * Create Xxx_async (an auto-loop instance of guarded underlied asyn generator).
      *
      * Note: The this.#asyncPromise_progress will record progress of this method.
@@ -226,24 +189,25 @@ function AsyncGuarder_RecyclableBase(
      * @return {Promise}
      *   Return the newly created .guarded_async() promise.
      */
-    static asyncPromise_create( ...restArgs ) {
+    [ name_of_asyncPromise_create ]( ...restArgs ) {
 
       // Note: The .throw_if_Xxx() static methods are defined in the parent classs.
 
       { // Checking pre-condition.
-        const funcNameInMessage = this.#name_of_asyncPromise_create;
+        const funcNameInMessage = name_of_asyncPromise_create;
 
         AsyncGuarder_RecyclableBase.throw_if_an_old_still_running
           .call( this, this.#asyncPromise_running, funcNameInMessage );
 
         AsyncGuarder_RecyclableBase
-          .throw_if_asyncPromise_or_asyncGenerator_running
+          [ name_of_throw_if_asyncPromise_or_asyncGenerator_running ]
           .call( this, funcNameInMessage );
       }
 
       // 1.
       let asyncGenerator;
       {
+!!!
         // Use internal independent progress.
         AsyncGuarder_RecyclableBase.asyncPromise_progress_create
           .call( this );
