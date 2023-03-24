@@ -94,15 +94,16 @@ let asyncGenerator_Guardian_RecyclableBase
       // Xxx_async_running
       Reflect.defineProperty( this,
         this.#name_of_async_running,
-        asyncGenerator_Guardian_RecyclableBase.propertyDescriptor_of_async_running );
+        asyncGenerator_Guardian_RecyclableBase
+          .propertyDescriptor_of_async_running );
 
       // Xxx_async_progress`;
       Reflect.defineProperty( this,
         this.#name_of_async_progress,
-        asyncGenerator_Guardian_RecyclableBase.propertyDescriptor_of_async_progress );
+        asyncGenerator_Guardian_RecyclableBase
+          .propertyDescriptor_of_async_progress );
     }
 
-//!!! ...unfinished... (2023/03/24)
     // Define shared instance (i.e. this.constructor.prototype's) properties.
     {
       // Xxx_promise_create()
@@ -114,8 +115,8 @@ let asyncGenerator_Guardian_RecyclableBase
 
     // Define static (i.e. this.constructor's) properties.
     {
+//!!! ...unfinished... (2023/03/24)
     }
-
   }
 
   /** @override */
