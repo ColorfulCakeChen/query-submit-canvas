@@ -45,6 +45,7 @@ let asyncGenerator_Guardian_RecyclableBase
 
   #name_of_asyncPromise_running;
   #name_of_asyncPromise_create;
+  #name_of_asyncPromise_guarded;
   #name_of_asyncPromise_progress;
 
 
@@ -89,6 +90,9 @@ let asyncGenerator_Guardian_RecyclableBase
     this.#name_of_asyncPromise_create
       = `${name_prefix}_asyncPromise_create`;
 
+    this.#name_of_asyncPromise_guarded
+      = `${name_prefix}_asyncPromise_guarded`;
+
     this.#name_of_asyncPromise_progress
       = `${name_prefix}_asyncPromise_progress`;
 
@@ -130,6 +134,7 @@ let asyncGenerator_Guardian_RecyclableBase
     Reflect.deleteProperty( this, this.#name_of_asyncPromise_running );
 
     this.#name_of_asyncPromise_progress = undefined;
+    this.#name_of_asyncPromise_guarded = undefined;
     this.#name_of_asyncPromise_create = undefined;
     this.#name_of_asyncPromise_running = undefined;
 
@@ -214,7 +219,8 @@ let asyncGenerator_Guardian_RecyclableBase
     let asyncGenerator;
     {
       // Use internal independent progress.
-      asyncGenerator_Guardian_RecyclableBase.asyncPromise_progress_create.call( this );
+      asyncGenerator_Guardian_RecyclableBase.asyncPromise_progress_create
+        .call( this );
 
       // Prepare asyncGenerator
       //
@@ -231,10 +237,9 @@ let asyncGenerator_Guardian_RecyclableBase
       .call( this, asyncGenerator );
   }
 
-//!!! ...unfinished... (2023/03/24)
   /**
    *
-   * @param {asyncGenerator_Guardian_Base} this
+   * @param {asyncGenerator_Guardian_RecyclableBase} this
    *
    * @param {AsyncGenerator} asyncGenerator
    *   The async generator (an instance of
@@ -251,25 +256,25 @@ let asyncGenerator_Guardian_RecyclableBase
     return asyncPromise;
   }
 
-//!!! ...unfinished... (2023/03/24)
   /**
-   * Composing the URL (according to this object's data members), download
-   * it as JSON format, extract data as a two dimension (column-major) array.
+   * The guarded async method for looping the underlied async generator.
    *
-   * @param {AsyncGenerator} fetcher
+   * @param {asyncGenerator_Guardian_RecyclableBase} this
+   *
+   * @param {AsyncGenerator} asyncGenerator
    *   The async generator (an instance of
-   * .JSON_ColumnMajorArrayArray_fetch_asyncGenerator()) to be wrapped by the
+   * .guarded_underlined_asyncGenerator()) to be wrapped by the
    * created promise.
    *
-   * @return {Promise( Array[] )}
-   *   Return a promise.
-   *   - Resolved to ( a two dimension (column-major) array ) when successful.
-   *   - Resolved to ( null ) when failed.
+   * @return {Promise}
+   *   Return a promise resolved to .value of asyncGenerator.next()
+   * { done: true, value }.
    */
   static async guarded_async( fetcher ) {
 
+//!!! ...unfinished... (2023/03/24)
     { // Checking pre-condition.
-      const funcNameInMessage = "JSON_ColumnMajorArrayArray_fetch_async";
+      const funcNameInMessage = this.#name_of_asyncPromise_guarded;
 
       GSheets_UrlComposer.throw_call_another_if_false.call( this,
         this.fetch_asyncPromise_running, funcNameInMessage,

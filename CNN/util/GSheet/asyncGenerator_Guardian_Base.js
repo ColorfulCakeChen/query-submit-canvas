@@ -43,11 +43,6 @@ let asyncGenerator_Guardian_Base
   #name_of_asyncPromise_running;
   #name_of_asyncGenerator_running;
   #name_of_asyncGenerator_create;
-
-//!!! (2023/03/24 Remarked)
-// sub-class should call .asyncGenerator_create_without_checking_precondition() directly.
-//  #name_of_asyncGenerator_create_without_checking_precondition;
-
   #name_of_asyncGenerator_guarded;
   #name_of_throw_if_asyncPromise_or_asyncGenerator_running;
 
@@ -97,11 +92,6 @@ let asyncGenerator_Guardian_Base
     this.#name_of_asyncGenerator_create
       = `${name_prefix}_asyncGenerator_create`;
 
-//!!! (2023/03/24 Remarked)
-// sub-class should call .asyncGenerator_create_without_checking_precondition() directly.
-//     this.#name_of_asyncGenerator_create_without_checking_precondition
-//       = `${name_prefix}_asyncGenerator_create_without_checking_precondition`;
-
     this.#name_of_asyncGenerator_guarded
       = `${name_prefix}_asyncGenerator_guarded`;
 
@@ -127,15 +117,6 @@ let asyncGenerator_Guardian_Base
 
     // Define static (i.e. this.constructor's) properties.
     {
-
-//!!! (2023/03/24 Remarked)
-// sub-class should call .asyncGenerator_create_without_checking_precondition() directly.
-//       // Xxx_throw_if_asyncPromise_or_asyncGenerator_running()
-//       Reflect.defineProperty( this.constructor,
-//         this.#name_of_asyncGenerator_create_without_checking_precondition,
-//         asyncGenerator_Guardian_Base
-//           .propertyDescriptor_of_asyncGenerator_create_without_checking_precondition );
-
       // Xxx_throw_if_asyncPromise_or_asyncGenerator_running()
       Reflect.defineProperty( this.constructor,
         this.#name_of_throw_if_asyncPromise_or_asyncGenerator_running,
@@ -152,22 +133,12 @@ let asyncGenerator_Guardian_Base
     Reflect.deleteProperty( this,
       this.#name_of_throw_if_asyncPromise_or_asyncGenerator_running );
 
-//!!! (2023/03/24 Remarked)
-// sub-class should call .asyncGenerator_create_without_checking_precondition() directly.
-//     Reflect.deleteProperty( this,
-//       this.#name_of_asyncGenerator_create_without_checking_precondition );
-
     Reflect.deleteProperty( this, this.#name_of_asyncGenerator_create );
 
     Reflect.deleteProperty( this, this.#name_of_asyncGenerator_running );
 
     this.#name_of_throw_if_asyncPromise_or_asyncGenerator_running = undefined;
     this.#name_of_asyncGenerator_guarded = undefined;
-
-//!!! (2023/03/24 Remarked)
-// sub-class should call .asyncGenerator_create_without_checking_precondition() directly.
-//    this.#name_of_asyncGenerator_create_without_checking_precondition = undefined;
-
     this.#name_of_asyncGenerator_create = undefined;
     this.#name_of_asyncGenerator_running = undefined;
     this.#name_of_asyncPromise_running = undefined;
@@ -220,16 +191,6 @@ let asyncGenerator_Guardian_Base
       .apply( this, restArgs );
     return asyncGenerator;
   }
-
-//!!! (2023/03/24 Remarked)
-// sub-class should call .asyncGenerator_create_without_checking_precondition() directly.
-//   /**
-//    * Property descriptor for Xxx_throw_if_asyncPromise_or_asyncGenerator_running().
-//    */
-//   static propertyDescriptor_of_asyncGenerator_create_without_checking_precondition = {
-//     value: asyncGenerator_Guardian_Base
-//              .asyncGenerator_create_without_checking_precondition
-//   };
 
   /**
    *
