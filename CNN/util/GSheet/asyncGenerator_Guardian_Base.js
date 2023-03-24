@@ -188,10 +188,8 @@ let asyncGenerator_Guardian_Base
       asyncGenerator_Guardian_Base.throw_if_an_old_still_running.call( this,
         this.#asyncGenerator_running, funcNameInMessage );
 
-//!!! ...unfinished... (2023/03/24)
-
-        asyncGenerator_Guardian_Base.throw_if_async_or_asyncGenerator_running.call( this,
-          funcNameInMessage );
+      asyncGenerator_Guardian_Base.throw_if_async_or_asyncGenerator_running
+        .call( this, funcNameInMessage );
     }
 
     let asyncGenerator = asyncGenerator_Guardian_Base
