@@ -76,6 +76,9 @@ function AsyncGuarder_Base(
    *   A method for creating the underlied async generator. If an old instnace
    * is still executing, it will throw exception.
    *
+   * @member {Function} Xxx_asyncGenerator_create_without_checking_precondition
+   *   An internal static method called by .Xxx_asyncGenerator_create(). 
+   *
    * @member {Function} Xxx_throw_if_asyncPromise_or_asyncGenerator_running
    *   A static method for throwing excption if .Xxx_asyncPromise_running or
    * .Xxx_asyncGenerator_running is true.

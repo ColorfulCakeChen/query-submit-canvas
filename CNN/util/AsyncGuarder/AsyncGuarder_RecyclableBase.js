@@ -80,6 +80,9 @@ function AsyncGuarder_RecyclableBase(
    *   A method for creating the underlied async method. If an old instnace
    * is still executing, it will throw exception.
    *
+   * @member {Function} Xxx_asyncPromise_create_without_checking_precondition
+   *   An internal static method called by .Xxx_asyncPromise_create(). 
+   *    
    * @member {ValueMax.Percentage.Aggregate} Xxx_asyncPromise_progress
    *   The progress of .Xxx_async(). If
    * ( .Xxx_asyncPromise_progress.valuePercentage == 100 ), the .Xxx_async() has
