@@ -272,15 +272,18 @@ let asyncGenerator_Guardian_RecyclableBase
    */
   static async guarded_async( fetcher ) {
 
-//!!! ...unfinished... (2023/03/24)
+    // Note: The .throw_if_Xxx() static methods are defined in the parent classs.
+
     { // Checking pre-condition.
       const funcNameInMessage = this.#name_of_asyncPromise_guarded;
 
-      GSheets_UrlComposer.throw_call_another_if_false.call( this,
-        this.fetch_asyncPromise_running, funcNameInMessage,
-        "JSON_ColumnMajorArrayArray_fetch_asyncPromise_create" );
+      asyncGenerator_Guardian_RecyclableBase.throw_call_another_if_false.call(
+        this,
+        this.asyncPromise_running, funcNameInMessage,
+        this.#name_of_asyncPromise_create );
     }
 
+//!!! ...unfinished... (2023/03/24)
     try {
       // 1.
       if ( !fetcher )
