@@ -21,8 +21,8 @@ import { asyncGenerator_Guardian_Base } from "./asyncGenerator_Guardian_Base.js"
  *   A method for creating the underlied async method. If an old instnace
  * is still executing, it will throw exception.
  *
- * @member {ValueMax.Percentage.Aggregate} Xxx_async_progress
- *   The progress of .Xxx_async(). If ( .Xxx_async_progress.valuePercentage == 100 ),
+ * @member {ValueMax.Percentage.Aggregate} Xxx_asyncPromise_progress
+ *   The progress of .Xxx_async(). If ( .Xxx_asyncPromise_progress.valuePercentage == 100 ),
  * the .Xxx_async() has done.
  *   - It is used only if .Xxx_asyncPromise_create() is called.
  *   - It is not used if .Xxx_asyncGenerator_create() is called directly. In this
@@ -41,12 +41,12 @@ let asyncGenerator_Guardian_RecyclableBase
     asyncGenerator_Guardian_RecyclableBase.setAsConstructor );
 
   #asyncPromise_running;
-  #async_progress;
+  #asyncPromise_progress;
 
   #name_of_asyncPromise_running;
   #name_of_asyncPromise_create;
 
-  #name_of_async_progress;
+  #name_of_asyncPromise_progress;
 
 
   /**
@@ -90,8 +90,8 @@ let asyncGenerator_Guardian_RecyclableBase
     this.#name_of_asyncPromise_create
       = `${name_prefix}_asyncPromise_create`;
 
-    this.#name_of_async_progress
-      = `${name_prefix}_async_progress`;
+    this.#name_of_asyncPromise_progress
+      = `${name_prefix}_asyncPromise_progress`;
 
     // Define read-only and enumerable instance (i.e. this.Xxx) properties.
     {
@@ -101,11 +101,11 @@ let asyncGenerator_Guardian_RecyclableBase
         asyncGenerator_Guardian_RecyclableBase
           .propertyDescriptor_of_asyncPromise_running );
 
-      // Xxx_async_progress
+      // Xxx_asyncPromise_progress
       Reflect.defineProperty( this,
-        this.#name_of_async_progress,
+        this.#name_of_asyncPromise_progress,
         asyncGenerator_Guardian_RecyclableBase
-          .propertyDescriptor_of_async_progress );
+          .propertyDescriptor_of_asyncPromise_progress );
     }
 
     // Define shared instance (i.e. this.constructor.prototype's) properties.
@@ -126,15 +126,15 @@ let asyncGenerator_Guardian_RecyclableBase
   /** @override */
   disposeResources() {
 
-    Reflect.deleteProperty( this, this.#name_of_async_progress );
+    Reflect.deleteProperty( this, this.#name_of_asyncPromise_progress );
     Reflect.deleteProperty( this, this.#name_of_asyncPromise_create );
     Reflect.deleteProperty( this, this.#name_of_asyncPromise_running );
 
-    this.#name_of_async_progress = undefined;
+    this.#name_of_asyncPromise_progress = undefined;
     this.#name_of_asyncPromise_create = undefined;
     this.#name_of_asyncPromise_running = undefined;
 
-    asyncGenerator_Guardian_RecyclableBase.async_progress_dispose.call( this );
+    asyncGenerator_Guardian_RecyclableBase.asyncPromise_progress_dispose.call( this );
 
     this.#asyncPromise_running = undefined;
 
@@ -154,28 +154,28 @@ let asyncGenerator_Guardian_RecyclableBase
 
 
   /**
-   * Property descriptor for Xxx_async_progress.
+   * Property descriptor for Xxx_asyncPromise_progress.
    * (as enumerable read-only properties).
    */
-  static propertyDescriptor_of_async_progress = 
-    { get() { return this.#async_progress; }, enumerable: true };
+  static propertyDescriptor_of_asyncPromise_progress = 
+    { get() { return this.#asyncPromise_progress; }, enumerable: true };
 
   /**
    * @param {asyncGenerator_Guardian_RecyclableBase} this
    */
-  static async_progress_create() {
-    asyncGenerator_Guardian_RecyclableBase.async_progress_dispose.call( this );
-    this.#async_progress
+  static asyncPromise_progress_create() {
+    asyncGenerator_Guardian_RecyclableBase.asyncPromise_progress_dispose.call( this );
+    this.#asyncPromise_progress
       = ValueMax.Percentage.Aggregate.Pool.get_or_create_by();
   }
 
   /**
    * @param {asyncGenerator_Guardian_RecyclableBase} this
    */
-  static async_progress_dispose() {
-    if ( this.#async_progress ) {
-      this.#async_progress.disposeResources_and_recycleToPool();
-      this.#async_progress = null;
+  static asyncPromise_progress_dispose() {
+    if ( this.#asyncPromise_progress ) {
+      this.#asyncPromise_progress.disposeResources_and_recycleToPool();
+      this.#asyncPromise_progress = null;
     }
   }
 
@@ -190,7 +190,7 @@ let asyncGenerator_Guardian_RecyclableBase
   /**
    * Create Xxx_async (an auto-loop instance of guarded underlied asyn generator).
    *
-   * Note: The this.#async_progress will record progress of this method.
+   * Note: The this.#asyncPromise_progress will record progress of this method.
    *
    *
    * @return {Promise}
@@ -215,7 +215,7 @@ let asyncGenerator_Guardian_RecyclableBase
     let asyncGenerator;
     {
       // Use internal independent progress.
-      asyncGenerator_Guardian_RecyclableBase.async_progress_create.call( this );
+      asyncGenerator_Guardian_RecyclableBase.asyncPromise_progress_create.call( this );
 
       // Prepare asyncGenerator
       //
@@ -223,7 +223,7 @@ let asyncGenerator_Guardian_RecyclableBase
       //       defined in the parent classs.
       asyncGenerator = asyncGenerator_Guardian_RecyclableBase
         .asyncGenerator_create_without_checking_precondition.call( this,
-          this.#async_progress, ...restArgs );
+          this.#asyncPromise_progress, ...restArgs );
     }
 
 //!!! ...unfinished... (2023/03/24)
