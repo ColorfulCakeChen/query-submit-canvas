@@ -201,6 +201,8 @@ let asyncGenerator_Guardian_RecyclableBase
    */
   static promise_create( ...restArgs ) {
 
+    // Note: The .throw_if_Xxx() static methods are defined in the parent classs.
+
     { // Checking pre-condition.
       const funcNameInMessage = this.#name_of_promise_create;
 
