@@ -264,14 +264,14 @@ function AsyncGuarder_RecyclableBase(
       // Note: The .throw_if_Xxx() static methods are defined in the parent classs.
 
       { // Checking pre-condition.
-        const funcNameInMessage = this.#name_of_asyncPromise_guarded;
+        const funcNameInMessage = name_of_asyncPromise_guarded;
 
         AsyncGuarder_RecyclableBase.throw_call_another_if_false.call(
           this,
           this.asyncPromise_running, funcNameInMessage,
-          this.#name_of_asyncPromise_create );
+          name_of_asyncPromise_create );
       }
-
+!!!
       try {
         // 1.
         let asyncGeneratorNext;
