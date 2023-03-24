@@ -142,7 +142,6 @@ let asyncGenerator_Guardian_Base
   static propertyDescriptor_asyncGenerator_running = 
     { get() { return this.#asyncGenerator_running; }, enumerable: true };
 
-//!!! ...unfinished... (2023/03/24)    
   /**
    * Property descriptor for Xxx_asyncGenerator_create().
    */
