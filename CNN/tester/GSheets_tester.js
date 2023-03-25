@@ -206,6 +206,10 @@ class TestCase {
    *
    * @param {boolean} bShouldProgress100
    *   True means the test should result in ( progressParent.valuePercentage == 100 ).
+   *
+   * @param {boolean} bShouldProgress100Default
+   *   True means the test is expected to result in
+   * ( progressParent.valuePercentage == 100 ) if without .abort().
    */
   constructor(
     testCaseId,
@@ -213,7 +217,8 @@ class TestCase {
     loadingMillisecondsMax,
     retryTimesMax,
     abortTestMode,
-    bShouldProgress100
+    bShouldProgress100,
+    bShouldProgress100Default
   ) {
     this.testCaseId = testCaseId;
     this.spreadsheetUrlPrefix = spreadsheetUrlPrefix;
@@ -222,6 +227,7 @@ class TestCase {
     this.retryTimesMax = retryTimesMax;
     this.abortTestMode = abortTestMode;
     this.bShouldProgress100 = bShouldProgress100;
+    this.bShouldProgress100Default = bShouldProgress100Default;
   }
 
   /**
@@ -654,7 +660,8 @@ class TestCaseArray extends Array {
 
         let testCase = new TestCase( testCaseId,
           spreadsheetUrlPrefix, spreadsheetId_postfix,
-          loadingMillisecondsMax, retryTimesMax, abortTestMode, bShouldProgress100 );
+          loadingMillisecondsMax, retryTimesMax, abortTestMode,
+          bShouldProgress100, bShouldProgress100Default );
 
         this.push( testCase );
       }
