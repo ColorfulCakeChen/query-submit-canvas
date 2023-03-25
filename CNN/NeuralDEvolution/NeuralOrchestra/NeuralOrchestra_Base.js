@@ -1300,9 +1300,10 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     }
 
     // 2.
-    return NeuralOrchestra_Base
+    let versus_load_promise = NeuralOrchestra_Base
       .versus_load_promise_create_without_checking_precondition.call( this,
         versus_loader );
+    return versus_load_promise;
   }
 
   /**

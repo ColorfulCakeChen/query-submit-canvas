@@ -234,9 +234,10 @@ function AsyncGuarder_RecyclableBase(
       }
 
       // 2.
-      return AsyncGuarder_RecyclableBase
+      let asyncPromise = AsyncGuarder_RecyclableBase
         [ name_of_asyncPromise_create_without_checking_precondition ]
         .call( this, asyncGenerator );
+      return asyncPromise;
     }
 
     /**
