@@ -270,7 +270,7 @@ function AsyncGuarder_Base(
       if (   ( b_asyncPromise_running )
           || ( this.#asyncGenerator_running ) )
         throw Error( `${mostDerivedClassName}.${funcNameInMessage}(): `
-          + `should not be executed while `
+          + `should not be executed while an instance of `
           + `.${name_of_asyncPromise_create}() or `
           + `.${name_of_asyncGenerator_create}() `
           + `still running.` );
@@ -288,7 +288,7 @@ function AsyncGuarder_Base(
 
       if ( b_still_running )
         throw Error( `${mostDerivedClassName}.${funcNameInMessage}(): `
-          + `An old .${funcNameInMessage}() is still running.` );
+          + `An old instance of .${funcNameInMessage}() is still running.` );
     }
 
     /**
