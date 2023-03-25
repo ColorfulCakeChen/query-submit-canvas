@@ -24,8 +24,9 @@ import * as Pool from "../Pool.js";
 function AsyncGuarder_Base(
   name_prefix, underlied_asyncGenerator_func, ParentClass = Object ) {
 
-  const name_of_underlied_asyncGenerator_func
-    = `${name_prefix}_underlied_asyncGenerator_func`;
+//!!! (2023/03/25) seems not necessary to keep it as a member.
+//   const name_of_underlied_asyncGenerator_func
+//     = `${name_prefix}_underlied_asyncGenerator_func`;
 
   /** Note:
    *
@@ -59,12 +60,15 @@ function AsyncGuarder_Base(
    * reentered.
    *
    *
-   * @member {AsyncGeneratorFunction} Xxx_underlied_asyncGenerator_func
-   *   A private property recording the function to create a underlied async
-   * generator which wants to be guarded by the .Xxx_asyncGenerator_running
-   * boolean flag.
-   *   - It will be called with thisArg as "this".
-   *   - Its 1st parameter must be progressParent (ValueMax.Percentage.Aggregate).
+
+//!!! (2023/03/25) seems not necessary to keep it as a member.
+//    * @member {AsyncGeneratorFunction} Xxx_underlied_asyncGenerator_func
+//    *   A private property recording the function to create a underlied async
+//    * generator which wants to be guarded by the .Xxx_asyncGenerator_running
+//    * boolean flag.
+//    *   - It will be called with thisArg as "this".
+//    *   - Its 1st parameter must be progressParent (ValueMax.Percentage.Aggregate).
+
    *
    * @member {boolean} Xxx_asyncGenerator_running
    *   If true, a underlied async generator (i.e. .Xxx_asyncGenerator_guarded())
@@ -87,8 +91,9 @@ function AsyncGuarder_Base(
 
     #asyncGenerator_running;
 
-    static [ name_of_underlied_asyncGenerator_func ]
-      = underlied_asyncGenerator_func;
+//!!! (2023/03/25) seems not necessary to keep it as a member.
+//     static [ name_of_underlied_asyncGenerator_func ]
+//       = underlied_asyncGenerator_func;
 
     /**
      *
@@ -223,8 +228,13 @@ function AsyncGuarder_Base(
 
       try {
         // 1.
-        let underlied_asyncGenerator = AsyncGuarder_Base
-          [ name_of_underlied_asyncGenerator_func ].apply( this, restArgs );
+
+//!!! (2023/03/25) seems not necessary to keep it as a member.
+//         let underlied_asyncGenerator = AsyncGuarder_Base
+//           [ name_of_underlied_asyncGenerator_func ].apply( this, restArgs );
+
+        let underlied_asyncGenerator
+          = underlied_asyncGenerator_func.apply( this, restArgs );
 
         let result = yield *underlied_asyncGenerator;
         return result;
