@@ -262,6 +262,24 @@ class TestCase {
     }
   }
 
+  /** Check running flags should false. */
+  urlComposer_throw_if_running( urlComposer, funcNameInMessage ) {
+
+    if ( urlComposer.fetch_asyncPromise_running )
+      throw Error( `GSheets_tester.TestCase`
+        + `.${funcNameInMessage}(): testCaseId=${this.testCaseId}, `
+        + `urlComposer.fetch_asyncPromise_running `
+        + `( ${urlComposer.fetch_asyncPromise_running} ) `
+        + `should be false.` );
+
+    if ( urlComposer.fetch_asyncGenerator_running )
+      throw Error( `GSheets_tester.TestCase`
+        + `.${funcNameInMessage}(): testCaseId=${this.testCaseId}, `
+        + `urlComposer.fetch_asyncGenerator_running `
+        + `( ${urlComposer.fetch_asyncGenerator_running} ) `
+        + `should be false.` );
+  }
+
   /**
    * Try to load differential evolution summary and one of versus.
    *
@@ -287,7 +305,7 @@ class TestCase {
     let progressFetch = progressParent.child_add(
       ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
 
-//!!! (2023/03/25 Remarked) urlComposer_reenter_test() can use it.
+//!!! (2023/03/25 Remarked) urlComposer_reenter_test() can not use it.
 //     let progressToAdvance = progressParent.child_add(
 //       ValueMax.Percentage.Concrete.Pool.get_or_create_by( 2 ) );
 
@@ -300,14 +318,49 @@ class TestCase {
       this.retryWaitingMillisecondsInterval
     );
 
-//!!! ...unfinished... (2023/03/25)
-// for ( bShouldProgress100Default == false )
-// can test .fetch_asyncPromise_create() (and reenter) before
-// .fetch_asyncGenerator_create()
-// because it will always be failed (even without aborting).
-//
+    let delayPromise;
 
-    let delayPromise = PartTime.Promise_resolvable_rejectable_create();
+//!!! ...unfinished... (2023/03/25)
+
+    // For test case always is failed (even without aborting), it can test
+    // .fetch_asyncPromise_create() (and reenter) before
+    // .fetch_asyncGenerator_create().
+    if ( this.bShouldProgress100Default == false ) {
+      delayPromise = PartTime.Promise_resolvable_rejectable_create();
+
+      let fetch_asyncPromise = urlComposer.fetch_asyncPromise_create(
+        params_loading_retryWaiting, delayPromise );
+
+      if ( !urlComposer.fetch_asyncPromise_running )
+        throw Error( `GSheets_tester.TestCase`
+          + `.urlComposer_fetcher(): testCaseId=${this.testCaseId}, `
+          + `urlComposer.fetch_asyncPromise_running=`
+          + `${urlComposer.fetch_asyncPromise_running} `
+          + `should be true.` );
+
+      this.urlComposer_reenter_test( urlComposer, funcNameInMessage );
+
+      delayPromise.resolve();
+      let fetchResult = await fetch_asyncPromise;
+  
+      if ( fetchResult != null )
+        throw Error( `GSheets_tester.TestCase`
+          + `.urlComposer_fetcher(): testCaseId=${this.testCaseId}, `
+          + `urlComposer.fetch_asyncPromise_create() `
+          + `result=${fetchResult} `
+          + `should be null.` );
+
+      this.urlComposer_throw_if_running( urlComposer, funcNameInMessage );
+
+      if ( 100 !== urlComposer.fetch_asyncPromise_progress.valuePercentage )
+        throw Error( `GSheets_tester.TestCase`
+          + `.urlComposer_fetcher(): testCaseId=${this.testCaseId}, `
+          + `urlComposer.fetch_asyncPromise_progress.valuePercentage `
+          + `( ${urlComposer.fetch_asyncPromise_progress.valuePercentage} ) `
+          + `should 100.` );
+    }
+
+    delayPromise = PartTime.Promise_resolvable_rejectable_create();
 
     let fetcher = urlComposer
       .fetch_asyncGenerator_create(
@@ -323,6 +376,7 @@ class TestCase {
         + `${urlComposer.fetch_asyncGenerator_running} `
         + `should be true.` );
 
+    {
       // Test reenter.
       this.urlComposer_reenter_test( urlComposer, funcNameInMessage );
 
@@ -377,21 +431,9 @@ class TestCase {
 
     } while ( !nextResult.done );
 
-    if ( urlComposer.fetch_asyncPromise_running )
-      throw Error( `GSheets_tester.TestCase`
-        + `.urlComposer_fetcher(): testCaseId=${this.testCaseId}, `
-        + `urlComposer.fetch_asyncPromise_running=`
-        + `${urlComposer.fetch_asyncPromise_running} `
-        + `should be false.` );
+    this.urlComposer_throw_if_running( urlComposer, funcNameInMessage );
 
-    if ( urlComposer.fetch_asyncGenerator_running )
-      throw Error( `GSheets_tester.TestCase`
-        + `.urlComposer_fetcher(): testCaseId=${this.testCaseId}, `
-        + `urlComposer.fetch_asyncGenerator_running=`
-        + `${urlComposer.fetch_asyncGenerator_running} `
-        + `should be false.` );
-
-//!!! (2023/03/25 Remarked) urlComposer_reenter_test() can use it.
+//!!! (2023/03/25 Remarked) urlComposer_reenter_test() can not use it.
 //     if ( 100 !== progressToAdvance.valuePercentage )
 //       throw Error( `GSheets_tester.TestCase`
 //         + `.urlComposer_fetcher(): testCaseId=${this.testCaseId}, `
