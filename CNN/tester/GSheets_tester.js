@@ -531,10 +531,17 @@ class TestCase {
 //     // 
 //     if ( this.bShouldProgress100 ) {
 
-      let fetch_asyncPromise_result
-        = await this.urlComposer_test_fetch_asyncPromise_succeeded_async(
-            urlComposer, params_loading_retryWaiting, funcNameInMessage );
-
+      let fetch_asyncPromise_result;
+      if ( this.bShouldProgress100 ) {
+        fetch_asyncPromise_result
+          = await this.urlComposer_test_fetch_asyncPromise_succeeded_async(
+              urlComposer, params_loading_retryWaiting, funcNameInMessage );
+      } else {
+        fetch_asyncPromise_result
+          = await this.urlComposer_test_fetch_asyncPromise_failed_async(
+              urlComposer, params_loading_retryWaiting, funcNameInMessage );
+      }
+  
       if ( !array2d_compare_EQ(
              fetch_asyncGenerator_result, fetch_asyncPromise_result ) )
         throw Error( `GSheets_tester.TestCase`
