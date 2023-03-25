@@ -77,8 +77,8 @@ function AsyncGuarder_RecyclableBase(
    * again. The Xxx is name_prefix.
    *
    * @member {Function} Xxx_asyncPromise_create
-   *   A method for creating the underlied async method.
-   *   - If an old instnace is still executing, it will throw exception.
+   *   A method for creating the underlied async generator and looping until done.
+   *   - If an old instance is still executing, it will throw exception.
    *   - It accepts almost the same parameters as underlied_asyncGenerator_func()
    *       except without the 1st parameter progressParent (which is replaced
    *       by .Xxx_asyncPromise_progress).

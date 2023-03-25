@@ -35,14 +35,19 @@ import * as ValueMax from "./ValueMax.js";
  *   If true, the .urlComposer.httpFetcher now is during retry waiting.
  *
  * @member {Function} fetch_asyncPromise_create
- *   A method accepts almost the same parameters as
- * .fetch_asyncGenerator_create() except without the 1st parameter
- * progressParent. It returns a promise.
+ *   A method for creating .JSON_ColumnMajorArrayArray_fetch_asyncGenerator()
+ * and looping until done.
+ *   - It accepts almost the same parameters as .fetch_asyncGenerator_create()
+ *       except without the 1st parameter progressParent (which is replaced by
+ *       .fetch_asyncPromise_progress).
+ *   - It returns a promise resolved to .value of { done: true, value } of
+ *       awaited .JSON_ColumnMajorArrayArray_fetch_asyncGenerator().next().
  *
  * @member {Function} fetch_asyncGenerator_create
- *   A method accepts the same parameters as
- * .JSON_ColumnMajorArrayArray_fetch_asyncGenerator(). It returns an async
- * generator.
+ *   A method for creating .JSON_ColumnMajorArrayArray_fetch_asyncGenerator().
+ *     - It accepts the same parameters as
+ *         .JSON_ColumnMajorArrayArray_fetch_asyncGenerator().
+ *     - It returns an async generator.
  */
 
 //!!! (2023/03/24 Remarked) Use AsyncGuarder instead.
