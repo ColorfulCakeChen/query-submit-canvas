@@ -608,7 +608,7 @@ class TestCase {
 //         if ( !array2d_compare_EQ( result21, result21_new ) )
 //           throw Error( `${result21} != ${result21_new}` );
 
-      }
+//      }
 
     } else {
       // (e.g. the nework is offline.)
