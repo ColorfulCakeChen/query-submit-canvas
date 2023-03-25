@@ -284,7 +284,7 @@ function AsyncGuarder_RecyclableBase(
 
         AsyncGuarder_RecyclableBase.throw_call_another_if_false.call(
           this,
-          this.asyncPromise_running, funcNameInMessage,
+          this.#asyncPromise_running, funcNameInMessage,
           name_of_asyncPromise_create );
       }
 
