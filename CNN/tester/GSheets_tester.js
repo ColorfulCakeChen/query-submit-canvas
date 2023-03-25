@@ -392,10 +392,11 @@ class TestCase {
   async* urlComposer_fetcher( urlComposer, progressParent ) {
     const funcNameInMessage = "urlComposer_fetcher";
 
-    // Test .abort() before HttpRequest.Fetcher created.
-    if ( this.abortTestMode.beforeFetching ) {
-      urlComposer.abort();
-    }
+//!!! (2023/03/25) Moved to just before .fetch_asyncGenerator_create()
+//     // Test .abort() before HttpRequest.Fetcher created.
+//     if ( this.abortTestMode.beforeFetching ) {
+//       urlComposer.abort();
+//     }
 
     let progressRoot = progressParent.root_get();
 
@@ -424,6 +425,11 @@ class TestCase {
     }
 
     let delayPromise = PartTime.Promise_resolvable_rejectable_create();
+
+    // Test .abort() before HttpRequest.Fetcher created.
+    if ( this.abortTestMode.beforeFetching ) {
+      urlComposer.abort();
+    }
 
     let fetcher = urlComposer
       .fetch_asyncGenerator_create(
