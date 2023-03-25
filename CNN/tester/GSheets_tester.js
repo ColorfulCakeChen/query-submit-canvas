@@ -295,8 +295,8 @@ class TestCase {
         + `should be true.` );
 
     this.urlComposer_reenter_test( urlComposer, funcNameInMessage );
+    delayPromise.resolve(); // After reenter testing.
 
-    delayPromise.resolve();
     let fetchResult = await fetch_asyncPromise;
 
     // Failed fetching should get null.
@@ -382,12 +382,9 @@ class TestCase {
         + `${urlComposer.fetch_asyncGenerator_running} `
         + `should be true.` );
 
-    {
-      // Test reenter.
-      this.urlComposer_reenter_test( urlComposer, funcNameInMessage );
-
-      delayPromise.resolve();
-    }
+    // Test reenter.
+    this.urlComposer_reenter_test( urlComposer, funcNameInMessage );
+    delayPromise.resolve(); // After reenter testing.
 
     //
     let nextResult;
