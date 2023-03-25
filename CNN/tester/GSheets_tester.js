@@ -475,6 +475,78 @@ class TestCase {
       if ( !array2d_compare_EQ( result11, result21 ) )
         throw Error( `${result11} != ${result21}` );
 
+
+//!!! ...unfinished... (2023/03/25)
+//       // If the request is expected to succeeded, test .fetch_asyncPromise_create()
+//       if ( this.bShouldProgress100 ) {
+
+//         //!!! ...unfinished... (2023/03/22)
+//         // should test .fetch_asyncGenerator_create()
+//         // and .fetch_asyncPromise_create()
+
+//         let delayPromise = PartTime.Promise_resolvable_rejectable_create();
+
+//         let fetcher = urlComposer
+//           .fetch_asyncGenerator_create(
+//             progressFetch, params_loading_retryWaiting, delayPromise );
+
+//         //!!! ...unfinished... (2023/03/22)
+//         // What if .fetch_asyncPromise_create()
+
+//         if ( !urlComposer.fetch_asyncGenerator_running )
+//           throw Error( `GSheets_tester.TestCase`
+//             + `.urlComposer_fetcher(): testCaseId=${this.testCaseId}, `
+//             + `urlComposer.fetch_asyncGenerator_running=`
+//             + `${urlComposer.fetch_asyncGenerator_running} `
+//             + `should be true.` );
+
+//         //!!! ...unfinished... (2023/03/22)
+//         // Test reenter.
+//         {
+//           // Test: Reenter .fetch_asyncPromise_create()
+//           //       should throw exception.
+//           try {
+//             urlComposer.fetch_asyncPromise_create();
+//           } catch ( e ) {
+//             if ( e.message.indexOf(
+//                   ".fetch_asyncPromise_create():" ) > 0 ) {
+//               progressToAdvance.value_advance();
+//               yield progressRoot;
+//             } else { // Unknown error, said loudly.
+//               throw Error( `GSheets_tester.TestCase.urlComposer_fetcher(): `
+//                 + `testCaseId=${this.testCaseId}, ${e}`, { cause: e } );
+//             }
+//           }
+
+//           // Test: Reenter .fetch_asyncGenerator_create()
+//           //       should throw exception.
+//           try {
+//             urlComposer.fetch_asyncGenerator_create();
+//           } catch ( e ) {
+//             if ( e.message.indexOf(
+//                   ".fetch_asyncGenerator_create():" ) > 0 ) {
+//               progressToAdvance.value_advance();
+//               yield progressRoot;
+//             } else { // Unknown error, said loudly.
+//               throw Error( `GSheets_tester.TestCase.urlComposer_fetcher(): `
+//                 + `testCaseId=${this.testCaseId}, ${e}`, { cause: e } );
+//             }
+//           }
+
+//           delayPromise.resolve();
+//         }
+
+//         let result11_new = ;
+//         let result12_new = ;
+
+//         if ( !array2d_compare_EQ( result11, result11_new ) )
+//           throw Error( `${result11} != ${result11_new}` );
+
+//         if ( !array2d_compare_EQ( result21, result21_new ) )
+//           throw Error( `${result21} != ${result21_new}` );
+
+      }
+
     } else {
       // (e.g. the nework is offline.)
     }
