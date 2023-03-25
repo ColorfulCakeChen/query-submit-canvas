@@ -536,6 +536,8 @@ class TestCase {
 //           delayPromise.resolve();
 //         }
 
+//!!! should also test .fetch_asyncPromise_progress
+
 //         let result11_new = ;
 //         let result12_new = ;
 
