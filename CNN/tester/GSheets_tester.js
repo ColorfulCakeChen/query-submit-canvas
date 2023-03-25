@@ -281,7 +281,9 @@ class TestCase {
   }
 
   /** Test .fetch_asyncPromise and ensure it is failed. */
-  urlComposer_test_fetch_asyncPromise_failed( urlComposer, funcNameInMessage ) {
+  async urlComposer_test_fetch_asyncPromise_failed_async(
+    urlComposer, funcNameInMessage ) {
+
     let delayPromise = PartTime.Promise_resolvable_rejectable_create();
 
     let fetch_asyncPromise = urlComposer.fetch_asyncPromise_create(
@@ -337,7 +339,6 @@ class TestCase {
       urlComposer.abort();
     }
 
-
     let progressRoot = progressParent.root_get();
 
     let progressFetch = progressParent.child_add(
@@ -362,7 +363,7 @@ class TestCase {
     // .fetch_asyncPromise_create() (and reenter) before
     // .fetch_asyncGenerator_create().
     if ( this.bShouldProgress100Default == false ) {
-      this.urlComposer_test_fetch_asyncPromise_failed(
+      await this.urlComposer_test_fetch_asyncPromise_failed_async(
         urlComposer, funcNameInMessage );
     }
 
