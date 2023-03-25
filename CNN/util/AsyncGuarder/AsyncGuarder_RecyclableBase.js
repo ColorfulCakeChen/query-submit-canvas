@@ -29,9 +29,6 @@ function AsyncGuarder_RecyclableBase(
     = `${name_prefix}_asyncPromise_running`;
 
 
-  const name_of_asyncPromise_running
-    = `${name_prefix}_asyncPromise_running`;
-
   const name_of_asyncPromise_create
     = `${name_prefix}_asyncPromise_create`;
 
