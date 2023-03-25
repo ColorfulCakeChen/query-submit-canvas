@@ -596,7 +596,6 @@ class TestCase {
           = await this.urlComposer_test_fetch_asyncPromise_succeeded_async(
               urlComposer2, funcNameInMessage );
 
-//!!! should also test .fetch_asyncPromise_progress
         if ( !array2d_compare_EQ( result11, result12 ) )
           throw Error( `GSheets_tester.TestCase`
             + `.${funcNameInMessage}(): testCaseId=${this.testCaseId}, `
@@ -612,7 +611,7 @@ class TestCase {
             + `should be the same as `
             + `result22 ( ${result22} )`
           );
-     }
+      }
 
     } else {
       // (e.g. the nework is offline.)
