@@ -313,7 +313,7 @@ class TestCase {
   async urlComposer_test_fetch_asyncPromise_failed_async(
     urlComposer, funcNameInMessage ) {
 
-    let fetchResult = await urlComposer_test_fetch_asyncPromise_async(
+    let fetchResult = await this.urlComposer_test_fetch_asyncPromise_async(
         urlComposer, funcNameInMessage );
 
     // Failed fetching should get null.
@@ -337,7 +337,7 @@ class TestCase {
   async urlComposer_test_fetch_asyncPromise_succeeded_async(
     urlComposer, funcNameInMessage ) {
 
-    let fetchResult = await urlComposer_test_fetch_asyncPromise_async(
+    let fetchResult = await this.urlComposer_test_fetch_asyncPromise_async(
         urlComposer, funcNameInMessage );
 
     // Failed fetching should get null.
