@@ -392,21 +392,10 @@ class TestCase {
   async* urlComposer_fetcher( urlComposer, progressParent ) {
     const funcNameInMessage = "urlComposer_fetcher";
 
-//!!! (2023/03/25) Moved to just before .fetch_asyncGenerator_create()
-//     // Test .abort() before HttpRequest.Fetcher created.
-//     if ( this.abortTestMode.beforeFetching ) {
-//       urlComposer.abort();
-//     }
-
     let progressRoot = progressParent.root_get();
 
     let progressFetch = progressParent.child_add(
       ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
-
-//!!! (2023/03/25 Remarked) urlComposer_reenter_test() can not use it.
-//     let progressToAdvance = progressParent.child_add(
-//       ValueMax.Percentage.Concrete.Pool.get_or_create_by( 2 ) );
-
 
     let params_loading_retryWaiting = new HttpRequest.Params_loading_retryWaiting(
       this.loadingMillisecondsMax,
@@ -498,15 +487,6 @@ class TestCase {
 
     let fetch_asyncGenerator_result = nextResult.value;
 
-//!!! (2023/03/25 Remarked) urlComposer_reenter_test() can not use it.
-//     if ( 100 !== progressToAdvance.valuePercentage )
-//       throw Error( `GSheets_tester.TestCase`
-//         + `.${funcNameInMessage}(): testCaseId=${this.testCaseId}, `
-//         + `progressToAdvance.valuePercentage `
-//           +  `( ${progressToAdvance.valuePercentage} ) should be 100.` );
-
-//!!! (2023/03/25 Remarked) may retry forever.
-
     if ( 
            // If the request is expected to succeeded, testing
            // .fetch_asyncPromise_create() should also be succeeded.
@@ -515,21 +495,6 @@ class TestCase {
            // If the request is expected to failed (even without aborting),
            // testing .fetch_asyncPromise_create() should also be failed.
         || ( this.bShouldProgress100Default == false ) ) {
-
-//!!! (2023/03/25 Remarked) has ensured not retry forever.
-//     // If the request is expected to succeeded, testing
-//     // .fetch_asyncPromise_create() should also be succeeded.
-//     //
-//     // Note:
-//     //
-//     // Although it seems that testing .fetch_asyncPromise_create() should
-//     // also be failed if the request is expected to failed (even without
-//     // aborting) (i.e. ( this.bShouldProgress100Default == false ) ),
-//     // however, this may result in retrying forever.
-//     //
-//     // So, only test if the request is expected to succeeded.
-//     // 
-//     if ( this.bShouldProgress100 ) {
 
       let fetch_asyncPromise_result;
       if ( this.bShouldProgress100 ) {
@@ -649,36 +614,6 @@ class TestCase {
           + `should be the same as `
           + `result21 ( ${result21} )`
         );
-
-//!!! (2023/03/25 Remarked) moved into .urlComposer_fetcher().
-//       // If the request is expected to succeeded, it can test
-//       // .fetch_asyncPromise_create() and should also be succeeded.
-//       if ( this.bShouldProgress100 ) {
-//
-//         let result12
-//           = await this.urlComposer_test_fetch_asyncPromise_succeeded_async(
-//               urlComposer1, params_loading_retryWaiting, funcNameInMessage );
-//
-//         let result22
-//           = await this.urlComposer_test_fetch_asyncPromise_succeeded_async(
-//               urlComposer2, params_loading_retryWaiting, funcNameInMessage );
-//
-//         if ( !array2d_compare_EQ( result11, result12 ) )
-//           throw Error( `GSheets_tester.TestCase`
-//             + `.${funcNameInMessage}(): testCaseId=${this.testCaseId}, `
-//             + `result11 ( ${result11} ) `
-//             + `should be the same as `
-//             + `result12 ( ${result12} )`
-//           );
-//
-//         if ( !array2d_compare_EQ( result21, result22 ) )
-//           throw Error( `GSheets_tester.TestCase`
-//             + `.${funcNameInMessage}(): testCaseId=${this.testCaseId}, `
-//             + `result21 ( ${result21} ) `
-//             + `should be the same as `
-//             + `result22 ( ${result22} )`
-//           );
-//       }
 
     } else {
       // (e.g. the nework is offline.)
