@@ -490,15 +490,29 @@ class TestCase {
 //         + `progressToAdvance.valuePercentage `
 //           +  `( ${progressToAdvance.valuePercentage} ) should be 100.` );
 
+//!!! (2023/03/25 Remarked) may retry forever.
+//     if ( 
+//            // If the request is expected to succeeded, testing
+//            // .fetch_asyncPromise_create() should also be succeeded.
+//            ( this.bShouldProgress100 )
+//      
+//            // If the request is expected to failed (even without aborting),
+//            // testing .fetch_asyncPromise_create() should also be failed.
+//         || ( this.bShouldProgress100Default == false ) ) {
 
-    if ( 
-           // If the request is expected to succeeded, testing
-           // .fetch_asyncPromise_create() should also be succeeded.
-           ( this.bShouldProgress100 )
-        
-           // If the request is expected to failed (even without aborting),
-           // testing .fetch_asyncPromise_create() should also be failed.
-        || ( this.bShouldProgress100Default == false ) ) {
+    // If the request is expected to succeeded, testing
+    // .fetch_asyncPromise_create() should also be succeeded.
+    //
+    // Note:
+    //
+    // Although it seems that testing .fetch_asyncPromise_create() should
+    // also be failed if the request is expected to failed (even without
+    // aborting) (i.e. ( this.bShouldProgress100Default == false ) ),
+    // however, this may result in retrying forever.
+    //
+    // So, only test if the request is expected to succeeded.
+    // 
+    if ( this.bShouldProgress100 ) {
 
       let fetch_asyncPromise_result
         = await this.urlComposer_test_fetch_asyncPromise_succeeded_async(
