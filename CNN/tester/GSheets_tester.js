@@ -230,6 +230,38 @@ class TestCase {
     this.bShouldProgress100Default = bShouldProgress100Default;
   }
 
+  /** Test reenter. */
+  urlComposer_reenter_test( urlComposer, funcNameInMessage ) {
+
+    // Test: Reenter .fetch_asyncPromise_create()
+    //       should throw exception.
+    try {
+      urlComposer.fetch_asyncPromise_create();
+    } catch ( e ) {
+      if ( e.message.indexOf( ".fetch_asyncPromise_create():" ) > 0 ) {
+        // progressToAdvance.value_advance();
+        // yield progressRoot;
+      } else { // Unknown error, said loudly.
+        throw Error( `GSheets_tester.TestCase.${funcNameInMessage}(): `
+          + `testCaseId=${this.testCaseId}, ${e}`, { cause: e } );
+      }
+    }
+
+    // Test: Reenter .fetch_asyncGenerator_create()
+    //       should throw exception.
+    try {
+      urlComposer.fetch_asyncGenerator_create();
+    } catch ( e ) {
+      if ( e.message.indexOf( ".fetch_asyncGenerator_create():" ) > 0 ) {
+        // progressToAdvance.value_advance();
+        // yield progressRoot;
+      } else { // Unknown error, said loudly.
+        throw Error( `GSheets_tester.TestCase.${funcNameInMessage}(): `
+          + `testCaseId=${this.testCaseId}, ${e}`, { cause: e } );
+      }
+    }
+  }
+
   /**
    * Try to load differential evolution summary and one of versus.
    *
@@ -242,6 +274,7 @@ class TestCase {
    *   - Return null when failed.
    */
   async* urlComposer_fetcher( urlComposer, progressParent ) {
+    const funcNameInMessage = "urlComposer_fetcher";
 
     // Test .abort() before HttpRequest.Fetcher created.
     if ( this.abortTestMode.beforeFetching ) {
@@ -254,8 +287,9 @@ class TestCase {
     let progressFetch = progressParent.child_add(
       ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
 
-    let progressToAdvance = progressParent.child_add(
-      ValueMax.Percentage.Concrete.Pool.get_or_create_by( 2 ) );
+//!!! (2023/03/25 Remarked) urlComposer_reenter_test() can use it.
+//     let progressToAdvance = progressParent.child_add(
+//       ValueMax.Percentage.Concrete.Pool.get_or_create_by( 2 ) );
 
 
     let params_loading_retryWaiting = new HttpRequest.Params_loading_retryWaiting(
@@ -289,38 +323,8 @@ class TestCase {
         + `${urlComposer.fetch_asyncGenerator_running} `
         + `should be true.` );
 
-//!!! ...unfinished... (2023/03/25) should move reenter test to a function.
-    // Test reenter.
-    {
-      // Test: Reenter .fetch_asyncPromise_create()
-      //       should throw exception.
-      try {
-        urlComposer.fetch_asyncPromise_create();
-      } catch ( e ) {
-        if ( e.message.indexOf(
-               ".fetch_asyncPromise_create():" ) > 0 ) {
-          progressToAdvance.value_advance();
-          yield progressRoot;
-        } else { // Unknown error, said loudly.
-          throw Error( `GSheets_tester.TestCase.urlComposer_fetcher(): `
-            + `testCaseId=${this.testCaseId}, ${e}`, { cause: e } );
-        }
-      }
-
-      // Test: Reenter .fetch_asyncGenerator_create()
-      //       should throw exception.
-      try {
-        urlComposer.fetch_asyncGenerator_create();
-      } catch ( e ) {
-        if ( e.message.indexOf(
-               ".fetch_asyncGenerator_create():" ) > 0 ) {
-          progressToAdvance.value_advance();
-          yield progressRoot;
-        } else { // Unknown error, said loudly.
-          throw Error( `GSheets_tester.TestCase.urlComposer_fetcher(): `
-            + `testCaseId=${this.testCaseId}, ${e}`, { cause: e } );
-        }
-      }
+      // Test reenter.
+      this.urlComposer_reenter_test( urlComposer, funcNameInMessage );
 
       delayPromise.resolve();
     }
@@ -387,11 +391,12 @@ class TestCase {
         + `${urlComposer.fetch_asyncGenerator_running} `
         + `should be false.` );
 
-    if ( 100 !== progressToAdvance.valuePercentage )
-      throw Error( `GSheets_tester.TestCase`
-        + `.urlComposer_fetcher(): testCaseId=${this.testCaseId}, `
-        + `progressToAdvance.valuePercentage `
-          +  `( ${progressToAdvance.valuePercentage} ) should 100.` );
+//!!! (2023/03/25 Remarked) urlComposer_reenter_test() can use it.
+//     if ( 100 !== progressToAdvance.valuePercentage )
+//       throw Error( `GSheets_tester.TestCase`
+//         + `.urlComposer_fetcher(): testCaseId=${this.testCaseId}, `
+//         + `progressToAdvance.valuePercentage `
+//           +  `( ${progressToAdvance.valuePercentage} ) should 100.` );
 
     return nextResult.value;
   }
