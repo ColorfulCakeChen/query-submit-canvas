@@ -19,7 +19,8 @@ import { Base as AsyncGuarder_Base } from "./AsyncGuarder_Base.js";
  * generator which wants to be guarded by the .Xxx_asyncGenerator_running
  * boolean flag.
  *   - It will be called with thisArg as "this".
- *   - Its 1st parameter must be progressParent (ValueMax.Percentage.Aggregate).
+ *   - Its 1st parameter must be progressParent (an instance of
+ *       ValueMax.Percentage.Aggregate).
  */
 function AsyncGuarder_RecyclableBase(
   name_prefix, underlied_asyncGenerator_func, ParentClass = Object ) {
@@ -76,12 +77,17 @@ function AsyncGuarder_RecyclableBase(
    * again. The Xxx is name_prefix.
    *
    * @member {Function} Xxx_asyncPromise_create
-   *   A method for creating the underlied async method. If an old instnace
-   * is still executing, it will throw exception.
+   *   A method for creating the underlied async method.
+   *   - If an old instnace is still executing, it will throw exception.
+   *   - It accepts almost the same parameters as underlied_asyncGenerator_func()
+   *       except without the 1st parameter progressParent (which is replaced
+   *       by .Xxx_asyncPromise_progress).
+   *   - It returns a promise resolved to .value of { done: true, value } of
+   *       awaited underlied_asyncGenerator_func().next().
    *
    * @member {Function} Xxx_asyncPromise_create_without_checking_precondition
    *   An internal static method called by .Xxx_asyncPromise_create(). 
-   *    
+   *
    * @member {ValueMax.Percentage.Aggregate} Xxx_asyncPromise_progress
    *   The progress of .Xxx_async(). If
    * ( .Xxx_asyncPromise_progress.valuePercentage == 100 ), the .Xxx_async() has
