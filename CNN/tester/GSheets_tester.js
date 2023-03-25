@@ -333,6 +333,30 @@ class TestCase {
         + `should not be 100.` );
   }
 
+  /** Test .fetch_asyncPromise and ensure it is succeeded. */
+  async urlComposer_test_fetch_asyncPromise_succeeded_async(
+    urlComposer, funcNameInMessage ) {
+
+    let fetchResult = await urlComposer_test_fetch_asyncPromise_async(
+        urlComposer, funcNameInMessage );
+
+    // Failed fetching should get null.
+    if ( fetchResult == null )
+      throw Error( `GSheets_tester.TestCase`
+        + `.${funcNameInMessage}(): testCaseId=${this.testCaseId}, `
+        + `urlComposer.fetch_asyncPromise_create() `
+        + `result=${fetchResult} `
+        + `should not be null.` );
+
+    // Succeeded fetching should get 100%.
+    if ( 100 !== urlComposer.fetch_asyncPromise_progress.valuePercentage )
+      throw Error( `GSheets_tester.TestCase`
+        + `.${funcNameInMessage}(): testCaseId=${this.testCaseId}, `
+        + `urlComposer.fetch_asyncPromise_progress.valuePercentage `
+        + `( ${urlComposer.fetch_asyncPromise_progress.valuePercentage} ) `
+        + `should be 100.` );
+  }
+
   /**
    * Try to load differential evolution summary and one of versus.
    *
