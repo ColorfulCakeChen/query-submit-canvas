@@ -1326,7 +1326,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
   static versus_load_promise_create_without_checking_precondition(
     versus_loader ) {
 
-!!! ...unfinished... (2023/03/25)
+//!!! ...unfinished... (2023/03/25)
 // Perhaps, only init_async() will record in this.versus_load_promise
     this.versus_load_async_running = true;
     this.versus_load_promise = NeuralOrchestra_Base.versus_load_async.call(
