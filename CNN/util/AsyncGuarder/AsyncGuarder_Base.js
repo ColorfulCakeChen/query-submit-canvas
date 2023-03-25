@@ -30,13 +30,18 @@ function AsyncGuarder_Base(
 
   /** Note:
    *
-   * Although the property .Xxx_asyncPromise_running will not be created by
-   * this AsyncGuarder_Base class (it will be created by sub-class
-   * AsyncGuarder_RecyclableBase), however, this class will try to check the
-   * property. So, its name should still be prepared.
+   * Although the property .Xxx_asyncPromise_running and
+   * .Xxx_asyncPromise_create() will not be created by this AsyncGuarder_Base
+   * class (they will be created by sub-class AsyncGuarder_RecyclableBase),
+   * however, this class will try to check these properties. So, their names
+   * should still be prepared.
    */
   const name_of_asyncPromise_running
     = `${name_prefix}_asyncPromise_running`;
+
+  const name_of_asyncPromise_create
+    = `${name_prefix}_asyncPromise_create`;
+
 
   const name_of_asyncGenerator_running
     = `${name_prefix}_asyncGenerator_running`;
