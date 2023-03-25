@@ -54,7 +54,7 @@ import * as ValueMax from "./ValueMax.js";
 //class GSheets_UrlComposer extends Recyclable.Root {
 class GSheets_UrlComposer
   extends AsyncGuarder.RecyclableBase(
-    "fetch", JSON_ColumnMajorArrayArray_fetch_asyncGenerator_relay ) {
+    "fetch", relay_JSON_ColumnMajorArrayArray_fetch_asyncGenerator ) {
 
   /**
    * Used as default GSheets.UrlComposer provider for conforming to Recyclable
@@ -496,10 +496,13 @@ class GSheets_UrlComposer
 /**
  *
  * @param {GSheets_UrlComposer} this
+ * @return {AsyncGenerator}
+ *   Return the newly created instance of GSheets_UrlComposer
+ * .JSON_ColumnMajorArrayArray_fetch_asyncGenerator().
  */
-function JSON_ColumnMajorArrayArray_fetch_asyncGenerator_relay(
+function relay_JSON_ColumnMajorArrayArray_fetch_asyncGenerator(
   ...restArgs ) {
 
-  GSheets_UrlComposer.JSON_ColumnMajorArrayArray_fetch_asyncGenerator
+  return GSheets_UrlComposer.JSON_ColumnMajorArrayArray_fetch_asyncGenerator
     .apply( this, restArgs )
 }
