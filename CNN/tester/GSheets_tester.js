@@ -286,7 +286,7 @@ class TestCase {
    * @return {Array[]} Return the fetched column major array of array.
    */
   async urlComposer_test_fetch_asyncPromise_async(
-    urlComposer, funcNameInMessage ) {
+    urlComposer, params_loading_retryWaiting, funcNameInMessage ) {
 
     let delayPromise = PartTime.Promise_resolvable_rejectable_create();
 
@@ -311,10 +311,10 @@ class TestCase {
 
   /** Test .fetch_asyncPromise and ensure it is failed. */
   async urlComposer_test_fetch_asyncPromise_failed_async(
-    urlComposer, funcNameInMessage ) {
+    urlComposer, params_loading_retryWaiting, funcNameInMessage ) {
 
     let fetchResult = await this.urlComposer_test_fetch_asyncPromise_async(
-        urlComposer, funcNameInMessage );
+        urlComposer, params_loading_retryWaiting, funcNameInMessage );
 
     // Failed fetching should get null.
     if ( fetchResult != null )
@@ -337,10 +337,10 @@ class TestCase {
 
   /** Test .fetch_asyncPromise and ensure it is succeeded. */
   async urlComposer_test_fetch_asyncPromise_succeeded_async(
-    urlComposer, funcNameInMessage ) {
+    urlComposer, params_loading_retryWaiting, funcNameInMessage ) {
 
     let fetchResult = await this.urlComposer_test_fetch_asyncPromise_async(
-        urlComposer, funcNameInMessage );
+        urlComposer, params_loading_retryWaiting, funcNameInMessage );
 
     // Failed fetching should get null.
     if ( fetchResult == null )
@@ -403,7 +403,7 @@ class TestCase {
     // .fetch_asyncGenerator_create() and should also be failed.
     if ( this.bShouldProgress100Default == false ) {
       await this.urlComposer_test_fetch_asyncPromise_failed_async(
-        urlComposer, funcNameInMessage );
+        urlComposer, params_loading_retryWaiting, funcNameInMessage );
     }
 
     let delayPromise = PartTime.Promise_resolvable_rejectable_create();
@@ -473,6 +473,8 @@ class TestCase {
 
     this.urlComposer_throw_if_running( urlComposer, funcNameInMessage );
 
+    let fetch_asyncGenerator_result = nextResult.value;
+
 //!!! (2023/03/25 Remarked) urlComposer_reenter_test() can not use it.
 //     if ( 100 !== progressToAdvance.valuePercentage )
 //       throw Error( `GSheets_tester.TestCase`
@@ -480,7 +482,32 @@ class TestCase {
 //         + `progressToAdvance.valuePercentage `
 //           +  `( ${progressToAdvance.valuePercentage} ) should be 100.` );
 
-    return nextResult.value;
+
+    if ( 
+           // If the request is expected to succeeded, it can test
+           // .fetch_asyncPromise_create() and should also be succeeded.
+           ( this.bShouldProgress100 )
+        
+           // If the request is expected to failed (even without aborting),
+           // it can test .fetch_asyncPromise_create() and should also be
+           // failed.
+        || ( this.bShouldProgress100Default == false ) ) {
+
+      let fetch_asyncPromise_result
+        = await this.urlComposer_test_fetch_asyncPromise_succeeded_async(
+            urlComposer, params_loading_retryWaiting, funcNameInMessage );
+
+      if ( !array2d_compare_EQ(
+             fetch_asyncGenerator_result, fetch_asyncPromise_result ) )
+        throw Error( `GSheets_tester.TestCase`
+          + `.${funcNameInMessage}(): testCaseId=${this.testCaseId}, `
+          + `fetch_asyncGenerator_result ( ${fetch_asyncGenerator_result} ) `
+          + `should be the same as `
+          + `fetch_asyncPromise_result ( ${fetch_asyncPromise_result} )`
+        );
+    }
+
+    return fetch_asyncGenerator_result;
   }
 
   /**
@@ -543,7 +570,12 @@ class TestCase {
 
     // Compare results: should the same.
     if ( !array2d_compare_EQ( result1, result2 ) )
-      throw Error( `${result1} != ${result2}` );
+      throw Error( `GSheets_tester.TestCase`
+        + `.${funcNameInMessage}(): testCaseId=${this.testCaseId}, `
+        + `result1 ( ${result1} ) `
+        + `should be the same as `
+        + `result2 ( ${result2} )`
+      );
 
     // Test change range.
     if ( result1 ) {
@@ -573,34 +605,35 @@ class TestCase {
           + `result21 ( ${result21} )`
         );
 
-      // If the request is expected to succeeded, it can test
-      // .fetch_asyncPromise_create() and should also be succeeded.
-      if ( this.bShouldProgress100 ) {
-
-        let result12
-          = await this.urlComposer_test_fetch_asyncPromise_succeeded_async(
-              urlComposer1, funcNameInMessage );
-
-        let result22
-          = await this.urlComposer_test_fetch_asyncPromise_succeeded_async(
-              urlComposer2, funcNameInMessage );
-
-        if ( !array2d_compare_EQ( result11, result12 ) )
-          throw Error( `GSheets_tester.TestCase`
-            + `.${funcNameInMessage}(): testCaseId=${this.testCaseId}, `
-            + `result11 ( ${result11} ) `
-            + `should be the same as `
-            + `result12 ( ${result12} )`
-          );
-
-        if ( !array2d_compare_EQ( result21, result22 ) )
-          throw Error( `GSheets_tester.TestCase`
-            + `.${funcNameInMessage}(): testCaseId=${this.testCaseId}, `
-            + `result21 ( ${result21} ) `
-            + `should be the same as `
-            + `result22 ( ${result22} )`
-          );
-      }
+//!!! (2023/03/25 Remarked) moved into .urlComposer_fetcher().
+//       // If the request is expected to succeeded, it can test
+//       // .fetch_asyncPromise_create() and should also be succeeded.
+//       if ( this.bShouldProgress100 ) {
+//
+//         let result12
+//           = await this.urlComposer_test_fetch_asyncPromise_succeeded_async(
+//               urlComposer1, params_loading_retryWaiting, funcNameInMessage );
+//
+//         let result22
+//           = await this.urlComposer_test_fetch_asyncPromise_succeeded_async(
+//               urlComposer2, params_loading_retryWaiting, funcNameInMessage );
+//
+//         if ( !array2d_compare_EQ( result11, result12 ) )
+//           throw Error( `GSheets_tester.TestCase`
+//             + `.${funcNameInMessage}(): testCaseId=${this.testCaseId}, `
+//             + `result11 ( ${result11} ) `
+//             + `should be the same as `
+//             + `result12 ( ${result12} )`
+//           );
+//
+//         if ( !array2d_compare_EQ( result21, result22 ) )
+//           throw Error( `GSheets_tester.TestCase`
+//             + `.${funcNameInMessage}(): testCaseId=${this.testCaseId}, `
+//             + `result21 ( ${result21} ) `
+//             + `should be the same as `
+//             + `result22 ( ${result22} )`
+//           );
+//       }
 
     } else {
       // (e.g. the nework is offline.)
