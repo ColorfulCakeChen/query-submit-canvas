@@ -331,6 +331,8 @@ class TestCase {
         + `urlComposer.fetch_asyncPromise_progress.valuePercentage `
         + `( ${urlComposer.fetch_asyncPromise_progress.valuePercentage} ) `
         + `should not be 100.` );
+
+    return fetchResult;
   }
 
   /** Test .fetch_asyncPromise and ensure it is succeeded. */
@@ -355,6 +357,8 @@ class TestCase {
         + `urlComposer.fetch_asyncPromise_progress.valuePercentage `
         + `( ${urlComposer.fetch_asyncPromise_progress.valuePercentage} ) `
         + `should be 100.` );
+
+    return fetchResult;
   }
 
   /**
@@ -564,88 +568,51 @@ class TestCase {
 
       if ( this.bShouldProgress100 ) // If the request is expected to succeeded,
         if ( result11 == null )      // it should have non-null result.
-          throw Error( `result11( ${result11} ) should not be null `
+          throw Error( `GSheets_tester.TestCase`
+            + `.${funcNameInMessage}(): testCaseId=${this.testCaseId}, `
+            + `result11 ( ${result11} ) should not be null `
             + `when ( .bShouldProgress100 == true ).`
           );
 
       // Note: If all cells are empty, GQViz got array with zero length.
       //       But APIv4 got undefined.
       if ( !array2d_compare_EQ( result11, result21 ) )
-        throw Error( `${result11} != ${result21}` );
-
+        throw Error( `GSheets_tester.TestCase`
+          + `.${funcNameInMessage}(): testCaseId=${this.testCaseId}, `
+          + `result11 ( ${result11} ) `
+          + `should be the same as `
+          + `result21 ( ${result21} )`
+        );
 
 //!!! ...unfinished... (2023/03/25)
-//       // If the request is expected to succeeded, test .fetch_asyncPromise_create()
-//       if ( this.bShouldProgress100 ) {
+      // If the request is expected to succeeded, test .fetch_asyncPromise_create()
+      if ( this.bShouldProgress100 ) {
 
-//         //!!! ...unfinished... (2023/03/22)
-//         // should test .fetch_asyncGenerator_create()
-//         // and .fetch_asyncPromise_create()
+        let result12
+          = await this.urlComposer_test_fetch_asyncPromise_succeeded_async(
+              urlComposer1, funcNameInMessage );
 
-//         let delayPromise = PartTime.Promise_resolvable_rejectable_create();
-
-//         let fetcher = urlComposer
-//           .fetch_asyncGenerator_create(
-//             progressFetch, params_loading_retryWaiting, delayPromise );
-
-//         //!!! ...unfinished... (2023/03/22)
-//         // What if .fetch_asyncPromise_create()
-
-//         if ( !urlComposer.fetch_asyncGenerator_running )
-//           throw Error( `GSheets_tester.TestCase`
-//             + `.urlComposer_fetcher(): testCaseId=${this.testCaseId}, `
-//             + `urlComposer.fetch_asyncGenerator_running=`
-//             + `${urlComposer.fetch_asyncGenerator_running} `
-//             + `should be true.` );
-
-//         //!!! ...unfinished... (2023/03/22)
-//         // Test reenter.
-//         {
-//           // Test: Reenter .fetch_asyncPromise_create()
-//           //       should throw exception.
-//           try {
-//             urlComposer.fetch_asyncPromise_create();
-//           } catch ( e ) {
-//             if ( e.message.indexOf(
-//                   ".fetch_asyncPromise_create():" ) > 0 ) {
-//               progressToAdvance.value_advance();
-//               yield progressRoot;
-//             } else { // Unknown error, said loudly.
-//               throw Error( `GSheets_tester.TestCase.urlComposer_fetcher(): `
-//                 + `testCaseId=${this.testCaseId}, ${e}`, { cause: e } );
-//             }
-//           }
-
-//           // Test: Reenter .fetch_asyncGenerator_create()
-//           //       should throw exception.
-//           try {
-//             urlComposer.fetch_asyncGenerator_create();
-//           } catch ( e ) {
-//             if ( e.message.indexOf(
-//                   ".fetch_asyncGenerator_create():" ) > 0 ) {
-//               progressToAdvance.value_advance();
-//               yield progressRoot;
-//             } else { // Unknown error, said loudly.
-//               throw Error( `GSheets_tester.TestCase.urlComposer_fetcher(): `
-//                 + `testCaseId=${this.testCaseId}, ${e}`, { cause: e } );
-//             }
-//           }
-
-//           delayPromise.resolve();
-//         }
+        let result22
+          = await this.urlComposer_test_fetch_asyncPromise_succeeded_async(
+              urlComposer2, funcNameInMessage );
 
 //!!! should also test .fetch_asyncPromise_progress
+        if ( !array2d_compare_EQ( result11, result12 ) )
+          throw Error( `GSheets_tester.TestCase`
+            + `.${funcNameInMessage}(): testCaseId=${this.testCaseId}, `
+            + `result11 ( ${result11} ) `
+            + `should be the same as `
+            + `result12 ( ${result12} )`
+          );
 
-//         let result11_new = ;
-//         let result12_new = ;
-
-//         if ( !array2d_compare_EQ( result11, result11_new ) )
-//           throw Error( `${result11} != ${result11_new}` );
-
-//         if ( !array2d_compare_EQ( result21, result21_new ) )
-//           throw Error( `${result21} != ${result21_new}` );
-
-//      }
+        if ( !array2d_compare_EQ( result21, result22 ) )
+          throw Error( `GSheets_tester.TestCase`
+            + `.${funcNameInMessage}(): testCaseId=${this.testCaseId}, `
+            + `result21 ( ${result21} ) `
+            + `should be the same as `
+            + `result22 ( ${result22} )`
+          );
+     }
 
     } else {
       // (e.g. the nework is offline.)
