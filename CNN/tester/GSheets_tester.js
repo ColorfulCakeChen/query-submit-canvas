@@ -311,13 +311,13 @@ class TestCase {
 
     this.urlComposer_throw_if_running( urlComposer, funcNameInMessage );
 
-    // Failed fetching should still get 100%.
-    if ( 100 !== urlComposer.fetch_asyncPromise_progress.valuePercentage )
+    // Failed fetching should not get 100%.
+    if ( 100 == urlComposer.fetch_asyncPromise_progress.valuePercentage )
       throw Error( `GSheets_tester.TestCase`
         + `.${funcNameInMessage}(): testCaseId=${this.testCaseId}, `
         + `urlComposer.fetch_asyncPromise_progress.valuePercentage `
         + `( ${urlComposer.fetch_asyncPromise_progress.valuePercentage} ) `
-        + `should 100.` );
+        + `should not be 100.` );
   }
 
   /**
