@@ -496,6 +496,7 @@ class GSheets_UrlComposer
 /**
  *
  * @param {GSheets_UrlComposer} this
+ *
  * @return {AsyncGenerator}
  *   Return the newly created instance of GSheets_UrlComposer
  * .JSON_ColumnMajorArrayArray_fetch_asyncGenerator().
