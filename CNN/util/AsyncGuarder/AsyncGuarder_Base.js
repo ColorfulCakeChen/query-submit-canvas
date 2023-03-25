@@ -271,8 +271,8 @@ function AsyncGuarder_Base(
           || ( this.#asyncGenerator_running ) )
         throw Error( `${mostDerivedClassName}.${funcNameInMessage}(): `
           + `should not be executed while `
-          + `.${name_of_asyncPromise_running}() or `
-          + `.${name_of_asyncGenerator_running}() `
+          + `.${name_of_asyncPromise_create}() or `
+          + `.${name_of_asyncGenerator_create}() `
           + `still running.` );
     }
 
