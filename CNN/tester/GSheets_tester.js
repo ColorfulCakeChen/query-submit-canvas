@@ -378,7 +378,7 @@ class TestCase {
 
     if ( !urlComposer.fetch_asyncGenerator_running )
       throw Error( `GSheets_tester.TestCase`
-        + `.urlComposer_fetcher(): testCaseId=${this.testCaseId}, `
+        + `.${funcNameInMessage}(): testCaseId=${this.testCaseId}, `
         + `urlComposer.fetch_asyncGenerator_running=`
         + `${urlComposer.fetch_asyncGenerator_running} `
         + `should be true.` );
@@ -440,7 +440,7 @@ class TestCase {
 //!!! (2023/03/25 Remarked) urlComposer_reenter_test() can not use it.
 //     if ( 100 !== progressToAdvance.valuePercentage )
 //       throw Error( `GSheets_tester.TestCase`
-//         + `.urlComposer_fetcher(): testCaseId=${this.testCaseId}, `
+//         + `.${funcNameInMessage}(): testCaseId=${this.testCaseId}, `
 //         + `progressToAdvance.valuePercentage `
 //           +  `( ${progressToAdvance.valuePercentage} ) should 100.` );
 
