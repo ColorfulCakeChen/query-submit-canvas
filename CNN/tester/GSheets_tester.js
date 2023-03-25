@@ -288,10 +288,19 @@ class TestCase {
   async urlComposer_test_fetch_asyncPromise_async(
     urlComposer, params_loading_retryWaiting, funcNameInMessage ) {
 
+    // Ensure not retry forever.
+    let params_loading_retryWaiting_clone;
+    {
+      params_loading_retryWaiting_clone
+        = Object.assign( {}, params_loading_retryWaiting );
+
+      params_loading_retryWaiting_clone.retryTimesMax = 0;
+    }
+
     let delayPromise = PartTime.Promise_resolvable_rejectable_create();
 
     let fetch_asyncPromise = urlComposer.fetch_asyncPromise_create(
-      params_loading_retryWaiting, delayPromise );
+      params_loading_retryWaiting_clone, delayPromise );
 
     if ( !urlComposer.fetch_asyncPromise_running )
       throw Error( `GSheets_tester.TestCase`
