@@ -150,7 +150,9 @@ function AsyncGuarder_RecyclableBase(
       Reflect.deleteProperty( this, name_of_asyncPromise_progress );
       Reflect.deleteProperty( this, name_of_asyncPromise_running );
 
-      AsyncGuarder_RecyclableBase.asyncPromise_progress_dispose.call( this );
+      AsyncGuarder_RecyclableBase
+        [ name_of_asyncPromise_progress_dispose ].call( this );
+
       this.#asyncPromise_running = undefined;
 
       super.disposeResources();
