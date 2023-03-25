@@ -414,9 +414,6 @@ class TestCase {
       .fetch_asyncGenerator_create(
         progressFetch, params_loading_retryWaiting, delayPromise );
 
-//!!! ...unfinished... (2023/03/22)
-// What if .fetch_asyncPromise_create()
-
     if ( !urlComposer.fetch_asyncGenerator_running )
       throw Error( `GSheets_tester.TestCase`
         + `.${funcNameInMessage}(): testCaseId=${this.testCaseId}, `
@@ -534,9 +531,6 @@ class TestCase {
       urlComposer1.urlComposer.spreadsheetUrlPrefix = this.spreadsheetUrlPrefix;
 
     urlComposer1.bLogFetcherEventToConsole = bLogFetcherEventToConsole;
-
-//!!! ...unfinished... (2023/03/22) should test re-entrtance preventing.
-
     let result1 = yield* this.urlComposer_fetcher( urlComposer1, progress1 );
 
     // With API key.
@@ -547,9 +541,6 @@ class TestCase {
       urlComposer2.urlComposer.spreadsheetUrlPrefix = this.spreadsheetUrlPrefix;
 
     urlComposer2.bLogFetcherEventToConsole = bLogFetcherEventToConsole;
-
-//!!! ...unfinished... (2023/03/22) should test re-entrtance preventing.
-
     let result2 = yield* this.urlComposer_fetcher( urlComposer2, progress2 );
 
     // Compare results: should the same.
@@ -584,8 +575,8 @@ class TestCase {
           + `result21 ( ${result21} )`
         );
 
-//!!! ...unfinished... (2023/03/25)
-      // If the request is expected to succeeded, test .fetch_asyncPromise_create()
+      // If the request is expected to succeeded, test
+      // .fetch_asyncPromise_create() should be succeeded.
       if ( this.bShouldProgress100 ) {
 
         let result12
