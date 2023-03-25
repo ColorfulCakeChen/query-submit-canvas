@@ -484,13 +484,12 @@ class TestCase {
 
 
     if ( 
-           // If the request is expected to succeeded, it can test
-           // .fetch_asyncPromise_create() and should also be succeeded.
+           // If the request is expected to succeeded, testing
+           // .fetch_asyncPromise_create() should also be succeeded.
            ( this.bShouldProgress100 )
         
            // If the request is expected to failed (even without aborting),
-           // it can test .fetch_asyncPromise_create() and should also be
-           // failed.
+           // testing .fetch_asyncPromise_create() should also be failed.
         || ( this.bShouldProgress100Default == false ) ) {
 
       let fetch_asyncPromise_result
