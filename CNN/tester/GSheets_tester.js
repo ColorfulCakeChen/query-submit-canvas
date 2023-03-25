@@ -300,6 +300,14 @@ class TestCase {
         + `${urlComposer.fetch_asyncPromise_running} `
         + `should be true.` );
 
+    // Before fetching done, progress should not be 100%.
+    if ( 100 == urlComposer.fetch_asyncPromise_progress.valuePercentage )
+      throw Error( `GSheets_tester.TestCase`
+        + `.${funcNameInMessage}(): testCaseId=${this.testCaseId}, `
+        + `urlComposer.fetch_asyncPromise_progress.valuePercentage `
+        + `( ${urlComposer.fetch_asyncPromise_progress.valuePercentage} ) `
+        + `should not be 100.` );
+
     this.urlComposer_reenter_test( urlComposer, funcNameInMessage );
     delayPromise.resolve(); // After reenter testing.
 
