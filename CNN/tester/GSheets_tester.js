@@ -260,9 +260,12 @@ class TestCase {
       this.retryWaitingMillisecondsInterval
     );
 
-//!!! ...unfinished... (2023/03/22)
-// should test .fetch_asyncGenerator_create()
-// and .fetch_asyncPromise_create()
+//!!! ...unfinished... (2023/03/25)
+// for ( bShouldProgress100Default == false )
+// can test .fetch_asyncPromise_create() (and reenter) before
+// .fetch_asyncGenerator_create()
+// because it will always be failed (even without aborting).
+//
 
     let delayPromise = PartTime.Promise_resolvable_rejectable_create();
 
@@ -280,7 +283,7 @@ class TestCase {
         + `${urlComposer.fetch_asyncGenerator_running} `
         + `should be true.` );
 
-//!!! ...unfinished... (2023/03/22)
+//!!! ...unfinished... (2023/03/25) should move reenter test to a function.
     // Test reenter.
     {
       // Test: Reenter .fetch_asyncPromise_create()
