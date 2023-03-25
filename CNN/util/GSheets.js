@@ -35,17 +35,21 @@ import * as ValueMax from "./ValueMax.js";
  *   If true, the .urlComposer.httpFetcher now is during retry waiting.
  *
  * @member {Function} fetch_asyncPromise_create
- *   A method accepts ( params_loading_retryWaiting, delayPromise ).
+ *   A method accepts almost the same parameters as
+ * .fetch_asyncGenerator_create() except without the 1st parameter
+ * progressParent. It returns a promise.
  *
  * @member {Function} fetch_asyncGenerator_create
- *   A method accepts ( progressParent, params_loading_retryWaiting, delayPromise ).
+ *   A method accepts the same parameters as
+ * .JSON_ColumnMajorArrayArray_fetch_asyncGenerator(). It returns an async
+ * generator.
  */
 
 //!!! (2023/03/24 Remarked) Use AsyncGuarder instead.
 //class GSheets_UrlComposer extends Recyclable.Root {
 class GSheets_UrlComposer
   extends AsyncGuarder.RecyclableBase(
-    "fetch", JSON_ColumnMajorArrayArray_fetch_asyncGenerator ) {
+    "fetch", JSON_ColumnMajorArrayArray_fetch_asyncGenerator_relay ) {
 
   /**
    * Used as default GSheets.UrlComposer provider for conforming to Recyclable
@@ -342,72 +346,73 @@ class GSheets_UrlComposer
 //   }
 
 
-// //!!! (2023/03/24 Remarked) Move to outside for AsyncGuarder.
-//   /**
-//    * An async generator for composing the URL (according this object's data
-//    * members), downloading it as JSON format, extracting data as a two dimension
-//    * (column-major) array.
-//    *
-//    * @param {ValueMax.Percentage.Aggregate} progressParent
-//    *   Some new progressToAdvance will be created and added to progressParent. The
-//    * created progressToAdvance will be increased when every time advanced. The
-//    * progressParent.root_get() will be returned when every time yield.
-//    *
-//    * @param {HttpRequest.Params_loading_retryWaiting} params_loading_retryWaiting
-//    *   The parameters for loading timeout and retry waiting time. It will be kept
-//    * but not modified by this object.
-//    *
-//    * @param {Promise} delayPromise
-//    *   Mainly used when unit testing. If not null, this async generator will
-//    * await it before complete. If null or undefined, no extra delay awaiting.
-//    *
-//    * @yield {Promise( ValueMax.Percentage.Aggregate )}
-//    *   Yield a promise resolves to { value: progressParent.root_get(), done: false }.
-//    *
-//    * @yield {Promise( Array[] )}
-//    *   Yield a promise
-//    *   - Resolved to { done: true,
-//    *       value: ( a two dimension (column-major) array ) } when successfully.
-//    *   - Resolved to { done: true, value: null } when failed.
-//    */
-//   static async* JSON_ColumnMajorArrayArray_fetch_asyncGenerator(
-//     progressParent, params_loading_retryWaiting, delayPromise ) {
+  /**
+   * An async generator for composing the URL (according this object's data
+   * members), downloading it as JSON format, extracting data as a two dimension
+   * (column-major) array.
+   *
+   * @param {GSheets_UrlComposer} this
+   *
+   * @param {ValueMax.Percentage.Aggregate} progressParent
+   *   Some new progressToAdvance will be created and added to progressParent.
+   * The created progressToAdvance will be increased when every time advanced.
+   * The progressParent.root_get() will be returned when every time yield.
+   *
+   * @param {HttpRequest.Params_loading_retryWaiting} params_loading_retryWaiting
+   *   The parameters for loading timeout and retry waiting time. It will be kept
+   * but not modified by this object.
+   *
+   * @param {Promise} delayPromise
+   *   Mainly used when unit testing. If not null, this async generator will
+   * await it before complete. If null or undefined, no extra delay awaiting.
+   *
+   * @yield {Promise( ValueMax.Percentage.Aggregate )}
+   *   Yield a promise resolves to { value: progressParent.root_get(), done: false }.
+   *
+   * @yield {Promise( Array[] )}
+   *   Yield a promise
+   *   - Resolved to { done: true,
+   *       value: ( a two dimension (column-major) array ) } when successfully.
+   *   - Resolved to { done: true, value: null } when failed.
+   */
+  static async* JSON_ColumnMajorArrayArray_fetch_asyncGenerator(
+    progressParent, params_loading_retryWaiting, delayPromise ) {
+
+//!!! (2023/03/24 Remarked) Use AsyncGuarder instead.
+//     { // Checking pre-condition.
+//       const funcNameInMessage = "JSON_ColumnMajorArrayArray_fetch_asyncGenerator";
 //
-// //!!! (2023/03/24 Remarked) Use AsyncGuarder instead.
-// //     { // Checking pre-condition.
-// //       const funcNameInMessage = "JSON_ColumnMajorArrayArray_fetch_asyncGenerator";
-// //
-// //       GSheets_UrlComposer.throw_call_another_if_false.call( this,
-// //         this.fetch_asyncGenerator_running, funcNameInMessage,
-// //         "JSON_ColumnMajorArrayArray_fetcher_create" );
-// //     }
-//
-//     try {
-//       // 1.
-//       let fetcher_underlie = this.urlComposer
-//         .JSON_ColumnMajorArrayArray_fetch_asyncGenerator(
-//           progressParent, params_loading_retryWaiting );
-//
-//       let ColumnMajorArrayArray = yield *fetcher_underlie;
-//
-//       // 2.
-//       if ( delayPromise )
-//         await delayPromise;
-//
-//       return ColumnMajorArrayArray;
-//
-//     } catch ( e ) {
-//       //debugger;
-//       throw e;
-//
-//     } finally {
-//
-// //!!! (2023/03/24 Remarked) Use AsyncGuarder instead.
-// //       // 3. So that this async generator could be executed again.
-// //       this.fetch_asyncGenerator_running = false;
-//
+//       GSheets_UrlComposer.throw_call_another_if_false.call( this,
+//         this.fetch_asyncGenerator_running, funcNameInMessage,
+//         "JSON_ColumnMajorArrayArray_fetcher_create" );
 //     }
-//   }
+
+    try {
+      // 1.
+      let fetcher_underlie = this.urlComposer
+        .JSON_ColumnMajorArrayArray_fetch_asyncGenerator(
+          progressParent, params_loading_retryWaiting );
+
+      let ColumnMajorArrayArray = yield *fetcher_underlie;
+
+      // 2.
+      if ( delayPromise )
+        await delayPromise;
+
+      return ColumnMajorArrayArray;
+
+    } catch ( e ) {
+      //debugger;
+      throw e;
+
+    } finally {
+
+//!!! (2023/03/24 Remarked) Use AsyncGuarder instead.
+//       // 3. So that this async generator could be executed again.
+//       this.fetch_asyncGenerator_running = false;
+
+    }
+  }
 
 
   /**
@@ -484,69 +489,12 @@ class GSheets_UrlComposer
 
 
 /**
- * An async generator for composing the URL (according this object's data
- * members), downloading it as JSON format, extracting data as a two dimension
- * (column-major) array.
  *
  * @param {GSheets_UrlComposer} this
- *
- * @param {ValueMax.Percentage.Aggregate} progressParent
- *   Some new progressToAdvance will be created and added to progressParent. The
- * created progressToAdvance will be increased when every time advanced. The
- * progressParent.root_get() will be returned when every time yield.
- *
- * @param {HttpRequest.Params_loading_retryWaiting} params_loading_retryWaiting
- *   The parameters for loading timeout and retry waiting time. It will be kept
- * but not modified by this object.
- *
- * @param {Promise} delayPromise
- *   Mainly used when unit testing. If not null, this async generator will
- * await it before complete. If null or undefined, no extra delay awaiting.
- *
- * @yield {Promise( ValueMax.Percentage.Aggregate )}
- *   Yield a promise resolves to { value: progressParent.root_get(), done: false }.
- *
- * @yield {Promise( Array[] )}
- *   Yield a promise
- *   - Resolved to { done: true,
- *       value: ( a two dimension (column-major) array ) } when successfully.
- *   - Resolved to { done: true, value: null } when failed.
  */
-async function* JSON_ColumnMajorArrayArray_fetch_asyncGenerator(
-  progressParent, params_loading_retryWaiting, delayPromise ) {
+function JSON_ColumnMajorArrayArray_fetch_asyncGenerator_relay(
+  ...restArgs ) {
 
-//!!! (2023/03/24 Remarked) Use AsyncGuarder instead.
-//     { // Checking pre-condition.
-//       const funcNameInMessage = "JSON_ColumnMajorArrayArray_fetch_asyncGenerator";
-//
-//       GSheets_UrlComposer.throw_call_another_if_false.call( this,
-//         this.fetch_asyncGenerator_running, funcNameInMessage,
-//         "JSON_ColumnMajorArrayArray_fetcher_create" );
-//     }
-
-  try {
-    // 1.
-    let underlied_fetcher = this.urlComposer
-      .JSON_ColumnMajorArrayArray_fetch_asyncGenerator(
-        progressParent, params_loading_retryWaiting );
-
-    let ColumnMajorArrayArray = yield *underlied_fetcher;
-
-    // 2.
-    if ( delayPromise )
-      await delayPromise;
-
-    return ColumnMajorArrayArray;
-
-  } catch ( e ) {
-    //debugger;
-    throw e;
-
-  } finally {
-
-//!!! (2023/03/24 Remarked) Use AsyncGuarder instead.
-//       // 3. So that this async generator could be executed again.
-//       this.fetch_asyncGenerator_running = false;
-
-  }
+  GSheets_UrlComposer.JSON_ColumnMajorArrayArray_fetch_asyncGenerator
+    .apply( this, restArgs )
 }
