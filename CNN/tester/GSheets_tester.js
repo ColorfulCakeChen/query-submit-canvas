@@ -280,8 +280,12 @@ class TestCase {
         + `should be false.` );
   }
 
-  /** Test .fetch_asyncPromise and ensure it is failed. */
-  async urlComposer_test_fetch_asyncPromise_failed_async(
+  /**
+   * Test .fetch_asyncPromise_create() and reenter.
+   *
+   * @return {Array[]} Return the fetched column major array of array.
+   */
+  async urlComposer_test_fetch_asyncPromise_async(
     urlComposer, funcNameInMessage ) {
 
     let delayPromise = PartTime.Promise_resolvable_rejectable_create();
@@ -301,6 +305,17 @@ class TestCase {
 
     let fetchResult = await fetch_asyncPromise;
 
+    this.urlComposer_throw_if_running( urlComposer, funcNameInMessage );
+    return fetchResult;
+  }
+
+  /** Test .fetch_asyncPromise and ensure it is failed. */
+  async urlComposer_test_fetch_asyncPromise_failed_async(
+    urlComposer, funcNameInMessage ) {
+
+    let fetchResult = await urlComposer_test_fetch_asyncPromise_async(
+        urlComposer, funcNameInMessage );
+
     // Failed fetching should get null.
     if ( fetchResult != null )
       throw Error( `GSheets_tester.TestCase`
@@ -308,8 +323,6 @@ class TestCase {
         + `urlComposer.fetch_asyncPromise_create() `
         + `result=${fetchResult} `
         + `should be null.` );
-
-    this.urlComposer_throw_if_running( urlComposer, funcNameInMessage );
 
     // Failed fetching should not get 100%.
     if ( 100 == urlComposer.fetch_asyncPromise_progress.valuePercentage )
@@ -442,7 +455,7 @@ class TestCase {
 //       throw Error( `GSheets_tester.TestCase`
 //         + `.${funcNameInMessage}(): testCaseId=${this.testCaseId}, `
 //         + `progressToAdvance.valuePercentage `
-//           +  `( ${progressToAdvance.valuePercentage} ) should 100.` );
+//           +  `( ${progressToAdvance.valuePercentage} ) should be 100.` );
 
     return nextResult.value;
   }
