@@ -267,7 +267,7 @@ class TestCase {
     let delayPromise = PartTime.Promise_resolvable_rejectable_create();
 
     let fetcher = urlComposer
-      .fetch_asyncfetch_asyncGenerator_create(
+      .fetch_asyncGenerator_create(
         progressFetch, params_loading_retryWaiting, delayPromise );
 
 //!!! ...unfinished... (2023/03/22)
@@ -298,13 +298,13 @@ class TestCase {
         }
       }
 
-      // Test: Reenter .fetch_asyncfetch_asyncGenerator_create()
+      // Test: Reenter .fetch_asyncGenerator_create()
       //       should throw exception.
       try {
-        urlComposer.fetch_asyncfetch_asyncGenerator_create();
+        urlComposer.fetch_asyncGenerator_create();
       } catch ( e ) {
         if ( e.message.indexOf(
-               ".fetch_asyncfetch_asyncGenerator_create():" ) > 0 ) {
+               ".fetch_asyncGenerator_create():" ) > 0 ) {
           progressToAdvance.value_advance();
           yield progressRoot;
         } else { // Unknown error, said loudly.
