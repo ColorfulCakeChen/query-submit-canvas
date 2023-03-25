@@ -398,11 +398,9 @@ class TestCase {
       this.retryWaitingMillisecondsInterval
     );
 
-//!!! ...unfinished... (2023/03/25)
-
     // For test case always is failed (even without aborting), it can test
     // .fetch_asyncPromise_create() (and reenter) before
-    // .fetch_asyncGenerator_create().
+    // .fetch_asyncGenerator_create() and should also be failed.
     if ( this.bShouldProgress100Default == false ) {
       await this.urlComposer_test_fetch_asyncPromise_failed_async(
         urlComposer, funcNameInMessage );
@@ -575,8 +573,8 @@ class TestCase {
           + `result21 ( ${result21} )`
         );
 
-      // If the request is expected to succeeded, test
-      // .fetch_asyncPromise_create() should be succeeded.
+      // If the request is expected to succeeded, it can test
+      // .fetch_asyncPromise_create() and should also be succeeded.
       if ( this.bShouldProgress100 ) {
 
         let result12
