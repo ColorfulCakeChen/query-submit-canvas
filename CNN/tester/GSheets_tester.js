@@ -373,11 +373,11 @@ class TestCase {
 
     } while ( !nextResult.done );
 
-    if ( urlComposer.fetch_async_running )
+    if ( urlComposer.fetch_asyncPromise_running )
       throw Error( `GSheets_tester.TestCase`
         + `.urlComposer_fetcher(): testCaseId=${this.testCaseId}, `
-        + `urlComposer.fetch_async_running=`
-        + `${urlComposer.fetch_async_running} `
+        + `urlComposer.fetch_asyncPromise_running=`
+        + `${urlComposer.fetch_asyncPromise_running} `
         + `should be false.` );
 
     if ( urlComposer.fetch_asyncGenerator_running )
