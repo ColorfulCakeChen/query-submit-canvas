@@ -465,6 +465,7 @@ class TestCase {
     retryWaitingSecondsExponentMax,
     retryWaitingMillisecondsInterval,
   ) {
+    const funcNameInMessage = "tester_Summary_and_Versus";
 
     this.loadingMillisecondsInterval = loadingMillisecondsInterval;
 
