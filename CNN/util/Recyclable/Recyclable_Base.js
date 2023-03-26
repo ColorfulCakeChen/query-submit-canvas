@@ -115,7 +115,7 @@ let Recyclable_Base = ( ParentClass = Object ) => class Recyclable_Base
    */
   disposeResources_and_recycleToPool() {
     this.disposeResources();
-    this.constructor.Pool.recycle( this );
+    this.constructor.Pool.recycle( this ); // The most derived class's Pool.
   }
 
 }
