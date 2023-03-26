@@ -1,9 +1,11 @@
 export { init, testResultSame, testDifferentDisposeStrategy_All, disposeResources };
 
-import * as ChannelShuffler from "../Conv/ChannelShuffler.js";
 import * as TensorTools from "../util/TensorTools.js";
 import * as Pool_Asserter from "./Ref/Pool_Asserter.js";
 //import * as PointDepthPoint_Reference from "../jsPerf/Ref/PointDepthPoint_Reference.js";
+import * as ChannelShuffler from "../Conv/ChannelShuffler.js";
+import * as ChannelShuffler_PerformanceTest
+  from "../Conv/ChannelShuffler/ChannelShuffler_PerformanceTest.js";
 
 /**
  * Test different channel shuffle implementation for CNN ShuffleNet.
@@ -59,16 +61,16 @@ class HeightWidthDepthGroup {
   shufflers_init() {
     this.shufflers_release();
 
-    this.shuffleInfo = ChannelShuffler.PerformanceTest.ShuffleInfo.Pool.get_or_create_by(
+    this.shuffleInfo = ChannelShuffler_PerformanceTest.ShuffleInfo.Pool.get_or_create_by(
       this.concatenatedShape, this.groupCount );
 
-    this.concatGatherUnsorted = ChannelShuffler.PerformanceTest.ConcatGather.Pool.get_or_create_by(
+    this.concatGatherUnsorted = ChannelShuffler_PerformanceTest.ConcatGather.Pool.get_or_create_by(
       this.concatenatedShape, this.groupCount );
 
-    this.splitConcatSortedShared = ChannelShuffler.PerformanceTest.SplitConcat.Pool.get_or_create_by(
+    this.splitConcatSortedShared = ChannelShuffler_PerformanceTest.SplitConcat.Pool.get_or_create_by(
       this.concatenatedShape, this.groupCount );
 
-    this.concatPointwiseConv = ChannelShuffler.PerformanceTest.ConcatPointwiseConv.Pool.get_or_create_by(
+    this.concatPointwiseConv = ChannelShuffler_PerformanceTest.ConcatPointwiseConv.Pool.get_or_create_by(
       this.concatenatedShape, this.groupCount );
   }
 
