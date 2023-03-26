@@ -18,6 +18,8 @@ import { Base as AsyncGuarder_Base } from "./AsyncGuarder_Base.js";
 //!!! ...unfinished... (2023/03/26)
 // need another class for Xxx_promise_create() without asyncGenerator
 // and without progress. (e.g. for .WorkerProxies_init(), .imageData_process())
+//
+// using underlied_async_func
 
 
 /**
