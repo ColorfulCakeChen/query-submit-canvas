@@ -11,6 +11,8 @@ import { Base as AsyncGuarder_Base } from "./AsyncGuarder_Base.js";
 // Otherwise, if inherit from this class multiple times,
 // the Recyclable.Base will be inherited multiple times.
 // (e.g. .init_promise_create() and .versus_load_promise_create())
+//
+// But, it seems not harmful if it is inherited multiple times.
 
 
 //!!! ...unfinished... (2023/03/26)
