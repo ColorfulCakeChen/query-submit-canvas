@@ -695,6 +695,12 @@ class NeuralOrchestra_Base extends Recyclable.Root {
    *   - Resolved to { done: true, value: undefined }, if failed.
    *     - The this.initOk will be false.
    */
+
+//!!! ...unfinished... (2023/03/26)
+// need parameter to indicate whether versus_load_asyncGenerator
+// or { versus_load_promise } should be returned when ( done == true ).
+// So that .init_async() could be achieved by Async.Guarder
+
   static async* init_asyncGenerator(
     progressParent,
     downloader_spreadsheetId, downloader_apiKey, bLogFetcherEventToConsole,

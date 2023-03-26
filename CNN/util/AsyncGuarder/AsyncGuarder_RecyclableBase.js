@@ -17,6 +17,7 @@ import { Base as AsyncGuarder_Base } from "./AsyncGuarder_Base.js";
 // need another class for Xxx_promise_create() without asyncGenerator
 // and without progress. (e.g. for .WorkerProxies_init(), .imageData_process())
 
+
 /**
  * Return a recyclable wrapper class for preventing an underlied async
  * generator from being reentered.
