@@ -5,6 +5,18 @@ import * as Recyclable from "../Recyclable.js";
 import * as ValueMax from "../ValueMax.js";
 import { Base as AsyncGuarder_Base } from "./AsyncGuarder_Base.js";
 
+
+//!!! ...unfinished... (2023/03/26)
+// Perhaps, can not inherit from Recyclable.Base() here.
+// Otherwise, if inherit from this class multiple times,
+// the Recyclable.Base will be inherited multiple times.
+// (e.g. .init_promise_create() and .versus_load_promise_create())
+
+
+//!!! ...unfinished... (2023/03/26)
+// need another class for Xxx_promise_create() without asyncGenerator
+// and without progress. (e.g. for .WorkerProxies_init(), .imageData_process())
+
 /**
  * Return a recyclable wrapper class for preventing an underlied async
  * generator from being reentered.
