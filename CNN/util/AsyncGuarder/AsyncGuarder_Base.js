@@ -107,7 +107,7 @@ function AsyncGuarder_Base(
 
 !!! ...unfinished... (2023/03/26)
 // need static throw_if_not_XxxOk()
-   * @member {Function} Xxx_throw_if_not_XxxOk
+   * @member {Function} throw_if_not_XxxOk
  
    */
   class AsyncGuarder_Base extends ParentClass {
@@ -341,7 +341,7 @@ function AsyncGuarder_Base(
 
 
 !!! ...unfinished... (2023/03/26)
-// need static Xxx_throw_if_not_XxxOk()
+// need static throw_if_not_XxxOk()
 
     /**
      * @param {NeuralOrchestra_Base} this
