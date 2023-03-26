@@ -41,8 +41,8 @@ let Recyclable_Base = ( ParentClass = Object ) => class Recyclable_Base
   * already).
   */
   constructor( ...restArgs ) {
-   super( ...restArgs );
-   Recyclable_Base.setAsConstructor_self.call( this );
+    super( ...restArgs );
+    Recyclable_Base.setAsConstructor_self.call( this );
   }
 
   /**
