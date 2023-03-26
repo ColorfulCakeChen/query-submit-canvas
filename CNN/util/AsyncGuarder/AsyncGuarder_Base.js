@@ -85,6 +85,11 @@ function AsyncGuarder_Base(
 !!! ...unfinished... (2023/03/26)
 // .XxxOk = undefined;
    * @member {boolean} XxxOk
+   *   A boolean flag representing whether underlied_asyncGenerator_func() is
+   *     failed (false) or succeeded (true).
+   *   - The .Xxx_asyncGenerator_create_without_checking_precondition() will
+   *       clear .XxxOk to undefined.
+   *   - The underlied_asyncGenerator_func() should set .XxxOk to false or true.
 
    * @member {Function} Xxx_asyncGenerator_create
    *   A method for creating the underlied async generator.
