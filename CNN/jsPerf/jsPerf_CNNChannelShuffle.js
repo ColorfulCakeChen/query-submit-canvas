@@ -1,7 +1,7 @@
 export { init, testResultSame, testDifferentDisposeStrategy_All, disposeResources };
 
+import * as Pool from "../util/Pool.js";
 import * as TensorTools from "../util/TensorTools.js";
-import * as Pool_Asserter from "./Ref/Pool_Asserter.js";
 //import * as PointDepthPoint_Reference from "../jsPerf/Ref/PointDepthPoint_Reference.js";
 import * as ChannelShuffler from "../Conv/ChannelShuffler.js";
 import * as ChannelShuffler_PerformanceTest
@@ -181,7 +181,7 @@ class HeightWidthDepthGroup {
 
       let memoryInfoPre = tf.memory(); // Test memory leakage of channel shufflers.
       
-      Pool_Asserter.assert_Pool_issuedCount_same_after_as_before( "jsPerf_CNNChannelShuffle.testResultSame()", () => {
+      Pool.Asserter.assert_Pool_issuedCount_same_after_as_before( "jsPerf_CNNChannelShuffle.testResultSame()", () => {
         this.shufflers_init();
         this.shufflers_release();
       } );
