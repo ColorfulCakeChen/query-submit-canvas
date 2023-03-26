@@ -860,11 +860,11 @@ class NeuralOrchestra_Base extends Recyclable.Root {
       NeuralOrchestra_Base.versusResultSender_create.call( this, sender_clientId );
 
       // 5.
-      this.initOk = true;
-
-      // 6.
       if ( initer_delayPromise )
         await initer_delayPromise;
+
+      // 6.
+      this.initOk = true;
 
       return versus_loader_prepended;
 

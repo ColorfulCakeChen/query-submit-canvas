@@ -81,6 +81,11 @@ function AsyncGuarder_Base(
    * is still executing. Please wait it becoming false if wanting to call
    * .Xxx_asyncGenerator_create() again. The Xxx is name_prefix.
    *
+
+!!! ...unfinished... (2023/03/26)
+// .XxxOk = undefined;
+   * @member {boolean} XxxOk
+
    * @member {Function} Xxx_asyncGenerator_create
    *   A method for creating the underlied async generator.
    *   - If an old instance is still executing, it will throw exception.
@@ -94,6 +99,11 @@ function AsyncGuarder_Base(
    *   A static method for throwing excption if .Xxx_asyncPromise_running or
    * .Xxx_asyncGenerator_running is true.
    *
+
+!!! ...unfinished... (2023/03/26)
+// need static throw_if_not_XxxOk()
+   * @member {Function} Xxx_throw_if_not_XxxOk
+ 
    */
   class AsyncGuarder_Base extends ParentClass {
 
@@ -162,6 +172,9 @@ function AsyncGuarder_Base(
 
       Reflect.deleteProperty( this, name_of_asyncGenerator_running );
 
+!!! ...unfinished... (2023/03/26)
+// .XxxOk = undefined;
+
       this.#asyncGenerator_running = undefined;
 
       // If parent class has the same method, call it.    
@@ -213,7 +226,14 @@ function AsyncGuarder_Base(
     static [ name_of_asyncGenerator_create_without_checking_precondition ](
       ...restArgs ) {
 
+
       this.#asyncGenerator_running = true;
+
+!!! ...unfinished... (2023/03/26)
+// need clear .XxxOk flag to undefined here.
+// e.g. this.initOk = undefined;
+
+
       let asyncGenerator = AsyncGuarder_Base
         [ name_of_asyncGenerator_guarded ].apply( this, restArgs );
       return asyncGenerator;
@@ -250,7 +270,7 @@ function AsyncGuarder_Base(
       } catch ( e ) {
         //debugger;
         throw e;
-
+  
       } finally {
         // 2. So that this async generator could be executed again.
         this.#asyncGenerator_running = false;
@@ -312,6 +332,21 @@ function AsyncGuarder_Base(
       if ( !b )
         throw Error( `${mostDerivedClassName}.${funcNameInMessage}(): `
           + `Please call .${funcNameShouldBeCalledInMessage}() instead.` );
+    }
+
+
+!!! ...unfinished... (2023/03/26)
+// need static Xxx_throw_if_not_XxxOk()
+
+    /**
+     * @param {NeuralOrchestra_Base} this
+     * @param {string} funcNameInMessage   The caller function name. (e.g. init_async)
+     */
+    static throw_if_not_versus_loadOk( funcNameInMessage ) {
+      if ( !this.versus_loadOk )
+        throw Error( `NeuralOrchestra.Base.${funcNameInMessage}(): `
+          + `should be executed only if `
+          + `this.versus_loadOk ( ${this.versus_loadOk} ) is true.` );
     }
 
   } );
