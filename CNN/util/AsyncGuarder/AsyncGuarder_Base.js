@@ -5,6 +5,19 @@ import * as Pool from "../Pool.js";
 //import * as Recyclable from "../Recyclable.js";
 //import * as ValueMax from "../ValueMax.js";
 
+
+!!! ...unfinished... (2023/03/27)
+// class ReentranceGuarder_asyncGenerator
+// class ReentranceGuarder_async
+// class ReentranceGuarder_async_by_asyncGenerator
+//   (suggested) inherit from Recyclabe.Base
+
+
+!!! ...unfinished... (2023/03/27)
+// Add parameter:
+//   - name_of_asyncResult (e.g. initOk, float32ArrayArray, versus_loadOk, ...)
+
+
 /**
  * Return a wrapper class for preventing an underlied async generator from
  * being reentered.
@@ -341,7 +354,7 @@ function AsyncGuarder_Base(
 
 
 !!! ...unfinished... (2023/03/26)
-// need static throw_if_not_XxxOk()
+// need static [ `throw_if_not_${name_of_asyncResult}` ]()
 
     /**
      * @param {NeuralOrchestra_Base} this
