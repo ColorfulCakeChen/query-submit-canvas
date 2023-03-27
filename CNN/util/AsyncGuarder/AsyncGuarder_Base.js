@@ -11,6 +11,10 @@ import * as Pool from "../Pool.js";
 // class ReentrancyPreventer_async
 // class ReentrancyPreventer_async_by_asyncGenerator
 //   (suggested) inherit from Recyclabe.Base
+//
+// class NotReentrant_asyncGenerator
+// class NotReentrant_async
+// class NotReentrant_async_by_asyncGenerator (suggested) inherit from Recyclabe.Base
 
 
 !!! ...unfinished... (2023/03/27)
