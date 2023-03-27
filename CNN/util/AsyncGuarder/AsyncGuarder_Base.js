@@ -7,9 +7,9 @@ import * as Pool from "../Pool.js";
 
 
 !!! ...unfinished... (2023/03/27)
-// class ReentranceGuarder_asyncGenerator
-// class ReentranceGuarder_async
-// class ReentranceGuarder_async_by_asyncGenerator
+// class ReentrantGuarder_asyncGenerator
+// class ReentrantGuarder_async
+// class ReentrantGuarder_async_by_asyncGenerator
 //   (suggested) inherit from Recyclabe.Base
 
 
