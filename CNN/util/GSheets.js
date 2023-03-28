@@ -31,12 +31,6 @@ function UrlComposer_Pool_get_or_create_by( spreadsheetId, range, apiKey ) {
   }
 }
 
-//!!! ...unfinished... (2023/03/28)
-// Replace this class by a creator function.
-// GSheets.UrlComposer_Pool_get_or_create_by()
-//
-// It create either GSheetsAPIv4 or GVizTQ.
-
 //!!! (2023/03/28 Remarked) Replaced by UrlComposer_Pool_get_or_create_by().
 // /**
 //  * Fetch data from Google Sheets.
@@ -89,14 +83,14 @@ function UrlComposer_Pool_get_or_create_by( spreadsheetId, range, apiKey ) {
 //   extends NonReentrant.asyncPromise_by_asyncGenerator(
 //     "fetch", "Result", relay_JSON_ColumnMajorArrayArray_fetch_asyncGenerator,
 //     Recyclable.Root ) {
-
+//
 //   /**
 //    * Used as default GSheets.UrlComposer provider for conforming to Recyclable
 //    * interface.
 //    */
 //   static Pool = new Pool.Root( "GSheets.UrlComposer.Pool",
 //     GSheets_UrlComposer, GSheets_UrlComposer.setAsConstructor );
-
+//
 //   /**
 //    * If no sheet name in the range's A1 notation, the first (most left) visible
 //    * sheet inside the spreadsheet will be used.
@@ -129,7 +123,7 @@ function UrlComposer_Pool_get_or_create_by( spreadsheetId, range, apiKey ) {
 //       spreadsheetId, range, apiKey
 //     );
 //   }
-
+//
 //   /** @override */
 //   static setAsConstructor( spreadsheetId, range, apiKey ) {
 //     super.setAsConstructor();
@@ -138,7 +132,7 @@ function UrlComposer_Pool_get_or_create_by( spreadsheetId, range, apiKey ) {
 //     );
 //     return this;
 //   }
-
+//
 //   /** @override */
 //   static setAsConstructor_self( spreadsheetId, range, apiKey ) {
 //     if ( apiKey != null ) {
@@ -149,7 +143,7 @@ function UrlComposer_Pool_get_or_create_by( spreadsheetId, range, apiKey ) {
 //         spreadsheetId, range );
 //     }
 //   }
-
+//
 //   /** @override */
 //   disposeResources() {
 //     if ( this.urlComposer ) {
@@ -158,49 +152,49 @@ function UrlComposer_Pool_get_or_create_by( spreadsheetId, range, apiKey ) {
 //     }
 //     super.disposeResources();
 //   }
-
-
+//
+//
 //   /** @param {string} spreadsheetId  The Google Sheets' id. */
 //   set spreadsheetId( spreadsheetId ) {
 //     this.urlComposer.spreadsheetId = spreadsheetId;
 //   }
-
+//
 //   /** @return {string} The Google Sheets' id. */
 //   get spreadsheetId() {
 //     return this.urlComposer.spreadsheetId;
 //   }
-
-
+//
+//
 //   /** @param {string} range  The range inside the Google Sheets. */
 //   set range( range ) {
 //     this.urlComposer.range = range;
 //   }
-
+//
 //   /** @return {string} The range inside the Google Sheets. */
 //   get range() {
 //     return this.urlComposer.range;
 //   }
-
-
+//
+//
 //   set bLogFetcherEventToConsole( bLogFetcherEventToConsole ) {
 //     if ( this.urlComposer )
 //       this.urlComposer.bLogFetcherEventToConsole = bLogFetcherEventToConsole;
 //   }
-
+//
 //   get bLogFetcherEventToConsole() {
 //     if ( this.urlComposer )
 //       return this.urlComposer.bLogFetcherEventToConsole;
 //     return false;
 //   }
-
-
+//
+//
 //   get retryWaitingTimer_isCounting() {
 //     if ( this.urlComposer )
 //       return this.urlComposer.retryWaitingTimer_isCounting;
 //     return false;
 //   }
-
-
+//
+//
 //   /**
 //    * An async generator for composing the URL (according this object's data
 //    * members), downloading it as JSON format, extracting data as a two dimension
