@@ -210,7 +210,7 @@ class GVizTQ_UrlComposer extends Recyclable.Root {
           = new HttpRequest.Fetcher( this.bLogFetcherEventToConsole );
 
         let httpResulter = httpRequestFetcher
-          .url_fetch_asyncGenerator(
+          .fetch_asyncGenerator_create(
             progressFetcher, url, params_loading_retryWaiting );
 
         // Abort immediately if caller requests to abort before
