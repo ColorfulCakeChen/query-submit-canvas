@@ -17,13 +17,6 @@ import { asyncGenerator as NonReentrant_asyncGenerator }
 // But, it seems not harmful to inherit Recyclable.Base multiple times.
 
 
-//!!! ...unfinished... (2023/03/26)
-// need another class for Xxx_promise_create() without asyncGenerator
-// and without progress. (e.g. for .WorkerProxies_init(), .imageData_process())
-//
-// using underlied_async_func
-
-
 /**
  * Return a recyclable wrapper class for preventing an underlied async
  * generator from being reentered.

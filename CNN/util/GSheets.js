@@ -1,6 +1,6 @@
 export { GSheets_UrlComposer as UrlComposer };
 
-import * as AsyncGuarder from "./AsyncGuarder.js";
+import * as NonReentrant from "./NonReentrant.js";
 import * as GVizTQ from "./GSheet/GVizTQ.js";
 import * as GSheetsAPIv4 from "./GSheet/GSheetsAPIv4.js";
 import * as HttpRequest from "./HttpRequest.js";
@@ -31,6 +31,10 @@ import * as ValueMax from "./ValueMax.js";
  *   - It is not used if .fetch_asyncGenerator_create() is called. In this
  *       case, its progressParent parameter will be used instead.
  *
+ * @member {boolean} fetchOk
+ *   If true, the fetch_asyncGenerator or fetch_asyncPromise has done
+ * successfully.
+ *
  * @member {boolean} retryWaitingTimer_isCounting
  *   If true, the .urlComposer.httpFetcher now is during retry waiting.
  *
@@ -50,8 +54,9 @@ import * as ValueMax from "./ValueMax.js";
  *     - It returns an async generator.
  */
 class GSheets_UrlComposer
-  extends AsyncGuarder.RecyclableBase(
-    "fetch", relay_JSON_ColumnMajorArrayArray_fetch_asyncGenerator ) {
+  extends NonReentrant_asyncGenerator(
+    "fetch", "Ok", relay_JSON_ColumnMajorArrayArray_fetch_asyncGenerator,
+    Recyclable.Root ) {
 
   /**
    * Used as default GSheets.UrlComposer provider for conforming to Recyclable
@@ -196,7 +201,7 @@ class GSheets_UrlComposer
   static async* JSON_ColumnMajorArrayArray_fetch_asyncGenerator(
     progressParent, params_loading_retryWaiting, delayPromise ) {
 
-//!!! (2023/03/24 Remarked) Use AsyncGuarder instead.
+//!!! (2023/03/24 Remarked) Use NonReentrant_asyncGenerator instead.
 //     { // Checking pre-condition.
 //       const funcNameInMessage = "JSON_ColumnMajorArrayArray_fetch_asyncGenerator";
 //
@@ -225,7 +230,7 @@ class GSheets_UrlComposer
 
     } finally {
 
-//!!! (2023/03/24 Remarked) Use AsyncGuarder instead.
+//!!! (2023/03/24 Remarked) Use NonReentrant_asyncGenerator instead.
 //       // 3. So that this async generator could be executed again.
 //       this.fetch_asyncGenerator_running = false;
 

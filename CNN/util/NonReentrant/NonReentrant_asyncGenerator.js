@@ -93,7 +93,7 @@ function NonReentrant_asyncGenerator(
    *       clear this.XxxYyy (e.g. this.initOk) to undefined.
    *   - The underlied_asyncGenerator_func() should set this.XxxYyy (e.g.
    *       this.initOk) to the .value when { done: true, value }.
-
+   *
    * @member {Function} Xxx_asyncGenerator_create
    *   A method for creating the underlied async generator.
    *   - If an old instance is still executing, it will throw exception.
