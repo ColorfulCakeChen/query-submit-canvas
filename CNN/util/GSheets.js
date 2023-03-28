@@ -8,6 +8,11 @@ import * as Pool from "./Pool.js";
 import * as Recyclable from "./Recyclable.js";
 import * as ValueMax from "./ValueMax.js";
 
+
+//!!! ...unfinished... (2023/03/28)
+// Replace this class by a creator function.
+// It create either GSheetsAPIv4 or GVizTQ.
+
 /**
  * Fetch data from Google Sheets.
  *
