@@ -11,6 +11,8 @@ import * as ValueMax from "./ValueMax.js";
 
 //!!! ...unfinished... (2023/03/28)
 // Replace this class by a creator function.
+// GSheets.UrlComposer_Pool_get_or_create_by()
+
 // It create either GSheetsAPIv4 or GVizTQ.
 
 /**
