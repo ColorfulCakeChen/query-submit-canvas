@@ -217,7 +217,7 @@ function NonReentrant_asyncPromise(
 
         let resultValue = await underlied_asyncPromise;
 
-        if ( resultValue != this[ name_of_asyncResult ] )
+        if ( resultValue != this[ name_of_asyncResult ] ) {
           const mostDerivedClassName
             = ClassHierarchyTools.MostDerived_ClassName_of_Instance( this );
 
@@ -226,6 +226,7 @@ function NonReentrant_asyncPromise(
             + `should be the same as `
             + `this.${name_of_asyncResult} ( ${this[ name_of_asyncResult ]} ).`
           );
+        }
 
         return resultValue;
 

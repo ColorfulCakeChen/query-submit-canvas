@@ -253,7 +253,7 @@ function NonReentrant_asyncGenerator(
             + `(e.g. has been terminated previously by throwing exception).` );
         }
 
-        if ( resultValue != this[ name_of_asyncResult ] )
+        if ( resultValue != this[ name_of_asyncResult ] ) {
           const mostDerivedClassName
             = ClassHierarchyTools.MostDerived_ClassName_of_Instance( this );
 
@@ -262,6 +262,7 @@ function NonReentrant_asyncGenerator(
             + `should be the same as `
             + `this.${name_of_asyncResult} ( ${this[ name_of_asyncResult ]} ).`
           );
+        }
 
         return resultValue;
 
