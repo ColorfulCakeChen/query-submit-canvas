@@ -791,7 +791,7 @@ class TestCase {
           if ( propertyValue != neuralOrchestra.params_loading_retryWaiting )
               throw Error( `NeuralOrchestra_tester.TestCase`
               + `.test_create_init_load_process_send_asyncGenerator(): `
-              + `neuralOrchestra.${p} (${neuralOrchestra[ p ]}) `
+              + `neuralOrchestra.${p} ( ${neuralOrchestra[ p ]} ) `
               + `should be undefined.` );
       }
 

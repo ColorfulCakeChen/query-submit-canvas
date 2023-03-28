@@ -230,6 +230,18 @@ class TestCase {
     this.bShouldProgress100Default = bShouldProgress100Default;
   }
 
+  /** Check: For a new urlComposer, all properties should be undefined. */
+  urlComposer_properties_undefined( urlComposer, funcNameInMessage ) {
+    for ( let p in urlComposer ) {
+      let propertyValue = urlComposer[ p ];
+      if ( propertyValue != undefined )
+        throw Error( `GSheets_tester.TestCase`
+          + `.${funcNameInMessage}(): testCaseId=${this.testCaseId}, `
+          + `urlComposer.${p} ( ${urlComposer[ p ]} ) `
+          + `should be undefined.` );
+    }
+  }
+
   /** Test reenter. */
   urlComposer_reenter_test( urlComposer, funcNameInMessage ) {
 
@@ -562,6 +574,8 @@ class TestCase {
     let urlComposer1 = GSheets.UrlComposer_Pool_get_or_create_by(
       spreadsheetId, range );
 
+    this.urlComposer_properties_undefined( urlComposer1, funcNameInMessage );
+
     if ( this.spreadsheetUrlPrefix )
       urlComposer1.spreadsheetUrlPrefix = this.spreadsheetUrlPrefix;
 
@@ -571,6 +585,8 @@ class TestCase {
     // With API key.
     let urlComposer2 = GSheets.UrlComposer_Pool_get_or_create_by(
       spreadsheetId, range, apiKey );
+
+    this.urlComposer_properties_undefined( urlComposer2, funcNameInMessage );
 
     if ( this.spreadsheetUrlPrefix )
       urlComposer2.spreadsheetUrlPrefix = this.spreadsheetUrlPrefix;
