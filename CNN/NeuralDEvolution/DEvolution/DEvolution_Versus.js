@@ -170,15 +170,15 @@ class DEvolution_Versus extends Recyclable.Root {
       spreadsheetUrlComposer.range = spreadsheetRange;
 
       let fetcherVersus
-        = spreadsheetUrlComposer.JSON_ColumnMajorArrayArray_fetcher_create(
+        = spreadsheetUrlComposer.fetch_asyncGenerator_create(
             progressForDownload, params_loading_retryWaiting );
 
       versusArrayArray = yield* fetcherVersus;
 
-!!! ...unfinished... (2023/03/28) should clear .fetchResult to reduce memory footprint.
-
       if ( !versusArrayArray )
         return false; // Download failure.
+
+      spreadsheetUrlComposer.fetchResult = undefined; // Reduce memory footprint.
     }
 
     // 2. decode.
