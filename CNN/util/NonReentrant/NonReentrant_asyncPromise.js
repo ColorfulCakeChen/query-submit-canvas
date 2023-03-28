@@ -161,61 +161,52 @@ function NonReentrant_asyncPromise(
       { // Checking pre-condition.
         const funcNameInMessage = name_of_asyncPromise_create;
 
-        NonReentrant_asyncPromise.throw_if_an_old_still_running.call( this,
-          this.#asyncPromise_running, funcNameInMessage );
-
-        NonReentrant_asyncPromise
-          [ name_of_throw_if_asyncPromise_or_asyncGenerator_running ]
+        NonReentrant_asyncPromise[ name_of_throw_if_asyncPromise_running ]
           .call( this, funcNameInMessage );
       }
 
-      let asyncGenerator = NonReentrant_asyncPromise
-        [ name_of_asyncGenerator_create_without_checking_precondition ]
+      let asyncPromise = NonReentrant_asyncPromise
+        [ name_of_asyncPromise_create_without_checking_precondition ]
         .apply( this, restArgs );
-      return asyncGenerator;
+      return asyncPromise;
     }
 
     /**
      *
      * @param {NonReentrant_asyncPromise} this
      *
-     * @return {AsyncGenerator}
+     * @return {AsyncFunction}
      *   Return the newly created instance of
      * this[ name_of_asyncPromise_guarded ]().
      */
-    static [ name_of_asyncGenerator_create_without_checking_precondition ](
+    static [ name_of_asyncPromise_create_without_checking_precondition ](
       ...restArgs ) {
 
-      this.#asyncGenerator_running = true;
+      this.#asyncPromise_running = true;
       this[ name_of_asyncResult ] = undefined;
 
-      let asyncGenerator = NonReentrant_asyncPromise
-        [ name_of_asyncGenerator_guarded ].apply( this, restArgs );
-      return asyncGenerator;
+      let asyncPromise = NonReentrant_asyncPromise
+        [ name_of_asyncPromise_guarded ].apply( this, restArgs );
+      return asyncPromise;
     }
 
     /**
-     * The guarded underlied async generator.
+     * The guarded underlied async function.
      *
      * @param {NonReentrant_asyncPromise} this
      */
     static async* [ name_of_asyncPromise_guarded ]( ...restArgs ) {
 
       { // Checking pre-condition.
-        const funcNameInMessage = name_of_asyncGenerator_guarded;
+        const funcNameInMessage = name_of_asyncPromise_guarded;
 
         NonReentrant_asyncPromise.throw_call_another_if_false.call( this,
-          this.#asyncGenerator_running, funcNameInMessage,
-          name_of_asyncGenerator_create );
+          this.#asyncPromise_running, funcNameInMessage,
+          name_of_asyncPromise_create );
       }
 
       try {
         // 1.
-
-//!!! (2023/03/25) seems not necessary to keep it as a member.
-//         let underlied_asyncGenerator = NonReentrant_asyncPromise
-//           [ name_of_underlied_asyncGenerator_func ].apply( this, restArgs );
-
         let underlied_asyncGenerator
           = underlied_asyncGenerator_func.apply( this, restArgs );
 
@@ -237,37 +228,17 @@ function NonReentrant_asyncPromise(
      * @param {NonReentrant_asyncPromise} this
      * @param {string} funcNameInMessage   The caller function name. (e.g. init_async)
      */
-    static [ name_of_throw_if_asyncPromise_or_asyncGenerator_running ](
+    static [ name_of_throw_if_asyncPromise_running ](
       funcNameInMessage ) {
 
       const mostDerivedClassName
         = ClassHierarchyTools.MostDerived_ClassName_of_Instance( this );
 
-      // Note: Property .Xxx_asyncPromise_running is created by sub-class
-      //       (if exists).
-      let b_asyncPromise_running = this[ name_of_asyncPromise_running ];
-
-      if (   ( b_asyncPromise_running )
-          || ( this.#asyncGenerator_running ) )
+      if ( this.#asyncPromise_running )
         throw Error( `${mostDerivedClassName}.${funcNameInMessage}(): `
           + `should not be executed while an instance of `
-          + `.${name_of_asyncPromise_create}() or `
-          + `.${name_of_asyncGenerator_create}() `
-          + `still running.` );
-    }
-
-    /**
-     * @param {NonReentrant_asyncPromise} this
-     * @param {boolean} b_still_running    If true, throw exception.
-     * @param {string} funcNameInMessage   The caller function name. (e.g. init_async)
-     */
-    static throw_if_an_old_still_running( b_still_running, funcNameInMessage ) {
-      const mostDerivedClassName
-        = ClassHierarchyTools.MostDerived_ClassName_of_Instance( this );
-
-      if ( b_still_running )
-        throw Error( `${mostDerivedClassName}.${funcNameInMessage}(): `
-          + `An old instance of .${funcNameInMessage}() is still running.` );
+          + `.${name_of_asyncPromise_create}() `
+          + `is still running.` );
     }
 
     /**

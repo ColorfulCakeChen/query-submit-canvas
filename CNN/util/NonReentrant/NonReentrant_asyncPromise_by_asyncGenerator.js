@@ -239,7 +239,8 @@ function NonReentrant_asyncPromise_by_asyncGenerator(
      * Create Xxx_asyncPromise (an auto-looping instance of guarded underlied
      * async generator).
      *
-     * Note: The this.#asyncPromise_progress will record progress of this method.
+     * Note: The this.#asyncPromise_progress will record progress of this
+     *       method.
      *
      *
      * @return {Promise}

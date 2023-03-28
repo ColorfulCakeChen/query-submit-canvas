@@ -328,7 +328,7 @@ function NonReentrant_asyncGenerator(
           + `should not be executed while an instance of `
           + `.${name_of_asyncPromise_create}() or `
           + `.${name_of_asyncGenerator_create}() `
-          + `still running.` );
+          + `is still running.` );
     }
 
     /**
