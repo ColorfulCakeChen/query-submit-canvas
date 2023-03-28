@@ -155,7 +155,7 @@ class GSheetsAPIv4_UrlComposer
   }
 
   /**  */
-  spreadsheetId_apiKey_set( spreadsheetId, apiKey ) {
+  set_by_spreadsheetId_apiKey( spreadsheetId, apiKey ) {
     this.spreadsheetId = spreadsheetId;
     this.apiKey = apiKey;
     return this;
