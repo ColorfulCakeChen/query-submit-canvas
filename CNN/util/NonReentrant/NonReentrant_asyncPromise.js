@@ -27,6 +27,8 @@ import * as ClassHierarchyTools from "../ClassHierarchyTools.js";
  *   A function for creating an underlied async function which wants to be
  * guarded by the .Xxx_asyncPromise_running boolean flag.
  *   - It will be called with thisArg as "this".
+ *   - The awaited result value of the underlied async function could be any
+ *       value except undefined.
  */
 function NonReentrant_asyncPromise(
   name_prefix, name_postfix_of_asyncResult, underlied_asyncPromise_func,

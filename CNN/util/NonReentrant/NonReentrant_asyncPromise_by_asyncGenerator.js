@@ -48,6 +48,8 @@ import { asyncGenerator as NonReentrant_asyncGenerator }
  *   - It will be called with thisArg as "this".
  *   - Its 1st parameter must be progressParent (an instance of
  *       ValueMax.Percentage.Aggregate).
+ *   - The .value of { done: true, value } of the underlied async generator
+ *       final .next() could be any value except undefined.
  */
 function NonReentrant_asyncPromise_by_asyncGenerator(
   name_prefix, name_postfix_of_asyncResult, underlied_asyncGenerator_func,
