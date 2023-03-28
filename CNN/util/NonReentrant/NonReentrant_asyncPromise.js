@@ -202,8 +202,8 @@ function NonReentrant_asyncPromise(
      */
     static async* [ name_of_asyncPromise_guarded ]( ...restArgs ) {
 
+      const funcNameInMessage = name_of_asyncPromise_guarded;
       { // Checking pre-condition.
-        const funcNameInMessage = name_of_asyncPromise_guarded;
 
         NonReentrant_asyncPromise.throw_call_another_if_false.call( this,
           this.#asyncPromise_running, funcNameInMessage,

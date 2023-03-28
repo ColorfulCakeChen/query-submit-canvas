@@ -223,8 +223,8 @@ function NonReentrant_asyncGenerator(
      */
     static async* [ name_of_asyncGenerator_guarded ]( ...restArgs ) {
 
+      const funcNameInMessage = name_of_asyncGenerator_guarded;
       { // Checking pre-condition.
-        const funcNameInMessage = name_of_asyncGenerator_guarded;
 
         NonReentrant_asyncGenerator.throw_call_another_if_false.call( this,
           this.#asyncGenerator_running, funcNameInMessage,
