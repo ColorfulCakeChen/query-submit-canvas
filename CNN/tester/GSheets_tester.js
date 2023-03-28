@@ -230,11 +230,18 @@ class TestCase {
     this.bShouldProgress100Default = bShouldProgress100Default;
   }
 
-  /** Check: For a new urlComposer, all properties should be undefined. */
+  /**
+   * Check: For a new urlComposer, all properties (except .spreadsheetId,
+   * .range, .apiKey) should be undefined.
+   */
   urlComposer_properties_undefined( urlComposer, funcNameInMessage ) {
     for ( let p in urlComposer ) {
       let propertyValue = urlComposer[ p ];
       if ( propertyValue != undefined )
+        if (   ( p != "spreadsheetId" )
+            && ( p != "range" )
+            && ( p != "apiKey" )
+           )
         throw Error( `GSheets_tester.TestCase`
           + `.${funcNameInMessage}(): testCaseId=${this.testCaseId}, `
           + `urlComposer.${p} ( ${urlComposer[ p ]} ) `
