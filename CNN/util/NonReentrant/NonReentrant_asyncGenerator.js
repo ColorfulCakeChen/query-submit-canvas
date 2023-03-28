@@ -209,9 +209,7 @@ function NonReentrant_asyncGenerator(
 
       Reflect.deleteProperty( this, name_of_asyncGenerator_running );
 
-!!! ...unfinished... (2023/03/26)
-// .XxxOk = undefined;
-
+      this[ name_of_asyncResult ] = undefined;
       this.#asyncGenerator_running = undefined;
 
       // If parent class has the same method, call it.    
