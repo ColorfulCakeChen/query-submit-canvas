@@ -239,6 +239,20 @@ class HttpRequest_Fetcher
 
       } while ( bRetry && ( !this.bAbort ) );
 
+      // When executed to here, .fetchResult should be:
+      //   - an object, if succeeded.
+      //   - null, if failed and can not continue to retry.
+      //   - undefined, if aborted during retry waiting.
+      //
+      // If undefined, force it to null.
+      //
+      // Note: .fetchResult can not be undefined. Otherwise, NonReentrant will
+      //       thow exception.
+      if ( this.fetchResult === undefined ) {
+        if ( this.bAbort )
+          this.fetchResult = null;
+      }
+
     } finally {
       // Ensure this async generator will not be aborted by default when it is
       // called in the next time.
