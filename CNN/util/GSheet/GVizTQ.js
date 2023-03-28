@@ -50,7 +50,7 @@ import * as ValueMax from "../ValueMax.js";
  *   The current (or last) fetcher of the http request. It could be used to
  * call .abort().
  *
- * @member {boolean}
+ * @member {boolean} retryWaitingTimer_isCounting
  *   If true, the .httpRequestFetcher now is during retry waiting.
  *
  * @member {boolean} bAbort
