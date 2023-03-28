@@ -74,8 +74,7 @@ import { Params_loading_retryWaiting as HttpRequest_Params_loading_retryWaiting 
  *
  * @member {Function} fetch_asyncGenerator_create
  *   A method for creating .fetch_asyncGenerator().
- *     - It accepts the same parameters as
- *         .fetch_asyncGenerator().
+ *     - It accepts the same parameters as .fetch_asyncGenerator().
  *     - It returns an async generator.
  */
 class HttpRequest_Fetcher
