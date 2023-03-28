@@ -54,7 +54,7 @@ import * as ValueMax from "./ValueMax.js";
  *     - It returns an async generator.
  */
 class GSheets_UrlComposer
-  extends NonReentrant_asyncGenerator(
+  extends NonReentrant.asyncGenerator(
     "fetch", "Ok", relay_JSON_ColumnMajorArrayArray_fetch_asyncGenerator,
     Recyclable.Root ) {
 
