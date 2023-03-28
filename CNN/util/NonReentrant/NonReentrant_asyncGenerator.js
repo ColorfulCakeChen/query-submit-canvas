@@ -69,6 +69,9 @@ function NonReentrant_asyncGenerator(
   const name_of_throw_if_asyncPromise_or_asyncGenerator_running
     = `throw_if_${name_prefix}_asyncPromise_or_asyncGenerator_running`;
 
+  const name_of_throw_if_asyncResult_undefined
+    = `throw_if_${name_of_asyncResult}_undefined`;
+
   const name_of_throw_if_not_asyncResult
     = `throw_if_not_${name_of_asyncResult}`;
 
@@ -91,8 +94,9 @@ function NonReentrant_asyncGenerator(
    *   - The Yyy is name_postfix_of_asyncResult (e.g. "Ok").
    *   - The .Xxx_asyncGenerator_create_without_checking_precondition() will
    *       clear this.XxxYyy (e.g. this.initOk) to undefined.
-   *   - The underlied_asyncGenerator_func() should set this.XxxYyy (e.g.
-   *       this.initOk) to the .value when { done: true, value }.
+   *   - The .Xxx_asyncGenerator_guarded() will set this.XxxYyy (e.g.
+   *       this.initOk) to the .value when underlied_asyncGenerator_func()
+   *       { done: true, value }.
    *
    * @member {Function} Xxx_asyncGenerator_create
    *   A method for creating the underlied async generator.
@@ -106,6 +110,9 @@ function NonReentrant_asyncGenerator(
    * @member {Function} throw_if_Xxx_asyncPromise_or_asyncGenerator_running
    *   A static method for throwing excption if .Xxx_asyncPromise_running or
    * .Xxx_asyncGenerator_running is true.
+   *
+   * @member {Function} [ throw_if_XxxYyy_undefined ]
+   *   A static method for throwing excption if ( this.XxxYyy ) is undefined.
    *
    * @member {Function} [ throw_if_not_XxxYyy ]
    *   A static method for throwing excption if ( !this.XxxYyy ) is true. That
@@ -236,31 +243,16 @@ function NonReentrant_asyncGenerator(
         let underlied_asyncGenerator
           = underlied_asyncGenerator_func.apply( this, restArgs );
 
-        let resultValue = yield *underlied_asyncGenerator;
+        resultValue = yield *underlied_asyncGenerator;
+        this[ name_of_asyncResult ] = resultValue;
 
-        // The result should be non-undefined. If result is undefined,
-        // the generator may have been terminated previously by throwing
-        // exception. So, continue to throw exception to inform caller the
-        // generator is illegal.
-        if ( resultValue === undefined ) {
-          const mostDerivedClassName
-            = ClassHierarchyTools.MostDerived_ClassName_of_Instance( this );
-
-          throw Error( `${mostDerivedClassName}.${funcNameInMessage}(): `
-            + `${name_prefix}_asyncGenerator is illegal `
-            + `(e.g. has been terminated previously by throwing exception).` );
-        }
-
-        if ( resultValue !== this[ name_of_asyncResult ] ) {
-          const mostDerivedClassName
-            = ClassHierarchyTools.MostDerived_ClassName_of_Instance( this );
-
-          throw Error( `${mostDerivedClassName}.${funcNameInMessage}(): `
-            + `${name_prefix}_asyncGenerator's resultValue ( ${resultValue} ) `
-            + `should be the same as `
-            + `this.${name_of_asyncResult} ( ${this[ name_of_asyncResult ]} ).`
-          );
-        }
+        // The result should be non-undefined. If result is undefined:
+        //   - The generator forgets to return meaningful result.
+        //   - The generator may have been terminated previously by throwing
+        //       exception. So, throw exception to inform caller the generator
+        //       may be illegal.
+        NonReentrant_asyncGenerator[ name_of_throw_if_asyncResult_undefined ]
+          .call( this, funcNameInMessage );
 
         return resultValue;
 
@@ -333,6 +325,25 @@ function NonReentrant_asyncGenerator(
 
       throw Error( `${mostDerivedClassName}.${funcNameInMessage}(): `
         + `Please call .${funcNameShouldBeCalledInMessage}() instead.` );
+    }
+
+    /**
+     * @param {NonReentrant_asyncGenerator} this
+     * @param {string} funcNameInMessage   The caller function name. (e.g. init_async)
+     */
+    static [ name_of_throw_if_asyncResult_undefined ]( funcNameInMessage ) {
+      if ( this[ name_of_asyncResult ] !== undefined )
+        return;
+
+      const mostDerivedClassName
+        = ClassHierarchyTools.MostDerived_ClassName_of_Instance( this );
+
+      throw Error( `${mostDerivedClassName}.${funcNameInMessage}(): `
+        + `this.${name_of_asyncResult} ( ${this[ name_of_asyncResult ]} ) `
+        + `should not be undefined. `
+        + `Perhaps, ${name_prefix}_asyncGenerator is illegal `
+        + `(e.g. has been terminated previously by throwing exception).`
+      );
     }
 
     /**

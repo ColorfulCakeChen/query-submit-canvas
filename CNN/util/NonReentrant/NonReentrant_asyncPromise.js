@@ -52,6 +52,9 @@ function NonReentrant_asyncPromise(
   const name_of_throw_if_asyncPromise_running
     = `throw_if_${name_prefix}_asyncPromise_running`;
 
+  const name_of_throw_if_asyncResult_undefined
+    = `throw_if_${name_of_asyncResult}_undefined`;
+
   const name_of_throw_if_not_asyncResult
     = `throw_if_not_${name_of_asyncResult}`;
 
@@ -74,8 +77,9 @@ function NonReentrant_asyncPromise(
    *   - The Yyy is name_postfix_of_asyncResult (e.g. "Ok").
    *   - The .Xxx_asyncPromise_create_without_checking_precondition() will
    *       clear this.XxxYyy (e.g. this.initOk) to undefined.
-   *   - The underlied_asyncPromise_func() should set this.XxxYyy (e.g.
-   *       this.initOk) to the result value.
+   *   - The .Xxx_asyncPromise_guarded() will set this.XxxYyy (e.g.
+   *       this.initOk) to the awaited result value of
+   *       underlied_asyncPromise_func().
 
    * @member {Function} Xxx_asyncPromise_create
    *   A method for creating the underlied async function.
@@ -89,6 +93,9 @@ function NonReentrant_asyncPromise(
    * @member {Function} throw_if_Xxx_asyncPromise_running
    *   A static method for throwing excption if .Xxx_asyncPromise_running is
    * true.
+   *
+   * @member {Function} [ throw_if_XxxYyy_undefined ]
+   *   A static method for throwing excption if ( this.XxxYyy ) is undefined.
    *
    * @member {Function} [ throw_if_not_XxxYyy ]
    *   A static method for throwing excption if ( !this.XxxYyy ) is true. That
@@ -216,17 +223,12 @@ function NonReentrant_asyncPromise(
           = underlied_asyncPromise_func.apply( this, restArgs );
 
         let resultValue = await underlied_asyncPromise;
+        this[ name_of_asyncResult ] = resultValue;
 
-        if ( resultValue !== this[ name_of_asyncResult ] ) {
-          const mostDerivedClassName
-            = ClassHierarchyTools.MostDerived_ClassName_of_Instance( this );
-
-          throw Error( `${mostDerivedClassName}.${funcNameInMessage}(): `
-            + `${name_prefix}_asyncPromise's resultValue ( ${resultValue} ) `
-            + `should be the same as `
-            + `this.${name_of_asyncResult} ( ${this[ name_of_asyncResult ]} ).`
-          );
-        }
+        // The result should be non-undefined. If result is undefined:
+        //   - The async function forgets to return meaningful result.
+        NonReentrant_asyncPromise[ name_of_throw_if_asyncResult_undefined ]
+          .call( this, funcNameInMessage );
 
         return resultValue;
 
@@ -278,6 +280,22 @@ function NonReentrant_asyncPromise(
 
       throw Error( `${mostDerivedClassName}.${funcNameInMessage}(): `
         + `Please call .${funcNameShouldBeCalledInMessage}() instead.` );
+    }
+
+    /**
+     * @param {NonReentrant_asyncGenerator} this
+     * @param {string} funcNameInMessage   The caller function name. (e.g. init_async)
+     */
+    static [ name_of_throw_if_asyncResult_undefined ]( funcNameInMessage ) {
+      if ( this[ name_of_asyncResult ] !== undefined )
+        return;
+
+      const mostDerivedClassName
+        = ClassHierarchyTools.MostDerived_ClassName_of_Instance( this );
+
+      throw Error( `${mostDerivedClassName}.${funcNameInMessage}(): `
+        + `this.${name_of_asyncResult} ( ${this[ name_of_asyncResult ]} ) `
+        + `should not be undefined.` );
     }
 
     /**

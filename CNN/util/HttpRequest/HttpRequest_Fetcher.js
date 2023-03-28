@@ -238,7 +238,7 @@ class HttpRequest_Fetcher
         }
 
       } while ( bRetry && ( !this.bAbort ) );
-
+!!!
       // When executed to here, .fetchResult should be:
       //   - an object, if succeeded.
       //   - null, if failed and can not continue to retry.
