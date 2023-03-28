@@ -203,40 +203,25 @@ class GSheets_UrlComposer
   static async* JSON_ColumnMajorArrayArray_fetch_asyncGenerator(
     progressParent, params_loading_retryWaiting, delayPromise ) {
 
-//!!! (2023/03/24 Remarked) Use NonReentrant_asyncGenerator instead.
-//     { // Checking pre-condition.
-//       const funcNameInMessage = "JSON_ColumnMajorArrayArray_fetch_asyncGenerator";
-//
-//       GSheets_UrlComposer.throw_call_another_if_false.call( this,
-//         this.fetch_asyncGenerator_running, funcNameInMessage,
-//         "JSON_ColumnMajorArrayArray_fetcher_create" );
-//     }
-
     try {
       // 1.
       let fetcher_underlie = this.urlComposer
         .JSON_ColumnMajorArrayArray_fetch_asyncGenerator(
           progressParent, params_loading_retryWaiting );
 
-      let ColumnMajorArrayArray = yield *fetcher_underlie;
+      let fetchResult = yield *fetcher_underlie;
 
       // 2.
       if ( delayPromise )
         await delayPromise;
 
-      this.fetchResult = ColumnMajorArrayArray;
-      return ColumnMajorArrayArray;
+      return fetchResult; // ColumnMajorArrayArray
 
     } catch ( e ) {
       //debugger;
       throw e;
 
     } finally {
-
-//!!! (2023/03/24 Remarked) Use NonReentrant_asyncGenerator instead.
-//       // 3. So that this async generator could be executed again.
-//       this.fetch_asyncGenerator_running = false;
-
     }
   }
 
