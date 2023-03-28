@@ -21,18 +21,19 @@ import * as ValueMax from "../ValueMax.js";
  *
  *
  * @member {string} spreadsheetId
- *   The identifier (the component after the "https://docs.google.com/spreadsheets/d/")
- * of the spreadsheet to be accessed.
+ *   The identifier (the component after the
+ * "https://docs.google.com/spreadsheets/d/") of the spreadsheet to be accessed.
  *
  * @member {string} range
- *   The cells' A1 notation. It describes the (name and) range of the sheet inside
- * the spreadsheet.
+ *   The cells' A1 notation. It describes the (name and) range of the sheet
+ * inside the spreadsheet.
  *   - "A1" refers to one cell of the first (most left) visible sheet.
- *   - "B2:C5" refers to cells of a rectangle of the first (most left) visible sheet.
- *   - "Books!D8:D" refers to the column D of sheet named "Books" from rows 8 to the
- *       last rows.
- *   - "'Name has space'!7:10" refers to the rows 7 to 10 of sheet named "Name has
- *       space".
+ *   - "B2:C5" refers to cells of a rectangle of the first (most left) visible
+ *       sheet.
+ *   - "Books!D8:D" refers to the column D of sheet named "Books" from rows 8
+ *       to the last rows.
+ *   - "'Name has space'!7:10" refers to the rows 7 to 10 of sheet named
+ *       "Name has space".
  *
  *
  * @member {Function} fetch_asyncPromise_create
@@ -102,8 +103,8 @@ class GSheetsAPIv4_UrlComposer
     GSheetsAPIv4_UrlComposer, GSheetsAPIv4_UrlComposer.setAsConstructor );
 
   /**
-   * If no sheet name in the range's A1 notation, the first (most left) visible sheet
-   * inside the spreadsheet will be used.
+   * If no sheet name in the range's A1 notation, the first (most left) visible
+   * sheet inside the spreadsheet will be used.
    *
    * @param {string} apiKey
    *   The API key string for accessing the spreadsheet.
@@ -166,13 +167,13 @@ class GSheetsAPIv4_UrlComposer
    * (column-major) array.
    *
    * @param {ValueMax.Percentage.Aggregate} progressParent
-   *   Some new progressToAdvance will be created and added to progressParent. The
-   * created progressToAdvance will be increased when every time advanced. The
-   * progressParent.root_get() will be returned when every time yield.
+   *   Some new progressToAdvance will be created and added to progressParent.
+   * The created progressToAdvance will be increased when every time advanced.
+   * The progressParent.root_get() will be returned when every time yield.
    *
    * @param {HttpRequest.Params_loading_retryWaiting} params_loading_retryWaiting
-   *   The parameters for loading timeout and retry waiting time. It will be kept
-   * but not modified by this object.
+   *   The parameters for loading timeout and retry waiting time. It will be
+   * kept but not modified by this object.
    *
    * @yield {Promise( ValueMax.Percentage.Aggregate )}
    *   Yield a promise resolves to { done: false, value: progressParent.root_get() }.

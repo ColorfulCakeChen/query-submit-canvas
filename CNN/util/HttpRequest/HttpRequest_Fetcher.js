@@ -24,8 +24,8 @@ import { Params_loading_retryWaiting as HttpRequest_Params_loading_retryWaiting 
  *   A string representing the URL to send the request to.
  *
  * @member {HttpRequest.Params_loading_retryWaiting} params_loading_retryWaiting
- *   The parameters for loading timeout and retry waiting time. It will be kept
- * but not modified by this object.
+ *   The parameters for loading timeout and retry waiting time. It will be
+ * kept but not modified by this object.
  *
  * @member {number} loadingMillisecondsCur
  *   The current time (in milliseconds) of loading. It is only used if
@@ -96,9 +96,9 @@ class HttpRequest_Fetcher
    *
    *
    * @param {ValueMax.Percentage.Aggregate} progressParent
-   *   Some new progressLoading will be created and added to progressParent. The
-   * created progressLoading will be increased when every time advanced. The
-   * progressParent.root_get() will be returned when every time yield.
+   *   Some new progressToAdvance will be created and added to progressParent.
+   * The created progressToAdvance will be increased when every time advanced.
+   * The progressParent.root_get() will be returned when every time yield.
    *
    * @return {AsyncGenerator}
    *   Return an async generator for receving result from XMLHttpRequest.
