@@ -39,6 +39,20 @@ import * as ValueMax from "../ValueMax.js";
  * https://docs.google.com/spreadsheets/d/18YyEoy-OfSkODfw8wqBRApSrRnBTZpjRpRiwIKy8a0M/gviz/tq?range='Evolution.Param'!B17&headers=0&tqx=out:csv
  *
  *
+ * @member {string} spreadsheetId
+ *   The identifier (the component after the "https://docs.google.com/spreadsheets/d/")
+ * of the spreadsheet to be accessed.
+ *
+ * @member {string} range
+ *   The cells' A1 notation. It describes the (name and) range of the sheet inside
+ * the spreadsheet.
+ *   - "A1" refers to one cell of the first (most left) visible sheet.
+ *   - "B2:C5" refers to cells of a rectangle of the first (most left) visible sheet.
+ *   - "Books!D8:D" refers to the column D of sheet named "Books" from rows 8 to the
+ *       last rows.
+ *   - "'Name has space'!7:10" refers to the rows 7 to 10 of sheet named "Name has
+ *       space".
+ *
  * @member {string} spreadsheetUrlPrefix
  *   - If null, GVizTQ_UrlComposer.spreadsheetUrlPrefix will be used.
  *   - If not null, it will be used (usually for unit testing ProgressEvent error).
@@ -67,20 +81,6 @@ class GVizTQ_UrlComposer extends Recyclable.Root {
   /**
    * If sheetId is null, sheetName is null, and no sheet name in the range's A1
    * notation, the first (most left) visible sheet inside the spreadsheet will be used.
-   *
-   * @param {string} spreadsheetId
-   *   The identifier (the component after the "https://docs.google.com/spreadsheets/d/")
-   * of the spreadsheet to be accessed.
-   *
-   * @param {string} range
-   *   The cells' A1 notation. It describes the (name and) range of the sheet inside
-   * the spreadsheet.
-   *   - "A1" refers to one cell of the first (most left) visible sheet.
-   *   - "B2:C5" refers to cells of a rectangle of the first (most left) visible sheet.
-   *   - "Books!D8:D" refers to the column D of sheet named "Books" from rows 8 to the
-   *       last rows.
-   *   - "'Name has space'!7:10" refers to the rows 7 to 10 of sheet named "Name has
-   *       space".
    *
    * @param {number} headers
    *   The component after the "headers=". It means how many header rows. It should be
