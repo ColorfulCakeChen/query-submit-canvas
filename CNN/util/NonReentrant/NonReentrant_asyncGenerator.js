@@ -237,7 +237,33 @@ function NonReentrant_asyncGenerator(
           = underlied_asyncGenerator_func.apply( this, restArgs );
 
         let result = yield *underlied_asyncGenerator;
-        return result;
+
+        let resultValue = result.value;
+
+        // The result should be non-undefined. If result is undefined,
+        // the generator may have been terminated previously by throwing
+        // exception. So, continue to throw exception to inform caller the
+        // generator is illegal.
+        if ( resultValue === undefined ) {
+          const mostDerivedClassName
+            = ClassHierarchyTools.MostDerived_ClassName_of_Instance( this );
+
+          throw Error( `${mostDerivedClassName}.${funcNameInMessage}(): `
+            + `${name_prefix}_asyncGenerator is illegal `
+            + `(e.g. has been terminated previously by throwing exception).` );
+        }
+
+        if ( resultValue != this[ name_of_asyncResult ] )
+          const mostDerivedClassName
+            = ClassHierarchyTools.MostDerived_ClassName_of_Instance( this );
+
+          throw Error( `${mostDerivedClassName}.${funcNameInMessage}(): `
+            + `${name_prefix}_asyncGenerator's resultValue ( ${resultValue} ) `
+            + `should be the same as `
+            + `this.${name_of_asyncResult} ( ${this[ name_of_asyncResult ]} ).`
+          );
+
+        return resultValue;
 
       } catch ( e ) {
         //debugger;
@@ -257,20 +283,21 @@ function NonReentrant_asyncGenerator(
     static [ name_of_throw_if_asyncPromise_or_asyncGenerator_running ](
       funcNameInMessage ) {
 
-      const mostDerivedClassName
-        = ClassHierarchyTools.MostDerived_ClassName_of_Instance( this );
-
       // Note: Property .Xxx_asyncPromise_running is created by sub-class
       //       (if exists).
       let b_asyncPromise_running = this[ name_of_asyncPromise_running ];
 
-      if (   ( b_asyncPromise_running )
-          || ( this.#asyncGenerator_running ) )
-        throw Error( `${mostDerivedClassName}.${funcNameInMessage}(): `
-          + `should not be executed while an instance of `
-          + `.${name_of_asyncPromise_create}() or `
-          + `.${name_of_asyncGenerator_create}() `
-          + `is still running.` );
+      if ( ( !b_asyncPromise_running ) && ( !this.#asyncGenerator_running ) )
+        return;
+
+      const mostDerivedClassName
+        = ClassHierarchyTools.MostDerived_ClassName_of_Instance( this );
+
+      throw Error( `${mostDerivedClassName}.${funcNameInMessage}(): `
+        + `should not be executed while an instance of `
+        + `.${name_of_asyncPromise_create}() or `
+        + `.${name_of_asyncGenerator_create}() `
+        + `is still running.` );
     }
 
     /**
@@ -279,12 +306,14 @@ function NonReentrant_asyncGenerator(
      * @param {string} funcNameInMessage   The caller function name. (e.g. init_async)
      */
     static throw_if_an_old_still_running( b_still_running, funcNameInMessage ) {
+      if ( !b_still_running )
+        return;
+
       const mostDerivedClassName
         = ClassHierarchyTools.MostDerived_ClassName_of_Instance( this );
 
-      if ( b_still_running )
-        throw Error( `${mostDerivedClassName}.${funcNameInMessage}(): `
-          + `An old instance of .${funcNameInMessage}() is still running.` );
+      throw Error( `${mostDerivedClassName}.${funcNameInMessage}(): `
+        + `An old instance of .${funcNameInMessage}() is still running.` );
     }
 
     /**
@@ -297,12 +326,14 @@ function NonReentrant_asyncGenerator(
     static throw_call_another_if_false(
       b, funcNameInMessage, funcNameShouldBeCalledInMessage ) {
 
+      if ( b )
+        return;
+
       const mostDerivedClassName
         = ClassHierarchyTools.MostDerived_ClassName_of_Instance( this );
 
-      if ( !b )
-        throw Error( `${mostDerivedClassName}.${funcNameInMessage}(): `
-          + `Please call .${funcNameShouldBeCalledInMessage}() instead.` );
+      throw Error( `${mostDerivedClassName}.${funcNameInMessage}(): `
+        + `Please call .${funcNameShouldBeCalledInMessage}() instead.` );
     }
 
     /**
@@ -310,15 +341,17 @@ function NonReentrant_asyncGenerator(
      * @param {string} funcNameInMessage   The caller function name. (e.g. init_async)
      */
     static [ name_of_throw_if_not_asyncResult ]( funcNameInMessage ) {
+      if ( this[ name_of_asyncResult ] )
+        return;
+
       const mostDerivedClassName
         = ClassHierarchyTools.MostDerived_ClassName_of_Instance( this );
 
-      if ( !this[ name_of_asyncResult ] )
-        throw Error( `${mostDerivedClassName}.${funcNameInMessage}(): `
-          + `should be executed only if `
-          + `this.${name_of_asyncResult} ( ${this[ name_of_asyncResult ]} ) `
-          + `is truthy (i.e. not undefined, not null, not false, `
-          + `not 0, not NaN, not empty string "").` );
+      throw Error( `${mostDerivedClassName}.${funcNameInMessage}(): `
+        + `should be executed only if `
+        + `this.${name_of_asyncResult} ( ${this[ name_of_asyncResult ]} ) `
+        + `is truthy (i.e. not undefined, not null, not false, `
+        + `not 0, not NaN, not empty string "").` );
     }
 
   } );

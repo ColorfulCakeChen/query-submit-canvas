@@ -1284,6 +1284,9 @@ class NeuralOrchestra_Base extends Recyclable.Root {
       NeuralOrchestra_Base.throw_if_an_old_still_running.call( this,
         this.versus_load_async_running, funcNameInMessage );
 
+
+//!!! ...unfinished... (2023/03/28)
+// How to integrate these precondition checking to the NonReentrant_Xxx base class?
       NeuralOrchestra_Base.throw_if_initializing.call( this, funcNameInMessage );
       NeuralOrchestra_Base.throw_if_not_initOk.call( this, funcNameInMessage );
 

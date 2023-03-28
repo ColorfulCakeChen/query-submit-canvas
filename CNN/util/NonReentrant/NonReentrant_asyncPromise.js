@@ -215,8 +215,19 @@ function NonReentrant_asyncPromise(
         let underlied_asyncPromise
           = underlied_asyncPromise_func.apply( this, restArgs );
 
-        let result = await underlied_asyncPromise;
-        return result;
+        let resultValue = await underlied_asyncPromise;
+
+        if ( resultValue != this[ name_of_asyncResult ] )
+          const mostDerivedClassName
+            = ClassHierarchyTools.MostDerived_ClassName_of_Instance( this );
+
+          throw Error( `${mostDerivedClassName}.${funcNameInMessage}(): `
+            + `${name_prefix}_asyncPromise's resultValue ( ${resultValue} ) `
+            + `should be the same as `
+            + `this.${name_of_asyncResult} ( ${this[ name_of_asyncResult ]} ).`
+          );
+
+        return resultValue;
 
       } catch ( e ) {
         //debugger;
@@ -236,14 +247,16 @@ function NonReentrant_asyncPromise(
     static [ name_of_throw_if_asyncPromise_running ](
       funcNameInMessage ) {
 
+      if ( !this.#asyncPromise_running )
+        return;
+
       const mostDerivedClassName
         = ClassHierarchyTools.MostDerived_ClassName_of_Instance( this );
 
-      if ( this.#asyncPromise_running )
-        throw Error( `${mostDerivedClassName}.${funcNameInMessage}(): `
-          + `should not be executed while an instance of `
-          + `.${name_of_asyncPromise_create}() `
-          + `is still running.` );
+      throw Error( `${mostDerivedClassName}.${funcNameInMessage}(): `
+        + `should not be executed while an instance of `
+        + `.${name_of_asyncPromise_create}() `
+        + `is still running.` );
     }
 
     /**
@@ -256,12 +269,14 @@ function NonReentrant_asyncPromise(
     static throw_call_another_if_false(
       b, funcNameInMessage, funcNameShouldBeCalledInMessage ) {
 
+      if ( b )
+        return;
+
       const mostDerivedClassName
         = ClassHierarchyTools.MostDerived_ClassName_of_Instance( this );
 
-      if ( !b )
-        throw Error( `${mostDerivedClassName}.${funcNameInMessage}(): `
-          + `Please call .${funcNameShouldBeCalledInMessage}() instead.` );
+      throw Error( `${mostDerivedClassName}.${funcNameInMessage}(): `
+        + `Please call .${funcNameShouldBeCalledInMessage}() instead.` );
     }
 
     /**
@@ -269,15 +284,17 @@ function NonReentrant_asyncPromise(
      * @param {string} funcNameInMessage   The caller function name. (e.g. init_async)
      */
     static [ name_of_throw_if_not_asyncResult ]( funcNameInMessage ) {
+      if ( this[ name_of_asyncResult ] )
+        return;
+
       const mostDerivedClassName
         = ClassHierarchyTools.MostDerived_ClassName_of_Instance( this );
 
-      if ( !this[ name_of_asyncResult ] )
-        throw Error( `${mostDerivedClassName}.${funcNameInMessage}(): `
-          + `should be executed only if `
-          + `this.${name_of_asyncResult} ( ${this[ name_of_asyncResult ]} ) `
-          + `is truthy (i.e. not undefined, not null, not false, `
-          + `not 0, not NaN, not empty string "").` );
+      throw Error( `${mostDerivedClassName}.${funcNameInMessage}(): `
+        + `should be executed only if `
+        + `this.${name_of_asyncResult} ( ${this[ name_of_asyncResult ]} ) `
+        + `is truthy (i.e. not undefined, not null, not false, `
+        + `not 0, not NaN, not empty string "").` );
     }
 
   } );

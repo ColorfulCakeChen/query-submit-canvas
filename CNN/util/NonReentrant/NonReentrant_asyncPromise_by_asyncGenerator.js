@@ -342,8 +342,8 @@ function NonReentrant_asyncPromise_by_asyncGenerator(
           asyncGeneratorNext = await asyncGenerator.next();
         } while ( !asyncGeneratorNext.done );
 
-        let result = asyncGeneratorNext.value;
-        return result;
+        let resultValue = asyncGeneratorNext.value;
+        return resultValue;
 
       } catch ( e ) {
         //console.error( e );
