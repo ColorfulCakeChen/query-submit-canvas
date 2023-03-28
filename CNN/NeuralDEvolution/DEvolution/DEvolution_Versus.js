@@ -174,6 +174,9 @@ class DEvolution_Versus extends Recyclable.Root {
             progressForDownload, params_loading_retryWaiting );
 
       versusArrayArray = yield* fetcherVersus;
+
+!!! ...unfinished... (2023/03/28) should clear .fetchResult to reduce memory footprint.
+
       if ( !versusArrayArray )
         return false; // Download failure.
     }
