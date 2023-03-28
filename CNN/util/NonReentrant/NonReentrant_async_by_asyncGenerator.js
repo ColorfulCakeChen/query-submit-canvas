@@ -263,7 +263,8 @@ function NonReentrant_async_by_asyncGenerator(
       let asyncGenerator;
       {
         // Use internal independent progress.
-        NonReentrant_async_by_asyncGenerator[ name_of_asyncPromise_progress_create ]
+        NonReentrant_async_by_asyncGenerator
+          [ name_of_asyncPromise_progress_create ]
           .call( this );
 
         // Prepare asyncGenerator
