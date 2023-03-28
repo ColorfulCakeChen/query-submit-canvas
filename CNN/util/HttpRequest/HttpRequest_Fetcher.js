@@ -243,8 +243,7 @@ class HttpRequest_Fetcher
       //   - an object, if succeeded.
       //   - null, if failed and can not continue to retry.
       //   - undefined, if aborted during retry waiting.
-      //
-      // If undefined, force it to null.
+      //     - In this case, force it to null.
       //
       // Note: .fetchResult can not be undefined. Otherwise, NonReentrant will
       //       thow exception.
