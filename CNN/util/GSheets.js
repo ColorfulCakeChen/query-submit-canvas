@@ -31,9 +31,14 @@ import * as ValueMax from "./ValueMax.js";
  *   - It is not used if .fetch_asyncGenerator_create() is called. In this
  *       case, its progressParent parameter will be used instead.
  *
- * @member {boolean} fetchOk
- *   If true, the fetch_asyncGenerator or fetch_asyncPromise has done
- * successfully.
+
+!!! ...unfinished... (2023/03/28)
+fetchResult may be falsy (i.e. when failed)
+
+ * @member {Array[]} fetchResult
+ *   The result ( a two dimension (column-major) array ) when
+ * fetch_asyncGenerator or fetch_asyncPromise succeeded.
+ * 
  *
  * @member {boolean} retryWaitingTimer_isCounting
  *   If true, the .urlComposer.httpFetcher now is during retry waiting.
@@ -55,7 +60,7 @@ import * as ValueMax from "./ValueMax.js";
  */
 class GSheets_UrlComposer
   extends NonReentrant.asyncPromise_by_asyncGenerator(
-    "fetch", "Ok", relay_JSON_ColumnMajorArrayArray_fetch_asyncGenerator,
+    "fetch", "Result", relay_JSON_ColumnMajorArrayArray_fetch_asyncGenerator,
     Recyclable.Root ) {
 
   /**
