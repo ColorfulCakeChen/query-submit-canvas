@@ -172,7 +172,7 @@ class HttpRequest_Fetcher
     }
 
     // load-wait-retry
-    let responseText;
+    let fetchResult;
     try {
       let bRetry;
       do {
@@ -180,13 +180,13 @@ class HttpRequest_Fetcher
 
         // 1. Try to load.
         try {
-          responseText
+          let responseText
             = yield* HttpRequest_Fetcher.load_asyncGenerator.call( this );
 
           // No need to retry, since request is succeeded (when executed to here).
           bRetry = false;
 
-          this.fetchResult = responseText;
+          fetchResult = responseText;
 
         // 2. Determine whether should retry.
         } catch( e ) {
@@ -223,7 +223,7 @@ class HttpRequest_Fetcher
           if ( !bRetry ) {
             // Since no retry, the retry waiting timer should be completed to 100%
             HttpRequest_Fetcher.progressRetryWaiting_set_whenDone.call( this );
-            this.fetchResult = null;
+            fetchResult = null;
             throw e;
           }
         }
@@ -238,18 +238,18 @@ class HttpRequest_Fetcher
         }
 
       } while ( bRetry && ( !this.bAbort ) );
-!!!
-      // When executed to here, .fetchResult should be:
+
+      // When executed to here, fetchResult should be:
       //   - an object, if succeeded.
       //   - null, if failed and can not continue to retry.
       //   - undefined, if aborted during retry waiting.
       //     - In this case, force it to null.
       //
-      // Note: .fetchResult can not be undefined. Otherwise, NonReentrant will
+      // Note: fetchResult can not be undefined. Otherwise, NonReentrant will
       //       thow exception.
-      if ( this.fetchResult === undefined ) {
+      if ( fetchResult === undefined ) {
         if ( this.bAbort )
-          this.fetchResult = null;
+          fetchResult = null;
       }
 
     } finally {
@@ -259,7 +259,7 @@ class HttpRequest_Fetcher
     }
 
     // 5. Return the successfully downloaded result.
-    return this.fetchResult;
+    return fetchResult;
   }
 
   get loadingMillisecondsMax() {
