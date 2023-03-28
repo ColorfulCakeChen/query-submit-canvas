@@ -162,7 +162,7 @@ class DEvolution_VersusSummary extends Recyclable.Root {
     // The summary is at the first column of the first (i.e. left most) sheet.
     this.urlComposer.range = DEvolution_VersusSummary.spreadsheetRange;
 
-    let fetcher = this.urlComposer.JSON_ColumnMajorArrayArray_fetcher_create(
+    let fetcher = this.urlComposer.fetch_asyncGenerator_create(
       progressFetcher, params_loading_retryWaiting );
 
     let rangeArrayArray = yield *fetcher;
