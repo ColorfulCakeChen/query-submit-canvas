@@ -437,6 +437,8 @@ class NeuralOrchestra_Base extends Recyclable.Root {
 
 //!!! ...unfinished... (2023/03/28)
 // How to integrate these precondition checking to the NonReentrant_Xxx base class?
+// Perhaps, by overriding same name method.
+
       NeuralOrchestra_Base.throw_if_workerProxies_busy_or_versus_loading.call(
         this, funcNameInMessage );
     }
@@ -596,6 +598,8 @@ class NeuralOrchestra_Base extends Recyclable.Root {
 
 //!!! ...unfinished... (2023/03/28)
 // How to integrate these precondition checking to the NonReentrant_Xxx base class?
+// Perhaps, by overriding same name method.
+
       NeuralOrchestra_Base.throw_if_workerProxies_busy_or_versus_loading.call(
         this, funcNameInMessage );
     }
@@ -959,6 +963,10 @@ class NeuralOrchestra_Base extends Recyclable.Root {
         this.workerProxies_init_async_running, funcNameInMessage,
         "workerProxies_init_promise_create" );
 
+//!!! ...unfinished... (2023/03/28)
+// How to integrate these precondition checking to the NonReentrant_Xxx base class?
+// Perhaps, by overriding same name method.
+
       NeuralOrchestra_Base.throw_if_imageData_processing.call( this,
         funcNameInMessage );
     }
@@ -1035,6 +1043,10 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     { // Checking pre-condition.
       const funcNameInMessage = "workerProxies_compileShaders_async";
 
+//!!! ...unfinished... (2023/03/28)
+// How to integrate these precondition checking to the NonReentrant_Xxx base class?
+// Perhaps, by overriding same name method.
+
       NeuralOrchestra_Base.throw_if_imageData_processing.call( this,
         funcNameInMessage );
     }
@@ -1104,6 +1116,10 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     { // Checking pre-condition.
       const funcNameInMessage = "workerProxies_NeuralNetArray_create_async";
 
+//!!! ...unfinished... (2023/03/28)
+// How to integrate these precondition checking to the NonReentrant_Xxx base class?
+// Perhaps, by overriding same name method.
+
       NeuralOrchestra_Base.throw_if_imageData_processing.call( this,
         funcNameInMessage );
     }
@@ -1143,6 +1159,8 @@ class NeuralOrchestra_Base extends Recyclable.Root {
 
 //!!! ...unfinished... (2023/03/28)
 // How to integrate these precondition checking to the NonReentrant_Xxx base class?
+// Perhaps, by overriding same name method.
+
       NeuralOrchestra_Base.throw_if_initializing.call( this, funcNameInMessage );
       NeuralOrchestra_Base.throw_if_workerProxies_initializing.call( this,
         funcNameInMessage );
@@ -1284,9 +1302,10 @@ class NeuralOrchestra_Base extends Recyclable.Root {
       NeuralOrchestra_Base.throw_if_an_old_still_running.call( this,
         this.versus_load_async_running, funcNameInMessage );
 
-
 //!!! ...unfinished... (2023/03/28)
 // How to integrate these precondition checking to the NonReentrant_Xxx base class?
+// Perhaps, by overriding same name method.
+
       NeuralOrchestra_Base.throw_if_initializing.call( this, funcNameInMessage );
       NeuralOrchestra_Base.throw_if_not_initOk.call( this, funcNameInMessage );
 
