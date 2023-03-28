@@ -37,10 +37,10 @@ function NonReentrant_asyncGenerator(
   /** Note:
    *
    * Although the property .Xxx_asyncPromise_running and
-   * .Xxx_asyncPromise_create() will not be created by this NonReentrant_asyncGenerator
-   * class (they will be created by sub-class AsyncGuarder_RecyclableBase),
-   * however, this class will try to check these properties. So, their names
-   * should still be prepared.
+   * .Xxx_asyncPromise_create() will not be created by this
+   * NonReentrant_asyncGenerator class (they will be created by sub-class
+   * NonReentrant_asyncPromise_by_asyncGenerator), however, this class will
+   * try to check these properties. So, their names should still be prepared.
    */
   const name_of_asyncPromise_running
     = `${name_prefix}_asyncPromise_running`;
