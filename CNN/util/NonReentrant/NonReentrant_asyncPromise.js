@@ -77,12 +77,14 @@ function NonReentrant_asyncPromise(
    *   A property recording the result of underlied_asyncPromise_func().
    *   - The Xxx is name_prefix (e.g. "init").
    *   - The Yyy is name_postfix_of_asyncResult (e.g. "Ok").
+   *   - It is not a private read-only property so that it can cleared to
+   *       release memory by outside caller.
    *   - The .Xxx_asyncPromise_create_without_checking_precondition() will
    *       clear this.XxxYyy (e.g. this.initOk) to undefined.
    *   - The .Xxx_asyncPromise_guarded() will set this.XxxYyy (e.g.
    *       this.initOk) to the awaited result value of
    *       underlied_asyncPromise_func().
-
+   *
    * @member {Function} Xxx_asyncPromise_create
    *   A method for creating the underlied async function.
    *   - If an old instance is still executing, it will throw exception.
@@ -139,9 +141,6 @@ function NonReentrant_asyncPromise(
     disposeResources() {
 
       Reflect.deleteProperty( this, name_of_asyncPromise_running );
-
-//!!! ...unfinished... (2023/03/28)
-// Whether should let this[ name_of_asyncResult ] be a private read-only property.
 
       this[ name_of_asyncResult ] = undefined;
       this.#asyncPromise_running = undefined;

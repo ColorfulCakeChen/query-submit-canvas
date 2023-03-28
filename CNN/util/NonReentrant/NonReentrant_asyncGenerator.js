@@ -94,6 +94,8 @@ function NonReentrant_asyncGenerator(
    *   A property recording the result of underlied_asyncGenerator_func().
    *   - The Xxx is name_prefix (e.g. "init").
    *   - The Yyy is name_postfix_of_asyncResult (e.g. "Ok").
+   *   - It is not a private read-only property so that it can cleared to
+   *       release memory by outside caller.
    *   - The .Xxx_asyncGenerator_create_without_checking_precondition() will
    *       clear this.XxxYyy (e.g. this.initOk) to undefined.
    *   - The .Xxx_asyncGenerator_guarded() will set this.XxxYyy (e.g.
@@ -156,9 +158,6 @@ function NonReentrant_asyncGenerator(
     disposeResources() {
 
       Reflect.deleteProperty( this, name_of_asyncGenerator_running );
-
-//!!! ...unfinished... (2023/03/28)
-// Whether should let this[ name_of_asyncResult ] be a private read-only property.
 
       this[ name_of_asyncResult ] = undefined;
       this.#asyncGenerator_running = undefined;
