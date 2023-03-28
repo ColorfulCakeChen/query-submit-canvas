@@ -378,7 +378,7 @@ function NonReentrant_asyncGenerator(
           + `should be executed only if `
           + `this.${name_of_asyncResult} ( ${this[ name_of_asyncResult ]} ) `
           + `is truthy (i.e. not undefined, not null, not false, `
-          + `not 0, not Nan, not empty string "").` );
+          + `not 0, not NaN, not empty string "").` );
     }
 
   } );
