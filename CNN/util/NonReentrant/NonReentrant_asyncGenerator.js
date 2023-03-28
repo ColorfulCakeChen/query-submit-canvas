@@ -13,7 +13,7 @@ import * as Pool from "../Pool.js";
 // class NonReentrant_async_by_asyncGenerator (suggested) inherit from Recyclabe.Base
 
 
-!!! ...unfinished... (2023/03/27)
+//!!! ...unfinished... (2023/03/27)
 // Add parameter:
 //   - name_of_asyncResult (e.g. initOk, float32ArrayArray, versus_loadOk, ...)
 
@@ -40,11 +40,11 @@ import * as Pool from "../Pool.js";
  *       "imageData_process_result_float32ArrayArray".
  *
  * @param {AsyncGeneratorFunction} underlied_asyncGenerator_func
- *   A private property recording the function to create a underlied async
- * generator which wants to be guarded by the .Xxx_asyncGenerator_running
- * boolean flag.
+ *   A function for creating a underlied async generator which wants to be
+ * guarded by the .Xxx_asyncGenerator_running boolean flag.
  *   - It will be called with thisArg as "this".
- *   - Its 1st parameter must be progressParent (ValueMax.Percentage.Aggregate).
+ *   - Its 1st parameter must be progressParent (an instance of
+ *       ValueMax.Percentage.Aggregate).
  */
 function NonReentrant_asyncGenerator(
   name_prefix, name_postfix_of_asyncResult, underlied_asyncGenerator_func,
