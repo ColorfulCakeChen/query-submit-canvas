@@ -2,19 +2,6 @@ export { NonReentrant_asyncGenerator as asyncGenerator };
 
 import * as ClassHierarchyTools from "../ClassHierarchyTools.js";
 
-
-// !!! ...unfinished... (2023/03/27)
-//
-// class NonReentrant_asyncGenerator
-// class NonReentrant_async_without_asyncGenerator
-// class NonReentrant_async_by_asyncGenerator (suggested) inherit from Recyclabe.Base
-
-
-//!!! ...unfinished... (2023/03/27)
-// Add parameter:
-//   - name_of_asyncResult (e.g. initOk, float32ArrayArray, versus_loadOk, ...)
-
-
 /**
  * Return a wrapper class for preventing an underlied async generator from
  * being reentered.
@@ -46,10 +33,6 @@ import * as ClassHierarchyTools from "../ClassHierarchyTools.js";
 function NonReentrant_asyncGenerator(
   name_prefix, name_postfix_of_asyncResult, underlied_asyncGenerator_func,
   ParentClass = Object ) {
-
-//!!! (2023/03/25) seems not necessary to keep it as a member.
-//   const name_of_underlied_asyncGenerator_func
-//     = `${name_prefix}_underlied_asyncGenerator_func`;
 
   /** Note:
    *
@@ -97,16 +80,6 @@ function NonReentrant_asyncGenerator(
    * reentered. (Reentrancy Preventer)
    *
    *
-
-//!!! (2023/03/25) seems not necessary to keep it as a member.
-//    * @member {AsyncGeneratorFunction} Xxx_underlied_asyncGenerator_func
-//    *   A private property recording the function to create a underlied async
-//    * generator which wants to be guarded by the .Xxx_asyncGenerator_running
-//    * boolean flag.
-//    *   - It will be called with thisArg as "this".
-//    *   - Its 1st parameter must be progressParent (ValueMax.Percentage.Aggregate).
-
-   *
    * @member {boolean} Xxx_asyncGenerator_running
    *   If true, a underlied async generator (i.e. .Xxx_asyncGenerator_guarded())
    * is still executing. Please wait it becoming false if wanting to call
@@ -143,10 +116,6 @@ function NonReentrant_asyncGenerator(
 
     #asyncGenerator_running;
 
-//!!! (2023/03/25) seems not necessary to keep it as a member.
-//     static [ name_of_underlied_asyncGenerator_func ]
-//       = underlied_asyncGenerator_func;
-
     /**
      *
      */
@@ -172,33 +141,6 @@ function NonReentrant_asyncGenerator(
           name_of_asyncGenerator_running,
           NonReentrant_asyncGenerator.propertyDescriptor_of_asyncGenerator_running );
       }
-
-//!!! (2023/03/24 Remarked) Replaced by computed property names.
-//   !!! ...unfinished... (2023/03/22)
-//   // shared instance (i.e. this.constructor.prototype's) properties
-//   // static (i.e. this.constructor's) properties
-//   // should not defineProperty() by every instance.
-//   //
-//   // They should be defined as computed named property. 
-//
-//
-//       // Define shared instance (i.e. this.constructor.prototype's) properties.
-//       {
-//         // Xxx_asyncGenerator_create()
-//         Reflect.defineProperty( this.constructor.prototype,
-//           this.#name_of_asyncGenerator_create,
-//           NonReentrant_asyncGenerator
-//             .propertyDescriptor_of_asyncGenerator_create );
-//       }
-//
-//       // Define static (i.e. this.constructor's) properties.
-//       {
-//         // Xxx_throw_if_asyncPromise_or_asyncGenerator_running()
-//         Reflect.defineProperty( this.constructor,
-//           this.#name_of_throw_if_asyncPromise_or_asyncGenerator_running,
-//           NonReentrant_asyncGenerator
-//             .propertyDescriptor_of_throw_if_asyncPromise_or_asyncGenerator_running );
-//       }
     }
 
     /** @override */
@@ -291,11 +233,6 @@ function NonReentrant_asyncGenerator(
 
       try {
         // 1.
-
-//!!! (2023/03/25) seems not necessary to keep it as a member.
-//         let underlied_asyncGenerator = NonReentrant_asyncGenerator
-//           [ name_of_underlied_asyncGenerator_func ].apply( this, restArgs );
-
         let underlied_asyncGenerator
           = underlied_asyncGenerator_func.apply( this, restArgs );
 
