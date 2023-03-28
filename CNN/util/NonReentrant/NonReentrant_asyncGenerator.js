@@ -243,7 +243,7 @@ function NonReentrant_asyncGenerator(
         let underlied_asyncGenerator
           = underlied_asyncGenerator_func.apply( this, restArgs );
 
-        resultValue = yield *underlied_asyncGenerator;
+        let resultValue = yield *underlied_asyncGenerator;
         this[ name_of_asyncResult ] = resultValue;
 
         // The result should be non-undefined. If result is undefined:
