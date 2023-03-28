@@ -926,17 +926,18 @@ class NeuralOrchestra_Base extends Recyclable.Root {
   }
 
   /**
-   * This method will always block UI worker (because of compiling WebGL shaders)
-   * even if it is called in non-UI worker. So it is suggested to call this method
-   * during game splash screen displaying.
+   * This method will always block UI worker (because of compiling WebGL
+   * shaders) even if it is called in non-UI worker. So it is suggested to
+   * call this method during game splash screen displaying.
    *
    * @param {NeuralOrchestra_Base} this
    *
    * @param {NeuralNet.ParamsBase} this.neuralNetParamsBase
    *   The neural network configuration. It will be used for both two neural
-   * networks. It will be kept (i.e. owned and destroyed) by this NeuralOrchetra
-   * object. Its .nConvStageTypeId may be modified according to which backend
-   * (webgl or cpu) is used finally for gaining the best performance.
+   * networks. It will be kept (i.e. owned and destroyed) by this
+   * NeuralOrchetra object. Its .nConvStageTypeId may be modified according
+   * to which backend (webgl or cpu) is used finally for gaining the best
+   * performance.
    *
    * @return {Promise}
    *   Return a promise:
@@ -954,6 +955,8 @@ class NeuralOrchestra_Base extends Recyclable.Root {
         this.workerProxies_init_async_running, funcNameInMessage,
         "workerProxies_init_promise_create" );
 
+//!!! ...unfinished... (2023/03/28)
+// How to integrate these precondition checking to the NonReentrant_Xxx base class?
       NeuralOrchestra_Base.throw_if_imageData_processing.call( this,
         funcNameInMessage );
     }
@@ -1136,6 +1139,8 @@ class NeuralOrchestra_Base extends Recyclable.Root {
       NeuralOrchestra_Base.throw_if_an_old_still_running.call( this,
         this.imageData_process_async_running, funcNameInMessage );
 
+//!!! ...unfinished... (2023/03/28)
+// How to integrate these precondition checking to the NonReentrant_Xxx base class?
       NeuralOrchestra_Base.throw_if_initializing.call( this, funcNameInMessage );
       NeuralOrchestra_Base.throw_if_workerProxies_initializing.call( this,
         funcNameInMessage );

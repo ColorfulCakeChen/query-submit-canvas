@@ -48,7 +48,7 @@ function NonReentrant_asyncPromise(
   const name_of_asyncPromise_guarded
     = `${name_prefix}_asyncPromise_guarded`;
 
-//!!!
+
   const name_of_throw_if_asyncPromise_running
     = `throw_if_${name_prefix}_asyncPromise_running`;
 
@@ -97,7 +97,7 @@ function NonReentrant_asyncPromise(
    */
   class NonReentrant_asyncPromise extends ParentClass {
 
-    #asyncGenerator_running;
+    #asyncPromise_running;
 
     /**
      *
@@ -207,10 +207,10 @@ function NonReentrant_asyncPromise(
 
       try {
         // 1.
-        let underlied_asyncGenerator
-          = underlied_asyncGenerator_func.apply( this, restArgs );
+        let underlied_asyncPromise
+          = underlied_asyncPromise_func.apply( this, restArgs );
 
-        let result = yield *underlied_asyncGenerator;
+        let result = await underlied_asyncPromise;
         return result;
 
       } catch ( e ) {
@@ -218,8 +218,8 @@ function NonReentrant_asyncPromise(
         throw e;
   
       } finally {
-        // 2. So that this async generator could be executed again.
-        this.#asyncGenerator_running = false;
+        // 2. So that this async method could be executed again.
+        this.#asyncPromise_running = false;
       }
     }
 
