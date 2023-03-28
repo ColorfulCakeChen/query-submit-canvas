@@ -22,13 +22,15 @@ import * as ValueMax from "./ValueMax.js";
  *       undefined).
  */
 function UrlComposer_Pool_get_or_create_by( spreadsheetId, range, apiKey ) {
+  let urlComposer;
   if ( apiKey ) {
-    this.urlComposer = GSheetsAPIv4.UrlComposer.Pool.get_or_create_by(
+    urlComposer = GSheetsAPIv4.UrlComposer.Pool.get_or_create_by(
       spreadsheetId, range, apiKey );
   } else {
-    this.urlComposer = GVizTQ.UrlComposer.Pool.get_or_create_by(
+    urlComposer = GVizTQ.UrlComposer.Pool.get_or_create_by(
       spreadsheetId, range );
   }
+  return urlComposer;
 }
 
 //!!! (2023/03/28 Remarked) Replaced by UrlComposer_Pool_get_or_create_by().
