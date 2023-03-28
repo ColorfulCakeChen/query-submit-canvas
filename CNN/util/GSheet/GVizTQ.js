@@ -50,6 +50,9 @@ import * as ValueMax from "../ValueMax.js";
  *   The current (or last) fetcher of the http request. It could be used to
  * call .abort().
  *
+ * @member {boolean}
+ *   If true, the .httpRequestFetcher now is during retry waiting.
+ *
  * @member {boolean} bAbort
  *   If true, it means .abort() is called.
  */
@@ -266,9 +269,6 @@ class GVizTQ_UrlComposer extends Recyclable.Root {
     }
   }
 
-  /**
-   * @return {boolean} Return true, if .httpRequestFetcher now is during retry waiting.
-   */
   get retryWaitingTimer_isCounting() {
     if ( this.httpRequestFetcher )
       return this.httpRequestFetcher.retryWaitingTimer_isCounting;
@@ -286,72 +286,6 @@ class GVizTQ_UrlComposer extends Recyclable.Root {
     this.bAbort = true;
     this.httpRequestFetcher?.abort();
   }
-
-// //!!! (2023/02/14 Remarked) Use XMLHttpRequest instead. (for progress)
-//   /**
-//    * Generator for composing the URL (according this object's data members), downloading
-//    * it as JSON format, extracting data as a two dimension (column-major) array.
-//    *
-//    * @param {ValueMax.Percentage.Aggregate} progressParent
-//    *   Some new progressToAdvance will be created and added to progressParent. The
-//    * created progressToAdvance will be increased when every time advanced. The
-//    * progressParent.root_get() will be returned when every time yield.
-//    *
-//    * @yield {Promise( ValueMax.Percentage.Aggregate )}
-//    *   Yield a promise resolves to { value: progressParent.root_get(), done: false }.
-//    *
-//    * @yield {Promise( Array[] )}
-//    *   - Yield a promise resolves to { done: true,
-//    *       value: ( a two dimension (column-major) array ) } when successfully.
-//    *   - Yield a promise resolves to { done: true, value: null } when failed.
-//    */
-//   async* JSON_ColumnMajorArrayArray_fetch_asyncGenerator( progressParent ) {
-//     let progressRoot = progressParent.root_get();
-//     let progressToAdvance = progressParent.child_add(
-//       ValueMax.Percentage.Concrete.Pool.get_or_create_by( 4 ) );
-//
-//     try {
-//       // 1. Compose URL and download it as JSONP.
-//       let url = this.getUrl_forJSON();
-//       let response = await fetch( url );
-//
-//       progressToAdvance.value_advance(); // 25%
-//       yield progressRoot;
-//
-//       if ( !response.ok )
-//         return null;
-//
-//       // 2. Google Visualization Table Query returns JSONP (not JSON).
-//       let text = await response.text();
-//
-//       progressToAdvance.value_advance(); // 25%
-//       yield progressRoot;
-//
-//       if ( !text )
-//         return null;
-//
-//       // 3. Try to evaluate it as JSON.
-//       let json = GVizTQ_UrlComposer.evalJSONP( text );
-//
-//       progressToAdvance.value_advance(); // 25%
-//       yield progressRoot;
-//
-//       if ( !json )
-//         return null;
-//
-//       // 4. Collect into column-major array.
-//       let ColumnMajorArrayArray
-//         = GVizTQ_UrlComposer.dataTable_to_ColumnMajorArrayArray( json.table );
-//
-//       progressToAdvance.value_advance(); // 25%
-//       yield progressRoot;
-//
-//       return ColumnMajorArrayArray;
-//
-//     } catch ( e ) {
-//       return null;
-//     }
-//   }
 
   /**
    * @param {string} outputFormat
