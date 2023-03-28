@@ -1,8 +1,9 @@
 export { GVizTQ_UrlComposer as UrlComposer };
 
+import * as HttpRequest from "../HttpRequest.js";
+import * as NonReentrant from "../NonReentrant.js";
 import * as Pool from "../Pool.js";
 import * as Recyclable from "../Recyclable.js";
-import * as HttpRequest from "../HttpRequest.js";
 import * as ValueMax from "../ValueMax.js";
 
 /**
@@ -52,6 +53,44 @@ import * as ValueMax from "../ValueMax.js";
  *       last rows.
  *   - "'Name has space'!7:10" refers to the rows 7 to 10 of sheet named "Name has
  *       space".
+ *
+ *
+ * @member {Function} fetch_asyncPromise_create
+ *   A method for creating .JSON_ColumnMajorArrayArray_fetch_asyncGenerator()
+ * and looping until done.
+ *   - It accepts almost the same parameters as .fetch_asyncGenerator_create()
+ *       except without the 1st parameter progressParent (which is replaced by
+ *       .fetch_asyncPromise_progress).
+ *   - It returns a promise resolved to .value of { done: true, value } of
+ *       awaited .JSON_ColumnMajorArrayArray_fetch_asyncGenerator().next().
+ *
+ * @member {Function} fetch_asyncGenerator_create
+ *   A method for creating .JSON_ColumnMajorArrayArray_fetch_asyncGenerator().
+ *     - It accepts the same parameters as
+ *         .JSON_ColumnMajorArrayArray_fetch_asyncGenerator().
+ *     - It returns an async generator.
+ *
+ * @member {boolean} fetch_asyncPromise_running
+ *   If true, a fetch_asyncPromise is still executing. Please wait it becoming
+ * false if wanting to call .fetch_asyncPromise_create() again.
+ *
+ * @member {boolean} fetch_asyncGenerator_running
+ *   If true, a fetch_asyncGenerator is still executing. Please wait it
+ * becoming false if wanting to call .fetch_asyncGenerator_create() again.
+ *
+ * @member {ValueMax.Percentage.Aggregate} fetch_asyncPromise_progress
+ *   The progress of fetch_asyncPromise. If
+ * ( .fetch_asyncPromise_progress.valuePercentage == 100 ), the fetching has
+ * done.
+ *   - It is used only if .fetch_asyncPromise_create() is called.
+ *   - It is not used if .fetch_asyncGenerator_create() is called. In this
+ *       case, its progressParent parameter will be used instead.
+ *
+ * @member {Array[]} fetchResult
+ *   The result of fetch_asyncGenerator or fetch_asyncPromise.
+ *   - A ( two dimension (column-major) array ) if succeeded.
+ *   - null if failed.
+ *
  *
  * @member {string} spreadsheetUrlPrefix
  *   - If null, GVizTQ_UrlComposer.spreadsheetUrlPrefix will be used.
