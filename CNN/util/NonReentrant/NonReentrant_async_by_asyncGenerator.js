@@ -27,6 +27,10 @@ import { asyncGenerator as NonReentrant_asyncGenerator }
  * Return a recyclable wrapper class for preventing an underlied async
  * generator from being reentered.
  *
+ * It is strongly suggested the ParentClass has ancestor class (i.e.
+ * inherits directly or indirectly from) Recyclable.Base because the
+ * .Xxx_asyncPromise_progress needs to be disposed and recycled.
+ *
  *
  * @param {string} name_prefix
  *   The prefix for all async operations and flags. (e.g. "init" or "fetch"
@@ -52,7 +56,8 @@ import { asyncGenerator as NonReentrant_asyncGenerator }
  *       ValueMax.Percentage.Aggregate).
  */
 function NonReentrant_async_by_asyncGenerator(
-  name_prefix, underlied_asyncGenerator_func, ParentClass = Object ) {
+  name_prefix, name_postfix_of_asyncResult, underlied_asyncGenerator_func,
+  ParentClass = Object ) {
 
   const name_of_asyncPromise_running
     = `${name_prefix}_asyncPromise_running`;
@@ -78,15 +83,16 @@ function NonReentrant_async_by_asyncGenerator(
     = `${name_prefix}_asyncPromise_progress_dispose`;
 
 
-  // These static methods are defined in parent class (i.e. NonReentrant_asyncGenerator),
-  // however, they will be called by this sub-class (i.e.
-  // NonReentrant_async_by_asyncGenerator). So, their names should still be prepared.
+  // These static methods are defined in parent class (i.e.
+  // NonReentrant_asyncGenerator), however, they will be called by this
+  // sub-class (i.e. NonReentrant_async_by_asyncGenerator). So, their names
+  // should still be prepared here.
 
   const name_of_asyncGenerator_create_without_checking_precondition
     = `${name_prefix}_asyncGenerator_create_without_checking_precondition`;
 
   const name_of_throw_if_asyncPromise_or_asyncGenerator_running
-    = `${name_prefix}_throw_if_asyncPromise_or_asyncGenerator_running`;
+    = `throw_if_${name_prefix}_asyncPromise_or_asyncGenerator_running`;
 
 
   return (
@@ -95,12 +101,15 @@ function NonReentrant_async_by_asyncGenerator(
    * A recyclable wrapper class for preventing an underlied async generator from
    * being reentered. (Reentrancy Preventer)
    *
+   * It is strongly suggested the ParentClass has ancestor class (i.e.
+   * inherits directly or indirectly from) Recyclable.Base because the
+   * .Xxx_asyncPromise_progress needs to be disposed and recycled.
    *
    *
    * @member {boolean} Xxx_asyncPromise_running
-   *   If true, a underlied async method (i.e. .Xxx_async()) is still executing.
-   * Please wait it becoming false if wanting to call .Xxx_asyncPromise_create()
-   * again. The Xxx is name_prefix.
+   *   If true, a underlied async method (i.e. .Xxx_asyncPromise_guarded()) is
+   * still executing. Please wait it becoming false if wanting to call
+   * .Xxx_asyncPromise_create() again. The Xxx is name_prefix.
    *
    * @member {Function} Xxx_asyncPromise_create
    *   A method for creating the underlied async generator and looping until done.
@@ -122,9 +131,10 @@ function NonReentrant_async_by_asyncGenerator(
    *   - It is not used if .Xxx_asyncGenerator_create() is called. In this case,
    *       its progressParent parameter will be used instead.
    */
-  class NonReentrant_async_by_asyncGenerator extends NonReentrant_asyncGenerator(
-    name_prefix, underlied_asyncGenerator_func,
-    Recyclable.Base( ParentClass ) ) {
+  class NonReentrant_async_by_asyncGenerator
+    extends NonReentrant_asyncGenerator(
+      name_prefix, name_postfix_of_asyncResult, underlied_asyncGenerator_func,
+      ParentClass ) {
 
     /**
      * Used as default NonReentrant.async_by_asyncGenerator provider for
