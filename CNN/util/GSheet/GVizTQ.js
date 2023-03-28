@@ -230,6 +230,10 @@ class GVizTQ_UrlComposer
    *   The parameters for loading timeout and retry waiting time. It will be
    * kept but not modified by this object.
    *
+   * @param {Promise} delayPromise
+   *   Mainly used when unit testing. If not null, this async generator will
+   * await it before complete. If null or undefined, no extra delay awaiting.
+   *
    * @yield {Promise( ValueMax.Percentage.Aggregate )}
    *   Yield a promise resolves to { value: progressParent.root_get(), done: false }.
    *
@@ -239,9 +243,7 @@ class GVizTQ_UrlComposer
    *   - Yield a promise resolves to { done: true, value: null } when failed.
    */
   static async* JSON_ColumnMajorArrayArray_fetch_asyncGenerator(
-    progressParent, params_loading_retryWaiting ) {
-
-//!!! ...unfinished... (2023/03/11) What if re-entrtance?
+    progressParent, params_loading_retryWaiting, delayPromise ) {
 
     let progressRoot = progressParent.root_get();
     let progressFetcher = progressParent.child_add(
@@ -289,6 +291,10 @@ class GVizTQ_UrlComposer
       // 3. Collect into column-major array.
       let ColumnMajorArrayArray
         = GVizTQ_UrlComposer.dataTable_to_ColumnMajorArrayArray( json.table );
+
+      // 4.
+      if ( delayPromise )
+        await delayPromise;
 
       progressToAdvance.value_advance();
       yield progressRoot;

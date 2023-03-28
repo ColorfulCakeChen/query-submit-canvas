@@ -175,6 +175,10 @@ class GSheetsAPIv4_UrlComposer
    *   The parameters for loading timeout and retry waiting time. It will be
    * kept but not modified by this object.
    *
+   * @param {Promise} delayPromise
+   *   Mainly used when unit testing. If not null, this async generator will
+   * await it before complete. If null or undefined, no extra delay awaiting.
+   *
    * @yield {Promise( ValueMax.Percentage.Aggregate )}
    *   Yield a promise resolves to { done: false, value: progressParent.root_get() }.
    *
@@ -184,9 +188,7 @@ class GSheetsAPIv4_UrlComposer
    *   - Yield a promise resolves to { done: true, value: null } when failed.
    */
   static async* JSON_ColumnMajorArrayArray_fetch_asyncGenerator(
-    progressParent, params_loading_retryWaiting ) {
-
-//!!! ...unfinished... (2023/03/11) What if re-entrtance?
+    progressParent, params_loading_retryWaiting, delayPromise ) {
 
     let progressRoot = progressParent.root_get();
     let progressFetcher = progressParent.child_add(
@@ -232,6 +234,10 @@ class GSheetsAPIv4_UrlComposer
 
       // 3. Since already downloaded as column major. Uses it directly.
       let ColumnMajorArrayArray = json.values;
+
+      // 4.
+      if ( delayPromise )
+        await delayPromise;
 
       progressToAdvance.value_advance();
       yield progressRoot;
