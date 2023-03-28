@@ -268,6 +268,10 @@ function NonReentrant_asyncPromise_by_asyncGenerator(
           .call( this );
 
         // Prepare asyncGenerator
+        //
+        // Note: This parent class static method will also set
+        //       this[ name_of_asyncResult ] to  undefined.
+        //
         asyncGenerator = NonReentrant_asyncPromise_by_asyncGenerator
           [ name_of_asyncGenerator_create_without_checking_precondition ]
           .call( this, this.#asyncPromise_progress, ...restArgs );
