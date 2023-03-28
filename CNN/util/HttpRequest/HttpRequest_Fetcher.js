@@ -1,5 +1,6 @@
 export { HttpRequest_Fetcher as Fetcher };
 
+import * as NonReentrant from "./NonReentrant.js";
 import * as PartTime from "../PartTime.js";
 import * as RandTools from "../RandTools.js";
 import * as ValueMax from "../ValueMax.js";
@@ -61,8 +62,25 @@ import { Params_loading_retryWaiting as HttpRequest_Params_loading_retryWaiting 
  *
  * @member {boolean} bAbort
  *   If true, it means .abort() is called.
+ *
+ * @member {boolean} fetch_asyncGenerator_running
+ *   If true, a fetch_asyncGenerator is still executing. Please wait it
+ * becoming false if wanting to call .fetch_asyncGenerator_create() again.
+ *
+ * @member {object} fetchResult
+ *   The result of fetch_asyncGenerator.
+ *   - xhr.response if succeeded.
+ *   - null if failed.
+ *
+ * @member {Function} fetch_asyncGenerator_create
+ *   A method for creating .fetch_asyncGenerator().
+ *     - It accepts the same parameters as
+ *         .fetch_asyncGenerator().
+ *     - It returns an async generator.
  */
-class HttpRequest_Fetcher {
+class HttpRequest_Fetcher
+  extends NonReentrant.asyncPromise_by_asyncGenerator(
+    "fetch", "Result", relay_fetch_asyncGenerator ) {
 
   /**
    *
@@ -101,7 +119,7 @@ class HttpRequest_Fetcher {
    * ( progressLoading.valuePercentage == 100 ) will still be reported for
    * representing the request already done (with failure, though).
    */
-  async* url_fetch_asyncGenerator(
+  static async* fetch_asyncGenerator(
     progressParent,
     url,
 
@@ -112,8 +130,6 @@ class HttpRequest_Fetcher {
     method = HttpRequest_Fetcher.methodDefault,
     body
   ) {
-
-//!!! ...unfinished... (2023/03/11) What if re-entrtance?
 
     // 0.
 
@@ -170,6 +186,8 @@ class HttpRequest_Fetcher {
           // No need to retry, since request is succeeded (when executed to here).
           bRetry = false;
 
+          this.fetchResult = responseText;
+
         // 2. Determine whether should retry.
         } catch( e ) {
 
@@ -205,6 +223,7 @@ class HttpRequest_Fetcher {
           if ( !bRetry ) {
             // Since no retry, the retry waiting timer should be completed to 100%
             HttpRequest_Fetcher.progressRetryWaiting_set_whenDone.call( this );
+            this.fetchResult = null;
             throw e;
           }
         }
@@ -227,7 +246,7 @@ class HttpRequest_Fetcher {
     }
 
     // 5. Return the successfully downloaded result.
-    return responseText;
+    return this.fetchResult;
   }
 
   get loadingMillisecondsMax() {
@@ -387,7 +406,7 @@ class HttpRequest_Fetcher {
    * An async generator for sending a http request and tracking its progress
    * (without retry).
    *
-   * (This method is called by url_fetch_asyncGenerator())
+   * (This method is called by .fetch_asyncGenerator())
    *
    *
    * @param {HttpRequest_Fetcher} this
@@ -556,7 +575,7 @@ class HttpRequest_Fetcher {
   /**
    * An async generator for tracking retry waiting timer progress.
    *
-   * (This method is called by url_fetch_asyncGenerator())
+   * (This method is called by .fetch_asyncGenerator())
    *
    *
    * @param {HttpRequest_Fetcher} this
@@ -1058,3 +1077,16 @@ HttpRequest_Fetcher.responseTypeDefault = "text";
  * step gradually.
  */
 HttpRequest_Fetcher.progressTotalFakeLarger = 1024 * 1024;
+
+
+/**
+ *
+ * @param {HttpRequest_Fetcher} this
+ *
+ * @return {AsyncGenerator}
+ *   Return the newly created instance of
+ * HttpRequest_Fetcher.fetch_asyncGenerator().
+ */
+function relay_fetch_asyncGenerator( ...restArgs ) {
+  return HttpRequest_Fetcher.fetch_asyncGenerator.apply( this, restArgs )
+}

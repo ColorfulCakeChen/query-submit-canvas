@@ -33,8 +33,8 @@ import * as ValueMax from "./ValueMax.js";
  *
  * @member {Array[]} fetchResult
  *   The result of fetch_asyncGenerator or fetch_asyncPromise.
- *   - A ( two dimension (column-major) array ) when succeeded.
- *   - null when failed.
+ *   - A ( two dimension (column-major) array ) if succeeded.
+ *   - null if failed.
  *
  *
  * @member {boolean} retryWaitingTimer_isCounting
