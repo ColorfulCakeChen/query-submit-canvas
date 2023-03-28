@@ -242,6 +242,11 @@ function NonReentrant_asyncGenerator(
         NonReentrant_asyncGenerator
           [ name_of_throw_if_asyncPromise_or_asyncGenerator_running ]
           .call( this, funcNameInMessage );
+
+
+//!!! ...unfinished... (2023/03/28)
+// How to integrate more precondition checking here?
+
       }
 
       let asyncGenerator = NonReentrant_asyncGenerator

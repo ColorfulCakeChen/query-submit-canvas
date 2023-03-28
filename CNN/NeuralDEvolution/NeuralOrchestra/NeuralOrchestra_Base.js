@@ -435,6 +435,8 @@ class NeuralOrchestra_Base extends Recyclable.Root {
       // If .init_asyncGenerator() running, throw, too.
       NeuralOrchestra_Base.throw_if_initializing.call( this, funcNameInMessage );
 
+//!!! ...unfinished... (2023/03/28)
+// How to integrate these precondition checking to the NonReentrant_Xxx base class?
       NeuralOrchestra_Base.throw_if_workerProxies_busy_or_versus_loading.call(
         this, funcNameInMessage );
     }
@@ -592,6 +594,8 @@ class NeuralOrchestra_Base extends Recyclable.Root {
       // If .init_async() running, throw, too.
       NeuralOrchestra_Base.throw_if_initializing.call( this, funcNameInMessage );
 
+//!!! ...unfinished... (2023/03/28)
+// How to integrate these precondition checking to the NonReentrant_Xxx base class?
       NeuralOrchestra_Base.throw_if_workerProxies_busy_or_versus_loading.call(
         this, funcNameInMessage );
     }
