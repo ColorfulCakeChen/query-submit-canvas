@@ -109,10 +109,14 @@ import * as ValueMax from "../ValueMax.js";
  * @member {boolean} bAbort
  *   If true, it means .abort() is called.
  */
-class GVizTQ_UrlComposer extends Recyclable.Root {
+class GVizTQ_UrlComposer
+  extends NonReentrant.asyncPromise_by_asyncGenerator(
+    "fetch", "Result", relay_JSON_ColumnMajorArrayArray_fetch_asyncGenerator,
+    Recyclable.Root ) {
 
   /**
-   * Used as default GSheet.GVizTQ.UrlComposer provider for conforming to Recyclable interface.
+   * Used as default GSheet.GVizTQ.UrlComposer provider for conforming to
+   * Recyclable interface.
    */
   static Pool = new Pool.Root( "GSheet.GVizTQ.UrlComposer.Pool",
     GVizTQ_UrlComposer, GVizTQ_UrlComposer.setAsConstructor );
@@ -229,7 +233,7 @@ class GVizTQ_UrlComposer extends Recyclable.Root {
    *       value: ( a two dimension (column-major) array ) } when successfully.
    *   - Yield a promise resolves to { done: true, value: null } when failed.
    */
-  async* JSON_ColumnMajorArrayArray_fetch_asyncGenerator(
+  static async* JSON_ColumnMajorArrayArray_fetch_asyncGenerator(
     progressParent, params_loading_retryWaiting ) {
 
 //!!! ...unfinished... (2023/03/11) What if re-entrtance?
@@ -455,3 +459,20 @@ GVizTQ_UrlComposer.GoogleVisualizationTableQueryUrlPostfix = "gviz/tq";
 
 /** The version of Google Visualization Table Query API. */
 GVizTQ_UrlComposer.GoogleVisualizationTableQueryAPIVersion = "0.7";
+
+
+/**
+ *
+ * @param {GVizTQ_UrlComposer} this
+ *
+ * @return {AsyncGenerator}
+ *   Return the newly created instance of GVizTQ_UrlComposer
+ * .JSON_ColumnMajorArrayArray_fetch_asyncGenerator().
+ */
+function relay_JSON_ColumnMajorArrayArray_fetch_asyncGenerator(
+  ...restArgs ) {
+
+  return GVizTQ_UrlComposer
+    .JSON_ColumnMajorArrayArray_fetch_asyncGenerator
+    .apply( this, restArgs )
+}

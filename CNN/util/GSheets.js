@@ -1,4 +1,6 @@
 export { GSheets_UrlComposer as UrlComposer };
+export * as GVizTQ from "./GSheet/GVizTQ.js";
+export * as GSheetsAPIv4 from "./GSheet/GSheetsAPIv4.js";
 
 import * as NonReentrant from "./NonReentrant.js";
 import * as GVizTQ from "./GSheet/GVizTQ.js";

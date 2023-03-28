@@ -89,10 +89,14 @@ import * as ValueMax from "../ValueMax.js";
  * @member {boolean} bAbort
  *   If true, it means .abort() is called.
  */
-class GSheetsAPIv4_UrlComposer extends Recyclable.Root {
+class GSheetsAPIv4_UrlComposer
+  extends NonReentrant.asyncPromise_by_asyncGenerator(
+    "fetch", "Result", relay_JSON_ColumnMajorArrayArray_fetch_asyncGenerator,
+    Recyclable.Root ) {
 
   /**
-   * Used as default GSheet.GSheetsAPIv4.UrlComposer provider for conforming to Recyclable interface.
+   * Used as default GSheet.GSheetsAPIv4.UrlComposer provider for conforming to
+   * Recyclable interface.
    */
   static Pool = new Pool.Root( "GSheet.GSheetsAPIv4.UrlComposer.Pool",
     GSheetsAPIv4_UrlComposer, GSheetsAPIv4_UrlComposer.setAsConstructor );
@@ -178,7 +182,7 @@ class GSheetsAPIv4_UrlComposer extends Recyclable.Root {
    *       value: ( a two dimension (column-major) array ) } when successfully.
    *   - Yield a promise resolves to { done: true, value: null } when failed.
    */
-  async* JSON_ColumnMajorArrayArray_fetch_asyncGenerator(
+  static async* JSON_ColumnMajorArrayArray_fetch_asyncGenerator(
     progressParent, params_loading_retryWaiting ) {
 
 //!!! ...unfinished... (2023/03/11) What if re-entrtance?
@@ -306,3 +310,20 @@ class GSheetsAPIv4_UrlComposer extends Recyclable.Root {
 /** The url prefix of Google Sheets API v4. */
 GSheetsAPIv4_UrlComposer.spreadsheetUrlPrefix
   = "https://sheets.googleapis.com/v4/spreadsheets";
+
+
+/**
+ *
+ * @param {GSheetsAPIv4_UrlComposer} this
+ *
+ * @return {AsyncGenerator}
+ *   Return the newly created instance of GSheetsAPIv4_UrlComposer
+ * .JSON_ColumnMajorArrayArray_fetch_asyncGenerator().
+ */
+function relay_JSON_ColumnMajorArrayArray_fetch_asyncGenerator(
+  ...restArgs ) {
+
+  return GSheetsAPIv4_UrlComposer
+    .JSON_ColumnMajorArrayArray_fetch_asyncGenerator
+    .apply( this, restArgs )
+}
