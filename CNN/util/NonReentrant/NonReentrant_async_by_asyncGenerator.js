@@ -30,7 +30,7 @@ import { asyncGenerator as NonReentrant_asyncGenerator }
  *
  * @param {string} name_prefix
  *   The prefix for all async operations and flags. (e.g. "init" or "fetch"
- * or "versus_load")
+ * or "workerProxies_init" or "versus_load" or "imageData_process")
  *
  * @param {AsyncGeneratorFunction} underlied_asyncGenerator_func
  *   A private property recording the function to create a underlied async

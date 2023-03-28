@@ -6,11 +6,7 @@ import * as Pool from "../Pool.js";
 //import * as ValueMax from "../ValueMax.js";
 
 
-!!! ...unfinished... (2023/03/27)
-// class ReentrancyPreventer_asyncGenerator
-// class ReentrancyPreventer_async
-// class ReentrancyPreventer_async_by_asyncGenerator
-//   (suggested) inherit from Recyclabe.Base
+// !!! ...unfinished... (2023/03/27)
 //
 // class NonReentrant_asyncGenerator
 // class NonReentrant_async_without_asyncGenerator
@@ -29,7 +25,19 @@ import * as Pool from "../Pool.js";
  *
  * @param {string} name_prefix
  *   The prefix for all async operations and flags. (e.g. "init" or "fetch"
- * or "versus_load")
+ * or "workerProxies_init" or "versus_load" or "imageData_process")
+ *
+ * @param {string} name_postfix_of_asyncResult 
+ *   The property name postfix for recording the .value of { done: true, value }
+ * of underlied_asyncGenerator_func.next(). For example,
+ *
+ *   - If ( name_prefix == "init" ) and ( name_postfix_of_asyncResult == "Ok" ),
+ *       the property name of result will be "initOk".
+ *
+ *   - If ( name_prefix == "imageData_process" ) and
+ *       ( name_postfix_of_asyncResult == "_result_float32ArrayArray" ), the
+ *       property name of result will be
+ *       "imageData_process_result_float32ArrayArray".
  *
  * @param {AsyncGeneratorFunction} underlied_asyncGenerator_func
  *   A private property recording the function to create a underlied async
@@ -39,7 +47,8 @@ import * as Pool from "../Pool.js";
  *   - Its 1st parameter must be progressParent (ValueMax.Percentage.Aggregate).
  */
 function NonReentrant_asyncGenerator(
-  name_prefix, underlied_asyncGenerator_func, ParentClass = Object ) {
+  name_prefix, name_postfix_of_asyncResult, underlied_asyncGenerator_func,
+  ParentClass = Object ) {
 
 //!!! (2023/03/25) seems not necessary to keep it as a member.
 //   const name_of_underlied_asyncGenerator_func
@@ -63,6 +72,9 @@ function NonReentrant_asyncGenerator(
   const name_of_asyncGenerator_running
     = `${name_prefix}_asyncGenerator_running`;
 
+  const name_of_asyncResult
+    = `${name_prefix}${name_postfix_of_asyncResult}`;
+
 
   const name_of_asyncGenerator_create
     = `${name_prefix}_asyncGenerator_create`;
@@ -73,8 +85,13 @@ function NonReentrant_asyncGenerator(
   const name_of_asyncGenerator_guarded
     = `${name_prefix}_asyncGenerator_guarded`;
 
+
   const name_of_throw_if_asyncPromise_or_asyncGenerator_running
-    = `${name_prefix}_throw_if_asyncPromise_or_asyncGenerator_running`;
+    = `throw_if_${name_prefix}_asyncPromise_or_asyncGenerator_running`;
+
+  const name_of_throw_if_not_asyncResult
+    = `throw_if_not_${name_of_asyncResult}`;
+
 
   return (
 
@@ -96,17 +113,16 @@ function NonReentrant_asyncGenerator(
    * @member {boolean} Xxx_asyncGenerator_running
    *   If true, a underlied async generator (i.e. .Xxx_asyncGenerator_guarded())
    * is still executing. Please wait it becoming false if wanting to call
-   * .Xxx_asyncGenerator_create() again. The Xxx is name_prefix.
+   * .Xxx_asyncGenerator_create() again. The Xxx is name_prefix (e.g. "init").
    *
-
-!!! ...unfinished... (2023/03/26)
-// .XxxOk = undefined;
-   * @member {boolean} XxxOk
-   *   A boolean flag representing whether underlied_asyncGenerator_func() is
-   *     failed (false) or succeeded (true).
+   * @member {any} XxxYyy
+   *   A property recording the result of underlied_asyncGenerator_func().
+   *   - The Xxx is name_prefix (e.g. "init").
+   *   - The Yyy is name_postfix_of_asyncResult (e.g. "Ok").
    *   - The .Xxx_asyncGenerator_create_without_checking_precondition() will
-   *       clear .XxxOk to undefined.
-   *   - The underlied_asyncGenerator_func() should set .XxxOk to false or true.
+   *       clear this.XxxYyy (e.g. this.initOk) to undefined.
+   *   - The underlied_asyncGenerator_func() should set this.XxxYyy (e.g.
+   *       this.initOk) to the .value when { done: true, value }.
 
    * @member {Function} Xxx_asyncGenerator_create
    *   A method for creating the underlied async generator.
@@ -117,15 +133,14 @@ function NonReentrant_asyncGenerator(
    * @member {Function} Xxx_asyncGenerator_create_without_checking_precondition
    *   An internal static method called by .Xxx_asyncGenerator_create(). 
    *
-   * @member {Function} Xxx_throw_if_asyncPromise_or_asyncGenerator_running
+   * @member {Function} throw_if_Xxx_asyncPromise_or_asyncGenerator_running
    *   A static method for throwing excption if .Xxx_asyncPromise_running or
    * .Xxx_asyncGenerator_running is true.
    *
-
-!!! ...unfinished... (2023/03/26)
-// need static throw_if_not_XxxOk()
-   * @member {Function} throw_if_not_XxxOk
- 
+   * @member {Function} [ throw_if_not_XxxYyy ]
+   *   A static method for throwing excption if ( !this.XxxYyy ) is true. That
+   * is, if this.XxxYyy is either undefined or null or false or 0, throw
+   * exception.
    */
   class NonReentrant_asyncGenerator extends ParentClass {
 
@@ -248,13 +263,8 @@ function NonReentrant_asyncGenerator(
     static [ name_of_asyncGenerator_create_without_checking_precondition ](
       ...restArgs ) {
 
-
       this.#asyncGenerator_running = true;
-
-!!! ...unfinished... (2023/03/26)
-// need clear .XxxOk flag to undefined here.
-// e.g. this.initOk = undefined;
-
+      this[ name_of_asyncResult ] = undefined;
 
       let asyncGenerator = NonReentrant_asyncGenerator
         [ name_of_asyncGenerator_guarded ].apply( this, restArgs );
@@ -329,7 +339,6 @@ function NonReentrant_asyncGenerator(
      * @param {string} funcNameInMessage   The caller function name. (e.g. init_async)
      */
     static throw_if_an_old_still_running( b_still_running, funcNameInMessage ) {
-
       const mostDerivedClassName
         = ClassHierarchyTools.MostDerived_ClassName_of_Instance( this );
 
@@ -356,19 +365,20 @@ function NonReentrant_asyncGenerator(
           + `Please call .${funcNameShouldBeCalledInMessage}() instead.` );
     }
 
-
-!!! ...unfinished... (2023/03/26)
-// need static [ `throw_if_not_${name_of_asyncResult}` ]()
-
     /**
-     * @param {NeuralOrchestra_Base} this
+     * @param {NonReentrant_asyncGenerator} this
      * @param {string} funcNameInMessage   The caller function name. (e.g. init_async)
      */
-    static throw_if_not_versus_loadOk( funcNameInMessage ) {
-      if ( !this.versus_loadOk )
-        throw Error( `NeuralOrchestra.Base.${funcNameInMessage}(): `
+    static [ name_of_throw_if_not_asyncResult ]( funcNameInMessage ) {
+      const mostDerivedClassName
+        = ClassHierarchyTools.MostDerived_ClassName_of_Instance( this );
+
+      if ( !this[ name_of_asyncResult ] )
+        throw Error( `${mostDerivedClassName}.${funcNameInMessage}(): `
           + `should be executed only if `
-          + `this.versus_loadOk ( ${this.versus_loadOk} ) is true.` );
+          + `this.${name_of_asyncResult} ( ${this[ name_of_asyncResult ]} ) `
+          + `is truthy (i.e. not undefined, not null, not false, `
+          + `not 0, not Nan, not empty string "").` );
     }
 
   } );
