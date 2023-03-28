@@ -559,7 +559,7 @@ class TestCase {
       ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
 
     // Without API key.
-    let urlComposer1 = GSheets.UrlComposer.Pool.get_or_create_by(
+    let urlComposer1 = GSheets.UrlComposer_Pool_get_or_create_by(
       spreadsheetId, range );
 
     if ( this.spreadsheetUrlPrefix )
@@ -569,7 +569,7 @@ class TestCase {
     let result1 = yield* this.urlComposer_fetcher( urlComposer1, progress1 );
 
     // With API key.
-    let urlComposer2 = GSheets.UrlComposer.Pool.get_or_create_by(
+    let urlComposer2 = GSheets.UrlComposer_Pool_get_or_create_by(
       spreadsheetId, range, apiKey );
 
     if ( this.spreadsheetUrlPrefix )
