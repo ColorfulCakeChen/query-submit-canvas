@@ -232,7 +232,7 @@ class TestCase {
 
   /**
    * Check: For a new urlComposer, all properties (except .spreadsheetId,
-   * .range, .apiKey) should be undefined.
+   * .range, .apiKey, .headers) should be undefined.
    */
   urlComposer_properties_undefined( urlComposer, funcNameInMessage ) {
     for ( let p in urlComposer ) {
@@ -241,6 +241,7 @@ class TestCase {
         if (   ( p != "spreadsheetId" )
             && ( p != "range" )
             && ( p != "apiKey" )
+            && ( p != "headers" )
            )
         throw Error( `GSheets_tester.TestCase`
           + `.${funcNameInMessage}(): testCaseId=${this.testCaseId}, `
