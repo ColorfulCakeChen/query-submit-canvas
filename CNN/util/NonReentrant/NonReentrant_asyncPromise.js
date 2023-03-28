@@ -1,22 +1,9 @@
-export { NonReentrant_asyncGenerator as asyncGenerator };
+export { NonReentrant_asyncPromise as asyncPromise };
 
 import * as ClassHierarchyTools from "../ClassHierarchyTools.js";
 
-
-// !!! ...unfinished... (2023/03/27)
-//
-// class NonReentrant_asyncGenerator
-// class NonReentrant_async_without_asyncGenerator
-// class NonReentrant_async_by_asyncGenerator (suggested) inherit from Recyclabe.Base
-
-
-//!!! ...unfinished... (2023/03/27)
-// Add parameter:
-//   - name_of_asyncResult (e.g. initOk, float32ArrayArray, versus_loadOk, ...)
-
-
 /**
- * Return a wrapper class for preventing an underlied async generator from
+ * Return a wrapper class for preventing an underlied async function from
  * being reentered.
  *
  *
@@ -25,8 +12,8 @@ import * as ClassHierarchyTools from "../ClassHierarchyTools.js";
  * or "workerProxies_init" or "versus_load" or "imageData_process")
  *
  * @param {string} name_postfix_of_asyncResult 
- *   The property name postfix for recording the .value of { done: true, value }
- * of underlied_asyncGenerator_func.next(). For example,
+ *   The property name postfix for recording the awaited value of
+ * underlied_asyncPromise_func(). For example,
  *
  *   - If ( name_prefix == "init" ) and ( name_postfix_of_asyncResult == "Ok" ),
  *       the property name of result will be "initOk".
@@ -36,55 +23,34 @@ import * as ClassHierarchyTools from "../ClassHierarchyTools.js";
  *       property name of result will be
  *       "imageData_process_result_float32ArrayArray".
  *
- * @param {AsyncGeneratorFunction} underlied_asyncGenerator_func
- *   A function for creating an underlied async generator which wants to be
- * guarded by the .Xxx_asyncGenerator_running boolean flag.
+ * @param {AsyncFunction} underlied_asyncPromise_func
+ *   A function for creating an underlied async function which wants to be
+ * guarded by the .Xxx_asyncPromise_running boolean flag.
  *   - It will be called with thisArg as "this".
- *   - Its 1st parameter must be progressParent (an instance of
- *       ValueMax.Percentage.Aggregate).
  */
-function NonReentrant_asyncGenerator(
-  name_prefix, name_postfix_of_asyncResult, underlied_asyncGenerator_func,
+function NonReentrant_asyncPromise(
+  name_prefix, name_postfix_of_asyncResult, underlied_asyncPromise_func,
   ParentClass = Object ) {
 
-//!!! (2023/03/25) seems not necessary to keep it as a member.
-//   const name_of_underlied_asyncGenerator_func
-//     = `${name_prefix}_underlied_asyncGenerator_func`;
-
-  /** Note:
-   *
-   * Although the property .Xxx_asyncPromise_running and
-   * .Xxx_asyncPromise_create() will not be created by this NonReentrant_asyncGenerator
-   * class (they will be created by sub-class AsyncGuarder_RecyclableBase),
-   * however, this class will try to check these properties. So, their names
-   * should still be prepared.
-   */
   const name_of_asyncPromise_running
     = `${name_prefix}_asyncPromise_running`;
-
-  const name_of_asyncPromise_create
-    = `${name_prefix}_asyncPromise_create`;
-
-
-  const name_of_asyncGenerator_running
-    = `${name_prefix}_asyncGenerator_running`;
 
   const name_of_asyncResult
     = `${name_prefix}${name_postfix_of_asyncResult}`;
 
 
-  const name_of_asyncGenerator_create
-    = `${name_prefix}_asyncGenerator_create`;
+  const name_of_asyncPromise_create
+    = `${name_prefix}_asyncPromise_create`;
 
-  const name_of_asyncGenerator_create_without_checking_precondition
-    = `${name_prefix}_asyncGenerator_create_without_checking_precondition`;
+  const name_of_asyncPromise_create_without_checking_precondition
+    = `${name_prefix}_asyncPromise_create_without_checking_precondition`;
 
-  const name_of_asyncGenerator_guarded
-    = `${name_prefix}_asyncGenerator_guarded`;
+  const name_of_asyncPromise_guarded
+    = `${name_prefix}_asyncPromise_guarded`;
 
-
-  const name_of_throw_if_asyncPromise_or_asyncGenerator_running
-    = `throw_if_${name_prefix}_asyncPromise_or_asyncGenerator_running`;
+//!!!
+  const name_of_throw_if_asyncPromise_running
+    = `throw_if_${name_prefix}_asyncPromise_running`;
 
   const name_of_throw_if_not_asyncResult
     = `throw_if_not_${name_of_asyncResult}`;
@@ -93,53 +59,43 @@ function NonReentrant_asyncGenerator(
   return (
 
   /**
-   * A wrapper class for preventing an underlied async generator from being
+   * A wrapper class for preventing an underlied async function from being
    * reentered. (Reentrancy Preventer)
    *
    *
-
-//!!! (2023/03/25) seems not necessary to keep it as a member.
-//    * @member {AsyncGeneratorFunction} Xxx_underlied_asyncGenerator_func
-//    *   A private property recording the function to create a underlied async
-//    * generator which wants to be guarded by the .Xxx_asyncGenerator_running
-//    * boolean flag.
-//    *   - It will be called with thisArg as "this".
-//    *   - Its 1st parameter must be progressParent (ValueMax.Percentage.Aggregate).
-
-   *
-   * @member {boolean} Xxx_asyncGenerator_running
-   *   If true, a underlied async generator (i.e. .Xxx_asyncGenerator_guarded())
+   * @member {boolean} Xxx_asyncPromise_running
+   *   If true, a underlied async function (i.e. .Xxx_asyncPromise_guarded())
    * is still executing. Please wait it becoming false if wanting to call
-   * .Xxx_asyncGenerator_create() again. The Xxx is name_prefix (e.g. "init").
+   * .Xxx_asyncPromise_create() again. The Xxx is name_prefix (e.g. "init").
    *
    * @member {any} XxxYyy
-   *   A property recording the result of underlied_asyncGenerator_func().
+   *   A property recording the result of underlied_asyncPromise_func().
    *   - The Xxx is name_prefix (e.g. "init").
    *   - The Yyy is name_postfix_of_asyncResult (e.g. "Ok").
-   *   - The .Xxx_asyncGenerator_create_without_checking_precondition() will
+   *   - The .Xxx_asyncPromise_create_without_checking_precondition() will
    *       clear this.XxxYyy (e.g. this.initOk) to undefined.
-   *   - The underlied_asyncGenerator_func() should set this.XxxYyy (e.g.
-   *       this.initOk) to the .value when { done: true, value }.
+   *   - The underlied_asyncPromise_func() should set this.XxxYyy (e.g.
+   *       this.initOk) to the result value.
 
-   * @member {Function} Xxx_asyncGenerator_create
-   *   A method for creating the underlied async generator.
+   * @member {Function} Xxx_asyncPromise_create
+   *   A method for creating the underlied async function.
    *   - If an old instance is still executing, it will throw exception.
-   *   - It accepts the same parameters as underlied_asyncGenerator_func().
-   *   - It returns an async generator.
+   *   - It accepts the same parameters as underlied_asyncPromise_func().
+   *   - It returns a promise.
    *
-   * @member {Function} Xxx_asyncGenerator_create_without_checking_precondition
-   *   An internal static method called by .Xxx_asyncGenerator_create(). 
+   * @member {Function} Xxx_asyncPromise_create_without_checking_precondition
+   *   An internal static method called by .Xxx_asyncPromise_create(). 
    *
-   * @member {Function} throw_if_Xxx_asyncPromise_or_asyncGenerator_running
-   *   A static method for throwing excption if .Xxx_asyncPromise_running or
-   * .Xxx_asyncGenerator_running is true.
+   * @member {Function} throw_if_Xxx_asyncPromise_running
+   *   A static method for throwing excption if .Xxx_asyncPromise_running is
+   * true.
    *
    * @member {Function} [ throw_if_not_XxxYyy ]
    *   A static method for throwing excption if ( !this.XxxYyy ) is true. That
    * is, if this.XxxYyy is either undefined or null or false or 0 or NaN or
    * empty string "", throw exception.
    */
-  class NonReentrant_asyncGenerator extends ParentClass {
+  class NonReentrant_asyncPromise extends ParentClass {
 
     #asyncGenerator_running;
 
@@ -152,13 +108,13 @@ function NonReentrant_asyncGenerator(
      */
     constructor( ...restArgs ) {
       super( ...restArgs );
-      NonReentrant_asyncGenerator.setAsConstructor_self.call( this );
+      NonReentrant_asyncPromise.setAsConstructor_self.call( this );
     }
 
     /** @override */
     static setAsConstructor( ...restArgs ) {
       super.setAsConstructor.apply( this, restArgs );
-      NonReentrant_asyncGenerator.setAsConstructor_self.call( this );
+      NonReentrant_asyncPromise.setAsConstructor_self.call( this );
       return this;
     }
 
@@ -170,7 +126,7 @@ function NonReentrant_asyncGenerator(
         // Xxx_asyncGenerator_running
         Reflect.defineProperty( this,
           name_of_asyncGenerator_running,
-          NonReentrant_asyncGenerator.propertyDescriptor_of_asyncGenerator_running );
+          NonReentrant_asyncPromise.propertyDescriptor_of_asyncGenerator_running );
       }
 
 //!!! (2023/03/24 Remarked) Replaced by computed property names.
@@ -187,7 +143,7 @@ function NonReentrant_asyncGenerator(
 //         // Xxx_asyncGenerator_create()
 //         Reflect.defineProperty( this.constructor.prototype,
 //           this.#name_of_asyncGenerator_create,
-//           NonReentrant_asyncGenerator
+//           NonReentrant_asyncPromise
 //             .propertyDescriptor_of_asyncGenerator_create );
 //       }
 //
@@ -196,7 +152,7 @@ function NonReentrant_asyncGenerator(
 //         // Xxx_throw_if_asyncPromise_or_asyncGenerator_running()
 //         Reflect.defineProperty( this.constructor,
 //           this.#name_of_throw_if_asyncPromise_or_asyncGenerator_running,
-//           NonReentrant_asyncGenerator
+//           NonReentrant_asyncPromise
 //             .propertyDescriptor_of_throw_if_asyncPromise_or_asyncGenerator_running );
 //       }
     }
@@ -234,15 +190,15 @@ function NonReentrant_asyncGenerator(
       { // Checking pre-condition.
         const funcNameInMessage = name_of_asyncGenerator_create;
 
-        NonReentrant_asyncGenerator.throw_if_an_old_still_running.call( this,
+        NonReentrant_asyncPromise.throw_if_an_old_still_running.call( this,
           this.#asyncGenerator_running, funcNameInMessage );
 
-        NonReentrant_asyncGenerator
+        NonReentrant_asyncPromise
           [ name_of_throw_if_asyncPromise_or_asyncGenerator_running ]
           .call( this, funcNameInMessage );
       }
 
-      let asyncGenerator = NonReentrant_asyncGenerator
+      let asyncGenerator = NonReentrant_asyncPromise
         [ name_of_asyncGenerator_create_without_checking_precondition ]
         .apply( this, restArgs );
       return asyncGenerator;
@@ -250,7 +206,7 @@ function NonReentrant_asyncGenerator(
 
     /**
      *
-     * @param {NonReentrant_asyncGenerator} this
+     * @param {NonReentrant_asyncPromise} this
      *
      * @return {AsyncGenerator}
      *   Return the newly created instance of .guarded_underlined_asyncGenerator().
@@ -261,7 +217,7 @@ function NonReentrant_asyncGenerator(
       this.#asyncGenerator_running = true;
       this[ name_of_asyncResult ] = undefined;
 
-      let asyncGenerator = NonReentrant_asyncGenerator
+      let asyncGenerator = NonReentrant_asyncPromise
         [ name_of_asyncGenerator_guarded ].apply( this, restArgs );
       return asyncGenerator;
     }
@@ -269,14 +225,14 @@ function NonReentrant_asyncGenerator(
     /**
      * The guarded underlied async generator.
      *
-     * @param {NonReentrant_asyncGenerator} this
+     * @param {NonReentrant_asyncPromise} this
      */
     static async* [ name_of_asyncGenerator_guarded ]( ...restArgs ) {
 
       { // Checking pre-condition.
         const funcNameInMessage = name_of_asyncGenerator_guarded;
 
-        NonReentrant_asyncGenerator.throw_call_another_if_false.call( this,
+        NonReentrant_asyncPromise.throw_call_another_if_false.call( this,
           this.#asyncGenerator_running, funcNameInMessage,
           name_of_asyncGenerator_create );
       }
@@ -285,7 +241,7 @@ function NonReentrant_asyncGenerator(
         // 1.
 
 //!!! (2023/03/25) seems not necessary to keep it as a member.
-//         let underlied_asyncGenerator = NonReentrant_asyncGenerator
+//         let underlied_asyncGenerator = NonReentrant_asyncPromise
 //           [ name_of_underlied_asyncGenerator_func ].apply( this, restArgs );
 
         let underlied_asyncGenerator
@@ -306,7 +262,7 @@ function NonReentrant_asyncGenerator(
 
 
     /**
-     * @param {NonReentrant_asyncGenerator} this
+     * @param {NonReentrant_asyncPromise} this
      * @param {string} funcNameInMessage   The caller function name. (e.g. init_async)
      */
     static [ name_of_throw_if_asyncPromise_or_asyncGenerator_running ](
@@ -329,7 +285,7 @@ function NonReentrant_asyncGenerator(
     }
 
     /**
-     * @param {NonReentrant_asyncGenerator} this
+     * @param {NonReentrant_asyncPromise} this
      * @param {boolean} b_still_running    If true, throw exception.
      * @param {string} funcNameInMessage   The caller function name. (e.g. init_async)
      */
@@ -343,7 +299,7 @@ function NonReentrant_asyncGenerator(
     }
 
     /**
-     * @param {NonReentrant_asyncGenerator} this
+     * @param {NonReentrant_asyncPromise} this
      * @param {boolean} b                  If false, throw exception.
      * @param {string} funcNameInMessage   The caller function name. (e.g. init_async)
      * @param {string} funcNameShouldBeCalledInMessage
@@ -361,7 +317,7 @@ function NonReentrant_asyncGenerator(
     }
 
     /**
-     * @param {NonReentrant_asyncGenerator} this
+     * @param {NonReentrant_asyncPromise} this
      * @param {string} funcNameInMessage   The caller function name. (e.g. init_async)
      */
     static [ name_of_throw_if_not_asyncResult ]( funcNameInMessage ) {

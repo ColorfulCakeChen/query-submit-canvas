@@ -1,4 +1,5 @@
-export { NonReentrant_async_by_asyncGenerator as async_by_asyncGenerator };
+export { NonReentrant_asyncPromise_by_asyncGenerator
+  as asyncPromise_by_asyncGenerator };
 
 import * as Pool from "../Pool.js";
 import * as Recyclable from "../Recyclable.js";
@@ -49,13 +50,13 @@ import { asyncGenerator as NonReentrant_asyncGenerator }
  *       "imageData_process_result_float32ArrayArray".
  *
  * @param {AsyncGeneratorFunction} underlied_asyncGenerator_func
- *   A function for creating a underlied async generator which wants to be
+ *   A function for creating an underlied async generator which wants to be
  * guarded by the .Xxx_asyncGenerator_running boolean flag.
  *   - It will be called with thisArg as "this".
  *   - Its 1st parameter must be progressParent (an instance of
  *       ValueMax.Percentage.Aggregate).
  */
-function NonReentrant_async_by_asyncGenerator(
+function NonReentrant_asyncPromise_by_asyncGenerator(
   name_prefix, name_postfix_of_asyncResult, underlied_asyncGenerator_func,
   ParentClass = Object ) {
 
@@ -85,7 +86,7 @@ function NonReentrant_async_by_asyncGenerator(
 
   // These static methods are defined in parent class (i.e.
   // NonReentrant_asyncGenerator), however, they will be called by this
-  // sub-class (i.e. NonReentrant_async_by_asyncGenerator). So, their names
+  // sub-class (i.e. NonReentrant_asyncPromise_by_asyncGenerator). So, their names
   // should still be prepared here.
 
   const name_of_asyncGenerator_create_without_checking_precondition
@@ -131,18 +132,18 @@ function NonReentrant_async_by_asyncGenerator(
    *   - It is not used if .Xxx_asyncGenerator_create() is called. In this case,
    *       its progressParent parameter will be used instead.
    */
-  class NonReentrant_async_by_asyncGenerator
+  class NonReentrant_asyncPromise_by_asyncGenerator
     extends NonReentrant_asyncGenerator(
       name_prefix, name_postfix_of_asyncResult, underlied_asyncGenerator_func,
       ParentClass ) {
 
     /**
-     * Used as default NonReentrant.async_by_asyncGenerator provider for
+     * Used as default NonReentrant.asyncPromise_by_asyncGenerator provider for
      * conforming to Recyclable interface.
      */
-    static Pool = new Pool.Root( "NonReentrant.async_by_asyncGenerator.Pool",
-      NonReentrant_async_by_asyncGenerator,
-      NonReentrant_async_by_asyncGenerator.setAsConstructor );
+    static Pool = new Pool.Root( "NonReentrant.asyncPromise_by_asyncGenerator.Pool",
+      NonReentrant_asyncPromise_by_asyncGenerator,
+      NonReentrant_asyncPromise_by_asyncGenerator.setAsConstructor );
 
 
     #asyncPromise_running;
@@ -154,13 +155,13 @@ function NonReentrant_async_by_asyncGenerator(
      */
     constructor( ...restArgs ) {
       super( ...restArgs );
-      NonReentrant_async_by_asyncGenerator.setAsConstructor_self.call( this );
+      NonReentrant_asyncPromise_by_asyncGenerator.setAsConstructor_self.call( this );
     }
 
     /** @override */
     static setAsConstructor( ...restArgs ) {
       super.setAsConstructor.apply( this, restArgs );
-      NonReentrant_async_by_asyncGenerator.setAsConstructor_self.call( this );
+      NonReentrant_asyncPromise_by_asyncGenerator.setAsConstructor_self.call( this );
       return this;
     }
 
@@ -172,13 +173,13 @@ function NonReentrant_async_by_asyncGenerator(
         // Xxx_asyncPromise_running
         Reflect.defineProperty( this,
           name_of_asyncPromise_running,
-          NonReentrant_async_by_asyncGenerator
+          NonReentrant_asyncPromise_by_asyncGenerator
             .propertyDescriptor_of_asyncPromise_running );
 
         // Xxx_asyncPromise_progress
         Reflect.defineProperty( this,
           name_of_asyncPromise_progress,
-          NonReentrant_async_by_asyncGenerator
+          NonReentrant_asyncPromise_by_asyncGenerator
             .propertyDescriptor_of_asyncPromise_progress );
       }
     }
@@ -189,7 +190,7 @@ function NonReentrant_async_by_asyncGenerator(
       Reflect.deleteProperty( this, name_of_asyncPromise_progress );
       Reflect.deleteProperty( this, name_of_asyncPromise_running );
 
-      NonReentrant_async_by_asyncGenerator
+      NonReentrant_asyncPromise_by_asyncGenerator
         [ name_of_asyncPromise_progress_dispose ].call( this );
 
       this.#asyncPromise_running = undefined;
@@ -214,17 +215,17 @@ function NonReentrant_async_by_asyncGenerator(
       { get() { return this.#asyncPromise_progress; }, enumerable: true };
 
     /**
-     * @param {NonReentrant_async_by_asyncGenerator} this
+     * @param {NonReentrant_asyncPromise_by_asyncGenerator} this
      */
     static [ name_of_asyncPromise_progress_create ]() {
-      NonReentrant_async_by_asyncGenerator
+      NonReentrant_asyncPromise_by_asyncGenerator
         [ name_of_asyncPromise_progress_dispose ].call( this );
       this.#asyncPromise_progress
         = ValueMax.Percentage.Aggregate.Pool.get_or_create_by();
     }
 
     /**
-     * @param {NonReentrant_async_by_asyncGenerator} this
+     * @param {NonReentrant_asyncPromise_by_asyncGenerator} this
      */
     static [ name_of_asyncPromise_progress_dispose ]() {
       if ( this.#asyncPromise_progress ) {
@@ -251,10 +252,10 @@ function NonReentrant_async_by_asyncGenerator(
       { // Checking pre-condition.
         const funcNameInMessage = name_of_asyncPromise_create;
 
-        NonReentrant_async_by_asyncGenerator.throw_if_an_old_still_running
+        NonReentrant_asyncPromise_by_asyncGenerator.throw_if_an_old_still_running
           .call( this, this.#asyncPromise_running, funcNameInMessage );
 
-        NonReentrant_async_by_asyncGenerator
+        NonReentrant_asyncPromise_by_asyncGenerator
           [ name_of_throw_if_asyncPromise_or_asyncGenerator_running ]
           .call( this, funcNameInMessage );
       }
@@ -263,18 +264,18 @@ function NonReentrant_async_by_asyncGenerator(
       let asyncGenerator;
       {
         // Use internal independent progress.
-        NonReentrant_async_by_asyncGenerator
+        NonReentrant_asyncPromise_by_asyncGenerator
           [ name_of_asyncPromise_progress_create ]
           .call( this );
 
         // Prepare asyncGenerator
-        asyncGenerator = NonReentrant_async_by_asyncGenerator
+        asyncGenerator = NonReentrant_asyncPromise_by_asyncGenerator
           [ name_of_asyncGenerator_create_without_checking_precondition ]
           .call( this, this.#asyncPromise_progress, ...restArgs );
       }
 
       // 2.
-      let asyncPromise = NonReentrant_async_by_asyncGenerator
+      let asyncPromise = NonReentrant_asyncPromise_by_asyncGenerator
         [ name_of_asyncPromise_create_without_checking_precondition ]
         .call( this, asyncGenerator );
       return asyncPromise;
@@ -282,7 +283,7 @@ function NonReentrant_async_by_asyncGenerator(
 
     /**
      *
-     * @param {NonReentrant_async_by_asyncGenerator} this
+     * @param {NonReentrant_asyncPromise_by_asyncGenerator} this
      *
      * @param {AsyncGenerator} asyncGenerator
      *   The async generator (an instance of
@@ -296,7 +297,7 @@ function NonReentrant_async_by_asyncGenerator(
       asyncGenerator ) {
 
       this.#asyncPromise_running = true;
-      let asyncPromise = NonReentrant_async_by_asyncGenerator
+      let asyncPromise = NonReentrant_asyncPromise_by_asyncGenerator
         [ name_of_asyncPromise_guarded ].call( this, asyncGenerator );
       return asyncPromise;
     }
@@ -304,7 +305,7 @@ function NonReentrant_async_by_asyncGenerator(
     /**
      * The guarded async method for looping the underlied async generator.
      *
-     * @param {NonReentrant_async_by_asyncGenerator} this
+     * @param {NonReentrant_asyncPromise_by_asyncGenerator} this
      *
      * @param {AsyncGenerator} asyncGenerator
      *   The async generator (an instance of
@@ -322,7 +323,7 @@ function NonReentrant_async_by_asyncGenerator(
       { // Checking pre-condition.
         const funcNameInMessage = name_of_asyncPromise_guarded;
 
-        NonReentrant_async_by_asyncGenerator.throw_call_another_if_false.call(
+        NonReentrant_asyncPromise_by_asyncGenerator.throw_call_another_if_false.call(
           this,
           this.#asyncPromise_running, funcNameInMessage,
           name_of_asyncPromise_create );
