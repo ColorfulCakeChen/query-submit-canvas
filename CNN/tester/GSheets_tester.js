@@ -563,7 +563,7 @@ class TestCase {
       spreadsheetId, range );
 
     if ( this.spreadsheetUrlPrefix )
-      urlComposer1.urlComposer.spreadsheetUrlPrefix = this.spreadsheetUrlPrefix;
+      urlComposer1.spreadsheetUrlPrefix = this.spreadsheetUrlPrefix;
 
     urlComposer1.bLogFetcherEventToConsole = bLogFetcherEventToConsole;
     let result1 = yield* this.urlComposer_fetcher( urlComposer1, progress1 );
@@ -573,7 +573,7 @@ class TestCase {
       spreadsheetId, range, apiKey );
 
     if ( this.spreadsheetUrlPrefix )
-      urlComposer2.urlComposer.spreadsheetUrlPrefix = this.spreadsheetUrlPrefix;
+      urlComposer2.spreadsheetUrlPrefix = this.spreadsheetUrlPrefix;
 
     urlComposer2.bLogFetcherEventToConsole = bLogFetcherEventToConsole;
     let result2 = yield* this.urlComposer_fetcher( urlComposer2, progress2 );
