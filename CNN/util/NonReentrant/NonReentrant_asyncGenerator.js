@@ -1,4 +1,4 @@
-export { AsyncGuarder_Base as Base };
+export { NonReentrant_asyncGenerator as asyncGenerator };
 
 import * as ClassHierarchyTools from "../ClassHierarchyTools.js";
 import * as Pool from "../Pool.js";
@@ -12,9 +12,9 @@ import * as Pool from "../Pool.js";
 // class ReentrancyPreventer_async_by_asyncGenerator
 //   (suggested) inherit from Recyclabe.Base
 //
-// class NotReentrant_asyncGenerator
-// class NotReentrant_async
-// class NotReentrant_async_by_asyncGenerator (suggested) inherit from Recyclabe.Base
+// class NonReentrant_asyncGenerator
+// class NonReentrant_async_without_asyncGenerator
+// class NonReentrant_async_by_asyncGenerator (suggested) inherit from Recyclabe.Base
 
 
 !!! ...unfinished... (2023/03/27)
@@ -38,7 +38,7 @@ import * as Pool from "../Pool.js";
  *   - It will be called with thisArg as "this".
  *   - Its 1st parameter must be progressParent (ValueMax.Percentage.Aggregate).
  */
-function AsyncGuarder_Base(
+function NonReentrant_asyncGenerator(
   name_prefix, underlied_asyncGenerator_func, ParentClass = Object ) {
 
 //!!! (2023/03/25) seems not necessary to keep it as a member.
@@ -48,7 +48,7 @@ function AsyncGuarder_Base(
   /** Note:
    *
    * Although the property .Xxx_asyncPromise_running and
-   * .Xxx_asyncPromise_create() will not be created by this AsyncGuarder_Base
+   * .Xxx_asyncPromise_create() will not be created by this NonReentrant_asyncGenerator
    * class (they will be created by sub-class AsyncGuarder_RecyclableBase),
    * however, this class will try to check these properties. So, their names
    * should still be prepared.
@@ -80,7 +80,7 @@ function AsyncGuarder_Base(
 
   /**
    * A wrapper class for preventing an underlied async generator from being
-   * reentered.
+   * reentered. (Reentrancy Preventer)
    *
    *
 
@@ -127,7 +127,7 @@ function AsyncGuarder_Base(
    * @member {Function} throw_if_not_XxxOk
  
    */
-  class AsyncGuarder_Base extends ParentClass {
+  class NonReentrant_asyncGenerator extends ParentClass {
 
     #asyncGenerator_running;
 
@@ -140,13 +140,13 @@ function AsyncGuarder_Base(
      */
     constructor( ...restArgs ) {
       super( ...restArgs );
-      AsyncGuarder_Base.setAsConstructor_self.call( this );
+      NonReentrant_asyncGenerator.setAsConstructor_self.call( this );
     }
 
     /** @override */
     static setAsConstructor( ...restArgs ) {
       super.setAsConstructor.apply( this, restArgs );
-      AsyncGuarder_Base.setAsConstructor_self.call( this );
+      NonReentrant_asyncGenerator.setAsConstructor_self.call( this );
       return this;
     }
 
@@ -158,7 +158,7 @@ function AsyncGuarder_Base(
         // Xxx_asyncGenerator_running
         Reflect.defineProperty( this,
           name_of_asyncGenerator_running,
-          AsyncGuarder_Base.propertyDescriptor_of_asyncGenerator_running );
+          NonReentrant_asyncGenerator.propertyDescriptor_of_asyncGenerator_running );
       }
 
 //!!! (2023/03/24 Remarked) Replaced by computed property names.
@@ -175,7 +175,7 @@ function AsyncGuarder_Base(
 //         // Xxx_asyncGenerator_create()
 //         Reflect.defineProperty( this.constructor.prototype,
 //           this.#name_of_asyncGenerator_create,
-//           AsyncGuarder_Base
+//           NonReentrant_asyncGenerator
 //             .propertyDescriptor_of_asyncGenerator_create );
 //       }
 //
@@ -184,7 +184,7 @@ function AsyncGuarder_Base(
 //         // Xxx_throw_if_asyncPromise_or_asyncGenerator_running()
 //         Reflect.defineProperty( this.constructor,
 //           this.#name_of_throw_if_asyncPromise_or_asyncGenerator_running,
-//           AsyncGuarder_Base
+//           NonReentrant_asyncGenerator
 //             .propertyDescriptor_of_throw_if_asyncPromise_or_asyncGenerator_running );
 //       }
     }
@@ -224,15 +224,15 @@ function AsyncGuarder_Base(
       { // Checking pre-condition.
         const funcNameInMessage = name_of_asyncGenerator_create;
 
-        AsyncGuarder_Base.throw_if_an_old_still_running.call( this,
+        NonReentrant_asyncGenerator.throw_if_an_old_still_running.call( this,
           this.#asyncGenerator_running, funcNameInMessage );
 
-        AsyncGuarder_Base
+        NonReentrant_asyncGenerator
           [ name_of_throw_if_asyncPromise_or_asyncGenerator_running ]
           .call( this, funcNameInMessage );
       }
 
-      let asyncGenerator = AsyncGuarder_Base
+      let asyncGenerator = NonReentrant_asyncGenerator
         [ name_of_asyncGenerator_create_without_checking_precondition ]
         .apply( this, restArgs );
       return asyncGenerator;
@@ -240,7 +240,7 @@ function AsyncGuarder_Base(
 
     /**
      *
-     * @param {AsyncGuarder_Base} this
+     * @param {NonReentrant_asyncGenerator} this
      *
      * @return {AsyncGenerator}
      *   Return the newly created instance of .guarded_underlined_asyncGenerator().
@@ -256,7 +256,7 @@ function AsyncGuarder_Base(
 // e.g. this.initOk = undefined;
 
 
-      let asyncGenerator = AsyncGuarder_Base
+      let asyncGenerator = NonReentrant_asyncGenerator
         [ name_of_asyncGenerator_guarded ].apply( this, restArgs );
       return asyncGenerator;
     }
@@ -264,14 +264,14 @@ function AsyncGuarder_Base(
     /**
      * The guarded underlied async generator.
      *
-     * @param {AsyncGuarder_Base} this
+     * @param {NonReentrant_asyncGenerator} this
      */
     static async* [ name_of_asyncGenerator_guarded ]( ...restArgs ) {
 
       { // Checking pre-condition.
         const funcNameInMessage = name_of_asyncGenerator_guarded;
 
-        AsyncGuarder_Base.throw_call_another_if_false.call( this,
+        NonReentrant_asyncGenerator.throw_call_another_if_false.call( this,
           this.#asyncGenerator_running, funcNameInMessage,
           name_of_asyncGenerator_create );
       }
@@ -280,7 +280,7 @@ function AsyncGuarder_Base(
         // 1.
 
 //!!! (2023/03/25) seems not necessary to keep it as a member.
-//         let underlied_asyncGenerator = AsyncGuarder_Base
+//         let underlied_asyncGenerator = NonReentrant_asyncGenerator
 //           [ name_of_underlied_asyncGenerator_func ].apply( this, restArgs );
 
         let underlied_asyncGenerator
@@ -301,7 +301,7 @@ function AsyncGuarder_Base(
 
 
     /**
-     * @param {AsyncGuarder_Base} this
+     * @param {NonReentrant_asyncGenerator} this
      * @param {string} funcNameInMessage   The caller function name. (e.g. init_async)
      */
     static [ name_of_throw_if_asyncPromise_or_asyncGenerator_running ](
@@ -324,7 +324,7 @@ function AsyncGuarder_Base(
     }
 
     /**
-     * @param {AsyncGuarder_Base} this
+     * @param {NonReentrant_asyncGenerator} this
      * @param {boolean} b_still_running    If true, throw exception.
      * @param {string} funcNameInMessage   The caller function name. (e.g. init_async)
      */
@@ -339,7 +339,7 @@ function AsyncGuarder_Base(
     }
 
     /**
-     * @param {AsyncGuarder_Base} this
+     * @param {NonReentrant_asyncGenerator} this
      * @param {boolean} b                  If false, throw exception.
      * @param {string} funcNameInMessage   The caller function name. (e.g. init_async)
      * @param {string} funcNameShouldBeCalledInMessage

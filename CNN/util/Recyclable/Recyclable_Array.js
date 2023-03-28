@@ -9,15 +9,18 @@ import { Base } from "./Recyclable_Base.js";
 class Recyclable_Array extends Base( Array ) {
 
   /**
-   * Used as default Recyclable.Array provider for conforming to Recyclable interface.
+   * Used as default Recyclable.Array provider for conforming to Recyclable
+   * interface.
    */
-  static Pool = new Pool.Root( "Recyclable.Array.Pool", Recyclable_Array, Recyclable_Array.setAsConstructor );
+  static Pool = new Pool.Root( "Recyclable.Array.Pool",
+    Recyclable_Array, Recyclable_Array.setAsConstructor );
 
   /**
    */
   constructor( ...restArgs ) {
     super( ...restArgs );
-    // (2022/06/27 Remarked) No need to call .setAsConstructor_self() because the constructor of parent class (i.e. Array) has already done it.
+    // (2022/06/27 Remarked) No need to call .setAsConstructor_self()
+    // because the constructor of parent class (i.e. Array) has already done it.
     //Recyclable_Array.setAsConstructor_self.call( this, ...restArgs );
   }
 
