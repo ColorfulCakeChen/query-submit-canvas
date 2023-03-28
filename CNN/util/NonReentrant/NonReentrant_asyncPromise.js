@@ -140,6 +140,9 @@ function NonReentrant_asyncPromise(
 
       Reflect.deleteProperty( this, name_of_asyncPromise_running );
 
+//!!! ...unfinished... (2023/03/28)
+// Whether should let this[ name_of_asyncResult ] be a private read-only property.
+
       this[ name_of_asyncResult ] = undefined;
       this.#asyncPromise_running = undefined;
 

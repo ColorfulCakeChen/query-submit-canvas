@@ -157,6 +157,9 @@ function NonReentrant_asyncGenerator(
 
       Reflect.deleteProperty( this, name_of_asyncGenerator_running );
 
+//!!! ...unfinished... (2023/03/28)
+// Whether should let this[ name_of_asyncResult ] be a private read-only property.
+
       this[ name_of_asyncResult ] = undefined;
       this.#asyncGenerator_running = undefined;
 
