@@ -1,6 +1,6 @@
 export { HttpRequest_Fetcher as Fetcher };
 
-import * as NonReentrant from "./NonReentrant.js";
+import * as NonReentrant from "../NonReentrant.js";
 import * as PartTime from "../PartTime.js";
 import * as RandTools from "../RandTools.js";
 import * as ValueMax from "../ValueMax.js";
