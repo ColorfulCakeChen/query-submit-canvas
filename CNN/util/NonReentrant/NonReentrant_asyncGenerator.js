@@ -224,10 +224,12 @@ function NonReentrant_asyncGenerator(
 
 
     /**
-     * Create Xxx_asyncGenerator (an instance of guarded underlied async generator).
+     * Create Xxx_asyncGenerator (an instance of guarded underlied async
+     * generator).
      *
      * @return {AsyncGenerator}
-     *   Return the newly created instance of .guarded_underlined_asyncGenerator().
+     *   Return the newly created instance of
+     * this[ name_of_asyncGenerator_guarded ]().
      */
     [ name_of_asyncGenerator_create ]( ...restArgs ) {
 
@@ -253,7 +255,8 @@ function NonReentrant_asyncGenerator(
      * @param {NonReentrant_asyncGenerator} this
      *
      * @return {AsyncGenerator}
-     *   Return the newly created instance of .guarded_underlined_asyncGenerator().
+     *   Return the newly created instance of
+     * this[ name_of_asyncGenerator_guarded ].
      */
     static [ name_of_asyncGenerator_create_without_checking_precondition ](
       ...restArgs ) {

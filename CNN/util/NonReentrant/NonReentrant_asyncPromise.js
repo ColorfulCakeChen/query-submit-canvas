@@ -149,18 +149,20 @@ function NonReentrant_asyncPromise(
 
 
     /**
-     * Create Xxx_asyncPromise (an instance of guarded underlied async function).
+     * Create Xxx_asyncPromise (an instance of guarded underlied async
+     * function).
      *
-     * @return {AsyncGenerator}
-     *   Return the newly created instance of .guarded_underlined_asyncGenerator().
+     * @return {AsyncFunction}
+     *   Return the newly created instance of
+     * this[ name_of_asyncPromise_guarded ]().
      */
-    [ name_of_asyncGenerator_create ]( ...restArgs ) {
+    [ name_of_asyncPromise_create ]( ...restArgs ) {
 
       { // Checking pre-condition.
-        const funcNameInMessage = name_of_asyncGenerator_create;
+        const funcNameInMessage = name_of_asyncPromise_create;
 
         NonReentrant_asyncPromise.throw_if_an_old_still_running.call( this,
-          this.#asyncGenerator_running, funcNameInMessage );
+          this.#asyncPromise_running, funcNameInMessage );
 
         NonReentrant_asyncPromise
           [ name_of_throw_if_asyncPromise_or_asyncGenerator_running ]
@@ -178,7 +180,8 @@ function NonReentrant_asyncPromise(
      * @param {NonReentrant_asyncPromise} this
      *
      * @return {AsyncGenerator}
-     *   Return the newly created instance of .guarded_underlined_asyncGenerator().
+     *   Return the newly created instance of
+     * this[ name_of_asyncPromise_guarded ]().
      */
     static [ name_of_asyncGenerator_create_without_checking_precondition ](
       ...restArgs ) {
@@ -196,7 +199,7 @@ function NonReentrant_asyncPromise(
      *
      * @param {NonReentrant_asyncPromise} this
      */
-    static async* [ name_of_asyncGenerator_guarded ]( ...restArgs ) {
+    static async* [ name_of_asyncPromise_guarded ]( ...restArgs ) {
 
       { // Checking pre-condition.
         const funcNameInMessage = name_of_asyncGenerator_guarded;
