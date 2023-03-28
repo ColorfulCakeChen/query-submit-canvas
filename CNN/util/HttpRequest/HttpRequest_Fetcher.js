@@ -85,6 +85,7 @@ class HttpRequest_Fetcher
    *
    */
   constructor( bLogEventToConsole ) {
+    super();
     this.bLogEventToConsole = bLogEventToConsole;
     this.allPromiseSet = new Set();
   }
