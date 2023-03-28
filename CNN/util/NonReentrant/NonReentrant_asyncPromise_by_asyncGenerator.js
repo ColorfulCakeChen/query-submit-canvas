@@ -168,7 +168,7 @@ function NonReentrant_asyncPromise_by_asyncGenerator(
     /** @override */
     static setAsConstructor_self() {
 
-      // Define read-only and enumerable instance (i.e. this.Xxx) properties.
+      // Define read-only and enumerable instance (i.e. this.Abc) properties.
       {
         // Xxx_asyncPromise_running
         Reflect.defineProperty( this,

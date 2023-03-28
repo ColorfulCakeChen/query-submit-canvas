@@ -99,10 +99,6 @@ function NonReentrant_asyncPromise(
 
     #asyncGenerator_running;
 
-//!!! (2023/03/25) seems not necessary to keep it as a member.
-//     static [ name_of_underlied_asyncGenerator_func ]
-//       = underlied_asyncGenerator_func;
-
     /**
      *
      */
@@ -121,49 +117,22 @@ function NonReentrant_asyncPromise(
     /** @override */
     static setAsConstructor_self() {
 
-      // Define read-only and enumerable instance (i.e. this.Xxx) properties.
+      // Define read-only and enumerable instance (i.e. this.Abc) properties.
       {
-        // Xxx_asyncGenerator_running
+        // Xxx_asyncPromise_running
         Reflect.defineProperty( this,
-          name_of_asyncGenerator_running,
-          NonReentrant_asyncPromise.propertyDescriptor_of_asyncGenerator_running );
+          name_of_asyncPromise_running,
+          NonReentrant_asyncPromise.propertyDescriptor_of_asyncPromise_running );
       }
-
-//!!! (2023/03/24 Remarked) Replaced by computed property names.
-//   !!! ...unfinished... (2023/03/22)
-//   // shared instance (i.e. this.constructor.prototype's) properties
-//   // static (i.e. this.constructor's) properties
-//   // should not defineProperty() by every instance.
-//   //
-//   // They should be defined as computed named property. 
-//
-//
-//       // Define shared instance (i.e. this.constructor.prototype's) properties.
-//       {
-//         // Xxx_asyncGenerator_create()
-//         Reflect.defineProperty( this.constructor.prototype,
-//           this.#name_of_asyncGenerator_create,
-//           NonReentrant_asyncPromise
-//             .propertyDescriptor_of_asyncGenerator_create );
-//       }
-//
-//       // Define static (i.e. this.constructor's) properties.
-//       {
-//         // Xxx_throw_if_asyncPromise_or_asyncGenerator_running()
-//         Reflect.defineProperty( this.constructor,
-//           this.#name_of_throw_if_asyncPromise_or_asyncGenerator_running,
-//           NonReentrant_asyncPromise
-//             .propertyDescriptor_of_throw_if_asyncPromise_or_asyncGenerator_running );
-//       }
     }
 
     /** @override */
     disposeResources() {
 
-      Reflect.deleteProperty( this, name_of_asyncGenerator_running );
+      Reflect.deleteProperty( this, name_of_asyncPromise_running );
 
       this[ name_of_asyncResult ] = undefined;
-      this.#asyncGenerator_running = undefined;
+      this.#asyncPromise_running = undefined;
 
       // If parent class has the same method, call it.    
       if ( super.disposeResources instanceof Function )
@@ -172,15 +141,15 @@ function NonReentrant_asyncPromise(
 
 
     /**
-     * Property descriptor for Xxx_asyncGenerator_running.
+     * Property descriptor for Xxx_asyncPromise_running.
      * (as enumerable read-only properties).
      */
-    static propertyDescriptor_of_asyncGenerator_running = 
-      { get() { return this.#asyncGenerator_running; }, enumerable: true };
+    static propertyDescriptor_of_asyncPromise_running = 
+      { get() { return this.#asyncPromise_running; }, enumerable: true };
 
 
     /**
-     * Create Xxx_asyncGenerator (an instance of guarded underlied asyn generator).
+     * Create Xxx_asyncPromise (an instance of guarded underlied async function).
      *
      * @return {AsyncGenerator}
      *   Return the newly created instance of .guarded_underlined_asyncGenerator().

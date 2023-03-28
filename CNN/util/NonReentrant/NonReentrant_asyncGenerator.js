@@ -165,7 +165,7 @@ function NonReentrant_asyncGenerator(
     /** @override */
     static setAsConstructor_self() {
 
-      // Define read-only and enumerable instance (i.e. this.Xxx) properties.
+      // Define read-only and enumerable instance (i.e. this.Abc) properties.
       {
         // Xxx_asyncGenerator_running
         Reflect.defineProperty( this,
@@ -224,7 +224,7 @@ function NonReentrant_asyncGenerator(
 
 
     /**
-     * Create Xxx_asyncGenerator (an instance of guarded underlied asyn generator).
+     * Create Xxx_asyncGenerator (an instance of guarded underlied async generator).
      *
      * @return {AsyncGenerator}
      *   Return the newly created instance of .guarded_underlined_asyncGenerator().
