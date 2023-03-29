@@ -81,8 +81,8 @@ function NonReentrant_asyncPromise_by_asyncGenerator(
 
   // These static methods are defined in parent class (i.e.
   // NonReentrant_asyncGenerator), however, they will be called by this
-  // sub-class (i.e. NonReentrant_asyncPromise_by_asyncGenerator). So, their names
-  // should still be prepared here.
+  // sub-class (i.e. NonReentrant_asyncPromise_by_asyncGenerator). So, their
+  // names should still be prepared here.
 
   const name_of_asyncGenerator_create_without_checking_precondition
     = `${name_prefix}_asyncGenerator_create_without_checking_precondition`;
@@ -94,8 +94,8 @@ function NonReentrant_asyncPromise_by_asyncGenerator(
   return (
 
   /**
-   * A recyclable wrapper class for preventing an underlied async generator from
-   * being reentered. (Reentrancy Preventer)
+   * A recyclable wrapper class for preventing an underlied async generator
+   * from being reentered. (Reentrancy Preventer)
    *
    * It is strongly suggested the ParentClass has ancestor class (i.e.
    * inherits directly or indirectly from) Recyclable.Base because the
@@ -103,16 +103,17 @@ function NonReentrant_asyncPromise_by_asyncGenerator(
    *
    *
    * @member {boolean} Xxx_asyncPromise_running
-   *   If true, a underlied async method (i.e. .Xxx_asyncPromise_guarded()) is
-   * still executing. Please wait it becoming false if wanting to call
+   *   If true, a underlied async method (i.e. .Xxx_asyncPromise_guarded())
+   * is still executing. Please wait it becoming false if wanting to call
    * .Xxx_asyncPromise_create() again. The Xxx is name_prefix.
    *
    * @member {Function} Xxx_asyncPromise_create
-   *   A method for creating the underlied async generator and looping until done.
+   *   A method for creating the underlied async generator and looping until
+   *     done.
    *   - If an old instance is still executing, it will throw exception.
-   *   - It accepts almost the same parameters as underlied_asyncGenerator_func()
-   *       except without the 1st parameter progressParent (which is replaced
-   *       by .Xxx_asyncPromise_progress).
+   *   - It accepts almost the same parameters as
+   *       underlied_asyncGenerator_func() except without the 1st parameter
+   *       progressParent (which is replaced by .Xxx_asyncPromise_progress).
    *   - It returns a promise resolved to .value of { done: true, value } of
    *       awaited underlied_asyncGenerator_func().next().
    *
@@ -121,11 +122,11 @@ function NonReentrant_asyncPromise_by_asyncGenerator(
    *
    * @member {ValueMax.Percentage.Aggregate} Xxx_asyncPromise_progress
    *   The progress of .Xxx_async(). If
-   * ( .Xxx_asyncPromise_progress.valuePercentage == 100 ), the .Xxx_async() has
-   * done.
+   * ( .Xxx_asyncPromise_progress.valuePercentage == 100 ), the .Xxx_async()
+   * has done.
    *   - It is used only if .Xxx_asyncPromise_create() is called.
-   *   - It is not used if .Xxx_asyncGenerator_create() is called. In this case,
-   *       its progressParent parameter will be used instead.
+   *   - It is not used if .Xxx_asyncGenerator_create() is called. In this
+   *       case, its progressParent parameter will be used instead.
    */
   class NonReentrant_asyncPromise_by_asyncGenerator
     extends NonReentrant_asyncGenerator(
@@ -133,10 +134,11 @@ function NonReentrant_asyncPromise_by_asyncGenerator(
       ParentClass ) {
 
     /**
-     * Used as default NonReentrant.asyncPromise_by_asyncGenerator provider for
-     * conforming to Recyclable interface.
+     * Used as default NonReentrant.asyncPromise_by_asyncGenerator provider
+     * for conforming to Recyclable interface.
      */
-    static Pool = new Pool.Root( "NonReentrant.asyncPromise_by_asyncGenerator.Pool",
+    static Pool = new Pool.Root(
+      "NonReentrant.asyncPromise_by_asyncGenerator.Pool",
       NonReentrant_asyncPromise_by_asyncGenerator,
       NonReentrant_asyncPromise_by_asyncGenerator.setAsConstructor );
 
@@ -150,13 +152,15 @@ function NonReentrant_asyncPromise_by_asyncGenerator(
      */
     constructor( ...restArgs ) {
       super( ...restArgs );
-      NonReentrant_asyncPromise_by_asyncGenerator.setAsConstructor_self.call( this );
+      NonReentrant_asyncPromise_by_asyncGenerator
+        .setAsConstructor_self.call( this );
     }
 
     /** @override */
     static setAsConstructor( ...restArgs ) {
       super.setAsConstructor.apply( this, restArgs );
-      NonReentrant_asyncPromise_by_asyncGenerator.setAsConstructor_self.call( this );
+      NonReentrant_asyncPromise_by_asyncGenerator
+        .setAsConstructor_self.call( this );
       return this;
     }
 
@@ -243,13 +247,15 @@ function NonReentrant_asyncPromise_by_asyncGenerator(
      */
     [ name_of_asyncPromise_create ]( ...restArgs ) {
 
-      // Note: The .throw_if_Xxx() static methods are defined in the parent classs.
+      // Note: The .throw_if_Xxx() static methods are defined in the parent
+      //       classs.
 
       { // Checking pre-condition.
         const funcNameInMessage = name_of_asyncPromise_create;
 
-        NonReentrant_asyncPromise_by_asyncGenerator.throw_if_an_old_still_running
-          .call( this, this.#asyncPromise_running, funcNameInMessage );
+        NonReentrant_asyncPromise_by_asyncGenerator
+          .throw_if_an_old_still_running.call( this,
+            this.#asyncPromise_running, funcNameInMessage );
 
         NonReentrant_asyncPromise_by_asyncGenerator
           [ name_of_throw_if_asyncPromise_or_asyncGenerator_running ]
@@ -323,15 +329,16 @@ function NonReentrant_asyncPromise_by_asyncGenerator(
      */
     static async [ name_of_asyncPromise_guarded ]( asyncGenerator ) {
 
-      // Note: The .throw_if_Xxx() static methods are defined in the parent classs.
+      // Note: The .throw_if_Xxx() static methods are defined in the parent
+      //       classs.
 
       { // Checking pre-condition.
         const funcNameInMessage = name_of_asyncPromise_guarded;
 
-        NonReentrant_asyncPromise_by_asyncGenerator.throw_call_another_if_false.call(
-          this,
-          this.#asyncPromise_running, funcNameInMessage,
-          name_of_asyncPromise_create );
+        NonReentrant_asyncPromise_by_asyncGenerator
+          .throw_call_another_if_false.call( this,
+            this.#asyncPromise_running, funcNameInMessage,
+            name_of_asyncPromise_create );
       }
 
       try {
