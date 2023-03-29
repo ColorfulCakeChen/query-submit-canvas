@@ -1581,7 +1581,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
 
       if ( workerProxies_init_asyncPromise ) {
         // If has workerProxies_init_asyncPromise, must during initializing.
-        NeuralOrchestra_Base.throw_if_not_initializing.call( this,
+        NeuralOrchestra_Base.throw_if_init_asyncPromise_and_asyncGenerator_not_running.call( this,
           funcNameInMessage );
        } else {
         // If no workerProxies_init_asyncPromise, the initOk must be true.
@@ -1843,7 +1843,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
    * @param {NeuralOrchestra_Base} this
    * @param {string} funcNameInMessage   The caller function name. (e.g. init_async)
    */
-  static throw_if_not_initializing( funcNameInMessage ) {
+  static throw_if_init_asyncPromise_and_asyncGenerator_not_running( funcNameInMessage ) {
     if (   ( !this.init_asyncPromise_running )
         && ( !this.init_asyncGenerator_running ) )
       throw Error( `NeuralOrchestra.Base.${funcNameInMessage}(): `
