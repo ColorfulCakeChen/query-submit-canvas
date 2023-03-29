@@ -1104,5 +1104,5 @@ HttpRequest_Fetcher.progressTotalFakeLarger = 1024 * 1024;
  * HttpRequest_Fetcher.fetch_asyncGenerator().
  */
 function relay_fetch_asyncGenerator( ...restArgs ) {
-  return HttpRequest_Fetcher.fetch_asyncGenerator.apply( this, restArgs )
+  return HttpRequest_Fetcher.fetch_asyncGenerator.apply( this, restArgs );
 }
