@@ -203,8 +203,7 @@ import * as DEvolution from "../DEvolution.js";
  *
  * @member {boolean} workerProxies_init_asyncPromise_running
  *   If true, a .workerProxies_init_async() is still executing. Please wait
- * it becoming false if wanting to call
- * .workerProxies_init_asyncPromise_create() again.
+ * it becoming false if wanting to call .workerProxies_init_async() again.
  *
  * @member {boolean} workerProxies_initOk
  *   If true, a .workerProxies_init_async() has been executed and succeeded.
@@ -802,8 +801,13 @@ class NeuralOrchestra_Base extends Recyclable.Root {
 
         NeuralOrchestra_Base.workerProxies_create.call( this );
 
+//!!! (2023/03/29 Remarked) Old Codes
+// Integrate .workerProxies_init_asyncPromise_create() into .workerProxies_init_async()
+//         workerProxies_init_asyncPromise
+//           = NeuralOrchestra_Base.workerProxies_init_asyncPromise_create.call( this );
+
         workerProxies_init_asyncPromise
-          = NeuralOrchestra_Base.workerProxies_init_asyncPromise_create.call( this );
+          = NeuralOrchestra_Base.workerProxies_init_async.call( this );
 
         allPromiseSet.add( workerProxies_init_asyncPromise );
       }
@@ -961,40 +965,6 @@ class NeuralOrchestra_Base extends Recyclable.Root {
   }
 
   /**
-   * Call .workerProxies_init_async() and return workerProxies_init_asyncPromise.
-   *
-   * @param {NeuralOrchestra_Base} this
-   * @param {NeuralNet.ParamsBase} this.neuralNetParamsBase
-   *
-   * @return {Promise( boolean )}
-   *   Return workerProxies_init_asyncPromise which is an instance of
-   * .workerProxies_init_async().
-   */
-  static workerProxies_init_asyncPromise_create() {
-
-    { // Checking pre-condition.
-      const funcNameInMessage = "workerProxies_init_asyncPromise_create";
-
-      NeuralOrchestra_Base.throw_if_an_old_still_running.call( this,
-        this.workerProxies_init_asyncPromise_running, funcNameInMessage );
-
-//!!! ...unfinished... (2023/03/28)
-// How to integrate these precondition checking to the NonReentrant_Xxx base class?
-// Perhaps, by overriding same name method.
-
-      NeuralOrchestra_Base.throw_if_imageData_processing.call( this,
-        funcNameInMessage );
-    }
-
-    this.workerProxies_init_asyncPromise_running = true;
-    this.workerProxies_initOk = undefined;
-
-    let workerProxies_init_asyncPromise
-      = NeuralOrchestra_Base.workerProxies_init_async.call( this );
-    return workerProxies_init_asyncPromise;
-  }
-
-  /**
    * This method will always block UI worker (because of compiling WebGL
    * shaders) even if it is called in non-UI worker. So it is suggested to
    * call this method during game splash screen displaying.
@@ -1020,9 +990,11 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     { // Checking pre-condition.
       const funcNameInMessage = "workerProxies_init_async";
 
-      NeuralOrchestra_Base.throw_call_another_if_false.call( this,
-        this.workerProxies_init_asyncPromise_running, funcNameInMessage,
-        "workerProxies_init_asyncPromise_create" );
+      NeuralOrchestra_Base.throw_if_an_old_still_running.call( this,
+        this.workerProxies_init_asyncPromise_running, funcNameInMessage );
+
+//!!! ...unfinished... (2023/03/29)
+// Perhaps, should check init_asyncGenerator_or_asyncPromise_running == true.
 
 //!!! ...unfinished... (2023/03/28)
 // How to integrate these precondition checking to the NonReentrant_Xxx base class?
@@ -1031,6 +1003,9 @@ class NeuralOrchestra_Base extends Recyclable.Root {
       NeuralOrchestra_Base.throw_if_imageData_processing.call( this,
         funcNameInMessage );
     }
+
+    this.workerProxies_init_asyncPromise_running = true;
+    this.workerProxies_initOk = undefined;
 
     let initOk;
     try {
@@ -1092,6 +1067,146 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     }
   }
 
+//!!! (2023/03/29 Remarked) Old Codes
+// Integrate .workerProxies_init_asyncPromise_create() into .workerProxies_init_async()
+//   /**
+//    * Call .workerProxies_init_async() and return workerProxies_init_asyncPromise.
+//    *
+//    * @param {NeuralOrchestra_Base} this
+//    * @param {NeuralNet.ParamsBase} this.neuralNetParamsBase
+//    *
+//    * @return {Promise( boolean )}
+//    *   Return workerProxies_init_asyncPromise which is an instance of
+//    * .workerProxies_init_async().
+//    */
+//   static workerProxies_init_asyncPromise_create() {
+//
+//     { // Checking pre-condition.
+//       const funcNameInMessage = "workerProxies_init_asyncPromise_create";
+//
+//       NeuralOrchestra_Base.throw_if_an_old_still_running.call( this,
+//         this.workerProxies_init_asyncPromise_running, funcNameInMessage );
+//
+// //!!! ...unfinished... (2023/03/29)
+// // Perhaps, should check init_asyncGenerator_or_asyncPromise_running == true.
+//
+// //!!! ...unfinished... (2023/03/28)
+// // How to integrate these precondition checking to the NonReentrant_Xxx base class?
+// // Perhaps, by overriding same name method.
+//
+//       NeuralOrchestra_Base.throw_if_imageData_processing.call( this,
+//         funcNameInMessage );
+//     }
+//
+//     this.workerProxies_init_asyncPromise_running = true;
+//     this.workerProxies_initOk = undefined;
+//
+//     let workerProxies_init_asyncPromise
+//       = NeuralOrchestra_Base.workerProxies_init_async.call( this );
+//     return workerProxies_init_asyncPromise;
+//   }
+//
+//   /**
+//    * This method will always block UI worker (because of compiling WebGL
+//    * shaders) even if it is called in non-UI worker. So it is suggested to
+//    * call this method during game splash screen displaying.
+//    *
+//    * @param {NeuralOrchestra_Base} this
+//    *
+//    * @param {NeuralNet.ParamsBase} this.neuralNetParamsBase
+//    *   The neural network configuration. It will be used for both two neural
+//    * networks. It will be kept (i.e. owned and destroyed) by this
+//    * NeuralOrchetra object. Its .nConvStageTypeId may be modified according
+//    * to which backend (webgl or cpu) is used finally for gaining the best
+//    * performance.
+//    *
+//    * @return {Promise}
+//    *   Return a promise:
+//    *   - Resolved to true, if succeeded.
+//    *     - The neural workers have been created and GPU shaders have been
+//    *         compiled.
+//    *   - Resolved to false, if failed.
+//    */
+//   static async workerProxies_init_async() {
+//
+//     { // Checking pre-condition.
+//       const funcNameInMessage = "workerProxies_init_async";
+//
+//       NeuralOrchestra_Base.throw_call_another_if_false.call( this,
+//         this.workerProxies_init_asyncPromise_running, funcNameInMessage,
+//         "workerProxies_init_asyncPromise_create" );
+//
+// //!!! ...unfinished... (2023/03/29)
+// // Perhaps, should check init_asyncGenerator_or_asyncPromise_running == true.
+//
+// //!!! ...unfinished... (2023/03/28)
+// // How to integrate these precondition checking to the NonReentrant_Xxx base class?
+// // Perhaps, by overriding same name method.
+//
+//       NeuralOrchestra_Base.throw_if_imageData_processing.call( this,
+//         funcNameInMessage );
+//     }
+//
+//     let initOk;
+//     try {
+//       // 0.
+//       let neuralNetParamsBase = this.neuralNetParamsBase;
+//       let initOkPromise;
+//
+//       // 1. Try backend "webgl" first.
+//       //
+//       // Backend "webgl" has best performance with SHUFFLE_NET_V2_BY_MOBILE_NET_V1 (5)
+//       // and one web worker (NO_FILL).
+//       //
+//       {
+//         neuralNetParamsBase
+//           .nConvStageTypeId_adjust_for_backend_webgl_if_ShuffleNetV2();
+//
+//         initOkPromise = this.workerProxies.init_async( "webgl",
+//           NeuralWorker.Mode.Singleton.Ids.ONE_WORKER__ONE_SCALE__NO_FILL // (0) 
+//         );
+//
+//         initOk = await initOkPromise;
+//         if ( initOk ) { // For WebGL, compile WebGL shaders in advance.
+//           let compilePromise
+//             = NeuralOrchestra_Base.workerProxies_compileShaders_async.call( this );
+//
+//           let compileOk = await compilePromise;
+//
+//           this.workerProxies_initOk = compileOk;
+//           return this.workerProxies_initOk;
+//         }
+//       }
+//
+//       // 2. If backend "webgl" initialization failed, try backend "cpu".
+//       //
+//       // Backend "cpu" has best performance with SHUFFLE_NET_V2 (4)
+//       // and two web workers (NO_FILL) by .applier().
+//       //
+//       {
+//         neuralNetParamsBase
+//           .nConvStageTypeId_adjust_for_backend_cpu_if_ShuffleNetV2();
+//
+//         initOkPromise = this.workerProxies.init_async( "cpu",
+//           NeuralWorker.Mode.Singleton.Ids.TWO_WORKER__ONE_SCALE__NO_FILL__APPLIER // (5) 
+//         );
+//
+//         initOk = await initOkPromise;
+//         this.workerProxies_initOk = initOk;
+//         return this.workerProxies_initOk;
+//       }
+//
+//     } catch ( e ) {
+//       debugger;
+//       this.workerProxies_initOk = false;
+//       throw e;
+//
+//     } finally {
+//       // 3. So that this async method could be executed again.
+//       this.workerProxies_init_asyncPromise_running = false;
+//     }
+//   }
+
   /**
    * Create dummy neural networks in all neural web workers to compile WebGL
    * shaders in advance.
@@ -1103,6 +1218,10 @@ class NeuralOrchestra_Base extends Recyclable.Root {
 
     { // Checking pre-condition.
       const funcNameInMessage = "workerProxies_compileShaders_async";
+
+//!!! ...unfinished... (2023/03/29)
+// Perhaps, should check init_asyncGenerator_or_asyncPromise_running == true.
+
 
 //!!! ...unfinished... (2023/03/28)
 // How to integrate these precondition checking to the NonReentrant_Xxx base class?
@@ -1612,7 +1731,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
    * The progressParent.root_get() will be returned when every time yield.
    *
    * @param {Promise( boolean )} workerProxies_init_asyncPromise
-   *   The result of .workerProxies_init_asyncPromise_create().
+   *   The an instance of .workerProxies_init_async().
    *   - If not null, it awaited before creating neural networks.
    *     - This case is used by .init_asyncGenerator()
    *   - If null, the .initOk must already be true.
