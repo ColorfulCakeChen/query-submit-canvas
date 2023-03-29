@@ -533,8 +533,12 @@ class TestCase {
 
     let init_asyncGenerator;
     let init_asyncPromise;
+    let b_return_versus_load_asyncGenerator_instead_of_asyncPromise;
 
-    if ( b_init_asyncGenerator )
+    if ( b_init_asyncGenerator ) {
+      b_return_versus_load_asyncGenerator_instead_of_asyncPromise
+        = true; // return versus_load_asyncGenerator
+
       init_asyncGenerator = neuralOrchestra.init_asyncGenerator_create(
         progressInit,
         this.init_parameters.downloader_spreadsheetId,
@@ -545,10 +549,13 @@ class TestCase {
         this.init_parameters.vocabularyChannelCount,
         this.init_parameters.blockCountTotalRequested,
         this.init_parameters.output_channelCount_per_alignment,
-        true, // return versus_load_asyncGenerator,
+        b_return_versus_load_asyncGenerator_instead_of_asyncPromise,
         init_asyncGenerator_delayPromise, versus_load_asyncGenerator_delayPromise
       );
-    else
+    } else {}
+      b_return_versus_load_asyncGenerator_instead_of_asyncPromise
+        = false; // return versus_load_asyncPromise
+
       init_asyncPromise = neuralOrchestra.init_asyncPromise_create(
         this.init_parameters.downloader_spreadsheetId,
         this.init_parameters.downloader_apiKey,
@@ -558,7 +565,7 @@ class TestCase {
         this.init_parameters.vocabularyChannelCount,
         this.init_parameters.blockCountTotalRequested,
         this.init_parameters.output_channelCount_per_alignment,
-        false, // return versus_load_asyncPromise
+        b_return_versus_load_asyncGenerator_instead_of_asyncPromise,
         init_asyncGenerator_delayPromise, versus_load_asyncGenerator_delayPromise
       );
 
@@ -655,7 +662,7 @@ class TestCase {
     try {
       init_asyncGenerator_delayPromise.resolve();
 
-      if ( b_init_asyncGenerator ) {
+      if ( b_return_versus_load_asyncGenerator_instead_of_asyncPromise ) {
         let initer;
         do {
           initer = await init_asyncGenerator.next();
