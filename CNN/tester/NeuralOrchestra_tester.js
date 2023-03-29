@@ -540,6 +540,7 @@ class TestCase {
         this.init_parameters.vocabularyChannelCount,
         this.init_parameters.blockCountTotalRequested,
         this.init_parameters.output_channelCount_per_alignment,
+        true, // return versus_load_asyncGenerator,
         initer_delayPromise, versus_loader_delayPromise
       );
     else
@@ -552,6 +553,7 @@ class TestCase {
         this.init_parameters.vocabularyChannelCount,
         this.init_parameters.blockCountTotalRequested,
         this.init_parameters.output_channelCount_per_alignment,
+        false, // return versus_load_asyncPromise
         initer_delayPromise, versus_loader_delayPromise
       );
 
