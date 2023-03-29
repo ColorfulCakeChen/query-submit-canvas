@@ -281,7 +281,7 @@ function NonReentrant_asyncGenerator(
         let resultValue = yield *underlied_asyncGenerator;
 
         // The resultValue should be non-undefined. If it is undefined:
-        //   - The generator forgets to return meaningful result.
+        //   - The generator forgot to return meaningful result.
         //   - The generator may have been terminated previously by throwing
         //       exception. So, throw exception to inform caller the generator
         //       may be illegal.
@@ -298,7 +298,7 @@ function NonReentrant_asyncGenerator(
         }
 
         // The .XxxOk should be non-undefined. If it is undefined:
-        //   - The generator forgets to set it.
+        //   - The generator forgot to set it.
         NonReentrant_asyncGenerator[ name_of_throw_if_asyncResultOk_undefined ]
           .call( this, funcNameInMessage );
 

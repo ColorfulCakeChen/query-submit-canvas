@@ -214,7 +214,7 @@ function NonReentrant_asyncPromise(
         let resultValue = await underlied_asyncPromise;
 
         // The result should be non-undefined. If result is undefined:
-        //   - The async function forgets to set it.
+        //   - The async function forgot to set it.
         NonReentrant_asyncPromise[ name_of_throw_if_asyncResultOk_undefined ]
           .call( this, funcNameInMessage );
 
