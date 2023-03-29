@@ -441,7 +441,7 @@ class TestCase {
         } while ( !loaderNext.done );
         versus_loadOk = loaderNext.value;
 
-        // Note: In .versus_load_asyncGenerator(), .versus_load_progress is not used.
+        // Note: In .versus_load_asyncGenerator(), .versus_load_asyncPromise_progress is not used.
         if ( bTryLoad )
           if ( 100 !== progressLoad.valuePercentage )
             throw Error( `NeuralOrchestra_tester.TestCase`
@@ -453,11 +453,11 @@ class TestCase {
       } else {
         versus_loadOk = await versus_load_asyncPromise;
 
-        if ( 100 !== neuralOrchestra.versus_load_progress.valuePercentage )
+        if ( 100 !== neuralOrchestra.versus_load_asyncPromise_progress.valuePercentage )
           throw Error( `NeuralOrchestra_tester.TestCase`
             + `.test_load_process_send_asyncGenerator(): testId=${this.testId}, `
-            + `neuralOrchestra.versus_load_progress.valuePercentage (`
-            + `${neuralOrchestra.versus_load_progress.valuePercentage}) `
+            + `neuralOrchestra.versus_load_asyncPromise_progress.valuePercentage (`
+            + `${neuralOrchestra.versus_load_asyncPromise_progress.valuePercentage}) `
             + `should be 100.` );
       }      
     } catch ( e ) { // Unknown error, said loudly.
