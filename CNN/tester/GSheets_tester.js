@@ -369,6 +369,13 @@ class TestCase {
         + `( ${urlComposer.fetch_asyncPromise_progress.valuePercentage} ) `
         + `should not be 100.` );
 
+    // Failed fetching should get false.
+    if ( urlComposer.fetchOk )
+      throw Error( `GSheets_tester.TestCase`
+        + `.${funcNameInMessage}(): testCaseId=${this.testCaseId}, `
+        + `urlComposer.fetchOk ( ${urlComposer.fetchOk} ) `
+        + `should be falsy.` );
+
     return fetchResult;
   }
 
@@ -394,6 +401,13 @@ class TestCase {
         + `urlComposer.fetch_asyncPromise_progress.valuePercentage `
         + `( ${urlComposer.fetch_asyncPromise_progress.valuePercentage} ) `
         + `should be 100.` );
+
+    // Succeeded fetching should get true.
+    if ( !urlComposer.fetchOk )
+      throw Error( `GSheets_tester.TestCase`
+        + `.${funcNameInMessage}(): testCaseId=${this.testCaseId}, `
+        + `urlComposer.fetchOk ( ${urlComposer.fetchOk} ) `
+        + `should be truthy.` );
 
     return fetchResult;
   }
@@ -621,13 +635,22 @@ class TestCase {
       urlComposer2.range = newRange;
       let result21 = yield* this.urlComposer_fetcher( urlComposer2, progress21 );
 
-      if ( this.bShouldProgress100 ) // If the request is expected to succeeded,
-        if ( result11 == null )      // it should have non-null result.
+      if ( this.bShouldProgress100 ) { // If the request is expected to succeeded,
+        if ( result11 == null )        // it should have non-null result.
           throw Error( `GSheets_tester.TestCase`
             + `.${funcNameInMessage}(): testCaseId=${this.testCaseId}, `
             + `result11 ( ${result11} ) should not be null `
             + `when ( .bShouldProgress100 == true ).`
           );
+
+        // Succeeded fetching should get true.
+        if ( !urlComposer1.fetchOk || !urlComposer2.fetchOk )
+          throw Error( `GSheets_tester.TestCase`
+            + `.${funcNameInMessage}(): testCaseId=${this.testCaseId}, `
+            + `urlComposer1.fetchOk ( ${urlComposer1.fetchOk} ) and `
+            + `urlComposer2.fetchOk ( ${urlComposer2.fetchOk} ) `
+            + `should be truthy.` );
+      }
 
       // Note: If all cells are empty, GQViz got array with zero length.
       //       But APIv4 got undefined.
@@ -641,6 +664,14 @@ class TestCase {
 
     } else {
       // (e.g. the nework is offline.)
+
+      // Failed fetching should get false.
+      if ( urlComposer1.fetchOk || urlComposer2.fetchOk )
+        throw Error( `GSheets_tester.TestCase`
+          + `.${funcNameInMessage}(): testCaseId=${this.testCaseId}, `
+          + `urlComposer1.fetchOk ( ${urlComposer1.fetchOk} ) and `
+          + `urlComposer2.fetchOk ( ${urlComposer2.fetchOk} ) `
+          + `should be falsy.` );
     }
 
     urlComposer2.disposeResources_and_recycleToPool();
