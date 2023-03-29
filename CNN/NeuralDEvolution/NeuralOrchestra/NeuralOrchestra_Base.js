@@ -125,8 +125,9 @@ import * as DEvolution from "../DEvolution.js";
  *
  *
  * @member {string} downloader_spreadsheetId
- *   The Google Sheets spreadsheetId of neural network weights. Every worker will
- * load weights from the spreadsheet to initialize one neural network.
+ *   The Google Sheets spreadsheetId of neural network weights. The weights
+ * loaded from the spreadsheet will be passed to every neural worker to
+ * initialize the neural network.
  *
  * @member {string} downloader_apiKey
  *   The API key for accessing the Google Sheets spreadsheet of neural network
@@ -135,7 +136,8 @@ import * as DEvolution from "../DEvolution.js";
  *   - If not null, Google Sheets API v4 will be used.
  *
  * @member {boolean} bLogFetcherEventToConsole
- *   If true, some debug messages of HttpRequest.Fetcher will be logged to console.
+ *   If true, some debug messages of HttpRequest.Fetcher will be logged to
+ * console.
  *
  *
  * @member {string} sender_clientId
@@ -167,8 +169,8 @@ import * as DEvolution from "../DEvolution.js";
  *
  *
  * @member {string} backendName
- *   Which backend (of tensorflow.js library) is used by web worker. Either "cpu"
- * or "webgl".
+ *   Which backend (of tensorflow.js library) is used by web worker. Either
+ * "cpu" or "webgl".
  *
  * @member {number} nNeuralWorker_ModeId
  *   The numeric identifier of neural worker mode (i.e.
@@ -201,8 +203,8 @@ import * as DEvolution from "../DEvolution.js";
  *
  * @member {boolean} workerProxies_init_asyncPromise_running
  *   If true, a .workerProxies_init_async() is still executing. Please wait
- * it becoming false if wanting to call .workerProxies_init_asyncPromise_create()
- * again.
+ * it becoming false if wanting to call
+ * .workerProxies_init_asyncPromise_create() again.
  *
  * @member {boolean} workerProxies_initOk
  *   If true, a .workerProxies_init_async() has been executed and succeeded.
@@ -215,12 +217,13 @@ import * as DEvolution from "../DEvolution.js";
  *
  * 
  * @member {boolean} versus_load_asyncPromise_running
- *   If true, a .versus_load_async() is still executing. Please wait it becoming
- * false if wanting to call .versus_load_asyncPromise_create() again.
+ *   If true, a .versus_load_async() is still executing. Please wait it
+ * becoming false if wanting to call .versus_load_asyncPromise_create() again.
  *
  * @member {boolean} versus_load_asyncGenerator_running
  *   If true, a .versus_load_asyncGenerator() is still executing. Please wait
- * it becoming false if wanting to call .versus_load_asyncGenerator_create() again.
+ * it becoming false if wanting to call .versus_load_asyncGenerator_create()
+ * again.
  *
  * @member {Promise( boolean )} versus_load_asyncPromise
  *   The result of .versus_load_asyncPromise_create().
