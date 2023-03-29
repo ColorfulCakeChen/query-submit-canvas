@@ -892,8 +892,6 @@ class NeuralOrchestra_Base extends Recyclable.Root {
         returnValue = versus_load_asyncGenerator_prepended;
 
       } else {
-        // Note: It is not be awaited here. Caller is responsible for awaiting
-        //       versus_load_asyncPromise
         versus_load_asyncPromise = NeuralOrchestra_Base
           .versus_load_asyncPromise_create_without_checking_precondition.call(
             this, versus_load_asyncGenerator_prepended );
