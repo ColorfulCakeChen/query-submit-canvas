@@ -878,7 +878,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
       // more time by outside caller (including .init_async()).
       let versus_load_asyncGenerator_prepended;
       {
-        // Replace versus_load_asyncGenerator by a new asyn generator which
+        // Replace versus_load_asyncGenerator by a new async generator which
         // will yield the loaderNext first. Just like push the loaderNext back
         // to the original versus_load_asyncGenerator.
         versus_load_asyncGenerator_prepended = PartTime.prepend_asyncGenerator(
