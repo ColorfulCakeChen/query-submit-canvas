@@ -67,10 +67,8 @@ import { Params_loading_retryWaiting as HttpRequest_Params_loading_retryWaiting 
  *   If true, a fetch_asyncGenerator is still executing. Please wait it
  * becoming false if wanting to call .fetch_asyncGenerator_create() again.
  *
- * @member {object} fetchResult
- *   The result of fetch_asyncGenerator.
- *   - xhr.response if succeeded.
- *   - null if failed.
+ * @member {boolean} fetchOk
+ *   Whether fetch_asyncGenerator is succeeded.
  *
  * @member {Function} fetch_asyncGenerator_create
  *   A method for creating .fetch_asyncGenerator().
@@ -187,6 +185,7 @@ class HttpRequest_Fetcher
           bRetry = false;
 
           fetchResult = responseText;
+          this.fetchOk = true;
 
         // 2. Determine whether should retry.
         } catch( e ) {
@@ -224,6 +223,7 @@ class HttpRequest_Fetcher
             // Since no retry, the retry waiting timer should be completed to 100%
             HttpRequest_Fetcher.progressRetryWaiting_set_whenDone.call( this );
             fetchResult = null;
+            this.fetchOk = false;
             throw e;
           }
         }
@@ -248,8 +248,10 @@ class HttpRequest_Fetcher
       // Note: fetchResult can not be undefined. Otherwise, NonReentrant will
       //       thow exception.
       if ( fetchResult === undefined ) {
-        if ( this.bAbort )
+        if ( this.bAbort ) {
           fetchResult = null;
+          this.fetchOk = false;
+        }
       }
 
     } finally {
