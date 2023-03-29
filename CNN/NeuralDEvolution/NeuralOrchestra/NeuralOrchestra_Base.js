@@ -564,7 +564,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
           + `should not be undefined.`
         );
 
-!!! ...unfinished... (2023/03/29)
+//!!! ...unfinished... (2023/03/29)
       // 3. Continue to load (versus summary and) versus and create neural
       //    networks.
       //
@@ -910,10 +910,6 @@ class NeuralOrchestra_Base extends Recyclable.Root {
 
       // 6.
       this.initOk = true;
-
-!!! ...unfinished... (2023/03/29)
-// Who is responsible to return initOk?
-
       return returnValue;
 
     } catch ( e ) {
