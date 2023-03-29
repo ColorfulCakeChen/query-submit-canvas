@@ -190,14 +190,21 @@ function Promise_resolvable_rejectable_create() {
  * resolved to { done: false, value }.
  */
 async function* prepend_asyncGenerator( prependNextPromise, asyncGenerator ) {
-  let prependNext = await prependNextPromise;
-  if ( prependNext.done )
-    return prependNext.value;
-  else
-    yield prependNext.value;
+  try {
+    let prependNext = await prependNextPromise;
+    if ( prependNext.done )
+      return prependNext.value;
+    else
+      yield prependNext.value;
 
-  let result = yield* asyncGenerator;
-  return result;
+    let result = yield* asyncGenerator;
+    return result;
+
+  } catch ( e ) {
+    console.error( e );
+    debugger;
+    throw e;
+  }
 }
 
 
