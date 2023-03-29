@@ -122,10 +122,10 @@ function NonReentrant_asyncGenerator(
    *   A static method for throwing excption if .Xxx_asyncPromise_running and
    * .Xxx_asyncGenerator_running is false.
    *
-   * @member {Function} [ throw_if_XxxYyy_undefined ]
+   * @member {Function} throw_if_XxxYyy_undefined
    *   A static method for throwing excption if ( this.XxxYyy ) is undefined.
    *
-   * @member {Function} [ throw_if_not_XxxYyy ]
+   * @member {Function} throw_if_not_XxxYyy
    *   A static method for throwing excption if ( !this.XxxYyy ) is true. That
    * is, if this.XxxYyy is either undefined or null or false or 0 or NaN or
    * empty string "", throw exception.
