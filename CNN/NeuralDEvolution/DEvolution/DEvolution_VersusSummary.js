@@ -171,7 +171,8 @@ class DEvolution_VersusSummary extends Recyclable.Root {
       return false;
     }
 
-    this.urlComposer.fetchResult = undefined; // Reduce memory footprint.
+//!!! ...unfinished... (2023/03/29) fetchOk instead of fetchResult
+//    this.urlComposer.fetchResult = undefined; // Reduce memory footprint.
 
     // Only the first column (i.e. column[ 0 ]) has range description string.
     this.rangeArray = rangeArrayArray[ 0 ];

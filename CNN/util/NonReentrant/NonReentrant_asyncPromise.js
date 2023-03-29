@@ -28,7 +28,8 @@ import * as ClassHierarchyTools from "../ClassHierarchyTools.js";
  * guarded by the .Xxx_asyncPromise_running boolean flag.
  *   - It will be called with thisArg as "this".
  *   - The awaited result value of the underlied async function could be any
- *       value except undefined.
+ *       value (including undefined).
+ *   - The underlied async function must set .XxxOk to either true or false.
  */
 function NonReentrant_asyncPromise(
   name_prefix, name_postfix_of_asyncResult, underlied_asyncPromise_func,
@@ -227,6 +228,9 @@ function NonReentrant_asyncPromise(
           = underlied_asyncPromise_func.apply( this, restArgs );
 
         let resultValue = await underlied_asyncPromise;
+
+!!! ...unfinished... (2023/03/29) XxxOk instead of XxxYyy
+
         this[ name_of_asyncResult ] = resultValue;
 
         // The result should be non-undefined. If result is undefined:

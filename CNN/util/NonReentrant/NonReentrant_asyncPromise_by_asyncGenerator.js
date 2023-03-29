@@ -47,6 +47,8 @@ import { asyncGenerator as NonReentrant_asyncGenerator }
  *       ValueMax.Percentage.Aggregate).
  *   - The .value of { done: true, value } of the underlied async generator
  *       final .next() could be any value except undefined.
+ *   - The underlied async generator must also set .XxxOk to either true or
+ *       false.
  */
 function NonReentrant_asyncPromise_by_asyncGenerator(
   name_prefix, name_postfix_of_asyncResult, underlied_asyncGenerator_func,

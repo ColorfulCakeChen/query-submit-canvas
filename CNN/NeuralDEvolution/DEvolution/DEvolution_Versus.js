@@ -178,7 +178,8 @@ class DEvolution_Versus extends Recyclable.Root {
       if ( !versusArrayArray )
         return false; // Download failure.
 
-      spreadsheetUrlComposer.fetchResult = undefined; // Reduce memory footprint.
+//!!! ...unfinished... (2023/03/29) fetchOk instead of fetchResult
+//      spreadsheetUrlComposer.fetchResult = undefined; // Reduce memory footprint.
     }
 
     // 2. decode.
