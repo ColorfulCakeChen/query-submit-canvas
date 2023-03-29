@@ -552,7 +552,7 @@ class TestCase {
         b_return_versus_load_asyncGenerator_instead_of_asyncPromise,
         init_asyncGenerator_delayPromise, versus_load_asyncGenerator_delayPromise
       );
-    } else {}
+    } else {
       b_return_versus_load_asyncGenerator_instead_of_asyncPromise
         = false; // return versus_load_asyncPromise
 
@@ -568,6 +568,7 @@ class TestCase {
         b_return_versus_load_asyncGenerator_instead_of_asyncPromise,
         init_asyncGenerator_delayPromise, versus_load_asyncGenerator_delayPromise
       );
+    }
 
     if ( neuralOrchestra.initOk !== undefined )
       throw Error( `NeuralOrchestra_tester.TestCase`
