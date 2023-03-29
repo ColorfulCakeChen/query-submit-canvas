@@ -11,18 +11,6 @@ import * as ClassHierarchyTools from "../ClassHierarchyTools.js";
  *   The prefix for all async operations and flags. (e.g. "init" or "fetch"
  * or "workerProxies_init" or "versus_load" or "imageData_process")
  *
- * @param {string} name_postfix_of_asyncResult 
- *   The property name postfix for recording the awaited value of
- * underlied_asyncPromise_func(). For example,
- *
- *   - If ( name_prefix == "init" ) and ( name_postfix_of_asyncResult == "Ok" ),
- *       the property name of result will be "initOk".
- *
- *   - If ( name_prefix == "imageData_process" ) and
- *       ( name_postfix_of_asyncResult == "_result_float32ArrayArray" ), the
- *       property name of result will be
- *       "imageData_process_result_float32ArrayArray".
- *
  * @param {AsyncFunction} underlied_asyncPromise_func
  *   A function for creating an underlied async function which wants to be
  * guarded by the .Xxx_asyncPromise_running boolean flag.
@@ -32,14 +20,14 @@ import * as ClassHierarchyTools from "../ClassHierarchyTools.js";
  *   - The underlied async function must set .XxxOk to either true or false.
  */
 function NonReentrant_asyncPromise(
-  name_prefix, name_postfix_of_asyncResult, underlied_asyncPromise_func,
+  name_prefix, underlied_asyncPromise_func,
   ParentClass = Object ) {
 
   const name_of_asyncPromise_running
     = `${name_prefix}_asyncPromise_running`;
 
-  const name_of_asyncResult
-    = `${name_prefix}${name_postfix_of_asyncResult}`;
+  const name_of_asyncResultOk
+    = `${name_prefix}Ok`;
 
 
   const name_of_asyncPromise_create
@@ -55,11 +43,11 @@ function NonReentrant_asyncPromise(
   const name_of_throw_if_asyncPromise_running
     = `throw_if_${name_prefix}_asyncPromise_running`;
 
-  const name_of_throw_if_asyncResult_undefined
-    = `throw_if_${name_of_asyncResult}_undefined`;
+  const name_of_throw_if_asyncResultOk_undefined
+    = `throw_if_${name_of_asyncResultOk}_undefined`;
 
-  const name_of_throw_if_not_asyncResult
-    = `throw_if_not_${name_of_asyncResult}`;
+  const name_of_throw_if_not_asyncResultOk
+    = `throw_if_not_${name_of_asyncResultOk}`;
 
 
   return (
@@ -74,17 +62,15 @@ function NonReentrant_asyncPromise(
    * is still executing. Please wait it becoming false if wanting to call
    * .Xxx_asyncPromise_create() again. The Xxx is name_prefix (e.g. "init").
    *
-   * @member {any} XxxYyy
-   *   A property recording the result of underlied_asyncPromise_func().
+   * @member {boolean} XxxOk
+   *   A property recording whether underlied_asyncPromise_func() is succeeded.
    *   - The Xxx is name_prefix (e.g. "init").
-   *   - The Yyy is name_postfix_of_asyncResult (e.g. "Ok").
-   *   - It is not a private read-only property so that it can cleared to
-   *       release memory by outside caller.
+   *   - It is not a private read-only property so that
+   *       underlied_asyncPromise_func() can set it value.
    *   - The .Xxx_asyncPromise_create_without_checking_precondition() will
-   *       clear this.XxxYyy (e.g. this.initOk) to undefined.
-   *   - The .Xxx_asyncPromise_guarded() will set this.XxxYyy (e.g.
-   *       this.initOk) to the awaited result value of
-   *       underlied_asyncPromise_func().
+   *       clear this.XxxOk (e.g. this.initOk) to undefined.
+   *   - The underlied_asyncPromise_func() must set this.XxxOk (e.g.
+   *       this.initOk) to either true or false.
    *
    * @member {Function} Xxx_asyncPromise_create
    *   A method for creating the underlied async function.
@@ -99,13 +85,11 @@ function NonReentrant_asyncPromise(
    *   A static method for throwing excption if .Xxx_asyncPromise_running is
    * true.
    *
-   * @member {Function} [ throw_if_XxxYyy_undefined ]
-   *   A static method for throwing excption if ( this.XxxYyy ) is undefined.
+   * @member {Function} [ throw_if_XxxOk_undefined ]
+   *   A static method for throwing excption if ( this.XxxOk ) is undefined.
    *
-   * @member {Function} [ throw_if_not_XxxYyy ]
-   *   A static method for throwing excption if ( !this.XxxYyy ) is true. That
-   * is, if this.XxxYyy is either undefined or null or false or 0 or NaN or
-   * empty string "", throw exception.
+   * @member {Function} [ throw_if_not_XxxOk ]
+   *   A static method for throwing excption if this.XxxOk is not truthy.
    */
   class NonReentrant_asyncPromise extends ParentClass {
 
@@ -143,7 +127,7 @@ function NonReentrant_asyncPromise(
 
       Reflect.deleteProperty( this, name_of_asyncPromise_running );
 
-      this[ name_of_asyncResult ] = undefined;
+      this[ name_of_asyncResultOk ] = undefined;
       this.#asyncPromise_running = undefined;
 
       // If parent class has the same method, call it.    
@@ -200,7 +184,7 @@ function NonReentrant_asyncPromise(
       ...restArgs ) {
 
       this.#asyncPromise_running = true;
-      this[ name_of_asyncResult ] = undefined;
+      this[ name_of_asyncResultOk ] = undefined;
 
       let asyncPromise = NonReentrant_asyncPromise
         [ name_of_asyncPromise_guarded ].apply( this, restArgs );
@@ -229,13 +213,9 @@ function NonReentrant_asyncPromise(
 
         let resultValue = await underlied_asyncPromise;
 
-!!! ...unfinished... (2023/03/29) XxxOk instead of XxxYyy
-
-        this[ name_of_asyncResult ] = resultValue;
-
         // The result should be non-undefined. If result is undefined:
-        //   - The async function forgets to return meaningful result.
-        NonReentrant_asyncPromise[ name_of_throw_if_asyncResult_undefined ]
+        //   - The async function forgets to set it.
+        NonReentrant_asyncPromise[ name_of_throw_if_asyncResultOk_undefined ]
           .call( this, funcNameInMessage );
 
         return resultValue;
@@ -294,24 +274,26 @@ function NonReentrant_asyncPromise(
      * @param {NonReentrant_asyncGenerator} this
      * @param {string} funcNameInMessage   The caller function name. (e.g. init_async)
      */
-    static [ name_of_throw_if_asyncResult_undefined ]( funcNameInMessage ) {
-      if ( this[ name_of_asyncResult ] !== undefined )
+    static [ name_of_throw_if_asyncResultOk_undefined ]( funcNameInMessage ) {
+      if ( this[ name_of_asyncResultOk ] !== undefined )
         return;
 
       const mostDerivedClassName
         = ClassHierarchyTools.MostDerived_ClassName_of_Instance( this );
 
       throw Error( `${mostDerivedClassName}.${funcNameInMessage}(): `
-        + `this.${name_of_asyncResult} ( ${this[ name_of_asyncResult ]} ) `
-        + `should not be undefined.` );
+        + `this.${name_of_asyncResultOk} ( ${this[ name_of_asyncResultOk ]} ) `
+        + `should not be undefined. `
+        + `The underlied async function must set it to either true or false.`
+      );
     }
 
     /**
      * @param {NonReentrant_asyncPromise} this
      * @param {string} funcNameInMessage   The caller function name. (e.g. init_async)
      */
-    static [ name_of_throw_if_not_asyncResult ]( funcNameInMessage ) {
-      if ( this[ name_of_asyncResult ] )
+    static [ name_of_throw_if_not_asyncResultOk ]( funcNameInMessage ) {
+      if ( this[ name_of_asyncResultOk ] )
         return;
 
       const mostDerivedClassName
@@ -319,9 +301,8 @@ function NonReentrant_asyncPromise(
 
       throw Error( `${mostDerivedClassName}.${funcNameInMessage}(): `
         + `should be executed only if `
-        + `this.${name_of_asyncResult} ( ${this[ name_of_asyncResult ]} ) `
-        + `is truthy (i.e. not undefined, not null, not false, `
-        + `not 0, not NaN, not empty string "").` );
+        + `this.${name_of_asyncResultOk} ( ${this[ name_of_asyncResultOk ]} ) `
+        + `is true.` );
     }
 
   } );

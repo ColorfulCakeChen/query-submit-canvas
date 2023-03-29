@@ -298,7 +298,7 @@ function NonReentrant_asyncGenerator(
         }
 
         // The .XxxOk should be non-undefined. If it is undefined:
-        //   - The generator forgets to return meaningful result.
+        //   - The generator forgets to set it.
         NonReentrant_asyncGenerator[ name_of_throw_if_asyncResultOk_undefined ]
           .call( this, funcNameInMessage );
 
