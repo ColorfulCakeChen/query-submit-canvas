@@ -602,7 +602,8 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     input_height, input_width,
     vocabularyChannelCount,
     blockCountTotalRequested, output_channelCount_per_alignment,
-    init_asyncGenerator_delayPromise, versus_load_asyncGenerator_delayPromise ) {
+    init_asyncGenerator_delayPromise,
+    versus_load_asyncGenerator_delayPromise ) {
 
     { // Checking pre-condition.
       const funcNameInMessage = "init_asyncGenerator_create";
@@ -611,7 +612,9 @@ class NeuralOrchestra_Base extends Recyclable.Root {
         this.init_asyncGenerator_running, funcNameInMessage );
 
       // If .init_async() running, throw, too.
-      NeuralOrchestra_Base.throw_if_init_asyncPromise_or_asyncGenerator_running.call( this, funcNameInMessage );
+      NeuralOrchestra_Base
+        .throw_if_init_asyncPromise_or_asyncGenerator_running.call( this,
+          funcNameInMessage );
 
 //!!! ...unfinished... (2023/03/28)
 // How to integrate these precondition checking to the NonReentrant_Xxx base class?
@@ -651,7 +654,8 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     input_height, input_width,
     vocabularyChannelCount,
     blockCountTotalRequested, output_channelCount_per_alignment,
-    init_asyncGenerator_delayPromise, versus_load_asyncGenerator_delayPromise ) {
+    init_asyncGenerator_delayPromise,
+    versus_load_asyncGenerator_delayPromise ) {
 
     this.init_asyncGenerator_running = true;
     this.initOk = undefined;
@@ -663,31 +667,34 @@ class NeuralOrchestra_Base extends Recyclable.Root {
       input_height, input_width,
       vocabularyChannelCount,
       blockCountTotalRequested, output_channelCount_per_alignment,
-      init_asyncGenerator_delayPromise, versus_load_asyncGenerator_delayPromise );
+      init_asyncGenerator_delayPromise,
+      versus_load_asyncGenerator_delayPromise );
     return init_asyncGenerator;
   }
 
   /**
-   *   - Load all differential evolution versus weights ranges (i.e. versus summary).
+   *   - Load all differential evolution versus weights ranges (i.e. versus
+   *       summary).
    *   - Load one versus.
    *   - Create neural workers and compile GPU shaders.
    *   - Create neural networks.
    *
    *
-   * Note1: Although this is an async generator, it will always block main worker
-   *        (i.e. UI worker) due to GPU shader compiling no matter it is called
-   *        in which web worker. So, it is highly recommended to call it when
-   *        display a static splash screen.
+   * Note1: Although this is an async generator, it will always block main
+   *        worker (i.e. UI worker) due to GPU shader compiling no matter it
+   *        is called in which web worker. So, it is highly recommended to
+   *        call it when display a static splash screen.
    *
-   * Note2: After this async generator done, continue to versus_load_asyncGenerator.next()
-   *        which will not block main worker. So, it is recommended to do that
-   *        with an animated screen for displaying loading progress.
+   * Note2: After this async generator done, continuing to call
+   *        versus_load_asyncGenerator.next() will not block main worker.
+   *        So, it is recommended to do that with an animated screen for
+   *        displaying loading progress.
    *
    *
    * @param {ValueMax.Percentage.Aggregate} progressParent
-   *   Some new progressToAdvance will be created and added to progressParent. The
-   * created progressToAdvance will be increased when every time advanced. The
-   * progressParent.root_get() will be returned when every time yield.
+   *   Some new progressToAdvance will be created and added to progressParent.
+   * The created progressToAdvance will be increased when every time advanced.
+   * The progressParent.root_get() will be returned when every time yield.
    *
    *
    * @param {Promise} init_asyncGenerator_delayPromise
@@ -695,9 +702,9 @@ class NeuralOrchestra_Base extends Recyclable.Root {
    * await it before complete. If null or undefined, no extra delay awaiting.
    *
    * @param {Promise} versus_load_asyncGenerator_delayPromise
-   *   Mainly used when unit testing. If not null, the versus_load_asyncGenerator async
-   * generator will await it before complete. If null or undefined, no extra
-   * delay awaiting.
+   *   Mainly used when unit testing. If not null, the
+   * versus_load_asyncGenerator async generator will await it before complete.
+   * If null or undefined, no extra delay awaiting.
    *
    *
    * @yield {Promise( ValueMax.Percentage.Aggregate )}
