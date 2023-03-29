@@ -433,7 +433,9 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     input_height, input_width,
     vocabularyChannelCount,
     blockCountTotalRequested, output_channelCount_per_alignment,
-    init_asyncGenerator_delayPromise, versus_load_asyncGenerator_delayPromise ) {
+    b_return_versus_load_asyncGenerator_instead_of_asyncPromise,
+    init_asyncGenerator_delayPromise,
+    versus_load_asyncGenerator_delayPromise ) {
 
     { // Checking pre-condition.
       const funcNameInMessage = "init_asyncPromise_create";
@@ -463,6 +465,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
       input_height, input_width,
       vocabularyChannelCount,
       blockCountTotalRequested, output_channelCount_per_alignment,
+      b_return_versus_load_asyncGenerator_instead_of_asyncPromise,
       init_asyncGenerator_delayPromise,
       versus_load_asyncGenerator_delayPromise
     );
@@ -494,14 +497,19 @@ class NeuralOrchestra_Base extends Recyclable.Root {
    *
    * @return {Promise}
    *   Return a promise (i.e. init_asyncPromise).
-   *   - Resolved to true, if succeeded.
+   *   - Resolved to versus_load_asyncGenerator or
+   *       { versus_load_asyncPromise }, if succeeded.
    *     - The neural workers have been created and GPU shaders have been
    *         compiled.
+   * 
    *     - But the versus summary and versus may still be loading (i.e. not
-   *         yet complete). The neural networks may also still not be created
-   *         (since they need the versus data). Please check
-   *         .versus_load_asyncPromise or .versus_load_asyncPromise_progress
-   *         or .versus_loadOk to determine whether complete.
+   *         yet complete).
+   *       - The neural networks may also still not be created (since they
+   *           need the versus data).
+   *       - Please asynchronously check the returned value
+   *           (versus_load_asyncGenerator or versus_load_asyncPromise) or
+   *           .versus_load_asyncPromise_progress or .versus_loadOk to
+   *           determine whether versus loading completed.
    * 
    *   - Resolved to false, if failed.
    */
@@ -511,6 +519,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     input_height, input_width,
     vocabularyChannelCount,
     blockCountTotalRequested, output_channelCount_per_alignment,
+    b_return_versus_load_asyncGenerator_instead_of_asyncPromise,
     init_asyncGenerator_delayPromise,
     versus_load_asyncGenerator_delayPromise ) {
 
@@ -539,6 +548,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
           input_height, input_width,
           vocabularyChannelCount,
           blockCountTotalRequested, output_channelCount_per_alignment,
+          b_return_versus_load_asyncGenerator_instead_of_asyncPromise,
           init_asyncGenerator_delayPromise,
           versus_load_asyncGenerator_delayPromise
         );
@@ -549,32 +559,39 @@ class NeuralOrchestra_Base extends Recyclable.Root {
       } while ( !init_asyncGeneratorNext.done );
 
       // (Note: The .initOk will also be set.)
-      let versus_load_asyncGenerator = init_asyncGeneratorNext.value;
+      let versus_load_asyncGenerator_or_wrapped_asyncPromise
+        = init_asyncGeneratorNext.value;
 
-      if ( ( versus_load_asyncGenerator != undefined ) != this.initOk )
+      if ( ( versus_load_asyncGenerator_or_wrapped_asyncPromise != undefined )
+             != this.initOk )
         throw Error( `NeuralOrchestra.Base.${funcNameInMessage}(): `
-          + `( versus_load_asyncGenerator ( ${versus_load_asyncGenerator} ) != undefined ) `
+          + `( versus_load_asyncGenerator_or_wrapped_asyncPromise ( `
+            + `${versus_load_asyncGenerator_or_wrapped_asyncPromise} ) != undefined ) `
           + `should be the same as `
           + `this.initOk ( ${this.initOk} ).`
         );
 
-      if ( !versus_load_asyncGenerator )
+      if ( !versus_load_asyncGenerator_or_wrapped_asyncPromise )
         throw Error( `NeuralOrchestra.Base.${funcNameInMessage}(): `
-          + `versus_load_asyncGenerator ( ${versus_load_asyncGenerator} ) `
+          + `versus_load_asyncGenerator_or_wrapped_asyncPromise ( `
+            + `${versus_load_asyncGenerator_or_wrapped_asyncPromise} ) `
           + `should not be undefined.`
         );
 
-//!!! ...unfinished... (2023/03/29)
-      // 3. Continue to load (versus summary and) versus and create neural
-      //    networks.
-      //
-      // Note: It is not be awaited here. Caller is responsible for awaiting
-      //       .versus_load_asyncPromise
-      NeuralOrchestra_Base
-        .versus_load_asyncPromise_create_without_checking_precondition.call( this,
-          versus_load_asyncGenerator );
+//!!! ...unfinished... (2023/03/29) 
+// Use versus_load_asyncGenerator_or_wrapped_asyncPromise instead.
+//       // 3. Continue to load (versus summary and) versus and create neural
+//       //    networks.
+//       //
+//       // Note: It is not be awaited here. Caller is responsible for awaiting
+//       //       .versus_load_asyncPromise
+//       NeuralOrchestra_Base
+//         .versus_load_asyncPromise_create_without_checking_precondition.call( this,
+//           versus_load_asyncGenerator );
+//
+//       return this.initOk;
 
-      return this.initOk;
+      return versus_load_asyncGenerator_or_wrapped_asyncPromise;
 
     } catch ( e ) {
       debugger;
@@ -1398,7 +1415,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
   static versus_load_asyncPromise_create_without_checking_precondition(
     versus_load_asyncGenerator ) {
 
-//!!! ...unfinished... (2023/03/25)
+!!! ...unfinished... (2023/03/25)
 // Perhaps, only init_async() will record in this.versus_load_asyncPromise
     this.versus_load_asyncPromise_running = true;
     this.versus_load_asyncPromise = NeuralOrchestra_Base.versus_load_async.call(
