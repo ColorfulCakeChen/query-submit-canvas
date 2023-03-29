@@ -1444,9 +1444,11 @@ class NeuralOrchestra_Base extends Recyclable.Root {
         throw Error( `NeuralOrchestra.Base.${funcNameInMessage}(): `
           + `versus_load_asyncGenerator should have already existed.` );
 
+      let loaderNextPromise;
       let loaderNext;
       do {
-        loaderNext = await versus_load_asyncGenerator.next();
+        loaderNextPromise = versus_load_asyncGenerator.next();
+        loaderNext = await loaderNextPromise;
       } while ( !loaderNext.done );
 
       // The result should be either true or false. If result is undefined,
