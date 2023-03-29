@@ -1222,11 +1222,6 @@ class NeuralOrchestra_Base extends Recyclable.Root {
 //!!! ...unfinished... (2023/03/29)
 // Perhaps, should check init_asyncGenerator_or_asyncPromise_running == true.
 
-
-//!!! ...unfinished... (2023/03/28)
-// How to integrate these precondition checking to the NonReentrant_Xxx base class?
-// Perhaps, by overriding same name method.
-
       NeuralOrchestra_Base.throw_if_imageData_processing.call( this,
         funcNameInMessage );
     }
@@ -1295,10 +1290,6 @@ class NeuralOrchestra_Base extends Recyclable.Root {
 
     { // Checking pre-condition.
       const funcNameInMessage = "workerProxies_NeuralNetArray_create_async";
-
-//!!! ...unfinished... (2023/03/28)
-// How to integrate these precondition checking to the NonReentrant_Xxx base class?
-// Perhaps, by overriding same name method.
 
       NeuralOrchestra_Base.throw_if_imageData_processing.call( this,
         funcNameInMessage );
