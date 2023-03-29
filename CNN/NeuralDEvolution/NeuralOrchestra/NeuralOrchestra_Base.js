@@ -712,7 +712,8 @@ class NeuralOrchestra_Base extends Recyclable.Root {
    *
    * @yield {Promise( AsyncGenerator )}
    *   Yield a promise:
-   *   - Resolved to { done: true, value: versus_load_asyncGenerator }, if succeeded.
+   *   - Resolved to { done: true, value: versus_load_asyncGenerator }, if
+   *       succeeded.
    *     - The this.initOk will be true.
    *     - The neural workers have been created and GPU shaders have been
    *         compiled.
@@ -720,9 +721,10 @@ class NeuralOrchestra_Base extends Recyclable.Root {
    *         yet complete).
    *       - The neural networks may also still not be created (since they
    *           need the versus data).
-   *       - Please asynchronously check the returned value (versus_load_asyncGenerator
-   *           which is an instance of .versus_load_asyncGenerator()) or
-   *           .versus_loadOk to determine whether completed.
+   *       - Please asynchronously check the returned value
+   *           (versus_load_asyncGenerator which is an instance of
+   *           .versus_load_asyncGenerator()) or .versus_loadOk to determine
+   *           whether completed.
    *
    *   - Resolved to { done: true, value: undefined }, if failed.
    *     - The this.initOk will be false.
@@ -740,7 +742,8 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     input_height, input_width,
     vocabularyChannelCount,
     blockCountTotalRequested, output_channelCount_per_alignment,
-    init_asyncGenerator_delayPromise, versus_load_asyncGenerator_delayPromise
+    init_asyncGenerator_delayPromise,
+    versus_load_asyncGenerator_delayPromise
   ) {
 
     const funcNameInMessage = "init_asyncGenerator";
