@@ -273,7 +273,10 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     { // Checking pre-condition.
       const funcNameInMessage = "disposeResources";
 
-      NeuralOrchestra_Base.throw_if_init_asyncPromise_or_asyncGenerator_running.call( this, funcNameInMessage );
+      NeuralOrchestra_Base
+        .throw_if_init_asyncPromise_or_asyncGenerator_running.call( this,
+          funcNameInMessage );
+
       NeuralOrchestra_Base.throw_if_workerProxies_busy_or_versus_loading.call(
         this, funcNameInMessage );
     }
@@ -439,7 +442,9 @@ class NeuralOrchestra_Base extends Recyclable.Root {
         this.init_asyncPromise_running, funcNameInMessage );
 
       // If .init_asyncGenerator() running, throw, too.
-      NeuralOrchestra_Base.throw_if_init_asyncPromise_or_asyncGenerator_running.call( this, funcNameInMessage );
+      NeuralOrchestra_Base
+        .throw_if_init_asyncPromise_or_asyncGenerator_running.call( this,
+          funcNameInMessage );
 
 //!!! ...unfinished... (2023/03/28)
 // How to integrate these precondition checking to the NonReentrant_Xxx base class?
@@ -458,21 +463,24 @@ class NeuralOrchestra_Base extends Recyclable.Root {
       input_height, input_width,
       vocabularyChannelCount,
       blockCountTotalRequested, output_channelCount_per_alignment,
-      init_asyncGenerator_delayPromise, versus_load_asyncGenerator_delayPromise
+      init_asyncGenerator_delayPromise,
+      versus_load_asyncGenerator_delayPromise
     );
     return init_asyncPromise;
   }
 
   /**
-   * Call .init_asyncGenerator() and .versus_load_asyncPromise_create() internally.
+   * Call .init_asyncGenerator() and .versus_load_asyncPromise_create()
+   * internally.
    *
    *
    * Note1: Although this is an async method, it will always block main worker
-   *        (i.e. UI worker). (Please see also .init_asyncGenerator() explanation.)
+   *        (i.e. UI worker). (Please see also .init_asyncGenerator()
+   *        explanation.)
    *
    * Note2: For the same reason, after this async method resolved, continue to
-   *        await .versus_load_asyncPromise will not block main worker. (Please see
-   *        also .init_asyncGenerator() explanation.)
+   *        await .versus_load_asyncPromise will not block main worker. (Please
+   *        see also .init_asyncGenerator() explanation.)
    *
    *
    * @param {Promise} init_asyncGenerator_delayPromise
@@ -480,9 +488,9 @@ class NeuralOrchestra_Base extends Recyclable.Root {
    * await it before complete. If null or undefined, no extra delay awaiting.
    *
    * @param {Promise} versus_load_asyncGenerator_delayPromise
-   *   Mainly used when unit testing. If not null, the versus_load_asyncGenerator async
-   * generator will await it before complete. If null or undefined, no extra
-   * delay awaiting.
+   *   Mainly used when unit testing. If not null, the
+   * versus_load_asyncGenerator async generator will await it before complete.
+   * If null or undefined, no extra delay awaiting.
    *
    * @return {Promise}
    *   Return a promise (i.e. init_asyncPromise).
@@ -491,9 +499,9 @@ class NeuralOrchestra_Base extends Recyclable.Root {
    *         compiled.
    *     - But the versus summary and versus may still be loading (i.e. not
    *         yet complete). The neural networks may also still not be created
-   *         (since they need the versus data). Please check .versus_load_asyncPromise
-   *         or .versus_load_asyncPromise_progress or .versus_loadOk to determine whether
-   *         complete.
+   *         (since they need the versus data). Please check
+   *         .versus_load_asyncPromise or .versus_load_asyncPromise_progress
+   *         or .versus_loadOk to determine whether complete.
    * 
    *   - Resolved to false, if failed.
    */
@@ -503,13 +511,15 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     input_height, input_width,
     vocabularyChannelCount,
     blockCountTotalRequested, output_channelCount_per_alignment,
-    init_asyncGenerator_delayPromise, versus_load_asyncGenerator_delayPromise ) {
+    init_asyncGenerator_delayPromise,
+    versus_load_asyncGenerator_delayPromise ) {
 
     const funcNameInMessage = "init_async";
     { // Checking pre-condition.
 
       NeuralOrchestra_Base.throw_call_another_if_false.call( this,
-        this.init_asyncPromise_running, funcNameInMessage, "init_asyncPromise_create" );
+        this.init_asyncPromise_running, funcNameInMessage,
+        "init_asyncPromise_create" );
 
       NeuralOrchestra_Base.throw_if_workerProxies_busy_or_versus_loading.call(
         this, "init_async" );
@@ -529,7 +539,8 @@ class NeuralOrchestra_Base extends Recyclable.Root {
           input_height, input_width,
           vocabularyChannelCount,
           blockCountTotalRequested, output_channelCount_per_alignment,
-          init_asyncGenerator_delayPromise, versus_load_asyncGenerator_delayPromise
+          init_asyncGenerator_delayPromise,
+          versus_load_asyncGenerator_delayPromise
         );
 
       let init_asyncGeneratorNext;
