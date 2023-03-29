@@ -202,7 +202,7 @@ async function* prepend_asyncGenerator( prependNextPromise, asyncGenerator ) {
 
   } catch ( e ) {
     console.error( e );
-    debugger;
+    //debugger;
     throw e;
   }
 }
