@@ -273,7 +273,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     { // Checking pre-condition.
       const funcNameInMessage = "disposeResources";
 
-      NeuralOrchestra_Base.throw_if_initializing.call( this, funcNameInMessage );
+      NeuralOrchestra_Base.throw_if_init_asyncPromise_or_asyncGenerator_running.call( this, funcNameInMessage );
       NeuralOrchestra_Base.throw_if_workerProxies_busy_or_versus_loading.call(
         this, funcNameInMessage );
     }
@@ -439,7 +439,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
         this.init_asyncPromise_running, funcNameInMessage );
 
       // If .init_asyncGenerator() running, throw, too.
-      NeuralOrchestra_Base.throw_if_initializing.call( this, funcNameInMessage );
+      NeuralOrchestra_Base.throw_if_init_asyncPromise_or_asyncGenerator_running.call( this, funcNameInMessage );
 
 //!!! ...unfinished... (2023/03/28)
 // How to integrate these precondition checking to the NonReentrant_Xxx base class?
@@ -600,7 +600,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
         this.init_asyncGenerator_running, funcNameInMessage );
 
       // If .init_async() running, throw, too.
-      NeuralOrchestra_Base.throw_if_initializing.call( this, funcNameInMessage );
+      NeuralOrchestra_Base.throw_if_init_asyncPromise_or_asyncGenerator_running.call( this, funcNameInMessage );
 
 //!!! ...unfinished... (2023/03/28)
 // How to integrate these precondition checking to the NonReentrant_Xxx base class?
@@ -1167,7 +1167,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
 // How to integrate these precondition checking to the NonReentrant_Xxx base class?
 // Perhaps, by overriding same name method.
 
-      NeuralOrchestra_Base.throw_if_initializing.call( this, funcNameInMessage );
+      NeuralOrchestra_Base.throw_if_init_asyncPromise_or_asyncGenerator_running.call( this, funcNameInMessage );
       NeuralOrchestra_Base.throw_if_workerProxies_initializing.call( this,
         funcNameInMessage );
       NeuralOrchestra_Base.throw_if_not_initOk.call( this, funcNameInMessage );
@@ -1206,7 +1206,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
         this.imageData_process_asyncPromise_running, funcNameInMessage,
         "imageData_process_asyncPromise_create" );
 
-      NeuralOrchestra_Base.throw_if_initializing.call( this, funcNameInMessage );
+      NeuralOrchestra_Base.throw_if_init_asyncPromise_or_asyncGenerator_running.call( this, funcNameInMessage );
       NeuralOrchestra_Base.throw_if_workerProxies_initializing.call( this,
         funcNameInMessage );
       NeuralOrchestra_Base.throw_if_not_initOk.call( this, funcNameInMessage );
@@ -1312,7 +1312,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
 // How to integrate these precondition checking to the NonReentrant_Xxx base class?
 // Perhaps, by overriding same name method.
 
-      NeuralOrchestra_Base.throw_if_initializing.call( this, funcNameInMessage );
+      NeuralOrchestra_Base.throw_if_init_asyncPromise_or_asyncGenerator_running.call( this, funcNameInMessage );
       NeuralOrchestra_Base.throw_if_not_initOk.call( this, funcNameInMessage );
 
       NeuralOrchestra_Base.throw_if_versus_loading.call( this, funcNameInMessage );
@@ -1482,7 +1482,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
 // How to integrate these precondition checking to the NonReentrant_Xxx base class?
 // Perhaps, by overriding same name method.
 
-      NeuralOrchestra_Base.throw_if_initializing.call( this, funcNameInMessage );
+      NeuralOrchestra_Base.throw_if_init_asyncPromise_or_asyncGenerator_running.call( this, funcNameInMessage );
       NeuralOrchestra_Base.throw_if_not_initOk.call( this, funcNameInMessage );
 
       NeuralOrchestra_Base.throw_if_versus_loading.call( this, funcNameInMessage );
@@ -1787,7 +1787,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     { // Checking pre-condition.
 
       // Prevent from .versusResultSender not existed.
-      NeuralOrchestra_Base.throw_if_initializing.call( this, funcNameInMessage );
+      NeuralOrchestra_Base.throw_if_init_asyncPromise_or_asyncGenerator_running.call( this, funcNameInMessage );
       NeuralOrchestra_Base.throw_if_not_initOk.call( this, funcNameInMessage );
 
       // Prevent from .versus not existed.
@@ -1832,7 +1832,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
    * @param {NeuralOrchestra_Base} this
    * @param {string} funcNameInMessage   The caller function name. (e.g. init_async)
    */
-  static throw_if_initializing( funcNameInMessage ) {
+  static throw_if_init_asyncPromise_or_asyncGenerator_running( funcNameInMessage ) {
     if (   ( this.init_asyncPromise_running )
         || ( this.init_asyncGenerator_running ) )
       throw Error( `NeuralOrchestra.Base.${funcNameInMessage}(): `

@@ -71,6 +71,9 @@ function NonReentrant_asyncGenerator(
   const name_of_throw_if_asyncPromise_or_asyncGenerator_running
     = `throw_if_${name_prefix}_asyncPromise_or_asyncGenerator_running`;
 
+  const name_of_throw_if_asyncPromise_and_asyncGenerator_not_running
+    = `throw_if_${name_prefix}_asyncPromise_and_asyncGenerator_not_running`;
+
   const name_of_throw_if_asyncResult_undefined
     = `throw_if_${name_of_asyncResult}_undefined`;
 
@@ -114,6 +117,10 @@ function NonReentrant_asyncGenerator(
    * @member {Function} throw_if_Xxx_asyncPromise_or_asyncGenerator_running
    *   A static method for throwing excption if .Xxx_asyncPromise_running or
    * .Xxx_asyncGenerator_running is true.
+   *
+   * @member {Function} throw_if_Xxx_asyncPromise_and_asyncGenerator_not_running
+   *   A static method for throwing excption if .Xxx_asyncPromise_running and
+   * .Xxx_asyncGenerator_running is false.
    *
    * @member {Function} [ throw_if_XxxYyy_undefined ]
    *   A static method for throwing excption if ( this.XxxYyy ) is undefined.
@@ -280,9 +287,9 @@ function NonReentrant_asyncGenerator(
 
       // Note: Property .Xxx_asyncPromise_running is created by sub-class
       //       (if exists).
-      let b_asyncPromise_running = this[ name_of_asyncPromise_running ];
-
-      if ( ( !b_asyncPromise_running ) && ( !this.#asyncGenerator_running ) )
+      if (   ( !this.#asyncGenerator_running )
+          && ( !this[ name_of_asyncPromise_running ] ) // b_asyncPromise_running
+         )
         return;
 
       const mostDerivedClassName
@@ -293,6 +300,30 @@ function NonReentrant_asyncGenerator(
         + `.${name_of_asyncPromise_create}() or `
         + `.${name_of_asyncGenerator_create}() `
         + `is still running.` );
+    }
+
+    /**
+     * @param {NonReentrant_asyncGenerator} this
+     * @param {string} funcNameInMessage   The caller function name. (e.g. init_async)
+     */
+    static [ name_of_throw_if_asyncPromise_and_asyncGenerator_not_running ](
+      funcNameInMessage ) {
+
+      // Note: Property .Xxx_asyncPromise_running is created by sub-class
+      //       (if exists).
+      if (   ( this.#asyncGenerator_running )
+          || ( this[ name_of_asyncPromise_running ] ) // b_asyncPromise_running
+         )
+        return;
+
+      const mostDerivedClassName
+        = ClassHierarchyTools.MostDerived_ClassName_of_Instance( this );
+
+      throw Error( `${mostDerivedClassName}.${funcNameInMessage}(): `
+        + `should be executed during an instance of `
+        + `.${name_of_asyncPromise_create}() or `
+        + `.${name_of_asyncGenerator_create}() `
+        + `is running.` );
     }
 
     /**
