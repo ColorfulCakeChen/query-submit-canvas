@@ -1616,7 +1616,8 @@ class NeuralOrchestra_Base extends Recyclable.Root {
    *   - If not null, it awaited before creating neural networks.
    *     - This case is used by .init_asyncGenerator()
    *   - If null, the .initOk must already be true.
-   *     - This case is used by .versus_load_asyncGenerator_create() (i.e. outside caller).
+   *     - This case is used by .versus_load_asyncGenerator_create() (i.e.
+   *         outside caller).
    *
    * @param {Promise} delayPromise
    *   Mainly used when unit testing. If not null, this async generator will
