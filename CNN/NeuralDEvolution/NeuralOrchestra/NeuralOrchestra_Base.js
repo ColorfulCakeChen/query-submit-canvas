@@ -1615,7 +1615,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
    *   The result of .workerProxies_init_asyncPromise_create().
    *   - If not null, it awaited before creating neural networks.
    *     - This case is used by .init_asyncGenerator()
-   *   - If null, the .initOk must have been true.
+   *   - If null, the .initOk must already be true.
    *     - This case is used by .versus_load_asyncGenerator_create() (i.e. outside caller).
    *
    * @param {Promise} delayPromise
