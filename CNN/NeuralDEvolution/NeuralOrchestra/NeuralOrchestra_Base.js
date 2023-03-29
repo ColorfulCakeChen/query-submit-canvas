@@ -886,7 +886,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
       }
 
       // 3.5 Continue to load (versus summary and) versus and create neural
-      //    networks.
+      //     networks.
       let returnValue;
       if ( b_return_versus_load_asyncGenerator_instead_of_asyncPromise ) {
         returnValue = versus_load_asyncGenerator_prepended;
