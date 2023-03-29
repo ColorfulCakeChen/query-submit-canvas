@@ -77,7 +77,7 @@ import { Params_loading_retryWaiting as HttpRequest_Params_loading_retryWaiting 
  */
 class HttpRequest_Fetcher
   extends NonReentrant.asyncGenerator(
-    "fetch", "Result", relay_fetch_asyncGenerator ) {
+    "fetch", relay_fetch_asyncGenerator ) {
 
   /**
    *
