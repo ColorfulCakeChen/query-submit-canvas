@@ -51,7 +51,7 @@ class TestCase {
   /**
    * Because ImageData.data.buffer (and sourceNumberArray.buffer) will be
    * transferred (i.e. not copied) to web worker when
-   * .imageData_process_asyncPromise_create(), they should be re-created
+   * .imageData_process_async(), they should be re-created
    * every time.
    */
   ImageData_create() {
@@ -95,7 +95,7 @@ class TestCase {
     //       copied) to web worker, it should be re-created every time.
     let sourceImageData = this.ImageData_create();
     let delayPromise = PartTime.Promise_resolvable_rejectable_create();
-    processPromise = neuralOrchestra.imageData_process_asyncPromise_create(
+    processPromise = neuralOrchestra.imageData_process_async(
       sourceImageData, delayPromise );
 
     if ( neuralOrchestra.imageData_process_asyncPromise_running ) {
@@ -110,13 +110,13 @@ class TestCase {
         + `should be true.` );
     }
 
-    // Test: Reenter .imageData_process_asyncPromise_create()
+    // Test: Reenter .imageData_process_async()
     //       should throw exception.
     try {
       ++this.testId;
-      neuralOrchestra.imageData_process_asyncPromise_create();
+      neuralOrchestra.imageData_process_async();
     } catch ( e ) {
-      if ( e.message.indexOf( ".imageData_process_asyncPromise_create():" ) > 0 ) {
+      if ( e.message.indexOf( ".imageData_process_async():" ) > 0 ) {
         progressToAdvance.value_advance();
         yield progressRoot;
       } else { // Unknown error, said loudly.
@@ -417,9 +417,9 @@ class TestCase {
     // Test: process before versus loaded. (should exception.)
     try {
       ++this.testId;
-      neuralOrchestra.imageData_process_asyncPromise_create();
+      neuralOrchestra.imageData_process_async();
     } catch ( e ) {
-      if ( e.message.indexOf( ".imageData_process_asyncPromise_create():" ) > 0 ) {
+      if ( e.message.indexOf( ".imageData_process_async():" ) > 0 ) {
         progressToAdvance.value_advance();
         yield progressRoot;
       } else { // Unknown error, said loudly.
@@ -647,9 +647,9 @@ class TestCase {
     // Test: process before init ok. (should exception.)
     try {
       ++this.testId;
-      neuralOrchestra.imageData_process_asyncPromise_create();
+      neuralOrchestra.imageData_process_async();
     } catch ( e ) {
-      if ( e.message.indexOf( ".imageData_process_asyncPromise_create():" ) > 0 ) {
+      if ( e.message.indexOf( ".imageData_process_async():" ) > 0 ) {
         progressToAdvance.value_advance();
         yield progressRoot;
       } else { // Unknown error, said loudly.
@@ -827,9 +827,9 @@ class TestCase {
       // 1.4 Test: process before .init. (should exception.)
       try {
         ++this.testId;
-        neuralOrchestra.imageData_process_asyncPromise_create();
+        neuralOrchestra.imageData_process_async();
       } catch ( e ) {
-        if ( e.message.indexOf( ".imageData_process_asyncPromise_create():" ) > 0 ) {
+        if ( e.message.indexOf( ".imageData_process_async():" ) > 0 ) {
           progressToAdvance.value_advance();
           yield progressRoot;
         } else { // Unknown error, said loudly.

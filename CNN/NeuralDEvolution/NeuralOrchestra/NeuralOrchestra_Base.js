@@ -77,7 +77,7 @@ import * as DEvolution from "../DEvolution.js";
  *
  * 1.3 Process image, and report versus result
  *
- *   - call and await .imageData_process_asyncPromise_create()
+ *   - call and await .imageData_process_async()
  *   - call versusResultSender_send()
  *   - go to 1.1.2 or 1.2.2 (Load another versus)
  *
@@ -211,8 +211,8 @@ import * as DEvolution from "../DEvolution.js";
  *
  * @member {boolean} imageData_process_asyncPromise_running
  *   If true, a .imageData_process_async() is still executing.
- * Please wait it becoming false if wanting to call
- * .imageData_process_asyncPromise_create() again.
+ * Please wait it becoming false if wanting to call .imageData_process_async()
+ * again.
  *
  * 
  * @member {boolean} versus_load_asyncPromise_running
@@ -1314,40 +1314,6 @@ class NeuralOrchestra_Base extends Recyclable.Root {
 
 
   /**
-   * Call .imageData_process_async() and return imageData_process_asyncPromise.
-   *
-   * @return {Promise( Float32Array[] )}
-   *   Return imageData_process_asyncPromise which is an instance
-   * of .imageData_process_async().
-   */
-  imageData_process_asyncPromise_create( sourceImageData, delayPromise ) {
-
-    { // Checking pre-condition.
-      const funcNameInMessage = "imageData_process_asyncPromise_create";
-
-      NeuralOrchestra_Base.throw_if_an_old_still_running.call( this,
-        this.imageData_process_asyncPromise_running, funcNameInMessage );
-
-//!!! ...unfinished... (2023/03/28)
-// How to integrate these precondition checking to the NonReentrant_Xxx base class?
-// Perhaps, by overriding same name method.
-
-      NeuralOrchestra_Base.throw_if_init_asyncPromise_or_asyncGenerator_running.call( this, funcNameInMessage );
-      NeuralOrchestra_Base.throw_if_workerProxies_initializing.call( this,
-        funcNameInMessage );
-      NeuralOrchestra_Base.throw_if_not_initOk.call( this, funcNameInMessage );
-      NeuralOrchestra_Base.throw_if_versus_loading.call( this, funcNameInMessage );
-      NeuralOrchestra_Base.throw_if_not_versus_loadOk.call( this, funcNameInMessage );
-    }
-
-    this.imageData_process_asyncPromise_running = true;
-    let imageData_process_asyncPromise
-      = NeuralOrchestra_Base.imageData_process_async.call( this,
-          sourceImageData, delayPromise );
-    return imageData_process_asyncPromise;
-  }
-
-  /**
    *
    * @param {ImageData} sourceImageData
    *   The input image datat which will be processed by neural workers.
@@ -1362,22 +1328,29 @@ class NeuralOrchestra_Base extends Recyclable.Root {
    *   - Float32Array[ 0 ] is parent (chromosome) neural network's output.
    *   - Float32Array[ 1 ] is offspring (chromosome) neural network's output.
    */
-  static async imageData_process_async( sourceImageData, delayPromise ) {
+  async imageData_process_async( sourceImageData, delayPromise ) {
 
     { // Checking pre-condition.
       const funcNameInMessage = "imageData_process_async";
 
-      NeuralOrchestra_Base.throw_call_another_if_false.call( this,
-        this.imageData_process_asyncPromise_running, funcNameInMessage,
-        "imageData_process_asyncPromise_create" );
+      NeuralOrchestra_Base.throw_if_an_old_still_running.call( this,
+        this.imageData_process_asyncPromise_running, funcNameInMessage );
 
-      NeuralOrchestra_Base.throw_if_init_asyncPromise_or_asyncGenerator_running.call( this, funcNameInMessage );
+//!!! ...unfinished... (2023/03/28)
+// How to integrate these precondition checking to the NonReentrant_Xxx base class?
+// Perhaps, by overriding same name method.
+
+      NeuralOrchestra_Base.throw_if_init_asyncPromise_or_asyncGenerator_running
+        .call( this, funcNameInMessage );
+
       NeuralOrchestra_Base.throw_if_workerProxies_initializing.call( this,
         funcNameInMessage );
       NeuralOrchestra_Base.throw_if_not_initOk.call( this, funcNameInMessage );
       NeuralOrchestra_Base.throw_if_versus_loading.call( this, funcNameInMessage );
       NeuralOrchestra_Base.throw_if_not_versus_loadOk.call( this, funcNameInMessage );
     }
+
+    this.imageData_process_asyncPromise_running = true;
 
     try {
       // 1.
@@ -1397,6 +1370,93 @@ class NeuralOrchestra_Base extends Recyclable.Root {
       this.imageData_process_asyncPromise_running = false;
     }
   }
+
+//!!! (2023/03/29 Remarked) Old Codes
+// Integrate .imageData_process_asyncPromise_create() into .imageData_process_async()
+//   /**
+//    * Call .imageData_process_async() and return imageData_process_asyncPromise.
+//    *
+//    * @return {Promise( Float32Array[] )}
+//    *   Return imageData_process_asyncPromise which is an instance
+//    * of .imageData_process_async().
+//    */
+//   imageData_process_asyncPromise_create( sourceImageData, delayPromise ) {
+//
+//     { // Checking pre-condition.
+//       const funcNameInMessage = "imageData_process_asyncPromise_create";
+//
+//       NeuralOrchestra_Base.throw_if_an_old_still_running.call( this,
+//         this.imageData_process_asyncPromise_running, funcNameInMessage );
+//
+// //!!! ...unfinished... (2023/03/28)
+// // How to integrate these precondition checking to the NonReentrant_Xxx base class?
+// // Perhaps, by overriding same name method.
+//
+//       NeuralOrchestra_Base.throw_if_init_asyncPromise_or_asyncGenerator_running.call( this, funcNameInMessage );
+//       NeuralOrchestra_Base.throw_if_workerProxies_initializing.call( this,
+//         funcNameInMessage );
+//       NeuralOrchestra_Base.throw_if_not_initOk.call( this, funcNameInMessage );
+//       NeuralOrchestra_Base.throw_if_versus_loading.call( this, funcNameInMessage );
+//       NeuralOrchestra_Base.throw_if_not_versus_loadOk.call( this, funcNameInMessage );
+//     }
+//
+//     this.imageData_process_asyncPromise_running = true;
+//     let imageData_process_asyncPromise
+//       = NeuralOrchestra_Base.imageData_process_async.call( this,
+//           sourceImageData, delayPromise );
+//     return imageData_process_asyncPromise;
+//   }
+//
+//   /**
+//    *
+//    * @param {ImageData} sourceImageData
+//    *   The input image datat which will be processed by neural workers.
+//    *
+//    * @param {Promise} delayPromise
+//    *   Mainly used when unit testing. If not null, this async method will await
+//    * it before complete. If null or undefined, no extra delay awaiting.
+//    *
+//    * @return {Promise( Float32Array[] )}
+//    *   Return a promise resolved to an array [ Float32Array, Float32Array ]
+//    * representing the (pair) neural networks' results.
+//    *   - Float32Array[ 0 ] is parent (chromosome) neural network's output.
+//    *   - Float32Array[ 1 ] is offspring (chromosome) neural network's output.
+//    */
+//   static async imageData_process_async( sourceImageData, delayPromise ) {
+//
+//     { // Checking pre-condition.
+//       const funcNameInMessage = "imageData_process_async";
+//
+//       NeuralOrchestra_Base.throw_call_another_if_false.call( this,
+//         this.imageData_process_asyncPromise_running, funcNameInMessage,
+//         "imageData_process_asyncPromise_create" );
+//
+//       NeuralOrchestra_Base.throw_if_init_asyncPromise_or_asyncGenerator_running.call( this, funcNameInMessage );
+//       NeuralOrchestra_Base.throw_if_workerProxies_initializing.call( this,
+//         funcNameInMessage );
+//       NeuralOrchestra_Base.throw_if_not_initOk.call( this, funcNameInMessage );
+//       NeuralOrchestra_Base.throw_if_versus_loading.call( this, funcNameInMessage );
+//       NeuralOrchestra_Base.throw_if_not_versus_loadOk.call( this, funcNameInMessage );
+//     }
+//
+//     try {
+//       // 1.
+//       let theFloat32ArrayArrayPromise
+//         = this.workerProxies.ImageData_process_async( sourceImageData );
+//
+//       let theFloat32ArrayArray = await theFloat32ArrayArrayPromise;
+//
+//       // 2.
+//       if ( delayPromise )
+//         await delayPromise;
+//
+//       return theFloat32ArrayArray;
+//
+//     } finally {
+//       // 3. So that this async method could be executed again.
+//       this.imageData_process_asyncPromise_running = false;
+//     }
+//   }
 
 
   /**
