@@ -46,7 +46,8 @@ import * as DEvolution from "../DEvolution.js";
  *
  *   - await .versus_load_asyncPromise, or
  *   - check .versus_loadOk asynchronously until become true, or
- *   - check .versus_load_asyncPromise_progress.valuePercentage asynchronously until become 100.
+ *   - check .versus_load_asyncPromise_progress.valuePercentage asynchronously
+ *       until become 100.
  *   - go to 1.3
  *
  *
@@ -56,7 +57,8 @@ import * as DEvolution from "../DEvolution.js";
  * 1.2.1 Initialize (and also load one versus)
  *
  *   - call .init_asyncGenerator_create() with yourself progressParent.
- *   - await .next() until { done: true, value: versus_load_asyncGenerator }, go to 1.2.3
+ *   - await .next() until { done: true, value: versus_load_asyncGenerator }
+ *   - go to 1.2.3
  *
  *
  * 1.2.2 Load another versus
@@ -75,7 +77,7 @@ import * as DEvolution from "../DEvolution.js";
  *
  * 1.3 Process image, and report versus result
  *
- *   - call and await .imageData_process_promise_create()
+ *   - call and await .imageData_process_asyncPromise_create()
  *   - call versusResultSender_send()
  *   - go to 1.1.2 or 1.2.2 (Load another versus)
  *
@@ -206,10 +208,10 @@ import * as DEvolution from "../DEvolution.js";
  *   If true, a .workerProxies_init_async() has been executed and succeeded.
  *
  *
- * @member {boolean} imageData_process_async_running
+ * @member {boolean} imageData_process_asyncPromise_running
  *   If true, a .imageData_process_async() is still executing.
  * Please wait it becoming false if wanting to call
- * .imageData_process_promise_create() again.
+ * .imageData_process_asyncPromise_create() again.
  *
  * 
  * @member {boolean} versus_load_asyncPromise_running
@@ -283,7 +285,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     NeuralOrchestra_Base.versus_dispose.call( this );
     NeuralOrchestra_Base.versusSummary_dispose.call( this );
 
-    this.imageData_process_async_running = undefined;
+    this.imageData_process_asyncPromise_running = undefined;
 
     this.workerProxies_initOk = undefined;
     this.workerProxies_init_asyncPromise_running = undefined;
@@ -1144,19 +1146,19 @@ class NeuralOrchestra_Base extends Recyclable.Root {
 
 
   /**
-   * Call .imageData_process_async() and return imageData_process_promise.
+   * Call .imageData_process_async() and return imageData_process_asyncPromise.
    *
    * @return {Promise( Float32Array[] )}
-   *   Return imageData_process_promise which is an instance
+   *   Return imageData_process_asyncPromise which is an instance
    * of .imageData_process_async().
    */
-  imageData_process_promise_create( sourceImageData, delayPromise ) {
+  imageData_process_asyncPromise_create( sourceImageData, delayPromise ) {
 
     { // Checking pre-condition.
-      const funcNameInMessage = "imageData_process_promise_create";
+      const funcNameInMessage = "imageData_process_asyncPromise_create";
 
       NeuralOrchestra_Base.throw_if_an_old_still_running.call( this,
-        this.imageData_process_async_running, funcNameInMessage );
+        this.imageData_process_asyncPromise_running, funcNameInMessage );
 
 //!!! ...unfinished... (2023/03/28)
 // How to integrate these precondition checking to the NonReentrant_Xxx base class?
@@ -1170,11 +1172,11 @@ class NeuralOrchestra_Base extends Recyclable.Root {
       NeuralOrchestra_Base.throw_if_not_versus_loadOk.call( this, funcNameInMessage );
     }
 
-    this.imageData_process_async_running = true;
-    let imageData_process_promise
+    this.imageData_process_asyncPromise_running = true;
+    let imageData_process_asyncPromise
       = NeuralOrchestra_Base.imageData_process_async.call( this,
           sourceImageData, delayPromise );
-    return imageData_process_promise;
+    return imageData_process_asyncPromise;
   }
 
   /**
@@ -1198,8 +1200,8 @@ class NeuralOrchestra_Base extends Recyclable.Root {
       const funcNameInMessage = "imageData_process_async";
 
       NeuralOrchestra_Base.throw_call_another_if_false.call( this,
-        this.imageData_process_async_running, funcNameInMessage,
-        "imageData_process_promise_create" );
+        this.imageData_process_asyncPromise_running, funcNameInMessage,
+        "imageData_process_asyncPromise_create" );
 
       NeuralOrchestra_Base.throw_if_initializing.call( this, funcNameInMessage );
       NeuralOrchestra_Base.throw_if_workerProxies_initializing.call( this,
@@ -1224,7 +1226,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
 
     } finally {
       // 3. So that this async method could be executed again.
-      this.imageData_process_async_running = false;
+      this.imageData_process_asyncPromise_running = false;
     }
   }
 
@@ -1872,7 +1874,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
    * @param {string} funcNameInMessage   The caller function name. (e.g. init_async)
    */
   static throw_if_imageData_processing( funcNameInMessage ) {
-    if ( this.imageData_process_async_running )
+    if ( this.imageData_process_asyncPromise_running )
       throw Error( `NeuralOrchestra.Base.${funcNameInMessage}(): `
         + `should not be executed while `
         + `NeuralWorker.Proxies is still processing image.` );
