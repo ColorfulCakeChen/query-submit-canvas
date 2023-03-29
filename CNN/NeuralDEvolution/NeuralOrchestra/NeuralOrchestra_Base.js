@@ -1253,7 +1253,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     //const bLogDryRunTime = false;
     let neuralNet_create_promise
       = NeuralOrchestra_Base.workerProxies_NeuralNetArray_create_async.call(
-        this, weightArrayBufferArray, bLogDryRunTime );
+          this, weightArrayBufferArray, bLogDryRunTime );
 
     let createOk = await neuralNet_create_promise;
     if ( !createOk )
