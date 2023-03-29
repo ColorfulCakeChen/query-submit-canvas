@@ -102,8 +102,8 @@ function NonReentrant_asyncGenerator(
    *   - The .Xxx_asyncGenerator_create_without_checking_precondition() will
    *       clear this.XxxYyy (e.g. this.initOk) to undefined.
    *   - The .Xxx_asyncGenerator_guarded() will set this.XxxYyy (e.g.
-   *       this.initOk) to the .value when underlied_asyncGenerator_func()
-   *       { done: true, value }.
+   *       this.initOk) to the .value of { done: true, value } of final
+   *       underlied_asyncGenerator_func().next().
    *
    * @member {Function} Xxx_asyncGenerator_create
    *   A method for creating the underlied async generator.
