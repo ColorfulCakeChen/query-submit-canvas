@@ -1365,6 +1365,11 @@ class NeuralOrchestra_Base extends Recyclable.Root {
 
       return theFloat32ArrayArray;
 
+    } catch ( e ) {
+      debugger;
+      console.error( e );
+      throw e;
+
     } finally {
       // 3. So that this async method could be executed again.
       this.imageData_process_asyncPromise_running = false;
