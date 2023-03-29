@@ -7,16 +7,6 @@ import * as ValueMax from "../ValueMax.js";
 import { asyncGenerator as NonReentrant_asyncGenerator }
   from "./NonReentrant_asyncGenerator.js";
 
-
-//!!! ...unfinished... (2023/03/26)
-// Perhaps, can not inherit from Recyclable.Base() here.
-// Otherwise, if inherit from this class multiple times,
-// the Recyclable.Base will be inherited multiple times.
-// (e.g. .init_promise_create() and .versus_load_promise_create())
-//
-// But, it seems not harmful to inherit Recyclable.Base multiple times.
-
-
 /**
  * Return a recyclable wrapper class for preventing an underlied async
  * generator from being reentered.
@@ -24,6 +14,13 @@ import { asyncGenerator as NonReentrant_asyncGenerator }
  * It is strongly suggested the ParentClass has ancestor class (i.e.
  * inherits directly or indirectly from) Recyclable.Base because the
  * .Xxx_asyncPromise_progress needs to be disposed and recycled.
+ *
+ *
+ * Q: Why not inherit from Recyclable.Base() here?
+ * A: The Recyclable.Base will be inherited multiple times, if sub-class
+ *      inherits from this class multiple times for different async operation
+ *      (e.g. init and versus_load). (Although it seems not harmful to inherit
+ *      Recyclable.Base multiple times.
  *
  *
  * @param {string} name_prefix
