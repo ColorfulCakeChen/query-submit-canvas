@@ -98,15 +98,15 @@ class TestCase {
     processPromise = neuralOrchestra.imageData_process_asyncPromise_create(
       sourceImageData, delayPromise );
 
-    if ( neuralOrchestra.imageData_process_async_running ) {
+    if ( neuralOrchestra.imageData_process_asyncPromise_running ) {
       ++this.testId;
       progressToAdvance.value_advance();
       yield progressRoot;
     } else {
       throw Error( `NeuralOrchestra_tester.TestCase`
         + `.test_process_send_asyncGenerator(): testId=${this.testId}, `
-        + `neuralOrchestra.imageData_process_async_running=`
-        + `${neuralOrchestra.imageData_process_async_running} `
+        + `neuralOrchestra.imageData_process_asyncPromise_running=`
+        + `${neuralOrchestra.imageData_process_asyncPromise_running} `
         + `should be true.` );
     }
 
