@@ -27,18 +27,6 @@ import { asyncGenerator as NonReentrant_asyncGenerator }
  *   The prefix for all async operations and flags. (e.g. "init" or "fetch"
  * or "workerProxies_init" or "versus_load" or "imageData_process")
  *
- * @param {string} name_postfix_of_asyncResult 
- *   The property name postfix for recording the .value of { done: true, value }
- * of underlied_asyncGenerator_func.next(). For example,
- *
- *   - If ( name_prefix == "init" ) and ( name_postfix_of_asyncResult == "Ok" ),
- *       the property name of result will be "initOk".
- *
- *   - If ( name_prefix == "imageData_process" ) and
- *       ( name_postfix_of_asyncResult == "_result_float32ArrayArray" ), the
- *       property name of result will be
- *       "imageData_process_result_float32ArrayArray".
- *
  * @param {AsyncGeneratorFunction} underlied_asyncGenerator_func
  *   A function for creating an underlied async generator which wants to be
  * guarded by the .Xxx_asyncGenerator_running boolean flag.
@@ -51,7 +39,7 @@ import { asyncGenerator as NonReentrant_asyncGenerator }
  *       false.
  */
 function NonReentrant_asyncPromise_by_asyncGenerator(
-  name_prefix, name_postfix_of_asyncResult, underlied_asyncGenerator_func,
+  name_prefix, underlied_asyncGenerator_func,
   ParentClass = Object ) {
 
   const name_of_asyncPromise_running
@@ -129,7 +117,7 @@ function NonReentrant_asyncPromise_by_asyncGenerator(
    */
   class NonReentrant_asyncPromise_by_asyncGenerator
     extends NonReentrant_asyncGenerator(
-      name_prefix, name_postfix_of_asyncResult, underlied_asyncGenerator_func,
+      name_prefix, underlied_asyncGenerator_func,
       ParentClass ) {
 
     /**
@@ -277,7 +265,7 @@ function NonReentrant_asyncPromise_by_asyncGenerator(
         // Prepare asyncGenerator
         //
         // Note: This parent class static method will also set
-        //       this[ name_of_asyncResult ] to  undefined.
+        //       this[ name_of_asyncResultOk ] to  undefined.
         //
         asyncGenerator = NonReentrant_asyncPromise_by_asyncGenerator
           [ name_of_asyncGenerator_create_without_checking_precondition ]
