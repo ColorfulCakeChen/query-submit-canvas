@@ -44,7 +44,7 @@ import * as DEvolution from "../DEvolution.js";
  *
  * 1.1.3 Wait for versus loaded and neural networks created
  *
- *   - await .versus_load_asyncPromise, or
+ *   - await versus_load_asyncPromise, or
  *   - check .versus_loadOk asynchronously until become true, or
  *   - check .versus_load_asyncPromise_progress.valuePercentage asynchronously
  *       until become 100.
@@ -225,8 +225,11 @@ import * as DEvolution from "../DEvolution.js";
  * it becoming false if wanting to call .versus_load_asyncGenerator_create()
  * again.
  *
- * @member {Promise( boolean )} versus_load_asyncPromise
- *   The result of .versus_load_asyncPromise_create().
+
+//!!! (2023/03/29 Remarked) No longer record in this.versus_load_asyncPromise
+//  * @member {Promise( boolean )} versus_load_asyncPromise
+//  *   The result of .versus_load_asyncPromise_create().
+
  *
  * @member {ValueMax.Percentage.Aggregate} versus_load_asyncPromise_progress
  *   The progress of loading versus summary, loading versus, creating neural
@@ -284,7 +287,10 @@ class NeuralOrchestra_Base extends Recyclable.Root {
     NeuralOrchestra_Base.versusResultSender_dispose.call( this );
 
     NeuralOrchestra_Base.versus_load_asyncPromise_progress_dispose.call( this );
-    this.versus_load_asyncPromise = undefined;
+
+//!!! (2023/03/29 Remarked) No longer record in this.versus_load_asyncPromise
+//    this.versus_load_asyncPromise = undefined;
+
     this.versus_loadOk = undefined;
     this.versus_load_asyncGenerator_running = undefined;
     this.versus_load_asyncPromise_running = undefined;
@@ -482,8 +488,9 @@ class NeuralOrchestra_Base extends Recyclable.Root {
    *        explanation.)
    *
    * Note2: For the same reason, after this async method resolved, continue to
-   *        await .versus_load_asyncPromise will not block main worker. (Please
-   *        see also .init_asyncGenerator() explanation.)
+   *        await versus_load_asyncGenerator or versus_load_asyncPromise will
+   *        not block main worker. (Please see also .init_asyncGenerator()
+   *        explanation.)
    *
    *
    * @param {Promise} init_asyncGenerator_delayPromise
@@ -1337,7 +1344,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
   }
 
   /**
-   * Create .versus_load_asyncPromise (an instance of .versus_load_async()).
+   * Create versus_load_asyncPromise (an instance of .versus_load_async()).
    *
    *
    * @param {Promise} delayPromise
@@ -1345,7 +1352,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
    * await it before complete. If null or undefined, no extra delay awaiting.
    *
    * @return {Promise( boolean )}
-   *   Return the newly created this.versus_load_asyncPromise which is an instance
+   *   Return the newly created versus_load_asyncPromise which is an instance
    * of .versus_load_async().
    */
   versus_load_asyncPromise_create( delayPromise ) {
@@ -1396,7 +1403,7 @@ class NeuralOrchestra_Base extends Recyclable.Root {
   }
 
   /**
-   * Create .versus_load_asyncPromise (an instance of .versus_load_async()).
+   * Create versus_load_asyncPromise (an instance of .versus_load_async()).
    *
    * Called by .init_async() and .versus_load_asyncPromise_create(). It does not
    * check precondition.
@@ -1415,12 +1422,19 @@ class NeuralOrchestra_Base extends Recyclable.Root {
   static versus_load_asyncPromise_create_without_checking_precondition(
     versus_load_asyncGenerator ) {
 
-!!! ...unfinished... (2023/03/25)
-// Perhaps, only init_async() will record in this.versus_load_asyncPromise
+//!!! (2023/03/25 Remarked) no longer record in .versus_load_asyncPromise
+// !!! ...unfinished... (2023/03/25)
+// // Perhaps, only init_async() will record in this.versus_load_asyncPromise
+//     this.versus_load_asyncPromise_running = true;
+//     this.versus_load_asyncPromise = NeuralOrchestra_Base.versus_load_async.call(
+//       this, versus_load_asyncGenerator );
+//     return this.versus_load_asyncPromise;
+
     this.versus_load_asyncPromise_running = true;
-    this.versus_load_asyncPromise = NeuralOrchestra_Base.versus_load_async.call(
+    let versus_load_asyncPromise = NeuralOrchestra_Base.versus_load_async.call(
       this, versus_load_asyncGenerator );
-    return this.versus_load_asyncPromise;
+    return versus_load_asyncPromise;
+
   }
 
   /**
