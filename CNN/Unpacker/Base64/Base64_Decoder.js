@@ -17,9 +17,9 @@ import * as Base64_Constant from "./Base64_Constant.js";
  * by generatorFunction.
  *
  * @param {ValueMax.Percentage.Aggregate} progressParent
- *   Some new progressToAdvance will be created and added to progressParent. The
- * created progressToAdvance will be increased when every time advanced. The
- * progressParent.root_get() will be returned when every time yield.
+ *   Some new progressToAdvance will be created and added to progressParent.
+ * The created progressToAdvance will be increased when every time advanced.
+ * The progressParent.root_get() will be returned when every time yield.
  *
  * @param {string|string[]} source_Base64Char_String_or_StringArray
  *   A string whose content is Base64 encoded text. Or, a string array whose every
@@ -100,9 +100,9 @@ function* from_Base64Char_StringOrStringArray_generator_by_GeneratorFunction(
  * Generator for Base64 decoding from an ArrayBuffer by generatorFunction.
  *
  * @param {ValueMax.Percentage.Aggregate} progressParent
- *   Some new progressToAdvance will be created and added to progressParent. The
- * created progressToAdvance will be increased when every time advanced. The
- * progressParent.root_get() will be returned when every time yield.
+ *   Some new progressToAdvance will be created and added to progressParent.
+ * The created progressToAdvance will be increased when every time advanced.
+ * The progressParent.root_get() will be returned when every time yield.
  *
  * @param {ArrayBuffer} source_Base64Char_CodePoint_ArrayBuffer
  *   The input Base64 encoded value (as a Base64 charcater's code point) data as
@@ -154,9 +154,9 @@ function* from_Base64Char_CodePoint_ArrayBuffer_generator_by_GeneratorFunction(
  * Uint8Array.
  *
  * @param {ValueMax.Percentage.Aggregate} progressParent
- *   Some new progressToAdvance will be created and added to progressParent. The
- * created progressToAdvance will be increased when every time advanced. The
- * progressParent.root_get() will be returned when every time yield.
+ *   Some new progressToAdvance will be created and added to progressParent.
+ * The created progressToAdvance will be increased when every time advanced.
+ * The progressParent.root_get() will be returned when every time yield.
  *
  * @param {string|string[]} source_Base64Char_String_or_StringArray
  *   A string whose content is Base64 encoded text. Or, a string array whose every
@@ -196,9 +196,9 @@ function* Base64Char_StringOrStringArray_to_Uint8Array_generator(
  * Generator for Base64 decoding from an ArrayBuffer.
  *
  * @param {ValueMax.Percentage.Aggregate} progressParent
- *   Some new progressToAdvance will be created and added to progressParent. The
- * created progressToAdvance will be increased when every time advanced. The
- * progressParent.root_get() will be returned when every time yield.
+ *   Some new progressToAdvance will be created and added to progressParent.
+ * The created progressToAdvance will be increased when every time advanced.
+ * The progressParent.root_get() will be returned when every time yield.
  *
  * @param {ArrayBuffer} source_Base64Char_CodePoint_ArrayBuffer
  *   The input Base64 encoded value (as a Base64 charcater's code point) data as
@@ -327,9 +327,9 @@ function* lineSkipper_from_Uint8Array( progressToAdvance,
  *
  *
  * @param {ValueMax.Percentage.Aggregate} progressParent
- *   Some new progressToAdvance will be created and added to progressParent. The
- * created progressToAdvance will be increased when every time advanced. The
- * progressParent.root_get() will be returned when every time yield.
+ *   Some new progressToAdvance will be created and added to progressParent.
+ * The created progressToAdvance will be increased when every time advanced.
+ * The progressParent.root_get() will be returned when every time yield.
  *
  * @param {Uint8Array} source_Base64Char_CodePoint_Uint8Array
  *   The input Base64 encoded value (as a Base64 charcater's code point) data as

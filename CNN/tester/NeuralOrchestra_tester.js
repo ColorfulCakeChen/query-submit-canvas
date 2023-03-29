@@ -292,7 +292,8 @@ class TestCase {
    */
   async* test_load_process_send_asyncGenerator(
     progressParent, neuralOrchestra,
-    versus_load_asyncGenerator, versus_load_asyncPromise, versus_load_asyncGenerator_delayPromise,
+    versus_load_asyncGenerator, versus_load_asyncPromise,
+    versus_load_asyncGenerator_delayPromise,
     b_load_asyncGenerator, b_reenter_first_load_asyncGenerator ) {
 
     ++this.testId;
@@ -328,11 +329,13 @@ class TestCase {
         = PartTime.Promise_resolvable_rejectable_create();
 
       if ( b_load_asyncGenerator ) {
-        versus_load_asyncGenerator = neuralOrchestra.versus_load_asyncGenerator_create(
-          progressLoad, versus_load_asyncGenerator_delayPromise );
+        versus_load_asyncGenerator = neuralOrchestra
+          .versus_load_asyncGenerator_create(
+            progressLoad, versus_load_asyncGenerator_delayPromise );
       } else {
-        versus_load_asyncPromise = neuralOrchestra.versus_load_asyncPromise_create(
-          versus_load_asyncGenerator_delayPromise );
+        versus_load_asyncPromise = neuralOrchestra
+          .versus_load_asyncPromise_create(
+            versus_load_asyncGenerator_delayPromise );
       }
     }
 
@@ -523,8 +526,10 @@ class TestCase {
     // 1. Initialize.
     ++this.testId;
 
-    let init_asyncGenerator_delayPromise = PartTime.Promise_resolvable_rejectable_create();
-    let versus_load_asyncGenerator_delayPromise = PartTime.Promise_resolvable_rejectable_create();
+    let init_asyncGenerator_delayPromise
+      = PartTime.Promise_resolvable_rejectable_create();
+    let versus_load_asyncGenerator_delayPromise
+      = PartTime.Promise_resolvable_rejectable_create();
 
     let init_asyncGenerator;
     let init_asyncPromise;
@@ -661,7 +666,8 @@ class TestCase {
         if ( ( versus_load_asyncGenerator != undefined ) != neuralOrchestra.initOk )
           throw Error( `NeuralOrchestra_tester.TestCase`
             + `.test_init_load_process_send_asyncGenerator(): testId=${this.testId}, `
-            + `( versus_load_asyncGenerator ( ${versus_load_asyncGenerator} ) != undefined ) `
+            + `( versus_load_asyncGenerator `
+              + `( ${versus_load_asyncGenerator} ) != undefined ) `
             + `should be the same as `
             + `neuralOrchestra.initOk ( ${neuralOrchestra.initOk} ).`
           );
@@ -732,11 +738,14 @@ class TestCase {
       //       by .test_load_process_send_asyncGenerator().
       yield* this.test_load_process_send_asyncGenerator(
         progressLoadProcessSend, neuralOrchestra,
-        versus_load_asyncGenerator, versus_load_asyncPromise, versus_load_asyncGenerator_delayPromise,
+        versus_load_asyncGenerator, versus_load_asyncPromise,
+        versus_load_asyncGenerator_delayPromise,
         b_load_asyncGenerator, b_reenter_first_load_asyncGenerator );
 
       // After first time loading (by .init_Xxx()), clear them so that loading again.
-      versus_load_asyncGenerator = versus_load_asyncPromise = versus_load_asyncGenerator_delayPromise = null;
+      versus_load_asyncGenerator
+        = versus_load_asyncPromise
+        = versus_load_asyncGenerator_delayPromise = null;
 
       ++nLoadProcessSendCount;
     }
@@ -1067,9 +1076,9 @@ class TestCase {
 /**
  *
  * @param {ValueMax.Percentage.Aggregate} progressParent
- *   Some new progressToAdvance will be created and added to progressParent. The
- * created progressToAdvance will be increased when every time advanced. The
- * progressParent.root_get() will be returned when every time yield.
+ *   Some new progressToAdvance will be created and added to progressParent.
+ * The created progressToAdvance will be increased when every time advanced.
+ * The progressParent.root_get() will be returned when every time yield.
  *
  */
 async function* tester( progressParent ) {

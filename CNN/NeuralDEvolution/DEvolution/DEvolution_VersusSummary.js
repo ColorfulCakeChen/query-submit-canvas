@@ -132,9 +132,9 @@ class DEvolution_VersusSummary extends Recyclable.Root {
    * ranges.
    *
    * @param {ValueMax.Percentage.Aggregate} progressParent
-   *   Some new progressToAdvance will be created and added to progressParent. The
-   * created progressToAdvance will be increased when every time advanced. The
-   * progressParent.root_get() will be returned when every time yield.
+   *   Some new progressToAdvance will be created and added to progressParent.
+   * The created progressToAdvance will be increased when every time advanced.
+   * The progressParent.root_get() will be returned when every time yield.
    *
    * @param {HttpRequest.Params_loading_retryWaiting} params_loading_retryWaiting
    *   The parameters for loading timeout and retry waiting time. It will be kept
@@ -245,9 +245,9 @@ class DEvolution_VersusSummary extends Recyclable.Root {
    * versus weights.
    *
    * @param {ValueMax.Percentage.Aggregate} progressParent
-   *   Some new progressToAdvance will be created and added to progressParent. The
-   * created progressToAdvance will be increased when every time advanced. The
-   * progressParent.root_get() will be returned when every time yield.
+   *   Some new progressToAdvance will be created and added to progressParent.
+   * The created progressToAdvance will be increased when every time advanced.
+   * The progressParent.root_get() will be returned when every time yield.
    *
    * @param {HttpRequest.Params_loading_retryWaiting} params_loading_retryWaiting
    *   The parameters for loading timeout and retry waiting time. It will be kept

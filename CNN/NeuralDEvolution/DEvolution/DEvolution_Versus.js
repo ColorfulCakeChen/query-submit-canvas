@@ -106,14 +106,14 @@ class DEvolution_Versus extends Recyclable.Root {
    * from specified spreadsheet range.
    *
    * @param {ValueMax.Percentage.Aggregate} progressParent
-   *   Some new progressToAdvance will be created and added to progressParent. The
-   * created progressToAdvance will be increased when every time advanced. The
-   * progressParent.root_get() will be returned when every time yield.
+   *   Some new progressToAdvance will be created and added to progressParent.
+   * The created progressToAdvance will be increased when every time advanced.
+   * The progressParent.root_get() will be returned when every time yield.
    *
    * @param {GSheets.UrlComposer} spreadsheetUrlComposer
-   *   The source spreadsheet id to be downloaded from. Its spreadsheetId (and apiKey if
-   * necessary) should have been setup correctly. Its range will be set as
-   * spreadsheetRange. It will not be released by this method.
+   *   The source spreadsheet id to be downloaded from. Its spreadsheetId (and
+   * apiKey if necessary) should have been setup correctly. Its range will be
+   * set as spreadsheetRange. It will not be released by this method.
    *
    * @param {string} spreadsheetRange
    *   The range description string for downloading this versus data.

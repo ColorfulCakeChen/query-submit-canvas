@@ -318,9 +318,9 @@ function to_String( aNumber, textDecoder, tempUint8Array ) {
  *
  *
  * @param {ValueMax.Percentage.Aggregate} progressParent
- *   Some new progressToAdvance will be created and added to progressParent. The
- * created progressToAdvance will be increased when every time advanced. The
- * progressParent.root_get() will be returned when every time yield.
+ *   Some new progressToAdvance will be created and added to progressParent.
+ * The created progressToAdvance will be increased when every time advanced.
+ * The progressParent.root_get() will be returned when every time yield.
  *
  * @param {number[]} source_numberArray
  *   The 12-bits floating-point number array to be encoded to Base64 string array.
@@ -449,9 +449,9 @@ function* generator_to_Base64Char_CodePoint_Uint8Array_from_NumberArray(
 /**
  *
  * @param {ValueMax.Percentage.Aggregate} progressParent
- *   Some new progressToAdvance will be created and added to progressParent. The
- * created progressToAdvance will be increased when every time advanced. The
- * progressParent.root_get() will be returned when every time yield.
+ *   Some new progressToAdvance will be created and added to progressParent.
+ * The created progressToAdvance will be increased when every time advanced.
+ * The progressParent.root_get() will be returned when every time yield.
  *
  * @param {number[]} source_numberArray
  *   The 12-bits floating-point number array to be encoded to Base64 string array.

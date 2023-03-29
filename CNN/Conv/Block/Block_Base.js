@@ -328,12 +328,13 @@ class Block_Base extends Recyclable.Root {
    * Generator for initializing this object.
    *
    * @param {ValueMax.Percentage.Aggregate} progressParent
-   *   Some new progressToAdvance will be created and added to progressParent. The
-   * created progressToAdvance will be increased when every time advanced. The
-   * progressParent.root_get() will be returned when every time yield.
+   *   Some new progressToAdvance will be created and added to progressParent.
+   * The created progressToAdvance will be increased when every time advanced.
+   * The progressParent.root_get() will be returned when every time yield.
    *
    * @param {number[]|Float32Array} inputWeightArray
-   *   The weights source array to be extracted from. It will not be kept by this object.
+   *   The weights source array to be extracted from. It will not be kept by
+   * this object.
    *
    * @param {number} weightElementOffsetBegin
    *   The beginning position (i.e. array index) to extract from inputWeightArray.

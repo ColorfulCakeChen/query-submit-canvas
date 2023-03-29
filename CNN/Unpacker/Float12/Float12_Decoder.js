@@ -258,9 +258,9 @@ function from_String( base64String ) {
  * Base64.Decoder.Base64Char_CodePoint_Uint8Array_to_Uint8Array_generator())
  *
  * @param {ValueMax.Percentage.Aggregate} progressParent
- *   Some new progressToAdvance will be created and added to progressParent. The
- * created progressToAdvance will be increased when every time advanced. The
- * progressParent.root_get() will be returned when every time yield.
+ *   Some new progressToAdvance will be created and added to progressParent.
+ * The created progressToAdvance will be increased when every time advanced.
+ * The progressParent.root_get() will be returned when every time yield.
  *
  * @param {Uint8Array} source_Base64Char_CodePoint_Uint8Array
  *   The input Base64 encoded value (as a Base64 charcater's code point) data as
@@ -404,9 +404,9 @@ function* Base64Char_CodePoint_Uint8Array_to_Float32Array_generator(
  * Float32Array.
  *
  * @param {ValueMax.Percentage.Aggregate} progressParent
- *   Some new progressToAdvance will be created and added to progressParent. The
- * created progressToAdvance will be increased when every time advanced. The
- * progressParent.root_get() will be returned when every time yield.
+ *   Some new progressToAdvance will be created and added to progressParent.
+ * The created progressToAdvance will be increased when every time advanced.
+ * The progressParent.root_get() will be returned when every time yield.
  *
  * @param {string|string[]} source_Base64Char_String_or_StringArray
  *   A string whose content is Base64 encoded text. Or, a string array whose every

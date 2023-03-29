@@ -75,17 +75,19 @@ class Embedding_Base extends Recyclable.Base( ReturnOrClone.Root ) {
   /**
    * Generator for initializing this object.
    * 
-   * Note: Embedding.initer() does not have argument inputScaleBoundsArray0, but it does
-   * assumes input's value bounds is [ 0, vocabularyCountPerInputChannel ].
+   * Note: Embedding.initer() does not have argument inputScaleBoundsArray0,
+   *       but it does assumes input's value bounds is
+   *       [ 0, vocabularyCountPerInputChannel ].
    *
    * @param {ValueMax.Percentage.Aggregate} progressParent
-   *   Some new progressToAdvance will be created and added to progressParent. The created progressToAdvance will be
-   * increased when every time advanced. The progressParent.root_get() will be returned when every time yield.
+   *   Some new progressToAdvance will be created and added to progressParent.
+   * The created progressToAdvance will be increased when every time advanced.
+   * The progressParent.root_get() will be returned when every time yield.
    *
    * @param {Params} params
-   *   A Params object. The params.init() will be called to extract parameters. This
-   * params will be owned and destroyed by this .initer(). So caller should not use
-   * it again.
+   *   A Params object. The params.init() will be called to extract parameters.
+   * This params will be owned and destroyed by this .initer(). So caller
+   * should not use it again.
    *
    * @yield {ValueMax.Percentage.Aggregate}
    *   Yield ( value = progressParent.root_get() ) when ( done = false ).
