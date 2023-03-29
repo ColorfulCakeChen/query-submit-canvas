@@ -67,10 +67,8 @@ import * as ValueMax from "../ValueMax.js";
  *   - It is not used if .fetch_asyncGenerator_create() is called. In this
  *       case, its progressParent parameter will be used instead.
  *
- * @member {Array[]} fetchResult
- *   The result of fetch_asyncGenerator or fetch_asyncPromise.
- *   - A ( two dimension (column-major) array ) if succeeded.
- *   - null if failed.
+ * @member {boolean} fetchOk
+ *   Whether fetch_asyncGenerator or fetch_asyncPromise is succeeded.
  *
  *
  * @member {string} spreadsheetUrlPrefix
@@ -217,8 +215,10 @@ class GSheetsAPIv4_UrlComposer
           httpRequestFetcher.abort();
 
         responseText = yield* httpResulter;
-        if ( !responseText )
+        if ( !responseText ) {
+          this.fetchOk = false;
           return null;
+        }
 
       // Note: It has no effect if .abort() is called after here.
       }
@@ -229,8 +229,10 @@ class GSheetsAPIv4_UrlComposer
       progressToAdvance.value_advance();
       yield progressRoot;
 
-      if ( !json )
+      if ( !json ) {
+        this.fetchOk = false;
         return null;
+      }
 
       // 3. Since already downloaded as column major. Uses it directly.
       let ColumnMajorArrayArray = json.values;
@@ -242,16 +244,19 @@ class GSheetsAPIv4_UrlComposer
       progressToAdvance.value_advance();
       yield progressRoot;
 
+      this.fetchOk = true;
       return ColumnMajorArrayArray;
 
     } catch ( e ) {
       if ( HttpRequest.Fetcher
              .Exception_is_ProgressEvent_abort_error_load_timeout( e ) ) {
          // XMLHttpRequest related exception is possible and acceptable.
-        return null;
+         this.fetchOk = false;
+         return null;
 
       } else { // Unknown error, should be said loundly.
         //console.error( e );
+        this.fetchOk = false;
         throw e;
       }
 
