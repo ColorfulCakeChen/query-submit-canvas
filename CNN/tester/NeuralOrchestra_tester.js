@@ -652,7 +652,6 @@ class TestCase {
     ++this.testId;
     let versus_load_asyncGenerator;
     let versus_load_asyncPromise;
-    let initOk;
     try {
       init_asyncGenerator_delayPromise.resolve();
 
@@ -680,16 +679,11 @@ class TestCase {
           );
 
       } else {
-        initOk = await init_asyncPromise;
-        versus_load_asyncPromise = neuralOrchestra.versus_load_asyncPromise;
+        let wrapped_versus_load_asyncPromise = await init_asyncPromise;
+        versus_load_asyncPromise
+          = wrapped_versus_load_asyncPromise.versus_load_asyncPromise;
 
-        if ( initOk != neuralOrchestra.initOk )
-          throw Error( `NeuralOrchestra_tester.TestCase`
-            + `.test_init_load_process_send_asyncGenerator(): testId=${this.testId}, `
-            + `initOk ( ${initOk} ) should be same as `
-            + `neuralOrchestra.initOk ( ${neuralOrchestra.initOk} ) ` );
-
-        if ( initOk != true ) // undefined is also not acceptable.
+        if ( neuralOrchestra.initOk != true ) // undefined is also not acceptable.
           throw Error( `NeuralOrchestra_tester.TestCase`
             + `.test_init_load_process_send_asyncGenerator(): testId=${this.testId}, `
             + `neuralOrchestra.init_async() failed.` );
