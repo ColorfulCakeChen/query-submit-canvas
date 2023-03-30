@@ -252,7 +252,7 @@ class NeuralOrchestra_Base extends
     "imageData_process", relay_imageData_process_asyncPromise,
 
   NonReentrant.asyncPromise_by_asyncGenerator(
-    "init_asyncGenerator", relay_init_asyncGenerator,
+    "init", relay_init_asyncGenerator,
     "versus_load_asyncPromise_progress", // Use versus_load's progress object.
 
     Recyclable.Root ) ) {
@@ -472,7 +472,7 @@ class NeuralOrchestra_Base extends
         this, funcNameInMessage );
     }
 
-    return super.init_asyncPromise_create( ...arguments );
+    return super.init_asyncPromise_create.apply( this, arguments );
   }
 
 //!!! (2023/03/30 Remarked) Use NonReentrant.asyncPromise_by_asyncGenerator() instead.
