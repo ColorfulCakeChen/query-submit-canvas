@@ -1089,7 +1089,11 @@ class NeuralOrchestra_Base extends
         .call( this, funcNameInMessage );
     }
 
-    return super.versus_load_asyncPromise_create( delayPromise );
+    // For outside caller, no workerProxies_init_asyncPromise.
+    const workerProxies_init_asyncPromise = null;
+
+    return super.versus_load_asyncPromise_create(
+      workerProxies_init_asyncPromise, delayPromise );
   }
 
 // //!!! (2023/03/30 Remarked) Use NonReentrant.asyncPromise_by_asyncGenerator() instead.
