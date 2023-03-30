@@ -1435,30 +1435,34 @@ class NeuralOrchestra_Base extends
 
     const funcNameInMessage = "versus_load_asyncGenerator";
 
-    { // Checking pre-condition.
-
-      // Q: Why are these checkings necessary?
-      // A: Because .init_asyncGenerator() will not call
-      //    .versus_load_asyncGenerator_create() but call
-      //    .versus_load_asyncGenerator_create_without_checking_precondition(),
-      //    here still needs do some checkings.
-      //
-
-      if ( workerProxies_init_asyncPromise ) {
-        // If has workerProxies_init_asyncPromise, must during initializing.
-        NeuralOrchestra_Base
-          .throw_if_init_asyncPromise_and_asyncGenerator_not_running.call(
-            this, funcNameInMessage );
-       } else {
-        // If no workerProxies_init_asyncPromise, the initOk must be true.
-        NeuralOrchestra_Base.throw_if_not_initOk.call( this,
-          funcNameInMessage );
-      }
-
-      // Prevent the nueral networks from being changed during they are processing.
-      NeuralOrchestra_Base.throw_if_imageData_process_asyncPromise_running
-        .call( this, funcNameInMessage );
-    }
+//!!! (2023/03/30 Remarked)
+// // When executed here, the .init_asyncGenerator() may have done (i.e. not running).
+//   { // Checking pre-condition.
+//
+//       // Q: Why are these checkings necessary?
+//       // A: Because .init_asyncGenerator() will not call
+//       //    .versus_load_asyncGenerator_create() but call
+//       //    .versus_load_asyncGenerator_create_without_checking_precondition(),
+//       //    here still needs do some checkings.
+//       //
+//
+// //!!! (2023/03/30 Remarked)
+// // When executed here, the .init_asyncGenerator() may have done (i.e. not running).
+// //       if ( workerProxies_init_asyncPromise ) {
+// //         // If has workerProxies_init_asyncPromise, must during initializing.
+// //         NeuralOrchestra_Base
+// //           .throw_if_init_asyncPromise_and_asyncGenerator_not_running.call(
+// //             this, funcNameInMessage );
+// //        } else {
+// //         // If no workerProxies_init_asyncPromise, the initOk must be true.
+// //         NeuralOrchestra_Base.throw_if_not_initOk.call( this,
+// //           funcNameInMessage );
+// //       }
+//
+//       // Prevent the nueral networks from being changed during they are processing.
+//       NeuralOrchestra_Base.throw_if_imageData_process_asyncPromise_running
+//         .call( this, funcNameInMessage );
+//     }
 
     let progressRoot;
     let progressToAdvance;
