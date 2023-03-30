@@ -299,7 +299,8 @@ class NeuralOrchestra_Base
     NeuralOrchestra_Base.versus_dispose.call( this );
     NeuralOrchestra_Base.versusSummary_dispose.call( this );
 
-    this.imageData_process_asyncPromise_running = undefined;
+//!!! (2023/03/30) Replaced by NonReentrant.asyncPromise
+//    this.imageData_process_asyncPromise_running = undefined;
 
     this.workerProxies_initOk = undefined;
     this.workerProxies_init_asyncPromise_running = undefined;
@@ -1003,8 +1004,8 @@ class NeuralOrchestra_Base
 // How to integrate these precondition checking to the NonReentrant_Xxx base class?
 // Perhaps, by overriding same name method.
 
-      NeuralOrchestra_Base.throw_if_imageData_processing.call( this,
-        funcNameInMessage );
+      NeuralOrchestra_Base.throw_if_imageData_process_asyncPromise_running
+        .call( this, funcNameInMessage );
     }
 
     this.workerProxies_init_asyncPromise_running = true;
@@ -1097,8 +1098,8 @@ class NeuralOrchestra_Base
 // // How to integrate these precondition checking to the NonReentrant_Xxx base class?
 // // Perhaps, by overriding same name method.
 //
-//       NeuralOrchestra_Base.throw_if_imageData_processing.call( this,
-//         funcNameInMessage );
+//       NeuralOrchestra_Base.throw_if_imageData_process_asyncPromise_running
+//         .call( this, funcNameInMessage );
 //     }
 //
 //     this.workerProxies_init_asyncPromise_running = true;
@@ -1146,8 +1147,8 @@ class NeuralOrchestra_Base
 // // How to integrate these precondition checking to the NonReentrant_Xxx base class?
 // // Perhaps, by overriding same name method.
 //
-//       NeuralOrchestra_Base.throw_if_imageData_processing.call( this,
-//         funcNameInMessage );
+//       NeuralOrchestra_Base.throw_if_imageData_process_asyncPromise_running
+//         .call( this, funcNameInMessage );
 //     }
 //
 //     let initOk;
@@ -1225,8 +1226,8 @@ class NeuralOrchestra_Base
 //!!! ...unfinished... (2023/03/29)
 // Perhaps, should check init_asyncGenerator_or_asyncPromise_running == true.
 
-      NeuralOrchestra_Base.throw_if_imageData_processing.call( this,
-        funcNameInMessage );
+      NeuralOrchestra_Base.throw_if_imageData_process_asyncPromise_running
+        .call( this, funcNameInMessage );
     }
 
     // Dummy neural network's weights.
@@ -1294,8 +1295,8 @@ class NeuralOrchestra_Base
     { // Checking pre-condition.
       const funcNameInMessage = "workerProxies_NeuralNetArray_create_async";
 
-      NeuralOrchestra_Base.throw_if_imageData_processing.call( this,
-        funcNameInMessage );
+      NeuralOrchestra_Base.throw_if_imageData_process_asyncPromise_running
+        .call( this, funcNameInMessage );
     }
 
     // Although neural network configuration will be copied (not transferred)
@@ -1586,8 +1587,8 @@ class NeuralOrchestra_Base
       NeuralOrchestra_Base.throw_if_versus_loading.call( this, funcNameInMessage );
 
       // Prevent the nueral networks from being changed during they are processing.
-      NeuralOrchestra_Base.throw_if_imageData_processing.call( this,
-        funcNameInMessage );
+      NeuralOrchestra_Base.throw_if_imageData_process_asyncPromise_running
+        .call( this, funcNameInMessage );
     }
 
     // 1.
@@ -1678,8 +1679,8 @@ class NeuralOrchestra_Base
         "versus_load_asyncPromise_create" );
 
       // Prevent the nueral networks from being changed during they are processing.
-      NeuralOrchestra_Base.throw_if_imageData_processing.call( this,
-        funcNameInMessage );
+      NeuralOrchestra_Base.throw_if_imageData_process_asyncPromise_running
+        .call( this, funcNameInMessage );
     }
 
     try {
@@ -1765,8 +1766,8 @@ class NeuralOrchestra_Base
       NeuralOrchestra_Base.throw_if_versus_loading.call( this, funcNameInMessage );
 
       // Prevent the nueral networks from being changed during they are processing.
-      NeuralOrchestra_Base.throw_if_imageData_processing.call( this,
-        funcNameInMessage );
+      NeuralOrchestra_Base.throw_if_imageData_process_asyncPromise_running
+        .call( this, funcNameInMessage );
     }
 
     const workerProxies_init_asyncPromise = null; // For outside caller.
@@ -1868,8 +1869,8 @@ class NeuralOrchestra_Base
       }
 
       // Prevent the nueral networks from being changed during they are processing.
-      NeuralOrchestra_Base.throw_if_imageData_processing.call( this,
-        funcNameInMessage );
+      NeuralOrchestra_Base.throw_if_imageData_process_asyncPromise_running
+        .call( this, funcNameInMessage );
     }
 
     let progressRoot;
@@ -2150,16 +2151,17 @@ class NeuralOrchestra_Base
         + `NeuralWorker.Proxies is still initializing.` );
   }
 
-  /**
-   * @param {NeuralOrchestra_Base} this
-   * @param {string} funcNameInMessage   The caller function name. (e.g. init_async)
-   */
-  static throw_if_imageData_processing( funcNameInMessage ) {
-    if ( this.imageData_process_asyncPromise_running )
-      throw Error( `NeuralOrchestra.Base.${funcNameInMessage}(): `
-        + `should not be executed while `
-        + `NeuralWorker.Proxies is still processing image.` );
-  }
+//!!! (2023/03/30) Replaced by NonReentrant.asyncPromise
+//   /**
+//    * @param {NeuralOrchestra_Base} this
+//    * @param {string} funcNameInMessage   The caller function name. (e.g. init_async)
+//    */
+//   static throw_if_imageData_process_asyncPromise_running( funcNameInMessage ) {
+//     if ( this.imageData_process_asyncPromise_running )
+//       throw Error( `NeuralOrchestra.Base.${funcNameInMessage}(): `
+//         + `should not be executed while `
+//         + `NeuralWorker.Proxies is still processing image.` );
+//   }
 
   /**
    * @param {NeuralOrchestra_Base} this
@@ -2168,8 +2170,8 @@ class NeuralOrchestra_Base
   static throw_if_workerProxies_busy( funcNameInMessage ) {
     NeuralOrchestra_Base.throw_if_workerProxies_initializing.call( this,
       funcNameInMessage );
-    NeuralOrchestra_Base.throw_if_imageData_processing.call( this,
-      funcNameInMessage );
+    NeuralOrchestra_Base.throw_if_imageData_process_asyncPromise_running
+      .call( this, funcNameInMessage );
   }
 
   /**
