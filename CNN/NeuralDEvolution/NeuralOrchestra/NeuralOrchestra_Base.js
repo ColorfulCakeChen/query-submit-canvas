@@ -442,7 +442,7 @@ class NeuralOrchestra_Base extends
    *   Return a newly created init_asyncPromise which is an instance of
    * .init_asyncPromise() which will loop .init_asyncGenerator() until done.
    *   - Please see also .init_asyncGenerator() explanation for the promise.
-   *   - The .versus_load_asyncPromise_progress could be used to track
+   *   - The .versus_load_asyncPromise_progress could be used to display
    *       progress. When all the workerProxies initializing, versus summary
    *       and versus loading, neural networks creating have done, it should
    *       be ( .versus_load_asyncPromise_progress.valuePercentage == 100 ).
