@@ -228,12 +228,6 @@ import * as DEvolution from "../DEvolution.js";
  * it becoming false if wanting to call .versus_load_asyncGenerator_create()
  * again.
  *
-
-//!!! (2023/03/29 Remarked) No longer record in this.versus_load_asyncPromise
-//  * @member {Promise( boolean )} versus_load_asyncPromise
-//  *   The result of .versus_load_asyncPromise_create().
-
- *
  * @member {ValueMax.Percentage.Aggregate} versus_load_asyncPromise_progress
  *   The progress of loading versus summary, loading versus, creating neural
  * networks. If ( .versus_load_asyncPromise_progress.valuePercentage == 100 ),
@@ -244,8 +238,8 @@ import * as DEvolution from "../DEvolution.js";
  *       is called, their progressParent parameter will be used instead.
  *
  * @member {boolean} versus_loadOk
- *   If true, a .versus_load_async() or .versus_load_asyncGenerator() has been
- * executed and succeeded.
+ *   If true, a .versus_load_asyncPromise() or .versus_load_asyncGenerator()
+ * has been executed and succeeded.
  */
 class NeuralOrchestra_Base extends
   NonReentrant.asyncPromise(
@@ -1543,7 +1537,7 @@ class NeuralOrchestra_Base extends
    * be wrapped by the created promise.
    *
    * @return {Promise( boolean )}
-   *   Return the newly created this.versus_load_asyncPromise which is an instance
+   *   Return the newly created versus_load_asyncPromise which is an instance
    * of .versus_load_async().
    */
   static versus_load_asyncPromise_create_without_checking_precondition(
@@ -1561,7 +1555,6 @@ class NeuralOrchestra_Base extends
     let versus_load_asyncPromise = NeuralOrchestra_Base.versus_load_async.call(
       this, versus_load_asyncGenerator );
     return versus_load_asyncPromise;
-
   }
 
   /**
