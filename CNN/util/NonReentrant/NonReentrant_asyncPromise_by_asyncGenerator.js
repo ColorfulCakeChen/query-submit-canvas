@@ -69,10 +69,10 @@ function NonReentrant_asyncPromise_by_asyncGenerator(
       = `${name_prefix}_asyncPromise_progress`;
 
   const name_of_asyncPromise_progress_create
-    = `${name_prefix}_asyncPromise_progress_create`;
+    = `${name_of_asyncPromise_progress}_create`;
 
   const name_of_asyncPromise_progress_dispose
-    = `${name_prefix}_asyncPromise_progress_dispose`;
+    = `${name_of_asyncPromise_progress}_dispose`;
 
 
   // These static methods are defined in parent class (i.e.
