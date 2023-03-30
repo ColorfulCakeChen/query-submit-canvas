@@ -1400,13 +1400,13 @@ class NeuralOrchestra_Base
       if ( delayPromise )
         await delayPromise;
 
-      this.imageData_process = true;
+      this.imageData_processOk = true;
       return theFloat32ArrayArray;
 
     } catch ( e ) {
       //debugger;
       //console.error( e );
-      this.imageData_process = false;
+      this.imageData_processOk = false;
       throw e;
 
     } finally {
