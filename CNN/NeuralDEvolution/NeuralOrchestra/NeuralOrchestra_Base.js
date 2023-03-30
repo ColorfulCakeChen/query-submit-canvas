@@ -2157,8 +2157,8 @@ class NeuralOrchestra_Base extends
  *   Return the newly created instance of
  * NeuralOrchestra_Base.init_asyncGenerator().
  */
-function relay_init_asyncGenerator( ...restArgs ) {
-  return NeuralOrchestra_Base.init_asyncGenerator.apply( this, restArgs );
+function relay_init_asyncGenerator() {
+  return NeuralOrchestra_Base.init_asyncGenerator.apply( this, arguments );
 }
 
 /**
@@ -2169,8 +2169,21 @@ function relay_init_asyncGenerator( ...restArgs ) {
  *   Return the newly created instance of
  * NeuralOrchestra_Base.imageData_process_asyncPromise().
  */
-function relay_imageData_process_asyncPromise( ...restArgs ) {
+function relay_imageData_process_asyncPromise() {
   return NeuralOrchestra_Base.imageData_process_asyncPromise.apply(
-    this, restArgs );
+    this, arguments );
+}
+
+/**
+ *
+ * @param {NeuralOrchestra_Base} this
+ *
+ * @return {AsyncGenerator}
+ *   Return the newly created instance of
+ * NeuralOrchestra_Base.versus_load_asyncGenerator().
+ */
+function relay_versus_load_asyncGenerator() {
+  return NeuralOrchestra_Base.versus_load_asyncGenerator.apply(
+    this, arguments );
 }
 
