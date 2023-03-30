@@ -1434,8 +1434,8 @@ class NeuralOrchestra_Base extends
     { // Checking pre-condition.
 
       // Q: Why are these checkings necessary?
-      // A: Because .init_asyncGenerator()
-      //      will not call .versus_load_asyncGenerator_create() but call
+      // A: Because .init_asyncGenerator() will not call
+      //    .versus_load_asyncGenerator_create() but call
       //    .versus_load_asyncGenerator_create_without_checking_precondition(),
       //    here still needs do some checkings.
       //
