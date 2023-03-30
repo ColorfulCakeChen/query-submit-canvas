@@ -298,7 +298,8 @@ class NeuralOrchestra_Base extends
 
     NeuralOrchestra_Base.versusResultSender_dispose.call( this );
 
-    NeuralOrchestra_Base.versus_load_asyncPromise_progress_dispose.call( this );
+//!!! (2023/03/30 Remarked) Use NonReentrant.asyncPromise_by_asyncGenerator instead.
+//    NeuralOrchestra_Base.versus_load_asyncPromise_progress_dispose.call( this );
 
 //!!! (2023/03/29 Remarked) No longer record in this.versus_load_asyncPromise
 //    this.versus_load_asyncPromise = undefined;
@@ -1409,24 +1410,25 @@ class NeuralOrchestra_Base extends
 //   }
 
 
-  /**
-   * @param {NeuralOrchestra_Base} this
-   */
-  static versus_load_asyncPromise_progress_create() {
-    NeuralOrchestra_Base.versus_load_asyncPromise_progress_dispose.call( this );
-    this.versus_load_asyncPromise_progress
-      = ValueMax.Percentage.Aggregate.Pool.get_or_create_by();
-  }
-
-  /**
-   * @param {NeuralOrchestra_Base} this
-   */
-  static versus_load_asyncPromise_progress_dispose() {
-    if ( this.versus_load_asyncPromise_progress ) {
-      this.versus_load_asyncPromise_progress.disposeResources_and_recycleToPool();
-      this.versus_load_asyncPromise_progress = null;
-    }
-  }
+//!!! (2023/03/30 Remarked) Use NonReentrant.asyncPromise_by_asyncGenerator instead.
+//   /**
+//    * @param {NeuralOrchestra_Base} this
+//    */
+//   static versus_load_asyncPromise_progress_create() {
+//     NeuralOrchestra_Base.versus_load_asyncPromise_progress_dispose.call( this );
+//     this.versus_load_asyncPromise_progress
+//       = ValueMax.Percentage.Aggregate.Pool.get_or_create_by();
+//   }
+//
+//   /**
+//    * @param {NeuralOrchestra_Base} this
+//    */
+//   static versus_load_asyncPromise_progress_dispose() {
+//     if ( this.versus_load_asyncPromise_progress ) {
+//       this.versus_load_asyncPromise_progress.disposeResources_and_recycleToPool();
+//       this.versus_load_asyncPromise_progress = null;
+//     }
+//   }
 
 
   /**
