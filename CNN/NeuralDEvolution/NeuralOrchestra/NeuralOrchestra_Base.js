@@ -214,6 +214,10 @@ import * as DEvolution from "../DEvolution.js";
  * Please wait it becoming false if wanting to call
  * .imageData_process_asyncPromise_create() again.
  *
+ * @member {boolean} imageData_processOk
+ *   If true, a .imageData_process_asyncPromise_create() has been executed and
+ * succeeded.
+ *
  * 
  * @member {boolean} versus_load_asyncPromise_running
  *   If true, a .versus_load_async() is still executing. Please wait it
@@ -588,19 +592,6 @@ class NeuralOrchestra_Base
           + `should not be undefined.`
         );
 
-//!!! ...unfinished... (2023/03/29) 
-// Use versus_load_asyncGenerator_or_wrapped_asyncPromise instead.
-//       // 3. Continue to load (versus summary and) versus and create neural
-//       //    networks.
-//       //
-//       // Note: It is not be awaited here. Caller is responsible for awaiting
-//       //       .versus_load_asyncPromise
-//       NeuralOrchestra_Base
-//         .versus_load_asyncPromise_create_without_checking_precondition.call( this,
-//           versus_load_asyncGenerator );
-//
-//       return this.initOk;
-
       return versus_load_asyncGenerator_or_wrapped_asyncPromise;
 
     } catch ( e ) {
@@ -804,11 +795,6 @@ class NeuralOrchestra_Base
           output_channelCount );
 
         NeuralOrchestra_Base.workerProxies_create.call( this );
-
-//!!! (2023/03/29 Remarked) Old Codes
-// Integrate .workerProxies_init_asyncPromise_create() into .workerProxies_init_async()
-//         workerProxies_init_asyncPromise
-//           = NeuralOrchestra_Base.workerProxies_init_asyncPromise_create.call( this );
 
         workerProxies_init_asyncPromise
           = NeuralOrchestra_Base.workerProxies_init_async.call( this );
