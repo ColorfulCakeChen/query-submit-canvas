@@ -1860,8 +1860,9 @@ class NeuralOrchestra_Base
 
       if ( workerProxies_init_asyncPromise ) {
         // If has workerProxies_init_asyncPromise, must during initializing.
-        NeuralOrchestra_Base.throw_if_init_asyncPromise_and_asyncGenerator_not_running.call( this,
-          funcNameInMessage );
+        NeuralOrchestra_Base
+          .throw_if_init_asyncPromise_and_asyncGenerator_not_running.call(
+            this, funcNameInMessage );
        } else {
         // If no workerProxies_init_asyncPromise, the initOk must be true.
         NeuralOrchestra_Base.throw_if_not_initOk.call( this,
@@ -2117,7 +2118,7 @@ class NeuralOrchestra_Base
       throw Error( `NeuralOrchestra.Base.${funcNameInMessage}(): `
         + `should not be executed during initializing.` );
   }
-
+!!!
   /**
    * @param {NeuralOrchestra_Base} this
    * @param {string} funcNameInMessage   The caller function name. (e.g. init_async)

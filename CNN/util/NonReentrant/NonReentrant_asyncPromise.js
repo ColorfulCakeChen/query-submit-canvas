@@ -43,6 +43,9 @@ function NonReentrant_asyncPromise(
   const name_of_throw_if_asyncPromise_running
     = `throw_if_${name_prefix}_asyncPromise_running`;
 
+  const name_of_throw_if_asyncPromise_not_running
+    = `throw_if_${name_prefix}_asyncPromise_not_running`;
+
   const name_of_throw_if_asyncResultOk_undefined
     = `throw_if_${name_of_asyncResultOk}_undefined`;
 
@@ -84,6 +87,10 @@ function NonReentrant_asyncPromise(
    * @member {Function} throw_if_Xxx_asyncPromise_running
    *   A static method for throwing excption if .Xxx_asyncPromise_running is
    * true.
+   *
+   * @member {Function} throw_if_Xxx_asyncPromise_not_running
+   *   A static method for throwing excption if .Xxx_asyncPromise_running is
+   * false.
    *
    * @member {Function} [ throw_if_XxxOk_undefined ]
    *   A static method for throwing excption if ( this.XxxOk ) is undefined.
@@ -248,6 +255,25 @@ function NonReentrant_asyncPromise(
         + `should not be executed while an instance of `
         + `.${name_of_asyncPromise_create}() `
         + `is still running.` );
+    }
+
+    /**
+     * @param {NonReentrant_asyncGenerator} this
+     * @param {string} funcNameInMessage   The caller function name. (e.g. init_async)
+     */
+    static [ name_of_throw_if_asyncPromise_not_running ](
+      funcNameInMessage ) {
+
+      if ( this.#asyncPromise_running )
+        return;
+
+      const mostDerivedClassName
+        = ClassHierarchyTools.MostDerived_ClassName_of_Instance( this );
+
+      throw Error( `${mostDerivedClassName}.${funcNameInMessage}(): `
+        + `should be executed during an instance of `
+        + `.${name_of_asyncPromise_create}() `
+        + `is running.` );
     }
 
     /**
