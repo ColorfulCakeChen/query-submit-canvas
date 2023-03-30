@@ -110,6 +110,13 @@ class TestCase {
         + `should be true.` );
     }
 
+    if ( neuralOrchestra.imageData_processOk !== undefined )
+      throw Error( `NeuralOrchestra_tester.TestCase`
+        + `.test_process_send_asyncGenerator(): testId=${this.testId}, `
+        + `neuralOrchestra.imageData_process `
+          + `( ${neuralOrchestra.imageData_process} ) `
+        + `should be undefined.` );
+
     // Test: Reenter .imageData_process_asyncPromise_create()
     //       should throw exception.
     try {
@@ -185,6 +192,13 @@ class TestCase {
     } catch ( e ) { // Unknown error, said loudly.
       throw Error( `NeuralOrchestra: testId=${this.testId}. ${e}`, { cause: e } );
     }
+
+    if ( neuralOrchestra.imageData_processOk != true ) // undefined is also not acceptable.
+      throw Error( `NeuralOrchestra_tester.TestCase`
+        + `.test_process_send_asyncGenerator(): testId=${this.testId}, `
+        + `neuralOrchestra.imageData_processOk `
+          + `(${neuralOrchestra.imageData_processOk}) `
+        + `should be true.` );
 
     if ( 2 != Float32ArrayArray.length )
       throw Error( `NeuralOrchestra_tester.TestCase`
