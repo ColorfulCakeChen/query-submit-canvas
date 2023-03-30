@@ -246,10 +246,14 @@ import * as DEvolution from "../DEvolution.js";
  *   If true, a .versus_load_async() or .versus_load_asyncGenerator() has been
  * executed and succeeded.
  */
-class NeuralOrchestra_Base
-  extends NonReentrant.asyncPromise(
+class NeuralOrchestra_Base extends
+  NonReentrant.asyncPromise(
     "imageData_process", relay_imageData_process_asyncPromise,
-    Recyclable.Root ) {
+
+  NonReentrant.asyncPromise_by_asyncGenerator(
+    "init_asyncGenerator", relay_init_asyncGenerator,
+
+    Recyclable.Root ) ) {
 
   /**
    * Used as default NeuralOrchestra.Base provider for conforming to
@@ -310,7 +314,7 @@ class NeuralOrchestra_Base
     this.workerProxies_init_asyncPromise_running = undefined;
     NeuralOrchestra_Base.neuralNetParamsBase_dispose.call( this );
     NeuralOrchestra_Base.workerProxies_dispose.call( this );
-
+!!!
     this.initOk = undefined;
     this.init_asyncGenerator_running = undefined;
     this.init_asyncPromise_running = undefined;
@@ -434,8 +438,6 @@ class NeuralOrchestra_Base
 
   /**
    * Call .init_async() and return init_asyncPromise.
-   *
-   * @param {NeuralOrchestra_Base} this
    *
    * @return {Promise( boolean )}
    *   Return init_asyncPromise which is an instance of .init_async().
@@ -608,11 +610,10 @@ class NeuralOrchestra_Base
 
 
   /**
-   * Create init_asyncGenerator (an instance of .init_asyncGenerator()).
-   *
    *
    * @return {AsyncGenerator}
-   *   Return init_asyncGenerator which is an instance of .init_asyncGenerator().
+   *   Return a newly created init_asyncGenerator which is an instance of
+   * .init_asyncGenerator().
    */
   init_asyncGenerator_create(
     progressParent,
@@ -628,54 +629,82 @@ class NeuralOrchestra_Base
     { // Checking pre-condition.
       const funcNameInMessage = "init_asyncGenerator_create";
 
-      NeuralOrchestra_Base.throw_if_an_old_still_running.call( this,
-        this.init_asyncGenerator_running, funcNameInMessage );
-
-      // If .init_async() running, throw, too.
-      NeuralOrchestra_Base
-        .throw_if_init_asyncPromise_or_asyncGenerator_running.call( this,
-          funcNameInMessage );
-
-//!!! ...unfinished... (2023/03/28)
-// How to integrate these precondition checking to the NonReentrant_Xxx base class?
-// Perhaps, by overriding same name method.
-
       NeuralOrchestra_Base.throw_if_workerProxies_busy_or_versus_loading.call(
         this, funcNameInMessage );
     }
 
-    return NeuralOrchestra_Base
-      .init_asyncGenerator_create_without_checking_precondition.call( this,
-        progressParent, 
-        downloader_spreadsheetId, downloader_apiKey, bLogFetcherEventToConsole,
-        sender_clientId,
-        input_height, input_width,
-        vocabularyChannelCount,
-        blockCountTotalRequested, output_channelCount_per_alignment,
-        b_return_versus_load_asyncGenerator_instead_of_asyncPromise,
-        init_asyncGenerator_delayPromise, versus_load_asyncGenerator_delayPromise );
+    return super.init_asyncGenerator_create.apply( this, arguments );
   }
 
-  /**
-   * Create init_asyncGenerator (an instance of .init_asyncGenerator()).
-   * 
-   * Called by .init_async() and .init_asyncGenerator_create(). It does not check
-   * precondition.
-   *
-   *
-   * @param {NeuralOrchestra_Base} this
-   *
-   * @return {AsyncGenerator}
-   *   Return init_asyncGenerator which is an instance of .init_asyncGenerator().
-   */
-  static init_asyncGenerator_create_without_checking_precondition( ...restArgs ) {
-    this.init_asyncGenerator_running = true;
-    this.initOk = undefined;
-
-    let init_asyncGenerator = NeuralOrchestra_Base.init_asyncGenerator.apply(
-      this, restArgs );
-    return init_asyncGenerator;
-  }
+//!!! (2023/03/30 Remarked) Use NonReentrant.asyncPromise_by_asyncGenerator()
+//   /**
+//    *
+//    * @return {AsyncGenerator}
+//    *   Return a newly created init_asyncGenerator which is an instance of
+//    * .init_asyncGenerator().
+//    */
+//   init_asyncGenerator_create(
+//     progressParent,
+//     downloader_spreadsheetId, downloader_apiKey, bLogFetcherEventToConsole,
+//     sender_clientId,
+//     input_height, input_width,
+//     vocabularyChannelCount,
+//     blockCountTotalRequested, output_channelCount_per_alignment,
+//     b_return_versus_load_asyncGenerator_instead_of_asyncPromise,
+//     init_asyncGenerator_delayPromise,
+//     versus_load_asyncGenerator_delayPromise ) {
+//
+//     { // Checking pre-condition.
+//       const funcNameInMessage = "init_asyncGenerator_create";
+//
+//       NeuralOrchestra_Base.throw_if_an_old_still_running.call( this,
+//         this.init_asyncGenerator_running, funcNameInMessage );
+//
+//       // If .init_async() running, throw, too.
+//       NeuralOrchestra_Base
+//         .throw_if_init_asyncPromise_or_asyncGenerator_running.call( this,
+//           funcNameInMessage );
+//
+// //!!! ...unfinished... (2023/03/28)
+// // How to integrate these precondition checking to the NonReentrant_Xxx base class?
+// // Perhaps, by overriding same name method.
+//
+//       NeuralOrchestra_Base.throw_if_workerProxies_busy_or_versus_loading.call(
+//         this, funcNameInMessage );
+//     }
+//
+//     return NeuralOrchestra_Base
+//       .init_asyncGenerator_create_without_checking_precondition.call( this,
+//         progressParent, 
+//         downloader_spreadsheetId, downloader_apiKey, bLogFetcherEventToConsole,
+//         sender_clientId,
+//         input_height, input_width,
+//         vocabularyChannelCount,
+//         blockCountTotalRequested, output_channelCount_per_alignment,
+//         b_return_versus_load_asyncGenerator_instead_of_asyncPromise,
+//         init_asyncGenerator_delayPromise, versus_load_asyncGenerator_delayPromise );
+//   }
+//
+//   /**
+//    * Create init_asyncGenerator (an instance of .init_asyncGenerator()).
+//    * 
+//    * Called by .init_async() and .init_asyncGenerator_create(). It does not check
+//    * precondition.
+//    *
+//    *
+//    * @param {NeuralOrchestra_Base} this
+//    *
+//    * @return {AsyncGenerator}
+//    *   Return init_asyncGenerator which is an instance of .init_asyncGenerator().
+//    */
+//   static init_asyncGenerator_create_without_checking_precondition( ...restArgs ) {
+//     this.init_asyncGenerator_running = true;
+//     this.initOk = undefined;
+//
+//     let init_asyncGenerator = NeuralOrchestra_Base.init_asyncGenerator.apply(
+//       this, restArgs );
+//     return init_asyncGenerator;
+//   }
 
   /**
    *   - Load all differential evolution versus weights ranges (i.e. versus
@@ -751,16 +780,17 @@ class NeuralOrchestra_Base
     versus_load_asyncGenerator_delayPromise
   ) {
 
-    const funcNameInMessage = "init_asyncGenerator";
-    { // Checking pre-condition.
-
-      NeuralOrchestra_Base.throw_call_another_if_false.call( this,
-        this.init_asyncGenerator_running, funcNameInMessage,
-        "init_asyncGenerator_create" );
-
-      NeuralOrchestra_Base.throw_if_workerProxies_busy_or_versus_loading.call(
-        this, funcNameInMessage );
-    }
+//!!! (2023/03/30 Remarked) Moved to .init_asyncGenerator_create()
+//     const funcNameInMessage = "init_asyncGenerator";
+//     { // Checking pre-condition.
+//
+//       NeuralOrchestra_Base.throw_call_another_if_false.call( this,
+//         this.init_asyncGenerator_running, funcNameInMessage,
+//         "init_asyncGenerator_create" );
+//
+//       NeuralOrchestra_Base.throw_if_workerProxies_busy_or_versus_loading.call(
+//         this, funcNameInMessage );
+//     }
 
     try {
       // 0.
@@ -1208,7 +1238,7 @@ class NeuralOrchestra_Base
    */
   static async imageData_process_asyncPromise( sourceImageData, delayPromise ) {
 
-//!!! ...unfinished... (2023/03/29) NonReentrant.asyncPromise will do some check.
+//!!! ...unfinished... (2023/03/29) Moved to .imageData_process_asyncPromise_create()
 //     { // Checking pre-condition.
 //       const funcNameInMessage = "imageData_process_async";
 //
@@ -2079,6 +2109,18 @@ class NeuralOrchestra_Base
 
 }
 
+
+/**
+ *
+ * @param {NeuralOrchestra_Base} this
+ *
+ * @return {AsyncGenerator}
+ *   Return the newly created instance of
+ * NeuralOrchestra_Base.init_asyncGenerator().
+ */
+function relay_init_asyncGenerator( ...restArgs ) {
+  return NeuralOrchestra_Base.init_asyncGenerator.apply( this, restArgs );
+}
 
 /**
  *
