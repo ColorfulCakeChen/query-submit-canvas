@@ -993,8 +993,9 @@ class NeuralOrchestra_Base extends
       throw e;
 
     } finally {
-      // 7. So that this async generator could be executed again.
-      this.init_asyncGenerator_running = false;
+//!!! (2023/03/30 Remarked) Use NonReentrant.asyncPromise_by_asyncGenerator instead.
+//       // 7. So that this async generator could be executed again.
+//       this.init_asyncGenerator_running = false;
     }
   }
 
@@ -2016,38 +2017,39 @@ class NeuralOrchestra_Base extends
   }
 
 
-  /**
-   * @param {NeuralOrchestra_Base} this
-   * @param {string} funcNameInMessage   The caller function name. (e.g. init_async)
-   */
-  static throw_if_init_asyncPromise_or_asyncGenerator_running( funcNameInMessage ) {
-    if (   ( this.init_asyncPromise_running )
-        || ( this.init_asyncGenerator_running ) )
-      throw Error( `NeuralOrchestra.Base.${funcNameInMessage}(): `
-        + `should not be executed during initializing.` );
-  }
-
-  /**
-   * @param {NeuralOrchestra_Base} this
-   * @param {string} funcNameInMessage   The caller function name. (e.g. init_async)
-   */
-  static throw_if_init_asyncPromise_and_asyncGenerator_not_running( funcNameInMessage ) {
-    if (   ( !this.init_asyncPromise_running )
-        && ( !this.init_asyncGenerator_running ) )
-      throw Error( `NeuralOrchestra.Base.${funcNameInMessage}(): `
-        + `should be executed during initializing.` );
-  }
-
-  /**
-   * @param {NeuralOrchestra_Base} this
-   * @param {string} funcNameInMessage   The caller function name. (e.g. init_async)
-   */
-  static throw_if_not_initOk( funcNameInMessage ) {
-    if ( !this.initOk )
-      throw Error( `NeuralOrchestra.Base.${funcNameInMessage}(): `
-        + `should be executed only if `
-        + `this.initOk ( ${this.initOk} ) is true.` );
-  }
+//!!! (2023/03/30 Remarked) Use NonReentrant.asyncPromise_by_asyncGenerator instead.
+//   /**
+//    * @param {NeuralOrchestra_Base} this
+//    * @param {string} funcNameInMessage   The caller function name. (e.g. init_async)
+//    */
+//   static throw_if_init_asyncPromise_or_asyncGenerator_running( funcNameInMessage ) {
+//     if (   ( this.init_asyncPromise_running )
+//         || ( this.init_asyncGenerator_running ) )
+//       throw Error( `NeuralOrchestra.Base.${funcNameInMessage}(): `
+//         + `should not be executed during initializing.` );
+//   }
+//
+//   /**
+//    * @param {NeuralOrchestra_Base} this
+//    * @param {string} funcNameInMessage   The caller function name. (e.g. init_async)
+//    */
+//   static throw_if_init_asyncPromise_and_asyncGenerator_not_running( funcNameInMessage ) {
+//     if (   ( !this.init_asyncPromise_running )
+//         && ( !this.init_asyncGenerator_running ) )
+//       throw Error( `NeuralOrchestra.Base.${funcNameInMessage}(): `
+//         + `should be executed during initializing.` );
+//   }
+//
+//   /**
+//    * @param {NeuralOrchestra_Base} this
+//    * @param {string} funcNameInMessage   The caller function name. (e.g. init_async)
+//    */
+//   static throw_if_not_initOk( funcNameInMessage ) {
+//     if ( !this.initOk )
+//       throw Error( `NeuralOrchestra.Base.${funcNameInMessage}(): `
+//         + `should be executed only if `
+//         + `this.initOk ( ${this.initOk} ) is true.` );
+//   }
 
   /**
    * @param {NeuralOrchestra_Base} this
