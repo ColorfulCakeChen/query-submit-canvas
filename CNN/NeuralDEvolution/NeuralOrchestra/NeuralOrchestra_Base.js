@@ -472,7 +472,7 @@ class NeuralOrchestra_Base extends
         this, funcNameInMessage );
     }
 
-    return super.init_asyncPromise_create.apply( this, arguments );
+    return super.init_asyncPromise_create( ...arguments );
   }
 
 //!!! (2023/03/30 Remarked) Use NonReentrant.asyncPromise_by_asyncGenerator() instead.
