@@ -1338,8 +1338,8 @@ class NeuralOrchestra_Base
 
       NeuralOrchestra_Base.throw_if_init_asyncPromise_or_asyncGenerator_running
         .call( this, funcNameInMessage );
-      NeuralOrchestra_Base.throw_if_workerProxies_init_asyncPromise_running.call( this,
-        funcNameInMessage );
+      NeuralOrchestra_Base.throw_if_workerProxies_init_asyncPromise_running
+        .call( this, funcNameInMessage );
       NeuralOrchestra_Base.throw_if_not_initOk.call( this, funcNameInMessage );
       NeuralOrchestra_Base.throw_if_versus_loading.call( this, funcNameInMessage );
       NeuralOrchestra_Base.throw_if_not_versus_loadOk.call( this, funcNameInMessage );
