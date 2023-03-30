@@ -997,8 +997,9 @@ class NeuralOrchestra_Base
       NeuralOrchestra_Base.throw_if_an_old_still_running.call( this,
         this.workerProxies_init_asyncPromise_running, funcNameInMessage );
 
-//!!! ...unfinished... (2023/03/29)
-// Perhaps, should check init_asyncGenerator_or_asyncPromise_running == true.
+      NeuralOrchestra_Base
+        .throw_if_init_asyncPromise_and_asyncGenerator_not_running.call( this,
+          funcNameInMessage );
 
 //!!! ...unfinished... (2023/03/28)
 // How to integrate these precondition checking to the NonReentrant_Xxx base class?
@@ -1223,8 +1224,9 @@ class NeuralOrchestra_Base
     { // Checking pre-condition.
       const funcNameInMessage = "workerProxies_compileShaders_async";
 
-//!!! ...unfinished... (2023/03/29)
-// Perhaps, should check init_asyncGenerator_or_asyncPromise_running == true.
+      NeuralOrchestra_Base
+        .throw_if_init_asyncPromise_and_asyncGenerator_not_running.call( this,
+          funcNameInMessage );
 
       NeuralOrchestra_Base.throw_if_imageData_process_asyncPromise_running
         .call( this, funcNameInMessage );
@@ -2118,7 +2120,7 @@ class NeuralOrchestra_Base
       throw Error( `NeuralOrchestra.Base.${funcNameInMessage}(): `
         + `should not be executed during initializing.` );
   }
-!!!
+
   /**
    * @param {NeuralOrchestra_Base} this
    * @param {string} funcNameInMessage   The caller function name. (e.g. init_async)
