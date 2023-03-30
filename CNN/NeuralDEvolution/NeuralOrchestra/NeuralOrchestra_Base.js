@@ -1092,6 +1092,9 @@ class NeuralOrchestra_Base extends
     // For outside caller, no workerProxies_init_asyncPromise.
     const workerProxies_init_asyncPromise = null;
 
+    // Note: The same name (i.e. .versus_load_asyncPromise_create()) method
+    //       of parent class (i.e. NonReentrant.asyncPromise_by_asyncGenerator)
+    //       has one more parameter (i.e. workerProxies_init_asyncPromise).
     return super.versus_load_asyncPromise_create(
       workerProxies_init_asyncPromise, delayPromise );
   }
@@ -1310,6 +1313,9 @@ class NeuralOrchestra_Base extends
     // For outside caller, no workerProxies_init_asyncPromise.
     const workerProxies_init_asyncPromise = null;
 
+    // Note: The same name (i.e. .versus_load_asyncGenerator_create()) method
+    //       of parent class (i.e. NonReentrant.asyncPromise_by_asyncGenerator)
+    //       has one more parameter (i.e. workerProxies_init_asyncPromise).
     return super.versus_load_asyncGenerator_create(
       progressParent, workerProxies_init_asyncPromise, delayPromise );
   }
@@ -1604,7 +1610,7 @@ class NeuralOrchestra_Base extends
       return this.versus_loadOk;
 
     } catch ( e ) {
-      debugger;
+      //debugger;
       this.versus_loadOk = false;
       throw e;
 
