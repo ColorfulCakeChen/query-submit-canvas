@@ -45,9 +45,9 @@ import * as DEvolution from "../DEvolution.js";
  * 1.1.3 Wait for versus loaded and neural networks created
  *
  *   - await versus_load_asyncPromise, or
- *   - check .versus_loadOk asynchronously until become true, or
- *   - check .versus_load_asyncPromise_progress.valuePercentage asynchronously
- *       until become 100.
+ *   - await versus_load_asyncGenerator.next() until { done: true, value: true }.
+ *     - .versus_loadOk asynchronously should be true.
+ *     - .versus_load_asyncPromise_progress.valuePercentage should be 100.
  *   - go to 1.3
  *
  *
@@ -69,9 +69,10 @@ import * as DEvolution from "../DEvolution.js";
  *
  * 1.2.3 Wait for versus loaded and neural networks created
  *
- *   - await versus_load_asyncGenerator.next() until { done: true, value: true }, or
- *   - check .versus_loadOk asynchronously until become true.
- *   - (.versus_load_asyncPromise_progress is not used in this case.)
+ *   - await versus_load_asyncPromise, or
+ *   - await versus_load_asyncGenerator.next() until { done: true, value: true }.
+ *     - .versus_loadOk asynchronously should be true.
+ *     - (.versus_load_asyncPromise_progress is not used in this case.)
  *   - go to 1.3
  *
  *
@@ -220,7 +221,7 @@ import * as DEvolution from "../DEvolution.js";
  *
  * 
  * @member {boolean} versus_load_asyncPromise_running
- *   If true, a .versus_load_async() is still executing. Please wait it
+ *   If true, a .versus_load_asyncPromise() is still executing. Please wait it
  * becoming false if wanting to call .versus_load_asyncPromise_create() again.
  *
  * @member {boolean} versus_load_asyncGenerator_running
@@ -230,8 +231,9 @@ import * as DEvolution from "../DEvolution.js";
  *
  * @member {ValueMax.Percentage.Aggregate} versus_load_asyncPromise_progress
  *   The progress of loading versus summary, loading versus, creating neural
- * networks. If ( .versus_load_asyncPromise_progress.valuePercentage == 100 ),
- * all the loading and creating has done.
+ * networks. When all the workerProxies initializing, versus summary and
+ * versus loading, neural networks creating have done, it should be
+ *  ( .versus_load_asyncPromise_progress.valuePercentage == 100 ).
  *   - It is used only if .init_asyncPromise_create() or
  *       .versus_load_asyncPromise_create() is called.
  *   - If .init_asyncGenerator_create() or .versus_load_asyncGenerator_create()
@@ -247,7 +249,7 @@ class NeuralOrchestra_Base extends
 
   NonReentrant.asyncPromise_by_asyncGenerator(
     "versus_load", relay_versus_load_asyncGenerator,
-    null, // Use default versus_load_progress object.
+    null, // Use default versus_load_asyncPromise_progress object.
 
   NonReentrant.asyncPromise_by_asyncGenerator(
     "init", relay_init_asyncGenerator,
@@ -441,10 +443,9 @@ class NeuralOrchestra_Base extends
    * .init_asyncPromise() which will loop .init_asyncGenerator() until done.
    *   - Please see also .init_asyncGenerator() explanation for the promise.
    *   - The .versus_load_asyncPromise_progress could be used to track
-   *       progress. If
-   *       ( .versus_load_asyncPromise_progress.valuePercentage == 100 ), all
-   *       the workerProxies initializing, versus summary and versus loading,
-   *       neural networks creating have done.
+   *       progress. When all the workerProxies initializing, versus summary
+   *       and versus loading, neural networks creating have done, it should
+   *       be ( .versus_load_asyncPromise_progress.valuePercentage == 100 ).
    */
   init_asyncPromise_create(
     downloader_spreadsheetId, downloader_apiKey, bLogFetcherEventToConsole,
@@ -1500,31 +1501,34 @@ class NeuralOrchestra_Base extends
       if ( delayPromise )
         await delayPromise;
 
+      // 5.
+      //
+      // Note: When advance progress to 100%, .versus_load_asyncGenerator_running
+      //       has not been set to false. So, caller can not re-execute this
+      //       generator immediately when progress become 100%).
+      if ( neuralNet_createOk ) {
+        this.versus_loadOk = true;
+
+        // Only if neural networks created successfully.
+        progressToAdvance.value_advance();
+        yield progressRoot;
+
+      } else {
+        this.versus_loadOk = false;
+      }
+
+      return this.versus_loadOk;
+
     } catch ( e ) {
       //debugger;
       this.versus_loadOk = false;
       throw e;
 
     } finally {
-      // 5. So that this async generator could be executed again.
-      this.versus_load_asyncGenerator_running = false;
+//!!! (2023/03/30 Remarked) Use NonReentrant.asyncPromise_by_asyncGenerator() instead.
+//       // 5. So that this async generator could be executed again.
+//       this.versus_load_asyncGenerator_running = false;
     }
-
-    // 6. Advance progress to 100% only if neural networks created successfully
-    //    and .versus_load_asyncGenerator_running has been set to false (so
-    //    that caller can re-execute this generator immediately when progress
-    //    become 100%).
-    if ( neuralNet_createOk ) {
-      this.versus_loadOk = true;
-
-      progressToAdvance.value_advance();
-      yield progressRoot;
-
-    } else {
-      this.versus_loadOk = false;
-    }
-
-    return this.versus_loadOk;
   }
 
 
