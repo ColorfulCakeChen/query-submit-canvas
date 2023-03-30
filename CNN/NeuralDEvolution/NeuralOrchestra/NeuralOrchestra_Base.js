@@ -1433,10 +1433,12 @@ class NeuralOrchestra_Base extends
 
     { // Checking pre-condition.
 
-//!!! (2023/03/30 Remarked) Moved to .versus_load_asyncGenerator_create()
-//       NeuralOrchestra_Base.throw_call_another_if_false.call( this,
-//         this.versus_load_asyncGenerator_running, funcNameInMessage,
-//         "versus_load_asyncGenerator_create" );
+      // Q: Why are these checkings necessary?
+      // A: Because .init_asyncGenerator()
+      //      will not call .versus_load_asyncGenerator_create() but call
+      //    .versus_load_asyncGenerator_create_without_checking_precondition(),
+      //    here still needs do some checkings.
+      //
 
       if ( workerProxies_init_asyncPromise ) {
         // If has workerProxies_init_asyncPromise, must during initializing.
@@ -1449,10 +1451,9 @@ class NeuralOrchestra_Base extends
           funcNameInMessage );
       }
 
-//!!! (2023/03/30 Remarked) Moved to .versus_load_asyncGenerator_create()
-//       // Prevent the nueral networks from being changed during they are processing.
-//       NeuralOrchestra_Base.throw_if_imageData_process_asyncPromise_running
-//         .call( this, funcNameInMessage );
+      // Prevent the nueral networks from being changed during they are processing.
+      NeuralOrchestra_Base.throw_if_imageData_process_asyncPromise_running
+        .call( this, funcNameInMessage );
     }
 
     let progressRoot;
