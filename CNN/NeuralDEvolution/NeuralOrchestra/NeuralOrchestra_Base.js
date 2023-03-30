@@ -1595,7 +1595,7 @@ class NeuralOrchestra_Base extends
       //
       // Note: When advance progress to 100%, .versus_load_asyncGenerator_running
       //       has not been set to false. So, caller can not re-execute this
-      //       generator immediately when progress become 100%).
+      //       generator immediately when progress become 100%.
       if ( neuralNet_createOk ) {
         this.versus_loadOk = true;
 
