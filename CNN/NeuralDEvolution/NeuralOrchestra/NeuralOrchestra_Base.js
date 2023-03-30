@@ -604,7 +604,7 @@ class NeuralOrchestra_Base
       return versus_load_asyncGenerator_or_wrapped_asyncPromise;
 
     } catch ( e ) {
-      debugger;
+      //debugger;
       // Note: Here should not modify .initOk because .init_asyncGenerator()
       //       will do.
       throw e;
@@ -939,7 +939,7 @@ class NeuralOrchestra_Base
       return returnValue;
 
     } catch ( e ) {
-      debugger;
+      //debugger;
       this.initOk = false;
       throw e;
 
@@ -1062,7 +1062,7 @@ class NeuralOrchestra_Base
       }
 
     } catch ( e ) {
-      debugger;
+      //debugger;
       this.workerProxies_initOk = false;
       throw e;
 
@@ -1718,7 +1718,7 @@ class NeuralOrchestra_Base
       return loadOk;
 
     } catch ( e ) {
-      debugger;
+      //debugger;
       // Note: Here should not modify .versus_loadOk because
       //       .versus_load_asyncGenerator() will do.
       throw e;
@@ -1994,7 +1994,7 @@ class NeuralOrchestra_Base
         await delayPromise;
 
     } catch ( e ) {
-      debugger;
+      //debugger;
       this.versus_loadOk = false;
       throw e;
 
