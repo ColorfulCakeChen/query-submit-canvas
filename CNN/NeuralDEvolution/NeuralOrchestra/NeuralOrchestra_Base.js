@@ -196,6 +196,11 @@ import * as DEvolution from "../DEvolution.js";
  *   If true, a .init_asyncGenerator_create() is still executing. Please wait
  * it becoming false if wanting to call .init_asyncGenerator_create() again.
  *
+
+//!!! ...unfinished... (2023/03/30)
+// should use .versus_load_asyncPromise_progress
+// But how?
+
  * @member {ValueMax.Percentage.Aggregate} init_asyncPromise_progress
  *   The progress of .init_asyncPromise_create(). If
  * ( .init_asyncPromise_progress.valuePercentage == 100 ), all the
