@@ -203,7 +203,7 @@ function NonReentrant_asyncPromise(
      *
      * @param {NonReentrant_asyncPromise} this
      */
-    static async* [ name_of_asyncPromise_guarded ]( ...restArgs ) {
+    static async [ name_of_asyncPromise_guarded ]( ...restArgs ) {
 
       const funcNameInMessage = name_of_asyncPromise_guarded;
       { // Checking pre-condition.
