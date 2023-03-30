@@ -198,8 +198,9 @@ import * as DEvolution from "../DEvolution.js";
  *
  * @member {ValueMax.Percentage.Aggregate} init_asyncPromise_progress
  *   The progress of .init_asyncPromise_create(). If
- * ( .init_asyncPromise_progress.valuePercentage == 100 ), the workerProxies
- * has beeb initialized.
+ * ( .init_asyncPromise_progress.valuePercentage == 100 ), all the
+ * workerProxies initializing, versus summary and versus loading, neural
+ * networks creating have done.
  *   - It is used only if .init_asyncPromise_create() is called.
  *   - If .init_asyncGenerator_create() is called, its progressParent
  *       parameter will be used instead.
