@@ -1132,7 +1132,7 @@ class NeuralOrchestra_Base extends
 
   /**
    *
-   * 1. Usage
+   * 1.
    *
    * Please call .versus_load_asyncPromise_create() or
    * .versus_load_asyncGenerator_create() to create this generator.
