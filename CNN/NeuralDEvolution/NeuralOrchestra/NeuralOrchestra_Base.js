@@ -1397,6 +1397,18 @@ class NeuralOrchestra_Base extends
 //   }
 
   /**
+   *
+   * 1. Usage
+   *
+   * Please call .versus_load_asyncPromise_create() or
+   * .versus_load_asyncGenerator_create() to create this generator.
+   *
+   * When this generator is executing, it should not be created another
+   * instance. Please do that after the executing generator done.
+   *
+   *
+   * 2. 
+   *
    *   - Load all differential evolution versus weights ranges (if not yet loaded).
    *     - Record in .versusSummary
    *
@@ -1407,8 +1419,12 @@ class NeuralOrchestra_Base extends
    *     - Record in .workerProxies
    *
    *
-   * If this generator is executing, it should not create another same generator.
-   * Please do that after the executing generator done.
+   * 3. Progress
+   *
+   * When advancing progress to 100%, .versus_load_asyncGenerator_running
+   * has not yet been set to false. So, in fact, caller can not re-execute
+   * this generator immediately when progress become 100%. Awaiting the
+   * finale .next() to { done: true, value } is more reliable.
    *
    *
    * @param {NeuralOrchestra_Base} this
@@ -1592,12 +1608,6 @@ class NeuralOrchestra_Base extends
         await delayPromise;
 
       // 5.
-      //
-      // Note:
-      //
-      // When advancing progress to 100%, .versus_load_asyncGenerator_running
-      // has not been set to false. So, in fact, caller can not re-execute
-      // this generator immediately when progress become 100%.
       if ( neuralNet_createOk ) {
         this.versus_loadOk = true;
 
