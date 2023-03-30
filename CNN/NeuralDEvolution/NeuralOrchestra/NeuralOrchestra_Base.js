@@ -1599,7 +1599,7 @@ class NeuralOrchestra_Base extends
       if ( neuralNet_createOk ) {
         this.versus_loadOk = true;
 
-        // Only if neural networks created successfully.
+        // Only if neural networks created successfully, advance progress to 100%.
         progressToAdvance.value_advance();
         yield progressRoot;
 
