@@ -140,9 +140,6 @@ function NonReentrant_asyncPromise_by_asyncGenerator(
 
 
     #asyncPromise_running;
-//!!! (2023/03/30 Remarked)
-// No longer a private property. So that it could be disposed by different sub-class.
-//    #asyncPromise_progress;
 
 
     /**
@@ -172,23 +169,12 @@ function NonReentrant_asyncPromise_by_asyncGenerator(
           name_of_asyncPromise_running,
           NonReentrant_asyncPromise_by_asyncGenerator
             .propertyDescriptor_of_asyncPromise_running );
-
-//!!! (2023/03/30 Remarked)
-// No longer a private property. So that it could be disposed by different sub-class.
-//         // Xxx_asyncPromise_progress
-//         Reflect.defineProperty( this,
-//           name_of_asyncPromise_progress,
-//           NonReentrant_asyncPromise_by_asyncGenerator
-//             .propertyDescriptor_of_asyncPromise_progress );
       }
     }
 
     /** @override */
     disposeResources() {
 
-//!!! (2023/03/30 Remarked)
-// No longer a private property. So that it could be disposed by different sub-class.
-//      Reflect.deleteProperty( this, name_of_asyncPromise_progress );
       Reflect.deleteProperty( this, name_of_asyncPromise_running );
 
       NonReentrant_asyncPromise_by_asyncGenerator
@@ -206,36 +192,6 @@ function NonReentrant_asyncPromise_by_asyncGenerator(
      */
     static propertyDescriptor_of_asyncPromise_running = 
       { get() { return this.#asyncPromise_running; }, enumerable: true };
-
-
-//!!! (2023/03/30 Remarked)
-// No longer a private property. So that it could be disposed by different sub-class.
-//     /**
-//      * Property descriptor for Xxx_asyncPromise_progress.
-//      * (as enumerable read-only properties).
-//      */
-//     static propertyDescriptor_of_asyncPromise_progress = 
-//       { get() { return this.#asyncPromise_progress; }, enumerable: true };
-//
-//     /**
-//      * @param {NonReentrant_asyncPromise_by_asyncGenerator} this
-//      */
-//     static [ name_of_asyncPromise_progress_create ]() {
-//       NonReentrant_asyncPromise_by_asyncGenerator
-//         [ name_of_asyncPromise_progress_dispose ].call( this );
-//       this.#asyncPromise_progress
-//         = ValueMax.Percentage.Aggregate.Pool.get_or_create_by();
-//     }
-//
-//     /**
-//      * @param {NonReentrant_asyncPromise_by_asyncGenerator} this
-//      */
-//     static [ name_of_asyncPromise_progress_dispose ]() {
-//       if ( this.#asyncPromise_progress ) {
-//         this.#asyncPromise_progress.disposeResources_and_recycleToPool();
-//         this.#asyncPromise_progress = null;
-//       }
-//     }
 
     /**
      * @param {NonReentrant_asyncPromise_by_asyncGenerator} this
@@ -284,19 +240,11 @@ function NonReentrant_asyncPromise_by_asyncGenerator(
         NonReentrant_asyncPromise_by_asyncGenerator
           [ name_of_throw_if_asyncPromise_or_asyncGenerator_running ]
           .call( this, funcNameInMessage );
-
-
-//!!! ...unfinished... (2023/03/28)
-// How to integrate more precondition checking here?
-
       }
 
       // 1.
       let asyncGenerator;
       {
-//!!! ...unfinished... (2023/03/30)
-// Perhaps, let caller can specify progressParent.
-
         // Use internal independent progress.
         NonReentrant_asyncPromise_by_asyncGenerator
           [ name_of_asyncPromise_progress_create ]

@@ -166,11 +166,6 @@ function NonReentrant_asyncPromise(
 
         NonReentrant_asyncPromise[ name_of_throw_if_asyncPromise_running ]
           .call( this, funcNameInMessage );
-
-
-//!!! ...unfinished... (2023/03/28)
-// How to integrate more precondition checking here?
-
       }
 
       let asyncPromise = NonReentrant_asyncPromise
