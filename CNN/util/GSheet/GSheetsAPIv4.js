@@ -90,7 +90,7 @@ import * as ValueMax from "../ValueMax.js";
  */
 class GSheetsAPIv4_UrlComposer
   extends NonReentrant.asyncPromise_by_asyncGenerator(
-    "fetch", relay_JSON_ColumnMajorArrayArray_fetch_asyncGenerator,
+    "fetch", relay_JSON_ColumnMajorArrayArray_fetch_asyncGenerator, null,
     Recyclable.Root ) {
 
   /**
