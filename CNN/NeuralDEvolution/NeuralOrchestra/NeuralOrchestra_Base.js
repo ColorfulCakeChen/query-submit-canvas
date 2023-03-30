@@ -11,12 +11,6 @@ import * as NeuralNet from "../../Conv/NeuralNet.js";
 import * as NeuralWorker from "../NeuralWorker.js";
 import * as DEvolution from "../DEvolution.js";
 
-
-//!!! ...unfinished... (2023/03/21)
-// Only if ( this.initOk === undefined ), init_asyncXxx() can be called.
-// Prevent from being re-initialized. So that unit testing can be accelerated.
-
-
 /**
  * Orchestrate neural networks with differential evolution.
  *
@@ -298,11 +292,6 @@ class NeuralOrchestra_Base extends
 
     NeuralOrchestra_Base.versusResultSender_dispose.call( this );
 
-//!!! (2023/03/30 Remarked) Use NonReentrant.asyncPromise_by_asyncGenerator instead.
-//     this.versus_loadOk = undefined;
-//     this.versus_load_asyncGenerator_running = undefined;
-//     this.versus_load_asyncPromise_running = undefined;
-
     NeuralOrchestra_Base.versus_dispose.call( this );
     NeuralOrchestra_Base.versusSummary_dispose.call( this );
 
@@ -310,11 +299,6 @@ class NeuralOrchestra_Base extends
     this.workerProxies_init_asyncPromise_running = undefined;
     NeuralOrchestra_Base.neuralNetParamsBase_dispose.call( this );
     NeuralOrchestra_Base.workerProxies_dispose.call( this );
-
-//!!! (2023/03/30 Remarked) Use NonReentrant.asyncPromise_by_asyncGenerator instead.
-//     this.initOk = undefined;
-//     this.init_asyncGenerator_running = undefined;
-//     this.init_asyncPromise_running = undefined;
 
     this.output_channelCount_per_alignment = undefined;
     this.bLogFetcherEventToConsole = undefined;
@@ -1099,180 +1083,6 @@ class NeuralOrchestra_Base extends
       workerProxies_init_asyncPromise, delayPromise );
   }
 
-// //!!! (2023/03/30 Remarked) Use NonReentrant.asyncPromise_by_asyncGenerator() instead.
-//   /**
-//    *
-//    * @param {Promise} delayPromise
-//    *   Mainly used when unit testing. If not null, the async method will
-//    * await it before complete. If null or undefined, no extra delay awaiting.
-//    *
-//    * @return {Promise( boolean )}
-//    *   Return a newly created versus_load_asyncPromise which is an instance
-//    * of .versus_load_asyncPromise() which will loop
-//    * .versu_load_asyncGenerator() until done.
-//    */
-//   versus_load_asyncPromise_create( delayPromise ) {
-//
-//     const funcNameInMessage = "versus_load_asyncPromise_create";
-//     { // Checking pre-condition.
-//
-//       NeuralOrchestra_Base.throw_if_an_old_still_running.call( this,
-//         this.versus_load_asyncPromise_running, funcNameInMessage );
-//
-// //!!! ...unfinished... (2023/03/28)
-// // How to integrate these precondition checking to the NonReentrant_Xxx base class?
-// // Perhaps, by overriding same name method.
-//
-//       NeuralOrchestra_Base.throw_if_init_asyncPromise_or_asyncGenerator_running.call( this, funcNameInMessage );
-//       NeuralOrchestra_Base.throw_if_not_initOk.call( this, funcNameInMessage );
-//
-//       NeuralOrchestra_Base
-//         .throw_if_versus_load_asyncPromise_or_asyncGenerator_running.call(
-//           this, funcNameInMessage );
-//
-//       // Prevent the nueral networks from being changed during they are processing.
-//       NeuralOrchestra_Base.throw_if_imageData_process_asyncPromise_running
-//         .call( this, funcNameInMessage );
-//     }
-//
-//     // 1.
-//     let versus_load_asyncGenerator;
-//     {
-//       // Use internal independent progress.
-//       NeuralOrchestra_Base.versus_load_asyncPromise_progress_create.call( this );
-//
-//       // Prepare versus_load_asyncGenerator
-//       const workerProxies_init_asyncPromise = null; // For outside caller.
-//       versus_load_asyncGenerator = NeuralOrchestra_Base
-//         .versus_load_asyncGenerator_create_without_checking_precondition.call( this,
-//           this.versus_load_asyncPromise_progress,
-//           workerProxies_init_asyncPromise, delayPromise );
-//
-//       // Note: Here needs not set .versus_loadOk to undefined because
-//       //       .versus_load_asyncGenerator_create_without_checking_precondition() has
-//       //       done it.
-//     }
-//
-//     // 2.
-//     let versus_load_asyncPromise = NeuralOrchestra_Base
-//       .versus_load_asyncPromise_create_without_checking_precondition.call( this,
-//         versus_load_asyncGenerator );
-//     return versus_load_asyncPromise;
-//   }
-//
-//   /**
-//    * Create versus_load_asyncPromise (an instance of .versus_load_async()).
-//    *
-//    * Called by .init_async() and .versus_load_asyncPromise_create(). It does not
-//    * check precondition.
-//    *
-//    *
-//    * @param {NeuralOrchestra_Base} this
-//    *
-//    * @param {AsyncGenerator} versus_load_asyncGenerator
-//    *   The async generator (an instance of .versus_load_asyncGenerator()) to
-//    * be wrapped by the created promise.
-//    *
-//    * @return {Promise( boolean )}
-//    *   Return the newly created versus_load_asyncPromise which is an instance
-//    * of .versus_load_async().
-//    */
-//   static versus_load_asyncPromise_create_without_checking_precondition(
-//     versus_load_asyncGenerator ) {
-//
-// //!!! (2023/03/25 Remarked) no longer record in .versus_load_asyncPromise
-// // !!! ...unfinished... (2023/03/25)
-// // // Perhaps, only init_async() will record in this.versus_load_asyncPromise
-// //     this.versus_load_asyncPromise_running = true;
-// //     this.versus_load_asyncPromise = NeuralOrchestra_Base.versus_load_async.call(
-// //       this, versus_load_asyncGenerator );
-// //     return this.versus_load_asyncPromise;
-//
-//     this.versus_load_asyncPromise_running = true;
-//     let versus_load_asyncPromise = NeuralOrchestra_Base.versus_load_async.call(
-//       this, versus_load_asyncGenerator );
-//     return versus_load_asyncPromise;
-//   }
-//
-//   /**
-//    * Call versus_load_asyncGenerator.next() until done.
-//    *
-//    *
-//    * @param {NeuralOrchestra_Base} this
-//    *
-//    * @param {AsyncGenerator} versus_load_asyncGenerator
-//    *   The async generator (an instance of .versus_load_asyncGenerator()) to
-//    * be wrapped by the created promise. It will be .next() until done by this
-//    * async method.
-//    *
-//    * @return {Promise( boolean )}
-//    *   Return a promise:
-//    *   - Resolved to true, if succeeded.
-//    *     - Versus summary and versus are loaded. Neural networks are created.
-//    *   - Resolved to false, if failed.
-//    *   - When settled, the .versus_load_asyncPromise_progress has been stopped.
-//    */
-//   static async versus_load_async( versus_load_asyncGenerator ) {
-//
-// //!!! (2023/03/30 Remarked) Moved to .versus_load_asyncGenerator_create()
-//
-//     const funcNameInMessage = "versus_load_async";
-//     { // Checking pre-condition.
-//
-//       NeuralOrchestra_Base.throw_call_another_if_false.call( this,
-//         this.versus_load_asyncPromise_running, funcNameInMessage,
-//         "versus_load_asyncPromise_create" );
-//
-//       // Prevent the nueral networks from being changed during they are processing.
-//       NeuralOrchestra_Base.throw_if_imageData_process_asyncPromise_running
-//         .call( this, funcNameInMessage );
-//     }
-//
-//     try {
-//       // 1.
-//       if ( !versus_load_asyncGenerator )
-//         throw Error( `NeuralOrchestra.Base.${funcNameInMessage}(): `
-//           + `versus_load_asyncGenerator should have already existed.` );
-//
-//       let loaderNextPromise;
-//       let loaderNext;
-//       do {
-//         loaderNextPromise = versus_load_asyncGenerator.next();
-//         loaderNext = await loaderNextPromise;
-//       } while ( !loaderNext.done );
-//
-//       // The result should be either true or false. If result is undefined,
-//       // the generator may have been terminated previously by throwing
-//       // exception. So, continue to throw exception to inform caller the
-//       // generator is illegal.
-//       if ( loaderNext.value === undefined )
-//         throw Error( `NeuralOrchestra.Base.${funcNameInMessage}(): `
-//           + `versus_load_asyncGenerator is illegal `
-//           + `(e.g. has been terminated previously by throwing exception).` );
-//
-//       let loadOk = loaderNext.value;
-//       if ( loadOk != this.versus_loadOk )
-//         throw Error( `NeuralOrchestra.Base.${funcNameInMessage}(): `
-//           + `loadOk ( ${loadOk} ) `
-//           + `should be the same as `
-//           + `this.versus_loadOk ( ${this.versus_loadOk} ).`
-//         );
-//
-//       return loadOk;
-//
-//     } catch ( e ) {
-//       //debugger;
-//       // Note: Here should not modify .versus_loadOk because
-//       //       .versus_load_asyncGenerator() will do.
-//       throw e;
-//
-//     } finally {
-//       // 2. So that this async method could be executed again.
-//       this.versus_load_asyncPromise_running = false;
-//     }
-//   }
-
-
   /**
    * When wanting to load the next versus with yourself progressParent, call
    * this method and call .next() until { done: true }.
@@ -1320,82 +1130,6 @@ class NeuralOrchestra_Base extends
       progressParent, workerProxies_init_asyncPromise, delayPromise );
   }
 
-//!!! (2023/03/30 Remarked) Use NonReentrant.asyncPromise_by_asyncGenerator() instead.
-//   /**
-//    * When wanting to load the next versus with yourself progressParent, call
-//    * this method and call .next() until { done: true }.
-//    *
-//    *
-//    * @param {ValueMax.Percentage.Aggregate} progressParent
-//    *   Some new progressToAdvance will be created and added to progressParent.
-//    * The created progressToAdvance will be increased when every time advanced.
-//    * The progressParent.root_get() will be returned when every time yield.
-//    *
-//    * @param {Promise} delayPromise
-//    *   Mainly used when unit testing. If not null, the async generator will
-//    * await it before complete. If null or undefined, no extra delay awaiting.
-//    *
-//    * @return {AsyncGenerator}
-//    *   Return a newly created versus_load_asyncGenerator which is an instance of
-//    * .versus_load_asyncGenerator().
-//    */
-//   versus_load_asyncGenerator_create( progressParent, delayPromise ) {
-//
-//     { // Checking pre-condition.
-//       const funcNameInMessage = "versus_load_asyncGenerator_create";
-//
-//       NeuralOrchestra_Base.throw_if_an_old_still_running.call( this,
-//         this.versus_load_asyncGenerator_running, funcNameInMessage );
-//
-// //!!! ...unfinished... (2023/03/28)
-// // How to integrate these precondition checking to the NonReentrant_Xxx base class?
-// // Perhaps, by overriding same name method.
-//
-//       NeuralOrchestra_Base.throw_if_init_asyncPromise_or_asyncGenerator_running.call( this, funcNameInMessage );
-//       NeuralOrchestra_Base.throw_if_not_initOk.call( this, funcNameInMessage );
-//
-//       NeuralOrchestra_Base
-//         .throw_if_versus_load_asyncPromise_or_asyncGenerator_running.call(
-//           this, funcNameInMessage );
-//
-//       // Prevent the nueral networks from being changed during they are processing.
-//       NeuralOrchestra_Base.throw_if_imageData_process_asyncPromise_running
-//         .call( this, funcNameInMessage );
-//     }
-//
-//     const workerProxies_init_asyncPromise = null; // For outside caller.
-//     let versus_load_asyncGenerator = NeuralOrchestra_Base
-//       .versus_load_asyncGenerator_create_without_checking_precondition.call( this,
-//         progressParent, workerProxies_init_asyncPromise, delayPromise );
-//     return versus_load_asyncGenerator;
-//   }
-//
-//   /**
-//    * Create an instance of .versus_load_asyncGenerator().
-//    * 
-//    * Called by .init_asyncGenerator(), .versus_load_async() and
-//    * .versus_load_asyncGenerator_create().
-//    *
-//    * It does not check precondition. It does not record in .versus_load_asyncGenerator
-//    *
-//    *
-//    * @param {NeuralOrchestra_Base} this
-//    *
-//    * @return {AsyncGenerator}
-//    *   Return the newly created versus_load_asyncGenerator which is an instance of
-//    * .versus_load_asyncGenerator().
-//    */
-//   static versus_load_asyncGenerator_create_without_checking_precondition(
-//     progressParent, workerProxies_init_asyncPromise, delayPromise ) {
-//
-//     this.versus_load_asyncGenerator_running = true;
-//     this.versus_loadOk = undefined;
-//
-//     let versus_load_asyncGenerator = NeuralOrchestra_Base.versus_load_asyncGenerator.call(
-//       this, progressParent, workerProxies_init_asyncPromise, delayPromise );
-//     return versus_load_asyncGenerator;
-//   }
-
   /**
    *
    * 1. Usage
@@ -1437,10 +1171,10 @@ class NeuralOrchestra_Base extends
    * @param {Promise( boolean )} workerProxies_init_asyncPromise
    *   The an instance of .workerProxies_init_async().
    *   - If not null, it awaited before creating neural networks.
-   *     - This case is used by .init_asyncGenerator()
+   *     - This case is used by .init_asyncGenerator() (i.e. internal caller).
    *   - If null, the .initOk must already be true.
-   *     - This case is used by .versus_load_asyncGenerator_create() (i.e.
-   *         outside caller).
+   *     - This case is used by .versus_load_asyncPromise_create() and
+   *         .versus_load_asyncGenerator_create() (i.e. outside caller).
    *
    * @param {Promise} delayPromise
    *   Mainly used when unit testing. If not null, this async generator will
@@ -1460,35 +1194,6 @@ class NeuralOrchestra_Base extends
     progressParent, workerProxies_init_asyncPromise, delayPromise ) {
 
     const funcNameInMessage = "versus_load_asyncGenerator";
-
-//!!! (2023/03/30 Remarked)
-// // When executed here, the .init_asyncGenerator() may have done (i.e. not running).
-//   { // Checking pre-condition.
-//
-//       // Q: Why are these checkings necessary?
-//       // A: Because .init_asyncGenerator() will not call
-//       //    .versus_load_asyncGenerator_create() but call
-//       //    .versus_load_asyncGenerator_create_without_checking_precondition(),
-//       //    here still needs do some checkings.
-//       //
-//
-// //!!! (2023/03/30 Remarked)
-// // When executed here, the .init_asyncGenerator() may have done (i.e. not running).
-// //       if ( workerProxies_init_asyncPromise ) {
-// //         // If has workerProxies_init_asyncPromise, must during initializing.
-// //         NeuralOrchestra_Base
-// //           .throw_if_init_asyncPromise_and_asyncGenerator_not_running.call(
-// //             this, funcNameInMessage );
-// //        } else {
-// //         // If no workerProxies_init_asyncPromise, the initOk must be true.
-// //         NeuralOrchestra_Base.throw_if_not_initOk.call( this,
-// //           funcNameInMessage );
-// //       }
-//
-//       // Prevent the nueral networks from being changed during they are processing.
-//       NeuralOrchestra_Base.throw_if_imageData_process_asyncPromise_running
-//         .call( this, funcNameInMessage );
-//     }
 
     let progressRoot;
     let progressToAdvance;
@@ -1627,9 +1332,6 @@ class NeuralOrchestra_Base extends
       throw e;
 
     } finally {
-//!!! (2023/03/30 Remarked) Use NonReentrant.asyncPromise_by_asyncGenerator() instead.
-//       // 5. So that this async generator could be executed again.
-//       this.versus_load_asyncGenerator_running = false;
     }
   }
 
@@ -1747,30 +1449,6 @@ class NeuralOrchestra_Base extends
       .call( this, funcNameInMessage );
   }
 
-//!!! (2023/03/30 Remarked) Use NonReentrant.asyncPromise_by_asyncGenerator() instead.
-//   /**
-//    * @param {NeuralOrchestra_Base} this
-//    * @param {string} funcNameInMessage   The caller function name. (e.g. init_async)
-//    */
-//   static throw_if_versus_load_asyncPromise_or_asyncGenerator_running( funcNameInMessage ) {
-//     if (   ( this.versus_load_asyncPromise_running )
-//         || ( this.versus_load_asyncGenerator_running ) )
-//       throw Error( `NeuralOrchestra.Base.${funcNameInMessage}(): `
-//         + `should not be executed while `
-//         + `DEvolution.VersusSummary or DEvolution.Versus is still loading.` );
-//   }
-//
-//   /**
-//    * @param {NeuralOrchestra_Base} this
-//    * @param {string} funcNameInMessage   The caller function name. (e.g. init_async)
-//    */
-//   static throw_if_not_versus_loadOk( funcNameInMessage ) {
-//     if ( !this.versus_loadOk )
-//       throw Error( `NeuralOrchestra.Base.${funcNameInMessage}(): `
-//         + `should be executed only if `
-//         + `this.versus_loadOk ( ${this.versus_loadOk} ) is true.` );
-//   }
-
   /**
    * @param {NeuralOrchestra_Base} this
    * @param {string} funcNameInMessage   The caller function name. (e.g. init_async)
@@ -1781,34 +1459,6 @@ class NeuralOrchestra_Base extends
       .throw_if_versus_load_asyncPromise_or_asyncGenerator_running.call(
         this, funcNameInMessage );
   }
-
-//!!! (2023/03/30 Remarked) Use NonReentrant.asyncPromise_by_asyncGenerator() instead.
-//   /**
-//    * @param {NeuralOrchestra_Base} this
-//    * @param {boolean} b_still_running    If true, throw exception.
-//    * @param {string} funcNameInMessage   The caller function name. (e.g. init_async)
-//    */
-//   static throw_if_an_old_still_running( b_still_running, funcNameInMessage ) {
-//     if ( b_still_running )
-//       throw Error( `NeuralOrchestra.Base.${funcNameInMessage}(): `
-//         + `An old .${funcNameInMessage}() is still running.` );
-//   }
-
-//!!! (2023/03/30 Remarked) Use NonReentrant.asyncPromise_by_asyncGenerator() instead.
-//   /**
-//    * @param {NeuralOrchestra_Base} this
-//    * @param {boolean} b                  If false, throw exception.
-//    * @param {string} funcNameInMessage   The caller function name. (e.g. init_async)
-//    * @param {string} funcNameShouldBeCalledInMessage
-//    *   The function name which should be called instead. (e.g. init_asyncPromise_create)
-//    */
-//   static throw_call_another_if_false(
-//     b, funcNameInMessage, funcNameShouldBeCalledInMessage ) {
-//
-//     if ( !b )
-//       throw Error( `NeuralOrchestra.Base.${funcNameInMessage}(): `
-//         + `Please call .${funcNameShouldBeCalledInMessage}() instead.` );
-//   }
 
 }
 
