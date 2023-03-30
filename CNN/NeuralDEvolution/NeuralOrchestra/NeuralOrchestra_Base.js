@@ -1082,7 +1082,7 @@ class NeuralOrchestra_Base extends
 
       NeuralOrchestra_Base
         .throw_if_versus_load_asyncPromise_or_asyncGenerator_running
-          .call( this, funcNameInMessage );
+        .call( this, funcNameInMessage );
 
       // Prevent the nueral networks from being changed during they are processing.
       NeuralOrchestra_Base.throw_if_imageData_process_asyncPromise_running
