@@ -1600,7 +1600,7 @@ class NeuralOrchestra_Base extends
       return this.versus_loadOk;
 
     } catch ( e ) {
-      //debugger;
+      debugger;
       this.versus_loadOk = false;
       throw e;
 
