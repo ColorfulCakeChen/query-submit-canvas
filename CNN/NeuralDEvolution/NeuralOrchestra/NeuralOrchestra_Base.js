@@ -770,8 +770,8 @@ class NeuralOrchestra_Base extends
    * The progressParent.root_get() will be returned when every time yield.
    *
    * @param {boolean} b_return_versus_load_asyncGenerator_instead_of_asyncPromise
-   *   A boolean flag determines what this async generater's final awaited .next()
-   * returns.
+   *   A boolean flag determines what this async generater's final awaited
+   * .next() returns.
    *   - If truthy, { done: true, value: versus_load_asyncGenerator }.
    *   - If falsy,  { done: true, value: { versus_load_asyncPromise } }.
    *       (Note that the versus_load_asyncPromise is wrapped in an object.)
