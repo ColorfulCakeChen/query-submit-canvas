@@ -196,20 +196,6 @@ import * as DEvolution from "../DEvolution.js";
  *   If true, a .init_asyncGenerator_create() is still executing. Please wait
  * it becoming false if wanting to call .init_asyncGenerator_create() again.
  *
-
-//!!! ...unfinished... (2023/03/30)
-// should use .versus_load_asyncPromise_progress
-// But how?
-
- * @member {ValueMax.Percentage.Aggregate} init_asyncPromise_progress
- *   The progress of .init_asyncPromise_create(). If
- * ( .init_asyncPromise_progress.valuePercentage == 100 ), all the
- * workerProxies initializing, versus summary and versus loading, neural
- * networks creating have done.
- *   - It is used only if .init_asyncPromise_create() is called.
- *   - If .init_asyncGenerator_create() is called, its progressParent
- *       parameter will be used instead.
- *
  * @member {boolean} initOk
  *   If true, a .init_async() or .init_asyncGenerator() has been executed
  * and succeeded.
@@ -252,9 +238,10 @@ import * as DEvolution from "../DEvolution.js";
  *   The progress of loading versus summary, loading versus, creating neural
  * networks. If ( .versus_load_asyncPromise_progress.valuePercentage == 100 ),
  * all the loading and creating has done.
- *   - It is used only if .init_asyncPromise_create() is called.
- *   - If .init_asyncGenerator_create() is called, its progressParent
- *       parameter will be used instead.
+ *   - It is used only if .init_asyncPromise_create() or
+ *       .versus_load_asyncPromise_create() is called.
+ *   - If .init_asyncGenerator_create() or .versus_load_asyncGenerator_create()
+ *       is called, their progressParent parameter will be used instead.
  *
  * @member {boolean} versus_loadOk
  *   If true, a .versus_load_async() or .versus_load_asyncGenerator() has been
@@ -266,6 +253,7 @@ class NeuralOrchestra_Base extends
 
   NonReentrant.asyncPromise_by_asyncGenerator(
     "init_asyncGenerator", relay_init_asyncGenerator,
+    "versus_load_asyncPromise_progress", // Use versus_load's progress object.
 
     Recyclable.Root ) ) {
 
@@ -454,12 +442,17 @@ class NeuralOrchestra_Base extends
   /**
    * (This method's parameters are almost the same as .init_asyncGenerator()
    * except without the 1st parameter progressParent because the
-   * .init_asyncPromise_progress is used instead.)
+   * .versus_load_asyncPromise_progress is used instead.)
    *
    * @return {Promise( AsyncGenerator | { Promise } )}
    *   Return a newly created init_asyncPromise which is an instance of
    * .init_asyncPromise() which will loop .init_asyncGenerator() until done.
-   * Please see also .init_asyncGenerator() explanation for the promise.
+   *   - Please see also .init_asyncGenerator() explanation for the promise.
+   *   - The .versus_load_asyncPromise_progress could be used to track
+   *       progress. If
+   *       ( .versus_load_asyncPromise_progress.valuePercentage == 100 ), all
+   *       the workerProxies initializing, versus summary and versus loading,
+   *       neural networks creating have done.
    */
   init_asyncPromise_create(
     downloader_spreadsheetId, downloader_apiKey, bLogFetcherEventToConsole,
