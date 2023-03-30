@@ -27,6 +27,13 @@ import { asyncGenerator as NonReentrant_asyncGenerator }
  *   The prefix for all async operations and flags. (e.g. "init" or "fetch"
  * or "workerProxies_init" or "versus_load" or "imageData_process")
  *
+ * @param {string} name_of_asyncPromise_progress
+ *   The property name for progress to be used by the underlied async generator.
+ *   - If null, Xxx_asyncPromise_progress will be used. (Xxx is name_prefix)
+ *   - If not null, the specified name will be used. This is especially useful
+ *       when the progress object wants to be shared among multiple
+ *       NoReentrant.Xxx sub-classes.
+ *
  * @param {AsyncGeneratorFunction} underlied_asyncGenerator_func
  *   A function for creating an underlied async generator which wants to be
  * guarded by the .Xxx_asyncGenerator_running boolean flag.
@@ -40,6 +47,7 @@ import { asyncGenerator as NonReentrant_asyncGenerator }
  */
 function NonReentrant_asyncPromise_by_asyncGenerator(
   name_prefix, underlied_asyncGenerator_func,
+  name_of_asyncPromise_progress = null,
   ParentClass = Object ) {
 
   const name_of_asyncPromise_running
@@ -56,8 +64,9 @@ function NonReentrant_asyncPromise_by_asyncGenerator(
     = `${name_prefix}_asyncPromise_guarded`;
 
 
-  const name_of_asyncPromise_progress
-    = `${name_prefix}_asyncPromise_progress`;
+  if ( !name_of_asyncPromise_progress )
+    name_of_asyncPromise_progress
+      = `${name_prefix}_asyncPromise_progress`;
 
   const name_of_asyncPromise_progress_create
     = `${name_prefix}_asyncPromise_progress_create`;
@@ -131,7 +140,9 @@ function NonReentrant_asyncPromise_by_asyncGenerator(
 
 
     #asyncPromise_running;
-    #asyncPromise_progress;
+//!!! (2023/03/30 Remarked)
+// No longer a private property. So that it could be disposed by different sub-class.
+//    #asyncPromise_progress;
 
 
     /**
@@ -162,18 +173,22 @@ function NonReentrant_asyncPromise_by_asyncGenerator(
           NonReentrant_asyncPromise_by_asyncGenerator
             .propertyDescriptor_of_asyncPromise_running );
 
-        // Xxx_asyncPromise_progress
-        Reflect.defineProperty( this,
-          name_of_asyncPromise_progress,
-          NonReentrant_asyncPromise_by_asyncGenerator
-            .propertyDescriptor_of_asyncPromise_progress );
+//!!! (2023/03/30 Remarked)
+// No longer a private property. So that it could be disposed by different sub-class.
+//         // Xxx_asyncPromise_progress
+//         Reflect.defineProperty( this,
+//           name_of_asyncPromise_progress,
+//           NonReentrant_asyncPromise_by_asyncGenerator
+//             .propertyDescriptor_of_asyncPromise_progress );
       }
     }
 
     /** @override */
     disposeResources() {
 
-      Reflect.deleteProperty( this, name_of_asyncPromise_progress );
+//!!! (2023/03/30 Remarked)
+// No longer a private property. So that it could be disposed by different sub-class.
+//      Reflect.deleteProperty( this, name_of_asyncPromise_progress );
       Reflect.deleteProperty( this, name_of_asyncPromise_running );
 
       NonReentrant_asyncPromise_by_asyncGenerator
@@ -193,12 +208,34 @@ function NonReentrant_asyncPromise_by_asyncGenerator(
       { get() { return this.#asyncPromise_running; }, enumerable: true };
 
 
-    /**
-     * Property descriptor for Xxx_asyncPromise_progress.
-     * (as enumerable read-only properties).
-     */
-    static propertyDescriptor_of_asyncPromise_progress = 
-      { get() { return this.#asyncPromise_progress; }, enumerable: true };
+//!!! (2023/03/30 Remarked)
+// No longer a private property. So that it could be disposed by different sub-class.
+//     /**
+//      * Property descriptor for Xxx_asyncPromise_progress.
+//      * (as enumerable read-only properties).
+//      */
+//     static propertyDescriptor_of_asyncPromise_progress = 
+//       { get() { return this.#asyncPromise_progress; }, enumerable: true };
+//
+//     /**
+//      * @param {NonReentrant_asyncPromise_by_asyncGenerator} this
+//      */
+//     static [ name_of_asyncPromise_progress_create ]() {
+//       NonReentrant_asyncPromise_by_asyncGenerator
+//         [ name_of_asyncPromise_progress_dispose ].call( this );
+//       this.#asyncPromise_progress
+//         = ValueMax.Percentage.Aggregate.Pool.get_or_create_by();
+//     }
+//
+//     /**
+//      * @param {NonReentrant_asyncPromise_by_asyncGenerator} this
+//      */
+//     static [ name_of_asyncPromise_progress_dispose ]() {
+//       if ( this.#asyncPromise_progress ) {
+//         this.#asyncPromise_progress.disposeResources_and_recycleToPool();
+//         this.#asyncPromise_progress = null;
+//       }
+//     }
 
     /**
      * @param {NonReentrant_asyncPromise_by_asyncGenerator} this
@@ -206,7 +243,7 @@ function NonReentrant_asyncPromise_by_asyncGenerator(
     static [ name_of_asyncPromise_progress_create ]() {
       NonReentrant_asyncPromise_by_asyncGenerator
         [ name_of_asyncPromise_progress_dispose ].call( this );
-      this.#asyncPromise_progress
+      this[ name_of_asyncPromise_progress ]
         = ValueMax.Percentage.Aggregate.Pool.get_or_create_by();
     }
 
@@ -214,9 +251,9 @@ function NonReentrant_asyncPromise_by_asyncGenerator(
      * @param {NonReentrant_asyncPromise_by_asyncGenerator} this
      */
     static [ name_of_asyncPromise_progress_dispose ]() {
-      if ( this.#asyncPromise_progress ) {
-        this.#asyncPromise_progress.disposeResources_and_recycleToPool();
-        this.#asyncPromise_progress = null;
+      if ( this[ name_of_asyncPromise_progress ] ) {
+        this[ name_of_asyncPromise_progress ].disposeResources_and_recycleToPool();
+        this[ name_of_asyncPromise_progress ] = null;
       }
     }
 
@@ -225,8 +262,8 @@ function NonReentrant_asyncPromise_by_asyncGenerator(
      * Create Xxx_asyncPromise (an auto-looping instance of guarded underlied
      * async generator).
      *
-     * Note: The this.#asyncPromise_progress will record progress of this
-     *       method.
+     * Note: The this[ name_of_asyncPromise_progress ] will record progress of
+     *       this method.
      *
      *
      * @return {Promise}
@@ -273,7 +310,7 @@ function NonReentrant_asyncPromise_by_asyncGenerator(
         //
         asyncGenerator = NonReentrant_asyncPromise_by_asyncGenerator
           [ name_of_asyncGenerator_create_without_checking_precondition ]
-          .call( this, this.#asyncPromise_progress, ...restArgs );
+          .call( this, this[ name_of_asyncPromise_progress ], ...restArgs );
       }
 
       // 2.
