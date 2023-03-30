@@ -246,10 +246,14 @@ class NeuralOrchestra_Base extends
     "imageData_process", relay_imageData_process_asyncPromise,
 
   NonReentrant.asyncPromise_by_asyncGenerator(
+    "versus_load", relay_versus_load_asyncGenerator,
+    null, // Use default versus_load_progress object.
+
+  NonReentrant.asyncPromise_by_asyncGenerator(
     "init", relay_init_asyncGenerator,
     "versus_load_asyncPromise_progress", // Use versus_load's progress object.
 
-    Recyclable.Root ) ) {
+    Recyclable.Root ) ) ) {
 
   /**
    * Used as default NeuralOrchestra.Base provider for conforming to
@@ -1626,18 +1630,6 @@ class NeuralOrchestra_Base extends
         + `NeuralWorker.Proxies is still initializing.` );
   }
 
-//!!! (2023/03/30) Replaced by NonReentrant.asyncPromise
-//   /**
-//    * @param {NeuralOrchestra_Base} this
-//    * @param {string} funcNameInMessage   The caller function name. (e.g. init_async)
-//    */
-//   static throw_if_imageData_process_asyncPromise_running( funcNameInMessage ) {
-//     if ( this.imageData_process_asyncPromise_running )
-//       throw Error( `NeuralOrchestra.Base.${funcNameInMessage}(): `
-//         + `should not be executed while `
-//         + `NeuralWorker.Proxies is still processing image.` );
-//   }
-
   /**
    * @param {NeuralOrchestra_Base} this
    * @param {string} funcNameInMessage   The caller function name. (e.g. init_async)
@@ -1649,28 +1641,29 @@ class NeuralOrchestra_Base extends
       .call( this, funcNameInMessage );
   }
 
-  /**
-   * @param {NeuralOrchestra_Base} this
-   * @param {string} funcNameInMessage   The caller function name. (e.g. init_async)
-   */
-  static throw_if_versus_load_asyncPromise_or_asyncGenerator_running( funcNameInMessage ) {
-    if (   ( this.versus_load_asyncPromise_running )
-        || ( this.versus_load_asyncGenerator_running ) )
-      throw Error( `NeuralOrchestra.Base.${funcNameInMessage}(): `
-        + `should not be executed while `
-        + `DEvolution.VersusSummary or DEvolution.Versus is still loading.` );
-  }
-
-  /**
-   * @param {NeuralOrchestra_Base} this
-   * @param {string} funcNameInMessage   The caller function name. (e.g. init_async)
-   */
-  static throw_if_not_versus_loadOk( funcNameInMessage ) {
-    if ( !this.versus_loadOk )
-      throw Error( `NeuralOrchestra.Base.${funcNameInMessage}(): `
-        + `should be executed only if `
-        + `this.versus_loadOk ( ${this.versus_loadOk} ) is true.` );
-  }
+//!!! (2023/03/30 Remarked) Use NonReentrant.asyncPromise_by_asyncGenerator() instead.
+//   /**
+//    * @param {NeuralOrchestra_Base} this
+//    * @param {string} funcNameInMessage   The caller function name. (e.g. init_async)
+//    */
+//   static throw_if_versus_load_asyncPromise_or_asyncGenerator_running( funcNameInMessage ) {
+//     if (   ( this.versus_load_asyncPromise_running )
+//         || ( this.versus_load_asyncGenerator_running ) )
+//       throw Error( `NeuralOrchestra.Base.${funcNameInMessage}(): `
+//         + `should not be executed while `
+//         + `DEvolution.VersusSummary or DEvolution.Versus is still loading.` );
+//   }
+//
+//   /**
+//    * @param {NeuralOrchestra_Base} this
+//    * @param {string} funcNameInMessage   The caller function name. (e.g. init_async)
+//    */
+//   static throw_if_not_versus_loadOk( funcNameInMessage ) {
+//     if ( !this.versus_loadOk )
+//       throw Error( `NeuralOrchestra.Base.${funcNameInMessage}(): `
+//         + `should be executed only if `
+//         + `this.versus_loadOk ( ${this.versus_loadOk} ) is true.` );
+//   }
 
   /**
    * @param {NeuralOrchestra_Base} this
@@ -1694,20 +1687,21 @@ class NeuralOrchestra_Base extends
         + `An old .${funcNameInMessage}() is still running.` );
   }
 
-  /**
-   * @param {NeuralOrchestra_Base} this
-   * @param {boolean} b                  If false, throw exception.
-   * @param {string} funcNameInMessage   The caller function name. (e.g. init_async)
-   * @param {string} funcNameShouldBeCalledInMessage
-   *   The function name which should be called instead. (e.g. init_asyncPromise_create)
-   */
-  static throw_call_another_if_false(
-    b, funcNameInMessage, funcNameShouldBeCalledInMessage ) {
-
-    if ( !b )
-      throw Error( `NeuralOrchestra.Base.${funcNameInMessage}(): `
-        + `Please call .${funcNameShouldBeCalledInMessage}() instead.` );
-  }
+//!!! (2023/03/30 Remarked) Use NonReentrant.asyncPromise_by_asyncGenerator() instead.
+//   /**
+//    * @param {NeuralOrchestra_Base} this
+//    * @param {boolean} b                  If false, throw exception.
+//    * @param {string} funcNameInMessage   The caller function name. (e.g. init_async)
+//    * @param {string} funcNameShouldBeCalledInMessage
+//    *   The function name which should be called instead. (e.g. init_asyncPromise_create)
+//    */
+//   static throw_call_another_if_false(
+//     b, funcNameInMessage, funcNameShouldBeCalledInMessage ) {
+//
+//     if ( !b )
+//       throw Error( `NeuralOrchestra.Base.${funcNameInMessage}(): `
+//         + `Please call .${funcNameShouldBeCalledInMessage}() instead.` );
+//   }
 
 }
 
