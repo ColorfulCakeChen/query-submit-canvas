@@ -264,8 +264,9 @@ function NonReentrant_asyncPromise_by_asyncGenerator(
 
         // Prepare asyncGenerator
         //
-        // Note: This parent class static method will also set
-        //       this[ name_of_asyncResultOk ] to  undefined.
+        // Note: The Xxx_asyncGenerator_create_without_checking_precondition()
+        //       (which is a static method defined in parent class) will also
+        //       set this[ name_of_asyncResultOk ] to  undefined.
         //
         asyncGenerator = NonReentrant_asyncPromise_by_asyncGenerator
           [ name_of_asyncGenerator_create_without_checking_precondition ]
