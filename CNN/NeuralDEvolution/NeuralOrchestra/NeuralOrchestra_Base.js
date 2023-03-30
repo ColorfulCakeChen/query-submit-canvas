@@ -1247,7 +1247,9 @@ class NeuralOrchestra_Base extends
       NeuralOrchestra_Base.throw_if_workerProxies_init_asyncPromise_running
         .call( this, funcNameInMessage );
       NeuralOrchestra_Base.throw_if_not_initOk.call( this, funcNameInMessage );
-      NeuralOrchestra_Base.throw_if_versus_loading.call( this, funcNameInMessage );
+      NeuralOrchestra_Base
+        .throw_if_versus_load_asyncPromise_or_asyncGenerator_running.call(
+          this, funcNameInMessage );
       NeuralOrchestra_Base.throw_if_not_versus_loadOk.call( this, funcNameInMessage );
     }
 
@@ -1289,7 +1291,7 @@ class NeuralOrchestra_Base extends
 //       NeuralOrchestra_Base.throw_if_workerProxies_init_asyncPromise_running.call( this,
 //         funcNameInMessage );
 //       NeuralOrchestra_Base.throw_if_not_initOk.call( this, funcNameInMessage );
-//       NeuralOrchestra_Base.throw_if_versus_loading.call( this, funcNameInMessage );
+//       NeuralOrchestra_Base.throw_if_versus_load_asyncPromise_or_asyncGenerator_running.call( this, funcNameInMessage );
 //       NeuralOrchestra_Base.throw_if_not_versus_loadOk.call( this, funcNameInMessage );
 //     }
 //
@@ -1348,7 +1350,7 @@ class NeuralOrchestra_Base extends
 //       NeuralOrchestra_Base.throw_if_workerProxies_init_asyncPromise_running.call( this,
 //         funcNameInMessage );
 //       NeuralOrchestra_Base.throw_if_not_initOk.call( this, funcNameInMessage );
-//       NeuralOrchestra_Base.throw_if_versus_loading.call( this, funcNameInMessage );
+//       NeuralOrchestra_Base.throw_if_versus_load_asyncPromise_or_asyncGenerator_running.call( this, funcNameInMessage );
 //       NeuralOrchestra_Base.throw_if_not_versus_loadOk.call( this, funcNameInMessage );
 //     }
 //
@@ -1387,7 +1389,7 @@ class NeuralOrchestra_Base extends
 //       NeuralOrchestra_Base.throw_if_workerProxies_init_asyncPromise_running.call( this,
 //         funcNameInMessage );
 //       NeuralOrchestra_Base.throw_if_not_initOk.call( this, funcNameInMessage );
-//       NeuralOrchestra_Base.throw_if_versus_loading.call( this, funcNameInMessage );
+//       NeuralOrchestra_Base.throw_if_versus_load_asyncPromise_or_asyncGenerator_running.call( this, funcNameInMessage );
 //       NeuralOrchestra_Base.throw_if_not_versus_loadOk.call( this, funcNameInMessage );
 //     }
 //
@@ -1493,7 +1495,9 @@ class NeuralOrchestra_Base extends
       NeuralOrchestra_Base.throw_if_init_asyncPromise_or_asyncGenerator_running.call( this, funcNameInMessage );
       NeuralOrchestra_Base.throw_if_not_initOk.call( this, funcNameInMessage );
 
-      NeuralOrchestra_Base.throw_if_versus_loading.call( this, funcNameInMessage );
+      NeuralOrchestra_Base
+        .throw_if_versus_load_asyncPromise_or_asyncGenerator_running.call(
+          this, funcNameInMessage );
 
       // Prevent the nueral networks from being changed during they are processing.
       NeuralOrchestra_Base.throw_if_imageData_process_asyncPromise_running
@@ -1672,7 +1676,9 @@ class NeuralOrchestra_Base extends
       NeuralOrchestra_Base.throw_if_init_asyncPromise_or_asyncGenerator_running.call( this, funcNameInMessage );
       NeuralOrchestra_Base.throw_if_not_initOk.call( this, funcNameInMessage );
 
-      NeuralOrchestra_Base.throw_if_versus_loading.call( this, funcNameInMessage );
+      NeuralOrchestra_Base
+        .throw_if_versus_load_asyncPromise_or_asyncGenerator_running.call(
+          this, funcNameInMessage );
 
       // Prevent the nueral networks from being changed during they are processing.
       NeuralOrchestra_Base.throw_if_imageData_process_asyncPromise_running
@@ -1980,7 +1986,9 @@ class NeuralOrchestra_Base extends
       NeuralOrchestra_Base.throw_if_not_initOk.call( this, funcNameInMessage );
 
       // Prevent from .versus not existed.
-      NeuralOrchestra_Base.throw_if_versus_loading.call( this, funcNameInMessage );
+      NeuralOrchestra_Base
+        .throw_if_versus_load_asyncPromise_or_asyncGenerator_running.call(
+          this, funcNameInMessage );
       NeuralOrchestra_Base.throw_if_not_versus_loadOk.call( this, funcNameInMessage );
     }
 
@@ -2089,7 +2097,7 @@ class NeuralOrchestra_Base extends
    * @param {NeuralOrchestra_Base} this
    * @param {string} funcNameInMessage   The caller function name. (e.g. init_async)
    */
-  static throw_if_versus_loading( funcNameInMessage ) {
+  static throw_if_versus_load_asyncPromise_or_asyncGenerator_running( funcNameInMessage ) {
     if (   ( this.versus_load_asyncPromise_running )
         || ( this.versus_load_asyncGenerator_running ) )
       throw Error( `NeuralOrchestra.Base.${funcNameInMessage}(): `
@@ -2114,7 +2122,9 @@ class NeuralOrchestra_Base extends
    */
   static throw_if_workerProxies_busy_or_versus_loading( funcNameInMessage ) {
     NeuralOrchestra_Base.throw_if_workerProxies_busy.call( this, funcNameInMessage );
-    NeuralOrchestra_Base.throw_if_versus_loading.call( this, funcNameInMessage );
+    NeuralOrchestra_Base
+      .throw_if_versus_load_asyncPromise_or_asyncGenerator_running.call(
+        this, funcNameInMessage );
   }
 
   /**
