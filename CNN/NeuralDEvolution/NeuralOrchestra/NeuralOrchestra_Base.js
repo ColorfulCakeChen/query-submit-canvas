@@ -1752,16 +1752,17 @@ class NeuralOrchestra_Base extends
         this, funcNameInMessage );
   }
 
-  /**
-   * @param {NeuralOrchestra_Base} this
-   * @param {boolean} b_still_running    If true, throw exception.
-   * @param {string} funcNameInMessage   The caller function name. (e.g. init_async)
-   */
-  static throw_if_an_old_still_running( b_still_running, funcNameInMessage ) {
-    if ( b_still_running )
-      throw Error( `NeuralOrchestra.Base.${funcNameInMessage}(): `
-        + `An old .${funcNameInMessage}() is still running.` );
-  }
+//!!! (2023/03/30 Remarked) Use NonReentrant.asyncPromise_by_asyncGenerator() instead.
+//   /**
+//    * @param {NeuralOrchestra_Base} this
+//    * @param {boolean} b_still_running    If true, throw exception.
+//    * @param {string} funcNameInMessage   The caller function name. (e.g. init_async)
+//    */
+//   static throw_if_an_old_still_running( b_still_running, funcNameInMessage ) {
+//     if ( b_still_running )
+//       throw Error( `NeuralOrchestra.Base.${funcNameInMessage}(): `
+//         + `An old .${funcNameInMessage}() is still running.` );
+//   }
 
 //!!! (2023/03/30 Remarked) Use NonReentrant.asyncPromise_by_asyncGenerator() instead.
 //   /**
