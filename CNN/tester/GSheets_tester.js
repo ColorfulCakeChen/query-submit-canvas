@@ -510,31 +510,51 @@ class TestCase {
         else
           nextTimes_loading = 0;
 
+        // Check: progressLoading and progressRetryWaiting.
         if ( urlComposer.httpRequestFetcher ) {
+          let progressLoading
+            = urlComposer.httpRequestFetcher.progressLoading;
+          let progressRetryWaiting
+            = urlComposer.httpRequestFetcher.progressRetryWaiting;
 
-          // Check: progressLoading
           if ( bRetryWaitingCurrent ) {
-            if ( 100 !== urlComposer.httpRequestFetcher.progressLoading.valuePercentage )
+            // phase changes from loading to retry waiting.
+
+            // In fact, both .value and .max are 0.
+            if ( 100 !== progressLoading.valuePercentage )
               throw Error( `GSheets_tester.TestCase`
                 + `.${funcNameInMessage}(): testCaseId=${this.testCaseId}, `
                 + `When phase changes from loading to retry waiting, `
                 + `urlComposer.httpRequestFetcher.progressLoading.valuePercentage (`
-                + `${urlComposer.httpRequestFetcher.progressLoading.valuePercentage} ) `
-                + `should 100.` );
+                + `${progressLoading.valuePercentage} ) `
+                + `should be 100.` );
 
           } else {
-            if ( 0 !== urlComposer.httpRequestFetcher.progressLoading.valuePercentage )
+            // phase changes from retry waiting to loading.
+
+            if (   ( 0 !== progressLoading.value )
+                || ( 0 !== progressLoading.max ) )
+              throw Error( `GSheets_tester.TestCase`
+                + `.${funcNameInMessage}(): testCaseId=${this.testCaseId}, `
+                + `When phase changes from retry waiting to loading, both `
+                + `urlComposer.httpRequestFetcher.progressLoading.value (`
+                + `${progressLoading.value} ) and `
+                + `urlComposer.httpRequestFetcher.progressLoading.max (`
+                + `${progressLoading.max} ) `
+                + `should be 0.` );
+
+            if ( 0 !== progressRetryWaiting.valuePercentage )
               throw Error( `GSheets_tester.TestCase`
                 + `.${funcNameInMessage}(): testCaseId=${this.testCaseId}, `
                 + `When phase changes from retry waiting to loading, `
-                + `urlComposer.httpRequestFetcher.progressLoading.valuePercentage (`
-                + `${urlComposer.httpRequestFetcher.progressLoading.valuePercentage} ) `
-                + `should 0.` );
+                + `urlComposer.httpRequestFetcher.progressRetryWaiting.valuePercentage (`
+                + `${progressRetryWaiting.valuePercentage} ) `
+                + `should be 0.` );
           }
 
         } else {
           // The fetching was done (including failed or aborted). No
-          // .httpRequestFetcher (and progressLoading) could be checked.
+          // .httpRequestFetcher could be checked.
         }
       }
 

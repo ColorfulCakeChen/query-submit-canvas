@@ -825,7 +825,13 @@ class HttpRequest_Fetcher
     }
 
     // 1.
-    this.progressRetryWaiting.value_max_set( this.retryWaitingMillisecondsMax );
+
+    // Note: Here, the .retryWaitingMillisecondsCur should be 0.
+    HttpRequest_Fetcher.progressRetryWaiting_set_beforeDone.call( this );
+
+// !!! (2023/03/31 Remarked) both .value and .max should be set.
+//     this.progressRetryWaiting.value_max_set( this.retryWaitingMillisecondsMax );
+
 
     // 2.
     HttpRequest_Fetcher.retryWaitingTimerPromise_create_and_set.call( this );
