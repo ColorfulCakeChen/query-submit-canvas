@@ -570,6 +570,11 @@ class HttpRequest_Fetcher
     do {
       let allPromise = Promise.race( this.allPromiseSet );
 
+//!!! ...unfinished... (2023/03/31)
+// Perhaps, let .loadingTimerPromise resolved to
+// HttpRequest_Fetcher.handle_loadingTimer (instead of progressRoot).
+// So that it can be ditinguished.
+
       // All succeeded promises resolve to progressRoot.
       // All failed promises reject to (i.e. throw exception of) ProgressEvent.
       let progressRoot = await allPromise;
