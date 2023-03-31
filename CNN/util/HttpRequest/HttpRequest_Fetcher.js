@@ -205,7 +205,9 @@ class HttpRequest_Fetcher
 
               } else {
                 bRetry = true; // 2.2.2 Retry one more time.
-                ++this.retryTimesCur;
+
+//!!! (2023/03/31 Remarked) Moved into .retryWaiting_asyncGenerator()
+//                ++this.retryTimesCur;
               }
 
             } else { // 2.3 Unknown ProgressEvent. (Never retry for unknown error.)
@@ -811,7 +813,6 @@ class HttpRequest_Fetcher
     // 1.
 
     // 1.1    
-    HttpRequest_Fetcher.retryWaiting_log.call( this, "start" );
 
     // Before yield progress, .retryWaitingTimerPromise must be created.
     // So that .retryWaitingTimer_isCounting will become true for outside
@@ -820,9 +821,26 @@ class HttpRequest_Fetcher
 
     // Inform outside caller progress when begin retry waiting.
     //
-    // Note: .progressRetryWaiting should have been setup at begnning of
-    //       .loading_asyncGenerator()
+    // Note1: .progressRetryWaiting should have been setup at begnning of
+    //        .loading_asyncGenerator()
+    //
+    // Note2: .retryTimesCur must have not yet be increased (so that
+    //        .retryTimes_isRunOut still false).
     yield this.progressRoot;
+
+//!!! ...unfinished... (2023/03/31)
+// Perhaps, .retryTimes_isRunOut should use another variable to determine.
+// e.g. .retryTimesNext ?
+//
+// Because log message should before yield progress.
+
+    // Before logging message, increase .retryTimesCur (so that log messages
+    // have correct .retryTimesCur).
+    ++this.retryTimesCur;
+
+    // Note: Log must be after .retryTimesCur being increased, because it is
+    //       used in the log message.
+    HttpRequest_Fetcher.retryWaiting_log.call( this, "start" );
 
     // 1.2 Abort immediately if caller requests.
     //
