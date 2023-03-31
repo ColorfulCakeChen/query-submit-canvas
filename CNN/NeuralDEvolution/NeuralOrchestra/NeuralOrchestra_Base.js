@@ -1245,8 +1245,9 @@ class NeuralOrchestra_Base extends
 
       // 2. Load versus.
       NeuralOrchestra_Base.versus_dispose.call( this );
-      this.versus = yield* this.versusSummary.versus_next_load_asyncGenerator(
-        progressVersus, this.params_loading_retryWaiting );
+      this.versus
+        = yield* this.versusSummary.versus_next_load_asyncGenerator_create(
+            progressVersus, this.params_loading_retryWaiting );
 
       if ( !this.versus )
         throw Error( `NeuralOrchestra.Base.${funcNameInMessage}(): `
