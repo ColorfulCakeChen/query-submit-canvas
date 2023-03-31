@@ -811,7 +811,7 @@ class HttpRequest_Fetcher
     // 0.
 
     // 0.1    
-    HttpRequest_Fetcher.retryWaiting_log( "start" );
+    HttpRequest_Fetcher.retryWaiting_log.call( this, "start" );
 
     // Inform outside caller progress when begin retry waiting.
     //
@@ -824,7 +824,7 @@ class HttpRequest_Fetcher
     // Although, it seems no chance to execute to here if aborted.
     //
     if ( this.bAbort ) {
-      HttpRequest_Fetcher.retryWaiting_log( "abort at start" );
+      HttpRequest_Fetcher.retryWaiting_log.call( this, "abort at start" );
 
       // Inform outside caller progress when stopping retry waiting.
       HttpRequest_Fetcher.progressRetryWaiting_set_whenDone.call( this );
@@ -1188,7 +1188,7 @@ class HttpRequest_Fetcher
 
     // 3.
     const phaseString = bAbort ? "abort" : ( bDone ? "done" : "progress" );
-    HttpRequest_Fetcher.retryWaiting_log( phaseString );
+    HttpRequest_Fetcher.retryWaiting_log.call( this, phaseString );
 
     // 4. Re-listen on repeatable succeeded event.
     {
