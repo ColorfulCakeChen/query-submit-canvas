@@ -330,6 +330,7 @@ class HttpRequest_Fetcher
     return false;
   }
 
+//!!! (2023/03/31 Remarked) Use loop instead of recursive.
   /**
    * Cancel current loadingTimer (if exists).
    *
@@ -417,42 +418,8 @@ class HttpRequest_Fetcher
     this.retryWaitingTimerPromise = null;
   }
 
-//!!! (2023/03/31 Remarked) Use loop instead of recursive.
-//   /** Cancel current retryWaitingTimer (if exists).
-//    *
-//    * @param {HttpRequest_Fetcher} this
-//    */
-//  static retryWaitingTimer_cancel() {
-//     if ( !this.retryWaitingTimerPromise )
-//       return;
-//
-//     this.retryWaitingTimerPromise.cancelTimer(); // Stop timer.
-//     this.allPromiseSet.delete( this.retryWaitingTimerPromise ); // Stop listening.
-//
-//     // Canceling retry timer may result in:
-//     //   - .handle_retryWaitingTimer() never be called.
-//     //       So, let the retry waiting progress done (100%) here.
-//     //
-//     //   - .retryWait_asyncGenerator() be blocked forever.
-//     //       So, resolve the retry waiting promise here.
-//     //
-//     {
-//       HttpRequest_Fetcher.progressRetryWaiting_set_whenDone.call( this );
-//
-//       if ( this.bLogEventToConsole )
-//         console.log( `( ${this.url} ) HttpRequest_Fetcher: `
-//           + `retryWaitingTimer: cancel: `
-//           + `retryTimesCur=${this.retryTimesCur}, `
-//           + `retryWaitingMillisecondsCur=${this.retryWaitingMillisecondsCur}, `
-//           + `retryWaitingMillisecondsMax=${this.retryWaitingMillisecondsMax}, `
-//           + `progressRetryWaiting=${this.progressRetryWaiting.valuePercentage}%` );
-//
-//       this.retryWaitingTimerPromise.resolve( this.progressRoot );
-//     }
-//
-//     this.retryWaitingTimerPromise = null;
-//   }
 
+//!!! (2023/03/31 Remarked) Use loop instead of recursive.
   /**
    * An async generator for sending a http request and tracking its progress
    * (without retry).
@@ -692,77 +659,8 @@ class HttpRequest_Fetcher
     return this.progressRoot; // 4. Return the total progress.
   }
 
+
 //!!! (2023/03/31 Remarked) Use loop instead of recursive.
-//   /**
-//    * An async generator for tracking retry waiting timer progress.
-//    *
-//    * (This method is called by .fetch_asyncGenerator())
-//    *
-//    *
-//    * @param {HttpRequest_Fetcher} this
-//    *
-//    * @param {ValueMax.Percentage.Concrete} this.progressRetryWaiting
-//    *   This .progressRetryWaiting will be increased when every time advanced. The
-//    * this.progressRoot will be returned when every time yield.
-//    *
-//    * @yield {Promise( ValueMax.Percentage.Aggregate )}
-//    *   Yield a promise resolves to { done: false, value: this.progressRoot }.
-//    *
-//    * @yield {Promise( object )}
-//    *   Yield a promise resolves to { done: true, value: this.progressRoot }.
-//    */
-//   static async* retryWait_asyncGenerator() {
-//
-//     if ( this.bLogEventToConsole )
-//       console.log( `( ${this.url} ) HttpRequest_Fetcher: `
-//         + `retryWaitingTimer: start: `
-//         + `retryTimesCur=${this.retryTimesCur}, `
-//         + `retryWaitingMillisecondsCur=${this.retryWaitingMillisecondsCur}, `
-//         + `retryWaitingMillisecondsMax=${this.retryWaitingMillisecondsMax}, `
-//         + `progressRetryWaiting=${this.progressRetryWaiting.valuePercentage}%` );
-//
-//     // 0. Abort immediately if caller requests.
-//     //
-//     // Although, it seems no chance to execute to here if aborted.
-//     //
-//     if ( this.bAbort ) {
-//       return this.progressRoot;
-//     }
-//
-//     // 1.
-//     this.progressRetryWaiting.value_max_set( this.retryWaitingMillisecondsMax );
-//
-//     // 2.
-//     HttpRequest_Fetcher.retryWaitingTimerPromise_create_and_set.call( this );
-//
-//     // All promises to be listened.
-//     {
-//       this.allPromiseSet.clear();
-//       this.allPromiseSet.add( this.retryWaitingTimerPromise );
-//     }
-//
-//     // 3. Until done.
-//     let notDone;
-//     do {
-//       let allPromise = Promise.race( this.allPromiseSet );
-//
-//       // All succeeded promises resolve to progressRoot.
-//       let progressRoot = await allPromise;
-//       yield progressRoot;
-//
-//       // Not done, if:
-//       //   - HttpRequest_Fetcher.abort() is not called.
-//       //   - .retryWaitingTimerPromise still exists.
-//       //
-//       notDone =    ( !this.bAbort )
-//                 && ( this.allPromiseSet.has( this.retryWaitingTimerPromise ) );
-//
-//     } while ( notDone ); // Stop if retry waiting completely.
-//
-//     return this.progressRoot; // 4. Return the total progress.
-//   }
-
-
   /**
    * @param {HttpRequest_Fetcher} this
    */
@@ -783,18 +681,6 @@ class HttpRequest_Fetcher
     this.retryWaitingTimerPromise = PartTime.delayedValue(
       delayMilliseconds, this.progressRoot );
   }
-
-//!!! (2023/03/31 Remarked) Use loop instead of recursive.
-//   /**
-//    * @param {HttpRequest_Fetcher} this
-//    */
-//   static retryWaitingTimerPromise_create_and_set() {
-//     const delayMilliseconds = this.retryWaitingMillisecondsInterval;
-//     const deltaValue = delayMilliseconds;
-//     this.retryWaitingTimerPromise = PartTime.Promise_create_by_setTimeout(
-//       delayMilliseconds, HttpRequest_Fetcher.handle_retryWaitingTimer,
-//       this, deltaValue );
-//   }
 
 
   /**
@@ -956,6 +842,7 @@ class HttpRequest_Fetcher
     //       rejected promise could trigger exception.
   }
 
+//!!! (2023/03/31 Remarked) Use loop instead of recursive.
   /**
    * @param {HttpRequest_Fetcher} this
    */
@@ -1060,70 +947,6 @@ class HttpRequest_Fetcher
       }
     }
   }
-
-//!!! (2023/03/31 Remarked) Use loop instead of recursive.
-//   /**
-//    * @param {HttpRequest_Fetcher} this
-//    */
-//   static handle_retryWaitingTimer( resolve, reject, deltaValue ) {
-//     this.retryWaitingMillisecondsCur += deltaValue;
-//
-//     // 1.
-//     let bAbort;
-//     let bDone;
-//     if (   ( !this.bAbort )
-//         && ( this.allPromiseSet.has( this.retryWaitingTimerPromise ) ) ) {
-//       bAbort = false;
-//
-//       // Since user not abort, checking time whether exceeds.
-//       if ( this.retryWaitingMillisecondsCur < this.retryWaitingMillisecondsMax ) {
-//         bDone = false;
-//       } else {
-//         bDone = true;
-//       }
-//
-//     // User abort. (i.e. .abort() or .retryWaitingTimer_cancel() is called)
-//     } else {
-//       bAbort = true;
-//       bDone = true; // abort is also a kind of done.
-//     }
-//
-//     // 2.
-//     if ( bDone )
-//       HttpRequest_Fetcher.progressRetryWaiting_set_whenDone.call( this );
-//     else
-//       HttpRequest_Fetcher.progressRetryWaiting_set_beforeDone.call( this );
-//
-//     // 3.
-//     if ( this.bLogEventToConsole )
-//       console.log( `( ${this.url} ) HttpRequest_Fetcher: `
-//         + `retryWaitingTimer: `
-//         + `${ bDone ? "done" : "progress" }: `
-//         + `retryTimesCur=${this.retryTimesCur}, `
-//         + `retryWaitingMillisecondsCur=${this.retryWaitingMillisecondsCur}, `
-//         + `retryWaitingMillisecondsMax=${this.retryWaitingMillisecondsMax}, `
-//         + `progressRetryWaiting=${this.progressRetryWaiting.valuePercentage}%` );
-//
-//     // 4.
-//     // Note: Even if aborted, still resolve the progress.
-//     resolve( this.progressRoot );
-//
-//     // 5. Re-listen on repeatable succeeded event.
-//     {
-//       this.allPromiseSet.delete( this.retryWaitingTimerPromise );
-//
-//       // If done (include user abort), no need to re-generate promise.
-//       if ( bDone ) {
-//         this.retryWaitingTimerPromise = null;
-//
-//       // Before retryWaitingTimer done, its event could happen many times.
-//       } else {
-//         // Re-generate a new promise for listening on it.
-//         HttpRequest_Fetcher.retryWaitingTimerPromise_create_and_set.call( this );
-//         this.allPromiseSet.add( this.retryWaitingTimerPromise );
-//       }
-//     }
-//   }
 
 
   /**
