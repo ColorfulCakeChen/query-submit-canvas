@@ -60,8 +60,13 @@ function delayedValue( delayMilliseconds, value ) {
  *   The delay time (in milliseconds) when the (returned) promise will be resolved.
  *
  * @return {Promise}
- *   Return a promise which will be resolved as undefined after specified
- * milliseconds.
+ *   Return a newly created Promise which will be resolved as undefined
+ * after specified milliseconds. The returned Promise will have the following
+ * properties:
+ *   - .resolve( v ): Call it to cancel timer and resolve the promise to v.
+ *   - .reject( v ): Call it to cancel timer and reject the promise to v.
+ *   - .timeoutId: could be used to call clearTimeout().
+ *   - .cancelTimer(): Call it (without any parameter) to cancel the timer.
  */
 function sleep( delayMilliseconds = 0 ) {
   return delayedValue( delayMilliseconds, undefined );
