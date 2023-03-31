@@ -1,9 +1,10 @@
 export { DEvolution_VersusSummary as VersusSummary };
 
-import * as Pool from "../../util/Pool.js";
-import * as Recyclable from "../../util/Recyclable.js";
 import * as GSheets from "../../util/GSheets.js";
 import * as HttpRequest from "../../util/HttpRequest.js";
+import * as NonReentrant from "../../util/NonReentrant.js";
+import * as Pool from "../../util/Pool.js";
+import * as Recyclable from "../../util/Recyclable.js";
 import * as RandTools from "../../util/RandTools.js";
 import * as ValueMax from "../../util/ValueMax.js";
 import { Versus as DEvolution_Versus } from "./DEvolution_Versus.js";
@@ -35,8 +36,52 @@ import { Versus as DEvolution_Versus } from "./DEvolution_Versus.js";
  *   So many versus data has been visited. It is the next index into
  * .visitIndexArray[].
  *
+
+!!! ...unfinished... (2023/03/31)
+
  * @member {boolean} loadOk
  *   If true, the .rangeArray[] has been ready.
+ *
+
+!!! ...unfinished... (2023/03/31)
+
+ * @member {Function} fetch_asyncPromise_create
+ *   A method for creating .JSON_ColumnMajorArrayArray_fetch_asyncGenerator()
+ * and looping until done.
+ *   - It accepts almost the same parameters as .fetch_asyncGenerator_create()
+ *       except without the 1st parameter progressParent (which is replaced by
+ *       .fetch_asyncPromise_progress).
+ *   - It returns a promise resolved to .value of { done: true, value } of
+ *       awaited .JSON_ColumnMajorArrayArray_fetch_asyncGenerator().next().
+ *
+ * @member {Function} fetch_asyncGenerator_create
+ *   A method for creating .JSON_ColumnMajorArrayArray_fetch_asyncGenerator().
+ *     - It accepts the same parameters as
+ *         .JSON_ColumnMajorArrayArray_fetch_asyncGenerator().
+ *     - It returns an async generator.
+ *
+ * @member {boolean} fetch_asyncPromise_running
+ *   If true, a fetch_asyncPromise is still executing. Please wait it becoming
+ * false if wanting to call .fetch_asyncPromise_create() again.
+ *
+ * @member {boolean} fetch_asyncGenerator_running
+ *   If true, a fetch_asyncGenerator is still executing. Please wait it
+ * becoming false if wanting to call .fetch_asyncGenerator_create() again.
+ *
+ * @member {ValueMax.Percentage.Aggregate} fetch_asyncPromise_progress
+ *   The progress of fetch_asyncPromise. If
+ * ( .fetch_asyncPromise_progress.valuePercentage == 100 ), the fetching has
+ * done.
+ *   - It is used only if .fetch_asyncPromise_create() is called.
+ *   - It is not used if .fetch_asyncGenerator_create() is called. In this
+ *       case, its progressParent parameter will be used instead.
+ *
+ * @member {boolean} fetchOk
+ *   Whether fetch_asyncGenerator or fetch_asyncPromise is succeeded.
+ *
+
+ *
+ *
  */
 class DEvolution_VersusSummary extends Recyclable.Root {
 
@@ -121,6 +166,8 @@ class DEvolution_VersusSummary extends Recyclable.Root {
     return false;
   }
 
+
+//!!! ...unfinished... (2023/03/31)
   get loadOk() {
     if ( this.rangeArray )
       return true;
@@ -148,7 +195,7 @@ class DEvolution_VersusSummary extends Recyclable.Root {
    *   - Resolved to { done: true, value: true }, if succeeded.
    *   - Resolved to { done: true, value: false }, if failed.
    */
-  async* rangeArray_load_asyncGenerator(
+  static async* rangeArray_load_asyncGenerator(
     progressParent, params_loading_retryWaiting ) {
 
 //!!! ...unfinished... (2023/03/11) What if re-entrtance?
@@ -261,7 +308,7 @@ class DEvolution_VersusSummary extends Recyclable.Root {
    *   - Resolved to { done: true, value: DEvolution.Versus }, if succeeded.
    *   - Resolved to { done: true, value: null }, if failed.
    */
-  async* versus_next_load_asyncGenerator(
+  static async* versus_next_load_asyncGenerator(
     progressParent, params_loading_retryWaiting ) {
 
 //!!! ...unfinished... (2023/03/11) What if re-entrtance?
@@ -302,51 +349,52 @@ class DEvolution_VersusSummary extends Recyclable.Root {
     return versus;
   }
 
-  /**
-   * Load this object by calling .versus_next_load_asyncGenerator() and advance
-   * the generator by looping until done.
-   *
-   * An async generator for loading the next versus data of differential evolution
-   * versus weights.
-   *
-   * @param {HttpRequest.Params_loading_retryWaiting} params_loading_retryWaiting
-   *   The parameters for loading timeout and retry waiting time. It will be kept
-   * but not modified by this object.
-   *
-   * @return {Promise( DEvolution.Versus )}
-   *   Return a promise:
-   *   - Resolved to DEvolution.Versus, if succeeded.
-   *   - Resolved to null, if failed.
-   */
-  async versus_next_load_async( params_loading_retryWaiting ) {
-
-//!!! ...unfinished... (2023/03/11) What if re-entrtance?
-
-    let progress;
-    try {
-      progress = ValueMax.Percentage.Aggregate.Pool.get_or_create_by();
-      let loader_async = this.versus_next_load_asyncGenerator( progress,
-        params_loading_retryWaiting );
-
-      let loaderNext;
-      do {
-        loaderNext = await loader_async.next();
-      } while ( loaderNext.done == false );
-
-      let versus = loaderNext.value;
-      return versus;
-
-    } catch ( e ) {
-      //console.error( e );
-      throw e; // Unknown error, should be said loundly.
-
-    } finally {
-      if ( progress ) {
-        progress.disposeResources_and_recycleToPool();
-        progress = null;
-      }
-    }
-  }
+//!!! (2023/03/31 Remarked) Use NonReentrant.asyncPromise_by_asyncGenerator instead.
+//   /**
+//    * Load this object by calling .versus_next_load_asyncGenerator() and advance
+//    * the generator by looping until done.
+//    *
+//    * An async generator for loading the next versus data of differential evolution
+//    * versus weights.
+//    *
+//    * @param {HttpRequest.Params_loading_retryWaiting} params_loading_retryWaiting
+//    *   The parameters for loading timeout and retry waiting time. It will be kept
+//    * but not modified by this object.
+//    *
+//    * @return {Promise( DEvolution.Versus )}
+//    *   Return a promise:
+//    *   - Resolved to DEvolution.Versus, if succeeded.
+//    *   - Resolved to null, if failed.
+//    */
+//   async versus_next_load_async( params_loading_retryWaiting ) {
+//
+// //!!! ...unfinished... (2023/03/11) What if re-entrtance?
+//
+//     let progress;
+//     try {
+//       progress = ValueMax.Percentage.Aggregate.Pool.get_or_create_by();
+//       let loader_async = this.versus_next_load_asyncGenerator( progress,
+//         params_loading_retryWaiting );
+//
+//       let loaderNext;
+//       do {
+//         loaderNext = await loader_async.next();
+//       } while ( loaderNext.done == false );
+//
+//       let versus = loaderNext.value;
+//       return versus;
+//
+//     } catch ( e ) {
+//       //console.error( e );
+//       throw e; // Unknown error, should be said loundly.
+//
+//     } finally {
+//       if ( progress ) {
+//         progress.disposeResources_and_recycleToPool();
+//         progress = null;
+//       }
+//     }
+//   }
 
 }
 
