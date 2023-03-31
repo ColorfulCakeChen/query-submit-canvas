@@ -531,15 +531,14 @@ class TestCase {
           } else {
             // phase changes from retry waiting to loading.
 
+//!!! ...unfinished... (2023/03/31) sure?
             if (   ( 0 !== progressLoading.value )
                 || ( 0 !== progressLoading.max ) )
               throw Error( `GSheets_tester.TestCase`
                 + `.${funcNameInMessage}(): testCaseId=${this.testCaseId}, `
                 + `When phase changes from retry waiting to loading, both `
-                + `.progressLoading.value (`
-                + `${progressLoading.value} ) and `
-                + `.progressLoading.max (`
-                + `${progressLoading.max} ) `
+                + `.progressLoading.value ( ${progressLoading.value} ) and `
+                + `.progressLoading.max ( ${progressLoading.max} ) `
                 + `should be 0.` );
 
             let retryTimes_isRunOut = httpRequestFetcher.retryTimes_isRunOut;
