@@ -48,13 +48,13 @@ function getRandomIntInclusive( min, max ) {
  *
  * @return {number}
  *   Return a random integer between
- * [ 0, ( 2 ** Math.min( exponent, exponentMax ) ) ].
+ * [ 1, ( 2 ** Math.min( exponent, exponentMax ) ) ].
  */
 function getRandomInt_TruncatedBinaryExponent( exponent, exponentMax ) {
   let exponentRestricted = Math.min( exponent, exponentMax );
   let exponentZeroOrPositive = Math.max( 0, exponentRestricted );
   let power = ( 2 ** exponentZeroOrPositive );
-  let randomInt = getRandomIntInclusive( 0, power );
+  let randomInt = getRandomIntInclusive( 1, power );
   return randomInt;
 }
 
