@@ -1234,7 +1234,7 @@ class NeuralOrchestra_Base extends
       // 1. Load versus summary.
       if ( versusSummary_needLoad ) {
         let versusSummary_loadOk
-          = yield *this.versusSummary.rangeArray_load_asyncGenerator(
+          = yield *this.versusSummary.rangeArray_load_asyncGenerator_create(
               progressVersusSummary, this.params_loading_retryWaiting );
 
         if ( !versusSummary_loadOk )
