@@ -36,52 +36,83 @@ import { Versus as DEvolution_Versus } from "./DEvolution_Versus.js";
  *   So many versus data has been visited. It is the next index into
  * .visitIndexArray[].
  *
-
-!!! ...unfinished... (2023/03/31)
-
- * @member {boolean} loadOk
- *   If true, the .rangeArray[] has been ready.
  *
-
-!!! ...unfinished... (2023/03/31)
-
- * @member {Function} fetch_asyncPromise_create
- *   A method for creating .JSON_ColumnMajorArrayArray_fetch_asyncGenerator()
+ * @member {Function} rangeArray_load_asyncPromise_create
+ *   A method for creating .rangeArray_load_asyncGenerator()
  * and looping until done.
- *   - It accepts almost the same parameters as .fetch_asyncGenerator_create()
- *       except without the 1st parameter progressParent (which is replaced by
- *       .fetch_asyncPromise_progress).
+ *   - It accepts almost the same parameters as
+ *       .rangeArray_load_asyncGenerator_create() except without the 1st
+ *       parameter progressParent (which is replaced by
+ *       .rangeArray_load_asyncPromise_progress).
  *   - It returns a promise resolved to .value of { done: true, value } of
- *       awaited .JSON_ColumnMajorArrayArray_fetch_asyncGenerator().next().
+ *       awaited .rangeArray_load_asyncGenerator().next().
  *
- * @member {Function} fetch_asyncGenerator_create
- *   A method for creating .JSON_ColumnMajorArrayArray_fetch_asyncGenerator().
+ * @member {Function} rangeArray_load_asyncGenerator_create
+ *   A method for creating .rangeArray_load_asyncGenerator().
  *     - It accepts the same parameters as
- *         .JSON_ColumnMajorArrayArray_fetch_asyncGenerator().
+ *         .rangeArray_load_asyncGenerator().
  *     - It returns an async generator.
  *
- * @member {boolean} fetch_asyncPromise_running
- *   If true, a fetch_asyncPromise is still executing. Please wait it becoming
- * false if wanting to call .fetch_asyncPromise_create() again.
+ * @member {boolean} rangeArray_load_asyncPromise_running
+ *   If true, a rangeArray_load_asyncPromise is still executing. Please wait
+ * it becoming false if wanting to call .rangeArray_load_asyncPromise_create()
+ * again.
  *
- * @member {boolean} fetch_asyncGenerator_running
- *   If true, a fetch_asyncGenerator is still executing. Please wait it
- * becoming false if wanting to call .fetch_asyncGenerator_create() again.
+ * @member {boolean} rangeArray_load_asyncGenerator_running
+ *   If true, a rangeArray_load_asyncGenerator is still executing. Please wait
+ * it becoming false if wanting to call .rangeArray_load_asyncGenerator_create()
+ * again.
  *
- * @member {ValueMax.Percentage.Aggregate} fetch_asyncPromise_progress
- *   The progress of fetch_asyncPromise. If
- * ( .fetch_asyncPromise_progress.valuePercentage == 100 ), the fetching has
- * done.
- *   - It is used only if .fetch_asyncPromise_create() is called.
- *   - It is not used if .fetch_asyncGenerator_create() is called. In this
- *       case, its progressParent parameter will be used instead.
+ * @member {ValueMax.Percentage.Aggregate} rangeArray_load_asyncPromise_progress
+ *   The progress of rangeArray_load_asyncPromise. If
+ * ( .rangeArray_load_asyncPromise_progress.valuePercentage == 100 ), the loading
+ * has done.
+ *   - It is used only if .rangeArray_load_asyncPromise_create() is called.
+ *   - It is not used if .rangeArray_load_asyncGenerator_create() is called. In
+ *       this case, its progressParent parameter will be used instead.
  *
- * @member {boolean} fetchOk
- *   Whether fetch_asyncGenerator or fetch_asyncPromise is succeeded.
+ * @member {boolean} rangeArray_loadOk
+ *   Whether rangeArray_load_asyncGenerator or rangeArray_load_asyncPromise is
+ * succeeded.
  *
-
  *
+ * @member {Function} versus_next_load_asyncPromise_create
+ *   A method for creating .versus_next_load_asyncGenerator()
+ * and looping until done.
+ *   - It accepts almost the same parameters as
+ *       .versus_next_load_asyncGenerator_create() except without the 1st
+ *       parameter progressParent (which is replaced by
+ *       .versus_next_load_asyncPromise_progress).
+ *   - It returns a promise resolved to .value of { done: true, value } of
+ *       awaited .versus_next_load_asyncGenerator().next().
  *
+ * @member {Function} versus_next_load_asyncGenerator_create
+ *   A method for creating .versus_next_load_asyncGenerator().
+ *     - It accepts the same parameters as
+ *         .versus_next_load_asyncGenerator().
+ *     - It returns an async generator.
+ *
+ * @member {boolean} versus_next_load_asyncPromise_running
+ *   If true, a versus_next_load_asyncPromise is still executing. Please wait
+ * it becoming false if wanting to call
+ * .versus_next_load_asyncPromise_create() again.
+ *
+ * @member {boolean} rangeArray_load_asyncGenerator_running
+ *   If true, a versus_next_load_asyncGenerator is still executing. Please wait
+ * it becoming false if wanting to call
+ * .versus_next_load_asyncGenerator_create() again.
+ *
+ * @member {ValueMax.Percentage.Aggregate} versus_next_load_asyncPromise_progress
+ *   The progress of versus_next_load_asyncPromise. If
+ * ( .versus_next_load_asyncPromise_progress.valuePercentage == 100 ), the
+ * loading has done.
+ *   - It is used only if .versus_next_load_asyncPromise_create() is called.
+ *   - It is not used if .versus_next_load_asyncGenerator_create() is called.
+ *       In this case, its progressParent parameter will be used instead.
+ *
+ * @member {boolean} versus_next_loadOk
+ *   Whether versus_next_load_asyncGenerator or versus_next_load_asyncPromise
+ * is succeeded.
  */
 class DEvolution_VersusSummary extends
   NonReentrant.asyncPromise_by_asyncGenerator(
@@ -175,13 +206,12 @@ class DEvolution_VersusSummary extends
     return false;
   }
 
-
-//!!! ...unfinished... (2023/03/31)
-  get loadOk() {
-    if ( this.rangeArray )
-      return true;
-    return false;
-  }
+//!!! (2023/03/31 Remarked) Replaced by .rangeArray_loadOk
+//   get loadOk() {
+//     if ( this.rangeArray )
+//       return true;
+//     return false;
+//   }
 
   /**
    * An async generator for loading all differential evolution versus weights
@@ -207,8 +237,6 @@ class DEvolution_VersusSummary extends
   static async* rangeArray_load_asyncGenerator(
     progressParent, params_loading_retryWaiting ) {
 
-//!!! ...unfinished... (2023/03/11) What if re-entrtance?
-
     let progressRoot = progressParent.root_get();
     let progressFetcher = progressParent.child_add(
       ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
@@ -226,9 +254,6 @@ class DEvolution_VersusSummary extends
       this.rangeArray = null;
       return false;
     }
-
-//!!! ...unfinished... (2023/03/29) fetchOk instead of fetchResult
-//    this.urlComposer.fetchResult = undefined; // Reduce memory footprint.
 
     // Only the first column (i.e. column[ 0 ]) has range description string.
     this.rangeArray = rangeArrayArray[ 0 ];
@@ -319,8 +344,6 @@ class DEvolution_VersusSummary extends
    */
   static async* versus_next_load_asyncGenerator(
     progressParent, params_loading_retryWaiting ) {
-
-//!!! ...unfinished... (2023/03/11) What if re-entrtance?
 
     let visitIndex = this.visitIndex_get();
     if ( visitIndex < 0 )
