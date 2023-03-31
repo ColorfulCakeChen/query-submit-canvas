@@ -374,7 +374,7 @@ class DEvolution_VersusSummary extends
       throw e; // Unknown error, should be said loundly.
 
     } finally {
-      if ( !versus_loadOk ) { // Release, if failed to load.
+      if ( !this.versus_next_loadOk ) { // Release, if failed to load.
         if ( versus ) {
           versus.disposeResources_and_recycleToPool();
           versus = null;
