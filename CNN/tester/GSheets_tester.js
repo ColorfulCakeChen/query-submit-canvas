@@ -552,7 +552,7 @@ class TestCase {
           } else {
             // phase changes from retry waiting to loading.
 
-//!!! ...unfinished... (2023/03/31) sure?
+//!!! ...unfinished... (2023/03/31) sure? When become .valuePercentage 0?
             // i.e., .valuePercentage 100.
             if (   ( 0 !== progressLoading.value )
                 || ( 0 !== progressLoading.max ) )
