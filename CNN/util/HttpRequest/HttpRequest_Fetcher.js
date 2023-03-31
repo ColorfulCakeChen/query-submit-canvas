@@ -1263,13 +1263,13 @@ class HttpRequest_Fetcher
     //   - ( progressEvent.loaded == 0 ) when ( .lengthComputable == false )
     //
 
-    if ( event.lengthComputable ) {
-      this.progressLoading.value_max_set( event.total );
-      this.progressLoading.value_set( event.loaded );
+    if ( progressEvent.lengthComputable ) {
+      this.progressLoading.value_max_set( progressEvent.total );
+      this.progressLoading.value_set( progressEvent.loaded );
 
     } else { // Complete the fake progress to 100%.
-      this.progressLoading.value_max_set( event.loaded );
-      this.progressLoading.value_set( event.loaded );
+      this.progressLoading.value_max_set( progressEvent.loaded );
+      this.progressLoading.value_set( progressEvent.loaded );
     }
   }
 
