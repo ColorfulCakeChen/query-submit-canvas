@@ -252,6 +252,7 @@ class DEvolution_VersusSummary extends
     let rangeArrayArray = yield *fetcher;
     if ( !rangeArrayArray ) {
       this.rangeArray = null;
+      this.rangeArray_loadOk = false;
       return false;
     }
 
@@ -263,6 +264,7 @@ class DEvolution_VersusSummary extends
     progressToAdvance.value_advance();
     yield progressRoot;
 
+    this.rangeArray_loadOk = true;
     return true;
   }
 
@@ -346,10 +348,11 @@ class DEvolution_VersusSummary extends
     progressParent, params_loading_retryWaiting ) {
 
     let visitIndex = this.visitIndex_get();
-    if ( visitIndex < 0 )
+    if ( visitIndex < 0 ) {
+      this.versus_next_loadOk = false;
       return null;
+    }
 
-    let versus_loadOk;
     let versus;
     try {
       let spreadsheetRange = this.rangeArray[ visitIndex ];
@@ -360,13 +363,14 @@ class DEvolution_VersusSummary extends
         params_loading_retryWaiting,
         this.textEncoder );
 
-      versus_loadOk = yield* versusLoader;
+      this.versus_next_loadOk = yield* versusLoader;
 
-      if ( versus_loadOk ) // Increase visit count, only if loaded sucessfully.
-        ++this.visitCount;
+      if ( this.versus_next_loadOk )
+        ++this.visitCount; // Increase visit count, only if loaded sucessfully.
 
     } catch ( e ) {
       //console.error( e );
+      this.versus_next_loadOk = false;
       throw e; // Unknown error, should be said loundly.
 
     } finally {
