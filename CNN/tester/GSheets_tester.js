@@ -533,8 +533,8 @@ class TestCase {
           }
 
         } else {
-          // Perhaps, the fetching was aborted. No .httpRequestFetcher could
-          // be checked for progressLoading.
+          // The fetching was done (including failed or aborted). No
+          // .httpRequestFetcher (and progressLoading) could be checked.
         }
       }
 
