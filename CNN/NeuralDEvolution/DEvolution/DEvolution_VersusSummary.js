@@ -358,7 +358,7 @@ class DEvolution_VersusSummary extends
       let spreadsheetRange = this.rangeArray[ visitIndex ];
 
       versus = DEvolution_Versus.Pool.get_or_create_by();
-      let versusLoader = versus.load_asyncGenerator( progressParent,
+      let versusLoader = versus.load_asyncGenerator_create( progressParent,
         this.urlComposer, spreadsheetRange,
         params_loading_retryWaiting,
         this.textEncoder );
