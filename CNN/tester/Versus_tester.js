@@ -22,6 +22,9 @@ let g_VersusSummary;
 function window_onLoad( event ) {
   g_Contorls.SpreadsheetIdText = document.getElementById( "SpreadsheetIdText" );
 
+  g_Contorls.bLogFetcherEventToConsoleCheckbox
+    = document.getElementById( "bLogFetcherEventToConsoleCheckbox" );
+
   g_Contorls.DownloadSummaryButton = document.getElementById( "DownloadSummaryButton" );
   g_Contorls.DownloadSummaryButton.addEventListener(
     "click", DownloadSummaryButton_onClick );
@@ -49,7 +52,11 @@ function DownloadSummaryButton_onClick( event ) {
     g_VersusSummary.weightsSpreadsheetId = spreadsheetId;
   }
 
-  g_VersusSummary.rangeArray_load_async().then( VersusSummary_onDownload );
+  g_VersusSummary.bLogFetcherEventToConsole
+    = g_Contorls.bLogFetcherEventToConsoleCheckbox.checked;
+
+  g_VersusSummary.rangeArray_load_asyncPromise_create()
+    .then( VersusSummary_onDownload );
 }
 
 /** */
