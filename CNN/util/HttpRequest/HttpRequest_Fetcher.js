@@ -809,33 +809,34 @@ class HttpRequest_Fetcher
   static async* retryWait_asyncGenerator() {
 
     // 0.
+
+    // 0.1    
     HttpRequest_Fetcher.retryWaiting_log( "start" );
 
-    // 0. Abort immediately if caller requests.
+    // Inform outside caller progress when begin retry waiting.
+    //
+    // Note: .progressRetryWaiting should have been setup at begnning of
+    //       .loading_asyncGenerator()
+    yield this.progressRoot;
+
+    // 0.2 Abort immediately if caller requests.
     //
     // Although, it seems no chance to execute to here if aborted.
     //
     if ( this.bAbort ) {
       HttpRequest_Fetcher.retryWaiting_log( "abort at start" );
-      return this.progressRoot;
+
+      // Inform outside caller progress when stopping retry waiting.
+      HttpRequest_Fetcher.progressRetryWaiting_set_whenDone.call( this );
+      yield this.progressRoot;
+
+      return;
     }
 
     // 1.
-
-    // Note: Here, the .retryWaitingMillisecondsCur should be 0.
-    HttpRequest_Fetcher.progressRetryWaiting_set_beforeDone.call( this );
-
-// !!! (2023/03/31 Remarked) both .value and .max should be set.
-//     this.progressRetryWaiting.value_max_set( this.retryWaitingMillisecondsMax );
-!!!
-
-    // 0.4 Inform outside caller progress when begin retry waiting.
-    yield this.progressRoot;
-
-    // 2.
     HttpRequest_Fetcher.retryWaitingTimerPromise_create_and_set.call( this );
 
-    // 3. Until done.
+    // 2. Until done.
     let notDone;
     do {
       // All succeeded promises resolve to progressRoot.
@@ -854,7 +855,7 @@ class HttpRequest_Fetcher
 
     } while ( notDone ); // Stop if retry waiting completely.
 
-    return this.progressRoot; // 4. Return the total progress.
+    return;
   }
 
 
