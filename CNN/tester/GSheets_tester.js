@@ -500,7 +500,7 @@ class TestCase {
       else
         ++nextTimes_loading;
 
-      // When changing between loading and retry waiting.
+      // When phase changs between loading and retry waiting.
       if ( bRetryWaitingPrevious != bRetryWaitingCurrent ) {
         bRetryWaitingPrevious = bRetryWaitingCurrent;
 
