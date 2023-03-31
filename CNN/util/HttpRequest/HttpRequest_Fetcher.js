@@ -808,10 +808,15 @@ class HttpRequest_Fetcher
    */
   static async* retryWait_asyncGenerator() {
 
-    // 0.
+    // 1.
 
-    // 0.1    
+    // 1.1    
     HttpRequest_Fetcher.retryWaiting_log.call( this, "start" );
+
+    // Before yield progress, .retryWaitingTimerPromise must be created.
+    // So that .retryWaitingTimer_isCounting will become true for outside
+    // caller detecting beginning of retry waiting.
+    HttpRequest_Fetcher.retryWaitingTimerPromise_create_and_set.call( this );
 
     // Inform outside caller progress when begin retry waiting.
     //
@@ -819,7 +824,7 @@ class HttpRequest_Fetcher
     //       .loading_asyncGenerator()
     yield this.progressRoot;
 
-    // 0.2 Abort immediately if caller requests.
+    // 1.2 Abort immediately if caller requests.
     //
     // Although, it seems no chance to execute to here if aborted.
     //
@@ -832,9 +837,6 @@ class HttpRequest_Fetcher
 
       return;
     }
-
-    // 1.
-    HttpRequest_Fetcher.retryWaitingTimerPromise_create_and_set.call( this );
 
     // 2. Until done.
     let notDone;
