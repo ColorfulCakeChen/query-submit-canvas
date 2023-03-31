@@ -18,11 +18,39 @@ export { forOf };
  * @return {Promise}
  *   Return a promise which will be resolved as specified value after specified
  * milliseconds.
+ *
+ * @return {Promise}
+ *   Return a newly created Promise which will be resolved as specified value
+ * after specified milliseconds. The returned Promise will have the following
+ * properties:
+ *   - .resolve( v ): Call it to cancel timer and resolve the promise to v.
+ *   - .reject( v ): Call it to cancel timer and reject the promise to v.
+ *   - .timeoutId: could be used to call clearTimeout().
+ *   - .cancelTimer(): Call it (without any parameter) to cancel the timer.
  */
 function delayedValue( delayMilliseconds, value ) {
-  return new Promise( ( resolve /*, reject*/ ) => {
-    setTimeout( () => resolve( value ), delayMilliseconds );
+
+//!!! (2023/03/31 Remarked) Attach resolveFunc and rejectFunc.
+//   return new Promise( ( resolve /*, reject*/ ) => {
+//     setTimeout( () => resolve( value ), delayMilliseconds );
+//   } );
+
+  let resolveFunc, rejectFunc;
+  let timeoutId;
+
+  let p = new Promise( ( resolve, reject ) => {
+    resolveFunc = resolve;
+    rejectFunc = reject;
+    timeoutId = setTimeout( () => resolve( value ), delayMilliseconds );
   } );
+
+  p.resolve = ( v ) => { clearTimeout( timeoutId ); resolveFunc( v ); }
+  p.reject = ( v ) => { clearTimeout( timeoutId ); rejectFunc( v ); };
+
+  p.timeoutId = timeoutId;
+  p.cancelTimer = clearTimeout.bind( null, timeoutId );
+
+  return p;
 }
 
 /**
@@ -207,11 +235,6 @@ async function* prepend_asyncGenerator( prependNextPromise, asyncGenerator ) {
   }
 }
 
-
-/** */
-function forOf_timeoutCallback() {
-  
-}
 
 /**
  * Periodically call generator.next() by setTimeout() until
