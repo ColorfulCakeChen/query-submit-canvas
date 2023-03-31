@@ -1,4 +1,4 @@
-import * as HttpRequest from "../../util/HttpRequest.js";
+import * as HttpRequest from "../util/HttpRequest.js";
 import * as HTMLTable from "../Display/HTMLTable.js";
 import * as DEvolution from "../NeuralDEvolution/DEvolution.js";
 
