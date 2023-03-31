@@ -553,6 +553,7 @@ class TestCase {
             // phase changes from retry waiting to loading.
 
 //!!! ...unfinished... (2023/03/31) sure?
+            // i.e., .valuePercentage 100.
             if (   ( 0 !== progressLoading.value )
                 || ( 0 !== progressLoading.max ) )
               throw Error( `GSheets_tester.TestCase`
