@@ -25,6 +25,38 @@ import { VersusId } from "./DEvolution_VersusId.js";
  *
  * @member {number} loadTimestampMilliseconds
  *   The time (Date.now()) when this versus is loaded completely.
+ *
+ *
+ * @member {Function} load_asyncPromise_create
+ *   A method for creating .load_asyncGenerator() and looping until done.
+ *   - It accepts almost the same parameters as .load_asyncGenerator_create()
+ *       except without the 1st parameter progressParent (which is replaced by
+ *       .load_asyncPromise_progress).
+ *   - It returns a promise resolved to .value of { done: true, value } of
+ *       awaited .load_asyncGenerator().next().
+ *
+ * @member {Function} load_asyncGenerator_create
+ *   A method for creating .load_asyncGenerator().
+ *     - It accepts the same parameters as .load_asyncGenerator().
+ *     - It returns an async generator.
+ *
+ * @member {boolean} load_asyncPromise_running
+ *   If true, a load_asyncPromise is still executing. Please wait it becoming
+ * false if wanting to call .load_asyncPromise_create() again.
+ *
+ * @member {boolean} load_asyncGenerator_running
+ *   If true, a load_asyncGenerator is still executing. Please wait it becoming
+ * false if wanting to call .load_asyncGenerator_create() again.
+ *
+ * @member {ValueMax.Percentage.Aggregate} load_asyncPromise_progress
+ *   The progress of load_asyncPromise. If
+ * ( .load_asyncPromise_progress.valuePercentage == 100 ), the loading has done.
+ *   - It is used only if .load_asyncPromise_create() is called.
+ *   - It is not used if .load_asyncGenerator_create() is called. In
+ *       this case, its progressParent parameter will be used instead.
+ *
+ * @member {boolean} loadOk
+ *   Whether load_asyncGenerator or load_asyncPromise is succeeded.
  */
 class DEvolution_Versus extends
   NonReentrant.asyncPromise_by_asyncGenerator(
@@ -147,8 +179,6 @@ class DEvolution_Versus extends
     params_loading_retryWaiting,
     textEncoder ) {
 
-//!!! ...unfinished... (2023/03/11) What if re-entrtance?
-
     // 0.1
     this.parentChromosomeFloat32Array = undefined;
     this.offspringChromosomeFloat32Array = undefined;
@@ -181,11 +211,10 @@ class DEvolution_Versus extends
 
       versusArrayArray = yield* fetcherVersus;
 
-      if ( !versusArrayArray )
+      if ( !versusArrayArray ) {
+        this.loadOk = false;
         return false; // Download failure.
-
-//!!! ...unfinished... (2023/03/29) fetchOk instead of fetchResult
-//      spreadsheetUrlComposer.fetchResult = undefined; // Reduce memory footprint.
+      }
     }
 
     // 2. decode.
@@ -206,16 +235,20 @@ class DEvolution_Versus extends
 
       // 2.1.1 The 1st row of the first column should be the versusId string.
       let versusIdString = versusArrayArray?.[ COLUMN_ID_versusId ]?.[ 0 ];
-      if ( !versusIdString )
+      if ( !versusIdString ) {
+        this.loadOk = false;
         return false; // versusIdString is empty.
+      }
 
       if ( this.versusId )
         this.versusId.set_byVersusIdString( versusIdString );
       else
         this.versusId = VersusId.Pool.get_or_create_by( versusIdString );
 
-      if ( !this.versusId.isValid() )
+      if ( !this.versusId.isValid() ) {
+        this.loadOk = false;
         return false; // versusId is illegal.
+      }
 
       // 2.1.2 The 2nd row of the first column should be the GA4 measurement id.
       let measurementIdString = versusArrayArray?.[ COLUMN_ID_versusId ]?.[ 1 ];
@@ -233,8 +266,10 @@ class DEvolution_Versus extends
     {
       let parentChromosomeArray
         = versusArrayArray?.[ COLUMN_ID_parentChromosome ];
-      if ( !parentChromosomeArray )
+      if ( !parentChromosomeArray ) {
+        this.loadOk = false;
         return false; // parent chromosome array is undefined.
+      }
 
       let parentChromosomeDecoder = Float12.Decoder
         .Base64Char_StringOrStringArray_to_Float32Array_generator(
@@ -249,8 +284,10 @@ class DEvolution_Versus extends
     {
       let offspringChromosomeArray
         = versusArrayArray?.[ COLUMN_ID_offspringChromosome ];
-      if ( !offspringChromosomeArray )
+      if ( !offspringChromosomeArray ) {
+        this.loadOk = false;
         return false; // offspring chromosome array is undefined.
+      }
 
       let offspringChromosomeDecoder = Float12.Decoder
         .Base64Char_StringOrStringArray_to_Float32Array_generator(
@@ -263,6 +300,7 @@ class DEvolution_Versus extends
 
     //3.
     this.loadTimestampMilliseconds = Date.now();
+    this.loadOk = true;
     return true;
   }
 
