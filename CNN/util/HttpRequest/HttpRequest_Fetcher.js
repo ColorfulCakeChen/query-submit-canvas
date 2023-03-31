@@ -1240,6 +1240,8 @@ class HttpRequest_Fetcher
    * Called when loading progress done (i.e. onabort(), onerror(), onload(),
    * ontimeout()).
    *
+   * It will ensure .progressLoading become 100%.
+   *
    * @param {HttpRequest_Fetcher} this
    *
    * @param {ProgressEvent} progressEvent
@@ -1288,6 +1290,8 @@ class HttpRequest_Fetcher
 
   /**
    * Called when retry waiting progress done.
+   *
+   * It will ensure .progressRetryWaiting become 100%.
    *
    * @param {HttpRequest_Fetcher} this
    */
