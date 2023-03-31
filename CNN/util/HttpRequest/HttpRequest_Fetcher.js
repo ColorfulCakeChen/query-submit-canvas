@@ -174,8 +174,6 @@ class HttpRequest_Fetcher
     try {
       let bRetry;
       do {
-        HttpRequest_Fetcher.retryWaitingMilliseconds_init.call( this );
-
         // 1. Try to load.
         try {
           let responseText
@@ -417,14 +415,7 @@ class HttpRequest_Fetcher
     //
     {
       HttpRequest_Fetcher.progressRetryWaiting_set_whenDone.call( this );
-
-      if ( this.bLogEventToConsole )
-        console.log( `( ${this.url} ) HttpRequest_Fetcher: `
-          + `retryWaitingTimer: cancel: `
-          + `retryTimesCur=${this.retryTimesCur}, `
-          + `retryWaitingMillisecondsCur=${this.retryWaitingMillisecondsCur}, `
-          + `retryWaitingMillisecondsMax=${this.retryWaitingMillisecondsMax}, `
-          + `progressRetryWaiting=${this.progressRetryWaiting.valuePercentage}%` );
+      HttpRequest_Fetcher.retryWaiting_log.call( this, "cancel" );
 
       this.retryWaitingTimerPromise.resolve( this.progressRoot );
     }
@@ -470,21 +461,30 @@ class HttpRequest_Fetcher
     // 0.
 
     // 0.1
-    let progressLoading_max_default;
-
-    if ( this.loadingTimer_isUsed ) { // Use timeout time as progress target.
-      progressLoading_max_default = this.loadingMillisecondsMax;
-      this.loadingMillisecondsCur = 0;
-    } else { // Use total content length (perhaps unknown) as progress target.
-      progressLoading_max_default = HttpRequest_Fetcher.progressTotalFakeLarger;
-      this.loadingMillisecondsCur = undefined;
-    }
- 
-    this.progressLoading.value_max_set( progressLoading_max_default );
-
-    // 0.2
     this.contentLoaded = undefined;
     this.contentTotal = undefined;
+
+    // 0.2 Reset loading progress.
+    let progressLoading_max_default;
+    {
+      if ( this.loadingTimer_isUsed ) { // Use timeout time as progress target.
+        progressLoading_max_default = this.loadingMillisecondsMax;
+        this.loadingMillisecondsCur = 0;
+      } else { // Use total content length (perhaps unknown) as progress target.
+        progressLoading_max_default = HttpRequest_Fetcher.progressTotalFakeLarger;
+        this.loadingMillisecondsCur = undefined;
+      }
+    }
+
+    this.progressLoading.value_max_set( progressLoading_max_default );
+    this.progressLoading.value_set( 0 );
+
+    // 0.3 Reset retry waiting progress.
+    HttpRequest_Fetcher.retryWaitingMilliseconds_init.call( this );
+    HttpRequest_Fetcher.progressRetryWaiting_set_beforeDone.call( this );
+
+    // 0.4 Inform outside caller progress when begin loading.
+    yield this.progressRoot;
 
     // 1.
 
@@ -808,19 +808,15 @@ class HttpRequest_Fetcher
    */
   static async* retryWait_asyncGenerator() {
 
-    if ( this.bLogEventToConsole )
-      console.log( `( ${this.url} ) HttpRequest_Fetcher: `
-        + `retryWaitingTimer: start: `
-        + `retryTimesCur=${this.retryTimesCur}, `
-        + `retryWaitingMillisecondsCur=${this.retryWaitingMillisecondsCur}, `
-        + `retryWaitingMillisecondsMax=${this.retryWaitingMillisecondsMax}, `
-        + `progressRetryWaiting=${this.progressRetryWaiting.valuePercentage}%` );
+    // 0.
+    HttpRequest_Fetcher.retryWaiting_log( "start" );
 
     // 0. Abort immediately if caller requests.
     //
     // Although, it seems no chance to execute to here if aborted.
     //
     if ( this.bAbort ) {
+      HttpRequest_Fetcher.retryWaiting_log( "abort at start" );
       return this.progressRoot;
     }
 
@@ -831,7 +827,10 @@ class HttpRequest_Fetcher
 
 // !!! (2023/03/31 Remarked) both .value and .max should be set.
 //     this.progressRetryWaiting.value_max_set( this.retryWaitingMillisecondsMax );
+!!!
 
+    // 0.4 Inform outside caller progress when begin retry waiting.
+    yield this.progressRoot;
 
     // 2.
     HttpRequest_Fetcher.retryWaitingTimerPromise_create_and_set.call( this );
@@ -1187,14 +1186,8 @@ class HttpRequest_Fetcher
       HttpRequest_Fetcher.progressRetryWaiting_set_beforeDone.call( this );
 
     // 3.
-    if ( this.bLogEventToConsole )
-      console.log( `( ${this.url} ) HttpRequest_Fetcher: `
-        + `retryWaitingTimer: `
-        + `${ bDone ? "done" : "progress" }: `
-        + `retryTimesCur=${this.retryTimesCur}, `
-        + `retryWaitingMillisecondsCur=${this.retryWaitingMillisecondsCur}, `
-        + `retryWaitingMillisecondsMax=${this.retryWaitingMillisecondsMax}, `
-        + `progressRetryWaiting=${this.progressRetryWaiting.valuePercentage}%` );
+    const phaseString = bAbort ? "abort" : ( bDone ? "done" : "progress" );
+    HttpRequest_Fetcher.retryWaiting_log( phaseString );
 
     // 4. Re-listen on repeatable succeeded event.
     {
@@ -1308,6 +1301,22 @@ class HttpRequest_Fetcher
     }
   }
 
+
+  /**
+   *
+   * @param {HttpRequest_Fetcher} this
+   */
+  static retryWaiting_log( phaseString ) {
+    if ( !this.bLogEventToConsole )
+      return;
+
+    console.log( `( ${this.url} ) HttpRequest_Fetcher: `
+      + `retryWaitingTimer: ${phaseString}: `
+      + `retryTimesCur=${this.retryTimesCur}, `
+      + `retryWaitingMillisecondsCur=${this.retryWaitingMillisecondsCur}, `
+      + `retryWaitingMillisecondsMax=${this.retryWaitingMillisecondsMax}, `
+      + `progressRetryWaiting=${this.progressRetryWaiting.valuePercentage}%` );
+  }
 
   /**
    * @param {object} e
