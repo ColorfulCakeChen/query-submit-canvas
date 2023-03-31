@@ -26,7 +26,12 @@ import { VersusId } from "./DEvolution_VersusId.js";
  * @member {number} loadTimestampMilliseconds
  *   The time (Date.now()) when this versus is loaded completely.
  */
-class DEvolution_Versus extends Recyclable.Root {
+class DEvolution_Versus extends
+  NonReentrant.asyncPromise_by_asyncGenerator(
+    "load", relay_load_asyncGenerator,
+    null, // Use default load_asyncGenerator_progress object.
+
+  Recyclable.Root ) {
 
   /**
    * Used as default DEvolution.Versus provider for conforming to Recyclable interface.

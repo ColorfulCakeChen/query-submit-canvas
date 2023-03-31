@@ -83,7 +83,16 @@ import { Versus as DEvolution_Versus } from "./DEvolution_Versus.js";
  *
  *
  */
-class DEvolution_VersusSummary extends Recyclable.Root {
+class DEvolution_VersusSummary extends
+  NonReentrant.asyncPromise_by_asyncGenerator(
+    "versus_next_load", relay_versus_next_load_asyncGenerator,
+    null, // Use default versus_next_load_asyncPromise_progress object.
+
+  NonReentrant.asyncPromise_by_asyncGenerator(
+    "rangeArray_load", relay_rangeArray_load_asyncGenerator,
+    null, // Use default relay_rangeArray_load_asyncGenerator_progress object.
+
+  Recyclable.Root ) ) {
 
   /**
    * Used as default DEvolution.VersusSummary provider for conforming to
