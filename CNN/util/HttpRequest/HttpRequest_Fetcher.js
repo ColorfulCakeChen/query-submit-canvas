@@ -550,15 +550,19 @@ class HttpRequest_Fetcher
     do {
       let allPromise = Promise.race( this.allPromiseSet );
 
-//!!! ...unfinished... (2023/03/31)
-// Perhaps, let .loadingTimerPromise resolved to
-// HttpRequest_Fetcher.handle_loadingTimer (instead of progressRoot).
-// So that it can be ditinguished.
-
       // All succeeded promises resolve to progressRoot.
+      //   - Except .loadingTimerPromise resolved to .handle_loadingTimer
+      //
       // All failed promises reject to (i.e. throw exception of) ProgressEvent.
-      let progressRoot = await allPromise;
-      yield progressRoot;
+      let progressRoot__or__handle_loadingTimer = await allPromise;
+
+      // .loadingTimerPromise resolved.
+      if ( progressRoot__or__handle_loadingTimer
+             === HttpRequest_Fetcher.handle_loadingTimer ) {
+        HttpRequest_Fetcher.handle_loadingTimer.call( this );
+      }
+
+      yield this.progressRoot;
 
       // Not done, if:
       //   - ( .loadPromise still pending (i.e. still in waiting promises) ).
@@ -854,10 +858,15 @@ class HttpRequest_Fetcher
    */
   static loadingTimerPromise_create_and_set() {
     const delayMilliseconds = this.loadingMillisecondsInterval;
-    const deltaValue = delayMilliseconds;
-    this.loadingTimerPromise = PartTime.Promise_create_by_setTimeout(
-      delayMilliseconds, HttpRequest_Fetcher.handle_loadingTimer,
-      this, deltaValue );
+    //const deltaValue = delayMilliseconds;
+    this.loadingTimerPromise = PartTime.delayedValue(
+      delayMilliseconds, HttpRequest_Fetcher.handle_loadingTimer );
+
+    // Q: Why use PartTime.delayedValue rather than
+    //      PartTime.Promise_create_by_setTimeout()?
+    // A: For using loop instead of recursive (which may result in stack
+    //      overflow if too many times trigger).
+    //
   }
 
 //!!! (2023/03/31 Remarked) Use loop instead of recursive.
@@ -1045,8 +1054,8 @@ class HttpRequest_Fetcher
   /**
    * @param {HttpRequest_Fetcher} this
    */
-  static handle_loadingTimer( resolve, reject, deltaValue ) {
-    this.loadingMillisecondsCur += deltaValue;
+  static handle_loadingTimer() {
+    this.loadingMillisecondsCur += this.loadingMillisecondsInterval;
 
     // 1.
     // Advance progress only if loadingTimer used.
@@ -1071,8 +1080,6 @@ class HttpRequest_Fetcher
         + `loadingMillisecondsCur=${this.loadingMillisecondsCur}, `
         + `loadingMillisecondsMax=${this.loadingMillisecondsMax}, `
         + `progressLoading=${this.progressLoading.valuePercentage}%` );
-
-    resolve( this.progressRoot );
 
     // Re-listen on repeatable succeeded event.
     {
