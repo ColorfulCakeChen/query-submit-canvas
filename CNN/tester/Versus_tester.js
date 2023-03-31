@@ -1,3 +1,4 @@
+import * as HttpRequest from "../../util/HttpRequest.js";
 import * as HTMLTable from "../Display/HTMLTable.js";
 import * as DEvolution from "../NeuralDEvolution/DEvolution.js";
 
@@ -17,6 +18,25 @@ let g_Contorls = {
 };
 
 let g_VersusSummary;
+let g_params_loading_retryWaiting = params_loading_retryWaiting_create();
+
+/** */
+function params_loading_retryWaiting_create() {
+  const loadingMillisecondsMax = ( 60 * 1000 );
+  const loadingMillisecondsInterval = ( 5 * 1000 );
+
+  const retryTimesMax = -1; // retry infinite times
+  const retryWaitingSecondsExponentMax = 6; // i.e. ( 2 ** 6 ) = 64 seconds
+  const retryWaitingMillisecondsInterval = ( 1000 );
+
+  let params_loading_retryWaiting
+    = new HttpRequest.Params_loading_retryWaiting(
+        loadingMillisecondsMax, loadingMillisecondsInterval,
+        retryTimesMax,
+        retryWaitingSecondsExponentMax, retryWaitingMillisecondsInterval
+      );
+  return params_loading_retryWaiting;
+}
 
 /** */
 function window_onLoad( event ) {
@@ -55,7 +75,8 @@ function DownloadSummaryButton_onClick( event ) {
   g_VersusSummary.bLogFetcherEventToConsole
     = g_Contorls.bLogFetcherEventToConsoleCheckbox.checked;
 
-  g_VersusSummary.rangeArray_load_asyncPromise_create()
+  g_VersusSummary
+    .rangeArray_load_asyncPromise_create( g_params_loading_retryWaiting )
     .then( VersusSummary_onDownload );
 }
 
@@ -108,7 +129,8 @@ function VersusSummary_onDownload( bDownloadSummaryOk ) {
 /** */
 function DownloadVersusButton_onClick( event ) {
   g_Contorls.DownloadVersusButton.disabled = true; // Prevent from many clicking quickly.
-  g_VersusSummary.versus_next_load_asyncPromise_create()
+  g_VersusSummary
+    .versus_next_load_asyncPromise_create( g_params_loading_retryWaiting )
     .then( Versus_onDownload );
 }
 
