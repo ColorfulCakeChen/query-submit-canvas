@@ -206,13 +206,6 @@ class DEvolution_VersusSummary extends
     return false;
   }
 
-//!!! (2023/03/31 Remarked) Replaced by .rangeArray_loadOk
-//   get loadOk() {
-//     if ( this.rangeArray )
-//       return true;
-//     return false;
-//   }
-
   /**
    * An async generator for loading all differential evolution versus weights
    * ranges.
