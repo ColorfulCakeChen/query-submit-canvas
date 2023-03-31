@@ -400,3 +400,30 @@ class DEvolution_VersusSummary extends Recyclable.Root {
 
 /** The summary is at the first column of the first (i.e. left most) sheet. */
 DEvolution_VersusSummary.spreadsheetRange = "A:A";
+
+
+/**
+ *
+ * @param {DEvolution_VersusSummary} this
+ *
+ * @return {AsyncGenerator}
+ *   Return the newly created instance of
+ * DEvolution_VersusSummary.versus_load_asyncGenerator().
+ */
+function relay_rangeArray_load_asyncGenerator() {
+  return DEvolution_VersusSummary.rangeArray_load_asyncGenerator.apply(
+    this, arguments );
+}
+
+/**
+ *
+ * @param {DEvolution_VersusSummary} this
+ *
+ * @return {AsyncGenerator}
+ *   Return the newly created instance of
+ * DEvolution_VersusSummary.versus_next_load_asyncGenerator().
+ */
+function relay_versus_next_load_asyncGenerator() {
+  return DEvolution_VersusSummary.versus_next_load_asyncGenerator.apply(
+    this, arguments );
+}

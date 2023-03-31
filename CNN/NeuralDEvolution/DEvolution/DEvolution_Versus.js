@@ -137,7 +137,7 @@ class DEvolution_Versus extends Recyclable.Root {
    *       .offspringChromosomeFloat32Array of this will be set.
    *   - Resolved to { done: true, value: false }, if failed.
    */
-  async* load_asyncGenerator( progressParent,
+  static async* load_asyncGenerator( progressParent,
     spreadsheetUrlComposer, spreadsheetRange,
     params_loading_retryWaiting,
     textEncoder ) {
@@ -319,3 +319,17 @@ class DEvolution_Versus extends Recyclable.Root {
  * Sending result of expired versus to server may confuse server.
  */
 DEvolution_Versus.expireIntervalMilliseconds = 90 * 60 * 1000;
+
+
+/**
+ *
+ * @param {DEvolution_Versus} this
+ *
+ * @return {AsyncGenerator}
+ *   Return the newly created instance of
+ * DEvolution_Versus.load_asyncGenerator().
+ */
+function relay_load_asyncGenerator() {
+  return DEvolution_Versus.load_asyncGenerator.apply(
+    this, arguments );
+}
