@@ -385,53 +385,6 @@ class DEvolution_VersusSummary extends
     return versus;
   }
 
-//!!! (2023/03/31 Remarked) Use NonReentrant.asyncPromise_by_asyncGenerator instead.
-//   /**
-//    * Load this object by calling .versus_next_load_asyncGenerator() and advance
-//    * the generator by looping until done.
-//    *
-//    * An async generator for loading the next versus data of differential evolution
-//    * versus weights.
-//    *
-//    * @param {HttpRequest.Params_loading_retryWaiting} params_loading_retryWaiting
-//    *   The parameters for loading timeout and retry waiting time. It will be kept
-//    * but not modified by this object.
-//    *
-//    * @return {Promise( DEvolution.Versus )}
-//    *   Return a promise:
-//    *   - Resolved to DEvolution.Versus, if succeeded.
-//    *   - Resolved to null, if failed.
-//    */
-//   async versus_next_load_async( params_loading_retryWaiting ) {
-//
-// //!!! ...unfinished... (2023/03/11) What if re-entrtance?
-//
-//     let progress;
-//     try {
-//       progress = ValueMax.Percentage.Aggregate.Pool.get_or_create_by();
-//       let loader_async = this.versus_next_load_asyncGenerator( progress,
-//         params_loading_retryWaiting );
-//
-//       let loaderNext;
-//       do {
-//         loaderNext = await loader_async.next();
-//       } while ( loaderNext.done == false );
-//
-//       let versus = loaderNext.value;
-//       return versus;
-//
-//     } catch ( e ) {
-//       //console.error( e );
-//       throw e; // Unknown error, should be said loundly.
-//
-//     } finally {
-//       if ( progress ) {
-//         progress.disposeResources_and_recycleToPool();
-//         progress = null;
-//       }
-//     }
-//   }
-
 }
 
 /** The summary is at the first column of the first (i.e. left most) sheet. */

@@ -304,50 +304,6 @@ class DEvolution_Versus extends
     return true;
   }
 
-//!!! (2023/03/31 Remarked) Use NonReentrant.asyncPromise_by_asyncGenerator instead.
-//   /**
-//    * Load this object by calling load_asyncGenerator() and advance the generator
-//    * by loop until done.
-//    *
-//    * @return {Promise( boolean )}
-//    *   Return a promise.
-//    *   - Resolved to true, if succeeded. The .versusId,
-//    *       .parentChromosomeFloat32Array, and .offspringChromosomeFloat32Array
-//    *       of this will be set.
-//    *   - Resolved to false, if failed.
-//    */
-//   async load_async(
-//     spreadsheetUrlComposer, spreadsheetRange,
-//     params_loading_retryWaiting,
-//     textEncoder ) {
-//
-//     let progress = ValueMax.Percentage.Aggregate.Pool.get_or_create_by();
-//
-//     try {
-//       let loader_async = this.load_asyncGenerator( progress,
-//         spreadsheetUrlComposer, spreadsheetRange,
-//         params_loading_retryWaiting, textEncoder );
-//
-//       let loaderNext;
-//       do {
-//         loaderNext = await loader_async.next();
-//       } while ( loaderNext.done == false );
-//
-//       let bLoadOk = loaderNext.value;
-//       return bLoadOk;
-//
-//     } catch ( e ) {
-//       //console.error( e );
-//       throw e; // Unknown error, should be said loundly.
-//
-//     } finally {
-//       if ( progress ) {
-//         progress.disposeResources_and_recycleToPool();
-//         progress = null;
-//       }
-//     }
-//   }
-
 }
 
 /**

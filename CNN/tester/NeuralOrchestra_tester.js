@@ -359,7 +359,7 @@ class TestCase {
         + `neuralOrchestra.versus_loadOk ( ${neuralOrchestra.versus_loadOk} ) `
         + `should be undefined.` );
 
-    // Test: Reenter try .versus_load_asyncGenerator() and then .load_async()
+    // Test: Reenter try .versus_load_asyncGenerator() and then .versus_load_asyncPromise()
     if ( b_reenter_first_load_asyncGenerator ) {
 
       try { // Test: Reenter .versus_load_asyncGenerator() should throw exception.
