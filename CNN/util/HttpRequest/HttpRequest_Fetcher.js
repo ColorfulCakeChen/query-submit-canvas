@@ -424,6 +424,65 @@ class HttpRequest_Fetcher
     HttpRequest_Fetcher.retryWaitingTimer_cancel.call( this );
   }
 
+
+//!!! ...unfinished... (2023/04/01)
+// loadingYieldIdCurrent
+// loadingYieldIdFinal
+
+  get loading_started() {
+    if ( this.loadingYieldIdCurrent < 0 )
+      return false;
+    return true;
+  }
+
+  get loading_stoppped() {
+    if ( !this.loading_started )
+      return true; // Not yet started is a kind of stopped.
+    if ( this.loadingYieldIdCurrent >= this.loadingYieldIdFinal )
+      return true;
+    return false;
+  }
+
+*
+* @member {number} loadingYieldIdCurrent
+*   An integer which will be increased by one before every time
+* .load_asyncGenerator() yield.
+*   - Negative: not yet start loading.
+*   - ( < .loadingYieldIdFinal ):  
+*     - Zero: .load_asyncGenerator() just starts loading.
+*     - Positive: .load_asyncGenerator() is still loading.
+*   - ( == .loadingYieldIdFinal ):
+*     - Zero or Positive: .load_asyncGenerator()'s final yield.
+*   - ( > .loadingYieldIdFinal ):
+*     - Zero or Positive: .load_asyncGenerator() has stopped.
+*
+* @member {number} loadingYieldIdFinal
+*   An integer recording the final yield id of .load_asyncGenerator().
+*
+*
+
+//!!! ...unfinished... (2023/04/01)
+// retryWaitingYieldIdCurrent
+// retryWaitingYieldIdFinal
+
+* @member {number} retryWaitingYieldIdCurrent
+*   An integer which will be increased by one before every time
+* .retryWait_asyncGenerator() yield.
+*   - Negative: not yet start loading.
+*   - ( < .retryWaitingYieldIdFinal ):  
+*     - Zero: .retryWait_asyncGenerator() just starts loading.
+*     - Positive: .retryWait_asyncGenerator() is still loading.
+*   - ( == .retryWaitingYieldIdFinal ):
+*     - Zero or Positive: .retryWait_asyncGenerator()'s final yield.
+*   - ( > .retryWaitingYieldIdFinal ):
+*     - Zero or Positive: .retryWait_asyncGenerator() has stopped.
+*
+* @member {number} retryWaitingYieldIdFinal
+*   An integer recording the final yield id of .retryWait_asyncGenerator().
+*
+*
+
+
   /**
    * @return {boolean}
    *   Return true, if ( .loadingMillisecondsMax > 0 ), which means using timer
