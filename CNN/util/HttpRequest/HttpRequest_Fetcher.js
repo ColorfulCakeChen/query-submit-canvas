@@ -220,7 +220,7 @@ class HttpRequest_Fetcher
 
   get loadingStartStopState() {
     let nStartStopState
-      = ValueDesc.StartStopState.Singleton.determine_byCurrentFinal(
+      = ValueDesc.StartStopState.determine_byCurrentFinal(
           this.loadingYieldIdCurrent, this.loadingYieldIdFinal );
     return nStartStopState;
   }
@@ -234,7 +234,7 @@ class HttpRequest_Fetcher
 
   get retryWaitingStartStopState() {
     let nStartStopState
-      = ValueDesc.StartStopState.Singleton.determine_byCurrentFinal(
+      = ValueDesc.StartStopState.determine_byCurrentFinal(
           this.retryWaitingYieldIdCurrent, this.retryWaitingYieldIdFinal );
     return nStartStopState;
   }
