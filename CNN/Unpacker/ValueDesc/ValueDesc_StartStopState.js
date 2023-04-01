@@ -31,31 +31,17 @@ class StartStopState extends Int {
    * @param {number} currentIndex
    *   An integer representing current index. For example, it could be
    * increased by one before every time an async generator yield.
+   *
    *   - undefined:     not yet started,  if ( finalIndex == undefined ).
    *   - undefined:     illegal,          if ( finalIndex != undefined ).
    *
-   *   - <  0 or NaN:   illegal,          if ( finalIndex == undefined ).
+   *   - <  0:          illegal,          if ( finalIndex == undefined ).
    *   - == 0:          starting,         if ( finalIndex == undefined ).
    *   - >  0:          started,          if ( finalIndex == undefined ).
    *
-   *   -  < finalIndex: illegal,          if ( finalIndex != undefined ).
+   *   - <  finalIndex: illegal,          if ( finalIndex != undefined ).
    *   - == finalIndex: stopping,         if ( finalIndex != undefined ).
-   *   -  > finalIndex: stopped,          if ( finalIndex != undefined ).
-   *
-   *   - >  0: started,  if ( finalIndex == undefined ).
-   *   - >  0: illegal,  if ( finalIndex != undefined ).
-   *   - >  0: started,  if ( finalIndex != undefined ).
-   *   - finalIndex: stopping
-
-//!!! ...unfinished... (2023/04/01)
-
-   *   - ( < finalIndex ):  
-   *     - Zero: .load_asyncGenerator() just starts loading.
-   *     - Positive: .load_asyncGenerator() is still loading.
-   *   - ( == finalIndex ):
-   *     - Zero or Positive: .load_asyncGenerator()'s final yield.
-   *   - ( > finalIndex ):
-   *     - Zero or Positive: .load_asyncGenerator() has stopped.
+   *   - >  finalIndex: stopped,          if ( finalIndex != undefined ).
    *
    * @param {number} finalIndex
    *   An integer recording the stopping index.
