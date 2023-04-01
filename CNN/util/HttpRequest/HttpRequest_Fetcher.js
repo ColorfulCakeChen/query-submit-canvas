@@ -796,9 +796,11 @@ class HttpRequest_Fetcher
       HttpRequest_Fetcher.progressRetryWaiting_set_whenDone.call( this );
 
       // Inform outside caller progress when stopping retry waiting.
-      ++this.retryWaitingYieldIdCurrent; // started.
-      this.retryWaitingYieldIdFinal = this.retryWaitingYieldIdCurrent; // stopping.
+      {
+        ++this.retryWaitingYieldIdCurrent; // started.
+        this.retryWaitingYieldIdFinal = this.retryWaitingYieldIdCurrent; // stopping.
       yield this.progressRoot;
+      }
 
       ++this.retryWaitingYieldIdCurrent; // stopped.
 
