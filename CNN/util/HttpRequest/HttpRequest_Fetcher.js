@@ -196,8 +196,6 @@ class HttpRequest_Fetcher
     this.progressParent = undefined;
     this.progressRoot = undefined;
 
-//!!! ...unfinished... (2023/04/01)
-
     this.allPromiseSet = undefined;
     this.bLogEventToConsole = undefined;
 
