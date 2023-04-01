@@ -100,11 +100,7 @@ class StartStopState extends Int {
           + `equal or greater than finalIndex.`
         );
       }
-
     }
-
-//!!! ...unfinished... (2023/04/01)
-
   }
 
 }
