@@ -427,10 +427,10 @@ class TestCase {
     if ( !httpRequestFetcher )
       return;
 
-//!!! ...unfinished... (2023/04/01)
-
     let progressLoading = httpRequestFetcher.progressLoading;
     let progressRetryWaiting = httpRequestFetcher.progressRetryWaiting;
+
+//!!! ...unfinished... (2023/04/01)
 
     if ( bRetryWaitingCurrent ) {
       // phase changes from loading to retry waiting.
@@ -446,14 +446,24 @@ class TestCase {
 
       let retryTimes_isRunOut = httpRequestFetcher.retryTimes_isRunOut;
       if ( retryTimes_isRunOut ) {
-        if ( 100 !== progressRetryWaiting.valuePercentage )
+
+        if ( progressRetryWaiting )
           throw Error( `GSheets_tester.TestCase`
             + `.${funcNameInMessage}(): testCaseId=${this.testCaseId}, `
             + `When phase changes from retry waiting to loading, `
-            + `.progressRetryWaiting.valuePercentage ( `
-            + `${progressRetryWaiting.valuePercentage} ) `
-            + `should be 100, `
+            + `.progressRetryWaiting ( ${progressRetryWaiting} ) `
+            + `should be null, `
             + `if retryTimes_isRunOut ( ${retryTimes_isRunOut}) is true.` );
+
+//!!! (2023/04/01 Remarked) should be null.
+//         if ( 100 !== progressRetryWaiting.valuePercentage )
+//           throw Error( `GSheets_tester.TestCase`
+//             + `.${funcNameInMessage}(): testCaseId=${this.testCaseId}, `
+//             + `When phase changes from retry waiting to loading, `
+//             + `.progressRetryWaiting.valuePercentage ( `
+//             + `${progressRetryWaiting.valuePercentage} ) `
+//             + `should be 100, `
+//             + `if retryTimes_isRunOut ( ${retryTimes_isRunOut}) is true.` );
       } else {
         if ( 0 !== progressRetryWaiting.valuePercentage )
           throw Error( `GSheets_tester.TestCase`
@@ -487,8 +497,6 @@ class TestCase {
           + `${progressRetryWaiting.valuePercentage} ) `
           + `should be 100.` );
     }
-
-
   }
 
   /**
