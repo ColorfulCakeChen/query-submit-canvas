@@ -249,7 +249,7 @@ class HttpRequest_Fetcher
   get retryWaiting_during() {
     let retryWaitingStartStopState = this.retryWaitingStartStopState;
     if ( retryWaitingStartStopState
-           != ValueDesc.StartStopState.Singleton.NOT_YET_STARTED )
+           != ValueDesc.StartStopState.Singleton.Ids.NOT_YET_STARTED )
       return true; // No matter starting, started, stopping, stopped.
     return false;
   }
