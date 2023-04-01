@@ -115,6 +115,10 @@ import * as ValueMax from "../ValueMax.js";
  * .httpRequestFetcher.retryWaitingYieldIdCurrent and
  * .httpRequestFetcher.retryWaitingYieldIdFinal.
  *
+ * @member {boolean} retryWaiting_during
+ *   Whether now is during retry waiting (i.e. not NOT_YET_STARTED, no matter
+ * starting, started, stopping, stopped).
+ *
  * @member {boolean} bAbort
  *   If true, it means .abort() is called.
  */
@@ -346,6 +350,12 @@ class GVizTQ_UrlComposer
   get retryWaitingStartStopState() {
     if ( this.httpRequestFetcher )
       return this.httpRequestFetcher.retryWaitingStartStopState;
+    return undefined;
+  }
+
+  get retryWaiting_during() {
+    if ( this.httpRequestFetcher )
+      return this.httpRequestFetcher.retryWaiting_during;
     return undefined;
   }
 
