@@ -1303,8 +1303,7 @@ class Block_TestParams_Base extends TestParams.Base {
             throw Error( `Block_Reference.Base.calcResult(): `
               + `Block.TestParams.Base.generate_Filters_Biases(): Unknown `
               + `nConvBlockTypeId=`
-              + `${ValueDesc.ConvBlockType.Singleton.getName_byId( paramsAll.nConvBlockTypeId )}`
-              + `(${paramsAll.nConvBlockTypeId}). `
+              + `${ValueDesc.ConvBlockType.Singleton.getNameWithInt_byId( paramsAll.nConvBlockTypeId )}. `
               + `` );
           break;
       }

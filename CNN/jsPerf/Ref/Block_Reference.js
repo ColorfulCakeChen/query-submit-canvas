@@ -718,8 +718,7 @@ class Block_Reference_Base extends Recyclable.Root {
         throw Error( `Block_Reference.Base.block_create(): `
           + `channelShuffler must NOT null when `
           + `nConvBlockTypeId=`
-          + `${ValueDesc.ConvBlockType.Singleton.getName_byId( testParams.out.nConvBlockTypeId )}`
-          + `(${testParams.out.nConvBlockTypeId}) `
+          + `${ValueDesc.ConvBlockType.Singleton.getNameWithInt_byId( testParams.out.nConvBlockTypeId )} `
           + `${block}`
       );
 
@@ -1052,8 +1051,7 @@ class Block_Reference_Base extends Recyclable.Root {
           throw Error( `Block_Reference.Base.calcResult(): `
             + `imageIn1 must be null when `
             + `nConvBlockTypeId=`
-            + `${ValueDesc.ConvBlockType.Singleton.getName_byId( testParams.out.nConvBlockTypeId )}`
-            + `(${testParams.out.nConvBlockTypeId}). `
+            + `${ValueDesc.ConvBlockType.Singleton.getNameWithInt_byId( testParams.out.nConvBlockTypeId )}. `
             + `${testParams.out}` );
 
         imageIn1 = imageIn0; // Not input1 but input0.
@@ -1246,8 +1244,7 @@ class Block_Reference_Base extends Recyclable.Root {
           throw Error( `Block_Reference.Base.calcResult(): `
             + `Concat2ShuffleSplit: Unsupported `
             + `nConvBlockTypeId=`
-            + `${ValueDesc.ConvBlockType.Singleton.getName_byId( testParams.out.nConvBlockTypeId )}`
-            + `(${testParams.out.nConvBlockTypeId}). `
+            + `${ValueDesc.ConvBlockType.Singleton.getNameWithInt_byId( testParams.out.nConvBlockTypeId )}. `
             + `${testParams.out}` );
           break;
       }

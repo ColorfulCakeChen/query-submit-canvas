@@ -151,9 +151,11 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
 
       if ( nHigherHalfDifferent != ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.NONE ) {
         let msg = `Depthwise.FiltersArray_BiasesArray.setAsConstructor_self(): `
-          + `nHigherHalfDifferent ( ${ValueDesc.Depthwise_HigherHalfDifferent.Singleton.getName_byId( nHigherHalfDifferent )} ) `
+          + `nHigherHalfDifferent `
+          + `( ${ValueDesc.Depthwise_HigherHalfDifferent.Singleton.getNameWithInt_byId( nHigherHalfDifferent )} ) `
           + `should be ( NONE ) when `
-          + `AvgMax_Or_ChannelMultiplier is ( ${ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.getName_byId( AvgMax_Or_ChannelMultiplier )} )`
+          + `AvgMax_Or_ChannelMultiplier is `
+          + `( ${ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.getNameWithInt_byId( AvgMax_Or_ChannelMultiplier )} )`
           ;
 
         throw msg;
@@ -708,7 +710,7 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
                               `Depthwise.FiltersArray_BiasesArray.set_filtersArray_biasesArray_afterFilter_afterBias_apply_undoPreviousEscapingScale(): `
                             + `For avg/max pooling, `
                             + `if ( bBias ( ${this.bBias} ) is not false ) or `
-                            + `( nActivationId ( ${ValueDesc.ActivationFunction.Singleton.getName_byId( this.nActivationId )}(${this.nActivationId}) ) `
+                            + `( nActivationId ( ${ValueDesc.ActivationFunction.Singleton.getNameWithInt_byId( this.nActivationId )} ) `
                               + `is not ValueDesc.ActivationFunction.Singleton.Ids.NONE(0) ), `
                             + `undoPreviousEscapingScale[ ${inChannelEnd} ] ( ${undoPreviousEscapingScale} ) must be 1 .`
                           );

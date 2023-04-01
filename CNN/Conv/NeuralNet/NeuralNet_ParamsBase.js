@@ -220,7 +220,7 @@ class NeuralNet_ParamsBase extends Recyclable.Root {
    *  e.g. "SHUFFLE_NET_V2_BY_MOBILE_NET_V1(5)"
    */
   get nConvStageTypeName_with_Id() {
-    return `${this.nConvStageTypeName}(${this.nConvStageTypeId})`;
+    return ValueDesc.ConvStageType.Singleton.getNameWithInt_byId( this.nConvStageTypeId );
   }
 
   /**

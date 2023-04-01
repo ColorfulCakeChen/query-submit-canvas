@@ -323,8 +323,7 @@ class Block_InferencedParams extends Recyclable.Root {
             throw Error(
               `Block.InferencedParams.set_inputTensorCount_input1_height_width_channelCount_bDepthwiseRequestedAndNeeded_depthwisePadInfo_by(): `
               + `When ( nConvBlockTypeId == `
-              + `${ValueDesc.ConvBlockType.Singleton.getName_byId( nConvBlockTypeId )}`
-              + `(${nConvBlockTypeId}) ), `
+              + `${ValueDesc.ConvBlockType.Singleton.getNameWithInt_byId( nConvBlockTypeId )}, `
               + `input tensor count ( ${this.inputTensorCount} ) should be one.`
             );
           break;

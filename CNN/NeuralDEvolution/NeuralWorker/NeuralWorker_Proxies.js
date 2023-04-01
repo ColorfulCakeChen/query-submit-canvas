@@ -575,8 +575,7 @@ class NeuralWorker_Proxies extends Recyclable.Root {
     let str = 
         `backendName=\"${this.backendName}\", `
       + `nNeuralWorker_ModeId=`
-        + `${NeuralWorker_Mode.Singleton.getName_byId( this.nNeuralWorker_ModeId )}`
-        + `(${this.nNeuralWorker_ModeId}), `
+        + `${NeuralWorker_Mode.Singleton.getNameWithInt_byIdgetName_byId( this.nNeuralWorker_ModeId )}, `
       + `neuralNetCount=${this.neuralNetCount}, `
       + `hardwareConcurrency=${this.hardwareConcurrency}, `
       + `totalWorkerCount=${this.totalWorkerCount}`
