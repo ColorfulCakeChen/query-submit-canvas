@@ -1249,6 +1249,12 @@ class HttpRequest_Fetcher
   }
 
 
+
+//!!! ...unfinished... (2023/04/01) add to log
+// this.loadingYieldIdCurrent
+// this.loadingYieldIdFinal
+// this.loadingCurrentFinalState_NameWithInt
+
   /**
    *
    * @param {HttpRequest_Fetcher} this
@@ -1262,7 +1268,13 @@ class HttpRequest_Fetcher
       + `retryTimesCur=${this.retryTimesCur}, `
       + `retryWaitingMillisecondsCur=${this.retryWaitingMillisecondsCur}, `
       + `retryWaitingMillisecondsMax=${this.retryWaitingMillisecondsMax}, `
-      + `progressRetryWaiting=${this.progressRetryWaiting.valuePercentage}%` );
+      + `progressRetryWaiting=${this.progressRetryWaiting.valuePercentage}%`
+
+//!!! ...unfinished... (2023/04/01) add to log
+      this.retryWaitingYieldIdCurrent
+      this.retryWaitingYieldIdFinal
+      this.retryWaitingCurrentFinalState_NameWithInt
+    );
   }
 
   /**
