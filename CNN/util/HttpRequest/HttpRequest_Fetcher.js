@@ -469,8 +469,12 @@ class HttpRequest_Fetcher
 // starting and stopping?
 
   get loadingStateStarting() {
-    if ( this.loadingYieldIdCurrent == 0 )
+    if (   ( this.loadingYieldIdCurrent === 0 )
+        && ( this.loadingYieldIdFinal === undefined ) )
       return true;
+
+    // Note: If ( .loadingYieldIdFinal == 0 ), it is stopping (not starting)
+    //       even if ( .loadingYieldIdCurrent == 0 ).
     return false;
   }
 
