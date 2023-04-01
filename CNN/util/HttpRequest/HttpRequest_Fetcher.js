@@ -659,6 +659,12 @@ class HttpRequest_Fetcher
         // All failed promises reject to (i.e. throw exception of) ProgressEvent.
         let progressRoot__or__handle_loadingTimer = await allPromiseRace;
 
+//!!! ...unfinished... (2023/04/01)
+// It seems possible loading timer triggerred after progressLoading 100
+// (by load event). And then, loading timer ruin the progressLoading
+// (e.g. .loadingMillisecondsCur=500, .loadingMillisecondsMax=6000,
+// progressLoading=0.04997810958800046%)
+
         // .loadingTimerPromise resolved.
         if ( progressRoot__or__handle_loadingTimer
               === HttpRequest_Fetcher.handle_loadingTimer ) {
