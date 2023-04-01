@@ -474,7 +474,7 @@ class HttpRequest_Fetcher
 //!!!
   get loadingStateNotYetStart() {
     if ( this.loadingYieldIdCurrent == undefined )
-      return true;
+      return true; // No matter what .loadingYieldIdFinal is.
     return false;
   }
 
