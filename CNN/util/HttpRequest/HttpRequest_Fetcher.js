@@ -177,18 +177,19 @@ class HttpRequest_Fetcher
 
     this.xhr = undefined;
 
+    // Note: .progressLoading and progressRetryWaiting are not owned by this
+    //       HttpRequest_Fetcher object. They should be destroyed by outside
+    //       caller (i.e. by progressParent). Here just nullify them.
     this.progressRetryWaiting = undefined;
     this.progressLoading = undefined;
 
-    this.retryTimesCur = undefined;
-
-
-    this.bAbort = undefined;
 
     this.contentLoaded = undefined;
     this.contentTotal = undefined;
 
-    this.progressRoot = undefined;
+    this.bAbort = undefined;
+
+    this.retryTimesCur = undefined;
 
     this.body = undefined;
     this.method = undefined;
@@ -196,6 +197,7 @@ class HttpRequest_Fetcher
     this.params_loading_retryWaiting = undefined;
     this.url = undefined;
     this.progressParent = undefined;
+    this.progressRoot = undefined;
 
 //!!! ...unfinished... (2023/04/01)
 
