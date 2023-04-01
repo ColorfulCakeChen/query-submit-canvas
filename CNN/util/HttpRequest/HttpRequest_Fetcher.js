@@ -524,9 +524,6 @@ class HttpRequest_Fetcher
     HttpRequest_Fetcher.progressRetryWaiting_set_beforeDone.call( this );
 
 //!!! ...unfinished... (2023/04/01)
-// this.retryWaitingYieldIdFinal = undefined;
-// this.retryWaitingYieldIdCurrent = undefined;
-//
 // this.loadingYieldIdFinal = undefined;
 // this.loadingYieldIdCurrent = undefined;
 
@@ -679,6 +676,11 @@ class HttpRequest_Fetcher
    *   Yield a promise resolves to { done: true, value: this.progressRoot }.
    */
   static async* retryWait_asyncGenerator() {
+
+//!!! ...unfinished... (2023/04/01)
+// this.retryWaitingYieldIdFinal = undefined;
+// this.retryWaitingYieldIdCurrent = undefined;
+//
 
     // 1.
 
