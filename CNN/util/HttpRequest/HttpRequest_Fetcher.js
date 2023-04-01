@@ -84,7 +84,42 @@ import { Params_loading_retryWaiting as HttpRequest_Params_loading_retryWaiting 
  * @member {number} loadingYieldIdFinal
  *   An integer recording the final yield id of .load_asyncGenerator().
  *
+ * @member {boolean} loadingStateStarted
+ *   If true, the .load_asyncGenerator() has started.
  *
+ * @member {boolean} loadingStateStopped
+ *   ??? If true, the .load_asyncGenerator() has started.
+ *
+
+//!!! ...unfinished... (2023/04/01)
+// loadingYieldIdCurrent
+// loadingYieldIdFinal
+
+  get loadingStateStarted() {
+    if ( this.loadingYieldIdCurrent < 0 )
+      return false;
+    return true;
+  }
+
+  get loadingStateStoppped() {
+    if ( !this.loadingStateStarted )
+      return true; // Not yet started is a kind of stopped.
+    if ( this.loadingYieldIdCurrent >= this.loadingYieldIdFinal )
+      return true;
+    return false;
+  }
+
+  get loadingYieldFirst() {
+    if ( this.loadingYieldIdCurrent == 0 )
+      return true;
+    return false;
+  }
+
+  get loadingYieldLast() {
+    if ( this.loadingYieldIdCurrent == this.loadingYieldIdFinal )
+      return true;
+    return false;
+  }
 
 //!!! ...unfinished... (2023/04/01) should define:
 // retryWaitingYieldIdCurrent
@@ -435,10 +470,17 @@ class HttpRequest_Fetcher
     return true;
   }
 
+//!!!
+  get loadingStateStopping() {
+    if ( this.loadingYieldIdCurrent == this.loadingYieldIdFinal )
+      return true;
+    return false;
+  }
+
   get loadingStateStoppped() {
     if ( !this.loadingStateStarted )
       return true; // Not yet started is a kind of stopped.
-    if ( this.loadingYieldIdCurrent >= this.loadingYieldIdFinal )
+    if ( this.loadingYieldIdCurrent > this.loadingYieldIdFinal )
       return true;
     return false;
   }
