@@ -471,29 +471,50 @@ class HttpRequest_Fetcher
 // Problem: What if ( .loadingYieldIdFinal == 0 )?
 // starting and stopping?
 
+//!!!
+  get loadingStateStartingOrStarted() {
+    if ( this.loadingYieldIdFinal == undefined )
+      return true; // undefined .loadingYieldIdFinal means starting or started.
+    return false;
+  }
+
+  get loadingStateStoppingOrStopped() {
+    if ( this.loadingYieldIdFinal != undefined )
+      return true; // defined .loadingYieldIdFinal means stopping or stopped.
+    return false;
+  }
+
+
   get loadingStateStarting() {
-    if ( this.loadingYieldIdFinal !== undefined )
+    if ( this.loadingYieldIdFinal != undefined )
       return false; // e.g. ( .loadingYieldIdFinal == 0 ), it means stopping.
-    if ( this.loadingYieldIdCurrent === 0 )
+    if ( this.loadingYieldIdCurrent == 0 )
       return true;
     return false;
   }
 
   get loadingStateStarted() {
-    if ( this.loadingYieldIdFinal !== undefined )
-      return false; // e.g. ( .loadingYieldIdFinal == 0 ), it means stopping.
+    if ( this.loadingYieldIdFinal != undefined )
+      return false; // defined .loadingYieldIdFinal means stopping or stopped.
     if ( this.loadingYieldIdCurrent > 0 )
       return true;
     return false;
   }
 
+//!!!
   get loadingStateStopping() {
+    if ( this.loadingYieldIdFinal == undefined )
+      return false; // undefined .loadingYieldIdFinal means starting or started.
     if ( this.loadingYieldIdCurrent == this.loadingYieldIdFinal )
       return true;
     return false;
   }
 
+//!!!
   get loadingStateStoppped() {
+    if ( this.loadingYieldIdFinal == undefined )
+      return false; // undefined .loadingYieldIdFinal means starting or started.
+
     if ( !this.loadingStateStarted )
       return true; // Not yet started is a kind of stopped.
     if ( this.loadingYieldIdCurrent > this.loadingYieldIdFinal )
