@@ -824,11 +824,14 @@ class HttpRequest_Fetcher
                 && ( this.retryWaitingTimerPromise );
 
 
-      ++this.retryWaitingYieldIdCurrent; // started.
-      if ( !notDone )
-        this.retryWaitingYieldIdFinal = this.retryWaitingYieldIdCurrent; // stopping.
+      // Inform outside caller progress when step retry waiting.
+      {
+        ++this.retryWaitingYieldIdCurrent; // started.
+        if ( !notDone )
+          this.retryWaitingYieldIdFinal = this.retryWaitingYieldIdCurrent; // stopping.
 
-      yield progressRoot;
+        yield progressRoot;
+      }
 
     } while ( notDone ); // Stop if retry waiting completely.
 
