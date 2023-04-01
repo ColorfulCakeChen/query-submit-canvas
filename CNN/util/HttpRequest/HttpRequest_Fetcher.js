@@ -511,7 +511,7 @@ class HttpRequest_Fetcher
 
 //!!!
 //!!! ...unfinished... (2023/04/01)
-// Problem: What if ( .loadingYieldIdCurrent < 0 )
+// Problem: What if ( .loadingYieldIdCurrent == undefined )
 // and ( .loadingYieldIdFinal == undefined )?
 //
 // not yet started? starting or started?
