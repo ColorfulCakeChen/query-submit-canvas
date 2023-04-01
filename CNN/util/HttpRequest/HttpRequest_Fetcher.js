@@ -125,10 +125,43 @@ class HttpRequest_Fetcher
   /**
    *
    */
-  constructor( bLogEventToConsole ) {
-    super();
+  constructor( bLogEventToConsole , ...restArgs ) {
+    super( ...restArgs );
+    NonReentrant_asyncGenerator.setAsConstructor_self.call( this,
+      bLogEventToConsole );
+  }
+
+  /** @override */
+  static setAsConstructor( bLogEventToConsole , ...restArgs ) {
+    super.setAsConstructor.apply( this, restArgs );
+    NonReentrant_asyncGenerator.setAsConstructor_self.call( this,
+      bLogEventToConsole );
+    return this;
+  }
+
+  /** @override */
+  static setAsConstructor_self( bLogEventToConsole ) {
     this.bLogEventToConsole = bLogEventToConsole;
     this.allPromiseSet = new Set();
+  }
+
+  /** @override */
+  disposeResources() {
+
+//!!! ...unfinished... (2023/04/01)
+
+    this.retryWaitingYieldIdFinal = undefined;
+    this.retryWaitingYieldIdCurrent = undefined;
+
+    this.loadingYieldIdFinal = undefined;
+    this.loadingYieldIdCurrent = undefined;
+
+    this.allPromiseSet = undefined;
+    this.bLogEventToConsole = undefined;
+
+    // If parent class has the same method, call it.    
+    if ( super.disposeResources instanceof Function )
+      super.disposeResources();
   }
 
   /**
