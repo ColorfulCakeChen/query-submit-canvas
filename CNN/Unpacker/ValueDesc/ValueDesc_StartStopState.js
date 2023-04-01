@@ -45,8 +45,8 @@ class StartStopState extends Int {
    *
    * @param {number} finalIndex
    *   An integer recording the final index.
-   *   - If it is undefined, either starting or started.
-   *   - If it is not undefined, either stopping or stopped.
+   *   - If undefined, either starting or started.
+   *   - If not undefined, either stopping or stopped.
    *
    * @return {number}
    *   Return one of StartStopState.Ids.Xxx according to currentIndex and
@@ -59,11 +59,26 @@ class StartStopState extends Int {
         return StartStopState.Singleton.Ids.NOT_YET_STARTED; // (0)
       } else {
         throw Error( `ValueDesc.StartStopState.determine_byCurrentFinal(): `
+          + `finalIndex ( ${finalIndex} ) should also be undefined `
+          + `when currentIndex ( ${currentIndex} ) is undefined.`
+        );
+      }
+
+    } else { // ( currentIndex != undefined )
+
+      if ( finalIndex == undefined ) {
+
+//!!! ...unfinished... (2023/04/01)
+        return StartStopState.Singleton.Ids.NOT_YET_STARTED; // (0)
+
+      } else {
+
+//!!! ...unfinished... (2023/04/01)
+        throw Error( `ValueDesc.StartStopState.determine_byCurrentFinal(): `
           + `finalIndex ( ${finalIndex} ) should be undefined `
           + `when currentIndex ( ${currentIndex} ) is undefined.`
         );
       }
-    } else {
 
     }
 
