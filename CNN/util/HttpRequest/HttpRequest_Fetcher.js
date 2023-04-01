@@ -516,6 +516,8 @@ class HttpRequest_Fetcher
   }
 
   get loadingStateStopping() {
+    if ( this.loadingYieldIdCurrent == undefined )
+      return false; // Not yet started.
     if ( this.loadingYieldIdFinal == undefined )
       return false; // undefined .loadingYieldIdFinal means starting or started.
     if ( this.loadingYieldIdCurrent == this.loadingYieldIdFinal )
@@ -531,11 +533,10 @@ class HttpRequest_Fetcher
 // not yet started? starting or started?
 
   get loadingStateStoppped() {
+    if ( this.loadingYieldIdCurrent == undefined )
+      return false; // Not yet started. (is NOT a kind of stopped.)
     if ( this.loadingYieldIdFinal == undefined )
       return false; // undefined .loadingYieldIdFinal means starting or started.
-
-    if ( !this.loadingStateStarted )
-      return true; // Not yet started is a kind of stopped.
     if ( this.loadingYieldIdCurrent > this.loadingYieldIdFinal )
       return true;
     return false;
