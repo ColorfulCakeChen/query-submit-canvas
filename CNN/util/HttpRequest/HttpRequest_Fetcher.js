@@ -64,11 +64,6 @@ import { Params_loading_retryWaiting as HttpRequest_Params_loading_retryWaiting 
  * @member {boolean} bAbort
  *   If true, it means .abort() is called.
  *
-
-//!!! ...unfinished... (2023/04/01) should define:
-// loadingYieldIdCurrent
-// loadingYieldIdFinal
-
  *
  * @member {number} loadingYieldIdCurrent
  *   An integer which will be increased by one before every time
@@ -82,57 +77,19 @@ import { Params_loading_retryWaiting as HttpRequest_Params_loading_retryWaiting 
  *   One of ValueDesc.CurrentFinalState.Singleton.Ids.Xxx according to
  * .loadingYieldIdCurrent and .loadingYieldIdFinal.
  *
-
-//!!! ...unfinished... (2023/04/01)
-// loadingYieldIdCurrent
-// loadingYieldIdFinal
-
-  get loadingStateStarted() {
-    if ( this.loadingYieldIdCurrent < 0 )
-      return false;
-    return true;
-  }
-
-  get loadingStateStoppped() {
-    if ( !this.loadingStateStarted )
-      return true; // Not yet started is a kind of stopped.
-    if ( this.loadingYieldIdCurrent >= this.loadingYieldIdFinal )
-      return true;
-    return false;
-  }
-
-  get loadingYieldFirst() {
-    if ( this.loadingYieldIdCurrent == 0 )
-      return true;
-    return false;
-  }
-
-  get loadingYieldLast() {
-    if ( this.loadingYieldIdCurrent == this.loadingYieldIdFinal )
-      return true;
-    return false;
-  }
-
-//!!! ...unfinished... (2023/04/01) should define:
-// retryWaitingYieldIdCurrent
-// retryWaitingYieldIdFinal
-
+ *
  * @member {number} retryWaitingYieldIdCurrent
  *   An integer which will be increased by one before every time
- * .retryWait_asyncGenerator() yield.
- *   - Negative: not yet start loading.
- *   - ( < .retryWaitingYieldIdFinal ):  
- *     - Zero: .retryWait_asyncGenerator() just starts loading.
- *     - Positive: .retryWait_asyncGenerator() is still loading.
- *   - ( == .retryWaitingYieldIdFinal ):
- *     - Zero or Positive: .retryWait_asyncGenerator()'s final yield.
- *   - ( > .retryWaitingYieldIdFinal ):
- *     - Zero or Positive: .retryWait_asyncGenerator() has stopped.
+ * .retryWait_asyncGenerator() yield. It is either undefined or 0 or positive.
  *
- * @member {number} retryWaitingYieldIdFinal
- *   An integer recording the final yield id of .retryWait_asyncGenerator().
- *   - If it is undefined, retry waiting is either starting or started.
- *   - If it is not undefined, retry waiting is either stopping or stopped.
+ * @member {number} retryWaitingingYieldIdFinal
+ *   An integer recording the final yield id of .retryWaiting_asyncGenerator().
+ * It is either undefined or 0 or positive.
+ *
+ * @member {number} retryWaitingingCurrentFinalState
+ *   One of ValueDesc.CurrentFinalState.Singleton.Ids.Xxx according to
+ * .retryWaitingingYieldIdCurrent and .retryWaitingingYieldIdFinal.
+ *
  *
  * @member {boolean} fetch_asyncGenerator_running
  *   If true, a fetch_asyncGenerator is still executing. Please wait it
@@ -231,6 +188,115 @@ class HttpRequest_Fetcher
     if ( super.disposeResources instanceof Function )
       super.disposeResources();
   }
+
+
+  get loadingMillisecondsMax() {
+    return this.params_loading_retryWaiting.loadingMillisecondsMax;
+  }
+
+  get loadingMillisecondsInterval() {
+    return this.params_loading_retryWaiting.loadingMillisecondsInterval;
+  }
+
+  get retryTimesMax() {
+    return this.params_loading_retryWaiting.retryTimesMax;
+  }
+
+  get retryWaitingSecondsExponentMax() {
+    return this.params_loading_retryWaiting.retryWaitingSecondsExponentMax;
+  }
+
+  get retryWaitingMillisecondsInterval() {
+    return this.params_loading_retryWaiting.retryWaitingMillisecondsInterval;
+  }
+
+//!!! ...unfinished... (2023/04/01)
+// loadingYieldIdCurrent
+// loadingYieldIdFinal
+
+  get loadingCurrentFinalState() {
+    let nCurrentFinalState
+      = ValueDesc.CurrentFinalState.Singleton.determine_byCurrentFinal(
+          this.loadingYieldIdCurrent, this.loadingYieldIdFinal );
+    return nCurrentFinalState;
+  }
+
+//!!! ...unfinished... (2023/04/01)
+// retryWaitingYieldIdCurrent
+// retryWaitingYieldIdFinal
+
+  get retryWaitingCurrentFinalState() {
+    let nCurrentFinalState
+      = ValueDesc.CurrentFinalState.Singleton.determine_byCurrentFinal(
+          this.retryWaitingYieldIdCurrent, this.retryWaitingYieldIdFinal );
+    return nCurrentFinalState;
+  }
+
+
+  /**
+   * @return {boolean}
+   *   Return true, if ( .loadingMillisecondsMax > 0 ), which means using timer
+   * to advance progressLoading.
+   */
+  get loadingTimer_isUsed() {
+    if ( this.loadingMillisecondsMax > 0 )
+      return true;
+    return false;
+  }
+
+  /**
+   * @return {boolean}
+   *   Return true, if ( .loadingTimer_isUsed == true ) and ( now is during
+   * loading ).
+   */
+  get loadingTimer_isCounting() {
+    if ( this.loadingTimerPromise )
+      return true;
+    return false;
+  }
+
+  /** @return {boolean} Return true, if not yet reach maximum retry times. */
+  get retryTimes_isRunOut() {
+    if ( this.retryTimesMax < 0 )
+      return false; // Never run out, since retry forever.
+    if ( this.retryTimesCur < this.retryTimesMax )
+      return false; // Still has retry times.
+    return true; // Run out of retry times. (Include never retry.)
+  }
+
+  /**
+   * @return {boolean} Return true, if now is during retry waiting.
+   */
+  get retryWaitingTimer_isCounting() {
+    if ( this.retryWaitingTimerPromise )
+      return true;
+    return false;
+  }
+
+
+  /**
+   * Abort the loading (or waiting).
+   *
+   * Note: Calling .abort() will not cause retry. While other failure (e.g.
+   * error, load without status 200, timeout) will cause retry (if
+   * .retryTimesMax != 0).
+   */
+  abort() {
+    this.bAbort = true;
+
+    {
+      if ( this.xhr )
+        this.xhr.abort();
+
+      if ( this.progressLoading ) {
+        this.progressLoading.value_max_set( 0 );
+        this.progressLoading.value_set( 0 );
+      }
+    }
+
+    HttpRequest_Fetcher.retryWaitingTimer_cancel.call( this );
+  }
+
 
   /**
    * An async generator for sending a http request and tracking its progress
@@ -408,293 +474,6 @@ class HttpRequest_Fetcher
     // 5. Return the successfully downloaded result.
     return fetchResult;
   }
-
-  get loadingMillisecondsMax() {
-    return this.params_loading_retryWaiting.loadingMillisecondsMax;
-  }
-
-  get loadingMillisecondsInterval() {
-    return this.params_loading_retryWaiting.loadingMillisecondsInterval;
-  }
-
-  get retryTimesMax() {
-    return this.params_loading_retryWaiting.retryTimesMax;
-  }
-
-  get retryWaitingSecondsExponentMax() {
-    return this.params_loading_retryWaiting.retryWaitingSecondsExponentMax;
-  }
-
-  get retryWaitingMillisecondsInterval() {
-    return this.params_loading_retryWaiting.retryWaitingMillisecondsInterval;
-  }
-
-  /**
-   * Abort the loading (or waiting).
-   *
-   * Note: Calling .abort() will not cause retry. While other failure (e.g.
-   * error, load without status 200, timeout) will cause retry (if
-   * .retryTimesMax != 0).
-   */
-  abort() {
-    this.bAbort = true;
-
-    {
-      if ( this.xhr )
-        this.xhr.abort();
-
-      if ( this.progressLoading ) {
-        this.progressLoading.value_max_set( 0 );
-        this.progressLoading.value_set( 0 );
-      }
-    }
-
-    HttpRequest_Fetcher.retryWaitingTimer_cancel.call( this );
-  }
-
-
-//!!! ...unfinished... (2023/04/01)
-// loadingYieldIdCurrent
-// loadingYieldIdFinal
-
-  get loadingCurrentFinalState() {
-    let nCurrentFinalState
-      = ValueDesc.CurrentFinalState.Singleton.determine_byCurrentFinal(
-          this.loadingYieldIdCurrent, this.loadingYieldIdFinal );
-    return nCurrentFinalState;
-  }
-
-
-//!!! ...unfinished... (2023/04/01)
-// Problem: What if ( .loadingYieldIdFinal == 0 )?
-// starting and stopping?
-
-//!!!
-  get loadingStateNotYetStart() {
-    if ( this.loadingYieldIdCurrent == undefined )
-      return true; // No matter what .loadingYieldIdFinal is.
-    return false;
-  }
-
-  get loadingStateStartingOrStarted() {
-    if ( this.loadingYieldIdCurrent == undefined )
-      return false; // Not yet started.
-    if ( this.loadingYieldIdFinal == undefined )
-      return true; // undefined .loadingYieldIdFinal means starting or started.
-    return false;
-  }
-
-  get loadingStateStoppingOrStopped() {
-    if ( this.loadingYieldIdCurrent == undefined )
-      return false; // Not yet started.
-    if ( this.loadingYieldIdFinal != undefined )
-      return true; // defined .loadingYieldIdFinal means stopping or stopped.
-    return false;
-  }
-
-
-  get loadingStateStarting() {
-    if ( this.loadingYieldIdCurrent == undefined )
-      return false; // Not yet started.
-    if ( this.loadingYieldIdFinal != undefined )
-      return false; // e.g. ( .loadingYieldIdFinal == 0 ), it means stopping.
-    if ( this.loadingYieldIdCurrent == 0 )
-      return true;
-    return false;
-  }
-
-  get loadingStateStarted() {
-    if ( this.loadingYieldIdCurrent == undefined )
-      return false; // Not yet started.
-    if ( this.loadingYieldIdFinal != undefined )
-      return false; // defined .loadingYieldIdFinal means stopping or stopped.
-    if ( this.loadingYieldIdCurrent > 0 )
-      return true;
-    return false;
-  }
-
-  get loadingStateStopping() {
-    if ( this.loadingYieldIdCurrent == undefined )
-      return false; // Not yet started.
-    if ( this.loadingYieldIdFinal == undefined )
-      return false; // undefined .loadingYieldIdFinal means starting or started.
-    if ( this.loadingYieldIdCurrent == this.loadingYieldIdFinal )
-      return true;
-    return false;
-  }
-
-//!!!
-//!!! ...unfinished... (2023/04/01)
-// Problem: What if ( .loadingYieldIdCurrent == undefined )
-// and ( .loadingYieldIdFinal == undefined )?
-//
-// not yet started? starting or started?
-
-  get loadingStateStoppped() {
-    if ( this.loadingYieldIdCurrent == undefined )
-      return false; // Not yet started. (is NOT a kind of stopped.)
-    if ( this.loadingYieldIdFinal == undefined )
-      return false; // undefined .loadingYieldIdFinal means starting or started.
-    if ( this.loadingYieldIdCurrent > this.loadingYieldIdFinal )
-      return true;
-    return false;
-  }
-
-  get loadingYieldFirst() {
-    if ( this.loadingYieldIdCurrent == 0 )
-      return true;
-    return false;
-  }
-
-  get loadingYieldLast() {
-    if ( this.loadingYieldIdCurrent == this.loadingYieldIdFinal )
-      return true;
-    return false;
-  }
-
-*
-* @member {number} loadingYieldIdCurrent
-*   An integer which will be increased by one before every time
-* .load_asyncGenerator() yield.
-*   - Negative: not yet start loading.
-*   - ( < .loadingYieldIdFinal ):  
-*     - Zero: .load_asyncGenerator() just starts loading.
-*     - Positive: .load_asyncGenerator() is still loading.
-*   - ( == .loadingYieldIdFinal ):
-*     - Zero or Positive: .load_asyncGenerator()'s final yield.
-*   - ( > .loadingYieldIdFinal ):
-*     - Zero or Positive: .load_asyncGenerator() has stopped.
-*
-* @member {number} loadingYieldIdFinal
-*   An integer recording the final yield id of .load_asyncGenerator().
-*
-*
-
-//!!! ...unfinished... (2023/04/01)
-// retryWaitingYieldIdCurrent
-// retryWaitingYieldIdFinal
-
-* @member {number} retryWaitingYieldIdCurrent
-*   An integer which will be increased by one before every time
-* .retryWait_asyncGenerator() yield.
-*   - Negative: not yet start loading.
-*   - ( < .retryWaitingYieldIdFinal ):  
-*     - Zero: .retryWait_asyncGenerator() just starts loading.
-*     - Positive: .retryWait_asyncGenerator() is still loading.
-*   - ( == .retryWaitingYieldIdFinal ):
-*     - Zero or Positive: .retryWait_asyncGenerator()'s final yield.
-*   - ( > .retryWaitingYieldIdFinal ):
-*     - Zero or Positive: .retryWait_asyncGenerator() has stopped.
-*
-* @member {number} retryWaitingYieldIdFinal
-*   An integer recording the final yield id of .retryWait_asyncGenerator().
-*
-*
-
-
-  /**
-   * @return {boolean}
-   *   Return true, if ( .loadingMillisecondsMax > 0 ), which means using timer
-   * to advance progressLoading.
-   */
-  get loadingTimer_isUsed() {
-    if ( this.loadingMillisecondsMax > 0 )
-      return true;
-    return false;
-  }
-
-  /**
-   * @return {boolean}
-   *   Return true, if ( .loadingTimer_isUsed == true ) and ( now is during
-   * loading ).
-   */
-  get loadingTimer_isCounting() {
-    if ( this.loadingTimerPromise )
-      return true;
-    return false;
-  }
-
-  /**
-   * Cancel current loadingTimer (if exists).
-   *
-   * @param {HttpRequest_Fetcher} this
-   */
-  static loadingTimer_cancel() {
-    if ( !this.loadingTimerPromise )
-      return;
-
-    this.loadingTimerPromise.cancelTimer(); // Stop timer.
-    this.allPromiseSet.delete( this.loadingTimerPromise ); // Stop listening.
-    this.loadingTimerPromise = null;
-  }
-
-
-  /** @return {boolean} Return true, if not yet reach maximum retry times. */
-  get retryTimes_isRunOut() {
-    if ( this.retryTimesMax < 0 )
-      return false; // Never run out, since retry forever.
-    if ( this.retryTimesCur < this.retryTimesMax )
-      return false; // Still has retry times.
-    return true; // Run out of retry times. (Include never retry.)
-  }
-
-  /**
-   * @param {HttpRequest_Fetcher} this
-   */
-  static retryWaitingMilliseconds_init() {
-
-    // No need (or can not) retry.
-    if ( this.retryTimes_isRunOut ) {
-      // So that always ( .progressRetryWaiting.valuePercentage == 100% )
-      this.retryWaitingMillisecondsMax = 0;
-      this.retryWaitingMillisecondsCur = undefined;
-
-    // Still could retry.
-    } else {
-      this.retryWaitingMillisecondsMax
-        = 1000 * RandTools.getRandomInt_TruncatedBinaryExponent(
-            this.retryTimesCur, this.retryWaitingSecondsExponentMax );
-
-      this.retryWaitingMillisecondsCur = 0;
-    }
-  }
-
-  /**
-   * @return {boolean} Return true, if now is during retry waiting.
-   */
-  get retryWaitingTimer_isCounting() {
-    if ( this.retryWaitingTimerPromise )
-      return true;
-    return false;
-  }
-
-  /** Cancel current retryWaitingTimer (if exists).
-   *
-   * @param {HttpRequest_Fetcher} this
-   */
-  static retryWaitingTimer_cancel() {
-    if ( !this.retryWaitingTimerPromise )
-      return;
-
-    this.retryWaitingTimerPromise.cancelTimer(); // Stop timer.
-
-    // Canceling retry timer may result in:
-    //   - .handle_retryWaitingTimer() never be called.
-    //       So, let the retry waiting progress done (100%) here.
-    //
-    //   - .retryWait_asyncGenerator() be blocked forever.
-    //       So, resolve the retry waiting promise here.
-    //
-    {
-      HttpRequest_Fetcher.progressRetryWaiting_set_whenDone.call( this );
-      HttpRequest_Fetcher.retryWaiting_log.call( this, "cancel" );
-
-      this.retryWaitingTimerPromise.resolve( this.progressRoot );
-    }
-
-    this.retryWaitingTimerPromise = null;
-  }
-
 
   /**
    * An async generator for sending a http request and tracking its progress
@@ -977,6 +756,71 @@ class HttpRequest_Fetcher
     } while ( notDone ); // Stop if retry waiting completely.
 
     return;
+  }
+
+
+
+  /**
+   * Cancel current loadingTimer (if exists).
+   *
+   * @param {HttpRequest_Fetcher} this
+   */
+  static loadingTimer_cancel() {
+    if ( !this.loadingTimerPromise )
+      return;
+
+    this.loadingTimerPromise.cancelTimer(); // Stop timer.
+    this.allPromiseSet.delete( this.loadingTimerPromise ); // Stop listening.
+    this.loadingTimerPromise = null;
+  }
+
+
+  /**
+   * @param {HttpRequest_Fetcher} this
+   */
+  static retryWaitingMilliseconds_init() {
+
+    // No need (or can not) retry.
+    if ( this.retryTimes_isRunOut ) {
+      // So that always ( .progressRetryWaiting.valuePercentage == 100% )
+      this.retryWaitingMillisecondsMax = 0;
+      this.retryWaitingMillisecondsCur = undefined;
+
+    // Still could retry.
+    } else {
+      this.retryWaitingMillisecondsMax
+        = 1000 * RandTools.getRandomInt_TruncatedBinaryExponent(
+            this.retryTimesCur, this.retryWaitingSecondsExponentMax );
+
+      this.retryWaitingMillisecondsCur = 0;
+    }
+  }
+
+  /** Cancel current retryWaitingTimer (if exists).
+   *
+   * @param {HttpRequest_Fetcher} this
+   */
+  static retryWaitingTimer_cancel() {
+    if ( !this.retryWaitingTimerPromise )
+      return;
+
+    this.retryWaitingTimerPromise.cancelTimer(); // Stop timer.
+
+    // Canceling retry timer may result in:
+    //   - .handle_retryWaitingTimer() never be called.
+    //       So, let the retry waiting progress done (100%) here.
+    //
+    //   - .retryWait_asyncGenerator() be blocked forever.
+    //       So, resolve the retry waiting promise here.
+    //
+    {
+      HttpRequest_Fetcher.progressRetryWaiting_set_whenDone.call( this );
+      HttpRequest_Fetcher.retryWaiting_log.call( this, "cancel" );
+
+      this.retryWaitingTimerPromise.resolve( this.progressRoot );
+    }
+
+    this.retryWaitingTimerPromise = null;
   }
 
 
