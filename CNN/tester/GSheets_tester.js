@@ -450,7 +450,7 @@ class TestCase {
           || ( 0 !== progressLoading.max ) )
         throw Error( `GSheets_tester.TestCase`
           + `.${funcNameInMessage}(): testCaseId=${this.testCaseId}, `
-          + `When phase changes from retry waiting to loading, both `
+          + `When phase changes from loading to retry waiting, both `
           + `.progressLoading.value ( ${progressLoading.value} ) and `
           + `.progressLoading.max ( ${progressLoading.max} ) `
           + `should be 0.` );
@@ -458,7 +458,7 @@ class TestCase {
       if ( 100 !== progressRetryWaiting.valuePercentage )
         throw Error( `GSheets_tester.TestCase`
           + `.${funcNameInMessage}(): testCaseId=${this.testCaseId}, `
-          + `When phase changes from retry waiting to loading, `
+          + `When phase changes from loading to retry waiting, `
           + `.progressRetryWaiting.valuePercentage ( `
           + `${progressRetryWaiting.valuePercentage} ) `
           + `should be 100.` );
@@ -466,13 +466,21 @@ class TestCase {
     // 2. phase changes from retry waiting to loading.
     } else {
 
+      if ( 0 !== progressLoading.valuePercentage )
+        throw Error( `GSheets_tester.TestCase`
+          + `.${funcNameInMessage}(): testCaseId=${this.testCaseId}, `
+          + `When phase changes from loading to retry waiting, `
+          + `.progressLoading.valuePercentage (`
+          + `${progressLoading.valuePercentage} ) `
+          + `should be 100.` );
+
       let retryTimes_isRunOut = httpRequestFetcher.retryTimes_isRunOut;
       if ( retryTimes_isRunOut ) {
 
         if ( progressRetryWaiting )
           throw Error( `GSheets_tester.TestCase`
             + `.${funcNameInMessage}(): testCaseId=${this.testCaseId}, `
-            + `When phase changes from loading to retry waiting, `
+            + `When phase changes from retry waiting to loading, `
             + `.progressRetryWaiting ( ${progressRetryWaiting} ) `
             + `should be null, `
             + `if retryTimes_isRunOut ( ${retryTimes_isRunOut}) is true.` );
@@ -481,7 +489,7 @@ class TestCase {
 //         if ( 100 !== progressRetryWaiting.valuePercentage )
 //           throw Error( `GSheets_tester.TestCase`
 //             + `.${funcNameInMessage}(): testCaseId=${this.testCaseId}, `
-//             + `When phase changes from loading to retry waiting, `
+//             + `When phase changes from retry waiting to loading, `
 //             + `.progressRetryWaiting.valuePercentage ( `
 //             + `${progressRetryWaiting.valuePercentage} ) `
 //             + `should be 100, `
@@ -490,7 +498,7 @@ class TestCase {
         if ( 0 !== progressRetryWaiting.valuePercentage )
           throw Error( `GSheets_tester.TestCase`
             + `.${funcNameInMessage}(): testCaseId=${this.testCaseId}, `
-            + `When phase changes from loading to retry waiting, `
+            + `When phase changes from retry waiting to loading, `
             + `.progressRetryWaiting.valuePercentage ( `
             + `${progressRetryWaiting.valuePercentage} ) `
             + `should be 0, ` 
