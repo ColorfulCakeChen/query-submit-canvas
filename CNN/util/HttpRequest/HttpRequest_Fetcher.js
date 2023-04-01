@@ -464,6 +464,10 @@ class HttpRequest_Fetcher
 // loadingYieldIdCurrent
 // loadingYieldIdFinal
 
+//!!! ...unfinished... (2023/04/01)
+// Problem: What if ( .loadingYieldIdFinal == 0 )?
+// starting and stopping?
+
   get loadingStateStarting() {
     if ( this.loadingYieldIdCurrent == 0 )
       return true;
@@ -476,7 +480,6 @@ class HttpRequest_Fetcher
     return false;
   }
 
-//!!!
   get loadingStateStopping() {
     if ( this.loadingYieldIdCurrent == this.loadingYieldIdFinal )
       return true;
