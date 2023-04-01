@@ -550,12 +550,9 @@ class HttpRequest_Fetcher
     HttpRequest_Fetcher.retryWaitingMilliseconds_init.call( this );
     HttpRequest_Fetcher.progressRetryWaiting_set_beforeDone.call( this );
 
-//!!! ...unfinished... (2023/04/01)
-// this.loadingYieldIdFinal = undefined;
-// this.loadingYieldIdCurrent = undefined;
-
-
     // 0.4 Inform outside caller progress when begin loading.
+    this.loadingYieldIdCurrent = 0; // starting.
+    this.loadingYieldIdFinal = undefined;
     yield this.progressRoot;
 
     // 1.
@@ -634,8 +631,6 @@ class HttpRequest_Fetcher
         HttpRequest_Fetcher.handle_loadingTimer.call( this );
       }
 
-      yield this.progressRoot;
-
       // Not done, if:
       //   - ( .loadPromise still pending (i.e. still in waiting promises) ).
       //
@@ -646,11 +641,19 @@ class HttpRequest_Fetcher
       //
       notDone = ( this.allPromiseSet.has( this.loadPromise ) );
 
+      ++this.loadingYieldIdCurrent; // started.
+      if ( !notDone )
+        this.loadingYieldIdFinal = this.loadingYieldIdCurrent; // stopping.
+
+      yield this.progressRoot;
+
     // Stop if loading completely and successfully.
     //
     // Note: The other ways to leave this loop are throwing exceptions (e.g.
     //       the pending promises rejected).
     } while ( notDone );
+
+    ++this.loadingYieldIdCurrent; // stopped.
 
     // 2. 
     // (2023/02/15) For debug.
