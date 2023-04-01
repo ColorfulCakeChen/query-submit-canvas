@@ -602,16 +602,17 @@ class TestCase {
 
       // Call .next()
       nextResult = await fetcher.next();
-      bRetryWaitingCurrent = urlComposer.retryWaiting_during;
 
 //!!! ...unfinished... (2023/04/01)
 // Perhaps, compare nextTimes_Xxx and httpRequestFetcher.XxxYieldIdCurrent.
 
-      // Accumulate how many times .next() is called (according to PREVIOUS phase).
-      if ( bRetryWaitingPrevious )
+      // Accumulate how many times .next() is called.
+      if ( bRetryWaitingCurrent )
         ++nextTimes_retryWaiting;
       else
         ++nextTimes_loading;
+
+      bRetryWaitingCurrent = urlComposer.retryWaiting_during;
 
       // When phase changs between loading and retry waiting.
       if ( bRetryWaitingPrevious != bRetryWaitingCurrent ) {
