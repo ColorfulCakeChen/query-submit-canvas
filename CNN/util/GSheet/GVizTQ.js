@@ -109,11 +109,11 @@ import * as ValueMax from "../ValueMax.js";
  * .httpRequestFetcher.loadingYieldIdCurrent and
  * .httpRequestFetcher.loadingYieldIdFinal.
  *
- * @member {number} retryWaitingingStartStopState
+ * @member {number} retryWaitingStartStopState
  *   The start-stop state of retry waiting.
  * ValueDesc.StartStopState.Singleton.Ids.Xxx according to
- * .httpRequestFetcher.retryWaitingingYieldIdCurrent and
- * .httpRequestFetcher.retryWaitingingYieldIdFinal.
+ * .httpRequestFetcher.retryWaitingYieldIdCurrent and
+ * .httpRequestFetcher.retryWaitingYieldIdFinal.
  *
  * @member {boolean} bAbort
  *   If true, it means .abort() is called.

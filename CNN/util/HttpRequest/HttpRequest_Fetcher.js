@@ -78,19 +78,29 @@ import { Params_loading_retryWaiting as HttpRequest_Params_loading_retryWaiting 
  * ValueDesc.StartStopState.Singleton.Ids.Xxx according to
  * .loadingYieldIdCurrent and .loadingYieldIdFinal.
  *
+ * @member {string} loadingStartStopState_NameWithIn
+ *   The message string for .loadingStartStopState.
+ *
  *
  * @member {number} retryWaitingYieldIdCurrent
  *   An integer which will be increased by one before every time
  * .retryWait_asyncGenerator() yield. It is either undefined or 0 or positive.
  *
- * @member {number} retryWaitingingYieldIdFinal
+ * @member {number} retryWaitingYieldIdFinal
  *   An integer recording the final yield id of .retryWaiting_asyncGenerator().
  * It is either undefined or 0 or positive.
  *
- * @member {number} retryWaitingingStartStopState
+ * @member {number} retryWaitingStartStopState
  *   The start-stop state of retry waiting.
  * ValueDesc.StartStopState.Singleton.Ids.Xxx according to
- * .retryWaitingingYieldIdCurrent and .retryWaitingingYieldIdFinal.
+ * .retryWaitingYieldIdCurrent and .retryWaitingYieldIdFinal.
+ *
+ * @member {string} retryWaitingStartStopState_NameWithIn
+ *   The message string for .retryWaitingStartStopState.
+ *
+ * @member {boolean} retryWaiting_during
+ *   Whether now is during retry waiting (i.e. not NOT_YET_STARTED, no matter
+ * starting, started, stopping, stopped).
  *
  *
  * @member {boolean} fetch_asyncGenerator_running
@@ -234,6 +244,14 @@ class HttpRequest_Fetcher
       = ValueDesc.StartStopState.Singleton.getNameWithInt_byId(
           this.retryWaitingStartStopState );
     return strStartStopState;
+  }
+
+  get retryWaiting_during() {
+    let retryWaitingStartStopState = this.retryWaitingStartStopState;
+    if ( retryWaitingStartStopState
+           != ValueDesc.StartStopState.Singleton.NOT_YET_STARTED )
+      return true; // No matter starting, started, stopping, stopped.
+    return false;
   }
 
 
