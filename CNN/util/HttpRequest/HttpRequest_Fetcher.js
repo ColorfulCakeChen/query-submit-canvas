@@ -546,6 +546,12 @@ class HttpRequest_Fetcher
     this.progressLoading.value_max_set( progressLoading_max_default );
     this.progressLoading.value_set( 0 );
 
+//!!! ...unfinished... (2023/04/01)
+// If .retryTimes_isRunOut, perhaps, remove the progressRetryWaiting
+// so that only progressLoading exists.
+//
+// What about .retryTimesCur here?
+
     // 0.3 Reset retry waiting progress.
     HttpRequest_Fetcher.retryWaitingMilliseconds_init.call( this );
     HttpRequest_Fetcher.progressRetryWaiting_set_beforeDone.call( this );
@@ -729,7 +735,7 @@ class HttpRequest_Fetcher
 //!!! ...unfinished... (2023/03/31)
     // Note2: .retryTimesCur must have not yet be increased (so that
     //        .retryTimes_isRunOut still false).
-    
+
     // Before yield progress, current and final index must be setup.
     // So that outside caller can detect start-stop state of retry waiting.
     this.retryWaitingYieldIdCurrent = 0; // starting.
