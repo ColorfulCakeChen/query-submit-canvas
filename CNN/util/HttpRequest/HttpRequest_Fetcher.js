@@ -765,7 +765,11 @@ class HttpRequest_Fetcher
     //       used in the log message.
     HttpRequest_Fetcher.retryWaiting_log.call( this, "start" );
 
-    // 2. Inform outside caller progress when begin retry waiting.
+    // 2. Before yield, start retry waiting timer.
+    //    So that it can be canceled if .abort() is called during the yield.
+    HttpRequest_Fetcher.retryWaitingTimerPromise_create_and_set.call( this );
+
+    // 3. Inform outside caller progress when begin retry waiting.
     //
     // Note1: .progressRetryWaiting should have been setup at begnning of
     //        .loading_asyncGenerator()
@@ -777,12 +781,11 @@ class HttpRequest_Fetcher
 
     // Before yield progress, current and final index must be setup.
     // So that outside caller can detect start-stop state of retry waiting.
-    this.retryWaitingYieldIdCurrent = 0; // starting.
-    this.retryWaitingYieldIdFinal = undefined;
-    yield this.progressRoot;
-
-    // 3.
-    HttpRequest_Fetcher.retryWaitingTimerPromise_create_and_set.call( this );
+    {
+      this.retryWaitingYieldIdCurrent = 0; // starting.
+      this.retryWaitingYieldIdFinal = undefined;
+      yield this.progressRoot;
+    }
 
     // 4. Abort immediately if caller requests.
     //
