@@ -215,6 +215,13 @@ class HttpRequest_Fetcher
     return nCurrentFinalState;
   }
 
+  get loadingCurrentFinalState_NameWithInt() {
+    let strCurrentFinalState
+      = ValueDesc.CurrentFinalState.Singleton.getNameWithInt_byId(
+          this.loadingCurrentFinalState );
+    return strCurrentFinalState;
+  }
+
   get retryWaitingCurrentFinalState() {
     let nCurrentFinalState
       = ValueDesc.CurrentFinalState.Singleton.determine_byCurrentFinal(
@@ -222,6 +229,12 @@ class HttpRequest_Fetcher
     return nCurrentFinalState;
   }
 
+  get retryWaitingCurrentFinalState_NameWithInt() {
+    let strCurrentFinalState
+      = ValueDesc.CurrentFinalState.Singleton.getNameWithInt_byId(
+          this.retryWaitingCurrentFinalState );
+    return strCurrentFinalState;
+  }
 
   /**
    * @return {boolean}
