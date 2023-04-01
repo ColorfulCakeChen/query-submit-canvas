@@ -469,10 +469,10 @@ class TestCase {
       if ( 0 !== progressLoading.valuePercentage )
         throw Error( `GSheets_tester.TestCase`
           + `.${funcNameInMessage}(): testCaseId=${this.testCaseId}, `
-          + `When phase changes from loading to retry waiting, `
+          + `When phase changes from retry waiting to loading, `
           + `.progressLoading.valuePercentage (`
           + `${progressLoading.valuePercentage} ) `
-          + `should be 100.` );
+          + `should be 0.` );
 
       let retryTimes_isRunOut = httpRequestFetcher.retryTimes_isRunOut;
       if ( retryTimes_isRunOut ) {
