@@ -1129,20 +1129,22 @@ class HttpRequest_Fetcher
     this.loadingMillisecondsCur += this.loadingMillisecondsInterval;
 
     // 1.
-    // Advance progress only if loadingTimer used.
-    if ( this.loadingTimer_isUsed ) {
-      this.progressLoading.value_set( this.loadingMillisecondsCur );
-    }
-
-    // 2.
-    let bAbort;
+    let bDoneByOthers;
     if (   ( !this.bAbort )
         && ( this.allPromiseSet.has( this.loadingTimerPromise ) ) ) {
-      bAbort = false;
+      bDoneByOthers = false;
 
-    // User abort. (i.e. .abort() or .loadingTimer_cancel() is called)
+    // User abort. (i.e. .abort() or .loadingTimer_cancel() is called
+    // (because other event (e.g. load event) finished).
     } else {
-      bAbort = true;
+      bDoneByOthers = true;
+    }
+
+    // 2. Advance progress only if loadingTimer used, and not finished by
+    //    others. (Otherwise, the progress (e.g. 100%) may be destroyed.)
+    if (   ( this.loadingTimer_isUsed )
+        && ( !bDoneByOthers ) ) {
+      this.progressLoading.value_set( this.loadingMillisecondsCur );
     }
 
     // 3.
@@ -1157,8 +1159,8 @@ class HttpRequest_Fetcher
     {
       this.allPromiseSet.delete( this.loadingTimerPromise );
 
-      // If user abort, no need to re-generate promise.
-      if ( bAbort ) {
+      // If user abort or done, no need to re-generate promise.
+      if ( bDoneByOthers ) {
         this.loadingTimerPromise = null;
 
       // Before loadingTimer done, its event could happen many times.
