@@ -479,12 +479,16 @@ class HttpRequest_Fetcher
   }
 
   get loadingStateStartingOrStarted() {
+    if ( this.loadingYieldIdCurrent == undefined )
+      return false; // Not yet started.
     if ( this.loadingYieldIdFinal == undefined )
       return true; // undefined .loadingYieldIdFinal means starting or started.
     return false;
   }
 
   get loadingStateStoppingOrStopped() {
+    if ( this.loadingYieldIdCurrent == undefined )
+      return false; // Not yet started.
     if ( this.loadingYieldIdFinal != undefined )
       return true; // defined .loadingYieldIdFinal means stopping or stopped.
     return false;
@@ -494,16 +498,16 @@ class HttpRequest_Fetcher
   get loadingStateStarting() {
     if ( this.loadingYieldIdCurrent == undefined )
       return false; // Not yet started.
-
     if ( this.loadingYieldIdFinal != undefined )
       return false; // e.g. ( .loadingYieldIdFinal == 0 ), it means stopping.
-
     if ( this.loadingYieldIdCurrent == 0 )
       return true;
     return false;
   }
 
   get loadingStateStarted() {
+    if ( this.loadingYieldIdCurrent == undefined )
+      return false; // Not yet started.
     if ( this.loadingYieldIdFinal != undefined )
       return false; // defined .loadingYieldIdFinal means stopping or stopped.
     if ( this.loadingYieldIdCurrent > 0 )
