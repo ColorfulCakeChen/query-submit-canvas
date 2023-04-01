@@ -31,17 +31,15 @@ class Pointwise_HigherHalfDifferent extends Int {
 Pointwise_HigherHalfDifferent.Singleton = new Pointwise_HigherHalfDifferent;
 
 
-/** Describe id, range, name of the processing mode of depthwise convolution's higher half channels.
+/**
+ * Describe id, range, name of the processing mode of depthwise convolution's
+ * higher half channels.
  *
  * Convert number value into integer between [ 0, 2 ] representing:
- *   - 0: NONE                                    (normal depthwise convolution. no higher half different.)
- *   - 1: HIGHER_HALF_DEPTHWISE2                  (depthwise1 of ShuffleNetV2_ByMobileNetV1's head)
- *   - 2: HIGHER_HALF_PASS_THROUGH                (depthwise1 of ShuffleNetV2_ByMobileNetV1's body/tail)
-
-//!!! (2022/07/13 Remarked) Does not work.
-// *   - 3: HIGHER_HALF_COPY_LOWER_HALF_DEPTHWISE2  (depthwise1 of ShuffleNetV2_ByMobileNetV1's head when ( pointwiseChannelCount == 0 )
-
- *                                                   and ( depthwise_AvgMax_Or_ChannelMultiplier == 2 ) )
+ *   - 0: NONE                      (normal depthwise convolution. no higher half different.)
+ *   - 1: HIGHER_HALF_DEPTHWISE2    (depthwise1 of ShuffleNetV2_ByMobileNetV1's head)
+ *   - 2: HIGHER_HALF_PASS_THROUGH  (depthwise1 of ShuffleNetV2_ByMobileNetV1's body/tail)
+ *                                    and ( depthwise_AvgMax_Or_ChannelMultiplier == 2 ) )
  */
 class Depthwise_HigherHalfDifferent extends Int {
 
@@ -50,9 +48,6 @@ class Depthwise_HigherHalfDifferent extends Int {
       NONE:                     new Int.Info( 0, "NONE" ),
       HIGHER_HALF_DEPTHWISE2:   new Int.Info( 1, "HIGHER_HALF_DEPTHWISE2" ),
       HIGHER_HALF_PASS_THROUGH: new Int.Info( 2, "HIGHER_HALF_PASS_THROUGH" ),
-
-//!!! (2022/07/13 Remarked) Does not work.
-//      "HIGHER_HALF_COPY_LOWER_HALF_DEPTHWISE2: 3)
     } );
   }
 
@@ -64,11 +59,13 @@ Depthwise_HigherHalfDifferent.Singleton = new Depthwise_HigherHalfDifferent;
 
 /** Describe depthwise operation's id, range, name.
  *
- * Convert number value into integer between [ -2, 32 ] representing depthwise operation:
+ * Convert number value into integer between [ -2, 32 ] representing depthwise
+ * operation:
  *   - -2: average pooling. (AVG)
  *   - -1: maximum pooling. (MAX)
  *   -  0: no depthwise operation. (NONE)
- *   - [ 1, 32 ]: depthwise convolution with channel multiplier between 1 and 32 (inclusive).
+ *   - [ 1, 32 ]: depthwise convolution with channel multiplier between 1 and
+ *       32 (inclusive).
  */
 class AvgMax_Or_ChannelMultiplier extends Int {
 
