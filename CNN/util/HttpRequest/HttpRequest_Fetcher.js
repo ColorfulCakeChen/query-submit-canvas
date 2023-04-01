@@ -811,11 +811,13 @@ class HttpRequest_Fetcher
     // 2. Until done.
     let notDone;
     do {
-      // All succeeded promises resolve to progressRoot.
+      // 2.1 All succeeded promises resolve to progressRoot.
       let progressRoot = await this.retryWaitingTimerPromise;
 
       HttpRequest_Fetcher.handle_retryWaitingTimer.call( this );
 
+      // 2.2
+      //
       // Not done, if:
       //   - HttpRequest_Fetcher.abort() is not called.
       //   - .retryWaitingTimerPromise still exists.
@@ -823,18 +825,18 @@ class HttpRequest_Fetcher
       notDone =    ( !this.bAbort )
                 && ( this.retryWaitingTimerPromise );
 
-
-      // Inform outside caller progress when step retry waiting.
+      // 2.3 Inform outside caller progress when step retry waiting.
       {
         ++this.retryWaitingYieldIdCurrent; // started.
         if ( !notDone )
-          this.retryWaitingYieldIdFinal = this.retryWaitingYieldIdCurrent; // stopping.
+          this.retryWaitingYieldIdFinal = this.retryWaitingYieldIdCurrent;
 
         yield progressRoot;
       }
 
     } while ( notDone ); // Stop if retry waiting completely.
 
+    // 2.4
     ++this.retryWaitingYieldIdCurrent; // stopped.
 
     return;
