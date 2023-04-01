@@ -501,7 +501,6 @@ class HttpRequest_Fetcher
     return false;
   }
 
-//!!!
   get loadingStateStopping() {
     if ( this.loadingYieldIdFinal == undefined )
       return false; // undefined .loadingYieldIdFinal means starting or started.
@@ -511,6 +510,12 @@ class HttpRequest_Fetcher
   }
 
 //!!!
+//!!! ...unfinished... (2023/04/01)
+// Problem: What if ( .loadingYieldIdCurrent < 0 )
+// and ( .loadingYieldIdFinal == undefined )?
+//
+// not yet started? starting or started?
+
   get loadingStateStoppped() {
     if ( this.loadingYieldIdFinal == undefined )
       return false; // undefined .loadingYieldIdFinal means starting or started.
