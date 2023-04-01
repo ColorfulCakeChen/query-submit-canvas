@@ -160,13 +160,11 @@ class HttpRequest_Fetcher
 //!!! ...unfinished... (2023/04/01)
 
     this.retryWaitingTimerPromise = undefined;
-
     this.retryWaitingMillisecondsCur = undefined;
     this.retryWaitingMillisecondsMax = undefined;
 
 
     this.loadingTimerPromise = undefined;
-
     this.loadingMillisecondsCur = undefined;
 
 
@@ -179,28 +177,25 @@ class HttpRequest_Fetcher
 
     this.xhr = undefined;
 
-    this.bAbort = undefined;
-  
     this.progressRetryWaiting = undefined;
     this.progressLoading = undefined;
 
     this.retryTimesCur = undefined;
 
 
+    this.bAbort = undefined;
+
     this.contentLoaded = undefined;
     this.contentTotal = undefined;
 
+    this.progressRoot = undefined;
 
     this.body = undefined;
     this.method = undefined;
     this.responseType = undefined;
-
     this.params_loading_retryWaiting = undefined;
-
     this.url = undefined;
-
     this.progressParent = undefined;
-    this.progressRoot = undefined;
 
 //!!! ...unfinished... (2023/04/01)
 
