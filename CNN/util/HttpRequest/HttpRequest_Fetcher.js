@@ -747,7 +747,10 @@ class HttpRequest_Fetcher
 
     // 4. Abort immediately if caller requests.
     //
+
+//!!! ...unfinished... (2023/04/01) It is possible because the above yield.
     // Although, it seems no chance to execute to here if aborted.
+
     //
     if ( this.bAbort ) {
       HttpRequest_Fetcher.retryWaiting_log.call( this, "abort at start" );
