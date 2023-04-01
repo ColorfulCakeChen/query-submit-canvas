@@ -29,9 +29,15 @@ class StartStopState extends Int {
 
   /**
    * @param {number} currentIndex
-   *   An integer representing current index which will be increased by one
-   * before every time an async generator yield.
-   *   - If undefined: not yet started. (No matter what finalIndex is.)
+   *   An integer representing current index. For example, it could be
+   * increased by one before every time an async generator yield.
+   *   - undefined: not yet started,  if ( finalIndex == undefined ).
+   *   - undefined: illegal,          if ( finalIndex != undefined ).
+   *   - == 0: starting, if ( finalIndex != 0 ).
+   *   - >  0: started,  if ( finalIndex == undefined ).
+   *   - >  0: illegal,  if ( finalIndex != undefined ).
+   *   - >  0: started,  if ( finalIndex != undefined ).
+   *   - finalIndex: stopping
 
 //!!! ...unfinished... (2023/04/01)
 
@@ -44,9 +50,9 @@ class StartStopState extends Int {
    *     - Zero or Positive: .load_asyncGenerator() has stopped.
    *
    * @param {number} finalIndex
-   *   An integer recording the final index.
-   *   - If undefined, either starting or started.
-   *   - If not undefined, either stopping or stopped.
+   *   An integer recording the stopping index.
+   *   - If undefined, either not yet started or starting or started.
+   *   - If defined, either stopping or stopped.
    *
    * @return {number}
    *   Return one of StartStopState.Ids.Xxx according to currentIndex and
