@@ -476,7 +476,7 @@ class TestCase {
     //
     let nextResult;
 //!!!???
-    let bRetryWaitingPrevious = urlComposer.retryWaitingTimer_isCounting;
+    let bRetryWaitingPrevious = urlComposer.retryWaiting_during;
     let bRetryWaitingCurrent = bRetryWaitingPrevious;
     let nextTimes_loading = 0, nextTimes_retryWaiting = 0;
     do {
@@ -498,7 +498,7 @@ class TestCase {
       // Call .next()
       nextResult = await fetcher.next();
 //!!!???
-      bRetryWaitingCurrent = urlComposer.retryWaitingTimer_isCounting;
+      bRetryWaitingCurrent = urlComposer.retryWaiting_during;
 
 //!!! ...unfinished... (2023/04/01)
 // Perhaps, compare nextTimes_Xxx and httpRequestFetcher.XxxYieldIdCurrent.
