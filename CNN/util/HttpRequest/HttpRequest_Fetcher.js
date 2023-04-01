@@ -163,10 +163,8 @@ class HttpRequest_Fetcher
     this.retryWaitingMillisecondsCur = undefined;
     this.retryWaitingMillisecondsMax = undefined;
 
-
     this.loadingTimerPromise = undefined;
     this.loadingMillisecondsCur = undefined;
-
 
     this.timeoutPromise = undefined;
     this.progressPromise = undefined;
@@ -177,17 +175,16 @@ class HttpRequest_Fetcher
 
     this.xhr = undefined;
 
+    this.contentLoaded = undefined;
+    this.contentTotal = undefined;
+
+    this.bAbort = undefined;
+
     // Note: .progressLoading and progressRetryWaiting are not owned by this
     //       HttpRequest_Fetcher object. They should be destroyed by outside
     //       caller (i.e. by progressParent). Here just nullify them.
     this.progressRetryWaiting = undefined;
     this.progressLoading = undefined;
-
-
-    this.contentLoaded = undefined;
-    this.contentTotal = undefined;
-
-    this.bAbort = undefined;
 
     this.retryTimesCur = undefined;
 
