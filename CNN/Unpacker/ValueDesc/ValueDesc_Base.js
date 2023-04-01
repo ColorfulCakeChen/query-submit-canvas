@@ -153,6 +153,9 @@ class Int {
   }
 
   /**
+   * @param {number} integerValue
+   *   It should be one of ValueDesc.Yyy.Singleton.Ids.Xxx.
+   *
    * @return {string}
    *   Return the integerValue's name (e.g. "AVG", "MAX", "NONE"). If no name,
    * return the string of the integer value (e.g. "1", "2", ..., "64").
@@ -167,6 +170,9 @@ class Int {
   }
 
   /**
+   * @param {number} integerValue
+   *   It should be one of ValueDesc.Yyy.Singleton.Ids.Xxx.
+   *
    * @return {string}
    *   Return the integerValue's name with integer (e.g. "AVG(-2)", "MAX(-1)",
    * "NONE(0)"). If no name, return the string of the integer value (e.g. "1",
