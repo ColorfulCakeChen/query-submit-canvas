@@ -150,6 +150,7 @@ class HttpRequest_Fetcher
 
 //!!! ...unfinished... (2023/04/01)
 
+
     this.retryWaitingYieldIdFinal = undefined;
     this.retryWaitingYieldIdCurrent = undefined;
 
@@ -160,10 +161,22 @@ class HttpRequest_Fetcher
 
     this.retryWaitingTimerPromise = undefined;
 
+    this.retryWaitingMillisecondsCur = undefined;
+    this.retryWaitingMillisecondsMax = undefined;
+
+
     this.loadingTimerPromise = undefined;
 
+    this.loadingMillisecondsCur = undefined;
     this.loadingMillisecondsMax = undefined;
 
+
+    this.timeoutPromise = undefined;
+    this.progressPromise = undefined;
+    this.loadstartPromise = undefined;
+    this.loadPromise = undefined;
+    this.errorPromise = undefined;
+    this.abortPromise = undefined;
 
     this.xhr = undefined;
 
@@ -172,12 +185,12 @@ class HttpRequest_Fetcher
     this.progressRetryWaiting = undefined;
     this.progressLoading = undefined;
 
-
-    this.retryWaitingMillisecondsCur = undefined;
-    this.retryWaitingMillisecondsMax = undefined;
-
     this.retryTimesCur = undefined;
     this.retryTimesMax = undefined;
+
+
+    this.contentLoaded = undefined;
+    this.contentTotal = undefined;
 
 
     this.body = undefined;
