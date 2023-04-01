@@ -564,15 +564,16 @@ class HttpRequest_Fetcher
     this.progressLoading.value_max_set( progressLoading_max_default );
     this.progressLoading.value_set( 0 );
 
-//!!! ...unfinished... (2023/04/01)
-// If .retryTimes_isRunOut, perhaps, remove the progressRetryWaiting
-// so that only progressLoading exists.
-//
-// What about .retryTimesCur here?
-
     // 0.3 Reset retry waiting progress.
     HttpRequest_Fetcher.retryWaitingMilliseconds_init.call( this );
-    HttpRequest_Fetcher.progressRetryWaiting_set_beforeDone.call( this );
+
+    // If there is no more retry times, remove the progressRetryWaiting
+    // so that only progressLoading occupies the whole progressParent.
+    if ( this.retryTimes_isRunOut ) {
+      this.progressParent.child_dispose( this.progressRetryWaiting );
+    } else {
+      HttpRequest_Fetcher.progressRetryWaiting_set_beforeDone.call( this );
+    }
 
     // 0.4 Inform outside caller progress when begin loading.
     //
