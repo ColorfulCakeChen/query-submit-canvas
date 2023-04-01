@@ -615,6 +615,7 @@ class HttpRequest_Fetcher
     }
 
     // All promises to be listened.
+    let allPromiseRace;
     {
       this.allPromiseSet.clear();
 
@@ -627,6 +628,10 @@ class HttpRequest_Fetcher
 
       if ( this.loadingTimerPromise )
         this.allPromiseSet.add( this.loadingTimerPromise );
+
+      // The .allPromiseSet should be used before xhr.send(). Otherwise, some
+      // events may be resolved (and removed itself from .allPromiseSet).
+      allPromiseRace = Promise.race( this.allPromiseSet );
     }
 
 //!!! ...unfinished... (2023/04/01)
@@ -648,13 +653,12 @@ class HttpRequest_Fetcher
     // 1.4 Until done or failed.
     let notDone;
     do {
-      let allPromise = Promise.race( this.allPromiseSet );
 
       // All succeeded promises resolve to progressRoot.
       //   - Except .loadingTimerPromise resolved to .handle_loadingTimer
       //
       // All failed promises reject to (i.e. throw exception of) ProgressEvent.
-      let progressRoot__or__handle_loadingTimer = await allPromise;
+      let progressRoot__or__handle_loadingTimer = await allPromiseRace;
 
       // .loadingTimerPromise resolved.
       if ( progressRoot__or__handle_loadingTimer
@@ -672,11 +676,16 @@ class HttpRequest_Fetcher
       //
       notDone = ( this.allPromiseSet.has( this.loadPromise ) );
 
-      ++this.loadingYieldIdCurrent; // started.
-      if ( !notDone )
-        this.loadingYieldIdFinal = this.loadingYieldIdCurrent; // stopping.
+      {
+        ++this.loadingYieldIdCurrent; // started.
+        if ( !notDone )
+          this.loadingYieldIdFinal = this.loadingYieldIdCurrent; // stopping.
 
-      yield this.progressRoot;
+        yield this.progressRoot;
+      }
+
+      if ( notDone ) // Continue to listen.
+        allPromiseRace = Promise.race( this.allPromiseSet );
 
     // Stop if loading completely and successfully.
     //
