@@ -1,4 +1,4 @@
-export { StartStopState };
+export { CurrentFinalState };
 
 import { Int } from "./ValueDesc_Base.js";
 
@@ -13,7 +13,7 @@ import { Int } from "./ValueDesc_Base.js";
  *   - 3: STOPPING
  *   - 4: STOPPED
  */
-class StartStopState extends Int {
+class CurrentFinalState extends Int {
 
   constructor() {
     super( 0, 4,
@@ -50,7 +50,7 @@ class StartStopState extends Int {
    *   - If defined, either stopping or stopped.
    *
    * @return {number}
-   *   Return one of StartStopState.Ids.Xxx according to currentIndex and
+   *   Return one of CurrentFinalState.Ids.Xxx according to currentIndex and
    * finalIndex.
    */
   static determine_byCurrentFinal( currentIndex, finalIndex ) {
@@ -58,10 +58,10 @@ class StartStopState extends Int {
     if ( currentIndex == undefined ) { // 1.
 
       if ( finalIndex == undefined ) { // 1.1
-        return StartStopState.Singleton.Ids.NOT_YET_STARTED; // (0)
+        return CurrentFinalState.Singleton.Ids.NOT_YET_STARTED; // (0)
 
       } else { // 1.2
-        throw Error( `ValueDesc.StartStopState.determine_byCurrentFinal(): `
+        throw Error( `ValueDesc.CurrentFinalState.determine_byCurrentFinal(): `
           + `finalIndex ( ${finalIndex} ) should also be undefined `
           + `when currentIndex ( ${currentIndex} ) is undefined.`
         );
@@ -72,13 +72,13 @@ class StartStopState extends Int {
       if ( finalIndex == undefined ) { // 2.1
 
         if ( currentIndex == 0 ) // 2.1.1
-          return StartStopState.Singleton.Ids.STARTING; // (1)
+          return CurrentFinalState.Singleton.Ids.STARTING; // (1)
 
         if ( currentIndex > 0 ) // 2.1.2
-          return StartStopState.Singleton.Ids.STARTED; // (2)
+          return CurrentFinalState.Singleton.Ids.STARTED; // (2)
 
         // 2.1.3 ( currentIndex < 0 ) or Number.isNaN( currentIndex )
-        throw Error( `ValueDesc.StartStopState.determine_byCurrentFinal(): `
+        throw Error( `ValueDesc.CurrentFinalState.determine_byCurrentFinal(): `
           + `when finalIndex ( ${finalIndex} ) is undefined, `
           + `currentIndex ( ${currentIndex} ) should be either `
           + `equal or greater than 0.`
@@ -87,14 +87,14 @@ class StartStopState extends Int {
       } else { // 2.2 ( finalIndex != undefined )
 
         if ( currentIndex == finalIndex ) // 2.2.1
-          return StartStopState.Singleton.Ids.STOPPING; // (3)
+          return CurrentFinalState.Singleton.Ids.STOPPING; // (3)
 
         if ( currentIndex > finalIndex ) // 2.2.2
-          return StartStopState.Singleton.Ids.STOPPED; // (4)
+          return CurrentFinalState.Singleton.Ids.STOPPED; // (4)
 
         // 2.2.3 ( currentIndex < finalIndex )
         //       or Number.isNaN( currentIndex ) or Number.isNaN( finalIndex )
-        throw Error( `ValueDesc.StartStopState.determine_byCurrentFinal(): `
+        throw Error( `ValueDesc.CurrentFinalState.determine_byCurrentFinal(): `
           + `when finalIndex ( ${finalIndex} ) is not undefined, `
           + `currentIndex ( ${currentIndex} ) should be either `
           + `equal or greater than finalIndex.`
@@ -105,5 +105,5 @@ class StartStopState extends Int {
 
 }
 
-/** The only one ValueDesc.StartStopState instance. */
-StartStopState.Singleton = new StartStopState;
+/** The only one ValueDesc.CurrentFinalState instance. */
+CurrentFinalState.Singleton = new CurrentFinalState;

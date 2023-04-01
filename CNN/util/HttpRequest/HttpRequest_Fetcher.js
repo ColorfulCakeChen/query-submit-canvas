@@ -4,6 +4,7 @@ import * as NonReentrant from "../NonReentrant.js";
 import * as PartTime from "../PartTime.js";
 import * as RandTools from "../RandTools.js";
 import * as ValueMax from "../ValueMax.js";
+import * as ValueDesc from "../../Unpacker/ValueDesc.js";
 import { Params_loading_retryWaiting as HttpRequest_Params_loading_retryWaiting }
   from "./HttpRequest_Params_loading_retryWaiting.js";
 
@@ -71,26 +72,15 @@ import { Params_loading_retryWaiting as HttpRequest_Params_loading_retryWaiting 
  *
  * @member {number} loadingYieldIdCurrent
  *   An integer which will be increased by one before every time
- * .load_asyncGenerator() yield.
- *   - Negative: not yet start loading.
- *   - ( < .loadingYieldIdFinal ):  
- *     - Zero: .load_asyncGenerator() just starts loading.
- *     - Positive: .load_asyncGenerator() is still loading.
- *   - ( == .loadingYieldIdFinal ):
- *     - Zero or Positive: .load_asyncGenerator()'s final yield.
- *   - ( > .loadingYieldIdFinal ):
- *     - Zero or Positive: .load_asyncGenerator() has stopped.
+ * .load_asyncGenerator() yield. It is either undefined or 0 or positive.
  *
  * @member {number} loadingYieldIdFinal
  *   An integer recording the final yield id of .load_asyncGenerator().
- *   - If it is undefined, loading is either starting or started.
- *   - If it is not undefined, loading is either stopping or stopped.
+ * It is either undefined or 0 or positive.
  *
- * @member {boolean} loadingStateStarted
- *   If true, the .load_asyncGenerator() has started.
- *
- * @member {boolean} loadingStateStopped
- *   ??? If true, the .load_asyncGenerator() has started.
+ * @member {number} loadingCurrentFinalState
+ *   One of ValueDesc.CurrentFinalState.Singleton.Ids.Xxx according to
+ * .loadingYieldIdCurrent and .loadingYieldIdFinal.
  *
 
 //!!! ...unfinished... (2023/04/01)
@@ -466,6 +456,14 @@ class HttpRequest_Fetcher
 //!!! ...unfinished... (2023/04/01)
 // loadingYieldIdCurrent
 // loadingYieldIdFinal
+
+  get loadingCurrentFinalState() {
+    let nCurrentFinalState
+      = ValueDesc.CurrentFinalState.Singleton.determine_byCurrentFinal(
+          this.loadingYieldIdCurrent, this.loadingYieldIdFinal );
+    return nCurrentFinalState;
+  }
+
 
 //!!! ...unfinished... (2023/04/01)
 // Problem: What if ( .loadingYieldIdFinal == 0 )?
