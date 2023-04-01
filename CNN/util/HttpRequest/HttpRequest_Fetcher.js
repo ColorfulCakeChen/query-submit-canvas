@@ -1117,6 +1117,15 @@ class HttpRequest_Fetcher
    * @param {HttpRequest_Fetcher} this
    */
   static handle_loadingTimer() {
+
+
+//!!! ...unfinished... (2023/04/01)
+// It seems possible loading timer triggerred after progressLoading 100
+// (by load event). And then, loading timer ruin the progressLoading
+// (e.g. .loadingMillisecondsCur=500, .loadingMillisecondsMax=6000,
+// progressLoading=0.04997810958800046%)
+
+
     this.loadingMillisecondsCur += this.loadingMillisecondsInterval;
 
     // 1.
