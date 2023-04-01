@@ -83,6 +83,11 @@ Bool.Singleton = new Bool;
  *   A map object contains integer value to its name. Using
  * this.integerToNameMap.get( integerValue ) could get the name of the integer value.
  *
+ * @member {Map} integerToNameWithIntMap
+ *   A map object contains integer value to its name (e.g. "Xxx") with integer
+ * (e.g. "Xxx( 12 )"). Using this.integerToNameWithIntMap.get( integerValue ) could
+ * get the name with integer of the integer value.
+ *
  * @member {Map} integerToInfoMap
  *   A map object contains integer value to its information. Using
  * this.integerToObjectMap.get( integerValue ) could get the information object of
@@ -114,6 +119,7 @@ class Int {
     {
       this.Ids = {};
       this.integerToNameMap = new Map;
+      this.integerToNameWithIntMap = new Map;
       this.integerToInfoMap = new Map;
 
       let nameForProgramArray = Object.keys( Infos );
@@ -137,6 +143,10 @@ class Int {
 
         this.Ids[ nameForProgram ] = integerId;
         this.integerToNameMap.set( integerId, nameForMessage );
+
+        this.integerToNameWithIntMap
+          .set( integerId, `${nameForMessage}(${integerId})` );
+
         this.integerToInfoMap.set( integerId, info );
       }
     }
@@ -144,16 +154,31 @@ class Int {
 
   /**
    * @return {string}
-   *   Return the name of the integerValue. If no name, return the string of the
-   * integer value (e.g. "1", "2", ..., "64").
+   *   Return the integerValue's name (e.g. "AVG", "MAX", "NONE"). If no name,
+   * return the string of the integer value (e.g. "1", "2", ..., "64").
    */
   getName_byId( integerValue ) {
     // Look up whether has name (e.g. "AVG", "MAX", "NONE").
     let name = this.integerToNameMap.get( integerValue );
-    if ( null == name ) {
+    if ( name === undefined ) {
       name = integerValue?.toString();
     }
     return name;
+  }
+
+  /**
+   * @return {string}
+   *   Return the integerValue's name with integer (e.g. "AVG(-2)", "MAX(-1)",
+   * "NONE(0)"). If no name, return the string of the integer value (e.g. "1",
+   * "2", ..., "64").
+   */
+  getNameWithInt_byId( integerValue ) {
+    // Look up whether has name (e.g. "AVG(-2)", "MAX(-1)", "NONE(0)").
+    let nameWithInt = this.integerToNameWithIntMap.get( integerValue );
+    if ( nameWithInt === undefined ) {
+      nameWithInt = integerValue?.toString();
+    }
+    return nameWithInt;
   }
 
   /**
