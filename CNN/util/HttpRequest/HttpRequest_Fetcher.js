@@ -83,6 +83,8 @@ import { Params_loading_retryWaiting as HttpRequest_Params_loading_retryWaiting 
  *
  * @member {number} loadingYieldIdFinal
  *   An integer recording the final yield id of .load_asyncGenerator().
+ *   - If it is undefined, loading is either starting or started.
+ *   - If it is not undefined, loading is either stopping or stopped.
  *
  * @member {boolean} loadingStateStarted
  *   If true, the .load_asyncGenerator() has started.
@@ -139,7 +141,8 @@ import { Params_loading_retryWaiting as HttpRequest_Params_loading_retryWaiting 
  *
  * @member {number} retryWaitingYieldIdFinal
  *   An integer recording the final yield id of .retryWait_asyncGenerator().
- *
+ *   - If it is undefined, retry waiting is either starting or started.
+ *   - If it is not undefined, retry waiting is either stopping or stopped.
  *
  * @member {boolean} fetch_asyncGenerator_running
  *   If true, a fetch_asyncGenerator is still executing. Please wait it
@@ -477,6 +480,8 @@ class HttpRequest_Fetcher
   }
 
   get loadingStateStarted() {
+    if ( this.loadingYieldIdFinal !== undefined )
+      return false; // e.g. ( .loadingYieldIdFinal == 0 ), it means stopping.
     if ( this.loadingYieldIdCurrent > 0 )
       return true;
     return false;
