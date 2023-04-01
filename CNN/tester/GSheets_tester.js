@@ -575,14 +575,10 @@ class TestCase {
     //
     let nextResult;
 
-//!!! ...unfinished... (2023/04/01)
-// Problem: httpRequestFetcher not yet created. so got undefeined.
-//    let bRetryWaitingPrevious = urlComposer.retryWaiting_during;
-
     // Since just beginning, it should be in loading phase.
     //
     // Note: Can not call urlComposer.retryWaiting_during (which will get
-    //       undefeined) here because .httpRequestFetcher has not yet been
+    //       undefined) here because .httpRequestFetcher has not yet been
     //       created.
     let bRetryWaitingPrevious = false;
     let bRetryWaitingCurrent = bRetryWaitingPrevious;
@@ -606,7 +602,6 @@ class TestCase {
 
       // Call .next()
       nextResult = await fetcher.next();
-//!!!???
       bRetryWaitingCurrent = urlComposer.retryWaiting_during;
 
 //!!! ...unfinished... (2023/04/01)
@@ -628,6 +623,8 @@ class TestCase {
         else
           nextTimes_loading = 0;
 
+//!!! ...unfinished... (2023/04/01)
+// What about first time loading?
         // Check: progressLoading and progressRetryWaiting.
         this.check_progressLoading_progressRetryWaiting(
           urlComposer, bRetryWaitingCurrent, funcNameInMessage );
