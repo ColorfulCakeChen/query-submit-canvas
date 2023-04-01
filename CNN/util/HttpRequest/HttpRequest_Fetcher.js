@@ -629,14 +629,11 @@ class HttpRequest_Fetcher
       if ( this.loadingTimerPromise )
         this.allPromiseSet.add( this.loadingTimerPromise );
 
-      // The .allPromiseSet should be used before xhr.send(). Otherwise, some
-      // events may be resolved (and removed itself from .allPromiseSet).
+      // Note: The .allPromiseSet should be used before xhr.send(). Otherwise,
+      //       some events may be resolved (and change .allPromiseSet).
       allPromiseRace = Promise.race( this.allPromiseSet );
     }
 
-//!!! ...unfinished... (2023/04/01)
-// should await promise before .send()
-// Otherwise, some event may have resolved and lost.
     // 1.3
     xhr.send( this.body );
 
@@ -669,7 +666,7 @@ class HttpRequest_Fetcher
         }
       }
 
-      // 2.2 According adjusted .allPromiseSet to determine whether is done. 
+      // 2.2 According .allPromiseSet to determine whether is done. 
       //
       // Not done, if:
       //   - ( .loadPromise still pending (i.e. still in waiting promises) ).
@@ -681,7 +678,15 @@ class HttpRequest_Fetcher
       //
       notDone = ( this.allPromiseSet.has( this.loadPromise ) );
 
-      // 2.3 Report progress.
+      // 2.3 If not done, continue to listen them.
+      //
+      // Note: The .allPromiseSet should be used before yield. Otherwise,
+      //       some events may be resolved (and change .allPromiseSet)
+      //       during yield.
+      if ( notDone )
+        allPromiseRace = Promise.race( this.allPromiseSet );
+
+      // 2.4 Report progress.
       {
         ++this.loadingYieldIdCurrent; // started.
         if ( !notDone )
@@ -689,10 +694,6 @@ class HttpRequest_Fetcher
 
         yield this.progressRoot;
       }
-
-      // 2.4 Continue to listen.
-      if ( notDone )
-        allPromiseRace = Promise.race( this.allPromiseSet );
 
     // Stop if loading completely and successfully.
     //
