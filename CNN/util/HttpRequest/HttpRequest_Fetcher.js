@@ -464,10 +464,16 @@ class HttpRequest_Fetcher
 // loadingYieldIdCurrent
 // loadingYieldIdFinal
 
+  get loadingStateStarting() {
+    if ( this.loadingYieldIdCurrent == 0 )
+      return true;
+    return false;
+  }
+
   get loadingStateStarted() {
-    if ( this.loadingYieldIdCurrent < 0 )
-      return false;
-    return true;
+    if ( this.loadingYieldIdCurrent > 0 )
+      return true;
+    return false;
   }
 
 //!!!
