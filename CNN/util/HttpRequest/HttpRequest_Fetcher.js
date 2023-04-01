@@ -63,6 +63,27 @@ import { Params_loading_retryWaiting as HttpRequest_Params_loading_retryWaiting 
  * @member {boolean} bAbort
  *   If true, it means .abort() is called.
  *
+
+//!!! ...unfinished... (2023/04/01) should define:
+// loadingYieldIdCurrent
+// loadingYieldIdFinal
+//
+// retryWaitingYieldIdCurrent
+// retryWaitingYieldIdFinal
+
+ *
+ * @member {number} loadingYieldIdCurrent
+ *   An integer which will be increased by one before every time
+ * .load_asyncGenerator() yield.
+ *   - Negative: not yet start loading.
+ *   - ( < .loadingYieldIdFinal ):  
+ *     - Zero: just start loading.
+ *     - Positive: still loading.
+ *   - ( == .loadingYieldIdFinal ):
+ *     - Zero or Positive: .load_asyncGenerator()'s final yield.
+ *   - ( > .loadingYieldIdFinal ):
+ *     - Zero or Positive: .load_asyncGenerator() has stopped.
+ *
  * @member {boolean} fetch_asyncGenerator_running
  *   If true, a fetch_asyncGenerator is still executing. Please wait it
  * becoming false if wanting to call .fetch_asyncGenerator_create() again.
