@@ -22,37 +22,48 @@ class SqueezeExcitationChannelCountDivisor extends Int {
       EXCITATION:         new Int.Info( -1, "EXCITATION" ),
       SQUEEZE_EXCITATION: new Int.Info(  0, "SQUEEZE_EXCITATION" ),
 
-      // "SQUEEZE_INTERMEDIATE_DIVISOR_1_EXCITATION: "SQUEEZE_INTERMEDIATE_DIVISOR_2_EXCITATION:
+      // "SQUEEZE_INTERMEDIATE_DIVISOR_1_EXCITATION",
+      // "SQUEEZE_INTERMEDIATE_DIVISOR_2_EXCITATION",
       // ..., "SQUEEZE_INTERMEDIATE_DIVISOR_64_EXCITATION".
       //
-      // (2022/05/26 Remarked) Do not define these names because they will occupy too many memory.
+      // (2022/05/26 Remarked) Do not define these names because they will
+      // occupy too many memory.
       //
-      //... [ ... new Array( 64 ).keys() ].map( x => `SQUEEZE_INTERMEDIATE_DIVISOR_${( x + 1 )}_EXCITATION` )
+      // ... [ ... new Array( 64 ).keys() ].map(
+      //   x => `SQUEEZE_INTERMEDIATE_DIVISOR_${( x + 1 )}_EXCITATION` )
     } );
   }
 
   /**
-   * @param {number} nSqueezeExcitationChannelCountDivisorId   One of ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.Xxx.
+   * @param {number} nSqueezeExcitationChannelCountDivisorId
+   *   One of ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.Xxx.
+   *
    * @return {boolen} Return true, if it has excitation step.
    */
   static hasExcitation( nSqueezeExcitationChannelCountDivisorId ) {
-    if ( nSqueezeExcitationChannelCountDivisorId > SqueezeExcitationChannelCountDivisor.Singleton.Ids.NONE ) // (-2)
+    if ( nSqueezeExcitationChannelCountDivisorId
+           > SqueezeExcitationChannelCountDivisor.Singleton.Ids.NONE ) // (-2)
       return true;
     return false;
   }
 
   /**
-   * @param {number} nSqueezeExcitationChannelCountDivisorId   One of ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.Xxx.
+   * @param {number} nSqueezeExcitationChannelCountDivisorId
+   *   One of ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.Xxx.
+   *
    * @return {boolen} Return true, if it has squeeze step.
    */
   static hasSqueeze( nSqueezeExcitationChannelCountDivisorId ) {
-    if ( nSqueezeExcitationChannelCountDivisorId >= SqueezeExcitationChannelCountDivisor.Singleton.Ids.SQUEEZE_EXCITATION ) // (0)
+    if ( nSqueezeExcitationChannelCountDivisorId
+           >= SqueezeExcitationChannelCountDivisor.Singleton.Ids.SQUEEZE_EXCITATION ) // (0)
       return true;
     return false;
   }
 
   /**
-   * @param {number} nSqueezeExcitationChannelCountDivisorId   One of ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.Xxx.
+   * @param {number} nSqueezeExcitationChannelCountDivisorId
+   *   One of ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.Xxx.
+   *
    * @return {boolen} Return true, if it has intermediate step.
    */
   static hasIntermediate( nSqueezeExcitationChannelCountDivisorId ) {
@@ -64,5 +75,5 @@ class SqueezeExcitationChannelCountDivisor extends Int {
 }
 
 /** The only one ValueDesc.SqueezeExcitationChannelCountDivisor instance. */
-SqueezeExcitationChannelCountDivisor.Singleton = new SqueezeExcitationChannelCountDivisor;
-
+SqueezeExcitationChannelCountDivisor.Singleton
+  = new SqueezeExcitationChannelCountDivisor;

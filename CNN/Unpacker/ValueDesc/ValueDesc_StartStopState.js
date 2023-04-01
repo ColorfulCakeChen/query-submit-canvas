@@ -1,4 +1,4 @@
-export { CurrentFinalState };
+export { StartStopState };
 
 import { Int } from "./ValueDesc_Base.js";
 
@@ -13,7 +13,7 @@ import { Int } from "./ValueDesc_Base.js";
  *   - 3: STOPPING
  *   - 4: STOPPED
  */
-class CurrentFinalState extends Int {
+class StartStopState extends Int {
 
   constructor() {
     super( 0, 4,
@@ -27,7 +27,9 @@ class CurrentFinalState extends Int {
     );
   }
 
+  
+
 }
 
-/** The only one ValueDesc.CurrentFinalState instance. */
-CurrentFinalState.Singleton = new CurrentFinalState;
+/** The only one ValueDesc.StartStopState instance. */
+StartStopState.Singleton = new StartStopState;
