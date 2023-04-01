@@ -443,6 +443,18 @@ class HttpRequest_Fetcher
     return false;
   }
 
+  get loadingYieldFirst() {
+    if ( this.loadingYieldIdCurrent == 0 )
+      return true;
+    return false;
+  }
+
+  get loadingYieldLast() {
+    if ( this.loadingYieldIdCurrent == this.loadingYieldIdFinal )
+      return true;
+    return false;
+  }
+
 *
 * @member {number} loadingYieldIdCurrent
 *   An integer which will be increased by one before every time
