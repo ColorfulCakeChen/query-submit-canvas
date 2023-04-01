@@ -156,6 +156,43 @@ class HttpRequest_Fetcher
     this.loadingYieldIdFinal = undefined;
     this.loadingYieldIdCurrent = undefined;
 
+//!!! ...unfinished... (2023/04/01)
+
+    this.retryWaitingTimerPromise = undefined;
+
+    this.loadingTimerPromise = undefined;
+
+    this.loadingMillisecondsMax = undefined;
+
+
+    this.xhr = undefined;
+
+    this.bAbort = undefined;
+  
+    this.progressRetryWaiting = undefined;
+    this.progressLoading = undefined;
+
+
+    this.retryWaitingMillisecondsCur = undefined;
+    this.retryWaitingMillisecondsMax = undefined;
+
+    this.retryTimesCur = undefined;
+    this.retryTimesMax = undefined;
+
+
+    this.body = undefined;
+    this.method = undefined;
+    this.responseType = undefined;
+
+    this.params_loading_retryWaiting = undefined;
+
+    this.url = undefined;
+
+    this.progressParent = undefined;
+    this.progressRoot = undefined;
+
+//!!! ...unfinished... (2023/04/01)
+
     this.allPromiseSet = undefined;
     this.bLogEventToConsole = undefined;
 
