@@ -103,6 +103,12 @@ import * as ValueMax from "../ValueMax.js";
  *   The current (or last) fetcher of the http request. It could be used to
  * call .abort().
  *
+ * @member {number} loadingCurrentFinalState
+ *   The start-stop state of retry waiting.
+ * ValueDesc.CurrentFinalState.Singleton.Ids.Xxx according to
+ * .httpRequestFetcher.loadingYieldIdCurrent and
+ * .httpRequestFetcher.loadingYieldIdFinal.
+ *
  * @member {number} retryWaitingingCurrentFinalState
  *   The start-stop state of retry waiting.
  * ValueDesc.CurrentFinalState.Singleton.Ids.Xxx according to
@@ -329,6 +335,12 @@ class GVizTQ_UrlComposer
       // called in the next time.
       this.bAbort = false;
     }
+  }
+
+  get loadingCurrentFinalState() {
+    if ( this.httpRequestFetcher )
+      return this.httpRequestFetcher.loadingCurrentFinalState;
+    return undefined;
   }
 
   get retryWaitingCurrentFinalState() {
