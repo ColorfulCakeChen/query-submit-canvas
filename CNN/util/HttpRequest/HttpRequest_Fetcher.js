@@ -133,16 +133,11 @@ class HttpRequest_Fetcher
   /** @override */
   disposeResources() {
 
-//!!! ...unfinished... (2023/04/01)
-
-
     this.retryWaitingYieldIdFinal = undefined;
     this.retryWaitingYieldIdCurrent = undefined;
 
     this.loadingYieldIdFinal = undefined;
     this.loadingYieldIdCurrent = undefined;
-
-//!!! ...unfinished... (2023/04/01)
 
     this.retryWaitingTimerPromise = undefined;
     this.retryWaitingMillisecondsCur = undefined;
@@ -210,9 +205,6 @@ class HttpRequest_Fetcher
     return this.params_loading_retryWaiting.retryWaitingMillisecondsInterval;
   }
 
-//!!! ...unfinished... (2023/04/01)
-// loadingYieldIdCurrent
-// loadingYieldIdFinal
 
   get loadingCurrentFinalState() {
     let nCurrentFinalState
@@ -220,10 +212,6 @@ class HttpRequest_Fetcher
           this.loadingYieldIdCurrent, this.loadingYieldIdFinal );
     return nCurrentFinalState;
   }
-
-//!!! ...unfinished... (2023/04/01)
-// retryWaitingYieldIdCurrent
-// retryWaitingYieldIdFinal
 
   get retryWaitingCurrentFinalState() {
     let nCurrentFinalState
@@ -255,15 +243,6 @@ class HttpRequest_Fetcher
     return false;
   }
 
-  /** @return {boolean} Return true, if not yet reach maximum retry times. */
-  get retryTimes_isRunOut() {
-    if ( this.retryTimesMax < 0 )
-      return false; // Never run out, since retry forever.
-    if ( this.retryTimesCur < this.retryTimesMax )
-      return false; // Still has retry times.
-    return true; // Run out of retry times. (Include never retry.)
-  }
-
   /**
    * @return {boolean} Return true, if now is during retry waiting.
    */
@@ -271,6 +250,16 @@ class HttpRequest_Fetcher
     if ( this.retryWaitingTimerPromise )
       return true;
     return false;
+  }
+
+
+  /** @return {boolean} Return true, if not yet reach maximum retry times. */
+  get retryTimes_isRunOut() {
+    if ( this.retryTimesMax < 0 )
+      return false; // Never run out, since retry forever.
+    if ( this.retryTimesCur < this.retryTimesMax )
+      return false; // Still has retry times.
+    return true; // Run out of retry times. (Include never retry.)
   }
 
 
@@ -534,12 +523,13 @@ class HttpRequest_Fetcher
     HttpRequest_Fetcher.retryWaitingMilliseconds_init.call( this );
     HttpRequest_Fetcher.progressRetryWaiting_set_beforeDone.call( this );
 
-//!!! ...unfinished... (2023/04/01) should define:
-// loadingYieldIdCurrent
-// loadingYieldIdFinal
+//!!! ...unfinished... (2023/04/01)
+// this.retryWaitingYieldIdFinal = undefined;
+// this.retryWaitingYieldIdCurrent = undefined;
 //
-// retryWaitingYieldIdCurrent
-// retryWaitingYieldIdFinal
+// this.loadingYieldIdFinal = undefined;
+// this.loadingYieldIdCurrent = undefined;
+
 
     // 0.4 Inform outside caller progress when begin loading.
     yield this.progressRoot;
