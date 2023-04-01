@@ -168,7 +168,6 @@ class HttpRequest_Fetcher
     this.loadingTimerPromise = undefined;
 
     this.loadingMillisecondsCur = undefined;
-    this.loadingMillisecondsMax = undefined;
 
 
     this.timeoutPromise = undefined;
@@ -186,7 +185,6 @@ class HttpRequest_Fetcher
     this.progressLoading = undefined;
 
     this.retryTimesCur = undefined;
-    this.retryTimesMax = undefined;
 
 
     this.contentLoaded = undefined;
