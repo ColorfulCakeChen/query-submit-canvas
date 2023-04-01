@@ -429,14 +429,14 @@ class HttpRequest_Fetcher
 // loadingYieldIdCurrent
 // loadingYieldIdFinal
 
-  get loading_started() {
+  get loadingStateStarted() {
     if ( this.loadingYieldIdCurrent < 0 )
       return false;
     return true;
   }
 
-  get loading_stoppped() {
-    if ( !this.loading_started )
+  get loadingStateStoppped() {
+    if ( !this.loadingStateStarted )
       return true; // Not yet started is a kind of stopped.
     if ( this.loadingYieldIdCurrent >= this.loadingYieldIdFinal )
       return true;
