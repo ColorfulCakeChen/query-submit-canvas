@@ -432,8 +432,8 @@ class TestCase {
 
 //!!! ...unfinished... (2023/04/01)
 
+    // 1. phase changes from loading to retry waiting.
     if ( bRetryWaitingCurrent ) {
-      // phase changes from loading to retry waiting.
 
       // In fact, both .value and .max are 0.
       if ( 100 !== progressLoading.valuePercentage )
@@ -443,40 +443,6 @@ class TestCase {
           + `.progressLoading.valuePercentage (`
           + `${progressLoading.valuePercentage} ) `
           + `should be 100.` );
-
-      let retryTimes_isRunOut = httpRequestFetcher.retryTimes_isRunOut;
-      if ( retryTimes_isRunOut ) {
-
-        if ( progressRetryWaiting )
-          throw Error( `GSheets_tester.TestCase`
-            + `.${funcNameInMessage}(): testCaseId=${this.testCaseId}, `
-            + `When phase changes from retry waiting to loading, `
-            + `.progressRetryWaiting ( ${progressRetryWaiting} ) `
-            + `should be null, `
-            + `if retryTimes_isRunOut ( ${retryTimes_isRunOut}) is true.` );
-
-//!!! (2023/04/01 Remarked) should be null.
-//         if ( 100 !== progressRetryWaiting.valuePercentage )
-//           throw Error( `GSheets_tester.TestCase`
-//             + `.${funcNameInMessage}(): testCaseId=${this.testCaseId}, `
-//             + `When phase changes from retry waiting to loading, `
-//             + `.progressRetryWaiting.valuePercentage ( `
-//             + `${progressRetryWaiting.valuePercentage} ) `
-//             + `should be 100, `
-//             + `if retryTimes_isRunOut ( ${retryTimes_isRunOut}) is true.` );
-      } else {
-        if ( 0 !== progressRetryWaiting.valuePercentage )
-          throw Error( `GSheets_tester.TestCase`
-            + `.${funcNameInMessage}(): testCaseId=${this.testCaseId}, `
-            + `When phase changes from retry waiting to loading, `
-            + `.progressRetryWaiting.valuePercentage ( `
-            + `${progressRetryWaiting.valuePercentage} ) `
-            + `should be 0, ` 
-            + `if retryTimes_isRunOut ( ${retryTimes_isRunOut}) is false.` );
-      }
-
-    } else {
-      // phase changes from retry waiting to loading.
 
 //!!! ...unfinished... (2023/03/31) sure? When become .valuePercentage 0?
       // i.e., .valuePercentage 100.
@@ -496,6 +462,41 @@ class TestCase {
           + `.progressRetryWaiting.valuePercentage ( `
           + `${progressRetryWaiting.valuePercentage} ) `
           + `should be 100.` );
+
+    // 2. phase changes from retry waiting to loading.
+    } else {
+
+      let retryTimes_isRunOut = httpRequestFetcher.retryTimes_isRunOut;
+      if ( retryTimes_isRunOut ) {
+
+        if ( progressRetryWaiting )
+          throw Error( `GSheets_tester.TestCase`
+            + `.${funcNameInMessage}(): testCaseId=${this.testCaseId}, `
+            + `When phase changes from loading to retry waiting, `
+            + `.progressRetryWaiting ( ${progressRetryWaiting} ) `
+            + `should be null, `
+            + `if retryTimes_isRunOut ( ${retryTimes_isRunOut}) is true.` );
+
+//!!! (2023/04/01 Remarked) should be null.
+//         if ( 100 !== progressRetryWaiting.valuePercentage )
+//           throw Error( `GSheets_tester.TestCase`
+//             + `.${funcNameInMessage}(): testCaseId=${this.testCaseId}, `
+//             + `When phase changes from loading to retry waiting, `
+//             + `.progressRetryWaiting.valuePercentage ( `
+//             + `${progressRetryWaiting.valuePercentage} ) `
+//             + `should be 100, `
+//             + `if retryTimes_isRunOut ( ${retryTimes_isRunOut}) is true.` );
+      } else {
+        if ( 0 !== progressRetryWaiting.valuePercentage )
+          throw Error( `GSheets_tester.TestCase`
+            + `.${funcNameInMessage}(): testCaseId=${this.testCaseId}, `
+            + `When phase changes from loading to retry waiting, `
+            + `.progressRetryWaiting.valuePercentage ( `
+            + `${progressRetryWaiting.valuePercentage} ) `
+            + `should be 0, ` 
+            + `if retryTimes_isRunOut ( ${retryTimes_isRunOut}) is false.` );
+      }
+
     }
   }
 
