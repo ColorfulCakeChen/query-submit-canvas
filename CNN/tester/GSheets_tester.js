@@ -612,9 +612,8 @@ class TestCase {
       else
         ++nextTimes_loading;
 
-      bRetryWaitingCurrent = urlComposer.retryWaiting_during;
-
       // When phase changs between loading and retry waiting.
+      bRetryWaitingCurrent = urlComposer.retryWaiting_during;
       if ( bRetryWaitingPrevious != bRetryWaitingCurrent ) {
         bRetryWaitingPrevious = bRetryWaitingCurrent;
 
