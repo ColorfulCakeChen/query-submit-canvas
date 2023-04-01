@@ -755,12 +755,18 @@ class HttpRequest_Fetcher
    */
   static async* retryWait_asyncGenerator() {
 
+    // Note: .progressRetryWaiting should have been setup at begnning of
+    //       .loading_asyncGenerator().
+    //
+
     // 1.
 
-    // Before logging message, increase .retryTimesCur (so that log messages
-    // have correct .retryTimesCur).
+    // 1.1 Before logging message, increase .retryTimesCur (so that log messages
+    //     have correct .retryTimesCur).
     ++this.retryTimesCur;
 
+    // 1.2
+    //
     // Note: Log must be after .retryTimesCur being increased, because it is
     //       used in the log message.
     HttpRequest_Fetcher.retryWaiting_log.call( this, "start" );
@@ -771,14 +777,6 @@ class HttpRequest_Fetcher
 
     // 3. Inform outside caller progress when begin retry waiting.
     //
-    // Note1: .progressRetryWaiting should have been setup at begnning of
-    //        .loading_asyncGenerator()
-    //
-
-//!!! ...unfinished... (2023/03/31)
-    // Note2: .retryTimesCur must have not yet be increased (so that
-    //        .retryTimes_isRunOut still false).
-
     // Before yield progress, current and final index must be setup.
     // So that outside caller can detect start-stop state of retry waiting.
     {
