@@ -236,6 +236,7 @@ class HttpRequest_Fetcher
     return strCurrentFinalState;
   }
 
+
   /**
    * @return {boolean}
    *   Return true, if ( .loadingMillisecondsMax > 0 ), which means using timer
@@ -392,6 +393,15 @@ class HttpRequest_Fetcher
       do {
         // 1. Try to load.
         try {
+          // Before yield, initialize current and final yield id.
+          {
+            this.loadingYieldIdCurrent = undefined;
+            this.loadingYieldIdFinal = undefined;
+
+            this.retryWaitingYieldIdCurrent = undefined;
+            this.retryWaitingYieldIdFinal = undefined;
+          }
+
           let responseText
             = yield* HttpRequest_Fetcher.load_asyncGenerator.call( this );
 
