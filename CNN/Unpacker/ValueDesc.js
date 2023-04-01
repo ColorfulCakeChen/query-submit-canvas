@@ -8,3 +8,4 @@ export { StridesPad } from "./ValueDesc/ValueDesc_StridesPad.js";
 export { ActivationFunction } from "./ValueDesc/ValueDesc_ActivationFunction.js";
 export { PassThroughStyle } from "./ValueDesc/ValueDesc_PassThroughStyle.js";
 export { ConvStageType } from "./ValueDesc/ValueDesc_ConvStageType.js";
+export { CurrentFinalState } from "./ValueDesc/ValueDesc_CurrentFinalState.js";

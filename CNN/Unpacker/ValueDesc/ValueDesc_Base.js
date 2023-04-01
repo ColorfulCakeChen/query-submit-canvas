@@ -52,32 +52,39 @@ Bool.Singleton = new Bool;
  * Describe some properties of an integer parameter.
  *
  *
- * Q: Why use object literal instead of string array?
+ * Q: Why uses object literal instead of string array?
  * A: So that JaveScript codes compressor could work properly.
  *
  *
  *
  * @member {ValueRange.Int} range
- *   The integer range of the parameter's all possible values. It is an ValueRange.Int
- * object with ( min = valueIntegerMin ) and ( max = valueIntegerMax ).
+ *   The integer range of the parameter's all possible values. It is an
+ * ValueRange.Int object with ( min = valueIntegerMin ) and
+ * ( max = valueIntegerMax ).
  *
  * @member {Object} Ids
- *   An object contains all the named values. It is constructed from Infos.Xxx and
- * Infos.Xxx.id. The Objects.keys( Ids ).length could be less than .range.kinds
- * (i.e. some number value could have no name). It is just like a name-to-integer
- * Map, but could be accessed by dot (.) operator (not by .get() method). It could
- * be used as a constant enumeration. The this.Ids.valueName (or this.Ids[ valueName ])
- * will be valueInteger.
+ *   An object contains all the named values. It is constructed from Infos.Xxx
+ * and Infos.Xxx.id. The Objects.keys( Ids ).length could be less than
+ * .range.kinds (i.e. some number value could have no name). It is just like a
+ * name-to-integer Map, but could be accessed by dot (.) operator (not by
+ * .get() method). It could be used as a constant enumeration. The
+ * this.Ids.valueName (or this.Ids[ valueName ]) will be valueInteger.
  *
  * @member {Object} Infos
- *   An object contains all named integer values' information. Its every property should
- * a Int.Info (or sub-class) object. This Infos object will be kept (i.e. not cloned)
- * by this ValueDesc.Int object.  The Objects.keys( Infos ).length could be less than
- * .range.kinds (i.e. some number value could have no extra information object). It
- * is just like a name-to-object Map, but could be accessed by dot (.) operator (not
- * by .get() method). This could be used as a constant enumeration. The
- * this.Infos.valueName (or this.Infos[ valueName ]) will be an Int.Info (or sub-class)
- * instance.
+ *   An object contains all named integer values' information. Its every
+ * property should a Int.Info (or sub-class) object. This Infos object will be
+ * kept (i.e. not cloned) by this ValueDesc.Int object. The
+ * Objects.keys( Infos ).length could be less than .range.kinds (i.e. some
+ * number value could have no extra information object). It is just like a
+ * name-to-object Map, but could be accessed by dot (.) operator (not by
+ * .get() method). This could be used as a constant enumeration. The
+ * this.Infos.valueName (or this.Infos[ valueName ]) will be an
+ * Int.Info (or sub-class) instance.
+ *
+ * @member {Map} integerToInfoMap
+ *   A map object contains integer value to its information. Using
+ * this.integerToObjectMap.get( integerValue ) could get the information object of
+ * the integer value.
  *
  * @member {Map} integerToNameMap
  *   A map object contains integer value to its name. Using
@@ -87,11 +94,6 @@ Bool.Singleton = new Bool;
  *   A map object contains integer value to its name (e.g. "Xxx") with integer
  * (e.g. "Xxx( 12 )"). Using this.integerToNameWithIntMap.get( integerValue ) could
  * get the name with integer of the integer value.
- *
- * @member {Map} integerToInfoMap
- *   A map object contains integer value to its information. Using
- * this.integerToObjectMap.get( integerValue ) could get the information object of
- * the integer value.
  *
  */
 class Int {
@@ -118,9 +120,9 @@ class Int {
 
     {
       this.Ids = {};
+      this.integerToInfoMap = new Map;
       this.integerToNameMap = new Map;
       this.integerToNameWithIntMap = new Map;
-      this.integerToInfoMap = new Map;
 
       let nameForProgramArray = Object.keys( Infos );
       for ( let i = 0; i < infoArray.length; ++i ) {
@@ -141,13 +143,19 @@ class Int {
         // This is the name which will not be twisted by JavaScript codes compressor.
         let nameForMessage = info.nameForMessage;
 
+        // Ensure integerId not duplicated.
+        const checkingInfo = this.integerToInfoMap.get( integerId );
+        if ( checkingInfo !== undefined )
+          throw Error( `ValueDesc.Int.constructor(): Range violation: `
+            + `integerId ( ${integerId} ) appears multiple times.`
+          );
+
         this.Ids[ nameForProgram ] = integerId;
+        this.integerToInfoMap.set( integerId, info );
         this.integerToNameMap.set( integerId, nameForMessage );
 
         this.integerToNameWithIntMap
           .set( integerId, `${nameForMessage}(${integerId})` );
-
-        this.integerToInfoMap.set( integerId, info );
       }
     }
   }
