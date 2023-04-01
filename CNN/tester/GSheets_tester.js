@@ -498,6 +498,9 @@ class TestCase {
       nextResult = await fetcher.next();
       bRetryWaitingCurrent = urlComposer.retryWaitingTimer_isCounting;
 
+//!!! ...unfinished... (2023/04/01)
+// Perhaps, compare nextTimes_Xxx and httpRequestFetcher.XxxYieldIdCurrent.
+
       // Accumulate how many times .next() is called (according to PREVIOUS phase).
       if ( bRetryWaitingPrevious )
         ++nextTimes_retryWaiting;
