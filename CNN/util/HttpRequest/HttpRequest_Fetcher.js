@@ -1266,14 +1266,14 @@ class HttpRequest_Fetcher
     console.log( `( ${this.url} ) HttpRequest_Fetcher: `
       + `retryWaitingTimer: ${phaseString}: `
       + `retryTimesCur=${this.retryTimesCur}, `
+
+      + `retryWaitingYieldIdCurrent=${this.retryWaitingYieldIdCurrent}, `
+      + `retryWaitingYieldIdFinal=${this.retryWaitingYieldIdFinal}, `
+      + `retryWaitingCurrentFinalState=${this.retryWaitingCurrentFinalState_NameWithInt}, `
+
       + `retryWaitingMillisecondsCur=${this.retryWaitingMillisecondsCur}, `
       + `retryWaitingMillisecondsMax=${this.retryWaitingMillisecondsMax}, `
       + `progressRetryWaiting=${this.progressRetryWaiting.valuePercentage}%`
-
-//!!! ...unfinished... (2023/04/01) add to log
-      this.retryWaitingYieldIdCurrent
-      this.retryWaitingYieldIdFinal
-      this.retryWaitingCurrentFinalState_NameWithInt
     );
   }
 
