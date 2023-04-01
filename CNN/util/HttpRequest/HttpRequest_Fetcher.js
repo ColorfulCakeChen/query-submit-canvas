@@ -852,19 +852,20 @@ class HttpRequest_Fetcher
   /**
    * @param {HttpRequest_Fetcher} this
    */
-  static handle_abort( resolve, reject, event ) {
+  static handle_abort( resolve, reject, progressEvent ) {
     // Stop listen progress timer (since completed).
     HttpRequest_Fetcher.loadingTimer_cancel.call( this );
 
-    // Advance progress to complete status (event if use timer).
-    HttpRequest_Fetcher.progressLoading_set_whenDone.call( this, event );
+    // Advance progress to complete status (even if use timer).
+    HttpRequest_Fetcher.progressLoading_set_whenDone.call( this,
+      progressEvent );
 
     if ( this.bLogEventToConsole )
       console.warn( `( ${this.url} ) HttpRequest_Fetcher: abort: `
-        + `${HttpRequest_Fetcher.ProgressEvent_toString( event )}, `
+        + `${HttpRequest_Fetcher.ProgressEvent_toString( progressEvent )}, `
         + `progressLoading=${this.progressLoading.valuePercentage}%` );
 
-    reject( event );
+    reject( progressEvent );
 
     // Note: The non-repeatable failure event should still be listened on
     //       (i.e. should not removed from this.allPromiseSet), so that the
@@ -874,19 +875,20 @@ class HttpRequest_Fetcher
   /**
    * @param {HttpRequest_Fetcher} this
    */
-  static handle_error( resolve, reject, event ) {
+  static handle_error( resolve, reject, progressEvent ) {
     // Stop listen progress timer (since completed).
     HttpRequest_Fetcher.loadingTimer_cancel.call( this );
 
-    // Advance progress to complete status (event if use timer).
-    HttpRequest_Fetcher.progressLoading_set_whenDone.call( this, event );
+    // Advance progress to complete status (even if use timer).
+    HttpRequest_Fetcher.progressLoading_set_whenDone.call( this,
+      progressEvent );
 
     if ( this.bLogEventToConsole )
       console.warn( `( ${this.url} ) HttpRequest_Fetcher: error: `
-        + `${HttpRequest_Fetcher.ProgressEvent_toString( event )}, `
+        + `${HttpRequest_Fetcher.ProgressEvent_toString( progressEvent )}, `
         + `progressLoading=${this.progressLoading.valuePercentage}%` );
 
-    reject( event );
+    reject( progressEvent );
 
     // Note: The non-repeatable failure event should still be listened on
     //       (i.e. should not removed from this.allPromiseSet), so that the
@@ -896,19 +898,20 @@ class HttpRequest_Fetcher
   /**
    * @param {HttpRequest_Fetcher} this
    */
-  static handle_load( resolve, reject, event ) {
+  static handle_load( resolve, reject, progressEvent ) {
     // Stop listen progress timer (since completed).
     HttpRequest_Fetcher.loadingTimer_cancel.call( this );
 
-    // Advance progress to complete status (event if use timer).
-    HttpRequest_Fetcher.progressLoading_set_whenDone.call( this, event );
+    // Advance progress to complete status (even if use timer).
+    HttpRequest_Fetcher.progressLoading_set_whenDone.call( this,
+      progressEvent );
 
     let xhr = this.xhr;
 
     let logMsg;
     if ( this.bLogEventToConsole )
       logMsg = `( ${this.url} ) HttpRequest_Fetcher: load: `
-        + `${HttpRequest_Fetcher.ProgressEvent_toString( event )}, `
+        + `${HttpRequest_Fetcher.ProgressEvent_toString( progressEvent )}, `
         + `status=${xhr.status}, statusText=\"${xhr.statusText}\", `
         + `progressLoading=${this.progressLoading.valuePercentage}%`;
 
@@ -927,7 +930,7 @@ class HttpRequest_Fetcher
       if ( this.bLogEventToConsole )
         console.warn( logMsg );
 
-      reject( event );
+      reject( progressEvent );
 
       // Note: The non-repeatable failure event should still be listened on
       //       (i.e. should not removed from this.allPromiseSet), so that the
@@ -938,16 +941,17 @@ class HttpRequest_Fetcher
   /**
    * @param {HttpRequest_Fetcher} this
    */
-  static handle_loadstart( resolve, reject, event ) {
+  static handle_loadstart( resolve, reject, progressEvent ) {
 
     // Advance progress only if loadingTimer NOT used.
     if ( !this.loadingTimer_isUsed ) {
-      HttpRequest_Fetcher.progressLoading_set_beforeDone.call( this, event );
+      HttpRequest_Fetcher.progressLoading_set_beforeDone.call( this,
+        progressEvent );
     }
 
     if ( this.bLogEventToConsole )
       console.log( `( ${this.url} ) HttpRequest_Fetcher: loadstart: `
-        + `${HttpRequest_Fetcher.ProgressEvent_toString( event )}, `
+        + `${HttpRequest_Fetcher.ProgressEvent_toString( progressEvent )}, `
         + `progressLoading=${this.progressLoading.valuePercentage}%` );
 
     resolve( this.progressRoot );
@@ -959,16 +963,17 @@ class HttpRequest_Fetcher
   /**
    * @param {HttpRequest_Fetcher} this
    */
-  static handle_progress( resolve, reject, event ) {
+  static handle_progress( resolve, reject, progressEvent ) {
 
     // Advance progress only if loadingTimer NOT used.
     if ( !this.loadingTimer_isUsed ) {
-      HttpRequest_Fetcher.progressLoading_set_beforeDone.call( this, event );
+      HttpRequest_Fetcher.progressLoading_set_beforeDone.call( this,
+        progressEvent );
     }
 
     if ( this.bLogEventToConsole )
       console.log( `( ${this.url} ) HttpRequest_Fetcher: progress: `
-        + `${HttpRequest_Fetcher.ProgressEvent_toString( event )}, `
+        + `${HttpRequest_Fetcher.ProgressEvent_toString( progressEvent )}, `
         + `progressLoading=${this.progressLoading.valuePercentage}%` );
 
     resolve( this.progressRoot );
@@ -989,19 +994,20 @@ class HttpRequest_Fetcher
   /**
    * @param {HttpRequest_Fetcher} this
    */
-  static handle_timeout( resolve, reject, event ) {
+  static handle_timeout( resolve, reject, progressEvent ) {
     // Stop listen progress timer (since completed).
     HttpRequest_Fetcher.loadingTimer_cancel.call( this );
 
-    // Advance progress to complete status (event if use timer).
-    HttpRequest_Fetcher.progressLoading_set_whenDone.call( this, event );
+    // Advance progress to complete status (even if use timer).
+    HttpRequest_Fetcher.progressLoading_set_whenDone.call( this,
+      progressEvent );
 
     if ( this.bLogEventToConsole )
       console.warn( `( ${this.url} ) HttpRequest_Fetcher: timeout: `
-        + `${HttpRequest_Fetcher.ProgressEvent_toString( event )}, `
+        + `${HttpRequest_Fetcher.ProgressEvent_toString( progressEvent )}, `
         + `progressLoading=${this.progressLoading.valuePercentage}%` );
 
-    reject( event );
+    reject( progressEvent );
 
     // Note: The non-repeatable failure event should still be listened on
     //       (i.e. should not removed from this.allPromiseSet), so that the
