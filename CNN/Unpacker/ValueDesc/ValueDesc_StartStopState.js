@@ -31,7 +31,10 @@ class StartStopState extends Int {
    * @param {number} currentIndex
    *   An integer representing current index which will be increased by one
    * before every time an async generator yield.
-   *   - undefined: not yet started.
+   *   - If undefined: not yet started. (No matter what finalIndex is.)
+
+//!!! ...unfinished... (2023/04/01)
+
    *   - ( < finalIndex ):  
    *     - Zero: .load_asyncGenerator() just starts loading.
    *     - Positive: .load_asyncGenerator() is still loading.
@@ -50,6 +53,21 @@ class StartStopState extends Int {
    * finalIndex.
    */
   static determine_byCurrentFinal( currentIndex, finalIndex ) {
+
+    if ( currentIndex == undefined ) {
+      if ( finalIndex == undefined ) {
+        return StartStopState.Singleton.Ids.NOT_YET_STARTED; // (0)
+      } else {
+        throw Error( `ValueDesc.StartStopState.determine_byCurrentFinal(): `
+          + `finalIndex ( ${finalIndex} ) should be undefined `
+          + `when currentIndex ( ${currentIndex} ) is undefined.`
+        );
+      }
+    } else {
+
+    }
+
+//!!! ...unfinished... (2023/04/01)
 
   }
 
