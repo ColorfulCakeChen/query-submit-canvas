@@ -124,14 +124,14 @@ class HttpRequest_Fetcher
    */
   constructor( bLogEventToConsole , ...restArgs ) {
     super( ...restArgs );
-    NonReentrant_asyncGenerator.setAsConstructor_self.call( this,
+    HttpRequest_Fetcher.setAsConstructor_self.call( this,
       bLogEventToConsole );
   }
 
   /** @override */
   static setAsConstructor( bLogEventToConsole , ...restArgs ) {
     super.setAsConstructor.apply( this, restArgs );
-    NonReentrant_asyncGenerator.setAsConstructor_self.call( this,
+    HttpRequest_Fetcher.setAsConstructor_self.call( this,
       bLogEventToConsole );
     return this;
   }
