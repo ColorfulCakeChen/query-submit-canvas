@@ -629,6 +629,9 @@ class HttpRequest_Fetcher
         this.allPromiseSet.add( this.loadingTimerPromise );
     }
 
+//!!! ...unfinished... (2023/04/01)
+// should await promise before .send()
+// Otherwise, some event may have resolved and lost.
     // 1.3
     xhr.send( this.body );
 
