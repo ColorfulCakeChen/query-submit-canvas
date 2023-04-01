@@ -55,8 +55,10 @@ class StartStopState extends Int {
   static determine_byCurrentFinal( currentIndex, finalIndex ) {
 
     if ( currentIndex == undefined ) {
+
       if ( finalIndex == undefined ) {
         return StartStopState.Singleton.Ids.NOT_YET_STARTED; // (0)
+
       } else {
         throw Error( `ValueDesc.StartStopState.determine_byCurrentFinal(): `
           + `finalIndex ( ${finalIndex} ) should also be undefined `
@@ -73,8 +75,6 @@ class StartStopState extends Int {
         else
           return StartStopState.Singleton.Ids.STARTED; // (2)
 
-//!!! ...unfinished... (2023/04/01)
-
       } else {
 
         if ( currentIndex == finalIndex )
@@ -83,7 +83,6 @@ class StartStopState extends Int {
         if ( currentIndex > finalIndex )
           return StartStopState.Singleton.Ids.STOPPED; // (4)
 
-//!!! ...unfinished... (2023/04/01)
         if ( currentIndex < finalIndex )
           throw Error( `ValueDesc.StartStopState.determine_byCurrentFinal(): `
             + `when finalIndex ( ${finalIndex} ) is not undefined, `
