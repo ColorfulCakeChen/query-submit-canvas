@@ -33,13 +33,15 @@ class StartStopState extends Int {
    * increased by one before every time an async generator yield.
    *   - undefined:     not yet started,  if ( finalIndex == undefined ).
    *   - undefined:     illegal,          if ( finalIndex != undefined ).
+   *
    *   - <  0 or NaN:   illegal,          if ( finalIndex == undefined ).
    *   - == 0:          starting,         if ( finalIndex == undefined ).
    *   - >  0:          started,          if ( finalIndex == undefined ).
    *
+   *   -  < finalIndex: illegal,          if ( finalIndex != undefined ).
    *   - == finalIndex: stopping,         if ( finalIndex != undefined ).
    *   -  > finalIndex: stopped,          if ( finalIndex != undefined ).
-   * 
+   *
    *   - >  0: started,  if ( finalIndex == undefined ).
    *   - >  0: illegal,  if ( finalIndex != undefined ).
    *   - >  0: started,  if ( finalIndex != undefined ).
