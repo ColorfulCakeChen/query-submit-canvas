@@ -31,13 +31,15 @@ class StartStopState extends Int {
    * @param {number} currentIndex
    *   An integer representing current index. For example, it could be
    * increased by one before every time an async generator yield.
-   *   - undefined: not yet started,  if ( finalIndex == undefined ).
-   *   - undefined: illegal,          if ( finalIndex != undefined ).
-   *   - <  0:      illegal,          if ( finalIndex == undefined ).
-   *   - == 0:      starting,         if ( finalIndex == undefined ).
-   *   - >  0:      started,          if ( finalIndex == undefined ).
-   * !!!
-   *   - == 0:      starting,         if ( finalIndex != 0 ).
+   *   - undefined:     not yet started,  if ( finalIndex == undefined ).
+   *   - undefined:     illegal,          if ( finalIndex != undefined ).
+   *   - <  0 or NaN:   illegal,          if ( finalIndex == undefined ).
+   *   - == 0:          starting,         if ( finalIndex == undefined ).
+   *   - >  0:          started,          if ( finalIndex == undefined ).
+   *
+   *   - == finalIndex: stopping,         if ( finalIndex != undefined ).
+   *   -  > finalIndex: stopped,          if ( finalIndex != undefined ).
+   * 
    *   - >  0: started,  if ( finalIndex == undefined ).
    *   - >  0: illegal,  if ( finalIndex != undefined ).
    *   - >  0: started,  if ( finalIndex != undefined ).
@@ -64,49 +66,50 @@ class StartStopState extends Int {
    */
   static determine_byCurrentFinal( currentIndex, finalIndex ) {
 
-    if ( currentIndex == undefined ) {
+    if ( currentIndex == undefined ) { // 1.
 
-      if ( finalIndex == undefined ) {
+      if ( finalIndex == undefined ) { // 1.1
         return StartStopState.Singleton.Ids.NOT_YET_STARTED; // (0)
 
-      } else {
+      } else { // 1.2
         throw Error( `ValueDesc.StartStopState.determine_byCurrentFinal(): `
           + `finalIndex ( ${finalIndex} ) should also be undefined `
           + `when currentIndex ( ${currentIndex} ) is undefined.`
         );
       }
 
-    } else { // ( currentIndex != undefined )
+    } else { // 2. ( currentIndex != undefined )
 
-      if ( finalIndex == undefined ) {
+      if ( finalIndex == undefined ) { // 2.1
 
-        if ( currentIndex == 0 )
+        if ( currentIndex == 0 ) // 2.1.1
           return StartStopState.Singleton.Ids.STARTING; // (1)
 
-        if ( currentIndex > 0 )
+        if ( currentIndex > 0 ) // 2.1.2
           return StartStopState.Singleton.Ids.STARTED; // (2)
 
-        // ( currentIndex < 0 ) or NaN
+        // 2.1.3 ( currentIndex < 0 ) or Number.isNaN( currentIndex )
         throw Error( `ValueDesc.StartStopState.determine_byCurrentFinal(): `
           + `when finalIndex ( ${finalIndex} ) is undefined, `
           + `currentIndex ( ${currentIndex} ) should be either `
           + `equal or greater than 0.`
         );
 
-      } else {
+      } else { // 2.2 ( finalIndex != undefined )
 
-        if ( currentIndex == finalIndex )
+        if ( currentIndex == finalIndex ) // 2.2.1
           return StartStopState.Singleton.Ids.STOPPING; // (3)
 
-        if ( currentIndex > finalIndex )
+        if ( currentIndex > finalIndex ) // 2.2.2
           return StartStopState.Singleton.Ids.STOPPED; // (4)
 
-        if ( currentIndex < finalIndex )
-          throw Error( `ValueDesc.StartStopState.determine_byCurrentFinal(): `
-            + `when finalIndex ( ${finalIndex} ) is not undefined, `
-            + `currentIndex ( ${currentIndex} ) should be either `
-            + `equal or greater than finalIndex.`
-          );
+        // 2.2.3 ( currentIndex < finalIndex )
+        //       or Number.isNaN( currentIndex ) or Number.isNaN( finalIndex )
+        throw Error( `ValueDesc.StartStopState.determine_byCurrentFinal(): `
+          + `when finalIndex ( ${finalIndex} ) is not undefined, `
+          + `currentIndex ( ${currentIndex} ) should be either `
+          + `equal or greater than finalIndex.`
+        );
       }
 
     }
