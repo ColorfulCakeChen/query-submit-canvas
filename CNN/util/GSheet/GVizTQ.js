@@ -103,8 +103,11 @@ import * as ValueMax from "../ValueMax.js";
  *   The current (or last) fetcher of the http request. It could be used to
  * call .abort().
  *
- * @member {boolean} retryWaitingTimer_isCounting
- *   If true, the .httpRequestFetcher now is during retry waiting.
+ * @member {number} retryWaitingingCurrentFinalState
+ *   The start-stop state of retry waiting.
+ * ValueDesc.CurrentFinalState.Singleton.Ids.Xxx according to
+ * .httpRequestFetcher.retryWaitingingYieldIdCurrent and
+ * .httpRequestFetcher.retryWaitingingYieldIdFinal.
  *
  * @member {boolean} bAbort
  *   If true, it means .abort() is called.
@@ -328,10 +331,10 @@ class GVizTQ_UrlComposer
     }
   }
 
-  get retryWaitingTimer_isCounting() {
+  get retryWaitingCurrentFinalState() {
     if ( this.httpRequestFetcher )
-      return this.httpRequestFetcher.retryWaitingTimer_isCounting;
-    return false;
+      return this.httpRequestFetcher.retryWaitingCurrentFinalState;
+    return undefined;
   }
 
   /**

@@ -74,7 +74,8 @@ import { Params_loading_retryWaiting as HttpRequest_Params_loading_retryWaiting 
  * It is either undefined or 0 or positive.
  *
  * @member {number} loadingCurrentFinalState
- *   One of ValueDesc.CurrentFinalState.Singleton.Ids.Xxx according to
+ *   The start-stop state of loading.
+ * ValueDesc.CurrentFinalState.Singleton.Ids.Xxx according to
  * .loadingYieldIdCurrent and .loadingYieldIdFinal.
  *
  *
@@ -87,7 +88,8 @@ import { Params_loading_retryWaiting as HttpRequest_Params_loading_retryWaiting 
  * It is either undefined or 0 or positive.
  *
  * @member {number} retryWaitingingCurrentFinalState
- *   One of ValueDesc.CurrentFinalState.Singleton.Ids.Xxx according to
+ *   The start-stop state of retry waiting.
+ * ValueDesc.CurrentFinalState.Singleton.Ids.Xxx according to
  * .retryWaitingingYieldIdCurrent and .retryWaitingingYieldIdFinal.
  *
  *
@@ -232,25 +234,27 @@ class HttpRequest_Fetcher
     return false;
   }
 
-  /**
-   * @return {boolean}
-   *   Return true, if ( .loadingTimer_isUsed == true ) and ( now is during
-   * loading ).
-   */
-  get loadingTimer_isCounting() {
-    if ( this.loadingTimerPromise )
-      return true;
-    return false;
-  }
+//!!! (2023/04/01 Remarked) Use .loadingCurrentFinalState instead.
+//   /**
+//    * @return {boolean}
+//    *   Return true, if ( .loadingTimer_isUsed == true ) and ( now is during
+//    * loading ).
+//    */
+//   get loadingTimer_isCounting() {
+//     if ( this.loadingTimerPromise )
+//       return true;
+//     return false;
+//   }
 
-  /**
-   * @return {boolean} Return true, if now is during retry waiting.
-   */
-  get retryWaitingTimer_isCounting() {
-    if ( this.retryWaitingTimerPromise )
-      return true;
-    return false;
-  }
+//!!! (2023/04/01 Remarked) Use .retryWaitingCurrentFinalState instead.
+//   /**
+//    * @return {boolean} Return true, if now is during retry waiting.
+//    */
+//   get retryWaitingTimer_isCounting() {
+//     if ( this.retryWaitingTimerPromise )
+//       return true;
+//     return false;
+//   }
 
 
   /** @return {boolean} Return true, if not yet reach maximum retry times. */
