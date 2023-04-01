@@ -902,6 +902,7 @@ class HttpRequest_Fetcher
     if ( this.bLogEventToConsole )
       console.warn( `( ${this.url} ) HttpRequest_Fetcher: abort: `
         + `${HttpRequest_Fetcher.ProgressEvent_toString( progressEvent )}, `
+        + `${HttpRequest_Fetcher.loadingYieldId_toString()}, `
         + `progressLoading=${this.progressLoading.valuePercentage}%` );
 
     reject( progressEvent );
@@ -925,6 +926,7 @@ class HttpRequest_Fetcher
     if ( this.bLogEventToConsole )
       console.warn( `( ${this.url} ) HttpRequest_Fetcher: error: `
         + `${HttpRequest_Fetcher.ProgressEvent_toString( progressEvent )}, `
+        + `${HttpRequest_Fetcher.loadingYieldId_toString()}, `
         + `progressLoading=${this.progressLoading.valuePercentage}%` );
 
     reject( progressEvent );
@@ -952,6 +954,7 @@ class HttpRequest_Fetcher
       logMsg = `( ${this.url} ) HttpRequest_Fetcher: load: `
         + `${HttpRequest_Fetcher.ProgressEvent_toString( progressEvent )}, `
         + `status=${xhr.status}, statusText=\"${xhr.statusText}\", `
+        + `${HttpRequest_Fetcher.loadingYieldId_toString()}, `
         + `progressLoading=${this.progressLoading.valuePercentage}%`;
 
     if ( xhr.status === 200 ) {
@@ -991,6 +994,7 @@ class HttpRequest_Fetcher
     if ( this.bLogEventToConsole )
       console.log( `( ${this.url} ) HttpRequest_Fetcher: loadstart: `
         + `${HttpRequest_Fetcher.ProgressEvent_toString( progressEvent )}, `
+        + `${HttpRequest_Fetcher.loadingYieldId_toString()}, `
         + `progressLoading=${this.progressLoading.valuePercentage}%` );
 
     resolve( this.progressRoot );
@@ -1013,6 +1017,7 @@ class HttpRequest_Fetcher
     if ( this.bLogEventToConsole )
       console.log( `( ${this.url} ) HttpRequest_Fetcher: progress: `
         + `${HttpRequest_Fetcher.ProgressEvent_toString( progressEvent )}, `
+        + `${HttpRequest_Fetcher.loadingYieldId_toString()}, `
         + `progressLoading=${this.progressLoading.valuePercentage}%` );
 
     resolve( this.progressRoot );
@@ -1044,6 +1049,7 @@ class HttpRequest_Fetcher
     if ( this.bLogEventToConsole )
       console.warn( `( ${this.url} ) HttpRequest_Fetcher: timeout: `
         + `${HttpRequest_Fetcher.ProgressEvent_toString( progressEvent )}, `
+        + `${HttpRequest_Fetcher.loadingYieldId_toString()}, `
         + `progressLoading=${this.progressLoading.valuePercentage}%` );
 
     reject( progressEvent );
@@ -1079,6 +1085,7 @@ class HttpRequest_Fetcher
     // 3.
     if ( this.bLogEventToConsole )
       console.log( `( ${this.url} ) HttpRequest_Fetcher: loadingTimer: `
+        + `${HttpRequest_Fetcher.loadingYieldId_toString()}, `
         + `loadingMillisecondsCur=${this.loadingMillisecondsCur}, `
         + `loadingMillisecondsMax=${this.loadingMillisecondsMax}, `
         + `progressLoading=${this.progressLoading.valuePercentage}%` );
@@ -1249,14 +1256,7 @@ class HttpRequest_Fetcher
   }
 
 
-
-//!!! ...unfinished... (2023/04/01) add to log
-// this.loadingYieldIdCurrent
-// this.loadingYieldIdFinal
-// this.loadingCurrentFinalState_NameWithInt
-
   /**
-   *
    * @param {HttpRequest_Fetcher} this
    */
   static retryWaiting_log( phaseString ) {
@@ -1266,11 +1266,7 @@ class HttpRequest_Fetcher
     console.log( `( ${this.url} ) HttpRequest_Fetcher: `
       + `retryWaitingTimer: ${phaseString}: `
       + `retryTimesCur=${this.retryTimesCur}, `
-
-      + `retryWaitingYieldIdCurrent=${this.retryWaitingYieldIdCurrent}, `
-      + `retryWaitingYieldIdFinal=${this.retryWaitingYieldIdFinal}, `
-      + `retryWaitingCurrentFinalState=${this.retryWaitingCurrentFinalState_NameWithInt}, `
-
+      + `${HttpRequest_Fetcher.retryWaitingYieldId_toString()}, `
       + `retryWaitingMillisecondsCur=${this.retryWaitingMillisecondsCur}, `
       + `retryWaitingMillisecondsMax=${this.retryWaitingMillisecondsMax}, `
       + `progressRetryWaiting=${this.progressRetryWaiting.valuePercentage}%`
@@ -1303,6 +1299,30 @@ class HttpRequest_Fetcher
   static ProgressEvent_toString( progressEvent ) {
     let str = `lengthComputable=${progressEvent.lengthComputable}, `
       + `loaded=${progressEvent.loaded}, total=${progressEvent.total}`;
+    return str;
+  }
+
+  /**
+   * @param {HttpRequest_Fetcher} this
+   */
+  static loadingYieldId_toString() {
+    let str =
+        `loadingYieldIdCurrent=${this.loadingYieldIdCurrent}, `
+      + `loadingYieldIdFinal=${this.loadingYieldIdFinal}, `
+      + `loadingCurrentFinalState=${this.loadingCurrentFinalState_NameWithInt}`
+      ;
+    return str;
+  }
+
+  /**
+   * @param {HttpRequest_Fetcher} this
+   */
+  static retryWaitingYieldId_toString() {
+    let str =
+        `retryWaitingYieldIdCurrent=${this.retryWaitingYieldIdCurrent}, `
+      + `retryWaitingYieldIdFinal=${this.retryWaitingYieldIdFinal}, `
+      + `retryWaitingCurrentFinalState=${this.retryWaitingCurrentFinalState_NameWithInt}`
+      ;
     return str;
   }
 
