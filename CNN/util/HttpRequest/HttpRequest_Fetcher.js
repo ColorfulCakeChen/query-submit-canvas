@@ -73,9 +73,9 @@ import { Params_loading_retryWaiting as HttpRequest_Params_loading_retryWaiting 
  *   An integer recording the final yield id of .load_asyncGenerator().
  * It is either undefined or 0 or positive.
  *
- * @member {number} loadingCurrentFinalState
+ * @member {number} loadingStartStopState
  *   The start-stop state of loading.
- * ValueDesc.CurrentFinalState.Singleton.Ids.Xxx according to
+ * ValueDesc.StartStopState.Singleton.Ids.Xxx according to
  * .loadingYieldIdCurrent and .loadingYieldIdFinal.
  *
  *
@@ -87,9 +87,9 @@ import { Params_loading_retryWaiting as HttpRequest_Params_loading_retryWaiting 
  *   An integer recording the final yield id of .retryWaiting_asyncGenerator().
  * It is either undefined or 0 or positive.
  *
- * @member {number} retryWaitingingCurrentFinalState
+ * @member {number} retryWaitingingStartStopState
  *   The start-stop state of retry waiting.
- * ValueDesc.CurrentFinalState.Singleton.Ids.Xxx according to
+ * ValueDesc.StartStopState.Singleton.Ids.Xxx according to
  * .retryWaitingingYieldIdCurrent and .retryWaitingingYieldIdFinal.
  *
  *
@@ -208,32 +208,32 @@ class HttpRequest_Fetcher
   }
 
 
-  get loadingCurrentFinalState() {
-    let nCurrentFinalState
-      = ValueDesc.CurrentFinalState.Singleton.determine_byCurrentFinal(
+  get loadingStartStopState() {
+    let nStartStopState
+      = ValueDesc.StartStopState.Singleton.determine_byCurrentFinal(
           this.loadingYieldIdCurrent, this.loadingYieldIdFinal );
-    return nCurrentFinalState;
+    return nStartStopState;
   }
 
-  get loadingCurrentFinalState_NameWithInt() {
-    let strCurrentFinalState
-      = ValueDesc.CurrentFinalState.Singleton.getNameWithInt_byId(
-          this.loadingCurrentFinalState );
-    return strCurrentFinalState;
+  get loadingStartStopState_NameWithInt() {
+    let strStartStopState
+      = ValueDesc.StartStopState.Singleton.getNameWithInt_byId(
+          this.loadingStartStopState );
+    return strStartStopState;
   }
 
-  get retryWaitingCurrentFinalState() {
-    let nCurrentFinalState
-      = ValueDesc.CurrentFinalState.Singleton.determine_byCurrentFinal(
+  get retryWaitingStartStopState() {
+    let nStartStopState
+      = ValueDesc.StartStopState.Singleton.determine_byCurrentFinal(
           this.retryWaitingYieldIdCurrent, this.retryWaitingYieldIdFinal );
-    return nCurrentFinalState;
+    return nStartStopState;
   }
 
-  get retryWaitingCurrentFinalState_NameWithInt() {
-    let strCurrentFinalState
-      = ValueDesc.CurrentFinalState.Singleton.getNameWithInt_byId(
-          this.retryWaitingCurrentFinalState );
-    return strCurrentFinalState;
+  get retryWaitingStartStopState_NameWithInt() {
+    let strStartStopState
+      = ValueDesc.StartStopState.Singleton.getNameWithInt_byId(
+          this.retryWaitingStartStopState );
+    return strStartStopState;
   }
 
 
@@ -248,7 +248,7 @@ class HttpRequest_Fetcher
     return false;
   }
 
-//!!! (2023/04/01 Remarked) Use .loadingCurrentFinalState instead.
+//!!! (2023/04/01 Remarked) Use .loadingStartStopState instead.
 //   /**
 //    * @return {boolean}
 //    *   Return true, if ( .loadingTimer_isUsed == true ) and ( now is during
@@ -260,7 +260,7 @@ class HttpRequest_Fetcher
 //     return false;
 //   }
 
-//!!! (2023/04/01 Remarked) Use .retryWaitingCurrentFinalState instead.
+//!!! (2023/04/01 Remarked) Use .retryWaitingStartStopState instead.
 //   /**
 //    * @return {boolean} Return true, if now is during retry waiting.
 //    */
@@ -1309,7 +1309,7 @@ class HttpRequest_Fetcher
     let str =
         `loadingYieldIdCurrent=${this.loadingYieldIdCurrent}, `
       + `loadingYieldIdFinal=${this.loadingYieldIdFinal}, `
-      + `loadingCurrentFinalState=${this.loadingCurrentFinalState_NameWithInt}`
+      + `loadingStartStopState=${this.loadingStartStopState_NameWithInt}`
       ;
     return str;
   }
@@ -1321,7 +1321,7 @@ class HttpRequest_Fetcher
     let str =
         `retryWaitingYieldIdCurrent=${this.retryWaitingYieldIdCurrent}, `
       + `retryWaitingYieldIdFinal=${this.retryWaitingYieldIdFinal}, `
-      + `retryWaitingCurrentFinalState=${this.retryWaitingCurrentFinalState_NameWithInt}`
+      + `retryWaitingStartStopState=${this.retryWaitingStartStopState_NameWithInt}`
       ;
     return str;
   }

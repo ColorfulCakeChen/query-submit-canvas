@@ -82,15 +82,15 @@ import * as ValueMax from "../ValueMax.js";
  *   The current (or last) fetcher of the http request. It could be used to
  * call .abort().
  *
- * @member {number} loadingCurrentFinalState
+ * @member {number} loadingStartStopState
  *   The start-stop state of retry waiting.
- * ValueDesc.CurrentFinalState.Singleton.Ids.Xxx according to
+ * ValueDesc.StartStopState.Singleton.Ids.Xxx according to
  * .httpRequestFetcher.loadingYieldIdCurrent and
  * .httpRequestFetcher.loadingYieldIdFinal.
  *
- * @member {number} retryWaitingingCurrentFinalState
+ * @member {number} retryWaitingingStartStopState
  *   The start-stop state of retry waiting.
- * ValueDesc.CurrentFinalState.Singleton.Ids.Xxx according to
+ * ValueDesc.StartStopState.Singleton.Ids.Xxx according to
  * .httpRequestFetcher.retryWaitingingYieldIdCurrent and
  * .httpRequestFetcher.retryWaitingingYieldIdFinal.
  *
@@ -280,15 +280,15 @@ class GSheetsAPIv4_UrlComposer
     }
   }
 
-  get loadingCurrentFinalState() {
+  get loadingStartStopState() {
     if ( this.httpRequestFetcher )
-      return this.httpRequestFetcher.loadingCurrentFinalState;
+      return this.httpRequestFetcher.loadingStartStopState;
     return undefined;
   }
 
-  get retryWaitingCurrentFinalState() {
+  get retryWaitingStartStopState() {
     if ( this.httpRequestFetcher )
-      return this.httpRequestFetcher.retryWaitingCurrentFinalState;
+      return this.httpRequestFetcher.retryWaitingStartStopState;
     return undefined;
   }
 
