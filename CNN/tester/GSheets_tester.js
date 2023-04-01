@@ -435,7 +435,9 @@ class TestCase {
     // 1. phase changes from loading to retry waiting.
     if ( bRetryWaitingCurrent ) {
 
-      // In fact, both .value and .max are 0.
+      // 1.1
+
+      // 1.1.1 In fact, both .value and .max are 0.
       if ( 100 !== progressLoading.valuePercentage )
         throw Error( `GSheets_tester.TestCase`
           + `.${funcNameInMessage}(): testCaseId=${this.testCaseId}, `
@@ -445,7 +447,7 @@ class TestCase {
           + `should be 100.` );
 
 //!!! ...unfinished... (2023/03/31) sure? When become .valuePercentage 0?
-      // i.e., .valuePercentage 100.
+      // 1.1.2 i.e., .valuePercentage 100.
       if (   ( 0 !== progressLoading.value )
           || ( 0 !== progressLoading.max ) )
         throw Error( `GSheets_tester.TestCase`
@@ -455,13 +457,14 @@ class TestCase {
           + `.progressLoading.max ( ${progressLoading.max} ) `
           + `should be 0.` );
 
-      if ( 100 !== progressRetryWaiting.valuePercentage )
+      // 1.2
+      if ( 0 !== progressRetryWaiting.valuePercentage )
         throw Error( `GSheets_tester.TestCase`
           + `.${funcNameInMessage}(): testCaseId=${this.testCaseId}, `
           + `When phase changes from loading to retry waiting, `
           + `.progressRetryWaiting.valuePercentage ( `
           + `${progressRetryWaiting.valuePercentage} ) `
-          + `should be 100.` );
+          + `should be 0.` );
 
     // 2. phase changes from retry waiting to loading.
     } else {
