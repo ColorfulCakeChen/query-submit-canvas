@@ -19,37 +19,15 @@ class CurrentFinalState extends Int {
     super( 0, 4,
       {
         NOT_YET_STARTED: new Int.Info( 0, "NOT_YET_STARTED" ),
-        STARTING: new Int.Info( 1, "STARTING" ),
-        STARTED: new Int.Info( 2, "STARTED" ),
-        STOPPING: new Int.Info( 3, "STOPPING" ),
-        NOT_YET_STARTED: new Int.Info( 0, "NOT_YET_STARTED" ),
+        STARTING:        new Int.Info( 1, "STARTING" ),
+        STARTED:         new Int.Info( 2, "STARTED" ),
+        STOPPING:        new Int.Info( 3, "STOPPING" ),
+        STOPPED:         new Int.Info( 4, "STOPPED" ),
       }
     );
-
   }
 
 }
 
-/**
- *
- * @member {number} nPassThroughStyleId
- *   The pass-through style id (ValueDesc.PassThroughStyle.Singleton.Ids.Xxx).
- *
- * @member {number} filterValue
- *   The convolution filter value for the pass-through style.
- *
- * @member {number} biasValue
- *   The convolution bias value for the pass-through style.
- *
- */
-PassThroughStyle.Info = class PassThroughStyle_Info extends Int.Info {
-
-  constructor( nPassThroughStyleId, nameForMessage, filterValue, biasValue ) {
-    super( nPassThroughStyleId, nameForMessage );
-    this.filterValue = filterValue;
-    this.biasValue = biasValue;
-  }
-}
-
-/** The only one ValueDesc.PassThroughStyle instance. */
-PassThroughStyle.Singleton = new PassThroughStyle;
+/** The only one ValueDesc.CurrentFinalState instance. */
+CurrentFinalState.Singleton = new CurrentFinalState;
