@@ -44,7 +44,8 @@ class StartStopState extends Int {
    *   - >  finalIndex: stopped,          if ( finalIndex != undefined ).
    *
    * @param {number} finalIndex
-   *   An integer recording the stopping index.
+   *   An integer recording the stopping index. For example, it could be
+   * the current index when an async generator yield last times.
    *   - If undefined, either not yet started or starting or started.
    *   - If defined, either stopping or stopped.
    *
