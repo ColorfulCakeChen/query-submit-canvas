@@ -799,7 +799,7 @@ class HttpRequest_Fetcher
       {
         ++this.retryWaitingYieldIdCurrent; // started.
         this.retryWaitingYieldIdFinal = this.retryWaitingYieldIdCurrent; // stopping.
-      yield this.progressRoot;
+        yield this.progressRoot;
       }
 
       ++this.retryWaitingYieldIdCurrent; // stopped.
