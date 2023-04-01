@@ -33,7 +33,9 @@ class StartStopState extends Int {
    * increased by one before every time an async generator yield.
    *   - undefined: not yet started,  if ( finalIndex == undefined ).
    *   - undefined: illegal,          if ( finalIndex != undefined ).
-   *   - == 0: starting, if ( finalIndex != 0 ).
+   *   - == 0:      starting,         if ( finalIndex == undefined ).
+   * !!!
+   *   - == 0:      starting,         if ( finalIndex != 0 ).
    *   - >  0: started,  if ( finalIndex == undefined ).
    *   - >  0: illegal,  if ( finalIndex != undefined ).
    *   - >  0: started,  if ( finalIndex != undefined ).
@@ -78,8 +80,16 @@ class StartStopState extends Int {
 
         if ( currentIndex == 0 )
           return StartStopState.Singleton.Ids.STARTING; // (1)
-        else
+
+        if ( currentIndex > 0 )
           return StartStopState.Singleton.Ids.STARTED; // (2)
+
+        // ( currentIndex < 0 ) or NaN
+        throw Error( `ValueDesc.StartStopState.determine_byCurrentFinal(): `
+          + `when finalIndex ( ${finalIndex} ) is undefined, `
+          + `currentIndex ( ${currentIndex} ) should be either `
+          + `equal or greater than 0.`
+        );
 
       } else {
 
