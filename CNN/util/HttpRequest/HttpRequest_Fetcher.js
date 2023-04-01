@@ -650,22 +650,27 @@ class HttpRequest_Fetcher
       xhr.abort();
     }
 
-    // 1.4 Until done or failed.
+    // 2. Until done or failed.
     let notDone;
     do {
 
-      // All succeeded promises resolve to progressRoot.
-      //   - Except .loadingTimerPromise resolved to .handle_loadingTimer
-      //
-      // All failed promises reject to (i.e. throw exception of) ProgressEvent.
-      let progressRoot__or__handle_loadingTimer = await allPromiseRace;
+      // 2.1 Wait event happened and adjust .allPromiseSet by itself.
+      {
+        // All succeeded promises resolve to progressRoot.
+        //   - Except .loadingTimerPromise resolved to .handle_loadingTimer
+        //
+        // All failed promises reject to (i.e. throw exception of) ProgressEvent.
+        let progressRoot__or__handle_loadingTimer = await allPromiseRace;
 
-      // .loadingTimerPromise resolved.
-      if ( progressRoot__or__handle_loadingTimer
-             === HttpRequest_Fetcher.handle_loadingTimer ) {
-        HttpRequest_Fetcher.handle_loadingTimer.call( this );
+        // .loadingTimerPromise resolved.
+        if ( progressRoot__or__handle_loadingTimer
+              === HttpRequest_Fetcher.handle_loadingTimer ) {
+          HttpRequest_Fetcher.handle_loadingTimer.call( this );
+        }
       }
 
+      // 2.2 According adjusted .allPromiseSet to determine whether is done. 
+      //
       // Not done, if:
       //   - ( .loadPromise still pending (i.e. still in waiting promises) ).
       //
@@ -676,6 +681,7 @@ class HttpRequest_Fetcher
       //
       notDone = ( this.allPromiseSet.has( this.loadPromise ) );
 
+      // 2.3 Report progress.
       {
         ++this.loadingYieldIdCurrent; // started.
         if ( !notDone )
@@ -684,7 +690,8 @@ class HttpRequest_Fetcher
         yield this.progressRoot;
       }
 
-      if ( notDone ) // Continue to listen.
+      // 2.4 Continue to listen.
+      if ( notDone )
         allPromiseRace = Promise.race( this.allPromiseSet );
 
     // Stop if loading completely and successfully.
@@ -693,9 +700,10 @@ class HttpRequest_Fetcher
     //       the pending promises rejected).
     } while ( notDone );
 
+    // 2.5
     ++this.loadingYieldIdCurrent; // stopped.
 
-    // 2. 
+    // 3. 
     // (2023/02/15) For debug.
     // (When execution to here, the request should have finished successfully.)
     {
@@ -703,7 +711,7 @@ class HttpRequest_Fetcher
       // If .abort() is called, xhr.status will be changed (from 200) to 0 even
       // if loading is succeeded. So, do not check xhr.status whether 200.
       //
-      // // 2.1
+      // // 3.1
       // if ( 200 !== xhr.status ) {
       //   //debugger;
       //   throw Error( `( ${this.url} ) HttpRequest_Fetcher`
@@ -712,7 +720,7 @@ class HttpRequest_Fetcher
       //     + `xhr.status ( ${xhr.status} ) should be 200.` );
       // }
 
-      // 2.2
+      // 3.2
       if ( 100 != this.progressLoading.valuePercentage ) {
         //debugger;
         throw Error( `( ${this.url} ) HttpRequest_Fetcher`
@@ -723,7 +731,7 @@ class HttpRequest_Fetcher
       }
     }
 
-    // 3. Return the successfully downloaded result.
+    // 4. Return the successfully downloaded result.
     return xhr.response;
   }
 
