@@ -634,25 +634,28 @@ class HttpRequest_Fetcher
       allPromiseRace = Promise.race( this.allPromiseSet );
     }
 
-    // 1.3
-    xhr.send( this.body );
-
-    // Abort immediately if caller requests. (For example,
-    // HttpRequest_Fetcher.abort() may be called during retry waiting.)
-    //
-    // Note: Calling xhr.abort() only has effect after xhr.send(). Calling
-    //       xhr.abort() before xhr.send() has no effect.
-    //
-    if ( this.bAbort ) {
-      xhr.abort();
-    }
-
-    // 2. Until done or failed.
     try {
+      // 2.
+      //
+//!!! ...unfinished... (2023/04/02)
+      // Note: .send() seems possible throw exception. Place it inside try-catch.
+      xhr.send( this.body );
+
+      // Abort immediately if caller requests. (For example,
+      // HttpRequest_Fetcher.abort() may be called during retry waiting.)
+      //
+      // Note: Calling xhr.abort() only has effect after xhr.send(). Calling
+      //       xhr.abort() before xhr.send() has no effect.
+      //
+      if ( this.bAbort ) {
+        xhr.abort();
+      }
+
+      // 3. Until done or failed.
       let notDone;
       do {
 
-        // 2.1 Wait event happened and adjust .allPromiseSet by itself.
+        // 3.1 Wait event happened and adjust .allPromiseSet by itself.
         //
         // All succeeded promises resolve to progressRoot.
         //   - Except .loadingTimerPromise resolved to .handle_loadingTimer
@@ -660,7 +663,7 @@ class HttpRequest_Fetcher
         // All failed promises reject to (i.e. throw exception of) ProgressEvent.
         let progressRoot__or__handle_loadingTimer = await allPromiseRace;
 
-        // 2.2 Determine whether is done according to .allPromiseSet.
+        // 3.2 Determine whether is done according to .allPromiseSet.
         //
         // Not done, if:
         //   - ( .loadPromise still pending (i.e. still in waiting promises) ).
@@ -672,16 +675,10 @@ class HttpRequest_Fetcher
         //
         notDone = ( this.allPromiseSet.has( this.loadPromise ) );
 
-  //!!! ...unfinished... (2023/04/01)
-  // It seems possible loading timer triggerred after progressLoading 100
-  // (by load event). And then, loading timer ruin the progressLoading
-  // (e.g. .loadingMillisecondsCur=500, .loadingMillisecondsMax=6000,
-  // progressLoading=0.04997810958800046%)
-
-        // 2.3
+        // 3.3
         if ( notDone ) {
 
-          // 2.3.1 If not done, handle loading timer.
+          // 3.3.1 If not done, handle loading timer.
           //
           // Note: If done, do not handle loading timer. Otherwise, the
           //       progressLoading 100 (e.g. by load event) may be destroyed by
@@ -692,7 +689,7 @@ class HttpRequest_Fetcher
             HttpRequest_Fetcher.handle_loadingTimer.call( this );
           }
 
-          // 2.3.2 If not done, continue to listen them.
+          // 3.3.2 If not done, continue to listen them.
           //
           // Note: The .allPromiseSet should be used before yield. Otherwise,
           //       some events may be resolved (and change .allPromiseSet)
@@ -700,7 +697,7 @@ class HttpRequest_Fetcher
           allPromiseRace = Promise.race( this.allPromiseSet );
         }
 
-        // 2.4 Report progress.
+        // 3.4 Report progress.
         {
           ++this.loadingYieldIdCurrent; // started.
           if ( !notDone )
@@ -716,17 +713,16 @@ class HttpRequest_Fetcher
       } while ( notDone );
 
     } catch ( e ) {
-      // 2.5 (e.g. abort, error, timeout, ...)
+      // 3.5 (e.g. abort, error, timeout, ...)
       this.loadingYieldIdFinal = this.loadingYieldIdCurrent; // stopping.
       throw e;
 
     } finally {
-      // 2.6 Ensure stopped even if exception.
+      // 3.6 Ensure stopped even if exception.
       ++this.loadingYieldIdCurrent; // stopped.
     }
 
-
-    // 3. 
+    // 4. 
     // (2023/02/15) For debug.
     // (When execution to here, the request should have finished successfully.)
     {
@@ -734,7 +730,7 @@ class HttpRequest_Fetcher
       // If .abort() is called, xhr.status will be changed (from 200) to 0 even
       // if loading is succeeded. So, do not check xhr.status whether 200.
       //
-      // // 3.1
+      // // 4.1
       // if ( 200 !== xhr.status ) {
       //   //debugger;
       //   throw Error( `HttpRequest_Fetcher.load_asyncGenerator(): `
@@ -742,7 +738,7 @@ class HttpRequest_Fetcher
       //     + `xhr.status ( ${xhr.status} ) should be 200.` );
       // }
 
-      // 3.2
+      // 4.2
       if ( 100 != this.progressLoading.valuePercentage ) {
         //debugger;
         throw Error( `HttpRequest_Fetcher.load_asyncGenerator(): `
@@ -752,7 +748,7 @@ class HttpRequest_Fetcher
       }
     }
 
-    // 4. Return the successfully downloaded result.
+    // 5. Return the successfully downloaded result.
     return xhr.response;
   }
 
