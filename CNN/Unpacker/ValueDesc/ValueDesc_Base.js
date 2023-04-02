@@ -17,7 +17,7 @@ class Same {
 
   /** @return {string} Return the string value. */
   getName_byId( value ) {
-    return String( value );
+    return String( value ); // workable even if undefined, null, NaN, Infinity.
   }
 }
 
