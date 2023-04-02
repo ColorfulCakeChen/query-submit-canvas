@@ -822,10 +822,21 @@ class HttpRequest_Fetcher
     try {
       let notDone;
       do {
-        // 2.1 All succeeded promises resolve to progressRoot.
-        let progressRoot = await this.retryWaitingTimerPromise;
 
-        HttpRequest_Fetcher.handle_retryWaitingTimer.call( this );
+        // 2.1
+        //
+        // During the yield (before the end of this do-while loop), the
+        // this.retryWaitingTimerPromise may become null (e.g.
+        // retryWaitingTimer_cancel() is called).
+        //
+        // So, check it before await on it. Otherwise, null will be got.
+        //
+        // Although the promise will resolve to progressRoot, null will be got
+        // if await on null. So, do not rely on it.
+        if ( this.retryWaitingTimerPromise ) {
+          await this.retryWaitingTimerPromise;
+          HttpRequest_Fetcher.handle_retryWaitingTimer.call( this );
+        }
 
         // 2.2
         //
@@ -841,22 +852,8 @@ class HttpRequest_Fetcher
           ++this.retryWaitingYieldIdCurrent; // started.
           if ( !notDone ) // stopping.
             this.retryWaitingYieldIdFinal = this.retryWaitingYieldIdCurrent;
-
-          if ( !progressRoot ) {
-            debugger;
-            throw Error( `HttpRequest_Fetcher.retryWait_asyncGenerator(): `
-            + `progressRoot ( ${progressRoot} ) should be not null.` );
-          }
   
-//!!! ...unfinished... (2023/04/02) seems may got null.
-// Perhaps, use this.progressRoot
-
-!!! ...unfinished... (2023/04/02)
-// During yield, the this.retryWaitingTimerPromise may become null
-// (e.g. retryWaitingTimer_cancel() is called).
-// The next await will on the null and got null.
-
-          yield progressRoot;
+          yield this.progressRoot;
         }
 
       } while ( notDone ); // Stop if retry waiting completely.
