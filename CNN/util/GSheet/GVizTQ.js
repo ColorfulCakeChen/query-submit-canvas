@@ -1,5 +1,6 @@
 export { GVizTQ_UrlComposer as UrlComposer };
 
+import * as ClassHierarchyTools from "../ClassHierarchyTools.js";
 import * as HttpRequest from "../HttpRequest.js";
 import * as NonReentrant from "../NonReentrant.js";
 import * as Pool from "../Pool.js";
