@@ -648,77 +648,83 @@ class HttpRequest_Fetcher
     }
 
     // 2. Until done or failed.
-    let notDone;
-    do {
+    try {
+      let notDone;
+      do {
 
-      // 2.1 Wait event happened and adjust .allPromiseSet by itself.
-      //
-      // All succeeded promises resolve to progressRoot.
-      //   - Except .loadingTimerPromise resolved to .handle_loadingTimer
-      //
-      // All failed promises reject to (i.e. throw exception of) ProgressEvent.
-      let progressRoot__or__handle_loadingTimer = await allPromiseRace;
-
-      // 2.2 Determine whether is done according to .allPromiseSet.
-      //
-      // Not done, if:
-      //   - ( .loadPromise still pending (i.e. still in waiting promises) ).
-      //
-      // Note: If .abort() is called, xhr.status will be changed (from 200)
-      //       to 0 even if loading is succeeded. So,
-      //         - Do not check ( xhr.status !== 200 ).
-      //         - Just check .allPromiseSet.has( .loadPromise ) purely.
-      //
-      notDone = ( this.allPromiseSet.has( this.loadPromise ) );
-
-//!!! ...unfinished... (2023/04/01)
-// It seems possible loading timer triggerred after progressLoading 100
-// (by load event). And then, loading timer ruin the progressLoading
-// (e.g. .loadingMillisecondsCur=500, .loadingMillisecondsMax=6000,
-// progressLoading=0.04997810958800046%)
-
-      // 2.3
-      if ( notDone ) {
-
-        // 2.3.1 If not done, handle loading timer.
+        // 2.1 Wait event happened and adjust .allPromiseSet by itself.
         //
-        // Note: If done, do not handle loading timer. Otherwise, the
-        //       progressLoading 100 (e.g. by load event) may be destroyed by
-        //       loading timer.
-        if ( progressRoot__or__handle_loadingTimer
-              === HttpRequest_Fetcher.handle_loadingTimer ) {
-          // loadingTimerPromise resolved.
-          HttpRequest_Fetcher.handle_loadingTimer.call( this );
+        // All succeeded promises resolve to progressRoot.
+        //   - Except .loadingTimerPromise resolved to .handle_loadingTimer
+        //
+        // All failed promises reject to (i.e. throw exception of) ProgressEvent.
+        let progressRoot__or__handle_loadingTimer = await allPromiseRace;
+
+        // 2.2 Determine whether is done according to .allPromiseSet.
+        //
+        // Not done, if:
+        //   - ( .loadPromise still pending (i.e. still in waiting promises) ).
+        //
+        // Note: If .abort() is called, xhr.status will be changed (from 200)
+        //       to 0 even if loading is succeeded. So,
+        //         - Do not check ( xhr.status !== 200 ).
+        //         - Just check .allPromiseSet.has( .loadPromise ) purely.
+        //
+        notDone = ( this.allPromiseSet.has( this.loadPromise ) );
+
+  //!!! ...unfinished... (2023/04/01)
+  // It seems possible loading timer triggerred after progressLoading 100
+  // (by load event). And then, loading timer ruin the progressLoading
+  // (e.g. .loadingMillisecondsCur=500, .loadingMillisecondsMax=6000,
+  // progressLoading=0.04997810958800046%)
+
+        // 2.3
+        if ( notDone ) {
+
+          // 2.3.1 If not done, handle loading timer.
+          //
+          // Note: If done, do not handle loading timer. Otherwise, the
+          //       progressLoading 100 (e.g. by load event) may be destroyed by
+          //       loading timer.
+          if ( progressRoot__or__handle_loadingTimer
+                === HttpRequest_Fetcher.handle_loadingTimer ) {
+            // loadingTimerPromise resolved.
+            HttpRequest_Fetcher.handle_loadingTimer.call( this );
+          }
+
+          // 2.3.2 If not done, continue to listen them.
+          //
+          // Note: The .allPromiseSet should be used before yield. Otherwise,
+          //       some events may be resolved (and change .allPromiseSet)
+          //       during yield.
+          allPromiseRace = Promise.race( this.allPromiseSet );
         }
 
-        // 2.3.2 If not done, continue to listen them.
-        //
-        // Note: The .allPromiseSet should be used before yield. Otherwise,
-        //       some events may be resolved (and change .allPromiseSet)
-        //       during yield.
-        allPromiseRace = Promise.race( this.allPromiseSet );
-      }
+        // 2.4 Report progress.
+        {
+          ++this.loadingYieldIdCurrent; // started.
+          if ( !notDone )
+            this.loadingYieldIdFinal = this.loadingYieldIdCurrent; // stopping.
 
-      // 2.4 Report progress.
-      {
-        ++this.loadingYieldIdCurrent; // started.
-        if ( !notDone )
-          this.loadingYieldIdFinal = this.loadingYieldIdCurrent; // stopping.
+          yield this.progressRoot;
+        }
 
-        yield this.progressRoot;
-      }
+      // Stop if loading completely and successfully.
+      //
+      // Note: The other ways to leave this loop are throwing exceptions (e.g.
+      //       the pending promises rejected).
+      } while ( notDone );
 
-    // Stop if loading completely and successfully.
-    //
-    // Note: The other ways to leave this loop are throwing exceptions (e.g.
-    //       the pending promises rejected).
-    } while ( notDone );
+    } catch ( e ) {
+      // 2.5 (e.g. abort, error, timeout, ...)
+      this.loadingYieldIdFinal = this.loadingYieldIdCurrent; // stopping.
+      throw e;
 
-!!! ...unfinished... (2023/04/02)
-// Ensure stopped even if exception (e.g. abort, error, timeout, ...).
+    } finally {
+      // 2.6 Ensure stopped even if exception.
+      ++this.loadingYieldIdCurrent; // stopped.
+    }
 
-    // 2.5
-    ++this.loadingYieldIdCurrent; // stopped.
 
     // 3. 
     // (2023/02/15) For debug.
@@ -826,38 +832,43 @@ class HttpRequest_Fetcher
     }
 
     // 2. Until done.
-    let notDone;
-    do {
-      // 2.1 All succeeded promises resolve to progressRoot.
-      let progressRoot = await this.retryWaitingTimerPromise;
+    try {
+      let notDone;
+      do {
+        // 2.1 All succeeded promises resolve to progressRoot.
+        let progressRoot = await this.retryWaitingTimerPromise;
 
-      HttpRequest_Fetcher.handle_retryWaitingTimer.call( this );
+        HttpRequest_Fetcher.handle_retryWaitingTimer.call( this );
 
-      // 2.2
-      //
-      // Not done, if:
-      //   - HttpRequest_Fetcher.abort() is not called.
-      //   - .retryWaitingTimerPromise still exists.
-      //
-      notDone =    ( !this.bAbort )
-                && ( this.retryWaitingTimerPromise );
+        // 2.2
+        //
+        // Not done, if:
+        //   - HttpRequest_Fetcher.abort() is not called.
+        //   - .retryWaitingTimerPromise still exists.
+        //
+        notDone =    ( !this.bAbort )
+                  && ( this.retryWaitingTimerPromise );
 
-      // 2.3 Inform outside caller progress when step retry waiting.
-      {
-        ++this.retryWaitingYieldIdCurrent; // started.
-        if ( !notDone )
-          this.retryWaitingYieldIdFinal = this.retryWaitingYieldIdCurrent;
+        // 2.3 Inform outside caller progress when step retry waiting.
+        {
+          ++this.retryWaitingYieldIdCurrent; // started.
+          if ( !notDone ) // stopping.
+            this.retryWaitingYieldIdFinal = this.retryWaitingYieldIdCurrent;
 
-        yield progressRoot;
-      }
+          yield progressRoot;
+        }
 
-    } while ( notDone ); // Stop if retry waiting completely.
+      } while ( notDone ); // Stop if retry waiting completely.
 
-!!! ...unfinished... (2023/04/02)
-// Ensure stopped even if exception.
+    } catch ( e ) {
+      // 2.4
+      this.retryWaitingYieldIdFinal = this.retryWaitingYieldIdCurrent; // stopping.
+      throw e;
 
-    // 2.4
-    ++this.retryWaitingYieldIdCurrent; // stopped.
+    } finally {
+      // 2.5 Ensure stopped even if exception.
+      ++this.retryWaitingYieldIdCurrent; // stopped.
+    }
 
     return;
   }
