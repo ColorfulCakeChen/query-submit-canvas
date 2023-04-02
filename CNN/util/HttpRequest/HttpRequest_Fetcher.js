@@ -830,9 +830,6 @@ class HttpRequest_Fetcher
         // retryWaitingTimer_cancel() is called).
         //
         // So, check it before await on it. Otherwise, null will be got.
-        //
-        // Although the promise will resolve to progressRoot, null will be got
-        // if await on null. So, do not rely on it.
         if ( this.retryWaitingTimerPromise ) {
           await this.retryWaitingTimerPromise;
           HttpRequest_Fetcher.handle_retryWaitingTimer.call( this );
@@ -853,6 +850,9 @@ class HttpRequest_Fetcher
           if ( !notDone ) // stopping.
             this.retryWaitingYieldIdFinal = this.retryWaitingYieldIdCurrent;
   
+          // Although .retryWaitingTimerPromise will resolve to progressRoot,
+          // null will be got if it has become null (i.e. await on null). So,
+          // do not rely on it. Use this.progressRoot directly instead.
           yield this.progressRoot;
         }
 
