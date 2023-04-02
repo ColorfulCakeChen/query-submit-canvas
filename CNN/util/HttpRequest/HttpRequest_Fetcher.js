@@ -1454,11 +1454,11 @@ class HttpRequest_Fetcher
     classNameInMessage, funcNameInMessage ) {
 
     HttpRequest_Fetcher.throw_if_loadingStartStopState_not.call(
-      this, mostDerivedClassName, funcNameInMessage,
+      this, classNameInMessage, funcNameInMessage,
       ValueDesc.StartStopState.Singleton.Ids.STOPPED );
 
     HttpRequest_Fetcher.throw_if_retryWaitingStartStopState_not.call(
-      this, mostDerivedClassName, funcNameInMessage,
+      this, classNameInMessage, funcNameInMessage,
       ValueDesc.StartStopState.Singleton.Ids.STOPPED );
   }
 
