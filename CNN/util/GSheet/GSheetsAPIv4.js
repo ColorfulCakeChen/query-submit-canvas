@@ -202,6 +202,8 @@ class GSheetsAPIv4_UrlComposer
   static async* JSON_ColumnMajorArrayArray_fetch_asyncGenerator(
     progressParent, params_loading_retryWaiting, delayPromise ) {
 
+    const funcNameInMessage = "JSON_ColumnMajorArrayArray_fetch_asyncGenerator";
+
     let progressRoot = progressParent.root_get();
     let progressFetcher = progressParent.child_add(
       ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
@@ -276,8 +278,19 @@ class GSheetsAPIv4_UrlComposer
 
     } finally {
 
-!!! ...unfinished... (2023/04/02)
-// Ensure httpRequestFetcher's loading and retrtWaiting have state SOPPED.
+      // Check: fetcher's loading and retrtWaiting have state SOPPED.
+      if ( httpRequestFetcher ) {
+        const mostDerivedClassName
+          = ClassHierarchyTools.MostDerived_ClassName_of_Instance( this );
+
+        HttpRequest_Fetcher.throw_if_loadingStartStopState_not.call(
+          httpRequestFetcher, mostDerivedClassName, funcNameInMessage,
+          ValueDesc.StartStopState.Singleton.Ids.STOPPED );
+
+        HttpRequest_Fetcher.throw_if_retryWaitingStartStopState_not.call(
+          httpRequestFetcher, mostDerivedClassName, funcNameInMessage,
+          ValueDesc.StartStopState.Singleton.Ids.STOPPED );
+      }
 
       // Release the fetcher which is used by this async generator.
       if ( this.httpRequestFetcher === httpRequestFetcher )
