@@ -15,6 +15,13 @@ import * as Base64 from "../Base64.js";
 import * as Uint12 from "../Uint12.js";
 import * as Float12_Constant_Coder from "./Float12_Constant_Coder.js";
 
+
+//!!! ...unfinished... (2023/04/02)
+// Perhaps, desgin Float8 (8-bits floating-point number).
+// In server, every 3 Float8 (3 * 8 bits = 24 bits) are encoded
+// as 4 Base64 (4 * 6 bits = 24 bits).
+
+
 /**
  *
  * @param {integer} exponent_signed_corrected_n37_p26
