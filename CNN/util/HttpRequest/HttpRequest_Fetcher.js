@@ -1432,7 +1432,7 @@ class HttpRequest_Fetcher
    */
   static throw_if_loadingStartStopState_not(
     classNameInMessage, funcNameInMessage, comparedStartStopState ) {
-    HttpRequest_Fetcher.throw_if_StartStopState_not(
+    HttpRequest_Fetcher.throw_if_StartStopState_not.call( this,
       classNameInMessage, funcNameInMessage,
       "loadingStartStopState", comparedStartStopState );
   }
@@ -1442,7 +1442,7 @@ class HttpRequest_Fetcher
    */
   static throw_if_retryWaitingStartStopState_not(
     classNameInMessage, funcNameInMessage, comparedStartStopState ) {
-    HttpRequest_Fetcher.throw_if_StartStopState_not(
+    HttpRequest_Fetcher.throw_if_StartStopState_not.call( this,
       classNameInMessage, funcNameInMessage,
       "retryWaitingStartStopState", comparedStartStopState );
   }
@@ -1454,11 +1454,11 @@ class HttpRequest_Fetcher
     classNameInMessage, funcNameInMessage ) {
 
     HttpRequest_Fetcher.throw_if_loadingStartStopState_not.call(
-      httpRequestFetcher, mostDerivedClassName, funcNameInMessage,
+      this, mostDerivedClassName, funcNameInMessage,
       ValueDesc.StartStopState.Singleton.Ids.STOPPED );
 
     HttpRequest_Fetcher.throw_if_retryWaitingStartStopState_not.call(
-      httpRequestFetcher, mostDerivedClassName, funcNameInMessage,
+      this, mostDerivedClassName, funcNameInMessage,
       ValueDesc.StartStopState.Singleton.Ids.STOPPED );
   }
 
