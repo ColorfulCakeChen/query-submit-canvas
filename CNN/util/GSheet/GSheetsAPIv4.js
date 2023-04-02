@@ -282,14 +282,8 @@ class GSheetsAPIv4_UrlComposer
       if ( httpRequestFetcher ) {
         const mostDerivedClassName
           = ClassHierarchyTools.MostDerived_ClassName_of_Instance( this );
-
-        HttpRequest_Fetcher.throw_if_loadingStartStopState_not.call(
-          httpRequestFetcher, mostDerivedClassName, funcNameInMessage,
-          ValueDesc.StartStopState.Singleton.Ids.STOPPED );
-
-        HttpRequest_Fetcher.throw_if_retryWaitingStartStopState_not.call(
-          httpRequestFetcher, mostDerivedClassName, funcNameInMessage,
-          ValueDesc.StartStopState.Singleton.Ids.STOPPED );
+        HttpRequest_Fetcher.throw_if_loading_retryWaiting_StartStopState_not_STOPPD
+          .call( httpRequestFetcher, mostDerivedClassName, funcNameInMessage );
       }
 
       // Release the fetcher which is used by this async generator.
