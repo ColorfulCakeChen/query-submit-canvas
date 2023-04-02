@@ -274,6 +274,10 @@ class GSheetsAPIv4_UrlComposer
       }
 
     } finally {
+
+!!! ...unfinished... (2023/04/02)
+// Ensure httpRequestFetcher's loading and retrtWaiting have state SOPPED.
+
       // Release the fetcher which is used by this async generator.
       if ( this.httpRequestFetcher === httpRequestFetcher )
         this.httpRequestFetcher = undefined;

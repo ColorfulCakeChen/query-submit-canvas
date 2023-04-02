@@ -714,6 +714,9 @@ class HttpRequest_Fetcher
     //       the pending promises rejected).
     } while ( notDone );
 
+//!!! ...unfinished... (2023/04/02)
+// Ensure stopped even if exception (e.g. abort, error, timeout, ...).
+
     // 2.5
     ++this.loadingYieldIdCurrent; // stopped.
 
@@ -849,6 +852,9 @@ class HttpRequest_Fetcher
       }
 
     } while ( notDone ); // Stop if retry waiting completely.
+
+//!!! ...unfinished... (2023/04/02)
+// Ensure stopped even if exception.
 
     // 2.4
     ++this.retryWaitingYieldIdCurrent; // stopped.
