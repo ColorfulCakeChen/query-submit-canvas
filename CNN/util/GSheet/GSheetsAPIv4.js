@@ -283,7 +283,8 @@ class GSheetsAPIv4_UrlComposer
       if ( httpRequestFetcher ) {
         const mostDerivedClassName
           = ClassHierarchyTools.MostDerived_ClassName_of_Instance( this );
-        HttpRequest_Fetcher.throw_if_loading_retryWaiting_StartStopState_not_STOPPD
+        HttpRequest.Fetcher
+          .throw_if_loading_retryWaiting_StartStopState_not_STOPPD
           .call( httpRequestFetcher, mostDerivedClassName, funcNameInMessage );
       }
 
