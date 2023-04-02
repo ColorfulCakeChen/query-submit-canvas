@@ -737,8 +737,7 @@ class HttpRequest_Fetcher
       // // 3.1
       // if ( 200 !== xhr.status ) {
       //   //debugger;
-      //   throw Error( `( ${this.url} ) HttpRequest_Fetcher`
-      //     + `.load_asyncGenerator(): `
+      //   throw Error( `HttpRequest_Fetcher.load_asyncGenerator(): `
       //     + `When done, `
       //     + `xhr.status ( ${xhr.status} ) should be 200.` );
       // }
@@ -746,8 +745,7 @@ class HttpRequest_Fetcher
       // 3.2
       if ( 100 != this.progressLoading.valuePercentage ) {
         //debugger;
-        throw Error( `( ${this.url} ) HttpRequest_Fetcher`
-          + `.load_asyncGenerator(): `
+        throw Error( `HttpRequest_Fetcher.load_asyncGenerator(): `
           + `When done, `
           + `progressLoading.valuePercentage `
           + `( ${this.progressLoading.valuePercentage} ) should be 100.` );
@@ -1420,8 +1418,7 @@ class HttpRequest_Fetcher
     const comparedStartStopStateName = ValueDesc.StartStopState.Singleton
       .getNameWithInt_byId( comparedStartStopState );
 
-    throw Error( `( ${this.url} ) `
-      + `${classNameInMessage}.${funcNameInMessage}(): `
+    throw Error( `${classNameInMessage}.${funcNameInMessage}(): `
       + `.${propertyName} ( ${propertyStartStopStateName} ) `
       + `should be `
       + `${comparedStartStopStateName}.` );
@@ -1450,14 +1447,9 @@ class HttpRequest_Fetcher
   /**
    * @param {HttpRequest_Fetcher} this
    */
-  static throw_if_loading_retryWaiting_StartStopState_not_STOPPD(
+  static throw_if_loadingStartStopState_not_STOPPED(
     classNameInMessage, funcNameInMessage ) {
-
     HttpRequest_Fetcher.throw_if_loadingStartStopState_not.call(
-      this, classNameInMessage, funcNameInMessage,
-      ValueDesc.StartStopState.Singleton.Ids.STOPPED );
-
-    HttpRequest_Fetcher.throw_if_retryWaitingStartStopState_not.call(
       this, classNameInMessage, funcNameInMessage,
       ValueDesc.StartStopState.Singleton.Ids.STOPPED );
   }

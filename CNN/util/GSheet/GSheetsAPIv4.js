@@ -279,12 +279,11 @@ class GSheetsAPIv4_UrlComposer
 
     } finally {
 
-      // Check: fetcher's loading and retrtWaiting have state SOPPED.
+      // No matter how terminated, loading state should always be STOPPED.
       if ( httpRequestFetcher ) {
         const mostDerivedClassName
           = ClassHierarchyTools.MostDerived_ClassName_of_Instance( this );
-        HttpRequest.Fetcher
-          .throw_if_loading_retryWaiting_StartStopState_not_STOPPD
+        HttpRequest.Fetcher.throw_if_loadingStartStopState_not_STOPPED
           .call( httpRequestFetcher, mostDerivedClassName, funcNameInMessage );
       }
 
