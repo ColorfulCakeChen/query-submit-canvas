@@ -1406,7 +1406,7 @@ class HttpRequest_Fetcher
    * to be compared with. If this[ propertyName ] is different from it,
    * throw exception.
    */
-  static throw_if_not_StartStopState(
+  static throw_if_StartStopState_not(
     classNameInMessage, funcNameInMessage,
     propertyName, comparedStartStopState ) {
 
@@ -1422,32 +1422,31 @@ class HttpRequest_Fetcher
 
     throw Error( `( ${this.url} ) `
       + `${classNameInMessage}.${funcNameInMessage}(): `
-      + `${propertyName} ( ${propertyStartStopStateName} ) `
+      + `.${propertyName} ( ${propertyStartStopStateName} ) `
       + `should be `
       + `${comparedStartStopStateName}.` );
   }
 
+  /**
+   * @param {HttpRequest_Fetcher} this
+   */
+  static throw_if_loadingStartStopState_not(
+    classNameInMessage, funcNameInMessage, comparedStartStopState ) {
+    HttpRequest_Fetcher.throw_if_StartStopState_not(
+      classNameInMessage, funcNameInMessage,
+      "loadingStartStopState", comparedStartStopState );
+  }
 
   /**
    * @param {HttpRequest_Fetcher} this
-   *
-   * @param {number} nStartStopState
-   *   The start-stop state (i.e. ValueDesc.StartStopState.Singleton.Ids.Xxx)
-   * to be compared with. If .loadingStartStopState is different from it,
-   * throw exception.
    */
-  static throw_if_not_loadingStartStopState(
-    classNameInMessage, funcNameInMessage, nStartStopState ) {
-
-    const loadingStartStopState = this.loadingStartStopState;
-    if ( 
-           != ValueDesc.StartStopState.Singleton.Ids.STOPPED )
-
-
-!!! ...unfinished... (2023/04/02)
-// Ensure httpRequestFetcher's loading and retrtWaiting have state SOPPED.
-
+  static throw_if_retryWaitingStartStopState_not(
+    classNameInMessage, funcNameInMessage, comparedStartStopState ) {
+    HttpRequest_Fetcher.throw_if_StartStopState_not(
+      classNameInMessage, funcNameInMessage,
+      "retryWaitingStartStopState", comparedStartStopState );
   }
+
 
   /**
    * @param {object} e
