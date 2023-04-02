@@ -652,27 +652,14 @@ class HttpRequest_Fetcher
     do {
 
       // 2.1 Wait event happened and adjust .allPromiseSet by itself.
-      {
-        // All succeeded promises resolve to progressRoot.
-        //   - Except .loadingTimerPromise resolved to .handle_loadingTimer
-        //
-        // All failed promises reject to (i.e. throw exception of) ProgressEvent.
-        let progressRoot__or__handle_loadingTimer = await allPromiseRace;
+      //
+      // All succeeded promises resolve to progressRoot.
+      //   - Except .loadingTimerPromise resolved to .handle_loadingTimer
+      //
+      // All failed promises reject to (i.e. throw exception of) ProgressEvent.
+      let progressRoot__or__handle_loadingTimer = await allPromiseRace;
 
-//!!! ...unfinished... (2023/04/01)
-// It seems possible loading timer triggerred after progressLoading 100
-// (by load event). And then, loading timer ruin the progressLoading
-// (e.g. .loadingMillisecondsCur=500, .loadingMillisecondsMax=6000,
-// progressLoading=0.04997810958800046%)
-
-        // .loadingTimerPromise resolved.
-        if ( progressRoot__or__handle_loadingTimer
-              === HttpRequest_Fetcher.handle_loadingTimer ) {
-          HttpRequest_Fetcher.handle_loadingTimer.call( this );
-        }
-      }
-
-      // 2.2 According .allPromiseSet to determine whether is done. 
+      // 2.2 Determine whether is done according to .allPromiseSet.
       //
       // Not done, if:
       //   - ( .loadPromise still pending (i.e. still in waiting promises) ).
@@ -684,13 +671,29 @@ class HttpRequest_Fetcher
       //
       notDone = ( this.allPromiseSet.has( this.loadPromise ) );
 
-      // 2.3 If not done, continue to listen them.
-      //
-      // Note: The .allPromiseSet should be used before yield. Otherwise,
-      //       some events may be resolved (and change .allPromiseSet)
-      //       during yield.
-      if ( notDone )
+//!!! ...unfinished... (2023/04/01)
+// It seems possible loading timer triggerred after progressLoading 100
+// (by load event). And then, loading timer ruin the progressLoading
+// (e.g. .loadingMillisecondsCur=500, .loadingMillisecondsMax=6000,
+// progressLoading=0.04997810958800046%)
+
+      // 2.3
+      if ( notDone ) {
+
+        // 2.3.1 If not done, handle loading timer.
+        if ( progressRoot__or__handle_loadingTimer
+              === HttpRequest_Fetcher.handle_loadingTimer ) {
+          // loadingTimerPromise resolved.
+          HttpRequest_Fetcher.handle_loadingTimer.call( this );
+        }
+
+        // 2.3.2 If not done, continue to listen them.
+        //
+        // Note: The .allPromiseSet should be used before yield. Otherwise,
+        //       some events may be resolved (and change .allPromiseSet)
+        //       during yield.
         allPromiseRace = Promise.race( this.allPromiseSet );
+      }
 
       // 2.4 Report progress.
       {
@@ -1179,6 +1182,7 @@ class HttpRequest_Fetcher
    * @param {HttpRequest_Fetcher} this
    */
   static handle_retryWaitingTimer() {
+
     // 1.
     this.retryWaitingMillisecondsCur += this.retryWaitingMillisecondsInterval;
     if ( this.retryWaitingMillisecondsCur > this.retryWaitingMillisecondsMax )
