@@ -681,6 +681,10 @@ class HttpRequest_Fetcher
       if ( notDone ) {
 
         // 2.3.1 If not done, handle loading timer.
+        //
+        // Note: If done, do not handle loading timer. Otherwise, the
+        //       progressLoading 100 (e.g. by load event) may be destroyed by
+        //       loading timer.
         if ( progressRoot__or__handle_loadingTimer
               === HttpRequest_Fetcher.handle_loadingTimer ) {
           // loadingTimerPromise resolved.
