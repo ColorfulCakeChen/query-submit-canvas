@@ -637,7 +637,6 @@ class HttpRequest_Fetcher
     try {
       // 2.
       //
-//!!! ...unfinished... (2023/04/02)
       // Note: .send() seems possible throw exception. Place it inside try-catch.
       xhr.send( this.body );
 
@@ -851,6 +850,12 @@ class HttpRequest_Fetcher
   
 //!!! ...unfinished... (2023/04/02) seems may got null.
 // Perhaps, use this.progressRoot
+
+//!!! ...unfinished... (2023/04/02)
+// During yield, the this.retryWaitingTimerPromise may become null
+// (e.g. retryWaitingTimer_cancel() is called).
+// The next await will on the null and got null.
+
           yield progressRoot;
         }
 
