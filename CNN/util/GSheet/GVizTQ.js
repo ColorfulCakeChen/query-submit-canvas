@@ -5,6 +5,7 @@ import * as NonReentrant from "../NonReentrant.js";
 import * as Pool from "../Pool.js";
 import * as Recyclable from "../Recyclable.js";
 import * as ValueMax from "../ValueMax.js";
+import * as ValueDesc from "../../Unpacker/ValueDesc.js";
 
 /**
  * Compose a URL for downloading cells data (as JSON or .CSV format) from a
@@ -332,8 +333,15 @@ class GVizTQ_UrlComposer
 
     } finally {
 
+      if ( httpRequestFetcher ) {
+        if ( httpRequestFetcher.loadingStartStopState
+               != ValueDesc.StartStopState.Singleton.Ids.STOPPED )
+
+
 !!! ...unfinished... (2023/04/02)
 // Ensure httpRequestFetcher's loading and retrtWaiting have state SOPPED.
+
+      }
 
       // Release the fetcher which is used by this async generator.
       if ( this.httpRequestFetcher === httpRequestFetcher )

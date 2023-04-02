@@ -1369,6 +1369,86 @@ class HttpRequest_Fetcher
     );
   }
 
+
+  /**
+   * @param {HttpRequest_Fetcher} this
+   */
+  static loadingYieldId_toString() {
+    let str =
+        `loadingYieldIdCurrent=${this.loadingYieldIdCurrent}, `
+      + `loadingYieldIdFinal=${this.loadingYieldIdFinal}, `
+      + `loadingStartStopState=${this.loadingStartStopState_NameWithInt}`
+      ;
+    return str;
+  }
+
+  /**
+   * @param {HttpRequest_Fetcher} this
+   */
+  static retryWaitingYieldId_toString() {
+    let str =
+        `retryWaitingYieldIdCurrent=${this.retryWaitingYieldIdCurrent}, `
+      + `retryWaitingYieldIdFinal=${this.retryWaitingYieldIdFinal}, `
+      + `retryWaitingStartStopState=${this.retryWaitingStartStopState_NameWithInt}`
+      ;
+    return str;
+  }
+
+
+  /**
+   * @param {HttpRequest_Fetcher} this
+   *
+   * @param {string} propertyName
+   *   this[ propertyName ] will be compared with nStartStopState.
+   *
+   * @param {number} comparedStartStopState
+   *   The start-stop state (i.e. ValueDesc.StartStopState.Singleton.Ids.Xxx)
+   * to be compared with. If this[ propertyName ] is different from it,
+   * throw exception.
+   */
+  static throw_if_not_StartStopState(
+    classNameInMessage, funcNameInMessage,
+    propertyName, comparedStartStopState ) {
+
+    const propertyStartStopState = this[ propertyName ];
+    if ( propertyStartStopState == comparedStartStopState )
+      return;
+
+    const propertyStartStopStateName = ValueDesc.StartStopState.Singleton
+      .getNameWithInt_byId( propertyStartStopState );
+
+    const comparedStartStopStateName = ValueDesc.StartStopState.Singleton
+      .getNameWithInt_byId( comparedStartStopState );
+
+    throw Error( `( ${this.url} ) `
+      + `${classNameInMessage}.${funcNameInMessage}(): `
+      + `${propertyName} ( ${propertyStartStopStateName} ) `
+      + `should be `
+      + `${comparedStartStopStateName}.` );
+  }
+
+
+  /**
+   * @param {HttpRequest_Fetcher} this
+   *
+   * @param {number} nStartStopState
+   *   The start-stop state (i.e. ValueDesc.StartStopState.Singleton.Ids.Xxx)
+   * to be compared with. If .loadingStartStopState is different from it,
+   * throw exception.
+   */
+  static throw_if_not_loadingStartStopState(
+    classNameInMessage, funcNameInMessage, nStartStopState ) {
+
+    const loadingStartStopState = this.loadingStartStopState;
+    if ( 
+           != ValueDesc.StartStopState.Singleton.Ids.STOPPED )
+
+
+!!! ...unfinished... (2023/04/02)
+// Ensure httpRequestFetcher's loading and retrtWaiting have state SOPPED.
+
+  }
+
   /**
    * @param {object} e
    *   An exception object to be checked.
@@ -1395,30 +1475,6 @@ class HttpRequest_Fetcher
   static ProgressEvent_toString( progressEvent ) {
     let str = `lengthComputable=${progressEvent.lengthComputable}, `
       + `loaded=${progressEvent.loaded}, total=${progressEvent.total}`;
-    return str;
-  }
-
-  /**
-   * @param {HttpRequest_Fetcher} this
-   */
-  static loadingYieldId_toString() {
-    let str =
-        `loadingYieldIdCurrent=${this.loadingYieldIdCurrent}, `
-      + `loadingYieldIdFinal=${this.loadingYieldIdFinal}, `
-      + `loadingStartStopState=${this.loadingStartStopState_NameWithInt}`
-      ;
-    return str;
-  }
-
-  /**
-   * @param {HttpRequest_Fetcher} this
-   */
-  static retryWaitingYieldId_toString() {
-    let str =
-        `retryWaitingYieldIdCurrent=${this.retryWaitingYieldIdCurrent}, `
-      + `retryWaitingYieldIdFinal=${this.retryWaitingYieldIdFinal}, `
-      + `retryWaitingStartStopState=${this.retryWaitingStartStopState_NameWithInt}`
-      ;
     return str;
   }
 
