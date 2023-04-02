@@ -843,6 +843,14 @@ class HttpRequest_Fetcher
           if ( !notDone ) // stopping.
             this.retryWaitingYieldIdFinal = this.retryWaitingYieldIdCurrent;
 
+          if ( !progressRoot ) {
+            debugger;
+            throw Error( `HttpRequest_Fetcher.retryWait_asyncGenerator(): `
+            + `progressRoot ( ${progressRoot} ) should be not null.` );
+          }
+  
+//!!! ...unfinished... (2023/04/02) seems may got null.
+// Perhaps, use this.progressRoot
           yield progressRoot;
         }
 
