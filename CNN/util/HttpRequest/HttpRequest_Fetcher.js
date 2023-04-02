@@ -1126,9 +1126,12 @@ class HttpRequest_Fetcher
 // progressLoading=0.04997810958800046%)
 
 
-    this.loadingMillisecondsCur += this.loadingMillisecondsInterval;
-
     // 1.
+    this.loadingMillisecondsCur += this.loadingMillisecondsInterval;
+    if ( this.loadingMillisecondsCur > this.loadingMillisecondsMax )
+      this.loadingMillisecondsCur = this.loadingMillisecondsMax;
+
+    // 2.
     let bDoneByOthers;
     if (   ( !this.bAbort )
         && ( this.allPromiseSet.has( this.loadingTimerPromise ) ) ) {
@@ -1140,14 +1143,14 @@ class HttpRequest_Fetcher
       bDoneByOthers = true;
     }
 
-    // 2. Advance progress only if loadingTimer used, and not finished by
+    // 3. Advance progress only if loadingTimer used, and not finished by
     //    others. (Otherwise, the progress (e.g. 100%) may be destroyed.)
     if (   ( this.loadingTimer_isUsed )
         && ( !bDoneByOthers ) ) {
       this.progressLoading.value_set( this.loadingMillisecondsCur );
     }
 
-    // 3.
+    // 4.
     if ( this.bLogEventToConsole )
       console.log( `( ${this.url} ) HttpRequest_Fetcher: loadingTimer: `
         + `${HttpRequest_Fetcher.loadingYieldId_toString.call( this )}, `
@@ -1155,7 +1158,7 @@ class HttpRequest_Fetcher
         + `loadingMillisecondsMax=${this.loadingMillisecondsMax}, `
         + `progressLoading=${this.progressLoading.valuePercentage}%` );
 
-    // Re-listen on repeatable succeeded event.
+    // 5. Re-listen on repeatable succeeded event.
     {
       this.allPromiseSet.delete( this.loadingTimerPromise );
 
@@ -1176,9 +1179,12 @@ class HttpRequest_Fetcher
    * @param {HttpRequest_Fetcher} this
    */
   static handle_retryWaitingTimer() {
-    this.retryWaitingMillisecondsCur += this.retryWaitingMillisecondsInterval;
-
     // 1.
+    this.retryWaitingMillisecondsCur += this.retryWaitingMillisecondsInterval;
+    if ( this.retryWaitingMillisecondsCur > this.retryWaitingMillisecondsMax )
+      this.retryWaitingMillisecondsCur = this.retryWaitingMillisecondsMax;
+
+    // 2.
     let bAbort;
     let bDone;
     if (   ( !this.bAbort )
@@ -1198,17 +1204,17 @@ class HttpRequest_Fetcher
       bDone = true; // abort is also a kind of done.
     }
 
-    // 2.
+    // 3.
     if ( bDone )
       HttpRequest_Fetcher.progressRetryWaiting_set_whenDone.call( this );
     else
       HttpRequest_Fetcher.progressRetryWaiting_set_beforeDone.call( this );
 
-    // 3.
+    // 4.
     const phaseString = bAbort ? "abort" : ( bDone ? "done" : "progress" );
     HttpRequest_Fetcher.retryWaiting_log.call( this, phaseString );
 
-    // 4. Re-listen on repeatable succeeded event.
+    // 5. Re-listen on repeatable succeeded event.
     {
       // If done (include user abort), no need to re-generate promise.
       if ( bDone ) {

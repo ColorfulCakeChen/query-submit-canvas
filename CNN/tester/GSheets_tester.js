@@ -939,13 +939,18 @@ async function* tester( progressParent ) {
   // const bLogFetcherEventToConsole = false;
   const bLogFetcherEventToConsole = true; // For debug.
 
-  // (2023/03/31 Remarked) Use shorter loading timer interval to ensure it
-  // will be triggered.
+  // Note1: Use shorter loading timer interval to ensure it will be triggered.
+  // Note2: Let xxxMax can not be divided by XxxInterval for testing XxxCur
+  //        exceeding xxxMax.
   //const loadingMillisecondsInterval = 5 * 1000;
-  const loadingMillisecondsInterval = 0.5 * 1000;
+  const loadingMillisecondsInterval = 0.503 * 1000;
 
   const retryWaitingSecondsExponentMax = 6; // i.e. ( <= 64 seconds )
-  const retryWaitingMillisecondsInterval = 1 * 1000;
+
+  // Note: Let xxxMax can not be divided by XxxInterval for testing XxxCur
+  //       exceeding xxxMax.
+  //const retryWaitingMillisecondsInterval = 1 * 1000;
+  const retryWaitingMillisecondsInterval = 1.06 * 1000;
 
   // Every test case has its own progressParent.
   let progressRoot = progressParent.root_get();
