@@ -17,7 +17,7 @@ class Same {
 
   /** @return {string} Return the string value. */
   getName_byId( value ) {
-    return value?.toString();
+    return String( value );
   }
 }
 
@@ -40,7 +40,7 @@ class Bool {
 
   /** @return {string} Return the string value. */
   getName_byId( value ) {
-    return value?.toString();
+    return String( value );
   }
 }
 
@@ -83,17 +83,18 @@ Bool.Singleton = new Bool;
  *
  * @member {Map} integerToInfoMap
  *   A map object contains integer value to its information. Using
- * this.integerToObjectMap.get( integerValue ) could get the information object of
- * the integer value.
+ * this.integerToObjectMap.get( integerValue ) could get the information object
+ * of the integer value.
  *
  * @member {Map} integerToNameMap
  *   A map object contains integer value to its name. Using
- * this.integerToNameMap.get( integerValue ) could get the name of the integer value.
+ * this.integerToNameMap.get( integerValue ) could get the name of the integer
+ * value.
  *
  * @member {Map} integerToNameWithIntMap
  *   A map object contains integer value to its name (e.g. "Xxx") with integer
- * (e.g. "Xxx( 12 )"). Using this.integerToNameWithIntMap.get( integerValue ) could
- * get the name with integer of the integer value.
+ * (e.g. "Xxx( 12 )"). Using this.integerToNameWithIntMap.get( integerValue )
+ * could get the name with integer of the integer value.
  *
  */
 class Int {
@@ -172,7 +173,7 @@ class Int {
     // Look up whether has name (e.g. "AVG", "MAX", "NONE").
     let name = this.integerToNameMap.get( integerValue );
     if ( name === undefined ) {
-      name = integerValue?.toString();
+      name = String( integerValue );
     }
     return name;
   }
@@ -190,7 +191,7 @@ class Int {
     // Look up whether has name (e.g. "AVG(-2)", "MAX(-1)", "NONE(0)").
     let nameWithInt = this.integerToNameWithIntMap.get( integerValue );
     if ( nameWithInt === undefined ) {
-      nameWithInt = integerValue?.toString();
+      nameWithInt = String( integerValue );
     }
     return nameWithInt;
   }
