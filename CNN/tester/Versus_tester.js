@@ -32,7 +32,7 @@ function params_loading_retryWaiting_create() {
   const loadingMillisecondsMax = ( 30 * 1000 ); //( 60 * 1000 );
   const loadingMillisecondsInterval = 1001; //( 5 * 1000 );
 
-  const retryTimesMax = 5; // -1 means retry infinite times
+  const retryTimesMax = 3; // -1 means retry infinite times
   const retryWaitingSecondsExponentMax = 6; // i.e. ( 2 ** 6 ) = 64 seconds
   const retryWaitingMillisecondsInterval = 1002; //( 1000 );
 
