@@ -1,12 +1,10 @@
 export { GSheetsAPIv4_UrlComposer as UrlComposer };
 
-import * as ClassHierarchyTools from "../ClassHierarchyTools.js";
 import * as HttpRequest from "../HttpRequest.js";
 import * as NonReentrant from "../NonReentrant.js";
 import * as Pool from "../Pool.js";
 import * as Recyclable from "../Recyclable.js";
 import * as ValueMax from "../ValueMax.js";
-//import * as ValueDesc from "../../Unpacker/ValueDesc.js";
 
 /**
  * Compose a URL for downloading cells data (as JSON) from a Google Sheets by using

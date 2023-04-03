@@ -1,5 +1,6 @@
 export { HttpRequest_Fetcher as Fetcher };
 
+import * as ClassHierarchyTools from "../ClassHierarchyTools.js";
 import * as NonReentrant from "../NonReentrant.js";
 import * as PartTime from "../PartTime.js";
 import * as RandTools from "../RandTools.js";
@@ -1479,7 +1480,7 @@ class HttpRequest_Fetcher
    */
   static throw_if_loadingStartStopState_not_STOPPED( funcNameInMessage ) {
     HttpRequest_Fetcher.throw_if_loadingStartStopState_not.call( this,
-      funcNameInMessage, [ ValueDesc.StartStopState.Singleton.Ids.STOPPED ] );
+      funcNameInMessage, HttpRequest_Fetcher.StartStopState_Array__STOPPED );
   }
 
   /**
@@ -1488,10 +1489,8 @@ class HttpRequest_Fetcher
   static throw_if_retryWaitingStartStopState_not_NOT_YET_STARTED_or_not_STOPPED(
     funcNameInMessage ) {
     HttpRequest_Fetcher.throw_if_retryWaitingStartStopState_not.call( this,
-      funcNameInMessage, [
-        ValueDesc.StartStopState.Singleton.Ids.NOT_YET_STARTED,
-        ValueDesc.StartStopState.Singleton.Ids.STOPPED,
-       ] );
+      funcNameInMessage,
+      HttpRequest_Fetcher.StartStopState_Array__NOT_YET_STARTED__STOPPED );
   }
 
   /**
@@ -1557,6 +1556,15 @@ HttpRequest_Fetcher.responseTypeDefault = "text";
  * step gradually.
  */
 HttpRequest_Fetcher.progressTotalFakeLarger = 1024 * 1024;
+
+
+HttpRequest_Fetcher.StartStopState_Array__STOPPED = [
+  ValueDesc.StartStopState.Singleton.Ids.STOPPED ];
+
+HttpRequest_Fetcher.StartStopState_Array__NOT_YET_STARTED__STOPPED = [
+  ValueDesc.StartStopState.Singleton.Ids.NOT_YET_STARTED,
+  ValueDesc.StartStopState.Singleton.Ids.STOPPED
+];
 
 
 /**
