@@ -508,8 +508,6 @@ class HttpRequest_Fetcher
       // Checking post-condition.
       {
         // No matter how terminated, loading state should always be STOPPED.
-        //
-        // Note: retry waiting state may be STOPPED or NOT_YET_STARTED.
         HttpRequest_Fetcher.throw_if_loadingStartStopState_not_STOPPED
           .call( this, funcNameInMessage );
 
