@@ -6,7 +6,7 @@ import * as NonReentrant from "../NonReentrant.js";
 import * as Pool from "../Pool.js";
 import * as Recyclable from "../Recyclable.js";
 import * as ValueMax from "../ValueMax.js";
-import * as ValueDesc from "../../Unpacker/ValueDesc.js";
+//import * as ValueDesc from "../../Unpacker/ValueDesc.js";
 
 /**
  * Compose a URL for downloading cells data (as JSON or .CSV format) from a
@@ -258,7 +258,7 @@ class GVizTQ_UrlComposer
   static async* JSON_ColumnMajorArrayArray_fetch_asyncGenerator(
     progressParent, params_loading_retryWaiting, delayPromise ) {
 
-    const funcNameInMessage = "JSON_ColumnMajorArrayArray_fetch_asyncGenerator";
+    //const funcNameInMessage = "JSON_ColumnMajorArrayArray_fetch_asyncGenerator";
 
     let progressRoot = progressParent.root_get();
     let progressFetcher = progressParent.child_add(
@@ -335,15 +335,6 @@ class GVizTQ_UrlComposer
       }
 
     } finally {
-
-      // No matter how terminated, loading state should always be STOPPED.
-      if ( httpRequestFetcher ) {
-        const mostDerivedClassName
-          = ClassHierarchyTools.MostDerived_ClassName_of_Instance( this );
-        HttpRequest.Fetcher.throw_if_loadingStartStopState_not_STOPPED
-          .call( httpRequestFetcher, mostDerivedClassName, funcNameInMessage );
-      }
-
       // Release the fetcher which is used by this async generator.
       if ( this.httpRequestFetcher === httpRequestFetcher )
         this.httpRequestFetcher = undefined;

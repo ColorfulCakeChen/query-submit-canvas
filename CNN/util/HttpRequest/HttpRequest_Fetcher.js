@@ -363,6 +363,7 @@ class HttpRequest_Fetcher
     method = HttpRequest_Fetcher.methodDefault,
     body
   ) {
+    const funcNameInMessage = fetch_asyncGenerator;
 
     // 0.
 
@@ -503,6 +504,24 @@ class HttpRequest_Fetcher
       // Ensure this async generator will not be aborted by default when it is
       // called in the next time.
       this.bAbort = false;
+
+      // Checking post-condition.
+      {
+        // No matter how terminated, loading state should always be STOPPED.
+        //
+        // Note: retry waiting state may be STOPPED or NOT_YET_STARTED.
+        HttpRequest_Fetcher.throw_if_loadingStartStopState_not_STOPPED
+          .call( this, funcNameInMessage );
+
+        // retry waiting state may be NOT_YET_STARTED or STOPPED (e.g. aborted).
+        HttpRequest_Fetcher
+          .throw_if_retryWaitingStartStopState_not_NOT_YET_STARTED_or_not_STOPPED
+          .call( this, funcNameInMessage );
+
+        // No matter how terminated, progressParent should always be 100.
+        HttpRequest_Fetcher.throw_if_progressParent_not_100
+          .call( this, funcNameInMessage )
+      }
     }
 
     // 5. Return the successfully downloaded result.
@@ -1399,59 +1418,98 @@ class HttpRequest_Fetcher
    * @param {string} propertyName
    *   this[ propertyName ] will be compared with nStartStopState.
    *
-   * @param {number} comparedStartStopState
-   *   The start-stop state (i.e. ValueDesc.StartStopState.Singleton.Ids.Xxx)
-   * to be compared with. If this[ propertyName ] is different from it,
-   * throw exception.
+   * @param {number[]} comparedStartStopStateArray
+   *   The start-stop states (i.e. ValueDesc.StartStopState.Singleton.Ids.Xxx)
+   * to be compared with. If this[ propertyName ] is not one of it, throw
+   * exception.
    */
-  static throw_if_StartStopState_not(
-    classNameInMessage, funcNameInMessage,
-    propertyName, comparedStartStopState ) {
+  static throw_if_StartStopState_not_one_of(
+    funcNameInMessage, propertyName, comparedStartStopStateArray ) {
 
     const propertyStartStopState = this[ propertyName ];
-    if ( propertyStartStopState == comparedStartStopState )
-      return;
+    for ( let i = 0; i < comparedStartStopStateArray.length; ++i ) {
+      if ( propertyStartStopState == comparedStartStopState )
+        return; // Found.
+    }
+
+    const mostDerivedClassName
+      = ClassHierarchyTools.MostDerived_ClassName_of_Instance( this );
 
     const propertyStartStopStateName = ValueDesc.StartStopState.Singleton
       .getNameWithInt_byId( propertyStartStopState );
 
-    const comparedStartStopStateName = ValueDesc.StartStopState.Singleton
-      .getNameWithInt_byId( comparedStartStopState );
+    let comparedStartStopStateNamesString;
+    {
+      let comparedStartStopStateNameArray
+        = new Array( comparedStartStopStateArray.length );
 
-    throw Error( `${classNameInMessage}.${funcNameInMessage}(): `
+      for ( let i = 0; i < comparedStartStopStateArray.length; ++i ) {
+        const comparedStartStopStateName = ValueDesc.StartStopState.Singleton
+          .getNameWithInt_byId( comparedStartStopState );
+        comparedStartStopStateNameArray[ i ] = comparedStartStopStateName;
+      }
+
+      comparedStartStopStateNamesString
+        = comparedStartStopStateNameArray.join( ", " );
+    }
+
+    throw Error( `mostDerivedClassName.${funcNameInMessage}(): `
       + `.${propertyName} ( ${propertyStartStopStateName} ) `
-      + `should be `
-      + `${comparedStartStopStateName}.` );
+      + `should be one of [ ${comparedStartStopStateNamesString} ].` );
   }
 
   /**
    * @param {HttpRequest_Fetcher} this
    */
-  static throw_if_loadingStartStopState_not(
-    classNameInMessage, funcNameInMessage, comparedStartStopState ) {
-    HttpRequest_Fetcher.throw_if_StartStopState_not.call( this,
-      classNameInMessage, funcNameInMessage,
-      "loadingStartStopState", comparedStartStopState );
+  static throw_if_loadingStartStopState_not_one_of(
+    funcNameInMessage, comparedStartStopStateArray ) {
+    HttpRequest_Fetcher.throw_if_StartStopState_not_one_of.call( this,
+      funcNameInMessage, "loadingStartStopState", comparedStartStopStateArray );
   }
 
   /**
    * @param {HttpRequest_Fetcher} this
    */
-  static throw_if_retryWaitingStartStopState_not(
-    classNameInMessage, funcNameInMessage, comparedStartStopState ) {
-    HttpRequest_Fetcher.throw_if_StartStopState_not.call( this,
-      classNameInMessage, funcNameInMessage,
-      "retryWaitingStartStopState", comparedStartStopState );
+  static throw_if_retryWaitingStartStopState_not_one_of(
+    funcNameInMessage, comparedStartStopStateArray ) {
+    HttpRequest_Fetcher.throw_if_StartStopState_not_one_of.call( this,
+      funcNameInMessage, "retryWaitingStartStopState", comparedStartStopStateArray );
   }
 
   /**
    * @param {HttpRequest_Fetcher} this
    */
-  static throw_if_loadingStartStopState_not_STOPPED(
-    classNameInMessage, funcNameInMessage ) {
-    HttpRequest_Fetcher.throw_if_loadingStartStopState_not.call(
-      this, classNameInMessage, funcNameInMessage,
-      ValueDesc.StartStopState.Singleton.Ids.STOPPED );
+  static throw_if_loadingStartStopState_not_STOPPED( funcNameInMessage ) {
+    HttpRequest_Fetcher.throw_if_loadingStartStopState_not.call( this,
+      funcNameInMessage, [ ValueDesc.StartStopState.Singleton.Ids.STOPPED ] );
+  }
+
+  /**
+   * @param {HttpRequest_Fetcher} this
+   */
+  static throw_if_retryWaitingStartStopState_not_NOT_YET_STARTED_or_not_STOPPED(
+    funcNameInMessage ) {
+    HttpRequest_Fetcher.throw_if_retryWaitingStartStopState_not.call( this,
+      funcNameInMessage, [
+        ValueDesc.StartStopState.Singleton.Ids.NOT_YET_STARTED,
+        ValueDesc.StartStopState.Singleton.Ids.STOPPED,
+       ] );
+  }
+
+  /**
+   * @param {HttpRequest_Fetcher} this
+   */
+  static throw_if_progressParent_not_100( funcNameInMessage ) {
+    if ( 100 == this.progressParent.valuePercentage )
+      return;
+
+    const mostDerivedClassName
+      = ClassHierarchyTools.MostDerived_ClassName_of_Instance( this );
+
+    throw Error( `mostDerivedClassName.${funcNameInMessage}(): `
+      + `.progressParent.valuePercentage ( `
+      + `${this.progressParent.valuePercentage} ) `
+      + `should be 100.` );
   }
 
 
