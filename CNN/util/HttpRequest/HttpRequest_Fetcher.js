@@ -593,7 +593,9 @@ class HttpRequest_Fetcher
 
 !!! ...unfinished... (2023/04/03)
 // What if .abort() was called during retry waiting?
-// There is no chance executed to here.
+// What if .abort() was called during loading?
+// There is no chance executed to here in the above two cases.
+//
 
       this.progressParent.child_dispose( this.progressRetryWaiting );
     } else {
