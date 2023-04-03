@@ -9,9 +9,11 @@
     <table>
       <tr>
         <th scope="row">SpreadsheetId</th>
-        <td>
+        <td colspan="3">
           <input id="SpreadsheetIdText" type="text" maxlength="150" size="50"/>
           <button id="DownloadSummaryButton" type="button" disabled>Download Summary</button>
+        </td>
+        <td colspan="1">
           <progress id="DownloadVersusSummaryProgressBar"></progress>
         </td>
       </tr>
@@ -41,36 +43,39 @@
 
       <tr>
         <th scope="row">VersusSummary</th>
-        <td>
+        <td colspan="4">
           <table id="VersusSummaryTable"></table>
         </td>
       </tr>
 
       <tr>
         <th scope="row">NextVisitIndex</th>
-        <td>
+        <td colspan="3">
           <input id="NextVisitIndexText" type="text" maxlength="20" size="20" readonly/>
           <button id="DownloadVersusButton" type="button" disabled>Download Next Versus</button>
+          <progress id="DownloadVersusProgressBar"></progress>
+        </td>
+        <td colspan="1">
           <progress id="DownloadVersusProgressBar"></progress>
         </td>
       </tr>
 
       <tr>
         <th scope="row">VersusId</th>
-        <td id="VersusId">
+        <td id="VersusId" colspan="4">
         </td>
       </tr>
 
       <tr>
         <th scope="row">ParentChromosomes</th>
-        <td>
+        <td colspan="4">
           <textarea id="ParentChromosomes" rows="10" cols="150" readonly></textarea>
         </td>
       </tr>
 
       <tr>
         <th scope="row">OffspringChromosomes</th>
-        <td>
+        <td colspan="4">
           <textarea id="OffspringChromosomes" rows="10" cols="150" readonly></textarea>
         </td>
       </tr>
