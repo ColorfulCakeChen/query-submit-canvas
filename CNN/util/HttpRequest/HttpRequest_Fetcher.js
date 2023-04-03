@@ -1481,8 +1481,8 @@ class HttpRequest_Fetcher
    * @param {HttpRequest_Fetcher} this
    */
   static throw_if_loadingStartStopState_not_STOPPED( funcNameInMessage ) {
-    HttpRequest_Fetcher.throw_if_loadingStartStopState_not.call( this,
-      funcNameInMessage, HttpRequest_Fetcher.StartStopState_Array__STOPPED );
+    HttpRequest_Fetcher.throw_if_loadingStartStopState_not_one_of.call( this,
+      funcNameInMessage, HttpRequest_Fetcher.StartStopStateArray__STOPPED );
   }
 
   /**
@@ -1490,9 +1490,9 @@ class HttpRequest_Fetcher
    */
   static throw_if_retryWaitingStartStopState_not_NOT_YET_STARTED_or_not_STOPPED(
     funcNameInMessage ) {
-    HttpRequest_Fetcher.throw_if_retryWaitingStartStopState_not.call( this,
+    HttpRequest_Fetcher.throw_if_retryWaitingStartStopState_not_one_of.call( this,
       funcNameInMessage,
-      HttpRequest_Fetcher.StartStopState_Array__NOT_YET_STARTED__STOPPED );
+      HttpRequest_Fetcher.StartStopStateArray__NOT_YET_STARTED__STOPPED );
   }
 
   /**
@@ -1560,10 +1560,10 @@ HttpRequest_Fetcher.responseTypeDefault = "text";
 HttpRequest_Fetcher.progressTotalFakeLarger = 1024 * 1024;
 
 
-HttpRequest_Fetcher.StartStopState_Array__STOPPED = [
+HttpRequest_Fetcher.StartStopStateArray__STOPPED = [
   ValueDesc.StartStopState.Singleton.Ids.STOPPED ];
 
-HttpRequest_Fetcher.StartStopState_Array__NOT_YET_STARTED__STOPPED = [
+HttpRequest_Fetcher.StartStopStateArray__NOT_YET_STARTED__STOPPED = [
   ValueDesc.StartStopState.Singleton.Ids.NOT_YET_STARTED,
   ValueDesc.StartStopState.Singleton.Ids.STOPPED
 ];
