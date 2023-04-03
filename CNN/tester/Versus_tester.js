@@ -9,6 +9,11 @@ let g_Contorls = {
   SpreadsheetIdText: null,
   DownloadSummaryButton: null,
 
+  bLogFetcherEventToConsoleCheckbox: null,
+  loadingMillisecondsMaxNumber: null,
+  loadingMillisecondsIntervalNumber: null,
+  retryTimesMaxNumber: null,
+
   NextVisitIndexText: null,
   DownloadVersusButton: null,
 
@@ -40,25 +45,19 @@ function params_loading_retryWaiting_create() {
 
 /** */
 function window_onLoad( event ) {
-  g_Contorls.SpreadsheetIdText = document.getElementById( "SpreadsheetIdText" );
 
-  g_Contorls.bLogFetcherEventToConsoleCheckbox
-    = document.getElementById( "bLogFetcherEventToConsoleCheckbox" );
+  // Binding UI control elements.
+  for ( let propertyName in g_Contorls ) {
+    g_Contorls[ propertyName ] = document.getElementById( propertyName );
+  }
 
-  g_Contorls.DownloadSummaryButton = document.getElementById( "DownloadSummaryButton" );
   g_Contorls.DownloadSummaryButton.addEventListener(
     "click", DownloadSummaryButton_onClick );
   g_Contorls.DownloadSummaryButton.disabled = false;
 
-  g_Contorls.NextVisitIndexText = document.getElementById( "NextVisitIndexText" );
-
-  g_Contorls.DownloadVersusButton = document.getElementById( "DownloadVersusButton" );
   g_Contorls.DownloadVersusButton.addEventListener(
     "click", DownloadVersusButton_onClick );
 
-  g_Contorls.VersusId = document.getElementById( "VersusId" );
-  g_Contorls.ParentChromosomes = document.getElementById( "ParentChromosomes" );
-  g_Contorls.OffspringChromosomes = document.getElementById( "OffspringChromosomes" );
 }
 
 /** */
@@ -74,6 +73,17 @@ function DownloadSummaryButton_onClick( event ) {
 
   g_VersusSummary.bLogFetcherEventToConsole
     = g_Contorls.bLogFetcherEventToConsoleCheckbox.checked;
+
+  {
+    g_params_loading_retryWaiting.loadingMillisecondsMax
+      = Number.parseInt( g_Contorls.loadingMillisecondsMaxNumber.value );
+
+    g_params_loading_retryWaiting.loadingMillisecondsInterval
+      = Number.parseInt( g_Contorls.loadingMillisecondsIntervalNumber.value );
+
+    g_params_loading_retryWaiting.retryTimesMax
+      = Number.parseInt( g_Contorls.retryTimesMaxNumber.value );
+  }
 
   g_VersusSummary
     .rangeArray_load_asyncPromise_create( g_params_loading_retryWaiting )
