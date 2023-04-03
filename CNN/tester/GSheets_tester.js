@@ -42,6 +42,8 @@ function array2d_compare_EQ( lhs, rhs ) {
 //!!! ...unfinshed... (2023/04/01)
 // What about abort() at not_yet_started, starting, started, stopping, stopped
 // of loading and retry waiting?
+//
+// Problem: There is no yield at all these points.
 
 /**
  * Whether and when to call .abort().
