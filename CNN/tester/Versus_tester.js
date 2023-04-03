@@ -100,6 +100,8 @@ function DownloadSummaryButton_onClick( event ) {
     }
   }
 
+//!!! ...unfinshed... (2023/04/03)
+// Use requestAnimation to update progress.
   g_VersusSummary
     .rangeArray_load_asyncPromise_create( g_params_loading_retryWaiting )
     .then( VersusSummary_onDownload );
@@ -154,6 +156,9 @@ function VersusSummary_onDownload( bDownloadSummaryOk ) {
 /** */
 function DownloadVersusButton_onClick( event ) {
   g_Contorls.DownloadVersusButton.disabled = true; // Prevent from many clicking quickly.
+
+//!!! ...unfinshed... (2023/04/03)
+// Use requestAnimation to update progress.
   g_VersusSummary
     .versus_next_load_asyncPromise_create( g_params_loading_retryWaiting )
     .then( Versus_onDownload );
