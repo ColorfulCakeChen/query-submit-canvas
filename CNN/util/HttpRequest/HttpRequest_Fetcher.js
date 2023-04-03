@@ -364,7 +364,7 @@ class HttpRequest_Fetcher
     method = HttpRequest_Fetcher.methodDefault,
     body
   ) {
-    const funcNameInMessage = fetch_asyncGenerator;
+    const funcNameInMessage = "fetch_asyncGenerator";
 
     // 0.
 
