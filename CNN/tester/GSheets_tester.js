@@ -563,10 +563,10 @@ class TestCase {
     // Note: Can not call urlComposer.retryWaiting_during (which will get
     //       undefined) here because .httpRequestFetcher has not yet been
     //       created.
-    let bRetryWaitingPrevious = undefined; // So that 1st .next() will also be checked.
-    let bRetryWaitingCurrent = false;
+    let bRetryWaitingPrevious = false;
+    let bRetryWaitingCurrent = bRetryWaitingPrevious;
 
-    let nextTimes_loading = 0, nextTimes_retryWaiting = 0;
+    let nextTimes = 0, nextTimes_loading = 0, nextTimes_retryWaiting = 0;
     do {
 
       // Call .abort() if .next() has been called as specified times
@@ -585,6 +585,12 @@ class TestCase {
 
       // Call .next()
       nextResult = await fetcher.next();
+      ++nextTimes;
+
+      // Check: progressLoading and progressRetryWaiting for 1st time loading.
+      if ( 1 == nextTimes )
+        this.check_progressLoading_progressRetryWaiting(
+          urlComposer, bRetryWaitingCurrent, funcNameInMessage );
 
 //!!! ...unfinished... (2023/04/01)
 // Perhaps, compare nextTimes_Xxx and httpRequestFetcher.XxxYieldIdCurrent.
@@ -606,8 +612,6 @@ class TestCase {
         else
           nextTimes_loading = 0;
 
-//!!! ...unfinished... (2023/04/01)
-// What about first time loading?
         // Check: progressLoading and progressRetryWaiting.
         this.check_progressLoading_progressRetryWaiting(
           urlComposer, bRetryWaitingCurrent, funcNameInMessage );
