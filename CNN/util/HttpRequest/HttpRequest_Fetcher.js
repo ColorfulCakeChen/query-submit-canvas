@@ -803,7 +803,7 @@ class HttpRequest_Fetcher
 
       // 1.2 Before logging message and yield progress, current and final
       //     index must be setup. So that log message and outside caller have
-      //     correct start-stop state of retry waiting.
+      //     consistent start-stop state of retry waiting.
       this.retryWaitingYieldIdCurrent = 0; // starting.
       this.retryWaitingYieldIdFinal = undefined;
 
