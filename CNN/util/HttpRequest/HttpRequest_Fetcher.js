@@ -267,28 +267,6 @@ class HttpRequest_Fetcher
     return false;
   }
 
-//!!! (2023/04/01 Remarked) Use .loadingStartStopState instead.
-//   /**
-//    * @return {boolean}
-//    *   Return true, if ( .loadingTimer_isUsed == true ) and ( now is during
-//    * loading ).
-//    */
-//   get loadingTimer_isCounting() {
-//     if ( this.loadingTimerPromise )
-//       return true;
-//     return false;
-//   }
-
-//!!! (2023/04/01 Remarked) Use .retryWaitingStartStopState instead.
-//   /**
-//    * @return {boolean} Return true, if now is during retry waiting.
-//    */
-//   get retryWaitingTimer_isCounting() {
-//     if ( this.retryWaitingTimerPromise )
-//       return true;
-//     return false;
-//   }
-
 
   /** @return {boolean} Return true, if not yet reach maximum retry times. */
   get retryTimes_isRunOut() {
@@ -452,9 +430,6 @@ class HttpRequest_Fetcher
 
               } else {
                 bRetry = true; // 2.2.2 Retry one more time.
-
-//!!! (2023/03/31 Remarked) Moved into .retryWaiting_asyncGenerator()
-//                ++this.retryTimesCur;
               }
 
             } else { // 2.3 Unknown ProgressEvent. (Never retry for unknown error.)
@@ -587,21 +562,6 @@ class HttpRequest_Fetcher
     // 0.3 Reset retry waiting progress.
     HttpRequest_Fetcher.retryWaitingMilliseconds_init.call( this );
     HttpRequest_Fetcher.progressRetryWaiting_set_beforeDone.call( this );
-
-//!!! (2023/04/03 Remarked) Moved to the end of retry waiting.
-//     // If there is no more retry times, remove the progressRetryWaiting
-//     // so that only progressLoading occupies the whole progressParent.
-//     if ( this.retryTimes_isRunOut ) {
-//
-// !!! ...unfinished... (2023/04/03)
-// // What if .abort() was called during retry waiting?
-// // There is no chance executed to here.
-// //
-//
-//       this.progressParent.child_dispose( this.progressRetryWaiting );
-//     } else {
-//       HttpRequest_Fetcher.progressRetryWaiting_set_beforeDone.call( this );
-//     }
 
     // 0.4 Inform outside caller progress when begin loading.
     //
@@ -1183,14 +1143,6 @@ class HttpRequest_Fetcher
    * @param {HttpRequest_Fetcher} this
    */
   static handle_loadingTimer() {
-
-
-//!!! ...unfinished... (2023/04/01)
-// It seems possible loading timer triggerred after progressLoading 100
-// (by load event). And then, loading timer ruin the progressLoading
-// (e.g. .loadingMillisecondsCur=500, .loadingMillisecondsMax=6000,
-// progressLoading=0.04997810958800046%)
-
 
     // 1.
     this.loadingMillisecondsCur += this.loadingMillisecondsInterval;
