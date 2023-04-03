@@ -809,14 +809,14 @@ class HttpRequest_Fetcher
       //     canceled if .abort() is called during the yield.
       HttpRequest_Fetcher.retryWaitingTimerPromise_create_and_set.call( this );
 
-      // 1.2 Before logging message and yield progress, current and final
-      //     index must be setup. So that log message and outside caller have
-      //     consistent start-stop state of retry waiting.
+      // 1.2 Before log message and yield progress, current and final
+      //     yield id must be setup. So that log message and outside caller
+      //     have consistent start-stop state of retry waiting.
       this.retryWaitingYieldIdCurrent = 0; // starting.
       this.retryWaitingYieldIdFinal = undefined;
 
-      // 1.3 Before logging message, increase .retryTimesCur (so that log
-      //     messages have correct .retryTimesCur).
+      // 1.3 Before log message, increase .retryTimesCur (so that log messages
+      //     have correct .retryTimesCur).
       ++this.retryTimesCur;
 
       // 1.4 Before yield, log message. So that outside caller and debugger
@@ -832,12 +832,17 @@ class HttpRequest_Fetcher
 
     // 2. Abort immediately if caller requests.
     if ( this.bAbort ) {
+
+      // Before log message and yield progress, increase current yield id.
+      // So that log message and outside caller have consistent start-stop
+      // state of retry waiting.
+      ++this.retryWaitingYieldIdCurrent; // started.
+
       HttpRequest_Fetcher.retryWaiting_log.call( this, "abort at start" );
       HttpRequest_Fetcher.progressRetryWaiting_set_whenDone.call( this );
 
       // Inform outside caller progress when stopping retry waiting.
       {
-        ++this.retryWaitingYieldIdCurrent; // started.
         this.retryWaitingYieldIdFinal = this.retryWaitingYieldIdCurrent; // stopping.
         yield this.progressRoot;
       }
@@ -851,8 +856,13 @@ class HttpRequest_Fetcher
     try {
       let notDone;
       do {
+        // 3.1 Before handle retry waiting and yield progress, increase
+        //     current yield id. So that log message inside the retry waiting
+        //     handler and outside caller have consistent start-stop state of
+        //     retry waiting.
+        ++this.retryWaitingYieldIdCurrent; // started.
 
-        // 3.1
+        // 3.2
         //
         // During the yield (before the end of this do-while loop), the
         // this.retryWaitingTimerPromise may become null (e.g.
@@ -864,7 +874,7 @@ class HttpRequest_Fetcher
           HttpRequest_Fetcher.handle_retryWaitingTimer.call( this );
         }
 
-        // 3.2
+        // 3.3 Determine whether retry waiting is done.
         //
         // Not done, if:
         //   - HttpRequest_Fetcher.abort() is not called.
@@ -873,9 +883,8 @@ class HttpRequest_Fetcher
         notDone =    ( !this.bAbort )
                   && ( this.retryWaitingTimerPromise );
 
-        // 3.3 Inform outside caller progress when step retry waiting.
+        // 3.4 Inform outside caller progress when step retry waiting.
         {
-          ++this.retryWaitingYieldIdCurrent; // started.
           if ( !notDone ) // stopping.
             this.retryWaitingYieldIdFinal = this.retryWaitingYieldIdCurrent;
   
@@ -888,12 +897,12 @@ class HttpRequest_Fetcher
       } while ( notDone ); // Stop if retry waiting completely.
 
     } catch ( e ) {
-      // 3.4
+      // 3.5
       this.retryWaitingYieldIdFinal = this.retryWaitingYieldIdCurrent; // stopping.
       throw e;
 
     } finally {
-      // 3.5 Ensure stopped even if exception.
+      // 3.6 Ensure stopped even if exception.
       ++this.retryWaitingYieldIdCurrent; // stopped.
 
       // 4. If there is no more retry times, remove the progressRetryWaiting

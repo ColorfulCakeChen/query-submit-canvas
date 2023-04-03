@@ -482,6 +482,9 @@ class TestCase {
       let retryTimes_isRunOut = httpRequestFetcher.retryTimes_isRunOut;
       if ( retryTimes_isRunOut ) { // 2.2.1
 
+!!! ...unfinished... (2023/04/03)
+// No matter ending of loading or retry waiting, this should be true.
+
         if ( progressRetryWaiting )
           throw Error( `GSheets_tester.TestCase`
             + `.${funcNameInMessage}(): testCaseId=${this.testCaseId}, `
