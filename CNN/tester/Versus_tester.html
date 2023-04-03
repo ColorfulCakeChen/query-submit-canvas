@@ -12,16 +12,28 @@
         <td>
           <input id="SpreadsheetIdText" type="text" maxlength="150" size="50"/>
           <button id="DownloadSummaryButton" type="button" disabled>Download Summary</button>
+          <progress id="DownloadVersusSummaryProgressBar"></progress>
+        </td>
+      </tr>
 
+      <tr>
+        <th scope="row">LoadingParams</th>
+        <td>
           <label for="bLogFetcherEventToConsoleCheckbox">bLogFetcherEventToConsole</label>
           <input id="bLogFetcherEventToConsoleCheckbox" type="checkbox"/>
+        </td>
 
+        <td>
           <label for="loadingMillisecondsMaxNumber">loadingMillisecondsMax</label>
           <input id="loadingMillisecondsMaxNumber" type="number" value="3000"/>
+        </td>
 
+        <td>
           <label for="loadingMillisecondsIntervalNumber">loadingMillisecondsInterval</label>
           <input id="loadingMillisecondsIntervalNumber" type="number" value="1001"/>
+        </td>
 
+        <td>
           <label for="retryTimesMaxNumber">retryTimesMax</label>
           <input id="retryTimesMaxNumber" type="number" value="5"/>
         </td>
@@ -39,6 +51,7 @@
         <td>
           <input id="NextVisitIndexText" type="text" maxlength="20" size="20" readonly/>
           <button id="DownloadVersusButton" type="button" disabled>Download Next Versus</button>
+          <progress id="DownloadVersusProgressBar"></progress>
         </td>
       </tr>
 

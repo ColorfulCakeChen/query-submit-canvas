@@ -8,6 +8,7 @@ window.addEventListener( "load", window_onLoad );
 let g_Contorls = {
   SpreadsheetIdText: null,
   DownloadSummaryButton: null,
+  DownloadVersusSummaryProgressBar: null,
 
   bLogFetcherEventToConsoleCheckbox: null,
   loadingMillisecondsMaxNumber: null,
@@ -16,6 +17,7 @@ let g_Contorls = {
 
   NextVisitIndexText: null,
   DownloadVersusButton: null,
+  DownloadVersusProgressBar: null,
 
   VersusId: null,
   ParentChromosomes: null,
