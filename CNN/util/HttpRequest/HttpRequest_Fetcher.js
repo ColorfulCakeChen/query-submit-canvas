@@ -1429,6 +1429,7 @@ class HttpRequest_Fetcher
 
     const propertyStartStopState = this[ propertyName ];
     for ( let i = 0; i < comparedStartStopStateArray.length; ++i ) {
+      const comparedStartStopState = comparedStartStopStateArray[ i ];
       if ( propertyStartStopState == comparedStartStopState )
         return; // Found.
     }
@@ -1445,6 +1446,7 @@ class HttpRequest_Fetcher
         = new Array( comparedStartStopStateArray.length );
 
       for ( let i = 0; i < comparedStartStopStateArray.length; ++i ) {
+        const comparedStartStopState = comparedStartStopStateArray[ i ];
         const comparedStartStopStateName = ValueDesc.StartStopState.Singleton
           .getNameWithInt_byId( comparedStartStopState );
         comparedStartStopStateNameArray[ i ] = comparedStartStopStateName;
