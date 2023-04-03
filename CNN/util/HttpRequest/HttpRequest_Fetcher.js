@@ -586,21 +586,22 @@ class HttpRequest_Fetcher
 
     // 0.3 Reset retry waiting progress.
     HttpRequest_Fetcher.retryWaitingMilliseconds_init.call( this );
+    HttpRequest_Fetcher.progressRetryWaiting_set_beforeDone.call( this );
 
-    // If there is no more retry times, remove the progressRetryWaiting
-    // so that only progressLoading occupies the whole progressParent.
-    if ( this.retryTimes_isRunOut ) {
-
-!!! ...unfinished... (2023/04/03)
-// What if .abort() was called during retry waiting?
-// What if .abort() was called during loading?
-// There is no chance executed to here in the above two cases.
+//!!! (2023/04/03 Remarked) Moved to the end of retry waiting.
+//     // If there is no more retry times, remove the progressRetryWaiting
+//     // so that only progressLoading occupies the whole progressParent.
+//     if ( this.retryTimes_isRunOut ) {
 //
-
-      this.progressParent.child_dispose( this.progressRetryWaiting );
-    } else {
-      HttpRequest_Fetcher.progressRetryWaiting_set_beforeDone.call( this );
-    }
+// !!! ...unfinished... (2023/04/03)
+// // What if .abort() was called during retry waiting?
+// // There is no chance executed to here.
+// //
+//
+//       this.progressParent.child_dispose( this.progressRetryWaiting );
+//     } else {
+//       HttpRequest_Fetcher.progressRetryWaiting_set_beforeDone.call( this );
+//     }
 
     // 0.4 Inform outside caller progress when begin loading.
     //
@@ -894,6 +895,13 @@ class HttpRequest_Fetcher
     } finally {
       // 3.5 Ensure stopped even if exception.
       ++this.retryWaitingYieldIdCurrent; // stopped.
+
+      // 4. If there is no more retry times, remove the progressRetryWaiting
+      //    so that only progressLoading occupies the whole progressParent.
+      if ( this.retryTimes_isRunOut ) {
+        this.progressParent.child_dispose( this.progressRetryWaiting );
+        this.progressRetryWaiting = undefined;
+      }
     }
 
     return;
