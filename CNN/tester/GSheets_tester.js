@@ -563,8 +563,8 @@ class TestCase {
     // Note: Can not call urlComposer.retryWaiting_during (which will get
     //       undefined) here because .httpRequestFetcher has not yet been
     //       created.
-    let bRetryWaitingPrevious = false;
-    let bRetryWaitingCurrent = bRetryWaitingPrevious;
+    let bRetryWaitingPrevious = undefined; // So that 1st .next() will also be checked.
+    let bRetryWaitingCurrent = false;
 
     let nextTimes_loading = 0, nextTimes_retryWaiting = 0;
     do {
