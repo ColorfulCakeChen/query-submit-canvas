@@ -1440,7 +1440,7 @@ class HttpRequest_Fetcher
     const propertyStartStopStateName = ValueDesc.StartStopState.Singleton
       .getNameWithInt_byId( propertyStartStopState );
 
-    let comparedStartStopStateNamesString;
+    let comparedStartStopStateNamesString; // Collect names of compared state.
     {
       let comparedStartStopStateNameArray
         = new Array( comparedStartStopStateArray.length );
