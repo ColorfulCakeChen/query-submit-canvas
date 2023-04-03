@@ -430,14 +430,15 @@ class TestCase {
     let progressLoading = httpRequestFetcher.progressLoading;
     let progressRetryWaiting = httpRequestFetcher.progressRetryWaiting;
 
-//!!! ...unfinished... (2023/04/01)
-
     // 1. phase changes from loading to retry waiting.
     if ( bRetryWaitingCurrent ) {
 
       // 1.1
 
-      // 1.1.1 In fact, both .value and .max are 0.
+      // 1.1.1
+      //   - Either both .value and .max are 0 (error, timeout, abort).
+      //   - Or both .value and .max are non-zero (load, but status 404 File
+      //       Not Found).
       if ( 100 !== progressLoading.valuePercentage )
         throw Error( `GSheets_tester.TestCase`
           + `.${funcNameInMessage}(): testCaseId=${this.testCaseId}, `
@@ -445,17 +446,6 @@ class TestCase {
           + `.progressLoading.valuePercentage (`
           + `${progressLoading.valuePercentage} ) `
           + `should be 100.` );
-
-//!!! ...unfinished... (2023/03/31) sure? When become .valuePercentage 0?
-      // 1.1.2 i.e., .valuePercentage 100.
-      if (   ( 0 !== progressLoading.value )
-          || ( 0 !== progressLoading.max ) )
-        throw Error( `GSheets_tester.TestCase`
-          + `.${funcNameInMessage}(): testCaseId=${this.testCaseId}, `
-          + `When phase changes from loading to retry waiting, both `
-          + `.progressLoading.value ( ${progressLoading.value} ) and `
-          + `.progressLoading.max ( ${progressLoading.max} ) `
-          + `should be 0.` );
 
       // 1.2
       if ( 0 !== progressRetryWaiting.valuePercentage )
@@ -492,16 +482,6 @@ class TestCase {
             + `.progressRetryWaiting ( ${progressRetryWaiting} ) `
             + `should be null, `
             + `if retryTimes_isRunOut ( ${retryTimes_isRunOut}) is true.` );
-
-//!!! (2023/04/01 Remarked) should be null.
-//         if ( 100 !== progressRetryWaiting.valuePercentage )
-//           throw Error( `GSheets_tester.TestCase`
-//             + `.${funcNameInMessage}(): testCaseId=${this.testCaseId}, `
-//             + `When phase changes from retry waiting to loading, `
-//             + `.progressRetryWaiting.valuePercentage ( `
-//             + `${progressRetryWaiting.valuePercentage} ) `
-//             + `should be 100, `
-//             + `if retryTimes_isRunOut ( ${retryTimes_isRunOut}) is true.` );
 
       } else { // 2.2.2
 
