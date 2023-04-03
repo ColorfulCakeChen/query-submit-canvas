@@ -482,9 +482,9 @@ class TestCase {
       let retryTimes_isRunOut = httpRequestFetcher.retryTimes_isRunOut;
       if ( retryTimes_isRunOut ) { // 2.2.1
 
-!!! ...unfinished... (2023/04/03)
-// No matter ending of loading or retry waiting, this should be true.
-
+        // Note: In fact, at the end of retry waiting (i.e. not only here),
+        // progressRetryWaiting have been disposed. However, there is no yield
+        // at that point. So, check it at the beginning of loading.
         if ( progressRetryWaiting )
           throw Error( `GSheets_tester.TestCase`
             + `.${funcNameInMessage}(): testCaseId=${this.testCaseId}, `
