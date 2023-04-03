@@ -512,7 +512,8 @@ class HttpRequest_Fetcher
         HttpRequest_Fetcher.throw_if_loadingStartStopState_not_STOPPED
           .call( this, funcNameInMessage );
 
-        // retry waiting state may be NOT_YET_STARTED or STOPPED (e.g. aborted).
+        // retry waiting state may be NOT_YET_STARTED (in normal) or STOPPED
+        // (if aborted during retry waiting).
         HttpRequest_Fetcher
           .throw_if_retryWaitingStartStopState_not_NOT_YET_STARTED_or_not_STOPPED
           .call( this, funcNameInMessage );
