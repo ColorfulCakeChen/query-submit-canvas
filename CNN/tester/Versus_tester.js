@@ -77,14 +77,27 @@ function DownloadSummaryButton_onClick( event ) {
     = g_Contorls.bLogFetcherEventToConsoleCheckbox.checked;
 
   {
-    g_params_loading_retryWaiting.loadingMillisecondsMax
-      = Number.parseInt( g_Contorls.loadingMillisecondsMaxNumber.value );
+    { // Extract from UI.
+      g_params_loading_retryWaiting.loadingMillisecondsMax
+        = Number.parseInt( g_Contorls.loadingMillisecondsMaxNumber.value );
 
-    g_params_loading_retryWaiting.loadingMillisecondsInterval
-      = Number.parseInt( g_Contorls.loadingMillisecondsIntervalNumber.value );
+      g_params_loading_retryWaiting.loadingMillisecondsInterval
+        = Number.parseInt( g_Contorls.loadingMillisecondsIntervalNumber.value );
 
-    g_params_loading_retryWaiting.retryTimesMax
-      = Number.parseInt( g_Contorls.retryTimesMaxNumber.value );
+      g_params_loading_retryWaiting.retryTimesMax
+        = Number.parseInt( g_Contorls.retryTimesMaxNumber.value );
+    }
+
+    { // Reflect to UI.
+      g_Contorls.loadingMillisecondsMaxNumber.value
+        = g_params_loading_retryWaiting.loadingMillisecondsMax;
+
+      g_Contorls.loadingMillisecondsIntervalNumber.value
+        = g_params_loading_retryWaiting.loadingMillisecondsInterval;
+
+      g_Contorls.retryTimesMaxNumber.value
+        = g_params_loading_retryWaiting.retryTimesMax;
+    }
   }
 
   g_VersusSummary
