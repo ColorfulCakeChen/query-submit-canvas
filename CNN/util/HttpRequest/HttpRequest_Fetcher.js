@@ -507,7 +507,7 @@ class HttpRequest_Fetcher
       // called in the next time.
       this.bAbort = false;
 
-      // Checking post-condition.
+      // Check post-condition.
       {
         // No matter how terminated, loading state should always be STOPPED.
         HttpRequest_Fetcher.throw_if_loadingStartStopState_not_STOPPED
@@ -749,8 +749,8 @@ class HttpRequest_Fetcher
       ++this.loadingYieldIdCurrent; // stopped.
     }
 
-    // 4. 
-    // (2023/02/15) For debug.
+    // 4. Check post-condition.
+    //
     // (When execution to here, the request should have finished successfully.)
     {
       // (2023/02/24 Remarked)
