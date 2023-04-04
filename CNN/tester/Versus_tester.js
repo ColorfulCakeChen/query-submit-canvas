@@ -157,6 +157,10 @@ function VersusSummary_onDownload( bDownloadSummaryOk ) {
 function DownloadVersusButton_onClick( event ) {
   g_Contorls.DownloadVersusButton.disabled = true; // Prevent from many clicking quickly.
 
+//!!! ...unfinshed... (2023/04/04)
+// Add abort button.
+// If ( retryTimesMax != 0 ), display retry time cur/max (or cur only if max < 0).
+
 //!!! ...unfinshed... (2023/04/03)
 // Use requestAnimation to update progress.
   g_VersusSummary
