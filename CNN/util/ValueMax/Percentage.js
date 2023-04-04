@@ -173,6 +173,16 @@ class ValueMax_Percentage_Concrete extends ValueMax_Percentage_Base {
   }
 
   /**
+   * Set .value as .max (and invalidate .valuePercentage_cached).
+   *
+   * @return {number}
+   *   Return the adjusted value (i.e. this.max).
+   */
+  value_set_as_max() {
+    return this.value_set( this.max );
+  }
+
+  /**
    * Add advancedValue to .value (and invalidate .valuePercentage_cached).
    *
    * @param {number} advancedValue

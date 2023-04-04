@@ -449,11 +449,6 @@ class HttpRequest_Fetcher
 //             // Since no retry, the retry waiting timer should be completed to 100%
 //             HttpRequest_Fetcher.progressRetryWaiting_set_whenDone.call( this );
 
-!!!
-      //   - Either both .value and .max are 0 (error, timeout, abort).
-      //   - Or both .value and .max are non-zero (load, but status 404 File
-      //       Not Found).
-
             fetchResult = null;
             this.fetchOk = false;
             throw e;
@@ -506,7 +501,6 @@ class HttpRequest_Fetcher
           .throw_if_retryWaitingStartStopState_not_NOT_YET_STARTED_or_not_STOPPED
           .call( this, funcNameInMessage );
 
-!!!
         // No matter how terminated, progressParent should always be 100.
         HttpRequest_Fetcher.throw_if_progressParent_not_100
           .call( this, funcNameInMessage );
@@ -823,30 +817,28 @@ class HttpRequest_Fetcher
       yield this.progressRoot;
     }
 
-    // 2. Abort immediately if caller requests.
-    if ( this.bAbort ) {
+    try {
+      // 2. Abort immediately if caller requests.
+      if ( this.bAbort ) {
 
-      // Before log message and yield progress, increase current yield id.
-      // So that log message and outside caller have consistent start-stop
-      // state of retry waiting.
-      ++this.retryWaitingYieldIdCurrent; // started.
+        // Before log message and yield progress, increase current yield id.
+        // So that log message and outside caller have consistent start-stop
+        // state of retry waiting.
+        ++this.retryWaitingYieldIdCurrent; // started.
 
-      HttpRequest_Fetcher.retryWaiting_log.call( this, "abort at start" );
-      HttpRequest_Fetcher.progressRetryWaiting_set_whenDone.call( this );
+        HttpRequest_Fetcher.retryWaiting_log.call( this, "abort at start" );
+        HttpRequest_Fetcher.progressRetryWaiting_set_whenDone.call( this );
 
-      // Inform outside caller progress when stopping retry waiting.
-      {
-        this.retryWaitingYieldIdFinal = this.retryWaitingYieldIdCurrent; // stopping.
-        yield this.progressRoot;
+        // Inform outside caller progress when stopping retry waiting.
+        {
+          this.retryWaitingYieldIdFinal = this.retryWaitingYieldIdCurrent; // stopping.
+          yield this.progressRoot;
+        }
+
+        return;
       }
 
-      ++this.retryWaitingYieldIdCurrent; // stopped.
-
-      return;
-    }
-
-    // 3. Until done.
-    try {
+      // 3. Until done.
       let notDone;
       do {
         // 3.1 Before handle retry waiting and yield progress, increase
@@ -904,6 +896,11 @@ class HttpRequest_Fetcher
         this.progressParent.child_dispose( this.progressRetryWaiting );
         this.progressRetryWaiting = undefined;
       }
+
+      // 5. Since there is no chance to retry loading, force .progressLoading
+      //    100% directly.
+      if ( this.bAbort )
+        this.progressLoading.value_set_as_max();
     }
 
     return;
