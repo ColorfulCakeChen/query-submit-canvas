@@ -437,17 +437,27 @@ class TestCase {
 
       // 1.1
 
-      // 1.1.1
-      //   - Either both .value and .max are 0 (error, timeout, abort).
-      //   - Or both .value and .max are non-zero (load, but status 404 File
-      //       Not Found).
-      if ( 100 !== progressLoading.valuePercentage )
+//!!! (2023/04/04 Remarked) should also be 0.
+//       // 1.1.1
+//       //   - Either both .value and .max are 0 (error, timeout, abort).
+//       //   - Or both .value and .max are non-zero (load, but status 404 File
+//       //       Not Found).
+//       if ( 100 !== progressLoading.valuePercentage )
+//         throw Error( `GSheets_tester.TestCase`
+//           + `.${funcNameInMessage}(): testCaseId=${this.testCaseId}, `
+//           + `When phase changes from loading to retry waiting, `
+//           + `.progressLoading.valuePercentage (`
+//           + `${progressLoading.valuePercentage} ) `
+//           + `should be 100.` );
+
+      // 1.1
+      if ( 0 !== progressLoading.valuePercentage )
         throw Error( `GSheets_tester.TestCase`
           + `.${funcNameInMessage}(): testCaseId=${this.testCaseId}, `
           + `When phase changes from loading to retry waiting, `
           + `.progressLoading.valuePercentage (`
           + `${progressLoading.valuePercentage} ) `
-          + `should be 100.` );
+          + `should be 0.` );
 
       // 1.2
       if ( 0 !== progressRetryWaiting.valuePercentage )
