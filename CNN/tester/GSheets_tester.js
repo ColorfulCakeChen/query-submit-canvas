@@ -1025,20 +1025,31 @@ async function* tester( progressParent ) {
           + `progressTestCase.valuePercentage (${progressTestCase.valuePercentage} ) `
           + `should not be 100.` );
 
-!!! ...unfinished... (2023/04/04)
-// When ( progressTestCase.valuePercentage > 0 ),
-// reomving it from progressParent will make progressParent.valuePercentage
-// backtrack (i.e. become smaller).
+//!!! (2023/04/04 Remarked)
+// // When ( progressTestCase.valuePercentage > 0 ),
+// // reomving it from progressParent will make progressParent.valuePercentage
+// // backtrack (i.e. become smaller).
+//
+//       // For failed network request (e.g. abort, error, load without tatus 200,
+//       // timeout), drop its (not 100%) progress so that the total progress could
+//       // still 100% (suppose that there at least one TestCase (e.g. the last
+//       // TestCase) is succeeded).
+//       //
+//       progressParent.child_dispose( progressTestCase );
 
       // For failed network request (e.g. abort, error, load without tatus 200,
-      // timeout), drop its (not 100%) progress so that the total progress could
-      // still 100% (suppose that there at least one TestCase (e.g. the last
-      // TestCase) is succeeded).
+      // timeout), force its progress to 100% so that the total progress could
+      // still 100%.
       //
-      progressParent.child_dispose( progressTestCase );
+      // Note: Another possible solution is dropping the (not 100%) progress
+      //       from progressParent. However, When
+      //       ( progressTestCase.valuePercentage > 0 ), reomving it from
+      //       progressParent may make progressParent.valuePercentage backtrack
+      //       (i.e. become smaller).
+      progressTestCase.value_set_as_max();
 
-      // Because the above dropping will also change progressParent.valuePercentage
-      // (may increase or decrease), it is necessary to inform outside.
+      // Because the above adjusting will also change
+      // progressParent.valuePercentage, it is necessary to inform outside.
       //
       yield progressRoot;
     }
