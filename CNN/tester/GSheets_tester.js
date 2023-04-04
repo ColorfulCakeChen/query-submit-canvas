@@ -1025,6 +1025,11 @@ async function* tester( progressParent ) {
           + `progressTestCase.valuePercentage (${progressTestCase.valuePercentage} ) `
           + `should not be 100.` );
 
+!!! ...unfinished... (2023/04/04)
+// When ( progressTestCase.valuePercentage > 0 ),
+// reomving it from progressParent will make progressParent.valuePercentage
+// backtrack (i.e. become smaller).
+
       // For failed network request (e.g. abort, error, load without tatus 200,
       // timeout), drop its (not 100%) progress so that the total progress could
       // still 100% (suppose that there at least one TestCase (e.g. the last
