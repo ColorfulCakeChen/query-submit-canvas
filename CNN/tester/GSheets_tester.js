@@ -482,19 +482,44 @@ class TestCase {
             + `.${funcNameInMessage}(): testCaseId=${this.testCaseId}, `
             + `When phase changes from retry waiting to loading, `
             + `.progressRetryWaiting ( ${progressRetryWaiting} ) `
-            + `should be null, `
-            + `if retryTimes_isRunOut ( ${retryTimes_isRunOut}) is true.` );
+            + `should be null, if retryTimes_isRunOut `
+            + `( ${retryTimes_isRunOut} ) is true.` );
 
       } else { // 2.2.2
 
-        if ( 0 !== progressRetryWaiting.valuePercentage )
+        let retryTimesCur = httpRequestFetcher.retryTimesCur;
+        if ( retryTimesCur == 0 ) { // Not yet begin any retry.
+
+          if ( progressRetryWaiting )
+            throw Error( `GSheets_tester.TestCase`
+              + `.${funcNameInMessage}(): testCaseId=${this.testCaseId}, `
+              + `When phase changes from retry waiting to loading, `
+              + `if not yet begin any retry (i.e. retryTimesCur `
+              + `( ${retryTimesCur} ) is 0), `
+              + `.progressRetryWaiting ( ${progressRetryWaiting} ) `
+              + `should be null, even if retryTimes_isRunOut `
+              + `( ${retryTimes_isRunOut} ) is false.` );
+
+        } else if ( retryTimesCur > 0 ) { // during retry loading.
+          if ( 100 !== progressRetryWaiting.valuePercentage )
+            throw Error( `GSheets_tester.TestCase`
+              + `.${funcNameInMessage}(): testCaseId=${this.testCaseId}, `
+              + `When phase changes from retry waiting to loading, `
+              + `if has begun any retry (i.e. retryTimesCur `
+              + `( ${retryTimesCur} ) is greater than 0), `
+              + `.progressRetryWaiting.valuePercentage ( `
+              + `${progressRetryWaiting.valuePercentage} ) `
+              + `should be 100, even if retryTimes_isRunOut `
+              + `( ${retryTimes_isRunOut} ) is false.` );
+
+        } else { // ( retryTimesCur < 0 )
           throw Error( `GSheets_tester.TestCase`
-            + `.${funcNameInMessage}(): testCaseId=${this.testCaseId}, `
-            + `When phase changes from retry waiting to loading, `
-            + `.progressRetryWaiting.valuePercentage ( `
-            + `${progressRetryWaiting.valuePercentage} ) `
-            + `should be 0, ` 
-            + `if retryTimes_isRunOut ( ${retryTimes_isRunOut}) is false.` );
+          + `.${funcNameInMessage}(): testCaseId=${this.testCaseId}, `
+          + `When phase changes from retry waiting to loading, `
+          + `.retryTimesCur ( ${retryTimesCur} ) should not be negative.` );
+        }
+
+!!!
       }
 
     }
