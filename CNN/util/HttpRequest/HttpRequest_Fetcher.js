@@ -781,7 +781,7 @@ class HttpRequest_Fetcher
     //
     if ( !this.progressRetryWaiting ) {
       this.progressRetryWaiting = this.progressParent.child_add(
-        ValueMax.Percentage.Concrete.Pool.get_or_create_by( arbitraryNonZero ) );
+        ValueMax.Percentage.Concrete.Pool.get_or_create_by() );
     }
 
     // 1.
