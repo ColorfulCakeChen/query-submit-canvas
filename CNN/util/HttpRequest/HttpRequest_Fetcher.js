@@ -780,7 +780,7 @@ class HttpRequest_Fetcher
     //       should be destroyed by outside caller (i.e. by progressParent).
     //
     if ( !this.progressRetryWaiting ) {
-      this.progressRetryWaiting = progressParent.child_add(
+      this.progressRetryWaiting = this.progressParent.child_add(
         ValueMax.Percentage.Concrete.Pool.get_or_create_by( arbitraryNonZero ) );
     }
 
