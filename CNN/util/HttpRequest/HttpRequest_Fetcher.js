@@ -445,9 +445,9 @@ class HttpRequest_Fetcher
           // 3. Throw exception if not retry.
           if ( !bRetry ) {
 
-!!! (2023/04/04) seems not necessary, because it already was.
-            // Since no retry, the retry waiting timer should be completed to 100%
-            HttpRequest_Fetcher.progressRetryWaiting_set_whenDone.call( this );
+//!!! (2023/04/04 Remarked) seems not necessary, because it already was.
+//             // Since no retry, the retry waiting timer should be completed to 100%
+//             HttpRequest_Fetcher.progressRetryWaiting_set_whenDone.call( this );
 
             fetchResult = null;
             this.fetchOk = false;
@@ -461,9 +461,9 @@ class HttpRequest_Fetcher
           yield* HttpRequest_Fetcher.retryWait_asyncGenerator.call( this );
         } else {
 
-!!! (2023/04/04) seems not necessary, because it already was.
-          // If no retry, the retry waiting timer should be completed to 100%
-          HttpRequest_Fetcher.progressRetryWaiting_set_whenDone.call( this );
+//!!! (2023/04/04 Remarked) seems not necessary, because it already was.
+//           // If no retry, the retry waiting timer should be completed to 100%
+//           HttpRequest_Fetcher.progressRetryWaiting_set_whenDone.call( this );
         }
 
       } while ( bRetry && ( !this.bAbort ) );
