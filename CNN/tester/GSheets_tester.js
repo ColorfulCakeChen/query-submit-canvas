@@ -519,7 +519,7 @@ class TestCase {
               + `( ${retryTimesCur} ) is greater than 0), `
               + `.progressRetryWaiting.valuePercentage ( `
               + `${progressRetryWaiting.valuePercentage} ) `
-              + `should be 100, even if retryTimes_isRunOut `
+              + `should be 100, if retryTimes_isRunOut `
               + `( ${retryTimes_isRunOut} ) is false.` );
 
         } else { // ( retryTimesCur < 0 )
