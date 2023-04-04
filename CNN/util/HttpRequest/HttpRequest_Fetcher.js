@@ -34,7 +34,7 @@ import { Params_loading_retryWaiting as HttpRequest_Params_loading_retryWaiting 
  * ( .loadingMillisecondsMax > 0 ).
  *
  * @member {number} retryTimesCur
- *   How many times has been retried.
+ *   Now is which times retry.
  *
  * @member {number} retryWaitingMillisecondsMax
  *   The maximum time (in milliseconds) of waiting for retry. It is only used

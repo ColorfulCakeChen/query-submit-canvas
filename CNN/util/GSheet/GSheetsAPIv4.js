@@ -36,6 +36,14 @@ import * as ValueMax from "../ValueMax.js";
  *       "Name has space".
  *
  *
+ * @member {number} retryTimesMax
+ *   Retry request so many times at most when request failed (except abort).
+ * Please see also HttpRequest.Params_loading_retryWaiting.
+ *
+ * @member {number} retryTimesCur
+ *   Now is which times retry.
+ *
+ *
  * @member {Function} fetch_asyncPromise_create
  *   A method for creating .JSON_ColumnMajorArrayArray_fetch_asyncGenerator()
  * and looping until done.
@@ -286,23 +294,28 @@ class GSheetsAPIv4_UrlComposer
     }
   }
 
+
   get loadingStartStopState() {
-    if ( this.httpRequestFetcher )
-      return this.httpRequestFetcher.loadingStartStopState;
-    return undefined;
+    return this.httpRequestFetcher?.loadingStartStopState;
   }
 
+
   get retryWaitingStartStopState() {
-    if ( this.httpRequestFetcher )
-      return this.httpRequestFetcher.retryWaitingStartStopState;
-    return undefined;
+    return this.httpRequestFetcher?.retryWaitingStartStopState;
   }
 
   get retryWaiting_during() {
-    if ( this.httpRequestFetcher )
-      return this.httpRequestFetcher.retryWaiting_during;
-    return undefined;
+    return this.httpRequestFetcher?.retryWaiting_during;
   }
+
+  get retryTimesMax() {
+    return this.httpRequestFetcher?.retryTimesMax;
+  }
+
+  get retryTimesCur() {
+    return this.httpRequestFetcher?.retryTimesCur;
+  }
+
 
   /**
    * Abort the loading (or waiting).
