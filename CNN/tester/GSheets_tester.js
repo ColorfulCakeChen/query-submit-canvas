@@ -528,8 +528,6 @@ class TestCase {
           + `When phase changes from retry waiting to loading, `
           + `.retryTimesCur ( ${retryTimesCur} ) should not be negative.` );
         }
-
-!!!
       }
 
     }
