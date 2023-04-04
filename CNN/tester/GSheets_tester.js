@@ -511,6 +511,7 @@ class TestCase {
               + `( ${retryTimes_isRunOut} ) is false.` );
 
         } else if ( retryTimesCur > 0 ) { // during retry loading.
+
           if ( 100 !== progressRetryWaiting.valuePercentage )
             throw Error( `GSheets_tester.TestCase`
               + `.${funcNameInMessage}(): testCaseId=${this.testCaseId}, `
