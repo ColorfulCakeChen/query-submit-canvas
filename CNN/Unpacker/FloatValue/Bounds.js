@@ -629,8 +629,12 @@ class Bounds extends Recyclable.Root {
     for ( let i = 0; i < sourceArray.length; ++i ) {
       let element = Math.fround( sourceArray[ i ] );
       if ( !Number.isNaN( element ) ) {
-        resultArray[ i ] = Math.max( this.lower, Math.min( element, this.upper ) );
-      } // If NaN, let it become 0. (Just do nothing, because Float32Array is initialized to zero by default.)
+        resultArray[ i ]
+          = Math.max( this.lower, Math.min( element, this.upper ) );
+
+      // Otherwise (i.e. NaN), let it become 0. (Just do nothing, because
+      // Float32Array is initialized to zero by default.)
+      }
     }
     return resultArray;
   }
