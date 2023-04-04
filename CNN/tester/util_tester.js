@@ -70,9 +70,9 @@ function test() {
     bDetectProgressBacktrack = true;
 
 //!!! (2023/04/04 Temp Remarked) if no retry, should also not backtrack.
-//     // HttpRequest.Fetcher will back-track progress.
-//     if ( gTestGeneratorFuncMap.get( GSheets_tester.tester ) )
-//       bDetectProgressBacktrack = false;
+    // HttpRequest.Fetcher will back-track progress.
+    if ( gTestGeneratorFuncMap.get( GSheets_tester.tester ) )
+      bDetectProgressBacktrack = false;
   }
 
   let tester = testerAll();
