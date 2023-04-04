@@ -774,7 +774,12 @@ class HttpRequest_Fetcher
    */
   static async* retryWait_asyncGenerator() {
 
-    // .progressRetryWaiting is only created when first times retry waiting.
+    // 0.
+
+    // 0.1 .progressLoading should become 0% since now is going to retry.
+    this.progressLoading.value_set( 0 );
+
+    // 0.2 .progressRetryWaiting is only created when first times retry waiting.
     //
     // Note: Although .progressLoading and progressRetryWaiting is recorded in
     //       this, they are not owned by this HttpRequest_Fetcher object. They
