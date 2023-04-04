@@ -449,6 +449,11 @@ class HttpRequest_Fetcher
 //             // Since no retry, the retry waiting timer should be completed to 100%
 //             HttpRequest_Fetcher.progressRetryWaiting_set_whenDone.call( this );
 
+!!!
+      //   - Either both .value and .max are 0 (error, timeout, abort).
+      //   - Or both .value and .max are non-zero (load, but status 404 File
+      //       Not Found).
+
             fetchResult = null;
             this.fetchOk = false;
             throw e;
@@ -501,9 +506,10 @@ class HttpRequest_Fetcher
           .throw_if_retryWaitingStartStopState_not_NOT_YET_STARTED_or_not_STOPPED
           .call( this, funcNameInMessage );
 
+!!!
         // No matter how terminated, progressParent should always be 100.
         HttpRequest_Fetcher.throw_if_progressParent_not_100
-          .call( this, funcNameInMessage )
+          .call( this, funcNameInMessage );
       }
     }
 
@@ -729,16 +735,17 @@ class HttpRequest_Fetcher
       // if ( 200 !== xhr.status ) {
       //   //debugger;
       //   throw Error( `HttpRequest_Fetcher.load_asyncGenerator(): `
-      //     + `When done, `
-      //     + `xhr.status ( ${xhr.status} ) should be 200.` );
+      //     + `When done, xhr.status ( ${xhr.status} ) should be 200.` );
       // }
 
       // 4.2
+      //   - Either both .value and .max are 0 (error, timeout, abort).
+      //   - Or both .value and .max are non-zero (load, but status 404 File
+      //       Not Found).
       if ( 100 != this.progressLoading.valuePercentage ) {
         //debugger;
         throw Error( `HttpRequest_Fetcher.load_asyncGenerator(): `
-          + `When done, `
-          + `progressLoading.valuePercentage `
+          + `When done, progressLoading.valuePercentage `
           + `( ${this.progressLoading.valuePercentage} ) should be 100.` );
       }
     }
