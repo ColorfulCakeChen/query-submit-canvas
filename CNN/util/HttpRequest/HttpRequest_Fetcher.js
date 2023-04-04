@@ -375,14 +375,16 @@ class HttpRequest_Fetcher
       this.progressLoading = progressParent.child_add(
         ValueMax.Percentage.Concrete.Pool.get_or_create_by( arbitraryNonZero ) );
 
-      {
-        // If retry times is run out at begining, it means no retry at all.
-        if ( this.retryTimes_isRunOut )
-          this.progressRetryWaiting = undefined;
-        else
-          this.progressRetryWaiting = progressParent.child_add(
-            ValueMax.Percentage.Concrete.Pool.get_or_create_by( arbitraryNonZero ) );
-      }
+//!!! (2023/04/04 Remarked)
+// Only created when first times retry waiting.
+//       {
+//         // If retry times is run out at begining, it means no retry at all.
+//         if ( this.retryTimes_isRunOut )
+//           this.progressRetryWaiting = undefined;
+//         else
+//           this.progressRetryWaiting = progressParent.child_add(
+//             ValueMax.Percentage.Concrete.Pool.get_or_create_by( arbitraryNonZero ) );
+//       }
     }
 
     // load-wait-retry
@@ -442,8 +444,11 @@ class HttpRequest_Fetcher
 
           // 3. Throw exception if not retry.
           if ( !bRetry ) {
+
+!!! (2023/04/04) seems not necessary, because it already was.
             // Since no retry, the retry waiting timer should be completed to 100%
             HttpRequest_Fetcher.progressRetryWaiting_set_whenDone.call( this );
+
             fetchResult = null;
             this.fetchOk = false;
             throw e;
@@ -455,6 +460,8 @@ class HttpRequest_Fetcher
           // If retry, waiting before it (i.e. truncated exponential backoff algorithm).
           yield* HttpRequest_Fetcher.retryWait_asyncGenerator.call( this );
         } else {
+
+!!! (2023/04/04) seems not necessary, because it already was.
           // If no retry, the retry waiting timer should be completed to 100%
           HttpRequest_Fetcher.progressRetryWaiting_set_whenDone.call( this );
         }
@@ -559,9 +566,10 @@ class HttpRequest_Fetcher
     this.progressLoading.value_max_set( progressLoading_max_default );
     this.progressLoading.value_set( 0 );
 
-    // 0.3 Reset retry waiting progress.
-    HttpRequest_Fetcher.retryWaitingMilliseconds_init.call( this );
-    HttpRequest_Fetcher.progressRetryWaiting_set_beforeDone.call( this );
+//!!! (2023/04/04 Remarked) Moved to .retryWait_asyncGenerator().
+//    // 0.3 Reset retry waiting progress.
+//     HttpRequest_Fetcher.retryWaitingMilliseconds_init.call( this );
+//     HttpRequest_Fetcher.progressRetryWaiting_set_beforeDone.call( this );
 
     // 0.4 Inform outside caller progress when begin loading.
     //
@@ -759,34 +767,47 @@ class HttpRequest_Fetcher
    */
   static async* retryWait_asyncGenerator() {
 
-    // Note: .progressRetryWaiting should have been setup at begnning of
-    //       .loading_asyncGenerator().
+    // .progressRetryWaiting is only created when first times retry waiting.
     //
+    // Note: Although .progressLoading and progressRetryWaiting is recorded in
+    //       this, they are not owned by this HttpRequest_Fetcher object. They
+    //       should be destroyed by outside caller (i.e. by progressParent).
+    //
+    if ( !this.progressRetryWaiting ) {
+      this.progressRetryWaiting = progressParent.child_add(
+        ValueMax.Percentage.Concrete.Pool.get_or_create_by( arbitraryNonZero ) );
+    }
 
     // 1.
     {
-      // 1.1 Before yield, start retry waiting timer. So that it can be
+      // 1.1 Because .retryTimesCur affects .retryTimes_isRunOut which affects
+      //     .retryWaitingMillisecondsMax and .retryWaitingMillisecondsCur,
+      //     determine them before .retryTimesCur being increased.
+      HttpRequest_Fetcher.retryWaitingMilliseconds_init.call( this );
+      HttpRequest_Fetcher.progressRetryWaiting_set_beforeDone.call( this );
+  
+      // 1.2 Before yield, start retry waiting timer. So that it can be
       //     canceled if .abort() is called during the yield.
       HttpRequest_Fetcher.retryWaitingTimerPromise_create_and_set.call( this );
 
-      // 1.2 Before log message and yield progress, current and final
+      // 1.3 Before log message and yield progress, current and final
       //     yield id must be setup. So that log message and outside caller
       //     have consistent start-stop state of retry waiting.
       this.retryWaitingYieldIdCurrent = 0; // starting.
       this.retryWaitingYieldIdFinal = undefined;
 
-      // 1.3 Before log message, increase .retryTimesCur (so that log messages
+      // 1.4 Before log message, increase .retryTimesCur (so that log messages
       //     have correct .retryTimesCur).
       ++this.retryTimesCur;
 
-      // 1.4 Before yield, log message. So that outside caller and debugger
+      // 1.5 Before yield, log message. So that outside caller and debugger
       //     have consistent feeling.
       //
       // Note: Log must be after .retryTimesCur being increased, because it is
       //       used in the log message.
       HttpRequest_Fetcher.retryWaiting_log.call( this, "start" );
 
-      // 1.5 Inform outside caller progress when begin retry waiting.
+      // 1.6 Inform outside caller progress when begin retry waiting.
       yield this.progressRoot;
     }
 
@@ -902,6 +923,12 @@ class HttpRequest_Fetcher
       // So that always ( .progressRetryWaiting.valuePercentage == 100% )
       this.retryWaitingMillisecondsMax = 0;
       this.retryWaitingMillisecondsCur = undefined;
+
+      // (should not execute to here.)
+      throw Error( `HttpRequest_Fetcher.retryWaitingMilliseconds_init(): `
+        + `should not be called when `
+        + `.retryTimes_isRunOut ( ${this.retryTimes_isRunOut} ) is true.`
+      );
 
     // Still could retry.
     } else {
