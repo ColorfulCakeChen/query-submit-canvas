@@ -770,8 +770,12 @@ class HttpRequest_Fetcher
 
     // 0.
 
-    // 0.1 .progressLoading should become 0% since now is going to retry.
-    this.progressLoading.value_set( 0 );
+    // 0.1 .progressLoading should become 0%, since now is going to retry.
+    {
+      const arbitraryNonZero = 1;
+      this.progressLoading.value_max_set( arbitraryNonZero );
+      this.progressLoading.value_set( 0 );
+    }
 
     // 0.2 .progressRetryWaiting is only created when first times retry waiting.
     //

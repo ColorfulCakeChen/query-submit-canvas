@@ -476,7 +476,7 @@ class TestCase {
         throw Error( `GSheets_tester.TestCase`
           + `.${funcNameInMessage}(): testCaseId=${this.testCaseId}, `
           + `When phase changes from retry waiting to loading, `
-          + `.progressLoading.valuePercentage (`
+          + `.progressLoading.valuePercentage ( `
           + `${progressLoading.valuePercentage} ) `
           + `should be 0.` );
 
