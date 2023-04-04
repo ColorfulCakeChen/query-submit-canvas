@@ -1038,15 +1038,21 @@ async function* tester( progressParent ) {
 //       progressParent.child_dispose( progressTestCase );
 
       // For failed network request (e.g. abort, error, load without tatus 200,
-      // timeout), force its progress to 100% so that the total progress could
-      // still 100%.
+      // timeout), force its progress to 100% (by replacing all its children
+      // progresses with a 100% progress) so that the total progress could still
+      // 100%.
       //
       // Note: Another possible solution is dropping the (not 100%) progress
       //       from progressParent. However, When
       //       ( progressTestCase.valuePercentage > 0 ), reomving it from
       //       progressParent may make progressParent.valuePercentage backtrack
       //       (i.e. become smaller).
-      progressTestCase.value_set_as_max();
+      {
+        progressTestCase.child_disposeAll();
+        progressTestCase.child_add(
+          ValueMax.Percentage.Concrete.Pool.get_or_create_by( 1 ) );
+        progressTestCase.children[ 0 ].value_set_as_max();
+      }
 
       // Because the above adjusting will also change
       // progressParent.valuePercentage, it is necessary to inform outside.
