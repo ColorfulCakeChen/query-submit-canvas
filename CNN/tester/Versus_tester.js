@@ -182,16 +182,7 @@ async function DownloadSummaryButton_onClick( event ) {
 
 /** */
 function DownloadSummaryAbortButton_onClick( event ) {
-
-//!!! ...unfinshed... (2023/04/05) should wait aborted.
-  g_Contorls.DownloadSummaryButton.disabled = false;
-
-  g_Contorls.DownloadSummaryAbortButton.disabled = true;
-
   g_VersusSummary.urlComposer.abort();
-
-//!!! ...unfinshed... (2023/04/05)
-
 }
 
 /** */
@@ -268,9 +259,7 @@ function DownloadVersusButton_onClick( event ) {
 
 /** */
 function DownloadVersusAbortButton_onClick( event ) {
-
-//!!! ...unfinished... (2023/04/05)
-
+  g_VersusSummary.urlComposer.abort();
 }
 
 /**
@@ -279,6 +268,7 @@ function DownloadVersusAbortButton_onClick( event ) {
  */
 function Versus_onDownload( versus ) {
   g_Contorls.DownloadVersusButton.disabled = false;
+  g_Contorls.DownloadVersusAbortButton.disabled = true;
 
   let visitIndex = g_VersusSummary.visitIndex_get();
   g_Contorls.NextVisitIndexText.value = visitIndex;
