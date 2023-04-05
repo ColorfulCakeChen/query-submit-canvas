@@ -187,19 +187,38 @@ class DEvolution_Versus extends
     // 0.2 Prepare progress.
     let progressRoot = progressParent.root_get();
 
-    let progressForDownload = progressParent.child_add(
+    // (2023/04/05 Remarked)
+    // For preventing decoding (which is faster than network downloading)
+    // from occupying too large portion of progress, let UrlComposer
+    // uses progressParent directly.
+    //
+    // let progressForDownloading = progressParent.child_add(
+    //   ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
+    let progressForDownloading = progressParent;
+
+    // For preventing decoding (which is faster than network downloading)
+    // from occupying too large portion of progress, let they all under a
+    // single progressDecoding directly.
+    //
+    let progressForDecoding = progressParent.child_add(
       ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
 
-//!!! ...unfinshed... (2023/04/05)
-// Perhaps, reduce progress portion of versusId (whose computation is small).
-    let progressToAdvance = progressParent.child_add(
+    let progressToAdvance = progressForDecoding.child_add(
       ValueMax.Percentage.Concrete.Pool.get_or_create_by( 1 ) ); // versusId
-  
-    let progressForParentChromosome = progressParent.child_add(
-      ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
 
-    let progressForOffspringChromosome = progressParent.child_add(
-      ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
+    // (2023/04/05 Remarked)
+    // For preventing versusId (whose computation is small) from occupying too
+    // large portion of progress, let chromosome decoders uses
+    // progressForDecoding directly.
+    //
+    // let progressForParentChromosome = progressForDecoding.child_add(
+    //   ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
+    //
+    // let progressForOffspringChromosome = progressForDecoding.child_add(
+    //   ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
+    //
+    let progressForParentChromosome = progressForDecoding;
+    let progressForOffspringChromosome = progressForDecoding;
 
     // 1. download from remote.
     let versusArrayArray;
@@ -209,7 +228,7 @@ class DEvolution_Versus extends
 
       let fetcherVersus
         = spreadsheetUrlComposer.fetch_asyncGenerator_create(
-            progressForDownload, params_loading_retryWaiting );
+            progressForDownloading, params_loading_retryWaiting );
 
       versusArrayArray = yield* fetcherVersus;
 
