@@ -390,17 +390,6 @@ class HttpRequest_Fetcher
       const arbitraryNonZero = 1;
       this.progressLoading = progressParent.child_add(
         ValueMax.Percentage.Concrete.Pool.get_or_create_by( arbitraryNonZero ) );
-
-//!!! (2023/04/04 Remarked)
-// Only created when first times retry waiting.
-//       {
-//         // If retry times is run out at begining, it means no retry at all.
-//         if ( this.retryTimes_isRunOut )
-//           this.progressRetryWaiting = undefined;
-//         else
-//           this.progressRetryWaiting = progressParent.child_add(
-//             ValueMax.Percentage.Concrete.Pool.get_or_create_by( arbitraryNonZero ) );
-//       }
     }
 
     // load-wait-retry
@@ -460,11 +449,6 @@ class HttpRequest_Fetcher
 
           // 3. Throw exception if not retry.
           if ( !bRetry ) {
-
-//!!! (2023/04/04 Remarked) seems not necessary, because it already was.
-//             // Since no retry, the retry waiting timer should be completed to 100%
-//             HttpRequest_Fetcher.progressRetryWaiting_set_whenDone.call( this );
-
             fetchResult = null;
             this.fetchOk = false;
             throw e;
@@ -476,10 +460,6 @@ class HttpRequest_Fetcher
           // If retry, waiting before it (i.e. truncated exponential backoff algorithm).
           yield* HttpRequest_Fetcher.retryWait_asyncGenerator.call( this );
         } else {
-
-//!!! (2023/04/04 Remarked) seems not necessary, because it already was.
-//           // If no retry, the retry waiting timer should be completed to 100%
-//           HttpRequest_Fetcher.progressRetryWaiting_set_whenDone.call( this );
         }
 
       } while ( bRetry && ( !this.bAbort ) );
@@ -581,11 +561,6 @@ class HttpRequest_Fetcher
 
     this.progressLoading.value_max_set( progressLoading_max_default );
     this.progressLoading.value_set( 0 );
-
-//!!! (2023/04/04 Remarked) Moved to .retryWait_asyncGenerator().
-//    // 0.3 Reset retry waiting progress.
-//     HttpRequest_Fetcher.retryWaitingMilliseconds_init.call( this );
-//     HttpRequest_Fetcher.progressRetryWaiting_set_beforeDone.call( this );
 
     // 0.4 Inform outside caller progress when begin loading.
     //
