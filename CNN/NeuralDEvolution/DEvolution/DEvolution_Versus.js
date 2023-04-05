@@ -190,6 +190,8 @@ class DEvolution_Versus extends
     let progressForDownload = progressParent.child_add(
       ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
 
+//!!! ...unfinshed... (2023/04/05)
+// Perhaps, reduce progress portion of versusId (whose computation is small).
     let progressToAdvance = progressParent.child_add(
       ValueMax.Percentage.Concrete.Pool.get_or_create_by( 1 ) ); // versusId
   
