@@ -177,10 +177,6 @@ async function DownloadSummaryButton_onClick( event ) {
     g_VersusSummary.rangeArray_load_asyncPromise_progress
   );
 
-
-//!!! (2023/04/05 Remarked)
-//    .then( VersusSummary_onDownload );
-
   VersusSummary_onDownload( bDownloadSummaryOk );
 }
 
@@ -255,9 +251,19 @@ function DownloadVersusButton_onClick( event ) {
 
 //!!! ...unfinshed... (2023/04/03)
 // Use requestAnimation to update progress.
-  g_VersusSummary
-    .versus_next_load_asyncPromise_create( g_params_loading_retryWaiting )
-    .then( Versus_onDownload );
+
+  let versus_next_load_asyncPromise = g_VersusSummary
+    .versus_next_load_asyncPromise_create( g_params_loading_retryWaiting );
+
+  let versus = await retryTimes_progress_loadPromise(
+    g_Contorls.DownloadVersusRetryTimesSpan,
+    g_Contorls.DownloadVersusProgressBar,
+    g_VersusVersus.urlComposer,
+    versus_next_load_asyncPromise,
+    g_VersusVersus.versus_next_load_asyncPromise_progress
+  );
+
+  Versus_onDownload( versus );
 }
 
 /** */
