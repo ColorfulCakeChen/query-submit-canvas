@@ -206,6 +206,9 @@ class DEvolution_Versus extends
     let progressToAdvance = progressForDecoding.child_add(
       ValueMax.Percentage.Concrete.Pool.get_or_create_by( 1 ) ); // versusId
 
+//!!! ...unfinished... (2023/04/05)
+// Problem: This will result progressParent backtrack.
+
     // (2023/04/05 Remarked)
     // For preventing versusId (whose computation is small) from occupying too
     // large portion of progress, let chromosome decoders uses
