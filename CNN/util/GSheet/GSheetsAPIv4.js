@@ -316,6 +316,10 @@ class GSheetsAPIv4_UrlComposer
     return this.httpRequestFetcher?.retryTimesCur;
   }
 
+  get retryTimes_CurMax_toString() {
+    return this.httpRequestFetcher?.retryTimes_CurMax_toString;
+  }
+
 
   /**
    * Abort the loading (or waiting).

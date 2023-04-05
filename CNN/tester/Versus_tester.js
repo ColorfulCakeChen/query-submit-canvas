@@ -8,6 +8,7 @@ window.addEventListener( "load", window_onLoad );
 let g_Contorls = {
   SpreadsheetIdText: null,
   DownloadSummaryButton: null,
+  DownloadSummaryRetryTimesSpan: null,
   DownloadSummaryAbortButton: null,
   DownloadSummaryProgressBar: null,
 
@@ -18,6 +19,7 @@ let g_Contorls = {
 
   NextVisitIndexText: null,
   DownloadVersusButton: null,
+  DownloadVersusRetryTimesSpan: null,
   DownloadVersusAbortButton: null,
   DownloadVersusProgressBar: null,
 
@@ -113,7 +115,10 @@ async function DownloadSummaryButton_onClick( event ) {
   }
 
 //!!! ...unfinshed... (2023/04/03)
+// g_Contorls.DownloadSummaryRetryTimesSpan
+//
 // Use requestAnimation to update progress.
+
   let bDownloadSummaryOk = await g_VersusSummary
     .rangeArray_load_asyncPromise_create( g_params_loading_retryWaiting );
 

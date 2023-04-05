@@ -268,6 +268,22 @@ class HttpRequest_Fetcher
   }
 
 
+  /**
+   * @return {string}
+   *   Return a string describing .retryTimesCur and .retryTimesMax.
+   *   - If ( .retryTimesCur == 0 ), empty string.
+   *   - If ( .retryTimesCur > 0 ):
+   *     - If ( .retryTimesMax < 0 ), `${retryTimesCur}`
+   *     - If ( .retryTimesMax > 0 ), `${retryTimesCur}/${retryTimesMax}`
+   */
+  get retryTimes_CurMax_toString() {
+    if ( this.retryTimesCur <= 0 )
+      return ""; // Not during retry.
+    if ( this.retryTimesMax < 0 )
+      return `${this.retryTimesCur}`; // Infinite retry times.
+    return `${this.retryTimesCur}/${this.retryTimesMax}`; // Finite retry times.
+  }
+
   /** @return {boolean} Return true, if not yet reach maximum retry times. */
   get retryTimes_isRunOut() {
     if ( this.retryTimesMax < 0 )
