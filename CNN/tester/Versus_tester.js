@@ -98,7 +98,7 @@ function window_onLoad( event ) {
  * @return {any}
  *   Return the resolved value of loadPromise.
  */
-function retryTimes_progress_loadPromise(
+async function retryTimes_progress_loadPromise(
   retryTimesSpanHTMLElement, progressHTMLElement,
   urlComposer, loadPromise, progressPercentage
 ) {
@@ -108,27 +108,22 @@ function retryTimes_progress_loadPromise(
   let bDone;
   let promiseResolvedValue;
   do {
-    let timePromise = PartTime.delayedValue( 500, retryTimes_progress_loadPromise );
+    let timePromise
+      = PartTime.delayedValue( 500, retryTimes_progress_loadPromise );
     let allPromiseRace = Promise.race( [ loadPromise, timePromise ] );
 
-    let result = await allPromiseRace;
-    if ( result === retryTimes_progress_loadPromise ) { // timePromise
-      bDone = false;
-
-    } else { // rangeArray_load_asyncPromise
-      bDone = true;
-      promiseResolvedValue = result;
-    }
+    promiseResolvedValue = await allPromiseRace;
+    if ( promiseResolvedValue === retryTimes_progress_loadPromise )
+      bDone = false; // timePromise
+    else
+      bDone = true; // loadPromise
 
     retryTimesSpanHTMLElement.textContent
       = urlComposer.retryTimes_CurMax_string;
-
     progressHTMLElement.value = progressPercentage.valuePercentage;
-
   } while ( !bDone );
 
   retryTimesSpanHTMLElement.textContent = "";
-
   return promiseResolvedValue;
 }
 
@@ -171,67 +166,14 @@ async function DownloadSummaryButton_onClick( event ) {
     }
   }
 
-//!!! ...unfinshed... (2023/04/03 Added and Remarked) use timer instead.
-//   let versusSummaryLoader = g_VersusSummary
-//     .rangeArray_load_asyncGenerator_create( g_params_loading_retryWaiting );
-//
-//   let loaderNext;
-//   do {
-//     loaderNext = await versusSummaryLoader.next();
-//
-//     g_Contorls.DownloadSummaryRetryTimesSpan.textContent
-//       = g_VersusSummary.urlComposer.retryTimes_CurMax_string;
-//
-//     g_Contorls.DownloadSummaryProgressBar.value_set( )
-//
-//   } while ( !loaderNext.done );
-//
-//   g_Contorls.DownloadSummaryRetryTimesSpan.textContent = "";
-//
-//   let bDownloadSummaryOk = loaderNext.value;
+  let bDownloadSummaryOk = await retryTimes_progress_loadPromise(
+    g_Contorls.DownloadSummaryRetryTimesSpan,
+    g_Contorls.DownloadSummaryProgressBar,
+    g_VersusSummary.urlComposer,
+    rangeArray_load_asyncPromise,
+    g_VersusSummary.fetch_asyncGenerator_progress
+  );
 
-
-//!!! ...unfinshed... (2023/04/03)
-// Use requestAnimation to update progress.
-//
-// g_Contorls.DownloadSummaryRetryTimesSpan
-// .retryTimes_CurMax_string
-//
-//   let bDownloadSummaryOk = await g_VersusSummary
-//     .rangeArray_load_asyncPromise_create( g_params_loading_retryWaiting );
-
-
-  let rangeArray_load_asyncPromise = g_VersusSummary
-    .rangeArray_load_asyncPromise_create( g_params_loading_retryWaiting );
-
-  g_Contorls.DownloadSummaryProgressBar.max
-    = g_VersusSummary.fetch_asyncGenerator_progress.maxPercentage;
-
-  let bDone;
-  let bDownloadSummaryOk;
-  do {
-    let timePromise = PartTime.delayedValue( 500, g_VersusSummary );
-    let allPromiseRace
-      = Promise.race( [ rangeArray_load_asyncPromise, timePromise ] );
-
-    let result = await allPromiseRace;
-    if ( result === g_VersusSummary ) { // timePromise
-      bDone = false;
-
-    } else { // rangeArray_load_asyncPromise
-      bDone = true;
-      bDownloadSummaryOk = result;
-    }
-
-    g_Contorls.DownloadSummaryRetryTimesSpan.textContent
-      = g_VersusSummary.urlComposer.retryTimes_CurMax_string;
-
-    g_Contorls.DownloadSummaryProgressBar.value
-      = g_VersusSummary.fetch_asyncGenerator_progress.valuePercentage;
-
-  } while ( !bDone );
-
-  g_Contorls.DownloadSummaryRetryTimesSpan.textContent = "";
 
 //!!! (2023/04/05 Remarked)
 //    .then( VersusSummary_onDownload );
