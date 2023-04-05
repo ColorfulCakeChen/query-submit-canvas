@@ -166,6 +166,9 @@ async function DownloadSummaryButton_onClick( event ) {
     }
   }
 
+  let rangeArray_load_asyncPromise = g_VersusSummary
+    .rangeArray_load_asyncPromise_create( g_params_loading_retryWaiting );
+
   let bDownloadSummaryOk = await retryTimes_progress_loadPromise(
     g_Contorls.DownloadSummaryRetryTimesSpan,
     g_Contorls.DownloadSummaryProgressBar,
