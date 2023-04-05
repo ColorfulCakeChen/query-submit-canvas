@@ -461,6 +461,9 @@ class TestCase {
       versus_load_asyncGenerator_delayPromise.resolve();
 
       if ( versus_load_asyncGenerator ) {
+
+!!! Why not use yield*
+
         let loaderNext;
         do {
           loaderNext = await versus_load_asyncGenerator.next();
@@ -692,6 +695,9 @@ class TestCase {
       init_asyncGenerator_delayPromise.resolve();
 
       if ( b_return_versus_load_asyncGenerator_instead_of_asyncPromise ) {
+
+!!! Why not use yield*
+
         let initNext;
         do {
           initNext = await init_asyncGenerator.next();
