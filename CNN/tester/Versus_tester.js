@@ -74,7 +74,7 @@ function window_onLoad( event ) {
 }
 
 /** */
-function DownloadSummaryButton_onClick( event ) {
+async function DownloadSummaryButton_onClick( event ) {
   g_Contorls.DownloadSummaryButton.disabled = true; // Prevent from many clicking quickly.
   g_Contorls.DownloadSummaryAbortButton.disabled = false;
 
@@ -114,9 +114,13 @@ function DownloadSummaryButton_onClick( event ) {
 
 //!!! ...unfinshed... (2023/04/03)
 // Use requestAnimation to update progress.
-  g_VersusSummary
-    .rangeArray_load_asyncPromise_create( g_params_loading_retryWaiting )
-    .then( VersusSummary_onDownload );
+  let bDownloadSummaryOk = await g_VersusSummary
+    .rangeArray_load_asyncPromise_create( g_params_loading_retryWaiting );
+
+//!!! (2023/04/05 Remarked)
+//    .then( VersusSummary_onDownload );
+
+  VersusSummary_onDownload( bDownloadSummaryOk );
 }
 
 /** */
