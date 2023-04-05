@@ -8,7 +8,8 @@ window.addEventListener( "load", window_onLoad );
 let g_Contorls = {
   SpreadsheetIdText: null,
   DownloadSummaryButton: null,
-  DownloadVersusSummaryProgressBar: null,
+  DownloadSummaryAbortButton: null,
+  DownloadSummaryProgressBar: null,
 
   bLogFetcherEventToConsoleCheckbox: null,
   loadingMillisecondsMaxNumber: null,
@@ -17,6 +18,7 @@ let g_Contorls = {
 
   NextVisitIndexText: null,
   DownloadVersusButton: null,
+  DownloadVersusAbortButton: null,
   DownloadVersusProgressBar: null,
 
   VersusId: null,
@@ -53,18 +55,28 @@ function window_onLoad( event ) {
     g_Contorls[ propertyName ] = document.getElementById( propertyName );
   }
 
-  g_Contorls.DownloadSummaryButton.addEventListener(
-    "click", DownloadSummaryButton_onClick );
-  g_Contorls.DownloadSummaryButton.disabled = false;
+  {
+    g_Contorls.DownloadSummaryButton.addEventListener(
+      "click", DownloadSummaryButton_onClick );
+    g_Contorls.DownloadSummaryButton.disabled = false;
 
-  g_Contorls.DownloadVersusButton.addEventListener(
-    "click", DownloadVersusButton_onClick );
+    g_Contorls.DownloadSummaryAbortButton.addEventListener(
+      "click", DownloadSummaryAbortButton_onClick );
+  }
 
+  {
+    g_Contorls.DownloadVersusButton.addEventListener(
+      "click", DownloadVersusButton_onClick );
+
+    g_Contorls.DownloadVersusAbortButton.addEventListener(
+      "click", DownloadVersusAbortButton_onClick );
+  }
 }
 
 /** */
 function DownloadSummaryButton_onClick( event ) {
   g_Contorls.DownloadSummaryButton.disabled = true; // Prevent from many clicking quickly.
+  g_Contorls.DownloadSummaryAbortButton.disabled = false;
 
   let spreadsheetId = g_Contorls.SpreadsheetIdText.value;
   if ( !g_VersusSummary ) {
@@ -108,8 +120,23 @@ function DownloadSummaryButton_onClick( event ) {
 }
 
 /** */
+function DownloadSummaryAbortButton_onClick( event ) {
+
+//!!! ...unfinshed... (2023/04/05) should wait aborted.
+  g_Contorls.DownloadSummaryButton.disabled = false;
+
+  g_Contorls.DownloadSummaryAbortButton.disabled = true;
+
+  g_VersusSummary.urlComposer.abort();
+
+//!!! ...unfinshed... (2023/04/05)
+
+}
+
+/** */
 function VersusSummary_onDownload( bDownloadSummaryOk ) {
   g_Contorls.DownloadSummaryButton.disabled = false;
+  g_Contorls.DownloadSummaryAbortButton.disabled = true;
 
   if ( !bDownloadSummaryOk ) {
     g_Contorls.NextVisitIndexText.value = "";
