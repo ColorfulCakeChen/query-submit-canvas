@@ -6,6 +6,19 @@ import * as ValueMax from "../util/ValueMax.js";
 import * as DEvolution from "../NeuralDEvolution/DEvolution.js";
 import * as NeuralOrchestra from "../NeuralDEvolution/NeuralOrchestra.js";
 
+// number to boolean loop.
+
+// from false to true.
+// const n_to_b_begin = 0;
+// const n_to_b_end = 2;
+// const n_to_b_step = +1;
+
+// from true to false.
+const n_to_b_begin = 1;
+const n_to_b_end = -1;
+const n_to_b_step = -1;
+
+
 /** */
 class TestCase {
 
@@ -949,9 +962,9 @@ class TestCase {
       // Test: use .init_async() or .init_asyncGenerator().
       let b_init_asyncGenerator;
       for (
-        let n_init_asyncGenerator = 0;
-        n_init_asyncGenerator < 2;
-        ++n_init_asyncGenerator ) {
+        let n_init_asyncGenerator = n_to_b_begin;
+        n_init_asyncGenerator != n_to_b_end;
+        n_init_asyncGenerator += n_to_b_step ) {
 
         b_init_asyncGenerator = ( n_init_asyncGenerator != 0 );
         if ( b_init_asyncGenerator_first )
@@ -960,9 +973,9 @@ class TestCase {
         // Test: reenter .init_async() or .init_asyncGenerator() first.
         let b_reenter_first_init_asyncGenerator;
         for (
-          let n_reenter_first_init_asyncGenerator = 0;
-          n_reenter_first_init_asyncGenerator < 2;
-          ++n_reenter_first_init_asyncGenerator ) {
+          let n_reenter_first_init_asyncGenerator = n_to_b_begin;
+          n_reenter_first_init_asyncGenerator != n_to_b_end;
+          n_reenter_first_init_asyncGenerator += n_to_b_step ) {
 
           b_reenter_first_init_asyncGenerator
             = ( n_reenter_first_init_asyncGenerator != 0 );
@@ -970,18 +983,18 @@ class TestCase {
           // Test: use .versus_load_async() or .versus_load_asyncGenerator().
           let b_load_asyncGenerator;
           for (
-            let n_load_asyncGenerator = 0;
-            n_load_asyncGenerator < 2;
-            ++n_load_asyncGenerator ) {
+            let n_load_asyncGenerator = n_to_b_begin;
+            n_load_asyncGenerator != n_to_b_end;
+            n_load_asyncGenerator += n_to_b_step ) {
 
             b_load_asyncGenerator = ( n_load_asyncGenerator != 0 );
 
             // Test: reenter .versus_load_async() or .versus_load_asyncGenerator() first.
             let b_reenter_first_load_asyncGenerator;
             for (
-              let n_reenter_first_load_asyncGenerator = 0;
-              n_reenter_first_load_asyncGenerator < 2;
-              ++n_reenter_first_load_asyncGenerator ) {
+              let n_reenter_first_load_asyncGenerator = n_to_b_begin;
+              n_reenter_first_load_asyncGenerator != n_to_b_end;
+              n_reenter_first_load_asyncGenerator += n_to_b_step ) {
 
               b_reenter_first_load_asyncGenerator
                 = ( n_reenter_first_load_asyncGenerator != 0 );
@@ -1050,9 +1063,9 @@ class TestCase {
     //       before init.
     let b_before_init_first_load_asyncGenerator;
     for (
-      let n_before_init_first_load_asyncGenerator = 0;
-      n_before_init_first_load_asyncGenerator < 2;
-      ++n_before_init_first_load_asyncGenerator ) {
+      let n_before_init_first_load_asyncGenerator = n_to_b_begin;
+      n_before_init_first_load_asyncGenerator != n_to_b_end;
+      n_before_init_first_load_asyncGenerator += n_to_b_step ) {
 
       b_before_init_first_load_asyncGenerator
         = ( n_before_init_first_load_asyncGenerator != 0 );
@@ -1060,9 +1073,9 @@ class TestCase {
       // Test: use .init_async() or .init_asyncGenerator() first.
       let b_init_asyncGenerator_first;
       for (
-        let n_init_asyncGenerator_first = 0;
-        n_init_asyncGenerator_first < 2;
-        ++n_init_asyncGenerator_first ) {
+        let n_init_asyncGenerator_first = n_to_b_begin;
+        n_init_asyncGenerator_first != n_to_b_end;
+        n_init_asyncGenerator_first += n_to_b_step ) {
 
         b_init_asyncGenerator_first = ( n_init_asyncGenerator_first != 0 );
 
