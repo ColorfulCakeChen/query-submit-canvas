@@ -6,7 +6,7 @@ import * as ValueMax from "../util/ValueMax.js";
 import * as DEvolution from "../NeuralDEvolution/DEvolution.js";
 import * as NeuralOrchestra from "../NeuralDEvolution/NeuralOrchestra.js";
 
-// number to boolean loop.
+// number to boolean loop order.
 
 // from false to true.
 const n_to_b_false_true = { begin: 0, end: 2, step: +1 };
@@ -960,9 +960,9 @@ class TestCase {
 
       let n_to_b_init_asyncGenerator;
       if ( b_init_asyncGenerator_first )
-        b_init_asyncGenerator = n_to_b_true_false;
+        n_to_b_init_asyncGenerator = n_to_b_true_false;
       else
-        b_init_asyncGenerator = n_to_b_false_true;
+        n_to_b_init_asyncGenerator = n_to_b_false_true;
 
       // Test: use .init_async() or .init_asyncGenerator().
       let b_init_asyncGenerator;
