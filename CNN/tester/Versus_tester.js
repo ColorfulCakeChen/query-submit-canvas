@@ -199,6 +199,13 @@ function DownloadVersusButton_onClick( event ) {
     .then( Versus_onDownload );
 }
 
+/** */
+function DownloadVersusAbortButton_onClick( event ) {
+
+//!!! ...unfinished... (2023/04/05)
+
+}
+
 /**
  * @param {DEvolution.versus} versus
  *   The downloaded versus. null means downloading is failed. 
