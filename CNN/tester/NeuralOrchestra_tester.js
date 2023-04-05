@@ -465,7 +465,7 @@ class TestCase {
         do {
           loaderNext = await versus_load_asyncGenerator.next();
           if ( !loaderNext.done )
-            yield loaderNext.value;
+            yield loaderNext.value; // Report progress.
         } while ( !loaderNext.done );
         versus_loadOk = loaderNext.value;
 
@@ -696,7 +696,7 @@ class TestCase {
         do {
           initNext = await init_asyncGenerator.next();
           if ( !initNext.done )
-            yield initNext.value;
+            yield initNext.value; // Report progress.
         } while ( !initNext.done );
         versus_load_asyncGenerator = initNext.value;
 
