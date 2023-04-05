@@ -33,24 +33,6 @@ let g_VersusSummary;
 let g_params_loading_retryWaiting = params_loading_retryWaiting_create();
 
 /** */
-function params_loading_retryWaiting_create() {
-  const loadingMillisecondsMax = ( 30 * 1000 ); //( 60 * 1000 );
-  const loadingMillisecondsInterval = 1001; //( 5 * 1000 );
-
-  const retryTimesMax = 3; // -1 means retry infinite times
-  const retryWaitingSecondsExponentMax = 6; // i.e. ( 2 ** 6 ) = 64 seconds
-  const retryWaitingMillisecondsInterval = 1002; //( 1000 );
-
-  let params_loading_retryWaiting
-    = new HttpRequest.Params_loading_retryWaiting(
-        loadingMillisecondsMax, loadingMillisecondsInterval,
-        retryTimesMax,
-        retryWaitingSecondsExponentMax, retryWaitingMillisecondsInterval
-      );
-  return params_loading_retryWaiting;
-}
-
-/** */
 function window_onLoad( event ) {
 
   // Binding UI control elements.
@@ -73,6 +55,49 @@ function window_onLoad( event ) {
 
     g_Contorls.DownloadVersusAbortButton.addEventListener(
       "click", DownloadVersusAbortButton_onClick );
+  }
+}
+
+/** */
+function params_loading_retryWaiting_create() {
+  const loadingMillisecondsMax = ( 30 * 1000 ); //( 60 * 1000 );
+  const loadingMillisecondsInterval = 1001; //( 5 * 1000 );
+
+  const retryTimesMax = 3; // -1 means retry infinite times
+  const retryWaitingSecondsExponentMax = 6; // i.e. ( 2 ** 6 ) = 64 seconds
+  const retryWaitingMillisecondsInterval = 1002; //( 1000 );
+
+  let params_loading_retryWaiting
+    = new HttpRequest.Params_loading_retryWaiting(
+        loadingMillisecondsMax, loadingMillisecondsInterval,
+        retryTimesMax,
+        retryWaitingSecondsExponentMax, retryWaitingMillisecondsInterval
+      );
+  return params_loading_retryWaiting;
+}
+
+/** */
+function params_loading_retryWaiting_extractFromUI() {
+  { // Extract from UI.
+    g_params_loading_retryWaiting.loadingMillisecondsMax
+      = Number.parseInt( g_Contorls.loadingMillisecondsMaxNumber.value );
+
+    g_params_loading_retryWaiting.loadingMillisecondsInterval
+      = Number.parseInt( g_Contorls.loadingMillisecondsIntervalNumber.value );
+
+    g_params_loading_retryWaiting.retryTimesMax
+      = Number.parseInt( g_Contorls.retryTimesMaxNumber.value );
+  }
+
+  { // Reflect to UI.
+    g_Contorls.loadingMillisecondsMaxNumber.value
+      = g_params_loading_retryWaiting.loadingMillisecondsMax;
+
+    g_Contorls.loadingMillisecondsIntervalNumber.value
+      = g_params_loading_retryWaiting.loadingMillisecondsInterval;
+
+    g_Contorls.retryTimesMaxNumber.value
+      = g_params_loading_retryWaiting.retryTimesMax;
   }
 }
 
@@ -143,29 +168,7 @@ async function DownloadSummaryButton_onClick( event ) {
   g_VersusSummary.bLogFetcherEventToConsole
     = g_Contorls.bLogFetcherEventToConsoleCheckbox.checked;
 
-  {
-    { // Extract from UI.
-      g_params_loading_retryWaiting.loadingMillisecondsMax
-        = Number.parseInt( g_Contorls.loadingMillisecondsMaxNumber.value );
-
-      g_params_loading_retryWaiting.loadingMillisecondsInterval
-        = Number.parseInt( g_Contorls.loadingMillisecondsIntervalNumber.value );
-
-      g_params_loading_retryWaiting.retryTimesMax
-        = Number.parseInt( g_Contorls.retryTimesMaxNumber.value );
-    }
-
-    { // Reflect to UI.
-      g_Contorls.loadingMillisecondsMaxNumber.value
-        = g_params_loading_retryWaiting.loadingMillisecondsMax;
-
-      g_Contorls.loadingMillisecondsIntervalNumber.value
-        = g_params_loading_retryWaiting.loadingMillisecondsInterval;
-
-      g_Contorls.retryTimesMaxNumber.value
-        = g_params_loading_retryWaiting.retryTimesMax;
-    }
-  }
+  params_loading_retryWaiting_extractFromUI();
 
   let rangeArray_load_asyncPromise = g_VersusSummary
     .rangeArray_load_asyncPromise_create( g_params_loading_retryWaiting );
@@ -237,6 +240,8 @@ function VersusSummary_onDownload( bDownloadSummaryOk ) {
 async function DownloadVersusButton_onClick( event ) {
   g_Contorls.DownloadVersusButton.disabled = true; // Prevent from many clicking quickly.
   g_Contorls.DownloadVersusAbortButton.disabled = false;
+
+  params_loading_retryWaiting_extractFromUI();
 
   let versus_next_load_asyncPromise = g_VersusSummary
     .versus_next_load_asyncPromise_create( g_params_loading_retryWaiting );
