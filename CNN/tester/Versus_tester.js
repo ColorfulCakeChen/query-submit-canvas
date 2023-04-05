@@ -174,7 +174,7 @@ async function DownloadSummaryButton_onClick( event ) {
     g_Contorls.DownloadSummaryProgressBar,
     g_VersusSummary.urlComposer,
     rangeArray_load_asyncPromise,
-    g_VersusSummary.fetch_asyncGenerator_progress
+    g_VersusSummary.rangeArray_load_asyncPromise_progress
   );
 
 
