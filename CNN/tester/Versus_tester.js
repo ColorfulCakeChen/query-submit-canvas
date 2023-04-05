@@ -246,7 +246,7 @@ async function DownloadVersusButton_onClick( event ) {
     g_Contorls.DownloadVersusProgressBar,
     g_VersusSummary.urlComposer,
     versus_next_load_asyncPromise,
-    g_VersusVersus.versus_next_load_asyncPromise_progress
+    g_VersusSummary.versus_next_load_asyncPromise_progress
   );
 
   Versus_onDownload( versus );
