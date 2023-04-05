@@ -464,6 +464,8 @@ class TestCase {
         let loaderNext;
         do {
           loaderNext = await versus_load_asyncGenerator.next();
+          if ( !loaderNext.done )
+            yield loaderNext.value;
         } while ( !loaderNext.done );
         versus_loadOk = loaderNext.value;
 
@@ -690,11 +692,13 @@ class TestCase {
       init_asyncGenerator_delayPromise.resolve();
 
       if ( b_return_versus_load_asyncGenerator_instead_of_asyncPromise ) {
-        let initer;
+        let initNext;
         do {
-          initer = await init_asyncGenerator.next();
-        } while ( !initer.done );
-        versus_load_asyncGenerator = initer.value;
+          initNext = await init_asyncGenerator.next();
+          if ( !initNext.done )
+            yield initNext.value;
+        } while ( !initNext.done );
+        versus_load_asyncGenerator = initNext.value;
 
         if ( ( versus_load_asyncGenerator != undefined ) != neuralOrchestra.initOk )
           throw Error( `NeuralOrchestra_tester.TestCase`
