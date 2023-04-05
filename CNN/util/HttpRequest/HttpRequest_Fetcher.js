@@ -276,7 +276,7 @@ class HttpRequest_Fetcher
    *     - If ( .retryTimesMax < 0 ), `${retryTimesCur}`
    *     - If ( .retryTimesMax > 0 ), `${retryTimesCur}/${retryTimesMax}`
    */
-  get retryTimes_CurMax_toString() {
+  get retryTimes_CurMax_string() {
     if ( this.retryTimesCur <= 0 )
       return ""; // Not during retry.
     if ( this.retryTimesMax < 0 )

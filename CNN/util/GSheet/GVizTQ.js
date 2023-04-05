@@ -373,8 +373,8 @@ class GVizTQ_UrlComposer
     return this.httpRequestFetcher?.retryTimesCur;
   }
 
-  get retryTimes_CurMax_toString() {
-    return this.httpRequestFetcher?.retryTimes_CurMax_toString;
+  get retryTimes_CurMax_string() {
+    return this.httpRequestFetcher?.retryTimes_CurMax_string;
   }
 
 
