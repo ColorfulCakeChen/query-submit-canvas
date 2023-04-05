@@ -497,8 +497,9 @@ class HttpRequest_Fetcher
           .throw_if_retryWaitingStartStopState_not_NOT_YET_STARTED_or_not_STOPPED
           .call( this, funcNameInMessage );
 
-        // No matter how terminated, progressParent should always be 100.
-        HttpRequest_Fetcher.throw_if_progressParent_not_100
+        // No matter how terminated, progressLoading and progressRetryWaiting
+        // (if exists) should always be 100.
+        HttpRequest_Fetcher.throw_if_progress_not_100
           .call( this, funcNameInMessage );
       }
     }
@@ -1463,7 +1464,7 @@ class HttpRequest_Fetcher
         = comparedStartStopStateNameArray.join( ", " );
     }
 
-    throw Error( `mostDerivedClassName.${funcNameInMessage}(): `
+    throw Error( `${mostDerivedClassName}.${funcNameInMessage}(): `
       + `.${propertyName} ( ${propertyStartStopStateName} ) `
       + `should be one of [ ${comparedStartStopStateNamesString} ].` );
   }
@@ -1507,17 +1508,33 @@ class HttpRequest_Fetcher
   /**
    * @param {HttpRequest_Fetcher} this
    */
-  static throw_if_progressParent_not_100( funcNameInMessage ) {
-    if ( 100 == this.progressParent.valuePercentage )
-      return;
+  static throw_if_progress_not_100( funcNameInMessage ) {
+    // Note: Because .progressParent may contain other progress besides
+    //       .progressLoading and .progressRetryWaiting, do not check it
+    //       directly.
 
-    const mostDerivedClassName
-      = ClassHierarchyTools.MostDerived_ClassName_of_Instance( this );
+    if ( 100 != this.progressLoading.valuePercentage ) {
+      const mostDerivedClassName
+        = ClassHierarchyTools.MostDerived_ClassName_of_Instance( this );
 
-    throw Error( `mostDerivedClassName.${funcNameInMessage}(): `
-      + `.progressParent.valuePercentage ( `
-      + `${this.progressParent.valuePercentage} ) `
+      throw Error( `${mostDerivedClassName}.${funcNameInMessage}(): `
+      + `.progressLoading.valuePercentage ( `
+      + `${this.progressLoading.valuePercentage} ) `
       + `should be 100.` );
+    }
+
+    if ( !this.progressRetryWaiting )
+      return; // retry times is run out. (It's ok.)
+
+    if ( 100 != this.progressRetryWaiting.valuePercentage ) {
+      const mostDerivedClassName
+        = ClassHierarchyTools.MostDerived_ClassName_of_Instance( this );
+
+      throw Error( `${mostDerivedClassName}.${funcNameInMessage}(): `
+        + `.progressRetryWaiting.valuePercentage ( `
+        + `${this.progressRetryWaiting.valuePercentage} ) `
+        + `should be 100.` );
+    }
   }
 
 
