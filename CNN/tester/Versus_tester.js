@@ -234,7 +234,7 @@ function VersusSummary_onDownload( bDownloadSummaryOk ) {
 }
 
 /** */
-function DownloadVersusButton_onClick( event ) {
+async function DownloadVersusButton_onClick( event ) {
   g_Contorls.DownloadVersusButton.disabled = true; // Prevent from many clicking quickly.
   g_Contorls.DownloadVersusAbortButton.disabled = false;
 
