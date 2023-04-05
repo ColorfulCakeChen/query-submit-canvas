@@ -958,7 +958,7 @@ class TestCase {
       // 2. Initialize, load, process, send.
       let nInitLoadProcessSend = 0;
 
-      const n_to_b_init_asyncGenerator;
+      let n_to_b_init_asyncGenerator;
       if ( b_init_asyncGenerator_first )
         b_init_asyncGenerator = n_to_b_true_false;
       else
