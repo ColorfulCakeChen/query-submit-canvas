@@ -1,4 +1,5 @@
 import * as HttpRequest from "../util/HttpRequest.js";
+import * as PartTime from "../util/PartTime.js";
 import * as HTMLTable from "../Display/HTMLTable.js";
 import * as DEvolution from "../NeuralDEvolution/DEvolution.js";
 
@@ -75,6 +76,62 @@ function window_onLoad( event ) {
   }
 }
 
+/**
+ *
+ * @param {HTMLSpanElement} retryTimesSpanHTMLElement
+ *   The DOM (Document Object Model) Node of HTML span elemnt for displaying
+ * current loading retry times.
+ *
+ * @param {HTMLProgressElement} progressHTMLElement
+ *   The DOM (Document Object Model) Node of HTML progress elemnt for
+ * displaying current loading progress.
+ *
+ * @return { GSheetsAPIv4.UrlComposer | GVizTQ.UrlComposer } urlComposer
+ *   The UrlComposer which provides loadPromise.
+ *
+ * @param {Promise} loadPromise
+ *   The promise to be awaited.
+ *
+ * @param {ValueMax.Percentage.Base} progressPercentage
+ *   The progress of the loadPromise.
+ *
+ * @return {any}
+ *   Return the resolved value of loadPromise.
+ */
+function retryTimes_progress_loadPromise(
+  retryTimesSpanHTMLElement, progressHTMLElement,
+  urlComposer, loadPromise, progressPercentage
+) {
+
+  progressHTMLElement.max = progressPercentage.maxPercentage;
+
+  let bDone;
+  let promiseResolvedValue;
+  do {
+    let timePromise = PartTime.delayedValue( 500, retryTimes_progress_loadPromise );
+    let allPromiseRace = Promise.race( [ loadPromise, timePromise ] );
+
+    let result = await allPromiseRace;
+    if ( result === retryTimes_progress_loadPromise ) { // timePromise
+      bDone = false;
+
+    } else { // rangeArray_load_asyncPromise
+      bDone = true;
+      promiseResolvedValue = result;
+    }
+
+    retryTimesSpanHTMLElement.textContent
+      = urlComposer.retryTimes_CurMax_string;
+
+    progressHTMLElement.value = progressPercentage.valuePercentage;
+
+  } while ( !bDone );
+
+  retryTimesSpanHTMLElement.textContent = "";
+
+  return promiseResolvedValue;
+}
+
 /** */
 async function DownloadSummaryButton_onClick( event ) {
   g_Contorls.DownloadSummaryButton.disabled = true; // Prevent from many clicking quickly.
@@ -114,14 +171,67 @@ async function DownloadSummaryButton_onClick( event ) {
     }
   }
 
+//!!! ...unfinshed... (2023/04/03 Added and Remarked) use timer instead.
+//   let versusSummaryLoader = g_VersusSummary
+//     .rangeArray_load_asyncGenerator_create( g_params_loading_retryWaiting );
+//
+//   let loaderNext;
+//   do {
+//     loaderNext = await versusSummaryLoader.next();
+//
+//     g_Contorls.DownloadSummaryRetryTimesSpan.textContent
+//       = g_VersusSummary.urlComposer.retryTimes_CurMax_string;
+//
+//     g_Contorls.DownloadSummaryProgressBar.value_set( )
+//
+//   } while ( !loaderNext.done );
+//
+//   g_Contorls.DownloadSummaryRetryTimesSpan.textContent = "";
+//
+//   let bDownloadSummaryOk = loaderNext.value;
+
+
 //!!! ...unfinshed... (2023/04/03)
 // Use requestAnimation to update progress.
 //
 // g_Contorls.DownloadSummaryRetryTimesSpan
 // .retryTimes_CurMax_string
+//
+//   let bDownloadSummaryOk = await g_VersusSummary
+//     .rangeArray_load_asyncPromise_create( g_params_loading_retryWaiting );
 
-  let bDownloadSummaryOk = await g_VersusSummary
+
+  let rangeArray_load_asyncPromise = g_VersusSummary
     .rangeArray_load_asyncPromise_create( g_params_loading_retryWaiting );
+
+  g_Contorls.DownloadSummaryProgressBar.max
+    = g_VersusSummary.fetch_asyncGenerator_progress.maxPercentage;
+
+  let bDone;
+  let bDownloadSummaryOk;
+  do {
+    let timePromise = PartTime.delayedValue( 500, g_VersusSummary );
+    let allPromiseRace
+      = Promise.race( [ rangeArray_load_asyncPromise, timePromise ] );
+
+    let result = await allPromiseRace;
+    if ( result === g_VersusSummary ) { // timePromise
+      bDone = false;
+
+    } else { // rangeArray_load_asyncPromise
+      bDone = true;
+      bDownloadSummaryOk = result;
+    }
+
+    g_Contorls.DownloadSummaryRetryTimesSpan.textContent
+      = g_VersusSummary.urlComposer.retryTimes_CurMax_string;
+
+    g_Contorls.DownloadSummaryProgressBar.value
+      = g_VersusSummary.fetch_asyncGenerator_progress.valuePercentage;
+
+  } while ( !bDone );
+
+  g_Contorls.DownloadSummaryRetryTimesSpan.textContent = "";
 
 //!!! (2023/04/05 Remarked)
 //    .then( VersusSummary_onDownload );

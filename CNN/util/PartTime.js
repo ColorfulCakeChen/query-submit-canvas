@@ -29,12 +29,6 @@ export { forOf };
  *   - .cancelTimer(): Call it (without any parameter) to cancel the timer.
  */
 function delayedValue( delayMilliseconds, value ) {
-
-//!!! (2023/03/31 Remarked) Attach resolveFunc and rejectFunc.
-//   return new Promise( ( resolve /*, reject*/ ) => {
-//     setTimeout( () => resolve( value ), delayMilliseconds );
-//   } );
-
   let resolveFunc, rejectFunc;
   let timeoutId;
 

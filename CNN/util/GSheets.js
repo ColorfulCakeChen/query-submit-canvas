@@ -7,7 +7,7 @@ import * as GVizTQ from "./GSheet/GVizTQ.js";
 
 /**
  *
- * @return { GSheetsAPIv4 | GVizTQ }
+ * @return { GSheetsAPIv4.UrlComposer | GVizTQ.UrlComposer }
  *   - Get or create an instance of GSheetsAPIv4 if apiKey is truthy.
  *   - Get or create an instance of GVizTQ if apiKey is falsy (i.e. null or
  *       undefined).
