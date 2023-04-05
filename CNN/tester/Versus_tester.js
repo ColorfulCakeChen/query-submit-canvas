@@ -9,8 +9,8 @@ window.addEventListener( "load", window_onLoad );
 let g_Contorls = {
   SpreadsheetIdText: null,
   DownloadSummaryButton: null,
-  DownloadSummaryRetryTimesSpan: null,
   DownloadSummaryAbortButton: null,
+  DownloadSummaryRetryTimesSpan: null,
   DownloadSummaryProgressBar: null,
 
   bLogFetcherEventToConsoleCheckbox: null,
@@ -20,8 +20,8 @@ let g_Contorls = {
 
   NextVisitIndexText: null,
   DownloadVersusButton: null,
-  DownloadVersusRetryTimesSpan: null,
   DownloadVersusAbortButton: null,
+  DownloadVersusRetryTimesSpan: null,
   DownloadVersusProgressBar: null,
 
   VersusId: null,
