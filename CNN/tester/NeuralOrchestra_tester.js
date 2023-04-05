@@ -462,15 +462,16 @@ class TestCase {
 
       if ( versus_load_asyncGenerator ) {
 
-!!! Why not use yield*
+//!!! (2023/04/05 Remarked) Use yield* instead.
+//         let loaderNext;
+//         do {
+//           loaderNext = await versus_load_asyncGenerator.next();
+//           if ( !loaderNext.done )
+//             yield loaderNext.value; // Report progress.
+//         } while ( !loaderNext.done );
+//         versus_loadOk = loaderNext.value;
 
-        let loaderNext;
-        do {
-          loaderNext = await versus_load_asyncGenerator.next();
-          if ( !loaderNext.done )
-            yield loaderNext.value; // Report progress.
-        } while ( !loaderNext.done );
-        versus_loadOk = loaderNext.value;
+        versus_loadOk = yield* versus_load_asyncGenerator;
 
         // Note: In .versus_load_asyncGenerator(), .versus_load_asyncPromise_progress is not used.
         if ( bTryLoad )
@@ -696,15 +697,16 @@ class TestCase {
 
       if ( b_return_versus_load_asyncGenerator_instead_of_asyncPromise ) {
 
-!!! Why not use yield*
+//!!! (2023/04/05 Remarked) Use yield* instead.
+//         let initNext;
+//         do {
+//           initNext = await init_asyncGenerator.next();
+//           if ( !initNext.done )
+//             yield initNext.value; // Report progress.
+//         } while ( !initNext.done );
+//         versus_load_asyncGenerator = initNext.value;
 
-        let initNext;
-        do {
-          initNext = await init_asyncGenerator.next();
-          if ( !initNext.done )
-            yield initNext.value; // Report progress.
-        } while ( !initNext.done );
-        versus_load_asyncGenerator = initNext.value;
+        versus_load_asyncGenerator = yield* init_asyncGenerator;
 
         if ( ( versus_load_asyncGenerator != undefined ) != neuralOrchestra.initOk )
           throw Error( `NeuralOrchestra_tester.TestCase`
