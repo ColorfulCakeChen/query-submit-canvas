@@ -200,6 +200,9 @@ class DEvolution_Versus extends
     // from occupying too large portion of progress, let they all under a
     // single progressDecoding directly.
     //
+    // Note: progressForParentChromosome and progressForOffspringChromosome
+    //       can not use progressForDecoding directly. They should be child
+    //       of progressForDecoding. Otheriwse, progressParent will backtrack.
     let progressForDecoding = progressParent.child_add(
       ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
 
