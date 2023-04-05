@@ -286,6 +286,4 @@ function Versus_onDownload( versus ) {
   g_Contorls.VersusId.textContent = versus.versusId.versusIdString;
   g_Contorls.ParentChromosomes.value = versus.parentChromosomeFloat32Array;
   g_Contorls.OffspringChromosomes.value = versus.offspringChromosomeFloat32Array;
- 
-//!!! ...unfinished... (2022/12/28)
 }
