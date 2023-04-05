@@ -654,7 +654,7 @@ class TestCase {
       }
 
       if ( !nextResult.done ) {
-        yield nextResult.value;
+        yield nextResult.value; // Report progress.
       }
 
     } while ( !nextResult.done );
