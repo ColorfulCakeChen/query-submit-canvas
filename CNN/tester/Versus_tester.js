@@ -115,9 +115,10 @@ async function DownloadSummaryButton_onClick( event ) {
   }
 
 //!!! ...unfinshed... (2023/04/03)
-// g_Contorls.DownloadSummaryRetryTimesSpan
-//
 // Use requestAnimation to update progress.
+//
+// g_Contorls.DownloadSummaryRetryTimesSpan
+// .retryTimes_CurMax_toString
 
   let bDownloadSummaryOk = await g_VersusSummary
     .rangeArray_load_asyncPromise_create( g_params_loading_retryWaiting );
