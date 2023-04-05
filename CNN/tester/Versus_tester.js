@@ -159,66 +159,79 @@ async function retryTimes_progress_loadPromise(
 
 /** */
 async function DownloadSummaryButton_onClick( event ) {
-  g_Contorls.DownloadSummaryButton.disabled = true; // Prevent from many clicking quickly.
-  g_Contorls.DownloadSummaryAbortButton.disabled = false;
+  try {
+    g_Contorls.DownloadSummaryButton.disabled = true; // Prevent from many clicking quickly.
+    g_Contorls.DownloadSummaryAbortButton.disabled = false;
 
-  let spreadsheetId = g_Contorls.SpreadsheetIdText.value;
-  if ( !g_VersusSummary ) {
-    g_VersusSummary = DEvolution.VersusSummary.Pool.get_or_create_by( spreadsheetId );
-  } else {
-    g_VersusSummary.weightsSpreadsheetId = spreadsheetId;
+    let spreadsheetId = g_Contorls.SpreadsheetIdText.value;
+    if ( !g_VersusSummary ) {
+      g_VersusSummary = DEvolution.VersusSummary.Pool.get_or_create_by( spreadsheetId );
+    } else {
+      g_VersusSummary.weightsSpreadsheetId = spreadsheetId;
+    }
+
+    params_loading_retryWaiting_extractFromUI();
+
+    let rangeArray_load_asyncPromise = g_VersusSummary
+      .rangeArray_load_asyncPromise_create( g_params_loading_retryWaiting );
+
+    let bDownloadSummaryOk = await retryTimes_progress_loadPromise(
+      g_Contorls.DownloadSummaryRetryTimesSpan,
+      g_Contorls.DownloadSummaryProgressBar,
+      g_VersusSummary.urlComposer,
+      rangeArray_load_asyncPromise,
+      g_VersusSummary.rangeArray_load_asyncPromise_progress
+    );
+
+    VersusSummary_onDownload( bDownloadSummaryOk );
+
+  } catch( e ) {
+    alert( e );
+    console.error( e );
+    //debugger;
   }
-
-  params_loading_retryWaiting_extractFromUI();
-
-  let rangeArray_load_asyncPromise = g_VersusSummary
-    .rangeArray_load_asyncPromise_create( g_params_loading_retryWaiting );
-
-  let bDownloadSummaryOk = await retryTimes_progress_loadPromise(
-    g_Contorls.DownloadSummaryRetryTimesSpan,
-    g_Contorls.DownloadSummaryProgressBar,
-    g_VersusSummary.urlComposer,
-    rangeArray_load_asyncPromise,
-    g_VersusSummary.rangeArray_load_asyncPromise_progress
-  );
-
-  VersusSummary_onDownload( bDownloadSummaryOk );
 }
 
 /** */
 function DownloadSummaryAbortButton_onClick( event ) {
-  g_VersusSummary.urlComposer.abort();
+  try {
+    g_VersusSummary.urlComposer.abort();
+  } catch( e ) {
+    alert( e );
+    console.error( e );
+    //debugger;
+  }
 }
 
 /** */
 function VersusSummary_onDownload( bDownloadSummaryOk ) {
-  g_Contorls.DownloadSummaryButton.disabled = false;
-  g_Contorls.DownloadSummaryAbortButton.disabled = true;
-
-  if ( !bDownloadSummaryOk ) {
-    g_Contorls.NextVisitIndexText.value = "";
-    g_Contorls.DownloadVersusButton.disabled = true;
-
-    let spreadsheetId = g_VersusSummary.weightsSpreadsheetId;
-    alert( `Failed to download VersusSummary from Google Sheets `
-      + `\"${spreadsheetId}\".` );
-    return;
-    // g_VersusSummary.disposeResources_and_recycleToPool();
-    // g_VersusSummary = null;
-  }
-
-  g_Contorls.NextVisitIndexText.value = g_VersusSummary.visitIndex_get();
-  g_Contorls.DownloadVersusButton.disabled = false;
-
   let htmlTableOperator;
-  {
-    const htmlTableId = "VersusSummaryTable";
-    const digitsCount = 0; // i.e. integer
-    htmlTableOperator
-      = HTMLTable.Operator.Pool.get_or_create_by( htmlTableId, digitsCount );
-  }
-
   try {
+    g_Contorls.DownloadSummaryButton.disabled = false;
+    g_Contorls.DownloadSummaryAbortButton.disabled = true;
+
+    if ( !bDownloadSummaryOk ) {
+      g_Contorls.NextVisitIndexText.value = "";
+      g_Contorls.DownloadVersusButton.disabled = true;
+
+      let spreadsheetId = g_VersusSummary.weightsSpreadsheetId;
+      alert( `Failed to download VersusSummary from Google Sheets `
+        + `\"${spreadsheetId}\".` );
+      return;
+      // g_VersusSummary.disposeResources_and_recycleToPool();
+      // g_VersusSummary = null;
+    }
+
+    g_Contorls.NextVisitIndexText.value = g_VersusSummary.visitIndex_get();
+    g_Contorls.DownloadVersusButton.disabled = false;
+
+    {
+      const htmlTableId = "VersusSummaryTable";
+      const digitsCount = 0; // i.e. integer
+      htmlTableOperator
+        = HTMLTable.Operator.Pool.get_or_create_by( htmlTableId, digitsCount );
+    }
+
     htmlTableOperator.Table_clear();
 
     if ( !htmlTableOperator.Header_hasChild() ) {
@@ -228,6 +241,12 @@ function VersusSummary_onDownload( bDownloadSummaryOk ) {
     for ( let i = 0; i < g_VersusSummary.rangeArray.length; ++i ) {
       htmlTableOperator.Body_addRow( [ i, g_VersusSummary.rangeArray[ i ] ] );
     }
+
+
+  } catch( e ) {
+    alert( e );
+    console.error( e );
+    //debugger;
 
   } finally {
     if ( htmlTableOperator ) {
@@ -239,28 +258,41 @@ function VersusSummary_onDownload( bDownloadSummaryOk ) {
 
 /** */
 async function DownloadVersusButton_onClick( event ) {
-  g_Contorls.DownloadVersusButton.disabled = true; // Prevent from many clicking quickly.
-  g_Contorls.DownloadVersusAbortButton.disabled = false;
+  try {
+    g_Contorls.DownloadVersusButton.disabled = true; // Prevent from many clicking quickly.
+    g_Contorls.DownloadVersusAbortButton.disabled = false;
 
-  params_loading_retryWaiting_extractFromUI();
+    params_loading_retryWaiting_extractFromUI();
 
-  let versus_next_load_asyncPromise = g_VersusSummary
-    .versus_next_load_asyncPromise_create( g_params_loading_retryWaiting );
+    let versus_next_load_asyncPromise = g_VersusSummary
+      .versus_next_load_asyncPromise_create( g_params_loading_retryWaiting );
 
-  let versus = await retryTimes_progress_loadPromise(
-    g_Contorls.DownloadVersusRetryTimesSpan,
-    g_Contorls.DownloadVersusProgressBar,
-    g_VersusSummary.urlComposer,
-    versus_next_load_asyncPromise,
-    g_VersusSummary.versus_next_load_asyncPromise_progress
-  );
+    let versus = await retryTimes_progress_loadPromise(
+      g_Contorls.DownloadVersusRetryTimesSpan,
+      g_Contorls.DownloadVersusProgressBar,
+      g_VersusSummary.urlComposer,
+      versus_next_load_asyncPromise,
+      g_VersusSummary.versus_next_load_asyncPromise_progress
+    );
 
-  Versus_onDownload( versus );
+    Versus_onDownload( versus );
+
+  } catch( e ) {
+    alert( e );
+    console.error( e );
+    //debugger;
+  }
 }
 
 /** */
 function DownloadVersusAbortButton_onClick( event ) {
-  g_VersusSummary.urlComposer.abort();
+  try {
+    g_VersusSummary.urlComposer.abort();
+  } catch( e ) {
+    alert( e );
+    console.error( e );
+    //debugger;
+  }
 }
 
 /**
@@ -268,28 +300,35 @@ function DownloadVersusAbortButton_onClick( event ) {
  *   The downloaded versus. null means downloading is failed. 
  */
 function Versus_onDownload( versus ) {
-  g_Contorls.DownloadVersusButton.disabled = false;
-  g_Contorls.DownloadVersusAbortButton.disabled = true;
+  try {
+    g_Contorls.DownloadVersusButton.disabled = false;
+    g_Contorls.DownloadVersusAbortButton.disabled = true;
 
-  let visitIndex = g_VersusSummary.visitIndex_get();
-  g_Contorls.NextVisitIndexText.value = visitIndex;
+    let visitIndex = g_VersusSummary.visitIndex_get();
+    g_Contorls.NextVisitIndexText.value = visitIndex;
 
-  if ( !versus ) {
-    let range = g_VersusSummary.rangeArray[ visitIndex ];
+    if ( !versus ) {
+      let range = g_VersusSummary.rangeArray[ visitIndex ];
 
-    let spreadsheetId = g_VersusSummary.weightsSpreadsheetId;
-    alert( `Failed to download rangeArray[ ${visitIndex} ] = \"${range}\" `
-      + `from Google Sheets \"${spreadsheetId}\".`
-    );
+      let spreadsheetId = g_VersusSummary.weightsSpreadsheetId;
+      alert( `Failed to download rangeArray[ ${visitIndex} ] = \"${range}\" `
+        + `from Google Sheets \"${spreadsheetId}\".`
+      );
 
-    g_Contorls.VersusId.textContent = "";
-    g_Contorls.ParentChromosomes.value = "";
-    g_Contorls.OffspringChromosomes.value = "";
+      g_Contorls.VersusId.textContent = "";
+      g_Contorls.ParentChromosomes.value = "";
+      g_Contorls.OffspringChromosomes.value = "";
 
-    return;
+      return;
+    }
+
+    g_Contorls.VersusId.textContent = versus.versusId.versusIdString;
+    g_Contorls.ParentChromosomes.value = versus.parentChromosomeFloat32Array;
+    g_Contorls.OffspringChromosomes.value = versus.offspringChromosomeFloat32Array;
+
+  } catch( e ) {
+    alert( e );
+    console.error( e );
+    //debugger;
   }
-
-  g_Contorls.VersusId.textContent = versus.versusId.versusIdString;
-  g_Contorls.ParentChromosomes.value = versus.parentChromosomeFloat32Array;
-  g_Contorls.OffspringChromosomes.value = versus.offspringChromosomeFloat32Array;
 }
