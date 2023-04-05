@@ -241,7 +241,7 @@ async function DownloadVersusButton_onClick( event ) {
   let versus_next_load_asyncPromise = g_VersusSummary
     .versus_next_load_asyncPromise_create( g_params_loading_retryWaiting );
 
-  let versus = await versus_next_load_asyncPromise(
+  let versus = await retryTimes_progress_loadPromise(
     g_Contorls.DownloadVersusRetryTimesSpan,
     g_Contorls.DownloadVersusProgressBar,
     g_VersusSummary.urlComposer,
