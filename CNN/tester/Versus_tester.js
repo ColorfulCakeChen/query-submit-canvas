@@ -77,6 +77,7 @@ function window_onLoad( event ) {
 }
 
 /**
+ * Await loadPromise and display progress simultaneously.
  *
  * @param {HTMLSpanElement} retryTimesSpanHTMLElement
  *   The DOM (Document Object Model) Node of HTML span elemnt for displaying
@@ -235,13 +236,7 @@ function VersusSummary_onDownload( bDownloadSummaryOk ) {
 /** */
 function DownloadVersusButton_onClick( event ) {
   g_Contorls.DownloadVersusButton.disabled = true; // Prevent from many clicking quickly.
-
-//!!! ...unfinshed... (2023/04/04)
-// Add abort button.
-// If ( retryTimesMax != 0 ), display retry time cur/max (or cur only if max < 0).
-
-//!!! ...unfinshed... (2023/04/03)
-// Use requestAnimation to update progress.
+  g_Contorls.DownloadVersusAbortButton.disabled = false;
 
   let versus_next_load_asyncPromise = g_VersusSummary
     .versus_next_load_asyncPromise_create( g_params_loading_retryWaiting );
