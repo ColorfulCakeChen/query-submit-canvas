@@ -960,7 +960,7 @@ class TestCase {
       let nInitLoadProcessSend = 0;
 
       // Test: use .init_async() or .init_asyncGenerator().
-      let b_init_asyncGenerator = ( n_to_b_begin != 0 );
+      let b_init_asyncGenerator = !( n_to_b_begin != 0 );
       for (
         let n_init_asyncGenerator = n_to_b_begin;
         n_init_asyncGenerator != n_to_b_end;
