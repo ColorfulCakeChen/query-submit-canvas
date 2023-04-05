@@ -212,8 +212,16 @@ class GSheetsAPIv4_UrlComposer
     //const funcNameInMessage = "JSON_ColumnMajorArrayArray_fetch_asyncGenerator";
 
     let progressRoot = progressParent.root_get();
-    let progressFetcher = progressParent.child_add(
-      ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
+
+    // (2023/04/05 Remarked)
+    // For preventing decoding (which is faster than network downloading)
+    // from occupying too large portion of progress, let httpRequestFetcher
+    // uses progressParent directly.
+    //
+    // let progressFetcher = progressParent.child_add(
+    //   ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
+    let progressFetcher = progressParent;
+
     let progressToAdvance = progressParent.child_add(
       ValueMax.Percentage.Concrete.Pool.get_or_create_by( 2 ) );
 
