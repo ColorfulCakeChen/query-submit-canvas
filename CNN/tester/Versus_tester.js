@@ -78,7 +78,11 @@ function params_loading_retryWaiting_create() {
 
 /** */
 function params_loading_retryWaiting_extractFromUI() {
+
   { // Extract from UI.
+    g_VersusSummary.bLogFetcherEventToConsole
+      = g_Contorls.bLogFetcherEventToConsoleCheckbox.checked;
+
     g_params_loading_retryWaiting.loadingMillisecondsMax
       = Number.parseInt( g_Contorls.loadingMillisecondsMaxNumber.value );
 
@@ -164,9 +168,6 @@ async function DownloadSummaryButton_onClick( event ) {
   } else {
     g_VersusSummary.weightsSpreadsheetId = spreadsheetId;
   }
-
-  g_VersusSummary.bLogFetcherEventToConsole
-    = g_Contorls.bLogFetcherEventToConsoleCheckbox.checked;
 
   params_loading_retryWaiting_extractFromUI();
 
