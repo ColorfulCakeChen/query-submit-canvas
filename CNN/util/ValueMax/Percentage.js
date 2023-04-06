@@ -328,13 +328,28 @@ class ValueMax_Percentage_Aggregate extends ValueMax_Percentage_Base {
    * @override
    */
   get treeDepth() {
-    if ( this.#treeDepth_cached !== undefined )
+    if ( this.#treeDepth_cached != undefined )
       return this.#treeDepth_cached;
 
-//!!! ...unfinished... (2023/04/06)
-//if child.treeDepth > 0 
-// else throw Error() 
+    let treeDepthChildMax = 0;
+    for ( let i = 0; i < this.children.length; ++i ) {
+      let child = this.children[ i ];
+      if ( !child )
+        continue;
 
+      let treeDepthChild = child.treeDepth;
+      if ( treeDepthChild > 0 ) {
+        if ( treeDepthChild > treeDepthChildMax )
+          treeDepthChildMax = treeDepthChild;
+
+      } else {
+        throw Error( `ValueMax.Percentage.Aggregate.treeDepth(): `
+          + `treeDepthChild ( ${treeDepthChild} ) should be positive.`
+        );
+      }
+    }
+
+    this.#treeDepth_cached = treeDepthChildMax + 1;
     return this.#treeDepth_cached;
   }
 
