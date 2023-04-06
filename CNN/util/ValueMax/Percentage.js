@@ -342,6 +342,16 @@ class ValueMax_Percentage_Aggregate extends ValueMax_Percentage_Base {
   }
 
   /**
+   * Invalidate .#treeDepth_cached (i.e. let it become undefined). This
+   * method will invalidate parent's .#treeDepth_cached, too.
+   */
+  treeDepth_cached_invalidate() {
+    this.#treeDepth_cached = undefined;
+    if ( this.parent )
+      this.parent.treeDepth_cached_invalidate();
+  }
+
+  /**
    *
    * @return {number} Return the most length to the concrete (i.e. leaf) child.
    * @override
@@ -370,16 +380,6 @@ class ValueMax_Percentage_Aggregate extends ValueMax_Percentage_Base {
 
     this.#treeDepth_cached = treeDepthChildMax + 1;
     return this.#treeDepth_cached;
-  }
-
-  /**
-   * Invalidate .#treeDepth_cached (i.e. let it become undefined). This
-   * method will invalidate parent's .#treeDepth_cached, too.
-   */
-  treeDepth_cached_invalidate() {
-    this.#treeDepth_cached = undefined;
-    if ( this.parent )
-      this.parent.treeDepth_cached_invalidate();
   }
 
   /**
