@@ -217,7 +217,7 @@ class DEvolution_Versus extends
 
     let progressForParentChromosome = progressForDecoding.child_add(
       ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
-    
+
     let progressForOffspringChromosome = progressForDecoding.child_add(
       ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
 
