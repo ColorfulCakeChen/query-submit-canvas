@@ -497,7 +497,11 @@ class ValueMax_Percentage_Aggregate extends ValueMax_Percentage_Base {
 
         // Restrict between [ 0, partMax ].
         partValue = Math.max( 0, Math.min( partValue, partMax ) );
-  
+
+//!!! ...unfinished... (2023/04/06)
+// This will result in progress backtrack.
+// When later child become more deeper.
+
         // 3. Weighted by tree depth. (deeper means more tasks to be done.)
         let partTreeDepth = child.treeDepth;
         if ( partTreeDepth > 0 ) {
