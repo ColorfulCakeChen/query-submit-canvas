@@ -17,6 +17,10 @@ import * as Recyclable from "../Recyclable.js";
  *
  * @member {Percentage.Base} parent
  *   The direct parent Percentage.Base of this Percentage.Base.
+ *
+ * @member {number} weight
+ *   The weight of this Percentage.Base. It is used when calculated parent's
+ * .valuePercentage. Default is 1.
  */
 class ValueMax_Percentage_Base extends Recyclable.Root {
 
@@ -30,21 +34,22 @@ class ValueMax_Percentage_Base extends Recyclable.Root {
   /**
    *
    */
-  constructor() {
+  constructor( weight = 1 ) {
     super();
-    ValueMax_Percentage_Base.setAsConstructor_self.call( this );
+    ValueMax_Percentage_Base.setAsConstructor_self.call( this, weight );
   }
 
   /** @override */
-  static setAsConstructor() {
+  static setAsConstructor( weight = 1 ) {
     super.setAsConstructor();
-    ValueMax_Percentage_Base.setAsConstructor_self.call( this );
+    ValueMax_Percentage_Base.setAsConstructor_self.call( this,  weight );
     return this;
   }
 
   /** @override */
-  static setAsConstructor_self() {
+  static setAsConstructor_self( weight) {
     this.parent = null;
+    this.weight = weight;
   }
 
   /** @override */
@@ -62,6 +67,7 @@ class ValueMax_Percentage_Base extends Recyclable.Root {
     //  }
     //}
 
+    this.weight = undefined;
     this.parent = undefined;
     super.disposeResources();
   }
@@ -146,14 +152,14 @@ class ValueMax_Percentage_Concrete extends ValueMax_Percentage_Base {
    *   - If .max is zero, the valuePercentage will always be 100 (to avoid
    *       divide by zero and avoid Aggregate.valuePercentage never 100).
    */
-  constructor( max = -1 ) {
-    super();
+  constructor( max = -1, weight = 1 ) {
+    super( weight );
     ValueMax_Percentage_Concrete.setAsConstructor_self.call( this, max );
   }
 
   /** @override */
-  static setAsConstructor( max = -1 ) {
-    super.setAsConstructor();
+  static setAsConstructor( max = -1, weight = 1 ) {
+    super.setAsConstructor( weight );
     ValueMax_Percentage_Concrete.setAsConstructor_self.call( this, max );
     return this;
   }
@@ -308,18 +314,19 @@ class ValueMax_Percentage_Aggregate extends ValueMax_Percentage_Base {
    * to Recyclable interface.
    */
   static Pool = new Pool.Root( "ValueMax.Percentage.Aggregate.Pool",
-    ValueMax_Percentage_Aggregate, ValueMax_Percentage_Aggregate.setAsConstructor );
+    ValueMax_Percentage_Aggregate,
+    ValueMax_Percentage_Aggregate.setAsConstructor );
 
   /**
    */
-  constructor() {
-    super();
+  constructor( weight = 1 ) {
+    super( weight );
     ValueMax_Percentage_Aggregate.setAsConstructor_self.call( this );
   }
 
   /** @override */
-  static setAsConstructor() {
-    super.setAsConstructor();
+  static setAsConstructor( weight = 1 ) {
+    super.setAsConstructor( weight );
     ValueMax_Percentage_Aggregate.setAsConstructor_self.call( this );
     return this;
   }
@@ -522,23 +529,19 @@ class ValueMax_Percentage_Aggregate extends ValueMax_Percentage_Base {
         // Restrict between [ 0, partMax ].
         partValue = Math.max( 0, Math.min( partValue, partMax ) );
 
-//!!! ...unfinished... (2023/04/06)
-// Dynamic treeDepth will result in progress backtrack.
-// When later child become more deeper.
-
-        // 3. Weighted by tree depth. (deeper means more tasks to be done.)
-        let partTreeDepth = child.treeDepth;
-        if ( partTreeDepth > 0 ) {
-          let partMaxWeighted = partTreeDepth * partMax;
-          let partValueWeighted = partTreeDepth * partValue;
+        // 3. Weights
+        let partWeight = child.weight;
+        if ( partWeight > 0 ) {
+          let partMaxWeighted = partWeight * partMax;
+          let partValueWeighted = partWeight * partValue;
     
           // 4. Weighted Sum
           valueSum += partValueWeighted;
           maxSum += partMaxWeighted;
     
-        } else { // illegal treeDepth (should be positive).
+        } else { // illegal weight (should be positive).
           throw Error( `ValueMax.Percentage.Aggregate.valuePercentage(): `
-            + `child.treeDepth ( ${partTreeDepth} ) should be positive.`
+            + `child.weight ( ${partWeight} ) should be positive.`
           );
         }
   
