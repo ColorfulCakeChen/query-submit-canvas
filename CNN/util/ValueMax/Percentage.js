@@ -249,7 +249,7 @@ class ValueMax_Percentage_Concrete extends ValueMax_Percentage_Base {
 
   /**
    * Invalidate .valuePercentage_cached (i.e. let it become undefined). This
-   * method will invalidate parent's .valuePercentage_cached, too.
+   * method will call parent's .valuePercentage_cached_invalidate().
    * @override
    */
   valuePercentage_cached_invalidate() {
@@ -349,16 +349,6 @@ class ValueMax_Percentage_Aggregate extends ValueMax_Percentage_Base {
   }
 
   /**
-   * Invalidate .#treeDepth_cached (i.e. let it become undefined). This
-   * method will invalidate parent's .#treeDepth_cached, too.
-   */
-  treeDepth_cached_invalidate() {
-    this.#treeDepth_cached = undefined;
-    if ( this.parent )
-      this.parent.treeDepth_cached_invalidate();
-  }
-
-  /**
    *
    * @return {number} Return the most length to the concrete (i.e. leaf) child.
    * @override
@@ -405,7 +395,6 @@ class ValueMax_Percentage_Aggregate extends ValueMax_Percentage_Base {
     child.parent = this;
 
     this.valuePercentage_cached_invalidate();
-    this.treeDepth_cached_invalidate();
 
     return child;
   }
@@ -431,7 +420,6 @@ class ValueMax_Percentage_Aggregate extends ValueMax_Percentage_Base {
       this.children.splice( i, 1 );
 
       this.valuePercentage_cached_invalidate();
-      this.treeDepth_cached_invalidate();
 
       break;
     }
@@ -477,7 +465,6 @@ class ValueMax_Percentage_Aggregate extends ValueMax_Percentage_Base {
     }
 
     this.valuePercentage_cached_invalidate();
-    this.treeDepth_cached_invalidate();
   }
 
   /**
@@ -488,16 +475,18 @@ class ValueMax_Percentage_Aggregate extends ValueMax_Percentage_Base {
   child_disposeAll() {
     this.children.clear();
     this.valuePercentage_cached_invalidate();
-    this.treeDepth_cached_invalidate();
   }
 
   /**
-   * Invalidate .valuePercentage_cached (i.e. let it become undefined). This
-   * method will invalidate parent's .valuePercentage_cached, too.
+   *   - Invalidate .valuePercentage_cached (i.e. let it become undefined).
+   *   - Invalidate .#treeDepth_cached (i.e. let it become undefined).
+   *   - This method will call parent's .valuePercentage_cached_invalidate().
+   *
    * @override
    */
   valuePercentage_cached_invalidate() {
     this.#valuePercentage_cached = undefined;
+    this.#treeDepth_cached = undefined;
     super.valuePercentage_cached_invalidate();
   }
 
