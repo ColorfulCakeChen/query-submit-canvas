@@ -93,7 +93,8 @@ class ValueMax_Percentage_Base extends Recyclable.Root {
   }
 
   /**
-   * Dummy.
+   * The most length to the concrete (i.e. leaf) child.
+   *
    * @return {number} Always 0. Sub-class should override this method.
    */
   get treeDepth() {
@@ -173,6 +174,7 @@ class ValueMax_Percentage_Concrete extends ValueMax_Percentage_Base {
 
   /**
    * @return {number} Always 1.
+   * @override 
    */
   get treeDepth() {
     return 1;
@@ -326,6 +328,11 @@ class ValueMax_Percentage_Aggregate extends ValueMax_Percentage_Base {
    * @return {number} ??? Always 0. Sub-class should override this method.
    */
   get treeDepth() {
+
+//!!! ...unfinished... (2023/04/06)
+//if child.treeDepth > 0 
+// else throw Error() 
+
     ???return 0;
   }
 
