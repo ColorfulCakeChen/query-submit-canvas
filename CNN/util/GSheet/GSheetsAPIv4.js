@@ -214,7 +214,7 @@ class GSheetsAPIv4_UrlComposer
     let progressRoot = progressParent.root_get();
 
 //!!! (2023/04/06 Remarked)
-// Use tree depth instead of flatten tricks.
+// Use weight instead of flatten tricks.
 //
 //     // (2023/04/05 Remarked)
 //     // For preventing decoding (which is faster than network downloading)
@@ -226,10 +226,10 @@ class GSheetsAPIv4_UrlComposer
 //     let progressFetcher = progressParent;
 
     let progressFetcher = progressParent.child_add(
-      ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
+      ValueMax.Percentage.Aggregate.Pool.get_or_create_by( 2 ) );
 
     let progressToAdvance = progressParent.child_add(
-      ValueMax.Percentage.Concrete.Pool.get_or_create_by( 2 ) );
+      ValueMax.Percentage.Concrete.Pool.get_or_create_by( 2, 1 ) );
 
     let httpRequestFetcher;
     try {

@@ -233,7 +233,7 @@ class DEvolution_VersusSummary extends
     let progressRoot = progressParent.root_get();
 
 //!!! (2023/04/06 Remarked)
-// Use tree depth instead of flatten tricks.
+// Use weight instead of flatten tricks.
 //
 //     // (2023/04/05 Remarked)
 //     // For preventing .visitIndexArray_prepare() (whose computation is small)
@@ -245,10 +245,10 @@ class DEvolution_VersusSummary extends
 //     let progressFetcher = progressParent;
 
     let progressFetcher = progressParent.child_add(
-      ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
+      ValueMax.Percentage.Aggregate.Pool.get_or_create_by( 2 ) );
 
     let progressToAdvance = progressParent.child_add(
-      ValueMax.Percentage.Concrete.Pool.get_or_create_by( 1 ) );
+      ValueMax.Percentage.Concrete.Pool.get_or_create_by( 1, 1 ) );
 
     // The summary is at the first column of the first (i.e. left most) sheet.
     this.urlComposer.range = DEvolution_VersusSummary.spreadsheetRange;

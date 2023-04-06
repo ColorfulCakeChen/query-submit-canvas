@@ -188,7 +188,7 @@ class DEvolution_Versus extends
     let progressRoot = progressParent.root_get();
 
 //!!! (2023/04/06 Remarked)
-// Use tree depth instead of flatten tricks.
+// Use weight instead of flatten tricks.
 //
 //     // (2023/04/05 Remarked)
 //     // For preventing decoding (which is faster than network downloading)
@@ -200,7 +200,7 @@ class DEvolution_Versus extends
 //     let progressForDownloading = progressParent;
 
     let progressForDownloading = progressParent.child_add(
-      ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
+      ValueMax.Percentage.Aggregate.Pool.get_or_create_by( 2 ) );
 
     // For preventing decoding (which is faster than network downloading)
     // from occupying too large portion of progress, let they all under a
@@ -210,16 +210,16 @@ class DEvolution_Versus extends
     //       can not use progressForDecoding directly. They should be children
     //       of progressForDecoding. Otheriwse, progressParent will backtrack.
     let progressForDecoding = progressParent.child_add(
-      ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
+      ValueMax.Percentage.Aggregate.Pool.get_or_create_by( 1 ) );
 
     let progressToAdvance = progressForDecoding.child_add(
-      ValueMax.Percentage.Concrete.Pool.get_or_create_by( 1 ) ); // versusId
+      ValueMax.Percentage.Concrete.Pool.get_or_create_by( 1, 1 ) ); // versusId
 
     let progressForParentChromosome = progressForDecoding.child_add(
-      ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
+      ValueMax.Percentage.Aggregate.Pool.get_or_create_by( 2 ) );
 
     let progressForOffspringChromosome = progressForDecoding.child_add(
-      ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
+      ValueMax.Percentage.Aggregate.Pool.get_or_create_by( 2 ) );
 
 // //!!! (2023/04/05 Remarked)
 // // Problem: This will result progressParent backtrack.
