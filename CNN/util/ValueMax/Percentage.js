@@ -308,7 +308,7 @@ class ValueMax_Percentage_Aggregate extends ValueMax_Percentage_Base {
 
   /** @override */
   static setAsConstructor_self() {
-    this.#treeDepth_cached = undefined;
+    //this.#treeDepth_cached = undefined;
     this.children = Recyclable.OwnerArray.Pool.get_or_create_by();
   }
 
