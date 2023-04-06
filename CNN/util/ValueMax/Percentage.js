@@ -8,9 +8,6 @@ import * as Recyclable from "../Recyclable.js";
 //!!! ...unfinished... (2023/04/06)
 // need ValueMax_Percentage_tester to test progress behavior.
 
-//!!! ...unfinished... (2023/04/06)
-// Use private property, getter, setter for .value and .max
-
 /**
  * The base class for representing valuePercentage as number between [0, 100]
  * inclusive. Acceptable by Receiver.Base.
@@ -128,6 +125,9 @@ class ValueMax_Percentage_Base extends Recyclable.Root {
  */
 class ValueMax_Percentage_Concrete extends ValueMax_Percentage_Base {
 
+  #value;
+  #max;
+
   /**
    * Used as default ValueMax.Percentage.Concrete provider for conforming
    * to Recyclable interface.
@@ -159,14 +159,14 @@ class ValueMax_Percentage_Concrete extends ValueMax_Percentage_Base {
 
   /** @override */
   static setAsConstructor_self( max = -1 ) {
-    this.value = 0;
-    this.max = max; // Negative indicates not initialized.
+    this.#value = 0;
+    this.#max = max; // Negative indicates not initialized.
   }
 
   /** @override */
   disposeResources() {
-    this.max = undefined;
-    this.value = undefined;
+    this.#max = undefined;
+    this.#value = undefined;
     super.disposeResources();
   }
 
@@ -178,6 +178,10 @@ class ValueMax_Percentage_Concrete extends ValueMax_Percentage_Base {
     return 1;
   }
 
+  get value() {
+    return this.#value;
+  }
+
   /**
    * Set .value (and invalidate .valuePercentage_cached).
    *
@@ -187,10 +191,9 @@ class ValueMax_Percentage_Concrete extends ValueMax_Percentage_Base {
    * @return {number}
    *   Return the adjusted value.
    */
-  value_set( newValue = 0 ) {
-    this.value = newValue;
+  set value( newValue = 0 ) {
+    this.#value = newValue;
     this.valuePercentage_cached_invalidate();
-    return this.value;
   }
 
   /**
@@ -200,7 +203,7 @@ class ValueMax_Percentage_Concrete extends ValueMax_Percentage_Base {
    *   Return the adjusted value (i.e. this.max).
    */
   value_set_as_max() {
-    return this.value_set( this.max );
+    return this.value = this.#max;
   }
 
   /**
@@ -213,12 +216,15 @@ class ValueMax_Percentage_Concrete extends ValueMax_Percentage_Base {
    *   Return the adjusted value.
    */
   value_advance( advancedValue = 1 ) {
-    this.value += advancedValue;
+    this.#value += advancedValue;
     this.valuePercentage_cached_invalidate();
-    return this.value;
+    return this.#value;
   }
 
-//!!! ...unfinished... (2023/04/06) Rename to .max_set()
+  get max() {
+    return this.#max;
+  }
+
   /**
    * Set .max (and invalidate .valuePercentage_cached).
    *
@@ -228,10 +234,13 @@ class ValueMax_Percentage_Concrete extends ValueMax_Percentage_Base {
    * @return {number}
    *   Return the adjusted max value.
    */
-  value_max_set( newMax = 1000 ) {
-    this.max = newMax;
+//!!! (2023/04/06 Remarked) Rename to .max
+//  value_max_set( newMax = 1000 ) {
+  set max( newMax = 1000 ) {
+    this.#max = newMax;
     this.valuePercentage_cached_invalidate();
-    return this.max;
+//!!! (2023/04/06 Remarked) setter always will return it by default.
+//    return this.#max;
   }
 
   /**
@@ -247,27 +256,27 @@ class ValueMax_Percentage_Concrete extends ValueMax_Percentage_Base {
 
     // If max is negative (i.e. not initialized), return 0 (to avoid
     // Aggregate.valuePercentage become 100 immediately).
-    if ( this.max < 0 )
+    if ( this.#max < 0 )
       return 0;
 
     // If max is indeed zero, return 100 (to avoid divide by zero and avoid
     // Aggregate.valuePercentage never 100).
-    if ( this.max == 0 )
+    if ( this.#max == 0 )
       return 100;
 
     // value should be in [ 0, max ].
-    let value = this.value;
+    let value = this.#value;
     if ( value < 0 )
       throw Error( `ValueMax.Percentage.Concrete.valuePercentage(): `
         + `value ( ${value} ) should >= 0`
       );
 
-    if ( value > this.max )
+    if ( value > this.#max )
       throw Error( `ValueMax.Percentage.Concrete.valuePercentage(): `
-        + `value ( ${value} ) should <= max ( ${this.max} )`
+        + `value ( ${value} ) should <= max ( ${this.#max} )`
       );
 
-    this.valuePercentage_cached = ( value / this.max ) * 100;
+    this.valuePercentage_cached = ( value / this.#max ) * 100;
     return this.valuePercentage_cached;
   }
 }
