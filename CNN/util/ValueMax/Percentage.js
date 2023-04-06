@@ -79,6 +79,8 @@ class ValueMax_Percentage_Base extends Recyclable.Root {
     return this; // If no parent, this is the root.
   }
 
+!!! ...unfinished... (2023/04/06)
+valuePercentage_cached should become private.
   /**
    * Invalidate .valuePercentage_cached (i.e. let it become undefined). This
    * method will invalidate parent's .valuePercentage_cached, too.
