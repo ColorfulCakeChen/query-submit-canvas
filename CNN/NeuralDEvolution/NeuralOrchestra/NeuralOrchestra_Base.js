@@ -1222,14 +1222,14 @@ class NeuralOrchestra_Base extends
       let progressVersusSummary;
       if ( versusSummary_needLoad ) {
         progressVersusSummary = progressParent.child_add(
-          ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
+          ValueMax.Percentage.Aggregate.Pool.get_or_create_by( 2 ) );
       }
 
       let progressVersus = progressParent.child_add(
-        ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
+        ValueMax.Percentage.Aggregate.Pool.get_or_create_by( 2 ) );
 
       progressToAdvance = progressParent.child_add(
-        ValueMax.Percentage.Concrete.Pool.get_or_create_by( 2 ) );
+        ValueMax.Percentage.Concrete.Pool.get_or_create_by( 2, 1 ) );
 
       // 1. Load versus summary.
       if ( versusSummary_needLoad ) {
