@@ -268,6 +268,9 @@ class GVizTQ_UrlComposer
 
     let progressRoot = progressParent.root_get();
 
+!!! ...unfinished... (2023/04/06)
+// Use tree depth instead of flatten tricks.
+
     // (2023/04/05 Remarked)
     // For preventing decoding (which is faster than network downloading)
     // from occupying too large portion of progress, let httpRequestFetcher

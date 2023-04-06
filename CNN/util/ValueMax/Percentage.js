@@ -8,6 +8,9 @@ import * as Recyclable from "../Recyclable.js";
 //!!! ...unfinished... (2023/04/06)
 // need ValueMax_Percentage_tester to test progress behavior.
 
+//!!! ...unfinished... (2023/04/06)
+// Use private property, getter, setter for .value and .max
+
 /**
  * The base class for representing valuePercentage as number between [0, 100]
  * inclusive. Acceptable by Receiver.Base.

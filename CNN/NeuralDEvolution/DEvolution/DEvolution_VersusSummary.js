@@ -232,6 +232,9 @@ class DEvolution_VersusSummary extends
 
     let progressRoot = progressParent.root_get();
 
+!!! ...unfinished... (2023/04/06)
+// Use tree depth instead of flatten tricks.
+
     // (2023/04/05 Remarked)
     // For preventing .visitIndexArray_prepare() (whose computation is small)
     // from occupying too large portion of progress, let urlComposer uses
