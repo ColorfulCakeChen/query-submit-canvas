@@ -592,7 +592,7 @@ class HeightWidthDepth {
             + ExecutionTimeInfoTimes // for performance test complete.
             + 1                      // for NeuralWorker.Mode complete
           );
-          progressToAdvance.value_max_set( progressMax );
+          progressToAdvance.max = progressMax;
 
           // Control test ModeId direction.
           let testCaseArray = [ ...this.testCaseMap.values() ];

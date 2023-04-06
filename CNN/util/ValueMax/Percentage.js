@@ -234,13 +234,9 @@ class ValueMax_Percentage_Concrete extends ValueMax_Percentage_Base {
    * @return {number}
    *   Return the adjusted max value.
    */
-//!!! (2023/04/06 Remarked) Rename to .max
-//  value_max_set( newMax = 1000 ) {
   set max( newMax = 1000 ) {
     this.#max = newMax;
     this.valuePercentage_cached_invalidate();
-//!!! (2023/04/06 Remarked) setter always will return it by default.
-//    return this.#max;
   }
 
   /**
