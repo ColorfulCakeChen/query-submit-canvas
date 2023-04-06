@@ -209,6 +209,7 @@ class ValueMax_Percentage_Concrete extends ValueMax_Percentage_Base {
     return this.value;
   }
 
+//!!! ...unfinished... (2023/04/06) Rename to .max_set()
   /**
    * Set .max (and invalidate .valuePercentage_cached).
    *
