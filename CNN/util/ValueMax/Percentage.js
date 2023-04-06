@@ -92,8 +92,13 @@ class ValueMax_Percentage_Base extends Recyclable.Root {
       this.parent.valuePercentage_cached_invalidate();
   }
 
-//!!! ...unfinished... (2023/04/06)
-// treeDepth_cached_invalidate()
+  /**
+   * Dummy.
+   * @return {number} Always 0. Sub-class should override this method.
+   */
+  get treeDepth() {
+    return 0;
+  }
 
   /**
    * Dummy.
@@ -166,8 +171,12 @@ class ValueMax_Percentage_Concrete extends ValueMax_Percentage_Base {
     super.disposeResources();
   }
 
-//!!! ...unfinished... (2023/04/06)
-// treeDepth == 1
+  /**
+   * @return {number} Always 1.
+   */
+  get treeDepth() {
+    return 1;
+  }
 
   /**
    * Set .value (and invalidate .valuePercentage_cached).
@@ -308,6 +317,18 @@ class ValueMax_Percentage_Aggregate extends ValueMax_Percentage_Base {
     }
     super.disposeResources();
   }
+
+//!!! ...unfinished... (2023/04/06)
+// treeDepth_cached_invalidate()
+
+  /**
+   *
+   * @return {number} ??? Always 0. Sub-class should override this method.
+   */
+  get treeDepth() {
+    ???return 0;
+  }
+
 
   /**
    * Append child (and invalidate .valuePercentage_cached).
