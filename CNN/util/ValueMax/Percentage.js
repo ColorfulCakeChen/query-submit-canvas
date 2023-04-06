@@ -552,12 +552,13 @@ class ValueMax_Percentage_Aggregate extends ValueMax_Percentage_Base {
     if ( maxSum > 0 ) {
       // 5. Weighted Average
       this.#valuePercentage_cached = ( valueSum / maxSum ) * 100;
-      return this.#valuePercentage_cached;
 
     } else {
       // Return zero if the total max is illegal. (to avoid divide by zero.)
-      return 0;
+      this.#valuePercentage_cached = 0;
     }
+
+    return this.#valuePercentage_cached;
   }
 
 }
