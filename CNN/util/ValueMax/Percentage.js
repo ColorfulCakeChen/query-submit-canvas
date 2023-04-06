@@ -474,12 +474,6 @@ class ValueMax_Percentage_Aggregate extends ValueMax_Percentage_Base {
     if ( this.valuePercentage_cached != undefined )
       return this.valuePercentage_cached;
 
-
-//!!! ...unfinished... (2023/04/06)
-//
-// child.valuePercentage and child.maxPercentage should be multiplied by
-// child.treeDepth. (weighted average)
-
     let valueSum = 0, maxSum = 0;
 
     // (Note: Use integer array index is faster than iterator (i.e. for-of)).
@@ -489,24 +483,48 @@ class ValueMax_Percentage_Aggregate extends ValueMax_Percentage_Base {
       if ( !child )
         continue;
 
+      // 1.
       let partMax = child.maxPercentage;
-      if ( partMax <= 0 )
-        continue; // Skip illegal progress. (maxPercentage should always be 100.)
+      if ( partMax > 0 ) {
 
-      let partValue = child.valuePercentage;
+        // 2.
+        let partValue = child.valuePercentage;
 
-      // Restrict between [ 0, partMax ].
-      partValue = Math.max( 0, Math.min( partValue, partMax ) );
-
-      valueSum += partValue;
-      maxSum += partMax;
+        // Restrict between [ 0, partMax ].
+        partValue = Math.max( 0, Math.min( partValue, partMax ) );
+  
+        // 3. Weighted by tree depth. (deeper means more tasks to be done.)
+        let partTreeDepth = child.treeDepth;
+        if ( partTreeDepth > 0 ) {
+          let partMaxWeighted = partTreeDepth * partMax;
+          let partValueWeighted = partTreeDepth * partValue;
+    
+          // 4. Weighted Sum
+          valueSum += partValueWeighted;
+          maxSum += partMaxWeighted;
+    
+        } else { // illegal treeDepth (should be positive).
+          throw Error( `ValueMax.Percentage.Aggregate.valuePercentage(): `
+            + `child.treeDepth ( ${partTreeDepth} ) should be positive.`
+          );
+        }
+  
+      } else { // illegal .maxPercentage (should always be 100).
+        throw Error( `ValueMax.Percentage.Aggregate.valuePercentage(): `
+          + `child.maxPercentage ( ${partMax} ) should be positive (i.e. 100).`
+        );
+      }
     }
 
-    if ( maxSum <= 0 )
-      return 0; // Return zero if the total max is illegal. (to avoid divide by zero.)
+    if ( maxSum > 0 ) {
+      // 5. Weighted Average
+      this.valuePercentage_cached = ( valueSum / maxSum ) * 100;
+      return this.valuePercentage_cached;
 
-    this.valuePercentage_cached = ( valueSum / maxSum ) * 100;
-    return this.valuePercentage_cached;
+    } else {
+      // Return zero if the total max is illegal. (to avoid divide by zero.)
+      return 0;
+    }
   }
 
 }
