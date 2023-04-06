@@ -45,7 +45,6 @@ class ValueMax_Percentage_Base extends Recyclable.Root {
   /** @override */
   static setAsConstructor_self() {
     this.parent = null;
-    this.valuePercentage_cached = undefined;
   }
 
   /** @override */
@@ -63,7 +62,6 @@ class ValueMax_Percentage_Base extends Recyclable.Root {
     //  }
     //}
 
-    this.valuePercentage_cached = undefined;
     this.parent = undefined;
     super.disposeResources();
   }
@@ -79,14 +77,13 @@ class ValueMax_Percentage_Base extends Recyclable.Root {
     return this; // If no parent, this is the root.
   }
 
-!!! ...unfinished... (2023/04/06)
-valuePercentage_cached should become private.
   /**
-   * Invalidate .valuePercentage_cached (i.e. let it become undefined). This
-   * method will invalidate parent's .valuePercentage_cached, too.
+   * This method will call parent's .valuePercentage_cached_invalidate().
+   *
+   * Sub-class should override this method and invalidate .valuePercentage_cached
+   * (i.e. let it become undefined). 
    */
   valuePercentage_cached_invalidate() {
-    this.valuePercentage_cached = undefined;
     if ( this.parent )
       this.parent.valuePercentage_cached_invalidate();
   }
@@ -130,6 +127,8 @@ class ValueMax_Percentage_Concrete extends ValueMax_Percentage_Base {
   #value;
   #max;
 
+  #valuePercentage_cached;
+
   /**
    * Used as default ValueMax.Percentage.Concrete provider for conforming
    * to Recyclable interface.
@@ -167,6 +166,7 @@ class ValueMax_Percentage_Concrete extends ValueMax_Percentage_Base {
 
   /** @override */
   disposeResources() {
+    this.#valuePercentage_cached = undefined;
     this.#max = undefined;
     this.#value = undefined;
     super.disposeResources();
@@ -242,6 +242,16 @@ class ValueMax_Percentage_Concrete extends ValueMax_Percentage_Base {
   }
 
   /**
+   * Invalidate .valuePercentage_cached (i.e. let it become undefined). This
+   * method will invalidate parent's .valuePercentage_cached, too.
+   * @override
+   */
+  valuePercentage_cached_invalidate() {
+    this.#valuePercentage_cached = undefined;
+    super.valuePercentage_cached_invalidate();
+  }
+
+  /**
    * @return {number}
    *   The progress as number between [ 0, 100 ] inclusive.
    *     - Always 0, if this.max is negative.
@@ -249,8 +259,8 @@ class ValueMax_Percentage_Concrete extends ValueMax_Percentage_Base {
    *     - Otherwise, return the ratio of ( this.value / this.max ).
    */
   get valuePercentage() {
-    if ( this.valuePercentage_cached != undefined )
-      return this.valuePercentage_cached;
+    if ( this.#valuePercentage_cached != undefined )
+      return this.#valuePercentage_cached;
 
     // If max is negative (i.e. not initialized), return 0 (to avoid
     // Aggregate.valuePercentage become 100 immediately).
@@ -274,8 +284,8 @@ class ValueMax_Percentage_Concrete extends ValueMax_Percentage_Base {
         + `value ( ${value} ) should <= max ( ${this.#max} )`
       );
 
-    this.valuePercentage_cached = ( value / this.#max ) * 100;
-    return this.valuePercentage_cached;
+    this.#valuePercentage_cached = ( value / this.#max ) * 100;
+    return this.#valuePercentage_cached;
   }
 }
 
@@ -291,6 +301,7 @@ class ValueMax_Percentage_Concrete extends ValueMax_Percentage_Base {
 class ValueMax_Percentage_Aggregate extends ValueMax_Percentage_Base {
 
   #treeDepth_cached;
+  #valuePercentage_cached;
 
   /**
    * Used as default ValueMax.Percentage.Aggregate provider for conforming
@@ -326,6 +337,7 @@ class ValueMax_Percentage_Aggregate extends ValueMax_Percentage_Base {
       this.children = null;
     }
     this.#treeDepth_cached = undefined;
+    this.#valuePercentage_cached = undefined;
     super.disposeResources();
   }
 
@@ -473,13 +485,23 @@ class ValueMax_Percentage_Aggregate extends ValueMax_Percentage_Base {
   }
 
   /**
+   * Invalidate .valuePercentage_cached (i.e. let it become undefined). This
+   * method will invalidate parent's .valuePercentage_cached, too.
+   * @override
+   */
+  valuePercentage_cached_invalidate() {
+    this.#valuePercentage_cached = undefined;
+    super.valuePercentage_cached_invalidate();
+  }
+
+  /**
    * @return {number}
    *   The sum of all children's ( valuePercentage / maxPercentage ) as
    * number between [0, 100] inclusive.
    */
   get valuePercentage() {
-    if ( this.valuePercentage_cached != undefined )
-      return this.valuePercentage_cached;
+    if ( this.#valuePercentage_cached != undefined )
+      return this.#valuePercentage_cached;
 
     let valueSum = 0, maxSum = 0;
 
@@ -529,8 +551,8 @@ class ValueMax_Percentage_Aggregate extends ValueMax_Percentage_Base {
 
     if ( maxSum > 0 ) {
       // 5. Weighted Average
-      this.valuePercentage_cached = ( valueSum / maxSum ) * 100;
-      return this.valuePercentage_cached;
+      this.#valuePercentage_cached = ( valueSum / maxSum ) * 100;
+      return this.#valuePercentage_cached;
 
     } else {
       // Return zero if the total max is illegal. (to avoid divide by zero.)
