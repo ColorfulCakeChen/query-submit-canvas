@@ -344,7 +344,7 @@ class ValueMax_Percentage_Aggregate extends ValueMax_Percentage_Base {
 
       } else {
         throw Error( `ValueMax.Percentage.Aggregate.treeDepth(): `
-          + `treeDepthChild ( ${treeDepthChild} ) should be positive.`
+          + `child.treeDepth ( ${treeDepthChild} ) should be positive.`
         );
       }
     }
