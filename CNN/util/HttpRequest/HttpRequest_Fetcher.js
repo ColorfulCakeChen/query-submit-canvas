@@ -309,8 +309,7 @@ class HttpRequest_Fetcher
         this.xhr.abort();
 
       if ( this.progressLoading ) {
-        this.progressLoading.max = 0;
-        this.progressLoading.value = 0;
+        this.progressLoading.value_max_set( 0, 0 );
       }
     }
 
@@ -560,8 +559,7 @@ class HttpRequest_Fetcher
       }
     }
 
-    this.progressLoading.max = progressLoading_max_default;
-    this.progressLoading.value = 0;
+    this.progressLoading.value_max_set( 0, progressLoading_max_default );
 
     // 0.4 Inform outside caller progress when begin loading.
     //
@@ -765,8 +763,7 @@ class HttpRequest_Fetcher
     // 0.1 .progressLoading should become 0%, since now is going to retry.
     {
       const arbitraryNonZero = 1;
-      this.progressLoading.max = arbitraryNonZero;
-      this.progressLoading.value = 0;
+      this.progressLoading.value_max_set( 0, arbitraryNonZero );
     }
 
     // 0.2 .progressRetryWaiting is only created when first times retry waiting.
@@ -1301,13 +1298,12 @@ class HttpRequest_Fetcher
       // So, even if ( progressEvent.total == 0 ), this function still
       // could result in ( progressLoading.valuePercentage == 100 ) correctly.
       //
-      this.progressLoading.max = progressEvent.total;
-      this.progressLoading.value = progressEvent.loaded;
+      this.progressLoading.value_max_set(
+        progressEvent.loaded, progressEvent.total );
 
     } else { // Fake an incremental never-100% progress percentage.
       let fakeMax = progressEvent.loaded + HttpRequest_Fetcher.progressTotalFakeLarger;
-      this.progressLoading.max = fakeMax;
-      this.progressLoading.value = progressEvent.loaded;
+      this.progressLoading.value_max_set( progressEvent.loaded, fakeMax );
     }
   }
 
@@ -1341,12 +1337,12 @@ class HttpRequest_Fetcher
     //
 
     if ( progressEvent.lengthComputable ) {
-      this.progressLoading.max = progressEvent.total;
-      this.progressLoading.value = progressEvent.loaded;
+      this.progressLoading.value_max_set(
+        progressEvent.loaded, progressEvent.total );
 
     } else { // Complete the fake progress to 100%.
-      this.progressLoading.max = progressEvent.loaded;
-      this.progressLoading.value = progressEvent.loaded;
+      this.progressLoading.value_max_set(
+        progressEvent.loaded, progressEvent.loaded );
     }
   }
 
@@ -1358,8 +1354,8 @@ class HttpRequest_Fetcher
    */
   static progressRetryWaiting_set_beforeDone() {
     if ( this.progressRetryWaiting ) {
-      this.progressRetryWaiting.max = this.retryWaitingMillisecondsMax;
-      this.progressRetryWaiting.value = this.retryWaitingMillisecondsCur;
+      this.progressRetryWaiting.value_max_set(
+        this.retryWaitingMillisecondsCur, this.retryWaitingMillisecondsMax );
     }
   }
 
@@ -1372,8 +1368,8 @@ class HttpRequest_Fetcher
    */
   static progressRetryWaiting_set_whenDone() {
     if ( this.progressRetryWaiting ) {
-      this.progressRetryWaiting.max = this.retryWaitingMillisecondsMax;
-      this.progressRetryWaiting.value = this.retryWaitingMillisecondsMax;
+      this.progressRetryWaiting.value_max_set(
+        this.retryWaitingMillisecondsMax, this.retryWaitingMillisecondsMax );
     }
   }
 

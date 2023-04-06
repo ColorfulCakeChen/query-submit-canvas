@@ -248,6 +248,21 @@ class ValueMax_Percentage_Concrete extends ValueMax_Percentage_Base {
   }
 
   /**
+   * Set .value and .max (and invalidate .valuePercentage_cached).
+   *
+   * @param {number} newValue
+   *   The new .value. default is 0.
+   *
+   * @param {number} newMax
+   *   The new .max. default is 1000.
+   */
+  value_max_set( newValue = 0, newMax = 1000 ) {
+    this.#value = newValue;
+    this.#max = newMax;
+    this.valuePercentage_cached_invalidate();
+  }
+
+  /**
    * Invalidate .valuePercentage_cached (i.e. let it become undefined). This
    * method will call parent's .valuePercentage_cached_invalidate().
    * @override
