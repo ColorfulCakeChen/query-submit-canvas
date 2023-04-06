@@ -187,17 +187,20 @@ class DEvolution_Versus extends
     // 0.2 Prepare progress.
     let progressRoot = progressParent.root_get();
 
-!!! ...unfinished... (2023/04/06)
+//!!! (2023/04/06 Remarked)
 // Use tree depth instead of flatten tricks.
+//
+//     // (2023/04/05 Remarked)
+//     // For preventing decoding (which is faster than network downloading)
+//     // from occupying too large portion of progress, let UrlComposer
+//     // uses progressParent directly.
+//     //
+//     // let progressForDownloading = progressParent.child_add(
+//     //   ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
+//     let progressForDownloading = progressParent;
 
-    // (2023/04/05 Remarked)
-    // For preventing decoding (which is faster than network downloading)
-    // from occupying too large portion of progress, let UrlComposer
-    // uses progressParent directly.
-    //
-    // let progressForDownloading = progressParent.child_add(
-    //   ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
-    let progressForDownloading = progressParent;
+    let progressForDownloading = progressParent.child_add(
+      ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
 
     // For preventing decoding (which is faster than network downloading)
     // from occupying too large portion of progress, let they all under a

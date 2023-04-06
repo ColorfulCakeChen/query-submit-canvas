@@ -268,17 +268,20 @@ class GVizTQ_UrlComposer
 
     let progressRoot = progressParent.root_get();
 
-!!! ...unfinished... (2023/04/06)
+//!!! (2023/04/06 Remarked)
 // Use tree depth instead of flatten tricks.
+//
+//     // (2023/04/05 Remarked)
+//     // For preventing decoding (which is faster than network downloading)
+//     // from occupying too large portion of progress, let httpRequestFetcher
+//     // uses progressParent directly.
+//     //
+//     // let progressFetcher = progressParent.child_add(
+//     //   ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
+//     let progressFetcher = progressParent;
 
-    // (2023/04/05 Remarked)
-    // For preventing decoding (which is faster than network downloading)
-    // from occupying too large portion of progress, let httpRequestFetcher
-    // uses progressParent directly.
-    //
-    // let progressFetcher = progressParent.child_add(
-    //   ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
-    let progressFetcher = progressParent;
+    let progressFetcher = progressParent.child_add(
+      ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
 
     let progressToAdvance = progressParent.child_add(
       ValueMax.Percentage.Concrete.Pool.get_or_create_by( 2 ) );
