@@ -5,6 +5,9 @@ export { ValueMax_Percentage_Aggregate as Aggregate };
 import * as Pool from "../Pool.js";
 import * as Recyclable from "../Recyclable.js";
 
+//!!! ...unfinished... (2023/04/06)
+// need ValueMax_Percentage_tester to test progress behavior.
+
 /**
  * The base class for representing valuePercentage as number between [0, 100]
  * inclusive. Acceptable by Receiver.Base.
@@ -86,6 +89,9 @@ class ValueMax_Percentage_Base extends Recyclable.Root {
       this.parent.valuePercentage_cached_invalidate();
   }
 
+//!!! ...unfinished... (2023/04/06)
+// treeDepth_cached_invalidate()
+
   /**
    * Dummy.
    * @return {number} Always 0. Sub-class should override this method.
@@ -156,6 +162,9 @@ class ValueMax_Percentage_Concrete extends ValueMax_Percentage_Base {
     this.value = undefined;
     super.disposeResources();
   }
+
+//!!! ...unfinished... (2023/04/06)
+// treeDepth == 1
 
   /**
    * Set .value (and invalidate .valuePercentage_cached).
@@ -312,7 +321,10 @@ class ValueMax_Percentage_Aggregate extends ValueMax_Percentage_Base {
     child.parent = this;
 
     this.valuePercentage_cached_invalidate();
-     
+
+//!!! ...unfinished... (2023/04/06)
+// treeDepth_cached_invalidate()
+
     return child;
   }
 
@@ -339,6 +351,10 @@ class ValueMax_Percentage_Aggregate extends ValueMax_Percentage_Base {
     }
 
     this.valuePercentage_cached_invalidate();
+
+//!!! ...unfinished... (2023/04/06)
+// treeDepth_cached_invalidate()
+
     return bFound;
   }
 
@@ -380,6 +396,10 @@ class ValueMax_Percentage_Aggregate extends ValueMax_Percentage_Base {
     }
 
     this.valuePercentage_cached_invalidate();
+
+//!!! ...unfinished... (2023/04/06)
+// treeDepth_cached_invalidate()
+
   }
 
   /**
@@ -390,6 +410,10 @@ class ValueMax_Percentage_Aggregate extends ValueMax_Percentage_Base {
   child_disposeAll() {
     this.children.clear();
     this.valuePercentage_cached_invalidate();
+
+//!!! ...unfinished... (2023/04/06)
+// treeDepth_cached_invalidate()
+
   }
 
   /**
@@ -400,7 +424,14 @@ class ValueMax_Percentage_Aggregate extends ValueMax_Percentage_Base {
   get valuePercentage() {
     if ( this.valuePercentage_cached != undefined )
       return this.valuePercentage_cached;
-    
+
+
+//!!! ...unfinished... (2023/04/06)
+// treeDepth_cached_invalidate()
+//
+// child.valuePercentage and child.maxPercentage should be multiplied by
+// child.treeDepth. (weighted average)
+
     let valueSum = 0, maxSum = 0;
 
     // (Note: Use integer array index is faster than iterator (i.e. for-of)).
