@@ -93,8 +93,6 @@ class ValueMax_Percentage_Base extends Recyclable.Root {
   }
 
   /**
-   * The most length to the concrete (i.e. leaf) child.
-   *
    * @return {number} Always 0. Sub-class should override this method.
    */
   get treeDepth() {
@@ -174,7 +172,7 @@ class ValueMax_Percentage_Concrete extends ValueMax_Percentage_Base {
 
   /**
    * @return {number} Always 1.
-   * @override 
+   * @override
    */
   get treeDepth() {
     return 1;
@@ -285,6 +283,8 @@ class ValueMax_Percentage_Concrete extends ValueMax_Percentage_Base {
  */
 class ValueMax_Percentage_Aggregate extends ValueMax_Percentage_Base {
 
+  #treeDepth_cached;
+
   /**
    * Used as default ValueMax.Percentage.Aggregate provider for conforming
    * to Recyclable interface.
@@ -308,6 +308,7 @@ class ValueMax_Percentage_Aggregate extends ValueMax_Percentage_Base {
 
   /** @override */
   static setAsConstructor_self() {
+    this.#treeDepth_cached = undefined;
     this.children = Recyclable.OwnerArray.Pool.get_or_create_by();
   }
 
@@ -317,25 +318,35 @@ class ValueMax_Percentage_Aggregate extends ValueMax_Percentage_Base {
       this.children.disposeResources_and_recycleToPool();
       this.children = null;
     }
+    this.#treeDepth_cached = undefined;
     super.disposeResources();
   }
 
-//!!! ...unfinished... (2023/04/06)
-// treeDepth_cached_invalidate()
-
   /**
    *
-   * @return {number} ??? Always 0. Sub-class should override this method.
+   * @return {number} Return the most length to the concrete (i.e. leaf) child.
+   * @override
    */
   get treeDepth() {
+    if ( this.#treeDepth_cached !== undefined )
+      return this.#treeDepth_cached;
 
 //!!! ...unfinished... (2023/04/06)
 //if child.treeDepth > 0 
 // else throw Error() 
 
-    ???return 0;
+    return this.#treeDepth_cached;
   }
 
+  /**
+   * Invalidate .#treeDepth_cached (i.e. let it become undefined). This
+   * method will invalidate parent's .#treeDepth_cached, too.
+   */
+  treeDepth_cached_invalidate() {
+    this.#treeDepth_cached = undefined;
+    if ( this.parent )
+      this.parent.treeDepth_cached_invalidate();
+  }
 
   /**
    * Append child (and invalidate .valuePercentage_cached).
@@ -353,9 +364,7 @@ class ValueMax_Percentage_Aggregate extends ValueMax_Percentage_Base {
     child.parent = this;
 
     this.valuePercentage_cached_invalidate();
-
-//!!! ...unfinished... (2023/04/06)
-// treeDepth_cached_invalidate()
+    this.treeDepth_cached_invalidate();
 
     return child;
   }
@@ -379,13 +388,12 @@ class ValueMax_Percentage_Aggregate extends ValueMax_Percentage_Base {
       bFound = true;
       child.parent = null;
       this.children.splice( i, 1 );
+
+      this.valuePercentage_cached_invalidate();
+      this.treeDepth_cached_invalidate();
+
       break;
     }
-
-    this.valuePercentage_cached_invalidate();
-
-//!!! ...unfinished... (2023/04/06)
-// treeDepth_cached_invalidate()
 
     return bFound;
   }
@@ -428,10 +436,7 @@ class ValueMax_Percentage_Aggregate extends ValueMax_Percentage_Base {
     }
 
     this.valuePercentage_cached_invalidate();
-
-//!!! ...unfinished... (2023/04/06)
-// treeDepth_cached_invalidate()
-
+    this.treeDepth_cached_invalidate();
   }
 
   /**
@@ -442,10 +447,7 @@ class ValueMax_Percentage_Aggregate extends ValueMax_Percentage_Base {
   child_disposeAll() {
     this.children.clear();
     this.valuePercentage_cached_invalidate();
-
-//!!! ...unfinished... (2023/04/06)
-// treeDepth_cached_invalidate()
-
+    this.treeDepth_cached_invalidate();
   }
 
   /**
@@ -459,7 +461,6 @@ class ValueMax_Percentage_Aggregate extends ValueMax_Percentage_Base {
 
 
 //!!! ...unfinished... (2023/04/06)
-// treeDepth_cached_invalidate()
 //
 // child.valuePercentage and child.maxPercentage should be multiplied by
 // child.treeDepth. (weighted average)
