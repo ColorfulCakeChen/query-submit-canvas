@@ -523,17 +523,17 @@ class ValueMax_Percentage_Aggregate extends ValueMax_Percentage_Base {
         if ( partWeight > 0 ) {
           let partMaxWeighted = partWeight * partMax;
           let partValueWeighted = partWeight * partValue;
-    
+
           // 4. Weighted Sum
           valueSum += partValueWeighted;
           maxSum += partMaxWeighted;
-    
+
         } else { // illegal weight (should be positive).
           throw Error( `ValueMax.Percentage.Aggregate.valuePercentage(): `
             + `child.weight ( ${partWeight} ) should be positive.`
           );
         }
-  
+
       } else { // illegal .maxPercentage (should always be 100).
         throw Error( `ValueMax.Percentage.Aggregate.valuePercentage(): `
           + `child.maxPercentage ( ${partMax} ) should be positive (i.e. 100).`
