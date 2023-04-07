@@ -162,6 +162,8 @@ async function DownloadSummaryButton_onClick( event ) {
   try {
     g_Contorls.DownloadSummaryButton.disabled = true; // Prevent from many clicking quickly.
     g_Contorls.DownloadSummaryAbortButton.disabled = false;
+    g_Contorls.DownloadVersusButton.disabled = true;
+    g_Contorls.DownloadVersusAbortButton.disabled = true;
 
     let spreadsheetId = g_Contorls.SpreadsheetIdText.value;
     if ( !g_VersusSummary ) {
@@ -209,6 +211,8 @@ function VersusSummary_onDownload( bDownloadSummaryOk ) {
   try {
     g_Contorls.DownloadSummaryButton.disabled = false;
     g_Contorls.DownloadSummaryAbortButton.disabled = true;
+    g_Contorls.DownloadVersusButton.disabled = false;
+    g_Contorls.DownloadVersusAbortButton.disabled = true;
 
     if ( !bDownloadSummaryOk ) {
       g_Contorls.NextVisitIndexText.value = "";
@@ -259,6 +263,8 @@ function VersusSummary_onDownload( bDownloadSummaryOk ) {
 /** */
 async function DownloadVersusButton_onClick( event ) {
   try {
+    g_Contorls.DownloadSummaryButton.disabled = true;
+    g_Contorls.DownloadSummaryAbortButton.disabled = true;
     g_Contorls.DownloadVersusButton.disabled = true; // Prevent from many clicking quickly.
     g_Contorls.DownloadVersusAbortButton.disabled = false;
 
@@ -301,6 +307,8 @@ function DownloadVersusAbortButton_onClick( event ) {
  */
 function Versus_onDownload( versus ) {
   try {
+    g_Contorls.DownloadSummaryButton.disabled = false;
+    g_Contorls.DownloadSummaryAbortButton.disabled = true;
     g_Contorls.DownloadVersusButton.disabled = false;
     g_Contorls.DownloadVersusAbortButton.disabled = true;
 
