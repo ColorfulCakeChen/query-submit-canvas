@@ -132,7 +132,7 @@ async function retryTimes_progress_loadPromise(
   retryTimesSpanHTMLElement, progressHTMLElement,
   urlComposer, loadPromise, progressPercentage
 ) {
-  const timeMilliseconds = 100; //500;
+  const timeMilliseconds = 10; //100; //500;
 
   progressHTMLElement.max = progressPercentage.maxPercentage;
 
