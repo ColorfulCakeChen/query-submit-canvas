@@ -251,7 +251,7 @@ async function DownloadSummaryButton_onClick( event ) {
       progress = ValueMax.Percentage.Aggregate.Pool.get_or_create_by();
 
       let rangeArray_load_asyncGenerator = g_VersusSummary
-        .rangeArray_load_asyncGenerrator_create(
+        .rangeArray_load_asyncGenerator_create(
           progress, g_params_loading_retryWaiting );
 
       let bDownloadSummaryOk = await retryTimes_progress_load_by_asyncGenerator(
