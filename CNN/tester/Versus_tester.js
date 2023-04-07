@@ -60,7 +60,7 @@ function window_onLoad( event ) {
 
 /** */
 function params_loading_retryWaiting_create() {
-  const loadingMillisecondsMax = ( 30 * 1000 ); //( 60 * 1000 );
+  const loadingMillisecondsMax = ( 60 * 1000 );
   const loadingMillisecondsInterval = 1001; //( 5 * 1000 );
 
   const retryTimesMax = 3; // -1 means retry infinite times
@@ -132,6 +132,7 @@ async function retryTimes_progress_loadPromise(
   retryTimesSpanHTMLElement, progressHTMLElement,
   urlComposer, loadPromise, progressPercentage
 ) {
+  const timeMilliseconds = 100; //500;
 
   progressHTMLElement.max = progressPercentage.maxPercentage;
 
@@ -139,7 +140,7 @@ async function retryTimes_progress_loadPromise(
   let promiseResolvedValue;
   do {
     let timePromise
-      = PartTime.delayedValue( 500, retryTimes_progress_loadPromise );
+      = PartTime.delayedValue( timeMilliseconds, retryTimes_progress_loadPromise );
     let allPromiseRace = Promise.race( [ loadPromise, timePromise ] );
 
     promiseResolvedValue = await allPromiseRace;
