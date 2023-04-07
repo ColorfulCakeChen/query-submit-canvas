@@ -272,10 +272,10 @@ function *testerPercentageAggregate( progressParent ) {
         + `should be 6.`
       );
 
-      concrete31 = ValueMax.Percentage.Concrete.Pool.get_or_create_by( 10 );
+      let concrete31 = ValueMax.Percentage.Concrete.Pool.get_or_create_by( 10 );
       aggregate3.child_add( concrete31 );
 
-      concrete32 = ValueMax.Percentage.Concrete.Pool.get_or_create_by( 10 );
+      let concrete32 = ValueMax.Percentage.Concrete.Pool.get_or_create_by( 10 );
       aggregate3.child_add( concrete32 );
 
       aggregate.child_add( aggregate3 );
