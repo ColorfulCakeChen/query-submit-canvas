@@ -1,4 +1,5 @@
 export { delayedValue, sleep };
+export { nextAnimationFrameValue };
 export { Promise_create_by_addEventListener_once };
 export { Promise_create_by_setTimeout };
 export { Promise_resolvable_rejectable_create };
@@ -14,10 +15,6 @@ export { forOf };
  *
  * @param {any} value
  *   The value which will be returned by the resolved promise.
- *
- * @return {Promise}
- *   Return a promise which will be resolved as specified value after specified
- * milliseconds.
  *
  * @return {Promise}
  *   Return a newly created Promise which will be resolved as specified value
@@ -64,6 +61,41 @@ function delayedValue( delayMilliseconds, value ) {
  */
 function sleep( delayMilliseconds = 0 ) {
   return delayedValue( delayMilliseconds, undefined );
+}
+
+//!!! ...unfinished... (2023/04/07)
+/**
+ * A wrapper for requestAnimationFrame().
+ *
+ * @param {any} value
+ *   The value which will be returned by the resolved promise.
+ *
+ * @return {Promise}
+ *   Return a newly created Promise which will be resolved as specified value
+ * right before the next repaint. The returned Promise will have the following
+ * properties:
+ *   - .resolve( v ): Call it to cancel timer and resolve the promise to v.
+ *   - .reject( v ): Call it to cancel timer and reject the promise to v.
+ *   - .requestId: could be used to call cancelAnimationFrame().
+ *   - .cancelRequest(): Call it (without any parameter) to cancel the request.
+ */
+function nextAnimationFrameValue( value ) {
+  let resolveFunc, rejectFunc;
+  let requestId;
+
+  let p = new Promise( ( resolve, reject ) => {
+    resolveFunc = resolve;
+    rejectFunc = reject;
+    requestId = requestAnimationFrame( () => resolve( value ) );
+  } );
+
+  p.resolve = ( v ) => { cancelAnimationFrame()( requestId ); resolveFunc( v ); }
+  p.reject = ( v ) => { cancelAnimationFrame()( requestId ); rejectFunc( v ); };
+
+  p.requestId = requestId;
+  p.cancelRequest = cancelAnimationFrame.bind( null, requestId );
+
+  return p;
 }
 
 
