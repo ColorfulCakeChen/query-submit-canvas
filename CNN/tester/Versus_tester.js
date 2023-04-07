@@ -106,7 +106,7 @@ function params_loading_retryWaiting_extractFromUI() {
 }
 
 /**
- * Await loadPromise and display progress simultaneously.
+ * Await load_asyncPromise and display progress simultaneously.
  *
  * @param {HTMLSpanElement} retryTimesSpanHTMLElement
  *   The DOM (Document Object Model) Node of HTML span elemnt for displaying
@@ -117,20 +117,20 @@ function params_loading_retryWaiting_extractFromUI() {
  * displaying current loading progress.
  *
  * @return { GSheetsAPIv4.UrlComposer | GVizTQ.UrlComposer } urlComposer
- *   The UrlComposer which provides loadPromise.
+ *   The UrlComposer which provides load_asyncPromise.
  *
- * @param {Promise} loadPromise
+ * @param {Promise} load_asyncPromise
  *   The promise to be awaited.
  *
  * @param {ValueMax.Percentage.Base} progressPercentage
- *   The progress of the loadPromise.
+ *   The progress of the load_asyncPromise.
  *
  * @return {any}
- *   Return the resolved value of loadPromise.
+ *   Return the resolved value of load_asyncPromise.
  */
-async function retryTimes_progress_loadPromise(
+async function retryTimes_progress_load_by_asyncPromise(
   retryTimesSpanHTMLElement, progressHTMLElement,
-  urlComposer, loadPromise, progressPercentage
+  urlComposer, load_asyncPromise, progressPercentage
 ) {
   const timeMilliseconds = 0; //10; //100; //500;
 
@@ -139,15 +139,72 @@ async function retryTimes_progress_loadPromise(
   let bDone;
   let promiseResolvedValue;
   do {
-    let timePromise
-      = PartTime.delayedValue( timeMilliseconds, retryTimes_progress_loadPromise );
-    let allPromiseRace = Promise.race( [ loadPromise, timePromise ] );
+    let timePromise = PartTime.delayedValue( timeMilliseconds,
+      retryTimes_progress_load_by_asyncPromise );
+    let allPromiseRace = Promise.race( [ load_asyncPromise, timePromise ] );
 
     promiseResolvedValue = await allPromiseRace;
-    if ( promiseResolvedValue === retryTimes_progress_loadPromise )
+    if ( promiseResolvedValue === retryTimes_progress_load_by_asyncPromise )
       bDone = false; // timePromise
     else
-      bDone = true; // loadPromise
+      bDone = true; // load_asyncPromise
+
+    retryTimesSpanHTMLElement.textContent
+      = urlComposer.retryTimes_CurMax_string;
+    progressHTMLElement.value = progressPercentage.valuePercentage;
+  } while ( !bDone );
+
+  retryTimesSpanHTMLElement.textContent = "";
+  return promiseResolvedValue;
+}
+
+/**
+ * Await load_asyncGenerator and display progress simultaneously.
+ *
+ * (Its progress displaying may be better than
+ * retryTimes_progress_load_by_asyncPromise().)
+ *
+ * @param {HTMLSpanElement} retryTimesSpanHTMLElement
+ *   The DOM (Document Object Model) Node of HTML span elemnt for displaying
+ * current loading retry times.
+ *
+ * @param {HTMLProgressElement} progressHTMLElement
+ *   The DOM (Document Object Model) Node of HTML progress elemnt for
+ * displaying current loading progress.
+ *
+ * @return { GSheetsAPIv4.UrlComposer | GVizTQ.UrlComposer } urlComposer
+ *   The UrlComposer which provides load_asyncPromise.
+ *
+ * @param {AsyncGenerator} load_asyncGenerator
+ *   The async generator to be awaited.
+ *
+ * @param {ValueMax.Percentage.Base} progressPercentage
+ *   The progress of the load_asyncPromise.
+ *
+ * @return {any}
+ *   Return the resolved value of load_asyncPromise.
+ */
+async function retryTimes_progress_load_by_asyncGenerator(
+  retryTimesSpanHTMLElement, progressHTMLElement,
+  urlComposer, load_asyncGenerator, progressPercentage
+) {
+
+  progressHTMLElement.max = progressPercentage.maxPercentage;
+
+  let bDone;
+  let loaderNext;
+  let promiseResolvedValue;
+  do {
+    loaderNext = await load_asyncGenerator.next();
+    if ( loaderNext.done ) {
+      bDone = true;
+      // progressHTMLElement.value = 100; // ???progressRoot
+      promiseResolvedValue = loaderNext.value;
+      
+    } else {
+      bDone = false;
+      // progressHTMLElement.value = loaderNext.value; // progressRoot
+    }
 
     retryTimesSpanHTMLElement.textContent
       = urlComposer.retryTimes_CurMax_string;
@@ -178,7 +235,7 @@ async function DownloadSummaryButton_onClick( event ) {
     let rangeArray_load_asyncPromise = g_VersusSummary
       .rangeArray_load_asyncPromise_create( g_params_loading_retryWaiting );
 
-    let bDownloadSummaryOk = await retryTimes_progress_loadPromise(
+    let bDownloadSummaryOk = await retryTimes_progress_load_by_asyncPromise(
       g_Contorls.DownloadSummaryRetryTimesSpan,
       g_Contorls.DownloadSummaryProgressBar,
       g_VersusSummary.urlComposer,
@@ -274,7 +331,7 @@ async function DownloadVersusButton_onClick( event ) {
     let versus_next_load_asyncPromise = g_VersusSummary
       .versus_next_load_asyncPromise_create( g_params_loading_retryWaiting );
 
-    let versus = await retryTimes_progress_loadPromise(
+    let versus = await retryTimes_progress_load_by_asyncPromise(
       g_Contorls.DownloadVersusRetryTimesSpan,
       g_Contorls.DownloadVersusProgressBar,
       g_VersusSummary.urlComposer,
