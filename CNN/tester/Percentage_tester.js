@@ -265,12 +265,12 @@ function *testerPercentageAggregate( progressParent ) {
     // The 3th child is aggregate.
     let aggregate3;
     {
-      aggregate3 = ValueMax.Percentage.Aggregate.Pool.get_or_create_by( 5 );
+      aggregate3 = ValueMax.Percentage.Aggregate.Pool.get_or_create_by( 6 );
 
-      if ( aggregate3.weight != 1 )
+      if ( aggregate3.weight != 6 )
       throw Error( `Percentage_tester.${funcNameInMessage}(): `
         + `aggregate3.weight ( ${aggregate3.weight} ) `
-        + `should be 5.`
+        + `should be 6.`
       );
 
       concrete31 = ValueMax.Percentage.Concrete.Pool.get_or_create_by( 10 );
