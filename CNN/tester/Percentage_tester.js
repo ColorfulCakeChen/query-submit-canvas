@@ -31,6 +31,16 @@ function *testerPercentageConcrete( progressParent ) {
         + `.valuePercentage ( ${concrete.valuePercentage} ) `
         + `should be 0 if no .max ( ${concrete.max} ) `
       );
+
+    if ( concrete.treeDepth != 1 )
+      throw Error( `Percentage_tester.${funcNameInMessage}(): `
+        + `.treeDepth ( ${concrete.treeDepth} ) `
+        + `should be 1 for ValueMax.Percentage.Concrete.`
+      );
+
+    progressToAdvance.value_advance();
+    yield progressRoot;
+    
   } finally {
     if ( concrete ) {
       concrete.disposeResources_and_recycleToPool();
