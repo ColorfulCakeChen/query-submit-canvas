@@ -200,7 +200,7 @@ class DEvolution_Versus extends
 //     let progressForDownloading = progressParent;
 
     let progressForDownloading = progressParent.child_add(
-      ValueMax.Percentage.Aggregate.Pool.get_or_create_by( 3 ) );
+      ValueMax.Percentage.Aggregate.Pool.get_or_create_by( 4 ) );
 
     // For preventing decoding (which is faster than network downloading)
     // from occupying too large portion of progress, let they all under a
