@@ -204,30 +204,24 @@ async function retryTimes_progress_load_by_asyncGenerator(
 
   progressHTMLElement.max = progressPercentage.maxPercentage;
 
-  let bDone;
   let loaderNext;
   let promiseResolvedValue;
   do {
     loaderNext = await load_asyncGenerator.next();
-    if ( loaderNext.done ) {
-      bDone = true;
-      promiseResolvedValue = loaderNext.value;
-    } else {
-      bDone = false;
-    }
-
-    // Update UI right before the next repaint.
-    //
-    // Note: This awaiting makes UI smoother but also slow down loaderNext.
-    //       Although slower, however, this makes every loaderNext could be
-    //       seen by user (even if the loaderNext is too fast to be seen).
-    {
+    if ( !loaderNext.done ) {
+      // Update UI right before the next repaint.
+      //
+      // Note: This awaiting makes UI smoother but also slow down loaderNext.
+      //       Although slower, however, this makes every loaderNext could be
+      //       seen by user (even if the loaderNext is too fast to be seen).
       await PartTime.nextAnimationFrameValue();
       retryTimesSpanHTMLElement.textContent
         = urlComposer.retryTimes_CurMax_string;
       progressHTMLElement.value = progressPercentage.valuePercentage;
     }
-  } while ( !bDone );
+  } while ( !loaderNext.done );
+
+  promiseResolvedValue = loaderNext.value;
 
   retryTimesSpanHTMLElement.textContent = "";
   return promiseResolvedValue;
