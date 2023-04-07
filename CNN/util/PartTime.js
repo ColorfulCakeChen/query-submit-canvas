@@ -74,8 +74,8 @@ function sleep( delayMilliseconds = 0 ) {
  *   Return a newly created Promise which will be resolved as specified value
  * right before the next repaint. The returned Promise will have the following
  * properties:
- *   - .resolve( v ): Call it to cancel timer and resolve the promise to v.
- *   - .reject( v ): Call it to cancel timer and reject the promise to v.
+ *   - .resolve( v ): Call it to cancel request and resolve the promise to v.
+ *   - .reject( v ): Call it to cancel request and reject the promise to v.
  *   - .requestId: could be used to call cancelAnimationFrame().
  *   - .cancelRequest(): Call it (without any parameter) to cancel the request.
  */
