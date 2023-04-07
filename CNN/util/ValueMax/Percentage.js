@@ -5,9 +5,6 @@ export { ValueMax_Percentage_Aggregate as Aggregate };
 import * as Pool from "../Pool.js";
 import * as Recyclable from "../Recyclable.js";
 
-//!!! ...unfinished... (2023/04/06)
-// need ValueMax_Percentage_tester to test progress behavior.
-
 /**
  * The base class for representing valuePercentage as number between [0, 100]
  * inclusive. Acceptable by Receiver.Base.
