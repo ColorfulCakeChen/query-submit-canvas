@@ -308,10 +308,19 @@ function *testerPercentageAggregate( progressParent ) {
           + `aggregate3.valuePercentage ( ${aggregate3.valuePercentage} ) (6/10).`
         );
 
-      aggregate3.child_detachAll();
-
-      concrete31.disposeResources_and_recycleToPool();
+      aggregate3.child_dispose( concrete31 );
       concrete31 = null;
+
+      if ( aggregate.valuePercentage != 10 )
+        throw Error( `Percentage_tester.${funcNameInMessage}(): `
+          + `.valuePercentage ( ${aggregate.valuePercentage} ) `
+          + `should be 10 if `
+          + `concrete1.valuePercentage ( ${concrete1.valuePercentage} ) (1/10), `
+          + `concrete2.valuePercentage ( ${concrete2.valuePercentage} ) (3/10), `
+          + `aggregate3.valuePercentage ( ${aggregate3.valuePercentage} ) (6/10).`
+        );
+
+      aggregate3.child_detachAll();
 
       concrete32.disposeResources_and_recycleToPool();
       concrete32 = null;
@@ -339,11 +348,15 @@ function *testerPercentageAggregate( progressParent ) {
       );
     }
 
-//!!! ...unfinished... (2023/04/07)
-// Add another aggregate
-// child_detach, child.dispose, child_detachAll, child_disposeAll
+    {
+      aggregate3.child_disposeAll();
 
-//!!! ...unfinished... (2023/04/07)
+      if ( aggregate.valuePercentage != 0 )
+        throw Error( `Percentage_tester.${funcNameInMessage}(): `
+          + `.valuePercentage ( ${aggregate.valuePercentage} ) `
+          + `should be 0 if there is no child.`
+        );
+    }
 
     progressToAdvance.value_advance();
     yield progressRoot;
@@ -354,8 +367,6 @@ function *testerPercentageAggregate( progressParent ) {
       aggregate = null;
     }
   }
-
-
 
 //!!! ...unfinished... (2023/04/07)
 }
