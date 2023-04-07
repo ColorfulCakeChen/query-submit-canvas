@@ -5,6 +5,7 @@ import * as Pool from "../util/Pool.js";
 import * as NeuralWorker from "../NeuralDEvolution/NeuralWorker.js";
 import * as Base64ToUint8Array_tester from "./Base64ToUint8Array_tester.js";
 import * as Float12_tester from "./Float12_tester.js";
+import * as Percentage_tester from "./Percentage_tester.js";
 import * as Uint12_tester from "./Uint12_tester.js";
 import * as GSheets_tester from "./GSheets_tester.js";
 import * as AsyncWorker_tester from "./AsyncWorker_tester.js";
@@ -22,6 +23,7 @@ window.addEventListener( "load", event => {
 /** Map from test generator function to boolean or ValueMax.Percentage.Aggregate */
 const gTestGeneratorFuncMap = new Map( [
 
+  [ Percentage_tester.tester, true ],
   // [ Base64ToUint8Array_tester.tester, true ],
 
   // [ Float12_tester.tester, true ],
@@ -33,7 +35,7 @@ const gTestGeneratorFuncMap = new Map( [
   // [ DEvolution_tester.tester, true ],
 
 //!!! (2023/02/14 Temp Remarked) For speed up other testing.
-  [ NeuralOrchestra_tester.tester, true ],
+  // [ NeuralOrchestra_tester.tester, true ],
 
 ] );
 

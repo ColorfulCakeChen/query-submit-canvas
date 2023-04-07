@@ -947,9 +947,9 @@ const gTestCaseArray = new TestCaseArray();
 /**
  *
  * @param {ValueMax.Percentage.Aggregate} progressParent
- *   Some new progressToAdvance will be created and added to progressParent. The
- * created progressToAdvance will be increased when every time advanced. The
- * progressParent.root_get() will be returned when every time yield.
+ *   Some new progressToAdvance will be created and added to progressParent.
+ * The created progressToAdvance will be increased when every time advanced.
+ * The progressParent.root_get() will be returned when every time yield.
  *
  */
 async function* tester( progressParent ) {
