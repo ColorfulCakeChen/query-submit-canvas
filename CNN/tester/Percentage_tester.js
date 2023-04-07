@@ -198,8 +198,9 @@ function *testerPercentageAggregate( progressParent ) {
       );
 
     // One concrete child.
+    let concrete1;
     {
-      let concrete1 = ValueMax.Percentage.Concrete.Pool.get_or_create_by( 10, 1 );
+      concrete1 = ValueMax.Percentage.Concrete.Pool.get_or_create_by( 10, 1 );
       aggregate.child_add( concrete1 );
 
       if ( aggregate.treeDepth != 2 )
@@ -226,9 +227,10 @@ function *testerPercentageAggregate( progressParent ) {
 
 //!!! ...unfinished... (2023/04/07)
     // Two concrete child.
+    let concrete2;
     {
-      let concrete2 = ValueMax.Percentage.Concrete.Pool.get_or_create_by( 10, 3 );
-      aggregate.child_add( concrete1 );
+      concrete2 = ValueMax.Percentage.Concrete.Pool.get_or_create_by( 10, 3 );
+      aggregate.child_add( concrete2 );
 
       if ( aggregate.treeDepth != 2 )
         throw Error( `Percentage_tester.${funcNameInMessage}(): `
