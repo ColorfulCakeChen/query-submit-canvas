@@ -162,6 +162,9 @@ async function retryTimes_progress_load_by_asyncPromise(
 /**
  * Await load_asyncGenerator and display progress simultaneously.
  *
+
+!!! ...unfinished... (2023/04/07 It seems same worse (i.e. not beter))
+
  * (Its progress displaying may be better than
  * retryTimes_progress_load_by_asyncPromise().)
  *
