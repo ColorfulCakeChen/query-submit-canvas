@@ -232,18 +232,45 @@ async function DownloadSummaryButton_onClick( event ) {
 
     params_loading_retryWaiting_extractFromUI();
 
-    let rangeArray_load_asyncPromise = g_VersusSummary
-      .rangeArray_load_asyncPromise_create( g_params_loading_retryWaiting );
+//!!! (2023/04/07 Remarked)
+// Use retryTimes_progress_load_by_asyncGenerator() instead.
+//     let rangeArray_load_asyncPromise = g_VersusSummary
+//       .rangeArray_load_asyncPromise_create( g_params_loading_retryWaiting );
+//
+//     let bDownloadSummaryOk = await retryTimes_progress_load_by_asyncPromise(
+//       g_Contorls.DownloadSummaryRetryTimesSpan,
+//       g_Contorls.DownloadSummaryProgressBar,
+//       g_VersusSummary.urlComposer,
+//       rangeArray_load_asyncPromise,
+//       g_VersusSummary.rangeArray_load_asyncPromise_progress
+//     );
 
-    let bDownloadSummaryOk = await retryTimes_progress_load_by_asyncPromise(
-      g_Contorls.DownloadSummaryRetryTimesSpan,
-      g_Contorls.DownloadSummaryProgressBar,
-      g_VersusSummary.urlComposer,
-      rangeArray_load_asyncPromise,
-      g_VersusSummary.rangeArray_load_asyncPromise_progress
-    );
+    let rangeArray_load_asyncPromise_progress;
+    try {
+      rangeArray_load_asyncPromise_progress
+        = ValueMax.Percentage.Aggregate.Pool.get_or_create_by();
 
-    VersusSummary_onDownload( bDownloadSummaryOk );
+      let rangeArray_load_asyncGenerator = g_VersusSummary
+        .rangeArray_load_asyncGenerrator_create(
+          rangeArray_load_asyncPromise_progress,
+          g_params_loading_retryWaiting );
+
+      let bDownloadSummaryOk = await retryTimes_progress_load_by_asyncGenerator(
+        g_Contorls.DownloadSummaryRetryTimesSpan,
+        g_Contorls.DownloadSummaryProgressBar,
+        g_VersusSummary.urlComposer,
+        rangeArray_load_asyncPromise,
+        rangeArray_load_asyncPromise_progress
+      );
+
+      VersusSummary_onDownload( bDownloadSummaryOk );
+
+    } finally {
+      if ( rangeArray_load_asyncPromise_progress ) {
+        rangeArray_load_asyncPromise_progress.disposeResources_and_recycleToPool();
+        rangeArray_load_asyncPromise_progress = null;
+      }
+    }
 
   } catch( e ) {
     alert( e );
