@@ -211,9 +211,15 @@ async function retryTimes_progress_load_by_asyncGenerator(
     if ( !loaderNext.done ) {
       // Update UI right before the next repaint.
       //
-      // Note: This awaiting makes UI smoother but also slows down loaderNext.
-      //       Although slower, however, this makes every loaderNext could be
-      //       seen by user (even if the loaderNext is too fast to be seen).
+      // Note1: This awaiting makes UI smoother but also slows down loaderNext.
+      //        Although slower, however, this makes every loaderNext could be
+      //        seen by user (even if the loaderNext is too fast to be seen).
+      //
+      // Note2: Because HttpRequest.Fetcher uses XHR's event to download data,
+      //        it will continue to download and is not blocked (i.e. will not
+      //        timeout) by this repaint time waiting. However, other rasks
+      //        (e.g. decoding the downloaded data) will be blocked by this
+      //        repaint time waiting.
       await PartTime.nextAnimationFrameValue();
       retryTimesSpanHTMLElement.textContent
         = urlComposer.retryTimes_CurMax_string;
