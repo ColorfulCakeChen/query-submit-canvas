@@ -81,6 +81,14 @@ function *testerPercentageConcrete( progressParent ) {
         + `.max ( ${concrete.max} ) is 10.`
       );
 
+    concrete.value_advance( 2 );
+    if ( concrete.valuePercentage != 40 )
+      throw Error( `Percentage_tester.${funcNameInMessage}(): `
+        + `.valuePercentage ( ${concrete.valuePercentage} ) `
+        + `should be 40 if .value ( ${concrete.value} ) is 4 and `
+        + `.max ( ${concrete.max} ) is 10.`
+      );
+
     concrete.value_max_set( 3, 6 );
     if ( concrete.valuePercentage != 50 )
       throw Error( `Percentage_tester.${funcNameInMessage}(): `
