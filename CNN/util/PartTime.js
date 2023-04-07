@@ -89,8 +89,8 @@ function nextAnimationFrameValue( value ) {
     requestId = requestAnimationFrame( () => resolve( value ) );
   } );
 
-  p.resolve = ( v ) => { cancelAnimationFrame()( requestId ); resolveFunc( v ); }
-  p.reject = ( v ) => { cancelAnimationFrame()( requestId ); rejectFunc( v ); };
+  p.resolve = ( v ) => { cancelAnimationFrame( requestId ); resolveFunc( v ); }
+  p.reject = ( v ) => { cancelAnimationFrame( requestId ); rejectFunc( v ); };
 
   p.requestId = requestId;
   p.cancelRequest = cancelAnimationFrame.bind( null, requestId );
