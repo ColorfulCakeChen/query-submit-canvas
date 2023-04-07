@@ -162,11 +162,17 @@ async function retryTimes_progress_load_by_asyncPromise(
 /**
  * Await load_asyncGenerator and display progress simultaneously.
  *
-
-!!! ...unfinished... (2023/04/07 It seems same worse (i.e. not beter))
-
- * (Its progress displaying may be better than
- * retryTimes_progress_load_by_asyncPromise().)
+ * It loops the async generator slower. But its progress displaying is better
+ * (than retryTimes_progress_load_by_asyncPromise()).
+ *
+ * The reasons are:
+ *
+ *   - It will wait repaint time for updating UI (so that displaying is
+ *       smoother).
+ *
+ *   - Only after UI updated, it waits async generator .next(). (So, it is
+ *       slower.)
+ *
  *
  * @param {HTMLSpanElement} retryTimesSpanHTMLElement
  *   The DOM (Document Object Model) Node of HTML span elemnt for displaying
