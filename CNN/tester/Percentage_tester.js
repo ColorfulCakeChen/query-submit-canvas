@@ -26,6 +26,18 @@ function *testerPercentageConcrete( progressParent ) {
         + `should be 1 by default.`
       );
 
+    if ( concrete.value != 0 )
+      throw Error( `Percentage_tester.${funcNameInMessage}(): `
+        + `.value ( ${concrete.value} ) `
+        + `should be 0 by default.`
+      );
+
+    if ( concrete.max >= 0 )
+      throw Error( `Percentage_tester.${funcNameInMessage}(): `
+        + `.max ( ${concrete.max} ) `
+        + `should be negative by default.`
+      );
+
     if ( concrete.valuePercentage != 0 )
       throw Error( `Percentage_tester.${funcNameInMessage}(): `
         + `.valuePercentage ( ${concrete.valuePercentage} ) `
