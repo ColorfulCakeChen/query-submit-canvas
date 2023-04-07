@@ -216,7 +216,7 @@ async function retryTimes_progress_load_by_asyncGenerator(
       // progressHTMLElement.value = loaderNext.value; // progressRoot
     }
 
-    // Update UI before the next repaint.
+    // Update UI right before the next repaint.
     {
       await PartTime.nextAnimationFrameValue();
       retryTimesSpanHTMLElement.textContent
