@@ -208,12 +208,9 @@ async function retryTimes_progress_load_by_asyncGenerator(
     loaderNext = await load_asyncGenerator.next();
     if ( loaderNext.done ) {
       bDone = true;
-      // progressHTMLElement.value = 100; // ???progressRoot
       promiseResolvedValue = loaderNext.value;
-      
     } else {
       bDone = false;
-      // progressHTMLElement.value = loaderNext.value; // progressRoot
     }
 
     // Update UI right before the next repaint.
