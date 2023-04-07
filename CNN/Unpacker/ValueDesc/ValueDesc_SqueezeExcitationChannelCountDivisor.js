@@ -6,13 +6,24 @@ import { Int } from "./ValueDesc_Base.js";
 // Perhaps, combine prefix_postfix into this enumeration.
 // divisor from 0, 1, 2, 4, 8, 16, 32, 64 (i.e. by 2's power)
 
-/** Describe squeeze-and-excitation channel count divisor's id, range, name.
+/**
+ * Describe squeeze-and-excitation channel count divisor's id, range, name.
  *
  * Convert number value into integer between [ -2, 64 ] representing depthwise operation:
  *   - -2: NONE                                             (no squeeze, no excitation, no multiply)
  *   - -1: EXCITATION                                       (no squeeze, no intermediate excitation)
  *   -  0: SQUEEZE_EXCITATION                               (has squeeze, no intermediate excitation)
  *   - [ 1, 64 ]: SQUEEZE_INTERMEDIATE_DIVISOR_N_EXCITATION (has squeeze, has intermediate excitation ( input_channel_count / this_divisor ) )
+ *
+ *
+ * Note:
+ *   - Convolution neural network with squeeze-and-excitation (e.g.
+ *       MobileNetV3) has so-called attention ability.
+ *
+ *   - In fact, from the point of view of the formula, it looks like a power
+ *       series (note: Taylor series is a kinds of power series). So, it gains
+ *       more ability to approximate any function.
+ *
  */
 class SqueezeExcitationChannelCountDivisor extends Int {
 
