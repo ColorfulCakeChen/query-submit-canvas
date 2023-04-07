@@ -308,8 +308,35 @@ function *testerPercentageAggregate( progressParent ) {
           + `aggregate3.valuePercentage ( ${aggregate3.valuePercentage} ) (6/10).`
         );
 
+      aggregate3.child_detachAll();
 
+      concrete31.disposeResources_and_recycleToPool();
+      concrete31 = null;
 
+      concrete32.disposeResources_and_recycleToPool();
+      concrete32 = null;
+
+      if ( aggregate.valuePercentage != 4 )
+        throw Error( `Percentage_tester.${funcNameInMessage}(): `
+          + `.valuePercentage ( ${aggregate.valuePercentage} ) `
+          + `should be 4 if `
+          + `concrete1.valuePercentage ( ${concrete1.valuePercentage} ) (1/10), `
+          + `concrete2.valuePercentage ( ${concrete2.valuePercentage} ) (3/10), `
+          + `aggregate3.valuePercentage ( ${aggregate3.valuePercentage} ) (6/10).`
+        );
+
+      aggregate.child_dispose( aggregate3 );
+
+      aggregate3.disposeResources_and_recycleToPool();
+      aggregate3 = null;
+
+      if ( aggregate.valuePercentage != 10 )
+      throw Error( `Percentage_tester.${funcNameInMessage}(): `
+        + `.valuePercentage ( ${aggregate.valuePercentage} ) `
+        + `should be 10 if `
+        + `concrete1.valuePercentage ( ${concrete1.valuePercentage} ) (1/4), `
+        + `concrete2.valuePercentage ( ${concrete2.valuePercentage} ) (3/4).`
+      );
     }
 
 //!!! ...unfinished... (2023/04/07)
