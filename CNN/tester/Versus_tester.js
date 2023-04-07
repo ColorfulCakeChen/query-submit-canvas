@@ -1,5 +1,6 @@
 import * as HttpRequest from "../util/HttpRequest.js";
 import * as PartTime from "../util/PartTime.js";
+import * as ValueMax from "../util/ValueMax.js";
 import * as HTMLTable from "../Display/HTMLTable.js";
 import * as DEvolution from "../NeuralDEvolution/DEvolution.js";
 
