@@ -325,7 +325,7 @@ function *testerPercentageAggregate( progressParent ) {
           + `aggregate3.valuePercentage ( ${aggregate3.valuePercentage} ) (6/10).`
         );
 
-      aggregate.child_dispose( aggregate3 );
+      aggregate.child_detach( aggregate3 );
 
       aggregate3.disposeResources_and_recycleToPool();
       aggregate3 = null;
