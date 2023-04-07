@@ -261,7 +261,6 @@ function *testerPercentageAggregate( progressParent ) {
         );
     }
 
-//!!! ...unfinished... (2023/04/07)
     // The 3th child is aggregate.
     let aggregate3;
     {
@@ -349,7 +348,9 @@ function *testerPercentageAggregate( progressParent ) {
     }
 
     {
-      aggregate3.child_disposeAll();
+      aggregate.child_disposeAll();
+      concrete1 = null;
+      concrete2 = null;
 
       if ( aggregate.valuePercentage != 0 )
         throw Error( `Percentage_tester.${funcNameInMessage}(): `
@@ -367,8 +368,6 @@ function *testerPercentageAggregate( progressParent ) {
       aggregate = null;
     }
   }
-
-//!!! ...unfinished... (2023/04/07)
 }
 
 /**
