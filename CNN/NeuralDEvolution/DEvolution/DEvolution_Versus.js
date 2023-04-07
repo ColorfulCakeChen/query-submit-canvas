@@ -250,7 +250,7 @@ class DEvolution_Versus extends
     const COLUMN_ID_offspringChromosome = 2;
 
     const Base64_skipLineCount = 0;
-    const Base64_suspendByteCount = 1024 * 1024;
+    const Base64_suspendByteCount = 10 * 1024; //1024 * 1024;
 
     // 2.1 versusId
     {
