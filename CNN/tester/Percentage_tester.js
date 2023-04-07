@@ -185,8 +185,49 @@ function *testerPercentageAggregate( progressParent ) {
   try {
     aggregate = ValueMax.Percentage.Aggregate.Pool.get_or_create_by();
 
-    concrete = ValueMax.Percentage.Concrete.Pool.get_or_create_by();
-    aggregate.child_add( concrete );
+    if ( aggregate.treeDepth != 1 )
+      throw Error( `Percentage_tester.${funcNameInMessage}(): `
+        + `.treeDepth ( ${aggregate.treeDepth} ) `
+        + `should be 1 when ValueMax.Percentage.Aggregate created.`
+      );
+
+    if ( aggregate.valuePercentage != 0 )
+      throw Error( `Percentage_tester.${funcNameInMessage}(): `
+        + `.valuePercentage ( ${aggregate.valuePercentage} ) `
+        + `should be 0 if there is no child.`
+      );
+
+//!!! ...unfinished... (2023/04/07)
+
+    let concrete1 = ValueMax.Percentage.Concrete.Pool.get_or_create_by( 10, 1 );
+    aggregate.child_add( concrete1 );
+
+    if ( aggregate.treeDepth != 2 )
+      throw Error( `Percentage_tester.${funcNameInMessage}(): `
+        + `.treeDepth ( ${aggregate.treeDepth} ) `
+        + `should be 2 when has one concrete child.`
+      );
+
+    if ( aggregate.valuePercentage != 0 )
+      throw Error( `Percentage_tester.${funcNameInMessage}(): `
+        + `.valuePercentage ( ${aggregate.valuePercentage} ) `
+        + `should be 0 if only child.valuePercentage `
+        + `( ${concrete1.valuePercentage} ).`
+      );
+
+    concrete1.value_advance();
+    if ( aggregate.valuePercentage != 10 )
+      throw Error( `Percentage_tester.${funcNameInMessage}(): `
+        + `.valuePercentage ( ${aggregate.valuePercentage} ) `
+        + `should be 10 if only child.valuePercentage `
+        + `( ${concrete1.valuePercentage} ).`
+      );
+
+//!!! ...unfinished... (2023/04/07)
+// Add another aggregate
+// child_detach, child.dispose, child_detachAll, child_disposeAll
+
+//!!! ...unfinished... (2023/04/07)
 
     progressToAdvance.value_advance();
     yield progressRoot;
@@ -194,13 +235,12 @@ function *testerPercentageAggregate( progressParent ) {
   } finally {
     if ( aggregate ) {
       aggregate.disposeResources_and_recycleToPool();
-      concrete = null;
       aggregate = null;
     }
   }
 
 
-  
+
 //!!! ...unfinished... (2023/04/07)
 }
 
