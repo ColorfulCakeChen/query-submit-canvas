@@ -287,6 +287,28 @@ function *testerPercentageAggregate( progressParent ) {
           + `should be 3 when has aggregate child.`
         );
 
+      if ( aggregate.valuePercentage != 4 )
+        throw Error( `Percentage_tester.${funcNameInMessage}(): `
+          + `.valuePercentage ( ${aggregate.valuePercentage} ) `
+          + `should be 4 if `
+          + `concrete1.valuePercentage ( ${concrete1.valuePercentage} ) (1/10), `
+          + `concrete2.valuePercentage ( ${concrete2.valuePercentage} ) (3/10), `
+          + `aggregate3.valuePercentage ( ${aggregate3.valuePercentage} ) (6/10).`
+        );
+
+      concrete31.value_advance();
+      concrete32.value_advance();
+
+      if ( aggregate.valuePercentage != 10 )
+        throw Error( `Percentage_tester.${funcNameInMessage}(): `
+          + `.valuePercentage ( ${aggregate.valuePercentage} ) `
+          + `should be 10 if `
+          + `concrete1.valuePercentage ( ${concrete1.valuePercentage} ) (1/10), `
+          + `concrete2.valuePercentage ( ${concrete2.valuePercentage} ) (3/10), `
+          + `aggregate3.valuePercentage ( ${aggregate3.valuePercentage} ) (6/10).`
+        );
+
+
 
     }
 
