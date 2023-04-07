@@ -185,6 +185,12 @@ function *testerPercentageAggregate( progressParent ) {
   try {
     aggregate = ValueMax.Percentage.Aggregate.Pool.get_or_create_by();
 
+    if ( aggregate.weight != 1 )
+      throw Error( `Percentage_tester.${funcNameInMessage}(): `
+        + `.weight ( ${aggregate.weight} ) `
+        + `should be 1 by default.`
+      );
+
     if ( aggregate.treeDepth != 1 )
       throw Error( `Percentage_tester.${funcNameInMessage}(): `
         + `.treeDepth ( ${aggregate.treeDepth} ) `
@@ -225,7 +231,6 @@ function *testerPercentageAggregate( progressParent ) {
         );
     }
 
-//!!! ...unfinished... (2023/04/07)
     // Two concrete child.
     let concrete2;
     {
@@ -254,6 +259,35 @@ function *testerPercentageAggregate( progressParent ) {
           + `concrete1.valuePercentage ( ${concrete1.valuePercentage} ) (1/4), `
           + `concrete2.valuePercentage ( ${concrete2.valuePercentage} ) (3/4).`
         );
+    }
+
+//!!! ...unfinished... (2023/04/07)
+    // The 3th child is aggregate.
+    let aggregate3;
+    {
+      aggregate3 = ValueMax.Percentage.Aggregate.Pool.get_or_create_by( 5 );
+
+      if ( aggregate3.weight != 1 )
+      throw Error( `Percentage_tester.${funcNameInMessage}(): `
+        + `aggregate3.weight ( ${aggregate3.weight} ) `
+        + `should be 5.`
+      );
+
+      concrete31 = ValueMax.Percentage.Concrete.Pool.get_or_create_by( 10 );
+      aggregate3.child_add( concrete31 );
+
+      concrete32 = ValueMax.Percentage.Concrete.Pool.get_or_create_by( 10 );
+      aggregate3.child_add( concrete32 );
+
+      aggregate.child_add( aggregate3 );
+
+      if ( aggregate.treeDepth != 3 )
+        throw Error( `Percentage_tester.${funcNameInMessage}(): `
+          + `.treeDepth ( ${aggregate.treeDepth} ) `
+          + `should be 3 when has aggregate child.`
+        );
+
+
     }
 
 //!!! ...unfinished... (2023/04/07)
