@@ -38,18 +38,66 @@ function *testerPercentageConcrete( progressParent ) {
         + `should be negative by default.`
       );
 
-    if ( concrete.valuePercentage != 0 )
-      throw Error( `Percentage_tester.${funcNameInMessage}(): `
-        + `.valuePercentage ( ${concrete.valuePercentage} ) `
-        + `should be 0 if no .max ( ${concrete.max} ) `
-      );
-
     if ( concrete.treeDepth != 1 )
       throw Error( `Percentage_tester.${funcNameInMessage}(): `
         + `.treeDepth ( ${concrete.treeDepth} ) `
         + `should be 1 for ValueMax.Percentage.Concrete.`
       );
 
+    if ( concrete.valuePercentage != 0 )
+      throw Error( `Percentage_tester.${funcNameInMessage}(): `
+        + `.valuePercentage ( ${concrete.valuePercentage} ) `
+        + `should be 0 if .max ( ${concrete.max} ) is negative.`
+      );
+
+    concrete.max = 0;
+    if ( concrete.valuePercentage != 100 )
+      throw Error( `Percentage_tester.${funcNameInMessage}(): `
+        + `.valuePercentage ( ${concrete.valuePercentage} ) `
+        + `should be 100 if .max ( ${concrete.max} ) is 0.`
+      );
+
+    concrete.max = 10;
+    if ( concrete.valuePercentage != 0 )
+      throw Error( `Percentage_tester.${funcNameInMessage}(): `
+        + `.valuePercentage ( ${concrete.valuePercentage} ) `
+        + `should be 0 if .value ( ${concrete.value} ) is 0 and `
+        + `.max ( ${concrete.max} ) is positive.`
+      );
+
+    concrete.value = 1;
+    if ( concrete.valuePercentage != 10 )
+      throw Error( `Percentage_tester.${funcNameInMessage}(): `
+        + `.valuePercentage ( ${concrete.valuePercentage} ) `
+        + `should be 10 if .value ( ${concrete.value} ) is 1 and `
+        + `.max ( ${concrete.max} ) is 10.`
+      );
+
+    concrete.value_advance();
+    if ( concrete.valuePercentage != 20 )
+      throw Error( `Percentage_tester.${funcNameInMessage}(): `
+        + `.valuePercentage ( ${concrete.valuePercentage} ) `
+        + `should be 20 if .value ( ${concrete.value} ) is 2 and `
+        + `.max ( ${concrete.max} ) is 10.`
+      );
+
+    concrete.value_max_set( 3, 6 );
+    if ( concrete.valuePercentage != 50 )
+      throw Error( `Percentage_tester.${funcNameInMessage}(): `
+        + `.valuePercentage ( ${concrete.valuePercentage} ) `
+        + `should be 50 if .value ( ${concrete.value} ) is 3 and `
+        + `.max ( ${concrete.max} ) is 6.`
+      );
+
+    concrete.value_set_as_max();
+    if ( concrete.valuePercentage != 100 )
+      throw Error( `Percentage_tester.${funcNameInMessage}(): `
+        + `.valuePercentage ( ${concrete.valuePercentage} ) `
+        + `should be 100 if .value ( ${concrete.value} ) is 6 and `
+        + `.max ( ${concrete.max} ) is 6.`
+      );
+
+//!!! ...unfinished... (2023/04/07)
     progressToAdvance.value_advance();
     yield progressRoot;
     
