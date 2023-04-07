@@ -107,7 +107,10 @@ function params_loading_retryWaiting_extractFromUI() {
 }
 
 /**
+ * (Deprcated)
+ *
  * Await load_asyncPromise and display progress simultaneously.
+ *
  *
  * @param {HTMLSpanElement} retryTimesSpanHTMLElement
  *   The DOM (Document Object Model) Node of HTML span elemnt for displaying
