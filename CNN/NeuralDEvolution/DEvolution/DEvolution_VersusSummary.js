@@ -232,18 +232,6 @@ class DEvolution_VersusSummary extends
 
     let progressRoot = progressParent.root_get();
 
-//!!! (2023/04/06 Remarked)
-// Use weight instead of flatten tricks.
-//
-//     // (2023/04/05 Remarked)
-//     // For preventing .visitIndexArray_prepare() (whose computation is small)
-//     // from occupying too large portion of progress, let urlComposer uses
-//     // progressParent directly.
-//     //
-//     // let progressFetcher = progressParent.child_add(
-//     //   ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
-//     let progressFetcher = progressParent;
-
     let progressFetcher = progressParent.child_add(
       ValueMax.Percentage.Aggregate.Pool.get_or_create_by( 4 ) );
 
