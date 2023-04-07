@@ -211,7 +211,7 @@ async function retryTimes_progress_load_by_asyncGenerator(
     if ( !loaderNext.done ) {
       // Update UI right before the next repaint.
       //
-      // Note: This awaiting makes UI smoother but also slow down loaderNext.
+      // Note: This awaiting makes UI smoother but also slows down loaderNext.
       //       Although slower, however, this makes every loaderNext could be
       //       seen by user (even if the loaderNext is too fast to be seen).
       await PartTime.nextAnimationFrameValue();
