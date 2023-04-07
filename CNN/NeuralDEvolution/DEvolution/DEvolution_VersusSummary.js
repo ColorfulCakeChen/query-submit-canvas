@@ -245,7 +245,7 @@ class DEvolution_VersusSummary extends
 //     let progressFetcher = progressParent;
 
     let progressFetcher = progressParent.child_add(
-      ValueMax.Percentage.Aggregate.Pool.get_or_create_by( 2 ) );
+      ValueMax.Percentage.Aggregate.Pool.get_or_create_by( 4 ) );
 
     let progressToAdvance = progressParent.child_add(
       ValueMax.Percentage.Concrete.Pool.get_or_create_by( 1, 1 ) );
