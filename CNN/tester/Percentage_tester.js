@@ -197,31 +197,62 @@ function *testerPercentageAggregate( progressParent ) {
         + `should be 0 if there is no child.`
       );
 
+    // One concrete child.
+    {
+      let concrete1 = ValueMax.Percentage.Concrete.Pool.get_or_create_by( 10, 1 );
+      aggregate.child_add( concrete1 );
+
+      if ( aggregate.treeDepth != 2 )
+        throw Error( `Percentage_tester.${funcNameInMessage}(): `
+          + `.treeDepth ( ${aggregate.treeDepth} ) `
+          + `should be 2 when has one concrete child.`
+        );
+
+      if ( aggregate.valuePercentage != 0 )
+        throw Error( `Percentage_tester.${funcNameInMessage}(): `
+          + `.valuePercentage ( ${aggregate.valuePercentage} ) `
+          + `should be 0 if only child.valuePercentage `
+          + `( ${concrete1.valuePercentage} ).`
+        );
+
+      concrete1.value_advance();
+      if ( aggregate.valuePercentage != 10 )
+        throw Error( `Percentage_tester.${funcNameInMessage}(): `
+          + `.valuePercentage ( ${aggregate.valuePercentage} ) `
+          + `should be 10 if only child.valuePercentage `
+          + `( ${concrete1.valuePercentage} ).`
+        );
+    }
+
 //!!! ...unfinished... (2023/04/07)
+    // Two concrete child.
+    {
+      let concrete2 = ValueMax.Percentage.Concrete.Pool.get_or_create_by( 10, 3 );
+      aggregate.child_add( concrete1 );
 
-    let concrete1 = ValueMax.Percentage.Concrete.Pool.get_or_create_by( 10, 1 );
-    aggregate.child_add( concrete1 );
+      if ( aggregate.treeDepth != 2 )
+        throw Error( `Percentage_tester.${funcNameInMessage}(): `
+          + `.treeDepth ( ${aggregate.treeDepth} ) `
+          + `should be 2 when has two concrete children.`
+        );
 
-    if ( aggregate.treeDepth != 2 )
-      throw Error( `Percentage_tester.${funcNameInMessage}(): `
-        + `.treeDepth ( ${aggregate.treeDepth} ) `
-        + `should be 2 when has one concrete child.`
-      );
+      if ( aggregate.valuePercentage != 2.5 )
+        throw Error( `Percentage_tester.${funcNameInMessage}(): `
+          + `.valuePercentage ( ${aggregate.valuePercentage} ) `
+          + `should be 2.5 if `
+          + `concrete1.valuePercentage ( ${concrete1.valuePercentage} ) (1/4), `
+          + `concrete2.valuePercentage ( ${concrete2.valuePercentage} ) (3/4).`
+        );
 
-    if ( aggregate.valuePercentage != 0 )
-      throw Error( `Percentage_tester.${funcNameInMessage}(): `
-        + `.valuePercentage ( ${aggregate.valuePercentage} ) `
-        + `should be 0 if only child.valuePercentage `
-        + `( ${concrete1.valuePercentage} ).`
-      );
-
-    concrete1.value_advance();
-    if ( aggregate.valuePercentage != 10 )
-      throw Error( `Percentage_tester.${funcNameInMessage}(): `
-        + `.valuePercentage ( ${aggregate.valuePercentage} ) `
-        + `should be 10 if only child.valuePercentage `
-        + `( ${concrete1.valuePercentage} ).`
-      );
+      concrete2.value_advance();
+      if ( aggregate.valuePercentage != 10 )
+        throw Error( `Percentage_tester.${funcNameInMessage}(): `
+          + `.valuePercentage ( ${aggregate.valuePercentage} ) `
+          + `should be 10 if `
+          + `concrete1.valuePercentage ( ${concrete1.valuePercentage} ) (1/4), `
+          + `concrete2.valuePercentage ( ${concrete2.valuePercentage} ) (3/4).`
+        );
+    }
 
 //!!! ...unfinished... (2023/04/07)
 // Add another aggregate
