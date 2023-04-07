@@ -14,11 +14,18 @@ function *testerPercentageConcrete( progressParent ) {
   //   ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
 
   let progressToAdvance = progressParent.child_add(
-    ValueMax.Percentage.Concrete.Pool.get_or_create_by( ???2 ) );
+    ValueMax.Percentage.Concrete.Pool.get_or_create_by( 3 ) );
 
   let concrete;
+
   try {
     concrete = ValueMax.Percentage.Concrete.Pool.get_or_create_by();
+
+    if ( concrete.max >= 0 )
+      throw Error( `Percentage_tester.${funcNameInMessage}(): `
+        + `.max ( ${concrete.max} ) `
+        + `should be negative by default.`
+      );
 
     if ( concrete.weight != 1 )
       throw Error( `Percentage_tester.${funcNameInMessage}(): `
@@ -30,12 +37,6 @@ function *testerPercentageConcrete( progressParent ) {
       throw Error( `Percentage_tester.${funcNameInMessage}(): `
         + `.value ( ${concrete.value} ) `
         + `should be 0 by default.`
-      );
-
-    if ( concrete.max >= 0 )
-      throw Error( `Percentage_tester.${funcNameInMessage}(): `
-        + `.max ( ${concrete.max} ) `
-        + `should be negative by default.`
       );
 
     if ( concrete.treeDepth != 1 )
@@ -105,7 +106,6 @@ function *testerPercentageConcrete( progressParent ) {
         + `.max ( ${concrete.max} ) is 6.`
       );
 
-//!!! ...unfinished... (2023/04/07)
     progressToAdvance.value_advance();
     yield progressRoot;
     
@@ -115,7 +115,60 @@ function *testerPercentageConcrete( progressParent ) {
       concrete = null;
     }
   }
-  
+
+  // Test give max in the constructor.
+  try {
+    concrete = ValueMax.Percentage.Concrete.Pool.get_or_create_by( 5 );
+
+    if ( concrete.max != 5 )
+      throw Error( `Percentage_tester.${funcNameInMessage}(): `
+        + `.max ( ${concrete.max} ) `
+        + `should be 5.`
+      );
+
+    if ( concrete.weight != 1 )
+      throw Error( `Percentage_tester.${funcNameInMessage}(): `
+        + `.weight ( ${concrete.weight} ) `
+        + `should be 1 by default.`
+      );
+
+    progressToAdvance.value_advance();
+    yield progressRoot;
+
+  } finally {
+    if ( concrete ) {
+      concrete.disposeResources_and_recycleToPool();
+      concrete = null;
+    }
+  }
+
+  // Test give max and weight in the constructor.
+  try {
+    concrete = ValueMax.Percentage.Concrete.Pool.get_or_create_by( 7, 9 );
+
+    if ( concrete.max != 7 )
+      throw Error( `Percentage_tester.${funcNameInMessage}(): `
+        + `.max ( ${concrete.max} ) `
+        + `should be 7.`
+      );
+
+    if ( concrete.weight != 9 )
+      throw Error( `Percentage_tester.${funcNameInMessage}(): `
+        + `.weight ( ${concrete.weight} ) `
+        + `should be 9.`
+      );
+
+    progressToAdvance.value_advance();
+    yield progressRoot;
+
+  } finally {
+    if ( concrete ) {
+      concrete.disposeResources_and_recycleToPool();
+      concrete = null;
+    }
+  }
+
+
 //!!! ...unfinished... (2023/04/07)
 }
 
