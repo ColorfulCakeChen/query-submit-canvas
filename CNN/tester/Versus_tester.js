@@ -210,9 +210,13 @@ async function retryTimes_progress_load_by_asyncGenerator(
       // progressHTMLElement.value = loaderNext.value; // progressRoot
     }
 
-    retryTimesSpanHTMLElement.textContent
-      = urlComposer.retryTimes_CurMax_string;
-    progressHTMLElement.value = progressPercentage.valuePercentage;
+    // Update UI before the next repaint.
+    {
+      await PartTime.nextAnimationFrameValue();
+      retryTimesSpanHTMLElement.textContent
+        = urlComposer.retryTimes_CurMax_string;
+      progressHTMLElement.value = progressPercentage.valuePercentage;
+    }
   } while ( !bDone );
 
   retryTimesSpanHTMLElement.textContent = "";
