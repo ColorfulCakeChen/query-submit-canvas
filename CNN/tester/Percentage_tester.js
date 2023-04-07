@@ -7,7 +7,6 @@ import * as ValueMax from "../util/ValueMax.js";
 function *testerPercentageConcrete( progressParent ) {
   const funcNameInMessage = "testerPercentageConcrete";
 
-  // Progress group.
   let progressRoot = progressParent.root_get();
 
   // let progressXxx = progressAggregate.child_add(
@@ -167,14 +166,39 @@ function *testerPercentageConcrete( progressParent ) {
       concrete = null;
     }
   }
-
-
-//!!! ...unfinished... (2023/04/07)
 }
 
 /** */
 function *testerPercentageAggregate( progressParent ) {
   const funcNameInMessage = "testerPercentageAggregate";
+
+  let progressRoot = progressParent.root_get();
+
+  // let progressXxx = progressAggregate.child_add(
+  //   ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
+
+  let progressToAdvance = progressParent.child_add(
+    ValueMax.Percentage.Concrete.Pool.get_or_create_by( 1 ) );
+
+  let aggregate;
+
+  try {
+    aggregate = ValueMax.Percentage.Aggregate.Pool.get_or_create_by();
+
+    concrete = ValueMax.Percentage.Concrete.Pool.get_or_create_by();
+    aggregate.child_add( concrete );
+
+    progressToAdvance.value_advance();
+    yield progressRoot;
+
+  } finally {
+    if ( aggregate ) {
+      aggregate.disposeResources_and_recycleToPool();
+      concrete = null;
+      aggregate = null;
+    }
+  }
+
 
   
 //!!! ...unfinished... (2023/04/07)
