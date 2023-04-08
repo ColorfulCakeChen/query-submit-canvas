@@ -482,6 +482,54 @@ class TestCase {
             + `should be 100.` );
       }
 
+//!!!
+
+      if ( bTryLoad ) {
+        // According to which .versus_load_Xxx() is used.
+
+        switch ( n_load_asyncType ) {
+          case asyncType_0_asyncGenerator: // 0
+            break;
+  
+          case asyncType_1_asyncGenerator_with_asyncPromise_progress: // 1
+            break;
+  
+          case asyncType_2_asyncPromise: // 2
+            break;
+  
+          default:
+            throw Error( `NeuralOrchestra_tester.TestCase`
+              + `.test_load_process_send_asyncGenerator(): testId=${this.testId}, `
+              + `n_load_asyncType ( ${n_load_asyncType} ) `
+              + `should be 0 or 1 or 2.` );
+            break;
+        }
+  
+      } else {
+        // According to which .init_Xxx() (not which .versus_load_Xxx()) is used.
+
+        switch ( n_init_asyncType ) {
+          case asyncType_0_asyncGenerator: // 0
+            break;
+    
+          case asyncType_1_asyncGenerator_with_asyncPromise_progress: // 1
+            break;
+    
+          case asyncType_2_asyncPromise: // 2
+            break;
+    
+          default:
+            throw Error( `NeuralOrchestra_tester.TestCase`
+              + `.test_init_load_process_send_asyncGenerator(): testId=${this.testId}, `
+              + `n_init_asyncType ( ${n_init_asyncType} ) `
+              + `should be 0 or 1 or 2.` );
+            break;
+        }
+    
+      }
+
+
+//!!!
       // Clear it to prevent from be misused by the next testing.
       if ( neuralOrchestra.versus_load_asyncPromise_progress )
         neuralOrchestra.versus_load_asyncPromise_progress.child_disposeAll();
