@@ -498,9 +498,6 @@ class TestCase {
                   + `progressLoad.valuePercentage (`
                   + `${progressLoad.valuePercentage}) `
                   + `should be 100.` );
-
-!!! ...unfinished... (2023/04/08)
-
             }
             break;
   
@@ -516,7 +513,14 @@ class TestCase {
   
           case asyncType_2_asyncPromise: // 2
             {
-!!! ...unfinished... (2023/04/08)
+              versus_loadOk = await versus_load_asyncPromise;
+
+              if ( 100 !== neuralOrchestra.versus_load_asyncPromise_progress.valuePercentage )
+                throw Error( `NeuralOrchestra_tester.TestCase`
+                  + `.test_load_process_send_asyncGenerator(): testId=${this.testId}, `
+                  + `neuralOrchestra.versus_load_asyncPromise_progress.valuePercentage (`
+                  + `${neuralOrchestra.versus_load_asyncPromise_progress.valuePercentage}) `
+                  + `should be 100.` );
             }
             break;
   
