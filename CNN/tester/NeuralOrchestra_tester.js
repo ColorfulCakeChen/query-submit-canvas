@@ -916,14 +916,14 @@ class TestCase {
         n_init_asyncTypeOrder < asyncTypeOrderArray.length;
         ++n_init_asyncTypeOrder ) {
 
-        let init_asyncType = asyncTypeOrderArray[ n_init_asyncTypeOrder ];
+        let init_asyncTypeOrder = asyncTypeOrderArray[ n_init_asyncTypeOrder ];
 
         for (
           let n_load_asyncTypeOrder = 0;
           n_load_asyncTypeOrder < asyncTypeOrderArray.length;
           ++n_load_asyncTypeOrder ) {
 
-          let load_asyncType = asyncTypeOrderArray[ n_load_asyncTypeOrder ];
+          let load_asyncTypeOrder = asyncTypeOrderArray[ n_load_asyncTypeOrder ];
 
           yield* this.test_create_init_load_process_send_asyncGenerator(
             progressCreateInitLoadProcessSend,
