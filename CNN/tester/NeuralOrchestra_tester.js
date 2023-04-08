@@ -23,9 +23,16 @@ const asyncType_0_asyncGenerator = 0;
 const asyncType_1_asyncGenerator_with_asyncPromise_progress = 0;
 const asyncType_2_asyncPromise = 2;
 
-const asyncTypeOrder_0_to_2 = { begin: 0, end:  3, step: +1 };
-const asyncTypeOrder_2_to_0 = { begin: 2, end: -1, step: -1 };
-const asyncTypeOrder = asyncTypeOrder_2_to_0;
+/** async type order. */
+const asyncTypeOrder_0_ascent = { begin: 0, end:  3, step: +1 }; // 0 to 2
+const asyncTypeOrder_1_descent = { begin: 2, end: -1, step: -1 }; // 2 to 0
+
+const asyncTypeOrderArray = [
+  asyncTypeOrder_0_ascent,
+  asyncTypeOrder_1_descent
+];
+
+//const asyncTypeOrder = asyncTypeOrder_1_descent;
 
 
 /** */
