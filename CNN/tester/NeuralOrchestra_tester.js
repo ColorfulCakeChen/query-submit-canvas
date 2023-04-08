@@ -527,19 +527,26 @@ class TestCase {
           case asyncType_0_asyncGenerator: // 0
             {
               versus_loadOk = yield* versus_load_asyncGenerator;
-              progressToBeChecked = progressInit;
+              progressToBeChecked = progressInit; // (Note: not progressLoad)
             }
             break;
     
           case asyncType_1_asyncGenerator_with_asyncPromise_progress: // 1
-            {
-!!! ...unfinished... (2023/04/08)
+            { // Do not use yield* here. Otherwise, wrong progressRoot (of
+              // internal progress) will be yielded to outside caller.
+              let loaderNext;
+              do {
+                loaderNext = await versus_load_asyncGenerator.next();
+              } while ( !loaderNext.done );
+              versus_loadOk = loaderNext.value;
+              progressToBeChecked = neuralOrchestra.versus_load_asyncPromise_progress;
             }
             break;
     
           case asyncType_2_asyncPromise: // 2
             {
-!!! ...unfinished... (2023/04/08)
+              versus_loadOk = await versus_load_asyncPromise;
+              progressToBeChecked = neuralOrchestra.versus_load_asyncPromise_progress;
             }
             break;
     
@@ -559,7 +566,6 @@ class TestCase {
           + `${progressToBeChecked.valuePercentage}) `
           + `should be 100.` );
 
-//!!!
       // Clear it to prevent from be misused by the next testing.
       if ( neuralOrchestra.versus_load_asyncPromise_progress )
         neuralOrchestra.versus_load_asyncPromise_progress.child_disposeAll();
