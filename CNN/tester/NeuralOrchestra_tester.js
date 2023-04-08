@@ -6,16 +6,17 @@ import * as ValueMax from "../util/ValueMax.js";
 import * as DEvolution from "../NeuralDEvolution/DEvolution.js";
 import * as NeuralOrchestra from "../NeuralDEvolution/NeuralOrchestra.js";
 
-// number to boolean loop order.
-
-// from false to true.
-const n_to_b_false_true = { begin: 0, end: 2, step: +1 };
-
-// from true to false.
-const n_to_b_true_false = { begin: 1, end: -1, step: -1 };
-
-/** current uses which kind of number to boolean loop. */
-const n_to_b = n_to_b_true_false;
+//!!! (2023/04/08 Remarked) Not used now.
+// // number to boolean loop order.
+//
+// // from false to true.
+// const n_to_b_false_true = { begin: 0, end: 2, step: +1 };
+//
+// // from true to false.
+// const n_to_b_true_false = { begin: 1, end: -1, step: -1 };
+//
+// /** current uses which kind of number to boolean loop. */
+// const n_to_b = n_to_b_true_false;
 
 
 /** async type. */
