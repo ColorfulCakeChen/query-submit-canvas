@@ -18,6 +18,12 @@ const n_to_b_true_false = { begin: 1, end: -1, step: -1 };
 const n_to_b = n_to_b_true_false;
 
 
+/** async type. */
+const asyncType_0_asyncGenerator = 0;
+const asyncType_1_asyncGenerator_with_asyncPromise_progress = 0;
+const asyncType_2_asyncPromise = 2;
+
+
 /** */
 class TestCase {
 
