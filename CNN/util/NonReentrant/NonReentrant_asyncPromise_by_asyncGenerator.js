@@ -116,10 +116,7 @@ function NonReentrant_asyncPromise_by_asyncGenerator(
    *   A method for creating the underlied async generator by using
    * .Xxx_asyncPromise_progress as 1st parameter.
    *   - If an old instance is still executing, it will throw exception.
-
-!!! ...unfinished... (2023/04/08) How?
-
-   *   - It is mutually exclusive with .Xxx_asyncPromise_create().
+   *   - It is mutually exclusive with .Xxx_asyncGenerator_create().
    *   - It accepts almost the same parameters as
    *       underlied_asyncGenerator_func() except without the 1st parameter
    *       progressParent (which is replaced by .Xxx_asyncPromise_progress).
@@ -134,10 +131,6 @@ function NonReentrant_asyncPromise_by_asyncGenerator(
    *   A method for creating the underlied async generator and looping until
    *     done.
    *   - If an old instance is still executing, it will throw exception.
-
-!!! ...unfinished... (2023/04/08) How?
-
-   *   - It is mutually exclusive with .Xxx_asyncGenerator_create_with_internal_progress().
    *   - It accepts almost the same parameters as
    *       underlied_asyncGenerator_func() except without the 1st parameter
    *       progressParent (which is replaced by .Xxx_asyncPromise_progress).
