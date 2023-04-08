@@ -474,6 +474,10 @@ class TestCase {
             + `should be 100.` );
       }
 
+      // Clear it to prevent from be misused by the next testing.
+      if ( neuralOrchestra.versus_load_asyncPromise_progress )
+        neuralOrchestra.versus_load_asyncPromise_progress.child_disposeAll();
+
     } catch ( e ) { // Unknown error, said loudly.
       throw Error( `NeuralOrchestra: testId=${this.testId}. ${e}`, { cause: e } );
     }
