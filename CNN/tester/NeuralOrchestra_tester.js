@@ -906,10 +906,6 @@ class TestCase {
       createCount < this.createCountBase;
       ++createCount ) {
 
-      let progressCreateInitLoadProcessSend
-        = progressCreateInitLoadProcessSendArray[
-            nCreateInitLoadProcessSend ];
-
       // Test: use .init_async() or .init_asyncGenerator() first.
       for (
         let n_init_asyncTypeOrder = 0;
@@ -924,6 +920,10 @@ class TestCase {
           ++n_load_asyncTypeOrder ) {
 
           let load_asyncTypeOrder = asyncTypeOrderArray[ n_load_asyncTypeOrder ];
+
+          let progressCreateInitLoadProcessSend
+            = progressCreateInitLoadProcessSendArray[
+                nCreateInitLoadProcessSend ];
 
           yield* this.test_create_init_load_process_send_asyncGenerator(
             progressCreateInitLoadProcessSend,
