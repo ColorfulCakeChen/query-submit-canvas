@@ -435,6 +435,11 @@ class TestCase {
       versus_load_asyncGenerator_delayPromise.resolve();
 
       if ( versus_load_asyncGenerator ) {
+
+!!! ...unfinished... (2023/04/08)
+// If asyncType_1_asyncGenerator_with_asyncPromise_progress,
+// should not yield*. Otherwise, wrong progressRoot will be yielded.
+
         versus_loadOk = yield* versus_load_asyncGenerator;
 
         // Note: In .versus_load_asyncGenerator(),
