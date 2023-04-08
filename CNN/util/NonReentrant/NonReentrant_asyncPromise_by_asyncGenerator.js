@@ -284,7 +284,7 @@ function NonReentrant_asyncPromise_by_asyncGenerator(
      */
     static
       [ name_of_asyncGenerator_create_with_internal_progress_without_checking_precondition ](
-        asyncGenerator ) {
+        ...restArgs ) {
 
       // 1. Use internal independent progress.
       NonReentrant_asyncPromise_by_asyncGenerator

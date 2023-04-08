@@ -23,13 +23,13 @@ window.addEventListener( "load", event => {
 /** Map from test generator function to boolean or ValueMax.Percentage.Aggregate */
 const gTestGeneratorFuncMap = new Map( [
 
-  [ Percentage_tester.tester, true ],
+  // [ Percentage_tester.tester, true ],
   // [ Base64ToUint8Array_tester.tester, true ],
 
   // [ Float12_tester.tester, true ],
   // [ Uint12_tester.tester, true ],
 
-  // [ GSheets_tester.tester, true ],
+  [ GSheets_tester.tester, true ],
 
   // [ AsyncWorker_tester.tester, true ],
   // [ DEvolution_tester.tester, true ],

@@ -286,6 +286,21 @@ class TestCase {
           + `testCaseId=${this.testCaseId}, ${e}`, { cause: e } );
       }
     }
+
+    // Test: Reenter .fetch_asyncGenerator_create_with_internal_progress()
+    //       should throw exception.
+    try {
+      urlComposer.fetch_asyncGenerator_create_with_internal_progress();
+    } catch ( e ) {
+      if ( e.message.indexOf(
+             ".fetch_asyncGenerator_create_with_internal_progress():" ) > 0 ) {
+        // progressToAdvance.value_advance();
+        // yield progressRoot;
+      } else { // Unknown error, said loudly.
+        throw Error( `GSheets_tester.TestCase.${funcNameInMessage}(): `
+          + `testCaseId=${this.testCaseId}, ${e}`, { cause: e } );
+      }
+    }
   }
 
   /** Check running flags should false. */
