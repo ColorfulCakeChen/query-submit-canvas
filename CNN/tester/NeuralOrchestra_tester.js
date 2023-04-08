@@ -324,7 +324,10 @@ class TestCase {
     progressParent, neuralOrchestra,
     versus_load_asyncGenerator, versus_load_asyncPromise,
     versus_load_asyncGenerator_delayPromise,
-    n_load_asyncType ) {
+    n_init_asyncType, n_load_asyncType ) {
+
+!!! ...unfinished... (2023/04/08)
+//  n_init_asyncType
 
     ++this.testId;
 
@@ -550,7 +553,7 @@ class TestCase {
           + `n_init_asyncType ( ${n_init_asyncType} ) `
           + `should be 0 or 1 or 2.` );
         break;
-     }
+    }
 
     let progressLoadProcessSendArray = new Array( nLoadProcessSendCountMax );
     for ( let i = 0; i < nLoadProcessSendCountMax; ++i ) {
@@ -676,17 +679,80 @@ class TestCase {
     try {
       init_asyncGenerator_delayPromise.resolve();
 
-      if ( b_return_versus_load_asyncGenerator_instead_of_asyncPromise ) {
+//!!! (2023/04/08 Remarked) Use n_init_asyncType instead.
+//       if ( b_return_versus_load_asyncGenerator_instead_of_asyncPromise ) {
+//
+// //!!! ...unfinished... (2023/04/08)
+// // If asyncType_1_asyncGenerator_with_asyncPromise_progress,
+// // should not yield*. Otherwise, wrong progressRoot will be yielded.
+//
+//         versus_load_asyncGenerator = yield* init_asyncGenerator;
+//
+//         if ( ( versus_load_asyncGenerator != undefined ) != neuralOrchestra.initOk )
+//           throw Error( `NeuralOrchestra_tester.TestCase`
+//             + `.test_init_load_process_send_asyncGenerator(): testId=${this.testId}, `
+//             + `( versus_load_asyncGenerator `
+//               + `( ${versus_load_asyncGenerator} ) != undefined ) `
+//             + `should be the same as `
+//             + `neuralOrchestra.initOk ( ${neuralOrchestra.initOk} ).`
+//           );
+//
+//         if ( !versus_load_asyncGenerator )
+//           throw Error( `NeuralOrchestra_tester.TestCase`
+//             + `.test_init_load_process_send_asyncGenerator(): testId=${this.testId}, `
+//             + `versus_load_asyncGenerator ( ${versus_load_asyncGenerator} ) `
+//             + `should not be undefined.`
+//           );
+//
+//       } else {
+//         let wrapped_versus_load_asyncPromise = await init_asyncPromise;
+//         versus_load_asyncPromise
+//           = wrapped_versus_load_asyncPromise.versus_load_asyncPromise;
+//
+//         if ( neuralOrchestra.initOk != true ) // undefined is also not acceptable.
+//           throw Error( `NeuralOrchestra_tester.TestCase`
+//             + `.test_init_load_process_send_asyncGenerator(): testId=${this.testId}, `
+//             + `neuralOrchestra.init_async() failed.` );
+//       }
 
+      switch ( n_init_asyncType ) {
+        case asyncType_0_asyncGenerator: // 0
+          {
+            versus_load_asyncGenerator = yield* init_asyncGenerator;
+          }
+          break;
 
-!!! ...unfinished... (2023/04/08)
-// If asyncType_1_asyncGenerator_with_asyncPromise_progress,
-// should not yield*. Otherwise, wrong progressRoot will be yielded.
+        case asyncType_1_asyncGenerator_with_asyncPromise_progress: // 1
+          {
+            // Do not use yield* here. Otherwise, wrong progressRoot (of
+            // internal progress) will be yielded to outside caller.
+            let initerNext;
+            do {
+              initerNext = await init_asyncGenerator.next();
+            } while ( !initerNext.done );
+            versus_load_asyncGenerator = initerNext.value;
+          }
+          break;
 
+        case asyncType_2_asyncPromise: // 2
+          {
+            let wrapped_versus_load_asyncPromise = await init_asyncPromise;
+            versus_load_asyncPromise
+              = wrapped_versus_load_asyncPromise.versus_load_asyncPromise;
+          }
+          break;
 
-        versus_load_asyncGenerator = yield* init_asyncGenerator;
+        default:
+          throw Error( `NeuralOrchestra_tester.TestCase`
+            + `.test_init_load_process_send_asyncGenerator(): testId=${this.testId}, `
+            + `n_init_asyncType ( ${n_init_asyncType} ) `
+            + `should be 0 or 1 or 2.` );
+          break;
+      }
 
-        if ( ( versus_load_asyncGenerator != undefined ) != neuralOrchestra.initOk )
+      if ( versus_load_asyncGenerator ) {
+        let initOk = ( versus_load_asyncGenerator != undefined );
+        if ( initOk != neuralOrchestra.initOk )
           throw Error( `NeuralOrchestra_tester.TestCase`
             + `.test_init_load_process_send_asyncGenerator(): testId=${this.testId}, `
             + `( versus_load_asyncGenerator `
@@ -695,23 +761,26 @@ class TestCase {
             + `neuralOrchestra.initOk ( ${neuralOrchestra.initOk} ).`
           );
 
-        if ( !versus_load_asyncGenerator )
+      } else if ( versus_load_asyncPromise ) {
+        let initOk = ( versus_load_asyncPromise != undefined );
+        if ( initOk != neuralOrchestra.initOk )
           throw Error( `NeuralOrchestra_tester.TestCase`
             + `.test_init_load_process_send_asyncGenerator(): testId=${this.testId}, `
-            + `versus_load_asyncGenerator ( ${versus_load_asyncGenerator} ) `
-            + `should not be undefined.`
+            + `( versus_load_asyncPromise `
+              + `( ${versus_load_asyncPromise} ) != undefined ) `
+            + `should be the same as `
+            + `neuralOrchestra.initOk ( ${neuralOrchestra.initOk} ).`
           );
 
       } else {
-        let wrapped_versus_load_asyncPromise = await init_asyncPromise;
-        versus_load_asyncPromise
-          = wrapped_versus_load_asyncPromise.versus_load_asyncPromise;
-
-        if ( neuralOrchestra.initOk != true ) // undefined is also not acceptable.
-          throw Error( `NeuralOrchestra_tester.TestCase`
-            + `.test_init_load_process_send_asyncGenerator(): testId=${this.testId}, `
-            + `neuralOrchestra.init_async() failed.` );
+        throw Error( `NeuralOrchestra_tester.TestCase`
+          + `.test_init_load_process_send_asyncGenerator(): testId=${this.testId}, `
+          + `versus_load_asyncGenerator ( ${versus_load_asyncGenerator} ) and `
+          + `versus_load_asyncPromise ( ${versus_load_asyncPromise} ) `
+          + `should not all undefined.`
+        );
       }
+
     } catch ( e ) { // Unknown error, said loudly.
       throw Error( `NeuralOrchestra: testId=${this.testId}. ${e}`, { cause: e } );
     }
@@ -758,7 +827,7 @@ class TestCase {
         progressLoadProcessSend, neuralOrchestra,
         versus_load_asyncGenerator, versus_load_asyncPromise,
         versus_load_asyncGenerator_delayPromise,
-        n_load_asyncType );
+        n_init_asyncType, n_load_asyncType );
 
       // After first time loading (by .init_Xxx()), clear them so that loading again.
       versus_load_asyncGenerator
