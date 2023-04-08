@@ -58,6 +58,9 @@ function NonReentrant_asyncGenerator(
     = `${name_prefix}_asyncGenerator_guarded`;
 
 
+  const name_of_throw_if_an_old_asyncGenerator_still_running
+    = `throw_if_an_old_${name_prefix}_asyncGenerator_still_running`;
+
   const name_of_throw_if_asyncPromise_or_asyncGenerator_running
     = `throw_if_${name_prefix}_asyncPromise_or_asyncGenerator_running`;
 
@@ -182,8 +185,9 @@ function NonReentrant_asyncGenerator(
       { // Checking pre-condition.
         const funcNameInMessage = name_of_asyncGenerator_create;
 
-        NonReentrant_asyncGenerator.throw_if_an_old_still_running.call( this,
-          this.#asyncGenerator_running, funcNameInMessage );
+        NonReentrant_asyncGenerator
+          [ name_of_throw_if_an_old_asyncGenerator_still_running ]
+          .call( this, funcNameInMessage );
 
         NonReentrant_asyncGenerator
           [ name_of_throw_if_asyncPromise_or_asyncGenerator_running ]
@@ -334,6 +338,16 @@ function NonReentrant_asyncGenerator(
 
       throw Error( `${mostDerivedClassName}.${funcNameInMessage}(): `
         + `An old instance of .${funcNameInMessage}() is still running.` );
+    }
+
+    /**
+     * @param {NonReentrant_asyncGenerator} this
+     * @param {string} funcNameInMessage   The caller function name. (e.g. init_async)
+     */
+    static [ name_of_throw_if_an_old_asyncGenerator_still_running ](
+      funcNameInMessage ) {
+      NonReentrant_asyncGenerator.throw_if_an_old_still_running.call( this,
+        this.#asyncGenerator_running, funcNameInMessage );
     }
 
     /**
