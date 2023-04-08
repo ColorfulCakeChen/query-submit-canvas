@@ -344,10 +344,13 @@ class TestCase {
           progressLoad = progressParent.child_add(
             ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
           break;
+
         case asyncType_1_asyncGenerator_with_asyncPromise_progress: // 1
           break; // Use internal progress.
+
         case asyncType_2_asyncPromise: // 2
           break; // Use internal progress.
+
         default:
           throw Error( `NeuralOrchestra_tester.TestCase`
             + `.test_load_process_send_asyncGenerator(): testId=${this.testId}, `
@@ -369,50 +372,31 @@ class TestCase {
       versus_load_asyncGenerator_delayPromise
         = PartTime.Promise_resolvable_rejectable_create();
 
-//!!!
-//     n_init_asyncType,
-//     n_load_asyncType
-//
-// asyncType_0_asyncGenerator = 0;
-// asyncType_1_asyncGenerator_with_asyncPromise_progress = 1;
-// asyncType_2_asyncPromise = 2;
+      switch ( n_load_asyncType ) {
+        case asyncType_0_asyncGenerator: // 0
+          versus_load_asyncGenerator = neuralOrchestra
+            .versus_load_asyncGenerator_create(
+              progressLoad, versus_load_asyncGenerator_delayPromise );
+          break;
 
-    switch ( n_load_asyncType ) {
-      case asyncType_0_asyncGenerator: // 0
-        versus_load_asyncGenerator = neuralOrchestra
-          .versus_load_asyncGenerator_create(
-            progressLoad, versus_load_asyncGenerator_delayPromise );
-        break;
+        case asyncType_1_asyncGenerator_with_asyncPromise_progress: // 1
+          versus_load_asyncGenerator = neuralOrchestra
+            .versus_load_asyncGenerator_create_with_asyncPromise_progress(
+              versus_load_asyncGenerator_delayPromise );
+          break;
 
-      case asyncType_1_asyncGenerator_with_asyncPromise_progress: // 1
-        versus_load_asyncGenerator = neuralOrchestra
-          .versus_load_asyncGenerator_create_with_asyncPromise_progress(
-            versus_load_asyncGenerator_delayPromise );
-        break;
+        case asyncType_2_asyncPromise: // 2
+          versus_load_asyncPromise = neuralOrchestra
+            .versus_load_asyncPromise_create(
+              versus_load_asyncGenerator_delayPromise );
+          break;
 
-      case asyncType_2_asyncPromise: // 2
-        versus_load_asyncPromise = neuralOrchestra
-          .versus_load_asyncPromise_create(
-            versus_load_asyncGenerator_delayPromise );
-        break;
-
-      default:
-        throw Error( `NeuralOrchestra_tester.TestCase`
-          + `.test_load_process_send_asyncGenerator(): testId=${this.testId}, `
-          + `n_load_asyncType ( ${n_load_asyncType} ) `
-          + `should be 0 or 1 or 2.` );
-        break;
-      }
-
-!!!
-      if ( b_load_asyncGenerator ) {
-        versus_load_asyncGenerator = neuralOrchestra
-          .versus_load_asyncGenerator_create(
-            progressLoad, versus_load_asyncGenerator_delayPromise );
-      } else {
-        versus_load_asyncPromise = neuralOrchestra
-          .versus_load_asyncPromise_create(
-            versus_load_asyncGenerator_delayPromise );
+        default:
+          throw Error( `NeuralOrchestra_tester.TestCase`
+            + `.test_load_process_send_asyncGenerator(): testId=${this.testId}, `
+            + `n_load_asyncType ( ${n_load_asyncType} ) `
+            + `should be 0 or 1 or 2.` );
+          break;
       }
     }
 
@@ -455,6 +439,7 @@ class TestCase {
         // Note: In .versus_load_asyncGenerator(),
         //       .versus_load_asyncPromise_progress is not used.
         if ( bTryLoad )
+!!!        
           if ( 100 !== progressLoad.valuePercentage )
             throw Error( `NeuralOrchestra_tester.TestCase`
               + `.test_load_process_send_asyncGenerator(): testId=${this.testId}, `
