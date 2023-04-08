@@ -641,7 +641,7 @@ class TestCase {
 
       try { // Test: Reenter .init_asyncGenerator_create_with_asyncPromise_progress() should throw exception.
         ++this.testId;
-        neuralOrchestra.init_asyncGenerator_create_with_asyncPromise_progresse();
+        neuralOrchestra.init_asyncGenerator_create_with_asyncPromise_progress();
       } catch ( e ) {
         if ( e.message.indexOf(
                ".init_asyncGenerator_create_with_asyncPromise_progress():" ) > 0 ) {
@@ -681,7 +681,7 @@ class TestCase {
 
       try { // Test: Reenter .init_asyncGenerator_create_with_asyncPromise_progress() should throw exception.
         ++this.testId;
-        neuralOrchestra.init_asyncGenerator_create_with_asyncPromise_progresse();
+        neuralOrchestra.init_asyncGenerator_create_with_asyncPromise_progress();
       } catch ( e ) {
         if ( e.message.indexOf(
                ".init_asyncGenerator_create_with_asyncPromise_progress():" ) > 0 ) {
