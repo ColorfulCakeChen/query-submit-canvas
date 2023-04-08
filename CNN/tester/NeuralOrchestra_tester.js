@@ -900,30 +900,30 @@ class TestCase {
     // 2. Create, initialize, load, process, send.
     let nCreateInitLoadProcessSend = 0;
 
-    // Test: use .init_async() or .init_asyncGenerator() first.
+    // Test: re-create.
     for (
-      let n_init_asyncTypeOrder = 0;
-      n_init_asyncTypeOrder < asyncTypeOrderArray.length;
-      ++n_init_asyncTypeOrder ) {
+      let createCount = 0;
+      createCount < this.createCountBase;
+      ++createCount ) {
 
-      let init_asyncType = asyncTypeOrderArray[ n_init_asyncTypeOrder ];
+      let progressCreateInitLoadProcessSend
+        = progressCreateInitLoadProcessSendArray[
+            nCreateInitLoadProcessSend ];
 
+      // Test: use .init_async() or .init_asyncGenerator() first.
       for (
-        let n_load_asyncTypeOrder = 0;
-        n_load_asyncTypeOrder < asyncTypeOrderArray.length;
-        ++n_load_asyncTypeOrder ) {
+        let n_init_asyncTypeOrder = 0;
+        n_init_asyncTypeOrder < asyncTypeOrderArray.length;
+        ++n_init_asyncTypeOrder ) {
 
-        let load_asyncType = asyncTypeOrderArray[ n_load_asyncTypeOrder ];
+        let init_asyncType = asyncTypeOrderArray[ n_init_asyncTypeOrder ];
 
-        // Test: re-create.
         for (
-          let createCount = 0;
-          createCount < this.createCountBase;
-          ++createCount ) {
+          let n_load_asyncTypeOrder = 0;
+          n_load_asyncTypeOrder < asyncTypeOrderArray.length;
+          ++n_load_asyncTypeOrder ) {
 
-          let progressCreateInitLoadProcessSend
-            = progressCreateInitLoadProcessSendArray[
-                nCreateInitLoadProcessSend ];
+          let load_asyncType = asyncTypeOrderArray[ n_load_asyncTypeOrder ];
 
           yield* this.test_create_init_load_process_send_asyncGenerator(
             progressCreateInitLoadProcessSend,
