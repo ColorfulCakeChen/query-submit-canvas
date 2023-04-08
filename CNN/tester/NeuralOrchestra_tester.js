@@ -62,6 +62,11 @@ class TestCase {
       }
     };
 
+
+//!!! ...unfinished... (2023/04/08)
+// seems no need .createCountBase, .initCountBase
+
+
     this.createCountBase = 2; // Try create NeuralOrchestra twice.
     this.initCountBase = 2;   // Try init NeuralOrchestra twice.
     this.loadCountBase = 2;
@@ -897,9 +902,11 @@ class TestCase {
     yield progressRoot;
 
     // 2. Load, process, send.
-    let nLoadProcessSendCount = 0;
+    for (
+      let nLoadProcessSendCount = 0;
+      nLoadProcessSendCount < nLoadProcessSendCountMax;
+      ++nLoadProcessSendCount ) {
 
-    for ( let loadCount = 0; loadCount < this.loadCountBase; ++loadCount ) {
       let progressLoadProcessSend
         = progressLoadProcessSendArray[ nLoadProcessSendCount ];
 
@@ -918,8 +925,6 @@ class TestCase {
       versus_load_asyncGenerator
         = versus_load_asyncPromise
         = versus_load_asyncGenerator_delayPromise = null;
-
-      ++nLoadProcessSendCount;
     }
 
     if ( progressInit )
@@ -1111,6 +1116,12 @@ class TestCase {
           ++nCreateInitLoadProcessSend;
         }
       }
+
+
+//!!! ...unfinished... (2023/04/08)
+// should reverse init_asyncTypeOrder and load_asyncTypeOrder.
+
+
     }
   }
 
