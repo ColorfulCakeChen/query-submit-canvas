@@ -523,6 +523,8 @@ class TestCase {
     let progressRoot = progressParent.root_get();
 
     let progressInit;
+
+!!! ...unfinished... (2023/04/08)
     if ( b_init_asyncGenerator )
       progressInit = progressParent.child_add(
         ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
@@ -819,6 +821,7 @@ class TestCase {
 //       * load_asyncTypeOrder.count
 
       // Test: use .init_async() or .init_asyncGenerator().
+!!! ...unfinished... (2023/04/08)
       let b_init_asyncGenerator;
       for (
         let n_init_asyncType = init_asyncTypeOrder.begin;
@@ -871,8 +874,8 @@ class TestCase {
     this.testId = 0;
 
     const nCreateInitLoadProcessSendMax = this.createCountBase
-//      * 2 // b_before_init_first_load_asyncGenerator
-      * 2 // b_init_asyncGenerator_first
+      * asyncTypeOrderArray.length // init_asyncTypeOrder
+      * asyncTypeOrderArray.length // load_asyncTypeOrder
       ;
 
     // 1. Prepare progress list.
@@ -889,33 +892,37 @@ class TestCase {
     // 2. Create, initialize, load, process, send.
     let nCreateInitLoadProcessSend = 0;
 
-    // Test: use .init_async() or .init_asyncGenerator() first.
-    let b_init_asyncGenerator_first;
+    // Test: re-create.
     for (
-      let n_init_asyncGenerator_first = n_to_b.begin;
-      n_init_asyncGenerator_first != n_to_b.end;
-      n_init_asyncGenerator_first += n_to_b.step ) {
+      let createCount = 0;
+      createCount < this.createCountBase;
+      ++createCount ) {
 
-      b_init_asyncGenerator_first = ( n_init_asyncGenerator_first != 0 );
+      let progressCreateInitLoadProcessSend
+        = progressCreateInitLoadProcessSendArray[
+            nCreateInitLoadProcessSend ];
 
-      // Test: re-create.
+      // Test: use .init_async() or .init_asyncGenerator() first.
       for (
-        let createCount = 0;
-        createCount < this.createCountBase;
-        ++createCount ) {
+        let n_init_asyncTypeOrder = 0;
+        n_init_asyncTypeOrder < asyncTypeOrderArray.length;
+        ++n_init_asyncTypeOrder ) {
 
-        let progressCreateInitLoadProcessSend
-          = progressCreateInitLoadProcessSendArray[
-              nCreateInitLoadProcessSend ];
+        let init_asyncType = asyncTypeOrderArray[ n_init_asyncTypeOrder ];
 
-//!!! ...unfinished... (2023/04/08)
-// should also test init and versus_load by Xxx_create_with_asyncPromise_progress().
+        for (
+          let n_load_asyncTypeOrder = 0;
+          n_load_asyncTypeOrder < asyncTypeOrderArray.length;
+          ++n_load_asyncTypeOrder ) {
 
-        yield* this.test_create_init_load_process_send_asyncGenerator(
-          progressCreateInitLoadProcessSend,
-          b_init_asyncGenerator_first );
+          let load_asyncType = asyncTypeOrderArray[ n_load_asyncTypeOrder ];
 
-        ++nCreateInitLoadProcessSend;
+          yield* this.test_create_init_load_process_send_asyncGenerator(
+            progressCreateInitLoadProcessSend,
+            init_asyncTypeOrder, load_asyncTypeOrder );
+
+          ++nCreateInitLoadProcessSend;
+        }
       }
     }
   }
