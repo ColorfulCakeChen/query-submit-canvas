@@ -526,9 +526,8 @@ class TestCase {
         switch ( n_init_asyncType ) {
           case asyncType_0_asyncGenerator: // 0
             {
-!!! ...unfinished... (2023/04/08)
-// check progressInit
-
+              versus_loadOk = yield* versus_load_asyncGenerator;
+              progressToBeChecked = progressInit;
             }
             break;
     
