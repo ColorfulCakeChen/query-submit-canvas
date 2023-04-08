@@ -62,11 +62,6 @@ class TestCase {
       }
     };
 
-
-//!!! (2023/04/08 Remarked)
-// .createCountBase and.initCountBase seem not necessary.
-//     this.createCountBase = 2; // Try create NeuralOrchestra twice.
-//     this.initCountBase = 2;   // Try init NeuralOrchestra twice.
     this.loadCountBase = 2; // One is by init, another is by versus_load
 
     this.testId = undefined; // For debug.
@@ -439,53 +434,6 @@ class TestCase {
     try {
       versus_load_asyncGenerator_delayPromise.resolve();
 
-//!!! (2023/04/08 Remarked) Use n_load_asyncType and n_init_asyncType instead.
-//       if ( versus_load_asyncGenerator ) {
-//
-// !!! ...unfinished... (2023/04/08)
-// // If asyncType_1_asyncGenerator_with_asyncPromise_progress,
-// // should not yield*. Otherwise, wrong progressRoot will be yielded.
-//
-//         versus_loadOk = yield* versus_load_asyncGenerator;
-//
-//         // Note: In .versus_load_asyncGenerator(),
-//         //       .versus_load_asyncPromise_progress may or may not be used.
-//         if ( bTryLoad ) {
-//           if ( progressLoad ) {
-//             if ( 100 !== progressLoad.valuePercentage )
-//               throw Error( `NeuralOrchestra_tester.TestCase`
-//                 + `.test_load_process_send_asyncGenerator(): testId=${this.testId}, `
-//                 + `progressLoad.valuePercentage (`
-//                 + `${progressLoad.valuePercentage}) `
-//                 + `should be 100.` );
-//           } else {
-//             if ( 100 !== neuralOrchestra.versus_load_asyncPromise_progress.valuePercentage )
-//               throw Error( `NeuralOrchestra_tester.TestCase`
-//                 + `.test_load_process_send_asyncGenerator(): testId=${this.testId}, `
-//                 + `neuralOrchestra.versus_load_asyncPromise_progress.valuePercentage (`
-//                 + `${neuralOrchestra.versus_load_asyncPromise_progress.valuePercentage}) `
-//                 + `should be 100.` );
-//           }
-//         } else {
-//           // If caller's n_init_asyncType is asyncType_0_asyncGenerator,
-//           // no progress could be checked here. (Although it may be checkable
-//           // in other cases.)
-//           //
-//           // So, do nothing here.
-//         }
-//
-//       } else {
-//         versus_loadOk = await versus_load_asyncPromise;
-//
-//         if ( 100 !== neuralOrchestra.versus_load_asyncPromise_progress.valuePercentage )
-//           throw Error( `NeuralOrchestra_tester.TestCase`
-//             + `.test_load_process_send_asyncGenerator(): testId=${this.testId}, `
-//             + `neuralOrchestra.versus_load_asyncPromise_progress.valuePercentage (`
-//             + `${neuralOrchestra.versus_load_asyncPromise_progress.valuePercentage}) `
-//             + `should be 100.` );
-//       }
-
-
       if ( bTryLoad ) {
         // According to which .versus_load_Xxx() is used.
         switch ( n_load_asyncType ) {
@@ -766,42 +714,6 @@ class TestCase {
     try {
       init_asyncGenerator_delayPromise.resolve();
 
-//!!! (2023/04/08 Remarked) Use n_init_asyncType instead.
-//       if ( b_return_versus_load_asyncGenerator_instead_of_asyncPromise ) {
-//
-// //!!! ...unfinished... (2023/04/08)
-// // If asyncType_1_asyncGenerator_with_asyncPromise_progress,
-// // should not yield*. Otherwise, wrong progressRoot will be yielded.
-//
-//         versus_load_asyncGenerator = yield* init_asyncGenerator;
-//
-//         if ( ( versus_load_asyncGenerator != undefined ) != neuralOrchestra.initOk )
-//           throw Error( `NeuralOrchestra_tester.TestCase`
-//             + `.test_init_load_process_send_asyncGenerator(): testId=${this.testId}, `
-//             + `( versus_load_asyncGenerator `
-//               + `( ${versus_load_asyncGenerator} ) != undefined ) `
-//             + `should be the same as `
-//             + `neuralOrchestra.initOk ( ${neuralOrchestra.initOk} ).`
-//           );
-//
-//         if ( !versus_load_asyncGenerator )
-//           throw Error( `NeuralOrchestra_tester.TestCase`
-//             + `.test_init_load_process_send_asyncGenerator(): testId=${this.testId}, `
-//             + `versus_load_asyncGenerator ( ${versus_load_asyncGenerator} ) `
-//             + `should not be undefined.`
-//           );
-//
-//       } else {
-//         let wrapped_versus_load_asyncPromise = await init_asyncPromise;
-//         versus_load_asyncPromise
-//           = wrapped_versus_load_asyncPromise.versus_load_asyncPromise;
-//
-//         if ( neuralOrchestra.initOk != true ) // undefined is also not acceptable.
-//           throw Error( `NeuralOrchestra_tester.TestCase`
-//             + `.test_init_load_process_send_asyncGenerator(): testId=${this.testId}, `
-//             + `neuralOrchestra.init_async() failed.` );
-//       }
-
       switch ( n_init_asyncType ) {
         case asyncType_0_asyncGenerator: // 0
           {
@@ -948,9 +860,6 @@ class TestCase {
 
     ++this.testId;
 
-//!!! (2023/04/08 Remarked)
-// .createCountBase and.initCountBase seem not necessary.
-//    const nInitLoadProcessSendMax = this.initCountBase
     const nInitLoadProcessSendMax = 1
       * init_asyncTypeOrder.count
       * load_asyncTypeOrder.count
@@ -1017,38 +926,30 @@ class TestCase {
       // Test: re-init (without re-create).
       let nInitLoadProcessSend = 0;
 
-//!!! (2023/04/08 Remarked)
-// .createCountBase and.initCountBase seem not necessary.
-//      for ( let initCount = 0; initCount < this.initCountBase; ++initCount ) {
+      // Test: use .init_async() or .init_asyncGenerator().
+      for (
+        let n_init_asyncType = init_asyncTypeOrder.begin;
+        n_init_asyncType != init_asyncTypeOrder.end;
+        n_init_asyncType += init_asyncTypeOrder.step ) {
 
-        // Test: use .init_async() or .init_asyncGenerator().
+        // Test: use .versus_load_async() or .versus_load_asyncGenerator().
         for (
-          let n_init_asyncType = init_asyncTypeOrder.begin;
-          n_init_asyncType != init_asyncTypeOrder.end;
-          n_init_asyncType += init_asyncTypeOrder.step ) {
+          let n_load_asyncType = load_asyncTypeOrder.begin;
+          n_load_asyncType != load_asyncTypeOrder.end;
+          n_load_asyncType += load_asyncTypeOrder.step ) {
 
-          // Test: use .versus_load_async() or .versus_load_asyncGenerator().
-          for (
-            let n_load_asyncType = load_asyncTypeOrder.begin;
-            n_load_asyncType != load_asyncTypeOrder.end;
-            n_load_asyncType += load_asyncTypeOrder.step ) {
+          let progressInitLoadProcessSend
+            = progressInitLoadProcessSendArray[ nInitLoadProcessSend ];
+  
+          yield* this.test_init_load_process_send_asyncGenerator(
+            progressInitLoadProcessSend, neuralOrchestra,
+            n_init_asyncType,
+            n_load_asyncType
+          );
 
-            let progressInitLoadProcessSend
-              = progressInitLoadProcessSendArray[ nInitLoadProcessSend ];
-    
-            yield* this.test_init_load_process_send_asyncGenerator(
-              progressInitLoadProcessSend, neuralOrchestra,
-              n_init_asyncType,
-              n_load_asyncType
-            );
-
-            ++nInitLoadProcessSend;
-          }
+          ++nInitLoadProcessSend;
         }
-
-//!!! (2023/04/08 Remarked)
-// .createCountBase and.initCountBase seem not necessary.
-//      }
+      }
 
       if ( 100 !== progressToAdvance.valuePercentage )
         throw Error( `NeuralOrchestra_tester.TestCase`
@@ -1073,9 +974,6 @@ class TestCase {
   async* test_asyncGenerator( progressParent ) {
     this.testId = 0;
 
-//!!! (2023/04/08 Remarked)
-// .createCountBase and.initCountBase seem not necessary.
-//    const nCreateInitLoadProcessSendMax = this.createCountBase
     const nCreateInitLoadProcessSendMax = 1
       * asyncTypeOrderArray.length // init_asyncTypeOrder
       * asyncTypeOrderArray.length // load_asyncTypeOrder
@@ -1095,45 +993,32 @@ class TestCase {
     // 2. Create, initialize, load, process, send.
     let nCreateInitLoadProcessSend = 0;
 
-//!!! (2023/04/08 Remarked)
-// .createCountBase and.initCountBase seem not necessary.
-//     // Test: re-create.
-//     for (
-//       let createCount = 0;
-//       createCount < this.createCountBase;
-//       ++createCount ) {
+    // Test: use .init_async() or .init_asyncGenerator() first.
+    for (
+      let n_init_asyncTypeOrder = 0;
+      n_init_asyncTypeOrder < asyncTypeOrderArray.length;
+      ++n_init_asyncTypeOrder ) {
 
-      // Test: use .init_async() or .init_asyncGenerator() first.
+      let init_asyncTypeOrder = asyncTypeOrderArray[ n_init_asyncTypeOrder ];
+
       for (
-        let n_init_asyncTypeOrder = 0;
-        n_init_asyncTypeOrder < asyncTypeOrderArray.length;
-        ++n_init_asyncTypeOrder ) {
+        let n_load_asyncTypeOrder = 0;
+        n_load_asyncTypeOrder < asyncTypeOrderArray.length;
+        ++n_load_asyncTypeOrder ) {
 
-        let init_asyncTypeOrder = asyncTypeOrderArray[ n_init_asyncTypeOrder ];
+        let load_asyncTypeOrder = asyncTypeOrderArray[ n_load_asyncTypeOrder ];
 
-        for (
-          let n_load_asyncTypeOrder = 0;
-          n_load_asyncTypeOrder < asyncTypeOrderArray.length;
-          ++n_load_asyncTypeOrder ) {
+        let progressCreateInitLoadProcessSend
+          = progressCreateInitLoadProcessSendArray[
+              nCreateInitLoadProcessSend ];
 
-          let load_asyncTypeOrder = asyncTypeOrderArray[ n_load_asyncTypeOrder ];
+        yield* this.test_create_init_load_process_send_asyncGenerator(
+          progressCreateInitLoadProcessSend,
+          init_asyncTypeOrder, load_asyncTypeOrder );
 
-          let progressCreateInitLoadProcessSend
-            = progressCreateInitLoadProcessSendArray[
-                nCreateInitLoadProcessSend ];
-
-          yield* this.test_create_init_load_process_send_asyncGenerator(
-            progressCreateInitLoadProcessSend,
-            init_asyncTypeOrder, load_asyncTypeOrder );
-
-          ++nCreateInitLoadProcessSend;
-        }
+        ++nCreateInitLoadProcessSend;
       }
-
-//!!! (2023/04/08 Remarked)
-// .createCountBase and.initCountBase seem not necessary.
-//    }
-
+    }
   }
 
 }
