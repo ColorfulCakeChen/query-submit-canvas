@@ -502,7 +502,12 @@ class TestCase {
           case asyncType_1_asyncGenerator_with_asyncPromise_progress: // 1
             { // Do not use yield* here. Otherwise, wrong progressRoot (of
               // internal progress) will be yielded to outside caller.
-
+              let loaderNext;
+              do {
+                loaderNext = await versus_load_asyncGenerator.next();
+              } while ( !loaderNext.done );
+              versus_loadOk = loaderNext.value;
+  
 !!! ...unfinished... (2023/04/08)
 
 
