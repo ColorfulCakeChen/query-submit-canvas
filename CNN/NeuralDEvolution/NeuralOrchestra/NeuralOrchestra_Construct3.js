@@ -103,6 +103,12 @@ class NeuralOrchestra_Construct3 extends Base {
 // Perhaps, check this.versus_load_progress
 // (may be loading versusSummary + versus, or loading versus only.)
 
+
+//!!! ...unfinished... (2023/04/08)
+// Since this should inside a requestAnimationFrame() callback.
+// Update progress to UI. And then, call versus_load_asyncGenerator.next()
+//
+
   }
 
   /**
