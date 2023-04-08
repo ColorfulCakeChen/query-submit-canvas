@@ -1171,7 +1171,7 @@ class NeuralOrchestra_Base extends
    * .versus_load_asyncGenerator().
    */
   versus_load_asyncGenerator_create_with_asyncPromise_progress( delayPromise ) {
-!!!
+
     { // Checking pre-condition.
       const funcNameInMessage
         = "versus_load_asyncGenerator_create_with_asyncPromise_progress";
