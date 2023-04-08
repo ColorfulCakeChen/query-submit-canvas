@@ -832,8 +832,6 @@ class TestCase {
 
       // Test: re-init (without re-create).
       for ( let initCount = 0; initCount < this.initCountBase; ++initCount ) {
-        let progressInitLoadProcessSend
-          = progressInitLoadProcessSendArray[ nInitLoadProcessSend ];
 
         // Test: use .init_async() or .init_asyncGenerator().
         for (
@@ -847,6 +845,9 @@ class TestCase {
             n_load_asyncType != load_asyncTypeOrder.end;
             n_load_asyncType += load_asyncTypeOrder.step ) {
 
+            let progressInitLoadProcessSend
+              = progressInitLoadProcessSendArray[ nInitLoadProcessSend ];
+    
             yield* this.test_init_load_process_send_asyncGenerator(
               progressInitLoadProcessSend, neuralOrchestra,
               n_init_asyncType,
