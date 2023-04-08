@@ -738,16 +738,6 @@ class TestCase {
       init_asyncGenerator_delayPromise.resolve();
 
       if ( b_return_versus_load_asyncGenerator_instead_of_asyncPromise ) {
-
-//!!! (2023/04/05 Remarked) Use yield* instead.
-//         let initNext;
-//         do {
-//           initNext = await init_asyncGenerator.next();
-//           if ( !initNext.done )
-//             yield initNext.value; // Report progress.
-//         } while ( !initNext.done );
-//         versus_load_asyncGenerator = initNext.value;
-
         versus_load_asyncGenerator = yield* init_asyncGenerator;
 
         if ( ( versus_load_asyncGenerator != undefined ) != neuralOrchestra.initOk )
