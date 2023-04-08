@@ -20,12 +20,12 @@ const n_to_b = n_to_b_true_false;
 
 /** async type. */
 const asyncType_0_asyncGenerator = 0;
-const asyncType_1_asyncGenerator_with_asyncPromise_progress = 0;
+const asyncType_1_asyncGenerator_with_asyncPromise_progress = 1;
 const asyncType_2_asyncPromise = 2;
 
 /** async type order. */
-const asyncTypeOrder_0_ascent = { begin: 0, end:  3, step: +1 }; // 0 to 2
-const asyncTypeOrder_1_descent = { begin: 2, end: -1, step: -1 }; // 2 to 0
+const asyncTypeOrder_0_ascent =  { begin: 0, end:  3, step: +1, count: 3 }; // 0 to 2
+const asyncTypeOrder_1_descent = { begin: 2, end: -1, step: -1, count: 3 }; // 2 to 0
 
 const asyncTypeOrderArray = [
   asyncTypeOrder_0_ascent,
@@ -462,9 +462,9 @@ class TestCase {
   /** */
   async* test_init_load_process_send_asyncGenerator(
     progressParent, neuralOrchestra,
-    b_init_asyncGenerator,
-    b_load_asyncGenerator
-  ) {
+    n_init_asyncType,
+    n_load_asyncType
+) {
 
     ++this.testId;
 
@@ -499,24 +499,41 @@ class TestCase {
     let init_asyncPromise;
     let b_return_versus_load_asyncGenerator_instead_of_asyncPromise;
 
-    if ( b_init_asyncGenerator ) {
-      b_return_versus_load_asyncGenerator_instead_of_asyncPromise
-        = true; // return versus_load_asyncGenerator
+//!!!
+//     n_init_asyncType,
+//     n_load_asyncType
+//
+// const asyncType_0_asyncGenerator = 0;
+// const asyncType_1_asyncGenerator_with_asyncPromise_progress = 1;
+// const asyncType_2_asyncPromise = 2;
 
-      init_asyncGenerator = neuralOrchestra.init_asyncGenerator_create(
-        progressInit,
-        this.init_parameters.downloader_spreadsheetId,
-        this.init_parameters.downloader_apiKey,
-        this.init_parameters.bLogFetcherEventToConsole,
-        this.init_parameters.sender_clientId,
-        this.init_parameters.input_height, this.init_parameters.input_width,
-        this.init_parameters.vocabularyChannelCount,
-        this.init_parameters.blockCountTotalRequested,
-        this.init_parameters.output_channelCount_per_alignment,
-        b_return_versus_load_asyncGenerator_instead_of_asyncPromise,
-        init_asyncGenerator_delayPromise, versus_load_asyncGenerator_delayPromise
-      );
-    } else {
+    switch ( n_init_asyncType ) {
+      case asyncType_0_asyncGenerator: // 0
+
+        b_return_versus_load_asyncGenerator_instead_of_asyncPromise
+          = true; // return versus_load_asyncGenerator
+
+        init_asyncGenerator = neuralOrchestra.init_asyncGenerator_create(
+          progressInit,
+          this.init_parameters.downloader_spreadsheetId,
+          this.init_parameters.downloader_apiKey,
+          this.init_parameters.bLogFetcherEventToConsole,
+          this.init_parameters.sender_clientId,
+          this.init_parameters.input_height, this.init_parameters.input_width,
+          this.init_parameters.vocabularyChannelCount,
+          this.init_parameters.blockCountTotalRequested,
+          this.init_parameters.output_channelCount_per_alignment,
+          b_return_versus_load_asyncGenerator_instead_of_asyncPromise,
+          init_asyncGenerator_delayPromise, versus_load_asyncGenerator_delayPromise
+        );
+        break;
+
+    case asyncType_1_asyncGenerator_with_asyncPromise_progress: // 1
+!!!
+      break;
+
+    case asyncType_2_asyncPromise: // 2
+
       b_return_versus_load_asyncGenerator_instead_of_asyncPromise
         = false; // return versus_load_asyncPromise
 
@@ -532,6 +549,14 @@ class TestCase {
         b_return_versus_load_asyncGenerator_instead_of_asyncPromise,
         init_asyncGenerator_delayPromise, versus_load_asyncGenerator_delayPromise
       );
+      break;
+
+    default:
+      throw Error( `NeuralOrchestra_tester.TestCase`
+        + `.test_init_load_process_send_asyncGenerator(): testId=${this.testId}, `
+        + `n_init_asyncType ( ${n_init_asyncType} ) `
+        + `should be 0 or 1 or 2.` );
+      break;
     }
 
     if ( neuralOrchestra.initOk !== undefined )
@@ -661,16 +686,13 @@ class TestCase {
   /** */
   async* test_create_init_load_process_send_asyncGenerator(
     progressParent,
-    b_init_asyncGenerator_first ) {
+    init_asyncTypeOrder, load_asyncTypeOrder ) {
 
     ++this.testId;
 
     const nInitLoadProcessSendMax = this.initCountBase
-      * 2 // b_init_asyncGenerator
-//      * 2 // b_reenter_first_init_asyncGenerator
-
-      * 2 // b_load_asyncGenerator
-//      * 2 // b_reenter_first_load_asyncGenerator
+      * init_asyncTypeOrder.count
+      * load_asyncTypeOrder.count
       ;
 
     // Prepare progress list.
@@ -732,29 +754,22 @@ class TestCase {
       // 2. Initialize, load, process, send.
       let nInitLoadProcessSend = 0;
 
-      let n_to_b_init_asyncGenerator;
-      if ( b_init_asyncGenerator_first )
-        n_to_b_init_asyncGenerator = n_to_b_true_false;
-      else
-        n_to_b_init_asyncGenerator = n_to_b_false_true;
+//!!! ...unfinished... (2023/04/08)
+//       * init_asyncTypeOrder.count
+//       * load_asyncTypeOrder.count
 
       // Test: use .init_async() or .init_asyncGenerator().
       let b_init_asyncGenerator;
       for (
-        let n_init_asyncGenerator = n_to_b_init_asyncGenerator.begin;
-        n_init_asyncGenerator != n_to_b_init_asyncGenerator.end;
-        n_init_asyncGenerator += n_to_b_init_asyncGenerator.step ) {
-
-        b_init_asyncGenerator = ( n_init_asyncGenerator != 0 );
+        let n_init_asyncType = init_asyncTypeOrder.begin;
+        n_init_asyncType != init_asyncTypeOrder.end;
+        n_init_asyncType += init_asyncTypeOrder.step ) {
 
         // Test: use .versus_load_async() or .versus_load_asyncGenerator().
-        let b_load_asyncGenerator;
         for (
-          let n_load_asyncGenerator = n_to_b.begin;
-          n_load_asyncGenerator != n_to_b.end;
-          n_load_asyncGenerator += n_to_b.step ) {
-
-          b_load_asyncGenerator = ( n_load_asyncGenerator != 0 );
+          let n_load_asyncType = load_asyncTypeOrder.begin;
+          n_load_asyncType != load_asyncTypeOrder.end;
+          n_load_asyncType += load_asyncTypeOrder.step ) {
 
           // Test: re-init (without re-create).
           for ( let initCount = 0; initCount < this.initCountBase; ++initCount ) {
@@ -763,8 +778,8 @@ class TestCase {
 
             yield* this.test_init_load_process_send_asyncGenerator(
               progressInitLoadProcessSend, neuralOrchestra,
-              b_init_asyncGenerator,
-              b_load_asyncGenerator
+              n_init_asyncType,
+              n_load_asyncType
             );
 
             ++nInitLoadProcessSend;
