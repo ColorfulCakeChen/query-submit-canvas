@@ -832,6 +832,14 @@ class TestCase {
         n_init_asyncType, n_load_asyncType,
         progressInit );
 
+      if ( progressInit )
+        if ( 100 !== progressInit.valuePercentage )
+          throw Error( `NeuralOrchestra_tester.TestCase`
+            + `.test_init_load_process_send_asyncGenerator(): testId=${this.testId}, `
+            + `progressInit.valuePercentage (`
+            + `${progressInit.valuePercentage}) `
+            + `should be 100.` );
+
       // After first time loading (by .init_Xxx()), clear to indicate init done
       // and need to versus_load.
       progressInit = null;
@@ -839,14 +847,6 @@ class TestCase {
       versus_load_asyncPromise = null;
       versus_load_asyncGenerator_delayPromise = null;
     }
-
-    if ( progressInit )
-      if ( 100 !== progressInit.valuePercentage )
-        throw Error( `NeuralOrchestra_tester.TestCase`
-          + `.test_init_load_process_send_asyncGenerator(): testId=${this.testId}, `
-          + `progressInit.valuePercentage (`
-          + `${progressInit.valuePercentage}) `
-          + `should be 100.` );
 
     if ( 100 !== progressToAdvance.valuePercentage )
       throw Error( `NeuralOrchestra_tester.TestCase`
