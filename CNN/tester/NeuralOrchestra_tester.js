@@ -601,7 +601,7 @@ class TestCase {
         b_return_versus_load_asyncGenerator_instead_of_asyncPromise
           = true; // return versus_load_asyncGenerator
 
-        init_asyncPromise = neuralOrchestra.init_asyncGenerator_with_asyncPromise_progress(
+        init_asyncGenerator = neuralOrchestra.init_asyncGenerator_with_asyncPromise_progress(
           this.init_parameters.downloader_spreadsheetId,
           this.init_parameters.downloader_apiKey,
           this.init_parameters.bLogFetcherEventToConsole,
