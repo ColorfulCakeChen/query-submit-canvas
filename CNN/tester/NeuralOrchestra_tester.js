@@ -323,7 +323,7 @@ class TestCase {
     progressParent, neuralOrchestra,
     versus_load_asyncGenerator, versus_load_asyncPromise,
     versus_load_asyncGenerator_delayPromise,
-    b_load_asyncGenerator ) {
+    n_load_asyncType ) {
 
     ++this.testId;
 
@@ -339,10 +339,22 @@ class TestCase {
 
     let progressLoad;
     if ( bTryLoad ) {
-      if ( b_load_asyncGenerator ) {
-        progressLoad = progressParent.child_add(
-          ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
-      }
+      switch ( n_load_asyncType ) {
+        case asyncType_0_asyncGenerator: // 0
+          progressLoad = progressParent.child_add(
+            ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
+          break;
+        case asyncType_1_asyncGenerator_with_asyncPromise_progress: // 1
+          break; // Use internal progress.
+        case asyncType_2_asyncPromise: // 2
+          break; // Use internal progress.
+        default:
+          throw Error( `NeuralOrchestra_tester.TestCase`
+            + `.test_load_process_send_asyncGenerator(): testId=${this.testId}, `
+            + `n_load_asyncType ( ${n_load_asyncType} ) `
+            + `should be 0 or 1 or 2.` );
+          break;
+       }
     }
 
     let progressProcessSend = progressParent.child_add(
@@ -357,6 +369,42 @@ class TestCase {
       versus_load_asyncGenerator_delayPromise
         = PartTime.Promise_resolvable_rejectable_create();
 
+//!!!
+//     n_init_asyncType,
+//     n_load_asyncType
+//
+// asyncType_0_asyncGenerator = 0;
+// asyncType_1_asyncGenerator_with_asyncPromise_progress = 1;
+// asyncType_2_asyncPromise = 2;
+
+    switch ( n_load_asyncType ) {
+      case asyncType_0_asyncGenerator: // 0
+        versus_load_asyncGenerator = neuralOrchestra
+          .versus_load_asyncGenerator_create(
+            progressLoad, versus_load_asyncGenerator_delayPromise );
+        break;
+
+      case asyncType_1_asyncGenerator_with_asyncPromise_progress: // 1
+        versus_load_asyncGenerator = neuralOrchestra
+          .versus_load_asyncGenerator_create_with_asyncPromise_progress(
+            versus_load_asyncGenerator_delayPromise );
+        break;
+
+      case asyncType_2_asyncPromise: // 2
+        versus_load_asyncPromise = neuralOrchestra
+          .versus_load_asyncPromise_create(
+            versus_load_asyncGenerator_delayPromise );
+        break;
+
+      default:
+        throw Error( `NeuralOrchestra_tester.TestCase`
+          + `.test_load_process_send_asyncGenerator(): testId=${this.testId}, `
+          + `n_load_asyncType ( ${n_load_asyncType} ) `
+          + `should be 0 or 1 or 2.` );
+        break;
+      }
+
+!!!
       if ( b_load_asyncGenerator ) {
         versus_load_asyncGenerator = neuralOrchestra
           .versus_load_asyncGenerator_create(
@@ -370,7 +418,7 @@ class TestCase {
 
     if ( neuralOrchestra.versus_loadOk !== undefined )
       throw Error( `NeuralOrchestra_tester.TestCase`
-        + `.test_load_process_send_asyncGenerator(): `
+        + `.test_load_process_send_asyncGenerator(): testId=${this.testId}, `
         + `neuralOrchestra.versus_loadOk ( ${neuralOrchestra.versus_loadOk} ) `
         + `should be undefined.` );
 
@@ -464,7 +512,7 @@ class TestCase {
     progressParent, neuralOrchestra,
     n_init_asyncType,
     n_load_asyncType
-) {
+  ) {
 
     ++this.testId;
 
@@ -498,14 +546,6 @@ class TestCase {
     let init_asyncGenerator;
     let init_asyncPromise;
     let b_return_versus_load_asyncGenerator_instead_of_asyncPromise;
-
-//!!!
-//     n_init_asyncType,
-//     n_load_asyncType
-//
-// const asyncType_0_asyncGenerator = 0;
-// const asyncType_1_asyncGenerator_with_asyncPromise_progress = 1;
-// const asyncType_2_asyncPromise = 2;
 
     switch ( n_init_asyncType ) {
       case asyncType_0_asyncGenerator: // 0
@@ -684,7 +724,7 @@ class TestCase {
         progressLoadProcessSend, neuralOrchestra,
         versus_load_asyncGenerator, versus_load_asyncPromise,
         versus_load_asyncGenerator_delayPromise,
-        b_load_asyncGenerator );
+        n_load_asyncType );
 
       // After first time loading (by .init_Xxx()), clear them so that loading again.
       versus_load_asyncGenerator
