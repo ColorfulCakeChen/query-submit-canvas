@@ -228,8 +228,11 @@ import * as DEvolution from "../DEvolution.js";
  * networks. When all the workerProxies initializing, versus summary and
  * versus loading, neural networks creating have done, it should be
  *  ( .versus_load_asyncPromise_progress.valuePercentage == 100 ).
- *   - It is used only if .init_asyncPromise_create() or
- *       .versus_load_asyncPromise_create() is called.
+ *   - It is used only if one of the following is called:
+ *     - .init_asyncPromise_create() or
+ *     - .init_asyncGenerator_create_with_asyncPromise_progress() or
+ *     - .versus_load_asyncPromise_create() or
+ *     - .versus_load_asyncGenerator_create_with_asyncPromise_progress().
  *   - If .init_asyncGenerator_create() or .versus_load_asyncGenerator_create()
  *       is called, their progressParent parameter will be used instead.
  *
@@ -468,6 +471,29 @@ class NeuralOrchestra_Base extends
     }
 
     return super.init_asyncGenerator_create.apply( this, restArgs );
+  }
+
+  /**
+   * (This method's parameters are almost the same as .init_asyncGenerator()
+   * except without the 1st parameter progressParent because the
+   * .versus_load_asyncPromise_progress is used instead.)
+   *
+   * @return {AsyncGenerator}
+   *   Return a newly created init_asyncGenerator which is an instance of
+   * .init_asyncGenerator().
+   */
+  init_asyncGenerator_create_with_asyncPromise_progress( ...restArgs ) {
+
+    { // Checking pre-condition.
+      const funcNameInMessage
+        = "init_asyncGenerator_create_with_asyncPromise_progress";
+
+      NeuralOrchestra_Base.throw_if_workerProxies_busy_or_versus_loading.call(
+        this, funcNameInMessage );
+    }
+
+    return super.init_asyncGenerator_create_with_asyncPromise_progress
+      .apply( this, restArgs );
   }
 
   /**
@@ -1128,6 +1154,50 @@ class NeuralOrchestra_Base extends
     //       has one more parameter (i.e. workerProxies_init_asyncPromise).
     return super.versus_load_asyncGenerator_create(
       progressParent, workerProxies_init_asyncPromise, delayPromise );
+  }
+
+  /**
+   * When wanting to load the next versus with yourself progressParent, call
+   * this method and call .next() until { done: true }.
+   *
+   * The .versus_load_asyncPromise_progress will be used.
+   *
+   * @param {Promise} delayPromise
+   *   Mainly used when unit testing. If not null, the async generator will
+   * await it before complete. If null or undefined, no extra delay awaiting.
+   *
+   * @return {AsyncGenerator}
+   *   Return a newly created versus_load_asyncGenerator which is an instance of
+   * .versus_load_asyncGenerator().
+   */
+  versus_load_asyncGenerator_create_with_asyncPromise_progress( delayPromise ) {
+!!!
+    { // Checking pre-condition.
+      const funcNameInMessage
+        = "versus_load_asyncGenerator_create_with_asyncPromise_progress";
+
+      NeuralOrchestra_Base.throw_if_init_asyncPromise_or_asyncGenerator_running
+        .call( this, funcNameInMessage );
+
+      NeuralOrchestra_Base.throw_if_not_initOk.call( this, funcNameInMessage );
+
+      NeuralOrchestra_Base
+        .throw_if_versus_load_asyncPromise_or_asyncGenerator_running
+        .call( this, funcNameInMessage );
+
+      // Prevent the nueral networks from being changed during they are processing.
+      NeuralOrchestra_Base.throw_if_imageData_process_asyncPromise_running
+        .call( this, funcNameInMessage );
+    }
+
+    // For outside caller, no workerProxies_init_asyncPromise.
+    const workerProxies_init_asyncPromise = null;
+
+    // Note: The same name (i.e. .versus_load_asyncGenerator_create()) method
+    //       of parent class (i.e. NonReentrant.asyncPromise_by_asyncGenerator)
+    //       has one more parameter (i.e. workerProxies_init_asyncPromise).
+    return super.versus_load_asyncGenerator_create_with_asyncPromise_progress(
+      workerProxies_init_asyncPromise, delayPromise );
   }
 
   /**
