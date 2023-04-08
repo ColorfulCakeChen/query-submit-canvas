@@ -677,6 +677,13 @@ class TestCase {
       init_asyncGenerator_delayPromise.resolve();
 
       if ( b_return_versus_load_asyncGenerator_instead_of_asyncPromise ) {
+
+
+!!! ...unfinished... (2023/04/08)
+// If asyncType_1_asyncGenerator_with_asyncPromise_progress,
+// should not yield*. Otherwise, wrong progressRoot will be yielded.
+
+
         versus_load_asyncGenerator = yield* init_asyncGenerator;
 
         if ( ( versus_load_asyncGenerator != undefined ) != neuralOrchestra.initOk )
