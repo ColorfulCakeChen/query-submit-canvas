@@ -90,6 +90,32 @@ class TestCase {
   }
 
   /**
+   * @param {NeuralOrchestra.Base} neuralOrchestra
+   *   The object which has method with the specified name.
+   *
+   * @param {string} methodName
+   *   neuralOrchestra[ methodName ]() will be called. If it does not throw
+   * exception (whose message should has the `${methodName}():`), throw exception.
+   */
+  neuralOrchestra_should_throw_exception( neuralOrchestra, methodName ) {
+    try {
+      ++this.testId;
+      neuralOrchestra[ methodName ]();
+      throw Error( `NeuralOrchestra: testId=${this.testId}. `
+        + `NeuralOrchestra.Base.${methodName}() should throw exception.`
+      );
+
+    } catch ( e ) {
+      let decoratedMethodName = `${methodName}():`;
+      if ( e.message.indexOf( decoratedMethodName ) < 0 ) {
+        // Unknown error, said loudly.
+        throw Error( `NeuralOrchestra: testId=${this.testId}. ${e}`,
+          { cause: e } );
+      }
+    }
+  }
+
+  /**
    *
    */
   async* test_process_send_asyncGenerator( progressParent, neuralOrchestra ) {
