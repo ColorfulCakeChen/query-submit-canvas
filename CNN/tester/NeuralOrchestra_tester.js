@@ -437,6 +437,7 @@ class TestCase {
     try {
       versus_load_asyncGenerator_delayPromise.resolve();
 
+!!! (2023/04/08 Remarked) Use n_load_asyncType and n_init_asyncType instead.
       if ( versus_load_asyncGenerator ) {
 
 !!! ...unfinished... (2023/04/08)
@@ -486,9 +487,18 @@ class TestCase {
 
       if ( bTryLoad ) {
         // According to which .versus_load_Xxx() is used.
-
         switch ( n_load_asyncType ) {
           case asyncType_0_asyncGenerator: // 0
+            {
+              versus_loadOk = yield* versus_load_asyncGenerator;
+
+              if ( 100 !== progressLoad.valuePercentage )
+                throw Error( `NeuralOrchestra_tester.TestCase`
+                  + `.test_load_process_send_asyncGenerator(): testId=${this.testId}, `
+                  + `progressLoad.valuePercentage (`
+                  + `${progressLoad.valuePercentage}) `
+                  + `should be 100.` );
+            }
             break;
   
           case asyncType_1_asyncGenerator_with_asyncPromise_progress: // 1
@@ -507,7 +517,6 @@ class TestCase {
   
       } else {
         // According to which .init_Xxx() (not which .versus_load_Xxx()) is used.
-
         switch ( n_init_asyncType ) {
           case asyncType_0_asyncGenerator: // 0
             break;
