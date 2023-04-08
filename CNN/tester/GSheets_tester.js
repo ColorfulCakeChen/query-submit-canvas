@@ -287,13 +287,13 @@ class TestCase {
       }
     }
 
-    // Test: Reenter .fetch_asyncGenerator_create_with_internal_progress()
+    // Test: Reenter .fetch_asyncGenerator_create_with_asyncPromise_progress()
     //       should throw exception.
     try {
-      urlComposer.fetch_asyncGenerator_create_with_internal_progress();
+      urlComposer.fetch_asyncGenerator_create_with_asyncPromise_progress();
     } catch ( e ) {
       if ( e.message.indexOf(
-             ".fetch_asyncGenerator_create_with_internal_progress():" ) > 0 ) {
+             ".fetch_asyncGenerator_create_with_asyncPromise_progress():" ) > 0 ) {
         // progressToAdvance.value_advance();
         // yield progressRoot;
       } else { // Unknown error, said loudly.

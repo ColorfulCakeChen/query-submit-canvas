@@ -54,11 +54,11 @@ function NonReentrant_asyncPromise_by_asyncGenerator(
     = `${name_prefix}_asyncPromise_running`;
 
 
-  const name_of_asyncGenerator_create_with_internal_progress
-    = `${name_prefix}_asyncGenerator_create_with_internal_progress`;
+  const name_of_asyncGenerator_create_with_asyncPromise_progress
+    = `${name_prefix}_asyncGenerator_create_with_asyncPromise_progress`;
 
-  const name_of_asyncGenerator_create_with_internal_progress_without_checking_precondition
-    = `${name_prefix}_asyncPromise_create_with_internal_progress_without_checking_precondition`;
+  const name_of_asyncGenerator_create_with_asyncPromise_progress_without_checking_precondition
+    = `${name_prefix}_asyncPromise_create_with_asyncPromise_progress_without_checking_precondition`;
 
 
   const name_of_asyncPromise_create
@@ -112,7 +112,7 @@ function NonReentrant_asyncPromise_by_asyncGenerator(
    * .Xxx_asyncPromise_progress needs to be disposed and recycled.
    *
    *
-   * @member {Function} Xxx_asyncGenerator_create_with_internal_progress
+   * @member {Function} Xxx_asyncGenerator_create_with_asyncPromise_progress
    *   A method for creating the underlied async generator by using
    * .Xxx_asyncPromise_progress as 1st parameter.
    *   - If an old instance is still executing, it will throw exception.
@@ -249,14 +249,14 @@ function NonReentrant_asyncPromise_by_asyncGenerator(
      *   Return the newly created instance of
      * this[ name_of_asyncGenerator_guarded ]().
      */
-    [ name_of_asyncGenerator_create_with_internal_progress ]( ...restArgs ) {
+    [ name_of_asyncGenerator_create_with_asyncPromise_progress ]( ...restArgs ) {
 
       // Note: The .throw_if_Xxx() static methods are defined in the parent
       //       class.
 
       { // Checking pre-condition.
         const funcNameInMessage
-          = name_of_asyncGenerator_create_with_internal_progress;
+          = name_of_asyncGenerator_create_with_asyncPromise_progress;
 
         NonReentrant_asyncPromise_by_asyncGenerator
           [ name_of_throw_if_an_old_asyncGenerator_still_running ]
@@ -268,7 +268,7 @@ function NonReentrant_asyncPromise_by_asyncGenerator(
       }
 
       let asyncGenerator = NonReentrant_asyncPromise_by_asyncGenerator
-        [ name_of_asyncGenerator_create_with_internal_progress_without_checking_precondition ]
+        [ name_of_asyncGenerator_create_with_asyncPromise_progress_without_checking_precondition ]
         .apply( this, restArgs );
 
       return asyncGenerator;
@@ -283,7 +283,7 @@ function NonReentrant_asyncPromise_by_asyncGenerator(
      * this[ name_of_asyncGenerator_guarded ] by internal progress.
      */
     static
-      [ name_of_asyncGenerator_create_with_internal_progress_without_checking_precondition ](
+      [ name_of_asyncGenerator_create_with_asyncPromise_progress_without_checking_precondition ](
         ...restArgs ) {
 
       // 1. Use internal independent progress.
@@ -335,7 +335,7 @@ function NonReentrant_asyncPromise_by_asyncGenerator(
 
       // 1. Prepare asyncGenerator
       let asyncGenerator = NonReentrant_asyncPromise_by_asyncGenerator
-        [ name_of_asyncGenerator_create_with_internal_progress_without_checking_precondition ]
+        [ name_of_asyncGenerator_create_with_asyncPromise_progress_without_checking_precondition ]
         .apply( this, restArgs );
 
       // 2. Wrapped as asyncPromise.
@@ -347,7 +347,7 @@ function NonReentrant_asyncPromise_by_asyncGenerator(
     }
 
 //!!! (2023/04/08 Remarked)
-// Call [ name_of_asyncGenerator_create_with_internal_progress ]() internally.
+// Call [ name_of_asyncGenerator_create_with_asyncPromise_progress ]() internally.
 //     /**
 //      * Create Xxx_asyncPromise (an auto-looping instance of guarded underlied
 //      * async generator).
