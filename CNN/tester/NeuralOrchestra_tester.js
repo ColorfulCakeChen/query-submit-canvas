@@ -752,6 +752,14 @@ class TestCase {
       ++nLoadProcessSendCount;
     }
 
+    if ( progressInit )
+      if ( 100 !== progressInit.valuePercentage )
+        throw Error( `NeuralOrchestra_tester.TestCase`
+          + `.test_init_load_process_send_asyncGenerator(): testId=${this.testId}, `
+          + `progressInit.valuePercentage (`
+          + `${progressInit.valuePercentage}) `
+          + `should be 100.` );
+
     if ( 100 !== progressToAdvance.valuePercentage )
       throw Error( `NeuralOrchestra_tester.TestCase`
         + `.test_init_load_process_send_asyncGenerator(): testId=${this.testId}, `
