@@ -832,10 +832,12 @@ class TestCase {
         n_init_asyncType, n_load_asyncType,
         progressInit );
 
-      // After first time loading (by .init_Xxx()), clear them so that loading again.
-      versus_load_asyncGenerator
-        = versus_load_asyncPromise
-        = versus_load_asyncGenerator_delayPromise = null;
+      // After first time loading (by .init_Xxx()), clear to indicate init done
+      // and need to versus_load.
+      progressInit = null;
+      versus_load_asyncGenerator = null;
+      versus_load_asyncPromise = null;
+      versus_load_asyncGenerator_delayPromise = null;
     }
 
     if ( progressInit )
