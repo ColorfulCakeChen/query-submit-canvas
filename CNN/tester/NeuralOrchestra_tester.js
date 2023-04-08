@@ -1176,6 +1176,9 @@ class TestCase {
             = progressCreateInitLoadProcessSendArray[
                 nCreateInitLoadProcessSend ];
 
+//!!! ...unfinished... (2023/04/08)
+// should also test init and versus_load by Xxx_create_with_asyncPromise_progress().
+
           yield* this.test_create_init_load_process_send_asyncGenerator(
             progressCreateInitLoadProcessSend,
             b_before_init_first_load_asyncGenerator,
