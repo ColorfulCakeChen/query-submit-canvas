@@ -1105,61 +1105,74 @@ class TestCase {
       //             .versus_load_async()
       } else {
 
-        // Test: versus_load before .init
-        //       and before .versus_load_asyncGenerator_create. (should exception.)
-        try {
-          ++this.testId;
-          neuralOrchestra.versus_load_asyncPromise_create();
-        } catch ( e ) {
-          if ( e.message.indexOf( ".versus_load_asyncPromise_create():" ) > 0 ) {
-            progressToAdvance.value_advance();
-            yield progressRoot;
-          } else { // Unknown error, said loudly.
-            throw Error( `NeuralOrchestra: testId=${this.testId}. ${e}`, { cause: e } );
-          }
-        }
+        this.neuralOrchestra_should_throw_exception( neuralOrchestra,
+          "versus_load_asyncPromise_create" );
 
-        // Test: .versus_load_asyncGenerator_create_with_asyncPromise_progress
-        //       before .init. (should exception.)
-        try {
-          ++this.testId;
-          neuralOrchestra.versus_load_asyncGenerator_create_with_asyncPromise_progress();
-        } catch ( e ) {
-          if ( e.message.indexOf(
-                 ".versus_load_asyncGenerator_create_with_asyncPromise_progress():" ) > 0 ) {
-            progressToAdvance.value_advance();
-            yield progressRoot;
-          } else { // Unknown error, said loudly.
-            throw Error( `NeuralOrchestra: testId=${this.testId}. ${e}`, { cause: e } );
-          }
-        }
+        this.neuralOrchestra_should_throw_exception( neuralOrchestra,
+          "versus_load_asyncGenerator_create_with_asyncPromise_progress" );
 
-        // Test: versus_load_asyncGenerator before .init. (should exception.)
-        try {
-          ++this.testId;
-          neuralOrchestra.versus_load_asyncGenerator_create();
-        } catch ( e ) {
-          if ( e.message.indexOf( ".versus_load_asyncGenerator_create():" ) > 0 ) {
-            progressToAdvance.value_advance();
-            yield progressRoot;
-          } else { // Unknown error, said loudly.
-            throw Error( `NeuralOrchestra: testId=${this.testId}. ${e}`, { cause: e } );
-          }
-        }
+        this.neuralOrchestra_should_throw_exception( neuralOrchestra,
+          "versus_load_asyncGenerator_create" );
 
-        // Test: versus_load before .init
-        //       but after .versus_load_asyncGenerator_create. (should exception.)
-        try {
-          ++this.testId;
-          neuralOrchestra.versus_load_asyncPromise_create();
-        } catch ( e ) {
-          if ( e.message.indexOf( ".versus_load_asyncPromise_create():" ) > 0 ) {
-            progressToAdvance.value_advance();
-            yield progressRoot;
-          } else { // Unknown error, said loudly.
-            throw Error( `NeuralOrchestra: testId=${this.testId}. ${e}`, { cause: e } );
-          }
-        }
+        this.neuralOrchestra_should_throw_exception( neuralOrchestra,
+          "versus_load_asyncPromise_create" );
+
+//!!! (2023/04/08 Remarked) Use .neuralOrchestra_should_throw_exception() instead.
+//         // Test: versus_load before .init
+//         //       and before .versus_load_asyncGenerator_create. (should exception.)
+//         try {
+//           ++this.testId;
+//           neuralOrchestra.versus_load_asyncPromise_create();
+//         } catch ( e ) {
+//           if ( e.message.indexOf( ".versus_load_asyncPromise_create():" ) > 0 ) {
+//             progressToAdvance.value_advance();
+//             yield progressRoot;
+//           } else { // Unknown error, said loudly.
+//             throw Error( `NeuralOrchestra: testId=${this.testId}. ${e}`, { cause: e } );
+//           }
+//         }
+//
+//         // Test: .versus_load_asyncGenerator_create_with_asyncPromise_progress
+//         //       before .init. (should exception.)
+//         try {
+//           ++this.testId;
+//           neuralOrchestra.versus_load_asyncGenerator_create_with_asyncPromise_progress();
+//         } catch ( e ) {
+//           if ( e.message.indexOf(
+//                  ".versus_load_asyncGenerator_create_with_asyncPromise_progress():" ) > 0 ) {
+//             progressToAdvance.value_advance();
+//             yield progressRoot;
+//           } else { // Unknown error, said loudly.
+//             throw Error( `NeuralOrchestra: testId=${this.testId}. ${e}`, { cause: e } );
+//           }
+//         }
+//
+//         // Test: versus_load_asyncGenerator before .init. (should exception.)
+//         try {
+//           ++this.testId;
+//           neuralOrchestra.versus_load_asyncGenerator_create();
+//         } catch ( e ) {
+//           if ( e.message.indexOf( ".versus_load_asyncGenerator_create():" ) > 0 ) {
+//             progressToAdvance.value_advance();
+//             yield progressRoot;
+//           } else { // Unknown error, said loudly.
+//             throw Error( `NeuralOrchestra: testId=${this.testId}. ${e}`, { cause: e } );
+//           }
+//         }
+//
+//         // Test: versus_load before .init
+//         //       but after .versus_load_asyncGenerator_create. (should exception.)
+//         try {
+//           ++this.testId;
+//           neuralOrchestra.versus_load_asyncPromise_create();
+//         } catch ( e ) {
+//           if ( e.message.indexOf( ".versus_load_asyncPromise_create():" ) > 0 ) {
+//             progressToAdvance.value_advance();
+//             yield progressRoot;
+//           } else { // Unknown error, said loudly.
+//             throw Error( `NeuralOrchestra: testId=${this.testId}. ${e}`, { cause: e } );
+//           }
+//         }
       }
 
       // 2. Initialize, load, process, send.
