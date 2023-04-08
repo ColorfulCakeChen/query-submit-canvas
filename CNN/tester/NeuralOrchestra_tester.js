@@ -473,9 +473,6 @@ class TestCase {
             + `should be 100.` );
       }
 
-      // So that it will be 0 if used wrongly in the next times test.
-      neuralOrchestra.versus_load_asyncPromise_progress.value = 0;
-
     } catch ( e ) { // Unknown error, said loudly.
       throw Error( `NeuralOrchestra: testId=${this.testId}. ${e}`, { cause: e } );
     }
