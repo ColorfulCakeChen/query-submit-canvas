@@ -432,54 +432,55 @@ class TestCase {
     //    created.
     ++this.testId;
     let versus_loadOk;
+    let progressToBeChecked;
     try {
       versus_load_asyncGenerator_delayPromise.resolve();
 
-!!! (2023/04/08 Remarked) Use n_load_asyncType and n_init_asyncType instead.
-      if ( versus_load_asyncGenerator ) {
-
-!!! ...unfinished... (2023/04/08)
-// If asyncType_1_asyncGenerator_with_asyncPromise_progress,
-// should not yield*. Otherwise, wrong progressRoot will be yielded.
-
-        versus_loadOk = yield* versus_load_asyncGenerator;
-
-        // Note: In .versus_load_asyncGenerator(),
-        //       .versus_load_asyncPromise_progress may or may not be used.
-        if ( bTryLoad ) {
-          if ( progressLoad ) {
-            if ( 100 !== progressLoad.valuePercentage )
-              throw Error( `NeuralOrchestra_tester.TestCase`
-                + `.test_load_process_send_asyncGenerator(): testId=${this.testId}, `
-                + `progressLoad.valuePercentage (`
-                + `${progressLoad.valuePercentage}) `
-                + `should be 100.` );
-          } else {
-            if ( 100 !== neuralOrchestra.versus_load_asyncPromise_progress.valuePercentage )
-              throw Error( `NeuralOrchestra_tester.TestCase`
-                + `.test_load_process_send_asyncGenerator(): testId=${this.testId}, `
-                + `neuralOrchestra.versus_load_asyncPromise_progress.valuePercentage (`
-                + `${neuralOrchestra.versus_load_asyncPromise_progress.valuePercentage}) `
-                + `should be 100.` );
-          }
-        } else {
-          // If caller's n_init_asyncType is asyncType_0_asyncGenerator,
-          // no progress could be checked here. (Although it may be checkable
-          // in other cases.)
-          //
-          // So, do nothing here.
-        }
-
-      } else {
-        versus_loadOk = await versus_load_asyncPromise;
-
-        if ( 100 !== neuralOrchestra.versus_load_asyncPromise_progress.valuePercentage )
-          throw Error( `NeuralOrchestra_tester.TestCase`
-            + `.test_load_process_send_asyncGenerator(): testId=${this.testId}, `
-            + `neuralOrchestra.versus_load_asyncPromise_progress.valuePercentage (`
-            + `${neuralOrchestra.versus_load_asyncPromise_progress.valuePercentage}) `
-            + `should be 100.` );
-      }
+//!!! (2023/04/08 Remarked) Use n_load_asyncType and n_init_asyncType instead.
+//       if ( versus_load_asyncGenerator ) {
+//
+// !!! ...unfinished... (2023/04/08)
+// // If asyncType_1_asyncGenerator_with_asyncPromise_progress,
+// // should not yield*. Otherwise, wrong progressRoot will be yielded.
+//
+//         versus_loadOk = yield* versus_load_asyncGenerator;
+//
+//         // Note: In .versus_load_asyncGenerator(),
+//         //       .versus_load_asyncPromise_progress may or may not be used.
+//         if ( bTryLoad ) {
+//           if ( progressLoad ) {
+//             if ( 100 !== progressLoad.valuePercentage )
+//               throw Error( `NeuralOrchestra_tester.TestCase`
+//                 + `.test_load_process_send_asyncGenerator(): testId=${this.testId}, `
+//                 + `progressLoad.valuePercentage (`
+//                 + `${progressLoad.valuePercentage}) `
+//                 + `should be 100.` );
+//           } else {
+//             if ( 100 !== neuralOrchestra.versus_load_asyncPromise_progress.valuePercentage )
+//               throw Error( `NeuralOrchestra_tester.TestCase`
+//                 + `.test_load_process_send_asyncGenerator(): testId=${this.testId}, `
+//                 + `neuralOrchestra.versus_load_asyncPromise_progress.valuePercentage (`
+//                 + `${neuralOrchestra.versus_load_asyncPromise_progress.valuePercentage}) `
+//                 + `should be 100.` );
+//           }
+//         } else {
+//           // If caller's n_init_asyncType is asyncType_0_asyncGenerator,
+//           // no progress could be checked here. (Although it may be checkable
+//           // in other cases.)
+//           //
+//           // So, do nothing here.
+//         }
+//
+//       } else {
+//         versus_loadOk = await versus_load_asyncPromise;
+//
+//         if ( 100 !== neuralOrchestra.versus_load_asyncPromise_progress.valuePercentage )
+//           throw Error( `NeuralOrchestra_tester.TestCase`
+//             + `.test_load_process_send_asyncGenerator(): testId=${this.testId}, `
+//             + `neuralOrchestra.versus_load_asyncPromise_progress.valuePercentage (`
+//             + `${neuralOrchestra.versus_load_asyncPromise_progress.valuePercentage}) `
+//             + `should be 100.` );
+//       }
 
 //!!!
 
@@ -489,13 +490,7 @@ class TestCase {
           case asyncType_0_asyncGenerator: // 0
             {
               versus_loadOk = yield* versus_load_asyncGenerator;
-
-              if ( 100 !== progressLoad.valuePercentage )
-                throw Error( `NeuralOrchestra_tester.TestCase`
-                  + `.test_load_process_send_asyncGenerator(): testId=${this.testId}, `
-                  + `progressLoad.valuePercentage (`
-                  + `${progressLoad.valuePercentage}) `
-                  + `should be 100.` );
+              progressToBeChecked = progressLoad;
             }
             break;
   
@@ -507,23 +502,14 @@ class TestCase {
                 loaderNext = await versus_load_asyncGenerator.next();
               } while ( !loaderNext.done );
               versus_loadOk = loaderNext.value;
-  
-!!! ...unfinished... (2023/04/08)
-
-
+              progressToBeChecked = neuralOrchestra.versus_load_asyncPromise_progress;
             }
             break;
   
           case asyncType_2_asyncPromise: // 2
             {
               versus_loadOk = await versus_load_asyncPromise;
-
-              if ( 100 !== neuralOrchestra.versus_load_asyncPromise_progress.valuePercentage )
-                throw Error( `NeuralOrchestra_tester.TestCase`
-                  + `.test_load_process_send_asyncGenerator(): testId=${this.testId}, `
-                  + `neuralOrchestra.versus_load_asyncPromise_progress.valuePercentage (`
-                  + `${neuralOrchestra.versus_load_asyncPromise_progress.valuePercentage}) `
-                  + `should be 100.` );
+              progressToBeChecked = neuralOrchestra.versus_load_asyncPromise_progress;
             }
             break;
   
@@ -567,6 +553,12 @@ class TestCase {
         }
       }
 
+      if ( 100 !== progressToBeChecked.valuePercentage )
+        throw Error( `NeuralOrchestra_tester.TestCase`
+          + `.test_load_process_send_asyncGenerator(): testId=${this.testId}, `
+          + `progressToBeChecked.valuePercentage (`
+          + `${progressToBeChecked.valuePercentage}) `
+          + `should be 100.` );
 
 //!!!
       // Clear it to prevent from be misused by the next testing.
