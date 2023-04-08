@@ -324,10 +324,8 @@ class TestCase {
     progressParent, neuralOrchestra,
     versus_load_asyncGenerator, versus_load_asyncPromise,
     versus_load_asyncGenerator_delayPromise,
-    n_init_asyncType, n_load_asyncType ) {
-
-!!! ...unfinished... (2023/04/08)
-//  n_init_asyncType
+    n_init_asyncType, n_load_asyncType,
+    progressInit ) {
 
     ++this.testId;
 
@@ -538,6 +536,8 @@ class TestCase {
           case asyncType_0_asyncGenerator: // 0
             {
 !!! ...unfinished... (2023/04/08)
+// check progressInit
+
             }
             break;
     
@@ -908,7 +908,8 @@ class TestCase {
         progressLoadProcessSend, neuralOrchestra,
         versus_load_asyncGenerator, versus_load_asyncPromise,
         versus_load_asyncGenerator_delayPromise,
-        n_init_asyncType, n_load_asyncType );
+        n_init_asyncType, n_load_asyncType,
+        progressInit );
 
       // After first time loading (by .init_Xxx()), clear them so that loading again.
       versus_load_asyncGenerator
