@@ -82,6 +82,10 @@ function NonReentrant_asyncPromise_by_asyncGenerator(
     = `${name_of_asyncPromise_progress}_dispose`;
 
 
+  const name_of_throw_if_an_old_asyncPromise_still_running
+    = `throw_if_an_old_${name_prefix}_asyncPromise_still_running`;
+
+
   // These static methods are defined in parent class (i.e.
   // NonReentrant_asyncGenerator), however, they will be called by this
   // sub-class (i.e. NonReentrant_asyncPromise_by_asyncGenerator). So, their
@@ -89,6 +93,9 @@ function NonReentrant_asyncPromise_by_asyncGenerator(
 
   const name_of_asyncGenerator_create_without_checking_precondition
     = `${name_prefix}_asyncGenerator_create_without_checking_precondition`;
+
+  const name_of_throw_if_an_old_asyncGenerator_still_running
+    = `throw_if_an_old_${name_prefix}_asyncGenerator_still_running`;
 
   const name_of_throw_if_asyncPromise_or_asyncGenerator_running
     = `throw_if_${name_prefix}_asyncPromise_or_asyncGenerator_running`;
@@ -252,19 +259,15 @@ function NonReentrant_asyncPromise_by_asyncGenerator(
     [ name_of_asyncGenerator_create_with_internal_progress ]( ...restArgs ) {
 
       // Note: The .throw_if_Xxx() static methods are defined in the parent
-      //       classs.
+      //       class.
 
       { // Checking pre-condition.
         const funcNameInMessage
           = name_of_asyncGenerator_create_with_internal_progress;
 
         NonReentrant_asyncPromise_by_asyncGenerator
-          .throw_if_an_old_still_running.call( this,
-
-!!! ...unfinished... (2023/04/08)
-// should check .#asyncGenerator_running
-
-            this.#asyncPromise_running, funcNameInMessage );
+          [ name_of_throw_if_an_old_asyncGenerator_still_running ]
+          .call( this, funcNameInMessage );
 
         NonReentrant_asyncPromise_by_asyncGenerator
           [ name_of_throw_if_asyncPromise_or_asyncGenerator_running ]
@@ -323,14 +326,14 @@ function NonReentrant_asyncPromise_by_asyncGenerator(
     [ name_of_asyncPromise_create ]( ...restArgs ) {
 
       // Note: The .throw_if_Xxx() static methods are defined in the parent
-      //       classs.
+      //       class.
 
       { // Checking pre-condition.
         const funcNameInMessage = name_of_asyncPromise_create;
 
         NonReentrant_asyncPromise_by_asyncGenerator
-          .throw_if_an_old_still_running.call( this,
-            this.#asyncPromise_running, funcNameInMessage );
+          [ name_of_throw_if_an_old_asyncPromise_still_running ]
+          .call( this, funcNameInMessage );
 
         NonReentrant_asyncPromise_by_asyncGenerator
           [ name_of_throw_if_asyncPromise_or_asyncGenerator_running ]
@@ -366,14 +369,18 @@ function NonReentrant_asyncPromise_by_asyncGenerator(
 //     [ name_of_asyncPromise_create ]( ...restArgs ) {
 //
 //       // Note: The .throw_if_Xxx() static methods are defined in the parent
-//       //       classs.
+//       //       class.
 //
 //       { // Checking pre-condition.
 //         const funcNameInMessage = name_of_asyncPromise_create;
 //
 //         NonReentrant_asyncPromise_by_asyncGenerator
-//           .throw_if_an_old_still_running.call( this,
-//             this.#asyncPromise_running, funcNameInMessage );
+//           [ name_of_throw_if_an_old_asyncPromise_still_running ]
+//           .call( this, funcNameInMessage );
+//
+////         NonReentrant_asyncPromise_by_asyncGenerator
+////           .throw_if_an_old_still_running.call( this,
+////            this.#asyncPromise_running, funcNameInMessage );
 //
 //         NonReentrant_asyncPromise_by_asyncGenerator
 //           [ name_of_throw_if_asyncPromise_or_asyncGenerator_running ]
@@ -444,7 +451,7 @@ function NonReentrant_asyncPromise_by_asyncGenerator(
     static async [ name_of_asyncPromise_guarded ]( asyncGenerator ) {
 
       // Note: The .throw_if_Xxx() static methods are defined in the parent
-      //       classs.
+      //       class.
 
       { // Checking pre-condition.
         const funcNameInMessage = name_of_asyncPromise_guarded;
@@ -474,6 +481,22 @@ function NonReentrant_asyncPromise_by_asyncGenerator(
         // 2. So that this async method could be executed again.
         this.#asyncPromise_running = false;
       }
+    }
+
+
+    /**
+     * @param {NonReentrant_asyncPromise_by_asyncGenerator} this
+     * @param {string} funcNameInMessage   The caller function name. (e.g. init_async)
+     */
+    static [ name_of_throw_if_an_old_asyncPromise_still_running ](
+      funcNameInMessage ) {
+
+      // Note: The .throw_if_Xxx() static methods are defined in the parent
+      //       class.
+
+      NonReentrant_asyncPromise_by_asyncGenerator
+        .throw_if_an_old_still_running
+        .call( this, this.#asyncPromise_running, funcNameInMessage );
     }
   } );
 

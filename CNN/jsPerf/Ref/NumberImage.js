@@ -90,7 +90,7 @@ class NumberImage_Base extends Recyclable.Root {
     this.input1_ScaleBoundsArray = input1_ScaleBoundsArray?.clone();
 
     // Note1: Different BoundsArraySet class have different arguments.
-    // Note2: BoundsArraySetClass is classs (i.e. not instance). It can not be tested by instanceof.
+    // Note2: BoundsArraySetClass is class (i.e. not instance). It can not be tested by instanceof.
     // Note3: NumberImage's BoundsArraySet always has only output0.
     //
     switch ( BoundsArraySetClass ) {
