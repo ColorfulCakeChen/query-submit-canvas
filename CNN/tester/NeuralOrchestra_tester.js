@@ -523,11 +523,25 @@ class TestCase {
     let progressRoot = progressParent.root_get();
 
     let progressInit;
+    switch ( n_init_asyncType ) {
+      case asyncType_0_asyncGenerator: // 0
+        progressInit = progressParent.child_add(
+          ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
+        break;
 
-!!! ...unfinished... (2023/04/08)
-    if ( b_init_asyncGenerator )
-      progressInit = progressParent.child_add(
-        ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
+      case asyncType_1_asyncGenerator_with_asyncPromise_progress: // 1
+        break; // Use internal progress.
+
+      case asyncType_2_asyncPromise: // 2
+        break; // Use internal progress.
+
+      default:
+        throw Error( `NeuralOrchestra_tester.TestCase`
+          + `.test_init_load_process_send_asyncGenerator(): testId=${this.testId}, `
+          + `n_init_asyncType ( ${n_init_asyncType} ) `
+          + `should be 0 or 1 or 2.` );
+        break;
+     }
 
     let progressLoadProcessSendArray = new Array( nLoadProcessSendCountMax );
     for ( let i = 0; i < nLoadProcessSendCountMax; ++i ) {
@@ -816,28 +830,22 @@ class TestCase {
       // 2. Initialize, load, process, send.
       let nInitLoadProcessSend = 0;
 
-//!!! ...unfinished... (2023/04/08)
-//       * init_asyncTypeOrder.count
-//       * load_asyncTypeOrder.count
+      // Test: re-init (without re-create).
+      for ( let initCount = 0; initCount < this.initCountBase; ++initCount ) {
+        let progressInitLoadProcessSend
+          = progressInitLoadProcessSendArray[ nInitLoadProcessSend ];
 
-      // Test: use .init_async() or .init_asyncGenerator().
-!!! ...unfinished... (2023/04/08)
-      let b_init_asyncGenerator;
-      for (
-        let n_init_asyncType = init_asyncTypeOrder.begin;
-        n_init_asyncType != init_asyncTypeOrder.end;
-        n_init_asyncType += init_asyncTypeOrder.step ) {
-
-        // Test: use .versus_load_async() or .versus_load_asyncGenerator().
+        // Test: use .init_async() or .init_asyncGenerator().
         for (
-          let n_load_asyncType = load_asyncTypeOrder.begin;
-          n_load_asyncType != load_asyncTypeOrder.end;
-          n_load_asyncType += load_asyncTypeOrder.step ) {
+          let n_init_asyncType = init_asyncTypeOrder.begin;
+          n_init_asyncType != init_asyncTypeOrder.end;
+          n_init_asyncType += init_asyncTypeOrder.step ) {
 
-          // Test: re-init (without re-create).
-          for ( let initCount = 0; initCount < this.initCountBase; ++initCount ) {
-            let progressInitLoadProcessSend
-              = progressInitLoadProcessSendArray[ nInitLoadProcessSend ];
+          // Test: use .versus_load_async() or .versus_load_asyncGenerator().
+          for (
+            let n_load_asyncType = load_asyncTypeOrder.begin;
+            n_load_asyncType != load_asyncTypeOrder.end;
+            n_load_asyncType += load_asyncTypeOrder.step ) {
 
             yield* this.test_init_load_process_send_asyncGenerator(
               progressInitLoadProcessSend, neuralOrchestra,
