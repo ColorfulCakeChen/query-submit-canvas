@@ -67,7 +67,7 @@ class TestCase {
 // .createCountBase and.initCountBase seem not necessary.
 //     this.createCountBase = 2; // Try create NeuralOrchestra twice.
 //     this.initCountBase = 2;   // Try init NeuralOrchestra twice.
-    this.loadCountBase = 2;
+    this.loadCountBase = 2; // One is by init, another is by versus_load
 
     this.testId = undefined; // For debug.
 
