@@ -457,7 +457,8 @@ class TestCase {
           }
         } else {
           // If caller's n_init_asyncType is asyncType_0_asyncGenerator,
-          // no progress could be checked here.
+          // no progress could be checked here. (Although it may be checkable
+          // in other cases.)
           //
           // So, do nothing here.
         }
