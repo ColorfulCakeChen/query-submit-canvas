@@ -54,6 +54,13 @@ function NonReentrant_asyncPromise_by_asyncGenerator(
     = `${name_prefix}_asyncPromise_running`;
 
 
+  const name_of_asyncGenerator_create_with_internal_progress
+    = `${name_prefix}_asyncGenerator_create_with_internal_progress`;
+
+  const name_of_asyncGenerator_create_with_internal_progress_without_checking_precondition
+    = `${name_prefix}_asyncPromise_create_with_internal_progress_without_checking_precondition`;
+
+
   const name_of_asyncPromise_create
     = `${name_prefix}_asyncPromise_create`;
 
@@ -97,6 +104,15 @@ function NonReentrant_asyncPromise_by_asyncGenerator(
    * inherits directly or indirectly from) Recyclable.Base because the
    * .Xxx_asyncPromise_progress needs to be disposed and recycled.
    *
+   *
+   * @member {Function} Xxx_asyncGenerator_create_with_internal_progress
+   *   A method for creating the underlied async generator by using
+   * .Xxx_asyncPromise_progress as 1st parameter.
+   *   - If an old instance is still executing, it will throw exception.
+   *   - It accepts almost the same parameters as
+   *       underlied_asyncGenerator_func() except without the 1st parameter
+   *       progressParent (which is replaced by .Xxx_asyncPromise_progress).
+   *   - It returns an async generator.
    *
    * @member {boolean} Xxx_asyncPromise_running
    *   If true, a underlied async method (i.e. .Xxx_asyncPromise_guarded())
@@ -215,6 +231,73 @@ function NonReentrant_asyncPromise_by_asyncGenerator(
 
 
     /**
+     * Create Xxx_asyncGenerator (an instance of guarded underlied async
+     * generator).
+     *
+     * Note: The this[ name_of_asyncPromise_progress ] will record progress of
+     *       this method.
+     *
+     * @return {AsyncGenerator}
+     *   Return the newly created instance of
+     * this[ name_of_asyncGenerator_guarded ]().
+     */
+    [ name_of_asyncGenerator_create_with_internal_progress ]( ...restArgs ) {
+
+      // Note: The .throw_if_Xxx() static methods are defined in the parent
+      //       classs.
+
+      { // Checking pre-condition.
+        const funcNameInMessage
+          = name_of_asyncGenerator_create_with_internal_progress;
+
+        NonReentrant_asyncPromise_by_asyncGenerator
+          .throw_if_an_old_still_running.call( this,
+            this.#asyncPromise_running, funcNameInMessage );
+
+        NonReentrant_asyncPromise_by_asyncGenerator
+          [ name_of_throw_if_asyncPromise_or_asyncGenerator_running ]
+          .call( this, funcNameInMessage );
+      }
+
+      let asyncGenerator = NonReentrant_asyncPromise_by_asyncGenerator
+        [ name_of_asyncGenerator_create_with_internal_progress_without_checking_precondition ]
+        .apply( this, restArgs );
+
+      return asyncGenerator;
+    }
+
+    /**
+     *
+     * @param {NonReentrant_asyncPromise_by_asyncGenerator} this
+     *
+     * @return {AsyncGenerator}
+     *   Return the newly created instance of
+     * this[ name_of_asyncGenerator_guarded ] by internal progress.
+     */
+    static
+      [ name_of_asyncGenerator_create_with_internal_progress_without_checking_precondition ](
+        asyncGenerator ) {
+
+      // 1. Use internal independent progress.
+      NonReentrant_asyncPromise_by_asyncGenerator
+        [ name_of_asyncPromise_progress_create ]
+        .call( this );
+
+      // 2. Create asyncGenerator
+      //
+      // Note: The Xxx_asyncGenerator_create_without_checking_precondition()
+      //       (which is a static method defined in parent class) will also
+      //       set this[ name_of_asyncResultOk ] to undefined.
+      //
+      let asyncGenerator = NonReentrant_asyncPromise_by_asyncGenerator
+        [ name_of_asyncGenerator_create_without_checking_precondition ]
+        .call( this, this[ name_of_asyncPromise_progress ], ...restArgs );
+
+      return asyncGenerator;
+    }
+
+
+    /**
      * Create Xxx_asyncPromise (an auto-looping instance of guarded underlied
      * async generator).
      *
@@ -242,31 +325,74 @@ function NonReentrant_asyncPromise_by_asyncGenerator(
           .call( this, funcNameInMessage );
       }
 
-      // 1.
-      let asyncGenerator;
-      {
-        // Use internal independent progress.
-        NonReentrant_asyncPromise_by_asyncGenerator
-          [ name_of_asyncPromise_progress_create ]
-          .call( this );
+      // 1. Prepare asyncGenerator
+      let asyncGenerator = NonReentrant_asyncPromise_by_asyncGenerator
+        [ name_of_asyncGenerator_create_with_internal_progress_without_checking_precondition ]
+        .apply( this, restArgs );
 
-        // Prepare asyncGenerator
-        //
-        // Note: The Xxx_asyncGenerator_create_without_checking_precondition()
-        //       (which is a static method defined in parent class) will also
-        //       set this[ name_of_asyncResultOk ] to  undefined.
-        //
-        asyncGenerator = NonReentrant_asyncPromise_by_asyncGenerator
-          [ name_of_asyncGenerator_create_without_checking_precondition ]
-          .call( this, this[ name_of_asyncPromise_progress ], ...restArgs );
-      }
-
-      // 2.
+      // 2. Wrapped as asyncPromise.
       let asyncPromise = NonReentrant_asyncPromise_by_asyncGenerator
         [ name_of_asyncPromise_create_without_checking_precondition ]
         .call( this, asyncGenerator );
+
       return asyncPromise;
     }
+
+//!!! (2023/04/08 Remarked)
+// Call [ name_of_asyncGenerator_create_with_internal_progress ]() internally.
+//     /**
+//      * Create Xxx_asyncPromise (an auto-looping instance of guarded underlied
+//      * async generator).
+//      *
+//      * Note: The this[ name_of_asyncPromise_progress ] will record progress of
+//      *       this method.
+//      *
+//      *
+//      * @return {Promise}
+//      *   Return the newly created .guarded_async() promise.
+//      */
+//     [ name_of_asyncPromise_create ]( ...restArgs ) {
+//
+//       // Note: The .throw_if_Xxx() static methods are defined in the parent
+//       //       classs.
+//
+//       { // Checking pre-condition.
+//         const funcNameInMessage = name_of_asyncPromise_create;
+//
+//         NonReentrant_asyncPromise_by_asyncGenerator
+//           .throw_if_an_old_still_running.call( this,
+//             this.#asyncPromise_running, funcNameInMessage );
+//
+//         NonReentrant_asyncPromise_by_asyncGenerator
+//           [ name_of_throw_if_asyncPromise_or_asyncGenerator_running ]
+//           .call( this, funcNameInMessage );
+//       }
+//
+//       // 1.
+//       let asyncGenerator;
+//       {
+//         // Use internal independent progress.
+//         NonReentrant_asyncPromise_by_asyncGenerator
+//           [ name_of_asyncPromise_progress_create ]
+//           .call( this );
+//
+//         // Prepare asyncGenerator
+//         //
+//         // Note: The Xxx_asyncGenerator_create_without_checking_precondition()
+//         //       (which is a static method defined in parent class) will also
+//         //       set this[ name_of_asyncResultOk ] to  undefined.
+//         //
+//         asyncGenerator = NonReentrant_asyncPromise_by_asyncGenerator
+//           [ name_of_asyncGenerator_create_without_checking_precondition ]
+//           .call( this, this[ name_of_asyncPromise_progress ], ...restArgs );
+//       }
+//
+//       // 2.
+//       let asyncPromise = NonReentrant_asyncPromise_by_asyncGenerator
+//         [ name_of_asyncPromise_create_without_checking_precondition ]
+//         .call( this, asyncGenerator );
+//       return asyncPromise;
+//     }
 
     /**
      *
