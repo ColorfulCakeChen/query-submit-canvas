@@ -498,13 +498,26 @@ class TestCase {
                   + `progressLoad.valuePercentage (`
                   + `${progressLoad.valuePercentage}) `
                   + `should be 100.` );
+
+!!! ...unfinished... (2023/04/08)
+
             }
             break;
   
           case asyncType_1_asyncGenerator_with_asyncPromise_progress: // 1
+            { // Do not use yield* here. Otherwise, wrong progressRoot (of
+              // internal progress) will be yielded to outside caller.
+
+!!! ...unfinished... (2023/04/08)
+
+
+            }
             break;
   
           case asyncType_2_asyncPromise: // 2
+            {
+!!! ...unfinished... (2023/04/08)
+            }
             break;
   
           default:
@@ -519,12 +532,21 @@ class TestCase {
         // According to which .init_Xxx() (not which .versus_load_Xxx()) is used.
         switch ( n_init_asyncType ) {
           case asyncType_0_asyncGenerator: // 0
+            {
+!!! ...unfinished... (2023/04/08)
+            }
             break;
     
           case asyncType_1_asyncGenerator_with_asyncPromise_progress: // 1
+            {
+!!! ...unfinished... (2023/04/08)
+            }
             break;
     
           case asyncType_2_asyncPromise: // 2
+            {
+!!! ...unfinished... (2023/04/08)
+            }
             break;
     
           default:
@@ -534,7 +556,6 @@ class TestCase {
               + `should be 0 or 1 or 2.` );
             break;
         }
-    
       }
 
 
@@ -780,8 +801,7 @@ class TestCase {
           break;
 
         case asyncType_1_asyncGenerator_with_asyncPromise_progress: // 1
-          {
-            // Do not use yield* here. Otherwise, wrong progressRoot (of
+          { // Do not use yield* here. Otherwise, wrong progressRoot (of
             // internal progress) will be yielded to outside caller.
             let initerNext;
             do {
