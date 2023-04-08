@@ -485,7 +485,6 @@ class TestCase {
 //             + `should be 100.` );
 //       }
 
-//!!!
 
       if ( bTryLoad ) {
         // According to which .versus_load_Xxx() is used.
@@ -908,10 +907,12 @@ class TestCase {
       let progressLoadProcessSend
         = progressLoadProcessSendArray[ nLoadProcessSendCount ];
 
-      // Test: loading multiple times. The first time is by above .init_asyncXxx()
-      //       internally. The others (after 2nd times) are by calling
-      //       .versus_load_asyncGenerator_create() or .versus_load_asyncPromise_create()
-      //       by .test_load_process_send_asyncGenerator().
+      // Test: loading multiple times. The first time is by above
+      //       .init_asyncXxx() internally. The others (after 2nd times
+      //       (inclusive)) are by calling .versus_load_asyncGenerator_create()
+      //       or .versus_load_asyncGenerator_create_with_asyncPromis_progress()
+      //       or .versus_load_asyncPromise_create()
+      //       in the .test_load_process_send_asyncGenerator().
       yield* this.test_load_process_send_asyncGenerator(
         progressLoadProcessSend, neuralOrchestra,
         versus_load_asyncGenerator, versus_load_asyncPromise,
