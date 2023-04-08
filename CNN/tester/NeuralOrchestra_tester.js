@@ -570,7 +570,8 @@ class TestCase {
       if ( versus_load_asyncGenerator ) {
         versus_loadOk = yield* versus_load_asyncGenerator;
 
-        // Note: In .versus_load_asyncGenerator(), .versus_load_asyncPromise_progress is not used.
+        // Note: In .versus_load_asyncGenerator(),
+        //       .versus_load_asyncPromise_progress is not used.
         if ( bTryLoad )
           if ( 100 !== progressLoad.valuePercentage )
             throw Error( `NeuralOrchestra_tester.TestCase`
