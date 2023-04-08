@@ -63,12 +63,10 @@ class TestCase {
     };
 
 
-//!!! ...unfinished... (2023/04/08)
-// seems no need .createCountBase, .initCountBase
-
-
-    this.createCountBase = 2; // Try create NeuralOrchestra twice.
-    this.initCountBase = 2;   // Try init NeuralOrchestra twice.
+//!!! (2023/04/08 Remarked)
+// .createCountBase and.initCountBase seem not necessary.
+//     this.createCountBase = 2; // Try create NeuralOrchestra twice.
+//     this.initCountBase = 2;   // Try init NeuralOrchestra twice.
     this.loadCountBase = 2;
 
     this.testId = undefined; // For debug.
@@ -949,7 +947,10 @@ class TestCase {
 
     ++this.testId;
 
-    const nInitLoadProcessSendMax = this.initCountBase
+//!!! (2023/04/08 Remarked)
+// .createCountBase and.initCountBase seem not necessary.
+//    const nInitLoadProcessSendMax = this.initCountBase
+    const nInitLoadProcessSendMax = 1
       * init_asyncTypeOrder.count
       * load_asyncTypeOrder.count
       ;
@@ -1011,10 +1012,13 @@ class TestCase {
       }
 
       // 2. Initialize, load, process, send.
+      //
+      // Test: re-init (without re-create).
       let nInitLoadProcessSend = 0;
 
-      // Test: re-init (without re-create).
-      for ( let initCount = 0; initCount < this.initCountBase; ++initCount ) {
+//!!! (2023/04/08 Remarked)
+// .createCountBase and.initCountBase seem not necessary.
+//      for ( let initCount = 0; initCount < this.initCountBase; ++initCount ) {
 
         // Test: use .init_async() or .init_asyncGenerator().
         for (
@@ -1040,7 +1044,10 @@ class TestCase {
             ++nInitLoadProcessSend;
           }
         }
-      }
+
+//!!! (2023/04/08 Remarked)
+// .createCountBase and.initCountBase seem not necessary.
+//      }
 
       if ( 100 !== progressToAdvance.valuePercentage )
         throw Error( `NeuralOrchestra_tester.TestCase`
@@ -1065,7 +1072,10 @@ class TestCase {
   async* test_asyncGenerator( progressParent ) {
     this.testId = 0;
 
-    const nCreateInitLoadProcessSendMax = this.createCountBase
+//!!! (2023/04/08 Remarked)
+// .createCountBase and.initCountBase seem not necessary.
+//    const nCreateInitLoadProcessSendMax = this.createCountBase
+    const nCreateInitLoadProcessSendMax = 1
       * asyncTypeOrderArray.length // init_asyncTypeOrder
       * asyncTypeOrderArray.length // load_asyncTypeOrder
       ;
@@ -1084,11 +1094,13 @@ class TestCase {
     // 2. Create, initialize, load, process, send.
     let nCreateInitLoadProcessSend = 0;
 
-    // Test: re-create.
-    for (
-      let createCount = 0;
-      createCount < this.createCountBase;
-      ++createCount ) {
+//!!! (2023/04/08 Remarked)
+// .createCountBase and.initCountBase seem not necessary.
+//     // Test: re-create.
+//     for (
+//       let createCount = 0;
+//       createCount < this.createCountBase;
+//       ++createCount ) {
 
       // Test: use .init_async() or .init_asyncGenerator() first.
       for (
@@ -1117,12 +1129,10 @@ class TestCase {
         }
       }
 
+//!!! (2023/04/08 Remarked)
+// .createCountBase and.initCountBase seem not necessary.
+//    }
 
-//!!! ...unfinished... (2023/04/08)
-// should reverse init_asyncTypeOrder and load_asyncTypeOrder.
-
-
-    }
   }
 
 }
