@@ -167,7 +167,7 @@ function params_loading_retryWaiting_extractFromUI() {
  * Await load_asyncGenerator and display progress simultaneously.
  *
  * It loops the async generator slower. But its progress displaying is better
- * (than retryTimes_progress_load_by_asyncPromise()).
+ * (than by setTimeout()).
  *
  * The reasons are:
  *
@@ -237,7 +237,8 @@ async function load_asyncGenerator_ticker_by_loop(
 }
 
 /**
- * Almost same as load_asyncGenerator_ticker_by_loop() but uses callback.
+ * Almost same as load_asyncGenerator_ticker_by_loop() but uses callback
+ * internally.
  */
 function load_asyncGenerator_ticker_by_callback(
   load_asyncGenerator,
