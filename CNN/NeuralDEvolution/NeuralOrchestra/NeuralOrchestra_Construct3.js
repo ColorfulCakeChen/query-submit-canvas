@@ -112,8 +112,7 @@ class NeuralOrchestra_Construct3 extends Base {
 //!!! ...unfinished... (2023/04/08)
     class AA {
       lastNextAwaiting;
-      lastNextDone;
-      //lastNextValue;
+      lastNext;
 
       constructor( asyncGenerator ) {
         this.asyncGenerator = asyncGenerator;
@@ -122,14 +121,12 @@ class NeuralOrchestra_Construct3 extends Base {
       true_when_done() {
         if ( this.lastNextAwaiting )
           return false;
-        if ( this.lastNextDone )
+        if ( this.lastNext?.done )
           return true;
 
         this.lastNextAwaiting = true;
         this.asyncGenerator.next().then( done_value => {
           this.lastNext = done_value;
-          this.lastNextDone = done_value.done;
-          //lastNextValue = done_value.value;
           this.lastNextAwaiting = false;
         });
         return false;
