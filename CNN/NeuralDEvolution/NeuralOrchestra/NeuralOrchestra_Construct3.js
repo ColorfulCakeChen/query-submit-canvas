@@ -68,6 +68,9 @@ class NeuralOrchestra_Construct3 extends Base {
     let pfnStep = NeuralOrchestra_Construct3.Versus_Step_Function_Array[
       runtime.globalVars.Versus_Step_Current ];
 
+//!!! ...unfinished... (2023/04/09)
+// Perhaps, let the returned valud of pfnStep() representing the new state id.
+// So that they can determine going to which state.
     pfnStep.call( this, runtime );
   }
 
