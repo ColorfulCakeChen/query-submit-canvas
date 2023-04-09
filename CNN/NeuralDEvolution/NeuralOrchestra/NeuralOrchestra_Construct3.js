@@ -140,8 +140,10 @@ class NeuralOrchestra_Construct3 extends Base {
     }
 
     update_to_UI();
-    if ( !notDone_if_awaiting() )
-      change_to_next_state();
+    if ( notDone_if_awaiting() )
+      return;
+
+    change_to_next_state();
   }
 
   /**
