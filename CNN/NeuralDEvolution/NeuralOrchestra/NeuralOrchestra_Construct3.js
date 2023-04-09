@@ -1,5 +1,6 @@
 export { NeuralOrchestra_Construct3 as Construct3 };
 
+import * as PartTime from "../../util/PartTime.js";
 import * as Pool from "../../util/Pool.js";
 import * as Recyclable from "../../util/Recyclable.js";
 // import * as ValueDesc from "../../Unpacker/ValueDesc.js";
@@ -8,15 +9,16 @@ import * as Recyclable from "../../util/Recyclable.js";
 import { Base } from "./NeuralOrchestra_Base.js";
 
 /**
- * Orchestrate neural networks with differential evolution, and inter-operate with
- * Construct3 Game Engine.
+ * Orchestrate neural networks with differential evolution, and inter-operate
+ * with Construct3 Game Engine.
  *
  *
  */
 class NeuralOrchestra_Construct3 extends Base {
 
   /**
-   * Used as default NeuralOrchestra.Construct3 provider for conforming to Recyclable interface.
+   * Used as default NeuralOrchestra.Construct3 provider for conforming to
+   * Recyclable interface.
    */
   static Pool = new Pool.Root( "NeuralOrchestra.Construct3.Pool",
     NeuralOrchestra_Construct3, NeuralOrchestra_Construct3.setAsConstructor );
@@ -54,8 +56,8 @@ class NeuralOrchestra_Construct3 extends Base {
    *
    *   - runtime.globalVars.Versus_Step_X_Yyy: The defined step constants.
    *
-   *   - runtime.globalVars.Versus_Step_Current: The current game step. It's value
-   *       should be one of runtime.globalVars.Versus_Step_X_Yyy
+   *   - runtime.globalVars.Versus_Step_Current: The current game step. It's
+   *       value should be one of runtime.globalVars.Versus_Step_X_Yyy
    *
    *
    * @param {Object} runtime
@@ -80,7 +82,10 @@ class NeuralOrchestra_Construct3 extends Base {
    */
   static Versus_Step_00_DownloadWeights_Begin( runtime ) {
 
-//!!! ...unfinished... (2022/10/27)
+//!!! ...unfinished... (2023/04/08)
+    // let versus_load_asyncGenerator = this.???;
+    this.versus_load_asyncGeneratorTicker
+      = new PartTime.AsyncGeneratorTicker( versus_load_asyncGenerator );
 
 
   }
@@ -114,38 +119,9 @@ class NeuralOrchestra_Construct3 extends Base {
 //
 
 //!!! ...unfinished... (2023/04/08)
-    class AsyncGeneratorNext {
-      lastNextAwaiting;
-      lastNext;
-
-      constructor( asyncGenerator ) {
-        this.asyncGenerator = asyncGenerator;
-      }
-
-      /**
-       * 
-       * @return {boolean}
-       *   - Return false, if awaiting .asyncGenerator.next().
-       *   - Return true, if .asyncGenerator is done.
-       */
-      done() {
-        if ( this.lastNextAwaiting )
-          return false; // not done since still awaiting.
-        if ( this.lastNext?.done )
-          return true;
-
-        this.lastNextAwaiting = true;
-        this.asyncGenerator.next().then( done_value => {
-          this.lastNext = done_value;
-          this.lastNextAwaiting = false;
-        });
-        return false;
-      }
-    }
 
     update_to_UI();
-    if ( done() ) {
-      
+    if ( this.versus_load_asyncGeneratorTicker.done() ) {
       return next_state_id; // change to next state.
     }
 

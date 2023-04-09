@@ -4,7 +4,7 @@ export { Promise_create_by_addEventListener_once };
 export { Promise_create_by_setTimeout };
 export { Promise_resolvable_rejectable_create };
 export { prepend_asyncGenerator };
-export { AsyncGeneratorNext };
+export { AsyncGeneratorTicker };
 export { forOf };
 
 
@@ -276,19 +276,19 @@ async function* prepend_asyncGenerator( prependNextPromise, asyncGenerator ) {
  * async function* AGF() { ... }
  *
  * let asyncGenerator = AGF();
- * let agn = new AsyncGeneratorNext( asyncGenerator );
+ * let asyncGeneratorTicker = new AsyncGeneratorTicker( asyncGenerator );
  *
  * requestAnimationFrame( callback );
  * 
  * function callback() {
- *   if ( !agn.done() )
+ *   if ( !asyncGeneratorTicker.done() )
  *     requestAnimationFrame( callback );
  * }
  *
  * </pre>
  *
  */
-class AsyncGeneratorNext {
+class AsyncGeneratorTicker {
   lastNext;
   lastNextAwaiting;
 
@@ -298,6 +298,7 @@ class AsyncGeneratorNext {
   }
 
   /**
+   * Tick the async generator once.
    *
    *   - Return true, if previous .asyncGenerator.next() has resolved as
    *       { done: true, value }.
