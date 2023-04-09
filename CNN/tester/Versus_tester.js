@@ -236,6 +236,20 @@ async function load_asyncGenerator_ticker_by_loop(
   return promiseResolvedValue;
 }
 
+/**
+ * Almost same as load_asyncGenerator_ticker_by_loop() but uses callback.
+ */
+function load_asyncGenerator_ticker_by_callback(
+  load_asyncGenerator,
+  urlComposer, progressPercentage,
+  retryTimesSpanHTMLElement, progressHTMLElement
+) {
+
+//!!! ...unfinished... (2023/04/09)
+
+}
+
+
 /** */
 async function DownloadSummaryButton_onClick( event ) {
   try {
