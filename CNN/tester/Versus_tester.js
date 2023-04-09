@@ -186,21 +186,21 @@ function params_loading_retryWaiting_extractFromUI() {
  *   The DOM (Document Object Model) Node of HTML progress elemnt for
  * displaying current loading progress.
  *
- * @return { GSheetsAPIv4.UrlComposer | GVizTQ.UrlComposer } urlComposer
- *   The UrlComposer which provides load_asyncPromise.
- *
  * @param {AsyncGenerator} load_asyncGenerator
  *   The async generator to be awaited.
  *
+ * @return { GSheetsAPIv4.UrlComposer | GVizTQ.UrlComposer } urlComposer
+ *   The UrlComposer which provides load_asyncGenerator.
+ *
  * @param {ValueMax.Percentage.Base} progressPercentage
- *   The progress of the load_asyncPromise.
+ *   The progress of the load_asyncGenerator.
  *
  * @return {any}
- *   Return the resolved value of load_asyncPromise.
+ *   Return the resolved value when load_asyncGenerator done.
  */
 async function retryTimes_progress_load_by_asyncGenerator(
-  retryTimesSpanHTMLElement, progressHTMLElement,
-  urlComposer, load_asyncGenerator, progressPercentage
+  retryTimesSpanHTMLElement, progressHTMLElement, load_asyncGenerator,
+  urlComposer, progressPercentage
 ) {
 
   progressHTMLElement.max = progressPercentage.maxPercentage;
@@ -258,8 +258,8 @@ async function DownloadSummaryButton_onClick( event ) {
     let bDownloadSummaryOk = await retryTimes_progress_load_by_asyncGenerator(
       g_Contorls.DownloadSummaryRetryTimesSpan,
       g_Contorls.DownloadSummaryProgressBar,
-      g_VersusSummary.urlComposer,
       rangeArray_load_asyncGenerator,
+      g_VersusSummary.urlComposer,
       g_VersusSummary.rangeArray_load_asyncPromise_progress
     );
 
@@ -355,8 +355,8 @@ async function DownloadVersusButton_onClick( event ) {
     let versus = await retryTimes_progress_load_by_asyncGenerator(
       g_Contorls.DownloadVersusRetryTimesSpan,
       g_Contorls.DownloadVersusProgressBar,
-      g_VersusSummary.urlComposer,
       versus_next_load_asyncGenerator,
+      g_VersusSummary.urlComposer,
       g_VersusSummary.versus_next_load_asyncPromise_progress
     );
 
