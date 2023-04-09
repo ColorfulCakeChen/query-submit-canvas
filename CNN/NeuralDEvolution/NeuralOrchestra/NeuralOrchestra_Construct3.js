@@ -126,7 +126,7 @@ class NeuralOrchestra_Construct3 extends Base {
        */
       done() {
         if ( this.lastNextAwaiting )
-          return false;
+          return false; // not done since still awaiting.
         if ( this.lastNext?.done )
           return true;
 
