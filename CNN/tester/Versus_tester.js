@@ -178,16 +178,8 @@ function params_loading_retryWaiting_extractFromUI() {
  *       slower.)
  *
  *
- * @param {HTMLSpanElement} retryTimesSpanHTMLElement
- *   The DOM (Document Object Model) Node of HTML span elemnt for displaying
- * current loading retry times.
- *
- * @param {HTMLProgressElement} progressHTMLElement
- *   The DOM (Document Object Model) Node of HTML progress elemnt for
- * displaying current loading progress.
- *
  * @param {AsyncGenerator} load_asyncGenerator
- *   The async generator to be awaited.
+ *   The async generator to be awaited (ticked until done).
  *
  * @return { GSheetsAPIv4.UrlComposer | GVizTQ.UrlComposer } urlComposer
  *   The UrlComposer where load_asyncGenerator comes from. It could provide
@@ -196,12 +188,21 @@ function params_loading_retryWaiting_extractFromUI() {
  * @param {ValueMax.Percentage.Base} progressPercentage
  *   The progress of the load_asyncGenerator.
  *
+ * @param {HTMLSpanElement} retryTimesSpanHTMLElement
+ *   The DOM (Document Object Model) Node of HTML span elemnt for displaying
+ * current loading retry times.
+ *
+ * @param {HTMLProgressElement} progressHTMLElement
+ *   The DOM (Document Object Model) Node of HTML progress elemnt for
+ * displaying current loading progress.
+ *
  * @return {any}
  *   Return the resolved value when load_asyncGenerator done.
  */
-async function retryTimes_progress_load_asyncGenerator_ticker(
-  retryTimesSpanHTMLElement, progressHTMLElement, load_asyncGenerator,
-  urlComposer, progressPercentage
+async function load_asyncGenerator_ticker_by_loop(
+  load_asyncGenerator,
+  urlComposer, progressPercentage,
+  retryTimesSpanHTMLElement, progressHTMLElement
 ) {
 
   progressHTMLElement.max = progressPercentage.maxPercentage;
@@ -256,12 +257,12 @@ async function DownloadSummaryButton_onClick( event ) {
       .rangeArray_load_asyncGenerator_create_with_asyncPromise_progress(
         g_params_loading_retryWaiting );
 
-    let bDownloadSummaryOk = await retryTimes_progress_load_asyncGenerator_ticker(
-      g_Contorls.DownloadSummaryRetryTimesSpan,
-      g_Contorls.DownloadSummaryProgressBar,
+    let bDownloadSummaryOk = await load_asyncGenerator_ticker_by_loop(
       rangeArray_load_asyncGenerator,
       g_VersusSummary.urlComposer,
-      g_VersusSummary.rangeArray_load_asyncPromise_progress
+      g_VersusSummary.rangeArray_load_asyncPromise_progress,
+      g_Contorls.DownloadSummaryRetryTimesSpan,
+      g_Contorls.DownloadSummaryProgressBar
     );
 
     VersusSummary_onDownload( bDownloadSummaryOk );
@@ -353,12 +354,12 @@ async function DownloadVersusButton_onClick( event ) {
       .versus_next_load_asyncGenerator_create_with_asyncPromise_progress(
         g_params_loading_retryWaiting );
 
-    let versus = await retryTimes_progress_load_asyncGenerator_ticker(
-      g_Contorls.DownloadVersusRetryTimesSpan,
-      g_Contorls.DownloadVersusProgressBar,
+    let versus = await load_asyncGenerator_ticker_by_loop(
       versus_next_load_asyncGenerator,
       g_VersusSummary.urlComposer,
-      g_VersusSummary.versus_next_load_asyncPromise_progress
+      g_VersusSummary.versus_next_load_asyncPromise_progress,
+      g_Contorls.DownloadVersusRetryTimesSpan,
+      g_Contorls.DownloadVersusProgressBar
     );
 
     Versus_onDownload( versus );
