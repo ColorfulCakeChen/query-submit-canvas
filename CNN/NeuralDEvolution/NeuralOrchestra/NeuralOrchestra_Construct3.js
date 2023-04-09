@@ -71,6 +71,7 @@ class NeuralOrchestra_Construct3 extends Base {
 //!!! ...unfinished... (2023/04/09)
 // Perhaps, let the returned valud of pfnStep() representing the new state id.
 // So that they can determine going to which state.
+// If undefined, means do not change state.
     pfnStep.call( this, runtime );
   }
 
@@ -144,8 +145,8 @@ class NeuralOrchestra_Construct3 extends Base {
 
     update_to_UI();
     if ( done() ) {
-      change_to_next_state();
-      return;
+      
+      return next_state_id; // change to next state.
     }
 
   }
