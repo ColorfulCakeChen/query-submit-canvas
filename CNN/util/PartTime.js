@@ -280,7 +280,7 @@ async function* prepend_asyncGenerator( prependNextPromise, asyncGenerator ) {
  * let asyncGeneratorTicker = new AsyncGeneratorTicker( asyncGenerator );
  *
  * requestAnimationFrame( callback );
- * 
+ *
  * function callback() {
  *   if ( !asyncGeneratorTicker.done() )
  *     requestAnimationFrame( callback );
