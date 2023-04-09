@@ -251,46 +251,6 @@ async function DownloadSummaryButton_onClick( event ) {
 
     params_loading_retryWaiting_extractFromUI();
 
-//!!! (2023/04/07 Remarked)
-// Use retryTimes_progress_load_by_asyncGenerator() instead.
-//     let rangeArray_load_asyncPromise = g_VersusSummary
-//       .rangeArray_load_asyncPromise_create( g_params_loading_retryWaiting );
-//
-//     let bDownloadSummaryOk = await retryTimes_progress_load_by_asyncPromise(
-//       g_Contorls.DownloadSummaryRetryTimesSpan,
-//       g_Contorls.DownloadSummaryProgressBar,
-//       g_VersusSummary.urlComposer,
-//       rangeArray_load_asyncPromise,
-//       g_VersusSummary.rangeArray_load_asyncPromise_progress
-//     );
-
-//!!! (2023/04/08 Remarked) Use internal progress instead.
-//     let progress;
-//     try {
-//       progress = ValueMax.Percentage.Aggregate.Pool.get_or_create_by();
-//
-//       let rangeArray_load_asyncGenerator = g_VersusSummary
-//         .rangeArray_load_asyncGenerator_create(
-//           progress, g_params_loading_retryWaiting );
-//
-//       let bDownloadSummaryOk = await retryTimes_progress_load_by_asyncGenerator(
-//         g_Contorls.DownloadSummaryRetryTimesSpan,
-//         g_Contorls.DownloadSummaryProgressBar,
-//         g_VersusSummary.urlComposer,
-//         rangeArray_load_asyncGenerator,
-//         progress
-//       );
-//
-//       VersusSummary_onDownload( bDownloadSummaryOk );
-//
-//     } finally {
-//       if ( progress ) {
-//         progress.disposeResources_and_recycleToPool();
-//         progress = null;
-//       }
-//     }
-
-
     let rangeArray_load_asyncGenerator = g_VersusSummary
       .rangeArray_load_asyncGenerator_create_with_asyncPromise_progress(
         g_params_loading_retryWaiting );
@@ -387,46 +347,6 @@ async function DownloadVersusButton_onClick( event ) {
     g_Contorls.DownloadVersusAbortButton.disabled = false;
 
     params_loading_retryWaiting_extractFromUI();
-
-//!!! (2023/04/07 Remarked)
-// Use retryTimes_progress_load_by_asyncGenerator() instead.
-//     let versus_next_load_asyncPromise = g_VersusSummary
-//       .versus_next_load_asyncPromise_create( g_params_loading_retryWaiting );
-//
-//     let versus = await retryTimes_progress_load_by_asyncPromise(
-//       g_Contorls.DownloadVersusRetryTimesSpan,
-//       g_Contorls.DownloadVersusProgressBar,
-//       g_VersusSummary.urlComposer,
-//       versus_next_load_asyncPromise,
-//       g_VersusSummary.versus_next_load_asyncPromise_progress
-//     );
-
-//!!! (2023/04/08 Remarked) Use internal progress instead.
-//     let progress;
-//     try {
-//       progress = ValueMax.Percentage.Aggregate.Pool.get_or_create_by();
-//
-//       let versus_next_load_asyncGenerator = g_VersusSummary
-//         .versus_next_load_asyncGenerator_create(
-//           progress, g_params_loading_retryWaiting );
-//
-//       let versus = await retryTimes_progress_load_by_asyncGenerator(
-//         g_Contorls.DownloadVersusRetryTimesSpan,
-//         g_Contorls.DownloadVersusProgressBar,
-//         g_VersusSummary.urlComposer,
-//         versus_next_load_asyncGenerator,
-//         progress
-//       );
-//
-//       Versus_onDownload( versus );
-//
-//     } finally {
-//       if ( progress ) {
-//         progress.disposeResources_and_recycleToPool();
-//         progress = null;
-//       }
-//     }
-
 
     let versus_next_load_asyncGenerator = g_VersusSummary
       .versus_next_load_asyncGenerator_create_with_asyncPromise_progress(
