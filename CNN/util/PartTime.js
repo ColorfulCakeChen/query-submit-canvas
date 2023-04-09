@@ -269,7 +269,8 @@ async function* prepend_asyncGenerator( prependNextPromise, asyncGenerator ) {
 
 
 /**
- * A helper class for calling an async generator's .next().
+ * A helper class for calling an async generator's .next() inside a periodic
+ * callback.
  *
  * <pre>
  *
