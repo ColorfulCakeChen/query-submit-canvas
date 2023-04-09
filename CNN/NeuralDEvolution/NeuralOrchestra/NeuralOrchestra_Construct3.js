@@ -121,29 +121,30 @@ class NeuralOrchestra_Construct3 extends Base {
       /**
        * 
        * @return {boolean}
-       *   - Return true, if awaiting .asyncGenerator.next().
-       *   - Return false, if .asyncGenerator is done.
+       *   - Return false, if awaiting .asyncGenerator.next().
+       *   - Return true, if .asyncGenerator is done.
        */
-      notDone_if_awaiting() {
+      done() {
         if ( this.lastNextAwaiting )
-          return true;
-        if ( this.lastNext?.done )
           return false;
+        if ( this.lastNext?.done )
+          return true;
 
         this.lastNextAwaiting = true;
         this.asyncGenerator.next().then( done_value => {
           this.lastNext = done_value;
           this.lastNextAwaiting = false;
         });
-        return true;
+        return false;
       }
     }
 
     update_to_UI();
-    if ( notDone_if_awaiting() )
+    if ( done() ) {
+      change_to_next_state();
       return;
+    }
 
-    change_to_next_state();
   }
 
   /**
