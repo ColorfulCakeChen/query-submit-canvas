@@ -198,7 +198,7 @@ function params_loading_retryWaiting_extractFromUI() {
  * @return {any}
  *   Return the resolved value when load_asyncGenerator done.
  */
-async function retryTimes_progress_load_by_asyncGenerator(
+async function retryTimes_progress_load_asyncGenerator(
   retryTimesSpanHTMLElement, progressHTMLElement, load_asyncGenerator,
   urlComposer, progressPercentage
 ) {
@@ -255,7 +255,7 @@ async function DownloadSummaryButton_onClick( event ) {
       .rangeArray_load_asyncGenerator_create_with_asyncPromise_progress(
         g_params_loading_retryWaiting );
 
-    let bDownloadSummaryOk = await retryTimes_progress_load_by_asyncGenerator(
+    let bDownloadSummaryOk = await retryTimes_progress_load_asyncGenerator(
       g_Contorls.DownloadSummaryRetryTimesSpan,
       g_Contorls.DownloadSummaryProgressBar,
       rangeArray_load_asyncGenerator,
@@ -352,7 +352,7 @@ async function DownloadVersusButton_onClick( event ) {
       .versus_next_load_asyncGenerator_create_with_asyncPromise_progress(
         g_params_loading_retryWaiting );
 
-    let versus = await retryTimes_progress_load_by_asyncGenerator(
+    let versus = await retryTimes_progress_load_asyncGenerator(
       g_Contorls.DownloadVersusRetryTimesSpan,
       g_Contorls.DownloadVersusProgressBar,
       versus_next_load_asyncGenerator,
