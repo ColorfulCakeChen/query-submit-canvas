@@ -4,6 +4,7 @@ export { Promise_create_by_addEventListener_once };
 export { Promise_create_by_setTimeout };
 export { Promise_resolvable_rejectable_create };
 export { prepend_asyncGenerator };
+export { AsyncGeneratorNext };
 export { forOf };
 
 
@@ -263,6 +264,49 @@ async function* prepend_asyncGenerator( prependNextPromise, asyncGenerator ) {
     console.error( e );
     //debugger;
     throw e;
+  }
+}
+
+
+/**
+ * 
+ */
+class AsyncGeneratorNext {
+  lastNext;
+  lastNextAwaiting;
+
+  constructor( asyncGenerator ) {
+    this.asyncGenerator = asyncGenerator;
+  }
+
+  /**
+   *
+   *   - Return true, if previous .asyncGenerator.next() has resolved as
+   *       { done: true, value }.
+   *
+   *   - Return false, if .asyncGenerator.next() has been called but is still
+   *       awaiting.
+   *
+   *   - Call .asyncGenerator.next() and return false, if it has not yet been
+   *       called after previous .asyncGenerator.next() resolved.
+   *
+   *
+   * @return {boolean}
+   *   - Return false, if awaiting .asyncGenerator.next().
+   *   - Return true, if .asyncGenerator is done.
+   */
+  done() {
+    if ( this.lastNext?.done )
+      return true;
+    if ( this.lastNextAwaiting )
+      return false;
+
+    this.lastNextAwaiting = true;
+    this.asyncGenerator.next().then( done_value => {
+      this.lastNext = done_value;
+      this.lastNextAwaiting = false;
+    });
+    return false;
   }
 }
 
