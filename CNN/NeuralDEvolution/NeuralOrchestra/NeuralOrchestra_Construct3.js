@@ -132,6 +132,7 @@ class NeuralOrchestra_Construct3 extends Base {
           //lastNextValue = done_value.value;
           this.lastNextAwaiting = false;
         });
+        return false;
       }
     }
 
