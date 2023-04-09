@@ -24,6 +24,10 @@ import { Int } from "./ValueDesc_Base.js";
  *       series (note: Taylor series is a kinds of power series). So, it gains
  *       more ability to approximate any function.
  *
+ *   - Think: If replacing the multiplication with power (i.e. x ** y),
+ *       whether does provide more approximation ability (e.g. power contains
+ *       multiplication and division)?
+ *
  */
 class SqueezeExcitationChannelCountDivisor extends Int {
 
