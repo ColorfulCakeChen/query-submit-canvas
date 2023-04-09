@@ -114,7 +114,7 @@ class NeuralOrchestra_Construct3 extends Base {
 //
 
 //!!! ...unfinished... (2023/04/08)
-    class AA {
+    class AsyncGeneratorNext {
       lastNextAwaiting;
       lastNext;
 
