@@ -109,6 +109,26 @@ class NeuralOrchestra_Construct3 extends Base {
 // Update progress to UI. And then, call versus_load_asyncGenerator.next()
 //
 
+//!!! ...unfinished... (2023/04/08)
+    let lastNextAwaiting;
+    let lastNextDone;
+    //let lastNextValue;
+    async function true_when_done() {
+      if ( lastNextAwaiting )
+        return false;
+      if ( lastNextDone )
+        return true;
+
+      lastNextAwaiting = true;
+      lastNext = await asyncGenerator.next();
+      lastNextDone = lastNext.done;
+      //lastNextValue = lastNext.value;
+      lastNextAwaiting = false;
+    }
+
+    update_to_UI();
+    if ( true_when_done() )
+      change_to_next_state();
   }
 
   /**
