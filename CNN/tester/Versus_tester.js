@@ -190,7 +190,8 @@ function params_loading_retryWaiting_extractFromUI() {
  *   The async generator to be awaited.
  *
  * @return { GSheetsAPIv4.UrlComposer | GVizTQ.UrlComposer } urlComposer
- *   The UrlComposer which provides load_asyncGenerator.
+ *   The UrlComposer where load_asyncGenerator comes from. It could provide
+ * current retry times.
  *
  * @param {ValueMax.Percentage.Base} progressPercentage
  *   The progress of the load_asyncGenerator.
@@ -198,7 +199,7 @@ function params_loading_retryWaiting_extractFromUI() {
  * @return {any}
  *   Return the resolved value when load_asyncGenerator done.
  */
-async function retryTimes_progress_load_asyncGenerator(
+async function retryTimes_progress_load_asyncGenerator_ticker(
   retryTimesSpanHTMLElement, progressHTMLElement, load_asyncGenerator,
   urlComposer, progressPercentage
 ) {
@@ -255,7 +256,7 @@ async function DownloadSummaryButton_onClick( event ) {
       .rangeArray_load_asyncGenerator_create_with_asyncPromise_progress(
         g_params_loading_retryWaiting );
 
-    let bDownloadSummaryOk = await retryTimes_progress_load_asyncGenerator(
+    let bDownloadSummaryOk = await retryTimes_progress_load_asyncGenerator_ticker(
       g_Contorls.DownloadSummaryRetryTimesSpan,
       g_Contorls.DownloadSummaryProgressBar,
       rangeArray_load_asyncGenerator,
@@ -352,7 +353,7 @@ async function DownloadVersusButton_onClick( event ) {
       .versus_next_load_asyncGenerator_create_with_asyncPromise_progress(
         g_params_loading_retryWaiting );
 
-    let versus = await retryTimes_progress_load_asyncGenerator(
+    let versus = await retryTimes_progress_load_asyncGenerator_ticker(
       g_Contorls.DownloadVersusRetryTimesSpan,
       g_Contorls.DownloadVersusProgressBar,
       versus_next_load_asyncGenerator,
