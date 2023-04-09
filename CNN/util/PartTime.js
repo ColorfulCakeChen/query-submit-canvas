@@ -64,7 +64,7 @@ function sleep( delayMilliseconds = 0 ) {
   return delayedValue( delayMilliseconds, undefined );
 }
 
-//!!! ...unfinished... (2023/04/07)
+
 /**
  * A wrapper for requestAnimationFrame().
  *
@@ -269,12 +269,30 @@ async function* prepend_asyncGenerator( prependNextPromise, asyncGenerator ) {
 
 
 /**
+ * A helper class for calling an async generator's .next().
+ *
+ * <pre>
+ *
+ * async function* AGF() { ... }
+ *
+ * let asyncGenerator = AGF();
+ * let agn = new AsyncGeneratorNext( asyncGenerator );
+ *
+ * requestAnimationFrame( callback );
  * 
+ * function callback() {
+ *   if ( !agn.done() )
+ *     requestAnimationFrame( callback );
+ * }
+ *
+ * </pre>
+ *
  */
 class AsyncGeneratorNext {
   lastNext;
   lastNextAwaiting;
 
+  /** */
   constructor( asyncGenerator ) {
     this.asyncGenerator = asyncGenerator;
   }
