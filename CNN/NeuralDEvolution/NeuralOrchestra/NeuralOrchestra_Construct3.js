@@ -113,17 +113,19 @@ class NeuralOrchestra_Construct3 extends Base {
     let lastNextAwaiting;
     let lastNextDone;
     //let lastNextValue;
-    async function true_when_done() {
+    function true_when_done() {
       if ( lastNextAwaiting )
         return false;
       if ( lastNextDone )
         return true;
 
       lastNextAwaiting = true;
-      lastNext = await asyncGenerator.next();
-      lastNextDone = lastNext.done;
-      //lastNextValue = lastNext.value;
-      lastNextAwaiting = false;
+      asyncGenerator.next().then( v => {
+        lastNext = v;
+        lastNextDone = lastNext.done;
+        //lastNextValue = lastNext.value;
+        lastNextAwaiting = false;
+      });
     }
 
     update_to_UI();
