@@ -106,61 +106,62 @@ function params_loading_retryWaiting_extractFromUI() {
   }
 }
 
-/**
- * (Deprcated)
- *
- * Await load_asyncPromise and display progress simultaneously.
- *
- *
- * @param {HTMLSpanElement} retryTimesSpanHTMLElement
- *   The DOM (Document Object Model) Node of HTML span elemnt for displaying
- * current loading retry times.
- *
- * @param {HTMLProgressElement} progressHTMLElement
- *   The DOM (Document Object Model) Node of HTML progress elemnt for
- * displaying current loading progress.
- *
- * @return { GSheetsAPIv4.UrlComposer | GVizTQ.UrlComposer } urlComposer
- *   The UrlComposer which provides load_asyncPromise.
- *
- * @param {Promise} load_asyncPromise
- *   The promise to be awaited.
- *
- * @param {ValueMax.Percentage.Base} progressPercentage
- *   The progress of the load_asyncPromise.
- *
- * @return {any}
- *   Return the resolved value of load_asyncPromise.
- */
-async function retryTimes_progress_load_by_asyncPromise(
-  retryTimesSpanHTMLElement, progressHTMLElement,
-  urlComposer, load_asyncPromise, progressPercentage
-) {
-  const timeMilliseconds = 0; //10; //100; //500;
-
-  progressHTMLElement.max = progressPercentage.maxPercentage;
-
-  let bDone;
-  let promiseResolvedValue;
-  do {
-    let timePromise = PartTime.delayedValue( timeMilliseconds,
-      retryTimes_progress_load_by_asyncPromise );
-    let allPromiseRace = Promise.race( [ load_asyncPromise, timePromise ] );
-
-    promiseResolvedValue = await allPromiseRace;
-    if ( promiseResolvedValue === retryTimes_progress_load_by_asyncPromise )
-      bDone = false; // timePromise
-    else
-      bDone = true; // load_asyncPromise
-
-    retryTimesSpanHTMLElement.textContent
-      = urlComposer.retryTimes_CurMax_string;
-    progressHTMLElement.value = progressPercentage.valuePercentage;
-  } while ( !bDone );
-
-  retryTimesSpanHTMLElement.textContent = "";
-  return promiseResolvedValue;
-}
+//!!! (2023/04/09 Remarked) Use requestAnimationFrame() instead.
+// /**
+//  * (Deprcated)
+//  *
+//  * Await load_asyncPromise and display progress simultaneously.
+//  *
+//  *
+//  * @param {HTMLSpanElement} retryTimesSpanHTMLElement
+//  *   The DOM (Document Object Model) Node of HTML span elemnt for displaying
+//  * current loading retry times.
+//  *
+//  * @param {HTMLProgressElement} progressHTMLElement
+//  *   The DOM (Document Object Model) Node of HTML progress elemnt for
+//  * displaying current loading progress.
+//  *
+//  * @return { GSheetsAPIv4.UrlComposer | GVizTQ.UrlComposer } urlComposer
+//  *   The UrlComposer which provides load_asyncPromise.
+//  *
+//  * @param {Promise} load_asyncPromise
+//  *   The promise to be awaited.
+//  *
+//  * @param {ValueMax.Percentage.Base} progressPercentage
+//  *   The progress of the load_asyncPromise.
+//  *
+//  * @return {any}
+//  *   Return the resolved value of load_asyncPromise.
+//  */
+// async function retryTimes_progress_load_by_asyncPromise(
+//   retryTimesSpanHTMLElement, progressHTMLElement,
+//   urlComposer, load_asyncPromise, progressPercentage
+// ) {
+//   const timeMilliseconds = 0; //10; //100; //500;
+//
+//   progressHTMLElement.max = progressPercentage.maxPercentage;
+//
+//   let bDone;
+//   let promiseResolvedValue;
+//   do {
+//     let timePromise = PartTime.delayedValue( timeMilliseconds,
+//       retryTimes_progress_load_by_asyncPromise );
+//     let allPromiseRace = Promise.race( [ load_asyncPromise, timePromise ] );
+//
+//     promiseResolvedValue = await allPromiseRace;
+//     if ( promiseResolvedValue === retryTimes_progress_load_by_asyncPromise )
+//       bDone = false; // timePromise
+//     else
+//       bDone = true; // load_asyncPromise
+//
+//     retryTimesSpanHTMLElement.textContent
+//       = urlComposer.retryTimes_CurMax_string;
+//     progressHTMLElement.value = progressPercentage.valuePercentage;
+//   } while ( !bDone );
+//
+//   retryTimesSpanHTMLElement.textContent = "";
+//   return promiseResolvedValue;
+// }
 
 /**
  * Await load_asyncGenerator and display progress simultaneously.
