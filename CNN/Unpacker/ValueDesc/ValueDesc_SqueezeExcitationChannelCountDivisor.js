@@ -25,8 +25,8 @@ import { Int } from "./ValueDesc_Base.js";
  *       more ability to approximate any function.
  *
  *   - Think: If replacing the multiplication with power (i.e. x ** y),
- *       whether does provide more approximation ability (e.g. power contains
- *       multiplication and division)?
+ *       whether does it provide more approximation ability (e.g. power
+ *       can express both multiplication and division)?
  *
  */
 class SqueezeExcitationChannelCountDivisor extends Int {
