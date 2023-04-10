@@ -14,25 +14,30 @@ import * as Stage from "../../Stage.js";
 class NeuralNet_StageParamsCreator_Base extends Recyclable.Root {
 
   /**
-   * Used as default NeuralNet.StageParamsCreator.Base provider for conforming to Recyclable interface.
+   * Used as default NeuralNet.StageParamsCreator.Base provider for conforming
+   * to Recyclable interface.
    */
   static Pool = new Pool.Root( "NeuralNet.StageParamsCreator.Base.Pool",
-    NeuralNet_StageParamsCreator_Base, NeuralNet_StageParamsCreator_Base.setAsConstructor );
+    NeuralNet_StageParamsCreator_Base,
+    NeuralNet_StageParamsCreator_Base.setAsConstructor );
 
   /**
    * @param {Params} neuralNetParams
-   *   The NeuralNet.Params object which provides basic parameters. It will be referenced (i.e. not cloned, not owned, not released)
-   * by this NeuralNet.StageParamsCreator.Base onject.
+   *   The NeuralNet.Params object which provides basic parameters. It will be
+   * referenced (i.e. not cloned, not owned, not released) by this
+   * NeuralNet.StageParamsCreator.Base onject.
    */
   constructor( neuralNetParams ) {
     super();
-    NeuralNet_StageParamsCreator_Base.setAsConstructor_self.call( this, neuralNetParams );
+    NeuralNet_StageParamsCreator_Base.setAsConstructor_self.call( this,
+      neuralNetParams );
   }
 
   /** @override */
   static setAsConstructor( neuralNetParams ) {
     super.setAsConstructor();
-    NeuralNet_StageParamsCreator_Base.setAsConstructor_self.call( this, neuralNetParams );
+    NeuralNet_StageParamsCreator_Base.setAsConstructor_self.call( this,
+      neuralNetParams );
     return this;
   }
 
