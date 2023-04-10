@@ -237,10 +237,10 @@ async function load_asyncGenerator_ticker_by_loop(
 }
 
 /**
- * Almost same as load_asyncGenerator_ticker_by_loop() but uses callback
- * internally.
+ * Almost the same as load_asyncGenerator_ticker_by_loop() but uses
+ * callback internally.
  */
-function load_asyncGenerator_ticker_by_callback(
+async function load_asyncGenerator_ticker_by_callback(
   load_asyncGenerator,
   urlComposer, progressPercentage,
   retryTimesSpanHTMLElement, progressHTMLElement
@@ -251,7 +251,7 @@ function load_asyncGenerator_ticker_by_callback(
   let asyncGeneratorTicker
     = new PartTime.AsyncGeneratorTicker( asyncGenerator );
 
-  let promiseResolvedValue;
+  let p = PartTime.Promise_resolvable_rejectable_create();
 
   function callback() {
     retryTimesSpanHTMLElement.textContent
@@ -260,9 +260,8 @@ function load_asyncGenerator_ticker_by_callback(
     progressHTMLElement.value = progressPercentage.valuePercentage;
 
     if ( asyncGeneratorTicker.done() ) {
-//!!! ...unfinished... (2023/04/09)
-      promiseResolvedValue = asyncGeneratorTicker.lastNext.value;
       retryTimesSpanHTMLElement.textContent = "";
+      p.resolve( asyncGeneratorTicker.lastNext.value );
 
     } else {
       requestAnimationFrame( callback );
@@ -271,8 +270,7 @@ function load_asyncGenerator_ticker_by_callback(
 
   requestAnimationFrame( callback );
 
-//!!! ...unfinished... (2023/04/09)
-// How to return result?
+  return p;
 }
 
 
