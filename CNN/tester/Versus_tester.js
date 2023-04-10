@@ -246,9 +246,33 @@ function load_asyncGenerator_ticker_by_callback(
   retryTimesSpanHTMLElement, progressHTMLElement
 ) {
 
+  progressHTMLElement.max = progressPercentage.maxPercentage;
+
+  let asyncGeneratorTicker
+    = new PartTime.AsyncGeneratorTicker( asyncGenerator );
+
+  let promiseResolvedValue;
+
+  function callback() {
+    retryTimesSpanHTMLElement.textContent
+      = urlComposer.retryTimes_CurMax_string;
+
+    progressHTMLElement.value = progressPercentage.valuePercentage;
+
+    if ( asyncGeneratorTicker.done() ) {
+//!!! ...unfinished... (2023/04/09)
+      promiseResolvedValue = asyncGeneratorTicker.lastNext.value;
+      retryTimesSpanHTMLElement.textContent = "";
+
+    } else {
+      requestAnimationFrame( callback );
+    }
+  }
+
 //!!! ...unfinished... (2023/04/09)
 // new PartTime.AsyncGeneratorTicker
 
+  requestAnimationFrame( callback );
 }
 
 

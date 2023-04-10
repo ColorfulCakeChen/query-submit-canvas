@@ -277,21 +277,34 @@ async function* prepend_asyncGenerator( prependNextPromise, asyncGenerator ) {
  * async function* AGF() { ... }
  *
  * let asyncGenerator = AGF();
- * let asyncGeneratorTicker = new AsyncGeneratorTicker( asyncGenerator );
+ * let ticker = new PartTime.AsyncGeneratorTicker( asyncGenerator );
+ * let result;
  *
  * requestAnimationFrame( callback );
  *
  * function callback() {
- *   if ( !asyncGeneratorTicker.done() )
+ *   if ( ticker.done() )
+ *     result = ticker.lastNext.value;
+ *   else
  *     requestAnimationFrame( callback );
  * }
  *
  * </pre>
  *
+ *
+ * @member {boolean} lastNextAwaiting
+ *   - If true, the last .asyncGenerator.next() is still awaiting.
+ *   - If false, the .lastNext has the awaited result.
+ *   - If undefined, the .asyncGenerator.next() has not yet been called.
+ *
+ * @member {object} lastNext
+ *   - If ( .lastNextAwaiting === undefined ), .lastNext is not meaningful.
+ *   - If ( .lastNextAwaiting !== undefined ), .lastNext is the { done, value }
+ *       of last awaited .asyncGenerator.next().
  */
 class AsyncGeneratorTicker {
-  lastNext;
   lastNextAwaiting;
+  lastNext;
 
   /** */
   constructor( asyncGenerator ) {
