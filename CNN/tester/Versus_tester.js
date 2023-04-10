@@ -269,10 +269,10 @@ function load_asyncGenerator_ticker_by_callback(
     }
   }
 
-//!!! ...unfinished... (2023/04/09)
-// new PartTime.AsyncGeneratorTicker
-
   requestAnimationFrame( callback );
+
+//!!! ...unfinished... (2023/04/09)
+// How to return result?
 }
 
 
