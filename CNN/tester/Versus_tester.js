@@ -173,9 +173,9 @@ async function load_asyncGenerator_looper(
     }
   } while ( !loaderNext.done );
 
-  promiseResolvedValue = loaderNext.value;
-
   retryTimesSpanHTMLElement.textContent = "";
+
+  promiseResolvedValue = loaderNext.value;
   return promiseResolvedValue;
 }
 
@@ -198,28 +198,20 @@ async function load_asyncGenerator_ticker(
   let asyncGeneratorTicker
     = new PartTime.AsyncGeneratorTicker( load_asyncGenerator );
 
-  let p = PartTime.Promise_resolvable_rejectable_create();
+  do {
+    await PartTime.nextAnimationFrameValue();
 
-  function callback() {
     retryTimesSpanHTMLElement.textContent
       = urlComposer.retryTimes_CurMax_string;
 
     progressHTMLElement.value = progressPercentage.valuePercentage;
 
-    if ( asyncGeneratorTicker.done() ) {
-      retryTimesSpanHTMLElement.textContent = "";
-      p.resolve( asyncGeneratorTicker.lastNext.value );
+  } while ( !asyncGeneratorTicker.done() );
 
-    } else {
-!!! ...unfinished... (2023/04/10)
-// Produce deep call stack because recursive.
-      requestAnimationFrame( callback );
-    }
-  }
+  retryTimesSpanHTMLElement.textContent = "";
 
-  requestAnimationFrame( callback );
-
-  return p;
+  let promiseResolvedValue = asyncGeneratorTicker.lastNext.value;
+  return promiseResolvedValue;
 }
 
 
