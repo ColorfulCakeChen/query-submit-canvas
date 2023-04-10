@@ -336,8 +336,8 @@ async function DownloadVersusButton_onClick( event ) {
         g_params_loading_retryWaiting );
 
     // (2023/04/10 Remarked) Test load_asyncGenerator_ticker().
-    let versus = await load_asyncGenerator_looper(
-    //let versus = await load_asyncGenerator_ticker(
+    //let versus = await load_asyncGenerator_looper(
+    let versus = await load_asyncGenerator_ticker(
       versus_next_load_asyncGenerator,
       g_VersusSummary.urlComposer,
       g_VersusSummary.versus_next_load_asyncPromise_progress,
