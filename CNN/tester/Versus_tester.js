@@ -295,7 +295,9 @@ async function DownloadSummaryButton_onClick( event ) {
       .rangeArray_load_asyncGenerator_create_with_asyncPromise_progress(
         g_params_loading_retryWaiting );
 
-    let bDownloadSummaryOk = await load_asyncGenerator_ticker_by_loop(
+    // (2023/04/10 Remarked) Test load_asyncGenerator_ticker_by_callback().
+    //let bDownloadSummaryOk = await load_asyncGenerator_ticker_by_loop(
+    let bDownloadSummaryOk = await load_asyncGenerator_ticker_by_callback(
       rangeArray_load_asyncGenerator,
       g_VersusSummary.urlComposer,
       g_VersusSummary.rangeArray_load_asyncPromise_progress,
@@ -392,7 +394,9 @@ async function DownloadVersusButton_onClick( event ) {
       .versus_next_load_asyncGenerator_create_with_asyncPromise_progress(
         g_params_loading_retryWaiting );
 
-    let versus = await load_asyncGenerator_ticker_by_loop(
+    // (2023/04/10 Remarked) Test load_asyncGenerator_ticker_by_callback().
+    //let versus = await load_asyncGenerator_ticker_by_loop(
+    let versus = await load_asyncGenerator_ticker_by_callback(
       versus_next_load_asyncGenerator,
       g_VersusSummary.urlComposer,
       g_VersusSummary.versus_next_load_asyncPromise_progress,
