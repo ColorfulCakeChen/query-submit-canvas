@@ -239,6 +239,10 @@ async function load_asyncGenerator_ticker_by_loop(
 /**
  * Almost the same as load_asyncGenerator_ticker_by_loop() but uses
  * callback internally.
+ *
+ * It is even slower than load_asyncGenerator_ticker_by_loop(). But its
+ * displaying is also smoother than it. The reason may be that it calls
+ * requestAnimationFrame() more times even if there is no progress at all.
  */
 async function load_asyncGenerator_ticker_by_callback(
   load_asyncGenerator,
