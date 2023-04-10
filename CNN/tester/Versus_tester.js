@@ -181,7 +181,7 @@ async function load_asyncGenerator_looper(
 
 /**
  * Almost the same as load_asyncGenerator_looper() but uses
- * callback internally.
+ * AsyncGeneratorTicker internally.
  *
  * It is even slower than load_asyncGenerator_looper(). But its
  * displaying is also smoother than it. The reason may be that it calls
