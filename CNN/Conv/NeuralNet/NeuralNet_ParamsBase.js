@@ -27,24 +27,26 @@ import { InferencedParams } from "./NeuralNet_InferencedParams.js";
  *   The input image's channel count.
  *
  * @member {number} vocabularyChannelCount
- *   In the embedding layer, every vocabulary will have how many embedding channels.
- * Every input channel will be expanded into so many embedding channels. It could
- * be viewed as embeddingChannelCountPerInputChannel. It must be ( >= 2 ) because
- * it always has ( bEmbedVocabularyId == true ).
+ *   In the embedding layer, every vocabulary will have how many embedding
+ * channels. Every input channel will be expanded into so many embedding
+ * channels. It could be viewed as embeddingChannelCountPerInputChannel. It
+ * must be ( >= 2 ) because it always has ( bEmbedVocabularyId == true ).
  *
  * @member {number} vocabularyCountPerInputChannel
- *   In the embedding layer, every input channel will have how many vocabularies.
- * This is also vocabulary count per vocabulary table (because every input channel
- * has a vocabulary table). For an image data (R-G-B-A four channels), there will
- * be 256 vocabularies per input channel because every channel is represented by
- * one byte (8 bits) which has 2^8 = 256 kinds of possible values.
+ *   In the embedding layer, every input channel will have how many
+ * vocabularies. This is also vocabulary count per vocabulary table (because
+ * every input channel has a vocabulary table). For an image data (R-G-B-A
+ * four channels), there will be 256 vocabularies per input channel because
+ * every channel is represented by one byte (8 bits) which has 2^8 = 256 kinds
+ * of possible values.
  *
  * @member {number} nConvStageTypeId
- *   The type (ValueDesc.ConvStageType.Singleton.Ids.Xxx) of every convolution stage.
+ *   The type (ValueDesc.ConvStageType.Singleton.Ids.Xxx) of every convolution
+ * stage.
  * 
  * @member {number} blockCountTotalRequested
- *   How many blocks of the whole neural network are wanted. It will be spreaded to
- * every stage. Note that every stage will have at least 2 blocks.
+ *   How many blocks of the whole neural network are wanted. It will be
+ * spreaded to every stage. Note that every stage will have at least 2 blocks.
  *
  * @member {number} output_channelCount
  *   The output tensor's channel count.
@@ -59,7 +61,8 @@ import { InferencedParams } from "./NeuralNet_InferencedParams.js";
 class NeuralNet_ParamsBase extends Recyclable.Root {
 
   /**
-   * Used as default NeuralNet.ParamsBase provider for conforming to Recyclable interface.
+   * Used as default NeuralNet.ParamsBase provider for conforming to
+   * Recyclable interface.
    */
   static Pool = new Pool.Root( "NeuralNet.ParamsBase.Pool",
     NeuralNet_ParamsBase, NeuralNet_ParamsBase.setAsConstructor );
@@ -177,7 +180,8 @@ class NeuralNet_ParamsBase extends Recyclable.Root {
 
   /**
    * @return {boolean}
-   *   Return true, if .inferencedParams will create .embeddingParams and .stageParamsArray
+   *   Return true, if .inferencedParams will create .embeddingParams and
+   * .stageParamsArray
    */
   inferencedParams_embeddingParams_stageParamsArray_needed() {
     return true;
@@ -185,7 +189,8 @@ class NeuralNet_ParamsBase extends Recyclable.Root {
 
   /**
    * @return {Embedding.ParamsBase|Embedding.Params}
-   *   Return which embedding parameter class should be used by InferencedParams.
+   *   Return which embedding parameter class should be used by
+   * InferencedParams.
    */
   EmbeddingParamsClass_get() {
     return Embedding.ParamsBase;
@@ -212,7 +217,8 @@ class NeuralNet_ParamsBase extends Recyclable.Root {
    *  e.g. "SHUFFLE_NET_V2_BY_MOBILE_NET_V1"
    */
   get nConvStageTypeName() {
-    return ValueDesc.ConvStageType.Singleton.getName_byId( this.nConvStageTypeId );
+    return ValueDesc.ConvStageType.Singleton.getName_byId(
+      this.nConvStageTypeId );
   }
 
   /**
@@ -220,7 +226,8 @@ class NeuralNet_ParamsBase extends Recyclable.Root {
    *  e.g. "SHUFFLE_NET_V2_BY_MOBILE_NET_V1(5)"
    */
   get nConvStageTypeName_with_Id() {
-    return ValueDesc.ConvStageType.Singleton.getNameWithInt_byId( this.nConvStageTypeId );
+    return ValueDesc.ConvStageType.Singleton.getNameWithInt_byId(
+      this.nConvStageTypeId );
   }
 
   /**
