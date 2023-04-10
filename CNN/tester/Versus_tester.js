@@ -211,9 +211,11 @@ async function load_asyncGenerator_ticker(
       p.resolve( asyncGeneratorTicker.lastNext.value );
 
     } else {
-!!! ...unfinished... (2023/04/10)
-// Produce deep call stack because recursive.
-      requestAnimationFrame( callback );
+//!!! ...unfinished... (2023/04/10)
+// // Produce deep call stack because recursive.
+//       requestAnimationFrame( callback );
+
+      requestAnimationFrame( () => callback() );
     }
   }
 
