@@ -249,7 +249,7 @@ async function load_asyncGenerator_ticker_by_callback(
   progressHTMLElement.max = progressPercentage.maxPercentage;
 
   let asyncGeneratorTicker
-    = new PartTime.AsyncGeneratorTicker( asyncGenerator );
+    = new PartTime.AsyncGeneratorTicker( load_asyncGenerator );
 
   let p = PartTime.Promise_resolvable_rejectable_create();
 
