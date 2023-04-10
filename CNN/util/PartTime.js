@@ -280,13 +280,13 @@ async function* prepend_asyncGenerator( prependNextPromise, asyncGenerator ) {
  * let ticker = new PartTime.AsyncGeneratorTicker( asyncGenerator );
  * let result;
  *
- * requestAnimationFrame( callback );
+ * let intervalId = setInterval( callback, 1000 );
  *
  * function callback() {
- *   if ( ticker.done() )
+ *   if ( ticker.done() ) {
  *     result = ticker.lastNext.value;
- *   else
- *     requestAnimationFrame( callback );
+ *     clearInterval( intervalId );
+ *   }
  * }
  *
  * </pre>
