@@ -142,7 +142,7 @@ function params_loading_retryWaiting_extractFromUI() {
  * @return {any}
  *   Return the resolved value when load_asyncGenerator done.
  */
-async function load_asyncGenerator_ticker_by_loop(
+async function load_asyncGenerator_looper(
   load_asyncGenerator,
   urlComposer, progressPercentage,
   retryTimesSpanHTMLElement, progressHTMLElement
@@ -180,14 +180,14 @@ async function load_asyncGenerator_ticker_by_loop(
 }
 
 /**
- * Almost the same as load_asyncGenerator_ticker_by_loop() but uses
+ * Almost the same as load_asyncGenerator_looper() but uses
  * callback internally.
  *
- * It is even slower than load_asyncGenerator_ticker_by_loop(). But its
+ * It is even slower than load_asyncGenerator_looper(). But its
  * displaying is also smoother than it. The reason may be that it calls
  * requestAnimationFrame() more times even if there is no progress at all.
  */
-async function load_asyncGenerator_ticker_by_callback(
+async function load_asyncGenerator_ticker(
   load_asyncGenerator,
   urlComposer, progressPercentage,
   retryTimesSpanHTMLElement, progressHTMLElement
@@ -244,9 +244,9 @@ async function DownloadSummaryButton_onClick( event ) {
       .rangeArray_load_asyncGenerator_create_with_asyncPromise_progress(
         g_params_loading_retryWaiting );
 
-    // (2023/04/10 Remarked) Test load_asyncGenerator_ticker_by_callback().
-    //let bDownloadSummaryOk = await load_asyncGenerator_ticker_by_loop(
-    let bDownloadSummaryOk = await load_asyncGenerator_ticker_by_callback(
+    // (2023/04/10 Remarked) Test load_asyncGenerator_ticker().
+    //let bDownloadSummaryOk = await load_asyncGenerator_looper(
+    let bDownloadSummaryOk = await load_asyncGenerator_ticker(
       rangeArray_load_asyncGenerator,
       g_VersusSummary.urlComposer,
       g_VersusSummary.rangeArray_load_asyncPromise_progress,
@@ -343,9 +343,9 @@ async function DownloadVersusButton_onClick( event ) {
       .versus_next_load_asyncGenerator_create_with_asyncPromise_progress(
         g_params_loading_retryWaiting );
 
-    // (2023/04/10 Remarked) Test load_asyncGenerator_ticker_by_callback().
-    //let versus = await load_asyncGenerator_ticker_by_loop(
-    let versus = await load_asyncGenerator_ticker_by_callback(
+    // (2023/04/10 Remarked) Test load_asyncGenerator_ticker().
+    //let versus = await load_asyncGenerator_looper(
+    let versus = await load_asyncGenerator_ticker(
       versus_next_load_asyncGenerator,
       g_VersusSummary.urlComposer,
       g_VersusSummary.versus_next_load_asyncPromise_progress,
