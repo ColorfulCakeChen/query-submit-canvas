@@ -119,6 +119,8 @@ class NeuralOrchestra_Construct3 extends Base {
 //
 
 //!!! ...unfinished... (2023/04/08)
+// .urlComposer.retryTimes_CurMax_string;
+// .progressPercentage.valuePercentage;
 
     update_to_UI();
     if ( this.versus_load_asyncGeneratorTicker.done() ) {
