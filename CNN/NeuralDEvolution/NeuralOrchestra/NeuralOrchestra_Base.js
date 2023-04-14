@@ -90,8 +90,9 @@ import * as DEvolution from "../DEvolution.js";
  *   - Enlarging input_width is cheaper than enlarging input_height (because
  *       of increasing less pixels).
  *
- *   - Left most +3 pixels record previous output of neural network 0.
- *   - Right most +3 pixels record previous output of neural network 1.
+ *   - + 3 is because depthwise convolution filter size is 3 * 3.
+ *     - Left most +3 pixels record previous output of neural network 0.
+ *     - Right most +3 pixels record previous output of neural network 1.
  *
  *
  * The ( output_channelCount_per_alignment = 64 ) is important.
