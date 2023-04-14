@@ -165,7 +165,9 @@ class NeuralOrchestra_Construct3 extends Base {
    */
   static Versus_Step_05_ParentAlignment0_Fighting( runtime ) {
 
-//!!! ...unfinished... (2022/10/27)
+//!!! ...unfinished... (2023/04/14)
+// Perhaps, use IBinaryDataInstance to recurrent output to game scene.
+// So, set IWorldIntance.colorRga[] of game object.
 
 
   }
