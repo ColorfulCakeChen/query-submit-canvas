@@ -168,7 +168,9 @@ class NeuralOrchestra_Construct3 extends Base {
 //!!! ...unfinished... (2023/04/14)
 // Perhaps, use IBinaryDataInstance to recurrent output to game scene.
 // So, set IWorldIntance.colorRga[] of game object.
-
+//
+// Get ImageData from DrawCanvas. Fill recurrent output into
+// ImageData.data (Uint8ClampedArray) directly.
 
   }
 

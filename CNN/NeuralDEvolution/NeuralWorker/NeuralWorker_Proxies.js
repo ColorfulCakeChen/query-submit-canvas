@@ -108,6 +108,11 @@ import { Mode as NeuralWorker_Mode } from "./NeuralWorker_Mode.js";
  *   - Use these TiledBackground world objects' color (RGB) and opacity (A) to
  *       express recurrent feedback information.
  *
+ *   - Disadvantage: Drawing so many tiny world objects may be hurt performance.
+ *       Filling recurrent feedback (i.e. previous output) into ImageData.data
+ *       (Uint8ClampedArray) directly (after getting ImageData from DrawCanvas)
+ *       should be faster.
+ *
  *
  * 2.3 Backend "cpu"
  *

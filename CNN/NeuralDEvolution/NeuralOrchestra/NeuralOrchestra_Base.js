@@ -85,7 +85,7 @@ import * as DEvolution from "../DEvolution.js";
  *   - (i.e. output_channelCount = 64 * 2 = 128)
  *
  * The extra +3 pixels of input_width are used for recurrent feedback (i.e.
- * the neural network output of the previous game tick).
+ * the neural network output of the previous game tick) which.
  *
  * The ( output_channelCount_per_alignment = 64 ) is important.
  *
