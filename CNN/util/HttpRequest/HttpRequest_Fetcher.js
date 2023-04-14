@@ -355,6 +355,10 @@ class HttpRequest_Fetcher
 
     responseType = HttpRequest_Fetcher.responseTypeDefault,
     method = HttpRequest_Fetcher.methodDefault,
+
+//!!! ...unfinished... (2023/04/14)
+// Perhaps, add fetch API's Headers objects.
+
     body
   ) {
 
