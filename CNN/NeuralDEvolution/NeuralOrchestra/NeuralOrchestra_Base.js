@@ -80,12 +80,19 @@ import * as DEvolution from "../DEvolution.js";
  * 2. Configuration for 250K filter weights and executing 2 times per second
  *
  *   - input_height = 72
- *   - input_width = 131 (= ( 128 + 3 ) )
+ *   - input_width = 136 (= 128 + 4 + 4)
  *   - output_channelCount_per_alignment = 64
  *   - (i.e. output_channelCount = 64 * 2 = 128)
  *
- * The extra +3 pixels of input_width are used for recurrent feedback (i.e.
- * the neural network output of the previous game tick) which.
+ * The extra + 4 + 4 pixels of input_width are used for recurrent feedback
+ * (i.e. the neural network output of the previous game tick).
+ *
+ *   - Enlarging input_width is cheaper than enlarging input_height (because
+ *       of increasing less pixels).
+ *
+ *   - Left most +4 pixels are previous output of neural network 0.
+ *   - Right most +4 pixels are previous output of neural network 1.
+ *
  *
  * The ( output_channelCount_per_alignment = 64 ) is important.
  *
