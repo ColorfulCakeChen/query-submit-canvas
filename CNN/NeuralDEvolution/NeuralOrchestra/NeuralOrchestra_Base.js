@@ -87,6 +87,7 @@ import * as DEvolution from "../DEvolution.js";
 
 !!! ...unfinished... (2023/04/14)
 // seems have 128 (not 64) output per neural network.
+// perhaps, +4 ?
 
  * The extra + 3 pixels of input_width are used for recurrent feedback
  * (i.e. the neural network output of the previous game tick).
