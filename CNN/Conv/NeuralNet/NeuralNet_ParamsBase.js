@@ -9,9 +9,17 @@ import * as Stage from "../Stage.js";
 import * as Block from "../Block.js";
 import { InferencedParams } from "./NeuralNet_InferencedParams.js";
 
-//!!! ...unfinished... (2022/08/02)
-// Perhaps, add parameter bCastToInt32 for controlling whether needs cast input to integer.
-// Perhaps, add .blockCountOfStageLast, so that the final stage could have more blocks.
+
+//!!! ...unfinished... (2023/04/15)
+// Add parameter control whether final output should have the same value range
+// as input (i.e. non-negative integer which can be used in embedding look up).
+//
+// Implement it by tf.clipByValue() (which is cheaper than tf.mod()) and
+// tf.cast( "int32" ).
+//
+// This is useful if the output will be feedback recurrently to the next
+// times input.
+
 
 /**
  * NeuralNet parameters base class.

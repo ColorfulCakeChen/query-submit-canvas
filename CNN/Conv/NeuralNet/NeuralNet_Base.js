@@ -612,10 +612,10 @@ class NeuralNet_Base extends Recyclable.Root {
    *   The image or canvas which provides image.
    *
    * @param {boolean} bForceInt32
-   *   If true, the dtype of the returned tf.tensor3d will be guaranteed as int32.
-   * Otherwise, the dtype of the returned tf.tensor3d may be int32 or float32 (if
-   * resized). This is useful if the result will be used by an embedding layer
-   * (which only accepts integer input). Default is true.
+   *   If true, the dtype of the returned tf.tensor3d will be guaranteed as
+   * int32. Otherwise, the dtype of the returned tf.tensor3d may be int32 or
+   * float32 (if resized). This is useful if the result will be used by an
+   * embedding layer (which only accepts integer input). Default is true.
    *
    * @return {tf.tensor3d}
    *   Return the tensor3d which is the scaled image from canvas. Its size will
