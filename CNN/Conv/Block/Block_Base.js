@@ -316,18 +316,22 @@ import { inputTensorPlaceholder_creator } from "./Block_inputTensorPlaceholder_c
  *             and input1.
  *
  * @member {number} tensorWeightCountTotal
- *   The total wieght count used in tensors. Not including Params, because they are not used in tensors. Including inferenced
- * weights, if they are used in tensors. (Not including channelShuffler.)
+ *   The total wieght count used in tensors. Not including Params, because they
+ * are not used in tensors. Including inferenced weights, if they are used in
+ * tensors. (Not including channelShuffler.)
  *
  * @member {number} tensorWeightCountExtracted
- *   The wieght count extracted from inputWeightArray and used in tensors. Not including Params, because they are not used in
- * tensors. Not including inferenced weights (even if they are used in tensors), because they are not extracted from inputWeightArray.
- * (Not including channelShuffler.)
+ *   The wieght count extracted from inputWeightArray and used in tensors. Not
+ * including Params, because they are not used in tensors. Not including
+ * inferenced weights (even if they are used in tensors), because they are not
+ * extracted from inputWeightArray. (Not including channelShuffler.)
  *
  * @member {function} apply
- *   This is a data member which is a pointer to a function. The function processes .input0.realTensor (and .input1.realTensor) as
- * inputTensor(s). It puts to .output0.realTensor as outputTensor. The inputTensors may or may not be disposed according to
- * setKeepInputTensor(). All intermediate tensors will be disposed.
+ *   This is a data member which is a pointer to a function. The function
+ * processes .input0.realTensor (and .input1.realTensor) as inputTensor(s). It
+ * puts to .output0.realTensor as outputTensor. The inputTensors may or may not
+ * be disposed according to setKeepInputTensor(). All intermediate tensors will
+ * be disposed.
  *
  */
 class Block_Base extends Recyclable.Root {
