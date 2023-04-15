@@ -226,6 +226,12 @@ class NeuralNet_StageParamsCreator_Base extends Recyclable.Root {
 // pointwise20ActivationId may use
 // CLIP_BY_VALUE_N0_P255, CLIP_BY_VALUE_N0_P1023, CLIP_BY_VALUE_N0_P65535,
 // CLIP_BY_VALUE_N0_P2POW20, CLIP_BY_VALUE_N0_P2POW24, ...
+//
+// But this is not workable because:
+//   - MobileNetV2_Xxx has add-input-to-output behind pointwise2.
+//   - non-MobileNetV2_Xxx has squeeze-and-excitation behind pointwise2.
+// They will destroy the activation function result.
+//
 
     // pointwise20 always has no activation function, so that any number could be
     // generated.
