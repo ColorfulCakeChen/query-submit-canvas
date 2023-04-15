@@ -720,7 +720,6 @@ class NeuralNet_Base extends Recyclable.Root {
       let valueClippedTensor = inputTensor.clipByValue( valueMin, valueMax );
 
       inputTensor.dispose(); // Release immediately to reduce memory footprint.
-      inputTensor = null;
 
       try {
         // 2. Let value be integer.
@@ -736,14 +735,11 @@ class NeuralNet_Base extends Recyclable.Root {
       }
 
     } catch ( e ) {
+      // No matter successful or failed, always release input tensor.
+      inputTensor.dispose();
       throw e; // e.g. out of (GPU) memory.
 
     } finally {
-      // No matter successful or failed, always release input tensor.
-      if ( inputTensor ) {
-        inputTensor.dispose();
-        inputTensor = null;
-      }
     }
   }
 
