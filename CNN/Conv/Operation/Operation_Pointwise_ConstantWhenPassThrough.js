@@ -9,8 +9,8 @@ import { Pointwise } from "./Operation_Pointwise.js";
  * input) when pass-through.
  *
  * It has the following properties:
- *   - ( nPassThroughStyleId
- *       == ValueDesc.PassThroughStyle.Singleton.Ids.PASS_THROUGH_STYLE_FILTER_0_BIAS_1 ) (1).
+ *   - ( nPassThroughStyleId ==
+ *       ValueDesc.PassThroughStyle.Singleton.Ids.PASS_THROUGH_STYLE_FILTER_0_BIAS_1 ) (1).
  *
  * Usually, this is used for squeeze-and-excitaion pointwise.
  *

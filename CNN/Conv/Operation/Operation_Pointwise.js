@@ -22,28 +22,38 @@ import { Base } from "./Operation_Base.js";
  *   If true, the init() is successful.
  *
  * @member {function} pfnConv
- *   This is a method. It has one parameter inputTensor and return a outputTensor. The inputTensor (tf.tensor3d) represents the image
- * ( height x width x channel ) which will be processed. The outputTensor (tf.tensor3d) represents the result.
- * All intermediate tensors will be disposed. The inputTensor may or may not be disposed. In fact, this method calls one of
- * return_input_directly(), keep_input_return_copy(), Conv_and_destroy(), Conv_and_keep() according to the parameters.
+ *   This is a method. It has one parameter inputTensor and return a
+ * outputTensor. The inputTensor (tf.tensor3d) represents the image
+ * ( height x width x channel ) which will be processed. The outputTensor
+ * (tf.tensor3d) represents the result. All intermediate tensors will be
+ * disposed. The inputTensor may or may not be disposed. In fact, this method
+ * calls one of return_input_directly(), keep_input_return_copy(),
+ * Conv_and_destroy(), Conv_and_keep() according to the parameters.
  *
  * @member {function} apply
- *   This is a method. It processes this.input0.realTensor as inputTensor and puts to this.output0.realTensor as outputTensor. The
- * inputTensor (tf.tensor3d) represents the image ( height x width x channel ) which will be processed. The outputTensor (tf.tensor3d)
- * represents the result. All intermediate tensors will be disposed. The inputTensor may or may not be disposed. In fact, this method 
- * calls one of output0_return_input0_directly(), output0_return_input0_cloned(), Conv_and_destroy_or_keep(),
- * ConvBias_and_destroy_or_keep(), ConvActivation_and_destroy_or_keep(), ConvBiasActivation_and_destroy_or_keep()
- * according to the parameters.
+ *   This is a method. It processes this.input0.realTensor as inputTensor and
+ * puts to this.output0.realTensor as outputTensor. The inputTensor
+ * (tf.tensor3d) represents the image ( height x width x channel ) which will
+ * be processed. The outputTensor (tf.tensor3d) represents the result. All
+ * intermediate tensors will be disposed. The inputTensor may or may not be
+ * disposed. In fact, this method calls one of
+ * output0_return_input0_directly(), output0_return_input0_cloned(),
+ * Conv_and_destroy_or_keep(), ConvBias_and_destroy_or_keep(),
+ * ConvActivation_and_destroy_or_keep(),
+ * ConvBiasActivation_and_destroy_or_keep() according to the parameters.
  *
  * @see Operation.Base
  * @see Pointwise.FiltersArray_BiasesArray
  */
-class Pointwise extends Base( FiltersArray_BiasesArray( TwoTensors.filtersTensor4d_biasesTensor3d( ReturnOrClone.Root ) ) ) {
+class Pointwise extends Base( FiltersArray_BiasesArray(
+  TwoTensors.filtersTensor4d_biasesTensor3d( ReturnOrClone.Root ) ) ) {
 
   /**
-   * Used as default Operation.Pointwise provider for conforming to Recyclable interface.
+   * Used as default Operation.Pointwise provider for conforming to Recyclable
+   * interface.
    */
-  static Pool = new Pool.Root( "Operation.Pointwise.Pool", Pointwise, Pointwise.setAsConstructor );
+  static Pool = new Pool.Root( "Operation.Pointwise.Pool",
+    Pointwise, Pointwise.setAsConstructor );
 
   /**
    */
@@ -55,8 +65,10 @@ class Pointwise extends Base( FiltersArray_BiasesArray( TwoTensors.filtersTensor
 
     super(
       inputTensorPlaceholder0, null, 1,
-      inputTensorPlaceholder0.channelCount, outputChannelCount, bBias, nActivationId, nPassThroughStyleId,
-      nHigherHalfDifferent, inputTensorPlaceholder0.channelCount_lowerHalf, outputChannelCount_lowerHalf,
+      inputTensorPlaceholder0.channelCount, outputChannelCount,
+      bBias, nActivationId, nPassThroughStyleId,
+      nHigherHalfDifferent,
+      inputTensorPlaceholder0.channelCount_lowerHalf, outputChannelCount_lowerHalf,
       channelShuffler_inputGroupCount, channelShuffler_outputGroupCount );
 
     Pointwise.setAsConstructor_self.call( this );
@@ -71,8 +83,10 @@ class Pointwise extends Base( FiltersArray_BiasesArray( TwoTensors.filtersTensor
 
     super.setAsConstructor(
       inputTensorPlaceholder0, null, 1,
-      inputTensorPlaceholder0.channelCount, outputChannelCount, bBias, nActivationId, nPassThroughStyleId,
-      nHigherHalfDifferent, inputTensorPlaceholder0.channelCount_lowerHalf, outputChannelCount_lowerHalf,
+      inputTensorPlaceholder0.channelCount, outputChannelCount,
+      bBias, nActivationId, nPassThroughStyleId,
+      nHigherHalfDifferent,
+      inputTensorPlaceholder0.channelCount_lowerHalf, outputChannelCount_lowerHalf,
       channelShuffler_inputGroupCount, channelShuffler_outputGroupCount );
 
     Pointwise.setAsConstructor_self.call( this );
@@ -93,11 +107,15 @@ class Pointwise extends Base( FiltersArray_BiasesArray( TwoTensors.filtersTensor
   init( inputWeightArray, weightElementOffsetBegin ) {
 
     // Q1: Why is the inputWeightArray not a parameter of constructor?
-    // A1: The reason is to avoid keeping it as this.inputWeightArray so that it could be released by memory garbage collector.
+    // A1: The reason is to avoid keeping it as this.inputWeightArray so that
+    //     it could be released by memory garbage collector.
     //
-    // Q2: Why not keep filtersWeights and biasesWeights in data members of this?
-    // A2: Their underlying ArrayBuffer is inputWeightArray.buffer. If this.filtersWeights and this.biasesWeights are kept,
-    //     the inputWeightArray.buffer could not be released by memory garbage collector.
+    // Q2: Why not keep filtersWeights and biasesWeights in data members of
+    //     this?
+    // A2: Their underlying ArrayBuffer is inputWeightArray.buffer. If
+    //     this.filtersWeights and this.biasesWeights are kept,
+    //     the inputWeightArray.buffer could not be released by memory garbage
+    //     collector.
 
 
     // 1. Determine operation functions.
@@ -112,13 +130,16 @@ class Pointwise extends Base( FiltersArray_BiasesArray( TwoTensors.filtersTensor
 
       // Bypass previous to next.
       //
-      // Note: The .outputX and .inputX should always be different object (but can have the same content).
-      //       Otherwise, the apply() will destroy the content of .inputX (especially when keep-input-tensor).
-      this.output0.set_height_width_channelCount_scaleBoundsArray_byTensorPlaceholder( this.input0 );
+      // Note: The .outputX and .inputX should always be different object (but
+      //       can have the same content). Otherwise, the apply() will destroy
+      //       the content of .inputX (especially when keep-input-tensor).
+      this.output0.set_height_width_channelCount_scaleBoundsArray_byTensorPlaceholder(
+        this.input0 );
 
     } else { // 3.
 
-      bExtractOk = super.init( inputWeightArray, weightElementOffsetBegin, this.input0.scaleBoundsArray );
+      bExtractOk = super.init( inputWeightArray,
+        weightElementOffsetBegin, this.input0.scaleBoundsArray );
       if ( bExtractOk ) {
         try {
 
@@ -126,18 +147,22 @@ class Pointwise extends Base( FiltersArray_BiasesArray( TwoTensors.filtersTensor
             this.filtersTensor4d = tf.tensor( this.filtersArray, this.filtersShape );
 
 //!!! (2022/08/05 Temp Remarked) For debug BoundsArraySet calculation error.
-            this.filtersArray.disposeResources_and_recycleToPool(); this.filtersArray = null; // Release for reducing memory usage.
+            this.filtersArray.disposeResources_and_recycleToPool();
+            this.filtersArray = null; // Release for reducing memory usage.
 
-            // Note: Because .filtersShape will be kept by .filtersTensor4d internally, it can not be released here.
+            // Note: Because .filtersShape will be kept by .filtersTensor4d
+            //       internally, it can not be released here.
           }
 
           if ( this.biasesShape && this.biasesArray ) {
             this.biasesTensor3d = tf.tensor( this.biasesArray, this.biasesShape );
 
 //!!! (2022/08/05 Temp Remarked) For debug BoundsArraySet calculation error.
-            this.biasesArray.disposeResources_and_recycleToPool(); this.biasesArray = null; // Release for reducing memory usage.
+            this.biasesArray.disposeResources_and_recycleToPool();
+            this.biasesArray = null; // Release for reducing memory usage.
 
-            // Note: Because .biasesShape will be kept by .biasesTensor3d internally, it can not be released here.
+            // Note: Because .biasesShape will be kept by .biasesTensor3d
+            //       internally, it can not be released here.
           }
 
           this.output0.set_height_width_channelCount_scaleBoundsArray(
@@ -149,9 +174,11 @@ class Pointwise extends Base( FiltersArray_BiasesArray( TwoTensors.filtersTensor
             this.boundsArraySet.output0
           );
 
-          // Release for reducing memory usage. (Since it has been inside the output tensor placeholder.)
+          // Release for reducing memory usage. (Since it has been inside the
+          // output tensor placeholder.)
           {
-            this.boundsArraySet.output0 = null; // Because it has already been transferred to TensorPlaceholder this.output0
+            // Because it has already been transferred to TensorPlaceholder this.output0
+            this.boundsArraySet.output0 = null;
             this.boundsArraySet.disposeResources_and_recycleToPool();
             this.boundsArraySet = null;
           }
@@ -179,8 +206,8 @@ class Pointwise extends Base( FiltersArray_BiasesArray( TwoTensors.filtersTensor
   }
 
   /**
-   * Adjust this.pfnConv (and this.apply if need) so that this.pfnConv() and this.apply() will or will not
-   * dispose its inputTensor.
+   * Adjust this.pfnConv (and this.apply if need) so that this.pfnConv() and
+   * this.apply() will or will not dispose its inputTensor.
    */
   setKeepInputTensor( bKeepInputTensor ) {
     if ( bKeepInputTensor == this.bKeepInputTensor )
@@ -230,7 +257,8 @@ class Pointwise extends Base( FiltersArray_BiasesArray( TwoTensors.filtersTensor
    *   The Base object to be determined and modified.
    */
   static setup_bPointwise_pfn() {
-    this.bKeepInputTensor = false; // (Because this method will arrange function pointer as not-keep-input-tensor.)
+    // (Because this method will arrange function pointer as not-keep-input-tensor.)
+    this.bKeepInputTensor = false;
 
     // 0. Determine whether pointwise operation should exist.
     if ( this.outputChannelCount > 0 ) {
@@ -266,15 +294,20 @@ class Pointwise extends Base( FiltersArray_BiasesArray( TwoTensors.filtersTensor
   }
 
 
-  /** Pointwise Convolution (1x1). (The inputTensor will not be disposed so that it can be used for achieving skip connection.) */
+  /**
+   * Pointwise Convolution (1x1). (The inputTensor will not be disposed so that
+   * it can be used for achieving skip connection.)
+   */
   static Conv_and_keep( inputTensor ) {
     return tf.conv2d( inputTensor, this.filtersTensor4d, 1, "valid" ); // 1x1, Stride = 1
   }
 
   static Conv_and_destroy( inputTensor ) {
-    let t = tf.conv2d( inputTensor, this.filtersTensor4d, 1, "valid" );
-    inputTensor.dispose();
-    return t;
+    try {
+      return tf.conv2d( inputTensor, this.filtersTensor4d, 1, "valid" );
+    } finally {
+      inputTensor.dispose();
+    }
   }
 
   
@@ -286,8 +319,12 @@ class Pointwise extends Base( FiltersArray_BiasesArray( TwoTensors.filtersTensor
   static ConvBias_and_destroy_or_keep() {
     let t0 = this.pfnConv( this.input0.realTensor );
 
-    let t1 = tf.add( t0, this.biasesTensor3d );
-    t0.dispose();
+    let t1;
+    try {
+      t1 = tf.add( t0, this.biasesTensor3d );
+    } finally {
+      t0.dispose();
+    }
 
     this.output0.realTensor = t1;
   }
@@ -295,8 +332,12 @@ class Pointwise extends Base( FiltersArray_BiasesArray( TwoTensors.filtersTensor
   static ConvActivation_and_destroy_or_keep() {
     let t0 = this.pfnConv( this.input0.realTensor );
 
-    let t1 = this.pfnActivation( t0 );
-    t0.dispose();
+    let t1;
+    try {
+      t1 = this.pfnActivation( t0 );
+    } finally {
+      t0.dispose();
+    }
 
     this.output0.realTensor = t1;
   }
@@ -304,11 +345,18 @@ class Pointwise extends Base( FiltersArray_BiasesArray( TwoTensors.filtersTensor
   static ConvBiasActivation_and_destroy_or_keep() {
     let t0 = this.pfnConv( this.input0.realTensor );
 
-    let t1 = tf.add( t0, this.biasesTensor3d );
-    t0.dispose();
+    let t1;
+    try {
+      t1 = tf.add( t0, this.biasesTensor3d );
+    } finally {
+      t0.dispose();
+    }
 
-    t0 = this.pfnActivation( t1 );
-    t1.dispose();
+    try {
+      t0 = this.pfnActivation( t1 );
+    } finally {
+      t1.dispose();
+    }
 
     this.output0.realTensor = t0;
   }

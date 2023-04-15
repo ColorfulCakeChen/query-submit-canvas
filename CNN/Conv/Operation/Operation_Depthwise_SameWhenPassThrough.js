@@ -9,8 +9,8 @@ import { Depthwise } from "./Operation_Depthwise.js";
  * pass-through.
  *
  * It has the following properties:
- *   - ( nPassThroughStyleId
- *       == ValueDesc.PassThroughStyle.Singleton.Ids.PASS_THROUGH_STYLE_FILTER_1_BIAS_0 ) (0).
+ *   - ( nPassThroughStyleId ==
+ *       ValueDesc.PassThroughStyle.Singleton.Ids.PASS_THROUGH_STYLE_FILTER_1_BIAS_0 ) (0).
  *
  * Usually, this is used for non-squeeze-and-excitaion depthwise.
  *

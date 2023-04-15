@@ -400,9 +400,8 @@ class Depthwise extends Base( FiltersArray_BiasesArray(
 
   static Avg_and_destroy( inputTensor ) {
     try {
-      let t = tf.pool( inputTensor,
+      return tf.pool( inputTensor,
         this.poolWindowShape, "avg", this.pad, 1, this.strides ); // dilations = 1
-      return t;
     } finally {
       inputTensor.dispose();
     }
@@ -416,9 +415,8 @@ class Depthwise extends Base( FiltersArray_BiasesArray(
 
   static Max_and_destroy( inputTensor ) {
     try {
-      let t = tf.pool( inputTensor,
+      return tf.pool( inputTensor,
         this.poolWindowShape, "max", this.pad, 1, this.strides ); // dilations = 1
-      return t;
     } finally {
       inputTensor.dispose();
     }
@@ -432,9 +430,8 @@ class Depthwise extends Base( FiltersArray_BiasesArray(
 
   static Conv_and_destroy( inputTensor ) {
     try {
-      let t = tf.depthwiseConv2d( inputTensor,
+      return tf.depthwiseConv2d( inputTensor,
         this.filtersTensor4d, this.strides, this.pad );
-      return t;
     } finally {
       inputTensor.dispose();
     }
