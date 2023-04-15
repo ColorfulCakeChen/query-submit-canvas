@@ -6,23 +6,29 @@ import * as TensorPlaceholder from "../TensorPlaceholder.js";
 import { Root } from "./Operation_Base.js";
 
 /**
- * A dummy operation which could pass its input to its output (with properly cloning or disposing according to keep-intput-tensor flags).
+ * A dummy operation which could pass its input to its output (with properly
+ * cloning or disposing according to keep-intput-tensor flags).
  *
  *
  * @member {function} apply
- *   This is a data member which is a pointer to a function. The function processes .input0.realTensor (and .input1.realTensor) as
- * inputTensor(s). It puts to .output0.realTensor as outputTensor. They are tf.tensor3d and just be passed from input to output.
- * The inputTensors may or may not be disposed according to setKeepInputTensor(). Default is setKeepInputTensor( false, false )
- * which will destroy all inputs. Usually, sub-class should override this data member.
+ *   This is a data member which is a pointer to a function. The function
+ * processes .input0.realTensor (and .input1.realTensor) as inputTensor(s). It
+ * puts to .output0.realTensor as outputTensor. They are tf.tensor3d and just
+ * be passed from input to output. The inputTensors may or may not be disposed
+ * according to setKeepInputTensor(). Default is
+ * setKeepInputTensor( false, false ) which will destroy all inputs. Usually,
+ * sub-class should override this data member.
  *
  * @see Operation.Base
  */
 class Dummy extends Root {
 
   /**
-   * Used as default Operation.Dummy provider for conforming to Recyclable interface.
+   * Used as default Operation.Dummy provider for conforming to Recyclable
+   * interface.
    */
-  static Pool = new Pool.Root( "Operation.Dummy.Pool", Dummy, Dummy.setAsConstructor );
+  static Pool = new Pool.Root( "Operation.Dummy.Pool",
+    Dummy, Dummy.setAsConstructor );
 
   /**
    */
@@ -40,7 +46,8 @@ class Dummy extends Root {
 
   /** @override */
   static setAsConstructor_self() {
-    Dummy.setup_apply_dummy.call( this, false, false ); // Default is destroy0 and destroy1.
+    // Default is destroy0 and destroy1.
+    Dummy.setup_apply_dummy.call( this, false, false );
   }
 
   /** @override */
@@ -49,40 +56,48 @@ class Dummy extends Root {
   }
 
   /**
-   * Adjust according to specified keep-input-tensor flag(s). So that calling .apply() will generate correct result without memory leakage.
+   * Adjust according to specified keep-input-tensor flag(s). So that calling
+   * .apply() will generate correct result without memory leakage.
    *
-   * The this.setKeepInputTensor_IfNotFinalOperation_Or_In() will call this method. This method should adjust
-   * this.apply so that this.apply() will or will not dispose its inputTensors.
+   * The this.setKeepInputTensor_IfNotFinalOperation_Or_In() will call this
+   * method. This method should adjust this.apply so that this.apply() will or
+   * will not dispose its inputTensors.
    *
    * Sub-class should override this method.
    *
    * @param {boolean} bKeepInputTensor0
-   *   Whether the .input0's tensor should be destroyed by this operation. It is ignored if .input0 does not exist.
+   *   Whether the .input0's tensor should be destroyed by this operation. It
+   * is ignored if .input0 does not exist.
    *
    * @param {boolean} bKeepInputTensor1
-   *   Whether the .input1's tensor should be destroyed by this operation. It is ignored if .input1 does not exist.
+   *   Whether the .input1's tensor should be destroyed by this operation. It
+   * is ignored if .input1 does not exist.
    */
   setKeepInputTensor( bKeepInputTensor0, bKeepInputTensor1 ) {
     Dummy.setup_apply_dummy.call( this, bKeepInputTensor0, bKeepInputTensor1 );
   }
 
   /**
-   * Determine this.apply data members according to whether .inputX and .outputX exist and whether they are required to be kept.
-   * The .apply will just pass through from input to output (but handle keep-input-tensor flag correctly).
+   * Determine this.apply data members according to whether .inputX and .outputX
+   * exist and whether they are required to be kept. The .apply will just pass
+   * through from input to output (but handle keep-input-tensor flag correctly).
    *
    *
    * @param {Dummy} this
    *   The Dummy object to be determined and modified.
    *
    * @param {boolean} bKeepInputTensor0
-   *   Whether the .input0's tensor should be destroyed by this operation. It is ignored if .input0 does not exist.
+   *   Whether the .input0's tensor should be destroyed by this operation. It
+   * is ignored if .input0 does not exist.
    *
    * @param {boolean} bKeepInputTensor1
-   *   Whether the .input1's tensor should be destroyed by this operation. It is ignored if .input1 does not exist.
+   *   Whether the .input1's tensor should be destroyed by this operation. It
+   * is ignored if .input1 does not exist.
    */
   static setup_apply_dummy( bKeepInputTensor0, bKeepInputTensor1 ) {
 
-    // Note: Do not use function declared in function because they may generate new function object every time.
+    // Note: Do not use function declared in function because they may generate
+    //       new function object every time.
 
     if ( this.input0 ) {
       if ( this.input1 ) {
