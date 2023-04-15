@@ -730,7 +730,6 @@ class NeuralNet_Base extends Recyclable.Root {
 
       } finally {
         valueClippedTensor.dispose();
-        valueClippedTensor = null;
       }
 
     } catch ( e ) {
