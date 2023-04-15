@@ -570,13 +570,13 @@ class NeuralNet_Base extends Recyclable.Root {
       this.blockFinal.apply();
       outputTensor = this.blockFinal.output0.realTensor;
 
-//!!! ...unfinished... (2023/04/15)
+//!!! ...unfinished... (2023/04/15) output_asInputValueRange
       // Restricting final output to the same value range as input (i.e.
       // non-negative integer which can be used in embedding looking up).
       //
       // This is useful if the output should become recurrent feedback of the next
       // times input.
-      if ( ??? ) {
+      if ( this.output_asInputValueRange ) {
         outputTensor = this.Tensor_restrict_to_InputValueRange_and_dispose(
           outputTensor );
       }
