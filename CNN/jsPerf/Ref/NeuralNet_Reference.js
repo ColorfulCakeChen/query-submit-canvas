@@ -730,10 +730,10 @@ class NeuralNet_Reference_Base extends Recyclable.Root {
 
     // 4. Clamp and integerize output.
     if ( testParams.out.output_asInputValueRange ) {
+      const lowerBound = 0;
+      const upperBound = ( testParams.out.vocabularyCountPerInputChannel - 1 );
       imageOut.modify_byClamp_toInt(
-        0, testParams.out.vocabularyCountPerInputChannel,
-        "output_clamp_int", testParams.out
-      );
+        lowerBound, upperBound, "output_clamp_int", testParams.out );
     }
     
     return imageOut;
