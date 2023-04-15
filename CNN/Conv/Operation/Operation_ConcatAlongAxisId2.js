@@ -232,14 +232,20 @@ class ConcatAlongAxisId2 extends Root {
   }
 
 
-  /** Concatenate along axis id 2. (Both the input0 and input1 will not be disposed. */
+  /**
+   * Concatenate along axis id 2. (Both the input0 and input1 will not be
+   * disposed.
+   */
   static Concat_and_keep0_keep1() {
     this.inputTensors[ 0 ] = this.input0.realTensor;
     this.inputTensors[ 1 ] = this.input1.realTensor;
     this.output0.realTensor = tf.concat( this.inputTensors, 2 ); // AxisId = 2
   }
 
-  /** Concatenate along axis id 2. (The input0 will not be disposed. The input1 will be disposed. */
+  /**
+   * Concatenate along axis id 2. (The input0 will not be disposed. The input1
+   * will be disposed.
+   */
   static Concat_and_keep0_destroy1() {
     try {
       this.inputTensors[ 0 ] = this.input0.realTensor;
@@ -250,7 +256,10 @@ class ConcatAlongAxisId2 extends Root {
     }
   }
 
-  /** Concatenate along axis id 2. (The input0 will be disposed. The input1 will not be disposed. */
+  /**
+   * Concatenate along axis id 2. (The input0 will be disposed. The input1 will
+   * not be disposed.
+   */
   static Concat_and_destroy0_keep1() {
     try {
       this.inputTensors[ 0 ] = this.input0.realTensor;
@@ -261,7 +270,9 @@ class ConcatAlongAxisId2 extends Root {
     }
   }
 
-  /** Concatenate along axis id 2. (Both the input0 and input1 will be disposed. */
+  /**
+   * Concatenate along axis id 2. (Both the input0 and input1 will be disposed.
+   */
   static Concat_and_destroy0_destroy1() {
     try {
       this.inputTensors[ 0 ] = this.input0.realTensor;

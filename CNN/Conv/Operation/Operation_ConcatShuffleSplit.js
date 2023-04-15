@@ -463,7 +463,10 @@ class ConcatShuffleSplit extends Root {
   }
 
 
-  /** Concatenate along axis id 2. (Both the input0 and input1 will not be disposed.) */
+  /**
+   * Concatenate along axis id 2. (Both the input0 and input1 will not be
+   * disposed.)
+   */
   static ConcatShuffleSplit_and_keep0_keep1( inputTensors, outputTensors ) {
     this.inputTensors[ 0 ] = this.input0.realTensor;
     this.inputTensors[ 1 ] = this.input1.realTensor;
@@ -472,7 +475,8 @@ class ConcatShuffleSplit extends Root {
     this.pfnShuffleSplit( t0 );
   }
 
-  /** Concatenate along axis id 2. (The input0 will not be disposed. The input1
+  /**
+   * Concatenate along axis id 2. (The input0 will not be disposed. The input1
    * will be disposed.)
    */
   static ConcatShuffleSplit_and_keep0_destroy1( inputTensors, outputTensors ) {
@@ -488,7 +492,8 @@ class ConcatShuffleSplit extends Root {
     this.pfnShuffleSplit( t0 );
   }
 
-  /** Concatenate along axis id 2. (The input0 will be disposed. The input1
+  /**
+   * Concatenate along axis id 2. (The input0 will be disposed. The input1
    * will not be disposed.)
    */
   static ConcatShuffleSplit_and_destroy0_keep1( inputTensors, outputTensors ) {
@@ -504,7 +509,10 @@ class ConcatShuffleSplit extends Root {
     this.pfnShuffleSplit( t0 );
   }
 
-  /** Concatenate along axis id 2. (Both the input0 and input1 will be disposed.) */
+  /**
+   * Concatenate along axis id 2. (Both the input0 and input1 will be
+   * disposed.)
+   */
   static ConcatShuffleSplit_and_destroy0_destroy1( inputTensors, outputTensors ) {
     try {
       this.inputTensors[ 0 ] = this.input0.realTensor;

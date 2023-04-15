@@ -5,10 +5,12 @@ import * as ValueDesc from "../../Unpacker/ValueDesc.js";
 import { Pointwise } from "./Operation_Pointwise.js";
 
 /**
- * Pointwise convolution whose output will be constant value (no matter what input) when pass-through.
+ * Pointwise convolution whose output will be constant value (no matter what
+ * input) when pass-through.
  *
  * It has the following properties:
- *   - ( nPassThroughStyleId == ValueDesc.PassThroughStyle.Singleton.Ids.PASS_THROUGH_STYLE_FILTER_0_BIAS_1 ) (1).
+ *   - ( nPassThroughStyleId
+ *       == ValueDesc.PassThroughStyle.Singleton.Ids.PASS_THROUGH_STYLE_FILTER_0_BIAS_1 ) (1).
  *
  * Usually, this is used for squeeze-and-excitaion pointwise.
  *
@@ -16,10 +18,13 @@ import { Pointwise } from "./Operation_Pointwise.js";
 class Pointwise_ConstantWhenPassThrough extends Pointwise {
 
   /**
-   * Used as default Operation.Pointwise_ConstantWhenPassThrough provider for conforming to Recyclable interface.
+   * Used as default Operation.Pointwise_ConstantWhenPassThrough provider for
+   * conforming to Recyclable interface.
    */
-  static Pool = new Pool.Root( "Operation.Pointwise_ConstantWhenPassThrough.Pool",
-    Pointwise_ConstantWhenPassThrough, Pointwise_ConstantWhenPassThrough.setAsConstructor );
+  static Pool = new Pool.Root(
+    "Operation.Pointwise_ConstantWhenPassThrough.Pool",
+    Pointwise_ConstantWhenPassThrough,
+    Pointwise_ConstantWhenPassThrough.setAsConstructor );
 
   /**
    */
