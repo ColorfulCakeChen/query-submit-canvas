@@ -492,10 +492,16 @@ class NeuralNet_Base extends Recyclable.Root {
   }
 
   /**
-   * Release all ScaleBoundsArray (inside tensor placeholder) except
-   * .stage0.inputX and .stageLast.outputX
+   * Release all stages' ScaleBoundsArray (inside tensor placeholder) except:
+   * .stage0.inputX and .stageLast.outputX.
    *
    * This could reduce memory footprint by releasing unused scale bounds array.
+   *
+   * Note:
+   *   - .embedding.output_scaleBoundsArray still exists, too.
+   *   - .blockFinal.inputX and .blockFinal.outputX still exist, too.
+   *       (.blockFinal's other ScaleBoundsArray are released by Block itself.)
+   *
    */
   dispose_intermediate_ScaleBoundsArray() {
     if ( !this.stageArray )
@@ -526,8 +532,6 @@ class NeuralNet_Base extends Recyclable.Root {
       this.stage0.output1?.ScaleBoundsArray_dispose();
       this.stage0.output0.ScaleBoundsArray_dispose();
     }
-
-//!!! ...unfinished... (2023/04/15) What about embedding and blockFinal's bounds array?
   }
 
   /**

@@ -110,7 +110,8 @@ class Embedding_Base extends Recyclable.Base( ReturnOrClone.Root ) {
       ;
 
     let progressRoot = progressParent.root_get();
-    let progressToAdvance = progressParent.child_add( ValueMax.Percentage.Concrete.Pool.get_or_create_by( progressMax ) ); // For parameters extracting.
+    let progressToAdvance = progressParent.child_add(
+      ValueMax.Percentage.Concrete.Pool.get_or_create_by( progressMax ) ); // For parameters extracting.
 
     // 1. Extract parameters.
     try {
