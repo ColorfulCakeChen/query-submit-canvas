@@ -14,13 +14,15 @@ import { InferencedParams } from "./Block_InferencedParams.js";
 import { inputTensorPlaceholder_creator } from "./Block_inputTensorPlaceholder_creator.js";
 
 /**
- * One block of a stage of convolution neural network. Basically, there are three convolutions inside this object.
+ * One block of a stage of convolution neural network. Basically, there are
+ * three convolutions inside this object.
  *   - 1x1 pointwise convolution: change channel count. (exapnd)
  *   - NxN depthwise convolution: change channel count. (channel multiplier)
  *   - 1x1 pointwise convolution: change channel count. (shrink)
  *
- * The pointwise1 and depthwise convolution could exist or not exist. The pointwise2 convolution must exist. If a convolution
- * exists, it could have or have no bias and activation function.
+ * The pointwise1 and depthwise convolution could exist or not exist. The
+ * pointwise2 convolution must exist. If a convolution exists, it could have or
+ * have no bias and activation function.
  *
  *
  * There are twelve combinations:
