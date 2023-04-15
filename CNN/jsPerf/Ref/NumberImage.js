@@ -763,8 +763,7 @@ class NumberImage_Base extends Recyclable.Root {
   }
 
   /**
-   * Note: This method will also set .boundsArraySet.afterActivation
-   *       (i.e. .output0.boundsArray).
+   * Note: This method will also set .boundsArraySet.output0.boundsArray.
    *
    * @param {NumberImage.Base} this    The source image to be processed.
    * @param {number}   lowerBound      The lower bound of clamp.
@@ -779,7 +778,7 @@ class NumberImage_Base extends Recyclable.Root {
   modify_byClamp_toInt( lowerBound, upperBound, parametersDesc, ...clampNames ) {
     let imageIn = this;
 
-    imageIn.boundsArraySet.afterActivation.set_all_byLowerUpper(
+    imageIn.boundsArraySet.output0.boundsArray.set_all_byLowerUpper(
       lowerBound, upperBound );
 
     if ( lowerBound == undefined )
