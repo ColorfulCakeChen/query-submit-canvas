@@ -178,18 +178,18 @@ import { InferencedParams } from "./Stage_InferencedParams.js";
  * multiplied to its input, it should be viewed as a non-linear operation (just
  * like activation function is a non-linear operation).
  *
- * If squeeze-and-excitation is prefix the pointwise2 convolution (i.e. just after
- * the depthwise convolution), the depthwise convolution should have bias (and even
- * activation). Since squeeze-and-excitation is non-linear, if it is applied, a bias
- * should be applied (to achieve affine transformation) before the non-linearity
- * operation.
+ * If squeeze-and-excitation is prefix the pointwise2 convolution (i.e. just
+ * after the depthwise convolution), the depthwise convolution should have bias
+ * (and even activation). Since squeeze-and-excitation is non-linear, if it is
+ * applied, a bias should be applied (to achieve affine transformation) before
+ * the non-linearity operation.
  *
- * In MobileNetV2_Xxx (whose squeeze-and-excitation is prefix), its depthwise has
- * bias (and activation) for this reason.
+ * In MobileNetV2_Xxx (whose squeeze-and-excitation is prefix), its depthwise
+ * has bias (and activation) for this reason.
  *
- * In non-MobileNetV2_Xxx, the squeeze-and-excitation is postfix (not prefix) the
- * pointwise2 convolution to prevent pointwise2 and the next stage's pointwise1
- * from becoming one affine transformation.
+ * In non-MobileNetV2_Xxx, the squeeze-and-excitation is postfix (not prefix)
+ * the pointwise2 convolution to prevent pointwise2 and the next stage's
+ * pointwise1 from becoming one affine transformation.
  *
  *
  * 5. Note: tf.batchNorm()
