@@ -241,7 +241,10 @@ class AddTwoTensors extends Root {
     this.output0.realTensor = tf.add( this.input0.realTensor, this.input1.realTensor );
   }
 
-  /** Add. (The inputTensors0 will not be disposed. The inputTensor1 will be disposed. */
+  /**
+   * Add. (The inputTensors0 will not be disposed. The inputTensor1 will be
+   * disposed.
+   */
   static Add_and_keep0_destroy1() {
     try {
       this.output0.realTensor = tf.add( this.input0.realTensor, this.input1.realTensor );
@@ -250,7 +253,10 @@ class AddTwoTensors extends Root {
     }
   }
 
-  /** Add. (The inputTensor0 will be disposed. The inputTensor1 will not be disposed. */
+  /**
+   * Add. (The inputTensor0 will be disposed. The inputTensor1 will not be
+   * disposed.
+   */
   static Add_and_destroy0_keep1() {
     try {
       this.output0.realTensor = tf.add( this.input0.realTensor, this.input1.realTensor );
