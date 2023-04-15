@@ -776,7 +776,7 @@ class NumberImage_Base extends Recyclable.Root {
    *   Return this which all values are restricted between [ lowerBound,
    * upperBound ] and converted to integers.
    */
-  modify_byClamp_Int( lowerBound, upperBound, parametersDesc, ...clampNames ) {
+  modify_byClamp_toInt( lowerBound, upperBound, parametersDesc, ...clampNames ) {
     let imageIn = this;
 
     imageIn.boundsArraySet.afterActivation.set_all_byLowerUpper(
