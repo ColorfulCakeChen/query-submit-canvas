@@ -34,7 +34,7 @@ class NeuralNet_Params extends Weights.Params( ParamsBase ) {
     vocabularyChannelCount, vocabularyCountPerInputChannel = 256,
     nConvStageTypeId,
     blockCountTotalRequested,
-    output_channelCount,
+    output_channelCount, output_asInputValueRange,
     bKeepInputTensor
   ) {
     super(
@@ -43,7 +43,7 @@ class NeuralNet_Params extends Weights.Params( ParamsBase ) {
       vocabularyChannelCount, vocabularyCountPerInputChannel,
       nConvStageTypeId,
       blockCountTotalRequested,
-      output_channelCount,
+      output_channelCount, output_asInputValueRange,
       bKeepInputTensor
     );
     NeuralNet_Params.setAsConstructor_self.call( this );
@@ -55,7 +55,7 @@ class NeuralNet_Params extends Weights.Params( ParamsBase ) {
     vocabularyChannelCount, vocabularyCountPerInputChannel = 256,
     nConvStageTypeId,
     blockCountTotalRequested,
-    output_channelCount,
+    output_channelCount, output_asInputValueRange,
     bKeepInputTensor
   ) {
     super.setAsConstructor(
@@ -64,7 +64,7 @@ class NeuralNet_Params extends Weights.Params( ParamsBase ) {
       vocabularyChannelCount, vocabularyCountPerInputChannel,
       nConvStageTypeId,
       blockCountTotalRequested,
-      output_channelCount,
+      output_channelCount, output_asInputValueRange,
       bKeepInputTensor
     );
     NeuralNet_Params.setAsConstructor_self.call( this );
@@ -131,6 +131,7 @@ class NeuralNet_Params extends Weights.Params( ParamsBase ) {
       this.nConvStageTypeId = this.getParamValue_byParamDesc( NeuralNet_Params.nConvStageTypeId );
       this.blockCountTotalRequested = this.getParamValue_byParamDesc( NeuralNet_Params.blockCountTotalRequested );
       this.output_channelCount = this.getParamValue_byParamDesc( NeuralNet_Params.output_channelCount );
+      this.output_asInputValueRange = this.getParamValue_byParamDesc( NeuralNet_Params.output_asInputValueRange );
       this.bKeepInputTensor = this.getParamValue_byParamDesc( NeuralNet_Params.bKeepInputTensor );
     }
 
@@ -154,6 +155,7 @@ class NeuralNet_Params extends Weights.Params( ParamsBase ) {
       neuralNetParamsBase.nConvStageTypeId,
       neuralNetParamsBase.blockCountTotalRequested,
       neuralNetParamsBase.output_channelCount,
+      neuralNetParamsBase.output_asInputValueRange,
       neuralNetParamsBase.bKeepInputTensor
     );
     return neuralNetParams;
@@ -176,6 +178,7 @@ NeuralNet_Params.nConvStageTypeId =         new ParamDesc.ConvStageType( "nConvS
 NeuralNet_Params.blockCountTotalRequested = new ParamDesc.Int(  "blockCountTotalRequested",       2, ( 10 * 1024 ) );
 
 NeuralNet_Params.output_channelCount =      new ParamDesc.Int(  "output_channelCount",            1, ( 10 * 1024 ) );
+NeuralNet_Params.output_asInputValueRange = new ParamDesc.Bool( "output_asInputValueRange" );
 
 NeuralNet_Params.bKeepInputTensor =         new ParamDesc.Bool( "bKeepInputTensor" );
 
