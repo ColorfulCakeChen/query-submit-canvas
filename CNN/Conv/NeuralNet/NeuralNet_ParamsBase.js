@@ -70,9 +70,9 @@ import { InferencedParams } from "./NeuralNet_InferencedParams.js";
  *   The output tensor's channel count.
  *
  * @member {boolean} output_asInputValueRange
- *   If true, restrict output value in (neural network) input value range (i.e.
- * non-negative integer which can be used in embedding looking up). This is
- * useful if the output will be used as the recurrent feedback of the next
+ *   If true, restrict output value to the (neural network) input value range
+ * (i.e. non-negative integer which can be used in embedding looking up). This
+ * is useful if the output will be used as the recurrent feedback of the next
  * times input.
  *
  * @member {boolean} bKeepInputTensor
@@ -98,7 +98,7 @@ class NeuralNet_ParamsBase extends Recyclable.Root {
     vocabularyChannelCount, vocabularyCountPerInputChannel,
     nConvStageTypeId,
     blockCountTotalRequested,
-    output_channelCount,
+    output_channelCount, output_asInputValueRange,
     bKeepInputTensor
   ) {
     super();
@@ -107,7 +107,7 @@ class NeuralNet_ParamsBase extends Recyclable.Root {
       vocabularyChannelCount, vocabularyCountPerInputChannel,
       nConvStageTypeId,
       blockCountTotalRequested,
-      output_channelCount,
+      output_channelCount, output_asInputValueRange,
       bKeepInputTensor
     );
   }
@@ -118,7 +118,7 @@ class NeuralNet_ParamsBase extends Recyclable.Root {
     vocabularyChannelCount, vocabularyCountPerInputChannel,
     nConvStageTypeId,
     blockCountTotalRequested,
-    output_channelCount,
+    output_channelCount, output_asInputValueRange,
     bKeepInputTensor
   ) {
     super.setAsConstructor();
@@ -127,7 +127,7 @@ class NeuralNet_ParamsBase extends Recyclable.Root {
       vocabularyChannelCount, vocabularyCountPerInputChannel,
       nConvStageTypeId,
       blockCountTotalRequested,
-      output_channelCount,
+      output_channelCount, output_asInputValueRange,
       bKeepInputTensor
     );
     return this;
@@ -139,7 +139,7 @@ class NeuralNet_ParamsBase extends Recyclable.Root {
     vocabularyChannelCount, vocabularyCountPerInputChannel,
     nConvStageTypeId,
     blockCountTotalRequested,
-    output_channelCount,
+    output_channelCount, output_asInputValueRange,
     bKeepInputTensor
   ) {
     this.input_height = input_height;
@@ -150,6 +150,7 @@ class NeuralNet_ParamsBase extends Recyclable.Root {
     this.nConvStageTypeId = nConvStageTypeId;
     this.blockCountTotalRequested = blockCountTotalRequested;
     this.output_channelCount = output_channelCount;
+    this.output_asInputValueRange = output_asInputValueRange;
     this.bKeepInputTensor = bKeepInputTensor;
   }
 
@@ -158,6 +159,7 @@ class NeuralNet_ParamsBase extends Recyclable.Root {
     this.inferencedParams_dispose();
 
     this.bKeepInputTensor = undefined;
+    this.output_asInputValueRange = undefined;
     this.output_channelCount = undefined;
     this.blockCountTotalRequested = undefined;
     this.nConvStageTypeId = undefined;
@@ -182,7 +184,7 @@ class NeuralNet_ParamsBase extends Recyclable.Root {
       this.vocabularyCountPerInputChannel,
       this.nConvStageTypeId,
       this.blockCountTotalRequested,
-      this.output_channelCount,
+      this.output_channelCount, this.output_asInputValueRange,
       this.bKeepInputTensor
     );
     return another;
@@ -310,6 +312,7 @@ class NeuralNet_ParamsBase extends Recyclable.Root {
       + `blockCountTotalRequested=${this.blockCountTotalRequested}, `
 
       + `output_channelCount=${this.output_channelCount}, `
+      + `output_asInputValueRange=${this.output_asInputValueRange}, `
 
       + `bKeepInputTensor=${this.bKeepInputTensor}, `
       + `inferencedParams={ ${this.inferencedParams} }`
