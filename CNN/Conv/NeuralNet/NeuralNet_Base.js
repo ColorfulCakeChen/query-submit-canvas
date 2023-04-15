@@ -609,7 +609,7 @@ class NeuralNet_Base extends Recyclable.Root {
    * (by scaling) to this neural network's acceptable input [ height, width ].
    *
    * @param {Uint8Array|ImageData|ImageBitmap|HTMLImageElement|HTMLCanvasElement|HTMLVideoElement} sourcePixelData
-   *   The image or canvas which provides image.
+   *   The image or canvas which provides image (as RGBA 4-channels Uint8 data).
    *
    * @param {boolean} bForceInt32
    *   If true, the dtype of the returned tf.tensor3d will be guaranteed as
