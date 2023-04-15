@@ -50,7 +50,11 @@ class NeuralNet_Reference_Base extends Recyclable.Root {
     this.Embedding_Reference = Embedding_Reference.Base.Pool.get_or_create_by();
     this.Stage_Reference = Stage_Reference.Base.Pool.get_or_create_by();
     this.Block_Reference = Block_Reference.Base.Pool.get_or_create_by();
-    this.asserter_Equal = TensorTools.Asserter_Equal.Pool.get_or_create_by( 0.01, 0.005 );
+
+//!!! (2023/04/15)
+// For clamped and integerized output, acceptable delta should be smaller.
+//    this.asserter_Equal = TensorTools.Asserter_Equal.Pool.get_or_create_by( 0.01, 0.005 );
+    this.asserter_Equal = TensorTools.Asserter_Equal.Pool.get_or_create_by( 0.0001, 0.0005 );
 
     // For reducing memory allocation.
     this.imageInArray = Recyclable.Array.Pool.get_or_create_by( 2 );  // imageInArray[ 0 ] is input0, imageInArray[ 1 ] is input1.
