@@ -69,6 +69,12 @@ import { InferencedParams } from "./NeuralNet_InferencedParams.js";
  * @member {number} output_channelCount
  *   The output tensor's channel count.
  *
+ * @member {boolean} output_asInputValueRange
+ *   If true, restrict output value in (neural network) input value range (i.e.
+ * non-negative integer which can be used in embedding looking up). This is
+ * useful if the output will be used as the recurrent feedback of the next
+ * times input.
+ *
  * @member {boolean} bKeepInputTensor
  *   If true, apply() will not dispose inputTensor (i.e. will be kept).
  *
