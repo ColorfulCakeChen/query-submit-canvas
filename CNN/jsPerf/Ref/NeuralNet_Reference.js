@@ -728,11 +728,16 @@ class NeuralNet_Reference_Base extends Recyclable.Root {
       this.imageOutArray[ 1 ] = null;
     }
 
-    // 4.
-!!! ...unfinishd... (2023/04/15) output_asInputValueRange
-//    output_asInputValueRange
-// imageOut.assert_pixels_byBoundsArray( imageOut.boundsArraySet.afterActivation );
+    // 4. Clamp and integerize output.
+    if ( testParams.out.output_asInputValueRange ) {
+//!!! ...unfinishd... (2023/04/15) output_asInputValueRange
+//
 
+      imageOut.modify_byClamp_toInt(
+        0, testParams.out.vocabularyCountPerInputChannel,
+        "output_clamp_int", testParams.out
+      );
+    }
     
     return imageOut;
   }

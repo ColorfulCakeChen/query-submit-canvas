@@ -814,6 +814,8 @@ class NumberImage_Base extends Recyclable.Root {
       }
     }
 
+    this.assert_pixels_byBoundsArray_output(); // Verify pixels' bounds.
+
     return imageIn;
   }
 
