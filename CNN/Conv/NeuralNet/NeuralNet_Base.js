@@ -413,14 +413,14 @@ class NeuralNet_Base extends Recyclable.Root {
   }
 
   /**
-   * Initialize this object by calling initer() and advance the generator by loop
-   * until done.
+   * Initialize this object by calling initer() and advance the generator by
+   * looping until done.
    *
    * @return {boolean}
-   *   - Return true, if succeeded (and progressParent.valuePercentage will be equal
-   *     to 100).
-   *   - Return false, if failed (and progressParent.valuePercentage will be less than
-   *     100).
+   *   - Return true, if succeeded (and progressParent.valuePercentage will be
+   *       equal to 100).
+   *   - Return false, if failed (and progressParent.valuePercentage will be
+   *       less than 100).
    */
   init( progressParent, inputWeightArray, weightElementOffsetBegin, params ) {
 
