@@ -426,6 +426,8 @@ class HeightWidthDepth {
     //let blockCountTotalRequested_ShuffleNet = this.blockCountTotalRequested * 2;
     const blockCountTotalRequested_ShuffleNet = this.blockCountTotalRequested;
 
+    const output_asInputValueRange = true;
+
     // The neuralNet performance testing should not keep-input-tensor because the
     // input image is created from canvas in real time.
     let bKeepInputTensor = false;
@@ -433,7 +435,9 @@ class HeightWidthDepth {
     // input_height, input_width, input_channelCount,
     // vocabularyChannelCount, vocabularyCountPerInputChannel,
     // nConvStageTypeId,
-    // blockCountTotalRequested, output_channelCount, bKeepInputTensor
+    // blockCountTotalRequested,
+    // output_channelCount, output_asInputValueRange,
+    // bKeepInputTensor
     //
 
     // Create TestCases for every NeuralWorker.Mode
@@ -459,7 +463,8 @@ class HeightWidthDepth {
           this.height, this.width, this.depth,
           this.vocabularyChannelCount, vocabularyCountPerInputChannel,
           nConvStageType,
-          blockCountTotalRequested_ShuffleNet, output_channelCount_real,
+          blockCountTotalRequested_ShuffleNet,
+          output_channelCount_real, output_asInputValueRange,
           bKeepInputTensor
         ),
         theModeInfo.id
