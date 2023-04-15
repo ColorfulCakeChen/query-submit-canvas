@@ -682,6 +682,68 @@ class NeuralNet_Base extends Recyclable.Root {
     }
   }
 
+
+//!!! ...unfinished... (2023/04/15)
+// Perhaps, provide method to fill previous output (Array-like, e.g. Int32Array
+// or Float32Array) to an Array-like (e.g. Uint8Array) for recurrent feedback.
+//
+
+
+//!!! ...unfinished... (2023/04/15)
+// Restricting final output should have the same value range
+// as input (i.e. non-negative integer which can be used in embedding looking up).
+//
+// Implement it by tf.clipByValue( 0, vocabularyCountPerInputChannel - 1 )
+// (which is cheaper than tf.mod()) and tf.cast( "int32" ).
+//
+// This is useful if the output should become recurrent feedback of the next
+// times input.
+//
+// Note: This can not be implemented by pointwise20ActivationId (e.g.
+// CLIP_BY_VALUE_N0_P255, CLIP_BY_VALUE_N0_P1023, CLIP_BY_VALUE_N0_P65535,
+// CLIP_BY_VALUE_N0_P2POW20, CLIP_BY_VALUE_N0_P2POW24, ...)
+//
+// The reason are:
+//   - MobileNetV2_Xxx has add-input-to-output behind pointwise2.
+//   - non-MobileNetV2_Xxx has squeeze-and-excitation behind pointwise2.
+// They will destroy the activation function result.
+//
+  Tensor_convert_to_InputValueRange( inputTensor ) {
+
+    // Embedding can only accept integer values between
+    // [ 0, ( vocabularyCountPerInputChannel - 1 ) ] because they are used as
+    // array indexes.
+    const valueMin = 0;
+    const valueMax = this.vocabularyCountPerInputChannel - 1;
+
+    let outputTensor;
+
+    let clippedTensor;
+    try {
+
+      clippedTensor = tf.clipByValue( inputTensor, valueMin, valueMax );
+
+    } catch ( e ) {
+      throw e; // e.g. out of (GPU) memory.
+
+    } finally {
+      ???.dispose();
+    }
+
+    let uintTensor;
+
+    try {
+      let scaledSourceTensorInt32 = scaledSourceTensorFloat32.cast( "int32" );
+      return scaledSourceTensorInt32;
+    } catch ( e ) {
+      throw e; // e.g. out of (GPU) memory.
+    } finally {
+      scaledSourceTensorFloat32.dispose();
+    }
+
+  }
+
+
   get stageCount()         { return this.stageArray?.length; }
   get blockCountPerStage() { return this.stageLast?.blockCount; }
   get blockCountTotal()    { return ( this.stageCount * this.blockCountPerStage ); }

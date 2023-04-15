@@ -14,7 +14,7 @@ import { InferencedParams } from "./NeuralNet_InferencedParams.js";
 // Add parameter control whether final output should have the same value range
 // as input (i.e. non-negative integer which can be used in embedding looking up).
 //
-// Implement it by tf.clipByValue( 0, vocabularyCountPerInputChannel )
+// Implement it by tf.clipByValue( 0, vocabularyCountPerInputChannel - 1 )
 // (which is cheaper than tf.mod()) and tf.cast( "int32" ).
 //
 // This is useful if the output should become recurrent feedback of the next
