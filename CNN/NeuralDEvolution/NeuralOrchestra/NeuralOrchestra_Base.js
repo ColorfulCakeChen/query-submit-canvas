@@ -411,6 +411,10 @@ class NeuralOrchestra_Base extends
     const nConvStageType
       = ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1; // (5)
 
+    // So that previous output could be used as recurrent feedback of the next
+    // times input.
+    const output_asInputValueRange = true;
+
     // The neuralNet should not keep-input-tensor because the input image is
     // created from canvas in real time.
     const bKeepInputTensor = false;
@@ -419,7 +423,9 @@ class NeuralOrchestra_Base extends
       input_height, input_width, input_channelCount,
       vocabularyChannelCount, vocabularyCountPerInputChannel,
       nConvStageType,
-      blockCountTotalRequested, output_channelCount, bKeepInputTensor
+      blockCountTotalRequested,
+      output_channelCount, output_asInputValueRange,
+      bKeepInputTensor
     );
   }
 
