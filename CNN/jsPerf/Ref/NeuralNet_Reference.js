@@ -396,21 +396,21 @@ class NeuralNet_Reference_Base extends Recyclable.Root {
     );
 
     // Check outputTensor.dtype is "float32" or "int32".
-    if ( this.testParams.output_asInputValueRange ) {
+    if ( this.testParams.out.output_asInputValueRange ) {
       if ( outputTensor.dtype !== "int32" )
         throw Error( `NeuralNet_Reference_Base.`
           + `assert_imageOut_Tensors_byNumberArrays(): `
           + `outputTensor.dtype ( ${outputTensor.dtype} ) `
-          + `should be "int32" when this.testParams.output_asInputValueRange `
-          + `( ${this.testParams.output_asInputValueRange} ) is true.`
+          + `should be "int32" when testParams.out.output_asInputValueRange `
+          + `( ${this.testParams.out.output_asInputValueRange} ) is true.`
         );
     } else {
       if ( outputTensor.dtype !== "float32" )
         throw Error( `NeuralNet_Reference_Base.`
           + `assert_imageOut_Tensors_byNumberArrays(): `
           + `outputTensor.dtype ( ${outputTensor.dtype} ) `
-          + `should be "float32" when this.testParams.output_asInputValueRange `
-          + `( ${this.testParams.output_asInputValueRange} ) is false.`
+          + `should be "int32" when testParams.out.output_asInputValueRange `
+          + `( ${this.testParams.out.output_asInputValueRange} ) is false.`
         );
     }
   }
