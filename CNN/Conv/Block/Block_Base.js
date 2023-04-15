@@ -129,10 +129,12 @@ import { inputTensorPlaceholder_creator } from "./Block_inputTensorPlaceholder_c
  *                          \---------------------------------------/
  * </pre>
  *
- * The channelShuffler of original ShuffleNetV2 is achieved by tf.reshape() operation. According to experiments, however, the
- * channelShuffler could be acheived by pointwise convolution more efficiently (than reshape). This results in our simplified
- * ShuffleNetV2 structure: replacing pointwise-concat-shuffle-split with concat-pointwise. It should be more efficient because
- * less operations are used than original structure.
+ * The channelShuffler of original ShuffleNetV2 is achieved by tf.reshape()
+ * operation. According to experiments, however, the channelShuffler could be
+ * acheived by pointwise convolution more efficiently (than reshape). This
+ * results in our simplified ShuffleNetV2 structure: replacing
+ * pointwise-concat-shuffle-split with concat-pointwise. It should be more
+ * efficient because less operations are used than original structure.
  *
  *
  * 
@@ -149,26 +151,31 @@ import { inputTensorPlaceholder_creator } from "./Block_inputTensorPlaceholder_c
  *   If true, this object initialized (i.e. initer()) successfully.
  *
  * @member {number} weightElementOffsetBegin
- *   The position which is started (inclusive) to extract from inputWeightArray by initer().
+ *   The position which is started (inclusive) to extract from inputWeightArray
+ * by initer().
  *
  * @member {number} weightElementOffsetEnd
- *   The position which is ended to (non-inclusive) extract from inputWeightArray by initer(). Where to extract next weights.
- * Only meaningful when ( this.bInitOk == true ).
+ *   The position which is ended to (non-inclusive) extract from
+ * inputWeightArray by initer(). Where to extract next weights. Only meaningful
+ * when ( this.bInitOk == true ).
  *
  * @member {number} inputTensorCount
  *   How many input tensors will be used by apply().
  *
  * @member {number} input1_height
- *   The height of the second input (i.e. input1). If there is no input1, it will be 0. This is inferenced from other parameters.
- * The input1's height of Block.apply() should match this value.
+ *   The height of the second input (i.e. input1). If there is no input1, it
+ * will be 0. This is inferenced from other parameters. The input1's height of
+ * Block.apply() should match this value.
  *
  * @member {number} input1_width
- *   The width of the second input (i.e. input1). If there is no input1, it will be 0. This is inferenced from other parameters.
- * The input1's width of Block.apply() should match this value.
+ *   The width of the second input (i.e. input1). If there is no input1, it
+ * will be 0. This is inferenced from other parameters. The input1's width of
+ * Block.apply() should match this value.
  *
  * @member {number} input1_channelCount
- *   The channel count of the second input (i.e. input1). If there is no input1, it will be 0. This is inferenced from other parameters.
- * The input1's channel count of Block.apply() should match this value.
+ *   The channel count of the second input (i.e. input1). If there is no
+ * input1, it will be 0. This is inferenced from other parameters. The input1's
+ * channel count of Block.apply() should match this value.
  *
  * @member {boolean} bDepthwiseRequestedAndNeeded
  *   Whether depthwise operation is requested and necessary.
@@ -183,105 +190,130 @@ import { inputTensorPlaceholder_creator } from "./Block_inputTensorPlaceholder_c
  *   If true, the concat1 (after depthwise and before pointwise2) is needed.
  *
  * @member {boolean} bConcat2ShuffleSplitRequested
- *   If true, the concat2 (after pointwise2) is needed. It may or may not follow channel shuffling and splitting.
+ *   If true, the concat2 (after pointwise2) is needed. It may or may not
+ * follow channel shuffling and splitting.
  *
  * @member {boolean} bAddInputToOutputRequested
- *   If true, the input (in this case, the main input (i.e. input0)) will be added to the output for achieving skip connection.
+ *   If true, the input (in this case, the main input (i.e. input0)) will be
+ * added to the output for achieving skip connection.
  *
  * @member {boolean} bAddInputToOutput0
- *   If true, the input (in this case, the main input (i.e. input0)) is added to the output0 for achieving skip connection.
+ *   If true, the input (in this case, the main input (i.e. input0)) is added
+ * to the output0 for achieving skip connection.
  *
  * @member {boolean} bAddInputToOutput1
- *   If true, the input (in this case, the main input (i.e. input0)) is added to the output1 for achieving skip connection.
+ *   If true, the input (in this case, the main input (i.e. input0)) is added
+ * to the output1 for achieving skip connection.
  *
  * @member {boolean} bHigherHalfDifferent
- *   Only if ( channelShuffler != null ), this is meaningful. If true, the higher half input channels are processed differently.
- * For pointwise convolution, the higher half may copy lower half, or the higher half may just pass through the input to output.
- * For depthwise convolution, please see bHigherHalfDepthwise2.
+ *   Only if ( channelShuffler != null ), this is meaningful. If true, the
+ * higher half input channels are processed differently. For pointwise
+ * convolution, the higher half may copy lower half, or the higher half may
+ * just pass through the input to output. For depthwise convolution, please
+ * see bHigherHalfDepthwise2.
  *
  * @member {boolean} bHigherHalfDepthwise2
- *   Only if ( bHigherHalfDifferent == true ), this is meaningful. If true, the depthwise1 will use higher half channels to achieve
- * the depthwise2. If false, the depthwise1's higher half channels just pass through the input to output.
+ *   Only if ( bHigherHalfDifferent == true ), this is meaningful. If true,
+ * the depthwise1 will use higher half channels to achieve the depthwise2. If
+ * false, the depthwise1's higher half channels just pass through the input to
+ * output.
  *
  * @member {number} pointwise20_channelShuffler_outputGroupCount
  *   The output group count of the pointwise20's channel shuffler when
  * ( nHigherHalfDifferent == ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_PASS_THROUGH ). Either 0 or 2.
- * Usually 2 ony if SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD or SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY.
+ * Usually 2 ony if SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD or
+ * SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY.
  *
  * @member {number} pointwise21ChannelCount
- *   The output channel count of the second pointwise2 convolution. If ( pointwise21ChannelCount == 0 ), it means pointwise21 does
- * not existed.
+ *   The output channel count of the second pointwise2 convolution. If
+ * ( pointwise21ChannelCount == 0 ), it means pointwise21 does not existed.
  *
  * @member {number} outputTensorCount
  *   How many output tensors will be generated by apply(). At least 1. At most 2.
  *
  * @member {string} pointwise1ActivationName
- *   The activation function id (Params.pointwise1ActivationId.valueDesc.Ids.Xxx) after the first pointwise convolution.
+ *   The activation function id (Params.pointwise1ActivationId.valueDesc.Ids.Xxx)
+ * after the first pointwise convolution.
  *
  * @member {string} depthwise_AvgMax_Or_ChannelMultiplier_Name
  *   Depthwise operation name.
  *
  * @member {string} depthwiseActivationName
- *   The activation function name (Params.depthwiseActivationId.valueDesc.Ids.Xxx) after depthwise convolution.
+ *   The activation function name (Params.depthwiseActivationId.valueDesc.Ids.Xxx)
+ * after depthwise convolution.
  *
  * @member {string} pointwise20ActivationName
- *   The activation function id (Params.pointwise20ActivationId.valueDesc.Ids.Xxx) after the first pointwise2 convolution.
+ *   The activation function id (Params.pointwise20ActivationId.valueDesc.Ids.Xxx)
+ * after the first pointwise2 convolution.
  *
  * @member {string} pointwise21ActivationName
- *   The name of activation function id (ValueDesc.ActivationFunction.Singleton.Ids.Xxx) after the second pointwise2 convolution.
- * It is only meaningful if ( pointwise21ChannelCount > 0 ) (i.e. ( bPointwise21 == true ) and ( pointwise20ChannelCount > 0 ) ).
+ *   The name of activation function id (ValueDesc.ActivationFunction.Singleton.Ids.Xxx)
+ * after the second pointwise2 convolution. It is only meaningful if
+ * ( pointwise21ChannelCount > 0 ) (i.e. ( bPointwise21 == true ) and
+ * ( pointwise20ChannelCount > 0 ) ).
  *
  * @member {number} input0_channelCount
- *   The channel count of the first input tensor (i.e. inputTensors[ 0 ]). This is the same as this.input0_channelCount
- * (from initer()).
+ *   The channel count of the first input tensor (i.e. inputTensors[ 0 ]). This
+ * is the same as this.input0_channelCount (from initer()).
  *
  * @member {number} input1_channelCount
- *   The channel count of the second input tensor (i.e. inputTensors[ 1 ]). It is zero or positive (never negative).
+ *   The channel count of the second input tensor (i.e. inputTensors[ 1 ]). It
+ * is zero or positive (never negative).
  *
  * @member {TensorPlaceholder.Base} input0
  *   The TensorPlaceholder object which represents this operation's 1st input.
  *
  * @member {TensorPlaceholder.Base} input1
- *   The TensorPlaceholder object which represents this operation's 2nd input. It exists only if ( this.inputTensorCount > 1 ).
+ *   The TensorPlaceholder object which represents this operation's 2nd input.
+ * It exists only if ( this.inputTensorCount > 1 ).
  *
  * @member {number} output_height
- *   The height of the output image. If depthwise does not exist, it will be the same as input0_height. Otherwise, depthwise
- * determines output_height.
+ *   The height of the output image. If depthwise does not exist, it will be
+ * the same as input0_height. Otherwise, depthwise determines output_height.
  *
  * @member {number} output_width
- *   The width of the output image. If depthwise does not exist, it will be the same as input0_width. Otherwise, depthwise
- * determines output_width.
+ *   The width of the output image. If depthwise does not exist, it will be the
+ * same as input0_width. Otherwise, depthwise determines output_width.
  *
  * @member {number} output0_channelCount
- *   The channel count of the outputTensor[ 0 ]. In theory, even if ( pointwise20ChannelCount == 0 ) and ( pointwise21ChannelCount == 0 ),
- * this will still be non-zero. However, now the pointwise20ChannelCount should always be not zero. 
+ *   The channel count of the outputTensor[ 0 ]. In theory, even if
+ * ( pointwise20ChannelCount == 0 ) and ( pointwise21ChannelCount == 0 ),
+ * this will still be non-zero. However, now the pointwise20ChannelCount should
+ * always be not zero. 
  *
  * @member {number} output1_channelCount
- *   The channel count of the outputTensor[ 1 ]. If ( pointwise21ChannelCount == 0 ), this will be zero.
+ *   The channel count of the outputTensor[ 1 ]. If
+ * ( pointwise21ChannelCount == 0 ), this will be zero.
  *
  * @member {number} output_channelCount
- *   The channel count of all output tensors (i.e. both outputTensor[ 0 ] and outputTensor[ 1 ]).
+ *   The channel count of all output tensors (i.e. both outputTensor[ 0 ] and
+ * outputTensor[ 1 ]).
  *
  * @member {TensorPlaceholder.Base} output0
  *   The TensorPlaceholder object which represents this operation's 1st output.
  *
  * @member {TensorPlaceholder.Base} output1
- *   The TensorPlaceholder object which represents this operation's 2nd output. It exists only if ( this.outputTensorCount >= 2 ).
+ *   The TensorPlaceholder object which represents this operation's 2nd output.
+ * It exists only if ( this.outputTensorCount >= 2 ).
  *
  * @member {ChannelShuffler.ConcatPointwiseConv} channelShuffler_ConcatPointwiseConv
- *   The channelShuffler. It must be implemented by ChannelShuffler.ConcatPointwiseConv with ( outputGroupCount == 2 ).
+ *   The channelShuffler. It must be implemented by
+ * ChannelShuffler.ConcatPointwiseConv with ( outputGroupCount == 2 ).
  *
- *     - It will not be disposed by this object (i.e. it is supposed to be shared with outter callers).
+ *     - It will not be disposed by this object (i.e. it is supposed to be
+ *         shared with outter callers).
  *
- *     - The channelShuffler's outputGroupCount must be 2 (i.e. split into two groups after channel-shuffling).
+ *     - The channelShuffler's outputGroupCount must be 2 (i.e. split into two
+ *         groups after channel-shuffling).
  *
  *     - It is used when:
  *       - ( nConvBlockTypeId == ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_HEAD )
  *         ( nConvBlockTypeId == ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BODY )
  *         ( nConvBlockTypeId == ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_TAIL )
  *         - The channelShuffler_ConcatPointwiseConv will be used.
- *         - The channelShuffler.shuffleInfo.totalChannelCount should be the same as the channel count of the concatenation
- *             of pointwise20 and input1.
+ *         - The channelShuffler.shuffleInfo.totalChannelCount should be the
+ *             same as the channel count of the concatenation of pointwise20
+ *             and input1.
  *
  * @member {number} tensorWeightCountTotal
  *   The total wieght count used in tensors. Not including Params, because they are not used in tensors. Including inferenced
