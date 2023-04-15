@@ -514,10 +514,11 @@ class ConcatShuffleSplit extends Root {
    * disposed.)
    */
   static ConcatShuffleSplit_and_destroy0_destroy1( inputTensors, outputTensors ) {
+    let t0;
     try {
       this.inputTensors[ 0 ] = this.input0.realTensor;
       this.inputTensors[ 1 ] = this.input1.realTensor;
-      let t0 = tf.concat( this.inputTensors, 2 ); // AxisId = 2
+      t0 = tf.concat( this.inputTensors, 2 ); // AxisId = 2
     } finally {
       this.input0.realTensor.dispose();
       this.input1.realTensor.dispose();
