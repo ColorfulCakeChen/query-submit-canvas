@@ -5,21 +5,26 @@ import * as ValueDesc from "../../Unpacker/ValueDesc.js";
 import { Depthwise } from "./Operation_Depthwise.js";
 
 /**
- * Depthwise convolution whose output will be constant value (no matter what input) when pass-through.
+ * Depthwise convolution whose output will be constant value (no matter what
+ * input) when pass-through.
  *
  * It has the following properties:
- *   - ( nPassThroughStyleId == ValueDesc.PassThroughStyle.Singleton.Ids.PASS_THROUGH_STYLE_FILTER_0_BIAS_1 ) (1).
+ *   - ( nPassThroughStyleId
+ *       == ValueDesc.PassThroughStyle.Singleton.Ids.PASS_THROUGH_STYLE_FILTER_0_BIAS_1 ) (1).
  *
  * Usually, this is used for squeeze-and-excitaion depthwise.
  *
  */
 class Depthwise_ConstantWhenPassThrough extends Depthwise {
 
-   /**
-   * Used as default Operation.Depthwise_ConstantWhenPassThrough provider for conforming to Recyclable interface.
+  /**
+   * Used as default Operation.Depthwise_ConstantWhenPassThrough provider for
+   * conforming to Recyclable interface.
    */
-  static Pool = new Pool.Root( "Operation.Depthwise_ConstantWhenPassThrough.Pool",
-    Depthwise_ConstantWhenPassThrough, Depthwise_ConstantWhenPassThrough.setAsConstructor );
+  static Pool = new Pool.Root(
+    "Operation.Depthwise_ConstantWhenPassThrough.Pool",
+    Depthwise_ConstantWhenPassThrough,
+    Depthwise_ConstantWhenPassThrough.setAsConstructor );
 
   /**
    */

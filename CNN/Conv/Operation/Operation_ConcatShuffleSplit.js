@@ -363,13 +363,16 @@ class ConcatShuffleSplit extends Root {
    */
   static ShuffleSplit_do( inputTensor ) {
 
-    // Since there is only two output group (i.e. ( outputGroupCount == 2 ) ), do not use loop (i.e. use unrolled-loop)
-    // so the performance could be better a little.
-    this.output0.realTensor = tf.conv2d( inputTensor, this.channelShuffler.filtersTensor4dArray[ 0 ], 1, "valid" );
-    this.output1.realTensor = tf.conv2d( inputTensor, this.channelShuffler.filtersTensor4dArray[ 1 ], 1, "valid" );
+    // Since there is only two output group (i.e. ( outputGroupCount == 2 ) ),
+    // do not use loop (i.e. use unrolled-loop) so that the performance could
+    // be better a little.
+    this.output0.realTensor = tf.conv2d( inputTensor,
+      this.channelShuffler.filtersTensor4dArray[ 0 ], 1, "valid" );
+    this.output1.realTensor = tf.conv2d( inputTensor,
+      this.channelShuffler.filtersTensor4dArray[ 1 ], 1, "valid" );
 
-    // Always destroy input. Because tf.concat() has always been done before this method is called, the keep-input has already be
-    // done by it.
+    // Always destroy input. Because tf.concat() has always been done before
+    // this method is called, the keep-input has already be done by it.
     inputTensor.dispose();
   }
 
