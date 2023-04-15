@@ -221,6 +221,7 @@ class NeuralNet_Base extends Recyclable.Root {
       this.nConvStageTypeId = params.nConvStageTypeId;
       this.nConvStageTypeName = params.nConvStageTypeName;
       this.blockCountTotalRequested = params.blockCountTotalRequested;
+      this.output_asInputValueRange = params.output_asInputValueRange;
       this.bKeepInputTensor = params.bKeepInputTensor;
 
       // The parameters which are determined (inferenced) from the above parameters.
