@@ -9,28 +9,6 @@ import * as Stage from "../Stage.js";
 import * as Block from "../Block.js";
 import { InferencedParams } from "./NeuralNet_InferencedParams.js";
 
-
-//!!! ...unfinished... (2023/04/15)
-// Add parameter control whether final output should have the same value range
-// as input (i.e. non-negative integer which can be used in embedding looking up).
-//
-// Implement it by tf.clipByValue( 0, vocabularyCountPerInputChannel - 1 )
-// (which is cheaper than tf.mod()) and tf.cast( "int32" ).
-//
-// This is useful if the output should become recurrent feedback of the next
-// times input.
-//
-// Note: This can not be implemented by pointwise20ActivationId (e.g.
-// CLIP_BY_VALUE_N0_P255, CLIP_BY_VALUE_N0_P1023, CLIP_BY_VALUE_N0_P65535,
-// CLIP_BY_VALUE_N0_P2POW20, CLIP_BY_VALUE_N0_P2POW24, ...)
-//
-// The reason are:
-//   - MobileNetV2_Xxx has add-input-to-output behind pointwise2.
-//   - non-MobileNetV2_Xxx has squeeze-and-excitation behind pointwise2.
-// They will destroy the activation function result.
-//
-
-
 /**
  * NeuralNet parameters base class.
  *

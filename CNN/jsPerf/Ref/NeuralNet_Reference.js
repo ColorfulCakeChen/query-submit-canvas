@@ -142,7 +142,8 @@ class NeuralNet_Reference_Base extends Recyclable.Root {
       bKeepInputTensor,
     } = testParams.out;
 
-    let inputTensor3d_fromBag = imageSourceBag.getTensor3d_by( input_height, input_width, input_channelCount );
+    let inputTensor3d_fromBag = imageSourceBag.getTensor3d_by(
+      input_height, input_width, input_channelCount );
 
     let inputTensor3d;
     let inputTensorDestroyCount; // How many input tensors will be destroyed by NeuralNet.apply().
@@ -287,7 +288,7 @@ class NeuralNet_Reference_Base extends Recyclable.Root {
       testParams.in.vocabularyChannelCount, testParams.in.vocabularyCountPerInputChannel,
       testParams.in.nConvStageTypeId,
       testParams.in.blockCountTotalRequested,
-      testParams.in.output_channelCount,
+      testParams.in.output_channelCount, testParams.in.output_asInputValueRange,
       testParams.in.bKeepInputTensor
     );
 
@@ -393,6 +394,25 @@ class NeuralNet_Reference_Base extends Recyclable.Root {
       outputTensor, outputArrayRef,
       "NeuralNet", "outputTensor", "outputRef", parametersDescription
     );
+
+    // Check outputTensor.dtype is "float32" or "int32".
+    if ( this.testParams.output_asInputValueRange ) {
+      if ( outputTensor.dtype !== "int32" )
+        throw Error( `NeuralNet_Reference_Base.`
+          + `assert_imageOut_Tensors_byNumberArrays(): `
+          + `outputTensor.dtype ( ${outputTensor.dtype} ) `
+          + `should be "int32" when this.testParams.output_asInputValueRange `
+          + `( ${this.testParams.output_asInputValueRange} ) is true.`
+        );
+    } else {
+      if ( outputTensor.dtype !== "float32" )
+        throw Error( `NeuralNet_Reference_Base.`
+          + `assert_imageOut_Tensors_byNumberArrays(): `
+          + `outputTensor.dtype ( ${outputTensor.dtype} ) `
+          + `should be "float32" when this.testParams.output_asInputValueRange `
+          + `( ${this.testParams.output_asInputValueRange} ) is false.`
+        );
+    }
   }
 
   /**
@@ -413,7 +433,7 @@ class NeuralNet_Reference_Base extends Recyclable.Root {
       testParams.in.vocabularyChannelCount, testParams.in.vocabularyCountPerInputChannel,
       testParams.in.nConvStageTypeId,
       testParams.in.blockCountTotalRequested,
-      testParams.in.output_channelCount,
+      testParams.in.output_channelCount, testParams.in.output_asInputValueRange,
       testParams.in.bKeepInputTensor
     );
 
@@ -463,6 +483,7 @@ class NeuralNet_Reference_Base extends Recyclable.Root {
     neuralNet_asserter.propertyValue( "blockCountTotalRequested", testParams.out.blockCountTotalRequested );
     neuralNet_asserter.propertyValue( "nActivationId", testParams.out.nActivationId );
     neuralNet_asserter.propertyValue( "output_channelCount", testParams.out.output_channelCount );
+    neuralNet_asserter.propertyValue( "output_asInputValueRange", testParams.out.output_asInputValueRange );
 
     // Inferenced parameters.
     let {
@@ -707,6 +728,10 @@ class NeuralNet_Reference_Base extends Recyclable.Root {
       this.imageOutArray[ 1 ] = null;
     }
 
+    // 4.
+!!! ...unfinishd... (2023/04/15) output_asInputValueRange
+//    output_asInputValueRange
+    
     return imageOut;
   }
 
