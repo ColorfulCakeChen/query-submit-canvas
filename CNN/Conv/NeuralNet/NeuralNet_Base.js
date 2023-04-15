@@ -526,6 +526,8 @@ class NeuralNet_Base extends Recyclable.Root {
       this.stage0.output1?.ScaleBoundsArray_dispose();
       this.stage0.output0.ScaleBoundsArray_dispose();
     }
+
+//!!! ...unfinished... (2023/04/15) What about blockFinal's bounds array?
   }
 
   /**
