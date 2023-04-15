@@ -86,11 +86,12 @@ class Stage_BlockParamsCreator_Base extends Recyclable.Root {
     }
   }
 
-  /** Called to determine blockCount, depthwiseFilterHeight_Default, depthwiseFilterWidth_Default, depthwiseFilterHeight_Last,
-    * depthwiseFilterWidth_Last.
-    *
-    * Sub-class could override this method to adjust data members.
-    */
+  /** Called to determine blockCount, depthwiseFilterHeight_Default,
+   * depthwiseFilterWidth_Default, depthwiseFilterHeight_Last,
+   * depthwiseFilterWidth_Last.
+   *
+   * Sub-class could override this method to adjust data members.
+   */
   determine_blockCount_depthwiseFilterHeightWidth_Default_Last() {
     let stageParams = this.stageParams;
     this.blockCount = stageParams.blockCountRequested; // By default, the block count is just the original block count.
@@ -101,12 +102,14 @@ class Stage_BlockParamsCreator_Base extends Recyclable.Root {
   }
 
   /**
-   * Called before block0 is about to be created. Sub-class should override this method to adjust data members.
+   * Called before block0 is about to be created. Sub-class should override
+   * this method to adjust data members.
    *
    * Block 0.
    *
    * The special points of a stage's block 0 are:
-   *   - halve the height x width. (Both ShuffleNetV2 and MobileNetV2) (by depthwise convolution with strides = 2)
+   *   - halve the height x width. (Both ShuffleNetV2 and MobileNetV2) (by
+   *       depthwise convolution with strides = 2)
    *   - Double channels. (Please see explanation of class Stage.Base)
    */
   configTo_beforeBlock0() {
@@ -130,7 +133,8 @@ class Stage_BlockParamsCreator_Base extends Recyclable.Root {
   }
 
   /**
-   * Called before every block (excluding block0, including block1, 2, ...). Sub-class should override this method to adjust data members.
+   * Called before every block (excluding block0, including block1, 2, ...).
+   * Sub-class should override this method to adjust data members.
    *
    * @param {number} blockIndex
    *   The id (i.e. 1, 2, ...) of the block which will be created.
@@ -148,23 +152,27 @@ class Stage_BlockParamsCreator_Base extends Recyclable.Root {
     this.input0_width = input_width;
     //this.input0_channelCount; // Sub-class should determine it.
 
-    // All blocks (except block0 in NoPointwise1) will not double the channel count by depthwise, because block0 has already double
-    // output channel count.
+    // All blocks (except block0 in NoPointwise1) will not double the channel
+    // count by depthwise, because block0 has already double output channel
+    // count.
     //
     this.depthwise_AvgMax_Or_ChannelMultiplier = 1;
 
-    // All blocks (except block0) uses depthwise ( strides = 1, pad = "same" ) to keep ( height, width ).
+    // All blocks (except block0) uses depthwise ( strides = 1, pad = "same" )
+    // to keep ( height, width ).
     this.depthwiseStridesPad = ValueDesc.StridesPad.Singleton.Ids.STRIDES_1_PAD_SAME;
 
     this.bKeepInputTensor = false; // No matter bKeepInputTensor, all blocks (except block0) should not keep input tensor.
   }
 
   /**
-   * Called before blockLast is about to be created. Sub-class could override this method to adjust data members.
+   * Called before blockLast is about to be created. Sub-class could override
+   * this method to adjust data members.
    */
   configTo_beforeBlockLast() {
 
-    // Besides, the blockLast may use a different depthwise filter size. This is especially true for NotShuffleNet_NotMobileNet.
+    // Besides, the blockLast may use a different depthwise filter size. This
+    // is especially true for NotShuffleNet_NotMobileNet.
     this.depthwiseFilterHeight = this.depthwiseFilterHeight_Last;
     this.depthwiseFilterWidth = this.depthwiseFilterWidth_Last;
 
@@ -172,7 +180,8 @@ class Stage_BlockParamsCreator_Base extends Recyclable.Root {
   }
 
   /**
-   * Config the activation of pointwise1, depthwise1, pointwise2 and squeeze-and-excitation for block0.
+   * Config the activation of pointwise1, depthwise1, pointwise2 and
+   * squeeze-and-excitation for block0.
    */
   activation_setup_forBlock0() {
     let stageParams = this.stageParams;
@@ -188,7 +197,8 @@ class Stage_BlockParamsCreator_Base extends Recyclable.Root {
     
     // 4. squeeze-and-excitation prefix or postfix
     {
-      if ( ValueDesc.ConvStageType.isMobileNetV2( stageParams.nConvStageTypeId ) ) { // MobileNetV2_Xxx uses prefix squeeze-and-excitation.
+      // MobileNetV2_Xxx uses prefix squeeze-and-excitation.
+      if ( ValueDesc.ConvStageType.isMobileNetV2( stageParams.nConvStageTypeId ) ) {
         this.bSqueezeExcitationPrefix = true;
 
       } else { // non-MobileNetV2_Xxx uses postfix squeeze-and-excitation.
@@ -213,23 +223,28 @@ class Stage_BlockParamsCreator_Base extends Recyclable.Root {
   }
 
   get depthwise_AvgMax_Or_ChannelMultiplier_Name() {
-    return ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.getName_byId( this.depthwise_AvgMax_Or_ChannelMultiplier );
+    return ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.getName_byId(
+      this.depthwise_AvgMax_Or_ChannelMultiplier );
   }
 
   get depthwiseActivationName() {
-    return ValueDesc.ActivationFunction.Singleton.getName_byId( this.depthwiseActivationId );
+    return ValueDesc.ActivationFunction.Singleton.getName_byId(
+      this.depthwiseActivationId );
   }
 
   get pointwise20ActivationName() {
-    return ValueDesc.ActivationFunction.Singleton.getName_byId( this.pointwise20ActivationId );
+    return ValueDesc.ActivationFunction.Singleton.getName_byId(
+      this.pointwise20ActivationId );
   }
 
   get nSqueezeExcitationChannelCountDivisorName() {
-    return ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.getName_byId( this.nSqueezeExcitationChannelCountDivisor );
+    return ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.getName_byId(
+      this.nSqueezeExcitationChannelCountDivisor );
   }
 
   get nActivationName() {
-    return ValueDesc.ActivationFunction.Singleton.getName_byId( this.nActivationId );
+    return ValueDesc.ActivationFunction.Singleton.getName_byId(
+      this.nActivationId );
   }
 
   /**
