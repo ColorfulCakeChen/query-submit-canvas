@@ -196,6 +196,7 @@ NeuralNet_Params.SequenceArray = new ParamDesc.SequenceArray( [
   NeuralNet_Params.nConvStageTypeId,
   NeuralNet_Params.blockCountTotalRequested,
   NeuralNet_Params.output_channelCount,
+  NeuralNet_Params.output_asInputValueRange,
   NeuralNet_Params.bKeepInputTensor,
 ] );
 
