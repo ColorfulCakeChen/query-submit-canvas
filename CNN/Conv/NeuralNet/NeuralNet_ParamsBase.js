@@ -12,7 +12,7 @@ import { InferencedParams } from "./NeuralNet_InferencedParams.js";
 
 //!!! ...unfinished... (2023/04/15)
 // Add parameter control whether final output should have the same value range
-// as input (i.e. non-negative integer which can be used in embedding look up).
+// as input (i.e. non-negative integer which can be used in embedding looking up).
 //
 // Implement it by tf.clipByValue() (which is cheaper than tf.mod()) and
 // tf.cast( "int32" ).
