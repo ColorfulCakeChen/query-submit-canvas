@@ -222,6 +222,8 @@ class HeightWidthDepth {
     //let blockCountTotalRequested_ShuffleNet = blockCountTotalRequested * 2;
     let blockCountTotalRequested_ShuffleNet = blockCountTotalRequested;
 
+    let output_asInputValueRange = true;
+
     // The neuralNet performance testing should not keep-input-tensor becuse the
     // input image is created from canvas in real time.
     let bKeepInputTensor = false;
@@ -229,7 +231,9 @@ class HeightWidthDepth {
     // input_height, input_width, input_channelCount,
     // vocabularyChannelCount, vocabularyCountPerInputChannel,
     // nConvStageTypeId,
-    // blockCountTotalRequested, output_channelCount, bKeepInputTensor
+    // blockCountTotalRequested,
+    // output_channelCount, output_asInputValueRange,
+    // bKeepInputTensor
     //
 
     // Test Case 0: (MobileNetV1)
@@ -238,7 +242,9 @@ class HeightWidthDepth {
         this.height, this.width, this.depth,
         vocabularyChannelCount, vocabularyCountPerInputChannel,
         ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V1,
-        blockCountTotalRequested, output_channelCount, bKeepInputTensor
+        blockCountTotalRequested,
+        output_channelCount, output_asInputValueRange,
+        bKeepInputTensor
       ) );
 
     // Test Case 1: (MobileNetV1_padValid)
@@ -247,7 +253,9 @@ class HeightWidthDepth {
         this.height, this.width, this.depth,
         vocabularyChannelCount, vocabularyCountPerInputChannel,
         ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V1_PAD_VALID,
-        blockCountTotalRequested, output_channelCount, bKeepInputTensor
+        blockCountTotalRequested,
+        output_channelCount, output_asInputValueRange,
+        bKeepInputTensor
       ) );
 
     // Test Case 2: (MobileNetV2_Thin)
@@ -256,7 +264,9 @@ class HeightWidthDepth {
         this.height, this.width, this.depth,
         vocabularyChannelCount, vocabularyCountPerInputChannel,
         ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V2_THIN,
-        blockCountTotalRequested, output_channelCount, bKeepInputTensor
+        blockCountTotalRequested,
+        output_channelCount, output_asInputValueRange,
+        bKeepInputTensor
       ) );
 
     // Test Case 3: (MobileNetV2)
@@ -265,7 +275,9 @@ class HeightWidthDepth {
         this.height, this.width, this.depth,
         vocabularyChannelCount, vocabularyCountPerInputChannel,
         ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V2,
-        blockCountTotalRequested, output_channelCount, bKeepInputTensor
+        blockCountTotalRequested,
+        output_channelCount, output_asInputValueRange,
+        bKeepInputTensor
       ) );
 
     // Test Case 4: (ShuffleNetV2))
@@ -274,7 +286,9 @@ class HeightWidthDepth {
         this.height, this.width, this.depth,
         vocabularyChannelCount, vocabularyCountPerInputChannel,
         ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2,
-        blockCountTotalRequested_ShuffleNet, output_channelCount, bKeepInputTensor
+        blockCountTotalRequested,
+        output_channelCount, output_asInputValueRange,
+        bKeepInputTensor
       ) );
 
     // Test Case 5: (ShuffleNetV2_byPointwise21)
@@ -283,7 +297,9 @@ class HeightWidthDepth {
         this.height, this.width, this.depth,
         vocabularyChannelCount, vocabularyCountPerInputChannel,
         ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21,
-        blockCountTotalRequested_ShuffleNet, output_channelCount, bKeepInputTensor
+        blockCountTotalRequested,
+        output_channelCount, output_asInputValueRange,
+        bKeepInputTensor
       ) );
 
     // Test Case 6: (ShuffleNetV2_byMobileNetV1)
@@ -292,7 +308,9 @@ class HeightWidthDepth {
         this.height, this.width, this.depth,
         vocabularyChannelCount, vocabularyCountPerInputChannel,
         ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1,
-        blockCountTotalRequested_ShuffleNet, output_channelCount, bKeepInputTensor
+        blockCountTotalRequested,
+        output_channelCount, output_asInputValueRange,
+        bKeepInputTensor
       ) );
 
     // Test Case 7: (ShuffleNetV2_byMobileNetV1_padValid)
@@ -301,7 +319,9 @@ class HeightWidthDepth {
         this.height, this.width, this.depth,
         vocabularyChannelCount, vocabularyCountPerInputChannel,
         ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID,
-        blockCountTotalRequested_ShuffleNet, output_channelCount, bKeepInputTensor
+        blockCountTotalRequested,
+        output_channelCount, output_asInputValueRange,
+        bKeepInputTensor
       ) );
   }
 
