@@ -220,6 +220,13 @@ class NeuralNet_StageParamsCreator_Base extends Recyclable.Root {
     // pointwise20 uses the requested output channel count.
     const pointwise20ChannelCount = neuralNetParams.output_channelCount;
 
+!!! ...unfinished... (2023/04/15)
+// If output is wanted to be restricted as neural network input
+// (i.e. non-negative integer for recurrent feedback easily),
+// pointwise20ActivationId may use
+// CLIP_BY_VALUE_N0_P255, CLIP_BY_VALUE_N0_P1023, CLIP_BY_VALUE_N0_P65535,
+// CLIP_BY_VALUE_N0_P2POW20, CLIP_BY_VALUE_N0_P2POW24, ...
+
     // pointwise20 always has no activation function, so that any number could be
     // generated.
     const pointwise20ActivationId = ValueDesc.ActivationFunction.Singleton.Ids.NONE;
