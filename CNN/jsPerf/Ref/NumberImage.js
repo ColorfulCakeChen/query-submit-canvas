@@ -762,49 +762,56 @@ class NumberImage_Base extends Recyclable.Root {
     return imageIn;
   }
 
-!!!
   /**
-   * Note: This method will also set .boundsArraySet.afterBias.
+   * Note: This method will also set .boundsArraySet.afterActivation
+   *       (i.e. .output0.boundsArray).
    *
    * @param {NumberImage.Base} this    The source image to be processed.
-   * @param {boolean}  bBias           Whether add bias.
-   * @param {number[]} biasesArray     The bias values.
+   * @param {number}   lowerBound      The lower bound of clamp.
+   * @param {number}   upperBound      The upper bound of clamp.
    * @param {Object}   parametersDesc  Its .toString() for debug message of this block.
-   * @param {string[]} biasNames       The strings for debug message of this bias.
+   * @param {string[]} clampNames      The strings for debug message of this clamp.
    *
    * @return {NumberImage.Base}
-   *   Return this which may or may not be added bias (according to bBias).
+   *   Return this which all values are restricted between [ lowerBound,
+   * upperBound ] and converted to integers.
    */
-  modify_byBias( bBias, biasesArray, parametersDesc, ...biasNames ) {
+  modify_byClamp_Int( lowerBound, upperBound, parametersDesc, ...clampNames ) {
     let imageIn = this;
 
-    imageIn.boundsArraySet.afterBias.set_all_byBoundsArray( imageIn.boundsArraySet.afterFilter );
-    if ( !bBias )
-      return imageIn;
+    imageIn.boundsArraySet.afterActivation.set_all_byLowerUpper(
+      lowerBound, upperBound );
 
-    if ( biasesArray == null )
-      throw Error( `${biasNames.join( "_") }: `
-        + `biasesArray (${biasesArray}) `
-        + `should not be null. (${parametersDesc})` );
+    if ( lowerBound == undefined )
+      throw Error( `${clampNames.join( "_") }: `
+        + `lowerBound ( ${lowerBound} ) `
+        + `should not be undefined. ( ${parametersDesc} )` );
 
-    if ( biasesArray.length != imageIn.depth )
-      throw Error( `${biasNames.join( "_") }: `
-        + `shape (${biasesArray.length}) `
-        + `should match input image channel count (${imageIn.depth}). (${parametersDesc})` );
+    if ( upperBound == undefined )
+      throw Error( `${clampNames.join( "_") }: `
+        + `upperBound ( ${upperBound} ) `
+        + `should not be undefined. ( ${parametersDesc} )` );
 
     let index = 0;
     for ( let y = 0; y < imageIn.height; ++y ) {
       for ( let x = 0; x < imageIn.width; ++x ) {
         for ( let channel = 0; channel < imageIn.depth; ++channel ) {
-          imageIn.dataArray[ index ] = Math.fround( Math.fround( imageIn.dataArray[ index ] ) + Math.fround( biasesArray[ channel ] ) );
+          let value = imageIn.dataArray[ index ];
+
+          let valueClamped;
+          if ( value < lowerBound )
+            valueClamped = lowerBound;
+          else if ( value > upperBound )
+            valueClamped = upperBound;
+          else
+            valueClamped = value;
+
+          let valueInt = Math.trunc( valueClamped );
+          imageIn.dataArray[ index ] = valueInt;
+
           ++index;
         }
       }
-    }
-
-    // Calculate value bounds of every output channels (i.e. .afterBias) by shifting as the bias.
-    for ( let inChannel = 0; inChannel < imageIn.depth; ++inChannel ) {
-      imageIn.boundsArraySet.afterBias.add_one_byN( inChannel, biasesArray[ inChannel ] );
     }
 
     return imageIn;

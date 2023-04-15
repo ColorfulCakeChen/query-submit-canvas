@@ -731,6 +731,8 @@ class NeuralNet_Reference_Base extends Recyclable.Root {
     // 4.
 !!! ...unfinishd... (2023/04/15) output_asInputValueRange
 //    output_asInputValueRange
+// imageOut.assert_pixels_byBoundsArray( imageOut.boundsArraySet.afterActivation );
+
     
     return imageOut;
   }
