@@ -17,7 +17,7 @@ import { InferencedParams } from "./NeuralNet_InferencedParams.js";
 // Implement it by tf.clipByValue() (which is cheaper than tf.mod()) and
 // tf.cast( "int32" ).
 //
-// This is useful if the output will be feedback recurrently to the next
+// This is useful if the output should become recurrent feedback of the next
 // times input.
 
 
