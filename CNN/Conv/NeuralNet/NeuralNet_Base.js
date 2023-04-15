@@ -708,6 +708,16 @@ class NeuralNet_Base extends Recyclable.Root {
 //   - non-MobileNetV2_Xxx has squeeze-and-excitation behind pointwise2.
 // They will destroy the activation function result.
 //
+  /**
+   * @param {tf.tensor3d} inputTensor
+   *   The tensor to be converted.
+   *   - It will be disposed, if converting is successful.
+   *   - It will may or may not be disposed according to
+   * whether converting is successful.
+   *
+   * @return {tf.tensor3d}
+   *   Return a new tensor. All other intermediate tensors were disposed.
+   */
   Tensor_convert_to_InputValueRange( inputTensor ) {
 
     // Embedding can only accept integer values between
@@ -718,27 +728,27 @@ class NeuralNet_Base extends Recyclable.Root {
 
     let outputTensor;
 
-    let clippedTensor;
     try {
+      let valueClippedTensor = tf.clipByValue( inputTensor, valueMin, valueMax );
 
-      clippedTensor = tf.clipByValue( inputTensor, valueMin, valueMax );
+      let uintTensor;
+      try {
+        uintTensor = valueClippedTensor.cast( "int32" );
+        return scaledSourceTensorInt32;
 
+      } catch ( e ) {
+        throw e; // e.g. out of (GPU) memory.
+
+      } finally {
+        ???.dispose();
+      }
+  
     } catch ( e ) {
+      inputTensor = 
       throw e; // e.g. out of (GPU) memory.
 
     } finally {
       ???.dispose();
-    }
-
-    let uintTensor;
-
-    try {
-      let scaledSourceTensorInt32 = scaledSourceTensorFloat32.cast( "int32" );
-      return scaledSourceTensorInt32;
-    } catch ( e ) {
-      throw e; // e.g. out of (GPU) memory.
-    } finally {
-      scaledSourceTensorFloat32.dispose();
     }
 
   }
