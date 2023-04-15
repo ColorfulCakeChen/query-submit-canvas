@@ -13,8 +13,10 @@ import * as Depthwise from "../../Conv/Depthwise.js";
 /**
  * Image composed from numbers. For testing.
  *
- * Note: It will convert computation result to Float32 by Math.fround(). The reason is that tensorflow.js uses Float32 (especially
- *       in WebGL backend. This conversion could reduce the difference of NumberImage and tf.tensor.
+ * Note: It will convert computation result to Float32 by Math.fround(). The
+ *       reason is that tensorflow.js uses Float32 (especially in WebGL
+ *       backend. This conversion could reduce the difference of NumberImage
+ *       and tf.tensor.
  *
  *
  *
@@ -691,8 +693,10 @@ class NumberImage_Base extends Recyclable.Root {
           imageOut.boundsArraySet.set_outputs_all_by_input0();
         }
 
-        // Note1: Since there is no undo previous scales, it needs not .scale_byChannel_withoutAffect_BoundsArraySet().
-        // Note2: Since there is no activation, it needs not .modify_byActivation_withoutAffect_BoundsArraySet().
+        // Note1: Since there is no undo previous scales, it needs not
+        //          .scale_byChannel_withoutAffect_BoundsArraySet().
+        // Note2: Since there is no activation, it needs not
+        //          .modify_byActivation_withoutAffect_BoundsArraySet().
 
       } else {
         imageOut.boundsArraySet.adjust_afterFilter_afterBias_set_output0_by_afterBias_bPassThrough_nActivationId( depthwiseActivationId );
@@ -711,6 +715,54 @@ class NumberImage_Base extends Recyclable.Root {
     return imageOut;
   }
 
+  /**
+   * Note: This method will also set .boundsArraySet.afterBias.
+   *
+   * @param {NumberImage.Base} this    The source image to be processed.
+   * @param {boolean}  bBias           Whether add bias.
+   * @param {number[]} biasesArray     The bias values.
+   * @param {Object}   parametersDesc  Its .toString() for debug message of this block.
+   * @param {string[]} biasNames       The strings for debug message of this bias.
+   *
+   * @return {NumberImage.Base}
+   *   Return this which may or may not be added bias (according to bBias).
+   */
+  modify_byBias( bBias, biasesArray, parametersDesc, ...biasNames ) {
+    let imageIn = this;
+
+    imageIn.boundsArraySet.afterBias.set_all_byBoundsArray( imageIn.boundsArraySet.afterFilter );
+    if ( !bBias )
+      return imageIn;
+
+    if ( biasesArray == null )
+      throw Error( `${biasNames.join( "_") }: `
+        + `biasesArray (${biasesArray}) `
+        + `should not be null. (${parametersDesc})` );
+
+    if ( biasesArray.length != imageIn.depth )
+      throw Error( `${biasNames.join( "_") }: `
+        + `shape (${biasesArray.length}) `
+        + `should match input image channel count (${imageIn.depth}). (${parametersDesc})` );
+
+    let index = 0;
+    for ( let y = 0; y < imageIn.height; ++y ) {
+      for ( let x = 0; x < imageIn.width; ++x ) {
+        for ( let channel = 0; channel < imageIn.depth; ++channel ) {
+          imageIn.dataArray[ index ] = Math.fround( Math.fround( imageIn.dataArray[ index ] ) + Math.fround( biasesArray[ channel ] ) );
+          ++index;
+        }
+      }
+    }
+
+    // Calculate value bounds of every output channels (i.e. .afterBias) by shifting as the bias.
+    for ( let inChannel = 0; inChannel < imageIn.depth; ++inChannel ) {
+      imageIn.boundsArraySet.afterBias.add_one_byN( inChannel, biasesArray[ inChannel ] );
+    }
+
+    return imageIn;
+  }
+
+!!!
   /**
    * Note: This method will also set .boundsArraySet.afterBias.
    *

@@ -7,66 +7,83 @@ import * as ValueDesc from "../../Unpacker/ValueDesc.js";
 import { InputsOutputs } from "./BoundsArraySet_InputsOutputs.js";
 
 /**
- * Element value bounds (per channel) for every operation's result of a convolution-bias-activation. The main purpose is to find out the
- * activationEscaping_ScaleArraySet so that it can be used to let channel escape from activation function's non-linear effect.
+ * Element value bounds (per channel) for every operation's result of a
+ * convolution-bias-activation. The main purpose is to find out the
+ * activationEscaping_ScaleArraySet so that it can be used to let channel
+ * escape from activation function's non-linear effect.
  *
  *   - Only input0 is used. The input1 always is undefined.
- *   - Only outputChannelCount0 is used. The outputChannelCount1 always is undefined.
+ *   - Only outputChannelCount0 is used. The outputChannelCount1 always is
+ *       undefined.
  *
  * @member {FloatValue.BoundsArray} afterUndoPreviousActivationEscaping
- *   The element value bounds (per channel) after applying the input0.scaleArraySet.undo to this.input0. (i.e. beforeFilter)
+ *   The element value bounds (per channel) after applying the
+ * input0.scaleArraySet.undo to this.input0. (i.e. beforeFilter)
  *
  * @member {FloatValue.BoundsArray} afterFilter
- *   The element value bounds (per channel) after applying the convolution filters to this.afterUndoPreviousActivationEscaping.
- * (i.e. beforeBias)
+ *   The element value bounds (per channel) after applying the convolution
+ * filters to this.afterUndoPreviousActivationEscaping. (i.e. beforeBias)
  *
  * @member {FloatValue.BoundsArray} afterBias
- *   The element value bounds (per channel) after applying the convolution biases to this.afterFilter. (i.e. beforeActivationEscaping)
+ *   The element value bounds (per channel) after applying the convolution
+ * biases to this.afterFilter. (i.e. beforeActivationEscaping)
  *
  * @member {FloatValue.BoundsArray} afterActivation
- *   The element value bounds (per channel) after applying activation function to this.afterBias. It is just
- * the this.output0.boundsArray (without this.output0.scaleArraySet).
+ *   The element value bounds (per channel) after applying activation function
+ * to this.afterBias. It is just the this.output0.boundsArray (without
+ * this.output0.scaleArraySet).
  *
  * @member {boolean[]} bPassThrough
- *   If true for a output channel, the output channel should be arranged to pass-through from input to output.
+ *   If true for a output channel, the output channel should be arranged to
+ * pass-through from input to output.
  *
  * @see InputsOutputs
  */
 class ConvBiasActivation extends InputsOutputs {
 
   /**
-   * Used as default BoundsArraySet.ConvBiasActivation provider for conforming to Recyclable interface.
+   * Used as default BoundsArraySet.ConvBiasActivation provider for conforming
+   * to Recyclable interface.
    */
-  static Pool = new Pool.Root( "BoundsArraySet.ConvBiasActivation.Pool", ConvBiasActivation, ConvBiasActivation.setAsConstructor );
+  static Pool = new Pool.Root( "BoundsArraySet.ConvBiasActivation.Pool",
+    ConvBiasActivation, ConvBiasActivation.setAsConstructor );
 
   /**
    *   - The .input0 will be set as input0.
-   *   - The .afterUndoPreviousActivationEscaping will be set according to  input0 and input0.scaleArraySet.undo.scales.
+   *   - The .afterUndoPreviousActivationEscaping will be set according to
+   *       input0 and input0.scaleArraySet.undo.scales.
    *
    * Difference from (parent class) InputsOutputs:
-   *   - Only input0 (always no input1), because convolution (no matter pointwise or depthwise) could handle one input tensor.
-   *   - Only output0 (always no output1), because convolution (no matter pointwise or depthwise) always generate one output tensor.
+   *   - Only input0 (always no input1), because convolution (no matter
+   *       pointwise or depthwise) could handle one input tensor.
+   *   - Only output0 (always no output1), because convolution (no matter
+   *       pointwise or depthwise) always generate one output tensor.
    *
    * @param {number} channelShuffler_inputGroupCount
-   *   The input group count of the channel shuffler. Usually, it is used for undo previous operation's channel shuffling. If 0, the
-   * inputScaleBoundsArray will be used. If positive (only 2 is supported currently), the inputScaleBoundsArray.beforeChannelShuffled
-   * will be used.
+   *   The input group count of the channel shuffler. Usually, it is used for
+   * undo previous operation's channel shuffling. If 0, the
+   * inputScaleBoundsArray will be used. If positive (only 2 is supported
+   * currently), the inputScaleBoundsArray.beforeChannelShuffled will be used.
    *
    */
   constructor( input0, outputChannelCount0, channelShuffler_inputGroupCount ) {
     super( input0, undefined, outputChannelCount0, undefined ); // .input0 and .output0
-    ConvBiasActivation.setAsConstructor_self.call( this, input0, outputChannelCount0, channelShuffler_inputGroupCount );
+    ConvBiasActivation.setAsConstructor_self.call( this,
+      input0, outputChannelCount0, channelShuffler_inputGroupCount );
   }
 
   /** @override */
   static setAsConstructor( input0, outputChannelCount0, channelShuffler_inputGroupCount ) {
     super.setAsConstructor( input0, undefined, outputChannelCount0, undefined );
-    ConvBiasActivation.setAsConstructor_self.call( this, input0, outputChannelCount0, channelShuffler_inputGroupCount );
+    ConvBiasActivation.setAsConstructor_self.call( this,
+      input0, outputChannelCount0, channelShuffler_inputGroupCount );
     return this;
   }
 
   /** @override */
-  static setAsConstructor_self( input0, outputChannelCount0, channelShuffler_inputGroupCount ) {
+  static setAsConstructor_self(
+    input0, outputChannelCount0, channelShuffler_inputGroupCount ) {
+
     this.afterUndoPreviousActivationEscaping = FloatValue.BoundsArray.Pool.get_or_create_by( input0.length ); // channel count same as input0.
     this.afterFilter = FloatValue.BoundsArray.Pool.get_or_create_by( outputChannelCount0 );
     this.afterBias = FloatValue.BoundsArray.Pool.get_or_create_by( outputChannelCount0 );
@@ -75,17 +92,23 @@ class ConvBiasActivation extends InputsOutputs {
   }
 
   /**
-   * Set .afterUndoPreviousActivationEscaping as .input0 multiplying .input0.scaleArraySet.undo.scales.
+   * Set .afterUndoPreviousActivationEscaping as .input0 multiplying
+   * .input0.scaleArraySet.undo.scales.
    *
    * @param {number} channelShuffler_inputGroupCount
-   *   The input group count of the channel shuffler. Usually, it is used for undo previous operation's channel shuffling.
-   *   - If 0, the .afterUndoPreviousActivationEscaping will be in the same order of inputScaleBoundsArray.
-   *   - If 2, the .afterUndoPreviousActivationEscaping will be in the order of undo-interleave-as-group-two of inputScaleBoundsArray.
+   *   The input group count of the channel shuffler. Usually, it is used for
+   * undo previous operation's channel shuffling.
+   *   - If 0, the .afterUndoPreviousActivationEscaping will be in the same
+   *       order of inputScaleBoundsArray.
+   *   - If 2, the .afterUndoPreviousActivationEscaping will be in the order
+   *       of undo-interleave-as-group-two of inputScaleBoundsArray.
    *
    * @return {ConvBiasActivation}
    *   Return this (modified) object.
    */
-  set_afterUndoPreviousActivationEscaping_by_input0_undoScales( channelShuffler_inputGroupCount ) {
+  set_afterUndoPreviousActivationEscaping_by_input0_undoScales(
+    channelShuffler_inputGroupCount ) {
+
     this.afterUndoPreviousActivationEscaping
       .set_all_byBoundsArray( this.input0.boundsArray )
       .multiply_all_byNs( this.input0.scaleArraySet.undo.scales );
@@ -101,8 +124,10 @@ class ConvBiasActivation extends InputsOutputs {
    * Redo the channel shuffling of .afterUndoPreviousActivationEscaping.
    */
   set_afterUndoPreviousActivationEscaping_by_Interleave_asGrouptTwo() {
-    let unShuffled = FloatValue.BoundsArray.Pool.get_or_create_by( this.afterUndoPreviousActivationEscaping.length );
-    unShuffled.set_all_byInterleave_asGrouptTwo_byBoundsArray( this.afterUndoPreviousActivationEscaping );
+    let unShuffled = FloatValue.BoundsArray.Pool.get_or_create_by(
+      this.afterUndoPreviousActivationEscaping.length );
+    unShuffled.set_all_byInterleave_asGrouptTwo_byBoundsArray(
+      this.afterUndoPreviousActivationEscaping );
     this.afterUndoPreviousActivationEscaping.disposeResources_and_recycleToPool();
     this.afterUndoPreviousActivationEscaping = unShuffled;
     return this;
@@ -112,15 +137,18 @@ class ConvBiasActivation extends InputsOutputs {
    * Undo the channel shuffling of .afterUndoPreviousActivationEscaping.
    */
   set_afterUndoPreviousActivationEscaping_by_Interleave_asGrouptTwo_undo() {
-    let unShuffled = FloatValue.BoundsArray.Pool.get_or_create_by( this.afterUndoPreviousActivationEscaping.length );
-    unShuffled.set_all_byInterleave_asGrouptTwo_undo_byBoundsArray( this.afterUndoPreviousActivationEscaping );
+    let unShuffled = FloatValue.BoundsArray.Pool.get_or_create_by(
+      this.afterUndoPreviousActivationEscaping.length );
+    unShuffled.set_all_byInterleave_asGrouptTwo_undo_byBoundsArray(
+      this.afterUndoPreviousActivationEscaping );
     this.afterUndoPreviousActivationEscaping.disposeResources_and_recycleToPool();
     this.afterUndoPreviousActivationEscaping = unShuffled;
     return this;
   }
 
   /**
-   * Sub-class should override this method (and call super.disposeResources() before return).
+   * Sub-class should override this method (and call super.disposeResources()
+   * before return).
    *
    * @override
    */
@@ -151,11 +179,14 @@ class ConvBiasActivation extends InputsOutputs {
 
   /**
    * @return {ConvBiasActivation}
-   *   Return a newly created ConvBiasActivation which is a copy of this ConvBiasActivation. The this.inputs will just past
-   * to new ConvBiasActivation (i.e. NOT copied). But the other data members will be copied.
+   *   Return a newly created ConvBiasActivation which is a copy of this
+   * ConvBiasActivation. The this.inputs will just past to new
+   * ConvBiasActivation (i.e. NOT copied). But the other data members will be
+   * copied.
    */
   clone() {
-    let result = ConvBiasActivation.Pool.get_or_create_by( this.input0, this.outputChannelCount0 );
+    let result = ConvBiasActivation.Pool.get_or_create_by(
+      this.input0, this.outputChannelCount0 );
     result.set_all_byBoundsArraySet( this );
     return result;
   }
@@ -199,9 +230,10 @@ class ConvBiasActivation extends InputsOutputs {
 
   /**
    * @param {FloatValue.Bounds} aBounds
-   *   Set all outputs related BoundsArray (.afterFilter, .afterBias, .output0.boundsArray (i.e. .afterActivation),
-   * .bPassThrough) to the same as the specified aBounds. Set the this.output0.scaleArraySet to default ( 1 ).
-   * The .input0 are not modified.
+   *   Set all outputs related BoundsArray (.afterFilter, .afterBias,
+   * .output0.boundsArray (i.e. .afterActivation), .bPassThrough) to the same
+   * as the specified aBounds. Set the this.output0.scaleArraySet to default
+   * (i.e. 1). The .input0 are not modified.
    *
    * @return {ConvBiasActivation}
    *   Return this (modified) object.
@@ -216,7 +248,8 @@ class ConvBiasActivation extends InputsOutputs {
 
   /**
    * @param {BoundsArraySet.ConvBiasActivation} aBoundsArraySet
-   *   The BoundsArraySet to be copied. The .inputs will just be referenced (NOT copied). But the other data members will be copied.
+   *   The BoundsArraySet to be copied. The .inputs will just be referenced
+   * (NOT copied). But the other data members will be copied.
    *
    * @return {ConvBiasActivation}
    *   Return this (modified) object which is copied from aBoundsArraySet.
@@ -250,7 +283,8 @@ class ConvBiasActivation extends InputsOutputs {
   }
 
   /**
-   * Determine .output0.boundsArray (i.e. .afterActivation) and .output0.scaleArraySet by .afterBias and .bPassThrough and nActivationId.
+   * Determine .output0.boundsArray (i.e. .afterActivation) and
+   * .output0.scaleArraySet by .afterBias and .bPassThrough and nActivationId.
    * Also adjust .afterFilter and .afterBias by .output0.scaleArraySet.
    *
    * The following properties will be used:
@@ -264,15 +298,17 @@ class ConvBiasActivation extends InputsOutputs {
    *   - this.output0.scaleArraySet
    *
    * @param {number} nActivationId
-   *   The activation function id (ValueDesc.ActivationFunction.Singleton.Ids.Xxx) of this convolution.
-   *
+   *   The activation function id (ValueDesc.ActivationFunction.Singleton.Ids.Xxx)
+   * of this convolution.
    *
    * @return {ConvBiasActivation}
    *   Return this (modified) object.
    */
-  adjust_afterFilter_afterBias_set_output0_by_afterBias_bPassThrough_nActivationId( nActivationId ) {
+  adjust_afterFilter_afterBias_set_output0_by_afterBias_bPassThrough_nActivationId(
+    nActivationId ) {
 
-    const theActivationFunctionInfo = ValueDesc.ActivationFunction.Singleton.getInfo_byId( nActivationId );
+    const theActivationFunctionInfo
+      = ValueDesc.ActivationFunction.Singleton.getInfo_byId( nActivationId );
 
     let outputChannelCount = this.afterBias.length;
     let doEscapingScale;
@@ -294,22 +330,30 @@ class ConvBiasActivation extends InputsOutputs {
 
           if ( bPassThrough ) { // For channels will be activation-escaping.
 
-            // If value bounds is [ 0, 0 ], adjust it to a range which includes zero.
+            // If value bounds is [ 0, 0 ], adjust it to a range which includes
+            // zero.
             //
-            // This could happen when filters are all zero for outChannel. This adjustment is necessary because the following
-            // .set_one_by_fromLowerUpper_toLowerUpper() can not work for bounds [ 0, 0 ].
+            // This could happen when filters are all zero for outChannel. This
+            // adjustment is necessary because the following
+            // .set_one_by_fromLowerUpper_toLowerUpper() can not work for bounds
+            // [ 0, 0 ].
             //
-            if ( ( this.afterBias.lowers[ outChannel ] == 0 ) && ( this.afterBias.uppers[ outChannel ] == 0 ) ) {
+            if (   ( this.afterBias.lowers[ outChannel ] == 0 )
+                && ( this.afterBias.uppers[ outChannel ] == 0 ) ) {
               this.afterBias.lowers[ outChannel ] = -1;
               this.afterBias.uppers[ outChannel ] = +1;
             }
 
-            // Calculate the scale for escaping bias result from activation function's non-linear domain into linear domain.
+            // Calculate the scale for escaping bias result from activation
+            // function's non-linear domain into linear domain.
             //
             // Note: This does not work for avg/max pooling.
-            this.output0.scaleArraySet.do.set_one_by_fromLowerUpper_toLowerUpper( outChannel,
-              this.afterBias.lowers[ outChannel ], this.afterBias.uppers[ outChannel ],
-              theActivationFunctionInfo.inputDomainLinear.lower, theActivationFunctionInfo.inputDomainLinear.upper
+            this.output0.scaleArraySet.do.set_one_by_fromLowerUpper_toLowerUpper(
+              outChannel,
+              this.afterBias.lowers[ outChannel ],
+              this.afterBias.uppers[ outChannel ],
+              theActivationFunctionInfo.inputDomainLinear.lower,
+              theActivationFunctionInfo.inputDomainLinear.upper
             );
 
             doEscapingScale = this.output0.scaleArraySet.do.scales[ outChannel ];
@@ -317,18 +361,21 @@ class ConvBiasActivation extends InputsOutputs {
               throw Error( `BoundsArraySet.ConvBiasActivation.`
                 + `adjust_afterFilter_afterBias_set_output0_by_afterBias_bPassThrough_nActivationId_nPassThroughStyleId( `
                   + ` ${ValueDesc.ActivationFunction.Singleton.getNameWithInt_byId( nActivationId )} ): `
-                + `this.output0.scaleArraySet.do.scales[ ${outChannel} ] ( ${doEscapingScale} ) `
-                + `should not be NaN. `
-                + `Please use activation function (e.g. clipByValue(), tanh()) which has both negative and positive parts near origin point.`
+                + `this.output0.scaleArraySet.do.scales[ ${outChannel} ] `
+                + `( ${doEscapingScale} ) should not be NaN. `
+                + `Please use activation function (e.g. clipByValue(), tanh())`
+                + `which has both negative and positive parts near origin point.`
               );
 
           } else { // For channels will not be activation-escaping.
-            this.output0.scaleArraySet.do.set_one_byN( outChannel, 1 ); // No need to escape. (i.e. scale = 1 for no scale)
+            // No need to escape. (i.e. scale = 1 for no scale)
+            this.output0.scaleArraySet.do.set_one_byN( outChannel, 1 );
             doEscapingScale = 1;
           }
         }
 
-        // 1.2 Determine .undo (Prepared for the next convolution-bias-activation. Not for this.)
+        // 1.2 Determine .undo (Prepared for the next convolution-bias-activation.
+        //     Not for this.)
         this.output0.scaleArraySet.undo.set_one_byUndo_N( outChannel, doEscapingScale );
       }
 
@@ -338,14 +385,19 @@ class ConvBiasActivation extends InputsOutputs {
 
       // 3. Determine .afterActivation (i.e. .output0.boundsArray)
       {
-        // If no activation function, the output range is determined by adjusted .afterBias.
+        // If no activation function, the output range is determined by
+        // adjusted .afterBias.
         if ( nActivationId == ValueDesc.ActivationFunction.Singleton.Ids.NONE ) {
-          this.output0.boundsArray.set_one_byBoundsArray( outChannel, this.afterBias, outChannel );
+          this.output0.boundsArray.set_one_byBoundsArray( outChannel,
+            this.afterBias, outChannel );
 
         } else { // Use activated escaping-scaled afterBias value as output.
-          let lower_activated = theActivationFunctionInfo.pfnReference( this.afterBias.lowers[ outChannel ] );
-          let upper_activated = theActivationFunctionInfo.pfnReference( this.afterBias.uppers[ outChannel ] );
-          this.output0.boundsArray.set_one_byLowerUpper( outChannel, lower_activated, upper_activated );
+          let lower_activated = theActivationFunctionInfo.pfnReference(
+            this.afterBias.lowers[ outChannel ] );
+          let upper_activated = theActivationFunctionInfo.pfnReference(
+            this.afterBias.uppers[ outChannel ] );
+          this.output0.boundsArray.set_one_byLowerUpper( outChannel,
+            lower_activated, upper_activated );
         }
       }
 
@@ -355,23 +407,26 @@ class ConvBiasActivation extends InputsOutputs {
   }
 
   /**
-   * Rearrange output related channel information (.afterFilter, .afterBias, .output0.boundsArray (i.e. .afterActivation),
-   * output0.scaleArraySet (i.e. activationEscaping), .bPassThrough) by interleaving as ( groupCount == 2 ). The channel
-   * count must be even (i.e. divisible by 2).
+   * Rearrange output related channel information (.afterFilter, .afterBias,
+   * .output0.boundsArray (i.e. .afterActivation), output0.scaleArraySet (i.e.
+   * activationEscaping), .bPassThrough) by interleaving as
+   * ( groupCount == 2 ). The channel count must be even (i.e. divisible by 2).
    *
    * @return {ConvBiasActivation}
    *   Return this (modified) object.
    */
   set_outputs_all_byInterleave_asGrouptTwo() {
     {
-      let afterFilterShuffled = FloatValue.BoundsArray.Pool.get_or_create_by( this.afterFilter.length );
+      let afterFilterShuffled = FloatValue.BoundsArray.Pool.get_or_create_by(
+        this.afterFilter.length );
       this.afterFilter.set_all_byInterleave_asGrouptTwo_byBoundsArray( this.afterFilter );
       this.afterFilter.disposeResources_and_recycleToPool();
       this.afterFilter = afterFilterShuffled;
     }
 
     {
-      let afterBiasShuffled = FloatValue.BoundsArray.Pool.get_or_create_by( this.afterBias.length );
+      let afterBiasShuffled = FloatValue.BoundsArray.Pool.get_or_create_by(
+        this.afterBias.length );
       this.afterBias.set_all_byInterleave_asGrouptTwo_byBoundsArray( this.afterBias );
       this.afterBias.disposeResources_and_recycleToPool();
       this.afterBias = afterBiasShuffled;
@@ -380,7 +435,8 @@ class ConvBiasActivation extends InputsOutputs {
     super.set_outputs_all_byInterleave_asGrouptTwo(); // i.e. this.afterActivation
 
     {
-      let bPassThroughShuffled = Recyclable.Array.Pool.get_or_create_by( this.bPassThrough.length );
+      let bPassThroughShuffled = Recyclable.Array.Pool.get_or_create_by(
+        this.bPassThrough.length );
 
       FloatValue.ArrayInterleaver.interleave_asGrouptTwo_alongLastAxis_from_to(
         this.bPassThrough, bPassThroughShuffled, this.bPassThrough.length );
