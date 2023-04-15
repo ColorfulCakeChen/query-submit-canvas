@@ -7,20 +7,24 @@ import * as ActivationEscaping from "../ActivationEscaping.js";
 /**
  * Element value bounds (per channel) for inputs and outputs of an operation.
  *
- * The main purpose is to find out the activationEscaping_ScaleArraySet so that it can be used to let channel escape from
- * activation function's non-linear effect.
+ * The main purpose is to find out the activationEscaping_ScaleArraySet so that
+ * it can be used to let channel escape from activation function's non-linear
+ * effect.
  *
  *
  * @member {number} inputTensorCount
- *   How many input tensors. It is 1, if only input0 exists. It is 2, if both input0 and input1 exist. 
+ *   How many input tensors. It is 1, if only input0 exists. It is 2, if both
+ * input0 and input1 exist. 
  *
  * @member {ActivationEscaping.ScaleBoundsArray} input0
- *   The element value bounds (per channel) of 1st input (can NOT null). It is the domain of the operation. It (from constructor)
- * will be kept (not cloned) directly. So caller should not modify them.
+ *   The element value bounds (per channel) of 1st input (can NOT null). It is
+ * the domain of the operation. It (from constructor) will be kept (not cloned)
+ * directly. So caller should not modify them.
  *
  * @member {ActivationEscaping.ScaleBoundsArray} input1
- *   The element value bounds (per channel) of 2nd input (can null or undefined). It is the domain of the operation. It (from
- * constructor) will be kept (not cloned) directly. So caller should not modify them.
+ *   The element value bounds (per channel) of 2nd input (can null or
+ * undefined). It is the domain of the operation. It (from constructor) will be
+ * kept (not cloned) directly. So caller should not modify them.
  *
  * @member {number} inputChannelCount0
  *   The channel count of 1st input (i.e. this.input0.channelCount).
@@ -29,15 +33,18 @@ import * as ActivationEscaping from "../ActivationEscaping.js";
  *   The channel count of 2nd input (i.e. this.input1.channelCount).
  *
  * @member {number} outputTensorCount
- *   How many output tensors. It is 1, if only output0 exists. It is 2, if both output0 and output1 exist. 
+ *   How many output tensors. It is 1, if only output0 exists. It is 2, if both
+ * output0 and output1 exist. 
  *
  * @member {ActivationEscaping.ScaleBoundsArray} output0
- *   The element value bounds (per channel) of 1st output. It is the range of the operation). It is created by constructor
- * according to outputChannelCount0 (must be positive).
+ *   The element value bounds (per channel) of 1st output. It is the range of
+ * the operation). It is created by constructor according to
+ * outputChannelCount0 (must be positive).
  *
  * @member {ActivationEscaping.ScaleBoundsArray} output1
- *   The element value bounds (per channel) of 2nd output. It is the range of the operation). It is created by constructor
- * according to outputChannelCount1 (if positive).
+ *   The element value bounds (per channel) of 2nd output. It is the range of
+ * the operation). It is created by constructor according to
+ * outputChannelCount1 (if positive).
  *
  * @member {number} outputChannelCount0
  *   The channel count of 1st output (i.e. this.output0.channelCount).
@@ -48,9 +55,11 @@ import * as ActivationEscaping from "../ActivationEscaping.js";
 class InputsOutputs extends Recyclable.Root {
 
   /**
-   * Used as default BoundsArraySet.InputsOutputs provider for conforming to Recyclable interface.
+   * Used as default BoundsArraySet.InputsOutputs provider for conforming to
+   * Recyclable interface.
    */
-  static Pool = new Pool.Root( "BoundsArraySet.InputsOutputs.Pool", InputsOutputs, InputsOutputs.setAsConstructor );
+  static Pool = new Pool.Root( "BoundsArraySet.InputsOutputs.Pool",
+    InputsOutputs, InputsOutputs.setAsConstructor );
 
   /**
    *
@@ -58,26 +67,31 @@ class InputsOutputs extends Recyclable.Root {
    *   The channel count of 1st output. (MUST positive)
    *
    * @param {number} outputChannelCount1
-   *   The channel count of 2nd output. (If undefined or null or zero or negative, there will be no output1.)
+   *   The channel count of 2nd output. (If undefined or null or zero or
+   * negative, there will be no output1.)
    */
   constructor( input0, input1, outputChannelCount0, outputChannelCount1 ) {
     super();
-    InputsOutputs.setAsConstructor_self.call( this, input0, input1, outputChannelCount0, outputChannelCount1 );
+    InputsOutputs.setAsConstructor_self.call( this,
+      input0, input1, outputChannelCount0, outputChannelCount1 );
   }
 
   /** @override */
   static setAsConstructor( input0, input1, outputChannelCount0, outputChannelCount1 ) {
     super.setAsConstructor();
-    InputsOutputs.setAsConstructor_self.call( this, input0, input1, outputChannelCount0, outputChannelCount1 );
+    InputsOutputs.setAsConstructor_self.call( this,
+      input0, input1, outputChannelCount0, outputChannelCount1 );
     return this;
   }
 
   /** @override */
-  static setAsConstructor_self( input0, input1, outputChannelCount0, outputChannelCount1 ) {
+  static setAsConstructor_self(
+    input0, input1, outputChannelCount0, outputChannelCount1 ) {
 
     if ( !( input0 instanceof ActivationEscaping.ScaleBoundsArray ) )
       throw Error( `BoundsArraySet.InputsOutputs.setAsConstructor(): `
-        + `input0 ( ${input0} ) must exist and be an instance of class ActivationEscaping.ScaleBoundsArray.`
+        + `input0 ( ${input0} ) must exist and be an instance of class `
+        + `ActivationEscaping.ScaleBoundsArray.`
       );
 
     this.input0 = input0;
@@ -86,7 +100,8 @@ class InputsOutputs extends Recyclable.Root {
 
       if ( !( input1 instanceof ActivationEscaping.ScaleBoundsArray ) )
         throw Error( `BoundsArraySet.InputsOutputs.setAsConstructor(): `
-          + `input1 ( ${input1} ) must exist and be an instance of class ActivationEscaping.ScaleBoundsArray.`
+          + `input1 ( ${input1} ) must exist and be an instance of class `
+          + `ActivationEscaping.ScaleBoundsArray.`
         );
 
       this.input1 = input1;
@@ -104,14 +119,16 @@ class InputsOutputs extends Recyclable.Root {
       if ( this.output0 )
         this.output0.length = outputChannelCount0;
       else
-        this.output0 = ActivationEscaping.ScaleBoundsArray.Pool.get_or_create_by( outputChannelCount0 );
+        this.output0 = ActivationEscaping.ScaleBoundsArray.Pool.get_or_create_by(
+          outputChannelCount0 );
 
       if ( outputChannelCount1 > 0 ) { // Two outputs.
 
         if ( this.output1 )
           this.output1.length = outputChannelCount1;
         else
-          this.output1 = ActivationEscaping.ScaleBoundsArray.Pool.get_or_create_by( outputChannelCount1 );
+          this.output1 = ActivationEscaping.ScaleBoundsArray.Pool.get_or_create_by(
+            outputChannelCount1 );
 
       // ( outputChannelCount1 <= 0 ), One output.
       } else {
@@ -124,21 +141,25 @@ class InputsOutputs extends Recyclable.Root {
     } else { // ( outputChannelCount0 < 0 ), Illegal.
 
       throw Error( `BoundsArraySet.InputsOutputs.constructor(): `
-        + `outputChannelCount0 ( ${outputChannelCount0} ) can not be negative (i.e. must >= 0).`
+        + `outputChannelCount0 ( ${outputChannelCount0} ) `
+        + `can not be negative (i.e. must >= 0).`
       );
     }
   }
 
   /**
-   * The .input0 and .input1 will be set to null. The .output0 and .output1 will be recycled and then set to null.
+   * The .input0 and .input1 will be set to null. The .output0 and .output1
+   * will be recycled and then set to null.
    *
-   * Sub-class should override this method (and call super.disposeResources() before return).
+   * Sub-class should override this method (and call super.disposeResources()
+   * before return).
    *
    * @override
    */
   disposeResources() {
 
-    // Because outputs are created by this BoundsArraySet, they should be released by this BoundsArraySet.
+    // Because outputs are created by this BoundsArraySet, they should be
+    // released by this BoundsArraySet.
     {
       if ( this.output1 ) {
         this.output1.disposeResources_and_recycleToPool();
@@ -151,7 +172,8 @@ class InputsOutputs extends Recyclable.Root {
       }
     }
 
-    // Because inputs are not created by this BoundsArraySet, they should not be released by this BoundsArraySet.
+    // Because inputs are not created by this BoundsArraySet, they should not
+    // be released by this BoundsArraySet.
     {
       if ( this.input1 )
         this.input1 = null;
@@ -165,17 +187,21 @@ class InputsOutputs extends Recyclable.Root {
 
   /**
    * @return {InputsOutputs}
-   *   Return a newly created InputsOutputs which is a copy of this InputsOutputs. The .input0 (, .input1) will just past
-   * to the newly created InputsOutputs (i.e. NOT copied). But the .output0 (, .output1) will be copied.
+   *   Return a newly created InputsOutputs which is a copy of this
+   * InputsOutputs. The .input0 (, .input1) will just past to the newly created
+   * InputsOutputs (i.e. NOT copied). But the .output0 (, .output1) will be
+   * copied.
    */
   clone() {
-    let result = InputsOutputs.Pool.get_or_create_by( this.input0, this.input1, this.outputChannelCount0, this.outputChannelCount1 );
+    let result = InputsOutputs.Pool.get_or_create_by(
+      this.input0, this.input1, this.outputChannelCount0, this.outputChannelCount1 );
     result.set_outputs_all_byBoundsArraySet( this );
     return result;
   }
 
   /**
-   * Set all outputs (activationEscaping) .scaleArraySet to scale 1 (i.e. all are no scale).
+   * Set all outputs (activationEscaping) .scaleArraySet to scale 1 (i.e. all
+   * are no scale).
    *
    * @return {InputsOutputs}
    *   Return this (modified) object.
@@ -187,8 +213,9 @@ class InputsOutputs extends Recyclable.Root {
   }
 
   /**
-   * Set all .output0 (and output1) to the same as the specified [ aLower, aUpper ]. Set their (activationEscaping)
-   * this.scaleArraySet to default ( 1 ). The .input0 (and .input1) are not modified.
+   * Set all .output0 (and output1) to the same as the specified
+   * [ aLower, aUpper ]. Set their (activationEscaping) this.scaleArraySet to
+   * default ( 1 ). The .input0 (and .input1) are not modified.
    *
    * @param {number} aLower  The new lower bound.
    * @param {number} aUpper  The new upper bound.
@@ -204,8 +231,9 @@ class InputsOutputs extends Recyclable.Root {
 
   /**
    * @param {FloatValue.Bounds} aBounds
-   *   Set all .output0 (and output1) to the same as the specified aBounds. Set their (activationEscaping) this.scaleArraySet
-   * to default ( 1 ). The .input0 (and .input1) are not modified.
+   *   Set all .output0 (and output1) to the same as the specified aBounds.
+   * Set their (activationEscaping) this.scaleArraySet to default ( 1 ). The
+   * .input0 (and .input1) are not modified.
    *
    * @return {InputsOutputs}
    *   Return this (modified) object.
@@ -218,8 +246,9 @@ class InputsOutputs extends Recyclable.Root {
 
   /**
    * @param {BoundsArray} outputBoundsArray
-   *   The BoundsArray to be copied to .output0 (and .output1). Set their (activationEscaping) this.scaleArraySet
-   * to default ( 1 ). The .input0 (and .input1) are not modified.
+   *   The BoundsArray to be copied to .output0 (and .output1). Set their
+   * (activationEscaping) this.scaleArraySet to default ( 1 ). The .input0 (and
+   * .input1) are not modified.
    *
    * @return {InputsOutputs}
    *   Return this (modified) object.
@@ -232,8 +261,9 @@ class InputsOutputs extends Recyclable.Root {
 
   /**
    * @param {ActivationEscaping.ScaleBoundsArray} aScaleBoundsArray
-   *   The ScaleBoundsArray to be copied to .output0 (and .output1). The (activationEscaping) .scaleArraySet are also
-   * copied. The .input0 (and .input1) are not modified.
+   *   The ScaleBoundsArray to be copied to .output0 (and .output1). The
+   * (activationEscaping) .scaleArraySet are also copied. The .input0 (and
+   * .input1) are not modified.
    *
    * @return {InputsOutputs}
    *   Return this (modified) object.
@@ -249,8 +279,8 @@ class InputsOutputs extends Recyclable.Root {
    *   - ( this.output0.channelCount == aBoundsArraySet.output0.channelCount ) &&
    *   - ( this.output1.channelCount == aBoundsArraySet.output1.channelCount )
    *
-   * This .input0 (and .input1) are not modified. But this .output0 (, .output1) will copy from aBoundsArraySet
-   * (including (activationEscaping) .scaleArraySet).
+   * This .input0 (and .input1) are not modified. But this .output0 (, .output1)
+   * will copy from aBoundsArraySet (including (activationEscaping) .scaleArraySet).
    *
    *
    * @param {BoundsArraySet.InputsOutputs} aBoundsArraySet
@@ -281,7 +311,8 @@ class InputsOutputs extends Recyclable.Root {
   }
 
   /**
-   * Set .output0 (and .output1) by .input0 (including (activation escaping) .scaleArraySet).
+   * Set .output0 (and .output1) by .input0 (including (activation escaping)
+   * .scaleArraySet).
    *
    * @return {InputsOutputs}
    *   Return this (modified) object.
@@ -294,7 +325,8 @@ class InputsOutputs extends Recyclable.Root {
   }
 
   /**
-   * Set .output0 (and .output1) by concatenating .input0 and .input1. The length of .output0 (and .output1 if exists) will be modified.
+   * Set .output0 (and .output1) by concatenating .input0 and .input1. The
+   * length of .output0 (and .output1 if exists) will be modified.
    *
    * @return {InputsOutputs}
    *   Return this (modified) object.
@@ -306,8 +338,8 @@ class InputsOutputs extends Recyclable.Root {
   }
 
   /**
-   * Rearrange this.outputs[] channel information by interleaving as ( groupCount == 2 ). This channel count must be even
-   * (i.e. divisible by 2).
+   * Rearrange this.outputs[] channel information by interleaving as
+   * ( groupCount == 2 ). This channel count must be even (i.e. divisible by 2).
    *
    * @return {InputsOutputs}
    *   Return this (modified) object.
@@ -319,8 +351,9 @@ class InputsOutputs extends Recyclable.Root {
   }
 
   /**
-   * Set .output0 and .output1 by splitting .input0. If .output1 does not exist, it will be created. The length
-   * of both .output0 and .output1 will be modified.
+   * Set .output0 and .output1 by splitting .input0. If .output1 does not
+   * exist, it will be created. The length of both .output0 and .output1 will
+   * be modified.
    *
    * @return {InputsOutputs}
    *   Return this (modified) object.
