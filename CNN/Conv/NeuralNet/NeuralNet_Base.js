@@ -710,15 +710,14 @@ class NeuralNet_Base extends Recyclable.Root {
 //
   /**
    * @param {tf.tensor3d} inputTensor
-   *   The tensor to be converted.
+   *   The tensor to be restricted.
    *   - It will be disposed, if converting is successful.
-   *   - It will may or may not be disposed according to
-   * whether converting is successful.
+   *   - It will not be disposed if converting is failed.
    *
    * @return {tf.tensor3d}
    *   Return a new tensor. All other intermediate tensors were disposed.
    */
-  Tensor_convert_to_InputValueRange( inputTensor ) {
+  Tensor_restrict_to_InputValueRange_and_dispose( inputTensor ) {
 
     // Embedding can only accept integer values between
     // [ 0, ( vocabularyCountPerInputChannel - 1 ) ] because they are used as
@@ -726,31 +725,34 @@ class NeuralNet_Base extends Recyclable.Root {
     const valueMin = 0;
     const valueMax = this.vocabularyCountPerInputChannel - 1;
 
-    let outputTensor;
-
+//    let outputTensor;
+    let valueClippedTensor;
     try {
-      let valueClippedTensor = tf.clipByValue( inputTensor, valueMin, valueMax );
+      valueClippedTensor = tf.clipByValue( inputTensor, valueMin, valueMax );
 
-      let uintTensor;
-      try {
-        uintTensor = valueClippedTensor.cast( "int32" );
-        return scaledSourceTensorInt32;
+      inputTensor.dispose();
+      inputTensor = null;
 
-      } catch ( e ) {
-        throw e; // e.g. out of (GPU) memory.
-
-      } finally {
-        ???.dispose();
-      }
-  
     } catch ( e ) {
-      inputTensor = 
       throw e; // e.g. out of (GPU) memory.
 
     } finally {
       ???.dispose();
     }
 
+    if ( valueClippedTensor ) {
+      try {
+        let intTensor = valueClippedTensor.cast( "int32" );
+        return intTensor;
+
+      } catch ( e ) {
+        throw e; // e.g. out of (GPU) memory.
+
+      } finally {
+        valueClippedTensor.dispose();
+        valueClippedTensor = null;
+      }
+    }
   }
 
 
