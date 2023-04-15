@@ -718,7 +718,6 @@ class NeuralNet_Base extends Recyclable.Root {
       //
       // Note: tf.clipByValue() is cheaper than tf.mod()
       let valueClippedTensor = inputTensor.clipByValue( valueMin, valueMax );
-
       inputTensor.dispose(); // Release immediately to reduce memory footprint.
 
       try {
