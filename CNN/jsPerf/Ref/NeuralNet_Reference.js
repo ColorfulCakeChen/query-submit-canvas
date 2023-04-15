@@ -171,7 +171,7 @@ class NeuralNet_Reference_Base extends Recyclable.Root {
       let memoryInfo_apply_before = tf.memory(); // Test memory leakage of NeuralNet.apply.
       {
         outputTensor3d = neuralNet.apply( inputTensor3d );
-    
+
         if ( 100 != neuralNet.progressApply.valuePercentage )
           throw Error( `NeuralNet_Reference_Base.neuralNet_create_apply_internal(): `
             + `Progress (${neuralNet.progressApply.valuePercentage}) should be 100 `
@@ -730,9 +730,6 @@ class NeuralNet_Reference_Base extends Recyclable.Root {
 
     // 4. Clamp and integerize output.
     if ( testParams.out.output_asInputValueRange ) {
-//!!! ...unfinishd... (2023/04/15) output_asInputValueRange
-//
-
       imageOut.modify_byClamp_toInt(
         0, testParams.out.vocabularyCountPerInputChannel,
         "output_clamp_int", testParams.out
