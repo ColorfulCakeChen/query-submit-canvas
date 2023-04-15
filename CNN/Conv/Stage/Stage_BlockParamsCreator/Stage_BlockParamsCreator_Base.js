@@ -198,7 +198,8 @@ class Stage_BlockParamsCreator_Base extends Recyclable.Root {
   }
 
   /**
-   * Config the activation of pointwise1, depthwise1, pointwise2 and squeeze-and-excitation for blockLast.
+   * Config the activation of pointwise1, depthwise1, pointwise2 and
+   * squeeze-and-excitation for blockLast.
    */
   activation_setup_forBlockLast() {
     let stageParams = this.stageParams;
