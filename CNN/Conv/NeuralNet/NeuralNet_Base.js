@@ -726,21 +726,13 @@ class NeuralNet_Base extends Recyclable.Root {
     const valueMax = this.vocabularyCountPerInputChannel - 1;
 
 //    let outputTensor;
-    let valueClippedTensor;
     try {
-      valueClippedTensor = tf.clipByValue( inputTensor, valueMin, valueMax );
+      let valueClippedTensor = inputTensor.clipByValue( valueMin, valueMax );
 
+//!!! what if tf.clipByValue() successful but .cast() failed?
       inputTensor.dispose();
       inputTensor = null;
 
-    } catch ( e ) {
-      throw e; // e.g. out of (GPU) memory.
-
-    } finally {
-      ???.dispose();
-    }
-
-    if ( valueClippedTensor ) {
       try {
         let intTensor = valueClippedTensor.cast( "int32" );
         return intTensor;
@@ -752,6 +744,12 @@ class NeuralNet_Base extends Recyclable.Root {
         valueClippedTensor.dispose();
         valueClippedTensor = null;
       }
+
+    } catch ( e ) {
+      throw e; // e.g. out of (GPU) memory.
+
+    } finally {
+      ???.dispose();
     }
   }
 
