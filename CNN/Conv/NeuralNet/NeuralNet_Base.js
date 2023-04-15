@@ -95,6 +95,10 @@ import { InferencedParams } from "./NeuralNet_InferencedParams.js";
  * @member {number} output_channelCount
  *   The output channel count of this neuralNet's final block.
  *
+ * @member {boolean} output_asInputValueRange
+ *   Whether output value is restricted to the (neural network) input value
+ * range (i.e. non-negative integer which can be used in embedding looking up).
+ *
  * @member {number} tensorWeightCountTotal
  *   The total wieght count used in tensors. Not including Params, because they are
  * not used in tensors. Including inferenced weights, if they are used in tensors.
