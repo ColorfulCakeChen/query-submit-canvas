@@ -783,7 +783,8 @@ class NeuralNet_Base extends Recyclable.Root {
 
       + `output_height=${this.output_height}, `
       + `output_width=${this.output_width}, `
-      + `output_channelCount=${this.output_channelCount}`
+      + `output_channelCount=${this.output_channelCount}, `
+      + `output_asInputValueRange=${this.output_asInputValueRange}`
     ;
     return str;
   }
@@ -804,8 +805,10 @@ class NeuralNet_Base extends Recyclable.Root {
         + `${this.stageLast_output_channelCount} ), `
       + `output_shape=`
         + `( ${this.output_height}, ${this.output_width}, `
-        + `${this.output_channelCount} )`
-      ;
+        + `${this.output_channelCount}`
+        + `${this.output_asInputValueRange ? ", asInputValueRange" : "" }`
+        + ` )`
+        ;
     return str;
   }
 
