@@ -710,12 +710,13 @@ class NeuralNet_Base extends Recyclable.Root {
 //
   /**
    * @param {tf.tensor3d} inputTensor
-   *   The tensor to be restricted.
-   *   - It will be disposed, if converting is successful.
-   *   - It will not be disposed if converting is failed.
+   *   The tensor to be restricted. It will always be disposed, no matter
+   * converting is successful or failed.
    *
    * @return {tf.tensor3d}
-   *   Return a new tensor. All other intermediate tensors were disposed.
+   *   Return a new tensor whose values are restricted to integers between
+   * [ 0, ( vocabularyCountPerInputChannel - 1 ) ]. The inputTensor and all
+   * other intermediate tensors were disposed.
    */
   Tensor_restrict_to_InputValueRange_and_dispose( inputTensor ) {
 
@@ -730,7 +731,7 @@ class NeuralNet_Base extends Recyclable.Root {
       let valueClippedTensor = inputTensor.clipByValue( valueMin, valueMax );
 
 //!!! what if tf.clipByValue() successful but .cast() failed?
-      inputTensor.dispose();
+      inputTensor.dispose(); // Release immediately to reduce memory footprint.
       inputTensor = null;
 
       try {
@@ -749,7 +750,10 @@ class NeuralNet_Base extends Recyclable.Root {
       throw e; // e.g. out of (GPU) memory.
 
     } finally {
-      ???.dispose();
+      if ( inputTensor ) {
+        inputTensor.dispose();
+        inputTensor = null;
+      }
     }
   }
 
