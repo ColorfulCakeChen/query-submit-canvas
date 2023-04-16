@@ -292,8 +292,12 @@ class Embedding_AddGatherReshape extends Base {
     // 1.2 Keep input tensor. (i.e. Not release input tensor.)
 
     // 2. Reshape tensor4d to tensor3d.
-    let outputTensor3d = gatherTensor4d.reshape( this.outputTensor3dShape );
-    gatherTensor4d.dispose();
+    let outputTensor3d;
+    try {
+      outputTensor3d = gatherTensor4d.reshape( this.outputTensor3dShape );
+    } finally {
+      gatherTensor4d.dispose();
+    }
 
     return outputTensor3d;
   }
@@ -305,15 +309,20 @@ class Embedding_AddGatherReshape extends Base {
 
     // 1. Gather along the first axis (i.e. axis id 0).
     //    tensor2d.gather( tensor3d ) results to tensor4d.
-    let gatherTensor4d = this.vocabularyTableTensor2d.gather( inputTensor3d, 0 );
-
-    // 1.2 Release input tensor.
-    inputTensor3d.dispose();
-    //inputTensor3d = null;
+    let gatherTensor4d;
+    try {
+      gatherTensor4d = this.vocabularyTableTensor2d.gather( inputTensor3d, 0 );
+    } finally {
+      inputTensor3d.dispose(); // 1.2 Release input tensor.
+    }
 
     // 2. Reshape tensor4d to tensor3d.
-    let outputTensor3d = gatherTensor4d.reshape( this.outputTensor3dShape );
-    gatherTensor4d.dispose();
+    let outputTensor3d;
+    try {
+      outputTensor3d = gatherTensor4d.reshape( this.outputTensor3dShape );
+    } finally {
+      gatherTensor4d.dispose();
+    }
 
     return outputTensor3d;
   }
@@ -331,13 +340,21 @@ class Embedding_AddGatherReshape extends Base {
 
     // 1. Gather along the first axis (i.e. axis id 0).
     //    tensor2d.gather( tensor3d ) results to tensor4d.
-    let gatherTensor4d
-      = this.vocabularyTableTensor2d.gather( vocabularyIndicesTensor3d, 0 );
-    vocabularyIndicesTensor3d.dispose();
+    let gatherTensor4d;
+    try {
+      gatherTensor4d
+        = this.vocabularyTableTensor2d.gather( vocabularyIndicesTensor3d, 0 );
+    } finally {
+      vocabularyIndicesTensor3d.dispose();
+    }
 
     // 2. Reshape tensor4d to tensor3d.
-    let outputTensor3d = gatherTensor4d.reshape( this.outputTensor3dShape );
-    gatherTensor4d.dispose();
+    let outputTensor3d;
+    try {
+      outputTensor3d = gatherTensor4d.reshape( this.outputTensor3dShape );
+    } finally {
+      gatherTensor4d.dispose();
+    }
 
     return outputTensor3d;
   }
@@ -349,27 +366,36 @@ class Embedding_AddGatherReshape extends Base {
 
     // 0.1 Shifting vocabulary indices by input channel. (Broadcasting is used.)
     //     So that a large merged table could be used to improve performance.
-    let vocabularyIndicesTensor3d
-      = inputTensor3d.add( this.channelValueOffsetTensor3d );
-
-    // 0.2 Release input tensor.
-    inputTensor3d.dispose();
-    //inputTensor3d = null;
+    let vocabularyIndicesTensor3d;
+    try {
+      vocabularyIndicesTensor3d
+        = inputTensor3d.add( this.channelValueOffsetTensor3d );
+    } finally {
+      inputTensor3d.dispose(); // 0.2 Release input tensor.
+    }
 
     // 1. Gather along the first axis (i.e. axis id 0).
     //
     // tensor2d.gather( tensor3d ) results to tensor4d.
-    let gatherTensor4d
-      = this.vocabularyTableTensor2d.gather( vocabularyIndicesTensor3d, 0 );
-    vocabularyIndicesTensor3d.dispose();
+    let gatherTensor4d;
+    try {
+      gatherTensor4d
+        = this.vocabularyTableTensor2d.gather( vocabularyIndicesTensor3d, 0 );
+    } finally {
+      vocabularyIndicesTensor3d.dispose();
+    }
 
     // 2. Reshape tensor4d to tensor3d.
     //
     // Note: Use pre-calculated array (i.e. outputTensor3dShape) for improving
     //       performance.
     //
-    let outputTensor3d = gatherTensor4d.reshape( this.outputTensor3dShape );
-    gatherTensor4d.dispose();
+    let outputTensor3d;
+    try {
+      outputTensor3d = gatherTensor4d.reshape( this.outputTensor3dShape );
+    } finally {
+      gatherTensor4d.dispose();
+    }
 
     return outputTensor3d;
   }
