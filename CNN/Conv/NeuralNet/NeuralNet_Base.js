@@ -734,7 +734,7 @@ class NeuralNet_Base extends Recyclable.Root {
 //   - Neighbor pixels on the same channel has two dimensions information
 //       (top-bottom, left-right).
 //
-//   - Different channel of the same pixel has only one dimension (front-rear).
+//   - Different channels of the same pixel has only one dimension (front-rear).
 //
 // So, placing all recurrent feedback information on the same channel is
 // important. Perhaps, let all channels of the same pixel have the same
