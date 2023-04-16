@@ -180,7 +180,7 @@ class HeightWidthDepthGroup {
     tf.tidy( () => {
 
       let memoryInfoPre = tf.memory(); // Test memory leakage of channel shufflers.
-      
+
       Pool.Asserter.assert_Pool_issuedCount_same_after_as_before( "jsPerf_CNNChannelShuffle.testResultSame()", () => {
         this.shufflers_init();
         this.shufflers_release();
@@ -195,7 +195,9 @@ class HeightWidthDepthGroup {
     this.shufflers_init();  // (Should outside tidy() for preventing from tensors being disposed.
 
     tf.tidy( () => {
-      let memoryInfo0 = tf.memory();
+      let memoryInfo_testCorrectness_before = tf.memory(); // Test memory leakage of imageSourceBag.
+
+      let memoryInfo0 = memoryInfo_testCorrectness_before;
 
       let t1Array = this.shuffleInfo.concatReshapeTransposeReshapeSplit( this.dataTensor3dArray );
       let memoryInfo1 = tf.memory();
@@ -264,6 +266,20 @@ class HeightWidthDepthGroup {
 
       if ( !TensorTools.Comparator.isTensorArrayEqual( t2Array, t4Array ) )
         throw Error( `ConcatGatherUnsorted() != PointwiseConv()` );
+
+      tf.dispose( t4Array );
+      tf.dispose( t3Array );
+      tf.dispose( t2Array );
+      tf.dispose( t1Array );
+
+      let memoryInfo_testCorrectness_after = tf.memory();
+
+      if ( memoryInfo_testCorrectness_after.numTensors != memoryInfo_testCorrectness_before.numTensors )
+        throw Error( `testCorrectness() memory leak. `
+          + `result tensor count (${memoryInfo_testCorrectness_after.numTensors}) `
+          + `should be (${memoryInfo_testCorrectness_before.numTensors} `
+        );
+
     });
   }
 
