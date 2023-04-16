@@ -736,14 +736,13 @@ class NeuralNet_Base extends Recyclable.Root {
   Tensor_restrict_to_InputValueRange_and_dispose(
     inputTensor, io_scaleBoundsArray ) {
 
-//!!! ...unfinished... (2023/04/16)
-// Perhaps, use constant inside .embedding
-
     // Embedding can only accept integer values between
     // [ 0, ( vocabularyCountPerInputChannel - 1 ) ] because they are used as
     // array indexes.
     const valueMin = 0;
-    const valueMax = this.vocabularyCountPerInputChannel - 1;
+//!!! (2023/04/16 Remarked) Use constant inside .embedding instead.
+//    const valueMax = this.vocabularyCountPerInputChannel - 1;
+    const valueMax = this.embedding.vocabularyIdMax;
 
     io_scaleBoundsArray.boundsArray.set_all_byLowerUpper( valueMin, valueMax );
 
