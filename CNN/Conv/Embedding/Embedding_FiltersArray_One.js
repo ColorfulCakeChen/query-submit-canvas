@@ -6,14 +6,14 @@ import * as ActivationEscaping from "../ActivationEscaping.js";
 import { FiltersArray_Base } from "./Embedding_FiltersArray_Base.js";
 
 /**
- * A large table which is composed of all vocabulary table of every input channel. It is
- * mainly used by Embedding.AddGatherReshape.
+ * A large table which is composed of all vocabulary table of every input
+ * channel. It is mainly used by Embedding.AddGatherReshape.
  *
  *
  *
  * @member {Racyclable.Array} filtersArray
- *   The embedding vocabulary look-up table. It is composed by merging all input channels'
- * vocabulary.
+ *   The embedding vocabulary look-up table. It is composed by merging all
+ * input channels' vocabulary.
  *
  * @see Embedding.FiltersArray_Base
  *
@@ -21,10 +21,12 @@ import { FiltersArray_Base } from "./Embedding_FiltersArray_Base.js";
 class Embedding_FiltersArray_One extends FiltersArray_Base {
 
   /**
-   * Used as default Embedding.FiltersArray_One provider for conforming to Recyclable interface.
+   * Used as default Embedding.FiltersArray_One provider for conforming to
+   * Recyclable interface.
    */
   static Pool = new Pool.Root( "Embedding.FiltersArray_One.Pool",
-    Embedding_FiltersArray_One, Embedding_FiltersArray_One.setAsConstructor );
+    Embedding_FiltersArray_One,
+    Embedding_FiltersArray_One.setAsConstructor );
 
   /**
    *
@@ -91,25 +93,36 @@ class Embedding_FiltersArray_One extends FiltersArray_Base {
     this.output_scaleBoundsArray.set_all_by_PositiveInfinity_NegativeInfinity();
     let outBoundsArray = this.output_scaleBoundsArray.boundsArray;
 
-    this.filtersArray = Recyclable.Array.Pool.get_or_create_by( this.tensorWeightCountTotal );
+    this.filtersArray
+      = Recyclable.Array.Pool.get_or_create_by( this.tensorWeightCountTotal );
+
     let filterIndex = 0;
 
     let sourceIndex = weightElementOffsetBegin;
 
     let outChannelBegin = 0;
     for ( let inChannel = 0; inChannel < this.input_channelCount; ++inChannel ) {
-      for ( let vocabularyId = 0; vocabularyId < this.vocabularyCountPerInputChannel; ++vocabularyId ) {
+      for (
+        let vocabularyId = 0;
+        vocabularyId < this.vocabularyCountPerInputChannel;
+        ++vocabularyId ) {
+
         let outChannel = outChannelBegin;
 
         if ( this.bEmbedVocabularyId ) {
-          this.filtersArray[ filterIndex ] = vocabularyId; // Embed the vocabulary's id.
+          // Embed the vocabulary's id.
+          this.filtersArray[ filterIndex ] = vocabularyId;
           ++filterIndex;
 
           outBoundsArray.enlarge_one_byN( outChannel, vocabularyId );
           ++outChannel;
         }
 
-        for ( let outChannelSub = outChannelSubBegin; outChannelSub < this.channelMultiplier; ++outChannelSub ) {
+        for (
+          let outChannelSub = outChannelSubBegin;
+          outChannelSub < this.channelMultiplier;
+          ++outChannelSub ) {
+
           let filterValue = inputWeightArray[ sourceIndex ];
           ++sourceIndex;
 

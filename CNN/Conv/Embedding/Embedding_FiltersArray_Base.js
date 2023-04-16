@@ -12,7 +12,8 @@ import { InferencedParams } from "./Embedding_InferencedParams.js";
 // or different look-up (i.e. vocabulary) table.
 
 /**
- * This is the base class of Embedding.FiltersArray_One and Embedding.FiltersArray_Multi.
+ * This is the base class of Embedding.FiltersArray_One and
+ * Embedding.FiltersArray_Multi.
  *
  *
  *
@@ -20,11 +21,13 @@ import { InferencedParams } from "./Embedding_InferencedParams.js";
  *  If true, this object initialized (i.e. initer()) successfully.
  *
  * @member {number} weightElementOffsetBegin
- *   The position which is started (inclusive) to extract from inputWeightArray by initer().
+ *   The position which is started (inclusive) to extract from inputWeightArray
+ * by initer().
  *
  * @member {number} weightElementOffsetEnd
- *   The position which is ended to (non-inclusive) extract from inputWeightArray by initer(). Where to extract next weights.
- * Only meaningful when ( this.bInitOk == true ).
+ *   The position which is ended to (non-inclusive) extract from
+ * inputWeightArray by initer(). Where to extract next weights. Only meaningful
+ * when ( this.bInitOk == true ).
  * 
  * @member {ActivationEscaping.ScaleBoundsArray} output_scaleBoundsArray
  *   The element value bounds (per channel) of output (can NOT null).
@@ -36,10 +39,12 @@ import { InferencedParams } from "./Embedding_InferencedParams.js";
 class Embedding_FiltersArray_Base extends Weights.Base( InferencedParams ) {
 
   /**
-   * Used as default Embedding.FiltersArray_Base provider for conforming to Recyclable interface.
+   * Used as default Embedding.FiltersArray_Base provider for conforming to
+   * Recyclable interface.
    */
   static Pool = new Pool.Root( "Embedding.FiltersArray_Base.Pool",
-    Embedding_FiltersArray_Base, Embedding_FiltersArray_Base.setAsConstructor );
+    Embedding_FiltersArray_Base,
+    Embedding_FiltersArray_Base.setAsConstructor );
 
   /**
    *
@@ -107,8 +112,9 @@ class Embedding_FiltersArray_Base extends Weights.Base( InferencedParams ) {
   /**
    * Initialize this object.
    * 
-   * Note: Embedding_FiltersArray.init() does not have argument inputScaleBoundsArray,
-   * but it does assumes input's value bounds is [ 0, vocabularyCountPerInputChannel ].
+   * Note: Embedding_FiltersArray.init() does not have argument
+   * inputScaleBoundsArray, but it does assumes input's value bounds is
+   * [ 0, vocabularyCountPerInputChannel ].
    *
    * @return {boolean}
    *   Return true, if succeeded. Return false, if failed.
@@ -116,13 +122,15 @@ class Embedding_FiltersArray_Base extends Weights.Base( InferencedParams ) {
   init( inputWeightArray, weightElementOffsetBegin ) {
 
     // Calcualte weights extracting beginning and ending position.
-    if ( !super.init( inputWeightArray, weightElementOffsetBegin, this.tensorWeightCountExtracted ) ) {
+    if ( !super.init( inputWeightArray,
+           weightElementOffsetBegin, this.tensorWeightCountExtracted ) ) {
       return false;  // e.g. input array does not have enough data.
     }
 
     // Initialize element value bounds (per channel).
-    this.output_scaleBoundsArray = ActivationEscaping.ScaleBoundsArray.Pool.get_or_create_by(
-      this.output_channelCount );
+    this.output_scaleBoundsArray
+      = ActivationEscaping.ScaleBoundsArray.Pool.get_or_create_by(
+          this.output_channelCount );
 
     return true;
   }
