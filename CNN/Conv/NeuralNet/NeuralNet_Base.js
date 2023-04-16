@@ -710,6 +710,9 @@ class NeuralNet_Base extends Recyclable.Root {
   Tensor_restrict_to_InputValueRange_and_dispose(
     inputTensor, io_scaleBoundsArray ) {
 
+//!!! ...unfinished... (2023/04/16)
+// Perhaps, use constant inside .embedding
+
     // Embedding can only accept integer values between
     // [ 0, ( vocabularyCountPerInputChannel - 1 ) ] because they are used as
     // array indexes.
@@ -728,32 +731,56 @@ class NeuralNet_Base extends Recyclable.Root {
     // They will destroy the activation function result.
     //
 
+    // 1. Let value be in range.
+    //
+    // Note: tf.clipByValue() is cheaper than tf.mod()
+    let valueClippedTensor;
     try {
-      // 1. Let value be in range.
-      //
-      // Note: tf.clipByValue() is cheaper than tf.mod()
-      let valueClippedTensor = inputTensor.clipByValue( valueMin, valueMax );
-      inputTensor.dispose(); // Release immediately to reduce memory footprint.
-
-      try {
-        // 2. Let value be integer.
-        let intTensor = valueClippedTensor.cast( "int32" );
-        return intTensor;
-
-      } catch ( e ) {
-        throw e; // e.g. out of (GPU) memory.
-
-      } finally {
-        valueClippedTensor.dispose();
-      }
-
+      valueClippedTensor = inputTensor.clipByValue( valueMin, valueMax );
     } catch ( e ) {
+      throw e; // e.g. out of (GPU) memory.
+    } finally {
       // No matter successful or failed, always release input tensor.
       inputTensor.dispose();
-      throw e; // e.g. out of (GPU) memory.
-
-    } finally {
     }
+
+    // 2. Let value be integer.
+    try {
+      let intTensor = valueClippedTensor.cast( "int32" );
+      return intTensor;
+    } catch ( e ) {
+      throw e; // e.g. out of (GPU) memory.
+    } finally {
+      valueClippedTensor.dispose();
+    }
+
+//!!! (2023/04/16 Remarked) Use two non-nested try-finally.
+//     try {
+//       // 1. Let value be in range.
+//       //
+//       // Note: tf.clipByValue() is cheaper than tf.mod()
+//       let valueClippedTensor = inputTensor.clipByValue( valueMin, valueMax );
+//       inputTensor.dispose(); // Release immediately to reduce memory footprint.
+//
+//       try {
+//         // 2. Let value be integer.
+//         let intTensor = valueClippedTensor.cast( "int32" );
+//         return intTensor;
+//
+//       } catch ( e ) {
+//         throw e; // e.g. out of (GPU) memory.
+//
+//       } finally {
+//         valueClippedTensor.dispose();
+//       }
+//
+//     } catch ( e ) {
+//       // No matter successful or failed, always release input tensor.
+//       inputTensor.dispose();
+//       throw e; // e.g. out of (GPU) memory.
+//
+//     } finally {
+//     }
   }
 
 
