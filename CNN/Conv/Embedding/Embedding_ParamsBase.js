@@ -10,7 +10,8 @@ import { InferencedParams } from "./Embedding_InferencedParams.js";
 class Embedding_ParamsBase extends Recyclable.Root {
 
   /**
-   * Used as default Embedding.ParamsBase provider for conforming to Recyclable interface.
+   * Used as default Embedding.ParamsBase provider for conforming to Recyclable
+   * interface.
    */
   static Pool = new Pool.Root( "Embedding.ParamsBase.Pool",
     Embedding_ParamsBase, Embedding_ParamsBase.setAsConstructor );
@@ -19,13 +20,15 @@ class Embedding_ParamsBase extends Recyclable.Root {
    */
   constructor(
     input_height, input_width, input_channelCount,
-    channelMultiplier, vocabularyCountPerInputChannel, bEmbedVocabularyId,
+    channelMultiplier, vocabularyCountPerInputChannel,
+    bEmbedVocabularyId,
     bKeepInputTensor
   ) {
     super();
     Embedding_ParamsBase.setAsConstructor_self.call( this,
       input_height, input_width, input_channelCount,
-      channelMultiplier, vocabularyCountPerInputChannel, bEmbedVocabularyId,
+      channelMultiplier, vocabularyCountPerInputChannel,
+      bEmbedVocabularyId,
       bKeepInputTensor
     );
   }
@@ -33,13 +36,15 @@ class Embedding_ParamsBase extends Recyclable.Root {
   /** @override */
   static setAsConstructor(
     input_height, input_width, input_channelCount,
-    channelMultiplier, vocabularyCountPerInputChannel, bEmbedVocabularyId,
+    channelMultiplier, vocabularyCountPerInputChannel,
+    bEmbedVocabularyId,
     bKeepInputTensor
   ) {
     super.setAsConstructor();
     Embedding_ParamsBase.setAsConstructor_self.call( this,
       input_height, input_width, input_channelCount,
-      channelMultiplier, vocabularyCountPerInputChannel, bEmbedVocabularyId,
+      channelMultiplier, vocabularyCountPerInputChannel,
+      bEmbedVocabularyId,
       bKeepInputTensor
     );
     return this;
@@ -48,7 +53,8 @@ class Embedding_ParamsBase extends Recyclable.Root {
   /** @override */
   static setAsConstructor_self(
     input_height, input_width, input_channelCount,
-    channelMultiplier, vocabularyCountPerInputChannel, bEmbedVocabularyId,
+    channelMultiplier, vocabularyCountPerInputChannel,
+    bEmbedVocabularyId,
     bKeepInputTensor
   ) {
     this.input_height = input_height;
@@ -88,7 +94,8 @@ class Embedding_ParamsBase extends Recyclable.Root {
     this.inferencedParams_dispose();
     this.inferencedParams = InferencedParams.Pool.get_or_create_by(
       this.input_height, this.input_width, this.input_channelCount,
-      this.channelMultiplier, this.vocabularyCountPerInputChannel, this.bEmbedVocabularyId
+      this.channelMultiplier, this.vocabularyCountPerInputChannel,
+      this.bEmbedVocabularyId
     );
   }
 

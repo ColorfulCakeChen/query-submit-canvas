@@ -26,21 +26,26 @@ import { InferencedParams } from "./Embedding_InferencedParams.js";
  *   The input image's channel count.
  *
  * @member {number} channelMultiplier
- *   Every vocabulary will have how many embedding channels. Every input channel will be expanded into so many
- * embedding channels. It could be viewed as embeddingChannelCountPerInputChannel.
+ *   Every vocabulary will have how many embedding channels. Every input
+ * channel will be expanded into so many embedding channels. It could be viewed
+ * as embeddingChannelCountPerInputChannel.
  *
  * @member {number} vocabularyCountPerInputChannel
- *   Every input channel will have how many vocabularies. This is also vocabulary count per vocabulary table (because
- * every input channel has a vocabulary table). For an image data (R-G-B-A four channels), there will be 256
- * vocabularies per input channel because every channel is represented by one byte (8 bits) which has 2^8 = 256 kinds
- * of possible values.
+ *   Every input channel will have how many vocabularies. This is also
+ * vocabulary count per vocabulary table (because every input channel has a
+ * vocabulary table). For an image data (R-G-B-A four channels), there will be
+ * 256 vocabularies per input channel because every channel is represented by
+ * one byte (8 bits) which has 2^8 = 256 kinds of possible values.
  *
  * @member {boolean} bEmbedVocabularyId
- *   If true, one of embedding channels will be an auto-generated vocabulary id (i.e. 0, 1, 2, ...). So only
- * ( channelMultiplier - 1 ) embedding channels will be extracted from inputWeightArray. The extra vocabulary id
- * channel achieves residual connection. Residual connection means apply_and_destroy_or_keep() will append (concatenate)
- * input to output. Since apply_and_destroy_or_keep()'s input is just vocabulary id (one channel or multiple channels),
- * pre-embedded vocabulary id inside the embedding table acheives the same effect by less computation (but more memory).
+ *   If true, one of embedding channels will be an auto-generated vocabulary id
+ * (i.e. 0, 1, 2, ...). So only ( channelMultiplier - 1 ) embedding channels
+ * will be extracted from inputWeightArray. The extra vocabulary id channel
+ * achieves residual connection. Residual connection means
+ * apply_and_destroy_or_keep() will append (concatenate) input to output. Since
+ * apply_and_destroy_or_keep()'s input is just vocabulary id (one channel or
+ * multiple channels), pre-embedded vocabulary id inside the embedding table
+ * acheives the same effect by less computation (but more memory).
  *
  * @member {boolean} bKeepInputTensor
  *   If true, apply() will not dispose inputTensor (i.e. will be kept).
@@ -54,23 +59,28 @@ import { InferencedParams } from "./Embedding_InferencedParams.js";
  class Embedding_Params extends Weights.Params( ParamsBase ) {
 
   /**
-   * Used as default Embedding.Params provider for conforming to Recyclable interface.
+   * Used as default Embedding.Params provider for conforming to Recyclable
+   * interface.
    */
-  static Pool = new Pool.Root( "Embedding.Params.Pool", Embedding_Params, Embedding_Params.setAsConstructor );
+  static Pool = new Pool.Root( "Embedding.Params.Pool",
+    Embedding_Params, Embedding_Params.setAsConstructor );
 
   /**
-   * If a parameter's value is null, it will be extracted from inputWeightArray (i.e. by evolution).
+   * If a parameter's value is null, it will be extracted from inputWeightArray
+   * (i.e. by evolution).
    *
    */
   constructor(
     input_height, input_width, input_channelCount,
-    channelMultiplier, vocabularyCountPerInputChannel = 256, bEmbedVocabularyId = true,
+    channelMultiplier, vocabularyCountPerInputChannel = 256,
+    bEmbedVocabularyId = true,
     bKeepInputTensor
   ) {
     super(
       Embedding_Params.SequenceArray,
       input_height, input_width, input_channelCount,
-      channelMultiplier, vocabularyCountPerInputChannel, bEmbedVocabularyId,
+      channelMultiplier, vocabularyCountPerInputChannel,
+      bEmbedVocabularyId,
       bKeepInputTensor
     );
     Embedding_Params.setAsConstructor_self.call( this );
@@ -79,13 +89,15 @@ import { InferencedParams } from "./Embedding_InferencedParams.js";
   /** @override */
   static setAsConstructor(
     input_height, input_width, input_channelCount,
-    channelMultiplier, vocabularyCountPerInputChannel = 256, bEmbedVocabularyId = true,
+    channelMultiplier, vocabularyCountPerInputChannel = 256,
+    bEmbedVocabularyId = true,
     bKeepInputTensor
   ) {
     super.setAsConstructor(
       Embedding_Params.SequenceArray,
       input_height, input_width, input_channelCount,
-      channelMultiplier, vocabularyCountPerInputChannel, bEmbedVocabularyId,
+      channelMultiplier, vocabularyCountPerInputChannel,
+      bEmbedVocabularyId,
       bKeepInputTensor
     );
     Embedding_Params.setAsConstructor_self.call( this );

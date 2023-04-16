@@ -13,32 +13,37 @@ import * as Recyclable from "../../util/Recyclable.js";
  *   The output image's width.
  *
  * @member {number} output_channelCount
- *   The output image's channel count. It is always depending on channelMultiplier and equals to ( inChannels * channelMultiplier ).
+ *   The output image's channel count. It is always depending on
+ * channelMultiplier and equals to ( inChannels * channelMultiplier ).
  *
  * @member {number} vocabularyIdMax
- *   The maximum legal vocabulary id. The legal vocabulary id should be in [ 0, ( vocabularyCountPerInputChannel - 1 ) ].
+ *   The maximum legal vocabulary id. The legal vocabulary id should be in
+ * [ 0, ( vocabularyCountPerInputChannel - 1 ) ].
  *
  * @member {number} weightCountPerVocabularyTable_extracted
- *   The weight count should be extracted from inputWeightArray for one input channel.
+ *   The weight count should be extracted from inputWeightArray for one input
+ * channel.
  *
  * @member {number} weightCountPerVocabularyTable
  *   The weight count for one input channel.
  *
  * @member {number} tensorWeightCountExtracted
- *   The wieght count extracted from inputWeightArray and used in tensors. Not including Params, because they are not used
- * in tensors. Not including embedded vocabulary id (even if ( bEmbedVocabularyId == true )), because they are not extracted
- * from inputWeightArray.
+ *   The wieght count extracted from inputWeightArray and used in tensors. Not
+ * including Params, because they are not used in tensors. Not including
+ * embedded vocabulary id (even if ( bEmbedVocabularyId == true )), because
+ * they are not extracted from inputWeightArray.
  *
  * @member {number} tensorWeightCountTotal
- *   The total wieght count used in tensors. Not including Params, because they are not used in tensors. Including embedded
- * vocabulary id.
+ *   The total wieght count used in tensors. Not including Params, because they
+ * are not used in tensors. Including embedded vocabulary id.
  *
  * @see Embedding.Params
  */
 class Embedding_InferencedParams extends Recyclable.Root {
 
   /**
-   * Used as default Embedding.InferencedParams provider for conforming to Recyclable interface.
+   * Used as default Embedding.InferencedParams provider for conforming to
+   * Recyclable interface.
    */
   static Pool = new Pool.Root( "Embedding.InferencedParams.Pool",
     Embedding_InferencedParams, Embedding_InferencedParams.setAsConstructor );
@@ -114,17 +119,23 @@ class Embedding_InferencedParams extends Recyclable.Root {
     this.output_width = input_width;
     this.output_channelCount = input_channelCount * channelMultiplier;
 
-    this.vocabularyIdMax = vocabularyCountPerInputChannel - 1; // maximum legal vocabulary id.
+    // maximum legal vocabulary id.
+    this.vocabularyIdMax = vocabularyCountPerInputChannel - 1;
 
     if ( bEmbedVocabularyId )
-      this.weightCountPerVocabularyTable_extracted = ( channelMultiplier - 1 ) * vocabularyCountPerInputChannel;
+      this.weightCountPerVocabularyTable_extracted
+        = ( channelMultiplier - 1 ) * vocabularyCountPerInputChannel;
     else
-      this.weightCountPerVocabularyTable_extracted = channelMultiplier * vocabularyCountPerInputChannel;
+      this.weightCountPerVocabularyTable_extracted
+        = channelMultiplier * vocabularyCountPerInputChannel;
 
-    this.weightCountPerVocabularyTable = channelMultiplier * vocabularyCountPerInputChannel;
+    this.weightCountPerVocabularyTable
+      = channelMultiplier * vocabularyCountPerInputChannel;
 
-    this.tensorWeightCountExtracted = this.weightCountPerVocabularyTable_extracted * input_channelCount;
-    this.tensorWeightCountTotal = this.weightCountPerVocabularyTable * input_channelCount;
+    this.tensorWeightCountExtracted
+      = this.weightCountPerVocabularyTable_extracted * input_channelCount;
+    this.tensorWeightCountTotal
+      = this.weightCountPerVocabularyTable * input_channelCount;
   }
 
   /** @override */
