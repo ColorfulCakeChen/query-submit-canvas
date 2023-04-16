@@ -720,14 +720,21 @@ class NeuralNet_Base extends Recyclable.Root {
 
 //!!! ...unfinished... (2023/04/16)
 //
+// Consider1:
+//
 //   - Neighbor pixels on the same channel can be moved to different channel of
 //       the same pixel by depthwise convolution filter.
 //
 //   - Different channel of the same pixel can NOT be moved to neighbor pixels
 //       on the same channel by either depthwise or pointwise convolution filter.
 //
-// Data on same channel has two dimensions information. Data on different channel
-// of the same pixel has only one dimension.
+//
+// Consider2:
+//
+//   - Neighbor pixels on the same channel has two dimensions information
+//       (top-bottom, left-right).
+//
+//   - Different channel of the same pixel has only one dimension (front-rear).
 //
 // So, placing all recurrent feedback information on the same channel is
 // important. Perhaps, let all channels of the same pixel have the same
