@@ -719,7 +719,7 @@ class NeuralNet_Base extends Recyclable.Root {
 //
 
 //!!! ...unfinished... (2023/04/16)
-// Where to place recurrent feedback information?
+// Where to place recurrent feedback information in the next times input?
 //
 //
 // Consider1:
