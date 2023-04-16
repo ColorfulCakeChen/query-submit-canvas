@@ -142,10 +142,10 @@ class NeuralNet_Base extends Recyclable.Root {
   /**
    * Generator for initializing this object.
    *
-   * Note: NeuralNet.initer() does not have argument inputScaleBoundsArray0. The
-   * reason is it has an embedding layer which is does not have inputScaleBoundsArray0
-   * too. So, it also assumes input's value bounds is
-   * [ 0, vocabularyCountPerInputChannel ].
+   * Note: NeuralNet.initer() does not have argument inputScaleBoundsArray0.
+   *       The reason is it has an embedding layer which is does not have
+   *       inputScaleBoundsArray0 too. So, it also assumes input's value bounds
+   *       is [ 0, vocabularyCountPerInputChannel ].
    *
    * @param {ValueMax.Percentage.Aggregate} progressParent
    *   Some new progressToAdvance will be created and added to progressParent.
