@@ -751,8 +751,6 @@ class NeuralNet_Base extends Recyclable.Root {
     // [ 0, ( vocabularyCountPerInputChannel - 1 ) ] because they are used as
     // array indexes.
     const valueMin = 0;
-//!!! (2023/04/16 Remarked) Use constant inside .embedding instead.
-//    const valueMax = this.vocabularyCountPerInputChannel - 1;
     const valueMax = this.embedding.vocabularyIdMax;
 
     io_scaleBoundsArray.boundsArray.set_all_byLowerUpper( valueMin, valueMax );
