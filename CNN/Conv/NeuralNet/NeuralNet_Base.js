@@ -285,20 +285,25 @@ class NeuralNet_Base extends Recyclable.Root {
       // 2. Create every stages.
       let StageParamsClass = params.StageParamsClass_get();
 
-      stageParamsCreator = InferencedParams.create_StageParamsCreator_byNeuralNetParams( params );
+      stageParamsCreator = InferencedParams
+        .create_StageParamsCreator_byNeuralNetParams( params );
       stageParamsCreator.determine_stageCount_blockCountPerStage();
 
-      for ( let i = 0; i < stageParamsCreator.stageCount; ++i ) { // Progress for stage0, 1, 2, 3, ... 
-        progressForStages.child_add( ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
+      // Progress for stage0, 1, 2, 3, ... 
+      for ( let i = 0; i < stageParamsCreator.stageCount; ++i ) {
+        progressForStages.child_add(
+          ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
       }
 
       let stageParams, stage, stageIniter;
       let next_input_height, next_input_width, next_input_channelCount;
 
-      this.stageArray = Recyclable.OwnerArray.Pool.get_or_create_by(); // Note: OwnerArray can not accept length as parameter.
+      // Note: OwnerArray can not accept length as parameter.
+      this.stageArray = Recyclable.OwnerArray.Pool.get_or_create_by();
       this.stageArray.length = stageParamsCreator.stageCount;
 
-      for ( let i = 0; i < this.stageArray.length; ++i ) { // Stage0, 1, 2, 3, ..., StageLast.
+      // Stage0, 1, 2, 3, ..., StageLast.
+      for ( let i = 0; i < this.stageArray.length; ++i ) {
 
         if ( 0 == i ) { // Stage0.
           stageParamsCreator.configTo_beforeStage0();
@@ -312,7 +317,8 @@ class NeuralNet_Base extends Recyclable.Root {
           stageParamsCreator.configTo_beforeStageLast();
         }
 
-        stageParams = stageParamsCreator.create_StageParams( StageParamsClass ); // Create current stage parameters.
+        // Create current stage parameters.
+        stageParams = stageParamsCreator.create_StageParams( StageParamsClass );
 
         stage = this.stageArray[ i ] = Stage.Base.Pool.get_or_create_by();
         stageIniter = stage.initer( progressForStages.children[ i ],
@@ -329,16 +335,21 @@ class NeuralNet_Base extends Recyclable.Root {
         this.tensorWeightCountExtracted += stage.tensorWeightCountExtracted;
 
         {
-          next_input_ScaleBoundsArray_or_TensorPlaceholder = stage.output0; // (This is a TensorPlaceholder.)
+          // (This is a TensorPlaceholder.)
+          next_input_ScaleBoundsArray_or_TensorPlaceholder = stage.output0;
 
-          // For ShuffleNetV2_ByMobileNetV1, the previous stage's output channel count
-          // will have lowerHalf and higherHalf. However, the next stage's input needs
-          // lowerHalf equal whole channel count and no higherHalf. Modify it for that.
-          if ( ValueDesc.ConvStageType.isShuffleNetV2_ByMobileNetV1( this.nConvStageTypeId ) ) {
-            next_input_ScaleBoundsArray_or_TensorPlaceholder.channelCount_lowerHalf
-              = next_input_ScaleBoundsArray_or_TensorPlaceholder.channelCount;
+          // For ShuffleNetV2_ByMobileNetV1, the previous stage's output
+          // channel count will have lowerHalf and higherHalf. However, the
+          // next stage's input needs lowerHalf equal whole channel count and
+          // no higherHalf. Modify it for that.
+          if ( ValueDesc.ConvStageType.isShuffleNetV2_ByMobileNetV1(
+                 this.nConvStageTypeId ) ) {
+            next_input_ScaleBoundsArray_or_TensorPlaceholder
+              .channelCount_lowerHalf
+                = next_input_ScaleBoundsArray_or_TensorPlaceholder.channelCount;
 
-            next_input_ScaleBoundsArray_or_TensorPlaceholder.channelCount_higherHalf = 0;
+            next_input_ScaleBoundsArray_or_TensorPlaceholder
+              .channelCount_higherHalf = 0;
           }
         }
 
@@ -348,7 +359,9 @@ class NeuralNet_Base extends Recyclable.Root {
       }
 
       this.stage0 = this.stageArray[ 0 ]; // Shortcut to the first stage.
-      this.stageLast = this.stageArray[ this.stageArray.length - 1 ]; // Shortcut to the last stage.
+
+      // Shortcut to the last stage.
+      this.stageLast = this.stageArray[ this.stageArray.length - 1 ];
 
       // 3. Create final block.
       {
@@ -362,13 +375,17 @@ class NeuralNet_Base extends Recyclable.Root {
         );
 
         let blockFinalParams = stageParamsCreator.blockFinalParams;
-        stageParamsCreator.blockFinalParams = null; // (Because ownship has transferrred.)
+
+        // (Because ownship has transferrred.)
+        stageParamsCreator.blockFinalParams = null;
 
         // No matter stageLast uses what kinds of block, there is always no
         // higher and lower half in the final block. So nullify them.
         // (Otherwise, Block.Base creation will be failed.)
-        next_input_ScaleBoundsArray_or_TensorPlaceholder.channelCount_lowerHalf = undefined;
-        next_input_ScaleBoundsArray_or_TensorPlaceholder.channelCount_higherHalf = undefined;
+        next_input_ScaleBoundsArray_or_TensorPlaceholder
+          .channelCount_lowerHalf = undefined;
+        next_input_ScaleBoundsArray_or_TensorPlaceholder
+          .channelCount_higherHalf = undefined;
 
         let blockFinal = this.blockFinal = Block.Base.Pool.get_or_create_by();
         let blockIniter = blockFinal.initer( progressForBlockFinal,
@@ -384,10 +401,13 @@ class NeuralNet_Base extends Recyclable.Root {
         this.tensorWeightCountTotal += blockFinal.tensorWeightCountTotal;
         this.tensorWeightCountExtracted += blockFinal.tensorWeightCountExtracted;
 
-        next_input_ScaleBoundsArray_or_TensorPlaceholder = blockFinal.output0_scaleBoundsArray;
+        next_input_ScaleBoundsArray_or_TensorPlaceholder
+          = blockFinal.output0_scaleBoundsArray;
       }
 
-      this.dispose_intermediate_ScaleBoundsArray(); // Release all intermediate stages' bounds array set for reducing memory footprint.
+      // Release all intermediate stages' bounds array set for reducing memory
+      // footprint.
+      this.dispose_intermediate_ScaleBoundsArray();
 
       {
         // Estimate the maximum value of progress for .applier().
@@ -406,7 +426,8 @@ class NeuralNet_Base extends Recyclable.Root {
 
     } finally {
       if ( stageParamsCreator ) {
-        stageParamsCreator.channelShuffler = null; // (Because ownership has been transferred to this NeuralNet object.)
+        // (Because ownership has been transferred to this NeuralNet object.)
+        stageParamsCreator.channelShuffler = null;
         stageParamsCreator.disposeResources_and_recycleToPool();
         stageParamsCreator = null;
       }
@@ -435,9 +456,14 @@ class NeuralNet_Base extends Recyclable.Root {
     let initerNext;
     do {
       initerNext = initer.next();
-    } while ( ! initerNext.done ); // When ( false == initerNext.done ), the ( initerNext.value ) will be progressParent.root_get().
 
-    let bInitOk = initerNext.value; // When ( true == initerNext.done ), the ( initerNext.value ) will be initialization successfully or failed.
+    // When ( false == initerNext.done ), the ( initerNext.value ) will be
+    // progressParent.root_get().
+    } while ( ! initerNext.done );
+
+    // When ( true == initerNext.done ), the ( initerNext.value ) will be
+    // initialization successfully or failed.
+    let bInitOk = initerNext.value;
     return bInitOk;
   }
 
@@ -597,8 +623,8 @@ class NeuralNet_Base extends Recyclable.Root {
   }
 
   /**
-   * Process input, destroy or keep input, return result by calling applier() and
-   * advance the generator by loop until done.
+   * Process input, destroy or keep input, return result by calling applier()
+   * and advance the generator by loop until done.
    *
    * @param {tf.tensor3d} inputTensor
    *   The source input image (which size should be [ this.input_height,
