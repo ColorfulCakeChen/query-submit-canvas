@@ -718,6 +718,17 @@ class NeuralNet_Base extends Recyclable.Root {
 // or Float32Array) to an Array-like (e.g. Uint8Array) for recurrent feedback.
 //
 
+//!!! ...unfinished... (2023/04/16)
+//
+//   - Neighbor pixels on the same channel can be moved to different channel of
+//       the same pixel by depthwise convolution filter.
+//
+//   - Different channel of the same pixel can NOT by moved to neighbor pixels
+//       on the same channel by pointwise convolution filter.
+//
+// So, placing all recurrent feedback information on the same channel is
+// important.
+
 
   /**
    * @param {tf.tensor3d} inputTensor
