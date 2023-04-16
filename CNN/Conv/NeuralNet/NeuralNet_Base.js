@@ -725,12 +725,12 @@ class NeuralNet_Base extends Recyclable.Root {
 // Consider1:
 //
 //   - Neighbor pixels on the same channel can be moved to different channel of
-//       the same pixel by depthwise convolution filter.
+//       the same pixel by pointwise and then depthwise convolution filter.
 //
 //!!! ...unfinished... (2023/04/26)
 //seems wrong. 
 // Different channel of the same pixel can ALSO be moved to neighbor pixels
-//       on the same channel by depthwise and pointwise convolution filter.
+//       on the same channel by depthwise and then pointwise convolution filter.
 //
 //   - Different channel of the same pixel can NOT be moved to neighbor pixels
 //       on the same channel by either depthwise or pointwise convolution filter.
