@@ -727,7 +727,8 @@ class NeuralNet_Base extends Recyclable.Root {
 //       on the same channel by pointwise convolution filter.
 //
 // So, placing all recurrent feedback information on the same channel is
-// important.
+// important. Perhaps, let all channels of the same pixel have the same
+// recurrent feedback information.
 
 
   /**
