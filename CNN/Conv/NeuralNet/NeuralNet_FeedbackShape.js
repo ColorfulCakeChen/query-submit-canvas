@@ -118,7 +118,8 @@ class NeuralNet_FeedbackShape {
    *   The number to be restriced to a positive integer.
    *
    * @return {number}
-   *   Return a positive integer which is greater than or equal to v.
+   *   Return a positive integer (i.e. at least 1) which is greater than or
+   * equal to v.
    */
   static ensure_positive_integer( v ) {
     return Math.ceil( Math.max( 1, v ) );
