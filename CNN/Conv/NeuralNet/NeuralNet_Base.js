@@ -725,12 +725,15 @@ class NeuralNet_Base extends Recyclable.Root {
  *
  * Consider1:
  *
- *   - Neighbor pixels of the same channel can be moved to different channel of
- *       the same pixel by pointwise and then depthwise convolution filter.
+ *   - Neighbor pixels of the same channel can be moved to different channel
+ *       of the same pixel by pointwise and then depthwise convolution filter.
  *
  *   - Different channel of the same pixel can also be moved to neighbor pixels
  *       of the same channel by depthwise and then pointwise convolution filter.
  *
+ *   - So, it seems both feasible to place recurrent feedback information
+ *       either on the neighbor pixels of the same channel or on the different
+ *       channel of the same pixel.
  *
  * Consider2:
  *
@@ -739,10 +742,10 @@ class NeuralNet_Base extends Recyclable.Root {
  *
  *   - Different channels of the same pixel has only one dimension (front-rear).
  *
+ *   - So, it seems better a little to place recurrent feedback information as
+ *       on the neighbor pixels of the same channel.
  *
- * So, it seems feasible to place recurrent feedback information either on the
- * neighbor pixels of the same channel or on the different channel of the same
- * pixel.
+ *
  * 
  *
  */
