@@ -745,8 +745,13 @@ class NeuralNet_Base extends Recyclable.Root {
  *   - So, it seems better a little to place recurrent feedback information as
  *       on the neighbor pixels of the same channel.
  *
+ * Consider3:
  *
- * 
+ *   - From an image's point of view, channels are originally used to represent
+ *       the relevant information of the same pixel.
+ *
+ *   - So, .
+ *
  *
  */
 
