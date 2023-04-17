@@ -756,8 +756,8 @@ class NeuralNet_Base extends Recyclable.Root {
  *     - Suppose: Only 6 output values are needed, and per pixel has 4 channel.
  *     - Then: 24 (= 6 * 4 ) values should be outputted.
  *       - Element 0, 4, 8, 12, 16, 20 are output values.
- *       - Element 1, 2, 3 are extra recurrent feedback infomation of element 0.
- *       - Element 5, 6, 7 are extra recurrent feedback infomation of element 4.
+ *       - Element 1, 2, 3 are extra recurrent feedback information of element 0.
+ *       - Element 5, 6, 7 are extra recurrent feedback information of element 4.
  *       - ...
  *
  *
