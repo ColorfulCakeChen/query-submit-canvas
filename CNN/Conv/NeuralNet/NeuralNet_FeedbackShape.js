@@ -104,10 +104,17 @@ class NeuralNet_FeedbackShape {
 
     // If (next times) input is 2d, feedback should also be 2d and at left
     // most of the (next times) input.
-    let width_2d = Math.ceil( width_1d / input_height );
+
+    // Prefer square
+    let width_2d = Math.ceil( Math.sqrt( width_1d ) );
+    let height_2d = width_2d;
+
+    if ( height_2d > input_height ) {
+      width_2d = Math.ceil( width_1d / input_height );
+      height_2d = input_height;
+    }
 
 //!!! ...unfinished... (2023/04/17)
-    let width_2d = Math.ceil( Math.sqrt( width_1d ) );
 
 
   }
