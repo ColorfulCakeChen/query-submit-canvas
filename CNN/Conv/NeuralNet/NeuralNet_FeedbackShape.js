@@ -2,10 +2,14 @@ export { NeuralNet_FeedbackShape as FeedbackShape };
 
 //!!! ...unfinished... (2023/04/16)
 /**
- * Where to place recurrent feedback information in the next times input?
  *
  *
- * 1. From convolution operation's point of view:
+ *
+ *
+ * 1. Where to place recurrent feedback information in the next times input?
+ *
+ *
+ * 1.1 From convolution operation's point of view:
  *
  *   - Neighbor pixels of the same channel can be moved to different channel
  *       of the same pixel by pointwise and then depthwise convolution filter.
@@ -18,7 +22,7 @@ export { NeuralNet_FeedbackShape as FeedbackShape };
  *       channel of the same pixel.
  *
  *
- * 2. From information dimension's point of view:
+ * 1.2 From information dimension's point of view:
  *
  *   - Neighbor pixels on the same channel has two dimensions information
  *       (top-bottom, left-right).
@@ -29,7 +33,7 @@ export { NeuralNet_FeedbackShape as FeedbackShape };
  *       on the neighbor pixels of the same channel.
  *
  *
- * 3. From image's point of view:
+ * 1.3 From image's point of view:
  *
  *   - Channels are originally used to represent the relevant information of
  *       the same pixel.
