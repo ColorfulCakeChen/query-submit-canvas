@@ -723,7 +723,7 @@ class NeuralNet_Base extends Recyclable.Root {
  * Where to place recurrent feedback information in the next times input?
  *
  *
- * 1. From convolution's point of view:
+ * 1. From convolution operation's point of view:
  *
  *   - Neighbor pixels of the same channel can be moved to different channel
  *       of the same pixel by pointwise and then depthwise convolution filter.
