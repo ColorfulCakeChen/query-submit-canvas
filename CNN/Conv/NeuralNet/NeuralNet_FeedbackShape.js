@@ -51,5 +51,23 @@ export { NeuralNet_FeedbackShape as FeedbackShape };
 class NeuralNet_FeedbackShape {
 
 //!!! ...unfinished... (2023/04/17)
+  /**
+   *
+   */
+  constructor() {
+
+  }
+
+//!!! ...unfinished... (2023/04/17)
+  /**
+   *
+   */
+  set_by(
+
+
+  ) {
+
+
+  }
 
 }
