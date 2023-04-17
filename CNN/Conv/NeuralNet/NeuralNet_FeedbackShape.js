@@ -98,7 +98,7 @@ class NeuralNet_FeedbackShape {
     let width_2d = Math.ceil( width_1d / input_height );
 
 //!!! ...unfinished... (2023/04/17)
-    let width_2d = Math.ceil( Math.sqrt( width_1d ) )
+    let width_2d = Math.ceil( Math.sqrt( width_1d ) );
 
 
   }
