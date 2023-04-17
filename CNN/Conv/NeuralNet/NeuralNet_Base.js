@@ -723,7 +723,7 @@ class NeuralNet_Base extends Recyclable.Root {
  * Where to place recurrent feedback information in the next times input?
  *
  *
- * Consider1:
+ * 1. From convolution's point of view:
  *
  *   - Neighbor pixels of the same channel can be moved to different channel
  *       of the same pixel by pointwise and then depthwise convolution filter.
@@ -735,7 +735,8 @@ class NeuralNet_Base extends Recyclable.Root {
  *       either on the neighbor pixels of the same channel or on the different
  *       channel of the same pixel.
  *
- * Consider2:
+ *
+ * 2. From information dimension's point of view:
  *
  *   - Neighbor pixels on the same channel has two dimensions information
  *       (top-bottom, left-right).
@@ -745,10 +746,11 @@ class NeuralNet_Base extends Recyclable.Root {
  *   - So, it seems better a little to place recurrent feedback information as
  *       on the neighbor pixels of the same channel.
  *
- * Consider3:
  *
- *   - From an image's point of view, channels are originally used to represent
- *       the relevant information of the same pixel.
+ * 3. From image's point of view:
+ *
+ *   - Channels are originally used to represent the relevant information of
+ *       the same pixel.
  *
  *   - So, .
  *
