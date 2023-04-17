@@ -87,6 +87,15 @@ class NeuralNet_FeedbackShape {
 
   ) {
 
+    input_height
+      = NeuralNet_FeedbackShape.ensure_positive_integer( input_height );
+    input_width
+      = NeuralNet_FeedbackShape.ensure_positive_integer( input_width );
+    input_channelCount
+      = NeuralNet_FeedbackShape.ensure_positive_integer( input_channelCount );
+    feedback_valueCount
+      = NeuralNet_FeedbackShape.ensure_positive_integer( feedback_valueCount );
+
 //!!! ...unfinished... (2023/04/17)
 
     // If (next times) input is 1d, feedback should also be 1d and prefix the
@@ -101,6 +110,18 @@ class NeuralNet_FeedbackShape {
     let width_2d = Math.ceil( Math.sqrt( width_1d ) );
 
 
+  }
+
+  /**
+   * 
+   * @param {number} v
+   *   The number to be restriced to a positive integer.
+   *
+   * @return {number}
+   *   Return a positive integer which is greater than or equal to v.
+   */
+  static ensure_positive_integer( v ) {
+    return Math.ceil( Math.max( 1, v ) );
   }
 
 }
