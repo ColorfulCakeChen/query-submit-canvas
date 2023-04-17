@@ -47,6 +47,13 @@ export { NeuralNet_FeedbackShape as FeedbackShape };
  *       - ...
  *
  *
+ * 2. Shape
+ *
+//!!! ...unfinished... (2023/04/17)
+ * 
+ *
+ *
+ *
  */
 class NeuralNet_FeedbackShape {
 
@@ -61,12 +68,29 @@ class NeuralNet_FeedbackShape {
 //!!! ...unfinished... (2023/04/17)
   /**
    *
+   * @param {number} input_height
+   *   The (next times) input image's height.
+   *
+   * @param {number} input_width
+   *   The (next times) input image's width.
+   *
+   * @param {number} input_channelCount
+   *   The (next times) input image's channel count.
+   *
+   * @param {number} feedback_valueCount
+   *   The feedback (i.e. the previous output) has how many values.
    */
   set_by(
+    input_height, input_width, input_channelCount,
+    feedback_valueCount,
 
 
   ) {
 
+//!!! ...unfinished... (2023/04/17)
+
+    // Suppose the 
+    let width_1d = feedback_valueCount % input_channelCount;
 
   }
 
