@@ -91,7 +91,9 @@ class NeuralNet_FeedbackShape {
 
     // If (next times) input is 1d, feedback should also 1d and prefix the
     // (next times) input.
-    let width_1d = feedback_valueCount % input_channelCount;
+    let width_1d = Math.round( feedback_valueCount / input_channelCount );
+
+    width_1d / input_height
 
   }
 
