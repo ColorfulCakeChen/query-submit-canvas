@@ -752,7 +752,8 @@ class NeuralNet_Base extends Recyclable.Root {
  *   - Channels are originally used to represent the relevant information of
  *       the same pixel.
  *
- *   - So, .
+ *   - So, it should view the previous output as channels group.
+ *     - For example, 
  *
  *
  */
