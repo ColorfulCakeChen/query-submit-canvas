@@ -89,11 +89,16 @@ class NeuralNet_FeedbackShape {
 
 //!!! ...unfinished... (2023/04/17)
 
-    // If (next times) input is 1d, feedback should also 1d and prefix the
+    // If (next times) input is 1d, feedback should also be 1d and prefix the
     // (next times) input.
     let width_1d = Math.round( feedback_valueCount / input_channelCount );
 
-    width_1d / input_height
+    // If (next times) input is 2d, feedback should also be 2d and at left
+    // most of the (next times) input.
+    let width_2d = Math.round( width_1d / input_height );
+
+//!!! ...unfinished... (2023/04/17)
+
 
   }
 
