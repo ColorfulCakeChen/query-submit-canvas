@@ -719,35 +719,33 @@ class NeuralNet_Base extends Recyclable.Root {
 //
 
 //!!! ...unfinished... (2023/04/16)
-// Where to place recurrent feedback information in the next times input?
-//
-//
-// Consider1:
-//
-//   - Neighbor pixels on the same channel can be moved to different channel of
-//       the same pixel by pointwise and then depthwise convolution filter.
-//
-//!!! ...unfinished... (2023/04/26)
-//seems wrong. 
-// Different channel of the same pixel can ALSO be moved to neighbor pixels
-//       on the same channel by depthwise and then pointwise convolution filter.
-//
-//   - Different channel of the same pixel can NOT be moved to neighbor pixels
-//       on the same channel by either depthwise or pointwise convolution filter.
-//
-//
-// Consider2:
-//
-//   - Neighbor pixels on the same channel has two dimensions information
-//       (top-bottom, left-right).
-//
-//   - Different channels of the same pixel has only one dimension (front-rear).
-//
-//
-// So, placing all recurrent feedback information on the neighbor pixels of
-// the same channel is important. Perhaps, let all channels of the same pixel
-// have the same recurrent feedback information.
-
+/**
+ * Where to place recurrent feedback information in the next times input?
+ *
+ *
+ * Consider1:
+ *
+ *   - Neighbor pixels of the same channel can be moved to different channel of
+ *       the same pixel by pointwise and then depthwise convolution filter.
+ *
+ *   - Different channel of the same pixel can also be moved to neighbor pixels
+ *       of the same channel by depthwise and then pointwise convolution filter.
+ *
+ *
+ * Consider2:
+ *
+ *   - Neighbor pixels on the same channel has two dimensions information
+ *       (top-bottom, left-right).
+ *
+ *   - Different channels of the same pixel has only one dimension (front-rear).
+ *
+ *
+ * So, it seems feasible to place recurrent feedback information either on the
+ * neighbor pixels of the same channel or on the different channel of the same
+ * pixel.
+ * 
+ *
+ */
 
   /**
    * @param {tf.tensor3d} inputTensor
