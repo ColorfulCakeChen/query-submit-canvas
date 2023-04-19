@@ -190,28 +190,36 @@ class NeuralNet_FeedbackShape {
       = Math.floor( elementCountPerAlignment / this.input_channelCount );
 
     // 3. alignment index should be either 0 or 1.
-    let explicitIndexBase;
+    let valueIndexBase;
     {
       if ( alignmentIndex === 0 )
-        explicitIndexBase = 0;
+        valueIndexBase = 0;
       else if ( alignmentIndex === 1 )
-        explicitIndexBase = valueCountPerAlignment;
+        valueIndexBase = valueCountPerAlignment;
       else
         throw Error( `NeuralNet_FeedbackShape.${funcNameInMessage}(): `
           + `alignmentIndex ( ${alignmentIndex} ) should be either 0 or 1.`
         );
     }
 
-    // 4. Extract every specified explicit values.
-    o_toValueArray.length = explicitIndexArray.length;
-    for ( let i = 0; i < explicitIndexArray.length; ++i ) {
+//    explicitValueIndexBegin, explicitValueIndexEnd
 
-      // explicitIndex should not exceed available explicit data of the
-      // alignment.
-      let explicitIndex = explicitIndexArray[ i ];
-      if ( !( explicitIndex < explicitValueCountPerAlignment ) )
+    // 4. Extract every specified explicit values.
+    let explicitValueIndex = explicitValueIndexBegin;
+    o_toValueArray.length = explicitValueIndexEnd - explicitValueIndexBegin;
+    for ( let i = 0; i < o_toValueArray.length; ++i ) {
+
+      if ( !( explicitValueIndex >= 0 ) )
         throw Error( `NeuralNet_FeedbackShape.${funcNameInMessage}(): `
-          + `explicitIndex ( ${explicitIndex} ) `
+          + `explicitValueIndex ( ${explicitValueIndex} ) `
+          + `should be greater than or equal to 0.`
+        );
+
+      // explicitValueIndex should not exceed available explicit data of the
+      // alignment.
+      if ( !( explicitValueIndex < explicitValueCountPerAlignment ) )
+        throw Error( `NeuralNet_FeedbackShape.${funcNameInMessage}(): `
+          + `explicitValueIndex ( ${explicitValueIndex} ) `
           + `should be less than `
           + `( ( fromValueArray.length / 2 ) / this.input_channelCount ) = `
           + `( ( ${fromValueArray.length} / 2 ) / ${this.input_channelCount} ) = `
@@ -222,11 +230,13 @@ class NeuralNet_FeedbackShape {
       //this.input_channelCount
 
       let valueIndex
-        = explicitIndexBase + ( explicitIndex * this.input_channelCount );
+        = valueIndexBase + ( explicitIndex * this.input_channelCount );
 
       let explicitValue = fromValueArray[ valueIndex ];
 
       o_toValueArray[ i ] = explicitValue;
+
+      ++explicitValueIndex;
     }
 
   }
