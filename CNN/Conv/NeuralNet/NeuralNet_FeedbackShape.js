@@ -134,6 +134,10 @@ class NeuralNet_FeedbackShape {
    * Extract output value by specified alignment index and explicit index.
    *
    *
+   * @param {number[]|TypedArray} o_toValueArray
+   *   The extracted explicit values will be filled into this number array (or
+   * TypedArray).
+   *
    * @param {Float32Array|Int32Array} fromValueArray
    *   A number array to be extracted information from. It is usually the
    * output TypedArray of a neural network. It is viewed as containing two
@@ -155,29 +159,37 @@ class NeuralNet_FeedbackShape {
    *   An non-negative integer represents which alignment the neural network
    * wants to personate. It should be either 0 or 1.
    *
-   * @param {number} explicitIndexArray
-   *   An array of non-negative integers represents which explicit values to
-   * be extracted when the neural network personate the specified alignment.
+   * @param {number} explicitValueIndexBegin
+   *   The explicit value index (when the neural network personates the
+   * specified alignment) to begin extracting. It is a non-negative integer
+   * between [ 0, ( ( fromValueArray.length / 2 ) / this.input_channelCount ) )
    *   - Every .input_channelCount elements is a tuple of feedback values.
    *   - The first element of the tuple is the explicit output value.
    *   - All other elements of the tuple are the implicit output values.
    *
-   * @param {number[]|TypedArray} o_toValueArray
-   *   The extracted explicit values will be filled into this number array (or
-   * TypedArray).
+   * @param {number} explicitValueIndexEnd
+   *   The explicit value index (when the neural network personates the
+   * specified alignment) to stop extracting (non-inclusive). It is a
+   * non-negative integer between
+   * [ 0, ( ( fromValueArray.length / 2 ) / this.input_channelCount ) ).
    */
-  valueArray_get_by_alignmentIndex_explicitIndexArray(
-    fromValueArray, alignmentIndex, explicitIndexArray, o_toValueArray ) {
+  explicitValueArray_get_by_alignmentIndex_explicitValueIndexBegin_explicitValueIndexEnd(
+    o_toValueArray,
+    fromValueArray, alignmentIndex,
+    explicitValueIndexBegin, explicitValueIndexEnd
+  ) {
 
     const funcNameInMessage
       = "valueArray_get_by_alignmentIndex_explicitIndexArray";
 
+    // 1.
     let valueCountPerAlignment = Math.floor( fromValueArray.length / 2 );
 
+    // 2.
     let explicitValueCountPerAlignment
       = Math.floor( elementCountPerAlignment / this.input_channelCount );
 
-    // alignment index should be either 0 or 1.
+    // 3. alignment index should be either 0 or 1.
     let explicitIndexBase;
     {
       if ( alignmentIndex === 0 )
@@ -190,7 +202,7 @@ class NeuralNet_FeedbackShape {
         );
     }
 
-    //
+    // 4. Extract every specified explicit values.
     o_toValueArray.length = explicitIndexArray.length;
     for ( let i = 0; i < explicitIndexArray.length; ++i ) {
 
