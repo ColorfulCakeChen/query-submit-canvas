@@ -152,20 +152,19 @@ class NeuralNet_FeedbackShape {
    *       personates alignment 1.
    *
    * @param {number} alignmentIndex
-   *   An integer represents which alignment the neural network wants to
-   * personate. It should be either 0 or 1.
+   *   An non-negative integer represents which alignment the neural network
+   * wants to personate. It should be either 0 or 1.
    *
-   * @param {number} explicitIndex
-   *   The 
-   *
-   *
+   * @param {number} explicitIndexArray
+   *   An array of non-negative integers represents which explicit values to
+   * be extracted when the neural network personate the specified alignment.
    *
    * @param {number[]|TypedArray} o_toValueArray
    *   The number array (or TypedArray) to be filled with the extracted
    * explicit values.
    */
-  valueArray_get_by_alignmentIndex_explicitIndex(
-    fromValueArray, alignmentIndex, explicitIndex, o_toValueArray ) {
+  valueArray_get_by_alignmentIndex_explicitIndexArray(
+    fromValueArray, alignmentIndex, explicitIndexArray, o_toValueArray ) {
 
 //!!! ...unfinished... (2023/04/19)
       //this.input_channelCount
