@@ -194,12 +194,12 @@ class NeuralNet_FeedbackShape {
     o_toValueArray.length = explicitIndexArray.length;
     for ( let i = 0; i < explicitIndexArray.length; ++i ) {
 
-      // explicitIndexRaw should not exceed available explicit data of the
+      // explicitIndex should not exceed available explicit data of the
       // alignment.
-      let explicitIndexRaw = explicitIndexArray[ i ];
-      if ( !( explicitIndexRaw < explicitValueCountPerAlignment ) )
+      let explicitIndex = explicitIndexArray[ i ];
+      if ( !( explicitIndex < explicitValueCountPerAlignment ) )
         throw Error( `NeuralNet_FeedbackShape.${funcNameInMessage}(): `
-          + `explicitIndexRaw ( ${explicitIndexRaw} ) `
+          + `explicitIndex ( ${explicitIndex} ) `
           + `should be less than `
           + `( ( fromValueArray.length / 2 ) / this.input_channelCount ) = `
           + `( ( ${fromValueArray.length} / 2 ) / ${this.input_channelCount} ) = `
@@ -209,10 +209,10 @@ class NeuralNet_FeedbackShape {
 //!!! ...unfinished... (2023/04/19)
       //this.input_channelCount
 
-      let explicitIndex
-        = explicitIndexBase + ( explicitIndexRaw * this.input_channelCount );
+      let valueIndex
+        = explicitIndexBase + ( explicitIndex * this.input_channelCount );
 
-      let explicitValue = fromValueArray[ explicitIndex ];
+      let explicitValue = fromValueArray[ valueIndex ];
 
       o_toValueArray[ i ] = explicitValue;
     }
