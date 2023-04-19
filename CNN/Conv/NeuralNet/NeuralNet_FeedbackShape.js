@@ -223,6 +223,15 @@ class NeuralNet_FeedbackShape {
         + `( ${explicitValueCountPerAlignment} ).`
       );
 
+    // explicitValueIndexBegin should be less than explicitValueIndexEnd.
+    if ( !( explicitValueIndexBegin < explicitValueIndexEnd ) )
+      throw Error( `NeuralNet_FeedbackShape.${funcNameInMessage}(): `
+        + `explicitValueIndexBegin ( ${explicitValueIndexBegin} ) `
+        + `should be less than `
+        + `explicitValueIndexEnd ( ${explicitValueIndexEnd} ) `
+      );
+
+
     // 5.
     let fromValueIndex
       = fromValueIndexBase + ( explicitValueIndex * this.input_channelCount );
