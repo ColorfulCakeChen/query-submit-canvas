@@ -163,6 +163,7 @@ class NeuralNet_FeedbackShape {
    *   The explicit value index (when the neural network personates the
    * specified alignment) to begin extracting. It is a non-negative integer
    * between [ 0, ( ( fromValueArray.length / 2 ) / this.input_channelCount ) )
+   * and less than explicitValueIndexEnd.
    *   - Every .input_channelCount elements is a tuple of feedback values.
    *   - The first element of the tuple is the explicit output value.
    *   - All other elements of the tuple are the implicit output values.
@@ -172,6 +173,7 @@ class NeuralNet_FeedbackShape {
    * specified alignment) to stop extracting (non-inclusive). It is a
    * non-negative integer between
    * [ 0, ( ( fromValueArray.length / 2 ) / this.input_channelCount ) ).
+   * and greater than explicitValueIndexBegin.
    */
   explicitValueArray_get_by_alignmentIndex_explicitValueIndexBegin_explicitValueIndexEnd(
     o_toValueArray,
