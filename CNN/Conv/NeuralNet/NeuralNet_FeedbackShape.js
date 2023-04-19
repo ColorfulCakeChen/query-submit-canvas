@@ -180,7 +180,7 @@ class NeuralNet_FeedbackShape {
   ) {
 
     const funcNameInMessage
-      = "valueArray_get_by_alignmentIndex_explicitIndexArray";
+      = "explicitValueArray_get_by_alignmentIndex_explicitValueIndexBegin_explicitValueIndexEnd";
 
     // 1.
     let valueCountPerAlignment = Math.floor( fromValueArray.length / 2 );
@@ -190,30 +190,37 @@ class NeuralNet_FeedbackShape {
       = Math.floor( elementCountPerAlignment / this.input_channelCount );
 
     // 3. alignment index should be either 0 or 1.
-    let valueIndexBase;
+    let fromValueIndexBase;
     {
       if ( alignmentIndex === 0 )
-        valueIndexBase = 0;
+        fromValueIndexBase = 0;
       else if ( alignmentIndex === 1 )
-        valueIndexBase = valueCountPerAlignment;
+        fromValueIndexBase = valueCountPerAlignment;
       else
         throw Error( `NeuralNet_FeedbackShape.${funcNameInMessage}(): `
           + `alignmentIndex ( ${alignmentIndex} ) should be either 0 or 1.`
         );
     }
 
-//    explicitValueIndexBegin, explicitValueIndexEnd
-
     // 4. Extract every specified explicit values.
+
+    // 4.1
     let explicitValueIndex = explicitValueIndexBegin;
+
+    // explicitValueIndex should be non-negative.
+    if ( !( explicitValueIndex >= 0 ) )
+      throw Error( `NeuralNet_FeedbackShape.${funcNameInMessage}(): `
+        + `explicitValueIndex ( ${explicitValueIndex} ) `
+        + `should be greater than or equal to 0.`
+      );
+
+    // 4.2
+    let fromValueIndex
+      = fromValueIndexBase + ( explicitValueIndex * this.input_channelCount );
+
+    // 4.3
     o_toValueArray.length = explicitValueIndexEnd - explicitValueIndexBegin;
     for ( let i = 0; i < o_toValueArray.length; ++i ) {
-
-      if ( !( explicitValueIndex >= 0 ) )
-        throw Error( `NeuralNet_FeedbackShape.${funcNameInMessage}(): `
-          + `explicitValueIndex ( ${explicitValueIndex} ) `
-          + `should be greater than or equal to 0.`
-        );
 
       // explicitValueIndex should not exceed available explicit data of the
       // alignment.
@@ -229,14 +236,11 @@ class NeuralNet_FeedbackShape {
 //!!! ...unfinished... (2023/04/19)
       //this.input_channelCount
 
-      let valueIndex
-        = valueIndexBase + ( explicitIndex * this.input_channelCount );
-
-      let explicitValue = fromValueArray[ valueIndex ];
-
+      let explicitValue = fromValueArray[ fromValueIndex ];
       o_toValueArray[ i ] = explicitValue;
 
       ++explicitValueIndex;
+      ++fromValueIndex;
     }
 
   }
