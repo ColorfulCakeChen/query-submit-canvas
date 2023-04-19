@@ -128,6 +128,10 @@ class NeuralNet_FeedbackShape {
 // Give NeuralNetIndex (0 or 1), AlignmentIndex (0 or 1), outputUsageIndex,
 // Return array index of NeuralNet output Float32Array (or Int32Array).
 
+//!!! ...unfinished... (2023/04/19)
+// output_getter()
+// feedback_setter()
+
 
   /**
    * 
