@@ -1,4 +1,4 @@
-export { NeuralOrchestra_FeedbackShape as FeedbackShape };
+export { NeuralNet_FeedbackShape as FeedbackShape };
 
 //!!! ...unfinished... (2023/04/16)
 /**
@@ -57,7 +57,7 @@ export { NeuralOrchestra_FeedbackShape as FeedbackShape };
  *
  *
  */
-class NeuralOrchestra_FeedbackShape {
+class NeuralNet_FeedbackShape {
 
 //!!! ...unfinished... (2023/04/17)
   /**
@@ -89,13 +89,13 @@ class NeuralOrchestra_FeedbackShape {
 
   ) {
 
-    input_height = NeuralOrchestra_FeedbackShape
+    input_height = NeuralNet_FeedbackShape
       .ensure_positive_integer( input_height );
-    input_width = NeuralOrchestra_FeedbackShape
+    input_width = NeuralNet_FeedbackShape
       .ensure_positive_integer( input_width );
-    input_channelCount = NeuralOrchestra_FeedbackShape
+    input_channelCount = NeuralNet_FeedbackShape
       .ensure_positive_integer( input_channelCount );
-    feedback_valueCount = NeuralOrchestra_FeedbackShape
+    feedback_valueCount = NeuralNet_FeedbackShape
       .ensure_positive_integer( feedback_valueCount );
 
 //!!! ...unfinished... (2023/04/17)
