@@ -160,8 +160,8 @@ class NeuralNet_FeedbackShape {
    * be extracted when the neural network personate the specified alignment.
    *
    * @param {number[]|TypedArray} o_toValueArray
-   *   The number array (or TypedArray) to be filled with the extracted
-   * explicit values.
+   *   The extracted explicit values will be filled into this number array (or
+   * TypedArray).
    */
   valueArray_get_by_alignmentIndex_explicitIndexArray(
     fromValueArray, alignmentIndex, explicitIndexArray, o_toValueArray ) {
