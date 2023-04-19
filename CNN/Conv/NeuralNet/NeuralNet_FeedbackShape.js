@@ -127,6 +127,7 @@ class NeuralNet_FeedbackShape {
 
 
 //!!! ...unfinished... (2023/04/18)
+// Another possible method is:
 // Give NeuralNetIndex (0 or 1), AlignmentIndex (0 or 1), outputUsageIndex,
 // Return array index of NeuralNet output Float32Array (or Int32Array).
 
