@@ -134,32 +134,38 @@ class NeuralNet_FeedbackShape {
    * Extract output value by specified alignment index and explicit index.
    *
    *
-   * @param {Float32Array|Int32Array} outputTypeArray
-   *   The output TypedArray of a neural network. It is viewed as containing
-   * two alignments output values which the neural network could personate.
+   * @param {Float32Array|Int32Array} fromValueArray
+   *   A number array to be extracted information from. It is usually the
+   * output TypedArray of a neural network. It is viewed as containing two
+   * alignments output values which the neural network could personate.
    *
-   *   - outputTypeArray[ 0 ] to
-   *       outputTypeArray[ ( outputTypeArray.length / 2 ) - 1 ]:
+   *   - fromValueArray[ 0 ] to
+   *     fromValueArray[ ( fromValueArray.length / 2 ) - 1 ]:
    *
    *       The (explicit and implicit) output values when the neural network
    *       personates alignment 0.
    *
-   *   - outputTypeArray[ outputTypeArray.length / 2 ] to
-   *       outputTypeArray[ outputTypeArray.length - 1 ]:
+   *   - fromValueArray[ fromValueArray.length / 2 ] to
+   *     fromValueArray[ fromValueArray.length - 1 ]:
    *
    *       The (explicit and implicit) output values when the neural network
    *       personates alignment 1.
    *
-   *
-   *
    * @param {number} alignmentIndex
-   *   
+   *   An integer represents which alignment the neural network wants to
+   * personate. It should be either 0 or 1.
    *
    * @param {number} explicitIndex
    *   The 
+   *
+   *
+   *
+   * @param {number[]|TypedArray} o_toValueArray
+   *   The number array (or TypedArray) to be filled with the extracted
+   * explicit values.
    */
-  output_explicit_get_by_alignmentIndex_explicitIndex(
-    outputTypeArray, alignmentIndex, explicitIndex ) {
+  valueArray_get_by_alignmentIndex_explicitIndex(
+    fromValueArray, alignmentIndex, explicitIndex, o_toValueArray ) {
 
 //!!! ...unfinished... (2023/04/19)
       //this.input_channelCount
