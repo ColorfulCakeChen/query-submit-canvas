@@ -136,10 +136,13 @@ class NeuralNet_FeedbackShape {
 
   /**
    *
+   * @param {Float32Array|Int32Array} outputTypeArray
+   *
+   *
    * @param {number} explicitIndex
    *   The 
    */
-  output_explicit_get_byIndex( explicitIndex ) {
+  output_explicit_get_byIndex( outputTypeArray, alignmentIndex, explicitIndex ) {
     
   }
 
