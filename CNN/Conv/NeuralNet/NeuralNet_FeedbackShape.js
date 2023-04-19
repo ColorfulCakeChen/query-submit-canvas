@@ -210,7 +210,7 @@ class NeuralNet_FeedbackShape {
     // explicitValueIndex should be non-negative.
     if ( !( explicitValueIndexBegin >= 0 ) )
       throw Error( `NeuralNet_FeedbackShape.${funcNameInMessage}(): `
-        + `explicitValueIndex ( ${explicitValueIndex} ) `
+        + `explicitValueIndexBegin ( ${explicitValueIndexBegin} ) `
         + `should be greater than or equal to 0.`
       );
 
@@ -218,7 +218,7 @@ class NeuralNet_FeedbackShape {
     // alignment.
     if ( !( explicitValueIndexEnd < explicitValueCountPerAlignment ) )
       throw Error( `NeuralNet_FeedbackShape.${funcNameInMessage}(): `
-        + `explicitValueIndex ( ${explicitValueIndex} ) `
+        + `explicitValueIndexEnd ( ${explicitValueIndexEnd} ) `
         + `should be less than `
         + `( ( fromValueArray.length / 2 ) / this.input_channelCount ) = `
         + `( ( ${fromValueArray.length} / 2 ) / ${this.input_channelCount} ) = `
