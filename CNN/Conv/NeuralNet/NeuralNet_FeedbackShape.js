@@ -228,9 +228,8 @@ class NeuralNet_FeedbackShape {
       throw Error( `NeuralNet_FeedbackShape.${funcNameInMessage}(): `
         + `explicitValueIndexBegin ( ${explicitValueIndexBegin} ) `
         + `should be less than `
-        + `explicitValueIndexEnd ( ${explicitValueIndexEnd} ) `
+        + `explicitValueIndexEnd ( ${explicitValueIndexEnd} ).`
       );
-
 
     // 5.
     let fromValueIndex
