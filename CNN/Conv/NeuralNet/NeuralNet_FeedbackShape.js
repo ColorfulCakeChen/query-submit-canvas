@@ -169,14 +169,46 @@ class NeuralNet_FeedbackShape {
   valueArray_get_by_alignmentIndex_explicitIndexArray(
     fromValueArray, alignmentIndex, explicitIndexArray, o_toValueArray ) {
 
+    const funcNameInMessage
+      = "valueArray_get_by_alignmentIndex_explicitIndexArray";
+
     let elementCountPerAlignment = Math.floor( fromValueArray.length / 2 );
 
     // alignment index should be either 0 or 1.
-    alignmentIndex
-      = Math.min( 1, Math.max( 0, Math.trunc( alignmentIndex ) ) );
+    let explicitIndexBase;
+    {
+      if ( alignmentIndex === 0 )
+        explicitIndexBase = 0;
+      else if ( alignmentIndex === 1 )
+        explicitIndexBase = elementCountPerAlignment;
+      else
+        throw Error( `NeuralNet_FeedbackShape.${funcNameInMessage}(): `
+          + `alignmentIndex ( ${alignmentIndex} ) should be either 0 or 1.`
+        );
+    }
+
+    //
+    o_toValueArray.length = explicitIndexArray.length;
+    for ( let i = 0; i < explicitIndexArray.length; ++i ) {
+
+      let explicitIndexRaw = explicitIndexArray[ i ];
 
 //!!! ...unfinished... (2023/04/19)
       //this.input_channelCount
+
+      // explicitIndexRaw should not exceed available data of the alignment.
+      if ( !( explicitIndexRaw < elementCountPerAlignment ) )
+        throw Error( `NeuralNet_FeedbackShape.${funcNameInMessage}(): `
+          + `explicitIndexRaw ( ${explicitIndexRaw} ) `
+          + `should be less than `
+          + `half of fromValueArray.length ( ${elementCountPerAlignment} ).`
+        );
+
+      let explicitIndex = explicitIndexBase + explicitIndexRaw;
+      let explicitValue = fromValueArray[ explicitIndex ];
+
+      o_toValueArray[ i ] = explicitValue;
+    }
 
   }
 
