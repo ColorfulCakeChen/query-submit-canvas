@@ -173,8 +173,10 @@ import { Mode as NeuralWorker_Mode } from "./NeuralWorker_Mode.js";
  * @member {function} ImageData_process_async
  *   This is a data member which is a pointer to a function. The function
  * accepts ImageData as input. It returns a promise resolved to an array
- * [ Float32Array, Float32Array ] representing the (pair) neural networks'
- * results.
+ * [ TypedArray, TypedArray ] representing the result of the pair of neural
+ * networks. The TypedArray may be:
+ *   - Float32Array (if ( neuralNetParams.output_asInputValueRange == false ) )
+ *   - Int32Array (if ( neuralNetParams.output_asInputValueRange == true ) )
  */
 class NeuralWorker_Proxies extends Recyclable.Root {
 
@@ -485,9 +487,12 @@ class NeuralWorker_Proxies extends Recyclable.Root {
    * @param {ImageData} sourceImageData
    *   The input image datat which will be processed by neural workers.
    *
-   * @return {Promise( Float32Array[] )}
-   *   Return a promise resolved to an array [ Float32Array, Float32Array ]
-   * representing the (pair) neural networks' results.
+   * @return {Promise( Float32Array[] | Int32Array[] )}
+   *   Return a promise resolved to an array [ TypedArray, TypedArray ]
+   * representing the result of the pair of neural networks. The TypedArray may
+   * be:
+   *   - Float32Array (if ( neuralNetParams.output_asInputValueRange == false ) )
+   *   - Int32Array (if ( neuralNetParams.output_asInputValueRange == true ) )
    */
   static async apply__ONE_WORKER__ONE_SCALE__FILL__or__NO_FILL( sourceImageData ) {
     let bFill = NeuralWorker_Mode.bFill_get( this.nNeuralWorker_ModeId );
@@ -503,9 +508,12 @@ class NeuralWorker_Proxies extends Recyclable.Root {
    * @param {ImageData} sourceImageData
    *   The input image datat which will be processed by neural workers.
    *
-   * @return {Promise( Float32Array[] )}
-   *   Return a promise resolved to an array [ Float32Array, Float32Array ]
-   * representing the (pair) neural networks' results.
+   * @return {Promise( Float32Array[] | Int32Array[] )}
+   *   Return a promise resolved to an array [ TypedArray, TypedArray ]
+   * representing the result of the pair of neural networks. The TypedArray may
+   * be:
+   *   - Float32Array (if ( neuralNetParams.output_asInputValueRange == false ) )
+   *   - Int32Array (if ( neuralNetParams.output_asInputValueRange == true ) )
    */
   static async apply__TWO_WORKER__ONE_SCALE__FILL__or__NO_FILL( sourceImageData ) {
     let modeInfo
@@ -544,9 +552,12 @@ class NeuralWorker_Proxies extends Recyclable.Root {
    * @param {ImageData} sourceImageData
    *   The input image datat which will be processed by neural workers.
    *
-   * @return {Promise( Float32Array[] )}
-   *   Return a promise resolved to an array [ Float32Array, Float32Array ]
-   * representing the (pair) neural networks' results.
+   * @return {Promise( Float32Array[] | Int32Array[] )}
+   *   Return a promise resolved to an array [ TypedArray, TypedArray ]
+   * representing the result of the pair of neural networks. The TypedArray may
+   * be:
+   *   - Float32Array (if ( neuralNetParams.output_asInputValueRange == false ) )
+   *   - Int32Array (if ( neuralNetParams.output_asInputValueRange == true ) )
    */
   static async apply__TWO_WORKER__TWO_SCALE__NO_FILL( sourceImageData ) {
     const worker0_bFork = true;

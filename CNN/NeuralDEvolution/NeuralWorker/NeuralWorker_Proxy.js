@@ -261,9 +261,11 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
    * representing the scaled image data whose shape is this.neuralNetParamsBase's
    * [ input_height, input_width, input_channelCount ].
    *
-   * @yield {Float32Array}
-   *   Resolve to { done: true, value: Float32Array }. The value is a Float32Array
-   * representing the neural network's result.
+   * @yield {Float32Array|Int32Array}
+   *   Resolve to { done: true, value: TypedArray }. The value is a TypedArray
+   * representing the neural network's result. The TypedArray may be:
+   *   - Float32Array (if ( neuralNetParams.output_asInputValueRange == false ) )
+   *   - Int32Array (if ( neuralNetParams.output_asInputValueRange == true ) )
    */
   TWO_WORKER__ONE_SCALE__FILL__step0_ImageData_process_asyncGenerator(
     sourceImageData, bApply_or_Applier ) {
@@ -327,9 +329,11 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
    * representing the scaled image data whose shape is this.neuralNetParamsBase's
    * [ input_height, input_width, input_channelCount ].
    *
-   * @yield {Float32Array}
-   *   Resolve to { done: true, value: Float32Array }. The value is a Float32Array
-   * representing the neural network's result.
+   * @yield {Float32Array|Int32Array}
+   *   Resolve to { done: true, value: TypedArray }. The value is a TypedArray
+   * representing the neural network's result. The TypedArray may be:
+   *   - Float32Array (if ( neuralNetParams.output_asInputValueRange == false ) )
+   *   - Int32Array (if ( neuralNetParams.output_asInputValueRange == true ) )
    */
   TWO_WORKER__ONE_SCALE__NO_FILL__step0_ImageData_process_asyncGenerator(
     sourceImageData, bApply_or_Applier ) {
@@ -369,9 +373,11 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
    * converted to tensor3d. If false, it will be converted to tensor3d directly
    * without filling alignment mark.
    *
-   * @return {Promise}
-   *   Return a promise resolved to a Float32Array representing the neural
-   * network's result.
+   * @return {Promise( Float32Array | Int32Array )}
+   *   Return a promise resolved to a TypedArray representing the neural
+   * network's result. The TypedArray may be:
+   *   - Float32Array (if ( neuralNetParams.output_asInputValueRange == false ) )
+   *   - Int32Array (if ( neuralNetParams.output_asInputValueRange == true ) )
    */
   TWO_WORKER__ONE_SCALE__step1_Int32Array_process_async( sourceInt32Array, bFill ) {
     return this.createPromise_by_postCommandArgs(
@@ -426,9 +432,11 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
    *   Resolve to { done: false, value: ImageData }. The value is an ImageData
    * which is just the (non-scaled) source image data.
    *
-   * @yield {Float32Array}
-   *   Resolve to { done: true, value: Float32Array }. The value is a Float32Array
-   * representing the neural network's result.
+   * @yield {Float32Array|Int32Array}
+   *   Resolve to { done: true, value: TypedArray }. The value is a TypedArray
+   * representing the neural network's result. The TypedArray may be:
+   *   - Float32Array (if ( neuralNetParams.output_asInputValueRange == false ) )
+   *   - Int32Array (if ( neuralNetParams.output_asInputValueRange == true ) )
    */
   TWO_WORKER__TWO_SCALE__ImageData_process_asyncGenerator( sourceImageData, bFork ) {
     return this.createResulter_by_postCommandArgs(

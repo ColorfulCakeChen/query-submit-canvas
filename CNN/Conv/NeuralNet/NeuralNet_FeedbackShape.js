@@ -48,6 +48,7 @@ export { NeuralNet_FeedbackShape as FeedbackShape };
  *     - Both explicit and implicit output values are used as recurrent
  *         feedback information.
  *
+ *
  * 2. Shape
  *
 //!!! ...unfinished... (2023/04/17)
@@ -81,7 +82,7 @@ class NeuralNet_FeedbackShape {
    * @param {number} feedback_valueCount
    *   The feedback (i.e. the previous output) has how many values.
    */
-  set_by(
+  init(
     input_height, input_width, input_channelCount,
     feedback_valueCount,
 
@@ -132,6 +133,15 @@ class NeuralNet_FeedbackShape {
 //!!! ...unfinished... (2023/04/19)
 // output_getter()
 // feedback_setter()
+
+  /**
+   *
+   * @param {number} explicitIndex
+   *   The 
+   */
+  output_explicit_get_byIndex( explicitIndex ) {
+    
+  }
 
 
   /**
