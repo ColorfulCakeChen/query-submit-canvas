@@ -989,9 +989,15 @@ class NeuralOrchestra_Base extends
 
   /**
    *
-   * @return {Promise( Float32Array[] )}
-   *   Return a newly created imageData_process_asyncPromise which is an
-   * instance of .imageData_process_async().
+   * @return {Promise( Float32Array[] | Int32Array[] )}
+   *   Return a promise resolved to an array [ TypedArray, TypedArray ]
+   * representing the result of the pair of neural networks. The TypedArray may
+   * be:
+   *   - Float32Array (if ( neuralNetParams.output_asInputValueRange == false ) )
+   *   - Int32Array (if ( neuralNetParams.output_asInputValueRange == true ) )
+   * The order is:
+   *   - TypedArrayArray[ 0 ] is parent (chromosome) neural network's output.
+   *   - TypedArrayArray[ 1 ] is offspring (chromosome) neural network's output.
    */
   imageData_process_asyncPromise_create( sourceImageData, delayPromise ) {
 
@@ -1022,11 +1028,15 @@ class NeuralOrchestra_Base extends
    *   Mainly used when unit testing. If not null, this async method will await
    * it before complete. If null or undefined, no extra delay awaiting.
    *
-   * @return {Promise( Float32Array[] )}
-   *   Return a promise resolved to an array [ Float32Array, Float32Array ]
-   * representing the (pair) neural networks' results.
-   *   - Float32Array[ 0 ] is parent (chromosome) neural network's output.
-   *   - Float32Array[ 1 ] is offspring (chromosome) neural network's output.
+   * @return {Promise( Float32Array[] | Int32Array[] )}
+   *   Return a promise resolved to an array [ TypedArray, TypedArray ]
+   * representing the result of the pair of neural networks. The TypedArray may
+   * be:
+   *   - Float32Array (if ( neuralNetParams.output_asInputValueRange == false ) )
+   *   - Int32Array (if ( neuralNetParams.output_asInputValueRange == true ) )
+   * The order is:
+   *   - TypedArrayArray[ 0 ] is parent (chromosome) neural network's output.
+   *   - TypedArrayArray[ 1 ] is offspring (chromosome) neural network's output.
    */
   static async imageData_process_asyncPromise( sourceImageData, delayPromise ) {
 
