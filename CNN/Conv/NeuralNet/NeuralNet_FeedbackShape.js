@@ -169,6 +169,12 @@ class NeuralNet_FeedbackShape {
   valueArray_get_by_alignmentIndex_explicitIndexArray(
     fromValueArray, alignmentIndex, explicitIndexArray, o_toValueArray ) {
 
+    let elementCountPerAlignment = Math.floor( fromValueArray.length / 2 );
+
+    // alignment index should be either 0 or 1.
+    alignmentIndex
+      = Math.min( 1, Math.max( 0, Math.trunc( alignmentIndex ) ) );
+
 //!!! ...unfinished... (2023/04/19)
       //this.input_channelCount
 
