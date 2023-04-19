@@ -123,6 +123,9 @@ class NeuralNet_FeedbackShape {
 // There are 4 (= 2 * 2) feedback information.
 
 
+//!!! ...unfinished... (2023/04/19)
+// implicit input values are feedback values.
+
   }
 
 
