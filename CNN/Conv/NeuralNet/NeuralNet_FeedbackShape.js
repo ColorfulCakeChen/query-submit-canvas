@@ -214,10 +214,10 @@ class NeuralNet_FeedbackShape {
 
     // explicitValueIndex should not exceed available explicit data of the
     // alignment.
-    if ( !( explicitValueIndexEnd < explicitValueCountPerAlignment ) )
+    if ( !( explicitValueIndexEnd <= explicitValueCountPerAlignment ) )
       throw Error( `NeuralNet_FeedbackShape.${funcNameInMessage}(): `
         + `explicitValueIndexEnd ( ${explicitValueIndexEnd} ) `
-        + `should be less than `
+        + `should be less than or equal to `
         + `( ( fromValueArray.length / 2 ) / this.input_channelCount ) = `
         + `( ( ${fromValueArray.length} / 2 ) / ${this.input_channelCount} ) = `
         + `( ${explicitValueCountPerAlignment} ).`
