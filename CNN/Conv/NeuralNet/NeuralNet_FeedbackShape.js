@@ -131,7 +131,8 @@ class NeuralNet_FeedbackShape {
 // Return array index of NeuralNet output Float32Array (or Int32Array).
 
   /**
-   * Extract output value by specified alignment index and explicit index.
+   * Extract output value by specified alignment index and explicit value index
+   * range.
    *
    *
    * @param {number[]|TypedArray} o_toValueArray
