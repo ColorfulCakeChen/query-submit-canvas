@@ -232,10 +232,6 @@ class NeuralNet_FeedbackShape {
     // 4.3
     o_toValueArray.length = explicitValueIndexEnd - explicitValueIndexBegin;
     for ( let i = 0; i < o_toValueArray.length; ++i ) {
-
-//!!! ...unfinished... (2023/04/19)
-      //this.input_channelCount
-
       let explicitValue = fromValueArray[ fromValueIndex ];
       o_toValueArray[ i ] = explicitValue;
 
