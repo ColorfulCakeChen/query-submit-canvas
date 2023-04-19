@@ -242,7 +242,7 @@ class NeuralNet_FeedbackShape {
       o_toValueArray[ i ] = explicitValue;
 
       ++explicitValueIndex;
-      ++fromValueIndex;
+      fromValueIndex += this.input_channelCount;
     }
   }
 
