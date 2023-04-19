@@ -89,14 +89,14 @@ class NeuralOrchestra_FeedbackShape {
 
   ) {
 
-    input_height
-      = NeuralOrchestra_FeedbackShape.ensure_positive_integer( input_height );
-    input_width
-      = NeuralOrchestra_FeedbackShape.ensure_positive_integer( input_width );
-    input_channelCount
-      = NeuralOrchestra_FeedbackShape.ensure_positive_integer( input_channelCount );
-    feedback_valueCount
-      = NeuralOrchestra_FeedbackShape.ensure_positive_integer( feedback_valueCount );
+    input_height = NeuralOrchestra_FeedbackShape
+      .ensure_positive_integer( input_height );
+    input_width = NeuralOrchestra_FeedbackShape
+      .ensure_positive_integer( input_width );
+    input_channelCount = NeuralOrchestra_FeedbackShape
+      .ensure_positive_integer( input_channelCount );
+    feedback_valueCount = NeuralOrchestra_FeedbackShape
+      .ensure_positive_integer( feedback_valueCount );
 
 //!!! ...unfinished... (2023/04/17)
 
@@ -135,15 +135,34 @@ class NeuralOrchestra_FeedbackShape {
 // feedback_setter()
 
   /**
+   * Extract output value by specified alignment index and explicit index.
+   *
    *
    * @param {Float32Array|Int32Array} outputTypeArray
+   *   The output TypedArray of a neural network. It is viewed as containing
+   * two alignments output values which the neural network could personate.
    *
+   *   - outputTypeArray[ 0 ] to
+   *       outputTypeArray[ ( outputTypeArray.length / 2 ) - 1 ]:
+   *       The (explicit and implicit) output values when the neural network
+   *       personate alignment 0.
+   *
+   *   - outputTypeArray[ outputTypeArray.length / 2 ] to
+   *       outputTypeArray[ outputTypeArray.length - 1 ]:
+   *       The (explicit and implicit) output values when the neural network
+   *       personate alignment 1.
+   *
+   *
+   *
+   * @param {number} alignmentIndex
+   *   
    *
    * @param {number} explicitIndex
    *   The 
    */
-  output_explicit_get_byIndex( outputTypeArray, alignmentIndex, explicitIndex ) {
-    
+  output_explicit_get_by_alignmentIndex_explicitIndex(
+    outputTwoAlignmentsTypeArray, alignmentIndex, explicitIndex ) {
+
   }
 
 
