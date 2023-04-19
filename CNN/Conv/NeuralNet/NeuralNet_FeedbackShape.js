@@ -202,9 +202,7 @@ class NeuralNet_FeedbackShape {
         );
     }
 
-    // 4. Extract every specified explicit values.
-
-    // 4.1
+    // 4.
     let explicitValueIndex = explicitValueIndexBegin;
 
     // explicitValueIndex should be non-negative.
@@ -225,11 +223,11 @@ class NeuralNet_FeedbackShape {
         + `( ${explicitValueCountPerAlignment} ).`
       );
 
-    // 4.2
+    // 5.
     let fromValueIndex
       = fromValueIndexBase + ( explicitValueIndex * this.input_channelCount );
 
-    // 4.3
+    // 6. Extract every specified explicit values.
     o_toValueArray.length = explicitValueIndexEnd - explicitValueIndexBegin;
     for ( let i = 0; i < o_toValueArray.length; ++i ) {
       let explicitValue = fromValueArray[ fromValueIndex ];
@@ -238,7 +236,6 @@ class NeuralNet_FeedbackShape {
       ++explicitValueIndex;
       ++fromValueIndex;
     }
-
   }
 
 
