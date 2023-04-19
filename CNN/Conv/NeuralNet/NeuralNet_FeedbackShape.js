@@ -208,10 +208,21 @@ class NeuralNet_FeedbackShape {
     let explicitValueIndex = explicitValueIndexBegin;
 
     // explicitValueIndex should be non-negative.
-    if ( !( explicitValueIndex >= 0 ) )
+    if ( !( explicitValueIndexBegin >= 0 ) )
       throw Error( `NeuralNet_FeedbackShape.${funcNameInMessage}(): `
         + `explicitValueIndex ( ${explicitValueIndex} ) `
         + `should be greater than or equal to 0.`
+      );
+
+    // explicitValueIndex should not exceed available explicit data of the
+    // alignment.
+    if ( !( explicitValueIndexEnd < explicitValueCountPerAlignment ) )
+      throw Error( `NeuralNet_FeedbackShape.${funcNameInMessage}(): `
+        + `explicitValueIndex ( ${explicitValueIndex} ) `
+        + `should be less than `
+        + `( ( fromValueArray.length / 2 ) / this.input_channelCount ) = `
+        + `( ( ${fromValueArray.length} / 2 ) / ${this.input_channelCount} ) = `
+        + `( ${explicitValueCountPerAlignment} ).`
       );
 
     // 4.2
@@ -221,17 +232,6 @@ class NeuralNet_FeedbackShape {
     // 4.3
     o_toValueArray.length = explicitValueIndexEnd - explicitValueIndexBegin;
     for ( let i = 0; i < o_toValueArray.length; ++i ) {
-
-      // explicitValueIndex should not exceed available explicit data of the
-      // alignment.
-      if ( !( explicitValueIndex < explicitValueCountPerAlignment ) )
-        throw Error( `NeuralNet_FeedbackShape.${funcNameInMessage}(): `
-          + `explicitValueIndex ( ${explicitValueIndex} ) `
-          + `should be less than `
-          + `( ( fromValueArray.length / 2 ) / this.input_channelCount ) = `
-          + `( ( ${fromValueArray.length} / 2 ) / ${this.input_channelCount} ) = `
-          + `( ${explicitValueCountPerAlignment} ).`
-        );
 
 //!!! ...unfinished... (2023/04/19)
       //this.input_channelCount
