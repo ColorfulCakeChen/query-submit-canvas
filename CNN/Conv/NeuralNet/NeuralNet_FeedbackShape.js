@@ -158,9 +158,9 @@ class NeuralNet_FeedbackShape {
    * @param {number} explicitIndexArray
    *   An array of non-negative integers represents which explicit values to
    * be extracted when the neural network personate the specified alignment.
-   *   - Every .input_channelCount elements consitute a feedback values.
-   *   - The first element of the feedback values is the explicit output value.
-   *   - All other elements of the feedback values are the implicit output values.
+   *   - Every .input_channelCount elements is a tuple of feedback values.
+   *   - The first element of the tuple is the explicit output value.
+   *   - All other elements of the tuple are the implicit output values.
    *
    * @param {number[]|TypedArray} o_toValueArray
    *   The extracted explicit values will be filled into this number array (or
