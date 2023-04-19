@@ -89,13 +89,13 @@ class NeuralNet_FeedbackShape {
 
   ) {
 
-    input_height = NeuralNet_FeedbackShape
+    this.input_height = input_height = NeuralNet_FeedbackShape
       .ensure_positive_integer( input_height );
-    input_width = NeuralNet_FeedbackShape
+    this.input_width = input_width = NeuralNet_FeedbackShape
       .ensure_positive_integer( input_width );
-    input_channelCount = NeuralNet_FeedbackShape
+    this.input_channelCount = input_channelCount = NeuralNet_FeedbackShape
       .ensure_positive_integer( input_channelCount );
-    feedback_valueCount = NeuralNet_FeedbackShape
+    this.feedback_valueCount = feedback_valueCount = NeuralNet_FeedbackShape
       .ensure_positive_integer( feedback_valueCount );
 
 //!!! ...unfinished... (2023/04/17)
@@ -130,10 +130,6 @@ class NeuralNet_FeedbackShape {
 // Give NeuralNetIndex (0 or 1), AlignmentIndex (0 or 1), outputUsageIndex,
 // Return array index of NeuralNet output Float32Array (or Int32Array).
 
-//!!! ...unfinished... (2023/04/19)
-// output_getter()
-// feedback_setter()
-
   /**
    * Extract output value by specified alignment index and explicit index.
    *
@@ -144,13 +140,15 @@ class NeuralNet_FeedbackShape {
    *
    *   - outputTypeArray[ 0 ] to
    *       outputTypeArray[ ( outputTypeArray.length / 2 ) - 1 ]:
+   *
    *       The (explicit and implicit) output values when the neural network
-   *       personate alignment 0.
+   *       personates alignment 0.
    *
    *   - outputTypeArray[ outputTypeArray.length / 2 ] to
    *       outputTypeArray[ outputTypeArray.length - 1 ]:
+   *
    *       The (explicit and implicit) output values when the neural network
-   *       personate alignment 1.
+   *       personates alignment 1.
    *
    *
    *
@@ -161,9 +159,17 @@ class NeuralNet_FeedbackShape {
    *   The 
    */
   output_explicit_get_by_alignmentIndex_explicitIndex(
-    outputTwoAlignmentsTypeArray, alignmentIndex, explicitIndex ) {
+    outputTypeArray, alignmentIndex, explicitIndex ) {
+
+//!!! ...unfinished... (2023/04/19)
+      //this.input_channelCount
 
   }
+
+
+//!!! ...unfinished... (2023/04/19)
+// feedback_setter()
+
 
 
   /**
