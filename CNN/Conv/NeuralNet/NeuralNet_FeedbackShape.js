@@ -58,25 +58,26 @@ export { NeuralNet_FeedbackShape as FeedbackShape };
  *       neural network.
  *
  *     - Explicit input: It is a part of the input which is visible to user.
- *         For example, the whole screen image.
+ *       - For example, the whole screen image.
  *
  *     - Implicit input: It is a part of the input which is not visible to
- *         user. For example, the image which is arranged outside of the
- *         screen. Its main usage is to place the feedback information (i.e.
- *         the previous time output).
- *
- *       - Note:Implicit input will contain not only (previous time) implicit
- *              output but also (previous time) explicit output.
+ *         user.
+ *       - For example, the image which is arranged outside of the screen.
+ *       - Its main usage is to place the feedback information (i.e. the
+ *           previous time output).
+ *       - Implicit input will contain not only (previous time) implicit
+ *           output but also (previous time) explicit output.
  *
  *   - Output: It is all the data which is outputted by the neural network.
  *
  *     - Explicit output: It is a part of the output which is visible to user.
- *         For example, the keyboard pressing simulation.
+ *       - For example, the keyboard pressing simulation.
  *
  *     - Implicit output: It is a part of the output which is not visible to
- *         user. For example, the reason of the keyboard pressing simulation.
- *         It is mainly used as extra data of feedback information in the next
- *         time input.
+ *         user.
+ *       - For example, the reason of the keyboard pressing simulation.
+ *       - It is mainly used as extra data of feedback information in the next
+ *           time input.
  *
  *
  * 3. Shape
