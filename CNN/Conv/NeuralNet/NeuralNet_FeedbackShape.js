@@ -85,6 +85,18 @@ export { NeuralNet_FeedbackShape as FeedbackShape };
  *
  * 3.1 Implicit input shape
  *
+ * Implicit input data is usually arranged along height and width because of
+ * computation cost.
+ *
+ *   - Arranging along channels (i.e. concatenating original input with new
+ *       channels) needs move the whole input data.
+ *
+ *   - In contrary, putting data into part of original image involes only local
+ *       operations.
+ *
+ *
+ *
+ *
 
 //!!! ...unfinished... (2023/04/17)
 
