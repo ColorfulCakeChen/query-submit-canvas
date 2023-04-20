@@ -182,7 +182,8 @@ class NeuralNet_FeedbackShape {
       = NeuralNet_FeedbackShape.ensure_positive_integer(
           feedback_valueCount );
 
-    // 2.
+    // 2. Fixed input channel count
+
     // Since implicit input data will be arranged along the height and width,
     // the explicit and implicit input channel count should always be the same
     // as input_channelCount.
@@ -190,6 +191,7 @@ class NeuralNet_FeedbackShape {
       = this.implicit_input_channelCount
       = this.explicit_input_channelCount;
 
+    // 3.
 //!!! ...unfinished... (2023/04/20)
 
     // If (next time) explicit input is 1d, feedback (as implicit input) should
