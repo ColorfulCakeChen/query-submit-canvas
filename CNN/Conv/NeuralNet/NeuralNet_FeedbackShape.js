@@ -91,8 +91,8 @@ export { NeuralNet_FeedbackShape as FeedbackShape };
  *   - Arranging along channels (i.e. concatenating original input image with
  *       new channels) needs move the whole input data.
  *
- *   - By contrast, putting data into part of original input image just needs
- *       move the part.
+ *   - By contrast, putting new data into part of original input image just
+ *       needs move the part.
  *
  *
  *
