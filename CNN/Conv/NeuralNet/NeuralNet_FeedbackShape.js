@@ -154,7 +154,8 @@ class NeuralNet_FeedbackShape {
    *   The (next time) explicit input image's channel count.
    *
    * @param {number} feedback_valueCount
-   *   The feedback (i.e. the previous output) has how many values.
+   *   The feedback has how many values. Usually, it is the previous output
+   * channel count.
    */
   init(
     explicit_input_height, explicit_input_width, explicit_input_channelCount,
