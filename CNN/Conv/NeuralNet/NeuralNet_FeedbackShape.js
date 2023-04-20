@@ -101,9 +101,9 @@ export { NeuralNet_FeedbackShape as FeedbackShape };
  *   - Every n (= input_channelCount) channels is viewed as an explicit and
  *       implicit output unit.
  *
- *     - For example, suppose there are 64 output channels and input channel
- *         count is 4 (i.e. RGBA). Then, there are 16 (= ( 64 / 4 ) ) explicit
- *         output data.
+ *     - For example, if there are 64 output channels and input channel count
+ *         is 4 (i.e. RGBA), there will be 16 (= ( 64 / 4 ) ) explicit output
+ *         data.
  *
  *   - That is, every 1 explicit output data will accompany with
  *       ( input_channelCount -  1 ) implicit output data.
