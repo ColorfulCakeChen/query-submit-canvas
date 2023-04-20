@@ -59,8 +59,8 @@ export { NeuralNet_FeedbackShape as FeedbackShape };
  *
  *     - Implicit input: It is a part of the input which is not visible to
  *         user. For example, the image which is arranged outside of the
- *         screen. Its main usage is to place feedback information (i.e.
- *         previous time output).
+ *         screen. Its main usage is to place the feedback information (i.e.
+ *         the previous time output).
  *
  *   - Output: It is all the data which is outputted by the neural network.
  *
