@@ -233,7 +233,8 @@ class NeuralNet_FeedbackShape {
 
     // 3.1
     // If the (next time) explicit input is 1d, the feedback (as implicit
-    // input) should also be 1d and prefix the (next time) explicit input.
+    // input) should also be 1d and prefix (i.e. at the left most of) the
+    // (next time) explicit input.
     let width_1d = Math.ceil( feedback_valueCount / input_channelCount );
 
     // 3.2
