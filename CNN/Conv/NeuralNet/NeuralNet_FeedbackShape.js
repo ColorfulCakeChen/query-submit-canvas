@@ -192,7 +192,6 @@ class NeuralNet_FeedbackShape {
       = this.explicit_input_channelCount;
 
     // 3.
-//!!! ...unfinished... (2023/04/20)
 
     // If the (next time) explicit input is 1d, the feedback (as implicit
     // input) should also be 1d and prefix the (next time) explicit input.
@@ -212,6 +211,10 @@ class NeuralNet_FeedbackShape {
       width_2d = Math.ceil( width_1d / input_height );
       height_2d = input_height;
     }
+
+//!!! ...unfinished... (2023/04/20)
+// this.implicit_input_height
+// this.implicit_input_width
 
 //!!! ...unfinished... (2023/04/17)
 // two alignments of two neural network.
