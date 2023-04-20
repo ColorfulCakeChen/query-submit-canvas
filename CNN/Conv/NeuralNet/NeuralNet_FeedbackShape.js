@@ -6,7 +6,7 @@ export { NeuralNet_FeedbackShape as FeedbackShape };
  *
  *
  *
- * 1. Where to feedback 
+ * 1. Feedback placing
  *
  * Where to place recurrent feedback information (i.e. previous time output) in
  * the next time input?
