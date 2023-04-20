@@ -50,16 +50,13 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
   /** @override */
   async* disposeResources() {
 
-!!! ...unfinished... (2023/04/20)
-// tf.memory() check tensor memory leak
-
     this.alignmentMarkArray_dispose();
     this.NeuralNetArray_dispose();
 
+    // Detect tensor memory leak.
     if ( this.tensorMemoryBefore !== undefined ) {
       let tensorMemoryAfter = tf.memory();
 
-      // Detect tensor memory leak.
       if ( tensorMemoryAfter.numBytes != this.tensorMemoryBefore.numBytes ) {
         let msg = `NeuralWorker_Body.disposeResources(): `
           + `workerId=${this.workerId}, `
