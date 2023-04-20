@@ -253,12 +253,11 @@ class NeuralNet_FeedbackShape {
       height_2d = explicit_input_height;
     }
 
-//!!! ...unfinished... (2023/04/20)
     // 3.4
     let implicit_input_height = this.implicit_input_height = height_2d;
     let implicit_input_width = this.implicit_input_width = width_2d;
 
-//!!! ...unfinished... (2023/04/17)
+//!!! ...unfinished... (2023/04/20)
 // two alignments of two neural network.
 // There are 4 (= 2 * 2) feedback information.
 
