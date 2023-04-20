@@ -130,41 +130,46 @@ export { NeuralNet_FeedbackShape as FeedbackShape };
  *
  *
  *
- * @param {number} input_height
+ * @member {number} input_height
  *   The whole input image's height.
  *
- * @param {number} input_width
+ * @member {number} input_width
  *   The whole input image's width.
  *
- * @param {number} input_channelCount
+ * @member {number} input_channelCount
  *   The whole input image's channel count.
  *
  *
- * @param {number} explicit_input_height
+ * @member {number} explicit_input_height
  *   The explicit (i.e. user visible) input image's height. It is equal to or
  * less than input_height.
  *
- * @param {number} explicit_input_width
+ * @member {number} explicit_input_width
  *   The explicit (i.e. user visible) input image's width. It is equal to or
  * less than input_width.
  *
- * @param {number} explicit_input_channelCount
+ * @member {number} explicit_input_channelCount
  *   The explicit (i.e. user visible) input image's channel count. It is always
  * equal to input_channelCount.
  *
  *
- * @param {number} implicit_input_height
+ * @member {number} implicit_input_height
  *   The implicit (i.e. feedback from previous output) input image's height. It
  * is equal to or less than input_height.
  *
- * @param {number} implicit_input_width
+ * @member {number} implicit_input_width
  *   The implicit (i.e. feedback from previous output) input image's width. It
  * is equal to or less than input_width.
  *
- * @param {number} implicit_input_channelCount
+ * @member {number} implicit_input_channelCount
  *   The implicit (i.e. feedback from previous output) input image's channel
  * count. It is always equal to input_channelCount.
  *
+ *
+ * @member {number} feedback_valueCount_per_alignment
+ *   The feedback (of an alignement of a neural network) has how many values.
+ * Usually, it is half of the (previous time) output channel count of a
+ * neural network.
  *
  *
  *
@@ -182,22 +187,10 @@ class NeuralNet_FeedbackShape {
 //!!! ...unfinished... (2023/04/17)
   /**
    *
-   * @param {number} explicit_input_height
-   *   The (next time) explicit input image's height.
-   *
-   * @param {number} explicit_input_width
-   *   The (next time) explicit input image's width.
-   *
-   * @param {number} explicit_input_channelCount
-   *   The (next time) explicit input image's channel count.
-   *
-   * @param {number} feedback_valueCount
-   *   The feedback has how many values. Usually, it is the previous output
-   * channel count.
    */
   init(
     explicit_input_height, explicit_input_width, explicit_input_channelCount,
-    feedback_valueCount,
+    feedback_valueCount_per_alignment,
 
 
   ) {
@@ -216,9 +209,9 @@ class NeuralNet_FeedbackShape {
       = NeuralNet_FeedbackShape.ensure_positive_integer(
           explicit_input_channelCount );
 
-    this.feedback_valueCount = feedback_valueCount
+    this.feedback_valueCount_per_alignment = feedback_valueCount_per_alignment
       = NeuralNet_FeedbackShape.ensure_positive_integer(
-          feedback_valueCount );
+          feedback_valueCount_per_alignment );
 
     // 2. Only one kind of input channel count.
     //
@@ -235,7 +228,7 @@ class NeuralNet_FeedbackShape {
     // If the (next time) explicit input is 1d, the feedback (as implicit
     // input) should also be 1d and prefix (i.e. at the left most of) the
     // (next time) explicit input.
-    let width_1d = Math.ceil( feedback_valueCount / input_channelCount );
+    let width_1d = Math.ceil( feedback_valueCount_per_alignment / input_channelCount );
 
     // 3.2
     // If the (next time) explicit input is 2d, the feedback (as implicit
