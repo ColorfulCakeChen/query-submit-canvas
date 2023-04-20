@@ -242,7 +242,8 @@ class NeuralNet_FeedbackShape {
     // input) should also be 2d and placed at left most of the (next time)
     // explicit input.
 
-    // Prefer square feedback shape.
+    // Prefer the square feedback shape because it fairly expresses the
+    // correlation along height and width.
     let width_2d = Math.ceil( Math.sqrt( width_1d ) );
     let height_2d = width_2d;
 
