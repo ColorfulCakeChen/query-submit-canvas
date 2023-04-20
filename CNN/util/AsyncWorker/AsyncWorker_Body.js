@@ -43,7 +43,7 @@ class AsyncWorker_Body {
       console.error( e );
       //debugger;
     }
-  
+
     close(); // Terminate this worker.
     //yield *super.disposeResources();
   }

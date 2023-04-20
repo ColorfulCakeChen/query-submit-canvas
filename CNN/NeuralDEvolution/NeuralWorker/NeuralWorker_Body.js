@@ -42,6 +42,8 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
 
       // Prevent from import tensorflow.js many times.
       NeuralWorker_Body.tensorflowJs_imported = true;
+
+      this.tensorMemoryBefore = tf.memory();
     }
   }
 
@@ -53,7 +55,27 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
 
     this.alignmentMarkArray_dispose();
     this.NeuralNetArray_dispose();
+
+    {
+      let tensorMemoryAfter = tf.memory();
+
+      // Detect tensor memory leak.
+      if ( tensorMemoryAfter.numBytes != this.tensorMemoryBefore.numBytes ) {
+        let msg = `NeuralWorker_Body.disposeResources(): `
+          + `tensorMemoryAfter.numBytes (${tensorMemoryAfter.numBytes}) != `
+          + `tensorMemoryBefore.numBytes (${tensorMemoryBefore.numBytes})`;
+
+        console.error( msg );
+        debugger;
+  
+        throw Error( msg );
+      }
+
+      this.tensorMemoryBefore = undefined;
+    }
+
     this.workerId = undefined;
+
     yield *super.disposeResources();
   }
 
