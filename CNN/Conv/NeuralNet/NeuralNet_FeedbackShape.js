@@ -98,7 +98,7 @@ export { NeuralNet_FeedbackShape as FeedbackShape };
  *
  * A possible arrangement:
  *
- *   - every n (= input_channelCount) channels is viewed as an explicit and
+ *   - Every n (= input_channelCount) channels is viewed as an explicit and
  *       implicit output unit.
  *
  *   - That is every 1 explicit output data will accompany with
