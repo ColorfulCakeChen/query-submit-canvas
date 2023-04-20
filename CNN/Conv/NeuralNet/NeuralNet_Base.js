@@ -605,7 +605,7 @@ class NeuralNet_Base extends Recyclable.Root {
       // non-negative integer which can be used in embedding looking up).
       //
       // This is useful if the output should become recurrent feedback of the
-      // next times input.
+      // next time input.
       if ( this.output_asInputValueRange ) {
         this.blockFinal.output0.realTensor
           = this.Tensor_restrict_to_InputValueRange_and_dispose(

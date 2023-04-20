@@ -6,7 +6,7 @@ export { NeuralNet_FeedbackShape as FeedbackShape };
  *
  *
  *
- * 1. Where to place recurrent feedback information in the next times input?
+ * 1. Where to place recurrent feedback information in the next time input?
  *
  *
  * 1.1 From convolution operation's point of view:
@@ -60,7 +60,7 @@ export { NeuralNet_FeedbackShape as FeedbackShape };
  *     - Implicit input: It is a part of the input which is not visible to
  *         user. For example, the image which is arranged outside of the
  *         screen. Its main usage is to place feedback information (i.e.
- *         previous output).
+ *         previous time output).
  *
  *   - Output: It is all the data which is outputted by the neural network.
  *
@@ -69,7 +69,8 @@ export { NeuralNet_FeedbackShape as FeedbackShape };
  *
  *     - Implicit output: It is a part of the output which is not visible to
  *         user. For example, the reason of the keyboard pressing simulation.
- *         Its main usage is to provide extra data in feedback information.
+ *         It is mainly used as extra data of feedback information in the next
+ *         time input.
  *
  *
  * 3. Shape
@@ -93,13 +94,13 @@ class NeuralNet_FeedbackShape {
   /**
    *
    * @param {number} input_height
-   *   The (next times) input image's height.
+   *   The (next time) input image's height.
    *
    * @param {number} input_width
-   *   The (next times) input image's width.
+   *   The (next time) input image's width.
    *
    * @param {number} input_channelCount
-   *   The (next times) input image's channel count.
+   *   The (next time) input image's channel count.
    *
    * @param {number} feedback_valueCount
    *   The feedback (i.e. the previous output) has how many values.
@@ -122,18 +123,18 @@ class NeuralNet_FeedbackShape {
 
 //!!! ...unfinished... (2023/04/17)
 
-    // If (next times) input is 1d, feedback should also be 1d and prefix the
-    // (next times) input.
+    // If (next time) input is 1d, feedback should also be 1d and prefix the
+    // (next time) input.
     let width_1d = Math.ceil( feedback_valueCount / input_channelCount );
 
-    // If (next times) input is 2d, feedback should also be 2d and at left
-    // most of the (next times) input.
+    // If (next time) input is 2d, feedback should also be 2d and at left
+    // most of the (next time) input.
 
     // Prefer square feedback shape.
     let width_2d = Math.ceil( Math.sqrt( width_1d ) );
     let height_2d = width_2d;
 
-    // But, if the (next times) input has not enough height to contain the
+    // But, if the (next time) input has not enough height to contain the
     // square shape of feedback, use rectangle shape.
     if ( height_2d > input_height ) {
       width_2d = Math.ceil( width_1d / input_height );

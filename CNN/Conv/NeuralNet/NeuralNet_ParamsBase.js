@@ -51,7 +51,7 @@ import { InferencedParams } from "./NeuralNet_InferencedParams.js";
  *   If true, restrict output value to the (neural network) input value range
  * (i.e. non-negative integer which can be used in embedding looking up). This
  * is useful if the output will be used as the recurrent feedback of the next
- * times input.
+ * time input.
  *
  * @member {boolean} bKeepInputTensor
  *   If true, apply() will not dispose inputTensor (i.e. will be kept).
