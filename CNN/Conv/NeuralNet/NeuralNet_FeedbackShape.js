@@ -62,6 +62,11 @@ export { NeuralNet_FeedbackShape as FeedbackShape };
  *         screen. Its main usage is to place feedback information (i.e.
  *         previous output).
  *
+ *   - Output: It is all the data which is outputted by the neural network.
+ *
+ *     - Explicit output: It is a part of the output which is visible to user.
+ *         For example, the keyboard pressing simulation.
+ *
  *
  *  (output)
  *
