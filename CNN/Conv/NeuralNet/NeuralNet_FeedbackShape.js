@@ -72,15 +72,6 @@ export { NeuralNet_FeedbackShape as FeedbackShape };
  *         Its main usage is to provide extra data in feedback information.
  *
  *
- *  (output)
- *
- * /Implicit
-//!!! ...unfinished... (2023/04/17)
- *
- *
- *
- *
- *
  * 3. Shape
  *
 //!!! ...unfinished... (2023/04/17)
