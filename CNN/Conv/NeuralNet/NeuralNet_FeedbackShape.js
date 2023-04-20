@@ -164,7 +164,7 @@ class NeuralNet_FeedbackShape {
 
   ) {
 
-    // 1.
+    // 1. Ensure positive integer.
 
     this.explicit_input_height = explicit_input_height
       = NeuralNet_FeedbackShape.ensure_positive_integer(
