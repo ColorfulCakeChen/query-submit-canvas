@@ -206,8 +206,8 @@ class NeuralNet_FeedbackShape {
     let width_2d = Math.ceil( Math.sqrt( width_1d ) );
     let height_2d = width_2d;
 
-    // But, if the (next time) input has not enough height to contain the
-    // square shape of feedback, use rectangle shape.
+    // But, if the (next time) explicit input has not enough height to contain
+    // the square shape of feedback, use rectangle shape.
     if ( height_2d > input_height ) {
       width_2d = Math.ceil( width_1d / input_height );
       height_2d = input_height;
