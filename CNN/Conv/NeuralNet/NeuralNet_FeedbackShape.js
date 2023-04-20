@@ -101,7 +101,7 @@ export { NeuralNet_FeedbackShape as FeedbackShape };
  *   - Every n (= input_channelCount) channels is viewed as an explicit and
  *       implicit output unit.
  *
- *   - That is every 1 explicit output data will accompany with
+ *   - That is, every 1 explicit output data will accompany with
  *       ( input_channelCount -  1 ) implicit output data.
  *
  *   - And then an explicit and implicit output unit will become a single pixel
