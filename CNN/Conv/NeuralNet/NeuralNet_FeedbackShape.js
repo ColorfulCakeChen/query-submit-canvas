@@ -104,6 +104,9 @@ export { NeuralNet_FeedbackShape as FeedbackShape };
  *   - That is every 1 explicit output data will accompany with
  *       ( input_channelCount -  1 ) implicit output data.
  *
+ *   - So that an explicit and implicit output unit will become a single pixel
+ *       (a strong correlation unit) when they are filled into the (next time)
+ *       implicit input (as feedback information).
  *
 
 //!!! ...unfinished... (2023/04/17)
