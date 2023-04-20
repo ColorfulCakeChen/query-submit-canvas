@@ -88,7 +88,9 @@ export { NeuralNet_FeedbackShape as FeedbackShape };
  *
  * 3.2 Implicit output shape
  *
- * 
+ * Since the output of a convolution neural network (CNN) only has channels
+ * (i.e. its height and width is always 1 * 1), the implicit and explicit
+ * output data are arranged as interleaved along the channels.
  *
  *
  *
