@@ -67,6 +67,10 @@ export { NeuralNet_FeedbackShape as FeedbackShape };
  *     - Explicit output: It is a part of the output which is visible to user.
  *         For example, the keyboard pressing simulation.
  *
+ *     - Implicit output: It is a part of the output which is not visible to
+ *         user. For example, the reason of the keyboard pressing simulation.
+ *         Its main usage is to provide extra data in feedback information.
+ *
  *
  *  (output)
  *
