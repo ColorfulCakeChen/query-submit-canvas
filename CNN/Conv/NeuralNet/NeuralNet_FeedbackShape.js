@@ -1,6 +1,5 @@
 export { NeuralNet_FeedbackShape as FeedbackShape };
 
-//!!! ...unfinished... (2023/04/16)
 /**
  *
  *
@@ -128,6 +127,30 @@ export { NeuralNet_FeedbackShape as FeedbackShape };
  *     - So that the strong correlation between explicit and implicit output
  *         of an unit could be represented by the strong correlation of
  *         channels of a single pixel.
+ *
+ *
+ * @param {number} input_height
+ *   The whole input image's height.
+ *
+ * @param {number} input_width
+ *   The whole input image's width.
+ *
+ * @param {number} input_channelCount
+ *   The whole input image's channel count.
+ *
+ * @param {number} explicit_input_height
+ *   The explicit (i.e. user visible) input image's height. It is equal to or
+ * less than input_height.
+ *
+ * @param {number} explicit_input_width
+ *   The explicit (i.e. user visible) input image's width. It is equal to or
+ * less than input_width.
+ *
+ * @param {number} explicit_input_channelCount
+ *   The explicit (i.e. user visible) input image's channel count. It is always
+ * equal to input_channelCount.
+ *
+ *
  *
  *
  */
