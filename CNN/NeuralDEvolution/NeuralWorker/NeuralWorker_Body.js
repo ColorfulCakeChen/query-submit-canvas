@@ -62,6 +62,7 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
       // Detect tensor memory leak.
       if ( tensorMemoryAfter.numBytes != this.tensorMemoryBefore.numBytes ) {
         let msg = `NeuralWorker_Body.disposeResources(): `
+          + `workerId=${this.workerId}, `
           + `tensorMemoryAfter.numBytes (${tensorMemoryAfter.numBytes}) != `
           + `tensorMemoryBefore.numBytes (${tensorMemoryBefore.numBytes})`;
 
