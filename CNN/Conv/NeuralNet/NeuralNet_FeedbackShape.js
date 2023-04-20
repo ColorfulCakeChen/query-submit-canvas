@@ -65,7 +65,7 @@ export { NeuralNet_FeedbackShape as FeedbackShape };
  *       - For example, the image which is arranged outside of the screen.
  *       - Its main usage is to place the feedback information (i.e. the
  *           previous time output).
- *       - Implicit input will contain not only (previous time) implicit
+ *       - Note: Implicit input will contain not only (previous time) implicit
  *           output but also (previous time) explicit output.
  *
  *   - Output: It is all the data which is outputted by the neural network.
