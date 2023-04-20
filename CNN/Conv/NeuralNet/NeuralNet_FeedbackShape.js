@@ -207,14 +207,16 @@ class NeuralNet_FeedbackShape {
 
     // But, if the (next time) explicit input has not enough height to contain
     // the square shape of feedback, use rectangle shape.
-    if ( height_2d > input_height ) {
-      width_2d = Math.ceil( width_1d / input_height );
-      height_2d = input_height;
+    if ( height_2d > explicit_input_height ) {
+      width_2d = Math.ceil( width_1d / explicit_input_height );
+      height_2d = explicit_input_height;
     }
 
 //!!! ...unfinished... (2023/04/20)
 // this.implicit_input_height
 // this.implicit_input_width
+// this.input_height
+// this.input_width
 
 //!!! ...unfinished... (2023/04/17)
 // two alignments of two neural network.
