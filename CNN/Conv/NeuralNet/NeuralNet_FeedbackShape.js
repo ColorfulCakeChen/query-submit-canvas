@@ -183,7 +183,7 @@ class NeuralNet_FeedbackShape {
           feedback_valueCount );
 
     // 2. Fixed input channel count
-
+    //
     // Since implicit input data will be arranged along the height and width,
     // the explicit and implicit input channel count should always be the same
     // as input_channelCount.
