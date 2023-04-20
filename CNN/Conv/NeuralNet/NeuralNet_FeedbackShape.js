@@ -144,33 +144,47 @@ class NeuralNet_FeedbackShape {
 //!!! ...unfinished... (2023/04/17)
   /**
    *
-   * @param {number} input_height
-   *   The (next time) input image's height.
+   * @param {number} explicit_input_height
+   *   The (next time) explicit input image's height.
    *
-   * @param {number} input_width
-   *   The (next time) input image's width.
+   * @param {number} explicit_input_width
+   *   The (next time) explicit input image's width.
    *
-   * @param {number} input_channelCount
-   *   The (next time) input image's channel count.
+   * @param {number} explicit_input_channelCount
+   *   The (next time) explicit input image's channel count.
    *
    * @param {number} feedback_valueCount
    *   The feedback (i.e. the previous output) has how many values.
    */
   init(
-    input_height, input_width, input_channelCount,
+    explicit_input_height, explicit_input_width, explicit_input_channelCount,
     feedback_valueCount,
 
 
   ) {
 
-    this.input_height = input_height = NeuralNet_FeedbackShape
-      .ensure_positive_integer( input_height );
-    this.input_width = input_width = NeuralNet_FeedbackShape
-      .ensure_positive_integer( input_width );
-    this.input_channelCount = input_channelCount = NeuralNet_FeedbackShape
-      .ensure_positive_integer( input_channelCount );
-    this.feedback_valueCount = feedback_valueCount = NeuralNet_FeedbackShape
-      .ensure_positive_integer( feedback_valueCount );
+    this.explicit_input_height = explicit_input_height
+      = NeuralNet_FeedbackShape.ensure_positive_integer(
+          explicit_input_height );
+
+    this.explicit_input_width = explicit_input_width
+      = NeuralNet_FeedbackShape.ensure_positive_integer(
+          explicit_input_width );
+
+    this.explicit_input_channelCount = explicit_input_channelCount
+      = NeuralNet_FeedbackShape.ensure_positive_integer(
+          explicit_input_channelCount );
+
+    this.feedback_valueCount = feedback_valueCount
+      = NeuralNet_FeedbackShape.ensure_positive_integer(
+          feedback_valueCount );
+
+    // Since implicit input data will be arranged along the height and width,
+    // the explicit and implicit input channel count should always be the same
+    // as input_channelCount.
+    let input_channelCount = this.input_channelCount
+      = this.implicit_input_channelCount
+      = this.explicit_input_channelCount;
 
 //!!! ...unfinished... (2023/04/17)
 
