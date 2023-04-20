@@ -112,11 +112,6 @@ export { NeuralNet_FeedbackShape as FeedbackShape };
  *       an unit could be represented by the strong correlation of channels of
  *       a single pixel.
  *
-
-//!!! ...unfinished... (2023/04/17)
-
- * 
- *
  *
  */
 class NeuralNet_FeedbackShape {
