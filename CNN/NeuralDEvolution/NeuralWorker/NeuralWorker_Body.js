@@ -56,7 +56,7 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
     this.alignmentMarkArray_dispose();
     this.NeuralNetArray_dispose();
 
-    {
+    if ( this.tensorMemoryBefore !== undefined ) {
       let tensorMemoryAfter = tf.memory();
 
       // Detect tensor memory leak.
@@ -68,7 +68,7 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
 
         console.error( msg );
         debugger;
-  
+
         throw Error( msg );
       }
 
