@@ -259,7 +259,7 @@ class NeuralNet_FeedbackShape {
 
 //!!! ...unfinished... (2023/04/20)
 // two alignments of two neural network.
-// There are 4 (= 2 * 2) feedback information.
+// There are 4 (= 2 * 2) feedback information blocks.
 
 
 //!!! ...unfinished... (2023/04/20)
