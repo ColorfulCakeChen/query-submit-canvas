@@ -6,7 +6,10 @@ export { NeuralNet_FeedbackShape as FeedbackShape };
  *
  *
  *
- * 1. Where to place recurrent feedback information in the next time input?
+ * 1. Where to feedback 
+ *
+ * Where to place recurrent feedback information (i.e. previous time output) in
+ * the next time input?
  *
  *
  * 1.1 From convolution operation's point of view:
