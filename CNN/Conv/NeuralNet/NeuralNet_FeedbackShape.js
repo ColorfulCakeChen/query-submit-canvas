@@ -231,10 +231,12 @@ class NeuralNet_FeedbackShape {
 
     // 3.
 
+    // 3.1
     // If the (next time) explicit input is 1d, the feedback (as implicit
     // input) should also be 1d and prefix the (next time) explicit input.
     let width_1d = Math.ceil( feedback_valueCount / input_channelCount );
 
+    // 3.2
     // If the (next time) explicit input is 2d, the feedback (as implicit
     // input) should also be 2d and placed at left most of the (next time)
     // explicit input.
@@ -243,12 +245,18 @@ class NeuralNet_FeedbackShape {
     let width_2d = Math.ceil( Math.sqrt( width_1d ) );
     let height_2d = width_2d;
 
+    // 3.3
     // But, if the (next time) explicit input has not enough height to contain
     // the square shape of feedback, use rectangle shape.
     if ( height_2d > explicit_input_height ) {
       width_2d = Math.ceil( width_1d / explicit_input_height );
       height_2d = explicit_input_height;
     }
+
+//!!! ...unfinished... (2023/04/20)
+    // 3.4
+    this.implicit_input_height = height_2d;
+    this.implicit_input_width = width_2d;
 
 //!!! ...unfinished... (2023/04/20)
 // this.implicit_input_height
