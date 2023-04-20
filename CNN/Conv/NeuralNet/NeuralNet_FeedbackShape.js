@@ -49,11 +49,33 @@ export { NeuralNet_FeedbackShape as FeedbackShape };
  *         feedback information.
  *
  *
- * 2. Shape
+ * 2. Explicit/Implicit Input/Output
+ *
+ *   - Input: It is all the data which will be sent to and processed by a
+ *       neural network.
+ *
+ *     - Explicit input: It is a part of the input which is visible to user.
+ *         For example, the whole screen image.
+ *
+ *     - Implicit input: It is a part of the input which is not visible to
+ *         user. For example, the image which is arranged outside of the
+ *         screen. Its main usage is to place feedback information (i.e.
+ *         previous output).
+ *
+ *
+ *  (output)
+ *
+ * /Implicit
+//!!! ...unfinished... (2023/04/17)
+ *
+ *
+ *
+ *
+ *
+ * 3. Shape
  *
 //!!! ...unfinished... (2023/04/17)
  * 
- *
  *
  *
  */
@@ -125,6 +147,12 @@ class NeuralNet_FeedbackShape {
 
 //!!! ...unfinished... (2023/04/19)
 // implicit input values are feedback values.
+
+
+//!!! ...unfinished... (2023/04/20)
+//     this.input_height = ;
+//     this.input_width = ;
+//     this.input_channelCount = ;
 
   }
 
