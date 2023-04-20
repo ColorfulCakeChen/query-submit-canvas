@@ -47,6 +47,10 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
 
   /** @override */
   async* disposeResources() {
+
+!!! ...unfinished... (2023/04/20)
+// tf.memory() check tensor memory leak
+
     this.alignmentMarkArray_dispose();
     this.NeuralNetArray_dispose();
     this.workerId = undefined;
