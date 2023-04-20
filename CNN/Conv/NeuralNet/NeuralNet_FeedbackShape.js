@@ -129,6 +129,7 @@ export { NeuralNet_FeedbackShape as FeedbackShape };
  *         channels of a single pixel.
  *
  *
+ *
  * @param {number} input_height
  *   The whole input image's height.
  *
@@ -137,6 +138,7 @@ export { NeuralNet_FeedbackShape as FeedbackShape };
  *
  * @param {number} input_channelCount
  *   The whole input image's channel count.
+ *
  *
  * @param {number} explicit_input_height
  *   The explicit (i.e. user visible) input image's height. It is equal to or
@@ -149,6 +151,19 @@ export { NeuralNet_FeedbackShape as FeedbackShape };
  * @param {number} explicit_input_channelCount
  *   The explicit (i.e. user visible) input image's channel count. It is always
  * equal to input_channelCount.
+ *
+ *
+ * @param {number} implicit_input_height
+ *   The implicit (i.e. feedback from previous output) input image's height. It
+ * is equal to or less than input_height.
+ *
+ * @param {number} implicit_input_width
+ *   The implicit (i.e. feedback from previous output) input image's width. It
+ * is equal to or less than input_width.
+ *
+ * @param {number} implicit_input_channelCount
+ *   The implicit (i.e. feedback from previous output) input image's channel
+ * count. It is always equal to input_channelCount.
  *
  *
  *
