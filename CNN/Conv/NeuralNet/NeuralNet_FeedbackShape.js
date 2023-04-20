@@ -106,7 +106,7 @@ export { NeuralNet_FeedbackShape as FeedbackShape };
  *
  *     - For example, if there are 64 output channels and input channel count
  *         is 4 (i.e. RGBA), there will be 16 (= ( 64 / 4 ) ) explicit output
- *         data. Every 1 explicit output data accompany with 3 implicit output
+ *         data. Every 1 explicit output data accompanies with 3 implicit output
  *         data.
  *
  *   - Let an explicit and implicit output unit become a single pixel when
