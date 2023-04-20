@@ -163,6 +163,8 @@ class NeuralNet_FeedbackShape {
 
   ) {
 
+    // 1.
+
     this.explicit_input_height = explicit_input_height
       = NeuralNet_FeedbackShape.ensure_positive_integer(
           explicit_input_height );
@@ -179,6 +181,7 @@ class NeuralNet_FeedbackShape {
       = NeuralNet_FeedbackShape.ensure_positive_integer(
           feedback_valueCount );
 
+    // 2.
     // Since implicit input data will be arranged along the height and width,
     // the explicit and implicit input channel count should always be the same
     // as input_channelCount.
