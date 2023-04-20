@@ -112,9 +112,9 @@ export { NeuralNet_FeedbackShape as FeedbackShape };
  *       they are filled into the (next time) implicit input (as feedback
  *       information).
  *
- *   - So that the strong correlation between explicit and implicit output of
- *       an unit could be represented by the strong correlation of channels of
- *       a single pixel.
+ *     - So that the strong correlation between explicit and implicit output
+ *         of an unit could be represented by the strong correlation of
+ *         channels of a single pixel.
  *
  *
  */
