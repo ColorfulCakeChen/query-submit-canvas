@@ -96,9 +96,13 @@ export { NeuralNet_FeedbackShape as FeedbackShape };
  * (i.e. its height and width is always 1 * 1), the explicit and implicit
  * output data are arranged as interleaved along the channels.
  *
- * For example, every n (= input_channelCount) channels is viewed as an
- * explicit and implicit output unit. That is every 1 explicit output data
- * will accompany with ( input_channelCount -  1 ) implicit output data.
+ * A possible arrangement:
+ *
+ *   - every n (= input_channelCount) channels is viewed as an explicit and
+ *       implicit output unit.
+ *
+ *   - That is every 1 explicit output data will accompany with
+ *       ( input_channelCount -  1 ) implicit output data.
  *
  *
 
