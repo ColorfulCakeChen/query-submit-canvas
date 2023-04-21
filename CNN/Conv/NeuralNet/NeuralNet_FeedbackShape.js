@@ -228,7 +228,22 @@ class NeuralNet_FeedbackShape {
     // If the (next time) explicit input is 1d, the feedback (as implicit
     // input) should also be 1d and prefix (i.e. at the left most of) the
     // (next time) explicit input.
-    let width_1d = Math.ceil( feedback_valueCount_per_alignment / input_channelCount );
+    let feedback_pixelCount_per_alignment
+      = Math.ceil( feedback_valueCount_per_alignment / input_channelCount );
+
+//!!! ...unfinished... (2023/04/21)
+
+    let feedback_pixelCount_duplicated_per_alignment;
+    if ( explicit_input_height == 1 ) {
+      feedback_pixelCount_duplicated_per_alignment
+        = feedback_pixelCount_per_alignment * 2;
+    } else {
+      feedback_pixelCount_duplicated_per_alignment
+        = feedback_pixelCount_per_alignment * 4;
+    }
+
+!!!
+// two times or four times     feedback_pixelCount_per_alignment
 
     // 3.2
     // If the (next time) explicit input is 2d, the feedback (as implicit
@@ -237,14 +252,14 @@ class NeuralNet_FeedbackShape {
 
     // Prefer the square feedback shape because it fairly expresses the
     // correlation along height and width.
-    let width_2d = Math.ceil( Math.sqrt( width_1d ) );
+    let width_2d = Math.ceil( Math.sqrt( feedback_pixelCount_per_alignment ) );
     let height_2d = width_2d;
 
     // 3.3
     // But, if the (next time) explicit input has not enough height to contain
     // the square shape of feedback, use rectangle shape.
     if ( height_2d > explicit_input_height ) {
-      width_2d = Math.ceil( width_1d / explicit_input_height );
+      width_2d = Math.ceil( feedback_pixelCount_per_alignment / explicit_input_height );
       height_2d = explicit_input_height;
     }
 
