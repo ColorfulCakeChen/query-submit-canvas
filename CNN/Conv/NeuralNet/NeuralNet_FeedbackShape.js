@@ -310,21 +310,17 @@ class NeuralNet_FeedbackShape {
 // There are 4 (= 2 * 2) feedback information blocks.
 
 
-//!!! ...unfinished... (2023/04/20)
+//!!! ...unfinished... (2023/04/21)
 // this.implicit_input_height
 // this.implicit_input_width
-// this.input_height
 // this.input_width
+// this.feedback_to_input_height
+// this.feedback_to_input_width
 
 
 //!!! ...unfinished... (2023/04/19)
 // implicit input values are feedback values.
 
-
-//!!! ...unfinished... (2023/04/20)
-//     this.input_height = ;
-//     this.input_width = ;
-//     this.input_channelCount = ;
 
   }
 
