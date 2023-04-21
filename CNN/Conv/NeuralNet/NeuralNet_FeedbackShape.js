@@ -172,6 +172,15 @@ export { NeuralNet_FeedbackShape as FeedbackShape };
  * neural network because neural network generates two alignments' outputs in
  * one time.
  *
+ * @member {number} feedback_to_input_height_multiplier
+ *   When converting feedback values to implicit input pixels, how many times
+ * should be replicated along the implicit input height.
+ *
+ * @member {number} feedback_to_input_width_multiplier
+ *   When converting feedback values to implicit input pixels, how many times
+ * should be replicated along the implicit input width.
+ *
+ *
  *
  *
  */
