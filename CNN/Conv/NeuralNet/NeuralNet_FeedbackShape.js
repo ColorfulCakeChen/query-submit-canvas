@@ -254,18 +254,22 @@ class NeuralNet_FeedbackShape {
     // will not (in fact, can not) make the height half (i.e. only input width
     // will be halven). So, double the feedback pixel count is enough.
     if ( explicit_input_height == 1 ) {
-      this.implicit_input_pixelCount_per_alignment
-        = implicit_input_pixelCount_per_alignment
-        = implicit_input_pixelCount_original_per_alignment * 2;
+      this.heightMultiplier = 1;
+      this.widthMultiplier = 2;
 
     // If input is 2d data (e.g. image), use four times the feedback pixel
     // count to compensate for neural network's stage's block0's making
     // quarter.
     } else {
-      this.implicit_input_pixelCount_per_alignment
-        = implicit_input_pixelCount_per_alignment
-        = implicit_input_pixelCount_original_per_alignment * 4;
+      this.heightMultiplier = 2;
+      this.widthMultiplier = 2;
     }
+
+
+    this.implicit_input_pixelCount_per_alignment
+      = implicit_input_pixelCount_per_alignment
+      = implicit_input_pixelCount_original_per_alignment
+          * this.heightMultiplier * this.widthMultiplier;
 
 !!!
 // two times or four times     feedback_pixelCount_per_alignment
