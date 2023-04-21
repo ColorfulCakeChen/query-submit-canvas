@@ -214,7 +214,9 @@ class NeuralNet_FeedbackShape {
       = NeuralNet_FeedbackShape.ensure_positive_integer(
           feedback_valueCount_per_alignment );
 
-    // 2. Only one kind of input channel count.
+    // 2.
+
+    // 2.1 Keep input channel count.
     //
     // Since implicit input data will be arranged along the height and width,
     // the explicit and implicit input channel count should always be the same
@@ -222,6 +224,14 @@ class NeuralNet_FeedbackShape {
     let input_channelCount = this.input_channelCount
       = this.implicit_input_channelCount
       = this.explicit_input_channelCount;
+
+    // 2.2 Keep input height.
+    //
+    // Because input may be 1d data (e.g. text or voice), change input height
+    // will make them meaningless. So, do not change input height.
+    let input_height = this.input_height
+      = this.implicit_input_height
+      = this.explicit_input_height;
 
     // 3. Determine implicit input pixel count.
 
