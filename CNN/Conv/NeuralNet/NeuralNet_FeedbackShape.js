@@ -172,6 +172,16 @@ export { NeuralNet_FeedbackShape as FeedbackShape };
  * neural network because neural network generates two alignments' outputs in
  * one time.
  *
+ * @member {number} feedback_to_input_pixelCount_original_per_alignment
+ *   The .feedback_valueCount_per_alignment will be viewed as how many input
+ * pixels (without multiplied by .feedback_to_input_height_multiplier and
+ * .feedback_to_input_width_multiplier).
+ *
+ * @member {number} feedback_to_input_pixelCount_per_alignment
+ *   The .feedback_valueCount_per_alignment will be viewed as how many input
+ * pixels (with multiplied by .feedback_to_input_height_multiplier and
+ * .feedback_to_input_width_multiplier).
+ *
  * @member {number} feedback_to_input_height_multiplier
  *   When converting feedback values to implicit input pixels, how many times
  * should be replicated along the implicit input height.
@@ -245,7 +255,7 @@ class NeuralNet_FeedbackShape {
     // 3. Determine implicit input pixel count.
 
     // 3.1 Every input_channelCount feedback values as a implicit input pixel.
-    this.implicit_input_pixelCount_original_per_alignment
+    this.feedback_to_input_pixelCount_original_per_alignment
       = Math.ceil( feedback_valueCount_per_alignment / this.input_channelCount );
 
     // 3.2 Four (or two) times the implicit input pixel count along height (if
@@ -271,8 +281,8 @@ class NeuralNet_FeedbackShape {
     }
 
 //!!! ...unfinished... (2023/04/21)
-    this.implicit_input_pixelCount_per_alignment
-      = this.implicit_input_pixelCount_original_per_alignment
+    this.feedback_to_input_pixelCount_per_alignment
+      = this.feedback_to_input_pixelCount_original_per_alignment
           * this.feedback_to_input_height_multiplier
           * this.feedback_to_input_width_multiplier;
 
@@ -317,6 +327,9 @@ class NeuralNet_FeedbackShape {
 // this.feedback_to_input_height
 // this.feedback_to_input_width
 
+
+  this.implicit_input_pixelCount_per_alignment
+    = this.implicit_input_height * this.implicit_input_width;
 
 //!!! ...unfinished... (2023/04/19)
 // implicit input values are feedback values.
