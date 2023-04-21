@@ -252,8 +252,8 @@ class NeuralNet_FeedbackShape {
     //     exists) and width.
     //
     // Because neural network's stage's block0 will make the input image as
-    // quarter (i.e. half it along height and width (by strides = 2)), four
-    // times feedback pixel count to compensate the lost.
+    // half or quarter (i.e. half it along height and width (by strides = 2)),
+    // two or four times feedback pixel count to compensate the lost.
 
     // 3.2.1 If input is 1d data (e.g. text or voice), neural network's stage's
     //       block0 will not (in fact, can not) make the height half (i.e. only
