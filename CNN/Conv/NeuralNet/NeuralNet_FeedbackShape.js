@@ -268,8 +268,7 @@ class NeuralNet_FeedbackShape {
         = this.feedback_to_input_width_multiplier = 2;
 
     // If input is 2d data (e.g. image), use four times the feedback pixel
-    // count to compensate for neural network's stage's block0's making
-    // quarter.
+    // count to compensate.
     } else {
       feedback_to_input_height_multiplier
         = this.feedback_to_input_height_multiplier = 2;
