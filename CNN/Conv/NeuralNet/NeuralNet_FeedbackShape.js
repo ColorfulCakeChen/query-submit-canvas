@@ -314,9 +314,8 @@ class NeuralNet_FeedbackShape {
         = Math.ceil(
             Math.sqrt( this.feedback_to_input_pixelCount_per_alignment ) );
 
-      // 4.3
-      // But, if the (next time) explicit input has not enough height to contain
-      // the square shape of feedback, use rectangle shape.
+      // 4.3 But, if the (next time) explicit input has not enough height to
+      //     contain the square shape of feedback, use rectangle shape.
       if ( this.feedback_to_input_height > explicit_input_height ) {
         this.feedback_to_input_height = explicit_input_height;
         this.feedback_to_input_width = Math.ceil(
