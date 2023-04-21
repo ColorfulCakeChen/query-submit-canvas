@@ -236,8 +236,8 @@ class NeuralNet_FeedbackShape {
     //     exists) and width.
     //
     // Because neural network's stage's block0 will make the input image as
-    // quarter (i.e. half along height and width (by strides = 2)), making
-    // feedback pixel count four times to compensate that.
+    // quarter (i.e. half it along height and width (by strides = 2)), four
+    // times feedback pixel count to compensate the lost.
     let implicit_input_pixelCount_per_alignment;
 
     // 
