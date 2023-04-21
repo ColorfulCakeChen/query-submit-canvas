@@ -283,7 +283,6 @@ class NeuralNet_FeedbackShape {
       this.feedback_to_input_width_multiplier = 2;
     }
 
-//!!! ...unfinished... (2023/04/21)
     this.feedback_to_input_pixelCount_per_alignment
       = this.feedback_to_input_pixelCount_original_per_alignment
           * this.feedback_to_input_height_multiplier
