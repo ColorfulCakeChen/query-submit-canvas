@@ -246,27 +246,33 @@ class NeuralNet_FeedbackShape {
     // Because neural network's stage's block0 will make the input image as
     // quarter (i.e. half it along height and width (by strides = 2)), four
     // times feedback pixel count to compensate the lost.
+    let feedback_to_input_height_multiplier;
+    let feedback_to_input_width_multiplier;
 
     // If input is 1d data (e.g. text or voice), neural network's stage's block0
     // will not (in fact, can not) make the height half (i.e. only input width
     // will be halven). So, double the feedback pixel count is enough.
     if ( explicit_input_height == 1 ) {
-      this.implicit_input_height_multiplier = 1;
-      this.implicit_input_width_multiplier = 2;
+      feedback_to_input_height_multiplier
+        = this.feedback_to_input_height_multiplier = 1;
+      feedback_to_input_width_multiplier
+        = this.feedback_to_input_width_multiplier = 2;
 
     // If input is 2d data (e.g. image), use four times the feedback pixel
     // count to compensate for neural network's stage's block0's making
     // quarter.
     } else {
-      this.implicit_input_height_multiplier = 2;
-      this.implicit_input_width_multiplier = 2;
+      feedback_to_input_height_multiplier
+        = this.feedback_to_input_height_multiplier = 2;
+      feedback_to_input_width_multiplier
+        = this.feedback_to_input_width_multiplier = 2;
     }
 
     let implicit_input_pixelCount_per_alignment
       = this.implicit_input_pixelCount_per_alignment
       = implicit_input_pixelCount_original_per_alignment
-          * this.implicit_input_height_multiplier
-          * this.implicit_input_width_multiplier;
+          * feedback_to_input_height_multiplier
+          * feedback_to_input_width_multiplier;
 
 //!!! ...unfinished... (2023/04/21)
 
