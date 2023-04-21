@@ -223,21 +223,32 @@ class NeuralNet_FeedbackShape {
       = this.implicit_input_channelCount
       = this.explicit_input_channelCount;
 
-    // 3. 
+    // 3. Determine implicit input pixel count.
 
-    // Every input_channelCount feedback values as a implicit input pixel.
-    let implicit_input_pixelCount_per_alignment
+    // 3.1 Every input_channelCount feedback values as a implicit input pixel.
+    let implicit_input_pixelCount_original_per_alignment
+      = this.implicit_input_pixelCount_original_per_alignment
       = Math.ceil( feedback_valueCount_per_alignment / input_channelCount );
 
 //!!! ...unfinished... (2023/04/21)
 
-    let implicit_input_pixelCount_duplicated_per_alignment;
+    // 3.2 Four (or two) times the implicit input pixel count along height (if
+    //     exists) and width.
+    //
+    // Because neural network's stage's block0 will make the input image as
+    // quarter (i.e. half along height and width (by strides = 2)), making
+    // feedback pixel count four times to compensate that.
+    let implicit_input_pixelCount_per_alignment;
+
+    // 
     if ( explicit_input_height == 1 ) {
-      implicit_input_pixelCount_duplicated_per_alignment
-        = implicit_input_pixelCount_per_alignment * 2;
+      this.implicit_input_pixelCount_per_alignment
+        = implicit_input_pixelCount_per_alignment
+        = implicit_input_pixelCount_original_per_alignment * 2;
     } else {
-      implicit_input_pixelCount_duplicated_per_alignment
-        = implicit_input_pixelCount_per_alignment * 4;
+      this.implicit_input_pixelCount_per_alignment
+        = implicit_input_pixelCount_per_alignment
+        = implicit_input_pixelCount_original_per_alignment * 4;
     }
 
 !!!
