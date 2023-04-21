@@ -290,9 +290,6 @@ class NeuralNet_FeedbackShape {
 
     // 4.
 
-//!!! ...unfinished... (2023/04/21)
-
-
     // 4.1 If the (next time) explicit input is 1d, the feedback (as implicit
     //     input) should also be 1d and prefix (i.e. at the left most of) the
     //     (next time) explicit input.
@@ -317,7 +314,7 @@ class NeuralNet_FeedbackShape {
         = Math.ceil(
             Math.sqrt( this.feedback_to_input_pixelCount_per_alignment ) );
 
-      // 3.3
+      // 4.3
       // But, if the (next time) explicit input has not enough height to contain
       // the square shape of feedback, use rectangle shape.
       if ( this.feedback_to_input_height > explicit_input_height ) {
@@ -329,14 +326,14 @@ class NeuralNet_FeedbackShape {
     }
 
 //!!! ...unfinished... (2023/04/21)
-
-    // 3.4
-    let implicit_input_height = this.implicit_input_height = height_2d;
-    let implicit_input_width = this.implicit_input_width = width_2d;
-
-//!!! ...unfinished... (2023/04/20)
 // two alignments of two neural network.
 // There are 4 (= 2 * 2) feedback information blocks.
+
+//!!! ...unfinished... (2023/04/21)
+
+    // 4.4
+    let implicit_input_height = this.implicit_input_height = height_2d;
+    let implicit_input_width = this.implicit_input_width = width_2d;
 
 
 //!!! ...unfinished... (2023/04/21)
