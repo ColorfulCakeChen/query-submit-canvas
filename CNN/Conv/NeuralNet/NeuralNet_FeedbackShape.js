@@ -230,7 +230,7 @@ class NeuralNet_FeedbackShape {
     // Since implicit input data will be arranged along the height and width,
     // the explicit and implicit input channel count should always be the same
     // as input_channelCount.
-    let input_channelCount = this.input_channelCount
+    this.input_channelCount
       = this.implicit_input_channelCount
       = this.explicit_input_channelCount;
 
@@ -238,16 +238,15 @@ class NeuralNet_FeedbackShape {
     //
     // Because input may be 1d data (e.g. text or voice), change input height
     // will make them meaningless. So, do not change input height.
-    let input_height = this.input_height
+    this.input_height
       = this.implicit_input_height
       = this.explicit_input_height;
 
     // 3. Determine implicit input pixel count.
 
     // 3.1 Every input_channelCount feedback values as a implicit input pixel.
-    let implicit_input_pixelCount_original_per_alignment
-      = this.implicit_input_pixelCount_original_per_alignment
-      = Math.ceil( feedback_valueCount_per_alignment / input_channelCount );
+    this.implicit_input_pixelCount_original_per_alignment
+      = Math.ceil( feedback_valueCount_per_alignment / this.input_channelCount );
 
     // 3.2 Four (or two) times the implicit input pixel count along height (if
     //     exists) and width.
@@ -255,32 +254,26 @@ class NeuralNet_FeedbackShape {
     // Because neural network's stage's block0 will make the input image as
     // quarter (i.e. half it along height and width (by strides = 2)), four
     // times feedback pixel count to compensate the lost.
-    let feedback_to_input_height_multiplier;
-    let feedback_to_input_width_multiplier;
 
     // If input is 1d data (e.g. text or voice), neural network's stage's block0
     // will not (in fact, can not) make the height half (i.e. only input width
     // will be halven). So, double the feedback pixel count is enough.
     if ( explicit_input_height == 1 ) {
-      feedback_to_input_height_multiplier
-        = this.feedback_to_input_height_multiplier = 1;
-      feedback_to_input_width_multiplier
-        = this.feedback_to_input_width_multiplier = 2;
+      this.feedback_to_input_height_multiplier = 1;
+      this.feedback_to_input_width_multiplier = 2;
 
     // If input is 2d data (e.g. image), use four times the feedback pixel
     // count to compensate.
     } else {
-      feedback_to_input_height_multiplier
-        = this.feedback_to_input_height_multiplier = 2;
-      feedback_to_input_width_multiplier
-        = this.feedback_to_input_width_multiplier = 2;
+      this.feedback_to_input_height_multiplier = 2;
+      this.feedback_to_input_width_multiplier = 2;
     }
 
-    let implicit_input_pixelCount_per_alignment
-      = this.implicit_input_pixelCount_per_alignment
-      = implicit_input_pixelCount_original_per_alignment
-          * feedback_to_input_height_multiplier
-          * feedback_to_input_width_multiplier;
+//!!! ...unfinished... (2023/04/21)
+    this.implicit_input_pixelCount_per_alignment
+      = this.implicit_input_pixelCount_original_per_alignment
+          * this.feedback_to_input_height_multiplier
+          * this.feedback_to_input_width_multiplier;
 
 //!!! ...unfinished... (2023/04/21)
 
