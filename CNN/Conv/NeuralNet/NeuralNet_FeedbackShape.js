@@ -321,6 +321,12 @@ class NeuralNet_FeedbackShape {
         this.feedback_to_input_width = Math.ceil(
           this.feedback_to_input_pixelCount_per_alignment
             / explicit_input_height );
+
+      } else {
+
+//!!! ...unfinished... (2023/04/21)
+// Try arrange these square along input height.
+
       }
     }
 
