@@ -288,30 +288,45 @@ class NeuralNet_FeedbackShape {
           * this.feedback_to_input_height_multiplier
           * this.feedback_to_input_width_multiplier;
 
+    // 4.
+
 //!!! ...unfinished... (2023/04/21)
 
 
     // If the (next time) explicit input is 1d, the feedback (as implicit
     // input) should also be 1d and prefix (i.e. at the left most of) the
     // (next time) explicit input.
+    if ( explicit_input_height == 1 ) {
+
+      this.feedback_to_input_height = 1;
+      this.feedback_to_input_width
+        = this.feedback_to_input_pixelCount_per_alignment;
+
+//!!! ...unfinished... (2023/04/21)
 
     // 3.2
     // If the (next time) explicit input is 2d, the feedback (as implicit
     // input) should also be 2d and placed at left most of the (next time)
     // explicit input.
+    } else {
 
-    // Prefer the square feedback shape because it fairly expresses the
-    // correlation along height and width.
-    let width_2d = Math.ceil( Math.sqrt( feedback_pixelCount_per_alignment ) );
-    let height_2d = width_2d;
+//!!! ...unfinished... (2023/04/21)
 
-    // 3.3
-    // But, if the (next time) explicit input has not enough height to contain
-    // the square shape of feedback, use rectangle shape.
-    if ( height_2d > explicit_input_height ) {
-      width_2d = Math.ceil( feedback_pixelCount_per_alignment / explicit_input_height );
-      height_2d = explicit_input_height;
+      // Prefer the square feedback shape because it fairly expresses the
+      // correlation along height and width.
+      let width_2d = Math.ceil( Math.sqrt( feedback_pixelCount_per_alignment ) );
+      let height_2d = width_2d;
+
+      // 3.3
+      // But, if the (next time) explicit input has not enough height to contain
+      // the square shape of feedback, use rectangle shape.
+      if ( height_2d > explicit_input_height ) {
+        width_2d = Math.ceil( feedback_pixelCount_per_alignment / explicit_input_height );
+        height_2d = explicit_input_height;
+      }
     }
+
+//!!! ...unfinished... (2023/04/21)
 
     // 3.4
     let implicit_input_height = this.implicit_input_height = height_2d;
