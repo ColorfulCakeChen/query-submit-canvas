@@ -250,7 +250,9 @@ class NeuralNet_FeedbackShape {
     // times feedback pixel count to compensate the lost.
     let implicit_input_pixelCount_per_alignment;
 
-    // 
+    // If input is 1d (e.g. text or voice), neural network's stage's block0
+    // will not (in fact, can not) make the height half (i.e. only input width
+    // will be halven). So, double the feedback pixel count is enough.
     if ( explicit_input_height == 1 ) {
       this.implicit_input_pixelCount_per_alignment
         = implicit_input_pixelCount_per_alignment
