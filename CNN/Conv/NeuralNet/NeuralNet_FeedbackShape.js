@@ -185,12 +185,12 @@ export { NeuralNet_FeedbackShape as FeedbackShape };
  * @member {number} feedback_to_input_height_multiplier
  *   When converting feedback values to implicit input pixels, how many times
  * should be replicated along the implicit input height. It is mainly used to
- * confront neural network's stage's block0's making a quarter.
+ * confront neural network's stage's block0's halving height.
  *
  * @member {number} feedback_to_input_width_multiplier
  *   When converting feedback values to implicit input pixels, how many times
  * should be replicated along the implicit input width. It is mainly used to
- * confront neural network's stage's block0's making a quarter.
+ * confront neural network's stage's block0's halving width.
  *
  *
  *
