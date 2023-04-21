@@ -169,7 +169,8 @@ export { NeuralNet_FeedbackShape as FeedbackShape };
  * @member {number} feedback_valueCount_per_alignment
  *   The feedback (of an alignement of a neural network) has how many values.
  * Usually, it is half of the (previous time) output channel count of a
- * neural network.
+ * neural network because neural network generates two alignments' outputs in
+ * one time.
  *
  *
  *
@@ -222,28 +223,29 @@ class NeuralNet_FeedbackShape {
       = this.implicit_input_channelCount
       = this.explicit_input_channelCount;
 
-    // 3.
+    // 3. 
 
-    // 3.1
-    // If the (next time) explicit input is 1d, the feedback (as implicit
-    // input) should also be 1d and prefix (i.e. at the left most of) the
-    // (next time) explicit input.
-    let feedback_pixelCount_per_alignment
+    // Every input_channelCount feedback values as a implicit input pixel.
+    let implicit_input_pixelCount_per_alignment
       = Math.ceil( feedback_valueCount_per_alignment / input_channelCount );
 
 //!!! ...unfinished... (2023/04/21)
 
-    let feedback_pixelCount_duplicated_per_alignment;
+    let implicit_input_pixelCount_duplicated_per_alignment;
     if ( explicit_input_height == 1 ) {
-      feedback_pixelCount_duplicated_per_alignment
-        = feedback_pixelCount_per_alignment * 2;
+      implicit_input_pixelCount_duplicated_per_alignment
+        = implicit_input_pixelCount_per_alignment * 2;
     } else {
-      feedback_pixelCount_duplicated_per_alignment
-        = feedback_pixelCount_per_alignment * 4;
+      implicit_input_pixelCount_duplicated_per_alignment
+        = implicit_input_pixelCount_per_alignment * 4;
     }
 
 !!!
 // two times or four times     feedback_pixelCount_per_alignment
+
+    // If the (next time) explicit input is 1d, the feedback (as implicit
+    // input) should also be 1d and prefix (i.e. at the left most of) the
+    // (next time) explicit input.
 
     // 3.2
     // If the (next time) explicit input is 2d, the feedback (as implicit
