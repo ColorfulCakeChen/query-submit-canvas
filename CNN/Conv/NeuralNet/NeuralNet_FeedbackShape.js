@@ -255,15 +255,16 @@ class NeuralNet_FeedbackShape {
     // quarter (i.e. half it along height and width (by strides = 2)), four
     // times feedback pixel count to compensate the lost.
 
-    // If input is 1d data (e.g. text or voice), neural network's stage's block0
-    // will not (in fact, can not) make the height half (i.e. only input width
-    // will be halven). So, double the feedback pixel count is enough.
+    // 3.2.1 If input is 1d data (e.g. text or voice), neural network's stage's
+    //       block0 will not (in fact, can not) make the height half (i.e. only
+    //       input width will be halven). So, double the feedback pixel count
+    //       is enough.
     if ( explicit_input_height == 1 ) {
       this.feedback_to_input_height_multiplier = 1;
       this.feedback_to_input_width_multiplier = 2;
 
-    // If input is 2d data (e.g. image), use four times the feedback pixel
-    // count to compensate.
+    // 3.2.2 If input is 2d data (e.g. image), use four times the feedback
+    //       pixel count to compensate.
     } else {
       this.feedback_to_input_height_multiplier = 2;
       this.feedback_to_input_width_multiplier = 2;
