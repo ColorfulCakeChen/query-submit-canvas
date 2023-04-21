@@ -240,15 +240,12 @@ class NeuralNet_FeedbackShape {
       = this.implicit_input_pixelCount_original_per_alignment
       = Math.ceil( feedback_valueCount_per_alignment / input_channelCount );
 
-//!!! ...unfinished... (2023/04/21)
-
     // 3.2 Four (or two) times the implicit input pixel count along height (if
     //     exists) and width.
     //
     // Because neural network's stage's block0 will make the input image as
     // quarter (i.e. half it along height and width (by strides = 2)), four
     // times feedback pixel count to compensate the lost.
-    let implicit_input_pixelCount_per_alignment;
 
     // If input is 1d data (e.g. text or voice), neural network's stage's block0
     // will not (in fact, can not) make the height half (i.e. only input width
@@ -265,15 +262,14 @@ class NeuralNet_FeedbackShape {
       this.implicit_input_width_multiplier = 2;
     }
 
-
-    this.implicit_input_pixelCount_per_alignment
-      = implicit_input_pixelCount_per_alignment
+    let implicit_input_pixelCount_per_alignment
+      = this.implicit_input_pixelCount_per_alignment
       = implicit_input_pixelCount_original_per_alignment
           * this.implicit_input_height_multiplier
           * this.implicit_input_width_multiplier;
 
-!!!
-// two times or four times     feedback_pixelCount_per_alignment
+//!!! ...unfinished... (2023/04/21)
+
 
     // If the (next time) explicit input is 1d, the feedback (as implicit
     // input) should also be 1d and prefix (i.e. at the left most of) the
