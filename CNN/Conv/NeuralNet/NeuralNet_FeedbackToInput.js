@@ -364,8 +364,11 @@ class NeuralNet_FeedbackToInput {
       let    = 0;
       for ( let h = 0; h < this.height_blockCount; ++h ) {
         for ( let w = 0; w < this.width_blockCount; ++w ) {
+          let left = ( h * this.height_pixelCount_per_alignment );
+          let top = ( w * this.width_pixelCount_per_alignment );
+
           this.block_position_leftArrayArray[ i ]
-            = ( h * this.height_blockCount ) + ( w * this.width_blockCount );
+            =  + ;
         }
       }
     }
