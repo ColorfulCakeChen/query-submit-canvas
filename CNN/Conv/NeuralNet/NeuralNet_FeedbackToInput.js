@@ -371,11 +371,20 @@ class NeuralNet_FeedbackToInput {
 
       for ( let i = 0; i < this.neuralNetCount; ++i ) {
 
-        let block_position_leftArray = this.block_position_leftArrayArray[ i ]
-          = new Array( this.alignmentCount );
+        if ( this.block_position_leftArrayArray[ i ] )
+          this.block_position_leftArrayArray[ i ].length = this.alignmentCount;
+        else
+          this.block_position_leftArrayArray[ i ]
+            = new Array( this.alignmentCount );
 
-        let block_position_topArray = this.block_position_topArrayArray[ i ]
-          = new Array( this.alignmentCount );
+        if ( this.block_position_topArrayArray[ i ] )
+          this.block_position_topArrayArray[ i ].length = this.alignmentCount;
+        else
+          this.block_position_topArrayArray[ i ]
+            = new Array( this.alignmentCount );
+
+        let block_position_leftArray = this.block_position_leftArrayArray[ i ];
+        let block_position_topArray = this.block_position_topArrayArray[ i ];
 
         for ( let j = 0; j < this.alignmentCount; ++j ) {
           block_position_leftArray[ j ] = ;
