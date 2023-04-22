@@ -139,6 +139,13 @@ export { NeuralNet_FeedbackShape as FeedbackShape };
  * @member {number} input_channelCount
  *   The whole input image's channel count.
  *
+ * @member {number} input_pixelCount
+ *   The whole input image's pixel count.
+ *
+ * @member {number} input_valueCount
+ *   The whole input image's value count. (Note: Every pixel has
+ * .input_channelCount valus.)
+ *
  *
  * @member {number} explicit_input_height
  *   The explicit (i.e. user visible) input image's height. It is equal to or
@@ -363,20 +370,27 @@ class NeuralNet_FeedbackShape {
 // this.feedback_to_input_width
 
 
-  this.implicit_input_pixelCount_per_alignment
-    = this.implicit_input_height * this.implicit_input_width;
+    this.implicit_input_pixelCount_per_alignment
+      = this.implicit_input_height * this.implicit_input_width;
 
 //!!! ...unfinished... (2023/04/19)
 // implicit input values are feedback values.
 
+    this.input_pixelCount = this.input_height * this.input_width;
+    this.input_valueCount = this.input_pixelCount * this.input_channelCount;
 
   }
 
 //!!! ...unfinished... (2023/04/22)
   /**
    *
+   * @param {Uint8ClampedArray|Int32Array} input_TypedArray
+   *   The (next time) input of the pair of neural networks. Usually, it is
+   * integer typed array. It should large enough to contain both implicit and
+   * explicit input.
+   *
    * @param {Int32Array[]} previous_output_Int32ArrayArray
-   *   The previous time output of the pair of neural networks.
+   *   The (previous time) output of the pair of neural networks.
    *
    *   - previous_output_Int32ArrayArray[ 0 ]
    *       [ 0 .. ( this.feedback_valueCount_per_alignment - 1 ) ]
@@ -402,12 +416,21 @@ class NeuralNet_FeedbackShape {
    *
    */
   set_implicit_input_by_previous_output(
-
+    input_TypedArray,
     previous_output_Int32ArrayArray
   ) {
 
     const funcNameInMessage = "set_implicit_input_by_previous_output";
 
+//!!! ...unfinished... (2023/04/22)
+
+    if ( input_TypedArray.length != this.input_valueCount )
+      throw Error( `NeuralNet_FeedbackShape.${funcNameInMessage}(): `
+        + `input_TypedArray.length ( ${input_TypedArray.length} ) `
+        + `should be the same as `
+        + `.input_valueCount `
+        + `( ${this.input_valueCount} ).`
+      );
 
 //!!! ...unfinished... (2023/04/22)
     if ( previous_output_Int32ArrayArray.length != 2 )
