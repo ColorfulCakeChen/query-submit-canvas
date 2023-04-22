@@ -368,7 +368,7 @@ class NeuralNet_FeedbackShape {
           * this.feedback_to_input_height_multiplier
           * this.feedback_to_input_width_multiplier;
 
-    // feedback information blocks gaps should also be enlarged.
+    // feedback_to_input blocks' gaps should also be enlarged.
     {
       this.feedback_to_input_block_gap_height
         = this.feedback_to_input_block_gap_height_original
@@ -379,7 +379,7 @@ class NeuralNet_FeedbackShape {
             * this.feedback_to_input_width_multiplier;
     }
 
-    // 4.
+    // 4. Determine feedback_to_input block shape.
 
     // 4.1 If the (next time) explicit input is 1d, the feedback (as implicit
     //     input) should also be 1d and prefix (i.e. at the left most of) the
