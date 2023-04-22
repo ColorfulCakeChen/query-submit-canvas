@@ -444,7 +444,7 @@ class NeuralNet_FeedbackToInput {
    * @param {number} this.block_position_topArrayArray
    */
   static block_position_fill() {
-    // 1.
+    // 1. Create all ( left, top ) coordinates.
     let leftArray = new Array( this.blockCount );
     let topArray = new Array( this.blockCount );
     {
@@ -470,12 +470,17 @@ class NeuralNet_FeedbackToInput {
       }
     }
 
-    // 2.
+    // 2. Distribute all ( left, top ) coordinates to neural networks'
+    //    alignments.
     {
       let i = 0;
       for ( let n = 0; n < this.neuralNetCount; ++n ) {
-        let block_position_leftArray = this.block_position_leftArrayArray[ n ];
-        let block_position_topArray = this.block_position_topArrayArray[ n ];
+
+        let block_position_leftArray
+          = this.block_position_leftArrayArray[ n ];
+
+        let block_position_topArray
+          = this.block_position_topArrayArray[ n ];
 
         for ( let a = 0; a < this.alignmentCount; ++a ) {
           block_position_leftArray[ a ] = leftArray[ i ];
