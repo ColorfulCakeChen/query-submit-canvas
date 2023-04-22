@@ -356,8 +356,8 @@ class NeuralNet_FeedbackToInput {
         this.blockCount / this.height_blockCount );
     }
 
-    // 7. The array of position ( left, top ) in input image for every
-    //    feedback_to_input block.
+    // 7. Determine every feedback_to_input block's ( left, top ) position
+    //    in input image.
     {
       NeuralNet_FeedbackToInput.block_position_create.call( this );
       NeuralNet_FeedbackToInput.block_position_fill.call( this );
