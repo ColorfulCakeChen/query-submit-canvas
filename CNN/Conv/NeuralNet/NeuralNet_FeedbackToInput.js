@@ -369,19 +369,23 @@ class NeuralNet_FeedbackToInput {
       else
         this.block_position_topArrayArray = new Array( this.neuralNetCount );
 
-//!!! ...unfinished... (2023/04/22)
-      // this.neuralNetCount
-      // this.alignmentCount
-
       for ( let i = 0; i < this.neuralNetCount; ++i ) {
 
-        this.block_position_leftArrayArray[ i ]
+        let block_position_leftArray = this.block_position_leftArrayArray[ i ]
           = new Array( this.alignmentCount );
 
-        this.block_position_topArrayArray[ i ]
+        let block_position_topArray = this.block_position_topArrayArray[ i ]
           = new Array( this.alignmentCount );
 
         for ( let j = 0; j < this.alignmentCount; ++j ) {
+          block_position_leftArray[ j ] = ;
+          block_position_topArray[ j ] = ;
+
+//!!! ...unfinished... (2023/04/22)
+
+
+        }
+      }
 
   
       let    = 0;
