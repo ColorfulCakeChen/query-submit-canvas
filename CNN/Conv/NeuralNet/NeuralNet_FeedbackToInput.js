@@ -259,11 +259,6 @@ class NeuralNet_FeedbackToInput {
       this.height_pixelCount_per_alignment = 1;
       this.width_pixelCount_per_alignment = this.pixelCount_per_alignment;
 
-      // Since input has no extra height to contain more feedback_to_input
-      // blocks, it is only possible to place 1 feedback_to_input block along
-      // the height.
-      this.height_blockCount = 1;
-
     // 5.2 If the (next time) explicit input is 2d, the feedback (as implicit
     //     input) should also be 2d and placed at left most of the (next time)
     //     explicit input.
@@ -283,11 +278,6 @@ class NeuralNet_FeedbackToInput {
 
         this.width_pixelCount_per_alignment = Math.ceil(
           this.pixelCount_per_alignment / explicit_input_height );
-  
-        // Since input has no extra height to contain more feedback_to_input
-        // blocks, it is only possible to place 1 feedback_to_input block along
-        // the height.
-        this.height_blockCount = 1;
       }
     }
 
