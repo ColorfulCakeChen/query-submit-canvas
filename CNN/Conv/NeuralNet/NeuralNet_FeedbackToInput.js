@@ -262,6 +262,10 @@ class NeuralNet_FeedbackToInput {
 //!!! ...unfinished... (2023/04/21)
 // Try arrange these square along input height.
 
+//!!! ...unfinished... (2023/04/22)
+// this.height_pixelCount_per_alignment
+// this.width_pixelCount_per_alignment
+
         this.height_blockCount = ???;
 
       }
@@ -278,10 +282,6 @@ class NeuralNet_FeedbackToInput {
 //   - implicit and explicit input data.
 //   - feedback of different alignment and neural network.
 
-
-//!!! ...unfinished... (2023/04/21)
-// this.feedback_to_input_height_pixelCount_per_alignment
-// this.feedback_to_input_width_pixelCount_per_alignment
 
   }
 
