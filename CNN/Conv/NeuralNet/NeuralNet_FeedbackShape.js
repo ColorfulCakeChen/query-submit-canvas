@@ -435,6 +435,9 @@ class NeuralNet_FeedbackShape {
       }
     }
 
+//!!! ...unfinished... (2023/04/22)
+// What if can not divisible? (e.g. 4 / 3 )
+
     this.feedback_to_input_width_blockCount
       = this.feedback_to_input_blockCount
           / this.feedback_to_input_height_blockCount;
