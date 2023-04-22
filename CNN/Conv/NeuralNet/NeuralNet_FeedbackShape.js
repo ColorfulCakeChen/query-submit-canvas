@@ -131,10 +131,14 @@ export { NeuralNet_FeedbackShape as FeedbackShape };
  *
  *
  * @member {number} input_height
- *   The whole input image's height.
+ *   The whole input image's height. (pixel count)
  *
  * @member {number} input_width
- *   The whole input image's width.
+ *   The whole input image's width. (pixel count)
+ *
+ * @member {number} input_width_valueCount
+ *   The whole input image's width (value count). (Note: Every pixel has
+ * .input_channelCount values.)
  *
  * @member {number} input_channelCount
  *   The whole input image's channel count.
@@ -144,7 +148,7 @@ export { NeuralNet_FeedbackShape as FeedbackShape };
  *
  * @member {number} input_valueCount
  *   The whole input image's value count. (Note: Every pixel has
- * .input_channelCount valus.)
+ * .input_channelCount values.)
  *
  *
  * @member {number} explicit_input_height
@@ -408,6 +412,7 @@ class NeuralNet_FeedbackShape {
 
 //!!! ...unfinished... (2023/04/19)
 // implicit input values are feedback values.
+    this.input_width_valueCount = this.input_width * this.input_channelCount;
 
     this.input_pixelCount = this.input_height * this.input_width;
     this.input_valueCount = this.input_pixelCount * this.input_channelCount;
