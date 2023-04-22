@@ -323,7 +323,8 @@ class NeuralNet_FeedbackToInput {
           break;
       }
 
-      this.width_blockCount = this.blockCount / this.height_blockCount;
+      this.width_blockCount = Math.ceil(
+        this.blockCount / this.height_blockCount );
 
     //!!! ...unfinished... (2023/04/22)
     // this.height_pixelCount_per_alignment
@@ -332,7 +333,6 @@ class NeuralNet_FeedbackToInput {
     // this.height_with_gap_pixelCount_per_alignment
     // this.width_with_gap_pixelCount_per_alignment
     
-             = ???;
     }
  
 
