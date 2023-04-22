@@ -474,8 +474,8 @@ class NeuralNet_FeedbackShape {
 //!!! ...unfinished... (2023/04/21)
 
     // 4.4
-    let implicit_input_height = this.implicit_input_height = height_2d;
-    let implicit_input_width = this.implicit_input_width = width_2d;
+    this.implicit_input_height = height_2d;
+    this.implicit_input_width = width_2d;
 
 
 //!!! ...unfinished... (2023/04/21)
