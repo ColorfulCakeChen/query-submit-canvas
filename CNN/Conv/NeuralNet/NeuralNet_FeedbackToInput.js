@@ -42,6 +42,18 @@ export { NeuralNet_FeedbackToInput as FeedbackToInput };
  * It is two times of .valueCount_per_alignment because a neural
  * network generates two alignments' outputs in one time.
  *
+ *
+ * @member {number} height_multiplier
+ *   When converting feedback values to implicit input pixels, how many times
+ * should be replicated along the implicit input height. It is mainly used to
+ * confront neural network's stage's block0's halving height.
+ *
+ * @member {number} width_multiplier
+ *   When converting feedback values to implicit input pixels, how many times
+ * should be replicated along the implicit input width. It is mainly used to
+ * confront neural network's stage's block0's halving width.
+ *
+ *
  * @member {number} pixelCount_original_per_alignment
  *   The .valueCount_per_alignment will be viewed as how many input pixels
  * (without multiplied by .height_multiplier and .width_multiplier).
@@ -53,18 +65,15 @@ export { NeuralNet_FeedbackToInput as FeedbackToInput };
  * @member {number} height_pixelCount_per_alignment
  *   The height (in pixel count) of .pixelCount_per_alignment.
  *
+ * @member {number} height_with_gap_pixelCount_per_alignment
+ *   ( .height_pixelCount_per_alignment + .block_gap_height )
+ *
  * @member {number} width_pixelCount_per_alignment
  *   The width (in pixel count) of .pixelCount_per_alignment.
  *
- * @member {number} height_multiplier
- *   When converting feedback values to implicit input pixels, how many times
- * should be replicated along the implicit input height. It is mainly used to
- * confront neural network's stage's block0's halving height.
+ * @member {number} width_with_gap_pixelCount_per_alignment
+ *   ( .width_pixelCount_per_alignment + .block_gap_width )
  *
- * @member {number} width_multiplier
- *   When converting feedback values to implicit input pixels, how many times
- * should be replicated along the implicit input width. It is mainly used to
- * confront neural network's stage's block0's halving width.
  *
  * @member {number} blockCount
  *   There are how many feedback blocks be put in the (next time) input. It is
@@ -195,34 +204,34 @@ class NeuralNet_FeedbackToInput {
         this.position_topArray = new Array( this.blockCount );
     }
 
-    // 3. Determine implicit input pixel count.
-
-    // 3.1 Every input_channelCount feedback values as an implicit input pixel.
-    this.pixelCount_original_per_alignment = Math.ceil(
-      this.valueCount_per_alignment / this.input_channelCount );
-
-    // 3.2 Four (or two) times the implicit input pixel count along height (if
+    // 3. Four (or two) times the implicit input pixel count along height (if
     //     exists) and width.
     //
     // Because neural network's stage's block0 will make the input image as
     // half or quarter (i.e. half it along height and width (by strides = 2)),
     // two or four times feedback pixel count to compensate the lost.
 
-    // 3.2.1 If input is 1d data (e.g. text or voice), neural network's stage's
-    //       block0 will not (in fact, can not) make the height half (i.e. only
-    //       input width will be halven). So, double the feedback pixel count
-    //       is enough.
+    // 3.1 If input is 1d data (e.g. text or voice), neural network's stage's
+    //     block0 will not (in fact, can not) make the height half (i.e. only
+    //     input width will be halven). So, double the feedback pixel count
+    //     is enough.
     if ( explicit_input_height == 1 ) {
       this.height_multiplier = 1;
       this.width_multiplier = 2;
 
-    // 3.2.2 If input is 2d data (e.g. image), use four times the feedback
-    //       pixel count to confront neural network's stage's block0's making
-    //       a quarter.
+    // 3.2 If input is 2d data (e.g. image), use four times the feedback
+    //     pixel count to confront neural network's stage's block0's making
+    //     a quarter.
     } else {
       this.height_multiplier = 2;
       this.width_multiplier = 2;
     }
+
+    // 4. Determine implicit input pixel count.
+
+    // 4.1 Every input_channelCount feedback values as an implicit input pixel.
+    this.pixelCount_original_per_alignment = Math.ceil(
+      this.valueCount_per_alignment / this.input_channelCount );
 
     this.pixelCount_per_alignment
       = this.pixelCount_original_per_alignment
@@ -237,9 +246,9 @@ class NeuralNet_FeedbackToInput {
         = this.block_gap_width_original * this.width_multiplier;
     }
 
-    // 4. Determine feedback_to_input block shape.
+    // 5. Determine feedback_to_input block shape.
 
-    // 4.1 If the (next time) explicit input is 1d, the feedback (as implicit
+    // 5.1 If the (next time) explicit input is 1d, the feedback (as implicit
     //     input) should also be 1d and prefix (i.e. at the left most of) the
     //     (next time) explicit input.
     if ( explicit_input_height == 1 ) {
@@ -249,9 +258,8 @@ class NeuralNet_FeedbackToInput {
       this.height_pixelCount_per_alignment = 1;
       this.width_pixelCount_per_alignment = this.pixelCount_per_alignment;
 
-
       this.height_with_gap_pixelCount_per_alignment
-        = this.height_pixelCount_per_alignment; // bottom block has no gap.
+        = this.height_pixelCount_per_alignment + this.block_gap_height;
 
       this.width_with_gap_pixelCount_per_alignment
         = this.width_pixelCount_per_alignment + this.block_gap_width;
@@ -262,7 +270,7 @@ class NeuralNet_FeedbackToInput {
       // the height.
       this.height_blockCount = 1;
 
-    // 4.2 If the (next time) explicit input is 2d, the feedback (as implicit
+    // 5.2 If the (next time) explicit input is 2d, the feedback (as implicit
     //     input) should also be 2d and placed at left most of the (next time)
     //     explicit input.
     } else {
@@ -275,7 +283,7 @@ class NeuralNet_FeedbackToInput {
         = this.width_pixelCount_per_alignment
         = Math.ceil( Math.sqrt( this.pixelCount_per_alignment ) );
 
-      // 4.3 But, if the (next time) explicit input has not enough height to
+      // 5.3 But, if the (next time) explicit input has not enough height to
       //     contain the square shape of feedback, use rectangle shape.
       if ( this.height_pixelCount_per_alignment > explicit_input_height ) {
 
@@ -286,7 +294,7 @@ class NeuralNet_FeedbackToInput {
 
 
         this.height_with_gap_pixelCount_per_alignment
-        = this.height_pixelCount_per_alignment; // bottom block has no gap.
+          = this.height_pixelCount_per_alignment + this.block_gap_height;
   
         this.width_with_gap_pixelCount_per_alignment
           = this.width_pixelCount_per_alignment + this.block_gap_width;
@@ -297,7 +305,9 @@ class NeuralNet_FeedbackToInput {
         // the height.
         this.height_blockCount = 1;
 
+      // 5.4
       } else {
+
 
 //!!! ...unfinished... (2023/04/21)
 // Try arrange these square along input height.
