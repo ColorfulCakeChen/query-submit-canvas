@@ -169,8 +169,14 @@ export { NeuralNet_FeedbackShape as FeedbackShape };
  * @member {number} feedback_valueCount_per_alignment
  *   The feedback (of an alignement of a neural network) has how many values.
  * Usually, it is half of the (previous time) output channel count of a
- * neural network because neural network generates two alignments' outputs in
+ * neural network because a neural network generates two alignments' outputs in
  * one time.
+ *
+ * @member {number} feedback_valueCount_per_neural_network
+ *   The feedback (of both alignements of a neural network) has how many values.
+ * Usually, it is the (previous time) output channel count of a neural network.
+ * It is two times of .feedback_valueCount_per_alignment because a neural
+ * network generates two alignments' outputs in one time.
  *
  * @member {number} feedback_to_input_pixelCount_original_per_alignment
  *   The .feedback_valueCount_per_alignment will be viewed as how many input
@@ -236,6 +242,9 @@ class NeuralNet_FeedbackShape {
           feedback_valueCount_per_alignment );
 
     // 2.
+
+    this.feedback_valueCount_per_neural_network
+      = this.feedback_valueCount_per_alignment * 2;
 
     // 2.1 Keep input channel count.
     //
@@ -371,27 +380,62 @@ class NeuralNet_FeedbackShape {
    *
    *   - previous_output_Int32ArrayArray[ 0 ]
    *       [ 0 .. ( this.feedback_valueCount_per_alignment - 1 ) ]
-   *       is the output of neural network 0 when it personates alignment 0.
+   *       is the (previous time) output of neural network 0 when it personates
+   *       alignment 0.
    *
    *   - previous_output_Int32ArrayArray[ 0 ]
    *       [ this.feedback_valueCount_per_alignment
    *         .. ( ( 2 * this.feedback_valueCount_per_alignment ) - 1 ) ]
-   *       is the output of neural network 0 when it personates alignment 1.
+   *       is the (previous time) output of neural network 0 when it personates
+   *       alignment 1.
    *
    *   - previous_output_Int32ArrayArray[ 1 ]
    *       [ 0 .. ( this.feedback_valueCount_per_alignment - 1 ) ]
-   *       is the output of neural network 1 when it personates alignment 0.
+   *       is the (previous time) output of neural network 1 when it personates
+   *       alignment 0.
    *
    *   - previous_output_Int32ArrayArray[ 1 ]
    *       [ this.feedback_valueCount_per_alignment
    *         .. ( ( 2 * this.feedback_valueCount_per_alignment ) - 1 ) ]
-   *       is the output of neural network 1 when it personates alignment 1.
+   *       is the (previous time) output of neural network 1 when it personates
+   *       alignment 1.
    *
    */
   set_implicit_input_by_previous_output(
 
     previous_output_Int32ArrayArray
   ) {
+
+    const funcNameInMessage = "set_implicit_input_by_previous_output";
+
+
+//!!! ...unfinished... (2023/04/22)
+    if ( previous_output_Int32ArrayArray.length != 2 )
+      throw Error( `NeuralNet_FeedbackShape.${funcNameInMessage}(): `
+        + `previous_output_Int32ArrayArray.length `
+        + `( ${previous_output_Int32ArrayArray.length} ) should be 2.`
+      );
+
+    if ( previous_output_Int32ArrayArray[ 0 ].length
+           != this.feedback_valueCount_per_neural_network )
+      throw Error( `NeuralNet_FeedbackShape.${funcNameInMessage}(): `
+        + `previous_output_Int32ArrayArray[ 0 ].length `
+        + `( ${previous_output_Int32ArrayArray[ 0 ].length} ) `
+        + `should be the same as `
+        + `.feedback_valueCount_per_neural_network `
+        + `( ${this.feedback_valueCount_per_neural_network} ).`
+      );
+
+    if ( previous_output_Int32ArrayArray[ 1 ].length
+           != this.feedback_valueCount_per_neural_network )
+      throw Error( `NeuralNet_FeedbackShape.${funcNameInMessage}(): `
+        + `previous_output_Int32ArrayArray[ 1 ].length `
+        + `( ${previous_output_Int32ArrayArray[ 1 ].length} ) `
+        + `should be the same as `
+        + `.feedback_valueCount_per_neural_network `
+        + `( ${this.feedback_valueCount_per_neural_network} ).`
+      );
+
 
 //!!! ...unfinished... (2023/04/22)
 
