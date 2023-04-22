@@ -199,6 +199,12 @@ export { NeuralNet_FeedbackShape as FeedbackShape };
  * pixels (with multiplied by .feedback_to_input_height_multiplier and
  * .feedback_to_input_width_multiplier).
  *
+ * @member {number} feedback_to_input_height_pixelCount_per_alignment
+ *   The height (in pixel count) of .feedback_to_input_pixelCount_per_alignment.
+ *
+ * @member {number} feedback_to_input_width_pixelCount_per_alignment
+ *   The width (in pixel count) of .feedback_to_input_pixelCount_per_alignment.
+ *
  * @member {number} feedback_to_input_height_multiplier
  *   When converting feedback values to implicit input pixels, how many times
  * should be replicated along the implicit input height. It is mainly used to
@@ -396,8 +402,8 @@ class NeuralNet_FeedbackShape {
 
 //!!! ...unfinished... (2023/04/21)
 
-      this.feedback_to_input_height_pixelCount_per_block = 1;
-      this.feedback_to_input_width_pixelCount_per_block
+      this.feedback_to_input_height_pixelCount_per_alignment = 1;
+      this.feedback_to_input_width_pixelCount_per_alignment
         = this.feedback_to_input_pixelCount_per_alignment;
 
       // Since input has no extra height to contain more feedback_to_input
@@ -414,15 +420,20 @@ class NeuralNet_FeedbackShape {
 
       // Prefer the square feedback shape because it fairly expresses the
       // correlation along height and width.
-      this.feedback_to_input_height_pixelCount_per_block = this.feedback_to_input_width_pixelCount_per_block
+      this.feedback_to_input_height_pixelCount_per_alignment
+        = this.feedback_to_input_width_pixelCount_per_alignment
         = Math.ceil(
             Math.sqrt( this.feedback_to_input_pixelCount_per_alignment ) );
 
       // 4.3 But, if the (next time) explicit input has not enough height to
       //     contain the square shape of feedback, use rectangle shape.
-      if ( this.feedback_to_input_height_pixelCount_per_block > explicit_input_height ) {
-        this.feedback_to_input_height_pixelCount_per_block = explicit_input_height;
-        this.feedback_to_input_width_pixelCount_per_block = Math.ceil(
+      if ( this.feedback_to_input_height_pixelCount_per_alignment
+             > explicit_input_height ) {
+
+        this.feedback_to_input_height_pixelCount_per_alignment
+           = explicit_input_height;
+
+        this.feedback_to_input_width_pixelCount_per_alignment = Math.ceil(
           this.feedback_to_input_pixelCount_per_alignment
             / explicit_input_height );
 
@@ -467,8 +478,8 @@ class NeuralNet_FeedbackShape {
 // this.implicit_input_height
 // this.implicit_input_width
 // this.input_width
-// this.feedback_to_input_height_pixelCount_per_block
-// this.feedback_to_input_width_pixelCount_per_block
+// this.feedback_to_input_height_pixelCount_per_alignment
+// this.feedback_to_input_width_pixelCount_per_alignment
 
 
     this.implicit_input_pixelCount_per_alignment
