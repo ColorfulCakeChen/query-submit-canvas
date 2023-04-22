@@ -216,6 +216,14 @@ export { NeuralNet_FeedbackShape as FeedbackShape };
  *   - There two alignments per two neural network.
  *   - So, there are 4 (= 2 * 2) feedback information blocks.
  *
+ * @member {number} feedback_to_input_height_blockCount
+ *   There are how manys feedback blocks along the height in the (next time)
+ * input.
+ *
+ * @member {number} feedback_to_input_width_blockCount
+ *   There are how manys feedback blocks along the width in the (next time)
+ * input.
+ *
  * @member {number} feedback_to_input_block_gap_height_original
  *   The gap (for distinguishing from different feedback information blocks and
  * explicit input) along the height (without multiplied by
