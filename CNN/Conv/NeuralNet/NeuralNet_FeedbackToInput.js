@@ -75,6 +75,12 @@ export { NeuralNet_FeedbackToInput as FeedbackToInput };
  *   ( .width_pixelCount_per_alignment + .block_gap_width )
  *
  *
+ * @member {number} neuralNetCount
+ *   There are how many neural networks in a versus. It is always 2.
+ *
+ * @member {number} alignmentCount
+ *   There are how many alignments in a versus. It is always 2.
+ *
  * @member {number} blockCount
  *   There are how many feedback blocks be put in the (next time) input. It is
  * always 4. (Every alignment has exactly one block.) Because:
@@ -219,7 +225,9 @@ class NeuralNet_FeedbackToInput {
     //
     // There are two neural networks (in a versus pair).
     // There two alignments per two neural network.
-    this.blockCount = 2 * 2;
+    this.neuralNetCount = 2;
+    this.alignmentCount = 2;
+    this.blockCount = this.neuralNetCount * this.alignmentCount;
 
     // 2.4.2 At least 1 gap between different feedback information blocks and
     //          explicit input.
@@ -348,21 +356,35 @@ class NeuralNet_FeedbackToInput {
         this.blockCount / this.height_blockCount );
     }
 
-!!!
     // 7. The array of position ( left, top ) in input image for every
     //    feedback_to_input block.
     {
       if ( this.block_position_leftArrayArray )
-        this.block_position_leftArrayArray.length = this.blockCount;
+        this.block_position_leftArrayArray.length = this.neuralNetCount;
       else
-        this.block_position_leftArrayArray = new Array( this.blockCount );
+        this.block_position_leftArrayArray = new Array( this.neuralNetCount );
 
       if ( this.block_position_topArrayArray )
-        this.block_position_topArrayArray.length = this.blockCount;
+        this.block_position_topArrayArray.length = this.neuralNetCount;
       else
-        this.block_position_topArrayArray = new Array( this.blockCount );
+        this.block_position_topArrayArray = new Array( this.neuralNetCount );
 
-      let i = 0;
+//!!! ...unfinished... (2023/04/22)
+      // this.neuralNetCount
+      // this.alignmentCount
+
+      for ( let i = 0; i < this.neuralNetCount; ++i ) {
+
+        this.block_position_leftArrayArray[ i ]
+          = new Array( this.alignmentCount );
+
+        this.block_position_topArrayArray[ i ]
+          = new Array( this.alignmentCount );
+
+        for ( let j = 0; j < this.alignmentCount; ++j ) {
+
+  
+      let    = 0;
       for ( let h = 0; h < this.height_blockCount; ++h ) {
         for ( let w = 0; w < this.width_blockCount; ++w ) {
           this.block_position_leftArrayArray[ i ]
