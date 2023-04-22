@@ -269,14 +269,14 @@ class NeuralNet_FeedbackToInput {
     //     explicit input.
     } else {
 
-      // Prefer the square feedback shape because it fairly expresses the
-      // correlation along height and width.
+      // 5.2.1 Prefer the square feedback shape because it fairly expresses
+      //       the correlation along height and width.
       this.height_pixelCount_per_alignment
         = this.width_pixelCount_per_alignment
         = Math.ceil( Math.sqrt( this.pixelCount_per_alignment ) );
 
-      // 5.3 But, if the (next time) explicit input has not enough height to
-      //     contain the square shape of feedback, use rectangle shape.
+      // 5.2.2 But, if the (next time) explicit input has not enough height
+      //       to contain the square shape of feedback, use rectangle shape.
       if ( this.height_pixelCount_per_alignment > explicit_input_height ) {
 
         this.height_pixelCount_per_alignment = explicit_input_height;
