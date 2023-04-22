@@ -359,44 +359,8 @@ class NeuralNet_FeedbackToInput {
     // 7. The array of position ( left, top ) in input image for every
     //    feedback_to_input block.
     {
-      if ( this.block_position_leftArrayArray )
-        this.block_position_leftArrayArray.length = this.neuralNetCount;
-      else
-        this.block_position_leftArrayArray = new Array( this.neuralNetCount );
+      NeuralNet_FeedbackToInput.block_position_prepare.call( this );
 
-      if ( this.block_position_topArrayArray )
-        this.block_position_topArrayArray.length = this.neuralNetCount;
-      else
-        this.block_position_topArrayArray = new Array( this.neuralNetCount );
-
-      for ( let i = 0; i < this.neuralNetCount; ++i ) {
-
-        if ( this.block_position_leftArrayArray[ i ] )
-          this.block_position_leftArrayArray[ i ].length = this.alignmentCount;
-        else
-          this.block_position_leftArrayArray[ i ]
-            = new Array( this.alignmentCount );
-
-        if ( this.block_position_topArrayArray[ i ] )
-          this.block_position_topArrayArray[ i ].length = this.alignmentCount;
-        else
-          this.block_position_topArrayArray[ i ]
-            = new Array( this.alignmentCount );
-
-        let block_position_leftArray = this.block_position_leftArrayArray[ i ];
-        let block_position_topArray = this.block_position_topArrayArray[ i ];
-
-        for ( let j = 0; j < this.alignmentCount; ++j ) {
-          block_position_leftArray[ j ] = ;
-          block_position_topArray[ j ] = ;
-
-//!!! ...unfinished... (2023/04/22)
-
-
-        }
-      }
-
-  
       let    = 0;
       for ( let h = 0; h < this.height_blockCount; ++h ) {
         for ( let w = 0; w < this.width_blockCount; ++w ) {
@@ -406,6 +370,56 @@ class NeuralNet_FeedbackToInput {
       }
     }
 
+  }
+
+  /**
+   * @param {NeuralNet_FeedbackToInput} this
+   * @param {number} this.neuralNetCount
+   * @param {number} this.alignmentCount
+   */
+  static block_position_prepare() {
+    // 1.
+    // 1.1
+    if ( this.block_position_leftArrayArray )
+      this.block_position_leftArrayArray.length = this.neuralNetCount;
+    else
+      this.block_position_leftArrayArray = new Array( this.neuralNetCount );
+
+    // 1.2
+    if ( this.block_position_topArrayArray )
+      this.block_position_topArrayArray.length = this.neuralNetCount;
+    else
+      this.block_position_topArrayArray = new Array( this.neuralNetCount );
+
+    // 2.
+    for ( let i = 0; i < this.neuralNetCount; ++i ) {
+
+      // 2.1
+      if ( this.block_position_leftArrayArray[ i ] )
+        this.block_position_leftArrayArray[ i ].length = this.alignmentCount;
+      else
+        this.block_position_leftArrayArray[ i ]
+          = new Array( this.alignmentCount );
+
+      // 2.2
+      if ( this.block_position_topArrayArray[ i ] )
+        this.block_position_topArrayArray[ i ].length = this.alignmentCount;
+      else
+        this.block_position_topArrayArray[ i ]
+          = new Array( this.alignmentCount );
+
+//!!! (2023/04/22 Remarked)
+//       let block_position_leftArray = this.block_position_leftArrayArray[ i ];
+//       let block_position_topArray = this.block_position_topArrayArray[ i ];
+//
+//       for ( let j = 0; j < this.alignmentCount; ++j ) {
+//         block_position_leftArray[ j ] = ;
+//         block_position_topArray[ j ] = ;
+//
+// //!!! ...unfinished... (2023/04/22)
+//
+//       }
+    }
   }
 
   /**
