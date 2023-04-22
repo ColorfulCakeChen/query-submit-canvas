@@ -401,7 +401,7 @@ class NeuralNet_FeedbackShape {
         = this.feedback_to_input_pixelCount_per_alignment;
 
       // Since input has no extra height to contain more feedback_to_input
-      // block, it is only possible to place 1 feedback_to_input block along
+      // blocks, it is only possible to place 1 feedback_to_input block along
       // the height.
       this.feedback_to_input_height_blockCount = 1;
 
@@ -427,7 +427,7 @@ class NeuralNet_FeedbackShape {
             / explicit_input_height );
 
         // Since input has no extra height to contain more feedback_to_input
-        // block, it is only possible to place 1 feedback_to_input block along
+        // blocks, it is only possible to place 1 feedback_to_input block along
         // the height.
         this.feedback_to_input_height_blockCount = 1;
 
