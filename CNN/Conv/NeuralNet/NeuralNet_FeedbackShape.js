@@ -250,9 +250,6 @@ class NeuralNet_FeedbackShape {
 
     // 2.
 
-    this.feedback_valueCount_per_neural_network
-      = this.feedback_valueCount_per_alignment * 2;
-
     // 2.1 Keep input channel count.
     //
     // Since implicit input data will be arranged along the height and width,
@@ -269,6 +266,29 @@ class NeuralNet_FeedbackShape {
     this.input_height
       = this.implicit_input_height
       = this.explicit_input_height;
+
+    // 2.3
+    this.feedback_valueCount_per_neural_network
+      = this.feedback_valueCount_per_alignment * 2;
+
+    // 2.4 Prepare input position ( left, top ) array for every feedback.
+    //
+    // There are two neural networks (in a versus pair).
+    // There two alignments per two neural network.
+    // So, there are 4 (= 2 * 2) feedback information blocks.
+    {
+      this.feedback_blockCount = 2 * 2;
+
+      if ( this.feedback_to_input_leftArray )
+        this.feedback_to_input_leftArray.length = this.feedback_blockCount
+      else
+        this.feedback_to_input_leftArray = new Array( this.feedback_blockCount );
+
+      if ( this.feedback_to_input_topArray )
+        this.feedback_to_input_topArray.length = this.feedback_blockCount;
+      else
+        this.feedback_to_input_topArray = new Array( this.feedback_blockCount );
+    }
 
     // 3. Determine implicit input pixel count.
 
