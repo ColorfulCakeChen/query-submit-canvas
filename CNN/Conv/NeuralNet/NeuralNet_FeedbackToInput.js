@@ -359,7 +359,7 @@ class NeuralNet_FeedbackToInput {
     // 7. The array of position ( left, top ) in input image for every
     //    feedback_to_input block.
     {
-      NeuralNet_FeedbackToInput.block_position_prepare.call( this );
+      NeuralNet_FeedbackToInput.block_position_create.call( this );
 
       let    = 0;
       for ( let h = 0; h < this.height_blockCount; ++h ) {
@@ -377,7 +377,7 @@ class NeuralNet_FeedbackToInput {
    * @param {number} this.neuralNetCount
    * @param {number} this.alignmentCount
    */
-  static block_position_prepare() {
+  static block_position_create() {
     // 1.
     // 1.1
     if ( this.block_position_leftArrayArray )
