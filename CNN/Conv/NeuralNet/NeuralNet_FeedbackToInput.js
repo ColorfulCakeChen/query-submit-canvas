@@ -447,29 +447,26 @@ class NeuralNet_FeedbackToInput {
     // 1.
     let leftArray = new Array( this.blockCount );
     let topArray = new Array( this.blockCount );
-
-    let i = 0;
-    for (
-       let height_block_index = 0;
-       height_block_index < this.height_blockCount;
-       ++height_block_index ) {
-
+    {
+      let i = 0;
       for (
-        let width_block_index = 0;
-        width_block_index < this.width_blockCount;
-        ++width_block_index ) {
+        let height_block_index = 0;
+        height_block_index < this.height_blockCount;
+        ++height_block_index ) {
 
-        let left
-          = ( width_block_index * this.width_pixelCount_per_alignment );
+        for (
+          let width_block_index = 0;
+          width_block_index < this.width_blockCount;
+          ++width_block_index ) {
 
-        leftArray[ i ] = left;
+          leftArray[ i ]
+            = ( width_block_index * this.width_pixelCount_per_alignment );
 
-        let top
-          = ( height_block_index * this.height_pixelCount_per_alignment );
+          topArray[ i ]
+            = ( height_block_index * this.height_pixelCount_per_alignment );
 
-        topArray[ i ] = top;
-
-        ++i;
+          ++i;
+        }
       }
     }
 
