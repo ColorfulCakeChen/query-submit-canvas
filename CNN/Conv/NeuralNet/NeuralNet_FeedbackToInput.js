@@ -360,29 +360,8 @@ class NeuralNet_FeedbackToInput {
     //    feedback_to_input block.
     {
       NeuralNet_FeedbackToInput.block_position_create.call( this );
-
-      let    = 0;
-      for (
-         let height_block_index = 0;
-         height_block_index < this.height_blockCount;
-         ++height_block_index ) {
-
-        for (
-          let width_block_index = 0;
-          width_block_index < this.width_blockCount;
-          ++width_block_index ) {
-
-          let left
-            = ( width_block_index * this.width_pixelCount_per_alignment );
-          let top
-            = ( height_block_index * this.height_pixelCount_per_alignment );
-
-          this.block_position_leftArrayArray[ i ]
-            =  + ;
-        }
-      }
+      NeuralNet_FeedbackToInput.block_position_fill.call( this );
     }
-
   }
 
   /**
@@ -420,18 +399,6 @@ class NeuralNet_FeedbackToInput {
       else
         this.block_position_topArrayArray[ i ]
           = new Array( this.alignmentCount );
-
-//!!! (2023/04/22 Remarked)
-//       let block_position_leftArray = this.block_position_leftArrayArray[ i ];
-//       let block_position_topArray = this.block_position_topArrayArray[ i ];
-//
-//       for ( let j = 0; j < this.alignmentCount; ++j ) {
-//         block_position_leftArray[ j ] = ;
-//         block_position_topArray[ j ] = ;
-//
-// //!!! ...unfinished... (2023/04/22)
-//
-//       }
     }
   }
 
