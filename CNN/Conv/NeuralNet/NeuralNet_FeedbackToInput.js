@@ -294,13 +294,18 @@ class NeuralNet_FeedbackToInput {
     this.width_with_gap_pixelCount_per_alignment
       = this.width_pixelCount_per_alignment + this.block_gap_width;
 
-    // 6.
+    // 6. Try arrange feedback blocks along input height.
     {
 
+//!!! ...unfinished... (2023/04/22)
 
-    //!!! ...unfinished... (2023/04/21)
-    // Try arrange these square along input height.
-    
+      let explicit_input_height_with_gap
+        = explicit_input_height + this.block_gap_height;
+
+        Math.ceil(
+        explicit_input_height_with_gap / this.height_with_gap_pixelCount_per_alignment )
+
+
     //!!! ...unfinished... (2023/04/22)
     // this.height_pixelCount_per_alignment
     // this.width_pixelCount_per_alignment
