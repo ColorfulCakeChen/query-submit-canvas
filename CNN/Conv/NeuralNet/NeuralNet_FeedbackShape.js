@@ -216,6 +216,21 @@ export { NeuralNet_FeedbackShape as FeedbackShape };
  *   - There two alignments per two neural network.
  *   - So, there are 4 (= 2 * 2) feedback information blocks.
  *
+ * @member {number} feedback_to_input_block_gap_height
+ *
+ *
+ * @member {number} feedback_to_input_block_gap_height_multiplied
+ *
+ *
+ * @member {number} feedback_to_input_block_gap_width
+ *
+ *
+ * @member {number} feedback_to_input_block_gap_width_multiplied
+ *
+ *
+ * @member {number} feedback_to_input_block_gap_height
+ *
+ *
  * @member {number[]} feedback_to_input_leftArray
  *   The array of left position of input for every feedback_to_input block.
  *
@@ -287,15 +302,25 @@ class NeuralNet_FeedbackShape {
     this.feedback_valueCount_per_neural_network
       = this.feedback_valueCount_per_alignment * 2;
 
-    // 2.4 Prepare array of position ( left, top ) of input for every
-    //     feedback_to_input block.
-    //
+    // 2.4 feedback_to_input block information.
+
+    // 2.4.1
     // There are two neural networks (in a versus pair).
     // There two alignments per two neural network.
     // So, there are 4 (= 2 * 2) feedback information blocks.
-    {
-      this.feedback_to_input_blockCount = 2 * 2;
+    this.feedback_to_input_blockCount = 2 * 2;
 
+//!!!
+    // 2.4.2
+    this.feedback_to_input_block_gap_height = 1;
+    this.feedback_to_input_block_gap_width = 1;
+
+    this.feedback_to_input_block_gap_height_multiplied = undefined;
+    this.feedback_to_input_block_gap_width_multiplied = undefined;
+
+    // 2.4.3 The array of position ( left, top ) of input for every
+    //       feedback_to_input block.
+    {
       if ( this.feedback_to_input_leftArray )
         this.feedback_to_input_leftArray.length = this.feedback_to_input_blockCount
       else
@@ -340,6 +365,16 @@ class NeuralNet_FeedbackShape {
       = this.feedback_to_input_pixelCount_original_per_alignment
           * this.feedback_to_input_height_multiplier
           * this.feedback_to_input_width_multiplier;
+
+    {
+      this.feedback_to_input_block_gap_height_multiplied
+        = this.feedback_to_input_block_gap_height
+            * this.feedback_to_input_height_multiplier;
+
+      this.feedback_to_input_block_gap_width_multiplied
+        = this.feedback_to_input_block_gap_width
+            * this.feedback_to_input_width_multiplier;
+    }
 
     // 4.
 
