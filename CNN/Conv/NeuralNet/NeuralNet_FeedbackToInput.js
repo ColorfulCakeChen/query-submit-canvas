@@ -299,9 +299,6 @@ class NeuralNet_FeedbackToInput {
 
     // 6. Try arrange feedback blocks along input height.
     {
-
-//!!! ...unfinished... (2023/04/22)
-
       let explicit_input_height_with_gap
         = explicit_input_height + this.block_gap_height;
 
@@ -318,7 +315,7 @@ class NeuralNet_FeedbackToInput {
         // Every two blocks (of one neural networks) in the same row.
         case 2: break; // Do nothing.
 
-        // Avoid arranging two feedback blocks of a neural network in different
+        // Do not arrange two feedback blocks of a neural network in different
         // row or column. Force every two blocks (of one neural networks) in
         // the same row.
         case 3:
