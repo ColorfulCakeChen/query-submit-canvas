@@ -336,7 +336,7 @@ class NeuralNet_FeedbackShape {
 
     // 3. Determine implicit input pixel count.
 
-    // 3.1 Every input_channelCount feedback values as a implicit input pixel.
+    // 3.1 Every input_channelCount feedback values as an implicit input pixel.
     this.feedback_to_input_pixelCount_original_per_alignment
       = Math.ceil( feedback_valueCount_per_alignment / this.input_channelCount );
 
