@@ -247,8 +247,15 @@ class NeuralNet_FeedbackToInput {
 //!!! ...unfinished... (2023/04/21)
 
       this.height_pixelCount_per_alignment = 1;
-      this.width_pixelCount_per_alignment
-        = this.pixelCount_per_alignment;
+      this.width_pixelCount_per_alignment = this.pixelCount_per_alignment;
+
+
+      this.height_with_gap_pixelCount_per_alignment
+        = this.height_pixelCount_per_alignment; // bottom block has no gap.
+
+      this.width_with_gap_pixelCount_per_alignment
+        = this.width_pixelCount_per_alignment + this.block_gap_width;
+
 
       // Since input has no extra height to contain more feedback_to_input
       // blocks, it is only possible to place 1 feedback_to_input block along
@@ -277,6 +284,14 @@ class NeuralNet_FeedbackToInput {
         this.width_pixelCount_per_alignment = Math.ceil(
           this.pixelCount_per_alignment / explicit_input_height );
 
+
+        this.height_with_gap_pixelCount_per_alignment
+        = this.height_pixelCount_per_alignment; // bottom block has no gap.
+  
+        this.width_with_gap_pixelCount_per_alignment
+          = this.width_pixelCount_per_alignment + this.block_gap_width;
+  
+  
         // Since input has no extra height to contain more feedback_to_input
         // blocks, it is only possible to place 1 feedback_to_input block along
         // the height.
@@ -290,15 +305,14 @@ class NeuralNet_FeedbackToInput {
 //!!! ...unfinished... (2023/04/22)
 // this.height_pixelCount_per_alignment
 // this.width_pixelCount_per_alignment
+//
+// this.height_with_gap_pixelCount_per_alignment
+// this.width_with_gap_pixelCount_per_alignment
 
         this.height_blockCount = ???;
 
       }
     }
-
-//!!! ...unfinished... (2023/04/22)
-// this.height_with_gap_pixelCount_per_alignment
-// this.width_with_gap_pixelCount_per_alignment
 
 //!!! ...unfinished... (2023/04/22)
 // What if can not divisible? (e.g. 4 / 3 )
