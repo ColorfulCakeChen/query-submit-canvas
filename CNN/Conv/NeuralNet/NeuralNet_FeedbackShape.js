@@ -216,20 +216,25 @@ export { NeuralNet_FeedbackShape as FeedbackShape };
  *   - There two alignments per two neural network.
  *   - So, there are 4 (= 2 * 2) feedback information blocks.
  *
+ * @member {number} feedback_to_input_block_gap_height_original
+ *   The gap (for distinguishing from different feedback information blocks and
+ * explicit input) along the height (without multiplied by
+ * .feedback_to_input_height_multiplier).
+ *
  * @member {number} feedback_to_input_block_gap_height
+ *   The gap (for distinguishing from different feedback information blocks and
+ * explicit input) along the height (with multiplied by
+ * .feedback_to_input_height_multiplier).
  *
- *
- * @member {number} feedback_to_input_block_gap_height_multiplied
- *
+ * @member {number} feedback_to_input_block_gap_width_original
+ *   The gap (for distinguishing from different feedback information blocks and
+ * explicit input) along the width (without multiplied by
+ * .feedback_to_input_width_multiplier).
  *
  * @member {number} feedback_to_input_block_gap_width
- *
- *
- * @member {number} feedback_to_input_block_gap_width_multiplied
- *
- *
- * @member {number} feedback_to_input_block_gap_height
- *
+ *   The gap (for distinguishing from different feedback information blocks and
+ * explicit input) along the width (with multiplied by
+ * .feedback_to_input_width_multiplier).
  *
  * @member {number[]} feedback_to_input_leftArray
  *   The array of left position of input for every feedback_to_input block.
@@ -312,11 +317,11 @@ class NeuralNet_FeedbackShape {
 
 //!!!
     // 2.4.2
-    this.feedback_to_input_block_gap_height = 1;
-    this.feedback_to_input_block_gap_width = 1;
+    this.feedback_to_input_block_gap_height_original = 1;
+    this.feedback_to_input_block_gap_width_original = 1;
 
-    this.feedback_to_input_block_gap_height_multiplied = undefined;
-    this.feedback_to_input_block_gap_width_multiplied = undefined;
+    this.feedback_to_input_block_gap_height = undefined;
+    this.feedback_to_input_block_gap_width = undefined;
 
     // 2.4.3 The array of position ( left, top ) of input for every
     //       feedback_to_input block.
@@ -367,12 +372,12 @@ class NeuralNet_FeedbackShape {
           * this.feedback_to_input_width_multiplier;
 
     {
-      this.feedback_to_input_block_gap_height_multiplied
-        = this.feedback_to_input_block_gap_height
+      this.feedback_to_input_block_gap_height
+        = this.feedback_to_input_block_gap_height_original
             * this.feedback_to_input_height_multiplier;
 
-      this.feedback_to_input_block_gap_width_multiplied
-        = this.feedback_to_input_block_gap_width
+      this.feedback_to_input_block_gap_width
+        = this.feedback_to_input_block_gap_width_original
             * this.feedback_to_input_width_multiplier;
     }
 
