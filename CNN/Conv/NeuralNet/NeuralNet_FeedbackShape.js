@@ -309,19 +309,16 @@ class NeuralNet_FeedbackShape {
 
     // 2.4 feedback_to_input block information.
 
-    // 2.4.1
+    // 2.4.1 There are 4 (= 2 * 2) feedback information blocks.
+    //
     // There are two neural networks (in a versus pair).
     // There two alignments per two neural network.
-    // So, there are 4 (= 2 * 2) feedback information blocks.
     this.feedback_to_input_blockCount = 2 * 2;
 
-//!!!
-    // 2.4.2
+    // 2.4.2 At least 1 gap between different feedback information blocks and
+    //          explicit input.
     this.feedback_to_input_block_gap_height_original = 1;
     this.feedback_to_input_block_gap_width_original = 1;
-
-    this.feedback_to_input_block_gap_height = undefined;
-    this.feedback_to_input_block_gap_width = undefined;
 
     // 2.4.3 The array of position ( left, top ) of input for every
     //       feedback_to_input block.
@@ -371,6 +368,7 @@ class NeuralNet_FeedbackShape {
           * this.feedback_to_input_height_multiplier
           * this.feedback_to_input_width_multiplier;
 
+    // feedback information blocks gaps should also be enlarged.
     {
       this.feedback_to_input_block_gap_height
         = this.feedback_to_input_block_gap_height_original
