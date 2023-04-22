@@ -5,6 +5,31 @@ export { NeuralNet_FeedbackToInput as FeedbackToInput };
  * output) to (implicit) input.
  *
  *
+ * @member {number} input_height
+ *   The whole input image's height (pixel count).
+ *
+ * @member {number} input_channelCount
+ *   The whole input image's channel count.
+ *
+ *
+ * @member {number} explicit_input_height
+ *   The explicit (i.e. user visible) input image's height (pixel count). It is
+ * equal to or less than input_height.
+ *
+ * @member {number} explicit_input_channelCount
+ *   The explicit (i.e. user visible) input image's channel count. It is always
+ * equal to input_channelCount.
+ *
+ *
+ * @member {number} implicit_input_height
+ *   The implicit (i.e. feedback from previous output) input image's height
+ * (pixel count). It is equal to or less than input_height.
+ *
+ * @member {number} implicit_input_channelCount
+ *   The implicit (i.e. feedback from previous output) input image's channel
+ * count. It is always equal to input_channelCount.
+ *
+ *
  * @member {number} valueCount_per_alignment
  *   The feedback (of an alignement of a neural network) has how many values.
  * Usually, it is half of the (previous time) output channel count of a

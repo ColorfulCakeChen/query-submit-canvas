@@ -197,6 +197,32 @@ class NeuralNet_FeedbackShape {
   }
 
 
+  get input_height() {
+    return this.feedbackToInput?.input_height;
+  }
+
+  get explicit_input_height() {
+    return this.feedbackToInput?.explicit_input_height;
+  }
+
+  get implicit_input_height() {
+    return this.feedbackToInput?.implicit_input_height;
+  }
+
+
+  get input_channelCount() {
+    return this.feedbackToInput?.input_channelCount;
+  }
+
+  get explicit_input_channelCount() {
+    return this.feedbackToInput?.explicit_input_channelCount;
+  }
+
+  get implicit_input_channelCount() {
+    return this.feedbackToInput?.implicit_input_channelCount;
+  }
+
+
 //!!! ...unfinished... (2023/04/17)
   /**
    *
@@ -211,35 +237,18 @@ class NeuralNet_FeedbackShape {
     // 1. Ensure positive integer.
 
     this.explicit_input_height = explicit_input_height
-      = NeuralNet_FeedbackShape.ensure_positive_integer(
+      = NeuralNet_FeedbackToInput.ensure_positive_integer(
           explicit_input_height );
 
     this.explicit_input_width = explicit_input_width
-      = NeuralNet_FeedbackShape.ensure_positive_integer(
+      = NeuralNet_FeedbackToInput.ensure_positive_integer(
           explicit_input_width );
 
     this.explicit_input_channelCount = explicit_input_channelCount
-      = NeuralNet_FeedbackShape.ensure_positive_integer(
+      = NeuralNet_FeedbackToInput.ensure_positive_integer(
           explicit_input_channelCount );
 
     // 2.
-
-    // 2.1 Keep input channel count.
-    //
-    // Since implicit input data will be arranged along the height and width,
-    // the explicit and implicit input channel count should always be the same
-    // as input_channelCount.
-    this.input_channelCount
-      = this.implicit_input_channelCount
-      = this.explicit_input_channelCount;
-
-    // 2.2 Keep input height.
-    //
-    // Because input may be 1d data (e.g. text or voice), change input height
-    // will make them meaningless. So, do not change input height.
-    this.input_height
-      = this.implicit_input_height
-      = this.explicit_input_height;
 
     // 2.3 Information for feedback to input.
     if ( !this.feedbackToInput )
@@ -250,6 +259,8 @@ class NeuralNet_FeedbackShape {
       explicit_input_channelCount,
       feedback_valueCount_per_alignment
     );
+
+
 
 
 //!!! ...unfinished... (2023/04/22)
@@ -486,99 +497,5 @@ class NeuralNet_FeedbackShape {
 //!!! ...unfinished... (2023/04/19)
 // feedback_setter()
 
-
-
-  /**
-   * 
-   * @param {number} v
-   *   The number to be restriced to a positive integer.
-   *
-   * @return {number}
-   *   Return a positive integer (i.e. at least 1) which is greater than or
-   * equal to v.
-   */
-  static ensure_positive_integer( v ) {
-    return Math.ceil( Math.max( 1, v ) );
-  }
-
-}
-
-
-/**
- * Information for placing feedback (i.e. previous explicit and implicit
- * output) to (implicit) input.
- *
- *
- * @member {number} feedback_to_input_pixelCount_original_per_alignment
- *   The .feedback_valueCount_per_alignment will be viewed as how many input
- * pixels (without multiplied by .feedback_to_input_height_multiplier and
- * .feedback_to_input_width_multiplier).
- *
- * @member {number} feedback_to_input_pixelCount_per_alignment
- *   The .feedback_valueCount_per_alignment will be viewed as how many input
- * pixels (with multiplied by .feedback_to_input_height_multiplier and
- * .feedback_to_input_width_multiplier).
- *
- * @member {number} feedback_to_input_height_pixelCount_per_alignment
- *   The height (in pixel count) of .feedback_to_input_pixelCount_per_alignment.
- *
- * @member {number} feedback_to_input_width_pixelCount_per_alignment
- *   The width (in pixel count) of .feedback_to_input_pixelCount_per_alignment.
- *
- * @member {number} feedback_to_input_height_multiplier
- *   When converting feedback values to implicit input pixels, how many times
- * should be replicated along the implicit input height. It is mainly used to
- * confront neural network's stage's block0's halving height.
- *
- * @member {number} feedback_to_input_width_multiplier
- *   When converting feedback values to implicit input pixels, how many times
- * should be replicated along the implicit input width. It is mainly used to
- * confront neural network's stage's block0's halving width.
- *
- * @member {number} feedback_to_input_blockCount
- *   There are how many feedback blocks be put in the (next time) input. It is
- * always 4. Because:
- *   - There are two neural networks (in a versus pair).
- *   - There two alignments per two neural network.
- *   - So, there are 4 (= 2 * 2) feedback information blocks.
- *
- * @member {number} feedback_to_input_height_blockCount
- *   There are how manys feedback blocks along the height in the (next time)
- * input.
- *
- * @member {number} feedback_to_input_width_blockCount
- *   There are how manys feedback blocks along the width in the (next time)
- * input.
- *
- * @member {number} feedback_to_input_block_gap_height_original
- *   The gap (for distinguishing from different feedback information blocks and
- * explicit input) along the height (without multiplied by
- * .feedback_to_input_height_multiplier).
- *
- * @member {number} feedback_to_input_block_gap_height
- *   The gap (for distinguishing from different feedback information blocks and
- * explicit input) along the height (with multiplied by
- * .feedback_to_input_height_multiplier).
- *
- * @member {number} feedback_to_input_block_gap_width_original
- *   The gap (for distinguishing from different feedback information blocks and
- * explicit input) along the width (without multiplied by
- * .feedback_to_input_width_multiplier).
- *
- * @member {number} feedback_to_input_block_gap_width
- *   The gap (for distinguishing from different feedback information blocks and
- * explicit input) along the width (with multiplied by
- * .feedback_to_input_width_multiplier).
- *
- * @member {number[]} feedback_to_input_leftArray
- *   The array of left position of input for every feedback_to_input block.
- *
- * @member {number[]} feedback_to_input_topArray
- *   The array of top position of input for every feedback_to_input block.
- *
- *
- *
- */
-class NeuralNet_Feedback_to_Input {
 
 }
