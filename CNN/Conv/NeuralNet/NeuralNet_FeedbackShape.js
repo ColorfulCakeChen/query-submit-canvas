@@ -205,6 +205,18 @@ export { NeuralNet_FeedbackShape as FeedbackShape };
  * should be replicated along the implicit input width. It is mainly used to
  * confront neural network's stage's block0's halving width.
  *
+ * @member {number} feedback_to_input_blockCount
+ *   There are how many feedback blocks be put in the (next time) input. It is
+ * always 4. Because:
+ *   - There are two neural networks (in a versus pair).
+ *   - There two alignments per two neural network.
+ *   - So, there are 4 (= 2 * 2) feedback information blocks.
+ *
+ * @member {number[]} feedback_to_input_leftArray
+ *   The array of left position of input for every feedback_to_input block.
+ *
+ * @member {number[]} feedback_to_input_topArray
+ *   The array of top position of input for every feedback_to_input block.
  *
  *
  *
@@ -271,23 +283,24 @@ class NeuralNet_FeedbackShape {
     this.feedback_valueCount_per_neural_network
       = this.feedback_valueCount_per_alignment * 2;
 
-    // 2.4 Prepare input position ( left, top ) array for every feedback.
+    // 2.4 Prepare array of position ( left, top ) of input for every
+    //     feedback_to_input block.
     //
     // There are two neural networks (in a versus pair).
     // There two alignments per two neural network.
     // So, there are 4 (= 2 * 2) feedback information blocks.
     {
-      this.feedback_blockCount = 2 * 2;
+      this.feedback_to_input_blockCount = 2 * 2;
 
       if ( this.feedback_to_input_leftArray )
-        this.feedback_to_input_leftArray.length = this.feedback_blockCount
+        this.feedback_to_input_leftArray.length = this.feedback_to_input_blockCount
       else
-        this.feedback_to_input_leftArray = new Array( this.feedback_blockCount );
+        this.feedback_to_input_leftArray = new Array( this.feedback_to_input_blockCount );
 
       if ( this.feedback_to_input_topArray )
-        this.feedback_to_input_topArray.length = this.feedback_blockCount;
+        this.feedback_to_input_topArray.length = this.feedback_to_input_blockCount;
       else
-        this.feedback_to_input_topArray = new Array( this.feedback_blockCount );
+        this.feedback_to_input_topArray = new Array( this.feedback_to_input_blockCount );
     }
 
     // 3. Determine implicit input pixel count.
