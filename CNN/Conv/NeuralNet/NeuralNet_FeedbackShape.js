@@ -147,11 +147,11 @@ import { FeedbackToInput as NeuralNet_FeedbackToInput }
  *   The whole input image's channel count.
  *
  * @member {number} input_pixelCount
- *   The whole input image's pixel count.
+ *   The whole input image's pixel count. (= input_height * input_width)
  *
  * @member {number} input_valueCount
  *   The whole input image's value count. (Note: Every pixel has
- * .input_channelCount values.)
+ * .input_channelCount values.) (= input_pixelCount * input_channelCount)
  *
  *
  * @member {number} explicit_input_height
@@ -178,6 +178,11 @@ import { FeedbackToInput as NeuralNet_FeedbackToInput }
  * @member {number} implicit_input_channelCount
  *   The implicit (i.e. feedback from previous output) input image's channel
  * count. It is always equal to input_channelCount.
+ *
+ * @member {number} implicit_input_pixelCount
+ *   The implicit input image's pixel count
+ * (= implicit_input_height * implicit_input_width). It is greater than or
+ * equal to necessary of .feedbackToInput.
  *
  *
  * @member {NeuralNet.FeedbackToInput} feedbackToInput
@@ -255,33 +260,21 @@ class NeuralNet_FeedbackShape {
       );
     }
 
-
-
-
-//!!! ...unfinished... (2023/04/22)
-
-    // 4.4
+    // 3.
     this.implicit_input_width
       = ( this.feedbackToInput.width_blockCount
            * this.feedbackToInput.width_with_gap_pixelCount_per_alignment );
 
-    this.input_width = this.implicit_input_width + this.explicit_input_width;
-
-//!!! ...unfinished... (2023/04/21)
-// this.implicit_input_width
-// this.input_width
-
-
-    this.implicit_input_pixelCount_per_alignment
+    this.implicit_input_pixelCount
       = this.implicit_input_height * this.implicit_input_width;
 
-//!!! ...unfinished... (2023/04/19)
-// implicit input values are feedback values.
+    // 4.
+    this.input_width = this.implicit_input_width + this.explicit_input_width;
+
     this.input_width_valueCount = this.input_width * this.input_channelCount;
 
     this.input_pixelCount = this.input_height * this.input_width;
     this.input_valueCount = this.input_pixelCount * this.input_channelCount;
-
   }
 
 //!!! ...unfinished... (2023/04/22)
