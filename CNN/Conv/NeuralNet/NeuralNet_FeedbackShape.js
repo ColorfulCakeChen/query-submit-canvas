@@ -141,7 +141,7 @@ import { FeedbackToInput as NeuralNet_FeedbackToInput }
  *
  * @member {number} input_width_valueCount
  *   The whole input image's width (value count). (Note: Every pixel has
- * .input_channelCount values.)
+ * .input_channelCount values.) (= input_width * input_channelCount)
  *
  * @member {number} input_channelCount
  *   The whole input image's channel count.
@@ -183,6 +183,10 @@ import { FeedbackToInput as NeuralNet_FeedbackToInput }
  *   The implicit input image's pixel count
  * (= implicit_input_height * implicit_input_width). It is greater than or
  * equal to necessary of .feedbackToInput.
+ *
+ * @member {number} implicit_input_valueCount
+ *   The implicit input image's value count
+ * (= implicit_input_pixelCount * input_channelCount).
  *
  *
  * @member {NeuralNet.FeedbackToInput} feedbackToInput
@@ -268,9 +272,11 @@ class NeuralNet_FeedbackShape {
     this.implicit_input_pixelCount
       = this.implicit_input_height * this.implicit_input_width;
 
+    this.implicit_input_valueCount
+      = this.implicit_input_pixelCount * this.input_channelCount;
+
     // 4.
     this.input_width = this.implicit_input_width + this.explicit_input_width;
-
     this.input_width_valueCount = this.input_width * this.input_channelCount;
 
     this.input_pixelCount = this.input_height * this.input_width;
