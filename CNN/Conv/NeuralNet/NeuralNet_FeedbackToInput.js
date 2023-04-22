@@ -299,10 +299,10 @@ class NeuralNet_FeedbackToInput {
       // Arranging two feedback blocks of the same one neural network in either
       // the same row or the same column.
       switch ( this.height_blockCount ) {
-        // All blocks in the same row.
+        // All four feedback blocks in the same row.
         case 1: break; // Do nothing.
 
-        // Every two blocks (of one neural networks) in the same row.
+        // Every two feedback blocks (of one neural networks) in the same row.
         case 2: break; // Do nothing.
 
         // Do not arrange two feedback blocks of a neural network in different
@@ -312,7 +312,7 @@ class NeuralNet_FeedbackToInput {
           this.height_blockCount = 2;
           break;
 
-        // All blocks in the same column.
+        // All four feedback blocks in the same column.
         case 4: break; // Do nothing.
 
         default:
@@ -322,6 +322,8 @@ class NeuralNet_FeedbackToInput {
           );
           break;
       }
+
+      this.width_blockCount = this.blockCount / this.height_blockCount;
 
     //!!! ...unfinished... (2023/04/22)
     // this.height_pixelCount_per_alignment
@@ -336,9 +338,6 @@ class NeuralNet_FeedbackToInput {
 
 //!!! ...unfinished... (2023/04/22)
 // What if can not divisible? (e.g. 4 / 3 )
-    this.width_blockCount
-      = this.blockCount / this.height_blockCount;
-
 
 //!!! ...unfinished... (2023/04/22)
 // Need gaps ( 1 * multiplier ) pixels between:
