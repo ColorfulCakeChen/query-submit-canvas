@@ -106,11 +106,13 @@ export { NeuralNet_FeedbackToInput as FeedbackToInput };
  *   The gap (for distinguishing from different feedback information blocks and
  * explicit input) along the width (with multiplied by .width_multiplier).
  *
- * @member {number[]} position_leftArray
- *   The array of left position of input for every feedback_to_input block.
+ * @member {number[]} block_position_leftArray
+ *   The array of left position in input image for every feedback_to_input
+ * block.
  *
- * @member {number[]} position_topArray
- *   The array of top position of input for every feedback_to_input block.
+ * @member {number[]} block_position_topArray
+ *   The array of top position in input image for every feedback_to_input
+ * block.
  *
  *
  *
@@ -193,20 +195,6 @@ class NeuralNet_FeedbackToInput {
     this.block_gap_height_original = 1;
     this.block_gap_width_original = 1;
 
-    // 2.4.3 The array of position ( left, top ) of input for every
-    //       feedback_to_input block.
-    {
-      if ( this.position_leftArray )
-        this.position_leftArray.length = this.blockCount
-      else
-        this.position_leftArray = new Array( this.blockCount );
-
-      if ( this.position_topArray )
-        this.position_topArray.length = this.blockCount;
-      else
-        this.position_topArray = new Array( this.blockCount );
-    }
-
     // 3. Four (or two) times the implicit input pixel count along height (if
     //    exists) and width.
     //
@@ -287,7 +275,9 @@ class NeuralNet_FeedbackToInput {
     this.width_with_gap_pixelCount_per_alignment
       = this.width_pixelCount_per_alignment + this.block_gap_width;
 
-    // 6. Try arrange feedback blocks along input height.
+    // 6. Determine .height_blockCount and .width_blockCount
+    //
+    // Try arrange feedback blocks along input height.
     {
       let explicit_input_height_with_gap
         = explicit_input_height + this.block_gap_height;
@@ -326,6 +316,30 @@ class NeuralNet_FeedbackToInput {
       this.width_blockCount = Math.ceil(
         this.blockCount / this.height_blockCount );
     }
+
+
+    // 7. The array of position ( left, top ) in input image for every
+    //    feedback_to_input block.
+    {
+      if ( this.block_position_leftArray )
+        this.block_position_leftArray.length = this.blockCount;
+      else
+        this.block_position_leftArray = new Array( this.blockCount );
+
+      if ( this.block_position_topArray )
+        this.block_position_topArray.length = this.blockCount;
+      else
+        this.block_position_topArray = new Array( this.blockCount );
+
+      let i = 0;
+      for ( let h = 0; h < this.height_blockCount; ++h ) {
+        for ( let w = 0; w < this.width_blockCount; ++w ) {
+          this.block_position_leftArray[ i ]
+            = ( h * this.height_blockCount ) + ( w * this.width_blockCount );
+        }
+      }
+    }
+
   }
 
   /**
