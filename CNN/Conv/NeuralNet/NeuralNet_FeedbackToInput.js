@@ -106,14 +106,45 @@ export { NeuralNet_FeedbackToInput as FeedbackToInput };
  *   The gap (for distinguishing from different feedback information blocks and
  * explicit input) along the width (with multiplied by .width_multiplier).
  *
- * @member {number[]} block_position_leftArray
- *   The array of left position in input image for every feedback_to_input
+ * @member {number[]} block_position_leftArrayArray
+ *   The array of array of left position in input image for every
+ * feedback_to_input block.
+ *
+ *   - block_position_leftArrayArray[ 0 ][ 0 ]
+ *       is the left position for the feedback block of neural network 0 when
+ *       it personates alignment 0.
+ *
+ *   - block_position_leftArrayArray[ 0 ][ 1 ]
+ *       is the left position for the feedback block of neural network 0 when
+ *       it personates alignment 1.
+ *
+ *   - block_position_leftArrayArray[ 1 ][ 0 ]
+ *       is the left position for the feedback block of neural network 1 when
+ *       it personates alignment 0.
+ *
+ *   - block_position_leftArrayArray[ 1 ][ 1 ]
+ *       is the left position for the feedback block of neural network 1 when
+ *       it personates alignment 1.
+ *
+ * @member {number[]} block_position_topArrayArray
+ *   The array of array of top position in input image for every feedback_to_input
  * block.
  *
- * @member {number[]} block_position_topArray
- *   The array of top position in input image for every feedback_to_input
- * block.
+ *   - block_position_topArrayArray[ 0 ][ 0 ]
+ *       is the top position for the feedback block of neural network 0 when
+ *       it personates alignment 0.
  *
+ *   - block_position_topArrayArray[ 0 ][ 1 ]
+ *       is the top position for the feedback block of neural network 0 when
+ *       it personates alignment 1.
+ *
+ *   - block_position_topArrayArray[ 1 ][ 0 ]
+ *       is the top position for the feedback block of neural network 1 when
+ *       it personates alignment 0.
+ *
+ *   - block_position_topArrayArray[ 1 ][ 1 ]
+ *       is the top position for the feedback block of neural network 1 when
+ *       it personates alignment 1.
  *
  *
  */
@@ -317,24 +348,24 @@ class NeuralNet_FeedbackToInput {
         this.blockCount / this.height_blockCount );
     }
 
-
+!!!
     // 7. The array of position ( left, top ) in input image for every
     //    feedback_to_input block.
     {
-      if ( this.block_position_leftArray )
-        this.block_position_leftArray.length = this.blockCount;
+      if ( this.block_position_leftArrayArray )
+        this.block_position_leftArrayArray.length = this.blockCount;
       else
-        this.block_position_leftArray = new Array( this.blockCount );
+        this.block_position_leftArrayArray = new Array( this.blockCount );
 
-      if ( this.block_position_topArray )
-        this.block_position_topArray.length = this.blockCount;
+      if ( this.block_position_topArrayArray )
+        this.block_position_topArrayArray.length = this.blockCount;
       else
-        this.block_position_topArray = new Array( this.blockCount );
+        this.block_position_topArrayArray = new Array( this.blockCount );
 
       let i = 0;
       for ( let h = 0; h < this.height_blockCount; ++h ) {
         for ( let w = 0; w < this.width_blockCount; ++w ) {
-          this.block_position_leftArray[ i ]
+          this.block_position_leftArrayArray[ i ]
             = ( h * this.height_blockCount ) + ( w * this.width_blockCount );
         }
       }
