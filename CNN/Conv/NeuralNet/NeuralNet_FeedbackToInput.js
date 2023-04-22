@@ -140,6 +140,9 @@ class NeuralNet_FeedbackToInput {
     feedback_valueCount_per_alignment
   ) {
 
+    const funcNameInMessage = "init";
+
+
     // 1. Ensure positive integer.
 
     this.explicit_input_height = explicit_input_height
@@ -302,10 +305,36 @@ class NeuralNet_FeedbackToInput {
       let explicit_input_height_with_gap
         = explicit_input_height + this.block_gap_height;
 
-      let height_blockCount_possible = Math.floor(
+      this.height_blockCount = Math.floor(
         explicit_input_height_with_gap
           / this.height_with_gap_pixelCount_per_alignment );
 
+      // Arranging two feedback blocks of the same one neural network in either
+      // the same row or the same column.
+      switch ( this.height_blockCount ) {
+        // All blocks in the same row.
+        case 1: break; // Do nothing.
+
+        // Every two blocks (of one neural networks) in the same row.
+        case 2: break; // Do nothing.
+
+        // Avoid arranging two feedback blocks of a neural network in different
+        // row or column. Force every two blocks (of one neural networks) in
+        // the same row.
+        case 3:
+          this.height_blockCount = 2;
+          break;
+
+        // All blocks in the same column.
+        case 4: break; // Do nothing.
+
+        default:
+          throw Error( `NeuralNet_FeedbackToInput.${funcNameInMessage}(): `
+            + `this.height_blockCount ( ${this.height_blockCount} ) `
+            + `should be either 1 or 2 or 4.`
+          );
+          break;
+      }
 
     //!!! ...unfinished... (2023/04/22)
     // this.height_pixelCount_per_alignment
@@ -314,7 +343,7 @@ class NeuralNet_FeedbackToInput {
     // this.height_with_gap_pixelCount_per_alignment
     // this.width_with_gap_pixelCount_per_alignment
     
-            this.height_blockCount = ???;
+             = ???;
     }
  
 
