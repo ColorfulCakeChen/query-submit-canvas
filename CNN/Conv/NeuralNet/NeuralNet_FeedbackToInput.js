@@ -229,7 +229,7 @@ class NeuralNet_FeedbackToInput {
 
     // 4. Determine implicit input pixel count.
 
-    // 4.1 Every input_channelCount feedback values as an implicit input pixel.
+    // Every input_channelCount feedback values as an implicit input pixel.
     this.pixelCount_original_per_alignment = Math.ceil(
       this.valueCount_per_alignment / this.input_channelCount );
 
@@ -237,7 +237,9 @@ class NeuralNet_FeedbackToInput {
       = this.pixelCount_original_per_alignment
           * this.height_multiplier * this.width_multiplier;
 
-    // feedback_to_input blocks' gaps should also be enlarged.
+    // 5. Determine feedback_to_input block shape.
+
+    // 5.0 feedback_to_input blocks' gaps should also be enlarged.
     {
       this.block_gap_height
         = this.block_gap_height_original * this.height_multiplier;
@@ -246,14 +248,10 @@ class NeuralNet_FeedbackToInput {
         = this.block_gap_width_original * this.width_multiplier;
     }
 
-    // 5. Determine feedback_to_input block shape.
-
     // 5.1 If the (next time) explicit input is 1d, the feedback (as implicit
     //     input) should also be 1d and prefix (i.e. at the left most of) the
     //     (next time) explicit input.
     if ( explicit_input_height == 1 ) {
-
-//!!! ...unfinished... (2023/04/21)
 
       this.height_pixelCount_per_alignment = 1;
       this.width_pixelCount_per_alignment = this.pixelCount_per_alignment;
@@ -267,8 +265,6 @@ class NeuralNet_FeedbackToInput {
     //     input) should also be 2d and placed at left most of the (next time)
     //     explicit input.
     } else {
-
-//!!! ...unfinished... (2023/04/21)
 
       // Prefer the square feedback shape because it fairly expresses the
       // correlation along height and width.
