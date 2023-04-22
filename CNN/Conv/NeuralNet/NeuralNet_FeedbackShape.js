@@ -131,10 +131,10 @@ export { NeuralNet_FeedbackShape as FeedbackShape };
  *
  *
  * @member {number} input_height
- *   The whole input image's height. (pixel count)
+ *   The whole input image's height (pixel count).
  *
  * @member {number} input_width
- *   The whole input image's width. (pixel count)
+ *   The whole input image's width (pixel count).
  *
  * @member {number} input_width_valueCount
  *   The whole input image's width (value count). (Note: Every pixel has
@@ -338,21 +338,25 @@ class NeuralNet_FeedbackShape {
     //       feedback_to_input block.
     {
       if ( this.feedback_to_input_leftArray )
-        this.feedback_to_input_leftArray.length = this.feedback_to_input_blockCount
+        this.feedback_to_input_leftArray.length
+          = this.feedback_to_input_blockCount
       else
-        this.feedback_to_input_leftArray = new Array( this.feedback_to_input_blockCount );
+        this.feedback_to_input_leftArray
+          = new Array( this.feedback_to_input_blockCount );
 
       if ( this.feedback_to_input_topArray )
-        this.feedback_to_input_topArray.length = this.feedback_to_input_blockCount;
+        this.feedback_to_input_topArray.length
+          = this.feedback_to_input_blockCount;
       else
-        this.feedback_to_input_topArray = new Array( this.feedback_to_input_blockCount );
+        this.feedback_to_input_topArray
+          = new Array( this.feedback_to_input_blockCount );
     }
 
     // 3. Determine implicit input pixel count.
 
     // 3.1 Every input_channelCount feedback values as an implicit input pixel.
-    this.feedback_to_input_pixelCount_original_per_alignment
-      = Math.ceil( feedback_valueCount_per_alignment / this.input_channelCount );
+    this.feedback_to_input_pixelCount_original_per_alignment = Math.ceil(
+      feedback_valueCount_per_alignment / this.input_channelCount );
 
     // 3.2 Four (or two) times the implicit input pixel count along height (if
     //     exists) and width.
