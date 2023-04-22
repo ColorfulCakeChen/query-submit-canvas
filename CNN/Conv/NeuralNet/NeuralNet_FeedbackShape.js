@@ -236,17 +236,9 @@ class NeuralNet_FeedbackShape {
 
     // 1. Ensure positive integer.
 
-    this.explicit_input_height = explicit_input_height
-      = NeuralNet_FeedbackToInput.ensure_positive_integer(
-          explicit_input_height );
-
     this.explicit_input_width = explicit_input_width
       = NeuralNet_FeedbackToInput.ensure_positive_integer(
           explicit_input_width );
-
-    this.explicit_input_channelCount = explicit_input_channelCount
-      = NeuralNet_FeedbackToInput.ensure_positive_integer(
-          explicit_input_channelCount );
 
     // 2.
 
