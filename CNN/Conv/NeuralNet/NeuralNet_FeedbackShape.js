@@ -400,6 +400,8 @@ class NeuralNet_FeedbackShape {
       this.feedback_to_input_width
         = this.feedback_to_input_pixelCount_per_alignment;
 
+      this.feedback_to_input_height_blockCount = 1;
+
     // 4.2 If the (next time) explicit input is 2d, the feedback (as implicit
     //     input) should also be 2d and placed at left most of the (next time)
     //     explicit input.
@@ -421,13 +423,21 @@ class NeuralNet_FeedbackShape {
           this.feedback_to_input_pixelCount_per_alignment
             / explicit_input_height );
 
+        this.feedback_to_input_height_blockCount = 1;
+
       } else {
 
 //!!! ...unfinished... (2023/04/21)
 // Try arrange these square along input height.
 
+        this.feedback_to_input_height_blockCount = ???;
+
       }
     }
+
+    this.feedback_to_input_width_blockCount
+      = this.feedback_to_input_blockCount
+          / this.feedback_to_input_height_blockCount;
 
 //!!! ...unfinished... (2023/04/21)
 // two alignments of two neural network.
