@@ -235,22 +235,25 @@ class NeuralNet_FeedbackShape {
   ) {
 
     // 1. Ensure positive integer.
-
     this.explicit_input_width = explicit_input_width
       = NeuralNet_FeedbackToInput.ensure_positive_integer(
           explicit_input_width );
 
-    // 2.
+    // 2. Information for feedback to input.
+    if ( !this.feedbackToInput ) {
+      this.feedbackToInput = new NeuralNet_FeedbackToInput(
+        explicit_input_height,
+        explicit_input_channelCount,
+        feedback_valueCount_per_alignment
+      );
 
-    // 2.3 Information for feedback to input.
-    if ( !this.feedbackToInput )
-      this.feedbackToInput = new NeuralNet_FeedbackToInput();
-
-    this.feedbackToInput.init(
-      explicit_input_height,
-      explicit_input_channelCount,
-      feedback_valueCount_per_alignment
-    );
+    } else {
+      this.feedbackToInput.init(
+        explicit_input_height,
+        explicit_input_channelCount,
+        feedback_valueCount_per_alignment
+      );
+    }
 
 
 

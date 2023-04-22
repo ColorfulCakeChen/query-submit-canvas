@@ -108,30 +108,31 @@ export { NeuralNet_FeedbackToInput as FeedbackToInput };
  */
 class NeuralNet_FeedbackToInput {
 
-
-//!!! ...unfinished... (2023/04/17)
   /**
    *
    */
-  constructor() {
-
+  constructor(
+    explicit_input_height,
+    explicit_input_channelCount,
+    feedback_valueCount_per_alignment
+  ) {
+    this.init(
+      explicit_input_height,
+      explicit_input_channelCount,
+      feedback_valueCount_per_alignment );
   }
 
-//!!! ...unfinished... (2023/04/17)
   /**
    *
    */
   init(
     explicit_input_height,
     explicit_input_channelCount,
-    feedback_valueCount_per_alignment,
-
-
+    feedback_valueCount_per_alignment
   ) {
 
     // 1. Ensure positive integer.
 
-//!!!???
     this.explicit_input_height = explicit_input_height
       = NeuralNet_FeedbackToInput.ensure_positive_integer(
           explicit_input_height );
@@ -196,7 +197,6 @@ class NeuralNet_FeedbackToInput {
 
     // 3. Determine implicit input pixel count.
 
-//!!!???
     // 3.1 Every input_channelCount feedback values as an implicit input pixel.
     this.pixelCount_original_per_alignment = Math.ceil(
       this.valueCount_per_alignment / this.input_channelCount );
