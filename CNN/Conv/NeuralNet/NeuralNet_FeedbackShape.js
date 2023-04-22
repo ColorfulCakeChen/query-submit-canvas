@@ -363,6 +363,39 @@ class NeuralNet_FeedbackShape {
 
   }
 
+//!!! ...unfinished... (2023/04/22)
+  /**
+   *
+   * @param {Int32Array[]} previous_output_Int32ArrayArray
+   *   The previous time output of the pair of neural networks.
+   *
+   *   - previous_output_Int32ArrayArray[ 0 ]
+   *       [ 0 .. ( this.feedback_valueCount_per_alignment - 1 ) ]
+   *       is the output of neural network 0 when it personates alignment 0.
+   *
+   *   - previous_output_Int32ArrayArray[ 0 ]
+   *       [ this.feedback_valueCount_per_alignment
+   *         .. ( ( 2 * this.feedback_valueCount_per_alignment ) - 1 ) ]
+   *       is the output of neural network 0 when it personates alignment 1.
+   *
+   *   - previous_output_Int32ArrayArray[ 1 ]
+   *       [ 0 .. ( this.feedback_valueCount_per_alignment - 1 ) ]
+   *       is the output of neural network 1 when it personates alignment 0.
+   *
+   *   - previous_output_Int32ArrayArray[ 1 ]
+   *       [ this.feedback_valueCount_per_alignment
+   *         .. ( ( 2 * this.feedback_valueCount_per_alignment ) - 1 ) ]
+   *       is the output of neural network 1 when it personates alignment 1.
+   *
+   */
+  set_implicit_input_by_previous_output(
+
+    previous_output_Int32ArrayArray
+  ) {
+
+//!!! ...unfinished... (2023/04/22)
+
+  }
 
 //!!! ...unfinished... (2023/04/18)
 // Another possible method is:

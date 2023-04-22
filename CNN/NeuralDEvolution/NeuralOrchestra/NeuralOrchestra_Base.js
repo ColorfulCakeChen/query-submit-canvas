@@ -1032,8 +1032,8 @@ class NeuralOrchestra_Base extends
    *   Return a promise resolved to an array [ TypedArray, TypedArray ]
    * representing the result of the pair of neural networks. The TypedArray may
    * be:
-   *   - Float32Array (if ( neuralNetParams.output_asInputValueRange == false ) )
-   *   - Int32Array (if ( neuralNetParams.output_asInputValueRange == true ) )
+   *   - Float32Array (if ( neuralNetParams.output_asInputValueRange == false ))
+   *   - Int32Array (if ( neuralNetParams.output_asInputValueRange == true ))
    * The order is:
    *   - TypedArrayArray[ 0 ] is parent (chromosome) neural network's output.
    *   - TypedArrayArray[ 1 ] is offspring (chromosome) neural network's output.
