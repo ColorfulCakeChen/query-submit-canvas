@@ -326,20 +326,7 @@ class NeuralNet_FeedbackToInput {
       this.width_blockCount = Math.ceil(
         this.blockCount / this.height_blockCount );
     }
- 
-
-//!!! ...unfinished... (2023/04/22)
-// What if can not divisible? (e.g. 4 / 3 )
-
-//!!! ...unfinished... (2023/04/22)
-// Need gaps ( 1 * multiplier ) pixels between:
-//   - implicit and explicit input data.
-//   - feedback of different alignment and neural network.
-
-
   }
-
-
 
   /**
    * 
