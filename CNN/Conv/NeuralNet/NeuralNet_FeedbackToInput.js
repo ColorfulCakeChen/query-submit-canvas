@@ -302,8 +302,9 @@ class NeuralNet_FeedbackToInput {
       let explicit_input_height_with_gap
         = explicit_input_height + this.block_gap_height;
 
-        Math.ceil(
-        explicit_input_height_with_gap / this.height_with_gap_pixelCount_per_alignment )
+      let height_blockCount_possible = Math.floor(
+        explicit_input_height_with_gap
+          / this.height_with_gap_pixelCount_per_alignment );
 
 
     //!!! ...unfinished... (2023/04/22)
