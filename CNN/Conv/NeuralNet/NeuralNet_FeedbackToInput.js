@@ -426,11 +426,11 @@ class NeuralNet_FeedbackToInput {
           width_block_index < this.width_blockCount;
           ++width_block_index ) {
 
-          leftArray[ i ]
-            = ( width_block_index * this.width_pixelCount_per_alignment );
+          leftArray[ i ] = ( width_block_index
+            * this.width_with_gap_pixelCount_per_alignment );
 
-          topArray[ i ]
-            = ( height_block_index * this.height_pixelCount_per_alignment );
+          topArray[ i ] = ( height_block_index
+            * this.height_with_gap_pixelCount_per_alignment );
 
           ++i;
         }

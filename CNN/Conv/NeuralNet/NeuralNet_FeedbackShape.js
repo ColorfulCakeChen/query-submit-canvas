@@ -261,7 +261,10 @@ class NeuralNet_FeedbackShape {
 //!!! ...unfinished... (2023/04/22)
 
     // 4.4
-    this.implicit_input_width = ???;
+    this.implicit_input_width
+      = ( this.feedbackToInput.width_blockCount
+           * this.feedbackToInput.width_with_gap_pixelCount_per_alignment );
+
     this.input_width = ???;
 
 //!!! ...unfinished... (2023/04/21)
