@@ -25,9 +25,22 @@ export { NeuralNet_FeedbackToInput as FeedbackToInput };
  *   The implicit (i.e. feedback from previous output) input image's height
  * (pixel count). It is equal to or less than input_height.
  *
+ * @member {number} implicit_input_width
+ *   The implicit (i.e. feedback from previous output) input image's width
+ * (pixel count).
+ *
  * @member {number} implicit_input_channelCount
  *   The implicit (i.e. feedback from previous output) input image's channel
  * count. It is always equal to input_channelCount.
+ *
+ * @member {number} implicit_input_pixelCount
+ *   The implicit (i.e. feedback from previous output) input image's pixel
+ * count (= implicit_input_height * implicit_input_width). It is greater than
+ * or equal to necessary of feedback.
+ *
+ * @member {number} implicit_input_valueCount
+ *   The implicit (i.e. feedback from previous output) input image's value
+ * count (= implicit_input_pixelCount * input_channelCount).
  *
  *
  * @member {number} valueCount_per_alignment
@@ -356,12 +369,23 @@ class NeuralNet_FeedbackToInput {
         this.blockCount / this.height_blockCount );
     }
 
-    // 7. Determine every feedback_to_input block's ( left, top ) position
+    // 7.
+    this.implicit_input_width
+      = this.width_blockCount * this.width_with_gap_pixelCount_per_alignment;
+
+    this.implicit_input_pixelCount
+      = this.implicit_input_height * this.implicit_input_width;
+
+    this.implicit_input_valueCount
+      = this.implicit_input_pixelCount * this.input_channelCount;
+
+    // 8. Determine every feedback_to_input block's ( left, top ) position
     //    in input image.
     {
       NeuralNet_FeedbackToInput.block_position_create.call( this );
       NeuralNet_FeedbackToInput.block_position_fill.call( this );
     }
+
   }
 
   /**

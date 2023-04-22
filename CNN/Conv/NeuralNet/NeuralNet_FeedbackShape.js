@@ -166,6 +166,14 @@ import { FeedbackToInput as NeuralNet_FeedbackToInput }
  *   The explicit (i.e. user visible) input image's channel count. It is always
  * equal to input_channelCount.
  *
+ * @member {number} explicit_input_pixelCount
+ *   The explicit input image's pixel count
+ * (= explicit_input_height * explicit_input_width).
+ *
+ * @member {number} explicit_input_valueCount
+ *   The explicit input image's value count
+ * (= explicit_input_pixelCount * input_channelCount).
+ * 
  *
  * @member {number} implicit_input_height
  *   The implicit (i.e. feedback from previous output) input image's height
@@ -173,19 +181,19 @@ import { FeedbackToInput as NeuralNet_FeedbackToInput }
  *
  * @member {number} implicit_input_width
  *   The implicit (i.e. feedback from previous output) input image's width
- * (pixel count). It is equal to or less than input_width.
+ * (pixel count).
  *
  * @member {number} implicit_input_channelCount
  *   The implicit (i.e. feedback from previous output) input image's channel
  * count. It is always equal to input_channelCount.
  *
  * @member {number} implicit_input_pixelCount
- *   The implicit input image's pixel count
+ *   The implicit (i.e. feedback from previous output) input image's pixel count
  * (= implicit_input_height * implicit_input_width). It is greater than or
  * equal to necessary of .feedbackToInput.
  *
  * @member {number} implicit_input_valueCount
- *   The implicit input image's value count
+ *   The implicit (i.e. feedback from previous output) input image's value count
  * (= implicit_input_pixelCount * input_channelCount).
  *
  *
@@ -210,37 +218,47 @@ class NeuralNet_FeedbackShape {
     return this.feedbackToInput?.input_height;
   }
 
-  get explicit_input_height() {
-    return this.feedbackToInput?.explicit_input_height;
-  }
-
-  get implicit_input_height() {
-    return this.feedbackToInput?.implicit_input_height;
-  }
-
-
   get input_channelCount() {
     return this.feedbackToInput?.input_channelCount;
+  }
+
+
+  get explicit_input_height() {
+    return this.feedbackToInput?.explicit_input_height;
   }
 
   get explicit_input_channelCount() {
     return this.feedbackToInput?.explicit_input_channelCount;
   }
 
+
+  get implicit_input_height() {
+    return this.feedbackToInput?.implicit_input_height;
+  }
+
+  get implicit_input_width() {
+    return this.feedbackToInput?.implicit_input_width;
+  }
+ 
   get implicit_input_channelCount() {
     return this.feedbackToInput?.implicit_input_channelCount;
   }
 
+  get implicit_input_pixelCount() {
+    return this.feedbackToInput?.implicit_input_pixelCount;
+  }
 
-//!!! ...unfinished... (2023/04/17)
+  get implicit_input_valueCount() {
+    return this.feedbackToInput?.implicit_input_pixelCount;
+  }
+
+
   /**
    *
    */
   init(
     explicit_input_height, explicit_input_width, explicit_input_channelCount,
     feedback_valueCount_per_alignment,
-
-
   ) {
 
     // 1. Ensure positive integer.
@@ -265,15 +283,11 @@ class NeuralNet_FeedbackShape {
     }
 
     // 3.
-    this.implicit_input_width
-      = ( this.feedbackToInput.width_blockCount
-           * this.feedbackToInput.width_with_gap_pixelCount_per_alignment );
+    this.explicit_input_pixelCount
+      = this.explicit_input_height * this.explicit_input_width;
 
-    this.implicit_input_pixelCount
-      = this.implicit_input_height * this.implicit_input_width;
-
-    this.implicit_input_valueCount
-      = this.implicit_input_pixelCount * this.input_channelCount;
+    this.explicit_input_valueCount
+      = this.explicit_input_pixelCount * this.input_channelCount;
 
     // 4.
     this.input_width = this.implicit_input_width + this.explicit_input_width;
