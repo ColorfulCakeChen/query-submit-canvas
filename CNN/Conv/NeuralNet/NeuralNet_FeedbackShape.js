@@ -400,6 +400,9 @@ class NeuralNet_FeedbackShape {
       this.feedback_to_input_width
         = this.feedback_to_input_pixelCount_per_alignment;
 
+      // Since input has no extra height to contain more feedback_to_input
+      // block, it is only possible to place 1 feedback_to_input block along
+      // the height.
       this.feedback_to_input_height_blockCount = 1;
 
     // 4.2 If the (next time) explicit input is 2d, the feedback (as implicit
@@ -423,6 +426,9 @@ class NeuralNet_FeedbackShape {
           this.feedback_to_input_pixelCount_per_alignment
             / explicit_input_height );
 
+        // Since input has no extra height to contain more feedback_to_input
+        // block, it is only possible to place 1 feedback_to_input block along
+        // the height.
         this.feedback_to_input_height_blockCount = 1;
 
       } else {
@@ -437,7 +443,6 @@ class NeuralNet_FeedbackShape {
 
 //!!! ...unfinished... (2023/04/22)
 // What if can not divisible? (e.g. 4 / 3 )
-
     this.feedback_to_input_width_blockCount
       = this.feedback_to_input_blockCount
           / this.feedback_to_input_height_blockCount;
