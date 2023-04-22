@@ -334,6 +334,11 @@ class NeuralNet_FeedbackShape {
 // two alignments of two neural network.
 // There are 4 (= 2 * 2) feedback information blocks.
 
+//!!! ...unfinished... (2023/04/22)
+// Need gaps ( 1 * multiplier ) pixels between:
+//   - implicit and explicit input data.
+//   - feedback of different alignment and neural network.
+
 //!!! ...unfinished... (2023/04/21)
 
     // 4.4
