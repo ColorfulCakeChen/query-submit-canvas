@@ -297,6 +297,10 @@ class NeuralNet_FeedbackToInput {
     }
 
 //!!! ...unfinished... (2023/04/22)
+// this.height_with_gap_pixelCount_per_alignment
+// this.width_with_gap_pixelCount_per_alignment
+
+//!!! ...unfinished... (2023/04/22)
 // What if can not divisible? (e.g. 4 / 3 )
     this.width_blockCount
       = this.blockCount / this.height_blockCount;
