@@ -205,7 +205,7 @@ class NeuralNet_FeedbackToInput {
     }
 
     // 3. Four (or two) times the implicit input pixel count along height (if
-    //     exists) and width.
+    //    exists) and width.
     //
     // Because neural network's stage's block0 will make the input image as
     // half or quarter (i.e. half it along height and width (by strides = 2)),
@@ -293,7 +293,6 @@ class NeuralNet_FeedbackToInput {
 
     this.width_with_gap_pixelCount_per_alignment
       = this.width_pixelCount_per_alignment + this.block_gap_width;
-
 
     // 6.
     {
