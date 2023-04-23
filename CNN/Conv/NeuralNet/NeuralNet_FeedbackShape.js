@@ -337,8 +337,7 @@ class NeuralNet_FeedbackShape {
 
     const funcNameInMessage = "set_implicit_input_by_previous_output";
 
-//!!! ...unfinished... (2023/04/22)
-
+    // 1. Check (next time) input shape.
     if ( input_TypedArray.length != this.input_valueCount )
       throw Error( `NeuralNet_FeedbackShape.${funcNameInMessage}(): `
         + `input_TypedArray.length ( ${input_TypedArray.length} ) `
@@ -347,7 +346,8 @@ class NeuralNet_FeedbackShape {
         + `( ${this.input_valueCount} ).`
       );
 
-//!!! ...unfinished... (2023/04/22)
+    // 2. Check (previous time) output shape.
+
     if ( previous_output_Int32ArrayArray.length != 2 )
       throw Error( `NeuralNet_FeedbackShape.${funcNameInMessage}(): `
         + `previous_output_Int32ArrayArray.length `
@@ -375,7 +375,7 @@ class NeuralNet_FeedbackShape {
       );
 
 
-//!!! ...unfinished... (2023/04/22)
+//!!! ...unfinished... (2023/04/23)
 
   }
 
