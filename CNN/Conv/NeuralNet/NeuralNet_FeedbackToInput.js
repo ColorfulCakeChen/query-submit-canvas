@@ -357,7 +357,7 @@ class NeuralNet_FeedbackToInput {
               * this.height_multiplier;
 
         this.width_pixelCount_per_alignment = Math.ceil(
-          this.pixelCount_per_alignment / explicit_input_height );
+          this.pixelCount_per_alignment / this.height_pixelCount_per_alignment );
 
 
 !!! ...unfinished... (2023/04/23)
