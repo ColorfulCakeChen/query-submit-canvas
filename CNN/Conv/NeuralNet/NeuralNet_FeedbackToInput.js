@@ -76,16 +76,20 @@ export { NeuralNet_FeedbackToInput as FeedbackToInput };
  * pixels (with multiplied by .height_multiplier and .width_multiplier).
  *
  * @member {number} height_pixelCount_per_alignment
- *   The height (in pixel count) of .pixelCount_per_alignment.
+ *   The height (in pixel count) of .pixelCount_per_alignment. It has been
+ * multiplied by .height_multiplier.
  *
  * @member {number} height_with_gap_pixelCount_per_alignment
- *   ( .height_pixelCount_per_alignment + .block_gap_height )
+ *   ( .height_pixelCount_per_alignment + .block_gap_height ). It has been
+ * multiplied by .height_multiplier.
  *
  * @member {number} width_pixelCount_per_alignment
- *   The width (in pixel count) of .pixelCount_per_alignment.
+ *   The width (in pixel count) of .pixelCount_per_alignment. It has been
+ * multiplied by .width_multiplier.
  *
  * @member {number} width_with_gap_pixelCount_per_alignment
- *   ( .width_pixelCount_per_alignment + .block_gap_width )
+ *   ( .width_pixelCount_per_alignment + .block_gap_width ). It has been
+ * multiplied by .width_multiplier.
  *
  *
  * @member {number} neuralNetCount
