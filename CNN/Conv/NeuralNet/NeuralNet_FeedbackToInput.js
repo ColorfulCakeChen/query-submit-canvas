@@ -338,6 +338,9 @@ class NeuralNet_FeedbackToInput {
         explicit_input_height_with_gap
           / this.height_with_gap_pixelCount_per_alignment );
 
+!!! ...unfinished... (2023/04/23)
+// ( this.height_blockCount > 4 ) is possible.
+
       // Arranging two feedback blocks of the same one neural network in either
       // the same row or the same column.
       switch ( this.height_blockCount ) {
