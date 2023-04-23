@@ -381,6 +381,9 @@ class NeuralNet_FeedbackShape {
 
 //!!! ...unfinished... (2023/04/23)
 
+    // 3.
+
+    // 3.1
     // Note: ( this.feedbackToInput.neuralNetCount == 2 )
     for (
       let neuralNetIndex = 0;
@@ -396,6 +399,7 @@ class NeuralNet_FeedbackShape {
       let block_position_topArray
         = block_position_topArrayArray[ neuralNetIndex ];
 
+      // 3.2
       // Note: ( this.feedbackToInput.alignmentCount == 2 )
       for (
         let alignmentIndex = 0;
