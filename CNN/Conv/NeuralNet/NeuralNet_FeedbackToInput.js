@@ -324,12 +324,11 @@ class NeuralNet_FeedbackToInput {
       //       the correlation along height and width.
       //
       // Note: Because .pixelCount_per_alignment has been multiplied by
-      //       ( .height_multiplier * width_multiplier ) = ( 2 * 2 ) = 4, its
+      //       ( .height_multiplier * .width_multiplier ) = ( 2 * 2 ) = 4, its
       //       square root always has factor sqrt( 4 ) = 2 (i.e. always is
       //       even number). So, the square root (i.e. the
       //       .width_pixelCount_per_alignment) wlll never break a expanded
       //       pixel in the middle.
-
       this.height_pixelCount_per_alignment
         = this.width_pixelCount_per_alignment
         = Math.ceil( Math.sqrt( this.pixelCount_per_alignment ) );
