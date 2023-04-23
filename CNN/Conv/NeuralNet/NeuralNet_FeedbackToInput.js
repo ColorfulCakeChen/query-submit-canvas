@@ -322,6 +322,11 @@ class NeuralNet_FeedbackToInput {
 
       // 5.2.1 Prefer the square feedback shape because it fairly expresses
       //       the correlation along height and width.
+      //
+      // Note: Because .height_pixelCount_per_alignment has been multiplied by
+      //       ( .height_multiplier * width_multiplier ) = ( 2 * 2 ) = 4, its
+      //       square root always has factor 2 (i.e. always is even number).
+
       this.height_pixelCount_per_alignment
         = this.width_pixelCount_per_alignment
         = Math.ceil( Math.sqrt( this.pixelCount_per_alignment ) );
