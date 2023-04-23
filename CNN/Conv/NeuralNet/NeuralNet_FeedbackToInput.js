@@ -344,7 +344,12 @@ class NeuralNet_FeedbackToInput {
       //       to contain the square shape of feedback, use rectangle shape.
       if ( this.height_pixelCount_per_alignment > explicit_input_height ) {
 
-        this.height_pixelCount_per_alignment = explicit_input_height;
+        // Ensure .height_pixelCount_per_alignment
+        //   - is divisible by .height_multiplier (i.e. 2), and
+        //   - does not exceed explicit_input_height
+        this.height_pixelCount_per_alignment
+          = Math.floor( explicit_input_height / this.height_multiplier )
+              * this.height_multiplier;
 
         this.width_pixelCount_per_alignment = Math.ceil(
           this.pixelCount_per_alignment / explicit_input_height );
