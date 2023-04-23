@@ -360,9 +360,16 @@ class NeuralNet_FeedbackToInput {
                 * this.height_multiplier;
         }
 
-        this.width_pixelCount_per_alignment = Math.ceil(
-          this.pixelCount_per_alignment / this.height_pixelCount_per_alignment );
+//!!! ...unfinished... (2023/04/23)
+        {
+          this.width_original_pixelCount_per_alignment = Math.ceil(
+            this.pixelCount_original_per_alignment
+              / this.height_original_pixelCount_per_alignment );
 
+          this.width_pixelCount_per_alignment = Math.ceil(
+            this.pixelCount_per_alignment
+              / this.height_pixelCount_per_alignment );
+        }
 !!! ...unfinished... (2023/04/23)
 // What if .width_pixelCount_per_alignment breaks a expanded pixel in the middle?
 // For example, ( pixelCount_per_alignment == 12 (= 3 * 2 * 2) ),
@@ -373,10 +380,6 @@ class NeuralNet_FeedbackToInput {
 //   this.width_pixelCount_per_alignment
 //     = Math.ceil( this.width_pixelCount_per_alignment / this.width_multiplier )
 //         * this.width_multiplier
-
-!!! ...unfinished... (2023/04/23)
-        this.height_original_pixelCount_per_alignment = ???;
-        this.width_original_pixelCount_per_alignment = ???;
 
 
       }
