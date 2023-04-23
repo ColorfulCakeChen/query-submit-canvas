@@ -323,10 +323,11 @@ class NeuralNet_FeedbackToInput {
       // 5.2.1 Prefer the square feedback shape because it fairly expresses
       //       the correlation along height and width.
       //
-      // Note: Because .height_pixelCount_per_alignment has been multiplied by
+      // Note: Because .pixelCount_per_alignment has been multiplied by
       //       ( .height_multiplier * width_multiplier ) = ( 2 * 2 ) = 4, its
       //       square root always has factor sqrt( 4 ) = 2 (i.e. always is
-      //       even number). So, the square root wlll never break the expanded
+      //       even number). So, the square root (i.e. the
+      //       .height_pixelCount_per_alignment) wlll never break the expanded
       //       pixels in the middle.
 
       this.height_pixelCount_per_alignment
