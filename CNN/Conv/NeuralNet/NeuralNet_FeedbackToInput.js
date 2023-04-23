@@ -160,8 +160,8 @@ export { NeuralNet_FeedbackToInput as FeedbackToInput };
  *       it personates alignment 1.
  *
  * @member {number[]} block_position_topArrayArray
- *   The array of array of top position in input image for every feedback_to_input
- * block.
+ *   The array of array of top position in input image for every
+ * feedback_to_input block.
  *
  *   - block_position_topArrayArray[ 0 ][ 0 ]
  *       is the top position for the feedback block of neural network 0 when
@@ -315,7 +315,8 @@ class NeuralNet_FeedbackToInput {
         = this.pixelCount_original_per_alignment;
 
       this.height_pixelCount_expanded_per_alignment = 1;
-      this.width_pixelCount_expanded_per_alignment = this.pixelCount_expanded_per_alignment;
+      this.width_pixelCount_expanded_per_alignment
+        = this.pixelCount_expanded_per_alignment;
 
     // 5.2 If the (next time) explicit input is 2d, the feedback (as implicit
     //     input) should also be 2d and placed at left most of the (next time)
@@ -325,12 +326,12 @@ class NeuralNet_FeedbackToInput {
       // 5.2.1 Prefer the square feedback shape because it fairly expresses
       //       the correlation along height and width.
       //
-      // Note: Because .pixelCount_expanded_per_alignment has been multiplied by
-      //       ( .height_multiplier * .width_multiplier ) = ( 2 * 2 ) = 4, its
-      //       square root always has factor sqrt( 4 ) = 2 (i.e. always is
+      // Note: Because .pixelCount_expanded_per_alignment has been multiplied
+      //       by ( .height_multiplier * .width_multiplier ) = ( 2 * 2 ) = 4,
+      //       its square root always has factor sqrt( 4 ) = 2 (i.e. always is
       //       even number). So, the square root (i.e. the
-      //       .width_pixelCount_expanded_per_alignment) wlll never break a expanded
-      //       pixel in the middle.
+      //       .width_pixelCount_expanded_per_alignment) wlll never break a
+      //       expanded pixel in the middle.
       this.height_pixelCount_expanded_per_alignment
         = this.width_pixelCount_expanded_per_alignment
         = Math.ceil( Math.sqrt( this.pixelCount_expanded_per_alignment ) );
