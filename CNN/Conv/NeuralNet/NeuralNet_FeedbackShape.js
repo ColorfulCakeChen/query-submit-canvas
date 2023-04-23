@@ -297,7 +297,6 @@ class NeuralNet_FeedbackShape {
     this.input_valueCount = this.input_pixelCount * this.input_channelCount;
   }
 
-//!!! ...unfinished... (2023/04/22)
   /**
    *
    * @param {Uint8ClampedArray|Int32Array} input_TypedArray
@@ -356,23 +355,23 @@ class NeuralNet_FeedbackShape {
       );
 
     if ( previous_output_Int32ArrayArray[ 0 ].length
-           != this.feedback_valueCount_per_neural_network )
+           != this.feedbackToInput.valueCount_per_neural_network )
       throw Error( `NeuralNet_FeedbackShape.${funcNameInMessage}(): `
         + `previous_output_Int32ArrayArray[ 0 ].length `
         + `( ${previous_output_Int32ArrayArray[ 0 ].length} ) `
         + `should be the same as `
-        + `.feedback_valueCount_per_neural_network `
-        + `( ${this.feedback_valueCount_per_neural_network} ).`
+        + `.feedbackToInput.valueCount_per_neural_network `
+        + `( ${this.feedbackToInput.valueCount_per_neural_network} ).`
       );
 
     if ( previous_output_Int32ArrayArray[ 1 ].length
-           != this.feedback_valueCount_per_neural_network )
+           != this.feedbackToInput.valueCount_per_neural_network )
       throw Error( `NeuralNet_FeedbackShape.${funcNameInMessage}(): `
         + `previous_output_Int32ArrayArray[ 1 ].length `
         + `( ${previous_output_Int32ArrayArray[ 1 ].length} ) `
         + `should be the same as `
-        + `.feedback_valueCount_per_neural_network `
-        + `( ${this.feedback_valueCount_per_neural_network} ).`
+        + `.feedbackToInput.valueCount_per_neural_network `
+        + `( ${this.feedbackToInput.valueCount_per_neural_network} ).`
       );
 
 
