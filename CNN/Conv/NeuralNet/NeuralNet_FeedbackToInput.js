@@ -75,6 +75,10 @@ export { NeuralNet_FeedbackToInput as FeedbackToInput };
  *   The .valueCount_per_alignment will be viewed as how many input
  * pixels (with multiplied by .height_multiplier and .width_multiplier).
  *
+ * @member {number} height_original_pixelCount_per_alignment
+ *   The height (in pixel count) of .pixelCount_original_per_alignment. It has
+ * not been multiplied by .height_multiplier.
+ *
  * @member {number} height_pixelCount_per_alignment
  *   The height (in pixel count) of .pixelCount_per_alignment. It has been
  * multiplied by .height_multiplier.
@@ -82,6 +86,10 @@ export { NeuralNet_FeedbackToInput as FeedbackToInput };
  * @member {number} height_with_gap_pixelCount_per_alignment
  *   ( .height_pixelCount_per_alignment + .block_gap_height ). It has been
  * multiplied by .height_multiplier.
+ *
+ * @member {number} width_original_pixelCount_per_alignment
+ *   The width (in pixel count) of .pixelCount_original_per_alignment. It has
+ * not been multiplied by .width_multiplier.
  *
  * @member {number} width_pixelCount_per_alignment
  *   The width (in pixel count) of .pixelCount_per_alignment. It has been
@@ -300,6 +308,10 @@ class NeuralNet_FeedbackToInput {
     //     (next time) explicit input.
     if ( explicit_input_height == 1 ) {
 
+      this.height_original_pixelCount_per_alignment = 1;
+      this.width_original_pixelCount_per_alignment
+        = this.pixelCount_original_per_alignment;
+
       this.height_pixelCount_per_alignment = 1;
       this.width_pixelCount_per_alignment = this.pixelCount_per_alignment;
 
@@ -314,6 +326,12 @@ class NeuralNet_FeedbackToInput {
         = this.width_pixelCount_per_alignment
         = Math.ceil( Math.sqrt( this.pixelCount_per_alignment ) );
 
+
+!!! ...unfinished... (2023/04/23)
+      this.height_original_pixelCount_per_alignment = ???;
+      this.width_original_pixelCount_per_alignment = ???;
+
+
       // 5.2.2 But, if the (next time) explicit input has not enough height
       //       to contain the square shape of feedback, use rectangle shape.
       if ( this.height_pixelCount_per_alignment > explicit_input_height ) {
@@ -322,6 +340,13 @@ class NeuralNet_FeedbackToInput {
 
         this.width_pixelCount_per_alignment = Math.ceil(
           this.pixelCount_per_alignment / explicit_input_height );
+
+
+!!! ...unfinished... (2023/04/23)
+        this.height_original_pixelCount_per_alignment = ???;
+        this.width_original_pixelCount_per_alignment = ???;
+
+
       }
     }
 

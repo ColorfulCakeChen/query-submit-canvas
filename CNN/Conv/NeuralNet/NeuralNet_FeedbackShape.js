@@ -427,13 +427,13 @@ class NeuralNet_FeedbackShape {
 
 
         for ( let y = 0;
-          y < this.feedbackToInput.height_pixelCount_per_alignment;
+          y < this.feedbackToInput.height_original_pixelCount_per_alignment;
           ++y ) {
 
           let to_input_valueIndex = to_input_valueIndex_row_begin;
 
           for ( let x = 0;
-            x < this.feedbackToInput.width_pixelCount_per_alignment;
+            x < this.feedbackToInput.width_original_pixelCount_per_alignment;
             ++x ) {
 
             ++to_input_valueIndex;
