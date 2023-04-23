@@ -349,9 +349,9 @@ class NeuralNet_FeedbackToInput {
         //       same row.
         } else if ( this.height_blockCount >= this.neuralNetCount ) { // >= 2
 
-          // Do not arrange two feedback blocks of a neural network in different
-          // row or column (e.g. .height_blockCount == 3 ). Force every two
-          // blocks (of one neural networks) in the same row.
+          // Do not arrange two feedback blocks of a neural network in
+          // different row or column (i.e. .height_blockCount == 3 ). Force
+          // every two blocks (of one neural networks) in the same row.
           this.height_blockCount = this.neuralNetCount;
 
         // 6.1.3 All four feedback blocks in the same row.
