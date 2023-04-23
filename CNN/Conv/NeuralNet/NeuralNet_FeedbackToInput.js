@@ -350,6 +350,11 @@ class NeuralNet_FeedbackToInput {
       }
     }
 
+!!! ...unfinished... (2023/04/23)
+// Rename:
+// height_pixelCount_per_alignment to height_expanded_pixelCount_per_alignment
+// width_pixelCount_per_alignment to width_expanded_pixelCount_per_alignment
+
     this.height_with_gap_pixelCount_per_alignment
       = this.height_pixelCount_per_alignment + this.block_gap_height;
 
