@@ -348,10 +348,15 @@ class NeuralNet_FeedbackShape {
 
     // 2. Check (previous time) output shape.
 
-    if ( previous_output_Int32ArrayArray.length != 2 )
+    // Note: ( this.feedbackToInput.neuralNetCount == 2 )
+    if ( previous_output_Int32ArrayArray.length
+           != this.feedbackToInput.neuralNetCount )
       throw Error( `NeuralNet_FeedbackShape.${funcNameInMessage}(): `
         + `previous_output_Int32ArrayArray.length `
-        + `( ${previous_output_Int32ArrayArray.length} ) should be 2.`
+        + `( ${previous_output_Int32ArrayArray.length} ) `
+        + `should be the same as `
+        + `.feedbackToInput.neuralNetCount ( `
+        + `${this.feedbackToInput.neuralNetCount} ).`
       );
 
     if ( previous_output_Int32ArrayArray[ 0 ].length
@@ -374,8 +379,16 @@ class NeuralNet_FeedbackShape {
         + `( ${this.feedbackToInput.valueCount_per_neural_network} ).`
       );
 
-
 //!!! ...unfinished... (2023/04/23)
+    // Note: ( this.feedbackToInput.neuralNetCount == 2 )
+    for (
+      let neuralNetIndex = 0;
+      neuralNetIndex < this.feedbackToInput.neuralNetCount;
+      ++neuralNetIndex ) {
+
+      previous_output_Int32ArrayArray[ neuralNetIndex ];
+
+    }
 
   }
 
