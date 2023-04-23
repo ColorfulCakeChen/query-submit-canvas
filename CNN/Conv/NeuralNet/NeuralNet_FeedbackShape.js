@@ -381,7 +381,7 @@ class NeuralNet_FeedbackShape {
 
 //!!! ...unfinished... (2023/04/23)
 
-    // 3.
+    // 3. Fill previous time output (i.e. feedback) to next time input.
 
     // 3.1
     // Note: ( this.feedbackToInput.neuralNetCount == 2 )
