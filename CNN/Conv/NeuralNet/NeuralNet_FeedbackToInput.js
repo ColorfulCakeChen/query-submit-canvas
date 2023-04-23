@@ -192,7 +192,7 @@ class NeuralNet_FeedbackToInput {
     feedback_valueCount_per_alignment
   ) {
 
-    const funcNameInMessage = "init";
+    //const funcNameInMessage = "init";
 
 
     // 1. Ensure positive integer.
@@ -338,36 +338,29 @@ class NeuralNet_FeedbackToInput {
         explicit_input_height_with_gap
           / this.height_with_gap_pixelCount_per_alignment );
 
-!!! ...unfinished... (2023/04/23)
-// ( this.height_blockCount > 4 ) is possible.
+      // 6.1 Arranging two feedback blocks of the same one neural network in
+      //     either the same row or the same column.
+      {
+        // 6.1.1 All four feedback blocks in the same column.
+        if ( this.height_blockCount >= this.blockCount ) { // >= 4
+          this.height_blockCount = this.blockCount;
 
-      // Arranging two feedback blocks of the same one neural network in either
-      // the same row or the same column.
-      switch ( this.height_blockCount ) {
-        // All four feedback blocks in the same row.
-        case 1: break; // Do nothing.
+        // 6.1.2 Every two feedback blocks (of one neural networks) in the
+        //       same row.
+        } else if ( this.height_blockCount >= this.neuralNetCount ) { // >= 2
 
-        // Every two feedback blocks (of one neural networks) in the same row.
-        case 2: break; // Do nothing.
+          // Do not arrange two feedback blocks of a neural network in different
+          // row or column (e.g. .height_blockCount == 3 ). Force every two
+          // blocks (of one neural networks) in the same row.
+          this.height_blockCount = this.neuralNetCount;
 
-        // Do not arrange two feedback blocks of a neural network in different
-        // row or column. Force every two blocks (of one neural networks) in
-        // the same row.
-        case 3:
-          this.height_blockCount = 2;
-          break;
-
-        // All four feedback blocks in the same column.
-        case 4: break; // Do nothing.
-
-        default:
-          throw Error( `NeuralNet_FeedbackToInput.${funcNameInMessage}(): `
-            + `this.height_blockCount ( ${this.height_blockCount} ) `
-            + `should be either 1 or 2 or 4.`
-          );
-          break;
+        // 6.1.3 All four feedback blocks in the same row.
+        } else { // >= 1
+          this.height_blockCount = 1;
+        }
       }
 
+      // 6.2
       this.width_blockCount = Math.ceil(
         this.blockCount / this.height_blockCount );
     }
