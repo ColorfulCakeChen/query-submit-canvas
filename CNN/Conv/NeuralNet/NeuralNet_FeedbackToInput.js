@@ -50,10 +50,10 @@ export { NeuralNet_FeedbackToInput as FeedbackToInput };
  * network generates two alignments' outputs in one time.
  *
  * @member {number} valueCount_original_per_neural_network
- *   The feedback (of both alignements of a neural network) has how many values.
- * Usually, it is the (previous time) output channel count of a neural network.
- * It is two times of .valueCount_original_per_alignment because a neural
- * network generates two alignments' outputs in one time.
+ *   The feedback (of both alignements of a neural network) has how many
+ * values. Usually, it is the (previous time) output channel count of a neural
+ * network. It is two times of .valueCount_original_per_alignment because a
+ * neural network generates two alignments' outputs in one time.
  *
  *
  * @member {number} height_multiplier
@@ -68,8 +68,8 @@ export { NeuralNet_FeedbackToInput as FeedbackToInput };
  *
  *
  * @member {number} pixelCount_original_per_alignment
- *   The .valueCount_original_per_alignment will be viewed as how many input pixels
- * (without multiplied by .height_multiplier and .width_multiplier).
+ *   The .valueCount_original_per_alignment will be viewed as how many input
+ * pixels (without multiplied by .height_multiplier and .width_multiplier).
  *
  * @member {number} pixelCount_expanded_per_alignment
  *   The .valueCount_original_per_alignment will be viewed as how many input
@@ -80,24 +80,24 @@ export { NeuralNet_FeedbackToInput as FeedbackToInput };
  * not been multiplied by .height_multiplier.
  *
  * @member {number} height_pixelCount_expanded_per_alignment
- *   The height (in pixel count) of .pixelCount_expanded_per_alignment. It has been
- * multiplied by .height_multiplier.
+ *   The height (in pixel count) of .pixelCount_expanded_per_alignment. It has
+ * been multiplied by .height_multiplier.
  *
  * @member {number} height_with_gap_pixelCount_expanded_per_alignment
- *   ( .height_pixelCount_expanded_per_alignment + .block_gap_height ). It has been
- * multiplied by .height_multiplier.
+ *   ( .height_pixelCount_expanded_per_alignment + .block_gap_height_pixelCount_expanded ). It has
+ * been multiplied by .height_multiplier.
  *
  * @member {number} width_pixelCount_original_per_alignment
  *   The width (in pixel count) of .pixelCount_original_per_alignment. It has
  * not been multiplied by .width_multiplier.
  *
  * @member {number} width_pixelCount_expanded_per_alignment
- *   The width (in pixel count) of .pixelCount_expanded_per_alignment. It has been
- * multiplied by .width_multiplier.
+ *   The width (in pixel count) of .pixelCount_expanded_per_alignment. It has
+ * been multiplied by .width_multiplier.
  *
  * @member {number} width_with_gap_pixelCount_expanded_per_alignment
- *   ( .width_pixelCount_expanded_per_alignment + .block_gap_width ). It has been
- * multiplied by .width_multiplier.
+ *   ( .width_pixelCount_expanded_per_alignment + .block_gap_width_pixelCount_expanded ). It has
+ * been multiplied by .width_multiplier.
  *
  *
  * @member {number} neuralNetCount
@@ -121,19 +121,19 @@ export { NeuralNet_FeedbackToInput as FeedbackToInput };
  *   There are how manys feedback blocks along the width in the (next time)
  * input.
  *
- * @member {number} block_gap_height_original
+ * @member {number} block_gap_height_pixelCount_original
  *   The gap (for distinguishing from different feedback information blocks and
  * explicit input) along the height (without multiplied by .height_multiplier).
  *
- * @member {number} block_gap_height
+ * @member {number} block_gap_height_pixelCount_expanded
  *   The gap (for distinguishing from different feedback information blocks and
  * explicit input) along the height (with multiplied by .height_multiplier).
  *
- * @member {number} block_gap_width_original
+ * @member {number} block_gap_width_pixelCount_original
  *   The gap (for distinguishing from different feedback information blocks and
  * explicit input) along the width (without multiplied by .width_multiplier).
  *
- * @member {number} block_gap_width
+ * @member {number} block_gap_width_pixelCount_expanded
  *   The gap (for distinguishing from different feedback information blocks and
  * explicit input) along the width (with multiplied by .width_multiplier).
  *
@@ -256,8 +256,8 @@ class NeuralNet_FeedbackToInput {
 
     // 2.4.2 At least 1 gap between different feedback information blocks and
     //          explicit input.
-    this.block_gap_height_original = 1;
-    this.block_gap_width_original = 1;
+    this.block_gap_height_pixelCount_original = 1;
+    this.block_gap_width_pixelCount_original = 1;
 
     // 3. Four (or two) times the implicit input pixel count along height (if
     //    exists) and width.
@@ -296,11 +296,11 @@ class NeuralNet_FeedbackToInput {
 
     // 5.0 feedback_to_input blocks' gaps should also be enlarged.
     {
-      this.block_gap_height
-        = this.block_gap_height_original * this.height_multiplier;
+      this.block_gap_height_pixelCount_expanded
+        = this.block_gap_height_pixelCount_original * this.height_multiplier;
 
-      this.block_gap_width
-        = this.block_gap_width_original * this.width_multiplier;
+      this.block_gap_width_pixelCount_expanded
+        = this.block_gap_width_pixelCount_original * this.width_multiplier;
     }
 
     // 5.1 If the (next time) explicit input is 1d, the feedback (as implicit
@@ -391,17 +391,17 @@ class NeuralNet_FeedbackToInput {
 // width_pixelCount_expanded_per_alignment to width_expanded_pixelCount_per_alignment
 
     this.height_with_gap_pixelCount_expanded_per_alignment
-      = this.height_pixelCount_expanded_per_alignment + this.block_gap_height;
+      = this.height_pixelCount_expanded_per_alignment + this.block_gap_height_pixelCount_expanded;
 
     this.width_with_gap_pixelCount_expanded_per_alignment
-      = this.width_pixelCount_expanded_per_alignment + this.block_gap_width;
+      = this.width_pixelCount_expanded_per_alignment + this.block_gap_width_pixelCount_expanded;
 
     // 6. Determine .height_blockCount and .width_blockCount
     //
     // Try arrange feedback blocks along input height.
     {
       let explicit_input_height_with_gap
-        = explicit_input_height + this.block_gap_height;
+        = explicit_input_height + this.block_gap_height_pixelCount_expanded;
 
       this.height_blockCount = Math.floor(
         explicit_input_height_with_gap
