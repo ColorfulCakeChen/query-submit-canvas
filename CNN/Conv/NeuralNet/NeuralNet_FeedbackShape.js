@@ -445,6 +445,8 @@ class NeuralNet_FeedbackShape {
                 ++x_multiplier ) {
       
 //!!! ...unfinished... (2023/04/23)
+// should beak early if has reached .height_expanded_pixelCount_per_alignment
+
                 ++to_input_valueIndex;
               }
 
