@@ -386,8 +386,17 @@ class NeuralNet_FeedbackShape {
       neuralNetIndex < this.feedbackToInput.neuralNetCount;
       ++neuralNetIndex ) {
 
+//!!! ...unfinished... (2023/04/23)
       previous_output_Int32ArrayArray[ neuralNetIndex ];
 
+      // Note: ( this.feedbackToInput.alignmentCount == 2 )
+      for (
+        let alignmentIndex = 0;
+        alignmentIndex < this.feedbackToInput.alignmentCount;
+        ++alignmentIndex ) {
+
+        // alignmentIndex;
+      }
     }
 
   }
