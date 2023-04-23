@@ -351,10 +351,14 @@ class NeuralNet_FeedbackToInput {
         // Note: Because explicit_input_height is at least 2 here, the
         //       .height_pixelCount_per_alignment will be also at
         //       least 2 (i.e. not 0 or 1).
-        this.height_pixelCount_per_alignment
-          = Math.floor( explicit_input_height / this.height_multiplier )
-              * this.height_multiplier;
+        {
+          this.height_original_pixelCount_per_alignment
+            = Math.floor( explicit_input_height / this.height_multiplier );
 
+          this.height_pixelCount_per_alignment
+            = this.height_original_pixelCount_per_alignment
+                * this.height_multiplier;
+        }
 
         this.width_pixelCount_per_alignment = Math.ceil(
           this.pixelCount_per_alignment / this.height_pixelCount_per_alignment );
