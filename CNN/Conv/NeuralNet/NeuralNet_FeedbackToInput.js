@@ -345,7 +345,8 @@ class NeuralNet_FeedbackToInput {
       if ( this.height_pixelCount_per_alignment > explicit_input_height ) {
 
         // Ensure .height_pixelCount_per_alignment
-        //   - is divisible by .height_multiplier (i.e. 2), and
+        //   - contains factor .height_multiplier (i.e. 2) (i.e. is divisible
+        //       by .height_multiplier), and
         //   - does not exceed explicit_input_height
         this.height_pixelCount_per_alignment
           = Math.floor( explicit_input_height / this.height_multiplier )
