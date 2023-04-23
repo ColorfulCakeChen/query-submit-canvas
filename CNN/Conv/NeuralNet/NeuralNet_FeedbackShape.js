@@ -360,23 +360,23 @@ class NeuralNet_FeedbackShape {
       );
 
     if ( previous_output_Int32ArrayArray[ 0 ].length
-           != this.feedbackToInput.valueCount_per_neural_network )
+           != this.feedbackToInput.valueCount_original_per_neural_network )
       throw Error( `NeuralNet_FeedbackShape.${funcNameInMessage}(): `
         + `previous_output_Int32ArrayArray[ 0 ].length `
         + `( ${previous_output_Int32ArrayArray[ 0 ].length} ) `
         + `should be the same as `
-        + `.feedbackToInput.valueCount_per_neural_network `
-        + `( ${this.feedbackToInput.valueCount_per_neural_network} ).`
+        + `.feedbackToInput.valueCount_original_per_neural_network `
+        + `( ${this.feedbackToInput.valueCount_original_per_neural_network} ).`
       );
 
     if ( previous_output_Int32ArrayArray[ 1 ].length
-           != this.feedbackToInput.valueCount_per_neural_network )
+           != this.feedbackToInput.valueCount_original_per_neural_network )
       throw Error( `NeuralNet_FeedbackShape.${funcNameInMessage}(): `
         + `previous_output_Int32ArrayArray[ 1 ].length `
         + `( ${previous_output_Int32ArrayArray[ 1 ].length} ) `
         + `should be the same as `
-        + `.feedbackToInput.valueCount_per_neural_network `
-        + `( ${this.feedbackToInput.valueCount_per_neural_network} ).`
+        + `.feedbackToInput.valueCount_original_per_neural_network `
+        + `( ${this.feedbackToInput.valueCount_original_per_neural_network} ).`
       );
 
 //!!! ...unfinished... (2023/04/23)
@@ -416,8 +416,8 @@ class NeuralNet_FeedbackShape {
                + block_position_left;
 
 //!!! ...unfinished... (2023/04/23)
-        // this.feedbackToInput.height_pixelCount_per_alignment
-        // this.feedbackToInput.width_pixelCount_per_alignment
+        // this.feedbackToInput.height_pixelCount_expanded_per_alignment
+        // this.feedbackToInput.width_pixelCount_expanded_per_alignment
 
         // this.feedbackToInput.height_multiplier
         // this.feedbackToInput.width_multiplier
@@ -427,7 +427,7 @@ class NeuralNet_FeedbackShape {
 
 
         for ( let y = 0;
-          y < this.feedbackToInput.height_original_pixelCount_per_alignment;
+          y < this.feedbackToInput.height_pixelCount_original_per_alignment;
           ++y ) {
 
           for ( let y_multiplier = 0;
@@ -437,7 +437,7 @@ class NeuralNet_FeedbackShape {
             let to_input_valueIndex = to_input_valueIndex_row_begin;
 
             for ( let x = 0;
-              x < this.feedbackToInput.width_original_pixelCount_per_alignment;
+              x < this.feedbackToInput.width_pixelCount_original_per_alignment;
               ++x ) {
 
               for ( let x_multiplier = 0;
@@ -445,7 +445,7 @@ class NeuralNet_FeedbackShape {
                 ++x_multiplier ) {
       
 //!!! ...unfinished... (2023/04/23)
-// should beak early if has reached .height_expanded_pixelCount_per_alignment
+// should beak early if has reached .height_pixelCount_expanded_per_alignment
 
                 ++to_input_valueIndex;
               }

@@ -43,16 +43,16 @@ export { NeuralNet_FeedbackToInput as FeedbackToInput };
  * count (= implicit_input_pixelCount * input_channelCount).
  *
  *
- * @member {number} valueCount_per_alignment
+ * @member {number} valueCount_original_per_alignment
  *   The feedback (of an alignement of a neural network) has how many values.
  * (i.e. feedback_valueCount_per_alignment) Usually, it is half of the
  * (previous time) output channel count of a neural network because a neural
  * network generates two alignments' outputs in one time.
  *
- * @member {number} valueCount_per_neural_network
+ * @member {number} valueCount_original_per_neural_network
  *   The feedback (of both alignements of a neural network) has how many values.
  * Usually, it is the (previous time) output channel count of a neural network.
- * It is two times of .valueCount_per_alignment because a neural
+ * It is two times of .valueCount_original_per_alignment because a neural
  * network generates two alignments' outputs in one time.
  *
  *
@@ -68,35 +68,35 @@ export { NeuralNet_FeedbackToInput as FeedbackToInput };
  *
  *
  * @member {number} pixelCount_original_per_alignment
- *   The .valueCount_per_alignment will be viewed as how many input pixels
+ *   The .valueCount_original_per_alignment will be viewed as how many input pixels
  * (without multiplied by .height_multiplier and .width_multiplier).
  *
- * @member {number} pixelCount_per_alignment
- *   The .valueCount_per_alignment will be viewed as how many input
+ * @member {number} pixelCount_expanded_per_alignment
+ *   The .valueCount_original_per_alignment will be viewed as how many input
  * pixels (with multiplied by .height_multiplier and .width_multiplier).
  *
- * @member {number} height_original_pixelCount_per_alignment
+ * @member {number} height_pixelCount_original_per_alignment
  *   The height (in pixel count) of .pixelCount_original_per_alignment. It has
  * not been multiplied by .height_multiplier.
  *
- * @member {number} height_pixelCount_per_alignment
- *   The height (in pixel count) of .pixelCount_per_alignment. It has been
+ * @member {number} height_pixelCount_expanded_per_alignment
+ *   The height (in pixel count) of .pixelCount_expanded_per_alignment. It has been
  * multiplied by .height_multiplier.
  *
- * @member {number} height_with_gap_pixelCount_per_alignment
- *   ( .height_pixelCount_per_alignment + .block_gap_height ). It has been
+ * @member {number} height_with_gap_pixelCount_expanded_per_alignment
+ *   ( .height_pixelCount_expanded_per_alignment + .block_gap_height ). It has been
  * multiplied by .height_multiplier.
  *
- * @member {number} width_original_pixelCount_per_alignment
+ * @member {number} width_pixelCount_original_per_alignment
  *   The width (in pixel count) of .pixelCount_original_per_alignment. It has
  * not been multiplied by .width_multiplier.
  *
- * @member {number} width_pixelCount_per_alignment
- *   The width (in pixel count) of .pixelCount_per_alignment. It has been
+ * @member {number} width_pixelCount_expanded_per_alignment
+ *   The width (in pixel count) of .pixelCount_expanded_per_alignment. It has been
  * multiplied by .width_multiplier.
  *
- * @member {number} width_with_gap_pixelCount_per_alignment
- *   ( .width_pixelCount_per_alignment + .block_gap_width ). It has been
+ * @member {number} width_with_gap_pixelCount_expanded_per_alignment
+ *   ( .width_pixelCount_expanded_per_alignment + .block_gap_width ). It has been
  * multiplied by .width_multiplier.
  *
  *
@@ -217,7 +217,7 @@ class NeuralNet_FeedbackToInput {
       = NeuralNet_FeedbackToInput.ensure_positive_integer(
           explicit_input_channelCount );
 
-    this.valueCount_per_alignment = feedback_valueCount_per_alignment
+    this.valueCount_original_per_alignment = feedback_valueCount_per_alignment
       = NeuralNet_FeedbackToInput.ensure_positive_integer(
           feedback_valueCount_per_alignment );
 
@@ -241,8 +241,8 @@ class NeuralNet_FeedbackToInput {
       = this.explicit_input_height;
 
     // 2.3
-    this.valueCount_per_neural_network
-      = this.valueCount_per_alignment * 2;
+    this.valueCount_original_per_neural_network
+      = this.valueCount_original_per_alignment * 2;
 
     // 2.4 feedback_to_input block information.
 
@@ -286,9 +286,9 @@ class NeuralNet_FeedbackToInput {
 
     // Every input_channelCount feedback values as an implicit input pixel.
     this.pixelCount_original_per_alignment = Math.ceil(
-      this.valueCount_per_alignment / this.input_channelCount );
+      this.valueCount_original_per_alignment / this.input_channelCount );
 
-    this.pixelCount_per_alignment
+    this.pixelCount_expanded_per_alignment
       = this.pixelCount_original_per_alignment
           * this.height_multiplier * this.width_multiplier;
 
@@ -308,12 +308,12 @@ class NeuralNet_FeedbackToInput {
     //     (next time) explicit input.
     if ( explicit_input_height == 1 ) {
 
-      this.height_original_pixelCount_per_alignment = 1;
-      this.width_original_pixelCount_per_alignment
+      this.height_pixelCount_original_per_alignment = 1;
+      this.width_pixelCount_original_per_alignment
         = this.pixelCount_original_per_alignment;
 
-      this.height_pixelCount_per_alignment = 1;
-      this.width_pixelCount_per_alignment = this.pixelCount_per_alignment;
+      this.height_pixelCount_expanded_per_alignment = 1;
+      this.width_pixelCount_expanded_per_alignment = this.pixelCount_expanded_per_alignment;
 
     // 5.2 If the (next time) explicit input is 2d, the feedback (as implicit
     //     input) should also be 2d and placed at left most of the (next time)
@@ -323,62 +323,62 @@ class NeuralNet_FeedbackToInput {
       // 5.2.1 Prefer the square feedback shape because it fairly expresses
       //       the correlation along height and width.
       //
-      // Note: Because .pixelCount_per_alignment has been multiplied by
+      // Note: Because .pixelCount_expanded_per_alignment has been multiplied by
       //       ( .height_multiplier * .width_multiplier ) = ( 2 * 2 ) = 4, its
       //       square root always has factor sqrt( 4 ) = 2 (i.e. always is
       //       even number). So, the square root (i.e. the
-      //       .width_pixelCount_per_alignment) wlll never break a expanded
+      //       .width_pixelCount_expanded_per_alignment) wlll never break a expanded
       //       pixel in the middle.
-      this.height_pixelCount_per_alignment
-        = this.width_pixelCount_per_alignment
-        = Math.ceil( Math.sqrt( this.pixelCount_per_alignment ) );
+      this.height_pixelCount_expanded_per_alignment
+        = this.width_pixelCount_expanded_per_alignment
+        = Math.ceil( Math.sqrt( this.pixelCount_expanded_per_alignment ) );
 
 
 !!! ...unfinished... (2023/04/23)
-      this.height_original_pixelCount_per_alignment = ???;
-      this.width_original_pixelCount_per_alignment = ???;
+      this.height_pixelCount_original_per_alignment = ???;
+      this.width_pixelCount_original_per_alignment = ???;
 
 
       // 5.2.2 But, if the (next time) explicit input has not enough height
       //       to contain the square shape of feedback, use rectangle shape.
-      if ( this.height_pixelCount_per_alignment > explicit_input_height ) {
+      if ( this.height_pixelCount_expanded_per_alignment > explicit_input_height ) {
 
-        // Ensure .height_pixelCount_per_alignment
+        // Ensure .height_pixelCount_expanded_per_alignment
         //   - contains factor .height_multiplier (i.e. 2) (i.e. is divisible
         //       by .height_multiplier), and
         //   - does not exceed explicit_input_height
         //
         // Note: Because explicit_input_height is at least 2 here, the
-        //       .height_pixelCount_per_alignment will be also at
+        //       .height_pixelCount_expanded_per_alignment will be also at
         //       least 2 (i.e. not 0 or 1).
         {
-          this.height_original_pixelCount_per_alignment
+          this.height_pixelCount_original_per_alignment
             = Math.floor( explicit_input_height / this.height_multiplier );
 
-          this.height_pixelCount_per_alignment
-            = this.height_original_pixelCount_per_alignment
+          this.height_pixelCount_expanded_per_alignment
+            = this.height_pixelCount_original_per_alignment
                 * this.height_multiplier;
         }
 
 //!!! ...unfinished... (2023/04/23)
         {
-          this.width_original_pixelCount_per_alignment = Math.ceil(
+          this.width_pixelCount_original_per_alignment = Math.ceil(
             this.pixelCount_original_per_alignment
-              / this.height_original_pixelCount_per_alignment );
+              / this.height_pixelCount_original_per_alignment );
 
-          this.width_pixelCount_per_alignment = Math.ceil(
-            this.pixelCount_per_alignment
-              / this.height_pixelCount_per_alignment );
+          this.width_pixelCount_expanded_per_alignment = Math.ceil(
+            this.pixelCount_expanded_per_alignment
+              / this.height_pixelCount_expanded_per_alignment );
         }
 !!! ...unfinished... (2023/04/23)
-// What if .width_pixelCount_per_alignment breaks a expanded pixel in the middle?
-// For example, ( pixelCount_per_alignment == 12 (= 3 * 2 * 2) ),
-// and ( height_pixelCount_per_alignment == 4 ),
-// then ( width_pixelCount_per_alignment == 3 )
+// What if .width_pixelCount_expanded_per_alignment breaks a expanded pixel in the middle?
+// For example, ( pixelCount_expanded_per_alignment == 12 (= 3 * 2 * 2) ),
+// and ( height_pixelCount_expanded_per_alignment == 4 ),
+// then ( width_pixelCount_expanded_per_alignment == 3 )
 //
 // Perhaps, need:
-//   this.width_pixelCount_per_alignment
-//     = Math.ceil( this.width_pixelCount_per_alignment / this.width_multiplier )
+//   this.width_pixelCount_expanded_per_alignment
+//     = Math.ceil( this.width_pixelCount_expanded_per_alignment / this.width_multiplier )
 //         * this.width_multiplier
 
 
@@ -387,14 +387,14 @@ class NeuralNet_FeedbackToInput {
 
 !!! ...unfinished... (2023/04/23)
 // Rename:
-// height_pixelCount_per_alignment to height_expanded_pixelCount_per_alignment
-// width_pixelCount_per_alignment to width_expanded_pixelCount_per_alignment
+// height_pixelCount_expanded_per_alignment to height_expanded_pixelCount_per_alignment
+// width_pixelCount_expanded_per_alignment to width_expanded_pixelCount_per_alignment
 
-    this.height_with_gap_pixelCount_per_alignment
-      = this.height_pixelCount_per_alignment + this.block_gap_height;
+    this.height_with_gap_pixelCount_expanded_per_alignment
+      = this.height_pixelCount_expanded_per_alignment + this.block_gap_height;
 
-    this.width_with_gap_pixelCount_per_alignment
-      = this.width_pixelCount_per_alignment + this.block_gap_width;
+    this.width_with_gap_pixelCount_expanded_per_alignment
+      = this.width_pixelCount_expanded_per_alignment + this.block_gap_width;
 
     // 6. Determine .height_blockCount and .width_blockCount
     //
@@ -405,7 +405,7 @@ class NeuralNet_FeedbackToInput {
 
       this.height_blockCount = Math.floor(
         explicit_input_height_with_gap
-          / this.height_with_gap_pixelCount_per_alignment );
+          / this.height_with_gap_pixelCount_expanded_per_alignment );
 
       // 6.1 Arranging two feedback blocks of the same one neural network in
       //     either the same row or the same column.
@@ -436,7 +436,7 @@ class NeuralNet_FeedbackToInput {
 
     // 7.
     this.implicit_input_width
-      = this.width_blockCount * this.width_with_gap_pixelCount_per_alignment;
+      = this.width_blockCount * this.width_with_gap_pixelCount_expanded_per_alignment;
 
     this.implicit_input_pixelCount
       = this.implicit_input_height * this.implicit_input_width;
@@ -516,10 +516,10 @@ class NeuralNet_FeedbackToInput {
           ++width_block_index ) {
 
           leftArray[ i ] = ( width_block_index
-            * this.width_with_gap_pixelCount_per_alignment );
+            * this.width_with_gap_pixelCount_expanded_per_alignment );
 
           topArray[ i ] = ( height_block_index
-            * this.height_with_gap_pixelCount_per_alignment );
+            * this.height_with_gap_pixelCount_expanded_per_alignment );
 
           ++i;
         }
