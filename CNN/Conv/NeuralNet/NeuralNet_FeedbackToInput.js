@@ -350,8 +350,8 @@ class NeuralNet_FeedbackToInput {
         //   - does not exceed explicit_input_height
         //
         // Note: Because explicit_input_height is at least 2 here, the
-        //       .height_pixelCount_per_alignment will be also at least 2
-        //       (i.e. not 0 or 1).
+        //       .height_pixelCount_per_alignment will be also at
+        //       least 2 (i.e. not 0 or 1).
         this.height_pixelCount_per_alignment
           = Math.floor( explicit_input_height / this.height_multiplier )
               * this.height_multiplier;
