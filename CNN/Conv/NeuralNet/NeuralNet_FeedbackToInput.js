@@ -361,7 +361,7 @@ class NeuralNet_FeedbackToInput {
 
 !!! ...unfinished... (2023/04/23)
 // What if .width_pixelCount_per_alignment breaks a expanded pixel in the middle?
-// For example, ( pixelCount_per_alignment == 12 ),
+// For example, ( pixelCount_per_alignment == 12 (= 3 * 2 * 2) ),
 // and ( height_pixelCount_per_alignment == 2 ),
 // then ( width_pixelCount_per_alignment == 3 )
 //
