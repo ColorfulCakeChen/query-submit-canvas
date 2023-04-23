@@ -327,8 +327,8 @@ class NeuralNet_FeedbackToInput {
       //       ( .height_multiplier * width_multiplier ) = ( 2 * 2 ) = 4, its
       //       square root always has factor sqrt( 4 ) = 2 (i.e. always is
       //       even number). So, the square root (i.e. the
-      //       .height_pixelCount_per_alignment) wlll never break the expanded
-      //       pixels in the middle.
+      //       .height_pixelCount_per_alignment) wlll never break a expanded
+      //       pixel in the middle.
 
       this.height_pixelCount_per_alignment
         = this.width_pixelCount_per_alignment
