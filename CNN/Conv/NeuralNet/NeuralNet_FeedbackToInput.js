@@ -106,7 +106,8 @@ export { NeuralNet_FeedbackToInput as FeedbackToInput };
  *   There are how many neural networks in a versus. It is always 2.
  *
  * @member {number} alignmentCount_per_neuralNet
- *   There are how many alignments in a versus. It is always 2.
+ *   There are how many alignments in a versus. Every neural network will
+ * generates output of all alignments. It is always 2.
  *
  * @member {number} blockCount
  *   There are how many feedback blocks be put in the (next time) input. It is
