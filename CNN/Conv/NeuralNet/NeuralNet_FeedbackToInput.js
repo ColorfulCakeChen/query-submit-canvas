@@ -13,7 +13,7 @@ export { NeuralNet_FeedbackToInput as FeedbackToInput };
  * network generates two alignments' outputs in one time.
  *
  * @member {number} valueCount_expanded
- *   (= .valueCount_original * .area.height_multiplier * .area.width_multiplier)
+ *   (= .valueCount_original * .height_multiplier * .width_multiplier)
  *
  *
  * @member {number} height_multiplier
@@ -27,18 +27,27 @@ export { NeuralNet_FeedbackToInput as FeedbackToInput };
  * confront neural network's stage's block0's halving width.
  *
  *
+ * @member {number} pixelCount_original
+ *   The .valueCount_original will be viewed as how many input pixels (without
+ * multiplied by .height_multiplier and .width_multiplier).
+ *
+ * @member {number} pixelCount_expanded
+ *   The .valueCount_original will be viewed as how many input pixels (with
+ * multiplied by .area.height_multiplier and .area.width_multiplier).
+ *
+ *
  */
 class NeuralNet_FeedbackToInput_Area {
 
   valueCount_original;
+  valueCount_expanded;
 
   height_multiplier;
   width_multiplier
 
+  pixelCount_original;
+
 //!!! ...unfinished... (2023/04/24)
-  get valueCount_expanded() {
-    return this.valueCount_original * this.area.height_multiplier * this.area.width_multiplier;
-  }
 
 
 }
@@ -94,20 +103,12 @@ class NeuralNet_FeedbackToInput_Area {
  * neural network generates two alignments' outputs in one time.
  *
  *
- * @member {number} pixelCount_original_per_alignment
- *   The .area.valueCount_original will be viewed as how many input
- * pixels (without multiplied by .area.height_multiplier and .area.width_multiplier).
- *
- * @member {number} pixelCount_expanded_per_alignment
- *   The .area.valueCount_original will be viewed as how many input
- * pixels (with multiplied by .area.height_multiplier and .area.width_multiplier).
- *
  * @member {number} height_pixelCount_original_per_alignment
- *   The height (in pixel count) of .pixelCount_original_per_alignment. It has
+ *   The height (in pixel count) of .area.pixelCount_original. It has
  * not been multiplied by .area.height_multiplier.
  *
  * @member {number} height_pixelCount_expanded_per_alignment
- *   The height (in pixel count) of .pixelCount_expanded_per_alignment. It has
+ *   The height (in pixel count) of .area.pixelCount_expanded. It has
  * been multiplied by .area.height_multiplier.
  *
  * @member {number} height_with_gap_pixelCount_expanded_per_alignment
@@ -116,11 +117,11 @@ class NeuralNet_FeedbackToInput_Area {
  * .area.height_multiplier.
  *
  * @member {number} width_pixelCount_original_per_alignment
- *   The width (in pixel count) of .pixelCount_original_per_alignment. It has
+ *   The width (in pixel count) of .area.pixelCount_original. It has
  * not been multiplied by .area.width_multiplier.
  *
  * @member {number} width_pixelCount_expanded_per_alignment
- *   The width (in pixel count) of .pixelCount_expanded_per_alignment. It has
+ *   The width (in pixel count) of .area.pixelCount_expanded. It has
  * been multiplied by .area.width_multiplier.
  *
  * @member {number} width_with_gap_pixelCount_expanded_per_alignment
@@ -236,8 +237,13 @@ class NeuralNet_FeedbackToInput {
 
     //const funcNameInMessage = "init";
 
-    if ( !this.area )
-      this.area = new NeuralNet_FeedbackToInput_Area();
+    let area;
+    {
+      if ( !this.area )
+        this.area = new NeuralNet_FeedbackToInput_Area();
+
+      area = this.area;
+    }
 
     // 1. Ensure positive integer.
 
@@ -249,7 +255,7 @@ class NeuralNet_FeedbackToInput {
       = NeuralNet_FeedbackToInput.ensure_positive_integer(
           explicit_input_channelCount );
 
-    this.area.valueCount_original = feedback_valueCount_per_alignment
+    area.valueCount_original = feedback_valueCount_per_alignment
       = NeuralNet_FeedbackToInput.ensure_positive_integer(
           feedback_valueCount_per_alignment );
 
@@ -274,7 +280,7 @@ class NeuralNet_FeedbackToInput {
 
     // 2.3
     this.valueCount_original_per_neural_network
-      = this.area.valueCount_original * 2;
+      = area.valueCount_original * 2;
 
     // 2.4 feedback_to_input area information.
 
@@ -303,27 +309,30 @@ class NeuralNet_FeedbackToInput {
     //     input width will be halven). So, double the feedback pixel count
     //     is enough.
     if ( explicit_input_height == 1 ) {
-      this.area.height_multiplier = 1;
-      this.area.width_multiplier = 2;
+      area.height_multiplier = 1;
+      area.width_multiplier = 2;
 
     // 3.2 If input is 2d data (e.g. image), use four times the feedback
     //     pixel count to confront neural network's stage's block0's making
     //     a quarter.
     } else {
-      this.area.height_multiplier = 2;
-      this.area.width_multiplier = 2;
+      area.height_multiplier = 2;
+      area.width_multiplier = 2;
     }
+
+    area.valueCount_expanded = area.valueCount_original
+      * area.height_multiplier * area.width_multiplier;
 
     // 4. Determine implicit input pixel count.
 
     // Every input_channelCount feedback values as an implicit input pixel.
-    this.pixelCount_original_per_alignment = Math.ceil(
+    this.area.pixelCount_original = Math.ceil(
       this.area.valueCount_original / this.input_channelCount );
 
-    this.pixelCount_expanded_per_alignment
-      = this.pixelCount_original_per_alignment
+    this.area.pixelCount_expanded
+      = this.area.pixelCount_original
           * this.area.height_multiplier * this.area.width_multiplier;
-
+    
     // 5. Determine feedback_to_input area shape.
 
     // 5.0 feedback_to_input areas' gaps should also be enlarged.
@@ -342,11 +351,11 @@ class NeuralNet_FeedbackToInput {
 
       this.height_pixelCount_original_per_alignment = 1;
       this.width_pixelCount_original_per_alignment
-        = this.pixelCount_original_per_alignment;
+        = this.area.pixelCount_original;
 
       this.height_pixelCount_expanded_per_alignment = 1;
       this.width_pixelCount_expanded_per_alignment
-        = this.pixelCount_expanded_per_alignment;
+        = this.area.pixelCount_expanded;
 
     // 5.2 If the (next time) explicit input is 2d, the feedback (as implicit
     //     input) should also be 2d and placed at left most of the (next time)
@@ -358,7 +367,7 @@ class NeuralNet_FeedbackToInput {
       {
         this.height_pixelCount_original_per_alignment
           = this.width_pixelCount_original_per_alignment
-          = Math.ceil( Math.sqrt( this.pixelCount_original_per_alignment ) );
+          = Math.ceil( Math.sqrt( this.area.pixelCount_original ) );
 
         this.height_pixelCount_expanded_per_alignment
           = this.height_pixelCount_original_per_alignment
@@ -388,7 +397,7 @@ class NeuralNet_FeedbackToInput {
 
         {
           this.width_pixelCount_original_per_alignment
-            = Math.ceil( this.pixelCount_original_per_alignment
+            = Math.ceil( this.area.pixelCount_original
                 / this.height_pixelCount_original_per_alignment );
         }
       }
