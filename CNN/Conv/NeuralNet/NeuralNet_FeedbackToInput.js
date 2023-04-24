@@ -177,11 +177,11 @@ class NeuralNet_FeedbackToInput_Area {
  *   - So, there are 4 (= 2 * 2) feedback information areas.
  *
  * @member {number} height_areaCount
- *   There are how manys feedback areas along the height in the (next time)
+ *   There are how many feedback areas along the height in the (next time)
  * input.
  *
  * @member {number} width_areaCount
- *   There are how manys feedback areas along the width in the (next time)
+ *   There are how many feedback areas along the width in the (next time)
  * input.
  *
  * @member {number[]} area_position_leftArrayArray
