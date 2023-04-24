@@ -2,14 +2,41 @@ export { NeuralNet_FeedbackToInput_Area as FeedbackToInput_Area };
 export { NeuralNet_FeedbackToInput as FeedbackToInput };
 
 /**
- * Describe a cuboid in the neural network's input for filling the neural
- * network's previous next output (i.e. feedback).
- * 
+ * Describe a cuboid in the neural network's input for filling the previous
+ * next output (i.e. feedback) of an alignment of a neural network.
+ *
+ *
+ * @member {number} valueCount_original
+ *   The feedback (of an alignement of a neural network) has how many values.
+ * (i.e. feedback_valueCount_per_alignment) Usually, it is half of the
+ * (previous time) output channel count of a neural network because a neural
+ * network generates two alignments' outputs in one time.
+ *
+ * @member {number} valueCount_expanded
+ *   (= .valueCount_original * .height_multiplier * .width_multiplier)
+ *
+ *
+ * @member {number} height_multiplier
+ *   When converting feedback values to implicit input pixels, how many times
+ * should be replicated along the implicit input height. It is mainly used to
+ * confront neural network's stage's block0's halving height.
+ *
+ * @member {number} width_multiplier
+ *   When converting feedback values to implicit input pixels, how many times
+ * should be replicated along the implicit input width. It is mainly used to
+ * confront neural network's stage's block0's halving width.
+ *
  *
  */
 class NeuralNet_FeedbackToInput_Area {
 
+  valueCount_original;
+
 //!!! ...unfinished... (2023/04/24)
+  get valueCount_expanded() {
+    return this.valueCount_original * this.height_multiplier * this.width_multiplier;
+  }
+
 
 }
 
@@ -57,36 +84,19 @@ class NeuralNet_FeedbackToInput_Area {
  * count (= implicit_input_pixelCount * input_channelCount).
  *
  *
- * @member {number} valueCount_original_per_alignment
- *   The feedback (of an alignement of a neural network) has how many values.
- * (i.e. feedback_valueCount_per_alignment) Usually, it is half of the
- * (previous time) output channel count of a neural network because a neural
- * network generates two alignments' outputs in one time.
- *
  * @member {number} valueCount_original_per_neural_network
  *   The feedback (of both alignements of a neural network) has how many
  * values. Usually, it is the (previous time) output channel count of a neural
- * network. It is two times of .valueCount_original_per_alignment because a
+ * network. It is two times of .area.valueCount_original because a
  * neural network generates two alignments' outputs in one time.
  *
  *
- * @member {number} height_multiplier
- *   When converting feedback values to implicit input pixels, how many times
- * should be replicated along the implicit input height. It is mainly used to
- * confront neural network's stage's block0's halving height.
- *
- * @member {number} width_multiplier
- *   When converting feedback values to implicit input pixels, how many times
- * should be replicated along the implicit input width. It is mainly used to
- * confront neural network's stage's block0's halving width.
- *
- *
  * @member {number} pixelCount_original_per_alignment
- *   The .valueCount_original_per_alignment will be viewed as how many input
+ *   The .area.valueCount_original will be viewed as how many input
  * pixels (without multiplied by .height_multiplier and .width_multiplier).
  *
  * @member {number} pixelCount_expanded_per_alignment
- *   The .valueCount_original_per_alignment will be viewed as how many input
+ *   The .area.valueCount_original will be viewed as how many input
  * pixels (with multiplied by .height_multiplier and .width_multiplier).
  *
  * @member {number} height_pixelCount_original_per_alignment
@@ -223,6 +233,8 @@ class NeuralNet_FeedbackToInput {
 
     //const funcNameInMessage = "init";
 
+    if ( !this.area )
+      this.area = new NeuralNet_FeedbackToInput_Area();
 
     // 1. Ensure positive integer.
 
@@ -234,7 +246,7 @@ class NeuralNet_FeedbackToInput {
       = NeuralNet_FeedbackToInput.ensure_positive_integer(
           explicit_input_channelCount );
 
-    this.valueCount_original_per_alignment = feedback_valueCount_per_alignment
+    this.area.valueCount_original = feedback_valueCount_per_alignment
       = NeuralNet_FeedbackToInput.ensure_positive_integer(
           feedback_valueCount_per_alignment );
 
@@ -259,7 +271,7 @@ class NeuralNet_FeedbackToInput {
 
     // 2.3
     this.valueCount_original_per_neural_network
-      = this.valueCount_original_per_alignment * 2;
+      = this.area.valueCount_original * 2;
 
     // 2.4 feedback_to_input area information.
 
@@ -303,7 +315,7 @@ class NeuralNet_FeedbackToInput {
 
     // Every input_channelCount feedback values as an implicit input pixel.
     this.pixelCount_original_per_alignment = Math.ceil(
-      this.valueCount_original_per_alignment / this.input_channelCount );
+      this.area.valueCount_original / this.input_channelCount );
 
     this.pixelCount_expanded_per_alignment
       = this.pixelCount_original_per_alignment

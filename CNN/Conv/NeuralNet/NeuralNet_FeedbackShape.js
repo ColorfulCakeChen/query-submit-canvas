@@ -445,7 +445,7 @@ class NeuralNet_FeedbackShape {
                 ++x_multiplier ) {
       
 //!!! ...unfinished... (2023/04/24)
-// if has reached .valueCount_expanded_per_alignment but not
+// if has reached .area.valueCount_expanded but not
 // .pixelCount_expanded_per_alignment, should fill zero.
 //
 // if has reached .pixelCount_expanded_per_alignment, break early.
