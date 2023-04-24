@@ -371,6 +371,9 @@ class NeuralNet_FeedbackToInput {
 
 //!!! ...unfinished... (2023/04/24)
 // Rename .Xxx_per_alignment to .area_Xxx/ (per alignment == per area)
+// (.height_areaCount to ???)
+// (.width_areaCount to ???)
+//
 // Add .area_all_height_Xxx and .area_all_width_Xxx
 
 //!!! ...unfinished... (2023/04/24)
