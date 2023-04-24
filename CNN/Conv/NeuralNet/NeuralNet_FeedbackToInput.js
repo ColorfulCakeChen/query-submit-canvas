@@ -44,9 +44,8 @@ export { NeuralNet_FeedbackToInput as FeedbackToInput };
  * multiplied by .height_multiplier.
  *
  * @member {number} height_with_gap_pixelCount_expanded
- *   ( .height_pixelCount_expanded
- * + .area_gap_height_pixelCount_expanded ). It has been multiplied by
- * .height_multiplier.
+ *   ( .height_pixelCount_expanded + .area_gap_height_pixelCount_expanded ). It
+ * has been multiplied by .height_multiplier.
  *
  * @member {number} width_pixelCount_original
  *   The width (in pixel count) of .pixelCount_original. It has not been
@@ -55,6 +54,11 @@ export { NeuralNet_FeedbackToInput as FeedbackToInput };
  * @member {number} width_pixelCount_expanded
  *   The width (in pixel count) of .pixelCount_expanded. It has been
  * multiplied by .width_multiplier.
+ *
+ * @member {number} width_with_gap_pixelCount_expanded
+ *   ( .width_pixelCount_expanded + .area_gap_width_pixelCount_expanded ). It
+ * has been multiplied by .width_multiplier.
+ *
  *
  *
  */
@@ -75,6 +79,7 @@ class NeuralNet_FeedbackToInput_Area {
 
   width_pixelCount_original;
   width_pixelCount_expanded;
+  width_with_gap_pixelCount_expanded;
 
 //!!! ...unfinished... (2023/04/24)
 
@@ -130,12 +135,6 @@ class NeuralNet_FeedbackToInput_Area {
  * values. Usually, it is the (previous time) output channel count of a neural
  * network. It is two times of .area.valueCount_original because a
  * neural network generates two alignments' outputs in one time.
- *
- *
- * @member {number} width_with_gap_pixelCount_expanded_per_alignment
- *   ( .area.width_pixelCount_expanded
- * + .area_gap_width_pixelCount_expanded ). It has been multiplied by
- * .area.width_multiplier.
  *
  *
  * @member {number} neuralNetCount
@@ -431,8 +430,8 @@ class NeuralNet_FeedbackToInput {
       = area.height_pixelCount_expanded
           + this.area_gap_height_pixelCount_expanded;
 
-    this.width_with_gap_pixelCount_expanded_per_alignment
-      = this.area.width_pixelCount_expanded
+    area.width_with_gap_pixelCount_expanded
+      = area.width_pixelCount_expanded
           + this.area_gap_width_pixelCount_expanded;
 
     // 6. Determine .height_areaCount and .width_areaCount
@@ -476,8 +475,7 @@ class NeuralNet_FeedbackToInput {
 
     // 7.
     this.implicit_input_width
-      = this.width_areaCount
-          * this.width_with_gap_pixelCount_expanded_per_alignment;
+      = this.width_areaCount * area.width_with_gap_pixelCount_expanded;
 
     this.implicit_input_pixelCount
       = this.implicit_input_height * this.implicit_input_width;
@@ -559,7 +557,7 @@ class NeuralNet_FeedbackToInput {
           ++width_area_index ) {
 
           leftArray[ i ] = ( width_area_index
-            * this.width_with_gap_pixelCount_expanded_per_alignment );
+            * this.area.width_with_gap_pixelCount_expanded );
 
           topArray[ i ] = ( height_area_index
             * this.area.height_with_gap_pixelCount_expanded );
