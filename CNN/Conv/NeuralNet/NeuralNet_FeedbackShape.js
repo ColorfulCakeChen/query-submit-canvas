@@ -402,10 +402,10 @@ class NeuralNet_FeedbackShape {
       // 3.2
       let from_output_valueIndex = 0;
 
-      // Note: ( this.feedbackToInput.alignmentCount == 2 )
+      // Note: ( this.feedbackToInput.alignmentCount_per_neuralNet == 2 )
       for (
         let alignmentIndex = 0;
-        alignmentIndex < this.feedbackToInput.alignmentCount;
+        alignmentIndex < this.feedbackToInput.alignmentCount_per_neuralNet;
         ++alignmentIndex ) {
 
         let block_position_left = block_position_leftArray[ alignmentIndex ];

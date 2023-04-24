@@ -105,7 +105,7 @@ export { NeuralNet_FeedbackToInput as FeedbackToInput };
  * @member {number} neuralNetCount
  *   There are how many neural networks in a versus. It is always 2.
  *
- * @member {number} alignmentCount
+ * @member {number} alignmentCount_per_neuralNet
  *   There are how many alignments in a versus. It is always 2.
  *
  * @member {number} blockCount
@@ -253,13 +253,13 @@ class NeuralNet_FeedbackToInput {
     // There are two neural networks (in a versus pair).
     // There two alignments per two neural network.
     this.neuralNetCount = 2;
-    this.alignmentCount = 2;
+    this.alignmentCount_per_neuralNet = 2;
 
 //!!! ...unfinished... (2023/04/24)
 // Rename "block" to "area". Otherwise, it is confused with NeutalNet's 
 // convolution block.
 
-    this.blockCount = this.neuralNetCount * this.alignmentCount;
+    this.blockCount = this.neuralNetCount * this.alignmentCount_per_neuralNet;
 
     // 2.4.2 At least 1 gap between different feedback information blocks and
     //          explicit input.
@@ -470,7 +470,7 @@ class NeuralNet_FeedbackToInput {
   /**
    * @param {NeuralNet_FeedbackToInput} this
    * @param {number} this.neuralNetCount
-   * @param {number} this.alignmentCount
+   * @param {number} this.alignmentCount_per_neuralNet
    */
   static block_position_create() {
     // 1.
@@ -491,17 +491,17 @@ class NeuralNet_FeedbackToInput {
 
       // 2.1
       if ( this.block_position_leftArrayArray[ i ] )
-        this.block_position_leftArrayArray[ i ].length = this.alignmentCount;
+        this.block_position_leftArrayArray[ i ].length = this.alignmentCount_per_neuralNet;
       else
         this.block_position_leftArrayArray[ i ]
-          = new Array( this.alignmentCount );
+          = new Array( this.alignmentCount_per_neuralNet );
 
       // 2.2
       if ( this.block_position_topArrayArray[ i ] )
-        this.block_position_topArrayArray[ i ].length = this.alignmentCount;
+        this.block_position_topArrayArray[ i ].length = this.alignmentCount_per_neuralNet;
       else
         this.block_position_topArrayArray[ i ]
-          = new Array( this.alignmentCount );
+          = new Array( this.alignmentCount_per_neuralNet );
     }
   }
 
@@ -552,7 +552,7 @@ class NeuralNet_FeedbackToInput {
         let block_position_topArray
           = this.block_position_topArrayArray[ n ];
 
-        for ( let a = 0; a < this.alignmentCount; ++a ) {
+        for ( let a = 0; a < this.alignmentCount_per_neuralNet; ++a ) {
           block_position_leftArray[ a ] = leftArray[ i ];
           block_position_topArray[ a ] = topArray[ i ];
   
