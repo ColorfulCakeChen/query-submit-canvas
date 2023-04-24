@@ -254,6 +254,11 @@ class NeuralNet_FeedbackToInput {
     // There two alignments per two neural network.
     this.neuralNetCount = 2;
     this.alignmentCount = 2;
+
+//!!! ...unfinished... (2023/04/24)
+// Rename "block" to "area". Otherwise, it is confused with NeutalNet's 
+// convolution block.
+
     this.blockCount = this.neuralNetCount * this.alignmentCount;
 
     // 2.4.2 At least 1 gap between different feedback information blocks and
