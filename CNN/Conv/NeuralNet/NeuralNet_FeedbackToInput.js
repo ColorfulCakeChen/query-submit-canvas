@@ -451,7 +451,8 @@ class NeuralNet_FeedbackToInput {
 
     // 7.
     this.implicit_input_width
-      = this.width_areaCount * this.width_with_gap_pixelCount_expanded_per_alignment;
+      = this.width_areaCount
+          * this.width_with_gap_pixelCount_expanded_per_alignment;
 
     this.implicit_input_pixelCount
       = this.implicit_input_height * this.implicit_input_width;
