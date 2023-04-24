@@ -493,14 +493,16 @@ class NeuralNet_FeedbackToInput {
 
       // 2.1
       if ( this.area_position_leftArrayArray[ i ] )
-        this.area_position_leftArrayArray[ i ].length = this.alignmentCount_per_neuralNet;
+        this.area_position_leftArrayArray[ i ].length
+          = this.alignmentCount_per_neuralNet;
       else
         this.area_position_leftArrayArray[ i ]
           = new Array( this.alignmentCount_per_neuralNet );
 
       // 2.2
       if ( this.area_position_topArrayArray[ i ] )
-        this.area_position_topArrayArray[ i ].length = this.alignmentCount_per_neuralNet;
+        this.area_position_topArrayArray[ i ].length
+          = this.alignmentCount_per_neuralNet;
       else
         this.area_position_topArrayArray[ i ]
           = new Array( this.alignmentCount_per_neuralNet );
