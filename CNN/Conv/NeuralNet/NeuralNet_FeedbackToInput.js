@@ -7,6 +7,8 @@ export { NeuralNet_FeedbackToInput as FeedbackToInput };
  */
 class NeuralNet_FeedbackToInput_AreaOne {
 
+//!!! ...unfinished... (2023/04/24)
+
 }
 
 
