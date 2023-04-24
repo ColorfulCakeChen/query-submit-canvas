@@ -367,19 +367,6 @@ class NeuralNet_FeedbackToInput {
             = Math.ceil( this.pixelCount_original_per_alignment
                 / this.height_pixelCount_original_per_alignment );
         }
-
-!!! ...unfinished... (2023/04/23)
-// What if .width_pixelCount_expanded_per_alignment breaks a expanded pixel in the middle?
-// For example, ( pixelCount_expanded_per_alignment == 12 (= 3 * 2 * 2) ),
-// and ( height_pixelCount_expanded_per_alignment == 4 ),
-// then ( width_pixelCount_expanded_per_alignment == 3 )
-//
-// Perhaps, need:
-//   this.width_pixelCount_expanded_per_alignment
-//     = Math.ceil( this.width_pixelCount_expanded_per_alignment / this.width_multiplier )
-//         * this.width_multiplier
-
-
       }
 
       this.width_pixelCount_expanded_per_alignment
