@@ -85,7 +85,7 @@ export { NeuralNet_FeedbackToInput as FeedbackToInput };
  *
  * @member {number} height_with_gap_pixelCount_expanded_per_alignment
  *   ( .height_pixelCount_expanded_per_alignment
- * + .block_gap_height_pixelCount_expanded ). It has been multiplied by
+ * + .area_gap_height_pixelCount_expanded ). It has been multiplied by
  * .height_multiplier.
  *
  * @member {number} width_pixelCount_original_per_alignment
@@ -98,7 +98,7 @@ export { NeuralNet_FeedbackToInput as FeedbackToInput };
  *
  * @member {number} width_with_gap_pixelCount_expanded_per_alignment
  *   ( .width_pixelCount_expanded_per_alignment
- * + .block_gap_width_pixelCount_expanded ). It has been multiplied by
+ * + .area_gap_width_pixelCount_expanded ). It has been multiplied by
  * .width_multiplier.
  *
  *
@@ -109,75 +109,75 @@ export { NeuralNet_FeedbackToInput as FeedbackToInput };
  *   There are how many alignments in a versus. Every neural network will
  * generates output of all alignments. It is always 2.
  *
- * @member {number} blockCount
- *   There are how many feedback blocks be put in the (next time) input. It is
- * always 4. (Every alignment has exactly one block.) Because:
+ * @member {number} areaCount
+ *   There are how many feedback areas be put in the (next time) input. It is
+ * always 4. (Every alignment has exactly one area.) Because:
  *   - There are two neural networks (in a versus pair).
  *   - There two alignments per two neural network.
- *   - So, there are 4 (= 2 * 2) feedback information blocks.
+ *   - So, there are 4 (= 2 * 2) feedback information areas.
  *
- * @member {number} height_blockCount
- *   There are how manys feedback blocks along the height in the (next time)
+ * @member {number} height_areaCount
+ *   There are how manys feedback areas along the height in the (next time)
  * input.
  *
- * @member {number} width_blockCount
- *   There are how manys feedback blocks along the width in the (next time)
+ * @member {number} width_areaCount
+ *   There are how manys feedback areas along the width in the (next time)
  * input.
  *
- * @member {number} block_gap_height_pixelCount_original
- *   The gap (for distinguishing from different feedback information blocks and
+ * @member {number} area_gap_height_pixelCount_original
+ *   The gap (for distinguishing from different feedback information areas and
  * explicit input) along the height (without multiplied by .height_multiplier).
  *
- * @member {number} block_gap_height_pixelCount_expanded
- *   The gap (for distinguishing from different feedback information blocks and
+ * @member {number} area_gap_height_pixelCount_expanded
+ *   The gap (for distinguishing from different feedback information areas and
  * explicit input) along the height (with multiplied by .height_multiplier).
  *
- * @member {number} block_gap_width_pixelCount_original
- *   The gap (for distinguishing from different feedback information blocks and
+ * @member {number} area_gap_width_pixelCount_original
+ *   The gap (for distinguishing from different feedback information areas and
  * explicit input) along the width (without multiplied by .width_multiplier).
  *
- * @member {number} block_gap_width_pixelCount_expanded
- *   The gap (for distinguishing from different feedback information blocks and
+ * @member {number} area_gap_width_pixelCount_expanded
+ *   The gap (for distinguishing from different feedback information areas and
  * explicit input) along the width (with multiplied by .width_multiplier).
  *
- * @member {number[]} block_position_leftArrayArray
+ * @member {number[]} area_position_leftArrayArray
  *   The array of array of left position in input image for every
- * feedback_to_input block.
+ * feedback_to_input area.
  *
- *   - block_position_leftArrayArray[ 0 ][ 0 ]
- *       is the left position for the feedback block of neural network 0 when
+ *   - area_position_leftArrayArray[ 0 ][ 0 ]
+ *       is the left position for the feedback area of neural network 0 when
  *       it personates alignment 0.
  *
- *   - block_position_leftArrayArray[ 0 ][ 1 ]
- *       is the left position for the feedback block of neural network 0 when
+ *   - area_position_leftArrayArray[ 0 ][ 1 ]
+ *       is the left position for the feedback area of neural network 0 when
  *       it personates alignment 1.
  *
- *   - block_position_leftArrayArray[ 1 ][ 0 ]
- *       is the left position for the feedback block of neural network 1 when
+ *   - area_position_leftArrayArray[ 1 ][ 0 ]
+ *       is the left position for the feedback area of neural network 1 when
  *       it personates alignment 0.
  *
- *   - block_position_leftArrayArray[ 1 ][ 1 ]
- *       is the left position for the feedback block of neural network 1 when
+ *   - area_position_leftArrayArray[ 1 ][ 1 ]
+ *       is the left position for the feedback area of neural network 1 when
  *       it personates alignment 1.
  *
- * @member {number[]} block_position_topArrayArray
+ * @member {number[]} area_position_topArrayArray
  *   The array of array of top position in input image for every
- * feedback_to_input block.
+ * feedback_to_input area.
  *
- *   - block_position_topArrayArray[ 0 ][ 0 ]
- *       is the top position for the feedback block of neural network 0 when
+ *   - area_position_topArrayArray[ 0 ][ 0 ]
+ *       is the top position for the feedback area of neural network 0 when
  *       it personates alignment 0.
  *
- *   - block_position_topArrayArray[ 0 ][ 1 ]
- *       is the top position for the feedback block of neural network 0 when
+ *   - area_position_topArrayArray[ 0 ][ 1 ]
+ *       is the top position for the feedback area of neural network 0 when
  *       it personates alignment 1.
  *
- *   - block_position_topArrayArray[ 1 ][ 0 ]
- *       is the top position for the feedback block of neural network 1 when
+ *   - area_position_topArrayArray[ 1 ][ 0 ]
+ *       is the top position for the feedback area of neural network 1 when
  *       it personates alignment 0.
  *
- *   - block_position_topArrayArray[ 1 ][ 1 ]
- *       is the top position for the feedback block of neural network 1 when
+ *   - area_position_topArrayArray[ 1 ][ 1 ]
+ *       is the top position for the feedback area of neural network 1 when
  *       it personates alignment 1.
  *
  *
@@ -247,9 +247,9 @@ class NeuralNet_FeedbackToInput {
     this.valueCount_original_per_neural_network
       = this.valueCount_original_per_alignment * 2;
 
-    // 2.4 feedback_to_input block information.
+    // 2.4 feedback_to_input area information.
 
-    // 2.4.1 There are 4 (= 2 * 2) feedback information blocks.
+    // 2.4.1 There are 4 (= 2 * 2) feedback information areas.
     //
     // There are two neural networks (in a versus pair).
     // There two alignments per two neural network.
@@ -257,15 +257,15 @@ class NeuralNet_FeedbackToInput {
     this.alignmentCount_per_neuralNet = 2;
 
 //!!! ...unfinished... (2023/04/24)
-// Rename "block" to "area". Otherwise, it is confused with NeutalNet's 
-// convolution block.
+// Rename "area" to "area". Otherwise, it is confused with NeutalNet's 
+// convolution area.
 
-    this.blockCount = this.neuralNetCount * this.alignmentCount_per_neuralNet;
+    this.areaCount = this.neuralNetCount * this.alignmentCount_per_neuralNet;
 
-    // 2.4.2 At least 1 gap between different feedback information blocks and
+    // 2.4.2 At least 1 gap between different feedback information areas and
     //          explicit input.
-    this.block_gap_height_pixelCount_original = 1;
-    this.block_gap_width_pixelCount_original = 1;
+    this.area_gap_height_pixelCount_original = 1;
+    this.area_gap_width_pixelCount_original = 1;
 
     // 3. Four (or two) times the implicit input pixel count along height (if
     //    exists) and width.
@@ -300,15 +300,15 @@ class NeuralNet_FeedbackToInput {
       = this.pixelCount_original_per_alignment
           * this.height_multiplier * this.width_multiplier;
 
-    // 5. Determine feedback_to_input block shape.
+    // 5. Determine feedback_to_input area shape.
 
-    // 5.0 feedback_to_input blocks' gaps should also be enlarged.
+    // 5.0 feedback_to_input areas' gaps should also be enlarged.
     {
-      this.block_gap_height_pixelCount_expanded
-        = this.block_gap_height_pixelCount_original * this.height_multiplier;
+      this.area_gap_height_pixelCount_expanded
+        = this.area_gap_height_pixelCount_original * this.height_multiplier;
 
-      this.block_gap_width_pixelCount_expanded
-        = this.block_gap_width_pixelCount_original * this.width_multiplier;
+      this.area_gap_width_pixelCount_expanded
+        = this.area_gap_width_pixelCount_original * this.width_multiplier;
     }
 
     // 5.1 If the (next time) explicit input is 1d, the feedback (as implicit
@@ -405,53 +405,53 @@ class NeuralNet_FeedbackToInput {
 
     this.height_with_gap_pixelCount_expanded_per_alignment
       = this.height_pixelCount_expanded_per_alignment
-          + this.block_gap_height_pixelCount_expanded;
+          + this.area_gap_height_pixelCount_expanded;
 
     this.width_with_gap_pixelCount_expanded_per_alignment
       = this.width_pixelCount_expanded_per_alignment
-          + this.block_gap_width_pixelCount_expanded;
+          + this.area_gap_width_pixelCount_expanded;
 
-    // 6. Determine .height_blockCount and .width_blockCount
+    // 6. Determine .height_areaCount and .width_areaCount
     //
-    // Try arrange feedback blocks along input height.
+    // Try arrange feedback areas along input height.
     {
       let explicit_input_height_with_gap
-        = explicit_input_height + this.block_gap_height_pixelCount_expanded;
+        = explicit_input_height + this.area_gap_height_pixelCount_expanded;
 
-      this.height_blockCount = Math.floor(
+      this.height_areaCount = Math.floor(
         explicit_input_height_with_gap
           / this.height_with_gap_pixelCount_expanded_per_alignment );
 
-      // 6.1 Arranging two feedback blocks of the same one neural network in
+      // 6.1 Arranging two feedback areas of the same one neural network in
       //     either the same row or the same column.
       {
-        // 6.1.1 All four feedback blocks in the same column.
-        if ( this.height_blockCount >= this.blockCount ) { // >= 4
-          this.height_blockCount = this.blockCount;
+        // 6.1.1 All four feedback areas in the same column.
+        if ( this.height_areaCount >= this.areaCount ) { // >= 4
+          this.height_areaCount = this.areaCount;
 
-        // 6.1.2 Every two feedback blocks (of one neural networks) in the
+        // 6.1.2 Every two feedback areas (of one neural networks) in the
         //       same row.
-        } else if ( this.height_blockCount >= this.neuralNetCount ) { // >= 2
+        } else if ( this.height_areaCount >= this.neuralNetCount ) { // >= 2
 
-          // Do not arrange two feedback blocks of a neural network in
-          // different row or column (i.e. .height_blockCount == 3 ). Force
-          // every two blocks (of one neural networks) in the same row.
-          this.height_blockCount = this.neuralNetCount;
+          // Do not arrange two feedback areas of a neural network in
+          // different row or column (i.e. .height_areaCount == 3 ). Force
+          // every two areas (of one neural networks) in the same row.
+          this.height_areaCount = this.neuralNetCount;
 
-        // 6.1.3 All four feedback blocks in the same row.
+        // 6.1.3 All four feedback areas in the same row.
         } else { // >= 1
-          this.height_blockCount = 1;
+          this.height_areaCount = 1;
         }
       }
 
       // 6.2
-      this.width_blockCount = Math.ceil(
-        this.blockCount / this.height_blockCount );
+      this.width_areaCount = Math.ceil(
+        this.areaCount / this.height_areaCount );
     }
 
     // 7.
     this.implicit_input_width
-      = this.width_blockCount * this.width_with_gap_pixelCount_expanded_per_alignment;
+      = this.width_areaCount * this.width_with_gap_pixelCount_expanded_per_alignment;
 
     this.implicit_input_pixelCount
       = this.implicit_input_height * this.implicit_input_width;
@@ -459,11 +459,11 @@ class NeuralNet_FeedbackToInput {
     this.implicit_input_valueCount
       = this.implicit_input_pixelCount * this.input_channelCount;
 
-    // 8. Determine every feedback_to_input block's ( left, top ) position
+    // 8. Determine every feedback_to_input area's ( left, top ) position
     //    in input image.
     {
-      NeuralNet_FeedbackToInput.block_position_create.call( this );
-      NeuralNet_FeedbackToInput.block_position_fill.call( this );
+      NeuralNet_FeedbackToInput.area_position_create.call( this );
+      NeuralNet_FeedbackToInput.area_position_fill.call( this );
     }
 
   }
@@ -473,67 +473,67 @@ class NeuralNet_FeedbackToInput {
    * @param {number} this.neuralNetCount
    * @param {number} this.alignmentCount_per_neuralNet
    */
-  static block_position_create() {
+  static area_position_create() {
     // 1.
     // 1.1
-    if ( this.block_position_leftArrayArray )
-      this.block_position_leftArrayArray.length = this.neuralNetCount;
+    if ( this.area_position_leftArrayArray )
+      this.area_position_leftArrayArray.length = this.neuralNetCount;
     else
-      this.block_position_leftArrayArray = new Array( this.neuralNetCount );
+      this.area_position_leftArrayArray = new Array( this.neuralNetCount );
 
     // 1.2
-    if ( this.block_position_topArrayArray )
-      this.block_position_topArrayArray.length = this.neuralNetCount;
+    if ( this.area_position_topArrayArray )
+      this.area_position_topArrayArray.length = this.neuralNetCount;
     else
-      this.block_position_topArrayArray = new Array( this.neuralNetCount );
+      this.area_position_topArrayArray = new Array( this.neuralNetCount );
 
     // 2.
     for ( let i = 0; i < this.neuralNetCount; ++i ) {
 
       // 2.1
-      if ( this.block_position_leftArrayArray[ i ] )
-        this.block_position_leftArrayArray[ i ].length = this.alignmentCount_per_neuralNet;
+      if ( this.area_position_leftArrayArray[ i ] )
+        this.area_position_leftArrayArray[ i ].length = this.alignmentCount_per_neuralNet;
       else
-        this.block_position_leftArrayArray[ i ]
+        this.area_position_leftArrayArray[ i ]
           = new Array( this.alignmentCount_per_neuralNet );
 
       // 2.2
-      if ( this.block_position_topArrayArray[ i ] )
-        this.block_position_topArrayArray[ i ].length = this.alignmentCount_per_neuralNet;
+      if ( this.area_position_topArrayArray[ i ] )
+        this.area_position_topArrayArray[ i ].length = this.alignmentCount_per_neuralNet;
       else
-        this.block_position_topArrayArray[ i ]
+        this.area_position_topArrayArray[ i ]
           = new Array( this.alignmentCount_per_neuralNet );
     }
   }
 
   /**
    * @param {NeuralNet_FeedbackToInput} this
-   * @param {number} this.blockCount
-   * @param {number} this.height_blockCount
-   * @param {number} this.width_blockCount
-   * @param {number} this.block_position_leftArrayArray
-   * @param {number} this.block_position_topArrayArray
+   * @param {number} this.areaCount
+   * @param {number} this.height_areaCount
+   * @param {number} this.width_areaCount
+   * @param {number} this.area_position_leftArrayArray
+   * @param {number} this.area_position_topArrayArray
    */
-  static block_position_fill() {
+  static area_position_fill() {
     // 1. Create all ( left, top ) coordinates.
-    let leftArray = new Array( this.blockCount );
-    let topArray = new Array( this.blockCount );
+    let leftArray = new Array( this.areaCount );
+    let topArray = new Array( this.areaCount );
     {
       let i = 0;
       for (
-        let height_block_index = 0;
-        height_block_index < this.height_blockCount;
-        ++height_block_index ) {
+        let height_area_index = 0;
+        height_area_index < this.height_areaCount;
+        ++height_area_index ) {
 
         for (
-          let width_block_index = 0;
-          width_block_index < this.width_blockCount;
-          ++width_block_index ) {
+          let width_area_index = 0;
+          width_area_index < this.width_areaCount;
+          ++width_area_index ) {
 
-          leftArray[ i ] = ( width_block_index
+          leftArray[ i ] = ( width_area_index
             * this.width_with_gap_pixelCount_expanded_per_alignment );
 
-          topArray[ i ] = ( height_block_index
+          topArray[ i ] = ( height_area_index
             * this.height_with_gap_pixelCount_expanded_per_alignment );
 
           ++i;
@@ -547,15 +547,15 @@ class NeuralNet_FeedbackToInput {
       let i = 0;
       for ( let n = 0; n < this.neuralNetCount; ++n ) {
 
-        let block_position_leftArray
-          = this.block_position_leftArrayArray[ n ];
+        let area_position_leftArray
+          = this.area_position_leftArrayArray[ n ];
 
-        let block_position_topArray
-          = this.block_position_topArrayArray[ n ];
+        let area_position_topArray
+          = this.area_position_topArrayArray[ n ];
 
         for ( let a = 0; a < this.alignmentCount_per_neuralNet; ++a ) {
-          block_position_leftArray[ a ] = leftArray[ i ];
-          block_position_topArray[ a ] = topArray[ i ];
+          area_position_leftArray[ a ] = leftArray[ i ];
+          area_position_topArray[ a ] = topArray[ i ];
   
           ++i;
         }
