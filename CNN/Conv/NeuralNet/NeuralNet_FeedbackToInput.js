@@ -298,20 +298,13 @@ class NeuralNet_FeedbackToInput {
     this.valueCount_original_per_neural_network
       = area.valueCount_original * 2;
 
-    // 2.4 feedback_to_input area information.
-
-    // 2.4.1 There are 4 (= 2 * 2) feedback information areas.
+    // 2.4 There are 4 (= 2 * 2) feedback information areas.
     //
     // There are two neural networks (in a versus pair).
     // There two alignments per two neural network.
     this.neuralNetCount = 2;
     this.alignmentCount_per_neuralNet = 2;
     this.areaCount = this.neuralNetCount * this.alignmentCount_per_neuralNet;
-
-    // 2.4.2 At least 1 gap between different feedback information areas and
-    //          explicit input.
-    area.gap_height_pixelCount_original = 1;
-    area.gap_width_pixelCount_original = 1;
 
     // 3. Four (or two) times the implicit input pixel count along height (if
     //    exists) and width.
@@ -352,6 +345,11 @@ class NeuralNet_FeedbackToInput {
 
     // 5.0 feedback_to_input areas' gaps should also be enlarged.
     {
+      // At least 1 gap between different feedback information areas and
+      // explicit input.
+      area.gap_height_pixelCount_original = 1;
+      area.gap_width_pixelCount_original = 1;
+
       area.gap_height_pixelCount_expanded
         = area.gap_height_pixelCount_original * area.height_multiplier;
 
