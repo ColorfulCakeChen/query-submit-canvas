@@ -444,8 +444,12 @@ class NeuralNet_FeedbackShape {
                 x_multiplier < this.feedbackToInput.width_multiplier;
                 ++x_multiplier ) {
       
-//!!! ...unfinished... (2023/04/23)
-// should beak early if has reached .height_pixelCount_expanded_per_alignment
+//!!! ...unfinished... (2023/04/24)
+// if has reached .valueCount_expanded_per_alignment but not
+// .pixelCount_expanded_per_alignment, should fill zero.
+//
+// if has reached .pixelCount_expanded_per_alignment, break early.
+//
 
                 ++to_input_valueIndex;
               }
