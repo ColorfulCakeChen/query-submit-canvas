@@ -257,8 +257,7 @@ class NeuralNet_FeedbackToInput {
     this.alignmentCount_per_neuralNet = 2;
 
 //!!! ...unfinished... (2023/04/24)
-// Rename "area" to "area". Otherwise, it is confused with NeutalNet's 
-// convolution area.
+// Perhaps, collect area_Xxx to and object .area"
 
     this.areaCount = this.neuralNetCount * this.alignmentCount_per_neuralNet;
 
