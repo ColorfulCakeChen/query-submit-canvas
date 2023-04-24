@@ -45,8 +45,8 @@ export { NeuralNet_FeedbackToInput as FeedbackToInput };
  * multiplied by .height_multiplier.
  *
  * @member {number} height_with_gap_pixelCount_expanded
- *   ( .height_pixelCount_expanded + .area.gap_height_pixelCount_expanded ). It
- * has been multiplied by .height_multiplier.
+ *   ( .height_pixelCount_expanded + .gap_height_pixelCount_expanded ). It has
+ * been multiplied by .height_multiplier.
  *
  *
  * @member {number} width_pixelCount_original
@@ -58,8 +58,8 @@ export { NeuralNet_FeedbackToInput as FeedbackToInput };
  * multiplied by .width_multiplier.
  *
  * @member {number} width_with_gap_pixelCount_expanded
- *   ( .width_pixelCount_expanded + .area.gap_width_pixelCount_expanded ). It
- * has been multiplied by .width_multiplier.
+ *   ( .width_pixelCount_expanded + .gap_width_pixelCount_expanded ). It has
+ * been multiplied by .width_multiplier.
  *
  *
  * @member {number} gap_height_pixelCount_original
