@@ -43,6 +43,15 @@ export { NeuralNet_FeedbackToInput as FeedbackToInput };
  *   The height (in pixel count) of .pixelCount_expanded. It has been
  * multiplied by .height_multiplier.
  *
+ * @member {number} height_with_gap_pixelCount_expanded
+ *   ( .height_pixelCount_expanded
+ * + .area_gap_height_pixelCount_expanded ). It has been multiplied by
+ * .height_multiplier.
+ *
+ * @member {number} width_pixelCount_original
+ *   The width (in pixel count) of .pixelCount_original. It has
+ * not been multiplied by .width_multiplier.
+ *
  *
  */
 class NeuralNet_FeedbackToInput_Area {
@@ -58,6 +67,9 @@ class NeuralNet_FeedbackToInput_Area {
 
   height_pixelCount_original;
   height_pixelCount_expanded;
+  height_with_gap_pixelCount_expanded;
+
+  width_pixelCount_original;
 
 //!!! ...unfinished... (2023/04/24)
 
@@ -114,15 +126,6 @@ class NeuralNet_FeedbackToInput_Area {
  * network. It is two times of .area.valueCount_original because a
  * neural network generates two alignments' outputs in one time.
  *
- *
- * @member {number} height_with_gap_pixelCount_expanded_per_alignment
- *   ( .area.height_pixelCount_expanded
- * + .area_gap_height_pixelCount_expanded ). It has been multiplied by
- * .area.height_multiplier.
- *
- * @member {number} width_pixelCount_original_per_alignment
- *   The width (in pixel count) of .area.pixelCount_original. It has
- * not been multiplied by .area.width_multiplier.
  *
  * @member {number} width_pixelCount_expanded_per_alignment
  *   The width (in pixel count) of .area.pixelCount_expanded. It has
@@ -354,7 +357,7 @@ class NeuralNet_FeedbackToInput {
     if ( explicit_input_height == 1 ) {
 
       this.area.height_pixelCount_original = 1;
-      this.width_pixelCount_original_per_alignment
+      this.area.width_pixelCount_original
         = this.area.pixelCount_original;
 
       this.area.height_pixelCount_expanded = 1;
@@ -370,7 +373,7 @@ class NeuralNet_FeedbackToInput {
       //       the correlation along height and width.
       {
         this.area.height_pixelCount_original
-          = this.width_pixelCount_original_per_alignment
+          = this.area.width_pixelCount_original
           = Math.ceil( Math.sqrt( this.area.pixelCount_original ) );
 
         this.area.height_pixelCount_expanded
@@ -400,14 +403,14 @@ class NeuralNet_FeedbackToInput {
         }
 
         {
-          this.width_pixelCount_original_per_alignment
+          this.area.width_pixelCount_original
             = Math.ceil( this.area.pixelCount_original
                 / this.area.height_pixelCount_original );
         }
       }
 
       this.width_pixelCount_expanded_per_alignment
-        = this.width_pixelCount_original_per_alignment
+        = this.area.width_pixelCount_original
             * this.area.width_multiplier;
     }
 
@@ -423,8 +426,8 @@ class NeuralNet_FeedbackToInput {
 // .area_all_Xxx to object .area_all.Xxx
 
 
-    this.height_with_gap_pixelCount_expanded_per_alignment
-      = this.area.height_pixelCount_expanded
+    area.height_with_gap_pixelCount_expanded
+      = area.height_pixelCount_expanded
           + this.area_gap_height_pixelCount_expanded;
 
     this.width_with_gap_pixelCount_expanded_per_alignment
@@ -440,7 +443,7 @@ class NeuralNet_FeedbackToInput {
 
       this.height_areaCount = Math.floor(
         explicit_input_height_with_gap
-          / this.height_with_gap_pixelCount_expanded_per_alignment );
+          / this.area.height_with_gap_pixelCount_expanded );
 
       // 6.1 Arranging two feedback areas of the same one neural network in
       //     either the same row or the same column.
@@ -558,7 +561,7 @@ class NeuralNet_FeedbackToInput {
             * this.width_with_gap_pixelCount_expanded_per_alignment );
 
           topArray[ i ] = ( height_area_index
-            * this.height_with_gap_pixelCount_expanded_per_alignment );
+            * this.area.height_with_gap_pixelCount_expanded );
 
           ++i;
         }
