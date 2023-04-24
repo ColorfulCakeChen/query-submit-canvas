@@ -113,7 +113,7 @@ export { NeuralNet_FeedbackToInput as FeedbackToInput };
  *   There are how many feedback areas be put in the (next time) input. It is
  * always 4. (Every alignment has exactly one area.) Because:
  *   - There are two neural networks (in a versus pair).
- *   - There two alignments per two neural network.
+ *   - There are two alignments per neural network.
  *   - So, there are 4 (= 2 * 2) feedback information areas.
  *
  * @member {number} height_areaCount
