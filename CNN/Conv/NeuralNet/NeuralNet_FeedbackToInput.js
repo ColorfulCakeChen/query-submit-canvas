@@ -325,22 +325,31 @@ class NeuralNet_FeedbackToInput {
 
       // 5.2.1 Prefer the square feedback shape because it fairly expresses
       //       the correlation along height and width.
-      //
-      // Note: Because .pixelCount_expanded_per_alignment has been multiplied
-      //       by ( .height_multiplier * .width_multiplier ) = ( 2 * 2 ) = 4,
-      //       its square root always has factor sqrt( 4 ) = 2 (i.e. always is
-      //       even number). So, the square root (i.e. the
-      //       .width_pixelCount_expanded_per_alignment) wlll never break a
-      //       expanded pixel in the middle.
+
+//!!! (2023/04/24 Remarked)
+// use pixelCount_original (instead of pixelCount_expanded) to sqrt
+//       //
+//       // Note: Because .pixelCount_expanded_per_alignment has been multiplied
+//       //       by ( .height_multiplier * .width_multiplier ) = ( 2 * 2 ) = 4,
+//       //       its square root always has factor sqrt( 4 ) = 2 (i.e. always is
+//       //       even number). So, the square root (i.e. the
+//       //       .width_pixelCount_expanded_per_alignment) wlll never break a
+//       //       expanded pixel in the middle.
+//       this.height_pixelCount_expanded_per_alignment
+//         = this.width_pixelCount_expanded_per_alignment
+//         = Math.ceil( Math.sqrt( this.pixelCount_expanded_per_alignment ) );
+
+      this.height_pixelCount_original_per_alignment
+        = this.width_pixelCount_original_per_alignment
+        = Math.ceil( Math.sqrt( this.pixelCount_original_per_alignment ) );
+
       this.height_pixelCount_expanded_per_alignment
-        = this.width_pixelCount_expanded_per_alignment
-        = Math.ceil( Math.sqrt( this.pixelCount_expanded_per_alignment ) );
+        = this.height_pixelCount_original_per_alignment
+            * this.height_multiplier;
 
-
-!!! ...unfinished... (2023/04/23)
-      this.height_pixelCount_original_per_alignment = ???;
-      this.width_pixelCount_original_per_alignment = ???;
-
+      this.width_pixelCount_expanded_per_alignment
+        = this.width_pixelCount_original_per_alignment
+            * this.width_multiplier;
 
       // 5.2.2 But, if the (next time) explicit input has not enough height
       //       to contain the square shape of feedback, use rectangle shape.
