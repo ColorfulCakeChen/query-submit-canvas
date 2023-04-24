@@ -100,11 +100,18 @@ class NeuralNet_FeedbackToInput_Area {
   width_pixelCount_expanded;
   width_with_gap_pixelCount_expanded;
 
-  gap_height_pixelCount_original;
-  gap_height_pixelCount_expanded;
+  // At least 1 gap between different feedback information areas and
+  // explicit input.
+  gap_height_pixelCount_original = 1;
+  gap_width_pixelCount_original = 1;
 
-  gap_width_pixelCount_original;
-  gap_width_pixelCount_expanded;
+  get gap_height_pixelCount_expanded() {
+    return this.gap_height_pixelCount_original * this.height_multiplier;
+  }
+
+  get gap_width_pixelCount_expanded() {
+    return this.gap_width_pixelCount_original * this.width_multiplier;
+  }
 
 //!!! ...unfinished... (2023/04/24)
 
@@ -342,20 +349,6 @@ class NeuralNet_FeedbackToInput {
       * area.height_multiplier * area.width_multiplier;
     
     // 5. Determine feedback_to_input area shape.
-
-    // 5.0 feedback_to_input areas' gaps should also be enlarged.
-    {
-      // At least 1 gap between different feedback information areas and
-      // explicit input.
-      area.gap_height_pixelCount_original = 1;
-      area.gap_width_pixelCount_original = 1;
-
-      area.gap_height_pixelCount_expanded
-        = area.gap_height_pixelCount_original * area.height_multiplier;
-
-      area.gap_width_pixelCount_expanded
-        = area.gap_width_pixelCount_original * area.width_multiplier;
-    }
 
     // 5.1 If the (next time) explicit input is 1d, the feedback (as implicit
     //     input) should also be 1d and prefix (i.e. at the left most of) the
