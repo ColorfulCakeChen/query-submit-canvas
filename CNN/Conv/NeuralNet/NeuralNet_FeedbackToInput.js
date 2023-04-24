@@ -1,4 +1,14 @@
+export { NeuralNet_FeedbackToInput_AreaOne as FeedbackToInput_AreaOne };
 export { NeuralNet_FeedbackToInput as FeedbackToInput };
+
+/**
+ * Information of an area of feedback to input.
+ *
+ */
+class NeuralNet_FeedbackToInput_AreaOne {
+
+}
+
 
 /**
  * Information for placing feedback (i.e. previous explicit and implicit
