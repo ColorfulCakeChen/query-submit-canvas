@@ -534,6 +534,7 @@ class NeuralNet_FeedbackToInput {
 
   /**
    * @param {NeuralNet_FeedbackToInput} this
+   * @param {number} this.area
    * @param {number} this.areaCount
    * @param {number} this.height_areaCount
    * @param {number} this.width_areaCount
