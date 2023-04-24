@@ -374,6 +374,10 @@ class NeuralNet_FeedbackToInput {
             * this.width_multiplier;
     }
 
+//!!! ...unfinished... (2023/04/24)
+// Rename .Xxx_per_alignment to .area_Xxx
+// Add .area_all_height_Xxx and .area_all_width_Xxx
+
     this.height_with_gap_pixelCount_expanded_per_alignment
       = this.height_pixelCount_expanded_per_alignment
           + this.area_gap_height_pixelCount_expanded;
