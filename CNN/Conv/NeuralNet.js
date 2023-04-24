@@ -5,4 +5,4 @@ export * as StageParamsCreator from "./NeuralNet/NeuralNet_StageParamsCreator.js
 export { Base } from "./NeuralNet/NeuralNet_Base.js";
 export { FeedbackShape } from "./NeuralNet/NeuralNet_FeedbackShape.js";
 export { FeedbackToInput } from "./NeuralNet/NeuralNet_FeedbackToInput.js";
-export { FeedbackToInput_AreaOne } from "./NeuralNet/NeuralNet_FeedbackToInput.js";
+export { FeedbackToInput_Cuboid } from "./NeuralNet/NeuralNet_FeedbackToInput.js";

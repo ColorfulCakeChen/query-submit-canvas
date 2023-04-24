@@ -1,11 +1,14 @@
-export { NeuralNet_FeedbackToInput_AreaOne as FeedbackToInput_AreaOne };
+export { NeuralNet_FeedbackToInput_Cuboid as FeedbackToInput_Cuboid };
 export { NeuralNet_FeedbackToInput as FeedbackToInput };
 
 /**
- * Information of an area of feedback to input.
+ * Describe a cuboid in the neural network's input for filling the neural
+ * network's previous next output (i.e. feedback).
+ * 
+ * An cuboid
  *
  */
-class NeuralNet_FeedbackToInput_AreaOne {
+class NeuralNet_FeedbackToInput_Cuboid {
 
 //!!! ...unfinished... (2023/04/24)
 
