@@ -49,8 +49,12 @@ export { NeuralNet_FeedbackToInput as FeedbackToInput };
  * .height_multiplier.
  *
  * @member {number} width_pixelCount_original
- *   The width (in pixel count) of .pixelCount_original. It has
- * not been multiplied by .width_multiplier.
+ *   The width (in pixel count) of .pixelCount_original. It has not been
+ * multiplied by .width_multiplier.
+ *
+ * @member {number} width_pixelCount_expanded
+ *   The width (in pixel count) of .pixelCount_expanded. It has been
+ * multiplied by .width_multiplier.
  *
  *
  */
@@ -70,6 +74,7 @@ class NeuralNet_FeedbackToInput_Area {
   height_with_gap_pixelCount_expanded;
 
   width_pixelCount_original;
+  width_pixelCount_expanded;
 
 //!!! ...unfinished... (2023/04/24)
 
@@ -127,12 +132,8 @@ class NeuralNet_FeedbackToInput_Area {
  * neural network generates two alignments' outputs in one time.
  *
  *
- * @member {number} width_pixelCount_expanded_per_alignment
- *   The width (in pixel count) of .area.pixelCount_expanded. It has
- * been multiplied by .area.width_multiplier.
- *
  * @member {number} width_with_gap_pixelCount_expanded_per_alignment
- *   ( .width_pixelCount_expanded_per_alignment
+ *   ( .area.width_pixelCount_expanded
  * + .area_gap_width_pixelCount_expanded ). It has been multiplied by
  * .area.width_multiplier.
  *
@@ -361,7 +362,7 @@ class NeuralNet_FeedbackToInput {
         = this.area.pixelCount_original;
 
       this.area.height_pixelCount_expanded = 1;
-      this.width_pixelCount_expanded_per_alignment
+      this.area.width_pixelCount_expanded
         = this.area.pixelCount_expanded;
 
     // 5.2 If the (next time) explicit input is 2d, the feedback (as implicit
@@ -409,7 +410,7 @@ class NeuralNet_FeedbackToInput {
         }
       }
 
-      this.width_pixelCount_expanded_per_alignment
+      this.area.width_pixelCount_expanded
         = this.area.width_pixelCount_original
             * this.area.width_multiplier;
     }
@@ -431,7 +432,7 @@ class NeuralNet_FeedbackToInput {
           + this.area_gap_height_pixelCount_expanded;
 
     this.width_with_gap_pixelCount_expanded_per_alignment
-      = this.width_pixelCount_expanded_per_alignment
+      = this.area.width_pixelCount_expanded
           + this.area_gap_width_pixelCount_expanded;
 
     // 6. Determine .height_areaCount and .width_areaCount
