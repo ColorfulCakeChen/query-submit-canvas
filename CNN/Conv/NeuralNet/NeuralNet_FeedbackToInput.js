@@ -255,11 +255,6 @@ class NeuralNet_FeedbackToInput {
     // There two alignments per two neural network.
     this.neuralNetCount = 2;
     this.alignmentCount_per_neuralNet = 2;
-
-//!!! ...unfinished... (2023/04/24)
-// Perhaps, collect area_Xxx to and object .area"
-// or under .alignment ? (per alignment == per area)
-
     this.areaCount = this.neuralNetCount * this.alignmentCount_per_neuralNet;
 
     // 2.4.2 At least 1 gap between different feedback information areas and
@@ -375,8 +370,13 @@ class NeuralNet_FeedbackToInput {
     }
 
 //!!! ...unfinished... (2023/04/24)
-// Rename .Xxx_per_alignment to .area_Xxx
+// Rename .Xxx_per_alignment to .area_Xxx/ (per alignment == per area)
 // Add .area_all_height_Xxx and .area_all_width_Xxx
+
+//!!! ...unfinished... (2023/04/24)
+// Perhaps, collect .area_Xxx to and object .area.Xxx
+// .area_all_Xxx to object .area_all.Xxx
+
 
     this.height_with_gap_pixelCount_expanded_per_alignment
       = this.height_pixelCount_expanded_per_alignment
