@@ -39,6 +39,10 @@ export { NeuralNet_FeedbackToInput as FeedbackToInput };
  *   The height (in pixel count) of .pixelCount_original. It has not been
  * multiplied by .height_multiplier.
  *
+ * @member {number} height_pixelCount_expanded
+ *   The height (in pixel count) of .pixelCount_expanded. It has been
+ * multiplied by .height_multiplier.
+ *
  *
  */
 class NeuralNet_FeedbackToInput_Area {
@@ -53,6 +57,7 @@ class NeuralNet_FeedbackToInput_Area {
   pixelCount_expanded;
 
   height_pixelCount_original;
+  height_pixelCount_expanded;
 
 //!!! ...unfinished... (2023/04/24)
 
@@ -110,12 +115,8 @@ class NeuralNet_FeedbackToInput_Area {
  * neural network generates two alignments' outputs in one time.
  *
  *
- * @member {number} height_pixelCount_expanded_per_alignment
- *   The height (in pixel count) of .area.pixelCount_expanded. It has
- * been multiplied by .area.height_multiplier.
- *
  * @member {number} height_with_gap_pixelCount_expanded_per_alignment
- *   ( .height_pixelCount_expanded_per_alignment
+ *   ( .area.height_pixelCount_expanded
  * + .area_gap_height_pixelCount_expanded ). It has been multiplied by
  * .area.height_multiplier.
  *
@@ -356,7 +357,7 @@ class NeuralNet_FeedbackToInput {
       this.width_pixelCount_original_per_alignment
         = this.area.pixelCount_original;
 
-      this.height_pixelCount_expanded_per_alignment = 1;
+      this.area.height_pixelCount_expanded = 1;
       this.width_pixelCount_expanded_per_alignment
         = this.area.pixelCount_expanded;
 
@@ -372,28 +373,28 @@ class NeuralNet_FeedbackToInput {
           = this.width_pixelCount_original_per_alignment
           = Math.ceil( Math.sqrt( this.area.pixelCount_original ) );
 
-        this.height_pixelCount_expanded_per_alignment
+        this.area.height_pixelCount_expanded
           = this.area.height_pixelCount_original
               * this.area.height_multiplier;
       }
 
       // 5.2.2 But, if the (next time) explicit input has not enough height
       //       to contain the square shape of feedback, use rectangle shape.
-      if ( this.height_pixelCount_expanded_per_alignment > explicit_input_height ) {
+      if ( this.area.height_pixelCount_expanded > explicit_input_height ) {
 
-        // Ensure .height_pixelCount_expanded_per_alignment
+        // Ensure .area.height_pixelCount_expanded
         //   - contains factor .area.height_multiplier (i.e. 2) (i.e. is divisible
         //       by .area.height_multiplier), and
         //   - does not exceed explicit_input_height
         //
         // Note: Because explicit_input_height is at least 2 here, the
-        //       .height_pixelCount_expanded_per_alignment will be also at
+        //       .area.height_pixelCount_expanded will be also at
         //       least 2 (i.e. not 0 or 1).
         {
           this.area.height_pixelCount_original
             = Math.floor( explicit_input_height / this.area.height_multiplier );
 
-          this.height_pixelCount_expanded_per_alignment
+          this.area.height_pixelCount_expanded
             = this.area.height_pixelCount_original
                 * this.area.height_multiplier;
         }
@@ -423,7 +424,7 @@ class NeuralNet_FeedbackToInput {
 
 
     this.height_with_gap_pixelCount_expanded_per_alignment
-      = this.height_pixelCount_expanded_per_alignment
+      = this.area.height_pixelCount_expanded
           + this.area_gap_height_pixelCount_expanded;
 
     this.width_with_gap_pixelCount_expanded_per_alignment
