@@ -310,8 +310,8 @@ class NeuralNet_FeedbackToInput {
 
     // 2.4.2 At least 1 gap between different feedback information areas and
     //          explicit input.
-    this.area.gap_height_pixelCount_original = 1;
-    this.area.gap_width_pixelCount_original = 1;
+    area.gap_height_pixelCount_original = 1;
+    area.gap_width_pixelCount_original = 1;
 
     // 3. Four (or two) times the implicit input pixel count along height (if
     //    exists) and width.
@@ -342,22 +342,21 @@ class NeuralNet_FeedbackToInput {
     // 4. Determine implicit input pixel count.
 
     // Every input_channelCount feedback values as an implicit input pixel.
-    this.area.pixelCount_original = Math.ceil(
-      this.area.valueCount_original / this.input_channelCount );
+    area.pixelCount_original = Math.ceil(
+      area.valueCount_original / this.input_channelCount );
 
-    this.area.pixelCount_expanded
-      = this.area.pixelCount_original
-          * this.area.height_multiplier * this.area.width_multiplier;
+    area.pixelCount_expanded = area.pixelCount_original
+      * area.height_multiplier * area.width_multiplier;
     
     // 5. Determine feedback_to_input area shape.
 
     // 5.0 feedback_to_input areas' gaps should also be enlarged.
     {
-      this.area.gap_height_pixelCount_expanded
-        = this.area.gap_height_pixelCount_original * this.area.height_multiplier;
+      area.gap_height_pixelCount_expanded
+        = area.gap_height_pixelCount_original * area.height_multiplier;
 
-      this.area.gap_width_pixelCount_expanded
-        = this.area.gap_width_pixelCount_original * this.area.width_multiplier;
+      area.gap_width_pixelCount_expanded
+        = area.gap_width_pixelCount_original * area.width_multiplier;
     }
 
     // 5.1 If the (next time) explicit input is 1d, the feedback (as implicit
@@ -365,13 +364,11 @@ class NeuralNet_FeedbackToInput {
     //     (next time) explicit input.
     if ( explicit_input_height == 1 ) {
 
-      this.area.height_pixelCount_original = 1;
-      this.area.width_pixelCount_original
-        = this.area.pixelCount_original;
+      area.height_pixelCount_original = 1;
+      area.width_pixelCount_original = area.pixelCount_original;
 
-      this.area.height_pixelCount_expanded = 1;
-      this.area.width_pixelCount_expanded
-        = this.area.pixelCount_expanded;
+      area.height_pixelCount_expanded = 1;
+      area.width_pixelCount_expanded = area.pixelCount_expanded;
 
     // 5.2 If the (next time) explicit input is 2d, the feedback (as implicit
     //     input) should also be 2d and placed at left most of the (next time)
@@ -381,18 +378,17 @@ class NeuralNet_FeedbackToInput {
       // 5.2.1 Prefer the square feedback shape because it fairly expresses
       //       the correlation along height and width.
       {
-        this.area.height_pixelCount_original
-          = this.area.width_pixelCount_original
-          = Math.ceil( Math.sqrt( this.area.pixelCount_original ) );
+        area.height_pixelCount_original
+          = area.width_pixelCount_original
+          = Math.ceil( Math.sqrt( area.pixelCount_original ) );
 
-        this.area.height_pixelCount_expanded
-          = this.area.height_pixelCount_original
-              * this.area.height_multiplier;
+        area.height_pixelCount_expanded
+          = area.height_pixelCount_original * area.height_multiplier;
       }
 
       // 5.2.2 But, if the (next time) explicit input has not enough height
       //       to contain the square shape of feedback, use rectangle shape.
-      if ( this.area.height_pixelCount_expanded > explicit_input_height ) {
+      if ( area.height_pixelCount_expanded > explicit_input_height ) {
 
         // Ensure .area.height_pixelCount_expanded
         //   - contains factor .area.height_multiplier (i.e. 2) (i.e. is divisible
@@ -403,24 +399,21 @@ class NeuralNet_FeedbackToInput {
         //       .area.height_pixelCount_expanded will be also at
         //       least 2 (i.e. not 0 or 1).
         {
-          this.area.height_pixelCount_original
-            = Math.floor( explicit_input_height / this.area.height_multiplier );
+          area.height_pixelCount_original
+            = Math.floor( explicit_input_height / area.height_multiplier );
 
-          this.area.height_pixelCount_expanded
-            = this.area.height_pixelCount_original
-                * this.area.height_multiplier;
+          area.height_pixelCount_expanded
+            = area.height_pixelCount_original * area.height_multiplier;
         }
 
         {
-          this.area.width_pixelCount_original
-            = Math.ceil( this.area.pixelCount_original
-                / this.area.height_pixelCount_original );
+          area.width_pixelCount_original = Math.ceil(
+            area.pixelCount_original / area.height_pixelCount_original );
         }
       }
 
-      this.area.width_pixelCount_expanded
-        = this.area.width_pixelCount_original
-            * this.area.width_multiplier;
+      area.width_pixelCount_expanded
+        = area.width_pixelCount_original * area.width_multiplier;
     }
 
 //!!! ...unfinished... (2023/04/24)
@@ -436,23 +429,21 @@ class NeuralNet_FeedbackToInput {
 
 
     area.height_with_gap_pixelCount_expanded
-      = area.height_pixelCount_expanded
-          + this.area.gap_height_pixelCount_expanded;
+      = area.height_pixelCount_expanded + area.gap_height_pixelCount_expanded;
 
     area.width_with_gap_pixelCount_expanded
-      = area.width_pixelCount_expanded
-          + this.area.gap_width_pixelCount_expanded;
+      = area.width_pixelCount_expanded + area.gap_width_pixelCount_expanded;
 
     // 6. Determine .height_areaCount and .width_areaCount
     //
     // Try arrange feedback areas along input height.
     {
       let explicit_input_height_with_gap
-        = explicit_input_height + this.area.gap_height_pixelCount_expanded;
+        = explicit_input_height + area.gap_height_pixelCount_expanded;
 
       this.height_areaCount = Math.floor(
         explicit_input_height_with_gap
-          / this.area.height_with_gap_pixelCount_expanded );
+          / area.height_with_gap_pixelCount_expanded );
 
       // 6.1 Arranging two feedback areas of the same one neural network in
       //     either the same row or the same column.
@@ -550,6 +541,8 @@ class NeuralNet_FeedbackToInput {
    * @param {number} this.area_position_topArrayArray
    */
   static area_position_fill() {
+    const area = this.area;
+
     // 1. Create all ( left, top ) coordinates.
     let leftArray = new Array( this.areaCount );
     let topArray = new Array( this.areaCount );
@@ -566,10 +559,10 @@ class NeuralNet_FeedbackToInput {
           ++width_area_index ) {
 
           leftArray[ i ] = ( width_area_index
-            * this.area.width_with_gap_pixelCount_expanded );
+            * area.width_with_gap_pixelCount_expanded );
 
           topArray[ i ] = ( height_area_index
-            * this.area.height_with_gap_pixelCount_expanded );
+            * area.height_with_gap_pixelCount_expanded );
 
           ++i;
         }
