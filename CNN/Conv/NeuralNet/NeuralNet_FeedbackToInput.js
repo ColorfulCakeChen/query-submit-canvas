@@ -35,6 +35,7 @@ export { NeuralNet_FeedbackToInput as FeedbackToInput };
  *   The .valueCount_original will be viewed as how many input pixels (with
  * multiplied by .height_multiplier and .width_multiplier).
  *
+ *
  * @member {number} height_pixelCount_original
  *   The height (in pixel count) of .pixelCount_original. It has not been
  * multiplied by .height_multiplier.
@@ -44,8 +45,9 @@ export { NeuralNet_FeedbackToInput as FeedbackToInput };
  * multiplied by .height_multiplier.
  *
  * @member {number} height_with_gap_pixelCount_expanded
- *   ( .height_pixelCount_expanded + .area_gap_height_pixelCount_expanded ). It
+ *   ( .height_pixelCount_expanded + .area.gap_height_pixelCount_expanded ). It
  * has been multiplied by .height_multiplier.
+ *
  *
  * @member {number} width_pixelCount_original
  *   The width (in pixel count) of .pixelCount_original. It has not been
@@ -56,9 +58,26 @@ export { NeuralNet_FeedbackToInput as FeedbackToInput };
  * multiplied by .width_multiplier.
  *
  * @member {number} width_with_gap_pixelCount_expanded
- *   ( .width_pixelCount_expanded + .area_gap_width_pixelCount_expanded ). It
+ *   ( .width_pixelCount_expanded + .area.gap_width_pixelCount_expanded ). It
  * has been multiplied by .width_multiplier.
  *
+ *
+ * @member {number} gap_height_pixelCount_original
+ *   The gap (for distinguishing from different feedback information areas and
+ * explicit input) along the height (without multiplied by .height_multiplier).
+ *
+ * @member {number} gap_height_pixelCount_expanded
+ *   The gap (for distinguishing from different feedback information areas and
+ * explicit input) along the height (with multiplied by .height_multiplier).
+ *
+ *
+ * @member {number} gap_width_pixelCount_original
+ *   The gap (for distinguishing from different feedback information areas and
+ * explicit input) along the width (without multiplied by .width_multiplier).
+ *
+ * @member {number} gap_width_pixelCount_expanded
+ *   The gap (for distinguishing from different feedback information areas and
+ * explicit input) along the width (with multiplied by .width_multiplier).
  *
  *
  */
@@ -80,6 +99,12 @@ class NeuralNet_FeedbackToInput_Area {
   width_pixelCount_original;
   width_pixelCount_expanded;
   width_with_gap_pixelCount_expanded;
+
+  gap_height_pixelCount_original;
+  gap_height_pixelCount_expanded;
+
+  gap_width_pixelCount_original;
+  gap_width_pixelCount_expanded;
 
 //!!! ...unfinished... (2023/04/24)
 
@@ -158,22 +183,6 @@ class NeuralNet_FeedbackToInput_Area {
  * @member {number} width_areaCount
  *   There are how manys feedback areas along the width in the (next time)
  * input.
- *
- * @member {number} area_gap_height_pixelCount_original
- *   The gap (for distinguishing from different feedback information areas and
- * explicit input) along the height (without multiplied by .area.height_multiplier).
- *
- * @member {number} area_gap_height_pixelCount_expanded
- *   The gap (for distinguishing from different feedback information areas and
- * explicit input) along the height (with multiplied by .area.height_multiplier).
- *
- * @member {number} area_gap_width_pixelCount_original
- *   The gap (for distinguishing from different feedback information areas and
- * explicit input) along the width (without multiplied by .area.width_multiplier).
- *
- * @member {number} area_gap_width_pixelCount_expanded
- *   The gap (for distinguishing from different feedback information areas and
- * explicit input) along the width (with multiplied by .area.width_multiplier).
  *
  * @member {number[]} area_position_leftArrayArray
  *   The array of array of left position in input image for every
@@ -301,8 +310,8 @@ class NeuralNet_FeedbackToInput {
 
     // 2.4.2 At least 1 gap between different feedback information areas and
     //          explicit input.
-    this.area_gap_height_pixelCount_original = 1;
-    this.area_gap_width_pixelCount_original = 1;
+    this.area.gap_height_pixelCount_original = 1;
+    this.area.gap_width_pixelCount_original = 1;
 
     // 3. Four (or two) times the implicit input pixel count along height (if
     //    exists) and width.
@@ -344,11 +353,11 @@ class NeuralNet_FeedbackToInput {
 
     // 5.0 feedback_to_input areas' gaps should also be enlarged.
     {
-      this.area_gap_height_pixelCount_expanded
-        = this.area_gap_height_pixelCount_original * this.area.height_multiplier;
+      this.area.gap_height_pixelCount_expanded
+        = this.area.gap_height_pixelCount_original * this.area.height_multiplier;
 
-      this.area_gap_width_pixelCount_expanded
-        = this.area_gap_width_pixelCount_original * this.area.width_multiplier;
+      this.area.gap_width_pixelCount_expanded
+        = this.area.gap_width_pixelCount_original * this.area.width_multiplier;
     }
 
     // 5.1 If the (next time) explicit input is 1d, the feedback (as implicit
@@ -428,18 +437,18 @@ class NeuralNet_FeedbackToInput {
 
     area.height_with_gap_pixelCount_expanded
       = area.height_pixelCount_expanded
-          + this.area_gap_height_pixelCount_expanded;
+          + this.area.gap_height_pixelCount_expanded;
 
     area.width_with_gap_pixelCount_expanded
       = area.width_pixelCount_expanded
-          + this.area_gap_width_pixelCount_expanded;
+          + this.area.gap_width_pixelCount_expanded;
 
     // 6. Determine .height_areaCount and .width_areaCount
     //
     // Try arrange feedback areas along input height.
     {
       let explicit_input_height_with_gap
-        = explicit_input_height + this.area_gap_height_pixelCount_expanded;
+        = explicit_input_height + this.area.gap_height_pixelCount_expanded;
 
       this.height_areaCount = Math.floor(
         explicit_input_height_with_gap
