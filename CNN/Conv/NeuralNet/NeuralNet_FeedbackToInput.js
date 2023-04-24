@@ -184,7 +184,7 @@ class NeuralNet_FeedbackToInput_Area {
  *   There are how many feedback areas along the width in the (next time)
  * input.
  *
- * @member {number[]} area_position_leftArrayArray
+ * @member {number[][]} area_position_leftArrayArray
  *   The array of array of left position in input image for every
  * feedback_to_input area.
  *
@@ -204,7 +204,7 @@ class NeuralNet_FeedbackToInput_Area {
  *       is the left position for the feedback area of neural network 1 when
  *       it personates alignment 1.
  *
- * @member {number[]} area_position_topArrayArray
+ * @member {number[][]} area_position_topArrayArray
  *   The array of array of top position in input image for every
  * feedback_to_input area.
  *
@@ -496,6 +496,8 @@ class NeuralNet_FeedbackToInput {
    * @param {NeuralNet_FeedbackToInput} this
    * @param {number} this.neuralNetCount
    * @param {number} this.alignmentCount_per_neuralNet
+   * @param {number[][]} this.area_position_leftArrayArray
+   * @param {number[][]} this.area_position_topArrayArray
    */
   static area_position_create() {
     // 1.
@@ -538,8 +540,8 @@ class NeuralNet_FeedbackToInput {
    * @param {number} this.areaCount
    * @param {number} this.height_areaCount
    * @param {number} this.width_areaCount
-   * @param {number} this.area_position_leftArrayArray
-   * @param {number} this.area_position_topArrayArray
+   * @param {number[][]} this.area_position_leftArrayArray
+   * @param {number[][]} this.area_position_topArrayArray
    */
   static area_position_fill() {
     const area = this.area;
