@@ -258,6 +258,7 @@ class NeuralNet_FeedbackToInput {
 
 //!!! ...unfinished... (2023/04/24)
 // Perhaps, collect area_Xxx to and object .area"
+// or under .alignment ?
 
     this.areaCount = this.neuralNetCount * this.alignmentCount_per_neuralNet;
 
