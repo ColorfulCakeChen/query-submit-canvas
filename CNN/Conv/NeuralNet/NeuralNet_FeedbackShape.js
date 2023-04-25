@@ -436,6 +436,10 @@ class NeuralNet_FeedbackShape {
           from_y < this.feedbackToInput.area.height_pixelCount_original;
           ++from_y ) {
 
+//!!!???
+          let from_valueIndex_y_begin = from_valueIndex;
+          let from_valueIndex_x_begin = from_valueIndex;
+
           for ( let y_multiplier = 0;
             y_multiplier < this.feedbackToInput.area.height_multiplier;
             ++y_multiplier ) {
@@ -445,6 +449,8 @@ class NeuralNet_FeedbackShape {
             for ( let from_x = 0;
               from_x < this.feedbackToInput.area.width_pixelCount_original;
               ++from_x ) {
+
+              let from_valueIndex_c_begin = from_valueIndex;
 
               for ( let x_multiplier = 0;
                 x_multiplier < this.feedbackToInput.area.width_multiplier;
