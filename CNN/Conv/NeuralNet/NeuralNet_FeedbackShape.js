@@ -450,7 +450,7 @@ class NeuralNet_FeedbackShape {
               //
               // Note: It is the same for the same from_x (even if different
               //       x_multiplier). But, it may appear many times in
-              //       different from_y.
+              //       different y_multiplier of the same from_y.
               let channelCount_to_copy; // channels to copy from feedback.
               let channelCount_to_zero; // channels to fill with zero.
               {
