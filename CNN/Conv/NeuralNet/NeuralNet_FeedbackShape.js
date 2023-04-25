@@ -460,18 +460,14 @@ class NeuralNet_FeedbackShape {
                 let channelCount_to_copy;
                 let channelCount_to_zero;
                 if ( from_valueCount_remained < input_channelCount ) {
-
                   channelCount_to_copy = from_valueCount_remained;
                   channelCount_to_zero = input_channelCount - from_valueCount_remained;
-
                 } else {
-
                   channelCount_to_copy = input_channelCount;
                   channelCount_to_zero = 0;
                 }
 
-
-                for ( let c = 0; c < input_channelCount; ++c ) {
+                for ( let c = 0; c < channelCount_to_copy; ++c ) {
 
                   let from_value
                     = previous_output_Int32Array[ from_valueIndex ];
@@ -491,6 +487,14 @@ class NeuralNet_FeedbackShape {
 // if has reached area.pixelCount_expanded, break early.
 //
                 } // c
+
+                // Fill zero for exceeding area.pixelCount_expanded.
+                for ( let c = 0; c < channelCount_to_zero; ++c ) {
+                  input_TypedArray[ to_valueIndex ] = 0;
+                  ++to_valueIndex;
+                } // c
+
+
               } // x_multiplier
             } // from_x
 
