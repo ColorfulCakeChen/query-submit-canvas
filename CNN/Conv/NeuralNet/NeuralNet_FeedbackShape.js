@@ -416,39 +416,39 @@ class NeuralNet_FeedbackShape {
               + area_position_left;
 
 //!!! ...unfinished... (2023/04/23)
-        // this.feedbackToInput.height_pixelCount_expanded_per_alignment
-        // this.feedbackToInput.width_pixelCount_expanded_per_alignment
+        // this.feedbackToInput.area.height_pixelCount_expanded
+        // this.feedbackToInput.area.width_pixelCount_expanded
 
-        // this.feedbackToInput.height_multiplier
-        // this.feedbackToInput.width_multiplier
+        // this.feedbackToInput.area.height_multiplier
+        // this.feedbackToInput.area.width_multiplier
 
 //!!! ...unfinished... (2023/04/23)
         let from_output_value = previous_output_Int32Array[ from_output_valueIndex ];
 
 
         for ( let y = 0;
-          y < this.feedbackToInput.height_pixelCount_original_per_alignment;
+          y < this.feedbackToInput.area.height_pixelCount_original;
           ++y ) {
 
           for ( let y_multiplier = 0;
-            y_multiplier < this.feedbackToInput.height_multiplier;
+            y_multiplier < this.feedbackToInput.area.height_multiplier;
             ++y_multiplier ) {
       
             let to_input_valueIndex = to_input_valueIndex_row_begin;
 
             for ( let x = 0;
-              x < this.feedbackToInput.width_pixelCount_original_per_alignment;
+              x < this.feedbackToInput.area.width_pixelCount_original;
               ++x ) {
 
               for ( let x_multiplier = 0;
-                x_multiplier < this.feedbackToInput.width_multiplier;
+                x_multiplier < this.feedbackToInput.area.width_multiplier;
                 ++x_multiplier ) {
 
 //!!! ...unfinished... (2023/04/24)
 // if has reached .area.valueCount_expanded but not
-// .pixelCount_expanded_per_alignment, should fill zero.
+// .area.pixelCount_expanded, should fill zero.
 //
-// if has reached .pixelCount_expanded_per_alignment, break early.
+// if has reached .area.pixelCount_expanded, break early.
 //
 
                 ++to_input_valueIndex;
