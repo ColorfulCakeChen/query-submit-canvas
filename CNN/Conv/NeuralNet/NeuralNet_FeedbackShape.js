@@ -448,12 +448,16 @@ class NeuralNet_FeedbackShape {
                 x_multiplier < this.feedbackToInput.area.width_multiplier;
                 ++x_multiplier ) {
 
+                for ( let c = 0; c < this.feedbackToInput.input_channelCount; ++c ) {
+
+
 //!!! ...unfinished... (2023/04/24)
 // if has reached .area.valueCount_expanded but not
 // .area.pixelCount_expanded, should fill zero.
 //
 // if has reached .area.pixelCount_expanded, break early.
 //
+                }
 
                 ++to_input_valueIndex;
               }
