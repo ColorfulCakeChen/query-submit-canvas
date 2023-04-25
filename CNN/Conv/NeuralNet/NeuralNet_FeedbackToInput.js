@@ -113,9 +113,6 @@ class NeuralNet_FeedbackToInput_Area {
     return this.gap_width_pixelCount_original * this.width_multiplier;
   }
 
-//!!! ...unfinished... (2023/04/24)
-
-
 }
 
 
@@ -406,18 +403,6 @@ class NeuralNet_FeedbackToInput {
       area.width_pixelCount_expanded
         = area.width_pixelCount_original * area.width_multiplier;
     }
-
-//!!! ...unfinished... (2023/04/24)
-// Rename .Xxx_per_alignment to .area_Xxx/ (per alignment == per area)
-// (.height_areaCount to ???)
-// (.width_areaCount to ???)
-//
-// Add .area_all_height_Xxx and .area_all_width_Xxx
-
-//!!! ...unfinished... (2023/04/24)
-// Perhaps, collect .area_Xxx to and object .area.Xxx
-// .area_all_Xxx to object .area_all.Xxx
-
 
     area.height_with_gap_pixelCount_expanded
       = area.height_pixelCount_expanded + area.gap_height_pixelCount_expanded;
