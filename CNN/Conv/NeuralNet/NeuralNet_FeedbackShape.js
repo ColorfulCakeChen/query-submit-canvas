@@ -432,8 +432,7 @@ class NeuralNet_FeedbackShape {
             to_valueIndex = to_valueIndex_y_begin;
 
             for ( let from_x = 0;
-              from_x < area.width_pixelCount_original;
-              ++from_x ) {
+              from_x < area.width_pixelCount_original; ++from_x ) {
 
               let from_valueIndex_x_begin = from_valueIndex;
 
@@ -442,7 +441,8 @@ class NeuralNet_FeedbackShape {
 
                 from_valueIndex = from_valueIndex_x_begin;
 
-                for ( let c = 0; c < feedbackToInput.input_channelCount; ++c ) {
+                for ( let c = 0;
+                  c < feedbackToInput.input_channelCount; ++c ) {
 
                   let from_value = previous_output_Int32Array[ from_valueIndex ];
                   input_TypedArray[ to_valueIndex ] = from_value;
