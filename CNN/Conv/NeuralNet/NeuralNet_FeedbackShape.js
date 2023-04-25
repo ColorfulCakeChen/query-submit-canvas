@@ -386,8 +386,7 @@ class NeuralNet_FeedbackShape {
 
     // 3.1
     // Note: ( this.feedbackToInput.neuralNetCount == 2 )
-    for (
-      let neuralNetIndex = 0;
+    for ( let neuralNetIndex = 0;
       neuralNetIndex < this.feedbackToInput.neuralNetCount;
       ++neuralNetIndex ) {
 
@@ -404,8 +403,7 @@ class NeuralNet_FeedbackShape {
       let from_valueIndex = 0;
 
       // Note: ( this.feedbackToInput.alignmentCount_per_neuralNet == 2 )
-      for (
-        let alignmentIndex = 0;
+      for ( let alignmentIndex = 0;
         alignmentIndex < this.feedbackToInput.alignmentCount_per_neuralNet;
         ++alignmentIndex ) {
 
