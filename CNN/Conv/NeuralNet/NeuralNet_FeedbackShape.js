@@ -635,14 +635,18 @@ class NeuralNet_FeedbackShape {
       );
 
     // 5.
-    let fromValueIndex
-      = fromValueIndexBase + ( from_output_valueIndex * this.input_channelCount );
+    let fromValueIndex = fromValueIndexBase
+      + ( from_output_valueIndex * this.input_channelCount );
 
-    // 6. Extract every specified explicit values.
-    to_valueArray.length = from_output_valueIndexEnd - from_output_valueIndexBegin;
+    // 6. Extract every specified previous time output values of a neural
+    //    network.
+
+    to_valueArray.length
+      = from_output_valueIndexEnd - from_output_valueIndexBegin;
+
     for ( let i = 0; i < to_valueArray.length; ++i ) {
-      let explicitValue = from_output_valueArray[ fromValueIndex ];
-      to_valueArray[ i ] = explicitValue;
+      let from_output_value = from_output_valueArray[ fromValueIndex ];
+      to_valueArray[ i ] = from_output_value;
 
       ++from_output_valueIndex;
       fromValueIndex += this.input_channelCount;
