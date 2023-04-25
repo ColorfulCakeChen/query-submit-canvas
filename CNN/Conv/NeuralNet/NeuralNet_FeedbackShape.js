@@ -413,8 +413,8 @@ class NeuralNet_FeedbackShape {
         let area_position_top = area_position_topArray[ alignmentIndex ];
 
         let to_valueIndex_y_begin
-          = ( area_position_top * this.input_width_valueCount )
-              + area_position_left;
+          = ( ( area_position_top * this.input_width ) + area_position_left )
+              * this.input_channelCount;
 
 //!!! ...unfinished... (2023/04/23)
         // this.feedbackToInput.area.height_pixelCount_expanded
@@ -439,14 +439,14 @@ class NeuralNet_FeedbackShape {
           let from_valueIndex_y_begin = from_valueIndex;
           let from_valueIndex_x_begin = from_valueIndex;
 
+//!!!???
+          let to_valueIndex = to_valueIndex_y_begin;
+
           for ( let y_multiplier = 0;
             y_multiplier < this.feedbackToInput.area.height_multiplier;
             ++y_multiplier ) {
 
             from_valueIndex = from_valueIndex_x_begin;
-
-//!!!???
-            let to_valueIndex = to_valueIndex_y_begin;
 
             for ( let from_x = 0;
               from_x < this.feedbackToInput.area.width_pixelCount_original;
