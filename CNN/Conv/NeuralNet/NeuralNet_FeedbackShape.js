@@ -337,6 +337,8 @@ class NeuralNet_FeedbackShape {
 
     const funcNameInMessage = "set_implicit_input_by_previous_output";
 
+    let feedbackToInput = this.feedbackToInput;
+
     // 1. Check (next time) input shape.
     if ( input_TypedArray.length != this.input_valueCount )
       throw Error( `NeuralNet_FeedbackShape.${funcNameInMessage}(): `
@@ -348,64 +350,62 @@ class NeuralNet_FeedbackShape {
 
     // 2. Check (previous time) output shape.
 
-    // Note: ( this.feedbackToInput.neuralNetCount == 2 )
+    // Note: ( feedbackToInput.neuralNetCount == 2 )
     if ( previous_output_Int32ArrayArray.length
-           != this.feedbackToInput.neuralNetCount )
+           != feedbackToInput.neuralNetCount )
       throw Error( `NeuralNet_FeedbackShape.${funcNameInMessage}(): `
         + `previous_output_Int32ArrayArray.length `
         + `( ${previous_output_Int32ArrayArray.length} ) `
         + `should be the same as `
         + `.feedbackToInput.neuralNetCount ( `
-        + `${this.feedbackToInput.neuralNetCount} ).`
+        + `${feedbackToInput.neuralNetCount} ).`
       );
 
     if ( previous_output_Int32ArrayArray[ 0 ].length
-           != this.feedbackToInput.valueCount_original_per_neural_network )
+           != feedbackToInput.valueCount_original_per_neural_network )
       throw Error( `NeuralNet_FeedbackShape.${funcNameInMessage}(): `
         + `previous_output_Int32ArrayArray[ 0 ].length `
         + `( ${previous_output_Int32ArrayArray[ 0 ].length} ) `
         + `should be the same as `
         + `.feedbackToInput.valueCount_original_per_neural_network `
-        + `( ${this.feedbackToInput.valueCount_original_per_neural_network} ).`
+        + `( ${feedbackToInput.valueCount_original_per_neural_network} ).`
       );
 
     if ( previous_output_Int32ArrayArray[ 1 ].length
-           != this.feedbackToInput.valueCount_original_per_neural_network )
+           != feedbackToInput.valueCount_original_per_neural_network )
       throw Error( `NeuralNet_FeedbackShape.${funcNameInMessage}(): `
         + `previous_output_Int32ArrayArray[ 1 ].length `
         + `( ${previous_output_Int32ArrayArray[ 1 ].length} ) `
         + `should be the same as `
         + `.feedbackToInput.valueCount_original_per_neural_network `
-        + `( ${this.feedbackToInput.valueCount_original_per_neural_network} ).`
+        + `( ${feedbackToInput.valueCount_original_per_neural_network} ).`
       );
-
-//!!! ...unfinished... (2023/04/23)
 
     // 3. Fill previous time output (i.e. feedback) to next time input.
     let area = this.feedbackToInput.area;
     let to_valueIndex = 0;
 
     // 3.1
-    // Note: ( this.feedbackToInput.neuralNetCount == 2 )
+    // Note: ( feedbackToInput.neuralNetCount == 2 )
     for ( let neuralNetIndex = 0;
-      neuralNetIndex < this.feedbackToInput.neuralNetCount;
+      neuralNetIndex < feedbackToInput.neuralNetCount;
       ++neuralNetIndex ) {
 
       let previous_output_Int32Array
         = previous_output_Int32ArrayArray[ neuralNetIndex ];
 
       let area_position_leftArray
-        = this.feedbackToInput.area_position_leftArrayArray[ neuralNetIndex ];
+        = feedbackToInput.area_position_leftArrayArray[ neuralNetIndex ];
 
       let area_position_topArray
-        = this.feedbackToInput.area_position_topArrayArray[ neuralNetIndex ];
+        = feedbackToInput.area_position_topArrayArray[ neuralNetIndex ];
 
       // 3.2
       let from_valueIndex = 0;
 
-      // Note: ( this.feedbackToInput.alignmentCount_per_neuralNet == 2 )
+      // Note: ( feedbackToInput.alignmentCount_per_neuralNet == 2 )
       for ( let alignmentIndex = 0;
-        alignmentIndex < this.feedbackToInput.alignmentCount_per_neuralNet;
+        alignmentIndex < feedbackToInput.alignmentCount_per_neuralNet;
         ++alignmentIndex ) {
 
         let from_valueIndex_y_begin = from_valueIndex;
@@ -445,7 +445,7 @@ class NeuralNet_FeedbackShape {
 
                 from_valueIndex = from_valueIndex_x_begin;
 
-                for ( let c = 0; c < this.feedbackToInput.input_channelCount; ++c ) {
+                for ( let c = 0; c < feedbackToInput.input_channelCount; ++c ) {
 
                   let from_value = previous_output_Int32Array[ from_valueIndex ];
                   input_TypedArray[ to_valueIndex ] = from_value;
