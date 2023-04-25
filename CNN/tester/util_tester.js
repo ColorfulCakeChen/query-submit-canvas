@@ -8,6 +8,7 @@ import * as Float12_tester from "./Float12_tester.js";
 import * as Percentage_tester from "./Percentage_tester.js";
 import * as Uint12_tester from "./Uint12_tester.js";
 import * as GSheets_tester from "./GSheets_tester.js";
+import * as FeedbackShape_tester from "./FeedbackShape_tester.js";
 import * as AsyncWorker_tester from "./AsyncWorker_tester.js";
 import * as DEvolution_tester from "./DEvolution_tester.js";
 import * as NeuralOrchestra_tester from "./NeuralOrchestra_tester.js";
