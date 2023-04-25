@@ -348,8 +348,7 @@ class NeuralNet_FeedbackShape {
       throw Error( `NeuralNet_FeedbackShape.${funcNameInMessage}(): `
         + `input_TypedArray.length ( ${input_TypedArray.length} ) `
         + `should be the same as `
-        + `.input_valueCount `
-        + `( ${this.input_valueCount} ).`
+        + `.input_valueCount ( ${this.input_valueCount} ).`
       );
 
     // 2. Check (previous time) output shape.
@@ -487,9 +486,22 @@ class NeuralNet_FeedbackShape {
                   ++to_valueIndex;
                 } // c
 
+                if ( from_valueCount_remained < 0 )
+                  throw Error( `NeuralNet_FeedbackShape.${funcNameInMessage}(): `
+                    + `from_valueCount_remained ( ${from_valueCount_remained} ) `
+                    + `should be non-negative.`
+                  );
+
               } // x_multiplier
 
               --from_pixelCount_remained;
+
+              if ( from_pixelCount_remained < 0 )
+                throw Error( `NeuralNet_FeedbackShape.${funcNameInMessage}(): `
+                  + `from_pixelCount_remained ( ${from_pixelCount_remained} ) `
+                  + `should be non-negative.`
+                );
+
             } // from_x
 
             to_valueIndex_y_begin += this.input_width_valueCount;
