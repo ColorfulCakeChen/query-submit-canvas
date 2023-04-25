@@ -562,18 +562,18 @@ class NeuralNet_FeedbackShape {
    * wants to personate. It should be either 0 or 1.
    *
    * @param {number} from_output_pixelIndexBegin
-   *   The explicit value index (when the neural network personates the
-   * specified alignment) to begin extracting. It is a non-negative integer
-   * between [ 0, ( ( from_output_valueArray.length / 2 ) / this.input_channelCount ) )
+   *   The pixel index (when the neural network personates the specified
+   * alignment) to begin extracting. It is a non-negative integer between
+   * [ 0, ( ( from_output_valueArray.length / 2 ) / this.input_channelCount ) )
    * and less than from_output_pixelIndexEnd.
-   *   - Every .input_channelCount elements is a tuple of feedback values.
-   *   - The first element of the tuple is the explicit output value.
-   *   - All other elements of the tuple are the implicit output values.
+   *   - Every .input_channelCount elements is viewed as a feedback pixel.
+   *   - The first channel of every pixel will be extracted.
+   *   - All other channels of every pixel will be ignored.
    *
    * @param {number} from_output_pixelIndexEnd
-   *   The explicit value index (when the neural network personates the
-   * specified alignment) to stop extracting (non-inclusive). It is a
-   * non-negative integer between
+   *   The pixel index (when the neural network personates the specified
+   * alignment) to stop extracting (non-inclusive). It is a non-negative
+   * integer between
    * [ 0, ( ( from_output_valueArray.length / 2 ) / this.input_channelCount ) ).
    * and greater than from_output_pixelIndexBegin.
    */
