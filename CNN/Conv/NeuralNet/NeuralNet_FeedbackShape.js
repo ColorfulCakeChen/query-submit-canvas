@@ -586,6 +586,12 @@ class NeuralNet_FeedbackShape {
     const funcNameInMessage = "valueArray_get_from_output_valueArray";
 
     // 1.
+    if ( ( from_output_valueArray.length % 2 ) != 0 )
+      throw Error( `NeuralNet_FeedbackShape.${funcNameInMessage}(): `
+        + `from_output_valueArray.length ( ${rom_output_valueArray.length} ) `
+        + `should be even number (i.e. divisible by 2).`
+      );
+
     let from_output_valueCountPerAlignment
       = Math.floor( from_output_valueArray.length / 2 );
 
