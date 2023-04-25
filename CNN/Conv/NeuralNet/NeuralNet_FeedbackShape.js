@@ -444,7 +444,9 @@ class NeuralNet_FeedbackShape {
                 for ( let c = 0;
                   c < feedbackToInput.input_channelCount; ++c ) {
 
-                  let from_value = previous_output_Int32Array[ from_valueIndex ];
+                  let from_value
+                    = previous_output_Int32Array[ from_valueIndex ];
+
                   input_TypedArray[ to_valueIndex ] = from_value;
 
                   ++to_valueIndex;
