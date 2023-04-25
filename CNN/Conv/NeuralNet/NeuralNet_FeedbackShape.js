@@ -382,6 +382,7 @@ class NeuralNet_FeedbackShape {
 //!!! ...unfinished... (2023/04/23)
 
     // 3. Fill previous time output (i.e. feedback) to next time input.
+    let area = this.feedbackToInput.area;
     let to_valueIndex = 0;
 
     // 3.1
@@ -423,24 +424,23 @@ class NeuralNet_FeedbackShape {
         let to_valueCount_cur = 0;
 
         for ( let from_y = 0;
-          from_y < this.feedbackToInput.area.height_pixelCount_original;
+          from_y < area.height_pixelCount_original;
           ++from_y ) {
 
           for ( let y_multiplier = 0;
-            y_multiplier < this.feedbackToInput.area.height_multiplier;
+            y_multiplier < area.height_multiplier;
             ++y_multiplier ) {
 
             from_valueIndex = from_valueIndex_y_begin;
             to_valueIndex = to_valueIndex_y_begin;
 
             for ( let from_x = 0;
-              from_x < this.feedbackToInput.area.width_pixelCount_original;
+              from_x < area.width_pixelCount_original;
               ++from_x ) {
 
               let from_valueIndex_x_begin = from_valueIndex;
 
-              for ( let x_multiplier = 0;
-                x_multiplier < this.feedbackToInput.area.width_multiplier;
+              for ( let x_multiplier = 0; x_multiplier < area.width_multiplier;
                 ++x_multiplier ) {
 
                 from_valueIndex = from_valueIndex_x_begin;
