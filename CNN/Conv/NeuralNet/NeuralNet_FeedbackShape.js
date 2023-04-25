@@ -419,8 +419,6 @@ class NeuralNet_FeedbackShape {
               * this.input_channelCount;
 
 //!!! ...unfinished... (2023/04/23)
-        let from_value = previous_output_Int32Array[ from_valueIndex ];
-
         let from_pixelCount_cur = 0;
         let from_valueCount_cur = 0;
         let to_pixelCount_cur = 0;
@@ -454,8 +452,8 @@ class NeuralNet_FeedbackShape {
 
                 for ( let c = 0; c < this.feedbackToInput.input_channelCount; ++c ) {
 
-                  input_TypedArray[ to_valueIndex ]
-                    = previous_output_Int32Array[ from_valueIndex ];
+                  let from_value = previous_output_Int32Array[ from_valueIndex ];
+                  input_TypedArray[ to_valueIndex ] = from_value;
 
                   ++to_valueIndex;
                   ++from_valueIndex;
