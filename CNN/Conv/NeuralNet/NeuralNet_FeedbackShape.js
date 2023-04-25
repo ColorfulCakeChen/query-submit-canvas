@@ -461,7 +461,7 @@ class NeuralNet_FeedbackShape {
                 let channelCount_to_zero  // channels to fill with zero.
                   = input_channelCount - from_valueCount_remained;
 
-                if ( channelCount_to_zero > 0 ) { // not enough feedback values.
+                if ( channelCount_to_zero >= 0 ) { // not enough feedback values.
                   channelCount_to_copy = from_valueCount_remained;
                 } else {
                   channelCount_to_copy = input_channelCount;
@@ -493,10 +493,12 @@ class NeuralNet_FeedbackShape {
                   input_TypedArray[ to_valueIndex ] = 0;
                   ++to_valueIndex;
                 } // c
-              } // x_multiplier
+
 
 //!!! ...unfinished... (2023/04/25)
-              --from_pixelCount_remained;
+                --from_pixelCount_remained;
+
+              } // x_multiplier
 
             } // from_x
 
