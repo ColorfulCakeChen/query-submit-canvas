@@ -572,7 +572,8 @@ class NeuralNet_FeedbackShape {
    *
    * @param {number} from_output_pixelCount
    *   The pixel count to stop extracting (non-inclusive). It is a non-negative
-   * integer between
+   * integer and ( from_output_pixelIndexBegin + from_output_pixelCount ) must
+   * be between
    * [ 0, ( ( from_output_valueArray.length / 2 ) / this.input_channelCount ) ).
    */
   valueArray_get_from_output_valueArray_1st_channel(
