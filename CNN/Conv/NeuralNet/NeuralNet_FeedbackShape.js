@@ -598,7 +598,7 @@ class NeuralNet_FeedbackShape {
 
     // 2.
     let from_output_pixelCountPerAlignment
-      = Math.floor( from_output_valueCountPerAlignment / this.input_channelCount );
+      = Math.ceil( from_output_valueCountPerAlignment / this.input_channelCount );
 
     // 3. alignment index should be either 0 or 1.
     let from_output_valueIndexBase;
