@@ -1029,7 +1029,7 @@ async function* tester( progressParent ) {
       if ( progressTestCase.valuePercentage != 100 )
         throw Error( `GSheets_tester.tester(): `
           + `testCase={ ${testCase.toString()} }, `
-          + `progressTestCase.valuePercentage (${progressTestCase.valuePercentage} ) `
+          + `progressTestCase.valuePercentage ( ${progressTestCase.valuePercentage} ) `
           + `should be 100.` );
 
     } else {
@@ -1037,20 +1037,8 @@ async function* tester( progressParent ) {
       if ( progressTestCase.valuePercentage == 100 )
         throw Error( `GSheets_tester.tester(): `
           + `testCase={ ${testCase.toString()} }, `
-          + `progressTestCase.valuePercentage (${progressTestCase.valuePercentage} ) `
+          + `progressTestCase.valuePercentage ( ${progressTestCase.valuePercentage} ) `
           + `should not be 100.` );
-
-//!!! (2023/04/04 Remarked)
-// // When ( progressTestCase.valuePercentage > 0 ),
-// // reomving it from progressParent will make progressParent.valuePercentage
-// // backtrack (i.e. become smaller).
-//
-//       // For failed network request (e.g. abort, error, load without tatus 200,
-//       // timeout), drop its (not 100%) progress so that the total progress could
-//       // still 100% (suppose that there at least one TestCase (e.g. the last
-//       // TestCase) is succeeded).
-//       //
-//       progressParent.child_dispose( progressTestCase );
 
       // For failed network request (e.g. abort, error, load without tatus 200,
       // timeout), force its progress to 100% (by replacing all its children
