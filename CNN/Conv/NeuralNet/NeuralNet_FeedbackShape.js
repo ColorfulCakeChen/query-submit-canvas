@@ -218,6 +218,7 @@ class NeuralNet_FeedbackShape {
     );
   }
 
+
   get input_height() {
     return this.feedbackToInput?.input_height;
   }
