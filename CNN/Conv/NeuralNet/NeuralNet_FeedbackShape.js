@@ -473,7 +473,6 @@ class NeuralNet_FeedbackShape {
 
                   ++from_valueIndex;
                   --from_valueCount_remained;
-                  --from_pixelCount_remained;
 
                   ++to_valueIndex;
 
@@ -491,6 +490,8 @@ class NeuralNet_FeedbackShape {
                   ++to_valueIndex;
                 } // c
 
+//!!!???
+                --from_pixelCount_remained;
 
               } // x_multiplier
             } // from_x
