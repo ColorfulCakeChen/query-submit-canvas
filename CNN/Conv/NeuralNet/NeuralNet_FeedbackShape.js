@@ -298,6 +298,10 @@ class NeuralNet_FeedbackShape {
   }
 
   /**
+   * Fill the previous time output (i.e. feedback) to the next time input. The
+   * pixels (including channels of partial pixel) which inside input area but
+   * outside previous output will be filled with zero.
+   *
    *
    * @param {Uint8ClampedArray|Int32Array} input_TypedArray
    *   The (next time) input of the pair of neural networks. Usually, it is
@@ -417,7 +421,6 @@ class NeuralNet_FeedbackShape {
           = ( ( area_position_top * this.input_width ) + area_position_left )
               * this.input_channelCount;
 
-//!!! ...unfinished... (2023/04/25)
         let from_valueCount_remained_y_begin = area.valueCount_expanded;
         let from_valueCount_remained = area.valueCount_expanded;
         let from_pixelCount_remained_y_begin = area.pixelCount_expanded;
@@ -475,29 +478,20 @@ class NeuralNet_FeedbackShape {
                   --from_valueCount_remained;
 
                   ++to_valueIndex;
-
-//!!! ...unfinished... (2023/04/24)
-// if has reached area.valueCount_expanded but not
-// area.pixelCount_expanded, should fill zero.
-//
-// if has reached area.pixelCount_expanded, break early.
-//
                 } // c
 
-                // Fill zero for exceeding area.pixelCount_expanded.
+                // Fill zero for pixels exceeding area.pixelCount_expanded
+                // and channels exceeding area.valueCount_expanded.
                 for ( let c = 0; c < channelCount_to_zero; ++c ) {
                   input_TypedArray[ to_valueIndex ] = 0;
                   ++to_valueIndex;
                 } // c
+
               } // x_multiplier
 
-
-//!!! ...unfinished... (2023/04/25)
               --from_pixelCount_remained;
-
             } // from_x
 
-//!!! ...unfinished... (2023/04/23)
             to_valueIndex_y_begin += this.input_width_valueCount;
           } // y_multiplier
         } // from_y
