@@ -418,8 +418,8 @@ class NeuralNet_FeedbackShape {
               * this.input_channelCount;
 
 //!!! ...unfinished... (2023/04/25)
-        let from_valueCount_y_begin = 0;
-        let from_valueCount = 0;
+        let from_valueCount_remained_y_begin = area.valueCount_expanded;
+        let from_valueCount_remained = area.valueCount_expanded;
         let from_pixelCount_y_begin = 0;
         let from_pixelCount = 0;
 
@@ -434,7 +434,7 @@ class NeuralNet_FeedbackShape {
             y_multiplier < area.height_multiplier; ++y_multiplier ) {
 
             from_valueIndex = from_valueIndex_y_begin;
-            from_valueCount = from_valueCount_y_begin;
+            from_valueCount_remained = from_valueCount_remained_y_begin;
             from_pixelCount = from_pixelCount_y_begin;
 
             to_valueIndex = to_valueIndex_y_begin;
@@ -443,20 +443,17 @@ class NeuralNet_FeedbackShape {
               from_x < area.width_pixelCount_original; ++from_x ) {
 
               let from_valueIndex_x_begin = from_valueIndex;
-              let from_valueCount_x_begin = from_valueCount;
+              let from_valueCount_remained_x_begin = from_valueCount_remained;
               let from_pixelCount_x_begin = from_pixelCount;
 
               for ( let x_multiplier = 0;
                 x_multiplier < area.width_multiplier; ++x_multiplier ) {
 
                 from_valueIndex = from_valueIndex_x_begin;
-                from_valueCount = from_valueCount_x_begin;
+                from_valueCount_remained = from_valueCount_remained_x_begin;
                 from_pixelCount = from_pixelCount_x_begin;
 
 //!!! ...unfinished... (2023/04/25)
-                let from_valueCount_remained
-                  = area.valueCount_expanded - from_valueCount;
-
                 let channelCount_to_copy;// channel count to copy from feedback.
                 let channelCount_to_zero // channel count to fill with zero.
                   = input_channelCount - from_valueCount_remained;
@@ -476,7 +473,7 @@ class NeuralNet_FeedbackShape {
                   input_TypedArray[ to_valueIndex ] = from_value;
 
                   ++from_valueIndex;
-                  ++from_valueCount;
+                  --from_valueCount_remained;
                   ++from_pixelCount;
 
                   ++to_valueIndex;
