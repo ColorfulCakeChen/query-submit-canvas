@@ -22,6 +22,16 @@ class TestCase {
 
   }
 
+  assert_EqualTo( funcNameInMessage, objectName, propertyName, value ) {
+//    const funcNameInMessage = "";
+
+    if ( this[ objectName ][ propertyName ] != value )
+      throw Error( `FeedbackShape_tester.TestCase.${funcNameInMessage}(): `
+        + `${objectName}.${propertyName} should be ( ${value} ).`
+      );
+
+  }
+
 }
 
 /** */
