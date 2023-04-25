@@ -532,8 +532,8 @@ class NeuralNet_FeedbackShape {
 // Return array index of NeuralNet output Float32Array (or Int32Array).
 
   /**
-   * Extract explicit output values by specified alignment index and explicit
-   * value index range.
+   * Extract every 1st channel of pixels of the previous time output values.
+   * Every .input_channelCount values are viewed as a pixel.
    *
    *
    * @param {number[]|TypedArray} to_valueArray
@@ -577,13 +577,13 @@ class NeuralNet_FeedbackShape {
    * [ 0, ( ( from_output_valueArray.length / 2 ) / this.input_channelCount ) ).
    * and greater than from_output_pixelIndexBegin.
    */
-  valueArray_get_from_output_valueArray(
+  valueArray_get_from_output_valueArray_1st_channel(
     to_valueArray,
     from_output_valueArray, alignmentIndex,
     from_output_pixelIndexBegin, from_output_pixelIndexEnd
   ) {
 
-    const funcNameInMessage = "valueArray_get_from_output_valueArray";
+    const funcNameInMessage = "valueArray_get_from_output_valueArray_1st_channel";
 
     // 1.
     if ( ( from_output_valueArray.length % 2 ) != 0 )
