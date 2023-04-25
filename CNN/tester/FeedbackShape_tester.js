@@ -28,6 +28,7 @@ class TestCase {
     let lhs = this[ objectName ][ propertyName ];
     if ( lhs != value )
       throw Error( `FeedbackShape_tester.TestCase.${funcNameInMessage}(): `
+        + `testCaseId=${this.testCaseId}, `
         + `${objectName}.${propertyName} ( ${lhs} ) should be ( ${value} ).`
       );
 
