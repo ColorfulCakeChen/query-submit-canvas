@@ -420,8 +420,8 @@ class NeuralNet_FeedbackShape {
 //!!! ...unfinished... (2023/04/25)
         let from_valueCount_remained_y_begin = area.valueCount_expanded;
         let from_valueCount_remained = area.valueCount_expanded;
-        let from_pixelCount_y_begin = 0;
-        let from_pixelCount = 0;
+        let from_pixelCount_remained_y_begin = area.pixelCount_expanded;
+        let from_pixelCount_remained = area.pixelCount_expanded;
 
 //!!! ...unfinished... (2023/04/25)
         let to_pixelCount_cur = 0;
@@ -435,7 +435,7 @@ class NeuralNet_FeedbackShape {
 
             from_valueIndex = from_valueIndex_y_begin;
             from_valueCount_remained = from_valueCount_remained_y_begin;
-            from_pixelCount = from_pixelCount_y_begin;
+            from_pixelCount_remained = from_pixelCount_remained_y_begin;
 
             to_valueIndex = to_valueIndex_y_begin;
 
@@ -444,14 +444,14 @@ class NeuralNet_FeedbackShape {
 
               let from_valueIndex_x_begin = from_valueIndex;
               let from_valueCount_remained_x_begin = from_valueCount_remained;
-              let from_pixelCount_x_begin = from_pixelCount;
+              let from_pixelCount_remained_x_begin = from_pixelCount_remained;
 
               for ( let x_multiplier = 0;
                 x_multiplier < area.width_multiplier; ++x_multiplier ) {
 
                 from_valueIndex = from_valueIndex_x_begin;
                 from_valueCount_remained = from_valueCount_remained_x_begin;
-                from_pixelCount = from_pixelCount_x_begin;
+                from_pixelCount_remained = from_pixelCount_remained_x_begin;
 
 //!!! ...unfinished... (2023/04/25)
                 let channelCount_to_copy;// channel count to copy from feedback.
@@ -474,7 +474,7 @@ class NeuralNet_FeedbackShape {
 
                   ++from_valueIndex;
                   --from_valueCount_remained;
-                  ++from_pixelCount;
+                  ++from_pixelCount_remained;
 
                   ++to_valueIndex;
 
