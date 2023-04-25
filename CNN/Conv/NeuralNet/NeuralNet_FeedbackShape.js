@@ -564,24 +564,21 @@ class NeuralNet_FeedbackShape {
    * @param {number} from_output_pixelIndexBegin
    *   The pixel index (when the neural network personates the specified
    * alignment) to begin extracting. It is a non-negative integer between
-   * [ 0, ( ( from_output_valueArray.length / 2 ) / this.input_channelCount ) )
-   * and less than from_output_pixelIndexEnd.
+   * [ 0, ( ( from_output_valueArray.length / 2 ) / this.input_channelCount ) ).
    *   - Every .input_channelCount values (in from_output_valueArray) is viewed
    *       as a feedback pixel.
    *   - The first channel of every pixel will be extracted.
    *   - All other channels of every pixel will be ignored.
    *
-   * @param {number} from_output_pixelIndexEnd
-   *   The pixel index (when the neural network personates the specified
-   * alignment) to stop extracting (non-inclusive). It is a non-negative
+   * @param {number} from_output_pixelCount
+   *   The pixel count to stop extracting (non-inclusive). It is a non-negative
    * integer between
    * [ 0, ( ( from_output_valueArray.length / 2 ) / this.input_channelCount ) ).
-   * and greater than from_output_pixelIndexBegin.
    */
   valueArray_get_from_output_valueArray_1st_channel(
     to_valueArray,
     from_output_valueArray, alignmentIndex,
-    from_output_pixelIndexBegin, from_output_pixelIndexEnd
+    from_output_pixelIndexBegin, from_output_pixelCount
   ) {
 
     const funcNameInMessage = "valueArray_get_from_output_valueArray_1st_channel";
@@ -616,30 +613,47 @@ class NeuralNet_FeedbackShape {
     // 4.
     let from_output_pixelIndex = from_output_pixelIndexBegin;
 
-    // from_output_pixelIndex should be non-negative.
+    // 4.1
+    // from_output_pixelIndexBegin should be non-negative.
     if ( !( from_output_pixelIndexBegin >= 0 ) )
       throw Error( `NeuralNet_FeedbackShape.${funcNameInMessage}(): `
         + `from_output_pixelIndexBegin ( ${from_output_pixelIndexBegin} ) `
         + `should be greater than or equal to 0.`
       );
 
-    // from_output_pixelIndex should not exceed available explicit data of the
+    // from_output_pixelIndexBegin should not exceed available pixels of the
     // alignment.
-    if ( !( from_output_pixelIndexEnd <= from_output_pixelCountPerAlignment ) )
+    if ( !( from_output_pixelIndexBegin < from_output_pixelCountPerAlignment ) )
       throw Error( `NeuralNet_FeedbackShape.${funcNameInMessage}(): `
-        + `from_output_pixelIndexEnd ( ${from_output_pixelIndexEnd} ) `
+        + `from_output_pixelIndexBegin ( ${from_output_pixelIndexBegin} ) `
         + `should be less than or equal to `
         + `( ( from_output_valueArray.length / 2 ) / this.input_channelCount ) = `
         + `( ( ${from_output_valueArray.length} / 2 ) / ${this.input_channelCount} ) = `
         + `( ${from_output_pixelCountPerAlignment} ).`
       );
 
-    // from_output_pixelIndexBegin should be less than from_output_pixelIndexEnd.
-    if ( !( from_output_pixelIndexBegin < from_output_pixelIndexEnd ) )
+    // 4.2
+    // from_output_pixelCount should be non-negative.
+    if ( !( from_output_pixelCount >= 0 ) )
       throw Error( `NeuralNet_FeedbackShape.${funcNameInMessage}(): `
-        + `from_output_pixelIndexBegin ( ${from_output_pixelIndexBegin} ) `
-        + `should be less than `
-        + `from_output_pixelIndexEnd ( ${from_output_pixelIndexEnd} ).`
+        + `from_output_pixelCount ( ${from_output_pixelCount} ) `
+        + `should be greater than or equal to 0.`
+      );
+
+    // from_output_pixelCount should not exceed available pixels of the
+    // alignment.
+    let from_output_pixelIndexEnd
+      = from_output_pixelIndexBegin + from_output_pixelCount;
+
+    if ( !( from_output_pixelIndexEnd <= from_output_pixelCountPerAlignment ) )
+      throw Error( `NeuralNet_FeedbackShape.${funcNameInMessage}(): `
+        + `from_output_pixelIndexEnd ( ${from_output_pixelIndexEnd} ) = ( `
+        + `from_output_pixelIndexBegin ( ${from_output_pixelIndexBegin} ) + `
+        + `from_output_pixelCount ( ${from_output_pixelCount} ) ) `
+        + `should be less than or equal to `
+        + `( ( from_output_valueArray.length / 2 ) / this.input_channelCount ) = `
+        + `( ( ${from_output_valueArray.length} / 2 ) / ${this.input_channelCount} ) = `
+        + `( ${from_output_pixelCountPerAlignment} ).`
       );
 
     // 5.
@@ -649,8 +663,7 @@ class NeuralNet_FeedbackShape {
     // 6. Extract all the 1st channel values of all specified pixels of the
     //    previous time output of a neural network.
 
-    to_valueArray.length
-      = from_output_pixelIndexEnd - from_output_pixelIndexBegin;
+    to_valueArray.length = from_output_pixelCount;
 
     for ( let i = 0; i < to_valueArray.length; ++i ) {
       let pixel_channel_1st = from_output_valueArray[ from_output_valueIndex ];
