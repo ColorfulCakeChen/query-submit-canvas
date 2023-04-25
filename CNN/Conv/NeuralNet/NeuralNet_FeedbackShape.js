@@ -451,6 +451,8 @@ class NeuralNet_FeedbackShape {
 
                 from_valueIndex = from_valueIndex_x_begin;
                 from_valueCount_remained = from_valueCount_remained_x_begin;
+
+//!!! ...unfinished... (2023/04/25)
                 from_pixelCount_remained = from_pixelCount_remained_x_begin;
 
                 let channelCount_to_copy; // channels to copy from feedback.
@@ -490,7 +492,7 @@ class NeuralNet_FeedbackShape {
                   ++to_valueIndex;
                 } // c
 
-//!!!???
+//!!! ...unfinished... (2023/04/25)
                 --from_pixelCount_remained;
 
               } // x_multiplier
