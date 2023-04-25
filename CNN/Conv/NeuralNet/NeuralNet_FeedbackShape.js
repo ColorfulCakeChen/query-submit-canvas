@@ -566,7 +566,8 @@ class NeuralNet_FeedbackShape {
    * alignment) to begin extracting. It is a non-negative integer between
    * [ 0, ( ( from_output_valueArray.length / 2 ) / this.input_channelCount ) )
    * and less than from_output_pixelIndexEnd.
-   *   - Every .input_channelCount elements is viewed as a feedback pixel.
+   *   - Every .input_channelCount values (in from_output_valueArray) is viewed
+   *       as a feedback pixel.
    *   - The first channel of every pixel will be extracted.
    *   - All other channels of every pixel will be ignored.
    *
