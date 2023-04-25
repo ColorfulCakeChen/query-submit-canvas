@@ -578,8 +578,8 @@ class NeuralNet_FeedbackShape {
    */
   valueArray_get_from_output_valueArray_1st_channel(
     to_valueArray,
-    from_output_valueArray, alignmentIndex,
-    from_output_pixelIndexBegin, from_output_pixelCount
+    from_output_valueArray,
+    alignmentIndex, from_output_pixelIndexBegin, from_output_pixelCount
   ) {
 
     const funcNameInMessage = "valueArray_get_from_output_valueArray_1st_channel";
