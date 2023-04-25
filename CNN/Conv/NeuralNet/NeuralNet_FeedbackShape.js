@@ -445,8 +445,8 @@ class NeuralNet_FeedbackShape {
 //!!! ...unfinished... (2023/04/25)
 //!!! (2023/04/25 Remarked)
 // shoud not break directly. should fill zero instead until whole area is filled.
-              if ( from_pixelCount_remained <= 0 )
-                break ???;
+//               if ( from_pixelCount_remained <= 0 )
+//                 break ???;
 
               for ( let x_multiplier = 0;
                 x_multiplier < area.width_multiplier; ++x_multiplier ) {
