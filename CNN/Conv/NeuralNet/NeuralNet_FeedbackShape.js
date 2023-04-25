@@ -586,7 +586,8 @@ class NeuralNet_FeedbackShape {
     const funcNameInMessage = "valueArray_get_from_output_valueArray";
 
     // 1.
-    let valueCountPerAlignment = Math.floor( from_output_valueArray.length / 2 );
+    let valueCountPerAlignment
+      = Math.floor( from_output_valueArray.length / 2 );
 
     // 2.
     let pixelCountPerAlignment
