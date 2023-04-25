@@ -480,8 +480,10 @@ class NeuralNet_FeedbackShape {
                   ++to_valueIndex;
                 } // c
 
-                // 3.7.2 Fill zero for pixels exceeding area.pixelCount_expanded
-                //       and channels exceeding area.valueCount_expanded.
+                // 3.7.2
+                // Fill zero for
+                //   - channels exceeding area.valueCount_expanded, and
+                //   - pixels exceeding area.pixelCount_expanded.
                 for ( let c = 0; c < channelCount_to_zero; ++c ) {
                   input_TypedArray[ to_valueIndex ] = 0;
                   ++to_valueIndex;
