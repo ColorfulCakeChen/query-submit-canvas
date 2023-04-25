@@ -457,11 +457,12 @@ class NeuralNet_FeedbackShape {
                 let from_valueCount_remained
                   = area.valueCount_expanded - from_valueCount;
 
-                let channelCount_to_copy;
-                let channelCount_to_zero;
-                if ( from_valueCount_remained < input_channelCount ) {
+                let channelCount_to_copy;// channel count to copy from feedback.
+                let channelCount_to_zero // channel count to be filled with zero.
+                  = input_channelCount - from_valueCount_remained;
+
+                if ( channelCount_to_zero > 0 ) {
                   channelCount_to_copy = from_valueCount_remained;
-                  channelCount_to_zero = input_channelCount - from_valueCount_remained;
                 } else {
                   channelCount_to_copy = input_channelCount;
                   channelCount_to_zero = 0;
