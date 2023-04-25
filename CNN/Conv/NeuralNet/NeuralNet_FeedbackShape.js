@@ -394,10 +394,10 @@ class NeuralNet_FeedbackShape {
         = previous_output_Int32ArrayArray[ neuralNetIndex ];
 
       let area_position_leftArray
-        = area_position_leftArrayArray[ neuralNetIndex ];
+        = this.feedbackToInput.area_position_leftArrayArray[ neuralNetIndex ];
 
       let area_position_topArray
-        = area_position_topArrayArray[ neuralNetIndex ];
+        = this.feedbackToInput.area_position_topArrayArray[ neuralNetIndex ];
 
       // 3.2
       let from_output_valueIndex = 0;
@@ -427,10 +427,12 @@ class NeuralNet_FeedbackShape {
 
         let from_pixelCount_cur = 0;
         let from_valueCount_cur = 0;
+        let to_pixelCount_cur = 0;
+        let to_valueCount_cur = 0;
 
-        for ( let y = 0;
-          y < this.feedbackToInput.area.height_pixelCount_original;
-          ++y ) {
+        for ( let from_y = 0;
+          from_y < this.feedbackToInput.area.height_pixelCount_original;
+          ++from_y ) {
 
           for ( let y_multiplier = 0;
             y_multiplier < this.feedbackToInput.area.height_multiplier;
@@ -438,9 +440,9 @@ class NeuralNet_FeedbackShape {
       
             let to_input_valueIndex = to_input_valueIndex_row_begin;
 
-            for ( let x = 0;
-              x < this.feedbackToInput.area.width_pixelCount_original;
-              ++x ) {
+            for ( let from_x = 0;
+              from_x < this.feedbackToInput.area.width_pixelCount_original;
+              ++from_x ) {
 
               for ( let x_multiplier = 0;
                 x_multiplier < this.feedbackToInput.area.width_multiplier;
