@@ -460,8 +460,11 @@ class NeuralNet_FeedbackShape {
 
                   input_TypedArray[ to_valueIndex ] = from_value;
 
-                  ++to_valueIndex;
                   ++from_valueIndex;
+                  ++from_valueCount;
+                  ++from_pixelCount;
+
+                  ++to_valueIndex;
 
 //!!! ...unfinished... (2023/04/24)
 // if has reached .area.valueCount_expanded but not
