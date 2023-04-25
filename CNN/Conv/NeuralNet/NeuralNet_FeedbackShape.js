@@ -464,17 +464,15 @@ class NeuralNet_FeedbackShape {
 //
 // if has reached .area.pixelCount_expanded, break early.
 //
-                }
-              }
-
-            }
-
-          }
+                } // c
+              } // x_multiplier
+            } // from_x
+          } // y_multiplier
 
 //!!! ...unfinished... (2023/04/23)
 
           to_valueIndex_y_begin += this.input_width_valueCount;
-        }
+        } // from_y
       }
     }
 
