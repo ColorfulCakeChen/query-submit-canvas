@@ -31,11 +31,11 @@ const gTestGeneratorFuncMap = new Map( [
 
   // [ GSheets_tester.tester, true ],
 
+  [ FeedbackShape_tester.tester, true ],
   // [ AsyncWorker_tester.tester, true ],
   // [ DEvolution_tester.tester, true ],
 
-//!!! (2023/02/14 Temp Remarked) For speed up other testing.
-  [ NeuralOrchestra_tester.tester, true ],
+  // [ NeuralOrchestra_tester.tester, true ],
 
 ] );
 
