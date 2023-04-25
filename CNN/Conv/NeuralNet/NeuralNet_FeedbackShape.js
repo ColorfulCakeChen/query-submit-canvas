@@ -423,10 +423,6 @@ class NeuralNet_FeedbackShape {
         let from_pixelCount_remained_y_begin = area.pixelCount_expanded;
         let from_pixelCount_remained = area.pixelCount_expanded;
 
-//!!! ...unfinished... (2023/04/25)
-        let to_pixelCount_cur = 0;
-        let to_valueCount_cur = 0;
-
         for ( let from_y = 0;
           from_y < area.height_pixelCount_original; ++from_y ) {
 
@@ -444,8 +440,11 @@ class NeuralNet_FeedbackShape {
 
               let from_valueIndex_x_begin = from_valueIndex;
               let from_valueCount_remained_x_begin = from_valueCount_remained;
+              let from_pixelCount_remained_x_begin = from_pixelCount_remained;
 
 //!!! ...unfinished... (2023/04/25)
+//!!! (2023/04/25 Remarked)
+// shoud not break directly. should fill zero instead until whole area is filled.
               if ( from_pixelCount_remained <= 0 )
                 break ???;
 
@@ -453,7 +452,10 @@ class NeuralNet_FeedbackShape {
                 x_multiplier < area.width_multiplier; ++x_multiplier ) {
 
                 from_valueIndex = from_valueIndex_x_begin;
-                // from_valueCount_remained = from_valueCount_remained_x_begin;
+                from_valueCount_remained = from_valueCount_remained_x_begin;
+
+//!!! ...unfinished... (2023/04/25)
+                from_pixelCount_remained = from_pixelCount_remained_x_begin;
 
                 let channelCount_to_copy; // channels to copy from feedback.
                 let channelCount_to_zero  // channels to fill with zero.
@@ -493,6 +495,7 @@ class NeuralNet_FeedbackShape {
                 } // c
               } // x_multiplier
 
+//!!! ...unfinished... (2023/04/25)
               --from_pixelCount_remained;
 
             } // from_x
