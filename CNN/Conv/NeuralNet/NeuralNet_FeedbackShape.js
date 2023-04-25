@@ -446,6 +446,7 @@ class NeuralNet_FeedbackShape {
               let from_valueIndex_x_begin = from_valueIndex;
               let from_valueCount_remained_x_begin = from_valueCount_remained;
 
+              // Handle the last pixel which comes from feedback.
               let channelCount_to_copy; // channels to copy from feedback.
               let channelCount_to_zero; // channels to fill with zero.
               {
