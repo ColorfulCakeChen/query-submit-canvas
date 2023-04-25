@@ -536,7 +536,7 @@ class NeuralNet_FeedbackShape {
    * value index range.
    *
    *
-   * @param {number[]|TypedArray} o_toValueArray
+   * @param {number[]|TypedArray} to_valueArray
    *   The extracted explicit values will be filled into this number array (or
    * TypedArray).
    *
@@ -577,14 +577,14 @@ class NeuralNet_FeedbackShape {
    * [ 0, ( ( from_output_valueArray.length / 2 ) / this.input_channelCount ) ).
    * and greater than explicitValueIndexBegin.
    */
-  explicitValueArray_get_by_alignmentIndex_explicitValueIndexBegin_explicitValueIndexEnd(
-    o_toValueArray,
+  valueArray_get_by_alignmentIndex_explicitValueIndexBegin_explicitValueIndexEnd(
+    to_valueArray,
     from_output_valueArray, alignmentIndex,
     explicitValueIndexBegin, explicitValueIndexEnd
   ) {
 
     const funcNameInMessage
-      = "explicitValueArray_get_by_alignmentIndex_explicitValueIndexBegin_explicitValueIndexEnd";
+      = "valueArray_get_by_alignmentIndex_explicitValueIndexBegin_explicitValueIndexEnd";
 
     // 1.
     let valueCountPerAlignment = Math.floor( from_output_valueArray.length / 2 );
@@ -640,10 +640,10 @@ class NeuralNet_FeedbackShape {
       = fromValueIndexBase + ( explicitValueIndex * this.input_channelCount );
 
     // 6. Extract every specified explicit values.
-    o_toValueArray.length = explicitValueIndexEnd - explicitValueIndexBegin;
-    for ( let i = 0; i < o_toValueArray.length; ++i ) {
+    to_valueArray.length = explicitValueIndexEnd - explicitValueIndexBegin;
+    for ( let i = 0; i < to_valueArray.length; ++i ) {
       let explicitValue = from_output_valueArray[ fromValueIndex ];
-      o_toValueArray[ i ] = explicitValue;
+      to_valueArray[ i ] = explicitValue;
 
       ++explicitValueIndex;
       fromValueIndex += this.input_channelCount;
