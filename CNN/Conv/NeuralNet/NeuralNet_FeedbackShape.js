@@ -425,7 +425,9 @@ class NeuralNet_FeedbackShape {
 //!!! ...unfinished... (2023/04/23)
         let from_output_value = previous_output_Int32Array[ from_output_valueIndex ];
 
-
+        let area_pixelCount_cur = 0;
+        let area_valueCount_cur = 0;
+  
         for ( let y = 0;
           y < this.feedbackToInput.area.height_pixelCount_original;
           ++y ) {
