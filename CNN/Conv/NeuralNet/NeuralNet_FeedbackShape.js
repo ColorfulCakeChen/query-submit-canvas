@@ -440,7 +440,8 @@ class NeuralNet_FeedbackShape {
 
               let from_valueIndex_x_begin = from_valueIndex;
 
-              for ( let x_multiplier = 0; x_multiplier < area.width_multiplier;
+              for ( let x_multiplier = 0;
+                x_multiplier < area.width_multiplier;
                 ++x_multiplier ) {
 
                 from_valueIndex = from_valueIndex_x_begin;
