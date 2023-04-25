@@ -537,7 +537,7 @@ class NeuralNet_FeedbackShape {
    *
    *
    * @param {number[]|TypedArray} to_valueArray
-   *   The extracted explicit values will be filled into this number array (or
+   *   The extracted values will be filled into this number array (or
    * TypedArray).
    *
    * @param {Float32Array|Int32Array} from_output_valueArray
