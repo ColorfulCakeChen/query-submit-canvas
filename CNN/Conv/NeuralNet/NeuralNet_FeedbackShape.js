@@ -561,30 +561,29 @@ class NeuralNet_FeedbackShape {
    *   An non-negative integer represents which alignment the neural network
    * wants to personate. It should be either 0 or 1.
    *
-   * @param {number} explicitValueIndexBegin
+   * @param {number} from_output_valueIndexBegin
    *   The explicit value index (when the neural network personates the
    * specified alignment) to begin extracting. It is a non-negative integer
    * between [ 0, ( ( from_output_valueArray.length / 2 ) / this.input_channelCount ) )
-   * and less than explicitValueIndexEnd.
+   * and less than from_output_valueIndexEnd.
    *   - Every .input_channelCount elements is a tuple of feedback values.
    *   - The first element of the tuple is the explicit output value.
    *   - All other elements of the tuple are the implicit output values.
    *
-   * @param {number} explicitValueIndexEnd
+   * @param {number} from_output_valueIndexEnd
    *   The explicit value index (when the neural network personates the
    * specified alignment) to stop extracting (non-inclusive). It is a
    * non-negative integer between
    * [ 0, ( ( from_output_valueArray.length / 2 ) / this.input_channelCount ) ).
-   * and greater than explicitValueIndexBegin.
+   * and greater than from_output_valueIndexBegin.
    */
-  valueArray_get_by_alignmentIndex_explicitValueIndexBegin_explicitValueIndexEnd(
+  valueArray_get_from_output_valueArray(
     to_valueArray,
-    from_output_valueArray, alignmentIndex,
-    explicitValueIndexBegin, explicitValueIndexEnd
+    from_output_valueArray,
+    alignmentIndex, from_output_valueIndexBegin, from_output_valueIndexEnd
   ) {
 
-    const funcNameInMessage
-      = "valueArray_get_by_alignmentIndex_explicitValueIndexBegin_explicitValueIndexEnd";
+    const funcNameInMessage = "valueArray_get_from_output_valueArray";
 
     // 1.
     let valueCountPerAlignment = Math.floor( from_output_valueArray.length / 2 );
@@ -607,45 +606,45 @@ class NeuralNet_FeedbackShape {
     }
 
     // 4.
-    let explicitValueIndex = explicitValueIndexBegin;
+    let from_output_valueIndex = from_output_valueIndexBegin;
 
-    // explicitValueIndex should be non-negative.
-    if ( !( explicitValueIndexBegin >= 0 ) )
+    // from_output_valueIndex should be non-negative.
+    if ( !( from_output_valueIndexBegin >= 0 ) )
       throw Error( `NeuralNet_FeedbackShape.${funcNameInMessage}(): `
-        + `explicitValueIndexBegin ( ${explicitValueIndexBegin} ) `
+        + `from_output_valueIndexBegin ( ${from_output_valueIndexBegin} ) `
         + `should be greater than or equal to 0.`
       );
 
-    // explicitValueIndex should not exceed available explicit data of the
+    // from_output_valueIndex should not exceed available explicit data of the
     // alignment.
-    if ( !( explicitValueIndexEnd <= explicitValueCountPerAlignment ) )
+    if ( !( from_output_valueIndexEnd <= explicitValueCountPerAlignment ) )
       throw Error( `NeuralNet_FeedbackShape.${funcNameInMessage}(): `
-        + `explicitValueIndexEnd ( ${explicitValueIndexEnd} ) `
+        + `from_output_valueIndexEnd ( ${from_output_valueIndexEnd} ) `
         + `should be less than or equal to `
         + `( ( from_output_valueArray.length / 2 ) / this.input_channelCount ) = `
         + `( ( ${from_output_valueArray.length} / 2 ) / ${this.input_channelCount} ) = `
         + `( ${explicitValueCountPerAlignment} ).`
       );
 
-    // explicitValueIndexBegin should be less than explicitValueIndexEnd.
-    if ( !( explicitValueIndexBegin < explicitValueIndexEnd ) )
+    // from_output_valueIndexBegin should be less than from_output_valueIndexEnd.
+    if ( !( from_output_valueIndexBegin < from_output_valueIndexEnd ) )
       throw Error( `NeuralNet_FeedbackShape.${funcNameInMessage}(): `
-        + `explicitValueIndexBegin ( ${explicitValueIndexBegin} ) `
+        + `from_output_valueIndexBegin ( ${from_output_valueIndexBegin} ) `
         + `should be less than `
-        + `explicitValueIndexEnd ( ${explicitValueIndexEnd} ).`
+        + `from_output_valueIndexEnd ( ${from_output_valueIndexEnd} ).`
       );
 
     // 5.
     let fromValueIndex
-      = fromValueIndexBase + ( explicitValueIndex * this.input_channelCount );
+      = fromValueIndexBase + ( from_output_valueIndex * this.input_channelCount );
 
     // 6. Extract every specified explicit values.
-    to_valueArray.length = explicitValueIndexEnd - explicitValueIndexBegin;
+    to_valueArray.length = from_output_valueIndexEnd - from_output_valueIndexBegin;
     for ( let i = 0; i < to_valueArray.length; ++i ) {
       let explicitValue = from_output_valueArray[ fromValueIndex ];
       to_valueArray[ i ] = explicitValue;
 
-      ++explicitValueIndex;
+      ++from_output_valueIndex;
       fromValueIndex += this.input_channelCount;
     }
   }
