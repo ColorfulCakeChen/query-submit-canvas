@@ -442,7 +442,8 @@ class NeuralNet_FeedbackShape {
           for ( let y_multiplier = 0;
             y_multiplier < this.feedbackToInput.area.height_multiplier;
             ++y_multiplier ) {
-      
+
+//!!!???
             let to_valueIndex = to_valueIndex_y_begin;
 
             for ( let from_x = 0;
@@ -479,7 +480,6 @@ class NeuralNet_FeedbackShape {
           }
 
 //!!! ...unfinished... (2023/04/23)
-          ++from_valueIndex;
 
           to_valueIndex_y_begin += this.input_width_valueCount;
         }
