@@ -347,7 +347,7 @@ class NeuralNet_FeedbackToInput {
 
     area.pixelCount_expanded = area.pixelCount_original
       * area.height_multiplier * area.width_multiplier;
-    
+
     // 5. Determine feedback_to_input area shape.
 
     // 5.1 If the (next time) explicit input is 1d, the feedback (as implicit
@@ -382,8 +382,8 @@ class NeuralNet_FeedbackToInput {
       if ( area.height_pixelCount_expanded > explicit_input_height ) {
 
         // Ensure .area.height_pixelCount_expanded
-        //   - contains factor .area.height_multiplier (i.e. 2) (i.e. is divisible
-        //       by .area.height_multiplier), and
+        //   - contains factor .area.height_multiplier (i.e. 2) (i.e. is
+        //       divisible by .area.height_multiplier), and
         //   - does not exceed explicit_input_height
         //
         // Note: Because explicit_input_height is at least 2 here, the
