@@ -459,9 +459,11 @@ class NeuralNet_FeedbackShape {
 
                 for ( let c = 0; c < this.feedbackToInput.input_channelCount; ++c ) {
 
-
                   input_TypedArray[ to_valueIndex ]
                     = previous_output_Int32Array[ from_valueIndex ];
+
+                  ++to_valueIndex;
+                  ++from_valueIndex;
 
 //!!! ...unfinished... (2023/04/24)
 // if has reached .area.valueCount_expanded but not
@@ -470,8 +472,6 @@ class NeuralNet_FeedbackShape {
 // if has reached .area.pixelCount_expanded, break early.
 //
                 }
-
-                ++to_valueIndex;
               }
 
             }
