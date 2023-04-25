@@ -540,19 +540,19 @@ class NeuralNet_FeedbackShape {
    *   The extracted explicit values will be filled into this number array (or
    * TypedArray).
    *
-   * @param {Float32Array|Int32Array} fromValueArray
+   * @param {Float32Array|Int32Array} from_output_valueArray
    *   A number array to be extracted information from. It is usually the
    * output TypedArray of a neural network. It is viewed as containing two
    * alignments output values which the neural network could personate.
    *
-   *   - fromValueArray[ 0 ] to
-   *     fromValueArray[ ( fromValueArray.length / 2 ) - 1 ]:
+   *   - from_output_valueArray[ 0 ] to
+   *     from_output_valueArray[ ( from_output_valueArray.length / 2 ) - 1 ]:
    *
    *       The (explicit and implicit) output values when the neural network
    *       personates alignment 0.
    *
-   *   - fromValueArray[ fromValueArray.length / 2 ] to
-   *     fromValueArray[ fromValueArray.length - 1 ]:
+   *   - from_output_valueArray[ from_output_valueArray.length / 2 ] to
+   *     from_output_valueArray[ from_output_valueArray.length - 1 ]:
    *
    *       The (explicit and implicit) output values when the neural network
    *       personates alignment 1.
@@ -564,7 +564,7 @@ class NeuralNet_FeedbackShape {
    * @param {number} explicitValueIndexBegin
    *   The explicit value index (when the neural network personates the
    * specified alignment) to begin extracting. It is a non-negative integer
-   * between [ 0, ( ( fromValueArray.length / 2 ) / this.input_channelCount ) )
+   * between [ 0, ( ( from_output_valueArray.length / 2 ) / this.input_channelCount ) )
    * and less than explicitValueIndexEnd.
    *   - Every .input_channelCount elements is a tuple of feedback values.
    *   - The first element of the tuple is the explicit output value.
@@ -574,12 +574,12 @@ class NeuralNet_FeedbackShape {
    *   The explicit value index (when the neural network personates the
    * specified alignment) to stop extracting (non-inclusive). It is a
    * non-negative integer between
-   * [ 0, ( ( fromValueArray.length / 2 ) / this.input_channelCount ) ).
+   * [ 0, ( ( from_output_valueArray.length / 2 ) / this.input_channelCount ) ).
    * and greater than explicitValueIndexBegin.
    */
   explicitValueArray_get_by_alignmentIndex_explicitValueIndexBegin_explicitValueIndexEnd(
     o_toValueArray,
-    fromValueArray, alignmentIndex,
+    from_output_valueArray, alignmentIndex,
     explicitValueIndexBegin, explicitValueIndexEnd
   ) {
 
@@ -587,7 +587,7 @@ class NeuralNet_FeedbackShape {
       = "explicitValueArray_get_by_alignmentIndex_explicitValueIndexBegin_explicitValueIndexEnd";
 
     // 1.
-    let valueCountPerAlignment = Math.floor( fromValueArray.length / 2 );
+    let valueCountPerAlignment = Math.floor( from_output_valueArray.length / 2 );
 
     // 2.
     let explicitValueCountPerAlignment
@@ -622,8 +622,8 @@ class NeuralNet_FeedbackShape {
       throw Error( `NeuralNet_FeedbackShape.${funcNameInMessage}(): `
         + `explicitValueIndexEnd ( ${explicitValueIndexEnd} ) `
         + `should be less than or equal to `
-        + `( ( fromValueArray.length / 2 ) / this.input_channelCount ) = `
-        + `( ( ${fromValueArray.length} / 2 ) / ${this.input_channelCount} ) = `
+        + `( ( from_output_valueArray.length / 2 ) / this.input_channelCount ) = `
+        + `( ( ${from_output_valueArray.length} / 2 ) / ${this.input_channelCount} ) = `
         + `( ${explicitValueCountPerAlignment} ).`
       );
 
@@ -642,7 +642,7 @@ class NeuralNet_FeedbackShape {
     // 6. Extract every specified explicit values.
     o_toValueArray.length = explicitValueIndexEnd - explicitValueIndexBegin;
     for ( let i = 0; i < o_toValueArray.length; ++i ) {
-      let explicitValue = fromValueArray[ fromValueIndex ];
+      let explicitValue = from_output_valueArray[ fromValueIndex ];
       o_toValueArray[ i ] = explicitValue;
 
       ++explicitValueIndex;
