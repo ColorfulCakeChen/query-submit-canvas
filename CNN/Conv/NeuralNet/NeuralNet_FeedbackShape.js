@@ -452,6 +452,10 @@ class NeuralNet_FeedbackShape {
                 from_valueCount = from_valueCount_x_begin;
                 from_pixelCount = from_pixelCount_x_begin;
 
+//!!! ...unfinished... (2023/04/25)
+                let from_valueCount_remained
+                  = area.valueCount_expanded - from_valueCount;
+
                 for ( let c = 0;
                   c < feedbackToInput.input_channelCount; ++c ) {
 
@@ -467,10 +471,10 @@ class NeuralNet_FeedbackShape {
                   ++to_valueIndex;
 
 //!!! ...unfinished... (2023/04/24)
-// if has reached .area.valueCount_expanded but not
-// .area.pixelCount_expanded, should fill zero.
+// if has reached area.valueCount_expanded but not
+// area.pixelCount_expanded, should fill zero.
 //
-// if has reached .area.pixelCount_expanded, break early.
+// if has reached area.pixelCount_expanded, break early.
 //
                 } // c
               } // x_multiplier
