@@ -449,6 +449,8 @@ class NeuralNet_FeedbackShape {
                 x_multiplier < area.width_multiplier; ++x_multiplier ) {
 
                 from_valueIndex = from_valueIndex_x_begin;
+                from_valueCount = from_valueCount_x_begin;
+                from_pixelCount = from_pixelCount_x_begin;
 
                 for ( let c = 0;
                   c < feedbackToInput.input_channelCount; ++c ) {
