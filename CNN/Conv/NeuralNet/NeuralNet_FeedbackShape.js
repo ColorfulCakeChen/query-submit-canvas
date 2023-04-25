@@ -440,7 +440,6 @@ class NeuralNet_FeedbackShape {
 
               let from_valueIndex_x_begin = from_valueIndex;
               let from_valueCount_remained_x_begin = from_valueCount_remained;
-              let from_pixelCount_remained_x_begin = from_pixelCount_remained;
 
 //!!! ...unfinished... (2023/04/25)
 //!!! (2023/04/25 Remarked)
@@ -453,9 +452,6 @@ class NeuralNet_FeedbackShape {
 
                 from_valueIndex = from_valueIndex_x_begin;
                 from_valueCount_remained = from_valueCount_remained_x_begin;
-
-//!!! ...unfinished... (2023/04/25)
-                from_pixelCount_remained = from_pixelCount_remained_x_begin;
 
                 let channelCount_to_copy; // channels to copy from feedback.
                 let channelCount_to_zero  // channels to fill with zero.
@@ -493,12 +489,11 @@ class NeuralNet_FeedbackShape {
                   input_TypedArray[ to_valueIndex ] = 0;
                   ++to_valueIndex;
                 } // c
+              } // x_multiplier
 
 
 //!!! ...unfinished... (2023/04/25)
-                --from_pixelCount_remained;
-
-              } // x_multiplier
+              --from_pixelCount_remained;
 
             } // from_x
 
