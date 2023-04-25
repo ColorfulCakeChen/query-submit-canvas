@@ -425,9 +425,11 @@ class NeuralNet_FeedbackShape {
         let from_pixelCount_remained_y_begin = area.pixelCount_expanded;
         let from_pixelCount_remained = area.pixelCount_expanded;
 
+        // 3.3
         for ( let from_y = 0;
           from_y < area.height_pixelCount_original; ++from_y ) {
 
+          // 3.4
           for ( let y_multiplier = 0;
             y_multiplier < area.height_multiplier; ++y_multiplier ) {
 
@@ -437,18 +439,14 @@ class NeuralNet_FeedbackShape {
 
             to_valueIndex = to_valueIndex_y_begin;
 
+            // 3.5
             for ( let from_x = 0;
               from_x < area.width_pixelCount_original; ++from_x ) {
 
               let from_valueIndex_x_begin = from_valueIndex;
               let from_valueCount_remained_x_begin = from_valueCount_remained;
 
-//!!! ...unfinished... (2023/04/25)
-//!!! (2023/04/25 Remarked)
-// shoud not break directly. should fill zero instead until whole area is filled.
-//               if ( from_pixelCount_remained <= 0 )
-//                 break ???;
-
+              // 3.6
               for ( let x_multiplier = 0;
                 x_multiplier < area.width_multiplier; ++x_multiplier ) {
 
@@ -466,6 +464,9 @@ class NeuralNet_FeedbackShape {
                   channelCount_to_zero = 0;
                 }
 
+                // 3.7
+
+                // 3.7.1 Copy output values as feedback in input values.
                 for ( let c = 0; c < channelCount_to_copy; ++c ) {
 
                   let from_value
@@ -479,8 +480,8 @@ class NeuralNet_FeedbackShape {
                   ++to_valueIndex;
                 } // c
 
-                // Fill zero for pixels exceeding area.pixelCount_expanded
-                // and channels exceeding area.valueCount_expanded.
+                // 3.7.2 Fill zero for pixels exceeding area.pixelCount_expanded
+                //       and channels exceeding area.valueCount_expanded.
                 for ( let c = 0; c < channelCount_to_zero; ++c ) {
                   input_TypedArray[ to_valueIndex ] = 0;
                   ++to_valueIndex;
