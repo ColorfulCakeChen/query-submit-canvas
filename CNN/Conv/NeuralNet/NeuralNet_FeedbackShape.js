@@ -470,11 +470,9 @@ class NeuralNet_FeedbackShape {
                 // 3.7
 
                 // 3.7.1 Copy output values as feedback in input values.
+                let from_value;
                 for ( let c = 0; c < channelCount_to_copy; ++c ) {
-
-                  let from_value
-                    = previous_output_Int32Array[ from_valueIndex ];
-
+                  from_value = previous_output_Int32Array[ from_valueIndex ];
                   input_TypedArray[ to_valueIndex ] = from_value;
 
                   ++from_valueIndex;
