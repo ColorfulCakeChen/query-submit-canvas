@@ -25,9 +25,10 @@ class TestCase {
   assert_EqualTo( funcNameInMessage, objectName, propertyName, value ) {
 //    const funcNameInMessage = "";
 
-    if ( this[ objectName ][ propertyName ] != value )
+    let lhs = this[ objectName ][ propertyName ];
+    if ( lhs != value )
       throw Error( `FeedbackShape_tester.TestCase.${funcNameInMessage}(): `
-        + `${objectName}.${propertyName} should be ( ${value} ).`
+        + `${objectName}.${propertyName} ( ${lhs} ) should be ( ${value} ).`
       );
 
   }
