@@ -382,6 +382,7 @@ class NeuralNet_FeedbackShape {
       );
 
     // 3. Fill previous time output (i.e. feedback) to next time input.
+    let input_channelCount = feedbackToInput.input_channelCount;
     let area = this.feedbackToInput.area;
     let to_valueIndex = 0;
 
@@ -456,8 +457,21 @@ class NeuralNet_FeedbackShape {
                 let from_valueCount_remained
                   = area.valueCount_expanded - from_valueCount;
 
-                for ( let c = 0;
-                  c < feedbackToInput.input_channelCount; ++c ) {
+                let channelCount_to_copy;
+                let channelCount_to_zero;
+                if ( from_valueCount_remained < input_channelCount ) {
+
+                  channelCount_to_copy = from_valueCount_remained;
+                  channelCount_to_zero = input_channelCount - from_valueCount_remained;
+
+                } else {
+
+                  channelCount_to_copy = input_channelCount;
+                  channelCount_to_zero = 0;
+                }
+
+
+                for ( let c = 0; c < input_channelCount; ++c ) {
 
                   let from_value
                     = previous_output_Int32Array[ from_valueIndex ];
