@@ -97,13 +97,6 @@ import { FeedbackToInput as NeuralNet_FeedbackToInput }
  *       needs move the part.
  *
  *
- *
- *
-
-//!!! ...unfinished... (2023/04/17)
-
- *
- *
  * 3.2 Explicit/Implicit output shape
  *
  * Since the output of a convolution neural network (CNN) only has channels
