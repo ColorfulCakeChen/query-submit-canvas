@@ -430,13 +430,13 @@ class NeuralNet_FeedbackShape {
 
 //!!!???
           let from_valueIndex_x_begin = from_valueIndex;
-          let to_valueIndex = to_valueIndex_y_begin;
 
           for ( let y_multiplier = 0;
             y_multiplier < this.feedbackToInput.area.height_multiplier;
             ++y_multiplier ) {
 
             from_valueIndex = from_valueIndex_x_begin;
+            to_valueIndex = to_valueIndex_y_begin;
 
             for ( let from_x = 0;
               from_x < this.feedbackToInput.area.width_pixelCount_original;
@@ -467,11 +467,10 @@ class NeuralNet_FeedbackShape {
                 } // c
               } // x_multiplier
             } // from_x
-          } // y_multiplier
 
 //!!! ...unfinished... (2023/04/23)
-
-          to_valueIndex_y_begin += this.input_width_valueCount;
+            to_valueIndex_y_begin += this.input_width_valueCount;
+          } // y_multiplier
         } // from_y
       }
     }
