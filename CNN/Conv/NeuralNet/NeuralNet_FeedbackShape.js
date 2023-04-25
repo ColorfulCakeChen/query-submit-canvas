@@ -443,6 +443,8 @@ class NeuralNet_FeedbackShape {
             y_multiplier < this.feedbackToInput.area.height_multiplier;
             ++y_multiplier ) {
 
+            from_valueIndex = from_valueIndex_x_begin;
+
 //!!!???
             let to_valueIndex = to_valueIndex_y_begin;
 
