@@ -205,14 +205,18 @@ import { FeedbackToInput as NeuralNet_FeedbackToInput }
  */
 class NeuralNet_FeedbackShape {
 
-//!!! ...unfinished... (2023/04/17)
   /**
    *
    */
-  constructor() {
-
+  constructor(
+    explicit_input_height, explicit_input_width, explicit_input_channelCount,
+    feedback_valueCount_per_alignment
+  ) {
+    this.init(
+      explicit_input_height, explicit_input_width, explicit_input_channelCount,
+      feedback_valueCount_per_alignment
+    );
   }
-
 
   get input_height() {
     return this.feedbackToInput?.input_height;
@@ -258,7 +262,7 @@ class NeuralNet_FeedbackShape {
    */
   init(
     explicit_input_height, explicit_input_width, explicit_input_channelCount,
-    feedback_valueCount_per_alignment,
+    feedback_valueCount_per_alignment
   ) {
 
     // 1. Ensure positive integer.
@@ -644,10 +648,5 @@ class NeuralNet_FeedbackShape {
       fromValueIndex += this.input_channelCount;
     }
   }
-
-
-//!!! ...unfinished... (2023/04/19)
-// feedback_setter()
-
 
 }
