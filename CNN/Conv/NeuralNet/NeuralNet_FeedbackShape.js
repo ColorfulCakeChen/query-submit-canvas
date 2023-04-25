@@ -480,6 +480,12 @@ class NeuralNet_FeedbackShape {
                   ++to_valueIndex;
                 } // c
 
+                if ( from_valueCount_remained < 0 )
+                  throw Error( `NeuralNet_FeedbackShape.${funcNameInMessage}(): `
+                    + `from_valueCount_remained ( ${from_valueCount_remained} ) `
+                    + `should be non-negative.`
+                  );
+
                 // 3.7.2
                 // Fill zero for
                 //   - channels exceeding area.valueCount_expanded, and
@@ -488,12 +494,6 @@ class NeuralNet_FeedbackShape {
                   input_TypedArray[ to_valueIndex ] = 0;
                   ++to_valueIndex;
                 } // c
-
-                if ( from_valueCount_remained < 0 )
-                  throw Error( `NeuralNet_FeedbackShape.${funcNameInMessage}(): `
-                    + `from_valueCount_remained ( ${from_valueCount_remained} ) `
-                    + `should be non-negative.`
-                  );
 
               } // x_multiplier
 
