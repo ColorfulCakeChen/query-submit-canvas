@@ -447,14 +447,17 @@ class NeuralNet_FeedbackShape {
               let from_valueCount_remained_x_begin = from_valueCount_remained;
 
               let channelCount_to_copy; // channels to copy from feedback.
-              let channelCount_to_zero  // channels to fill with zero.
-                = input_channelCount - from_valueCount_remained;
+              let channelCount_to_zero;  // channels to fill with zero.
+              {
+                channelCount_to_zero
+                  = input_channelCount - from_valueCount_remained;
 
-              if ( channelCount_to_zero >= 0 ) { // not enough feedback values.
-                channelCount_to_copy = from_valueCount_remained;
-              } else {
-                channelCount_to_copy = input_channelCount;
-                channelCount_to_zero = 0;
+                if ( channelCount_to_zero >= 0 ) { // not enough feedback values.
+                  channelCount_to_copy = from_valueCount_remained;
+                } else {
+                  channelCount_to_copy = input_channelCount;
+                  channelCount_to_zero = 0;
+                }
               }
 
               // 3.6
