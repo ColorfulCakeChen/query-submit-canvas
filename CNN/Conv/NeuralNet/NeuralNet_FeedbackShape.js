@@ -382,6 +382,7 @@ class NeuralNet_FeedbackShape {
 //!!! ...unfinished... (2023/04/23)
 
     // 3. Fill previous time output (i.e. feedback) to next time input.
+    let to_valueIndex = 0;
 
     // 3.1
     // Note: ( this.feedbackToInput.neuralNetCount == 2 )
@@ -401,7 +402,6 @@ class NeuralNet_FeedbackShape {
 
       // 3.2
       let from_valueIndex = 0;
-      let to_valueIndex = 0;
 
       // Note: ( this.feedbackToInput.alignmentCount_per_neuralNet == 2 )
       for (
