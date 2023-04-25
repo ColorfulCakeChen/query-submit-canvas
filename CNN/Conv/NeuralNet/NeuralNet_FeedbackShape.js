@@ -589,7 +589,7 @@ class NeuralNet_FeedbackShape {
     let valueCountPerAlignment = Math.floor( from_output_valueArray.length / 2 );
 
     // 2.
-    let explicitValueCountPerAlignment
+    let from_output_valueCountPerAlignment
       = Math.floor( valueCountPerAlignment / this.input_channelCount );
 
     // 3. alignment index should be either 0 or 1.
@@ -617,13 +617,13 @@ class NeuralNet_FeedbackShape {
 
     // from_output_valueIndex should not exceed available explicit data of the
     // alignment.
-    if ( !( from_output_valueIndexEnd <= explicitValueCountPerAlignment ) )
+    if ( !( from_output_valueIndexEnd <= from_output_valueCountPerAlignment ) )
       throw Error( `NeuralNet_FeedbackShape.${funcNameInMessage}(): `
         + `from_output_valueIndexEnd ( ${from_output_valueIndexEnd} ) `
         + `should be less than or equal to `
         + `( ( from_output_valueArray.length / 2 ) / this.input_channelCount ) = `
         + `( ( ${from_output_valueArray.length} / 2 ) / ${this.input_channelCount} ) = `
-        + `( ${explicitValueCountPerAlignment} ).`
+        + `( ${from_output_valueCountPerAlignment} ).`
       );
 
     // from_output_valueIndexBegin should be less than from_output_valueIndexEnd.
