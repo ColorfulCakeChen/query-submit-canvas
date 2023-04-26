@@ -172,8 +172,6 @@ class TestCase {
       area_width_pixelCount_expanded
         = area_width_pixelCount_original * area_width_multiplier;
 
-        ???area_pixelCount_original;
-
       this.assert_Area( "height_pixelCount_original", area_height_pixelCount_original );
       this.assert_Area( "height_pixelCount_expanded", area_height_pixelCount_expanded );
       this.assert_Area( "height_pixelCount_expanded",
@@ -193,6 +191,9 @@ class TestCase {
 
         this.assert_Area( "to_pixelCount_original", area_to_pixelCount_original );
         this.assert_Area( "to_pixelCount_expanded", area_to_pixelCount_expanded );
+
+        this.assert_Area_GE( "to_pixelCount_original", 1 );
+        this.assert_Area_GE( "to_pixelCount_expanded", 1 );
 
         // target area should be greater than or equal to source.
         this.assert_Area_LE( "from_pixelCount_original", area_to_pixelCount_original );
@@ -272,11 +273,21 @@ class TestCase {
 
   assert_LE( funcNameInMessage, parentObject, objectName, propertyName, value ) {
     let lhs = parentObject[ objectName ][ propertyName ];
-    if ( !( lhs < value ) )
+    if ( !( lhs <= value ) )
       throw Error( `FeedbackShape_tester.TestCase.${funcNameInMessage}(): `
         + `testCaseId=${this.testCaseId}, `
         + `${objectName}.${propertyName} ( ${lhs} ) `
         + `should be less than or equal to ( ${value} ).`
+      );
+  }
+
+  assert_GE( funcNameInMessage, parentObject, objectName, propertyName, value ) {
+    let lhs = parentObject[ objectName ][ propertyName ];
+    if ( !( lhs >= value ) )
+      throw Error( `FeedbackShape_tester.TestCase.${funcNameInMessage}(): `
+        + `testCaseId=${this.testCaseId}, `
+        + `${objectName}.${propertyName} ( ${lhs} ) `
+        + `should be greater than or equal to ( ${value} ).`
       );
   }
 
