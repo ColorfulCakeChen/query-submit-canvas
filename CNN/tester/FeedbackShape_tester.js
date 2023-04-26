@@ -32,20 +32,27 @@ class TestCase {
       this.feedback_valueCount_per_alignment
     );
 
-    this.assert_FeedbackShape( "explicit_input_height",
-      ( this.explicit_input_height > 0 ) ? this.explicit_input_height : 1 );
+    const explicit_input_height = ( this.explicit_input_height > 0 )
+      ? this.explicit_input_height : 1;
+    this.assert_FeedbackShape( "explicit_input_height", explicit_input_height );
 
-    this.assert_FeedbackShape( "explicit_input_width",
-      ( this.explicit_input_width > 0 ) ? this.explicit_input_width : 1 );
+    const explicit_input_width = ( this.explicit_input_width > 0 )
+      ? this.explicit_input_width : 1;
+    this.assert_FeedbackShape( "explicit_input_width", explicit_input_width );
 
+    const explicit_input_channelCount = ( this.explicit_input_channelCount > 0 )
+      ? this.explicit_input_channelCount : 1;
     this.assert_FeedbackShape( "explicit_input_channelCount",
-      ( this.explicit_input_channelCount > 0 )
-        ? this.explicit_input_channelCount : 1 );
+      explicit_input_channelCount );
 
-    this.assert_Area( "valueCount_original",
-      ( this.feedback_valueCount_per_alignment > 0 )
-        ? this.feedback_valueCount_per_alignment : 1 );
+    const valueCount_original = ( this.feedback_valueCount_per_alignment > 0 )
+      ? this.feedback_valueCount_per_alignment : 1;
+    this.assert_Area( "valueCount_original", valueCount_original );
 
+    const valueCount_original_per_neural_network = valueCount_original * 2;
+    this.assert_ToInput( "valueCount_original_per_neural_network",
+      valueCount_original_per_neural_network );
+  
 //!!! ...unfinished... (2023/04/26)
 
   }
