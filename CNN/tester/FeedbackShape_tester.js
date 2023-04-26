@@ -32,7 +32,7 @@ class TestCase {
       this.feedback_valueCount_per_alignment
     );
 
-    testProperties();
+    this.testProperties();
 
 //!!! ...unfinished... (2023/04/26)
   }
