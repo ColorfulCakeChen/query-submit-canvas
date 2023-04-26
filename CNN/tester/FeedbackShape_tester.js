@@ -25,7 +25,6 @@ class TestCase {
   test() {
     const funcNameInMessage = "test";
 
-//!!! ...unfinished... (2023/04/26)
     this.feedbackShape.init(
       this.explicit_input_height,
       this.explicit_input_width,
@@ -52,11 +51,11 @@ class TestCase {
   }
 
   assert_Area( propertyName, value ) {
-    this.assert( "test", this.feedbackShape.feedbackToInput, "area", propertyName, value );
+    this.assert( "test", this.feedbackShape.toInput, "area", propertyName, value );
   }
 
-  assert_FeedbackToInput( propertyName, value ) {
-    this.assert( "test", this.feedbackShape, "feedbackToInput", propertyName, value );
+  assert_ToInput( propertyName, value ) {
+    this.assert( "test", this.feedbackShape, "toInput", propertyName, value );
   }
 
   assert_FeedbackShape( propertyName, value ) {
