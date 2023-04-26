@@ -137,17 +137,42 @@ class TestCase {
     let area_width_pixelCount_original;
     let area_width_pixelCount_expanded;
     {
+
+
+//!!! ...unfinished... (2023/04/26)
+// Perhaps, needs not special case for ( explicit_input_height == 1 ).
+
       if ( explicit_input_height == 1 ) {
         area_height_pixelCount_original = 1;
-        area_height_pixelCount_expanded = 1;
         area_width_pixelCount_original = area_pixelCount_original;
-        area_width_pixelCount_expanded = area_pixelCount_original;
 
       } else {
 
+        area_height_pixelCount_original
+          = Math.ceil( Math.sqrt( area_pixelCount_original ) );
+
+        if ( area_height_pixelCount_original <= explicit_input_height ) { // square shape.
+          area_width_pixelCount_original = area_height_pixelCount_original
+
+        } else { // rectangle shape.
+          area_height_pixelCount_original = Math.floor(
+            explicit_input_height / area_height_multiplier );
+
+          area_width_pixelCount_original = Math.ceil(
+            from_pixelCount_original / area_height_pixelCount_original );
+        }
+      }
+
+
 //!!! ...unfinished... (2023/04/26)
 
-      }
+      area_height_pixelCount_expanded
+        = area_height_pixelCount_original * area_height_multiplier;
+
+      area_width_pixelCount_expanded
+        = area_width_pixelCount_original * area_width_multiplier;
+
+        ???area_pixelCount_original;
 
       this.assert_Area( "height_pixelCount_original", area_height_pixelCount_original );
       this.assert_Area( "height_pixelCount_expanded", area_height_pixelCount_expanded );
@@ -169,6 +194,7 @@ class TestCase {
         this.assert_Area( "to_pixelCount_original", area_to_pixelCount_original );
         this.assert_Area( "to_pixelCount_expanded", area_to_pixelCount_expanded );
 
+        // target area should be greater than or equal to source.
         this.assert_Area_LE( "from_pixelCount_original", area_to_pixelCount_original );
         this.assert_Area_LE( "from_pixelCount_expanded", area_to_pixelCount_expanded );
       }
