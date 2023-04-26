@@ -290,17 +290,17 @@ class NeuralNet_FeedbackToInput {
       = this.implicit_input_height
       = this.explicit_input_height;
 
-    // 2.3
-    this.valueCount_original_per_neural_network
-      = area.valueCount_original * 2;
-
-    // 2.4 There are 4 (= 2 * 2) feedback information areas.
+    // 2.3 There are 4 (= 2 * 2) feedback information areas.
     //
     // There are two neural networks (in a versus pair).
     // There two alignments per two neural network.
     this.neuralNetCount = 2;
     this.alignmentCount_per_neuralNet = 2;
     this.areaCount = this.neuralNetCount * this.alignmentCount_per_neuralNet;
+
+    // 2.4
+    this.valueCount_original_per_neural_network
+      = area.valueCount_original * this.alignmentCount_per_neuralNet;
 
     // 3. Four (or two) times the implicit input pixel count along height (if
     //    exists) and width.

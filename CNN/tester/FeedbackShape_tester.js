@@ -62,17 +62,6 @@ class TestCase {
 
 
     //
-    const area_valueCount_original
-      = ( this.feedback_valueCount_per_alignment > 0 )
-          ? this.feedback_valueCount_per_alignment : 1;
-    this.assert_Area( "valueCount_original", area_valueCount_original );
-
-    const valueCount_original_per_neural_network = area_valueCount_original * 2;
-    this.assert_ToInput( "valueCount_original_per_neural_network",
-      valueCount_original_per_neural_network );
-
-
-    //
     const neuralNetCount = 2;
     this.assert_ToInput( "neuralNetCount", neuralNetCount );
 
@@ -85,6 +74,18 @@ class TestCase {
 //!!! ...unfinished... (2023/04/26)
 // height_areaCount, width_areaCount
 // area_position_leftArrayArray, area_position_topArrayArray
+
+
+    //
+    const area_valueCount_original
+      = ( this.feedback_valueCount_per_alignment > 0 )
+          ? this.feedback_valueCount_per_alignment : 1;
+    this.assert_Area( "valueCount_original", area_valueCount_original );
+
+    const valueCount_original_per_neural_network
+      = area_valueCount_original * alignmentCount_per_neuralNet;
+    this.assert_ToInput( "valueCount_original_per_neural_network",
+      valueCount_original_per_neural_network );
 
 
     // implicit_input: height, width, channelCount, pixelCount, valueCount
