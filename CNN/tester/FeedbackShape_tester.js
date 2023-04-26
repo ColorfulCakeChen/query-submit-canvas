@@ -156,17 +156,17 @@ class TestCase {
 
 
       {
-        let area_pixelCount_original_restored
+        let area_to_pixelCount_original
           = area_height_pixelCount_original * area_width_pixelCount_original;
 
-        let area_pixelCount_expanded_restored
+        let area_to_pixelCount_expanded
           = area_height_pixelCount_expanded * area_width_pixelCount_expanded;
 
-        this.assert_Area( "to_pixelCount_original", area_pixelCount_original_restored );
-        this.assert_Area( "to_pixelCount_expanded", area_pixelCount_expanded_restored );
+        this.assert_Area( "to_pixelCount_original", area_to_pixelCount_original );
+        this.assert_Area( "to_pixelCount_expanded", area_to_pixelCount_expanded );
 
-        this.assert_Area_LE( "from_pixelCount_original", area_pixelCount_original_restored );
-        this.assert_Area_LE( "from_pixelCount_expanded", area_pixelCount_expanded_restored );
+        this.assert_Area_LE( "from_pixelCount_original", area_to_pixelCount_original );
+        this.assert_Area_LE( "from_pixelCount_expanded", area_to_pixelCount_expanded );
       }
 
 //!!! ...unfinished... (2023/04/26)
