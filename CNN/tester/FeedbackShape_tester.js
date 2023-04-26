@@ -39,8 +39,16 @@ class TestCase {
 
   testProperties() {
 
-    // explicit_input: height, width, channelCount, pixelCount, valueCount
+    const neuralNetCount = 2;
+    this.assert_FeedbackShape( "neuralNetCount", neuralNetCount );
 
+    const alignmentCount_per_neuralNet = 2;
+    this.assert_FeedbackShape( "alignmentCount_per_neuralNet", alignmentCount_per_neuralNet );
+
+    const areaCount = neuralNetCount * alignmentCount_per_neuralNet;
+    this.assert_FeedbackShape( "areaCount", areaCount );
+
+    // explicit_input: height, width, channelCount, pixelCount, valueCount
     const explicit_input_height
       = ( this.explicit_input_height > 0 ) ? this.explicit_input_height : 1;
     this.assert_FeedbackShape( "explicit_input_height", explicit_input_height );
@@ -74,7 +82,6 @@ class TestCase {
 
 
     // implicit_input: height, width, channelCount, pixelCount, valueCount
-
     const implicit_input_height = explicit_input_height;
     this.assert_FeedbackShape( "implicit_input_height" );
 
