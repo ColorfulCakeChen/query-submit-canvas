@@ -122,6 +122,7 @@ class TestCase {
       * area_height_multiplier * area_width_multiplier;
     this.assert_Area( "valueCount_expanded", area_valueCount_expanded );
 
+    //
     const area_pixelCount_original = Math.ceil(
       area_valueCount_original / explicit_input_channelCount );
     this.assert_Area( "pixelCount_original", area_pixelCount_original );
@@ -130,6 +131,33 @@ class TestCase {
       * area_height_multiplier * area_width_multiplier;
     this.assert_Area( "pixelCount_expanded", area_pixelCount_expanded );
 
+    // 
+    let area_height_pixelCount_original;
+    let area_height_pixelCount_expanded;
+    let area_width_pixelCount_original;
+    let area_width_pixelCount_expanded;
+    {
+      if ( explicit_input_height == 1 ) {
+        area_height_pixelCount_original = 1;
+        area_height_pixelCount_expanded = 1;
+        area_width_pixelCount_original = area_pixelCount_original;
+        area_width_pixelCount_expanded = area_pixelCount_original;
+
+      } else {
+
+//!!! ...unfinished... (2023/04/26)
+
+      }
+
+      this.assert_Area( "height_pixelCount_original", area_height_pixelCount_original );
+      this.assert_Area( "height_pixelCount_expanded", area_height_pixelCount_expanded );
+      this.assert_Area( "width_pixelCount_original", area_width_pixelCount_original );
+      this.assert_Area( "width_pixelCount_expanded", area_width_pixelCount_expanded );
+
+//!!! ...unfinished... (2023/04/26)
+    }
+
+    //
 
 //!!! ...unfinished... (2023/04/26)
 
