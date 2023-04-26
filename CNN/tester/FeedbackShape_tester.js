@@ -151,8 +151,13 @@ class TestCase {
 
       this.assert_Area( "height_pixelCount_original", area_height_pixelCount_original );
       this.assert_Area( "height_pixelCount_expanded", area_height_pixelCount_expanded );
+      this.assert_Area( "height_pixelCount_expanded",
+        area_height_pixelCount_original * area_height_multiplier );
+
       this.assert_Area( "width_pixelCount_original", area_width_pixelCount_original );
       this.assert_Area( "width_pixelCount_expanded", area_width_pixelCount_expanded );
+      this.assert_Area( "width_pixelCount_expanded",
+        area_width_pixelCount_original * area_width_multiplier );
 
       {
         let area_to_pixelCount_original
