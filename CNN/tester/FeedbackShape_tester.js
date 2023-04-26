@@ -74,17 +74,17 @@ class TestCase {
 
   }
 
-  assert_Area( propertyName, value ) {
+  assert_Area( propertyName ) {
     let value = this.comparedShape.toInput.area[ propertyName ];
     this.assert( "test", this.feedbackShape.toInput, "area", propertyName, value );
   }
 
-  assert_ToInput( propertyName, value ) {
+  assert_ToInput( propertyName ) {
     let value = this.comparedShape.toInput[ propertyName ];
     this.assert( "test", this.feedbackShape, "toInput", propertyName, value );
   }
 
-  assert_FeedbackShape( propertyName, value ) {
+  assert_FeedbackShape( propertyName ) {
     let value = this.comparedShape[ propertyName ];
     this.assert( "test", this, "feedbackShape", propertyName, value );
   }
