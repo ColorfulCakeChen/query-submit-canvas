@@ -88,15 +88,11 @@ class TestCase {
       valueCount_original_per_neural_network );
 
 
-    let area_height_multiplier;
-    let area_width_multiplier;
+    let area_height_multiplier = 2;
+    let area_width_multiplier = 2;
     {
       if ( explicit_input_height == 1 ) {
         area_height_multiplier = 1;
-        area_width_multiplier = 2;
-      } else {
-        area_height_multiplier = 2;
-        area_width_multiplier = 2;
       }
 
       this.assert_Area( "height_multiplier", area_height_multiplier );
