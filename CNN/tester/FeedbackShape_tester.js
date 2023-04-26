@@ -73,9 +73,7 @@ class MinMax {
   constructor( min, max ) {
     this.min = min;
     this.max = max;
-  }
-  get length() {
-    return ( max - min + 1 );
+    this.length = ( this.max - this.min + 1 );
   }
 }
 
