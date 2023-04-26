@@ -52,7 +52,7 @@ class TestCase {
     const valueCount_original_per_neural_network = valueCount_original * 2;
     this.assert_ToInput( "valueCount_original_per_neural_network",
       valueCount_original_per_neural_network );
-  
+
 //!!! ...unfinished... (2023/04/26)
 
   }
