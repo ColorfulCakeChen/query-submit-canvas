@@ -104,16 +104,16 @@ class TestCases {
   * testCase_generator() {
     let testCaseId = 0;
     for ( let h = this.explicit_input_height_MinMax.min;
-      h < this.explicit_input_height_MinMax.max; ++h ) {
+      h <= this.explicit_input_height_MinMax.max; ++h ) {
 
       for ( let w = this.explicit_input_width_MinMax.min;
-        w < this.explicit_input_width_MinMax.max; ++w ) {
+        w <= this.explicit_input_width_MinMax.max; ++w ) {
 
         for ( let c = this.explicit_input_channelCount_MinMax.min;
-          c < this.explicit_input_channelCount_MinMax.max; ++c ) {
+          c <= this.explicit_input_channelCount_MinMax.max; ++c ) {
 
           for ( let v = this.feedback_valueCount_per_alignment_MinMax.min;
-            v < this.feedback_valueCount_per_alignment_MinMax.max; ++v ) {
+            v <= this.feedback_valueCount_per_alignment_MinMax.max; ++v ) {
 
             let testCase = new TestCase(
               testCaseId, this.feedbackShape, h, w, c, v );
