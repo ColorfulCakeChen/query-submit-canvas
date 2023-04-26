@@ -83,7 +83,7 @@ class TestCase {
 
     // implicit_input: height, width, channelCount, pixelCount, valueCount
     const implicit_input_height = explicit_input_height;
-    this.assert_FeedbackShape( "implicit_input_height" );
+    this.assert_FeedbackShape( "implicit_input_height", implicit_input_height );
 
 //!!! ...unfinished... (2023/04/26) implicit_input_width
 //     const implicit_input_width = ???;
