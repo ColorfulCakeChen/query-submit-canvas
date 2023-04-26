@@ -163,7 +163,7 @@ async function* tester( progressParent ) {
 
   if ( progressToAdvance.valuePercentage != 100 )
     throw Error( `FeedbackShape_tester.tester(): `
-      + `testCase={ ${testCase.toString()} }, `
+      + `gTestCases.length={ ${gTestCases.length} }, `
       + `progressToAdvance.valuePercentage ( ${progressToAdvance.valuePercentage} ) `
       + `should be 100.` );
 
