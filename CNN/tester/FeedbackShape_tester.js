@@ -82,6 +82,10 @@ class TestCase {
     const areaCount = neuralNetCount * alignmentCount_per_neuralNet;
     this.assert_ToInput( "areaCount", areaCount );
 
+//!!! ...unfinished... (2023/04/26)
+// height_areaCount, width_areaCount
+// area_position_leftArrayArray, area_position_topArrayArray
+
 
     // implicit_input: height, width, channelCount, pixelCount, valueCount
     const implicit_input_height = explicit_input_height;
