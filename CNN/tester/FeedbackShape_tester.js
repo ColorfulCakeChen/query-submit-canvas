@@ -22,7 +22,7 @@ class TestCase {
   }
 
   /** */
-  async *testerGenerator() {
+  test() {
 
 //!!! ...unfinished... (2023/04/26)
     this.neuralNetFeedbackShape.init(
@@ -56,10 +56,13 @@ class MinMax {
     this.min = min;
     this.max = max;
   }
+  get length() {
+    return ( max - min + 1 );
+  }
 }
 
 /** */
-class TestCaseArray extends Array {
+class TestCases {
 
   /** */
   constructor() {
@@ -70,6 +73,13 @@ class TestCaseArray extends Array {
     this.explicit_input_channelCount_MinMax = new MinMax( 0, 10 );
     this.feedback_valueCount_per_alignment_MinMax = new MinMax( 0, 100 );
 
+    this.length = this.explicit_input_height_MinMax.length
+      * this.explicit_input_width_MinMax.length
+      * this.explicit_input_channelCount_MinMax.length
+      * this.feedback_valueCount_per_alignment_MinMax.length;
+  }
+
+  * testCase_generator() {
     let testCaseId = 0;
     for ( let h = this.explicit_input_height_MinMax.min;
       h < this.explicit_input_height_MinMax.max; ++h ) {
@@ -83,8 +93,9 @@ class TestCaseArray extends Array {
           for ( let v = this.feedback_valueCount_per_alignment_MinMax.min;
             v < this.feedback_valueCount_per_alignment_MinMax.max; ++v ) {
 
-            this.push( new TestCase( testCaseId, this.neuralNetFeedbackShape,
-              h, w, c, v ) );
+            let testCase = new TestCase(
+              testCaseId, this.neuralNetFeedbackShape, h, w, c, v );
+            yield testCase;
 
             ++testCaseId;
           }
@@ -97,12 +108,7 @@ class TestCaseArray extends Array {
 
 //
 //
-const gTestCaseArray = new TestCaseArray();
-{
-//!!! ...unfinished... (2023/04/25)
-  // gTestCaseArray
-  //   .append_by( null, "",        60 * 1000,  true ) // succeeded.
-}
+const gTestCases = new TestCases();
 
 /**
  *
@@ -118,19 +124,23 @@ async function* tester( progressParent ) {
   let progressRoot = progressParent.root_get();
 
   let progressToAdvance = progressParent.child_add(
-    ValueMax.Percentage.Concrete.Pool.get_or_create_by( gTestCaseArray.length ) );
+    ValueMax.Percentage.Concrete.Pool.get_or_create_by( gTestCases.length ) );
 
   // Try every test case.
-  for ( let i = 0; i < gTestCaseArray.length; ++i ) {
-    let testCase = gTestCaseArray[ i ];
-
-    let testGenerator = testCase.testGenerator();
-    yield* testGenerator;
+  const countPerYield = 100;
+  let testCaseGenerator = gTestCases.testCase_generator();
+  for ( let i = 0; i < gTestCases.length; ++i ) {
+    let testCase = testCaseGenerator.next();
+    testCase.test();
 
     progressToAdvance.value_advance();
-    yield progressRoot;
+
+    if ( ( i % countPerYield ) == 0 )
+      yield progressRoot;
   }
-  
+
+  yield progressRoot;
+
   if ( progressToAdvance.valuePercentage != 100 )
     throw Error( `FeedbackShape_tester.tester(): `
       + `testCase={ ${testCase.toString()} }, `
