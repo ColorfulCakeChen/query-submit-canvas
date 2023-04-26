@@ -8,12 +8,12 @@ import * as NeuralNet from "../Conv/NeuralNet.js";
 class TestCase {
 
   /** */
-  constructor( testCaseId, neuralNetFeedbackShape,
+  constructor( testCaseId, feedbackShape,
     explicit_input_height, explicit_input_width, explicit_input_channelCount,
     feedback_valueCount_per_alignment
   ) {
     this.testCaseId = testCaseId;
-    this.neuralNetFeedbackShape = neuralNetFeedbackShape;
+    this.feedbackShape = feedbackShape;
 
     this.explicit_input_height = explicit_input_height;
     this.explicit_input_width = explicit_input_width;
@@ -23,29 +23,47 @@ class TestCase {
 
   /** */
   test() {
+    const funcNameInMessage = "test";
 
 //!!! ...unfinished... (2023/04/26)
-    this.neuralNetFeedbackShape.init(
+    this.feedbackShape.init(
       this.explicit_input_height,
       this.explicit_input_width,
       this.explicit_input_channelCount,
       this.feedback_valueCount_per_alignment
     );
 
+    this.assert_FeedbackShape_EqualTo(
+      "explicit_input_height", this.explicit_input_height );
+
+    this.assert_FeedbackShape(
+      "explicit_input_width", this.explicit_input_width );
+
+    this.assert_FeedbackShape(
+      "explicit_input_channelCount", this.explicit_input_channelCount );
+
+    this.assert_FeedbackToInput(
+      "valueCount_original", this.feedback_valueCount_per_alignment );
+
 //!!! ...unfinished... (2023/04/26)
 
   }
 
-  assert_EqualTo( funcNameInMessage, objectName, propertyName, value ) {
-//    const funcNameInMessage = "";
+  assert_FeedbackToInput( propertyName, value ) {
+    this.assert( "test", this.feedbackShape, "feedbackToInput", propertyName, value );
+  }
 
-    let lhs = this[ objectName ][ propertyName ];
+  assert_FeedbackShape( propertyName, value ) {
+    this.assert( "test", this, "feedbackShape", propertyName, value );
+  }
+
+  assert( funcNameInMessage, parentObject, objectName, propertyName, value ) {
+    let lhs = parentObject[ objectName ][ propertyName ];
     if ( lhs != value )
       throw Error( `FeedbackShape_tester.TestCase.${funcNameInMessage}(): `
         + `testCaseId=${this.testCaseId}, `
         + `${objectName}.${propertyName} ( ${lhs} ) should be ( ${value} ).`
       );
-
   }
 
 }
@@ -66,7 +84,7 @@ class TestCases {
 
   /** */
   constructor() {
-    this.neuralNetFeedbackShape = new NeuralNet.FeedbackShape();
+    this.feedbackShape = new NeuralNet.FeedbackShape();
 
     this.explicit_input_height_MinMax = new MinMax( 0, 10 );
     this.explicit_input_width_MinMax = new MinMax( 0, 10 );
@@ -94,7 +112,7 @@ class TestCases {
             v < this.feedback_valueCount_per_alignment_MinMax.max; ++v ) {
 
             let testCase = new TestCase(
-              testCaseId, this.neuralNetFeedbackShape, h, w, c, v );
+              testCaseId, this.feedbackShape, h, w, c, v );
             yield testCase;
 
             ++testCaseId;
