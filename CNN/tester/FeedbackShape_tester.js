@@ -162,10 +162,11 @@ class TestCase {
         let area_pixelCount_expanded_restored
           = area_height_pixelCount_expanded * area_width_pixelCount_expanded;
 
-//!!! ...unfinished... (2023/04/26)
-// seems wrong. It will be ( _original_restored >= _original )
-        this.assert_Area( "from_pixelCount_original", area_pixelCount_original_restored );
-        this.assert_Area( "from_pixelCount_expanded", area_pixelCount_expanded_restored );
+        this.assert_Area( "to_pixelCount_original", area_pixelCount_original_restored );
+        this.assert_Area( "to_pixelCount_expanded", area_pixelCount_expanded_restored );
+
+        this.assert_Area_LE( "from_pixelCount_original", area_pixelCount_original_restored );
+        this.assert_Area_LE( "from_pixelCount_expanded", area_pixelCount_expanded_restored );
       }
 
 //!!! ...unfinished... (2023/04/26)
@@ -223,19 +224,30 @@ class TestCase {
 
   }
 
+  assert_Area_LE( propertyName, value ) {
+    this.assert_LE( "test", this.feedbackShape.toInput, "area", propertyName, value );
+  }
+
   assert_Area( propertyName, value ) {
-    //let value = this.comparedShape.toInput.area[ propertyName ];
     this.assert( "test", this.feedbackShape.toInput, "area", propertyName, value );
   }
 
   assert_ToInput( propertyName, value ) {
-    //let value = this.comparedShape.toInput[ propertyName ];
     this.assert( "test", this.feedbackShape, "toInput", propertyName, value );
   }
 
   assert_FeedbackShape( propertyName, value ) {
-    //let value = this.comparedShape[ propertyName ];
     this.assert( "test", this, "feedbackShape", propertyName, value );
+  }
+
+  assert_LE( funcNameInMessage, parentObject, objectName, propertyName, value ) {
+    let lhs = parentObject[ objectName ][ propertyName ];
+    if ( !( lhs < value ) )
+      throw Error( `FeedbackShape_tester.TestCase.${funcNameInMessage}(): `
+        + `testCaseId=${this.testCaseId}, `
+        + `${objectName}.${propertyName} ( ${lhs} ) `
+        + `should be less than or equal to ( ${value} ).`
+      );
   }
 
   assert( funcNameInMessage, parentObject, objectName, propertyName, value ) {
