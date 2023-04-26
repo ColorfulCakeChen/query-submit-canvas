@@ -65,14 +65,36 @@ class MinMax {
 /** */
 class TestCaseArray extends Array {
 
-
+  /** */
   constructor() {
     this.neuralNetFeedbackShape = new NeuralNet.FeedbackShape();
 
-    this.explicit_input_height_MinMax = new MinMax( ???, ??? );
+    this.explicit_input_height_MinMax = new MinMax( 0, ??? );
     this.explicit_input_width_MinMax = new MinMax( ???, ??? );
     this.explicit_input_channelCount_MinMax = new MinMax( ???, ??? );
     this.feedback_valueCount_per_alignment_MinMax = new MinMax( ???, ??? );
+
+    let testCaseId = 0;
+    for ( let h = this.explicit_input_height_MinMax.min;
+      h < this.explicit_input_height_MinMax.max; ++h ) {
+
+      for ( let w = this.explicit_input_width_MinMax.min;
+        w < this.explicit_input_width_MinMax.max; ++w ) {
+
+        for ( let c = this.explicit_input_channelCount_MinMax.min;
+          c < this.explicit_input_channelCount_MinMax.max; ++c ) {
+
+          for ( let v = this.feedback_valueCount_per_alignment_MinMax.min;
+            v < this.feedback_valueCount_per_alignment_MinMax.max; ++v ) {
+
+            this.push( new TestCase( testCaseId, this.neuralNetFeedbackShape,
+              h, w, c, v ) );
+
+            ++testCaseId;
+          }
+        }
+      }
+    }
   }
 
 //!!! ...unfinished... (2023/04/25)
