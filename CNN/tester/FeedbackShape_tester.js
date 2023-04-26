@@ -22,6 +22,21 @@ class TestCase {
 
   }
 
+  /** */
+  async *testerGenerator( progressParent ) {
+
+    let progressRoot = progressParent.root_get();
+
+    let progressToAdvance = progressParent.child_add(
+      ValueMax.Percentage.Concrete.Pool.get_or_create_by( 1 ) );
+
+//!!! ...unfinished... (2023/04/26)
+
+
+    progressToAdvance.value_advance();
+    yield progressRoot;
+  }
+
   assert_EqualTo( funcNameInMessage, objectName, propertyName, value ) {
 //    const funcNameInMessage = "";
 
@@ -78,10 +93,10 @@ async function* tester( progressParent ) {
     let progressTestCase = progressTestCaseArray[ i ];
 
 //!!! ...unfinished... (2023/04/25)
-//     let testGenerator = testCase.???tester_Summary_and_Versus(
-//       progressTestCase,
-//
-//     );
+    let testGenerator = testCase.testGenerator(
+      progressTestCase,
+
+    );
 
     yield* testGenerator;
 
