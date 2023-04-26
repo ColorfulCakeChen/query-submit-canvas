@@ -33,17 +33,19 @@ class TestCase {
       this.feedback_valueCount_per_alignment
     );
 
-    this.assert_FeedbackShape(
-      "explicit_input_height", this.explicit_input_height );
+    this.assert_FeedbackShape( "explicit_input_height",
+      ( this.explicit_input_height > 0 ) ? this.explicit_input_height : 1 );
 
-    this.assert_FeedbackShape(
-      "explicit_input_width", this.explicit_input_width );
+    this.assert_FeedbackShape( "explicit_input_width",
+      ( this.explicit_input_width > 0 ) ? this.explicit_input_width : 1 );
 
-    this.assert_FeedbackShape(
-      "explicit_input_channelCount", this.explicit_input_channelCount );
+    this.assert_FeedbackShape( "explicit_input_channelCount",
+      ( this.explicit_input_channelCount > 0 )
+        ? this.explicit_input_channelCount : 1 );
 
-    this.assert_FeedbackToInput(
-      "valueCount_original", this.feedback_valueCount_per_alignment );
+    this.assert_FeedbackToInput( "valueCount_original",
+      ( this.feedback_valueCount_per_alignment > 0 )
+        ? this.feedback_valueCount_per_alignment : 1 );
 
 //!!! ...unfinished... (2023/04/26)
 
