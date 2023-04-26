@@ -292,9 +292,9 @@ class TestCase {
     let lhs = parentObject[ objectName ][ propertyName ];
     if ( !( lhs <= value ) )
       throw Error( `FeedbackShape_tester.TestCase.${funcNameInMessage}(): `
-        + `testCaseId=${this.testCaseId}, `
         + `${objectName}.${propertyName} ( ${lhs} ) `
         + `should be less than or equal to ( ${value} ).`
+        + `{ ${this} }.`
       );
   }
 
@@ -302,9 +302,9 @@ class TestCase {
     let lhs = parentObject[ objectName ][ propertyName ];
     if ( !( lhs >= value ) )
       throw Error( `FeedbackShape_tester.TestCase.${funcNameInMessage}(): `
-        + `testCaseId=${this.testCaseId}, `
         + `${objectName}.${propertyName} ( ${lhs} ) `
         + `should be greater than or equal to ( ${value} ).`
+        + `{ ${this} }.`
       );
   }
 
@@ -312,11 +312,20 @@ class TestCase {
     let lhs = parentObject[ objectName ][ propertyName ];
     if ( lhs != value )
       throw Error( `FeedbackShape_tester.TestCase.${funcNameInMessage}(): `
-        + `testCaseId=${this.testCaseId}, `
-        + `${objectName}.${propertyName} ( ${lhs} ) should be ( ${value} ).`
+        + `${objectName}.${propertyName} ( ${lhs} ) should be ( ${value} ). `
+        + `{ ${this} }.`
       );
   }
 
+  toString() {
+    let str = `testCaseId=${this.testCaseId}, `
+      + `explicit_input_height=${this.explicit_input_height}, `
+      + `explicit_input_width=${this.explicit_input_width}, `
+      + `explicit_input_channelCount=${this.explicit_input_channelCount}, `
+      + `feedback_valueCount_per_alignment=${this.feedback_valueCount_per_alignment}`
+      ;
+    return str;
+  }
 }
 
 /** */
