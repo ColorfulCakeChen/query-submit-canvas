@@ -45,6 +45,14 @@ class TestCase {
     this.assert_FeedbackShape( "explicit_input_channelCount",
       explicit_input_channelCount );
 
+    const explicit_input_pixelCount = explicit_input_height * explicit_input_width;
+    this.assert_FeedbackShape( "explicit_input_pixelCount", explicit_input_pixelCount );
+
+    const explicit_input_valueCount
+      = explicit_input_pixelCount * explicit_input_channelCount;
+    this.assert_FeedbackShape( "explicit_input_valueCount", explicit_input_valueCount );
+
+
     const valueCount_original = ( this.feedback_valueCount_per_alignment > 0 )
       ? this.feedback_valueCount_per_alignment : 1;
     this.assert_Area( "valueCount_original", valueCount_original );
@@ -53,7 +61,10 @@ class TestCase {
     this.assert_ToInput( "valueCount_original_per_neural_network",
       valueCount_original_per_neural_network );
 
+
 //!!! ...unfinished... (2023/04/26)
+// input_height, input_width, input_width_valueCount, input_channelCount 
+// implicit_Xxx, implicit_input_pixelCount, implicit_input_valueCount
 
   }
 
