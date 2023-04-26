@@ -154,6 +154,7 @@ class TestCase {
       this.assert_Area( "width_pixelCount_original", area_width_pixelCount_original );
       this.assert_Area( "width_pixelCount_expanded", area_width_pixelCount_expanded );
 
+
       {
         let area_pixelCount_original_restored
           = area_height_pixelCount_original * area_width_pixelCount_original;
@@ -161,6 +162,8 @@ class TestCase {
         let area_pixelCount_expanded_restored
           = area_height_pixelCount_expanded * area_width_pixelCount_expanded;
 
+//!!! ...unfinished... (2023/04/26)
+// seems wrong. It will be ( _original_restored >= _original )
         this.assert_Area( "pixelCount_original", area_pixelCount_original_restored );
         this.assert_Area( "pixelCount_expanded", area_pixelCount_expanded_restored );
       }
