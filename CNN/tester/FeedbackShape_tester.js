@@ -165,20 +165,23 @@ class TestCase {
         area_height_pixelCount_original
           = Math.ceil( Math.sqrt( area_from_pixelCount_original ) );
 
-        if ( area_height_pixelCount_original <= explicit_input_height ) { // square shape.
+        area_height_pixelCount_expanded
+          = area_height_pixelCount_original * area_height_multiplier;
+
+        if ( area_height_pixelCount_expanded <= explicit_input_height ) { // square shape.
           area_width_pixelCount_original = area_height_pixelCount_original
 
         } else { // rectangle shape.
           area_height_pixelCount_original = Math.floor(
             explicit_input_height / area_height_multiplier );
 
+          area_height_pixelCount_expanded
+            = area_height_pixelCount_original * area_height_multiplier;
+
           area_width_pixelCount_original = Math.ceil(
             area_from_pixelCount_original / area_height_pixelCount_original );
         }
       }
-
-      area_height_pixelCount_expanded
-        = area_height_pixelCount_original * area_height_multiplier;
 
       area_width_pixelCount_expanded
         = area_width_pixelCount_original * area_width_multiplier;
