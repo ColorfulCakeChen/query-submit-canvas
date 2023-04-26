@@ -29,7 +29,7 @@ class TestCase {
       this.explicit_input_height,
       this.explicit_input_width,
       this.explicit_input_channelCount,
-      this.feedback_valueCount_per_alig
+      this.feedback_valueCount_per_alignment
     );
 
 //!!! ...unfinished... (2023/04/26)
