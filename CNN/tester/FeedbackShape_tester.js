@@ -347,10 +347,16 @@ class TestCases {
   constructor() {
     this.feedbackShape = new NeuralNet.FeedbackShape();
 
-    this.explicit_input_height_MinMax = new MinMax( 0, 10 ); //100 );
-    this.explicit_input_width_MinMax = new MinMax( 0, 10 ); //100 );
+    this.explicit_input_height_MinMax = new MinMax( 0, 100 );
+    this.explicit_input_width_MinMax = new MinMax( 0, 100 );
     this.explicit_input_channelCount_MinMax = new MinMax( 0, 10 );
-    this.feedback_valueCount_per_alignment_MinMax = new MinMax( 0, 10 ); //100 );
+    this.feedback_valueCount_per_alignment_MinMax = new MinMax( 0, 100 );
+
+    //!!! (2023/04/26 Remarked)
+    // this.explicit_input_height_MinMax = new MinMax( 0, 10 );
+    // this.explicit_input_width_MinMax = new MinMax( 0, 10 );
+    // this.explicit_input_channelCount_MinMax = new MinMax( 0, 10 );
+    // this.feedback_valueCount_per_alignment_MinMax = new MinMax( 0, 10 );
 
     this.length = this.explicit_input_height_MinMax.length
       * this.explicit_input_width_MinMax.length
