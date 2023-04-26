@@ -7,8 +7,8 @@ export { NeuralNet_FeedbackToInput as FeedbackToInput };
  *
  *
  * @member {number} from_valueCount_original
- *   The feedback (of an alignement of a neural network) has how many values.
- * (i.e. feedback_valueCount_per_alignment) Usually, it is half of the
+ *   The feedback (of an alignement of a neural network) has how many values
+ * (i.e. feedback_valueCount_per_alignment). Usually, it is half of the
  * (previous time) output channel count of a neural network because a neural
  * network generates two alignments' outputs in one time.
  *
