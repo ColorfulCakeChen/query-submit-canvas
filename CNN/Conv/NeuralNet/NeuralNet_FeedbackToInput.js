@@ -41,6 +41,7 @@ export { NeuralNet_FeedbackToInput as FeedbackToInput };
  *
  * @member {number} to_pixelCount_expanded
  *   (= .height_pixelCount_expanded * width_pixelCount_expanded).
+ * The pixel count on the implicit input area.
  *
  *
  * @member {number} height_pixelCount_original
