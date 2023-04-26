@@ -258,7 +258,7 @@ class NeuralNet_FeedbackShape {
           explicit_input_width );
 
     // 2. Information for feedback to input.
-    if ( !this.feedbackToInput ) {
+    if ( !this.feedbackToInput )
       this.feedbackToInput = new NeuralNet_FeedbackToInput();
 
     this.feedbackToInput.init(
