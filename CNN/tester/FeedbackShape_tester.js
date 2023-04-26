@@ -136,8 +136,6 @@ class TestCase {
     let area_height_pixelCount_expanded;
     let area_width_pixelCount_original;
     let area_width_pixelCount_expanded;
-    let area_to_pixelCount_original;
-    let area_to_pixelCount_expanded;
     {
 
 //!!! (2023/04/26 Remarked)
@@ -195,23 +193,23 @@ class TestCase {
       this.assert_Area( "width_pixelCount_expanded",
         area_width_pixelCount_original * area_width_multiplier );
 
-      {
-        area_to_pixelCount_original
-          = area_height_pixelCount_original * area_width_pixelCount_original;
+    }
 
-        area_to_pixelCount_expanded
-          = area_height_pixelCount_expanded * area_width_pixelCount_expanded;
+    const area_to_pixelCount_original
+      = area_height_pixelCount_original * area_width_pixelCount_original;
 
-        this.assert_Area( "to_pixelCount_original", area_to_pixelCount_original );
-        this.assert_Area( "to_pixelCount_expanded", area_to_pixelCount_expanded );
+    const area_to_pixelCount_expanded
+      = area_height_pixelCount_expanded * area_width_pixelCount_expanded;
+    {
+      this.assert_Area( "to_pixelCount_original", area_to_pixelCount_original );
+      this.assert_Area( "to_pixelCount_expanded", area_to_pixelCount_expanded );
 
-        this.assert_Area_GE( "to_pixelCount_original", 1 );
-        this.assert_Area_GE( "to_pixelCount_expanded", 1 );
+      this.assert_Area_GE( "to_pixelCount_original", 1 );
+      this.assert_Area_GE( "to_pixelCount_expanded", 1 );
 
-        // target area should be greater than or equal to source.
-        this.assert_Area_LE( "from_pixelCount_original", area_to_pixelCount_original );
-        this.assert_Area_LE( "from_pixelCount_expanded", area_to_pixelCount_expanded );
-      }
+      // target area should be greater than or equal to source.
+      this.assert_Area_LE( "from_pixelCount_original", area_to_pixelCount_original );
+      this.assert_Area_LE( "from_pixelCount_expanded", area_to_pixelCount_expanded );
     }
 
     //
