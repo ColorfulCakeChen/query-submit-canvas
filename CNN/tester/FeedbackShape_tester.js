@@ -32,34 +32,40 @@ class TestCase {
       this.feedback_valueCount_per_alignment
     );
 
-    const explicit_input_height = ( this.explicit_input_height > 0 )
-      ? this.explicit_input_height : 1;
-    this.assert_FeedbackShape( "explicit_input_height", explicit_input_height );
+    this.comparedShape = { toInput: { area: {} } };
+    const comparedShape = this.comparedShape;
+    const toInput = comparedShape.toInput;
+    const area = toInput.area;
 
-    const explicit_input_width = ( this.explicit_input_width > 0 )
-      ? this.explicit_input_width : 1;
-    this.assert_FeedbackShape( "explicit_input_width", explicit_input_width );
+    comparedShape.explicit_input_height
+      = ( this.explicit_input_height > 0 ) ? this.explicit_input_height : 1;
+    this.assert_FeedbackShape( "explicit_input_height" );
 
-    const explicit_input_channelCount = ( this.explicit_input_channelCount > 0 )
-      ? this.explicit_input_channelCount : 1;
-    this.assert_FeedbackShape( "explicit_input_channelCount",
-      explicit_input_channelCount );
+    comparedShape.explicit_input_width
+      = ( this.explicit_input_width > 0 ) ? this.explicit_input_width : 1;
+    this.assert_FeedbackShape( "explicit_input_width" );
 
-    const explicit_input_pixelCount = explicit_input_height * explicit_input_width;
-    this.assert_FeedbackShape( "explicit_input_pixelCount", explicit_input_pixelCount );
+    comparedShape.explicit_input_channelCount
+      = ( this.explicit_input_channelCount > 0 ) ? this.explicit_input_channelCount : 1;
+    this.assert_FeedbackShape( "explicit_input_channelCount" );
 
-    const explicit_input_valueCount
-      = explicit_input_pixelCount * explicit_input_channelCount;
-    this.assert_FeedbackShape( "explicit_input_valueCount", explicit_input_valueCount );
+    comparedShape.explicit_input_pixelCount
+      = comparedShape.explicit_input_height * comparedShape.explicit_input_width;
+    this.assert_FeedbackShape( "explicit_input_pixelCount" );
+
+    comparedShape.explicit_input_valueCount
+      = comparedShape.explicit_input_pixelCount
+          * comparedShape.explicit_input_channelCount;
+    this.assert_FeedbackShape( "explicit_input_valueCount" );
 
 
-    const valueCount_original = ( this.feedback_valueCount_per_alignment > 0 )
-      ? this.feedback_valueCount_per_alignment : 1;
-    this.assert_Area( "valueCount_original", valueCount_original );
+    area.valueCount_original
+      = ( this.feedback_valueCount_per_alignment > 0 )
+          ? this.feedback_valueCount_per_alignment : 1;
+    this.assert_Area( "valueCount_original" );
 
-    const valueCount_original_per_neural_network = valueCount_original * 2;
-    this.assert_ToInput( "valueCount_original_per_neural_network",
-      valueCount_original_per_neural_network );
+    toInput.valueCount_original_per_neural_network = area.valueCount_original * 2;
+    this.assert_ToInput( "valueCount_original_per_neural_network" );
 
 
 //!!! ...unfinished... (2023/04/26)
@@ -69,14 +75,17 @@ class TestCase {
   }
 
   assert_Area( propertyName, value ) {
+    let value = this.comparedShape.toInput.area[ propertyName ];
     this.assert( "test", this.feedbackShape.toInput, "area", propertyName, value );
   }
 
   assert_ToInput( propertyName, value ) {
+    let value = this.comparedShape.toInput[ propertyName ];
     this.assert( "test", this.feedbackShape, "toInput", propertyName, value );
   }
 
   assert_FeedbackShape( propertyName, value ) {
+    let value = this.comparedShape[ propertyName ];
     this.assert( "test", this, "feedbackShape", propertyName, value );
   }
 
