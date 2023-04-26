@@ -173,7 +173,7 @@ class TestCase {
             explicit_input_height / area_height_multiplier );
 
           area_width_pixelCount_original = Math.ceil(
-            from_pixelCount_original / area_height_pixelCount_original );
+            area_from_pixelCount_original / area_height_pixelCount_original );
         }
       }
 
