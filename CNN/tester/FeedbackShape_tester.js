@@ -165,7 +165,7 @@ class TestCase {
 
       {
         area_height_pixelCount_original
-          = Math.ceil( Math.sqrt( area_pixelCount_original ) );
+          = Math.ceil( Math.sqrt( area_from_pixelCount_original ) );
 
         if ( area_height_pixelCount_original <= explicit_input_height ) { // square shape.
           area_width_pixelCount_original = area_height_pixelCount_original
