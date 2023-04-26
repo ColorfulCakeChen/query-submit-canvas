@@ -146,7 +146,7 @@ async function* tester( progressParent ) {
   const countPerYield = 100;
   let testCaseGenerator = gTestCases.testCase_generator();
   for ( let i = 0; i < gTestCases.length; ++i ) {
-    let testCase = testCaseGenerator.next();
+    let { done, value: testCase } = testCaseGenerator.next();
     testCase.test();
 
     progressToAdvance.value_advance();
