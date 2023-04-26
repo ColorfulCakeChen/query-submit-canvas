@@ -78,8 +78,7 @@ class TestCase {
     this.assert_FeedbackShape( "implicit_input_height" );
 
 //!!! ...unfinished... (2023/04/26) implicit_input_width
-    comparedShape.implicit_input_width
-      = ( this.explicit_input_width > 0 ) ? this.explicit_input_width : 1;
+    comparedShape.implicit_input_width = ???;
     this.assert_FeedbackShape( "implicit_input_width" );
 
     comparedShape.implicit_input_channelCount
