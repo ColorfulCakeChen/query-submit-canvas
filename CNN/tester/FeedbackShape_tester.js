@@ -62,7 +62,7 @@ class TestCase {
     if ( lhs != value )
       throw Error( `FeedbackShape_tester.TestCase.${funcNameInMessage}(): `
         + `testCaseId=${this.testCaseId}, `
-        + `.${objectName}.${propertyName} ( ${lhs} ) should be ( ${value} ).`
+        + `${objectName}.${propertyName} ( ${lhs} ) should be ( ${value} ).`
       );
   }
 
@@ -145,13 +145,11 @@ async function* tester( progressParent ) {
   // Try every test case.
   const countPerYield = 100;
   let testCaseGenerator = gTestCases.testCase_generator();
-  for ( let i = 0; i < gTestCases.length; ++i ) {
-    let { done, value: testCase } = testCaseGenerator.next();
+  for ( let testCase of testCaseGenerator ) {
     testCase.test();
 
     progressToAdvance.value_advance();
-
-    if ( ( i % countPerYield ) == 0 )
+    if ( ( testCase.testCaseId % countPerYield ) == 0 )
       yield progressRoot;
   }
 
