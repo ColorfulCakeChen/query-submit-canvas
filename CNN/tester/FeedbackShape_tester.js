@@ -88,6 +88,25 @@ class TestCase {
       valueCount_original_per_neural_network );
 
 
+    let area_height_multiplier;
+    let area_width_multiplier;
+    {
+      if ( explicit_input_height == 1 ) {
+        area_height_multiplier = 1;
+        area_width_multiplier = 2;
+      } else {
+        area_height_multiplier = 1;
+        area_width_multiplier = 2;
+      }
+
+      this.assert_Area( "height_multiplier", area_height_multiplier );
+      this.assert_Area( "width_multiplier", area_width_multiplier );
+    }
+
+
+//!!! ...unfinished... (2023/04/26)
+
+
     // implicit_input: height, width, channelCount, pixelCount, valueCount
     const implicit_input_height = explicit_input_height;
     this.assert_FeedbackShape( "implicit_input_height", implicit_input_height );
