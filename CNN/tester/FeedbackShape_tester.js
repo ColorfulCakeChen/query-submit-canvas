@@ -141,7 +141,7 @@ const gTestCases = new TestCases();
  *
  */
 async function* tester( progressParent ) {
-  console.log( "NeuralNet.FeedbackShape testing..." );
+  console.log( `NeuralNet.FeedbackShape testing...` );
 
   let progressRoot = progressParent.root_get();
 
@@ -163,9 +163,10 @@ async function* tester( progressParent ) {
 
   if ( progressToAdvance.valuePercentage != 100 )
     throw Error( `FeedbackShape_tester.tester(): `
-      + `gTestCases.length={ ${gTestCases.length} }, `
+      + `gTestCases.length=${gTestCases.length}, `
       + `progressToAdvance.valuePercentage ( ${progressToAdvance.valuePercentage} ) `
       + `should be 100.` );
 
-  console.log( "NeuralNet.FeedbackShape testing... Done." );
+  console.log( `NeuralNet.FeedbackShape testing... Done. `
+    + `( ${gTestCases.length} cases )` );
 }
