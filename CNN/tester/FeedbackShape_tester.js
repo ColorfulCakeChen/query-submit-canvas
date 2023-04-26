@@ -111,7 +111,7 @@ class TestCase {
     const area_valueCount_original
       = ( this.feedback_valueCount_per_alignment > 0 )
           ? this.feedback_valueCount_per_alignment : 1;
-    this.assert_Area( "valueCount_original", area_valueCount_original );
+    this.assert_Area( "from_valueCount_original", area_valueCount_original );
 
     const valueCount_original_per_neural_network
       = area_valueCount_original * alignmentCount_per_neuralNet;
@@ -120,7 +120,7 @@ class TestCase {
 
     const area_valueCount_expanded = area_valueCount_original
       * area_height_multiplier * area_width_multiplier;
-    this.assert_Area( "valueCount_expanded", area_valueCount_expanded );
+    this.assert_Area( "from_valueCount_expanded", area_valueCount_expanded );
 
     //
     const area_from_pixelCount_original = Math.ceil(

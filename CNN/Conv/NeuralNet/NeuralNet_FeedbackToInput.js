@@ -6,14 +6,14 @@ export { NeuralNet_FeedbackToInput as FeedbackToInput };
  * next output (i.e. feedback) of an alignment of a neural network.
  *
  *
- * @member {number} valueCount_original
+ * @member {number} from_valueCount_original
  *   The feedback (of an alignement of a neural network) has how many values.
  * (i.e. feedback_valueCount_per_alignment) Usually, it is half of the
  * (previous time) output channel count of a neural network because a neural
  * network generates two alignments' outputs in one time.
  *
- * @member {number} valueCount_expanded
- *   (= .valueCount_original * .height_multiplier * .width_multiplier)
+ * @member {number} from_valueCount_expanded
+ *   (= .from_valueCount_original * .height_multiplier * .width_multiplier)
  *
  *
  * @member {number} height_multiplier
@@ -28,11 +28,11 @@ export { NeuralNet_FeedbackToInput as FeedbackToInput };
  *
  *
  * @member {number} from_pixelCount_original
- *   The .valueCount_original will be viewed as how many input pixels (without
+ *   The .from_valueCount_original will be viewed as how many input pixels (without
  * multiplied by .height_multiplier and .width_multiplier).
  *
  * @member {number} from_pixelCount_expanded
- *   The .valueCount_original will be viewed as how many input pixels (with
+ *   The .from_valueCount_original will be viewed as how many input pixels (with
  * multiplied by .height_multiplier and .width_multiplier).
  *
  *
@@ -83,8 +83,8 @@ export { NeuralNet_FeedbackToInput as FeedbackToInput };
  */
 class NeuralNet_FeedbackToInput_Area {
 
-  valueCount_original;
-  valueCount_expanded;
+  from_valueCount_original;
+  from_valueCount_expanded;
 
   height_multiplier;
   width_multiplier
@@ -162,7 +162,7 @@ class NeuralNet_FeedbackToInput_Area {
  * @member {number} valueCount_original_per_neural_network
  *   The feedback (of both alignements of a neural network) has how many
  * values. Usually, it is the (previous time) output channel count of a neural
- * network. It is two times of .area.valueCount_original because a
+ * network. It is two times of .area.from_valueCount_original because a
  * neural network generates two alignments' outputs in one time.
  *
  *
@@ -267,7 +267,7 @@ class NeuralNet_FeedbackToInput {
       = NeuralNet_FeedbackToInput.ensure_positive_integer(
           explicit_input_channelCount );
 
-    area.valueCount_original = feedback_valueCount_per_alignment
+    area.from_valueCount_original = feedback_valueCount_per_alignment
       = NeuralNet_FeedbackToInput.ensure_positive_integer(
           feedback_valueCount_per_alignment );
 
@@ -300,7 +300,7 @@ class NeuralNet_FeedbackToInput {
 
     // 2.4
     this.valueCount_original_per_neural_network
-      = area.valueCount_original * this.alignmentCount_per_neuralNet;
+      = area.from_valueCount_original * this.alignmentCount_per_neuralNet;
 
     // 3. Four (or two) times the implicit input pixel count along height (if
     //    exists) and width.
@@ -325,14 +325,14 @@ class NeuralNet_FeedbackToInput {
       area.width_multiplier = 2;
     }
 
-    area.valueCount_expanded = area.valueCount_original
+    area.from_valueCount_expanded = area.from_valueCount_original
       * area.height_multiplier * area.width_multiplier;
 
     // 4. Determine implicit input pixel count.
 
     // Every input_channelCount feedback values as an implicit input pixel.
     area.from_pixelCount_original = Math.ceil(
-      area.valueCount_original / this.input_channelCount );
+      area.from_valueCount_original / this.input_channelCount );
 
     area.from_pixelCount_expanded = area.from_pixelCount_original
       * area.height_multiplier * area.width_multiplier;
