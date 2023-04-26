@@ -43,12 +43,16 @@ class TestCase {
       ( this.explicit_input_channelCount > 0 )
         ? this.explicit_input_channelCount : 1 );
 
-    this.assert_FeedbackToInput( "valueCount_original",
+    this.assert_Area( "valueCount_original",
       ( this.feedback_valueCount_per_alignment > 0 )
         ? this.feedback_valueCount_per_alignment : 1 );
 
 //!!! ...unfinished... (2023/04/26)
 
+  }
+
+  assert_Area( propertyName, value ) {
+    this.assert( "test", this.feedbackShape.feedbackToInput, "area", propertyName, value );
   }
 
   assert_FeedbackToInput( propertyName, value ) {
