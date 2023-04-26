@@ -33,8 +33,14 @@ class TestCase {
       ValueMax.Percentage.Concrete.Pool.get_or_create_by( 1 ) );
 
 //!!! ...unfinished... (2023/04/26)
-    //this.neuralNetFeedbackShape.init( ??? );
+    this.neuralNetFeedbackShape.init(
+      this.explicit_input_height,
+      this.explicit_input_width,
+      this.explicit_input_channelCount,
+      this.feedback_valueCount_per_alig
+    );
 
+//!!! ...unfinished... (2023/04/26)
 
     progressToAdvance.value_advance();
     yield progressRoot;
