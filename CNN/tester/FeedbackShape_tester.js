@@ -136,6 +136,8 @@ class TestCase {
     let area_height_pixelCount_expanded;
     let area_width_pixelCount_original;
     let area_width_pixelCount_expanded;
+    let area_to_pixelCount_original;
+    let area_to_pixelCount_expanded;
     {
 
 //!!! (2023/04/26 Remarked)
@@ -196,10 +198,10 @@ class TestCase {
         area_width_pixelCount_original * area_width_multiplier );
 
       {
-        let area_to_pixelCount_original
+        area_to_pixelCount_original
           = area_height_pixelCount_original * area_width_pixelCount_original;
 
-        let area_to_pixelCount_expanded
+        area_to_pixelCount_expanded
           = area_height_pixelCount_expanded * area_width_pixelCount_expanded;
 
         this.assert_Area( "to_pixelCount_original", area_to_pixelCount_original );
