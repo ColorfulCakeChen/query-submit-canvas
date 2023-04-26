@@ -201,14 +201,7 @@ class NeuralNet_FeedbackShape {
   /**
    *
    */
-  constructor(
-    explicit_input_height, explicit_input_width, explicit_input_channelCount,
-    feedback_valueCount_per_alignment
-  ) {
-    this.init(
-      explicit_input_height, explicit_input_width, explicit_input_channelCount,
-      feedback_valueCount_per_alignment
-    );
+  constructor() {
   }
 
 
@@ -266,19 +259,13 @@ class NeuralNet_FeedbackShape {
 
     // 2. Information for feedback to input.
     if ( !this.feedbackToInput ) {
-      this.feedbackToInput = new NeuralNet_FeedbackToInput(
-        explicit_input_height,
-        explicit_input_channelCount,
-        feedback_valueCount_per_alignment
-      );
+      this.feedbackToInput = new NeuralNet_FeedbackToInput();
 
-    } else {
-      this.feedbackToInput.init(
-        explicit_input_height,
-        explicit_input_channelCount,
-        feedback_valueCount_per_alignment
-      );
-    }
+    this.feedbackToInput.init(
+      explicit_input_height,
+      explicit_input_channelCount,
+      feedback_valueCount_per_alignment
+    );
 
     // 3.
     this.explicit_input_pixelCount

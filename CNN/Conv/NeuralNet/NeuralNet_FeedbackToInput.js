@@ -235,15 +235,7 @@ class NeuralNet_FeedbackToInput {
   /**
    *
    */
-  constructor(
-    explicit_input_height,
-    explicit_input_channelCount,
-    feedback_valueCount_per_alignment
-  ) {
-    this.init(
-      explicit_input_height,
-      explicit_input_channelCount,
-      feedback_valueCount_per_alignment );
+  constructor() {
   }
 
   /**
