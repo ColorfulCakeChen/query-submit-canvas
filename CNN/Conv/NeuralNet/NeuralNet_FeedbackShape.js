@@ -1,7 +1,7 @@
 export { NeuralNet_FeedbackShape as FeedbackShape };
 
 import { FeedbackToInput as NeuralNet_FeedbackToInput }
-  from "./NeuralNet/NeuralNet_FeedbackToInput.js";
+  from "./NeuralNet_FeedbackToInput.js";
 
 /**
  *
