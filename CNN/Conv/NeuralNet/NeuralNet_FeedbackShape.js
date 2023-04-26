@@ -407,8 +407,8 @@ class NeuralNet_FeedbackShape {
 
         let from_valueCount_remained_y_begin = area.valueCount_expanded;
         let from_valueCount_remained = area.valueCount_expanded;
-        let from_pixelCount_remained_y_begin = area.pixelCount_expanded;
-        let from_pixelCount_remained = area.pixelCount_expanded;
+        let from_pixelCount_remained_y_begin = area.from_pixelCount_expanded;
+        let from_pixelCount_remained = area.from_pixelCount_expanded;
 
         // 3.3
         for ( let from_y = 0;
@@ -480,7 +480,7 @@ class NeuralNet_FeedbackShape {
                 // 3.7.2
                 // Fill zero for
                 //   - channels exceeding area.valueCount_expanded, and
-                //   - pixels exceeding area.pixelCount_expanded.
+                //   - pixels exceeding area.from_pixelCount_expanded.
                 for ( let c = 0; c < channelCount_to_zero; ++c ) {
                   input_TypedArray[ to_valueIndex ] = 0;
                   ++to_valueIndex;

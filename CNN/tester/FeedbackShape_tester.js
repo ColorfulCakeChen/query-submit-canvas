@@ -123,13 +123,13 @@ class TestCase {
     this.assert_Area( "valueCount_expanded", area_valueCount_expanded );
 
     //
-    const area_pixelCount_original = Math.ceil(
+    const area_from_pixelCount_original = Math.ceil(
       area_valueCount_original / explicit_input_channelCount );
-    this.assert_Area( "pixelCount_original", area_pixelCount_original );
+    this.assert_Area( "from_pixelCount_original", area_from_pixelCount_original );
 
-    const area_pixelCount_expanded = area_pixelCount_original
+    const area_from_pixelCount_expanded = area_pixelCount_original
       * area_height_multiplier * area_width_multiplier;
-    this.assert_Area( "pixelCount_expanded", area_pixelCount_expanded );
+    this.assert_Area( "from_pixelCount_expanded", area_from_pixelCount_expanded );
 
     // 
     let area_height_pixelCount_original;
@@ -164,8 +164,8 @@ class TestCase {
 
 //!!! ...unfinished... (2023/04/26)
 // seems wrong. It will be ( _original_restored >= _original )
-        this.assert_Area( "pixelCount_original", area_pixelCount_original_restored );
-        this.assert_Area( "pixelCount_expanded", area_pixelCount_expanded_restored );
+        this.assert_Area( "from_pixelCount_original", area_pixelCount_original_restored );
+        this.assert_Area( "from_pixelCount_expanded", area_pixelCount_expanded_restored );
       }
 
 //!!! ...unfinished... (2023/04/26)

@@ -27,21 +27,21 @@ export { NeuralNet_FeedbackToInput as FeedbackToInput };
  * confront neural network's stage's block0's halving width.
  *
  *
- * @member {number} pixelCount_original
+ * @member {number} from_pixelCount_original
  *   The .valueCount_original will be viewed as how many input pixels (without
  * multiplied by .height_multiplier and .width_multiplier).
  *
- * @member {number} pixelCount_expanded
+ * @member {number} from_pixelCount_expanded
  *   The .valueCount_original will be viewed as how many input pixels (with
  * multiplied by .height_multiplier and .width_multiplier).
  *
  *
  * @member {number} height_pixelCount_original
- *   The height (in pixel count) of .pixelCount_original. It has not been
+ *   The height (in pixel count) of .from_pixelCount_original. It has not been
  * multiplied by .height_multiplier.
  *
  * @member {number} height_pixelCount_expanded
- *   The height (in pixel count) of .pixelCount_expanded. It has been
+ *   The height (in pixel count) of .from_pixelCount_expanded. It has been
  * multiplied by .height_multiplier.
  *
  * @member {number} height_with_gap_pixelCount_expanded
@@ -50,11 +50,11 @@ export { NeuralNet_FeedbackToInput as FeedbackToInput };
  *
  *
  * @member {number} width_pixelCount_original
- *   The width (in pixel count) of .pixelCount_original. It has not been
+ *   The width (in pixel count) of .from_pixelCount_original. It has not been
  * multiplied by .width_multiplier.
  *
  * @member {number} width_pixelCount_expanded
- *   The width (in pixel count) of .pixelCount_expanded. It has been
+ *   The width (in pixel count) of .from_pixelCount_expanded. It has been
  * multiplied by .width_multiplier.
  *
  * @member {number} width_with_gap_pixelCount_expanded
@@ -89,8 +89,8 @@ class NeuralNet_FeedbackToInput_Area {
   height_multiplier;
   width_multiplier
 
-  pixelCount_original;
-  pixelCount_expanded;
+  from_pixelCount_original;
+  from_pixelCount_expanded;
 
   height_pixelCount_original;
   height_pixelCount_expanded;
@@ -331,10 +331,10 @@ class NeuralNet_FeedbackToInput {
     // 4. Determine implicit input pixel count.
 
     // Every input_channelCount feedback values as an implicit input pixel.
-    area.pixelCount_original = Math.ceil(
+    area.from_pixelCount_original = Math.ceil(
       area.valueCount_original / this.input_channelCount );
 
-    area.pixelCount_expanded = area.pixelCount_original
+    area.from_pixelCount_expanded = area.from_pixelCount_original
       * area.height_multiplier * area.width_multiplier;
 
     // 5. Determine feedback_to_input area shape.
@@ -345,10 +345,10 @@ class NeuralNet_FeedbackToInput {
     if ( explicit_input_height == 1 ) {
 
       area.height_pixelCount_original = 1;
-      area.width_pixelCount_original = area.pixelCount_original;
+      area.width_pixelCount_original = area.from_pixelCount_original;
 
       area.height_pixelCount_expanded = 1;
-      area.width_pixelCount_expanded = area.pixelCount_expanded;
+      area.width_pixelCount_expanded = area.from_pixelCount_expanded;
 
     // 5.2 If the (next time) explicit input is 2d, the feedback (as implicit
     //     input) should also be 2d and placed at left most of the (next time)
@@ -360,7 +360,7 @@ class NeuralNet_FeedbackToInput {
       {
         area.height_pixelCount_original
           = area.width_pixelCount_original
-          = Math.ceil( Math.sqrt( area.pixelCount_original ) );
+          = Math.ceil( Math.sqrt( area.from_pixelCount_original ) );
 
         area.height_pixelCount_expanded
           = area.height_pixelCount_original * area.height_multiplier;
@@ -388,7 +388,7 @@ class NeuralNet_FeedbackToInput {
 
         {
           area.width_pixelCount_original = Math.ceil(
-            area.pixelCount_original / area.height_pixelCount_original );
+            area.from_pixelCount_original / area.height_pixelCount_original );
         }
       }
 
