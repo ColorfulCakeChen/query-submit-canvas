@@ -36,6 +36,13 @@ export { NeuralNet_FeedbackToInput as FeedbackToInput };
  * multiplied by .height_multiplier and .width_multiplier).
  *
  *
+ * @member {number} to_pixelCount_original
+ *   (= .height_pixelCount_original * width_pixelCount_original).
+ *
+ * @member {number} to_pixelCount_expanded
+ *   (= .height_pixelCount_expanded * width_pixelCount_expanded).
+ *
+ *
  * @member {number} height_pixelCount_original
  *   The height (in pixel count) of .from_pixelCount_original. It has not been
  * multiplied by .height_multiplier.
@@ -92,6 +99,9 @@ class NeuralNet_FeedbackToInput_Area {
   from_pixelCount_original;
   from_pixelCount_expanded;
 
+  to_pixelCount_original;
+  to_pixelCount_expanded;
+ 
   height_pixelCount_original;
   height_pixelCount_expanded;
   height_with_gap_pixelCount_expanded;
@@ -401,6 +411,14 @@ class NeuralNet_FeedbackToInput {
 
     area.width_with_gap_pixelCount_expanded
       = area.width_pixelCount_expanded + area.gap_width_pixelCount_expanded;
+
+    {
+      area.to_pixelCount_original
+        = area.height_pixelCount_original * area.width_pixelCount_original;
+
+      area.to_pixelCount_expanded
+        = area.height_pixelCount_expanded * area.width_pixelCount_expanded;
+    }
 
     // 6. Determine .height_areaCount and .width_areaCount
     //
