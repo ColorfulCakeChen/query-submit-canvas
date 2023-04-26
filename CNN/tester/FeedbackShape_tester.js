@@ -88,7 +88,25 @@ class TestCase {
       this.assert_Area( "width_multiplier", area_width_multiplier );
     }
 
+    //
+    const area_gap_height_pixelCount_original = 1;
+    this.assert_Area( "gap_height_pixelCount_original",
+      area_gap_height_pixelCount_original );
 
+    const area_gap_width_pixelCount_original = 1;
+    this.assert_Area( "gap_width_pixelCount_original",
+      area_gap_width_pixelCount_original );
+  
+    const area_gap_height_pixelCount_expanded
+      = area_gap_height_pixelCount_original * area_height_multiplier;
+    this.assert_Area( "gap_height_pixelCount_expanded",
+      area_gap_height_pixelCount_expanded );
+  
+    const area_gap_width_pixelCount_expanded
+      = area_gap_width_pixelCount_original * area_width_multiplier;
+    this.assert_Area( "gap_width_pixelCount_expanded",
+      area_gap_width_pixelCount_expanded );
+  
     //
     const area_valueCount_original
       = ( this.feedback_valueCount_per_alignment > 0 )
