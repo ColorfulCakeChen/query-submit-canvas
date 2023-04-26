@@ -77,17 +77,6 @@ class TestCase {
 
 
     //
-    const area_valueCount_original
-      = ( this.feedback_valueCount_per_alignment > 0 )
-          ? this.feedback_valueCount_per_alignment : 1;
-    this.assert_Area( "valueCount_original", area_valueCount_original );
-
-    const valueCount_original_per_neural_network
-      = area_valueCount_original * alignmentCount_per_neuralNet;
-    this.assert_ToInput( "valueCount_original_per_neural_network",
-      valueCount_original_per_neural_network );
-
-
     let area_height_multiplier = 2;
     let area_width_multiplier = 2;
     {
@@ -100,6 +89,22 @@ class TestCase {
     }
 
 
+    //
+    const area_valueCount_original
+      = ( this.feedback_valueCount_per_alignment > 0 )
+          ? this.feedback_valueCount_per_alignment : 1;
+    this.assert_Area( "valueCount_original", area_valueCount_original );
+
+    const valueCount_original_per_neural_network
+      = area_valueCount_original * alignmentCount_per_neuralNet;
+    this.assert_ToInput( "valueCount_original_per_neural_network",
+      valueCount_original_per_neural_network );
+
+    const area_valueCount_expanded = area_valueCount_original
+      * area_height_multiplier * area_width_multiplier;
+    this.assert_Area( "valueCount_expanded", area_valueCount_expanded );
+
+    
 //!!! ...unfinished... (2023/04/26)
 
 
