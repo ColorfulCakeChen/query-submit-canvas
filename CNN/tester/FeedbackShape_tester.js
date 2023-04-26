@@ -293,7 +293,7 @@ class TestCase {
     if ( !( lhs <= value ) )
       throw Error( `FeedbackShape_tester.TestCase.${funcNameInMessage}(): `
         + `${objectName}.${propertyName} ( ${lhs} ) `
-        + `should be less than or equal to ( ${value} ).`
+        + `should be less than or equal to ( ${value} ). `
         + `{ ${this} }.`
       );
   }
@@ -303,7 +303,7 @@ class TestCase {
     if ( !( lhs >= value ) )
       throw Error( `FeedbackShape_tester.TestCase.${funcNameInMessage}(): `
         + `${objectName}.${propertyName} ( ${lhs} ) `
-        + `should be greater than or equal to ( ${value} ).`
+        + `should be greater than or equal to ( ${value} ). `
         + `{ ${this} }.`
       );
   }
