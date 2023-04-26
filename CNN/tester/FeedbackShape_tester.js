@@ -108,8 +108,8 @@ class TestCase {
       area_valueCount_original / explicit_input_channelCount );
     this.assert_Area( "pixelCount_original", area_pixelCount_original );
 
-    const area_pixelCount_expanded = Math.ceil(
-      area_valueCount_expanded / explicit_input_channelCount );
+    const area_pixelCount_expanded = area_valueCount_expanded
+      * area_height_multiplier * area_width_multiplier;
     this.assert_Area( "pixelCount_expanded", area_pixelCount_expanded );
 
 
