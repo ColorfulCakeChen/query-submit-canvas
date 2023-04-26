@@ -95,7 +95,7 @@ class TestCase {
         area_height_multiplier = 1;
         area_width_multiplier = 2;
       } else {
-        area_height_multiplier = 1;
+        area_height_multiplier = 2;
         area_width_multiplier = 2;
       }
 
