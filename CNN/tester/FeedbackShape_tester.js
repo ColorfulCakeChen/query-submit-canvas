@@ -40,13 +40,13 @@ class TestCase {
   testProperties() {
 
     const neuralNetCount = 2;
-    this.assert_FeedbackShape( "neuralNetCount", neuralNetCount );
+    this.assert_ToInput( "neuralNetCount", neuralNetCount );
 
     const alignmentCount_per_neuralNet = 2;
-    this.assert_FeedbackShape( "alignmentCount_per_neuralNet", alignmentCount_per_neuralNet );
+    this.assert_ToInput( "alignmentCount_per_neuralNet", alignmentCount_per_neuralNet );
 
     const areaCount = neuralNetCount * alignmentCount_per_neuralNet;
-    this.assert_FeedbackShape( "areaCount", areaCount );
+    this.assert_ToInput( "areaCount", areaCount );
 
     // explicit_input: height, width, channelCount, pixelCount, valueCount
     const explicit_input_height
