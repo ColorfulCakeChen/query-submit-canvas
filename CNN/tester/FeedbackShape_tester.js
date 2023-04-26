@@ -33,7 +33,7 @@ class TestCase {
       this.feedback_valueCount_per_alignment
     );
 
-    this.assert_FeedbackShape_EqualTo(
+    this.assert_FeedbackShape(
       "explicit_input_height", this.explicit_input_height );
 
     this.assert_FeedbackShape(
