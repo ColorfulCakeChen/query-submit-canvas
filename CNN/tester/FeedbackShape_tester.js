@@ -272,6 +272,10 @@ class TestCase {
     this.assert_LE( "test", this.feedbackShape.toInput, "area", propertyName, value );
   }
 
+  assert_Area_GE( propertyName, value ) {
+    this.assert_GE( "test", this.feedbackShape.toInput, "area", propertyName, value );
+  }
+
   assert_Area( propertyName, value ) {
     this.assert( "test", this.feedbackShape.toInput, "area", propertyName, value );
   }
