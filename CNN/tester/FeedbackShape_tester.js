@@ -7,11 +7,13 @@ import * as NeuralNet from "../Conv/NeuralNet.js";
 /** */
 class TestCase {
 
-  constructor( testCaseId,
+  /** */
+  constructor( testCaseId, neuralNetFeedbackShape,
     explicit_input_height, explicit_input_width, explicit_input_channelCount,
     feedback_valueCount_per_alignment
   ) {
     this.testCaseId = testCaseId;
+    this.neuralNetFeedbackShape = neuralNetFeedbackShape;
 
     this.explicit_input_height = explicit_input_height;
     this.explicit_input_width = explicit_input_width;
@@ -31,6 +33,7 @@ class TestCase {
       ValueMax.Percentage.Concrete.Pool.get_or_create_by( 1 ) );
 
 //!!! ...unfinished... (2023/04/26)
+    //this.neuralNetFeedbackShape.init( ??? );
 
 
     progressToAdvance.value_advance();
@@ -52,7 +55,25 @@ class TestCase {
 }
 
 /** */
+class MinMax {
+  constructor( min, max ) {
+    this.min = min;
+    this.max = max;
+  }
+}
+
+/** */
 class TestCaseArray extends Array {
+
+
+  constructor() {
+    this.neuralNetFeedbackShape = new NeuralNet.FeedbackShape();
+
+    this.explicit_input_height_MinMax = new MinMax( ???, ??? );
+    this.explicit_input_width_MinMax = new MinMax( ???, ??? );
+    this.explicit_input_channelCount_MinMax = new MinMax( ???, ??? );
+    this.feedback_valueCount_per_alignment_MinMax = new MinMax( ???, ??? );
+  }
 
 //!!! ...unfinished... (2023/04/25)
 
