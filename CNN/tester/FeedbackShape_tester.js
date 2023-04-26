@@ -179,8 +179,6 @@ class TestCase {
         }
       }
 
-//!!! ...unfinished... (2023/04/26)
-
       area_height_pixelCount_expanded
         = area_height_pixelCount_original * area_height_multiplier;
 
@@ -214,8 +212,6 @@ class TestCase {
         this.assert_Area_LE( "from_pixelCount_original", area_to_pixelCount_original );
         this.assert_Area_LE( "from_pixelCount_expanded", area_to_pixelCount_expanded );
       }
-
-//!!! ...unfinished... (2023/04/26)
     }
 
     //
