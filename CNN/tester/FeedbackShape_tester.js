@@ -102,9 +102,29 @@ class TestCase {
 //     this.assert_FeedbackShape( "implicit_input_valueCount", implicit_input_valueCount );
 
 
-//!!! ...unfinished... (2023/04/26)
+    // input: height, width, width_valueCount, channelCount, pixelCount, valueCount
+    const input_height = explicit_input_height;
+    this.assert_FeedbackShape( "input_height", implicit_input_height );
+
+//!!! ...unfinished... (2023/04/26) input_width
+//     const input_width = implicit_input_width + explicit_input_width;
+//     this.assert_FeedbackShape( "input_width", input_width );
 //
-// implicit_Xxx, implicit_input_pixelCount, implicit_input_valueCount
+//     const input_width_valueCount = input_width * input_channelCount;
+//     this.assert_FeedbackShape( "input_width_valueCount", input_width_valueCount );
+
+    const input_channelCount = explicit_input_channelCount;
+    this.assert_FeedbackShape( "input_channelCount", input_channelCount );
+
+//!!! ...unfinished... (2023/04/26) input_width
+//     const input_pixelCount = input_height * input_width;
+//     this.assert_FeedbackShape( "input_pixelCount", input_pixelCount );
+//
+//     const input_valueCount = input_pixelCount * input_channelCount;
+//     this.assert_FeedbackShape( "input_valueCount", input_valueCount );
+
+
+//!!! ...unfinished... (2023/04/26)
 
   }
 
