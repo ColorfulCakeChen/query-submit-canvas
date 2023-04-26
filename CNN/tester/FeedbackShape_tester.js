@@ -62,7 +62,7 @@ class TestCase {
     if ( lhs != value )
       throw Error( `FeedbackShape_tester.TestCase.${funcNameInMessage}(): `
         + `testCaseId=${this.testCaseId}, `
-        + `${objectName}.${propertyName} ( ${lhs} ) should be ( ${value} ).`
+        + `.${objectName}.${propertyName} ( ${lhs} ) should be ( ${value} ).`
       );
   }
 
