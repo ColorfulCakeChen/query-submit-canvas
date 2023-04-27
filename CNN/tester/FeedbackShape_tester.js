@@ -114,60 +114,60 @@ class TestCase {
           ? this.feedback_valueCount_per_alignment : 1;
     this.assert_Area( "from_valueCount_original", area_from_valueCount_original );
 
-    const from_valueCount_original_per_neural_network
+    const perNeuralNet_from_valueCount_original
       = area_from_valueCount_original * alignmentCount_per_neuralNet;
-    this.assert_FeedbackShape( "from_valueCount_original_per_neural_network",
-      from_valueCount_original_per_neural_network );
+    this.assert_perNeuralNet( "from_valueCount_original",
+      perNeuralNet_from_valueCount_original );
 
-    const from_valueCount_original_all_neural_networks
-      = from_valueCount_original_per_neural_network * neuralNetCount;
-    this.assert_FeedbackShape( "from_valueCount_original_all_neural_networks",
-      from_valueCount_original_all_neural_networks );
+    const allNeuralNets_from_valueCount_original
+      = perNeuralNet_from_valueCount_original * neuralNetCount;
+    this.assert_allNeuralNets( "from_valueCount_original",
+      allNeuralNets_from_valueCount_original );
 
     // from_valueCount_expanded
     const area_from_valueCount_expanded = area_from_valueCount_original
       * area_height_multiplier * area_width_multiplier;
     this.assert_Area( "from_valueCount_expanded", area_from_valueCount_expanded );
 
-    const from_valueCount_expanded_per_neural_network
+    const perNeuralNet_from_valueCount_expanded
       = area_from_valueCount_expanded * alignmentCount_per_neuralNet;
-    this.assert_FeedbackShape( "from_valueCount_expanded_per_neural_network",
-      from_valueCount_expanded_per_neural_network );
+    this.assert_perNeuralNet( "from_valueCount_expanded",
+      perNeuralNet_from_valueCount_expanded );
 
-    const from_valueCount_expanded_all_neural_networks
-      = from_valueCount_expanded_per_neural_network * neuralNetCount;
-    this.assert_FeedbackShape( "from_valueCount_expanded_all_neural_networks",
-      from_valueCount_expanded_all_neural_networks );
+    const allNeuralNets_from_valueCount_expanded
+      = perNeuralNet_from_valueCount_expanded * neuralNetCount;
+    this.assert_allNeuralNets( "from_valueCount_expanded",
+      allNeuralNets_from_valueCount_expanded );
 
     // from_pixelCount_original
     const area_from_pixelCount_original = Math.ceil(
       area_from_valueCount_original / explicit_input_channelCount );
     this.assert_Area( "from_pixelCount_original", area_from_pixelCount_original );
 
-    const from_pixelCount_original_per_neural_network
+    const perNeuralNet_from_pixelCount_original
       = area_from_pixelCount_original * alignmentCount_per_neuralNet;
-    this.assert_FeedbackShape( "from_pixelCount_original_per_neural_network",
-      from_pixelCount_original_per_neural_network );
+    this.assert_perNeuralNet( "from_pixelCount_original",
+      perNeuralNet_from_pixelCount_original );
 
-    const from_pixelCount_original_all_neural_networks
-      = from_pixelCount_original_per_neural_network * neuralNetCount;
-    this.assert_FeedbackShape( "from_pixelCount_original_all_neural_networks",
-      from_pixelCount_original_all_neural_networks );
+    const allNeuralNets_from_pixelCount_original
+      = perNeuralNet_from_pixelCount_original * neuralNetCount;
+    this.assert_allNeuralNets( "from_pixelCount_original",
+      allNeuralNets_from_pixelCount_original );
 
     // from_pixelCount_expanded
     const area_from_pixelCount_expanded = area_from_pixelCount_original
       * area_height_multiplier * area_width_multiplier;
     this.assert_Area( "from_pixelCount_expanded", area_from_pixelCount_expanded );
 
-    const from_pixelCount_expanded_per_neural_network
+    const perNeuralNet_from_pixelCount_expanded
       = area_from_pixelCount_expanded * alignmentCount_per_neuralNet;
-    this.assert_FeedbackShape( "from_pixelCount_expanded_per_neural_network",
-      from_pixelCount_expanded_per_neural_network );
+    this.assert_perNeuralNet( "from_pixelCount_expanded",
+      perNeuralNet_from_pixelCount_expanded );
 
-    const from_pixelCount_expanded_all_neural_networks
-      = from_pixelCount_expanded_per_neural_network * neuralNetCount;
-    this.assert_FeedbackShape( "from_pixelCount_expanded_all_neural_networks",
-      from_pixelCount_expanded_all_neural_networks );
+    const allNeuralNets_from_pixelCount_expanded
+      = perNeuralNet_from_pixelCount_expanded * neuralNetCount;
+    this.assert_allNeuralNets( "from_pixelCount_expanded",
+      allNeuralNets_from_pixelCount_expanded );
 
     // 
     let area_height_pixelCount_original;
@@ -283,8 +283,8 @@ class TestCase {
 //     this.assert_FeedbackShape( "implicit_input_valueCount", implicit_input_valueCount );
 
 //!!! ...unfinished... (2023/04/27)
-// implicit_input_pixelCount >= from_pixelCount_expanded_all_neural_networks
-// implicit_input_valueCount >= from_valueCount_expanded_all_neural_networks
+// implicit_input_pixelCount >= allNeuralNets_from_pixelCount_expanded
+// implicit_input_valueCount >= allNeuralNets_from_valueCount_expanded
 
     // input: height, width, width_valueCount, channelCount, pixelCount, valueCount
     const input_height = explicit_input_height;
@@ -321,6 +321,14 @@ class TestCase {
 
   assert_Area( propertyName, value ) {
     this.assert( "test", this.feedbackShape, "area", propertyName, value );
+  }
+
+  assert_perNeuralNet( propertyName, value ) {
+    this.assert( "test", this.feedbackShape, "perNeuralNet", propertyName, value );
+  }
+
+  assert_allNeuralNets( propertyName, value ) {
+    this.assert( "test", this.feedbackShape, "allNeuralNets", propertyName, value );
   }
 
   assert_FeedbackShape_LE( propertyName, value ) {
