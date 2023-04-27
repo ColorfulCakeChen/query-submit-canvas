@@ -72,10 +72,6 @@ class TestCase {
     const areaCount = neuralNetCount * alignmentCount_per_neuralNet;
     this.assert_FeedbackShape( "areaCount", areaCount );
 
-//!!! ...unfinished... (2023/04/26)
-// area_position_leftArrayArray, area_position_topArrayArray
-
-
     // multiplier
     let area_height_multiplier = 2;
     let area_width_multiplier = 2;
@@ -332,21 +328,20 @@ class TestCase {
     this.assert_FeedbackShape_GE( "implicit_input_valueCount",
       allNeuralNets_from_valueCount_expanded );
 
-//!!! ...unfinished... (2023/04/27)
-
     // input: height, width, width_valueCount, channelCount, pixelCount, valueCount
     const input_height = explicit_input_height;
     this.assert_FeedbackShape( "input_height", implicit_input_height );
 
-//!!! ...unfinished... (2023/04/26) input_width
-//     const input_width = implicit_input_width + explicit_input_width;
-//     this.assert_FeedbackShape( "input_width", input_width );
-//
-//     const input_width_valueCount = input_width * input_channelCount;
-//     this.assert_FeedbackShape( "input_width_valueCount", input_width_valueCount );
+    const input_width = implicit_input_width + explicit_input_width;
+    this.assert_FeedbackShape( "input_width", input_width );
+
+    const input_width_valueCount = input_width * input_channelCount;
+    this.assert_FeedbackShape( "input_width_valueCount", input_width_valueCount );
 
     const input_channelCount = explicit_input_channelCount;
     this.assert_FeedbackShape( "input_channelCount", input_channelCount );
+
+//!!! ...unfinished... (2023/04/27)
 
 //!!! ...unfinished... (2023/04/26) input_width
 //     const input_pixelCount = input_height * input_width;
@@ -355,7 +350,12 @@ class TestCase {
 //     const input_valueCount = input_pixelCount * input_channelCount;
 //     this.assert_FeedbackShape( "input_valueCount", input_valueCount );
 
-//!!! ...unfinished... (2023/04/26)
+
+
+//!!! ...unfinished... (2023/04/27)
+// area_position_leftArrayArray, area_position_topArrayArray
+
+
 
   }
 
