@@ -60,7 +60,6 @@ class TestCase {
       = explicit_input_pixelCount * explicit_input_channelCount;
     this.assert_FeedbackShape( "explicit_input_valueCount", explicit_input_valueCount );
 
-
     //
     const neuralNetCount = 2;
     this.assert_FeedbackShape( "neuralNetCount", neuralNetCount );
@@ -77,7 +76,7 @@ class TestCase {
 // area_position_leftArrayArray, area_position_topArrayArray
 
 
-    //
+    // multiplier
     let area_height_multiplier = 2;
     let area_width_multiplier = 2;
     {
@@ -89,7 +88,7 @@ class TestCase {
       this.assert_Area( "width_multiplier", area_width_multiplier );
     }
 
-    //
+    // gap
     const area_gap_height_pixelCount_original = 1;
     this.assert_Area( "gap_height_pixelCount_original",
       area_gap_height_pixelCount_original );
@@ -169,7 +168,7 @@ class TestCase {
     this.assert_allNeuralNets( "from_pixelCount_expanded",
       allNeuralNets_from_pixelCount_expanded );
 
-    // 
+    // to height and width
     let area_height_pixelCount_original;
     let area_height_pixelCount_expanded;
     let area_width_pixelCount_original;
