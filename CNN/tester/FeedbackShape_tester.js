@@ -63,13 +63,14 @@ class TestCase {
 
     //
     const neuralNetCount = 2;
-    this.assert_ToInput( "neuralNetCount", neuralNetCount );
+    this.assert_FeedbackShape( "neuralNetCount", neuralNetCount );
 
     const alignmentCount_per_neuralNet = 2;
-    this.assert_ToInput( "alignmentCount_per_neuralNet", alignmentCount_per_neuralNet );
+    this.assert_FeedbackShape( "alignmentCount_per_neuralNet",
+      alignmentCount_per_neuralNet );
 
     const areaCount = neuralNetCount * alignmentCount_per_neuralNet;
-    this.assert_ToInput( "areaCount", areaCount );
+    this.assert_FeedbackShape( "areaCount", areaCount );
 
 //!!! ...unfinished... (2023/04/26)
 // height_areaCount, width_areaCount
@@ -115,7 +116,7 @@ class TestCase {
 
     const from_valueCount_original_per_neural_network
       = area_valueCount_original * alignmentCount_per_neuralNet;
-    this.assert_ToInput( "from_valueCount_original_per_neural_network",
+    this.assert_FeedbackShape( "from_valueCount_original_per_neural_network",
       from_valueCount_original_per_neural_network );
 
     const area_valueCount_expanded = area_valueCount_original
@@ -281,10 +282,6 @@ class TestCase {
 
   assert_Area( propertyName, value ) {
     this.assert( "test", this.feedbackShape.toInput, "area", propertyName, value );
-  }
-
-  assert_ToInput( propertyName, value ) {
-    this.assert( "test", this.feedbackShape, "toInput", propertyName, value );
   }
 
   assert_FeedbackShape( propertyName, value ) {
