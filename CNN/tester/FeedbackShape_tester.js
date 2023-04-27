@@ -301,21 +301,25 @@ class TestCase {
     this.assert_FeedbackShape( "width_with_internal_gap_pixelCount_expanded",
       width_with_internal_gap_pixelCount_expanded );
 
-//!!! ...unfinished... (2023/04/26)
-
 
     // implicit_input: height, width, channelCount, pixelCount, valueCount
     const implicit_input_height = explicit_input_height;
     this.assert_FeedbackShape( "implicit_input_height", implicit_input_height );
+    this.assert_FeedbackShape_LE( "height_with_internal_gap_pixelCount_expanded",
+      implicit_input_height );
 
-//!!! ...unfinished... (2023/04/26) implicit_input_width
-//     const implicit_input_width = ???;
-//     this.assert_FeedbackShape( "implicit_input_width", implicit_input_width );
-//     this.assert_FeedbackShape_LE( "width_with_internal_gap_pixelCount_expanded",
-//       implicit_input_height );
+    const implicit_input_width
+      = width_areaCount * area_width_with_gap_pixelCount_expanded;
+
+    this.assert_FeedbackShape( "implicit_input_width", implicit_input_width );
+    this.assert_FeedbackShape_LE( "width_with_internal_gap_pixelCount_expanded",
+      implicit_input_width );
 
     const implicit_input_channelCount = explicit_input_channelCount;
     this.assert_FeedbackShape( "implicit_input_channelCount", implicit_input_channelCount );
+
+//!!! ...unfinished... (2023/04/26)
+
 
 //!!! ...unfinished... (2023/04/26) implicit_input_width
 //     const implicit_input_pixelCount
