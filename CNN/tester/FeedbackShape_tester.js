@@ -310,25 +310,25 @@ class TestCase {
 
     const implicit_input_width
       = width_areaCount * area_width_with_gap_pixelCount_expanded;
-
     this.assert_FeedbackShape( "implicit_input_width", implicit_input_width );
     this.assert_FeedbackShape_LE( "width_with_internal_gap_pixelCount_expanded",
       implicit_input_width );
 
     const implicit_input_channelCount = explicit_input_channelCount;
-    this.assert_FeedbackShape( "implicit_input_channelCount", implicit_input_channelCount );
+    this.assert_FeedbackShape( "implicit_input_channelCount",
+      implicit_input_channelCount );
 
-//!!! ...unfinished... (2023/04/26)
+    const implicit_input_pixelCount
+      = implicit_input_height * implicit_input_width;
+    this.assert_FeedbackShape( "implicit_input_pixelCount",
+      implicit_input_pixelCount );
 
+    const implicit_input_valueCount
+      = implicit_input_pixelCount * implicit_input_channelCount;
+    this.assert_FeedbackShape( "implicit_input_valueCount",
+      implicit_input_valueCount );
 
-//!!! ...unfinished... (2023/04/26) implicit_input_width
-//     const implicit_input_pixelCount
-//       = implicit_input_height * implicit_input_width;
-//     this.assert_FeedbackShape( "implicit_input_pixelCount", implicit_input_pixelCount );
-//
-//     const implicit_input_valueCount
-//       = implicit_input_pixelCount * implicit_input_channelCount;
-//     this.assert_FeedbackShape( "implicit_input_valueCount", implicit_input_valueCount );
+//!!! ...unfinished... (2023/04/27)
 
 //!!! ...unfinished... (2023/04/27)
 // implicit_input_pixelCount >= allNeuralNets_from_pixelCount_expanded
