@@ -183,22 +183,12 @@ import { FeedbackToInput as NeuralNet_FeedbackToInput }
  * @member {number} implicit_input_pixelCount
  *   The implicit (i.e. feedback from previous output) input image's pixel count
  * (= implicit_input_height * implicit_input_width). It is greater than or
-
-//!!! ...unfinished... (2023/04/27)
- * equal to necessary of .???to Input.
-
+ * equal to .allNeuralNets.from_pixelCount_expanded.
  *
  * @member {number} implicit_input_valueCount
  *   The implicit (i.e. feedback from previous output) input image's value count
- * (= implicit_input_pixelCount * input_channelCount).
- *
- *
-
-//!!! (2023/04/27 Remarked) Already be parent class.
-//  * @member {NeuralNet.FeedbackToInput} toInput
-//  *   The information about putting feedback into implicit input.
-
- *
+ * (= implicit_input_pixelCount * input_channelCount). It is greater than or
+ * equal to .allNeuralNets.from_valueCount_expanded.
  *
  *
  */
@@ -210,46 +200,6 @@ class NeuralNet_FeedbackShape extends NeuralNet_FeedbackToInput {
   constructor() {
     super();
   }
-
-//!!! (2023/04/27 Remarked) Already be parent class.
-//   get input_height() {
-//     return this.toInput?.input_height;
-//   }
-//
-//   get input_channelCount() {
-//     return this.toInput?.input_channelCount;
-//   }
-//
-//
-//   get explicit_input_height() {
-//     return this.toInput?.explicit_input_height;
-//   }
-//
-//   get explicit_input_channelCount() {
-//     return this.toInput?.explicit_input_channelCount;
-//   }
-//
-//
-//   get implicit_input_height() {
-//     return this.toInput?.implicit_input_height;
-//   }
-//
-//   get implicit_input_width() {
-//     return this.toInput?.implicit_input_width;
-//   }
-//
-//   get implicit_input_channelCount() {
-//     return this.toInput?.implicit_input_channelCount;
-//   }
-//
-//   get implicit_input_pixelCount() {
-//     return this.toInput?.implicit_input_pixelCount;
-//   }
-//
-//   get implicit_input_valueCount() {
-//     return this.toInput?.implicit_input_pixelCount;
-//   }
-
 
   /**
    *
