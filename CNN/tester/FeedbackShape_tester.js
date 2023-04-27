@@ -294,21 +294,14 @@ class TestCase {
           - area_gap_height_pixelCount_expanded;
     this.assert_FeedbackShape( "height_with_internal_gap_pixelCount_expanded",
       height_with_internal_gap_pixelCount_expanded );
+    this.assert_FeedbackShape_LE( "height_with_internal_gap_pixelCount_expanded",
+      explicit_input_height );
 
     const width_with_internal_gap_pixelCount_expanded
       = ( width_areaCount * area_width_with_gap_pixelCount_expanded )
           - area_gap_width_pixelCount_expanded;
     this.assert_FeedbackShape( "width_with_internal_gap_pixelCount_expanded",
       width_with_internal_gap_pixelCount_expanded );
-
-    if ( !( height_with_gap_pixelCount_expanded < explicit_input_height ) )
-      throw Error( `FeedbackShape_tester.TestCase.${funcNameInMessage}(): `
-      + `all_height_with_gap_pixelCount_expanded ( ${all_height_with_gap_pixelCount_expanded} ) `
-
-      + `.feedbackShape.height_areaCount ( ${height_areaCount} ) `
-        + `should be even number (i.e. divisible by 2). `
-        + `{ ${this} }.`
-      );
 
 //!!! ...unfinished... (2023/04/26)
 
@@ -320,6 +313,8 @@ class TestCase {
 //!!! ...unfinished... (2023/04/26) implicit_input_width
 //     const implicit_input_width = ???;
 //     this.assert_FeedbackShape( "implicit_input_width", implicit_input_width );
+//     this.assert_FeedbackShape_LE( "width_with_internal_gap_pixelCount_expanded",
+//       implicit_input_height );
 
     const implicit_input_channelCount = explicit_input_channelCount;
     this.assert_FeedbackShape( "implicit_input_channelCount", implicit_input_channelCount );
