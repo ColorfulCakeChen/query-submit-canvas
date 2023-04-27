@@ -344,11 +344,11 @@ class TestCase {
     const input_width = implicit_input_width + explicit_input_width;
     this.assert_FeedbackShape( "input_width", input_width );
 
-    const input_width_valueCount = input_width * input_channelCount;
-    this.assert_FeedbackShape( "input_width_valueCount", input_width_valueCount );
-
     const input_channelCount = explicit_input_channelCount;
     this.assert_FeedbackShape( "input_channelCount", input_channelCount );
+
+    const input_width_valueCount = input_width * input_channelCount;
+    this.assert_FeedbackShape( "input_width_valueCount", input_width_valueCount );
 
     const input_pixelCount = input_height * input_width;
     this.assert_FeedbackShape( "input_pixelCount", input_pixelCount );
