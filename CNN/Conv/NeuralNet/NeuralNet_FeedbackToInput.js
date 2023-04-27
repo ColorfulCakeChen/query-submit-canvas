@@ -215,6 +215,14 @@ class NeuralNet_FeedbackToInput_Area extends NeuralNet_FeedbackToInput_from {
  *   There are how many feedback areas along the width in the (next time)
  * input.
  *
+ *
+ * @member {number} height_with_internal_gap_pixelCount_expanded
+ *   The pixel count along height of all areas (including gap between them).
+ *
+ * @member {number} width_with_internal_gap_pixelCount_expanded
+ *   The pixel count along width of all areas (including gap between them).
+ *
+ *
  * @member {number[][]} area_position_leftArrayArray
  *   The array of array of left position in input image for every
  * feedback_to_input area.
@@ -563,7 +571,20 @@ class NeuralNet_FeedbackToInput {
         this.areaCount / this.height_areaCount );
     }
 
+    this.height_with_internal_gap_pixelCount_expanded
+      = ( this.height_areaCount * area.height_with_gap_pixelCount_expanded )
+          - area.gap_height_pixelCount_expanded; // bottom area needs not gap.
+
+    this.width_with_internal_gap_pixelCount_expanded
+      = ( this.width_areaCount * area.width_with_gap_pixelCount_expanded )
+          - area.gap_width_pixelCount_expanded; // right area needs not gap.
+
     // 7.
+
+    // Note: .implicit_input_width is different from
+    //       .width_with_internal_gap_pixelCount_expanded because
+    //       right-most area still needs gap to distinguishing from explicit
+    //       input pixels.
     this.implicit_input_width
       = this.width_areaCount * area.width_with_gap_pixelCount_expanded;
 

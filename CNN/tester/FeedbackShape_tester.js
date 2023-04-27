@@ -73,7 +73,6 @@ class TestCase {
     this.assert_FeedbackShape( "areaCount", areaCount );
 
 //!!! ...unfinished... (2023/04/26)
-// height_areaCount, width_areaCount
 // area_position_leftArrayArray, area_position_topArrayArray
 
 
@@ -270,6 +269,8 @@ class TestCase {
     }
 
     // height_areaCount and width_areaCount
+    const height_areaCount = this.feedbackShape.height_areaCount;
+    const width_areaCount = this.feedbackShape.width_areaCount;
 
     this.assert_Area_GE( "height_areaCount", 1 );
     this.assert_Area_GE( "width_areaCount", 1 );
@@ -278,13 +279,33 @@ class TestCase {
     this.assert_Area_LE( "width_areaCount", areaCount );
 
     // ( height_areaCount * width_areaCount ) should be areaCount.
-    this.assert_FeedbackShape( "areaCount",
-      this.feedbackShape.height_areaCount * this.feedbackShape.width_areaCount );
+    this.assert_FeedbackShape( "areaCount", height_areaCount * width_areaCount );
 
-    if ( ( this.feedbackShape.height_areaCount % 2 ) != 0 )
+    if ( ( height_areaCount % 2 ) != 0 )
       throw Error( `FeedbackShape_tester.TestCase.${funcNameInMessage}(): `
-        + `.feedbackShape.height_areaCount `
-        + `( ${this.feedbackShape.height_areaCount} ) `
+        + `.feedbackShape.height_areaCount ( ${height_areaCount} ) `
+        + `should be even number (i.e. divisible by 2). `
+        + `{ ${this} }.`
+      );
+
+    // height_with_internal_gap and width_with_internal_gap
+    const height_with_internal_gap_pixelCount_expanded
+      = ( height_areaCount * area_height_with_gap_pixelCount_expanded )
+          - area_gap_height_pixelCount_expanded;
+    this.assert_FeedbackShape( "height_with_internal_gap_pixelCount_expanded",
+      height_with_internal_gap_pixelCount_expanded );
+
+    const width_with_internal_gap_pixelCount_expanded
+      = ( width_areaCount * area_width_with_gap_pixelCount_expanded )
+          - area_gap_width_pixelCount_expanded;
+    this.assert_FeedbackShape( "width_with_internal_gap_pixelCount_expanded",
+      width_with_internal_gap_pixelCount_expanded );
+
+    if ( !( height_with_gap_pixelCount_expanded < explicit_input_height ) )
+      throw Error( `FeedbackShape_tester.TestCase.${funcNameInMessage}(): `
+      + `all_height_with_gap_pixelCount_expanded ( ${all_height_with_gap_pixelCount_expanded} ) `
+
+      + `.feedbackShape.height_areaCount ( ${height_areaCount} ) `
         + `should be even number (i.e. divisible by 2). `
         + `{ ${this} }.`
       );
