@@ -108,7 +108,7 @@ class TestCase {
     this.assert_Area( "gap_width_pixelCount_expanded",
       area_gap_width_pixelCount_expanded );
   
-    //
+    // from_valueCount_original
     const area_from_valueCount_original
       = ( this.feedback_valueCount_per_alignment > 0 )
           ? this.feedback_valueCount_per_alignment : 1;
@@ -124,7 +124,7 @@ class TestCase {
     this.assert_FeedbackShape( "from_valueCount_original_all_neural_networks",
       from_valueCount_original_all_neural_networks );
 
-    //
+    // from_valueCount_expanded
     const area_from_valueCount_expanded = area_from_valueCount_original
       * area_height_multiplier * area_width_multiplier;
     this.assert_Area( "from_valueCount_expanded", area_from_valueCount_expanded );
@@ -139,16 +139,29 @@ class TestCase {
     this.assert_FeedbackShape( "from_valueCount_expanded_all_neural_networks",
       from_valueCount_expanded_all_neural_networks );
 
-//!!! ...unfinished... (2023/04/27)
-
-    //
+    // from_pixelCount_original
     const area_from_pixelCount_original = Math.ceil(
       area_from_valueCount_original / explicit_input_channelCount );
     this.assert_Area( "from_pixelCount_original", area_from_pixelCount_original );
 
+    const from_pixelCount_original_per_neural_network
+      = area_from_pixelCount_original * alignmentCount_per_neuralNet;
+    this.assert_FeedbackShape( "from_pixelCount_original_per_neural_network",
+      from_pixelCount_original_per_neural_network );
+
+    const from_pixelCount_original_all_neural_networks
+      = from_pixelCount_original_per_neural_network * neuralNetCount;
+    this.assert_FeedbackShape( "from_pixelCount_original_all_neural_networks",
+      from_pixelCount_original_all_neural_networks );
+
+//!!! ...unfinished... (2023/04/27)
+
+    // from_pixelCount_expanded
     const area_from_pixelCount_expanded = area_from_pixelCount_original
       * area_height_multiplier * area_width_multiplier;
     this.assert_Area( "from_pixelCount_expanded", area_from_pixelCount_expanded );
+
+//!!! ...unfinished... (2023/04/27)
 
 !!!
 
