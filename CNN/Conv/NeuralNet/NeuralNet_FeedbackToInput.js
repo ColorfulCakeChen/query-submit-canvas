@@ -109,7 +109,7 @@ class NeuralNet_FeedbackToInput_from {
  *
  *
  */
-class NeuralNet_FeedbackToInput_Area extends FeedbackToInput_from {
+class NeuralNet_FeedbackToInput_Area extends NeuralNet_FeedbackToInput_from {
 
   height_multiplier;
   width_multiplier
