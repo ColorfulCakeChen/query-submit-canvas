@@ -661,13 +661,11 @@ class NeuralNet_FeedbackToInput {
     let topArray = new Array( this.areaCount );
     {
       let i = 0;
-      for (
-        let height_area_index = 0;
+      for ( let height_area_index = 0;
         height_area_index < this.height_areaCount;
         ++height_area_index ) {
 
-        for (
-          let width_area_index = 0;
+        for ( let width_area_index = 0;
           width_area_index < this.width_areaCount;
           ++width_area_index ) {
 
