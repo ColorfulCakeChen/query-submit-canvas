@@ -272,11 +272,11 @@ class TestCase {
     const height_areaCount = this.feedbackShape.height_areaCount;
     const width_areaCount = this.feedbackShape.width_areaCount;
 
-    this.assert_Area_GE( "height_areaCount", 1 );
-    this.assert_Area_GE( "width_areaCount", 1 );
+    this.assert_FeedbackShape_GE( "height_areaCount", 1 );
+    this.assert_FeedbackShape_GE( "width_areaCount", 1 );
 
-    this.assert_Area_LE( "height_areaCount", areaCount );
-    this.assert_Area_LE( "width_areaCount", areaCount );
+    this.assert_FeedbackShape_LE( "height_areaCount", areaCount );
+    this.assert_FeedbackShape_LE( "width_areaCount", areaCount );
 
     // ( height_areaCount * width_areaCount ) should be areaCount.
     this.assert_FeedbackShape( "areaCount", height_areaCount * width_areaCount );
