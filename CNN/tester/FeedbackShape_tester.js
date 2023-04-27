@@ -38,6 +38,7 @@ class TestCase {
   }
 
   testProperties() {
+    const funcNameInMessage = "testProperties";
 
     // explicit_input: height, width, channelCount, pixelCount, valueCount
     const explicit_input_height
@@ -273,6 +274,14 @@ class TestCase {
     // ( height_areaCount * width_areaCount ) should be areaCount
     this.assert_FeedbackShape( "areaCount",
       this.feedbackShape.height_areaCount * this.feedbackShape.width_areaCount );
+
+    if ( ( this.feedbackShape.height_areaCount % 2 ) != 0 )
+      throw Error( `FeedbackShape_tester.TestCase.${funcNameInMessage}(): `
+        + `.feedbackShape.height_areaCount `
+        + `( ${this.feedbackShape.height_areaCount} ) `
+        + `should be even number (i.e. divisible by 2). `
+        + `{ ${this} }.`
+      );
 
     this.assert_Area_LE( "height_areaCount", areaCount );
     this.assert_Area_LE( "width_areaCount", areaCount );
