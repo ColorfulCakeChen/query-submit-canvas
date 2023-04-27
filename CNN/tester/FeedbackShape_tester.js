@@ -322,17 +322,17 @@ class TestCase {
       = implicit_input_height * implicit_input_width;
     this.assert_FeedbackShape( "implicit_input_pixelCount",
       implicit_input_pixelCount );
+    this.assert_FeedbackShape_GE( "implicit_input_pixelCount",
+      allNeuralNets_from_pixelCount_expanded );
 
     const implicit_input_valueCount
       = implicit_input_pixelCount * implicit_input_channelCount;
     this.assert_FeedbackShape( "implicit_input_valueCount",
       implicit_input_valueCount );
+    this.assert_FeedbackShape_GE( "implicit_input_valueCount",
+      allNeuralNets_from_valueCount_expanded );
 
 //!!! ...unfinished... (2023/04/27)
-
-//!!! ...unfinished... (2023/04/27)
-// implicit_input_pixelCount >= allNeuralNets_from_pixelCount_expanded
-// implicit_input_valueCount >= allNeuralNets_from_valueCount_expanded
 
     // input: height, width, width_valueCount, channelCount, pixelCount, valueCount
     const input_height = explicit_input_height;
