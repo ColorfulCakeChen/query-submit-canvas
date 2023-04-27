@@ -268,7 +268,7 @@ class TestCase {
       this.assert_Area_LE( "from_pixelCount_expanded", area_to_pixelCount_expanded );
     }
 
-    //
+    // height_areaCount and width_areaCount
 
     // ( height_areaCount * width_areaCount ) should be areaCount
     this.assert_FeedbackShape( "areaCount",
