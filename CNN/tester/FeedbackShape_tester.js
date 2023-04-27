@@ -270,6 +270,10 @@ class TestCase {
 
     //
 
+    // ( height_areaCount * width_areaCount ) should be areaCount
+    this.assert_FeedbackShape( "areaCount",
+      this.feedbackShape.height_areaCount * this.feedbackShape.width_areaCount );
+
 //!!! ...unfinished... (2023/04/26)
 
 
