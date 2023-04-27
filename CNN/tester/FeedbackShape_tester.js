@@ -267,7 +267,7 @@ class TestCase {
     // height_areaCount and width_areaCount
     const height_areaCount = Math.floor(
       ( explicit_input_height + area_gap_height_pixelCount_expanded ) 
-        / area.height_with_gap_pixelCount_expanded );
+        / area_height_with_gap_pixelCount_expanded );
     this.assert_FeedbackShape( "height_areaCount", height_areaCount );
 
     const width_areaCount = Math.ceil( areaCount / height_areaCount );
