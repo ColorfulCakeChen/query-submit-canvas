@@ -323,6 +323,14 @@ class TestCase {
     this.assert( "test", this.feedbackShape, "area", propertyName, value );
   }
 
+  assert_FeedbackShape_LE( propertyName, value ) {
+    this.assert_LE( "test", this, "feedbackShape", propertyName, value );
+  }
+
+  assert_FeedbackShape_GE( propertyName, value ) {
+    this.assert_GE( "test", this, "feedbackShape", propertyName, value );
+  }
+
   assert_FeedbackShape( propertyName, value ) {
     this.assert( "test", this, "feedbackShape", propertyName, value );
   }
