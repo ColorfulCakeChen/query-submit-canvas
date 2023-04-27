@@ -178,21 +178,39 @@ class NeuralNet_FeedbackToInput_Area {
  * network. It is two times of .area.from_valueCount_original because a
  * neural network generates two alignments' outputs in one time.
  *
+ * @member {number} from_valueCount_expanded_per_neural_network
+ *   The feedback (of both alignements of a neural network) will be expanded to
+ * how many values.
+ *
+ *
  * @member {number} from_pixelCount_original_per_neural_network
  *   The feedback (of both alignements of a neural network) is viewed as how
  * many pixels.
  *
+ * @member {number} from_pixelCount_expanded_per_neural_network
+ *   The feedback (of both alignements of a neural network) will be expanded to
+ * how many pixels.
  *
- * @member {number} from_valueCount_original_all_neural_network
+ *
+ * @member {number} from_valueCount_original_all_neural_networks
  *   The feedback (of both alignements of both neural network) has how many
  * values. Usually, it is the (previous time) output channel count of both
  * neural network. It is two times of
  * .from_valueCount_original_per_neural_network because a versus has two
  * neural networks.
  *
- * @member {number} from_pixelCount_original_all_neural_network
+ * @member {number} from_valueCount_expanded_all_neural_networks
+ *   The feedback (of both alignements of both neural network) will be expanded
+ * to how many values.
+ *
+ *
+ * @member {number} from_pixelCount_original_all_neural_networks
  *   The feedback (of both alignements of both neural network) is viewed as how
  * many pixels.
+ *
+ * @member {number} from_pixelCount_expanded_all_neural_networks
+ *   The feedback (of both alignements of both neural network) will be expanded
+ * to how many pixels.
  *
  *
  * @member {number} neuralNetCount
@@ -382,17 +400,17 @@ class NeuralNet_FeedbackToInput {
     // 4.3
 
     // 4.3.1
-    this.from_valueCount_original_all_neural_network
+    this.from_valueCount_original_all_neural_networks
       = this.from_valueCount_original_per_neural_network * this.neuralNetCount;
 
-    this.from_valueCount_expanded_all_neural_network
+    this.from_valueCount_expanded_all_neural_networks
       = this.from_valueCount_expanded_per_neural_network * this.neuralNetCount;
 
     // 4.3.2
-    this.from_pixelCount_expanded_all_neural_network
+    this.from_pixelCount_expanded_all_neural_networks
       = this.from_pixelCount_original_per_neural_network * this.neuralNetCount;
 
-    this.from_pixelCount_expanded_all_neural_network
+    this.from_pixelCount_expanded_all_neural_networks
       = this.from_pixelCount_original_per_neural_network * this.neuralNetCount;
 
     // 5. Determine feedback_to_input area shape.

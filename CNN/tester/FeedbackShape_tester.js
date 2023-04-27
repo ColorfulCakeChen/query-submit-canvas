@@ -119,10 +119,10 @@ class TestCase {
     this.assert_FeedbackShape( "from_valueCount_original_per_neural_network",
       from_valueCount_original_per_neural_network );
 
-    const from_valueCount_original_all_neural_network
+    const from_valueCount_original_all_neural_networks
       = from_valueCount_original_per_neural_network * neuralNetCount;
-    this.assert_FeedbackShape( "from_valueCount_original_all_neural_network",
-      from_valueCount_original_all_neural_network );
+    this.assert_FeedbackShape( "from_valueCount_original_all_neural_networks",
+      from_valueCount_original_all_neural_networks );
 
     const area_valueCount_expanded = area_valueCount_original
       * area_height_multiplier * area_width_multiplier;
@@ -250,6 +250,9 @@ class TestCase {
 //       = implicit_input_pixelCount * implicit_input_channelCount;
 //     this.assert_FeedbackShape( "implicit_input_valueCount", implicit_input_valueCount );
 
+//!!! ...unfinished... (2023/04/27)
+// implicit_input_pixelCount >= from_pixelCount_expanded_all_neural_networks
+// implicit_input_valueCount >= from_valueCount_expanded_all_neural_networks
 
     // input: height, width, width_valueCount, channelCount, pixelCount, valueCount
     const input_height = explicit_input_height;
