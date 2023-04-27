@@ -109,13 +109,13 @@ class TestCase {
       area_gap_width_pixelCount_expanded );
   
     //
-    const area_valueCount_original
+    const area_from_valueCount_original
       = ( this.feedback_valueCount_per_alignment > 0 )
           ? this.feedback_valueCount_per_alignment : 1;
-    this.assert_Area( "from_valueCount_original", area_valueCount_original );
+    this.assert_Area( "from_valueCount_original", area_from_valueCount_original );
 
     const from_valueCount_original_per_neural_network
-      = area_valueCount_original * alignmentCount_per_neuralNet;
+      = area_from_valueCount_original * alignmentCount_per_neuralNet;
     this.assert_FeedbackShape( "from_valueCount_original_per_neural_network",
       from_valueCount_original_per_neural_network );
 
@@ -124,18 +124,33 @@ class TestCase {
     this.assert_FeedbackShape( "from_valueCount_original_all_neural_networks",
       from_valueCount_original_all_neural_networks );
 
-    const area_valueCount_expanded = area_valueCount_original
+    //
+    const area_from_valueCount_expanded = area_from_valueCount_original
       * area_height_multiplier * area_width_multiplier;
-    this.assert_Area( "from_valueCount_expanded", area_valueCount_expanded );
+    this.assert_Area( "from_valueCount_expanded", area_from_valueCount_expanded );
+
+    const from_valueCount_expanded_per_neural_network
+      = area_from_valueCount_expanded * alignmentCount_per_neuralNet;
+    this.assert_FeedbackShape( "from_valueCount_expanded_per_neural_network",
+      from_valueCount_expanded_per_neural_network );
+
+    const from_valueCount_expanded_all_neural_networks
+      = from_valueCount_expanded_per_neural_network * neuralNetCount;
+    this.assert_FeedbackShape( "from_valueCount_expanded_all_neural_networks",
+      from_valueCount_expanded_all_neural_networks );
+
+//!!! ...unfinished... (2023/04/27)
 
     //
     const area_from_pixelCount_original = Math.ceil(
-      area_valueCount_original / explicit_input_channelCount );
+      area_from_valueCount_original / explicit_input_channelCount );
     this.assert_Area( "from_pixelCount_original", area_from_pixelCount_original );
 
     const area_from_pixelCount_expanded = area_from_pixelCount_original
       * area_height_multiplier * area_width_multiplier;
     this.assert_Area( "from_pixelCount_expanded", area_from_pixelCount_expanded );
+
+!!!
 
     // 
     let area_height_pixelCount_original;
