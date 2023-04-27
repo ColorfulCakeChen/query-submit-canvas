@@ -134,7 +134,8 @@ import { FeedbackToInput as NeuralNet_FeedbackToInput }
  *
  * @member {number} input_width_valueCount
  *   The whole input image's width (value count). (Note: Every pixel has
- * .input_channelCount values.) (= input_width * input_channelCount)
+ * .input_channelCount values.) (= input_width * input_channelCount) It
+ * is the strides to the next row pixel.
  *
  * @member {number} input_channelCount
  *   The whole input image's channel count.
