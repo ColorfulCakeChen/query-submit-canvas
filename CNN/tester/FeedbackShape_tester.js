@@ -154,16 +154,20 @@ class TestCase {
     this.assert_FeedbackShape( "from_pixelCount_original_all_neural_networks",
       from_pixelCount_original_all_neural_networks );
 
-//!!! ...unfinished... (2023/04/27)
-
     // from_pixelCount_expanded
     const area_from_pixelCount_expanded = area_from_pixelCount_original
       * area_height_multiplier * area_width_multiplier;
     this.assert_Area( "from_pixelCount_expanded", area_from_pixelCount_expanded );
 
-//!!! ...unfinished... (2023/04/27)
+    const from_pixelCount_expanded_per_neural_network
+      = area_from_pixelCount_expanded * alignmentCount_per_neuralNet;
+    this.assert_FeedbackShape( "from_pixelCount_expanded_per_neural_network",
+      from_pixelCount_expanded_per_neural_network );
 
-!!!
+    const from_pixelCount_expanded_all_neural_networks
+      = from_pixelCount_expanded_per_neural_network * neuralNetCount;
+    this.assert_FeedbackShape( "from_pixelCount_expanded_all_neural_networks",
+      from_pixelCount_expanded_all_neural_networks );
 
     // 
     let area_height_pixelCount_original;
