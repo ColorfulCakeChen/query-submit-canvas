@@ -183,65 +183,72 @@ import { FeedbackToInput as NeuralNet_FeedbackToInput }
  * @member {number} implicit_input_pixelCount
  *   The implicit (i.e. feedback from previous output) input image's pixel count
  * (= implicit_input_height * implicit_input_width). It is greater than or
- * equal to necessary of .toInput.
+
+//!!! ...unfinished... (2023/04/27)
+ * equal to necessary of .???to Input.
+
  *
  * @member {number} implicit_input_valueCount
  *   The implicit (i.e. feedback from previous output) input image's value count
  * (= implicit_input_pixelCount * input_channelCount).
  *
  *
- * @member {NeuralNet.FeedbackToInput} toInput
- *   The information about putting feedback into implicit input.
+
+//!!! (2023/04/27 Remarked) Already be parent class.
+//  * @member {NeuralNet.FeedbackToInput} toInput
+//  *   The information about putting feedback into implicit input.
+
  *
  *
  *
  */
-class NeuralNet_FeedbackShape {
+class NeuralNet_FeedbackShape extends NeuralNet_FeedbackToInput {
 
   /**
    *
    */
   constructor() {
+    super();
   }
 
-
-  get input_height() {
-    return this.toInput?.input_height;
-  }
-
-  get input_channelCount() {
-    return this.toInput?.input_channelCount;
-  }
-
-
-  get explicit_input_height() {
-    return this.toInput?.explicit_input_height;
-  }
-
-  get explicit_input_channelCount() {
-    return this.toInput?.explicit_input_channelCount;
-  }
-
-
-  get implicit_input_height() {
-    return this.toInput?.implicit_input_height;
-  }
-
-  get implicit_input_width() {
-    return this.toInput?.implicit_input_width;
-  }
- 
-  get implicit_input_channelCount() {
-    return this.toInput?.implicit_input_channelCount;
-  }
-
-  get implicit_input_pixelCount() {
-    return this.toInput?.implicit_input_pixelCount;
-  }
-
-  get implicit_input_valueCount() {
-    return this.toInput?.implicit_input_pixelCount;
-  }
+//!!! (2023/04/27 Remarked) Already be parent class.
+//   get input_height() {
+//     return this.toInput?.input_height;
+//   }
+//
+//   get input_channelCount() {
+//     return this.toInput?.input_channelCount;
+//   }
+//
+//
+//   get explicit_input_height() {
+//     return this.toInput?.explicit_input_height;
+//   }
+//
+//   get explicit_input_channelCount() {
+//     return this.toInput?.explicit_input_channelCount;
+//   }
+//
+//
+//   get implicit_input_height() {
+//     return this.toInput?.implicit_input_height;
+//   }
+//
+//   get implicit_input_width() {
+//     return this.toInput?.implicit_input_width;
+//   }
+//
+//   get implicit_input_channelCount() {
+//     return this.toInput?.implicit_input_channelCount;
+//   }
+//
+//   get implicit_input_pixelCount() {
+//     return this.toInput?.implicit_input_pixelCount;
+//   }
+//
+//   get implicit_input_valueCount() {
+//     return this.toInput?.implicit_input_pixelCount;
+//   }
 
 
   /**
@@ -258,10 +265,7 @@ class NeuralNet_FeedbackShape {
           explicit_input_width );
 
     // 2. Information for feedback to input.
-    if ( !this.toInput )
-      this.toInput = new NeuralNet_FeedbackToInput();
-
-    this.toInput.init(
+    super.init(
       explicit_input_height,
       explicit_input_channelCount,
       feedback_valueCount_per_alignment
@@ -326,8 +330,6 @@ class NeuralNet_FeedbackShape {
 
     const funcNameInMessage = "set_implicit_input_by_previous_output";
 
-    let toInput = this.toInput;
-
     // 1. Check (next time) input shape.
     if ( input_TypedArray.length != this.input_valueCount )
       throw Error( `NeuralNet_FeedbackShape.${funcNameInMessage}(): `
@@ -338,62 +340,61 @@ class NeuralNet_FeedbackShape {
 
     // 2. Check (previous time) output shape.
 
-    // Note: ( toInput.neuralNetCount == 2 )
+    // Note: ( this.neuralNetCount == 2 )
     if ( previous_output_Int32ArrayArray.length
-           != toInput.neuralNetCount )
+           != this.neuralNetCount )
       throw Error( `NeuralNet_FeedbackShape.${funcNameInMessage}(): `
         + `previous_output_Int32ArrayArray.length `
         + `( ${previous_output_Int32ArrayArray.length} ) `
         + `should be the same as `
-        + `.toInput.neuralNetCount ( `
-        + `${toInput.neuralNetCount} ).`
+        + `.neuralNetCount ( ${this.neuralNetCount} ).`
       );
 
     if ( previous_output_Int32ArrayArray[ 0 ].length
-           != toInput.valueCount_original_per_neural_network )
+           != this.valueCount_original_per_neural_network )
       throw Error( `NeuralNet_FeedbackShape.${funcNameInMessage}(): `
         + `previous_output_Int32ArrayArray[ 0 ].length `
         + `( ${previous_output_Int32ArrayArray[ 0 ].length} ) `
         + `should be the same as `
-        + `.toInput.valueCount_original_per_neural_network `
-        + `( ${toInput.valueCount_original_per_neural_network} ).`
+        + `.valueCount_original_per_neural_network `
+        + `( ${this.valueCount_original_per_neural_network} ).`
       );
 
     if ( previous_output_Int32ArrayArray[ 1 ].length
-           != toInput.valueCount_original_per_neural_network )
+           != this.valueCount_original_per_neural_network )
       throw Error( `NeuralNet_FeedbackShape.${funcNameInMessage}(): `
         + `previous_output_Int32ArrayArray[ 1 ].length `
         + `( ${previous_output_Int32ArrayArray[ 1 ].length} ) `
         + `should be the same as `
-        + `.toInput.valueCount_original_per_neural_network `
-        + `( ${toInput.valueCount_original_per_neural_network} ).`
+        + `.valueCount_original_per_neural_network `
+        + `( ${this.valueCount_original_per_neural_network} ).`
       );
 
     // 3. Fill previous time output (i.e. feedback) to next time input.
-    let input_channelCount = toInput.input_channelCount;
-    let area = this.toInput.area;
+    let input_channelCount = this.input_channelCount;
+    let area = this.area;
     let to_valueIndex = 0;
 
     // 3.1
-    // Note: ( toInput.neuralNetCount == 2 )
+    // Note: ( .neuralNetCount == 2 )
     for ( let neuralNetIndex = 0;
-      neuralNetIndex < toInput.neuralNetCount; ++neuralNetIndex ) {
+      neuralNetIndex < this.neuralNetCount; ++neuralNetIndex ) {
 
       let previous_output_Int32Array
         = previous_output_Int32ArrayArray[ neuralNetIndex ];
 
       let area_position_leftArray
-        = toInput.area_position_leftArrayArray[ neuralNetIndex ];
+        = this.area_position_leftArrayArray[ neuralNetIndex ];
 
       let area_position_topArray
-        = toInput.area_position_topArrayArray[ neuralNetIndex ];
+        = this.area_position_topArrayArray[ neuralNetIndex ];
 
       // 3.2
       let from_valueIndex = 0;
 
-      // Note: ( toInput.alignmentCount_per_neuralNet == 2 )
+      // Note: ( .alignmentCount_per_neuralNet == 2 )
       for ( let alignmentIndex = 0;
-        alignmentIndex < toInput.alignmentCount_per_neuralNet;
+        alignmentIndex < this.alignmentCount_per_neuralNet;
         ++alignmentIndex ) {
 
         let from_valueIndex_y_begin = from_valueIndex;

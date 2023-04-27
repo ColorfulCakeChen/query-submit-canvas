@@ -526,7 +526,6 @@ class NeuralNet_FeedbackToInput {
       NeuralNet_FeedbackToInput.area_position_create.call( this );
       NeuralNet_FeedbackToInput.area_position_fill.call( this );
     }
-
   }
 
   /**
