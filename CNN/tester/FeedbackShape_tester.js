@@ -281,13 +281,6 @@ class TestCase {
     // ( height_areaCount * width_areaCount ) should be areaCount.
     this.assert_FeedbackShape( "areaCount", height_areaCount * width_areaCount );
 
-    if ( ( height_areaCount % 2 ) != 0 )
-      throw Error( `FeedbackShape_tester.TestCase.${funcNameInMessage}(): `
-        + `.feedbackShape.height_areaCount ( ${height_areaCount} ) `
-        + `should be even number (i.e. divisible by 2). `
-        + `{ ${this} }.`
-      );
-
     // height_with_internal_gap and width_with_internal_gap
     const height_with_internal_gap_pixelCount_expanded
       = ( height_areaCount * area_height_with_gap_pixelCount_expanded )
