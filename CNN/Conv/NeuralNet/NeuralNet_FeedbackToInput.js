@@ -407,11 +407,11 @@ class NeuralNet_FeedbackToInput {
       = this.from_valueCount_expanded_per_neural_network * this.neuralNetCount;
 
     // 4.3.2
-    this.from_pixelCount_expanded_all_neural_networks
+    this.from_pixelCount_original_all_neural_networks
       = this.from_pixelCount_original_per_neural_network * this.neuralNetCount;
 
     this.from_pixelCount_expanded_all_neural_networks
-      = this.from_pixelCount_original_per_neural_network * this.neuralNetCount;
+      = this.from_pixelCount_expanded_per_neural_network * this.neuralNetCount;
 
     // 5. Determine feedback_to_input area shape.
 
