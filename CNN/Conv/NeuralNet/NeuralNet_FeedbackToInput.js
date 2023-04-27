@@ -172,7 +172,7 @@ class NeuralNet_FeedbackToInput_Area {
  * count (= implicit_input_pixelCount * input_channelCount).
  *
  *
- * @member {number} valueCount_original_per_neural_network
+ * @member {number} from_valueCount_original_per_neural_network
  *   The feedback (of both alignements of a neural network) has how many
  * values. Usually, it is the (previous time) output channel count of a neural
  * network. It is two times of .area.from_valueCount_original because a
@@ -312,7 +312,7 @@ class NeuralNet_FeedbackToInput {
     this.areaCount = this.neuralNetCount * this.alignmentCount_per_neuralNet;
 
     // 2.4
-    this.valueCount_original_per_neural_network
+    this.from_valueCount_original_per_neural_network
       = area.from_valueCount_original * this.alignmentCount_per_neuralNet;
 
     // 3. Four (or two) times the implicit input pixel count along height (if

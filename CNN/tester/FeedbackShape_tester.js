@@ -113,10 +113,10 @@ class TestCase {
           ? this.feedback_valueCount_per_alignment : 1;
     this.assert_Area( "from_valueCount_original", area_valueCount_original );
 
-    const valueCount_original_per_neural_network
+    const from_valueCount_original_per_neural_network
       = area_valueCount_original * alignmentCount_per_neuralNet;
-    this.assert_ToInput( "valueCount_original_per_neural_network",
-      valueCount_original_per_neural_network );
+    this.assert_ToInput( "from_valueCount_original_per_neural_network",
+      from_valueCount_original_per_neural_network );
 
     const area_valueCount_expanded = area_valueCount_original
       * area_height_multiplier * area_width_multiplier;

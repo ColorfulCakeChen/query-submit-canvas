@@ -351,23 +351,23 @@ class NeuralNet_FeedbackShape extends NeuralNet_FeedbackToInput {
       );
 
     if ( previous_output_Int32ArrayArray[ 0 ].length
-           != this.valueCount_original_per_neural_network )
+           != this.from_valueCount_original_per_neural_network )
       throw Error( `NeuralNet_FeedbackShape.${funcNameInMessage}(): `
         + `previous_output_Int32ArrayArray[ 0 ].length `
         + `( ${previous_output_Int32ArrayArray[ 0 ].length} ) `
         + `should be the same as `
-        + `.valueCount_original_per_neural_network `
-        + `( ${this.valueCount_original_per_neural_network} ).`
+        + `.from_valueCount_original_per_neural_network `
+        + `( ${this.from_valueCount_original_per_neural_network} ).`
       );
 
     if ( previous_output_Int32ArrayArray[ 1 ].length
-           != this.valueCount_original_per_neural_network )
+           != this.from_valueCount_original_per_neural_network )
       throw Error( `NeuralNet_FeedbackShape.${funcNameInMessage}(): `
         + `previous_output_Int32ArrayArray[ 1 ].length `
         + `( ${previous_output_Int32ArrayArray[ 1 ].length} ) `
         + `should be the same as `
-        + `.valueCount_original_per_neural_network `
-        + `( ${this.valueCount_original_per_neural_network} ).`
+        + `.from_valueCount_original_per_neural_network `
+        + `( ${this.from_valueCount_original_per_neural_network} ).`
       );
 
     // 3. Fill previous time output (i.e. feedback) to next time input.
