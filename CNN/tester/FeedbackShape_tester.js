@@ -271,6 +271,12 @@ class TestCase {
 
     // height_areaCount and width_areaCount
 
+    this.assert_Area_GE( "height_areaCount", 1 );
+    this.assert_Area_GE( "width_areaCount", 1 );
+
+    this.assert_Area_LE( "height_areaCount", areaCount );
+    this.assert_Area_LE( "width_areaCount", areaCount );
+
     // ( height_areaCount * width_areaCount ) should be areaCount
     this.assert_FeedbackShape( "areaCount",
       this.feedbackShape.height_areaCount * this.feedbackShape.width_areaCount );
@@ -282,9 +288,6 @@ class TestCase {
         + `should be even number (i.e. divisible by 2). `
         + `{ ${this} }.`
       );
-
-    this.assert_Area_LE( "height_areaCount", areaCount );
-    this.assert_Area_LE( "width_areaCount", areaCount );
 
 //!!! ...unfinished... (2023/04/26)
 
