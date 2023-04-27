@@ -338,7 +338,6 @@ class NeuralNet_FeedbackToInput {
     this.alignmentCount_per_neuralNet = 2;
     this.areaCount = this.neuralNetCount * this.alignmentCount_per_neuralNet;
 
-
     // 3. Four (or two) times the implicit input pixel count along height (if
     //    exists) and width.
     //
