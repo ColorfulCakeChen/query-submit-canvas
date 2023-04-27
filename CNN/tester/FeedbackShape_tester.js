@@ -277,7 +277,7 @@ class TestCase {
     this.assert_Area_LE( "height_areaCount", areaCount );
     this.assert_Area_LE( "width_areaCount", areaCount );
 
-    // ( height_areaCount * width_areaCount ) should be areaCount
+    // ( height_areaCount * width_areaCount ) should be areaCount.
     this.assert_FeedbackShape( "areaCount",
       this.feedbackShape.height_areaCount * this.feedbackShape.width_areaCount );
 
