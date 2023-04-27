@@ -239,6 +239,18 @@ class TestCase {
       this.assert_Area_GE( "width_pixelCount_expanded", 1 );
     }
 
+    // to height_with_gap and width_with_gap
+    const area_height_with_gap_pixelCount_expanded
+      = area_height_pixelCount_expanded + area_gap_height_pixelCount_expanded;
+    this.assert_Area( "height_with_gap_pixelCount_expanded",
+      area_height_with_gap_pixelCount_expanded );
+
+    const area_width_with_gap_pixelCount_expanded
+      = area_width_pixelCount_expanded + area_gap_width_pixelCount_expanded;
+    this.assert_Area( "width_with_gap_pixelCount_expanded",
+      area_width_with_gap_pixelCount_expanded );
+
+    // to_pixel
     const area_to_pixelCount_original
       = area_height_pixelCount_original * area_width_pixelCount_original;
 

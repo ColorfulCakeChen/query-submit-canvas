@@ -518,13 +518,11 @@ class NeuralNet_FeedbackToInput {
       = area.width_pixelCount_expanded + area.gap_width_pixelCount_expanded;
 
     // 5.3
-    {
-      area.to_pixelCount_original
-        = area.height_pixelCount_original * area.width_pixelCount_original;
+    area.to_pixelCount_original
+      = area.height_pixelCount_original * area.width_pixelCount_original;
 
-      area.to_pixelCount_expanded
-        = area.height_pixelCount_expanded * area.width_pixelCount_expanded;
-    }
+    area.to_pixelCount_expanded
+      = area.height_pixelCount_expanded * area.width_pixelCount_expanded;
 
     // 6. Determine .height_areaCount and .width_areaCount
     //
