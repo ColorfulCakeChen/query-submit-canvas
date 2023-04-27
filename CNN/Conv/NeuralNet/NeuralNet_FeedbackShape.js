@@ -330,6 +330,10 @@ class NeuralNet_FeedbackShape extends NeuralNet_FeedbackToInput {
 
     const funcNameInMessage = "set_implicit_input_by_previous_output";
 
+    let input_channelCount = this.input_channelCount;
+    let area = this.area;
+    let perNeuralNet = this.perNeuralNet;
+
     // 1. Check (next time) input shape.
     if ( input_TypedArray.length != this.input_valueCount )
       throw Error( `NeuralNet_FeedbackShape.${funcNameInMessage}(): `
@@ -351,28 +355,26 @@ class NeuralNet_FeedbackShape extends NeuralNet_FeedbackToInput {
       );
 
     if ( previous_output_Int32ArrayArray[ 0 ].length
-           != this.from_valueCount_original_per_neural_network )
+           != perNeuralNet.from_valueCount_original )
       throw Error( `NeuralNet_FeedbackShape.${funcNameInMessage}(): `
         + `previous_output_Int32ArrayArray[ 0 ].length `
         + `( ${previous_output_Int32ArrayArray[ 0 ].length} ) `
         + `should be the same as `
-        + `.from_valueCount_original_per_neural_network `
-        + `( ${this.from_valueCount_original_per_neural_network} ).`
+        + `perNeuralNet.from_valueCount_original `
+        + `( ${perNeuralNet.from_valueCount_original} ).`
       );
 
     if ( previous_output_Int32ArrayArray[ 1 ].length
-           != this.from_valueCount_original_per_neural_network )
+           != perNeuralNet.from_valueCount_original )
       throw Error( `NeuralNet_FeedbackShape.${funcNameInMessage}(): `
         + `previous_output_Int32ArrayArray[ 1 ].length `
         + `( ${previous_output_Int32ArrayArray[ 1 ].length} ) `
         + `should be the same as `
-        + `.from_valueCount_original_per_neural_network `
-        + `( ${this.from_valueCount_original_per_neural_network} ).`
+        + `perNeuralNet.from_valueCount_original `
+        + `( ${perNeuralNet.from_valueCount_original} ).`
       );
 
     // 3. Fill previous time output (i.e. feedback) to next time input.
-    let input_channelCount = this.input_channelCount;
-    let area = this.area;
     let to_valueIndex = 0;
 
     // 3.1
