@@ -265,10 +265,19 @@ class TestCase {
     }
 
     // height_areaCount and width_areaCount
-    const height_areaCount = Math.floor(
+    let height_areaCount = Math.floor(
       ( explicit_input_height + area_gap_height_pixelCount_expanded ) 
         / area_height_with_gap_pixelCount_expanded );
-    this.assert_FeedbackShape( "height_areaCount", height_areaCount );
+    {
+      if ( height_areaCount >= areaCount )
+        height_areaCount = areaCount;
+      else if ( height_areaCount >= neuralNetCount )
+        height_areaCount = neuralNetCount;
+      else
+        height_areaCount = 1;
+
+      this.assert_FeedbackShape( "height_areaCount", height_areaCount );
+    }
 
     const width_areaCount = Math.ceil( areaCount / height_areaCount );
     this.assert_FeedbackShape( "width_areaCount", width_areaCount );
