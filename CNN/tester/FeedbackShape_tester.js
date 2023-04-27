@@ -269,8 +269,13 @@ class TestCase {
     }
 
     // height_areaCount and width_areaCount
-    const height_areaCount = this.feedbackShape.height_areaCount;
-    const width_areaCount = this.feedbackShape.width_areaCount;
+    const height_areaCount = Math.floor(
+      ( explicit_input_height + area_gap_height_pixelCount_expanded ) 
+        / area.height_with_gap_pixelCount_expanded );
+    this.assert_FeedbackShape( "height_areaCount", height_areaCount );
+
+    const width_areaCount = Math.ceil( areaCount / height_areaCount );
+    this.assert_FeedbackShape( "width_areaCount", width_areaCount );
 
     this.assert_FeedbackShape_GE( "height_areaCount", 1 );
     this.assert_FeedbackShape_GE( "width_areaCount", 1 );
