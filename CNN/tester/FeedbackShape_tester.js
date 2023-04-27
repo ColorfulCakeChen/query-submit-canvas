@@ -356,12 +356,32 @@ class TestCase {
     const input_valueCount = input_pixelCount * input_channelCount;
     this.assert_FeedbackShape( "input_valueCount", input_valueCount );
 
+    // area_position
+    {
+      if ( height_areaCount == 1 ) {
 
+//!!! ...unfinished... (2023/04/27)
+
+      } else if ( height_areaCount == 2 ) {
+
+//!!! ...unfinished... (2023/04/27)
+
+      } else if ( height_areaCount == 4 ) {
+
+//!!! ...unfinished... (2023/04/27)
+
+      } else {
+        throw Error( `FeedbackShape_tester.TestCase.${funcNameInMessage}(): `
+          + `height_areaCount ( ${height_areaCount} ) `
+          + `should be either 1 or 2 or 4. `
+          + `{ ${this} }.`
+        );
+      }
 
 //!!! ...unfinished... (2023/04/27)
 // area_position_leftArrayArray, area_position_topArrayArray
 
-
+    }
 
   }
 
