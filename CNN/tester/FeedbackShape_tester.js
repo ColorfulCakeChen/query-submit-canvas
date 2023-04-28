@@ -22,6 +22,7 @@ class TestCase {
 
     this.to_valueArray = new Array();
     this.from_output_valueArray = new Array();
+    this.nextInputArray = new Array();
   }
 
   /** */
@@ -512,6 +513,9 @@ class TestCase {
     const feedbackShape = this.feedbackShape;
     const input_channelCount = feedbackShape.input_channelCount;
 
+    this.nextInputArray.length = feedbackShape.input_valueCount;
+    this.nextInputArray.fill( 0 );
+
     // const area_from_pixelCount_original
     //   = feedbackShape.area.from_pixelCount_original;
 
@@ -526,8 +530,8 @@ class TestCase {
 
 //!!! ...unfinished... (2023/04/28)
         feedbackShape.set_implicit_input_by_previous_output(
-          input_TypedArray, previous_output_Int32ArrayArray );
-        
+          this.nextInputArray, this.from_output_valueArray );
+
       }
 
     }  
