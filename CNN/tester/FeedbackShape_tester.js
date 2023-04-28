@@ -445,17 +445,24 @@ class TestCase {
               ++expectedValue;
               if ( this.to_valueArray[ i ] != expectedValue )
                 throw Error( `FeedbackShape_tester.TestCase.${funcNameInMessage}(): `
-                  + `to_valueArray.length ( ${this.to_valueArray.length} ) `
-                  + `should be the same as `
-                  + `from_output_pixelCount ( ${from_output_pixelCount} ). `
+                  + `to_valueArray[ ${i} ]=${this.to_valueArray[ i ]} `
+                  + `should be ( ${expectedValue} ). `
                   + `{ ${this} }.`
                 );
             }
 
           } else if ( alignmentIndex == 1 ) {
             // should be all negative continuous integers.
-
-      //!!! ...unfinished... (2023/04/28)
+            let expectedValue = - from_output_pixelIndexBegin;
+            for ( let i = 0; i < this.to_valueArray.length; ++i ) {
+              --expectedValue;
+              if ( this.to_valueArray[ i ] != expectedValue )
+                throw Error( `FeedbackShape_tester.TestCase.${funcNameInMessage}(): `
+                  + `to_valueArray[ ${i} ]=${this.to_valueArray[ i ]} `
+                  + `should be ( ${expectedValue} ). `
+                  + `{ ${this} }.`
+                );
+            }
 
           } else {
             throw Error( `FeedbackShape_tester.TestCase.${funcNameInMessage}(): `
