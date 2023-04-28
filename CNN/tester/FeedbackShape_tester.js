@@ -737,7 +737,7 @@ class TestCase {
 
                 const to_valueIndex = to_valueIndex_base
                   + to_valueIndex_base_y + to_valueIndex_base_x;
-    
+
                 if ( from_valueIndex > area_from_valueCount_original ) {
                   if ( to_inputArray[ to_valueIndex ] != 0 )
                     throw Error( `FeedbackShape_tester.TestCase.${funcNameInMessage}(): `
@@ -753,7 +753,7 @@ class TestCase {
                     throw Error( `FeedbackShape_tester.TestCase.${funcNameInMessage}(): `
                       + `to_inputArray[ ${to_valueIndex} ]=`
                       + `${to_inputArray[ to_valueIndex ]} `
-                      + `should be the same as`
+                      + `should be the same as `
                       + `from_output_valueArray[ ${from_valueIndex} ]=`
                       + `${from_output_valueArray[ from_valueIndex ]}. `
                       + `{ ${this} }.`
