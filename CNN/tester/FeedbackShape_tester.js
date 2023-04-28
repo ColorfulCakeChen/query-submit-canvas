@@ -524,13 +524,17 @@ class TestCase {
         alignmentIndex < feedbackShape.alignmentCount_per_neuralNet;
         ++alignmentIndex ) {
 
+
+//!!! ...unfinished... (2023/04/28)
+        feedbackShape.set_implicit_input_by_previous_output(
+          input_TypedArray, previous_output_Int32ArrayArray );
+        
       }
 
-  
-//!!! ...unfinished... (2023/04/28)
-// Test set_implicit_input_by_previous_output()
-
     }  
+
+
+//!!! ...unfinished... (2023/04/28)
 
   }
   
