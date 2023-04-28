@@ -44,6 +44,11 @@ class TestCase {
     this.from_value_offset_per_neuralNet = Math.ceil(
       Math.log10( feedbackShape.perNeuralNet.from_valueCount_expanded ) );
 
+    // Because neuralNetIndex is 0 or 1, multiplying 10 can always exceed
+    // any from_value (i.e. any feedback value).
+    this.explcit_input_value_base_positive
+      = this.from_value_offset_per_neuralNet * 10;
+
     // from_output_valueArray
     {
       for ( let neuralNetIndex = 0;
@@ -569,7 +574,58 @@ class TestCase {
 
 
   }
-  
+
+  /** */
+  nextInputArray_explicit_fill() {
+    const feedbackShape = this.feedbackShape;
+    const input_height = feedbackShape.input_height;
+    const input_width = feedbackShape.input_width;
+    const input_channelCount = feedbackShape.input_channelCount;
+
+    const input_width_valueCount = feedbackShape.input_width_valueCount;
+
+    //const implicit_input_height = feedbackShape.implicit_input_height;
+    const implicit_input_width = feedbackShape.implicit_input_width;
+    //const implicit_input_channelCount = feedbackShape.implicit_input_channelCount;
+
+    //const explicit_input_height = feedbackShape.explicit_input_height;
+    const explicit_input_width = feedbackShape.explicit_input_width;
+    //const explicit_input_channelCount = feedbackShape.explicit_input_channelCount;
+
+    const explcit_input_value_base_positive
+      = this.explcit_input_value_base_positive;
+
+    // explicit input is at the right of the implicit input.
+    let explicit_to_valueIndex_y_begin
+      = ( implicit_input_width * input_channelCount );
+
+    let to_value = explcit_input_value_base_positive;
+    let to_valueIndex;
+    for ( let y = 0; y < input_height; ++y ) {
+      to_valueIndex = explicit_to_valueIndex_y_begin;
+
+      for ( let x = 0; x < explicit_input_width; ++x ) {
+        for ( let c = 0; c < input_channelCount; ++c ) {
+          this.nextInputArray[ to_valueIndex ] = to_value;
+
+          ++to_value;
+          ++to_valueIndex;
+        }
+      }
+
+      explicit_to_valueIndex_y_begin += input_width_valueCount;
+    }
+//!!! ...unfinished... (2023/04/28)
+
+  }
+
+  /** */
+  nextInputArray_explicit_check() {
+
+//!!! ...unfinished... (2023/04/28)
+
+  }
+
   assert_Area_LE( propertyName, value ) {
     this.assert_LE( "test", this.feedbackShape, "area", propertyName, value );
   }
