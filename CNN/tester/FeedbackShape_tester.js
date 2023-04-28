@@ -420,30 +420,37 @@ class TestCase {
         from_output_pixelIndexBegin < this.feedbackShape.area.from_valueCount_original;
         ++from_output_pixelIndexBegin ) {
 
-        , from_output_pixelCount
+        const pixelCountMax
+          = this.feedbackShape.area.from_valueCount_original
+              - from_output_pixelIndexBegin;
 
-    //!!! ...unfinished... (2023/04/28)
-        this.valueArray_get_from_output_valueArray_1st_channel(
-          this.to_valueArray, this.from_output_valueArray,
-          alignmentIndex, from_output_pixelIndexBegin, from_output_pixelCount
-        );
+        for ( let from_output_pixelCount = 0;
+          from_output_pixelCount < pixelCountMax;
+          ++from_output_pixelCount ) {
 
-        if ( alignmentIndex == 0 ) {
-          // should be all positive continuous integers.
-
-    //!!! ...unfinished... (2023/04/28)
-
-        } else if ( alignmentIndex == 1 ) {
-          // should be all negative continuous integers.
-
-    //!!! ...unfinished... (2023/04/28)
-
-        } else {
-          throw Error( `FeedbackShape_tester.TestCase.${funcNameInMessage}(): `
-            + `alignmentIndex ( ${alignmentIndex} ) `
-            + `should be either 0 or 1. `
-            + `{ ${this} }.`
+//!!! ...unfinished... (2023/04/28)
+          this.valueArray_get_from_output_valueArray_1st_channel(
+            this.to_valueArray, this.from_output_valueArray,
+            alignmentIndex, from_output_pixelIndexBegin, from_output_pixelCount
           );
+
+          if ( alignmentIndex == 0 ) {
+            // should be all positive continuous integers.
+
+      //!!! ...unfinished... (2023/04/28)
+
+          } else if ( alignmentIndex == 1 ) {
+            // should be all negative continuous integers.
+
+      //!!! ...unfinished... (2023/04/28)
+
+          } else {
+            throw Error( `FeedbackShape_tester.TestCase.${funcNameInMessage}(): `
+              + `alignmentIndex ( ${alignmentIndex} ) `
+              + `should be either 0 or 1. `
+              + `{ ${this} }.`
+            );
+          }
         }
       }
     }
