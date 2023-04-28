@@ -294,8 +294,7 @@ class NeuralNet_FeedbackShape extends NeuralNet_FeedbackToInput {
     // 2. Check (previous time) output shape.
 
     // Note: ( this.neuralNetCount == 2 )
-    if ( previous_output_Int32ArrayArray.length
-           != this.neuralNetCount )
+    if ( previous_output_Int32ArrayArray.length != this.neuralNetCount )
       throw Error( `NeuralNet_FeedbackShape.${funcNameInMessage}(): `
         + `previous_output_Int32ArrayArray.length `
         + `( ${previous_output_Int32ArrayArray.length} ) `
