@@ -275,9 +275,7 @@ class NeuralNet_FeedbackShape extends NeuralNet_FeedbackToInput {
    *
    */
   set_implicit_input_by_previous_output(
-    input_TypedArray,
-    previous_output_Int32ArrayArray
-  ) {
+    input_TypedArray, previous_output_Int32ArrayArray ) {
 
     const funcNameInMessage = "set_implicit_input_by_previous_output";
 

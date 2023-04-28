@@ -32,12 +32,15 @@ class TestCase {
       this.feedback_valueCount_per_alignment
     );
 
-    this.testProperties();
+    this.test_properties();
 
-//!!! ...unfinished... (2023/04/26)
+//!!! ...unfinished... (2023/04/28)
+// Test set_implicit_input_by_previous_output()
+
+    this.test_valueArray_get();
   }
 
-  testProperties() {
+  test_properties() {
     const funcNameInMessage = "testProperties";
 
     // explicit_input: height, width, channelCount, pixelCount, valueCount
@@ -377,11 +380,13 @@ class TestCase {
           + `{ ${this} }.`
         );
       }
-
-//!!! ...unfinished... (2023/04/27)
-// area_position_leftArrayArray, area_position_topArrayArray
-
     }
+  }
+
+  test_valueArray_get() {
+
+//!!! ...unfinished... (2023/04/28)
+// valueArray_get_from_output_valueArray_1st_channel()
 
   }
 
