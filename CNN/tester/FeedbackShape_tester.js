@@ -654,12 +654,24 @@ class TestCase {
 
     const area_from_valueCount_original
       = feedbackShape.area.from_valueCount_original;
+
+
     const area_height_pixelCount_original
       = feedbackShape.area.height_pixelCount_original;
+
     const area_width_pixelCount_original
       = feedbackShape.area.width_pixelCount_original;
+
     const area_width_valueCount_original
       = area_width_pixelCount_original * input_channelCount;
+
+
+    const area_width_pixelCount_expanded
+      = feedbackShape.area.width_pixelCount_expanded;
+
+    const area_width_valueCount_expanded
+      = area_width_pixelCount_expanded * input_channelCount;
+
 
     const area_height_multiplier = feedbackShape.area.height_multiplier;
     const area_width_multiplier = feedbackShape.area.width_multiplier;
@@ -698,7 +710,7 @@ class TestCase {
 
             const to_valueIndex_base_y
               = ( ( y * area_height_multiplier ) + y_multiplier )
-                  * area_width_valueCount_original;
+                  * area_width_valueCount_expanded;
 
             for ( let x = 0; x < area_width_pixelCount_original; ++x ) {
               const from_valueIndex = from_valueIndex_base
@@ -707,9 +719,11 @@ class TestCase {
               for ( let x_multiplier = 0;
                 x_multiplier < area_width_multiplier; ++x_multiplier ) {
 
-//!!!
-                const to_valueIndex = to_valueIndex_base_y
-                  + ( x * ( x_multiplier + 1 ) * input_channelCount );
+                const to_valueIndex_base_x
+                  = ( ( x * area_width_multiplier ) + x_multiplier )
+                      * input_channelCount;
+
+                const to_valueIndex = to_valueIndex_base_y + to_valueIndex_base_x;
     
                 if ( from_valueIndex > area_from_valueCount_original ) {
 
