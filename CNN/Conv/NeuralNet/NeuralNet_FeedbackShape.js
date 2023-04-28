@@ -385,6 +385,7 @@ class NeuralNet_FeedbackShape extends NeuralNet_FeedbackToInput {
             for ( let to_x = 0;
               to_x < area_width_pixelCount_original; ++to_x ) {
 
+//!!! ...unfinished... (2023/04/28) correct for area_1 ?
               let from_valueIndex_x_begin = from_valueIndex;
               let from_valueCount_remained_x_begin = from_valueCount_remained;
 
