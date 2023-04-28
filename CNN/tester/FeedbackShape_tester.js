@@ -709,10 +709,9 @@ class TestCase {
         const area_position_top = area_position_topArray[ alignmentIndex ];
 
 //!!!
-        area_position_top
-
-        area_position_left 
-
+        const to_valueIndex_base
+          = ( ( area_position_top * input_width ) + area_position_left )
+              * input_channelCount;
 
         for ( let y = 0; y < area_height_pixelCount_original; ++y ) {
           const from_valueIndex_base_y = ( y * area_width_valueCount_original );
