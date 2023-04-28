@@ -407,6 +407,8 @@ class TestCase {
   }
 
   test_valueArray_get() {
+    const funcNameInMessage = "test_valueArray_get";
+
     this.to_valueArray.length = ;
     this.to_valueArray.fill( -1 );
 
@@ -422,6 +424,17 @@ class TestCase {
         alignmentIndex, from_output_pixelIndexBegin, from_output_pixelCount
       );
 
+      if ( alignmentIndex == 0 ) {
+
+      } else if ( alignmentIndex == 1 ) {
+
+      } else {
+        throw Error( `FeedbackShape_tester.TestCase.${funcNameInMessage}(): `
+          + `alignmentIndex ( ${alignmentIndex} ) `
+          + `should be either 0 or 1. `
+          + `{ ${this} }.`
+        );
+      }
     }
 
   }
