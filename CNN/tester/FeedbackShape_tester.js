@@ -431,7 +431,7 @@ class TestCase {
       for ( let testCount = 0; testCount < tryTestCount; ++testCount ) {
 
         let from_output_pixelIndexBegin
-          = RandTools.getRandomIntInclusive( 0, area_from_pixelCount_original );
+          = RandTools.getRandomIntInclusive( 0, area_from_pixelCount_original - 1 );
 
 //!!! (2023/04/28 Remarked)
 //         for ( let from_output_pixelIndexBegin = 0;
