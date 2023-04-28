@@ -1,6 +1,6 @@
 export { tester };
 
-//import * as RandTools from "../util/RandTools.js";
+import * as RandTools from "../util/RandTools.js";
 import * as ValueMax from "../util/ValueMax.js";
 import * as NeuralNet from "../Conv/NeuralNet.js";
 
@@ -422,70 +422,85 @@ class TestCase {
     const area_from_pixelCount_original
       = feedbackShape.area.from_pixelCount_original;
 
+    const tryTestCount = 10;
+
     for ( let alignmentIndex = 0;
       alignmentIndex < feedbackShape.alignmentCount_per_neuralNet;
       ++alignmentIndex ) {
 
-      for ( let from_output_pixelIndexBegin = 0;
-        from_output_pixelIndexBegin < area_from_pixelCount_original;
-        ++from_output_pixelIndexBegin ) {
+      for ( let testCount = 0; testCount < tryTestCount; ++testCount ) {
+          
+        let from_output_pixelIndexBegin
+          = RandTools.getRandomIntInclusive( 0, area_from_pixelCount_original );
 
-        const pixelCountMax
-          = area_from_pixelCount_original - from_output_pixelIndexBegin;
+//!!! (2023/04/28 Remarked)
+//         for ( let from_output_pixelIndexBegin = 0;
+//           from_output_pixelIndexBegin < area_from_pixelCount_original;
+//           ++from_output_pixelIndexBegin )
+        {
 
-        for ( let from_output_pixelCount = 0;
-          from_output_pixelCount < pixelCountMax;
-          ++from_output_pixelCount ) {
+          const pixelCountMax
+            = area_from_pixelCount_original - from_output_pixelIndexBegin;
 
-          feedbackShape.valueArray_get_from_output_valueArray_1st_channel(
-            this.to_valueArray, this.from_output_valueArray,
-            alignmentIndex, from_output_pixelIndexBegin, from_output_pixelCount
-          );
+          let from_output_pixelCount
+            = RandTools.getRandomIntInclusive( 0, pixelCountMax );
 
-          if ( this.to_valueArray.length != from_output_pixelCount )
-            throw Error( `FeedbackShape_tester.TestCase.${funcNameInMessage}(): `
-              + `to_valueArray.length ( ${this.to_valueArray.length} ) `
-              + `should be the same as `
-              + `from_output_pixelCount ( ${from_output_pixelCount} ). `
-              + `{ ${this} }.`
+//!!! (2023/04/28 Remarked)
+//           for ( let from_output_pixelCount = 0;
+//             from_output_pixelCount < pixelCountMax;
+//             ++from_output_pixelCount )
+          {
+
+            feedbackShape.valueArray_get_from_output_valueArray_1st_channel(
+              this.to_valueArray, this.from_output_valueArray,
+              alignmentIndex, from_output_pixelIndexBegin, from_output_pixelCount
             );
 
-          if ( alignmentIndex == 0 ) {
-            // should be all positive continuous integers.
-            let expectedValue
-              = ( from_output_pixelIndexBegin * input_channelCount ) + 1;
+            if ( this.to_valueArray.length != from_output_pixelCount )
+              throw Error( `FeedbackShape_tester.TestCase.${funcNameInMessage}(): `
+                + `to_valueArray.length ( ${this.to_valueArray.length} ) `
+                + `should be the same as `
+                + `from_output_pixelCount ( ${from_output_pixelCount} ). `
+                + `{ ${this} }.`
+              );
 
-            for ( let i = 0; i < this.to_valueArray.length; ++i ) {
-              if ( this.to_valueArray[ i ] != expectedValue )
-                throw Error( `FeedbackShape_tester.TestCase.${funcNameInMessage}(): `
-                  + `to_valueArray[ ${i} ]=${this.to_valueArray[ i ]} `
-                  + `should be ( ${expectedValue} ). `
-                  + `{ ${this} }.`
-                );
-              expectedValue += input_channelCount;
+            if ( alignmentIndex == 0 ) {
+              // should be all positive continuous integers.
+              let expectedValue
+                = ( from_output_pixelIndexBegin * input_channelCount ) + 1;
+
+              for ( let i = 0; i < this.to_valueArray.length; ++i ) {
+                if ( this.to_valueArray[ i ] != expectedValue )
+                  throw Error( `FeedbackShape_tester.TestCase.${funcNameInMessage}(): `
+                    + `to_valueArray[ ${i} ]=${this.to_valueArray[ i ]} `
+                    + `should be ( ${expectedValue} ). `
+                    + `{ ${this} }.`
+                  );
+                expectedValue += input_channelCount;
+              }
+
+            } else if ( alignmentIndex == 1 ) {
+              // should be all negative continuous integers.
+              let expectedValue
+                = - ( from_output_pixelIndexBegin * input_channelCount ) - 1;
+
+              for ( let i = 0; i < this.to_valueArray.length; ++i ) {
+                if ( this.to_valueArray[ i ] != expectedValue )
+                  throw Error( `FeedbackShape_tester.TestCase.${funcNameInMessage}(): `
+                    + `to_valueArray[ ${i} ]=${this.to_valueArray[ i ]} `
+                    + `should be ( ${expectedValue} ). `
+                    + `{ ${this} }.`
+                  );
+                expectedValue -= input_channelCount;
+              }
+
+            } else {
+              throw Error( `FeedbackShape_tester.TestCase.${funcNameInMessage}(): `
+                + `alignmentIndex ( ${alignmentIndex} ) `
+                + `should be either 0 or 1. `
+                + `{ ${this} }.`
+              );
             }
-
-          } else if ( alignmentIndex == 1 ) {
-            // should be all negative continuous integers.
-            let expectedValue
-              = - ( from_output_pixelIndexBegin * input_channelCount ) - 1;
-
-            for ( let i = 0; i < this.to_valueArray.length; ++i ) {
-              if ( this.to_valueArray[ i ] != expectedValue )
-                throw Error( `FeedbackShape_tester.TestCase.${funcNameInMessage}(): `
-                  + `to_valueArray[ ${i} ]=${this.to_valueArray[ i ]} `
-                  + `should be ( ${expectedValue} ). `
-                  + `{ ${this} }.`
-                );
-              expectedValue -= input_channelCount;
-            }
-
-          } else {
-            throw Error( `FeedbackShape_tester.TestCase.${funcNameInMessage}(): `
-              + `alignmentIndex ( ${alignmentIndex} ) `
-              + `should be either 0 or 1. `
-              + `{ ${this} }.`
-            );
           }
         }
       }
