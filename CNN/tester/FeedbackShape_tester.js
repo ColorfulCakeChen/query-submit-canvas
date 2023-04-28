@@ -561,6 +561,8 @@ class TestCase {
 
   /** */
   nextInputArray_explicit_fill() {
+    const to_inputArray = this.nextInputArray;
+
     const feedbackShape = this.feedbackShape;
     const input_height = feedbackShape.input_height;
     const input_width = feedbackShape.input_width;
@@ -584,7 +586,7 @@ class TestCase {
 
       for ( let x = 0; x < explicit_input_width; ++x ) {
         for ( let c = 0; c < input_channelCount; ++c ) {
-          this.nextInputArray[ to_valueIndex ] = to_value;
+          to_inputArray[ to_valueIndex ] = to_value;
 
           ++to_value;
           ++to_valueIndex;
@@ -599,6 +601,8 @@ class TestCase {
   nextInputArray_explicit_check() {
     const funcNameInMessage = "nextInputArray_explicit_check";
 
+    const to_inputArray = this.nextInputArray;
+
     const feedbackShape = this.feedbackShape;
     const input_height = feedbackShape.input_height;
     const input_width = feedbackShape.input_width;
@@ -622,10 +626,10 @@ class TestCase {
 
       for ( let x = 0; x < explicit_input_width; ++x ) {
         for ( let c = 0; c < input_channelCount; ++c ) {
-          if ( this.nextInputArray[ to_valueIndex ] != to_value )
+          if ( to_inputArray[ to_valueIndex ] != to_value )
             throw Error( `FeedbackShape_tester.TestCase.${funcNameInMessage}(): `
-              + `nextInputArray[ ${to_valueIndex} ]=`
-              + `${this.nextInputArray[ to_valueIndex ]} `
+              + `to_inputArray[ ${to_valueIndex} ]=`
+              + `${to_inputArray[ to_valueIndex ]} `
               + `should be ( ${to_value} ). `
               + `{ ${this} }.`
             );
@@ -642,6 +646,8 @@ class TestCase {
   /** */
   nextInputArray_implicit_check() {
     const funcNameInMessage = "nextInputArray_implicit_check";
+
+    const to_inputArray = this.nextInputArray;
 
     const feedbackShape = this.feedbackShape;
     const input_height = feedbackShape.input_height;
@@ -701,7 +707,13 @@ class TestCase {
 
         const area_position_left = area_position_leftArray[ alignmentIndex ];
         const area_position_top = area_position_topArray[ alignmentIndex ];
-  
+
+//!!!
+        area_position_top
+
+        area_position_left 
+
+
         for ( let y = 0; y < area_height_pixelCount_original; ++y ) {
           const from_valueIndex_base_y = ( y * area_width_valueCount_original );
 
@@ -726,19 +738,26 @@ class TestCase {
                 const to_valueIndex = to_valueIndex_base_y + to_valueIndex_base_x;
     
                 if ( from_valueIndex > area_from_valueCount_original ) {
-
-//!!! ...unfinished... (2023/04/28) target should be value 0.
+                  if ( to_inputArray[ to_valueIndex ] != 0 )
+                    throw Error( `FeedbackShape_tester.TestCase.${funcNameInMessage}(): `
+                      + `to_inputArray[ ${to_valueIndex} ]=`
+                      + `${to_inputArray[ to_valueIndex ]} `
+                      + `should be ( 0 ). `
+                      + `{ ${this} }.`
+                    );
 
                 } else {
-
-//!!! ...unfinished... (2023/04/28)
-                  from_output_valueArray[ from_valueIndex ]
-
+                  if ( to_inputArray[ to_valueIndex ]
+                         != from_output_valueArray[ from_valueIndex ] )
+                    throw Error( `FeedbackShape_tester.TestCase.${funcNameInMessage}(): `
+                      + `to_inputArray[ ${to_valueIndex} ]=`
+                      + `${to_inputArray[ to_valueIndex ]} `
+                      + `should be the same as`
+                      + `from_output_valueArray[ ${from_valueIndex} ]=`
+                      + `${from_output_valueArray[ from_valueIndex ]}. `
+                      + `{ ${this} }.`
+                    );
                 }
-
-                area_position_top
-
-                area_position_left 
 
 //!!! ...unfinished... (2023/04/28)
                   
