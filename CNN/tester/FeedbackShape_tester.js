@@ -28,7 +28,8 @@ class TestCase {
   test() {
     const funcNameInMessage = "test";
 
-    this.feedbackShape.init(
+    const feedbackShape = this.feedbackShape;
+    feedbackShape.init(
       this.explicit_input_height,
       this.explicit_input_width,
       this.explicit_input_channelCount,
@@ -37,16 +38,20 @@ class TestCase {
 
     {
       this.from_output_valueArray.length
-        = this.feedbackShape.perNeuralNet.from_valueCount_original;
+        = feedbackShape.perNeuralNet.from_valueCount_original;
 
-      for ( let i = 0; i < this.feedbackShape.area.from_valueCount_original; ++i ) {
-        this.from_output_valueArray[ i ] = 1 + i; // positive integer
+      const area_from_valueCount_original
+        = feedbackShape.area.from_valueCount_original;
+
+      for ( let i = 0; i < area_from_valueCount_original; ++i ) {
+        this.from_output_valueArray[ i ] = i + 1; // all positive integers
       }
 
-      const twiceLength = 2 * this.feedbackShape.area.from_valueCount_original;
-      for ( let i = this.feedbackShape.area.from_valueCount_original;
-        i < twiceLength; ++i ) {
-        this.from_output_valueArray[ i ] = -1 - i; // negative integer
+      const twiceLength = 2 * area_from_valueCount_original;
+      for ( let i = area_from_valueCount_original;
+        i < twiceLength; ++i ) { // all negative integers
+        this.from_output_valueArray[ i ]
+          = ( area_from_valueCount_original - i ) - 1;
       }
 
       // In normal, it should not have this part.
