@@ -26,7 +26,7 @@ class TestCase {
     this.from_output_valueArrayArray[ 0 ] = new Array();
     this.from_output_valueArrayArray[ 1 ] = new Array();
 
-    //!!! (2023/04/28 Remarked) Use Uint32Array instead.
+    //!!! (2023/04/28 Remarked) Use Int32Array instead.
     //this.nextInputArray = new Array();
   }
 
@@ -545,7 +545,7 @@ class TestCase {
 
     if (   !this.nextInputArray
         || ( this.nextInputArray.length != feedbackShape.input_valueCount ) )
-      this.nextInputArray = new Uint32Array( feedbackShape.input_valueCount );
+      this.nextInputArray = new Int32Array( feedbackShape.input_valueCount );
     else
       this.nextInputArray.fill( 0 );
 
