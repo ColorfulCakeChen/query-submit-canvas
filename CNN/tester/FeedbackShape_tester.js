@@ -583,14 +583,8 @@ class TestCase {
     const input_channelCount = feedbackShape.input_channelCount;
 
     const input_width_valueCount = feedbackShape.input_width_valueCount;
-
-    //const implicit_input_height = feedbackShape.implicit_input_height;
     const implicit_input_width = feedbackShape.implicit_input_width;
-    //const implicit_input_channelCount = feedbackShape.implicit_input_channelCount;
-
-    //const explicit_input_height = feedbackShape.explicit_input_height;
     const explicit_input_width = feedbackShape.explicit_input_width;
-    //const explicit_input_channelCount = feedbackShape.explicit_input_channelCount;
 
     const explcit_input_value_base_positive
       = this.explcit_input_value_base_positive;
@@ -615,15 +609,50 @@ class TestCase {
 
       explicit_to_valueIndex_y_begin += input_width_valueCount;
     }
-//!!! ...unfinished... (2023/04/28)
-
   }
 
   /** */
   nextInputArray_explicit_check() {
+    const funcNameInMessage = "nextInputArray_explicit_check";
 
-//!!! ...unfinished... (2023/04/28)
+    const feedbackShape = this.feedbackShape;
+    const input_height = feedbackShape.input_height;
+    const input_width = feedbackShape.input_width;
+    const input_channelCount = feedbackShape.input_channelCount;
 
+    const input_width_valueCount = feedbackShape.input_width_valueCount;
+    const implicit_input_width = feedbackShape.implicit_input_width;
+    const explicit_input_width = feedbackShape.explicit_input_width;
+
+    const explcit_input_value_base_positive
+      = this.explcit_input_value_base_positive;
+
+    // explicit input is at the right of the implicit input.
+    let explicit_to_valueIndex_y_begin
+      = ( implicit_input_width * input_channelCount );
+
+    let to_value = explcit_input_value_base_positive;
+    let to_valueIndex;
+    for ( let y = 0; y < input_height; ++y ) {
+      to_valueIndex = explicit_to_valueIndex_y_begin;
+
+      for ( let x = 0; x < explicit_input_width; ++x ) {
+        for ( let c = 0; c < input_channelCount; ++c ) {
+          if ( this.nextInputArray[ to_valueIndex ] != to_value )
+            throw Error( `FeedbackShape_tester.TestCase.${funcNameInMessage}(): `
+              + `nextInputArray[ ${to_valueIndex} ]=`
+              + `${this.nextInputArray[ to_valueIndex ]} `
+              + `should be ( ${to_value} ). `
+              + `{ ${this} }.`
+            );
+
+          ++to_value;
+          ++to_valueIndex;
+        }
+      }
+
+      explicit_to_valueIndex_y_begin += input_width_valueCount;
+    }
   }
 
   assert_Area_LE( propertyName, value ) {
