@@ -19,6 +19,9 @@ class TestCase {
     this.explicit_input_width = explicit_input_width;
     this.explicit_input_channelCount = explicit_input_channelCount;
     this.feedback_valueCount_per_alignment = feedback_valueCount_per_alignment;
+
+    this.to_valueArray = new Array();
+    this.from_output_valueArray = new Array();
   }
 
   /** */
@@ -31,6 +34,26 @@ class TestCase {
       this.explicit_input_channelCount,
       this.feedback_valueCount_per_alignment
     );
+
+    {
+      this.from_output_valueArray.length
+        = this.feedbackShape.perNeuralNet.from_valueCount_original;
+
+      for ( let i = 0; i < this.feedbackShape.area.from_valueCount_original; ++i ) {
+        this.from_output_valueArray[ i ] = 1 + i; // positive integer
+      }
+
+      const twiceLength = 2 * this.feedbackShape.area.from_valueCount_original;
+      for ( let i = this.feedbackShape.area.from_valueCount_original;
+        i < twiceLength; ++i ) {
+        this.from_output_valueArray[ i ] = -1 - i; // negative integer
+      }
+
+      // In normal, it should not have this part.
+      for ( let i = twiceLength; i < this.from_output_valueArray.length; ++i ) {
+        this.from_output_valueArray[ i ] = 0; // zero.
+      }
+    }
 
     this.test_properties();
 
@@ -384,9 +407,13 @@ class TestCase {
   }
 
   test_valueArray_get() {
+    this.to_valueArray.length = ;
+    this.to_valueArray.fill( -1 );
 
 //!!! ...unfinished... (2023/04/28)
-// valueArray_get_from_output_valueArray_1st_channel()
+    this.valueArray_get_from_output_valueArray_1st_channel(
+      this.to_valueArray,
+      this.from_output_valueArray
 
   }
 

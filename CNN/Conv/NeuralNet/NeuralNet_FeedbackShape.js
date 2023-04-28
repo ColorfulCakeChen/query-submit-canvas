@@ -467,9 +467,10 @@ class NeuralNet_FeedbackShape extends NeuralNet_FeedbackToInput {
    * TypedArray).
    *
    * @param {Float32Array|Int32Array} from_output_valueArray
-   *   A number array to be extracted information from. It is usually the
-   * output TypedArray of a neural network. It is viewed as containing two
-   * alignments output values which the neural network could personate.
+   *   A number array (or TypedArray) to be extracted information from. It is
+   * usually the output TypedArray of a neural network. It is viewed as
+   * containing two alignments output values which the neural network could
+   * personate.
    *
    *   - from_output_valueArray[ 0 ] to
    *     from_output_valueArray[ ( from_output_valueArray.length / 2 ) - 1 ]:
