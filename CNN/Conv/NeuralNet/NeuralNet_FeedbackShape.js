@@ -322,13 +322,20 @@ class NeuralNet_FeedbackShape extends NeuralNet_FeedbackToInput {
         + `( ${perNeuralNet.from_valueCount_original} ).`
       );
 
+    const neuralNetCount = this.neuralNetCount;
+    const alignmentCount_per_neuralNet = this.alignmentCount_per_neuralNet;
+    const area_height_pixelCount_original = area.height_pixelCount_original;
+    const area_height_multiplier = area.height_multiplier;
+    const area_width_pixelCount_original = area.width_pixelCount_original;
+    const area_width_multiplier = area.width_multiplier;
+
     // 3. Fill previous time output (i.e. feedback) to next time input.
     let to_valueIndex = 0;
 
     // 3.1
     // Note: ( .neuralNetCount == 2 )
     for ( let neuralNetIndex = 0;
-      neuralNetIndex < this.neuralNetCount; ++neuralNetIndex ) {
+      neuralNetIndex < neuralNetCount; ++neuralNetIndex ) {
 
       let previous_output_Int32Array
         = previous_output_Int32ArrayArray[ neuralNetIndex ];
@@ -344,8 +351,7 @@ class NeuralNet_FeedbackShape extends NeuralNet_FeedbackToInput {
 
       // Note: ( .alignmentCount_per_neuralNet == 2 )
       for ( let alignmentIndex = 0;
-        alignmentIndex < this.alignmentCount_per_neuralNet;
-        ++alignmentIndex ) {
+        alignmentIndex < alignmentCount_per_neuralNet; ++alignmentIndex ) {
 
         let from_valueIndex_y_begin = from_valueIndex;
 
@@ -363,11 +369,11 @@ class NeuralNet_FeedbackShape extends NeuralNet_FeedbackToInput {
 
         // 3.3
         for ( let from_y = 0;
-          from_y < area.height_pixelCount_original; ++from_y ) {
+          from_y < area_height_pixelCount_original; ++from_y ) {
 
           // 3.4
           for ( let y_multiplier = 0;
-            y_multiplier < area.height_multiplier; ++y_multiplier ) {
+            y_multiplier < area_height_multiplier; ++y_multiplier ) {
 
             from_valueIndex = from_valueIndex_y_begin;
             from_valueCount_remained = from_valueCount_remained_y_begin;
@@ -377,7 +383,7 @@ class NeuralNet_FeedbackShape extends NeuralNet_FeedbackToInput {
 
             // 3.5
             for ( let from_x = 0;
-              from_x < area.width_pixelCount_original; ++from_x ) {
+              from_x < area_width_pixelCount_original; ++from_x ) {
 
               let from_valueIndex_x_begin = from_valueIndex;
               let from_valueCount_remained_x_begin = from_valueCount_remained;
@@ -403,7 +409,7 @@ class NeuralNet_FeedbackShape extends NeuralNet_FeedbackToInput {
 
               // 3.6
               for ( let x_multiplier = 0;
-                x_multiplier < area.width_multiplier; ++x_multiplier ) {
+                x_multiplier < area_width_multiplier; ++x_multiplier ) {
 
                 from_valueIndex = from_valueIndex_x_begin;
                 from_valueCount_remained = from_valueCount_remained_x_begin;

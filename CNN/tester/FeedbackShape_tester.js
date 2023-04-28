@@ -652,10 +652,10 @@ class TestCase {
     const implicit_input_width = feedbackShape.implicit_input_width;
     //const explicit_input_width = feedbackShape.explicit_input_width;
 
-    const area_height_pixelCount_expanded
-      = feedbackShape.area.height_pixelCount_expanded;
-    const area_width_pixelCount_expanded
-      = feedbackShape.area.width_pixelCount_expanded;
+    const area_height_pixelCount_original
+      = feedbackShape.area.height_pixelCount_original;
+    const area_width_pixelCount_original
+      = feedbackShape.area.width_pixelCount_original;
 
     const area_height_multiplier = feedbackShape.area.height_multiplier;
     const area_width_multiplier = feedbackShape.area.width_multiplier;
@@ -683,9 +683,23 @@ class TestCase {
         const area_position_left = area_position_leftArray[ alignmentIndex ];
         const area_position_top = area_position_topArray[ alignmentIndex ];
   
+        for ( let y = 0; y < area_height_pixelCount_original; ++y ) {
 
-          area_height_pixelCount_expanded
+          for ( let y_multiplier = 0;
+            y_multiplier < area_height_multiplier; ++y_multiplier ) {
+          
+            for ( let x = 0; x < area_width_pixelCount_original; ++x ) {
+
+              for ( let x_multiplier = 0;
+                x_multiplier < area_width_multiplier; ++x_multiplier ) {
+
+                area_height_pixelCount_expanded
 //!!! ...unfinished... (2023/04/28)
+                  
+              }
+            }
+          }
+        }
 
       }
     }
