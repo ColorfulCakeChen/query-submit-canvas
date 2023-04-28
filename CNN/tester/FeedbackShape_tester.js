@@ -375,6 +375,14 @@ class TestCase {
         assert_area_position_topArrayArray(  1, 1, 0 );
 
       } else if ( height_areaCount == 2 ) {
+        assert_area_position_leftArrayArray( 0, 1, widthUnit );
+        assert_area_position_topArrayArray(  0, 1, 0 );
+
+        assert_area_position_leftArrayArray( 1, 0, 0 );
+        assert_area_position_topArrayArray(  1, 0, heightUnit );
+
+        assert_area_position_leftArrayArray( 1, 1, widthUnit );
+        assert_area_position_topArrayArray(  1, 1, heightUnit );
 
 //!!! ...unfinished... (2023/04/27)
 
