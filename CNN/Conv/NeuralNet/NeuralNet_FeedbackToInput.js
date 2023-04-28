@@ -275,6 +275,11 @@ class NeuralNet_FeedbackToInput {
 
   /**
    *
+   * @member {number} feedback_valueCount_per_alignment
+   *   The feedback (of an alignement of a neural network) has how many values.
+   * Usually, it is half of the (previous time) output channel count of a
+   * neural network because a neural network generates two alignments' outputs
+   * in one time.
    */
   init(
     explicit_input_height,
