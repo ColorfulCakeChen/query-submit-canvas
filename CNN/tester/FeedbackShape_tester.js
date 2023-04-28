@@ -409,13 +409,14 @@ class TestCase {
   test_valueArray_get() {
     const funcNameInMessage = "test_valueArray_get";
 
-    const input_channelCount = this.feedbackShape.input_channelCount;
+    const feedbackShape = this.feedbackShape;
+    const input_channelCount = feedbackShape.input_channelCount;
 
     const area_from_pixelCount_original
-      = this.feedbackShape.area.from_pixelCount_original;
+      = feedbackShape.area.from_pixelCount_original;
 
     for ( let alignmentIndex = 0;
-      alignmentIndex < this.feedbackShape.alignmentCount_per_neuralNet;
+      alignmentIndex < feedbackShape.alignmentCount_per_neuralNet;
       ++alignmentIndex ) {
 
       for ( let from_output_pixelIndexBegin = 0;
@@ -429,7 +430,7 @@ class TestCase {
           from_output_pixelCount < pixelCountMax;
           ++from_output_pixelCount ) {
 
-          this.valueArray_get_from_output_valueArray_1st_channel(
+          feedbackShape.valueArray_get_from_output_valueArray_1st_channel(
             this.to_valueArray, this.from_output_valueArray,
             alignmentIndex, from_output_pixelIndexBegin, from_output_pixelCount
           );
