@@ -26,7 +26,8 @@ class TestCase {
     this.from_output_valueArrayArray[ 0 ] = new Array();
     this.from_output_valueArrayArray[ 1 ] = new Array();
 
-    this.nextInputArray = new Array();
+    //!!! (2023/04/28 Remarked) Use Uint32Array instead.
+    //this.nextInputArray = new Array();
   }
 
   /** */
@@ -544,8 +545,12 @@ class TestCase {
     const feedbackShape = this.feedbackShape;
     const input_channelCount = feedbackShape.input_channelCount;
 
-    this.nextInputArray.length = feedbackShape.input_valueCount;
-    this.nextInputArray.fill( 0 );
+    if (   !this.nextInputArray
+        || ( this.nextInputArray.length != feedbackShape.input_valueCount ) )
+      this.nextInputArray = new Uint32Array( feedbackShape.input_valueCount );
+    else
+      this.nextInputArray.fill( 0 );
+
     this.nextInputArray_explicit_fill();
 
 //!!! ...unfinished... (2023/04/28) fill implicit input
