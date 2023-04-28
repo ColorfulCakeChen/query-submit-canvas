@@ -429,7 +429,7 @@ class TestCase {
       ++alignmentIndex ) {
 
       for ( let testCount = 0; testCount < tryTestCount; ++testCount ) {
-          
+
         let from_output_pixelIndexBegin
           = RandTools.getRandomIntInclusive( 0, area_from_pixelCount_original );
 
