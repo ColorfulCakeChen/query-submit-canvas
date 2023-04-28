@@ -50,7 +50,7 @@ class TestCase {
         neuralNetIndex < feedbackShape.neuralNetCount; ++neuralNetIndex ) {
 
         let from_output_valueArray
-          = from_output_valueArrayArray[ neuralNetIndex ];
+          = this.from_output_valueArrayArray[ neuralNetIndex ];
       
         from_output_valueArray.length
           = feedbackShape.perNeuralNet.from_valueCount_original;
