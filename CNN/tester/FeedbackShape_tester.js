@@ -448,13 +448,13 @@ class TestCase {
               = ( from_output_pixelIndexBegin * input_channelCount ) + 1;
 
             for ( let i = 0; i < this.to_valueArray.length; ++i ) {
-              ++expectedValue;
               if ( this.to_valueArray[ i ] != expectedValue )
                 throw Error( `FeedbackShape_tester.TestCase.${funcNameInMessage}(): `
                   + `to_valueArray[ ${i} ]=${this.to_valueArray[ i ]} `
                   + `should be ( ${expectedValue} ). `
                   + `{ ${this} }.`
                 );
+              expectedValue += input_channelCount;
             }
 
           } else if ( alignmentIndex == 1 ) {
@@ -463,13 +463,13 @@ class TestCase {
               = - ( from_output_pixelIndexBegin * input_channelCount ) - 1;
 
             for ( let i = 0; i < this.to_valueArray.length; ++i ) {
-              --expectedValue;
               if ( this.to_valueArray[ i ] != expectedValue )
                 throw Error( `FeedbackShape_tester.TestCase.${funcNameInMessage}(): `
                   + `to_valueArray[ ${i} ]=${this.to_valueArray[ i ]} `
                   + `should be ( ${expectedValue} ). `
                   + `{ ${this} }.`
                 );
+              expectedValue -= input_channelCount;
             }
 
           } else {
