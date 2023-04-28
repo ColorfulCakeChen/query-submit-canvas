@@ -170,30 +170,6 @@ class TestCase {
     let area_width_pixelCount_original;
     let area_width_pixelCount_expanded;
     {
-
-//!!! (2023/04/26 Remarked)
-// It seems not necessary special case ( explicit_input_height == 1 ).
-//       if ( explicit_input_height == 1 ) {
-//         area_height_pixelCount_original = 1;
-//         area_width_pixelCount_original = area_pixelCount_original;
-//
-//       } else {
-//
-//         area_height_pixelCount_original
-//           = Math.ceil( Math.sqrt( area_pixelCount_original ) );
-//
-//         if ( area_height_pixelCount_original <= explicit_input_height ) { // square shape.
-//           area_width_pixelCount_original = area_height_pixelCount_original
-//
-//         } else { // rectangle shape.
-//           area_height_pixelCount_original = Math.floor(
-//             explicit_input_height / area_height_multiplier );
-//
-//           area_width_pixelCount_original = Math.ceil(
-//             from_pixelCount_original / area_height_pixelCount_original );
-//         }
-//       }
-
       {
         area_height_pixelCount_original
           = Math.ceil( Math.sqrt( area_from_pixelCount_original ) );
@@ -361,38 +337,38 @@ class TestCase {
       const heightUnit = area_height_with_gap_pixelCount_expanded;
       const widthUnit = area_width_with_gap_pixelCount_expanded;
 
-      assert_area_position_leftArrayArray( 0, 0, 0 );
-      assert_area_position_topArrayArray(  0, 0, 0 );
+      this.assert_area_position_leftArrayArray( 0, 0, 0 );
+      this.assert_area_position_topArrayArray(  0, 0, 0 );
 
       if ( height_areaCount == 1 ) {
-        assert_area_position_leftArrayArray( 0, 1, widthUnit );
-        assert_area_position_topArrayArray(  0, 1, 0 );
+        this.assert_area_position_leftArrayArray( 0, 1, widthUnit );
+        this.assert_area_position_topArrayArray(  0, 1, 0 );
 
-        assert_area_position_leftArrayArray( 1, 0, widthUnit * 2 );
-        assert_area_position_topArrayArray(  1, 0, 0 );
+        this.assert_area_position_leftArrayArray( 1, 0, widthUnit * 2 );
+        this.assert_area_position_topArrayArray(  1, 0, 0 );
 
-        assert_area_position_leftArrayArray( 1, 1, widthUnit * 3 );
-        assert_area_position_topArrayArray(  1, 1, 0 );
+        this.assert_area_position_leftArrayArray( 1, 1, widthUnit * 3 );
+        this.assert_area_position_topArrayArray(  1, 1, 0 );
 
       } else if ( height_areaCount == 2 ) {
-        assert_area_position_leftArrayArray( 0, 1, widthUnit );
-        assert_area_position_topArrayArray(  0, 1, 0 );
+        this.assert_area_position_leftArrayArray( 0, 1, widthUnit );
+        this.assert_area_position_topArrayArray(  0, 1, 0 );
 
-        assert_area_position_leftArrayArray( 1, 0, 0 );
-        assert_area_position_topArrayArray(  1, 0, heightUnit );
+        this.assert_area_position_leftArrayArray( 1, 0, 0 );
+        this.assert_area_position_topArrayArray(  1, 0, heightUnit );
 
-        assert_area_position_leftArrayArray( 1, 1, widthUnit );
-        assert_area_position_topArrayArray(  1, 1, heightUnit );
+        this.assert_area_position_leftArrayArray( 1, 1, widthUnit );
+        this.assert_area_position_topArrayArray(  1, 1, heightUnit );
 
       } else if ( height_areaCount == 4 ) {
-        assert_area_position_leftArrayArray( 0, 1, 0 );
-        assert_area_position_topArrayArray(  0, 1, heightUnit );
+        this.assert_area_position_leftArrayArray( 0, 1, 0 );
+        this.assert_area_position_topArrayArray(  0, 1, heightUnit );
 
-        assert_area_position_leftArrayArray( 1, 0, 0 );
-        assert_area_position_topArrayArray(  1, 0, heightUnit * 2 );
+        this.assert_area_position_leftArrayArray( 1, 0, 0 );
+        this.assert_area_position_topArrayArray(  1, 0, heightUnit * 2 );
 
-        assert_area_position_leftArrayArray( 1, 1, 0 );
-        assert_area_position_topArrayArray(  1, 1, heightUnit * 3 );
+        this.assert_area_position_leftArrayArray( 1, 1, 0 );
+        this.assert_area_position_topArrayArray(  1, 1, heightUnit * 3 );
 
       } else {
         throw Error( `FeedbackShape_tester.TestCase.${funcNameInMessage}(): `
