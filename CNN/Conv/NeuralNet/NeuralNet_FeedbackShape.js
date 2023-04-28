@@ -368,8 +368,8 @@ class NeuralNet_FeedbackShape extends NeuralNet_FeedbackToInput {
         let from_pixelCount_remained = area.from_pixelCount_expanded;
 
         // 3.3
-        for ( let from_y = 0;
-          from_y < area_height_pixelCount_original; ++from_y ) {
+        for ( let to_y = 0;
+          to_y < area_height_pixelCount_original; ++to_y ) {
 
           // 3.4
           for ( let y_multiplier = 0;
@@ -382,17 +382,17 @@ class NeuralNet_FeedbackShape extends NeuralNet_FeedbackToInput {
             to_valueIndex = to_valueIndex_y_begin;
 
             // 3.5
-            for ( let from_x = 0;
-              from_x < area_width_pixelCount_original; ++from_x ) {
+            for ( let to_x = 0;
+              to_x < area_width_pixelCount_original; ++to_x ) {
 
               let from_valueIndex_x_begin = from_valueIndex;
               let from_valueCount_remained_x_begin = from_valueCount_remained;
 
               // Handle the last pixel which comes from feedback.
               //
-              // Note: It is the same for the same from_x (even if different
+              // Note: It is the same for the same to_x (even if different
               //       x_multiplier). But, it may appear many times in
-              //       different y_multiplier of the same from_y.
+              //       different y_multiplier of the same to_y.
               let channelCount_to_copy; // channels to copy from feedback.
               let channelCount_to_zero; // channels to fill with zero.
               {
@@ -453,11 +453,11 @@ class NeuralNet_FeedbackShape extends NeuralNet_FeedbackToInput {
                   + `should be non-negative.`
                 );
 
-            } // from_x
+            } // to_x
 
             to_valueIndex_y_begin += this.input_width_valueCount;
           } // y_multiplier
-        } // from_y
+        } // to_y
       }
     }
   }

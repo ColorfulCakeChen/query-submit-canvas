@@ -683,17 +683,21 @@ class TestCase {
         const area_position_left = area_position_leftArray[ alignmentIndex ];
         const area_position_top = area_position_topArray[ alignmentIndex ];
   
-        for ( let y = 0; y < area_height_pixelCount_original; ++y ) {
+        for ( let to_y = 0; to_y < area_height_pixelCount_original; ++to_y ) {
 
           for ( let y_multiplier = 0;
             y_multiplier < area_height_multiplier; ++y_multiplier ) {
           
-            for ( let x = 0; x < area_width_pixelCount_original; ++x ) {
+            for ( let to_x = 0; to_x < area_width_pixelCount_original; ++to_x ) {
 
               for ( let x_multiplier = 0;
                 x_multiplier < area_width_multiplier; ++x_multiplier ) {
 
-                area_height_pixelCount_expanded
+                area_position_top
+
+                area_position_left 
+
+                from_output_valueArray[ ]
 //!!! ...unfinished... (2023/04/28)
                   
               }
