@@ -21,7 +21,11 @@ class TestCase {
     this.feedback_valueCount_per_alignment = feedback_valueCount_per_alignment;
 
     this.to_valueArray = new Array();
-    this.from_output_valueArray = new Array();
+
+    this.from_output_valueArrayArray = new Array();
+    this.from_output_valueArrayArray[ 0 ] = new Array();
+    this.from_output_valueArrayArray[ 1 ] = new Array();
+
     this.nextInputArray = new Array();
   }
 
@@ -37,28 +41,42 @@ class TestCase {
       this.feedback_valueCount_per_alignment
     );
 
+    this.from_value_offset_per_neuralNet = Math.ceil(
+      Math.log10( feedbackShape.perNeuralNet.from_valueCount_expanded ) );
+
+    // from_output_valueArray
     {
-      this.from_output_valueArray.length
-        = feedbackShape.perNeuralNet.from_valueCount_original;
+      for ( let neuralNetIndex = 0;
+        neuralNetIndex < feedbackShape.neuralNetCount; ++neuralNetIndex ) {
 
-      const area_from_valueCount_original
-        = feedbackShape.area.from_valueCount_original;
+        let from_output_valueArray
+          = from_output_valueArrayArray[ neuralNetIndex ];
+      
+        from_output_valueArray.length
+          = feedbackShape.perNeuralNet.from_valueCount_original;
 
-      // all positive integers (for alignment 0)
-      for ( let i = 0; i < area_from_valueCount_original; ++i ) {
-        this.from_output_valueArray[ i ] = i + 1;
-      }
+        const area_from_valueCount_original
+          = feedbackShape.area.from_valueCount_original;
 
-      // all negative integers (for alignment 1)
-      const twiceLength = 2 * area_from_valueCount_original;
-      for ( let i = area_from_valueCount_original; i < twiceLength; ++i ) {
-        this.from_output_valueArray[ i ]
-          = ( area_from_valueCount_original - i ) - 1;
-      }
+        const from_value_base_positive
+          = this.from_value_offset_per_neuralNet * neuralNetIndex;
 
-      // In normal, it should not have this part.
-      for ( let i = twiceLength; i < this.from_output_valueArray.length; ++i ) {
-        this.from_output_valueArray[ i ] = 0; // zero.
+        // all positive integers (for alignment 0)
+        for ( let i = 0; i < area_from_valueCount_original; ++i ) {
+          from_output_valueArray[ i ] = i + 1 + from_value_base_positive;
+        }
+
+        // all negative integers (for alignment 1)
+        const twiceLength = 2 * area_from_valueCount_original;
+        for ( let i = area_from_valueCount_original; i < twiceLength; ++i ) {
+          from_output_valueArray[ i ]
+            = ( area_from_valueCount_original - i ) - 1 - from_value_base_positive;
+        }
+
+        // In normal, it should not have this part.
+        for ( let i = twiceLength; i < from_output_valueArray.length; ++i ) {
+          from_output_valueArray[ i ] = 0; // zero.
+        }
       }
     }
 
@@ -421,6 +439,12 @@ class TestCase {
     const area_from_pixelCount_original
       = feedbackShape.area.from_pixelCount_original;
 
+    const neuralNetIndex = 0;
+    const from_output_valueArray
+      = this.from_output_valueArrayArray[ neuralNetIndex ];
+    // const from_value_base_positive
+    //   = this.from_value_offset_per_neuralNet * neuralNetIndex;
+
     const tryTestCount = 10;
 
     for ( let alignmentIndex = 0;
@@ -451,7 +475,7 @@ class TestCase {
           {
 
             feedbackShape.valueArray_get_from_output_valueArray_1st_channel(
-              this.to_valueArray, this.from_output_valueArray,
+              this.to_valueArray, from_output_valueArray,
               alignmentIndex, from_output_pixelIndexBegin, from_output_pixelCount
             );
 
@@ -466,7 +490,8 @@ class TestCase {
             if ( alignmentIndex == 0 ) {
               // should be all positive continuous integers.
               let expectedValue
-                = ( from_output_pixelIndexBegin * input_channelCount ) + 1;
+                = ( from_output_pixelIndexBegin * input_channelCount ) + 1
+                    + from_value_base_positive;
 
               for ( let i = 0; i < this.to_valueArray.length; ++i ) {
                 if ( this.to_valueArray[ i ] != expectedValue )
@@ -481,7 +506,8 @@ class TestCase {
             } else if ( alignmentIndex == 1 ) {
               // should be all negative continuous integers.
               let expectedValue
-                = - ( from_output_pixelIndexBegin * input_channelCount ) - 1;
+                = - ( from_output_pixelIndexBegin * input_channelCount ) - 1
+                    - from_value_base_positive;
 
               for ( let i = 0; i < this.to_valueArray.length; ++i ) {
                 if ( this.to_valueArray[ i ] != expectedValue )
@@ -516,23 +542,24 @@ class TestCase {
     this.nextInputArray.length = feedbackShape.input_valueCount;
     this.nextInputArray.fill( 0 );
 
+//!!! ...unfinished... (2023/04/28) fill explicit input
+
+//!!! ...unfinished... (2023/04/28) fill implicit input
+
     // const area_from_pixelCount_original
     //   = feedbackShape.area.from_pixelCount_original;
 
-    const tryTestCount = 10;
-
-    for ( let testCount = 0; testCount < tryTestCount; ++testCount ) {
 
 //!!! ...unfinished... (2023/04/28)
-//???
-      for ( let alignmentIndex = 0;
-        alignmentIndex < feedbackShape.alignmentCount_per_neuralNet;
-        ++alignmentIndex ) {
 
 
 //!!! ...unfinished... (2023/04/28)
         feedbackShape.set_implicit_input_by_previous_output(
-          this.nextInputArray, this.from_output_valueArray );
+          this.nextInputArray, this.from_output_valueArray??? );
+
+//!!! ...unfinished... (2023/04/28) check explicit input
+
+//!!! ...unfinished... (2023/04/28) check implicit input
 
       }
 
@@ -540,6 +567,9 @@ class TestCase {
 
 
 //!!! ...unfinished... (2023/04/28)
+// const from_value_base_positive
+//   = this.from_value_offset_per_neuralNet * neuralNetIndex;
+
 
   }
   
