@@ -444,7 +444,8 @@ class TestCase {
 
           if ( alignmentIndex == 0 ) {
             // should be all positive continuous integers.
-            let expectedValue = from_output_pixelIndexBegin + 1;
+            let expectedValue
+              = ( from_output_pixelIndexBegin * input_channelCount ) + 1;
 
             for ( let i = 0; i < this.to_valueArray.length; ++i ) {
               ++expectedValue;
@@ -458,7 +459,9 @@ class TestCase {
 
           } else if ( alignmentIndex == 1 ) {
             // should be all negative continuous integers.
-            let expectedValue = - from_output_pixelIndexBegin - 1;
+            let expectedValue
+              = - ( from_output_pixelIndexBegin * input_channelCount ) - 1;
+
             for ( let i = 0; i < this.to_valueArray.length; ++i ) {
               --expectedValue;
               if ( this.to_valueArray[ i ] != expectedValue )
