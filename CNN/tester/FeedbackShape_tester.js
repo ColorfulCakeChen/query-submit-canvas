@@ -63,13 +63,11 @@ class TestCase {
     }
 
     this.test_properties();
-
-//!!! ...unfinished... (2023/04/28)
-// Test set_implicit_input_by_previous_output()
-
     this.test_valueArray_get();
+    this.test_set_implicit_input();
   }
 
+  /** */
   test_properties() {
     const funcNameInMessage = "testProperties";
 
@@ -413,6 +411,7 @@ class TestCase {
     }
   }
 
+  /** */
   test_valueArray_get() {
     const funcNameInMessage = "test_valueArray_get";
 
@@ -505,9 +504,36 @@ class TestCase {
         }
       }
     }
-
   }
 
+  /** */
+  test_set_implicit_input() {
+    const funcNameInMessage = "test_set_implicit_input";
+
+    const feedbackShape = this.feedbackShape;
+    const input_channelCount = feedbackShape.input_channelCount;
+
+    // const area_from_pixelCount_original
+    //   = feedbackShape.area.from_pixelCount_original;
+
+    const tryTestCount = 10;
+
+    for ( let testCount = 0; testCount < tryTestCount; ++testCount ) {
+
+      for ( let alignmentIndex = 0;
+        alignmentIndex < feedbackShape.alignmentCount_per_neuralNet;
+        ++alignmentIndex ) {
+
+      }
+
+  
+//!!! ...unfinished... (2023/04/28)
+// Test set_implicit_input_by_previous_output()
+
+    }  
+
+  }
+  
   assert_Area_LE( propertyName, value ) {
     this.assert_LE( "test", this.feedbackShape, "area", propertyName, value );
   }
