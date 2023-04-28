@@ -467,7 +467,6 @@ class TestCase {
         //   from_output_pixelIndexBegin < area_from_pixelCount_original;
         //   ++from_output_pixelIndexBegin )
         {
-
           const pixelCountMax
             = area_from_pixelCount_original - from_output_pixelIndexBegin;
 
@@ -479,7 +478,6 @@ class TestCase {
           //   from_output_pixelCount < pixelCountMax;
           //   ++from_output_pixelCount )
           {
-
             feedbackShape.valueArray_get_from_output_valueArray_1st_channel(
               this.to_valueArray, from_output_valueArray,
               alignmentIndex, from_output_pixelIndexBegin, from_output_pixelCount
@@ -652,13 +650,23 @@ class TestCase {
 
     const input_width_valueCount = feedbackShape.input_width_valueCount;
     const implicit_input_width = feedbackShape.implicit_input_width;
-    const explicit_input_width = feedbackShape.explicit_input_width;
+    //const explicit_input_width = feedbackShape.explicit_input_width;
 
-    const explcit_input_value_base_positive
-      = this.explcit_input_value_base_positive;
+    const area_height_pixelCount_expanded
+      = feedbackShape.area.height_pixelCount_expanded;
+    const area_width_pixelCount_expanded
+      = feedbackShape.area.width_pixelCount_expanded;
+
+    const area_height_multiplier = feedbackShape.area.height_multiplier;
+    const area_width_multiplier = feedbackShape.area.width_multiplier;
+      
+    
 
 //!!! ...unfinished... (2023/04/28) check implicit input
 
+    const neuralNetIndex = 0;
+    const from_output_valueArray
+      = this.from_output_valueArrayArray[ neuralNetIndex ];
 
 //!!! ...unfinished... (2023/04/28)
 // const from_value_base_positive

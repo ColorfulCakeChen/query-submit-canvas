@@ -116,7 +116,7 @@ class NeuralNet_FeedbackToInput_Area extends NeuralNet_FeedbackToInput_from {
 
   to_pixelCount_original;
   to_pixelCount_expanded;
- 
+
   height_pixelCount_original;
   height_pixelCount_expanded;
   height_with_gap_pixelCount_expanded;
