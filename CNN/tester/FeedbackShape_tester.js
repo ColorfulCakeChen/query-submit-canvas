@@ -442,8 +442,8 @@ class TestCase {
     const neuralNetIndex = 0;
     const from_output_valueArray
       = this.from_output_valueArrayArray[ neuralNetIndex ];
-    // const from_value_base_positive
-    //   = this.from_value_offset_per_neuralNet * neuralNetIndex;
+    const from_value_base_positive
+      = this.from_value_offset_per_neuralNet * neuralNetIndex;
 
     const tryTestCount = 10;
 
@@ -554,16 +554,13 @@ class TestCase {
 
 
 //!!! ...unfinished... (2023/04/28)
-        feedbackShape.set_implicit_input_by_previous_output(
-          this.nextInputArray, this.from_output_valueArray??? );
+    feedbackShape.set_implicit_input_by_previous_output(
+      this.nextInputArray, this.from_output_valueArrayArray );
 
 //!!! ...unfinished... (2023/04/28) check explicit input
 
 //!!! ...unfinished... (2023/04/28) check implicit input
 
-      }
-
-    }  
 
 
 //!!! ...unfinished... (2023/04/28)
