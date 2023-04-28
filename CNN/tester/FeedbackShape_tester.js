@@ -723,8 +723,10 @@ class TestCase {
                   * area_width_valueCount_expanded;
 
             for ( let x = 0; x < area_width_pixelCount_original; ++x ) {
+
+              const from_valueIndex_base_x = x * input_channelCount;
               const from_valueIndex = from_valueIndex_base
-                + from_valueIndex_base_y + ( x * input_channelCount );
+                + from_valueIndex_base_y + from_valueIndex_base_x;
 
               for ( let x_multiplier = 0;
                 x_multiplier < area_width_multiplier; ++x_multiplier ) {
