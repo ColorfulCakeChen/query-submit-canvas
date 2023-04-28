@@ -685,8 +685,6 @@ class TestCase {
     const neuralNetCount = feedbackShape.neuralNetCount;
     const alignmentCount_per_neuralNet = feedbackShape.alignmentCount_per_neuralNet;
 
-//!!! ...unfinished... (2023/04/28) check implicit input
-
     for ( let neuralNetIndex = 0;
       neuralNetIndex < neuralNetCount; ++neuralNetIndex ) {
 
@@ -725,8 +723,12 @@ class TestCase {
             for ( let x = 0; x < area_width_pixelCount_original; ++x ) {
 
               const from_valueIndex_base_x = x * input_channelCount;
-              const from_valueIndex = from_valueIndex_base
-                + from_valueIndex_base_y + from_valueIndex_base_x;
+
+              const from_valueIndex_base_yx
+                = from_valueIndex_base_y + from_valueIndex_base_x;
+
+              const from_valueIndex
+                = from_valueIndex_base + from_valueIndex_base_yx;
 
               for ( let x_multiplier = 0;
                 x_multiplier < area_width_multiplier; ++x_multiplier ) {
@@ -738,12 +740,14 @@ class TestCase {
                 const to_valueIndex = to_valueIndex_base
                   + to_valueIndex_base_y + to_valueIndex_base_x;
 
-                if ( from_valueIndex > area_from_valueCount_original ) {
+                if ( from_valueIndex_base_yx > area_from_valueCount_original ) {
                   if ( to_inputArray[ to_valueIndex ] != 0 )
                     throw Error( `FeedbackShape_tester.TestCase.${funcNameInMessage}(): `
                       + `to_inputArray[ ${to_valueIndex} ]=`
                       + `${to_inputArray[ to_valueIndex ]} `
                       + `should be ( 0 ). `
+                      + `y=${y}, y_multiplier=${y_multiplier}, `
+                      + `x=${x}, y_multiplier=${x_multiplier}, `
                       + `{ ${this} }.`
                     );
 
@@ -756,6 +760,8 @@ class TestCase {
                       + `should be the same as `
                       + `from_output_valueArray[ ${from_valueIndex} ]=`
                       + `${from_output_valueArray[ from_valueIndex ]}. `
+                      + `y=${y}, y_multiplier=${y_multiplier}, `
+                      + `x=${x}, y_multiplier=${x_multiplier}, `
                       + `{ ${this} }.`
                     );
                 }
