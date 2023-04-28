@@ -546,8 +546,7 @@ class TestCase {
 
     this.nextInputArray.length = feedbackShape.input_valueCount;
     this.nextInputArray.fill( 0 );
-
-//!!! ...unfinished... (2023/04/28) fill explicit input
+    this.nextInputArray_explicit_fill();
 
 //!!! ...unfinished... (2023/04/28) fill implicit input
 
@@ -562,7 +561,7 @@ class TestCase {
     feedbackShape.set_implicit_input_by_previous_output(
       this.nextInputArray, this.from_output_valueArrayArray );
 
-//!!! ...unfinished... (2023/04/28) check explicit input
+    this.nextInputArray_explicit_check();
 
 //!!! ...unfinished... (2023/04/28) check implicit input
 
