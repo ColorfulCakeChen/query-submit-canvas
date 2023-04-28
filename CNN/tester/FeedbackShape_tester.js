@@ -708,7 +708,6 @@ class TestCase {
         const area_position_left = area_position_leftArray[ alignmentIndex ];
         const area_position_top = area_position_topArray[ alignmentIndex ];
 
-//!!!
         const to_valueIndex_base
           = ( ( area_position_top * input_width ) + area_position_left )
               * input_channelCount;
@@ -734,7 +733,8 @@ class TestCase {
                   = ( ( x * area_width_multiplier ) + x_multiplier )
                       * input_channelCount;
 
-                const to_valueIndex = to_valueIndex_base_y + to_valueIndex_base_x;
+                const to_valueIndex = to_valueIndex_base
+                  + to_valueIndex_base_y + to_valueIndex_base_x;
     
                 if ( from_valueIndex > area_from_valueCount_original ) {
                   if ( to_inputArray[ to_valueIndex ] != 0 )
