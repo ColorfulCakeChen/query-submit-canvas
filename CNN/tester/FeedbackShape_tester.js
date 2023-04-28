@@ -652,14 +652,18 @@ class TestCase {
     const implicit_input_width = feedbackShape.implicit_input_width;
     //const explicit_input_width = feedbackShape.explicit_input_width;
 
+    const area_from_valueCount_original
+      = feedbackShape.area.from_valueCount_original;
     const area_height_pixelCount_original
       = feedbackShape.area.height_pixelCount_original;
     const area_width_pixelCount_original
       = feedbackShape.area.width_pixelCount_original;
+    const area_width_valueCount_original
+      = area_width_pixelCount_original * input_channelCount;
 
     const area_height_multiplier = feedbackShape.area.height_multiplier;
     const area_width_multiplier = feedbackShape.area.width_multiplier;
-      
+
     const neuralNetCount = feedbackShape.neuralNetCount;
     const alignmentCount_per_neuralNet = feedbackShape.alignmentCount_per_neuralNet;
 
@@ -680,18 +684,25 @@ class TestCase {
       for ( let alignmentIndex = 0;
         alignmentIndex < alignmentCount_per_neuralNet; ++alignmentIndex ) {
 
+        const from_valueIndex_base
+          = ( area_from_valueCount_original * alignmentIndex );
+
         const area_position_left = area_position_leftArray[ alignmentIndex ];
         const area_position_top = area_position_topArray[ alignmentIndex ];
   
-        for ( let to_y = 0; to_y < area_height_pixelCount_original; ++to_y ) {
+        for ( let y = 0; y < area_height_pixelCount_original; ++y ) {
+          const from_valueIndex_base_y = ( y * area_width_valueCount_original );
 
           for ( let y_multiplier = 0;
             y_multiplier < area_height_multiplier; ++y_multiplier ) {
           
-            for ( let to_x = 0; to_x < area_width_pixelCount_original; ++to_x ) {
+            for ( let x = 0; x < area_width_pixelCount_original; ++x ) {
 
               for ( let x_multiplier = 0;
                 x_multiplier < area_width_multiplier; ++x_multiplier ) {
+
+                let from_valueIndex = from_valueIndex_base
+                  + from_valueIndex_base_y + ( x * input_channelCount );
 
                 area_position_top
 
