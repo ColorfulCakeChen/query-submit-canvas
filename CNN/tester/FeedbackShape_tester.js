@@ -410,10 +410,19 @@ class TestCase {
     this.to_valueArray.length = ;
     this.to_valueArray.fill( -1 );
 
-//!!! ...unfinished... (2023/04/28)
-    this.valueArray_get_from_output_valueArray_1st_channel(
-      this.to_valueArray,
-      this.from_output_valueArray
+    for ( let alignmentIndex = 0;
+      alignmentIndex < this.feedbackShape.alignmentCount_per_neuralNet;
+      ++alignmentIndex ) {
+
+      from_output_pixelIndexBegin, from_output_pixelCount
+
+  //!!! ...unfinished... (2023/04/28)
+      this.valueArray_get_from_output_valueArray_1st_channel(
+        this.to_valueArray, this.from_output_valueArray,
+        alignmentIndex, from_output_pixelIndexBegin, from_output_pixelCount
+      );
+
+    }
 
   }
 
