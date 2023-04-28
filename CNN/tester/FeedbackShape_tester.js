@@ -660,13 +660,24 @@ class TestCase {
     const area_height_multiplier = feedbackShape.area.height_multiplier;
     const area_width_multiplier = feedbackShape.area.width_multiplier;
       
-    
+    const neuralNetCount = feedbackShape.neuralNetCount;
+    const alignmentCount_per_neuralNet = feedbackShape.alignmentCount_per_neuralNet;
 
 //!!! ...unfinished... (2023/04/28) check implicit input
 
-    const neuralNetIndex = 0;
-    const from_output_valueArray
-      = this.from_output_valueArrayArray[ neuralNetIndex ];
+    for ( let neuralNetIndex = 0;
+      neuralNetIndex < neuralNetCount; ++neuralNetIndex ) {
+
+      const from_output_valueArray
+        = this.from_output_valueArrayArray[ neuralNetIndex ];
+
+      for ( let alignmentIndex = 0;
+        alignment < alignmentCount_per_neuralNet; ++alignment ) {
+
+//!!! ...unfinished... (2023/04/28)
+  
+      }
+    }
 
 //!!! ...unfinished... (2023/04/28)
 // const from_value_base_positive
