@@ -358,6 +358,9 @@ class TestCase {
 
     // area_position
     {
+      assert_area_position_leftArrayArray( 0, 0, 0 );
+      assert_area_position_topArrayArray( 0, 0, 0 );
+
       if ( height_areaCount == 1 ) {
 
 //!!! ...unfinished... (2023/04/27)
@@ -403,6 +406,16 @@ class TestCase {
 
   assert_allNeuralNets( propertyName, value ) {
     this.assert( "test", this.feedbackShape, "allNeuralNets", propertyName, value );
+  }
+
+  assert_area_position_leftArrayArray( arrayIndex0, arrayIndex1, value ) {
+    this.assert( "test", this.feedbackShape.area_position_leftArrayArray,
+      arrayIndex0, arrayIndex1, value );
+  }
+
+  assert_area_position_topArrayArray( arrayIndex0, arrayIndex1, value ) {
+    this.assert( "test", this.feedbackShape.area_position_topArrayArray,
+      arrayIndex0, arrayIndex1, value );
   }
 
   assert_FeedbackShape_LE( propertyName, value ) {
