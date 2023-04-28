@@ -409,9 +409,6 @@ class TestCase {
   test_valueArray_get() {
     const funcNameInMessage = "test_valueArray_get";
 
-    this.to_valueArray.length = ;
-    this.to_valueArray.fill( -1 );
-
     for ( let alignmentIndex = 0;
       alignmentIndex < this.feedbackShape.alignmentCount_per_neuralNet;
       ++alignmentIndex ) {
@@ -443,8 +440,17 @@ class TestCase {
 
           if ( alignmentIndex == 0 ) {
             // should be all positive continuous integers.
-
-      //!!! ...unfinished... (2023/04/28)
+            let expectedValue = from_output_pixelIndexBegin;
+            for ( let i = 0; i < this.to_valueArray.length; ++i ) {
+              ++expectedValue;
+              if ( this.to_valueArray[ i ] != expectedValue )
+                throw Error( `FeedbackShape_tester.TestCase.${funcNameInMessage}(): `
+                  + `to_valueArray.length ( ${this.to_valueArray.length} ) `
+                  + `should be the same as `
+                  + `from_output_pixelCount ( ${from_output_pixelCount} ). `
+                  + `{ ${this} }.`
+                );
+            }
 
           } else if ( alignmentIndex == 1 ) {
             // should be all negative continuous integers.
