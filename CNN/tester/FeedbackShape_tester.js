@@ -43,13 +43,15 @@ class TestCase {
       const area_from_valueCount_original
         = feedbackShape.area.from_valueCount_original;
 
+      // all positive integers (for alignment 0)
       for ( let i = 0; i < area_from_valueCount_original; ++i ) {
-        this.from_output_valueArray[ i ] = i + 1; // all positive integers
+        this.from_output_valueArray[ i ] = i + 1;
       }
 
+      // all negative integers (for alignment 1)
       const twiceLength = 2 * area_from_valueCount_original;
       for ( let i = area_from_valueCount_original;
-        i < twiceLength; ++i ) { // all negative integers
+        i < twiceLength; ++i ) {
         this.from_output_valueArray[ i ]
           = ( area_from_valueCount_original - i ) - 1;
       }
