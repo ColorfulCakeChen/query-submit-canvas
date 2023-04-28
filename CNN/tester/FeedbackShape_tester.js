@@ -50,8 +50,7 @@ class TestCase {
 
       // all negative integers (for alignment 1)
       const twiceLength = 2 * area_from_valueCount_original;
-      for ( let i = area_from_valueCount_original;
-        i < twiceLength; ++i ) {
+      for ( let i = area_from_valueCount_original; i < twiceLength; ++i ) {
         this.from_output_valueArray[ i ]
           = ( area_from_valueCount_original - i ) - 1;
       }
