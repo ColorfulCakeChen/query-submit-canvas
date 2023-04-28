@@ -553,30 +553,12 @@ class TestCase {
 
     this.nextInputArray_explicit_fill();
 
-//!!! ...unfinished... (2023/04/28) fill implicit input
-
-    // const area_from_pixelCount_original
-    //   = feedbackShape.area.from_pixelCount_original;
-
-
-//!!! ...unfinished... (2023/04/28)
-
-
-//!!! ...unfinished... (2023/04/28)
+    // fill implicit input.
     feedbackShape.set_implicit_input_by_previous_output(
       this.nextInputArray, this.from_output_valueArrayArray );
 
     this.nextInputArray_explicit_check();
-
-//!!! ...unfinished... (2023/04/28) check implicit input
-
-
-
-//!!! ...unfinished... (2023/04/28)
-// const from_value_base_positive
-//   = this.from_value_offset_per_neuralNet * neuralNetIndex;
-
-
+    this.nextInputArray_implicit_check();
   }
 
   /** */
@@ -657,6 +639,35 @@ class TestCase {
 
       explicit_to_valueIndex_y_begin += input_width_valueCount;
     }
+  }
+
+  /** */
+  nextInputArray_implicit_check() {
+    const funcNameInMessage = "nextInputArray_implicit_check";
+
+    const feedbackShape = this.feedbackShape;
+    const input_height = feedbackShape.input_height;
+    const input_width = feedbackShape.input_width;
+    const input_channelCount = feedbackShape.input_channelCount;
+
+    const input_width_valueCount = feedbackShape.input_width_valueCount;
+    const implicit_input_width = feedbackShape.implicit_input_width;
+    const explicit_input_width = feedbackShape.explicit_input_width;
+
+    const explcit_input_value_base_positive
+      = this.explcit_input_value_base_positive;
+
+//!!! ...unfinished... (2023/04/28) check implicit input
+
+
+//!!! ...unfinished... (2023/04/28)
+// const from_value_base_positive
+//   = this.from_value_offset_per_neuralNet * neuralNetIndex;
+
+    // const area_from_pixelCount_original
+    //   = feedbackShape.area.from_pixelCount_original;
+
+
   }
 
   assert_Area_LE( propertyName, value ) {
