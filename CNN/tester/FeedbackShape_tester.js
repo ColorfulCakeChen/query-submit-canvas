@@ -409,17 +409,21 @@ class TestCase {
   test_valueArray_get() {
     const funcNameInMessage = "test_valueArray_get";
 
+    const input_channelCount = this.feedbackShape.input_channelCount;
+
+    const area_from_pixelCount_original
+      = this.feedbackShape.area.from_pixelCount_original;
+
     for ( let alignmentIndex = 0;
       alignmentIndex < this.feedbackShape.alignmentCount_per_neuralNet;
       ++alignmentIndex ) {
 
       for ( let from_output_pixelIndexBegin = 0;
-        from_output_pixelIndexBegin < this.feedbackShape.area.from_valueCount_original;
+        from_output_pixelIndexBegin < area_from_pixelCount_original;
         ++from_output_pixelIndexBegin ) {
 
         const pixelCountMax
-          = this.feedbackShape.area.from_valueCount_original
-              - from_output_pixelIndexBegin;
+          = area_from_pixelCount_original - from_output_pixelIndexBegin;
 
         for ( let from_output_pixelCount = 0;
           from_output_pixelCount < pixelCountMax;
@@ -440,7 +444,8 @@ class TestCase {
 
           if ( alignmentIndex == 0 ) {
             // should be all positive continuous integers.
-            let expectedValue = from_output_pixelIndexBegin;
+            let expectedValue = from_output_pixelIndexBegin + 1;
+
             for ( let i = 0; i < this.to_valueArray.length; ++i ) {
               ++expectedValue;
               if ( this.to_valueArray[ i ] != expectedValue )
@@ -453,7 +458,7 @@ class TestCase {
 
           } else if ( alignmentIndex == 1 ) {
             // should be all negative continuous integers.
-            let expectedValue = - from_output_pixelIndexBegin;
+            let expectedValue = - from_output_pixelIndexBegin - 1;
             for ( let i = 0; i < this.to_valueArray.length; ++i ) {
               --expectedValue;
               if ( this.to_valueArray[ i ] != expectedValue )
