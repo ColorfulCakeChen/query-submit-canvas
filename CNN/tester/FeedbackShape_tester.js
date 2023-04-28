@@ -428,11 +428,18 @@ class TestCase {
           from_output_pixelCount < pixelCountMax;
           ++from_output_pixelCount ) {
 
-//!!! ...unfinished... (2023/04/28)
           this.valueArray_get_from_output_valueArray_1st_channel(
             this.to_valueArray, this.from_output_valueArray,
             alignmentIndex, from_output_pixelIndexBegin, from_output_pixelCount
           );
+
+          if ( this.to_valueArray.length != from_output_pixelCount )
+            throw Error( `FeedbackShape_tester.TestCase.${funcNameInMessage}(): `
+              + `to_valueArray.length ( ${this.to_valueArray.length} ) `
+              + `should be the same as `
+              + `from_output_pixelCount ( ${from_output_pixelCount} ). `
+              + `{ ${this} }.`
+            );
 
           if ( alignmentIndex == 0 ) {
             // should be all positive continuous integers.
