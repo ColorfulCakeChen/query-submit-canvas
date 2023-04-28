@@ -695,7 +695,11 @@ class TestCase {
 
           for ( let y_multiplier = 0;
             y_multiplier < area_height_multiplier; ++y_multiplier ) {
-          
+
+            const to_valueIndex_base_y
+              = ( ( y * area_height_multiplier ) + y_multiplier )
+                  * area_width_valueCount_original;
+
             for ( let x = 0; x < area_width_pixelCount_original; ++x ) {
               const from_valueIndex = from_valueIndex_base
                 + from_valueIndex_base_y + ( x * input_channelCount );
@@ -703,6 +707,10 @@ class TestCase {
               for ( let x_multiplier = 0;
                 x_multiplier < area_width_multiplier; ++x_multiplier ) {
 
+//!!!
+                const to_valueIndex = to_valueIndex_base_y
+                  + ( x * ( x_multiplier + 1 ) * input_channelCount );
+    
                 if ( from_valueIndex > area_from_valueCount_original ) {
 
 //!!! ...unfinished... (2023/04/28) target should be value 0.
@@ -711,7 +719,7 @@ class TestCase {
 
 //!!! ...unfinished... (2023/04/28)
                   from_output_valueArray[ from_valueIndex ]
-                  
+
                 }
 
                 area_position_top
