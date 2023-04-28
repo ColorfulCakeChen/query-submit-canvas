@@ -226,6 +226,7 @@ class NeuralNet_FeedbackToInput_Area extends NeuralNet_FeedbackToInput_from {
  * @member {number[][]} area_position_leftArrayArray
  *   The array of array of left position in input image for every
  * feedback_to_input area.
+ * ( area_position_leftArrayArray[ neuralNetIndex ][ alignmentIndex ] )
  *
  *   - area_position_leftArrayArray[ 0 ][ 0 ]
  *       is the left position for the feedback area of neural network 0 when
@@ -246,6 +247,7 @@ class NeuralNet_FeedbackToInput_Area extends NeuralNet_FeedbackToInput_from {
  * @member {number[][]} area_position_topArrayArray
  *   The array of array of top position in input image for every
  * feedback_to_input area.
+ * ( area_position_topArrayArray[ neuralNetIndex ][ alignmentIndex ] )
  *
  *   - area_position_topArrayArray[ 0 ][ 0 ]
  *       is the top position for the feedback area of neural network 0 when

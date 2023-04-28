@@ -671,11 +671,22 @@ class TestCase {
       const from_output_valueArray
         = this.from_output_valueArrayArray[ neuralNetIndex ];
 
-      for ( let alignmentIndex = 0;
-        alignment < alignmentCount_per_neuralNet; ++alignment ) {
+      const area_position_leftArray
+        = feedbackShape.area_position_leftArrayArray[ neuralNetIndex ];
 
-//!!! ...unfinished... (2023/04/28)
+      const area_position_topArray
+        = feedbackShape.area_position_topArrayArray[ neuralNetIndex ];
+
+      for ( let alignmentIndex = 0;
+        alignmentIndex < alignmentCount_per_neuralNet; ++alignmentIndex ) {
+
+        const area_position_left = area_position_leftArray[ alignmentIndex ];
+        const area_position_top = area_position_topArray[ alignmentIndex ];
   
+
+          area_height_pixelCount_expanded
+//!!! ...unfinished... (2023/04/28)
+
       }
     }
 
