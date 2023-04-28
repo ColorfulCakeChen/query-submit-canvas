@@ -523,6 +523,8 @@ class TestCase {
 
     for ( let testCount = 0; testCount < tryTestCount; ++testCount ) {
 
+//!!! ...unfinished... (2023/04/28)
+//???
       for ( let alignmentIndex = 0;
         alignmentIndex < feedbackShape.alignmentCount_per_neuralNet;
         ++alignmentIndex ) {
