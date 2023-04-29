@@ -402,20 +402,6 @@ class NeuralNet_FeedbackShape extends NeuralNet_FeedbackToInput {
               //       different y_multiplier of the same y.
               let channelCount_to_copy; // channels to copy from feedback.
 
-//!!! (2023/04/29) Drop variable channelCount_to_zero to improve performance.
-//               let channelCount_to_zero; // channels to fill with zero.
-//               {
-//                 channelCount_to_zero
-//                   = input_channelCount - from_valueCount_remained;
-//
-//                 if ( channelCount_to_zero >= 0 ) { // not enough feedback values.
-//                   channelCount_to_copy = from_valueCount_remained;
-//                 } else {
-//                   channelCount_to_copy = input_channelCount;
-//                   channelCount_to_zero = 0;
-//                 }
-//               }
-
               if ( input_channelCount > from_valueCount_remained ) {
                 // not enough feedback values.
                 channelCount_to_copy = from_valueCount_remained;
@@ -448,13 +434,6 @@ class NeuralNet_FeedbackShape extends NeuralNet_FeedbackToInput {
                 // Fill zero for
                 //   - channels exceeding area.from_valueCount_expanded, and
                 //   - pixels exceeding area.from_pixelCount_expanded.
-
-//!!! (2023/04/29) Drop variable channelCount_to_zero to improve performance.
-//                 for ( let c = 0; c < channelCount_to_zero; ++c ) {
-//                   input_TypedArray[ to_valueIndex ] = 0;
-//                   ++to_valueIndex;
-//                 } // c
-
                 for ( ; c < input_channelCount; ++c ) {
                   input_TypedArray[ to_valueIndex ] = 0;
                   ++to_valueIndex;
