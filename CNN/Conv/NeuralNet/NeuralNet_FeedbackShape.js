@@ -444,12 +444,6 @@ class NeuralNet_FeedbackShape extends NeuralNet_FeedbackToInput {
                   ++to_valueIndex;
                 } // c
 
-                if ( from_valueCount_remained < 0 )
-                  throw Error( `NeuralNet_FeedbackShape.${funcNameInMessage}(): `
-                    + `from_valueCount_remained ( ${from_valueCount_remained} ) `
-                    + `should be non-negative.`
-                  );
-
                 // 3.7.2
                 // Fill zero for
                 //   - channels exceeding area.from_valueCount_expanded, and
@@ -470,19 +464,30 @@ class NeuralNet_FeedbackShape extends NeuralNet_FeedbackToInput {
 
               --from_pixelCount_remained;
 
-              if ( from_pixelCount_remained < 0 )
-                throw Error( `NeuralNet_FeedbackShape.${funcNameInMessage}(): `
-                  + `from_pixelCount_remained ( ${from_pixelCount_remained} ) `
-                  + `should be non-negative.`
-                );
-
             } // x
 
             to_valueIndex_y_begin += input_width_valueCount;
           } // y_multiplier
         } // y
-      }
-    }
+
+        // Note: Checking here (instead of in the channel c loop) for avoiding
+        //       performance reducing too much.
+        {
+          if ( from_valueCount_remained < 0 )
+          throw Error( `NeuralNet_FeedbackShape.${funcNameInMessage}(): `
+            + `from_valueCount_remained ( ${from_valueCount_remained} ) `
+            + `should be non-negative.`
+          );
+
+          if ( from_pixelCount_remained < 0 )
+          throw Error( `NeuralNet_FeedbackShape.${funcNameInMessage}(): `
+            + `from_pixelCount_remained ( ${from_pixelCount_remained} ) `
+            + `should be non-negative.`
+          );
+        }
+
+      } // alignmentIndex
+    } // neuralNetIndex
   }
 
   /**
