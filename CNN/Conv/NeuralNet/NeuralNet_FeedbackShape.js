@@ -363,10 +363,18 @@ class NeuralNet_FeedbackShape extends NeuralNet_FeedbackToInput {
           = ( ( area_position_top * this.input_width ) + area_position_left )
               * this.input_channelCount;
 
-        let from_valueCount_remained_y_begin = area.from_valueCount_original;
-        let from_valueCount_remained = area.from_valueCount_original;
-        let from_pixelCount_remained_y_begin = area.from_pixelCount_original;
-        let from_pixelCount_remained = area.from_pixelCount_original;
+//!!! (2023/04/29) remained count should use _expanded.
+//         let from_valueCount_remained_y_begin = area.from_valueCount_original;
+//         let from_valueCount_remained = area.from_valueCount_original;
+//         let from_pixelCount_remained_y_begin = area.from_pixelCount_original;
+//         let from_pixelCount_remained = area.from_pixelCount_original;
+
+//!!! (2023/04/29 Remarked) remained count should use _expanded.
+//        let from_valueCount_remained_y_begin = area.from_valueCount_expanded;
+        let from_valueCount_remained = area.from_valueCount_expanded;
+//!!! (2023/04/29 Remarked) Not so easily to calc from_pixelCount_remained.
+//         let from_pixelCount_remained_y_begin = area.from_pixelCount_expanded;
+//         let from_pixelCount_remained = area.from_pixelCount_expanded;
 
         // 3.3
         for ( let y = 0; y < area_height_pixelCount_original; ++y ) {
@@ -376,17 +384,20 @@ class NeuralNet_FeedbackShape extends NeuralNet_FeedbackToInput {
             y_multiplier < area_height_multiplier; ++y_multiplier ) {
 
             from_valueIndex = from_valueIndex_y_begin;
-            from_valueCount_remained = from_valueCount_remained_y_begin;
-            from_pixelCount_remained = from_pixelCount_remained_y_begin;
+
+//!!! (2023/04/29 Remarked) remained count should use _expanded.
+//             from_valueCount_remained = from_valueCount_remained_y_begin;
+//             from_pixelCount_remained = from_pixelCount_remained_y_begin;
 
             to_valueIndex = to_valueIndex_y_begin;
 
             // 3.5
             for ( let x = 0; x < area_width_pixelCount_original; ++x ) {
 
-//!!! ...unfinished... (2023/04/28) correct for area_1 ?
               let from_valueIndex_x_begin = from_valueIndex;
-              let from_valueCount_remained_x_begin = from_valueCount_remained;
+
+//!!! (2023/04/29 Remarked) remained count should use _expanded.
+//              let from_valueCount_remained_x_begin = from_valueCount_remained;
 
               // Handle the last pixel which comes from feedback.
               //
@@ -407,7 +418,9 @@ class NeuralNet_FeedbackShape extends NeuralNet_FeedbackToInput {
                 x_multiplier < area_width_multiplier; ++x_multiplier ) {
 
                 from_valueIndex = from_valueIndex_x_begin;
-                from_valueCount_remained = from_valueCount_remained_x_begin;
+
+//!!! (2023/04/29 Remarked) remained count should use _expanded.
+//                from_valueCount_remained = from_valueCount_remained_x_begin;
 
                 // 3.7
 
@@ -434,7 +447,9 @@ class NeuralNet_FeedbackShape extends NeuralNet_FeedbackToInput {
 
               } // x_multiplier
 
-              --from_pixelCount_remained;
+//!!! (2023/04/29 Remarked) Not so easily to calc from_pixelCount_remained.
+// Otherwise, will < 0
+//              --from_pixelCount_remained;
 
             } // x
 
@@ -451,11 +466,12 @@ class NeuralNet_FeedbackShape extends NeuralNet_FeedbackToInput {
             + `should be non-negative.`
           );
 
-          if ( from_pixelCount_remained < 0 )
-          throw Error( `NeuralNet_FeedbackShape.${funcNameInMessage}(): `
-            + `from_pixelCount_remained ( ${from_pixelCount_remained} ) `
-            + `should be non-negative.`
-          );
+//!!! (2023/04/29 Remarked) Not so easily to calc from_pixelCount_remained.
+//           if ( from_pixelCount_remained < 0 )
+//           throw Error( `NeuralNet_FeedbackShape.${funcNameInMessage}(): `
+//             + `from_pixelCount_remained ( ${from_pixelCount_remained} ) `
+//             + `should be non-negative.`
+//           );
         }
 
       } // alignmentIndex
