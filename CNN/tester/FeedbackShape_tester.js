@@ -749,56 +749,46 @@ class TestCase {
                   = ( ( x * area_width_multiplier ) + x_multiplier );
 
 
+                for ( let c = 0; c < input_channelCount; ++c ) {
+
 //!!! ...unfinished... (2023/04/29) channel ?
+                  const to_valueIndex = ( ( to_valueIndex_base + to_valueIndex_base_y
+                    + to_valueIndex_base_x ) * input_channelCount )
+                    + c;
 
-                const to_valueIndex = ( ( to_valueIndex_base + to_valueIndex_base_y
-                  + to_valueIndex_base_x ) * input_channelCount )
-                  + c??;
+                  if ( from_valueIndex_base_yx > area_from_valueCount_original ) {
+                    if ( to_inputArray[ to_valueIndex ] != 0 )
+                      throw Error( `FeedbackShape_tester.TestCase.${funcNameInMessage}(): `
+                        + `to_inputArray[ ${to_valueIndex} ]=`
+                        + `${to_inputArray[ to_valueIndex ]} `
+                        + `should be ( 0 ). `
+                        + `y=${y}, y_multiplier=${y_multiplier}, `
+                        + `x=${x}, x_multiplier=${x_multiplier}, `
+                        + `{ ${this} }.`
+                      );
 
-                if ( from_valueIndex_base_yx > area_from_valueCount_original ) {
-                  if ( to_inputArray[ to_valueIndex ] != 0 )
-                    throw Error( `FeedbackShape_tester.TestCase.${funcNameInMessage}(): `
-                      + `to_inputArray[ ${to_valueIndex} ]=`
-                      + `${to_inputArray[ to_valueIndex ]} `
-                      + `should be ( 0 ). `
-                      + `y=${y}, y_multiplier=${y_multiplier}, `
-                      + `x=${x}, x_multiplier=${x_multiplier}, `
-                      + `{ ${this} }.`
-                    );
+                  } else {
+                    if ( to_inputArray[ to_valueIndex ]
+                          != from_output_valueArray[ from_valueIndex ] )
+                      throw Error( `FeedbackShape_tester.TestCase.${funcNameInMessage}(): `
+                        + `to_inputArray[ ${to_valueIndex} ]=`
+                        + `${to_inputArray[ to_valueIndex ]} `
+                        + `should be the same as `
+                        + `from_output_valueArray[ ${from_valueIndex} ]=`
+                        + `${from_output_valueArray[ from_valueIndex ]}. `
+                        + `y=${y}, y_multiplier=${y_multiplier}, `
+                        + `x=${x}, x_multiplier=${x_multiplier}, `
+                        + `{ ${this} }.`
+                      );
+                  }
 
-                } else {
-                  if ( to_inputArray[ to_valueIndex ]
-                         != from_output_valueArray[ from_valueIndex ] )
-                    throw Error( `FeedbackShape_tester.TestCase.${funcNameInMessage}(): `
-                      + `to_inputArray[ ${to_valueIndex} ]=`
-                      + `${to_inputArray[ to_valueIndex ]} `
-                      + `should be the same as `
-                      + `from_output_valueArray[ ${from_valueIndex} ]=`
-                      + `${from_output_valueArray[ from_valueIndex ]}. `
-                      + `y=${y}, y_multiplier=${y_multiplier}, `
-                      + `x=${x}, x_multiplier=${x_multiplier}, `
-                      + `{ ${this} }.`
-                    );
-                }
-
-//!!! ...unfinished... (2023/04/29)
-
-              }
-            }
-          }
-        }
-
-      }
-    }
-
-//!!! ...unfinished... (2023/04/28)
-// const from_value_base_positive
-//   = this.from_value_offset_per_neuralNet * neuralNetIndex;
-
-    // const area_from_pixelCount_original
-    //   = feedbackShape.area.from_pixelCount_original;
-
-
+                } // c
+              } // x_multiplier
+            } // x
+          } // y_multiplier
+        } // y
+      } // alignmentIndex
+    } // neuralNetIndex
   }
 
   assert_Area_LE( propertyName, value ) {
