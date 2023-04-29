@@ -472,6 +472,9 @@ class NeuralNet_FeedbackShape extends NeuralNet_FeedbackToInput {
 
             to_valueIndex_y_begin += input_width_valueCount;
           } // y_multiplier
+
+!!!???
+          from_valueIndex_y_begin += ???;
         } // y
 
         // Note: Checking here (instead of in the channel c loop) for avoiding
@@ -500,7 +503,7 @@ class NeuralNet_FeedbackShape extends NeuralNet_FeedbackToInput {
 //             );
         }
 
-        from_valueIndex_y_begin += area_from_valueCount_original;
+        from_valueIndex_y_begin = area_from_valueCount_original;
       } // alignmentIndex
     } // neuralNetIndex
   }
