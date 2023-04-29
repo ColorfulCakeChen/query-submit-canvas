@@ -363,13 +363,6 @@ class NeuralNet_FeedbackShape extends NeuralNet_FeedbackToInput {
           = ( ( area_position_top * this.input_width ) + area_position_left )
               * this.input_channelCount;
 
-//!!! (2023/04/29 Remarked) use _original instead.
-//         let from_valueCount_remained_y_begin = area.from_valueCount_expanded;
-//         let from_valueCount_remained = area.from_valueCount_expanded;
-//         let from_pixelCount_remained_y_begin = area.from_pixelCount_expanded;
-//         let from_pixelCount_remained = area.from_pixelCount_expanded;
-
-//!!! ...unfinished... (2023/04/28)
         let from_valueCount_remained_y_begin = area.from_valueCount_original;
         let from_valueCount_remained = area.from_valueCount_original;
         let from_pixelCount_remained_y_begin = area.from_pixelCount_original;
