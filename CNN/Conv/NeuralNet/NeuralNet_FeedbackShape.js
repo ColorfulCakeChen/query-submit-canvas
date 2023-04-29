@@ -352,13 +352,12 @@ class NeuralNet_FeedbackShape extends NeuralNet_FeedbackToInput {
 
       // 3.2
       let from_valueIndex_y_begin = 0;
+      let from_valueIndex_x_begin = 0;
       let from_valueIndex = 0;
 
       // Note: ( .alignmentCount_per_neuralNet == 2 )
       for ( let alignmentIndex = 0;
         alignmentIndex < alignmentCount_per_neuralNet; ++alignmentIndex ) {
-
-        let from_valueIndex_x_begin = 0;
 
         let area_position_left = area_position_leftArray[ alignmentIndex ];
         let area_position_top = area_position_topArray[ alignmentIndex ];
