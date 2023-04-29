@@ -411,16 +411,18 @@ class NeuralNet_FeedbackShape extends NeuralNet_FeedbackToInput {
               //       x_multiplier). But, it may appear many times in
               //       different y_multiplier of the same y.
               let channelCount_to_copy = 0; // channels to copy from feedback.
-
-              if ( from_valueCount_expanded_remained > 0 ) {
-                if ( input_channelCount > from_valueCount_original_remained ) {
-                  // not enough feedback values.
-                  channelCount_to_copy = from_valueCount_original_remained;
-                } else {
-                  channelCount_to_copy = input_channelCount;
+              {
+                if ( from_valueCount_expanded_remained > 0 ) {
+                  if ( input_channelCount
+                         > from_valueCount_original_remained ) {
+                    channelCount_to_copy // not enough feedback values.
+                      = from_valueCount_original_remained;
+                  } else {
+                    channelCount_to_copy = input_channelCount;
+                  }
+                } else { // no more feedback pixels.
+                  // Keep channelCount_to_copy = 0.
                 }
-              } else { // no more feedback pixels.
-                // Keep channelCount_to_copy = 0.
               }
 
               // 3.6
