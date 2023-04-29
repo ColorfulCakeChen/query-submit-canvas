@@ -420,8 +420,9 @@ class NeuralNet_FeedbackShape extends NeuralNet_FeedbackToInput {
                   } else {
                     channelCount_to_copy = input_channelCount;
                   }
-                } else { // no more feedback pixels.
-                  // Keep channelCount_to_copy = 0.
+
+                // Otherwise, no more feedback pixels.
+                // Keep channelCount_to_copy = 0.
                 }
               }
 
