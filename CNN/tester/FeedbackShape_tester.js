@@ -46,7 +46,7 @@ class TestCase {
       Math.log10( feedbackShape.perNeuralNet.from_valueCount_expanded ) );
 
     this.from_value_offset_per_neuralNet
-      = 10 ** this.this.from_value_offset_exponent_per_neuralNet;
+      = 10 ** this.from_value_offset_exponent_per_neuralNet;
 
     // Because neuralNetIndex is 0 or 1, multiplying 10 can always exceed
     // any from_value (i.e. any feedback value).
