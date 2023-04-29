@@ -376,7 +376,6 @@ class NeuralNet_FeedbackShape extends NeuralNet_FeedbackToInput {
 //         let from_pixelCount_original_remained_y_begin = area.from_pixelCount_original;
 //         let from_pixelCount_original_remained = area.from_pixelCount_original;
 
-        // Used to force channelCount_to_copy to 0.
         let from_valueCount_expanded_remained = area_from_valueCount_expanded;
 
         // 3.3
@@ -404,24 +403,6 @@ class NeuralNet_FeedbackShape extends NeuralNet_FeedbackToInput {
               // Note: It is the same for the same x (even if different
               //       x_multiplier). But, it may appear many times in
               //       different y_multiplier of the same y.
-
-//!!! (2023/04/29 Remarked) Use from_valueCount_original_remained only.
-//               let channelCount_to_copy = 0; // channels to copy from feedback.
-//               {
-//                 if ( from_valueCount_expanded_remained > 0 ) {
-//                   if ( input_channelCount
-//                          > from_valueCount_original_remained ) {
-//                     channelCount_to_copy // not enough feedback values.
-//                       = from_valueCount_original_remained;
-//                   } else {
-//                     channelCount_to_copy = input_channelCount;
-//                   }
-//
-//                 // Otherwise, no more feedback pixels.
-//                 // Keep channelCount_to_copy = 0.
-//                 }
-//               }
-
               let channelCount_to_copy; // channels to copy from feedback.
               {
                 if ( input_channelCount
