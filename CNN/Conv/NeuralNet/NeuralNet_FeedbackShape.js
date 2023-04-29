@@ -330,6 +330,9 @@ class NeuralNet_FeedbackShape extends NeuralNet_FeedbackToInput {
     const area_width_pixelCount_original = area.width_pixelCount_original;
     const area_width_multiplier = area.width_multiplier;
 
+    const area_from_valueCount_original = area.from_valueCount_original;
+    const area_from_valueCount_expanded = area.from_valueCount_expanded;
+
     // 3. Fill previous time output (i.e. feedback) to next time input.
     let to_valueIndex = 0;
 
@@ -354,7 +357,10 @@ class NeuralNet_FeedbackShape extends NeuralNet_FeedbackToInput {
       for ( let alignmentIndex = 0;
         alignmentIndex < alignmentCount_per_neuralNet; ++alignmentIndex ) {
 
-        let from_valueIndex_y_begin = from_valueIndex;
+//!!! (2023/04/29 Remarked)
+//        let from_valueIndex_y_begin = from_valueIndex;
+        let from_valueIndex_y_begin
+          = area_from_valueCount_original * alignmentIndex;
 
         let area_position_left = area_position_leftArray[ alignmentIndex ];
         let area_position_top = area_position_topArray[ alignmentIndex ];
@@ -363,14 +369,17 @@ class NeuralNet_FeedbackShape extends NeuralNet_FeedbackToInput {
           = ( ( area_position_top * this.input_width ) + area_position_left )
               * this.input_channelCount;
 
-        let from_valueCount_original_remained_y_begin = area.from_valueCount_original;
-        let from_valueCount_original_remained = area.from_valueCount_original;
+        let from_valueCount_original_remained_y_begin
+          = area_from_valueCount_original;
+
+        let from_valueCount_original_remained = area_from_valueCount_original;
+
 //!!! (2023/04/29 Remarked) Not so easily to calc from pixel count remained.
 //         let from_pixelCount_original_remained_y_begin = area.from_pixelCount_original;
 //         let from_pixelCount_original_remained = area.from_pixelCount_original;
 
         // Used to force channelCount_to_copy to 0.
-        let from_valueCount_expanded_remained = area.from_valueCount_expanded;
+        let from_valueCount_expanded_remained = area_from_valueCount_expanded;
 
         // 3.3
         for ( let y = 0; y < area_height_pixelCount_original; ++y ) {
@@ -412,6 +421,7 @@ class NeuralNet_FeedbackShape extends NeuralNet_FeedbackToInput {
                 }
               } else { // no more feedback pixels.
                 channelCount_to_copy = 0;
+                from_valueIndex = ???;
               }
 
               // 3.6
