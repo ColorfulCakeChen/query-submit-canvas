@@ -724,8 +724,6 @@ class TestCase {
             const to_valueIndex_base_y
               = ( ( y * area_height_multiplier ) + y_multiplier )
                   * input_width;
-//!!! (2023/04/29 Remarked) strides should be input_width
-//                  * ???area_width_valueCount_expanded;
 
             for ( let x = 0; x < area_width_pixelCount_original; ++x ) {
 
@@ -883,16 +881,16 @@ class TestCases {
     this.feedbackShape = new NeuralNet.FeedbackShape();
 
     //!!! (2023/04/29 Remarked) For speed up testing.
-    // this.explicit_input_height_MinMax = new MinMax( 0, 100 );
-    // this.explicit_input_width_MinMax = new MinMax( 0, 100 );
-    // this.explicit_input_channelCount_MinMax = new MinMax( 0, 10 );
-    // this.feedback_valueCount_per_alignment_MinMax = new MinMax( 0, 100 );
+    this.explicit_input_height_MinMax = new MinMax( 0, 100 );
+    this.explicit_input_width_MinMax = new MinMax( 0, 100 );
+    this.explicit_input_channelCount_MinMax = new MinMax( 0, 10 );
+    this.feedback_valueCount_per_alignment_MinMax = new MinMax( 0, 100 );
 
     //!!! (2023/04/26 Remarked)
-    this.explicit_input_height_MinMax = new MinMax( 0, 10 );
-    this.explicit_input_width_MinMax = new MinMax( 0, 10 );
-    this.explicit_input_channelCount_MinMax = new MinMax( 0, 10 );
-    this.feedback_valueCount_per_alignment_MinMax = new MinMax( 0, 10 );
+    // this.explicit_input_height_MinMax = new MinMax( 0, 10 );
+    // this.explicit_input_width_MinMax = new MinMax( 0, 10 );
+    // this.explicit_input_channelCount_MinMax = new MinMax( 0, 10 );
+    // this.feedback_valueCount_per_alignment_MinMax = new MinMax( 0, 10 );
 
     this.length = this.explicit_input_height_MinMax.length
       * this.explicit_input_width_MinMax.length
