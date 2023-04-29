@@ -365,9 +365,11 @@ class NeuralNet_FeedbackShape extends NeuralNet_FeedbackToInput {
 
         let from_valueCount_original_remained_y_begin = area.from_valueCount_original;
         let from_valueCount_original_remained = area.from_valueCount_original;
-        let from_valueCount_expanded_remained = area.from_valueCount_expanded;
         let from_pixelCount_original_remained_y_begin = area.from_pixelCount_original;
         let from_pixelCount_original_remained = area.from_pixelCount_original;
+
+        // Used to force channelCount_to_copy to 0.
+        let from_valueCount_expanded_remained = area.from_valueCount_expanded;
 
         // 3.3
         for ( let y = 0; y < area_height_pixelCount_original; ++y ) {
@@ -399,11 +401,15 @@ class NeuralNet_FeedbackShape extends NeuralNet_FeedbackToInput {
               //       different y_multiplier of the same y.
               let channelCount_to_copy; // channels to copy from feedback.
 
-              if ( input_channelCount > from_valueCount_original_remained ) {
-                // not enough feedback values.
-                channelCount_to_copy = from_valueCount_original_remained;
-              } else {
-                channelCount_to_copy = input_channelCount;
+              if ( from_valueCount_expanded_remained > 0 ) {
+                if ( input_channelCount > from_valueCount_original_remained ) {
+                  // not enough feedback values.
+                  channelCount_to_copy = from_valueCount_original_remained;
+                } else {
+                  channelCount_to_copy = input_channelCount;
+                }
+              } else { // no more feedback pixels.
+                channelCount_to_copy = 0;
               }
 
               // 3.6
