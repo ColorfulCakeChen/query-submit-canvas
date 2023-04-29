@@ -421,7 +421,6 @@ class NeuralNet_FeedbackShape extends NeuralNet_FeedbackToInput {
                 }
               } else { // no more feedback pixels.
                 channelCount_to_copy = 0;
-                from_valueIndex = ???;
               }
 
               // 3.6
