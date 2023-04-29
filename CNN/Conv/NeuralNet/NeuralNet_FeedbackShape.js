@@ -322,6 +322,7 @@ class NeuralNet_FeedbackShape extends NeuralNet_FeedbackToInput {
         + `( ${perNeuralNet.from_valueCount_original} ).`
       );
 
+    const input_width_valueCount = this.input_width_valueCount;
     const neuralNetCount = this.neuralNetCount;
     const alignmentCount_per_neuralNet = this.alignmentCount_per_neuralNet;
     const area_height_pixelCount_original = area.height_pixelCount_original;
@@ -477,7 +478,7 @@ class NeuralNet_FeedbackShape extends NeuralNet_FeedbackToInput {
 
             } // x
 
-            to_valueIndex_y_begin += this.input_width_valueCount;
+            to_valueIndex_y_begin += input_width_valueCount;
           } // y_multiplier
         } // y
       }
