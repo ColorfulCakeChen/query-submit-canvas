@@ -472,8 +472,9 @@ class NeuralNet_FeedbackShape extends NeuralNet_FeedbackToInput {
             to_valueIndex_y_begin += input_width_valueCount;
           } // y_multiplier
 
-!!!???
-          from_valueIndex_y_begin += ???area_width_valueCount_original;
+//!!!??? ...unfinished... (2023/04/29)
+//          from_valueIndex_y_begin += ???area_width_valueCount_original;
+          from_valueIndex_y_begin = from_valueIndex_x_begin;
         } // y
 
         // Note: Checking here (instead of in the channel c loop) for avoiding
