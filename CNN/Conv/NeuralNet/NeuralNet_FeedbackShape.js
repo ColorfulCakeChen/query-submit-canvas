@@ -365,6 +365,8 @@ class NeuralNet_FeedbackShape extends NeuralNet_FeedbackToInput {
 //         let from_valueIndex_y_begin
 //           = area_from_valueCount_original * alignmentIndex;
 
+        let from_valueIndex_x_begin = 0;
+
         let area_position_left = area_position_leftArray[ alignmentIndex ];
         let area_position_top = area_position_topArray[ alignmentIndex ];
 
@@ -404,7 +406,9 @@ class NeuralNet_FeedbackShape extends NeuralNet_FeedbackToInput {
             // 3.5
             for ( let x = 0; x < area_width_pixelCount_original; ++x ) {
 
-              let from_valueIndex_x_begin = from_valueIndex;
+//!!! (2023/04/29 Remarked)
+//               let from_valueIndex_x_begin = from_valueIndex;
+
               let from_valueCount_original_remained_x_begin
                 = from_valueCount_original_remained;
 
@@ -471,6 +475,8 @@ class NeuralNet_FeedbackShape extends NeuralNet_FeedbackToInput {
 
             to_valueIndex_y_begin += input_width_valueCount;
           } // y_multiplier
+
+          from_valueIndex_x_begin = from_valueIndex;
         } // y
 
         // Note: Checking here (instead of in the channel c loop) for avoiding
