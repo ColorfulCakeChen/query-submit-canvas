@@ -353,7 +353,7 @@ class NeuralNet_FeedbackShape extends NeuralNet_FeedbackToInput {
       // 3.2
       let from_valueIndex_y_begin = 0;
 //!!! (2023/04/29 Remarked)
-//      let from_valueIndex_x_begin = 0;
+      let from_valueIndex_x_begin;
       let from_valueIndex = 0;
 
       // Note: ( .alignmentCount_per_neuralNet == 2 )
@@ -388,7 +388,7 @@ class NeuralNet_FeedbackShape extends NeuralNet_FeedbackToInput {
 
 //!!! (2023/04/29 Remarked) should assign to from_valueIndex_x_begin.
 //            from_valueIndex = from_valueIndex_y_begin;
-            let from_valueIndex_x_begin = from_valueIndex_y_begin;
+            from_valueIndex_x_begin = from_valueIndex_y_begin;
 
             from_valueCount_original_remained
               = from_valueCount_original_remained_y_begin;
