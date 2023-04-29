@@ -709,11 +709,6 @@ class TestCase {
         const area_position_left = area_position_leftArray[ alignmentIndex ];
         const area_position_top = area_position_topArray[ alignmentIndex ];
 
-//!!! (2023/04/29 Remarked) should multiply input_channelCount after sum.
-//         const to_valueIndex_base
-//           = ( ( area_position_top * input_width ) + area_position_left )
-//               * input_channelCount;
-
         const to_valueIndex_base
           = ( ( area_position_top * input_width ) + area_position_left );
 
@@ -729,28 +724,11 @@ class TestCase {
 
             for ( let x = 0; x < area_width_pixelCount_original; ++x ) {
 
-//!!! (2023/04/29 Remarked) should multiply input_channelCount for y and x
-//               const from_valueIndex_base_x = x * input_channelCount;
-//
-//               const from_valueIndex_base_yx
-//                 = from_valueIndex_base_y + from_valueIndex_base_x;
-//
-//               const from_valueIndex
-//                 = from_valueIndex_base + from_valueIndex_base_yx;
-
               const from_valueIndex_base_yx = from_valueIndex_base
                 + ( from_valueIndex_base_y + x ) * input_channelCount;
 
               for ( let x_multiplier = 0;
                 x_multiplier < area_width_multiplier; ++x_multiplier ) {
-
-//!!! (2023/04/29 Remarked) should multiply input_channelCount after sum.
-//                 const to_valueIndex_base_x
-//                   = ( ( x * area_width_multiplier ) + x_multiplier )
-//                       * input_channelCount;
-//
-//                 const to_valueIndex = to_valueIndex_base
-//                   + to_valueIndex_base_y + to_valueIndex_base_x;
 
                 const to_valueIndex_base_x
                   = ( ( x * area_width_multiplier ) + x_multiplier );
