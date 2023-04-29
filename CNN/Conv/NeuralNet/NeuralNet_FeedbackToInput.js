@@ -322,8 +322,6 @@ class NeuralNet_FeedbackToInput {
       = NeuralNet_FeedbackToInput.ensure_positive_integer(
           explicit_input_channelCount );
 
-//!!! ...unfinished... (2023/04/29)
-// Perhaps, throw exception if zero or negative.
     area.from_valueCount_original = feedback_valueCount_per_alignment
       = NeuralNet_FeedbackToInput.ensure_positive_integer(
           feedback_valueCount_per_alignment );
