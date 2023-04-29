@@ -344,6 +344,8 @@ class NeuralNet_FeedbackShape extends NeuralNet_FeedbackToInput {
       let previous_output_Int32Array
         = previous_output_Int32ArrayArray[ neuralNetIndex ];
 
+      let from_valueIndex_y_begin = 0;
+
       let area_position_leftArray
         = this.area_position_leftArrayArray[ neuralNetIndex ];
 
@@ -359,8 +361,9 @@ class NeuralNet_FeedbackShape extends NeuralNet_FeedbackToInput {
 
 //!!! (2023/04/29 Remarked)
 //        let from_valueIndex_y_begin = from_valueIndex;
-        let from_valueIndex_y_begin
-          = area_from_valueCount_original * alignmentIndex;
+//!!! (2023/04/29 Remarked)
+//         let from_valueIndex_y_begin
+//           = area_from_valueCount_original * alignmentIndex;
 
         let area_position_left = area_position_leftArray[ alignmentIndex ];
         let area_position_top = area_position_topArray[ alignmentIndex ];
@@ -496,6 +499,7 @@ class NeuralNet_FeedbackShape extends NeuralNet_FeedbackToInput {
 //             );
         }
 
+        from_valueIndex_y_begin += area_from_valueCount_original;
       } // alignmentIndex
     } // neuralNetIndex
   }
