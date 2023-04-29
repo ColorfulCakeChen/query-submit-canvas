@@ -42,8 +42,11 @@ class TestCase {
       this.feedback_valueCount_per_alignment
     );
 
-    this.from_value_offset_per_neuralNet = Math.ceil(
+    this.from_value_offset_exponent_per_neuralNet = Math.ceil(
       Math.log10( feedbackShape.perNeuralNet.from_valueCount_expanded ) );
+
+    this.from_value_offset_per_neuralNet
+      = 10 ** this.this.from_value_offset_exponent_per_neuralNet;
 
     // Because neuralNetIndex is 0 or 1, multiplying 10 can always exceed
     // any from_value (i.e. any feedback value).
@@ -65,7 +68,7 @@ class TestCase {
           = feedbackShape.area.from_valueCount_original;
 
         const from_value_base_positive
-          = ( 10 ** this.from_value_offset_per_neuralNet ) * neuralNetIndex;
+          = this.from_value_offset_per_neuralNet * neuralNetIndex;
 
         // all positive integers (for alignment 0)
         for ( let i = 0; i < area_from_valueCount_original; ++i ) {
