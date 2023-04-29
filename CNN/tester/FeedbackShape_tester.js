@@ -720,7 +720,9 @@ class TestCase {
 
             const to_valueIndex_base_y
               = ( ( y * area_height_multiplier ) + y_multiplier )
-                  * area_width_valueCount_expanded;
+                  * input_width;
+//!!! (2023/04/29 Remarked) strides should be input_width
+//                  * ???area_width_valueCount_expanded;
 
             for ( let x = 0; x < area_width_pixelCount_original; ++x ) {
 
