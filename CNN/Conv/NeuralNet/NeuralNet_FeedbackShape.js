@@ -369,6 +369,7 @@ class NeuralNet_FeedbackShape extends NeuralNet_FeedbackToInput {
         let from_valueCount_original_remained_y_begin
           = area_from_valueCount_original;
 
+        let from_valueCount_original_remained_x_begin;
         let from_valueCount_original_remained = area_from_valueCount_original;
 
 //!!! (2023/04/29 Remarked) Not so easily to calc from pixel count remained.
@@ -387,8 +388,11 @@ class NeuralNet_FeedbackShape extends NeuralNet_FeedbackToInput {
 
             from_valueIndex_x_begin = from_valueIndex_y_begin;
 
-            from_valueCount_original_remained
+            from_valueCount_original_remained_x_begin
               = from_valueCount_original_remained_y_begin;
+//!!! (2023/04/29 Remarked) Assign to from_valueCount_original_remained_x_begin.
+//            from_valueCount_original_remained
+//              = from_valueCount_original_remained_y_begin;
 //!!! (2023/04/29 Remarked) Not so easily to calc from pixel count remained.
 //             from_pixelCount_original_remained
 //               = from_pixelCount_original_remained_y_begin;
@@ -398,27 +402,40 @@ class NeuralNet_FeedbackShape extends NeuralNet_FeedbackToInput {
             // 3.5
             for ( let x = 0; x < area_width_pixelCount_original; ++x ) {
 
-              let from_valueCount_original_remained_x_begin
-                = from_valueCount_original_remained;
+//!!! (2023/04/29 Remarked) Moved to outter loop.
+//               let from_valueCount_original_remained_x_begin
+//                 = from_valueCount_original_remained;
 
               // Handle the last pixel which comes from feedback.
               //
               // Note: It is the same for the same x (even if different
               //       x_multiplier). But, it may appear many times in
               //       different y_multiplier of the same y.
-              let channelCount_to_copy = 0; // channels to copy from feedback.
-              {
-                if ( from_valueCount_expanded_remained > 0 ) {
-                  if ( input_channelCount
-                         > from_valueCount_original_remained ) {
-                    channelCount_to_copy // not enough feedback values.
-                      = from_valueCount_original_remained;
-                  } else {
-                    channelCount_to_copy = input_channelCount;
-                  }
 
-                // Otherwise, no more feedback pixels.
-                // Keep channelCount_to_copy = 0.
+//!!! (2023/04/29 Remarked) Use from_valueCount_original_remained only.
+//               let channelCount_to_copy = 0; // channels to copy from feedback.
+//               {
+//                 if ( from_valueCount_expanded_remained > 0 ) {
+//                   if ( input_channelCount
+//                          > from_valueCount_original_remained ) {
+//                     channelCount_to_copy // not enough feedback values.
+//                       = from_valueCount_original_remained;
+//                   } else {
+//                     channelCount_to_copy = input_channelCount;
+//                   }
+//
+//                 // Otherwise, no more feedback pixels.
+//                 // Keep channelCount_to_copy = 0.
+//                 }
+//               }
+
+              let channelCount_to_copy; // channels to copy from feedback.
+              {
+                if ( input_channelCount > from_valueCount_original_remained ) {
+                  channelCount_to_copy // not enough feedback values.
+                    = from_valueCount_original_remained;
+                } else {
+                  channelCount_to_copy = input_channelCount;
                 }
               }
 
@@ -461,12 +478,19 @@ class NeuralNet_FeedbackShape extends NeuralNet_FeedbackToInput {
 //             --from_pixelCount_original_remained;
 
               from_valueIndex_x_begin += input_channelCount;
+
+              from_valueCount_original_remained_x_begin
+                -= channelCount_to_copy;
+
             } // x
 
             to_valueIndex_y_begin += input_width_valueCount;
           } // y_multiplier
 
           from_valueIndex_y_begin = from_valueIndex_x_begin;
+
+          from_valueCount_original_remained_y_begin
+            = from_valueCount_original_remained_x_begin;
         } // y
 
         // Note: Checking here (instead of in the channel c loop) for avoiding
