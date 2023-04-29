@@ -716,7 +716,7 @@ class TestCase {
           = ( ( area_position_top * input_width ) + area_position_left );
 
         for ( let y = 0; y < area_height_pixelCount_original; ++y ) {
-          const from_valueIndex_base_y = ( y * area_width_valueCount_original );
+          const from_valueIndex_base_y = ( y * area_width_pixelCount_original );
 
           for ( let y_multiplier = 0;
             y_multiplier < area_height_multiplier; ++y_multiplier ) {
