@@ -403,8 +403,6 @@ class NeuralNet_FeedbackShape extends NeuralNet_FeedbackToInput {
 
 //!!! (2023/04/29 Remarked)
 //               let from_valueIndex_x_begin = from_valueIndex;
-!!!???
-              let from_valueIndex_x_begin = from_valueIndex_y_begin;
 
               let from_valueCount_original_remained_x_begin
                 = from_valueCount_original_remained;
@@ -468,13 +466,14 @@ class NeuralNet_FeedbackShape extends NeuralNet_FeedbackToInput {
 //!!! (2023/04/29 Remarked) Not so easily to calc from pixel count remained.
 //             --from_pixelCount_original_remained;
 
+              from_valueIndex_x_begin += input_channelCount;
             } // x
 
             to_valueIndex_y_begin += input_width_valueCount;
           } // y_multiplier
 
 !!!???
-          from_valueIndex_y_begin += ???;
+          from_valueIndex_y_begin += ???area_width_valueCount_original;
         } // y
 
         // Note: Checking here (instead of in the channel c loop) for avoiding
