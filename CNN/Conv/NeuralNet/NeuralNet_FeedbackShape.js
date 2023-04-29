@@ -376,8 +376,6 @@ class NeuralNet_FeedbackShape extends NeuralNet_FeedbackToInput {
 //         let from_pixelCount_original_remained_y_begin = area.from_pixelCount_original;
 //         let from_pixelCount_original_remained = area.from_pixelCount_original;
 
-        let from_valueCount_expanded_remained = area_from_valueCount_expanded;
-
         // 3.3
         for ( let y = 0; y < area_height_pixelCount_original; ++y ) {
 
@@ -433,7 +431,6 @@ class NeuralNet_FeedbackShape extends NeuralNet_FeedbackToInput {
 
                   ++from_valueIndex;
                   --from_valueCount_original_remained;
-                  --from_valueCount_expanded_remained;
 
                   ++to_valueIndex;
                 } // c
@@ -475,13 +472,6 @@ class NeuralNet_FeedbackShape extends NeuralNet_FeedbackToInput {
             throw Error( `NeuralNet_FeedbackShape.${funcNameInMessage}(): `
               + `from_valueCount_original_remained ( `
               + `${from_valueCount_original_remained} ) `
-              + `should be non-negative.`
-            );
-
-          if ( from_valueCount_expanded_remained < 0 )
-            throw Error( `NeuralNet_FeedbackShape.${funcNameInMessage}(): `
-              + `from_valueCount_expanded_remained ( `
-              + `${from_valueCount_expanded_remained} ) `
               + `should be non-negative.`
             );
 
