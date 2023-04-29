@@ -352,7 +352,8 @@ class NeuralNet_FeedbackShape extends NeuralNet_FeedbackToInput {
 
       // 3.2
       let from_valueIndex_y_begin = 0;
-      let from_valueIndex_x_begin = 0;
+//!!! (2023/04/29 Remarked)
+//      let from_valueIndex_x_begin = 0;
       let from_valueIndex = 0;
 
       // Note: ( .alignmentCount_per_neuralNet == 2 )
@@ -385,7 +386,8 @@ class NeuralNet_FeedbackShape extends NeuralNet_FeedbackToInput {
           for ( let y_multiplier = 0;
             y_multiplier < area_height_multiplier; ++y_multiplier ) {
 
-            from_valueIndex = from_valueIndex_y_begin;
+//!!! (2023/04/29 Remarked) should assign to from_valueIndex_x_begin.
+//            from_valueIndex = from_valueIndex_y_begin;
 
             from_valueCount_original_remained
               = from_valueCount_original_remained_y_begin;
@@ -400,6 +402,7 @@ class NeuralNet_FeedbackShape extends NeuralNet_FeedbackToInput {
 
 //!!! (2023/04/29 Remarked)
 //               let from_valueIndex_x_begin = from_valueIndex;
+              let from_valueIndex_x_begin = from_valueIndex_y_begin;
 
               let from_valueCount_original_remained_x_begin
                 = from_valueCount_original_remained;
@@ -463,16 +466,10 @@ class NeuralNet_FeedbackShape extends NeuralNet_FeedbackToInput {
 //!!! (2023/04/29 Remarked) Not so easily to calc from pixel count remained.
 //             --from_pixelCount_original_remained;
 
-//!!! ...unfinished... (2023/04/29)
-              from_valueIndex_x_begin = from_valueIndex;
             } // x
 
             to_valueIndex_y_begin += input_width_valueCount;
           } // y_multiplier
-
-//!!! (2023/04/29 Remarked)
-//          from_valueIndex_x_begin = from_valueIndex;
-//          from_valueIndex_x_begin += ??? input_channelCount;
         } // y
 
         // Note: Checking here (instead of in the channel c loop) for avoiding
