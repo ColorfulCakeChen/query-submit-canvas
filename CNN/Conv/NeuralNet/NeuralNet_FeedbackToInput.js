@@ -403,7 +403,7 @@ class NeuralNet_FeedbackToInput {
     perNeuralNet.from_pixelCount_original
       = area.from_pixelCount_original * this.alignmentCount_per_neuralNet;
 
-      perNeuralNet.from_pixelCount_expanded
+    perNeuralNet.from_pixelCount_expanded
       = area.from_pixelCount_expanded * this.alignmentCount_per_neuralNet;
 
     // 4.3
