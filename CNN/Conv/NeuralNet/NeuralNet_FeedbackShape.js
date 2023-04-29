@@ -279,9 +279,9 @@ class NeuralNet_FeedbackShape extends NeuralNet_FeedbackToInput {
 
     const funcNameInMessage = "set_implicit_input_by_previous_output";
 
-    let input_channelCount = this.input_channelCount;
-    let area = this.area;
-    let perNeuralNet = this.perNeuralNet;
+    const input_channelCount = this.input_channelCount;
+    const area = this.area;
+    const perNeuralNet = this.perNeuralNet;
 
     // 1. Check (next time) input shape.
     if ( input_TypedArray.length != this.input_valueCount )
@@ -463,12 +463,16 @@ class NeuralNet_FeedbackShape extends NeuralNet_FeedbackToInput {
 //!!! (2023/04/29 Remarked) Not so easily to calc from pixel count remained.
 //             --from_pixelCount_original_remained;
 
+//!!! ...unfinished... (2023/04/29)
+              from_valueIndex_x_begin = from_valueIndex;
             } // x
 
             to_valueIndex_y_begin += input_width_valueCount;
           } // y_multiplier
 
-          from_valueIndex_x_begin = from_valueIndex;
+//!!! (2023/04/29 Remarked)
+//          from_valueIndex_x_begin = from_valueIndex;
+//          from_valueIndex_x_begin += ??? input_channelCount;
         } // y
 
         // Note: Checking here (instead of in the channel c loop) for avoiding
