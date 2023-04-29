@@ -331,8 +331,8 @@ class NeuralNet_FeedbackShape extends NeuralNet_FeedbackToInput {
 
     // 3. Fill previous time output (i.e. feedback) to next time input.
     let from_value;
-    let to_valueIndex = 0;
     let c;
+    let to_valueIndex = 0;
 
     // 3.1
     // Note: ( .neuralNetCount == 2 )
