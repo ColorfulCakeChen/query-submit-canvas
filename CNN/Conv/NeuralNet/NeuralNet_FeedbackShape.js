@@ -330,6 +330,7 @@ class NeuralNet_FeedbackShape extends NeuralNet_FeedbackToInput {
     const area_width_multiplier = area.width_multiplier;
 
     // 3. Fill previous time output (i.e. feedback) to next time input.
+    let from_value;
     let to_valueIndex = 0;
 
     // 3.1
@@ -423,7 +424,6 @@ class NeuralNet_FeedbackShape extends NeuralNet_FeedbackToInput {
                 // 3.7
 
                 // 3.7.1 Copy output values as feedback in input values.
-                let from_value;
                 for ( let c = 0; c < channelCount_to_copy; ++c ) {
                   from_value = previous_output_Int32Array[ from_valueIndex ];
                   input_TypedArray[ to_valueIndex ] = from_value;
