@@ -459,25 +459,25 @@ class NeuralNet_FeedbackShape extends NeuralNet_FeedbackToInput {
         //       performance reducing too much.
         {
           if ( from_valueCount_original_remained < 0 )
-          throw Error( `NeuralNet_FeedbackShape.${funcNameInMessage}(): `
-            + `from_valueCount_original_remained ( `
-            + `${from_valueCount_original_remained} ) `
-            + `should be non-negative.`
-          );
+            throw Error( `NeuralNet_FeedbackShape.${funcNameInMessage}(): `
+              + `from_valueCount_original_remained ( `
+              + `${from_valueCount_original_remained} ) `
+              + `should be non-negative.`
+            );
 
           if ( from_valueCount_expanded_remained < 0 )
-          throw Error( `NeuralNet_FeedbackShape.${funcNameInMessage}(): `
-            + `from_valueCount_expanded_remained ( `
-            + `${from_valueCount_expanded_remained} ) `
-            + `should be non-negative.`
-          );
+            throw Error( `NeuralNet_FeedbackShape.${funcNameInMessage}(): `
+              + `from_valueCount_expanded_remained ( `
+              + `${from_valueCount_expanded_remained} ) `
+              + `should be non-negative.`
+            );
 
           if ( from_pixelCount_original_remained < 0 )
-          throw Error( `NeuralNet_FeedbackShape.${funcNameInMessage}(): `
-            + `from_pixelCount_original_remained ( `
-            + `${from_pixelCount_original_remained} ) `
-            + `should be non-negative.`
-          );
+            throw Error( `NeuralNet_FeedbackShape.${funcNameInMessage}(): `
+              + `from_pixelCount_original_remained ( `
+              + `${from_pixelCount_original_remained} ) `
+              + `should be non-negative.`
+            );
         }
 
       } // alignmentIndex
