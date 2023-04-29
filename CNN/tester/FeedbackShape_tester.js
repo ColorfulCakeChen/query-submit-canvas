@@ -701,7 +701,10 @@ class TestCase {
         alignmentIndex < alignmentCount_per_neuralNet; ++alignmentIndex ) {
 
         const from_valueIndex_base
-          = ( area_from_valueCount_original * alignmentIndex );
+          = area_from_valueCount_original * alignmentIndex;
+
+        const from_valueIndex_upper_bound
+          = from_valueIndex_base + area_from_valueCount_original - 1;
 
         const area_position_left = area_position_leftArray[ alignmentIndex ];
         const area_position_top = area_position_topArray[ alignmentIndex ];
@@ -761,11 +764,7 @@ class TestCase {
                   const from_valueIndex = from_valueIndex_base_yx + c;
                   const to_valueIndex = to_valueIndex_base_yx + c;
 
-                  const from_valueIndex_without_base
-                    = ( from_valueIndex - from_valueIndex_base );
-
-                  if ( from_valueIndex_without_base
-                         > area_from_valueCount_original ) {
+                  if ( from_valueIndex > from_valueIndex_upper_bound ) {
                     if ( to_inputArray[ to_valueIndex ] != 0 )
                       throw Error( `FeedbackShape_tester.TestCase.${funcNameInMessage}(): `
                         + `to_inputArray[ ${to_valueIndex} ]=`
