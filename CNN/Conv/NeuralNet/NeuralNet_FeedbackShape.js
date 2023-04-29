@@ -403,7 +403,7 @@ class NeuralNet_FeedbackShape extends NeuralNet_FeedbackToInput {
 
 //!!! (2023/04/29 Remarked)
 //               let from_valueIndex_x_begin = from_valueIndex;
-???
+!!!???
               let from_valueIndex_x_begin = from_valueIndex_y_begin;
 
               let from_valueCount_original_remained_x_begin
