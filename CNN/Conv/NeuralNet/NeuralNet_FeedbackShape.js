@@ -497,10 +497,7 @@ class NeuralNet_FeedbackShape extends NeuralNet_FeedbackToInput {
 //             );
         }
 
-//!!! (2023/04/29 Remarked)
-//        from_valueIndex_y_begin += area_from_valueCount_original;
-        from_valueIndex_y_begin = from_valueIndex;
-
+        from_valueIndex_y_begin += area_from_valueCount_original;
       } // alignmentIndex
     } // neuralNetIndex
   }
