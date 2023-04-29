@@ -65,7 +65,7 @@ class TestCase {
           = feedbackShape.area.from_valueCount_original;
 
         const from_value_base_positive
-          = this.from_value_offset_per_neuralNet * neuralNetIndex;
+          = ( 10 ** this.from_value_offset_per_neuralNet ) * neuralNetIndex;
 
         // all positive integers (for alignment 0)
         for ( let i = 0; i < area_from_valueCount_original; ++i ) {
