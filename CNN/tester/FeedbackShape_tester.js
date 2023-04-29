@@ -886,10 +886,10 @@ class TestCases {
     // this.explicit_input_channelCount_MinMax = new MinMax( 0, 10 );
     // this.feedback_valueCount_per_alignment_MinMax = new MinMax( 0, 100 );
 
-    this.explicit_input_height_MinMax = new MinMax( 0, 20 );
-    this.explicit_input_width_MinMax = new MinMax( 0, 20 );
-    this.explicit_input_channelCount_MinMax = new MinMax( 0, 20 );
-    this.feedback_valueCount_per_alignment_MinMax = new MinMax( 0, 20 );
+    this.explicit_input_height_MinMax = new MinMax( 0, 30 );
+    this.explicit_input_width_MinMax = new MinMax( 0, 30 );
+    this.explicit_input_channelCount_MinMax = new MinMax( 0, 30 );
+    this.feedback_valueCount_per_alignment_MinMax = new MinMax( 0, 30 );
 
     //!!! (2023/04/26 Remarked)
     // this.explicit_input_height_MinMax = new MinMax( 0, 10 );
