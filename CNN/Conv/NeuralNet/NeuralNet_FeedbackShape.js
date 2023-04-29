@@ -431,7 +431,8 @@ class NeuralNet_FeedbackShape extends NeuralNet_FeedbackToInput {
 
               let channelCount_to_copy; // channels to copy from feedback.
               {
-                if ( input_channelCount > from_valueCount_original_remained ) {
+                if ( input_channelCount
+                       > from_valueCount_original_remained_x_begin ) {
                   channelCount_to_copy // not enough feedback values.
                     = from_valueCount_original_remained;
                 } else {
