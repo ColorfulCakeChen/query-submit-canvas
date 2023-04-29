@@ -761,7 +761,7 @@ class TestCase {
                   const from_valueIndex = from_valueIndex_base_yx + c;
                   const to_valueIndex = to_valueIndex_base_yx + c;
 
-                  if ( from_valueIndex_base_yx > area_from_valueCount_original ) {
+                  if ( from_valueIndex > area_from_valueCount_original ) {
                     if ( to_inputArray[ to_valueIndex ] != 0 )
                       throw Error( `FeedbackShape_tester.TestCase.${funcNameInMessage}(): `
                         + `to_inputArray[ ${to_valueIndex} ]=`
