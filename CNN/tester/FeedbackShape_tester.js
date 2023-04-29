@@ -719,7 +719,8 @@ class TestCase {
             y_multiplier < area_height_multiplier; ++y_multiplier ) {
 
             const to_valueIndex_base_y
-              = ( ( y * area_height_multiplier ) + y_multiplier ) * input_width;
+              = ( ( y * area_height_multiplier ) + y_multiplier )
+                  * input_width;
 //!!! (2023/04/29 Remarked) strides should be input_width
 //                  * ???area_width_valueCount_expanded;
 
