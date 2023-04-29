@@ -458,18 +458,26 @@ class NeuralNet_FeedbackShape extends NeuralNet_FeedbackToInput {
         // Note: Checking here (instead of in the channel c loop) for avoiding
         //       performance reducing too much.
         {
-          if ( from_valueCount_remained < 0 )
+          if ( from_valueCount_original_remained < 0 )
           throw Error( `NeuralNet_FeedbackShape.${funcNameInMessage}(): `
-            + `from_valueCount_remained ( ${from_valueCount_remained} ) `
+            + `from_valueCount_original_remained ( `
+            + `${from_valueCount_original_remained} ) `
             + `should be non-negative.`
           );
 
-//!!! (2023/04/29 Remarked) Not so easily to calc from_pixelCount_remained.
-//           if ( from_pixelCount_remained < 0 )
-//           throw Error( `NeuralNet_FeedbackShape.${funcNameInMessage}(): `
-//             + `from_pixelCount_remained ( ${from_pixelCount_remained} ) `
-//             + `should be non-negative.`
-//           );
+          if ( from_valueCount_expanded_remained < 0 )
+          throw Error( `NeuralNet_FeedbackShape.${funcNameInMessage}(): `
+            + `from_valueCount_expanded_remained ( `
+            + `${from_valueCount_expanded_remained} ) `
+            + `should be non-negative.`
+          );
+
+          if ( from_pixelCount_original_remained < 0 )
+          throw Error( `NeuralNet_FeedbackShape.${funcNameInMessage}(): `
+            + `from_pixelCount_original_remained ( `
+            + `${from_pixelCount_original_remained} ) `
+            + `should be non-negative.`
+          );
         }
 
       } // alignmentIndex
