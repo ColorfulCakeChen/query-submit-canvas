@@ -422,66 +422,6 @@ class NeuralNet_FeedbackToInput {
 
     // 5. Determine feedback_to_input area shape.
 
-//!!! (2023/04/26 Remarked)
-// It seems not necessary special case ( explicit_input_height == 1 ).
-//
-//     // 5.1 If the (next time) explicit input is 1d, the feedback (as implicit
-//     //     input) should also be 1d and prefix (i.e. at the left most of) the
-//     //     (next time) explicit input.
-//     if ( explicit_input_height == 1 ) {
-//
-//       area.height_pixelCount_original = 1;
-//       area.width_pixelCount_original = area.from_pixelCount_original;
-//
-//       area.height_pixelCount_expanded = 1;
-//       area.width_pixelCount_expanded = area.from_pixelCount_expanded;
-//
-//     // 5.2 If the (next time) explicit input is 2d, the feedback (as implicit
-//     //     input) should also be 2d and placed at left most of the (next time)
-//     //     explicit input.
-//     } else {
-//
-//       // 5.2.1 Prefer the square feedback shape because it fairly expresses
-//       //       the correlation along height and width.
-//       {
-//         area.height_pixelCount_original
-//           = area.width_pixelCount_original
-//           = Math.ceil( Math.sqrt( area.from_pixelCount_original ) );
-//
-//         area.height_pixelCount_expanded
-//           = area.height_pixelCount_original * area.height_multiplier;
-//       }
-//
-//       // 5.2.2 But, if the (next time) explicit input has not enough height
-//       //       to contain the square shape of feedback, use rectangle shape.
-//       if ( area.height_pixelCount_expanded > explicit_input_height ) {
-//
-//         // Ensure .area.height_pixelCount_expanded
-//         //   - contains factor .area.height_multiplier (i.e. 2) (i.e. is
-//         //       divisible by .area.height_multiplier), and
-//         //   - does not exceed explicit_input_height
-//         //
-//         // Note: Because explicit_input_height is at least 2 here, the
-//         //       .area.height_pixelCount_expanded will be also at
-//         //       least 2 (i.e. not 0 or 1).
-//         {
-//           area.height_pixelCount_original
-//             = Math.floor( explicit_input_height / area.height_multiplier );
-//
-//           area.height_pixelCount_expanded
-//             = area.height_pixelCount_original * area.height_multiplier;
-//         }
-//
-//         {
-//           area.width_pixelCount_original = Math.ceil(
-//             area.from_pixelCount_original / area.height_pixelCount_original );
-//         }
-//       }
-//
-//       area.width_pixelCount_expanded
-//         = area.width_pixelCount_original * area.width_multiplier;
-//     }
-
     // 5.1
     {
       // 5.1.1 Prefer the square feedback shape because it fairly expresses
