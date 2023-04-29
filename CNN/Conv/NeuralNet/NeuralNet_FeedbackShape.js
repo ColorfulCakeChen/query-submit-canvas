@@ -390,9 +390,6 @@ class NeuralNet_FeedbackShape extends NeuralNet_FeedbackToInput {
 
             from_valueCount_original_remained_x_begin
               = from_valueCount_original_remained_y_begin;
-//!!! (2023/04/29 Remarked) Assign to from_valueCount_original_remained_x_begin.
-//            from_valueCount_original_remained
-//              = from_valueCount_original_remained_y_begin;
 //!!! (2023/04/29 Remarked) Not so easily to calc from pixel count remained.
 //             from_pixelCount_original_remained
 //               = from_pixelCount_original_remained_y_begin;
@@ -401,10 +398,6 @@ class NeuralNet_FeedbackShape extends NeuralNet_FeedbackToInput {
 
             // 3.5
             for ( let x = 0; x < area_width_pixelCount_original; ++x ) {
-
-//!!! (2023/04/29 Remarked) Moved to outter loop.
-//               let from_valueCount_original_remained_x_begin
-//                 = from_valueCount_original_remained;
 
               // Handle the last pixel which comes from feedback.
               //
