@@ -769,6 +769,7 @@ class TestCase {
                         + `should be ( 0 ). `
                         + `y=${y}, y_multiplier=${y_multiplier}, `
                         + `x=${x}, x_multiplier=${x_multiplier}, `
+                        + `c=${c}, `
                         + `{ ${this} }.`
                       );
 
@@ -783,6 +784,7 @@ class TestCase {
                         + `${from_output_valueArray[ from_valueIndex ]}. `
                         + `y=${y}, y_multiplier=${y_multiplier}, `
                         + `x=${x}, x_multiplier=${x_multiplier}, `
+                        + `c=${c}, `
                         + `{ ${this} }.`
                       );
                   }
