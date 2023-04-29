@@ -365,8 +365,9 @@ class NeuralNet_FeedbackShape extends NeuralNet_FeedbackToInput {
 
         let from_valueCount_original_remained_y_begin = area.from_valueCount_original;
         let from_valueCount_original_remained = area.from_valueCount_original;
-        let from_pixelCount_original_remained_y_begin = area.from_pixelCount_original;
-        let from_pixelCount_original_remained = area.from_pixelCount_original;
+//!!! (2023/04/29 Remarked) Not so easily to calc from pixel count remained.
+//         let from_pixelCount_original_remained_y_begin = area.from_pixelCount_original;
+//         let from_pixelCount_original_remained = area.from_pixelCount_original;
 
         // Used to force channelCount_to_copy to 0.
         let from_valueCount_expanded_remained = area.from_valueCount_expanded;
@@ -382,8 +383,9 @@ class NeuralNet_FeedbackShape extends NeuralNet_FeedbackToInput {
 
             from_valueCount_original_remained
               = from_valueCount_original_remained_y_begin;
-            from_pixelCount_original_remained
-              = from_pixelCount_original_remained_y_begin;
+//!!! (2023/04/29 Remarked) Not so easily to calc from pixel count remained.
+//             from_pixelCount_original_remained
+//               = from_pixelCount_original_remained_y_begin;
 
             to_valueIndex = to_valueIndex_y_begin;
 
@@ -447,7 +449,8 @@ class NeuralNet_FeedbackShape extends NeuralNet_FeedbackToInput {
 
               } // x_multiplier
 
-             --from_pixelCount_original_remained;
+//!!! (2023/04/29 Remarked) Not so easily to calc from pixel count remained.
+//             --from_pixelCount_original_remained;
 
             } // x
 
@@ -472,12 +475,13 @@ class NeuralNet_FeedbackShape extends NeuralNet_FeedbackToInput {
               + `should be non-negative.`
             );
 
-          if ( from_pixelCount_original_remained < 0 )
-            throw Error( `NeuralNet_FeedbackShape.${funcNameInMessage}(): `
-              + `from_pixelCount_original_remained ( `
-              + `${from_pixelCount_original_remained} ) `
-              + `should be non-negative.`
-            );
+//!!! (2023/04/29 Remarked) Not so easily to calc from pixel count remained.
+//           if ( from_pixelCount_original_remained < 0 )
+//             throw Error( `NeuralNet_FeedbackShape.${funcNameInMessage}(): `
+//               + `from_pixelCount_original_remained ( `
+//               + `${from_pixelCount_original_remained} ) `
+//               + `should be non-negative.`
+//             );
         }
 
       } // alignmentIndex
