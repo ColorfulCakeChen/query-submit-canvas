@@ -504,8 +504,8 @@ class NeuralNet_FeedbackShape extends NeuralNet_FeedbackToInput {
         }
 
         // Because area_from_valueCount_original may not be divisible by
-        // input_channelCount, the incremental from_valueIndex_y_begin is not
-        // usable here. So, assign area_from_valueCount_original to it
+        // input_channelCount, the incremental from_valueIndex_y_begin is
+        // not usable here. So, assign area_from_valueCount_original to it
         // directly. 
         from_valueIndex_y_begin = area_from_valueCount_original;
       } // alignmentIndex
