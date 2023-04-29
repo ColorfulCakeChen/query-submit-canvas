@@ -332,6 +332,7 @@ class NeuralNet_FeedbackShape extends NeuralNet_FeedbackToInput {
     // 3. Fill previous time output (i.e. feedback) to next time input.
     let from_value;
     let to_valueIndex = 0;
+    let c;
 
     // 3.1
     // Note: ( .neuralNetCount == 2 )
@@ -401,17 +402,26 @@ class NeuralNet_FeedbackShape extends NeuralNet_FeedbackToInput {
               //       x_multiplier). But, it may appear many times in
               //       different y_multiplier of the same y.
               let channelCount_to_copy; // channels to copy from feedback.
-              let channelCount_to_zero; // channels to fill with zero.
-              {
-                channelCount_to_zero
-                  = input_channelCount - from_valueCount_remained;
 
-                if ( channelCount_to_zero >= 0 ) { // not enough feedback values.
-                  channelCount_to_copy = from_valueCount_remained;
-                } else {
-                  channelCount_to_copy = input_channelCount;
-                  channelCount_to_zero = 0;
-                }
+//!!! (2023/04/29) Drop variable channelCount_to_zero to improve performance.
+//               let channelCount_to_zero; // channels to fill with zero.
+//               {
+//                 channelCount_to_zero
+//                   = input_channelCount - from_valueCount_remained;
+//
+//                 if ( channelCount_to_zero >= 0 ) { // not enough feedback values.
+//                   channelCount_to_copy = from_valueCount_remained;
+//                 } else {
+//                   channelCount_to_copy = input_channelCount;
+//                   channelCount_to_zero = 0;
+//                 }
+//               }
+
+              if ( input_channelCount > from_valueCount_remained ) {
+                // not enough feedback values.
+                channelCount_to_copy = from_valueCount_remained;
+              } else {
+                channelCount_to_copy = input_channelCount;
               }
 
               // 3.6
@@ -424,7 +434,7 @@ class NeuralNet_FeedbackShape extends NeuralNet_FeedbackToInput {
                 // 3.7
 
                 // 3.7.1 Copy output values as feedback in input values.
-                for ( let c = 0; c < channelCount_to_copy; ++c ) {
+                for ( c = 0; c < channelCount_to_copy; ++c ) {
                   from_value = previous_output_Int32Array[ from_valueIndex ];
                   input_TypedArray[ to_valueIndex ] = from_value;
 
@@ -444,7 +454,14 @@ class NeuralNet_FeedbackShape extends NeuralNet_FeedbackToInput {
                 // Fill zero for
                 //   - channels exceeding area.from_valueCount_expanded, and
                 //   - pixels exceeding area.from_pixelCount_expanded.
-                for ( let c = 0; c < channelCount_to_zero; ++c ) {
+
+//!!! (2023/04/29) Drop variable channelCount_to_zero to improve performance.
+//                 for ( let c = 0; c < channelCount_to_zero; ++c ) {
+//                   input_TypedArray[ to_valueIndex ] = 0;
+//                   ++to_valueIndex;
+//                 } // c
+
+                for ( ; c < input_channelCount; ++c ) {
                   input_TypedArray[ to_valueIndex ] = 0;
                   ++to_valueIndex;
                 } // c
