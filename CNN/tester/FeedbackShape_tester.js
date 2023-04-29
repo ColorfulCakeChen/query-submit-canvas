@@ -733,12 +733,20 @@ class TestCase {
               for ( let x_multiplier = 0;
                 x_multiplier < area_width_multiplier; ++x_multiplier ) {
 
+//!!! (2023/04/29 Remarked) should multiply input_channelCount after sum.
+//                 const to_valueIndex_base_x
+//                   = ( ( x * area_width_multiplier ) + x_multiplier )
+//                       * input_channelCount;
+//
+//                 const to_valueIndex = to_valueIndex_base
+//                   + to_valueIndex_base_y + to_valueIndex_base_x;
+
                 const to_valueIndex_base_x
-                  = ( ( x * area_width_multiplier ) + x_multiplier )
-                      * input_channelCount;
+                  = ( ( x * area_width_multiplier ) + x_multiplier );
 
                 const to_valueIndex = to_valueIndex_base
-                  + to_valueIndex_base_y + to_valueIndex_base_x;
+                  + ( ( to_valueIndex_base_y + to_valueIndex_base_x )
+                      * input_channelCount );
 
                 if ( from_valueIndex_base_yx > area_from_valueCount_original ) {
                   if ( to_inputArray[ to_valueIndex ] != 0 )
