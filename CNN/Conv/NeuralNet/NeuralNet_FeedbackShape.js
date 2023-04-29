@@ -372,10 +372,6 @@ class NeuralNet_FeedbackShape extends NeuralNet_FeedbackToInput {
         let from_valueCount_original_remained_x_begin;
         let from_valueCount_original_remained = area_from_valueCount_original;
 
-//!!! (2023/04/29 Remarked) Not so easily to calc from pixel count remained.
-//         let from_pixelCount_original_remained_y_begin = area.from_pixelCount_original;
-//         let from_pixelCount_original_remained = area.from_pixelCount_original;
-
         // 3.3
         for ( let y = 0; y < area_height_pixelCount_original; ++y ) {
 
@@ -387,9 +383,6 @@ class NeuralNet_FeedbackShape extends NeuralNet_FeedbackToInput {
 
             from_valueCount_original_remained_x_begin
               = from_valueCount_original_remained_y_begin;
-//!!! (2023/04/29 Remarked) Not so easily to calc from pixel count remained.
-//             from_pixelCount_original_remained
-//               = from_pixelCount_original_remained_y_begin;
 
             to_valueIndex = to_valueIndex_y_begin;
 
@@ -446,14 +439,10 @@ class NeuralNet_FeedbackShape extends NeuralNet_FeedbackToInput {
 
               } // x_multiplier
 
-//!!! (2023/04/29 Remarked) Not so easily to calc from pixel count remained.
-//             --from_pixelCount_original_remained;
-
               from_valueIndex_x_begin += input_channelCount;
 
               from_valueCount_original_remained_x_begin
                 -= channelCount_to_copy;
-
             } // x
 
             to_valueIndex_y_begin += input_width_valueCount;
@@ -474,14 +463,6 @@ class NeuralNet_FeedbackShape extends NeuralNet_FeedbackToInput {
               + `${from_valueCount_original_remained} ) `
               + `should be non-negative.`
             );
-
-//!!! (2023/04/29 Remarked) Not so easily to calc from pixel count remained.
-//           if ( from_pixelCount_original_remained < 0 )
-//             throw Error( `NeuralNet_FeedbackShape.${funcNameInMessage}(): `
-//               + `from_pixelCount_original_remained ( `
-//               + `${from_pixelCount_original_remained} ) `
-//               + `should be non-negative.`
-//             );
         }
 
         // Because area_from_valueCount_original may not be divisible by
