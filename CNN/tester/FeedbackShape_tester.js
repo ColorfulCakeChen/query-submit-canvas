@@ -726,13 +726,17 @@ class TestCase {
 
             for ( let x = 0; x < area_width_pixelCount_original; ++x ) {
 
-              const from_valueIndex_base_x = x * input_channelCount;
+//!!! (2023/04/29 Remarked) should multiply input_channelCount for y and x
+//               const from_valueIndex_base_x = x * input_channelCount;
+//
+//               const from_valueIndex_base_yx
+//                 = from_valueIndex_base_y + from_valueIndex_base_x;
+//
+//               const from_valueIndex
+//                 = from_valueIndex_base + from_valueIndex_base_yx;
 
-              const from_valueIndex_base_yx
-                = from_valueIndex_base_y + from_valueIndex_base_x;
-
-              const from_valueIndex
-                = from_valueIndex_base + from_valueIndex_base_yx;
+              const from_valueIndex_base_yx = from_valueIndex_base
+                + ( from_valueIndex_base_y + x ) * input_channelCount;
 
               for ( let x_multiplier = 0;
                 x_multiplier < area_width_multiplier; ++x_multiplier ) {
@@ -748,13 +752,14 @@ class TestCase {
                 const to_valueIndex_base_x
                   = ( ( x * area_width_multiplier ) + x_multiplier );
 
+                const to_valueIndex_base_yx = ( to_valueIndex_base
+                  + to_valueIndex_base_y + to_valueIndex_base_x )
+                  * input_channelCount;
 
                 for ( let c = 0; c < input_channelCount; ++c ) {
 
-//!!! ...unfinished... (2023/04/29) channel ?
-                  const to_valueIndex = ( ( to_valueIndex_base + to_valueIndex_base_y
-                    + to_valueIndex_base_x ) * input_channelCount )
-                    + c;
+                  const from_valueIndex = from_valueIndex_base_yx + c;
+                  const to_valueIndex = to_valueIndex_base_yx + c;
 
                   if ( from_valueIndex_base_yx > area_from_valueCount_original ) {
                     if ( to_inputArray[ to_valueIndex ] != 0 )
