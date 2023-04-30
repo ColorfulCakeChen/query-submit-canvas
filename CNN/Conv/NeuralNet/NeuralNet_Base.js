@@ -654,13 +654,23 @@ class NeuralNet_Base extends Recyclable.Root {
     return outputTensor;
   }
 
-//!!! ...unfinished... (2023/04/27)
+//!!! ...unfinished... (2023/04/30)
   /**
    * Source image should not be scaled if feedback filling is necessary.
    * Because scaling let source image become a tf.tensor, filling feedback
    * needs to download tensor from GPU to CPU which is slow.
    */
 
+
+//!!! ...unfinished... (2023/04/30)
+// Perhaps, let create_ScaledSourceTensor_from_PixelData()
+// accepts parameter previous_output_Int32ArrayArray.
+// If ( !previous_output_Int32ArrayArray ),
+//   - sourcePixelData must be ImageData or TypedArray.
+//   - The size of sourcePixelData should be as feedbackShape.input_Xxx
+//   - It will be filled with previous_output_Int32ArrayArray (as feedback).
+//   - There will be no scaling.
+//
 
   /**
    * Create a tensor3d from source (e.g. canvas). Its size will be confirmed
