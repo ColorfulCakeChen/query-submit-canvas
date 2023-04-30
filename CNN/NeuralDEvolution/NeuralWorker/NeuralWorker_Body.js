@@ -230,8 +230,8 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
       }
 
       // Compile shaders and upload tensor to GPU if backend is webgl.
-      NeuralWorker_Body.NeuralNetArray_compileShaders_uploadTensors_ifWebGL.call(
-        this, bLogDryRunTime );
+      NeuralWorker_Body.NeuralNetArray_compileShaders_uploadTensors_ifWebGL
+        .call( this, bLogDryRunTime );
 
       if ( bAllOk )
         return { value: true };
@@ -467,7 +467,8 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
   }
 
   /**
-   * Process input image data by all (suppose two) neural networks in this web worker.
+   * Process input image data by all (suppose two) neural networks in this web
+   * worker.
    *
    * This method is used for:
    *   - One web worker. The worker has two neural networks.
@@ -480,12 +481,15 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
    *     - Fill alignment mark of the 2nd neural network, upload and process it.
    *
    *   - If ( bFill == false ), no alignment mark filling.
-   *     - The worker needs not wait for downloading scaled Int32Array from GPU memory.
-   *         and needs not upload alignment mark filled Int32Array to GPU.
+   *     - The worker needs not wait for downloading scaled Int32Array from GPU
+   *         memory and needs not upload alignment mark filled Int32Array to
+   *         GPU.
    *     - So every neural network always output twice channels. For example,
    *       - The neural network output 100 channels.
-   *       - channel [ 0, 49 ] are used if the neural network representing alignment A.
-   *       - channel [ 50, 99 ] are used if the neural network representing alignment B.
+   *       - channel [ 0, 49 ] are used if the neural network representing
+   *           alignment A.
+   *       - channel [ 50, 99 ] are used if the neural network representing
+   *           alignment B.
    *
    *
    * @param {ImageData} sourceImageData
@@ -496,9 +500,9 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
    *       correct shape before passed into the neural network.
    *
    * @param {boolean} bFill
-   *   If true, the source Int32Array will be filled by alignment mark before be
-   * converted to tensor3d. If false, it will be converted to tensor3d directly
-   * without filling alignment mark.
+   *   If true, the source Int32Array will be filled by alignment mark before
+   * be converted to tensor3d. If false, it will be converted to tensor3d
+   * directly without filling alignment mark.
    *
    * @yield {Float32Array[]}
    *   Resolve to { done: true, value: { value: [ Float32Array, Float32Array ],
@@ -509,7 +513,8 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
   async* ONE_WORKER__ONE_SCALE__ImageData_process( sourceImageData, bFill ) {
     const funcNameInMessage = "ONE_WORKER__ONE_SCALE__ImageData_process";
 
-    let resultFloat32ArrayPromiseArray = new Array( this.neuralNetArray.length );
+    let resultFloat32ArrayPromiseArray
+      = new Array( this.neuralNetArray.length );
 
 //!!! (2023/04/30 Remarked) Every operations should have try-finally to release tensors.
 //     // Ensure all tensors will be released, even if .apply() throws exception.
