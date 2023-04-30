@@ -67,7 +67,7 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
         debugger;
 
         // (2023/04/20 Remarked) It seems not feasible to throw exception
-        // during disposinf resources.
+        // during disposing resources.
         //throw Error( msg );
       }
 
