@@ -384,10 +384,12 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
 
   /**
    * @param {integer[]} markValueArray
-   *   An array of values representing every neural network playing which alignment.
-   * For example, in a OX (connect-three) game:
-   *   - ( markValueArray[ 0 ] == 0 ) means neural network 0 plays O side currently.
-   *   - ( markValueArray[ 1 ] == 255 ) means neural network 1 plays X side currently.
+   *   An array of values representing every neural network playing which
+   * alignment. For example, in a OX (connect-three) game:
+   *   - ( markValueArray[ 0 ] == 0 ) means neural network 0 plays O side
+   *       currently.
+   *   - ( markValueArray[ 1 ] == 255 ) means neural network 1 plays X side
+   *       currently.
    *
    * @yield {boolean}
    *   - Yield { done: true, value: { value: true } }.
@@ -425,19 +427,22 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
 // this neural network. (i.e. become recurrent neural network.)
 
   /**
-   * This method will fill some part of the image by alignment mark value so that
-   * the neural network could distunguish which alignment it represents.
+   * This method will fill some part of the image by alignment mark value so
+   * that the neural network could distinguish which alignment it represents.
    * 
-   * Usually, this method should be called Before converting Int32Array to tf.tensor.
+   * Usually, this method should be called Before converting Int32Array to
+   * tf.tensor.
    *
    * @param {integer} neuralNetIndex
    *   Which neural network's alignment mark value will be used.
    *
    * @param {Int32Array} imageInt32Array
-   *   It is viewed as an image whose size ( height, width, channelCount ) should
-   * match this.neuralNet's [ input_height, input_width, input_channelCount ].
+   *   It is viewed as an image whose size ( height, width, channelCount )
+   * should match this.neuralNet's shape [ input_height, input_width,
+   * input_channelCount ].
    */
-  static alignmentMark_fillTo_Image_Int32Array( neuralNetIndex, imageInt32Array ) {
+  static alignmentMark_fillTo_Image_Int32Array(
+    neuralNetIndex, imageInt32Array ) {
 
     // Q: Why fill top-left ( 3 * 3 ) pixels? Why not just fill top-left
     //      ( 1 * 1 ) pixel?
@@ -455,7 +460,8 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
     const alignmentMarkValue = this.alignmentMarkArray[ neuralNetIndex ];
 
     let neuralNet = this.neuralNetArray[ neuralNetIndex ];
-    const arrayIndex_rowStrides = neuralNet.input_width * neuralNet.input_channelCount;
+    const arrayIndex_rowStrides
+      = neuralNet.input_width * neuralNet.input_channelCount;
 
     let arrayIndex_rowBegin = 0, arrayIndex = 0;
     for ( let y = 0; y < markHeight; ++y ) {
