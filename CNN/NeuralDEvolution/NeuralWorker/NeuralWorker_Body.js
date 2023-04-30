@@ -523,6 +523,12 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
    *   - Float32Array (if ( neuralNetParams.output_asInputValueRange == false ) )
    *   - Int32Array (if ( neuralNetParams.output_asInputValueRange == true ) )
    */
+
+//!!! ...unfinished... (2023/04/30)
+// Accepts integer TypedArray, height, width, channelCount
+// instead of sourceImageData so that non-image data (e.g. text or sound)
+// can also be processed.
+
   async* ONE_WORKER__ONE_SCALE__ImageData_process( sourceImageData, bFill ) {
     const funcNameInMessage = "ONE_WORKER__ONE_SCALE__ImageData_process";
 
@@ -545,6 +551,13 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
           if (   ( !bFill && !scaledSourceTensor )
               || (  bFill && !scaledInt32Array ) ) {
             try {
+
+
+//!!! ...unfinished... (2023/04/30)
+// If scaling is not necessary (i.e. size is as expected) and filling is
+// required, do not create scaledSourceTensor and download as scaledInt32Array.
+// Just fill (alignment mark and feedback) and create sourceTensor directly.
+
               scaledSourceTensor
                 = neuralNet.create_ScaledSourceTensor_from_PixelData(
                     sourceImageData,
