@@ -1024,7 +1024,8 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
           this, neuralNetIndex, scaledInt32Array );
       }
 
-      sourceTensor = tf.tensor( scaledInt32Array, neuralNet.input_shape, "int32" );
+      sourceTensor
+        = tf.tensor( scaledInt32Array, neuralNet.input_shape, "int32" );
 
       // 2. Process image by neural network.
       outputTensor = neuralNet.apply( sourceTensor );
@@ -1043,8 +1044,9 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
         outputTensor = null;
       }
 
-      // In theory, it should already have been released by neural network. For avoiding
-      // memory leak (e.g. some exception when .apply()), release it again.
+      // In theory, it should already have been released by neural network.
+      // For avoiding memory leak (e.g. some exception thrown when .apply()),
+      // release it again.
       if ( sourceTensor ) {
         sourceTensor.dispose();
         sourceTensor = null;
