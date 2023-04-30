@@ -142,6 +142,8 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
   async* NeuralNetArray_create(
     neuralNetParamsBaseArray, weightArrayBufferArray, bLogDryRunTime ) {
 
+    const funcNameInMessage = "NeuralNetArray_create";
+
     // 0. Prepare container for all neural networks.
     {
       if ( this.neuralNetArray )
@@ -172,17 +174,18 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
           let aFloat32Array
             = new Float32Array( weightArrayBuffer, byteOffset, byteLength );
 
-          // Ensure there is no NaN value in the weight array. (Force NaN to 0.)
-          inputWeightArray
-            = Weights.Base.ValueBounds.Float32Array_RestrictedClone( aFloat32Array );
+          // Ensure there is no NaN value in the weight array.
+          // (Force NaN to 0.)
+          inputWeightArray = Weights.Base.ValueBounds
+            .Float32Array_RestrictedClone( aFloat32Array );
         }
 
-        // In web worker, the input of neural network will not be used by others.
-        // Force the neural network release its input tensor.
+        // In web worker, the input of neural network will not be used by
+        // others. Force the neural network release its input tensor.
         neuralNetParamsBase.bKeepInputTensor = false;
 
-        let neuralNetParams = NeuralNet.Params.get_or_create_by_NeuralNetParamsBase(
-          neuralNetParamsBase );
+        let neuralNetParams = NeuralNet.Params
+          .get_or_create_by_NeuralNetParamsBase( neuralNetParamsBase );
 
         progress = ValueMax.Percentage.Aggregate.Pool.get_or_create_by();
 
@@ -191,23 +194,26 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
         let neuralNet = this.neuralNetArray[ i ]
           = NeuralNet.Base.Pool.get_or_create_by();
 
-        let bInitOk = neuralNet.init( progress, inputWeightArray, 0, neuralNetParams );
+        let bInitOk = neuralNet.init( progress,
+          inputWeightArray, 0, neuralNetParams );
 
-        if ( false == bInitOk )
-          throw Error( `NeuralWorker_Body.NeuralNet_create(): `
+        if ( false == bInitOk ) {
+
+          // Note1: Because neuralNetParams has been destroyed by
+          //        NeuralNet.Base.init(), log neuralNetParamsBase instead.
+          //
+          // Note2: Because neuralNetParamsBase looks like (but not)
+          //        NeuralNet.ParamsBase, call .toString explicitly.
+          let strNeuralNetParamsBase = NeuralNet.ParamsBase.prototype
+            .toString.call( neuralNetParamsBase );
+
+          throw Error( `NeuralWorker_Body.${funcNameInMessage}(): `
             + `Failed to initialize neuralNetArray[ ${i} ] object. `
             + `progress.valuePercentage=${progress.valuePercentage}, `
-
-            // Note1: Because neuralNetParams has been destroyed by
-            //        NeuralNet.Base.init(), log neuralNetParamsBase instead.
-            //
-            // Note2: Because neuralNetParamsBase looks like (but not)
-            //        NeuralNet.ParamsBase, call .toString explicitly.
-            + `neuralNetParamsBase={ `
-              + `${NeuralNet.ParamsBase.prototype.toString.call( neuralNetParamsBase )} }, `
-
+            + `neuralNetParamsBase={ ${strNeuralNetParamsBase} }, `
             + `neuralNet={ ${neuralNet} }.`
           );
+        }
 
         progress.disposeResources_and_recycleToPool();
         progress = null;
@@ -217,7 +223,8 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
         // If need log dry-run time, also log neural network weight count.
         if ( bLogDryRunTime ) {
           let strWeightCountInfo = neuralNet.toString_WeightCount();
-          let logMsg = `NeuralWorker_Body.NeuralNet_create(): ${strWeightCountInfo}.`;
+          let logMsg = `NeuralWorker_Body.${funcNameInMessage}(): `
+            + `${strWeightCountInfo}.`;
           console.log( logMsg );
         }
       }
@@ -232,7 +239,7 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
         return { value: false };
 
     } catch ( e ) {
-      let errorMsg = `NeuralWorker_Body.NeuralNetArray_create(): `
+      let errorMsg = `NeuralWorker_Body.${funcNameInMessage}(): `
         + `workerId=${this.workerId}. ${e}`;
       console.error( errorMsg );
       //debugger;
