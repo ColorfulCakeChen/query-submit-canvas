@@ -567,7 +567,7 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
             // 2.3 Record result promise.
             //
             // Because downloading from GPU to CPU is slow, continue to compute
-            // the next neural network after downloading starting.
+            // the next neural network after downloading started.
             // 
             resultFloat32ArrayPromiseArray[ i ] = outputTensor.data();
 
