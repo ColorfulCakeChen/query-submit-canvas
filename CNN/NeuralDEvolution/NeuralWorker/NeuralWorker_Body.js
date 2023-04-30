@@ -812,8 +812,8 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
       }
 
       // In theory, it should already have been released by neural network.
-      // For avoiding memory leak (e.g. some exception when .apply()), release
-      // it again.
+      // For avoiding memory leak (e.g. some exception is thrown when
+      // .apply()), release it again.
       if ( sourceTensor ) {
         sourceTensor.dispose();
         sourceTensor = null;
@@ -964,8 +964,8 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
       }
 
       // In theory, it should already have been released by neural network.
-      // For avoiding memory leak (e.g. some exception when .apply()), release
-      // it again.
+      // For avoiding memory leak (e.g. some exception is thrown when
+      // .apply()), release it again.
       if ( scaledSourceTensor ) {
         scaledSourceTensor.dispose();
         scaledSourceTensor = null;
@@ -1055,8 +1055,8 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
       }
 
       // In theory, it should already have been released by neural network.
-      // For avoiding memory leak (e.g. some exception when .apply()), release
-      // it again.
+      // For avoiding memory leak (e.g. some exception is thrown when
+      // .apply()), release it again.
       if ( sourceTensor ) {
         sourceTensor.dispose();
         sourceTensor = null;
@@ -1164,8 +1164,8 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
       }
 
       // In theory, it should already have been released by neural network.
-      // For avoiding memory leak (e.g. some exception when .apply()), release
-      // it again.
+      // For avoiding memory leak (e.g. some exception is thrown when
+      // .apply()), release it again.
       if ( scaledSourceTensor ) {
         scaledSourceTensor.dispose();
         scaledSourceTensor = null;
