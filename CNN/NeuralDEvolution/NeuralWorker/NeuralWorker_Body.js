@@ -306,8 +306,10 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
     if ( backendName != "webgl" )
       return; // Only WebGL needs compile shaders.
 
-    tf.tidy( () => {
+//!!! (2023/04/30 Remarked) Every operations should have try-finally to release tensors.
+//    tf.tidy( () => {
 
+    {
       let neuralNet;
       let sourceTensor;
       let outputTensor;
@@ -353,7 +355,10 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
           }
         }
       }
-    } );
+    }
+
+//!!! (2023/04/30 Remarked) Every operations should have try-finally to release tensors.
+//    } );
   }
 
   /** Release the neural network. */
