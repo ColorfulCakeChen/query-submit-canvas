@@ -668,7 +668,7 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
    *
    *   - Fill alignment mark of this neural network, upload to GPU and process it.
    *
-   * 
+   *
    * @param {ImageData} sourceImageData
    *   The source image data to be processed.
    *
