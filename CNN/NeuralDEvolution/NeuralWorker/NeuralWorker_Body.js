@@ -1045,8 +1045,8 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
       }
 
       // In theory, it should already have been released by neural network.
-      // For avoiding memory leak (e.g. some exception thrown when .apply()),
-      // release it again.
+      // For avoiding memory leak (e.g. some exception when .apply()), release
+      // it again.
       if ( sourceTensor ) {
         sourceTensor.dispose();
         sourceTensor = null;
@@ -1071,34 +1071,38 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
    *       - The 2nd worker uses ( bFork == false ).
    *
    *   - Both workers scale source image data by themselves.
-   *     - Advantage: The 1st worker needs not wait for downloading scaled Int32Array
-   *         from GPU memory.
+   *     - Advantage: The 1st worker needs not wait for downloading scaled
+   *         Int32Array from GPU memory.
    *     - Disadvantage: The source image data is scaled twice.
    *
    *   - No alignment mark filling.
    *     - So every neural network always output twice channels. For example,
    *       - The neural network output 100 channels.
-   *       - channel [ 0, 49 ] are used if the neural network representing alignment A.
-   *       - channel [ 50, 99 ] are used if the neural network representing alignment B.
+   *       - channel [ 0, 49 ] are used if the neural network representing
+   *           alignment A.
+   *       - channel [ 50, 99 ] are used if the neural network representing
+   *           alignment B.
    *
    *
    * @param {ImageData} sourceImageData
    *   The source image data to be processed. Its shape needs not match
-   * this.neuralNet[ 0 ]'s [ input_height, input_width, input_channelCount ] because
-   * it will be scaled to the correct shape before passed into the neural network.
+   * this.neuralNet[ 0 ]'s [ input_height, input_width, input_channelCount ]
+   * because it will be scaled to the correct shape before passed into the
+   * neural network.
    *
    * @param {boolean} bFork
    *   Whether sent the source image data back to WorkerProxy.
    *
-   *   - If true, the sourceImageData will be sent back to WorkerProxy as an ImageData.
-   *       This is used for 1st worker.
+   *   - If true, the sourceImageData will be sent back to WorkerProxy as an
+   *       ImageData. This is used for the 1st worker.
    *
-   *   - If false, the sourceImageData will not be sent. This is used for 2nd worker.
+   *   - If false, the sourceImageData will not be sent. This is used for the
+   *       2nd worker.
    *
    * @yield {ImageData}
    *   Resolve to { done: false, value: { value: ImageData,
-   * transferableObjectArray: [ ImageData.data.buffer ] }. The value is an ImageData
-   * which is just the (non-scaled) source image data.
+   * transferableObjectArray: [ ImageData.data.buffer ] }. The value is an
+   * ImageData which is just the (non-scaled) source image data.
    *
    * @yield {Float32Array|Int32Array}
    *   Resolve to { done: true, value: { value: TypedArray,
@@ -1109,6 +1113,8 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
    *   - Int32Array (if ( neuralNetParams.output_asInputValueRange == true ) )
    */
   async* TWO_WORKER__TWO_SCALE__ImageData_process( sourceImageData, bFork ) {
+
+    const funcNameInMessage = "TWO_WORKER__TWO_SCALE__ImageData_process";
 
     let scaledSourceTensor;
     let outputTensor;
@@ -1135,8 +1141,7 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
       outputFloat32ArrayPromise = outputTensor.data();
 
     } catch ( e ) {
-      let errorMsg =
-          `NeuralWorker_Body.TWO_WORKER__TWO_SCALE__ImageData_process(): `
+      let errorMsg = `NeuralWorker_Body.${funcNameInMessage}(): `
         + `workerId=${this.workerId}. ${e}`;
       console.error( errorMsg );
       //debugger;
@@ -1148,8 +1153,9 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
         outputTensor = null;
       }
 
-      // In theory, it should already have been released by neural network. For
-      // avoiding memory leak (e.g. some exception when .apply()), release it again.
+      // In theory, it should already have been released by neural network.
+      // For avoiding memory leak (e.g. some exception when .apply()), release
+      // it again.
       if ( scaledSourceTensor ) {
         scaledSourceTensor.dispose();
         scaledSourceTensor = null;
