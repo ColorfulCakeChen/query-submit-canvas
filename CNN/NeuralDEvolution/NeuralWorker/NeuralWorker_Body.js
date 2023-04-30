@@ -887,14 +887,15 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
         outputTensor = neuralNet.apply( scaledSourceTensor );
 
         // Because downloading from GPU to CPU is slow, start downloading
-        // outputFloat32Array before posting scaledInt32Array back to WorkerProxy
-        // (i.e. another slow action).
+        // outputFloat32Array before posting scaledInt32Array back to
+        // WorkerProxy (i.e. another slow action).
         outputFloat32ArrayPromise = outputTensor.data();
 
-        // Post back to WorkerProxy. (Note: the scaledInt32Array will be destroyed.)
+        // Post back to WorkerProxy. (Note: the scaledInt32Array will be
+        // destroyed.)
         //
-        // Note: After the neuralNet.apply(), the scaledInt32Array should have been
-        // downloaded completely.
+        // Note: After the neuralNet.apply(), the scaledInt32Array should have
+        //       been downloaded completely.
         let scaledInt32Array = await scaledInt32ArrayPromise;
         yield {
           value: scaledInt32Array,
@@ -907,18 +908,19 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
         let applierNext = applier.next(); // NeuralNet sets progress to 0.
         applierNext = applier.next(); // NeuralNet processes embedding.
 
-        // Post back to WorkerProxy. (Note: the scaledInt32Array will be destroyed.)
+        // Post back to WorkerProxy. (Note: the scaledInt32Array will be
+        // destroyed.)
         //
-        // Note: After the neuralNet's embedding, the scaledInt32Array may have been
-        // downloaded completely.
+        // Note: After the neuralNet's embedding, the scaledInt32Array may
+        //       have been downloaded completely.
         let scaledInt32Array = await scaledInt32ArrayPromise;
         yield {
           value: scaledInt32Array,
           transferableObjectArray: [ scaledInt32Array.buffer ]
         };
 
-        // Because posting back to WorkerProxy is slow, continue to compute neural
-        // network (i.e. another slow action) when posting back.
+        // Because posting back to WorkerProxy is slow, continue to compute
+        // neural network (i.e. another slow action) when posting back.
         while ( !applierNext.done ) {
           applierNext = applier.next();
         }
@@ -927,8 +929,8 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
         outputFloat32ArrayPromise = outputTensor.data();
       }
 
-      // Note: After scaledInt32Array posting-back, the outputFloat32Array should
-      // have been downloaded completely.
+      // Note: After scaledInt32Array posting-back, the outputFloat32Array
+      //       should have been downloaded completely.
       outputFloat32Array = await outputFloat32ArrayPromise;
 
     } catch ( e ) {
@@ -944,8 +946,9 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
         outputTensor = null;
       }
 
-      // In theory, it should already have been released by neural network. For
-      // avoiding memory leak (e.g. some exception when .apply()), release it again.
+      // In theory, it should already have been released by neural network.
+      // For avoiding memory leak (e.g. some exception when .apply()), release
+      // it again.
       if ( scaledSourceTensor ) {
         scaledSourceTensor.dispose();
         scaledSourceTensor = null;
