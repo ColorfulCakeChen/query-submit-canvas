@@ -1000,6 +1000,9 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
     const neuralNetIndex = 0; // Always use the first neural network.
     let neuralNet = this.neuralNetArray[ neuralNetIndex ];
 
+    const funcNameInMessage
+      = "TWO_WORKER__ONE_SCALE__step1_Int32Array_process";
+
     let sourceTensor;
     let outputTensor;
     let outputFloat32ArrayPromise;
@@ -1017,7 +1020,7 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
       outputFloat32ArrayPromise = outputTensor.data();
 
     } catch ( e ) {
-      let errorMsg = `NeuralWorker_Body.TWO_WORKER__ONE_SCALE__step1_Int32Array_process(): `
+      let errorMsg = `NeuralWorker_Body.${funcNameInMessage}(): `
         + `workerId=${this.workerId}. ${e}`;
       console.error( errorMsg );
       //debugger;
