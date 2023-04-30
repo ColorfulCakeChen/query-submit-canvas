@@ -657,9 +657,9 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
    *
    * @yield {Float32Array}
    *   Resolve to { done: true, value: { value: Float32Array,
-   * transferableObjectArray: [ Float32Array.buffer ] }. The value is a Float32Array
-   * representing the neural network's result whose channel count is
-   * this.neuralNet[ 0 ].output_channelCount.
+   * transferableObjectArray: [ Float32Array.buffer ] }. The value is a
+   * Float32Array representing the neural network's result whose channel count
+   * is this.neuralNet[ 0 ].output_channelCount.
    */
   async* TWO_WORKER__ONE_SCALE__FILL__step0_ImageData_process(
     sourceImageData, bApply_or_Applier ) {
