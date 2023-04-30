@@ -504,11 +504,14 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
    * be converted to tensor3d. If false, it will be converted to tensor3d
    * directly without filling alignment mark.
    *
-   * @yield {Float32Array[]}
-   *   Resolve to { done: true, value: { value: [ Float32Array, Float32Array ],
-   * transferableObjectArray: [ Float32Array.buffer, Float32Array.buffer ] }.
-   * The value is an array of Float32Array representing all neural networks'
+   * @yield {Float32Array[] | Int32Array[]}
+   *   Resolve to { done: true, value: { value: [ TypedArray, TypedArray ],
+   * transferableObjectArray: [ TypedArray.buffer, TypedArray.buffer ] }.
+   * The value is an array of TypedArray representing all neural networks'
    * result whose channel count is this.neuralNetArray[].output_channelCount.
+   * The TypedArray may be:
+   *   - Float32Array (if ( neuralNetParams.output_asInputValueRange == false ) )
+   *   - Int32Array (if ( neuralNetParams.output_asInputValueRange == true ) )
    */
   async* ONE_WORKER__ONE_SCALE__ImageData_process( sourceImageData, bFill ) {
     const funcNameInMessage = "ONE_WORKER__ONE_SCALE__ImageData_process";
@@ -680,11 +683,13 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
    * Int32Array representing the scaled image data whose shape is
    * this.neuralNet[ 0 ]'s [ input_height, input_width, input_channelCount ].
    *
-   * @yield {Float32Array}
-   *   Resolve to { done: true, value: { value: Float32Array,
-   * transferableObjectArray: [ Float32Array.buffer ] }. The value is a
-   * Float32Array representing the neural network's result whose channel count
-   * is this.neuralNet[ 0 ].output_channelCount.
+   * @yield {Float32Array|Int32Array}
+   *   Resolve to { done: true, value: { value: TypedArray,
+   * transferableObjectArray: [ TypedArray.buffer ] }. The value is a
+   * TypedArray representing the neural network's result whose channel count
+   * is this.neuralNet[ 0 ].output_channelCount. The TypedArray may be:
+   *   - Float32Array (if ( neuralNetParams.output_asInputValueRange == false ) )
+   *   - Int32Array (if ( neuralNetParams.output_asInputValueRange == true ) )
    */
   async* TWO_WORKER__ONE_SCALE__FILL__step0_ImageData_process(
     sourceImageData, bApply_or_Applier ) {
@@ -849,11 +854,13 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
    * Int32Array representing the scaled image data whose shape is
    * this.neuralNet[ 0 ]'s [ input_height, input_width, input_channelCount ].
    *
-   * @yield {Float32Array}
-   *   Resolve to { done: true, value: { value: Float32Array,
-   * transferableObjectArray: [ Float32Array.buffer ] }. The value is a
-   * Float32Array representing the neural network's result whose channel
-   * count is this.neuralNet[ 0 ].output_channelCount.
+   * @yield {Float32Array|Int32Array}
+   *   Resolve to { done: true, value: { value: TypedArray,
+   * transferableObjectArray: [ TypedArray.buffer ] }. The value is a
+   * TypedArray representing the neural network's result whose channel
+   * count is this.neuralNet[ 0 ].output_channelCount. The TypedArray may be:
+   *   - Float32Array (if ( neuralNetParams.output_asInputValueRange == false ) )
+   *   - Int32Array (if ( neuralNetParams.output_asInputValueRange == true ) )
    */
   async* TWO_WORKER__ONE_SCALE__NO_FILL__step0_ImageData_process(
     sourceImageData, bApply_or_Applier ) {
@@ -970,31 +977,33 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
    *     - NeuralWorker_Mode.Singleton.Ids.TWO_WORKER__ONE_SCALE__NO_FILL__APPLIER (5)
    *     - The 2nd worker calls this method.
    *
-   *   - (may or may not) Fill alignment mark of this neural network, upload to GPU
-   *       and process it.
+   *   - (may or may not) Fill alignment mark of this neural network, upload to
+   *       GPU and process it.
    *
    *
    * @param {Int32Array} scaledInt32Array
    *   The source image data to be processed.
    *
-   *   - Its shape must match this.neuralNet[ 0 ]'s [ input_height, input_width,
-   *       input_channelCount ] because it will not be scaled and will be passed into
-   *       neural network directly.
+   *   - Its shape must match this.neuralNet[ 0 ]'s [ input_height,
+   *       input_width, input_channelCount ] because it will not be scaled and
+   *       will be passed into neural network directly.
    *
-   *   - This usually is called for the 2nd web worker in chain. The web worker will
-   *       accept a scaled Int32Array which is returned from the 1st web worker's
-   *       first yieled of .ImageData_process_asyncGenerator().
+   *   - This usually is called for the 2nd web worker in chain. The web worker
+   *       will accept a scaled Int32Array which is returned from the 1st web
+   *       worker's first yield of .ImageData_process_asyncGenerator().
    *
    * @param {boolean} bFill
-   *   If true, the source Int32Array will be filled by alignment mark before be
-   * converted to tensor3d. If false, it will be converted to tensor3d directly
-   * without filling alignment mark.
+   *   If true, the source Int32Array will be filled by alignment mark before
+   * be converted to tensor3d. If false, it will be converted to tensor3d
+   * directly without filling alignment mark.
    *
-   * @yield {Float32Array}
-   *   Resolve to { done: true, value: { value: Float32Array,
-   * transferableObjectArray: [ Float32Array.buffer ] }. The value is a Float32Array
-   * representing the neural network's result whose channel count is
-   * this.neuralNet[ 0 ].output_channelCount.
+   * @yield {Float32Array|Int32Array}
+   *   Resolve to { done: true, value: { value: TypedArray,
+   * transferableObjectArray: [ TypedArray.buffer ] }. The value is a
+   * TypedArray representing the neural network's result whose channel count is
+   * this.neuralNet[ 0 ].output_channelCount. The TypedArray may be:
+   *   - Float32Array (if ( neuralNetParams.output_asInputValueRange == false ) )
+   *   - Int32Array (if ( neuralNetParams.output_asInputValueRange == true ) )
    */
   async* TWO_WORKER__ONE_SCALE__step1_Int32Array_process(
     scaledInt32Array, bFill ) {
@@ -1089,11 +1098,13 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
    * transferableObjectArray: [ ImageData.data.buffer ] }. The value is an ImageData
    * which is just the (non-scaled) source image data.
    *
-   * @yield {Float32Array}
-   *   Resolve to { done: true, value: { value: Float32Array,
-   * transferableObjectArray: [ Float32Array.buffer ] }. The value is a Float32Array
-   * representing the neural network's result whose channel count is
-   * this.neuralNet[ 0 ].output_channelCount.
+   * @yield {Float32Array|Int32Array}
+   *   Resolve to { done: true, value: { value: TypedArray,
+   * transferableObjectArray: [ TypedArray.buffer ] }. The value is a
+   * TypedArray representing the neural network's result whose channel count is
+   * this.neuralNet[ 0 ].output_channelCount. The TypedArray may be:
+   *   - Float32Array (if ( neuralNetParams.output_asInputValueRange == false ) )
+   *   - Int32Array (if ( neuralNetParams.output_asInputValueRange == true ) )
    */
   async* TWO_WORKER__TWO_SCALE__ImageData_process( sourceImageData, bFork ) {
 
