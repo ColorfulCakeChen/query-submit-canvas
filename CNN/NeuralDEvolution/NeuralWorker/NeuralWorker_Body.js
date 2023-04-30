@@ -747,8 +747,8 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
           transferableObjectArray: [ scaledInt32Array.buffer ]
         };
 
-        // Because posting back to WorkerProxy is slow, continue to compute neural
-        // network (i.e. another slow action) when posting back.
+        // Because posting back to WorkerProxy is slow, continue to compute
+        // neural network (i.e. another slow action) when posting back.
         while ( !applierNext.done ) {
           applierNext = applier.next();
         }
@@ -771,8 +771,9 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
         outputTensor = null;
       }
 
-      // In theory, it should already have been released by neural network. For
-      // avoiding memory leak (e.g. some exception when .apply()), release it again.
+      // In theory, it should already have been released by neural network.
+      // For avoiding memory leak (e.g. some exception when .apply()), release
+      // it again.
       if ( sourceTensor ) {
         sourceTensor.dispose();
         sourceTensor = null;
