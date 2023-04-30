@@ -1158,7 +1158,11 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
           transferableObjectArray: [ sourceImageData.data.buffer ]
         };
       }
-  
+
+
+//!!! ...unfinished... (2023/04/30)
+// What about FILL or NO_FILL?
+
       // 2. Process image by neural network.
       outputTensor = neuralNet.apply( scaledSourceTensor );
       outputFloat32ArrayPromise = outputTensor.data();
