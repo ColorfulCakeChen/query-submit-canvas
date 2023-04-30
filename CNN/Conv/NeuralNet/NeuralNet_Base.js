@@ -676,6 +676,8 @@ class NeuralNet_Base extends Recyclable.Root {
 // What is sourcePixelData is not image (i.e. does not have 4 channels)?
 // For example, process text data or sound data.
 // It still needs fill feedback data but should not be scaled.
+// This implies another method for filling feedback is required.
+// They should not be combined into one method.
 
   /**
    * Create a tensor3d from source (e.g. canvas). Its size will be confirmed
