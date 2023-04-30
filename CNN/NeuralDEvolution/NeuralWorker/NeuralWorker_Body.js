@@ -664,6 +664,9 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
   async* TWO_WORKER__ONE_SCALE__FILL__step0_ImageData_process(
     sourceImageData, bApply_or_Applier ) {
 
+    const funcNameInMessage
+      = "TWO_WORKER__ONE_SCALE__FILL__step0_ImageData_process";
+
     const neuralNetIndex = 0; // Always use the first neural network.
     let neuralNet = this.neuralNetArray[ neuralNetIndex ];
 
@@ -679,8 +682,7 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
       scaledInt32Array = scaledSourceTensor.dataSync();
 
     } catch ( e ) {
-      let errorMsg =
-          `NeuralWorker_Body.TWO_WORKER__ONE_SCALE__FILL__step0_ImageData_process(): `
+      let errorMsg = `NeuralWorker_Body.${funcNameInMessage}(): `
         + `workerId=${this.workerId}. ${e}`;
       console.error( errorMsg );
       //debugger;
@@ -752,8 +754,7 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
       }
 
     } catch ( e ) {
-      let errorMsg =
-          `NeuralWorker_Body.TWO_WORKER__ONE_SCALE__FILL__step0_ImageData_process(): `
+      let errorMsg = `NeuralWorker_Body.${funcNameInMessage}(): `
         + `workerId=${this.workerId}. ${e}`;
       console.error( errorMsg );
       //debugger;
