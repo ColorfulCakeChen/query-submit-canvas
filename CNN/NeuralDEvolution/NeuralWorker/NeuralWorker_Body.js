@@ -254,59 +254,63 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
   }
 
   /**
-   * If backend is webgl, run the nueral network once for compiling shaders and
-   * uploading tensors to GPU. This could improve performance for the real run.
+   * If backend is webgl, run the nueral network once for compiling shaders
+   * and uploading tensors to GPU. This could improve performance for the
+   * real run.
    *
    * Note:
    *
-   *   - The shader compilation will happend in main thread (i.e. UI worker) even
-   *       if the neural network runs at non-main web worker (i.e. here). That is,
-   *       the compiling always blocks the UI worker.
+   *   - The shader compilation will happend in main thread (i.e. UI worker)
+   *       even if the neural network runs at non-main web worker (i.e. here).
+   *       That is, the compiling always blocks the UI worker.
    *
-   *   - The tensorflow.js library will cache the compilied shaders for the same
-   *       operations with the same input/output tensor shape. (Note: They should
-   *       be in the same web worker. Different web worker uses itself cache.)
+   *   - The tensorflow.js library will cache the compilied shaders for the
+   *       same operations with the same input/output tensor shape. (Note:
+   *       They should be in the same web worker. Different web worker uses
+   *       itself cache.)
    *
-   *   - Even the sharder has been compiled (i.e. operations with same input/output
-   *       tensor shape have been used before), this dry-run will still improve
-   *       performance for later real run because the neural network's filter
-   *       tensors will be uploaded to GPU.
+   *   - Even the sharder has been compiled (i.e. operations with the same
+   *       input/output tensor shape have been used before), this dry-run will
+   *       still improve performance for later real run because the neural
+   *       network's filters' tensors will be uploaded to GPU.
    *
    * So, it might be suggested that:
    *
    *   - At UI worker (i.e. not here) during game splash screen displaying:
    * 
-   *     - Create NeuralWorker.Proxies and inform all web workers create all dummy
-   *         neural networks (with the same NeuralNet.Params which will be use
-   *         later in the real run).
+   *     - Create NeuralWorker.Proxies and inform all web workers create all
+   *         dummy neural networks (with the same NeuralNet.Params which will
+   *         be use later in the real run).
    *
-   *     - This method will be called and it will compile shaders (in every web
-   *         workers). Although, the UI worker will always be blocked but it has
-   *         lesser hurt because the UI now is displaying a splash screen (i.e.
-   *         users has already expected the UI will be blocked).
+   *     - This method will be called and it will compile shaders (in every
+   *         web workers). Although, the UI worker will always be blocked but
+   *         it has lesser hurt because the UI now is displaying a splash
+   *         screen (i.e. users has already expected the UI will be blocked).
    *
    *   - Later when real run:
    * 
    *     - Inform all web workers create all real neural networks.
    *
-   *     - This method will be called but the UI will not be blocked (because WebGL
-   *         shaders have been compiled during game splash screen displaying).
+   *     - This method will be called but the UI will not be blocked (because
+   *         WebGL shaders have been compiled during game splash screen
+   *         displaying).
    *
-   *       - This method is still worth to be called (although no WebGL sharders
-   *           needs to be compiled), because it will upload the neural network
-   *           tensors to GPU.
+   *       - This method is still worth to be called (although no WebGL
+   *           sharders needs to be compiled), because it will upload the
+   *           neural network's filters' tensors to GPU.
    *
-   *       - Note1: The created neural network must have same input/output tenser
-   *           shape.
+   *       - Note1: The created neural network must have same input/output
+   *           tenser shape.
    *
-   *       - Note2: The same one NeuralWorker.Proxies and NeuralWorker.Proxy and
-   *           NeuralWorker.Body should be used. If the NeuralWorker.Body are
-   *           created every time, the shaders will be re-compiled again and again.)
+   *       - Note2: The same one NeuralWorker.Proxies and NeuralWorker.Proxy
+   *           and NeuralWorker.Body should be used. If the NeuralWorker.Body
+   *           are created every time, the shaders will be re-compiled again
+   *           and again.)
    *
    *
    * @param {boolean} bLogDryRunTime
-   *   If true, the neural network dry-run time will be measured twice and logged to
-   * console.
+   *   If true, the neural network dry-run time will be measured twice and
+   * logged to console.
    */
   static NeuralNetArray_compileShaders_uploadTensors_ifWebGL( bLogDryRunTime ) {
     let backendName = tf.getBackend();
