@@ -735,12 +735,13 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
         let applierNext = applier.next(); // NeuralNet sets progress to 0.
         applierNext = applier.next(); // NeuralNet processes embedding.
 
-        // Post back to WorkerProxy. (Note: the scaledInt32Array will be destroyed.)
+        // Post back to WorkerProxy. (Note: the scaledInt32Array will be
+        // destroyed.)
         //
-        // Note: Ideally, the scaledInt32Array posting-back should be done before
-        // neuralNet.apply(). However, that will happen exception (says the
-        // ArrayBuffer has been detached). So, do it after first operation (i.e.
-        // embedding) completely.
+        // Note: Ideally, the scaledInt32Array posting-back should be done
+        //       before neuralNet.apply(). However, that will happen exception
+        //       (says the ArrayBuffer has been detached). So, do it after
+        //       first operation (i.e. embedding) completely.
         yield {
           value: scaledInt32Array,
           transferableObjectArray: [ scaledInt32Array.buffer ]
