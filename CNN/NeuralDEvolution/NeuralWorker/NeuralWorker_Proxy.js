@@ -277,8 +277,6 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
   }
 
   /**
-
-  /**
    * This method is used for:
    *   - Two web workers. Every worker has one neural network.
    *     - NeuralWorker_Mode.Singleton.Ids.TWO_WORKER__ONE_SCALE__NO_FILL__APPLY (4)
