@@ -26,8 +26,8 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
       // Q1: Why not importScripts() at global scope?
       // A1: So that NeruralWorker_Proxy could prefetch this NeuralWorker_Body.
       //
-      // If place it at global scope, NeruralWorker_Proxy will be failed to
-      // prefetch this NeuralWorker_Body because importScripts() can not be
+      // If it is placed at global scope, NeruralWorker_Proxy will be failed
+      // to prefetch this NeuralWorker_Body because importScripts() can not be
       // called in javascript module (where NeruralWorker_Proxy usually reside
       // in).
       //
