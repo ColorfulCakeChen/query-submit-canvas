@@ -996,12 +996,14 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
    * representing the neural network's result whose channel count is
    * this.neuralNet[ 0 ].output_channelCount.
    */
-  async* TWO_WORKER__ONE_SCALE__step1_Int32Array_process( scaledInt32Array, bFill ) {
-    const neuralNetIndex = 0; // Always use the first neural network.
-    let neuralNet = this.neuralNetArray[ neuralNetIndex ];
+  async* TWO_WORKER__ONE_SCALE__step1_Int32Array_process(
+    scaledInt32Array, bFill ) {
 
     const funcNameInMessage
       = "TWO_WORKER__ONE_SCALE__step1_Int32Array_process";
+
+    const neuralNetIndex = 0; // Always use the first neural network.
+    let neuralNet = this.neuralNetArray[ neuralNetIndex ];
 
     let sourceTensor;
     let outputTensor;
