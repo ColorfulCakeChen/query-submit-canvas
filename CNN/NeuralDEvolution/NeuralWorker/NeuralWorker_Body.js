@@ -676,9 +676,9 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
    *
    * @yield {Int32Array}
    *   Resolve to { done: false, value: { value: Int32Array,
-   * transferableObjectArray: [ Int32Array.buffer ] }. The value is an Int32Array
-   * representing the scaled image data whose shape is this.neuralNet[ 0 ]'s
-   * [ input_height, input_width, input_channelCount ].
+   * transferableObjectArray: [ Int32Array.buffer ] }. The value is an
+   * Int32Array representing the scaled image data whose shape is
+   * this.neuralNet[ 0 ]'s [ input_height, input_width, input_channelCount ].
    *
    * @yield {Float32Array}
    *   Resolve to { done: true, value: { value: Float32Array,
