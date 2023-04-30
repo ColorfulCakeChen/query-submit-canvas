@@ -306,6 +306,9 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
     if ( backendName != "webgl" )
       return; // Only WebGL needs compile shaders.
 
+    const funcNameInMessage
+      = "NeuralNetArray_compileShaders_uploadTensors_ifWebGL";
+
 //!!! (2023/04/30 Remarked) Every operations should have try-finally to release tensors.
 //    tf.tidy( () => {
 
@@ -329,8 +332,7 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
               let timeElapsed = timeEnd - timeBegin;
               timeElapsedArray[ j ] = timeElapsed;
             }
-            console.log( `NeuralWorker_Body`
-              + `.NeuralNetArray_compileShaders_uploadTensors_ifWebGL(): `
+            console.log( `NeuralWorker_Body.${funcNameInMessage}(): `
               + `workerId=${this.workerId}, neuralNetIndex=${i}, `
               + `timeElapsed0=${timeElapsedArray[ 0 ]}, `
               + `timeElapsed1=${timeElapsedArray[ 1 ]}`
@@ -342,7 +344,7 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
           }
 
         } catch ( e ) {
-          let errorMsg = `NeuralWorker_Body.NeuralNetArray_dryRun_ifWebGL(): `
+          let errorMsg = `NeuralWorker_Body.${funcNameInMessage}(): `
             + `workerId=${this.workerId}. ${e}`;
           console.error( errorMsg );
           //debugger;
