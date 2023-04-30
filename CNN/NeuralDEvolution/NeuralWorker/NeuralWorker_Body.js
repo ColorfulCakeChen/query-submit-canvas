@@ -703,21 +703,25 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
       NeuralWorker_Body.alignmentMark_fillTo_Image_Int32Array.call(
         this, neuralNetIndex, scaledInt32Array );
 
-      sourceTensor = tf.tensor( scaledInt32Array, neuralNet.input_shape, "int32" );
+      sourceTensor
+        = tf.tensor( scaledInt32Array, neuralNet.input_shape, "int32" );
 
       // 2.1 Solution 1: Use neuralNet.apply().
       if ( bApply_or_Applier ) {
         outputTensor = neuralNet.apply( sourceTensor );
 
-        // Because downloading from GPU to CPU is slow, start downloading before
-        // posting scaledInt32Array back to WorkerProxy (i.e. another slow action).
+        // Because downloading from GPU to CPU is slow, start downloading
+        // before posting scaledInt32Array back to WorkerProxy (i.e. another
+        // slow action).
         let outputFloat32ArrayPromise = outputTensor.data();
 
-        // Post back to WorkerProxy. (Note: the scaledInt32Array will be destroyed.)
+        // Post back to WorkerProxy. (Note: the scaledInt32Array will be
+        // destroyed.)
         //
-        // Note: Ideally, the scaledInt32Arrayposting-back should be done before
-        // neuralNet.apply(). However, that will happen exception (says the
-        // ArrayBuffer has been detached). So, do it after neuralNet.apply().
+        // Note: Ideally, the scaledInt32Arrayposting-back should be done
+        //       before neuralNet.apply(). However, that will happen exception
+        //       (says the ArrayBuffer has been detached). So, do it after
+        //       neuralNet.apply().
         yield {
           value: scaledInt32Array,
           transferableObjectArray: [ scaledInt32Array.buffer ]
