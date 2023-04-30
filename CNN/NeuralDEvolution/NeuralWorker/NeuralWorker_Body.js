@@ -444,6 +444,11 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
   static alignmentMark_fillTo_Image_Int32Array(
     neuralNetIndex, imageInt32Array ) {
 
+
+//!!! ...unfinished... (2023/04/30)
+// Perhaps, should double as ( 6 * 6 ) for being shrinked to half ( 3 * 3 )
+// by neural network stage's block0.
+
     // Q: Why fill top-left ( 3 * 3 ) pixels? Why not just fill top-left
     //      ( 1 * 1 ) pixel?
     // A: NeuralNet mainly uses ( 3 * 3 ) depthwise filter.
