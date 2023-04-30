@@ -493,10 +493,11 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
    * result whose channel count is this.neuralNetArray[].output_channelCount.
    */
   async* ONE_WORKER__ONE_SCALE__ImageData_process( sourceImageData, bFill ) {
+    const funcNameInMessage = "ONE_WORKER__ONE_SCALE__ImageData_process";
 
     let resultFloat32ArrayPromiseArray = new Array( this.neuralNetArray.length );
 
-    // Ensure all tensors be released, even if .apply() has exception.
+    // Ensure all tensors will be released, even if .apply() throws exception.
     tf.tidy( () => {
       let scaledSourceTensor; // Only kept if need not fill alignment mark.
       try {
@@ -507,8 +508,7 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
 
           // 1. Scale image (only do it once).
           if (   ( !bFill && !scaledSourceTensor )
-              || (  bFill && !scaledInt32Array )
-            ) {
+              || (  bFill && !scaledInt32Array ) ) {
             try {
               scaledSourceTensor
                 = neuralNet.create_ScaledSourceTensor_from_PixelData(
@@ -521,8 +521,7 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
               }
 
             } catch ( e ) {
-              let errorMsg =
-                  `NeuralWorker_Body.ONE_WORKER__ONE_SCALE__ImageData_process(): `
+              let errorMsg = `NeuralWorker_Body.${funcNameInMessage}(): `
                 + `workerId=${this.workerId}. ${e}`;
               console.error( errorMsg );
               //debugger;
@@ -572,8 +571,7 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
             resultFloat32ArrayPromiseArray[ i ] = outputTensor.data();
 
           } catch ( e ) {
-            let errorMsg =
-                `NeuralWorker_Body.ONE_WORKER__ONE_SCALE__ImageData_process(): `
+            let errorMsg = `NeuralWorker_Body.${funcNameInMessage}(): `
               + `workerId=${this.workerId}. ${e}`;
             console.error( errorMsg );
             //debugger;
@@ -588,8 +586,7 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
         }
 
       } catch ( e ) {
-        let errorMsg =
-            `NeuralWorker_Body.ONE_WORKER__ONE_SCALE__ImageData_process(): `
+        let errorMsg = `NeuralWorker_Body.${funcNameInMessage}(): `
           + `workerId=${this.workerId}. ${e}`;
         console.error( errorMsg );
         //debugger;
