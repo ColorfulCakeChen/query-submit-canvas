@@ -518,7 +518,7 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
    *   Resolve to { done: true, value: { value: [ TypedArray, TypedArray ],
    * transferableObjectArray: [ TypedArray.buffer, TypedArray.buffer ] }.
    * The value is an array of TypedArray representing all neural networks'
-   * result whose channel count is this.neuralNetArray[].output_channelCount.
+   * result whose length is this.neuralNetArray[].output_channelCount.
    * The TypedArray may be:
    *   - Float32Array (if ( neuralNetParams.output_asInputValueRange == false ) )
    *   - Int32Array (if ( neuralNetParams.output_asInputValueRange == true ) )
@@ -696,8 +696,8 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
    * @yield {Float32Array|Int32Array}
    *   Resolve to { done: true, value: { value: TypedArray,
    * transferableObjectArray: [ TypedArray.buffer ] }. The value is a
-   * TypedArray representing the neural network's result whose channel count
-   * is this.neuralNet[ 0 ].output_channelCount. The TypedArray may be:
+   * TypedArray representing the neural network's result whose length is
+   * this.neuralNet[ 0 ].output_channelCount. The TypedArray may be:
    *   - Float32Array (if ( neuralNetParams.output_asInputValueRange == false ) )
    *   - Int32Array (if ( neuralNetParams.output_asInputValueRange == true ) )
    */
@@ -867,8 +867,8 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
    * @yield {Float32Array|Int32Array}
    *   Resolve to { done: true, value: { value: TypedArray,
    * transferableObjectArray: [ TypedArray.buffer ] }. The value is a
-   * TypedArray representing the neural network's result whose channel
-   * count is this.neuralNet[ 0 ].output_channelCount. The TypedArray may be:
+   * TypedArray representing the neural network's result whose length
+   * is this.neuralNet[ 0 ].output_channelCount. The TypedArray may be:
    *   - Float32Array (if ( neuralNetParams.output_asInputValueRange == false ) )
    *   - Int32Array (if ( neuralNetParams.output_asInputValueRange == true ) )
    */
@@ -1010,7 +1010,7 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
    * @yield {Float32Array|Int32Array}
    *   Resolve to { done: true, value: { value: TypedArray,
    * transferableObjectArray: [ TypedArray.buffer ] }. The value is a
-   * TypedArray representing the neural network's result whose channel count is
+   * TypedArray representing the neural network's result whose length is
    * this.neuralNet[ 0 ].output_channelCount. The TypedArray may be:
    *   - Float32Array (if ( neuralNetParams.output_asInputValueRange == false ) )
    *   - Int32Array (if ( neuralNetParams.output_asInputValueRange == true ) )
@@ -1117,7 +1117,7 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
    * @yield {Float32Array|Int32Array}
    *   Resolve to { done: true, value: { value: TypedArray,
    * transferableObjectArray: [ TypedArray.buffer ] }. The value is a
-   * TypedArray representing the neural network's result whose channel count is
+   * TypedArray representing the neural network's result whose length is
    * this.neuralNet[ 0 ].output_channelCount. The TypedArray may be:
    *   - Float32Array (if ( neuralNetParams.output_asInputValueRange == false ) )
    *   - Int32Array (if ( neuralNetParams.output_asInputValueRange == true ) )
