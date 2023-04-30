@@ -554,7 +554,8 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
               sourceTensor = tf.tensor(
                 scaledInt32Array, neuralNet.input_shape, "int32" );
 
-            // 2.1.2 Clone the scaled source tensor since no need fill alignment mark.
+            // 2.1.2 Clone the scaled source tensor since no need fill
+            //       alignment mark.
             } else {
               sourceTensor = scaledSourceTensor.clone();
             }
