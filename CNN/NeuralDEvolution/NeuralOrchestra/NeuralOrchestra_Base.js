@@ -440,6 +440,10 @@ class NeuralOrchestra_Base extends
   }
 
 
+//!!! ...unfinished... (2023/04/30)
+// If FILL, output_channelCount = output_channelCount_per_alignment
+// If NO_FILL, output_channelCount = output_channelCount_per_alignment * 2
+
   /**
    * (This method's parameters are almost the same as .init_asyncGenerator()
    * except without the 1st parameter progressParent because the
