@@ -497,8 +497,11 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
 
     let resultFloat32ArrayPromiseArray = new Array( this.neuralNetArray.length );
 
-    // Ensure all tensors will be released, even if .apply() throws exception.
-    tf.tidy( () => {
+//!!! (2023/04/30 Remarked) Every operations should have try-finally to release tensors.
+//     // Ensure all tensors will be released, even if .apply() throws exception.
+//     tf.tidy( () => {
+
+    {
       let scaledSourceTensor; // Only kept if need not fill alignment mark.
       try {
 
@@ -598,7 +601,10 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
           scaledSourceTensor = null;
         }
       }
-    } );
+    }
+
+//!!! (2023/04/30 Remarked) Every operations should have try-finally to release tensors.
+//     } );
 
     // Wait for all downloading from GPU to CPU completely.
     let resultFloat32ArrayArray
