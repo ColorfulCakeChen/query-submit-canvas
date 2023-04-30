@@ -601,10 +601,15 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
     } );
 
     // Wait for all downloading from GPU to CPU completely.
-    let resultFloat32ArrayArray = await Promise.all( resultFloat32ArrayPromiseArray );
-    let resultTransferableObjectArray = new Array( resultFloat32ArrayArray.length );
+    let resultFloat32ArrayArray
+      = await Promise.all( resultFloat32ArrayPromiseArray );
+
+    let resultTransferableObjectArray
+      = new Array( resultFloat32ArrayArray.length );
+
     for ( let i = 0; i < resultFloat32ArrayArray.length; ++i ) {
-      resultTransferableObjectArray[ i ] = resultFloat32ArrayArray[ i ].buffer;
+      resultTransferableObjectArray[ i ]
+        = resultFloat32ArrayArray[ i ].buffer;
     }
 
     return {
