@@ -718,7 +718,7 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
         // Post back to WorkerProxy. (Note: the scaledInt32Array will be
         // destroyed.)
         //
-        // Note: Ideally, the scaledInt32Arrayposting-back should be done
+        // Note: Ideally, the scaledInt32Array posting-back should be done
         //       before neuralNet.apply(). However, that will happen exception
         //       (says the ArrayBuffer has been detached). So, do it after
         //       neuralNet.apply().
