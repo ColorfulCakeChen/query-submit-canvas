@@ -94,6 +94,7 @@ class NeuralNet_ScaleFillTensor {
       );
 
     // 2. Scale
+    let scaledSourceTensorInt32;
     if (   ( source_height != target_height )
         || ( source_width != target_width ) ) {
 
@@ -114,24 +115,20 @@ class NeuralNet_ScaleFillTensor {
         throw e; // e.g. out of (GPU) memory.
       } finally {
         sourceTensorInt32.dispose();
-        sourceTensorInt32 = null;
       }
 
 //!!! ...unfinished... (2023/05/01)
-      if ( !bForceInt32 )
-        return scaledSourceTensorFloat32;
 
-      // Convert to int32 if necessary. (Note: The dtype of tf.image.resizeXxx()'s
-      // result is float32.)
+      // Convert to int32. (Note: The dtype of tf.image.resizeXxx()'s result
+      // is float32.)
       try {
-        let scaledSourceTensorInt32 = scaledSourceTensorFloat32.cast( "int32" );
-        return scaledSourceTensorInt32;
+        scaledSourceTensorInt32 = scaledSourceTensorFloat32.cast( "int32" );
       } catch ( e ) {
+        //debugger;
         throw e; // e.g. out of (GPU) memory.
       } finally {
         scaledSourceTensorFloat32.dispose();
       }
-
     }
 
 
