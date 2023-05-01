@@ -161,19 +161,21 @@ class NeuralNet_ScaleFillTensor {
 //!!! ...unfinished... (2023/05/01)
     // 2.
     const tensorCount = previous_output_Int32ArrayArray.length;
-    for ( let i = 0; i < tensorCount; ++i ) {
+
+//     for ( let i = 0; i < tensorCount; ++i ) {
+
+// //!!! ...unfinished... (2023/05/01)
+//       yield targetTensorInt32;
+
+//     }
+
 
 //!!! ...unfinished... (2023/05/01)
-      yield targetTensorInt32;
-
-    }
-
-
-//!!! ...unfinished... (2023/05/01)
+    let sourceTensorInt32;
     let targetTensorInt32;
     if ( bScale ) {
 
-      let scaledSourceTensorInt32
+      sourceTensorInt32
         = NeuralNet_ScaleFillTensor.createTensor_by_scale_TypedArray.call(
             this, source_TypedArray, source_height, source_width );
 
@@ -185,12 +187,12 @@ class NeuralNet_ScaleFillTensor {
 
         let scaledSourceInt32Array;
         try {
-          scaledSourceInt32Array = await scaledSourceTensorInt32.data();
+          scaledSourceInt32Array = await sourceTensorInt32.data();
         } catch ( e ) {
           //debugger;
           throw e; // e.g. out of (GPU) memory.
         } finally {
-          scaledSourceTensorInt32.dispose();
+          ???sourceTensorInt32.dispose();
         }
 
 //!!! ...unfinished... (2023/05/01)
@@ -206,14 +208,34 @@ class NeuralNet_ScaleFillTensor {
 //!!! ...unfinished... (2023/05/01)
 
       } else { // 2.2.2 No Scale, No Fill.
-        targetTensorInt32
-          = tf.tensor3d( source_TypedArray, this.target_shape, "int32" );
+
+        try {
+          sourceTensorInt32
+            = tf.tensor3d( source_TypedArray, this.target_shape, "int32" );
+
+          for ( let i = 0; i < tensorCount; ++i ) {
+            if ( i < ( tensorCount - 1 ) ) {
+              targetTensorInt32 = sourceTensorInt32.clone();
+            } else {
+              targetTensorInt32 = sourceTensorInt32;
+              sourceTensorInt32 = null;
+            }
+
+      //!!! ...unfinished... (2023/05/01)
+            yield targetTensorInt32;
+      
+          }
+        } finally {
+          if ( sourceTensorInt32 ) {
+            sourceTensorInt32.dispose();
+            sourceTensorInt32 = null;
+          }
+        }
       }
 
     }
 
 //!!! ...unfinished... (2023/05/01)
-    return targetTensorInt32;
 
   }
 
