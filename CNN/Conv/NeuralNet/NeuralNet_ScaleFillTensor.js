@@ -89,10 +89,18 @@ class NeuralNet_ScaleFillTensor {
    *   - previous_output_Int32ArrayArray.length must be the same as
    *       alignmentMarkValueArray.length.
    *
-   * @yield {Promise( tf.tensor3d )}
-   *   Yield a promise resolves to { done: false, value: tf.tensor3d } for
-   * every alignmentMarkValue and previous_output_Int32Array. The outside
-   * caller is responsible for destroying the returned tensor.
+   * @yield {Promise( [ tf.tensor3d, Promise( Int32Array ) ] )}
+   *   Yield a promise resolves to { done: false, value: [ tf.tensor3d,
+   * Promise( Int32Array ) ] } for every alignmentMarkValue and
+   * previous_output_Int32Array.
+   *
+   *   - The value[ 0 ] is a tf.tensor3d which has been ensured so that its
+   *       shape is the same as this.target_shape and has been filled with
+   *       alignmentMarkValue and previous_output_Int32Array (if exists). The
+   *       outside caller is responsible for destroying the returned tensor.
+   *
+   *   - The value[ 1 ] is a Promise which will resolve to TypedArray which is
+   *       the source pixel data of the value[ 0 ] (i.e. tf.tensor3d).
    *
    * @yield {Promise( undefined )}
    *   Yield a promise resolves to { done: true, value: undefined }.
