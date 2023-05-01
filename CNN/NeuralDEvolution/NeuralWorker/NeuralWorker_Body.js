@@ -186,8 +186,7 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
               + `${this.ScaleFill.target_height}, `
               + `${this.ScaleFill.target_width}, `
               + `${this.ScaleFill.target_channelCount} ). `
-              + `neuralNetParamsBase={ ${strNeuralNetParamsBase} }, `
-              + `neuralNet={ ${neuralNet} }.`
+              + `neuralNetParamsBase={ ${strNeuralNetParamsBase} }.`
             );
 
         } else {
