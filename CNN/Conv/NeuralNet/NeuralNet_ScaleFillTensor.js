@@ -46,11 +46,11 @@ class NeuralNet_ScaleFillTensor {
         + `source_size_per_channel ( `
         + `= source_height * source_width `
         + `= ${source_height} * ${source_width} `
-        + `= ${source_size_per_channel} )`
+        + `= ${source_size_per_channel} ).`
       );
 
-    let source_channelCount = source_TypedArray.length / source_size_per_channel;
-
+    let source_channelCount
+      = source_TypedArray.length / source_size_per_channel;
 
 
   }
