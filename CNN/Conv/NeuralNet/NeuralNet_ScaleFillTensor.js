@@ -118,25 +118,7 @@ class NeuralNet_ScaleFillTensor {
         + `target_channelCount ( ${target_channelCount} ).`
       );
 
-    // 1.2 Whether needs fill extra information into the target tensor.
-    let bFill;
-    if (   ( alignmenrMarkValue == undefined )
-        && ( previous_output_Int32ArrayArray == undefined ) ) {
-      bFill = false;
-    } else {
-      bFill = true;
-    }
-
-    // 1.3 Whether needs scale the source image to fit into the target tensor.
-    let bScale;
-    if (   ( source_height == this.target_height )
-        && ( source_width == this.target_width ) ) {
-      bScale = false;
-    } else {
-      bScale = true;
-    }
-
-    // 1.4 
+    // 1.2
     if ( alignmentMarkValueArray.length != 2 )
       throw Error( `NeuralNet_ScaleFillTensor.${funcNameInMessage}(): `
         + `alignmentMarkValueArray.length ( `
@@ -150,6 +132,24 @@ class NeuralNet_ScaleFillTensor {
         + `= ${previous_output_Int32ArrayArray.length} ) `
         + `should be 2.`
       );
+
+    // 1.3 Whether needs fill extra information into the target tensor.
+    let bFill;
+    if (   ( alignmentMarkValueArray == undefined )
+        && ( previous_output_Int32ArrayArray == undefined ) ) {
+      bFill = false;
+    } else {
+      bFill = true;
+    }
+
+    // 1.4 Whether needs scale the source image to fit into the target tensor.
+    let bScale;
+    if (   ( source_height == this.target_height )
+        && ( source_width == this.target_width ) ) {
+      bScale = false;
+    } else {
+      bScale = true;
+    }
 
 //!!! ...unfinished... (2023/05/01)
     // 2.
