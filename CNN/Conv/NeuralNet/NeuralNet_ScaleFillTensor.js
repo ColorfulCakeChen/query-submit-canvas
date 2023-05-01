@@ -80,7 +80,7 @@ class NeuralNet_ScaleFillTensor {
    *
    *
    */
-  scale_fill_tensor(
+  async createTensor_by_scale_fill_async(
     source_TypedArray, source_height, source_width,
     previous_output_Int32ArrayArray
 
@@ -147,6 +147,12 @@ class NeuralNet_ScaleFillTensor {
       if ( bFill ) { // 2.1.1
 
 //!!! ...unfinished... (2023/05/01)
+// Perhaps, should use Canvas Context's drawImage() to scale the source.
+// So that GPU-CPU transferring could be reduced.
+
+        let scaledSourceInt32Array = await scaledSourceTensorInt32.data();
+
+//!!! ...unfinished... (2023/05/01)
 
       } else { // 2.1.2 Scale, No Fill.
         targetTensorInt32 = scaledSourceTensorInt32;
@@ -169,10 +175,6 @@ class NeuralNet_ScaleFillTensor {
 
   }
 
-
-//!!! ...unfinished... (2023/05/01)
-// Perhaps, should use Canvas Context's drawImage() to scale the source.
-// So that GPU-CPU transferring could be reduced.
   /**
    *
    *
