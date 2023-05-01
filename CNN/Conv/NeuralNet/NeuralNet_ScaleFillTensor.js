@@ -208,4 +208,59 @@ class NeuralNet_ScaleFillTensor {
 
   }
 
+
+//!!! ...unfinished... (2023/05/01)
+// Perhaps, should use Canvas Context's drawImage() to scale the source.
+// So that GPU-CPU transferring could be reduced.
+  /**
+   *
+   *
+   * @param {Uint8ClampedArray|Uint16Array|Uint32Array} source_TypedArray
+   *   An unsigned integer TypedArray. For example, ImageData.data which is
+   * coming from a canvas. Note that it may be modified by filling with
+   * alignment mark and feedback information (i.e. previous time output of the
+   * neural network).
+   *
+   * @param {number} source_height
+   *   The height (in pixels) of the source image. For example,
+   * ImageData.height.
+   *
+   * @param {number} source_width
+   *   The width (in pixels) of the source image. For example,
+   * ImageData.width.
+   */
+  static scale_tensor( source_TypedArray, source_height, source_width ) {
+
+    let source_shape = [ source_height, source_width, source_channelCount ];
+    let sourceTensorInt32
+      = tf.tensor3d( source_TypedArray, source_shape, "int32" );
+
+    // Resize to the target size (height x width) which is the input image
+    // size used for training the neural network.
+    let scaledSourceTensorFloat32;
+    try {
+      scaledSourceTensorFloat32 = tf.image.resizeBilinear(
+        sourceTensorInt32, this.target_shape_height_width,
+        true // ( alignCorners = true ) for visual image resizing.
+      );
+    } catch ( e ) {
+      //debugger;
+      throw e; // e.g. out of (GPU) memory.
+    } finally {
+      sourceTensorInt32.dispose();
+    }
+
+    // Convert to int32. (Note: The dtype of tf.image.resizeXxx()'s result
+    // is float32.)
+    let scaledSourceTensorInt32;
+    try {
+      scaledSourceTensorInt32 = scaledSourceTensorFloat32.cast( "int32" );
+    } catch ( e ) {
+      //debugger;
+      throw e; // e.g. out of (GPU) memory.
+    } finally {
+      scaledSourceTensorFloat32.dispose();
+    }
+  }
+
 }
