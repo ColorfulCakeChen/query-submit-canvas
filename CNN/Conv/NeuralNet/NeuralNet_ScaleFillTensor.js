@@ -217,27 +217,36 @@ class NeuralNet_ScaleFillTensor {
 
       } else { // No Scale.
 
-        if ( bFill ) { // 2.2.1
+        if ( bFill ) { // 2.2.1 No Scale, Fill.
+
+          for ( let i = 0; i < tensorCount; ++i ) {
 
   //!!! ...unfinished... (2023/05/01)
+  // Modify source_TypedArray directly.
+
+            targetTensorInt32 = sourceTensorInt32
+              = tf.tensor3d( source_TypedArray, this.target_shape, "int32" );
+
+            yield targetTensorInt32;
+          }
 
         } else { // 2.2.2 No Scale, No Fill.
 
-            sourceTensorInt32
-              = tf.tensor3d( source_TypedArray, this.target_shape, "int32" );
+          sourceTensorInt32
+            = tf.tensor3d( source_TypedArray, this.target_shape, "int32" );
 
-            for ( let i = 0; i < tensorCount; ++i ) {
-              if ( i < ( tensorCount - 1 ) ) {
-                targetTensorInt32 = sourceTensorInt32.clone();
-              } else { // The final yield.
-                targetTensorInt32 = sourceTensorInt32;
-                sourceTensorInt32 = null;
-              }
-
-  //!!! ...unfinished... (2023/05/01)
-              // Assume the outside caller will dispose the targetTensorInt32.
-              yield targetTensorInt32;
+          for ( let i = 0; i < tensorCount; ++i ) {
+            if ( i < ( tensorCount - 1 ) ) {
+              targetTensorInt32 = sourceTensorInt32.clone();
+            } else { // The final yield.
+              targetTensorInt32 = sourceTensorInt32;
+              sourceTensorInt32 = null;
             }
+
+//!!! ...unfinished... (2023/05/01)
+            // Assume the outside caller will dispose the targetTensorInt32.
+            yield targetTensorInt32;
+          }
         }
 
       }
