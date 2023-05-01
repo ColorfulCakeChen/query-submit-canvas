@@ -95,8 +95,8 @@ class NeuralNet_ScaleFillTensor {
 
     // 2. Scale
     let scaledSourceTensorInt32;
-    if (   ( source_height == target_height )
-        && ( source_width == target_width ) ) {
+    if (   ( source_height == this.target_height )
+        && ( source_width == this.target_width ) ) {
 
       scaledSourceTensorInt32 = ???;
 
