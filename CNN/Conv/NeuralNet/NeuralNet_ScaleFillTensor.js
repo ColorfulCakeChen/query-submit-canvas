@@ -140,9 +140,9 @@ class NeuralNet_ScaleFillTensor {
     let targetTensorInt32;
     if ( bScale ) {
 
-      let scaledSourceTensorInt32 = this.createTensor_by_scale_TypedArray(
-        source_TypedArray, source_height, source_width );
-
+      let scaledSourceTensorInt32 = NeuralNet_ScaleFillTensor
+        .createTensor_by_scale_TypedArray.call( this,
+          source_TypedArray, source_height, source_width );
 
       if ( bFill ) { // 2.1.1
 
@@ -176,6 +176,8 @@ class NeuralNet_ScaleFillTensor {
   /**
    *
    *
+   * @param {NeuralNet_ScaleFillTensor} this
+   *
    * @param {Uint8ClampedArray|Uint16Array|Uint32Array} source_TypedArray
    *   An unsigned integer TypedArray. For example, ImageData.data which is
    * coming from a canvas. Note that it may be modified by filling with
@@ -194,7 +196,7 @@ class NeuralNet_ScaleFillTensor {
    *   Return a scaled int32 tensor3d whose depthwise size is [ this.height,
    * this.width ].
    */
-  createTensor_by_scale_TypedArray(
+  static createTensor_by_scale_TypedArray(
     source_TypedArray, source_height, source_width ) {
 
     let source_shape = [ source_height, source_width, source_channelCount ];
