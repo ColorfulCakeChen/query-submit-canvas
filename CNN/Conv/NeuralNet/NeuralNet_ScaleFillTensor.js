@@ -179,11 +179,11 @@ class NeuralNet_ScaleFillTensor {
           = NeuralNet_ScaleFillTensor.createTensor_by_scale_TypedArray.call(
               this, source_TypedArray, source_height, source_width );
 
-        if ( bFill ) { // 2.1.1
+        if ( bFill ) { // 2.1.1 Scale, Fill
 
-  //!!! ...unfinished... (2023/05/01)
-  // Perhaps, should use Canvas Context's drawImage() to scale the source.
-  // So that GPU-CPU transferring could be reduced.
+//!!! ...unfinished... (2023/05/01)
+// Perhaps, should use Canvas Context's drawImage() to scale the source.
+// So that GPU-CPU transferring could be reduced.
 
           let scaledSourceInt32Array;
           try {
@@ -196,7 +196,17 @@ class NeuralNet_ScaleFillTensor {
             sourceTensorInt32 = null;
           }
 
-  //!!! ...unfinished... (2023/05/01)
+          for ( let i = 0; i < tensorCount; ++i ) {
+
+//!!! ...unfinished... (2023/05/01)
+// Modify scaledSourceInt32Array.
+
+            let targetTensorInt32
+              = tf.tensor3d( source_TypedArray, this.target_shape, "int32" );
+
+            // Assume the outside caller will dispose the targetTensorInt32.
+            yield targetTensorInt32;
+          }
 
         } else { // 2.1.2 Scale, No Fill.
 
