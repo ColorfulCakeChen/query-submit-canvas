@@ -201,8 +201,8 @@ class NeuralNet_ScaleFillTensor {
 //!!! ...unfinished... (2023/05/01)
 // Modify scaledSourceInt32Array.
 
-            let targetTensorInt32
-              = tf.tensor3d( source_TypedArray, this.target_shape, "int32" );
+            let targetTensorInt32 = tf.tensor3d( scaledSourceInt32Array,
+              this.target_shape, "int32" );
 
             // Assume the outside caller will dispose the targetTensorInt32.
             yield targetTensorInt32;
