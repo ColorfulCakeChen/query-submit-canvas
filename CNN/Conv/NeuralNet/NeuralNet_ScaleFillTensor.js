@@ -25,7 +25,16 @@ class NeuralNet_ScaleFillTensor {
    * @param {number} source_width
    *
    *
-   * @param {number} source_channelCount
+???   * @param {number} source_channelCount
+   *
+   *
+   * @param {number} target_height
+   *
+   *
+   * @param {number} target_width
+   *
+   *
+   * @param {number} target_channelCount
    *
    *
    */
@@ -39,8 +48,8 @@ class NeuralNet_ScaleFillTensor {
 
     // 1.
     const source_size_per_channel = source_height * source_width;
-
     const source_valueCount = source_TypedArray.length;
+
     if ( ( source_valueCount % source_size_per_channel ) != 0 )
       throw Error( `NeuralNet_ScaleFillTensor.${funcNameInMessage}(): `
         + `source_TypedArray.length ( ${source_valueCount} ) ` 
@@ -51,7 +60,7 @@ class NeuralNet_ScaleFillTensor {
         + `= ${source_size_per_channel} ).`
       );
 
-    let source_channelCount = source_valueCount / source_size_per_channel;
+    const source_channelCount = source_valueCount / source_size_per_channel;
 
     if ( source_channelCount != target_channelCount )
       throw Error( `NeuralNet_ScaleFillTensor.${funcNameInMessage}(): `
