@@ -179,6 +179,10 @@ class NeuralNet_ScaleFillTensor {
 
         if ( bFill ) { // 2.1.1 Scale, Fill
 
+//!!! ...unfinished... (2023/05/01)
+// scaledSourceInt32Array should be exposed to caller for posting back
+// to WorkerProxy.
+
           let scaledSourceInt32Array;
           try {
             scaledSourceInt32Array = await sourceTensorInt32.data();
