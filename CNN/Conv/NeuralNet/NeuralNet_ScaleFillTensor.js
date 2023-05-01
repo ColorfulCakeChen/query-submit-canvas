@@ -59,13 +59,20 @@ class NeuralNet_ScaleFillTensor {
    * ImageData.width.
    *
    *
-???   * @param {number} source_channelCount
+
+//!!! ...unfinished... (2023/05/01)
+// The shape of previous_output_Int32ArrayArray depends on whether
+// a neural network generates output of one or two alignments.
+
+   * @param {Int32Array[]} previous_output_Int32ArrayArray
+   *   The (previous time) output of the pair of neural networks.
+   *
    *
    *
    */
   scale_fill_tensor(
     source_TypedArray, source_height, source_width,
-
+    previous_output_Int32ArrayArray
 
   ) {
     const funcNameInMessage = "scale_fill_tensor";
