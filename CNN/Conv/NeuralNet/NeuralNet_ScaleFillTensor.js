@@ -101,12 +101,8 @@ class NeuralNet_ScaleFillTensor {
       let sourceTensorInt32
         = tf.tensor3d( source_TypedArray, source_shape, "int32" );
 
-//!!! ...unfinished... (2023/05/01)
-// should scale
-
-      // Resize to the target size (height x width) which is the input
-      // image size used for training the neural network.
-      //
+      // Resize to the target size (height x width) which is the input image
+      // size used for training the neural network.
       let scaledSourceTensorFloat32;
       try {
         scaledSourceTensorFloat32 = tf.image.resizeBilinear(
@@ -114,11 +110,14 @@ class NeuralNet_ScaleFillTensor {
           true // ( alignCorners = true ) for visual image resizing.
         );
       } catch ( e ) {
+        //debugger;
         throw e; // e.g. out of (GPU) memory.
       } finally {
         sourceTensorInt32.dispose();
+        sourceTensorInt32 = null;
       }
 
+//!!! ...unfinished... (2023/05/01)
       if ( !bForceInt32 )
         return scaledSourceTensorFloat32;
 
