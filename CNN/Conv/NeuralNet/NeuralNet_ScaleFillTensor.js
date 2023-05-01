@@ -47,12 +47,16 @@ class NeuralNet_ScaleFillTensor {
    * @param {Uint8ClampedArray|Uint16Array|Uint32Array} source_TypedArray
    *   An unsigned integer TypedArray. It may be modified by filling with
    * alignment mark and feedback information (i.e. previous time output of the
-   * neural network).
+   * neural network). Usually, it is the ImageData.data which is coming from a
+   * canvas.
    *
    * @param {number} source_height
-   *
+   *   The height (in pixels) of the source image. For example,
+   * ImageData.height.
    *
    * @param {number} source_width
+   *   The width (in pixels) of the source image. For example,
+   * ImageData.width.
    *
    *
 ???   * @param {number} source_channelCount
@@ -60,8 +64,8 @@ class NeuralNet_ScaleFillTensor {
    *
    */
   scale_fill_tensor(
-    source_TypedArray,
-    source_height, source_width, //source_channelCount,
+    source_TypedArray, source_height, source_width,
+
 
   ) {
     const funcNameInMessage = "scale_fill_tensor";
@@ -93,6 +97,9 @@ class NeuralNet_ScaleFillTensor {
         + `target_channelCount ( ${target_channelCount} ).`
       );
 
+//!!! ...unfinished... (2023/05/01)
+// FILL or NO_FILL
+
     // 2. Scale
     let scaledSourceTensorInt32;
     if (   ( source_height == this.target_height )
@@ -119,8 +126,6 @@ class NeuralNet_ScaleFillTensor {
       } finally {
         sourceTensorInt32.dispose();
       }
-
-//!!! ...unfinished... (2023/05/01)
 
       // Convert to int32. (Note: The dtype of tf.image.resizeXxx()'s result
       // is float32.)
