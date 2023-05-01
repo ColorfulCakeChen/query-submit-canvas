@@ -209,7 +209,6 @@ class NeuralNet_ScaleFillTensor {
               sourceTensorInt32 = null;
             }
 
-//!!! ...unfinished... (2023/05/01)
             // Assume the outside caller will dispose the targetTensorInt32.
             yield targetTensorInt32;
           }
@@ -246,7 +245,6 @@ class NeuralNet_ScaleFillTensor {
               sourceTensorInt32 = null;
             }
 
-//!!! ...unfinished... (2023/05/01)
             // Assume the outside caller will dispose the targetTensorInt32.
             yield targetTensorInt32;
           }
@@ -264,9 +262,6 @@ class NeuralNet_ScaleFillTensor {
         sourceTensorInt32 = null;
       }
     }
-
-//!!! ...unfinished... (2023/05/01)
-
   }
 
   /**
