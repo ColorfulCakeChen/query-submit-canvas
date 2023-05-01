@@ -200,7 +200,8 @@ class NeuralNet_ScaleFillTensor {
             sourceTensorInt32 = null;
           }
 
-          let sourceInt32ArrayPromiseFunction = () => sourceInt32ArrayPromise;
+          let sourceInt32ArrayPromiseFunction
+            = () => sourceInt32ArrayPromise;
 
           for ( let i = 0; i < tensorCount; ++i ) {
 
@@ -231,7 +232,8 @@ class NeuralNet_ScaleFillTensor {
 
           // The reason yield a function (instead of a Promise directly) is
           // to ensure .data() only be called when necessary.
-          let sourceInt32ArrayPromiseFunction = () => sourceTensorInt32.data();
+          let sourceInt32ArrayPromiseFunction
+            = () => sourceTensorInt32.data();
 
           for ( let i = 0; i < tensorCount; ++i ) {
             let targetTensorInt32;
@@ -250,8 +252,8 @@ class NeuralNet_ScaleFillTensor {
 
         if ( bFill ) { // 2.2.1 No Scale, Fill.
 
-          let sourceTypedArrayPromise = Promise.resolve( source_TypedArray );
-          let sourceInt32ArrayPromiseFunction = () => sourceInt32ArrayPromise;
+          let sourceInt32ArrayPromiseFunction
+            = () => Promise.resolve( source_TypedArray );
 
           for ( let i = 0; i < tensorCount; ++i ) {
 
@@ -274,8 +276,8 @@ class NeuralNet_ScaleFillTensor {
           sourceTensorInt32
             = tf.tensor3d( source_TypedArray, this.target_shape, "int32" );
 
-          let sourceTypedArrayPromise = Promise.resolve( source_TypedArray );
-          let sourceInt32ArrayPromiseFunction = () => sourceInt32ArrayPromise;
+          let sourceInt32ArrayPromiseFunction
+            = () => Promise.resolve( source_TypedArray );
 
           for ( let i = 0; i < tensorCount; ++i ) {
             let targetTensorInt32;
