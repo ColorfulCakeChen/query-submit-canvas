@@ -229,6 +229,8 @@ class NeuralNet_ScaleFillTensor {
 // What if not used?
 // should be a function. If called, call .data()
 
+          // The reason yield a function (instead of a Promise directly) is
+          // to ensure .data() only be called when necessary.
           let sourceInt32ArrayPromiseFunction = () => sourceTensorInt32.data();
 
           for ( let i = 0; i < tensorCount; ++i ) {
