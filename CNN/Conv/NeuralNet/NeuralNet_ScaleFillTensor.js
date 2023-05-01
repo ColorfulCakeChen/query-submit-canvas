@@ -115,7 +115,7 @@ class NeuralNet_ScaleFillTensor {
     alignmentMarkValueArray,
     previous_output_Int32ArrayArray
   ) {
-    const funcNameInMessage = "scale_fill_tensor";
+    const funcNameInMessage = "createTensor_by_scale_fill_asyncGenerator";
 
     // 1.
 
