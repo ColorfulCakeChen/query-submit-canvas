@@ -101,7 +101,8 @@ class NeuralNet_ScaleFillTensor {
    *
    *   - The value[ 1 ] is an async function. The function will return a
    *       Promise which will resolve to a TypedArray which is the source pixel
-   *       data of the value[ 0 ] (i.e. tf.tensor3d).
+   *       data (which is scaled and filled with alignmentMarkValue and
+   *       previous_output_Int32Array) of the value[ 0 ] (i.e. tf.tensor3d).
    *
    * @yield {Promise( undefined )}
    *   Yield a promise resolves to { done: true, value: undefined }.
