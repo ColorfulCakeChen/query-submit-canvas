@@ -3,12 +3,41 @@ export { NeuralNet_ScaleFillTensor as ScaleFillTensor };
 /**
  * A helper class for preparing input tensor of a neural network.
  *
+ *
+ *
+ * @param {number} target_height
+ *   The height (in pixels) of the target image.
+ *
+ * @param {number} target_width
+ *   The width (in pixels) of the target image.
+ *
+ * @param {number} target_channelCount
+ *   The channel count of the target image.
+ *
+ * @member {number} target_shape
+ *  An array as [ target_height, target_width, target_channelCount ].
+ *
+ * @member {number} target_shape_height_width
+ *  An array as [ target_height, target_width ]. It is similar to .target_shape
+ * but without target_channelCount.
+ *
  */
 class NeuralNet_ScaleFillTensor {
 
-  /** */
-  constructor() {
+  /**
+   *
+   *
+   */
+  constructor(
+    target_height, target_width, target_channelCount,
 
+  ) {
+    this.target_height = target_height;
+    this.target_width = target_width;
+    this.target_channelCount = target_channelCount;
+
+    this.target_shape = [ target_height, target_width, target_channelCount ];
+    this.target_shape_height_width = [ target_height, target_width ];
   }
 
   /**
@@ -28,20 +57,10 @@ class NeuralNet_ScaleFillTensor {
 ???   * @param {number} source_channelCount
    *
    *
-   * @param {number} target_height
-   *
-   *
-   * @param {number} target_width
-   *
-   *
-   * @param {number} target_channelCount
-   *
-   *
    */
   scale_fill_tensor(
     source_TypedArray,
     source_height, source_width, //source_channelCount,
-    target_height, target_width, target_channelCount,
 
   ) {
     const funcNameInMessage = "scale_fill_tensor";
@@ -78,11 +97,11 @@ class NeuralNet_ScaleFillTensor {
         || ( source_width != target_width ) ) {
 
       let source_shape = [ source_height, source_width, source_channelCount ];
-      let sourceTensor = tf.tensor3d( source_TypedArray, source_shape, "int32" );
+      let sourceTensor
+        = tf.tensor3d( source_TypedArray, source_shape, "int32" );
 
 //!!! ...unfinished... (2023/05/01)
 // should scale
-
 
       // Otherwise, resize to the default size (height x width) which is the input
       // image size used for training the neural network.
@@ -90,7 +109,7 @@ class NeuralNet_ScaleFillTensor {
       let scaledSourceTensorFloat32;
       try {
         scaledSourceTensorFloat32 = tf.image.resizeBilinear(
-          sourceTensor, this.input_height_width_array,
+          sourceTensor, this.target_shape_height_width,
           true // ( alignCorners = true ) for visual image resizing.
         );
       } catch ( e ) {
