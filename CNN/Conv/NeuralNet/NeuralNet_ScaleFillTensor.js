@@ -182,21 +182,21 @@ class NeuralNet_ScaleFillTensor {
     // 3.
     let targetTensorInt32;
 
-    if ( bFill ) { // FILL
+    if ( bScale ) {
+      //scaledSourceTensorInt32;
 
-      if ( bScale ) { // 3.1.1
-        //scaledSourceTensorInt32;
+      if ( bFill ) { // 3.1.1
 
-      } else { // 3.1.2
+      } else { // 3.1.2 Scale, No Fill.
+        targetTensorInt32 = scaledSourceTensorInt32;
 
       }
 
-    } else { // NO_FILL
+    } else { // No Scale.
 
-      if ( bScale ) { // 3.2.1
-        //scaledSourceTensorInt32;
+      if ( bFill ) { // 3.2.1
 
-      } else { // 3.2.2 No Fill, No Scale.
+      } else { // 3.2.2 No Scale, No Fill.
         targetTensorInt32
           = tf.tensor3d( source_TypedArray, this.target_shape, "int32" );
       }
