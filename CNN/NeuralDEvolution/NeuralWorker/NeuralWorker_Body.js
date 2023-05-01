@@ -652,7 +652,7 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
         }
 
 //!!! ...unfinished... (2023/05/01)
-// for-of createTensor_by_scale_fill_asyncGenerator() until done
+// call createTensor_by_scale_fill_asyncGenerator().return()
 // to ensure all intermediate tensors are released.
 
       }
@@ -758,7 +758,7 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
       }
 
 //!!! ...unfinished... (2023/05/01)
-// for-of createTensor_by_scale_fill_asyncGenerator() until done
+// call createTensor_by_scale_fill_asyncGenerator().return()
 // to ensure all intermediate tensors are released.
 
     }
@@ -848,7 +848,7 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
       }
 
 //!!! ...unfinished... (2023/05/01)
-// for-of createTensor_by_scale_fill_asyncGenerator() until done
+// call createTensor_by_scale_fill_asyncGenerator().return()
 // to ensure all intermediate tensors are released.
 
     }
@@ -1005,7 +1005,7 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
       }
 
 //!!! ...unfinished... (2023/05/01)
-// for-of createTensor_by_scale_fill_asyncGenerator() until done
+// call createTensor_by_scale_fill_asyncGenerator().return()
 // to ensure all intermediate tensors are released.
 
     }
@@ -1101,7 +1101,7 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
       }
 
 //!!! ...unfinished... (2023/05/01)
-// for-of createTensor_by_scale_fill_asyncGenerator() until done
+// call createTensor_by_scale_fill_asyncGenerator().return()
 // to ensure all intermediate tensors are released.
 
     }
@@ -1219,7 +1219,7 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
       }
 
 //!!! ...unfinished... (2023/05/01)
-// for-of createTensor_by_scale_fill_asyncGenerator() until done
+// call createTensor_by_scale_fill_asyncGenerator().return()
 // to ensure all intermediate tensors are released.
 
     }
