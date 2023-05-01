@@ -135,41 +135,14 @@ class NeuralNet_ScaleFillTensor {
       bScale = true;
     }
 
-//!!! ...unfinished... (2023/05/01)
-    // 2.
-    let targetTensorInt32;
-
-    if ( bFill ) { // FILL
-
-      if ( bScale ) { // 2.1.1
-
-      } else { // 2.1.2
-
-      }
-
-    } else { // NO_FILL
-
-      if ( bScale ) { // 2.2.1
-
-      } else { // 2.2.2 No Fill, No Scale.
-        targetTensorInt32
-          = tf.tensor3d( source_TypedArray, this.target_shape, "int32" );
-      }
-
-    }
-
 
 //!!! ...unfinished... (2023/05/01)
 
     // 2. Scale
 
     let scaledSourceTensorInt32;
-    if (   ( source_height == this.target_height )
-        && ( source_width == this.target_width ) ) {
+    if ( bScale ) {
 
-      scaledSourceTensorInt32 = ???;
-
-    } else {
       let source_shape = [ source_height, source_width, source_channelCount ];
       let sourceTensorInt32
         = tf.tensor3d( source_TypedArray, source_shape, "int32" );
@@ -199,6 +172,35 @@ class NeuralNet_ScaleFillTensor {
       } finally {
         scaledSourceTensorFloat32.dispose();
       }
+
+    } else {
+
+      scaledSourceTensorInt32 = ???;
+    }
+
+//!!! ...unfinished... (2023/05/01)
+    // 3.
+    let targetTensorInt32;
+
+    if ( bFill ) { // FILL
+
+      if ( bScale ) { // 3.1.1
+        //scaledSourceTensorInt32;
+
+      } else { // 3.1.2
+
+      }
+
+    } else { // NO_FILL
+
+      if ( bScale ) { // 3.2.1
+        //scaledSourceTensorInt32;
+
+      } else { // 3.2.2 No Fill, No Scale.
+        targetTensorInt32
+          = tf.tensor3d( source_TypedArray, this.target_shape, "int32" );
+      }
+
     }
 
 
