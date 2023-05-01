@@ -228,8 +228,13 @@ class NeuralNet_ScaleFillTensor {
    * @param {number} source_width
    *   The width (in pixels) of the source image. For example,
    * ImageData.width.
+   *
+   * @param {tf.tensor3d}
+   *   Return a scaled int32 tensor3d whose depthwise size is [ this.height,
+   * this.width ].
    */
-  static scale_tensor( source_TypedArray, source_height, source_width ) {
+  static createTensor_by_scale_TypedArray(
+    source_TypedArray, source_height, source_width ) {
 
     let source_shape = [ source_height, source_width, source_channelCount ];
     let sourceTensorInt32
@@ -261,10 +266,6 @@ class NeuralNet_ScaleFillTensor {
     } finally {
       scaledSourceTensorFloat32.dispose();
     }
-
-
-//!!! ...unfinished... (2023/05/01)
-// Download to TypedArray?
 
     return scaledSourceTensorInt32;
   }
