@@ -261,6 +261,12 @@ class NeuralNet_ScaleFillTensor {
     } finally {
       scaledSourceTensorFloat32.dispose();
     }
+
+
+//!!! ...unfinished... (2023/05/01)
+// Download to TypedArray?
+
+    return scaledSourceTensorInt32;
   }
 
 }
