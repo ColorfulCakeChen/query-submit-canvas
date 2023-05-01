@@ -179,10 +179,6 @@ class NeuralNet_ScaleFillTensor {
 
         if ( bFill ) { // 2.1.1 Scale, Fill
 
-//!!! ...unfinished... (2023/05/01)
-// scaledSourceInt32Array should be exposed to caller for posting back
-// to WorkerProxy.
-
           let scaledSourceInt32Array;
           try {
             scaledSourceInt32Array = await sourceTensorInt32.data();
@@ -198,6 +194,10 @@ class NeuralNet_ScaleFillTensor {
 
 //!!! ...unfinished... (2023/05/01)
 // Modify scaledSourceInt32Array.
+
+//!!! ...unfinished... (2023/05/01)
+// The filled scaledSourceInt32Array should be exposed to caller for
+// posting back to WorkerProxy.
 
             let targetTensorInt32 = tf.tensor3d( scaledSourceInt32Array,
               this.target_shape, "int32" );
