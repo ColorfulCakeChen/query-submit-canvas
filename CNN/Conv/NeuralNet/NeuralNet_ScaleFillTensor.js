@@ -209,7 +209,8 @@ class NeuralNet_ScaleFillTensor {
         } else { // 2.1.2 Scale, No Fill.
 
 //!!! ...unfinished... (2023/05/01)
-// Try to download scaledSourceInt32Array but not to await it.
+// If 1st worker (how to know?),
+// try to download scaledSourceInt32Array but not to await it.
 // Expose scaledSourceInt32ArrayPromise to caller for
 // posting back to WorkerProxy.
 
