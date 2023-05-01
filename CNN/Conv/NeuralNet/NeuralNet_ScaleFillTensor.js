@@ -112,7 +112,6 @@ class NeuralNet_ScaleFillTensor {
     source_TypedArray, source_height, source_width,
     alignmentMarkValueArray,
     previous_output_Int32ArrayArray
-
   ) {
     const funcNameInMessage = "scale_fill_tensor";
 
@@ -187,9 +186,11 @@ class NeuralNet_ScaleFillTensor {
 
         if ( bFill ) { // 2.1.1 Scale, Fill
 
-          let scaledSourceInt32Array;
+          let sourceInt32ArrayPromise;
+          let sourceInt32Array;
           try {
-            scaledSourceInt32Array = await sourceTensorInt32.data();
+            sourceInt32ArrayPromise = sourceTensorInt32.data();
+            sourceInt32Array = await sourceInt32ArrayPromise;
           } catch ( e ) {
             //debugger;
             throw e; // e.g. out of (GPU) memory.
@@ -207,11 +208,11 @@ class NeuralNet_ScaleFillTensor {
 // The filled scaledSourceInt32Array should be exposed to caller for
 // posting back to WorkerProxy.
 
-            let targetTensorInt32 = tf.tensor3d( scaledSourceInt32Array,
-              this.target_shape, "int32" );
+            let targetTensorInt32
+              = tf.tensor3d( sourceInt32Array, this.target_shape, "int32" );
 
             // Assume the outside caller will dispose the targetTensorInt32.
-            yield targetTensorInt32;
+            yield [ targetTensorInt32, sourceInt32ArrayPromise ];
           }
 
         } else { // 2.1.2 Scale, No Fill.
@@ -222,6 +223,8 @@ class NeuralNet_ScaleFillTensor {
 // Expose scaledSourceInt32ArrayPromise to caller for
 // posting back to WorkerProxy.
 
+          let sourceInt32ArrayPromise = sourceTensorInt32.data();
+
           for ( let i = 0; i < tensorCount; ++i ) {
             let targetTensorInt32;
             if ( i < ( tensorCount - 1 ) ) {
@@ -230,7 +233,7 @@ class NeuralNet_ScaleFillTensor {
               targetTensorInt32 = sourceTensorInt32;
               sourceTensorInt32 = null;
             }
-            yield targetTensorInt32;
+            yield [ targetTensorInt32, sourceInt32ArrayPromise ];
           }
 
         }
