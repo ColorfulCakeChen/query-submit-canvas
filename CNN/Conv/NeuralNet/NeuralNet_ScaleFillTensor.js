@@ -45,7 +45,7 @@ class NeuralNet_ScaleFillTensor {
         + `should be divisible by `
         + `source_size_per_channel ( `
         + `= source_height * source_width `
-        + `= ${source_height} * ${source_width} )`
+        + `= ${source_height} * ${source_width} `
         + `= ${source_size_per_channel} )`
       );
 
