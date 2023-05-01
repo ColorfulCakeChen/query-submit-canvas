@@ -136,7 +136,30 @@ class NeuralNet_ScaleFillTensor {
     }
 
 //!!! ...unfinished... (2023/05/01)
+    // 2.
+    let targetTensorInt32;
 
+    if ( bFill ) { // FILL
+
+      if ( bScale ) { // 2.1.1
+
+      } else { // 2.1.2
+
+      }
+
+    } else { // NO_FILL
+
+      if ( bScale ) { // 2.2.1
+
+      } else { // 2.2.2 No Fill, No Scale.
+        targetTensorInt32
+          = tf.tensor3d( source_TypedArray, this.target_shape, "int32" );
+      }
+
+    }
+
+
+//!!! ...unfinished... (2023/05/01)
 
     // 2. Scale
 
