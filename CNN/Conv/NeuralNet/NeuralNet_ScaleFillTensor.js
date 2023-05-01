@@ -192,7 +192,8 @@ class NeuralNet_ScaleFillTensor {
             //debugger;
             throw e; // e.g. out of (GPU) memory.
           } finally {
-            ???sourceTensorInt32.dispose();
+            sourceTensorInt32.dispose();
+            sourceTensorInt32 = null;
           }
 
   //!!! ...unfinished... (2023/05/01)
