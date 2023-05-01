@@ -173,33 +173,32 @@ class NeuralNet_ScaleFillTensor {
 //!!! ...unfinished... (2023/05/01)
     let sourceTensorInt32;
     let targetTensorInt32;
-    if ( bScale ) {
+    try {
+      if ( bScale ) {
 
-      sourceTensorInt32
-        = NeuralNet_ScaleFillTensor.createTensor_by_scale_TypedArray.call(
-            this, source_TypedArray, source_height, source_width );
+        sourceTensorInt32
+          = NeuralNet_ScaleFillTensor.createTensor_by_scale_TypedArray.call(
+              this, source_TypedArray, source_height, source_width );
 
-      if ( bFill ) { // 2.1.1
+        if ( bFill ) { // 2.1.1
 
-//!!! ...unfinished... (2023/05/01)
-// Perhaps, should use Canvas Context's drawImage() to scale the source.
-// So that GPU-CPU transferring could be reduced.
+  //!!! ...unfinished... (2023/05/01)
+  // Perhaps, should use Canvas Context's drawImage() to scale the source.
+  // So that GPU-CPU transferring could be reduced.
 
-        let scaledSourceInt32Array;
-        try {
-          scaledSourceInt32Array = await sourceTensorInt32.data();
-        } catch ( e ) {
-          //debugger;
-          throw e; // e.g. out of (GPU) memory.
-        } finally {
-          ???sourceTensorInt32.dispose();
-        }
+          let scaledSourceInt32Array;
+          try {
+            scaledSourceInt32Array = await sourceTensorInt32.data();
+          } catch ( e ) {
+            //debugger;
+            throw e; // e.g. out of (GPU) memory.
+          } finally {
+            ???sourceTensorInt32.dispose();
+          }
 
-//!!! ...unfinished... (2023/05/01)
+  //!!! ...unfinished... (2023/05/01)
 
-      } else { // 2.1.2 Scale, No Fill.
-
-        try {
+        } else { // 2.1.2 Scale, No Fill.
 
           for ( let i = 0; i < tensorCount; ++i ) {
             if ( i < ( tensorCount - 1 ) ) {
@@ -214,48 +213,44 @@ class NeuralNet_ScaleFillTensor {
             yield targetTensorInt32;
           }
 
-        } finally {
-          if ( sourceTensorInt32 ) {
-            sourceTensorInt32.dispose();
-            sourceTensorInt32 = null;
-          }
         }
 
-      }
+      } else { // No Scale.
 
-    } else { // No Scale.
+        if ( bFill ) { // 2.2.1
 
-      if ( bFill ) { // 2.2.1
+  //!!! ...unfinished... (2023/05/01)
 
-//!!! ...unfinished... (2023/05/01)
+        } else { // 2.2.2 No Scale, No Fill.
 
-      } else { // 2.2.2 No Scale, No Fill.
+            sourceTensorInt32
+              = tf.tensor3d( source_TypedArray, this.target_shape, "int32" );
 
-        try {
-          sourceTensorInt32
-            = tf.tensor3d( source_TypedArray, this.target_shape, "int32" );
+            for ( let i = 0; i < tensorCount; ++i ) {
+              if ( i < ( tensorCount - 1 ) ) {
+                targetTensorInt32 = sourceTensorInt32.clone();
+              } else { // The final yield.
+                targetTensorInt32 = sourceTensorInt32;
+                sourceTensorInt32 = null;
+              }
 
-          for ( let i = 0; i < tensorCount; ++i ) {
-            if ( i < ( tensorCount - 1 ) ) {
-              targetTensorInt32 = sourceTensorInt32.clone();
-            } else { // The final yield.
-              targetTensorInt32 = sourceTensorInt32;
-              sourceTensorInt32 = null;
+  //!!! ...unfinished... (2023/05/01)
+              // Assume the outside caller will dispose the targetTensorInt32.
+              yield targetTensorInt32;
             }
-
-//!!! ...unfinished... (2023/05/01)
-            // Assume the outside caller will dispose the targetTensorInt32.
-            yield targetTensorInt32;
-          }
-
-        } finally {
-          if ( sourceTensorInt32 ) {
-            sourceTensorInt32.dispose();
-            sourceTensorInt32 = null;
-          }
         }
+
       }
 
+    } catch ( e ) {
+      //debugger;
+      throw e; // e.g. out of (GPU) memory.
+
+    } finally {
+      if ( sourceTensorInt32 ) {
+        sourceTensorInt32.dispose();
+        sourceTensorInt32 = null;
+      }
     }
 
 //!!! ...unfinished... (2023/05/01)
