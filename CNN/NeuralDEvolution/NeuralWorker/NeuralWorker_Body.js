@@ -570,7 +570,9 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
                   );
 
               if ( bFill ) {
-                scaledInt32Array = scaledSourceTensor.dataSync();
+                //!!! (2023/05/01 Remarked) Use await instead.
+                //scaledInt32Array = scaledSourceTensor.dataSync();
+                scaledInt32Array = await scaledSourceTensor.data();
               }
 
             } catch ( e ) {
@@ -742,7 +744,9 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
         true // ( bForceInt32 == true )
       );
 
-      scaledInt32Array = scaledSourceTensor.dataSync();
+      //!!! (2023/05/01 Remarked) Use await instead.
+      //scaledInt32Array = scaledSourceTensor.dataSync();
+      scaledInt32Array = await scaledSourceTensor.data();
 
     } catch ( e ) {
       let errorMsg = `NeuralWorker_Body.${funcNameInMessage}(): `
