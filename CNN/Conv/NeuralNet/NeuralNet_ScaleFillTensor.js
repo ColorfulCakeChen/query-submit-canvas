@@ -150,7 +150,15 @@ class NeuralNet_ScaleFillTensor {
 // Perhaps, should use Canvas Context's drawImage() to scale the source.
 // So that GPU-CPU transferring could be reduced.
 
-        let scaledSourceInt32Array = await scaledSourceTensorInt32.data();
+        let scaledSourceInt32Array;
+        try {
+          scaledSourceInt32Array = await scaledSourceTensorInt32.data();
+        } catch ( e ) {
+          //debugger;
+          throw e; // e.g. out of (GPU) memory.
+        } finally {
+          scaledSourceTensorInt32.dispose();
+        }
 
 //!!! ...unfinished... (2023/05/01)
 
