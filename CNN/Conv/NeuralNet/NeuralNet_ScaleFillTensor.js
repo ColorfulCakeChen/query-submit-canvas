@@ -64,7 +64,8 @@ class NeuralNet_ScaleFillTensor {
 
    * @param {integer} alignmenrMarkValue
    *   An integer value representing the neural network playing which
-   * alignment. For example, in a OX (connect-three) game:
+   * alignment. If undefined, there will be no alignmenrMarkValue be filled
+   * into target tensor. For example, in a OX (connect-three) game:
    *   - ( alignmenrMarkValue == 0 ) means neural network 0 plays O side
    *       currently.
    *   - ( alignmenrMarkValue == 255 ) means neural network 1 plays X side
@@ -76,7 +77,9 @@ class NeuralNet_ScaleFillTensor {
 // a neural network generates output of one or two alignments.
 
    * @param {Int32Array[]} previous_output_Int32ArrayArray
-   *   The (previous time) output of the pair of neural networks.
+   *   The (previous time) output of the pair of neural networks. If null or
+   * undefined, there will be no feedback information be filled into target
+   * tensor.
    *
    *
    *
