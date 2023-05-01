@@ -208,8 +208,6 @@ class NeuralNet_ScaleFillTensor {
               targetTensorInt32 = sourceTensorInt32;
               sourceTensorInt32 = null;
             }
-
-            // Assume the outside caller will dispose the targetTensorInt32.
             yield targetTensorInt32;
           }
 
@@ -227,7 +225,6 @@ class NeuralNet_ScaleFillTensor {
             let targetTensorInt32
               = tf.tensor3d( source_TypedArray, this.target_shape, "int32" );
 
-            // Assume the outside caller will dispose the targetTensorInt32.
             yield targetTensorInt32;
           }
 
@@ -244,8 +241,6 @@ class NeuralNet_ScaleFillTensor {
               targetTensorInt32 = sourceTensorInt32;
               sourceTensorInt32 = null;
             }
-
-            // Assume the outside caller will dispose the targetTensorInt32.
             yield targetTensorInt32;
           }
         }
