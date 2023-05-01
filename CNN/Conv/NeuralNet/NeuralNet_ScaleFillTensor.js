@@ -114,8 +114,7 @@ class NeuralNet_ScaleFillTensor {
         + `target_channelCount ( ${target_channelCount} ).`
       );
 
-//!!! ...unfinished... (2023/05/01)
-// FILL or NO_FILL
+      // Whether needs fill extra information into the target tensor.
       let bFill;
       if (   ( alignmenrMarkValue == undefined )
           && ( previous_output_Int32ArrayArray == undefined ) ) {
@@ -125,8 +124,6 @@ class NeuralNet_ScaleFillTensor {
       }
 
 //!!! ...unfinished... (2023/05/01)
-
-
 
 
     // 2. Scale
