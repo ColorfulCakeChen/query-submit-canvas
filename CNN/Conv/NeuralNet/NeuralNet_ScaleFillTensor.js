@@ -246,7 +246,7 @@ class NeuralNet_ScaleFillTensor {
 
 //!!! ...unfinished... (2023/05/01)
 // If 1st worker (how to know?),
-// Expose Promise( source_TypedArray ) to caller for
+// Expose Promise.resolve( source_TypedArray ) to caller for
 // posting back to WorkerProxy.
 
           sourceTensorInt32
