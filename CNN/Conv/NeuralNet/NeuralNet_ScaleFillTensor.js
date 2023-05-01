@@ -94,10 +94,11 @@ class NeuralNet_ScaleFillTensor {
    * sourceTypedArrayAsyncFunction ] } for every alignmentMarkValue and
    * previous_output_Int32Array.
    *
-   *   - The value[ 0 ] is a tf.tensor3d which has been ensured so that its
-   *       shape is the same as this.target_shape and has been filled with
-   *       alignmentMarkValue and previous_output_Int32Array (if exists). The
-   *       outside caller is responsible for destroying the returned tensor.
+   *   - The value[ 0 ] is a tf.tensor3d which has been scaled (if necessary)
+   *       so that its shape is the same as this.target_shape and has been
+   *       filled with alignmentMarkValue and previous_output_Int32Array (if
+   *       exists). The outside caller is responsible for destroying the
+   *       returned tensor.
    *
    *   - The value[ 1 ] is an async function. The function will return a
    *       Promise which will resolve to a TypedArray which is the source pixel
