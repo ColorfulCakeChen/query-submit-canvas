@@ -83,7 +83,8 @@ class NeuralNet_ScaleFillTensor {
    *
    * @yield {Promise( tf.tensor3d )}
    *   Yield a promise resolves to { done: false, value: tf.tensor3d } for
-   * every alignmentMarkValue and previous_output_Int32Array.
+   * every alignmentMarkValue and previous_output_Int32Array. The outside
+   * caller is responsible for destroying the returned tensor.
    *
    * @yield {Promise( undefined )}
    *   Yield a promise resolves to { done: true, value: undefined }.
