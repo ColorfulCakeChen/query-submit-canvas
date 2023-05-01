@@ -45,10 +45,10 @@ class NeuralNet_ScaleFillTensor {
    *
    *
    * @param {Uint8ClampedArray|Uint16Array|Uint32Array} source_TypedArray
-   *   An unsigned integer TypedArray. It may be modified by filling with
+   *   An unsigned integer TypedArray. For example, ImageData.data which is
+   * coming from a canvas. Note that it may be modified by filling with
    * alignment mark and feedback information (i.e. previous time output of the
-   * neural network). Usually, it is the ImageData.data which is coming from a
-   * canvas.
+   * neural network).
    *
    * @param {number} source_height
    *   The height (in pixels) of the source image. For example,
