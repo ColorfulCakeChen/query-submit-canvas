@@ -100,10 +100,9 @@ class NeuralNet_ScaleFillTensor {
    *       exists). The outside caller is responsible for destroying this
    *       returned tensor.
    *
-   *   - The value[ 1 ] is an async function. The function will return a
-   *       Promise which resolves to a TypedArray which is the source pixel
-   *       data (which is scaled and filled with alignmentMarkValue and
-   *       previous_output_Int32Array) of the value[ 0 ] (i.e. tf.tensor3d).
+   *   - The value[ 1 ] is an async function. The function returned Promise
+   *       resolves to the value[ 0 ]'s source TypedArray data (which is scaled
+   *       and filled with alignmentMarkValue and previous_output_Int32Array).
    *
    * @yield {Promise( undefined )}
    *   Yield a promise resolves to { done: true, value: undefined }.
