@@ -530,7 +530,7 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
    */
 
 //!!! ...unfinished... (2023/04/30)
-// Accepts integer TypedArray, height, width, channelCount
+// Accepts unsigned integer TypedArray, height, width, channelCount
 // instead of sourceImageData so that non-image data (e.g. text or sound)
 // can also be processed.
 

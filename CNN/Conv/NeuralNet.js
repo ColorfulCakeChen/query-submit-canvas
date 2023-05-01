@@ -7,3 +7,4 @@ export { FeedbackShape } from "./NeuralNet/NeuralNet_FeedbackShape.js";
 export { FeedbackToInput } from "./NeuralNet/NeuralNet_FeedbackToInput.js";
 export { FeedbackToInput_from } from "./NeuralNet/NeuralNet_FeedbackToInput.js";
 export { FeedbackToInput_Area } from "./NeuralNet/NeuralNet_FeedbackToInput.js";
+export { ScaleFillTensor } from "./NeuralNet/NeuralNet_ScaleFillTensor.js";
