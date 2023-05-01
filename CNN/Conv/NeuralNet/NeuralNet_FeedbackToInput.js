@@ -351,6 +351,13 @@ class NeuralNet_FeedbackToInput {
     // There two alignments per two neural network.
     this.neuralNetCount = 2;
     this.alignmentCount_per_neuralNet = 2;
+
+//!!! ...unfinished... (2023/05/01)
+// .areaCount should be determined according to:
+//   - want to fill two neural networks' two alignment feedback.
+//   - want to fill one neural networks' two alignment feedback.
+//   - want to fill one neural networks' one alignment feedback.
+//
     this.areaCount = this.neuralNetCount * this.alignmentCount_per_neuralNet;
 
     // 3. Four (or two) times the implicit input pixel count along height (if
