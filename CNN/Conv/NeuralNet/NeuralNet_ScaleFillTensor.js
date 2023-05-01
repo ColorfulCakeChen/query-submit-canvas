@@ -209,10 +209,6 @@ class NeuralNet_ScaleFillTensor {
 //!!! ...unfinished... (2023/05/01)
 // Modify scaledSourceInt32Array.
 
-//!!! ...unfinished... (2023/05/01)
-// The filled scaledSourceInt32Array should be exposed to caller for
-// posting back to WorkerProxy.
-
             let targetTensorInt32
               = tf.tensor3d( sourceInt32Array, this.target_shape, "int32" );
 
@@ -220,16 +216,6 @@ class NeuralNet_ScaleFillTensor {
           }
 
         } else { // 2.1.2 Scale, No Fill.
-
-//!!! ...unfinished... (2023/05/01)
-// If 1st worker (how to know?),
-// try to download scaledSourceInt32Array but not to await it.
-// Expose scaledSourceInt32ArrayPromise to caller for
-// posting back to WorkerProxy.
-
-//!!! ...unfinished... (2023/05/01)
-// What if not used?
-// should be a function. If called, call .data()
 
           // The reason why yield a function (instead of a Promise directly)
           // is to ensure .data() (which will consume CPU and memory bandwidth
@@ -269,11 +255,6 @@ class NeuralNet_ScaleFillTensor {
           }
 
         } else { // 2.2.2 No Scale, No Fill.
-
-//!!! ...unfinished... (2023/05/01)
-// If 1st worker (how to know?),
-// Expose Promise.resolve( source_TypedArray ) to caller for
-// posting back to WorkerProxy.
 
           sourceTensorInt32
             = tf.tensor3d( source_TypedArray, this.target_shape, "int32" );
