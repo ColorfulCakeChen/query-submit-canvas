@@ -140,9 +140,9 @@ class NeuralNet_ScaleFillTensor {
     let targetTensorInt32;
     if ( bScale ) {
 
-      let scaledSourceTensorInt32 = NeuralNet_ScaleFillTensor
-        .createTensor_by_scale_TypedArray.call( this,
-          source_TypedArray, source_height, source_width );
+      let scaledSourceTensorInt32
+        = NeuralNet_ScaleFillTensor.createTensor_by_scale_TypedArray.call(
+            this, source_TypedArray, source_height, source_width );
 
       if ( bFill ) { // 2.1.1
 
