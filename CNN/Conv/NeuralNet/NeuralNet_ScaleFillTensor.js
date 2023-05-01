@@ -142,18 +142,21 @@ class NeuralNet_ScaleFillTensor {
 
       let scaledSourceTensorInt32 = this.createTensor_by_scale_TypedArray(
         source_TypedArray, source_height, source_width );
-  
-  
+
+
       if ( bFill ) { // 2.1.1
+
+//!!! ...unfinished... (2023/05/01)
 
       } else { // 2.1.2 Scale, No Fill.
         targetTensorInt32 = scaledSourceTensorInt32;
-
       }
 
     } else { // No Scale.
 
       if ( bFill ) { // 2.2.1
+
+//!!! ...unfinished... (2023/05/01)
 
       } else { // 2.2.2 No Scale, No Fill.
         targetTensorInt32
@@ -161,7 +164,6 @@ class NeuralNet_ScaleFillTensor {
       }
 
     }
-
 
 //!!! ...unfinished... (2023/05/01)
 
