@@ -180,6 +180,7 @@ class NeuralNet_ScaleFillTensor {
     }
 
 //!!! ...unfinished... (2023/05/01)
+    return targetTensorInt32;
 
   }
 
