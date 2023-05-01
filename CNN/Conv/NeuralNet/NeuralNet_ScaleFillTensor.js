@@ -58,10 +58,6 @@ class NeuralNet_ScaleFillTensor {
    *   The width (in pixels) of the source image. For example,
    * ImageData.width.
    *
-   *
-
-//!!! ...unfinished... (2023/05/01)
-
    * @param {integer} alignmenrMarkValue
    *   An integer value representing the neural network playing which
    * alignment. If undefined, there will be no alignmenrMarkValue be filled
@@ -120,6 +116,18 @@ class NeuralNet_ScaleFillTensor {
 
 //!!! ...unfinished... (2023/05/01)
 // FILL or NO_FILL
+      let bFill;
+      if (   ( alignmenrMarkValue == undefined )
+          && ( previous_output_Int32ArrayArray == undefined ) ) {
+        bFill = false;
+      } else {
+        bFill = true;
+      }
+
+//!!! ...unfinished... (2023/05/01)
+
+
+
 
     // 2. Scale
     let scaledSourceTensorInt32;
