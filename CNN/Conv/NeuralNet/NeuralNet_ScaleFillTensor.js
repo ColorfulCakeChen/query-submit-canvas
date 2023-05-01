@@ -97,7 +97,7 @@ class NeuralNet_ScaleFillTensor {
    *   - The value[ 0 ] is a tf.tensor3d which has been scaled (if necessary)
    *       so that its shape is the same as this.target_shape and has been
    *       filled with alignmentMarkValue and previous_output_Int32Array (if
-   *       exists). The outside caller is responsible for destroying the
+   *       exists). The outside caller is responsible for destroying this
    *       returned tensor.
    *
    *   - The value[ 1 ] is an async function. The function will return a
