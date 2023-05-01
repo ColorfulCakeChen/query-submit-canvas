@@ -244,6 +244,11 @@ class NeuralNet_ScaleFillTensor {
 
         } else { // 2.2.2 No Scale, No Fill.
 
+//!!! ...unfinished... (2023/05/01)
+// If 1st worker (how to know?),
+// Expose Promise( source_TypedArray ) to caller for
+// posting back to WorkerProxy.
+
           sourceTensorInt32
             = tf.tensor3d( source_TypedArray, this.target_shape, "int32" );
 
