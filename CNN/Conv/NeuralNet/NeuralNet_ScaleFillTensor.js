@@ -77,6 +77,13 @@ class NeuralNet_ScaleFillTensor {
    * undefined, there will be no feedback information be filled into target
    * tensor.
    *
+   * @yield {Promise( tf.tensor3d )}
+   *   Yield a promise resolves to { done: false, value: tf.tensor3d } for
+   * every alignmentMarkValue and previous_output_Int32Array.
+   *
+   * @yield {Promise( undefined )}
+   *   Yield a promise resolves to { done: true, value: undefined }.
+   *
    *
    *
    */
