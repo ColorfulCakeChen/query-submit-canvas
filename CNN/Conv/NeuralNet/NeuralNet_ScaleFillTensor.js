@@ -222,6 +222,10 @@ class NeuralNet_ScaleFillTensor {
 // Expose scaledSourceInt32ArrayPromise to caller for
 // posting back to WorkerProxy.
 
+!!! ...unfinished... (2023/05/01)
+// What if not used?
+// should be a function. If called, call .data()
+
           let sourceInt32ArrayPromise = sourceTensorInt32.data();
 
           for ( let i = 0; i < tensorCount; ++i ) {
