@@ -89,9 +89,9 @@ class NeuralNet_ScaleFillTensor {
    *   - previous_output_Int32ArrayArray.length must be the same as
    *       alignmentMarkValueArray.length.
    *
-   * @yield {Promise( [ tf.tensor3d, Promise( TypedArray ) ] )}
+   * @yield {Promise( [ tf.tensor3d, sourceTypedArrayPromiseFunction ] )}
    *   Yield a promise resolves to { done: false, value: [ tf.tensor3d,
-   * Promise( TypedArray ) ] } for every alignmentMarkValue and
+   * sourceTypedArrayPromiseFunction ] } for every alignmentMarkValue and
    * previous_output_Int32Array.
    *
    *   - The value[ 0 ] is a tf.tensor3d which has been ensured so that its
@@ -99,8 +99,9 @@ class NeuralNet_ScaleFillTensor {
    *       alignmentMarkValue and previous_output_Int32Array (if exists). The
    *       outside caller is responsible for destroying the returned tensor.
    *
-   *   - The value[ 1 ] is a Promise which will resolve to a TypedArray which
-   *       is the source pixel data of the value[ 0 ] (i.e. tf.tensor3d).
+   *   - The value[ 1 ] is a function. The function will return a Promise which
+   *       will resolve to a TypedArray which is the source pixel data of the
+   *       value[ 0 ] (i.e. tf.tensor3d).
    *
    * @yield {Promise( undefined )}
    *   Yield a promise resolves to { done: true, value: undefined }.
@@ -199,6 +200,8 @@ class NeuralNet_ScaleFillTensor {
             sourceTensorInt32 = null;
           }
 
+          let sourceInt32ArrayPromiseFunction = () => sourceInt32ArrayPromise;
+
           for ( let i = 0; i < tensorCount; ++i ) {
 
 //!!! ...unfinished... (2023/05/01)
@@ -211,7 +214,7 @@ class NeuralNet_ScaleFillTensor {
             let targetTensorInt32
               = tf.tensor3d( sourceInt32Array, this.target_shape, "int32" );
 
-            yield [ targetTensorInt32, sourceInt32ArrayPromise ];
+            yield [ targetTensorInt32, sourceInt32ArrayPromiseFunction ];
           }
 
         } else { // 2.1.2 Scale, No Fill.
@@ -222,11 +225,11 @@ class NeuralNet_ScaleFillTensor {
 // Expose scaledSourceInt32ArrayPromise to caller for
 // posting back to WorkerProxy.
 
-!!! ...unfinished... (2023/05/01)
+//!!! ...unfinished... (2023/05/01)
 // What if not used?
 // should be a function. If called, call .data()
 
-          let sourceInt32ArrayPromise = sourceTensorInt32.data();
+          let sourceInt32ArrayPromiseFunction = () => sourceTensorInt32.data();
 
           for ( let i = 0; i < tensorCount; ++i ) {
             let targetTensorInt32;
@@ -236,7 +239,7 @@ class NeuralNet_ScaleFillTensor {
               targetTensorInt32 = sourceTensorInt32;
               sourceTensorInt32 = null;
             }
-            yield [ targetTensorInt32, sourceInt32ArrayPromise ];
+            yield [ targetTensorInt32, sourceInt32ArrayPromiseFunction ];
           }
 
         }
@@ -246,6 +249,7 @@ class NeuralNet_ScaleFillTensor {
         if ( bFill ) { // 2.2.1 No Scale, Fill.
 
           let sourceTypedArrayPromise = Promise.resolve( source_TypedArray );
+          let sourceInt32ArrayPromiseFunction = () => sourceInt32ArrayPromise;
 
           for ( let i = 0; i < tensorCount; ++i ) {
 
@@ -255,7 +259,7 @@ class NeuralNet_ScaleFillTensor {
             let targetTensorInt32
               = tf.tensor3d( source_TypedArray, this.target_shape, "int32" );
 
-            yield [ targetTensorInt32, sourceTypedArrayPromise ];
+            yield [ targetTensorInt32, sourceInt32ArrayPromiseFunction ];
           }
 
         } else { // 2.2.2 No Scale, No Fill.
@@ -269,6 +273,7 @@ class NeuralNet_ScaleFillTensor {
             = tf.tensor3d( source_TypedArray, this.target_shape, "int32" );
 
           let sourceTypedArrayPromise = Promise.resolve( source_TypedArray );
+          let sourceInt32ArrayPromiseFunction = () => sourceInt32ArrayPromise;
 
           for ( let i = 0; i < tensorCount; ++i ) {
             let targetTensorInt32;
@@ -278,7 +283,7 @@ class NeuralNet_ScaleFillTensor {
               targetTensorInt32 = sourceTensorInt32;
               sourceTensorInt32 = null;
             }
-            yield [ targetTensorInt32, sourceTypedArrayPromise ];
+            yield [ targetTensorInt32, sourceInt32ArrayPromiseFunction ];
           }
         }
 
