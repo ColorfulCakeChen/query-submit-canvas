@@ -135,68 +135,27 @@ class NeuralNet_ScaleFillTensor {
       bScale = true;
     }
 
-
 //!!! ...unfinished... (2023/05/01)
-
-    // 2. Scale
-
-    let scaledSourceTensorInt32;
-    if ( bScale ) {
-
-      let source_shape = [ source_height, source_width, source_channelCount ];
-      let sourceTensorInt32
-        = tf.tensor3d( source_TypedArray, source_shape, "int32" );
-
-      // Resize to the target size (height x width) which is the input image
-      // size used for training the neural network.
-      let scaledSourceTensorFloat32;
-      try {
-        scaledSourceTensorFloat32 = tf.image.resizeBilinear(
-          sourceTensorInt32, this.target_shape_height_width,
-          true // ( alignCorners = true ) for visual image resizing.
-        );
-      } catch ( e ) {
-        //debugger;
-        throw e; // e.g. out of (GPU) memory.
-      } finally {
-        sourceTensorInt32.dispose();
-      }
-
-      // Convert to int32. (Note: The dtype of tf.image.resizeXxx()'s result
-      // is float32.)
-      try {
-        scaledSourceTensorInt32 = scaledSourceTensorFloat32.cast( "int32" );
-      } catch ( e ) {
-        //debugger;
-        throw e; // e.g. out of (GPU) memory.
-      } finally {
-        scaledSourceTensorFloat32.dispose();
-      }
-
-    } else {
-
-      scaledSourceTensorInt32 = ???;
-    }
-
-//!!! ...unfinished... (2023/05/01)
-    // 3.
+    // 2.
     let targetTensorInt32;
-
     if ( bScale ) {
-      //scaledSourceTensorInt32;
 
-      if ( bFill ) { // 3.1.1
+      let scaledSourceTensorInt32 = this.createTensor_by_scale_TypedArray(
+        source_TypedArray, source_height, source_width );
+  
+  
+      if ( bFill ) { // 2.1.1
 
-      } else { // 3.1.2 Scale, No Fill.
+      } else { // 2.1.2 Scale, No Fill.
         targetTensorInt32 = scaledSourceTensorInt32;
 
       }
 
     } else { // No Scale.
 
-      if ( bFill ) { // 3.2.1
+      if ( bFill ) { // 2.2.1
 
-      } else { // 3.2.2 No Scale, No Fill.
+      } else { // 2.2.2 No Scale, No Fill.
         targetTensorInt32
           = tf.tensor3d( source_TypedArray, this.target_shape, "int32" );
       }
@@ -233,7 +192,7 @@ class NeuralNet_ScaleFillTensor {
    *   Return a scaled int32 tensor3d whose depthwise size is [ this.height,
    * this.width ].
    */
-  static createTensor_by_scale_TypedArray(
+  createTensor_by_scale_TypedArray(
     source_TypedArray, source_height, source_width ) {
 
     let source_shape = [ source_height, source_width, source_channelCount ];
