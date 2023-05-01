@@ -156,7 +156,6 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
       this.neuralNetArray.length = neuralNetParamsBaseArray.length;
     }
 
-//!!! ...unfinished... (2023/05/01) Create NeuralNet_ScaleFill.
     this.ScaleFill = undefined;
 
     // 2. Create every neural network.
