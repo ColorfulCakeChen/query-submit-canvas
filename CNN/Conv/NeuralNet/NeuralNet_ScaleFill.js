@@ -30,7 +30,6 @@ class NeuralNet_ScaleFill {
    *
    */
   constructor( target_height, target_width, target_channelCount ) {
-
     this.target_height = target_height;
     this.target_width = target_width;
     this.target_channelCount = target_channelCount;
