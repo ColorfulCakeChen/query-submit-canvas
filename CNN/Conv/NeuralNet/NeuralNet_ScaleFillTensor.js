@@ -199,8 +199,8 @@ class NeuralNet_ScaleFillTensor {
 
         } else { // 2.1.2 Scale, No Fill.
 
-          let targetTensorInt32;
           for ( let i = 0; i < tensorCount; ++i ) {
+            let targetTensorInt32;
             if ( i < ( tensorCount - 1 ) ) {
               targetTensorInt32 = sourceTensorInt32.clone();
             } else { // The final yield.
