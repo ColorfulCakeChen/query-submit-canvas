@@ -74,6 +74,7 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
       this.tensorMemoryBefore = undefined;
     }
 
+    this.ScaleFill = undefined;
     this.workerId = undefined;
 
     yield *super.disposeResources();
@@ -100,6 +101,7 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
     }
 
     this.workerId = workerId;
+    this.ScaleFill = undefined;
 
     let bInitOk = true;
 
@@ -154,6 +156,9 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
       this.neuralNetArray.length = neuralNetParamsBaseArray.length;
     }
 
+//!!! ...unfinished... (2023/05/01) Create NeuralNet_ScaleFill.
+    this.ScaleFill = undefined;
+
     // 2. Create every neural network.
     let progress;
     try {
@@ -161,6 +166,37 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
       for ( let i = 0; i < neuralNetParamsBaseArray.length; ++i ) {
         let neuralNetParamsBase = neuralNetParamsBaseArray[ i ];
         let weightArrayBuffer = weightArrayBufferArray[ i ];
+
+        // Create NeuralNet_ScaleFill.
+        if ( this.ScaleFill ) {
+          if (   ( this.ScaleFill.target_height
+                     != neuralNetParamsBase.input_height )
+              || ( this.ScaleFill.target_width
+                     != neuralNetParamsBase.input_width )
+              || ( this.ScaleFill.target_channelCount
+                     != neuralNetParamsBase.input_channelCount ) )
+
+            throw Error( `NeuralWorker_Body.${funcNameInMessage}(): `
+              + `neuralNetParamsBase[ ${i} ]'s `
+              + `( input_height, input_width, input_channelCount ) = ( `
+              + `${neuralNetParamsBase.input_height}, `
+              + `${neuralNetParamsBase.input_width}, `
+              + `${neuralNetParamsBase.input_channelCount} ) `
+              + `should be the same as another neuralNetParamsBase's ( `
+              + `${this.ScaleFill.target_height}, `
+              + `${this.ScaleFill.target_width}, `
+              + `${this.ScaleFill.target_channelCount} ). `
+              + `neuralNetParamsBase={ ${strNeuralNetParamsBase} }, `
+              + `neuralNet={ ${neuralNet} }.`
+            );
+
+        } else {
+          this.ScaleFill = new NeuralNet.ScaleFill(
+            neuralNetParamsBase.input_height,
+            neuralNetParamsBase.input_width,
+            neuralNetParamsBase.input_channelCount
+          );
+        }
 
         let inputWeightArray;
         {

@@ -1,4 +1,4 @@
-export { NeuralNet_ScaleFillTensor as ScaleFillTensor };
+export { NeuralNet_ScaleFill as ScaleFillTensor };
 
 /**
  * A helper class for preparing input tensor of a neural network.
@@ -23,16 +23,14 @@ export { NeuralNet_ScaleFillTensor as ScaleFillTensor };
  * but without target_channelCount.
  *
  */
-class NeuralNet_ScaleFillTensor {
+class NeuralNet_ScaleFill {
 
   /**
    *
    *
    */
-  constructor(
-    target_height, target_width, target_channelCount,
+  constructor( target_height, target_width, target_channelCount ) {
 
-  ) {
     this.target_height = target_height;
     this.target_width = target_width;
     this.target_channelCount = target_channelCount;
@@ -125,7 +123,7 @@ class NeuralNet_ScaleFillTensor {
     const source_valueCount = source_TypedArray.length;
 
     if ( ( source_valueCount % source_size_per_channel ) != 0 )
-      throw Error( `NeuralNet_ScaleFillTensor.${funcNameInMessage}(): `
+      throw Error( `NeuralNet_ScaleFill.${funcNameInMessage}(): `
         + `source_TypedArray.length ( ${source_valueCount} ) ` 
         + `should be divisible by `
         + `source_size_per_channel ( `
@@ -137,7 +135,7 @@ class NeuralNet_ScaleFillTensor {
     const source_channelCount = source_valueCount / source_size_per_channel;
 
     if ( source_channelCount != target_channelCount )
-      throw Error( `NeuralNet_ScaleFillTensor.${funcNameInMessage}(): `
+      throw Error( `NeuralNet_ScaleFill.${funcNameInMessage}(): `
         + `source_size_per_channel ( `
         + `= source_TypedArray.length / ( source_height * source_width ) ` 
         + `= ${source_valueCount} / ( ${source_height} * ${source_width} ) `
@@ -150,7 +148,7 @@ class NeuralNet_ScaleFillTensor {
     // 1.2
     if ( alignmentMarkValueArray.length
            != previous_output_Int32ArrayArray.length )
-      throw Error( `NeuralNet_ScaleFillTensor.${funcNameInMessage}(): `
+      throw Error( `NeuralNet_ScaleFill.${funcNameInMessage}(): `
         + `alignmentMarkValueArray.length ( `
         + `${alignmentMarkValueArray.length} ) `
         + `should be the same as `
@@ -183,7 +181,7 @@ class NeuralNet_ScaleFillTensor {
       if ( bScale ) {
 
         sourceTensorInt32
-          = NeuralNet_ScaleFillTensor.createTensor_by_scale_TypedArray.call(
+          = NeuralNet_ScaleFill.createTensor_by_scale_TypedArray.call(
               this, source_TypedArray, source_height, source_width );
 
         if ( bFill ) { // 2.1.1 Scale, Fill
@@ -288,7 +286,7 @@ class NeuralNet_ScaleFillTensor {
   /**
    *
    *
-   * @param {NeuralNet_ScaleFillTensor} this
+   * @param {NeuralNet_ScaleFill} this
    *
    * @param {Uint8ClampedArray|Uint16Array|Uint32Array} source_TypedArray
    *   An unsigned integer TypedArray. For example, ImageData.data which is
