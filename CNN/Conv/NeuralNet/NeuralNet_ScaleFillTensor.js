@@ -95,9 +95,12 @@ class NeuralNet_ScaleFillTensor {
 
     // 2. Scale
     let scaledSourceTensorInt32;
-    if (   ( source_height != target_height )
-        || ( source_width != target_width ) ) {
+    if (   ( source_height == target_height )
+        && ( source_width == target_width ) ) {
 
+      scaledSourceTensorInt32 = ???;
+
+    } else {
       let source_shape = [ source_height, source_width, source_channelCount ];
       let sourceTensorInt32
         = tf.tensor3d( source_TypedArray, source_shape, "int32" );
