@@ -41,6 +41,10 @@ class NeuralNet_ScaleFillTensor {
     this.target_shape_height_width = [ target_height, target_width ];
   }
 
+//!!! ...unfinished... (2023/05/01)
+// Perhaps, should use Canvas Context's drawImage() to scale the source.
+// So that GPU-CPU transferring could be reduced.
+
   /**
    *
    *
@@ -180,10 +184,6 @@ class NeuralNet_ScaleFillTensor {
               this, source_TypedArray, source_height, source_width );
 
         if ( bFill ) { // 2.1.1 Scale, Fill
-
-//!!! ...unfinished... (2023/05/01)
-// Perhaps, should use Canvas Context's drawImage() to scale the source.
-// So that GPU-CPU transferring could be reduced.
 
           let scaledSourceInt32Array;
           try {
