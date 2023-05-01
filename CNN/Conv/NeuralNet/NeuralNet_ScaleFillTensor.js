@@ -88,6 +88,9 @@ class NeuralNet_ScaleFillTensor {
     const funcNameInMessage = "scale_fill_tensor";
 
     // 1.
+
+    // 1.1 source shape
+
     const source_size_per_channel = source_height * source_width;
     const source_valueCount = source_TypedArray.length;
 
@@ -114,7 +117,7 @@ class NeuralNet_ScaleFillTensor {
         + `target_channelCount ( ${target_channelCount} ).`
       );
 
-    // Whether needs fill extra information into the target tensor.
+    // 1.2 Whether needs fill extra information into the target tensor.
     let bFill;
     if (   ( alignmenrMarkValue == undefined )
         && ( previous_output_Int32ArrayArray == undefined ) ) {
