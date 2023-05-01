@@ -139,10 +139,6 @@ class NeuralNet_ScaleFillTensor {
       );
 
     // 1.2
-
-//!!! ...unfinished... (2023/05/01)
-// should also accept ( .length == 1 ) for two workers situation.
-
     if ( alignmentMarkValueArray.length
            != previous_output_Int32ArrayArray.length )
       throw Error( `NeuralNet_ScaleFillTensor.${funcNameInMessage}(): `
