@@ -160,6 +160,16 @@ class NeuralNet_ScaleFillTensor {
 
 //!!! ...unfinished... (2023/05/01)
     // 2.
+    const tensorCount = previous_output_Int32ArrayArray.length;
+    for ( let i = 0; i < tensorCount; ++i ) {
+
+//!!! ...unfinished... (2023/05/01)
+      yield targetTensorInt32;
+
+    }
+
+
+//!!! ...unfinished... (2023/05/01)
     let targetTensorInt32;
     if ( bScale ) {
 
