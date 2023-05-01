@@ -114,14 +114,14 @@ class NeuralNet_ScaleFillTensor {
         + `target_channelCount ( ${target_channelCount} ).`
       );
 
-      // Whether needs fill extra information into the target tensor.
-      let bFill;
-      if (   ( alignmenrMarkValue == undefined )
-          && ( previous_output_Int32ArrayArray == undefined ) ) {
-        bFill = false;
-      } else {
-        bFill = true;
-      }
+    // Whether needs fill extra information into the target tensor.
+    let bFill;
+    if (   ( alignmenrMarkValue == undefined )
+        && ( previous_output_Int32ArrayArray == undefined ) ) {
+      bFill = false;
+    } else {
+      bFill = true;
+    }
 
 //!!! ...unfinished... (2023/05/01)
 
