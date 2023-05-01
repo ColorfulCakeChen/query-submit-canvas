@@ -198,7 +198,29 @@ class NeuralNet_ScaleFillTensor {
 //!!! ...unfinished... (2023/05/01)
 
       } else { // 2.1.2 Scale, No Fill.
-        targetTensorInt32 = scaledSourceTensorInt32;
+
+        try {
+
+          for ( let i = 0; i < tensorCount; ++i ) {
+            if ( i < ( tensorCount - 1 ) ) {
+              targetTensorInt32 = sourceTensorInt32.clone();
+            } else { // The final yield.
+              targetTensorInt32 = sourceTensorInt32;
+              sourceTensorInt32 = null;
+            }
+
+//!!! ...unfinished... (2023/05/01)
+            // Assume the outside caller will dispose the targetTensorInt32.
+            yield targetTensorInt32;
+          }
+
+        } finally {
+          if ( sourceTensorInt32 ) {
+            sourceTensorInt32.dispose();
+            sourceTensorInt32 = null;
+          }
+        }
+
       }
 
     } else { // No Scale.
@@ -216,7 +238,7 @@ class NeuralNet_ScaleFillTensor {
           for ( let i = 0; i < tensorCount; ++i ) {
             if ( i < ( tensorCount - 1 ) ) {
               targetTensorInt32 = sourceTensorInt32.clone();
-            } else {
+            } else { // The final yield.
               targetTensorInt32 = sourceTensorInt32;
               sourceTensorInt32 = null;
             }
