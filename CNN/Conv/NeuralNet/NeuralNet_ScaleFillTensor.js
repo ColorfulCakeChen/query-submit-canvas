@@ -126,10 +126,16 @@ class NeuralNet_ScaleFillTensor {
       bFill = true;
     }
 
+    // 1.3 Whether needs scale the source image to fit into the target tensor.
+    let bScale
+      =    ( source_height != this.target_height )
+        || ( source_width != this.target_width );
+
 //!!! ...unfinished... (2023/05/01)
 
 
     // 2. Scale
+
     let scaledSourceTensorInt32;
     if (   ( source_height == this.target_height )
         && ( source_width == this.target_width ) ) {
