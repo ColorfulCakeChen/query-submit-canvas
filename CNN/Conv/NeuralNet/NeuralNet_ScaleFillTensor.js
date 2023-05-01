@@ -64,12 +64,17 @@ class NeuralNet_ScaleFillTensor {
    *
    * @param {integer[]} alignmentMarkValueArray
    *   An array of values representing every neural network playing which
-   * alignment. If null or undefined, there will be no alignment mark value be
-   * filled into target tensor. For example, in a OX (connect-three) game:
-   *   - ( alignmentMarkValueArray[ 0 ] == 0 ) means neural network 0 plays O
-   *       side currently.
-   *   - ( alignmentMarkValueArray[ 1 ] == 255 ) means neural network 1 plays X
-   *       side currently.
+   * alignment.
+   *   - If null or undefined, there will be no alignment mark value be
+   *       filled into target tensor.
+   *   - alignmentMarkValueArray.length could be 1 or 2.
+   *   - alignmentMarkValueArray.length must be the same as
+   *       previous_output_Int32ArrayArray.length.
+   *   - Usage example: in a OX (connect-three) game:
+   *     - ( alignmentMarkValueArray[ 0 ] == 0 ) means neural network 0
+   *         plays O side currently.
+   *     - ( alignmentMarkValueArray[ 1 ] == 255 ) means neural network 1
+   *         plays X side currently.
    *
 
 //!!! ...unfinished... (2023/05/01)
@@ -77,9 +82,12 @@ class NeuralNet_ScaleFillTensor {
 // a neural network generates output of one or two alignments.
 
    * @param {Int32Array[]} previous_output_Int32ArrayArray
-   *   The (previous time) output of the pair of neural networks. If null or
-   * undefined, there will be no feedback information be filled into target
-   * tensor.
+   *   The (previous time) output of the pair of neural networks.
+   *   - If null or undefined, there will be no feedback information be filled
+   *       into target tensor.
+   *   - previous_output_Int32ArrayArray.length could be 1 or 2.
+   *   - previous_output_Int32ArrayArray.length must be the same as
+   *       alignmentMarkValueArray.length.
    *
    * @yield {Promise( tf.tensor3d )}
    *   Yield a promise resolves to { done: false, value: tf.tensor3d } for
@@ -135,18 +143,14 @@ class NeuralNet_ScaleFillTensor {
 //!!! ...unfinished... (2023/05/01)
 // should also accept ( .length == 1 ) for two workers situation.
 
-    if ( alignmentMarkValueArray.length != 2 )
+    if ( alignmentMarkValueArray.length
+           != previous_output_Int32ArrayArray.length )
       throw Error( `NeuralNet_ScaleFillTensor.${funcNameInMessage}(): `
         + `alignmentMarkValueArray.length ( `
-        + `= ${alignmentMarkValueArray.length} ) `
-        + `should be 2.`
-      );
-
-    if ( previous_output_Int32ArrayArray.length != 2 )
-      throw Error( `NeuralNet_ScaleFillTensor.${funcNameInMessage}(): `
+        + `${alignmentMarkValueArray.length} ) `
+        + `should be the same as `
         + `previous_output_Int32ArrayArray.length ( `
-        + `= ${previous_output_Int32ArrayArray.length} ) `
-        + `should be 2.`
+        + `${previous_output_Int32ArrayArray.length} ) `
       );
 
     // 1.3 Whether needs fill extra information into the target tensor.
