@@ -208,6 +208,10 @@ class NeuralNet_ScaleFillTensor {
 
         } else { // 2.1.2 Scale, No Fill.
 
+//!!! ...unfinished... (2023/05/01)
+// The filled scaledSourceInt32Array should be exposed to caller for
+// posting back to WorkerProxy.
+
           for ( let i = 0; i < tensorCount; ++i ) {
             let targetTensorInt32;
             if ( i < ( tensorCount - 1 ) ) {
