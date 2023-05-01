@@ -221,12 +221,13 @@ class NeuralNet_ScaleFillTensor {
 
           for ( let i = 0; i < tensorCount; ++i ) {
 
-  //!!! ...unfinished... (2023/05/01)
-  // Modify source_TypedArray directly.
+//!!! ...unfinished... (2023/05/01)
+// Modify source_TypedArray directly.
 
-            targetTensorInt32 = sourceTensorInt32
+            targetTensorInt32
               = tf.tensor3d( source_TypedArray, this.target_shape, "int32" );
 
+            // Assume the outside caller will dispose the targetTensorInt32.
             yield targetTensorInt32;
           }
 
