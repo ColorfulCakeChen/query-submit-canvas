@@ -58,14 +58,14 @@ class NeuralNet_ScaleFillTensor {
    *   The width (in pixels) of the source image. For example,
    * ImageData.width.
    *
-   * @param {integer} alignmenrMarkValue
-   *   An integer value representing the neural network playing which
-   * alignment. If undefined, there will be no alignmenrMarkValue be filled
-   * into target tensor. For example, in a OX (connect-three) game:
-   *   - ( alignmenrMarkValue == 0 ) means neural network 0 plays O side
-   *       currently.
-   *   - ( alignmenrMarkValue == 255 ) means neural network 1 plays X side
-   *       currently.
+   * @param {integer[]} alignmentMarkValueArray
+   *   An array of values representing every neural network playing which
+   * alignment. If null or undefined, there will be no alignment mark value be
+   * filled into target tensor. For example, in a OX (connect-three) game:
+   *   - ( alignmentMarkValueArray[ 0 ] == 0 ) means neural network 0 plays O
+   *       side currently.
+   *   - ( alignmentMarkValueArray[ 1 ] == 255 ) means neural network 1 plays X
+   *       side currently.
    *
 
 //!!! ...unfinished... (2023/05/01)
@@ -80,8 +80,9 @@ class NeuralNet_ScaleFillTensor {
    *
    *
    */
-  async createTensor_by_scale_fill_async(
+  async* createTensor_by_scale_fill_asyncGenerator(
     source_TypedArray, source_height, source_width,
+    alignmentMarkValueArray,
     previous_output_Int32ArrayArray
 
   ) {
@@ -134,6 +135,21 @@ class NeuralNet_ScaleFillTensor {
     } else {
       bScale = true;
     }
+
+    // 1.4 
+    if ( alignmentMarkValueArray.length != 2 )
+      throw Error( `NeuralNet_ScaleFillTensor.${funcNameInMessage}(): `
+        + `alignmentMarkValueArray.length ( `
+        + `= ${alignmentMarkValueArray.length} ) `
+        + `should be 2.`
+      );
+
+    if ( previous_output_Int32ArrayArray.length != 2 )
+      throw Error( `NeuralNet_ScaleFillTensor.${funcNameInMessage}(): `
+        + `previous_output_Int32ArrayArray.length ( `
+        + `= ${previous_output_Int32ArrayArray.length} ) `
+        + `should be 2.`
+      );
 
 //!!! ...unfinished... (2023/05/01)
     // 2.
