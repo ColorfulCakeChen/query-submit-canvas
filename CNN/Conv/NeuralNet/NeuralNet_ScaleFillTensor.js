@@ -238,10 +238,10 @@ class NeuralNet_ScaleFillTensor {
 
       } else { // No Scale.
 
-        if ( bFill ) { // 2.2.1 No Scale, Fill.
+        let sourceTypedArrayAsyncFunction
+          = async () => source_TypedArray;
 
-          let sourceTypedArrayAsyncFunction
-            = async () => source_TypedArray;
+        if ( bFill ) { // 2.2.1 No Scale, Fill.
 
           for ( let i = 0; i < tensorCount; ++i ) {
 
@@ -258,9 +258,6 @@ class NeuralNet_ScaleFillTensor {
 
           sourceTensorInt32
             = tf.tensor3d( source_TypedArray, this.target_shape, "int32" );
-
-          let sourceTypedArrayAsyncFunction
-            = async () => source_TypedArray;
 
           for ( let i = 0; i < tensorCount; ++i ) {
             let targetTensorInt32;
