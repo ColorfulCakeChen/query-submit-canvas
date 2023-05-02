@@ -28,4 +28,6 @@ export { NeuralWorker_Params as Params };
  */
 class NeuralWorker_Params {
 
+  output_channelCount_per_alignment;
+
 }
