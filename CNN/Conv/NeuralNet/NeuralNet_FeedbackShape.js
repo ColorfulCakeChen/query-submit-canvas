@@ -474,6 +474,12 @@ class NeuralNet_FeedbackShape extends NeuralNet_FeedbackToInput {
     } // neuralNetIndex
   }
 
+
+!!! ...unfinished... (2023.05/02)
+// The interpretation of from_output_valueArray (which contains one or
+// two alignments) should be according to NeuralWorker_Mode.
+// So, these Feedback related operations should belong to NeuralWorker.
+
   /**
    * Extract every 1st channel of pixels of the previous time output values.
    * Every .input_channelCount values are viewed as a pixel.
