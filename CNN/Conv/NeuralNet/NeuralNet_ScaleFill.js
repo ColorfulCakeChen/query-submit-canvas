@@ -59,14 +59,20 @@ class NeuralNet_ScaleFill {
    *   The width (in pixels) of the source_TypedArray. For example,
    * ImageData.width.
    *
+   * @param {boolean} bTwoTensors
+   *   - If true, two tensors will be generated and returned.
+   *   - If false, one tensor will be generated and returned.
+   *
    * @param {integer[]} alignmentMarkValueArray
    *   An array of values representing every neural network playing which
    * alignment.
    *   - If null or undefined, there will be no alignment mark value be
    *       filled into target tensor.
-   *   - alignmentMarkValueArray.length could be 1 or 2.
-   *   - alignmentMarkValueArray.length must be the same as
-   *       previous_output_Int32ArrayArray.length.
+   *   - If not null:
+   *     - alignmentMarkValueArray.length should be 1
+   *         if ( bTwoTensors == false )
+   *     - alignmentMarkValueArray.length should be 2
+   *         if ( bTwoTensors == true )
    *   - Usage example: in a OX (connect-three) game:
    *     - ( alignmentMarkValueArray[ 0 ] == 0 ) means neural network 0
    *         plays O side currently.
@@ -82,9 +88,11 @@ class NeuralNet_ScaleFill {
    *   The (previous time) output of the pair of neural networks.
    *   - If null or undefined, there will be no feedback information be filled
    *       into target tensor.
-   *   - previous_output_Int32ArrayArray.length could be 1 or 2.
-   *   - previous_output_Int32ArrayArray.length must be the same as
-   *       alignmentMarkValueArray.length.
+   *   - If not null:
+   *     - previous_output_Int32ArrayArray.length should be 1
+   *         if ( bTwoTensors == false )
+   *     - previous_output_Int32ArrayArray.length should be 2
+   *         if ( bTwoTensors == true )
    *
    * @yield {Promise( [ tf.tensor3d, sourceTypedArrayAsyncFunction ] )}
    *   Yield a promise resolves to { done: false, value: [ tf.tensor3d,
@@ -109,6 +117,7 @@ class NeuralNet_ScaleFill {
    */
   async* createTensor_by_scale_fill_asyncGenerator(
     source_TypedArray, source_height, source_width,
+    bTwoTensors,
     alignmentMarkValueArray,
     previous_output_Int32ArrayArray
   ) {
@@ -145,15 +154,31 @@ class NeuralNet_ScaleFill {
       );
 
     // 1.2
-    if ( alignmentMarkValueArray.length
-           != previous_output_Int32ArrayArray.length )
-      throw Error( `NeuralNet_ScaleFill.${funcNameInMessage}(): `
-        + `alignmentMarkValueArray.length ( `
-        + `${alignmentMarkValueArray.length} ) `
-        + `should be the same as `
-        + `previous_output_Int32ArrayArray.length ( `
-        + `${previous_output_Int32ArrayArray.length} ) `
-      );
+    let tensorCount;
+    if ( bTwoTensors ) {
+      tensorCount = 2;
+    } else {
+      tensorCount = 1;
+    }
+  
+    // 1.3
+    if ( alignmentMarkValueArray )
+      if ( alignmentMarkValueArray.length != tensorCount )
+        throw Error( `NeuralNet_ScaleFill.${funcNameInMessage}(): `
+          + `alignmentMarkValueArray.length ( `
+          + `${alignmentMarkValueArray.length} ) `
+          + `should be the same as `
+          + `tensorCount ( ${tensorCount} ) `
+        );
+
+    if ( previous_output_Int32ArrayArray )
+      if ( previous_output_Int32ArrayArray.length != tensorCount )
+        throw Error( `NeuralNet_ScaleFill.${funcNameInMessage}(): `
+          + `previous_output_Int32ArrayArray.length ( `
+          + `${previous_output_Int32ArrayArray.length} ) `
+          + `should be the same as `
+          + `tensorCount ( ${tensorCount} ) `
+        );
 
     // 1.3 Whether needs fill extra information into the target tensor.
     let bFill;
@@ -174,10 +199,6 @@ class NeuralNet_ScaleFill {
     }
 
     // 2.
-
-!!! ...unfinished... (2023/05/03)
-// What if ( previous_output_Int32ArrayArray == null )?
-    const tensorCount = previous_output_Int32ArrayArray.length;
     let sourceTensorInt32;
     try {
       if ( bScale ) {
