@@ -174,6 +174,9 @@ class NeuralNet_ScaleFill {
     }
 
     // 2.
+
+!!! ...unfinished... (2023/05/03)
+// What if ( previous_output_Int32ArrayArray == null )?
     const tensorCount = previous_output_Int32ArrayArray.length;
     let sourceTensorInt32;
     try {
