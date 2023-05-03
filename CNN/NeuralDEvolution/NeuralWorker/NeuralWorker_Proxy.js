@@ -206,7 +206,6 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
   }
 
 
-
   /**
    * Process input image data by all (suppose two) neural networks in this web
    * worker.
@@ -254,9 +253,11 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
    * converted to tensor3d. If false, it will be converted to tensor3d directly
    * without filling alignment mark.
    *
-   * @return {Promise}
-   *   Return a promise resolved to an array [ Float32Array, Float32Array ]
-   * representing the neural networks' result.
+   * @return {Promise( Float32Array | Int32Array )}
+   *   Return a promise resolved to an array [ TypedArray, TypedArray ]
+   * representing the neural networks' result. The TypedArray may be:
+   *   - Float32Array (if ( neuralNetParams.output_asInputValueRange == false ) )
+   *   - Int32Array (if ( neuralNetParams.output_asInputValueRange == true ) )
    */
   ONE_WORKER__ONE_SCALE__TypedArray_process_async(
     source_TypedArray, source_height, source_width, bFill ) {
