@@ -574,12 +574,6 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
    *   - Float32Array (if ( neuralNetParams.output_asInputValueRange == false ) )
    *   - Int32Array (if ( neuralNetParams.output_asInputValueRange == true ) )
    */
-
-//!!! ...unfinished... (2023/04/30)
-// Accepts unsigned integer TypedArray, height, width, channelCount
-// instead of sourceImageData so that non-image data (e.g. text or sound)
-// can also be processed.
-
   async* ONE_WORKER__ONE_SCALE__TypedArray_process(
     source_TypedArray, source_height, source_width, bFill ) {
 
@@ -593,6 +587,15 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
 //     tf.tidy( () => {
 
     {
+//!!! ...unfinished... (2023/05/03)
+      let createTensor_asyncGenerator
+        = this.ScaleFill.createTensor_by_scale_fill_asyncGenerator(
+            source_TypedArray, source_height, source_width,
+            alignmentMarkValueArray,
+            previous_output_Int32ArrayArray
+          );
+
+
       let scaledSourceTensor; // Only kept if need not fill alignment mark.
       try {
 
@@ -662,6 +665,7 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
               sourceTensor = scaledSourceTensor.clone();
             }
 
+!!!
             // 2.2 Process source tensor. (The sourceTensor will be released
             //     (in theroy).)
             outputTensor = neuralNet.apply( sourceTensor );
@@ -696,15 +700,18 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
         throw e;
 
       } finally {
+!!!
         if ( scaledSourceTensor ) {
           scaledSourceTensor.dispose();
           scaledSourceTensor = null;
         }
 
 //!!! ...unfinished... (2023/05/01)
-// call createTensor_by_scale_fill_asyncGenerator().return()
-// to ensure all intermediate tensors are released.
-
+        // Ensure all intermediate tensors are released.
+        if ( createTensor_asyncGenerator ) {
+          createTensor_asyncGenerator.return();
+          createTensor_asyncGenerator = null;
+        }
       }
     }
 
@@ -909,9 +916,11 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
       }
 
 //!!! ...unfinished... (2023/05/01)
-// call createTensor_by_scale_fill_asyncGenerator().return()
-// to ensure all intermediate tensors are released.
-
+      // Ensure all intermediate tensors are released.
+      if ( createTensor_asyncGenerator ) {
+        createTensor_asyncGenerator.return();
+        createTensor_asyncGenerator = null;
+      }
     }
 
     return {
@@ -1067,9 +1076,11 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
       }
 
 //!!! ...unfinished... (2023/05/01)
-// call createTensor_by_scale_fill_asyncGenerator().return()
-// to ensure all intermediate tensors are released.
-
+      // Ensure all intermediate tensors are released.
+      if ( createTensor_asyncGenerator ) {
+        createTensor_asyncGenerator.return();
+        createTensor_asyncGenerator = null;
+      }
     }
 
     return {
@@ -1175,9 +1186,11 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
       }
 
 //!!! ...unfinished... (2023/05/01)
-// call createTensor_by_scale_fill_asyncGenerator().return()
-// to ensure all intermediate tensors are released.
-
+      // Ensure all intermediate tensors are released.
+      if ( createTensor_asyncGenerator ) {
+        createTensor_asyncGenerator.return();
+        createTensor_asyncGenerator = null;
+      }
     }
 
     let outputFloat32Array = await outputFloat32ArrayPromise;
@@ -1187,7 +1200,6 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
       transferableObjectArray: [ outputFloat32Array.buffer ]
     };
   }
-
 
   /**
    * This method is used for:
@@ -1307,9 +1319,11 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
       }
 
 //!!! ...unfinished... (2023/05/01)
-// call createTensor_by_scale_fill_asyncGenerator().return()
-// to ensure all intermediate tensors are released.
-
+      // Ensure all intermediate tensors are released.
+      if ( createTensor_asyncGenerator ) {
+        createTensor_asyncGenerator.return();
+        createTensor_asyncGenerator = null;
+      }
     }
 
     let outputFloat32Array = await outputFloat32ArrayPromise;

@@ -205,6 +205,9 @@ class NeuralNet_ScaleFill {
 
 //!!! ...unfinished... (2023/05/01)
 // Modify scaledSourceInt32Array.
+//
+//            let alignmentMarkValue = alignmentMarkValueArray[ i ];
+//            let previous_output_Int32Array = previous_output_Int32ArrayArray[ i ];
 
             let targetTensorInt32
               = tf.tensor3d( sourceInt32Array, this.target_shape, "int32" );
@@ -244,6 +247,9 @@ class NeuralNet_ScaleFill {
 
 //!!! ...unfinished... (2023/05/01)
 // Modify source_TypedArray directly.
+//
+//            let alignmentMarkValue = alignmentMarkValueArray[ i ];
+//            let previous_output_Int32Array = previous_output_Int32ArrayArray[ i ];
 
             let targetTensorInt32
               = tf.tensor3d( source_TypedArray, this.target_shape, "int32" );
