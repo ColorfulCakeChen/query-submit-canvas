@@ -47,6 +47,10 @@ export { AsyncWorker_PromiseResolveReject as PromiseResolveReject };
     this.done = false;
 
     this.promiseToYieldReturn = this.promise.then( value => {
+
+//!!! ...unfinished... (2023/05/03)
+// Perhaps, put the value at another specified place, too.
+
       return { done: this.done, value: value };
     } );
 
