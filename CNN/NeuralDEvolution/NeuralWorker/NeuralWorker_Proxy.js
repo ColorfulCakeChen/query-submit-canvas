@@ -132,6 +132,9 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
   NeuralNetArray_create_async(
     neuralNetParamsBaseArray, weightArrayBufferArray, bLogDryRunTime ) {
 
+//!!! ...unfinished... (2023/05/03)
+// should clear kept .previous_output_Int32ArrayArray
+
     // 1. Record neural network configuration.
     {
       if ( this.neuralNetParamsBaseArray )
