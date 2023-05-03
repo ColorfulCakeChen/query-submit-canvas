@@ -61,8 +61,9 @@ class AsyncWorker_processingId_Resulter_Map {
    *   - AsyncWorker_processingId_Resulter_Map
    *       .resolve_or_reject_by_processingId_done_value()
    *
-   * @param {AsyncWork_PromiseResolveReject} thePromiseResolveReject 
-   *   The promise to be checked whether is final.
+   * @param {AsyncWork_PromiseResolveReject} aPromiseResolveReject 
+   *   The promise to be removed. Only if it is final and has been yielded, it
+   * will be removed. Otherwise, do nothing.
    */
   removeResulter_by_PromiseResolveReject_final( aPromiseResolveReject ) {
     if (   ( aPromiseResolveReject.final )
