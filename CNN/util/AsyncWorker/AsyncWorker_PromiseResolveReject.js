@@ -1,8 +1,8 @@
 export { AsyncWorker_PromiseResolveReject as PromiseResolveReject };
 
 /**
- * Hold a processing's id, promise, resolve (fulfilling function object), reject
- * (rejecting function object).
+ * Hold a processing's id, promise, resolve (fulfilling function object),
+ * reject (rejecting function object).
  *
  * @member {number} processingId
  *   The numeric identifier of the processing.
@@ -19,8 +19,9 @@ export { AsyncWorker_PromiseResolveReject as PromiseResolveReject };
  *   - If true, the promise is resolved to ( done == true ).
  *
  * @member {boolean} final
- *   If true, the promise is the final promise of the processing. (i.e. fulfilled.
- * either resolved ( done == true ) or rejected ( done == undefind ).)
+ *   If true, the promise is the final promise of the processing. (i.e.
+ * fulfilled. either resolved ( done == true ) or rejected
+ * ( done == undefind ).)
  *
  * @member {Promise} promiseToYieldReturn
  *   The promise used as the yield/return of the processing's async iterator
