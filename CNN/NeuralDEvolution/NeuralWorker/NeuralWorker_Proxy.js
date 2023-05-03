@@ -362,6 +362,24 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
     );
   }
 
+
+
+//!!! ...unfinished... (2023/05/02)
+// When training neural networks, NeuralWorker_Proxies is used.
+// When real usage after training complete, NeuralWorker_Proxy should be used.
+//
+// However, what kind of TypedArray_process_Xxx() should be called when real
+// usage?
+// It needs fill alignment mark and feedback but needs not post back source
+// TypedArray.
+//
+// Perhaps,
+// NeuralWorker.TWO_WORKER__ONE_SCALE__step1_TypedArray_process_async()
+// is the most suitable because:
+//   - It does not yield (i.e. transfer back) any thing.
+//   - It return a TypedArray (not an array [ TypedArray, TypedArray ] ).
+//
+
   /**
    * This method is used for:
    *   - Two web workers. Every worker has one neural network.
