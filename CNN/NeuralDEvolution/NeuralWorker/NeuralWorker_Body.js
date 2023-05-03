@@ -582,12 +582,7 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
     let resultFloat32ArrayPromiseArray
       = new Array( this.neuralNetArray.length );
 
-//!!! (2023/04/30 Remarked) Every operations should have try-finally to release tensors.
-//     // Ensure all tensors will be released, even if .apply() throws exception.
-//     tf.tidy( () => {
-
     {
-//!!! ...unfinished... (2023/05/03)
       let createTensor_asyncGenerator
         = this.ScaleFill.createTensor_by_scale_fill_asyncGenerator(
             source_TypedArray, source_height, source_width,
@@ -595,82 +590,40 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
             previous_output_Int32ArrayArray
           );
 
-
-      let scaledSourceTensor; // Only kept if need not fill alignment mark.
       try {
-
-        let scaledInt32Array; // Only used if need fill alignment mark.
         for ( let i = 0; i < this.neuralNetArray.length; ++i ) {
           let neuralNet = this.neuralNetArray[ i ];
 
-          // 1. Scale image (only do it once).
-          if (   ( !bFill && !scaledSourceTensor )
-              || (  bFill && !scaledInt32Array ) ) {
-            try {
-
-
-//!!! ...unfinished... (2023/04/30)
-// If scaling is not necessary (i.e. size is as expected) and filling is
-// required, do not create scaledSourceTensor and download as scaledInt32Array.
-// Just fill (alignment mark and feedback) and create sourceTensor directly.
-
-              scaledSourceTensor
-                = neuralNet.create_ScaledSourceTensor_from_PixelData(
-                    sourceImageData,
-                    true // ( bForceInt32 == true )
-                  );
-
-              if ( bFill ) {
-                //!!! (2023/05/01 Remarked) Use await instead.
-                //scaledInt32Array = scaledSourceTensor.dataSync();
-                scaledInt32Array = await scaledSourceTensor.data();
-              }
-
-            } catch ( e ) {
-              let errorMsg = `NeuralWorker_Body.${funcNameInMessage}(): `
-                + `workerId=${this.workerId}. ${e}`;
-              console.error( errorMsg );
-              //debugger;
-              throw e;
-
-            } finally {
-              // If need fill alignment mark, the source tensor will be
-              // re-created for every neural network, the scaled source
-              // tensor needs not be kept.
-              if ( bFill && scaledSourceTensor ) {
-                scaledSourceTensor.dispose();
-                scaledSourceTensor = null;
-              }
-            }
-          }
-
-          // 2. Process image by neural network.
           let sourceTensor;
           let outputTensor;
           try {
 
-            // 2.1 Prepare source tensor of every neural network.
+            // 1. Prepare source tensor of every neural network.
+            //
+            // Scaling, filling alignment mark and feedback information (i.e.
+            // previous time output), and then create source tensor.
+            {
+              let done_value_sourceTensorPromise
+                = createTensor_asyncGenerator.next();
 
-            // 2.1.1 Fill alignment mark and create new source tensor.
-            if ( bFill ) {
-              NeuralWorker_Body.alignmentMark_fillTo_Image_Int32Array.call(
-                this, i, scaledInt32Array );
+              let done_value_sourceTensor
+                = await done_value_sourceTensorPromise;
 
-              sourceTensor = tf.tensor(
-                scaledInt32Array, neuralNet.input_shape, "int32" );
+              if ( done_value_sourceTensor.done )
+                throw Error( `NeuralWorker_Body.${funcNameInMessage}(): `
+                  + `workerId=${this.workerId}, done_value_sourceTensor.done `
+                  + `( ${done_value_sourceTensor.done} ) `
+                  + `should be false.`
+                );;
 
-            // 2.1.2 Clone the scaled source tensor since no need fill
-            //       alignment mark.
-            } else {
-              sourceTensor = scaledSourceTensor.clone();
+              sourceTensor = done_value_sourceTensor.value;
             }
 
-!!!
-            // 2.2 Process source tensor. (The sourceTensor will be released
-            //     (in theroy).)
+            // 2. Process source tensor. (The sourceTensor will be released
+            //    (in theroy).)
             outputTensor = neuralNet.apply( sourceTensor );
 
-            // 2.3 Record result promise.
+            // 3. Record result promise.
             //
             // Because downloading from GPU to CPU is slow, continue to compute
             // the next neural network after downloading started.
@@ -700,13 +653,6 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
         throw e;
 
       } finally {
-!!!
-        if ( scaledSourceTensor ) {
-          scaledSourceTensor.dispose();
-          scaledSourceTensor = null;
-        }
-
-//!!! ...unfinished... (2023/05/01)
         // Ensure all intermediate tensors are released.
         if ( createTensor_asyncGenerator ) {
           createTensor_asyncGenerator.return();
@@ -715,10 +661,7 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
       }
     }
 
-//!!! (2023/04/30 Remarked) Every operations should have try-finally to release tensors.
-//     } );
-
-    // Wait for all downloading from GPU to CPU completely.
+    // 4. Wait for all downloading from GPU to CPU completely.
     let resultFloat32ArrayArray
       = await Promise.all( resultFloat32ArrayPromiseArray );
 
