@@ -179,6 +179,7 @@ class NeuralNet_ScaleFill {
     try {
       if ( bScale ) {
 
+        // Scale image (do it only once).
         sourceTensorInt32
           = NeuralNet_ScaleFill.createTensor_by_scale_TypedArray.call(
               this, source_TypedArray, source_height, source_width );
