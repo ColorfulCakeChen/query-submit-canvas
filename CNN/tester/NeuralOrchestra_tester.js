@@ -69,7 +69,7 @@ class TestCase {
     // Note:
     //
     // In the reentrance testing, when try await, the async method may have
-    // been completed. This is especially true for imageData_process_Xxx()
+    // been completed. This is especially true for TypedArray_process_Xxx()
     // which executues in another web worker (real parallelly).
     //
     // To prevent they complete too fast to test, add some delay by
@@ -79,7 +79,7 @@ class TestCase {
   /**
    * Because ImageData.data.buffer (and sourceNumberArray.buffer) will be
    * transferred (i.e. not copied) to web worker when
-   * .imageData_process_asyncPromise_create(), they should be re-created
+   * .TypedArray_process_asyncPromise_create(), they should be re-created
    * every time.
    */
   ImageData_create() {
@@ -149,32 +149,33 @@ class TestCase {
     //       copied) to web worker, it should be re-created every time.
     let sourceImageData = this.ImageData_create();
     let delayPromise = PartTime.Promise_resolvable_rejectable_create();
-    processPromise = neuralOrchestra.imageData_process_asyncPromise_create(
-      sourceImageData, delayPromise );
+    processPromise = neuralOrchestra.TypedArray_process_asyncPromise_create(
+      sourceImageData.data, sourceImageData.height, sourceImageData.width,
+      delayPromise );
 
-    if ( neuralOrchestra.imageData_process_asyncPromise_running ) {
+    if ( neuralOrchestra.TypedArray_process_asyncPromise_running ) {
       ++this.testId;
       progressToAdvance.value_advance();
       yield progressRoot;
     } else {
       throw Error( `NeuralOrchestra_tester.TestCase`
         + `.test_process_send_asyncGenerator(): testId=${this.testId}, `
-        + `neuralOrchestra.imageData_process_asyncPromise_running=`
-        + `${neuralOrchestra.imageData_process_asyncPromise_running} `
+        + `neuralOrchestra.TypedArray_process_asyncPromise_running=`
+        + `${neuralOrchestra.TypedArray_process_asyncPromise_running} `
         + `should be true.` );
     }
 
-    if ( neuralOrchestra.imageData_processOk !== undefined )
+    if ( neuralOrchestra.TypedArray_processOk !== undefined )
       throw Error( `NeuralOrchestra_tester.TestCase`
         + `.test_process_send_asyncGenerator(): testId=${this.testId}, `
-        + `neuralOrchestra.imageData_process `
-          + `( ${neuralOrchestra.imageData_process} ) `
+        + `neuralOrchestra.TypedArray_process `
+          + `( ${neuralOrchestra.TypedArray_process} ) `
         + `should be undefined.` );
 
     // Test: Calling these methods during processing should throw exception.
     {
       this.neuralOrchestra_should_throw_exception( neuralOrchestra,
-        "imageData_process_asyncPromise_create" );
+        "TypedArray_process_asyncPromise_create" );
 
 
       this.neuralOrchestra_should_throw_exception( neuralOrchestra,
@@ -207,11 +208,11 @@ class TestCase {
       throw Error( `NeuralOrchestra: testId=${this.testId}. ${e}`, { cause: e } );
     }
 
-    if ( neuralOrchestra.imageData_processOk != true ) // undefined is also not acceptable.
+    if ( neuralOrchestra.TypedArray_processOk != true ) // undefined is also not acceptable.
       throw Error( `NeuralOrchestra_tester.TestCase`
         + `.test_process_send_asyncGenerator(): testId=${this.testId}, `
-        + `neuralOrchestra.imageData_processOk `
-          + `(${neuralOrchestra.imageData_processOk}) `
+        + `neuralOrchestra.TypedArray_processOk `
+          + `(${neuralOrchestra.TypedArray_processOk}) `
         + `should be true.` );
 
     if ( 2 != Float32ArrayArray.length )
@@ -423,7 +424,7 @@ class TestCase {
 
 
       this.neuralOrchestra_should_throw_exception( neuralOrchestra,
-        "imageData_process_asyncPromise_create" );
+        "TypedArray_process_asyncPromise_create" );
     }
 
     // 2. Wait for versus summary loaded, versus loaded, and neural networks
@@ -705,7 +706,7 @@ class TestCase {
 
 
       this.neuralOrchestra_should_throw_exception( neuralOrchestra,
-        "imageData_process_asyncPromise_create" );
+        "TypedArray_process_asyncPromise_create" );
     }
 
     ++this.testId;
@@ -910,7 +911,7 @@ class TestCase {
 
 
         this.neuralOrchestra_should_throw_exception( neuralOrchestra,
-          "imageData_process_asyncPromise_create" );
+          "TypedArray_process_asyncPromise_create" );
 
 
         this.neuralOrchestra_should_throw_exception( neuralOrchestra,
