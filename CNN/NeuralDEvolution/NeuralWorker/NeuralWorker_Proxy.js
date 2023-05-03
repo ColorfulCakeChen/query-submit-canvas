@@ -221,7 +221,7 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
    * ImageData.width.
    *
    * @param {boolean} bFill
-   *   If true, the source Int32Array will be filled by alignment mark before be
+   *   If true, the source_TypedArray will be filled by alignment mark before be
    * converted to tensor3d. If false, it will be converted to tensor3d directly
    * without filling alignment mark.
    *
@@ -399,7 +399,7 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
    * ImageData.width.
    *
    * @param {boolean} bFill
-   *   If true, the source Int32Array will be filled by alignment mark before be
+   *   If true, the source_TypedArray will be filled by alignment mark before be
    * converted to tensor3d. If false, it will be converted to tensor3d directly
    * without filling alignment mark.
    *
