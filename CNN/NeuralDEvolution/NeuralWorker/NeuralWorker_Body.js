@@ -541,12 +541,24 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
    *           alignment B.
    *
    *
-   * @param {ImageData} sourceImageData
-   *   The source image data to be processed.
+   * @param {Uint8ClampedArray|Uint16Array|Uint32Array} source_TypedArray
+   *   An unsigned integer TypedArray which will be processed by the neural
+   * worker. For example, ImageData.data which is coming from a canvas.
    *
-   *   - Its shape needs not match this.neuralNet's [ input_height,
+   *   - Its shape needs not match this.neuralNet[ n ]'s [ input_height,
    *       input_width, input_channelCount ] because it will be scaled to the
    *       correct shape before passed into the neural network.
+   *
+   *   - It may be modified by filling with alignment mark and feedback
+   *       information (i.e. previous time output of the neural network).
+   *
+   * @param {number} source_height
+   *   The height (in pixels) of the source_TypedArray. For example,
+   * ImageData.height.
+   *
+   * @param {number} source_width
+   *   The width (in pixels) of the source_TypedArray. For example,
+   * ImageData.width.
    *
    * @param {boolean} bFill
    *   If true, the source Int32Array will be filled by alignment mark before
@@ -568,8 +580,10 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
 // instead of sourceImageData so that non-image data (e.g. text or sound)
 // can also be processed.
 
-  async* ONE_WORKER__ONE_SCALE__ImageData_process( sourceImageData, bFill ) {
-    const funcNameInMessage = "ONE_WORKER__ONE_SCALE__ImageData_process";
+  async* ONE_WORKER__ONE_SCALE__TypedArray_process(
+    source_TypedArray, source_height, source_width, bFill ) {
+
+    const funcNameInMessage = "ONE_WORKER__ONE_SCALE__TypedArray_process";
 
     let resultFloat32ArrayPromiseArray
       = new Array( this.neuralNetArray.length );
@@ -728,19 +742,28 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
    *   - Fill alignment mark of this neural network, upload to GPU and process it.
    *
    *
-   * @param {ImageData} sourceImageData
-   *   The source image data to be processed.
+   * @param {Uint8ClampedArray|Uint16Array|Uint32Array} source_TypedArray
+   *   An unsigned integer TypedArray which will be processed by the neural
+   * worker. For example, ImageData.data which is coming from a canvas.
    *
    *   - Its shape needs not match this.neuralNet[ 0 ]'s [ input_height,
    *       input_width, input_channelCount ] because it will be scaled to the
    *       correct shape before passed into the neural network.
    *
+   *   - It may be modified by filling with alignment mark and feedback
+   *       information (i.e. previous time output of the neural network).
+   *
    *   - This usually is called for the 1st web worker in chain. The scaled
    *       Int32Array will be transferred back to WorkerProxy for the 2nd
    *       web worker.
    *
-   *   - The scaled Int32Array will be filled by alignment mark, and then
-   *       converted into tensor3d, and then processed by neural network.
+   * @param {number} source_height
+   *   The height (in pixels) of the source_TypedArray. For example,
+   * ImageData.height.
+   *
+   * @param {number} source_width
+   *   The width (in pixels) of the source_TypedArray. For example,
+   * ImageData.width.
    *
    * @param {boolean} bApply_or_Applier
    *   - If true, use neuralNet.apply().
@@ -760,11 +783,11 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
    *   - Float32Array (if ( neuralNetParams.output_asInputValueRange == false ) )
    *   - Int32Array (if ( neuralNetParams.output_asInputValueRange == true ) )
    */
-  async* TWO_WORKER__ONE_SCALE__FILL__step0_ImageData_process(
-    sourceImageData, bApply_or_Applier ) {
+  async* TWO_WORKER__ONE_SCALE__FILL__step0_TypedArray_process(
+    source_TypedArray, source_height, source_width, bApply_or_Applier ) {
 
     const funcNameInMessage
-      = "TWO_WORKER__ONE_SCALE__FILL__step0_ImageData_process";
+      = "TWO_WORKER__ONE_SCALE__FILL__step0_TypedArray_process";
 
     const neuralNetIndex = 0; // Always use the first neural network.
     let neuralNet = this.neuralNetArray[ neuralNetIndex ];
@@ -911,19 +934,20 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
    *       just process the scaled tensor directly.
    *
    * 
-   * @param {ImageData} sourceImageData
-   *   The source image data to be processed.
+   * @param {Uint8ClampedArray|Uint16Array|Uint32Array} source_TypedArray
+   *   An unsigned integer TypedArray which will be processed by the neural
+   * worker. For example, ImageData.data which is coming from a canvas.
    *
    *   - Its shape needs not match this.neuralNet[ 0 ]'s [ input_height,
    *       input_width, input_channelCount ] because it will be scaled to the
    *       correct shape before passed into the neural network.
    *
+   *   - It will not be modified by filling with alignment mark and feedback
+   *       information (i.e. previous time output of the neural network).
+   *
    *   - This usually is called for the 1st web worker in chain. The scaled
    *       Int32Array will be transferred back to WorkerProxy for the 2nd web
    *       worker.
-   *
-   *   - The scaled tensor (without filling alignment mark) will be processed
-   *       by neural network directly.
    *
    * @param {boolean} bApply_or_Applier
    *   - If true, use neuralNet.apply().
@@ -943,11 +967,11 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
    *   - Float32Array (if ( neuralNetParams.output_asInputValueRange == false ) )
    *   - Int32Array (if ( neuralNetParams.output_asInputValueRange == true ) )
    */
-  async* TWO_WORKER__ONE_SCALE__NO_FILL__step0_ImageData_process(
-    sourceImageData, bApply_or_Applier ) {
+  async* TWO_WORKER__ONE_SCALE__NO_FILL__step0_TypedArray_process(
+    source_TypedArray, source_height, source_width, bApply_or_Applier ) {
 
     const funcNameInMessage
-      = "TWO_WORKER__ONE_SCALE__NO_FILL__step0_ImageData_process";
+      = "TWO_WORKER__ONE_SCALE__NO_FILL__step0_TypedArray_process";
 
     const neuralNetIndex = 0; // Always use the first neural network.
     let neuralNet = this.neuralNetArray[ neuralNetIndex ];
@@ -1067,16 +1091,28 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
    *       GPU and process it.
    *
    *
-   * @param {Int32Array} scaledInt32Array
-   *   The source image data to be processed.
+   * @param {Uint8ClampedArray|Uint16Array|Uint32Array} source_TypedArray
+   *   An unsigned integer TypedArray which will be processed by the neural
+   * worker. For example, ImageData.data which is coming from a canvas.
    *
-   *   - Its shape must match this.neuralNet[ 0 ]'s [ input_height,
-   *       input_width, input_channelCount ] because it will not be scaled and
-   *       will be passed into neural network directly.
+   *   - Its shape needs not match this.neuralNet[ 0 ]'s [ input_height,
+   *       input_width, input_channelCount ] because it will be scaled to the
+   *       correct shape before passed into the neural network.
+   *
+   *   - It may be modified by filling with alignment mark and feedback
+   *       information (i.e. previous time output of the neural network).
    *
    *   - This usually is called for the 2nd web worker in chain. The web worker
    *       will accept a scaled Int32Array which is returned from the 1st web
-   *       worker's first yield of .ImageData_process_asyncGenerator().
+   *       worker's first yield of .TypedArray_process_asyncGenerator().
+   *
+   * @param {number} source_height
+   *   The height (in pixels) of the source_TypedArray. For example,
+   * ImageData.height.
+   *
+   * @param {number} source_width
+   *   The width (in pixels) of the source_TypedArray. For example,
+   * ImageData.width.
    *
    * @param {boolean} bFill
    *   If true, the source Int32Array will be filled by alignment mark before
@@ -1092,7 +1128,7 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
    *   - Int32Array (if ( neuralNetParams.output_asInputValueRange == true ) )
    */
   async* TWO_WORKER__ONE_SCALE__step1_TypedArray_process(
-    ??? scaledInt32Array, bFill ) {
+    source_TypedArray, source_height, source_width, bFill ) {
 
     const funcNameInMessage
       = "TWO_WORKER__ONE_SCALE__step1_TypedArray_process";
@@ -1175,25 +1211,38 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
    *           alignment B.
    *
    *
-   * @param {ImageData} sourceImageData
-   *   The source image data to be processed. Its shape needs not match
-   * this.neuralNet[ 0 ]'s [ input_height, input_width, input_channelCount ]
-   * because it will be scaled to the correct shape before passed into the
-   * neural network.
+   * @param {Uint8ClampedArray|Uint16Array|Uint32Array} source_TypedArray
+   *   An unsigned integer TypedArray which will be processed by the neural
+   * worker. For example, ImageData.data which is coming from a canvas.
+   *
+   *   - Its shape needs not match this.neuralNet[ 0 ]'s [ input_height,
+   *       input_width, input_channelCount ] because it will be scaled to the
+   *       correct shape before passed into the neural network.
+   *
+   *   - It may be modified by filling with alignment mark and feedback
+   *       information (i.e. previous time output of the neural network).
+   *
+   * @param {number} source_height
+   *   The height (in pixels) of the source_TypedArray. For example,
+   * ImageData.height.
+   *
+   * @param {number} source_width
+   *   The width (in pixels) of the source_TypedArray. For example,
+   * ImageData.width.
    *
    * @param {boolean} bFork
-   *   Whether sent the source image data back to WorkerProxy.
+   *   Whether sent the source_TypedArray back to WorkerProxy.
    *
-   *   - If true, the sourceImageData will be sent back to WorkerProxy as an
-   *       ImageData. This is used for the 1st worker.
+   *   - If true, the source_TypedArray will be sent back to WorkerProxy as an
+   *       TypedArray. This is used for the 1st worker.
    *
-   *   - If false, the sourceImageData will not be sent. This is used for the
+   *   - If false, the source_TypedArray will not be sent. This is used for the
    *       2nd worker.
    *
-   * @yield {ImageData}
-   *   Resolve to { done: false, value: { value: ImageData,
-   * transferableObjectArray: [ ImageData.data.buffer ] }. The value is an
-   * ImageData which is just the (non-scaled) source image data.
+   * @yield {Uint8ClampedArray|Uint16Array|Uint32Array|Int32Array}
+   *   Resolve to { done: false, value: { value: TypedArray,
+   * transferableObjectArray: [ TypedArray.buffer ] }. The value is an
+   * TypedArray which is just the (non-scaled) source_TypedArray.
    *
    * @yield {Float32Array|Int32Array}
    *   Resolve to { done: true, value: { value: TypedArray,
@@ -1203,9 +1252,10 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
    *   - Float32Array (if ( neuralNetParams.output_asInputValueRange == false ) )
    *   - Int32Array (if ( neuralNetParams.output_asInputValueRange == true ) )
    */
-  async* TWO_WORKER__TWO_SCALE__ImageData_process( sourceImageData, bFork ) {
+  async* TWO_WORKER__TWO_SCALE__TypedArray_process(
+    source_TypedArray, source_height, source_width, bFork ) {
 
-    const funcNameInMessage = "TWO_WORKER__TWO_SCALE__ImageData_process";
+    const funcNameInMessage = "TWO_WORKER__TWO_SCALE__TypedArray_process";
 
     let scaledSourceTensor;
     let outputTensor;

@@ -269,9 +269,6 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
    *       Int32Array will be transferred back to WorkerProxy for the 2nd web
    *       worker.
    *
-   *   - The scaled Int32Array will be filled by alignment mark, and then
-   *       converted into tensor3d, and then processed by neural network.
-   *
    * @param {number} source_height
    *   The height (in pixels) of the source_TypedArray. For example,
    * ImageData.height.
@@ -326,15 +323,12 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
    *       input_width, input_channelCount ] because it will be scaled to the
    *       correct shape before passed into the neural network.
    *
-   *   - It may be modified by filling with alignment mark and feedback
+   *   - It will not be modified by filling with alignment mark and feedback
    *       information (i.e. previous time output of the neural network).
    *
    *   - This usually is called for the 1st web worker in chain. The scaled
    *       Int32Array will be transferred back to WorkerProxy for the 2nd web
    *       worker.
-   *
-   *   - The scaled Int32Array (without filling alignment mark) will be
-   *       converted into tensor3d, and then processed by neural network.
    *
    * @param {number} source_height
    *   The height (in pixels) of the source_TypedArray. For example,
@@ -466,7 +460,7 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
    * ImageData.width.
    *
    * @param {boolean} bFork
-   *   Whether yield the source image data.
+   *   Whether yield the source_TypedArray.
    *
    *   - If true, the source_TypedArray will be yielded as an TypedArray.
    *       This is used for 1st worker.
@@ -480,7 +474,7 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
    *       the 2nd is a Float32Array.
    *   - If ( bFork == false ), it will yield only one times, the Float32Array.
    *
-   * @yield {Uint8ClampedArray|Uint16Array|Uint32Array}
+   * @yield {Uint8ClampedArray|Uint16Array|Uint32Array|Int32Array}
    *   Resolve to { done: false, value: TypedArray }. The value is an TypedArray
    * which is just the (non-scaled) source_TypedArray.
    *
