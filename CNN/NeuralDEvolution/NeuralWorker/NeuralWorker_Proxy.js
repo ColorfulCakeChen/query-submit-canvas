@@ -42,17 +42,22 @@ import * as NotUsed from "./NeuralWorker_Body.js";
  *       workers.
  *
  *
- * @member {Float32Array[] | Int32Array[]} previous_output_TypedArrayArray
+
+//!!! ...unfinished... (2023/05/03)
+// How to get them if they come from AsyncWorker.Resulter?
+
+ * @member {Promise( Float32Array[] | Int32Array[] )} previous_output_TypedArrayArray_promise
  *   The (previous time) output of the neural network.
  *
  *   - Its content (i.e. the Float32Array or Int32Array) will become invalid
  *       when any Xxx_TypedArray_process_async() with ( bFill == true ) is
  *       called because they will be transferred (not copied) to the web
  *       worker. 
- *     - In this case, they should be Int32Array for feedback.
+ *     - In this case, they should be Int32Array for used as feedback.
  *
  *   - When .NeuralNetArray_create_async() is called, its content will be
- *     cleared, too.
+ *       cleared, too. Since there should be no previous output for newly
+ *       created neural network.
  *
  */
 class NeuralWorker_Proxy extends AsyncWorker.Proxy {
@@ -332,8 +337,9 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
    * ImageData.width.
    *
    * @return {AsyncWorker.Resulter}
-   *   Return an async iterator tracking the result of processing. It will yield
-   * two times, the 1st is an Int32Array, the 2nd is a Float32Array.
+   *   Return an async iterator tracking the result of processing. It will
+   * yield two times, the 1st is an Int32Array, the 2nd is a Float32Array (or
+   * Int32Array).
    *
    * @yield {Int32Array}
    *   Resolve to { done: false, value: Int32Array }. The value is an Int32Array
