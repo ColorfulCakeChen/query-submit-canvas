@@ -20,8 +20,8 @@ export { AsyncWorker_PromiseResolveReject as PromiseResolveReject };
  *
  * @member {boolean} final
  *   If true, the promise is the final promise of the processing. (i.e.
- * fulfilled. either resolved ( done == true ) or rejected
- * ( done == undefind ).)
+ * fulfilled which is either resolved ( done == true ) or rejected
+ * ( done == undefind )).
  *
  * @member {Promise} promiseToYieldReturn
  *   The promise used as the yield/return of the processing's async iterator
