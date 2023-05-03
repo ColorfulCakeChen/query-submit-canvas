@@ -499,7 +499,7 @@ class HeightWidthDepth {
     this.neuralWorkerProxies = null;
   }
 
-  /** Test .ImageData_process_async by Xxx */
+  /** Test .TypedArray_process_async by Xxx */
   async testNeuralWorker_ByName( testCaseName ) {
     let testCase = this.testCaseMap.get( testCaseName );
 
@@ -523,7 +523,8 @@ class HeightWidthDepth {
     }
 
     let resultFloat32ArrayArrayPromise
-      = this.neuralWorkerProxies.ImageData_process_async( imageData );
+      = this.neuralWorkerProxies.TypedArray_process_async(
+          imageData.data, imageData.height, imageData.width );
 
     if ( imageData.data.length != 0 )
       throw Error( `NeuralWorker_tester.testNeuralWorker_ByName(): `
