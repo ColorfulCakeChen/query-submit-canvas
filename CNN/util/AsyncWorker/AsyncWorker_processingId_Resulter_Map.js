@@ -26,13 +26,15 @@ class AsyncWorker_processingId_Resulter_Map {
    * Create a new AsyncWorker.Resulter. Record it in this map by processingId
    * as key.
    *
-   * This method is the initializer the processingId's PromiseResolveRejectArray.
+   * This method is the initializer the processingId's
+   * PromiseResolveRejectArray.
    *
    * @param {number} processingId
    *   The numeric identifier of the processing.
    *
    * @return {AsyncWorker.Resulter}
-   *   Return an async iterator for receving result from WorkerBody of the processing.
+   *   Return an async iterator for receving result from WorkerBody of the
+   * processing.
    */
   createResulter_by_processingId( processingId ) {
     let resulter = new Resulter( processingId, this );
@@ -47,10 +49,10 @@ class AsyncWorker_processingId_Resulter_Map {
 
   /**
    * 
-   * If the (not pending (i.e. fulfilled)) promise was resolved to ( done == true )
-   * or rejected, there will be no more result received from the WorkerBody
-   * in the future. So remove the resulter and its entire result queue (i.e.
-   * PromiseResolveRejectArray) of the processing.
+   * If the (not pending (i.e. fulfilled)) promise was resolved to
+   * ( done == true ) or rejected, there will be no more result received from
+   * the WorkerBody in the future. So remove the resulter and its entire result
+   * queue (i.e. PromiseResolveRejectArray) of the processing.
    *
    *
    * Note: Both the following two codes handle resulter removing (according to
@@ -85,9 +87,9 @@ class AsyncWorker_processingId_Resulter_Map {
   /**
    * Suppose every method function of WorkerProxy is an async generator.
    *
-   * When WorkerProxy receives [ processingId, done, value ] object from WorkerBody,
-   * please call this method. It will resolve or reject the corresponding pending
-   * promise.
+   * When WorkerProxy receives [ processingId, done, value ] object from
+   * WorkerBody, please call this method. It will resolve or reject the
+   * corresponding pending promise.
    *
    *   - if ( done == undefind ), reject the pending PromiseResolveReject.
    *
@@ -97,71 +99,74 @@ class AsyncWorker_processingId_Resulter_Map {
    *       append a new pending PromiseResolveReject for waiting future result
    *       from WorkerBody.
    *
-   * This method is the producer for the processingId's PromiseResolveRejectArray.
+   * This method is the producer for the processingId's
+   * PromiseResolveRejectArray.
    *
    *
    * @param {number} processingId
    *   The numeric identifier of the processing.
    *
    * @param {boolean} done
-   *   If true, this is the final value of the processing. If false, there will be
-   * more result values coming from the WorkerBody. If undfined, the WorkerBody is
-   * failed to execute the processing.
+   *   If true, this is the final value of the processing. If false, there will
+   * be more result values coming from the WorkerBody. If undfined, the
+   * WorkerBody is failed to execute the processing.
    *
    * @param {any} value
-   *   The result value of this step of the processing. If ( done == undefined ),
-   * this value represents errorReason (of rejecting). Otherwise, it is the value
-   * of resolving.
+   *   The result value of this step of the processing. If
+   * ( done == undefined ), this value represents errorReason (of rejecting).
+   * Otherwise, it is the value of resolving.
    */
   resolve_or_reject_by_processingId_done_value( processingId, done, value ) {
     let resulter = this.getResulter_by_processingId( processingId );
     if ( !resulter )
-      throw Error(
-          `AsyncWorker.processingId_Resulter_Map.resolve_by_processingId_done_value(): `
+      throw Error( `AsyncWorker.processingId_Resulter_Map.`
+        + `resolve_by_processingId_done_value(): `
         + `processingId=${processingId}. `
         + `The resulter does not exist.`
       );
 
     if ( resulter.PromiseResolveRejectArray.length <= 0 )
-      throw Error(
-          `AsyncWorker.processingId_Resulter_Map.resolve_by_processingId_done_value(): `
+      throw Error( `AsyncWorker.processingId_Resulter_Map.`
+        + `resolve_by_processingId_done_value(): `
         + `processingId=${processingId}. `
         + `The resulter.PromiseResolveRejectArray should not be empty.`
       );
 
     // Always resolve the last promise. (Assume it is pending.)
     let lastArrayIndex = resulter.PromiseResolveRejectArray.length - 1;
-    let currentPromiseResolveReject = resulter.PromiseResolveRejectArray[ lastArrayIndex ];
+    let currentPromiseResolveReject
+      = resulter.PromiseResolveRejectArray[ lastArrayIndex ];
 
     if ( !currentPromiseResolveReject.pending )
-      throw Error(
-          `AsyncWorker.processingId_Resulter_Map.resolve_by_processingId_done_value(): `
+      throw Error( `AsyncWorker.processingId_Resulter_Map.`
+        + `resolve_by_processingId_done_value(): `
         + `processingId=${processingId}, lastArrayIndex=${lastArrayIndex}. `
         + `The last element of PromiseResolveRejectArray should be pending.`
       );
 
-    // 1. If the done is undefined, it means "reject". (i.e. neither false nor true).
+    // 1. If the done is undefined, it means "reject". (i.e. neither false nor
+    //    true).
     if ( done == undefined ) {
 
       // 1.1 Reject the current pending promise to the errorReason.
       //     (In this case, the value represents errorReason.)
       currentPromiseResolveReject.errorReason_reject( value );
 
-    // 2. Otherwise, it is a regular result message (i.e. either false (not done) or
-    //    true (done)).
+    // 2. Otherwise, it is a regular result message (i.e. either false (not
+    //    done) or true (done)).
     } else {
 
       // 2.1 Prepare next pending promise.
 
-      // 2.1.1 Since web worker says the processing is done, do not create any more
-      //       pending promise because the processing will have no more result coming
-      //       from web worker in the future.
+      // 2.1.1 Since web worker says the processing is done, do not create any
+      //       more pending promise because the processing will have no more
+      //       result coming from web worker in the future.
       if ( done ) {
         // Do nothing.
 
-      // 2.1.2 The web worker says the processing is not yet completed, create a new
-      //       pending promise for the same processing for waiting future result from
-      //       web worker.
+      // 2.1.2 The web worker says the processing is not yet completed, create
+      //       a new pending promise for the same processing for waiting future
+      //       result from web worker.
       } else {
         let nextPromiseResolveReject = new PromiseResolveReject( processingId );
         resulter.PromiseResolveRejectArray.push( nextPromiseResolveReject );
@@ -172,14 +177,16 @@ class AsyncWorker_processingId_Resulter_Map {
     }
 
     // 3. Handle final promise.
-    this.removeResulter_by_PromiseResolveReject_final( currentPromiseResolveReject );
+    this.removeResulter_by_PromiseResolveReject_final(
+      currentPromiseResolveReject );
   }
 
   /**
    * Reject all pending PromiseResolveReject.
    *
-   * This is usually used when an AsyncWorker will be terminated forcibly. Rejecting
-   * these pending promises could avoid these promises' awaiters be blocked forever.
+   * This is usually used when an AsyncWorker will be terminated forcibly.
+   * Rejecting these pending promises could avoid these promises' awaiters be
+   * blocked forever.
    *
    * @param {any} errorReason 
    *   The information of the rejecting.
@@ -189,8 +196,8 @@ class AsyncWorker_processingId_Resulter_Map {
       if ( resulter.PromiseResolveRejectArray.length <= 0 )
         continue; // No promised could be rejected. (should not happen)
 
-      // Always reject the last promise, because it is the only one promise which
-      // is possible still pending.
+      // Always reject the last promise, because it is the only one promise
+      // which is possible still pending.
       let lastArrayIndex = resulter.PromiseResolveRejectArray.length - 1;
       let currentPromiseResolveReject
         = resulter.PromiseResolveRejectArray[ lastArrayIndex ];
@@ -202,7 +209,8 @@ class AsyncWorker_processingId_Resulter_Map {
       currentPromiseResolveReject.errorReason_reject( errorReason );
 
       // Handle final promise.
-      this.removeResulter_by_PromiseResolveReject_final( currentPromiseResolveReject );
+      this.removeResulter_by_PromiseResolveReject_final(
+        currentPromiseResolveReject );
     }
   }
 
