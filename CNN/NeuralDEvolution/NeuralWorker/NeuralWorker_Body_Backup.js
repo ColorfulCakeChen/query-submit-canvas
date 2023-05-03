@@ -53,7 +53,7 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
   /** @override */
   async* disposeResources() {
 
-    this.alignmentMarkArray_dispose();
+    this.alignmentMarkValueArray_dispose();
     this.NeuralNetArray_dispose();
 
     // Detect tensor memory leak.
@@ -96,8 +96,8 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
 
     // Clear resources.
     {
-      if ( this.alignmentMarkArray )
-        this.alignmentMarkArray.length = 0;
+      if ( this.alignmentMarkValueArray )
+        this.alignmentMarkValueArray.length = 0;
 
       if ( this.neuralNetArray )
         this.neuralNetArray.clear(); // Release old neural networks.
@@ -435,26 +435,26 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
 
     // 0. Prepare container for all neural networks' mark value.
     {
-      if ( this.alignmentMarkArray )
-        this.alignmentMarkArray.length = markValueArray.length;
+      if ( this.alignmentMarkValueArray )
+        this.alignmentMarkValueArray.length = markValueArray.length;
       else
-        this.alignmentMarkArray
+        this.alignmentMarkValueArray
           = Recyclable.Array.Pool.get_or_create_by( markValueArray.length );
     }
 
     // 1. Copy the alignment mark values.
-    for ( let i = 0; i < this.alignmentMarkArray.length; ++i ) {
-      this.alignmentMarkArray[ i ] = markValueArray[ i ];
+    for ( let i = 0; i < this.alignmentMarkValueArray.length; ++i ) {
+      this.alignmentMarkValueArray[ i ] = markValueArray[ i ];
     }
 
     return { value: true };
   }
 
-  /** Release the alignmentMarkArray. */
-  alignmentMarkArray_dispose() {
-    if ( this.alignmentMarkArray ) {
-      this.alignmentMarkArray.disposeResources_and_recycleToPool();
-      this.alignmentMarkArray = null;
+  /** Release the alignmentMarkValueArray. */
+  alignmentMarkValueArray_dispose() {
+    if ( this.alignmentMarkValueArray ) {
+      this.alignmentMarkValueArray.disposeResources_and_recycleToPool();
+      this.alignmentMarkValueArray = null;
     }
   }
 
@@ -499,7 +499,7 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
     const markHeight = 3;
     const markWidth = 3;
 
-    const alignmentMarkValue = this.alignmentMarkArray[ neuralNetIndex ];
+    const alignmentMarkValue = this.alignmentMarkValueArray[ neuralNetIndex ];
 
     let neuralNet = this.neuralNetArray[ neuralNetIndex ];
     const arrayIndex_rowStrides
