@@ -52,11 +52,11 @@ class NeuralNet_ScaleFill {
    * neural network).
    *
    * @param {number} source_height
-   *   The height (in pixels) of the source image. For example,
+   *   The height (in pixels) of the source_TypedArray. For example,
    * ImageData.height.
    *
    * @param {number} source_width
-   *   The width (in pixels) of the source image. For example,
+   *   The width (in pixels) of the source_TypedArray. For example,
    * ImageData.width.
    *
    * @param {integer[]} alignmentMarkValueArray
@@ -294,11 +294,11 @@ class NeuralNet_ScaleFill {
    * neural network).
    *
    * @param {number} source_height
-   *   The height (in pixels) of the source image. For example,
+   *   The height (in pixels) of the source_TypedArray. For example,
    * ImageData.height.
    *
    * @param {number} source_width
-   *   The width (in pixels) of the source image. For example,
+   *   The width (in pixels) of the source_TypedArray. For example,
    * ImageData.width.
    *
    * @param {tf.tensor3d}

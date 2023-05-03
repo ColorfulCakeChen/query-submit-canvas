@@ -1035,11 +1035,11 @@ class NeuralOrchestra_Base extends
    * information (i.e. previous time output of the neural network).
    *
    * @param {number} source_height
-   *   The height (in pixels) of the source image. For example,
+   *   The height (in pixels) of the source_TypedArray. For example,
    * ImageData.height.
    *
    * @param {number} source_width
-   *   The width (in pixels) of the source image. For example,
+   *   The width (in pixels) of the source_TypedArray. For example,
    * ImageData.width.
    *
    * @param {Promise} delayPromise

@@ -1091,11 +1091,11 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
    *   - Float32Array (if ( neuralNetParams.output_asInputValueRange == false ) )
    *   - Int32Array (if ( neuralNetParams.output_asInputValueRange == true ) )
    */
-  async* TWO_WORKER__ONE_SCALE__step1_Int32Array_process(
-    scaledInt32Array, bFill ) {
+  async* TWO_WORKER__ONE_SCALE__step1_TypedArray_process(
+    ??? scaledInt32Array, bFill ) {
 
     const funcNameInMessage
-      = "TWO_WORKER__ONE_SCALE__step1_Int32Array_process";
+      = "TWO_WORKER__ONE_SCALE__step1_TypedArray_process";
 
     const neuralNetIndex = 0; // Always use the first neural network.
     let neuralNet = this.neuralNetArray[ neuralNetIndex ];

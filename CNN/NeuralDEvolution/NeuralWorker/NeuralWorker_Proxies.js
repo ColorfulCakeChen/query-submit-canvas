@@ -491,11 +491,11 @@ class NeuralWorker_Proxies extends Recyclable.Root {
    * information (i.e. previous time output of the neural network).
    *
    * @param {number} source_height
-   *   The height (in pixels) of the source image. For example,
+   *   The height (in pixels) of the source_TypedArray. For example,
    * ImageData.height.
    *
    * @param {number} source_width
-   *   The width (in pixels) of the source image. For example,
+   *   The width (in pixels) of the source_TypedArray. For example,
    * ImageData.width.
    *
    * @return {Promise( Float32Array[] | Int32Array[] )}
@@ -526,11 +526,11 @@ class NeuralWorker_Proxies extends Recyclable.Root {
    * information (i.e. previous time output of the neural network).
    *
    * @param {number} source_height
-   *   The height (in pixels) of the source image. For example,
+   *   The height (in pixels) of the source_TypedArray. For example,
    * ImageData.height.
    *
    * @param {number} source_width
-   *   The width (in pixels) of the source image. For example,
+   *   The width (in pixels) of the source_TypedArray. For example,
    * ImageData.width.
    *
    * @return {Promise( Float32Array[] | Int32Array[] )}
@@ -583,11 +583,11 @@ class NeuralWorker_Proxies extends Recyclable.Root {
    * information (i.e. previous time output of the neural network).
    *
    * @param {number} source_height
-   *   The height (in pixels) of the source image. For example,
+   *   The height (in pixels) of the source_TypedArray. For example,
    * ImageData.height.
    *
    * @param {number} source_width
-   *   The width (in pixels) of the source image. For example,
+   *   The width (in pixels) of the source_TypedArray. For example,
    * ImageData.width.
    *
    * @return {Promise( Float32Array[] | Int32Array[] )}
