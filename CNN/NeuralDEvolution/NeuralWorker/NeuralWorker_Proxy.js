@@ -42,6 +42,18 @@ import * as NotUsed from "./NeuralWorker_Body.js";
  *       workers.
  *
  *
+ * @member {Float32Array[] | Int32Array[]} previous_output_TypedArrayArray
+ *   The (previous time) output of the neural network.
+ *
+ *   - Its content (i.e. the Float32Array or Int32Array) will become invalid
+ *       when any Xxx_TypedArray_process_async() with ( bFill == true ) is
+ *       called because they will be transferred (not copied) to the web
+ *       worker. 
+ *     - In this case, they should be Int32Array for feedback.
+ *
+ *   - When .NeuralNetArray_create_async() is called, its content will be
+ *     cleared, too.
+ *
  */
 class NeuralWorker_Proxy extends AsyncWorker.Proxy {
 
@@ -72,6 +84,7 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
   /** @override */
   disposeResources() {
     this.NeuralNetParamsBaseArray_dispose();
+    this.previous_output_TypedArrayArray = undefined;
     this.workerId = undefined;
     super.disposeResources();
   }
@@ -133,7 +146,18 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
     neuralNetParamsBaseArray, weightArrayBufferArray, bLogDryRunTime ) {
 
 //!!! ...unfinished... (2023/05/03)
-// should clear kept .previous_output_Int32ArrayArray
+//this.previous_output_TypedArrayArray
+    // 0. Since new neural networks are created, discard any old previous output.
+    {
+      if ( this.previous_output_TypedArrayArray ) {
+        this.previous_output_TypedArrayArray.length
+          = neuralNetParamsBaseArray.length;
+        this.previous_output_TypedArrayArray.fill( undefined );
+      } else {
+        this.previous_output_TypedArrayArray
+          = new Array( neuralNetParamsBaseArray.length );
+      }
+    }
 
     // 1. Record neural network configuration.
     {
