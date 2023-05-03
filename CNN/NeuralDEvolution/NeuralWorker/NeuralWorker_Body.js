@@ -583,15 +583,20 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
       = new Array( this.neuralNetArray.length );
 
     {
+//!!! ...unfinished... (2023/05/03)
+// Where to get previous_output_Int32ArrayArray?
+      let alignmentMarkValueArray, previous_output_Int32ArrayArray;
+      if ( bFill ) {
+        alignmentMarkValueArray = this.alignmentMarkValueArray;
+        //previous_output_Int32ArrayArray = ???;
+      }
+
       let bTwoTensors = ( this.neuralNetArray.length > 1 );
       let createTensor_asyncGenerator
         = this.ScaleFill.createTensor_by_scale_fill_asyncGenerator(
             source_TypedArray, source_height, source_width,
             bTwoTensors,
-            this.alignmentMarkValueArray,
-//!!! ...unfinished... (2023/05/03)
-// Where to get previous_output_Int32ArrayArray?
-//            previous_output_Int32ArrayArray
+            alignmentMarkValueArray, previous_output_Int32ArrayArray
           );
 
       try {
