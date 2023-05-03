@@ -72,7 +72,7 @@ import * as DEvolution from "../DEvolution.js";
  *
  * 1.3 Process image, and report versus result
  *
- *   - call and await .imageData_process_asyncPromise_create()
+ *   - call and await .TypedArray_process_asyncPromise_create()
  *   - call versusResultSender_send()
  *   - go to 1.1.2 or 1.2.2 (Load another versus)
  *
@@ -218,13 +218,13 @@ import * as DEvolution from "../DEvolution.js";
  *   If true, a .workerProxies_init_async() has been executed and succeeded.
  *
  *
- * @member {boolean} imageData_process_asyncPromise_running
- *   If true, a .imageData_process_asyncPromise_create() is still executing.
+ * @member {boolean} TypedArray_process_asyncPromise_running
+ *   If true, a .TypedArray_process_asyncPromise_create() is still executing.
  * Please wait it becoming false if wanting to call
- * .imageData_process_asyncPromise_create() again.
+ * .TypedArray_process_asyncPromise_create() again.
  *
- * @member {boolean} imageData_processOk
- *   If true, a .imageData_process_asyncPromise_create() has been executed and
+ * @member {boolean} TypedArray_processOk
+ *   If true, a .TypedArray_process_asyncPromise_create() has been executed and
  * succeeded.
  *
  * 
@@ -256,7 +256,7 @@ import * as DEvolution from "../DEvolution.js";
  */
 class NeuralOrchestra_Base extends
   NonReentrant.asyncPromise(
-    "imageData_process", relay_imageData_process_asyncPromise,
+    "TypedArray_process", relay_TypedArray_process_asyncPromise,
 
   NonReentrant.asyncPromise_by_asyncGenerator(
     "versus_load", relay_versus_load_asyncGenerator,
@@ -817,7 +817,7 @@ class NeuralOrchestra_Base extends
         .throw_if_init_asyncPromise_and_asyncGenerator_not_running.call( this,
           funcNameInMessage );
 
-      NeuralOrchestra_Base.throw_if_imageData_process_asyncPromise_running
+      NeuralOrchestra_Base.throw_if_TypedArray_process_asyncPromise_running
         .call( this, funcNameInMessage );
     }
 
@@ -900,7 +900,7 @@ class NeuralOrchestra_Base extends
         .throw_if_init_asyncPromise_and_asyncGenerator_not_running.call( this,
           funcNameInMessage );
 
-      NeuralOrchestra_Base.throw_if_imageData_process_asyncPromise_running
+      NeuralOrchestra_Base.throw_if_TypedArray_process_asyncPromise_running
         .call( this, funcNameInMessage );
     }
 
@@ -969,7 +969,7 @@ class NeuralOrchestra_Base extends
     { // Checking pre-condition.
       const funcNameInMessage = "workerProxies_NeuralNetArray_create_async";
 
-      NeuralOrchestra_Base.throw_if_imageData_process_asyncPromise_running
+      NeuralOrchestra_Base.throw_if_TypedArray_process_asyncPromise_running
         .call( this, funcNameInMessage );
     }
 
@@ -1003,10 +1003,11 @@ class NeuralOrchestra_Base extends
    *   - TypedArrayArray[ 0 ] is parent (chromosome) neural network's output.
    *   - TypedArrayArray[ 1 ] is offspring (chromosome) neural network's output.
    */
-  imageData_process_asyncPromise_create( sourceImageData, delayPromise ) {
+  TypedArray_process_asyncPromise_create(
+    source_TypedArray, source_height, source_width, delayPromise ) {
 
     { // Checking pre-condition.
-      const funcNameInMessage = "imageData_process_asyncPromise_create";
+      const funcNameInMessage = "TypedArray_process_asyncPromise_create";
 
       NeuralOrchestra_Base.throw_if_init_asyncPromise_or_asyncGenerator_running
         .call( this, funcNameInMessage );
@@ -1016,17 +1017,30 @@ class NeuralOrchestra_Base extends
       NeuralOrchestra_Base
         .throw_if_versus_load_asyncPromise_or_asyncGenerator_running.call(
           this, funcNameInMessage );
-      NeuralOrchestra_Base.throw_if_not_versus_loadOk.call( this, funcNameInMessage );
+      NeuralOrchestra_Base.throw_if_not_versus_loadOk.call( this,
+        funcNameInMessage );
     }
 
     return super
-      .imageData_process_asyncPromise_create( sourceImageData, delayPromise );
+      .TypedArray_process_asyncPromise_create(
+        source_TypedArray, source_height, source_width, delayPromise );
   }
 
   /**
    *
-   * @param {ImageData} sourceImageData
-   *   The input image datat which will be processed by neural workers.
+   * @param {Uint8ClampedArray|Uint16Array|Uint32Array} source_TypedArray
+   *   An unsigned integer TypedArray which will be processed by the pair of
+   * neural workers. For example, ImageData.data which is coming from a canvas.
+   * Note that it may be modified by filling with alignment mark and feedback
+   * information (i.e. previous time output of the neural network).
+   *
+   * @param {number} source_height
+   *   The height (in pixels) of the source image. For example,
+   * ImageData.height.
+   *
+   * @param {number} source_width
+   *   The width (in pixels) of the source image. For example,
+   * ImageData.width.
    *
    * @param {Promise} delayPromise
    *   Mainly used when unit testing. If not null, this async method will await
@@ -1042,12 +1056,14 @@ class NeuralOrchestra_Base extends
    *   - TypedArrayArray[ 0 ] is parent (chromosome) neural network's output.
    *   - TypedArrayArray[ 1 ] is offspring (chromosome) neural network's output.
    */
-  static async imageData_process_asyncPromise( sourceImageData, delayPromise ) {
+  static async TypedArray_process_asyncPromise(
+    source_TypedArray, source_height, source_width, delayPromise ) {
 
     try {
       // 1.
       let theFloat32ArrayArrayPromise
-        = this.workerProxies.ImageData_process_async( sourceImageData );
+        = this.workerProxies.TypedArray_process_async(
+            source_TypedArray, source_height, source_width );
 
       let theFloat32ArrayArray = await theFloat32ArrayArrayPromise;
 
@@ -1055,13 +1071,13 @@ class NeuralOrchestra_Base extends
       if ( delayPromise )
         await delayPromise;
 
-      this.imageData_processOk = true;
+      this.TypedArray_processOk = true;
       return theFloat32ArrayArray;
 
     } catch ( e ) {
       //debugger;
       //console.error( e );
-      this.imageData_processOk = false;
+      this.TypedArray_processOk = false;
       throw e;
 
     } finally {
@@ -1129,7 +1145,7 @@ class NeuralOrchestra_Base extends
         .call( this, funcNameInMessage );
 
       // Prevent the nueral networks from being changed during they are processing.
-      NeuralOrchestra_Base.throw_if_imageData_process_asyncPromise_running
+      NeuralOrchestra_Base.throw_if_TypedArray_process_asyncPromise_running
         .call( this, funcNameInMessage );
     }
 
@@ -1176,7 +1192,7 @@ class NeuralOrchestra_Base extends
         .call( this, funcNameInMessage );
 
       // Prevent the nueral networks from being changed during they are processing.
-      NeuralOrchestra_Base.throw_if_imageData_process_asyncPromise_running
+      NeuralOrchestra_Base.throw_if_TypedArray_process_asyncPromise_running
         .call( this, funcNameInMessage );
     }
 
@@ -1220,7 +1236,7 @@ class NeuralOrchestra_Base extends
         .call( this, funcNameInMessage );
 
       // Prevent the nueral networks from being changed during they are processing.
-      NeuralOrchestra_Base.throw_if_imageData_process_asyncPromise_running
+      NeuralOrchestra_Base.throw_if_TypedArray_process_asyncPromise_running
         .call( this, funcNameInMessage );
     }
 
@@ -1455,14 +1471,14 @@ class NeuralOrchestra_Base extends
    * Submit the result of the last differential evolution versus to server.
    *
    *
-   * Note: The resolved .imageData_process_asyncPromise_create() is an
-   *       Float32Array[].
+   * Note: The resolved .TypedArray_process_asyncPromise_create() is an
+   *       Float32Array[] or Int32Array[].
    *
    *   - Which one is parent (chromosome) neural network's output?
-   *     - Float32Array[ 0 ]
+   *     - Float32Array[ 0 ] (or Int32Array[ 0 ])
    *
    *   - Which one is offspring (chromosome) neural network's output?
-   *     - Float32Array[ 1 ]
+   *     - Float32Array[ 1 ] (or Int32Array[ 1 ])
    *
    *
    * @param {number} nNegativeZeroPositive
@@ -1548,9 +1564,9 @@ class NeuralOrchestra_Base extends
    * @param {string} funcNameInMessage   The caller function name. (e.g. init_async)
    */
   static throw_if_workerProxies_busy( funcNameInMessage ) {
-    NeuralOrchestra_Base.throw_if_workerProxies_init_asyncPromise_running.call( this,
-      funcNameInMessage );
-    NeuralOrchestra_Base.throw_if_imageData_process_asyncPromise_running
+    NeuralOrchestra_Base.throw_if_workerProxies_init_asyncPromise_running
+      .call( this, funcNameInMessage );
+    NeuralOrchestra_Base.throw_if_TypedArray_process_asyncPromise_running
       .call( this, funcNameInMessage );
   }
 
@@ -1559,7 +1575,8 @@ class NeuralOrchestra_Base extends
    * @param {string} funcNameInMessage   The caller function name. (e.g. init_async)
    */
   static throw_if_workerProxies_busy_or_versus_loading( funcNameInMessage ) {
-    NeuralOrchestra_Base.throw_if_workerProxies_busy.call( this, funcNameInMessage );
+    NeuralOrchestra_Base.throw_if_workerProxies_busy.call( this,
+      funcNameInMessage );
     NeuralOrchestra_Base
       .throw_if_versus_load_asyncPromise_or_asyncGenerator_running.call(
         this, funcNameInMessage );
@@ -1586,10 +1603,10 @@ function relay_init_asyncGenerator() {
  *
  * @return {Promise}
  *   Return the newly created instance of
- * NeuralOrchestra_Base.imageData_process_asyncPromise().
+ * NeuralOrchestra_Base.TypedArray_process_asyncPromise().
  */
-function relay_imageData_process_asyncPromise() {
-  return NeuralOrchestra_Base.imageData_process_asyncPromise.apply(
+function relay_TypedArray_process_asyncPromise() {
+  return NeuralOrchestra_Base.TypedArray_process_asyncPromise.apply(
     this, arguments );
 }
 
