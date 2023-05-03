@@ -45,6 +45,9 @@ import * as NotUsed from "./NeuralWorker_Body.js";
 
 //!!! ...unfinished... (2023/05/03)
 // How to get them if they come from AsyncWorker.Resulter?
+//
+// Perhaps, NeuralWorker's previous output promise should be placed
+// at NeuralWorker_Proxies (not NeuralWorker_Proxy).
 
  * @member {Promise( Float32Array[] | Int32Array[] )} previous_output_TypedArrayArray_promise
  *   The (previous time) output of the neural network.
@@ -208,6 +211,11 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
       [ "alignmentMarkValueArray_set", markValueArray ]
     );
   }
+
+//!!! ...unfinished... (2023/05/03)
+// If NeuralWorker's previous output promise should be placed
+// at NeuralWorker_Proxies (not NeuralWorker_Proxy), this
+// .TypedArray_process_async() should be at NeuralWorker_Proxies, too.
 
   /**
    * 

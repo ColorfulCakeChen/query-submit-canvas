@@ -50,6 +50,9 @@ export { AsyncWorker_PromiseResolveReject as PromiseResolveReject };
 
 //!!! ...unfinished... (2023/05/03)
 // Perhaps, put the value at another specified place, too.
+//
+// No, NeuralWorker's previous output promise should be placed
+// at NeuralWorker_Proxies (not NeuralWorker_Proxy).
 
       return { done: this.done, value: value };
     } );
