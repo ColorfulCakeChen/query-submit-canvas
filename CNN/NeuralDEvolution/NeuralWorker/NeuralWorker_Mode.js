@@ -51,6 +51,14 @@ class NeuralWorker_Mode extends Int {
         TWO_WORKER__TWO_SCALE__NO_FILL:          new NeuralWorker_Mode.Info(
           6, "TWO_WORKER__TWO_SCALE__NO_FILL",          2,
           false, undefined ),
+
+//!!! ...unfinished... (2023/05/03) TWO_WORKER__TWO_SCALE__FILL?
+
+//!!! ...unfinished... (2023/05/03)
+// Perhaps, needs one more mode for real usage neural network.
+// It will create only one nueral network (i.e. not two neural networks).
+//
+
       }
     );
   }
@@ -99,7 +107,7 @@ class NeuralWorker_Mode extends Int {
       return info.bApply_or_Applier;
     return NaN;
   }
-  
+
 }
 
 
