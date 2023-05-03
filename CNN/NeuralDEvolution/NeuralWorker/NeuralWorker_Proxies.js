@@ -411,10 +411,10 @@ class NeuralWorker_Proxies extends Recyclable.Root {
    *   - Resolved to true, if succeeded.
    *   - Resolved to false, if failed.
    */
-  async alignmentMarkArray_setValue_async( markValueArray ) {
+  async alignmentMarkValueArray_set_async( markValueArray ) {
 
     if ( markValueArray.length != this.neuralNetCount )
-      throw Error( `NeuralWorker.Proxies.alignmentMarkArray_setValue_async(): `
+      throw Error( `NeuralWorker.Proxies.alignmentMarkValueArray_set_async(): `
         + `markValueArray.length ( ${markValueArray.length} ) `
         + `should be ${this.neuralNetCount}.`
       );
@@ -427,7 +427,7 @@ class NeuralWorker_Proxies extends Recyclable.Root {
       let resultPromiseArray = new Array( this.workerProxyArray.length );
       for ( let i = 0; i < this.workerProxyArray.length; ++i ) {
         resultPromiseArray[ i ]
-          = this.workerProxyArray[ i ].alignmentMarkArray_setValue_async(
+          = this.workerProxyArray[ i ].alignmentMarkValueArray_set_async(
             [ markValueArray[ i ] ] );
       }
 
@@ -441,7 +441,7 @@ class NeuralWorker_Proxies extends Recyclable.Root {
     // 2. The only one worker sets all alignment mark values.
     } else {
       resultOk
-        = await this.workerProxyArray[ 0 ].alignmentMarkArray_setValue_async(
+        = await this.workerProxyArray[ 0 ].alignmentMarkValueArray_set_async(
             markValueArray );
     }
 

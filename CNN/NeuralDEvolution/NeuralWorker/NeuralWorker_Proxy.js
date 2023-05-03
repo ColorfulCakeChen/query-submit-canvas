@@ -171,9 +171,9 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
    *   - Resolved to true, if succeeded.
    *   - Resolved to false, if failed.
    */
-  alignmentMarkArray_setValue_async( markValueArray ) {
+  alignmentMarkValueArray_set_async( markValueArray ) {
     return this.createPromise_by_postCommandArgs(
-      [ "alignmentMarkArray_setValue", markValueArray ]
+      [ "alignmentMarkValueArray_set", markValueArray ]
     );
   }
 

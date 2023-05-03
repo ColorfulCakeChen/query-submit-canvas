@@ -431,7 +431,7 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
    * @yield {boolean}
    *   - Yield { done: true, value: { value: true } }.
    */
-  async* alignmentMarkArray_setValue( markValueArray ) {
+  async* alignmentMarkValueArray_set( markValueArray ) {
 
     // 0. Prepare container for all neural networks' mark value.
     {

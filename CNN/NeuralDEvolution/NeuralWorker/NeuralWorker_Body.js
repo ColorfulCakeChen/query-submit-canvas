@@ -428,7 +428,7 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
    * @yield {boolean}
    *   - Yield { done: true, value: { value: true } }.
    */
-  async* alignmentMarkArray_setValue( markValueArray ) {
+  async* alignmentMarkValueArray_set( markValueArray ) {
 
     // 0. Prepare container for all neural networks' mark value.
     {
@@ -586,7 +586,9 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
       let createTensor_asyncGenerator
         = this.ScaleFill.createTensor_by_scale_fill_asyncGenerator(
             source_TypedArray, source_height, source_width,
-            alignmentMarkValueArray,
+            this.alignmentMarkArray
+            this.alignmentMarkValueArray,
+//!!! ...unfinished
             previous_output_Int32ArrayArray
           );
 
