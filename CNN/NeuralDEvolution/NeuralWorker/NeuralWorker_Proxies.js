@@ -35,7 +35,7 @@ import { Mode as NeuralWorker_Mode } from "./NeuralWorker_Mode.js";
  *
  * 1.2 For NeuralWorker_Mode.Singleton.Ids.TWO_WORKER__Xxx
  * 
- * Every worker handles one neural network. When .ImageData_process_async() is
+ * Every worker handles one neural network. When .TypedArray_process_async() is
  * called, the input (usually a large memory block) will be transffered to the
  * 1st worker to start computing, and then transffered to the 2nd worker to
  * start computing, ... etc.
@@ -170,11 +170,11 @@ import { Mode as NeuralWorker_Mode } from "./NeuralWorker_Mode.js";
  * @member {number} totalWorkerCount
  *   There are how many web worker(s) created.
  *
- * @member {function} ImageData_process_async
+ * @member {function} TypedArray_process_async
  *   This is a data member which is a pointer to a function. The function
- * accepts ImageData as input. It returns a promise resolved to an array
- * [ TypedArray, TypedArray ] representing the result of the pair of neural
- * networks. The TypedArray may be:
+ * accepts an unsigned integer TypedArray as input. It returns a promise
+ * resolved to an array [ TypedArray, TypedArray ] representing the result of
+ * the pair of neural networks. The TypedArray may be:
  *   - Float32Array (if ( neuralNetParams.output_asInputValueRange == false ) )
  *   - Int32Array (if ( neuralNetParams.output_asInputValueRange == true ) )
  */
@@ -206,7 +206,7 @@ class NeuralWorker_Proxies extends Recyclable.Root {
 
   /** @override */
   disposeResources() {
-    this.ImageData_process_async = undefined;
+    this.TypedArray_process_async = undefined;
 
     this.workerProxyArray_dispose();
 
@@ -277,8 +277,8 @@ class NeuralWorker_Proxies extends Recyclable.Root {
       true
     );
 
-    // 2. Determine .ImageData_process_async
-    NeuralWorker_Proxies.setup_ImageData_process.call( this );
+    // 2. Determine .TypedArray_process_async
+    NeuralWorker_Proxies.setup_TypedArray_process.call( this );
 
     return initOk;
   }
@@ -450,15 +450,15 @@ class NeuralWorker_Proxies extends Recyclable.Root {
 
 
   /**
-   * Setup .ImageData_process_async according to .nNeuralWorker_ModeId.
+   * Setup .TypedArray_process_async according to .nNeuralWorker_ModeId.
    *
    * @param {NeuralWorker_Proxies} this
    */
-  static setup_ImageData_process() {
+  static setup_TypedArray_process() {
     switch ( this.nNeuralWorker_ModeId ) {
       case NeuralWorker_Mode.Singleton.Ids.ONE_WORKER__ONE_SCALE__FILL: // (0)
       case NeuralWorker_Mode.Singleton.Ids.ONE_WORKER__ONE_SCALE__NO_FILL: // (1)
-        this.ImageData_process_async
+        this.TypedArray_process_async
           = NeuralWorker_Proxies.apply__ONE_WORKER__ONE_SCALE__FILL__or__NO_FILL;
         break;
 
@@ -466,17 +466,17 @@ class NeuralWorker_Proxies extends Recyclable.Root {
       case NeuralWorker_Mode.Singleton.Ids.TWO_WORKER__ONE_SCALE__FILL__APPLIER: // (3)
       case NeuralWorker_Mode.Singleton.Ids.TWO_WORKER__ONE_SCALE__NO_FILL__APPLY: // (4)
       case NeuralWorker_Mode.Singleton.Ids.TWO_WORKER__ONE_SCALE__NO_FILL__APPLIER: // (5)
-        this.ImageData_process_async
+        this.TypedArray_process_async
           = NeuralWorker_Proxies.apply__TWO_WORKER__ONE_SCALE__FILL__or__NO_FILL;
         break;
 
       case NeuralWorker_Mode.Singleton.Ids.TWO_WORKER__TWO_SCALE__NO_FILL: // (6)
-        this.ImageData_process_async
+        this.TypedArray_process_async
           = NeuralWorker_Proxies.apply__TWO_WORKER__TWO_SCALE__NO_FILL;
         break;
 
       default:
-        throw Error( `NeuralWorker_Proxies.setup_ImageData_process(): `
+        throw Error( `NeuralWorker_Proxies.setup_TypedArray_process(): `
           + `Unknown nNeuralWorker_ModeId ( ${this.nNeuralWorker_ModeId} ).`
         );
         break;
@@ -484,8 +484,19 @@ class NeuralWorker_Proxies extends Recyclable.Root {
   }
 
   /**
-   * @param {ImageData} sourceImageData
-   *   The input image datat which will be processed by neural workers.
+   * @param {Uint8ClampedArray|Uint16Array|Uint32Array} source_TypedArray
+   *   An unsigned integer TypedArray which will be processed by the pair of
+   * neural workers. For example, ImageData.data which is coming from a canvas.
+   * Note that it may be modified by filling with alignment mark and feedback
+   * information (i.e. previous time output of the neural network).
+   *
+   * @param {number} source_height
+   *   The height (in pixels) of the source image. For example,
+   * ImageData.height.
+   *
+   * @param {number} source_width
+   *   The width (in pixels) of the source image. For example,
+   * ImageData.width.
    *
    * @return {Promise( Float32Array[] | Int32Array[] )}
    *   Return a promise resolved to an array [ TypedArray, TypedArray ]
@@ -494,19 +505,33 @@ class NeuralWorker_Proxies extends Recyclable.Root {
    *   - Float32Array (if ( neuralNetParams.output_asInputValueRange == false ) )
    *   - Int32Array (if ( neuralNetParams.output_asInputValueRange == true ) )
    */
-  static async apply__ONE_WORKER__ONE_SCALE__FILL__or__NO_FILL( sourceImageData ) {
+  static async apply__ONE_WORKER__ONE_SCALE__FILL__or__NO_FILL(
+    source_TypedArray, source_height, source_width ) {
+
     let bFill = NeuralWorker_Mode.bFill_get( this.nNeuralWorker_ModeId );
 
     let worker0_promise = this.workerProxyArray[ 0 ]
-      .ONE_WORKER__ONE_SCALE__ImageData_process_async( sourceImageData, bFill );
+      .ONE_WORKER__ONE_SCALE__TypedArray_process_async(
+        source_TypedArray, source_height, source_width, bFill );
 
     let worker0_value_Float32ArrayArray = await worker0_promise;
     return worker0_value_Float32ArrayArray;
   }
 
   /**
-   * @param {ImageData} sourceImageData
-   *   The input image datat which will be processed by neural workers.
+   * @param {Uint8ClampedArray|Uint16Array|Uint32Array} source_TypedArray
+   *   An unsigned integer TypedArray which will be processed by the pair of
+   * neural workers. For example, ImageData.data which is coming from a canvas.
+   * Note that it may be modified by filling with alignment mark and feedback
+   * information (i.e. previous time output of the neural network).
+   *
+   * @param {number} source_height
+   *   The height (in pixels) of the source image. For example,
+   * ImageData.height.
+   *
+   * @param {number} source_width
+   *   The width (in pixels) of the source image. For example,
+   * ImageData.width.
    *
    * @return {Promise( Float32Array[] | Int32Array[] )}
    *   Return a promise resolved to an array [ TypedArray, TypedArray ]
@@ -515,7 +540,9 @@ class NeuralWorker_Proxies extends Recyclable.Root {
    *   - Float32Array (if ( neuralNetParams.output_asInputValueRange == false ) )
    *   - Int32Array (if ( neuralNetParams.output_asInputValueRange == true ) )
    */
-  static async apply__TWO_WORKER__ONE_SCALE__FILL__or__NO_FILL( sourceImageData ) {
+  static async apply__TWO_WORKER__ONE_SCALE__FILL__or__NO_FILL(
+    source_TypedArray, source_height, source_width ) {
+
     let modeInfo
       = NeuralWorker_Mode.Singleton.getInfo_byId( this.nNeuralWorker_ModeId );
 
@@ -525,12 +552,12 @@ class NeuralWorker_Proxies extends Recyclable.Root {
     let worker0_resulter;
     if ( bFill ) {
       worker0_resulter = this.workerProxyArray[ 0 ]
-        .TWO_WORKER__ONE_SCALE__FILL__step0_ImageData_process_asyncGenerator(
-          sourceImageData, bApply_or_Applier );
+        .TWO_WORKER__ONE_SCALE__FILL__step0_TypedArray_process_asyncGenerator(
+          source_TypedArray, source_height, source_width, bApply_or_Applier );
     } else {
       worker0_resulter = this.workerProxyArray[ 0 ]
-        .TWO_WORKER__ONE_SCALE__NO_FILL__step0_ImageData_process_asyncGenerator(
-          sourceImageData, bApply_or_Applier );
+        .TWO_WORKER__ONE_SCALE__NO_FILL__step0_TypedArray_process_asyncGenerator(
+          source_TypedArray, source_height, source_width, bApply_or_Applier );
     }
 
     let { done: worker0_done_false, value: worker0_value_Int32Array }
@@ -549,8 +576,19 @@ class NeuralWorker_Proxies extends Recyclable.Root {
   }
 
   /**
-   * @param {ImageData} sourceImageData
-   *   The input image datat which will be processed by neural workers.
+   * @param {Uint8ClampedArray|Uint16Array|Uint32Array} source_TypedArray
+   *   An unsigned integer TypedArray which will be processed by the pair of
+   * neural workers. For example, ImageData.data which is coming from a canvas.
+   * Note that it may be modified by filling with alignment mark and feedback
+   * information (i.e. previous time output of the neural network).
+   *
+   * @param {number} source_height
+   *   The height (in pixels) of the source image. For example,
+   * ImageData.height.
+   *
+   * @param {number} source_width
+   *   The width (in pixels) of the source image. For example,
+   * ImageData.width.
    *
    * @return {Promise( Float32Array[] | Int32Array[] )}
    *   Return a promise resolved to an array [ TypedArray, TypedArray ]
@@ -559,24 +597,27 @@ class NeuralWorker_Proxies extends Recyclable.Root {
    *   - Float32Array (if ( neuralNetParams.output_asInputValueRange == false ) )
    *   - Int32Array (if ( neuralNetParams.output_asInputValueRange == true ) )
    */
-  static async apply__TWO_WORKER__TWO_SCALE__NO_FILL( sourceImageData ) {
+  static async apply__TWO_WORKER__TWO_SCALE__NO_FILL(
+    source_TypedArray, source_height, source_width ) {
+
     const worker0_bFork = true;
     let worker0_resulter = this.workerProxyArray[ 0 ]
-      .TWO_WORKER__TWO_SCALE__ImageData_process_asyncGenerator(
-        sourceImageData, worker0_bFork );
+      .TWO_WORKER__TWO_SCALE__TypedArray_process_asyncGenerator(
+        source_TypedArray, source_height, source_width, worker0_bFork );
 
-    let { done: worker0_done_false, value: worker0_value_ImageData }
+    let { done: worker0_done_false, value: worker0_value_TypedArray }
       = await worker0_resulter.next();
 
     const worker1_bFork = false;
     let worker1_resulter = this.workerProxyArray[ 1 ]
-      .TWO_WORKER__TWO_SCALE__ImageData_process_asyncGenerator(
-        worker0_value_ImageData, worker1_bFork );
+      .TWO_WORKER__TWO_SCALE__TypedArray_process_asyncGenerator(
+        worker0_value_TypedArray, source_height, source_width, worker1_bFork );
 
     let [
       { done: worker0_done_true, value: worker0_value_Float32Array },
       { done: worker1_done_true, value: worker1_value_Float32Array },
-    ] = await Promise.all( [ worker0_resulter.next(), worker1_resulter.next() ] );
+    ] = await Promise.all(
+      [ worker0_resulter.next(), worker1_resulter.next() ] );
 
     return [ worker0_value_Float32Array, worker1_value_Float32Array ];
   }
