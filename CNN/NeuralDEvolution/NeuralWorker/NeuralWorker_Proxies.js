@@ -198,12 +198,13 @@ import { Mode as NeuralWorker_Mode } from "./NeuralWorker_Mode.js";
  *
  *
  * @member {function} TypedArray_process_async
- *   This is a data member which is a pointer to a function. The function
- * accepts an unsigned integer TypedArray as input. It returns a promise
- * resolved to an array [ TypedArray, TypedArray ] representing the result of
- * the pair of neural networks. The TypedArray may be:
- *   - Float32Array (if ( neuralNetParams.output_asInputValueRange == false ) )
- *   - Int32Array (if ( neuralNetParams.output_asInputValueRange == true ) )
+ *   This is a data member which is a pointer to a function which is one of
+ * .apply__ONE_WORKER__TWO_NET__ONE_SCALE__FILL__or__NO_FILL(),
+ * .apply__TWO_WORKER__ONE_SCALE__FILL__or__NO_FILL(),
+ * .apply__TWO_WORKER__TWO_NET__TWO_SCALE__NO_FILL(),
+ * .apply__ONE_WORKER__ONE_NET__ONE_SCALE__FILL__or__NO_FILL(). It accepts an
+ * unsigned integer TypedArray and height and width as input. It returns a
+ * promise resolves to the .previous_output_TypedArrayArray.
  */
 class NeuralWorker_Proxies extends Recyclable.Root {
 
