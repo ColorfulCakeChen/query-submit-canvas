@@ -179,13 +179,18 @@ import { Mode as NeuralWorker_Mode } from "./NeuralWorker_Mode.js";
 // at NeuralWorker_Proxies (not NeuralWorker_Proxy).
 
  * @member {Float32Array[] | Int32Array[]} previous_output_TypedArrayArray
- *   The (previous time) output of the neural network.
+ *   An array [ TypedArray, TypedArray ] representing the (previous time)
+ * output of the (pair of) neural network(s).
  *
  *   - Its .length will be the same as .neuralNetCount.
  *
- *   - Its content (i.e. the Float32Array or Int32Array) will become invalid
- *       when .TypedArray_process_async() with ( bFill == true ) is
- *       called because they will be transferred (not copied) to the web
+ *   - Its element is TypedArray which may be:
+ *     - Float32Array (if ( neuralNetParams.output_asInputValueRange == false ) )
+ *     - Int32Array (if ( neuralNetParams.output_asInputValueRange == true ) )
+ *
+ *   - When .TypedArray_process_async() with ( bFill == true ) is called, its
+ *       content (i.e. the Float32Array or Int32Array) will become invalid
+ *       because they will be transferred (not copied) to the web
  *       worker. 
  *     - In this case, they should be Int32Array for used as feedback.
  *
@@ -193,7 +198,6 @@ import { Mode as NeuralWorker_Mode } from "./NeuralWorker_Mode.js";
  *       cleared, too. Since there should be no previous output for newly
  *       created neural network.
  *
-
  *
  * @member {function} TypedArray_process_async
  *   This is a data member which is a pointer to a function. The function
@@ -388,16 +392,18 @@ class NeuralWorker_Proxies extends Recyclable.Root {
   async NeuralNetArray_create_async(
     neuralNetParamsBaseArray, weightArrayBufferArray, bLogDryRunTime ) {
 
+    const funcNameInMessage = "NeuralNetArray_create_async";
+
     if ( neuralNetParamsBaseArray.length != this.neuralNetCount )
-      throw Error( `NeuralWorker.Proxies.NeuralNetArray_create_async(): `
+      throw Error( `NeuralWorker.Proxies.${funcNameInMessage}(): `
         + `neuralNetParamsBaseArray.length ( ${neuralNetParamsBaseArray.length} ) `
-        + `should be ${this.neuralNetCount}.`
+        + `should be the same as .neuralNetCount ( ${this.neuralNetCount} ).`
       );
 
     if ( weightArrayBufferArray.length != this.neuralNetCount )
-      throw Error( `NeuralWorker.Proxies.NeuralNetArray_create_async(): `
+      throw Error( `NeuralWorker.Proxies.${funcNameInMessage}(): `
         + `weightArrayBufferArray.length ( ${weightArrayBufferArray.length} ) `
-        + `should be ${this.neuralNetCount}.`
+        + `should be the same as .neuralNetCount ( ${this.neuralNetCount} ).`
       );
 
     let createOk;
@@ -419,7 +425,8 @@ class NeuralWorker_Proxies extends Recyclable.Root {
       for ( let i = 0; i < this.workerProxyArray.length; ++i ) {
         createPromiseArray[ i ]
           = this.workerProxyArray[ i ].NeuralNetArray_create_async(
-              [ neuralNetParamsBaseArray[ i ] ], [ weightArrayBufferArray[ i ] ],
+              [ neuralNetParamsBaseArray[ i ] ],
+              [ weightArrayBufferArray[ i ] ],
               bLogDryRunTime
             );
       }
@@ -537,7 +544,8 @@ class NeuralWorker_Proxies extends Recyclable.Root {
 
     if ( !this.TypedArray_process_async )
       throw Error( `NeuralWorker_Proxies.setup_TypedArray_process(): `
-        + `Unknown nNeuralWorker_ModeId ( ${this.nNeuralWorker_ModeId} ).`
+        + `Unknown nNeuralWorker_ModeId ( ${this.nNeuralWorker_ModeId} ). `
+        + `{ ${this} }`
       );
   }
 
@@ -557,11 +565,7 @@ class NeuralWorker_Proxies extends Recyclable.Root {
    * ImageData.width.
    *
    * @return {Promise( Float32Array[] | Int32Array[] )}
-   *   Return a promise resolved to an array [ TypedArray, TypedArray ]
-   * representing the result of the pair of neural networks. The TypedArray may
-   * be:
-   *   - Float32Array (if ( neuralNetParams.output_asInputValueRange == false ) )
-   *   - Int32Array (if ( neuralNetParams.output_asInputValueRange == true ) )
+   *   Return a promise resolved to the .previous_output_TypedArrayArray.
    */
   static async apply__ONE_WORKER__TWO_NET__ONE_SCALE__FILL__or__NO_FILL(
     source_TypedArray, source_height, source_width ) {
@@ -596,11 +600,7 @@ class NeuralWorker_Proxies extends Recyclable.Root {
    * ImageData.width.
    *
    * @return {Promise( Float32Array[] | Int32Array[] )}
-   *   Return a promise resolved to an array [ TypedArray, TypedArray ]
-   * representing the result of the pair of neural networks. The TypedArray may
-   * be:
-   *   - Float32Array (if ( neuralNetParams.output_asInputValueRange == false ) )
-   *   - Int32Array (if ( neuralNetParams.output_asInputValueRange == true ) )
+   *   Return a promise resolved to the .previous_output_TypedArrayArray.
    */
   static async apply__TWO_WORKER__ONE_SCALE__FILL__or__NO_FILL(
     source_TypedArray, source_height, source_width ) {
@@ -657,11 +657,7 @@ class NeuralWorker_Proxies extends Recyclable.Root {
    * ImageData.width.
    *
    * @return {Promise( Float32Array[] | Int32Array[] )}
-   *   Return a promise resolved to an array [ TypedArray, TypedArray ]
-   * representing the result of the pair of neural networks. The TypedArray may
-   * be:
-   *   - Float32Array (if ( neuralNetParams.output_asInputValueRange == false ) )
-   *   - Int32Array (if ( neuralNetParams.output_asInputValueRange == true ) )
+   *   Return a promise resolved to the .previous_output_TypedArrayArray.
    */
   static async apply__TWO_WORKER__TWO_NET__TWO_SCALE__NO_FILL(
     source_TypedArray, source_height, source_width ) {
