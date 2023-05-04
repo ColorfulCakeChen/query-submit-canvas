@@ -220,6 +220,10 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
    *   The width (in pixels) of the source_TypedArray. For example,
    * ImageData.width.
    *
+   * @param {Float32Array[] | Int32Array[]} previous_output_TypedArrayArray
+   *   An array [ TypedArray, TypedArray ] representing the previous time
+   * output of the (pair of) neural network(s).
+   *
    * @param {boolean} bFill
    *   If true, the source_TypedArray will be filled by alignment mark before be
    * converted to tensor3d. If false, it will be converted to tensor3d directly
@@ -232,13 +236,20 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
    *   - Int32Array (if ( neuralNetParams.output_asInputValueRange == true ) )
    */
   ONE_WORKER__ONE_SCALE__TypedArray_process_async(
-    source_TypedArray, source_height, source_width, bFill ) {
+    source_TypedArray, source_height, source_width,
+    previous_output_TypedArrayArray,
+    bFill ) {
 
     const bFork = false;
     return this.createPromise_by_postCommandArgs(
       [ "ONE_WORKER__ONE_SCALE__TypedArray_process",
-        source_TypedArray, source_height, source_width, bFill ],
-      [ source_TypedArray.buffer ]
+        source_TypedArray, source_height, source_width,
+        previous_output_TypedArrayArray,
+        bFill ],
+      [ source_TypedArray.buffer,
+        previous_output_TypedArrayArray[ 0 ].buffer,
+        previous_output_TypedArrayArray[ 1 ].buffer,
+      ]
     );
   }
 
@@ -279,6 +290,9 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
    *   The width (in pixels) of the source_TypedArray. For example,
    * ImageData.width.
    *
+   * @param {Float32Array|Int32Array} previous_output_TypedArray
+   *   A TypedArray representing the previous time output of the neural network.
+   *
    * @return {AsyncWorker.Resulter}
    *   Return an async iterator tracking the result of processing. It will
    * yield two times, the 1st is an Int32Array, the 2nd is a Float32Array (or
@@ -296,11 +310,17 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
    *   - Int32Array (if ( neuralNetParams.output_asInputValueRange == true ) )
    */
   TWO_WORKER__ONE_SCALE__FILL__step0_TypedArray_process_asyncGenerator(
-    source_TypedArray, source_height, source_width, bApply_or_Applier ) {
+    source_TypedArray, source_height, source_width,
+    previous_output_TypedArray,
+    bApply_or_Applier ) {
+
     return this.createResulter_by_postCommandArgs(
       [ "TWO_WORKER__ONE_SCALE__FILL__step0_TypedArray_process",
-        source_TypedArray, source_height, source_width, bApply_or_Applier ],
-      [ source_TypedArray.buffer ]
+        source_TypedArray, source_height, source_width,
+        previous_output_TypedArray,
+        bApply_or_Applier ],
+      [ source_TypedArray.buffer,
+        previous_output_TypedArray.buffer ]
     );
   }
 
@@ -341,6 +361,9 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
    *   The width (in pixels) of the source_TypedArray. For example,
    * ImageData.width.
    *
+   * @param {Float32Array|Int32Array} previous_output_TypedArray
+   *   A TypedArray representing the previous time output of the neural network.
+   *
    * @return {AsyncWorker.Resulter}
    *   Return an async iterator tracking the result of processing. It will yield
    * two times, the 1st is an Int32Array, the 2nd is a Float32Array.
@@ -357,11 +380,17 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
    *   - Int32Array (if ( neuralNetParams.output_asInputValueRange == true ) )
    */
   TWO_WORKER__ONE_SCALE__NO_FILL__step0_TypedArray_process_asyncGenerator(
-    source_TypedArray, source_height, source_width, bApply_or_Applier ) {
+    source_TypedArray, source_height, source_width,
+    previous_output_TypedArray,
+    bApply_or_Applier ) {
+
     return this.createResulter_by_postCommandArgs(
       [ "TWO_WORKER__ONE_SCALE__NO_FILL__step0_TypedArray_process",
-        source_TypedArray, source_height, source_width, bApply_or_Applier ],
-      [ source_TypedArray.buffer ]
+        source_TypedArray, source_height, source_width,
+        previous_output_TypedArray,
+        bApply_or_Applier ],
+      [ source_TypedArray.buffer,
+        previous_output_TypedArray.buffer ]
     );
   }
 
@@ -402,6 +431,9 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
    *   The width (in pixels) of the source_TypedArray. For example,
    * ImageData.width.
    *
+   * @param {Float32Array|Int32Array} previous_output_TypedArray
+   *   A TypedArray representing the previous time output of the neural network.
+   *
    * @param {boolean} bFill
    *   If true, the source_TypedArray will be filled by alignment mark before be
    * converted to tensor3d. If false, it will be converted to tensor3d directly
@@ -414,12 +446,17 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
    *   - Int32Array (if ( neuralNetParams.output_asInputValueRange == true ) )
    */
   TWO_WORKER__ONE_SCALE__step1_TypedArray_process_async(
-    source_TypedArray, source_height, source_width, bFill ) {
+    source_TypedArray, source_height, source_width,
+    previous_output_TypedArray,
+    bFill ) {
 
     return this.createPromise_by_postCommandArgs(
       [ "TWO_WORKER__ONE_SCALE__step1_TypedArray_process",
-        source_TypedArray, source_height, source_width, bFill ],
-      [ source_TypedArray.buffer ]
+        source_TypedArray, source_height, source_width,
+        previous_output_TypedArray,
+        bFill ],
+      [ source_TypedArray.buffer,
+        previous_output_TypedArray.buffer ]
     );
   }
 
@@ -463,6 +500,9 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
    *   The width (in pixels) of the source_TypedArray. For example,
    * ImageData.width.
    *
+   * @param {Float32Array|Int32Array} previous_output_TypedArray
+   *   A TypedArray representing the previous time output of the neural network.
+   *
    * @param {boolean} bFork
    *   Whether yield the source_TypedArray.
    *
@@ -489,14 +529,19 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
    *   - Int32Array (if ( neuralNetParams.output_asInputValueRange == true ) )
    */
   TWO_WORKER__TWO_SCALE__TypedArray_process_asyncGenerator(
-    source_TypedArray, source_height, source_width, bFork ) {
+    source_TypedArray, source_height, source_width,
+    previous_output_TypedArray,
+    bFork ) {
 
 //!!! ...unfinished... (2023/05/03) FILL or NO_FILL, _APPLY or _APPLIER.
 
     return this.createResulter_by_postCommandArgs(
       [ "TWO_WORKER__TWO_SCALE__TypedArray_process",
-        source_TypedArray, source_height, source_width, bFork ],
-      [ source_TypedArray.buffer ]
+        source_TypedArray, source_height, source_width,
+        previous_output_TypedArray,
+        bFork ],
+      [ source_TypedArray.buffer,
+        previous_output_TypedArray.buffer ]
     );
   }
 

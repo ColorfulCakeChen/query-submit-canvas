@@ -188,11 +188,9 @@ import { Mode as NeuralWorker_Mode } from "./NeuralWorker_Mode.js";
  *     - Float32Array (if ( neuralNetParams.output_asInputValueRange == false ) )
  *     - Int32Array (if ( neuralNetParams.output_asInputValueRange == true ) )
  *
- *   - When .TypedArray_process_async() with ( bFill == true ) is called, its
- *       content (i.e. the Float32Array or Int32Array) will become invalid
- *       because they will be transferred (not copied) to the web
- *       worker. 
- *     - In this case, they should be Int32Array for used as feedback.
+ *   - When .TypedArray_process_async() is called, its content (i.e. the
+ *       Float32Array or Int32Array) will become invalid because they will be
+ *       transferred (not copied) to the web worker for used as feedback.
  *
  *   - When .NeuralNetArray_create_async() is called, its content will be
  *       cleared, too. Since there should be no previous output for newly
