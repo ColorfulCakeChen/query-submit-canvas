@@ -704,12 +704,49 @@ class NeuralWorker_Proxies extends Recyclable.Root {
     return this.previous_output_TypedArrayArray;
   }
 
-//!!!
-  static apply__ONE_WORKER__ONE_NET__ONE_SCALE__FILL__or__NO_FILL(
+  /**
+   * @param {Uint8ClampedArray|Uint16Array|Uint32Array} source_TypedArray
+   *   An unsigned integer TypedArray which will be processed by the pair of
+   * neural workers. For example, ImageData.data which is coming from a canvas.
+   * Note that it may be modified by filling with alignment mark and feedback
+   * information (i.e. previous time output of the neural network).
+   *
+   * @param {number} source_height
+   *   The height (in pixels) of the source_TypedArray. For example,
+   * ImageData.height.
+   *
+   * @param {number} source_width
+   *   The width (in pixels) of the source_TypedArray. For example,
+   * ImageData.width.
+   *
+   * @return {Promise( Float32Array[] | Int32Array[] )}
+   *   Return a promise resolved to the .previous_output_TypedArrayArray.
+   */
+  static async apply__ONE_WORKER__ONE_NET__ONE_SCALE__FILL__or__NO_FILL(
+    source_TypedArray, source_height, source_width ) {
 
-  ) {
+    let bFill = NeuralWorker_Mode.bFill_get( this.nNeuralWorker_ModeId );
 
-//!!! ...unfinished... (2023/05/04)
+    // Note:
+    //
+    // .TWO_WORKER__TWO_NET__ONE_SCALE__step1_Int32Array_process_async()
+    //   - could scale (if necessary) and fill (if exists).
+    //   - will not post back source TypedArray.
+    //
+    // So, it is suitable for neural network inference usage.
+    //
+    let worker0_promise = this.workerProxyArray[ 0 ]
+      .TWO_WORKER__TWO_NET__ONE_SCALE__step1_Int32Array_process_async(
+        source_TypedArray, source_height, source_width,
+        this.previous_output_TypedArrayArray[ 0 ],
+        bFill );
+
+    worker0_value_Float32Array = await worker1_promise;
+
+    this.previous_output_TypedArrayArray
+      = [ worker0_value_Float32Array ];
+
+    return this.previous_output_TypedArrayArray;
   }
 
 

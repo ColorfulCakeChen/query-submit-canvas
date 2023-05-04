@@ -404,8 +404,13 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
    *     - NeuralWorker_Mode.Singleton.Ids.TWO_WORKER__TWO_NET__ONE_SCALE__NO_FILL__APPLIER (5)
    *     - The 2nd worker calls this method.
    *
-   *   - (may or may not) Fill alignment mark of this neural network, upload to
-   *       GPU and process it.
+   *   - One web worker. Every worker has one neural network. (inference usage)
+   *     - NeuralWorker_Mode.Singleton.Ids.ONE_WORKER__ONE_NET__ONE_SCALE__FILL (7)
+   *     - NeuralWorker_Mode.Singleton.Ids.ONE_WORKER__ONE_NET__ONE_SCALE__NO_FILL (8)          (inference usage)
+   *     - The only one worker calls this method.
+   *
+   *   - (may or may not) Fill alignment mark and feedback of this neural network,
+   *       upload to GPU and process it.
    *
    *
    * @param {Uint8ClampedArray|Uint16Array|Uint32Array} source_TypedArray
