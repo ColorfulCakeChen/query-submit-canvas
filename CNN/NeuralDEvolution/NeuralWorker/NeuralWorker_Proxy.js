@@ -243,19 +243,22 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
     // 1. Collect transferable objects.
     let transferableObjectArray;
     if ( previous_output_TypedArrayArray ) { // 1.1
-      if ( previous_output_TypedArrayArray[ 0 ] ) {
-        if ( previous_output_TypedArrayArray[ 1 ] ) { // 1.1.1
+      const previous_output_TypedArray0 = previous_output_TypedArrayArray[ 0 ];
+      const previous_output_TypedArray1 = previous_output_TypedArrayArray[ 1 ];
+
+      if ( previous_output_TypedArray0 ) {
+        if ( previous_output_TypedArray1 ) { // 1.1.1
           transferableObjectArray = [ source_TypedArray.buffer,
-            previous_output_TypedArrayArray[ 0 ].buffer,
-            previous_output_TypedArrayArray[ 1 ].buffer ];
+            previous_output_TypedArray0.buffer,
+            previous_output_TypedArray1.buffer ];
         } else { // 1.1.2
           transferableObjectArray = [ source_TypedArray.buffer,
-            previous_output_TypedArrayArray[ 0 ].buffer ];
+            previous_output_TypedArray0.buffer ];
         }
       } else { // 1.2.1
-        if ( previous_output_TypedArrayArray[ 1 ] ) {
+        if ( previous_output_TypedArray1 ) {
           transferableObjectArray = [ source_TypedArray.buffer,
-            previous_output_TypedArrayArray[ 1 ].buffer ];
+            previous_output_TypedArray1.buffer ];
         } else { // 1.2.2
           transferableObjectArray = [ source_TypedArray.buffer ];
         }
