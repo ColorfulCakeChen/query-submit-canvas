@@ -240,14 +240,31 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
     previous_output_TypedArrayArray,
     bFill ) {
 
-    let transferableObjectArray = [ source_TypedArray.buffer ];
-    if ( previous_output_TypedArrayArray ) {
-      if ( previous_output_TypedArrayArray[ 0 ] )
-        transferableObjectArray.push( previous_output_TypedArrayArray[ 0 ].buffer );
-      if ( previous_output_TypedArrayArray[ 1 ] )
-        transferableObjectArray.push( previous_output_TypedArrayArray[ 1 ].buffer );
+    // 1. Collect transferable objects.
+    let transferableObjectArray;
+    if ( previous_output_TypedArrayArray ) { // 1.1
+      if ( previous_output_TypedArrayArray[ 0 ] ) {
+        if ( previous_output_TypedArrayArray[ 1 ] ) { // 1.1.1
+          transferableObjectArray = [ source_TypedArray.buffer,
+            previous_output_TypedArrayArray[ 0 ].buffer,
+            previous_output_TypedArrayArray[ 1 ].buffer ];
+        } else { // 1.1.2
+          transferableObjectArray = [ source_TypedArray.buffer,
+            previous_output_TypedArrayArray[ 0 ].buffer ];
+        }
+      } else { // 1.2.1
+        if ( previous_output_TypedArrayArray[ 1 ] ) {
+          transferableObjectArray = [ source_TypedArray.buffer,
+            previous_output_TypedArrayArray[ 1 ].buffer ];
+        } else { // 1.2.2
+          transferableObjectArray = [ source_TypedArray.buffer ];
+        }
+      }
+    } else { // 1.2
+      transferableObjectArray = [ source_TypedArray.buffer ];
     }
 
+    // 2.
     return this.createPromise_by_postCommandArgs(
       [ "ONE_WORKER__ONE_SCALE__TypedArray_process",
         source_TypedArray, source_height, source_width,
@@ -319,12 +336,11 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
     bApply_or_Applier ) {
 
     let transferableObjectArray;
-    if ( previous_output_TypedArray ) {
+    if ( previous_output_TypedArray )
       transferableObjectArray
         = [ source_TypedArray.buffer, previous_output_TypedArray.buffer ];
-    } else {
+    else
       transferableObjectArray = [ source_TypedArray.buffer ];
-    }
 
     return this.createResulter_by_postCommandArgs(
       [ "TWO_WORKER__TWO_NET__ONE_SCALE__FILL__step0_TypedArray_process",
@@ -396,12 +412,11 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
     bApply_or_Applier ) {
 
     let transferableObjectArray;
-    if ( previous_output_TypedArray ) {
+    if ( previous_output_TypedArray )
       transferableObjectArray
         = [ source_TypedArray.buffer, previous_output_TypedArray.buffer ];
-    } else {
+    else
       transferableObjectArray = [ source_TypedArray.buffer ];
-    }
 
     return this.createResulter_by_postCommandArgs(
       [ "TWO_WORKER__TWO_NET__ONE_SCALE__NO_FILL__step0_TypedArray_process",
@@ -474,12 +489,11 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
     bFill ) {
 
     let transferableObjectArray;
-    if ( previous_output_TypedArray ) {
+    if ( previous_output_TypedArray )
       transferableObjectArray
         = [ source_TypedArray.buffer, previous_output_TypedArray.buffer ];
-    } else {
+    else
       transferableObjectArray = [ source_TypedArray.buffer ];
-    }
 
     return this.createPromise_by_postCommandArgs(
       [ "TWO_WORKER__TWO_NET__ONE_SCALE__step1_TypedArray_process",
@@ -566,12 +580,11 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
 //!!! ...unfinished... (2023/05/03) FILL or NO_FILL, _APPLY or _APPLIER.
 
     let transferableObjectArray;
-    if ( previous_output_TypedArray ) {
+    if ( previous_output_TypedArray )
       transferableObjectArray
         = [ source_TypedArray.buffer, previous_output_TypedArray.buffer ];
-    } else {
+    else
       transferableObjectArray = [ source_TypedArray.buffer ];
-    }
 
     return this.createResulter_by_postCommandArgs(
       [ "TWO_WORKER__TWO_SCALE__TypedArray_process",
