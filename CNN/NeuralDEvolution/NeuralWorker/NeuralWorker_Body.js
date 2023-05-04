@@ -560,6 +560,10 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
    *   The width (in pixels) of the source_TypedArray. For example,
    * ImageData.width.
    *
+   * @param {Float32Array[] | Int32Array[]} previous_output_TypedArrayArray
+   *   An array [ TypedArray, TypedArray ] representing the previous time
+   * output of the (pair of) neural network(s).
+   *
    * @param {boolean} bFill
    *   If true, the source_TypedArray will be filled by alignment mark before
    * be converted to tensor3d. If false, it will be converted to tensor3d
@@ -575,7 +579,9 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
    *   - Int32Array (if ( neuralNetParams.output_asInputValueRange == true ) )
    */
   async* ONE_WORKER__ONE_SCALE__TypedArray_process(
-    source_TypedArray, source_height, source_width, bFill ) {
+    source_TypedArray, source_height, source_width,
+    previous_output_TypedArrayArray,
+    bFill ) {
 
     const funcNameInMessage = "ONE_WORKER__ONE_SCALE__TypedArray_process";
 
@@ -584,8 +590,7 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
 
     {
 //!!! ...unfinished... (2023/05/03)
-// Where to get previous_output_Int32ArrayArray?
-      let alignmentMarkValueArray, previous_output_Int32ArrayArray;
+      let alignmentMarkValueArray;
       if ( bFill ) {
         alignmentMarkValueArray = this.alignmentMarkValueArray;
         //previous_output_Int32ArrayArray = ???;
@@ -596,7 +601,7 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
         = this.ScaleFill.createTensor_by_scale_fill_asyncGenerator(
             source_TypedArray, source_height, source_width,
             bTwoTensors,
-            alignmentMarkValueArray, previous_output_Int32ArrayArray
+            alignmentMarkValueArray, previous_output_TypedArrayArray
           );
 
       try {
@@ -724,6 +729,9 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
    *   The width (in pixels) of the source_TypedArray. For example,
    * ImageData.width.
    *
+   * @param {Float32Array|Int32Array} previous_output_TypedArray
+   *   A TypedArray representing the previous time output of the neural network.
+   *
    * @param {boolean} bApply_or_Applier
    *   - If true, use neuralNet.apply().
    *   - If false, use neuralNet.applier().
@@ -743,7 +751,9 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
    *   - Int32Array (if ( neuralNetParams.output_asInputValueRange == true ) )
    */
   async* TWO_WORKER__ONE_SCALE__FILL__step0_TypedArray_process(
-    source_TypedArray, source_height, source_width, bApply_or_Applier ) {
+    source_TypedArray, source_height, source_width,
+    previous_output_TypedArray,
+    bApply_or_Applier ) {
 
     const funcNameInMessage
       = "TWO_WORKER__ONE_SCALE__FILL__step0_TypedArray_process";
@@ -910,6 +920,17 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
    *       Int32Array will be transferred back to WorkerProxy for the 2nd web
    *       worker.
    *
+   * @param {number} source_height
+   *   The height (in pixels) of the source_TypedArray. For example,
+   * ImageData.height.
+   *
+   * @param {number} source_width
+   *   The width (in pixels) of the source_TypedArray. For example,
+   * ImageData.width.
+   *
+   * @param {Float32Array|Int32Array} previous_output_TypedArray
+   *   A TypedArray representing the previous time output of the neural network.
+   *
    * @param {boolean} bApply_or_Applier
    *   - If true, use neuralNet.apply().
    *   - If false, use neuralNet.applier().
@@ -929,7 +950,9 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
    *   - Int32Array (if ( neuralNetParams.output_asInputValueRange == true ) )
    */
   async* TWO_WORKER__ONE_SCALE__NO_FILL__step0_TypedArray_process(
-    source_TypedArray, source_height, source_width, bApply_or_Applier ) {
+    source_TypedArray, source_height, source_width,
+    previous_output_TypedArray,
+    bApply_or_Applier ) {
 
     const funcNameInMessage
       = "TWO_WORKER__ONE_SCALE__NO_FILL__step0_TypedArray_process";
@@ -1077,6 +1100,9 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
    *   The width (in pixels) of the source_TypedArray. For example,
    * ImageData.width.
    *
+   * @param {Float32Array|Int32Array} previous_output_TypedArray
+   *   A TypedArray representing the previous time output of the neural network.
+   *
    * @param {boolean} bFill
    *   If true, the source_TypedArray will be filled by alignment mark before
    * be converted to tensor3d. If false, it will be converted to tensor3d
@@ -1091,7 +1117,9 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
    *   - Int32Array (if ( neuralNetParams.output_asInputValueRange == true ) )
    */
   async* TWO_WORKER__ONE_SCALE__step1_TypedArray_process(
-    source_TypedArray, source_height, source_width, bFill ) {
+    source_TypedArray, source_height, source_width,
+    previous_output_TypedArray,
+    bFill ) {
 
     const funcNameInMessage
       = "TWO_WORKER__ONE_SCALE__step1_TypedArray_process";
@@ -1194,6 +1222,9 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
    *   The width (in pixels) of the source_TypedArray. For example,
    * ImageData.width.
    *
+   * @param {Float32Array|Int32Array} previous_output_TypedArray
+   *   A TypedArray representing the previous time output of the neural network.
+   *
    * @param {boolean} bFork
    *   Whether sent the source_TypedArray back to WorkerProxy.
    *
@@ -1217,7 +1248,9 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
    *   - Int32Array (if ( neuralNetParams.output_asInputValueRange == true ) )
    */
   async* TWO_WORKER__TWO_SCALE__TypedArray_process(
-    source_TypedArray, source_height, source_width, bFork ) {
+    source_TypedArray, source_height, source_width,
+    previous_output_TypedArray,
+    bFork ) {
 
     const funcNameInMessage = "TWO_WORKER__TWO_SCALE__TypedArray_process";
 
