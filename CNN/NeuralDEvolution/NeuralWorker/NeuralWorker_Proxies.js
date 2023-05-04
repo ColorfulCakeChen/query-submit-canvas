@@ -172,7 +172,7 @@ import { Mode as NeuralWorker_Mode } from "./NeuralWorker_Mode.js";
  *
  *
 
-//!!! ...unfinished... (2023/05/03)
+//!!! ...unfinished... (2023/05/04)
 // How to get them if they come from AsyncWorker.Resulter?
 //
 // Perhaps, NeuralWorker's previous output promise should be placed
@@ -262,27 +262,12 @@ class NeuralWorker_Proxies extends Recyclable.Root {
     this.backendName = backendName;
     this.nNeuralWorker_ModeId = nNeuralWorker_ModeId;
 
-//!!! ...unfinished... (2023/05/04)
-// .neuralNetCount should be determined by NeuralWorker_ModeId
-  /**
-   * 
-   *   - When training neural networks, ( .neuralNetCount == 2 ).
-   *
-   *   - When real usage after training complete, ( .neuralNetCount == 1 ).
-   *
-???   *     - This method should be used when real usage. It calls
-   *         .TWO_WORKER__ONE_SCALE__step1_TypedArray_process_async()
-   *         internally because:
-   *
-   *       - It does not yield (i.e. transfer back) any thing. That is, it
-   *         could fill alignment mark and feedback but will not post back
-   *         source TypedArray.
-   *
-   *       - It return a TypedArray (not an array [ TypedArray, TypedArray ] ).
-   *
-   */
+    // - When training neural networks, ( .neuralNetCount == 2 ).
+    //
+    // - When real usage after training complete, ( .neuralNetCount == 1 ).
+    this.neuralNetCount
+      = NeuralWorker_Mode.neuralNetCount_get( this.nNeuralWorker_ModeId );
 
-    this.neuralNetCount = 2; // Always two neural network (for differential evolution).
     this.hardwareConcurrency = navigator.hardwareConcurrency; // logical CPU count.
 
     // (At most) Two web workers are sufficient.
@@ -534,6 +519,12 @@ class NeuralWorker_Proxies extends Recyclable.Root {
           = NeuralWorker_Proxies.apply__TWO_WORKER__TWO_NET__TWO_SCALE__NO_FILL;
         break;
 
+      case NeuralWorker_Mode.Singleton.Ids.ONE_WORKER__ONE_NET__ONE_SCALE__FILL: // (7)
+      case NeuralWorker_Mode.Singleton.Ids.ONE_WORKER__ONE_NET__ONE_SCALE__NO_FILL: // (8)
+        this.TypedArray_process_async
+          = NeuralWorker_Proxies.apply__ONE_WORKER__ONE_NET__ONE_SCALE__FILL__or__NO_FILL;
+        break;
+
       default:
         throw Error( `NeuralWorker_Proxies.setup_TypedArray_process(): `
           + `Unknown nNeuralWorker_ModeId ( ${this.nNeuralWorker_ModeId} ).`
@@ -679,6 +670,14 @@ class NeuralWorker_Proxies extends Recyclable.Root {
       [ worker0_resulter.next(), worker1_resulter.next() ] );
 
     return [ worker0_value_Float32Array, worker1_value_Float32Array ];
+  }
+
+//!!!
+  static apply__ONE_WORKER__ONE_NET__ONE_SCALE__FILL__or__NO_FILL(
+
+  ) {
+
+//!!! ...unfinished... (2023/05/04)
   }
 
 
