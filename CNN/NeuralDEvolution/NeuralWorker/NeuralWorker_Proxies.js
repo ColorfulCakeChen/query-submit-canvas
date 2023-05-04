@@ -680,7 +680,7 @@ class NeuralWorker_Proxies extends Recyclable.Root {
         this.previous_output_TypedArrayArray[ 0 ],
         worker0_bFork );
 
-    let { done: worker0_done_false, value: worker0_value_TypedArray }
+    let { done: worker0_done_false, value: worker0_value_Int32Array }
       = await worker0_resulter.next();
 
     // Note: Use source_height and source_width because the 2nd web worker
@@ -688,7 +688,7 @@ class NeuralWorker_Proxies extends Recyclable.Root {
     const worker1_bFork = false;
     let worker1_resulter = this.workerProxyArray[ 1 ]
       .TWO_WORKER__TWO_SCALE__TypedArray_process_asyncGenerator(
-        worker0_value_TypedArray, source_height, source_width,
+        worker0_value_Int32Array, source_height, source_width,
         this.previous_output_TypedArrayArray[ 1 ],
         worker1_bFork );
 
