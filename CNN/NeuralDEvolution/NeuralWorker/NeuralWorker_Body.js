@@ -589,7 +589,27 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
       = new Array( this.neuralNetArray.length );
 
     {
-//!!! ...unfinished... (2023/05/03)
+//!!! ...unfinished... (2023/05/04)
+// Perhaps, no longer need bFill flags.
+// According to this.alignmentMarkValueArray and previous_output_TypedArrayArray
+// whether are all null, determine whether needs fill automatically.
+//
+// If so,
+//   - the .TWO_WORKER__TWO_NET__ONE_SCALE__NO_FILL__step0_TypedArray_process()
+//     and .TWO_WORKER__TWO_NET__ONE_SCALE__FILL__step0_TypedArray_process()
+//     should be combined into one method.
+//
+//   - Neural network should not see other neural network's previous time
+//       output.
+//
+//     - When neural network 0 computes, never fill neural network 1's previous
+//         time output as feedback.
+//
+//     - When neural network 1 computes, never fill neural network 0's previous
+//         time output as feedback.
+//
+
+//!!! ...unfinished... (2023/05/04)
       let alignmentMarkValueArray;
       if ( bFill ) {
         alignmentMarkValueArray = this.alignmentMarkValueArray;
