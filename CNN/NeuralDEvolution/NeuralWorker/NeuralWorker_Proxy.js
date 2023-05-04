@@ -491,7 +491,7 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
   TWO_WORKER__TWO_SCALE__TypedArray_process_asyncGenerator(
     source_TypedArray, source_height, source_width, bFork ) {
 
-//!!! ...unfinished... (2023/05/03) FILL or NO_FILL
+//!!! ...unfinished... (2023/05/03) FILL or NO_FILL, _APPLY or _APPLIER.
 
     return this.createResulter_by_postCommandArgs(
       [ "TWO_WORKER__TWO_SCALE__TypedArray_process",

@@ -576,7 +576,9 @@ class NeuralWorker_Proxies extends Recyclable.Root {
       .ONE_WORKER__ONE_SCALE__TypedArray_process_async(
         source_TypedArray, source_height, source_width, bFill );
 
-    let worker0_value_Float32ArrayArray = await worker0_promise;
+    let worker0_value_Float32ArrayArray
+      = this.previous_output_TypedArrayArray = await worker0_promise;
+
     return worker0_value_Float32ArrayArray;
 
 //!!! ...unfinished... (2023/05/04)
@@ -634,7 +636,10 @@ class NeuralWorker_Proxies extends Recyclable.Root {
       worker1_value_Float32Array
     ] = await Promise.all( [ worker0_resulter.next(), worker1_promise ] );
 
-    return [ worker0_value_Float32Array, worker1_value_Float32Array ];
+    this.previous_output_TypedArrayArray
+      = [ worker0_value_Float32Array, worker1_value_Float32Array ];
+
+    return this.previous_output_TypedArrayArray;
 
 //!!! ...unfinished... (2023/05/04)
 //this.previous_output_TypedArrayArray
@@ -681,7 +686,10 @@ class NeuralWorker_Proxies extends Recyclable.Root {
     ] = await Promise.all(
       [ worker0_resulter.next(), worker1_resulter.next() ] );
 
-    return [ worker0_value_Float32Array, worker1_value_Float32Array ];
+    this.previous_output_TypedArrayArray
+      = [ worker0_value_Float32Array, worker1_value_Float32Array ];
+
+    return this.previous_output_TypedArrayArray;
 
 //!!! ...unfinished... (2023/05/04)
 //this.previous_output_TypedArrayArray
