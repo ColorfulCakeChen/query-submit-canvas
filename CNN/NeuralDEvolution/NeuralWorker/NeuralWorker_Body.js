@@ -416,6 +416,10 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
     }
   }
 
+
+//!!! ...unfinished... (2023/05/04)
+// should accepts ( markValueArray == null ) to clear .alignmentMarkValueArray
+// to null.
   /**
    * @param {integer[]} markValueArray
    *   An array of values representing every neural network playing which
