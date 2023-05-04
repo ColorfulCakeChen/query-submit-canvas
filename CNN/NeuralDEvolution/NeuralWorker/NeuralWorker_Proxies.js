@@ -575,10 +575,10 @@ class NeuralWorker_Proxies extends Recyclable.Root {
         this.previous_output_TypedArrayArray,
         bFill );
 
-    let worker0_value_Float32ArrayArray
+    let worker0_value_TypedArrayArray
       = this.previous_output_TypedArrayArray = await worker0_promise;
 
-    return worker0_value_Float32ArrayArray;
+    return worker0_value_TypedArrayArray;
   }
 
   /**
@@ -642,12 +642,12 @@ class NeuralWorker_Proxies extends Recyclable.Root {
         bFill );
 
     let [
-      { done: worker0_done_true, value: worker0_value_Float32Array },
-      worker1_value_Float32Array
+      { done: worker0_done_true, value: worker0_value_TypedArray },
+      worker1_value_TypedArray
     ] = await Promise.all( [ worker0_resulter.next(), worker1_promise ] );
 
     this.previous_output_TypedArrayArray
-      = [ worker0_value_Float32Array, worker1_value_Float32Array ];
+      = [ worker0_value_TypedArray, worker1_value_TypedArray ];
 
     return this.previous_output_TypedArrayArray;
   }
@@ -693,13 +693,13 @@ class NeuralWorker_Proxies extends Recyclable.Root {
         worker1_bFork );
 
     let [
-      { done: worker0_done_true, value: worker0_value_Float32Array },
-      { done: worker1_done_true, value: worker1_value_Float32Array },
+      { done: worker0_done_true, value: worker0_value_TypedArray },
+      { done: worker1_done_true, value: worker1_value_TypedArray },
     ] = await Promise.all(
       [ worker0_resulter.next(), worker1_resulter.next() ] );
 
     this.previous_output_TypedArrayArray
-      = [ worker0_value_Float32Array, worker1_value_Float32Array ];
+      = [ worker0_value_TypedArray, worker1_value_TypedArray ];
 
     return this.previous_output_TypedArrayArray;
   }
@@ -741,10 +741,10 @@ class NeuralWorker_Proxies extends Recyclable.Root {
         this.previous_output_TypedArrayArray[ 0 ],
         bFill );
 
-    let worker0_value_Float32Array = await worker1_promise;
+    let worker0_value_TypedArray = await worker1_promise;
 
     this.previous_output_TypedArrayArray
-      = [ worker0_value_Float32Array ];
+      = [ worker0_value_TypedArray ];
 
     return this.previous_output_TypedArrayArray;
   }
