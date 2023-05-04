@@ -84,6 +84,9 @@ class NeuralNet_ScaleFill {
 // The shape of previous_output_Int32ArrayArray depends on whether
 // a neural network generates output of one or two alignments.
 
+//!!! ...unfinished... (2023/05/04)
+// previous_output_Int32ArrayArray or previous_output_Int32Array
+
    * @param {Int32Array[]} previous_output_Int32ArrayArray
    *   The (previous time) output of the pair of neural networks.
    *   - If null or undefined, there will be no feedback information be filled
