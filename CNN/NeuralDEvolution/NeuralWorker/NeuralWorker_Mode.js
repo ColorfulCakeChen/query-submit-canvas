@@ -20,45 +20,45 @@ import { Int } from "../../Unpacker/ValueDesc/ValueDesc_Base.js";
 class NeuralWorker_Mode extends Int {
 
   constructor() {
-    super( 0, 7,
+    super( 0, 8,
       {
         ONE_WORKER__TWO_NET__ONE_SCALE__FILL:
           new NeuralWorker_Mode.Info( 0,
-            "ONE_WORKER__TWO_NET__ONE_SCALE__FILL",             1, 2,
-            true, undefined ),
+            "ONE_WORKER__TWO_NET__ONE_SCALE__FILL",
+            1, 2, true, undefined ),
 
         ONE_WORKER__TWO_NET__ONE_SCALE__NO_FILL:
           new NeuralWorker_Mode.Info( 1,
-            "ONE_WORKER__TWO_NET__ONE_SCALE__NO_FILL",          1, 2,
-            false, undefined ),
+            "ONE_WORKER__TWO_NET__ONE_SCALE__NO_FILL",
+            1, 2, false, undefined ),
 
 
         TWO_WORKER__TWO_NET__ONE_SCALE__FILL__APPLY:
           new NeuralWorker_Mode.Info( 2,
-            "TWO_WORKER__TWO_NET__ONE_SCALE__FILL__APPLY",      2, 2,
-            true,  true ),
+            "TWO_WORKER__TWO_NET__ONE_SCALE__FILL__APPLY",
+            2, 2, true,  true ),
 
         TWO_WORKER__TWO_NET__ONE_SCALE__FILL__APPLIER:
           new NeuralWorker_Mode.Info( 3,
-            "TWO_WORKER__TWO_NET__ONE_SCALE__FILL__APPLIER",    2, 2,
-            true, false ),
+            "TWO_WORKER__TWO_NET__ONE_SCALE__FILL__APPLIER",
+            2, 2, true, false ),
 
 
         TWO_WORKER__TWO_NET__ONE_SCALE__NO_FILL__APPLY:
           new NeuralWorker_Mode.Info( 4,
-            "TWO_WORKER__TWO_NET__ONE_SCALE__NO_FILL__APPLY",   2, 2,
-            false,  true ),
+            "TWO_WORKER__TWO_NET__ONE_SCALE__NO_FILL__APPLY",
+            2, 2, false,  true ),
 
         TWO_WORKER__TWO_NET__ONE_SCALE__NO_FILL__APPLIER:
           new NeuralWorker_Mode.Info( 5,
-            "TWO_WORKER__TWO_NET__ONE_SCALE__NO_FILL__APPLIER", 2, 2,
-            false, false ),
+            "TWO_WORKER__TWO_NET__ONE_SCALE__NO_FILL__APPLIER",
+            2, 2, false, false ),
 
 
         TWO_WORKER__TWO_NET__TWO_SCALE__NO_FILL:
           new NeuralWorker_Mode.Info( 6,
-            "TWO_WORKER__TWO_NET__TWO_SCALE__NO_FILL",          2, 2,
-            false, undefined ),
+            "TWO_WORKER__TWO_NET__TWO_SCALE__NO_FILL",
+            2, 2, false, undefined ),
 
 
 //!!! ...unfinished... (2023/05/04) TWO_WORKER__TWO_SCALE__FILL?
@@ -72,7 +72,15 @@ class NeuralWorker_Mode extends Int {
 // Perhaps, needs one more mode for real usage neural network.
 // It will create only one nueral network (i.e. not two neural networks).
 //
+        ONE_WORKER__ONE_NET__ONE_SCALE__FILL:
+          new NeuralWorker_Mode.Info( 7,
+            "ONE_WORKER__ONE_NET__ONE_SCALE__FILL",
+            1, 1, true, undefined ),
 
+        ONE_WORKER__ONE_NET__ONE_SCALE__NO_FILL:
+          new NeuralWorker_Mode.Info( 8,
+            "ONE_WORKER__ONE_NET__ONE_SCALE__NO_FILL",
+            1, 1, false, undefined ),
       }
     );
   }
