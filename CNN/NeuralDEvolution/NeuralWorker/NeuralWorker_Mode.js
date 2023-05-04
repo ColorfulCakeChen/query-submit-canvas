@@ -7,7 +7,7 @@ import { Int } from "../../Unpacker/ValueDesc/ValueDesc_Base.js";
  * Convert number value into integer between [ 0, 6 ] representing neural worker mode:
  *   -  0: ONE_WORKER__ONE_SCALE__FILL
  *   -  1: ONE_WORKER__ONE_SCALE__NO_FILL
- * 
+ *
  *   -  2: TWO_WORKER__ONE_SCALE__FILL__APPLY
  *   -  3: TWO_WORKER__ONE_SCALE__FILL__APPLIER
  *

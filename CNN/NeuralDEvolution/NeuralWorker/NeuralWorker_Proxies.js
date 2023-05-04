@@ -170,6 +170,31 @@ import { Mode as NeuralWorker_Mode } from "./NeuralWorker_Mode.js";
  * @member {number} totalWorkerCount
  *   There are how many web worker(s) created.
  *
+ *
+
+//!!! ...unfinished... (2023/05/03)
+// How to get them if they come from AsyncWorker.Resulter?
+//
+// Perhaps, NeuralWorker's previous output promise should be placed
+// at NeuralWorker_Proxies (not NeuralWorker_Proxy).
+
+ * @member {Float32Array[] | Int32Array[]} previous_output_TypedArrayArray
+ *   The (previous time) output of the neural network.
+ *
+ *   - Its .length will be the same as .neuralNetCount.
+ *
+ *   - Its content (i.e. the Float32Array or Int32Array) will become invalid
+ *       when .TypedArray_process_async() with ( bFill == true ) is
+ *       called because they will be transferred (not copied) to the web
+ *       worker. 
+ *     - In this case, they should be Int32Array for used as feedback.
+ *
+ *   - When .NeuralNetArray_create_async() is called, its content will be
+ *       cleared, too. Since there should be no previous output for newly
+ *       created neural network.
+ *
+
+ *
  * @member {function} TypedArray_process_async
  *   This is a data member which is a pointer to a function. The function
  * accepts an unsigned integer TypedArray as input. It returns a promise
@@ -208,6 +233,8 @@ class NeuralWorker_Proxies extends Recyclable.Root {
   disposeResources() {
     this.TypedArray_process_async = undefined;
 
+    this.previous_output_TypedArrayArray = undefined;
+
     this.workerProxyArray_dispose();
 
     this.hardwareConcurrency = undefined;
@@ -234,6 +261,26 @@ class NeuralWorker_Proxies extends Recyclable.Root {
     // 0.
     this.backendName = backendName;
     this.nNeuralWorker_ModeId = nNeuralWorker_ModeId;
+
+//!!! ...unfinished... (2023/05/04)
+// .neuralNetCount should be determined by NeuralWorker_ModeId
+  /**
+   * 
+   *   - When training neural networks, ( .neuralNetCount == 2 ).
+   *
+   *   - When real usage after training complete, ( .neuralNetCount == 1 ).
+   *
+???   *     - This method should be used when real usage. It calls
+   *         .TWO_WORKER__ONE_SCALE__step1_TypedArray_process_async()
+   *         internally because:
+   *
+   *       - It does not yield (i.e. transfer back) any thing. That is, it
+   *         could fill alignment mark and feedback but will not post back
+   *         source TypedArray.
+   *
+   *       - It return a TypedArray (not an array [ TypedArray, TypedArray ] ).
+   *
+   */
 
     this.neuralNetCount = 2; // Always two neural network (for differential evolution).
     this.hardwareConcurrency = navigator.hardwareConcurrency; // logical CPU count.
@@ -296,8 +343,8 @@ class NeuralWorker_Proxies extends Recyclable.Root {
    * needs not be re-compiled again).
    * 
    * @param {integer} newLength
-   *   The .workerProxyArray will become the speccified length (and have so many
-   * NeuralWorker.Proxy).
+   *   The .workerProxyArray will become the speccified length (and have so
+   * many NeuralWorker.Proxy).
    */
   workerProxyArray_length_ensure( newLength ) {
     // 1. Prepare container.
@@ -310,8 +357,7 @@ class NeuralWorker_Proxies extends Recyclable.Root {
       let arrayIndexBegin = this.workerProxyArray.length;
 
       this.workerProxyArray.length = newLength; // Enlarge array.
-      for (
-        let i = 0, arrayIndex = arrayIndexBegin;
+      for ( let i = 0, arrayIndex = arrayIndexBegin;
         i < deltaCount;
         ++i, ++arrayIndex ) {
 
@@ -322,8 +368,9 @@ class NeuralWorker_Proxies extends Recyclable.Root {
     // 3. Reduce worker proxy.
     } else {
       for ( let arrayIndex = ( this.workerProxyArray.length - 1 );
-            arrayIndex >= newLength;
-            --arrayIndex ) {
+        arrayIndex >= newLength;
+        --arrayIndex ) {
+
         this.workerProxyArray[ arrayIndex ].disposeResources_and_recycleToPool();
         this.workerProxyArray[ arrayIndex ] = null;
       }
@@ -370,6 +417,18 @@ class NeuralWorker_Proxies extends Recyclable.Root {
       );
 
     let createOk;
+
+//!!! ...unfinished... (2023/05/04)
+//this.previous_output_TypedArrayArray
+    // 0. Since new neural networks are created, discard any old previous output.
+    {
+      if ( this.previous_output_TypedArrayArray ) {
+        this.previous_output_TypedArrayArray.length = this.neuralNetCount;
+        this.previous_output_TypedArrayArray.fill( undefined );
+      } else {
+        this.previous_output_TypedArrayArray = new Array( this.neuralNetCount );
+      }
+    }
 
     // 1. Every worker creates one neural network.
     if ( this.workerProxyArray.length > 1 ) { // (i.e. two workers)

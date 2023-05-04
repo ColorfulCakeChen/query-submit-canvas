@@ -42,26 +42,6 @@ import * as NotUsed from "./NeuralWorker_Body.js";
  *       workers.
  *
  *
-
-//!!! ...unfinished... (2023/05/03)
-// How to get them if they come from AsyncWorker.Resulter?
-//
-// Perhaps, NeuralWorker's previous output promise should be placed
-// at NeuralWorker_Proxies (not NeuralWorker_Proxy).
-
- * @member {Promise( Float32Array[] | Int32Array[] )} previous_output_TypedArrayArray_promise
- *   The (previous time) output of the neural network.
- *
- *   - Its content (i.e. the Float32Array or Int32Array) will become invalid
- *       when any Xxx_TypedArray_process_async() with ( bFill == true ) is
- *       called because they will be transferred (not copied) to the web
- *       worker. 
- *     - In this case, they should be Int32Array for used as feedback.
- *
- *   - When .NeuralNetArray_create_async() is called, its content will be
- *       cleared, too. Since there should be no previous output for newly
- *       created neural network.
- *
  */
 class NeuralWorker_Proxy extends AsyncWorker.Proxy {
 
@@ -92,7 +72,6 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
   /** @override */
   disposeResources() {
     this.NeuralNetParamsBaseArray_dispose();
-    this.previous_output_TypedArrayArray = undefined;
     this.workerId = undefined;
     super.disposeResources();
   }
@@ -153,20 +132,6 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
   NeuralNetArray_create_async(
     neuralNetParamsBaseArray, weightArrayBufferArray, bLogDryRunTime ) {
 
-//!!! ...unfinished... (2023/05/03)
-//this.previous_output_TypedArrayArray
-    // 0. Since new neural networks are created, discard any old previous output.
-    {
-      if ( this.previous_output_TypedArrayArray ) {
-        this.previous_output_TypedArrayArray.length
-          = neuralNetParamsBaseArray.length;
-        this.previous_output_TypedArrayArray.fill( undefined );
-      } else {
-        this.previous_output_TypedArrayArray
-          = new Array( neuralNetParamsBaseArray.length );
-      }
-    }
-
     // 1. Record neural network configuration.
     {
       if ( this.neuralNetParamsBaseArray )
@@ -209,36 +174,6 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
   alignmentMarkValueArray_set_async( markValueArray ) {
     return this.createPromise_by_postCommandArgs(
       [ "alignmentMarkValueArray_set", markValueArray ]
-    );
-  }
-
-//!!! ...unfinished... (2023/05/03)
-// If NeuralWorker's previous output promise should be placed
-// at NeuralWorker_Proxies (not NeuralWorker_Proxy), this
-// .TypedArray_process_async() should be at NeuralWorker_Proxies, too.
-
-  /**
-   * 
-   *   - When training neural networks, NeuralWorker_Proxies is used.
-   *
-   *   - When real usage after training complete, NeuralWorker_Proxy should be
-   *       used.
-   *
-   *     - This method should be used when real usage. It calls
-   *         .TWO_WORKER__ONE_SCALE__step1_TypedArray_process_async()
-   *         internally because:
-   *
-   *       - It does not yield (i.e. transfer back) any thing. That is, it
-   *         could fill alignment mark and feedback but will not post back
-   *         source TypedArray.
-   *
-   *       - It return a TypedArray (not an array [ TypedArray, TypedArray ] ).
-   *
-   */
-  TypedArray_process_async(
-    source_TypedArray, source_height, source_width, bFill ) {
-    return this.TWO_WORKER__ONE_SCALE__step1_TypedArray_process_async(
-      source_TypedArray, source_height, source_width, bFill
     );
   }
 
