@@ -263,7 +263,6 @@ class NeuralWorker_Proxies extends Recyclable.Root {
     this.nNeuralWorker_ModeId = nNeuralWorker_ModeId;
 
     // - When training neural networks, ( .neuralNetCount == 2 ).
-    //
     // - When real usage after training complete, ( .neuralNetCount == 1 ).
     this.neuralNetCount
       = NeuralWorker_Mode.neuralNetCount_get( this.nNeuralWorker_ModeId );

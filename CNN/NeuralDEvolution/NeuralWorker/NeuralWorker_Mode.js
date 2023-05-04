@@ -15,7 +15,10 @@ import { Int } from "../../Unpacker/ValueDesc/ValueDesc_Base.js";
  *   -  5: TWO_WORKER__TWO_NET__ONE_SCALE__NO_FILL__APPLIER
  *
  *   -  6: TWO_WORKER__TWO_NET__TWO_SCALE__NO_FILL
- *   -  7: TWO_WORKER__TWO_SCALE__FILL
+ *
+ *   -  7: ONE_WORKER__ONE_NET__ONE_SCALE__FILL
+ *   -  8: ONE_WORKER__ONE_NET__ONE_SCALE__NO_FILL
+ *
  */
 class NeuralWorker_Mode extends Int {
 
