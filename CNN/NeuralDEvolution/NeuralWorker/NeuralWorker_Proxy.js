@@ -309,13 +309,13 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
    *   - Float32Array (if ( neuralNetParams.output_asInputValueRange == false ) )
    *   - Int32Array (if ( neuralNetParams.output_asInputValueRange == true ) )
    */
-  TWO_WORKER__ONE_SCALE__FILL__step0_TypedArray_process_asyncGenerator(
+  TWO_WORKER__TWO_NET__ONE_SCALE__FILL__step0_TypedArray_process_asyncGenerator(
     source_TypedArray, source_height, source_width,
     previous_output_TypedArray,
     bApply_or_Applier ) {
 
     return this.createResulter_by_postCommandArgs(
-      [ "TWO_WORKER__ONE_SCALE__FILL__step0_TypedArray_process",
+      [ "TWO_WORKER__TWO_NET__ONE_SCALE__FILL__step0_TypedArray_process",
         source_TypedArray, source_height, source_width,
         previous_output_TypedArray,
         bApply_or_Applier ],
@@ -379,13 +379,13 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
    *   - Float32Array (if ( neuralNetParams.output_asInputValueRange == false ) )
    *   - Int32Array (if ( neuralNetParams.output_asInputValueRange == true ) )
    */
-  TWO_WORKER__ONE_SCALE__NO_FILL__step0_TypedArray_process_asyncGenerator(
+  TWO_WORKER__TWO_NET__ONE_SCALE__NO_FILL__step0_TypedArray_process_asyncGenerator(
     source_TypedArray, source_height, source_width,
     previous_output_TypedArray,
     bApply_or_Applier ) {
 
     return this.createResulter_by_postCommandArgs(
-      [ "TWO_WORKER__ONE_SCALE__NO_FILL__step0_TypedArray_process",
+      [ "TWO_WORKER__TWO_NET__ONE_SCALE__NO_FILL__step0_TypedArray_process",
         source_TypedArray, source_height, source_width,
         previous_output_TypedArray,
         bApply_or_Applier ],
@@ -445,13 +445,13 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
    *   - Float32Array (if ( neuralNetParams.output_asInputValueRange == false ) )
    *   - Int32Array (if ( neuralNetParams.output_asInputValueRange == true ) )
    */
-  TWO_WORKER__ONE_SCALE__step1_TypedArray_process_async(
+  TWO_WORKER__TWO_NET__ONE_SCALE__step1_TypedArray_process_async(
     source_TypedArray, source_height, source_width,
     previous_output_TypedArray,
     bFill ) {
 
     return this.createPromise_by_postCommandArgs(
-      [ "TWO_WORKER__ONE_SCALE__step1_TypedArray_process",
+      [ "TWO_WORKER__TWO_NET__ONE_SCALE__step1_TypedArray_process",
         source_TypedArray, source_height, source_width,
         previous_output_TypedArray,
         bFill ],

@@ -750,13 +750,13 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
    *   - Float32Array (if ( neuralNetParams.output_asInputValueRange == false ) )
    *   - Int32Array (if ( neuralNetParams.output_asInputValueRange == true ) )
    */
-  async* TWO_WORKER__ONE_SCALE__FILL__step0_TypedArray_process(
+  async* TWO_WORKER__TWO_NET__ONE_SCALE__FILL__step0_TypedArray_process(
     source_TypedArray, source_height, source_width,
     previous_output_TypedArray,
     bApply_or_Applier ) {
 
     const funcNameInMessage
-      = "TWO_WORKER__ONE_SCALE__FILL__step0_TypedArray_process";
+      = "TWO_WORKER__TWO_NET__ONE_SCALE__FILL__step0_TypedArray_process";
 
     const neuralNetIndex = 0; // Always use the first neural network.
     let neuralNet = this.neuralNetArray[ neuralNetIndex ];
@@ -949,13 +949,13 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
    *   - Float32Array (if ( neuralNetParams.output_asInputValueRange == false ) )
    *   - Int32Array (if ( neuralNetParams.output_asInputValueRange == true ) )
    */
-  async* TWO_WORKER__ONE_SCALE__NO_FILL__step0_TypedArray_process(
+  async* TWO_WORKER__TWO_NET__ONE_SCALE__NO_FILL__step0_TypedArray_process(
     source_TypedArray, source_height, source_width,
     previous_output_TypedArray,
     bApply_or_Applier ) {
 
     const funcNameInMessage
-      = "TWO_WORKER__ONE_SCALE__NO_FILL__step0_TypedArray_process";
+      = "TWO_WORKER__TWO_NET__ONE_SCALE__NO_FILL__step0_TypedArray_process";
 
     const neuralNetIndex = 0; // Always use the first neural network.
     let neuralNet = this.neuralNetArray[ neuralNetIndex ];
@@ -1116,13 +1116,13 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
    *   - Float32Array (if ( neuralNetParams.output_asInputValueRange == false ) )
    *   - Int32Array (if ( neuralNetParams.output_asInputValueRange == true ) )
    */
-  async* TWO_WORKER__ONE_SCALE__step1_TypedArray_process(
+  async* TWO_WORKER__TWO_NET__ONE_SCALE__step1_TypedArray_process(
     source_TypedArray, source_height, source_width,
     previous_output_TypedArray,
     bFill ) {
 
     const funcNameInMessage
-      = "TWO_WORKER__ONE_SCALE__step1_TypedArray_process";
+      = "TWO_WORKER__TWO_NET__ONE_SCALE__step1_TypedArray_process";
 
     const neuralNetIndex = 0; // Always use the first neural network.
     let neuralNet = this.neuralNetArray[ neuralNetIndex ];

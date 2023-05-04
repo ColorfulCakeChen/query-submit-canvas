@@ -200,7 +200,7 @@ import { Mode as NeuralWorker_Mode } from "./NeuralWorker_Mode.js";
  * @member {function} TypedArray_process_async
  *   This is a data member which is a pointer to a function which is one of
  * .apply__ONE_WORKER__TWO_NET__ONE_SCALE__FILL__or__NO_FILL(),
- * .apply__TWO_WORKER__ONE_SCALE__FILL__or__NO_FILL(),
+ * .apply__TWO_WORKER__TWO_NET__ONE_SCALE__FILL__or__NO_FILL(),
  * .apply__TWO_WORKER__TWO_NET__TWO_SCALE__NO_FILL(),
  * .apply__ONE_WORKER__ONE_NET__ONE_SCALE__FILL__or__NO_FILL(). It accepts an
  * unsigned integer TypedArray and height and width as input. It returns a
@@ -514,7 +514,7 @@ class NeuralWorker_Proxies extends Recyclable.Root {
 //       case NeuralWorker_Mode.Singleton.Ids.TWO_WORKER__TWO_NET__ONE_SCALE__NO_FILL__APPLY: // (4)
 //       case NeuralWorker_Mode.Singleton.Ids.TWO_WORKER__TWO_NET__ONE_SCALE__NO_FILL__APPLIER: // (5)
 //         this.TypedArray_process_async
-//           = NeuralWorker_Proxies.apply__TWO_WORKER__ONE_SCALE__FILL__or__NO_FILL;
+//           = NeuralWorker_Proxies.apply__TWO_WORKER__TWO_NET__ONE_SCALE__FILL__or__NO_FILL;
 //         break;
 //
 //       case NeuralWorker_Mode.Singleton.Ids.TWO_WORKER__TWO_NET__TWO_SCALE__NO_FILL: // (6)
@@ -599,7 +599,7 @@ class NeuralWorker_Proxies extends Recyclable.Root {
    * @return {Promise( Float32Array[] | Int32Array[] )}
    *   Return a promise resolved to the .previous_output_TypedArrayArray.
    */
-  static async apply__TWO_WORKER__ONE_SCALE__FILL__or__NO_FILL(
+  static async apply__TWO_WORKER__TWO_NET__ONE_SCALE__FILL__or__NO_FILL(
     source_TypedArray, source_height, source_width ) {
 
     let modeInfo
@@ -611,13 +611,13 @@ class NeuralWorker_Proxies extends Recyclable.Root {
     let worker0_resulter;
     if ( bFill ) {
       worker0_resulter = this.workerProxyArray[ 0 ]
-        .TWO_WORKER__ONE_SCALE__FILL__step0_TypedArray_process_asyncGenerator(
+        .TWO_WORKER__TWO_NET__ONE_SCALE__FILL__step0_TypedArray_process_asyncGenerator(
           source_TypedArray, source_height, source_width,
           this.previous_output_TypedArrayArray[ 0 ],
           bApply_or_Applier );
     } else {
       worker0_resulter = this.workerProxyArray[ 0 ]
-        .TWO_WORKER__ONE_SCALE__NO_FILL__step0_TypedArray_process_asyncGenerator(
+        .TWO_WORKER__TWO_NET__ONE_SCALE__NO_FILL__step0_TypedArray_process_asyncGenerator(
           source_TypedArray, source_height, source_width,
           this.previous_output_TypedArrayArray[ 0 ],
           bApply_or_Applier );
@@ -636,7 +636,7 @@ class NeuralWorker_Proxies extends Recyclable.Root {
     const source_width1 = neuralNetParams1.input_width;
 
     let worker1_promise = workerProxy1
-      .TWO_WORKER__ONE_SCALE__step1_Int32Array_process_async(
+      .TWO_WORKER__TWO_NET__ONE_SCALE__step1_Int32Array_process_async(
         worker0_value_Int32Array, source_height1, source_width1,
         this.previous_output_TypedArrayArray[ 1 ],
         bFill );
@@ -748,16 +748,16 @@ NeuralWorker_Proxies.NeuralWorker_ModeId__to__TypedArray_process__Array = [
 
 
   // TWO_WORKER__TWO_NET__ONE_SCALE__FILL__APPLY (2)
-  NeuralWorker_Proxies.apply__TWO_WORKER__ONE_SCALE__FILL__or__NO_FILL,
+  NeuralWorker_Proxies.apply__TWO_WORKER__TWO_NET__ONE_SCALE__FILL__or__NO_FILL,
 
   // TWO_WORKER__TWO_NET__ONE_SCALE__FILL__APPLIER (3)
-  NeuralWorker_Proxies.apply__TWO_WORKER__ONE_SCALE__FILL__or__NO_FILL,
+  NeuralWorker_Proxies.apply__TWO_WORKER__TWO_NET__ONE_SCALE__FILL__or__NO_FILL,
 
   // TWO_WORKER__TWO_NET__ONE_SCALE__NO_FILL__APPLY (4)
-  NeuralWorker_Proxies.apply__TWO_WORKER__ONE_SCALE__FILL__or__NO_FILL,
+  NeuralWorker_Proxies.apply__TWO_WORKER__TWO_NET__ONE_SCALE__FILL__or__NO_FILL,
 
   // TWO_WORKER__TWO_NET__ONE_SCALE__NO_FILL__APPLIER (5)
-  NeuralWorker_Proxies.apply__TWO_WORKER__ONE_SCALE__FILL__or__NO_FILL,
+  NeuralWorker_Proxies.apply__TWO_WORKER__TWO_NET__ONE_SCALE__FILL__or__NO_FILL,
 
 
   // TWO_WORKER__TWO_NET__TWO_SCALE__NO_FILL (6)
