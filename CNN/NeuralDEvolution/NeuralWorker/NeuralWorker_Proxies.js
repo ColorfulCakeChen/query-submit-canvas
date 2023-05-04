@@ -741,7 +741,7 @@ class NeuralWorker_Proxies extends Recyclable.Root {
         this.previous_output_TypedArrayArray[ 0 ],
         bFill );
 
-    worker0_value_Float32Array = await worker1_promise;
+    let worker0_value_Float32Array = await worker1_promise;
 
     this.previous_output_TypedArrayArray
       = [ worker0_value_Float32Array ];
