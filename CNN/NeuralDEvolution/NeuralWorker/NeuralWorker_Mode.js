@@ -7,19 +7,19 @@ import { Int } from "../../Unpacker/ValueDesc/ValueDesc_Base.js";
  * Convert number value into integer between [ 0, 8 ] representing neural
  * worker mode:
  *
- *   -  0: ONE_WORKER__TWO_NET__ONE_SCALE__FILL
- *   -  1: ONE_WORKER__TWO_NET__ONE_SCALE__NO_FILL
+ *   -  0: ONE_WORKER__TWO_NET__ONE_SCALE__FILL             (training usage)
+ *   -  1: ONE_WORKER__TWO_NET__ONE_SCALE__NO_FILL          (training usage)
  *
- *   -  2: TWO_WORKER__TWO_NET__ONE_SCALE__FILL__APPLY
- *   -  3: TWO_WORKER__TWO_NET__ONE_SCALE__FILL__APPLIER
+ *   -  2: TWO_WORKER__TWO_NET__ONE_SCALE__FILL__APPLY      (training usage)
+ *   -  3: TWO_WORKER__TWO_NET__ONE_SCALE__FILL__APPLIER    (training usage)
  *
- *   -  4: TWO_WORKER__TWO_NET__ONE_SCALE__NO_FILL__APPLY
- *   -  5: TWO_WORKER__TWO_NET__ONE_SCALE__NO_FILL__APPLIER
+ *   -  4: TWO_WORKER__TWO_NET__ONE_SCALE__NO_FILL__APPLY   (training usage)
+ *   -  5: TWO_WORKER__TWO_NET__ONE_SCALE__NO_FILL__APPLIER (training usage)
  *
- *   -  6: TWO_WORKER__TWO_NET__TWO_SCALE__NO_FILL
+ *   -  6: TWO_WORKER__TWO_NET__TWO_SCALE__NO_FILL          (training usage)
  *
- *   -  7: ONE_WORKER__ONE_NET__ONE_SCALE__FILL
- *   -  8: ONE_WORKER__ONE_NET__ONE_SCALE__NO_FILL
+ *   -  7: ONE_WORKER__ONE_NET__ONE_SCALE__FILL             (inference usage)
+ *   -  8: ONE_WORKER__ONE_NET__ONE_SCALE__NO_FILL          (inference usage)
  *
  */
 class NeuralWorker_Mode extends Int {
@@ -73,10 +73,6 @@ class NeuralWorker_Mode extends Int {
 //           true, ???undefined ),
 
 
-//!!! ...unfinished... (2023/05/03)
-// Perhaps, needs one more mode for real usage neural network.
-// It will create only one nueral network (i.e. not two neural networks).
-//
         ONE_WORKER__ONE_NET__ONE_SCALE__FILL:
           new NeuralWorker_Mode.Info( 7,
             "ONE_WORKER__ONE_NET__ONE_SCALE__FILL",
@@ -166,8 +162,8 @@ class NeuralWorker_Mode extends Int {
  *
  * @member {number} neuralNetCount
  *   The neural network count for the neural worker mode. Either 1 or 2.
- *   - When training neural network (by diffiential evolution), it is 2.
- *   - When real using neural network after training, it is 1.
+ *   - For neural network training usage (by diffiential evolution), it is 2.
+ *   - For neural network inference usage (after training), it is 1.
  *
  * @member {boolean} bFill
  *   Whether the neural worker mode will fill alignment mark and feedback
