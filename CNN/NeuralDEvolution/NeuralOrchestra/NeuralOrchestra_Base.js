@@ -840,7 +840,7 @@ class NeuralOrchestra_Base extends
           .nConvStageTypeId_adjust_for_backend_webgl_if_ShuffleNetV2();
 
         initOkPromise = this.workerProxies.init_async( "webgl",
-          NeuralWorker.Mode.Singleton.Ids.ONE_WORKER__ONE_SCALE__NO_FILL // (0) 
+          NeuralWorker.Mode.Singleton.Ids.ONE_WORKER__TWO_NET__ONE_SCALE__NO_FILL // (0) 
         );
 
         initOk = await initOkPromise;
@@ -865,7 +865,7 @@ class NeuralOrchestra_Base extends
           .nConvStageTypeId_adjust_for_backend_cpu_if_ShuffleNetV2();
 
         initOkPromise = this.workerProxies.init_async( "cpu",
-          NeuralWorker.Mode.Singleton.Ids.TWO_WORKER__ONE_SCALE__NO_FILL__APPLIER // (5) 
+          NeuralWorker.Mode.Singleton.Ids.TWO_WORKER__TWO_NET__ONE_SCALE__NO_FILL__APPLIER // (5) 
         );
 
         initOk = await initOkPromise;

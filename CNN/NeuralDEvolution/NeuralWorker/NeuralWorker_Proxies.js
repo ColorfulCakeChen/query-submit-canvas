@@ -148,9 +148,9 @@ import { Mode as NeuralWorker_Mode } from "./NeuralWorker_Mode.js";
  *
  * 3. Summary
  *
- *   - Try mode ONE_WORKER__ONE_SCALE__NO_FILL (0) with backend "webgl".
+ *   - Try mode ONE_WORKER__TWO_NET__ONE_SCALE__NO_FILL (0) with backend "webgl".
  *
- *   - If failed, try mode TWO_WORKER__ONE_SCALE__NO_FILL__APPLIER (5) with
+ *   - If failed, try mode TWO_WORKER__TWO_NET__ONE_SCALE__NO_FILL__APPLIER (5) with
  *       backend "cpu".
  *
  *
@@ -515,23 +515,23 @@ class NeuralWorker_Proxies extends Recyclable.Root {
    */
   static setup_TypedArray_process() {
     switch ( this.nNeuralWorker_ModeId ) {
-      case NeuralWorker_Mode.Singleton.Ids.ONE_WORKER__ONE_SCALE__FILL: // (0)
-      case NeuralWorker_Mode.Singleton.Ids.ONE_WORKER__ONE_SCALE__NO_FILL: // (1)
+      case NeuralWorker_Mode.Singleton.Ids.ONE_WORKER__TWO_NET__ONE_SCALE__FILL: // (0)
+      case NeuralWorker_Mode.Singleton.Ids.ONE_WORKER__TWO_NET__ONE_SCALE__NO_FILL: // (1)
         this.TypedArray_process_async
-          = NeuralWorker_Proxies.apply__ONE_WORKER__ONE_SCALE__FILL__or__NO_FILL;
+          = NeuralWorker_Proxies.apply__ONE_WORKER__TWO_NET__ONE_SCALE__FILL__or__NO_FILL;
         break;
 
-      case NeuralWorker_Mode.Singleton.Ids.TWO_WORKER__ONE_SCALE__FILL__APPLY: // (2)
-      case NeuralWorker_Mode.Singleton.Ids.TWO_WORKER__ONE_SCALE__FILL__APPLIER: // (3)
-      case NeuralWorker_Mode.Singleton.Ids.TWO_WORKER__ONE_SCALE__NO_FILL__APPLY: // (4)
-      case NeuralWorker_Mode.Singleton.Ids.TWO_WORKER__ONE_SCALE__NO_FILL__APPLIER: // (5)
+      case NeuralWorker_Mode.Singleton.Ids.TWO_WORKER__TWO_NET__ONE_SCALE__FILL__APPLY: // (2)
+      case NeuralWorker_Mode.Singleton.Ids.TWO_WORKER__TWO_NET__ONE_SCALE__FILL__APPLIER: // (3)
+      case NeuralWorker_Mode.Singleton.Ids.TWO_WORKER__TWO_NET__ONE_SCALE__NO_FILL__APPLY: // (4)
+      case NeuralWorker_Mode.Singleton.Ids.TWO_WORKER__TWO_NET__ONE_SCALE__NO_FILL__APPLIER: // (5)
         this.TypedArray_process_async
           = NeuralWorker_Proxies.apply__TWO_WORKER__ONE_SCALE__FILL__or__NO_FILL;
         break;
 
-      case NeuralWorker_Mode.Singleton.Ids.TWO_WORKER__TWO_SCALE__NO_FILL: // (6)
+      case NeuralWorker_Mode.Singleton.Ids.TWO_WORKER__TWO_NET__TWO_SCALE__NO_FILL: // (6)
         this.TypedArray_process_async
-          = NeuralWorker_Proxies.apply__TWO_WORKER__TWO_SCALE__NO_FILL;
+          = NeuralWorker_Proxies.apply__TWO_WORKER__TWO_NET__TWO_SCALE__NO_FILL;
         break;
 
       default:
@@ -564,7 +564,7 @@ class NeuralWorker_Proxies extends Recyclable.Root {
    *   - Float32Array (if ( neuralNetParams.output_asInputValueRange == false ) )
    *   - Int32Array (if ( neuralNetParams.output_asInputValueRange == true ) )
    */
-  static async apply__ONE_WORKER__ONE_SCALE__FILL__or__NO_FILL(
+  static async apply__ONE_WORKER__TWO_NET__ONE_SCALE__FILL__or__NO_FILL(
     source_TypedArray, source_height, source_width ) {
 
     let bFill = NeuralWorker_Mode.bFill_get( this.nNeuralWorker_ModeId );
@@ -656,7 +656,7 @@ class NeuralWorker_Proxies extends Recyclable.Root {
    *   - Float32Array (if ( neuralNetParams.output_asInputValueRange == false ) )
    *   - Int32Array (if ( neuralNetParams.output_asInputValueRange == true ) )
    */
-  static async apply__TWO_WORKER__TWO_SCALE__NO_FILL(
+  static async apply__TWO_WORKER__TWO_NET__TWO_SCALE__NO_FILL(
     source_TypedArray, source_height, source_width ) {
 
     const worker0_bFork = true;

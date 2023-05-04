@@ -5,54 +5,68 @@ import { Int } from "../../Unpacker/ValueDesc/ValueDesc_Base.js";
 /** Describe id, range, name of NeuralWorker_Mode.
  *
  * Convert number value into integer between [ 0, 6 ] representing neural worker mode:
- *   -  0: ONE_WORKER__ONE_SCALE__FILL
- *   -  1: ONE_WORKER__ONE_SCALE__NO_FILL
+ *   -  0: ONE_WORKER__TWO_NET__ONE_SCALE__FILL
+ *   -  1: ONE_WORKER__TWO_NET__ONE_SCALE__NO_FILL
  *
- *   -  2: TWO_WORKER__ONE_SCALE__FILL__APPLY
- *   -  3: TWO_WORKER__ONE_SCALE__FILL__APPLIER
+ *   -  2: TWO_WORKER__TWO_NET__ONE_SCALE__FILL__APPLY
+ *   -  3: TWO_WORKER__TWO_NET__ONE_SCALE__FILL__APPLIER
  *
- *   -  4: TWO_WORKER__ONE_SCALE__NO_FILL__APPLY
- *   -  5: TWO_WORKER__ONE_SCALE__NO_FILL__APPLIER
+ *   -  4: TWO_WORKER__TWO_NET__ONE_SCALE__NO_FILL__APPLY
+ *   -  5: TWO_WORKER__TWO_NET__ONE_SCALE__NO_FILL__APPLIER
  *
- *   -  6: TWO_WORKER__TWO_SCALE__NO_FILL
+ *   -  6: TWO_WORKER__TWO_NET__TWO_SCALE__NO_FILL
+ *   -  7: TWO_WORKER__TWO_SCALE__FILL
  */
 class NeuralWorker_Mode extends Int {
 
   constructor() {
-    super( 0, 6,
+    super( 0, 7,
       {
-        ONE_WORKER__ONE_SCALE__FILL:             new NeuralWorker_Mode.Info(
-          0, "ONE_WORKER__ONE_SCALE__FILL",             1, 2,
-          true, undefined ),
+        ONE_WORKER__TWO_NET__ONE_SCALE__FILL:
+          new NeuralWorker_Mode.Info( 0,
+            "ONE_WORKER__TWO_NET__ONE_SCALE__FILL",             1, 2,
+            true, undefined ),
 
-        ONE_WORKER__ONE_SCALE__NO_FILL:          new NeuralWorker_Mode.Info(
-          1, "ONE_WORKER__ONE_SCALE__NO_FILL",          1, 2,
-          false, undefined ),
-
-
-        TWO_WORKER__ONE_SCALE__FILL__APPLY:      new NeuralWorker_Mode.Info(
-          2, "TWO_WORKER__ONE_SCALE__FILL__APPLY",      2, 2,
-          true,  true ),
-
-        TWO_WORKER__ONE_SCALE__FILL__APPLIER:    new NeuralWorker_Mode.Info(
-          3, "TWO_WORKER__ONE_SCALE__FILL__APPLIER",    2, 2,
-          true, false ),
+        ONE_WORKER__TWO_NET__ONE_SCALE__NO_FILL:
+          new NeuralWorker_Mode.Info( 1,
+            "ONE_WORKER__TWO_NET__ONE_SCALE__NO_FILL",          1, 2,
+            false, undefined ),
 
 
-        TWO_WORKER__ONE_SCALE__NO_FILL__APPLY:   new NeuralWorker_Mode.Info(
-          4, "TWO_WORKER__ONE_SCALE__NO_FILL__APPLY",   2, 2,
-          false,  true ),
+        TWO_WORKER__TWO_NET__ONE_SCALE__FILL__APPLY:
+          new NeuralWorker_Mode.Info( 2,
+            "TWO_WORKER__TWO_NET__ONE_SCALE__FILL__APPLY",      2, 2,
+            true,  true ),
 
-        TWO_WORKER__ONE_SCALE__NO_FILL__APPLIER: new NeuralWorker_Mode.Info(
-          5, "TWO_WORKER__ONE_SCALE__NO_FILL__APPLIER", 2, 2,
-          false, false ),
+        TWO_WORKER__TWO_NET__ONE_SCALE__FILL__APPLIER:
+          new NeuralWorker_Mode.Info( 3,
+            "TWO_WORKER__TWO_NET__ONE_SCALE__FILL__APPLIER",    2, 2,
+            true, false ),
 
 
-        TWO_WORKER__TWO_SCALE__NO_FILL:          new NeuralWorker_Mode.Info(
-          6, "TWO_WORKER__TWO_SCALE__NO_FILL",          2, 2,
-          false, undefined ),
+        TWO_WORKER__TWO_NET__ONE_SCALE__NO_FILL__APPLY:
+          new NeuralWorker_Mode.Info( 4,
+            "TWO_WORKER__TWO_NET__ONE_SCALE__NO_FILL__APPLY",   2, 2,
+            false,  true ),
 
-//!!! ...unfinished... (2023/05/03) TWO_WORKER__TWO_SCALE__FILL?
+        TWO_WORKER__TWO_NET__ONE_SCALE__NO_FILL__APPLIER:
+          new NeuralWorker_Mode.Info( 5,
+            "TWO_WORKER__TWO_NET__ONE_SCALE__NO_FILL__APPLIER", 2, 2,
+            false, false ),
+
+
+        TWO_WORKER__TWO_NET__TWO_SCALE__NO_FILL:
+          new NeuralWorker_Mode.Info( 6,
+            "TWO_WORKER__TWO_NET__TWO_SCALE__NO_FILL",          2, 2,
+            false, undefined ),
+
+
+//!!! ...unfinished... (2023/05/04) TWO_WORKER__TWO_SCALE__FILL?
+// _APPLY ? or _APPLIER ?
+//         TWO_WORKER__TWO_SCALE__FILL:          new NeuralWorker_Mode.Info(
+//           7, "TWO_WORKER__TWO_SCALE__FILL",          2, 2,
+//           true, ???undefined ),
+
 
 //!!! ...unfinished... (2023/05/03)
 // Perhaps, needs one more mode for real usage neural network.
