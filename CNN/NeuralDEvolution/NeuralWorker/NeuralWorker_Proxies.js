@@ -627,9 +627,18 @@ class NeuralWorker_Proxies extends Recyclable.Root {
     let { done: worker0_done_false, value: worker0_value_Int32Array }
       = await worker0_resulter.next();
 
-    let worker1_promise = this.workerProxyArray[ 1 ]
+    // Note: Use input_height and input_width of the neural network because
+    //       the 1st web worker has scalee the source image. The 2nd web worker
+    //       needs not scale again.
+    const workerProxy1 = this.workerProxyArray[ 1 ];
+    const neuralNetParams1 = workerProxy1.neuralNetParamsBaseArray[ 0 ];
+
+    const source_height1 = neuralNetParams1.input_height;
+    const source_width1 = neuralNetParams1.input_width;
+
+    let worker1_promise = workerProxy1
       .TWO_WORKER__ONE_SCALE__step1_Int32Array_process_async(
-        worker0_value_Int32Array, source_height, source_width,
+        worker0_value_Int32Array, source_height1, source_width1,
         this.previous_output_TypedArrayArray[ 1 ],
         bFill );
 
@@ -675,6 +684,8 @@ class NeuralWorker_Proxies extends Recyclable.Root {
     let { done: worker0_done_false, value: worker0_value_TypedArray }
       = await worker0_resulter.next();
 
+    // Note: Use source_height and source_width because the 2nd web worker
+    //       will scale the source image by itself.
     const worker1_bFork = false;
     let worker1_resulter = this.workerProxyArray[ 1 ]
       .TWO_WORKER__TWO_SCALE__TypedArray_process_asyncGenerator(
