@@ -4,7 +4,9 @@ import { Int } from "../../Unpacker/ValueDesc/ValueDesc_Base.js";
 
 /** Describe id, range, name of NeuralWorker_Mode.
  *
- * Convert number value into integer between [ 0, 8 ] representing neural worker mode:
+ * Convert number value into integer between [ 0, 8 ] representing neural
+ * worker mode:
+ *
  *   -  0: ONE_WORKER__TWO_NET__ONE_SCALE__FILL
  *   -  1: ONE_WORKER__TWO_NET__ONE_SCALE__NO_FILL
  *

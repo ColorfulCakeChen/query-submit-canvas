@@ -402,8 +402,6 @@ class NeuralWorker_Proxies extends Recyclable.Root {
 
     let createOk;
 
-//!!! ...unfinished... (2023/05/04)
-//this.previous_output_TypedArrayArray
     // 0. Since new neural networks are created, discard any old previous output.
     {
       if ( this.previous_output_TypedArrayArray ) {
@@ -498,38 +496,49 @@ class NeuralWorker_Proxies extends Recyclable.Root {
    * @param {NeuralWorker_Proxies} this
    */
   static setup_TypedArray_process() {
-    switch ( this.nNeuralWorker_ModeId ) {
-      case NeuralWorker_Mode.Singleton.Ids.ONE_WORKER__TWO_NET__ONE_SCALE__FILL: // (0)
-      case NeuralWorker_Mode.Singleton.Ids.ONE_WORKER__TWO_NET__ONE_SCALE__NO_FILL: // (1)
-        this.TypedArray_process_async
-          = NeuralWorker_Proxies.apply__ONE_WORKER__TWO_NET__ONE_SCALE__FILL__or__NO_FILL;
-        break;
+//!!! (2023/05/04 Remarked)
+// Use .NeuralWorker_ModeId__to__TypedArray_process__Array instead.
+//     switch ( this.nNeuralWorker_ModeId ) {
+//       case NeuralWorker_Mode.Singleton.Ids.ONE_WORKER__TWO_NET__ONE_SCALE__FILL: // (0)
+//       case NeuralWorker_Mode.Singleton.Ids.ONE_WORKER__TWO_NET__ONE_SCALE__NO_FILL: // (1)
+//         this.TypedArray_process_async
+//           = NeuralWorker_Proxies.apply__ONE_WORKER__TWO_NET__ONE_SCALE__FILL__or__NO_FILL;
+//         break;
+//
+//       case NeuralWorker_Mode.Singleton.Ids.TWO_WORKER__TWO_NET__ONE_SCALE__FILL__APPLY: // (2)
+//       case NeuralWorker_Mode.Singleton.Ids.TWO_WORKER__TWO_NET__ONE_SCALE__FILL__APPLIER: // (3)
+//       case NeuralWorker_Mode.Singleton.Ids.TWO_WORKER__TWO_NET__ONE_SCALE__NO_FILL__APPLY: // (4)
+//       case NeuralWorker_Mode.Singleton.Ids.TWO_WORKER__TWO_NET__ONE_SCALE__NO_FILL__APPLIER: // (5)
+//         this.TypedArray_process_async
+//           = NeuralWorker_Proxies.apply__TWO_WORKER__ONE_SCALE__FILL__or__NO_FILL;
+//         break;
+//
+//       case NeuralWorker_Mode.Singleton.Ids.TWO_WORKER__TWO_NET__TWO_SCALE__NO_FILL: // (6)
+//         this.TypedArray_process_async
+//           = NeuralWorker_Proxies.apply__TWO_WORKER__TWO_NET__TWO_SCALE__NO_FILL;
+//         break;
+//
+//       case NeuralWorker_Mode.Singleton.Ids.ONE_WORKER__ONE_NET__ONE_SCALE__FILL: // (7)
+//       case NeuralWorker_Mode.Singleton.Ids.ONE_WORKER__ONE_NET__ONE_SCALE__NO_FILL: // (8)
+//         this.TypedArray_process_async
+//           = NeuralWorker_Proxies.apply__ONE_WORKER__ONE_NET__ONE_SCALE__FILL__or__NO_FILL;
+//         break;
+//
+//       default:
+//         throw Error( `NeuralWorker_Proxies.setup_TypedArray_process(): `
+//           + `Unknown nNeuralWorker_ModeId ( ${this.nNeuralWorker_ModeId} ).`
+//         );
+//         break;
+//     }
 
-      case NeuralWorker_Mode.Singleton.Ids.TWO_WORKER__TWO_NET__ONE_SCALE__FILL__APPLY: // (2)
-      case NeuralWorker_Mode.Singleton.Ids.TWO_WORKER__TWO_NET__ONE_SCALE__FILL__APPLIER: // (3)
-      case NeuralWorker_Mode.Singleton.Ids.TWO_WORKER__TWO_NET__ONE_SCALE__NO_FILL__APPLY: // (4)
-      case NeuralWorker_Mode.Singleton.Ids.TWO_WORKER__TWO_NET__ONE_SCALE__NO_FILL__APPLIER: // (5)
-        this.TypedArray_process_async
-          = NeuralWorker_Proxies.apply__TWO_WORKER__ONE_SCALE__FILL__or__NO_FILL;
-        break;
+    this.TypedArray_process_async = NeuralWorker_Proxies
+      .NeuralWorker_ModeId__to__TypedArray_process__Array[
+        this.nNeuralWorker_ModeId ];
 
-      case NeuralWorker_Mode.Singleton.Ids.TWO_WORKER__TWO_NET__TWO_SCALE__NO_FILL: // (6)
-        this.TypedArray_process_async
-          = NeuralWorker_Proxies.apply__TWO_WORKER__TWO_NET__TWO_SCALE__NO_FILL;
-        break;
-
-      case NeuralWorker_Mode.Singleton.Ids.ONE_WORKER__ONE_NET__ONE_SCALE__FILL: // (7)
-      case NeuralWorker_Mode.Singleton.Ids.ONE_WORKER__ONE_NET__ONE_SCALE__NO_FILL: // (8)
-        this.TypedArray_process_async
-          = NeuralWorker_Proxies.apply__ONE_WORKER__ONE_NET__ONE_SCALE__FILL__or__NO_FILL;
-        break;
-
-      default:
-        throw Error( `NeuralWorker_Proxies.setup_TypedArray_process(): `
-          + `Unknown nNeuralWorker_ModeId ( ${this.nNeuralWorker_ModeId} ).`
-        );
-        break;
-    }
+    if ( !this.TypedArray_process_async )
+      throw Error( `NeuralWorker_Proxies.setup_TypedArray_process(): `
+        + `Unknown nNeuralWorker_ModeId ( ${this.nNeuralWorker_ModeId} ).`
+      );
   }
 
   /**
@@ -565,6 +574,10 @@ class NeuralWorker_Proxies extends Recyclable.Root {
 
     let worker0_value_Float32ArrayArray = await worker0_promise;
     return worker0_value_Float32ArrayArray;
+
+//!!! ...unfinished... (2023/05/04)
+//this.previous_output_TypedArrayArray
+
   }
 
   /**
@@ -622,6 +635,10 @@ class NeuralWorker_Proxies extends Recyclable.Root {
     ] = await Promise.all( [ worker0_resulter.next(), worker1_promise ] );
 
     return [ worker0_value_Float32Array, worker1_value_Float32Array ];
+
+//!!! ...unfinished... (2023/05/04)
+//this.previous_output_TypedArrayArray
+
   }
 
   /**
@@ -669,6 +686,10 @@ class NeuralWorker_Proxies extends Recyclable.Root {
       [ worker0_resulter.next(), worker1_resulter.next() ] );
 
     return [ worker0_value_Float32Array, worker1_value_Float32Array ];
+
+//!!! ...unfinished... (2023/05/04)
+//this.previous_output_TypedArrayArray
+
   }
 
 //!!!
@@ -701,3 +722,40 @@ class NeuralWorker_Proxies extends Recyclable.Root {
 
 }
 
+/**
+ * An array for mapping from NeuralWorker_Mode.Singleton.Ids.Xxx to
+ * NeuralWorker_Proxies.apply__Xxx
+ */
+NeuralWorker_Proxies.NeuralWorker_ModeId__to__TypedArray_process__Array = [
+
+  // ONE_WORKER__TWO_NET__ONE_SCALE__FILL (0)
+  NeuralWorker_Proxies.apply__ONE_WORKER__TWO_NET__ONE_SCALE__FILL__or__NO_FILL,
+
+  // ONE_WORKER__TWO_NET__ONE_SCALE__NO_FILL (1)
+  NeuralWorker_Proxies.apply__ONE_WORKER__TWO_NET__ONE_SCALE__FILL__or__NO_FILL,
+
+
+  // TWO_WORKER__TWO_NET__ONE_SCALE__FILL__APPLY (2)
+  NeuralWorker_Proxies.apply__TWO_WORKER__ONE_SCALE__FILL__or__NO_FILL,
+
+  // TWO_WORKER__TWO_NET__ONE_SCALE__FILL__APPLIER (3)
+  NeuralWorker_Proxies.apply__TWO_WORKER__ONE_SCALE__FILL__or__NO_FILL,
+
+  // TWO_WORKER__TWO_NET__ONE_SCALE__NO_FILL__APPLY (4)
+  NeuralWorker_Proxies.apply__TWO_WORKER__ONE_SCALE__FILL__or__NO_FILL,
+
+  // TWO_WORKER__TWO_NET__ONE_SCALE__NO_FILL__APPLIER (5)
+  NeuralWorker_Proxies.apply__TWO_WORKER__ONE_SCALE__FILL__or__NO_FILL,
+
+
+  // TWO_WORKER__TWO_NET__TWO_SCALE__NO_FILL (6)
+  NeuralWorker_Proxies.apply__TWO_WORKER__TWO_NET__TWO_SCALE__NO_FILL,
+
+
+  // ONE_WORKER__ONE_NET__ONE_SCALE__FILL (7)
+  NeuralWorker_Proxies.apply__ONE_WORKER__ONE_NET__ONE_SCALE__FILL__or__NO_FILL,
+
+  // ONE_WORKER__ONE_NET__ONE_SCALE__NO_FILL (8)
+  NeuralWorker_Proxies.apply__ONE_WORKER__ONE_NET__ONE_SCALE__FILL__or__NO_FILL,
+
+];
