@@ -416,17 +416,13 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
     }
   }
 
-
-//!!! ...unfinished... (2023/05/04)
-// should accepts ( markValueArray == null ) to clear .alignmentMarkValueArray
-// to null.
   /**
    * @param {integer[]} markValueArray
    *   An array of values representing every neural network playing which
    * alignment.
    *   - It could be null or undefined or ( markValueArray.length == 0 ) to
-   *       clear .alignmentMarkValueArray for not filling alignment mark
-   *       in source TypedArray. (i.e. NO _FILL)
+   *       clear .alignmentMarkValueArray for not filling alignment mark into
+   *       source TypedArray. (i.e. NO _FILL)
    *
    *   - For example, in a OX (connect-three) game:
    *     - ( markValueArray[ 0 ] == 0 ) means neural network 0 plays O side
