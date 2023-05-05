@@ -184,12 +184,12 @@ import { FeedbackToInput as NeuralNet_FeedbackToInput }
  * @member {number} implicit_input_pixelCount
  *   The implicit (i.e. feedback from previous output) input image's pixel count
  * (= implicit_input_height * implicit_input_width). It is greater than or
- * equal to .allNeuralNets.from_pixelCount_expanded.
+!!! * equal to .allNeuralNets.from_pixelCount_expanded.
  *
  * @member {number} implicit_input_valueCount
  *   The implicit (i.e. feedback from previous output) input image's value count
  * (= implicit_input_pixelCount * input_channelCount). It is greater than or
- * equal to .allNeuralNets.from_valueCount_expanded.
+!!! * equal to .allNeuralNets.from_valueCount_expanded.
  *
  *
  */
@@ -251,6 +251,12 @@ class NeuralNet_FeedbackShape extends NeuralNet_FeedbackToInput {
    * @param {Int32Array[]} previous_output_Int32ArrayArray
    *   The (previous time) output of the pair of neural networks.
    *
+
+//!!! ...unfinished... (2023/05/05)
+// Deprecate NO_FILL.
+// When alignment mark is specified, it and previous time output
+// (i.e. feedback) will be filled automatically.
+
    *   - previous_output_Int32ArrayArray[ 0 ]
    *       [ 0 .. ( this.feedback_valueCount_per_alignment - 1 ) ]
    *       is the (previous time) output of neural network 0 when it personates

@@ -8,10 +8,8 @@ export { NeuralNet_FeedbackToInput as FeedbackToInput };
  *
  *
  * @member {number} from_valueCount_original
- *   The feedback (of an alignement of a neural network) has how many values
- * (i.e. feedback_valueCount_per_alignment). Usually, it is half of the
- * (previous time) output channel count of a neural network because a neural
- * network generates two alignments' outputs in one time.
+ *   The feedback (i.e. the neural network's previous time output) has how
+ * many values.
  *
  * @member {number} from_valueCount_expanded
  *   (= .from_valueCount_original * .height_multiplier * .width_multiplier)
@@ -39,8 +37,7 @@ class NeuralNet_FeedbackToInput_from {
 
 /**
  * Describe a cuboid in the neural network's input for filling the previous
- * output (i.e. feedback) of an alignment of a neural network to the next
- * time input.
+ * output (i.e. feedback) a neural network to the next time input.
  *
  *
  * @member {number} height_multiplier
@@ -184,28 +181,28 @@ class NeuralNet_FeedbackToInput_Area extends NeuralNet_FeedbackToInput_from {
  * count (= implicit_input_pixelCount * input_channelCount).
  *
  *
- * @member {NeuralNet_FeedbackToInput_from} perNeuralNet
- *   The value count and (viewed as) pixel count of a neural network's
- * previous output (i.e. feedback).
- * 
- * @member {NeuralNet_FeedbackToInput_from} allNeuralNets
- *   The value count and (viewed as) pixel count of all neural networks'
- * previous output (i.e. feedback).
+
+//!!! (2023/05/05 Remarked)
+//  * @member {NeuralNet_FeedbackToInput_from} perNeuralNet
+//  *   The value count and (viewed as) pixel count of a neural network's
+//  * previous output (i.e. feedback).
+//  * 
+//  * @member {NeuralNet_FeedbackToInput_from} allNeuralNets
+//  *   The value count and (viewed as) pixel count of all neural networks'
+//  * previous output (i.e. feedback).
  *
  *
- * @member {number} neuralNetCount
- *   There are how many neural networks in a versus. It is always 2.
- *
- * @member {number} alignmentCount_per_neuralNet
- *   There are how many alignments in a versus. Every neural network will
- * generates output of all alignments. It is always 2.
+
+//!!! (2023/05/05 Remarked)
+// !!! * @member {number} neuralNetCount
+//  *   There are how many neural networks in a versus. It is always 2.
+
  *
  * @member {number} areaCount
- *   There are how many feedback areas be put in the (next time) input. It is
- * always 4. (Every alignment has exactly one area.) Because:
- *   - There are two neural networks (in a versus pair).
- *   - There are two alignments per neural network.
- *   - So, there are 4 (= 2 * 2) feedback information areas.
+ *   There are how many filling areas be put in the (next time) input for a
+ * neural network. It is always 2.
+ *   - One for alignment mark of the neural network.
+ *   - The other for feedback (i.e. previous time output) of the neural network.
  *
  * @member {number} height_areaCount
  *   There are how many feedback areas along the height in the (next time)
@@ -223,48 +220,25 @@ class NeuralNet_FeedbackToInput_Area extends NeuralNet_FeedbackToInput_from {
  *   The pixel count along width of all areas (including gap between them).
  *
  *
- * @member {number[][]} area_position_leftArrayArray
- *   The array of array of left position in input image for every
- * feedback_to_input area.
- * ( area_position_leftArrayArray[ neuralNetIndex ][ alignmentIndex ] )
+ * @member {number[]} area_position_leftArray
+ *   The array of left position in input image for every feedback_to_input
+ * area. ( area_position_leftArray[ alignment_or_feedback ] )
  *
- *   - area_position_leftArrayArray[ 0 ][ 0 ]
- *       is the left position for the feedback area of neural network 0 when
- *       it personates alignment 0.
+ *   - area_position_leftArray[ 0 ]
+ *       is the left position for the alignment mark area of neural network.
  *
- *   - area_position_leftArrayArray[ 0 ][ 1 ]
- *       is the left position for the feedback area of neural network 0 when
- *       it personates alignment 1.
+ *   - area_position_leftArray[ 1 ]
+ *       is the left position for the feedback area of neural network.
  *
- *   - area_position_leftArrayArray[ 1 ][ 0 ]
- *       is the left position for the feedback area of neural network 1 when
- *       it personates alignment 0.
+ * @member {number[]} area_position_topArray
+ *   The array of top position in input image for every feedback_to_input
+ * area. ( area_position_topArray[ alignment_or_feedback ] )
  *
- *   - area_position_leftArrayArray[ 1 ][ 1 ]
- *       is the left position for the feedback area of neural network 1 when
- *       it personates alignment 1.
+ *   - area_position_topArray[ 0 ]
+ *       is the top position for the alignment mark area of neural network.
  *
- * @member {number[][]} area_position_topArrayArray
- *   The array of array of top position in input image for every
- * feedback_to_input area.
- * ( area_position_topArrayArray[ neuralNetIndex ][ alignmentIndex ] )
- *
- *   - area_position_topArrayArray[ 0 ][ 0 ]
- *       is the top position for the feedback area of neural network 0 when
- *       it personates alignment 0.
- *
- *   - area_position_topArrayArray[ 0 ][ 1 ]
- *       is the top position for the feedback area of neural network 0 when
- *       it personates alignment 1.
- *
- *   - area_position_topArrayArray[ 1 ][ 0 ]
- *       is the top position for the feedback area of neural network 1 when
- *       it personates alignment 0.
- *
- *   - area_position_topArrayArray[ 1 ][ 1 ]
- *       is the top position for the feedback area of neural network 1 when
- *       it personates alignment 1.
- *
+ *   - area_position_topArray[ 1 ]
+ *       is the top position for the feedback area of neural network.
  *
  */
 class NeuralNet_FeedbackToInput {
@@ -277,16 +251,14 @@ class NeuralNet_FeedbackToInput {
 
   /**
    *
-   * @member {number} feedback_valueCount_per_alignment
-   *   The feedback (of an alignement of a neural network) has how many values.
-   * Usually, it is half of the (previous time) output channel count of a
-   * neural network because a neural network generates two alignments' outputs
-   * in one time.
+   * @param {number} feedback_valueCount
+   *   The feedback (i.e. the neural network's previous time output) has how
+   * many values.
    */
   init(
     explicit_input_height,
     explicit_input_channelCount,
-    feedback_valueCount_per_alignment
+    feedback_valueCount
   ) {
 
     //const funcNameInMessage = "init";
@@ -298,19 +270,20 @@ class NeuralNet_FeedbackToInput {
       area = this.area;
     }
 
-    let perNeuralNet;
-    {
-      if ( !this.perNeuralNet )
-        this.perNeuralNet = new NeuralNet_FeedbackToInput_from();
-      perNeuralNet = this.perNeuralNet;
-    }
-
-    let allNeuralNets;
-    {
-      if ( !this.allNeuralNets )
-        this.allNeuralNets = new NeuralNet_FeedbackToInput_from();
-      allNeuralNets = this.allNeuralNets;
-    }
+//!!! (2023/05/05 Remarked)
+//     let perNeuralNet;
+//     {
+//       if ( !this.perNeuralNet )
+//         this.perNeuralNet = new NeuralNet_FeedbackToInput_from();
+//       perNeuralNet = this.perNeuralNet;
+//     }
+//
+//     let allNeuralNets;
+//     {
+//       if ( !this.allNeuralNets )
+//         this.allNeuralNets = new NeuralNet_FeedbackToInput_from();
+//       allNeuralNets = this.allNeuralNets;
+//     }
 
     // 1. Ensure positive integer.
 
@@ -322,9 +295,9 @@ class NeuralNet_FeedbackToInput {
       = NeuralNet_FeedbackToInput.ensure_positive_integer(
           explicit_input_channelCount );
 
-    area.from_valueCount_original = feedback_valueCount_per_alignment
+    area.from_valueCount_original = feedback_valueCount
       = NeuralNet_FeedbackToInput.ensure_positive_integer(
-          feedback_valueCount_per_alignment );
+          feedback_valueCount );
 
     // 2.
 
@@ -345,20 +318,9 @@ class NeuralNet_FeedbackToInput {
       = this.implicit_input_height
       = this.explicit_input_height;
 
-    // 2.3 There are 4 (= 2 * 2) feedback information areas.
-    //
-    // There are two neural networks (in a versus pair).
-    // There two alignments per two neural network.
-    this.neuralNetCount = 2;
-    this.alignmentCount_per_neuralNet = 2;
-
-//!!! ...unfinished... (2023/05/01)
-// .areaCount should be determined according to:
-//   - want to fill two neural networks' two alignment feedback.
-//   - want to fill one neural networks' two alignment feedback.
-//   - want to fill one neural networks' one alignment feedback.
-//
-    this.areaCount = this.neuralNetCount * this.alignmentCount_per_neuralNet;
+    // 2.3 There are 2 filling areas (alignment mark and feedback) per neural
+    //     network.
+    this.areaCount = 2;
 
     // 3. Four (or two) times the implicit input pixel count along height (if
     //    exists) and width.
@@ -395,37 +357,38 @@ class NeuralNet_FeedbackToInput {
     area.from_pixelCount_expanded = area.from_pixelCount_original
       * area.height_multiplier * area.width_multiplier;
 
-    // 4.2
-
-    // 4.2.1
-    perNeuralNet.from_valueCount_original
-      = area.from_valueCount_original * this.alignmentCount_per_neuralNet;
-
-    perNeuralNet.from_valueCount_expanded
-      = area.from_valueCount_expanded * this.alignmentCount_per_neuralNet;
-
-    // 4.2.2
-    perNeuralNet.from_pixelCount_original
-      = area.from_pixelCount_original * this.alignmentCount_per_neuralNet;
-
-    perNeuralNet.from_pixelCount_expanded
-      = area.from_pixelCount_expanded * this.alignmentCount_per_neuralNet;
-
-    // 4.3
-
-    // 4.3.1
-    allNeuralNets.from_valueCount_original
-      = perNeuralNet.from_valueCount_original * this.neuralNetCount;
-
-    allNeuralNets.from_valueCount_expanded
-      = perNeuralNet.from_valueCount_expanded * this.neuralNetCount;
-
-    // 4.3.2
-    allNeuralNets.from_pixelCount_original
-      = perNeuralNet.from_pixelCount_original * this.neuralNetCount;
-
-    allNeuralNets.from_pixelCount_expanded
-      = perNeuralNet.from_pixelCount_expanded * this.neuralNetCount;
+//!!! (2023/05/05 Remarked)
+//     // 4.2
+//
+//     // 4.2.1
+//     perNeuralNet.from_valueCount_original
+//       = area.from_valueCount_original * this.areaCount_per_neuralNet;
+//
+//     perNeuralNet.from_valueCount_expanded
+//       = area.from_valueCount_expanded * this.alignmentCount_per_neuralNet;
+//
+//     // 4.2.2
+//     perNeuralNet.from_pixelCount_original
+//       = area.from_pixelCount_original * this.alignmentCount_per_neuralNet;
+//
+//     perNeuralNet.from_pixelCount_expanded
+//       = area.from_pixelCount_expanded * this.alignmentCount_per_neuralNet;
+//
+//     // 4.3
+//
+//     // 4.3.1
+//     allNeuralNets.from_valueCount_original
+//       = perNeuralNet.from_valueCount_original * this.neuralNetCount;
+//
+//     allNeuralNets.from_valueCount_expanded
+//       = perNeuralNet.from_valueCount_expanded * this.neuralNetCount;
+//
+//     // 4.3.2
+//     allNeuralNets.from_pixelCount_original
+//       = perNeuralNet.from_pixelCount_original * this.neuralNetCount;
+//
+//     allNeuralNets.from_pixelCount_expanded
+//       = perNeuralNet.from_pixelCount_expanded * this.neuralNetCount;
 
     // 5. Determine feedback_to_input area shape.
 
@@ -497,22 +460,23 @@ class NeuralNet_FeedbackToInput {
         explicit_input_height_with_gap
           / area.height_with_gap_pixelCount_expanded );
 
-      // 6.1 Arranging two feedback areas of the same one neural network in
+      // 6.1 Arranging two filling areas of the same one neural network in
       //     either the same row or the same column.
       {
-        // 6.1.1 All four feedback areas in the same column.
-        if ( this.height_areaCount >= this.areaCount ) { // >= 4
+        // 6.1.1 All two feedback areas in the same column.
+        if ( this.height_areaCount >= this.areaCount ) { // >= 2
           this.height_areaCount = this.areaCount;
 
-        // 6.1.2 Every two feedback areas (of one neural networks) in the
-        //       same row.
-        } else if ( this.height_areaCount >= this.neuralNetCount ) { // >= 2
-
-          // Do not arrange two feedback areas of a neural network in
-          // different row or column (e.g. ( .height_areaCount == 3 ) or
-          // ( .width_areaCount == 3 ) ). Force every two areas (of one neural
-          // networks) in the same row.
-          this.height_areaCount = this.neuralNetCount;
+//!!! (2023/05/05 Remarked)
+//         // 6.1.2 Every two feedback areas (of one neural networks) in the
+//         //       same row.
+//         } else if ( this.height_areaCount >= this.neuralNetCount ) { // >= 2
+//
+//           // Do not arrange two feedback areas of a neural network in
+//           // different row or column (e.g. ( .height_areaCount == 3 ) or
+//           // ( .width_areaCount == 3 ) ). Force every two areas (of one neural
+//           // networks) in the same row.
+//           this.height_areaCount = this.neuralNetCount;
 
         // 6.1.3 All four feedback areas in the same row.
         } else { // >= 1
@@ -558,44 +522,23 @@ class NeuralNet_FeedbackToInput {
 
   /**
    * @param {NeuralNet_FeedbackToInput} this
-   * @param {number} this.neuralNetCount
-   * @param {number} this.alignmentCount_per_neuralNet
+   * @param {number} this.areaCount
    * @param {number[][]} this.area_position_leftArrayArray
    * @param {number[][]} this.area_position_topArrayArray
    */
   static area_position_create() {
-    // 1.
-    // 1.1
-    if ( this.area_position_leftArrayArray )
-      this.area_position_leftArrayArray.length = this.neuralNetCount;
-    else
-      this.area_position_leftArrayArray = new Array( this.neuralNetCount );
 
-    // 1.2
-    if ( this.area_position_topArrayArray )
-      this.area_position_topArrayArray.length = this.neuralNetCount;
+    // 1.
+    if ( this.area_position_leftArray )
+      this.area_position_leftArray.length = this.areaCount;
     else
-      this.area_position_topArrayArray = new Array( this.neuralNetCount );
+      this.area_position_leftArray = new Array( this.areaCount );
 
     // 2.
-    for ( let i = 0; i < this.neuralNetCount; ++i ) {
-
-      // 2.1
-      if ( this.area_position_leftArrayArray[ i ] )
-        this.area_position_leftArrayArray[ i ].length
-          = this.alignmentCount_per_neuralNet;
-      else
-        this.area_position_leftArrayArray[ i ]
-          = new Array( this.alignmentCount_per_neuralNet );
-
-      // 2.2
-      if ( this.area_position_topArrayArray[ i ] )
-        this.area_position_topArrayArray[ i ].length
-          = this.alignmentCount_per_neuralNet;
-      else
-        this.area_position_topArrayArray[ i ]
-          = new Array( this.alignmentCount_per_neuralNet );
-    }
+    if ( this.area_position_topArray )
+      this.area_position_topArray.length = this.areaCount;
+    else
+      this.area_position_topArray = new Array( this.areaCount );
   }
 
   /**
@@ -604,54 +547,29 @@ class NeuralNet_FeedbackToInput {
    * @param {number} this.areaCount
    * @param {number} this.height_areaCount
    * @param {number} this.width_areaCount
-   * @param {number[][]} this.area_position_leftArrayArray
-   * @param {number[][]} this.area_position_topArrayArray
+   * @param {number[][]} this.area_position_leftArray
+   * @param {number[][]} this.area_position_topArray
    */
   static area_position_fill() {
     const area = this.area;
 
-    // 1. Create all ( left, top ) coordinates.
-    let leftArray = new Array( this.areaCount );
-    let topArray = new Array( this.areaCount );
-    {
-      let i = 0;
-      for ( let height_area_index = 0;
-        height_area_index < this.height_areaCount;
-        ++height_area_index ) {
+    // Create all ( left, top ) coordinates.
+    let i = 0;
+    for ( let height_area_index = 0;
+      height_area_index < this.height_areaCount;
+      ++height_area_index ) {
 
-        for ( let width_area_index = 0;
-          width_area_index < this.width_areaCount;
-          ++width_area_index ) {
+      for ( let width_area_index = 0;
+        width_area_index < this.width_areaCount;
+        ++width_area_index ) {
 
-          leftArray[ i ] = ( width_area_index
-            * area.width_with_gap_pixelCount_expanded );
+        area_position_leftArray[ i ] = ( width_area_index
+          * area.width_with_gap_pixelCount_expanded );
 
-          topArray[ i ] = ( height_area_index
-            * area.height_with_gap_pixelCount_expanded );
+        area_position_topArray[ i ] = ( height_area_index
+          * area.height_with_gap_pixelCount_expanded );
 
-          ++i;
-        }
-      }
-    }
-
-    // 2. Distribute all ( left, top ) coordinates to neural networks'
-    //    alignments.
-    {
-      let i = 0;
-      for ( let n = 0; n < this.neuralNetCount; ++n ) {
-
-        let area_position_leftArray
-          = this.area_position_leftArrayArray[ n ];
-
-        let area_position_topArray
-          = this.area_position_topArrayArray[ n ];
-
-        for ( let a = 0; a < this.alignmentCount_per_neuralNet; ++a ) {
-          area_position_leftArray[ a ] = leftArray[ i ];
-          area_position_topArray[ a ] = topArray[ i ];
-  
-          ++i;
-        }
+        ++i;
       }
     }
   }
