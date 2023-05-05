@@ -207,7 +207,7 @@ class NeuralNet_FeedbackShape extends NeuralNet_FeedbackToInput {
    */
   init(
     explicit_input_height, explicit_input_width, explicit_input_channelCount,
-    feedback_valueCount_per_alignment
+    feedback_valueCount
   ) {
 
     // 1. Ensure positive integer.
@@ -219,7 +219,7 @@ class NeuralNet_FeedbackShape extends NeuralNet_FeedbackToInput {
     super.init(
       explicit_input_height,
       explicit_input_channelCount,
-      feedback_valueCount_per_alignment
+      feedback_valueCount
     );
 
     // 3.
@@ -238,6 +238,90 @@ class NeuralNet_FeedbackShape extends NeuralNet_FeedbackToInput {
   }
 
   /**
+   * Fill the alignment mark value to the next time input. All pixels
+   * (including every channels) inside input area will be filled with the
+   * alignment mark value.
+   *
+   *
+   * @param {Uint8ClampedArray|Int32Array} input_TypedArray
+   *   The (next time) input of the pair of neural networks. Usually, it is
+   * integer typed array. It should large enough to contain both implicit and
+   * explicit input.
+   *
+   * @param {integer} alignmentMarkValue
+   *   The values representing the neural network playing which alignment.
+   */
+  set_implicit_input_by_alignmentMarkValue(
+    input_TypedArray, alignmentMarkValue ) {
+
+    const funcNameInMessage = "set_implicit_input_by_alignmentMarkValue";
+
+    const input_channelCount = this.input_channelCount;
+    const area = this.area;
+
+    // 1. Check (next time) input shape.
+    if ( input_TypedArray.length != this.input_valueCount )
+      throw Error( `NeuralNet_FeedbackShape.${funcNameInMessage}(): `
+        + `input_TypedArray.length ( ${input_TypedArray.length} ) `
+        + `should be the same as `
+        + `.input_valueCount ( ${this.input_valueCount} ).`
+      );
+
+    // 3.
+    const input_width_valueCount = this.input_width_valueCount;
+    const area_height_pixelCount_original = area.height_pixelCount_original;
+    const area_height_multiplier = area.height_multiplier;
+    const area_width_pixelCount_original = area.width_pixelCount_original;
+    const area_width_multiplier = area.width_multiplier;
+
+    const area_from_valueCount_original = area.from_valueCount_original;
+    const area_from_valueCount_expanded = area.from_valueCount_expanded;
+
+    // 4. Fill alignment mark value to the next time input.
+    let to_valueIndex = 0;
+
+    // 4.1
+    const areaIndex = 0; // Area 0 is for filling alignment mark.
+    {
+      let area_position_left = this.area_position_leftArray[ areaIndex ];
+      let area_position_top = this.area_position_topArray[ areaIndex ];
+
+      let to_valueIndex_y_begin
+        = ( ( area_position_top * this.input_width ) + area_position_left )
+            * this.input_channelCount;
+
+      // 4.2
+      for ( let y = 0; y < area_height_pixelCount_original; ++y ) {
+
+        // 4.3
+        for ( let y_multiplier = 0;
+          y_multiplier < area_height_multiplier; ++y_multiplier ) {
+
+          to_valueIndex = to_valueIndex_y_begin;
+
+          // 4.4
+          for ( let x = 0; x < area_width_pixelCount_original; ++x ) {
+
+            // 4.5
+            for ( let x_multiplier = 0;
+              x_multiplier < area_width_multiplier; ++x_multiplier ) {
+
+              // 4.6
+              for ( let c = 0; c < input_channelCount; ++c ) {
+                input_TypedArray[ to_valueIndex ] = alignmentMarkValue;
+                ++to_valueIndex;
+              } // c
+
+            } // x_multiplier
+          } // x
+
+          to_valueIndex_y_begin += input_width_valueCount;
+        } // y_multiplier
+      } // y
+    } // areaIndex
+  }
+
+  /**
    * Fill the previous time output (i.e. feedback) to the next time input. The
    * pixels (including channels of partial pixel) which inside input area but
    * outside previous output will be filled with zero.
@@ -248,46 +332,17 @@ class NeuralNet_FeedbackShape extends NeuralNet_FeedbackToInput {
    * integer typed array. It should large enough to contain both implicit and
    * explicit input.
    *
-   * @param {Int32Array[]} previous_output_Int32ArrayArray
-   *   The (previous time) output of the pair of neural networks.
-   *
-
-//!!! ...unfinished... (2023/05/05)
-// Deprecate NO_FILL.
-// When alignment mark is specified, it and previous time output
-// (i.e. feedback) will be filled automatically.
-
-   *   - previous_output_Int32ArrayArray[ 0 ]
-   *       [ 0 .. ( this.feedback_valueCount_per_alignment - 1 ) ]
-   *       is the (previous time) output of neural network 0 when it personates
-   *       alignment 0.
-   *
-   *   - previous_output_Int32ArrayArray[ 0 ]
-   *       [ this.feedback_valueCount_per_alignment
-   *         .. ( ( 2 * this.feedback_valueCount_per_alignment ) - 1 ) ]
-   *       is the (previous time) output of neural network 0 when it personates
-   *       alignment 1.
-   *
-   *   - previous_output_Int32ArrayArray[ 1 ]
-   *       [ 0 .. ( this.feedback_valueCount_per_alignment - 1 ) ]
-   *       is the (previous time) output of neural network 1 when it personates
-   *       alignment 0.
-   *
-   *   - previous_output_Int32ArrayArray[ 1 ]
-   *       [ this.feedback_valueCount_per_alignment
-   *         .. ( ( 2 * this.feedback_valueCount_per_alignment ) - 1 ) ]
-   *       is the (previous time) output of neural network 1 when it personates
-   *       alignment 1.
+   * @param {Int32Array} previous_output_Int32Array
+   *   The (previous time) output of the neural networks.
    *
    */
   set_implicit_input_by_previous_output(
-    input_TypedArray, previous_output_Int32ArrayArray ) {
+    input_TypedArray, previous_output_Int32Array ) {
 
     const funcNameInMessage = "set_implicit_input_by_previous_output";
 
     const input_channelCount = this.input_channelCount;
     const area = this.area;
-    const perNeuralNet = this.perNeuralNet;
 
     // 1. Check (next time) input shape.
     if ( input_TypedArray.length != this.input_valueCount )
@@ -298,39 +353,18 @@ class NeuralNet_FeedbackShape extends NeuralNet_FeedbackToInput {
       );
 
     // 2. Check (previous time) output shape.
-
-    // Note: ( this.neuralNetCount == 2 )
-    if ( previous_output_Int32ArrayArray.length != this.neuralNetCount )
+    if ( previous_output_Int32Array.length != area.from_valueCount_original )
       throw Error( `NeuralNet_FeedbackShape.${funcNameInMessage}(): `
-        + `previous_output_Int32ArrayArray.length `
-        + `( ${previous_output_Int32ArrayArray.length} ) `
+        + `previous_output_Int32Array.length `
+        + `( ${previous_output_Int32Array.length} ) `
         + `should be the same as `
-        + `.neuralNetCount ( ${this.neuralNetCount} ).`
+        + `area.from_valueCount_original `
+        + `( ${area.from_valueCount_original} ).`
       );
 
-    if ( previous_output_Int32ArrayArray[ 0 ].length
-           != perNeuralNet.from_valueCount_original )
-      throw Error( `NeuralNet_FeedbackShape.${funcNameInMessage}(): `
-        + `previous_output_Int32ArrayArray[ 0 ].length `
-        + `( ${previous_output_Int32ArrayArray[ 0 ].length} ) `
-        + `should be the same as `
-        + `perNeuralNet.from_valueCount_original `
-        + `( ${perNeuralNet.from_valueCount_original} ).`
-      );
-
-    if ( previous_output_Int32ArrayArray[ 1 ].length
-           != perNeuralNet.from_valueCount_original )
-      throw Error( `NeuralNet_FeedbackShape.${funcNameInMessage}(): `
-        + `previous_output_Int32ArrayArray[ 1 ].length `
-        + `( ${previous_output_Int32ArrayArray[ 1 ].length} ) `
-        + `should be the same as `
-        + `perNeuralNet.from_valueCount_original `
-        + `( ${perNeuralNet.from_valueCount_original} ).`
-      );
-
+    // 3.
     const input_width_valueCount = this.input_width_valueCount;
-    const neuralNetCount = this.neuralNetCount;
-    const alignmentCount_per_neuralNet = this.alignmentCount_per_neuralNet;
+    //const areaCount = this.areaCount;
     const area_height_pixelCount_original = area.height_pixelCount_original;
     const area_height_multiplier = area.height_multiplier;
     const area_width_pixelCount_original = area.width_pixelCount_original;
@@ -339,145 +373,128 @@ class NeuralNet_FeedbackShape extends NeuralNet_FeedbackToInput {
     const area_from_valueCount_original = area.from_valueCount_original;
     const area_from_valueCount_expanded = area.from_valueCount_expanded;
 
-    // 3. Fill previous time output (i.e. feedback) to next time input.
+    // 4. Fill previous time output (i.e. feedback) to the next time input.
     let to_valueIndex = 0;
 
-    // 3.1
-    // Note: ( .neuralNetCount == 2 )
-    for ( let neuralNetIndex = 0;
-      neuralNetIndex < neuralNetCount; ++neuralNetIndex ) {
+    // 4.1
+    let from_valueIndex_y_begin = 0;
+    let from_valueIndex_x_begin;
+    let from_valueIndex = 0;
 
-      let previous_output_Int32Array
-        = previous_output_Int32ArrayArray[ neuralNetIndex ];
+    const areaIndex = 1; // Area 1 is for filling feedback.
+    {
+      let area_position_left = this.area_position_leftArray[ areaIndex ];
+      let area_position_top = this.area_position_topArray[ areaIndex ];
 
-      let area_position_leftArray
-        = this.area_position_leftArrayArray[ neuralNetIndex ];
+      let to_valueIndex_y_begin
+        = ( ( area_position_top * this.input_width ) + area_position_left )
+            * this.input_channelCount;
 
-      let area_position_topArray
-        = this.area_position_topArrayArray[ neuralNetIndex ];
+      let from_valueCount_original_remained_y_begin
+        = area_from_valueCount_original;
 
-      // 3.2
-      let from_valueIndex_y_begin = 0;
-      let from_valueIndex_x_begin;
-      let from_valueIndex = 0;
+      let from_valueCount_original_remained_x_begin;
+      let from_valueCount_original_remained = area_from_valueCount_original;
 
-      // Note: ( .alignmentCount_per_neuralNet == 2 )
-      for ( let alignmentIndex = 0;
-        alignmentIndex < alignmentCount_per_neuralNet; ++alignmentIndex ) {
+      // 4.2
+      for ( let y = 0; y < area_height_pixelCount_original; ++y ) {
 
-        let area_position_left = area_position_leftArray[ alignmentIndex ];
-        let area_position_top = area_position_topArray[ alignmentIndex ];
+        // 4.3
+        for ( let y_multiplier = 0;
+          y_multiplier < area_height_multiplier; ++y_multiplier ) {
 
-        let to_valueIndex_y_begin
-          = ( ( area_position_top * this.input_width ) + area_position_left )
-              * this.input_channelCount;
+          from_valueIndex_x_begin = from_valueIndex_y_begin;
 
-        let from_valueCount_original_remained_y_begin
-          = area_from_valueCount_original;
+          from_valueCount_original_remained_x_begin
+            = from_valueCount_original_remained_y_begin;
 
-        let from_valueCount_original_remained_x_begin;
-        let from_valueCount_original_remained = area_from_valueCount_original;
+          to_valueIndex = to_valueIndex_y_begin;
 
-        // 3.3
-        for ( let y = 0; y < area_height_pixelCount_original; ++y ) {
+          // 4.4
+          for ( let x = 0; x < area_width_pixelCount_original; ++x ) {
 
-          // 3.4
-          for ( let y_multiplier = 0;
-            y_multiplier < area_height_multiplier; ++y_multiplier ) {
+            // Handle the last pixel which comes from feedback.
+            //
+            // Note: It is the same for the same x (even if different
+            //       x_multiplier). But, it may appear many times in
+            //       different y_multiplier of the same y.
+            let channelCount_to_copy; // channels to copy from feedback.
+            {
+              if ( input_channelCount
+                      > from_valueCount_original_remained_x_begin ) {
+                channelCount_to_copy // not enough feedback values.
+                  = from_valueCount_original_remained_x_begin;
+              } else {
+                channelCount_to_copy = input_channelCount;
+              }
+            }
 
-            from_valueIndex_x_begin = from_valueIndex_y_begin;
+            // 4.5
+            for ( let x_multiplier = 0;
+              x_multiplier < area_width_multiplier; ++x_multiplier ) {
+
+              from_valueIndex = from_valueIndex_x_begin;
+
+              from_valueCount_original_remained
+                = from_valueCount_original_remained_x_begin;
+
+              // 4.6
+
+              // 4.6.1 Copy output values as feedback in input values.
+              let c = 0;
+              for ( ; c < channelCount_to_copy; ++c ) {
+                let from_value = previous_output_Int32Array[ from_valueIndex ];
+                input_TypedArray[ to_valueIndex ] = from_value;
+
+                ++from_valueIndex;
+                --from_valueCount_original_remained;
+
+                ++to_valueIndex;
+              } // c
+
+              // 4.6.2
+              // Fill zero for
+              //   - channels exceeding area.from_valueCount_expanded, and
+              //   - pixels exceeding area.from_pixelCount_expanded.
+              for ( ; c < input_channelCount; ++c ) {
+                input_TypedArray[ to_valueIndex ] = 0;
+                ++to_valueIndex;
+              } // c
+
+            } // x_multiplier
+
+            from_valueIndex_x_begin += input_channelCount;
 
             from_valueCount_original_remained_x_begin
-              = from_valueCount_original_remained_y_begin;
+              -= channelCount_to_copy;
+          } // x
 
-            to_valueIndex = to_valueIndex_y_begin;
+          to_valueIndex_y_begin += input_width_valueCount;
+        } // y_multiplier
 
-            // 3.5
-            for ( let x = 0; x < area_width_pixelCount_original; ++x ) {
+        from_valueIndex_y_begin = from_valueIndex_x_begin;
 
-              // Handle the last pixel which comes from feedback.
-              //
-              // Note: It is the same for the same x (even if different
-              //       x_multiplier). But, it may appear many times in
-              //       different y_multiplier of the same y.
-              let channelCount_to_copy; // channels to copy from feedback.
-              {
-                if ( input_channelCount
-                       > from_valueCount_original_remained_x_begin ) {
-                  channelCount_to_copy // not enough feedback values.
-                    = from_valueCount_original_remained_x_begin;
-                } else {
-                  channelCount_to_copy = input_channelCount;
-                }
-              }
+        from_valueCount_original_remained_y_begin
+          = from_valueCount_original_remained_x_begin;
+      } // y
 
-              // 3.6
-              for ( let x_multiplier = 0;
-                x_multiplier < area_width_multiplier; ++x_multiplier ) {
+      // Note: Checking here (instead of in the channel c loop) for avoiding
+      //       performance reducing too much.
+      {
+        if ( from_valueCount_original_remained < 0 )
+          throw Error( `NeuralNet_FeedbackShape.${funcNameInMessage}(): `
+            + `from_valueCount_original_remained ( `
+            + `${from_valueCount_original_remained} ) `
+            + `should be non-negative.`
+          );
+      }
 
-                from_valueIndex = from_valueIndex_x_begin;
-
-                from_valueCount_original_remained
-                  = from_valueCount_original_remained_x_begin;
-
-                // 3.7
-
-                // 3.7.1 Copy output values as feedback in input values.
-                let c = 0;
-                for ( ; c < channelCount_to_copy; ++c ) {
-                  let from_value = previous_output_Int32Array[ from_valueIndex ];
-                  input_TypedArray[ to_valueIndex ] = from_value;
-
-                  ++from_valueIndex;
-                  --from_valueCount_original_remained;
-
-                  ++to_valueIndex;
-                } // c
-
-                // 3.7.2
-                // Fill zero for
-                //   - channels exceeding area.from_valueCount_expanded, and
-                //   - pixels exceeding area.from_pixelCount_expanded.
-                for ( ; c < input_channelCount; ++c ) {
-                  input_TypedArray[ to_valueIndex ] = 0;
-                  ++to_valueIndex;
-                } // c
-
-              } // x_multiplier
-
-              from_valueIndex_x_begin += input_channelCount;
-
-              from_valueCount_original_remained_x_begin
-                -= channelCount_to_copy;
-            } // x
-
-            to_valueIndex_y_begin += input_width_valueCount;
-          } // y_multiplier
-
-          from_valueIndex_y_begin = from_valueIndex_x_begin;
-
-          from_valueCount_original_remained_y_begin
-            = from_valueCount_original_remained_x_begin;
-        } // y
-
-        // Note: Checking here (instead of in the channel c loop) for avoiding
-        //       performance reducing too much.
-        {
-          if ( from_valueCount_original_remained < 0 )
-            throw Error( `NeuralNet_FeedbackShape.${funcNameInMessage}(): `
-              + `from_valueCount_original_remained ( `
-              + `${from_valueCount_original_remained} ) `
-              + `should be non-negative.`
-            );
-        }
-
-        // Because area_from_valueCount_original may not be divisible by
-        // input_channelCount, the incremental from_valueIndex_y_begin is
-        // not usable here. So, assign area_from_valueCount_original to it
-        // directly. 
-        from_valueIndex_y_begin = area_from_valueCount_original;
-      } // alignmentIndex
-    } // neuralNetIndex
+      // Because area_from_valueCount_original may not be divisible by
+      // input_channelCount, the incremental from_valueIndex_y_begin is
+      // not usable here. So, assign area_from_valueCount_original to it
+      // directly. 
+      from_valueIndex_y_begin = area_from_valueCount_original;
+    } // areaIndex
   }
 
 
