@@ -225,6 +225,12 @@ class NeuralNet_ScaleFill {
 //       bFill = true;
 //     }
 
+
+//!!! ...unfinished.... (2023/05/05)
+// Perhaps, let scale do outside (e.g. by Canvas context drawImage()).
+// So that here can check source image size whether equal to
+// ( implicit + explicit ) size.
+
     // 1.4 Whether needs scale the source image to fit into the target tensor.
     let bScale;
     if (   ( source_height == this.target_height )
