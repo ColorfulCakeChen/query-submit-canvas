@@ -450,6 +450,9 @@ class NeuralWorker_Proxies extends Recyclable.Root {
    * @param {integer[]} markValueArray
    *   An array of values representing every neural network playing which
    * alignment.
+   *   - It could be null or undefined or ( markValueArray.length == 0 ) to
+   *       clear .this.alignmentMarkValueArray which means not to fill alignment
+   *       mark in source TypedArray. (i.e. NO _FILL)
    *
    * @return {Promise}
    *   Return a promise:
@@ -458,11 +461,17 @@ class NeuralWorker_Proxies extends Recyclable.Root {
    */
   async alignmentMarkValueArray_set_async( markValueArray ) {
 
-    if ( markValueArray.length != this.neuralNetCount )
-      throw Error( `NeuralWorker.Proxies.alignmentMarkValueArray_set_async(): `
-        + `markValueArray.length ( ${markValueArray.length} ) `
-        + `should be ${this.neuralNetCount}.`
-      );
+    const markValueArray_nonEmpty
+      = ( ( markValueArray ) && ( markValueArray.length > 0 ) );
+
+    if ( markValueArray_nonEmpty ) {
+      if ( markValueArray.length != this.neuralNetCount )
+        throw Error( `NeuralWorker.Proxies.alignmentMarkValueArray_set_async(): `
+          + `markValueArray.length ( ${markValueArray.length} ) `
+          + `should be either 0 or the same as `
+          + `.neuralNetCount ( ${this.neuralNetCount} ).`
+        );
+    }
 
     let resultOk;
 
@@ -471,9 +480,13 @@ class NeuralWorker_Proxies extends Recyclable.Root {
 
       let resultPromiseArray = new Array( this.workerProxyArray.length );
       for ( let i = 0; i < this.workerProxyArray.length; ++i ) {
-        resultPromiseArray[ i ]
-          = this.workerProxyArray[ i ].alignmentMarkValueArray_set_async(
-            [ markValueArray[ i ] ] );
+
+        let markValueArray_beSent;
+        if ( markValueArray_nonEmpty )
+          markValueArray_beSent = [ markValueArray[ i ] ];
+
+        resultPromiseArray[ i ] = this.workerProxyArray[ i ]
+          .alignmentMarkValueArray_set_async( markValueArray_beSent );
       }
 
       let resultOkArray = await Promise.all( resultPromiseArray );
@@ -485,9 +498,8 @@ class NeuralWorker_Proxies extends Recyclable.Root {
   
     // 2. The only one worker sets all alignment mark values.
     } else {
-      resultOk
-        = await this.workerProxyArray[ 0 ].alignmentMarkValueArray_set_async(
-            markValueArray );
+      resultOk = await this.workerProxyArray[ 0 ]
+        .alignmentMarkValueArray_set_async( markValueArray );
     }
 
     return resultOk;
