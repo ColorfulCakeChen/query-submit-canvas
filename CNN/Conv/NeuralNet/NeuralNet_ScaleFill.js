@@ -191,7 +191,7 @@ class NeuralNet_ScaleFill {
     const alignmentMarkValueArray_nonEmpty
       = ( alignmentMarkValueArray ) && ( alignmentMarkValueArray.length > 0 );
 
-    if ( alignmentMarkValueArray_nonEmpty )
+    if ( alignmentMarkValueArray_nonEmpty ) {
       if ( alignmentMarkValueArray.length != tensorCount )
         throw Error( `NeuralNet_ScaleFill.${funcNameInMessage}(): `
           + `alignmentMarkValueArray.length ( `
@@ -200,14 +200,15 @@ class NeuralNet_ScaleFill {
           + `tensorCount ( ${tensorCount} ) `
         );
 
-    if ( previous_output_Int32ArrayArray )
-      if ( previous_output_Int32ArrayArray.length != tensorCount )
-        throw Error( `NeuralNet_ScaleFill.${funcNameInMessage}(): `
-          + `previous_output_Int32ArrayArray.length ( `
-          + `${previous_output_Int32ArrayArray.length} ) `
-          + `should be the same as `
-          + `tensorCount ( ${tensorCount} ) `
-        );
+      if ( previous_output_Int32ArrayArray )
+        if ( previous_output_Int32ArrayArray.length != tensorCount )
+          throw Error( `NeuralNet_ScaleFill.${funcNameInMessage}(): `
+            + `previous_output_Int32ArrayArray.length ( `
+            + `${previous_output_Int32ArrayArray.length} ) `
+            + `should be the same as `
+            + `tensorCount ( ${tensorCount} ) `
+          );
+    }
 
     // 1.3 Whether needs fill extra information into the target tensor.
     let bFill;
