@@ -451,8 +451,8 @@ class NeuralWorker_Proxies extends Recyclable.Root {
    *   An array of values representing every neural network playing which
    * alignment.
    *   - It could be null or undefined or ( markValueArray.length == 0 ) to
-   *       clear .alignmentMarkValueArray for not filling alignment
-   *       mark in source TypedArray. (i.e. NO _FILL)
+   *       clear .alignmentMarkValueArray for not filling alignment mark
+   *       in source TypedArray. (i.e. NO _FILL)
    *
    * @return {Promise}
    *   Return a promise:
