@@ -425,8 +425,8 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
    *   An array of values representing every neural network playing which
    * alignment.
    *   - It could be null or undefined or ( markValueArray.length == 0 ) to
-   *       clear .this.alignmentMarkValueArray which means not to fill alignment
-   *       mark in source TypedArray. (i.e. NO _FILL)
+   *       clear .alignmentMarkValueArray for not filling alignment mark
+   *       in source TypedArray. (i.e. NO _FILL)
    *
    *   - For example, in a OX (connect-three) game:
    *     - ( markValueArray[ 0 ] == 0 ) means neural network 0 plays O side
