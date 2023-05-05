@@ -65,8 +65,9 @@ class NeuralNet_ScaleFill {
    *
 
 //!!! ...unfinished... (2023/05/05)
-// If ( !alignmentMarkValueArray ), it means NO_FILL.
-// In this case, previous_output_Int32ArrayArray[][] will be filled as 4 areas in one time.
+// If ( !alignmentMarkValueArray ) or ( alignmentMarkValueArray.length == 0 ),
+// it means NO_FILL. In this case, previous_output_Int32ArrayArray[][] will be
+// filled as 4 areas in one time.
 
    * @param {integer[]} alignmentMarkValueArray
    *   An array of values representing every neural network playing which
