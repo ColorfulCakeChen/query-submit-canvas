@@ -72,8 +72,15 @@ class NeuralNet_ScaleFill {
    * @param {integer[]} alignmentMarkValueArray
    *   An array of values representing every neural network playing which
    * alignment.
-   *   - If null or undefined or ( alignmentMarkValueArray.length == 0 ), there
-   *       will be no alignment mark value be filled into target tensor.
+   *
+   *   - If null or undefined or ( alignmentMarkValueArray.length == 0 ):
+   *     - There will be no alignment mark value be filled into target tensor.
+
+//!!! ...unfinished.... (2023/05/05)
+//!!!???
+   *     - Every previous_output_Int32ArrayArray[ n ] will be viewed as two
+   *         alignments' output of a neural network.
+   *
    *   - If not null:
    *     - alignmentMarkValueArray.length should be 1
    *         if ( bTwoTensors == false )
