@@ -72,8 +72,8 @@ class NeuralNet_ScaleFill {
    * @param {integer[]} alignmentMarkValueArray
    *   An array of values representing every neural network playing which
    * alignment.
-   *   - If null or undefined, there will be no alignment mark value be
-   *       filled into target tensor.
+   *   - If null or undefined or ( alignmentMarkValueArray.length == 0 ), there
+   *       will be no alignment mark value be filled into target tensor.
    *   - If not null:
    *     - alignmentMarkValueArray.length should be 1
    *         if ( bTwoTensors == false )
@@ -171,12 +171,16 @@ class NeuralNet_ScaleFill {
     }
   
     // 1.3
-    if ( alignmentMarkValueArray )
+      
+    const alignmentMarkValueArray_nonEmpty
+      = ( alignmentMarkValueArray ) && ( alignmentMarkValueArray.length > 0 );
+
+    if ( alignmentMarkValueArray_nonEmpty )
       if ( alignmentMarkValueArray.length != tensorCount )
         throw Error( `NeuralNet_ScaleFill.${funcNameInMessage}(): `
           + `alignmentMarkValueArray.length ( `
           + `${alignmentMarkValueArray.length} ) `
-          + `should be the same as `
+          + `should be either 0 or the same as `
           + `tensorCount ( ${tensorCount} ) `
         );
 
