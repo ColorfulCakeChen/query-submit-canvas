@@ -588,7 +588,6 @@ class NeuralNet_FeedbackShape extends NeuralNet_FeedbackToInput {
         + `( ${from_output_pixelCountMax} ).`
       );
 
-!!! ...unfinished... (2023/05/05)
     // 5.
     let from_output_valueIndex = from_output_valueIndexBase
       + ( from_output_pixelIndex * this.input_channelCount );
