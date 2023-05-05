@@ -7,6 +7,12 @@ import { Int } from "../../Unpacker/ValueDesc/ValueDesc_Base.js";
  * Convert number value into integer between [ 0, 8 ] representing neural
  * worker mode:
  *
+
+//!!! ...unfinished... (2023/05/05)
+// Deprecate NO_FILL.
+// When alignment mark is specified, it and previous time output
+// (i.e. feedback) will be filled automatically.
+
  *   -  0: ONE_WORKER__TWO_NET__ONE_SCALE__FILL             (training usage)
  *   -  1: ONE_WORKER__TWO_NET__ONE_SCALE__NO_FILL          (training usage)
  *

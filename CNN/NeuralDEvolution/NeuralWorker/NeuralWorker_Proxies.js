@@ -73,6 +73,12 @@ import { Mode as NeuralWorker_Mode } from "./NeuralWorker_Mode.js";
  *     - The cost are downloading input image from GPU to CPU, filling alignment
  *         mark, and uploading it from CPU to GPU.
  *
+
+//!!! ...unfinished... (2023/05/05)
+// Deprecate NO_FILL.
+// When alignment mark is specified, it and previous time output
+// (i.e. feedback) will be filled automatically.
+
  *   - NO_FILL means the input image will not be filled any extra information
  *       before it is processed by a neural network.
  *
