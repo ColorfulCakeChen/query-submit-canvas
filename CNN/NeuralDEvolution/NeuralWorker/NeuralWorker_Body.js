@@ -94,7 +94,7 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
     // Clear resources.
     {
       if ( this.alignmentMarkValueArray )
-        this.alignmentMarkValueArray.length = 0;
+        this.alignmentMarkValueArray.length = 0; // default is NO_FILL.
 
       if ( this.neuralNetArray )
         this.neuralNetArray.clear(); // Release old neural networks.
@@ -423,29 +423,41 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
   /**
    * @param {integer[]} markValueArray
    *   An array of values representing every neural network playing which
-   * alignment. For example, in a OX (connect-three) game:
-   *   - ( markValueArray[ 0 ] == 0 ) means neural network 0 plays O side
-   *       currently.
-   *   - ( markValueArray[ 1 ] == 255 ) means neural network 1 plays X side
-   *       currently.
+   * alignment.
+   *   - It could be null or undefined or ( markValueArray.length == 0 ) to
+   *       clear .this.alignmentMarkValueArray which means not to fill alignment
+   *       mark in source TypedArray. (i.e. NO _FILL)
+   *
+   *   - For example, in a OX (connect-three) game:
+   *     - ( markValueArray[ 0 ] == 0 ) means neural network 0 plays O side
+   *         currently.
+   *     - ( markValueArray[ 1 ] == 255 ) means neural network 1 plays X side
+   *         currently.
    *
    * @yield {boolean}
    *   - Yield { done: true, value: { value: true } }.
    */
   async* alignmentMarkValueArray_set( markValueArray ) {
 
-    // 0. Prepare container for all neural networks' mark value.
-    {
-      if ( this.alignmentMarkValueArray )
-        this.alignmentMarkValueArray.length = markValueArray.length;
-      else
-        this.alignmentMarkValueArray
-          = Recyclable.Array.Pool.get_or_create_by( markValueArray.length );
-    }
+    if ( ( markValueArray ) && ( markValueArray.length > 0 ) ) { // 1.
 
-    // 1. Copy the alignment mark values.
-    for ( let i = 0; i < this.alignmentMarkValueArray.length; ++i ) {
-      this.alignmentMarkValueArray[ i ] = markValueArray[ i ];
+      // 1.1 Prepare container for all neural networks' mark value.
+      {
+        if ( this.alignmentMarkValueArray )
+          this.alignmentMarkValueArray.length = markValueArray.length;
+        else
+          this.alignmentMarkValueArray
+            = Recyclable.Array.Pool.get_or_create_by( markValueArray.length );
+      }
+
+      // 1.2 Copy the alignment mark values.
+      for ( let i = 0; i < this.alignmentMarkValueArray.length; ++i ) {
+        this.alignmentMarkValueArray[ i ] = markValueArray[ i ];
+      }
+
+    } else { // 2.
+      if ( this.alignmentMarkValueArray )
+        this.alignmentMarkValueArray.length = 0;
     }
 
     return { value: true };
