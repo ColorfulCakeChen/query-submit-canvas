@@ -102,11 +102,20 @@ class NeuralNet_ScaleFill {
 
    * @param {Int32Array[]} previous_output_Int32ArrayArray
    *   The (previous time) output of the pair of neural networks.
+   *
    *   - If null or undefined, there will be no feedback information be filled
    *       into target tensor.
+   *
    *   - If not null:
+   *
+   *     - If alignmentMarkValueArray is null or undefined or
+   *         ( alignmentMarkValueArray.length == 0 ), the
+   *         previous_output_Int32ArrayArray will be ignored and there will be
+   *         no feedback information be filled into target tensor.
+   *
    *     - previous_output_Int32ArrayArray.length should be 1
    *         if ( bTwoTensors == false )
+   *
    *     - previous_output_Int32ArrayArray.length should be 2
    *         if ( bTwoTensors == true )
    *
@@ -202,12 +211,18 @@ class NeuralNet_ScaleFill {
 
     // 1.3 Whether needs fill extra information into the target tensor.
     let bFill;
-    if (   ( alignmentMarkValueArray == undefined )
-        && ( previous_output_Int32ArrayArray == undefined ) ) {
-      bFill = false;
-    } else {
+    if ( alignmentMarkValueArray_nonEmpty )
       bFill = true;
-    }
+    else
+      bFill = false;
+
+//!!! (2023/05/05 Remarked) Only according to alignmentMarkValueArray.
+//     if (   ( alignmentMarkValueArray == undefined )
+//         && ( previous_output_Int32ArrayArray == undefined ) ) {
+//       bFill = false;
+//     } else {
+//       bFill = true;
+//     }
 
     // 1.4 Whether needs scale the source image to fit into the target tensor.
     let bScale;
