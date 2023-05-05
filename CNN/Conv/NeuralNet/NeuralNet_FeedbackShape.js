@@ -238,6 +238,26 @@ class NeuralNet_FeedbackShape extends NeuralNet_FeedbackToInput {
   }
 
   /**
+   * Fill the previous time output (i.e. feedback) to the next time input. The
+   * pixels (including channels of partial pixel) which inside input area but
+   * outside previous output will be filled with zero.
+   *
+   *
+   * @param {Uint8ClampedArray|Int32Array} input_TypedArray
+   *   The (next time) input of the pair of neural networks. Usually, it is
+   * integer typed array. It should large enough to contain both implicit and
+   * explicit input.
+   *
+   * @param {Int32Array} previous_output_Int32Array
+   *   The (previous time) output of the neural networks.
+   *
+   */
+  set_implicit_input_by__alignmentMarkValue_previousOtput(
+    input_TypedArray, previous_output_Int32Array ) {
+!!!
+  }
+
+  /**
    * Fill the alignment mark value to the next time input. All pixels
    * (including every channels) inside input area will be filled with the
    * alignment mark value.
@@ -333,10 +353,10 @@ class NeuralNet_FeedbackShape extends NeuralNet_FeedbackToInput {
    *   The (previous time) output of the neural networks.
    *
    */
-  set_implicit_input_by_previous_output(
+  set_implicit_input_by_previousOutput(
     input_TypedArray, previous_output_Int32Array ) {
 
-    const funcNameInMessage = "set_implicit_input_by_previous_output";
+    const funcNameInMessage = "set_implicit_input_by_previousOutput";
 
     const input_channelCount = this.input_channelCount;
     const area = this.area;
