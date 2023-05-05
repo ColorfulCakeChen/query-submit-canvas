@@ -274,9 +274,6 @@ class NeuralNet_FeedbackShape extends NeuralNet_FeedbackToInput {
     const area_width_pixelCount_original = area.width_pixelCount_original;
     const area_width_multiplier = area.width_multiplier;
 
-    const area_from_valueCount_original = area.from_valueCount_original;
-    const area_from_valueCount_expanded = area.from_valueCount_expanded;
-
     // 4. Fill alignment mark value to the next time input.
     let to_valueIndex = 0;
 

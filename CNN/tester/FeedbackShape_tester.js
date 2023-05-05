@@ -554,6 +554,9 @@ class TestCase {
 
     this.nextInputArray_explicit_fill();
 
+//!!! ...unfinished... (2023/05/05)
+//  set_implicit_input_by_alignmentMarkValue
+
     // fill implicit input.
     feedbackShape.set_implicit_input_by_previous_output(
       this.nextInputArray, this.from_output_valueArrayArray );
