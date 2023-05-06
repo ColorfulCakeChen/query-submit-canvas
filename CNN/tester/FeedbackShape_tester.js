@@ -10,7 +10,7 @@ class TestCase {
   /** */
   constructor( testCaseId, feedbackShape,
     explicit_input_height, explicit_input_width, explicit_input_channelCount,
-    feedback_valueCount_per_alignment
+    feedback_valueCount
   ) {
     this.testCaseId = testCaseId;
     this.feedbackShape = feedbackShape;
@@ -18,13 +18,11 @@ class TestCase {
     this.explicit_input_height = explicit_input_height;
     this.explicit_input_width = explicit_input_width;
     this.explicit_input_channelCount = explicit_input_channelCount;
-    this.feedback_valueCount_per_alignment = feedback_valueCount_per_alignment;
+    this.feedback_valueCount = feedback_valueCount;
 
     this.to_valueArray = new Array();
 
-    this.from_output_valueArrayArray = new Array();
-    this.from_output_valueArrayArray[ 0 ] = new Array();
-    this.from_output_valueArrayArray[ 1 ] = new Array();
+    this.from_output_valueArray = new Array();
 
     //!!! (2023/04/28 Remarked) Use Int32Array instead.
     //this.nextInputArray = new Array();
@@ -39,11 +37,11 @@ class TestCase {
       this.explicit_input_height,
       this.explicit_input_width,
       this.explicit_input_channelCount,
-      this.feedback_valueCount_per_alignment
+      this.feedback_valueCount
     );
 
     this.from_value_offset_exponent_per_neuralNet = Math.ceil(
-      Math.log10( feedbackShape.perNeuralNet.from_valueCount_expanded ) );
+      Math.log10( feedbackShape.area.from_valueCount_expanded ) );
 
     this.from_value_offset_per_neuralNet
       = 10 ** this.from_value_offset_exponent_per_neuralNet;
@@ -55,37 +53,19 @@ class TestCase {
 
     // from_output_valueArray
     {
-      for ( let neuralNetIndex = 0;
-        neuralNetIndex < feedbackShape.neuralNetCount; ++neuralNetIndex ) {
+      const area_from_valueCount_original
+        = feedbackShape.area.from_valueCount_original;
 
-        let from_output_valueArray
-          = this.from_output_valueArrayArray[ neuralNetIndex ];
-      
-        from_output_valueArray.length
-          = feedbackShape.perNeuralNet.from_valueCount_original;
+      let from_output_valueArray = this.from_output_valueArray;
+      from_output_valueArray.length = area_from_valueCount_original;
 
-        const area_from_valueCount_original
-          = feedbackShape.area.from_valueCount_original;
+      const neuralNetIndex = 0;
+      const from_value_base_positive
+        = this.from_value_offset_per_neuralNet * neuralNetIndex;
 
-        const from_value_base_positive
-          = this.from_value_offset_per_neuralNet * neuralNetIndex;
-
-        // all positive integers (for alignment 0)
-        for ( let i = 0; i < area_from_valueCount_original; ++i ) {
-          from_output_valueArray[ i ] = i + 1 + from_value_base_positive;
-        }
-
-        // all negative integers (for alignment 1)
-        const twiceLength = 2 * area_from_valueCount_original;
-        for ( let i = area_from_valueCount_original; i < twiceLength; ++i ) {
-          from_output_valueArray[ i ]
-            = ( area_from_valueCount_original - i ) - 1 - from_value_base_positive;
-        }
-
-        // In normal, it should not have this part.
-        for ( let i = twiceLength; i < from_output_valueArray.length; ++i ) {
-          from_output_valueArray[ i ] = 0; // zero.
-        }
+      // all positive integers (for alignment 0)
+      for ( let i = 0; i < area_from_valueCount_original; ++i ) {
+        from_output_valueArray[ i ] = i + 1 + from_value_base_positive;
       }
     }
 
@@ -449,89 +429,59 @@ class TestCase {
       = feedbackShape.area.from_pixelCount_original;
 
     const neuralNetIndex = 0;
-    const from_output_valueArray
-      = this.from_output_valueArrayArray[ neuralNetIndex ];
+    const from_output_valueArray = this.from_output_valueArray;
     const from_value_base_positive
       = this.from_value_offset_per_neuralNet * neuralNetIndex;
 
     const tryTestCount = 10;
+    for ( let testCount = 0; testCount < tryTestCount; ++testCount ) {
 
-    for ( let alignmentIndex = 0;
-      alignmentIndex < feedbackShape.alignmentCount_per_neuralNet;
-      ++alignmentIndex ) {
+      let from_output_pixelIndexBegin = RandTools.getRandomIntInclusive(
+        0, area_from_pixelCount_original - 1 );
 
-      for ( let testCount = 0; testCount < tryTestCount; ++testCount ) {
+      //!!! (2023/04/28 Remarked) Too many to test.
+      // for ( let from_output_pixelIndexBegin = 0;
+      //   from_output_pixelIndexBegin < area_from_pixelCount_original;
+      //   ++from_output_pixelIndexBegin )
+      {
+        const pixelCountMax
+          = area_from_pixelCount_original - from_output_pixelIndexBegin;
 
-        let from_output_pixelIndexBegin = RandTools.getRandomIntInclusive(
-          0, area_from_pixelCount_original - 1 );
+        let from_output_pixelCount
+          = RandTools.getRandomIntInclusive( 0, pixelCountMax );
 
-        //!!! (2023/04/28 Remarked) Too many to test.
-        // for ( let from_output_pixelIndexBegin = 0;
-        //   from_output_pixelIndexBegin < area_from_pixelCount_original;
-        //   ++from_output_pixelIndexBegin )
+        //!!! (2023/04/28 Remarked) Too mant to test.
+        // for ( let from_output_pixelCount = 0;
+        //   from_output_pixelCount < pixelCountMax;
+        //   ++from_output_pixelCount )
         {
-          const pixelCountMax
-            = area_from_pixelCount_original - from_output_pixelIndexBegin;
+          feedbackShape.valueArray_get_from_output_valueArray_1st_channel(
+            this.to_valueArray, from_output_valueArray,
+            from_output_pixelIndexBegin, from_output_pixelCount
+          );
 
-          let from_output_pixelCount
-            = RandTools.getRandomIntInclusive( 0, pixelCountMax );
-
-          //!!! (2023/04/28 Remarked) Too mant to test.
-          // for ( let from_output_pixelCount = 0;
-          //   from_output_pixelCount < pixelCountMax;
-          //   ++from_output_pixelCount )
-          {
-            feedbackShape.valueArray_get_from_output_valueArray_1st_channel(
-              this.to_valueArray, from_output_valueArray,
-              alignmentIndex, from_output_pixelIndexBegin, from_output_pixelCount
+          if ( this.to_valueArray.length != from_output_pixelCount )
+            throw Error( `FeedbackShape_tester.TestCase.${funcNameInMessage}(): `
+              + `to_valueArray.length ( ${this.to_valueArray.length} ) `
+              + `should be the same as `
+              + `from_output_pixelCount ( ${from_output_pixelCount} ). `
+              + `{ ${this} }.`
             );
 
-            if ( this.to_valueArray.length != from_output_pixelCount )
-              throw Error( `FeedbackShape_tester.TestCase.${funcNameInMessage}(): `
-                + `to_valueArray.length ( ${this.to_valueArray.length} ) `
-                + `should be the same as `
-                + `from_output_pixelCount ( ${from_output_pixelCount} ). `
-                + `{ ${this} }.`
-              );
+          {
+            // should be all positive continuous integers.
+            let expectedValue
+              = ( from_output_pixelIndexBegin * input_channelCount ) + 1
+                  + from_value_base_positive;
 
-            if ( alignmentIndex == 0 ) {
-              // should be all positive continuous integers.
-              let expectedValue
-                = ( from_output_pixelIndexBegin * input_channelCount ) + 1
-                    + from_value_base_positive;
-
-              for ( let i = 0; i < this.to_valueArray.length; ++i ) {
-                if ( this.to_valueArray[ i ] != expectedValue )
-                  throw Error( `FeedbackShape_tester.TestCase.${funcNameInMessage}(): `
-                    + `to_valueArray[ ${i} ]=${this.to_valueArray[ i ]} `
-                    + `should be ( ${expectedValue} ). `
-                    + `{ ${this} }.`
-                  );
-                expectedValue += input_channelCount;
-              }
-
-            } else if ( alignmentIndex == 1 ) {
-              // should be all negative continuous integers.
-              let expectedValue
-                = - ( from_output_pixelIndexBegin * input_channelCount ) - 1
-                    - from_value_base_positive;
-
-              for ( let i = 0; i < this.to_valueArray.length; ++i ) {
-                if ( this.to_valueArray[ i ] != expectedValue )
-                  throw Error( `FeedbackShape_tester.TestCase.${funcNameInMessage}(): `
-                    + `to_valueArray[ ${i} ]=${this.to_valueArray[ i ]} `
-                    + `should be ( ${expectedValue} ). `
-                    + `{ ${this} }.`
-                  );
-                expectedValue -= input_channelCount;
-              }
-
-            } else {
-              throw Error( `FeedbackShape_tester.TestCase.${funcNameInMessage}(): `
-                + `alignmentIndex ( ${alignmentIndex} ) `
-                + `should be either 0 or 1. `
-                + `{ ${this} }.`
-              );
+            for ( let i = 0; i < this.to_valueArray.length; ++i ) {
+              if ( this.to_valueArray[ i ] != expectedValue )
+                throw Error( `FeedbackShape_tester.TestCase.${funcNameInMessage}(): `
+                  + `to_valueArray[ ${i} ]=${this.to_valueArray[ i ]} `
+                  + `should be ( ${expectedValue} ). `
+                  + `{ ${this} }.`
+                );
+              expectedValue += input_channelCount;
             }
           }
         }
