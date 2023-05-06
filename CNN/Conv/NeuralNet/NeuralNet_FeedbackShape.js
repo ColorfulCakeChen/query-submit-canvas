@@ -209,7 +209,7 @@ class NeuralNet_FeedbackShape extends NeuralNet_FeedbackToInput {
   }
 
   /**
-   * Call .set_implicit_input_by_alignmentMark() and
+   * Call .set_implicit_input_by_alignmentMarkValue() and
    * .set_implicit_input_by_previousOutputTypedArray().
    *
    *
@@ -225,10 +225,10 @@ class NeuralNet_FeedbackShape extends NeuralNet_FeedbackToInput {
    * @param {Int32Array} previous_output_Int32Array
    *   The (previous time) output of the neural networks.
    */
-  set_implicit_input_by_alignmentMark_previousOutputTypedArray(
+  set_implicit_input_by_alignmentMarkValue_previousOutputTypedArray(
     input_TypedArray, alignmentMarkValue, previous_output_Int32Array ) {
 
-    this.set_implicit_input_by_alignmentMark(
+    this.set_implicit_input_by_alignmentMarkValue(
       input_TypedArray, alignmentMarkValue );
 
     this.set_implicit_input_by_previousOutputTypedArray(
@@ -250,10 +250,10 @@ class NeuralNet_FeedbackShape extends NeuralNet_FeedbackToInput {
    * @param {integer} alignmentMarkValue
    *   The value representing the neural network playing which alignment currently.
    */
-  set_implicit_input_by_alignmentMark(
+  set_implicit_input_by_alignmentMarkValue(
     input_TypedArray, alignmentMarkValue ) {
 
-    const funcNameInMessage = "set_implicit_input_by_alignmentMark";
+    const funcNameInMessage = "set_implicit_input_by_alignmentMarkValue";
 
     // Q: Why fill an area pixels? Why not just fill ( 1 * 1 ) pixel?
     // A: NeuralNet mainly uses ( 3 * 3 ) depthwise filter.
