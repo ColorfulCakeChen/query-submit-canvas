@@ -28,7 +28,8 @@ import * as BatchIdCalculator from "./BatchIdCalculator.js";
 class PerformanceTestCase extends Recyclable.Root {
 
   /**
-   * Used as default PerformanceTestCase provider for conforming to Recyclable interface.
+   * Used as default PerformanceTestCase provider for conforming to Recyclable
+   * interface.
    */
   static Pool = new Pool.Root( "PerformanceTestCase.Pool",
     PerformanceTestCase, PerformanceTestCase.setAsConstructor );
@@ -157,6 +158,9 @@ class HeightWidthDepth {
     this.depth = depth;
 
     this.valueCount = height * width * depth;
+
+    this.output_channelCount = 4; //400; //300; //64;
+    this.has_implicit_input = true;
   }
 
   disposeResources() {
@@ -185,18 +189,34 @@ class HeightWidthDepth {
 
 !!! ...unfinished... (2023/05/06) has_implicit_input
 
-
     {
-      let largerHeight = this.height * 20;
-      let largerWidth = this.width * 20;
-      let inputChannelCount = this.depth; // Must be 4;
+      let input_height, input_width, input_channelCount;
+      if ( this.has_implicit_input ) {
+        let feedbackShape = new NeuralNet.FeedbackShape();
+
+        const feedback_valueCount = this.output_channelCount;
+        feedbackShape.init( this.height, this.width, this.depth,
+          feedback_valueCount );
+
+        input_height = feedbackShape.input_height;
+        input_width = feedbackShape.input_width;
+        input_channelCount = feedbackShape.input_channelCount;
+
+      } else {
+        input_height = this.height;
+        input_width = this.width;
+        input_channelCount = this.depth; // Must be 4;
+      }
+
+      let largerHeight = input_height * 20;
+      let largerWidth = input_width * 20;
 
       this.testCanvas = document.createElement( "canvas" );
       this.testCanvas.height = largerHeight;
       this.testCanvas.width = largerWidth;
 
       let inputImage = this.testPerformance_imageSourceBag.getImage_by(
-        largerHeight, largerWidth, inputChannelCount );
+        largerHeight, largerWidth, input_channelCount );
 
       let contextAttributes = { willReadFrequently: true };
       let ctx = this.testCanvas.getContext( "2d", contextAttributes );
@@ -216,10 +236,12 @@ class HeightWidthDepth {
     else
       this.testCaseMap = new Map();
 
+    const has_implicit_input = this.has_implicit_input;
+
     let vocabularyChannelCount = 8; //4;
     let vocabularyCountPerInputChannel = 256;
     let blockCountTotalRequested = 100; //50; //20; //10;
-    let output_channelCount = 4; //400; //300; //64;
+    const output_channelCount = this.output_channelCount;
 
     // ShuffleNetV2 uses twice block count to compensate reduced channel count.
     //let blockCountTotalRequested_ShuffleNet = blockCountTotalRequested * 2;
@@ -231,7 +253,8 @@ class HeightWidthDepth {
     // input image is created from canvas in real time.
     let bKeepInputTensor = false;
 
-    // input_height, input_width, input_channelCount,
+    // explicit_input_height, explicit_input_width, explicit_input_channelCount,
+    // has_implicit_input,
     // vocabularyChannelCount, vocabularyCountPerInputChannel,
     // nConvStageTypeId,
     // blockCountTotalRequested,
@@ -243,6 +266,7 @@ class HeightWidthDepth {
     this.neuralNet_PerformanceTest_addCase( 0, "MobileNetV1",
       NeuralNet.ParamsBase.Pool.get_or_create_by(
         this.height, this.width, this.depth,
+        has_implicit_input,
         vocabularyChannelCount, vocabularyCountPerInputChannel,
         ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V1,
         blockCountTotalRequested,
@@ -254,6 +278,7 @@ class HeightWidthDepth {
     this.neuralNet_PerformanceTest_addCase( 1, "MobileNetV1_padValid",
       NeuralNet.ParamsBase.Pool.get_or_create_by(
         this.height, this.width, this.depth,
+        has_implicit_input,
         vocabularyChannelCount, vocabularyCountPerInputChannel,
         ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V1_PAD_VALID,
         blockCountTotalRequested,
@@ -265,6 +290,7 @@ class HeightWidthDepth {
     this.neuralNet_PerformanceTest_addCase( 2, "MobileNetV2_Thin",
       NeuralNet.ParamsBase.Pool.get_or_create_by(
         this.height, this.width, this.depth,
+        has_implicit_input,
         vocabularyChannelCount, vocabularyCountPerInputChannel,
         ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V2_THIN,
         blockCountTotalRequested,
@@ -276,6 +302,7 @@ class HeightWidthDepth {
     this.neuralNet_PerformanceTest_addCase( 3, "MobileNetV2",
       NeuralNet.ParamsBase.Pool.get_or_create_by(
         this.height, this.width, this.depth,
+        has_implicit_input,
         vocabularyChannelCount, vocabularyCountPerInputChannel,
         ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V2,
         blockCountTotalRequested,
@@ -287,6 +314,7 @@ class HeightWidthDepth {
     this.neuralNet_PerformanceTest_addCase( 4, "ShuffleNetV2",
       NeuralNet.ParamsBase.Pool.get_or_create_by(
         this.height, this.width, this.depth,
+        has_implicit_input,
         vocabularyChannelCount, vocabularyCountPerInputChannel,
         ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2,
         blockCountTotalRequested,
@@ -298,6 +326,7 @@ class HeightWidthDepth {
     this.neuralNet_PerformanceTest_addCase( 5, "ShuffleNetV2_byPointwise21",
       NeuralNet.ParamsBase.Pool.get_or_create_by(
         this.height, this.width, this.depth,
+        has_implicit_input,
         vocabularyChannelCount, vocabularyCountPerInputChannel,
         ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21,
         blockCountTotalRequested,
@@ -309,6 +338,7 @@ class HeightWidthDepth {
     this.neuralNet_PerformanceTest_addCase( 6, "ShuffleNetV2_byMobileNetV1",
       NeuralNet.ParamsBase.Pool.get_or_create_by(
         this.height, this.width, this.depth,
+        has_implicit_input,
         vocabularyChannelCount, vocabularyCountPerInputChannel,
         ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1,
         blockCountTotalRequested,
@@ -320,6 +350,7 @@ class HeightWidthDepth {
     this.neuralNet_PerformanceTest_addCase( 7, "ShuffleNetV2_byMobileNetV1_padValid",
       NeuralNet.ParamsBase.Pool.get_or_create_by(
         this.height, this.width, this.depth,
+        has_implicit_input,
         vocabularyChannelCount, vocabularyCountPerInputChannel,
         ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID,
         blockCountTotalRequested,
@@ -391,7 +422,8 @@ class HeightWidthDepth {
     {
       let pool_all_issuedCount_before = Pool.All.issuedCount;
 
-      //Pool.Asserter.assert_Pool_issuedCount_same_after_as_before( "jsPerf_NeuralNet.HeightWidthDepth.testCorrectness()", () => {
+      //Pool.Asserter.assert_Pool_issuedCount_same_after_as_before(
+      //   "jsPerf_NeuralNet.HeightWidthDepth.testCorrectness()", () => {
       //}, this );
 
       yield;
@@ -400,8 +432,8 @@ class HeightWidthDepth {
         let memoryInfo_testCorrectness_before = tf.memory(); // Test memory leakage of imageSourceBag.
 
         {
-          // Note: imageSourceBag should not be created outside tidy() because tidy() will dispose tensors
-          //       dynamically created in them.
+          // Note: imageSourceBag should not be created outside tidy() because
+          //       tidy() will dispose tensors dynamically created in them.
           let imageSourceBag = ImageSourceBag.Base.Pool.get_or_create_by( "int32" );
 
           let testParams = NeuralNet_TestParams.Base.Pool.get_or_create_by();
@@ -413,16 +445,21 @@ class HeightWidthDepth {
           try {
             for ( testParams of testParamsGenerator ) {
               let bDisplayed = batchIdCalculator.checkAndDisplay( testParams.id );
+
+              // Since just entering a new batch section, take a break so that
+              // memory garbage collector could be activated to work.
               if ( bDisplayed )
-                yield; // Since just entering a new batch section, take a break so that memory garbage collector could be activated to work.
+                yield;
 
               testReference.testCorrectness( imageSourceBag, testParams );
             }
 
           } catch ( e ) {
             let backendName = tf.getBackend();
-            let msg = `jsPerf_NeuralNet.js: testCorrectness(): backendName=${backendName}, `
-              + `NeuralNet, (yieldCount == ${testParams.yieldCount}), testParams.id == ${testParams.id}`;
+            let msg = `jsPerf_NeuralNet.js: testCorrectness(): `
+              + `backendName=${backendName}, `
+              + `NeuralNet, (yieldCount == ${testParams.yieldCount}), `
+              + `testParams.id == ${testParams.id}`;
 
             console.log( msg );
             alert( `${msg}\n${e}` );
@@ -440,7 +477,8 @@ class HeightWidthDepth {
 
         let memoryInfo_testCorrectness_after = tf.memory();
 
-        if ( memoryInfo_testCorrectness_after.numTensors != memoryInfo_testCorrectness_before.numTensors )
+        if ( memoryInfo_testCorrectness_after.numTensors
+               != memoryInfo_testCorrectness_before.numTensors )
           throw Error( `testCorrectness() memory leak. `
             + `result tensor count (${memoryInfo_testCorrectness_after.numTensors}) `
             + `should be (${memoryInfo_testCorrectness_before.numTensors} `
@@ -448,7 +486,9 @@ class HeightWidthDepth {
       }
 
       Pool.Asserter.assert_Pool_issuedCount(
-        "jsPerf_NeuralNet.HeightWidthDepth.testCorrectness()", pool_all_issuedCount_before );
+        "jsPerf_NeuralNet.HeightWidthDepth.testCorrectness()",
+        pool_all_issuedCount_before );
+
       yield;
     }
 

@@ -685,66 +685,63 @@ class NeuralNet_Base extends Recyclable.Root {
    */
 
 
+  /**
+   * Create a tensor3d from source (e.g. canvas). Its size will be confirmed
+   * (by scaling) to this neural network's acceptable input [ height, width ].
+   *
+   * @param {Uint8Array|ImageData|ImageBitmap|HTMLImageElement|HTMLCanvasElement|HTMLVideoElement} sourcePixelData
+   *   The image or canvas which provides image (as RGBA 4-channels Uint8 data).
+   *
+   * @param {boolean} bForceInt32
+   *   If true, the dtype of the returned tf.tensor3d will be guaranteed as
+   * int32. Otherwise, the dtype of the returned tf.tensor3d may be int32 or
+   * float32 (if resized). This is useful if the result will be used by an
+   * embedding layer (which only accepts integer input). Default is true.
+   *
+   * @return {tf.tensor3d}
+   *   Return the tensor3d which is the scaled image from canvas. Its size will
+   * be [ this.input_height, this.input_width, this.input_channelCount ].
+   */
+  create_ScaledSourceTensor_from_PixelData( sourcePixelData, bForceInt32 = true ) {
 
-//!!! (2023//05/06 Remarked) Use NeuralNet_ScaleFill instead.
-//   /**
-//    * Create a tensor3d from source (e.g. canvas). Its size will be confirmed
-//    * (by scaling) to this neural network's acceptable input [ height, width ].
-//    *
-//    * @param {Uint8Array|ImageData|ImageBitmap|HTMLImageElement|HTMLCanvasElement|HTMLVideoElement} sourcePixelData
-//    *   The image or canvas which provides image (as RGBA 4-channels Uint8 data).
-//    *
-//    * @param {boolean} bForceInt32
-//    *   If true, the dtype of the returned tf.tensor3d will be guaranteed as
-//    * int32. Otherwise, the dtype of the returned tf.tensor3d may be int32 or
-//    * float32 (if resized). This is useful if the result will be used by an
-//    * embedding layer (which only accepts integer input). Default is true.
-//    *
-//    * @return {tf.tensor3d}
-//    *   Return the tensor3d which is the scaled image from canvas. Its size will
-//    * be [ this.input_height, this.input_width, this.input_channelCount ].
-//    */
-//   create_ScaledSourceTensor_from_PixelData( sourcePixelData, bForceInt32 = true ) {
-//
-//     //!!! ...unfinished... (2022/08/15) What about .fromPixelsAsync() ?
-//     let sourceTensor = tf.browser.fromPixels(
-//       sourcePixelData, this.input_channelCount ); // dtype will be int32.
-//
-//     // If the size ( height x width ) is as expected, use it directly.
-//     if (   ( sourceTensor.shape[ 0 ] == this.input_height )
-//         && ( sourceTensor.shape[ 1 ] == this.input_width  ) )
-//       return sourceTensor; // (Note: dtype will still be int32.)
-//
-//     // Otherwise, resize to the default size (height x width) which is the input
-//     // image size used for training the neural network.
-//     //
-//     let scaledSourceTensorFloat32;
-//     try {
-//       scaledSourceTensorFloat32 = tf.image.resizeBilinear(
-//         sourceTensor, this.input_height_width_array,
-//         true // ( alignCorners = true ) for visual image resizing.
-//       );
-//     } catch ( e ) {
-//       throw e; // e.g. out of (GPU) memory.
-//     } finally {
-//       sourceTensor.dispose();
-//     }
-//
-//     if ( !bForceInt32 )
-//       return scaledSourceTensorFloat32;
-//
-//     // Convert to int32 if necessary. (Note: The dtype of tf.image.resizeXxx()'s
-//     // result is float32.)
-//     try {
-//       let scaledSourceTensorInt32 = scaledSourceTensorFloat32.cast( "int32" );
-//       return scaledSourceTensorInt32;
-//     } catch ( e ) {
-//       throw e; // e.g. out of (GPU) memory.
-//     } finally {
-//       scaledSourceTensorFloat32.dispose();
-//     }
-//   }
+    //!!! ...unfinished... (2022/08/15) What about .fromPixelsAsync() ?
+    let sourceTensor = tf.browser.fromPixels(
+      sourcePixelData, this.input_channelCount ); // dtype will be int32.
 
+    // If the size ( height x width ) is as expected, use it directly.
+    if (   ( sourceTensor.shape[ 0 ] == this.input_height )
+        && ( sourceTensor.shape[ 1 ] == this.input_width  ) )
+      return sourceTensor; // (Note: dtype will still be int32.)
+
+    // Otherwise, resize to the default size (height x width) which is the input
+    // image size used for training the neural network.
+    //
+    let scaledSourceTensorFloat32;
+    try {
+      scaledSourceTensorFloat32 = tf.image.resizeBilinear(
+        sourceTensor, this.input_height_width_array,
+        true // ( alignCorners = true ) for visual image resizing.
+      );
+    } catch ( e ) {
+      throw e; // e.g. out of (GPU) memory.
+    } finally {
+      sourceTensor.dispose();
+    }
+
+    if ( !bForceInt32 )
+      return scaledSourceTensorFloat32;
+
+    // Convert to int32 if necessary. (Note: The dtype of tf.image.resizeXxx()'s
+    // result is float32.)
+    try {
+      let scaledSourceTensorInt32 = scaledSourceTensorFloat32.cast( "int32" );
+      return scaledSourceTensorInt32;
+    } catch ( e ) {
+      throw e; // e.g. out of (GPU) memory.
+    } finally {
+      scaledSourceTensorFloat32.dispose();
+    }
+  }
 
   /**
    * @param {tf.tensor3d} inputTensor
