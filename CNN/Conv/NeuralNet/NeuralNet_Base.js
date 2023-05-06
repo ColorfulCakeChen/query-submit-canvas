@@ -607,6 +607,9 @@ class NeuralNet_Base extends Recyclable.Root {
     progressToAdvance.value = 0;
     yield progressRoot;  // progress reset to zero. Report progress.
 
+//!!! ...unfinished... (2023/05/06)
+// Perhaps, check inputTensor.shape whether this.input_Xxx
+
     // 1. Embedding
     let outputTensor = this.embedding.apply( inputTensor );
 
