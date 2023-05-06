@@ -468,6 +468,7 @@ class NeuralNet_Reference_Base extends Recyclable.Root {
     let extractedParams = NeuralNet.Params.Pool.get_or_create_by(
       testParams.in.explicit_input_height, testParams.in.explicit_input_width,
       testParams.in.explicit_input_channelCount,
+      testParams.in.has_implicit_input,
       testParams.in.vocabularyChannelCount, testParams.in.vocabularyCountPerInputChannel,
       testParams.in.nConvStageTypeId,
       testParams.in.blockCountTotalRequested,
