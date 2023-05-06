@@ -1,5 +1,9 @@
 export { NeuralNet_ScaleFill as ScaleFillTensor };
 
+import { FeedbackShape as NeuralNet_FeedbackShape }
+  from "./NeuralNet_FeedbackShape.js";
+
+
 /**
  * A helper class for preparing input tensor of a neural network.
  *
@@ -36,6 +40,14 @@ class NeuralNet_ScaleFill {
 
     this.target_shape = [ target_height, target_width, target_channelCount ];
     this.target_shape_height_width = [ target_height, target_width ];
+
+//!!! ...unfinished.... (2023/05/05)
+//     this.feedbackShape = NeuralNet_FeedbackShape();
+//     this.feedbackShape.init(
+//       explicit_input_height, explicit_input_width, explicit_input_channelCount,
+//       feedback_valueCount
+//     );
+
   }
 
 //!!! ...unfinished... (2023/05/01)
