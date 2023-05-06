@@ -213,11 +213,12 @@ class NeuralNet_Base extends Recyclable.Root {
       // Get parameters' real (adjusted) values.
       //
       // Do not keep params in this.params for reducing memory usage.
-      this.input_height = params.input_height;
-      this.input_width = params.input_width;
-      this.input_channelCount = params.input_channelCount;
+      this.explicit_input_height = params.explicit_input_height;
+      this.explicit_input_width = params.explicit_input_width;
+      this.explicit_input_channelCount = params.explicit_input_channelCount;
 
 //!!! ...unfinished... (2023/05/06) has_implicit_input
+      this.has_implicit_input = params.has_implicit_input;
 
       this.vocabularyChannelCount = params.vocabularyChannelCount;
       this.vocabularyCountPerInputChannel = params.vocabularyCountPerInputChannel;
@@ -230,8 +231,17 @@ class NeuralNet_Base extends Recyclable.Root {
       // The parameters which are determined (inferenced) from the above parameters.
       {
 //!!! ...unfinished... (2023/05/06) has_implicit_input
-// Collect feedbackShape too.
-        
+
+        this.implicit_input_height = params.inferencedParams.implicit_input_height;
+        this.implicit_input_width = params.inferencedParams.implicit_input_width;
+        this.implicit_input_channelCount = params.inferencedParams.implicit_input_channelCount;
+
+        this.input_height = params.inferencedParams.input_height;
+        this.input_width = params.inferencedParams.input_width;
+        this.input_channelCount = params.inferencedParams.input_channelCount;
+
+        this.feedbackShape = params.inferencedParams.feedbackShape;
+
         this.bEmbedVocabularyId = params.inferencedParams.bEmbedVocabularyId;
 
         if ( this.input_height_width_array ) {
@@ -503,15 +513,26 @@ class NeuralNet_Base extends Recyclable.Root {
     this.input_height_width_array.length = 0; // (Keep and re-use array.)
     this.bEmbedVocabularyId = undefined;
 
+    this.feedbackShape = undefined;
+
+    this.input_channelCount = undefined;
+    this.input_width = undefined;
+    this.input_height = undefined;
+
+    this.implicit_input_channelCount = undefined;
+    this.implicit_input_width = undefined;
+    this.implicit_input_height = undefined;
+
     this.bKeepInputTensor = undefined;
     this.blockCountTotalRequested = undefined;
     this.nConvStageTypeName = undefined;
     this.nConvStageTypeId = undefined;
     this.vocabularyCountPerInputChannel = undefined;
     this.vocabularyChannelCount = undefined;
-    this.input_channelCount = undefined;
-    this.input_width = undefined;
-    this.input_height = undefined;
+    this.has_implicit_input = undefined;
+    this.explicit_input_channelCount = undefined;
+    this.explicit_input_width = undefined;
+    this.explicit_input_height = undefined;
 
     this.tensorWeightCountTotal = undefined;
     this.tensorWeightCountExtracted = undefined;
