@@ -546,8 +546,8 @@ class NeuralNet_FeedbackToInput {
 
   /** @override */
   toString() {
-    let str = `${this.area}, `
-      + `explicit_input_height=${this.explicit_input_height}, `
+    let str =
+        `explicit_input_height=${this.explicit_input_height}, `
       + `explicit_input_channelCount=${this.explicit_input_channelCount}, `
 
       + `implicit_input_height=${this.implicit_input_height}, `
@@ -559,7 +559,7 @@ class NeuralNet_FeedbackToInput {
 
       + `input_height=${this.input_height}, `
       + `input_channelCount=${this.input_channelCount}, `
-      
+
       + `areaCount=${this.areaCount}, `
       + `height_areaCount=${this.height_areaCount}, `
       + `width_areaCount=${this.width_areaCount}, `
@@ -568,7 +568,9 @@ class NeuralNet_FeedbackToInput {
         + `${this.height_with_internal_gap_pixelCount_expanded}, `
       + `width_with_internal_gap_pixelCount_expanded=`
         + `${this.width_with_internal_gap_pixelCount_expanded}, `
-  
+
+      + `area={ ${this.area} }, `
+
       + `area_position_leftArray=[ ${this.area_position_leftArray} ], `
       + `area_position_topArray=[ ${area_position_topArray} ]`
       ;
