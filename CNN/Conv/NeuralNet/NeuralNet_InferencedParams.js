@@ -90,6 +90,10 @@ class NeuralNet_InferencedParams extends Recyclable.Root {
 
   /** @override */
   static setAsConstructor_self( neuralNetParamsBase ) {
+
+//!!! ...unfinished... (2023/05/06)
+// NeuralNet_FeedbackShape
+
     this.embeddingParams_create( neuralNetParamsBase );
     this.stageParamsArray_blockFinalParams_create( neuralNetParamsBase );
   }
