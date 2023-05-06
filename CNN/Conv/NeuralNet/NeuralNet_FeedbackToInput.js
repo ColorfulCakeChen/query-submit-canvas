@@ -146,7 +146,6 @@ class NeuralNet_FeedbackToInput_Area extends NeuralNet_FeedbackToInput_from {
     return this.gap_width_pixelCount_original * this.width_multiplier;
   }
 
-
   /** @override */
   toString() {
     let str = `${super.toString()}, `
@@ -547,7 +546,7 @@ class NeuralNet_FeedbackToInput {
 
   /** @override */
   toString() {
-    let str = `${this.area.toString()}`
+    let str = `${this.area}`
 
       + `explicit_input_height=${this.explicit_input_height}, `
       + `explicit_input_channelCount=${this.explicit_input_channelCount}, `

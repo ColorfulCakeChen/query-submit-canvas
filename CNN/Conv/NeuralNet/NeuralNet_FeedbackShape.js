@@ -608,4 +608,21 @@ class NeuralNet_FeedbackShape extends NeuralNet_FeedbackToInput {
     }
   }
 
+  /** @override */
+  toString() {
+    let str = `${super.toString()}, `
+      + `explicit_input_width=${this.explicit_input_width}, `
+
+      + `explicit_input_pixelCount=${this.explicit_input_pixelCount}, `
+      + `explicit_input_valueCount=${this.explicit_input_valueCount}, `
+
+      + `input_width=${this.input_width}, `
+      + `input_width_valueCount=${this.input_width_valueCount}, `
+
+      + `input_pixelCount=${this.input_pixelCount}, `
+      + `input_valueCount=${this.input_valueCount}`
+      ;
+    return str;
+  }
+
 }
