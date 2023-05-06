@@ -180,6 +180,10 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
         let neuralNetParamsBase = neuralNetParamsBaseArray[ i ];
         let weightArrayBuffer = weightArrayBufferArray[ i ];
 
+//!!! ...unfinished... (2023/05/06)
+// the input_height and input_width will be changed when
+// alignmentMarkValueArray changed.
+
         // Create NeuralNet_ScaleFill.
         if ( this.ScaleFill ) {
           if (   ( this.ScaleFill.target_height
@@ -665,7 +669,7 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
 
       let bTwoTensors = ( this.neuralNetArray.length > 1 );
       let createTensor_asyncGenerator
-        = this.ScaleFill.createTensor_by_scale_fill_asyncGenerator(
+        = this.ScaleFill.createTensor_by_fill_asyncGenerator(
             source_TypedArray, source_height, source_width,
             bTwoTensors,
             alignmentMarkValueArray, previous_output_TypedArrayArray
