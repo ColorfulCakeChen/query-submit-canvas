@@ -213,8 +213,8 @@ import { Mode as NeuralWorker_Mode } from "./NeuralWorker_Mode.js";
  *       transferred (not copied) to the web worker for used as feedback.
  *
  *   - When .NeuralNetArray_create_async() is called, its content will be
- *       cleared, too. Since there should be no previous output for newly
- *       created neural network.
+ *       cleared. Since there should be no previous output for newly created
+ *       neural network.
  *
  *
  * @member {function} TypedArray_process_async
