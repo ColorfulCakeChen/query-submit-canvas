@@ -162,10 +162,9 @@ class NeuralNet_TestParams_Base extends TestParams.Base {
       this.embedding = Embedding_TestParams.Base.Pool.get_or_create_by( this.id );
 
       this.embedding.set_byParamsScattered(
-        neuralNetParams.explicit_input_height,
-        neuralNetParams.explicit_input_width,
-        neuralNetParams.explicit_input_channelCount,
-        neuralNetParams.has_implicit_input,
+        neuralNetParams.inferencedParams.input_height,
+        neuralNetParams.inferencedParams.input_width,
+        neuralNetParams.inferencedParams.input_channelCount,
         neuralNetParams.vocabularyChannelCount,
         neuralNetParams.vocabularyCountPerInputChannel,
         neuralNetParams.inferencedParams.bEmbedVocabularyId,
