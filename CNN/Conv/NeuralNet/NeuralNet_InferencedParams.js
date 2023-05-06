@@ -130,10 +130,15 @@ class NeuralNet_InferencedParams extends Recyclable.Root {
    * 
    */
   inputShape_dispose() {
+    this.implicit_input_channelCount = undefined;
+    this.implicit_input_width = undefined;
+    this.implicit_input_height = undefined;
+
+    this.input_channelCount = undefined;
+    this.input_width = undefined;
+    this.input_height = undefined;
+
     this.feedbackShape = undefined;
-
-//!!! ...unfinished... (2023/05/06)
-
   }
 
   /**
@@ -153,8 +158,23 @@ class NeuralNet_InferencedParams extends Recyclable.Root {
     } else {
 
 //!!! ...unfinished... (2023/05/06)
-      Xxx_input_height, Xxx_input_width, Xxx_input_channelCount
+      this.implicit_input_height = 0;
+        //= neuralNetParamsBase.explicit_input_height;
 
+      this.implicit_input_width = 0;
+
+      this.implicit_input_channelCount
+        = neuralNetParamsBase.explicit_input_channelCount;
+
+//!!! ...unfinished... (2023/05/06)
+      this.input_height
+        = neuralNetParamsBase.explicit_input_height;
+
+      this.input_width
+        = neuralNetParamsBase.explicit_input_width;
+
+      this.input_channelCount
+        = neuralNetParamsBase.explicit_input_channelCount;
     }
 
 !!!
