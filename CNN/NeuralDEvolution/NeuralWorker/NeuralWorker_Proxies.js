@@ -408,7 +408,14 @@ class NeuralWorker_Proxies extends Recyclable.Root {
    *   - Resolved to false, if failed.
    */
   async NeuralNetArray_create_async(
-    neuralNetParamsBaseArray, weightArrayBufferArray, bLogDryRunTime ) {
+
+//!!! ...unfinished... (2023/05/06)
+// should specify whether fill alignment mark and feedback information
+// because they affect input data shape which is needed for creating
+// neural network. 
+
+    neuralNetParamsBaseArray, weightArrayBufferArray, bLogDryRunTime
+  ) {
 
     const funcNameInMessage = "NeuralNetArray_create_async";
 
