@@ -1,4 +1,4 @@
-export { NeuralNet_ScaleFill as ScaleFillTensor };
+export { NeuralNet_ScaleFill as ScaleFill };
 
 import { FeedbackShape as NeuralNet_FeedbackShape }
   from "./NeuralNet_FeedbackShape.js";
