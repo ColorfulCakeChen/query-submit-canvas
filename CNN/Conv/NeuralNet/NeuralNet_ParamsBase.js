@@ -158,7 +158,8 @@ class NeuralNet_ParamsBase extends Recyclable.Root {
   }
 
   /**
-   * Get or create (from pool) NeuralNet.ParamsBase according to this NeuralNet.ParamsBase.
+   * Get or create (from pool) NeuralNet.ParamsBase according to this
+   * NeuralNet.ParamsBase.
    */
   clone() {
     let another = NeuralNet_ParamsBase.Pool.get_or_create_by(
@@ -266,7 +267,7 @@ class NeuralNet_ParamsBase extends Recyclable.Root {
    */
   nConvStageTypeId_adjust_for_backend_cpu_if_ShuffleNetV2() {
     if ( ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1
-            === this.nConvStageTypeId ) // (5)
+           === this.nConvStageTypeId ) // (5)
       this.nConvStageTypeId
         = ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2; // (4)
   }
@@ -277,7 +278,7 @@ class NeuralNet_ParamsBase extends Recyclable.Root {
    */
   nConvStageTypeId_adjust_for_backend_webgl_if_ShuffleNetV2() {
     if ( ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2
-            === this.nConvStageTypeId ) // (4)
+           === this.nConvStageTypeId ) // (4)
       this.nConvStageTypeId
         = ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1; // (5)
   }
