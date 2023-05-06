@@ -438,15 +438,16 @@ class TestCase {
 
     this.nextInputArray_explicit_fill();
 
-//!!! ...unfinished... (2023/05/05)
-//  set_implicit_input_by_alignmentMarkValue
-
     // fill implicit input.
-    feedbackShape.set_implicit_input_by_previousOutput(
-      this.nextInputArray, this.from_output_valueArray );
+    feedbackShape
+      .set_implicit_input_by_alignmentMarkValue_previousOutputTypedArray(
+        this.nextInputArray,
+        this.alignment_mark_value_base_positive, 
+        this.from_output_valueArray );
 
     this.nextInputArray_explicit_check();
-    this.nextInputArray_implicit_check();
+    this.nextInputArray_alignmentMark_check();
+    this.nextInputArray_feedback_check();
   }
 
   /** */
@@ -534,8 +535,134 @@ class TestCase {
   }
 
   /** */
-  nextInputArray_implicit_check() {
-    const funcNameInMessage = "nextInputArray_implicit_check";
+  nextInputArray_alignmentMark_check() {
+    const funcNameInMessage = "nextInputArray_alignmentMark_check";
+
+//!!! ...unfinished... (2023/05/05)
+
+    const to_inputArray = this.nextInputArray;
+
+    const feedbackShape = this.feedbackShape;
+    const input_height = feedbackShape.input_height;
+    const input_width = feedbackShape.input_width;
+    const input_channelCount = feedbackShape.input_channelCount;
+
+    const input_width_valueCount = feedbackShape.input_width_valueCount;
+    const implicit_input_width = feedbackShape.implicit_input_width;
+    //const explicit_input_width = feedbackShape.explicit_input_width;
+
+    const area_from_valueCount_original
+      = feedbackShape.area.from_valueCount_original;
+
+
+    const area_height_pixelCount_original
+      = feedbackShape.area.height_pixelCount_original;
+
+
+    const area_width_pixelCount_original
+      = feedbackShape.area.width_pixelCount_original;
+
+    const area_width_valueCount_original
+      = area_width_pixelCount_original * input_channelCount;
+
+
+    const area_width_pixelCount_expanded
+      = feedbackShape.area.width_pixelCount_expanded;
+
+    const area_width_valueCount_expanded
+      = area_width_pixelCount_expanded * input_channelCount;
+
+
+    const area_height_multiplier = feedbackShape.area.height_multiplier;
+    const area_width_multiplier = feedbackShape.area.width_multiplier;
+
+
+    const from_output_valueArray = this.from_output_valueArray;
+    const areaIndex = 1; // Area 1 is for feedback.
+    {
+      const from_valueIndex_base = 0;
+
+      const from_valueIndex_upper_bound
+        = from_valueIndex_base + area_from_valueCount_original - 1;
+
+      const area_position_left
+        = feedbackShape.area_position_leftArray[ areaIndex ];
+      const area_position_top
+        = feedbackShape.area_position_topArray[ areaIndex ];
+
+      const to_valueIndex_base
+        = ( ( area_position_top * input_width ) + area_position_left );
+
+      for ( let y = 0; y < area_height_pixelCount_original; ++y ) {
+        const from_valueIndex_base_y = ( y * area_width_pixelCount_original );
+
+        for ( let y_multiplier = 0;
+          y_multiplier < area_height_multiplier; ++y_multiplier ) {
+
+          const to_valueIndex_base_y
+            = ( ( y * area_height_multiplier ) + y_multiplier )
+                * input_width;
+
+          for ( let x = 0; x < area_width_pixelCount_original; ++x ) {
+
+            const from_valueIndex_base_yx = from_valueIndex_base
+              + ( from_valueIndex_base_y + x ) * input_channelCount;
+
+            for ( let x_multiplier = 0;
+              x_multiplier < area_width_multiplier; ++x_multiplier ) {
+
+              const to_valueIndex_base_x
+                = ( ( x * area_width_multiplier ) + x_multiplier );
+
+              const to_valueIndex_base_yx = ( to_valueIndex_base
+                + to_valueIndex_base_y + to_valueIndex_base_x )
+                * input_channelCount;
+
+              for ( let c = 0; c < input_channelCount; ++c ) {
+
+                const from_valueIndex = from_valueIndex_base_yx + c;
+                const to_valueIndex = to_valueIndex_base_yx + c;
+
+                if ( from_valueIndex > from_valueIndex_upper_bound ) {
+                  if ( to_inputArray[ to_valueIndex ] != 0 )
+                    throw Error( `FeedbackShape_tester.TestCase.${funcNameInMessage}(): `
+                      + `to_inputArray[ ${to_valueIndex} ]=`
+                      + `${to_inputArray[ to_valueIndex ]} `
+                      + `should be ( 0 ). `
+                      + `y=${y}, y_multiplier=${y_multiplier}, `
+                      + `x=${x}, x_multiplier=${x_multiplier}, `
+                      + `c=${c}, `
+                      + `{ ${this} }.`
+                    );
+
+                } else {
+                  if ( to_inputArray[ to_valueIndex ]
+                        != from_output_valueArray[ from_valueIndex ] )
+                    throw Error( `FeedbackShape_tester.TestCase.${funcNameInMessage}(): `
+                      + `to_inputArray[ ${to_valueIndex} ]=`
+                      + `${to_inputArray[ to_valueIndex ]} `
+                      + `should be the same as `
+                      + `from_output_valueArray[ ${from_valueIndex} ]=`
+                      + `${from_output_valueArray[ from_valueIndex ]}. `
+                      + `y=${y}, y_multiplier=${y_multiplier}, `
+                      + `x=${x}, x_multiplier=${x_multiplier}, `
+                      + `c=${c}, `
+                      + `{ ${this} }.`
+                    );
+                }
+
+              } // c
+            } // x_multiplier
+          } // x
+        } // y_multiplier
+      } // y
+    }
+  }
+
+
+  /** */
+  nextInputArray_feedback_check() {
+    const funcNameInMessage = "nextInputArray_feedback_check";
 
     const to_inputArray = this.nextInputArray;
 

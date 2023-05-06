@@ -239,7 +239,7 @@ class NeuralNet_FeedbackShape extends NeuralNet_FeedbackToInput {
 
   /**
    * Call .set_implicit_input_by_alignmentMarkValue() and
-   * .set_implicit_input_by_previousOutput().
+   * .set_implicit_input_by_previousOutputTypedArray().
    *
    *
    * @param {Uint8ClampedArray|Int32Array} input_TypedArray
@@ -254,13 +254,13 @@ class NeuralNet_FeedbackShape extends NeuralNet_FeedbackToInput {
    * @param {Int32Array} previous_output_Int32Array
    *   The (previous time) output of the neural networks.
    */
-  set_implicit_input_by_alignmentMarkValue_previousOutput(
+  set_implicit_input_by_alignmentMarkValue_previousOutputTypedArray(
     input_TypedArray, alignmentMarkValue, previous_output_Int32Array ) {
 
     this.set_implicit_input_by_alignmentMarkValue(
       input_TypedArray, alignmentMarkValue );
 
-    this.set_implicit_input_by_previousOutput(
+    this.set_implicit_input_by_previousOutputTypedArray(
       input_TypedArray, previous_output_Int32Array
     );
   }
@@ -371,10 +371,10 @@ class NeuralNet_FeedbackShape extends NeuralNet_FeedbackToInput {
    *   The (previous time) output of the neural networks.
    *
    */
-  set_implicit_input_by_previousOutput(
+  set_implicit_input_by_previousOutputTypedArray(
     input_TypedArray, previous_output_Int32Array ) {
 
-    const funcNameInMessage = "set_implicit_input_by_previousOutput";
+    const funcNameInMessage = "set_implicit_input_by_previousOutputTypedArray";
 
     const input_channelCount = this.input_channelCount;
     const area = this.area;
