@@ -9,6 +9,13 @@ import * as Stage from "../Stage.js";
 import * as Block from "../Block.js";
 import { InferencedParams } from "./NeuralNet_InferencedParams.js";
 
+
+//!!! ...unfinished... (2023/05/06)
+// Perhaps, specify whether fill alignment mark and feedback information
+// because they affect input data shape which is needed for creating
+// neural network. 
+
+
 /**
  * NeuralNet parameters base class.
  *

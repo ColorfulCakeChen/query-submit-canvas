@@ -238,9 +238,8 @@ class NeuralNet_FeedbackShape extends NeuralNet_FeedbackToInput {
   }
 
   /**
-   * Fill the previous time output (i.e. feedback) to the next time input. The
-   * pixels (including channels of partial pixel) which inside input area but
-   * outside previous output will be filled with zero.
+   * Call .set_implicit_input_by_alignmentMarkValue() and
+   * .set_implicit_input_by_previousOutput().
    *
    *
    * @param {Uint8ClampedArray|Int32Array} input_TypedArray
@@ -248,13 +247,22 @@ class NeuralNet_FeedbackShape extends NeuralNet_FeedbackToInput {
    * integer typed array. It should large enough to contain both implicit and
    * explicit input.
    *
+   * @param {integer} alignmentMarkValue
+   *   The value representing the neural network playing which alignment
+   * currently.
+   *
    * @param {Int32Array} previous_output_Int32Array
    *   The (previous time) output of the neural networks.
-   *
    */
-  set_implicit_input_by__alignmentMarkValue__previousOtput(
-    input_TypedArray, previous_output_Int32Array ) {
-!!!
+  set_implicit_input_by_alignmentMarkValue_previousOutput(
+    input_TypedArray, alignmentMarkValue, previous_output_Int32Array ) {
+
+    this.set_implicit_input_by_alignmentMarkValue(
+      input_TypedArray, alignmentMarkValue );
+
+    this.set_implicit_input_by_previousOutput(
+      input_TypedArray, previous_output_Int32Array
+    );
   }
 
   /**
@@ -269,7 +277,7 @@ class NeuralNet_FeedbackShape extends NeuralNet_FeedbackToInput {
    * explicit input.
    *
    * @param {integer} alignmentMarkValue
-   *   The values representing the neural network playing which alignment.
+   *   The value representing the neural network playing which alignment currently.
    */
   set_implicit_input_by_alignmentMarkValue(
     input_TypedArray, alignmentMarkValue ) {
