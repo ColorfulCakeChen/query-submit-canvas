@@ -91,6 +91,7 @@ class NeuralNet_StageParamsCreator_Base extends Recyclable.Root {
     // the requested output_channelCount.
     {
       let embedding_output_channelCount
+!!!
         = neuralNetParams.inferencedParams.input_channelCount
             * neuralNetParams.vocabularyChannelCount;
 

@@ -217,15 +217,7 @@ class NeuralNet_InferencedParams extends Recyclable.Root {
 
     let EmbeddingParamsClass = neuralNetParamsBase.EmbeddingParamsClass_get();
     this.embeddingParams = EmbeddingParamsClass.Pool.get_or_create_by(
-
-//!!! (2023/05/06 Remarked)
-//       neuralNetParamsBase.input_height,
-//       neuralNetParamsBase.input_width,
-//       neuralNetParamsBase.input_channelCount,
-      this.input_height,
-      this.input_width,
-      this.input_channelCount,
-
+      this.input_height, this.input_width, this.input_channelCount,
       neuralNetParamsBase.vocabularyChannelCount,
       neuralNetParamsBase.vocabularyCountPerInputChannel,
       this.bEmbedVocabularyId,
@@ -275,6 +267,10 @@ class NeuralNet_InferencedParams extends Recyclable.Root {
       // Create every stage.
       stageParamsCreator = NeuralNet_InferencedParams
         .create_StageParamsCreator_byNeuralNetParams( neuralNetParamsBase );
+
+!!! ...unfinished... (2023/05/06)
+// needs (this un-created) inferencedParams
+
       stageParamsCreator.determine_stageCount_blockCountPerStage();
 
       this.stageCount = stageParamsCreator.stageCount;
@@ -288,6 +284,10 @@ class NeuralNet_InferencedParams extends Recyclable.Root {
       for ( let i = 0; i < this.stageCount; ++i ) { // Stage0, 1, 2, 3, ..., StageLast.
 
         if ( 0 == i ) { // Stage0.
+
+!!! ...unfinished... (2023/05/06)
+// needs (this un-created) inferencedParams
+
           stageParamsCreator.configTo_beforeStage0();
         } else { // (i.e. stage1, 2, 3, ...)
           stageParamsCreator.configTo_beforeStageN_exceptStage0(
