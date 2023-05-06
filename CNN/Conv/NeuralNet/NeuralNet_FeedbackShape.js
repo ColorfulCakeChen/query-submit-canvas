@@ -64,11 +64,16 @@ import { FeedbackToInput as NeuralNet_FeedbackToInput }
  *
  *     - Implicit input: It is a part of the input which is not visible to
  *         user.
+ *
  *       - For example, the image which is arranged outside of the screen.
- *       - Its main usage is to place the feedback information (i.e. the
- *           previous time output).
- *       - Note: Implicit input will contain not only (previous time) implicit
- *           output but also (previous time) explicit output.
+ *
+ *       - Its main usage is to place the alignement mark (for letting neural
+ *           network know who it personates currently) and the feedback
+ *           information (i.e. the previous time output of the neural network).
+ *
+ *       - Note: Implicit input will contain not only alignment mark and the
+ *           (previous time) implicit output but also the (previous time)
+ *           explicit output.
  *
  *   - Output: It is all the data which is outputted by the neural network.
  *
@@ -77,7 +82,9 @@ import { FeedbackToInput as NeuralNet_FeedbackToInput }
  *
  *     - Implicit output: It is a part of the output which is not visible to
  *         user.
+ *
  *       - For example, the reason of the keyboard pressing simulation.
+ *
  *       - It is mainly used as extra data of feedback information in the next
  *           time input.
  *
