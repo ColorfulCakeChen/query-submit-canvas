@@ -14,7 +14,9 @@ import { InferencedParams } from "./NeuralNet_InferencedParams.js";
 // Perhaps, specify whether fill alignment mark and feedback information
 // because they affect input data shape which is needed for creating
 // neural network. 
-
+//
+// Let input_height and input_width become inferenced params?
+// Here accepts explicit_input_height and explicit_input_width.
 
 /**
  * NeuralNet parameters base class.
