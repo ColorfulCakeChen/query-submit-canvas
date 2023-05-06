@@ -459,11 +459,17 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
 
     if ( ( markValueArray ) && ( markValueArray.length > 0 ) ) { // 1.
 
-      if ( markValueArray.length != this.neuralNetArray?.length )
+      if ( !this.neuralNetArray )
+        throw Error( `NeuralWorker_Body.${funcNameInMessage}(): `
+          + `should be called after `
+          + `NeuralWorker_Body.NeuralNetArray_create() is called.`
+        );
+
+      if ( markValueArray.length != this.neuralNetArray.length )
         throw Error( `NeuralWorker_Body.${funcNameInMessage}(): `
           + `markValueArray.length ( ${markValueArray.length} ) `
           + `should be either 0 or the same as `
-          + `.neuralNetCount ( ${this.neuralNetArray?.length} ).`
+          + `.neuralNetCount ( ${this.neuralNetArray.length} ).`
         );
 
       // 1.1 Prepare container for all neural networks' mark value.
