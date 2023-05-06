@@ -12,7 +12,9 @@ export { NeuralWorker_Params as Params };
  */
 class NeuralWorker_Params {
 
-  output_channelCount_per_alignment;
+//!!! (2023/05/06 Remarked) No longer Xxx_per_alignment
+//  output_channelCount_per_alignment;
+  explicit_output_channelCount;
 
 //!!! ...unfinished... (2023/05/06)
 // alignmentMarkValueArray can NOT be placed here because
