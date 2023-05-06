@@ -163,8 +163,8 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
 
   /**
    * @param {integer[]} markValueArray
-   *   An array of values representing every neural network playing which
-   * alignment.
+   *   An array of values representing every neural network is playing which
+   * alignment currently.
    *   - It could be null or undefined or ( markValueArray.length == 0 ) to
    *       clear .alignmentMarkValueArray for not filling alignment mark into
    *       source TypedArray. (i.e. NO _FILL)

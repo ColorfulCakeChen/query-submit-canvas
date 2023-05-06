@@ -177,6 +177,20 @@ import { Mode as NeuralWorker_Mode } from "./NeuralWorker_Mode.js";
  *   There are how many web worker(s) created.
  *
  *
+ * @member {integer[]} alignmentMarkValueArray
+ *   An array of values representing every neural network is playing which
+ * alignment currently.
+ *
+ *   - If it is null or undefined, it means not to fill alignment mark and
+ *       feedback information (i.e. previous time output of the neural network)
+ *       into source TypedArray when .TypedArray_process_async() is called.
+ *
+ *   - Otherwise, its length should be the same as this.neuralNetCount
+ *
+ * @member {boolean} alignmentMarkValueArray_nonEmpty
+ *   Return true, if alignmentMarkValueArray is null or undefined or
+ * ( alignmentMarkValueArray.length == 0 ).
+ *
 
 //!!! ...unfinished... (2023/05/04)
 // How to get them if they come from AsyncWorker.Resulter?
@@ -243,6 +257,7 @@ class NeuralWorker_Proxies extends Recyclable.Root {
     this.TypedArray_process_async = undefined;
 
     this.previous_output_TypedArrayArray = undefined;
+    this.alignmentMarkValueArray = undefined;
 
     this.workerProxyArray_dispose();
 
@@ -458,10 +473,17 @@ class NeuralWorker_Proxies extends Recyclable.Root {
 // so that it can provide input_height and input_width (acccording
 // to explicit_input_height and width)
 
+  get alignmentMarkValueArray_nonEmpty() {
+    if (   ( this.alignmentMarkValueArray )
+        && ( this.alignmentMarkValueArray.length > 0 ) )
+      return true;
+    return false;
+  }
+
   /**
    * @param {integer[]} markValueArray
-   *   An array of values representing every neural network playing which
-   * alignment.
+   *   An array of values representing every neural network is playing which
+   * alignment currently.
    *   - It could be null or undefined or ( markValueArray.length == 0 ) to
    *       clear .alignmentMarkValueArray for not filling alignment mark into
    *       source TypedArray. (i.e. NO _FILL)
@@ -473,6 +495,7 @@ class NeuralWorker_Proxies extends Recyclable.Root {
    */
   async alignmentMarkValueArray_set_async( markValueArray ) {
 
+    // 1.
     const markValueArray_nonEmpty
       = ( ( markValueArray ) && ( markValueArray.length > 0 ) );
 
@@ -485,9 +508,14 @@ class NeuralWorker_Proxies extends Recyclable.Root {
         );
     }
 
-    let resultOk;
+    // 2. Record it so that input_height and input_width (acccording to
+    //    explicit_input_height and explicit_input_width) could be provided.
+    this.alignmentMarkValueArray = markValueArray;
 
-    // 1. Every worker sets one alignment mark value.
+    // 3.
+
+    // 3.1 Every worker sets one alignment mark value.
+    let resultOk;
     if ( this.workerProxyArray.length > 1 ) { // (i.e. two workers)
 
       let resultPromiseArray = new Array( this.workerProxyArray.length );
@@ -507,8 +535,8 @@ class NeuralWorker_Proxies extends Recyclable.Root {
         ( previousValue, currentValue ) => ( previousValue && currentValue ),
         true
       );
-  
-    // 2. The only one worker sets all alignment mark values.
+
+    // 3.2 The only one worker sets all alignment mark values.
     } else {
       resultOk = await this.workerProxyArray[ 0 ]
         .alignmentMarkValueArray_set_async( markValueArray );
