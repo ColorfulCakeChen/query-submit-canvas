@@ -241,8 +241,6 @@ class TestCase {
     {
       if ( height_areaCount >= areaCount )
         height_areaCount = areaCount;
-      else if ( height_areaCount >= neuralNetCount )
-        height_areaCount = neuralNetCount;
       else
         height_areaCount = 1;
 
