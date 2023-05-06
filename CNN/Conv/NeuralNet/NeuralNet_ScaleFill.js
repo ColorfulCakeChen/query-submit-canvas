@@ -9,13 +9,13 @@ import { FeedbackShape as NeuralNet_FeedbackShape }
  *
  *
  *
- * @param {number} target_height
+ * @member {number} target_height
  *   The height (in pixels) of the target image.
  *
- * @param {number} target_width
+ * @member {number} target_width
  *   The width (in pixels) of the target image.
  *
- * @param {number} target_channelCount
+ * @member {number} target_channelCount
  *   The channel count of the target image.
  *
  * @member {number} target_shape
