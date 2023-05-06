@@ -190,8 +190,6 @@ class NeuralNet_InferencedParams extends Recyclable.Root {
       this.input_channelCount
         = neuralNetParamsBase.explicit_input_channelCount;
     }
-
-//!!! ...unfinished... (2023/05/06)
   }
 
   /**

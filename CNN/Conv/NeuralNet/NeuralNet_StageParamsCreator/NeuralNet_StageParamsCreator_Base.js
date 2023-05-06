@@ -91,12 +91,8 @@ class NeuralNet_StageParamsCreator_Base extends Recyclable.Root {
     // the requested output_channelCount.
     {
       let embedding_output_channelCount
-        = neuralNetParams.input_channelCount * neuralNetParams.vocabularyChannelCount;
-
-
-//!!! ...unfinished... (2023/05/06) has_implicit_input
-!!! ...unfinished... (2023/05/06) neuralNetParams.inferencedParams.input_
-
+        = neuralNetParams.inferencedParams.input_channelCount
+            * neuralNetParams.vocabularyChannelCount;
 
       let expandFactor = Math.ceil(
         neuralNetParams.output_channelCount / embedding_output_channelCount );
@@ -124,12 +120,13 @@ class NeuralNet_StageParamsCreator_Base extends Recyclable.Root {
   configTo_beforeStage0() {
     let neuralNetParams = this.neuralNetParams;
 
-    this.input_height = neuralNetParams.input_height;
-    this.input_width = neuralNetParams.input_width;
+    this.input_height = neuralNetParams.inferencedParams.input_height;
+    this.input_width = neuralNetParams.inferencedParams.input_width;
 
     // The channel count is expanded by prefix embedding layer.
     this.input_channelCount
-      = neuralNetParams.input_channelCount * neuralNetParams.vocabularyChannelCount;
+      = neuralNetParams.inferencedParams.input_channelCount
+          * neuralNetParams.vocabularyChannelCount;
 
     this.nConvStageTypeId = neuralNetParams.nConvStageTypeId;
 
