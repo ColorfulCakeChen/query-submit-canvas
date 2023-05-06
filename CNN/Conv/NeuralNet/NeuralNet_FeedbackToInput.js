@@ -547,7 +547,7 @@ class NeuralNet_FeedbackToInput {
 
   /** @override */
   toString() {
-    let str = ``
+    let str = `${this.area.toString()}`
 
 !!! ...unfinished... (2023/05/06)
 // NeuralNet_FeedbackShape
@@ -555,6 +555,40 @@ class NeuralNet_FeedbackToInput {
 // input_height, input_width, input_channel
 
 
+this.explicit_input_height
+
+this.explicit_input_channelCount
+
+this.input_channelCount
+= this.implicit_input_channelCount
+= this.explicit_input_channelCount;
+
+this.input_height
+= this.implicit_input_height
+= this.explicit_input_height;
+
+// 2.3 There are 2 filling areas (alignment mark and feedback) per neural
+//     network.
+this.areaCount = 2;
+
+this.height_areaCount
+
+// 6.2
+this.width_areaCount
+
+this.height_with_internal_gap_pixelCount_expanded
+
+this.width_with_internal_gap_pixelCount_expanded
+
+this.implicit_input_width
+
+this.implicit_input_pixelCount
+
+this.implicit_input_valueCount
+{
+this.area_position_create.call( this );
+NeuralNet_FeedbackToInput.area_position_fill.call( this );
+}
       + `bEmbedVocabularyId=${this.bEmbedVocabularyId}, `
       + `stageCount=${this.stageCount}, `
       + `blockCountPerStage=${this.blockCountPerStage}, `
