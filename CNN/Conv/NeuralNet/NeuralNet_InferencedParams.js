@@ -312,14 +312,7 @@ class NeuralNet_InferencedParams extends Recyclable.Root {
 
   /** @override */
   toString() {
-    let str = ``
-
-//!!! ...unfinished... (2023/05/06)
-// NeuralNet_FeedbackShape
-// implicit_input_height, implicit_input_width, implicit_input_channel
-// input_height, input_width, input_channel
-
-
+    let str = `${this.feedbackShape}, `
       + `bEmbedVocabularyId=${this.bEmbedVocabularyId}, `
       + `stageCount=${this.stageCount}, `
       + `blockCountPerStage=${this.blockCountPerStage}, `

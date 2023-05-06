@@ -546,8 +546,7 @@ class NeuralNet_FeedbackToInput {
 
   /** @override */
   toString() {
-    let str = `${this.area}`
-
+    let str = `${this.area}, `
       + `explicit_input_height=${this.explicit_input_height}, `
       + `explicit_input_channelCount=${this.explicit_input_channelCount}, `
 
@@ -573,7 +572,6 @@ class NeuralNet_FeedbackToInput {
       + `area_position_leftArray=[ ${this.area_position_leftArray} ], `
       + `area_position_topArray=[ ${area_position_topArray} ]`
       ;
-
     return str;
   }
 
