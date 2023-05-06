@@ -567,25 +567,15 @@ class NeuralNet_FeedbackShape extends NeuralNet_FeedbackToInput {
     const funcNameInMessage = "valueArray_get_from_output_valueArray_1st_channel";
 
     // 1.
-    if ( ( from_output_valueArray.length % 2 ) != 0 )
-      throw Error( `NeuralNet_FeedbackShape.${funcNameInMessage}(): `
-        + `from_output_valueArray.length ( ${rom_output_valueArray.length} ) `
-        + `should be even number (i.e. divisible by 2).`
-      );
-
-    let from_output_valueCount = Math.floor( from_output_valueArray.length );
+    const from_output_valueCount = Math.floor( from_output_valueArray.length );
 
     // 2.
-    let from_output_pixelCountMax
+    const from_output_pixelCountMax
       = Math.ceil( from_output_valueCount / this.input_channelCount );
 
     // 3.
-    let from_output_valueIndexBase = 0;
 
-    // 4.
-    let from_output_pixelIndex = from_output_pixelIndexBegin;
-
-    // 4.1
+    // 3.1
     // from_output_pixelIndexBegin should be non-negative.
     if ( !( from_output_pixelIndexBegin >= 0 ) )
       throw Error( `NeuralNet_FeedbackShape.${funcNameInMessage}(): `
@@ -603,7 +593,7 @@ class NeuralNet_FeedbackShape extends NeuralNet_FeedbackToInput {
         + `( ${from_output_pixelCountMax} ).`
       );
 
-    // 4.2
+    // 3.2
     // from_output_pixelCount should be non-negative.
     if ( !( from_output_pixelCount >= 0 ) )
       throw Error( `NeuralNet_FeedbackShape.${funcNameInMessage}(): `
@@ -626,11 +616,14 @@ class NeuralNet_FeedbackShape extends NeuralNet_FeedbackToInput {
         + `( ${from_output_pixelCountMax} ).`
       );
 
-    // 5.
+    // 4.
+    let from_output_pixelIndex = from_output_pixelIndexBegin;
+
+    const from_output_valueIndexBase = 0;
     let from_output_valueIndex = from_output_valueIndexBase
       + ( from_output_pixelIndex * this.input_channelCount );
 
-    // 6. Extract all the 1st channel values of all specified pixels of the
+    // 5. Extract all the 1st channel values of all specified pixels of the
     //    previous time output of a neural network.
 
     to_valueArray.length = from_output_pixelCount;
