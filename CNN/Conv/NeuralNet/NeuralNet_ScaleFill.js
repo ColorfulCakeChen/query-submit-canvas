@@ -42,6 +42,49 @@ class NeuralNet_ScaleFill {
 // Perhaps, should use Canvas Context's drawImage() to scale the source.
 // So that GPU-CPU transferring could be reduced.
 
+//!!! ...unfinished.... (2023/05/05)
+// Perhaps, let scale do outside (e.g. by Canvas context drawImage()).
+// So that here can check source image size whether equal to
+// ( implicit + explicit ) size.
+
+  /**
+   *
+
+//!!! ...unfinished... (2023/05/06)
+
+   */
+  async* createTensor_by_fill_asyncGenerator(
+    source_TypedArray, source_height, source_width,
+    bTwoTensors,
+    alignmentMarkValueArray,
+    previous_output_Int32ArrayArray
+  ) {
+    const funcNameInMessage = "createTensor_by_fill_asyncGenerator";
+
+    // 1. source data must has the same shape as target tensor.
+    if (   ( source_height != this.target_height )
+        || ( source_width != this.target_width ) )
+      throw Error( `NeuralNet_ScaleFill.${funcNameInMessage}(): `
+        + `( source_height, source_width ) = `
+        + `( ${source_height}, ${source_width} ) ` 
+        + `should be the same as `
+        + `( target_height, target_width ) = `
+        + `( ${this.target_height}, ${this.target_width} ).` 
+      );
+
+    // 2.
+    yield* NeuralNet_ScaleFill.createTensor_by_scale_fill_asyncGenerator
+      .call( this,
+        source_TypedArray, source_height, source_width,
+        bTwoTensors,
+        alignmentMarkValueArray,
+        previous_output_Int32ArrayArray
+      );
+
+//!!! ...unfinished... (2023/05/06)
+
+  }
+
   /**
    *
    *
@@ -140,7 +183,7 @@ class NeuralNet_ScaleFill {
    *
    *
    */
-  async* createTensor_by_scale_fill_asyncGenerator(
+  static async* createTensor_by_scale_fill_asyncGenerator(
     source_TypedArray, source_height, source_width,
     bTwoTensors,
     alignmentMarkValueArray,
@@ -197,7 +240,7 @@ class NeuralNet_ScaleFill {
           + `alignmentMarkValueArray.length ( `
           + `${alignmentMarkValueArray.length} ) `
           + `should be either 0 or the same as `
-          + `tensorCount ( ${tensorCount} ) `
+          + `tensorCount ( ${tensorCount} ).`
         );
 
       if ( previous_output_Int32ArrayArray )
@@ -206,7 +249,7 @@ class NeuralNet_ScaleFill {
             + `previous_output_Int32ArrayArray.length ( `
             + `${previous_output_Int32ArrayArray.length} ) `
             + `should be the same as `
-            + `tensorCount ( ${tensorCount} ) `
+            + `tensorCount ( ${tensorCount} ).`
           );
     }
 
