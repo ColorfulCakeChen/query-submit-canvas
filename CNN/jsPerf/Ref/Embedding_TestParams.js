@@ -220,7 +220,8 @@ class Embedding_TestParams_Base extends TestParams.Base {
 
     // Pack all parameters, look-up tables weights into a (pre-allocated and re-used) NumberArray.
     this.in_weights.set_byConcat(
-      Embedding_TestParams_Base.paramsNameOrderArray_Basic, this.in.paramsNumberArrayObject, weightElementOffsetBegin );
+      Embedding_TestParams_Base.paramsNameOrderArray_Basic,
+      this.in.paramsNumberArrayObject, weightElementOffsetBegin );
 
     return this;
   }
