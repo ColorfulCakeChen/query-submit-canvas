@@ -216,10 +216,7 @@ class NeuralNet_Base extends Recyclable.Root {
       this.explicit_input_height = params.explicit_input_height;
       this.explicit_input_width = params.explicit_input_width;
       this.explicit_input_channelCount = params.explicit_input_channelCount;
-
-//!!! ...unfinished... (2023/05/06) has_implicit_input
       this.has_implicit_input = params.has_implicit_input;
-
       this.vocabularyChannelCount = params.vocabularyChannelCount;
       this.vocabularyCountPerInputChannel = params.vocabularyCountPerInputChannel;
       this.nConvStageTypeId = params.nConvStageTypeId;
@@ -230,8 +227,6 @@ class NeuralNet_Base extends Recyclable.Root {
 
       // The parameters which are determined (inferenced) from the above parameters.
       {
-//!!! ...unfinished... (2023/05/06) has_implicit_input
-
         this.implicit_input_height = params.inferencedParams.implicit_input_height;
         this.implicit_input_width = params.inferencedParams.implicit_input_width;
         this.implicit_input_channelCount = params.inferencedParams.implicit_input_channelCount;
@@ -249,7 +244,8 @@ class NeuralNet_Base extends Recyclable.Root {
           this.input_height_width_array[ 0 ] = this.input_height;
           this.input_height_width_array[ 1 ] = this.input_width;
         } else {
-          this.input_height_width_array = new Array( this.input_height, this.input_width );
+          this.input_height_width_array
+            = new Array( this.input_height, this.input_width );
         }
 
         if ( this.input_shape ) {
@@ -689,22 +685,6 @@ class NeuralNet_Base extends Recyclable.Root {
    */
 
 
-//!!! ...unfinished... (2023/04/30)
-// Perhaps, let create_ScaledSourceTensor_from_PixelData()
-// accepts parameter previous_output_Int32ArrayArray.
-// If ( !previous_output_Int32ArrayArray ),
-//   - sourcePixelData must be ImageData or TypedArray.
-//   - The size of sourcePixelData should be as feedbackShape.input_Xxx
-//   - It will be filled with previous_output_Int32ArrayArray (as feedback).
-//   - There will be no scaling.
-//
-
-//!!! ...unfinished... (2023/04/30)
-// What is sourcePixelData is not image (i.e. does not have 4 channels)?
-// For example, process text data or sound data.
-// It still needs fill feedback data but should not be scaled.
-// This implies another method for filling feedback is required.
-// They should not be combined into one method.
 
 //!!! (2023//05/06 Remarked) Use NeuralNet_ScaleFill instead.
 //   /**
