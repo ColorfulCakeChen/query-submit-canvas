@@ -126,9 +126,6 @@ import { FeedbackToInput as NeuralNet_FeedbackToInput }
  *
  *
  *
- * @member {number} input_height
- *   The whole input image's height (pixel count).
- *
  * @member {number} input_width
  *   The whole input image's width (pixel count).
  *
@@ -136,9 +133,6 @@ import { FeedbackToInput as NeuralNet_FeedbackToInput }
  *   The whole input image's width (value count). (Note: Every pixel has
  * .input_channelCount values.) (= input_width * input_channelCount) It
  * is the strides to the next row pixel.
- *
- * @member {number} input_channelCount
- *   The whole input image's channel count.
  *
  * @member {number} input_pixelCount
  *   The whole input image's pixel count. (= input_height * input_width)
@@ -148,17 +142,9 @@ import { FeedbackToInput as NeuralNet_FeedbackToInput }
  * .input_channelCount values.) (= input_pixelCount * input_channelCount)
  *
  *
- * @member {number} explicit_input_height
- *   The explicit (i.e. user visible) input image's height (pixel count). It is
- * equal to or less than input_height.
- *
  * @member {number} explicit_input_width
  *   The explicit (i.e. user visible) input image's width (pixel count). It is
  * equal to or less than input_width.
- *
- * @member {number} explicit_input_channelCount
- *   The explicit (i.e. user visible) input image's channel count. It is always
- * equal to input_channelCount.
  *
  * @member {number} explicit_input_pixelCount
  *   The explicit input image's pixel count
@@ -168,28 +154,6 @@ import { FeedbackToInput as NeuralNet_FeedbackToInput }
  *   The explicit input image's value count
  * (= explicit_input_pixelCount * input_channelCount).
  * 
- *
- * @member {number} implicit_input_height
- *   The implicit (i.e. feedback from previous output) input image's height
- * (pixel count). It is equal to or less than input_height.
- *
- * @member {number} implicit_input_width
- *   The implicit (i.e. feedback from previous output) input image's width
- * (pixel count).
- *
- * @member {number} implicit_input_channelCount
- *   The implicit (i.e. feedback from previous output) input image's channel
- * count. It is always equal to input_channelCount.
- *
- * @member {number} implicit_input_pixelCount
- *   The implicit (i.e. feedback from previous output) input image's pixel count
- * (= implicit_input_height * implicit_input_width). It is greater than or
-!!! * equal to .allNeuralNets.from_pixelCount_expanded.
- *
- * @member {number} implicit_input_valueCount
- *   The implicit (i.e. feedback from previous output) input image's value count
- * (= implicit_input_pixelCount * input_channelCount). It is greater than or
-!!! * equal to .allNeuralNets.from_valueCount_expanded.
  *
  *
  */
