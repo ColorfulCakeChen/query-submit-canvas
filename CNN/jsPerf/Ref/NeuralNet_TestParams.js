@@ -75,8 +75,10 @@ class NeuralNet_TestParams_Base extends TestParams.Base {
    */
   set_byParamsBase( aParamsBase ) {
     return this.set_byParamsScattered(
-      aParamsBase.input_height, aParamsBase.input_width, aParamsBase.input_channelCount,
-      aParamsBase.vocabularyChannelCount, aParamsBase.vocabularyCountPerInputChannel,
+      aParamsBase.explicit_input_height, aParamsBase.explicit_input_width,
+      aParamsBase.explicit_input_channelCount,
+      aParamsBase.vocabularyChannelCount,
+      aParamsBase.vocabularyCountPerInputChannel,
       aParamsBase.nConvStageTypeId,
       aParamsBase.blockCountTotalRequested,
       aParamsBase.output_channelCount, aParamsBase.output_asInputValueRange,
@@ -94,7 +96,7 @@ class NeuralNet_TestParams_Base extends TestParams.Base {
    *   Return this object self.
    */
   set_byParamsScattered(
-    input_height, input_width, input_channelCount,
+    explicit_input_height, explicit_input_width, explicit_input_channelCount,
     vocabularyChannelCount, vocabularyCountPerInputChannel,
     nConvStageTypeId,
     blockCountTotalRequested,
@@ -108,7 +110,7 @@ class NeuralNet_TestParams_Base extends TestParams.Base {
     }
 
     this.out = NeuralNet.ParamsBase.Pool.get_or_create_by(
-      input_height, input_width, input_channelCount,
+      explicit_input_height, explicit_input_width, explicit_input_channelCount,
       vocabularyChannelCount, vocabularyCountPerInputChannel,
       nConvStageTypeId,
       blockCountTotalRequested,
@@ -157,9 +159,9 @@ class NeuralNet_TestParams_Base extends TestParams.Base {
       this.embedding = Embedding_TestParams.Base.Pool.get_or_create_by( this.id );
 
       this.embedding.set_byParamsScattered(
-        neuralNetParams.input_height,
-        neuralNetParams.input_width,
-        neuralNetParams.input_channelCount,
+        neuralNetParams.explicit_input_height,
+        neuralNetParams.explicit_input_width,
+        neuralNetParams.explicit_input_channelCount,
         neuralNetParams.vocabularyChannelCount,
         neuralNetParams.vocabularyCountPerInputChannel,
         neuralNetParams.inferencedParams.bEmbedVocabularyId,
@@ -181,7 +183,8 @@ class NeuralNet_TestParams_Base extends TestParams.Base {
 
       let stageTestParams = Stage_TestParams.Base.Pool.get_or_create_by( this.id );
       stageTestParams.set_byParamsScattered(
-        stageParams.input_height, stageParams.input_width, stageParams.input_channelCount,
+        stageParams.explicit_input_height, stageParams.explicit_input_width,
+        stageParams.explicit_input_channelCount,
         stageParams.nConvStageTypeId,
         stageParams.blockCountRequested,
         stageParams.bPointwise1,
@@ -279,11 +282,11 @@ class NeuralNet_TestParams_Base extends TestParams.Base {
     // Restrict some parameter's large kinds. Otherwise, too many combination
     // will be generated.
     let valueOutMinMax = this.valueOutMinMax = {
-      input_height: [ 3, 5 ],
-      input_width: [ 3, 5 ],
+      explicit_input_height: [ 3, 5 ],
+      explicit_input_width: [ 3, 5 ],
 
-      input_channelCount: [
-        1, //NeuralNet.Params.input_channelCount.valueDesc.range.min,
+      explicit_input_channelCount: [
+        1, //NeuralNet.Params.explicit_input_channelCount.valueDesc.range.min,
         4
       ],
 
@@ -341,9 +344,9 @@ class NeuralNet_TestParams_Base extends TestParams.Base {
     //
     // Note: The order of these element could be adjusted to change testing order. The last element will be tested (changed) first.
     let paramDescConfigArray = [
-      new TestParams.ParamDescConfig( NeuralNet.Params.input_height,                   valueOutMinMax.input_height ),
-      new TestParams.ParamDescConfig( NeuralNet.Params.input_width,                    valueOutMinMax.input_width ),
-      new TestParams.ParamDescConfig( NeuralNet.Params.input_channelCount,             valueOutMinMax.input_channelCount ),
+      new TestParams.ParamDescConfig( NeuralNet.Params.explicit_input_height,          valueOutMinMax.explicit_input_height ),
+      new TestParams.ParamDescConfig( NeuralNet.Params.explicit_input_width,           valueOutMinMax.explicit_input_width ),
+      new TestParams.ParamDescConfig( NeuralNet.Params.explicit_input_channelCount,    valueOutMinMax.explicit_input_channelCount ),
 
       new TestParams.ParamDescConfig( NeuralNet.Params.vocabularyChannelCount,         valueOutMinMax.vocabularyChannelCount ),
       new TestParams.ParamDescConfig( NeuralNet.Params.vocabularyCountPerInputChannel, valueOutMinMax.vocabularyCountPerInputChannel ),
@@ -370,9 +373,14 @@ class NeuralNet_TestParams_Base extends TestParams.Base {
  * This order could not be changed arbitrarily. It must be the same as the parameter extracting order of NeuralNet.initer().
  */
 NeuralNet_TestParams_Base.paramsNameOrderArray_Basic = [
-  NeuralNet.Params.input_height.paramName,
-  NeuralNet.Params.input_width.paramName,
-  NeuralNet.Params.input_channelCount.paramName,
+  NeuralNet.Params.explicit_input_height.paramName,
+  NeuralNet.Params.explicit_input_width.paramName,
+  NeuralNet.Params.explicit_input_channelCount.paramName,
+
+
+//!!! ...unfinished... (2023/05/06) has_implicit_input
+
+
   NeuralNet.Params.vocabularyChannelCount.paramName,
   NeuralNet.Params.vocabularyCountPerInputChannel.paramName,
   NeuralNet.Params.nConvStageTypeId.paramName,
