@@ -494,6 +494,7 @@ class NeuralWorker_Proxies extends Recyclable.Root {
    *   - Resolved to false, if failed.
    */
   async alignmentMarkValueArray_set_async( markValueArray ) {
+    const funcNameInMessage = "alignmentMarkValueArray_set_async";
 
     // 1.
     const markValueArray_nonEmpty
@@ -501,7 +502,7 @@ class NeuralWorker_Proxies extends Recyclable.Root {
 
     if ( markValueArray_nonEmpty ) {
       if ( markValueArray.length != this.neuralNetCount )
-        throw Error( `NeuralWorker.Proxies.alignmentMarkValueArray_set_async(): `
+        throw Error( `NeuralWorker.Proxies.${funcNameInMessage}(): `
           + `markValueArray.length ( ${markValueArray.length} ) `
           + `should be either 0 or the same as `
           + `.neuralNetCount ( ${this.neuralNetCount} ).`
