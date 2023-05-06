@@ -467,12 +467,21 @@ class NeuralNet_FeedbackToInput {
 
   /**
    * @param {NeuralNet_FeedbackToInput} this
+   * @param {NeuralNet_FeedbackToInput_Area} this.area
    * @param {number} this.height_areaCount
    * @param {number} this.width_areaCount
    * @param {number[]} this.area_position_leftArray
    * @param {number[]} this.area_position_topArray
    */
   static area_position_fill() {
+    const area = this.area;
+
+    const area_width_with_gap_pixelCount_expanded
+      = area.width_with_gap_pixelCount_expanded;
+
+    const area_height_with_gap_pixelCount_expanded
+      = area.height_with_gap_pixelCount_expanded;
+
     const area_position_leftArray = this.area_position_leftArray;
     const area_position_topArray = this.area_position_topArray;
 
@@ -487,10 +496,10 @@ class NeuralNet_FeedbackToInput {
         ++width_area_index ) {
 
         area_position_leftArray[ i ] = ( width_area_index
-          * area.width_with_gap_pixelCount_expanded );
+          * area_width_with_gap_pixelCount_expanded );
 
         area_position_topArray[ i ] = ( height_area_index
-          * area.height_with_gap_pixelCount_expanded );
+          * area_height_with_gap_pixelCount_expanded );
 
         ++i;
       }
