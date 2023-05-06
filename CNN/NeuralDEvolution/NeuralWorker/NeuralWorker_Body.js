@@ -462,7 +462,7 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
       if ( !this.neuralNetArray )
         throw Error( `NeuralWorker_Body.${funcNameInMessage}(): `
           + `should be called after `
-          + `NeuralWorker_Body.NeuralNetArray_create() is called.`
+          + `NeuralWorker_Body.NeuralNetArray_create() has done.`
         );
 
       if ( markValueArray.length != this.neuralNetArray.length )
