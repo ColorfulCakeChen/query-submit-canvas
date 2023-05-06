@@ -268,10 +268,11 @@ class NeuralNet_InferencedParams extends Recyclable.Root {
       stageParamsCreator = NeuralNet_InferencedParams
         .create_StageParamsCreator_byNeuralNetParams( neuralNetParamsBase );
 
-!!! ...unfinished... (2023/05/06)
-// needs (this un-created) inferencedParams
-
-      stageParamsCreator.determine_stageCount_blockCountPerStage();
+      // Note: Because this inferencedParams is still creating, the input
+      //       shape can not be extracted by stageParamsCreator automatically.
+      //       So, pass them obviously.
+      stageParamsCreator.determine_stageCount_blockCountPerStage(
+        this.input_height, this.input_width, this.input_channelCount );
 
       this.stageCount = stageParamsCreator.stageCount;
       this.stageParamsArray.length = this.stageCount;
@@ -285,10 +286,12 @@ class NeuralNet_InferencedParams extends Recyclable.Root {
 
         if ( 0 == i ) { // Stage0.
 
-!!! ...unfinished... (2023/05/06)
-// needs (this un-created) inferencedParams
+          // Note: Because this inferencedParams is still creating, the input
+          //       shape can not be extracted by stageParamsCreator
+          //       automatically. So, pass them obviously.
+          stageParamsCreator.configTo_beforeStage0(
+            this.input_height, this.input_width, this.input_channelCount );
 
-          stageParamsCreator.configTo_beforeStage0();
         } else { // (i.e. stage1, 2, 3, ...)
           stageParamsCreator.configTo_beforeStageN_exceptStage0(
             i, next_input_height, next_input_width, next_input_channelCount );
