@@ -22,7 +22,7 @@ import { InferencedParams } from "./NeuralNet_InferencedParams.js";
 //          The FeedbackShape (if as the inferenced Params) will also be gone.
 
 
-//!!! ...unfinished... (2023/05/06) hasImplicitInput
+//!!! ...unfinished... (2023/05/06) has_implicit_input
 
 
 /**
@@ -297,7 +297,7 @@ class NeuralNet_ParamsBase extends Recyclable.Root {
   toString() {
     let str = ``
 
-//!!! ...unfinished... (2023/05/06) hasImplicitInput
+//!!! ...unfinished... (2023/05/06) has_implicit_input
 
       + `input_height=${this.input_height}, `
       + `input_width=${this.input_width}, `

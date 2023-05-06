@@ -126,7 +126,7 @@ class NeuralNet_Params extends Weights.Params( ParamsBase ) {
     {
 
 
-//!!! ...unfinished... (2023/05/06) hasImplicitInput
+//!!! ...unfinished... (2023/05/06) has_implicit_input
 
 
       this.input_height = this.getParamValue_byParamDesc( NeuralNet_Params.input_height );
@@ -173,7 +173,7 @@ class NeuralNet_Params extends Weights.Params( ParamsBase ) {
 // Define parameter descriptions.
 
 
-//!!! ...unfinished... (2023/05/06) hasImplicitInput
+//!!! ...unfinished... (2023/05/06) has_implicit_input
 
 
 NeuralNet_Params.input_height =             new ParamDesc.Int(  "input_height",                   1, ( 10 * 1024 ) );
@@ -201,7 +201,7 @@ NeuralNet_Params.bKeepInputTensor =         new ParamDesc.Bool( "bKeepInputTenso
 NeuralNet_Params.SequenceArray = new ParamDesc.SequenceArray( [
 
 
-//!!! ...unfinished... (2023/05/06) hasImplicitInput
+//!!! ...unfinished... (2023/05/06) has_implicit_input
 
 
   NeuralNet_Params.input_height,
