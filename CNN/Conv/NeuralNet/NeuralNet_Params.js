@@ -19,7 +19,8 @@ import { ParamsBase } from "./NeuralNet_ParamsBase.js";
 class NeuralNet_Params extends Weights.Params( ParamsBase ) {
 
   /**
-   * Used as default NeuralNet.Params provider for conforming to Recyclable interface.
+   * Used as default NeuralNet.Params provider for conforming to Recyclable
+   * interface.
    */
   static Pool = new Pool.Root( "NeuralNet.Params.Pool",
     NeuralNet_Params, NeuralNet_Params.setAsConstructor );
@@ -83,12 +84,12 @@ class NeuralNet_Params extends Weights.Params( ParamsBase ) {
 
   /**
    * @return {boolean}
-   *   Always return false. NeuralNet.Params needs not and can not
-   * generate Stage.Params by itself. Only NeuralNet.Base.initer() could do that.
-   * The reason is NeuralNet.StageParamsCreator needs input_height and input_width
+   *   Always return false. NeuralNet.Params needs not and can not generate
+   * Stage.Params by itself. Only NeuralNet.Base.initer() could do that. The
+   * reason is NeuralNet.StageParamsCreator needs input_height and input_width
    * of previous block. And these could only be available from previous
    * Stage.Base which should be created by NeuralNet.Base.initer().
-   * 
+   *
    * @override
    */
   inferencedParams_embeddingParams_stageParamsArray_needed() {
