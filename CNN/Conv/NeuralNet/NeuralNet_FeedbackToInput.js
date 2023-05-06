@@ -549,8 +549,6 @@ class NeuralNet_FeedbackToInput {
   toString() {
     let str = `${this.area.toString()}`
 
-!!! ...unfinished... (2023/05/06)
-
       + `explicit_input_height=${this.explicit_input_height}, `
       + `explicit_input_channelCount=${this.explicit_input_channelCount}, `
 
