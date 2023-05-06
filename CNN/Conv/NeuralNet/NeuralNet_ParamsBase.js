@@ -16,7 +16,7 @@ import { InferencedParams } from "./NeuralNet_InferencedParams.js";
 // neural network. 
 //
 // Let input_height and input_width become inferenced params?
-// Here accepts explicit_input_height and explicit_input_width.
+// Here accepts explicit_input_height and explicit_input_width and bFill.
 
 /**
  * NeuralNet parameters base class.
