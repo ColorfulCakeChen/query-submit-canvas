@@ -6,6 +6,9 @@ import * as ValueDesc from "../../Unpacker/ValueDesc.js";
 import * as Block from "../Block.js";
 import * as StageParamsCreator from "./NeuralNet_StageParamsCreator.js";
 
+import { FeedbackToInput as NeuralNet_FeedbackShape }
+  from "./NeuralNet_FeedbackShape.js";
+
 /**
  * All properties inferenced from NeuralNet.Params.
  *
@@ -92,7 +95,8 @@ class NeuralNet_InferencedParams extends Recyclable.Root {
   static setAsConstructor_self( neuralNetParamsBase ) {
 
 //!!! ...unfinished... (2023/05/06)
-// NeuralNet_FeedbackShape
+//  this.feedbackShape = NeuralNet_FeedbackShape();
+// this.feedbackShape.init( ??? );
 
     this.embeddingParams_create( neuralNetParamsBase );
     this.stageParamsArray_blockFinalParams_create( neuralNetParamsBase );
@@ -121,8 +125,7 @@ class NeuralNet_InferencedParams extends Recyclable.Root {
     this.embeddingParams_dispose();
     this.bEmbedVocabularyId = undefined;
 
-//!!! ...unfinished... (2023/05/06)
-// NeuralNet_FeedbackShape
+    this.feedbackShape = undefined;
 
     super.disposeResources();
   }
