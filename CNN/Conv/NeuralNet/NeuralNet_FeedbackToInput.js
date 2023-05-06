@@ -467,15 +467,14 @@ class NeuralNet_FeedbackToInput {
 
   /**
    * @param {NeuralNet_FeedbackToInput} this
-   * @param {number} this.area
-   * @param {number} this.areaCount
    * @param {number} this.height_areaCount
    * @param {number} this.width_areaCount
    * @param {number[]} this.area_position_leftArray
    * @param {number[]} this.area_position_topArray
    */
   static area_position_fill() {
-    const area = this.area;
+    const area_position_leftArray = this.area_position_leftArray;
+    const area_position_topArray = this.area_position_topArray;
 
     // Create all ( left, top ) coordinates.
     let i = 0;
