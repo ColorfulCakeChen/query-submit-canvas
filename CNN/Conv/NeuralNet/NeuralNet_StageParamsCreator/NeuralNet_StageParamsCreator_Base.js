@@ -80,9 +80,38 @@ class NeuralNet_StageParamsCreator_Base extends Recyclable.Root {
   /** Called to determine stageCount and blockCountPerStage.
     *
     * Sub-class could override this method to adjust data members.
+   *
+   * @param {number} input_height
+   *   The input height of the stage0 which will be created. If null or
+   * undefined, the .neuralNetParams.inferencedParams.input_height will be
+   * used instead.
+   *
+   * @param {number} input_width
+   *   The input width of the stage0 which will be created. If null or
+   * undefined, the .neuralNetParams.inferencedParams.input_width will be
+   * used instead.
+   *
+   * @param {number} input_channelCount
+   *   The input channel count of the stage0 which will be created. If null or
+   * undefined, the .neuralNetParams.inferencedParams.input_channelCount will
+   * be used instead.
     */
-  determine_stageCount_blockCountPerStage() {
+  determine_stageCount_blockCountPerStage(
+    input_height, input_width, input_channelCount ) {
+
     let neuralNetParams = this.neuralNetParams;
+
+    {
+      if ( input_height == undefined )
+        input_height = neuralNetParams.inferencedParams.input_height;
+
+      if ( input_width == undefined )
+        input_width = neuralNetParams.inferencedParams.input_width;
+
+      if ( input_channelCount == undefined )
+        input_channelCount
+          = neuralNetParams.inferencedParams.input_channelCount;
+    }
 
     // 1. stageCount
     //
@@ -91,12 +120,7 @@ class NeuralNet_StageParamsCreator_Base extends Recyclable.Root {
     // the requested output_channelCount.
     {
       let embedding_output_channelCount
-
-!!! ...unfinished... (2023/05/06)
-// needs inferencedParams which may not created
-
-        = neuralNetParams.inferencedParams.input_channelCount
-            * neuralNetParams.vocabularyChannelCount;
+        = input_channelCount * neuralNetParams.vocabularyChannelCount;
 
       let expandFactor = Math.ceil(
         neuralNetParams.output_channelCount / embedding_output_channelCount );
@@ -120,20 +144,43 @@ class NeuralNet_StageParamsCreator_Base extends Recyclable.Root {
 
   /**
    * Called before stage0 is about to be created.
+   *
+   * @param {number} input_height
+   *   The input height of the stage0 which will be created. If null or
+   * undefined, the .neuralNetParams.inferencedParams.input_height will be
+   * used instead.
+   *
+   * @param {number} input_width
+   *   The input width of the stage0 which will be created. If null or
+   * undefined, the .neuralNetParams.inferencedParams.input_width will be
+   * used instead.
+   *
+   * @param {number} input_channelCount
+   *   The input channel count of the stage0 which will be created. If null or
+   * undefined, the .neuralNetParams.inferencedParams.input_channelCount will
+   * be used instead.
    */
-  configTo_beforeStage0() {
+  configTo_beforeStage0( input_height, input_width, input_channelCount ) {
     let neuralNetParams = this.neuralNetParams;
 
-!!! ...unfinished... (2023/05/06)
-// needs inferencedParams which may not created
+    {
+      if ( input_height == undefined )
+        input_height = neuralNetParams.inferencedParams.input_height;
 
-    this.input_height = neuralNetParams.inferencedParams.input_height;
-    this.input_width = neuralNetParams.inferencedParams.input_width;
+      if ( input_width == undefined )
+        input_width = neuralNetParams.inferencedParams.input_width;
+
+      if ( input_channelCount == undefined )
+        input_channelCount
+          = neuralNetParams.inferencedParams.input_channelCount;
+    }
+
+    this.input_height = input_height;
+    this.input_width = input_width;
 
     // The channel count is expanded by prefix embedding layer.
     this.input_channelCount
-      = neuralNetParams.inferencedParams.input_channelCount
-          * neuralNetParams.vocabularyChannelCount;
+      = input_channelCount * neuralNetParams.vocabularyChannelCount;
 
     this.nConvStageTypeId = neuralNetParams.nConvStageTypeId;
 
@@ -167,7 +214,7 @@ class NeuralNet_StageParamsCreator_Base extends Recyclable.Root {
    *   The input width of the stage which will be created.
    *
    * @param {number} input_channelCount
-   *   The input channel counr of the stage which will be created.
+   *   The input channel count of the stage which will be created.
    */
   configTo_beforeStageN_exceptStage0(
     stageIndex, input_height, input_width, input_channelCount ) {
