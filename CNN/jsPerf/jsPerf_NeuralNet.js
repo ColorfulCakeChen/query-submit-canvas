@@ -187,8 +187,6 @@ class HeightWidthDepth {
     this.testPerformance_imageSourceBag
       = ImageSourceBag.Base.Pool.get_or_create_by( "int32" );
 
-!!! ...unfinished... (2023/05/06) has_implicit_input
-
     {
       let input_height, input_width, input_channelCount;
       if ( this.has_implicit_input ) {
