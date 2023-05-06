@@ -93,7 +93,7 @@ class NeuralNet_InferencedParams extends Recyclable.Root {
 
   /** @override */
   static setAsConstructor_self( neuralNetParamsBase ) {
-    this.inputShape_create();
+    this.inputShape_create( neuralNetParamsBase );
     this.embeddingParams_create( neuralNetParamsBase );
     this.stageParamsArray_blockFinalParams_create( neuralNetParamsBase );
   }
