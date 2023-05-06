@@ -174,7 +174,7 @@ class NeuralNet_FeedbackShape extends NeuralNet_FeedbackToInput {
   }
 
   /**
-   *
+   * @see NeuralNet_FeedbackToInput.init
    */
   init(
     explicit_input_height, explicit_input_width, explicit_input_channelCount,
