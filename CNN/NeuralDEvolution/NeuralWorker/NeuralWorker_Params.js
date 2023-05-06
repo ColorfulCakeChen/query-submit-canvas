@@ -14,4 +14,9 @@ class NeuralWorker_Params {
 
   output_channelCount_per_alignment;
 
+//!!! ...unfinished... (2023/05/06)
+// alignmentMarkValueArray can NOT be placed here because
+// alignemt mark value should be changable during the lifetime
+// of a neural network.
+
 }
