@@ -48,10 +48,22 @@ class NeuralNet_ScaleFill {
 // ( implicit + explicit ) size.
 
   /**
+   * Almost the same as .createTensor_by_scale_fill_asyncGenerator() but the
+   * source data must has the same shape as target tensor.
    *
-
-//!!! ...unfinished... (2023/05/06)
-
+   * If they are different, it is suggested to pre-scale source by Canvas
+   * Context's drawImage() before calling this method. The advantage are:
+   *
+   *   - GPU-CPU transferring could be reduced.
+   *
+   *     - Context.drawImage() operates in GPU directly.
+   *
+   *     - tf.image.resizeBilinear() needs upload source data from CPU to GPU.
+   *
+   *   - Here can check source image size whether equal to target
+   *        (= implicit + explicit ) size.
+   *
+   *
    */
   async* createTensor_by_fill_asyncGenerator(
     source_TypedArray, source_height, source_width,
