@@ -183,6 +183,9 @@ class HeightWidthDepth {
     this.testPerformance_imageSourceBag
       = ImageSourceBag.Base.Pool.get_or_create_by( "int32" );
 
+!!! ...unfinished... (2023/05/06) has_implicit_input
+
+
     {
       let largerHeight = this.height * 20;
       let largerWidth = this.width * 20;

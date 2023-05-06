@@ -20,6 +20,10 @@ let g_Controls = {
   largerFactor_Text: null,
   input_height_Text: null,
   input_width_Text: null,
+
+!!! ...unfinished... (2023/05/06) has_implicit_input
+
+
   vocabularyChannelCount_Text: null,
   blockCountTotalRequested_Text: null,
   output_channelCount_per_alignment_Text: null,

@@ -96,18 +96,17 @@ class NeuralNet_Reference_Base extends Recyclable.Root {
    */
   testCorrectness( imageSourceBag, testParams ) {
 
-    let {
-      input_height, input_width, input_channelCount,
+    const {
+      inferencedParams: { input_height, input_width, input_channelCount },
     } = testParams.out;
 
+    this.testCorrectness_imageIn = imageSourceBag.getImage_by(
+      input_height, input_width, input_channelCount );
 
-!!! ...unfinished... (2023/05/06) has_implicit_input
-
-
-    this.testCorrectness_imageIn = imageSourceBag.getImage_by( input_height, input_width, input_channelCount );
-
-    Pool.Asserter.assert_Pool_issuedCount_same_after_as_before( "NeuralNet_Reference.Base.testCorrectness_internal()",
-      NeuralNet_Reference_Base.testCorrectness_internal, this, imageSourceBag, testParams );
+    Pool.Asserter.assert_Pool_issuedCount_same_after_as_before(
+      "NeuralNet_Reference.Base.testCorrectness_internal()",
+      NeuralNet_Reference_Base.testCorrectness_internal,
+      this, imageSourceBag, testParams );
 
     this.testCorrectness_imageIn = null;
   }
@@ -125,10 +124,13 @@ class NeuralNet_Reference_Base extends Recyclable.Root {
   static testCorrectness_internal( imageSourceBag, testParams ) {
     this.testParams = testParams;
 
-    this.testCorrectness_imageOutReference = this.calcResult( this.testCorrectness_imageIn );
+    this.testCorrectness_imageOutReference
+      = this.calcResult( this.testCorrectness_imageIn );
 
-    Pool.Asserter.assert_Pool_issuedCount_same_after_as_before( "NeuralNet_Reference.Base.neuralNet_create_apply_internal()",
-      NeuralNet_Reference_Base.neuralNet_create_apply_internal, this, imageSourceBag, testParams );
+    Pool.Asserter.assert_Pool_issuedCount_same_after_as_before(
+      "NeuralNet_Reference.Base.neuralNet_create_apply_internal()",
+      NeuralNet_Reference_Base.neuralNet_create_apply_internal,
+      this, imageSourceBag, testParams );
 
     { // Release output reference images.
       if ( this.testCorrectness_imageOutReference != this.testCorrectness_imageIn ) { // Do not release image from ImageSourceBag.
@@ -146,7 +148,7 @@ class NeuralNet_Reference_Base extends Recyclable.Root {
   static neuralNet_create_apply_internal( imageSourceBag, testParams ) {
 
     let {
-      input_height, input_width, input_channelCount,
+      inferencedParams: { input_height, input_width, input_channelCount },
       bKeepInputTensor,
     } = testParams.out;
 
@@ -174,7 +176,8 @@ class NeuralNet_Reference_Base extends Recyclable.Root {
       // The difference tensor count will be the generated tensor count (i.e. outputTensorCount) minus destroyed input
       // tensor count (i.e. inputTensorDestroyCount).
       let neuralNet_outputTensorCount = 1;
-      tensorNumDifference_apply_before_after = neuralNet_outputTensorCount - inputTensorDestroyCount;
+      tensorNumDifference_apply_before_after
+        = neuralNet_outputTensorCount - inputTensorDestroyCount;
 
       let memoryInfo_apply_before = tf.memory(); // Test memory leakage of NeuralNet.apply.
       {
@@ -187,10 +190,13 @@ class NeuralNet_Reference_Base extends Recyclable.Root {
       }
       let memoryInfo_apply_after = tf.memory();
 
-      if ( memoryInfo_apply_after.numTensors != ( memoryInfo_apply_before.numTensors + tensorNumDifference_apply_before_after ) )
+      const numTensors_expected
+        = memoryInfo_apply_before.numTensors + tensorNumDifference_apply_before_after;
+
+      if ( memoryInfo_apply_after.numTensors != numTensors_expected )
         throw Error( `NeuralNet.apply() memory leak. `
           + `result tensor count (${memoryInfo_apply_after.numTensors}) `
-          + `should be (${ ( memoryInfo_apply_before.numTensors + tensorNumDifference_apply_before_after ) } `
+          + `should be (${numTensors_expected} `
           + `${neuralNet}` );
 
       if ( !inputTensor3d )
@@ -206,30 +212,39 @@ class NeuralNet_Reference_Base extends Recyclable.Root {
         if ( outputTensor3d && ( outputTensor3d.shape.length > CHANNEL_AXIS_ID ) )
           outputTensorChannelCount = outputTensor3d.shape[ CHANNEL_AXIS_ID ];
 
-        // The real channel count of the output tensor should be the same as predicted output channel count.
-        NeuralNet_Reference_Base.AssertTwoEqualValues( "output_channelCount", neuralNet.output_channelCount, outputTensorChannelCount, neuralNet );
+        // The real channel count of the output tensor should be the same as
+        // predicted output channel count.
+        NeuralNet_Reference_Base.AssertTwoEqualValues( "output_channelCount",
+          neuralNet.output_channelCount, outputTensorChannelCount, neuralNet );
       }
 
       // Test correctness of NeuralNet BoundsArraySet.
-      this.assert_imageOut_BoundsArraySet( neuralNet, this.testCorrectness_imageOutReference, neuralNet );
+      this.assert_imageOut_BoundsArraySet( neuralNet,
+        this.testCorrectness_imageOutReference, neuralNet );
 
       // Test correctness of NeuralNet.apply.
-      this.assert_imageOut_Tensors_byNumberArrays( outputTensor3d, this.testCorrectness_imageOutReference, neuralNet );
+      this.assert_imageOut_Tensors_byNumberArrays( outputTensor3d,
+        this.testCorrectness_imageOutReference, neuralNet );
 
       // Compare result of ShuffleNetV2 and ShuffleNetV2_byMobileNetV1.
-      NeuralNet_Reference_Base.neuralNet_compare_ShuffleNetV2_and_ShuffleNetV2_byMobileNetV1.call( this,
-        testParams,
-        inputTensor3d_fromBag, outputTensor3d );
+      NeuralNet_Reference_Base
+        .neuralNet_compare_ShuffleNetV2_and_ShuffleNetV2_byMobileNetV1
+        .call( this,
+          testParams,
+          inputTensor3d_fromBag, outputTensor3d );
 
       neuralNet.disposeResources_and_recycleToPool();
       neuralNet = null;
     }
     let memoryInfo_afterDispose = tf.memory();
 
-    if ( memoryInfo_afterDispose.numTensors != ( memoryInfo_beforeCreate.numTensors + tensorNumDifference_apply_before_after ) )
+    const numTensors_expected
+      = memoryInfo_beforeCreate.numTensors + tensorNumDifference_apply_before_after;
+
+    if ( memoryInfo_afterDispose.numTensors != numTensors_expected )
       throw Error(  `NeuralNet create/dispose memory leak. `
         + `result tensor count (${memoryInfo_afterDispose.numTensors}) `
-        + `should be (${ ( memoryInfo_beforeCreate.numTensors + tensorNumDifference_apply_before_after ) } `
+        + `should be (${numTensors_expected} `
         + `${neuralNet}` );
 
     tf.dispose( outputTensor3d );
@@ -292,7 +307,8 @@ class NeuralNet_Reference_Base extends Recyclable.Root {
 
     // Initialize successfully or failed.
     let extractedParams = NeuralNet.Params.Pool.get_or_create_by(
-      testParams.in.input_height, testParams.in.input_width, testParams.in.input_channelCount,
+      testParams.in.explicit_input_height, testParams.in.explicit_input_width,
+      testParams.in.explicit_input_channelCount,
       testParams.in.vocabularyChannelCount, testParams.in.vocabularyCountPerInputChannel,
       testParams.in.nConvStageTypeId,
       testParams.in.blockCountTotalRequested,
@@ -310,9 +326,11 @@ class NeuralNet_Reference_Base extends Recyclable.Root {
       throw Error( `Failed to initialize neuralNet object. ${neuralNet_toBeCompared}` );
 
     if ( 100 != progressInit.valuePercentage )
-      throw Error( `NeuralNet_Reference_Base.neuralNet_compare_ShuffleNetV2_and_ShuffleNetV2_byMobileNetV1(): `
+      throw Error( `NeuralNet_Reference_Base.`
+        + `neuralNet_compare_ShuffleNetV2_and_ShuffleNetV2_byMobileNetV1(): `
         + `Progress (${progressInit.valuePercentage}) should be 100 `
-        + `when initializing NeuralNet object successfully. ${neuralNet_toBeCompared}`);
+        + `when initializing NeuralNet object successfully. `
+        + `${neuralNet_toBeCompared}` );
 
     progressInit.disposeResources_and_recycleToPool();
     progressInit = null;
@@ -330,18 +348,22 @@ class NeuralNet_Reference_Base extends Recyclable.Root {
       outputTensor3d = neuralNet_toBeCompared.apply( inputTensor3d );
   
       if ( 100 != neuralNet_toBeCompared.progressApply.valuePercentage )
-        throw Error( `NeuralNet_Reference_Base.neuralNet_compare_ShuffleNetV2_and_ShuffleNetV2_byMobileNetV1(): `
-          + `Progress (${neuralNet_toBeCompared.progressApply.valuePercentage}) should be 100 `
+        throw Error( `NeuralNet_Reference_Base`
+          + `.neuralNet_compare_ShuffleNetV2_and_ShuffleNetV2_byMobileNetV1(): `
+          + `Progress (${neuralNet_toBeCompared.progressApply.valuePercentage}) `
+          + `should be 100 `
           + `after neuralNet.apply(). ${neuralNet_toBeCompared}`);
     }
 
     {
       // Test correctness of NeuralNet BoundsArraySet.
-      this.assert_imageOut_BoundsArraySet( neuralNet_toBeCompared, this.testCorrectness_imageOutReference, neuralNet_toBeCompared );
+      this.assert_imageOut_BoundsArraySet( neuralNet_toBeCompared,
+        this.testCorrectness_imageOutReference, neuralNet_toBeCompared );
 
       //!!! (2022/07/23 Remarked) Compare to outputTensor3d_original directly.
       //// Test correctness of NeuralNet.apply.
-      //this.assert_imageOut_Tensors_byNumberArrays( outputTensor3d, this.testCorrectness_imageOutReference, neuralNet );
+      //this.assert_imageOut_Tensors_byNumberArrays( outputTensor3d,
+      //  this.testCorrectness_imageOutReference, neuralNet );
 
       // Compare to outputTensor3d_original.
       let output_original = outputTensor3d_original.dataSync();
@@ -377,7 +399,9 @@ class NeuralNet_Reference_Base extends Recyclable.Root {
    * @param {NeuralNet.Base} neuralNet            The neuralNet to be checked.
    * @param {NumberImage.Base} imageOutReference  Refernece output Image data of the NeuralNet_Reference's calcResult().
    */
-  assert_imageOut_BoundsArraySet( neuralNet, imageOutReference, parametersDescription ) {
+  assert_imageOut_BoundsArraySet(
+    neuralNet, imageOutReference, parametersDescription ) {
+
     BoundsArraySet_Asserter.assert_ScaleBoundsArray( this.asserter_Equal,
       neuralNet.output_scaleBoundsArray, imageOutReference.boundsArraySet.output0,
       "output0", "output0_Ref", "NeuralNet", parametersDescription );
@@ -389,7 +413,9 @@ class NeuralNet_Reference_Base extends Recyclable.Root {
    * @param {tf.tensor3d} outputTensor            The output tensor of the NeuralNet's apply().
    * @param {NumberImage.Base} imageOutReference  Refernece output Image data of the NeuralNet_Reference's calcResult().
    */
-  assert_imageOut_Tensors_byNumberArrays( outputTensor, imageOutReference, parametersDescription ) {
+  assert_imageOut_Tensors_byNumberArrays(
+    outputTensor, imageOutReference, parametersDescription ) {
+
     let outputArrayRef;
 
     if ( imageOutReference ) {
@@ -437,7 +463,8 @@ class NeuralNet_Reference_Base extends Recyclable.Root {
 
     // Initialize successfully or failed.
     let extractedParams = NeuralNet.Params.Pool.get_or_create_by(
-      testParams.in.input_height, testParams.in.input_width, testParams.in.input_channelCount,
+      testParams.in.explicit_input_height, testParams.in.explicit_input_width,
+      testParams.in.explicit_input_channelCount,
       testParams.in.vocabularyChannelCount, testParams.in.vocabularyCountPerInputChannel,
       testParams.in.nConvStageTypeId,
       testParams.in.blockCountTotalRequested,
@@ -451,7 +478,8 @@ class NeuralNet_Reference_Base extends Recyclable.Root {
     );
 
     if ( neuralNet.bInitOk != bInitOk )
-      throw Error( `NeuralNet validation state (${neuralNet.bInitOk}) mismatches initer's result (${bInitOk}). ${neuralNet}` );
+      throw Error( `NeuralNet validation state (${neuralNet.bInitOk}) `
+        + `mismatches initer's result (${bInitOk}). ${neuralNet}` );
 
     if ( !bInitOk ) { //!!! For Debug.
       console.log( "testParams =", testParams );
@@ -473,18 +501,22 @@ class NeuralNet_Reference_Base extends Recyclable.Root {
       debugger;
     }
 
-    let neuralNet_asserter = ObjectPropertyAsserter.Base.Pool.get_or_create_by( "NeuralNet", neuralNet, neuralNet );
+    let neuralNet_asserter = ObjectPropertyAsserter.Base.Pool.get_or_create_by(
+      "NeuralNet", neuralNet, neuralNet );
 
     NeuralNet_Reference_Base.AssertTwoEqualValues( "parsing beginning position",
-      neuralNet.weightElementOffsetBegin, testParams.in_weights.weightElementOffsetBegin, neuralNet );
+      neuralNet.weightElementOffsetBegin,
+      testParams.in_weights.weightElementOffsetBegin, neuralNet );
 
     NeuralNet_Reference_Base.AssertTwoEqualValues( "parsing ending position",
-      neuralNet.weightElementOffsetEnd, testParams.in_weights.weightArray.length, neuralNet );
+      neuralNet.weightElementOffsetEnd,
+      testParams.in_weights.weightArray.length, neuralNet );
 
     // parameters.
-    neuralNet_asserter.propertyValue( "input_height", testParams.out.input_height );
-    neuralNet_asserter.propertyValue( "input_width", testParams.out.input_width );
-    neuralNet_asserter.propertyValue( "input_channelCount", testParams.out.input_channelCount );
+    neuralNet_asserter.propertyValue( "explicit_input_height", testParams.out.explicit_input_height );
+    neuralNet_asserter.propertyValue( "explicit_input_width", testParams.out.explicit_input_width );
+    neuralNet_asserter.propertyValue( "explicit_input_channelCount", testParams.out.explicit_input_channelCount );
+    neuralNet_asserter.propertyValue( "has_implicit_input", testParams.out.has_implicit_input );
     neuralNet_asserter.propertyValue( "vocabularyChannelCount", testParams.out.vocabularyChannelCount );
     neuralNet_asserter.propertyValue( "vocabularyCountPerInputChannel", testParams.out.vocabularyCountPerInputChannel );
     neuralNet_asserter.propertyValue( "nConvStageTypeId", testParams.out.nConvStageTypeId );
@@ -494,11 +526,22 @@ class NeuralNet_Reference_Base extends Recyclable.Root {
     neuralNet_asserter.propertyValue( "output_asInputValueRange", testParams.out.output_asInputValueRange );
 
     // Inferenced parameters.
-    let {
+    const {
+      implicit_input_height, implicit_input_width, implicit_input_channelCount,
+      input_height, input_width, input_channelCount,
+  
       stageCount, blockCountPerStage, blockCountTotal,
       stageLast_output_height, stageLast_output_width, stageLast_output_channelCount,
       output_height, output_width,
     } = testParams.out.inferencedParams;
+
+    neuralNet_asserter.propertyValue( "implicit_input_height", implicit_input_height );
+    neuralNet_asserter.propertyValue( "implicit_input_width", implicit_input_width );
+    neuralNet_asserter.propertyValue( "implicit_input_channelCount", implicit_input_channelCount );
+
+    neuralNet_asserter.propertyValue( "input_height", input_height );
+    neuralNet_asserter.propertyValue( "input_width", input_width );
+    neuralNet_asserter.propertyValue( "input_channelCount", input_channelCount );
 
     neuralNet_asserter.propertyValue( "stageCount", stageCount );
     neuralNet_asserter.propertyValue( "stageCount", testParams.stageArray.length );
@@ -524,7 +567,7 @@ class NeuralNet_Reference_Base extends Recyclable.Root {
 
     // Every stage will double channel count.
     let embedding_output_channelCount
-      = testParams.out.input_channelCount * testParams.out.vocabularyChannelCount;
+      = input_channelCount * testParams.out.vocabularyChannelCount;
     neuralNet_asserter.propertyValue( "stageLast_output_channelCount",
       embedding_output_channelCount * ( 2 ** stageCount ) );
 
@@ -665,7 +708,9 @@ class NeuralNet_Reference_Base extends Recyclable.Root {
     }
   }
 
-  /** According to imageIn and this.testParams.in.paramsNumberArrayObject, calculate imageOut.
+  /**
+   * According to imageIn and this.testParams.in.paramsNumberArrayObject,
+   * calculate imageOut.
    *
    * @param {NumberImage.Base} imageIn
    *   The image to be tested.
