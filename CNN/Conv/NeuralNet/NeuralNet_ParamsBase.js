@@ -29,14 +29,18 @@ import { InferencedParams } from "./NeuralNet_InferencedParams.js";
  * NeuralNet parameters base class.
  *
  *
- * @member {number} input_height
- *   The input image's height.
+ * @member {number} explicit_input_height
+ *   The explicit (i.e. user visible) input image's height (pixel count). It is
+ * equal to or less than .inferencedParams.input_height.
  *
- * @member {number} input_width
- *   The input image's width.
+ * @member {number} explicit_input_width
+ *   The explicit (i.e. user visible) input image's width (pixel count). It is
+ * equal to or less than .inferencedParams.input_width.
  *
- * @member {number} input_channelCount
- *   The input image's channel count.
+ * @member {number} explicit_input_channelCount
+ *   The explicit (i.e. user visible) input image's channel count. It is always
+ * equal to .inferencedParams.input_channelCount.
+ *
  *
  * @member {number} vocabularyChannelCount
  *   In the embedding layer, every vocabulary will have how many embedding
@@ -88,7 +92,7 @@ class NeuralNet_ParamsBase extends Recyclable.Root {
   /**
    */
   constructor(
-    input_height, input_width, input_channelCount,
+    explicit_input_height, explicit_input_width, explicit_input_channelCount,
     vocabularyChannelCount, vocabularyCountPerInputChannel,
     nConvStageTypeId,
     blockCountTotalRequested,
@@ -97,7 +101,7 @@ class NeuralNet_ParamsBase extends Recyclable.Root {
   ) {
     super();
     NeuralNet_ParamsBase.setAsConstructor_self.call( this,
-      input_height, input_width, input_channelCount,
+      explicit_input_height, explicit_input_width, explicit_input_channelCount,
       vocabularyChannelCount, vocabularyCountPerInputChannel,
       nConvStageTypeId,
       blockCountTotalRequested,
@@ -108,7 +112,7 @@ class NeuralNet_ParamsBase extends Recyclable.Root {
 
   /** @override */
   static setAsConstructor(
-    input_height, input_width, input_channelCount,
+    explicit_input_height, explicit_input_width, explicit_input_channelCount,
     vocabularyChannelCount, vocabularyCountPerInputChannel,
     nConvStageTypeId,
     blockCountTotalRequested,
@@ -117,7 +121,7 @@ class NeuralNet_ParamsBase extends Recyclable.Root {
   ) {
     super.setAsConstructor();
     NeuralNet_ParamsBase.setAsConstructor_self.call( this,
-      input_height, input_width, input_channelCount,
+      explicit_input_height, explicit_input_width, explicit_input_channelCount,
       vocabularyChannelCount, vocabularyCountPerInputChannel,
       nConvStageTypeId,
       blockCountTotalRequested,
@@ -129,16 +133,16 @@ class NeuralNet_ParamsBase extends Recyclable.Root {
 
   /** @override */
   static setAsConstructor_self(
-    input_height, input_width, input_channelCount,
+    explicit_input_height, explicit_input_width, explicit_input_channelCount,
     vocabularyChannelCount, vocabularyCountPerInputChannel,
     nConvStageTypeId,
     blockCountTotalRequested,
     output_channelCount, output_asInputValueRange,
     bKeepInputTensor
   ) {
-    this.input_height = input_height;
-    this.input_width = input_width;
-    this.input_channelCount = input_channelCount;
+    this.explicit_input_height = explicit_input_height;
+    this.explicit_input_width = explicit_input_width;
+    this.explicit_input_channelCount = explicit_input_channelCount;
     this.vocabularyChannelCount = vocabularyChannelCount;
     this.vocabularyCountPerInputChannel = vocabularyCountPerInputChannel;
     this.nConvStageTypeId = nConvStageTypeId;
@@ -159,9 +163,9 @@ class NeuralNet_ParamsBase extends Recyclable.Root {
     this.nConvStageTypeId = undefined;
     this.vocabularyCountPerInputChannel = undefined;
     this.vocabularyChannelCount = undefined;
-    this.input_channelCount = undefined;
-    this.input_width = undefined;
-    this.input_height = undefined;
+    this.explicit_input_channelCount = undefined;
+    this.explicit_input_width = undefined;
+    this.explicit_input_height = undefined;
 
     super.disposeResources();
   }
@@ -172,9 +176,9 @@ class NeuralNet_ParamsBase extends Recyclable.Root {
    */
   clone() {
     let another = NeuralNet_ParamsBase.Pool.get_or_create_by(
-      this.input_height,
-      this.input_width,
-      this.input_channelCount,
+      this.explicit_input_height,
+      this.explicit_input_width,
+      this.explicit_input_channelCount,
       this.vocabularyChannelCount,
       this.vocabularyCountPerInputChannel,
       this.nConvStageTypeId,
@@ -299,9 +303,10 @@ class NeuralNet_ParamsBase extends Recyclable.Root {
 
 //!!! ...unfinished... (2023/05/06) has_implicit_input
 
-      + `input_height=${this.input_height}, `
-      + `input_width=${this.input_width}, `
-      + `input_channelCount=${this.input_channelCount}, `
+      + `explicit_input_height=${this.explicit_input_height}, `
+      + `explicit_input_width=${this.explicit_input_width}, `
+      + `explicit_input_channelCount=${this.explicit_input_channelCount}, `
+
       + `vocabularyChannelCount=${this.vocabularyChannelCount}, `
       + `vocabularyCountPerInputChannel=${this.vocabularyCountPerInputChannel}, `
 
