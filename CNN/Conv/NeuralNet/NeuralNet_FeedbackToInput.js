@@ -555,49 +555,39 @@ class NeuralNet_FeedbackToInput {
 // input_height, input_width, input_channel
 
 
-this.explicit_input_height
 
-this.explicit_input_channelCount
 
-this.input_channelCount
-= this.implicit_input_channelCount
-= this.explicit_input_channelCount;
 
-this.input_height
-= this.implicit_input_height
-= this.explicit_input_height;
+      + `explicit_input_height=${this.explicit_input_height}, `
+      + `explicit_input_channelCount=${this.explicit_input_channelCount}, `
 
-// 2.3 There are 2 filling areas (alignment mark and feedback) per neural
-//     network.
-this.areaCount = 2;
+      + `implicit_input_height=${this.implicit_input_height}, `
+      + `implicit_input_width=${this.implicit_input_width}, `
+      + `implicit_input_channelCount=${this.implicit_input_channelCount}, `
 
-this.height_areaCount
+      + `implicit_input_pixelCount=${this.implicit_input_pixelCount}, `
+      + `implicit_input_valueCount=${this.implicit_input_valueCount}, `
 
-// 6.2
-this.width_areaCount
+      + `input_height=${this.input_height}, `
+      + `input_channelCount=${this.input_channelCount}, `
+      
+      + `areaCount=${this.areaCount}, `
+      + `height_areaCount=${this.height_areaCount}, `
+      + `width_areaCount=${this.width_areaCount}, `
 
-this.height_with_internal_gap_pixelCount_expanded
+      + `height_with_internal_gap_pixelCount_expanded=`
+        + `${this.height_with_internal_gap_pixelCount_expanded}, `
+      + `width_with_internal_gap_pixelCount_expanded=`
+        + `${this.width_with_internal_gap_pixelCount_expanded}, `
 
-this.width_with_internal_gap_pixelCount_expanded
-
-this.implicit_input_width
-
-this.implicit_input_pixelCount
-
-this.implicit_input_valueCount
-{
-this.area_position_create.call( this );
-NeuralNet_FeedbackToInput.area_position_fill.call( this );
-}
-      + `bEmbedVocabularyId=${this.bEmbedVocabularyId}, `
-      + `stageCount=${this.stageCount}, `
-      + `blockCountPerStage=${this.blockCountPerStage}, `
-      + `blockCountTotal=${this.blockCountTotal}, `
-      + `stageLast_output_height=${this.stageLast_output_height}, `
-      + `stageLast_output_width=${this.stageLast_output_width}, `
+        this.area_position_leftArray
+        this.area_position_topArray
+  
+  
       + `stageLast_output_channelCount=${this.stageLast_output_channelCount}, `
       + `output_height=${this.output_height}, `
-      + `output_width=${this.output_width} `
+
+      + `output_width=${this.output_width}`
     ;
     return str;
   }
