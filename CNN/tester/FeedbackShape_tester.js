@@ -46,8 +46,14 @@ class TestCase {
     this.from_value_offset_per_neuralNet
       = 10 ** this.from_value_offset_exponent_per_neuralNet;
 
-    // Because neuralNetIndex is 0 or 1, multiplying 10 can always exceed
-    // any from_value (i.e. any feedback value).
+    this.from_value_base_positive
+      = this.from_value_offset_per_neuralNet * 0;
+
+    this.alignment_mark_value_base_positive
+      = this.from_value_offset_per_neuralNet * 1;
+
+    // Multiplying 10 can always exceed any from_value (i.e. any feedback
+    // value) and alignment mark value.
     this.explcit_input_value_base_positive
       = this.from_value_offset_per_neuralNet * 10;
 
@@ -59,9 +65,7 @@ class TestCase {
       let from_output_valueArray = this.from_output_valueArray;
       from_output_valueArray.length = area_from_valueCount_original;
 
-      const neuralNetIndex = 0;
-      const from_value_base_positive
-        = this.from_value_offset_per_neuralNet * neuralNetIndex;
+      const from_value_base_positive = this.from_value_base_positive;
 
       // all positive integers (for alignment 0)
       for ( let i = 0; i < area_from_valueCount_original; ++i ) {
@@ -360,8 +364,8 @@ class TestCase {
 
     const neuralNetIndex = 0;
     const from_output_valueArray = this.from_output_valueArray;
-    const from_value_base_positive
-      = this.from_value_offset_per_neuralNet * neuralNetIndex;
+
+    const from_value_base_positive = this.from_value_base_positive;
 
     const tryTestCount = 10;
     for ( let testCount = 0; testCount < tryTestCount; ++testCount ) {
