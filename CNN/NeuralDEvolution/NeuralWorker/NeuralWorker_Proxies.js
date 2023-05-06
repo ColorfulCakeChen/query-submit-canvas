@@ -452,6 +452,12 @@ class NeuralWorker_Proxies extends Recyclable.Root {
     return createOk;
   }
 
+
+//!!! ...unfinished... (2023/05/06)
+// NeuralWorker_Proxies should also hold a alignmentMarkValueArray
+// so that it can provide input_height and input_width (acccording
+// to explicit_input_height and width)
+
   /**
    * @param {integer[]} markValueArray
    *   An array of values representing every neural network playing which
