@@ -188,8 +188,8 @@ import { Mode as NeuralWorker_Mode } from "./NeuralWorker_Mode.js";
  *   - Otherwise, its length should be the same as this.neuralNetCount
  *
  * @member {boolean} alignmentMarkValueArray_nonEmpty
- *   Return true, if alignmentMarkValueArray is null or undefined or
- * ( alignmentMarkValueArray.length == 0 ).
+ *   Return true, if .alignmentMarkValueArray is null or undefined or
+ * ( .alignmentMarkValueArray.length == 0 ).
  *
 
 //!!! ...unfinished... (2023/05/04)

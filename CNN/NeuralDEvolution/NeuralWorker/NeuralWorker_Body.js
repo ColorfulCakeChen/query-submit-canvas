@@ -14,6 +14,20 @@ import { tensorflowJsURL } from "./NeuralWorker_Common.js";
  * The implementation of a neural network web worker. It may own one or two neural
  * network(s).
  *
+ * @member {integer[]} alignmentMarkValueArray
+ *   An array of values representing every neural network is playing which
+ * alignment currently.
+ *
+ *   - If it is null or undefined, it means not to fill alignment mark and
+ *       feedback information (i.e. previous time output of the neural network)
+ *       into source TypedArray when .TypedArray_process_async() is called.
+ *
+ *   - Otherwise, its length should be the same as this.neuralNetArray.length
+ *
+ * @member {boolean} alignmentMarkValueArray_nonEmpty
+ *   Return true, if .alignmentMarkValueArray is null or undefined or
+ * ( .alignmentMarkValueArray.length == 0 ).
+ *
  */
 export default class NeuralWorker_Body extends AsyncWorker.Body {
 
@@ -416,10 +430,17 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
     }
   }
 
+  get alignmentMarkValueArray_nonEmpty() {
+    if (   ( this.alignmentMarkValueArray )
+        && ( this.alignmentMarkValueArray.length > 0 ) )
+      return true;
+    return false;
+  }
+
   /**
    * @param {integer[]} markValueArray
-   *   An array of values representing every neural network playing which
-   * alignment.
+   *   An array of values representing every neural network is playing which
+   * alignment currently.
    *   - It could be null or undefined or ( markValueArray.length == 0 ) to
    *       clear .alignmentMarkValueArray for not filling alignment mark into
    *       source TypedArray. (i.e. NO _FILL)
@@ -434,8 +455,16 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
    *   - Yield { done: true, value: { value: true } }.
    */
   async* alignmentMarkValueArray_set( markValueArray ) {
+    const funcNameInMessage = "alignmentMarkValueArray_set";
 
     if ( ( markValueArray ) && ( markValueArray.length > 0 ) ) { // 1.
+
+      if ( markValueArray.length != this.neuralNetArray?.length )
+        throw Error( `NeuralWorker_Body.${funcNameInMessage}(): `
+          + `markValueArray.length ( ${markValueArray.length} ) `
+          + `should be either 0 or the same as `
+          + `.neuralNetCount ( ${this.neuralNetArray?.length} ).`
+        );
 
       // 1.1 Prepare container for all neural networks' mark value.
       {
