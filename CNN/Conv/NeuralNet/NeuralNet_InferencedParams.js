@@ -169,17 +169,18 @@ class NeuralNet_InferencedParams extends Recyclable.Root {
       this.input_channelCount = this.feedbackShape.input_channelCount;
 
     } else {
+      this.feedbackShape = undefined;
 
-//!!! ...unfinished... (2023/05/06)
-      this.implicit_input_height = 0;
-        //= neuralNetParamsBase.explicit_input_height;
+      // height and channelCount are always the same as explicit_Xxx.
+      this.implicit_input_height
+        = neuralNetParamsBase.explicit_input_height;
 
       this.implicit_input_width = 0;
 
       this.implicit_input_channelCount
         = neuralNetParamsBase.explicit_input_channelCount;
 
-      //
+      // height and channelCount are always the same as explicit_Xxx.
       this.input_height
         = neuralNetParamsBase.explicit_input_height;
 
@@ -190,14 +191,7 @@ class NeuralNet_InferencedParams extends Recyclable.Root {
         = neuralNetParamsBase.explicit_input_channelCount;
     }
 
-!!!
-
 //!!! ...unfinished... (2023/05/06)
-//
-// this.inputShape_create();
-// Even if ( !has_implicit_input ), still needs have
-//  Xxx_input_height, Xxx_input_width, Xxx_input_channelCount
-
   }
 
   /**
