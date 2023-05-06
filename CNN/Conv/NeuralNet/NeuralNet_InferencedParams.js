@@ -100,6 +100,8 @@ class NeuralNet_InferencedParams extends Recyclable.Root {
 // this.feedbackShape.init( ??? );
 //
 // this.inputShape_create();
+// Even if ( !has_implicit_input ), still needs have
+//  Xxx_input_height, Xxx_input_width, Xxx_input_channelCount
 
     this.embeddingParams_create( neuralNetParamsBase );
     this.stageParamsArray_blockFinalParams_create( neuralNetParamsBase );
