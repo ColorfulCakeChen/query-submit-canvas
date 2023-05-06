@@ -152,8 +152,21 @@ class NeuralNet_InferencedParams extends Recyclable.Root {
       if ( !this.feedbackShape )
         this.feedbackShape = new NeuralNet_FeedbackShape();
 
-//!!! ...unfinished... (2023/05/06)
-//      this.feedbackShape.init( ??? );
+      this.feedbackShape.init(
+        neuralNetParamsBase.explicit_input_height,
+        neuralNetParamsBase.explicit_input_width,
+        neuralNetParamsBase.explicit_input_channelCount,
+        neuralNetParamsBase.output_channelCount // feedback_valueCount
+      );
+
+      this.implicit_input_height = this.feedbackShape.implicit_input_height;
+      this.implicit_input_width = this.feedbackShape.implicit_input_width;
+      this.implicit_input_channelCount
+        = this.feedbackShape.implicit_input_channelCount;
+
+      this.input_height = this.feedbackShape.input_height;
+      this.input_width = this.feedbackShape.input_width;
+      this.input_channelCount = this.feedbackShape.input_channelCount;
 
     } else {
 
@@ -166,7 +179,7 @@ class NeuralNet_InferencedParams extends Recyclable.Root {
       this.implicit_input_channelCount
         = neuralNetParamsBase.explicit_input_channelCount;
 
-//!!! ...unfinished... (2023/05/06)
+      //
       this.input_height
         = neuralNetParamsBase.explicit_input_height;
 
@@ -212,9 +225,15 @@ class NeuralNet_InferencedParams extends Recyclable.Root {
 
     let EmbeddingParamsClass = neuralNetParamsBase.EmbeddingParamsClass_get();
     this.embeddingParams = EmbeddingParamsClass.Pool.get_or_create_by(
-      neuralNetParamsBase.input_height,
-      neuralNetParamsBase.input_width,
-      neuralNetParamsBase.input_channelCount,
+
+//!!! (2023/05/06 Remarked)
+//       neuralNetParamsBase.input_height,
+//       neuralNetParamsBase.input_width,
+//       neuralNetParamsBase.input_channelCount,
+      this.input_height,
+      this.input_width,
+      this.input_channelCount,
+
       neuralNetParamsBase.vocabularyChannelCount,
       neuralNetParamsBase.vocabularyCountPerInputChannel,
       this.bEmbedVocabularyId,
