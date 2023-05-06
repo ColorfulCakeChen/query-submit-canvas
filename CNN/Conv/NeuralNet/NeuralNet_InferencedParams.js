@@ -93,16 +93,7 @@ class NeuralNet_InferencedParams extends Recyclable.Root {
 
   /** @override */
   static setAsConstructor_self( neuralNetParamsBase ) {
-
-//!!! ...unfinished... (2023/05/06)
-// if ( has_implicit_input )
-//  this.feedbackShape = NeuralNet_FeedbackShape();
-// this.feedbackShape.init( ??? );
-//
-// this.inputShape_create();
-// Even if ( !has_implicit_input ), still needs have
-//  Xxx_input_height, Xxx_input_width, Xxx_input_channelCount
-
+    this.inputShape_create();
     this.embeddingParams_create( neuralNetParamsBase );
     this.stageParamsArray_blockFinalParams_create( neuralNetParamsBase );
   }
@@ -130,9 +121,50 @@ class NeuralNet_InferencedParams extends Recyclable.Root {
     this.embeddingParams_dispose();
     this.bEmbedVocabularyId = undefined;
 
-    this.feedbackShape = undefined;
+    this.inputShape_dispose();
 
     super.disposeResources();
+  }
+
+  /**
+   * 
+   */
+  inputShape_dispose() {
+    this.feedbackShape = undefined;
+
+//!!! ...unfinished... (2023/05/06)
+
+  }
+
+  /**
+   * 
+   */
+  inputShape_create( neuralNetParamsBase ) {
+    this.inputShape_dispose();
+
+    if ( neuralNetParamsBase.has_implicit_input ) {
+
+      if ( !this.feedbackShape )
+        this.feedbackShape = new NeuralNet_FeedbackShape();
+
+//!!! ...unfinished... (2023/05/06)
+//      this.feedbackShape.init( ??? );
+
+    } else {
+
+//!!! ...unfinished... (2023/05/06)
+      Xxx_input_height, Xxx_input_width, Xxx_input_channelCount
+
+    }
+
+!!!
+
+//!!! ...unfinished... (2023/05/06)
+//
+// this.inputShape_create();
+// Even if ( !has_implicit_input ), still needs have
+//  Xxx_input_height, Xxx_input_width, Xxx_input_channelCount
+
   }
 
   /**

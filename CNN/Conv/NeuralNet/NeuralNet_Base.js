@@ -216,6 +216,9 @@ class NeuralNet_Base extends Recyclable.Root {
       this.input_height = params.input_height;
       this.input_width = params.input_width;
       this.input_channelCount = params.input_channelCount;
+
+//!!! ...unfinished... (2023/05/06) has_implicit_input
+
       this.vocabularyChannelCount = params.vocabularyChannelCount;
       this.vocabularyCountPerInputChannel = params.vocabularyCountPerInputChannel;
       this.nConvStageTypeId = params.nConvStageTypeId;

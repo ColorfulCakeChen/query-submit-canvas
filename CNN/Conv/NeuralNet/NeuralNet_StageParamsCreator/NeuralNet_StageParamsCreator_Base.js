@@ -93,6 +93,11 @@ class NeuralNet_StageParamsCreator_Base extends Recyclable.Root {
       let embedding_output_channelCount
         = neuralNetParams.input_channelCount * neuralNetParams.vocabularyChannelCount;
 
+
+//!!! ...unfinished... (2023/05/06) has_implicit_input
+!!! ...unfinished... (2023/05/06) neuralNetParams.inferencedParams.input_
+
+
       let expandFactor = Math.ceil(
         neuralNetParams.output_channelCount / embedding_output_channelCount );
 

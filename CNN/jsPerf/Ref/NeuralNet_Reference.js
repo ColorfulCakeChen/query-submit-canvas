@@ -100,6 +100,10 @@ class NeuralNet_Reference_Base extends Recyclable.Root {
       input_height, input_width, input_channelCount,
     } = testParams.out;
 
+
+!!! ...unfinished... (2023/05/06) has_implicit_input
+
+
     this.testCorrectness_imageIn = imageSourceBag.getImage_by( input_height, input_width, input_channelCount );
 
     Pool.Asserter.assert_Pool_issuedCount_same_after_as_before( "NeuralNet_Reference.Base.testCorrectness_internal()",
