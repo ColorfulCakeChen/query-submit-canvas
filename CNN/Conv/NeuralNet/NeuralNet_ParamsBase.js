@@ -41,6 +41,8 @@ import { InferencedParams } from "./NeuralNet_InferencedParams.js";
  *   The explicit (i.e. user visible) input image's channel count. It is always
  * equal to .inferencedParams.input_channelCount.
  *
+!!! * @member {boolean} has_implicit_input
+ *
  *
  * @member {number} vocabularyChannelCount
  *   In the embedding layer, every vocabulary will have how many embedding
