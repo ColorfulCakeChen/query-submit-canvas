@@ -181,23 +181,6 @@ class NeuralNet_FeedbackToInput_Area extends NeuralNet_FeedbackToInput_from {
  * count (= implicit_input_pixelCount * input_channelCount).
  *
  *
-
-//!!! (2023/05/05 Remarked)
-//  * @member {NeuralNet_FeedbackToInput_from} perNeuralNet
-//  *   The value count and (viewed as) pixel count of a neural network's
-//  * previous output (i.e. feedback).
-//  * 
-//  * @member {NeuralNet_FeedbackToInput_from} allNeuralNets
-//  *   The value count and (viewed as) pixel count of all neural networks'
-//  * previous output (i.e. feedback).
- *
- *
-
-//!!! (2023/05/05 Remarked)
-// !!! * @member {number} neuralNetCount
-//  *   There are how many neural networks in a versus. It is always 2.
-
- *
  * @member {number} areaCount
  *   There are how many filling areas be put in the (next time) input for a
  * neural network. It is always 2.
@@ -270,21 +253,6 @@ class NeuralNet_FeedbackToInput {
       area = this.area;
     }
 
-//!!! (2023/05/05 Remarked)
-//     let perNeuralNet;
-//     {
-//       if ( !this.perNeuralNet )
-//         this.perNeuralNet = new NeuralNet_FeedbackToInput_from();
-//       perNeuralNet = this.perNeuralNet;
-//     }
-//
-//     let allNeuralNets;
-//     {
-//       if ( !this.allNeuralNets )
-//         this.allNeuralNets = new NeuralNet_FeedbackToInput_from();
-//       allNeuralNets = this.allNeuralNets;
-//     }
-
     // 1. Ensure positive integer.
 
     this.explicit_input_height = explicit_input_height
@@ -356,39 +324,6 @@ class NeuralNet_FeedbackToInput {
 
     area.from_pixelCount_expanded = area.from_pixelCount_original
       * area.height_multiplier * area.width_multiplier;
-
-//!!! (2023/05/05 Remarked)
-//     // 4.2
-//
-//     // 4.2.1
-//     perNeuralNet.from_valueCount_original
-//       = area.from_valueCount_original * this.areaCount_per_neuralNet;
-//
-//     perNeuralNet.from_valueCount_expanded
-//       = area.from_valueCount_expanded * this.alignmentCount_per_neuralNet;
-//
-//     // 4.2.2
-//     perNeuralNet.from_pixelCount_original
-//       = area.from_pixelCount_original * this.alignmentCount_per_neuralNet;
-//
-//     perNeuralNet.from_pixelCount_expanded
-//       = area.from_pixelCount_expanded * this.alignmentCount_per_neuralNet;
-//
-//     // 4.3
-//
-//     // 4.3.1
-//     allNeuralNets.from_valueCount_original
-//       = perNeuralNet.from_valueCount_original * this.neuralNetCount;
-//
-//     allNeuralNets.from_valueCount_expanded
-//       = perNeuralNet.from_valueCount_expanded * this.neuralNetCount;
-//
-//     // 4.3.2
-//     allNeuralNets.from_pixelCount_original
-//       = perNeuralNet.from_pixelCount_original * this.neuralNetCount;
-//
-//     allNeuralNets.from_pixelCount_expanded
-//       = perNeuralNet.from_pixelCount_expanded * this.neuralNetCount;
 
     // 5. Determine feedback_to_input area shape.
 
@@ -467,18 +402,7 @@ class NeuralNet_FeedbackToInput {
         if ( this.height_areaCount >= this.areaCount ) { // >= 2
           this.height_areaCount = this.areaCount;
 
-//!!! (2023/05/05 Remarked)
-//         // 6.1.2 Every two feedback areas (of one neural networks) in the
-//         //       same row.
-//         } else if ( this.height_areaCount >= this.neuralNetCount ) { // >= 2
-//
-//           // Do not arrange two feedback areas of a neural network in
-//           // different row or column (e.g. ( .height_areaCount == 3 ) or
-//           // ( .width_areaCount == 3 ) ). Force every two areas (of one neural
-//           // networks) in the same row.
-//           this.height_areaCount = this.neuralNetCount;
-
-        // 6.1.3 All four feedback areas in the same row.
+        // 6.1.2 All four feedback areas in the same row.
         } else { // >= 1
           this.height_areaCount = 1;
         }
@@ -523,8 +447,8 @@ class NeuralNet_FeedbackToInput {
   /**
    * @param {NeuralNet_FeedbackToInput} this
    * @param {number} this.areaCount
-   * @param {number[][]} this.area_position_leftArrayArray
-   * @param {number[][]} this.area_position_topArrayArray
+   * @param {number[]} this.area_position_leftArray
+   * @param {number[]} this.area_position_topArray
    */
   static area_position_create() {
 
@@ -547,8 +471,8 @@ class NeuralNet_FeedbackToInput {
    * @param {number} this.areaCount
    * @param {number} this.height_areaCount
    * @param {number} this.width_areaCount
-   * @param {number[][]} this.area_position_leftArray
-   * @param {number[][]} this.area_position_topArray
+   * @param {number[]} this.area_position_leftArray
+   * @param {number[]} this.area_position_topArray
    */
   static area_position_fill() {
     const area = this.area;

@@ -100,14 +100,7 @@ class TestCase {
     this.assert_FeedbackShape( "explicit_input_valueCount", explicit_input_valueCount );
 
     //
-    const neuralNetCount = 2;
-    this.assert_FeedbackShape( "neuralNetCount", neuralNetCount );
-
-    const alignmentCount_per_neuralNet = 2;
-    this.assert_FeedbackShape( "alignmentCount_per_neuralNet",
-      alignmentCount_per_neuralNet );
-
-    const areaCount = neuralNetCount * alignmentCount_per_neuralNet;
+    const areaCount = 2;
     this.assert_FeedbackShape( "areaCount", areaCount );
 
     // multiplier
@@ -143,64 +136,23 @@ class TestCase {
   
     // from_valueCount_original
     const area_from_valueCount_original
-      = ( this.feedback_valueCount_per_alignment > 0 )
-          ? this.feedback_valueCount_per_alignment : 1;
+      = ( this.feedback_valueCount > 0 ) ? this.feedback_valueCount : 1;
     this.assert_Area( "from_valueCount_original", area_from_valueCount_original );
-
-    const perNeuralNet_from_valueCount_original
-      = area_from_valueCount_original * alignmentCount_per_neuralNet;
-    this.assert_perNeuralNet( "from_valueCount_original",
-      perNeuralNet_from_valueCount_original );
-
-    const allNeuralNets_from_valueCount_original
-      = perNeuralNet_from_valueCount_original * neuralNetCount;
-    this.assert_allNeuralNets( "from_valueCount_original",
-      allNeuralNets_from_valueCount_original );
 
     // from_valueCount_expanded
     const area_from_valueCount_expanded = area_from_valueCount_original
       * area_height_multiplier * area_width_multiplier;
     this.assert_Area( "from_valueCount_expanded", area_from_valueCount_expanded );
 
-    const perNeuralNet_from_valueCount_expanded
-      = area_from_valueCount_expanded * alignmentCount_per_neuralNet;
-    this.assert_perNeuralNet( "from_valueCount_expanded",
-      perNeuralNet_from_valueCount_expanded );
-
-    const allNeuralNets_from_valueCount_expanded
-      = perNeuralNet_from_valueCount_expanded * neuralNetCount;
-    this.assert_allNeuralNets( "from_valueCount_expanded",
-      allNeuralNets_from_valueCount_expanded );
-
     // from_pixelCount_original
     const area_from_pixelCount_original = Math.ceil(
       area_from_valueCount_original / explicit_input_channelCount );
     this.assert_Area( "from_pixelCount_original", area_from_pixelCount_original );
 
-    const perNeuralNet_from_pixelCount_original
-      = area_from_pixelCount_original * alignmentCount_per_neuralNet;
-    this.assert_perNeuralNet( "from_pixelCount_original",
-      perNeuralNet_from_pixelCount_original );
-
-    const allNeuralNets_from_pixelCount_original
-      = perNeuralNet_from_pixelCount_original * neuralNetCount;
-    this.assert_allNeuralNets( "from_pixelCount_original",
-      allNeuralNets_from_pixelCount_original );
-
     // from_pixelCount_expanded
     const area_from_pixelCount_expanded = area_from_pixelCount_original
       * area_height_multiplier * area_width_multiplier;
     this.assert_Area( "from_pixelCount_expanded", area_from_pixelCount_expanded );
-
-    const perNeuralNet_from_pixelCount_expanded
-      = area_from_pixelCount_expanded * alignmentCount_per_neuralNet;
-    this.assert_perNeuralNet( "from_pixelCount_expanded",
-      perNeuralNet_from_pixelCount_expanded );
-
-    const allNeuralNets_from_pixelCount_expanded
-      = perNeuralNet_from_pixelCount_expanded * neuralNetCount;
-    this.assert_allNeuralNets( "from_pixelCount_expanded",
-      allNeuralNets_from_pixelCount_expanded );
 
     // to height and width
     let area_height_pixelCount_original;
@@ -375,43 +327,21 @@ class TestCase {
       const heightUnit = area_height_with_gap_pixelCount_expanded;
       const widthUnit = area_width_with_gap_pixelCount_expanded;
 
-      this.assert_area_position_leftArrayArray( 0, 0, 0 );
-      this.assert_area_position_topArrayArray(  0, 0, 0 );
+      this.assert_area_position_leftArray( 0, 0 );
+      this.assert_area_position_topArray(  0, 0 );
 
       if ( height_areaCount == 1 ) {
-        this.assert_area_position_leftArrayArray( 0, 1, widthUnit );
-        this.assert_area_position_topArrayArray(  0, 1, 0 );
-
-        this.assert_area_position_leftArrayArray( 1, 0, widthUnit * 2 );
-        this.assert_area_position_topArrayArray(  1, 0, 0 );
-
-        this.assert_area_position_leftArrayArray( 1, 1, widthUnit * 3 );
-        this.assert_area_position_topArrayArray(  1, 1, 0 );
+        this.assert_area_position_leftArray( 1, widthUnit );
+        this.assert_area_position_topArray(  1, 0 );
 
       } else if ( height_areaCount == 2 ) {
-        this.assert_area_position_leftArrayArray( 0, 1, widthUnit );
-        this.assert_area_position_topArrayArray(  0, 1, 0 );
-
-        this.assert_area_position_leftArrayArray( 1, 0, 0 );
-        this.assert_area_position_topArrayArray(  1, 0, heightUnit );
-
-        this.assert_area_position_leftArrayArray( 1, 1, widthUnit );
-        this.assert_area_position_topArrayArray(  1, 1, heightUnit );
-
-      } else if ( height_areaCount == 4 ) {
-        this.assert_area_position_leftArrayArray( 0, 1, 0 );
-        this.assert_area_position_topArrayArray(  0, 1, heightUnit );
-
-        this.assert_area_position_leftArrayArray( 1, 0, 0 );
-        this.assert_area_position_topArrayArray(  1, 0, heightUnit * 2 );
-
-        this.assert_area_position_leftArrayArray( 1, 1, 0 );
-        this.assert_area_position_topArrayArray(  1, 1, heightUnit * 3 );
+        this.assert_area_position_leftArray( 1, 0 );
+        this.assert_area_position_topArray(  1, heightUnit );
 
       } else {
         throw Error( `FeedbackShape_tester.TestCase.${funcNameInMessage}(): `
           + `height_areaCount ( ${height_areaCount} ) `
-          + `should be either 1 or 2 or 4. `
+          + `should be either 1 or 2. `
           + `{ ${this} }.`
         );
       }
@@ -509,7 +439,7 @@ class TestCase {
 
     // fill implicit input.
     feedbackShape.set_implicit_input_by_previous_output(
-      this.nextInputArray, this.from_output_valueArrayArray );
+      this.nextInputArray, this.from_output_valueArray );
 
     this.nextInputArray_explicit_check();
     this.nextInputArray_implicit_check();
@@ -747,22 +677,14 @@ class TestCase {
     this.assert( "test", this.feedbackShape, "area", propertyName, value );
   }
 
-  assert_perNeuralNet( propertyName, value ) {
-    this.assert( "test", this.feedbackShape, "perNeuralNet", propertyName, value );
+  assert_area_position_leftArray( arrayIndex0, value ) {
+    this.assert( "test", this.feedbackShape.area_position_leftArray,
+      arrayIndex0, value );
   }
 
-  assert_allNeuralNets( propertyName, value ) {
-    this.assert( "test", this.feedbackShape, "allNeuralNets", propertyName, value );
-  }
-
-  assert_area_position_leftArrayArray( arrayIndex0, arrayIndex1, value ) {
-    this.assert( "test", this.feedbackShape.area_position_leftArrayArray,
-      arrayIndex0, arrayIndex1, value );
-  }
-
-  assert_area_position_topArrayArray( arrayIndex0, arrayIndex1, value ) {
-    this.assert( "test", this.feedbackShape.area_position_topArrayArray,
-      arrayIndex0, arrayIndex1, value );
+  assert_area_position_topArray( arrayIndex0, value ) {
+    this.assert( "test", this.feedbackShape.area_position_topArray,
+      arrayIndex0, value );
   }
 
   assert_FeedbackShape_LE( propertyName, value ) {
