@@ -124,6 +124,11 @@ class NeuralNet_Params extends Weights.Params( ParamsBase ) {
       return false;
 
     {
+
+
+//!!! ...unfinished... (2023/05/06) hasImplicitInput
+
+
       this.input_height = this.getParamValue_byParamDesc( NeuralNet_Params.input_height );
       this.input_width = this.getParamValue_byParamDesc( NeuralNet_Params.input_width );
       this.input_channelCount = this.getParamValue_byParamDesc( NeuralNet_Params.input_channelCount );
@@ -166,6 +171,11 @@ class NeuralNet_Params extends Weights.Params( ParamsBase ) {
 
 
 // Define parameter descriptions.
+
+
+//!!! ...unfinished... (2023/05/06) hasImplicitInput
+
+
 NeuralNet_Params.input_height =             new ParamDesc.Int(  "input_height",                   1, ( 10 * 1024 ) );
 NeuralNet_Params.input_width =              new ParamDesc.Int(  "input_width",                    1, ( 10 * 1024 ) );
 NeuralNet_Params.input_channelCount =       new ParamDesc.Int(  "input_channelCount",             1, ( 10 * 1024 ) );
@@ -189,6 +199,11 @@ NeuralNet_Params.bKeepInputTensor =         new ParamDesc.Bool( "bKeepInputTenso
  * this array's order.)
  */
 NeuralNet_Params.SequenceArray = new ParamDesc.SequenceArray( [
+
+
+//!!! ...unfinished... (2023/05/06) hasImplicitInput
+
+
   NeuralNet_Params.input_height,
   NeuralNet_Params.input_width,
   NeuralNet_Params.input_channelCount,

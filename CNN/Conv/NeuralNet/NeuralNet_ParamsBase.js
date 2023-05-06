@@ -21,6 +21,10 @@ import { InferencedParams } from "./NeuralNet_InferencedParams.js";
 // Problem: NeuralNet.Params will be destroyed when NeuralNet.Base is created.
 //          The FeedbackShape (if as the inferenced Params) will also be gone.
 
+
+//!!! ...unfinished... (2023/05/06) hasImplicitInput
+
+
 /**
  * NeuralNet parameters base class.
  *
@@ -292,6 +296,9 @@ class NeuralNet_ParamsBase extends Recyclable.Root {
   /** @override */
   toString() {
     let str = ``
+
+//!!! ...unfinished... (2023/05/06) hasImplicitInput
+
       + `input_height=${this.input_height}, `
       + `input_width=${this.input_width}, `
       + `input_channelCount=${this.input_channelCount}, `

@@ -95,6 +95,7 @@ class NeuralNet_InferencedParams extends Recyclable.Root {
   static setAsConstructor_self( neuralNetParamsBase ) {
 
 //!!! ...unfinished... (2023/05/06)
+// if ( hasImplicitInput )
 //  this.feedbackShape = NeuralNet_FeedbackShape();
 // this.feedbackShape.init( ??? );
 
