@@ -101,7 +101,7 @@ import { FeedbackToInput as NeuralNet_FeedbackToInput }
  *       image with new channels) needs move the whole input data.
  *
  *   - By contrast, putting new data into part of original input image just
- *       needs move the part.
+ *       needs move that part.
  *
  *
  * 3.2 Explicit/Implicit output shape
