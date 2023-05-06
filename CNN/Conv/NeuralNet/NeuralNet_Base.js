@@ -226,6 +226,9 @@ class NeuralNet_Base extends Recyclable.Root {
 
       // The parameters which are determined (inferenced) from the above parameters.
       {
+//!!! ...unfinished... (2023/05/06) has_implicit_input
+// Collect feedbackShape too.
+        
         this.bEmbedVocabularyId = params.inferencedParams.bEmbedVocabularyId;
 
         if ( this.input_height_width_array ) {
