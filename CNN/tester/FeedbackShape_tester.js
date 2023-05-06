@@ -47,15 +47,15 @@ class TestCase {
       = 10 ** this.from_value_offset_exponent_per_neuralNet;
 
     this.from_value_base_positive
-      = this.from_value_offset_per_neuralNet * 0;
+      = ( this.from_value_offset_per_neuralNet * 0 ) + 1;
 
-    this.alignment_mark_value_base_positive
-      = this.from_value_offset_per_neuralNet * 1;
+    this.alignment_mark_value
+      = ( this.from_value_offset_per_neuralNet * 1 ) + 1;
 
     // Multiplying 10 can always exceed any from_value (i.e. any feedback
     // value) and alignment mark value.
     this.explcit_input_value_base_positive
-      = this.from_value_offset_per_neuralNet * 10;
+      = ( this.from_value_offset_per_neuralNet * 10 ) + 1;
 
     // from_output_valueArray
     {
@@ -69,7 +69,7 @@ class TestCase {
 
       // all positive integers (for alignment 0)
       for ( let i = 0; i < area_from_valueCount_original; ++i ) {
-        from_output_valueArray[ i ] = i + 1 + from_value_base_positive;
+        from_output_valueArray[ i ] = i + from_value_base_positive;
       }
     }
 
@@ -403,7 +403,7 @@ class TestCase {
           {
             // should be all positive continuous integers.
             let expectedValue
-              = ( from_output_pixelIndexBegin * input_channelCount ) + 1
+              = ( from_output_pixelIndexBegin * input_channelCount )
                   + from_value_base_positive;
 
             for ( let i = 0; i < this.to_valueArray.length; ++i ) {
@@ -440,7 +440,7 @@ class TestCase {
     feedbackShape
       .set_implicit_input_by_alignmentMarkValue_previousOutputTypedArray(
         this.nextInputArray,
-        this.alignment_mark_value_base_positive, 
+        this.alignment_mark_value, 
         this.from_output_valueArray );
 
     this.nextInputArray_explicit_check();
@@ -566,7 +566,7 @@ class TestCase {
     const area_width_multiplier = feedbackShape.area.width_multiplier;
 
 
-    const alignment_mark_value = this.alignment_mark_value_base_positive;
+    const alignment_mark_value = this.alignment_mark_value;
 
     const areaIndex = 0; // Area 0 is for alignment mark.
     {
