@@ -6,7 +6,7 @@ import * as ValueDesc from "../../Unpacker/ValueDesc.js";
 import * as Block from "../Block.js";
 import * as StageParamsCreator from "./NeuralNet_StageParamsCreator.js";
 
-import { FeedbackToInput as NeuralNet_FeedbackShape }
+import { FeedbackShape as NeuralNet_FeedbackShape }
   from "./NeuralNet_FeedbackShape.js";
 
 /**
