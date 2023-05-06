@@ -91,7 +91,10 @@ class NeuralNet_StageParamsCreator_Base extends Recyclable.Root {
     // the requested output_channelCount.
     {
       let embedding_output_channelCount
-!!!
+
+!!! ...unfinished... (2023/05/06)
+// needs inferencedParams which may not created
+
         = neuralNetParams.inferencedParams.input_channelCount
             * neuralNetParams.vocabularyChannelCount;
 
@@ -120,6 +123,9 @@ class NeuralNet_StageParamsCreator_Base extends Recyclable.Root {
    */
   configTo_beforeStage0() {
     let neuralNetParams = this.neuralNetParams;
+
+!!! ...unfinished... (2023/05/06)
+// needs inferencedParams which may not created
 
     this.input_height = neuralNetParams.inferencedParams.input_height;
     this.input_width = neuralNetParams.inferencedParams.input_width;
