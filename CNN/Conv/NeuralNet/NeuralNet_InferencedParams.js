@@ -11,17 +11,17 @@ import * as StageParamsCreator from "./NeuralNet_StageParamsCreator.js";
  *
  * @member {boolean} bEmbedVocabularyId
  *   If true, one of embedding channels will be an auto-generated vocabulary id
- * (i.e. 0, 1, 2, ...). So only ( channelMultiplier - 1 ) embedding channels will
- * be extracted from inputWeightArray. The extra vocabulary id channel achieves
- * residual connection. Residual connection means apply_and_destroy_or_keep() will
- * append (concatenate) input to output. Since apply_and_destroy_or_keep()'s input
- * is just vocabulary id (one channel or multiple channels), pre-embedded vocabulary
- * id inside the embedding table acheives the same effect by less computation (but
- * more memory).
+ * (i.e. 0, 1, 2, ...). So only ( channelMultiplier - 1 ) embedding channels
+ * will be extracted from inputWeightArray. The extra vocabulary id channel
+ * achieves residual connection. Residual connection means
+ * apply_and_destroy_or_keep() will append (concatenate) input to output. Since
+ * apply_and_destroy_or_keep()'s input is just vocabulary id (one channel or
+ * multiple channels), pre-embedded vocabulary id inside the embedding table
+ * acheives the same effect by less computation (but more memory).
  *
  * @member {number} stageCount
- *   How many stages inside this neural network. It is ( >= 1 ). Every stage will
- * halve height, halve width, double channel count.
+ *   How many stages inside this neural network. It is ( >= 1 ). Every stage
+ * will halve height, halve width, double channel count.
  *
  * @member {number} blockCountPerStage
  *   How many blocks inside every stage. It is ( >= 2 ).
@@ -71,17 +71,20 @@ class NeuralNet_InferencedParams extends Recyclable.Root {
   /**
    *
    * @param {NeuralNet.ParamsBase} neuralNetParamsBase
-   *   The neural network parameters of this inferenced neural network parameters.
+   *   The neural network parameters of this inferenced neural network
+   * parameters.
    */
   constructor( neuralNetParamsBase ) {
     super();
-    NeuralNet_InferencedParams.setAsConstructor_self.call( this, neuralNetParamsBase );
+    NeuralNet_InferencedParams.setAsConstructor_self.call( this,
+      neuralNetParamsBase );
   }
 
   /** @override */
   static setAsConstructor( neuralNetParamsBase ) {
     super.setAsConstructor();
-    NeuralNet_InferencedParams.setAsConstructor_self.call( this, neuralNetParamsBase );
+    NeuralNet_InferencedParams.setAsConstructor_self.call( this,
+      neuralNetParamsBase );
     return this;
   }
 
@@ -133,9 +136,11 @@ class NeuralNet_InferencedParams extends Recyclable.Root {
   embeddingParams_create( neuralNetParamsBase ) {
     this.embeddingParams_dispose();
 
-    this.bEmbedVocabularyId = true; // Neural network should always have embedding layer.
+    // Neural network should always have embedding layer.
+    this.bEmbedVocabularyId = true;
 
-    if ( !neuralNetParamsBase.inferencedParams_embeddingParams_stageParamsArray_needed() )
+    if ( !neuralNetParamsBase
+           .inferencedParams_embeddingParams_stageParamsArray_needed() )
       return; // No need to create .embeddingParams.
 
     let EmbeddingParamsClass = neuralNetParamsBase.EmbeddingParamsClass_get();
@@ -175,12 +180,14 @@ class NeuralNet_InferencedParams extends Recyclable.Root {
     if ( this.stageParamsArray ) {
       this.stageParamsArray.clear(); // (Re-used if exists.)
     } else {
-      this.stageParamsArray = Recyclable.OwnerArray.Pool.get_or_create_by(); // Note: OwnerArray can not accept length as parameter.
+      // Note: OwnerArray can not accept length as parameter.
+      this.stageParamsArray = Recyclable.OwnerArray.Pool.get_or_create_by();
     }
 
     this.blockFinalParams_dispose();
 
-    if ( !neuralNetParamsBase.inferencedParams_embeddingParams_stageParamsArray_needed() )
+    if ( !neuralNetParamsBase
+           .inferencedParams_embeddingParams_stageParamsArray_needed() )
       return; // No need to create .stageParamsArray.
 
     let stageParamsCreator;
@@ -188,9 +195,8 @@ class NeuralNet_InferencedParams extends Recyclable.Root {
       let StageParamsClass = neuralNetParamsBase.StageParamsClass_get();
 
       // Create every stage.
-      stageParamsCreator
-        = NeuralNet_InferencedParams.create_StageParamsCreator_byNeuralNetParams(
-            neuralNetParamsBase );
+      stageParamsCreator = NeuralNet_InferencedParams
+        .create_StageParamsCreator_byNeuralNetParams( neuralNetParamsBase );
       stageParamsCreator.determine_stageCount_blockCountPerStage();
 
       this.stageCount = stageParamsCreator.stageCount;
@@ -314,4 +320,3 @@ class NeuralNet_InferencedParams extends Recyclable.Root {
   }
 
 }
-
