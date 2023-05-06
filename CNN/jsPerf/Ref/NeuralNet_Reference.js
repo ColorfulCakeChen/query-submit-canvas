@@ -118,7 +118,8 @@ class NeuralNet_Reference_Base extends Recyclable.Root {
    *   The provider of image and tensor of variable specification for testing.
    *
    * @param {NeuralNet_TestParams.Base} testParams
-   *   The test parameters. It is the value of NeuralNet_TestParams.Base.ParamsGenerator()'s result.
+   *   The test parameters. It is the value of
+   * NeuralNet_TestParams.Base.ParamsGenerator()'s result.
    *
    */
   static testCorrectness_internal( imageSourceBag, testParams ) {
@@ -133,8 +134,10 @@ class NeuralNet_Reference_Base extends Recyclable.Root {
       this, imageSourceBag, testParams );
 
     { // Release output reference images.
-      if ( this.testCorrectness_imageOutReference != this.testCorrectness_imageIn ) { // Do not release image from ImageSourceBag.
+      if ( this.testCorrectness_imageOutReference != this.testCorrectness_imageIn ) {
         this.testCorrectness_imageOutReference.disposeResources_and_recycleToPool();
+
+      // Do not release image from ImageSourceBag.      
       }
       this.testCorrectness_imageOutReference = null;
     }
