@@ -496,65 +496,65 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
     }
   }
 
-
-//!!! ...unfinished... (2022/09/18)
-// Perhaps, alignment mark filling could also fill some of the previous result of
-// this neural network. (i.e. become recurrent neural network.)
-
-  /**
-   * This method will fill some part of the image by alignment mark value so
-   * that the neural network could distinguish which alignment it represents.
-   * 
-   * Usually, this method should be called Before converting Int32Array to
-   * tf.tensor.
-   *
-   * @param {integer} neuralNetIndex
-   *   Which neural network's alignment mark value will be used.
-   *
-   * @param {Int32Array} imageInt32Array
-   *   It is viewed as an image whose size ( height, width, channelCount )
-   * should match this.neuralNet's shape [ input_height, input_width,
-   * input_channelCount ].
-   */
-  static alignmentMark_fillTo_Image_Int32Array(
-    neuralNetIndex, imageInt32Array ) {
-
-
-//!!! ...unfinished... (2023/04/30)
-// Perhaps, should double as ( 6 * 6 ) for being shrinked to half ( 3 * 3 )
-// by neural network stage's block0.
-
-    // Q: Why fill top-left ( 3 * 3 ) pixels? Why not just fill top-left
-    //      ( 1 * 1 ) pixel?
-    // A: NeuralNet mainly uses ( 3 * 3 ) depthwise filter.
-    //
-    //   - If alignment mark just occupies ( 1 * 1 ) pixel, it could only be
-    //       detected by a special depthwise filter.
-    //
-    //   - If alignment mark occupies ( 3 * 3 ) pixel, it could be detected by
-    //       most kinds of depthwise filter easily.
-    //
-    const markHeight = 3;
-    const markWidth = 3;
-
-    const alignmentMarkValue = this.alignmentMarkValueArray[ neuralNetIndex ];
-
-    let neuralNet = this.neuralNetArray[ neuralNetIndex ];
-    const arrayIndex_rowStrides
-      = neuralNet.input_width * neuralNet.input_channelCount;
-
-    let arrayIndex_rowBegin = 0, arrayIndex = 0;
-    for ( let y = 0; y < markHeight; ++y ) {
-      for ( let x = 0; x < markWidth; ++x ) {
-        for ( let c = 0; c < neuralNet.input_channelCount; ++c ) {
-          imageInt32Array[ arrayIndex ] = alignmentMarkValue;
-          ++arrayIndex;
-        }
-      }
-      arrayIndex_rowBegin += arrayIndex_rowStrides;
-      arrayIndex = arrayIndex_rowBegin;
-    }
-  }
+//!!! (2023/05/06 Remarked) Use NeuralNet_ScaleFill instead.
+// //!!! ...unfinished... (2022/09/18)
+// // Perhaps, alignment mark filling could also fill some of the previous result of
+// // this neural network. (i.e. become recurrent neural network.)
+//
+//   /**
+//    * This method will fill some part of the image by alignment mark value so
+//    * that the neural network could distinguish which alignment it represents.
+//    * 
+//    * Usually, this method should be called Before converting Int32Array to
+//    * tf.tensor.
+//    *
+//    * @param {integer} neuralNetIndex
+//    *   Which neural network's alignment mark value will be used.
+//    *
+//    * @param {Int32Array} imageInt32Array
+//    *   It is viewed as an image whose size ( height, width, channelCount )
+//    * should match this.neuralNet's shape [ input_height, input_width,
+//    * input_channelCount ].
+//    */
+//   static alignmentMark_fillTo_Image_Int32Array(
+//     neuralNetIndex, imageInt32Array ) {
+//
+//
+// //!!! ...unfinished... (2023/04/30)
+// // Perhaps, should double as ( 6 * 6 ) for being shrinked to half ( 3 * 3 )
+// // by neural network stage's block0.
+//
+//     // Q: Why fill top-left ( 3 * 3 ) pixels? Why not just fill top-left
+//     //      ( 1 * 1 ) pixel?
+//     // A: NeuralNet mainly uses ( 3 * 3 ) depthwise filter.
+//     //
+//     //   - If alignment mark just occupies ( 1 * 1 ) pixel, it could only be
+//     //       detected by a special depthwise filter.
+//     //
+//     //   - If alignment mark occupies ( 3 * 3 ) pixel, it could be detected by
+//     //       most kinds of depthwise filter easily.
+//     //
+//     const markHeight = 3;
+//     const markWidth = 3;
+//
+//     const alignmentMarkValue = this.alignmentMarkValueArray[ neuralNetIndex ];
+//
+//     let neuralNet = this.neuralNetArray[ neuralNetIndex ];
+//     const arrayIndex_rowStrides
+//       = neuralNet.input_width * neuralNet.input_channelCount;
+//
+//     let arrayIndex_rowBegin = 0, arrayIndex = 0;
+//     for ( let y = 0; y < markHeight; ++y ) {
+//       for ( let x = 0; x < markWidth; ++x ) {
+//         for ( let c = 0; c < neuralNet.input_channelCount; ++c ) {
+//           imageInt32Array[ arrayIndex ] = alignmentMarkValue;
+//           ++arrayIndex;
+//         }
+//       }
+//       arrayIndex_rowBegin += arrayIndex_rowStrides;
+//       arrayIndex = arrayIndex_rowBegin;
+//     }
+//   }
 
   /**
    * Process input image data by all (suppose two) neural networks in this web

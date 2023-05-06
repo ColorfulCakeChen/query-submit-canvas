@@ -276,6 +276,16 @@ class NeuralNet_FeedbackShape extends NeuralNet_FeedbackToInput {
 
     const funcNameInMessage = "set_implicit_input_by_alignmentMarkValue";
 
+    // Q: Why fill an area pixels? Why not just fill ( 1 * 1 ) pixel?
+    // A: NeuralNet mainly uses ( 3 * 3 ) depthwise filter.
+    //
+    //   - If alignment mark just occupies ( 1 * 1 ) pixel, it could only be
+    //       detected by a special depthwise filter.
+    //
+    //   - If alignment mark occupies ( 3 * 3 ) pixel, it could be detected by
+    //       most kinds of depthwise filter easily.
+    //
+
     const input_channelCount = this.input_channelCount;
     const area = this.area;
 
