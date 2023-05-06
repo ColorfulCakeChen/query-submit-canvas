@@ -733,7 +733,7 @@ class TestCase {
       + `explicit_input_height=${this.explicit_input_height}, `
       + `explicit_input_width=${this.explicit_input_width}, `
       + `explicit_input_channelCount=${this.explicit_input_channelCount}, `
-      + `feedback_valueCount_per_alignment=${this.feedback_valueCount_per_alignment}`
+      + `feedback_valueCount=${this.feedback_valueCount}`
       ;
     return str;
   }
@@ -759,23 +759,23 @@ class TestCases {
     // this.explicit_input_height_MinMax = new MinMax( 0, 100 );
     // this.explicit_input_width_MinMax = new MinMax( 0, 100 );
     // this.explicit_input_channelCount_MinMax = new MinMax( 0, 10 );
-    // this.feedback_valueCount_per_alignment_MinMax = new MinMax( 0, 100 );
+    // this.feedback_valueCount_MinMax = new MinMax( 0, 100 );
 
     this.explicit_input_height_MinMax = new MinMax( 0, 30 );
     this.explicit_input_width_MinMax = new MinMax( 0, 30 );
     this.explicit_input_channelCount_MinMax = new MinMax( 0, 30 );
-    this.feedback_valueCount_per_alignment_MinMax = new MinMax( 0, 30 );
+    this.feedback_valueCount_MinMax = new MinMax( 0, 30 );
 
     //!!! (2023/04/26 Remarked)
     // this.explicit_input_height_MinMax = new MinMax( 0, 10 );
     // this.explicit_input_width_MinMax = new MinMax( 0, 10 );
     // this.explicit_input_channelCount_MinMax = new MinMax( 0, 10 );
-    // this.feedback_valueCount_per_alignment_MinMax = new MinMax( 0, 10 );
+    // this.feedback_valueCount_MinMax = new MinMax( 0, 10 );
 
     this.length = this.explicit_input_height_MinMax.length
       * this.explicit_input_width_MinMax.length
       * this.explicit_input_channelCount_MinMax.length
-      * this.feedback_valueCount_per_alignment_MinMax.length;
+      * this.feedback_valueCount_MinMax.length;
   }
 
   * testCase_generator() {
@@ -789,8 +789,8 @@ class TestCases {
         for ( let c = this.explicit_input_channelCount_MinMax.min;
           c <= this.explicit_input_channelCount_MinMax.max; ++c ) {
 
-          for ( let v = this.feedback_valueCount_per_alignment_MinMax.min;
-            v <= this.feedback_valueCount_per_alignment_MinMax.max; ++v ) {
+          for ( let v = this.feedback_valueCount_MinMax.min;
+            v <= this.feedback_valueCount_MinMax.max; ++v ) {
 
             let testCase = new TestCase(
               testCaseId, this.feedbackShape, h, w, c, v );
