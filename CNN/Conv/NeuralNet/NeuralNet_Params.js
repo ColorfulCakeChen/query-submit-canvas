@@ -32,6 +32,7 @@ class NeuralNet_Params extends Weights.Params( ParamsBase ) {
    */
   constructor(
     explicit_input_height, explicit_input_width, explicit_input_channelCount,
+    has_implicit_input,
     vocabularyChannelCount, vocabularyCountPerInputChannel = 256,
     nConvStageTypeId,
     blockCountTotalRequested,
@@ -41,6 +42,7 @@ class NeuralNet_Params extends Weights.Params( ParamsBase ) {
     super(
       NeuralNet_Params.SequenceArray,
       explicit_input_height, explicit_input_width, explicit_input_channelCount,
+      has_implicit_input,
       vocabularyChannelCount, vocabularyCountPerInputChannel,
       nConvStageTypeId,
       blockCountTotalRequested,
@@ -53,6 +55,7 @@ class NeuralNet_Params extends Weights.Params( ParamsBase ) {
   /** @override */
   static setAsConstructor(
     explicit_input_height, explicit_input_width, explicit_input_channelCount,
+    has_implicit_input,
     vocabularyChannelCount, vocabularyCountPerInputChannel = 256,
     nConvStageTypeId,
     blockCountTotalRequested,
@@ -62,6 +65,7 @@ class NeuralNet_Params extends Weights.Params( ParamsBase ) {
     super.setAsConstructor(
       NeuralNet_Params.SequenceArray,
       explicit_input_height, explicit_input_width, explicit_input_channelCount,
+      has_implicit_input,
       vocabularyChannelCount, vocabularyCountPerInputChannel,
       nConvStageTypeId,
       blockCountTotalRequested,
@@ -124,14 +128,10 @@ class NeuralNet_Params extends Weights.Params( ParamsBase ) {
       return false;
 
     {
-
-
-//!!! ...unfinished... (2023/05/06) has_implicit_input
-
-
       this.explicit_input_height = this.getParamValue_byParamDesc( NeuralNet_Params.explicit_input_height );
       this.explicit_input_width = this.getParamValue_byParamDesc( NeuralNet_Params.explicit_input_width );
       this.explicit_input_channelCount = this.getParamValue_byParamDesc( NeuralNet_Params.explicit_input_channelCount );
+      this.has_implicit_input = this.getParamValue_byParamDesc( NeuralNet_Params.has_implicit_input );
       this.vocabularyChannelCount = this.getParamValue_byParamDesc( NeuralNet_Params.vocabularyChannelCount );
       this.vocabularyCountPerInputChannel = this.getParamValue_byParamDesc( NeuralNet_Params.vocabularyCountPerInputChannel );
       this.nConvStageTypeId = this.getParamValue_byParamDesc( NeuralNet_Params.nConvStageTypeId );
@@ -156,6 +156,7 @@ class NeuralNet_Params extends Weights.Params( ParamsBase ) {
       neuralNetParamsBase.explicit_input_height,
       neuralNetParamsBase.explicit_input_width,
       neuralNetParamsBase.explicit_input_channelCount,
+      neuralNetParamsBase.has_implicit_input,
       neuralNetParamsBase.vocabularyChannelCount,
       neuralNetParamsBase.vocabularyCountPerInputChannel,
       neuralNetParamsBase.nConvStageTypeId,
@@ -180,18 +181,20 @@ NeuralNet_Params.explicit_input_height =       new ParamDesc.Int(  "explicit_inp
 NeuralNet_Params.explicit_input_width =        new ParamDesc.Int(  "explicit_input_width",        1, ( 10 * 1024 ) );
 NeuralNet_Params.explicit_input_channelCount = new ParamDesc.Int(  "explicit_input_channelCount", 1, ( 10 * 1024 ) );
 
-NeuralNet_Params.vocabularyChannelCount =   new ParamDesc.Int(  "vocabularyChannelCount",         2, (  1 * 1024 ) );
+NeuralNet_Params.has_implicit_input =          new ParamDesc.Bool( "has_implicit_input" );
+
+NeuralNet_Params.vocabularyChannelCount =      new ParamDesc.Int(  "vocabularyChannelCount",         2, (  1 * 1024 ) );
 NeuralNet_Params.vocabularyCountPerInputChannel
-                                          = new ParamDesc.Int(  "vocabularyCountPerInputChannel", 1, ( 2 ** 24 ) );
+                                          =    new ParamDesc.Int(  "vocabularyCountPerInputChannel", 1, ( 2 ** 24 ) );
 
-NeuralNet_Params.nConvStageTypeId =         new ParamDesc.ConvStageType( "nConvStageTypeId" );
+NeuralNet_Params.nConvStageTypeId =            new ParamDesc.ConvStageType( "nConvStageTypeId" );
 
-NeuralNet_Params.blockCountTotalRequested = new ParamDesc.Int(  "blockCountTotalRequested",       2, ( 10 * 1024 ) );
+NeuralNet_Params.blockCountTotalRequested =    new ParamDesc.Int(  "blockCountTotalRequested",       2, ( 10 * 1024 ) );
 
-NeuralNet_Params.output_channelCount =      new ParamDesc.Int(  "output_channelCount",            1, ( 10 * 1024 ) );
-NeuralNet_Params.output_asInputValueRange = new ParamDesc.Bool( "output_asInputValueRange" );
+NeuralNet_Params.output_channelCount =         new ParamDesc.Int(  "output_channelCount",            1, ( 10 * 1024 ) );
+NeuralNet_Params.output_asInputValueRange =    new ParamDesc.Bool( "output_asInputValueRange" );
 
-NeuralNet_Params.bKeepInputTensor =         new ParamDesc.Bool( "bKeepInputTensor" );
+NeuralNet_Params.bKeepInputTensor =            new ParamDesc.Bool( "bKeepInputTensor" );
 
 
 /**
@@ -199,14 +202,10 @@ NeuralNet_Params.bKeepInputTensor =         new ParamDesc.Bool( "bKeepInputTenso
  * this array's order.)
  */
 NeuralNet_Params.SequenceArray = new ParamDesc.SequenceArray( [
-
-
-//!!! ...unfinished... (2023/05/06) has_implicit_input
-
-
   NeuralNet_Params.explicit_input_height,
   NeuralNet_Params.explicit_input_width,
   NeuralNet_Params.explicit_input_channelCount,
+  NeuralNet_Params.has_implicit_input,
   NeuralNet_Params.vocabularyChannelCount,
   NeuralNet_Params.vocabularyCountPerInputChannel,
   NeuralNet_Params.nConvStageTypeId,

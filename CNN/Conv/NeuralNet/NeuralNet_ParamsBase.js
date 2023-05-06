@@ -41,7 +41,9 @@ import { InferencedParams } from "./NeuralNet_InferencedParams.js";
  *   The explicit (i.e. user visible) input image's channel count. It is always
  * equal to .inferencedParams.input_channelCount.
  *
-!!! * @member {boolean} has_implicit_input
+ * @member {boolean} has_implicit_input
+ *   - If true, .inferencedParams.implicit_input_Xxx will be non-zero.
+ *   - If false, .inferencedParams.implicit_input_Xxx will be 0.
  *
  *
  * @member {number} vocabularyChannelCount
@@ -95,6 +97,7 @@ class NeuralNet_ParamsBase extends Recyclable.Root {
    */
   constructor(
     explicit_input_height, explicit_input_width, explicit_input_channelCount,
+    has_implicit_input,
     vocabularyChannelCount, vocabularyCountPerInputChannel,
     nConvStageTypeId,
     blockCountTotalRequested,
@@ -104,6 +107,7 @@ class NeuralNet_ParamsBase extends Recyclable.Root {
     super();
     NeuralNet_ParamsBase.setAsConstructor_self.call( this,
       explicit_input_height, explicit_input_width, explicit_input_channelCount,
+      has_implicit_input,
       vocabularyChannelCount, vocabularyCountPerInputChannel,
       nConvStageTypeId,
       blockCountTotalRequested,
@@ -115,6 +119,7 @@ class NeuralNet_ParamsBase extends Recyclable.Root {
   /** @override */
   static setAsConstructor(
     explicit_input_height, explicit_input_width, explicit_input_channelCount,
+    has_implicit_input,
     vocabularyChannelCount, vocabularyCountPerInputChannel,
     nConvStageTypeId,
     blockCountTotalRequested,
@@ -124,6 +129,7 @@ class NeuralNet_ParamsBase extends Recyclable.Root {
     super.setAsConstructor();
     NeuralNet_ParamsBase.setAsConstructor_self.call( this,
       explicit_input_height, explicit_input_width, explicit_input_channelCount,
+      has_implicit_input,
       vocabularyChannelCount, vocabularyCountPerInputChannel,
       nConvStageTypeId,
       blockCountTotalRequested,
@@ -136,6 +142,7 @@ class NeuralNet_ParamsBase extends Recyclable.Root {
   /** @override */
   static setAsConstructor_self(
     explicit_input_height, explicit_input_width, explicit_input_channelCount,
+    has_implicit_input,
     vocabularyChannelCount, vocabularyCountPerInputChannel,
     nConvStageTypeId,
     blockCountTotalRequested,
@@ -145,6 +152,7 @@ class NeuralNet_ParamsBase extends Recyclable.Root {
     this.explicit_input_height = explicit_input_height;
     this.explicit_input_width = explicit_input_width;
     this.explicit_input_channelCount = explicit_input_channelCount;
+    this.has_implicit_input = has_implicit_input;
     this.vocabularyChannelCount = vocabularyChannelCount;
     this.vocabularyCountPerInputChannel = vocabularyCountPerInputChannel;
     this.nConvStageTypeId = nConvStageTypeId;
@@ -165,6 +173,7 @@ class NeuralNet_ParamsBase extends Recyclable.Root {
     this.nConvStageTypeId = undefined;
     this.vocabularyCountPerInputChannel = undefined;
     this.vocabularyChannelCount = undefined;
+    this.has_implicit_input = undefined;
     this.explicit_input_channelCount = undefined;
     this.explicit_input_width = undefined;
     this.explicit_input_height = undefined;
@@ -181,6 +190,7 @@ class NeuralNet_ParamsBase extends Recyclable.Root {
       this.explicit_input_height,
       this.explicit_input_width,
       this.explicit_input_channelCount,
+      this.has_implicit_input,
       this.vocabularyChannelCount,
       this.vocabularyCountPerInputChannel,
       this.nConvStageTypeId,
@@ -301,13 +311,12 @@ class NeuralNet_ParamsBase extends Recyclable.Root {
 
   /** @override */
   toString() {
-    let str = ``
-
-//!!! ...unfinished... (2023/05/06) has_implicit_input
-
-      + `explicit_input_height=${this.explicit_input_height}, `
+    let str =
+        `explicit_input_height=${this.explicit_input_height}, `
       + `explicit_input_width=${this.explicit_input_width}, `
       + `explicit_input_channelCount=${this.explicit_input_channelCount}, `
+
+      + `has_implicit_input=${this.has_implicit_input}, `
 
       + `vocabularyChannelCount=${this.vocabularyChannelCount}, `
       + `vocabularyCountPerInputChannel=${this.vocabularyCountPerInputChannel}, `
