@@ -121,6 +121,9 @@ class NeuralNet_InferencedParams extends Recyclable.Root {
     this.embeddingParams_dispose();
     this.bEmbedVocabularyId = undefined;
 
+//!!! ...unfinished... (2023/05/06)
+// NeuralNet_FeedbackShape
+
     super.disposeResources();
   }
 
@@ -310,6 +313,13 @@ class NeuralNet_InferencedParams extends Recyclable.Root {
   /** @override */
   toString() {
     let str = ``
+
+//!!! ...unfinished... (2023/05/06)
+// NeuralNet_FeedbackShape
+// implicit_input_height, implicit_input_width, implicit_input_channel
+// input_height, input_width, input_channel
+
+
       + `bEmbedVocabularyId=${this.bEmbedVocabularyId}, `
       + `stageCount=${this.stageCount}, `
       + `blockCountPerStage=${this.blockCountPerStage}, `
@@ -318,8 +328,8 @@ class NeuralNet_InferencedParams extends Recyclable.Root {
       + `stageLast_output_width=${this.stageLast_output_width}, `
       + `stageLast_output_channelCount=${this.stageLast_output_channelCount}, `
       + `output_height=${this.output_height}, `
-      + `output_width=${this.output_width} `
-    ;
+      + `output_width=${this.output_width}`
+      ;
     return str;
   }
 

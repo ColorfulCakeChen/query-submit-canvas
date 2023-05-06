@@ -307,7 +307,7 @@ class NeuralNet_ParamsBase extends Recyclable.Root {
 
       + `bKeepInputTensor=${this.bKeepInputTensor}, `
       + `inferencedParams={ ${this.inferencedParams} }`
-    ;
+      ;
     return str;
   }
 

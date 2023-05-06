@@ -32,6 +32,17 @@ class NeuralNet_FeedbackToInput_from {
   from_pixelCount_original;
   from_pixelCount_expanded;
 
+  /** @override */
+  toString() {
+    let str =
+        `from_valueCount_original=${this.from_valueCount_original}, `
+      + `from_valueCount_expanded=${this.from_valueCount_expanded}, `
+      + `from_pixelCount_original=${this.from_pixelCount_original}, `
+      + `from_pixelCount_expanded=${this.from_pixelCount_expanded}`
+      ;
+    return str;
+  }
+
 }
 
 
@@ -109,7 +120,7 @@ class NeuralNet_FeedbackToInput_from {
 class NeuralNet_FeedbackToInput_Area extends NeuralNet_FeedbackToInput_from {
 
   height_multiplier;
-  width_multiplier
+  width_multiplier;
 
   to_pixelCount_original;
   to_pixelCount_expanded;
@@ -133,6 +144,33 @@ class NeuralNet_FeedbackToInput_Area extends NeuralNet_FeedbackToInput_from {
 
   get gap_width_pixelCount_expanded() {
     return this.gap_width_pixelCount_original * this.width_multiplier;
+  }
+
+
+  /** @override */
+  toString() {
+    let str = `${super.toString()}, `
+      + `height_multiplier=${this.height_multiplier}, `
+      + `width_multiplier=${this.width_multiplier}, `
+
+      + `to_pixelCount_original=${this.to_pixelCount_original}, `
+      + `to_pixelCount_expanded=${this.to_pixelCount_expanded}, `
+
+      + `height_pixelCount_original=${this.height_pixelCount_original}, `
+      + `height_pixelCount_expanded=${this.height_pixelCount_expanded}, `
+      + `height_with_gap_pixelCount_expanded=${this.height_with_gap_pixelCount_expanded}, `
+
+      + `width_pixelCount_original=${this.width_pixelCount_original}, `
+      + `width_pixelCount_expanded=${this.width_pixelCount_expanded}, `
+      + `width_with_gap_pixelCount_expanded=${this.width_with_gap_pixelCount_expanded}, `
+
+      + `gap_height_pixelCount_original=${this.gap_height_pixelCount_original}, `
+      + `gap_height_pixelCount_expanded=${this.gap_height_pixelCount_expanded}, `
+
+      + `gap_width_pixelCount_original=${this.gap_width_pixelCount_original}, `
+      + `gap_width_pixelCount_expanded=${this.gap_width_pixelCount_expanded}`
+      ;
+    return str;
   }
 
 }
@@ -504,6 +542,30 @@ class NeuralNet_FeedbackToInput {
         ++i;
       }
     }
+  }
+
+
+  /** @override */
+  toString() {
+    let str = ``
+
+!!! ...unfinished... (2023/05/06)
+// NeuralNet_FeedbackShape
+// implicit_input_height, implicit_input_width, implicit_input_channel
+// input_height, input_width, input_channel
+
+
+      + `bEmbedVocabularyId=${this.bEmbedVocabularyId}, `
+      + `stageCount=${this.stageCount}, `
+      + `blockCountPerStage=${this.blockCountPerStage}, `
+      + `blockCountTotal=${this.blockCountTotal}, `
+      + `stageLast_output_height=${this.stageLast_output_height}, `
+      + `stageLast_output_width=${this.stageLast_output_width}, `
+      + `stageLast_output_channelCount=${this.stageLast_output_channelCount}, `
+      + `output_height=${this.output_height}, `
+      + `output_width=${this.output_width} `
+    ;
+    return str;
   }
 
   /**
