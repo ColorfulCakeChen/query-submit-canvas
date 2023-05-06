@@ -17,6 +17,9 @@ import { InferencedParams } from "./NeuralNet_InferencedParams.js";
 //
 // Let input_height and input_width become inferenced params?
 // Here accepts explicit_input_height and explicit_input_width and bFill.
+//
+// Problem: NeuralNet.Params will be destroyed when NeuralNet.Base is created.
+//          The FeedbackShape (if as the inferenced Params) will also be gone.
 
 /**
  * NeuralNet parameters base class.
