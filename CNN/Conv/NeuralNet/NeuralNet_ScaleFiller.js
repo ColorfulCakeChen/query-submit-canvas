@@ -80,6 +80,7 @@ class NeuralNet_ScaleFiller {
   async* createTensor_by_fill_asyncGenerator(
     source_TypedArray, source_height, source_width,
     bTwoTensors,
+    feedbackShape,
     alignmentMarkValueArray,
     previous_output_Int32ArrayArray
   ) {
@@ -101,12 +102,10 @@ class NeuralNet_ScaleFiller {
       .call( this,
         source_TypedArray, source_height, source_width,
         bTwoTensors,
+        feedbackShape,
         alignmentMarkValueArray,
         previous_output_Int32ArrayArray
       );
-
-//!!! ...unfinished... (2023/05/06)
-
   }
 
   /**
@@ -129,6 +128,11 @@ class NeuralNet_ScaleFiller {
    * @param {boolean} bTwoTensors
    *   - If true, two tensors will be generated and returned.
    *   - If false, one tensor will be generated and returned.
+   *
+   * @param {NeuralNet_FeedbackShape} feedbackShape
+   *   If not null, it will be used to fill alignment mark value and feedback
+   * (i.e. previous time output) into target tensor. Otherwise, there will be
+   * no alignment mark value and feedback be filled into target tensor.
    *
 
 //!!! ...unfinished... (2023/05/05)
@@ -210,6 +214,10 @@ class NeuralNet_ScaleFiller {
   static async* createTensor_by_scale_fill_asyncGenerator(
     source_TypedArray, source_height, source_width,
     bTwoTensors,
+
+//!!! ...unfinished... (2023/05/07)
+    feedbackShape,
+
     alignmentMarkValueArray,
     previous_output_Int32ArrayArray
   ) {
