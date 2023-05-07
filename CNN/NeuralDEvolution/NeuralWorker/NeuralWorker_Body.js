@@ -249,6 +249,10 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
         let neuralNet = this.neuralNetArray[ i ]
           = NeuralNet.Base.Pool.get_or_create_by();
 
+//!!! ...unfinished... (2023/05/07)
+// Use neuralNet.feedbackShape to create NeuralNet_ScaleFill
+
+
         let bInitOk = neuralNet.init( progress,
           inputWeightArray, 0, neuralNetParams );
 

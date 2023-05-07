@@ -852,6 +852,8 @@ class NeuralNet_Base extends Recyclable.Root {
       + `explicit_input_width=${this.explicit_input_width}, `
       + `explicit_input_channelCount=${this.explicit_input_channelCount}, `
 
+      + `has_implicit_input=${this.has_implicit_input}, `
+
       + `vocabularyChannelCount=${this.vocabularyChannelCount}, `
       + `vocabularyCountPerInputChannel=${this.vocabularyCountPerInputChannel}, `
       + `nConvStageTypeName=${this.nConvStageTypeName}(${this.nConvStageTypeId}), `
