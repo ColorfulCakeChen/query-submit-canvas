@@ -214,10 +214,7 @@ class NeuralNet_ScaleFiller {
   static async* createTensor_by_scale_fill_asyncGenerator(
     source_TypedArray, source_height, source_width,
     bTwoTensors,
-
-//!!! ...unfinished... (2023/05/07)
     feedbackShape,
-
     alignmentMarkValueArray,
     previous_output_Int32ArrayArray
   ) {
@@ -260,22 +257,32 @@ class NeuralNet_ScaleFiller {
     } else {
       tensorCount = 1;
     }
-  
-    // 1.3
-      
+
+    // 1.3 Whether needs fill extra information into the target tensor.
+    //
+    // If has feedbackShape and has either alignmentMarkValue or
+    // previous_output, it is necessary to fill something into target tensor.
+    let bFill = false;
+
     const alignmentMarkValueArray_nonEmpty
       = ( alignmentMarkValueArray ) && ( alignmentMarkValueArray.length > 0 );
 
-    if ( alignmentMarkValueArray_nonEmpty ) {
-      if ( alignmentMarkValueArray.length != tensorCount )
-        throw Error( `NeuralNet_ScaleFiller.${funcNameInMessage}(): `
-          + `alignmentMarkValueArray.length ( `
-          + `${alignmentMarkValueArray.length} ) `
-          + `should be either 0 or the same as `
-          + `tensorCount ( ${tensorCount} ).`
-        );
+//!!! ...unfinished... (2023/05/07)
+    if ( feedbackShape ) {
 
-      if ( previous_output_Int32ArrayArray )
+      if ( alignmentMarkValueArray_nonEmpty ) {
+        if ( alignmentMarkValueArray.length != tensorCount )
+          throw Error( `NeuralNet_ScaleFiller.${funcNameInMessage}(): `
+            + `alignmentMarkValueArray.length ( `
+            + `${alignmentMarkValueArray.length} ) `
+            + `should be either 0 or the same as `
+            + `tensorCount ( ${tensorCount} ).`
+          );
+        
+        bFill = true;
+      }
+
+      if ( previous_output_Int32ArrayArray ) {
         if ( previous_output_Int32ArrayArray.length != tensorCount )
           throw Error( `NeuralNet_ScaleFiller.${funcNameInMessage}(): `
             + `previous_output_Int32ArrayArray.length ( `
@@ -283,10 +290,12 @@ class NeuralNet_ScaleFiller {
             + `should be the same as `
             + `tensorCount ( ${tensorCount} ).`
           );
+
+        bFill = true;
+      }
     }
 
-    // 1.3 Whether needs fill extra information into the target tensor.
-    let bFill;
+
     if ( alignmentMarkValueArray_nonEmpty )
       bFill = true;
     else
@@ -300,6 +309,8 @@ class NeuralNet_ScaleFiller {
 //       bFill = true;
 //     }
 
+
+    // 1.3
 
 //!!! ...unfinished.... (2023/05/05)
 // Perhaps, let scale do outside (e.g. by Canvas context drawImage()).
