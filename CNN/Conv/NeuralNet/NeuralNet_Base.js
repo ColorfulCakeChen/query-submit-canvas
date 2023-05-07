@@ -600,15 +600,25 @@ class NeuralNet_Base extends Recyclable.Root {
    */
   * applier( inputTensor ) {
 
-    // 0. Reset progress.
+    // 0.
+
+    // 0.1 Reset progress.
     let progressToAdvance = this.progressApply;
     let progressRoot = progressToAdvance.root_get();
 
     progressToAdvance.value = 0;
     yield progressRoot;  // progress reset to zero. Report progress.
 
-//!!! ...unfinished... (2023/05/06)
-// Perhaps, check inputTensor.shape whether this.input_Xxx
+    // 0.2 Ensure input tensor shape.
+    if (   ( inputTensor.shape.length != this.input_shape.length )
+        || ( inputTensor.shape[ 0 ] != this.input_shape[ 0 ] )
+        || ( inputTensor.shape[ 1 ] != this.input_shape[ 1 ]  )
+        || ( inputTensor.shape[ 2 ] != this.input_shape[ 2 ]  ) )
+      throw Error( `NeuralNet_Base.applier(): `
+        + `inputTensor.shape=[ ${inputTensor.shape} ] `
+        + `should be the same as `
+        + `input_shape=[ ${this.input_shape} ].`
+      );
 
     // 1. Embedding
     let outputTensor = this.embedding.apply( inputTensor );
