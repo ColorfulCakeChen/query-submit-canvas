@@ -279,6 +279,7 @@ class NeuralNet_ScaleFiller {
             + `tensorCount ( ${tensorCount} ).`
           );
 
+        // Can not have null previous output.
         for ( let i = 0; i < tensorCount; ++i ) {
           if ( previous_output_Int32ArrayArray[ i ] == null )
             throw Error( `NeuralNet_ScaleFiller.${funcNameInMessage}(): `
@@ -290,6 +291,8 @@ class NeuralNet_ScaleFiller {
 
         bFill = true;
       }
+
+    // Otherwise, no filling because of no feedbackShape.
     }
 
 
