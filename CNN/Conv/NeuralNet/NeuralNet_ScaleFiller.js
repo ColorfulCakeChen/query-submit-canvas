@@ -134,18 +134,19 @@ class NeuralNet_ScaleFiller {
    * (i.e. previous time output) into target tensor. Otherwise, there will be
    * no alignment mark value and feedback be filled into target tensor.
    *
-
-//!!! ...unfinished... (2023/05/05)
-// If ( !alignmentMarkValueArray ) or ( alignmentMarkValueArray.length == 0 ),
-// it means NO_FILL. In this case, previous_output_Int32ArrayArray[][] will be
-// filled as 4 areas in one time.
-
    * @param {integer[]} alignmentMarkValueArray
    *   An array of values representing every neural network playing which
    * alignment.
    *
-   *   - If null or undefined or ( alignmentMarkValueArray.length == 0 ):
+   *   - If ( feedbackShape == null ), alignmentMarkValueArray will be ignored.
+   *   - If ( feedbackShape != null ):
+   *   - If ( alignmentMarkValueArray == null ) or
+   *       ( alignmentMarkValueArray.length == 0 ):
    *     - There will be no alignment mark value be filled into target tensor.
+   *
+   *   - If not null
+   *     - If ( bTwoTensors == false ), alignmentMarkValueArray.length must be 1.
+   *     - If ( bTwoTensors ==  true ), alignmentMarkValueArray.length must be 2.
 
 //!!! ...unfinished.... (2023/05/05)
 //!!!???
@@ -298,11 +299,6 @@ class NeuralNet_ScaleFiller {
             );
         }
 
-!!! ...unfinished... (2023/05/07)
-// What if previous_output_Int32ArrayArray[ 0 ]
-// or previous_output_Int32ArrayArray[ 1 ] is null?
-// still bFill = true? 
-
         bFill = true;
       }
     }
@@ -363,6 +359,8 @@ class NeuralNet_ScaleFiller {
               feedbackShape.set_implicit_input_by_alignmentMarkValue(
                 sourceInt32Array, alignmentMarkValue );
             }
+
+!!! ...unfinished... (2023/05/07)
 
             if ( previous_output_Int32ArrayArray ) {
               let previous_output_Int32Array
