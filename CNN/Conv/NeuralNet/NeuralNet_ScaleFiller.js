@@ -207,8 +207,6 @@ class NeuralNet_ScaleFiller {
    * @yield {Promise( undefined )}
    *   Yield a promise resolves to { done: true, value: undefined }.
    *
-   *
-   *
    */
   static async* createTensor_by_scale_fill_asyncGenerator(
     source_TypedArray, source_height, source_width,
@@ -254,7 +252,16 @@ class NeuralNet_ScaleFiller {
     else
       tensorCount = 1;
 
-    // 1.3 Whether needs fill extra information into the target tensor.
+    // 1.3 Whether needs scale the source image to fit into the target tensor.
+    let bScale;
+    if (   ( source_height == this.target_height )
+        && ( source_width == this.target_width ) ) {
+      bScale = false;
+    } else {
+      bScale = true;
+    }
+
+    // 1.4 Whether needs fill extra information into the target tensor.
     //
     // If has feedbackShape and has either alignmentMarkValue or
     // previous_output, it is necessary to fill something into target tensor.
@@ -270,6 +277,7 @@ class NeuralNet_ScaleFiller {
 
     if ( feedbackShape ) {
 
+      // 1.4.1
       if ( alignmentMarkValueArray_nonEmpty ) {
         if ( alignmentMarkValueArray.length != tensorCount )
           throw Error( `NeuralNet_ScaleFiller.${funcNameInMessage}(): `
@@ -282,6 +290,7 @@ class NeuralNet_ScaleFiller {
         bFill = true;
       }
 
+      // 1.4.2
       if ( previous_output_Int32ArrayArray_nonEmpty ) {
         if ( previous_output_Int32ArrayArray.length != tensorCount )
           throw Error( `NeuralNet_ScaleFiller.${funcNameInMessage}(): `
@@ -305,21 +314,6 @@ class NeuralNet_ScaleFiller {
       }
 
     // Otherwise, no filling because of no feedbackShape.
-    }
-
-
-//!!! ...unfinished.... (2023/05/05)
-// Perhaps, let scale do outside (e.g. by Canvas context drawImage()).
-// So that here can check source image size whether equal to
-// ( implicit + explicit ) size.
-
-    // 1.4 Whether needs scale the source image to fit into the target tensor.
-    let bScale;
-    if (   ( source_height == this.target_height )
-        && ( source_width == this.target_width ) ) {
-      bScale = false;
-    } else {
-      bScale = true;
     }
 
     // 2.
