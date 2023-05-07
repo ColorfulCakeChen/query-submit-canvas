@@ -50,15 +50,6 @@ class NeuralNet_ScaleFiller {
 
   }
 
-//!!! ...unfinished... (2023/05/01)
-// Perhaps, should use Canvas Context's drawImage() to scale the source.
-// So that GPU-CPU transferring could be reduced.
-
-//!!! ...unfinished.... (2023/05/05)
-// Perhaps, let scale do outside (e.g. by Canvas context drawImage()).
-// So that here can check source image size whether equal to
-// ( implicit + explicit ) size.
-
   /**
    * Almost the same as .createTensor_by_scale_fill_asyncGenerator() but the
    * source data must has the same shape as target tensor.
@@ -103,8 +94,37 @@ class NeuralNet_ScaleFiller {
         feedbackShape, alignmentMarkValueArray, previous_output_Int32ArrayArray
       );
   }
+//!!! ...unfinished... (2023/05/01)
+// Perhaps, should use Canvas Context's drawImage() to scale the source.
+// So that GPU-CPU transferring could be reduced.
+
+//!!! ...unfinished.... (2023/05/05)
+// Perhaps, let scale do outside (e.g. by Canvas context drawImage()).
+// So that here can check source image size whether equal to
+// ( implicit + explicit ) size.
 
   /**
+   *
+   * Note:
+   *
+   * It is highly recommended to use this method without scaling to reduce
+   * data transferring between CPU and GPU.
+   *
+   * - Suggested usage:
+   *   - Use Canvas Context drawImage() to scale. (operates on GPU directly)
+   *   - Downloads data from GPU to CPU. (getImageData())
+   *   - Call this method:
+   *     - Fill alignment mark and feedback (i.e. previous time output).
+   *     - Uploads data from CPU to GPU to create tensor.
+   *
+   * - Not suggested usage:
+   *   - Downloads data from GPU to CPU. (getImageData())
+   *   - Call this method:
+   *     - Uploads data from CPU to GPU to scale tensor.
+   *     - Downloads data from GPU to CPU for filling alignment mark and
+   *         feedback (i.e. previous time output).
+   *     - Uploads data from CPU to GPU to create tensor.
+   * 
    *
    *
    * @param {Uint8ClampedArray|Uint16Array|Uint32Array} source_TypedArray

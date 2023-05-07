@@ -709,7 +709,7 @@ class NeuralNet_Base extends Recyclable.Root {
    *         - drawImage() operates on GPU directly.
    * 
    *         - This method downloads data from GPU to CPU for creating tensor.
-   *             And then, upload data from CPU to GPU to scale tensor.
+   *             And then, uploads data from CPU to GPU to scale tensor.
    *
    *
    * @param {Uint8Array|ImageData|ImageBitmap|HTMLImageElement|HTMLCanvasElement|HTMLVideoElement} sourcePixelData
