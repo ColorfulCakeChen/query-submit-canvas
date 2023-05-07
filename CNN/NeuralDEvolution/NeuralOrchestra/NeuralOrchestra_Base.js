@@ -387,6 +387,9 @@ class NeuralOrchestra_Base extends
     input_height = 72,
     input_width = 131, // = ( 128 + 3 ),
 
+!!! ...unfinished... (2023/05/07)
+// has_implicit_input
+
     vocabularyChannelCount = 4, //8
     blockCountTotalRequested = 39, //100, //200, //50, //20, //10,
     output_channelCount = 64 * 2 //16

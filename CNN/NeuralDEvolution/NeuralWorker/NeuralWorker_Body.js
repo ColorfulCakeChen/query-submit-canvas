@@ -184,6 +184,9 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
 // the input_height and input_width will be changed when
 // alignmentMarkValueArray changed.
 
+//!!! ...unfinished... (2023/05/07)
+// has_implicit_input
+
         // Create NeuralNet_ScaleFill.
         if ( this.ScaleFill ) {
           if (   ( this.ScaleFill.target_height
