@@ -890,21 +890,22 @@ class NeuralNet_Base extends Recyclable.Root {
   toString_WeightCount() {
     let str =
 
-        `input_height=${this.input_height}, `
-      + `input_width=${this.input_width}, `
-      + `input_channelCount=${this.input_channelCount}, `
+        `input_shape=( `
+      + `${this.input_height}, `
+      + `${this.input_width}, `
+      + `${this.input_channelCount} ), `
 
       + `tensorWeightCount = { `
       + `Extracted: ${this.tensorWeightCountExtracted}, `
       + `Total: ${this.tensorWeightCountTotal} }, `
       + `stageCount=${this.stageCount}, `
       + `blockCountTotal=${this.blockCountTotal}, `
-      + `stageLast_shape=`
-        + `( ${this.stageLast_output_height}, `
+      + `stageLast_shape=( `
+        + `${this.stageLast_output_height}, `
         + `${this.stageLast_output_width}, `
         + `${this.stageLast_output_channelCount} ), `
-      + `output_shape=`
-        + `( ${this.output_height}, ${this.output_width}, `
+      + `output_shape=( `
+        + `${this.output_height}, ${this.output_width}, `
         + `${this.output_channelCount}`
         + `${this.output_asInputValueRange ? ", asInputValueRange" : "" }`
         + ` )`
