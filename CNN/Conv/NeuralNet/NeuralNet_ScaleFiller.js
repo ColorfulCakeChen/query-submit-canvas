@@ -252,11 +252,10 @@ class NeuralNet_ScaleFiller {
 
     // 1.2
     let tensorCount;
-    if ( bTwoTensors ) {
+    if ( bTwoTensors )
       tensorCount = 2;
-    } else {
+    else
       tensorCount = 1;
-    }
 
     // 1.3 Whether needs fill extra information into the target tensor.
     //
