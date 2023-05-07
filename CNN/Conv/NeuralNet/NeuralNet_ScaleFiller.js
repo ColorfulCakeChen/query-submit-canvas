@@ -249,7 +249,8 @@ class NeuralNet_ScaleFiller {
     let bFill = false;
 
     const alignmentMarkValueArray_nonEmpty
-      = ( alignmentMarkValueArray ) && ( alignmentMarkValueArray.length > 0 );
+      = ( alignmentMarkValueArray )
+          && ( alignmentMarkValueArray.length > 0 );
 
     const previous_output_Int32ArrayArray_nonEmpty
       = ( previous_output_Int32ArrayArray )
