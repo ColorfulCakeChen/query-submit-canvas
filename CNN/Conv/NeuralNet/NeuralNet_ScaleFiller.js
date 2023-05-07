@@ -182,26 +182,13 @@ class NeuralNet_ScaleFiller {
    *         ( previous_output_Int32ArrayArray.length > 0 ):
    *
    *       - If ( bTwoTensors == false ),
-   *           previous_output_Int32ArrayArray_nonEmpty.length must be 1.
+   *           previous_output_Int32ArrayArray.length must be 1 and
+   *           previous_output_Int32ArrayArray[ 0 ] must be non-null.
    *
    *       - If ( bTwoTensors ==  true ),
-   *           previous_output_Int32ArrayArray_nonEmpty.length must be 2.
-   *
-!!!   *   - If null or undefined, there will be no feedback information be filled
-   *       into target tensor.
-   *
-   *   - If not null:
-   *
-   *     - If alignmentMarkValueArray is null or undefined or
-   *         ( alignmentMarkValueArray.length == 0 ), the
-   *         previous_output_Int32ArrayArray will be ignored and there will be
-   *         no feedback information be filled into target tensor.
-   *
-   *     - previous_output_Int32ArrayArray.length should be 1
-   *         if ( bTwoTensors == false )
-   *
-   *     - previous_output_Int32ArrayArray.length should be 2
-   *         if ( bTwoTensors == true )
+   *           previous_output_Int32ArrayArray.length must be 2 and both
+   *           previous_output_Int32ArrayArray[ 0 ] and
+   *           previous_output_Int32ArrayArray[ 1 ] must be non-null.
    *
    * @yield {Promise( [ tf.tensor3d, sourceTypedArrayAsyncFunction ] )}
    *   Yield a promise resolves to { done: false, value: [ tf.tensor3d,
