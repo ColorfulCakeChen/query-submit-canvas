@@ -267,7 +267,6 @@ class NeuralNet_ScaleFiller {
     const alignmentMarkValueArray_nonEmpty
       = ( alignmentMarkValueArray ) && ( alignmentMarkValueArray.length > 0 );
 
-//!!! ...unfinished... (2023/05/07)
     if ( feedbackShape ) {
 
       if ( alignmentMarkValueArray_nonEmpty ) {
@@ -291,26 +290,15 @@ class NeuralNet_ScaleFiller {
             + `tensorCount ( ${tensorCount} ).`
           );
 
+!!! ...unfinished... (2023/05/07)
+// What if previous_output_Int32ArrayArray[ 0 ]
+// or previous_output_Int32ArrayArray[ 1 ] is null?
+// still bFill = true? 
+
         bFill = true;
       }
     }
 
-
-    if ( alignmentMarkValueArray_nonEmpty )
-      bFill = true;
-    else
-      bFill = false;
-
-//!!! (2023/05/05 Remarked) Only according to alignmentMarkValueArray.
-//     if (   ( alignmentMarkValueArray == undefined )
-//         && ( previous_output_Int32ArrayArray == undefined ) ) {
-//       bFill = false;
-//     } else {
-//       bFill = true;
-//     }
-
-
-    // 1.3
 
 //!!! ...unfinished.... (2023/05/05)
 // Perhaps, let scale do outside (e.g. by Canvas context drawImage()).
@@ -361,6 +349,23 @@ class NeuralNet_ScaleFiller {
 //
 //            let alignmentMarkValue = alignmentMarkValueArray[ i ];
 //            let previous_output_Int32Array = previous_output_Int32ArrayArray[ i ];
+
+            if ( alignmentMarkValueArray_nonEmpty ) {
+              let alignmentMarkValue = alignmentMarkValueArray[ i ];
+              feedbackShape.set_implicit_input_by_alignmentMarkValue(
+                sourceInt32Array, alignmentMarkValue );
+            }
+
+            if ( previous_output_Int32ArrayArray ) {
+              let previous_output_Int32Array
+                = previous_output_Int32ArrayArray[ i ];
+
+              if ( previous_output_Int32Array ) {
+                this.set_implicit_input_by_previousOutputTypedArray(
+                  sourceInt32Array, previous_output_Int32Array
+                );
+              }
+            }
 
             let targetTensorInt32
               = tf.tensor3d( sourceInt32Array, this.target_shape, "int32" );
