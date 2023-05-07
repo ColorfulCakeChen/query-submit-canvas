@@ -692,6 +692,16 @@ class NeuralNet_Base extends Recyclable.Root {
    * Create a tensor3d from source (e.g. canvas). Its size will be confirmed
    * (by scaling) to this neural network's acceptable input [ height, width ].
    *
+   *
+   * Note: It is more recommended to use Canvas Context drawImage() to scale
+   *       image than this method. The reason is:
+   * 
+   *         - drawImage() operates on GPU directly.
+   * 
+   *         - This method downloads data from GPU to CPU for creating tensor.
+   *             And then, upload data from CPU to GPU to scale tensor.
+   *
+   *
    * @param {Uint8Array|ImageData|ImageBitmap|HTMLImageElement|HTMLCanvasElement|HTMLVideoElement} sourcePixelData
    *   The image or canvas which provides image (as RGBA 4-channels Uint8 data).
    *
