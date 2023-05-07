@@ -149,17 +149,7 @@ class NeuralNet_ScaleFiller {
    *     - If not null:
    *       - If ( bTwoTensors == false ), alignmentMarkValueArray.length must be 1.
    *       - If ( bTwoTensors ==  true ), alignmentMarkValueArray.length must be 2.
-
-//!!! ...unfinished.... (2023/05/05)
-//!!!???
-   *     - Every previous_output_Int32ArrayArray[ n ] will be viewed as two
-   *         alignments' output of a neural network.
    *
-   *   - If not null:
-   *     - alignmentMarkValueArray.length should be 1
-   *         if ( bTwoTensors == false )
-   *     - alignmentMarkValueArray.length should be 2
-   *         if ( bTwoTensors == true )
    *   - Usage example: in a OX (connect-three) game:
    *     - ( alignmentMarkValueArray[ 0 ] == 0 ) means neural network 0
    *         plays O side currently.
