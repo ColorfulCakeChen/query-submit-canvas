@@ -135,7 +135,7 @@ class NeuralNet_ScaleFiller {
    * no alignment mark value and feedback be filled into target tensor.
    *
    * @param {integer[]} alignmentMarkValueArray
-   *   An array of values representing every neural network playing which
+   *   An array of values representing every neural network personating which
    * alignment.
    *
    *   - If ( feedbackShape == null ), alignmentMarkValueArray will be ignored.
@@ -146,15 +146,16 @@ class NeuralNet_ScaleFiller {
    *         ( alignmentMarkValueArray.length == 0 ), there will be no alignment
    *         mark value be filled into target tensor.
    *
-   *     - If not null:
+   *     - If ( alignmentMarkValueArray != null ) and
+   *         ( alignmentMarkValueArray.length > 0 ):
    *       - If ( bTwoTensors == false ), alignmentMarkValueArray.length must be 1.
    *       - If ( bTwoTensors ==  true ), alignmentMarkValueArray.length must be 2.
    *
    *   - Usage example: in a OX (connect-three) game:
    *     - ( alignmentMarkValueArray[ 0 ] == 0 ) means neural network 0
-   *         plays O side currently.
+   *         personates O side currently.
    *     - ( alignmentMarkValueArray[ 1 ] == 255 ) means neural network 1
-   *         plays X side currently.
+   *         personates X side currently.
    *
 
 //!!! ...unfinished... (2023/05/01)
@@ -165,9 +166,28 @@ class NeuralNet_ScaleFiller {
 // previous_output_Int32ArrayArray or previous_output_Int32Array
 
    * @param {Int32Array[]} previous_output_Int32ArrayArray
-   *   The (previous time) output of the pair of neural networks.
+   *   Every neural network's previous time output which will be used as
+   * feedback values.
    *
-   *   - If null or undefined, there will be no feedback information be filled
+   *   - If ( feedbackShape == null ), previous_output_Int32ArrayArray will be
+   *       ignored.
+   *
+   *   - If ( feedbackShape != null ):
+   *
+   *     - If ( previous_output_Int32ArrayArray == null ) or
+   *         ( previous_output_Int32ArrayArray.length == 0 ), there will be
+   *         no feedback values be filled into target tensor.
+   *
+   *     - If ( previous_output_Int32ArrayArray != null ) and
+   *         ( previous_output_Int32ArrayArray.length > 0 ):
+   *
+   *       - If ( bTwoTensors == false ),
+   *           previous_output_Int32ArrayArray_nonEmpty.length must be 1.
+   *
+   *       - If ( bTwoTensors ==  true ),
+   *           previous_output_Int32ArrayArray_nonEmpty.length must be 2.
+   *
+!!!   *   - If null or undefined, there will be no feedback information be filled
    *       into target tensor.
    *
    *   - If not null:
@@ -259,6 +279,10 @@ class NeuralNet_ScaleFiller {
     const alignmentMarkValueArray_nonEmpty
       = ( alignmentMarkValueArray ) && ( alignmentMarkValueArray.length > 0 );
 
+    const previous_output_Int32ArrayArray_nonEmpty
+      = ( previous_output_Int32ArrayArray )
+          && ( previous_output_Int32ArrayArray.length > 0 );
+
     if ( feedbackShape ) {
 
       if ( alignmentMarkValueArray_nonEmpty ) {
@@ -273,7 +297,7 @@ class NeuralNet_ScaleFiller {
         bFill = true;
       }
 
-      if ( previous_output_Int32ArrayArray ) {
+      if ( previous_output_Int32ArrayArray_nonEmpty ) {
         if ( previous_output_Int32ArrayArray.length != tensorCount )
           throw Error( `NeuralNet_ScaleFiller.${funcNameInMessage}(): `
             + `previous_output_Int32ArrayArray.length ( `
