@@ -549,8 +549,11 @@ class NeuralNet_Reference_Base extends Recyclable.Root {
     neuralNet_asserter.propertyValue( "input_width", input_width );
     neuralNet_asserter.propertyValue( "input_channelCount", input_channelCount );
 
-    neuralNet_asserter.propertyValue( "feedbackShape", feedbackShape );
-    
+    if ( neuralNet.has_implicit_input )
+      neuralNet_asserter.propertyValueNE( "feedbackShape", null );
+    else // Both null.
+      neuralNet_asserter.propertyValue( "feedbackShape", feedbackShape );
+
     neuralNet_asserter.propertyValue( "stageCount", stageCount );
     neuralNet_asserter.propertyValue( "stageCount", testParams.stageArray.length );
 

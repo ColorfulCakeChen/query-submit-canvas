@@ -9,10 +9,12 @@ import * as Recyclable from "./Recyclable.js";
 class ObjectPropertyAsserter_Base extends Recyclable.Root {
 
   /**
-   * Used as default ObjectPropertyAsserter.Base provider for conforming to Recyclable interface.
+   * Used as default ObjectPropertyAsserter.Base provider for conforming to
+   * Recyclable interface.
    */
   static Pool = new Pool.Root( "ObjectPropertyAsserter.Base.Pool",
-    ObjectPropertyAsserter_Base, ObjectPropertyAsserter_Base.setAsConstructor );
+    ObjectPropertyAsserter_Base,
+    ObjectPropertyAsserter_Base.setAsConstructor );
 
   /**
    * @param {string} objectName
@@ -26,13 +28,15 @@ class ObjectPropertyAsserter_Base extends Recyclable.Root {
    */
   constructor( objectName, object, contextDescription ) {
     super();
-    ObjectPropertyAsserter_Base.setAsConstructor_self.call( this, objectName, object, contextDescription );
+    ObjectPropertyAsserter_Base.setAsConstructor_self.call( this,
+      objectName, object, contextDescription );
   }
 
   /** @override */
   static setAsConstructor( objectName, object, contextDescription ) {
     super.setAsConstructor();
-    ObjectPropertyAsserter_Base.setAsConstructor_self.call( this, objectName, object, contextDescription );
+    ObjectPropertyAsserter_Base.setAsConstructor_self.call( this,
+      objectName, object, contextDescription );
     return this;
   }
 
@@ -57,7 +61,8 @@ class ObjectPropertyAsserter_Base extends Recyclable.Root {
   propertyValue( propertyName, value ) {
     let propertyValue = this.object[ propertyName ];
     if ( propertyValue != value )
-      throw Error( `${this.objectName}.${propertyName} ( ${propertyValue} ) should be ( ${value} ). ${this.contextDescription}` );
+      throw Error( `${this.objectName}.${propertyName} ( ${propertyValue} ) `
+        + `should be ( ${value} ). ${this.contextDescription}` );
   }
 
   /**
@@ -66,7 +71,8 @@ class ObjectPropertyAsserter_Base extends Recyclable.Root {
   propertyValueNE( propertyName, value ) {
     let propertyValue = this.object[ propertyName ];
     if ( propertyValue == value )
-      throw Error( `${this.objectName}.${propertyName} ( ${propertyValue} ) should not be ( ${value} ). ${this.contextDescription}` );
+      throw Error( `${this.objectName}.${propertyName} ( ${propertyValue} ) `
+        + `should not be ( ${value} ). ${this.contextDescription}` );
   }
 
   /**
@@ -75,7 +81,8 @@ class ObjectPropertyAsserter_Base extends Recyclable.Root {
   propertyValueLE( propertyName, value ) {
     let propertyValue = this.object[ propertyName ];
     if ( propertyValue > value )
-      throw Error( `${this.objectName}.${propertyName} ( ${propertyValue} ) should be <= ( ${value} ). ${this.contextDescription}` );
+      throw Error( `${this.objectName}.${propertyName} ( ${propertyValue} ) `
+        + `should be <= ( ${value} ). ${this.contextDescription}` );
   }
 
   /**
@@ -84,7 +91,8 @@ class ObjectPropertyAsserter_Base extends Recyclable.Root {
   propertyValueGE( propertyName, value ) {
     let propertyValue = this.object[ propertyName ];
     if ( propertyValue < value )
-      throw Error( `${this.objectName}.${propertyName} ( ${propertyValue} ) should be >= ( ${value} ). ${this.contextDescription}` );
+      throw Error( `${this.objectName}.${propertyName} ( ${propertyValue} ) `
+        + `should be >= ( ${value} ). ${this.contextDescription}` );
   }
 
 }
