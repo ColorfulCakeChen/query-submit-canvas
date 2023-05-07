@@ -254,7 +254,7 @@ class PerformanceTestCase extends Recyclable.Root {
             + `NeuralNet object successfully. ${neuralNet}`);
 
 !!! ...unfinished... (2023/05/06)
-// Use NeuralNet_ScaleFill instead?
+// Use NeuralNet_ScaleFiller instead?
 
         let inputTensor3d = neuralNet.create_ScaledSourceTensor_from_PixelData( theCanvas );
         outputTensor3d = neuralNet.apply( inputTensor3d );

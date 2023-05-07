@@ -88,7 +88,7 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
       this.tensorMemoryBefore = undefined;
     }
 
-    this.ScaleFill = undefined;
+    this.ScaleFiller = undefined;
     this.workerId = undefined;
 
     yield *super.disposeResources();
@@ -115,7 +115,7 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
     }
 
     this.workerId = workerId;
-    this.ScaleFill = undefined;
+    this.ScaleFiller = undefined;
 
     let bInitOk = true;
 
@@ -170,7 +170,7 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
       this.neuralNetArray.length = neuralNetParamsBaseArray.length;
     }
 
-    this.ScaleFill = undefined;
+    this.ScaleFiller = undefined;
 
     // 2. Create every neural network.
     let progress;
@@ -187,13 +187,13 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
 //!!! ...unfinished... (2023/05/07)
 // has_implicit_input
 
-        // Create NeuralNet_ScaleFill.
-        if ( this.ScaleFill ) {
-          if (   ( this.ScaleFill.target_height
+        // Create NeuralNet_ScaleFiller.
+        if ( this.ScaleFiller ) {
+          if (   ( this.ScaleFiller.target_height
                      != neuralNetParamsBase.input_height )
-              || ( this.ScaleFill.target_width
+              || ( this.ScaleFiller.target_width
                      != neuralNetParamsBase.input_width )
-              || ( this.ScaleFill.target_channelCount
+              || ( this.ScaleFiller.target_channelCount
                      != neuralNetParamsBase.input_channelCount ) )
 
             throw Error( `NeuralWorker_Body.${funcNameInMessage}(): `
@@ -203,14 +203,14 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
               + `${neuralNetParamsBase.input_width}, `
               + `${neuralNetParamsBase.input_channelCount} ) `
               + `should be the same as another neuralNetParamsBase's ( `
-              + `${this.ScaleFill.target_height}, `
-              + `${this.ScaleFill.target_width}, `
-              + `${this.ScaleFill.target_channelCount} ). `
+              + `${this.ScaleFiller.target_height}, `
+              + `${this.ScaleFiller.target_width}, `
+              + `${this.ScaleFiller.target_channelCount} ). `
               + `neuralNetParamsBase={ ${strNeuralNetParamsBase} }.`
             );
 
         } else {
-          this.ScaleFill = new NeuralNet.ScaleFill(
+          this.ScaleFiller = new NeuralNet.ScaleFiller(
             neuralNetParamsBase.input_height,
             neuralNetParamsBase.input_width,
             neuralNetParamsBase.input_channelCount
@@ -250,7 +250,7 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
           = NeuralNet.Base.Pool.get_or_create_by();
 
 //!!! ...unfinished... (2023/05/07)
-// Use neuralNet.feedbackShape to create NeuralNet_ScaleFill
+// Use neuralNet.feedbackShape to create NeuralNet_ScaleFiller
 
 
         let bInitOk = neuralNet.init( progress,
@@ -513,7 +513,7 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
     }
   }
 
-//!!! (2023/05/06 Remarked) Use NeuralNet_ScaleFill instead.
+//!!! (2023/05/06 Remarked) Use NeuralNet_ScaleFiller instead.
 // //!!! ...unfinished... (2022/09/18)
 // // Perhaps, alignment mark filling could also fill some of the previous result of
 // // this neural network. (i.e. become recurrent neural network.)
@@ -676,7 +676,7 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
 
       let bTwoTensors = ( this.neuralNetArray.length > 1 );
       let createTensor_asyncGenerator
-        = this.ScaleFill.createTensor_by_fill_asyncGenerator(
+        = this.ScaleFiller.createTensor_by_fill_asyncGenerator(
             source_TypedArray, source_height, source_width,
             bTwoTensors,
             alignmentMarkValueArray, previous_output_TypedArrayArray

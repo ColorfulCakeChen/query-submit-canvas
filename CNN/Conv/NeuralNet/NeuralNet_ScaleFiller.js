@@ -1,4 +1,4 @@
-export { NeuralNet_ScaleFill as ScaleFill };
+export { NeuralNet_ScaleFiller as ScaleFiller };
 
 import { FeedbackShape as NeuralNet_FeedbackShape }
   from "./NeuralNet_FeedbackShape.js";
@@ -27,7 +27,7 @@ import { FeedbackShape as NeuralNet_FeedbackShape }
  * but without target_channelCount.
  *
  */
-class NeuralNet_ScaleFill {
+class NeuralNet_ScaleFiller {
 
   /**
    *
@@ -88,7 +88,7 @@ class NeuralNet_ScaleFill {
     // 1. source data must has the same shape as target tensor.
     if (   ( source_height != this.target_height )
         || ( source_width != this.target_width ) )
-      throw Error( `NeuralNet_ScaleFill.${funcNameInMessage}(): `
+      throw Error( `NeuralNet_ScaleFiller.${funcNameInMessage}(): `
         + `( source_height, source_width ) = `
         + `( ${source_height}, ${source_width} ) ` 
         + `should be the same as `
@@ -97,7 +97,7 @@ class NeuralNet_ScaleFill {
       );
 
     // 2.
-    yield* NeuralNet_ScaleFill.createTensor_by_scale_fill_asyncGenerator
+    yield* NeuralNet_ScaleFiller.createTensor_by_scale_fill_asyncGenerator
       .call( this,
         source_TypedArray, source_height, source_width,
         bTwoTensors,
@@ -223,7 +223,7 @@ class NeuralNet_ScaleFill {
     const source_valueCount = source_TypedArray.length;
 
     if ( ( source_valueCount % source_size_per_channel ) != 0 )
-      throw Error( `NeuralNet_ScaleFill.${funcNameInMessage}(): `
+      throw Error( `NeuralNet_ScaleFiller.${funcNameInMessage}(): `
         + `source_TypedArray.length ( ${source_valueCount} ) ` 
         + `should be divisible by `
         + `source_size_per_channel ( `
@@ -235,7 +235,7 @@ class NeuralNet_ScaleFill {
     const source_channelCount = source_valueCount / source_size_per_channel;
 
     if ( source_channelCount != target_channelCount )
-      throw Error( `NeuralNet_ScaleFill.${funcNameInMessage}(): `
+      throw Error( `NeuralNet_ScaleFiller.${funcNameInMessage}(): `
         + `source_size_per_channel ( `
         + `= source_TypedArray.length / ( source_height * source_width ) ` 
         + `= ${source_valueCount} / ( ${source_height} * ${source_width} ) `
@@ -260,7 +260,7 @@ class NeuralNet_ScaleFill {
 
     if ( alignmentMarkValueArray_nonEmpty ) {
       if ( alignmentMarkValueArray.length != tensorCount )
-        throw Error( `NeuralNet_ScaleFill.${funcNameInMessage}(): `
+        throw Error( `NeuralNet_ScaleFiller.${funcNameInMessage}(): `
           + `alignmentMarkValueArray.length ( `
           + `${alignmentMarkValueArray.length} ) `
           + `should be either 0 or the same as `
@@ -269,7 +269,7 @@ class NeuralNet_ScaleFill {
 
       if ( previous_output_Int32ArrayArray )
         if ( previous_output_Int32ArrayArray.length != tensorCount )
-          throw Error( `NeuralNet_ScaleFill.${funcNameInMessage}(): `
+          throw Error( `NeuralNet_ScaleFiller.${funcNameInMessage}(): `
             + `previous_output_Int32ArrayArray.length ( `
             + `${previous_output_Int32ArrayArray.length} ) `
             + `should be the same as `
@@ -314,7 +314,7 @@ class NeuralNet_ScaleFill {
 
         // Scale image (do it only once).
         sourceTensorInt32
-          = NeuralNet_ScaleFill.createTensor_by_scale_TypedArray.call(
+          = NeuralNet_ScaleFiller.createTensor_by_scale_TypedArray.call(
               this, source_TypedArray, source_height, source_width );
 
         if ( bFill ) { // 2.1.1 Scale, Fill
@@ -425,7 +425,7 @@ class NeuralNet_ScaleFill {
   /**
    *
    *
-   * @param {NeuralNet_ScaleFill} this
+   * @param {NeuralNet_ScaleFiller} this
    *
    * @param {Uint8ClampedArray|Uint16Array|Uint32Array} source_TypedArray
    *   An unsigned integer TypedArray. For example, ImageData.data which is
