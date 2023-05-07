@@ -146,7 +146,7 @@ class NeuralNet_ScaleFiller {
    *         ( alignmentMarkValueArray.length == 0 ), there will be no alignment
    *         mark value be filled into target tensor.
    *
-   *     - If not null
+   *     - If not null:
    *       - If ( bTwoTensors == false ), alignmentMarkValueArray.length must be 1.
    *       - If ( bTwoTensors ==  true ), alignmentMarkValueArray.length must be 2.
 
