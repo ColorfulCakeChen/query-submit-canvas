@@ -94,14 +94,6 @@ class NeuralNet_ScaleFiller {
         feedbackShape, alignmentMarkValueArray, previous_output_Int32ArrayArray
       );
   }
-//!!! ...unfinished... (2023/05/01)
-// Perhaps, should use Canvas Context's drawImage() to scale the source.
-// So that GPU-CPU transferring could be reduced.
-
-//!!! ...unfinished.... (2023/05/05)
-// Perhaps, let scale do outside (e.g. by Canvas context drawImage()).
-// So that here can check source image size whether equal to
-// ( implicit + explicit ) size.
 
   /**
    *
