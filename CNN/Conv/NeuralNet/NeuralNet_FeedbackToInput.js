@@ -572,7 +572,7 @@ class NeuralNet_FeedbackToInput {
       + `area={ ${this.area} }, `
 
       + `area_position_leftArray=[ ${this.area_position_leftArray} ], `
-      + `area_position_topArray=[ ${area_position_topArray} ]`
+      + `area_position_topArray=[ ${this.area_position_topArray} ]`
       ;
     return str;
   }
