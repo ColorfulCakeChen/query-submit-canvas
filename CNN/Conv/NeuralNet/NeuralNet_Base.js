@@ -617,7 +617,7 @@ class NeuralNet_Base extends Recyclable.Root {
       throw Error( `NeuralNet_Base.applier(): `
         + `inputTensor.shape=[ ${inputTensor.shape} ] `
         + `should be the same as `
-        + `input_shape=[ ${this.input_shape} ].`
+        + `.input_shape=[ ${this.input_shape} ].`
       );
 
     // 1. Embedding
