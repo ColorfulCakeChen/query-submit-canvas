@@ -534,6 +534,7 @@ class NeuralNet_Reference_Base extends Recyclable.Root {
     const {
       implicit_input_height, implicit_input_width, implicit_input_channelCount,
       input_height, input_width, input_channelCount,
+      feedbackShape,
   
       stageCount, blockCountPerStage, blockCountTotal,
       stageLast_output_height, stageLast_output_width, stageLast_output_channelCount,
@@ -548,6 +549,8 @@ class NeuralNet_Reference_Base extends Recyclable.Root {
     neuralNet_asserter.propertyValue( "input_width", input_width );
     neuralNet_asserter.propertyValue( "input_channelCount", input_channelCount );
 
+    neuralNet_asserter.propertyValue( "feedbackShape", feedbackShape );
+    
     neuralNet_asserter.propertyValue( "stageCount", stageCount );
     neuralNet_asserter.propertyValue( "stageCount", testParams.stageArray.length );
 
