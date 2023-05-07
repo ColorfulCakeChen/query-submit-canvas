@@ -139,14 +139,16 @@ class NeuralNet_ScaleFiller {
    * alignment.
    *
    *   - If ( feedbackShape == null ), alignmentMarkValueArray will be ignored.
-   *   - If ( feedbackShape != null ):
-   *   - If ( alignmentMarkValueArray == null ) or
-   *       ( alignmentMarkValueArray.length == 0 ):
-   *     - There will be no alignment mark value be filled into target tensor.
    *
-   *   - If not null
-   *     - If ( bTwoTensors == false ), alignmentMarkValueArray.length must be 1.
-   *     - If ( bTwoTensors ==  true ), alignmentMarkValueArray.length must be 2.
+   *   - If ( feedbackShape != null ):
+   *
+   *     - If ( alignmentMarkValueArray == null ) or
+   *         ( alignmentMarkValueArray.length == 0 ), there will be no alignment
+   *         mark value be filled into target tensor.
+   *
+   *     - If not null
+   *       - If ( bTwoTensors == false ), alignmentMarkValueArray.length must be 1.
+   *       - If ( bTwoTensors ==  true ), alignmentMarkValueArray.length must be 2.
 
 //!!! ...unfinished.... (2023/05/05)
 //!!!???
