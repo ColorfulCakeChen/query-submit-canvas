@@ -891,9 +891,9 @@ class NeuralNet_Base extends Recyclable.Root {
     let str =
 
         `input_shape=( `
-      + `${this.input_height}, `
-      + `${this.input_width}, `
-      + `${this.input_channelCount} ), `
+        + `${this.input_height}, `
+        + `${this.input_width}, `
+        + `${this.input_channelCount} ), `
 
       + `tensorWeightCount = { `
       + `Extracted: ${this.tensorWeightCountExtracted}, `
