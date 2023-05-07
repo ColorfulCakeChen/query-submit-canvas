@@ -235,7 +235,7 @@ class NeuralNet_ScaleFiller {
         + `target_channelCount ( ${target_channelCount} ).`
       );
 
-    // 1.2
+    // 1.2 How many tensors will be yielded.
     let tensorCount;
     if ( bTwoTensors )
       tensorCount = 2;
