@@ -289,6 +289,15 @@ class NeuralNet_ScaleFiller {
             + `tensorCount ( ${tensorCount} ).`
           );
 
+        for ( let i = 0; i < tensorCount; ++i ) {
+          if ( previous_output_Int32ArrayArray[ i ] == null )
+            throw Error( `NeuralNet_ScaleFiller.${funcNameInMessage}(): `
+              + `previous_output_Int32ArrayArray[ ${i} ] ( `
+              + `${previous_output_Int32ArrayArray[ i ]} ) `
+              + `should not be null or undefined.`
+            );
+        }
+
 !!! ...unfinished... (2023/05/07)
 // What if previous_output_Int32ArrayArray[ 0 ]
 // or previous_output_Int32ArrayArray[ 1 ] is null?
