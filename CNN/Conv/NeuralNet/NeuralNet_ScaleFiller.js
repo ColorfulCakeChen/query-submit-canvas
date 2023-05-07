@@ -157,14 +157,6 @@ class NeuralNet_ScaleFiller {
    *     - ( alignmentMarkValueArray[ 1 ] == 255 ) means neural network 1
    *         personates X side currently.
    *
-
-//!!! ...unfinished... (2023/05/01)
-// The shape of previous_output_Int32ArrayArray depends on whether
-// a neural network generates output of one or two alignments.
-
-//!!! ...unfinished... (2023/05/04)
-// previous_output_Int32ArrayArray or previous_output_Int32Array
-
    * @param {Int32Array[]} previous_output_Int32ArrayArray
    *   Every neural network's previous time output which will be used as
    * feedback values.
