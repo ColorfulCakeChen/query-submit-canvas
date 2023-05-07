@@ -80,9 +80,7 @@ class NeuralNet_ScaleFiller {
   async* createTensor_by_fill_asyncGenerator(
     source_TypedArray, source_height, source_width,
     bTwoTensors,
-    feedbackShape,
-    alignmentMarkValueArray,
-    previous_output_Int32ArrayArray
+    feedbackShape, alignmentMarkValueArray, previous_output_Int32ArrayArray
   ) {
     const funcNameInMessage = "createTensor_by_fill_asyncGenerator";
 
@@ -102,9 +100,7 @@ class NeuralNet_ScaleFiller {
       .call( this,
         source_TypedArray, source_height, source_width,
         bTwoTensors,
-        feedbackShape,
-        alignmentMarkValueArray,
-        previous_output_Int32ArrayArray
+        feedbackShape, alignmentMarkValueArray, previous_output_Int32ArrayArray
       );
   }
 
@@ -205,9 +201,7 @@ class NeuralNet_ScaleFiller {
   static async* createTensor_by_scale_fill_asyncGenerator(
     source_TypedArray, source_height, source_width,
     bTwoTensors,
-    feedbackShape,
-    alignmentMarkValueArray,
-    previous_output_Int32ArrayArray
+    feedbackShape, alignmentMarkValueArray, previous_output_Int32ArrayArray
   ) {
     const funcNameInMessage = "createTensor_by_scale_fill_asyncGenerator";
 
