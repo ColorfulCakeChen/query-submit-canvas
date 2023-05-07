@@ -846,9 +846,9 @@ class NeuralNet_Base extends Recyclable.Root {
    * @override
    */
   toString() {
-    let str = ``
+    let str =
 
-      + `explicit_input_height=${this.explicit_input_height}, `
+        `explicit_input_height=${this.explicit_input_height}, `
       + `explicit_input_width=${this.explicit_input_width}, `
       + `explicit_input_channelCount=${this.explicit_input_channelCount}, `
 
@@ -888,9 +888,9 @@ class NeuralNet_Base extends Recyclable.Root {
    * @return {string} The description string of the weight count.
    */
   toString_WeightCount() {
-    let str = ``
+    let str =
 
-      + `input_height=${this.input_height}, `
+        `input_height=${this.input_height}, `
       + `input_width=${this.input_width}, `
       + `input_channelCount=${this.input_channelCount}, `
 
