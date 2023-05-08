@@ -570,6 +570,12 @@ class NeuralWorker_Proxies extends Recyclable.Root {
     return resultOk;
   }
 
+  get previous_output_TypedArrayArray_nonEmpty() {
+    if (   ( this.previous_output_TypedArrayArray )
+        && ( this.previous_output_TypedArrayArray.length > 0 ) )
+      return true;
+    return false;
+  }
 
   /**
    * Setup .TypedArray_process_async according to .nNeuralWorker_ModeId.
