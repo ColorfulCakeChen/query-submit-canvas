@@ -352,24 +352,16 @@ class NeuralNet_ScaleFiller {
 //            let alignmentMarkValue = alignmentMarkValueArray[ i ];
 //            let previous_output_Int32Array = previous_output_Int32ArrayArray[ i ];
 
-            if ( alignmentMarkValueArray_nonEmpty ) {
-              let alignmentMarkValue = alignmentMarkValueArray[ i ];
+            if ( alignmentMarkValueArray_nonEmpty )
               feedbackShape.set_implicit_input_by_alignmentMarkValue(
-                sourceInt32Array, alignmentMarkValue );
-            }
+                sourceInt32Array, alignmentMarkValueArray[ i ] );
 
 !!! ...unfinished... (2023/05/07)
 
-            if ( previous_output_Int32ArrayArray_nonEmpty ) {
-              let previous_output_Int32Array
-                = previous_output_Int32ArrayArray[ i ];
-
-              if ( previous_output_Int32Array ) {
-                this.set_implicit_input_by_previousOutputTypedArray(
-                  sourceInt32Array, previous_output_Int32Array
-                );
-              }
-            }
+            if ( previous_output_Int32ArrayArray_nonEmpty )
+              feedbackShape.set_implicit_input_by_previousOutputTypedArray(
+                sourceInt32Array, previous_output_Int32ArrayArray[ i ]
+              );
 
             let targetTensorInt32
               = tf.tensor3d( sourceInt32Array, this.target_shape, "int32" );
