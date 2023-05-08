@@ -360,7 +360,7 @@ class NeuralNet_ScaleFiller {
 
 !!! ...unfinished... (2023/05/07)
 
-            if ( previous_output_Int32ArrayArray ) {
+            if ( previous_output_Int32ArrayArray_nonEmpty ) {
               let previous_output_Int32Array
                 = previous_output_Int32ArrayArray[ i ];
 
