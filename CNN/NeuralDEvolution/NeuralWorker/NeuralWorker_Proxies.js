@@ -198,7 +198,15 @@ import { Mode as NeuralWorker_Mode } from "./NeuralWorker_Mode.js";
  *   An array of values representing every neural network is playing which
  * alignment currently.
  *
- *   - If it is null or ( .length == 0 ), it means not to fill alignment mark
+ *     - If ( NeuralNet.Params.has_implicit_input == true ), they will be
+ *         filled (as alignment marks) into every input of the neural networks
+ *         (i.e. source TypedArray).
+ *
+ *     - If ( NeuralNet.Params.has_implicit_input == true ) but you do not want
+??? *         filled alignment marks, please clear it to null or let its
+ *         ( .length == 0 ).
+ *
+!!! *   - If it is null or ( .length == 0 ), it means not to fill alignment mark
  *       into the next time input of the neural networks (i.e. source
  *       TypedArray) when .TypedArray_process_async() is called.
  *
