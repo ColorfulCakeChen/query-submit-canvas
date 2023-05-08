@@ -31,7 +31,6 @@ class NeuralNet_ScaleFiller {
 
   /**
    *
-   *
    */
   constructor( target_height, target_width, target_channelCount ) {
     this.target_height = target_height;
@@ -40,19 +39,11 @@ class NeuralNet_ScaleFiller {
 
     this.target_shape = [ target_height, target_width, target_channelCount ];
     this.target_shape_height_width = [ target_height, target_width ];
-
-//!!! ...unfinished.... (2023/05/05)
-//     this.feedbackShape = NeuralNet_FeedbackShape();
-//     this.feedbackShape.init(
-//       explicit_input_height, explicit_input_width, explicit_input_channelCount,
-//       feedback_valueCount
-//     );
-
   }
 
   /**
    * Almost the same as .createTensor_by_scale_fill_asyncGenerator() but the
-   * source data must has the same shape as target tensor.
+   * source data must have the same shape as target tensor.
    *
    * If they are different, it is suggested to pre-scale source by Canvas
    * Context's drawImage() before calling this method. The advantage are:
