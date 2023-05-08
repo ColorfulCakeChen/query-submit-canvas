@@ -447,6 +447,23 @@ class HeightWidthDepth {
     // bKeepInputTensor
     //
 
+
+
+!!! ...unfinished... (2023/05/08)
+   /*
+    *   - ( NeuralNet.Params.has_implicit_input == false )
+    *       not fill.
+    * 
+    *   - ( NeuralNet.Params.has_implicit_input == true )
+    *       will fill.
+    *
+    *     - alignmentMarkValueArray null or ( .length == 0 )
+    *         not fill alignment mark.
+    *
+    *     - previous_output_TypedArrayArray null or ( .length == 0 )
+    *         not fill feedback (i.e. previous time output).
+    */
+   
     // Create TestCases for every NeuralWorker.Mode
     for ( let i = 0; i < NeuralWorker.Mode.Singleton.integerToInfoMap.size; ++i ) {
       let theModeInfo = NeuralWorker.Mode.Singleton.integerToInfoMap.get( i );

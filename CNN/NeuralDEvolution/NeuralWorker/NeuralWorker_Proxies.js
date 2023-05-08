@@ -208,13 +208,6 @@ import { Mode as NeuralWorker_Mode } from "./NeuralWorker_Mode.js";
  *   Return true, if .alignmentMarkValueArray is null or undefined or
  * ( .alignmentMarkValueArray.length == 0 ).
  *
-
-//!!! ...unfinished... (2023/05/04)
-// How to get them if they come from AsyncWorker.Resulter?
-//
-// Perhaps, NeuralWorker's previous output promise should be placed
-// at NeuralWorker_Proxies (not NeuralWorker_Proxy).
-
  * @member {Float32Array[] | Int32Array[]} previous_output_TypedArrayArray
  *   An array [ TypedArray, TypedArray ] representing the (previous time)
  * output of the (pair of) neural network(s).
