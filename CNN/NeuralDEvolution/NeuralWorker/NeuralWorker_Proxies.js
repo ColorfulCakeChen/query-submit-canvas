@@ -235,6 +235,10 @@ import { Mode as NeuralWorker_Mode } from "./NeuralWorker_Mode.js";
  *       cleared. Since there should be no previous output for newly created
  *       neural network.
  *
+ * @member {boolean} previous_output_TypedArrayArray_nonEmpty
+ *   Return true, if .previous_output_TypedArrayArray is null or
+ * ( .previous_output_TypedArrayArray.length == 0 ).
+ *
  *
  * @member {function} TypedArray_process_async
  *   This is a data member which is a pointer to a function which is one of
