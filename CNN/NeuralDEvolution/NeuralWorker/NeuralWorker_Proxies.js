@@ -203,14 +203,8 @@ import { Mode as NeuralWorker_Mode } from "./NeuralWorker_Mode.js";
  *         (i.e. source TypedArray).
  *
  *     - If ( NeuralNet.Params.has_implicit_input == true ) but you do not want
-??? *         filled alignment marks, please clear it to null or let its
- *         ( .length == 0 ).
- *
-!!! *   - If it is null or ( .length == 0 ), it means not to fill alignment mark
- *       into the next time input of the neural networks (i.e. source
- *       TypedArray) when .TypedArray_process_async() is called.
- *
- *   - Otherwise, its length should be the same as this.neuralNetCount
+ *         filled alignment marks, please call
+ *         .alignmentMarkValueArray_set_async( null ) to clear it to null.
  *
  * @member {boolean} alignmentMarkValueArray_nonEmpty
  *   Return true, if .alignmentMarkValueArray is null or
@@ -522,9 +516,13 @@ class NeuralWorker_Proxies extends Recyclable.Root {
    * @param {integer[]} markValueArray
    *   An array of values representing every neural network is playing which
    * alignment currently.
+   *
    *   - It could be null or undefined or ( markValueArray.length == 0 ) to
    *       clear .alignmentMarkValueArray for not filling alignment mark into
-   *       source TypedArray. (i.e. NO _FILL)
+   *       source TypedArray.
+   *
+   *   - Otherwise, markValueArray.length should be the same as
+   *       this.neuralNetCount
    *
    * @return {Promise}
    *   Return a promise:
