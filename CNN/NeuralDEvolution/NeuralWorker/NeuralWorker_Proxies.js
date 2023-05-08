@@ -198,14 +198,14 @@ import { Mode as NeuralWorker_Mode } from "./NeuralWorker_Mode.js";
  *   An array of values representing every neural network is playing which
  * alignment currently.
  *
- *   - If it is null or undefined, it means not to fill alignment mark and
- *       feedback information (i.e. previous time output of the neural network)
- *       into source TypedArray when .TypedArray_process_async() is called.
+ *   - If it is null or ( .length == 0 ), it means not to fill alignment mark
+ *       into the next time input of the neural networks (i.e. source
+ *       TypedArray) when .TypedArray_process_async() is called.
  *
  *   - Otherwise, its length should be the same as this.neuralNetCount
  *
  * @member {boolean} alignmentMarkValueArray_nonEmpty
- *   Return true, if .alignmentMarkValueArray is null or undefined or
+ *   Return true, if .alignmentMarkValueArray is null or
  * ( .alignmentMarkValueArray.length == 0 ).
  *
  * @member {Float32Array[] | Int32Array[]} previous_output_TypedArrayArray
@@ -224,7 +224,7 @@ import { Mode as NeuralWorker_Mode } from "./NeuralWorker_Mode.js";
  *
  *     - If ( NeuralNet.Params.has_implicit_input == true ), the transferred
  *         previous_output_TypedArrayArray will be filled (as feedback) into
- *         the next time input of the neural networks.
+ *         the next time input of the neural networks (i.e. source TypedArray).
  *
  *     - If ( NeuralNet.Params.has_implicit_input == true ) but you do not want
  *         it be transferred and filled (as feedback), please clear it to null
