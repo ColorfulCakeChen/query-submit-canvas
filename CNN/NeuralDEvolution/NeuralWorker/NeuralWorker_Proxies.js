@@ -225,9 +225,14 @@ import { Mode as NeuralWorker_Mode } from "./NeuralWorker_Mode.js";
  *     - Float32Array (if ( neuralNetParams.output_asInputValueRange == false ) )
  *     - Int32Array (if ( neuralNetParams.output_asInputValueRange == true ) )
  *
+
+!!! * neuralNetParamsBase.has_implicit_in
+
  *   - When .TypedArray_process_async() is called, its content (i.e. the
  *       Float32Array or Int32Array) will become invalid because they will be
  *       transferred (not copied) to the web worker for used as feedback.
+ *
+ *   - 
  *
  *   - When .NeuralNetArray_create_async() is called, its content will be
  *       cleared. Since there should be no previous output for newly created
@@ -696,13 +701,13 @@ class NeuralWorker_Proxies extends Recyclable.Root {
       worker0_resulter = this.workerProxyArray[ 0 ]
         .TWO_WORKER__TWO_NET__ONE_SCALE__FILL__step0_TypedArray_process_asyncGenerator(
           source_TypedArray, source_height, source_width,
-          this.previous_output_TypedArrayArray[ 0 ],
+          this.previous_output_TypedArrayArray?.[ 0 ],
           bApply_or_Applier );
     } else {
       worker0_resulter = this.workerProxyArray[ 0 ]
         .TWO_WORKER__TWO_NET__ONE_SCALE__NO_FILL__step0_TypedArray_process_asyncGenerator(
           source_TypedArray, source_height, source_width,
-          this.previous_output_TypedArrayArray[ 0 ],
+          this.previous_output_TypedArrayArray?.[ 0 ],
           bApply_or_Applier );
     }
 
@@ -721,7 +726,7 @@ class NeuralWorker_Proxies extends Recyclable.Root {
     let worker1_promise = workerProxy1
       .TWO_WORKER__TWO_NET__ONE_SCALE__step1_Int32Array_process_async(
         worker0_value_Int32Array, source_height1, source_width1,
-        this.previous_output_TypedArrayArray[ 1 ],
+        this.previous_output_TypedArrayArray?.[ 1 ],
         bFill );
 
     let [
@@ -760,7 +765,7 @@ class NeuralWorker_Proxies extends Recyclable.Root {
     let worker0_resulter = this.workerProxyArray[ 0 ]
       .TWO_WORKER__TWO_SCALE__TypedArray_process_asyncGenerator(
         source_TypedArray, source_height, source_width,
-        this.previous_output_TypedArrayArray[ 0 ],
+        this.previous_output_TypedArrayArray?.[ 0 ],
         worker0_bFork );
 
     let { done: worker0_done_false, value: worker0_value_Int32Array }
@@ -772,7 +777,7 @@ class NeuralWorker_Proxies extends Recyclable.Root {
     let worker1_resulter = this.workerProxyArray[ 1 ]
       .TWO_WORKER__TWO_SCALE__TypedArray_process_asyncGenerator(
         worker0_value_Int32Array, source_height, source_width,
-        this.previous_output_TypedArrayArray[ 1 ],
+        this.previous_output_TypedArrayArray?.[ 1 ],
         worker1_bFork );
 
     let [
@@ -821,7 +826,7 @@ class NeuralWorker_Proxies extends Recyclable.Root {
     let worker0_promise = this.workerProxyArray[ 0 ]
       .TWO_WORKER__TWO_NET__ONE_SCALE__step1_Int32Array_process_async(
         source_TypedArray, source_height, source_width,
-        this.previous_output_TypedArrayArray[ 0 ],
+        this.previous_output_TypedArrayArray?.[ 0 ],
         bFill );
 
     let worker0_value_TypedArray = await worker1_promise;
