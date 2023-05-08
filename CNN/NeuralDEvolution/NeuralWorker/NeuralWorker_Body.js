@@ -11,8 +11,8 @@ import { tensorflowJsURL } from "./NeuralWorker_Common.js";
 //   - library (tensorflow.js) downloading
 
 /**
- * The implementation of a neural network web worker. It may own one or two neural
- * network(s).
+ * The implementation of a neural network web worker. It may own one or two
+ * neural network(s).
  *
  * @member {integer[]} alignmentMarkValueArray
  *   An array of values representing every neural network is playing which
@@ -33,7 +33,9 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
 
   /** */
   constructor() {
-    super(); // register callback for handling messages sent from NeuralWorker_Proxy.
+
+    // register callback for handling messages sent from NeuralWorker_Proxy.
+    super();
 
     if ( !NeuralWorker_Body.tensorflowJs_imported ) {
 
