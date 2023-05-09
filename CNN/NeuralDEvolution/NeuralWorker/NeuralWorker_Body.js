@@ -182,24 +182,17 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
         let neuralNetParamsBase = neuralNetParamsBaseArray[ i ];
         let weightArrayBuffer = weightArrayBufferArray[ i ];
 
-//!!! ...unfinished... (2023/05/06)
-// the input_height and input_width will be changed when
-// alignmentMarkValueArray changed.
-
-//!!! ...unfinished... (2023/05/07)
-// has_implicit_input
-
         // Create NeuralNet_ScaleFiller.
         if ( this.ScaleFiller ) {
-          if (   ( this.ScaleFiller.target_height
-                     != neuralNetParamsBase.input_height )
-              || ( this.ScaleFiller.target_width
-                     != neuralNetParamsBase.input_width )
-              || ( this.ScaleFiller.target_channelCount
-                     != neuralNetParamsBase.input_channelCount ) )
+          if (   ( neuralNetParamsBase.inferencedParams.input_height
+                     != this.ScaleFiller.target_height )
+              || ( neuralNetParamsBase.inferencedParams.input_width
+                     != this.ScaleFiller.target_width )
+              || ( neuralNetParamsBase.inferencedParams.input_channelCount
+                     != this.ScaleFiller.target_channelCount ) )
 
             throw Error( `NeuralWorker_Body.${funcNameInMessage}(): `
-              + `neuralNetParamsBase[ ${i} ]'s `
+              + `neuralNetParamsBase[ ${i} ].inferencedParams' `
               + `( input_height, input_width, input_channelCount ) = ( `
               + `${neuralNetParamsBase.input_height}, `
               + `${neuralNetParamsBase.input_width}, `
@@ -213,9 +206,9 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
 
         } else {
           this.ScaleFiller = new NeuralNet.ScaleFiller(
-            neuralNetParamsBase.input_height,
-            neuralNetParamsBase.input_width,
-            neuralNetParamsBase.input_channelCount
+            neuralNetParamsBase.inferencedParams.input_height,
+            neuralNetParamsBase.inferencedParams.input_width,
+            neuralNetParamsBase.inferencedParams.input_channelCount
           );
         }
 
@@ -250,10 +243,6 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
         //       even if it's init failed and throw exception.
         let neuralNet = this.neuralNetArray[ i ]
           = NeuralNet.Base.Pool.get_or_create_by();
-
-//!!! ...unfinished... (2023/05/07)
-// Use neuralNet.feedbackShape to create NeuralNet_ScaleFiller
-
 
         let bInitOk = neuralNet.init( progress,
           inputWeightArray, 0, neuralNetParams );
