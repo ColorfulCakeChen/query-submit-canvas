@@ -667,6 +667,9 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
   /**
    * This method is used for:
    *   - Two web workers. Every worker has one neural network.
+
+!!! ...unfinished... (2023/05/09)
+
    *     - NeuralWorker_Mode.Singleton.Ids.TWO_WORKER__TWO_NET__ONE_SCALE__FILL__APPLY (2)
    *     - NeuralWorker_Mode.Singleton.Ids.TWO_WORKER__TWO_NET__ONE_SCALE__FILL__APPLIER (3)
    *     - The 1st worker calls this method.

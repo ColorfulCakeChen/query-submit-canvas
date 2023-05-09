@@ -650,28 +650,13 @@ class NeuralWorker_Proxies extends Recyclable.Root {
     let modeInfo
       = NeuralWorker_Mode.Singleton.getInfo_byId( this.nNeuralWorker_ModeId );
 
-//!!! ...unfinished... (2023/05/05)
-// Deprecate FILL and NO_FILL.
-// Deprecate XX_SCALE.
-
-
-    let bFill = modeInfo.bFill;
     let bApply_or_Applier = modeInfo.bApply_or_Applier;
 
-    let worker0_resulter;
-    if ( bFill ) {
-      worker0_resulter = this.workerProxyArray[ 0 ]
-        .TWO_WORKER__TWO_NET__step0_TypedArray_process_asyncGenerator(
-          source_TypedArray, source_height, source_width,
-          this.previous_output_TypedArrayArray?.[ 0 ],
-          bApply_or_Applier );
-    } else {
-      worker0_resulter = this.workerProxyArray[ 0 ]
-        .TWO_WORKER__TWO_NET__step0_TypedArray_process_asyncGenerator(
-          source_TypedArray, source_height, source_width,
-          this.previous_output_TypedArrayArray?.[ 0 ],
-          bApply_or_Applier );
-    }
+    let worker0_resulter = this.workerProxyArray[ 0 ]
+      .TWO_WORKER__TWO_NET__step0_TypedArray_process_asyncGenerator(
+        source_TypedArray, source_height, source_width,
+        this.previous_output_TypedArrayArray?.[ 0 ],
+        bApply_or_Applier );
 
     let { done: worker0_done_false, value: worker0_value_Int32Array }
       = await worker0_resulter.next();
@@ -685,8 +670,13 @@ class NeuralWorker_Proxies extends Recyclable.Root {
     const source_height1 = neuralNetParams1.input_height;
     const source_width1 = neuralNetParams1.input_width;
 
+//!!! ...unfinished... (2023/05/05)
+// Deprecate FILL and NO_FILL.
+// Deprecate XX_SCALE.
+
+
     let worker1_promise = workerProxy1
-      .TWO_WORKER__TWO_NET__ONE_SCALE__step1_Int32Array_process_async(
+      .TWO_WORKER__TWO_NET__step1_Int32Array_process_async(
         worker0_value_Int32Array, source_height1, source_width1,
         this.previous_output_TypedArrayArray?.[ 1 ],
         bFill );
