@@ -562,7 +562,7 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
       = new Array( this.neuralNetArray.length );
 
     {
-      const  bTwoTensors = ( this.neuralNetArray.length > 1 );
+      const bTwoTensors = ( this.neuralNetArray.length > 1 ); // should be true.
 
       // Even if there are two neural networks, their .feedbackShape should be
       // the same. So, just use the 1st neural network's feedbackShape.
@@ -580,7 +580,6 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
         for ( let i = 0; i < this.neuralNetArray.length; ++i ) {
           let neuralNet = this.neuralNetArray[ i ];
 
-          let sourceTensor;
           let outputTensor;
           try {
 
@@ -588,22 +587,22 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
             //
             // Scaling, filling alignment mark and feedback information (i.e.
             // previous time output), and then create source tensor.
-            {
-              let done_value_sourceTensor_Promise
-                = createTensor_asyncGenerator.next();
 
-              let done_value_sourceTensor
-                = await done_value_sourceTensor_Promise;
+            let done_value_sourceTensor_Promise
+              = createTensor_asyncGenerator.next();
 
-              if ( done_value_sourceTensor.done )
-                throw Error( `NeuralWorker_Body.${funcNameInMessage}(): `
-                  + `workerId=${this.workerId}, done_value_sourceTensor.done `
-                  + `( ${done_value_sourceTensor.done} ) `
-                  + `should be false.`
-                );;
+            let done_value_sourceTensor
+              = await done_value_sourceTensor_Promise;
 
-              sourceTensor = done_value_sourceTensor.value;
-            }
+            if ( done_value_sourceTensor.done )
+              throw Error( `NeuralWorker_Body.${funcNameInMessage}(): `
+                + `workerId=${this.workerId}, done_value_sourceTensor.done `
+                + `( ${done_value_sourceTensor.done} ) `
+                + `should be false.`
+              );
+
+            let [ sourceTensor, sourceTypedArrayAsyncFunction ]
+              = done_value_sourceTensor.value;
 
             // 2. Process source tensor. (The sourceTensor will be released
             //    (in theroy).)
@@ -722,59 +721,55 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
    *   - Float32Array (if ( neuralNetParams.output_asInputValueRange == false ) )
    *   - Int32Array (if ( neuralNetParams.output_asInputValueRange == true ) )
    */
-  async* TWO_WORKER__TWO_NET__ONE_SCALE__FILL__step0_TypedArray_process(
+  async* TWO_WORKER__TWO_NET__step0_TypedArray_process(
     source_TypedArray, source_height, source_width,
     previous_output_TypedArray,
     bApply_or_Applier ) {
 
     const funcNameInMessage
-      = "TWO_WORKER__TWO_NET__ONE_SCALE__FILL__step0_TypedArray_process";
+      = "TWO_WORKER__TWO_NET__step0_TypedArray_process";
+
+    const bTwoTensors = ( this.neuralNetArray.length > 1 ); // should be false.
 
     const neuralNetIndex = 0; // Always use the first neural network.
     let neuralNet = this.neuralNetArray[ neuralNetIndex ];
 
-    // 1. Scale image.
-    let scaledSourceTensor;
-    let scaledInt32Array;
-    try {
-      scaledSourceTensor = neuralNet.create_ScaledSourceTensor_from_PixelData(
-        sourceImageData,
-        true // ( bForceInt32 == true )
-      );
+    const feedbackShape = this.neuralNetArray[ neuralNetIndex ].feedbackShape;
 
-      //!!! (2023/05/01 Remarked) Use await instead.
-      //scaledInt32Array = scaledSourceTensor.dataSync();
-      scaledInt32Array = await scaledSourceTensor.data();
+    let createTensor_asyncGenerator
+      = this.ScaleFiller.createTensor_by_fill_asyncGenerator(
+          source_TypedArray, source_height, source_width,
+          bTwoTensors,
+          feedbackShape,
+          this.alignmentMarkValueArray, previous_output_TypedArrayArray
+        );
 
-    } catch ( e ) {
-      let errorMsg = `NeuralWorker_Body.${funcNameInMessage}(): `
-        + `workerId=${this.workerId}. ${e}`;
-      console.error( errorMsg );
-      //debugger;
-      throw e;
-
-    } finally {
-      if ( scaledSourceTensor ) {
-        scaledSourceTensor.dispose();
-        scaledSourceTensor = null;
-      }
-
-//!!! ...unfinished... (2023/05/01)
-// call createTensor_by_scale_fill_asyncGenerator().return()
-// to ensure all intermediate tensors are released.
-
-    }
-
-    // 2. Process image by neural network.
-    let sourceTensor;
     let outputTensor;
     let outputFloat32Array;
     try {
-      NeuralWorker_Body.alignmentMark_fillTo_Image_Int32Array.call(
-        this, neuralNetIndex, scaledInt32Array );
 
-      sourceTensor
-        = tf.tensor( scaledInt32Array, neuralNet.input_shape, "int32" );
+      // 1. Prepare source tensor of every neural network.
+      //
+      // Scaling, filling alignment mark and feedback information (i.e.
+      // previous time output), and then create source tensor.
+
+      let done_value_sourceTensor_Promise
+        = createTensor_asyncGenerator.next();
+
+      let done_value_sourceTensor
+        = await done_value_sourceTensor_Promise;
+
+      if ( done_value_sourceTensor.done )
+        throw Error( `NeuralWorker_Body.${funcNameInMessage}(): `
+          + `workerId=${this.workerId}, done_value_sourceTensor.done `
+          + `( ${done_value_sourceTensor.done} ) `
+          + `should be false.`
+        );
+
+      let [ sourceTensor, sourceTypedArrayAsyncFunction ]
+        = done_value_sourceTensor.value;
+
+      // 2. Process image by neural network.
 
       // 2.1 Solution 1: Use neuralNet.apply().
       if ( bApply_or_Applier ) {
@@ -792,6 +787,7 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
         //       before neuralNet.apply(). However, that will happen exception
         //       (says the ArrayBuffer has been detached). So, do it after
         //       neuralNet.apply().
+        let scaledInt32Array = await sourceTypedArrayAsyncFunction();
         yield {
           value: scaledInt32Array,
           transferableObjectArray: [ scaledInt32Array.buffer ]
@@ -812,6 +808,7 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
         //       before neuralNet.apply(). However, that will happen exception
         //       (says the ArrayBuffer has been detached). So, do it after
         //       first operation (i.e. embedding) completely.
+        let scaledInt32Array = await sourceTypedArrayAsyncFunction();
         yield {
           value: scaledInt32Array,
           transferableObjectArray: [ scaledInt32Array.buffer ]
@@ -841,15 +838,6 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
         outputTensor = null;
       }
 
-      // In theory, it should already have been released by neural network.
-      // For avoiding memory leak (e.g. some exception is thrown when
-      // .apply()), release it again.
-      if ( sourceTensor ) {
-        sourceTensor.dispose();
-        sourceTensor = null;
-      }
-
-//!!! ...unfinished... (2023/05/01)
       // Ensure all intermediate tensors are released.
       if ( createTensor_asyncGenerator ) {
         createTensor_asyncGenerator.return();
@@ -925,6 +913,10 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
     source_TypedArray, source_height, source_width,
     previous_output_TypedArray,
     bApply_or_Applier ) {
+
+
+!!! ...unfinished... (2023/05/09)
+
 
     const funcNameInMessage
       = "TWO_WORKER__TWO_NET__ONE_SCALE__NO_FILL__step0_TypedArray_process";

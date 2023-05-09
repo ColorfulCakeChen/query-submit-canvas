@@ -661,13 +661,13 @@ class NeuralWorker_Proxies extends Recyclable.Root {
     let worker0_resulter;
     if ( bFill ) {
       worker0_resulter = this.workerProxyArray[ 0 ]
-        .TWO_WORKER__TWO_NET__ONE_SCALE__FILL__step0_TypedArray_process_asyncGenerator(
+        .TWO_WORKER__TWO_NET__step0_TypedArray_process_asyncGenerator(
           source_TypedArray, source_height, source_width,
           this.previous_output_TypedArrayArray?.[ 0 ],
           bApply_or_Applier );
     } else {
       worker0_resulter = this.workerProxyArray[ 0 ]
-        .TWO_WORKER__TWO_NET__ONE_SCALE__NO_FILL__step0_TypedArray_process_asyncGenerator(
+        .TWO_WORKER__TWO_NET__step0_TypedArray_process_asyncGenerator(
           source_TypedArray, source_height, source_width,
           this.previous_output_TypedArrayArray?.[ 0 ],
           bApply_or_Applier );
