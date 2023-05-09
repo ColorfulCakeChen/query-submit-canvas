@@ -691,6 +691,11 @@ class NeuralWorker_Proxies extends Recyclable.Root {
     let modeInfo
       = NeuralWorker_Mode.Singleton.getInfo_byId( this.nNeuralWorker_ModeId );
 
+//!!! ...unfinished... (2023/05/05)
+// Deprecate FILL and NO_FILL.
+// Deprecate XX_SCALE.
+
+
     let bFill = modeInfo.bFill;
     let bApply_or_Applier = modeInfo.bApply_or_Applier;
 
@@ -810,6 +815,11 @@ class NeuralWorker_Proxies extends Recyclable.Root {
    */
   static async apply__ONE_WORKER__ONE_NET__ONE_SCALE__FILL__or__NO_FILL(
     source_TypedArray, source_height, source_width ) {
+
+//!!! ...unfinished... (2023/05/05)
+// Deprecate FILL and NO_FILL.
+// Deprecate XX_SCALE.
+
 
     let bFill = NeuralWorker_Mode.bFill_get( this.nNeuralWorker_ModeId );
 

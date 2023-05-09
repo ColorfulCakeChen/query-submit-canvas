@@ -4,90 +4,35 @@ import { Int } from "../../Unpacker/ValueDesc/ValueDesc_Base.js";
 
 /** Describe id, range, name of NeuralWorker_Mode.
  *
- * Convert number value into integer between [ 0, 8 ] representing neural
+ * Convert number value into integer between [ 0, 3 ] representing neural
  * worker mode:
  *
-
-//!!! ...unfinished... (2023/05/05)
-// Deprecate FILL and NO_FILL.
-// Deprecate XX_SCALE.
-
-
- *   -  0: ONE_WORKER__TWO_NET__ONE_SCALE__FILL             (training usage)
- *   -  1: ONE_WORKER__TWO_NET__ONE_SCALE__NO_FILL          (training usage)
- *
- *   -  2: TWO_WORKER__TWO_NET__ONE_SCALE__FILL__APPLY      (training usage)
- *   -  3: TWO_WORKER__TWO_NET__ONE_SCALE__FILL__APPLIER    (training usage)
- *
- *   -  4: TWO_WORKER__TWO_NET__ONE_SCALE__NO_FILL__APPLY   (training usage)
- *   -  5: TWO_WORKER__TWO_NET__ONE_SCALE__NO_FILL__APPLIER (training usage)
- *
- *   -  6: TWO_WORKER__TWO_NET__TWO_SCALE__NO_FILL          (training usage)
- *
- *   -  7: ONE_WORKER__ONE_NET__ONE_SCALE__FILL             (inference usage)
- *   -  8: ONE_WORKER__ONE_NET__ONE_SCALE__NO_FILL          (inference usage)
+ *   -  0: ONE_WORKER__TWO_NET             (training usage)
+ *   -  1: TWO_WORKER__TWO_NET__APPLY      (training usage)
+ *   -  2: TWO_WORKER__TWO_NET__APPLIER    (training usage)
+ *   -  3: ONE_WORKER__ONE_NET             (inference usage)
  *
  */
 class NeuralWorker_Mode extends Int {
 
   constructor() {
-    super( 0, 8,
+    super( 0, 3,
       {
-        ONE_WORKER__TWO_NET__ONE_SCALE__FILL:
+        ONE_WORKER__TWO_NET:
           new NeuralWorker_Mode.Info( 0,
-            "ONE_WORKER__TWO_NET__ONE_SCALE__FILL",
-            1, 2, true, undefined ),
+            "ONE_WORKER__TWO_NET",          1, 2, undefined ),
 
-        ONE_WORKER__TWO_NET__ONE_SCALE__NO_FILL:
+        TWO_WORKER__TWO_NET__APPLY:
           new NeuralWorker_Mode.Info( 1,
-            "ONE_WORKER__TWO_NET__ONE_SCALE__NO_FILL",
-            1, 2, false, undefined ),
+            "TWO_WORKER__TWO_NET__APPLY",   2, 2,      true ),
 
-
-        TWO_WORKER__TWO_NET__ONE_SCALE__FILL__APPLY:
+        TWO_WORKER__TWO_NET__APPLIER:
           new NeuralWorker_Mode.Info( 2,
-            "TWO_WORKER__TWO_NET__ONE_SCALE__FILL__APPLY",
-            2, 2, true,  true ),
+            "TWO_WORKER__TWO_NET__APPLIER", 2, 2,     false ),
 
-        TWO_WORKER__TWO_NET__ONE_SCALE__FILL__APPLIER:
+        ONE_WORKER__ONE_NET:
           new NeuralWorker_Mode.Info( 3,
-            "TWO_WORKER__TWO_NET__ONE_SCALE__FILL__APPLIER",
-            2, 2, true, false ),
-
-
-        TWO_WORKER__TWO_NET__ONE_SCALE__NO_FILL__APPLY:
-          new NeuralWorker_Mode.Info( 4,
-            "TWO_WORKER__TWO_NET__ONE_SCALE__NO_FILL__APPLY",
-            2, 2, false,  true ),
-
-        TWO_WORKER__TWO_NET__ONE_SCALE__NO_FILL__APPLIER:
-          new NeuralWorker_Mode.Info( 5,
-            "TWO_WORKER__TWO_NET__ONE_SCALE__NO_FILL__APPLIER",
-            2, 2, false, false ),
-
-
-        TWO_WORKER__TWO_NET__TWO_SCALE__NO_FILL:
-          new NeuralWorker_Mode.Info( 6,
-            "TWO_WORKER__TWO_NET__TWO_SCALE__NO_FILL",
-            2, 2, false, undefined ),
-
-
-//!!! ...unfinished... (2023/05/04) TWO_WORKER__TWO_SCALE__FILL?
-// _APPLY ? or _APPLIER ?
-//         TWO_WORKER__TWO_SCALE__FILL:          new NeuralWorker_Mode.Info(
-//           7, "TWO_WORKER__TWO_SCALE__FILL",          2, 2,
-//           true, ???undefined ),
-
-
-        ONE_WORKER__ONE_NET__ONE_SCALE__FILL:
-          new NeuralWorker_Mode.Info( 7,
-            "ONE_WORKER__ONE_NET__ONE_SCALE__FILL",
-            1, 1, true, undefined ),
-
-        ONE_WORKER__ONE_NET__ONE_SCALE__NO_FILL:
-          new NeuralWorker_Mode.Info( 8,
-            "ONE_WORKER__ONE_NET__ONE_SCALE__NO_FILL",
-            1, 1, false, undefined ),
+            "ONE_WORKER__ONE_NET",          1, 1, undefined ),
       }
     );
   }
@@ -131,22 +76,6 @@ class NeuralWorker_Mode extends Int {
    * (NeuralWorker.Mode.Singleton.Ids.Xxx)
    *
    * @return {boolean}
-   *   Whether the neural worker mode will fill alignment mark and feedback
-   * (i.e. previous time output) into image before processing it.
-   */
-  static bFill_get( nNeuralWorker_ModeId ) {
-    let info = NeuralWorker_Mode.Singleton.getInfo_byId( nNeuralWorker_ModeId );
-    if ( info )
-      return info.bFill;
-    return NaN;
-  }
-
-  /**
-   * @param {number} nNeuralWorker_ModeId
-   *   The numeric identifier of NeuralWorker_Mode.
-   * (NeuralWorker.Mode.Singleton.Ids.Xxx)
-   *
-   * @return {boolean}
    *   Only meaningful for mode XXX_APPLY and XXX_APPLIER.
    *   - If true, use neuralNet.apply().
    *   - If false, use neuralNet.applier().
@@ -171,10 +100,6 @@ class NeuralWorker_Mode extends Int {
  *   - For neural network training usage (by diffiential evolution), it is 2.
  *   - For neural network inference usage (after training), it is 1.
  *
- * @member {boolean} bFill
- *   Whether the neural worker mode will fill alignment mark and feedback
- * (i.e. previous time output) into image before processing it.
- *
  * @member {boolean} bApply_or_Applier
  *   Only meaningful for mode XXX_APPLY and XXX_APPLIER.
  *   - If true, use neuralNet.apply().
@@ -195,13 +120,12 @@ NeuralWorker_Mode.Info = class NeuralWorker_Mode_Info extends Int.Info {
    *
    */
   constructor( nNeuralWorker_ModeId, nameForMessage,
-    workerCount, neuralNetCount, bFill, bApply_or_Applier
+    workerCount, neuralNetCount, bApply_or_Applier
   ) {
     super( nNeuralWorker_ModeId, nameForMessage );
 
     this.workerCount = workerCount;
     this.neuralNetCount = neuralNetCount;
-    this.bFill = bFill;
     this.bApply_or_Applier = bApply_or_Applier;
   }
 
