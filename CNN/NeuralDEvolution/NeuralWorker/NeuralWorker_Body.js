@@ -510,33 +510,23 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
    *
    * This method is used for:
    *   - One web worker. The worker has two neural networks.
-   *     - NeuralWorker_Mode.Singleton.Ids.ONE_WORKER__TWO_NET__ONE_SCALE__FILL (0)
-   *     - NeuralWorker_Mode.Singleton.Ids.ONE_WORKER__TWO_NET__ONE_SCALE__NO_FILL (1)
+   *     - NeuralWorker_Mode.Singleton.Ids.ONE_WORKER__TWO_NET (0)
    *
-   *   - If ( bFill == true ), alignment mark filling.
-   *     - The worker will download scaled Int32Array from GPU memory.
-   *     - Fill alignment mark of the 1st neural network, upload and process it.
-   *     - Fill alignment mark of the 2nd neural network, upload and process it.
+   *   - If has alignment mark and feedback (i.e. previous time output):
    *
-   *   - If ( bFill == false ), no alignment mark filling.
-   *     - The worker needs not wait for downloading scaled Int32Array from GPU
-   *         memory and needs not upload alignment mark filled Int32Array to
-   *         GPU.
-   *     - So every neural network always output twice channels. For example,
-   *       - The neural network output 100 channels.
-   *       - channel [ 0, 49 ] are used if the neural network representing
-   *           alignment A.
-   *       - channel [ 50, 99 ] are used if the neural network representing
-   *           alignment B.
+   *     - Fill alignment mark and feedback (i.e. previous time output) of the
+   *         1st neural network, upload to GPU and process it.
+   *
+   *     - Fill alignment mark and feedback (i.e. previous time output) of the
+   *         2nd neural network, upload to GPU and process it.
    *
    *
    * @param {Uint8ClampedArray|Uint16Array|Uint32Array} source_TypedArray
    *   An unsigned integer TypedArray which will be processed by the neural
    * worker. For example, ImageData.data which is coming from a canvas.
    *
-   *   - Its shape needs not match this.neuralNet[ n ]'s [ input_height,
-   *       input_width, input_channelCount ] because it will be scaled to the
-   *       correct shape before passed into the neural network.
+   *   - Its shape must match this.neuralNet[ n ]'s [ input_height,
+   *       input_width, input_channelCount ].
    *
    *   - It may be modified by filling with alignment mark and feedback
    *       information (i.e. previous time output of the neural network).
@@ -553,11 +543,6 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
    *   An array [ TypedArray, TypedArray ] representing the previous time
    * output of the (pair of) neural network(s).
    *
-   * @param {boolean} bFill
-   *   If true, the source_TypedArray will be filled by alignment mark before
-   * be converted to tensor3d. If false, it will be converted to tensor3d
-   * directly without filling alignment mark.
-   *
    * @yield {Float32Array[] | Int32Array[]}
    *   Resolve to { done: true, value: { value: [ TypedArray, TypedArray ],
    * transferableObjectArray: [ TypedArray.buffer, TypedArray.buffer ] }.
@@ -567,43 +552,16 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
    *   - Float32Array (if ( neuralNetParams.output_asInputValueRange == false ) )
    *   - Int32Array (if ( neuralNetParams.output_asInputValueRange == true ) )
    */
-  async* ONE_WORKER__ONE_SCALE__TypedArray_process(
+  async* ONE_WORKER__TWO_NET__TypedArray_process(
     source_TypedArray, source_height, source_width,
-    previous_output_TypedArrayArray,
+    previous_output_TypedArrayArray ) {
 
-//!!! ...unfinished... (2023/05/05)
-// Deprecate FILL and NO_FILL.
-// Deprecate XX_SCALE.
-
-    bFill ) {
-
-    const funcNameInMessage = "ONE_WORKER__ONE_SCALE__TypedArray_process";
+    const funcNameInMessage = "ONE_WORKER__TWO_NET__TypedArray_process";
 
     let resultFloat32ArrayPromiseArray
       = new Array( this.neuralNetArray.length );
 
     {
-//!!! ...unfinished... (2023/05/04)
-// Perhaps, no longer need bFill flags.
-// According to this.alignmentMarkValueArray and previous_output_TypedArrayArray
-// whether are all null, determine whether needs fill automatically.
-//
-// If so,
-//   - the .TWO_WORKER__TWO_NET__ONE_SCALE__NO_FILL__step0_TypedArray_process()
-//     and .TWO_WORKER__TWO_NET__ONE_SCALE__FILL__step0_TypedArray_process()
-//     should be combined into one method.
-//
-//   - Neural network should not see other neural network's previous time
-//       output.
-//
-//     - When neural network 0 computes, never fill neural network 1's previous
-//         time output as feedback.
-//
-//     - When neural network 1 computes, never fill neural network 0's previous
-//         time output as feedback.
-//
-
-//!!! ...unfinished... (2023/05/04)
       const  bTwoTensors = ( this.neuralNetArray.length > 1 );
 
       // Even if there are two neural networks, their .feedbackShape should be
