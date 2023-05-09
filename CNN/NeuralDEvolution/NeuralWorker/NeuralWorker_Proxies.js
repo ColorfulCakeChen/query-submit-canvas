@@ -203,7 +203,7 @@ import { Mode as NeuralWorker_Mode } from "./NeuralWorker_Mode.js";
  *         (i.e. source TypedArray).
  *
  *     - If ( NeuralNet.Params.has_implicit_input == true ) but you do not want
- *         filled alignment marks, please call
+ *         to fill alignment marks, please call
  *         .alignmentMarkValueArray_set_async( null ) to clear it to null.
  *
  * @member {boolean} alignmentMarkValueArray_nonEmpty
