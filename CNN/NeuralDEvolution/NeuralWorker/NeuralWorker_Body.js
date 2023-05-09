@@ -570,6 +570,11 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
   async* ONE_WORKER__ONE_SCALE__TypedArray_process(
     source_TypedArray, source_height, source_width,
     previous_output_TypedArrayArray,
+
+//!!! ...unfinished... (2023/05/05)
+// Deprecate FILL and NO_FILL.
+// Deprecate XX_SCALE.
+
     bFill ) {
 
     const funcNameInMessage = "ONE_WORKER__ONE_SCALE__TypedArray_process";

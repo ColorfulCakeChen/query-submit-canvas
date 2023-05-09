@@ -241,6 +241,11 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
   ONE_WORKER__ONE_SCALE__TypedArray_process_async(
     source_TypedArray, source_height, source_width,
     previous_output_TypedArrayArray,
+
+//!!! ...unfinished... (2023/05/05)
+// Deprecate FILL and NO_FILL.
+// Deprecate XX_SCALE.
+
     bFill ) {
 
     // 1. Collect transferable objects.

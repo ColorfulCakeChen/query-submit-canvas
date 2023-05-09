@@ -195,7 +195,7 @@ import { Mode as NeuralWorker_Mode } from "./NeuralWorker_Mode.js";
  *
  *
  * @member {integer[]} alignmentMarkValueArray
- *   An array of values representing every neural network is playing which
+ *   An array of values representing every neural network is personating which
  * alignment currently.
  *
  *     - If ( NeuralNet.Params.has_implicit_input == true ), they will be
@@ -433,12 +433,6 @@ class NeuralWorker_Proxies extends Recyclable.Root {
    *   - Resolved to false, if failed.
    */
   async NeuralNetArray_create_async(
-
-//!!! ...unfinished... (2023/05/06)
-// should specify whether fill alignment mark and feedback information
-// because they affect input data shape which is needed for creating
-// neural network. 
-
     neuralNetParamsBaseArray, weightArrayBufferArray, bLogDryRunTime
   ) {
 
@@ -499,12 +493,6 @@ class NeuralWorker_Proxies extends Recyclable.Root {
     return createOk;
   }
 
-
-//!!! ...unfinished... (2023/05/06)
-// NeuralWorker_Proxies should also hold a alignmentMarkValueArray
-// so that it can provide input_height and input_width (acccording
-// to explicit_input_height and width)
-
   get alignmentMarkValueArray_nonEmpty() {
     if (   ( this.alignmentMarkValueArray )
         && ( this.alignmentMarkValueArray.length > 0 ) )
@@ -545,8 +533,7 @@ class NeuralWorker_Proxies extends Recyclable.Root {
         );
     }
 
-    // 2. Record it so that input_height and input_width (acccording to
-    //    explicit_input_height and explicit_input_width) could be provided.
+    // 2. Record it for reference.
     this.alignmentMarkValueArray = markValueArray;
 
     // 3.
@@ -661,6 +648,10 @@ class NeuralWorker_Proxies extends Recyclable.Root {
    */
   static async apply__ONE_WORKER__TWO_NET__ONE_SCALE__FILL__or__NO_FILL(
     source_TypedArray, source_height, source_width ) {
+
+//!!! ...unfinished... (2023/05/05)
+// Deprecate FILL and NO_FILL.
+// Deprecate XX_SCALE.
 
     let bFill = NeuralWorker_Mode.bFill_get( this.nNeuralWorker_ModeId );
 

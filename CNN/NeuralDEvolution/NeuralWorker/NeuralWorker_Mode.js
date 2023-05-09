@@ -9,9 +9,9 @@ import { Int } from "../../Unpacker/ValueDesc/ValueDesc_Base.js";
  *
 
 //!!! ...unfinished... (2023/05/05)
-// Deprecate NO_FILL.
-// When alignment mark is specified, it and previous time output
-// (i.e. feedback) will be filled automatically.
+// Deprecate FILL and NO_FILL.
+// Deprecate XX_SCALE.
+
 
  *   -  0: ONE_WORKER__TWO_NET__ONE_SCALE__FILL             (training usage)
  *   -  1: ONE_WORKER__TWO_NET__ONE_SCALE__NO_FILL          (training usage)
