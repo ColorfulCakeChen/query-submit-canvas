@@ -137,7 +137,8 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
       if ( this.neuralNetParamsBaseArray )
         this.neuralNetParamsBaseArray.clear();
       else
-        this.neuralNetParamsBaseArray = Recyclable.OwnerArray.Pool.get_or_create_by();
+        this.neuralNetParamsBaseArray
+          = Recyclable.OwnerArray.Pool.get_or_create_by();
 
       this.neuralNetParamsBaseArray.length = neuralNetParamsBaseArray.length;
       for ( let i = 0; i < weightArrayBufferArray.length; ++i ) {
@@ -167,7 +168,7 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
    * alignment currently.
    *   - It could be null or undefined or ( markValueArray.length == 0 ) to
    *       clear .alignmentMarkValueArray for not filling alignment mark into
-   *       source TypedArray. (i.e. NO _FILL)
+   *       source TypedArray.
    *
    * @return {Promise}
    *   Return a promise:
@@ -187,30 +188,23 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
    *
    * This method is used for:
    *   - One web worker. The worker has two neural networks.
-   *     - NeuralWorker_Mode.Singleton.Ids.ONE_WORKER__TWO_NET__ONE_SCALE__FILL (0)
-   *     - NeuralWorker_Mode.Singleton.Ids.ONE_WORKER__TWO_NET__ONE_SCALE__NO_FILL (1)
+   *     - NeuralWorker_Mode.Singleton.Ids.ONE_WORKER__TWO_NET (0)
    *
-   *   - If ( bFill == true ), alignment mark filling.
-   *     - The worker will download scaled Int32Array from GPU memory.
-   *     - Fill alignment mark of the 1st neural network, upload and process it.
-   *     - Fill alignment mark of the 2nd neural network, upload and process it.
+   *   - If has alignment mark and feedback (i.e. previous time output):
    *
-   *   - If ( bFill == false ), no alignment mark filling.
-   *     - The worker needs not wait for downloading scaled Int32Array from GPU memory.
-   *         and needs not upload alignment mark filled Int32Array to GPU.
-   *     - So every neural network always output twice channels. For example,
-   *       - The neural network output 100 channels.
-   *       - channel [ 0, 49 ] are used if the neural network representing alignment A.
-   *       - channel [ 50, 99 ] are used if the neural network representing alignment B.
+   *     - Fill alignment mark and feedback (i.e. previous time output) of the
+   *         1st neural network, upload to GPU and process it.
+   *
+   *     - Fill alignment mark and feedback (i.e. previous time output) of the
+   *         2nd neural network, upload to GPU and process it.
    *
    *
    * @param {Uint8ClampedArray|Uint16Array|Uint32Array} source_TypedArray
    *   An unsigned integer TypedArray which will be processed by the neural
    * worker. For example, ImageData.data which is coming from a canvas.
    *
-   *   - Its shape needs not match this.neuralNetParamsBase's [ input_height,
-   *       input_width, input_channelCount ] because it will be scaled to the
-   *       correct shape before passed into the neural network.
+   *   - Its shape must match this.neuralNetParamsBase's [ input_height,
+   *       input_width, input_channelCount ].
    *
    *   - It may be modified by filling with alignment mark and feedback
    *       information (i.e. previous time output of the neural network).
@@ -227,26 +221,15 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
    *   An array [ TypedArray, TypedArray ] representing the previous time
    * output of the (pair of) neural network(s).
    *
-   * @param {boolean} bFill
-   *   If true, the source_TypedArray will be filled by alignment mark before be
-   * converted to tensor3d. If false, it will be converted to tensor3d directly
-   * without filling alignment mark.
-   *
    * @return {Promise( Float32Array | Int32Array )}
    *   Return a promise resolved to an array [ TypedArray, TypedArray ]
    * representing the neural networks' result. The TypedArray may be:
    *   - Float32Array (if ( neuralNetParams.output_asInputValueRange == false ) )
    *   - Int32Array (if ( neuralNetParams.output_asInputValueRange == true ) )
    */
-  ONE_WORKER__ONE_SCALE__TypedArray_process_async(
+  ONE_WORKER__TWO_NET__TypedArray_process_async(
     source_TypedArray, source_height, source_width,
-    previous_output_TypedArrayArray,
-
-//!!! ...unfinished... (2023/05/05)
-// Deprecate FILL and NO_FILL.
-// Deprecate XX_SCALE.
-
-    bFill ) {
+    previous_output_TypedArrayArray ) {
 
     // 1. Collect transferable objects.
     let transferableObjectArray;
@@ -277,10 +260,9 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
 
     // 2.
     return this.createPromise_by_postCommandArgs(
-      [ "ONE_WORKER__ONE_SCALE__TypedArray_process",
+      [ "ONE_WORKER__TWO_NET__TypedArray_process",
         source_TypedArray, source_height, source_width,
-        previous_output_TypedArrayArray,
-        bFill ],
+        previous_output_TypedArrayArray ],
       transferableObjectArray
     );
   }
@@ -289,6 +271,9 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
   /**
    * This method is used for:
    *   - Two web workers. Every worker has one neural network.
+
+!!! ...unfinished... (2023/05/09)
+
    *     - NeuralWorker_Mode.Singleton.Ids.TWO_WORKER__TWO_NET__ONE_SCALE__FILL__APPLY (2)
    *     - NeuralWorker_Mode.Singleton.Ids.TWO_WORKER__TWO_NET__ONE_SCALE__FILL__APPLIER (3)
    *     - The 1st worker calls this method.
@@ -365,6 +350,9 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
   /**
    * This method is used for:
    *   - Two web workers. Every worker has one neural network.
+
+!!! ...unfinished... (2023/05/09)
+
    *     - NeuralWorker_Mode.Singleton.Ids.TWO_WORKER__TWO_NET__ONE_SCALE__NO_FILL__APPLY (4)
    *     - NeuralWorker_Mode.Singleton.Ids.TWO_WORKER__TWO_NET__ONE_SCALE__NO_FILL__APPLIER (5)
    *     - The 1st worker calls this method.
@@ -442,6 +430,9 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
   /**
    * This method is used for:
    *   - Two web workers. Every worker has one neural network.
+
+!!! ...unfinished... (2023/05/09)
+
    *     - NeuralWorker_Mode.Singleton.Ids.TWO_WORKER__TWO_NET__ONE_SCALE__FILL__APPLY (2)
    *     - NeuralWorker_Mode.Singleton.Ids.TWO_WORKER__TWO_NET__ONE_SCALE__FILL__APPLIER (3)
    *     - NeuralWorker_Mode.Singleton.Ids.TWO_WORKER__TWO_NET__ONE_SCALE__NO_FILL__APPLY (4)
@@ -519,6 +510,9 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
   /**
    * This method is used for:
    *   - Two web workers. Every worker has one neural network.
+
+!!! ...unfinished... (2023/05/09)
+
    *     - NeuralWorker_Mode.Singleton.Ids.TWO_WORKER__TWO_NET__TWO_SCALE__NO_FILL (6)
    *     - Both workers call this metohd.
    *       - The 1st worker uses ( bFork == true ).

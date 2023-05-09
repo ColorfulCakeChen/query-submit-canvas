@@ -614,17 +614,11 @@ class NeuralWorker_Proxies extends Recyclable.Root {
   static async apply__ONE_WORKER__TWO_NET(
     source_TypedArray, source_height, source_width ) {
 
-//!!! ...unfinished... (2023/05/05)
-// Deprecate FILL and NO_FILL.
-// Deprecate XX_SCALE.
-
-    let bFill = NeuralWorker_Mode.bFill_get( this.nNeuralWorker_ModeId );
-
     let worker0_promise = this.workerProxyArray[ 0 ]
-      .ONE_WORKER__ONE_SCALE__TypedArray_process_async(
+      .ONE_WORKER__TWO_NET__TypedArray_process_async(
         source_TypedArray, source_height, source_width,
-        this.previous_output_TypedArrayArray,
-        bFill );
+        this.previous_output_TypedArrayArray
+      );
 
     let worker0_value_TypedArrayArray
       = this.previous_output_TypedArrayArray = await worker0_promise;
