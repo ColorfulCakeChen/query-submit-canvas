@@ -667,17 +667,15 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
   /**
    * This method is used for:
    *   - Two web workers. Every worker has one neural network.
-
-!!! ...unfinished... (2023/05/09)
-
-   *     - NeuralWorker_Mode.Singleton.Ids.TWO_WORKER__TWO_NET__ONE_SCALE__FILL__APPLY (2)
-   *     - NeuralWorker_Mode.Singleton.Ids.TWO_WORKER__TWO_NET__ONE_SCALE__FILL__APPLIER (3)
+   *     - NeuralWorker_Mode.Singleton.Ids.TWO_WORKER__TWO_NET__APPLY (1)
+   *     - NeuralWorker_Mode.Singleton.Ids.TWO_WORKER__TWO_NET__APPLIER (2)
    *     - The 1st worker calls this method.
    *
-   *   - It will download scaled Int32Array from GPU memory. And post it back
-   *       to WorkerProxy.
+   *   - It will download scaled Int32Array from GPU memory. And post it back to
+   *         WorkerProxy.
    *
-   *   - Fill alignment mark of this neural network, upload to GPU and process it.
+   *   - Fill alignment mark and feedback (i.e. previous time output) of this
+   *       neural network, upload to GPU and process it.
    *
    *
    * @param {Uint8ClampedArray|Uint16Array|Uint32Array} source_TypedArray
