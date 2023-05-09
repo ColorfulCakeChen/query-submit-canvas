@@ -855,183 +855,6 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
   /**
    * This method is used for:
    *   - Two web workers. Every worker has one neural network.
-   *     - NeuralWorker_Mode.Singleton.Ids.TWO_WORKER__TWO_NET__ONE_SCALE__NO_FILL__APPLY (4)
-   *     - NeuralWorker_Mode.Singleton.Ids.TWO_WORKER__TWO_NET__ONE_SCALE__NO_FILL__APPLIER (5)
-   *     - The 1st worker calls this method.
-   *
-   *   - It will download scaled Int32Array from GPU memory. And post it back
-   *       to WorkerProxy.
-   *
-   *   - No Fill alignment mark of this neural network, no upload to GPU,
-   *       just process the scaled tensor directly.
-   *
-   * 
-   * @param {Uint8ClampedArray|Uint16Array|Uint32Array} source_TypedArray
-   *   An unsigned integer TypedArray which will be processed by the neural
-   * worker. For example, ImageData.data which is coming from a canvas.
-   *
-   *   - Its shape needs not match this.neuralNet[ 0 ]'s [ input_height,
-   *       input_width, input_channelCount ] because it will be scaled to the
-   *       correct shape before passed into the neural network.
-   *
-   *   - It will not be modified by filling with alignment mark and feedback
-   *       information (i.e. previous time output of the neural network).
-   *
-   *   - This usually is called for the 1st web worker in chain. The scaled
-   *       Int32Array will be transferred back to WorkerProxy for the 2nd web
-   *       worker.
-   *
-   * @param {number} source_height
-   *   The height (in pixels) of the source_TypedArray. For example,
-   * ImageData.height.
-   *
-   * @param {number} source_width
-   *   The width (in pixels) of the source_TypedArray. For example,
-   * ImageData.width.
-   *
-   * @param {Float32Array|Int32Array} previous_output_TypedArray
-   *   A TypedArray representing the previous time output of the neural network.
-   *
-   * @param {boolean} bApply_or_Applier
-   *   - If true, use neuralNet.apply().
-   *   - If false, use neuralNet.applier().
-   *
-   * @yield {Int32Array}
-   *   Resolve to { done: false, value: { value: Int32Array,
-   * transferableObjectArray: [ Int32Array.buffer ] }. The value is an
-   * Int32Array representing the scaled image data whose shape is
-   * this.neuralNet[ 0 ]'s [ input_height, input_width, input_channelCount ].
-   *
-   * @yield {Float32Array|Int32Array}
-   *   Resolve to { done: true, value: { value: TypedArray,
-   * transferableObjectArray: [ TypedArray.buffer ] }. The value is a
-   * TypedArray representing the neural network's result whose length
-   * is this.neuralNet[ 0 ].output_channelCount. The TypedArray may be:
-   *   - Float32Array (if ( neuralNetParams.output_asInputValueRange == false ) )
-   *   - Int32Array (if ( neuralNetParams.output_asInputValueRange == true ) )
-   */
-  async* TWO_WORKER__TWO_NET__ONE_SCALE__NO_FILL__step0_TypedArray_process(
-    source_TypedArray, source_height, source_width,
-    previous_output_TypedArray,
-    bApply_or_Applier ) {
-
-
-!!! ...unfinished... (2023/05/09)
-
-
-    const funcNameInMessage
-      = "TWO_WORKER__TWO_NET__ONE_SCALE__NO_FILL__step0_TypedArray_process";
-
-    const neuralNetIndex = 0; // Always use the first neural network.
-    let neuralNet = this.neuralNetArray[ neuralNetIndex ];
-
-    let scaledSourceTensor;
-    let outputTensor;
-    let outputFloat32Array;
-    try {
-      // 1. Scale image.
-      scaledSourceTensor = neuralNet.create_ScaledSourceTensor_from_PixelData(
-        sourceImageData,
-        true // ( bForceInt32 == true )
-      );
-
-      // Because downloading from GPU to CPU is slow, start downloading
-      // scaledInt32Array before computing the neural network (i.e. another
-      // slow action).
-      let scaledInt32ArrayPromise = scaledSourceTensor.data();
-
-      // 2. Process image by neural network.
-      let outputFloat32ArrayPromise;
-
-      // 2.1 Solution 1: Use neuralNet.apply().
-      if ( bApply_or_Applier ) {
-        outputTensor = neuralNet.apply( scaledSourceTensor );
-
-        // Because downloading from GPU to CPU is slow, start downloading
-        // outputFloat32Array before posting scaledInt32Array back to
-        // WorkerProxy (i.e. another slow action).
-        outputFloat32ArrayPromise = outputTensor.data();
-
-        // Post back to WorkerProxy. (Note: the scaledInt32Array will be
-        // destroyed.)
-        //
-        // Note: After the neuralNet.apply(), the scaledInt32Array should have
-        //       been downloaded completely.
-        let scaledInt32Array = await scaledInt32ArrayPromise;
-        yield {
-          value: scaledInt32Array,
-          transferableObjectArray: [ scaledInt32Array.buffer ]
-        };
-
-      // 2.2 Solution 2: Use neuralNet.applier().
-      } else {
-        let applier = neuralNet.applier( scaledSourceTensor );
-        let applierNext = applier.next(); // NeuralNet sets progress to 0.
-        applierNext = applier.next(); // NeuralNet processes embedding.
-
-        // Post back to WorkerProxy. (Note: the scaledInt32Array will be
-        // destroyed.)
-        //
-        // Note: After the neuralNet's embedding, the scaledInt32Array may
-        //       have been downloaded completely.
-        let scaledInt32Array = await scaledInt32ArrayPromise;
-        yield {
-          value: scaledInt32Array,
-          transferableObjectArray: [ scaledInt32Array.buffer ]
-        };
-
-        // Because posting back to WorkerProxy is slow, continue to compute
-        // neural network (i.e. another slow action) when posting back.
-        while ( !applierNext.done ) {
-          applierNext = applier.next();
-        }
-        outputTensor = applierNext.value;
-
-        outputFloat32ArrayPromise = outputTensor.data();
-      }
-
-      // Note: After scaledInt32Array posting-back, the outputFloat32Array
-      //       should have been downloaded completely.
-      outputFloat32Array = await outputFloat32ArrayPromise;
-
-    } catch ( e ) {
-      let errorMsg = `NeuralWorker_Body.${funcNameInMessage}(): `
-        + `workerId=${this.workerId}. ${e}`;
-      console.error( errorMsg );
-      //debugger;
-      throw e;
-
-    } finally {
-      if ( outputTensor ) {
-        outputTensor.dispose();
-        outputTensor = null;
-      }
-
-      // In theory, it should already have been released by neural network.
-      // For avoiding memory leak (e.g. some exception is thrown when
-      // .apply()), release it again.
-      if ( scaledSourceTensor ) {
-        scaledSourceTensor.dispose();
-        scaledSourceTensor = null;
-      }
-
-//!!! ...unfinished... (2023/05/01)
-      // Ensure all intermediate tensors are released.
-      if ( createTensor_asyncGenerator ) {
-        createTensor_asyncGenerator.return();
-        createTensor_asyncGenerator = null;
-      }
-    }
-
-    return {
-      value: outputFloat32Array,
-      transferableObjectArray: [ outputFloat32Array.buffer ]
-    };
-  }
-
-  /**
-   * This method is used for:
-   *   - Two web workers. Every worker has one neural network.
    *     - NeuralWorker_Mode.Singleton.Ids.TWO_WORKER__TWO_NET__ONE_SCALE__FILL__APPLY (2)
    *     - NeuralWorker_Mode.Singleton.Ids.TWO_WORKER__TWO_NET__ONE_SCALE__FILL__APPLIER (3)
    *     - NeuralWorker_Mode.Singleton.Ids.TWO_WORKER__TWO_NET__ONE_SCALE__NO_FILL__APPLY (4)
@@ -1089,6 +912,50 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
     const funcNameInMessage
       = "TWO_WORKER__TWO_NET__ONE_SCALE__step1_TypedArray_process";
 
+!!! ...unfinished... (2023/05/09)
+
+
+      // const bTwoTensors = ( this.neuralNetArray.length > 1 ); // should be false.
+  
+      // const neuralNetIndex = 0; // Always use the first neural network.
+      // let neuralNet = this.neuralNetArray[ neuralNetIndex ];
+  
+      // const feedbackShape = this.neuralNetArray[ neuralNetIndex ].feedbackShape;
+  
+      // let createTensor_asyncGenerator
+      //   = this.ScaleFiller.createTensor_by_fill_asyncGenerator(
+      //       source_TypedArray, source_height, source_width,
+      //       bTwoTensors,
+      //       feedbackShape,
+      //       this.alignmentMarkValueArray, previous_output_TypedArrayArray
+      //     );
+  
+      // let outputTensor;
+      // let outputFloat32Array;
+      // try {
+  
+      //   // 1. Prepare source tensor of every neural network.
+      //   //
+      //   // Scaling, filling alignment mark and feedback information (i.e.
+      //   // previous time output), and then create source tensor.
+  
+      //   let done_value_sourceTensor_Promise
+      //     = createTensor_asyncGenerator.next();
+  
+      //   let done_value_sourceTensor
+      //     = await done_value_sourceTensor_Promise;
+  
+      //   if ( done_value_sourceTensor.done )
+      //     throw Error( `NeuralWorker_Body.${funcNameInMessage}(): `
+      //       + `workerId=${this.workerId}, done_value_sourceTensor.done `
+      //       + `( ${done_value_sourceTensor.done} ) `
+      //       + `should be false.`
+      //     );
+  
+      //   let [ sourceTensor, sourceTypedArrayAsyncFunction ]
+      //     = done_value_sourceTensor.value;
+    
+  
     const neuralNetIndex = 0; // Always use the first neural network.
     let neuralNet = this.neuralNetArray[ neuralNetIndex ];
 

@@ -286,9 +286,8 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
    *   An unsigned integer TypedArray which will be processed by the neural
    * worker. For example, ImageData.data which is coming from a canvas.
    *
-   *   - Its shape needs not match this.neuralNetParamsBase's [ input_height,
-   *       input_width, input_channelCount ] because it will be scaled to the
-   *       correct shape before passed into the neural network.
+   *   - Its shape must match this.neuralNetParamsBase's [ input_height,
+   *       input_width, input_channelCount ].
    *
    *   - It may be modified by filling with alignment mark and feedback
    *       information (i.e. previous time output of the neural network).
@@ -324,7 +323,7 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
    *   - Float32Array (if ( neuralNetParams.output_asInputValueRange == false ) )
    *   - Int32Array (if ( neuralNetParams.output_asInputValueRange == true ) )
    */
-  TWO_WORKER__TWO_NET__ONE_SCALE__FILL__step0_TypedArray_process_asyncGenerator(
+  TWO_WORKER__TWO_NET__step0_TypedArray_process_asyncGenerator(
     source_TypedArray, source_height, source_width,
     previous_output_TypedArray,
     bApply_or_Applier ) {
@@ -337,86 +336,7 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
       transferableObjectArray = [ source_TypedArray.buffer ];
 
     return this.createResulter_by_postCommandArgs(
-      [ "TWO_WORKER__TWO_NET__ONE_SCALE__FILL__step0_TypedArray_process",
-        source_TypedArray, source_height, source_width,
-        previous_output_TypedArray,
-        bApply_or_Applier ],
-      transferableObjectArray
-    );
-  }
-
-  /**
-   * This method is used for:
-   *   - Two web workers. Every worker has one neural network.
-
-!!! ...unfinished... (2023/05/09)
-
-   *     - NeuralWorker_Mode.Singleton.Ids.TWO_WORKER__TWO_NET__ONE_SCALE__NO_FILL__APPLY (4)
-   *     - NeuralWorker_Mode.Singleton.Ids.TWO_WORKER__TWO_NET__ONE_SCALE__NO_FILL__APPLIER (5)
-   *     - The 1st worker calls this method.
-   *
-   *   - It will download scaled Int32Array from GPU memory. And post it back to
-   *         WorkerProxy.
-   *
-   *   - No Fill alignment mark of this neural network, no upload to GPU,
-   *       just process the scaled tensor directly.
-   *
-   * 
-   * @param {Uint8ClampedArray|Uint16Array|Uint32Array} source_TypedArray
-   *   An unsigned integer TypedArray which will be processed by the neural
-   * worker. For example, ImageData.data which is coming from a canvas.
-   *
-   *   - Its shape needs not match this.neuralNetParamsBase's [ input_height,
-   *       input_width, input_channelCount ] because it will be scaled to the
-   *       correct shape before passed into the neural network.
-   *
-   *   - It will not be modified by filling with alignment mark and feedback
-   *       information (i.e. previous time output of the neural network).
-   *
-   *   - This usually is called for the 1st web worker in chain. The scaled
-   *       Int32Array will be transferred back to WorkerProxy for the 2nd web
-   *       worker.
-   *
-   * @param {number} source_height
-   *   The height (in pixels) of the source_TypedArray. For example,
-   * ImageData.height.
-   *
-   * @param {number} source_width
-   *   The width (in pixels) of the source_TypedArray. For example,
-   * ImageData.width.
-   *
-   * @param {Float32Array|Int32Array} previous_output_TypedArray
-   *   A TypedArray representing the previous time output of the neural network.
-   *
-   * @return {AsyncWorker.Resulter}
-   *   Return an async iterator tracking the result of processing. It will yield
-   * two times, the 1st is an Int32Array, the 2nd is a Float32Array.
-   *
-   * @yield {Int32Array}
-   *   Resolve to { done: false, value: Int32Array }. The value is an Int32Array
-   * representing the scaled image data whose shape is this.neuralNetParamsBase's
-   * [ input_height, input_width, input_channelCount ].
-   *
-   * @yield {Float32Array|Int32Array}
-   *   Resolve to { done: true, value: TypedArray }. The value is a TypedArray
-   * representing the neural network's result. The TypedArray may be:
-   *   - Float32Array (if ( neuralNetParams.output_asInputValueRange == false ) )
-   *   - Int32Array (if ( neuralNetParams.output_asInputValueRange == true ) )
-   */
-  TWO_WORKER__TWO_NET__ONE_SCALE__NO_FILL__step0_TypedArray_process_asyncGenerator(
-    source_TypedArray, source_height, source_width,
-    previous_output_TypedArray,
-    bApply_or_Applier ) {
-
-    let transferableObjectArray;
-    if ( previous_output_TypedArray )
-      transferableObjectArray
-        = [ source_TypedArray.buffer, previous_output_TypedArray.buffer ];
-    else
-      transferableObjectArray = [ source_TypedArray.buffer ];
-
-    return this.createResulter_by_postCommandArgs(
-      [ "TWO_WORKER__TWO_NET__ONE_SCALE__NO_FILL__step0_TypedArray_process",
+      [ "TWO_WORKER__TWO_NET__step0_TypedArray_process",
         source_TypedArray, source_height, source_width,
         previous_output_TypedArray,
         bApply_or_Applier ],
