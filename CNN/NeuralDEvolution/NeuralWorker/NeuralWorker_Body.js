@@ -631,11 +631,11 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
             // Scaling, filling alignment mark and feedback information (i.e.
             // previous time output), and then create source tensor.
             {
-              let done_value_sourceTensorPromise
+              let done_value_sourceTensor_Promise
                 = createTensor_asyncGenerator.next();
 
               let done_value_sourceTensor
-                = await done_value_sourceTensorPromise;
+                = await done_value_sourceTensor_Promise;
 
               if ( done_value_sourceTensor.done )
                 throw Error( `NeuralWorker_Body.${funcNameInMessage}(): `
