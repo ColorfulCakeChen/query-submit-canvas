@@ -944,9 +944,13 @@ function TestButton_onClick( event ) {
     ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
 
   let tester = testerBackendAll( progress_NeuralWorker_tester,
-    largerFactor,
+
+//!!! (2023/05/11 Remarked)
+//    largerFactor,
+
     input_height,
     input_width,
+    has_implicit_input,
     vocabularyChannelCount,
     blockCountTotalRequested,
     output_channelCount,
