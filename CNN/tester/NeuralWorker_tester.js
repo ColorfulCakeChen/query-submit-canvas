@@ -689,6 +689,7 @@ class HeightWidthDepth {
             yield progressRoot;
 
             let resultFloat32ArrayArray;
+            let previous_output_TypedArrayArray_for_verification;
 
             // Execution time testing.
             {
@@ -703,9 +704,11 @@ class HeightWidthDepth {
                 timeInfo.elapsed = timeInfo.end - timeInfo.begin;
                 timeInfo.elapsedTotal += timeInfo.elapsed;
 
-!!! ...unfinished... (2023/05/11)
-// Keep as previous_output_TypedArrayArray
-// for the last 2nd testing so that verification can be done later.
+                // Copy the last 2nd testing result (i.e. the last 1st input)
+                // as previous time output for verification.
+                if ( i == ( timeInfo.times - 2 ) )
+                  previous_output_TypedArrayArray_for_verification
+                    = resultFloat32ArrayArray.slice();
 
                 progressToAdvance.value_advance(); // Every performance test complete.
                 yield progressRoot;
@@ -725,7 +728,8 @@ class HeightWidthDepth {
               // NeuralNet_try_result() shoul be called after prepare_async() so that
               // the nConvStageTypeId has been adjusted.
               let resultFloat32Array
-                = testCase.NeuralNet_try_result( this.testCanvas, ???previous_output_TypedArrayArray );
+                = testCase.NeuralNet_try_result( this.testCanvas,
+                    previous_output_TypedArrayArray_for_verification );
 
               let lhsNumberArray = resultFloat32ArrayArray[ 0 ];
               let rhsNumberArray = resultFloat32Array;
