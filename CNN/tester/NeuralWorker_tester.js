@@ -288,10 +288,11 @@ class PerformanceTestCase extends Recyclable.Root {
             0, 0, theCanvas.width, theCanvas.height );
         }
 
+        const bTwoTensors = false;
         createTensor_asyncGenerator
           = this.ScaleFiller.createTensor_by_fill_asyncGenerator(
               imageData.data, imageData.height, imageData.width,
-              false, //bTwoTensors
+              bTwoTensors,
               neuralNet.feedbackShape,
               alignmentMarkValueArray, previous_output_TypedArrayArray
             );
