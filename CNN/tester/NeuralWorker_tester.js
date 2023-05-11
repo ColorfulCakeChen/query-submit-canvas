@@ -216,7 +216,7 @@ class PerformanceTestCase extends Recyclable.Root {
   }
 
   /** Try to compute neural network result in this worker. */
-  NeuralNet_try_result( theCanvas ) {
+  NeuralNet_try_result( theCanvas, previous_output_TypedArrayArray ) {
     let resultFloat32Array;
 
     tf.tidy( () => {
@@ -263,10 +263,40 @@ class PerformanceTestCase extends Recyclable.Root {
             + `when initializing `
             + `NeuralNet object successfully. ${neuralNet}`);
 
-!!! ...unfinished... (2023/05/06)
-// Use NeuralNet_ScaleFiller instead?
+        let inputTensor3d;
+        {
+//!!! ...unfinished... (2023/05/11)
 
-        let inputTensor3d = neuralNet.create_ScaledSourceTensor_from_PixelData( theCanvas );
+          this.ScaleFiller = new NeuralNet.ScaleFiller(
+            this.neuralNetParamsBase.inferencedParams.input_height,
+            this.neuralNetParamsBase.inferencedParams.input_width,
+            this.neuralNetParamsBase.inferencedParams.input_channelCount
+          );
+
+          let imageData;
+          {
+            let ctx = theCanvas.getContext( "2d" );
+            imageData = ctx.getImageData(
+              0, 0, theCanvas.width, theCanvas.height );
+          }
+
+          let createTensor_asyncGenerator
+            = this.ScaleFiller.createTensor_by_fill_asyncGenerator(
+                imageData.data, imageData.height, imageData.width,
+                false, //bTwoTensors
+                neuralNet.feedbackShape,
+                ??? this.alignmentMarkValueArray, previous_output_TypedArrayArray
+              );
+  
+          inputTensor3d = tf.tensor3d(
+            imageData.data, [ imageData.height, imageData.width ], "int32" );
+
+
+            inputTensor3d
+        }
+  
+//!!! (2023/05/11 Remarked) Use NeuralNet_ScaleFiller instead?
+//        let inputTensor3d = neuralNet.create_ScaledSourceTensor_from_PixelData( theCanvas );
         outputTensor3d = neuralNet.apply( inputTensor3d );
         resultFloat32Array = outputTensor3d.dataSync();
 
@@ -673,6 +703,10 @@ class HeightWidthDepth {
                 timeInfo.elapsed = timeInfo.end - timeInfo.begin;
                 timeInfo.elapsedTotal += timeInfo.elapsed;
 
+!!! ...unfinished... (2023/05/11)
+// Keep as previous_output_TypedArrayArray
+// for the last 2nd testing so that verification can be done later.
+
                 progressToAdvance.value_advance(); // Every performance test complete.
                 yield progressRoot;
               }
@@ -684,12 +718,14 @@ class HeightWidthDepth {
 
             // For NO_FILL mode, the result should be the same as local simulation.
             // So they can be checked.
+
+!!! ...unfinished... (2023/05/11)
             let bFill = testCase.NeuralWorker_Mode_bFill;
             if ( !bFill ) {
               // NeuralNet_try_result() shoul be called after prepare_async() so that
               // the nConvStageTypeId has been adjusted.
               let resultFloat32Array
-                = testCase.NeuralNet_try_result( this.testCanvas );
+                = testCase.NeuralNet_try_result( this.testCanvas, ???previous_output_TypedArrayArray );
 
               let lhsNumberArray = resultFloat32ArrayArray[ 0 ];
               let rhsNumberArray = resultFloat32Array;
