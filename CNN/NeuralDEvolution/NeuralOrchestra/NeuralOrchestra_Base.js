@@ -387,7 +387,8 @@ class NeuralOrchestra_Base extends
     input_height = 72,
     input_width = 131, // = ( 128 + 3 ),
 
-!!! ...unfinished... (2023/05/07)
+!!! ...unfinished... (2023/05/11)
+// input_channelCount
 // has_implicit_input
 
     vocabularyChannelCount = 4, //8
@@ -465,6 +466,11 @@ class NeuralOrchestra_Base extends
     downloader_spreadsheetId, downloader_apiKey, bLogFetcherEventToConsole,
     sender_clientId,
     input_height, input_width,
+
+!!! ...unfinished... (2023/05/11)
+// input_channelCount
+// has_implicit_input
+
     vocabularyChannelCount,
     blockCountTotalRequested, output_channelCount_per_alignment,
     b_return_versus_load_asyncGenerator_instead_of_asyncPromise,
