@@ -738,12 +738,16 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
 
     const feedbackShape = this.neuralNetArray[ neuralNetIndex ].feedbackShape;
 
+    let previous_output_TypedArrayArray;
+    if ( previous_output_TypedArray )
+      previous_output_TypedArrayArray = [ previous_output_TypedArray ];
+
     let createTensor_asyncGenerator
       = this.ScaleFiller.createTensor_by_fill_asyncGenerator(
           source_TypedArray, source_height, source_width,
           bTwoTensors,
           feedbackShape,
-          this.alignmentMarkValueArray, [ previous_output_TypedArray ]
+          this.alignmentMarkValueArray, previous_output_TypedArrayArray
         );
 
     let outputTensor;
@@ -917,12 +921,16 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
 
     const feedbackShape = this.neuralNetArray[ neuralNetIndex ].feedbackShape;
 
+    let previous_output_TypedArrayArray;
+    if ( previous_output_TypedArray )
+      previous_output_TypedArrayArray = [ previous_output_TypedArray ];
+
     let createTensor_asyncGenerator
       = this.ScaleFiller.createTensor_by_fill_asyncGenerator(
           source_TypedArray, source_height, source_width,
           bTwoTensors,
           feedbackShape,
-          this.alignmentMarkValueArray, [ previous_output_TypedArray ]
+          this.alignmentMarkValueArray, previous_output_TypedArrayArray
         );
 
     let outputTensor;
