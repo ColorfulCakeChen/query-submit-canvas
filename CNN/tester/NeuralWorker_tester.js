@@ -209,7 +209,7 @@ class PerformanceTestCase extends Recyclable.Root {
   }
 
   /** Try to compute neural network result in this worker. */
-  NeuralNet_try_result( theCanvas,
+  async NeuralNet_try_result_async( theCanvas,
     alignmentMarkValueArray, previous_output_TypedArrayArray ) {
 
     let resultFloat32Array;
@@ -721,10 +721,10 @@ class HeightWidthDepth {
             }
 
             {
-              // NeuralNet_try_result() shoul be called after prepare_async()
+              // NeuralNet_try_result_async() should be called after prepare_async()
               // so that the nConvStageTypeId has been adjusted.
               let resultFloat32Array
-                = testCase.NeuralNet_try_result( this.testCanvas,
+                = await testCase.NeuralNet_try_result_async( this.testCanvas,
                     this.alignmentMarkValueArray,
                     previous_output_TypedArrayArray_for_verification );
 
