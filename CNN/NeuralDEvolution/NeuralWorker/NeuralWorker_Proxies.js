@@ -593,7 +593,7 @@ class NeuralWorker_Proxies extends Recyclable.Root {
    * @param {Uint8ClampedArray|Uint16Array|Uint32Array} source_TypedArray
    *   An unsigned integer TypedArray which will be processed by the pair of
    * neural workers. For example, ImageData.data which is coming from a canvas.
-   * Note that it may be modified by filling with alignment mark and feedback
+   * Note that it may be modified by filling with alignment mark and/or feedback
    * information (i.e. previous time output of the neural network).
    *
    * @param {number} source_height
@@ -626,7 +626,7 @@ class NeuralWorker_Proxies extends Recyclable.Root {
    * @param {Uint8ClampedArray|Uint16Array|Uint32Array} source_TypedArray
    *   An unsigned integer TypedArray which will be processed by the pair of
    * neural workers. For example, ImageData.data which is coming from a canvas.
-   * Note that it may be modified by filling with alignment mark and feedback
+   * Note that it may be modified by filling with alignment mark and/or feedback
    * information (i.e. previous time output of the neural network).
    *
    * @param {number} source_height
@@ -666,10 +666,6 @@ class NeuralWorker_Proxies extends Recyclable.Root {
     const source_height1 = neuralNetParams1.input_height;
     const source_width1 = neuralNetParams1.input_width;
 
-//!!! ...unfinished... (2023/05/05)
-// Deprecate FILL and NO_FILL.
-// Deprecate XX_SCALE.
-
     let worker1_promise = workerProxy1
       .TWO_WORKER__TWO_NET__step1_Int32Array_process_async(
         worker0_value_Int32Array, source_height1, source_width1,
@@ -688,61 +684,9 @@ class NeuralWorker_Proxies extends Recyclable.Root {
 
   /**
    * @param {Uint8ClampedArray|Uint16Array|Uint32Array} source_TypedArray
-   *   An unsigned integer TypedArray which will be processed by the pair of
-   * neural workers. For example, ImageData.data which is coming from a canvas.
-   * Note that it may be modified by filling with alignment mark and feedback
-   * information (i.e. previous time output of the neural network).
-   *
-   * @param {number} source_height
-   *   The height (in pixels) of the source_TypedArray. For example,
-   * ImageData.height.
-   *
-   * @param {number} source_width
-   *   The width (in pixels) of the source_TypedArray. For example,
-   * ImageData.width.
-   *
-   * @return {Promise( Float32Array[] | Int32Array[] )}
-   *   Return a promise resolved to the .previous_output_TypedArrayArray.
-   */
-  static async apply__TWO_WORKER__TWO_NET__TWO_SCALE__NO_FILL(
-    source_TypedArray, source_height, source_width ) {
-
-    const worker0_bFork = true;
-    let worker0_resulter = this.workerProxyArray[ 0 ]
-      .TWO_WORKER__TWO_SCALE__TypedArray_process_asyncGenerator(
-        source_TypedArray, source_height, source_width,
-        this.previous_output_TypedArrayArray?.[ 0 ],
-        worker0_bFork );
-
-    let { done: worker0_done_false, value: worker0_value_Int32Array }
-      = await worker0_resulter.next();
-
-    // Note: Use source_height and source_width because the 2nd web worker
-    //       will scale the source image by itself.
-    const worker1_bFork = false;
-    let worker1_resulter = this.workerProxyArray[ 1 ]
-      .TWO_WORKER__TWO_SCALE__TypedArray_process_asyncGenerator(
-        worker0_value_Int32Array, source_height, source_width,
-        this.previous_output_TypedArrayArray?.[ 1 ],
-        worker1_bFork );
-
-    let [
-      { done: worker0_done_true, value: worker0_value_TypedArray },
-      { done: worker1_done_true, value: worker1_value_TypedArray },
-    ] = await Promise.all(
-      [ worker0_resulter.next(), worker1_resulter.next() ] );
-
-    this.previous_output_TypedArrayArray
-      = [ worker0_value_TypedArray, worker1_value_TypedArray ];
-
-    return this.previous_output_TypedArrayArray;
-  }
-
-  /**
-   * @param {Uint8ClampedArray|Uint16Array|Uint32Array} source_TypedArray
-   *   An unsigned integer TypedArray which will be processed by the pair of
-   * neural workers. For example, ImageData.data which is coming from a canvas.
-   * Note that it may be modified by filling with alignment mark and feedback
+   *   An unsigned integer TypedArray which will be processed by the neural
+   * worker. For example, ImageData.data which is coming from a canvas.
+   * Note that it may be modified by filling with alignment mark and/or feedback
    * information (i.e. previous time output of the neural network).
    *
    * @param {number} source_height
