@@ -703,26 +703,18 @@ class NeuralWorker_Proxies extends Recyclable.Root {
   static async apply__ONE_WORKER__ONE_NET(
     source_TypedArray, source_height, source_width ) {
 
-//!!! ...unfinished... (2023/05/05)
-// Deprecate FILL and NO_FILL.
-// Deprecate XX_SCALE.
-
-
-    let bFill = NeuralWorker_Mode.bFill_get( this.nNeuralWorker_ModeId );
-
     // Note:
     //
-    // .TWO_WORKER__TWO_NET__ONE_SCALE__step1_Int32Array_process_async()
+    // .TWO_WORKER__TWO_NET__step1_Int32Array_process_async()
     //   - could scale (if necessary) and fill (if exists).
     //   - will not post back source TypedArray.
     //
-    // So, it is suitable for neural network inference usage.
+    // So, it is suitable for single neural network inference usage.
     //
     let worker0_promise = this.workerProxyArray[ 0 ]
-      .TWO_WORKER__TWO_NET__ONE_SCALE__step1_Int32Array_process_async(
+      .TWO_WORKER__TWO_NET__step1_Int32Array_process_async(
         source_TypedArray, source_height, source_width,
-        this.previous_output_TypedArrayArray?.[ 0 ],
-        bFill );
+        this.previous_output_TypedArrayArray?.[ 0 ] );
 
     let worker0_value_TypedArray = await worker1_promise;
 
