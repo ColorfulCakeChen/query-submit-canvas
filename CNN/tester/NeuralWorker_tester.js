@@ -139,7 +139,7 @@ class PerformanceTestCase extends Recyclable.Root {
    * @param {NeuralWorker.Proxies} neuralWorkerProxies
    *   The shared neural worker proxies.
    */
-  async prepare_async( neuralWorkerProxies, alignmentMarkValueArray ) {
+  async prepare_async( neuralWorkerProxies ) {
     try {
       await tf.ready(); // Ensure tf.getBackend() workable.
       let backendName = tf.getBackend();
@@ -202,18 +202,14 @@ class PerformanceTestCase extends Recyclable.Root {
           + `${neuralWorkerProxies}` );
 
       {
-        let alignmentMarkValueArray;
         if ( neuralNetCount > 1 ) {
-          ???alignmentMarkValueArray
-          this.alignmentMarkValueArray
+          this.alignmentMarkValueArray = [ 155, 255 ];
         } else {
-          ???alignmentMarkValueArray
-          this.alignmentMarkValueArray
-
+          this.alignmentMarkValueArray = [ 55 ];
         }
 
         let bSetOkPromise = neuralWorkerProxies
-          .alignmentMarkValueArray_set_async( ???this.alignmentMarkValueArray );
+          .alignmentMarkValueArray_set_async( this.alignmentMarkValueArray );
 
         let bSetOk = await bSetOkPromise;
         if ( false == bSetOk )
@@ -426,8 +422,8 @@ class HeightWidthDepth {
     this.backendName = backendName;
     this.bAscent_or_Descent = bAscent_or_Descent;
 
-
-    this.alignmentMarkValueArray = [ 155, 255 ];
+//!!! (2023/05/11 Remarked)
+//    this.alignmentMarkValueArray = [ 155, 255 ];
 
     this.feedbackShape = new NeuralNet.FeedbackShape();
     this.feedbackShape.init(
@@ -590,7 +586,7 @@ class HeightWidthDepth {
     if ( !testCase.preparePromise ) {
       this.neuralWorker_PerformanceTest_release_preparePromise();
       testCase.preparePromise = testCase.prepare_async(
-        this.neuralWorkerProxies, this.alignmentMarkValueArray );
+        this.neuralWorkerProxies );
     }
 
     // Note: Even if non-first time test this case, it is still necessary to
@@ -751,7 +747,7 @@ class HeightWidthDepth {
               // so that the nConvStageTypeId has been adjusted.
               let resultFloat32Array
                 = await testCase.NeuralNet_try_result_async( this.testCanvas,
-                    this.alignmentMarkValueArray,
+                  testCase.alignmentMarkValueArray,
                     previous_output_TypedArrayArray_for_verification );
 
               let lhsNumberArray = resultFloat32ArrayArray[ 0 ];
