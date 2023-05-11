@@ -156,23 +156,33 @@ class PerformanceTestCase extends Recyclable.Root {
 
       PerformanceTestCase.randomTestWeightArray_create();
 
+      let neuralNetCount
+        = NeuralWorker.Mode.neuralNetCount_get( this.nNeuralWorker_ModeId );
+
       // Although neural network configuration will be copied (not transferred)
       // to workers, they still need be cloned because NeuralWorker.Proxy will
       // keep (i.e. owned and destroyed) them.
       let neuralNetParamsBaseArray;
-      {
+      if ( neuralNetCount > 1 ) {
         let neuralNetParams0 = this.neuralNetParamsBase.clone();
         let neuralNetParams1 = this.neuralNetParamsBase.clone();
         neuralNetParamsBaseArray = [ neuralNetParams0, neuralNetParams1 ];
+      } else {
+        let neuralNetParams0 = this.neuralNetParamsBase.clone();
+        neuralNetParamsBaseArray = [ neuralNetParams0 ];
       }
 
       let weightArrayBufferArray;
-      {
+      if ( neuralNetCount > 1 ) {
         let weightArray0
           = new Float32Array( PerformanceTestCase.randomTestWeightArray );
         let weightArray1
           = new Float32Array( PerformanceTestCase.randomTestWeightArray );
         weightArrayBufferArray = [ weightArray0.buffer, weightArray1.buffer ];
+      } else {
+        let weightArray0
+          = new Float32Array( PerformanceTestCase.randomTestWeightArray );
+        weightArrayBufferArray = [ weightArray0.buffer ];
       }
 
       let bInitOk = await bInitOkPromise;
