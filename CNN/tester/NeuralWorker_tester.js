@@ -82,14 +82,17 @@ class ExecutionTimeInfo {
 class PerformanceTestCase extends Recyclable.Root {
 
   /**
-   * Used as default PerformanceTestCase provider for conforming to Recyclable interface.
+   * Used as default PerformanceTestCase provider for conforming to Recyclable
+   * interface.
    */
   static Pool = new Pool.Root( "PerformanceTestCase.Pool",
     PerformanceTestCase, PerformanceTestCase.setAsConstructor );
 
   /**
    */
-  constructor( testCaseId, testCaseName, neuralNetParamsBase, nNeuralWorker_ModeId ) {
+  constructor(
+    testCaseId, testCaseName, neuralNetParamsBase, nNeuralWorker_ModeId ) {
+
     super();
     PerformanceTestCase.setAsConstructor_self.call( this,
       testCaseId, testCaseName, neuralNetParamsBase, nNeuralWorker_ModeId
@@ -146,9 +149,11 @@ class PerformanceTestCase extends Recyclable.Root {
       let backendName = tf.getBackend();
 
       if ( backendName === "webgl" )
-        this.neuralNetParamsBase.nConvStageTypeId_adjust_for_backend_webgl_if_ShuffleNetV2();
+        this.neuralNetParamsBase
+          .nConvStageTypeId_adjust_for_backend_webgl_if_ShuffleNetV2();
       else if ( backendName === "cpu" )
-        this.neuralNetParamsBase.nConvStageTypeId_adjust_for_backend_cpu_if_ShuffleNetV2();
+        this.neuralNetParamsBase
+          .nConvStageTypeId_adjust_for_backend_cpu_if_ShuffleNetV2();
 
       let bInitOkPromise = neuralWorkerProxies.init_async(
         backendName, this.nNeuralWorker_ModeId );
@@ -167,8 +172,10 @@ class PerformanceTestCase extends Recyclable.Root {
 
       let weightArrayBufferArray;
       {
-        let weightArray0 = new Float32Array( PerformanceTestCase.randomTestWeightArray );
-        let weightArray1 = new Float32Array( PerformanceTestCase.randomTestWeightArray );
+        let weightArray0
+          = new Float32Array( PerformanceTestCase.randomTestWeightArray );
+        let weightArray1
+          = new Float32Array( PerformanceTestCase.randomTestWeightArray );
         weightArrayBufferArray = [ weightArray0.buffer, weightArray1.buffer ];
       }
 
@@ -218,8 +225,8 @@ class PerformanceTestCase extends Recyclable.Root {
       try {
         PerformanceTestCase.randomTestWeightArray_create();
 
-        let neuralNetParams = NeuralNet.Params.get_or_create_by_NeuralNetParamsBase(
-          this.neuralNetParamsBase );
+        let neuralNetParams = NeuralNet.Params
+          .get_or_create_by_NeuralNetParamsBase( this.neuralNetParamsBase );
 
         progress = ValueMax.Percentage.Aggregate.Pool.get_or_create_by();
         neuralNet = this.neuralNet = NeuralNet.Base.Pool.get_or_create_by();
@@ -238,7 +245,8 @@ class PerformanceTestCase extends Recyclable.Root {
 
         console.log( strWeightCountInfoLong );
 
-        if ( g_Controls.Info_TextArea.textContent.indexOf( strWeightCountInfo ) < 0 ) {
+        if ( g_Controls.Info_TextArea.textContent
+               .indexOf( strWeightCountInfo ) < 0 ) {
           if ( g_Controls.Info_TextArea.textContent.length > 0 )
             g_Controls.Info_TextArea.textContent += "\n";
           g_Controls.Info_TextArea.textContent += strWeightCountInfo_withConvType;
@@ -251,8 +259,8 @@ class PerformanceTestCase extends Recyclable.Root {
           );
 
         if ( 100 != progress.valuePercentage )
-          throw Error(
-            `Progress (${progress.valuePercentage}) should be 100 when initializing `
+          throw Error( `Progress (${progress.valuePercentage}) should be 100 `
+            + `when initializing `
             + `NeuralNet object successfully. ${neuralNet}`);
 
 !!! ...unfinished... (2023/05/06)
@@ -463,23 +471,6 @@ class HeightWidthDepth {
     // output_channelCount, output_asInputValueRange,
     // bKeepInputTensor
     //
-
-
-
-!!! ...unfinished... (2023/05/08)
-   /*
-    *   - ( NeuralNet.Params.has_implicit_input == false )
-    *       not fill.
-    * 
-    *   - ( NeuralNet.Params.has_implicit_input == true )
-    *       will fill.
-    *
-    *     - alignmentMarkValueArray null or ( .length == 0 )
-    *         not fill alignment mark.
-    *
-    *     - previous_output_TypedArrayArray null or ( .length == 0 )
-    *         not fill feedback (i.e. previous time output).
-    */
    
     // Create TestCases for every NeuralWorker.Mode
     for ( let i = 0; i < NeuralWorker.Mode.Singleton.integerToInfoMap.size; ++i ) {
@@ -858,8 +849,7 @@ async function* testerBackendAll( progressParent,
 //!!! (2023/05/11 Remarked)
 //      largerFactor,
 
-      input_height,
-      input_width,
+      input_height, input_width,
       has_implicit_input,
       vocabularyChannelCount,
       blockCountTotalRequested,
@@ -873,8 +863,7 @@ async function* testerBackendAll( progressParent,
 //!!! (2023/05/11 Remarked)
 //      largerFactor,
 
-      input_height,
-      input_width,
+      input_height, input_width,
       has_implicit_input,
       vocabularyChannelCount,
       blockCountTotalRequested,
