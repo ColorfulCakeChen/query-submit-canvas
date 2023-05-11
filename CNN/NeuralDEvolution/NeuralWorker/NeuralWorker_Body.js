@@ -904,13 +904,12 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
    *   - Float32Array (if ( neuralNetParams.output_asInputValueRange == false ) )
    *   - Int32Array (if ( neuralNetParams.output_asInputValueRange == true ) )
    */
-  async* TWO_WORKER__TWO_NET__ONE_SCALE__step1_TypedArray_process(
+  async* TWO_WORKER__TWO_NET__step1_TypedArray_process(
     source_TypedArray, source_height, source_width,
-    previous_output_TypedArray,
-    bFill ) {
+    previous_output_TypedArray ) {
 
     const funcNameInMessage
-      = "TWO_WORKER__TWO_NET__ONE_SCALE__step1_TypedArray_process";
+      = "TWO_WORKER__TWO_NET__step1_TypedArray_process";
 
 !!! ...unfinished... (2023/05/09)
 

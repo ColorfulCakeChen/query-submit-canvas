@@ -323,13 +323,9 @@ class NeuralWorker_Proxies extends Recyclable.Root {
     // differential evolution. Differential evolution evaluates just two entities
     // every time.
     //
-    // Note1: How could two neural networks determine all the actions of so many
-    //        game objects? The method is to let the output of every neural
-    //        network contains all actions of all game objects of all alignments.
-    //
-    // Note2: For NeuralWorker_Mode whose ( bFill == false ), only half of the
-    //        output actions (i.e. actions of one alignment in the game world)
-    //        will be used in one time.
+    // Note: How could two neural networks determine all the actions of so many
+    //       game objects? The method is to let the output of every neural
+    //       network contains all actions of all game objects of all alignments.
     //
     let totalWorkerCount = NeuralWorker_Mode.workerCount_get( nNeuralWorker_ModeId );
 
@@ -674,12 +670,10 @@ class NeuralWorker_Proxies extends Recyclable.Root {
 // Deprecate FILL and NO_FILL.
 // Deprecate XX_SCALE.
 
-
     let worker1_promise = workerProxy1
       .TWO_WORKER__TWO_NET__step1_Int32Array_process_async(
         worker0_value_Int32Array, source_height1, source_width1,
-        this.previous_output_TypedArrayArray?.[ 1 ],
-        bFill );
+        this.previous_output_TypedArrayArray?.[ 1 ] );
 
     let [
       { done: worker0_done_true, value: worker0_value_TypedArray },
