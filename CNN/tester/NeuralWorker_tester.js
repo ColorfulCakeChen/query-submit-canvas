@@ -730,9 +730,15 @@ class HeightWidthDepth {
 
                 // Copy the last 2nd testing result (i.e. the last 1st input)
                 // as previous time output for verification.
-                if ( i == ( timeInfo.times - 2 ) )
+                if ( i == ( timeInfo.times - 2 ) ) {
+                  const resultArrayLength = resultFloat32ArrayArray.length;
                   previous_output_TypedArrayArray_for_verification
-                    = resultFloat32ArrayArray.slice();
+                    = new Array( resultArrayLength );
+                  for ( let j = 0; j < resultArrayLength; ++j ) {
+                    previous_output_TypedArrayArray_for_verification[ j ]
+                      = resultFloat32ArrayArray[ j ].slice();
+                  }
+                }
 
                 progressToAdvance.value_advance(); // Every performance test complete.
                 yield progressRoot;
