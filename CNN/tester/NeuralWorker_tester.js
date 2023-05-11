@@ -133,17 +133,13 @@ class PerformanceTestCase extends Recyclable.Root {
     super.disposeResources();
   }
 
-  get NeuralWorker_Mode_bFill() {
-    return NeuralWorker.Mode.bFill_get( this.nNeuralWorker_ModeId );
-  }
-
   /**
    * Create .neuralWorkerProxies
    *
    * @param {NeuralWorker.Proxies} neuralWorkerProxies
    *   The shared neural worker proxies.
    */
-  async prepare_async( neuralWorkerProxies ) {
+  async prepare_async( neuralWorkerProxies, alignmentMarkValueArray ) {
     try {
       await tf.ready(); // Ensure tf.getBackend() workable.
       let backendName = tf.getBackend();
@@ -195,12 +191,9 @@ class PerformanceTestCase extends Recyclable.Root {
         throw Error( `Failed to create neural networks by neuralWorkerProxies. `
           + `${neuralWorkerProxies}` );
 
-      let bFill = this.NeuralWorker_Mode_bFill;
-      if ( bFill ) {
-        let markValueArray = [ 0, 255 ];
-
+      {
         let bSetOkPromise = neuralWorkerProxies
-          .alignmentMarkValueArray_set_async( markValueArray );
+          .alignmentMarkValueArray_set_async( this.alignmentMarkValueArray );
 
         let bSetOk = await bSetOkPromise;
         if ( false == bSetOk )
@@ -216,7 +209,9 @@ class PerformanceTestCase extends Recyclable.Root {
   }
 
   /** Try to compute neural network result in this worker. */
-  NeuralNet_try_result( theCanvas, previous_output_TypedArrayArray ) {
+  NeuralNet_try_result( theCanvas,
+    alignmentMarkValueArray, previous_output_TypedArrayArray ) {
+
     let resultFloat32Array;
 
     tf.tidy( () => {
@@ -285,9 +280,9 @@ class PerformanceTestCase extends Recyclable.Root {
                 imageData.data, imageData.height, imageData.width,
                 false, //bTwoTensors
                 neuralNet.feedbackShape,
-                ??? this.alignmentMarkValueArray, previous_output_TypedArrayArray
+                alignmentMarkValueArray, previous_output_TypedArrayArray
               );
-  
+  !!!
           inputTensor3d = tf.tensor3d(
             imageData.data, [ imageData.height, imageData.width ], "int32" );
 
@@ -409,6 +404,8 @@ class HeightWidthDepth {
 
     this.backendName = backendName;
     this.bAscent_or_Descent = bAscent_or_Descent;
+
+    this.alignmentMarkValueArray = [ 155, 255 ];
   }
 
   disposeResources() {
@@ -563,7 +560,8 @@ class HeightWidthDepth {
     // (so that there will be enough memory). Create the specified neural network.
     if ( !testCase.preparePromise ) {
       this.neuralWorker_PerformanceTest_release_preparePromise();
-      testCase.preparePromise = testCase.prepare_async( this.neuralWorkerProxies );
+      testCase.preparePromise = testCase.prepare_async(
+        this.neuralWorkerProxies, this.alignmentMarkValueArray );
     }
 
     // Note: Even if non-first time test this case, it is still necessary to wait
@@ -719,16 +717,12 @@ class HeightWidthDepth {
               //console.log( timeInfo.toString() );
             }
 
-            // For NO_FILL mode, the result should be the same as local simulation.
-            // So they can be checked.
-
-!!! ...unfinished... (2023/05/11)
-            let bFill = testCase.NeuralWorker_Mode_bFill;
-            if ( !bFill ) {
+            {
               // NeuralNet_try_result() shoul be called after prepare_async() so that
               // the nConvStageTypeId has been adjusted.
               let resultFloat32Array
                 = testCase.NeuralNet_try_result( this.testCanvas,
+                    this.alignmentMarkValueArray,
                     previous_output_TypedArrayArray_for_verification );
 
               let lhsNumberArray = resultFloat32ArrayArray[ 0 ];
