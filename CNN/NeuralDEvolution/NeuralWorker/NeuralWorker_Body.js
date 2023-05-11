@@ -244,7 +244,8 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
                      != this.ScaleFiller.target_height )
               || ( neuralNet.input_width
                      != this.ScaleFiller.target_width )
-              || ( neuralNet.input_channelCount != this.ScaleFiller.target_channelCount ) )
+              || ( neuralNet.input_channelCount
+                     != this.ScaleFiller.target_channelCount ) )
 
             throw Error( `NeuralWorker_Body.${funcNameInMessage}(): `
               + `neuralNetArray[ ${i} ]'s `
