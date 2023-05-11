@@ -202,8 +202,18 @@ class PerformanceTestCase extends Recyclable.Root {
           + `${neuralWorkerProxies}` );
 
       {
+        let alignmentMarkValueArray;
+        if ( neuralNetCount > 1 ) {
+          ???alignmentMarkValueArray
+          this.alignmentMarkValueArray
+        } else {
+          ???alignmentMarkValueArray
+          this.alignmentMarkValueArray
+
+        }
+
         let bSetOkPromise = neuralWorkerProxies
-          .alignmentMarkValueArray_set_async( this.alignmentMarkValueArray );
+          .alignmentMarkValueArray_set_async( ???this.alignmentMarkValueArray );
 
         let bSetOk = await bSetOkPromise;
         if ( false == bSetOk )
