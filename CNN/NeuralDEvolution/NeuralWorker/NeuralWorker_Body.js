@@ -750,7 +750,7 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
     let outputFloat32Array;
     try {
 
-      // 1. Prepare source tensor of every neural network.
+      // 1. Prepare source tensor of the neural network.
       //
       // Scaling, filling alignment mark and feedback information (i.e.
       // previous time output), and then create source tensor.
@@ -910,65 +910,45 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
     const funcNameInMessage
       = "TWO_WORKER__TWO_NET__step1_TypedArray_process";
 
-!!! ...unfinished... (2023/05/09)
+    const bTwoTensors = ( this.neuralNetArray.length > 1 ); // should be false.
 
-
-      // const bTwoTensors = ( this.neuralNetArray.length > 1 ); // should be false.
-  
-      // const neuralNetIndex = 0; // Always use the first neural network.
-      // let neuralNet = this.neuralNetArray[ neuralNetIndex ];
-  
-      // const feedbackShape = this.neuralNetArray[ neuralNetIndex ].feedbackShape;
-  
-      // let createTensor_asyncGenerator
-      //   = this.ScaleFiller.createTensor_by_fill_asyncGenerator(
-      //       source_TypedArray, source_height, source_width,
-      //       bTwoTensors,
-      //       feedbackShape,
-      //       this.alignmentMarkValueArray, previous_output_TypedArrayArray
-      //     );
-  
-      // let outputTensor;
-      // let outputFloat32Array;
-      // try {
-  
-      //   // 1. Prepare source tensor of every neural network.
-      //   //
-      //   // Scaling, filling alignment mark and feedback information (i.e.
-      //   // previous time output), and then create source tensor.
-  
-      //   let done_value_sourceTensor_Promise
-      //     = createTensor_asyncGenerator.next();
-  
-      //   let done_value_sourceTensor
-      //     = await done_value_sourceTensor_Promise;
-  
-      //   if ( done_value_sourceTensor.done )
-      //     throw Error( `NeuralWorker_Body.${funcNameInMessage}(): `
-      //       + `workerId=${this.workerId}, done_value_sourceTensor.done `
-      //       + `( ${done_value_sourceTensor.done} ) `
-      //       + `should be false.`
-      //     );
-  
-      //   let [ sourceTensor, sourceTypedArrayAsyncFunction ]
-      //     = done_value_sourceTensor.value;
-    
-  
     const neuralNetIndex = 0; // Always use the first neural network.
     let neuralNet = this.neuralNetArray[ neuralNetIndex ];
 
-    let sourceTensor;
+    const feedbackShape = this.neuralNetArray[ neuralNetIndex ].feedbackShape;
+
+    let createTensor_asyncGenerator
+      = this.ScaleFiller.createTensor_by_fill_asyncGenerator(
+          source_TypedArray, source_height, source_width,
+          bTwoTensors,
+          feedbackShape,
+          this.alignmentMarkValueArray, previous_output_TypedArrayArray
+        );
+
     let outputTensor;
     let outputFloat32ArrayPromise;
     try {
-      // 1. Prepare source tensor.
-      if ( bFill ) {
-        NeuralWorker_Body.alignmentMark_fillTo_Image_Int32Array.call(
-          this, neuralNetIndex, scaledInt32Array );
-      }
 
-      sourceTensor
-        = tf.tensor( scaledInt32Array, neuralNet.input_shape, "int32" );
+      // 1. Prepare source tensor of the neural network.
+      //
+      // Scaling, filling alignment mark and feedback information (i.e.
+      // previous time output), and then create source tensor.
+
+      let done_value_sourceTensor_Promise
+        = createTensor_asyncGenerator.next();
+
+      let done_value_sourceTensor
+        = await done_value_sourceTensor_Promise;
+
+      if ( done_value_sourceTensor.done )
+        throw Error( `NeuralWorker_Body.${funcNameInMessage}(): `
+          + `workerId=${this.workerId}, done_value_sourceTensor.done `
+          + `( ${done_value_sourceTensor.done} ) `
+          + `should be false.`
+        );
+
+      let [ sourceTensor, sourceTypedArrayAsyncFunction ]
+        = done_value_sourceTensor.value;
 
       // 2. Process image by neural network.
       outputTensor = neuralNet.apply( sourceTensor );
@@ -987,15 +967,6 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
         outputTensor = null;
       }
 
-      // In theory, it should already have been released by neural network.
-      // For avoiding memory leak (e.g. some exception is thrown when
-      // .apply()), release it again.
-      if ( sourceTensor ) {
-        sourceTensor.dispose();
-        sourceTensor = null;
-      }
-
-//!!! ...unfinished... (2023/05/01)
       // Ensure all intermediate tensors are released.
       if ( createTensor_asyncGenerator ) {
         createTensor_asyncGenerator.return();
@@ -1010,6 +981,8 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
       transferableObjectArray: [ outputFloat32Array.buffer ]
     };
   }
+
+!!! ...unfinished... (2023/05/11)
 
   /**
    * This method is used for:
