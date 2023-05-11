@@ -225,7 +225,7 @@ class NeuralNet_ScaleFiller {
 
     const source_channelCount = source_valueCount / source_size_per_channel;
 
-    if ( source_channelCount != target_channelCount )
+    if ( source_channelCount != this.target_channelCount )
       throw Error( `NeuralNet_ScaleFiller.${funcNameInMessage}(): `
         + `source_size_per_channel ( `
         + `= source_TypedArray.length / ( source_height * source_width ) ` 
