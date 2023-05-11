@@ -399,8 +399,6 @@ TWO_WORKER__TWO_NET__step1_TypedArray_process_async(
     source_TypedArray, source_height, source_width,
     previous_output_TypedArray ) {
 
-!!! ...unfinished... (2023/05/11)
-
     let transferableObjectArray;
     if ( previous_output_TypedArray )
       transferableObjectArray
@@ -416,6 +414,8 @@ TWO_WORKER__TWO_NET__step1_TypedArray_process_async(
     );
   }
 
+
+!!! ...unfinished... (2023/05/11)
 
   /**
    * This method is used for:

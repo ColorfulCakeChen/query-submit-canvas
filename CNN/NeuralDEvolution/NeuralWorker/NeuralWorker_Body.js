@@ -512,13 +512,13 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
    *   - One web worker. The worker has two neural networks.
    *     - NeuralWorker_Mode.Singleton.Ids.ONE_WORKER__TWO_NET (0)
    *
-   *   - If has alignment mark and feedback (i.e. previous time output):
+   *   - If has alignment mark and/or feedback (i.e. previous time output):
    *
-   *     - Fill alignment mark and feedback (i.e. previous time output) of the
-   *         1st neural network, upload to GPU and process it.
+   *     - Fill alignment mark and/or feedback (i.e. previous time output) of
+   *         the 1st neural network, upload to GPU and process it.
    *
-   *     - Fill alignment mark and feedback (i.e. previous time output) of the
-   *         2nd neural network, upload to GPU and process it.
+   *     - Fill alignment mark and/or feedback (i.e. previous time output) of
+   *         the 2nd neural network, upload to GPU and process it.
    *
    *
    * @param {Uint8ClampedArray|Uint16Array|Uint32Array} source_TypedArray
@@ -528,7 +528,7 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
    *   - Its shape must match this.neuralNet[ n ]'s [ input_height,
    *       input_width, input_channelCount ].
    *
-   *   - It may be modified by filling with alignment mark and feedback
+   *   - It may be modified by filling with alignment mark and/or feedback
    *       information (i.e. previous time output of the neural network).
    *
    * @param {number} source_height
@@ -674,19 +674,20 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
    *   - It will download scaled Int32Array from GPU memory. And post it back to
    *         WorkerProxy.
    *
-   *   - Fill alignment mark and feedback (i.e. previous time output) of this
-   *       neural network, upload to GPU and process it.
+   *   - If has alignment mark and/or feedback (i.e. previous time output):
+   *
+   *     - Fill alignment mark and/or feedback (i.e. previous time output) of
+   *         this neural network, upload to GPU and process it.
    *
    *
    * @param {Uint8ClampedArray|Uint16Array|Uint32Array} source_TypedArray
    *   An unsigned integer TypedArray which will be processed by the neural
    * worker. For example, ImageData.data which is coming from a canvas.
    *
-   *   - Its shape needs not match this.neuralNet[ 0 ]'s [ input_height,
-   *       input_width, input_channelCount ] because it will be scaled to the
-   *       correct shape before passed into the neural network.
+   *   - Its shape must match this.neuralNet[ 0 ]'s [ input_height,
+   *       input_width, input_channelCount ].
    *
-   *   - It may be modified by filling with alignment mark and feedback
+   *   - It may be modified by filling with alignment mark and/or feedback
    *       information (i.e. previous time output of the neural network).
    *
    *   - This usually is called for the 1st web worker in chain. The scaled
@@ -855,25 +856,28 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
   /**
    * This method is used for:
    *   - Two web workers. Every worker has one neural network.
-   *     - NeuralWorker_Mode.Singleton.Ids.TWO_WORKER__TWO_NET__ONE_SCALE__FILL__APPLY (2)
-   *     - NeuralWorker_Mode.Singleton.Ids.TWO_WORKER__TWO_NET__ONE_SCALE__FILL__APPLIER (3)
-   *     - NeuralWorker_Mode.Singleton.Ids.TWO_WORKER__TWO_NET__ONE_SCALE__NO_FILL__APPLY (4)
-   *     - NeuralWorker_Mode.Singleton.Ids.TWO_WORKER__TWO_NET__ONE_SCALE__NO_FILL__APPLIER (5)
+   *     - NeuralWorker_Mode.Singleton.Ids.TWO_WORKER__TWO_NET__APPLY (1)
+   *     - NeuralWorker_Mode.Singleton.Ids.TWO_WORKER__TWO_NET__APPLIER (2)
    *     - The 2nd worker calls this method.
    *
-   *   - (may or may not) Fill alignment mark of this neural network, upload to
-   *       GPU and process it.
+   *   - One web worker. Every worker has one neural network. (inference usage)
+   *     - NeuralWorker_Mode.Singleton.Ids.ONE_WORKER__ONE_NET (3)
+   *     - The only one worker calls this method.
+   *
+   *   - If has alignment mark and/or feedback (i.e. previous time output):
+   *
+   *     - Fill alignment mark and/or feedback (i.e. previous time output) of
+   *         this neural network, upload to GPU and process it.
    *
    *
    * @param {Uint8ClampedArray|Uint16Array|Uint32Array} source_TypedArray
    *   An unsigned integer TypedArray which will be processed by the neural
    * worker. For example, ImageData.data which is coming from a canvas.
    *
-   *   - Its shape needs not match this.neuralNet[ 0 ]'s [ input_height,
-   *       input_width, input_channelCount ] because it will be scaled to the
-   *       correct shape before passed into the neural network.
+   *   - Its shape must match this.neuralNet[ 0 ]'s [ input_height,
+   *       input_width, input_channelCount ].
    *
-   *   - It may be modified by filling with alignment mark and feedback
+   *   - It may be modified by filling with alignment mark and/or feedback
    *       information (i.e. previous time output of the neural network).
    *
    *   - This usually is called for the 2nd web worker in chain. The web worker
@@ -890,11 +894,6 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
    *
    * @param {Float32Array|Int32Array} previous_output_TypedArray
    *   A TypedArray representing the previous time output of the neural network.
-   *
-   * @param {boolean} bFill
-   *   If true, the source_TypedArray will be filled by alignment mark before
-   * be converted to tensor3d. If false, it will be converted to tensor3d
-   * directly without filling alignment mark.
    *
    * @yield {Float32Array|Int32Array}
    *   Resolve to { done: true, value: { value: TypedArray,
