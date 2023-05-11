@@ -276,9 +276,9 @@ class PerformanceTestCase extends Recyclable.Root {
 
       {
         this.ScaleFiller = new NeuralNet.ScaleFiller(
-          this.neuralNetParamsBase.inferencedParams.input_height,
-          this.neuralNetParamsBase.inferencedParams.input_width,
-          this.neuralNetParamsBase.inferencedParams.input_channelCount
+          this.neuralNet.input_height,
+          this.neuralNet.input_width,
+          this.neuralNet.input_channelCount
         );
 
         let imageData;
