@@ -21,8 +21,8 @@ let g_Controls = {
 //!!! ...unfinished... (2023/05/11)
 //  largerFactor_Text: null,
 
-  input_height_Text: null,
-  input_width_Text: null,
+  explicit_input_height_Text: null,
+  explicit_input_width_Text: null,
 
   has_implicit_input_Checkbox: null,
 
@@ -358,9 +358,9 @@ class HeightWidthDepth {
 //    * as ( largerFactor * height ) * ( largerFactor * width ).
 
    *
-   * @param {number} height            image height
-   * @param {number} width             image width
-   * @param {number} depth             image channel count
+   * @param {number} explicit_input_height        explicit image height
+   * @param {number} explicit_input_width         explicit image width
+   * @param {number} explicit_input_channelCount  explicit image channel count
    *
    * @param {boolean} has_implicit_input
    *   Whether has implicit input.
@@ -379,7 +379,7 @@ class HeightWidthDepth {
 //!!! ...unfinished... (2023/05/11)
 //    largerFactor,
 
-    height, width, depth,
+    explicit_input_height, explicit_input_width, explicit_input_channelCount,
     has_implicit_input,
 
     vocabularyChannelCount,
@@ -393,9 +393,9 @@ class HeightWidthDepth {
 //!!! ...unfinished... (2023/05/11)
 //    this.largerFactor = largerFactor;
 
-    this.height = height;
-    this.width = width;
-    this.depth = depth;
+    this.explicit_input_height = explicit_input_height;
+    this.explicit_input_width = explicit_input_width;
+    this.explicit_input_channelCount = explicit_input_channelCount;
 
     this.has_implicit_input = has_implicit_input;
 
@@ -406,7 +406,14 @@ class HeightWidthDepth {
     this.backendName = backendName;
     this.bAscent_or_Descent = bAscent_or_Descent;
 
+
     this.alignmentMarkValueArray = [ 155, 255 ];
+
+    this.feedbackShape = new NeuralNet.FeedbackShape();
+    this.feedbackShape.init(
+      explicit_input_height, explicit_input_width, explicit_input_channelCount,
+      output_channelCount // feedback_valueCount
+    );
   }
 
   disposeResources() {
@@ -442,9 +449,9 @@ class HeightWidthDepth {
 //      let inputHeight = this.height * this.largerFactor;
 //      let inputWidth = this.width * this.largerFactor;
 
-      let inputHeight = this.height;
-      let inputWidth = this.width;
-      let inputChannelCount = this.depth; // Must be 4;
+      let inputHeight = this.feedbackShape.input_height;
+      let inputWidth = this.feedbackShape.input_width;
+      let inputChannelCount = this.feedbackShape.input_channelCount; // Must be 4;
 
       this.testCanvas = document.createElement( "canvas" );
       this.testCanvas.height = inputHeight;
@@ -491,7 +498,7 @@ class HeightWidthDepth {
     // input image is created from canvas in real time.
     let bKeepInputTensor = false;
 
-    // input_height, input_width, input_channelCount,
+    // explicit_input_height, explicit_input_width, explicit_input_channelCount,
     // has_implicit_input,
     // vocabularyChannelCount, vocabularyCountPerInputChannel,
     // nConvStageTypeId,
@@ -513,7 +520,8 @@ class HeightWidthDepth {
       this.neuralWorker_PerformanceTest_addCase(
         theModeInfo.id, theModeInfo.nameForMessage,
         NeuralNet.ParamsBase.Pool.get_or_create_by(
-          this.height, this.width, this.depth,
+          this.explicit_input_height, this.explicit_input_width,
+          this.explicit_input_channelCount,
           this.has_implicit_input,
           this.vocabularyChannelCount, vocabularyCountPerInputChannel,
           nConvStageType,
@@ -806,8 +814,8 @@ async function* testerBackend( progressParent,
 //!!! (2023/05/11 Remarked)
 //  largerFactor,
 
-  input_height,
-  input_width,
+  explicit_input_height,
+  explicit_input_width,
   has_implicit_input,
 
   vocabularyChannelCount,
@@ -819,14 +827,14 @@ async function* testerBackend( progressParent,
 
   let testSet;
   try {
-    const depth = 4;
+    const explicit_channelCount = 4;
 
     // Using mobile phone's resolution ( 1080 * 2160 ) will crash the computer.
     // Using ( 1 / 15 ) of computer screen ( 1080 * 1920 ) (i.e. ( 72 * 128 )).
     testSet = new HeightWidthDepth(
 //!!! (2023/05/11 Remarked)
 //      largerFactor,
-      input_height, input_width, depth,
+      explicit_input_height, explicit_input_width, explicit_channelCount,
       has_implicit_input,
       vocabularyChannelCount,
       blockCountTotalRequested,
@@ -861,8 +869,8 @@ async function* testerBackendAll( progressParent,
 //!!! (2023/05/11 Remarked)
 //  largerFactor = 15,
 
-  input_height = 72,
-  input_width = 128,
+  explicit_input_height = 72,
+  explicit_input_width = 128,
   has_implicit_input = true,
 
   vocabularyChannelCount = 8, //6, //4,
@@ -884,7 +892,7 @@ async function* testerBackendAll( progressParent,
 //!!! (2023/05/11 Remarked)
 //      largerFactor,
 
-      input_height, input_width,
+      explicit_input_height, explicit_input_width,
       has_implicit_input,
       vocabularyChannelCount,
       blockCountTotalRequested,
@@ -898,7 +906,7 @@ async function* testerBackendAll( progressParent,
 //!!! (2023/05/11 Remarked)
 //      largerFactor,
 
-      input_height, input_width,
+      explicit_input_height, explicit_input_width,
       has_implicit_input,
       vocabularyChannelCount,
       blockCountTotalRequested,
@@ -926,13 +934,16 @@ function TestButton_onClick( event ) {
 //  let largerFactor = Number.parseInt( g_Controls.largerFactor_Text.value );
 //  g_Controls.largerFactor_Text.value = largerFactor;
   
-  let input_height = Number.parseInt( g_Controls.input_height_Text.value );
-  g_Controls.input_height_Text.value = input_height;
+  let explicit_input_height
+    = Number.parseInt( g_Controls.explicit_input_height_Text.value );
+  g_Controls.explicit_input_height_Text.value = explicit_input_height;
 
-  let input_width = Number.parseInt( g_Controls.input_width_Text.value );
-  g_Controls.input_width_Text.value = input_width;
+  let explicit_input_width
+    = Number.parseInt( g_Controls.explicit_input_width_Text.value );
+  g_Controls.explicit_input_width_Text.value = explicit_input_width;
 
-  let has_implicit_input = Number.parseInt( g_Controls.has_implicit_input_Checkbox.value );
+  let has_implicit_input
+    = Number.parseInt( g_Controls.has_implicit_input_Checkbox.value );
   g_Controls.has_implicit_input_Checkbox.value = has_implicit_input;
 
   let vocabularyChannelCount
@@ -972,8 +983,8 @@ function TestButton_onClick( event ) {
 //!!! (2023/05/11 Remarked)
 //    largerFactor,
 
-    input_height,
-    input_width,
+    explicit_input_height,
+    explicit_input_width,
     has_implicit_input,
     vocabularyChannelCount,
     blockCountTotalRequested,
