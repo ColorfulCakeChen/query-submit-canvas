@@ -667,7 +667,7 @@ class NeuralWorker_Proxies extends Recyclable.Root {
     const source_width1 = neuralNetParams1.input_width;
 
     let worker1_promise = workerProxy1
-      .TWO_WORKER__TWO_NET__step1_Int32Array_process_async(
+      .TWO_WORKER__TWO_NET__step1_TypedArray_process_async(
         worker0_value_Int32Array, source_height1, source_width1,
         this.previous_output_TypedArrayArray?.[ 1 ] );
 
@@ -705,14 +705,14 @@ class NeuralWorker_Proxies extends Recyclable.Root {
 
     // Note:
     //
-    // .TWO_WORKER__TWO_NET__step1_Int32Array_process_async()
+    // .TWO_WORKER__TWO_NET__step1_TypedArray_process_async()
     //   - could scale (if necessary) and fill (if exists).
     //   - will not post back source TypedArray.
     //
     // So, it is suitable for single neural network inference usage.
     //
     let worker0_promise = this.workerProxyArray[ 0 ]
-      .TWO_WORKER__TWO_NET__step1_Int32Array_process_async(
+      .TWO_WORKER__TWO_NET__step1_TypedArray_process_async(
         source_TypedArray, source_height, source_width,
         this.previous_output_TypedArrayArray?.[ 0 ] );
 
