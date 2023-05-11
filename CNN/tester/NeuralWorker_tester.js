@@ -17,16 +17,18 @@ import * as NumberImage from "../jsPerf/Ref/NumberImage.js";
 import * as HTMLTable from "../Display/HTMLTable.js";
 
 let g_Controls = {
-  largerFactor_Text: null,
+
+//!!! ...unfinished... (2023/05/11)
+//  largerFactor_Text: null,
+
   input_height_Text: null,
   input_width_Text: null,
 
-!!! ...unfinished... (2023/05/06) has_implicit_input
-
+  has_implicit_input_Checkbox: null,
 
   vocabularyChannelCount_Text: null,
   blockCountTotalRequested_Text: null,
-  output_channelCount_per_alignment_Text: null,
+  output_channelCount_Text: null,
 
   Info_TextArea: null,
   TestButton: null,
@@ -316,6 +318,8 @@ class PerformanceTestCase extends Recyclable.Root {
 class HeightWidthDepth {
 
   /**
+
+//!!! ...unfinished... (2023/05/11)
    * @param {number} largerFactor
    *   Simulate the real input size
    * as ( largerFactor * height ) * ( largerFactor * width ).
@@ -324,8 +328,11 @@ class HeightWidthDepth {
    * @param {number} width             image width
    * @param {number} depth             image channel count
    *
-   * @param {number} output_channelCount_per_alignment
-   *   The output channel count of one alignment.
+   * @param {boolean} has_implicit_input
+   *   Whether has implicit input.
+   *
+   * @param {number} output_channelCount
+   *   The output channel count of the neural network.
    *
    * @param {number} backendName
    *   Run this test set under which backend of tensorflow.js
@@ -335,19 +342,21 @@ class HeightWidthDepth {
    *   - If false, test from smallest NeuralWorker.Mode.Singleton.Ids.
    */
   constructor(
-    largerFactor,
+//!!! ...unfinished... (2023/05/11)
+//    largerFactor,
 
     height, width, depth,
 
     vocabularyChannelCount,
     blockCountTotalRequested,
-    output_channelCount_per_alignment,
+    output_channelCount,
   
     backendName, bAscent_or_Descent ) {
 
     this.disposeResources();
 
-    this.largerFactor = largerFactor;
+//!!! ...unfinished... (2023/05/11)
+//    this.largerFactor = largerFactor;
 
     this.height = height;
     this.width = width;
@@ -355,7 +364,7 @@ class HeightWidthDepth {
 
     this.vocabularyChannelCount = vocabularyChannelCount;
     this.blockCountTotalRequested = blockCountTotalRequested;
-    this.output_channelCount_per_alignment = output_channelCount_per_alignment;
+    this.output_channelCount = output_channelCount;
 
     this.backendName = backendName;
     this.bAscent_or_Descent = bAscent_or_Descent;
@@ -474,12 +483,7 @@ class HeightWidthDepth {
           + `theModeInfo.id ( ${theModeInfo.id} ) should be ( ${i} ).`
         );
 
-      // Ensure NO_FILL has twice output channel count.
-      let output_channelCount_real;
-      if ( theModeInfo.bFill ) // For FILL
-        output_channelCount_real = this.output_channelCount_per_alignment;
-      else // For NO_FILL
-        output_channelCount_real = this.output_channelCount_per_alignment * 2;
+!!! ...unfinished... (2023/05/11)
 
       this.neuralWorker_PerformanceTest_addCase(
         theModeInfo.id, theModeInfo.nameForMessage,
@@ -488,7 +492,7 @@ class HeightWidthDepth {
           this.vocabularyChannelCount, vocabularyCountPerInputChannel,
           nConvStageType,
           blockCountTotalRequested_ShuffleNet,
-          output_channelCount_real, output_asInputValueRange,
+          this.output_channelCount, output_asInputValueRange,
           bKeepInputTensor
         ),
         theModeInfo.id
@@ -773,7 +777,7 @@ async function* testerBackend( progressParent,
 
   vocabularyChannelCount,
   blockCountTotalRequested,
-  output_channelCount_per_alignment,
+  output_channelCount,
 
   backendName, bAscent_or_Descent,
 ) {
@@ -789,7 +793,7 @@ async function* testerBackend( progressParent,
       input_height, input_width, depth,
       vocabularyChannelCount,
       blockCountTotalRequested,
-      output_channelCount_per_alignment,
+      output_channelCount,
       backendName, bAscent_or_Descent,
     );
 
@@ -823,7 +827,7 @@ async function* testerBackendAll( progressParent,
 
   vocabularyChannelCount = 8, //6, //4,
   blockCountTotalRequested = 84, //100, //200, //50, //20, //10,
-  output_channelCount_per_alignment = 6,
+  output_channelCount = 6,
 ) {
 
   let progress_NeuralWorker_tester_cpu = progressParent.child_add(
@@ -841,7 +845,7 @@ async function* testerBackendAll( progressParent,
       input_width,
       vocabularyChannelCount,
       blockCountTotalRequested,
-      output_channelCount_per_alignment,
+      output_channelCount,
       "webgl", bAscent_or_Descent,
     );
 
@@ -852,7 +856,7 @@ async function* testerBackendAll( progressParent,
       input_width,
       vocabularyChannelCount,
       blockCountTotalRequested,
-      output_channelCount_per_alignment,
+      output_channelCount,
       "cpu", bAscent_or_Descent,
     );
   }
@@ -871,14 +875,19 @@ function TestButton_onClick( event ) {
   g_Controls.Info_TextArea.textContent = "";
 
   // Extract parameters from UI.
-  let largerFactor = Number.parseInt( g_Controls.largerFactor_Text.value );
-  g_Controls.largerFactor_Text.value = largerFactor;
+
+//!!! ...unfinished... (2023/05/11)
+//  let largerFactor = Number.parseInt( g_Controls.largerFactor_Text.value );
+//  g_Controls.largerFactor_Text.value = largerFactor;
   
   let input_height = Number.parseInt( g_Controls.input_height_Text.value );
   g_Controls.input_height_Text.value = input_height;
 
   let input_width = Number.parseInt( g_Controls.input_width_Text.value );
   g_Controls.input_width_Text.value = input_width;
+
+  let has_implicit_input = Number.parseInt( g_Controls.has_implicit_input_Checkbox.value );
+  g_Controls.has_implicit_input_Checkbox.value = has_implicit_input;
 
   let vocabularyChannelCount
     = Number.parseInt( g_Controls.vocabularyChannelCount_Text.value );
@@ -888,10 +897,10 @@ function TestButton_onClick( event ) {
     = Number.parseInt( g_Controls.blockCountTotalRequested_Text.value );
   g_Controls.blockCountTotalRequested_Text.value = blockCountTotalRequested;
 
-  let output_channelCount_per_alignment
-    = Number.parseInt( g_Controls.output_channelCount_per_alignment_Text.value );
-  g_Controls.output_channelCount_per_alignment_Text.value
-    = output_channelCount_per_alignment;
+  let output_channelCount
+    = Number.parseInt( g_Controls.output_channelCount_Text.value );
+  g_Controls.output_channelCount_Text.value
+    = output_channelCount;
 
   // Prepare output table.
   {
@@ -918,7 +927,7 @@ function TestButton_onClick( event ) {
     input_width,
     vocabularyChannelCount,
     blockCountTotalRequested,
-    output_channelCount_per_alignment,
+    output_channelCount,
   );
 
   let progressReceiver
