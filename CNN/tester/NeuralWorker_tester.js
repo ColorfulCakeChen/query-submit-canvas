@@ -285,8 +285,6 @@ class PerformanceTestCase extends Recyclable.Root {
         let { done, value: [ sourceTensor, sourceTypedArrayAsyncFunction ] }
           = await createTensor_asyncGenerator.next();
 
-//!!! ...unfinished... (2023/05/11)
-
 //!!! (2023/05/11 Remarked) Use NeuralNet_ScaleFiller instead?
 //        let inputTensor3d = neuralNet.create_ScaledSourceTensor_from_PixelData( theCanvas );
 
@@ -723,8 +721,8 @@ class HeightWidthDepth {
             }
 
             {
-              // NeuralNet_try_result() shoul be called after prepare_async() so that
-              // the nConvStageTypeId has been adjusted.
+              // NeuralNet_try_result() shoul be called after prepare_async()
+              // so that the nConvStageTypeId has been adjusted.
               let resultFloat32Array
                 = testCase.NeuralNet_try_result( this.testCanvas,
                     this.alignmentMarkValueArray,
