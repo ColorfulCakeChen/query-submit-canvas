@@ -216,6 +216,7 @@ class PerformanceTestCase extends Recyclable.Root {
 
     tf.tidy( () => {
       let progress, neuralNet;
+      let createTensor_asyncGenerator;
       let outputTensor3d;
       try {
         PerformanceTestCase.randomTestWeightArray_create();
@@ -258,10 +259,7 @@ class PerformanceTestCase extends Recyclable.Root {
             + `when initializing `
             + `NeuralNet object successfully. ${neuralNet}`);
 
-        let inputTensor3d;
         {
-//!!! ...unfinished... (2023/05/11)
-
           this.ScaleFiller = new NeuralNet.ScaleFiller(
             this.neuralNetParamsBase.inferencedParams.input_height,
             this.neuralNetParamsBase.inferencedParams.input_width,
@@ -275,24 +273,24 @@ class PerformanceTestCase extends Recyclable.Root {
               0, 0, theCanvas.width, theCanvas.height );
           }
 
-          let createTensor_asyncGenerator
+          createTensor_asyncGenerator
             = this.ScaleFiller.createTensor_by_fill_asyncGenerator(
                 imageData.data, imageData.height, imageData.width,
                 false, //bTwoTensors
                 neuralNet.feedbackShape,
                 alignmentMarkValueArray, previous_output_TypedArrayArray
               );
-  !!!
-          inputTensor3d = tf.tensor3d(
-            imageData.data, [ imageData.height, imageData.width ], "int32" );
-
-
-            inputTensor3d
         }
-  
+
+        let { done, value: [ sourceTensor, sourceTypedArrayAsyncFunction ] }
+          = await createTensor_asyncGenerator.next();
+
+//!!! ...unfinished... (2023/05/11)
+
 //!!! (2023/05/11 Remarked) Use NeuralNet_ScaleFiller instead?
 //        let inputTensor3d = neuralNet.create_ScaledSourceTensor_from_PixelData( theCanvas );
-        outputTensor3d = neuralNet.apply( inputTensor3d );
+
+        outputTensor3d = neuralNet.apply( sourceTensor );
         resultFloat32Array = outputTensor3d.dataSync();
 
       } finally {
@@ -304,6 +302,12 @@ class PerformanceTestCase extends Recyclable.Root {
         if ( progress ) {
           progress.disposeResources_and_recycleToPool();
           progress = null;
+        }
+
+        // Ensure all intermediate tensors are released.
+        if ( createTensor_asyncGenerator ) {
+          createTensor_asyncGenerator.return();
+          createTensor_asyncGenerator = null;
         }
 
         if ( outputTensor3d ) {
