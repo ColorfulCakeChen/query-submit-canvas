@@ -214,106 +214,104 @@ class PerformanceTestCase extends Recyclable.Root {
 
     let resultFloat32Array;
 
-    tf.tidy( () => {
-      let progress, neuralNet;
-      let createTensor_asyncGenerator;
-      let outputTensor3d;
-      try {
-        PerformanceTestCase.randomTestWeightArray_create();
+    let progress, neuralNet;
+    let createTensor_asyncGenerator;
+    let outputTensor3d;
+    try {
+      PerformanceTestCase.randomTestWeightArray_create();
 
-        let neuralNetParams = NeuralNet.Params
-          .get_or_create_by_NeuralNetParamsBase( this.neuralNetParamsBase );
+      let neuralNetParams = NeuralNet.Params
+        .get_or_create_by_NeuralNetParamsBase( this.neuralNetParamsBase );
 
-        progress = ValueMax.Percentage.Aggregate.Pool.get_or_create_by();
-        neuralNet = this.neuralNet = NeuralNet.Base.Pool.get_or_create_by();
+      progress = ValueMax.Percentage.Aggregate.Pool.get_or_create_by();
+      neuralNet = this.neuralNet = NeuralNet.Base.Pool.get_or_create_by();
 
-        let bInitOk = neuralNet.init( progress,
-          PerformanceTestCase.randomTestWeightArray, 0, neuralNetParams );
+      let bInitOk = neuralNet.init( progress,
+        PerformanceTestCase.randomTestWeightArray, 0, neuralNetParams );
 
-        let strWeightCountInfo = neuralNet.toString_WeightCount();
-        let strWeightCountInfo_withConvType = `${strWeightCountInfo}, `
-          + `nConvStageTypeName=`
-          + `${this.neuralNetParamsBase.nConvStageTypeName_with_Id}.`
-          ;
+      let strWeightCountInfo = neuralNet.toString_WeightCount();
+      let strWeightCountInfo_withConvType = `${strWeightCountInfo}, `
+        + `nConvStageTypeName=`
+        + `${this.neuralNetParamsBase.nConvStageTypeName_with_Id}.`
+        ;
 
-        let strWeightCountInfoLong = `NeuralNet.${this.testCaseName}: `
-          + `${strWeightCountInfo_withConvType}`;
+      let strWeightCountInfoLong = `NeuralNet.${this.testCaseName}: `
+        + `${strWeightCountInfo_withConvType}`;
 
-        console.log( strWeightCountInfoLong );
+      console.log( strWeightCountInfoLong );
 
-        if ( g_Controls.Info_TextArea.textContent
-               .indexOf( strWeightCountInfo ) < 0 ) {
-          if ( g_Controls.Info_TextArea.textContent.length > 0 )
-            g_Controls.Info_TextArea.textContent += "\n";
-          g_Controls.Info_TextArea.textContent += strWeightCountInfo_withConvType;
-        }
+      if ( g_Controls.Info_TextArea.textContent
+              .indexOf( strWeightCountInfo ) < 0 ) {
+        if ( g_Controls.Info_TextArea.textContent.length > 0 )
+          g_Controls.Info_TextArea.textContent += "\n";
+        g_Controls.Info_TextArea.textContent += strWeightCountInfo_withConvType;
+      }
 
-        if ( false == bInitOk )
-          throw Error( `Failed to initialize neuralNet object. `
-            + `neuralNetParams ( ${neuralNetParams} ), `
-            + `neuralNet ( ${neuralNet} ).`
-          );
+      if ( false == bInitOk )
+        throw Error( `Failed to initialize neuralNet object. `
+          + `neuralNetParams ( ${neuralNetParams} ), `
+          + `neuralNet ( ${neuralNet} ).`
+        );
 
-        if ( 100 != progress.valuePercentage )
-          throw Error( `Progress (${progress.valuePercentage}) should be 100 `
-            + `when initializing `
-            + `NeuralNet object successfully. ${neuralNet}`);
+      if ( 100 != progress.valuePercentage )
+        throw Error( `Progress (${progress.valuePercentage}) should be 100 `
+          + `when initializing `
+          + `NeuralNet object successfully. ${neuralNet}`);
 
+      {
+        this.ScaleFiller = new NeuralNet.ScaleFiller(
+          this.neuralNetParamsBase.inferencedParams.input_height,
+          this.neuralNetParamsBase.inferencedParams.input_width,
+          this.neuralNetParamsBase.inferencedParams.input_channelCount
+        );
+
+        let imageData;
         {
-          this.ScaleFiller = new NeuralNet.ScaleFiller(
-            this.neuralNetParamsBase.inferencedParams.input_height,
-            this.neuralNetParamsBase.inferencedParams.input_width,
-            this.neuralNetParamsBase.inferencedParams.input_channelCount
-          );
-
-          let imageData;
-          {
-            let ctx = theCanvas.getContext( "2d" );
-            imageData = ctx.getImageData(
-              0, 0, theCanvas.width, theCanvas.height );
-          }
-
-          createTensor_asyncGenerator
-            = this.ScaleFiller.createTensor_by_fill_asyncGenerator(
-                imageData.data, imageData.height, imageData.width,
-                false, //bTwoTensors
-                neuralNet.feedbackShape,
-                alignmentMarkValueArray, previous_output_TypedArrayArray
-              );
+          let ctx = theCanvas.getContext( "2d" );
+          imageData = ctx.getImageData(
+            0, 0, theCanvas.width, theCanvas.height );
         }
 
-        let { done, value: [ sourceTensor, sourceTypedArrayAsyncFunction ] }
-          = await createTensor_asyncGenerator.next();
+        createTensor_asyncGenerator
+          = this.ScaleFiller.createTensor_by_fill_asyncGenerator(
+              imageData.data, imageData.height, imageData.width,
+              false, //bTwoTensors
+              neuralNet.feedbackShape,
+              alignmentMarkValueArray, previous_output_TypedArrayArray
+            );
+      }
+
+      let { done, value: [ sourceTensor, sourceTypedArrayAsyncFunction ] }
+        = await createTensor_asyncGenerator.next();
 
 //!!! (2023/05/11 Remarked) Use NeuralNet_ScaleFiller instead?
 //        let inputTensor3d = neuralNet.create_ScaledSourceTensor_from_PixelData( theCanvas );
 
-        outputTensor3d = neuralNet.apply( sourceTensor );
-        resultFloat32Array = outputTensor3d.dataSync();
+      outputTensor3d = neuralNet.apply( sourceTensor );
+      resultFloat32Array = outputTensor3d.dataSync();
 
-      } finally {
-        if ( neuralNet ) {
-          neuralNet.disposeResources_and_recycleToPool();
-          neuralNet = null;
-        }
-
-        if ( progress ) {
-          progress.disposeResources_and_recycleToPool();
-          progress = null;
-        }
-
-        // Ensure all intermediate tensors are released.
-        if ( createTensor_asyncGenerator ) {
-          createTensor_asyncGenerator.return();
-          createTensor_asyncGenerator = null;
-        }
-
-        if ( outputTensor3d ) {
-          tf.dispose( outputTensor3d );
-          outputTensor3d = null;
-        }
+    } finally {
+      if ( neuralNet ) {
+        neuralNet.disposeResources_and_recycleToPool();
+        neuralNet = null;
       }
-    } );
+
+      if ( progress ) {
+        progress.disposeResources_and_recycleToPool();
+        progress = null;
+      }
+
+      // Ensure all intermediate tensors are released.
+      if ( createTensor_asyncGenerator ) {
+        createTensor_asyncGenerator.return();
+        createTensor_asyncGenerator = null;
+      }
+
+      if ( outputTensor3d ) {
+        tf.dispose( outputTensor3d );
+        outputTensor3d = null;
+      }
+    }
 
     return resultFloat32Array;
   }
