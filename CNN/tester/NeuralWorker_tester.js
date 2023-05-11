@@ -356,10 +356,11 @@ class HeightWidthDepth {
 
   /**
 
-//!!! ...unfinished... (2023/05/11)
-   * @param {number} largerFactor
-   *   Simulate the real input size
-   * as ( largerFactor * height ) * ( largerFactor * width ).
+///!!! ...unfinished... (2023/05/11)
+//    * @param {number} largerFactor
+//    *   Simulate the real input size
+//    * as ( largerFactor * height ) * ( largerFactor * width ).
+
    *
    * @param {number} height            image height
    * @param {number} width             image width
@@ -568,9 +569,9 @@ class HeightWidthDepth {
         this.neuralWorkerProxies, this.alignmentMarkValueArray );
     }
 
-    // Note: Even if non-first time test this case, it is still necessary to wait
-    //       for its initialization completely (which is doing/done by this case's
-    //       first time testing).
+    // Note: Even if non-first time test this case, it is still necessary to
+    //       wait for its initialization completely (which is doing/done by
+    //       this case's first time testing).
     await testCase.preparePromise;
 
     let imageData;
