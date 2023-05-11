@@ -346,6 +346,7 @@ class HeightWidthDepth {
 //    largerFactor,
 
     height, width, depth,
+    has_implicit_input,
 
     vocabularyChannelCount,
     blockCountTotalRequested,
@@ -361,6 +362,8 @@ class HeightWidthDepth {
     this.height = height;
     this.width = width;
     this.depth = depth;
+
+    this.has_implicit_input = has_implicit_input;
 
     this.vocabularyChannelCount = vocabularyChannelCount;
     this.blockCountTotalRequested = blockCountTotalRequested;
@@ -399,20 +402,24 @@ class HeightWidthDepth {
       = ImageSourceBag.Base.Pool.get_or_create_by( "int32" );
 
     {
-      let largerHeight = this.height * this.largerFactor;
-      let largerWidth = this.width * this.largerFactor;
+//!!! (2023/05/11 Remarked)
+//      let inputHeight = this.height * this.largerFactor;
+//      let inputWidth = this.width * this.largerFactor;
+
+      let inputHeight = this.height;
+      let inputWidth = this.width;
       let inputChannelCount = this.depth; // Must be 4;
 
       this.testCanvas = document.createElement( "canvas" );
-      this.testCanvas.height = largerHeight;
-      this.testCanvas.width = largerWidth;
+      this.testCanvas.height = inputHeight;
+      this.testCanvas.width = inputWidth;
 
       let inputImage = this.testPerformance_imageSourceBag.getImage_by(
-        largerHeight, largerWidth, inputChannelCount );
+        inputHeight, inputWidth, inputChannelCount );
 
       let contextAttributes = { willReadFrequently: true };
       let ctx = this.testCanvas.getContext( "2d", contextAttributes );
-      let imageData = ctx.createImageData( largerHeight, largerWidth );
+      let imageData = ctx.createImageData( inputHeight, inputWidth );
       for ( let i = 0; i < imageData.data.length; ++i ) {
         imageData.data[ i ] = inputImage.dataArray[ i ];
       }
@@ -449,6 +456,7 @@ class HeightWidthDepth {
     let bKeepInputTensor = false;
 
     // input_height, input_width, input_channelCount,
+    // has_implicit_input,
     // vocabularyChannelCount, vocabularyCountPerInputChannel,
     // nConvStageTypeId,
     // blockCountTotalRequested,
@@ -483,12 +491,11 @@ class HeightWidthDepth {
           + `theModeInfo.id ( ${theModeInfo.id} ) should be ( ${i} ).`
         );
 
-!!! ...unfinished... (2023/05/11)
-
       this.neuralWorker_PerformanceTest_addCase(
         theModeInfo.id, theModeInfo.nameForMessage,
         NeuralNet.ParamsBase.Pool.get_or_create_by(
           this.height, this.width, this.depth,
+          this.has_implicit_input,
           this.vocabularyChannelCount, vocabularyCountPerInputChannel,
           nConvStageType,
           blockCountTotalRequested_ShuffleNet,
@@ -770,10 +777,12 @@ class HeightWidthDepth {
  *
  */
 async function* testerBackend( progressParent,
-  largerFactor,
+//!!! (2023/05/11 Remarked)
+//  largerFactor,
 
   input_height,
   input_width,
+  has_implicit_input,
 
   vocabularyChannelCount,
   blockCountTotalRequested,
@@ -789,8 +798,10 @@ async function* testerBackend( progressParent,
     // Using mobile phone's resolution ( 1080 * 2160 ) will crash the computer.
     // Using ( 1 / 15 ) of computer screen ( 1080 * 1920 ) (i.e. ( 72 * 128 )).
     testSet = new HeightWidthDepth(
-      largerFactor,
+//!!! (2023/05/11 Remarked)
+//      largerFactor,
       input_height, input_width, depth,
+      has_implicit_input,
       vocabularyChannelCount,
       blockCountTotalRequested,
       output_channelCount,
@@ -820,10 +831,13 @@ async function* testerBackend( progressParent,
  *
  */
 async function* testerBackendAll( progressParent,
-  largerFactor = 15,
+
+//!!! (2023/05/11 Remarked)
+//  largerFactor = 15,
 
   input_height = 72,
   input_width = 128,
+  has_implicit_input = true,
 
   vocabularyChannelCount = 8, //6, //4,
   blockCountTotalRequested = 84, //100, //200, //50, //20, //10,
@@ -840,9 +854,13 @@ async function* testerBackendAll( progressParent,
     let bAscent_or_Descent;
     bAscent_or_Descent = false; // Descent
     yield* testerBackend( progress_NeuralWorker_tester_webgl,
-      largerFactor,
+
+//!!! (2023/05/11 Remarked)
+//      largerFactor,
+
       input_height,
       input_width,
+      has_implicit_input,
       vocabularyChannelCount,
       blockCountTotalRequested,
       output_channelCount,
@@ -851,9 +869,13 @@ async function* testerBackendAll( progressParent,
 
     bAscent_or_Descent = true; // Ascent
     yield* testerBackend( progress_NeuralWorker_tester_cpu,
-      largerFactor,
+
+//!!! (2023/05/11 Remarked)
+//      largerFactor,
+
       input_height,
       input_width,
+      has_implicit_input,
       vocabularyChannelCount,
       blockCountTotalRequested,
       output_channelCount,
