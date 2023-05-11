@@ -728,8 +728,8 @@ class HeightWidthDepth {
                 timeInfo.elapsed = timeInfo.end - timeInfo.begin;
                 timeInfo.elapsedTotal += timeInfo.elapsed;
 
-                // Copy the last 2nd testing result (i.e. the last 1st input)
-                // as previous time output for verification.
+                // Deep copy the last 2nd testing result (i.e. the last 1st
+                // input) as previous time output for verification.
                 if ( i == ( timeInfo.times - 2 ) ) {
                   const resultArrayLength = resultFloat32ArrayArray.length;
                   previous_output_TypedArrayArray_for_verification
