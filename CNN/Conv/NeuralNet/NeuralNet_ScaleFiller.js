@@ -233,7 +233,7 @@ class NeuralNet_ScaleFiller {
         + `= ${source_valueCount} / ( ${source_size_per_channel} ) `
         + `= ${source_channelCount} ) `
         + `should be the same as `
-        + `target_channelCount ( ${target_channelCount} ).`
+        + `target_channelCount ( ${this.target_channelCount} ).`
       );
 
     // 1.2 How many tensors will be yielded.
