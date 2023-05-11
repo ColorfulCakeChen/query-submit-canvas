@@ -219,7 +219,8 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
    *
    * @param {Float32Array[] | Int32Array[]} previous_output_TypedArrayArray
    *   An array [ TypedArray, TypedArray ] representing the previous time
-   * output of the (pair of) neural network(s).
+   * output of the (pair of) neural network(s). It could be null which means do
+   * not fill feedback (i.e. previous time output) into the source_TypedArray.
    *
    * @return {Promise( Float32Array | Int32Array )}
    *   Return a promise resolved to an array [ TypedArray, TypedArray ]
@@ -307,7 +308,9 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
    * ImageData.width.
    *
    * @param {Float32Array|Int32Array} previous_output_TypedArray
-   *   A TypedArray representing the previous time output of the neural network.
+   *   A TypedArray representing the previous time output of the neural
+   * network. It could be null which means do not fill feedback (i.e. previous
+   * time output) into the source_TypedArray.
    *
    * @return {AsyncWorker.Resulter}
    *   Return an async iterator tracking the result of processing. It will
@@ -387,7 +390,9 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
    * ImageData.width.
    *
    * @param {Float32Array|Int32Array} previous_output_TypedArray
-   *   A TypedArray representing the previous time output of the neural network.
+   *   A TypedArray representing the previous time output of the neural
+   * network. It could be null which means do not fill feedback (i.e. previous
+   * time output) into the source_TypedArray.
    *
    * @return {Promise( Float32Array | Int32Array )}
    *   Return a promise resolved to a TypedArray representing the neural

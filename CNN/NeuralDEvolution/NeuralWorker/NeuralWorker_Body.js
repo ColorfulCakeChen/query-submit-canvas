@@ -541,7 +541,8 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
    *
    * @param {Float32Array[] | Int32Array[]} previous_output_TypedArrayArray
    *   An array [ TypedArray, TypedArray ] representing the previous time
-   * output of the (pair of) neural network(s).
+   * output of the (pair of) neural network(s). It could be null which means do
+   * not fill feedback (i.e. previous time output) into the source_TypedArray.
    *
    * @yield {Float32Array[] | Int32Array[]}
    *   Resolve to { done: true, value: { value: [ TypedArray, TypedArray ],
@@ -703,7 +704,9 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
    * ImageData.width.
    *
    * @param {Float32Array|Int32Array} previous_output_TypedArray
-   *   A TypedArray representing the previous time output of the neural network.
+   *   A TypedArray representing the previous time output of the neural
+   * network. It could be null which means do not fill feedback (i.e. previous
+   * time output) into the source_TypedArray.
    *
    * @param {boolean} bApply_or_Applier
    *   - If true, use neuralNet.apply().
@@ -897,7 +900,9 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
    * ImageData.width.
    *
    * @param {Float32Array|Int32Array} previous_output_TypedArray
-   *   A TypedArray representing the previous time output of the neural network.
+   *   A TypedArray representing the previous time output of the neural
+   * network. It could be null which means do not fill feedback (i.e. previous
+   * time output) into the source_TypedArray.
    *
    * @yield {Float32Array|Int32Array}
    *   Resolve to { done: true, value: { value: TypedArray,
