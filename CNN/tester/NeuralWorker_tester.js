@@ -118,6 +118,9 @@ class PerformanceTestCase extends Recyclable.Root {
     this.testCaseName = testCaseName;
     this.neuralNetParamsBase = neuralNetParamsBase;
     this.nNeuralWorker_ModeId = nNeuralWorker_ModeId;
+
+    this.neuralNetCount
+      = NeuralWorker.Mode.neuralNetCount_get( nNeuralWorker_ModeId );
   }
 
   /** @override */
@@ -156,14 +159,11 @@ class PerformanceTestCase extends Recyclable.Root {
 
       PerformanceTestCase.randomTestWeightArray_create();
 
-      let neuralNetCount
-        = NeuralWorker.Mode.neuralNetCount_get( this.nNeuralWorker_ModeId );
-
       // Although neural network configuration will be copied (not transferred)
       // to workers, they still need be cloned because NeuralWorker.Proxy will
       // keep (i.e. owned and destroyed) them.
       let neuralNetParamsBaseArray;
-      if ( neuralNetCount > 1 ) {
+      if ( this.neuralNetCount > 1 ) {
         let neuralNetParams0 = this.neuralNetParamsBase.clone();
         let neuralNetParams1 = this.neuralNetParamsBase.clone();
         neuralNetParamsBaseArray = [ neuralNetParams0, neuralNetParams1 ];
@@ -173,7 +173,7 @@ class PerformanceTestCase extends Recyclable.Root {
       }
 
       let weightArrayBufferArray;
-      if ( neuralNetCount > 1 ) {
+      if ( this.neuralNetCount > 1 ) {
         let weightArray0
           = new Float32Array( PerformanceTestCase.randomTestWeightArray );
         let weightArray1
@@ -202,7 +202,7 @@ class PerformanceTestCase extends Recyclable.Root {
           + `${neuralWorkerProxies}` );
 
       {
-        if ( neuralNetCount > 1 ) {
+        if ( this.neuralNetCount > 1 ) {
           this.alignmentMarkValueArray = [ 155, 255 ];
         } else {
           this.alignmentMarkValueArray = [ 55 ];
@@ -226,7 +226,7 @@ class PerformanceTestCase extends Recyclable.Root {
 
   /** Try to compute neural network result in this worker. */
   async NeuralNet_try_result_async( theCanvas,
-    alignmentMarkValueArray, previous_output_TypedArrayArray ) {
+    alignmentMarkValue, previous_output_TypedArray ) {
 
     let resultFloat32Array;
 
@@ -289,6 +289,9 @@ class PerformanceTestCase extends Recyclable.Root {
         }
 
         const bTwoTensors = false;
+        const alignmentMarkValueArray = [ alignmentMarkValue ];
+        const previous_output_TypedArrayArray = [ previous_output_TypedArray ];
+
         createTensor_asyncGenerator
           = this.ScaleFiller.createTensor_by_fill_asyncGenerator(
               imageData.data, imageData.height, imageData.width,
@@ -731,10 +734,9 @@ class HeightWidthDepth {
                 // Deep copy the last 2nd testing result (i.e. the last 1st
                 // input) as previous time output for verification.
                 if ( i == ( timeInfo.times - 2 ) ) {
-                  const resultArrayLength = resultFloat32ArrayArray.length;
                   previous_output_TypedArrayArray_for_verification
                     = new Array( resultArrayLength );
-                  for ( let j = 0; j < resultArrayLength; ++j ) {
+                  for ( let j = 0; j < testCase.neuralNetCount; ++j ) {
                     previous_output_TypedArrayArray_for_verification[ j ]
                       = resultFloat32ArrayArray[ j ].slice();
                   }
@@ -750,29 +752,28 @@ class HeightWidthDepth {
             }
 
             {
-              // NeuralNet_try_result_async() should be called after prepare_async()
-              // so that the nConvStageTypeId has been adjusted.
-              let resultFloat32Array
-                = await testCase.NeuralNet_try_result_async( this.testCanvas,
-                  testCase.alignmentMarkValueArray,
-                    previous_output_TypedArrayArray_for_verification );
-
-              let lhsNumberArray = resultFloat32ArrayArray[ 0 ];
-              let rhsNumberArray = resultFloat32Array;
               let prefixMsg = "NeuralNet";
-              let lhsNumberArrayName = "output0";
-              let rhsNumberArrayName = "outputRef";
               let postfixMsg = testCase.testCaseName;
 
-              asserter_Equal.assert_NumberArray_NumberArray(
-                lhsNumberArray, rhsNumberArray,
-                prefixMsg, lhsNumberArrayName, rhsNumberArrayName, postfixMsg );
+              for ( let i = i; i < testCase.neuralNetCount; ++i ) {
+                // NeuralNet_try_result_async() should be called after prepare_async()
+                // so that the nConvStageTypeId has been adjusted.
+                let resultFloat32Array
+                  = await testCase.NeuralNet_try_result_async(
+                      this.testCanvas,
+                      testCase.alignmentMarkValueArray[ i ],
+                      previous_output_TypedArrayArray_for_verification[ i ] );
 
-              lhsNumberArray = resultFloat32ArrayArray[ 1 ];
-              lhsNumberArrayName = "output1";
-              asserter_Equal.assert_NumberArray_NumberArray(
-                lhsNumberArray, rhsNumberArray,
-                prefixMsg, lhsNumberArrayName, rhsNumberArrayName, postfixMsg );
+                let lhsNumberArray = resultFloat32ArrayArray[ 0 ];
+                let rhsNumberArray = resultFloat32Array;
+                let lhsNumberArrayName = `output${i}`;
+                let rhsNumberArrayName = `outputRef${i}`;
+                let postfixMsg = testCase.testCaseName;
+
+                asserter_Equal.assert_NumberArray_NumberArray(
+                  lhsNumberArray, rhsNumberArray,
+                  prefixMsg, lhsNumberArrayName, rhsNumberArrayName, postfixMsg );
+              }
             }
 
             progressToAdvance.value_advance(); // Every NeuralWorker.Mode complete
