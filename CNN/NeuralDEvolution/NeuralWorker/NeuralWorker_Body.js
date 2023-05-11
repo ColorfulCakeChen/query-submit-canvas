@@ -182,36 +182,6 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
         let neuralNetParamsBase = neuralNetParamsBaseArray[ i ];
         let weightArrayBuffer = weightArrayBufferArray[ i ];
 
-        // Create NeuralNet_ScaleFiller.
-        if ( this.ScaleFiller ) {
-          if (   ( neuralNetParamsBase.inferencedParams.input_height
-                     != this.ScaleFiller.target_height )
-              || ( neuralNetParamsBase.inferencedParams.input_width
-                     != this.ScaleFiller.target_width )
-              || ( neuralNetParamsBase.inferencedParams.input_channelCount
-                     != this.ScaleFiller.target_channelCount ) )
-
-            throw Error( `NeuralWorker_Body.${funcNameInMessage}(): `
-              + `neuralNetParamsBase[ ${i} ].inferencedParams' `
-              + `( input_height, input_width, input_channelCount ) = ( `
-              + `${neuralNetParamsBase.input_height}, `
-              + `${neuralNetParamsBase.input_width}, `
-              + `${neuralNetParamsBase.input_channelCount} ) `
-              + `should be the same as another neuralNetParamsBase's ( `
-              + `${this.ScaleFiller.target_height}, `
-              + `${this.ScaleFiller.target_width}, `
-              + `${this.ScaleFiller.target_channelCount} ). `
-              + `neuralNetParamsBase={ ${strNeuralNetParamsBase} }.`
-            );
-
-        } else {
-          this.ScaleFiller = new NeuralNet.ScaleFiller(
-            neuralNetParamsBase.inferencedParams.input_height,
-            neuralNetParamsBase.inferencedParams.input_width,
-            neuralNetParamsBase.inferencedParams.input_channelCount
-          );
-        }
-
         let inputWeightArray;
         {
           let weightElementOffsetBegin = 0;
@@ -267,7 +237,36 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
 
         progress.disposeResources_and_recycleToPool();
         progress = null;
-  
+
+        // Create NeuralNet_ScaleFiller.
+        if ( this.ScaleFiller ) {
+          if (   ( neuralNet.input_height
+                     != this.ScaleFiller.target_height )
+              || ( neuralNet.input_width
+                     != this.ScaleFiller.target_width )
+              || ( neuralNet.input_channelCount != this.ScaleFiller.target_channelCount ) )
+
+            throw Error( `NeuralWorker_Body.${funcNameInMessage}(): `
+              + `neuralNetArray[ ${i} ]'s `
+              + `( input_height, input_width, input_channelCount ) = ( `
+              + `${neuralNet.input_height}, `
+              + `${neuralNet.input_width}, `
+              + `${neuralNet.input_channelCount} ) `
+              + `should be the same as another neuralNet's ( `
+              + `${this.ScaleFiller.target_height}, `
+              + `${this.ScaleFiller.target_width}, `
+              + `${this.ScaleFiller.target_channelCount} ). `
+              + `neuralNetParamsBase={ ${strNeuralNetParamsBase} }.`
+            );
+
+        } else {
+          this.ScaleFiller = new NeuralNet.ScaleFiller(
+            neuralNet.input_height,
+            neuralNet.input_width,
+            neuralNet.input_channelCount
+          );
+        }
+
         bAllOk = bAllOk && bInitOk;
 
         // If need log dry-run time, also log neural network weight count.
