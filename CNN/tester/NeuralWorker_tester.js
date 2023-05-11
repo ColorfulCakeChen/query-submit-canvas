@@ -772,7 +772,9 @@ class HeightWidthDepth {
 
                 asserter_Equal.assert_NumberArray_NumberArray(
                   lhsNumberArray, rhsNumberArray,
-                  prefixMsg, lhsNumberArrayName, rhsNumberArrayName, postfixMsg );
+                  prefixMsg,
+                  lhsNumberArrayName, rhsNumberArrayName,
+                  postfixMsg );
               }
             }
 
