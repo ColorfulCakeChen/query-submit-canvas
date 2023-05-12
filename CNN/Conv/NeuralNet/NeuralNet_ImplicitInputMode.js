@@ -51,42 +51,63 @@ class NeuralNet_ImplicitInputMode extends Int {
 
   /**
    * @param {number} nNeuralNet_ImplicitInputModeId
-   *   The numeric identifier of NeuralNet_ImplicitInputMode.
-   * (NeuralWorker.Mode.Singleton.Ids.Xxx)
+   *   The numeric identifier of the neural network implicit input mode
+   * (NeuralNet.ImplicitInputMode.Singleton.Ids.Xxx).
    *
    * @return {boolean}
-   *   - If true, there will be extra space in the input image for filling
-   *       alignment mark and/or previous time output.
-   *
-   *     - .inferencedParams.implicit_input_Xxx will be non-zero.
-   *
-   *     - In this case, the .output_asInputValueRange should also be true so
-   *         that the previous time output is suitable for feedback.
-   *
-   *   - If false, there will be no extra space in the input image for filling
-   *       alignment mark and/or previous time output.
-   *
-   *     - .inferencedParams.implicit_input_Xxx will be 0.
-   *
+   *   Return NeuralNet_ImplicitInputMode.Info.bFillAlignmentMark of the mode
+   * id.
    */
-  static has_implicit_input_get( nNeuralNet_ImplicitInputModeId ) {
+  static bFillAlignmentMark_get( nNeuralNet_ImplicitInputModeId ) {
     let info = NeuralNet_ImplicitInputMode.Singleton
       .getInfo_byId( nNeuralNet_ImplicitInputModeId );
     if ( info )
-      return info.v;
+      return info.bFillAlignmentMark;
     return NaN;
   }
  
   /**
    * @param {number} nNeuralNet_ImplicitInputModeId
-   *   The numeric identifier of NeuralNet_ImplicitInputMode.
-   * (NeuralWorker.Mode.Singleton.Ids.Xxx)
+   *   The numeric identifier of the neural network implicit input mode
+   * (NeuralNet.ImplicitInputMode.Singleton.Ids.Xxx).
    *
    * @return {boolean}
-   *   If true, restrict output value to the (neural network) input value range
-   * (i.e. non-negative integer which can be used in embedding looking up). This
-   * is useful if the output will be used as the recurrent feedback of the next
-   * time input. It should be true if ( has_implicit_input == true ).
+   *   Return NeuralNet_ImplicitInputMode.Info.bFillPreviousTimeOutput of the
+   * mode id.
+   */
+  static bFillPreviousTimeOutput_get( nNeuralNet_ImplicitInputModeId ) {
+    let info = NeuralNet_ImplicitInputMode.Singleton
+      .getInfo_byId( nNeuralNet_ImplicitInputModeId );
+    if ( info )
+      return info.bFillPreviousTimeOutput;
+    return NaN;
+  }
+ 
+  /**
+   * @param {number} nNeuralNet_ImplicitInputModeId
+   *   The numeric identifier of the neural network implicit input mode
+   * (NeuralNet.ImplicitInputMode.Singleton.Ids.Xxx).
+   *
+   * @return {boolean}
+   *   Return NeuralNet_ImplicitInputMode.Info.has_implicit_input of the mode
+   * id.
+   */
+  static has_implicit_input_get( nNeuralNet_ImplicitInputModeId ) {
+    let info = NeuralNet_ImplicitInputMode.Singleton
+      .getInfo_byId( nNeuralNet_ImplicitInputModeId );
+    if ( info )
+      return info.has_implicit_input;
+    return NaN;
+  }
+ 
+  /**
+   * @param {number} nNeuralNet_ImplicitInputModeId
+   *   The numeric identifier of the neural network implicit input mode
+   * (NeuralNet.ImplicitInputMode.Singleton.Ids.Xxx).
+   *
+   * @return {boolean}
+   *   Return NeuralNet_ImplicitInputMode.Info.output_asInputValueRange of the
+   * mode id.
    */
    static output_asInputValueRange_get( nNeuralNet_ImplicitInputModeId ) {
     let info = NeuralNet_ImplicitInputMode.Singleton
@@ -138,7 +159,7 @@ class NeuralNet_ImplicitInputMode extends Int {
  *   If true, restrict output value to the (neural network) input value range
  * (i.e. non-negative integer which can be used in embedding looking up). This
  * is useful if the output will be used as the recurrent feedback of the next
- * time input. It should be true if ( has_implicit_input == true ).
+ * time input. It should be true if ( bFillPreviousTimeOutput == true ).
  *
  */
 NeuralNet_ImplicitInputMode.Info
@@ -147,7 +168,8 @@ NeuralNet_ImplicitInputMode.Info
   /**
    *
    * @param {number} nNeuralNet_ImplicitInputModeId
-   *   The neural worker mode id (NeuralNet.ImplicitInputMode.Singleton.Ids.Xxx).
+   *   The numeric identifier of the neural network implicit input mode
+   * (NeuralNet.ImplicitInputMode.Singleton.Ids.Xxx).
    *
    * @param {string} nameForMessage
    *   The string name of the integer value. Usually, it is used for debug
