@@ -16,10 +16,10 @@ import { Int } from "../../Unpacker/ValueDesc/ValueDesc_Base.js";
  * Convert number value into integer between [ 0, 3 ] representing neural
  * worker mode:
  *
- *   -  0: ONE_WORKER__TWO_NET             (training usage)
- *   -  1: TWO_WORKER__TWO_NET__APPLY      (training usage)
- *   -  2: TWO_WORKER__TWO_NET__APPLIER    (training usage)
- *   -  3: ONE_WORKER__ONE_NET             (inference usage)
+ *   -  0: 
+ *   -  1: 
+ *   -  2: FEEDBACK_PRREVIOUS_TIME_OUTPUT
+ *   -  3: OUTPUT_AS_INPUT_VALUE_RANGE
  *
  */
 class NeuralNet_ImplicitInputMode extends Int {
