@@ -35,6 +35,9 @@ import { ImplicitInputMode as NeuralNet_ImplicitInputMode }
  * (NeuralNet.ImplicitInputMode.Singleton.Ids.Xxx).
  *
 
+!!! ...unfinished... (2023/05/12)
+// should from NeuralNet_ImplicitInputMode
+
 !!! * @member {boolean} has_implicit_input
  *   - If true, there will be extra space in the input image for filling
  *       alignment mark and/or previous time output.
