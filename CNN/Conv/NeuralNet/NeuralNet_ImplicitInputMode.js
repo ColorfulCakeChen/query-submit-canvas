@@ -27,23 +27,38 @@ import { Int } from "../../Unpacker/ValueDesc/ValueDesc_Base.js";
 class NeuralNet_ImplicitInputMode extends Int {
 
   constructor() {
-    super( 0, 3,
+    super( 0, 5,
       {
-        ONE_WORKER__TWO_NET:
+        IMPLICIT_INPUT__NONE___OUTPUT__NORMAL:
           new NeuralNet_ImplicitInputMode.Info( 0,
-            "ONE_WORKER__TWO_NET",          1, 2, undefined ),
+            "IMPLICIT_INPUT__NONE___OUTPUT__NORMAL",
+            false, false, false ),
 
-        TWO_WORKER__TWO_NET__APPLY:
+        IMPLICIT_INPUT__NONE___OUTPUT__AS_INPUT_VALUE_RANGE:
           new NeuralNet_ImplicitInputMode.Info( 1,
-            "TWO_WORKER__TWO_NET__APPLY",   2, 2,      true ),
+            "IMPLICIT_INPUT__NONE___OUTPUT__AS_INPUT_VALUE_RANGE",
+            false, false,  true ),
 
-        TWO_WORKER__TWO_NET__APPLIER:
+        IMPLICIT_INPUT__FILL_ALIGNNNNNMENT_MARK___OUTPUT__NORMAL:
           new NeuralNet_ImplicitInputMode.Info( 2,
-            "TWO_WORKER__TWO_NET__APPLIER", 2, 2,     false ),
+            "IMPLICIT_INPUT__FILL_ALIGNNNNNMENT_MARK___OUTPUT__NORMAL",
+             true, false,  false ),
 
-        ONE_WORKER__ONE_NET:
+        IMPLICIT_INPUT__FILL_ALIGNNNNNMENT_MARK___OUTPUT__AS_INPUT_VALUE_RANGE:
           new NeuralNet_ImplicitInputMode.Info( 3,
-            "ONE_WORKER__ONE_NET",          1, 1, undefined ),
+            "IMPLICIT_INPUT__FILL_ALIGNNNNNMENT_MARK___OUTPUT__AS_INPUT_VALUE_RANGE",
+             true, false,  true ),
+
+        IMPLICIT_INPUT__FILL_PRREVIOUS_TIME_OUTPUT:
+          new NeuralNet_ImplicitInputMode.Info( 4,
+            "IMPLICIT_INPUT__FILL_PRREVIOUS_TIME_OUTPUT",
+            false,  true,  true ),
+
+        IMPLICIT_INPUT__FILL_ALIGNNNNNMENT_MARK__FILL_PRREVIOUS_TIME_OUTPUT:
+          new NeuralNet_ImplicitInputMode.Info( 5,
+            "IMPLICIT_INPUT__FILL_ALIGNNNNNMENT_MARK__FILL_PRREVIOUS_TIME_OUTPUT",
+             true,  true,  true ),
+
       }
     );
   }
@@ -65,7 +80,7 @@ class NeuralNet_ImplicitInputMode extends Int {
       return info.bFillAlignmentMark;
     return NaN;
   }
- 
+
   /**
    * @param {number} nNeuralNet_ImplicitInputModeId
    *   The numeric identifier of the neural network implicit input mode
@@ -82,7 +97,7 @@ class NeuralNet_ImplicitInputMode extends Int {
       return info.bFillPreviousTimeOutput;
     return NaN;
   }
- 
+
   /**
    * @param {number} nNeuralNet_ImplicitInputModeId
    *   The numeric identifier of the neural network implicit input mode
@@ -99,7 +114,7 @@ class NeuralNet_ImplicitInputMode extends Int {
       return info.has_implicit_input;
     return NaN;
   }
- 
+
   /**
    * @param {number} nNeuralNet_ImplicitInputModeId
    *   The numeric identifier of the neural network implicit input mode
