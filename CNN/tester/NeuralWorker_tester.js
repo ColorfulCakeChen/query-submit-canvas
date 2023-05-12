@@ -853,13 +853,13 @@ class HeightWidthDepth {
                 let resultFloat32Array
                   = await testCase.NeuralNet_try_result_async(
                       this.testCanvas,
-                      testCase.alignmentMarkValueArray[ i ],
-                      previous_output_TypedArrayArray_for_verification[ i ] );
+                      testCase.alignmentMarkValueArray[ neuralNetIndex ],
+                      previous_output_TypedArrayArray_for_verification[ neuralNetIndex ] );
 
                 let lhsNumberArray = resultFloat32ArrayArray[ 0 ];
                 let rhsNumberArray = resultFloat32Array;
-                let lhsNumberArrayName = `output${i}`;
-                let rhsNumberArrayName = `outputRef${i}`;
+                let lhsNumberArrayName = `output${neuralNetIndex}`;
+                let rhsNumberArrayName = `outputRef${neuralNetIndex}`;
                 let postfixMsg = testCase.testCaseName;
 
                 asserter_Equal.assert_NumberArray_NumberArray(
