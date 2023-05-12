@@ -11,10 +11,11 @@ import { Mode as NeuralWorker_Mode } from "./NeuralWorker_Mode.js";
 //
 
 /**
- * The container of WorkerProxy. It orchestrates these WorkerProxy. Especially, it
- * transfers (scaled) source image data to and from web worker. This could maximize
- * parallel computing under the restriction of transferring source image data to
- * every web worker serially.
+ * The container of NeuralWorker_Proxy. It orchestrates these
+ * NeuralWorker_Proxy. Especially, it transfers (possible scaled) source image
+ * data to and from web worker. This could maximize parallel computing under
+ * the restriction of transferring source image data to every web worker
+ * serially.
  *
  *
  * 1. Idea
@@ -27,10 +28,10 @@ import { Mode as NeuralWorker_Mode } from "./NeuralWorker_Mode.js";
  * and GPU multiple times) to process both competition side of a diffential
  * evolution iteration.
  *
- * So these ONE_WORKER__Xxx modes combine two neural networks of both competition
- * sides in one web worker. Although they compute serially (not parallelly), it
- * may still be faster than computing them in two workers because the memory
- * transferring between CPU and GPU is reduced.
+ * So these ONE_WORKER__Xxx modes combine two neural networks of both
+ * competition sides in one web worker. Although they compute serially (not
+ * parallelly), it may still be faster than computing them in two workers
+ * because the memory transferring between CPU and GPU is reduced.
  *
  *
  * 1.2 For NeuralWorker_Mode.Singleton.Ids.TWO_WORKER__Xxx
@@ -41,9 +42,9 @@ import { Mode as NeuralWorker_Mode } from "./NeuralWorker_Mode.js";
  * start computing, ... etc.
  *
  * When passing large data by Worker.postMessage(), it is preferred by
- * transferring (not by copying). If the large data wants to be transferred
- * (not copied) to many workers, the only possible way is to transferring them
- * serially.
+ * transferring (i.e. by not copying). If the large data wants to be
+ * transferred (not copied) to many workers, the only possible way is to
+ * transferring them serially.
  *
  * However, serially transferring hurts the performance. Workers are better to
  * compute parallelly. So every worker should transfer the (possible scaled)
@@ -51,9 +52,10 @@ import { Mode as NeuralWorker_Mode } from "./NeuralWorker_Mode.js";
  * network at the same time. And then, this WorkerProxies will transfer the
  * source image data to the next worker as soon as possible.
  *
- * Finally, this WorkerProxies collects all web workers' results in a promise.
- * The promise will resolve with an array of Float32Array. Every Float32Array
- * is the output of one neural network.
+ * Finally, this NeiralWorker_Proxies collects all web workers' results into a
+ * promise. The promise will resolve with an array of Float32Array (or
+ * Int32Array). Every Float32Array (or Int32Array) is the output of one neural
+ * network.
  *
  *
  * 2. Experiments
