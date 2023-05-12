@@ -336,6 +336,10 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
    *         this neural network, upload to GPU and process it.
    *
    *
+   * Note: This is a non-async method but return an async-generator-like
+   *       object. So, it can be viewed as an async generator.
+   *
+   *
    * @param {Uint8ClampedArray|Uint16Array|Uint32Array} source_TypedArray
    *   An unsigned integer TypedArray which will be processed by the neural
    * worker. For example, ImageData.data which is coming from a canvas.
@@ -379,7 +383,7 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
    *   - Float32Array (if ( neuralNetParams.output_asInputValueRange == false ) )
    *   - Int32Array (if ( neuralNetParams.output_asInputValueRange == true ) )
    */
-  async TWO_WORKER__TWO_NET__step0_TypedArray_process_asyncGenerator(
+  TWO_WORKER__TWO_NET__step0_TypedArray_process_asyncGenerator(
     source_TypedArray, source_height, source_width,
     previous_output_TypedArray,
     bApply_or_Applier ) {
