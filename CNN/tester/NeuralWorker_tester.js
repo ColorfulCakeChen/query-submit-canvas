@@ -342,7 +342,8 @@ class PerformanceTestCase extends Recyclable.Root {
       //!!! (2022/09/25 Remarked) too large for mobile phone.
       //const weightArrayLength = ( 100 * 1024 * 1024 );
       const weightArrayLength = ( 10 * 1024 * 1024 );
-      PerformanceTestCase.randomTestWeightArray = new Float32Array( weightArrayLength );
+      PerformanceTestCase.randomTestWeightArray
+        = new Float32Array( weightArrayLength );
 
       //!!! (2023/05/12 Remarked) Use larger variation to generate negative result.
       //const weightsRandomOffset = TestParams.Base.weightsRandomOffset;
