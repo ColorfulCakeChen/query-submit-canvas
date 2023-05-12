@@ -70,16 +70,16 @@ class NeuralNet_ImplicitInputMode extends Int {
    * (NeuralNet.ImplicitInputMode.Singleton.Ids.Xxx).
    *
    * @return {boolean}
-   *   Return NeuralNet_ImplicitInputMode.Info.implicit_input_fill_alignment_mark
+   *   Return NeuralNet_ImplicitInputMode.Info.implicit_input_bFillPreviousTimeOutput
    * of the mode id.
    */
-  static implicit_input_fill_alignment_mark_get(
+  static implicit_input_bFillPreviousTimeOutput_get(
     nNeuralNet_ImplicitInputModeId ) {
 
     let info = NeuralNet_ImplicitInputMode.Singleton
       .getInfo_byId( nNeuralNet_ImplicitInputModeId );
     if ( info )
-      return info.implicit_input_fill_alignment_mark;
+      return info.implicit_input_bFillPreviousTimeOutput;
     return NaN;
   }
 
@@ -142,7 +142,7 @@ class NeuralNet_ImplicitInputMode extends Int {
 /**
  *
  *
- * @member {boolean} implicit_input_fill_alignment_mark
+ * @member {boolean} implicit_input_bFillPreviousTimeOutput
  *   - If true, there will be extra space in the input image for filling
  *       alignment mark.
  *
@@ -198,14 +198,14 @@ NeuralNet_ImplicitInputMode.Info
    *
    */
   constructor( nNeuralNet_ImplicitInputModeId, nameForMessage,
-    implicit_input_fill_alignment_mark,
+    implicit_input_bFillPreviousTimeOutput,
     implicit_input_fill_previous_time_output,
     output_asInputValueRange
   ) {
     super( nNeuralNet_ImplicitInputModeId, nameForMessage );
 
-    this.implicit_input_fill_alignment_mark
-      = implicit_input_fill_alignment_mark;
+    this.implicit_input_bFillPreviousTimeOutput
+      = implicit_input_bFillPreviousTimeOutput;
 
     this.implicit_input_fill_previous_time_output
       = implicit_input_fill_previous_time_output;
@@ -224,7 +224,7 @@ NeuralNet_ImplicitInputMode.Info
   }
 
   get has_implicit_input() {
-    if ( this.implicit_input_fill_alignment_mark )
+    if ( this.implicit_input_bFillPreviousTimeOutput )
       return true;
     if ( this.implicit_input_fill_previous_time_output )
       return true;
