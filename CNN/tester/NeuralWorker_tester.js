@@ -344,13 +344,17 @@ class PerformanceTestCase extends Recyclable.Root {
       const weightArrayLength = ( 10 * 1024 * 1024 );
       PerformanceTestCase.randomTestWeightArray = new Float32Array( weightArrayLength );
 
+      //!!! (2023/05/12 Remarked) Use larger variation to generate negative result.
+      //const weightsRandomOffset = TestParams.Base.weightsRandomOffset;
+      const weightsRandomOffset = { min: -50, max: +5 };
+
       RandTools.fill_numberArray(
         PerformanceTestCase.randomTestWeightArray,
         1, 1, weightArrayLength, // height, width, channelCount,
         TestParams.Base.weightsValueBegin,
         TestParams.Base.weightsValueStep,
-        TestParams.Base.weightsRandomOffset.min,
-        TestParams.Base.weightsRandomOffset.max,
+        weightsRandomOffset.min,
+        weightsRandomOffset.max,
         TestParams.Base.weightsDivisorForRemainder
       );
     }
@@ -425,9 +429,6 @@ class HeightWidthDepth {
 
     this.backendName = backendName;
     this.bAscent_or_Descent = bAscent_or_Descent;
-
-//!!! (2023/05/11 Remarked)
-//    this.alignmentMarkValueArray = [ 155, 255 ];
 
     this.feedbackShape = new NeuralNet.FeedbackShape();
     this.feedbackShape.init(
