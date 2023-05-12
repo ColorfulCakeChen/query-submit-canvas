@@ -156,6 +156,7 @@ class NeuralNet_ParamsBase extends Recyclable.Root {
     this.output_asInputValueRange = output_asInputValueRange;
     this.bKeepInputTensor = bKeepInputTensor;
 
+!!! ...unfinished... (2023/05/12)
     if ( has_implicit_input && !output_asInputValueRange )
       throw Error( 'NeuralNet_ParamsBase.setAsConstructor_self(): '
         + `When `

@@ -200,6 +200,15 @@ NeuralNet_ImplicitInputMode.Info
     this.bFillAlignmentMark = bFillAlignmentMark;
     this.bFillPreviousTimeOutput = bFillPreviousTimeOutput;
     this.output_asInputValueRange = output_asInputValueRange;
+
+    if ( bFillPreviousTimeOutput && !output_asInputValueRange )
+      throw Error( 'NeuralNet_ImplicitInputMode.Info.constructor(): '
+        + `When `
+        + `bFillPreviousTimeOutput ( ${bFillPreviousTimeOutput} ) `
+        + `is true, `
+        + `output_asInputValueRange ( ${output_asInputValueRange} ) `
+        + `should also be true.`
+      );
   }
 
   get has_implicit_input() {
