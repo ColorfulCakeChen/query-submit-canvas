@@ -183,8 +183,13 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
       transferableObjectArray
     );
 
-    // 3.2 After sent to neural worker body, generate inference parameters so
-    //     that outside caller could reference them (if necessary).
+    // 3.2 After sending basic parameters to the neural worker body, generate
+    //     inference parameters so that the outside caller could reference
+    //     them (if necessary).
+    //
+    // Note: Because the neural worker body will also generate inference
+    //       parameters by itself, there is not necessary to send them to the
+    //       neural worker body.
     for ( let neuralNetIndex = 0;
       neuralNetIndex < neuralNetParamsBaseArray.length;
       ++neuralNetIndex ) {
