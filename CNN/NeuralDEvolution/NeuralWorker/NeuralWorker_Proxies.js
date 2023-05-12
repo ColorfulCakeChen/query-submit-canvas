@@ -600,7 +600,7 @@ class NeuralWorker_Proxies extends Recyclable.Root {
   }
 
   /**
-   * 
+   * Swap .alignmentMarkValueArray[ 0 ] and this.alignmentMarkValueArray[ 1 ].
    *
    * @return {Promise}
    *   Return a promise:
@@ -608,11 +608,25 @@ class NeuralWorker_Proxies extends Recyclable.Root {
    *   - Resolved to false, if failed.
    */
   async alignmentMarkValueArray_swap_async() {
+    const funcNameInMessage = "alignmentMarkValueArray_swap_async";
 
-!!! ...unfinished... (2023/05/12)
-// If ( !alignmentMarkValueArray_nonEmpty )
-// or ( alignmentMarkValueArray.length != 2 ), throw exception
+    // 1.
+    if ( !this.alignmentMarkValueArray_nonEmpty )
+      throw Error( `NeuralWorker.Proxies.${funcNameInMessage}(): `
+        + `.alignmentMarkValueArray_nonEmpty `
+        + `( ${this.alignmentMarkValueArray_nonEmpty} ) `
+        + `should be true for swapping.`
+      );
 
+    if ( this.alignmentMarkValueArray.length != 2 )
+      throw Error( `NeuralWorker.Proxies.${funcNameInMessage}(): `
+        + `.alignmentMarkValueArray.length `
+        + `( ${this.alignmentMarkValueArray.length} ) `
+        + `should be 2 for swapping.`
+      );
+
+    return this.alignmentMarkValueArray_set_async(
+      this.alignmentMarkValueArray[ 1 ], this.alignmentMarkValueArray[ 0 ] );
   }
 
   get previous_output_TypedArrayArray_nonEmpty() {
