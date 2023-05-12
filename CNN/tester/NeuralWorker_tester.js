@@ -793,7 +793,7 @@ class HeightWidthDepth {
               timeInfo.elapsedTotal = 0;
               for ( let i = 0; i < timeInfo.times; ++i ) {
 
-                {
+                if ( testCase.neuralNetCount == 2 ) {
                   let swapOk = await this.neuralWorkerProxies
                     .alignmentMarkValueArray_swap_async();
 
