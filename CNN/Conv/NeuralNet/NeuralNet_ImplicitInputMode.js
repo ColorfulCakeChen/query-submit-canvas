@@ -13,13 +13,15 @@ import { Int } from "../../Unpacker/ValueDesc/ValueDesc_Base.js";
 
 /** Describe id, range, name of NeuralNet_ImplicitInputMode.
  *
- * Convert number value into integer between [ 0, 3 ] representing neural
- * worker mode:
+ * Convert number value into integer between [ 0, 5 ] representing neural
+ * network's implicit input mode:
  *
- *   -  0: FILL__ALIGNNNNNMENT_MARK
- *   -  1: FILL__PRREVIOUS_TIME_OUTPUT
- *   -  2: FILL__ALIGNNNNNMENT_MARK__PRREVIOUS_TIME_OUTPUT
- *   -  3: OUTPUT_AS_INPUT_VALUE_RANGE
+ *   -  0: IMPLICIT_INPUT__NONE
+ *   -  1: IMPLICIT_INPUT__FILL__ALIGNNNNNMENT_MARK
+ *   -  2: IMPLICIT_INPUT__FILL__ALIGNNNNNMENT_MARK__OUTPUT_AS_INPUT_VALUE_RANGE
+ *   -  3: IMPLICIT_INPUT__FILL__PRREVIOUS_TIME_OUTPUT
+ *   -  4: IMPLICIT_INPUT__FILL__ALIGNNNNNMENT_MARK__PRREVIOUS_TIME_OUTPUT
+ *   -  5: IMPLICIT_INPUT__NONE__OUTPUT_AS_INPUT_VALUE_RANGE
  *
  */
 class NeuralNet_ImplicitInputMode extends Int {
