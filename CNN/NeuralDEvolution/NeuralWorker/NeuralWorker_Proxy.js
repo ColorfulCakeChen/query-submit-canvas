@@ -173,13 +173,29 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
     }
 
     // 3. Inform web work to create neural networks.
-    return this.createPromise_by_postCommandArgs(
+
+    // 3.1
+    let createOkPromise = this.createPromise_by_postCommandArgs(
       [ "NeuralNetArray_create",
         neuralNetParamsBaseArray, weightArrayBufferArray,
         bLogDryRunTime
       ],
       transferableObjectArray
     );
+
+    // 3.2 After sent to neural worker body, generate inference parameters so
+    //     that outside caller could reference them (if necessary).
+    for ( let neuralNetIndex = 0;
+      neuralNetIndex < neuralNetParamsBaseArray.length;
+      ++neuralNetIndex ) {
+
+      let neuralNetParamsBase = neuralNetParamsBaseArray[ neuralNetIndex ];
+      neuralNetParamsBase.inferencedParams_create();
+    }
+
+    // 3.3
+    let createOk = await createOkPromise;
+    return createOk;
   }
 
   /**

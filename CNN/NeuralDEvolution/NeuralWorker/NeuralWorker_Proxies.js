@@ -725,7 +725,7 @@ class NeuralWorker_Proxies extends Recyclable.Root {
     //       the 1st web worker has scaled the source image. The 2nd web worker
     //       needs not scale again.
     const workerProxy1 = this.workerProxyArray[ 1 ];
-    const neuralNetParams1 = workerProxy1.neuralNetParamsBaseArray[ 0 ];
+    const ???neuralNetParams1 = workerProxy1.neuralNetParamsBaseArray[ 0 ];
 
     const source_height1 = neuralNetParams1.input_height;
     const source_width1 = neuralNetParams1.input_width;
