@@ -472,32 +472,31 @@ class NeuralOrchestra_Base extends
    * @param {NeuralOrchestra_Base} this
    */
   static neuralNetParamsBase_create(
-!!! ...unfinished... (2023/05/12)
-// explicit_
-    input_height = 72,
-    input_width = 131, // = ( 128 + 3 ),
 
-!!! ...unfinished... (2023/05/12)
-// input_channelCount
-    has_implicit_input,
+    explicit_input_height = 72,
+    explicit_input_width = 128,
 
-    vocabularyChannelCount = 4, //8
-    blockCountTotalRequested = 39, //100, //200, //50, //20, //10,
-    output_channelCount = 64, //16
+    // For image coming from canvas, the tf.browser.fromPixels() handle a
+    // RGBA 4 channels faster than RGB 3 channels input.
+    explicit_input_channelCount = 4,
 
-!!! ...unfinished... (2023/05/12)
+    has_implicit_input = true, // with feedback.
+
+    vocabularyChannelCount = 4,
+
+    // For image, every RGBA input channel always has 256 (= 2 ** 8) possible
+    // values.
+    vocabularyCountPerInputChannel = 256,
+
+    blockCountTotalRequested = 39,
+    output_channelCount = 64,
+
+    // So that previous output could be used as recurrent feedback of the next
+    // times input.
     output_asInputValueRange = true
   ) {
 
     NeuralOrchestra_Base.neuralNetParamsBase_dispose.call( this );
-
-    // Because image comes from canvas, the tf.browser.fromPixels() handle a
-    // RGBA 4 channels faster than RGB 3 channels input.
-    const input_channelCount = 4;
-
-    // For image, every RGBA input channel always has 256 (= 2 ** 8) possible
-    // values.
-    const vocabularyCountPerInputChannel = 256;
 
     // Use faster convolution neural network architecture.
     //
@@ -508,26 +507,19 @@ class NeuralOrchestra_Base extends
     const nConvStageType
       = ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1; // (5)
 
-    // So that previous output could be used as recurrent feedback of the next
-    // times input.
-    const output_asInputValueRange = true;
-
     // The neuralNet should not keep-input-tensor because the input image is
     // created from canvas in real time.
     const bKeepInputTensor = false;
 
     this.neuralNetParamsBase = NeuralNet.ParamsBase.Pool.get_or_create_by(
-      input_height, input_width, input_channelCount,
+      explicit_input_height, explicit_input_width, explicit_input_channelCount,
+      has_implicit_input,
       vocabularyChannelCount, vocabularyCountPerInputChannel,
       nConvStageType,
       blockCountTotalRequested,
       output_channelCount, output_asInputValueRange,
       bKeepInputTensor
     );
-
-
-!!! ...unfinished... (2023/05/12)
-// .inferencedParams ?
   }
 
   /**
