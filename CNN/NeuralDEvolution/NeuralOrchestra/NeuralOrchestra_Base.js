@@ -156,24 +156,69 @@ import * as DEvolution from "../DEvolution.js";
  *   The client id when sending measurement protocol.
  *
  *
- * @member {number} input_height
- *   The input image's height.
+
+!!! ...unfinished... (2023/05/12) How to get input_height and input_width?
+
+ * @member {number} explicit_input_height
+ *   The explicit (i.e. user visible) input image's height (pixel count). It is
+ * equal to or less than .input_height.
  *
- * @member {number} input_width
- *   The input image's width.
+ * @member {number} explicit_input_width
+ *   The explicit (i.e. user visible) input image's width (pixel count). It is
+ * equal to or less than .input_width.
  *
+ * @member {number} explicit_input_channelCount
+ *   The explicit (i.e. user visible) input image's channel count. It is always
+ * equal to .input_channelCount.
+ *
+ * @member {boolean} has_implicit_input
+ *   - If true, there will be extra space in the input image for filling
+ *       alignment mark and/or previous time output.
+ *
+ *     - In this case, the .output_asInputValueRange should also be true so
+ *         that the previous time output is suitable for feedback.
+ *
+ *   - If false, there will be no extra space in the input image for filling
+ *       alignment mark and/or previous time output.
+ *
+ *
+
+!!!
  * @member {number} vocabularyChannelCount
  *   In the embedding layer, every vocabulary will have how many embedding
  * channels. Every input channel will be expanded into so many embedding
- * channels. It could be viewed as embeddingChannelCountPerInputChannel.
- * It must be ( >= 2 ) because it always has ( bEmbedVocabularyId == true ).
+ * channels. It could be viewed as embeddingChannelCountPerInputChannel. It
+ * must be ( >= 2 ) because the embedding layer always has
+ * ( bEmbedVocabularyId == true ).
  *
+ * @member {number} vocabularyCountPerInputChannel
+ *   In the embedding layer, every input channel will have how many
+ * vocabularies. This is also vocabulary count per vocabulary table (because
+ * every input channel has a vocabulary table). For an image data (R-G-B-A
+ * four channels), there will be 256 vocabularies per input channel because
+ * every channel is represented by one byte (8 bits) which has 2^8 = 256 kinds
+ * of possible values.
+ * 
  * @member {number} blockCountTotalRequested
  *   How many blocks of the whole neural network are wanted. It will be
  * spreaded to every stage. Note that every stage will have at least 2 blocks.
  *
  * @member {number} output_channelCount
  *   Every neural network output tensor's channel count.
+ *
+ * @member {boolean} output_asInputValueRange
+ *   If true, restrict output value to the (neural network) input value range
+ * (i.e. non-negative integer which can be used in embedding looking up). This
+ * is useful if the output will be used as the recurrent feedback of the next
+ * time input. It should be true if ( has_implicit_input == true ).
+ *
+ *
+ * @member {number} input_height
+ *   The input image's height. It exists only after NeuralWorker.Proxies
+ * created.
+ *
+ * @member {number} input_width
+ *   The input image's width. It exists only after NeuralWorker.Proxies
  *
  *
  * @member {string} backendName
@@ -187,7 +232,7 @@ import * as DEvolution from "../DEvolution.js";
  * @member {NeuralNet.ParamsBase} neuralNetParamsBase
  *   The neural network configuration. It will be used for both two neural
  * networks. It will be kept (i.e. owned and destroyed) by this
- * NeuralOrchetra object.
+ * NeuralOrchestra object.
  *
  * @member {DEvolution.VersusSummary} versusSummary
  *   The downloaded versus summary of the differential evolution.
@@ -338,6 +383,16 @@ class NeuralOrchestra_Base extends
     return this.neuralNetParamsBase?.input_width;
   }
 
+!!!
+  get input_height() {
+    return this.workerProxies?.workerProxyArray?.[ 0 ].input_height;
+  }
+
+  get input_width() {
+    return this.workerProxies?.workerProxyArray?.[ 0 ].input_width;
+  }
+
+
   get vocabularyChannelCount() {
     return this.neuralNetParamsBase?.vocabularyChannelCount;
   }
@@ -384,7 +439,7 @@ class NeuralOrchestra_Base extends
    */
   static neuralNetParamsBase_create(
 !!! ...unfinished... (2023/05/12)
-// explicit
+// explicit_
     input_height = 72,
     input_width = 131, // = ( 128 + 3 ),
 
@@ -435,6 +490,10 @@ class NeuralOrchestra_Base extends
       output_channelCount, output_asInputValueRange,
       bKeepInputTensor
     );
+
+
+!!! ...unfinished... (2023/05/12)
+// .inferencedParams ?
   }
 
   /**
@@ -813,7 +872,7 @@ class NeuralOrchestra_Base extends
    * @param {NeuralNet.ParamsBase} this.neuralNetParamsBase
    *   The neural network configuration. It will be used for both two neural
    * networks. It will be kept (i.e. owned and destroyed) by this
-   * NeuralOrchetra object. Its .nConvStageTypeId may be modified according
+   * NeuralOrchestra object. Its .nConvStageTypeId may be modified according
    * to which backend (webgl or cpu) is used finally for gaining the best
    * performance.
    *

@@ -26,19 +26,25 @@ import { InferencedParams } from "./NeuralNet_InferencedParams.js";
  * equal to .inferencedParams.input_channelCount.
  *
  * @member {boolean} has_implicit_input
- *   - If true, .inferencedParams.implicit_input_Xxx will be non-zero.
+ *   - If true, there will be extra space in the input image for filling
+ *       alignment mark and/or previous time output.
+ *
+ *     - .inferencedParams.implicit_input_Xxx will be non-zero.
  *
  *     - In this case, the .output_asInputValueRange should also be true so
  *         that the previous time output is suitable for feedback.
  *
- *   - If false, .inferencedParams.implicit_input_Xxx will be 0.
+ *   - If false, there will be no extra space in the input image for filling
+ *       alignment mark and/or previous time output.
  *
+ *     - .inferencedParams.implicit_input_Xxx will be 0.
  *
  * @member {number} vocabularyChannelCount
  *   In the embedding layer, every vocabulary will have how many embedding
  * channels. Every input channel will be expanded into so many embedding
  * channels. It could be viewed as embeddingChannelCountPerInputChannel. It
- * must be ( >= 2 ) because it always has ( bEmbedVocabularyId == true ).
+ * must be ( >= 2 ) because the embedding layer always has
+ * ( bEmbedVocabularyId == true ).
  *
  * @member {number} vocabularyCountPerInputChannel
  *   In the embedding layer, every input channel will have how many
@@ -63,7 +69,7 @@ import { InferencedParams } from "./NeuralNet_InferencedParams.js";
  *   If true, restrict output value to the (neural network) input value range
  * (i.e. non-negative integer which can be used in embedding looking up). This
  * is useful if the output will be used as the recurrent feedback of the next
- * time input.
+ * time input. It should be true if ( has_implicit_input == true ).
  *
  * @member {boolean} bKeepInputTensor
  *   If true, apply() will not dispose inputTensor (i.e. will be kept).
