@@ -16,9 +16,9 @@ import { Int } from "../../Unpacker/ValueDesc/ValueDesc_Base.js";
  * Convert number value into integer between [ 0, 3 ] representing neural
  * worker mode:
  *
- *   -  0: 
- *   -  1: 
- *   -  2: FEEDBACK_PRREVIOUS_TIME_OUTPUT
+ *   -  0: FILL__ALIGNNNNNMENT_MARK
+ *   -  1: FILL__PRREVIOUS_TIME_OUTPUT
+ *   -  2: FILL__ALIGNNNNNMENT_MARK__PRREVIOUS_TIME_OUTPUT
  *   -  3: OUTPUT_AS_INPUT_VALUE_RANGE
  *
  */
