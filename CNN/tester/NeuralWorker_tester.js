@@ -483,11 +483,13 @@ class HeightWidthDepth {
     this.backendName = backendName;
     this.bAscent_or_Descent = bAscent_or_Descent;
 
-    this.feedbackShape = new NeuralNet.FeedbackShape();
-    this.feedbackShape.init(
-      explicit_input_height, explicit_input_width, explicit_input_channelCount,
-      output_channelCount // feedback_valueCount
-    );
+    if ( has_implicit_input ) {
+      this.feedbackShape = new NeuralNet.FeedbackShape();
+      this.feedbackShape.init(
+        explicit_input_height, explicit_input_width, explicit_input_channelCount,
+        output_channelCount // feedback_valueCount
+      );
+    }
   }
 
   disposeResources() {
@@ -523,9 +525,16 @@ class HeightWidthDepth {
 //      let inputHeight = this.height * this.largerFactor;
 //      let inputWidth = this.width * this.largerFactor;
 
-      let inputHeight = this.feedbackShape.input_height;
-      let inputWidth = this.feedbackShape.input_width;
-      let inputChannelCount = this.feedbackShape.input_channelCount; // Must be 4;
+      let inputHeight, inputWidth, inputChannelCount;
+      if ( has_implicit_input ) {
+        inputHeight = this.feedbackShape.input_height;
+        inputWidth = this.feedbackShape.input_width;
+        inputChannelCount = this.feedbackShape.input_channelCount; // Must be 4;
+      } else {
+        inputHeight = this.explicit_input_height;
+        inputWidth = this.explicit_input_width;
+        inputChannelCount = this.explicit_input_channelCount; // Must be 4;
+      }
 
       this.testCanvas = document.createElement( "canvas" );
       this.testCanvas.height = inputHeight;
