@@ -358,7 +358,6 @@ class NeuralOrchestra_Base extends
     NeuralOrchestra_Base.neuralNetParamsBase_dispose.call( this );
     NeuralOrchestra_Base.workerProxies_dispose.call( this );
 
-    this.output_channelCount = undefined;
     this.bLogFetcherEventToConsole = undefined;
     this.downloader_apiKey = undefined;
     this.downloader_spreadsheetId = undefined;
@@ -698,9 +697,6 @@ class NeuralOrchestra_Base extends
       this.downloader_spreadsheetId = downloader_spreadsheetId;
       this.downloader_apiKey = downloader_apiKey;
       this.bLogFetcherEventToConsole = bLogFetcherEventToConsole;
-
-!!!
-      this.output_channelCount = output_channelCount;
 
       // 0.2
       // Note: Here should not call .versus_load_asyncPromise_progress_dispose().
