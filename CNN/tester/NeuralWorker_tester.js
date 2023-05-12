@@ -157,6 +157,10 @@ class PerformanceTestCase extends Recyclable.Root {
       let bInitOkPromise = neuralWorkerProxies.init_async(
         backendName, this.nNeuralWorker_ModeId );
 
+!!! ...unfinished... (2023/05/12)
+      // Check neuralWorkerProxies.alignmentMarkValueArray
+      // and .previous_output_TypedArrayArray is null.
+        
       PerformanceTestCase.randomTestWeightArray_create();
 
       // Although neural network configuration will be copied (not transferred)
@@ -200,6 +204,10 @@ class PerformanceTestCase extends Recyclable.Root {
       if ( !bCreateOk )
         throw Error( `Failed to create neural networks by neuralWorkerProxies. `
           + `${neuralWorkerProxies}` );
+
+!!! ...unfinished... (2023/05/12)
+// Check neuralWorkerProxies.alignmentMarkValueArray
+// and .previous_output_TypedArrayArray is null.
 
       {
         if ( this.neuralNetCount > 1 ) {
@@ -618,6 +626,12 @@ class HeightWidthDepth {
       );
 
     let resultFloat32ArrayArray = await resultFloat32ArrayArrayPromise;
+
+
+!!! ...unfinished... (2023/05/12)
+    // Check neuralWorkerProxies.alignmentMarkValueArray
+    // and .previous_output_TypedArrayArray is not null.
+    
     return resultFloat32ArrayArray;
   }
 
