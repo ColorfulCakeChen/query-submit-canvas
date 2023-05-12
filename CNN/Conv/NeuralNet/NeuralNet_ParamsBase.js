@@ -9,22 +9,6 @@ import * as Stage from "../Stage.js";
 import * as Block from "../Block.js";
 import { InferencedParams } from "./NeuralNet_InferencedParams.js";
 
-
-//!!! ...unfinished... (2023/05/06)
-// Perhaps, specify whether fill alignment mark and feedback information
-// because they affect input data shape which is needed for creating
-// neural network. 
-//
-// Let input_height and input_width become inferenced params?
-// Here accepts explicit_input_height and explicit_input_width and bFill.
-//
-// Problem: NeuralNet.Params will be destroyed when NeuralNet.Base is created.
-//          The FeedbackShape (if as the inferenced Params) will also be gone.
-
-
-//!!! ...unfinished... (2023/05/06) has_implicit_input
-
-
 /**
  * NeuralNet parameters base class.
  *
@@ -63,7 +47,7 @@ import { InferencedParams } from "./NeuralNet_InferencedParams.js";
  * @member {number} nConvStageTypeId
  *   The type (ValueDesc.ConvStageType.Singleton.Ids.Xxx) of every convolution
  * stage.
- * 
+ *
  * @member {number} blockCountTotalRequested
  *   How many blocks of the whole neural network are wanted. It will be
  * spreaded to every stage. Note that every stage will have at least 2 blocks.

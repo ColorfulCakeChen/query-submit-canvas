@@ -79,9 +79,12 @@ import * as DEvolution from "../DEvolution.js";
  *
  * 2. Configuration for 250K filter weights and executing 2 times per second
  *
+
+!!! ...unfinished... (2023/05/12)
+
  *   - input_height = 72
  *   - input_width = 131 (= 128 + 3)
- *   - output_channelCount_per_alignment = 64
+ *   - output_channelCount???_per_alignment = 64
  *   - (i.e. output_channelCount = 64 * 2 = 128)
  *
 
@@ -169,12 +172,8 @@ import * as DEvolution from "../DEvolution.js";
  *   How many blocks of the whole neural network are wanted. It will be
  * spreaded to every stage. Note that every stage will have at least 2 blocks.
  *
- * @member {number} output_channelCount_per_alignment
- *   The output tensor's channel count for one alignment of the versus. It is
- * half the output tensor's channel count.
- * 
  * @member {number} output_channelCount
- *   The output tensor's channel count. (= output_channelCount_per_alignment * 2)
+ *   Every neural network output tensor's channel count.
  *
  *
  * @member {string} backendName
@@ -317,7 +316,7 @@ class NeuralOrchestra_Base extends
     NeuralOrchestra_Base.neuralNetParamsBase_dispose.call( this );
     NeuralOrchestra_Base.workerProxies_dispose.call( this );
 
-    this.output_channelCount_per_alignment = undefined;
+    this.output_channelCount = undefined;
     this.bLogFetcherEventToConsole = undefined;
     this.downloader_apiKey = undefined;
     this.downloader_spreadsheetId = undefined;
@@ -387,13 +386,16 @@ class NeuralOrchestra_Base extends
     input_height = 72,
     input_width = 131, // = ( 128 + 3 ),
 
-!!! ...unfinished... (2023/05/11)
+!!! ...unfinished... (2023/05/12)
 // input_channelCount
 // has_implicit_input
 
     vocabularyChannelCount = 4, //8
     blockCountTotalRequested = 39, //100, //200, //50, //20, //10,
-    output_channelCount = 64 * 2 //16
+    output_channelCount = 64, //16
+
+!!! ...unfinished... (2023/05/12)
+    output_asInputValueRange = true
   ) {
 
     NeuralOrchestra_Base.neuralNetParamsBase_dispose.call( this );
@@ -472,7 +474,7 @@ class NeuralOrchestra_Base extends
 // has_implicit_input
 
     vocabularyChannelCount,
-    blockCountTotalRequested, output_channelCount_per_alignment,
+    blockCountTotalRequested, output_channelCount,
     b_return_versus_load_asyncGenerator_instead_of_asyncPromise,
     init_asyncGenerator_delayPromise,
     versus_load_asyncGenerator_delayPromise ) {
@@ -597,7 +599,7 @@ class NeuralOrchestra_Base extends
     sender_clientId,
     input_height, input_width,
     vocabularyChannelCount,
-    blockCountTotalRequested, output_channelCount_per_alignment,
+    blockCountTotalRequested, output_channelCount,
     b_return_versus_load_asyncGenerator_instead_of_asyncPromise,
     init_asyncGenerator_delayPromise,
     versus_load_asyncGenerator_delayPromise
@@ -610,11 +612,7 @@ class NeuralOrchestra_Base extends
       this.downloader_spreadsheetId = downloader_spreadsheetId;
       this.downloader_apiKey = downloader_apiKey;
       this.bLogFetcherEventToConsole = bLogFetcherEventToConsole;
-      this.output_channelCount_per_alignment = output_channelCount_per_alignment;
-
-      // Because NO_FILL NeuralWorker.Mode will be used, the real
-      // output_channelCount will be twice of output_channelCount_per_alignment.
-      let output_channelCount = output_channelCount_per_alignment * 2;
+      this.output_channelCount = output_channelCount;
 
       // 0.2
       // Note: Here should not call .versus_load_asyncPromise_progress_dispose().
@@ -631,9 +629,19 @@ class NeuralOrchestra_Base extends
         // It will be used by .workerProxies_init_async()
         NeuralOrchestra_Base.neuralNetParamsBase_create.call( this,
           input_height, input_width,
+
+          !!! ...unfinished... (2023/05/12)
+          // input_channelCount
+          // has_implicit_input
+
           vocabularyChannelCount,
           blockCountTotalRequested,
-          output_channelCount );
+          output_channelCount,
+          
+          !!! ...unfinished... (2023/05/12)
+              output_asInputValueRange = true
+
+           );
 
         NeuralOrchestra_Base.workerProxies_create.call( this );
 
@@ -861,6 +869,10 @@ class NeuralOrchestra_Base extends
 
           this.workerProxies_initOk = compileOk;
           return this.workerProxies_initOk;
+
+!!! ...unfinished... (2023/05/12)
+// alignmentMarkValueArray
+
         }
       }
 
@@ -880,6 +892,10 @@ class NeuralOrchestra_Base extends
         initOk = await initOkPromise;
         this.workerProxies_initOk = initOk;
         return this.workerProxies_initOk;
+
+!!! ...unfinished... (2023/05/12)
+// alignmentMarkValueArray
+
       }
 
     } catch ( e ) {
