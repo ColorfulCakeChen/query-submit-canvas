@@ -626,7 +626,7 @@ class NeuralWorker_Proxies extends Recyclable.Root {
       );
 
     return this.alignmentMarkValueArray_set_async(
-      this.alignmentMarkValueArray[ 1 ], this.alignmentMarkValueArray[ 0 ] );
+      [ this.alignmentMarkValueArray[ 1 ], this.alignmentMarkValueArray[ 0 ] ] );
   }
 
   get previous_output_TypedArrayArray_nonEmpty() {
