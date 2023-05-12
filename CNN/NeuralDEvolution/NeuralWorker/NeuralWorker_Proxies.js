@@ -221,7 +221,11 @@ import { Mode as NeuralWorker_Mode } from "./NeuralWorker_Mode.js";
  *   An array [ TypedArray, TypedArray ] representing the (previous time)
  * output of the (pair of) neural network(s).
  *
- *   - Its .length will be the same as .neuralNetCount.
+ *   - When .init_async() and .NeuralNetArray_create_async() it will be cleared
+ *       to undefined.
+ *
+ *     - After .TypedArray_process_async() succesfully, it will be non-null and
+ *         its .length will be the same as .neuralNetCount.
  *
  *   - Its element is TypedArray which may be:
  *     - Float32Array (if ( neuralNetParams.output_asInputValueRange == false ) )
@@ -306,6 +310,9 @@ class NeuralWorker_Proxies extends Recyclable.Root {
    * Initialize this worker proxy controller. It will create two neural networks
    * in one or two web worker(s).
    *
+   * The .alignmentMarkValueArray and .previous_output_TypedArrayArray will be
+   * cleared.
+   *
    *
    * @return {Promise}
    *   Return a promise:
@@ -335,6 +342,14 @@ class NeuralWorker_Proxies extends Recyclable.Root {
     //       network contains all actions of all game objects of all alignments.
     //
     let totalWorkerCount = NeuralWorker_Mode.workerCount_get( nNeuralWorker_ModeId );
+
+    // Since (re-)initialization, no alignment marks and no previous outputs.
+    {
+      this.previous_output_TypedArrayArray = undefined;
+
+      // Note: NeuralWorker_Body will clear it, too.
+      this.alignmentMarkValueArray = undefined;
+    }
 
     // 1. Web workers.
     let initOkArray;
@@ -416,6 +431,10 @@ class NeuralWorker_Proxies extends Recyclable.Root {
   /**
    * Create neural networks in all web workers' body.
    *
+   * The .alignmentMarkValueArray and .previous_output_TypedArrayArray will be
+   * cleared.
+   *
+   *
    * @param {NeuralNet.ParamsBase[]} neuralNetParamsBaseArray
    *   An array of configurations for the neural network to be created. These
    * configurations (exclude the array) will be owned (i.e. kept and destroyed)
@@ -436,8 +455,7 @@ class NeuralWorker_Proxies extends Recyclable.Root {
    *   - Resolved to false, if failed.
    */
   async NeuralNetArray_create_async(
-    neuralNetParamsBaseArray, weightArrayBufferArray, bLogDryRunTime
-  ) {
+    neuralNetParamsBaseArray, weightArrayBufferArray, bLogDryRunTime ) {
 
     const funcNameInMessage = "NeuralNetArray_create_async";
 
@@ -455,14 +473,12 @@ class NeuralWorker_Proxies extends Recyclable.Root {
 
     let createOk;
 
-    // 0. Since new neural networks are created, discard any old previous output.
+    // Since (re-)creation, no alignment marks and no previous outputs.
     {
-      if ( this.previous_output_TypedArrayArray ) {
-        this.previous_output_TypedArrayArray.length = this.neuralNetCount;
-        this.previous_output_TypedArrayArray.fill( undefined );
-      } else {
-        this.previous_output_TypedArrayArray = new Array( this.neuralNetCount );
-      }
+      this.previous_output_TypedArrayArray = undefined;
+
+      // Note: NeuralWorker_Body will clear it, too.
+      this.alignmentMarkValueArray = undefined;
     }
 
     // 1. Every worker creates one neural network.

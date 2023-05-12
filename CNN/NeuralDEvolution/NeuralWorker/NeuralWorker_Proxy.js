@@ -89,6 +89,9 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
    * Initialize this worker proxy. It will create one web worker and inform it
    * to initialize (e.g. load library), but not yet to create neural network.
    *
+   * Note: The .alignmentMarkValueArray will be cleared.
+   *
+   *
    * @param {number} workerId
    *   This id of this worker proxy (and web worker). This is the array index
    * in the parent container (i.e. WorkerProxies).
@@ -110,6 +113,9 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
 
   /**
    * Create neural network(s) in the web worker body.
+   *
+   * Note: The .alignmentMarkValueArray will be cleared.
+   *
    *
    * @param {NeuralNet.ParamsBase[]} neuralNetParamsBaseArray
    *   An array of configurations for the neural network to be created. These

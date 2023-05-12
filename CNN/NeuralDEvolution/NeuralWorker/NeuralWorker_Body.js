@@ -106,6 +106,9 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
 
   /**
    *
+   * Note: The .alignmentMarkValueArray will be cleared.
+   *
+   *
    * @param {number} workerId
    *   A non-negative integer represents this worker's id. The id of the first
    * worker should be 0.
@@ -117,8 +120,9 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
 
     // Clear resources.
     {
+      // Since (re-)initialization, no alignment marks.
       if ( this.alignmentMarkValueArray )
-        this.alignmentMarkValueArray.length = 0; // default is NO_FILL.
+        this.alignmentMarkValueArray.length = 0;
 
       if ( this.neuralNetArray )
         this.neuralNetArray.clear(); // Release old neural networks.
@@ -149,6 +153,9 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
   }
 
   /**
+   * Note: The .alignmentMarkValueArray will be cleared.
+   *
+   *
    * @param {Object[]} neuralNetParamsBaseArray
    *   An array of object. Every element is an object looks like
    * NeuralNet.ParamsBase.
@@ -166,12 +173,17 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
    *   - Yield { done: true, value: { value: false } }, if failed.
    */
   async* NeuralNetArray_create(
-    neuralNetParamsBaseArray, weightArrayBufferArray, bLogDryRunTime,
-    alignmentMarkValueArray ) {
+    neuralNetParamsBaseArray, weightArrayBufferArray, bLogDryRunTime ) {
 
     const funcNameInMessage = "NeuralNetArray_create";
 
-    // 0. Prepare container for all neural networks.
+    // 0.
+
+    // 0.1 Since (re-)creation, no alignment marks.
+    if ( this.alignmentMarkValueArray )
+      this.alignmentMarkValueArray.length = 0;
+
+    // 0.2 Prepare container for all neural networks.
     {
       if ( this.neuralNetArray )
         this.neuralNetArray.clear(); // Release old neural networks.
@@ -291,8 +303,6 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
       // Compile shaders and upload tensor to GPU if backend is webgl.
       NeuralWorker_Body.NeuralNetArray_compileShaders_uploadTensors_ifWebGL
         .call( this, bLogDryRunTime );
-
-!!! alignmentMarkValueArray
 
       if ( bAllOk )
         return { value: true };
