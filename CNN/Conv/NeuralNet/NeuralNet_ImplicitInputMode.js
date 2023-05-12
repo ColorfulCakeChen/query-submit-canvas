@@ -10,6 +10,11 @@ import { Int } from "../../Unpacker/ValueDesc/ValueDesc_Base.js";
 
 
 //!!! ...unfinished... (2023/05/12)
+// Problem: In NeuralNet testing case, how to test the 
+// implicit_input_bFillAlignmentMark and
+// implicit_input_bFillPreviousTimeOutput?
+//
+
 
 /** Describe id, range, name of NeuralNet_ImplicitInputMode.
  *
