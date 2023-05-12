@@ -15,14 +15,22 @@ import { tensorflowJsURL } from "./NeuralWorker_Common.js";
  * neural network(s).
  *
  * @member {integer[]} alignmentMarkValueArray
- *   An array of values representing every neural network is playing which
- * alignment currently.
+ *   An array of values representing every neural network is personating
+ * which alignment currently.
  *
- *   - If it is null or undefined, it means not to fill alignment mark and
- *       feedback information (i.e. previous time output of the neural network)
- *       into source TypedArray when .TypedArray_process_async() is called.
+ *   - It could be null or undefined or ( alignmentMarkValueArray.length == 0 )
+ *       for not filling alignment mark into source TypedArray.
  *
- *   - Otherwise, its length should be the same as this.neuralNetArray.length
+ *   - Otherwise, alignmentMarkValueArray.length should be the same as
+ *       this.neuralNetCount
+ *
+ *     - If ( NeuralNet.Params.has_implicit_input == true ), they will be
+ *         filled (as alignment marks) into every input of the neural
+ *         networks (i.e. source TypedArray).
+ *
+ *     - If ( NeuralNet.Params.has_implicit_input == true ) but you do not
+ *         want to fill alignment marks, please call
+ *         .alignmentMarkValueArray_set_async( null ) to clear it to null.
  *
  * @member {boolean} alignmentMarkValueArray_nonEmpty
  *   Return true, if .alignmentMarkValueArray is null or undefined or
@@ -158,7 +166,8 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
    *   - Yield { done: true, value: { value: false } }, if failed.
    */
   async* NeuralNetArray_create(
-    neuralNetParamsBaseArray, weightArrayBufferArray, bLogDryRunTime ) {
+    neuralNetParamsBaseArray, weightArrayBufferArray, bLogDryRunTime,
+    alignmentMarkValueArray ) {
 
     const funcNameInMessage = "NeuralNetArray_create";
 
@@ -282,6 +291,8 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
       // Compile shaders and upload tensor to GPU if backend is webgl.
       NeuralWorker_Body.NeuralNetArray_compileShaders_uploadTensors_ifWebGL
         .call( this, bLogDryRunTime );
+
+!!! alignmentMarkValueArray
 
       if ( bAllOk )
         return { value: true };
@@ -440,26 +451,39 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
   }
 
   /**
-   * @param {integer[]} markValueArray
-   *   An array of values representing every neural network is playing which
-   * alignment currently.
-   *   - It could be null or undefined or ( markValueArray.length == 0 ) to
-   *       clear .alignmentMarkValueArray for not filling alignment mark into
-   *       source TypedArray. (i.e. NO _FILL)
+   * @param {integer[]} alignmentMarkValueArray
+   *   An array of values representing every neural network is personating
+   * which alignment currently.
+   *
+   *   - It could be null or undefined or
+   *       ( alignmentMarkValueArray.length == 0 ) for not filling alignment
+   *       mark into source TypedArray.
+   *
+   *   - Otherwise, alignmentMarkValueArray.length should be the same as
+   *       this.neuralNetCount
+   *
+   *     - If ( NeuralNet.Params.has_implicit_input == true ), they will be
+   *         filled (as alignment marks) into every input of the neural
+   *         networks (i.e. source TypedArray).
+   *
+   *     - If ( NeuralNet.Params.has_implicit_input == true ) but you do not
+   *         want to fill alignment marks, please use
+   *         ( alignmentMarkValueArray == null ) to clear it.
    *
    *   - For example, in a OX (connect-three) game:
-   *     - ( markValueArray[ 0 ] == 0 ) means neural network 0 plays O side
-   *         currently.
-   *     - ( markValueArray[ 1 ] == 255 ) means neural network 1 plays X side
-   *         currently.
+   *     - ( alignmentMarkValueArray[ 0 ] == 0 ) means neural network 0
+   *         personates O side currently.
+   *     - ( alignmentMarkValueArray[ 1 ] == 255 ) means neural network 1
+   *         personates X side currently.
    *
    * @yield {boolean}
    *   - Yield { done: true, value: { value: true } }.
    */
-  async* alignmentMarkValueArray_set( markValueArray ) {
+  async* alignmentMarkValueArray_set( alignmentMarkValueArray ) {
     const funcNameInMessage = "alignmentMarkValueArray_set";
 
-    if ( ( markValueArray ) && ( markValueArray.length > 0 ) ) { // 1.
+    if (   ( alignmentMarkValueArray )
+        && ( alignmentMarkValueArray.length > 0 ) ) { // 1.
 
       if ( !this.neuralNetArray )
         throw Error( `NeuralWorker_Body.${funcNameInMessage}(): `
@@ -467,9 +491,10 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
           + `NeuralWorker_Body.NeuralNetArray_create() has done.`
         );
 
-      if ( markValueArray.length != this.neuralNetArray.length )
+      if ( alignmentMarkValueArray.length != this.neuralNetArray.length )
         throw Error( `NeuralWorker_Body.${funcNameInMessage}(): `
-          + `markValueArray.length ( ${markValueArray.length} ) `
+          + `alignmentMarkValueArray.length `
+          + `( ${alignmentMarkValueArray.length} ) `
           + `should be either 0 or the same as `
           + `.neuralNetCount ( ${this.neuralNetArray.length} ).`
         );
@@ -477,15 +502,16 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
       // 1.1 Prepare container for all neural networks' mark value.
       {
         if ( this.alignmentMarkValueArray )
-          this.alignmentMarkValueArray.length = markValueArray.length;
+          this.alignmentMarkValueArray.length = alignmentMarkValueArray.length;
         else
           this.alignmentMarkValueArray
-            = Recyclable.Array.Pool.get_or_create_by( markValueArray.length );
+            = Recyclable.Array.Pool.get_or_create_by(
+                alignmentMarkValueArray.length );
       }
 
       // 1.2 Copy the alignment mark values.
       for ( let i = 0; i < this.alignmentMarkValueArray.length; ++i ) {
-        this.alignmentMarkValueArray[ i ] = markValueArray[ i ];
+        this.alignmentMarkValueArray[ i ] = alignmentMarkValueArray[ i ];
       }
 
     } else { // 2.

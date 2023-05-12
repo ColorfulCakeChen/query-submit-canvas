@@ -195,16 +195,23 @@ import { Mode as NeuralWorker_Mode } from "./NeuralWorker_Mode.js";
  *
  *
  * @member {integer[]} alignmentMarkValueArray
- *   An array of values representing every neural network is personating which
- * alignment currently.
+ *   An array of values representing every neural network is personating
+ * which alignment currently.
+ *
+ *   - It could be null or undefined or
+ *       ( alignmentMarkValueArray.length == 0 ) for not filling alignment
+ *       mark into source TypedArray.
+ *
+ *   - Otherwise, alignmentMarkValueArray.length should be the same as
+ *       this.neuralNetCount
  *
  *     - If ( NeuralNet.Params.has_implicit_input == true ), they will be
- *         filled (as alignment marks) into every input of the neural networks
- *         (i.e. source TypedArray).
+ *         filled (as alignment marks) into every input of the neural
+ *         networks (i.e. source TypedArray).
  *
- *     - If ( NeuralNet.Params.has_implicit_input == true ) but you do not want
- *         to fill alignment marks, please call
- *         .alignmentMarkValueArray_set_async( null ) to clear it to null.
+ *     - If ( NeuralNet.Params.has_implicit_input == true ) but you do not
+ *         want to fill alignment marks, please call
+ *         .alignmentMarkValueArray_set_async( null ) to clear it.
  *
  * @member {boolean} alignmentMarkValueArray_nonEmpty
  *   Return true, if .alignmentMarkValueArray is null or
@@ -497,40 +504,50 @@ class NeuralWorker_Proxies extends Recyclable.Root {
   }
 
   /**
-   * @param {integer[]} markValueArray
-   *   An array of values representing every neural network is playing which
-   * alignment currently.
+   * @param {integer[]} alignmentMarkValueArray
+   *   An array of values representing every neural network is personating
+   * which alignment currently.
    *
-   *   - It could be null or undefined or ( markValueArray.length == 0 ) to
-   *       clear .alignmentMarkValueArray for not filling alignment mark into
-   *       source TypedArray.
+   *   - It could be null or undefined or
+   *       ( alignmentMarkValueArray.length == 0 ) for not filling alignment
+   *       mark into source TypedArray.
    *
-   *   - Otherwise, markValueArray.length should be the same as
+   *   - Otherwise, alignmentMarkValueArray.length should be the same as
    *       this.neuralNetCount
    *
+   *     - If ( NeuralNet.Params.has_implicit_input == true ), they will be
+   *         filled (as alignment marks) into every input of the neural
+   *         networks (i.e. source TypedArray).
+   *
+   *     - If ( NeuralNet.Params.has_implicit_input == true ) but you do not
+   *         want to fill alignment marks, please use
+   *         ( alignmentMarkValueArray == null ) to clear it.
+   * 
    * @return {Promise}
    *   Return a promise:
    *   - Resolved to true, if succeeded.
    *   - Resolved to false, if failed.
    */
-  async alignmentMarkValueArray_set_async( markValueArray ) {
+  async alignmentMarkValueArray_set_async( alignmentMarkValueArray ) {
     const funcNameInMessage = "alignmentMarkValueArray_set_async";
 
     // 1.
-    const markValueArray_nonEmpty
-      = ( ( markValueArray ) && ( markValueArray.length > 0 ) );
+    const alignmentMarkValueArray_nonEmpty
+      = (   ( alignmentMarkValueArray )
+         && ( alignmentMarkValueArray.length > 0 ) );
 
-    if ( markValueArray_nonEmpty ) {
-      if ( markValueArray.length != this.neuralNetCount )
+    if ( alignmentMarkValueArray_nonEmpty ) {
+      if ( alignmentMarkValueArray.length != this.neuralNetCount )
         throw Error( `NeuralWorker.Proxies.${funcNameInMessage}(): `
-          + `markValueArray.length ( ${markValueArray.length} ) `
+          + `alignmentMarkValueArray.length `
+          + `( ${alignmentMarkValueArray.length} ) `
           + `should be either 0 or the same as `
           + `.neuralNetCount ( ${this.neuralNetCount} ).`
         );
     }
 
     // 2. Record it for reference.
-    this.alignmentMarkValueArray = markValueArray;
+    this.alignmentMarkValueArray = alignmentMarkValueArray;
 
     // 3.
 

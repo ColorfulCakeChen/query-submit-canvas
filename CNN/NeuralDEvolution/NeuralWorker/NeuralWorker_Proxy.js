@@ -163,21 +163,33 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
   }
 
   /**
-   * @param {integer[]} markValueArray
-   *   An array of values representing every neural network is playing which
-   * alignment currently.
-   *   - It could be null or undefined or ( markValueArray.length == 0 ) to
-   *       clear .alignmentMarkValueArray for not filling alignment mark into
-   *       source TypedArray.
+   * @param {integer[]} alignmentMarkValueArray
+   *   An array of values representing every neural network is personating
+   * which alignment currently.
    *
+   *   - It could be null or undefined or
+   *       ( alignmentMarkValueArray.length == 0 ) for not filling alignment
+   *       mark into source TypedArray.
+   *
+   *   - Otherwise, alignmentMarkValueArray.length should be the same as
+   *       this.neuralNetCount
+   *
+   *     - If ( NeuralNet.Params.has_implicit_input == true ), they will be
+   *         filled (as alignment marks) into every input of the neural
+   *         networks (i.e. source TypedArray).
+   *
+   *     - If ( NeuralNet.Params.has_implicit_input == true ) but you do not
+   *         want to fill alignment marks, please use
+   *         ( alignmentMarkValueArray == null ) to clear it.
+   * 
    * @return {Promise}
    *   Return a promise:
    *   - Resolved to true, if succeeded.
    *   - Resolved to false, if failed.
    */
-  alignmentMarkValueArray_set_async( markValueArray ) {
+  alignmentMarkValueArray_set_async( alignmentMarkValueArray ) {
     return this.createPromise_by_postCommandArgs(
-      [ "alignmentMarkValueArray_set", markValueArray ]
+      [ "alignmentMarkValueArray_set", alignmentMarkValueArray ]
     );
   }
 

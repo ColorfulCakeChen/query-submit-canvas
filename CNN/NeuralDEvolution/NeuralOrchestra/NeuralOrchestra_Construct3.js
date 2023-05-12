@@ -228,10 +228,10 @@ class NeuralOrchestra_Construct3 extends Base {
    *       (-1: Offspring win. 0: Parent and Offspring draw. +1: Parent win.)
    *
    *   - runtime.globalVars.Versus_Result_ParentAlignment0
-   *       The versus result when Parent plays alignment 0.
+   *       The versus result when Parent personates alignment 0.
    *
    *   - runtime.globalVars.Versus_Result_ParentAlignment1
-   *       The versus result when Parent plays alignment 1.
+   *       The versus result when Parent personates alignment 1.
    *
    * @param {NeuralOrchestra_Construct3.Construct3} this
    */
