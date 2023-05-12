@@ -3,11 +3,13 @@ export { NeuralNet_ImplicitInputMode as ImplicitInputMode };
 import { Int } from "../../Unpacker/ValueDesc/ValueDesc_Base.js";
 
 
-//!!! ...unfinished... (2023/05/06)
+//!!! ...unfinished... (2023/05/12)
 // alignmentMarkValueArray can NOT be placed here because
 // alignemt mark value should be changable during the lifetime
 // of a neural network.
 
+
+//!!! ...unfinished... (2023/05/12)
 
 /** Describe id, range, name of NeuralNet_ImplicitInputMode.
  *
@@ -127,26 +129,26 @@ NeuralNet_ImplicitInputMode.Info
   /**
    *
    * @param {number} nNeuralNet_ImplicitInputModeId
-   *   The neural worker mode id (NeuralWorker.Mode.Singleton.Ids.Xxx).
+   *   The neural worker mode id (NeuralNet.ImplicitInputMode.Singleton.Ids.Xxx).
    *
    * @param {string} nameForMessage
-   *   The string name of the integer value. Usually, it is used for debug message.
-   * This is why it is a string (so that it will not be twisted by JavaScript codes
-   * compressor).
+   *   The string name of the integer value. Usually, it is used for debug
+   * message. This is why it is a string (so that it will not be twisted by
+   * JavaScript codes compressor).
    *
    */
   constructor( nNeuralNet_ImplicitInputModeId, nameForMessage,
-    workerCount, neuralNetCount, bApply_or_Applier
+    has_implicit_input, output_asInputValueRange
   ) {
     super( nNeuralNet_ImplicitInputModeId, nameForMessage );
 
     this.workerCount = workerCount;
-    this.neuralNetCount = neuralNetCount;
-    this.bApply_or_Applier = bApply_or_Applier;
+    this.has_implicit_input = has_implicit_input;
+    this.output_asInputValueRange = output_asInputValueRange;
   }
 
 }
 
 
-/** The only one NeuralWorker.Mode instance. */
+/** The only one NeuralNet.ImplicitInputMode instance. */
 NeuralNet_ImplicitInputMode.Singleton = new NeuralNet_ImplicitInputMode;

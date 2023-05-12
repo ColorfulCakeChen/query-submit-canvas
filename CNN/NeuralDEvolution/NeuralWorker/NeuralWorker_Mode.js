@@ -114,9 +114,9 @@ NeuralWorker_Mode.Info = class NeuralWorker_Mode_Info extends Int.Info {
    *   The neural worker mode id (NeuralWorker.Mode.Singleton.Ids.Xxx).
    *
    * @param {string} nameForMessage
-   *   The string name of the integer value. Usually, it is used for debug message.
-   * This is why it is a string (so that it will not be twisted by JavaScript codes
-   * compressor).
+   *   The string name of the integer value. Usually, it is used for debug
+   * message. This is why it is a string (so that it will not be twisted by
+   * JavaScript codes compressor).
    *
    */
   constructor( nNeuralWorker_ModeId, nameForMessage,
