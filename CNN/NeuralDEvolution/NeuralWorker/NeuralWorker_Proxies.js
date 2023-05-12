@@ -67,7 +67,7 @@ import { Mode as NeuralWorker_Mode } from "./NeuralWorker_Mode.js";
  * 2.1 FILL and NO_FILL
  *
  * How does a neural network know which alignment (in a differential evolution
- * versus) it represents? There are two methods: FILL or NO_FILL.
+ * versus) it represents (i.e. personates)? There are two methods: FILL or NO_FILL.
  *
  *   - FILL means the input image will be filled some information (i.e.
  *       alignment mark) before it is processed by a neural network.
@@ -124,42 +124,42 @@ import { Mode as NeuralWorker_Mode } from "./NeuralWorker_Mode.js";
  *
  * 2.3 Backend "cpu"
  *
- *   - TWO_WORKER_Xxx is better than ONE_WORKER_Xxx.
+ *   - TWO_WORKER__Xxx is better than ONE_WORKER__Xxx.
  *
  *     - This is especially true if your computer has multiple (i.e. >= 2) CPU
  *         because computation could be done parallelly by different CPU.
  *
- *   - Xxx_APPLIER is far more better than Xxx_APPLY.
+ *   - Xxx__APPLIER is far more better than Xxx__APPLY.
  *
- *     - This is because Xxx_APPLIER could deliver input image to another CPU
- *         (i.e. the 2nd computation) more earlier than Xxx_APPLY.
+ *     - This is because Xxx__APPLIER could deliver input image to another CPU
+ *         (i.e. the 2nd computation) more earlier than Xxx__APPLY. This
+ *         increases the computational parallelism.
  *
  *
  * 2.4 Backend "webgl"
  *
- *   - ONE_WORKER_Xxx is better than (at least, comparable to) TWO_WORKER_Xxx.
+ *   - ONE_WORKER__Xxx is better than (at least, comparable to) TWO_WORKER__Xxx.
  *
  *     - The possible reason is that the GPU is a shared resource among all web
  *         workers. Using more web workers just wastes more time to transfer
  *         input images between them (and then, they still needs take turns to
  *         use the same one GPU for computation).
  *
- *   - Xxx_APPLIER may or may not be better than Xxx_APPLY.
+ *   - Xxx__APPLIER may or may not be better than Xxx__APPLY.
  *
  *     - The gain (if has) is not so obvious as in backend "cpu".
  *
- *     - The possible reason is that the 2nd worker needs wait for the GPU to be
- *         released by the 1st worker no matter how early (how fast) the input
- *         image is received by the 2nd worker (because the GPU is shared by
- *         all web workers).
+ *     - The possible reason is that the 2nd worker needs wait for the GPU to
+ *         be released by the 1st worker no matter how early (how fast) the
+ *         input image is received by the 2nd worker (because the GPU is shared
+ *         by all web workers).
  *
  *
  * 3. Summary
  *
- *   - Try mode ONE_WORKER__TWO_NET__ONE_SCALE__NO_FILL (0) with backend "webgl".
+ *   - Try mode ONE_WORKER__TWO_NET (0) with backend "webgl".
  *
- *   - If failed, try mode TWO_WORKER__TWO_NET__ONE_SCALE__NO_FILL__APPLIER (5) with
- *       backend "cpu".
+ *   - If failed, try mode TWO_WORKER__TWO_NET__APPLIER (2) with backend "cpu".
  *
  *
 
