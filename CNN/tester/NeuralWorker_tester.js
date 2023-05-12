@@ -1085,6 +1085,8 @@ function TestButton_onClick( event ) {
     = Number.parseInt( g_Controls.explicit_input_width_Text.value );
   g_Controls.explicit_input_width_Text.value = explicit_input_width;
 
+!!! ...unfinished... (2023/05/12)
+// Restrict it?
   let explicit_input_channelCount
     = Number.parseInt( g_Controls.explicit_input_channelCount_Text.value );
   g_Controls.explicit_input_channelCount_Text.value = explicit_input_channelCount;
