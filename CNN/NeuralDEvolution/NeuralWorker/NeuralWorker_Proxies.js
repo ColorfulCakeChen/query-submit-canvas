@@ -64,65 +64,39 @@ import { Mode as NeuralWorker_Mode } from "./NeuralWorker_Mode.js";
  * some observations.
  *
  *
- * 2.1 FILL and NO_FILL
+ * 2.1 Filling alignment mark and/or feedback
  *
- * How does a neural network know which alignment (in a differential evolution
- * versus) it represents (i.e. personates)? There are two methods: FILL or NO_FILL.
+ * If specify ( neuralNetParamsBase.has_implicit_input == true ) when calling
+ * .NeuralNetArray_create_async(). And provide an enlarged (with respect to
+ * neuralNetParamsBase.explicit_input_Xxx) image as input to
+ * .TypedArray_process_async(). Then, the follwing two issues could be handled:
+ * 
+ *   - How does a neural network know which alignment (in a differential
+ *       evolution versus) it represents (i.e. personates) currently?
  *
- *   - FILL means the input image will be filled some information (i.e.
- *       alignment mark) before it is processed by a neural network.
+ *     - Please call .alignmentMarkValueArray_set_async() to provide alignement
+ *         marks of both comprtition sides.
  *
- *     - The cost are downloading input image from GPU to CPU, filling alignment
- *         mark, and uploading it from CPU to GPU.
+ *   - What if a neural network needs itself previous time output as feedback?
  *
-
-//!!! ...unfinished... (2023/05/05)
-// Deprecate NO_FILL.
-// When alignment mark is specified, it and previous time output
-// (i.e. feedback) will be filled automatically.
-
- *   - NO_FILL means the input image will not be filled any extra information
- *       before it is processed by a neural network.
- *
- *     - Instead, the neural network will simultaneously output results for
- *         both alignments.
- *         - For example, the neural network outputs 100 channels totally.
- *         - If the neural network represents alignment A,
- *             use output channels 0 - 49.
- *         - If the neural network represents alignment B,
- *             use output channels 50 - 99.
- *
- *     - The cost are doubling the output channel count.
- *
- * At first glance, we might guess doubling output channel count should be
- * slower. The memory downloading/modifying/uploading, however, are even
- * slower. In the result, the NO_FILL's performance is comparable to (if not
- * better than) FILL.
+ *     - Please ensure ( neuralNetParamsBase.output_asInputValueRange == true )
+ *         so that the neural network's output is feasible for feedback.
  *
  *
- * 2.2 (Pre-fill) recurrent information
+ * The cost is:
  *
- * Except alignment mark, if recurrent feedback information (i.e. the previous
- * step's output of the neural network) is wanted, here is a possible method
- * without filling by neural network itself:
+ *   - Filling extra information (i.e. alignment mark and/or feedback) takes
+ *       extra time.
  *
- *   - Let DrawingCanvas be larger than Viewport.
- *
- *   - Arrange some 1 * 1 size TiledBackground (with pure white (RGBA all 255)
- *       image) world objects inside the DrawingCanvas (so that they visible
- *       by neural network ) but outside the Viewport (so that they are invisible
- *       by user).
- *
- *   - Use these TiledBackground world objects' color (RGB) and opacity (A) to
- *       express recurrent feedback information.
- *
- *   - Disadvantage: Drawing so many tiny world objects may be hurt performance.
- *       Filling recurrent feedback (i.e. previous output) into ImageData.data
- *       (Uint8ClampedArray) directly (after getting ImageData from DrawCanvas)
- *       should be faster.
+ *   - Processing the enlarged input image is usually slower a little.
  *
  *
- * 2.3 Backend "cpu"
+ * How to provided an enlarged input image?
+ *
+ *     - Let DrawingCanvas be larger than Viewport.
+ *
+ *
+ * 2.2 Backend "cpu"
  *
  *   - TWO_WORKER__Xxx is better than ONE_WORKER__Xxx.
  *
@@ -136,7 +110,7 @@ import { Mode as NeuralWorker_Mode } from "./NeuralWorker_Mode.js";
  *         increases the computational parallelism.
  *
  *
- * 2.4 Backend "webgl"
+ * 2.3 Backend "webgl"
  *
  *   - ONE_WORKER__Xxx is better than (at least, comparable to) TWO_WORKER__Xxx.
  *
