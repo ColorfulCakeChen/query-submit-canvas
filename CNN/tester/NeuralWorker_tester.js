@@ -346,7 +346,7 @@ class PerformanceTestCase extends Recyclable.Root {
 
       //!!! (2023/05/12 Remarked) Use larger variation to generate negative result.
       //const weightsRandomOffset = TestParams.Base.weightsRandomOffset;
-      const weightsRandomOffset = { min: -50, max: +5 };
+      const weightsRandomOffset = { min: -500, max: +5 };
 
       RandTools.fill_numberArray(
         PerformanceTestCase.randomTestWeightArray,
