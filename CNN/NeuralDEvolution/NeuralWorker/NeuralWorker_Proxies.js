@@ -599,6 +599,22 @@ class NeuralWorker_Proxies extends Recyclable.Root {
     return resultOk;
   }
 
+  /**
+   * 
+   *
+   * @return {Promise}
+   *   Return a promise:
+   *   - Resolved to true, if succeeded.
+   *   - Resolved to false, if failed.
+   */
+  async alignmentMarkValueArray_swap_async() {
+
+!!! ...unfinished... (2023/05/12)
+// If ( !alignmentMarkValueArray_nonEmpty )
+// or ( alignmentMarkValueArray.length != 2 ), throw exception
+
+  }
+
   get previous_output_TypedArrayArray_nonEmpty() {
     if (   ( this.previous_output_TypedArrayArray )
         && ( this.previous_output_TypedArrayArray.length > 0 ) )
