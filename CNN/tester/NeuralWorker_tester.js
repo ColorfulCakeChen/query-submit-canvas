@@ -824,8 +824,9 @@ class HeightWidthDepth {
               let postfixMsg = testCase.testCaseName;
 
               for ( let i = i; i < testCase.neuralNetCount; ++i ) {
-                // NeuralNet_try_result_async() should be called after prepare_async()
-                // so that the nConvStageTypeId has been adjusted.
+                // NeuralNet_try_result_async() should be called after
+                // prepare_async() so that the nConvStageTypeId has been
+                // adjusted.
                 let resultFloat32Array
                   = await testCase.NeuralNet_try_result_async(
                       this.testCanvas,
