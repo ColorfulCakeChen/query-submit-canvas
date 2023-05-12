@@ -143,6 +143,8 @@ class PerformanceTestCase extends Recyclable.Root {
    *   The shared neural worker proxies.
    */
   async prepare_async( neuralWorkerProxies ) {
+    const funcNameInMessage = "prepare_async";
+
     try {
       await tf.ready(); // Ensure tf.getBackend() workable.
       let backendName = tf.getBackend();
@@ -157,10 +159,24 @@ class PerformanceTestCase extends Recyclable.Root {
       let bInitOkPromise = neuralWorkerProxies.init_async(
         backendName, this.nNeuralWorker_ModeId );
 
-!!! ...unfinished... (2023/05/12)
-      // Check neuralWorkerProxies.alignmentMarkValueArray
-      // and .previous_output_TypedArrayArray is null.
-        
+      {
+        if ( neuralWorkerProxies.alignmentMarkValueArray_nonEmpty )
+          throw Error( `NeuralWorker_tester.PerformanceTestCase`
+            + `.${funcNameInMessage}(): `
+            + `.alignmentMarkValueArray_nonEmpty `
+            + `( ${neuralWorkerProxies.alignmentMarkValueArray_nonEmpty} ) `
+            + `should be false after .init_async() done. `
+            + `${neuralWorkerProxies}` );
+
+        if ( neuralWorkerProxies.previous_output_TypedArrayArray_nonEmpty )
+          throw Error( `NeuralWorker_tester.PerformanceTestCase`
+            + `.${funcNameInMessage}(): `
+            + `.previous_output_TypedArrayArray_nonEmpty `
+            + `( ${neuralWorkerProxies.previous_output_TypedArrayArray_nonEmpty} ) `
+            + `should be false after .init_async() done. `
+            + `${neuralWorkerProxies}` );
+          }
+
       PerformanceTestCase.randomTestWeightArray_create();
 
       // Although neural network configuration will be copied (not transferred)
@@ -191,7 +207,9 @@ class PerformanceTestCase extends Recyclable.Root {
 
       let bInitOk = await bInitOkPromise;
       if ( !bInitOk )
-        throw Error( `Failed to initialize neuralWorkerProxies object. `
+        throw Error( `NeuralWorker_tester.PerformanceTestCase`
+          + `.${funcNameInMessage}(): `
+          + `Failed to initialize neuralWorkerProxies object. `
           + `${neuralWorkerProxies}` );
 
       // (2022//09/26 Remarked)
@@ -202,12 +220,28 @@ class PerformanceTestCase extends Recyclable.Root {
 
       let bCreateOk = await bCreateOkPromise;
       if ( !bCreateOk )
-        throw Error( `Failed to create neural networks by neuralWorkerProxies. `
+        throw Error( `NeuralWorker_tester.PerformanceTestCase`
+          + `.${funcNameInMessage}(): `
+          + `Failed to create neural networks by neuralWorkerProxies. `
           + `${neuralWorkerProxies}` );
 
-!!! ...unfinished... (2023/05/12)
-// Check neuralWorkerProxies.alignmentMarkValueArray
-// and .previous_output_TypedArrayArray is null.
+      {
+        if ( neuralWorkerProxies.alignmentMarkValueArray_nonEmpty )
+          throw Error( `NeuralWorker_tester.PerformanceTestCase`
+            + `.${funcNameInMessage}(): `
+            + `.alignmentMarkValueArray_nonEmpty `
+            + `( ${neuralWorkerProxies.alignmentMarkValueArray_nonEmpty} ) `
+            + `should be false after .NeuralNetArray_create_async() done. `
+            + `${neuralWorkerProxies}` );
+
+        if ( neuralWorkerProxies.previous_output_TypedArrayArray_nonEmpty )
+          throw Error( `NeuralWorker_tester.PerformanceTestCase`
+            + `.${funcNameInMessage}(): `
+            + `.previous_output_TypedArrayArray_nonEmpty `
+            + `( ${neuralWorkerProxies.previous_output_TypedArrayArray_nonEmpty} ) `
+            + `should be false after .NeuralNetArray_create_async() done. `
+            + `${neuralWorkerProxies}` );
+      }
 
       {
         if ( this.neuralNetCount > 1 ) {
@@ -221,7 +255,17 @@ class PerformanceTestCase extends Recyclable.Root {
 
         let bSetOk = await bSetOkPromise;
         if ( false == bSetOk )
-          throw Error( `Failed to set alignment mark by neuralWorkerProxies. `
+          throw Error( `NeuralWorker_tester.PerformanceTestCase`
+            + `.${funcNameInMessage}(): `
+            + `Failed to set alignment mark by neuralWorkerProxies. `
+            + `${neuralWorkerProxies}` );
+
+        if ( !neuralWorkerProxies.alignmentMarkValueArray_nonEmpty )
+          throw Error( `NeuralWorker_tester.PerformanceTestCase`
+            + `.${funcNameInMessage}(): `
+            + `.alignmentMarkValueArray_nonEmpty `
+            + `( ${neuralWorkerProxies.alignmentMarkValueArray_nonEmpty} ) `
+            + `should be true after .alignmentMarkValueArray_set_async() done. `
             + `${neuralWorkerProxies}` );
       }
 
@@ -593,6 +637,10 @@ class HeightWidthDepth {
 
   /** Test .TypedArray_process_async by Xxx */
   async testNeuralWorker_ByName( testCaseName ) {
+    const funcNameInMessage = "testNeuralWorker_ByName";
+
+    const neuralWorkerProxies = this.neuralWorkerProxies;
+
     let testCase = this.testCaseMap.get( testCaseName );
 
     // First time test this case. Release all other test cases' neural networks
@@ -600,7 +648,7 @@ class HeightWidthDepth {
     if ( !testCase.preparePromise ) {
       this.neuralWorker_PerformanceTest_release_preparePromise();
       testCase.preparePromise = testCase.prepare_async(
-        this.neuralWorkerProxies );
+        neuralWorkerProxies );
     }
 
     // Note: Even if non-first time test this case, it is still necessary to
@@ -616,22 +664,26 @@ class HeightWidthDepth {
     }
 
     let resultFloat32ArrayArrayPromise
-      = this.neuralWorkerProxies.TypedArray_process_async(
+      = neuralWorkerProxies.TypedArray_process_async(
           imageData.data, imageData.height, imageData.width );
 
     if ( imageData.data.length != 0 )
-      throw Error( `NeuralWorker_tester.testNeuralWorker_ByName(): `
+      throw Error( `NeuralWorker_tester.HeightWidthDepth`
+        + `.${funcNameInMessage}(): `
         + `imageData.data.length ( ${imageData.data.length} ) should be 0 `
-        + `after transferred to worker.`
-      );
+        + `after transferred to worker. `
+        + `${neuralWorkerProxies}` );
 
     let resultFloat32ArrayArray = await resultFloat32ArrayArrayPromise;
 
+    if ( !neuralWorkerProxies.previous_output_TypedArrayArray_nonEmpty )
+      throw Error( `NeuralWorker_tester.HeightWidthDepth`
+        + `.${funcNameInMessage}(): `
+        + `.previous_output_TypedArrayArray_nonEmpty `
+        + `( ${neuralWorkerProxies.previous_output_TypedArrayArray_nonEmpty} ) `
+        + `should be true after .TypedArray_process_async() done. `
+        + `${neuralWorkerProxies}` );
 
-!!! ...unfinished... (2023/05/12)
-    // Check neuralWorkerProxies.alignmentMarkValueArray
-    // and .previous_output_TypedArrayArray is not null.
-    
     return resultFloat32ArrayArray;
   }
 
