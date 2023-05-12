@@ -850,11 +850,11 @@ class HeightWidthDepth {
                 // NeuralNet_try_result_async() should be called after
                 // prepare_async() so that the nConvStageTypeId has been
                 // adjusted.
-                let resultFloat32Array
-                  = await testCase.NeuralNet_try_result_async(
-                      this.testCanvas,
-                      testCase.alignmentMarkValueArray[ neuralNetIndex ],
-                      previous_output_TypedArrayArray_for_verification[ neuralNetIndex ] );
+                let resultFloat32Array = await testCase
+                  .NeuralNet_try_result_async(
+                    this.testCanvas,
+                    testCase.alignmentMarkValueArray[ neuralNetIndex ],
+                    previous_output_TypedArrayArray_for_verification[ neuralNetIndex ] );
 
                 let lhsNumberArray = resultFloat32ArrayArray[ 0 ];
                 let rhsNumberArray = resultFloat32Array;
