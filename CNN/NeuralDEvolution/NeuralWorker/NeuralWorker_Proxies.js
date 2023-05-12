@@ -729,8 +729,8 @@ class NeuralWorker_Proxies extends Recyclable.Root {
     const neuralNetParams1
       = workerProxy1.neuralNetParamsBaseArray[ workerProxy1_neuralNetIndex0 ];
 
-    const source_height1 = neuralNetParams1.input_height;
-    const source_width1 = neuralNetParams1.input_width;
+    const source_height1 = neuralNetParams1.inferencedParams.input_height;
+    const source_width1 = neuralNetParams1.inferencedParams.input_width;
 
     let worker1_promise = workerProxy1
       .TWO_WORKER__TWO_NET__step1_TypedArray_process_async(
