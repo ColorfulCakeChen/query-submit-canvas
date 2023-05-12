@@ -104,7 +104,7 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
    *   - Resolved to true, if succeeded.
    *   - Resolved to false, if failed.
    */
-  initWorker_async( workerId, backendName ) {
+  async initWorker_async( workerId, backendName ) {
     this.workerId = workerId;
     return this.createPromise_by_postCommandArgs(
       [ "initWorker", workerId, backendName ]
@@ -136,7 +136,7 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
    *   - Resolved to true, if succeeded.
    *   - Resolved to false, if failed.
    */
-  NeuralNetArray_create_async(
+  async NeuralNetArray_create_async(
     neuralNetParamsBaseArray, weightArrayBufferArray, bLogDryRunTime ) {
 
     const funcNameInMessage = "NeuralNetArray_create_async";
@@ -228,12 +228,11 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
    *   - Resolved to true, if succeeded.
    *   - Resolved to false, if failed.
    */
-  alignmentMarkValueArray_set_async( alignmentMarkValueArray ) {
+  async alignmentMarkValueArray_set_async( alignmentMarkValueArray ) {
     return this.createPromise_by_postCommandArgs(
       [ "alignmentMarkValueArray_set", alignmentMarkValueArray ]
     );
   }
-
 
   /**
    * Process input image data by all (suppose two) neural networks in this web
@@ -281,7 +280,7 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
    *   - Float32Array (if ( neuralNetParams.output_asInputValueRange == false ) )
    *   - Int32Array (if ( neuralNetParams.output_asInputValueRange == true ) )
    */
-  ONE_WORKER__TWO_NET__TypedArray_process_async(
+  async ONE_WORKER__TWO_NET__TypedArray_process_async(
     source_TypedArray, source_height, source_width,
     previous_output_TypedArrayArray ) {
 
@@ -320,7 +319,6 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
       transferableObjectArray
     );
   }
-
 
   /**
    * This method is used for:
@@ -381,7 +379,7 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
    *   - Float32Array (if ( neuralNetParams.output_asInputValueRange == false ) )
    *   - Int32Array (if ( neuralNetParams.output_asInputValueRange == true ) )
    */
-  TWO_WORKER__TWO_NET__step0_TypedArray_process_asyncGenerator(
+  async TWO_WORKER__TWO_NET__step0_TypedArray_process_asyncGenerator(
     source_TypedArray, source_height, source_width,
     previous_output_TypedArray,
     bApply_or_Applier ) {
@@ -453,7 +451,7 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
    *   - Float32Array (if ( neuralNetParams.output_asInputValueRange == false ) )
    *   - Int32Array (if ( neuralNetParams.output_asInputValueRange == true ) )
    */
-TWO_WORKER__TWO_NET__step1_TypedArray_process_async(
+  async TWO_WORKER__TWO_NET__step1_TypedArray_process_async(
     source_TypedArray, source_height, source_width,
     previous_output_TypedArray ) {
 
