@@ -696,6 +696,7 @@ class HeightWidthDepth {
    * progressParent.root_get() will be returned when every time yield.
    */
   async* tester( progressParent ) {
+    const funcNameInMessage = "tester";
 
     // Ensure backend of tensorflow.js
     {
@@ -791,6 +792,20 @@ class HeightWidthDepth {
               timeInfo.name = testCase.testCaseName;
               timeInfo.elapsedTotal = 0;
               for ( let i = 0; i < timeInfo.times; ++i ) {
+
+                {
+                  let swapOk = await this.neuralWorkerProxies
+                    .alignmentMarkValueArray_swap_async();
+
+                  if ( !swapOk )
+                    throw Error( `NeuralWorker_tester.HeightWidthDepth`
+                      + `.${funcNameInMessage}(): `
+                      + `.neuralWorkerProxies.alignmentMarkValueArray_swap_async() `
+                      + `result ( ${swapOk} ) `
+                      + `should be true. `
+                      + `${this.neuralWorkerProxies}` );
+                }
+
                 timeInfo.begin = Date.now();
                 let testByNamePromise
                   = this.testNeuralWorker_ByName( testCase.testCaseName );

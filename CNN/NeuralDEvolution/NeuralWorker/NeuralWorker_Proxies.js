@@ -803,8 +803,11 @@ class NeuralWorker_Proxies extends Recyclable.Root {
       + `nNeuralWorker_ModeId=${strNeuralWorker_Mode}, `
       + `neuralNetCount=${this.neuralNetCount}, `
       + `hardwareConcurrency=${this.hardwareConcurrency}, `
-      + `totalWorkerCount=${this.totalWorkerCount}`
-    ;
+      + `totalWorkerCount=${this.totalWorkerCount}, `
+      + `alignmentMarkValueArray=${ this.alignmentMarkValueArray
+          ? `[ ${this.alignmentMarkValueArray} ]`
+          : this.alignmentMarkValueArray }`
+      ;
     return str;
   }
 
