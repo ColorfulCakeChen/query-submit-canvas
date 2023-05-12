@@ -345,10 +345,10 @@ class NeuralWorker_Proxies extends Recyclable.Root {
 
     // Since (re-)initialization, no alignment marks and no previous outputs.
     {
-      this.previous_output_TypedArrayArray = undefined;
-
       // Note: NeuralWorker_Body will clear it, too.
       this.alignmentMarkValueArray = undefined;
+
+      this.previous_output_TypedArrayArray = undefined;
     }
 
     // 1. Web workers.
@@ -475,10 +475,10 @@ class NeuralWorker_Proxies extends Recyclable.Root {
 
     // Since (re-)creation, no alignment marks and no previous outputs.
     {
-      this.previous_output_TypedArrayArray = undefined;
-
       // Note: NeuralWorker_Body will clear it, too.
       this.alignmentMarkValueArray = undefined;
+
+      this.previous_output_TypedArrayArray = undefined;
     }
 
     // 1. Every worker creates one neural network.
