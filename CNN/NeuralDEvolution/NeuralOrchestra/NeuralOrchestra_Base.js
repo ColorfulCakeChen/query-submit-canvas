@@ -156,9 +156,6 @@ import * as DEvolution from "../DEvolution.js";
  *   The client id when sending measurement protocol.
  *
  *
-
-!!! ...unfinished... (2023/05/12) How to get input_height and input_width?
-
  * @member {number} explicit_input_height
  *   The explicit (i.e. user visible) input image's height (pixel count). It is
  * equal to or less than .input_height.
@@ -169,7 +166,7 @@ import * as DEvolution from "../DEvolution.js";
  *
  * @member {number} explicit_input_channelCount
  *   The explicit (i.e. user visible) input image's channel count. It is always
- * equal to .input_channelCount.
+ * equal to .input_channelCount.  For RGA input image, it should be 4.
  *
  * @member {boolean} has_implicit_input
  *   - If true, there will be extra space in the input image for filling
@@ -181,9 +178,6 @@ import * as DEvolution from "../DEvolution.js";
  *   - If false, there will be no extra space in the input image for filling
  *       alignment mark and/or previous time output.
  *
- *
-
-!!!
  * @member {number} vocabularyChannelCount
  *   In the embedding layer, every vocabulary will have how many embedding
  * channels. Every input channel will be expanded into so many embedding
@@ -219,6 +213,7 @@ import * as DEvolution from "../DEvolution.js";
  *
  * @member {number} input_width
  *   The input image's width. It exists only after NeuralWorker.Proxies
+ * created.
  *
  *
  * @member {string} backendName
@@ -229,10 +224,12 @@ import * as DEvolution from "../DEvolution.js";
  *   The numeric identifier of neural worker mode (i.e.
  * NeuralWorker.Mode.Singleton.Ids.Xxx).
  *
+ *
  * @member {NeuralNet.ParamsBase} neuralNetParamsBase
  *   The neural network configuration. It will be used for both two neural
  * networks. It will be kept (i.e. owned and destroyed) by this
  * NeuralOrchestra object.
+ *
  *
  * @member {DEvolution.VersusSummary} versusSummary
  *   The downloaded versus summary of the differential evolution.
@@ -371,19 +368,52 @@ class NeuralOrchestra_Base extends
     super.disposeResources();
   }
 
+
   get sender_clientId() {
     return this.versusResultSender?.clientId;
   }
 
-  get input_height() {
-    return this.neuralNetParamsBase?.input_height;
+
+  get explicit_input_height() {
+    return this.neuralNetParamsBase?.explicit_input_height;
   }
 
-  get input_width() {
-    return this.neuralNetParamsBase?.input_width;
+  get explicit_input_width() {
+    return this.neuralNetParamsBase?.explicit_input_width;
   }
 
-!!!
+  get explicit_input_channelCount() {
+    return this.neuralNetParamsBase?.explicit_input_channelCount;
+  }
+
+  get has_implicit_input() {
+    return this.neuralNetParamsBase?.has_implicit_input;
+  }
+
+
+  get vocabularyChannelCount() {
+    return this.neuralNetParamsBase?.vocabularyChannelCount;
+  }
+
+  get vocabularyCountPerInputChannel() {
+    return this.neuralNetParamsBase?.vocabularyCountPerInputChannel;
+  }
+
+
+  get blockCountTotalRequested() {
+    return this.neuralNetParamsBase?.blockCountTotalRequested;
+  }
+
+
+  get output_channelCount() {
+    return this.neuralNetParamsBase?.output_channelCount;
+  }
+
+  get output_asInputValueRange() {
+    return this.neuralNetParamsBase?.output_asInputValueRange;
+  }
+
+
   get input_height() {
     return this.workerProxies?.workerProxyArray?.[ 0 ].input_height;
   }
@@ -393,18 +423,6 @@ class NeuralOrchestra_Base extends
   }
 
 
-  get vocabularyChannelCount() {
-    return this.neuralNetParamsBase?.vocabularyChannelCount;
-  }
-
-  get blockCountTotalRequested() {
-    return this.neuralNetParamsBase?.blockCountTotalRequested;
-  }
-
-  get output_channelCount() {
-    return this.neuralNetParamsBase?.output_channelCount;
-  }
-
   get backendName() {
     return this.workerProxies?.backendName;
   }
@@ -412,6 +430,7 @@ class NeuralOrchestra_Base extends
   get nNeuralWorker_ModeId() {
     return this.workerProxies?.nNeuralWorker_ModeId;
   }
+
 
   /**
    * Create .params_loading_retryWaiting
@@ -433,6 +452,21 @@ class NeuralOrchestra_Base extends
           retryWaitingSecondsExponentMax, retryWaitingMillisecondsInterval
         );
   }
+
+//!!! ...unfinished... (2023/05/12)
+//    explicit_input_height
+//    explicit_input_width
+//    explicit_input_channelCount
+//
+//    has_implicit_input
+//
+//    vocabularyChannelCount
+//    vocabularyCountPerInputChannel
+//
+//    blockCountTotalRequested
+//    output_channelCount
+//
+//    output_asInputValueRange
 
   /**
    * @param {NeuralOrchestra_Base} this
