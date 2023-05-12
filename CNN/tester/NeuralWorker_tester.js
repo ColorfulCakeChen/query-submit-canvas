@@ -766,10 +766,11 @@ class HeightWidthDepth {
           }
 
           const timeInfo = new ExecutionTimeInfo( ExecutionTimeInfoTimes );
-          for ( let i = testCaseIndexBegin;
-                i != testCaseIndexEnd; i += testCaseIndexStep ) {
+          for ( let testCaseIndex = testCaseIndexBegin;
+            testCaseIndex != testCaseIndexEnd;
+            testCaseIndex += testCaseIndexStep ) {
 
-            testCase = testCaseArray[ i ];
+            testCase = testCaseArray[ testCaseIndex ];
 
             // First time test the case. Release all other test cases' neural
             // networks (so that there will be enough memory). Create the
@@ -864,7 +865,7 @@ class HeightWidthDepth {
 
             progressToAdvance.value_advance(); // Every NeuralWorker.Mode complete
             yield progressRoot;
-          }
+          } // testCaseIndex
 
           this.neuralWorker_PerformanceTest_release();
 
