@@ -8,6 +8,8 @@ import * as Embedding from "../Embedding.js";
 import * as Stage from "../Stage.js";
 import * as Block from "../Block.js";
 import { InferencedParams } from "./NeuralNet_InferencedParams.js";
+import { ImplicitInputMode as NeuralNet_ImplicitInputMode }
+  from "./NeuralNet_ImplicitInputMode.js";
 
 /**
  * NeuralNet parameters base class.
