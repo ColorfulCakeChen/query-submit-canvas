@@ -28,7 +28,14 @@ import { ImplicitInputMode as NeuralNet_ImplicitInputMode }
  * equal to .inferencedParams.input_channelCount. For RGA input image, it should
  * be 4.
  *
- * @member {boolean} has_implicit_input
+
+!!! ...unfinished... (2023/05/12)
+ * @member {number} nNeuralNet_ImplicitInputModeId
+ *   The numeric identifier of the neural network implicit input mode
+ * (NeuralNet.ImplicitInputMode.Singleton.Ids.Xxx).
+ *
+
+!!! * @member {boolean} has_implicit_input
  *   - If true, there will be extra space in the input image for filling
  *       alignment mark and/or previous time output.
  *
