@@ -136,23 +136,6 @@ import { Mode as NeuralWorker_Mode } from "./NeuralWorker_Mode.js";
  *   - If failed, try mode TWO_WORKER__TWO_NET__APPLIER (2) with backend "cpu".
  *
  *
-
-!!! ...unfinished... (2023/05/08)
- *   - ( NeuralNet.Params.has_implicit_input == false )
- *       not fill.
- * 
- *   - ( NeuralNet.Params.has_implicit_input == true )
- *       will fill.
- *
- *     - alignmentMarkValueArray null or ( .length == 0 )
- *         not fill alignment mark.
- *
- *     - previous_output_TypedArrayArray null or ( .length == 0 )
- *         not fill feedback (i.e. previous time output).
- *
-
- *
- *
  *
  * @member {string} backendName
  *   Which backend (of tensorflow.js library) will be used by web worker. Either
