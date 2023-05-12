@@ -601,7 +601,12 @@ class HeightWidthDepth {
         );
 
       this.neuralWorker_PerformanceTest_addCase(
-        theModeInfo.id, theModeInfo.nameForMessage,
+        theModeInfo.id,
+
+//!!! (2023/05/12 Remarked) name with id.
+//        theModeInfo.nameForMessage,
+        NeuralWorker.Mode.Singleton.getNameWithInt_byId( i ),
+
         NeuralNet.ParamsBase.Pool.get_or_create_by(
           this.explicit_input_height, this.explicit_input_width,
           this.explicit_input_channelCount,
@@ -805,7 +810,6 @@ class HeightWidthDepth {
                 timeTimesIndex < timeInfo.times;
                 ++timeTimesIndex ) {
 
-//!!! ...unfinished... (2023/05/12)
                 if ( testCase.neuralNetCount == 2 ) {
                   let swapOk = await this.neuralWorkerProxies
                     .alignmentMarkValueArray_swap_async();
