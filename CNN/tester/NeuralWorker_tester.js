@@ -851,8 +851,7 @@ class HeightWidthDepth {
                 // prepare_async() so that the nConvStageTypeId has been
                 // adjusted.
                 let resultFloat32Array = await testCase
-                  .NeuralNet_try_result_async(
-                    this.testCanvas,
+                  .NeuralNet_try_result_async( this.testCanvas,
                     testCase.alignmentMarkValueArray[ neuralNetIndex ],
                     previous_output_TypedArrayArray_for_verification[ neuralNetIndex ] );
 
