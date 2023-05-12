@@ -73,7 +73,9 @@ class NeuralNet_ImplicitInputMode extends Int {
    *   Return NeuralNet_ImplicitInputMode.Info.implicit_input_fill_alignment_mark
    * of the mode id.
    */
-  static implicit_input_fill_alignment_mark_get( nNeuralNet_ImplicitInputModeId ) {
+  static implicit_input_fill_alignment_mark_get(
+    nNeuralNet_ImplicitInputModeId ) {
+
     let info = NeuralNet_ImplicitInputMode.Singleton
       .getInfo_byId( nNeuralNet_ImplicitInputModeId );
     if ( info )
@@ -90,7 +92,9 @@ class NeuralNet_ImplicitInputMode extends Int {
    *   Return NeuralNet_ImplicitInputMode.Info.implicit_input_fill_previous_time_output
    * of the mode id.
    */
-  static implicit_input_fill_previous_time_output_get( nNeuralNet_ImplicitInputModeId ) {
+  static implicit_input_fill_previous_time_output_get(
+    nNeuralNet_ImplicitInputModeId ) {
+
     let info = NeuralNet_ImplicitInputMode.Singleton
       .getInfo_byId( nNeuralNet_ImplicitInputModeId );
     if ( info )
