@@ -17,11 +17,11 @@ import { Int } from "../../Unpacker/ValueDesc/ValueDesc_Base.js";
  * network's implicit input mode:
  *
  *   -  0: IMPLICIT_INPUT__NONE
- *   -  1: IMPLICIT_INPUT__NONE__OUTPUT_AS_INPUT_VALUE_RANGE
- *   -  2: IMPLICIT_INPUT__FILL__ALIGNNNNNMENT_MARK
- *   -  3: IMPLICIT_INPUT__FILL__ALIGNNNNNMENT_MARK__OUTPUT_AS_INPUT_VALUE_RANGE
- *   -  4: IMPLICIT_INPUT__FILL__PRREVIOUS_TIME_OUTPUT
- *   -  5: IMPLICIT_INPUT__FILL__ALIGNNNNNMENT_MARK__PRREVIOUS_TIME_OUTPUT
+ *   -  1: IMPLICIT_INPUT__NONE___OUTPUT_AS_INPUT_VALUE_RANGE
+ *   -  2: IMPLICIT_INPUT__FILL_ALIGNNNNNMENT_MARK
+ *   -  3: IMPLICIT_INPUT__FILL_ALIGNNNNNMENT_MARK___OUTPUT_AS_INPUT_VALUE_RANGE
+ *   -  4: IMPLICIT_INPUT__FILL_PRREVIOUS_TIME_OUTPUT
+ *   -  5: IMPLICIT_INPUT__FILL_ALIGNNNNNMENT_MARK__FILL_PRREVIOUS_TIME_OUTPUT
  *
  */
 class NeuralNet_ImplicitInputMode extends Int {
@@ -100,6 +100,12 @@ class NeuralNet_ImplicitInputMode extends Int {
 
 
 /**
+ *
+ *
+ * @member {boolean} bFillAlignmentMark
+ *
+ *
+ * @member {boolean} bFillPreviousOutput
  *
  *
  * @member {boolean} has_implicit_input
