@@ -40,7 +40,7 @@ let Weights_Base = ( ParentClass = Object ) =>
     Weights_Base, Weights_Base.setAsConstructor );
 
   /**
-   * Just record the begin and length without checking them. Please call extract()
+   * Just record the begin and length without checking them. Please call init()
    * to finish extracting.
    */ 
   constructor( ...restArgs ) {

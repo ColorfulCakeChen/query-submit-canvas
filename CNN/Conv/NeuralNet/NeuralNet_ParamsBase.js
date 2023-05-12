@@ -27,6 +27,10 @@ import { InferencedParams } from "./NeuralNet_InferencedParams.js";
  *
  * @member {boolean} has_implicit_input
  *   - If true, .inferencedParams.implicit_input_Xxx will be non-zero.
+ *
+ *     - In this case, the .output_asInputValueRange should also be true so
+ *         that the previous time output is suitable for feedback.
+ *
  *   - If false, .inferencedParams.implicit_input_Xxx will be 0.
  *
  *
@@ -144,6 +148,15 @@ class NeuralNet_ParamsBase extends Recyclable.Root {
     this.output_channelCount = output_channelCount;
     this.output_asInputValueRange = output_asInputValueRange;
     this.bKeepInputTensor = bKeepInputTensor;
+
+    if ( has_implicit_input && !output_asInputValueRange )
+      throw Error( 'NeuralNet_ParamsBase.setAsConstructor_self(): '
+        + `When `
+        + `has_implicit_input ( ${has_implicit_input} ) `
+        + `is true, `
+        + `output_asInputValueRange ( ${output_asInputValueRange} ) `
+        + `should also be true.`
+      );
   }
 
   /** @override */

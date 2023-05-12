@@ -383,12 +383,14 @@ class NeuralOrchestra_Base extends
    * @param {NeuralOrchestra_Base} this
    */
   static neuralNetParamsBase_create(
+!!! ...unfinished... (2023/05/12)
+// explicit
     input_height = 72,
     input_width = 131, // = ( 128 + 3 ),
 
 !!! ...unfinished... (2023/05/12)
 // input_channelCount
-// has_implicit_input
+    has_implicit_input,
 
     vocabularyChannelCount = 4, //8
     blockCountTotalRequested = 39, //100, //200, //50, //20, //10,
