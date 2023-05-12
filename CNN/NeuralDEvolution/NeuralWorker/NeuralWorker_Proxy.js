@@ -72,6 +72,7 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
   /** @override */
   disposeResources() {
     this.NeuralNetParamsBaseArray_dispose();
+    this.neuralNetCount = undefined;
     this.workerId = undefined;
     super.disposeResources();
   }
@@ -131,6 +132,19 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
    */
   NeuralNetArray_create_async(
     neuralNetParamsBaseArray, weightArrayBufferArray, bLogDryRunTime ) {
+
+    const funcNameInMessage = "NeuralNetArray_create_async";
+
+    if ( neuralNetParamsBaseArray.length != weightArrayBufferArray.length )
+      throw Error( `NeuralWorker.Proxy.${funcNameInMessage}(): `
+        + `neuralNetParamsBaseArray.length `
+        + `( ${neuralNetParamsBaseArray.length} ) `
+        + `should be the same as `
+        + `weightArrayBufferArray.length `
+        + `( ${weightArrayBufferArray.length} ).`
+      );
+
+    this.neuralNetCount = neuralNetParamsBaseArray.length;
 
     // 1. Record neural network configuration.
     {
