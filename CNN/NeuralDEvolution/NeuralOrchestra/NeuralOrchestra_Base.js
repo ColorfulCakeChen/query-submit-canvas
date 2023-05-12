@@ -712,7 +712,6 @@ class NeuralOrchestra_Base extends
       {
         // It will be used by .workerProxies_init_async()
         NeuralOrchestra_Base.neuralNetParamsBase_create.call( this,
-//!!! ...unfinished... (2023/05/11)
           explicit_input_height, explicit_input_width,
           explicit_input_channelCount,
           has_implicit_input,
@@ -928,14 +927,14 @@ class NeuralOrchestra_Base extends
       // 1. Try backend "webgl" first.
       //
       // Backend "webgl" has best performance with SHUFFLE_NET_V2_BY_MOBILE_NET_V1 (5)
-      // and one web worker (NO_FILL).
+      // and one web worker.
       //
       {
         neuralNetParamsBase
           .nConvStageTypeId_adjust_for_backend_webgl_if_ShuffleNetV2();
 
         initOkPromise = this.workerProxies.init_async( "webgl",
-          NeuralWorker.Mode.Singleton.Ids.ONE_WORKER__TWO_NET__ONE_SCALE__NO_FILL // (0) 
+          NeuralWorker.Mode.Singleton.Ids.ONE_WORKER__TWO_NET // (0) 
         );
 
         initOk = await initOkPromise;
@@ -957,14 +956,14 @@ class NeuralOrchestra_Base extends
       // 2. If backend "webgl" initialization failed, try backend "cpu".
       //
       // Backend "cpu" has best performance with SHUFFLE_NET_V2 (4)
-      // and two web workers (NO_FILL) by .applier().
+      // and two web workers by .applier().
       //
       {
         neuralNetParamsBase
           .nConvStageTypeId_adjust_for_backend_cpu_if_ShuffleNetV2();
 
         initOkPromise = this.workerProxies.init_async( "cpu",
-          NeuralWorker.Mode.Singleton.Ids.TWO_WORKER__TWO_NET__ONE_SCALE__NO_FILL__APPLIER // (5) 
+          NeuralWorker.Mode.Singleton.Ids.TWO_WORKER__TWO_NET__APPLIER // (2) 
         );
 
         initOk = await initOkPromise;
