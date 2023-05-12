@@ -855,7 +855,7 @@ class HeightWidthDepth {
                     testCase.alignmentMarkValueArray[ neuralNetIndex ],
                     previous_output_TypedArrayArray_for_verification[ neuralNetIndex ] );
 
-                let lhsNumberArray = resultFloat32ArrayArray[ 0 ];
+                let lhsNumberArray = resultFloat32ArrayArray[ neuralNetIndex ];
                 let rhsNumberArray = resultFloat32Array;
                 let lhsNumberArrayName = `output${neuralNetIndex}`;
                 let rhsNumberArrayName = `outputRef${neuralNetIndex}`;
