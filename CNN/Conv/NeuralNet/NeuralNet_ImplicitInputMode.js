@@ -103,19 +103,31 @@ class NeuralNet_ImplicitInputMode extends Int {
  *
  *
  * @member {boolean} bFillAlignmentMark
+ *   - If true, there will be extra space in the input image for filling
+ *       alignment mark.
  *
+ *     - .inferencedParams.implicit_input_Xxx will be non-zero.
  *
- * @member {boolean} bFillPreviousOutput
+ *   - If false, there will be no extra space in the input image for filling
+ *       alignment mark.
  *
+ * @member {boolean} bFillPreviousTimeOutput
+ *   - If true, there will be extra space in the input image for filling
+ *       previous time output.
+ *
+ *     - .inferencedParams.implicit_input_Xxx will be non-zero.
+ *
+ *     - In this case, the .output_asInputValueRange should also be true so
+ *         that the previous time output is suitable for feedback.
+ *
+ *   - If false, there will be no extra space in the input image for filling
+ *       previous time output.
  *
  * @member {boolean} has_implicit_input
  *   - If true, there will be extra space in the input image for filling
  *       alignment mark and/or previous time output.
  *
  *     - .inferencedParams.implicit_input_Xxx will be non-zero.
- *
- *     - In this case, the .output_asInputValueRange should also be true so
- *         that the previous time output is suitable for feedback.
  *
  *   - If false, there will be no extra space in the input image for filling
  *       alignment mark and/or previous time output.
@@ -144,13 +156,21 @@ NeuralNet_ImplicitInputMode.Info
    *
    */
   constructor( nNeuralNet_ImplicitInputModeId, nameForMessage,
-    has_implicit_input, output_asInputValueRange
+    bFillAlignmentMark, bFillPreviousTimeOutput, output_asInputValueRange
   ) {
     super( nNeuralNet_ImplicitInputModeId, nameForMessage );
 
-    this.workerCount = workerCount;
-    this.has_implicit_input = has_implicit_input;
+    this.bFillAlignmentMark = bFillAlignmentMark;
+    this.bFillPreviousTimeOutput = bFillPreviousTimeOutput;
     this.output_asInputValueRange = output_asInputValueRange;
+  }
+
+  get has_implicit_input() {
+    if ( this.bFillAlignmentMark )
+      return true;
+    if ( this.bFillPreviousTimeOutput )
+      return true;
+    return false;
   }
 
 }
