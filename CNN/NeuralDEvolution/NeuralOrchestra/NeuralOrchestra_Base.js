@@ -470,30 +470,26 @@ class NeuralOrchestra_Base extends
 
   /**
    * @param {NeuralOrchestra_Base} this
+   * 
+   * @param {number} explicit_input_channelCount
+   *   For image coming from canvas, the tf.browser.fromPixels() handle a
+   * RGBA 4 channels faster than RGB 3 channels input.
+   * 
+   * @param {number} vocabularyCountPerInputChannel
+   *   For image, every RGBA input channel always has 256 (= 2 ** 8) possible
+   * values.
+   * 
    */
   static neuralNetParamsBase_create(
-
     explicit_input_height = 72,
     explicit_input_width = 128,
-
-    // For image coming from canvas, the tf.browser.fromPixels() handle a
-    // RGBA 4 channels faster than RGB 3 channels input.
     explicit_input_channelCount = 4,
-
     has_implicit_input = true, // with feedback.
-
     vocabularyChannelCount = 4,
-
-    // For image, every RGBA input channel always has 256 (= 2 ** 8) possible
-    // values.
     vocabularyCountPerInputChannel = 256,
-
     blockCountTotalRequested = 39,
     output_channelCount = 64,
-
-    // So that previous output could be used as recurrent feedback of the next
-    // times input.
-    output_asInputValueRange = true
+    output_asInputValueRange = true, // for feedback.
   ) {
 
     NeuralOrchestra_Base.neuralNetParamsBase_dispose.call( this );
@@ -554,14 +550,13 @@ class NeuralOrchestra_Base extends
   init_asyncPromise_create(
     downloader_spreadsheetId, downloader_apiKey, bLogFetcherEventToConsole,
     sender_clientId,
-    input_height, input_width,
 
-!!! ...unfinished... (2023/05/11)
-// input_channelCount
-// has_implicit_input
+    explicit_input_height, explicit_input_width, explicit_input_channelCount,
+    has_implicit_input,
+    vocabularyChannelCount, vocabularyCountPerInputChannel,
+    blockCountTotalRequested,
+    output_channelCount, output_asInputValueRange,
 
-    vocabularyChannelCount,
-    blockCountTotalRequested, output_channelCount,
     b_return_versus_load_asyncGenerator_instead_of_asyncPromise,
     init_asyncGenerator_delayPromise,
     versus_load_asyncGenerator_delayPromise ) {
@@ -684,9 +679,13 @@ class NeuralOrchestra_Base extends
     progressParent,
     downloader_spreadsheetId, downloader_apiKey, bLogFetcherEventToConsole,
     sender_clientId,
-    input_height, input_width,
-    vocabularyChannelCount,
-    blockCountTotalRequested, output_channelCount,
+
+    explicit_input_height, explicit_input_width, explicit_input_channelCount,
+    has_implicit_input,
+    vocabularyChannelCount, vocabularyCountPerInputChannel,
+    blockCountTotalRequested,
+    output_channelCount, output_asInputValueRange,
+
     b_return_versus_load_asyncGenerator_instead_of_asyncPromise,
     init_asyncGenerator_delayPromise,
     versus_load_asyncGenerator_delayPromise
@@ -699,6 +698,8 @@ class NeuralOrchestra_Base extends
       this.downloader_spreadsheetId = downloader_spreadsheetId;
       this.downloader_apiKey = downloader_apiKey;
       this.bLogFetcherEventToConsole = bLogFetcherEventToConsole;
+
+!!!
       this.output_channelCount = output_channelCount;
 
       // 0.2
@@ -715,20 +716,14 @@ class NeuralOrchestra_Base extends
       {
         // It will be used by .workerProxies_init_async()
         NeuralOrchestra_Base.neuralNetParamsBase_create.call( this,
-          input_height, input_width,
-
-          !!! ...unfinished... (2023/05/12)
-          // input_channelCount
-          // has_implicit_input
-
-          vocabularyChannelCount,
+//!!! ...unfinished... (2023/05/11)
+          explicit_input_height, explicit_input_width,
+          explicit_input_channelCount,
+          has_implicit_input,
+          vocabularyChannelCount, vocabularyCountPerInputChannel,
           blockCountTotalRequested,
-          output_channelCount,
-          
-          !!! ...unfinished... (2023/05/12)
-              output_asInputValueRange = true
-
-           );
+          output_channelCount, output_asInputValueRange,
+        );
 
         NeuralOrchestra_Base.workerProxies_create.call( this );
 
