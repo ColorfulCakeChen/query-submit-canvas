@@ -818,7 +818,7 @@ class HeightWidthDepth {
                 // input) as previous time output for verification.
                 if ( i == ( timeInfo.times - 2 ) ) {
                   previous_output_TypedArrayArray_for_verification
-                    = new Array( resultArrayLength );
+                    = new Array( testCase.neuralNetCount );
                   for ( let j = 0; j < testCase.neuralNetCount; ++j ) {
                     previous_output_TypedArrayArray_for_verification[ j ]
                       = resultFloat32ArrayArray[ j ].slice();
