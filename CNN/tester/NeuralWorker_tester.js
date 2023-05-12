@@ -834,7 +834,7 @@ class HeightWidthDepth {
               //console.log( timeInfo.toString() );
             }
 
-            {
+            { // Verify neural network result.
               let prefixMsg = "NeuralNet";
               let postfixMsg = testCase.testCaseName;
 
