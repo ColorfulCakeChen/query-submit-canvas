@@ -526,7 +526,7 @@ class HeightWidthDepth {
 //      let inputWidth = this.width * this.largerFactor;
 
       let inputHeight, inputWidth, inputChannelCount;
-      if ( has_implicit_input ) {
+      if ( this.has_implicit_input ) {
         inputHeight = this.feedbackShape.input_height;
         inputWidth = this.feedbackShape.input_width;
         inputChannelCount = this.feedbackShape.input_channelCount; // Must be 4;
