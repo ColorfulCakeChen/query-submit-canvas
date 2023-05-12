@@ -883,20 +883,25 @@ class HeightWidthDepth {
 
         if ( memoryInfo_testCorrectness_after.numTensors
                != memoryInfo_testCorrectness_before.numTensors )
-          throw Error( `NeuralWorker_tester.tester() memory leak. `
+          throw Error( `NeuralWorker_tester.HeightWidthDepth`
+            + `.${funcNameInMessage}(): `
+            + `memory leak. `
             + `result tensor count (${memoryInfo_testCorrectness_after.numTensors}) `
             + `should be (${memoryInfo_testCorrectness_before.numTensors} `
           );
       }
 
       Pool.Asserter.assert_Pool_issuedCount(
-        "NeuralWorker_tester.tester()", pool_all_issuedCount_before );
+        `NeuralWorker_tester.HeightWidthDepth.${funcNameInMessage}()`,
+        pool_all_issuedCount_before );
 
     } catch ( e ) {
       let backendName = tf.getBackend();
-      let msg = `NeuralWorker_tester.tester(): `
+      let msg = `NeuralWorker_tester.HeightWidthDepth`
+        + `.${funcNameInMessage}(): `
         + `backendName=${backendName}, `
-        + `testCaseId=${testCase.testCaseId}, testCaseName=${testCase.testCaseName}. `
+        + `testCaseId=${testCase.testCaseId}, `
+        + `testCaseName=${testCase.testCaseName}. `
         + `${e}`;
 
       console.log( msg );
