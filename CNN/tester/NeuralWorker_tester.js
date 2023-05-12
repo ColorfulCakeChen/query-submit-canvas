@@ -1065,8 +1065,8 @@ function TestButton_onClick( event ) {
   g_Controls.explicit_input_width_Text.value = explicit_input_width;
 
   let has_implicit_input
-    = Number.parseInt( g_Controls.has_implicit_input_Checkbox.value );
-  g_Controls.has_implicit_input_Checkbox.value = has_implicit_input;
+    = Number.parseInt( g_Controls.has_implicit_input_Checkbox.checked );
+  g_Controls.has_implicit_input_Checkbox.checked = has_implicit_input;
 
   let vocabularyChannelCount
     = Number.parseInt( g_Controls.vocabularyChannelCount_Text.value );
