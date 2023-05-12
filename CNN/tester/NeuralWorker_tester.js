@@ -23,12 +23,17 @@ let g_Controls = {
 
   explicit_input_height_Text: null,
   explicit_input_width_Text: null,
+  explicit_input_channelCount_Text: null,
 
   has_implicit_input_Checkbox: null,
 
   vocabularyChannelCount_Text: null,
+  vocabularyCountPerInputChannel_Text: null,
+
   blockCountTotalRequested_Text: null,
+
   output_channelCount_Text: null,
+  output_asInputValueRange_Checkbox: null,
 
   Info_TextArea: null,
   TestButton: null,
@@ -951,6 +956,8 @@ async function* testerBackend( progressParent,
 
   explicit_input_height,
   explicit_input_width,
+  explicit_input_channelCount,
+
   has_implicit_input,
 
   vocabularyChannelCount,
@@ -962,8 +969,6 @@ async function* testerBackend( progressParent,
 
   let testSet;
   try {
-    const explicit_channelCount = 4;
-
     // Using mobile phone's resolution ( 1080 * 2160 ) will crash the computer.
     // Using ( 1 / 15 ) of computer screen ( 1080 * 1920 ) (i.e. ( 72 * 128 )).
     testSet = new HeightWidthDepth(
@@ -1006,6 +1011,7 @@ async function* testerBackendAll( progressParent,
 
   explicit_input_height = 72,
   explicit_input_width = 128,
+  explicit_input_channelCount = 4,
   has_implicit_input = true,
 
   vocabularyChannelCount = 8, //6, //4,
@@ -1028,6 +1034,7 @@ async function* testerBackendAll( progressParent,
 //      largerFactor,
 
       explicit_input_height, explicit_input_width,
+      explicit_input_channelCount,
       has_implicit_input,
       vocabularyChannelCount,
       blockCountTotalRequested,
@@ -1042,6 +1049,7 @@ async function* testerBackendAll( progressParent,
 //      largerFactor,
 
       explicit_input_height, explicit_input_width,
+      explicit_input_channelCount,
       has_implicit_input,
       vocabularyChannelCount,
       blockCountTotalRequested,
@@ -1077,11 +1085,22 @@ function TestButton_onClick( event ) {
     = Number.parseInt( g_Controls.explicit_input_width_Text.value );
   g_Controls.explicit_input_width_Text.value = explicit_input_width;
 
+  let explicit_input_channelCount
+    = Number.parseInt( g_Controls.explicit_input_channelCount_Text.value );
+  g_Controls.explicit_input_channelCount_Text.value = explicit_input_channelCount;
+
   let has_implicit_input = g_Controls.has_implicit_input_Checkbox.checked;
 
   let vocabularyChannelCount
     = Number.parseInt( g_Controls.vocabularyChannelCount_Text.value );
   g_Controls.vocabularyChannelCount_Text.value = vocabularyChannelCount;
+
+!!! ...unfinished... (2023/05/12)
+// Restrict it?
+  let vocabularyCountPerInputChannel
+    = Number.parseInt( g_Controls.vocabularyCountPerInputChannel_Text.value );
+  g_Controls.vocabularyCountPerInputChannel_Text.value
+    = vocabularyCountPerInputChannel;
 
   let blockCountTotalRequested
     = Number.parseInt( g_Controls.blockCountTotalRequested_Text.value );
@@ -1092,7 +1111,12 @@ function TestButton_onClick( event ) {
   g_Controls.output_channelCount_Text.value
     = output_channelCount;
 
-  // Prepare output table.
+!!! ...unfinished... (2023/05/12)
+// Restrict it by ( has_implicit_input )?
+  let output_asInputValueRange
+    = g_Controls.output_asInputValueRange_Checkbox.checked;
+
+    // Prepare output table.
   {
     if ( !g_Controls.performanceTable_htmlTableOperator ) {
       const htmlTableId = "NeuralWorker_Performance_Table";
@@ -1118,6 +1142,7 @@ function TestButton_onClick( event ) {
 
     explicit_input_height,
     explicit_input_width,
+    explicit_input_channelCount,
     has_implicit_input,
     vocabularyChannelCount,
     blockCountTotalRequested,

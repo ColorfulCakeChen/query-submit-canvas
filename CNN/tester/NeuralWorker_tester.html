@@ -26,20 +26,35 @@
           <input id="explicit_input_width_Text" type="text" maxlength="5" size="5" value="128"/>
         </td>
 
-        <th scope="row">has_implicit_input</th>
+        <th scope="row">explicit_input_channelCount</th>
         <td>
-          <input id="has_implicit_input_Checkbox" type="checkbox" checked>
+          <input id="explicit_input_channelCount_Text" type="text" maxlength="3" size="3" value="4"/>
         </td>
   
       </tr>
       
       <tr>
+
+        <th scope="row">has_implicit_input</th>
+        <td>
+          <input id="has_implicit_input_Checkbox" type="checkbox" checked>
+        </td>
+
         <th scope="row">vocabularyChannelCount (>= 2) </th>
         <td>
           <input id="vocabularyChannelCount_Text" type="text" maxlength="3" size="3" value="4"/>
           <!-- 8 -->
         </td>
 
+        <th scope="row">vocabularyCountPerInputChannel (>= 2) </th>
+        <td>
+          <input id="vocabularyCountPerInputChannel_Text" type="text" maxlength="6" size="6" value="256"/>
+        </td>
+
+      </tr>
+
+      <tr>
+    
         <th scope="row">blockCountTotalRequested (>= 2) </th>
         <td>
           <input id="blockCountTotalRequested_Text" type="text" maxlength="4" size="4" value="39"/>
@@ -49,6 +64,12 @@
         <td>
           <input id="output_channelCount_Text" type="text" maxlength="4" size="4" value="64"/>
         </td>
+
+        <th scope="row">output_asInputValueRange</th>
+        <td>
+          <input id="output_asInputValueRange_Checkbox" type="checkbox" checked>
+        </td>
+
       </tr>
 
       <tr>
