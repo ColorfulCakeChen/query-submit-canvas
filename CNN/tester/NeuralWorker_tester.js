@@ -792,8 +792,11 @@ class HeightWidthDepth {
             {
               timeInfo.name = testCase.testCaseName;
               timeInfo.elapsedTotal = 0;
-              for ( let i = 0; i < timeInfo.times; ++i ) {
+              for ( let timeTimesIndex = 0;
+                timeTimesIndex < timeInfo.times;
+                ++timeTimesIndex ) {
 
+//!!! ...unfinished... (2023/05/12)
                 if ( testCase.neuralNetCount == 2 ) {
                   let swapOk = await this.neuralWorkerProxies
                     .alignmentMarkValueArray_swap_async();
@@ -817,7 +820,7 @@ class HeightWidthDepth {
 
                 // Deep copy the last 2nd testing result (i.e. the last 1st
                 // input) as previous time output for verification.
-                if ( i == ( timeInfo.times - 2 ) ) {
+                if ( timeTimesIndex == ( timeInfo.times - 2 ) ) {
                   previous_output_TypedArrayArray_for_verification
                     = new Array( testCase.neuralNetCount );
                   for ( let j = 0; j < testCase.neuralNetCount; ++j ) {
@@ -828,7 +831,8 @@ class HeightWidthDepth {
 
                 progressToAdvance.value_advance(); // Every performance test complete.
                 yield progressRoot;
-              }
+              } // timeTimesIndex
+
               g_Controls.performanceTable_htmlTableOperator.Body_addRow( [
                 backendName, timeInfo.name, timeInfo.countPerSecond
               ] );
@@ -839,7 +843,10 @@ class HeightWidthDepth {
               let prefixMsg = "NeuralNet";
               let postfixMsg = testCase.testCaseName;
 
-              for ( let i = 0; i < testCase.neuralNetCount; ++i ) {
+              for ( let neuralNetIndex = 0;
+                neuralNetIndex < testCase.neuralNetCount;
+                ++neuralNetIndex ) {
+
                 // NeuralNet_try_result_async() should be called after
                 // prepare_async() so that the nConvStageTypeId has been
                 // adjusted.
@@ -860,7 +867,7 @@ class HeightWidthDepth {
                   prefixMsg,
                   lhsNumberArrayName, rhsNumberArrayName,
                   postfixMsg );
-              }
+              } // neuralNetIndex
             }
 
             progressToAdvance.value_advance(); // Every NeuralWorker.Mode complete
