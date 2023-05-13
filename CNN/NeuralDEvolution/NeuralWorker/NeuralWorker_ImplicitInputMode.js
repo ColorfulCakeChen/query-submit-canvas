@@ -2,24 +2,24 @@ export { NeuralWorker_ImplicitInputMode as ImplicitInputMode };
 
 import { Int } from "../../Unpacker/ValueDesc/ValueDesc_Base.js";
 
-
-//!!! ...unfinished... (2023/05/12)
-// alignmentMarkValueArrayArray can NOT be placed here because
-// alignemt mark value should be changable during the lifetime
-// of a neural network.
-
-
-//!!! ...unfinished... (2023/05/12)
-// Problem: In NeuralNet testing case, how to test the 
-// implicit_input_bFillAlignmentMark and
-// implicit_input_bFillPreviousTimeOutput?
-//
-// Solution1: Let NeuralNet has .TyedArray_process_async() method.
-//
-// Solution2: Let NeuralWorker_ImplicitInputMode becomes
-// NeuralWorker_ImplicitInputMode.
-//
-
+/*
+ * Note:
+ *
+ * This could be a NeuralNet's parameter (instead of NeuralWorker). But that
+ * has a little problem.
+ *
+ * Problem: In NeuralNet testing case, how to test the 
+ *          implicit_input_bFillAlignmentMark and
+ *          implicit_input_bFillPreviousTimeOutput?
+ *
+ * Solution1: Let NeuralNet has .TyedArray_process_async() method.
+ *
+ * Solution2: Let it become NeuralWorker's parameter
+ *            NeuralWorker_ImplicitInputMode.
+ *
+ * Currently, the solution2 is used.
+ *
+ */
 
 /** Describe id, range, name of NeuralWorker_ImplicitInputMode.
  *
@@ -68,7 +68,6 @@ class NeuralWorker_ImplicitInputMode extends Int {
           new NeuralWorker_ImplicitInputMode.Info( 5,
             "IMPLICIT_INPUT__FILL_ALIGNNNNNMENT_MARK__FILL_PRREVIOUS_TIME_OUTPUT",
              true,  true,  true ),
-
       }
     );
   }
