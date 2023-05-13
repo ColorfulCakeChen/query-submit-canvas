@@ -50,7 +50,7 @@ class TestCase {
     this.from_value_base_positive
       = ( this.from_value_offset_per_neuralNet * 0 ) + 1;
 
-    this.alignment_mark_value_base_positive
+    this.alignmentMarkValue_base_positive
       = ( this.from_value_offset_per_neuralNet * 1 ) + 1;
 
     {
@@ -59,12 +59,12 @@ class TestCase {
       let alignmentMarkValueArray = this.alignmentMarkValueArray;
       alignmentMarkValueArray.length = input_channelCount;
 
-      const alignment_mark_value_base_positive
-        = this.alignment_mark_value_base_positive;
+      const alignmentMarkValue_base_positive
+        = this.alignmentMarkValue_base_positive;
 
       // all positive integers
       for ( let i = 0; i < input_channelCount; ++i ) {
-        alignmentMarkValueArray[ i ] = i + alignment_mark_value_base_positive;
+        alignmentMarkValueArray[ i ] = i + alignmentMarkValue_base_positive;
       }
     }
 
@@ -451,7 +451,7 @@ class TestCase {
     feedbackShape
       .set_implicit_input_by_alignmentMarkValueArray_previousOutputTypedArray(
         this.nextInputArray,
-        this.alignment_mark_value, 
+        this.alignmentMarkValueArray,
         this.from_output_valueArray );
 
     this.nextInputArray_explicit_check();
@@ -576,8 +576,7 @@ class TestCase {
     const area_height_multiplier = feedbackShape.area.height_multiplier;
     const area_width_multiplier = feedbackShape.area.width_multiplier;
 
-!!!
-    const alignment_mark_value = this.alignment_mark_value;
+    const alignmentMarkValueArray = this.alignmentMarkValueArray;
 
     const areaIndex = 0; // Area 0 is for alignment mark.
     {
@@ -614,12 +613,14 @@ class TestCase {
 
                 const to_valueIndex = to_valueIndex_base_yx + c;
 
-                if ( to_inputArray[ to_valueIndex ] != alignment_mark_value )
+                if ( to_inputArray[ to_valueIndex ]
+                       != alignmentMarkValueArray [ c ] )
                   throw Error( `FeedbackShape_tester.TestCase.${funcNameInMessage}(): `
                     + `to_inputArray[ ${to_valueIndex} ]=`
                     + `${to_inputArray[ to_valueIndex ]} `
                     + `should be the same as `
-                    + `alignment_mark_value ( ${alignment_mark_value} ), `
+                    + `alignmentMarkValueArray[ ${c} ] ( `
+                    + `${alignmentMarkValueArray} ). `
                     + `{ ${this} }.`
                   );
 
