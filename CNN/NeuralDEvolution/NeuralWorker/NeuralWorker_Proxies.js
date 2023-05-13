@@ -421,7 +421,8 @@ class NeuralWorker_Proxies extends Recyclable.Root {
    * @param {NeuralNet.ParamsBase[]} neuralNetParamsBaseArray
    *   An array of configurations for the neural network to be created. These
    * configurations (exclude the array) will be owned (i.e. kept and destroyed)
-   * by this NeuralWorker.Proxy.
+   * by this NeuralWorker.Proxies. Its content may be modified according to
+   * .nNeuralWorker_ImplicitInputModeId.
    *
    * @param {ArrayBuffer[]} weightArrayBufferArray
    *   An array of every neural network's weights. Every element will be
