@@ -948,7 +948,7 @@ class NeuralOrchestra_Base extends
           return this.workerProxies_initOk;
 
 !!! ...unfinished... (2023/05/12)
-// alignmentMarkValueArray
+// alignmentMarkValueArrayArray
 
         }
       }
@@ -971,7 +971,7 @@ class NeuralOrchestra_Base extends
         return this.workerProxies_initOk;
 
 !!! ...unfinished... (2023/05/12)
-// alignmentMarkValueArray
+// alignmentMarkValueArrayArray
 
       }
 

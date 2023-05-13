@@ -250,13 +250,16 @@ class PerformanceTestCase extends Recyclable.Root {
 
       {
         if ( this.neuralNetCount > 1 ) {
-          this.alignmentMarkValueArray = [ 155, 255 ];
+          this.alignmentMarkValueArrayArray
+            = [ [ 155, 155, 155, 255 ], [ 255, 255, 255, 255 ] ];
         } else {
-          this.alignmentMarkValueArray = [ 55 ];
+          this.alignmentMarkValueArrayArray
+            = [ [ 55, 55, 55, 255 ] ];
         }
 
         let bSetOkPromise = neuralWorkerProxies
-          .alignmentMarkValueArray_set_async( this.alignmentMarkValueArray );
+          .alignmentMarkValueArrayArray_set_async(
+            this.alignmentMarkValueArrayArray );
 
         let bSetOk = await bSetOkPromise;
         if ( false == bSetOk )
@@ -265,12 +268,13 @@ class PerformanceTestCase extends Recyclable.Root {
             + `Failed to set alignment mark by neuralWorkerProxies. `
             + `${neuralWorkerProxies}` );
 
-        if ( !neuralWorkerProxies.alignmentMarkValueArray_nonEmpty )
+        if ( !neuralWorkerProxies.alignmentMarkValueArrayArray_nonEmpty )
           throw Error( `NeuralWorker_tester.PerformanceTestCase`
             + `.${funcNameInMessage}(): `
-            + `.alignmentMarkValueArray_nonEmpty `
-            + `( ${neuralWorkerProxies.alignmentMarkValueArray_nonEmpty} ) `
-            + `should be true after .alignmentMarkValueArray_set_async() done. `
+            + `.alignmentMarkValueArrayArray_nonEmpty `
+            + `( ${neuralWorkerProxies.alignmentMarkValueArrayArray_nonEmpty} ) `
+            + `should be true after `
+            + `.alignmentMarkValueArrayArray_set_async() done. `
             + `${neuralWorkerProxies}` );
       }
 
@@ -283,7 +287,7 @@ class PerformanceTestCase extends Recyclable.Root {
 
   /** Try to compute neural network result in this worker. */
   async NeuralNet_try_result_async( theCanvas,
-    alignmentMarkValue, previous_output_TypedArray ) {
+    alignmentMarkValueArray, previous_output_TypedArray ) {
 
     let resultFloat32Array;
 
@@ -346,7 +350,7 @@ class PerformanceTestCase extends Recyclable.Root {
         }
 
         const bTwoTensors = false;
-        const alignmentMarkValueArray = [ alignmentMarkValue ];
+        const alignmentMarkValueArrayArray = [ alignmentMarkValueArray ];
         const previous_output_TypedArrayArray = [ previous_output_TypedArray ];
 
         createTensor_asyncGenerator
@@ -354,7 +358,7 @@ class PerformanceTestCase extends Recyclable.Root {
               imageData.data, imageData.height, imageData.width,
               bTwoTensors,
               neuralNet.feedbackShape,
-              alignmentMarkValueArray, previous_output_TypedArrayArray
+              alignmentMarkValueArrayArray, previous_output_TypedArrayArray
             );
       }
 
@@ -817,12 +821,12 @@ class HeightWidthDepth {
 
                 if ( testCase.neuralNetCount == 2 ) {
                   let swapOk = await this.neuralWorkerProxies
-                    .alignmentMarkValueArray_swap_async();
+                    .alignmentMarkValueArrayArray_swap_async();
 
                   if ( !swapOk )
                     throw Error( `NeuralWorker_tester.HeightWidthDepth`
                       + `.${funcNameInMessage}(): `
-                      + `.neuralWorkerProxies.alignmentMarkValueArray_swap_async() `
+                      + `.neuralWorkerProxies.alignmentMarkValueArrayArray_swap_async() `
                       + `result ( ${swapOk} ) `
                       + `should be true. `
                       + `${this.neuralWorkerProxies}` );
@@ -870,7 +874,7 @@ class HeightWidthDepth {
                 // adjusted.
                 let resultFloat32Array = await testCase
                   .NeuralNet_try_result_async( this.testCanvas,
-                    testCase.alignmentMarkValueArray[ neuralNetIndex ],
+                    testCase.alignmentMarkValueArrayArray[ neuralNetIndex ],
                     previous_output_TypedArrayArray_for_verification[ neuralNetIndex ] );
 
                 let lhsNumberArray = resultFloat32ArrayArray[ neuralNetIndex ];

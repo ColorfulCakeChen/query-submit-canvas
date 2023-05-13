@@ -4,7 +4,7 @@ import { Int } from "../../Unpacker/ValueDesc/ValueDesc_Base.js";
 
 
 //!!! ...unfinished... (2023/05/12)
-// alignmentMarkValueArray can NOT be placed here because
+// alignmentMarkValueArrayArray can NOT be placed here because
 // alignemt mark value should be changable during the lifetime
 // of a neural network.
 
