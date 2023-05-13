@@ -244,7 +244,8 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
         } else { // 1.3 Unknown element type.
           throw Error( `NeuralWorker_Proxy`
             + `.alignmentMarkValueArrayArray_set_async(): `
-            + `alignmentMarkValueArrayArray[ ${i} ] ( ${alignmentMarkValueArray} ) `
+            + `alignmentMarkValueArrayArray[ ${i} ] `
+            + `( ${alignmentMarkValueArray} ) `
             + `should be either an array or TypedArray.`
           );
         }
