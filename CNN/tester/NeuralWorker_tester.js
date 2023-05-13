@@ -628,6 +628,10 @@ class HeightWidthDepth {
           + `theModeInfo.id ( ${theModeInfo.id} ) should be ( ${i} ).`
         );
 
+      const testCaseId = theModeInfo.id;
+      const testCaseName
+        = NeuralWorker.Mode.Singleton.getNameWithInt_byId( i );
+
       let neuralNetParamsBase = NeuralNet.ParamsBase.Pool.get_or_create_by(
         this.explicit_input_height, this.explicit_input_width,
         this.explicit_input_channelCount,
@@ -640,11 +644,8 @@ class HeightWidthDepth {
       );
 
       this.neuralWorker_PerformanceTest_addCase(
-        theModeInfo.id,
-        NeuralWorker.Mode.Singleton.getNameWithInt_byId( i ),
-        neuralNetParamsBase,
-        theModeInfo.id,
-        this.nNeuralWorker_ImplicitInputModeId,
+        testCaseId, testCaseName, neuralNetParamsBase,
+        theModeInfo.id, this.nNeuralWorker_ImplicitInputModeId,
       );
     }
 
