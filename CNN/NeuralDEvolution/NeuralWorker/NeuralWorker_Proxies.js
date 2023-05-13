@@ -200,21 +200,18 @@ import { ImplicitInputMode as NeuralWorker_ImplicitInputMode }
  *         its .length will be the same as .neuralNetCount.
  *
  *   - Its element is TypedArray which may be:
- *     - Float32Array (if ( neuralNetParams.output_asInputValueRange == false ) )
- *     - Int32Array (if ( neuralNetParams.output_asInputValueRange == true ) )
+ *     - Float32Array, if ( neuralNetParams.output_asInputValueRange == false ).
+ *     - Int32Array, if ( neuralNetParams.output_asInputValueRange == true ).
  *
- *   - When .TypedArray_process_async() is called, its content (i.e. the
+ *   - If ( .ImplicitInputModeInfo.implicit_input_bFillPreviousTimeOutput == true ):
+ *
+ *     - When .TypedArray_process_async() is called, its content (i.e. the
  *       Float32Array or Int32Array) will become invalid because they will be
  *       transferred (not copied) to the web worker for used as feedback.
  *
- *     - If ( NeuralNet.Params.has_implicit_input == true ), the transferred
- *         previous_output_TypedArrayArray will be filled (as feedback) into
- *         the next time input of the neural networks (i.e. source TypedArray).
- *
- *     - If ( NeuralNet.Params.has_implicit_input == true ) but you do not want
- *         it be transferred and filled (as feedback), please clear it to null
- *         or let its ( .length == 0 ) before calling
- *         .TypedArray_process_async().
+ *     - The transferred previous_output_TypedArrayArray will be used to fill
+ *         (as feedback) into the next time input of the neural networks (i.e.
+ *         source TypedArray).
  *
  *   - When .NeuralNetArray_create_async() is called, its content will be
  *       cleared. Since there should be no previous output for newly created
