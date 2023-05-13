@@ -211,8 +211,52 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
    *   - Resolved to false, if failed.
    */
   async alignmentMarkValueArrayArray_set_async( alignmentMarkValueArrayArray ) {
+
+    // 1. Handle TypedArray.
+    let alignmentMarkValueArrayArray_clone;
+    let transferableObjectArray;
+    {
+      alignmentMarkValueArrayArray_clone
+        = new Array( alignmentMarkValueArrayArray.length );
+
+      for ( let i = 0; i < alignmentMarkValueArrayArray.length; ++i ) {
+        const alignmentMarkValueArray = alignmentMarkValueArrayArray[ i ];
+
+        // 1.1 If normal array, use it directly because it will be cloned
+        //     automatically when posting to web worker.
+        if ( alignmentMarkValueArray instanceof Array ) {
+          alignmentMarkValueArrayArray_clone[ i ] = alignmentMarkValueArray;
+
+        // 1.2 If TypedArray, clone them for transferring.
+        } else if ( alignmentMarkValueArray.buffer != undefined ) {
+          let alignmentMarkValueArrayArray_clone
+            = alignmentMarkValueArray.slice();
+
+          alignmentMarkValueArrayArray_clone[ i ]
+            = alignmentMarkValueArrayArray_clone;
+
+          if ( !transferableObjectArray )
+            transferableObjectArray
+              = [ alignmentMarkValueArrayArray_clone.buffer ];
+          else
+            transferableObjectArray.push(
+              alignmentMarkValueArrayArray_clone.buffer );
+
+        } else { // 1.3 Unknown element type.
+          throw Error( `NeuralWorker_Proxy`
+            + `.alignmentMarkValueArrayArray_set_async(): `
+            + `alignmentMarkValueArray ( ${alignmentMarkValueArray} ) `
+            + `should be either an array or TypedArray.`
+          );
+        }
+      }
+    }
+
+    // 2.
     return this.createPromise_by_postCommandArgs(
-      [ "alignmentMarkValueArrayArray_set", alignmentMarkValueArrayArray ]
+      [ "alignmentMarkValueArrayArray_set",
+        alignmentMarkValueArrayArray_clone ],
+      transferableObjectArray
     );
   }
 
