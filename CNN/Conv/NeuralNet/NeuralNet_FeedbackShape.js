@@ -218,7 +218,7 @@ class NeuralNet_FeedbackShape extends NeuralNet_FeedbackToInput {
    * integer typed array. It should large enough to contain both implicit and
    * explicit input.
    *
-   * @param {number[]|Int32Array|Uint8ClampedArray} alignmentMarkValueArray
+   * @param {Uint8ClampedArray|Int32Array|number[]} alignmentMarkValueArray
    *   The values representing the neural network personating which alignment
    * currently. Its .length should be the same as .input_channelCount becasue
    * it represents a pixel.
@@ -248,7 +248,7 @@ class NeuralNet_FeedbackShape extends NeuralNet_FeedbackToInput {
    * integer typed array. It should large enough to contain both implicit and
    * explicit input.
    *
-   * @param {number[]|Int32Array|Uint8ClampedArray} alignmentMarkValueArray
+   * @param {Uint8ClampedArray|Int32Array|number[]} alignmentMarkValueArray
    *   The values representing the neural network personating which alignment
    * currently. Its .length should be the same as .input_channelCount becasue
    * it represents a pixel.
