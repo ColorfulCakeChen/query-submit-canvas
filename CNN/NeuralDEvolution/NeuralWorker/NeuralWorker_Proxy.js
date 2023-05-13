@@ -246,7 +246,7 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
             + `.alignmentMarkValueArrayArray_set_async(): `
             + `alignmentMarkValueArrayArray[ ${i} ] `
             + `( ${alignmentMarkValueArray} ) `
-            + `should be either an array or TypedArray.`
+            + `should be either an Array or TypedArray.`
           );
         }
       }
