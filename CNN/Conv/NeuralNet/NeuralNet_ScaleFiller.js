@@ -210,7 +210,8 @@ class NeuralNet_ScaleFiller {
   static async* createTensor_by_scale_fill_asyncGenerator(
     source_TypedArray, source_height, source_width,
     bTwoTensors,
-    feedbackShape, alignmentMarkValueArray, previous_output_Int32ArrayArray
+    feedbackShape,
+    alignmentMarkValueArrayArray, previous_output_Int32ArrayArray
   ) {
     const funcNameInMessage = "createTensor_by_scale_fill_asyncGenerator";
 
@@ -266,9 +267,9 @@ class NeuralNet_ScaleFiller {
     // previous_output, it is necessary to fill something into target tensor.
     let bFill = false;
 
-    const alignmentMarkValueArray_nonEmpty
-      = ( alignmentMarkValueArray )
-          && ( alignmentMarkValueArray.length > 0 );
+    const alignmentMarkValueArrayArray_nonEmpty
+      = ( alignmentMarkValueArrayArray )
+          && ( alignmentMarkValueArrayArray.length > 0 );
 
     const previous_output_Int32ArrayArray_nonEmpty
       = ( previous_output_Int32ArrayArray )
@@ -277,11 +278,11 @@ class NeuralNet_ScaleFiller {
     if ( feedbackShape ) {
 
       // 1.4.1
-      if ( alignmentMarkValueArray_nonEmpty ) {
-        if ( alignmentMarkValueArray.length != tensorCount )
+      if ( alignmentMarkValueArrayArray_nonEmpty ) {
+        if ( alignmentMarkValueArrayArray.length != tensorCount )
           throw Error( `NeuralNet_ScaleFiller.${funcNameInMessage}(): `
-            + `alignmentMarkValueArray.length ( `
-            + `${alignmentMarkValueArray.length} ) `
+            + `alignmentMarkValueArrayArray.length ( `
+            + `${alignmentMarkValueArrayArray.length} ) `
             + `should be either 0 or the same as `
             + `tensorCount ( ${tensorCount} ).`
           );
@@ -344,9 +345,9 @@ class NeuralNet_ScaleFiller {
             = async () => sourceInt32ArrayPromise;
 
           for ( let i = 0; i < tensorCount; ++i ) {
-            if ( alignmentMarkValueArray_nonEmpty )
-              feedbackShape.set_implicit_input_by_alignmentMarkValue(
-                sourceInt32Array, alignmentMarkValueArray[ i ] );
+            if ( alignmentMarkValueArrayArray_nonEmpty )
+              feedbackShape.set_implicit_input_by_alignmentMarkValueArray(
+                sourceInt32Array, alignmentMarkValueArrayArray[ i ] );
             if ( previous_output_Int32ArrayArray_nonEmpty )
               feedbackShape.set_implicit_input_by_previousOutputTypedArray(
                 sourceInt32Array, previous_output_Int32ArrayArray[ i ] );
@@ -384,9 +385,9 @@ class NeuralNet_ScaleFiller {
         if ( bFill ) { // 2.2.1 No Scale, Fill.
 
           for ( let i = 0; i < tensorCount; ++i ) {
-            if ( alignmentMarkValueArray_nonEmpty )
-              feedbackShape.set_implicit_input_by_alignmentMarkValue(
-                source_TypedArray, alignmentMarkValueArray[ i ] );
+            if ( alignmentMarkValueArrayArray_nonEmpty )
+              feedbackShape.set_implicit_input_by_alignmentMarkValueArray(
+                source_TypedArray, alignmentMarkValueArrayArray[ i ] );
             if ( previous_output_Int32ArrayArray_nonEmpty )
               feedbackShape.set_implicit_input_by_previousOutputTypedArray(
                 source_TypedArray, previous_output_Int32ArrayArray[ i ] );
