@@ -14,7 +14,11 @@ import { Int } from "../../Unpacker/ValueDesc/ValueDesc_Base.js";
 // implicit_input_bFillAlignmentMark and
 // implicit_input_bFillPreviousTimeOutput?
 //
-// Perhaps, let NeuralNet has .TyedArray_process() methods.
+// Solution1: Let NeuralNet has .TyedArray_process_async() method.
+//
+// Solution2: Let NeuralNet_ImplicitInputMode becomes
+// NeuralWorker_ImplicitInputMode.
+//
 
 
 /** Describe id, range, name of NeuralNet_ImplicitInputMode.
