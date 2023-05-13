@@ -218,13 +218,10 @@ class NeuralNet_FeedbackShape extends NeuralNet_FeedbackToInput {
    * integer typed array. It should large enough to contain both implicit and
    * explicit input.
    *
-
-!!! ...unfinished... (2023/05/13)
-// should be alignmentMarkValueArray
-
-   * @param {integer} alignmentMarkValue
-   *   The value representing the neural network playing which alignment
-   * currently.
+   * @param {number[]|Int32Array|Uint8ClampedArray} alignmentMarkValueArray
+   *   The values representing the neural network personating which alignment
+   * currently. Its .length should be the same as .input_channelCount becasue
+   * it represents a pixel.
    *
    * @param {Int32Array} previous_output_Int32Array
    *   The (previous time) output of the neural networks.
@@ -241,9 +238,9 @@ class NeuralNet_FeedbackShape extends NeuralNet_FeedbackToInput {
   }
 
   /**
-   * Fill the alignment mark value to the next time input. All pixels
-   * (including every channels) inside input area will be filled with the
-   * alignment mark value.
+   * Fill the alignment mark values to the next time input. All pixels
+   * (including every channels) inside implicit input area 0 will be filled
+   * with the alignment mark values.
    *
    *
    * @param {Uint8ClampedArray|Int32Array} input_TypedArray
@@ -251,17 +248,15 @@ class NeuralNet_FeedbackShape extends NeuralNet_FeedbackToInput {
    * integer typed array. It should large enough to contain both implicit and
    * explicit input.
    *
-
-!!! ...unfinished... (2023/05/13)
-// should be alignmentMarkValueArray
-
-   * @param {integer} alignmentMarkValue
-   *   The value representing the neural network playing which alignment currently.
+   * @param {number[]|Int32Array|Uint8ClampedArray} alignmentMarkValueArray
+   *   The values representing the neural network personating which alignment
+   * currently. Its .length should be the same as .input_channelCount becasue
+   * it represents a pixel.
    */
-  set_implicit_input_by_alignmentMarkValue(
-    input_TypedArray, alignmentMarkValue ) {
+  set_implicit_input_by_alignmentMarkValueArray(
+    input_TypedArray, alignmentMarkValueArray ) {
 
-    const funcNameInMessage = "set_implicit_input_by_alignmentMarkValue";
+    const funcNameInMessage = "set_implicit_input_by_alignmentMarkValueArray";
 
     // Q: Why fill an area pixels? Why not just fill ( 1 * 1 ) pixel?
     // A: NeuralNet mainly uses ( 3 * 3 ) depthwise filter.
@@ -282,6 +277,16 @@ class NeuralNet_FeedbackShape extends NeuralNet_FeedbackToInput {
         + `input_TypedArray.length ( ${input_TypedArray.length} ) `
         + `should be the same as `
         + `.input_valueCount ( ${this.input_valueCount} ).`
+      );
+
+    // 2. Check alignment mark value array shape.
+    if ( alignmentMarkValueArray.length != input_channelCount )
+      throw Error( `NeuralNet_FeedbackShape.${funcNameInMessage}(): `
+        + `alignmentMarkValueArray.length `
+        + `( ${alignmentMarkValueArray.length} ) `
+        + `should be the same as `
+        + `input_channelCount `
+        + `( ${input_channelCount} ).`
       );
 
     // 3.
@@ -322,7 +327,8 @@ class NeuralNet_FeedbackShape extends NeuralNet_FeedbackToInput {
 
               // 4.6
               for ( let c = 0; c < input_channelCount; ++c ) {
-                input_TypedArray[ to_valueIndex ] = alignmentMarkValue;
+                input_TypedArray[ to_valueIndex ]
+                  = alignmentMarkValueArray[ c ];
                 ++to_valueIndex;
               } // c
 
