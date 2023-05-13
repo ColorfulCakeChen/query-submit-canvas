@@ -21,9 +21,9 @@ let g_Controls = {
 //!!! ...unfinished... (2023/05/11)
 //  largerFactor_Text: null,
 
-  explicit_input_height_Text: null,
-  explicit_input_width_Text: null,
-  explicit_input_channelCount_Text: null,
+  explicit_input_height_Number: null,
+  explicit_input_width_Number: null,
+  explicit_input_channelCount_Number: null,
 
   vocabularyChannelCount_Text: null,
   vocabularyCountPerInputChannel_Text: null,
@@ -1132,18 +1132,18 @@ function TestButton_onClick( event ) {
 //  g_Controls.largerFactor_Text.value = largerFactor;
   
   let explicit_input_height
-    = Number.parseInt( g_Controls.explicit_input_height_Text.value );
-  g_Controls.explicit_input_height_Text.value = explicit_input_height;
+    = Number.parseInt( g_Controls.explicit_input_height_Number.value );
+  g_Controls.explicit_input_height_Number.value = explicit_input_height;
 
   let explicit_input_width
-    = Number.parseInt( g_Controls.explicit_input_width_Text.value );
-  g_Controls.explicit_input_width_Text.value = explicit_input_width;
+    = Number.parseInt( g_Controls.explicit_input_width_Number.value );
+  g_Controls.explicit_input_width_Number.value = explicit_input_width;
 
 //!!! ...unfinished... (2023/05/12)
 // Restrict it?
   let explicit_input_channelCount
-    = Number.parseInt( g_Controls.explicit_input_channelCount_Text.value );
-  g_Controls.explicit_input_channelCount_Text.value = explicit_input_channelCount;
+    = Number.parseInt( g_Controls.explicit_input_channelCount_Number.value );
+  g_Controls.explicit_input_channelCount_Number.value = explicit_input_channelCount;
 
 
   let vocabularyChannelCount
