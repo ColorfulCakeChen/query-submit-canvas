@@ -25,15 +25,12 @@ let g_Controls = {
   explicit_input_width_Text: null,
   explicit_input_channelCount_Text: null,
 
-  has_implicit_input_Checkbox: null,
-
   vocabularyChannelCount_Text: null,
   vocabularyCountPerInputChannel_Text: null,
 
   blockCountTotalRequested_Text: null,
 
   output_channelCount_Text: null,
-  output_asInputValueRange_Checkbox: null,
 
   Info_TextArea: null,
   TestButton: null,
@@ -96,33 +93,39 @@ class PerformanceTestCase extends Recyclable.Root {
   /**
    */
   constructor(
-    testCaseId, testCaseName, neuralNetParamsBase, nNeuralWorker_ModeId ) {
+    testCaseId, testCaseName, neuralNetParamsBase,
+    nNeuralWorker_ModeId, nNeuralWorker_ImplicitInputModeId ) {
 
     super();
     PerformanceTestCase.setAsConstructor_self.call( this,
-      testCaseId, testCaseName, neuralNetParamsBase, nNeuralWorker_ModeId
+      testCaseId, testCaseName, neuralNetParamsBase,
+      nNeuralWorker_ModeId, nNeuralWorker_ImplicitInputModeId
     );
   }
 
   /** @override */
   static setAsConstructor(
-    testCaseId, testCaseName, neuralNetParamsBase, nNeuralWorker_ModeId ) {
+    testCaseId, testCaseName, neuralNetParamsBase,
+    nNeuralWorker_ModeId, nNeuralWorker_ImplicitInputModeId ) {
 
     super.setAsConstructor();
     PerformanceTestCase.setAsConstructor_self.call( this,
-      testCaseId, testCaseName, neuralNetParamsBase, nNeuralWorker_ModeId
+      testCaseId, testCaseName, neuralNetParamsBase,
+      nNeuralWorker_ModeId, nNeuralWorker_ImplicitInputModeId
     );
     return this;
   }
 
   /** @override */
   static setAsConstructor_self(
-    testCaseId, testCaseName, neuralNetParamsBase, nNeuralWorker_ModeId ) {
+    testCaseId, testCaseName, neuralNetParamsBase,
+    nNeuralWorker_ModeId, nNeuralWorker_ImplicitInputModeId ) {
 
     this.testCaseId = testCaseId;
     this.testCaseName = testCaseName;
     this.neuralNetParamsBase = neuralNetParamsBase;
     this.nNeuralWorker_ModeId = nNeuralWorker_ModeId;
+    this.nNeuralWorker_ImplicitInputModeId = nNeuralWorker_ImplicitInputModeId;
 
     this.neuralNetCount
       = NeuralWorker.Mode.neuralNetCount_get( nNeuralWorker_ModeId );
@@ -162,7 +165,9 @@ class PerformanceTestCase extends Recyclable.Root {
           .nConvStageTypeId_adjust_for_backend_cpu_if_ShuffleNetV2();
 
       let bInitOkPromise = neuralWorkerProxies.init_async(
-        backendName, this.nNeuralWorker_ModeId );
+        backendName,
+        this.nNeuralWorker_ModeId,
+        this.nNeuralWorker_ImplicitInputModeId );
 
       {
         if ( neuralWorkerProxies.alignmentMarkValueArray_nonEmpty )
@@ -444,12 +449,13 @@ class HeightWidthDepth {
 //    * as ( largerFactor * height ) * ( largerFactor * width ).
 
    *
+   * @param {number} nNeuralWorker_ImplicitInputModeId
+   *   The numeric identifier of the neural network implicit input mode
+   * (NeuralWorker.ImplicitInputMode.Singleton.Ids.Xxx).
+   *
    * @param {number} explicit_input_height        explicit image height
    * @param {number} explicit_input_width         explicit image width
    * @param {number} explicit_input_channelCount  explicit image channel count
-   *
-   * @param {boolean} has_implicit_input
-   *   Whether has implicit input.
    *
    * @param {number} output_channelCount
    *   The output channel count of the neural network.
@@ -464,9 +470,9 @@ class HeightWidthDepth {
   constructor(
 //!!! ...unfinished... (2023/05/11)
 //    largerFactor,
+    nNeuralWorker_ImplicitInputModeId,
 
     explicit_input_height, explicit_input_width, explicit_input_channelCount,
-    has_implicit_input,
 
     vocabularyChannelCount,
     blockCountTotalRequested,
@@ -479,11 +485,11 @@ class HeightWidthDepth {
 //!!! ...unfinished... (2023/05/11)
 //    this.largerFactor = largerFactor;
 
+    this.nNeuralWorker_ImplicitInputModeId = nNeuralWorker_ImplicitInputModeId;
+
     this.explicit_input_height = explicit_input_height;
     this.explicit_input_width = explicit_input_width;
     this.explicit_input_channelCount = explicit_input_channelCount;
-
-    this.has_implicit_input = has_implicit_input;
 
     this.vocabularyChannelCount = vocabularyChannelCount;
     this.blockCountTotalRequested = blockCountTotalRequested;
@@ -492,12 +498,23 @@ class HeightWidthDepth {
     this.backendName = backendName;
     this.bAscent_or_Descent = bAscent_or_Descent;
 
-    if ( has_implicit_input ) {
-      this.feedbackShape = new NeuralNet.FeedbackShape();
-      this.feedbackShape.init(
-        explicit_input_height, explicit_input_width, explicit_input_channelCount,
-        output_channelCount // feedback_valueCount
-      );
+    {
+      this.ImplicitInputModeInfo = NeuralWorker.ImplicitInputMode.Singleton
+        .getInfo_byId( nNeuralWorker_ImplicitInputModeId );
+
+      this.has_implicit_input
+        = this.ImplicitInputModeInfo.has_implicit_input;
+
+      this.output_asInputValueRange
+        = this.ImplicitInputModeInfo.output_asInputValueRange;
+
+      if ( this.ImplicitInputModeInfo.has_implicit_input ) {
+        this.feedbackShape = new NeuralNet.FeedbackShape();
+        this.feedbackShape.init(
+          explicit_input_height, explicit_input_width, explicit_input_channelCount,
+          output_channelCount // feedback_valueCount
+        );
+      }
     }
   }
 
@@ -510,10 +527,12 @@ class HeightWidthDepth {
    * 
    */
   neuralWorker_PerformanceTest_addCase(
-    testCaseId, testCaseName, neuralNetParamsBase, nNeuralWorker_ModeId ) {
+    testCaseId, testCaseName, neuralNetParamsBase,
+    nNeuralWorker_ModeId, nNeuralWorker_ImplicitInputModeId ) {
 
     let aPerformanceTestCase = PerformanceTestCase.Pool.get_or_create_by(
-      testCaseId, testCaseName, neuralNetParamsBase, nNeuralWorker_ModeId );
+      testCaseId, testCaseName, neuralNetParamsBase,
+      nNeuralWorker_ModeId, nNeuralWorker_ImplicitInputModeId );
 
     this.testCaseMap.set( testCaseName, aPerformanceTestCase );
   }
@@ -611,11 +630,8 @@ class HeightWidthDepth {
 
       this.neuralWorker_PerformanceTest_addCase(
         theModeInfo.id,
-
-//!!! (2023/05/12 Remarked) name with id.
-//        theModeInfo.nameForMessage,
+        this.nNeuralWorker_ImplicitInputModeId,
         NeuralWorker.Mode.Singleton.getNameWithInt_byId( i ),
-
         NeuralNet.ParamsBase.Pool.get_or_create_by(
           this.explicit_input_height, this.explicit_input_width,
           this.explicit_input_channelCount,
@@ -623,7 +639,7 @@ class HeightWidthDepth {
           this.vocabularyChannelCount, vocabularyCountPerInputChannel,
           nConvStageType,
           blockCountTotalRequested_ShuffleNet,
-          this.output_channelCount, output_asInputValueRange,
+          this.output_channelCount, this.output_asInputValueRange,
           bKeepInputTensor
         ),
         theModeInfo.id
@@ -958,11 +974,11 @@ async function* testerBackend( progressParent,
 //!!! (2023/05/11 Remarked)
 //  largerFactor,
 
+  nNeuralWorker_ImplicitInputModeId,
+
   explicit_input_height,
   explicit_input_width,
   explicit_input_channelCount,
-
-  has_implicit_input,
 
   vocabularyChannelCount,
   blockCountTotalRequested,
@@ -978,8 +994,8 @@ async function* testerBackend( progressParent,
     testSet = new HeightWidthDepth(
 //!!! (2023/05/11 Remarked)
 //      largerFactor,
+      nNeuralWorker_ImplicitInputModeId,
       explicit_input_height, explicit_input_width, explicit_channelCount,
-      has_implicit_input,
       vocabularyChannelCount,
       blockCountTotalRequested,
       output_channelCount,
@@ -1013,10 +1029,11 @@ async function* testerBackendAll( progressParent,
 //!!! (2023/05/11 Remarked)
 //  largerFactor = 15,
 
+  nNeuralWorker_ImplicitInputModeId,
+
   explicit_input_height = 72,
   explicit_input_width = 128,
   explicit_input_channelCount = 4,
-  has_implicit_input = true,
 
   vocabularyChannelCount = 8, //6, //4,
   blockCountTotalRequested = 84, //100, //200, //50, //20, //10,
@@ -1037,9 +1054,9 @@ async function* testerBackendAll( progressParent,
 //!!! (2023/05/11 Remarked)
 //      largerFactor,
 
+      nNeuralWorker_ImplicitInputModeId,
       explicit_input_height, explicit_input_width,
       explicit_input_channelCount,
-      has_implicit_input,
       vocabularyChannelCount,
       blockCountTotalRequested,
       output_channelCount,
@@ -1052,9 +1069,9 @@ async function* testerBackendAll( progressParent,
 //!!! (2023/05/11 Remarked)
 //      largerFactor,
 
+      nNeuralWorker_ImplicitInputModeId,
       explicit_input_height, explicit_input_width,
       explicit_input_channelCount,
-      has_implicit_input,
       vocabularyChannelCount,
       blockCountTotalRequested,
       output_channelCount,
@@ -1095,7 +1112,7 @@ function TestButton_onClick( event ) {
     = Number.parseInt( g_Controls.explicit_input_channelCount_Text.value );
   g_Controls.explicit_input_channelCount_Text.value = explicit_input_channelCount;
 
-  let has_implicit_input = g_Controls.has_implicit_input_Checkbox.checked;
+//!!!  let has_implicit_input = g_Controls.has_implicit_input_Checkbox.checked;
 
   let vocabularyChannelCount
     = Number.parseInt( g_Controls.vocabularyChannelCount_Text.value );
@@ -1119,8 +1136,8 @@ function TestButton_onClick( event ) {
 
 //!!! ...unfinished... (2023/05/12)
 // Restrict it by ( has_implicit_input )?
-  let output_asInputValueRange
-    = g_Controls.output_asInputValueRange_Checkbox.checked;
+  // let output_asInputValueRange
+  //   = g_Controls.output_asInputValueRange_Checkbox.checked;
 
     // Prepare output table.
   {
@@ -1146,10 +1163,12 @@ function TestButton_onClick( event ) {
 //!!! (2023/05/11 Remarked)
 //    largerFactor,
 
+!!! ...unfinished... (2023/05/13)
+    nNeuralWorker_ImplicitInputModeId,
+
     explicit_input_height,
     explicit_input_width,
     explicit_input_channelCount,
-    has_implicit_input,
     vocabularyChannelCount,
     blockCountTotalRequested,
     output_channelCount,
