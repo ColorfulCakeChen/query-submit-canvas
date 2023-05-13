@@ -143,8 +143,8 @@ import { ImplicitInputMode as NeuralWorker_ImplicitInputMode }
  *
  *
  * @member {string} backendName
- *   Which backend (of tensorflow.js library) will be used by web worker. Either
- * "cpu" or "webgl".
+ *   Which backend (of tensorflow.js library) will be used by web worker.
+ * Either "cpu" or "webgl".
  *
  * @member {number} nNeuralWorker_ModeId
  *   The numeric identifier of neural worker mode (i.e.
