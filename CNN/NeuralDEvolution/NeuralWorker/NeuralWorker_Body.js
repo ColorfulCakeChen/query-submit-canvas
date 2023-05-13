@@ -471,8 +471,9 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
   async* alignmentMarkValueArrayArray_set( alignmentMarkValueArrayArray ) {
     const funcNameInMessage = "alignmentMarkValueArrayArray_set";
 
+    // 1. non-empty alignment mark value array array.
     if (   ( alignmentMarkValueArrayArray )
-        && ( alignmentMarkValueArrayArray.length > 0 ) ) { // 1.
+        && ( alignmentMarkValueArrayArray.length > 0 ) ) {
 
       if ( !this.neuralNetArray )
         throw Error( `NeuralWorker_Body.${funcNameInMessage}(): `
@@ -506,38 +507,20 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
         );
       }
 
-!!! ...unfinished... (2023/05/12)
-// Why not hold the received array directly?
-      // 1.1 Prepare container for all neural networks' mark value.
-      {
-        if ( this.alignmentMarkValueArrayArray )
-          this.alignmentMarkValueArrayArray.length
-            = alignmentMarkValueArrayArray.length;
-        else
-          this.alignmentMarkValueArrayArray
-            = Recyclable.Array.Pool.get_or_create_by(
-                alignmentMarkValueArrayArray.length );
-      }
+      // Hold the received alignment mary value array array directly.
+      this.alignmentMarkValueArrayArray = alignmentMarkValueArrayArray;
 
-      // 1.2 Copy the alignment mark values.
-      for ( let i = 0; i < this.alignmentMarkValueArray.length; ++i ) {
-        this.alignmentMarkValueArray[ i ] = alignmentMarkValueArray[ i ];
-      }
-
-    } else { // 2.
-      if ( this.alignmentMarkValueArray )
-        this.alignmentMarkValueArray.length = 0;
+    } else { // 2. empty alignment mark value array array.
+    if ( this.alignmentMarkValueArrayArray )
+        this.alignmentMarkValueArrayArray.length = 0;
     }
 
     return { value: true };
   }
 
-  /** Release the alignmentMarkValueArray. */
-  alignmentMarkValueArray_dispose() {
-    if ( this.alignmentMarkValueArray ) {
-      this.alignmentMarkValueArray.disposeResources_and_recycleToPool();
-      this.alignmentMarkValueArray = null;
-    }
+  /** Release the alignmentMarkValueArrayArray. */
+  alignmentMarkValueArrayArray_dispose() {
+    this.alignmentMarkValueArrayArray = undefined;
   }
 
   /**
