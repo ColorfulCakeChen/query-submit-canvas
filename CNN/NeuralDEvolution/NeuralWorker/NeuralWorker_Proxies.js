@@ -457,6 +457,10 @@ class NeuralWorker_Proxies extends Recyclable.Root {
 
     // Ensure neuralNetParamsBase has correct flags combination according to
     // implicit input mode.
+    //
+    // Note: ( implicit_input_bFillPreviousTimeOutput == true ) but
+    //       ( output_asInputValueRange == false ) is a little illegal
+    //       combination.
     {
       for ( let neuralNetIndex = 0;
         neuralNetIndex < this.neuralNetCount; ++neuralNetIndex ) {
