@@ -10,7 +10,7 @@ import { Int } from "../../Unpacker/ValueDesc/ValueDesc_Base.js";
  *
  * Problem: In NeuralNet testing case, how to test the 
  *          implicit_input_bFillAlignmentMark and
- *          implicit_input_bFillPreviousTimeOutput?
+ *          implicit_input_bFillPreviousOutput?
  *
  * Solution1: Let NeuralNet has .TyedArray_process_async() method.
  *
@@ -98,16 +98,16 @@ class NeuralWorker_ImplicitInputMode extends Int {
    * (NeuralWorker.ImplicitInputMode.Singleton.Ids.Xxx).
    *
    * @return {boolean}
-   *   Return NeuralWorker_ImplicitInputMode.Info.implicit_input_bFillPreviousTimeOutput
+   *   Return NeuralWorker_ImplicitInputMode.Info.implicit_input_bFillPreviousOutput
    * of the mode id.
    */
-  static implicit_input_bFillPreviousTimeOutput_get(
+  static implicit_input_bFillPreviousOutput_get(
     nNeuralWorker_ImplicitInputModeId ) {
 
     let info = NeuralWorker_ImplicitInputMode.Singleton
       .getInfo_byId( nNeuralWorker_ImplicitInputModeId );
     if ( info )
-      return info.implicit_input_bFillPreviousTimeOutput;
+      return info.implicit_input_bFillPreviousOutput;
     return NaN;
   }
 
@@ -160,7 +160,7 @@ class NeuralWorker_ImplicitInputMode extends Int {
  *   - If false, there will be no extra space in the input image for filling
  *       alignment mark.
  *
- * @member {boolean} implicit_input_bFillPreviousTimeOutput
+ * @member {boolean} implicit_input_bFillPreviousOutput
  *   - If true, there will be extra space in the input image for filling
  *       previous time output.
  *
@@ -188,7 +188,7 @@ class NeuralWorker_ImplicitInputMode extends Int {
  * (i.e. non-negative integer which can be used in embedding looking up). This
  * is useful if the output will be used as the recurrent feedback of the next
  * time input. It should be true if
- * ( implicit_input_bFillPreviousTimeOutput == true ).
+ * ( implicit_input_bFillPreviousOutput == true ).
  *
  */
 NeuralWorker_ImplicitInputMode.Info
@@ -208,7 +208,7 @@ NeuralWorker_ImplicitInputMode.Info
    */
   constructor( nNeuralWorker_ImplicitInputModeId, nameForMessage,
     implicit_input_bFillAlignmentMark,
-    implicit_input_bFillPreviousTimeOutput,
+    implicit_input_bFillPreviousOutput,
     output_asInputValueRange
   ) {
     super( nNeuralWorker_ImplicitInputModeId, nameForMessage );
@@ -216,16 +216,16 @@ NeuralWorker_ImplicitInputMode.Info
     this.implicit_input_bFillAlignmentMark
       = implicit_input_bFillAlignmentMark;
 
-    this.implicit_input_bFillPreviousTimeOutput
-      = implicit_input_bFillPreviousTimeOutput;
+    this.implicit_input_bFillPreviousOutput
+      = implicit_input_bFillPreviousOutput;
 
     this.output_asInputValueRange = output_asInputValueRange;
 
-    if ( implicit_input_bFillPreviousTimeOutput && !output_asInputValueRange )
+    if ( implicit_input_bFillPreviousOutput && !output_asInputValueRange )
       throw Error( 'NeuralWorker_ImplicitInputMode.Info.constructor(): '
         + `When `
-        + `implicit_input_bFillPreviousTimeOutput ( `
-        + `${implicit_input_bFillPreviousTimeOutput} ) `
+        + `implicit_input_bFillPreviousOutput ( `
+        + `${implicit_input_bFillPreviousOutput} ) `
         + `is true, `
         + `output_asInputValueRange ( ${output_asInputValueRange} ) `
         + `should also be true.`
@@ -235,7 +235,7 @@ NeuralWorker_ImplicitInputMode.Info
   get has_implicit_input() {
     if ( this.implicit_input_bFillAlignmentMark )
       return true;
-    if ( this.implicit_input_bFillPreviousTimeOutput )
+    if ( this.implicit_input_bFillPreviousOutput )
       return true;
     return false;
   }

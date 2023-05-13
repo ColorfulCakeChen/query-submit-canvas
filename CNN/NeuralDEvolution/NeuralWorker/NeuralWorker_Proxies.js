@@ -206,7 +206,7 @@ import { ImplicitInputMode as NeuralWorker_ImplicitInputMode }
  *     - Float32Array, if ( neuralNetParams.output_asInputValueRange == false ).
  *     - Int32Array, if ( neuralNetParams.output_asInputValueRange == true ).
  *
- *   - If ( .ImplicitInputModeInfo.implicit_input_bFillPreviousTimeOutput == true ):
+ *   - If ( .ImplicitInputModeInfo.implicit_input_bFillPreviousOutput == true ):
  *
  *     - When .TypedArray_process_async() is called, its content (i.e. the
  *       Float32Array or Int32Array) will become invalid because they will be
@@ -458,7 +458,7 @@ class NeuralWorker_Proxies extends Recyclable.Root {
     // Ensure neuralNetParamsBase has correct flags combination according to
     // implicit input mode.
     //
-    // Note: ( implicit_input_bFillPreviousTimeOutput == true ) but
+    // Note: ( implicit_input_bFillPreviousOutput == true ) but
     //       ( output_asInputValueRange == false ) is a little illegal
     //       combination.
     {
@@ -675,7 +675,7 @@ class NeuralWorker_Proxies extends Recyclable.Root {
 
     // Send previous time output only if requested.
     let previous_output_TypedArrayArray;
-    if ( this.ImplicitInputModeInfo.implicit_input_bFillPreviousTimeOutput )
+    if ( this.ImplicitInputModeInfo.implicit_input_bFillPreviousOutput )
       previous_output_TypedArrayArray = this.previous_output_TypedArrayArray;
 
     let worker0_promise = this.workerProxyArray[ 0 ]
@@ -712,7 +712,7 @@ class NeuralWorker_Proxies extends Recyclable.Root {
 
     // Send previous time output only if requested.
     let previous_output_TypedArrayArray;
-    if ( this.ImplicitInputModeInfo.implicit_input_bFillPreviousTimeOutput )
+    if ( this.ImplicitInputModeInfo.implicit_input_bFillPreviousOutput )
       previous_output_TypedArrayArray = this.previous_output_TypedArrayArray;
 
     let bApply_or_Applier = this.ModeInfo.bApply_or_Applier;
@@ -776,7 +776,7 @@ class NeuralWorker_Proxies extends Recyclable.Root {
 
     // Send previous time output only if requested.
     let previous_output_TypedArrayArray;
-    if ( this.ImplicitInputModeInfo.implicit_input_bFillPreviousTimeOutput )
+    if ( this.ImplicitInputModeInfo.implicit_input_bFillPreviousOutput )
       previous_output_TypedArrayArray = this.previous_output_TypedArrayArray;
 
     // Note:
