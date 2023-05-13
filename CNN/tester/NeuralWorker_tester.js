@@ -1132,38 +1132,45 @@ function TestButton_onClick( event ) {
 //  g_Controls.largerFactor_Text.value = largerFactor;
   
   let explicit_input_height
-    = Number.parseInt( g_Controls.explicit_input_height_Number.value );
+    = NeuralNet.Params.explicit_input_height.ValueDesc.range.adjust(
+        Number.parseInt( g_Controls.explicit_input_height_Number.value ) );
   g_Controls.explicit_input_height_Number.value = explicit_input_height;
 
   let explicit_input_width
-    = Number.parseInt( g_Controls.explicit_input_width_Number.value );
+    = NeuralNet.Params.explicit_input_width.ValueDesc.range.adjust(
+        Number.parseInt( g_Controls.explicit_input_width_Number.value ) );
   g_Controls.explicit_input_width_Number.value = explicit_input_width;
 
 //!!! ...unfinished... (2023/05/12)
 // Restrict it?
   let explicit_input_channelCount
-    = Number.parseInt( g_Controls.explicit_input_channelCount_Number.value );
+    = NeuralNet.Params.explicit_input_channelCount.ValueDesc.range.adjust(
+        Number.parseInt( g_Controls.explicit_input_channelCount_Number.value ) );
   g_Controls.explicit_input_channelCount_Number.value = explicit_input_channelCount;
 
 
   let vocabularyChannelCount
-    = Number.parseInt( g_Controls.vocabularyChannelCount_Number.value );
+    = NeuralNet.Params.vocabularyChannelCount.ValueDesc.range.adjust(
+        Number.parseInt( g_Controls.vocabularyChannelCount_Number.value ) );
   g_Controls.vocabularyChannelCount_Number.value = vocabularyChannelCount;
 
 //!!! ...unfinished... (2023/05/12)
 // Restrict it?
   let vocabularyCountPerInputChannel
-    = Number.parseInt( g_Controls.vocabularyCountPerInputChannel_Number.value );
+    = NeuralNet.Params.vocabularyCountPerInputChannel.ValueDesc.range.adjust(
+        Number.parseInt( g_Controls.vocabularyCountPerInputChannel_Number.value ) );
   g_Controls.vocabularyCountPerInputChannel_Number.value
     = vocabularyCountPerInputChannel;
 
   let blockCountTotalRequested
-    = Number.parseInt( g_Controls.blockCountTotalRequested_Number.value );
+    = NeuralNet.Params.blockCountTotalRequested.ValueDesc.range.adjust(
+        Number.parseInt( g_Controls.blockCountTotalRequested_Number.value ) );
   g_Controls.blockCountTotalRequested_Number.value = blockCountTotalRequested;
 
 
   let output_channelCount
-    = Number.parseInt( g_Controls.output_channelCount_Number.value );
+    = NeuralNet.Params.output_channelCount.ValueDesc.range.adjust(
+        Number.parseInt( g_Controls.output_channelCount_Number.value ) );
   g_Controls.output_channelCount_Number.value
     = output_channelCount;
 
