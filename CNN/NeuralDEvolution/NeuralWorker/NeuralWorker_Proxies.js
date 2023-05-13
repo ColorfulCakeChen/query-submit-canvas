@@ -74,8 +74,8 @@ import { Mode as NeuralWorker_Mode } from "./NeuralWorker_Mode.js";
  *   - How does a neural network know which alignment (in a differential
  *       evolution versus) it represents (i.e. personates) currently?
  *
- *     - Please call .alignmentMarkValueArray_set_async() to provide alignement
- *         marks of both comprtition sides.
+ *     - Please call .alignmentMarkValueArrayArray_set_async() to provide
+ *         alignement mark values of both comprtition sides.
  *
  *   - What if a neural network needs itself previous time output as feedback?
  *
@@ -153,15 +153,17 @@ import { Mode as NeuralWorker_Mode } from "./NeuralWorker_Mode.js";
  *   There are how many web worker(s) created.
  *
  *
- * @member {integer[]} alignmentMarkValueArray
- *   An array of values representing every neural network is personating
- * which alignment currently.
+ * @member {Uint8ClampedArray[]|Int32Array[]|number[][]} alignmentMarkValueArrayArray
+ *   An array of two non-negative integer arrays representing every neural
+ * network personating which alignment currently. Every non-negative integer
+ * array's .length should be the same as .input_channelCount becasue it
+ * represents a pixel.
  *
  *   - It could be null or undefined or
- *       ( alignmentMarkValueArray.length == 0 ) for not filling alignment
+ *       ( alignmentMarkValueArrayArray.length == 0 ) for not filling alignment
  *       mark into source TypedArray.
  *
- *   - Otherwise, alignmentMarkValueArray.length should be the same as
+ *   - Otherwise, alignmentMarkValueArrayArray.length should be the same as
  *       this.neuralNetCount
  *
  *     - If ( NeuralNet.Params.has_implicit_input == true ), they will be
@@ -170,11 +172,11 @@ import { Mode as NeuralWorker_Mode } from "./NeuralWorker_Mode.js";
  *
  *     - If ( NeuralNet.Params.has_implicit_input == true ) but you do not
  *         want to fill alignment marks, please call
- *         .alignmentMarkValueArray_set_async( null ) to clear it.
+ *         .alignmentMarkValueArrayArray_set_async( null ) to clear it.
  *
- * @member {boolean} alignmentMarkValueArray_nonEmpty
- *   Return true, if .alignmentMarkValueArray is null or
- * ( .alignmentMarkValueArray.length == 0 ).
+ * @member {boolean} alignmentMarkValueArrayArray_nonEmpty
+ *   Return true, if .alignmentMarkValueArrayArray is null or
+ * ( .alignmentMarkValueArrayArray.length == 0 ).
  *
  * @member {Float32Array[] | Int32Array[]} previous_output_TypedArrayArray
  *   An array [ TypedArray, TypedArray ] representing the (previous time)
@@ -252,7 +254,7 @@ class NeuralWorker_Proxies extends Recyclable.Root {
     this.TypedArray_process_async = undefined;
 
     this.previous_output_TypedArrayArray = undefined;
-    this.alignmentMarkValueArray = undefined;
+    this.alignmentMarkValueArrayArray = undefined;
 
     this.workerProxyArray_dispose();
 
@@ -266,11 +268,11 @@ class NeuralWorker_Proxies extends Recyclable.Root {
   }
 
   /**
-   * Initialize this worker proxy controller. It will create two neural networks
-   * in one or two web worker(s).
+   * Initialize this worker proxy controller. It will create two neural
+   * networks in one or two web worker(s).
    *
-   * The .alignmentMarkValueArray and .previous_output_TypedArrayArray will be
-   * cleared.
+   * The .alignmentMarkValueArrayArray and .previous_output_TypedArrayArray
+   * will be cleared.
    *
    *
    * @return {Promise}

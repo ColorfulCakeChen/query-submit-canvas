@@ -135,13 +135,14 @@ class NeuralNet_ScaleFiller {
    * (i.e. previous time output) into target tensor. Otherwise, there will be
    * no alignment mark value and feedback be filled into target tensor.
    *
-!!!   * @param {Uint8ClampedArray[]|Int32Array[]|number[][]} alignmentMarkValueArrayArray
+   * @param {Uint8ClampedArray[]|Int32Array[]|number[][]} alignmentMarkValueArrayArray
    *   An array of two non-negative integer arrays representing every neural
    * network personating which alignment currently. Every non-negative integer
    * array's .length should be the same as .input_channelCount becasue it
    * represents a pixel.
    *
-   *   - If ( feedbackShape == null ), alignmentMarkValueArrayArray will be ignored.
+   *   - If ( feedbackShape == null ), alignmentMarkValueArrayArray will be
+   *       ignored.
    *
    *   - If ( feedbackShape != null ):
    *
