@@ -456,6 +456,7 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
   }
 
   /**
+   * The alignmentMarkValueArrayArray will be owned and kept directly.
    *
    * @yield {boolean}
    *   - Yield { done: true, value: { value: true } }.
