@@ -485,7 +485,7 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
       // Check the alignment mark value array length.
       const input_channelCount = this.neuralNetArray[ 0 ].input_channelCount;
       for ( let neuralNetIndex = 0;
-        neuralNetIndex < this.alignmentMarkValueArrayArray.length;
+        neuralNetIndex < alignmentMarkValueArrayArray.length;
         ++neuralNetIndex ) {
 
         const alignmentMarkValueArrayLength
