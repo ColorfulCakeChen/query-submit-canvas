@@ -260,14 +260,11 @@ class PerformanceTestCase extends Recyclable.Root {
 
       if ( this.ImplicitInputModeInfo.implicit_input_bFillAlignmentMark ) {
         if ( this.neuralNetCount > 1 ) {
-//!!! (2023/05/13 Remarked) Try TypedArray.
-//           this.alignmentMarkValueArrayArray
-//             = [ [ 155, 155, 155, 255 ], [ 255, 255, 255, 255 ] ];
-          this.alignmentMarkValueArrayArray
+          this.alignmentMarkValueArrayArray // Test TypedArray.
             = [ Int32Array.from( [ 155, 155, 155, 255 ] ),
                 Uint8ClampedArray.from( [ 255, 255, 255, 255 ] ) ];
         } else {
-          this.alignmentMarkValueArrayArray
+          this.alignmentMarkValueArrayArray // Test Array.
             = [ [ 55, 55, 55, 255 ] ];
         }
 
