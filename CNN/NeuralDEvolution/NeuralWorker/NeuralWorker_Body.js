@@ -593,7 +593,7 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
             source_TypedArray, source_height, source_width,
             bTwoTensors,
             feedbackShape,
-            this.alignmentMarkValueArray, previous_output_TypedArrayArray
+            this.alignmentMarkValueArrayArray, previous_output_TypedArrayArray
           );
 
       try {
@@ -769,7 +769,7 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
           source_TypedArray, source_height, source_width,
           bTwoTensors,
           feedbackShape,
-          this.alignmentMarkValueArray, previous_output_TypedArrayArray
+          this.alignmentMarkValueArrayArray, previous_output_TypedArrayArray
         );
 
     let outputTensor;
@@ -954,7 +954,7 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
           source_TypedArray, source_height, source_width,
           bTwoTensors,
           feedbackShape,
-          this.alignmentMarkValueArray, previous_output_TypedArrayArray
+          this.alignmentMarkValueArrayArray, previous_output_TypedArrayArray
         );
 
     let outputTensor;
