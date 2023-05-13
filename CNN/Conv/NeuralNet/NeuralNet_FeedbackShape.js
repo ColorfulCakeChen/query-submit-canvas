@@ -218,6 +218,10 @@ class NeuralNet_FeedbackShape extends NeuralNet_FeedbackToInput {
    * integer typed array. It should large enough to contain both implicit and
    * explicit input.
    *
+
+!!! ...unfinished... (2023/05/13)
+// should be alignmentMarkValueArray
+
    * @param {integer} alignmentMarkValue
    *   The value representing the neural network playing which alignment
    * currently.
@@ -247,6 +251,10 @@ class NeuralNet_FeedbackShape extends NeuralNet_FeedbackToInput {
    * integer typed array. It should large enough to contain both implicit and
    * explicit input.
    *
+
+!!! ...unfinished... (2023/05/13)
+// should be alignmentMarkValueArray
+
    * @param {integer} alignmentMarkValue
    *   The value representing the neural network playing which alignment currently.
    */
