@@ -1089,7 +1089,7 @@ function TestButton_onClick( event ) {
     = Number.parseInt( g_Controls.explicit_input_width_Text.value );
   g_Controls.explicit_input_width_Text.value = explicit_input_width;
 
-!!! ...unfinished... (2023/05/12)
+//!!! ...unfinished... (2023/05/12)
 // Restrict it?
   let explicit_input_channelCount
     = Number.parseInt( g_Controls.explicit_input_channelCount_Text.value );
@@ -1101,7 +1101,7 @@ function TestButton_onClick( event ) {
     = Number.parseInt( g_Controls.vocabularyChannelCount_Text.value );
   g_Controls.vocabularyChannelCount_Text.value = vocabularyChannelCount;
 
-!!! ...unfinished... (2023/05/12)
+//!!! ...unfinished... (2023/05/12)
 // Restrict it?
   let vocabularyCountPerInputChannel
     = Number.parseInt( g_Controls.vocabularyCountPerInputChannel_Text.value );
@@ -1117,7 +1117,7 @@ function TestButton_onClick( event ) {
   g_Controls.output_channelCount_Text.value
     = output_channelCount;
 
-!!! ...unfinished... (2023/05/12)
+//!!! ...unfinished... (2023/05/12)
 // Restrict it by ( has_implicit_input )?
   let output_asInputValueRange
     = g_Controls.output_asInputValueRange_Checkbox.checked;
