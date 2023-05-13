@@ -1,6 +1,7 @@
 export { NeuralWorker_Proxies as Proxies };
 
 import * as Pool from "../../util/Pool.js";
+import * as RandTools from "../../util/RandTools.js";
 import * as Recyclable from "../../util/Recyclable.js";
 import * as NeuralNet from "../../Conv/NeuralNet.js";
 import { Proxy as NeuralWorker_Proxy } from "./NeuralWorker_Proxy.js";
@@ -754,11 +755,8 @@ class NeuralWorker_Proxies extends Recyclable.Root {
       + `neuralNetCount=${this.neuralNetCount}, `
       + `hardwareConcurrency=${this.hardwareConcurrency}, `
       + `totalWorkerCount=${this.totalWorkerCount}, `
-!!!
-      + `alignmentMarkValueArrayArray=${ this.alignmentMarkValueArrayArray
-          ? `[ [ ${this.alignmentMarkValueArrayArray[ 0 ]} ], `
-              + ` [ ${this.alignmentMarkValueArrayArray[ 1 ]} ] ]`
-          : this.alignmentMarkValueArrayArray }`
+      + `alignmentMarkValueArrayArray=`
+        + `${ RandTools.array_toString( this.alignmentMarkValueArrayArray )}`
       ;
     return str;
   }
