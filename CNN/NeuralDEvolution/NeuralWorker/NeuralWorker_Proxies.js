@@ -769,6 +769,11 @@ class NeuralWorker_Proxies extends Recyclable.Root {
   static async apply__ONE_WORKER__ONE_NET(
     source_TypedArray, source_height, source_width ) {
 
+    // Send previous time output only if requested.
+    let previous_output_TypedArrayArray;
+    if ( this.ImplicitInputModeInfo.implicit_input_bFillPreviousTimeOutput )
+      previous_output_TypedArrayArray = this.previous_output_TypedArrayArray;
+
     // Note:
     //
     // .TWO_WORKER__TWO_NET__step1_TypedArray_process_async()
@@ -780,7 +785,7 @@ class NeuralWorker_Proxies extends Recyclable.Root {
     let worker0_promise = this.workerProxyArray[ 0 ]
       .TWO_WORKER__TWO_NET__step1_TypedArray_process_async(
         source_TypedArray, source_height, source_width,
-        this.previous_output_TypedArrayArray?.[ 0 ] );
+        previous_output_TypedArrayArray?.[ 0 ] );
 
     let worker0_value_TypedArray = await worker0_promise;
 
