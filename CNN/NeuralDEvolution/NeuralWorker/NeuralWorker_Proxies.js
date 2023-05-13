@@ -6,6 +6,9 @@ import * as Recyclable from "../../util/Recyclable.js";
 import * as NeuralNet from "../../Conv/NeuralNet.js";
 import { Proxy as NeuralWorker_Proxy } from "./NeuralWorker_Proxy.js";
 import { Mode as NeuralWorker_Mode } from "./NeuralWorker_Mode.js";
+import { ImplicitInputMode as NeuralWorker_ImplicitInputMode }
+  from "./NeuralWorker_ImplicitInputMode.js";
+
 
 //!!! ...unfinished... (2022/05/25)
 // Perhaps, Using SharedArrayBuffer to pass input image between different web worker.
@@ -146,6 +149,10 @@ import { Mode as NeuralWorker_Mode } from "./NeuralWorker_Mode.js";
  *   The numeric identifier of neural worker mode (i.e.
  * NeuralWorker.Mode.Singleton.Ids.Xxx).
  *
+ * @member {number} nNeuralWorker_ImplicitInputModeId
+ *   The numeric identifier of the neural network implicit input mode
+ * (NeuralWorker.ImplicitInputMode.Singleton.Ids.Xxx).
+ *
  * @member {number} neuralNetCount
  *   There are how many neural networks created. It is always 2 (because of
  * differential evolution) no matter how totalWorkerCount is.
@@ -262,6 +269,9 @@ class NeuralWorker_Proxies extends Recyclable.Root {
     this.hardwareConcurrency = undefined;
     this.neuralNetCount = undefined;
 
+    this.ImplicitInputModeInfo = undefined;
+    this.nNeuralWorker_ImplicitInputModeId = undefined;
+
     this.nNeuralWorker_ModeId = undefined;
     this.backendName = undefined;
 
@@ -281,14 +291,20 @@ class NeuralWorker_Proxies extends Recyclable.Root {
    *   - Resolved to true, if succeeded.
    *   - Resolved to false, if failed.
    */
-  async init_async( backendName, nNeuralWorker_ModeId ) {
+  async init_async(
+    backendName, nNeuralWorker_ModeId, nNeuralWorker_ImplicitInputModeId ) {
 
     // 0.
     this.backendName = backendName;
     this.nNeuralWorker_ModeId = nNeuralWorker_ModeId;
+    this.nNeuralWorker_ImplicitInputModeId = nNeuralWorker_ImplicitInputModeId;
 
     this.neuralNetCount
       = NeuralWorker_Mode.neuralNetCount_get( this.nNeuralWorker_ModeId );
+
+  //!!! ...unfinished... (2023/05/13)
+    this.ImplicitInputModeInfo = NeuralWorker_ImplicitInputMode.Singleton
+      .getInfo_byId( nNeuralWorker_ImplicitInputModeId );
 
     this.hardwareConcurrency = navigator.hardwareConcurrency; // logical CPU count.
 
@@ -656,10 +672,8 @@ class NeuralWorker_Proxies extends Recyclable.Root {
   static async apply__TWO_WORKER__TWO_NET(
     source_TypedArray, source_height, source_width ) {
 
-    let modeInfo
-      = NeuralWorker_Mode.Singleton.getInfo_byId( this.nNeuralWorker_ModeId );
-
-    let bApply_or_Applier = modeInfo.bApply_or_Applier;
+    let bApply_or_Applier = NeuralWorker_Mode.Singleton
+      .bApply_or_Applier_get( this.nNeuralWorker_ModeId );
 
     let worker0_resulter = this.workerProxyArray[ 0 ]
       .TWO_WORKER__TWO_NET__step0_TypedArray_process_asyncGenerator(
@@ -746,12 +760,19 @@ class NeuralWorker_Proxies extends Recyclable.Root {
 
   /** */
   toString() {
-    let strNeuralWorker_Mode = NeuralWorker_Mode.Singleton
-      .getNameWithInt_byId( this.nNeuralWorker_ModeId );
+    let strNeuralWorker_Mode
+      = NeuralWorker_Mode.Singleton
+          .getNameWithInt_byId( this.nNeuralWorker_ModeId );
+
+    let strNeuralWorker_ImplicitInputMode
+      = NeuralWorker_ImplicitInputMode.Singleton
+          .getNameWithInt_byId( this.nNeuralWorker_ImplicitInputModeId );
 
     let str = 
         `backendName=\"${this.backendName}\", `
       + `nNeuralWorker_ModeId=${strNeuralWorker_Mode}, `
+      + `nNeuralWorker_ImplicitInputModeId=`
+        + `${strNeuralWorker_ImplicitInputMode}, `
       + `neuralNetCount=${this.neuralNetCount}, `
       + `hardwareConcurrency=${this.hardwareConcurrency}, `
       + `totalWorkerCount=${this.totalWorkerCount}, `
