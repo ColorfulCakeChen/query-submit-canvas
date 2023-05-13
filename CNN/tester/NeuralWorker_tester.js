@@ -131,6 +131,9 @@ class PerformanceTestCase extends Recyclable.Root {
 
     this.neuralNetCount
       = NeuralWorker.Mode.neuralNetCount_get( nNeuralWorker_ModeId );
+
+    this.ImplicitInputModeInfo = NeuralWorker.ImplicitInputMode.Singleton
+      .getInfo_byId( nNeuralWorker_ImplicitInputModeId );
   }
 
   /** @override */
@@ -255,7 +258,7 @@ class PerformanceTestCase extends Recyclable.Root {
             + `${neuralWorkerProxies}` );
       }
 
-      {
+      if ( this.ImplicitInputModeInfo.implicit_input_bFillAlignmentMark ) {
         if ( this.neuralNetCount > 1 ) {
           this.alignmentMarkValueArrayArray
             = [ [ 155, 155, 155, 255 ], [ 255, 255, 255, 255 ] ];
@@ -363,8 +366,15 @@ class PerformanceTestCase extends Recyclable.Root {
         }
 
         const bTwoTensors = false;
-        const alignmentMarkValueArrayArray = [ alignmentMarkValueArray ];
-        const previous_output_TypedArrayArray = [ previous_output_TypedArray ];
+        let alignmentMarkValueArrayArray;
+        let previous_output_TypedArrayArray;
+        {
+          if ( this.ImplicitInputModeInfo.implicit_input_bFillAlignmentMark )
+            alignmentMarkValueArrayArray = [ alignmentMarkValueArray ];
+          
+          if ( this.ImplicitInputModeInfo.implicit_input_bFillPreviousOutput )
+            previous_output_TypedArrayArray = [ previous_output_TypedArray ];
+        }
 
         createTensor_asyncGenerator
           = this.ScaleFiller.createTensor_by_fill_asyncGenerator(
