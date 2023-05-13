@@ -394,58 +394,50 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
     const funcNameInMessage
       = "NeuralNetArray_compileShaders_uploadTensors_ifWebGL";
 
-//!!! (2023/04/30 Remarked) Every operations should have try-finally to release tensors.
-//    tf.tidy( () => {
+    let neuralNet;
+    let sourceTensor;
+    let outputTensor;
+    for ( let i = 0; i < this.neuralNetArray.length; ++i ) {
+      try {
+        neuralNet = this.neuralNetArray[ i ];
 
-    {
-      let neuralNet;
-      let sourceTensor;
-      let outputTensor;
-      for ( let i = 0; i < this.neuralNetArray.length; ++i ) {
-        try {
-          neuralNet = this.neuralNetArray[ i ];
-
-          if ( bLogDryRunTime ) {
-            const nDryRunTimes = 2;
-            let timeElapsedArray = new Array( nDryRunTimes );
-            for ( let j = 0; j < nDryRunTimes; ++j ) {
-              sourceTensor = tf.zeros( neuralNet.input_shape, "int32" );
-
-              let timeBegin = Date.now();
-              outputTensor = neuralNet.apply( sourceTensor );
-              let timeEnd = Date.now();
-              let timeElapsed = timeEnd - timeBegin;
-              timeElapsedArray[ j ] = timeElapsed;
-            }
-            console.log( `NeuralWorker_Body.${funcNameInMessage}(): `
-              + `workerId=${this.workerId}, neuralNetIndex=${i}, `
-              + `timeElapsed0=${timeElapsedArray[ 0 ]}, `
-              + `timeElapsed1=${timeElapsedArray[ 1 ]}`
-            );
-
-          } else {
+        if ( bLogDryRunTime ) {
+          const nDryRunTimes = 2;
+          let timeElapsedArray = new Array( nDryRunTimes );
+          for ( let j = 0; j < nDryRunTimes; ++j ) {
             sourceTensor = tf.zeros( neuralNet.input_shape, "int32" );
+
+            let timeBegin = Date.now();
             outputTensor = neuralNet.apply( sourceTensor );
+            let timeEnd = Date.now();
+            let timeElapsed = timeEnd - timeBegin;
+            timeElapsedArray[ j ] = timeElapsed;
           }
+          console.log( `NeuralWorker_Body.${funcNameInMessage}(): `
+            + `workerId=${this.workerId}, neuralNetIndex=${i}, `
+            + `timeElapsed0=${timeElapsedArray[ 0 ]}, `
+            + `timeElapsed1=${timeElapsedArray[ 1 ]}`
+          );
 
-        } catch ( e ) {
-          let errorMsg = `NeuralWorker_Body.${funcNameInMessage}(): `
-            + `workerId=${this.workerId}. ${e}`;
-          console.error( errorMsg );
-          //debugger;
-          throw e;
+        } else {
+          sourceTensor = tf.zeros( neuralNet.input_shape, "int32" );
+          outputTensor = neuralNet.apply( sourceTensor );
+        }
 
-        } finally {
-          if ( outputTensor ) {
-            outputTensor.dispose();
-            outputTensor = null;
-          }
+      } catch ( e ) {
+        let errorMsg = `NeuralWorker_Body.${funcNameInMessage}(): `
+          + `workerId=${this.workerId}. ${e}`;
+        console.error( errorMsg );
+        //debugger;
+        throw e;
+
+      } finally {
+        if ( outputTensor ) {
+          outputTensor.dispose();
+          outputTensor = null;
         }
       }
     }
-
-//!!! (2023/04/30 Remarked) Every operations should have try-finally to release tensors.
-//    } );
   }
 
   /** Release the neural network. */
