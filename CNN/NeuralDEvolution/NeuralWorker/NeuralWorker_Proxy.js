@@ -89,7 +89,7 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
    * Initialize this worker proxy. It will create one web worker and inform it
    * to initialize (e.g. load library), but not yet to create neural network.
    *
-   * Note: The .alignmentMarkValueArray will be cleared.
+   * Note: The .alignmentMarkValueArrayArray will be cleared.
    *
    *
    * @param {number} workerId
@@ -114,7 +114,7 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
   /**
    * Create neural network(s) in the web worker body.
    *
-   * Note: The .alignmentMarkValueArray will be cleared.
+   * Note: The .alignmentMarkValueArrayArray will be cleared.
    *
    *
    * @param {NeuralNet.ParamsBase[]} neuralNetParamsBaseArray
@@ -204,33 +204,15 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
   }
 
   /**
-   * @param {integer[]} alignmentMarkValueArray
-   *   An array of values representing every neural network is personating
-   * which alignment currently.
-   *
-   *   - It could be null or undefined or
-   *       ( alignmentMarkValueArray.length == 0 ) for not filling alignment
-   *       mark into source TypedArray.
-   *
-   *   - Otherwise, alignmentMarkValueArray.length should be the same as
-   *       this.neuralNetCount
-   *
-   *     - If ( NeuralNet.Params.has_implicit_input == true ), they will be
-   *         filled (as alignment marks) into every input of the neural
-   *         networks (i.e. source TypedArray).
-   *
-   *     - If ( NeuralNet.Params.has_implicit_input == true ) but you do not
-   *         want to fill alignment marks, please use
-   *         ( alignmentMarkValueArray == null ) to clear it.
    * 
    * @return {Promise}
    *   Return a promise:
    *   - Resolved to true, if succeeded.
    *   - Resolved to false, if failed.
    */
-  async alignmentMarkValueArray_set_async( alignmentMarkValueArray ) {
+  async alignmentMarkValueArrayArray_set_async( alignmentMarkValueArrayArray ) {
     return this.createPromise_by_postCommandArgs(
-      [ "alignmentMarkValueArray_set", alignmentMarkValueArray ]
+      [ "alignmentMarkValueArrayArray_set", alignmentMarkValueArrayArray ]
     );
   }
 
