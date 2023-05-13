@@ -571,7 +571,7 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
 
     const funcNameInMessage = "ONE_WORKER__TWO_NET__TypedArray_process";
 
-    let resultFloat32ArrayPromiseArray
+    let outputTypedArrayPromiseArray
       = new Array( this.neuralNetArray.length );
 
     const bTwoTensors = ( this.neuralNetArray.length > 1 ); // should be true.
@@ -625,7 +625,7 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
           // Because downloading from GPU to CPU is slow, continue to compute
           // the next neural network after downloading started.
           // 
-          resultFloat32ArrayPromiseArray[ i ] = outputTensor.data();
+          outputTypedArrayPromiseArray[ i ] = outputTensor.data();
 
         } catch ( e ) {
           let errorMsg = `NeuralWorker_Body.${funcNameInMessage}(): `
@@ -658,19 +658,19 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
     }
 
     // 4. Wait for all downloading from GPU to CPU completely.
-    let resultFloat32ArrayArray
-      = await Promise.all( resultFloat32ArrayPromiseArray );
+    let outputTypedArrayArray
+      = await Promise.all( outputTypedArrayPromiseArray );
 
     let resultTransferableObjectArray
-      = new Array( resultFloat32ArrayArray.length );
+      = new Array( outputTypedArrayArray.length );
 
-    for ( let i = 0; i < resultFloat32ArrayArray.length; ++i ) {
+    for ( let i = 0; i < outputTypedArrayArray.length; ++i ) {
       resultTransferableObjectArray[ i ]
-        = resultFloat32ArrayArray[ i ].buffer;
+        = outputTypedArrayArray[ i ].buffer;
     }
 
     return {
-      value: resultFloat32ArrayArray,
+      value: outputTypedArrayArray,
       transferableObjectArray: resultTransferableObjectArray
     };
   }
