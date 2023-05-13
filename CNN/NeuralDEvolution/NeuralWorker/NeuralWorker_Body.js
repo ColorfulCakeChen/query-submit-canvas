@@ -14,14 +14,17 @@ import { tensorflowJsURL } from "./NeuralWorker_Common.js";
  * The implementation of a neural network web worker. It may own one or two
  * neural network(s).
  *
- * @member {integer[]} alignmentMarkValueArray
- *   An array of values representing every neural network is personating
- * which alignment currently.
+ * @member {Uint8ClampedArray[]|Int32Array[]|number[][]} alignmentMarkValueArrayArray
+ *   An array with two non-negative integer arrays representing every neural
+ * network personating which alignment currently. Every non-negative integer
+ * array's .length should be the same as .input_channelCount becasue it
+ * represents a pixel.
  *
- *   - It could be null or undefined or ( alignmentMarkValueArray.length == 0 )
- *       for not filling alignment mark into source TypedArray.
+ *   - It could be null or undefined or
+ *       ( alignmentMarkValueArrayArray.length == 0 ) for not filling alignment
+ *       mark into source TypedArray.
  *
- *   - Otherwise, alignmentMarkValueArray.length should be the same as
+ *   - Otherwise, alignmentMarkValueArrayArray.length should be the same as
  *       this.neuralNetCount
  *
  *     - If ( NeuralNet.Params.has_implicit_input == true ), they will be
@@ -30,11 +33,11 @@ import { tensorflowJsURL } from "./NeuralWorker_Common.js";
  *
  *     - If ( NeuralNet.Params.has_implicit_input == true ) but you do not
  *         want to fill alignment marks, please call
- *         .alignmentMarkValueArray_set_async( null ) to clear it to null.
+ *         .alignmentMarkValueArrayArray_set_async( null ) to clear it.
  *
- * @member {boolean} alignmentMarkValueArray_nonEmpty
- *   Return true, if .alignmentMarkValueArray is null or undefined or
- * ( .alignmentMarkValueArray.length == 0 ).
+ * @member {boolean} alignmentMarkValueArrayArray_nonEmpty
+ *   Return true, if .alignmentMarkValueArrayArray is null or
+ * ( .alignmentMarkValueArrayArray.length == 0 ).
  *
  */
 export default class NeuralWorker_Body extends AsyncWorker.Body {
@@ -74,7 +77,7 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
   /** @override */
   async* disposeResources() {
 
-    this.alignmentMarkValueArray_dispose();
+    this.alignmentMarkValueArrayArray_dispose();
     this.NeuralNetArray_dispose();
 
     // Detect tensor memory leak.
@@ -106,7 +109,7 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
 
   /**
    *
-   * Note: The .alignmentMarkValueArray will be cleared.
+   * Note: The .alignmentMarkValueArrayArray will be cleared.
    *
    *
    * @param {number} workerId
@@ -121,8 +124,8 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
     // Clear resources.
     {
       // Since (re-)initialization, no alignment marks.
-      if ( this.alignmentMarkValueArray )
-        this.alignmentMarkValueArray.length = 0;
+      if ( this.alignmentMarkValueArrayArray )
+        this.alignmentMarkValueArrayArray.length = 0;
 
       if ( this.neuralNetArray )
         this.neuralNetArray.clear(); // Release old neural networks.
@@ -153,7 +156,7 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
   }
 
   /**
-   * Note: The .alignmentMarkValueArray will be cleared.
+   * Note: The .alignmentMarkValueArrayArray will be cleared.
    *
    *
    * @param {Object[]} neuralNetParamsBaseArray
@@ -180,8 +183,8 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
     // 0.
 
     // 0.1 Since (re-)creation, no alignment marks.
-    if ( this.alignmentMarkValueArray )
-      this.alignmentMarkValueArray.length = 0;
+    if ( this.alignmentMarkValueArrayArray )
+      this.alignmentMarkValueArrayArray.length = 0;
 
     // 0.2 Prepare container for all neural networks.
     {
@@ -453,47 +456,23 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
     }
   }
 
-  get alignmentMarkValueArray_nonEmpty() {
-    if (   ( this.alignmentMarkValueArray )
-        && ( this.alignmentMarkValueArray.length > 0 ) )
+  get alignmentMarkValueArrayArray_nonEmpty() {
+    if (   ( this.alignmentMarkValueArrayArray )
+        && ( this.alignmentMarkValueArrayArray.length > 0 ) )
       return true;
     return false;
   }
 
   /**
-   * @param {integer[]} alignmentMarkValueArray
-   *   An array of values representing every neural network is personating
-   * which alignment currently.
-   *
-   *   - It could be null or undefined or
-   *       ( alignmentMarkValueArray.length == 0 ) for not filling alignment
-   *       mark into source TypedArray.
-   *
-   *   - Otherwise, alignmentMarkValueArray.length should be the same as
-   *       this.neuralNetCount
-   *
-   *     - If ( NeuralNet.Params.has_implicit_input == true ), they will be
-   *         filled (as alignment marks) into every input of the neural
-   *         networks (i.e. source TypedArray).
-   *
-   *     - If ( NeuralNet.Params.has_implicit_input == true ) but you do not
-   *         want to fill alignment marks, please use
-   *         ( alignmentMarkValueArray == null ) to clear it.
-   *
-   *   - For example, in a OX (connect-three) game:
-   *     - ( alignmentMarkValueArray[ 0 ] == 0 ) means neural network 0
-   *         personates O side currently.
-   *     - ( alignmentMarkValueArray[ 1 ] == 255 ) means neural network 1
-   *         personates X side currently.
    *
    * @yield {boolean}
    *   - Yield { done: true, value: { value: true } }.
    */
-  async* alignmentMarkValueArray_set( alignmentMarkValueArray ) {
-    const funcNameInMessage = "alignmentMarkValueArray_set";
+  async* alignmentMarkValueArrayArray_set( alignmentMarkValueArrayArray ) {
+    const funcNameInMessage = "alignmentMarkValueArrayArray_set";
 
-    if (   ( alignmentMarkValueArray )
-        && ( alignmentMarkValueArray.length > 0 ) ) { // 1.
+    if (   ( alignmentMarkValueArrayArray )
+        && ( alignmentMarkValueArrayArray.length > 0 ) ) { // 1.
 
       if ( !this.neuralNetArray )
         throw Error( `NeuralWorker_Body.${funcNameInMessage}(): `
@@ -501,22 +480,43 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
           + `NeuralWorker_Body.NeuralNetArray_create() has done.`
         );
 
-      if ( alignmentMarkValueArray.length != this.neuralNetArray.length )
+      if ( alignmentMarkValueArrayArray.length != this.neuralNetArray.length )
         throw Error( `NeuralWorker_Body.${funcNameInMessage}(): `
-          + `alignmentMarkValueArray.length `
-          + `( ${alignmentMarkValueArray.length} ) `
+          + `alignmentMarkValueArrayArray.length `
+          + `( ${alignmentMarkValueArrayArray.length} ) `
           + `should be either 0 or the same as `
           + `.neuralNetCount ( ${this.neuralNetArray.length} ).`
         );
 
+      // Check the alignment mark value array length.
+      const input_channelCount = this.neuralNetArray[ 0 ].input_channelCount;
+      for ( let neuralNetIndex = 0;
+        neuralNetIndex < this.alignmentMarkValueArrayArray.length;
+        ++neuralNetIndex ) {
+
+        const alignmentMarkValueArrayLength
+          = alignmentMarkValueArrayArray[ neuralNetIndex ]?.length;
+
+        if ( alignmentMarkValueArrayLength != input_channelCount )
+        throw Error( `NeuralWorker_Body.${funcNameInMessage}(): `
+          + `alignmentMarkValueArrayArray[ ${neuralNetIndex} ].length `
+          + `( ${alignmentMarkValueArrayLength} ) `
+          + `should be the same as `
+          + `.input_channelCount ( ${input_channelCount} ).`
+        );
+      }
+
+!!! ...unfinished... (2023/05/12)
+// Why not hold the received array directly?
       // 1.1 Prepare container for all neural networks' mark value.
       {
-        if ( this.alignmentMarkValueArray )
-          this.alignmentMarkValueArray.length = alignmentMarkValueArray.length;
+        if ( this.alignmentMarkValueArrayArray )
+          this.alignmentMarkValueArrayArray.length
+            = alignmentMarkValueArrayArray.length;
         else
-          this.alignmentMarkValueArray
+          this.alignmentMarkValueArrayArray
             = Recyclable.Array.Pool.get_or_create_by(
-                alignmentMarkValueArray.length );
+                alignmentMarkValueArrayArray.length );
       }
 
       // 1.2 Copy the alignment mark values.
