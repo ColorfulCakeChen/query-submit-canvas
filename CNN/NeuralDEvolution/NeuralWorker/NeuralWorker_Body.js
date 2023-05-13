@@ -661,17 +661,17 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
     let outputTypedArrayArray
       = await Promise.all( outputTypedArrayPromiseArray );
 
-    let resultTransferableObjectArray
+    let outputTransferableObjectArray
       = new Array( outputTypedArrayArray.length );
 
     for ( let i = 0; i < outputTypedArrayArray.length; ++i ) {
-      resultTransferableObjectArray[ i ]
+      outputTransferableObjectArray[ i ]
         = outputTypedArrayArray[ i ].buffer;
     }
 
     return {
       value: outputTypedArrayArray,
-      transferableObjectArray: resultTransferableObjectArray
+      transferableObjectArray: outputTransferableObjectArray
     };
   }
 
