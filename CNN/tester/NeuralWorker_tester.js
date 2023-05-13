@@ -264,7 +264,7 @@ class PerformanceTestCase extends Recyclable.Root {
 //           this.alignmentMarkValueArrayArray
 //             = [ [ 155, 155, 155, 255 ], [ 255, 255, 255, 255 ] ];
           this.alignmentMarkValueArrayArray
-            = [ [ 155, 155, 155, 255 ],
+            = [ Int32Array.from( [ 155, 155, 155, 255 ] ),
                 Uint8ClampedArray.from( [ 255, 255, 255, 255 ] ) ];
         } else {
           this.alignmentMarkValueArrayArray
