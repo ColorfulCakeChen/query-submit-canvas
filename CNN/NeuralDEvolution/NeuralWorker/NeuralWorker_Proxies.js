@@ -149,6 +149,9 @@ import { ImplicitInputMode as NeuralWorker_ImplicitInputMode }
  *   The numeric identifier of neural worker mode (i.e.
  * NeuralWorker.Mode.Singleton.Ids.Xxx).
  *
+ * @member {NeuralWorker_Mode_Info} ModeInfo
+ *   The information of the nNeuralWorker_ModeId.
+ *
  * @member {number} nNeuralWorker_ImplicitInputModeId
  *   The numeric identifier of the neural network implicit input mode
  * (NeuralWorker.ImplicitInputMode.Singleton.Ids.Xxx).
@@ -272,6 +275,7 @@ class NeuralWorker_Proxies extends Recyclable.Root {
     this.ImplicitInputModeInfo = undefined;
     this.nNeuralWorker_ImplicitInputModeId = undefined;
 
+    this.ModeInfo = undefined;
     this.nNeuralWorker_ModeId = undefined;
     this.backendName = undefined;
 
@@ -299,8 +303,10 @@ class NeuralWorker_Proxies extends Recyclable.Root {
     this.nNeuralWorker_ModeId = nNeuralWorker_ModeId;
     this.nNeuralWorker_ImplicitInputModeId = nNeuralWorker_ImplicitInputModeId;
 
-    this.neuralNetCount
-      = NeuralWorker_Mode.neuralNetCount_get( this.nNeuralWorker_ModeId );
+    this.ModeInfo = NeuralWorker_Mode.Singleton
+      .getInfo_byId( nNeuralWorker_ModeId );
+
+    this.neuralNetCount = this.ModeInfo.neuralNetCount;
 
     this.ImplicitInputModeInfo = NeuralWorker_ImplicitInputMode.Singleton
       .getInfo_byId( nNeuralWorker_ImplicitInputModeId );
@@ -318,8 +324,7 @@ class NeuralWorker_Proxies extends Recyclable.Root {
     //       many game objects? The method is to let the output of every neural
     //       network contains all actions of all game objects of all alignments.
     //
-    let totalWorkerCount
-      = NeuralWorker_Mode.workerCount_get( nNeuralWorker_ModeId );
+    let totalWorkerCount = this.ModeInfo.workerCount;
 
     // Since (re-)initialization, no alignment marks and no previous outputs.
     {
@@ -705,8 +710,7 @@ class NeuralWorker_Proxies extends Recyclable.Root {
     if ( this.ImplicitInputModeInfo.implicit_input_bFillPreviousTimeOutput )
       previous_output_TypedArrayArray = this.previous_output_TypedArrayArray;
 
-    let bApply_or_Applier = NeuralWorker_Mode.Singleton
-      .bApply_or_Applier_get( this.nNeuralWorker_ModeId );
+    let bApply_or_Applier = this.ModeInfo.bApply_or_Applier;
 
     let worker0_resulter = this.workerProxyArray[ 0 ]
       .TWO_WORKER__TWO_NET__step0_TypedArray_process_asyncGenerator(
