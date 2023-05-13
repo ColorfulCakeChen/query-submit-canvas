@@ -62,7 +62,8 @@ class NeuralNet_ScaleFiller {
   async* createTensor_by_fill_asyncGenerator(
     source_TypedArray, source_height, source_width,
     bTwoTensors,
-    feedbackShape, alignmentMarkValueArray, previous_output_Int32ArrayArray
+    feedbackShape,
+    alignmentMarkValueArrayArray, previous_output_Int32ArrayArray
   ) {
     const funcNameInMessage = "createTensor_by_fill_asyncGenerator";
 
@@ -82,7 +83,8 @@ class NeuralNet_ScaleFiller {
       .call( this,
         source_TypedArray, source_height, source_width,
         bTwoTensors,
-        feedbackShape, alignmentMarkValueArray, previous_output_Int32ArrayArray
+        feedbackShape,
+        alignmentMarkValueArrayArray, previous_output_Int32ArrayArray
       );
   }
 
@@ -133,28 +135,34 @@ class NeuralNet_ScaleFiller {
    * (i.e. previous time output) into target tensor. Otherwise, there will be
    * no alignment mark value and feedback be filled into target tensor.
    *
-   * @param {integer[]} alignmentMarkValueArray
-   *   An array of values representing every neural network personating which
-   * alignment.
+!!!   * @param {Uint8ClampedArray[]|Int32Array[]|number[][]} alignmentMarkValueArrayArray
+   *   An array of two non-negative integer arrays representing every neural
+   * network personating which alignment currently. Every non-negative integer
+   * array's .length should be the same as .input_channelCount becasue it
+   * represents a pixel.
    *
-   *   - If ( feedbackShape == null ), alignmentMarkValueArray will be ignored.
+   *   - If ( feedbackShape == null ), alignmentMarkValueArrayArray will be ignored.
    *
    *   - If ( feedbackShape != null ):
    *
-   *     - If ( alignmentMarkValueArray == null ) or
-   *         ( alignmentMarkValueArray.length == 0 ), there will be no alignment
-   *         mark value be filled into target tensor.
+   *     - If ( alignmentMarkValueArrayArray == null ) or
+   *         ( alignmentMarkValueArrayArray.length == 0 ), there will be no
+   *         alignment mark value be filled into target tensor.
    *
-   *     - If ( alignmentMarkValueArray != null ) and
-   *         ( alignmentMarkValueArray.length > 0 ):
-   *       - If ( bTwoTensors == false ), alignmentMarkValueArray.length must be 1.
-   *       - If ( bTwoTensors ==  true ), alignmentMarkValueArray.length must be 2.
+   *     - If ( alignmentMarkValueArrayArray != null ) and
+   *         ( alignmentMarkValueArrayArray.length > 0 ):
+   *
+   *       - If ( bTwoTensors == false ), alignmentMarkValueArrayArray.length
+   *           must be 1.
+   *
+   *       - If ( bTwoTensors ==  true ), alignmentMarkValueArrayArray.length
+   *           must be 2.
    *
    *   - Usage example: in a OX (connect-three) game:
-   *     - ( alignmentMarkValueArray[ 0 ] == 0 ) means neural network 0
-   *         personates O side currently.
-   *     - ( alignmentMarkValueArray[ 1 ] == 255 ) means neural network 1
-   *         personates X side currently.
+   *     - ( alignmentMarkValueArrayArray[ 0 ] == [ 0, 0, 0, 255 ] ) means
+   *         neural network 0 personates O side currently.
+   *     - ( alignmentMarkValueArrayArray[ 1 ] == [ 255, 255, 255, 255 ) means
+   *         neural network 1 personates X side currently.
    *
    * @param {Int32Array[]} previous_output_Int32ArrayArray
    *   Every neural network's previous time output which will be used as
