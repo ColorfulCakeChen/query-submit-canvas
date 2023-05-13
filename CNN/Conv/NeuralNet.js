@@ -8,6 +8,3 @@ export { FeedbackToInput } from "./NeuralNet/NeuralNet_FeedbackToInput.js";
 export { FeedbackToInput_from } from "./NeuralNet/NeuralNet_FeedbackToInput.js";
 export { FeedbackToInput_Area } from "./NeuralNet/NeuralNet_FeedbackToInput.js";
 export { ScaleFiller } from "./NeuralNet/NeuralNet_ScaleFiller.js";
-
-export { ImplicitInputMode } from "./NeuralNet/NeuralNet_ImplicitInputMode.js";
-
