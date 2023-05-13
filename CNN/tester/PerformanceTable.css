@@ -47,7 +47,7 @@ tr:hover {
   background-color: darkgrey;
 } */
 
-input, textarea {
+input, textarea, select {
   background-color: black;
   color: lightgrey;
   width: 100%;
