@@ -32,6 +32,8 @@ let g_Controls = {
 
   output_channelCount_Text: null,
 
+  implicit_input_mode_Select: null,
+
   Info_TextArea: null,
   TestButton: null,
 
@@ -1133,6 +1135,10 @@ function TestButton_onClick( event ) {
     = Number.parseInt( g_Controls.output_channelCount_Text.value );
   g_Controls.output_channelCount_Text.value
     = output_channelCount;
+
+  let nNeuralWorker_ImplicitInputModeId 
+    = Number.parseInt( g_Controls.implicit_input_mode_Select.???value );
+  g_Controls.implicit_input_mode_Select
 
 //!!! ...unfinished... (2023/05/12)
 // Restrict it by ( has_implicit_input )?

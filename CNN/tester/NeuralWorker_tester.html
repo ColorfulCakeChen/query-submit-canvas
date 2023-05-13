@@ -62,7 +62,14 @@
 
         <th scope="row">implicit_input_mode</th>
         <td>
-          <select id="implicit_input_mode_Select" type="checkbox" checked>
+          <select id="implicit_input_mode_Select">
+            <option value="0">IMPLICIT_INPUT__NONE___OUTPUT__AS_NORMAL</option>
+            <option value="1">IMPLICIT_INPUT__NONE___OUTPUT__AS_INPUT_VALUE_RANGE</option>
+            <option value="2">IMPLICIT_INPUT__FILL_ALIGNMENT_MARK___OUTPUT__AS_NORMAL</option>
+            <option value="3">IMPLICIT_INPUT__FILL_ALIGNMENT_MARK___OUTPUT__AS_INPUT_VALUE_RANGE</option>
+            <option value="4">IMPLICIT_INPUT__FILL_PRREVIOUS_TIME_OUTPUT</option>
+            <option value="5">IMPLICIT_INPUT__FILL_ALIGNMENT_MARK__FILL_PRREVIOUS_TIME_OUTPUT</option>
+          </select>
         </td>
 
       </tr>
