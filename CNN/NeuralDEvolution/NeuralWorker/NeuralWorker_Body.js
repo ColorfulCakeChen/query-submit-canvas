@@ -234,7 +234,7 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
         progress = ValueMax.Percentage.Aggregate.Pool.get_or_create_by();
 
         // Note: Put into this.neuralNetArray[] so that it could be released
-        //       even if it's init failed and throw exception.
+        //       even if its .init is failed and throws exception.
         let neuralNet = this.neuralNetArray[ i ]
           = NeuralNet.Base.Pool.get_or_create_by();
 
