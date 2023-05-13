@@ -628,21 +628,23 @@ class HeightWidthDepth {
           + `theModeInfo.id ( ${theModeInfo.id} ) should be ( ${i} ).`
         );
 
+      let neuralNetParamsBase = NeuralNet.ParamsBase.Pool.get_or_create_by(
+        this.explicit_input_height, this.explicit_input_width,
+        this.explicit_input_channelCount,
+        this.has_implicit_input,
+        this.vocabularyChannelCount, this.vocabularyCountPerInputChannel,
+        nConvStageType,
+        this.blockCountTotalRequested,
+        this.output_channelCount, this.output_asInputValueRange,
+        bKeepInputTensor
+      );
+
       this.neuralWorker_PerformanceTest_addCase(
         theModeInfo.id,
-        this.nNeuralWorker_ImplicitInputModeId,
         NeuralWorker.Mode.Singleton.getNameWithInt_byId( i ),
-        NeuralNet.ParamsBase.Pool.get_or_create_by(
-          this.explicit_input_height, this.explicit_input_width,
-          this.explicit_input_channelCount,
-          this.has_implicit_input,
-          this.vocabularyChannelCount, this.vocabularyCountPerInputChannel,
-          nConvStageType,
-          this.blockCountTotalRequested,
-          this.output_channelCount, this.output_asInputValueRange,
-          bKeepInputTensor
-        ),
-        theModeInfo.id
+        neuralNetParamsBase,
+        theModeInfo.id,
+        this.nNeuralWorker_ImplicitInputModeId,
       );
     }
 
