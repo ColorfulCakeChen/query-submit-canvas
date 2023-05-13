@@ -574,88 +574,86 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
     let resultFloat32ArrayPromiseArray
       = new Array( this.neuralNetArray.length );
 
-    {
-      const bTwoTensors = ( this.neuralNetArray.length > 1 ); // should be true.
+    const bTwoTensors = ( this.neuralNetArray.length > 1 ); // should be true.
 
-      // Even if there are two neural networks, their .feedbackShape should be
-      // the same. So, just use the 1st neural network's feedbackShape.
-      const feedbackShape = this.neuralNetArray[ 0 ].feedbackShape;
+    // Even if there are two neural networks, their .feedbackShape should be
+    // the same. So, just use the 1st neural network's feedbackShape.
+    const feedbackShape = this.neuralNetArray[ 0 ].feedbackShape;
 
-      let createTensor_asyncGenerator
-        = this.ScaleFiller.createTensor_by_fill_asyncGenerator(
-            source_TypedArray, source_height, source_width,
-            bTwoTensors,
-            feedbackShape,
-            this.alignmentMarkValueArrayArray, previous_output_TypedArrayArray
-          );
+    let createTensor_asyncGenerator
+      = this.ScaleFiller.createTensor_by_fill_asyncGenerator(
+          source_TypedArray, source_height, source_width,
+          bTwoTensors,
+          feedbackShape,
+          this.alignmentMarkValueArrayArray, previous_output_TypedArrayArray
+        );
 
-      try {
-        for ( let i = 0; i < this.neuralNetArray.length; ++i ) {
-          let neuralNet = this.neuralNetArray[ i ];
+    try {
+      for ( let i = 0; i < this.neuralNetArray.length; ++i ) {
+        let neuralNet = this.neuralNetArray[ i ];
 
-          let outputTensor;
-          try {
+        let outputTensor;
+        try {
 
-            // 1. Prepare source tensor of every neural network.
-            //
-            // Scaling, filling alignment mark and feedback information (i.e.
-            // previous time output), and then create source tensor.
+          // 1. Prepare source tensor of every neural network.
+          //
+          // Scaling, filling alignment mark and feedback information (i.e.
+          // previous time output), and then create source tensor.
 
-            let done_value_sourceTensor_Promise
-              = createTensor_asyncGenerator.next();
+          let done_value_sourceTensor_Promise
+            = createTensor_asyncGenerator.next();
 
-            let done_value_sourceTensor
-              = await done_value_sourceTensor_Promise;
+          let done_value_sourceTensor
+            = await done_value_sourceTensor_Promise;
 
-            if ( done_value_sourceTensor.done )
-              throw Error( `NeuralWorker_Body.${funcNameInMessage}(): `
-                + `workerId=${this.workerId}, done_value_sourceTensor.done `
-                + `( ${done_value_sourceTensor.done} ) `
-                + `should be false.`
-              );
+          if ( done_value_sourceTensor.done )
+            throw Error( `NeuralWorker_Body.${funcNameInMessage}(): `
+              + `workerId=${this.workerId}, done_value_sourceTensor.done `
+              + `( ${done_value_sourceTensor.done} ) `
+              + `should be false.`
+            );
 
-            let [ sourceTensor, sourceTypedArrayAsyncFunction ]
-              = done_value_sourceTensor.value;
+          let [ sourceTensor, sourceTypedArrayAsyncFunction ]
+            = done_value_sourceTensor.value;
 
-            // 2. Process source tensor. (The sourceTensor will be released
-            //    (in theroy).)
-            outputTensor = neuralNet.apply( sourceTensor );
+          // 2. Process source tensor. (The sourceTensor will be released
+          //    (in theroy).)
+          outputTensor = neuralNet.apply( sourceTensor );
 
-            // 3. Record result promise.
-            //
-            // Because downloading from GPU to CPU is slow, continue to compute
-            // the next neural network after downloading started.
-            // 
-            resultFloat32ArrayPromiseArray[ i ] = outputTensor.data();
+          // 3. Record result promise.
+          //
+          // Because downloading from GPU to CPU is slow, continue to compute
+          // the next neural network after downloading started.
+          // 
+          resultFloat32ArrayPromiseArray[ i ] = outputTensor.data();
 
-          } catch ( e ) {
-            let errorMsg = `NeuralWorker_Body.${funcNameInMessage}(): `
-              + `workerId=${this.workerId}. ${e}`;
-            console.error( errorMsg );
-            //debugger;
-            throw e;
+        } catch ( e ) {
+          let errorMsg = `NeuralWorker_Body.${funcNameInMessage}(): `
+            + `workerId=${this.workerId}. ${e}`;
+          console.error( errorMsg );
+          //debugger;
+          throw e;
 
-          } finally {
-            if ( outputTensor ) {
-              outputTensor.dispose();
-              outputTensor = null;
-            }
+        } finally {
+          if ( outputTensor ) {
+            outputTensor.dispose();
+            outputTensor = null;
           }
         }
+      }
 
-      } catch ( e ) {
-        let errorMsg = `NeuralWorker_Body.${funcNameInMessage}(): `
-          + `workerId=${this.workerId}. ${e}`;
-        console.error( errorMsg );
-        //debugger;
-        throw e;
+    } catch ( e ) {
+      let errorMsg = `NeuralWorker_Body.${funcNameInMessage}(): `
+        + `workerId=${this.workerId}. ${e}`;
+      console.error( errorMsg );
+      //debugger;
+      throw e;
 
-      } finally {
-        // Ensure all intermediate tensors are released.
-        if ( createTensor_asyncGenerator ) {
-          createTensor_asyncGenerator.return();
-          createTensor_asyncGenerator = null;
-        }
+    } finally {
+      // Ensure all intermediate tensors are released.
+      if ( createTensor_asyncGenerator ) {
+        createTensor_asyncGenerator.return();
+        createTensor_asyncGenerator = null;
       }
     }
 
