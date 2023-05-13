@@ -229,18 +229,17 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
 
         // 1.2 If TypedArray, clone them for transferring.
         } else if ( alignmentMarkValueArray.buffer != undefined ) {
-          let alignmentMarkValueArrayArray_clone
-            = alignmentMarkValueArray.slice();
+          let alignmentMarkValueArray_clone = alignmentMarkValueArray.slice();
 
           alignmentMarkValueArrayArray_clone[ i ]
-            = alignmentMarkValueArrayArray_clone;
+            = alignmentMarkValueArray_clone;
 
           if ( !transferableObjectArray )
             transferableObjectArray
-              = [ alignmentMarkValueArrayArray_clone.buffer ];
+              = [ alignmentMarkValueArray_clone.buffer ];
           else
             transferableObjectArray.push(
-              alignmentMarkValueArrayArray_clone.buffer );
+              alignmentMarkValueArray_clone.buffer );
 
         } else { // 1.3 Unknown element type.
           throw Error( `NeuralWorker_Proxy`
