@@ -677,10 +677,9 @@ class NeuralWorker_Proxies extends Recyclable.Root {
         previous_output_TypedArrayArray
       );
 
-    let worker0_value_TypedArrayArray
-      = this.previous_output_TypedArrayArray = await worker0_promise;
+    this.previous_output_TypedArrayArray = await worker0_promise;
 
-    return worker0_value_TypedArrayArray;
+    return this.previous_output_TypedArrayArray;
   }
 
   /**
@@ -789,8 +788,7 @@ class NeuralWorker_Proxies extends Recyclable.Root {
 
     let worker0_value_TypedArray = await worker0_promise;
 
-    this.previous_output_TypedArrayArray
-      = [ worker0_value_TypedArray ];
+    this.previous_output_TypedArrayArray = [ worker0_value_TypedArray ];
 
     return this.previous_output_TypedArrayArray;
   }
