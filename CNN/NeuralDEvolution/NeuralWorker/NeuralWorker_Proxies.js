@@ -526,7 +526,7 @@ class NeuralWorker_Proxies extends Recyclable.Root {
   async alignmentMarkValueArrayArray_set_async( alignmentMarkValueArrayArray ) {
     const funcNameInMessage = "alignmentMarkValueArrayArray_set_async";
 
-//!!! ...unfinished... (2023/05/13)
+    // Send alignment mark value array array only if requested.
     if ( !this.ImplicitInputModeInfo.implicit_input_bFillAlignmentMark )
       throw Error( `NeuralWorker.Proxies.${funcNameInMessage}(): `
         + `.ImplicitInputModeInfo.implicit_input_bFillAlignmentMark `
@@ -666,10 +666,16 @@ class NeuralWorker_Proxies extends Recyclable.Root {
   static async apply__ONE_WORKER__TWO_NET(
     source_TypedArray, source_height, source_width ) {
 
+//!!! ...unfinished... (2023/05/13)
+    // Send previous time output only if requested.
+    let previous_output_TypedArrayArray;
+    if ( this.ImplicitInputModeInfo.implicit_input_bFillPreviousTimeOutput )
+      previous_output_TypedArrayArray = this.previous_output_TypedArrayArray;
+
     let worker0_promise = this.workerProxyArray[ 0 ]
       .ONE_WORKER__TWO_NET__TypedArray_process_async(
         source_TypedArray, source_height, source_width,
-        this.previous_output_TypedArrayArray
+        previous_output_TypedArrayArray
       );
 
     let worker0_value_TypedArrayArray
