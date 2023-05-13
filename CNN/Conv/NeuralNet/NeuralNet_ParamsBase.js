@@ -28,17 +28,8 @@ import { ImplicitInputMode as NeuralNet_ImplicitInputMode }
  * equal to .inferencedParams.input_channelCount. For RGA input image, it should
  * be 4.
  *
-
-!!! ...unfinished... (2023/05/12)
- * @member {number} nNeuralNet_ImplicitInputModeId
- *   The numeric identifier of the neural network implicit input mode
- * (NeuralNet.ImplicitInputMode.Singleton.Ids.Xxx).
  *
-
-!!! ...unfinished... (2023/05/12)
-// should from NeuralNet_ImplicitInputMode
-
-!!! * @member {boolean} has_implicit_input
+ * @member {boolean} has_implicit_input
  *   - If true, there will be extra space in the input image for filling
  *       alignment mark and/or previous time output.
  *
@@ -167,16 +158,6 @@ class NeuralNet_ParamsBase extends Recyclable.Root {
     this.output_channelCount = output_channelCount;
     this.output_asInputValueRange = output_asInputValueRange;
     this.bKeepInputTensor = bKeepInputTensor;
-
-//!!! ...unfinished... (2023/05/12) should be combined into one parameter.
-//     if ( has_implicit_input && !output_asInputValueRange )
-//       throw Error( 'NeuralNet_ParamsBase.setAsConstructor_self(): '
-//         + `When `
-//         + `has_implicit_input ( ${has_implicit_input} ) `
-//         + `is true, `
-//         + `output_asInputValueRange ( ${output_asInputValueRange} ) `
-//         + `should also be true.`
-//       );
   }
 
   /** @override */
