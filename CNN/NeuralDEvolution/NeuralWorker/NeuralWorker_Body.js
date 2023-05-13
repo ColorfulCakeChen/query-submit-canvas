@@ -764,7 +764,7 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
         );
 
     let outputTensor;
-    let outputFloat32Array;
+    let outputTypedArray;
     try {
 
       // 1. Prepare source tensor of the neural network.
@@ -797,7 +797,7 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
         // Because downloading from GPU to CPU is slow, start downloading
         // before posting scaledInt32Array back to WorkerProxy (i.e. another
         // slow action).
-        let outputFloat32ArrayPromise = outputTensor.data();
+        let outputTypedArrayPromise = outputTensor.data();
 
         // Post back to WorkerProxy. (Note: the scaledInt32Array will be
         // destroyed.)
@@ -812,7 +812,7 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
           transferableObjectArray: [ scaledInt32Array.buffer ]
         };
 
-        outputFloat32Array = await outputFloat32ArrayPromise;
+        outputTypedArray = await outputTypedArrayPromise;
 
       // 2.2 Solution 2: Use neuralNet.applier().
       } else {
@@ -840,8 +840,8 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
         }
         outputTensor = applierNext.value;
 
-        let outputFloat32ArrayPromise = outputTensor.data();
-        outputFloat32Array = await outputFloat32ArrayPromise;
+        let outputTypedArrayPromise = outputTensor.data();
+        outputTypedArray = await outputTypedArrayPromise;
       }
 
     } catch ( e ) {
@@ -865,8 +865,8 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
     }
 
     return {
-      value: outputFloat32Array,
-      transferableObjectArray: [ outputFloat32Array.buffer ]
+      value: outputTypedArray,
+      transferableObjectArray: [ outputTypedArray.buffer ]
     };
   }
 
@@ -949,7 +949,7 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
         );
 
     let outputTensor;
-    let outputFloat32ArrayPromise;
+    let outputTypedArrayPromise;
     try {
 
       // 1. Prepare source tensor of the neural network.
@@ -975,7 +975,7 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
 
       // 2. Process image by neural network.
       outputTensor = neuralNet.apply( sourceTensor );
-      outputFloat32ArrayPromise = outputTensor.data();
+      outputTypedArrayPromise = outputTensor.data();
 
     } catch ( e ) {
       let errorMsg = `NeuralWorker_Body.${funcNameInMessage}(): `
@@ -997,11 +997,11 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
       }
     }
 
-    let outputFloat32Array = await outputFloat32ArrayPromise;
+    let outputTypedArray = await outputTypedArrayPromise;
 
     return {
-      value: outputFloat32Array,
-      transferableObjectArray: [ outputFloat32Array.buffer ]
+      value: outputTypedArray,
+      transferableObjectArray: [ outputTypedArray.buffer ]
     };
   }
 
