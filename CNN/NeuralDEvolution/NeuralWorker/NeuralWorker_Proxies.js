@@ -154,7 +154,7 @@ import { Mode as NeuralWorker_Mode } from "./NeuralWorker_Mode.js";
  *
  *
  * @member {Uint8ClampedArray[]|Int32Array[]|number[][]} alignmentMarkValueArrayArray
- *   An array of two non-negative integer arrays representing every neural
+ *   An array with two non-negative integer arrays representing every neural
  * network personating which alignment currently. Every non-negative integer
  * array's .length should be the same as .input_channelCount becasue it
  * represents a pixel.
@@ -298,16 +298,17 @@ class NeuralWorker_Proxies extends Recyclable.Root {
     // differential evolution. Differential evolution evaluates just two entities
     // every time.
     //
-    // Note: How could two neural networks determine all the actions of so many
-    //       game objects? The method is to let the output of every neural
+    // Note: How could two neural networks determine all the actions of so
+    //       many game objects? The method is to let the output of every neural
     //       network contains all actions of all game objects of all alignments.
     //
-    let totalWorkerCount = NeuralWorker_Mode.workerCount_get( nNeuralWorker_ModeId );
+    let totalWorkerCount
+      = NeuralWorker_Mode.workerCount_get( nNeuralWorker_ModeId );
 
     // Since (re-)initialization, no alignment marks and no previous outputs.
     {
       // Note: NeuralWorker_Body will clear it, too.
-      this.alignmentMarkValueArray = undefined;
+      this.alignmentMarkValueArrayArray = undefined;
 
       this.previous_output_TypedArrayArray = undefined;
     }
@@ -392,8 +393,8 @@ class NeuralWorker_Proxies extends Recyclable.Root {
   /**
    * Create neural networks in all web workers' body.
    *
-   * The .alignmentMarkValueArray and .previous_output_TypedArrayArray will be
-   * cleared.
+   * The .alignmentMarkValueArrayArray and .previous_output_TypedArrayArray
+   * will be cleared.
    *
    *
    * @param {NeuralNet.ParamsBase[]} neuralNetParamsBaseArray
@@ -437,7 +438,7 @@ class NeuralWorker_Proxies extends Recyclable.Root {
     // Since (re-)creation, no alignment marks and no previous outputs.
     {
       // Note: NeuralWorker_Body will clear it, too.
-      this.alignmentMarkValueArray = undefined;
+      this.alignmentMarkValueArrayArray = undefined;
 
       this.previous_output_TypedArrayArray = undefined;
     }
@@ -473,58 +474,40 @@ class NeuralWorker_Proxies extends Recyclable.Root {
     return createOk;
   }
 
-  get alignmentMarkValueArray_nonEmpty() {
-    if (   ( this.alignmentMarkValueArray )
-        && ( this.alignmentMarkValueArray.length > 0 ) )
+  get alignmentMarkValueArrayArray_nonEmpty() {
+    if (   ( this.alignmentMarkValueArrayArray )
+        && ( this.alignmentMarkValueArrayArray.length > 0 ) )
       return true;
     return false;
   }
 
   /**
-   * @param {integer[]} alignmentMarkValueArray
-   *   An array of values representing every neural network is personating
-   * which alignment currently.
-   *
-   *   - It could be null or undefined or
-   *       ( alignmentMarkValueArray.length == 0 ) for not filling alignment
-   *       mark into source TypedArray.
-   *
-   *   - Otherwise, alignmentMarkValueArray.length should be the same as
-   *       this.neuralNetCount
-   *
-   *     - If ( NeuralNet.Params.has_implicit_input == true ), they will be
-   *         filled (as alignment marks) into every input of the neural
-   *         networks (i.e. source TypedArray).
-   *
-   *     - If ( NeuralNet.Params.has_implicit_input == true ) but you do not
-   *         want to fill alignment marks, please use
-   *         ( alignmentMarkValueArray == null ) to clear it.
    * 
    * @return {Promise}
    *   Return a promise:
    *   - Resolved to true, if succeeded.
    *   - Resolved to false, if failed.
    */
-  async alignmentMarkValueArray_set_async( alignmentMarkValueArray ) {
-    const funcNameInMessage = "alignmentMarkValueArray_set_async";
+  async alignmentMarkValueArrayArray_set_async( alignmentMarkValueArrayArray ) {
+    const funcNameInMessage = "alignmentMarkValueArrayArray_set_async";
 
     // 1.
-    const alignmentMarkValueArray_nonEmpty
-      = (   ( alignmentMarkValueArray )
-         && ( alignmentMarkValueArray.length > 0 ) );
+    const alignmentMarkValueArrayArray_nonEmpty
+      = (   ( alignmentMarkValueArrayArray )
+         && ( alignmentMarkValueArrayArray.length > 0 ) );
 
-    if ( alignmentMarkValueArray_nonEmpty ) {
-      if ( alignmentMarkValueArray.length != this.neuralNetCount )
+    if ( alignmentMarkValueArrayArray_nonEmpty ) {
+      if ( alignmentMarkValueArrayArray.length != this.neuralNetCount )
         throw Error( `NeuralWorker.Proxies.${funcNameInMessage}(): `
-          + `alignmentMarkValueArray.length `
-          + `( ${alignmentMarkValueArray.length} ) `
+          + `alignmentMarkValueArrayArray.length `
+          + `( ${alignmentMarkValueArrayArray.length} ) `
           + `should be either 0 or the same as `
           + `.neuralNetCount ( ${this.neuralNetCount} ).`
         );
     }
 
     // 2. Record it for reference.
-    this.alignmentMarkValueArray = alignmentMarkValueArray;
+    this.alignmentMarkValueArrayArray = alignmentMarkValueArrayArray;
 
     // 3.
 
@@ -535,13 +518,14 @@ class NeuralWorker_Proxies extends Recyclable.Root {
       let resultPromiseArray = new Array( this.workerProxyArray.length );
       for ( let i = 0; i < this.workerProxyArray.length; ++i ) {
 
-        let alignmentMarkValueArray_beSent;
-        if ( alignmentMarkValueArray_nonEmpty )
-          alignmentMarkValueArray_beSent = [ alignmentMarkValueArray[ i ] ];
+        let alignmentMarkValueArrayArray_beSent;
+        if ( alignmentMarkValueArrayArray_nonEmpty )
+          alignmentMarkValueArrayArray_beSent
+            = [ alignmentMarkValueArrayArray[ i ] ];
 
         resultPromiseArray[ i ] = this.workerProxyArray[ i ]
-          .alignmentMarkValueArray_set_async(
-            alignmentMarkValueArray_beSent );
+          .alignmentMarkValueArrayArray_set_async(
+            alignmentMarkValueArrayArray_beSent );
       }
 
       let resultOkArray = await Promise.all( resultPromiseArray );
@@ -554,40 +538,43 @@ class NeuralWorker_Proxies extends Recyclable.Root {
     // 3.2 The only one worker sets all alignment mark values.
     } else {
       resultOk = await this.workerProxyArray[ 0 ]
-        .alignmentMarkValueArray_set_async( alignmentMarkValueArray );
+        .alignmentMarkValueArrayArray_set_async(
+          alignmentMarkValueArrayArray );
     }
 
     return resultOk;
   }
 
   /**
-   * Swap .alignmentMarkValueArray[ 0 ] and this.alignmentMarkValueArray[ 1 ].
+   * Swap .alignmentMarkValueArrayArray[ 0 ] and
+   * .alignmentMarkValueArrayArray[ 1 ].
    *
    * @return {Promise}
    *   Return a promise:
    *   - Resolved to true, if succeeded.
    *   - Resolved to false, if failed.
    */
-  async alignmentMarkValueArray_swap_async() {
-    const funcNameInMessage = "alignmentMarkValueArray_swap_async";
+  async alignmentMarkValueArrayArray_swap_async() {
+    const funcNameInMessage = "alignmentMarkValueArrayArray_swap_async";
 
     // 1.
-    if ( !this.alignmentMarkValueArray_nonEmpty )
+    if ( !this.alignmentMarkValueArrayArray_nonEmpty )
       throw Error( `NeuralWorker.Proxies.${funcNameInMessage}(): `
-        + `.alignmentMarkValueArray_nonEmpty `
-        + `( ${this.alignmentMarkValueArray_nonEmpty} ) `
+        + `.alignmentMarkValueArrayArray_nonEmpty `
+        + `( ${this.alignmentMarkValueArrayArray_nonEmpty} ) `
         + `should be true for swapping.`
       );
 
-    if ( this.alignmentMarkValueArray.length != 2 )
+    if ( this.alignmentMarkValueArrayArray.length != 2 )
       throw Error( `NeuralWorker.Proxies.${funcNameInMessage}(): `
-        + `.alignmentMarkValueArray.length `
-        + `( ${this.alignmentMarkValueArray.length} ) `
+        + `.alignmentMarkValueArrayArray.length `
+        + `( ${this.alignmentMarkValueArrayArray.length} ) `
         + `should be 2 for swapping.`
       );
 
-    return this.alignmentMarkValueArray_set_async(
-      [ this.alignmentMarkValueArray[ 1 ], this.alignmentMarkValueArray[ 0 ] ] );
+    return this.alignmentMarkValueArrayArray_set_async(
+      [ this.alignmentMarkValueArrayArray[ 1 ],
+        this.alignmentMarkValueArrayArray[ 0 ] ] );
   }
 
   get previous_output_TypedArrayArray_nonEmpty() {
@@ -767,9 +754,11 @@ class NeuralWorker_Proxies extends Recyclable.Root {
       + `neuralNetCount=${this.neuralNetCount}, `
       + `hardwareConcurrency=${this.hardwareConcurrency}, `
       + `totalWorkerCount=${this.totalWorkerCount}, `
-      + `alignmentMarkValueArray=${ this.alignmentMarkValueArray
-          ? `[ ${this.alignmentMarkValueArray} ]`
-          : this.alignmentMarkValueArray }`
+!!!
+      + `alignmentMarkValueArrayArray=${ this.alignmentMarkValueArrayArray
+          ? `[ [ ${this.alignmentMarkValueArrayArray[ 0 ]} ], `
+              + ` [ ${this.alignmentMarkValueArrayArray[ 1 ]} ] ]`
+          : this.alignmentMarkValueArrayArray }`
       ;
     return str;
   }

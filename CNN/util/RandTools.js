@@ -2,6 +2,7 @@ export { getRandomIntInclusive_by_minInt_kindsInt, getRandomIntInclusive };
 export { getRandomInt_TruncatedBinaryExponent };
 export { fill_numberArray, generate_numberArray };
 export { shuffle_Array };
+export { array_toString };
 
 import * as FloatValue from "../Unpacker/FloatValue.js";
 import * as Recyclable from "./Recyclable.js";
@@ -227,4 +228,30 @@ function shuffle_Array( io_array ) {
     io_array[ swapIndex ] = io_array[ i ];
     io_array[ i ] = tempElement;
   }
+}
+
+/**
+ * @param {any[]} anArray
+ *   An array to be converted to a string. It can have nested sub-array as element.
+ *
+ * @return {string}
+ *   Return a string representing the array's content.
+ */
+function array_toString( anArray ) {
+  let str;
+  if ( anArray != undefined ) {
+    if ( anArray.length != undefined ) { // 1. Assume it is an array.
+      let strArray = new Array( anArray.length );
+      for ( let i = 0; i < anArray.length; ++i ) {
+        strArray[ i ] = array_toString( anArray[ i ] );
+      }
+     str = `[ ${strArray.join( ", " )} ]`;
+  
+    } else { // 2. Assume it is not an array.
+      str = `${anArray}`;
+    }
+  } else { // 3. undefined or null.
+    str = `${anArray}`;
+  }
+  return str;
 }
