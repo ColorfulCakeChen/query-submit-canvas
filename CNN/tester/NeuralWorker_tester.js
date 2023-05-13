@@ -260,8 +260,14 @@ class PerformanceTestCase extends Recyclable.Root {
           this.alignmentMarkValueArrayArray
             = [ [ 155, 155, 155, 255 ], [ 255, 255, 255, 255 ] ];
         } else {
-          this.alignmentMarkValueArrayArray
-            = [ [ 55, 55, 55, 255 ] ];
+//!!! (2023/05/13 Temp Remarked) Try TypedArray
+//           this.alignmentMarkValueArrayArray
+//             = [ [ 55, 55, 55, 255 ] ];
+          this.alignmentMarkValueArrayArray = [ new Uint8ClampedArray( 4 ) ];
+          this.alignmentMarkValueArrayArray[ 0 ][ 0 ] = 55;
+          this.alignmentMarkValueArrayArray[ 0 ][ 1 ] = 55;
+          this.alignmentMarkValueArrayArray[ 0 ][ 2 ] = 55;
+          this.alignmentMarkValueArrayArray[ 0 ][ 3 ] = 255;
         }
 
         let bSetOkPromise = neuralWorkerProxies
