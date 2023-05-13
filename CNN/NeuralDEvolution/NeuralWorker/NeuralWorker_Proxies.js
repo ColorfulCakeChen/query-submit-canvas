@@ -467,7 +467,7 @@ class NeuralWorker_Proxies extends Recyclable.Root {
           = this.ImplicitInputModeInfo.has_implicit_input;
 
         neuralNetParamsBase.output_asInputValueRange
-          = this.ImplicitInputModeInfo.has_implicit_input;
+          = this.ImplicitInputModeInfo.output_asInputValueRange;
       }
     }
 
