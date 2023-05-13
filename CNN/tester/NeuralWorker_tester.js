@@ -997,7 +997,7 @@ async function* testerBackend( progressParent,
 //!!! (2023/05/11 Remarked)
 //      largerFactor,
       nNeuralWorker_ImplicitInputModeId,
-      explicit_input_height, explicit_input_width, explicit_channelCount,
+      explicit_input_height, explicit_input_width, explicit_input_channelCount,
       vocabularyChannelCount,
       blockCountTotalRequested,
       output_channelCount,
