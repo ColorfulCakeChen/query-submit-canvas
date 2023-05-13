@@ -69,7 +69,7 @@ class NeuralWorker_Mode extends Int {
       return info.neuralNetCount;
     return NaN;
   }
- 
+
   /**
    * @param {number} nNeuralWorker_ModeId
    *   The numeric identifier of NeuralWorker_Mode.

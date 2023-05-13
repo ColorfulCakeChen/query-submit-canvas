@@ -452,7 +452,22 @@ class NeuralWorker_Proxies extends Recyclable.Root {
         + `should be the same as .neuralNetCount ( ${this.neuralNetCount} ).`
       );
 
-    let createOk;
+//!!! ...unfinished... (2023/05/13)
+    // Ensure neuralNetParamsBase has correct flags combination according to
+    // implicit input mode.
+    {
+      for ( let neuralNetIndex = 0;
+        neuralNetIndex < this.neuralNetCount; ++neuralNetIndex ) {
+
+        let neuralNetParamsBase = neuralNetParamsBaseArray[ neuralNetIndex ];
+
+        neuralNetParamsBase.has_implicit_input
+          = this.ImplicitInputModeInfo.has_implicit_input;
+
+        neuralNetParamsBase.output_asInputValueRange
+          = this.ImplicitInputModeInfo.has_implicit_input;
+      }
+    }
 
     // Since (re-)creation, no alignment marks and no previous outputs.
     {
@@ -461,6 +476,8 @@ class NeuralWorker_Proxies extends Recyclable.Root {
 
       this.previous_output_TypedArrayArray = undefined;
     }
+
+    let createOk;
 
     // 1. Every worker creates one neural network.
     if ( this.workerProxyArray.length > 1 ) { // (i.e. two workers)
