@@ -153,6 +153,9 @@ import { ImplicitInputMode as NeuralWorker_ImplicitInputMode }
  *   The numeric identifier of the neural network implicit input mode
  * (NeuralWorker.ImplicitInputMode.Singleton.Ids.Xxx).
  *
+ * @member {NeuralWorker_ImplicitInputMode_Info} ImplicitInputModeInfo
+ *   The information object of the nNeuralWorker_ImplicitInputModeId.
+ *
  * @member {number} neuralNetCount
  *   There are how many neural networks created. It is always 2 (because of
  * differential evolution) no matter how totalWorkerCount is.
@@ -302,7 +305,6 @@ class NeuralWorker_Proxies extends Recyclable.Root {
     this.neuralNetCount
       = NeuralWorker_Mode.neuralNetCount_get( this.nNeuralWorker_ModeId );
 
-  //!!! ...unfinished... (2023/05/13)
     this.ImplicitInputModeInfo = NeuralWorker_ImplicitInputMode.Singleton
       .getInfo_byId( nNeuralWorker_ImplicitInputModeId );
 
