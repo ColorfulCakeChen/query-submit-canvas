@@ -1114,7 +1114,6 @@ function TestButton_onClick( event ) {
     = Number.parseInt( g_Controls.explicit_input_channelCount_Text.value );
   g_Controls.explicit_input_channelCount_Text.value = explicit_input_channelCount;
 
-//!!!  let has_implicit_input = g_Controls.has_implicit_input_Checkbox.checked;
 
   let vocabularyChannelCount
     = Number.parseInt( g_Controls.vocabularyChannelCount_Text.value );
@@ -1131,21 +1130,19 @@ function TestButton_onClick( event ) {
     = Number.parseInt( g_Controls.blockCountTotalRequested_Text.value );
   g_Controls.blockCountTotalRequested_Text.value = blockCountTotalRequested;
 
+
   let output_channelCount
     = Number.parseInt( g_Controls.output_channelCount_Text.value );
   g_Controls.output_channelCount_Text.value
     = output_channelCount;
 
-  let nNeuralWorker_ImplicitInputModeId 
-    = Number.parseInt( g_Controls.implicit_input_mode_Select.???value );
-  g_Controls.implicit_input_mode_Select
+  let nNeuralWorker_ImplicitInputModeId
+    = Number.parseInt( g_Controls.implicit_input_mode_Select.value );
+  g_Controls.implicit_input_mode_Select.value
+    = nNeuralWorker_ImplicitInputModeId;
 
-//!!! ...unfinished... (2023/05/12)
-// Restrict it by ( has_implicit_input )?
-  // let output_asInputValueRange
-  //   = g_Controls.output_asInputValueRange_Checkbox.checked;
 
-    // Prepare output table.
+  // Prepare output table.
   {
     if ( !g_Controls.performanceTable_htmlTableOperator ) {
       const htmlTableId = "NeuralWorker_Performance_Table";
@@ -1169,9 +1166,7 @@ function TestButton_onClick( event ) {
 //!!! (2023/05/11 Remarked)
 //    largerFactor,
 
-!!! ...unfinished... (2023/05/13)
     nNeuralWorker_ImplicitInputModeId,
-
     explicit_input_height,
     explicit_input_width,
     explicit_input_channelCount,
