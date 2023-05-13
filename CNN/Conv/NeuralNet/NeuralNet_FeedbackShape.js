@@ -227,7 +227,7 @@ class NeuralNet_FeedbackShape extends NeuralNet_FeedbackToInput {
    *   The (previous time) output of the neural networks.
    */
   set_implicit_input_by_alignmentMarkValueArray_previousOutputTypedArray(
-    input_TypedArray, alignmentMarkValue, previous_output_Int32Array ) {
+    input_TypedArray, alignmentMarkValueArray, previous_output_Int32Array ) {
 
     this.set_implicit_input_by_alignmentMarkValueArray(
       input_TypedArray, alignmentMarkValueArray );
