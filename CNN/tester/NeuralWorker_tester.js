@@ -848,17 +848,19 @@ class HeightWidthDepth {
                 timeTimesIndex < timeInfo.times;
                 ++timeTimesIndex ) {
 
-                if ( testCase.neuralNetCount == 2 ) {
-                  let swapOk = await this.neuralWorkerProxies
-                    .alignmentMarkValueArrayArray_swap_async();
+                if ( this.ImplicitInputModeInfo.implicit_input_bFillAlignmentMark ) {
+                  if ( testCase.neuralNetCount == 2 ) {
+                    let swapOk = await this.neuralWorkerProxies
+                      .alignmentMarkValueArrayArray_swap_async();
 
-                  if ( !swapOk )
-                    throw Error( `NeuralWorker_tester.HeightWidthDepth`
-                      + `.${funcNameInMessage}(): `
-                      + `.neuralWorkerProxies.alignmentMarkValueArrayArray_swap_async() `
-                      + `result ( ${swapOk} ) `
-                      + `should be true. `
-                      + `${this.neuralWorkerProxies}` );
+                    if ( !swapOk )
+                      throw Error( `NeuralWorker_tester.HeightWidthDepth`
+                        + `.${funcNameInMessage}(): .neuralWorkerProxies`
+                        + `.alignmentMarkValueArrayArray_swap_async() `
+                        + `result ( ${swapOk} ) `
+                        + `should be true. `
+                        + `${this.neuralWorkerProxies}` );
+                  }
                 }
 
                 timeInfo.begin = Date.now();
