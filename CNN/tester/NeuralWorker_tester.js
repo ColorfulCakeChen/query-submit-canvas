@@ -477,7 +477,10 @@ class HeightWidthDepth {
     explicit_input_height, explicit_input_width, explicit_input_channelCount,
 
     vocabularyChannelCount,
+    vocabularyCountPerInputChannel,
+
     blockCountTotalRequested,
+
     output_channelCount,
   
     backendName, bAscent_or_Descent ) {
@@ -494,6 +497,7 @@ class HeightWidthDepth {
     this.explicit_input_channelCount = explicit_input_channelCount;
 
     this.vocabularyChannelCount = vocabularyChannelCount;
+    this.vocabularyCountPerInputChannel = vocabularyCountPerInputChannel;
     this.blockCountTotalRequested = blockCountTotalRequested;
     this.output_channelCount = output_channelCount;
 
@@ -591,7 +595,7 @@ class HeightWidthDepth {
     else
       this.testCaseMap = new Map();
 
-    const vocabularyCountPerInputChannel = 256;
+    //const vocabularyCountPerInputChannel = 256;
 
     // (2023/03/08 Remarked) Use SHUFFLE_NET_V2_BY_MOBILE_NET_V1 instead.
     // const nConvStageType
@@ -600,12 +604,6 @@ class HeightWidthDepth {
     // Use ( pad = same ) so that edge pixels will not be dropped.
     const nConvStageType
       = ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1; // (5)
-
-    // ShuffleNetV2 uses twice block count to compensate reduced channel count.
-    //let blockCountTotalRequested_ShuffleNet = this.blockCountTotalRequested * 2;
-    const blockCountTotalRequested_ShuffleNet = this.blockCountTotalRequested;
-
-    const output_asInputValueRange = true;
 
     // The neuralNet performance testing should not keep-input-tensor because the
     // input image is created from canvas in real time.
@@ -638,9 +636,9 @@ class HeightWidthDepth {
           this.explicit_input_height, this.explicit_input_width,
           this.explicit_input_channelCount,
           this.has_implicit_input,
-          this.vocabularyChannelCount, vocabularyCountPerInputChannel,
+          this.vocabularyChannelCount, this.vocabularyCountPerInputChannel,
           nConvStageType,
-          blockCountTotalRequested_ShuffleNet,
+          this.blockCountTotalRequested,
           this.output_channelCount, this.output_asInputValueRange,
           bKeepInputTensor
         ),
@@ -983,7 +981,10 @@ async function* testerBackend( progressParent,
   explicit_input_channelCount,
 
   vocabularyChannelCount,
+  vocabularyCountPerInputChannel,
+
   blockCountTotalRequested,
+
   output_channelCount,
 
   backendName, bAscent_or_Descent,
@@ -998,7 +999,7 @@ async function* testerBackend( progressParent,
 //      largerFactor,
       nNeuralWorker_ImplicitInputModeId,
       explicit_input_height, explicit_input_width, explicit_input_channelCount,
-      vocabularyChannelCount,
+      vocabularyChannelCount, vocabularyCountPerInputChannel,
       blockCountTotalRequested,
       output_channelCount,
       backendName, bAscent_or_Descent,
@@ -1038,7 +1039,10 @@ async function* testerBackendAll( progressParent,
   explicit_input_channelCount = 4,
 
   vocabularyChannelCount = 8, //6, //4,
+  vocabularyCountPerInputChannel = 256,
+
   blockCountTotalRequested = 84, //100, //200, //50, //20, //10,
+
   output_channelCount = 6,
 ) {
 
@@ -1059,7 +1063,7 @@ async function* testerBackendAll( progressParent,
       nNeuralWorker_ImplicitInputModeId,
       explicit_input_height, explicit_input_width,
       explicit_input_channelCount,
-      vocabularyChannelCount,
+      vocabularyChannelCount, vocabularyCountPerInputChannel,
       blockCountTotalRequested,
       output_channelCount,
       "webgl", bAscent_or_Descent,
@@ -1074,7 +1078,7 @@ async function* testerBackendAll( progressParent,
       nNeuralWorker_ImplicitInputModeId,
       explicit_input_height, explicit_input_width,
       explicit_input_channelCount,
-      vocabularyChannelCount,
+      vocabularyChannelCount, vocabularyCountPerInputChannel,
       blockCountTotalRequested,
       output_channelCount,
       "cpu", bAscent_or_Descent,
@@ -1167,10 +1171,8 @@ function TestButton_onClick( event ) {
 //    largerFactor,
 
     nNeuralWorker_ImplicitInputModeId,
-    explicit_input_height,
-    explicit_input_width,
-    explicit_input_channelCount,
-    vocabularyChannelCount,
+    explicit_input_height, explicit_input_width, explicit_input_channelCount,
+    vocabularyChannelCount, vocabularyCountPerInputChannel,
     blockCountTotalRequested,
     output_channelCount,
   );
