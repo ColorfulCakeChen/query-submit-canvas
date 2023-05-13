@@ -241,11 +241,17 @@ function array_toString( anArray ) {
   let str;
   if ( anArray != undefined ) {
     if ( anArray.length != undefined ) { // 1. Assume it is an array.
-      let strArray = new Array( anArray.length );
-      for ( let i = 0; i < anArray.length; ++i ) {
-        strArray[ i ] = array_toString( anArray[ i ] );
+
+      if ( anArray.length > 0 ) { // 1.1 non-empty array.
+        let strArray = new Array( anArray.length );
+        for ( let i = 0; i < anArray.length; ++i ) {
+          strArray[ i ] = array_toString( anArray[ i ] );
+        }
+        str = `[ ${strArray.join( ", " )} ]`;
+
+      } else { // 1.2 empty array.
+        str = "[]";
       }
-     str = `[ ${strArray.join( ", " )} ]`;
   
     } else { // 2. Assume it is not an array.
       str = `${anArray}`;
