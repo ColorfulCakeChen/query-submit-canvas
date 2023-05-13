@@ -25,10 +25,10 @@ let g_Controls = {
   explicit_input_width_Number: null,
   explicit_input_channelCount_Number: null,
 
-  vocabularyChannelCount_Text: null,
-  vocabularyCountPerInputChannel_Text: null,
+  vocabularyChannelCount_Number: null,
+  vocabularyCountPerInputChannel_Number: null,
 
-  blockCountTotalRequested_Text: null,
+  blockCountTotalRequested_Number: null,
 
   output_channelCount_Text: null,
 
@@ -1147,19 +1147,19 @@ function TestButton_onClick( event ) {
 
 
   let vocabularyChannelCount
-    = Number.parseInt( g_Controls.vocabularyChannelCount_Text.value );
-  g_Controls.vocabularyChannelCount_Text.value = vocabularyChannelCount;
+    = Number.parseInt( g_Controls.vocabularyChannelCount_Number.value );
+  g_Controls.vocabularyChannelCount_Number.value = vocabularyChannelCount;
 
 //!!! ...unfinished... (2023/05/12)
 // Restrict it?
   let vocabularyCountPerInputChannel
-    = Number.parseInt( g_Controls.vocabularyCountPerInputChannel_Text.value );
-  g_Controls.vocabularyCountPerInputChannel_Text.value
+    = Number.parseInt( g_Controls.vocabularyCountPerInputChannel_Number.value );
+  g_Controls.vocabularyCountPerInputChannel_Number.value
     = vocabularyCountPerInputChannel;
 
   let blockCountTotalRequested
-    = Number.parseInt( g_Controls.blockCountTotalRequested_Text.value );
-  g_Controls.blockCountTotalRequested_Text.value = blockCountTotalRequested;
+    = Number.parseInt( g_Controls.blockCountTotalRequested_Number.value );
+  g_Controls.blockCountTotalRequested_Number.value = blockCountTotalRequested;
 
 
   let output_channelCount
