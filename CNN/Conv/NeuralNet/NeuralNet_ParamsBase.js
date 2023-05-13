@@ -168,15 +168,15 @@ class NeuralNet_ParamsBase extends Recyclable.Root {
     this.output_asInputValueRange = output_asInputValueRange;
     this.bKeepInputTensor = bKeepInputTensor;
 
-!!! ...unfinished... (2023/05/12)
-    if ( has_implicit_input && !output_asInputValueRange )
-      throw Error( 'NeuralNet_ParamsBase.setAsConstructor_self(): '
-        + `When `
-        + `has_implicit_input ( ${has_implicit_input} ) `
-        + `is true, `
-        + `output_asInputValueRange ( ${output_asInputValueRange} ) `
-        + `should also be true.`
-      );
+//!!! ...unfinished... (2023/05/12) should be combined into one parameter.
+//     if ( has_implicit_input && !output_asInputValueRange )
+//       throw Error( 'NeuralNet_ParamsBase.setAsConstructor_self(): '
+//         + `When `
+//         + `has_implicit_input ( ${has_implicit_input} ) `
+//         + `is true, `
+//         + `output_asInputValueRange ( ${output_asInputValueRange} ) `
+//         + `should also be true.`
+//       );
   }
 
   /** @override */
