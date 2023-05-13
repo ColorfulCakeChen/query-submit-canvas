@@ -30,7 +30,7 @@ let g_Controls = {
 
   blockCountTotalRequested_Number: null,
 
-  output_channelCount_Text: null,
+  output_channelCount_Number: null,
 
   implicit_input_mode_Select: null,
 
@@ -1163,8 +1163,8 @@ function TestButton_onClick( event ) {
 
 
   let output_channelCount
-    = Number.parseInt( g_Controls.output_channelCount_Text.value );
-  g_Controls.output_channelCount_Text.value
+    = Number.parseInt( g_Controls.output_channelCount_Number.value );
+  g_Controls.output_channelCount_Number.value
     = output_channelCount;
 
   let nNeuralWorker_ImplicitInputModeId
