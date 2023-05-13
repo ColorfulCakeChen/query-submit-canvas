@@ -11,7 +11,8 @@ import { ImplicitInputMode as NeuralWorker_ImplicitInputMode }
 
 
 //!!! ...unfinished... (2022/05/25)
-// Perhaps, Using SharedArrayBuffer to pass input image between different web worker.
+// Perhaps, Using SharedArrayBuffer to pass input image between different web
+// worker.
 //
 
 /**
