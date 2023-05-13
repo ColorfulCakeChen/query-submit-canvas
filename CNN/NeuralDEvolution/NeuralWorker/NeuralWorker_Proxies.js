@@ -756,7 +756,7 @@ class NeuralWorker_Proxies extends Recyclable.Root {
       + `hardwareConcurrency=${this.hardwareConcurrency}, `
       + `totalWorkerCount=${this.totalWorkerCount}, `
       + `alignmentMarkValueArrayArray=`
-        + `${ RandTools.array_toString( this.alignmentMarkValueArrayArray )}`
+        + `${RandTools.array_toString( this.alignmentMarkValueArrayArray )}`
       ;
     return str;
   }
