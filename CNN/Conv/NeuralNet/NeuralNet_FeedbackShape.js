@@ -209,7 +209,7 @@ class NeuralNet_FeedbackShape extends NeuralNet_FeedbackToInput {
   }
 
   /**
-   * Call .set_implicit_input_by_alignmentMarkValue() and
+   * Call .set_implicit_input_by_alignmentMarkValueArray() and
    * .set_implicit_input_by_previousOutputTypedArray().
    *
    *
@@ -226,11 +226,11 @@ class NeuralNet_FeedbackShape extends NeuralNet_FeedbackToInput {
    * @param {Int32Array} previous_output_Int32Array
    *   The (previous time) output of the neural networks.
    */
-  set_implicit_input_by_alignmentMarkValue_previousOutputTypedArray(
+  set_implicit_input_by_alignmentMarkValueArray_previousOutputTypedArray(
     input_TypedArray, alignmentMarkValue, previous_output_Int32Array ) {
 
-    this.set_implicit_input_by_alignmentMarkValue(
-      input_TypedArray, alignmentMarkValue );
+    this.set_implicit_input_by_alignmentMarkValueArray(
+      input_TypedArray, alignmentMarkValueArray );
 
     this.set_implicit_input_by_previousOutputTypedArray(
       input_TypedArray, previous_output_Int32Array
@@ -285,8 +285,7 @@ class NeuralNet_FeedbackShape extends NeuralNet_FeedbackToInput {
         + `alignmentMarkValueArray.length `
         + `( ${alignmentMarkValueArray.length} ) `
         + `should be the same as `
-        + `input_channelCount `
-        + `( ${input_channelCount} ).`
+        + `input_channelCount ( ${input_channelCount} ).`
       );
 
     // 3.
