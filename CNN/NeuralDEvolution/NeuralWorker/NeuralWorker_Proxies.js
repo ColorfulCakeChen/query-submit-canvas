@@ -154,7 +154,7 @@ import { ImplicitInputMode as NeuralWorker_ImplicitInputMode }
  * (NeuralWorker.ImplicitInputMode.Singleton.Ids.Xxx).
  *
  * @member {NeuralWorker_ImplicitInputMode_Info} ImplicitInputModeInfo
- *   The information object of the nNeuralWorker_ImplicitInputModeId.
+ *   The information of the nNeuralWorker_ImplicitInputModeId.
  *
  * @member {number} neuralNetCount
  *   There are how many neural networks created. It is always 2 (because of
