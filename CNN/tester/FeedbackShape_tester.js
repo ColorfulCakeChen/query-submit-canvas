@@ -22,6 +22,7 @@ class TestCase {
 
     this.to_valueArray = new Array();
 
+    this.alignmentMarkValueArray = new Array();
     this.from_output_valueArray = new Array();
 
     //!!! (2023/04/28 Remarked) Use Int32Array instead.
@@ -49,8 +50,23 @@ class TestCase {
     this.from_value_base_positive
       = ( this.from_value_offset_per_neuralNet * 0 ) + 1;
 
-    this.alignment_mark_value
+    this.alignment_mark_value_base_positive
       = ( this.from_value_offset_per_neuralNet * 1 ) + 1;
+
+    {
+      const input_channelCount = feedbackShape.input_channelCount;
+
+      let alignmentMarkValueArray = this.alignmentMarkValueArray;
+      alignmentMarkValueArray.length = input_channelCount;
+
+      const alignment_mark_value_base_positive
+        = this.alignment_mark_value_base_positive;
+
+      // all positive integers
+      for ( let i = 0; i < input_channelCount; ++i ) {
+        alignmentMarkValueArray[ i ] = i + alignment_mark_value_base_positive;
+      }
+    }
 
     // Multiplying 10 can always exceed any from_value (i.e. any feedback
     // value) and alignment mark value.
@@ -67,7 +83,7 @@ class TestCase {
 
       const from_value_base_positive = this.from_value_base_positive;
 
-      // all positive integers (for alignment 0)
+      // all positive integers.
       for ( let i = 0; i < area_from_valueCount_original; ++i ) {
         from_output_valueArray[ i ] = i + from_value_base_positive;
       }
@@ -433,13 +449,13 @@ class TestCase {
 
     // fill implicit input.
     feedbackShape
-      .set_implicit_input_by_alignmentMarkValue_previousOutputTypedArray(
+      .set_implicit_input_by_alignmentMarkValueArray_previousOutputTypedArray(
         this.nextInputArray,
         this.alignment_mark_value, 
         this.from_output_valueArray );
 
     this.nextInputArray_explicit_check();
-    this.nextInputArray_alignmentMark_check();
+    this.nextInputArray_alignmentMarkValueArray_check();
     this.nextInputArray_feedback_check();
   }
 
@@ -528,8 +544,8 @@ class TestCase {
   }
 
   /** */
-  nextInputArray_alignmentMark_check() {
-    const funcNameInMessage = "nextInputArray_alignmentMark_check";
+  nextInputArray_alignmentMarkValueArray_check() {
+    const funcNameInMessage = "nextInputArray_alignmentMarkValueArray_check";
 
     const to_inputArray = this.nextInputArray;
 
@@ -560,7 +576,7 @@ class TestCase {
     const area_height_multiplier = feedbackShape.area.height_multiplier;
     const area_width_multiplier = feedbackShape.area.width_multiplier;
 
-
+!!!
     const alignment_mark_value = this.alignment_mark_value;
 
     const areaIndex = 0; // Area 0 is for alignment mark.
