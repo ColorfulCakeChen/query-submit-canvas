@@ -452,7 +452,6 @@ class NeuralWorker_Proxies extends Recyclable.Root {
         + `should be the same as .neuralNetCount ( ${this.neuralNetCount} ).`
       );
 
-//!!! ...unfinished... (2023/05/13)
     // Ensure neuralNetParamsBase has correct flags combination according to
     // implicit input mode.
     {
@@ -526,6 +525,15 @@ class NeuralWorker_Proxies extends Recyclable.Root {
    */
   async alignmentMarkValueArrayArray_set_async( alignmentMarkValueArrayArray ) {
     const funcNameInMessage = "alignmentMarkValueArrayArray_set_async";
+
+//!!! ...unfinished... (2023/05/13)
+    if ( !this.ImplicitInputModeInfo.implicit_input_bFillAlignmentMark )
+      throw Error( `NeuralWorker.Proxies.${funcNameInMessage}(): `
+        + `.ImplicitInputModeInfo.implicit_input_bFillAlignmentMark `
+        + `( ${this.ImplicitInputModeInfo.implicit_input_bFillAlignmentMark} ) `
+        + `should be true `
+        + `for setting alignment mark value array array.`
+      );
 
     // 1.
     const alignmentMarkValueArrayArray_nonEmpty
