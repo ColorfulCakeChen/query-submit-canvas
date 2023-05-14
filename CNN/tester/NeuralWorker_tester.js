@@ -53,21 +53,24 @@ class UIControls {
 
   /** */
   controls_setup() {
-    for ( let p in this.controls_all ) {
-      let htmlElement = document.getElementById( p );
+    for ( let propertyName in this.controls_all ) {
+      let htmlElement = document.getElementById( propertyName );
       //this[ p ] = htmlElement;
       this.controls_all[ p ] = htmlElement;
-
       if ( p.endsWith( "_Number" ) )
         controls_number[ p ] = htmlElement;
     }
   }
 
   /** */
-  let explicit_input_height
-    = NeuralNet.Params.explicit_input_height.valueDesc.range.adjust(
-        Number.parseInt( g_Controls.explicit_input_height_Number.value ) );
-  g_Controls.explicit_input_height_Number.value = explicit_input_height;
+  controls_number_setup() {
+
+!!!
+    let explicit_input_height
+      = NeuralNet.Params.explicit_input_height.valueDesc.range.adjust(
+          Number.parseInt( g_Controls.explicit_input_height_Number.value ) );
+    g_Controls.explicit_input_height_Number.value = explicit_input_height;
+  }
 
 };
 
