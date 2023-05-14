@@ -46,6 +46,8 @@ class UIControls {
 
   controls_number = {};
 
+  controls_number_nameArray = [];
+
   /** */
   constructor() {
     this.controls_setup();
@@ -53,12 +55,23 @@ class UIControls {
 
   /** */
   controls_setup() {
-    for ( let propertyName in this.controls_all ) {
-      let htmlElement = document.getElementById( propertyName );
-      //this[ p ] = htmlElement;
-      this.controls_all[ p ] = htmlElement;
-      if ( p.endsWith( "_Number" ) )
-        controls_number[ p ] = htmlElement;
+    const postfixNumber = "_Number";
+    const postfixNumberLength = postfixNumber.length;
+
+    this.controls_number_nameArray.length = 0;
+    for ( let controlName in this.controls_all ) {
+      let htmlElement = document.getElementById( controlName );
+      //this[ controlName ] = htmlElement;
+      this.controls_all[ controlName ] = htmlElement;
+
+      if ( controlName.endsWith( postfixNumber ) ) { // Numeric controls.
+        controls_number[ controlName ] = htmlElement;
+
+        const propertyName
+          = controlName.substring( 0, controlName.length - postfixNumberLength );
+
+        this.controls_number_nameArray.push( propertyName );
+      }
     }
   }
 
