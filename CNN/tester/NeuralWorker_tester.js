@@ -44,9 +44,8 @@ class UIControls {
     NeuralWorker_Performance_Table: null,
   };
 
-  controls_number = {};
-
-  controls_number_nameArray = [];
+  controls_number = {}; // Numeric controls.
+  controls_number_nameArray = []; // Numeric controls' names.
 
   /** */
   constructor() {
@@ -67,8 +66,8 @@ class UIControls {
       if ( controlName.endsWith( postfixNumber ) ) { // Numeric controls.
         controls_number[ controlName ] = htmlElement;
 
-        const propertyName
-          = controlName.substring( 0, controlName.length - postfixNumberLength );
+        const propertyName = controlName.substring( 0,
+          controlName.length - postfixNumberLength );
 
         this.controls_number_nameArray.push( propertyName );
       }
