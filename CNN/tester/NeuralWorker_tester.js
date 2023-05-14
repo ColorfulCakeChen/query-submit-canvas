@@ -44,11 +44,11 @@ class UIControls {
     NeuralWorker_Performance_Table: null,
   };
 
-  controls_number = {}; // Numeric controls.
-  controls_number_controlNameArray = [];  // Numeric controls' names.
-  controls_number_propertyNameArray = [];  // Numeric properties' names.
-  controls_number_valueArray = [];  // Numeric controls' values. (as array)
-  controls_number_valueObject = {}; // Numeric controls' values. (as object)
+  numeric_controls = {}; // Numeric controls.
+  numeric_controls_controlNameArray = [];  // Numeric controls' names.
+  numeric_controls_propertyNameArray = [];  // Numeric properties' names.
+  numeric_controls_valueArray = [];  // Numeric controls' values. (as array)
+  numeric_controls_valueObject = {}; // Numeric controls' values. (as object)
 
   /** */
   constructor() {
@@ -60,8 +60,10 @@ class UIControls {
     const postfixNumber = "_Number";
     const postfixNumberLength = postfixNumber.length;
 
-    this.controls_number_controlNameArray.length = 0;
-    this.controls_number_propertyNameArray.length = 0;
+    const numeric_controls = this.numeric_controls;
+
+    this.numeric_controls_controlNameArray.length = 0;
+    this.numeric_controls_propertyNameArray.length = 0;
 
     for ( let controlName in this.controls_all ) {
       let htmlElement = document.getElementById( controlName );
@@ -69,13 +71,13 @@ class UIControls {
       this.controls_all[ controlName ] = htmlElement;
 
       if ( controlName.endsWith( postfixNumber ) ) { // Numeric controls.
-        controls_number[ controlName ] = htmlElement;
+        numeric_controls[ controlName ] = htmlElement;
 
         const propertyName = controlName.substring( 0,
           controlName.length - postfixNumberLength );
 
-        this.controls_number_controlNameArray.push( controlName );
-        this.controls_number_propertyNameArray.push( propertyName );
+        this.numeric_controls_controlNameArray.push( controlName );
+        this.numeric_controls_propertyNameArray.push( propertyName );
 
         // If the numeric control represents a NeuralNet.Params, setup range.
         const paramDesc = NeuralNet.Params[ propertyName ];
@@ -88,19 +90,19 @@ class UIControls {
   }
 
   /** */
-  controls_number_collect_values() {
-    const controls_number = this.controls_number;
-    const controls_number_controlNameArray = this.controls_number_controlNameArray;
-    const controls_number_propertyNameArray = this.controls_number_propertyNameArray;
-    const controls_number_valueArray = this.controls_number_valueArray;
-    const controls_number_valueObject = this.controls_number_valueObject;
+  numeric_controls_collect_values() {
+    const numeric_controls = this.numeric_controls;
+    const numeric_controls_controlNameArray = this.numeric_controls_controlNameArray;
+    const numeric_controls_propertyNameArray = this.numeric_controls_propertyNameArray;
+    const numeric_controls_valueArray = this.numeric_controls_valueArray;
+    const numeric_controls_valueObject = this.numeric_controls_valueObject;
 
-    controls_number_valueArray.length = controls_number_nameArray.length;
-    for ( let i = 0; i < controls_number_nameArray.length; ++i ) {
-      const controlName = controls_number_controlNameArray[ i ];
-      const propertyName = controls_number_propertyNameArray[ i ];
+    numeric_controls_valueArray.length = numeric_controls_nameArray.length;
+    for ( let i = 0; i < numeric_controls_nameArray.length; ++i ) {
+      const controlName = numeric_controls_controlNameArray[ i ];
+      const propertyName = numeric_controls_propertyNameArray[ i ];
 
-      const htmlElement = controls_number[ controlName ];
+      const htmlElement = numeric_controls[ controlName ];
       const valueInt = Number.parseInt( htmlElement.value );
 
       let valueIntAdjusted;
@@ -114,8 +116,8 @@ class UIControls {
 
       htmlElement.value = valueIntAdjusted; // Adjust value in UI.
 
-      controls_number_valueArray.push( valueIntAdjusted );
-      controls_number_valueObject[ propertyName ] = valueIntAdjusted;
+      numeric_controls_valueArray.push( valueIntAdjusted );
+      numeric_controls_valueObject[ propertyName ] = valueIntAdjusted;
     }
   }
 
@@ -1207,7 +1209,7 @@ function TestButton_onClick( event ) {
   let pool_all_issuedCount_before = Pool.All.issuedCount;
 
   const controls_all = g_Controls.controls_all;
-  const controls_number_valueObject = g_Controls.controls_number_valueObject;
+  const numeric_controls_valueObject = g_Controls.numeric_controls_valueObject;
 
   controls_all.TestButton.disabled = true; // Prevent multiple clicks.
   controls_all.Info_TextArea.textContent = "";
@@ -1215,7 +1217,7 @@ function TestButton_onClick( event ) {
   // Extract parameters from UI.
 
 //!!! (2023/05/14 Remarked)
-// Use  g_Controls.controls_number_collect_values()
+// Use  g_Controls.numeric_controls_collect_values()
 // except implicit_input_mode_Select  
 //
 // //!!! ...unfinished... (2023/05/11)
@@ -1266,7 +1268,7 @@ function TestButton_onClick( event ) {
 //     = output_channelCount;
 
 //!!! ...unfinished... (2023/05/14)
-  g_Controls.controls_number_collect_values();
+  g_Controls.numeric_controls_collect_values();
 
   let nNeuralWorker_ImplicitInputModeId
     = Number.parseInt( controls_all.implicit_input_mode_Select.value );
@@ -1301,14 +1303,14 @@ function TestButton_onClick( event ) {
 //!!! (2023/05/11 Remarked)
 //    largerFactor,
 
-    controls_number_valueObject.nNeuralWorker_ImplicitInputModeId,
-    controls_number_valueObject.explicit_input_height,
-    controls_number_valueObject.explicit_input_width,
-    controls_number_valueObject.explicit_input_channelCount,
-    controls_number_valueObject.vocabularyChannelCount,
-    controls_number_valueObject.vocabularyCountPerInputChannel,
-    controls_number_valueObject.blockCountTotalRequested,
-    controls_number_valueObject.output_channelCount
+    numeric_controls_valueObject.nNeuralWorker_ImplicitInputModeId,
+    numeric_controls_valueObject.explicit_input_height,
+    numeric_controls_valueObject.explicit_input_width,
+    numeric_controls_valueObject.explicit_input_channelCount,
+    numeric_controls_valueObject.vocabularyChannelCount,
+    numeric_controls_valueObject.vocabularyCountPerInputChannel,
+    numeric_controls_valueObject.blockCountTotalRequested,
+    numeric_controls_valueObject.output_channelCount
   );
 
   let progressReceiver
