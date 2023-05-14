@@ -89,6 +89,7 @@ class UIControls {
 
   /** */
   controls_number_collect_values() {
+    const controls_number = this.controls_number;
     const controls_number_controlNameArray = this.controls_number_controlNameArray;
     const controls_number_propertyNameArray = this.controls_number_propertyNameArray;
     const controls_number_valueArray = this.controls_number_valueArray;
@@ -99,14 +100,23 @@ class UIControls {
       const controlName = controls_number_controlNameArray[ i ];
       const propertyName = controls_number_propertyNameArray[ i ];
 
-!!!
-    let explicit_input_height
-      = NeuralNet.Params.explicit_input_height.valueDesc.range.adjust(
-          Number.parseInt( g_Controls.explicit_input_height_Number.value ) );
-    g_Controls.explicit_input_height_Number.value = explicit_input_height;
+      const htmlElement = controls_number[ controlName ];
+      const valueInt = Number.parseInt( htmlElement.value );
+
+      let valueIntAdjusted;
+      { // For NeuralNet.Params, restrict it by range.
+        const paramDesc = NeuralNet.Params[ propertyName ];
+        if ( paramDesc )
+          valueIntAdjusted = paramDesc.valueDesc.range.adjust( valueInt );
+        else
+          valueIntAdjusted = valueInt;
+      }
+
+      htmlElement.value = valueIntAdjusted; // Adjust value in UI.
+    }
   }
 
-};
+}
 
 let g_Controls;
 
