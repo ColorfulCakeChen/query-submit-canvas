@@ -16,31 +16,51 @@ import * as ImageSourceBag from "../jsPerf/Ref/ImageSourceBag.js";
 import * as NumberImage from "../jsPerf/Ref/NumberImage.js";
 import * as HTMLTable from "../Display/HTMLTable.js";
 
-let g_Controls = {
+/** */
+class UIControls {
 
+  controls_all = {
 //!!! ...unfinished... (2023/05/11)
 //  largerFactor_Text: null,
 
-  explicit_input_height_Number: null,
-  explicit_input_width_Number: null,
-  explicit_input_channelCount_Number: null,
+    explicit_input_height_Number: null,
+    explicit_input_width_Number: null,
+    explicit_input_channelCount_Number: null,
 
-  vocabularyChannelCount_Number: null,
-  vocabularyCountPerInputChannel_Number: null,
+    vocabularyChannelCount_Number: null,
+    vocabularyCountPerInputChannel_Number: null,
 
-  blockCountTotalRequested_Number: null,
+    blockCountTotalRequested_Number: null,
 
-  output_channelCount_Number: null,
+    output_channelCount_Number: null,
 
-  implicit_input_mode_Select: null,
+    implicit_input_mode_Select: null,
 
-  Info_TextArea: null,
-  TestButton: null,
+    Info_TextArea: null,
+    TestButton: null,
 
-  TestProgressBar: null,
+    TestProgressBar: null,
 
-  NeuralWorker_Performance_Table: null,
+    NeuralWorker_Performance_Table: null,
+  };
+
+  /** */
+  constructor() {
+    for ( let p in this.controls_all ) {
+      //this[ p ] = this.controls_all[ p ] = document.getElementById( p );
+      this.controls_all[ p ] = document.getElementById( p );
+    }
+  }
+
+  /** */
+  let explicit_input_height
+    = NeuralNet.Params.explicit_input_height.valueDesc.range.adjust(
+        Number.parseInt( g_Controls.explicit_input_height_Number.value ) );
+  g_Controls.explicit_input_height_Number.value = explicit_input_height;
+
 };
+
+let g_Controls;
 
 window.addEventListener( "load", event => {
 
@@ -49,10 +69,7 @@ window.addEventListener( "load", event => {
     g_Controls.TestButton.disabled = false;
   });
 
-  for ( let p in g_Controls ) {
-    g_Controls[ p ] = document.getElementById( p );
-  }
-
+  g_Controls = new UIControls();
   g_Controls.TestButton.addEventListener( "click", TestButton_onClick );
 });
 
@@ -1130,7 +1147,7 @@ function TestButton_onClick( event ) {
 //!!! ...unfinished... (2023/05/11)
 //  let largerFactor = Number.parseInt( g_Controls.largerFactor_Text.value );
 //  g_Controls.largerFactor_Text.value = largerFactor;
-  
+
   let explicit_input_height
     = NeuralNet.Params.explicit_input_height.valueDesc.range.adjust(
         Number.parseInt( g_Controls.explicit_input_height_Number.value ) );
