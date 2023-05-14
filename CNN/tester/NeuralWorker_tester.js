@@ -1199,66 +1199,71 @@ function TestButton_onClick( event ) {
 
   let pool_all_issuedCount_before = Pool.All.issuedCount;
 
-  g_Controls.TestButton.disabled = true; // Prevent multiple clicks.
-  g_Controls.Info_TextArea.textContent = "";
+  const controls_all = g_Controls.controls_all;
+  const controls_number_valueObject = g_Controls.controls_number_valueObject;
+
+  controls_all.TestButton.disabled = true; // Prevent multiple clicks.
+  controls_all.Info_TextArea.textContent = "";
 
   // Extract parameters from UI.
 
-!!! ...unfinished... (2023/05/14)
-// Use  g_Controls.controls_number_collect_values();
+//!!! (2023/05/14 Remarked)
+// Use  g_Controls.controls_number_collect_values()
 // except implicit_input_mode_Select  
-  
-  
-//!!! ...unfinished... (2023/05/11)
-//  let largerFactor = Number.parseInt( g_Controls.largerFactor_Text.value );
-//  g_Controls.largerFactor_Text.value = largerFactor;
+//
+// //!!! ...unfinished... (2023/05/11)
+// //  let largerFactor = Number.parseInt( g_Controls.largerFactor_Text.value );
+// //  g_Controls.largerFactor_Text.value = largerFactor;
+//
+//   let explicit_input_height
+//     = NeuralNet.Params.explicit_input_height.valueDesc.range.adjust(
+//         Number.parseInt( g_Controls.explicit_input_height_Number.value ) );
+//   g_Controls.explicit_input_height_Number.value = explicit_input_height;
+//
+//   let explicit_input_width
+//     = NeuralNet.Params.explicit_input_width.valueDesc.range.adjust(
+//         Number.parseInt( g_Controls.explicit_input_width_Number.value ) );
+//   g_Controls.explicit_input_width_Number.value = explicit_input_width;
+//
+// //!!! ...unfinished... (2023/05/12)
+// // Restrict it?
+//   let explicit_input_channelCount
+//     = NeuralNet.Params.explicit_input_channelCount.valueDesc.range.adjust(
+//         Number.parseInt( g_Controls.explicit_input_channelCount_Number.value ) );
+//   g_Controls.explicit_input_channelCount_Number.value = explicit_input_channelCount;
+//
+//
+//   let vocabularyChannelCount
+//     = NeuralNet.Params.vocabularyChannelCount.valueDesc.range.adjust(
+//         Number.parseInt( g_Controls.vocabularyChannelCount_Number.value ) );
+//   g_Controls.vocabularyChannelCount_Number.value = vocabularyChannelCount;
+//
+// //!!! ...unfinished... (2023/05/12)
+// // Restrict it?
+//   let vocabularyCountPerInputChannel
+//     = NeuralNet.Params.vocabularyCountPerInputChannel.valueDesc.range.adjust(
+//         Number.parseInt( g_Controls.vocabularyCountPerInputChannel_Number.value ) );
+//   g_Controls.vocabularyCountPerInputChannel_Number.value
+//     = vocabularyCountPerInputChannel;
+//
+//   let blockCountTotalRequested
+//     = NeuralNet.Params.blockCountTotalRequested.valueDesc.range.adjust(
+//         Number.parseInt( g_Controls.blockCountTotalRequested_Number.value ) );
+//   g_Controls.blockCountTotalRequested_Number.value = blockCountTotalRequested;
+//
+//
+//   let output_channelCount
+//     = NeuralNet.Params.output_channelCount.valueDesc.range.adjust(
+//         Number.parseInt( g_Controls.output_channelCount_Number.value ) );
+//   g_Controls.output_channelCount_Number.value
+//     = output_channelCount;
 
-  let explicit_input_height
-    = NeuralNet.Params.explicit_input_height.valueDesc.range.adjust(
-        Number.parseInt( g_Controls.explicit_input_height_Number.value ) );
-  g_Controls.explicit_input_height_Number.value = explicit_input_height;
-
-  let explicit_input_width
-    = NeuralNet.Params.explicit_input_width.valueDesc.range.adjust(
-        Number.parseInt( g_Controls.explicit_input_width_Number.value ) );
-  g_Controls.explicit_input_width_Number.value = explicit_input_width;
-
-//!!! ...unfinished... (2023/05/12)
-// Restrict it?
-  let explicit_input_channelCount
-    = NeuralNet.Params.explicit_input_channelCount.valueDesc.range.adjust(
-        Number.parseInt( g_Controls.explicit_input_channelCount_Number.value ) );
-  g_Controls.explicit_input_channelCount_Number.value = explicit_input_channelCount;
-
-
-  let vocabularyChannelCount
-    = NeuralNet.Params.vocabularyChannelCount.valueDesc.range.adjust(
-        Number.parseInt( g_Controls.vocabularyChannelCount_Number.value ) );
-  g_Controls.vocabularyChannelCount_Number.value = vocabularyChannelCount;
-
-//!!! ...unfinished... (2023/05/12)
-// Restrict it?
-  let vocabularyCountPerInputChannel
-    = NeuralNet.Params.vocabularyCountPerInputChannel.valueDesc.range.adjust(
-        Number.parseInt( g_Controls.vocabularyCountPerInputChannel_Number.value ) );
-  g_Controls.vocabularyCountPerInputChannel_Number.value
-    = vocabularyCountPerInputChannel;
-
-  let blockCountTotalRequested
-    = NeuralNet.Params.blockCountTotalRequested.valueDesc.range.adjust(
-        Number.parseInt( g_Controls.blockCountTotalRequested_Number.value ) );
-  g_Controls.blockCountTotalRequested_Number.value = blockCountTotalRequested;
-
-
-  let output_channelCount
-    = NeuralNet.Params.output_channelCount.valueDesc.range.adjust(
-        Number.parseInt( g_Controls.output_channelCount_Number.value ) );
-  g_Controls.output_channelCount_Number.value
-    = output_channelCount;
+//!!! ...unfinished... (2023/05/14)
+  g_Controls.controls_number_collect_values();
 
   let nNeuralWorker_ImplicitInputModeId
-    = Number.parseInt( g_Controls.implicit_input_mode_Select.value );
-  g_Controls.implicit_input_mode_Select.value
+    = Number.parseInt( controls_all.implicit_input_mode_Select.value );
+  controls_all.implicit_input_mode_Select.value
     = nNeuralWorker_ImplicitInputModeId;
 
 
@@ -1286,11 +1291,14 @@ function TestButton_onClick( event ) {
 //!!! (2023/05/11 Remarked)
 //    largerFactor,
 
-    nNeuralWorker_ImplicitInputModeId,
-    explicit_input_height, explicit_input_width, explicit_input_channelCount,
-    vocabularyChannelCount, vocabularyCountPerInputChannel,
-    blockCountTotalRequested,
-    output_channelCount,
+    controls_number_valueObject.nNeuralWorker_ImplicitInputModeId,
+    controls_number_valueObject.explicit_input_height,
+    controls_number_valueObject.explicit_input_width,
+    controls_number_valueObject.explicit_input_channelCount,
+    controls_number_valueObject.vocabularyChannelCount,
+    controls_number_valueObject.vocabularyCountPerInputChannel,
+    controls_number_valueObject.blockCountTotalRequested,
+    controls_number_valueObject.output_channelCount
   );
 
   let progressReceiver
@@ -1340,7 +1348,7 @@ function TestButton_onClick( event ) {
       g_Controls.performanceTable_htmlTableOperator = null;
     }
 
-    g_Controls.TestButton.disabled = false; // Re-enable UI.
+    controls_all.TestButton.disabled = false; // Re-enable UI.
 
     try {
       Pool.Asserter.assert_Pool_issuedCount(
