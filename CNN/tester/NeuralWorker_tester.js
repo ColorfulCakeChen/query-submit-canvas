@@ -96,7 +96,8 @@ class UIControls {
 
     controls_number_valueArray.length = controls_number_nameArray.length;
     for ( let i = 0; i < controls_number_nameArray.length; ++i ) {
-      const property controls_number_nameArray[ i ]
+      const controlName = controls_number_controlNameArray[ i ];
+      const propertyName = controls_number_propertyNameArray[ i ];
 
 !!!
     let explicit_input_height
