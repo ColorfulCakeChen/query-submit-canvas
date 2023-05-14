@@ -113,6 +113,9 @@ class UIControls {
       }
 
       htmlElement.value = valueIntAdjusted; // Adjust value in UI.
+
+      controls_number_valueArray.push( valueIntAdjusted );
+      controls_number_valueObject[ propertyName ] = valueIntAdjusted;
     }
   }
 
