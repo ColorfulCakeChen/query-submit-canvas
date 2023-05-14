@@ -70,6 +70,14 @@ class UIControls {
           controlName.length - postfixNumberLength );
 
         this.controls_number_nameArray.push( propertyName );
+
+        // If the numeric control represents a NeuralNet.Params, setup range.
+        const paramDesc = NeuralNet.Params[ propertyName ];
+        if ( paramDesc ) {
+          htmlElement.min = paramDesc.valueDesc.range.min;
+          htmlElement.max = paramDesc.valueDesc.range.max;
+          //htmlElement.placeholder
+        }
       }
     }
   }
