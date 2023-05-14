@@ -408,11 +408,14 @@ class PerformanceTestCase extends Recyclable.Root {
 
       console.log( strWeightCountInfoLong );
 
-      if ( g_Controls.Info_TextArea.textContent
+      const controls_all = g_Controls.controls_all;
+      if ( controls_all.Info_TextArea.textContent
               .indexOf( strWeightCountInfo ) < 0 ) {
-        if ( g_Controls.Info_TextArea.textContent.length > 0 )
-          g_Controls.Info_TextArea.textContent += "\n";
-        g_Controls.Info_TextArea.textContent += strWeightCountInfo_withConvType;
+        if ( controls_all.Info_TextArea.textContent.length > 0 ) {
+          controls_all.Info_TextArea.textContent += "\n";
+        }
+        controls_all.Info_TextArea.textContent
+          += strWeightCountInfo_withConvType;
       }
 
       if ( false == bInitOk )
@@ -847,9 +850,11 @@ class HeightWidthDepth {
 
     const ExecutionTimeInfoTimes = 10;
 
+    const performanceTable_htmlTableOperator
+      = g_Controls.performanceTable_htmlTableOperator;
     {
-      if ( !g_Controls.performanceTable_htmlTableOperator.Header_hasChild() ) {
-        g_Controls.performanceTable_htmlTableOperator.Header_addRow( [
+      if ( !performanceTable_htmlTableOperator.Header_hasChild() ) {
+        performanceTable_htmlTableOperator.Header_addRow( [
           "Backend",
           "NeuralWorker.Mode",
           `ops/sec (${ExecutionTimeInfoTimes} runs sampled)`
@@ -967,7 +972,7 @@ class HeightWidthDepth {
                 yield progressRoot;
               } // timeTimesIndex
 
-              g_Controls.performanceTable_htmlTableOperator.Body_addRow( [
+              performanceTable_htmlTableOperator.Body_addRow( [
                 backendName, timeInfo.name, timeInfo.countPerSecond
               ] );
               //console.log( timeInfo.toString() );
