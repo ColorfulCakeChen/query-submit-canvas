@@ -1276,15 +1276,18 @@ function TestButton_onClick( event ) {
 
   // Prepare output table.
   {
-    if ( !g_Controls.performanceTable_htmlTableOperator ) {
+    const performanceTable_htmlTableOperator
+      = g_Controls.performanceTable_htmlTableOperator;
+
+    if ( !performanceTable_htmlTableOperator ) {
       const htmlTableId = "NeuralWorker_Performance_Table";
       const digitsCount = 4;
-      g_Controls.performanceTable_htmlTableOperator
+      performanceTable_htmlTableOperator
         = HTMLTable.Operator.Pool.get_or_create_by( htmlTableId, digitsCount );
     }
 
     // Clear output table.
-    g_Controls.performanceTable_htmlTableOperator.Table_clear();
+    performanceTable_htmlTableOperator.Table_clear();
   }  
 
   // Aggregate all progress about util_tester.
