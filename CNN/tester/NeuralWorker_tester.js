@@ -1302,7 +1302,7 @@ function TestButton_onClick( event ) {
   );
 
   let progressReceiver
-    = new ValueMax.Receiver.HTMLProgress( g_Controls.TestProgressBar );
+    = new ValueMax.Receiver.HTMLProgress( controls_all.TestProgressBar );
   progressReceiver.setValue( 0 );
 
   let testPromise = PartTime.forOf( tester,
