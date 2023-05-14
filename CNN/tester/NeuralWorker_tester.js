@@ -1199,15 +1199,16 @@ function TestButton_onClick( event ) {
 
   let pool_all_issuedCount_before = Pool.All.issuedCount;
 
-!!! ...unfinished... (2023/05/14)
-// Use  g_Controls.controls_number_collect_values();
-
-
   g_Controls.TestButton.disabled = true; // Prevent multiple clicks.
   g_Controls.Info_TextArea.textContent = "";
 
   // Extract parameters from UI.
 
+!!! ...unfinished... (2023/05/14)
+// Use  g_Controls.controls_number_collect_values();
+// except implicit_input_mode_Select  
+  
+  
 //!!! ...unfinished... (2023/05/11)
 //  let largerFactor = Number.parseInt( g_Controls.largerFactor_Text.value );
 //  g_Controls.largerFactor_Text.value = largerFactor;
