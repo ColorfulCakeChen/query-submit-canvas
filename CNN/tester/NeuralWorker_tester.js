@@ -125,6 +125,7 @@ let g_Controls;
 
 window.addEventListener( "load", event => {
 
+  g_Controls = new UIControls();
   const controls_all = g_Controls.controls_all;
 
   // Note: NeuralWorker_Body will also load tensorflow.js by itself.
@@ -132,7 +133,6 @@ window.addEventListener( "load", event => {
     controls_all.TestButton.disabled = false;
   });
 
-  g_Controls = new UIControls();
   controls_all.TestButton.addEventListener( "click", TestButton_onClick );
 });
 
