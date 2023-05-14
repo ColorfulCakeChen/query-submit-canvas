@@ -44,11 +44,22 @@ class UIControls {
     NeuralWorker_Performance_Table: null,
   };
 
+  controls_number = {};
+
   /** */
   constructor() {
+    this.controls_setup();
+  }
+
+  /** */
+  controls_setup() {
     for ( let p in this.controls_all ) {
-      //this[ p ] = this.controls_all[ p ] = document.getElementById( p );
-      this.controls_all[ p ] = document.getElementById( p );
+      let htmlElement = document.getElementById( p );
+      //this[ p ] = htmlElement;
+      this.controls_all[ p ] = htmlElement;
+
+      if ( p.endsWith( "_Number" ) )
+        controls_number[ p ] = htmlElement;
     }
   }
 
