@@ -45,7 +45,10 @@ class UIControls {
   };
 
   controls_number = {}; // Numeric controls.
-  controls_number_nameArray = []; // Numeric controls' names.
+  controls_number_controlNameArray = [];  // Numeric controls' names.
+  controls_number_propertyNameArray = [];  // Numeric properties' names.
+  controls_number_valueArray = [];  // Numeric controls' values. (as array)
+  controls_number_valueObject = {}; // Numeric controls' values. (as object)
 
   /** */
   constructor() {
@@ -57,7 +60,9 @@ class UIControls {
     const postfixNumber = "_Number";
     const postfixNumberLength = postfixNumber.length;
 
-    this.controls_number_nameArray.length = 0;
+    this.controls_number_controlNameArray.length = 0;
+    this.controls_number_propertyNameArray.length = 0;
+
     for ( let controlName in this.controls_all ) {
       let htmlElement = document.getElementById( controlName );
       //this[ controlName ] = htmlElement;
@@ -69,21 +74,29 @@ class UIControls {
         const propertyName = controlName.substring( 0,
           controlName.length - postfixNumberLength );
 
-        this.controls_number_nameArray.push( propertyName );
+        this.controls_number_controlNameArray.push( controlName );
+        this.controls_number_propertyNameArray.push( propertyName );
 
         // If the numeric control represents a NeuralNet.Params, setup range.
         const paramDesc = NeuralNet.Params[ propertyName ];
         if ( paramDesc ) {
           htmlElement.min = paramDesc.valueDesc.range.min;
           htmlElement.max = paramDesc.valueDesc.range.max;
-          //htmlElement.placeholder
         }
       }
     }
   }
 
   /** */
-  controls_number_setup() {
+  controls_number_collect_values() {
+    const controls_number_controlNameArray = this.controls_number_controlNameArray;
+    const controls_number_propertyNameArray = this.controls_number_propertyNameArray;
+    const controls_number_valueArray = this.controls_number_valueArray;
+    const controls_number_valueObject = this.controls_number_valueObject;
+
+    controls_number_valueArray.length = controls_number_nameArray.length;
+    for ( let i = 0; i < controls_number_nameArray.length; ++i ) {
+      const property controls_number_nameArray[ i ]
 
 !!!
     let explicit_input_height
