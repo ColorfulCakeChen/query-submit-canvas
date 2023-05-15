@@ -761,7 +761,7 @@ class HeightWidthDepth {
       let imageData = new ImageData(
         this.input_TypedArray, input_width, input_height );
 
-      this.input_TypedArray = null;
+      this.input_TypedArray = null; // It has been kept by ImageData directly.
 
       this.input_Canvas = document.createElement( "canvas" );
       this.input_Canvas.height = input_height;
@@ -772,7 +772,7 @@ class HeightWidthDepth {
       ctx.putImageData( imageData, 0 , 0 );
 
     } else {
-      this.input_Canvas = null;
+      this.input_Canvas = null; // No canvas in this case.
     }
   }
 
