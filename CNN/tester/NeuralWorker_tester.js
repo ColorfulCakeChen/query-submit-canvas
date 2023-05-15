@@ -682,14 +682,33 @@ class HeightWidthDepth {
       = ImageSourceBag.Base.Pool.get_or_create_by( "int32" );
 
 !!! ...unfinished... (2023/05/15)
-// If ( vocabularyCountPerChannel < ( 2 ** 8 ) ) // 256
-//   - If ( input_channelCount == 4 ), use ImageData.
-//   - Otherwise, use Uint8ClampedArray.
-//
-// If ( vocabularyCountPerChannel < ( 2 ** 16 ) ), use Uint16Array.
-//
-// If ( vocabularyCountPerChannel < ( 2 ** 32 ) ), use Uint32Array.
-//
+/*
+ If ( vocabularyCountPerChannel < ( 2 ** 8 ) ) // 256
+   - If ( input_channelCount == 4 ), use ImageData.
+   - Otherwise, use Uint8ClampedArray.
+
+ If ( vocabularyCountPerChannel < ( 2 ** 16 ) ), use Uint16Array.
+
+ If ( vocabularyCountPerChannel < ( 2 ** 32 ) ), use Uint32Array.
+
+
+ImageSourceBag_Base.weightsValueBegin = 1;
+ImageSourceBag_Base.weightsValueStep = 10; //1;
+
+ImageSourceBag_Base.weightsRandomOffset = { min: -1, max: +1 };
+
+ImageSourceBag_Base.weightsDivisorForRemainder = 256;
+
+image = NumberImage.Base.create_bySequenceRandom(
+  originalHeight, originalWidth, channelCount,
+  ImageSourceBag_Base.weightsValueBegin,
+  ImageSourceBag_Base.weightsValueStep,
+  ImageSourceBag_Base.weightsRandomOffset.min,
+  ImageSourceBag_Base.weightsRandomOffset.max,
+  ImageSourceBag_Base.weightsDivisorForRemainder
+);
+
+*/
 
     {
 //!!! (2023/05/11 Remarked)

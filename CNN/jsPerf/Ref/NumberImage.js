@@ -1477,7 +1477,8 @@ class NumberImage_Base extends Recyclable.Root {
       shuffleResult = concatResult.modify_byInterleave_asGrouptTwo(
         parametersDesc, "concatShuffleSplitName", "interleave_asGrouptTwo" );
 
-      // Note: The concatResult is just modified (i.e. not cloned). So do not dispose concatResult.
+      // Note: The concatResult is just modified (i.e. not cloned). So do not
+      //       dispose concatResult.
       concatResult = null; // (Since it has been transferred to shuffleResult.)
     } else {
       shuffleResult = concatResult;
@@ -1486,7 +1487,9 @@ class NumberImage_Base extends Recyclable.Root {
  
     // 3.
     if ( bSplit ) {
-      NumberImage_Base.calcSplitAlongAxisId2( shuffleResult, imageOutArray, parametersDesc, "concatShuffleSplitName", "split" );
+      NumberImage_Base.calcSplitAlongAxisId2(
+        shuffleResult, imageOutArray, parametersDesc,
+        "concatShuffleSplitName", "split" );
       shuffleResult.disposeResources_and_recycleToPool();
       shuffleResult = null;
     } else {
@@ -1540,18 +1543,22 @@ class NumberImage_Base extends Recyclable.Root {
    * @param {number} valueStep     The incremental value of every next filled value in the sequence.
    *
    * @param {number} randomOffsetMin
-   *   Every element of the generated number array will been shifted from the sequence id between
-   * [ randomOffsetMin, randomOffsetMax ] (inclusive) randomly. Default is 0.
+   *   Every element of the generated number array will been shifted from the
+   * sequence id between [ randomOffsetMin, randomOffsetMax ] (inclusive)
+   * randomly. Default is 0.
    *
    * @param {number} randomOffsetMax
-   *   Every element of the generated number array will been shifted from the sequence id between
-   * [ randomOffsetMin, randomOffsetMax ] (inclusive) randomly. Default is 0.
+   *   Every element of the generated number array will been shifted from the
+   * sequence id between [ randomOffsetMin, randomOffsetMax ] (inclusive)
+   * randomly. Default is 0.
    *
    * @param {number} divisorForRemainder
-   *   To restrict the generated value. Default is 256, because image's evey channel of a pixel should be in [ 0, 255 ].
+   *   To restrict the generated value. Default is 256, because image's evey
+   * channel of a pixel should be in [ 0, 255 ].
    *
    * @return {NumberImage.Base}
-   *   Return a newly generated image. Basically, they are sequential numbers which could be added by random offset between
+   *   Return a newly generated image. Basically, they are sequential numbers
+   * which could be added by random offset between
    * [ randomOffsetMin, randomOffsetMax].
    */
   static create_bySequenceRandom(
@@ -1566,24 +1573,29 @@ class NumberImage_Base extends Recyclable.Root {
       const preFilledValue = undefined; // Because it will be filled with generated random values.
       const aBounds = undefined;        // Because .boundsArraySet will be filled later.
 
-      let inputScaleBoundsArray = ActivationEscaping.ScaleBoundsArray.Pool.get_or_create_by( channelCount );
+      let inputScaleBoundsArray = ActivationEscaping.ScaleBoundsArray.Pool
+        .get_or_create_by( channelCount );
       inputScaleBoundsArray.set_all_byBounds( Weights.Base.ValueBounds );
 
-      imageNew = NumberImage_Base.Pool.get_or_create_by( height, width, channelCount, preFilledValue,
+      imageNew = NumberImage_Base.Pool.get_or_create_by(
+        height, width, channelCount, preFilledValue,
         inputScaleBoundsArray, null, BoundsArraySet.InputsOutputs, aBounds );
 
-      inputScaleBoundsArray.disposeResources_and_recycleToPool(); // Because the newly created NumberImage.Base has already copy it.
+      // Because the newly created NumberImage.Base has already copy it.
+      inputScaleBoundsArray.disposeResources_and_recycleToPool();
       inputScaleBoundsArray = null;
     }
 
-    // 2. Fill .dataArray with random sequence values and got their bounds (if requested).
+    // 2. Fill .dataArray with random sequence values and got their bounds
+    //    (if requested).
     RandTools.fill_numberArray( imageNew.dataArray,
       height, width, channelCount,
       valueBegin, valueStep,
       randomOffsetMin, randomOffsetMax, divisorForRemainder );
 
     // 3. Fill .boundsArraySet
-    imageNew.boundsArraySet.set_outputs_all_byBoundsArray( imageNew.dataArray.boundsArray_byChannel );
+    imageNew.boundsArraySet.set_outputs_all_byBoundsArray(
+      imageNew.dataArray.boundsArray_byChannel );
     imageNew.assert_pixels_byBoundsArray_output(); // Verify pixels' bounds.
 
     return imageNew;
