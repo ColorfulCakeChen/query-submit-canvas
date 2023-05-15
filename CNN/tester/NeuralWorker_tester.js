@@ -1306,7 +1306,10 @@ function TestButton_onClick( event ) {
     = nNeuralWorker_ImplicitInputModeId;
 
   // Prepare output table.
-  g_Controls.performanceTable_htmlTableOperator_create();
+  const htmlTableId = "NeuralWorker_Performance_Table";
+  const digitsCount = 4;
+  g_Controls.performanceTable_htmlTableOperator_create(
+    htmlTableId, digitsCount );
 
   // Aggregate all progress about util_tester.
   let progress = ValueMax.Percentage.Aggregate.Pool.get_or_create_by();
