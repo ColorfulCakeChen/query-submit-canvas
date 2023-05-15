@@ -528,9 +528,6 @@ class PerformanceTestCase extends Recyclable.Root {
   static randomTestWeightArray_create() {
     if ( !PerformanceTestCase.randomTestWeightArray ) {
 
-      // Note: Because ( valueStepPerChannel = valueStep * channelCount ),
-      //       channelCount should not be too large. Otherwise, the result
-      //       array will almost positive number.
       const pseudo_height = 1024;
       const pseudo_width = 1024;
       //!!! (2022/09/25 Remarked) too large for mobile phone.
@@ -546,9 +543,7 @@ class PerformanceTestCase extends Recyclable.Root {
       const weightsValueBegin = 0;
       const weightsValueStep = 10;
 
-      //!!! (2023/05/12 Remarked) Use larger variation to generate negative result.
-      //const weightsRandomOffset = TestParams.Base.weightsRandomOffset;
-      //const weightsRandomOffset = { min: -500, max: +5 };
+      // Use larger variation to generate negative result.
       const weightsRandomOffset = {
         min: -weightArrayLength,
         max: +5 };
