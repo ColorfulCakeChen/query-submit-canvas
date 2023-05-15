@@ -689,11 +689,11 @@ class HeightWidthDepth {
     const input_valueCount = this.input_valueCount;
 
     // Create input data array.
-    if ( this.vocabularyCountPerInputChannel < ( 2 ** 8 ) ) { // 256
+    if ( this.vocabularyCountPerInputChannel <= ( 2 ** 8 ) ) { // 256
       this.input_TypedArray = new Uint8ClampedArray( input_valueCount );
-    } if ( this.vocabularyCountPerInputChannel < ( 2 ** 16 ) ) { // 65536
+    } if ( this.vocabularyCountPerInputChannel <= ( 2 ** 16 ) ) { // 65536
       this.input_TypedArray = new Uint16Array( input_valueCount );
-    } else { // ( vocabularyCountPerInputChannel < ( 2 ** 32 ) )
+    } else { // ( vocabularyCountPerInputChannel <= ( 2 ** 32 ) )
       this.input_TypedArray = new Uint32Array( input_valueCount );
     }
 
@@ -714,8 +714,8 @@ class HeightWidthDepth {
         input_divisorForRemainder );
     }
 
-    // If ( vocabulary count is 256 ) and ( channel count is 4 ), use canvas.
-    if (   ( this.vocabularyCountPerInputChannel < ( 2 ** 8 ) ) // 256
+    // If ( vocabulary count <= 256 ) and ( channel count == 4 ), use canvas.
+    if (   ( this.vocabularyCountPerInputChannel <= ( 2 ** 8 ) ) // 256
         && ( inputChannelCount == 4 ) ) { // Use ImageData.
     
       let imageData = new ImageData(
