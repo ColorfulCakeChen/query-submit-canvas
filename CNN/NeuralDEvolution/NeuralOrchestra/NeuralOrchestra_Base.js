@@ -910,8 +910,8 @@ class NeuralOrchestra_Base extends
         this.workerProxies_init_asyncPromise_running, funcNameInMessage );
 
       NeuralOrchestra_Base
-        .throw_if_init_asyncPromise_and_asyncGenerator_not_running.call( this,
-          funcNameInMessage );
+        .throw_if_init_asyncPromise_and_asyncGenerator_not_running
+        .call( this, funcNameInMessage );
 
 !!! ...unfinished... (2023/05/15)
 // throw_if_alignmentMarkValueArrayArray_set_asyncPromise_running()
@@ -1004,8 +1004,8 @@ class NeuralOrchestra_Base extends
       const funcNameInMessage = "workerProxies_compileShaders_async";
 
       NeuralOrchestra_Base
-        .throw_if_init_asyncPromise_and_asyncGenerator_not_running.call( this,
-          funcNameInMessage );
+        .throw_if_init_asyncPromise_and_asyncGenerator_not_running
+        .call( this, funcNameInMessage );
 
 !!! ...unfinished... (2023/05/15)
 // throw_if_alignmentMarkValueArrayArray_set_asyncPromise_running()
@@ -1085,6 +1085,32 @@ class NeuralOrchestra_Base extends
       NeuralOrchestra_Base.throw_if_TypedArray_process_asyncPromise_running
         .call( this, funcNameInMessage );
     }
+
+
+/*!!!
+
+  static throw_if_workerProxies_busy( funcNameInMessage ) {
+    NeuralOrchestra_Base
+      .throw_if_workerProxies_init_asyncPromise_running
+      .call( this, funcNameInMessage );
+
+!!! ...unfinished... (2023/05/15)
+// throw_if_alignmentMarkValueArrayArray_set_asyncPromise_running()
+
+    NeuralOrchestra_Base
+      .throw_if_TypedArray_process_asyncPromise_running
+      .call( this, funcNameInMessage );
+  }
+
+  static throw_if_workerProxies_busy_or_versus_loading( funcNameInMessage ) {
+    NeuralOrchestra_Base
+      .throw_if_workerProxies_busy
+      .call( this, funcNameInMessage );
+    NeuralOrchestra_Base
+      .throw_if_versus_load_asyncPromise_or_asyncGenerator_running
+      .call( this, funcNameInMessage );
+  }
+*/
 
     // Although neural network configuration will be copied (not transferred)
     // to workers, they still need be cloned because NeuralWorker.Proxy will
@@ -1267,6 +1293,7 @@ class NeuralOrchestra_Base extends
         .call( this, funcNameInMessage );
 
 !!! ...unfinished... (2023/05/15)
+// throw_if_workerProxies_busy_or_versus_loading()
 // throw_if_alignmentMarkValueArrayArray_set_asyncPromise_running()
 
       // Prevent the nueral networks from being changed during they are processing.
@@ -1317,6 +1344,7 @@ class NeuralOrchestra_Base extends
         .call( this, funcNameInMessage );
 
 !!! ...unfinished... (2023/05/15)
+// throw_if_workerProxies_busy_or_versus_loading()
 // throw_if_alignmentMarkValueArrayArray_set_asyncPromise_running()
 
       // Prevent the nueral networks from being changed during they are processing.
@@ -1364,6 +1392,7 @@ class NeuralOrchestra_Base extends
         .call( this, funcNameInMessage );
 
 !!! ...unfinished... (2023/05/15)
+// throw_if_workerProxies_busy_or_versus_loading()
 // throw_if_alignmentMarkValueArrayArray_set_asyncPromise_running()
 
       // Prevent the nueral networks from being changed during they are processing.
@@ -1371,27 +1400,29 @@ class NeuralOrchestra_Base extends
         .call( this, funcNameInMessage );
     }
 
-/*
+/*!!!
 
   static throw_if_workerProxies_busy( funcNameInMessage ) {
-    NeuralOrchestra_Base.throw_if_workerProxies_init_asyncPromise_running
+    NeuralOrchestra_Base
+      .throw_if_workerProxies_init_asyncPromise_running
       .call( this, funcNameInMessage );
 
 !!! ...unfinished... (2023/05/15)
 // throw_if_alignmentMarkValueArrayArray_set_asyncPromise_running()
 
-    NeuralOrchestra_Base.throw_if_TypedArray_process_asyncPromise_running
+    NeuralOrchestra_Base
+      .throw_if_TypedArray_process_asyncPromise_running
       .call( this, funcNameInMessage );
   }
 
   static throw_if_workerProxies_busy_or_versus_loading( funcNameInMessage ) {
-    NeuralOrchestra_Base.throw_if_workerProxies_busy.call( this,
-      funcNameInMessage );
     NeuralOrchestra_Base
-      .throw_if_versus_load_asyncPromise_or_asyncGenerator_running.call(
-        this, funcNameInMessage );
+      .throw_if_workerProxies_busy
+      .call( this, funcNameInMessage );
+    NeuralOrchestra_Base
+      .throw_if_versus_load_asyncPromise_or_asyncGenerator_running
+      .call( this, funcNameInMessage );
   }
-
 */
 
     // For outside caller, no workerProxies_init_asyncPromise.
@@ -1443,7 +1474,7 @@ class NeuralOrchestra_Base extends
    * The progressParent.root_get() will be returned when every time yield.
    *
    * @param {Promise( boolean )} workerProxies_init_asyncPromise
-   *   The an instance of .workerProxies_init_async().
+   *   The instance of .workerProxies_init_async().
    *   - If not null, it awaited before creating neural networks.
    *     - This case is used by .init_asyncGenerator() (i.e. internal caller).
    *   - If null, the .initOk must already be true.
