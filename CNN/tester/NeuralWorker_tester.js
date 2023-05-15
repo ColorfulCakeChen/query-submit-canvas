@@ -657,9 +657,10 @@ class HeightWidthDepth {
     this.input_Canvas = undefined;
   }
 
-  /** */
+  /** Create .input_TypedArray or .input_Canvas */
   input_Data_prepare() {
 
+    // Determine input data shape.
     let input_height, input_width, input_channelCount;
     if ( this.has_implicit_input ) {
       input_height = this.feedbackShape.input_height;
@@ -704,97 +705,27 @@ class HeightWidthDepth {
     if (   ( this.vocabularyCountPerInputChannel < ( 2 ** 8 ) ) // 256
         && ( inputChannelCount == 4 ) ) { // Use ImageData.
     
-        let imageData = new ImageData(
-          this.input_TypedArray, input_width, input_height );
+      let imageData = new ImageData(
+        this.input_TypedArray, input_width, input_height );
 
-        this.input_TypedArray = null;
+      this.input_TypedArray = null;
 
-//  !!! ...unfinished... (2023/05/15)
-  // should restrict .data value between [ 0, vocabularyCountPerChannel - 1 ]
-  
 //!!! (2023/05/15 Remarked)
-        // for ( let i = 0; i < imageData.data.length; ++i ) {
-        //   imageData.data[ i ] = this.input_TypedArray[ i ];
-        // }
+      // for ( let i = 0; i < imageData.data.length; ++i ) {
+      //   imageData.data[ i ] = this.input_TypedArray[ i ];
+      // }
 
-        this.input_Canvas = document.createElement( "canvas" );
-        this.input_Canvas.height = input_height;
-        this.input_Canvas.width = input_width;
+      this.input_Canvas = document.createElement( "canvas" );
+      this.input_Canvas.height = input_height;
+      this.input_Canvas.width = input_width;
 
-        let contextAttributes = { willReadFrequently: true };
-        let ctx = this.input_Canvas.getContext( "2d", contextAttributes );
-        ctx.putImageData( imageData, 0 , 0 );
+      let contextAttributes = { willReadFrequently: true };
+      let ctx = this.input_Canvas.getContext( "2d", contextAttributes );
+      ctx.putImageData( imageData, 0 , 0 );
 
-      } else {
-        this.input_Canvas = null;
-      }
-
-!!! ...unfinished... (2023/05/15)
-
-    /*
-     If ( vocabularyCountPerChannel < ( 2 ** 8 ) ) // 256
-       - If ( input_channelCount == 4 ), use ImageData.
-       - Otherwise, use Uint8ClampedArray.
-    
-     If ( vocabularyCountPerChannel < ( 2 ** 16 ) ), use Uint16Array.
-    
-     If ( vocabularyCountPerChannel < ( 2 ** 32 ) ), use Uint32Array.
-    
-    
-     sourceDataDesc = {
-       valueBegin: 1,
-       valueStep: 10, //1,
-       randomOffset: { min: -1, max: +1 },
-       divisorForRemainder: this.vocabularyCountPerInputChannel, //256
-     };
-    
-    image = NumberImage.Base.create_bySequenceRandom(
-      originalHeight, originalWidth, channelCount,
-      ImageSourceBag_Base.weightsValueBegin,
-      ImageSourceBag_Base.weightsValueStep,
-      ImageSourceBag_Base.weightsRandomOffset.min,
-      ImageSourceBag_Base.weightsRandomOffset.max,
-      ImageSourceBag_Base.weightsDivisorForRemainder
-    );
-    
-        RandTools.fill_numberArray( imageNew.dataArray,
-          height, width, channelCount,
-    input_valueBegin = 1;
-    input_valueStep = 10; //1;
-    input_randomOffset = { min: -1, max: +1 };
-    input_divisorForRemainder = this.vocabularyCountPerInputChannel;
-
-          valueBegin, valueStep,
-          randomOffsetMin, randomOffsetMax, divisorForRemainder );
-    
-    */
-    
-        {
-    //!!! (2023/05/11 Remarked)
-    //      let inputHeight = this.height * this.largerFactor;
-    //      let inputWidth = this.width * this.largerFactor;
-    
-          this.input_Canvas = document.createElement( "canvas" );
-          this.input_Canvas.height = inputHeight;
-          this.input_Canvas.width = inputWidth;
-    
-          let inputImage = this.testPerformance_imageSourceBag.getImage_by(
-            inputHeight, inputWidth, inputChannelCount );
-    
-          let contextAttributes = { willReadFrequently: true };
-          let ctx = this.input_Canvas.getContext( "2d", contextAttributes );
-          let imageData = ctx.createImageData( inputHeight, inputWidth );
-    
-    !!! ...unfinished... (2023/05/15)
-    // should restrict .data value between [ 0, vocabularyCountPerChannel - 1 ]
-    
-          for ( let i = 0; i < imageData.data.length; ++i ) {
-            imageData.data[ i ] = inputImage.dataArray[ i ];
-          }
-    
-          ctx.putImageData( imageData, 0 , 0 );
-        }
-    
+    } else {
+      this.input_Canvas = null;
+    }
   }
 
   /**
@@ -816,87 +747,8 @@ class HeightWidthDepth {
 
     this.disposeResources();
 
+    this.input_Data_prepare();
     this.neuralWorkerProxies = NeuralWorker.Proxies.Pool.get_or_create_by();
-
-//!!! (2023/05/15 Remarked)
-//     // Larger input image for performance testing.
-//     this.testPerformance_imageSourceBag
-//       = ImageSourceBag.Base.Pool.get_or_create_by( "int32" );
-
-!!! ...unfinished... (2023/05/15)
-/*
- If ( vocabularyCountPerChannel < ( 2 ** 8 ) ) // 256
-   - If ( input_channelCount == 4 ), use ImageData.
-   - Otherwise, use Uint8ClampedArray.
-
- If ( vocabularyCountPerChannel < ( 2 ** 16 ) ), use Uint16Array.
-
- If ( vocabularyCountPerChannel < ( 2 ** 32 ) ), use Uint32Array.
-
-
- sourceDataDesc = {
-   valueBegin: 1,
-   valueStep: 10, //1,
-   randomOffset: { min: -1, max: +1 },
-   divisorForRemainder: 256
- };
-
-image = NumberImage.Base.create_bySequenceRandom(
-  originalHeight, originalWidth, channelCount,
-  ImageSourceBag_Base.weightsValueBegin,
-  ImageSourceBag_Base.weightsValueStep,
-  ImageSourceBag_Base.weightsRandomOffset.min,
-  ImageSourceBag_Base.weightsRandomOffset.max,
-  ImageSourceBag_Base.weightsDivisorForRemainder
-);
-
-    RandTools.fill_numberArray( imageNew.dataArray,
-      height, width, channelCount,
-      valueBegin, valueStep,
-      randomOffsetMin, randomOffsetMax, divisorForRemainder );
-
-*/
-
-    {
-//!!! (2023/05/11 Remarked)
-//      let inputHeight = this.height * this.largerFactor;
-//      let inputWidth = this.width * this.largerFactor;
-
-      let inputHeight, inputWidth, inputChannelCount;
-      if ( this.has_implicit_input ) {
-        inputHeight = this.feedbackShape.input_height;
-        inputWidth = this.feedbackShape.input_width;
-        inputChannelCount = this.feedbackShape.input_channelCount; // Must be 4;
-      } else {
-        inputHeight = this.explicit_input_height;
-        inputWidth = this.explicit_input_width;
-        inputChannelCount = this.explicit_input_channelCount; // Must be 4;
-      }
-
-      this.input_Canvas = document.createElement( "canvas" );
-      this.input_Canvas.height = inputHeight;
-      this.input_Canvas.width = inputWidth;
-
-      let inputImage = this.testPerformance_imageSourceBag.getImage_by(
-        inputHeight, inputWidth, inputChannelCount );
-
-      let contextAttributes = { willReadFrequently: true };
-      let ctx = this.input_Canvas.getContext( "2d", contextAttributes );
-      let imageData = ctx.createImageData( inputHeight, inputWidth );
-
-!!! ...unfinished... (2023/05/15)
-// should restrict .data value between [ 0, vocabularyCountPerChannel - 1 ]
-
-      for ( let i = 0; i < imageData.data.length; ++i ) {
-        imageData.data[ i ] = inputImage.dataArray[ i ];
-      }
-
-      ctx.putImageData( imageData, 0 , 0 );
-    }
-
-//!!! (2023/05/15 Remarked)
-//    this.testPerformance_imageSourceBag.clear(); // Reduce memory.
-
 
     if ( this.testCaseMap )
       this.testCaseMap.clear();
