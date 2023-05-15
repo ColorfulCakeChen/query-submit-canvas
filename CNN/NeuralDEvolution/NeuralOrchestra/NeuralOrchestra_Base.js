@@ -1040,7 +1040,7 @@ class NeuralOrchestra_Base extends
 
     let createOk = await neuralNet_create_promise;
     if ( !createOk )
-      throw Error( `NeuralOrchestra.Base.workerProxies_compileShaders_async(): `
+      throw Error( `NeuralOrchestra.Base.${funcNameInMessage}(): `
         + `Failed to create neural networks. `
         + `workerProxies={ ${this.workerProxies} }`
       );
