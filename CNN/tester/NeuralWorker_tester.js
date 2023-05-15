@@ -541,7 +541,6 @@ class PerformanceTestCase extends Recyclable.Root {
       const weightArrayLength
         = pseudo_height * pseudo_width * pseudo_channelCount;
 
-
       PerformanceTestCase.randomTestWeightArray
         = new Float32Array( weightArrayLength );
 
