@@ -270,6 +270,12 @@ class PerformanceTestCase extends Recyclable.Root {
   async prepare_async( neuralWorkerProxies ) {
     const funcNameInMessage = "prepare_async";
 
+    const input_channelCount
+      = this.neuralNetParamsBase.explicit_input_channelCount;
+
+    const vocabularyCountPerInputChannel
+      = this.neuralNetParamsBase.vocabularyCountPerInputChannel;
+
     try {
       await tf.ready(); // Ensure tf.getBackend() workable.
       let backendName = tf.getBackend();
@@ -370,14 +376,35 @@ class PerformanceTestCase extends Recyclable.Root {
             + `${neuralWorkerProxies}` );
       }
 
+      // Prepare .alignmentMarkValueArrayArray
       if ( this.ImplicitInputModeInfo.implicit_input_bFillAlignmentMark ) {
-        if ( this.neuralNetCount > 1 ) {
+
+        if ( this.neuralNetCount > 1 )
           this.alignmentMarkValueArrayArray // Test TypedArray.
-            = [ Int32Array.from( [ 155, 155, 155, 255 ] ),
-                Uint8ClampedArray.from( [ 255, 255, 255, 255 ] ) ];
-        } else {
+            = [ new Int32Array( input_channelCount ),
+                new Uint8ClampedArray( input_channelCount ) ];
+        else
           this.alignmentMarkValueArrayArray // Test Array.
-            = [ [ 55, 55, 55, 255 ] ];
+            = [ new Array( input_channelCount ) ];
+
+        const markValueBegin = 1;
+        const markValueStep = 1;
+        const markRandomOffset = { min: -1, max: +1 };
+        const markDivisorForRemainder = vocabularyCountPerInputChannel;
+
+        for ( let neuralNetIndex = 0;
+          neuralNetIndex < this.neuralNetCount; ++neuralNetIndex ) {
+
+          let alignmentMarkValueArray
+            = this.alignmentMarkValueArrayArray[ neuralNetIndex ];
+
+          RandTools.fill_numberArray(
+            alignmentMarkValueArray,
+            1, 1, input_channelCount,
+            markValueBegin, markValueStep,
+            markRandomOffset.min, markRandomOffset.max,
+            markDivisorForRemainder
+          );
         }
 
         let bSetOkPromise = neuralWorkerProxies
