@@ -694,7 +694,7 @@ class HeightWidthDepth {
     if ( vocabularyCountPerInputChannel <= ( 2 ** 8 ) ) // 256
       this.input_TypedArray = new Uint8ClampedArray( input_valueCount );
     else // ( vocabularyCountPerInputChannel > 256 )
-      this.input_TypedArray = new Uint32Array( input_valueCount );
+      this.input_TypedArray = new Int32Array( input_valueCount );
 
     // Fill input data.
     {
