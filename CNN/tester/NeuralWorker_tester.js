@@ -659,18 +659,21 @@ class HeightWidthDepth {
   /** */
   inputData_prepare() {
 
-    let inputHeight, inputWidth, inputChannelCount;
+    let input_height, input_width, input_channelCount;
     if ( this.has_implicit_input ) {
-      inputHeight = this.feedbackShape.input_height;
-      inputWidth = this.feedbackShape.input_width;
-      inputChannelCount = this.feedbackShape.input_channelCount; // Must be 4;
+      input_height = this.feedbackShape.input_height;
+      input_width = this.feedbackShape.input_width;
+      input_channelCount = this.feedbackShape.input_channelCount;
     } else {
-      inputHeight = this.explicit_input_height;
-      inputWidth = this.explicit_input_width;
-      inputChannelCount = this.explicit_input_channelCount; // Must be 4;
+      input_height = this.explicit_input_height;
+      input_width = this.explicit_input_width;
+      input_channelCount = this.explicit_input_channelCount;
     }
 
     // vocabularyCountPerInputChannel,
+
+    let input_pixelCount = input_height * input_width * input_channelCount;
+    let input_valueCount = input_pixelCount * input_channelCount;
 
     if ( this.vocabularyCountPerInputChannel < ( 2 ** 8 ) ) { // 256
       if ( inputChannelCount == 4 ) {
