@@ -389,7 +389,7 @@ class PerformanceTestCase extends Recyclable.Root {
 
         const markValueBegin = 1;
         const markValueStep = 1;
-        const markRandomOffset = { min: -1, max: +1 };
+        const markRandomOffset = { min: -10, max: +1 };
         const markDivisorForRemainder = vocabularyCountPerInputChannel;
 
         for ( let neuralNetIndex = 0;
