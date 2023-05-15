@@ -680,41 +680,12 @@ class HeightWidthDepth {
     let input_pixelCount = input_height * input_width * input_channelCount;
     let input_valueCount = input_pixelCount * input_channelCount;
 
-    this.input_TypedArray = null;
-    this.input_Canvas = null;
-
     if ( this.vocabularyCountPerInputChannel < ( 2 ** 8 ) ) { // 256
-      if ( inputChannelCount == 4 ) { // Use ImageData.
-
-        this.input_Canvas = document.createElement( "canvas" );
-        this.input_Canvas.height = input_height;
-        this.input_Canvas.width = input_width;
-  
-        let contextAttributes = { willReadFrequently: true };
-        let ctx = this.input_Canvas.getContext( "2d", contextAttributes );
-        let imageData = ctx.createImageData( input_height, input_width );
-  
-  !!! ...unfinished... (2023/05/15)
-  // should restrict .data value between [ 0, vocabularyCountPerChannel - 1 ]
-  
-        for ( let i = 0; i < imageData.data.length; ++i ) {
-          imageData.data[ i ] = inputImage.dataArray[ i ];
-        }
-  
-        ctx.putImageData( imageData, 0 , 0 );
-      }
-
-      } else {
-
-        - Otherwise, use Uint8ClampedArray.
-      }
-
+      this.input_TypedArray = new Uint8ClampedArray( input_valueCount );
     } if ( this.vocabularyCountPerInputChannel < ( 2 ** 16 ) ) { // 65536
-      , use Uint16Array.
-
+      this.input_TypedArray = new Uint16Array( input_valueCount );
     } else { // ( vocabularyCountPerInputChannel < ( 2 ** 32 ) )
-      , use Uint32Array.
-
+      this.input_TypedArray = new Uint32Array( input_valueCount );
     }
 
 
@@ -725,9 +696,35 @@ class HeightWidthDepth {
       input_randomOffset.min, input_randomOffset.max,
       input_divisorForRemainder );
 
-      valueBegin, valueStep,
-      randomOffsetMin, randomOffsetMax, divisorForRemainder );
 
+//!!!
+    if (   ( this.vocabularyCountPerInputChannel < ( 2 ** 8 ) ) // 256
+        && ( inputChannelCount == 4 ) ) { // Use ImageData.
+    
+        let imageData = new ImageData(
+          this.input_TypedArray, input_width, input_height );
+
+        this.input_TypedArray = null;
+
+//  !!! ...unfinished... (2023/05/15)
+  // should restrict .data value between [ 0, vocabularyCountPerChannel - 1 ]
+  
+//!!! (2023/05/15 Remarked)
+        // for ( let i = 0; i < imageData.data.length; ++i ) {
+        //   imageData.data[ i ] = this.input_TypedArray[ i ];
+        // }
+
+        this.input_Canvas = document.createElement( "canvas" );
+        this.input_Canvas.height = input_height;
+        this.input_Canvas.width = input_width;
+
+        let contextAttributes = { willReadFrequently: true };
+        let ctx = this.input_Canvas.getContext( "2d", contextAttributes );
+        ctx.putImageData( imageData, 0 , 0 );
+
+      } else {
+        this.input_Canvas = null;
+      }
 
 !!! ...unfinished... (2023/05/15)
 
