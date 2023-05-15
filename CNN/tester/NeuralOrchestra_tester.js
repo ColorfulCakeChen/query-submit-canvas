@@ -571,6 +571,8 @@ class TestCase {
     n_load_asyncType
   ) {
 
+    const funcNameInMessage = "test_init_load_process_send_asyncGenerator";
+
     ++this.testId;
 
     const nLoadProcessSendCountMax = this.loadCountBase;
@@ -592,7 +594,7 @@ class TestCase {
 
       default:
         throw Error( `NeuralOrchestra_tester.TestCase`
-          + `.test_init_load_process_send_asyncGenerator(): testId=${this.testId}, `
+          + `.${funcNameInMessage}(): testId=${this.testId}, `
           + `n_init_asyncType ( ${n_init_asyncType} ) `
           + `should be 0 or 1 or 2.` );
         break;
@@ -685,7 +687,7 @@ class TestCase {
 
     default:
       throw Error( `NeuralOrchestra_tester.TestCase`
-        + `.test_init_load_process_send_asyncGenerator(): testId=${this.testId}, `
+        + `.${funcNameInMessage}(): testId=${this.testId}, `
         + `n_init_asyncType ( ${n_init_asyncType} ) `
         + `should be 0 or 1 or 2.` );
       break;
@@ -693,7 +695,7 @@ class TestCase {
 
     if ( neuralOrchestra.initOk !== undefined )
       throw Error( `NeuralOrchestra_tester.TestCase`
-        + `.test_init_load_process_send_asyncGenerator(): testId=${this.testId}, `
+        + `.${funcNameInMessage}(): testId=${this.testId}, `
         + `neuralOrchestra.initOk ( ${neuralOrchestra.initOk} ) `
         + `should be undefined.` );
 
@@ -751,7 +753,7 @@ class TestCase {
 
         default:
           throw Error( `NeuralOrchestra_tester.TestCase`
-            + `.test_init_load_process_send_asyncGenerator(): testId=${this.testId}, `
+            + `.${funcNameInMessage}(): testId=${this.testId}, `
             + `n_init_asyncType ( ${n_init_asyncType} ) `
             + `should be 0 or 1 or 2.` );
           break;
@@ -761,7 +763,7 @@ class TestCase {
         let initOk = ( versus_load_asyncGenerator != undefined );
         if ( initOk != neuralOrchestra.initOk )
           throw Error( `NeuralOrchestra_tester.TestCase`
-            + `.test_init_load_process_send_asyncGenerator(): testId=${this.testId}, `
+            + `.${funcNameInMessage}(): testId=${this.testId}, `
             + `( versus_load_asyncGenerator `
               + `( ${versus_load_asyncGenerator} ) != undefined ) `
             + `should be the same as `
@@ -772,7 +774,7 @@ class TestCase {
         let initOk = ( versus_load_asyncPromise != undefined );
         if ( initOk != neuralOrchestra.initOk )
           throw Error( `NeuralOrchestra_tester.TestCase`
-            + `.test_init_load_process_send_asyncGenerator(): testId=${this.testId}, `
+            + `.${funcNameInMessage}(): testId=${this.testId}, `
             + `( versus_load_asyncPromise `
               + `( ${versus_load_asyncPromise} ) != undefined ) `
             + `should be the same as `
@@ -781,7 +783,7 @@ class TestCase {
 
       } else {
         throw Error( `NeuralOrchestra_tester.TestCase`
-          + `.test_init_load_process_send_asyncGenerator(): testId=${this.testId}, `
+          + `.${funcNameInMessage}(): testId=${this.testId}, `
           + `versus_load_asyncGenerator ( ${versus_load_asyncGenerator} ) and `
           + `versus_load_asyncPromise ( ${versus_load_asyncPromise} ) `
           + `should not all undefined.`
@@ -794,13 +796,13 @@ class TestCase {
 
     if ( neuralOrchestra.initOk != true ) // undefined is also not acceptable.
       throw Error( `NeuralOrchestra_tester.TestCase`
-        + `.test_init_load_process_send_asyncGenerator(): testId=${this.testId}, `
+        + `.${funcNameInMessage}(): testId=${this.testId}, `
         + `neuralOrchestra.initOk ( ${neuralOrchestra.initOk} ) `
         + `should be true.` );
 
     if ( neuralOrchestra.workerProxies_initOk != true ) // undefined is also not acceptable.
       throw Error( `NeuralOrchestra_tester.TestCase`
-        + `.test_init_load_process_send_asyncGenerator(): testId=${this.testId}, `
+        + `.${funcNameInMessage}(): testId=${this.testId}, `
         + `neuralOrchestra.workerProxies_initOk `
         + `( ${neuralOrchestra.workerProxies_initOk} ) `
         + `should be true.` );
@@ -810,7 +812,7 @@ class TestCase {
       if ( neuralOrchestra[ initParameterName ]
              != this.init_parameters[ initParameterName ] )
         throw Error( `NeuralOrchestra_tester.TestCase`
-          + `.test_init_load_process_send_asyncGenerator(): testId=${this.testId}, `
+          + `.${funcNameInMessage}(): testId=${this.testId}, `
           + `neuralOrchestra.${initParameterName} `
           + `( ${neuralOrchestra[ initParameterName ]} ) `
           + `should be ( ${this.init_parameters[ initParameterName ]} ).` );
@@ -844,7 +846,7 @@ class TestCase {
       if ( progressInit )
         if ( 100 !== progressInit.valuePercentage )
           throw Error( `NeuralOrchestra_tester.TestCase`
-            + `.test_init_load_process_send_asyncGenerator(): testId=${this.testId}, `
+            + `.${funcNameInMessage}(): testId=${this.testId}, `
             + `progressInit.valuePercentage (`
             + `${progressInit.valuePercentage}) `
             + `should be 100.` );
@@ -859,7 +861,7 @@ class TestCase {
 
     if ( 100 !== progressToAdvance.valuePercentage )
       throw Error( `NeuralOrchestra_tester.TestCase`
-        + `.test_init_load_process_send_asyncGenerator(): testId=${this.testId}, `
+        + `.${funcNameInMessage}(): testId=${this.testId}, `
         + `progressToAdvance.valuePercentage `
           +  `( ${progressToAdvance.valuePercentage} ) should 100.` );
   }
@@ -868,6 +870,8 @@ class TestCase {
   async* test_create_init_load_process_send_asyncGenerator(
     progressParent,
     init_asyncTypeOrder, load_asyncTypeOrder ) {
+
+    const funcNameInMessage = "test_create_init_load_process_send_asyncGenerator";
 
     ++this.testId;
 
