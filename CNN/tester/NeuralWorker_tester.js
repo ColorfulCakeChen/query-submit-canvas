@@ -531,12 +531,8 @@ class PerformanceTestCase extends Recyclable.Root {
       const pseudo_height = 1024;
       const pseudo_width = 1024;
       //!!! (2022/09/25 Remarked) too large for mobile phone.
-      //const pseudo_channelCount = 50;
-      const pseudo_channelCount_half = 5;
-      const pseudo_channelCount = pseudo_channelCount_half * 2;
-
-      const weightArrayLength_half
-        = pseudo_height * pseudo_width * pseudo_channelCount_half;
+      //const pseudo_channelCount = 100;
+      const pseudo_channelCount = 10;
 
       const weightArrayLength
         = pseudo_height * pseudo_width * pseudo_channelCount;
@@ -549,9 +545,7 @@ class PerformanceTestCase extends Recyclable.Root {
 
       // Use larger variation to generate negative result.
       const weightsRandomOffset = {
-//!!! (2023/05/15 Remarked)
-//        min: -weightArrayLength_half,
-        min: - ( 2 * weightArrayLength ),
+        min: - ( 5 * weightArrayLength ),
         max: +5 };
 
       const weightsDivisorForRemainder = 1024;
