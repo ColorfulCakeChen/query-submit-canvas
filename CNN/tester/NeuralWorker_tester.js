@@ -527,27 +527,44 @@ class PerformanceTestCase extends Recyclable.Root {
   /** */
   static randomTestWeightArray_create() {
     if ( !PerformanceTestCase.randomTestWeightArray ) {
+
+      // Note: Because ( valueStepPerChannel = valueStep * channelCount ),
+      //       channelCount should not be too large. Otherwise, the result
+      //       array will almost positive number.
+      const pseudo_height = 1024;
+      const pseudo_width = 1024;
       //!!! (2022/09/25 Remarked) too large for mobile phone.
-      //const weightArrayLength = ( 100 * 1024 * 1024 );
-      const weightArrayLength = ( 10 * 1024 * 1024 );
+      //const pseudo_channelCount = 100;
+      const pseudo_channelCount = 10;
+
+      const weightArrayLength
+        = pseudo_height * pseudo_width * pseudo_channelCount;
+
       PerformanceTestCase.randomTestWeightArray
         = new Float32Array( weightArrayLength );
+
+      const weightsValueBegin = 0;
+      const weightsValueStep = 10;
 
       //!!! (2023/05/12 Remarked) Use larger variation to generate negative result.
       //const weightsRandomOffset = TestParams.Base.weightsRandomOffset;
       //const weightsRandomOffset = { min: -500, max: +5 };
       const weightsRandomOffset = {
-        min: - ( 5 * TestParams.Base.weightsDivisorForRemainder ),
+        min: - ( 2 * TestParams.Base.weightsDivisorForRemainder ),
         max: +5 };
+
+      const weightsDivisorForRemainder = 1024;
 
       RandTools.fill_numberArray(
         PerformanceTestCase.randomTestWeightArray,
-        1, 1, weightArrayLength, // height, width, channelCount,
-        TestParams.Base.weightsValueBegin,
-        TestParams.Base.weightsValueStep,
+!!!
+//        1, 1, weightArrayLength, // height, width, channelCount,
+
+        pseudo_height, pseudo_width, pseudo_channelCount,
+        weightsValueBegin, weightsValueStep,
         weightsRandomOffset.min,
         weightsRandomOffset.max,
-        TestParams.Base.weightsDivisorForRemainder
+        weightsDivisorForRemainder
       );
     }
   }
