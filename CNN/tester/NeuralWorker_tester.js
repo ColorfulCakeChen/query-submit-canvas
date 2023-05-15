@@ -693,9 +693,7 @@ class HeightWidthDepth {
     // Create input data array.
     if ( vocabularyCountPerInputChannel <= ( 2 ** 8 ) ) // 256
       this.input_TypedArray = new Uint8ClampedArray( input_valueCount );
-    else if ( vocabularyCountPerInputChannel <= ( 2 ** 16 ) ) // 65536
-      this.input_TypedArray = new Uint16Array( input_valueCount );
-    else // ( vocabularyCountPerInputChannel <= ( 2 ** 32 ) )
+    else // ( vocabularyCountPerInputChannel > 256 )
       this.input_TypedArray = new Uint32Array( input_valueCount );
 
     // Fill input data.
