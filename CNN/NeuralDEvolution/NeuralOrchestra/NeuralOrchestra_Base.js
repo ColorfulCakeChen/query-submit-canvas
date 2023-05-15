@@ -1266,6 +1266,9 @@ class NeuralOrchestra_Base extends
         .throw_if_versus_load_asyncPromise_or_asyncGenerator_running
         .call( this, funcNameInMessage );
 
+!!! ...unfinished... (2023/05/15)
+// throw_if_alignmentMarkValueArrayArray_set_asyncPromise_running()
+
       // Prevent the nueral networks from being changed during they are processing.
       NeuralOrchestra_Base.throw_if_TypedArray_process_asyncPromise_running
         .call( this, funcNameInMessage );
@@ -1313,6 +1316,9 @@ class NeuralOrchestra_Base extends
         .throw_if_versus_load_asyncPromise_or_asyncGenerator_running
         .call( this, funcNameInMessage );
 
+!!! ...unfinished... (2023/05/15)
+// throw_if_alignmentMarkValueArrayArray_set_asyncPromise_running()
+
       // Prevent the nueral networks from being changed during they are processing.
       NeuralOrchestra_Base.throw_if_TypedArray_process_asyncPromise_running
         .call( this, funcNameInMessage );
@@ -1356,6 +1362,9 @@ class NeuralOrchestra_Base extends
       NeuralOrchestra_Base
         .throw_if_versus_load_asyncPromise_or_asyncGenerator_running
         .call( this, funcNameInMessage );
+
+!!! ...unfinished... (2023/05/15)
+// throw_if_alignmentMarkValueArrayArray_set_asyncPromise_running()
 
       // Prevent the nueral networks from being changed during they are processing.
       NeuralOrchestra_Base.throw_if_TypedArray_process_asyncPromise_running
