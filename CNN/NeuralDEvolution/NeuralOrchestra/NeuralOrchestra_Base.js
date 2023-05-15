@@ -1688,6 +1688,10 @@ class NeuralOrchestra_Base extends
   static throw_if_workerProxies_busy( funcNameInMessage ) {
     NeuralOrchestra_Base.throw_if_workerProxies_init_asyncPromise_running
       .call( this, funcNameInMessage );
+
+!!! ...unfinished... (2023/05/15)
+// throw_if_alignmentMarkValueArrayArray_set_asyncPromise_running()
+
     NeuralOrchestra_Base.throw_if_TypedArray_process_asyncPromise_running
       .call( this, funcNameInMessage );
   }
