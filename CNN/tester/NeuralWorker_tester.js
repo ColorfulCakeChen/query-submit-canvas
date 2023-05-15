@@ -643,7 +643,8 @@ class HeightWidthDepth {
       if ( this.ImplicitInputModeInfo.has_implicit_input ) {
         this.feedbackShape = new NeuralNet.FeedbackShape();
         this.feedbackShape.init(
-          explicit_input_height, explicit_input_width, explicit_input_channelCount,
+          explicit_input_height, explicit_input_width,
+          explicit_input_channelCount,
           output_channelCount // feedback_valueCount
         );
       }
@@ -679,6 +680,16 @@ class HeightWidthDepth {
     // Larger input image for performance testing.
     this.testPerformance_imageSourceBag
       = ImageSourceBag.Base.Pool.get_or_create_by( "int32" );
+
+!!! ...unfinished... (2023/05/15)
+// If ( vocabularyCountPerChannel < ( 2 ** 8 ) ) // 256
+//   - If ( input_channelCount == 4 ), use ImageData.
+//   - Otherwise, use Uint8ClampedArray.
+//
+// If ( vocabularyCountPerChannel < ( 2 ** 16 ) ), use Uint16Array.
+//
+// If ( vocabularyCountPerChannel < ( 2 ** 32 ) ), use Uint32Array.
+//
 
     {
 //!!! (2023/05/11 Remarked)
