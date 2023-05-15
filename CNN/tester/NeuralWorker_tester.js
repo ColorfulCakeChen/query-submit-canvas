@@ -537,7 +537,8 @@ class PerformanceTestCase extends Recyclable.Root {
       //const weightsRandomOffset = TestParams.Base.weightsRandomOffset;
       //const weightsRandomOffset = { min: -500, max: +5 };
       const weightsRandomOffset = {
-        min: -TestParams.Base.weightsDivisorForRemainder, max: +5 };
+        min: - TestParams.Base.weightsDivisorForRemainder - 500,
+        max: +5 };
 
       RandTools.fill_numberArray(
         PerformanceTestCase.randomTestWeightArray,
@@ -1318,59 +1319,6 @@ function TestButton_onClick( event ) {
   controls_all.Info_TextArea.textContent = "";
 
   // Extract parameters from UI.
-
-//!!! (2023/05/14 Remarked)
-// Use  g_Controls.numeric_controls_collect_values()
-// except implicit_input_mode_Select  
-//
-// //!!! ...unfinished... (2023/05/11)
-// //  let largerFactor = Number.parseInt( g_Controls.largerFactor_Text.value );
-// //  g_Controls.largerFactor_Text.value = largerFactor;
-//
-//   let explicit_input_height
-//     = NeuralNet.Params.explicit_input_height.valueDesc.range.adjust(
-//         Number.parseInt( g_Controls.explicit_input_height_Number.value ) );
-//   g_Controls.explicit_input_height_Number.value = explicit_input_height;
-//
-//   let explicit_input_width
-//     = NeuralNet.Params.explicit_input_width.valueDesc.range.adjust(
-//         Number.parseInt( g_Controls.explicit_input_width_Number.value ) );
-//   g_Controls.explicit_input_width_Number.value = explicit_input_width;
-//
-// //!!! ...unfinished... (2023/05/12)
-// // Restrict it?
-//   let explicit_input_channelCount
-//     = NeuralNet.Params.explicit_input_channelCount.valueDesc.range.adjust(
-//         Number.parseInt( g_Controls.explicit_input_channelCount_Number.value ) );
-//   g_Controls.explicit_input_channelCount_Number.value = explicit_input_channelCount;
-//
-//
-//   let vocabularyChannelCount
-//     = NeuralNet.Params.vocabularyChannelCount.valueDesc.range.adjust(
-//         Number.parseInt( g_Controls.vocabularyChannelCount_Number.value ) );
-//   g_Controls.vocabularyChannelCount_Number.value = vocabularyChannelCount;
-//
-// //!!! ...unfinished... (2023/05/12)
-// // Restrict it?
-//   let vocabularyCountPerInputChannel
-//     = NeuralNet.Params.vocabularyCountPerInputChannel.valueDesc.range.adjust(
-//         Number.parseInt( g_Controls.vocabularyCountPerInputChannel_Number.value ) );
-//   g_Controls.vocabularyCountPerInputChannel_Number.value
-//     = vocabularyCountPerInputChannel;
-//
-//   let blockCountTotalRequested
-//     = NeuralNet.Params.blockCountTotalRequested.valueDesc.range.adjust(
-//         Number.parseInt( g_Controls.blockCountTotalRequested_Number.value ) );
-//   g_Controls.blockCountTotalRequested_Number.value = blockCountTotalRequested;
-//
-//
-//   let output_channelCount
-//     = NeuralNet.Params.output_channelCount.valueDesc.range.adjust(
-//         Number.parseInt( g_Controls.output_channelCount_Number.value ) );
-//   g_Controls.output_channelCount_Number.value
-//     = output_channelCount;
-
-//!!! ...unfinished... (2023/05/14)
   g_Controls.numeric_controls_collect_values();
 
   let nNeuralWorker_ImplicitInputModeId
