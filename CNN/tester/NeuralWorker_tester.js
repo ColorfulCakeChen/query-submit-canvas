@@ -468,6 +468,7 @@ class PerformanceTestCase extends Recyclable.Root {
           this.neuralNet.input_channelCount
         );
 
+!!! ...unfinished... (2023/05/15)
         let imageData;
         {
           let ctx = theCanvas.getContext( "2d" );
@@ -657,23 +658,42 @@ class HeightWidthDepth {
     this.input_Canvas = undefined;
   }
 
+  get input_height() {
+    if ( this.has_implicit_input )
+      return this.feedbackShape.input_height;
+    else
+      return this.explicit_input_height;
+  }
+
+  get input_width() {
+    if ( this.has_implicit_input )
+      return this.feedbackShape.input_width;
+    else
+      return this.explicit_input_width;
+  }
+
+  get input_channelCount() {
+    if ( this.has_implicit_input )
+      return this.feedbackShape.input_channelCount;
+    else
+      return this.explicit_input_channelCount;
+  }
+
+  get input_pixelCount() {
+    return input_height * input_width ;
+  }
+
+  get input_valueCount() {
+    return input_pixelCount * input_channelCount;
+  }
+
   /** Create .input_TypedArray or .input_Canvas */
-  input_Data_prepare() {
-
-    // Determine input data shape.
-    let input_height, input_width, input_channelCount;
-    if ( this.has_implicit_input ) {
-      input_height = this.feedbackShape.input_height;
-      input_width = this.feedbackShape.input_width;
-      input_channelCount = this.feedbackShape.input_channelCount;
-    } else {
-      input_height = this.explicit_input_height;
-      input_width = this.explicit_input_width;
-      input_channelCount = this.explicit_input_channelCount;
-    }
-
-    let input_pixelCount = input_height * input_width * input_channelCount;
-    let input_valueCount = input_pixelCount * input_channelCount;
+  input_TypedArray_prepare() {
+    const input_height = this.input_height;
+    const input_width = this.input_width; 
+    const input_channelCount = this.input_channelCount;
+    //const input_pixelCount = this.input_pixelCount;
+    const input_valueCount = this.input_valueCount;
 
     // Create input data array.
     if ( this.vocabularyCountPerInputChannel < ( 2 ** 8 ) ) { // 256
@@ -729,6 +749,22 @@ class HeightWidthDepth {
   }
 
   /**
+   * @return {TypedArray}
+   *   Return a TypedArray to be proccessed by neural network.
+   */
+  input_TypedArray_get() {
+    let input_TypedArray;
+    if ( this.input_Canvas ) {
+      let ctx = this.input_Canvas.getContext( "2d" );
+      input_TypedArray = ctx.getImageData(
+        0, 0, this.input_Canvas.width, this.input_Canvas.height );
+    } else {
+      input_TypedArray = this.input_TypedArray;
+    }
+    return input_TypedArray;
+  }
+
+  /**
    * 
    */
   neuralWorker_PerformanceTest_addCase(
@@ -747,7 +783,7 @@ class HeightWidthDepth {
 
     this.disposeResources();
 
-    this.input_Data_prepare();
+    this.input_TypedArray_prepare();
     this.neuralWorkerProxies = NeuralWorker.Proxies.Pool.get_or_create_by();
 
     if ( this.testCaseMap )
@@ -859,15 +895,26 @@ class HeightWidthDepth {
     //       this case's first time testing).
     await testCase.preparePromise;
 
-    let imageData;
-    {
+    let input_height, input_width;
+    let input_TypedArray;
+
+    if ( this.input_Canvas ) {
+      input_height = this.input_Canvas.height;
+      input_width = this.input_Canvas.width;
+
       let ctx = this.input_Canvas.getContext( "2d" );
-      imageData = ctx.getImageData(
-        0, 0, this.input_Canvas.width, this.input_Canvas.height );
+      input_TypedArray = ctx.getImageData( 0, 0, input_width, input_height );
+
+    } else {
+      input_height = ;
+      input_width = ;
+      input_TypedArray = this.input_TypedArray;
     }
 
+!!!
     let resultFloat32ArrayArrayPromise
       = neuralWorkerProxies.TypedArray_process_async(
+!!!
           imageData.data, imageData.height, imageData.width );
 
     if ( imageData.data.length != 0 )
