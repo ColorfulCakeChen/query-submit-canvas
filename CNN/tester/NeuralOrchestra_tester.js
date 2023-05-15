@@ -139,6 +139,8 @@ class TestCase {
    *
    */
   async* test_process_send_asyncGenerator( progressParent, neuralOrchestra ) {
+    const funcNameInMessage = "test_process_send_asyncGenerator";
+
     ++this.testId;
 
     let progressRoot = progressParent.root_get();
@@ -163,7 +165,7 @@ class TestCase {
       yield progressRoot;
     } else {
       throw Error( `NeuralOrchestra_tester.TestCase`
-        + `.test_process_send_asyncGenerator(): testId=${this.testId}, `
+        + `.${funcNameInMessage}(): testId=${this.testId}, `
         + `neuralOrchestra.TypedArray_process_asyncPromise_running=`
         + `${neuralOrchestra.TypedArray_process_asyncPromise_running} `
         + `should be true.` );
@@ -171,7 +173,7 @@ class TestCase {
 
     if ( neuralOrchestra.TypedArray_processOk !== undefined )
       throw Error( `NeuralOrchestra_tester.TestCase`
-        + `.test_process_send_asyncGenerator(): testId=${this.testId}, `
+        + `.${funcNameInMessage}(): testId=${this.testId}, `
         + `neuralOrchestra.TypedArray_process `
           + `( ${neuralOrchestra.TypedArray_process} ) `
         + `should be undefined.` );
@@ -214,27 +216,27 @@ class TestCase {
 
     if ( neuralOrchestra.TypedArray_processOk != true ) // undefined is also not acceptable.
       throw Error( `NeuralOrchestra_tester.TestCase`
-        + `.test_process_send_asyncGenerator(): testId=${this.testId}, `
+        + `.${funcNameInMessage}(): testId=${this.testId}, `
         + `neuralOrchestra.TypedArray_processOk `
           + `(${neuralOrchestra.TypedArray_processOk}) `
         + `should be true.` );
 
     if ( 2 != Float32ArrayArray.length )
       throw Error( `NeuralOrchestra_tester.TestCase`
-        + `.test_process_send_asyncGenerator(): testId=${this.testId}, `
+        + `.${funcNameInMessage}(): testId=${this.testId}, `
         + `Float32ArrayArray.length=${Float32ArrayArray.length} `
         + `should be 2.` );
 
     if ( Float32ArrayArray[ 0 ].length != this.init_parameters.output_channelCount )
       throw Error( `NeuralOrchestra_tester.TestCase`
-        + `.test_process_send_asyncGenerator(): testId=${this.testId}, `
+        + `.${funcNameInMessage}(): testId=${this.testId}, `
         + `Float32ArrayArray[ 0 ].length=${Float32ArrayArray[ 0 ].length} `
         + `should be the same as `
         + `.output_channelCount ( ${this.init_parameters.output_channelCount}.` );
 
     if ( Float32ArrayArray[ 1 ].length != this.init_parameters.output_channelCount )
       throw Error( `NeuralOrchestra_tester.TestCase`
-        + `.test_process_send_asyncGenerator(): testId=${this.testId}, `
+        + `.${funcNameInMessage}(): testId=${this.testId}, `
         + `Float32ArrayArray[ 1 ].length=${Float32ArrayArray[ 1 ].length} `
         + `should be the same as `
         + `.output_channelCount ( ${this.init_parameters.output_channelCount}.` );
@@ -264,7 +266,7 @@ class TestCase {
 
           if ( bWillTrySend )
             throw Error( `NeuralOrchestra_tester.TestCase`
-              + `.test_process_send_asyncGenerator(): testId=${this.testId}, `
+              + `.${funcNameInMessage}(): testId=${this.testId}, `
               + `.versusResultSender_send() should not try to send the result `
               + `of an expired versus.` );
 
@@ -280,7 +282,7 @@ class TestCase {
 
           if ( bWillTrySend )
             throw Error( `NeuralOrchestra_tester.TestCase`
-              + `.test_process_send_asyncGenerator(): testId=${this.testId}, `
+              + `.${funcNameInMessage}(): testId=${this.testId}, `
               + `.versusResultSender_send() should not try to send the result `
               + `of a versus with undefined timestamp.` );
 
@@ -297,7 +299,7 @@ class TestCase {
 
           if ( !bWillTrySend )
             throw Error( `NeuralOrchestra_tester.TestCase`
-              + `.test_process_send_asyncGenerator(): testId=${this.testId}, `
+              + `.${funcNameInMessage}(): testId=${this.testId}, `
               + `.versusResultSender_send() should try to send the result `
               + `of an non-expired versus.` );
 
@@ -313,7 +315,7 @@ class TestCase {
 
     if ( 100 !== progressToAdvance.valuePercentage )
       throw Error( `NeuralOrchestra_tester.TestCase`
-        + `.test_process_send_asyncGenerator(): testId=${this.testId}, `
+        + `.${funcNameInMessage}(): testId=${this.testId}, `
         + `progressToAdvance.valuePercentage `
           +  `( ${progressToAdvance.valuePercentage} ) should 100.` );
   }
