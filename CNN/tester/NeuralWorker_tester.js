@@ -395,11 +395,8 @@ class PerformanceTestCase extends Recyclable.Root {
         for ( let neuralNetIndex = 0;
           neuralNetIndex < this.neuralNetCount; ++neuralNetIndex ) {
 
-          let alignmentMarkValueArray
-            = this.alignmentMarkValueArrayArray[ neuralNetIndex ];
-
           RandTools.fill_numberArray(
-            alignmentMarkValueArray,
+            this.alignmentMarkValueArrayArray[ neuralNetIndex ],
             1, 1, input_channelCount,
             markValueBegin, markValueStep,
             markRandomOffset.min, markRandomOffset.max,
