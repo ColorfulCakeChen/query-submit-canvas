@@ -332,6 +332,8 @@ class TestCase {
     n_init_asyncType, n_load_asyncType,
     progressInit ) {
 
+    const funcNameInMessage = "test_load_process_send_asyncGenerator";
+
     ++this.testId;
 
     // Use versus_load_asyncPromise and versus_load_asyncGenerator to define bTryLoad.
@@ -360,7 +362,7 @@ class TestCase {
 
         default:
           throw Error( `NeuralOrchestra_tester.TestCase`
-            + `.test_load_process_send_asyncGenerator(): testId=${this.testId}, `
+            + `.${funcNameInMessage}(): testId=${this.testId}, `
             + `n_load_asyncType ( ${n_load_asyncType} ) `
             + `should be 0 or 1 or 2.` );
           break;
@@ -400,7 +402,7 @@ class TestCase {
 
         default:
           throw Error( `NeuralOrchestra_tester.TestCase`
-            + `.test_load_process_send_asyncGenerator(): testId=${this.testId}, `
+            + `.${funcNameInMessage}(): testId=${this.testId}, `
             + `n_load_asyncType ( ${n_load_asyncType} ) `
             + `should be 0 or 1 or 2.` );
           break;
@@ -409,7 +411,7 @@ class TestCase {
 
     if ( neuralOrchestra.versus_loadOk !== undefined )
       throw Error( `NeuralOrchestra_tester.TestCase`
-        + `.test_load_process_send_asyncGenerator(): testId=${this.testId}, `
+        + `.${funcNameInMessage}(): testId=${this.testId}, `
         + `neuralOrchestra.versus_loadOk ( ${neuralOrchestra.versus_loadOk} ) `
         + `should be undefined.` );
 
@@ -472,7 +474,7 @@ class TestCase {
   
           default:
             throw Error( `NeuralOrchestra_tester.TestCase`
-              + `.test_load_process_send_asyncGenerator(): testId=${this.testId}, `
+              + `.${funcNameInMessage}(): testId=${this.testId}, `
               + `n_load_asyncType ( ${n_load_asyncType} ) `
               + `should be 0 or 1 or 2.` );
             break;
@@ -509,7 +511,7 @@ class TestCase {
     
           default:
             throw Error( `NeuralOrchestra_tester.TestCase`
-              + `.test_init_load_process_send_asyncGenerator(): testId=${this.testId}, `
+              + `.${funcNameInMessage}(): testId=${this.testId}, `
               + `n_init_asyncType ( ${n_init_asyncType} ) `
               + `should be 0 or 1 or 2.` );
             break;
@@ -518,7 +520,7 @@ class TestCase {
 
       if ( 100 !== progressToBeChecked.valuePercentage )
         throw Error( `NeuralOrchestra_tester.TestCase`
-          + `.test_load_process_send_asyncGenerator(): testId=${this.testId}, `
+          + `.${funcNameInMessage}(): testId=${this.testId}, `
           + `progressToBeChecked.valuePercentage (`
           + `${progressToBeChecked.valuePercentage}) `
           + `should be 100.` );
@@ -533,18 +535,18 @@ class TestCase {
 
     if ( neuralOrchestra.versus_loadOk != true ) // undefined is also not acceptable.
       throw Error( `NeuralOrchestra_tester.TestCase`
-        + `.test_load_process_send_asyncGenerator(): testId=${this.testId}, `
+        + `.${funcNameInMessage}(): testId=${this.testId}, `
         + `neuralOrchestra.versus_loadOk (${neuralOrchestra.versus_loadOk}) `
         + `should be true.` );
 
     if ( versus_loadOk != true ) // undefined is also not acceptable.
       throw Error( `NeuralOrchestra_tester.TestCase`
-        + `.test_load_process_send_asyncGenerator(): testId=${this.testId}, `
+        + `.${funcNameInMessage}(): testId=${this.testId}, `
         + `versus_loadOk (${versus_loadOk}) should be true.` );
 
     if ( versus_loadOk != neuralOrchestra.versus_loadOk )
       throw Error( `NeuralOrchestra_tester.TestCase`
-        + `.test_load_process_send_asyncGenerator(): testId=${this.testId}, `
+        + `.${funcNameInMessage}(): testId=${this.testId}, `
         + `versus_loadOk ( ${versus_loadOk} ) should be same as `
         + `neuralOrchestra.versus_loadOk ( ${neuralOrchestra.versus_loadOk} ) ` );
 
@@ -557,7 +559,7 @@ class TestCase {
 
     if ( 100 !== progressToAdvance.valuePercentage )
       throw Error( `NeuralOrchestra_tester.TestCase`
-        + `.test_load_process_send_asyncGenerator(): testId=${this.testId}, `
+        + `.${funcNameInMessage}(): testId=${this.testId}, `
         + `progressToAdvance.valuePercentage `
           +  `( ${progressToAdvance.valuePercentage} ) should 100.` );
   }
