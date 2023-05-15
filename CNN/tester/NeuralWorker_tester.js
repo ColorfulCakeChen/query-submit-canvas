@@ -387,8 +387,9 @@ class PerformanceTestCase extends Recyclable.Root {
           this.alignmentMarkValueArrayArray // Test Array.
             = [ new Array( input_channelCount ) ];
 
-        const markValueBegin = 1;
-        const markValueStep = 1;
+        // between [ 0, ( vocabularyCountPerInputChannel - 1 ) ]
+        const markValueBegin = 10;
+        const markValueStep = 5;
         const markRandomOffset = { min: -10, max: +1 };
         const markDivisorForRemainder = vocabularyCountPerInputChannel;
 
