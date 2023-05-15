@@ -573,7 +573,9 @@ class PerformanceTestCase extends Recyclable.Root {
         min: - ( 10 * weightArrayLength ),
         max: +5 };
 
-      const weightsDivisorForRemainder = 1024;
+      //!!! (2023/05/15 Remarked) For reduce neural network result value.
+      //const weightsDivisorForRemainder = 1024;
+      const weightsDivisorForRemainder = 128;
 
       RandTools.fill_numberArray(
         PerformanceTestCase.randomTestWeightArray,
@@ -729,9 +731,10 @@ class HeightWidthDepth {
 
     // Create input data array.
     //
-    // Note: It seems that tf.tensor() can only accept Uint8ClampedArray,
-    //       Uint8Array and Int32Array. Others (e.g. Int8Array, Uint16Aray,
-    //       Int16Array, Uint32Array) can not be accepted.
+    // Note: It seems that tf.tensor( dtype="int32" ) can only accept
+    //       Uint8ClampedArray, Uint8Array and Int32Array. Others (e.g.
+    //       Int8Array, Uint16Aray, Int16Array, Uint32Array) can not be
+    //       accepted.
     //
     if ( vocabularyCountPerInputChannel <= ( 2 ** 8 ) ) // 256
       this.input_TypedArray = new Uint8ClampedArray( input_valueCount );
