@@ -706,6 +706,10 @@ class HeightWidthDepth {
       let contextAttributes = { willReadFrequently: true };
       let ctx = this.testCanvas.getContext( "2d", contextAttributes );
       let imageData = ctx.createImageData( inputHeight, inputWidth );
+
+!!! ...unfinished... (2023/05/15)
+// should restrict .data value between [ 0, vocabularyCountPerChannel - 1 ]
+
       for ( let i = 0; i < imageData.data.length; ++i ) {
         imageData.data[ i ] = inputImage.dataArray[ i ];
       }
