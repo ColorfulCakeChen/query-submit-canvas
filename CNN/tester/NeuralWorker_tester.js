@@ -658,7 +658,7 @@ class HeightWidthDepth {
   }
 
   /** */
-  inputData_prepare() {
+  input_Data_prepare() {
 
     let input_height, input_width, input_channelCount;
     if ( this.has_implicit_input ) {
