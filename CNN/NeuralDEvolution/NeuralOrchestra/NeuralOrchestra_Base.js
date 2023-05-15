@@ -1093,6 +1093,10 @@ class NeuralOrchestra_Base extends
   }
 
 
+//!!! ...unfinished... (2023/05/15)
+// alignmentMarkValueArrayArray_set_asyncPromise_create()
+
+
   /**
    *
    * @return {Promise( Float32Array[] | Int32Array[] )}
@@ -1110,8 +1114,6 @@ class NeuralOrchestra_Base extends
 
     { // Checking pre-condition.
       const funcNameInMessage = "TypedArray_process_asyncPromise_create";
-
-//!!! ...unfinished... (2023/05/14)
 
       NeuralOrchestra_Base
         .throw_if_init_asyncPromise_or_asyncGenerator_running
