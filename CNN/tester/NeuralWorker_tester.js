@@ -692,9 +692,9 @@ class HeightWidthDepth {
 
     // Create input data array.
     //
-    // Note: tf.tensor() seems can only accept Uint8ClampedArray, Uint8Array,
-    //       Int32Array. Others (e.g. Int8Array, Uint16Aray, Int16Array,
-    //       Uint32Array) can not be accepted.
+    // Note: It seems that tf.tensor() can only accept Uint8ClampedArray,
+    //       Uint8Array and Int32Array. Others (e.g. Int8Array, Uint16Aray,
+    //       Int16Array, Uint32Array) can not be accepted.
     //
     if ( vocabularyCountPerInputChannel <= ( 2 ** 8 ) ) // 256
       this.input_TypedArray = new Uint8ClampedArray( input_valueCount );
