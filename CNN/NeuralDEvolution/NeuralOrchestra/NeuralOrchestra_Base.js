@@ -1111,53 +1111,24 @@ class NeuralOrchestra_Base extends
     { // Checking pre-condition.
       const funcNameInMessage = "TypedArray_process_asyncPromise_create";
 
-!!! ...unfinished... (2023/05/14)
-//throw_if_workerProxies_busy_or_versus_loading()?
+//!!! ...unfinished... (2023/05/14)
+
+      NeuralOrchestra_Base
+        .throw_if_init_asyncPromise_or_asyncGenerator_running
+        .call( this, funcNameInMessage );
 
       NeuralOrchestra_Base
         .throw_if_workerProxies_busy_or_versus_loading
         .call( this, funcNameInMessage );
 
       NeuralOrchestra_Base
-        .throw_if_init_asyncPromise_or_asyncGenerator_running
-        .call( this, funcNameInMessage );
-      // NeuralOrchestra_Base
-      //   .throw_if_workerProxies_init_asyncPromise_running
-      //   .call( this, funcNameInMessage );
-      NeuralOrchestra_Base
         .throw_if_not_initOk
         .call( this, funcNameInMessage );
-      // NeuralOrchestra_Base
-      //   .throw_if_versus_load_asyncPromise_or_asyncGenerator_running
-      //   .call( this, funcNameInMessage );
+
       NeuralOrchestra_Base
         .throw_if_not_versus_loadOk
         .call( this, funcNameInMessage );
-!!!
-      // NeuralOrchestra_Base
-      //   .throw_if_TypedArray_process_asyncPromise_running
-      //   .call( this, funcNameInMessage );
     }
-
-/*!!!
-
-  static throw_if_workerProxies_busy( funcNameInMessage ) {
-    NeuralOrchestra_Base.throw_if_workerProxies_init_asyncPromise_running
-      .call( this, funcNameInMessage );
-    NeuralOrchestra_Base.throw_if_TypedArray_process_asyncPromise_running
-      .call( this, funcNameInMessage );
-  }
-
-  static throw_if_workerProxies_busy_or_versus_loading( funcNameInMessage ) {
-    NeuralOrchestra_Base.throw_if_workerProxies_busy.call( this,
-      funcNameInMessage );
-    NeuralOrchestra_Base
-      .throw_if_versus_load_asyncPromise_or_asyncGenerator_running.call(
-        this, funcNameInMessage );
-  }
-
-
-*/
 
     return super
       .TypedArray_process_asyncPromise_create(
