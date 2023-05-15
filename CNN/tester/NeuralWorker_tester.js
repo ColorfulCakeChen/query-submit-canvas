@@ -550,7 +550,7 @@ class PerformanceTestCase extends Recyclable.Root {
       //const weightsRandomOffset = TestParams.Base.weightsRandomOffset;
       //const weightsRandomOffset = { min: -500, max: +5 };
       const weightsRandomOffset = {
-        min: - ( 2 * TestParams.Base.weightsDivisorForRemainder ),
+        min: -weightArrayLength,
         max: +5 };
 
       const weightsDivisorForRemainder = 1024;
