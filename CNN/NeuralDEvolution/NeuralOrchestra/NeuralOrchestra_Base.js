@@ -582,8 +582,9 @@ class NeuralOrchestra_Base extends
     { // Checking pre-condition.
       const funcNameInMessage = "init_asyncGenerator_create";
 
-      NeuralOrchestra_Base.throw_if_workerProxies_busy_or_versus_loading.call(
-        this, funcNameInMessage );
+      NeuralOrchestra_Base
+        .throw_if_workerProxies_busy_or_versus_loading
+        .call( this, funcNameInMessage );
     }
 
     return super.init_asyncGenerator_create.apply( this, restArgs );
@@ -604,8 +605,9 @@ class NeuralOrchestra_Base extends
       const funcNameInMessage
         = "init_asyncGenerator_create_with_asyncPromise_progress";
 
-      NeuralOrchestra_Base.throw_if_workerProxies_busy_or_versus_loading.call(
-        this, funcNameInMessage );
+      NeuralOrchestra_Base
+        .throw_if_workerProxies_busy_or_versus_loading
+        .call( this, funcNameInMessage );
     }
 
     return super.init_asyncGenerator_create_with_asyncPromise_progress
@@ -911,6 +913,9 @@ class NeuralOrchestra_Base extends
         .throw_if_init_asyncPromise_and_asyncGenerator_not_running.call( this,
           funcNameInMessage );
 
+!!! ...unfinished... (2023/05/15)
+// throw_if_alignmentMarkValueArrayArray_set_asyncPromise_running()
+
       NeuralOrchestra_Base.throw_if_TypedArray_process_asyncPromise_running
         .call( this, funcNameInMessage );
     }
@@ -1002,6 +1007,9 @@ class NeuralOrchestra_Base extends
         .throw_if_init_asyncPromise_and_asyncGenerator_not_running.call( this,
           funcNameInMessage );
 
+!!! ...unfinished... (2023/05/15)
+// throw_if_alignmentMarkValueArrayArray_set_asyncPromise_running()
+
       NeuralOrchestra_Base.throw_if_TypedArray_process_asyncPromise_running
         .call( this, funcNameInMessage );
     }
@@ -1070,6 +1078,9 @@ class NeuralOrchestra_Base extends
 
     { // Checking pre-condition.
       const funcNameInMessage = "workerProxies_NeuralNetArray_create_async";
+
+!!! ...unfinished... (2023/05/15)
+// throw_if_alignmentMarkValueArrayArray_set_asyncPromise_running()
 
       NeuralOrchestra_Base.throw_if_TypedArray_process_asyncPromise_running
         .call( this, funcNameInMessage );
