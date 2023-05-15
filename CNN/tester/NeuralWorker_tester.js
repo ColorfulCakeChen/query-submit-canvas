@@ -688,10 +688,12 @@ class HeightWidthDepth {
     //const input_pixelCount = this.input_pixelCount;
     const input_valueCount = this.input_valueCount;
 
+    const vocabularyCountPerInputChannel = this.vocabularyCountPerInputChannel;
+
     // Create input data array.
-    if ( this.vocabularyCountPerInputChannel <= ( 2 ** 8 ) ) { // 256
+    if ( vocabularyCountPerInputChannel <= ( 2 ** 8 ) ) { // 256
       this.input_TypedArray = new Uint8ClampedArray( input_valueCount );
-    } if ( this.vocabularyCountPerInputChannel <= ( 2 ** 16 ) ) { // 65536
+    } if ( vocabularyCountPerInputChannel <= ( 2 ** 16 ) ) { // 65536
       this.input_TypedArray = new Uint16Array( input_valueCount );
     } else { // ( vocabularyCountPerInputChannel <= ( 2 ** 32 ) )
       this.input_TypedArray = new Uint32Array( input_valueCount );
@@ -699,12 +701,11 @@ class HeightWidthDepth {
 
     // Fill input data.
     {
-      const input_valueBegin = 1;
+      // Restrict data value between [ 0, ( vocabularyCountPerChannel - 1 ) ].
+      const input_valueBegin = 10;
       const input_valueStep = 10; //1;
       const input_randomOffset = { min: -10, max: +10 };
-
-      // Restrict data value between [ 0, ( vocabularyCountPerChannel - 1 ) ].
-      const input_divisorForRemainder = this.vocabularyCountPerInputChannel;
+      const input_divisorForRemainder = vocabularyCountPerInputChannel;
 
       RandTools.fill_numberArray(
         this.input_TypedArray,
@@ -715,8 +716,8 @@ class HeightWidthDepth {
     }
 
     // If ( vocabulary count <= 256 ) and ( channel count == 4 ), use canvas.
-    if (   ( this.vocabularyCountPerInputChannel <= ( 2 ** 8 ) ) // 256
-        && ( inputChannelCount == 4 ) ) { // Use ImageData.
+    if (   ( vocabularyCountPerInputChannel <= ( 2 ** 8 ) ) // 256
+        && ( input_channelCount == 4 ) ) { // Use ImageData.
     
       let imageData = new ImageData(
         this.input_TypedArray, input_width, input_height );
