@@ -409,7 +409,8 @@ class PerformanceTestCase extends Recyclable.Root {
   }
 
   /** Try to compute neural network result in this worker. */
-  async NeuralNet_try_result_async( theCanvas,
+  async NeuralNet_try_result_async(
+    input_TypedArray, input_height, input_width,
     alignmentMarkValueArray, previous_output_TypedArray ) {
 
     let resultFloat32Array;
@@ -468,14 +469,6 @@ class PerformanceTestCase extends Recyclable.Root {
           this.neuralNet.input_channelCount
         );
 
-!!! ...unfinished... (2023/05/15)
-        let imageData;
-        {
-          let ctx = theCanvas.getContext( "2d" );
-          imageData = ctx.getImageData(
-            0, 0, theCanvas.width, theCanvas.height );
-        }
-
         const bTwoTensors = false;
         let alignmentMarkValueArrayArray;
         let previous_output_TypedArrayArray;
@@ -489,7 +482,7 @@ class PerformanceTestCase extends Recyclable.Root {
 
         createTensor_asyncGenerator
           = this.ScaleFiller.createTensor_by_fill_asyncGenerator(
-              imageData.data, imageData.height, imageData.width,
+              input_TypedArray, input_height, input_width,
               bTwoTensors,
               neuralNet.feedbackShape,
               alignmentMarkValueArrayArray, previous_output_TypedArrayArray
@@ -750,18 +743,19 @@ class HeightWidthDepth {
 
   /**
    * @return {TypedArray}
-   *   Return a TypedArray to be proccessed by neural network.
+   *   Return a TypedArray which is cloned from the input data.
    */
-  input_TypedArray_get() {
-    let input_TypedArray;
+  input_TypedArray_clone() {
+    let input_TypedArray_clone;
     if ( this.input_Canvas ) {
       let ctx = this.input_Canvas.getContext( "2d" );
-      input_TypedArray = ctx.getImageData(
+      let imageData = ctx.getImageData(
         0, 0, this.input_Canvas.width, this.input_Canvas.height );
+      input_TypedArray_clone = imageData.data; // ImageData is cloned already.
     } else {
-      input_TypedArray = this.input_TypedArray;
+      input_TypedArray_clone = this.input_TypedArray.slice();
     }
-    return input_TypedArray;
+    return input_TypedArray_clone;
   }
 
   /**
@@ -895,32 +889,18 @@ class HeightWidthDepth {
     //       this case's first time testing).
     await testCase.preparePromise;
 
-    let input_height, input_width;
-    let input_TypedArray;
+    const input_height = this.input_height;
+    const input_width = this.input_width;
+    const input_TypedArray = this.input_TypedArray_clone();
 
-    if ( this.input_Canvas ) {
-      input_height = this.input_Canvas.height;
-      input_width = this.input_Canvas.width;
-
-      let ctx = this.input_Canvas.getContext( "2d" );
-      input_TypedArray = ctx.getImageData( 0, 0, input_width, input_height );
-
-    } else {
-      input_height = ;
-      input_width = ;
-      input_TypedArray = this.input_TypedArray;
-    }
-
-!!!
     let resultFloat32ArrayArrayPromise
       = neuralWorkerProxies.TypedArray_process_async(
-!!!
-          imageData.data, imageData.height, imageData.width );
+          input_TypedArray, input_height, input_width );
 
-    if ( imageData.data.length != 0 )
+    if ( input_TypedArray.length != 0 )
       throw Error( `NeuralWorker_tester.HeightWidthDepth`
         + `.${funcNameInMessage}(): `
-        + `imageData.data.length ( ${imageData.data.length} ) should be 0 `
+        + `input_TypedArray.length ( ${input_TypedArray.length} ) should be 0 `
         + `after transferred to worker. `
         + `${neuralWorkerProxies}` );
 
@@ -1093,8 +1073,11 @@ class HeightWidthDepth {
             }
 
             { // Verify neural network result.
-              let prefixMsg = "NeuralNet";
-              let postfixMsg = testCase.testCaseName;
+              const input_height = this.input_height;
+              const input_width = this.input_width;
+
+              const prefixMsg = "NeuralNet";
+              const postfixMsg = testCase.testCaseName;
 
               for ( let neuralNetIndex = 0;
                 neuralNetIndex < testCase.neuralNetCount;
@@ -1111,12 +1094,15 @@ class HeightWidthDepth {
                     previous_output_TypedArray
                       = previous_output_TypedArrayArray_for_verification[ neuralNetIndex ];
                 }
-    
+
+                const input_TypedArray = this.input_TypedArray_clone();
+
                 // NeuralNet_try_result_async() should be called after
                 // prepare_async() so that the nConvStageTypeId has been
                 // adjusted.
                 let resultFloat32Array = await testCase
-                  .NeuralNet_try_result_async( this.input_Canvas,
+                  .NeuralNet_try_result_async(
+                    input_TypedArray, input_height, input_width,
                     alignmentMarkValueArray, previous_output_TypedArray );
 
                 let lhsNumberArray = resultFloat32ArrayArray[ neuralNetIndex ];
