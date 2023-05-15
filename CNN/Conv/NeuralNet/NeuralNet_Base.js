@@ -795,7 +795,7 @@ class NeuralNet_Base extends Recyclable.Root {
     //       (e.g. CLIP_BY_VALUE_N0_P255, CLIP_BY_VALUE_N0_P65535,
     //       CLIP_BY_VALUE_N0_P2POW20, CLIP_BY_VALUE_N0_P2POW24, ...)
     //
-    // The reason are:
+    // The reasons are:
     //   - MobileNetV2_Xxx has add-input-to-output behind pointwise2.
     //   - non-MobileNetV2_Xxx has squeeze-and-excitation behind pointwise2.
     // They will destroy the activation function result.
