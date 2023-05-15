@@ -871,7 +871,8 @@ class TestCase {
     progressParent,
     init_asyncTypeOrder, load_asyncTypeOrder ) {
 
-    const funcNameInMessage = "test_create_init_load_process_send_asyncGenerator";
+    const funcNameInMessage
+      = "test_create_init_load_process_send_asyncGenerator";
 
     ++this.testId;
 
