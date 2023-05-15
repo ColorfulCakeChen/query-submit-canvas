@@ -517,9 +517,6 @@ class PerformanceTestCase extends Recyclable.Root {
       let { done, value: [ sourceTensor, sourceTypedArrayAsyncFunction ] }
         = await createTensor_asyncGenerator.next();
 
-//!!! (2023/05/11 Remarked) Use NeuralNet_ScaleFiller instead?
-//        let inputTensor3d = neuralNet.create_ScaledSourceTensor_from_PixelData( theCanvas );
-
       outputTensor3d = neuralNet.apply( sourceTensor );
       resultFloat32Array = outputTensor3d.dataSync();
 
@@ -766,11 +763,6 @@ class HeightWidthDepth {
 
       this.input_TypedArray = null;
 
-//!!! (2023/05/15 Remarked)
-      // for ( let i = 0; i < imageData.data.length; ++i ) {
-      //   imageData.data[ i ] = this.input_TypedArray[ i ];
-      // }
-
       this.input_Canvas = document.createElement( "canvas" );
       this.input_Canvas.height = input_height;
       this.input_Canvas.width = input_width;
@@ -900,12 +892,6 @@ class HeightWidthDepth {
       }
       this.testCaseMap.clear();
     }
-
-//!!! (2023/05/15 Remarked)
-//     if ( this.testPerformance_imageSourceBag ) {
-//       this.testPerformance_imageSourceBag.disposeResources_and_recycleToPool();
-//       this.testPerformance_imageSourceBag = null;
-//     }
 
     this.neuralWorkerProxies?.disposeResources_and_recycleToPool();
     this.neuralWorkerProxies = null;
