@@ -653,7 +653,8 @@ class HeightWidthDepth {
 
   disposeResources() {
     this.neuralWorker_PerformanceTest_release();
-    this.testCanvas = null;
+    this.input_TypedArray = undefined;
+    this.input_Canvas = undefined;
   }
 
   /** */
@@ -671,13 +672,37 @@ class HeightWidthDepth {
     }
 
     // vocabularyCountPerInputChannel,
+    const input_valueBegin = 1;
+    const input_valueStep = 10; //1;
+    const input_randomOffset = { min: -1, max: +1 };
+    const input_divisorForRemainder = this.vocabularyCountPerInputChannel;
 
     let input_pixelCount = input_height * input_width * input_channelCount;
     let input_valueCount = input_pixelCount * input_channelCount;
 
+    this.input_TypedArray = null;
+    this.input_Canvas = null;
+
     if ( this.vocabularyCountPerInputChannel < ( 2 ** 8 ) ) { // 256
-      if ( inputChannelCount == 4 ) {
-        , use ImageData.
+      if ( inputChannelCount == 4 ) { // Use ImageData.
+
+        this.input_Canvas = document.createElement( "canvas" );
+        this.input_Canvas.height = input_height;
+        this.input_Canvas.width = input_width;
+  
+        let contextAttributes = { willReadFrequently: true };
+        let ctx = this.input_Canvas.getContext( "2d", contextAttributes );
+        let imageData = ctx.createImageData( input_height, input_width );
+  
+  !!! ...unfinished... (2023/05/15)
+  // should restrict .data value between [ 0, vocabularyCountPerChannel - 1 ]
+  
+        for ( let i = 0; i < imageData.data.length; ++i ) {
+          imageData.data[ i ] = inputImage.dataArray[ i ];
+        }
+  
+        ctx.putImageData( imageData, 0 , 0 );
+      }
 
       } else {
 
@@ -691,6 +716,17 @@ class HeightWidthDepth {
       , use Uint32Array.
 
     }
+
+
+    RandTools.fill_numberArray(
+      ??? imageNew.dataArray,
+      input_height, input_width, input_channelCount,
+      input_valueBegin, input_valueStep,
+      input_randomOffset.min, input_randomOffset.max,
+      input_divisorForRemainder );
+
+      valueBegin, valueStep,
+      randomOffsetMin, randomOffsetMax, divisorForRemainder );
 
 
 !!! ...unfinished... (2023/05/15)
@@ -723,6 +759,11 @@ class HeightWidthDepth {
     
         RandTools.fill_numberArray( imageNew.dataArray,
           height, width, channelCount,
+    input_valueBegin = 1;
+    input_valueStep = 10; //1;
+    input_randomOffset = { min: -1, max: +1 };
+    input_divisorForRemainder = this.vocabularyCountPerInputChannel;
+
           valueBegin, valueStep,
           randomOffsetMin, randomOffsetMax, divisorForRemainder );
     
@@ -733,15 +774,15 @@ class HeightWidthDepth {
     //      let inputHeight = this.height * this.largerFactor;
     //      let inputWidth = this.width * this.largerFactor;
     
-          this.testCanvas = document.createElement( "canvas" );
-          this.testCanvas.height = inputHeight;
-          this.testCanvas.width = inputWidth;
+          this.input_Canvas = document.createElement( "canvas" );
+          this.input_Canvas.height = inputHeight;
+          this.input_Canvas.width = inputWidth;
     
           let inputImage = this.testPerformance_imageSourceBag.getImage_by(
             inputHeight, inputWidth, inputChannelCount );
     
           let contextAttributes = { willReadFrequently: true };
-          let ctx = this.testCanvas.getContext( "2d", contextAttributes );
+          let ctx = this.input_Canvas.getContext( "2d", contextAttributes );
           let imageData = ctx.createImageData( inputHeight, inputWidth );
     
     !!! ...unfinished... (2023/05/15)
@@ -832,15 +873,15 @@ image = NumberImage.Base.create_bySequenceRandom(
         inputChannelCount = this.explicit_input_channelCount; // Must be 4;
       }
 
-      this.testCanvas = document.createElement( "canvas" );
-      this.testCanvas.height = inputHeight;
-      this.testCanvas.width = inputWidth;
+      this.input_Canvas = document.createElement( "canvas" );
+      this.input_Canvas.height = inputHeight;
+      this.input_Canvas.width = inputWidth;
 
       let inputImage = this.testPerformance_imageSourceBag.getImage_by(
         inputHeight, inputWidth, inputChannelCount );
 
       let contextAttributes = { willReadFrequently: true };
-      let ctx = this.testCanvas.getContext( "2d", contextAttributes );
+      let ctx = this.input_Canvas.getContext( "2d", contextAttributes );
       let imageData = ctx.createImageData( inputHeight, inputWidth );
 
 !!! ...unfinished... (2023/05/15)
@@ -968,9 +1009,9 @@ image = NumberImage.Base.create_bySequenceRandom(
 
     let imageData;
     {
-      let ctx = this.testCanvas.getContext( "2d" );
+      let ctx = this.input_Canvas.getContext( "2d" );
       imageData = ctx.getImageData(
-        0, 0, this.testCanvas.width, this.testCanvas.height );
+        0, 0, this.input_Canvas.width, this.input_Canvas.height );
     }
 
     let resultFloat32ArrayArrayPromise
@@ -1176,7 +1217,7 @@ image = NumberImage.Base.create_bySequenceRandom(
                 // prepare_async() so that the nConvStageTypeId has been
                 // adjusted.
                 let resultFloat32Array = await testCase
-                  .NeuralNet_try_result_async( this.testCanvas,
+                  .NeuralNet_try_result_async( this.input_Canvas,
                     alignmentMarkValueArray, previous_output_TypedArray );
 
                 let lhsNumberArray = resultFloat32ArrayArray[ neuralNetIndex ];
