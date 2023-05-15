@@ -121,6 +121,36 @@ class UIControls {
     }
   }
 
+  /** */
+  performanceTable_htmlTableOperator_create( htmlTableId, digitsCount ) {
+    if ( this.performanceTable_htmlTableOperator ) {
+      if (   ( this.performanceTable_htmlTableOperator.htmlTableId
+                 != htmlTableId )
+          || ( this.performanceTable_htmlTableOperator.digitsCount
+                 != digitsCount )
+         ) {
+        this.performanceTable_htmlTableOperator_dispose();
+      }
+    }
+
+    if ( !this.performanceTable_htmlTableOperator ) {
+      this.performanceTable_htmlTableOperator
+        = HTMLTable.Operator.Pool.get_or_create_by( htmlTableId, digitsCount );
+    }
+
+    // Clear output table.
+    this.performanceTable_htmlTableOperator.Table_clear();
+  }
+
+  /** Release output table operator. */
+  performanceTable_htmlTableOperator_dispose() {
+    if ( this.performanceTable_htmlTableOperator ) {
+      this.performanceTable_htmlTableOperator
+        .disposeResources_and_recycleToPool();
+      this.performanceTable_htmlTableOperator = null;
+    }
+  }
+
 }
 
 let g_Controls;
@@ -1275,22 +1305,8 @@ function TestButton_onClick( event ) {
   controls_all.implicit_input_mode_Select.value
     = nNeuralWorker_ImplicitInputModeId;
 
-
   // Prepare output table.
-  {
-    let performanceTable_htmlTableOperator
-      = g_Controls.performanceTable_htmlTableOperator;
-
-    if ( !performanceTable_htmlTableOperator ) {
-      const htmlTableId = "NeuralWorker_Performance_Table";
-      const digitsCount = 4;
-      performanceTable_htmlTableOperator
-        = HTMLTable.Operator.Pool.get_or_create_by( htmlTableId, digitsCount );
-    }
-
-    // Clear output table.
-    performanceTable_htmlTableOperator.Table_clear();
-  }  
+  g_Controls.performanceTable_htmlTableOperator_create();
 
   // Aggregate all progress about util_tester.
   let progress = ValueMax.Percentage.Aggregate.Pool.get_or_create_by();
@@ -1303,7 +1319,8 @@ function TestButton_onClick( event ) {
 //!!! (2023/05/11 Remarked)
 //    largerFactor,
 
-    nNeuralWorker_ImplicitInputModeId,
+//!!!
+    undefined, //nNeuralWorker_ImplicitInputModeId,
     numeric_controls_valueObject.explicit_input_height,
     numeric_controls_valueObject.explicit_input_width,
     numeric_controls_valueObject.explicit_input_channelCount,
@@ -1353,12 +1370,7 @@ function TestButton_onClick( event ) {
     }
 
     // Release output table operator.
-    if ( g_Controls.performanceTable_htmlTableOperator ) {
-      g_Controls.performanceTable_htmlTableOperator
-        .disposeResources_and_recycleToPool();
-
-      g_Controls.performanceTable_htmlTableOperator = null;
-    }
+    g_Controls.performanceTable_htmlTableOperator_dispose();
 
     controls_all.TestButton.disabled = false; // Re-enable UI.
 
