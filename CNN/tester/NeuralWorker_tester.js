@@ -97,8 +97,8 @@ class UIControls {
     const numeric_controls_valueArray = this.numeric_controls_valueArray;
     const numeric_controls_valueObject = this.numeric_controls_valueObject;
 
-    numeric_controls_valueArray.length = numeric_controls_nameArray.length;
-    for ( let i = 0; i < numeric_controls_nameArray.length; ++i ) {
+    numeric_controls_valueArray.length = numeric_controls_controlNameArray.length;
+    for ( let i = 0; i < numeric_controls_controlNameArray.length; ++i ) {
       const controlName = numeric_controls_controlNameArray[ i ];
       const propertyName = numeric_controls_propertyNameArray[ i ];
 
