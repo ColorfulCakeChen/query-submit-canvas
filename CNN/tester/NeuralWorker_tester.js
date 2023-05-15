@@ -1278,7 +1278,7 @@ function TestButton_onClick( event ) {
 
   // Prepare output table.
   {
-    const performanceTable_htmlTableOperator
+    let performanceTable_htmlTableOperator
       = g_Controls.performanceTable_htmlTableOperator;
 
     if ( !performanceTable_htmlTableOperator ) {
