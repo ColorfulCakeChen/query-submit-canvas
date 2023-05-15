@@ -692,12 +692,12 @@ class HeightWidthDepth {
  If ( vocabularyCountPerChannel < ( 2 ** 32 ) ), use Uint32Array.
 
 
-ImageSourceBag_Base.weightsValueBegin = 1;
-ImageSourceBag_Base.weightsValueStep = 10; //1;
-
-ImageSourceBag_Base.weightsRandomOffset = { min: -1, max: +1 };
-
-ImageSourceBag_Base.weightsDivisorForRemainder = 256;
+ sourceDataDesc = {
+   valueBegin: 1,
+   valueStep: 10, //1,
+   randomOffset: { min: -1, max: +1 },
+   divisorForRemainder: 256
+ };
 
 image = NumberImage.Base.create_bySequenceRandom(
   originalHeight, originalWidth, channelCount,
@@ -707,6 +707,11 @@ image = NumberImage.Base.create_bySequenceRandom(
   ImageSourceBag_Base.weightsRandomOffset.max,
   ImageSourceBag_Base.weightsDivisorForRemainder
 );
+
+    RandTools.fill_numberArray( imageNew.dataArray,
+      height, width, channelCount,
+      valueBegin, valueStep,
+      randomOffsetMin, randomOffsetMax, divisorForRemainder );
 
 */
 
