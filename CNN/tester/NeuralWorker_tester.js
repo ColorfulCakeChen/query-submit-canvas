@@ -673,11 +673,11 @@ class HeightWidthDepth {
   }
 
   get input_pixelCount() {
-    return input_height * input_width ;
+    return this.input_height * this.input_width ;
   }
 
   get input_valueCount() {
-    return input_pixelCount * input_channelCount;
+    return this.input_pixelCount * this.input_channelCount;
   }
 
   /** Create .input_TypedArray or .input_Canvas */
