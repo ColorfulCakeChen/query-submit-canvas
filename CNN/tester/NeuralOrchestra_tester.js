@@ -907,8 +907,8 @@ class TestCase {
         let propertyValue = neuralOrchestra[ p ];
         if ( propertyValue != undefined )
           if ( propertyValue != neuralOrchestra.params_loading_retryWaiting )
-              throw Error( `NeuralOrchestra_tester.TestCase`
-              + `.test_create_init_load_process_send_asyncGenerator(): `
+            throw Error( `NeuralOrchestra_tester.TestCase`
+              + `.${funcNameInMessage}(): testId=${this.testId}, `
               + `neuralOrchestra.${p} ( ${neuralOrchestra[ p ]} ) `
               + `should be undefined.` );
       }
@@ -968,8 +968,7 @@ class TestCase {
 
       if ( 100 !== progressToAdvance.valuePercentage )
         throw Error( `NeuralOrchestra_tester.TestCase`
-          + `.test_create_init_load_process_send_asyncGenerator(): `
-          + `testId=${this.testId}, `
+          + `.${funcNameInMessage}(): testId=${this.testId}, `
           + `progressToAdvance.valuePercentage `
             +  `( ${progressToAdvance.valuePercentage} ) should 100.` );
 
