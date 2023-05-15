@@ -557,9 +557,6 @@ class PerformanceTestCase extends Recyclable.Root {
 
       RandTools.fill_numberArray(
         PerformanceTestCase.randomTestWeightArray,
-!!!
-//        1, 1, weightArrayLength, // height, width, channelCount,
-
         pseudo_height, pseudo_width, pseudo_channelCount,
         weightsValueBegin, weightsValueStep,
         weightsRandomOffset.min,
