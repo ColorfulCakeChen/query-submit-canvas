@@ -12,7 +12,7 @@ import * as Weights from "../Unpacker/Weights.js";
 import * as NeuralNet from "../Conv/NeuralNet.js";
 import * as NeuralWorker from "../NeuralDEvolution/NeuralWorker.js";
 import * as TestParams from "../jsPerf/Ref/TestParams.js";
-import * as ImageSourceBag from "../jsPerf/Ref/ImageSourceBag.js";
+//import * as ImageSourceBag from "../jsPerf/Ref/ImageSourceBag.js";
 import * as NumberImage from "../jsPerf/Ref/NumberImage.js";
 import * as HTMLTable from "../Display/HTMLTable.js";
 
@@ -656,6 +656,103 @@ class HeightWidthDepth {
     this.testCanvas = null;
   }
 
+  /** */
+  inputData_prepare() {
+
+    let inputHeight, inputWidth, inputChannelCount;
+    if ( this.has_implicit_input ) {
+      inputHeight = this.feedbackShape.input_height;
+      inputWidth = this.feedbackShape.input_width;
+      inputChannelCount = this.feedbackShape.input_channelCount; // Must be 4;
+    } else {
+      inputHeight = this.explicit_input_height;
+      inputWidth = this.explicit_input_width;
+      inputChannelCount = this.explicit_input_channelCount; // Must be 4;
+    }
+
+    // vocabularyCountPerInputChannel,
+
+    if ( this.vocabularyCountPerInputChannel < ( 2 ** 8 ) ) { // 256
+      if ( inputChannelCount == 4 ) {
+        , use ImageData.
+
+      } else {
+
+        - Otherwise, use Uint8ClampedArray.
+      }
+
+    } if ( this.vocabularyCountPerInputChannel < ( 2 ** 16 ) ) { // 65536
+      , use Uint16Array.
+
+    } else { // ( vocabularyCountPerInputChannel < ( 2 ** 32 ) )
+      , use Uint32Array.
+
+    }
+
+
+!!! ...unfinished... (2023/05/15)
+
+    /*
+     If ( vocabularyCountPerChannel < ( 2 ** 8 ) ) // 256
+       - If ( input_channelCount == 4 ), use ImageData.
+       - Otherwise, use Uint8ClampedArray.
+    
+     If ( vocabularyCountPerChannel < ( 2 ** 16 ) ), use Uint16Array.
+    
+     If ( vocabularyCountPerChannel < ( 2 ** 32 ) ), use Uint32Array.
+    
+    
+     sourceDataDesc = {
+       valueBegin: 1,
+       valueStep: 10, //1,
+       randomOffset: { min: -1, max: +1 },
+       divisorForRemainder: this.vocabularyCountPerInputChannel, //256
+     };
+    
+    image = NumberImage.Base.create_bySequenceRandom(
+      originalHeight, originalWidth, channelCount,
+      ImageSourceBag_Base.weightsValueBegin,
+      ImageSourceBag_Base.weightsValueStep,
+      ImageSourceBag_Base.weightsRandomOffset.min,
+      ImageSourceBag_Base.weightsRandomOffset.max,
+      ImageSourceBag_Base.weightsDivisorForRemainder
+    );
+    
+        RandTools.fill_numberArray( imageNew.dataArray,
+          height, width, channelCount,
+          valueBegin, valueStep,
+          randomOffsetMin, randomOffsetMax, divisorForRemainder );
+    
+    */
+    
+        {
+    //!!! (2023/05/11 Remarked)
+    //      let inputHeight = this.height * this.largerFactor;
+    //      let inputWidth = this.width * this.largerFactor;
+    
+          this.testCanvas = document.createElement( "canvas" );
+          this.testCanvas.height = inputHeight;
+          this.testCanvas.width = inputWidth;
+    
+          let inputImage = this.testPerformance_imageSourceBag.getImage_by(
+            inputHeight, inputWidth, inputChannelCount );
+    
+          let contextAttributes = { willReadFrequently: true };
+          let ctx = this.testCanvas.getContext( "2d", contextAttributes );
+          let imageData = ctx.createImageData( inputHeight, inputWidth );
+    
+    !!! ...unfinished... (2023/05/15)
+    // should restrict .data value between [ 0, vocabularyCountPerChannel - 1 ]
+    
+          for ( let i = 0; i < imageData.data.length; ++i ) {
+            imageData.data[ i ] = inputImage.dataArray[ i ];
+          }
+    
+          ctx.putImageData( imageData, 0 , 0 );
+        }
+    
+  }
+
   /**
    * 
    */
@@ -677,9 +774,10 @@ class HeightWidthDepth {
 
     this.neuralWorkerProxies = NeuralWorker.Proxies.Pool.get_or_create_by();
 
-    // Larger input image for performance testing.
-    this.testPerformance_imageSourceBag
-      = ImageSourceBag.Base.Pool.get_or_create_by( "int32" );
+//!!! (2023/05/15 Remarked)
+//     // Larger input image for performance testing.
+//     this.testPerformance_imageSourceBag
+//       = ImageSourceBag.Base.Pool.get_or_create_by( "int32" );
 
 !!! ...unfinished... (2023/05/15)
 /*
@@ -752,7 +850,8 @@ image = NumberImage.Base.create_bySequenceRandom(
       ctx.putImageData( imageData, 0 , 0 );
     }
 
-    this.testPerformance_imageSourceBag.clear(); // Reduce memory.
+//!!! (2023/05/15 Remarked)
+//    this.testPerformance_imageSourceBag.clear(); // Reduce memory.
 
 
     if ( this.testCaseMap )
@@ -833,10 +932,11 @@ image = NumberImage.Base.create_bySequenceRandom(
       this.testCaseMap.clear();
     }
 
-    if ( this.testPerformance_imageSourceBag ) {
-      this.testPerformance_imageSourceBag.disposeResources_and_recycleToPool();
-      this.testPerformance_imageSourceBag = null;
-    }
+//!!! (2023/05/15 Remarked)
+//     if ( this.testPerformance_imageSourceBag ) {
+//       this.testPerformance_imageSourceBag.disposeResources_and_recycleToPool();
+//       this.testPerformance_imageSourceBag = null;
+//     }
 
     this.neuralWorkerProxies?.disposeResources_and_recycleToPool();
     this.neuralWorkerProxies = null;
