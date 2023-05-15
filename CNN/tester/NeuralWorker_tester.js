@@ -671,15 +671,10 @@ class HeightWidthDepth {
       input_channelCount = this.explicit_input_channelCount;
     }
 
-    // vocabularyCountPerInputChannel,
-    const input_valueBegin = 1;
-    const input_valueStep = 10; //1;
-    const input_randomOffset = { min: -1, max: +1 };
-    const input_divisorForRemainder = this.vocabularyCountPerInputChannel;
-
     let input_pixelCount = input_height * input_width * input_channelCount;
     let input_valueCount = input_pixelCount * input_channelCount;
 
+    // Create input data array.
     if ( this.vocabularyCountPerInputChannel < ( 2 ** 8 ) ) { // 256
       this.input_TypedArray = new Uint8ClampedArray( input_valueCount );
     } if ( this.vocabularyCountPerInputChannel < ( 2 ** 16 ) ) { // 65536
@@ -688,16 +683,24 @@ class HeightWidthDepth {
       this.input_TypedArray = new Uint32Array( input_valueCount );
     }
 
+    // Fill input data.
+    {
+      const input_valueBegin = 1;
+      const input_valueStep = 10; //1;
+      const input_randomOffset = { min: -10, max: +10 };
 
-    RandTools.fill_numberArray(
-      ??? imageNew.dataArray,
-      input_height, input_width, input_channelCount,
-      input_valueBegin, input_valueStep,
-      input_randomOffset.min, input_randomOffset.max,
-      input_divisorForRemainder );
+      // Restrict data value between [ 0, ( vocabularyCountPerChannel - 1 ) ].
+      const input_divisorForRemainder = this.vocabularyCountPerInputChannel;
 
+      RandTools.fill_numberArray(
+        this.input_TypedArray,
+        input_height, input_width, input_channelCount,
+        input_valueBegin, input_valueStep,
+        input_randomOffset.min, input_randomOffset.max,
+        input_divisorForRemainder );
+    }
 
-//!!!
+    // If ( vocabulary count is 256 ) and ( channel count is 4 ), use canvas.
     if (   ( this.vocabularyCountPerInputChannel < ( 2 ** 8 ) ) // 256
         && ( inputChannelCount == 4 ) ) { // Use ImageData.
     
