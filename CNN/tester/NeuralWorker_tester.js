@@ -1322,8 +1322,7 @@ function TestButton_onClick( event ) {
 //!!! (2023/05/11 Remarked)
 //    largerFactor,
 
-//!!!
-    undefined, //nNeuralWorker_ImplicitInputModeId,
+    nNeuralWorker_ImplicitInputModeId,
     numeric_controls_valueObject.explicit_input_height,
     numeric_controls_valueObject.explicit_input_width,
     numeric_controls_valueObject.explicit_input_channelCount,
