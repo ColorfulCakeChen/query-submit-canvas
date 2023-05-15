@@ -549,7 +549,9 @@ class PerformanceTestCase extends Recyclable.Root {
 
       // Use larger variation to generate negative result.
       const weightsRandomOffset = {
-        min: -weightArrayLength_half,
+//!!! (2023/05/15 Remarked)
+//        min: -weightArrayLength_half,
+        min: -weightArrayLength,
         max: +5 };
 
       const weightsDivisorForRemainder = 1024;
