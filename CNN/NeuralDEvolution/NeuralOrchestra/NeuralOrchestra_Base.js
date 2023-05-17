@@ -345,11 +345,12 @@ class NeuralOrchestra_Base extends
       const funcNameInMessage = "disposeResources";
 
       NeuralOrchestra_Base
-        .throw_if_init_asyncPromise_or_asyncGenerator_running.call( this,
-          funcNameInMessage );
+        .throw_if_init_asyncPromise_or_asyncGenerator_running
+        .call( this, funcNameInMessage );
 
-      NeuralOrchestra_Base.throw_if_versus_loading_or_workerProxies_busy.call(
-        this, funcNameInMessage );
+      NeuralOrchestra_Base
+        .throw_if_versus_loading_or_workerProxies_busy
+        .call( this, funcNameInMessage );
     }
 
     NeuralOrchestra_Base.versusResultSender_dispose.call( this );
@@ -361,6 +362,9 @@ class NeuralOrchestra_Base extends
     this.workerProxies_init_asyncPromise_running = undefined;
     NeuralOrchestra_Base.neuralNetParamsBase_dispose.call( this );
     NeuralOrchestra_Base.workerProxies_dispose.call( this );
+
+!!!
+    nNeuralWorker_ImplicitInputModeId
 
     this.bLogFetcherEventToConsole = undefined;
     this.downloader_apiKey = undefined;
@@ -731,6 +735,9 @@ class NeuralOrchestra_Base extends
         NeuralOrchestra_Base.neuralNetParamsBase_create.call( this,
           explicit_input_height, explicit_input_width,
           explicit_input_channelCount,
+
+!!! ...unfinished.... (2023/05/17) nNeuralWorker_ImplicitInputModeId
+
           has_implicit_input,
           vocabularyChannelCount, vocabularyCountPerInputChannel,
           blockCountTotalRequested,
@@ -765,8 +772,9 @@ class NeuralOrchestra_Base extends
 
         // 3.1
         //
-        // If versus_load_asyncGenerator.next() resolved, got an { done, value } object.
-        // If workerProxies_init_asyncPromise resolved, got a boolean value.
+        // - If versus_load_asyncGenerator.next() resolved, got an
+        //     { done, value } object.
+        // - If workerProxies_init_asyncPromise resolved, got a boolean value.
         let allPromise = Promise.race( allPromiseSet );
         let object_or_boolean = await allPromise;
 
@@ -787,7 +795,8 @@ class NeuralOrchestra_Base extends
 
             // 3.2.1
             // In theory, it should not execute to here because
-            // versus_load_asyncGenerator waits .workerProxies_init_asyncPromise internally.
+            // versus_load_asyncGenerator waits .workerProxies_init_asyncPromise
+            // internally.
             throw Error( `NeuralOrchestra.Base.${funcNameInMessage}(): `
               + `versus_load_asyncGenerator `
               + `should not be done before `
@@ -1071,13 +1080,13 @@ class NeuralOrchestra_Base extends
    * @param {NeuralNet.ParamsBase} this.neuralNetParamsBase
    *
    * @param {ArrayBuffer[]} weightArrayBufferArray
-   *   An array of every neural network's weights. Every element will be interpreted
-   * as Float32Array. Every element will be transferred to web worker (i.e. their
-   * .byteLength will become zero).
+   *   An array of every neural network's weights. Every element will be
+   * interpreted as Float32Array. Every element will be transferred to web
+   * worker (i.e. their .byteLength will become zero).
    *
    * @param {boolean} bLogDryRunTime
-   *   If true, the neural network dry-run time will be measured twice and logged to
-   * console.
+   *   If true, the neural network dry-run time will be measured twice and
+   * logged to console.
    *
    * @return {Promise}
    *   Return a promise:
@@ -1105,8 +1114,9 @@ class NeuralOrchestra_Base extends
       neuralNetParamsBaseArray = [ neuralNetParams0, neuralNetParams1 ];
     }
 
-    let neuralNet_create_promise = this.workerProxies.NeuralNetArray_create_async(
-      neuralNetParamsBaseArray, weightArrayBufferArray, bLogDryRunTime );
+    let neuralNet_create_promise
+      = this.workerProxies.NeuralNetArray_create_async(
+          neuralNetParamsBaseArray, weightArrayBufferArray, bLogDryRunTime );
 
     let neuralNet_createOk = await neuralNet_create_promise;
     return neuralNet_createOk;
