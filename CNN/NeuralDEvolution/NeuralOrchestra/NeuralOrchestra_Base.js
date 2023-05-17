@@ -458,21 +458,6 @@ class NeuralOrchestra_Base extends
         );
   }
 
-//!!! ...unfinished... (2023/05/12)
-//    explicit_input_height
-//    explicit_input_width
-//    explicit_input_channelCount
-//
-//    has_implicit_input
-//
-//    vocabularyChannelCount
-//    vocabularyCountPerInputChannel
-//
-//    blockCountTotalRequested
-//    output_channelCount
-//
-//    output_asInputValueRange
-
   /**
    * @param {NeuralOrchestra_Base} this
    * 
@@ -537,10 +522,6 @@ class NeuralOrchestra_Base extends
   }
 
 
-//!!! ...unfinished... (2023/04/30)
-// If FILL, output_channelCount = output_channelCount_per_alignment
-// If NO_FILL, output_channelCount = output_channelCount_per_alignment * 2
-
   /**
    * (This method's parameters are almost the same as .init_asyncGenerator()
    * except without the 1st parameter progressParent because the
@@ -560,14 +541,10 @@ class NeuralOrchestra_Base extends
     sender_clientId,
 
     explicit_input_height, explicit_input_width, explicit_input_channelCount,
-
-!!! ...unfinished.... (2023/05/17) nNeuralWorker_ImplicitInputModeId
-
-   
-    has_implicit_input,
+    nNeuralWorker_ImplicitInputModeId,
     vocabularyChannelCount, vocabularyCountPerInputChannel,
     blockCountTotalRequested,
-    output_channelCount, output_asInputValueRange,
+    output_channelCount,
 
     b_return_versus_load_asyncGenerator_instead_of_asyncPromise,
     init_asyncGenerator_delayPromise,
@@ -576,8 +553,9 @@ class NeuralOrchestra_Base extends
     { // Checking pre-condition.
       const funcNameInMessage = "init_asyncPromise_create";
 
-      NeuralOrchestra_Base.throw_if_versus_loading_or_workerProxies_busy.call(
-        this, funcNameInMessage );
+      NeuralOrchestra_Base
+        .throw_if_versus_loading_or_workerProxies_busy
+        .call( this, funcNameInMessage );
     }
 
     return super.init_asyncPromise_create.apply( this, arguments );
