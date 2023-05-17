@@ -50,6 +50,13 @@ class TestCase {
 
       sender_clientId: Date.now(),
 
+!!! ...unfinished... (2023/05/17)
+// explicit_input_height, explicit_input_width, explicit_input_channelCount,
+// nNeuralWorker_ImplicitInputModeId,
+// vocabularyChannelCount, vocabularyCountPerInputChannel,
+// blockCountTotalRequested,
+// output_channelCount,
+
       input_height: 72,
       input_width: 128,
 
@@ -634,18 +641,19 @@ class TestCase {
             this.init_parameters.downloader_apiKey,
             this.init_parameters.bLogFetcherEventToConsole,
             this.init_parameters.sender_clientId,
-            this.init_parameters.input_height, this.init_parameters.input_width,
 
-//!!! ...unfinished... (2023/05/17)
+!!! ...unfinished... (2023/05/17)
 // explicit_input_height, explicit_input_width, explicit_input_channelCount,
 // nNeuralWorker_ImplicitInputModeId,
 // vocabularyChannelCount, vocabularyCountPerInputChannel,
 // blockCountTotalRequested,
 // output_channelCount,
 
+            this.init_parameters.input_height, this.init_parameters.input_width,
             this.init_parameters.vocabularyChannelCount,
             this.init_parameters.blockCountTotalRequested,
             this.init_parameters.output_channelCount_per_alignment,
+
             b_return_versus_load_asyncGenerator_instead_of_asyncPromise,
             init_asyncGenerator_delayPromise, versus_load_asyncGenerator_delayPromise
           );
@@ -663,10 +671,19 @@ class TestCase {
           this.init_parameters.downloader_apiKey,
           this.init_parameters.bLogFetcherEventToConsole,
           this.init_parameters.sender_clientId,
+
+!!! ...unfinished... (2023/05/17)
+// explicit_input_height, explicit_input_width, explicit_input_channelCount,
+// nNeuralWorker_ImplicitInputModeId,
+// vocabularyChannelCount, vocabularyCountPerInputChannel,
+// blockCountTotalRequested,
+// output_channelCount,
+
           this.init_parameters.input_height, this.init_parameters.input_width,
           this.init_parameters.vocabularyChannelCount,
           this.init_parameters.blockCountTotalRequested,
           this.init_parameters.output_channelCount_per_alignment,
+
           b_return_versus_load_asyncGenerator_instead_of_asyncPromise,
           init_asyncGenerator_delayPromise, versus_load_asyncGenerator_delayPromise
         );
@@ -683,10 +700,19 @@ class TestCase {
           this.init_parameters.downloader_apiKey,
           this.init_parameters.bLogFetcherEventToConsole,
           this.init_parameters.sender_clientId,
+
+!!! ...unfinished... (2023/05/17)
+// explicit_input_height, explicit_input_width, explicit_input_channelCount,
+// nNeuralWorker_ImplicitInputModeId,
+// vocabularyChannelCount, vocabularyCountPerInputChannel,
+// blockCountTotalRequested,
+// output_channelCount,
+
           this.init_parameters.input_height, this.init_parameters.input_width,
           this.init_parameters.vocabularyChannelCount,
           this.init_parameters.blockCountTotalRequested,
           this.init_parameters.output_channelCount_per_alignment,
+
           b_return_versus_load_asyncGenerator_instead_of_asyncPromise,
           init_asyncGenerator_delayPromise, versus_load_asyncGenerator_delayPromise
         );
