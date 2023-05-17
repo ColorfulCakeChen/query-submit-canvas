@@ -4,6 +4,7 @@ import * as PartTime from "../util/PartTime.js";
 import * as RandTools from "../util/RandTools.js";
 import * as ValueMax from "../util/ValueMax.js";
 import * as DEvolution from "../NeuralDEvolution/DEvolution.js";
+import * as NeuralNet from "../Conv/NeuralNet.js";
 import * as NeuralOrchestra from "../NeuralDEvolution/NeuralOrchestra.js";
 
 //!!! (2023/04/08 Remarked) Not used now.
@@ -65,6 +66,19 @@ class TestCase {
       output_channelCount: 64, //128,
     };
 
+    {
+      const init_parameters = this.init_parameters;
+      let feedbackShape = init_parameters.feedbackShape
+        = new NeuralNet.FeedbackShape();
+
+      feedbackShape.init(
+        init_parameters.explicit_input_height,
+        init_parameters.explicit_input_width,
+        init_parameters.explicit_input_channelCount,
+        init_parameters.output_channelCount
+      );
+    }
+  
     this.loadCountBase = 2; // One is by init, another is by versus_load
 
     this.testId = undefined; // For debug.
@@ -86,18 +100,22 @@ class TestCase {
    * every time.
    */
   ImageData_create() {
+    const init_parameters = this.init_parameters;
+    const feedbackShape = init_parameters.feedbackShape
 
-    const input_height = this.init_parameters.input_height;
-    const input_width = this.init_parameters.input_width;
+    const input_height = feedbackShape.input_height;
+    const input_width = feedbackShape.input_width;
 
     // should be 4 for RGBA image.
-    const input_channelCount = this.init_parameters.input_channelCount;
+    const input_channelCount = feedbackShape.input_channelCount;
 
     const valueBegin = 0, valueStep = 1;
     const randomOffsetMin = -1, randomOffsetMax = 1;
     const divisorForRemainder = 256; //( 2 ** 26 );
 
-    let elementCount = input_height * input_width * input_channelCount;
+//!!! (2023/05/17 Remarked)
+//    let elementCount = input_height * input_width * input_channelCount;
+    let elementCount = feedbackShape.input_valueCount;
 
     let sourceNumberArray = new Uint8ClampedArray( elementCount );
     RandTools.fill_numberArray( sourceNumberArray,
@@ -629,6 +647,7 @@ class TestCase {
     let init_asyncPromise;
     let b_return_versus_load_asyncGenerator_instead_of_asyncPromise;
 
+    const init_parameters = this.init_parameters;
     switch ( n_init_asyncType ) {
       case asyncType_0_asyncGenerator: // 0
         {
@@ -637,19 +656,21 @@ class TestCase {
 
           init_asyncGenerator = neuralOrchestra.init_asyncGenerator_create(
             progressInit,
-            this.init_parameters.downloader_spreadsheetId,
-            this.init_parameters.downloader_apiKey,
-            this.init_parameters.bLogFetcherEventToConsole,
-            this.init_parameters.sender_clientId,
+            init_parameters.downloader_spreadsheetId,
+            init_parameters.downloader_apiKey,
+            init_parameters.bLogFetcherEventToConsole,
+            init_parameters.sender_clientId,
 
 !!! ...unfinished... (2023/05/17)
-// explicit_input_height, explicit_input_width, explicit_input_channelCount,
+// , , ,
 // nNeuralWorker_ImplicitInputModeId,
 // vocabularyChannelCount, vocabularyCountPerInputChannel,
 // blockCountTotalRequested,
 // output_channelCount,
 
-            this.init_parameters.input_height, this.init_parameters.input_width,
+            init_parameters.explicit_input_height,
+            init_parameters.explicit_input_width,
+            init_parameters.explicit_input_channelCount,
             this.init_parameters.vocabularyChannelCount,
             this.init_parameters.blockCountTotalRequested,
             this.init_parameters.output_channelCount_per_alignment,
