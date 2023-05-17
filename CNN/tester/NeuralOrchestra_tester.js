@@ -233,19 +233,20 @@ class TestCase {
         + `Float32ArrayArray.length=${Float32ArrayArray.length} `
         + `should be 2.` );
 
-    if ( Float32ArrayArray[ 0 ].length != this.init_parameters.output_channelCount )
+    const output_channelCount = this.init_parameters.output_channelCount;
+    if ( Float32ArrayArray[ 0 ].length != output_channelCount )
       throw Error( `NeuralOrchestra_tester.TestCase`
         + `.${funcNameInMessage}(): testId=${this.testId}, `
         + `Float32ArrayArray[ 0 ].length=${Float32ArrayArray[ 0 ].length} `
         + `should be the same as `
-        + `.output_channelCount ( ${this.init_parameters.output_channelCount}.` );
+        + `.output_channelCount ( ${output_channelCount}.` );
 
-    if ( Float32ArrayArray[ 1 ].length != this.init_parameters.output_channelCount )
+    if ( Float32ArrayArray[ 1 ].length != output_channelCount )
       throw Error( `NeuralOrchestra_tester.TestCase`
         + `.${funcNameInMessage}(): testId=${this.testId}, `
         + `Float32ArrayArray[ 1 ].length=${Float32ArrayArray[ 1 ].length} `
         + `should be the same as `
-        + `.output_channelCount ( ${this.init_parameters.output_channelCount}.` );
+        + `.output_channelCount ( ${output_channelCount}.` );
 
     progressToAdvance.value_advance();
     yield progressRoot;
