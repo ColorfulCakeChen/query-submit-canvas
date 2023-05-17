@@ -660,21 +660,14 @@ class TestCase {
             init_parameters.downloader_apiKey,
             init_parameters.bLogFetcherEventToConsole,
             init_parameters.sender_clientId,
-
-!!! ...unfinished... (2023/05/17)
-// , , ,
-// nNeuralWorker_ImplicitInputModeId,
-// vocabularyChannelCount, vocabularyCountPerInputChannel,
-// blockCountTotalRequested,
-// output_channelCount,
-
             init_parameters.explicit_input_height,
             init_parameters.explicit_input_width,
             init_parameters.explicit_input_channelCount,
-            this.init_parameters.vocabularyChannelCount,
-            this.init_parameters.blockCountTotalRequested,
-            this.init_parameters.output_channelCount_per_alignment,
-
+            init_parameters.nNeuralWorker_ImplicitInputModeId,
+            init_parameters.vocabularyChannelCount,
+            init_parameters.vocabularyCountPerInputChannel,
+            init_parameters.blockCountTotalRequested,
+            init_parameters.output_channelCount,
             b_return_versus_load_asyncGenerator_instead_of_asyncPromise,
             init_asyncGenerator_delayPromise, versus_load_asyncGenerator_delayPromise
           );
@@ -686,28 +679,23 @@ class TestCase {
         b_return_versus_load_asyncGenerator_instead_of_asyncPromise
           = true; // return versus_load_asyncGenerator
 
-        init_asyncGenerator
-           = neuralOrchestra.init_asyncGenerator_create_with_asyncPromise_progress(
-          this.init_parameters.downloader_spreadsheetId,
-          this.init_parameters.downloader_apiKey,
-          this.init_parameters.bLogFetcherEventToConsole,
-          this.init_parameters.sender_clientId,
-
-!!! ...unfinished... (2023/05/17)
-// explicit_input_height, explicit_input_width, explicit_input_channelCount,
-// nNeuralWorker_ImplicitInputModeId,
-// vocabularyChannelCount, vocabularyCountPerInputChannel,
-// blockCountTotalRequested,
-// output_channelCount,
-
-          this.init_parameters.input_height, this.init_parameters.input_width,
-          this.init_parameters.vocabularyChannelCount,
-          this.init_parameters.blockCountTotalRequested,
-          this.init_parameters.output_channelCount_per_alignment,
-
-          b_return_versus_load_asyncGenerator_instead_of_asyncPromise,
-          init_asyncGenerator_delayPromise, versus_load_asyncGenerator_delayPromise
-        );
+        init_asyncGenerator = neuralOrchestra
+          .init_asyncGenerator_create_with_asyncPromise_progress(
+            init_parameters.downloader_spreadsheetId,
+            init_parameters.downloader_apiKey,
+            init_parameters.bLogFetcherEventToConsole,
+            init_parameters.sender_clientId,
+            init_parameters.explicit_input_height,
+            init_parameters.explicit_input_width,
+            init_parameters.explicit_input_channelCount,
+            init_parameters.nNeuralWorker_ImplicitInputModeId,
+            init_parameters.vocabularyChannelCount,
+            init_parameters.vocabularyCountPerInputChannel,
+            init_parameters.blockCountTotalRequested,
+            init_parameters.output_channelCount,
+            b_return_versus_load_asyncGenerator_instead_of_asyncPromise,
+            init_asyncGenerator_delayPromise, versus_load_asyncGenerator_delayPromise
+          );
       }
       break;
 
