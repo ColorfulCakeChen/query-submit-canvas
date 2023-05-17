@@ -168,6 +168,10 @@ import * as DEvolution from "../DEvolution.js";
  *   The explicit (i.e. user visible) input image's channel count. It is always
  * equal to .input_channelCount.  For RGA input image, it should be 4.
  *
+ * @member {number} nNeuralWorker_ImplicitInputModeId
+ *   The numeric identifier of the neural network implicit input mode
+ * (NeuralWorker.ImplicitInputMode.Singleton.Ids.Xxx).
+ *
  * @member {boolean} has_implicit_input
  *   - If true, there will be extra space in the input image for filling
  *       alignment mark and/or previous time output.
@@ -483,6 +487,9 @@ class NeuralOrchestra_Base extends
     explicit_input_height = 72,
     explicit_input_width = 128,
     explicit_input_channelCount = 4,
+
+!!! ...unfinished.... (2023/05/17) nNeuralWorker_ImplicitInputModeId
+
     has_implicit_input = true, // with feedback.
     vocabularyChannelCount = 4,
     vocabularyCountPerInputChannel = 256,
@@ -551,6 +558,10 @@ class NeuralOrchestra_Base extends
     sender_clientId,
 
     explicit_input_height, explicit_input_width, explicit_input_channelCount,
+
+!!! ...unfinished.... (2023/05/17) nNeuralWorker_ImplicitInputModeId
+
+   
     has_implicit_input,
     vocabularyChannelCount, vocabularyCountPerInputChannel,
     blockCountTotalRequested,
@@ -682,6 +693,10 @@ class NeuralOrchestra_Base extends
     sender_clientId,
 
     explicit_input_height, explicit_input_width, explicit_input_channelCount,
+
+!!! ...unfinished.... (2023/05/17) nNeuralWorker_ImplicitInputModeId
+
+
     has_implicit_input,
     vocabularyChannelCount, vocabularyCountPerInputChannel,
     blockCountTotalRequested,
