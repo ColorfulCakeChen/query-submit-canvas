@@ -86,24 +86,27 @@ class TestCase {
    * every time.
    */
   ImageData_create() {
-    const input_channelCount = 4; // i.e. RGBA
+
+    const input_height = this.init_parameters.input_height;
+    const input_width = this.init_parameters.input_width;
+
+    // should be 4 for RGBA image.
+    const input_channelCount = this.init_parameters.input_channelCount;
+
     const valueBegin = 0, valueStep = 1;
     const randomOffsetMin = -1, randomOffsetMax = 1;
     const divisorForRemainder = 256; //( 2 ** 26 );
 
-    let elementCount
-      = this.init_parameters.input_width * this.init_parameters.input_height
-          * input_channelCount;
+    let elementCount = input_height * input_width * input_channelCount;
 
     let sourceNumberArray = new Uint8ClampedArray( elementCount );
     RandTools.fill_numberArray( sourceNumberArray,
-      this.init_parameters.input_height, this.init_parameters.input_width,
-      input_channelCount,
+      input_height, input_width, input_channelCount,
       valueBegin, valueStep,
       randomOffsetMin, randomOffsetMax, divisorForRemainder );
 
     let sourceImageData = new ImageData( sourceNumberArray,
-      this.init_parameters.input_width, this.init_parameters.input_height );
+      input_width, input_height );
 
     return sourceImageData;
   }
