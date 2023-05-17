@@ -673,14 +673,10 @@ class NeuralOrchestra_Base extends
     sender_clientId,
 
     explicit_input_height, explicit_input_width, explicit_input_channelCount,
-
-!!! ...unfinished.... (2023/05/17) nNeuralWorker_ImplicitInputModeId
-
-
-    has_implicit_input,
+    nNeuralWorker_ImplicitInputModeId,
     vocabularyChannelCount, vocabularyCountPerInputChannel,
     blockCountTotalRequested,
-    output_channelCount, output_asInputValueRange,
+    output_channelCount,
 
     b_return_versus_load_asyncGenerator_instead_of_asyncPromise,
     init_asyncGenerator_delayPromise,
@@ -711,13 +707,10 @@ class NeuralOrchestra_Base extends
         NeuralOrchestra_Base.neuralNetParamsBase_create.call( this,
           explicit_input_height, explicit_input_width,
           explicit_input_channelCount,
-
-!!! ...unfinished.... (2023/05/17) nNeuralWorker_ImplicitInputModeId
-
-          has_implicit_input,
+          nNeuralWorker_ImplicitInputModeId,
           vocabularyChannelCount, vocabularyCountPerInputChannel,
           blockCountTotalRequested,
-          output_channelCount, output_asInputValueRange,
+          output_channelCount
         );
 
         NeuralOrchestra_Base.workerProxies_create.call( this );
@@ -730,7 +723,8 @@ class NeuralOrchestra_Base extends
 
       // 2. Load (versus summary and) versus. Create neural networks.
       let versus_load_asyncGenerator = NeuralOrchestra_Base
-        .versus_load_asyncGenerator_create_without_checking_precondition.call( this,
+        .versus_load_asyncGenerator_create_without_checking_precondition
+        .call( this,
           progressParent, workerProxies_init_asyncPromise,
           versus_load_asyncGenerator_delayPromise );
 
