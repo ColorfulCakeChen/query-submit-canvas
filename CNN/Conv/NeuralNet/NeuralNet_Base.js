@@ -728,6 +728,9 @@ class NeuralNet_Base extends Recyclable.Root {
   create_ScaledSourceTensor_from_PixelData( sourcePixelData, bForceInt32 = true ) {
 
     //!!! ...unfinished... (2022/08/15) What about .fromPixelsAsync() ?
+
+    // Note: For image coming from canvas, the tf.browser.fromPixels() handle a
+    //       RGBA 4 channels faster than RGB 3 channels input.
     let sourceTensor = tf.browser.fromPixels(
       sourcePixelData, this.input_channelCount ); // dtype will be int32.
 

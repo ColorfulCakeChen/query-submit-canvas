@@ -166,7 +166,7 @@ import * as DEvolution from "../DEvolution.js";
  *
  * @member {number} explicit_input_channelCount
  *   The explicit (i.e. user visible) input image's channel count. It is always
- * equal to .input_channelCount.  For RGA input image, it should be 4.
+ * equal to .input_channelCount. For RGA input image, it should be 4.
  *
  * @member {number} nNeuralWorker_ImplicitInputModeId
  *   The numeric identifier of the neural network implicit input mode
@@ -363,9 +363,7 @@ class NeuralOrchestra_Base extends
     NeuralOrchestra_Base.neuralNetParamsBase_dispose.call( this );
     NeuralOrchestra_Base.workerProxies_dispose.call( this );
 
-!!!
-    nNeuralWorker_ImplicitInputModeId
-
+    this.nNeuralWorker_ImplicitInputModeId = undefined;
     this.bLogFetcherEventToConsole = undefined;
     this.downloader_apiKey = undefined;
     this.downloader_spreadsheetId = undefined;
@@ -478,31 +476,28 @@ class NeuralOrchestra_Base extends
   /**
    * @param {NeuralOrchestra_Base} this
    * 
-   * @param {number} explicit_input_channelCount
-   *   For image coming from canvas, the tf.browser.fromPixels() handle a
-   * RGBA 4 channels faster than RGB 3 channels input.
-   * 
-   * @param {number} vocabularyCountPerInputChannel
-   *   For image, every RGBA input channel always has 256 (= 2 ** 8) possible
-   * values.
-   * 
    */
   static neuralNetParamsBase_create(
     explicit_input_height = 72,
     explicit_input_width = 128,
     explicit_input_channelCount = 4,
 
-!!! ...unfinished.... (2023/05/17) nNeuralWorker_ImplicitInputModeId
+    nNeuralWorker_ImplicitInputModeId
+      = NeuralWorker_ImplicitInputMode.Singleton.Ids
+          .IMPLICIT_INPUT__FILL_ALIGNMENT_MARK__FILL_PREVIOUS_OUTPUT, // (5)
 
-    has_implicit_input = true, // with feedback.
     vocabularyChannelCount = 4,
     vocabularyCountPerInputChannel = 256,
     blockCountTotalRequested = 39,
-    output_channelCount = 64,
-    output_asInputValueRange = true, // for feedback.
+    output_channelCount = 64
   ) {
 
     NeuralOrchestra_Base.neuralNetParamsBase_dispose.call( this );
+
+    const theImplicitInputModeInfo = NeuralWorker_ImplicitInputMode.Singleton
+      .getInfo_byId( nNeuralWorker_ImplicitInputModeId );
+
+    const has_implicit_input = theImplicitInputModeInfo.has_implicit_input;
 
     // Use faster convolution neural network architecture.
     //
@@ -512,6 +507,9 @@ class NeuralOrchestra_Base extends
     //
     const nConvStageType
       = ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1; // (5)
+
+    const output_asInputValueRange
+      = theImplicitInputModeInfo.output_asInputValueRange;
 
     // The neuralNet should not keep-input-tensor because the input image is
     // created from canvas in real time.
