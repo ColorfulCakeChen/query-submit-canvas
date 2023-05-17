@@ -1612,14 +1612,20 @@ class NeuralOrchestra_Base extends
     { // Checking pre-condition.
 
       // Prevent from .versusResultSender not existed.
-      NeuralOrchestra_Base.throw_if_init_asyncPromise_or_asyncGenerator_running.call( this, funcNameInMessage );
-      NeuralOrchestra_Base.throw_if_not_initOk.call( this, funcNameInMessage );
+      NeuralOrchestra_Base
+        .throw_if_init_asyncPromise_or_asyncGenerator_running
+        .call( this, funcNameInMessage );
+      NeuralOrchestra_Base
+        .throw_if_not_initOk
+        .call( this, funcNameInMessage );
 
       // Prevent from .versus not existed.
       NeuralOrchestra_Base
-        .throw_if_versus_load_asyncPromise_or_asyncGenerator_running.call(
-          this, funcNameInMessage );
-      NeuralOrchestra_Base.throw_if_not_versus_loadOk.call( this, funcNameInMessage );
+        .throw_if_versus_load_asyncPromise_or_asyncGenerator_running
+        .call( this, funcNameInMessage );
+      NeuralOrchestra_Base
+        .throw_if_not_versus_loadOk
+        .call( this, funcNameInMessage );
     }
 
     // Check current time and the versus downloaded time.
