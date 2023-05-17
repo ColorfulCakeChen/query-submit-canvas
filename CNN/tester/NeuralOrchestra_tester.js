@@ -50,23 +50,19 @@ class TestCase {
 
       sender_clientId: Date.now(),
 
-!!! ...unfinished... (2023/05/17)
-// explicit_input_height, explicit_input_width, explicit_input_channelCount,
-// nNeuralWorker_ImplicitInputModeId,
-// vocabularyChannelCount, vocabularyCountPerInputChannel,
-// blockCountTotalRequested,
-// output_channelCount,
+      explicit_input_height: 72,
+      explicit_input_width: 128,
+      explicit_input_channelCount: 4, // RGBA Image.
 
-      input_height: 72,
-      input_width: 128,
+      nNeuralWorker_ImplicitInputModeId:
+        NeuralWorker_ImplicitInputMode.Singleton.Ids
+          .IMPLICIT_INPUT__FILL_ALIGNMENT_MARK__FILL_PREVIOUS_OUTPUT, // (5)
 
       vocabularyChannelCount: 4, //8, //6,
-      blockCountTotalRequested: 39, //84, //144,
-      output_channelCount_per_alignment: 64, //12,
+      vocabularyCountPerInputChannel: 256, // ( 2 ** 8 ) for RGBA channel.
 
-      get output_channelCount() {
-        return this.output_channelCount_per_alignment * 2;
-      }
+      blockCountTotalRequested: 39, //84, //144,
+      output_channelCount: 64, //128,
     };
 
     this.loadCountBase = 2; // One is by init, another is by versus_load
