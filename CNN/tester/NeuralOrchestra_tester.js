@@ -669,7 +669,8 @@ class TestCase {
             init_parameters.blockCountTotalRequested,
             init_parameters.output_channelCount,
             b_return_versus_load_asyncGenerator_instead_of_asyncPromise,
-            init_asyncGenerator_delayPromise, versus_load_asyncGenerator_delayPromise
+            init_asyncGenerator_delayPromise,
+            versus_load_asyncGenerator_delayPromise
           );
         }
         break;
@@ -694,7 +695,8 @@ class TestCase {
             init_parameters.blockCountTotalRequested,
             init_parameters.output_channelCount,
             b_return_versus_load_asyncGenerator_instead_of_asyncPromise,
-            init_asyncGenerator_delayPromise, versus_load_asyncGenerator_delayPromise
+            init_asyncGenerator_delayPromise,
+            versus_load_asyncGenerator_delayPromise
           );
       }
       break;
@@ -718,7 +720,8 @@ class TestCase {
           init_parameters.blockCountTotalRequested,
           init_parameters.output_channelCount,
           b_return_versus_load_asyncGenerator_instead_of_asyncPromise,
-          init_asyncGenerator_delayPromise, versus_load_asyncGenerator_delayPromise
+          init_asyncGenerator_delayPromise,
+          versus_load_asyncGenerator_delayPromise
         );
       }
       break;
@@ -846,14 +849,15 @@ class TestCase {
         + `should be true.` );
 
     // Check properties of init_asyncXxx().
-    for ( let initParameterName in this.init_parameters ) {
+    const init_parameters = this.init_parameters;
+    for ( let initParameterName in init_parameters ) {
       if ( neuralOrchestra[ initParameterName ]
-             != this.init_parameters[ initParameterName ] )
+             != init_parameters[ initParameterName ] )
         throw Error( `NeuralOrchestra_tester.TestCase`
           + `.${funcNameInMessage}(): testId=${this.testId}, `
           + `neuralOrchestra.${initParameterName} `
           + `( ${neuralOrchestra[ initParameterName ]} ) `
-          + `should be ( ${this.init_parameters[ initParameterName ]} ).` );
+          + `should be ( ${init_parameters[ initParameterName ]} ).` );
     }
 
     progressToAdvance.value_advance();
