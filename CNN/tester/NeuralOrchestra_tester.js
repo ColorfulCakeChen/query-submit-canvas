@@ -635,6 +635,14 @@ class TestCase {
             this.init_parameters.bLogFetcherEventToConsole,
             this.init_parameters.sender_clientId,
             this.init_parameters.input_height, this.init_parameters.input_width,
+
+//!!! ...unfinished... (2023/05/17)
+// explicit_input_height, explicit_input_width, explicit_input_channelCount,
+// nNeuralWorker_ImplicitInputModeId,
+// vocabularyChannelCount, vocabularyCountPerInputChannel,
+// blockCountTotalRequested,
+// output_channelCount,
+
             this.init_parameters.vocabularyChannelCount,
             this.init_parameters.blockCountTotalRequested,
             this.init_parameters.output_channelCount_per_alignment,
