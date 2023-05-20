@@ -995,6 +995,7 @@ class TestCase {
       }
 
     } catch ( e ) { // Unknown error, said loudly.
+      debugger;
       throw Error( `NeuralOrchestra: testId=${this.testId}. ${e}`, { cause: e } );
     }
 
