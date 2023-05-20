@@ -468,6 +468,7 @@ class NeuralWorker_Proxies extends Recyclable.Root {
 
         let neuralNetParamsBase = neuralNetParamsBaseArray[ neuralNetIndex ];
 
+!!! ...unfinished... (2023/05/20)
         neuralNetParamsBase.has_implicit_input
           = this.ImplicitInputModeInfo.has_implicit_input;
 

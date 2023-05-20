@@ -735,6 +735,7 @@ class NeuralOrchestra_Base extends
       this.downloader_spreadsheetId = downloader_spreadsheetId;
       this.downloader_apiKey = downloader_apiKey;
       this.bLogFetcherEventToConsole = bLogFetcherEventToConsole;
+      this.nNeuralWorker_ImplicitInputModeId = nNeuralWorker_ImplicitInputModeId;
 
       // 0.2
       // Note: Here should not call .versus_load_asyncPromise_progress_dispose().
@@ -976,7 +977,8 @@ class NeuralOrchestra_Base extends
           .nConvStageTypeId_adjust_for_backend_webgl_if_ShuffleNetV2();
 
         initOkPromise = this.workerProxies.init_async( "webgl",
-          NeuralWorker.Mode.Singleton.Ids.ONE_WORKER__TWO_NET // (0) 
+          NeuralWorker.Mode.Singleton.Ids.ONE_WORKER__TWO_NET, // (0) 
+          this.nNeuralWorker_ImplicitInputModeId
         );
 
         initOk = await initOkPromise;
@@ -988,10 +990,6 @@ class NeuralOrchestra_Base extends
 
           this.workerProxies_initOk = compileOk;
           return this.workerProxies_initOk;
-
-//!!! ...unfinished... (2023/05/12)
-// alignmentMarkValueArrayArray
-
         }
       }
 
@@ -1005,16 +1003,13 @@ class NeuralOrchestra_Base extends
           .nConvStageTypeId_adjust_for_backend_cpu_if_ShuffleNetV2();
 
         initOkPromise = this.workerProxies.init_async( "cpu",
-          NeuralWorker.Mode.Singleton.Ids.TWO_WORKER__TWO_NET__APPLIER // (2) 
+          NeuralWorker.Mode.Singleton.Ids.TWO_WORKER__TWO_NET__APPLIER, // (2) 
+          this.nNeuralWorker_ImplicitInputModeId
         );
 
         initOk = await initOkPromise;
         this.workerProxies_initOk = initOk;
         return this.workerProxies_initOk;
-
-//!!! ...unfinished... (2023/05/12)
-// alignmentMarkValueArrayArray
-
       }
 
     } catch ( e ) {
