@@ -78,7 +78,22 @@ class TestCase {
         init_parameters.output_channelCount
       );
     }
-  
+
+    {
+      const output_channelCount = this.init_parameters.output_channelCount;
+
+      const alignmentMarkValueArray0
+        = [ ... ( new Array( output_channelCount ) ).keys() ]
+            .map( x => x + 1 );
+
+      const alignmentMarkValueArray1
+        = [ ... ( new Array( output_channelCount ) ).keys() ]
+            .map( x => x + output_channelCount + 1 );
+
+      this.init_parameters.alignmentMarkValueArrayArray
+        = [ alignmentMarkValueArray0, alignmentMarkValueArray1 ];
+    }
+
     this.loadCountBase = 2; // One is by init, another is by versus_load
 
     this.testId = undefined; // For debug.
@@ -171,21 +186,8 @@ class TestCase {
 
     ++this.testId;
 
-    const output_channelCount = this.init_parameters.output_channelCount;
-
-    let alignmentMarkValueArrayArray;
-    {
-      let alignmentMarkValueArray0
-        = [ ... ( new Array( output_channelCount ) ).keys() ]
-            .map( x => x + 1 );
-
-      let alignmentMarkValueArray1
-        = [ ... ( new Array( output_channelCount ) ).keys() ]
-            .map( x => x + output_channelCount + 1 );
-
-      alignmentMarkValueArrayArray
-        = [ alignmentMarkValueArray0, alignmentMarkValueArray1 ];
-    }
+    const alignmentMarkValueArrayArray
+      = this.init_parameters.alignmentMarkValueArrayArray;
 
     // 1. Set alignment mark value array array.
     let delayPromise = PartTime.Promise_resolvable_rejectable_create();
@@ -195,7 +197,7 @@ class TestCase {
         alignmentMarkValueArrayArray, delayPromise );
 
 //!!! ...unfinished... (2023/05/20)
-    if ( neuralOrchestra.TypedArray_process_asyncPromise_running ) {
+    if ( neuralOrchestra.alignmentMarkValueArrayArray_set_asyncPromise_running ) {
       ++this.testId;
       progressToAdvance.value_advance();
       yield progressRoot;
