@@ -1152,28 +1152,8 @@ class NeuralOrchestra_Base extends
       const funcNameInMessage
         = "alignmentMarkValueArrayArray_set_asyncPromise_create";
 
-
-//!!! ...unfinished... (2023/05/20)
-// These pre-conditions should be combined because they are used by the followings:
-//      .alignmentMarkValueArrayArray_set_asyncPromise_create()
-//      .alignmentMarkValueArrayArray_swap_asyncPromise_create()
-//      .TypedArray_process_asyncPromise_create()
-//
-
       NeuralOrchestra_Base
-        .throw_if_init_asyncPromise_or_asyncGenerator_running
-        .call( this, funcNameInMessage );
-
-      NeuralOrchestra_Base
-        .throw_if_versus_loading_or_workerProxies_busy
-        .call( this, funcNameInMessage );
-
-      NeuralOrchestra_Base
-        .throw_if_not_initOk
-        .call( this, funcNameInMessage );
-
-      NeuralOrchestra_Base
-        .throw_if_not_versus_loadOk
+        .throw_if_not_initOk_or_not_versus_loadOk_or_workerProxies_busy(
         .call( this, funcNameInMessage );
     }
 
@@ -1225,11 +1205,6 @@ class NeuralOrchestra_Base extends
   }
 
 
-//!!! ...unfinished... (2023/05/20)
-//      .alignmentMarkValueArrayArray_set_asyncPromise_create()
-//      .alignmentMarkValueArrayArray_swap_asyncPromise_create()
-//
-
   /**
    * Swap .alignmentMarkValueArrayArray[ 0 ] and
    * .alignmentMarkValueArrayArray[ 1 ].
@@ -1245,21 +1220,8 @@ class NeuralOrchestra_Base extends
       const funcNameInMessage
         = "alignmentMarkValueArrayArray_swap_asyncPromise_create";
 
-//!!!
       NeuralOrchestra_Base
-        .throw_if_init_asyncPromise_or_asyncGenerator_running
-        .call( this, funcNameInMessage );
-
-      NeuralOrchestra_Base
-        .throw_if_versus_loading_or_workerProxies_busy
-        .call( this, funcNameInMessage );
-
-      NeuralOrchestra_Base
-        .throw_if_not_initOk
-        .call( this, funcNameInMessage );
-
-      NeuralOrchestra_Base
-        .throw_if_not_versus_loadOk
+        .throw_if_not_initOk_or_not_versus_loadOk_or_workerProxies_busy(
         .call( this, funcNameInMessage );
     }
 
@@ -1327,19 +1289,7 @@ class NeuralOrchestra_Base extends
       const funcNameInMessage = "TypedArray_process_asyncPromise_create";
 
       NeuralOrchestra_Base
-        .throw_if_init_asyncPromise_or_asyncGenerator_running
-        .call( this, funcNameInMessage );
-
-      NeuralOrchestra_Base
-        .throw_if_versus_loading_or_workerProxies_busy
-        .call( this, funcNameInMessage );
-
-      NeuralOrchestra_Base
-        .throw_if_not_initOk
-        .call( this, funcNameInMessage );
-
-      NeuralOrchestra_Base
-        .throw_if_not_versus_loadOk
+        .throw_if_not_initOk_or_not_versus_loadOk_or_workerProxies_busy(
         .call( this, funcNameInMessage );
     }
 
@@ -1936,6 +1886,30 @@ class NeuralOrchestra_Base extends
       .call( this, funcNameInMessage );
     NeuralOrchestra_Base
       .throw_if_versus_load_asyncPromise_or_asyncGenerator_running
+      .call( this, funcNameInMessage );
+  }
+
+  /**
+   * @param {NeuralOrchestra_Base} this
+   * @param {string} funcNameInMessage   The caller function name. (e.g. init_async)
+   */
+  static throw_if_not_initOk_or_not_versus_loadOk_or_workerProxies_busy(
+    funcNameInMessage ) {
+
+    NeuralOrchestra_Base
+      .throw_if_init_asyncPromise_or_asyncGenerator_running
+      .call( this, funcNameInMessage );
+
+    NeuralOrchestra_Base
+      .throw_if_versus_loading_or_workerProxies_busy
+      .call( this, funcNameInMessage );
+
+    NeuralOrchestra_Base
+      .throw_if_not_initOk
+      .call( this, funcNameInMessage );
+
+    NeuralOrchestra_Base
+      .throw_if_not_versus_loadOk
       .call( this, funcNameInMessage );
   }
 
