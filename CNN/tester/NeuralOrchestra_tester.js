@@ -170,6 +170,52 @@ class TestCase {
     }
   }
 
+  /**
+   * @param {NeuralOrchestra.Base} neuralOrchestra
+   *   The object which has methods to be called to throw exception.
+   */
+  neuralOrchestra_should_throw_exception_for_init( neuralOrchestra ) {
+    this.neuralOrchestra_should_throw_exception( neuralOrchestra,
+      "init_asyncGenerator_create" );
+
+    this.neuralOrchestra_should_throw_exception( neuralOrchestra,
+      "init_asyncGenerator_create_with_asyncPromise_progress" );
+
+    this.neuralOrchestra_should_throw_exception( neuralOrchestra,
+      "init_asyncPromise_create" );
+  }
+
+  /**
+   * @param {NeuralOrchestra.Base} neuralOrchestra
+   *   The object which has methods to be called to throw exception.
+   */
+  neuralOrchestra_should_throw_exception_for_load( neuralOrchestra ) {
+    this.neuralOrchestra_should_throw_exception( neuralOrchestra,
+      "versus_load_asyncPromise_create" );
+
+    this.neuralOrchestra_should_throw_exception( neuralOrchestra,
+      "versus_load_asyncGenerator_create_with_asyncPromise_progress" );
+
+    this.neuralOrchestra_should_throw_exception( neuralOrchestra,
+      "versus_load_asyncGenerator_create" );
+  }
+
+  /**
+   * @param {NeuralOrchestra.Base} neuralOrchestra
+   *   The object which has methods to be called to throw exception.
+   */
+  neuralOrchestra_should_throw_exception_for_process( neuralOrchestra ) {
+    this.neuralOrchestra_should_throw_exception( neuralOrchestra,
+      "alignmentMarkValueArrayArray_set_asyncPromise_create" );
+
+    this.neuralOrchestra_should_throw_exception( neuralOrchestra,
+      "TypedArray_process_asyncPromise_create" );
+
+    this.neuralOrchestra_should_throw_exception( neuralOrchestra,
+      "alignmentMarkValueArrayArray_swap_asyncPromise_create" );
+  }
+
+
 
 //!!! ...unfinished... (2023/05/20)
 //  alignmentMarkValueArrayArray_set_asyncPromise
@@ -426,7 +472,7 @@ class TestCase {
       this.neuralOrchestra_should_throw_exception( neuralOrchestra,
         "init_asyncPromise_create" );
 
-    
+
       this.neuralOrchestra_should_throw_exception( neuralOrchestra,
         "versus_load_asyncPromise_create" );
 
