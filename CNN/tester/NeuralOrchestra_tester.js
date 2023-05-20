@@ -224,7 +224,8 @@ class TestCase {
   /**
    *
    */
-  async* test_alignmentMarkValueArrayArray_set_asyncGenerator( neuralOrchestra ) {
+  async* test_alignmentMarkValueArrayArray_set_asyncGenerator(
+    neuralOrchestra ) {
 
     const funcNameInMessage
       = "test_alignmentMarkValueArrayArray_set_asyncGenerator";
@@ -276,16 +277,16 @@ class TestCase {
       throw Error( `NeuralOrchestra_tester.TestCase`
         + `.${funcNameInMessage}(): testId=${this.testId}, `
         + `neuralOrchestra.alignmentMarkValueArrayArray_setOk `
-          + `(${neuralOrchestra.alignmentMarkValueArrayArray_setOk}) `
+          + `( ${neuralOrchestra.alignmentMarkValueArrayArray_setOk} ) `
         + `should be true.` );
 
     if ( setOk != neuralOrchestra.alignmentMarkValueArrayArray_setOk )
       throw Error( `NeuralOrchestra_tester.TestCase`
         + `.${funcNameInMessage}(): testId=${this.testId}, `
-        + `setOk (${setOk}) `
+        + `setOk ( ${setOk} ) `
         + `should be the same as `
         + `neuralOrchestra.alignmentMarkValueArrayArray_setOk `
-          + `(${neuralOrchestra.alignmentMarkValueArrayArray_setOk}).` );
+          + `( ${neuralOrchestra.alignmentMarkValueArrayArray_setOk} ).` );
   }
 
 
@@ -354,7 +355,7 @@ class TestCase {
       throw Error( `NeuralOrchestra_tester.TestCase`
         + `.${funcNameInMessage}(): testId=${this.testId}, `
         + `neuralOrchestra.TypedArray_processOk `
-          + `(${neuralOrchestra.TypedArray_processOk}) `
+          + `( ${neuralOrchestra.TypedArray_processOk} ) `
         + `should be true.` );
 
     if ( 2 != Float32ArrayArray.length )
@@ -647,8 +648,8 @@ class TestCase {
       if ( 100 !== progressToBeChecked.valuePercentage )
         throw Error( `NeuralOrchestra_tester.TestCase`
           + `.${funcNameInMessage}(): testId=${this.testId}, `
-          + `progressToBeChecked.valuePercentage (`
-          + `${progressToBeChecked.valuePercentage}) `
+          + `progressToBeChecked.valuePercentage `
+          + `( ${progressToBeChecked.valuePercentage} ) `
           + `should be 100.` );
 
       // Clear it to prevent from be misused by the next testing.
@@ -662,13 +663,13 @@ class TestCase {
     if ( neuralOrchestra.versus_loadOk != true ) // undefined is also not acceptable.
       throw Error( `NeuralOrchestra_tester.TestCase`
         + `.${funcNameInMessage}(): testId=${this.testId}, `
-        + `neuralOrchestra.versus_loadOk (${neuralOrchestra.versus_loadOk}) `
+        + `neuralOrchestra.versus_loadOk ( ${neuralOrchestra.versus_loadOk} ) `
         + `should be true.` );
 
     if ( versus_loadOk != true ) // undefined is also not acceptable.
       throw Error( `NeuralOrchestra_tester.TestCase`
         + `.${funcNameInMessage}(): testId=${this.testId}, `
-        + `versus_loadOk (${versus_loadOk}) should be true.` );
+        + `versus_loadOk ( ${versus_loadOk} ) should be true.` );
 
     if ( versus_loadOk != neuralOrchestra.versus_loadOk )
       throw Error( `NeuralOrchestra_tester.TestCase`
@@ -979,8 +980,8 @@ class TestCase {
         if ( 100 !== progressInit.valuePercentage )
           throw Error( `NeuralOrchestra_tester.TestCase`
             + `.${funcNameInMessage}(): testId=${this.testId}, `
-            + `progressInit.valuePercentage (`
-            + `${progressInit.valuePercentage}) `
+            + `progressInit.valuePercentage ( `
+            + `${progressInit.valuePercentage} ) `
             + `should be 100.` );
 
       // After first time loading (by .init_Xxx()), clear to indicate init done
