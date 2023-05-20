@@ -196,26 +196,21 @@ class TestCase {
       .alignmentMarkValueArrayArray_set_asyncPromise_create(
         alignmentMarkValueArrayArray, delayPromise );
 
-//!!! ...unfinished... (2023/05/20)
-    if ( neuralOrchestra.alignmentMarkValueArrayArray_set_asyncPromise_running ) {
-      ++this.testId;
-      progressToAdvance.value_advance();
-      yield progressRoot;
-    } else {
+    if ( !neuralOrchestra.alignmentMarkValueArrayArray_set_asyncPromise_running )
       throw Error( `NeuralOrchestra_tester.TestCase`
         + `.${funcNameInMessage}(): testId=${this.testId}, `
-        + `neuralOrchestra.TypedArray_process_asyncPromise_running=`
-        + `${neuralOrchestra.TypedArray_process_asyncPromise_running} `
+        + `neuralOrchestra.alignmentMarkValueArrayArray_set_asyncPromise_running=`
+        + `${neuralOrchestra.alignmentMarkValueArrayArray_set_asyncPromise_running} `
         + `should be true.` );
-    }
 
-    if ( neuralOrchestra.TypedArray_processOk !== undefined )
+    if ( neuralOrchestra.alignmentMarkValueArrayArray_setOk !== undefined )
       throw Error( `NeuralOrchestra_tester.TestCase`
         + `.${funcNameInMessage}(): testId=${this.testId}, `
-        + `neuralOrchestra.TypedArray_process `
-          + `( ${neuralOrchestra.TypedArray_process} ) `
+        + `neuralOrchestra.alignmentMarkValueArrayArray_setOk `
+          + `( ${neuralOrchestra.alignmentMarkValueArrayArray_setOk} ) `
         + `should be undefined.` );
 
+//!!! ...unfinished... (2023/05/20)
     // Test: Calling these methods during processing should throw exception.
     {
       this.neuralOrchestra_should_throw_exception( neuralOrchestra,
@@ -400,8 +395,8 @@ class TestCase {
     if ( neuralOrchestra.TypedArray_processOk !== undefined )
       throw Error( `NeuralOrchestra_tester.TestCase`
         + `.${funcNameInMessage}(): testId=${this.testId}, `
-        + `neuralOrchestra.TypedArray_process `
-          + `( ${neuralOrchestra.TypedArray_process} ) `
+        + `neuralOrchestra.TypedArray_processOk `
+          + `( ${neuralOrchestra.TypedArray_processOk} ) `
         + `should be undefined.` );
 
     // Test: Calling these methods during processing should throw exception.
