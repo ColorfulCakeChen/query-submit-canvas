@@ -69,6 +69,11 @@ class TestCase {
 
     {
       const init_parameters = this.init_parameters;
+
+!!! ...unfinished... (2023/05/20)
+// .feedbackShape should not placed inside this.init_parameters
+// Otherwise, properties undefined checking will fail.
+
       let feedbackShape = init_parameters.feedbackShape
         = new NeuralNet.FeedbackShape();
 
@@ -90,6 +95,11 @@ class TestCase {
       const alignmentMarkValueArray1
         = [ ... ( new Array( output_channelCount ) ).keys() ]
             .map( x => x + output_channelCount + 1 );
+
+
+!!! ...unfinished... (2023/05/20)
+// .alignmentMarkValueArrayArray should not placed inside this.init_parameters
+// Otherwise, properties undefined checking will fail.
 
       this.init_parameters.alignmentMarkValueArrayArray
         = [ alignmentMarkValueArray0, alignmentMarkValueArray1 ];
