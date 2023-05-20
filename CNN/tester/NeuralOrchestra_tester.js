@@ -354,8 +354,6 @@ class TestCase {
   async* test_process_send_asyncGenerator( progressParent, neuralOrchestra ) {
     const funcNameInMessage = "test_process_send_asyncGenerator";
 
-    ++this.testId;
-
     let progressRoot = progressParent.root_get();
 
     let progressToAdvance = progressParent.child_add(
@@ -372,6 +370,7 @@ class TestCase {
       neuralOrchestra );
 
     for ( let processIndex = 0; processIndex < processCount; ++processIndex ) {
+      ++this.testId;
 
       // 1.2 Process image.
       let processPromise;
