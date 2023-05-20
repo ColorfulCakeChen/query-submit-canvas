@@ -513,7 +513,7 @@ class NeuralOrchestra_Base extends
     explicit_input_channelCount = 4,
 
     nNeuralWorker_ImplicitInputModeId
-      = NeuralWorker_ImplicitInputMode.Singleton.Ids
+      = NeuralWorker.ImplicitInputMode.Singleton.Ids
           .IMPLICIT_INPUT__FILL_ALIGNMENT_MARK__FILL_PREVIOUS_OUTPUT, // (5)
 
     vocabularyChannelCount = 4,
@@ -524,7 +524,7 @@ class NeuralOrchestra_Base extends
 
     NeuralOrchestra_Base.neuralNetParamsBase_dispose.call( this );
 
-    const theImplicitInputModeInfo = NeuralWorker_ImplicitInputMode.Singleton
+    const theImplicitInputModeInfo = NeuralWorker.ImplicitInputMode.Singleton
       .getInfo_byId( nNeuralWorker_ImplicitInputModeId );
 
     const has_implicit_input = theImplicitInputModeInfo.has_implicit_input;
