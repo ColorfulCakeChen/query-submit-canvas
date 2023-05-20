@@ -259,34 +259,9 @@ class TestCase {
 //!!! ...unfinished... (2023/05/20)
     // Test: Calling these methods during processing should throw exception.
     {
-      this.neuralOrchestra_should_throw_exception( neuralOrchestra,
-        "alignmentMarkValueArrayArray_set_asyncPromise_create" );
-
-      this.neuralOrchestra_should_throw_exception( neuralOrchestra,
-        "TypedArray_process_asyncPromise_create" );
-
-      this.neuralOrchestra_should_throw_exception( neuralOrchestra,
-        "alignmentMarkValueArrayArray_swap_asyncPromise_create" );
-
-
-      this.neuralOrchestra_should_throw_exception( neuralOrchestra,
-        "init_asyncGenerator_create" );
-
-      this.neuralOrchestra_should_throw_exception( neuralOrchestra,
-        "init_asyncGenerator_create_with_asyncPromise_progress" );
-
-      this.neuralOrchestra_should_throw_exception( neuralOrchestra,
-        "init_asyncPromise_create" );
-
-    
-      this.neuralOrchestra_should_throw_exception( neuralOrchestra,
-        "versus_load_asyncPromise_create" );
-
-      this.neuralOrchestra_should_throw_exception( neuralOrchestra,
-        "versus_load_asyncGenerator_create_with_asyncPromise_progress" );
-
-      this.neuralOrchestra_should_throw_exception( neuralOrchestra,
-        "versus_load_asyncGenerator_create" );
+      this.neuralOrchestra_should_throw_exception_for_process( neuralOrchestra );
+      this.neuralOrchestra_should_throw_exception_for_init( neuralOrchestra );
+      this.neuralOrchestra_should_throw_exception_for_load( neuralOrchestra );
     }
 
     // 2. Wait for image processed.
@@ -453,34 +428,9 @@ class TestCase {
 
     // Test: Calling these methods during processing should throw exception.
     {
-      this.neuralOrchestra_should_throw_exception( neuralOrchestra,
-        "alignmentMarkValueArrayArray_set_asyncPromise_create" );
-
-      this.neuralOrchestra_should_throw_exception( neuralOrchestra,
-        "TypedArray_process_asyncPromise_create" );
-
-      this.neuralOrchestra_should_throw_exception( neuralOrchestra,
-        "alignmentMarkValueArrayArray_swap_asyncPromise_create" );
-
-
-      this.neuralOrchestra_should_throw_exception( neuralOrchestra,
-        "init_asyncGenerator_create" );
-
-      this.neuralOrchestra_should_throw_exception( neuralOrchestra,
-        "init_asyncGenerator_create_with_asyncPromise_progress" );
-
-      this.neuralOrchestra_should_throw_exception( neuralOrchestra,
-        "init_asyncPromise_create" );
-
-
-      this.neuralOrchestra_should_throw_exception( neuralOrchestra,
-        "versus_load_asyncPromise_create" );
-
-      this.neuralOrchestra_should_throw_exception( neuralOrchestra,
-        "versus_load_asyncGenerator_create_with_asyncPromise_progress" );
-
-      this.neuralOrchestra_should_throw_exception( neuralOrchestra,
-        "versus_load_asyncGenerator_create" );
+      this.neuralOrchestra_should_throw_exception_for_process( neuralOrchestra );
+      this.neuralOrchestra_should_throw_exception_for_init( neuralOrchestra );
+      this.neuralOrchestra_should_throw_exception_for_load( neuralOrchestra );
     }
 
     // 2. Wait for image processed.
@@ -697,28 +647,11 @@ class TestCase {
 
     // Test: Calling these methods during versus loading should throw exception.
     {
-      this.neuralOrchestra_should_throw_exception( neuralOrchestra,
-        "versus_load_asyncGenerator_create_with_asyncPromise_progress" );
-
-      this.neuralOrchestra_should_throw_exception( neuralOrchestra,
-        "versus_load_asyncGenerator_create" );
-
-      this.neuralOrchestra_should_throw_exception( neuralOrchestra,
-        "versus_load_asyncPromise_create" );
-
+      this.neuralOrchestra_should_throw_exception_for_process( neuralOrchestra );
+      this.neuralOrchestra_should_throw_exception_for_load( neuralOrchestra );
 
       this.neuralOrchestra_should_throw_exception( neuralOrchestra,
         "versusResultSender_send" );
-
-
-      this.neuralOrchestra_should_throw_exception( neuralOrchestra,
-        "alignmentMarkValueArrayArray_set_asyncPromise_create" );
-
-      this.neuralOrchestra_should_throw_exception( neuralOrchestra,
-        "TypedArray_process_asyncPromise_create" );
-
-      this.neuralOrchestra_should_throw_exception( neuralOrchestra,
-        "alignmentMarkValueArrayArray_swap_asyncPromise_create" );
     }
 
     // 2. Wait for versus summary loaded, versus loaded, and neural networks
@@ -1003,28 +936,11 @@ class TestCase {
 
     // Test: Calling these methods during versus initializing should throw exception.
     {
-      this.neuralOrchestra_should_throw_exception( neuralOrchestra,
-        "init_asyncGenerator_create" );
-
-      this.neuralOrchestra_should_throw_exception( neuralOrchestra,
-        "init_asyncGenerator_create_with_asyncPromise_progress" );
-
-      this.neuralOrchestra_should_throw_exception( neuralOrchestra,
-        "init_asyncPromise_create" );
-
+      this.neuralOrchestra_should_throw_exception_for_process( neuralOrchestra );
+      this.neuralOrchestra_should_throw_exception_for_init( neuralOrchestra );
 
       this.neuralOrchestra_should_throw_exception( neuralOrchestra,
         "versusResultSender_send" );
-
-
-      this.neuralOrchestra_should_throw_exception( neuralOrchestra,
-        "alignmentMarkValueArrayArray_set_asyncPromise_create" );
-
-      this.neuralOrchestra_should_throw_exception( neuralOrchestra,
-        "TypedArray_process_asyncPromise_create" );
-
-      this.neuralOrchestra_should_throw_exception( neuralOrchestra,
-        "alignmentMarkValueArrayArray_swap_asyncPromise_create" );
     }
 
     ++this.testId;
@@ -1231,25 +1147,8 @@ class TestCase {
         this.neuralOrchestra_should_throw_exception( neuralOrchestra,
           "versusResultSender_send" );
 
-
-        this.neuralOrchestra_should_throw_exception( neuralOrchestra,
-          "alignmentMarkValueArrayArray_set_asyncPromise_create" );
-
-        this.neuralOrchestra_should_throw_exception( neuralOrchestra,
-          "TypedArray_process_asyncPromise_create" );
-
-        this.neuralOrchestra_should_throw_exception( neuralOrchestra,
-          "alignmentMarkValueArrayArray_swap_asyncPromise_create" );
-
-
-        this.neuralOrchestra_should_throw_exception( neuralOrchestra,
-          "versus_load_asyncPromise_create" );
-
-        this.neuralOrchestra_should_throw_exception( neuralOrchestra,
-          "versus_load_asyncGenerator_create_with_asyncPromise_progress" );
-
-        this.neuralOrchestra_should_throw_exception( neuralOrchestra,
-          "versus_load_asyncGenerator_create" );
+        this.neuralOrchestra_should_throw_exception_for_process( neuralOrchestra );
+        this.neuralOrchestra_should_throw_exception_for_load( neuralOrchestra );
       }
 
       // 2. Initialize, load, process, send.
