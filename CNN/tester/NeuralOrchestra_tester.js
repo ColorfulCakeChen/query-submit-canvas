@@ -376,9 +376,10 @@ class TestCase {
       //       copied) to web worker, it should be re-created every time.
       let sourceImageData = this.ImageData_create();
       let delayPromise = PartTime.Promise_resolvable_rejectable_create();
-      let processPromise = neuralOrchestra.TypedArray_process_asyncPromise_create(
-        sourceImageData.data, sourceImageData.height, sourceImageData.width,
-        delayPromise );
+      let processPromise = neuralOrchestra
+        .TypedArray_process_asyncPromise_create(
+          sourceImageData.data, sourceImageData.height, sourceImageData.width,
+          delayPromise );
 
       if ( neuralOrchestra.TypedArray_process_asyncPromise_running ) {
         ++this.testId;
