@@ -1153,7 +1153,7 @@ class NeuralOrchestra_Base extends
         = "alignmentMarkValueArrayArray_set_asyncPromise_create";
 
       NeuralOrchestra_Base
-        .throw_if_not_initOk_or_not_versus_loadOk_or_workerProxies_busy(
+        .throw_if_not_initOk_or_not_versus_loadOk_or_workerProxies_busy
         .call( this, funcNameInMessage );
     }
 
@@ -1221,7 +1221,7 @@ class NeuralOrchestra_Base extends
         = "alignmentMarkValueArrayArray_swap_asyncPromise_create";
 
       NeuralOrchestra_Base
-        .throw_if_not_initOk_or_not_versus_loadOk_or_workerProxies_busy(
+        .throw_if_not_initOk_or_not_versus_loadOk_or_workerProxies_busy
         .call( this, funcNameInMessage );
     }
 
@@ -1289,7 +1289,7 @@ class NeuralOrchestra_Base extends
       const funcNameInMessage = "TypedArray_process_asyncPromise_create";
 
       NeuralOrchestra_Base
-        .throw_if_not_initOk_or_not_versus_loadOk_or_workerProxies_busy(
+        .throw_if_not_initOk_or_not_versus_loadOk_or_workerProxies_busy
         .call( this, funcNameInMessage );
     }
 
