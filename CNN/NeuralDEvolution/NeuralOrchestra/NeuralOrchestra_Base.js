@@ -1138,11 +1138,6 @@ class NeuralOrchestra_Base extends
   }
 
 
-//!!! ...unfinished... (2023/05/20)
-//      .alignmentMarkValueArrayArray_set_asyncPromise_create()
-//      .alignmentMarkValueArrayArray_swap_asyncPromise_create()
-//
-
   /**
    *
    * @return {Promise( boolean )}
@@ -1154,7 +1149,16 @@ class NeuralOrchestra_Base extends
     alignmentMarkValueArrayArray, delayPromise ) {
 
     { // Checking pre-condition.
-      const funcNameInMessage = "alignmentMarkValueArrayArray_set_asyncPromise_create";
+      const funcNameInMessage
+        = "alignmentMarkValueArrayArray_set_asyncPromise_create";
+
+
+//!!! ...unfinished... (2023/05/20)
+// These pre-conditions should be combined because they are used by the followings:
+//      .alignmentMarkValueArrayArray_set_asyncPromise_create()
+//      .alignmentMarkValueArrayArray_swap_asyncPromise_create()
+//      .TypedArray_process_asyncPromise_create()
+//
 
       NeuralOrchestra_Base
         .throw_if_init_asyncPromise_or_asyncGenerator_running
@@ -1220,7 +1224,89 @@ class NeuralOrchestra_Base extends
     }
   }
 
+
+//!!! ...unfinished... (2023/05/20)
+//      .alignmentMarkValueArrayArray_set_asyncPromise_create()
+//      .alignmentMarkValueArrayArray_swap_asyncPromise_create()
+//
+
+  /**
+   * Swap .alignmentMarkValueArrayArray[ 0 ] and
+   * .alignmentMarkValueArrayArray[ 1 ].
+   *
+   * @return {Promise( boolean )}
+   *   Return a promise:
+   *   - Resolved to true, if succeeded.
+   *   - Resolved to false, if failed.
+   */
+  alignmentMarkValueArrayArray_swap_asyncPromise_create( delayPromise ) {
+
+    { // Checking pre-condition.
+      const funcNameInMessage
+        = "alignmentMarkValueArrayArray_swap_asyncPromise_create";
+
 //!!!
+      NeuralOrchestra_Base
+        .throw_if_init_asyncPromise_or_asyncGenerator_running
+        .call( this, funcNameInMessage );
+
+      NeuralOrchestra_Base
+        .throw_if_versus_loading_or_workerProxies_busy
+        .call( this, funcNameInMessage );
+
+      NeuralOrchestra_Base
+        .throw_if_not_initOk
+        .call( this, funcNameInMessage );
+
+      NeuralOrchestra_Base
+        .throw_if_not_versus_loadOk
+        .call( this, funcNameInMessage );
+    }
+
+    return super
+      .alignmentMarkValueArrayArray_swap_asyncPromise_create( delayPromise );
+  }
+
+  /**
+   * Swap .alignmentMarkValueArrayArray[ 0 ] and
+   * .alignmentMarkValueArrayArray[ 1 ].
+   *
+   *
+   * @param {Promise} delayPromise
+   *   Mainly used when unit testing. If not null, this async method will await
+   * it before complete. If null or undefined, no extra delay awaiting.
+   *
+   * @return {Promise( boolean )}
+   *   Return a promise:
+   *   - Resolved to true, if succeeded.
+   *   - Resolved to false, if failed.
+   */
+  static async alignmentMarkValueArrayArray_swap_asyncPromise( delayPromise ) {
+
+    try {
+      // 1.
+      let resultOkPromise
+        = this.workerProxies.alignmentMarkValueArrayArray_swap_async();
+
+      let resultOk = await resultOkPromise;
+
+      // 2.
+      if ( delayPromise )
+        await delayPromise;
+
+      this.alignmentMarkValueArrayArray_swapOk = resultOk;
+      return resultOk;
+
+    } catch ( e ) {
+      //debugger;
+      //console.error( e );
+      this.alignmentMarkValueArrayArray_swapOk = false;
+      throw e;
+
+    } finally {
+    }
+  }
+
 
   /**
    *
