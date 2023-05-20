@@ -361,6 +361,12 @@ class TestCase {
     let progressToAdvance = progressParent.child_add(
       ValueMax.Percentage.Concrete.Pool.get_or_create_by( 5 ) );
 
+
+//!!! ...unfinished... (2023/05/20)
+//     test_alignmentMarkValueArrayArray_set_asyncGenerator
+//     test_alignmentMarkValueArrayArray_swap_asyncGenerator
+
+
     // 1. Process image.
     let processPromise;
 
@@ -738,11 +744,6 @@ class TestCase {
     yield progressRoot;
 
     // 3. Test processing image and sending versus result.
-
-//!!! ...unfinished... (2023/05/20)
-//     test_alignmentMarkValueArrayArray_set_asyncGenerator
-//     test_alignmentMarkValueArrayArray_swap_asyncGenerator
-
     yield *this.test_process_send_asyncGenerator(
       progressProcessSend, neuralOrchestra );
 
