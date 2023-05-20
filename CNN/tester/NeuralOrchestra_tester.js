@@ -5,6 +5,7 @@ import * as RandTools from "../util/RandTools.js";
 import * as ValueMax from "../util/ValueMax.js";
 import * as DEvolution from "../NeuralDEvolution/DEvolution.js";
 import * as NeuralNet from "../Conv/NeuralNet.js";
+import * as NeuralWorker from "../NeuralDEvolution/NeuralWorker.js";
 import * as NeuralOrchestra from "../NeuralDEvolution/NeuralOrchestra.js";
 
 //!!! (2023/04/08 Remarked) Not used now.
