@@ -1011,7 +1011,6 @@ class TestCase {
         + `should be true.` );
 
     // Check properties of init_asyncXxx().
-    const init_parameters = this.init_parameters;
     for ( let initParameterName in init_parameters ) {
       if ( neuralOrchestra[ initParameterName ]
              != init_parameters[ initParameterName ] )
