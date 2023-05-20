@@ -892,7 +892,7 @@ class NeuralOrchestra_Base extends
       return returnValue;
 
     } catch ( e ) {
-      //debugger;
+      debugger;
       this.initOk = false;
       throw e;
 
