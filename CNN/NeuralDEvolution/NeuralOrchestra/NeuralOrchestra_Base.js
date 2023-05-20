@@ -72,7 +72,10 @@ import * as DEvolution from "../DEvolution.js";
  *
  * 1.3 Process image, and report versus result
  *
- *   - call and await .TypedArray_process_asyncPromise_create()
+ *   - call and await .alignmentMarkValueArrayArray_set_asyncPromise_create()
+ *   - call and await .TypedArray_process_asyncPromise_create() repeatedly.
+ *   - call and await .alignmentMarkValueArrayArray_swap_asyncPromise_create()
+ *   - call and await .TypedArray_process_asyncPromise_create() repeatedly.
  *   - call versusResultSender_send()
  *   - go to 1.1.2 or 1.2.2 (Load another versus)
  *
@@ -235,6 +238,19 @@ import * as DEvolution from "../DEvolution.js";
  * NeuralOrchestra object.
  *
  *
+ * @member {Uint8ClampedArray[]|Int32Array[]|number[][]} alignmentMarkValueArrayArray
+ *   (Please see NeuralWorker.Proxies explanation.)
+ *
+ * @member {boolean} alignmentMarkValueArrayArray_nonEmpty
+ *   (Please see NeuralWorker.Proxies explanation.)
+ *
+ * @member {Float32Array[] | Int32Array[]} previous_output_TypedArrayArray
+ *   (Please see NeuralWorker.Proxies explanation.)
+ *
+ * @member {boolean} previous_output_TypedArrayArray_nonEmpty
+ *   (Please see NeuralWorker.Proxies explanation.)
+ *
+ *
  * @member {DEvolution.VersusSummary} versusSummary
  *   The downloaded versus summary of the differential evolution.
  *
@@ -303,6 +319,10 @@ class NeuralOrchestra_Base extends
   NonReentrant.asyncPromise(
     "TypedArray_process", relay_TypedArray_process_asyncPromise,
 
+!!! ...unfinished... (2023/05/20)
+//      .alignmentMarkValueArrayArray_set_asyncPromise_create()
+//      .alignmentMarkValueArrayArray_swap_asyncPromise_create()
+       
   NonReentrant.asyncPromise_by_asyncGenerator(
     "versus_load", relay_versus_load_asyncGenerator,
     null, // Use default versus_load_asyncPromise_progress object.
@@ -434,6 +454,23 @@ class NeuralOrchestra_Base extends
 
   get nNeuralWorker_ModeId() {
     return this.workerProxies?.nNeuralWorker_ModeId;
+  }
+
+
+  get alignmentMarkValueArrayArray() {
+    return this.workerProxies?.alignmentMarkValueArrayArray;
+  }
+
+  get alignmentMarkValueArrayArray_nonEmpty() {
+    return this.workerProxies?.alignmentMarkValueArrayArray_nonEmpty;
+  }
+
+  get previous_output_TypedArrayArray() {
+    return this.workerProxies?.previous_output_TypedArrayArray;
+  }
+
+  get previous_output_TypedArrayArray_nonEmpty() {
+    return this.workerProxies?.previous_output_TypedArrayArray_nonEmpty;
   }
 
 
