@@ -314,15 +314,23 @@ import * as DEvolution from "../DEvolution.js";
  * @member {boolean} versus_loadOk
  *   If true, a .versus_load_asyncPromise() or .versus_load_asyncGenerator()
  * has been executed and succeeded.
+ *
+ *
+ * @see NeuralWorker.Proxies
+ *
  */
 class NeuralOrchestra_Base extends
   NonReentrant.asyncPromise(
     "TypedArray_process", relay_TypedArray_process_asyncPromise,
 
-!!! ...unfinished... (2023/05/20)
-//      .alignmentMarkValueArrayArray_set_asyncPromise_create()
-//      .alignmentMarkValueArrayArray_swap_asyncPromise_create()
-       
+  NonReentrant.asyncPromise(
+    "alignmentMarkValueArrayArray_set",
+    relay_alignmentMarkValueArrayArray_set_asyncPromise,
+
+  NonReentrant.asyncPromise(
+    "alignmentMarkValueArrayArray_swap",
+    relay_alignmentMarkValueArrayArray_swap_asyncPromise,
+
   NonReentrant.asyncPromise_by_asyncGenerator(
     "versus_load", relay_versus_load_asyncGenerator,
     null, // Use default versus_load_asyncPromise_progress object.
@@ -331,7 +339,7 @@ class NeuralOrchestra_Base extends
     "init", relay_init_asyncGenerator,
     "versus_load_asyncPromise_progress", // Use versus_load's progress object.
 
-    Recyclable.Root ) ) ) {
+    Recyclable.Root ) ) ) ) ) {
 
   /**
    * Used as default NeuralOrchestra.Base provider for conforming to
@@ -1133,6 +1141,13 @@ class NeuralOrchestra_Base extends
 //!!! ...unfinished... (2023/05/15)
 // alignmentMarkValueArrayArray_set_asyncPromise_create()
 
+!!! ...unfinished... (2023/05/20)
+//      .alignmentMarkValueArrayArray_set_asyncPromise_create()
+//      .alignmentMarkValueArrayArray_swap_asyncPromise_create()
+//
+//     relay_alignmentMarkValueArrayArray_set_asyncPromise,
+//     relay_alignmentMarkValueArrayArray_swap_asyncPromise,
+
 
   /**
    *
@@ -1764,7 +1779,6 @@ class NeuralOrchestra_Base extends
 
 
 /**
- *
  * @param {NeuralOrchestra_Base} this
  *
  * @return {AsyncGenerator}
@@ -1776,7 +1790,30 @@ function relay_init_asyncGenerator() {
 }
 
 /**
+ * @param {NeuralOrchestra_Base} this
  *
+ * @return {Promise}
+ *   Return the newly created instance of
+ * NeuralOrchestra_Base.alignmentMarkValueArrayArray_set_asyncPromise().
+ */
+function relay_alignmentMarkValueArrayArray_set_asyncPromise() {
+  return NeuralOrchestra_Base.alignmentMarkValueArrayArray_set_asyncPromise
+    .apply( this, arguments );
+}
+
+/**
+ * @param {NeuralOrchestra_Base} this
+ *
+ * @return {Promise}
+ *   Return the newly created instance of
+ * NeuralOrchestra_Base.alignmentMarkValueArrayArray_swap_asyncPromise().
+ */
+function relay_alignmentMarkValueArrayArray_swap_asyncPromise() {
+  return NeuralOrchestra_Base.alignmentMarkValueArrayArray_swap_asyncPromise
+    .apply( this, arguments );
+}
+
+/**
  * @param {NeuralOrchestra_Base} this
  *
  * @return {Promise}
@@ -1784,12 +1821,11 @@ function relay_init_asyncGenerator() {
  * NeuralOrchestra_Base.TypedArray_process_asyncPromise().
  */
 function relay_TypedArray_process_asyncPromise() {
-  return NeuralOrchestra_Base.TypedArray_process_asyncPromise.apply(
-    this, arguments );
+  return NeuralOrchestra_Base.TypedArray_process_asyncPromise
+    .apply( this, arguments );
 }
 
 /**
- *
  * @param {NeuralOrchestra_Base} this
  *
  * @return {AsyncGenerator}
@@ -1797,7 +1833,6 @@ function relay_TypedArray_process_asyncPromise() {
  * NeuralOrchestra_Base.versus_load_asyncGenerator().
  */
 function relay_versus_load_asyncGenerator() {
-  return NeuralOrchestra_Base.versus_load_asyncGenerator.apply(
-    this, arguments );
+  return NeuralOrchestra_Base.versus_load_asyncGenerator
+    .apply( this, arguments );
 }
-
