@@ -526,6 +526,10 @@ class NeuralWorker_Proxies extends Recyclable.Root {
 
   /**
    * 
+   * @param {Uint8ClampedArray[]|Int32Array[]|number[][]} alignmentMarkValueArrayArray
+   *   (Please see NeuralWorker.Proxies explanation.) This array will be kept
+   * by this NeuralWorker.Proxies object directly.
+   *
    * @return {Promise( boolean )}
    *   Return a promise:
    *   - Resolved to true, if succeeded.
