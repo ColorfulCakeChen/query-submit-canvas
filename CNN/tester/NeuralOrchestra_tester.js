@@ -359,49 +359,61 @@ class TestCase {
     let progressRoot = progressParent.root_get();
 
     let progressToAdvance = progressParent.child_add(
-      ValueMax.Percentage.Concrete.Pool.get_or_create_by( 5 ) );
+      ValueMax.Percentage.Concrete.Pool.get_or_create_by( 6 ) );
 
+    // 1.
 
-//!!! ...unfinished... (2023/05/20)
-//     test_alignmentMarkValueArrayArray_set_asyncGenerator
-//     test_alignmentMarkValueArrayArray_swap_asyncGenerator
+    // One is after alignmentMarkValueArrayArray setting,
+    // the other is after alignmentMarkValueArrayArray swapping.
+    const processCount = 2;
 
+    // 1.1 Set alignment marks.
+    yield *this.test_alignmentMarkValueArrayArray_set_asyncGenerator(
+      neuralOrchestra );
 
-    // 1. Process image.
-    let processPromise;
+    for ( let processIndex = 0; processIndex < processCount; ++processIndex ) {
 
-    // Note: Because ImageData.data.buffer will be transferred (i.e. not
-    //       copied) to web worker, it should be re-created every time.
-    let sourceImageData = this.ImageData_create();
-    let delayPromise = PartTime.Promise_resolvable_rejectable_create();
-    processPromise = neuralOrchestra.TypedArray_process_asyncPromise_create(
-      sourceImageData.data, sourceImageData.height, sourceImageData.width,
-      delayPromise );
+      // 1.2 Process image.
+      let processPromise;
 
-    if ( neuralOrchestra.TypedArray_process_asyncPromise_running ) {
-      ++this.testId;
-      progressToAdvance.value_advance();
-      yield progressRoot;
-    } else {
-      throw Error( `NeuralOrchestra_tester.TestCase`
-        + `.${funcNameInMessage}(): testId=${this.testId}, `
-        + `neuralOrchestra.TypedArray_process_asyncPromise_running=`
-        + `${neuralOrchestra.TypedArray_process_asyncPromise_running} `
-        + `should be true.` );
-    }
+      // Note: Because ImageData.data.buffer will be transferred (i.e. not
+      //       copied) to web worker, it should be re-created every time.
+      let sourceImageData = this.ImageData_create();
+      let delayPromise = PartTime.Promise_resolvable_rejectable_create();
+      processPromise = neuralOrchestra.TypedArray_process_asyncPromise_create(
+        sourceImageData.data, sourceImageData.height, sourceImageData.width,
+        delayPromise );
 
-    if ( neuralOrchestra.TypedArray_processOk !== undefined )
-      throw Error( `NeuralOrchestra_tester.TestCase`
-        + `.${funcNameInMessage}(): testId=${this.testId}, `
-        + `neuralOrchestra.TypedArray_processOk `
-          + `( ${neuralOrchestra.TypedArray_processOk} ) `
-        + `should be undefined.` );
+      if ( neuralOrchestra.TypedArray_process_asyncPromise_running ) {
+        ++this.testId;
+        progressToAdvance.value_advance();
+        yield progressRoot;
+      } else {
+        throw Error( `NeuralOrchestra_tester.TestCase`
+          + `.${funcNameInMessage}(): testId=${this.testId}, `
+          + `neuralOrchestra.TypedArray_process_asyncPromise_running=`
+          + `${neuralOrchestra.TypedArray_process_asyncPromise_running} `
+          + `should be true.` );
+      }
 
-    // Test: Calling these methods during processing should throw exception.
-    {
-      this.neuralOrchestra_should_throw_exception_for_process( neuralOrchestra );
-      this.neuralOrchestra_should_throw_exception_for_init( neuralOrchestra );
-      this.neuralOrchestra_should_throw_exception_for_load( neuralOrchestra );
+      if ( neuralOrchestra.TypedArray_processOk !== undefined )
+        throw Error( `NeuralOrchestra_tester.TestCase`
+          + `.${funcNameInMessage}(): testId=${this.testId}, `
+          + `neuralOrchestra.TypedArray_processOk `
+            + `( ${neuralOrchestra.TypedArray_processOk} ) `
+          + `should be undefined.` );
+
+      // Test: Calling these methods during processing should throw exception.
+      {
+        this.neuralOrchestra_should_throw_exception_for_process( neuralOrchestra );
+        this.neuralOrchestra_should_throw_exception_for_init( neuralOrchestra );
+        this.neuralOrchestra_should_throw_exception_for_load( neuralOrchestra );
+      }
+
+      // 1.3 Swap alignment marks.
+      yield *this.test_alignmentMarkValueArrayArray_swap_asyncGenerator(
+        neuralOrchestra );
+
     }
 
     // 2. Wait for image processed.
