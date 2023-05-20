@@ -1138,16 +1138,89 @@ class NeuralOrchestra_Base extends
   }
 
 
-//!!! ...unfinished... (2023/05/15)
-// alignmentMarkValueArrayArray_set_asyncPromise_create()
-
-!!! ...unfinished... (2023/05/20)
+//!!! ...unfinished... (2023/05/20)
 //      .alignmentMarkValueArrayArray_set_asyncPromise_create()
 //      .alignmentMarkValueArrayArray_swap_asyncPromise_create()
 //
-//     relay_alignmentMarkValueArrayArray_set_asyncPromise,
-//     relay_alignmentMarkValueArrayArray_swap_asyncPromise,
 
+  /**
+   *
+   * @return {Promise( boolean )}
+   *   Return a promise:
+   *   - Resolved to true, if succeeded.
+   *   - Resolved to false, if failed.
+   */
+  alignmentMarkValueArrayArray_set_asyncPromise_create(
+    alignmentMarkValueArrayArray, delayPromise ) {
+
+    { // Checking pre-condition.
+      const funcNameInMessage = "alignmentMarkValueArrayArray_set_asyncPromise_create";
+
+      NeuralOrchestra_Base
+        .throw_if_init_asyncPromise_or_asyncGenerator_running
+        .call( this, funcNameInMessage );
+
+      NeuralOrchestra_Base
+        .throw_if_versus_loading_or_workerProxies_busy
+        .call( this, funcNameInMessage );
+
+      NeuralOrchestra_Base
+        .throw_if_not_initOk
+        .call( this, funcNameInMessage );
+
+      NeuralOrchestra_Base
+        .throw_if_not_versus_loadOk
+        .call( this, funcNameInMessage );
+    }
+
+    return super
+      .alignmentMarkValueArrayArray_set_asyncPromise_create(
+        alignmentMarkValueArrayArray, delayPromise );
+  }
+
+  /**
+   *
+   * @param {Uint8ClampedArray[]|Int32Array[]|number[][]} alignmentMarkValueArrayArray
+   *   (Please see NeuralWorker.Proxies explanation.)
+   *
+   * @param {Promise} delayPromise
+   *   Mainly used when unit testing. If not null, this async method will await
+   * it before complete. If null or undefined, no extra delay awaiting.
+   *
+   * @return {Promise( boolean )}
+   *   Return a promise:
+   *   - Resolved to true, if succeeded.
+   *   - Resolved to false, if failed.
+   */
+  static async alignmentMarkValueArrayArray_set_asyncPromise(
+    alignmentMarkValueArrayArray, delayPromise ) {
+
+    try {
+      // 1.
+      let resultOkPromise
+        = this.workerProxies.alignmentMarkValueArrayArray_set_async(
+            alignmentMarkValueArrayArray );
+
+      let resultOk = await resultOkPromise;
+
+      // 2.
+      if ( delayPromise )
+        await delayPromise;
+
+      this.alignmentMarkValueArrayArray_setOk = resultOk;
+      return resultOk;
+
+    } catch ( e ) {
+      //debugger;
+      //console.error( e );
+      this.alignmentMarkValueArrayArray_setOk = false;
+      throw e;
+
+    } finally {
+    }
+  }
+
+//!!!
 
   /**
    *

@@ -526,7 +526,7 @@ class NeuralWorker_Proxies extends Recyclable.Root {
 
   /**
    * 
-   * @return {Promise}
+   * @return {Promise( boolean )}
    *   Return a promise:
    *   - Resolved to true, if succeeded.
    *   - Resolved to false, if failed.
@@ -601,7 +601,7 @@ class NeuralWorker_Proxies extends Recyclable.Root {
    * Swap .alignmentMarkValueArrayArray[ 0 ] and
    * .alignmentMarkValueArrayArray[ 1 ].
    *
-   * @return {Promise}
+   * @return {Promise( boolean )}
    *   Return a promise:
    *   - Resolved to true, if succeeded.
    *   - Resolved to false, if failed.
