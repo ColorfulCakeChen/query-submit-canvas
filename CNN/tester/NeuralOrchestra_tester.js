@@ -67,14 +67,15 @@ class TestCase {
       output_channelCount: 64, //128,
     };
 
+    this.init_parameters_extra = {};
     {
-      const init_parameters = this.init_parameters;
+      const init_parameters_extra = this.init_parameters_extra;
 
 !!! ...unfinished... (2023/05/20)
 // .feedbackShape should not placed inside this.init_parameters
 // Otherwise, properties undefined checking will fail.
 
-      let feedbackShape = init_parameters.feedbackShape
+      let feedbackShape = init_parameters_extra.feedbackShape
         = new NeuralNet.FeedbackShape();
 
       feedbackShape.init(
@@ -96,12 +97,7 @@ class TestCase {
         = [ ... ( new Array( output_channelCount ) ).keys() ]
             .map( x => x + output_channelCount + 1 );
 
-
-!!! ...unfinished... (2023/05/20)
-// .alignmentMarkValueArrayArray should not placed inside this.init_parameters
-// Otherwise, properties undefined checking will fail.
-
-      this.init_parameters.alignmentMarkValueArrayArray
+      this.init_parameters_extra.alignmentMarkValueArrayArray
         = [ alignmentMarkValueArray0, alignmentMarkValueArray1 ];
     }
 
@@ -127,7 +123,7 @@ class TestCase {
    */
   ImageData_create() {
     const init_parameters = this.init_parameters;
-    const feedbackShape = init_parameters.feedbackShape
+    const feedbackShape = this.init_parameters_extra.feedbackShape;
 
     const input_height = feedbackShape.input_height;
     const input_width = feedbackShape.input_width;
@@ -238,7 +234,7 @@ class TestCase {
     ++this.testId;
 
     const alignmentMarkValueArrayArray
-      = this.init_parameters.alignmentMarkValueArrayArray;
+      = this.init_parameters_extra.alignmentMarkValueArrayArray;
 
     // 1. Set alignment mark value array array.
     let delayPromise = PartTime.Promise_resolvable_rejectable_create();
