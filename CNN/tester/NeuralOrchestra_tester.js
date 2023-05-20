@@ -214,7 +214,13 @@ class TestCase {
     // Test: Calling these methods during processing should throw exception.
     {
       this.neuralOrchestra_should_throw_exception( neuralOrchestra,
+        "alignmentMarkValueArrayArray_set_asyncPromise_create" );
+
+      this.neuralOrchestra_should_throw_exception( neuralOrchestra,
         "TypedArray_process_asyncPromise_create" );
+
+      this.neuralOrchestra_should_throw_exception( neuralOrchestra,
+        "alignmentMarkValueArrayArray_swap_asyncPromise_create" );
 
 
       this.neuralOrchestra_should_throw_exception( neuralOrchestra,
@@ -402,7 +408,13 @@ class TestCase {
     // Test: Calling these methods during processing should throw exception.
     {
       this.neuralOrchestra_should_throw_exception( neuralOrchestra,
+        "alignmentMarkValueArrayArray_set_asyncPromise_create" );
+
+      this.neuralOrchestra_should_throw_exception( neuralOrchestra,
         "TypedArray_process_asyncPromise_create" );
+
+      this.neuralOrchestra_should_throw_exception( neuralOrchestra,
+        "alignmentMarkValueArrayArray_swap_asyncPromise_create" );
 
 
       this.neuralOrchestra_should_throw_exception( neuralOrchestra,
@@ -654,7 +666,13 @@ class TestCase {
 
 
       this.neuralOrchestra_should_throw_exception( neuralOrchestra,
+        "alignmentMarkValueArrayArray_set_asyncPromise_create" );
+
+      this.neuralOrchestra_should_throw_exception( neuralOrchestra,
         "TypedArray_process_asyncPromise_create" );
+
+      this.neuralOrchestra_should_throw_exception( neuralOrchestra,
+        "alignmentMarkValueArrayArray_swap_asyncPromise_create" );
     }
 
     // 2. Wait for versus summary loaded, versus loaded, and neural networks
@@ -954,7 +972,13 @@ class TestCase {
 
 
       this.neuralOrchestra_should_throw_exception( neuralOrchestra,
+        "alignmentMarkValueArrayArray_set_asyncPromise_create" );
+
+      this.neuralOrchestra_should_throw_exception( neuralOrchestra,
         "TypedArray_process_asyncPromise_create" );
+
+      this.neuralOrchestra_should_throw_exception( neuralOrchestra,
+        "alignmentMarkValueArrayArray_swap_asyncPromise_create" );
     }
 
     ++this.testId;
@@ -1163,7 +1187,13 @@ class TestCase {
 
 
         this.neuralOrchestra_should_throw_exception( neuralOrchestra,
+          "alignmentMarkValueArrayArray_set_asyncPromise_create" );
+
+        this.neuralOrchestra_should_throw_exception( neuralOrchestra,
           "TypedArray_process_asyncPromise_create" );
+
+        this.neuralOrchestra_should_throw_exception( neuralOrchestra,
+          "alignmentMarkValueArrayArray_swap_asyncPromise_create" );
 
 
         this.neuralOrchestra_should_throw_exception( neuralOrchestra,
