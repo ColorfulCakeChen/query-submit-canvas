@@ -69,36 +69,32 @@ class TestCase {
 
     this.init_parameters_extra = {};
     {
-      const init_parameters_extra = this.init_parameters_extra;
+      {
+        let feedbackShape = this.init_parameters_extra.feedbackShape
+          = new NeuralNet.FeedbackShape();
 
-!!! ...unfinished... (2023/05/20)
-// .feedbackShape should not placed inside this.init_parameters
-// Otherwise, properties undefined checking will fail.
+        feedbackShape.init(
+          init_parameters.explicit_input_height,
+          init_parameters.explicit_input_width,
+          init_parameters.explicit_input_channelCount,
+          init_parameters.output_channelCount
+        );
+      }
 
-      let feedbackShape = init_parameters_extra.feedbackShape
-        = new NeuralNet.FeedbackShape();
+      {
+        const output_channelCount = this.init_parameters.output_channelCount;
 
-      feedbackShape.init(
-        init_parameters.explicit_input_height,
-        init_parameters.explicit_input_width,
-        init_parameters.explicit_input_channelCount,
-        init_parameters.output_channelCount
-      );
-    }
+        const alignmentMarkValueArray0
+          = [ ... ( new Array( output_channelCount ) ).keys() ]
+              .map( x => x + 1 );
 
-    {
-      const output_channelCount = this.init_parameters.output_channelCount;
+        const alignmentMarkValueArray1
+          = [ ... ( new Array( output_channelCount ) ).keys() ]
+              .map( x => x + output_channelCount + 1 );
 
-      const alignmentMarkValueArray0
-        = [ ... ( new Array( output_channelCount ) ).keys() ]
-            .map( x => x + 1 );
-
-      const alignmentMarkValueArray1
-        = [ ... ( new Array( output_channelCount ) ).keys() ]
-            .map( x => x + output_channelCount + 1 );
-
-      this.init_parameters_extra.alignmentMarkValueArrayArray
-        = [ alignmentMarkValueArray0, alignmentMarkValueArray1 ];
+        this.init_parameters_extra.alignmentMarkValueArrayArray
+          = [ alignmentMarkValueArray0, alignmentMarkValueArray1 ];
+      }
     }
 
     this.loadCountBase = 2; // One is by init, another is by versus_load
