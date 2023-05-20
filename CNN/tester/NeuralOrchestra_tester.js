@@ -215,12 +215,6 @@ class TestCase {
       "alignmentMarkValueArrayArray_swap_asyncPromise_create" );
   }
 
-
-
-//!!! ...unfinished... (2023/05/20)
-//  alignmentMarkValueArrayArray_set_asyncPromise
-//  alignmentMarkValueArrayArray_swap_asyncPromise
-
   /**
    *
    */
@@ -289,8 +283,71 @@ class TestCase {
           + `( ${neuralOrchestra.alignmentMarkValueArrayArray_setOk} ).` );
   }
 
+  /**
+   *
+   */
+  async* test_alignmentMarkValueArrayArray_swap_asyncGenerator(
+    neuralOrchestra ) {
 
-//!!!
+    const funcNameInMessage
+      = "test_alignmentMarkValueArrayArray_swap_asyncGenerator";
+
+    ++this.testId;
+
+    // 1. Set alignment mark value array array.
+    let delayPromise = PartTime.Promise_resolvable_rejectable_create();
+
+    let swapOkPromise = neuralOrchestra
+      .alignmentMarkValueArrayArray_swap_asyncPromise_create(
+        delayPromise );
+
+    if ( !neuralOrchestra.alignmentMarkValueArrayArray_swap_asyncPromise_running )
+      throw Error( `NeuralOrchestra_tester.TestCase`
+        + `.${funcNameInMessage}(): testId=${this.testId}, `
+        + `neuralOrchestra.alignmentMarkValueArrayArray_swap_asyncPromise_running=`
+        + `${neuralOrchestra.alignmentMarkValueArrayArray_swap_asyncPromise_running} `
+        + `should be true.` );
+
+    if ( neuralOrchestra.alignmentMarkValueArrayArray_swapOk !== undefined )
+      throw Error( `NeuralOrchestra_tester.TestCase`
+        + `.${funcNameInMessage}(): testId=${this.testId}, `
+        + `neuralOrchestra.alignmentMarkValueArrayArray_swapOk `
+          + `( ${neuralOrchestra.alignmentMarkValueArrayArray_swapOk} ) `
+        + `should be undefined.` );
+
+    // Test: Calling these methods during processing should throw exception.
+    {
+      this.neuralOrchestra_should_throw_exception_for_process( neuralOrchestra );
+      this.neuralOrchestra_should_throw_exception_for_init( neuralOrchestra );
+      this.neuralOrchestra_should_throw_exception_for_load( neuralOrchestra );
+    }
+
+    // 2. Wait for alignment mark value array array swapping.
+    ++this.testId;
+    let swapOk;
+    try {
+      delayPromise.resolve();
+      swapOk = await swapOkPromise;
+    } catch ( e ) { // Unknown error, said loudly.
+      throw Error( `NeuralOrchestra: testId=${this.testId}. ${e}`, { cause: e } );
+    }
+
+    if ( neuralOrchestra.alignmentMarkValueArrayArray_swapOk != true ) // undefined is also not acceptable.
+      throw Error( `NeuralOrchestra_tester.TestCase`
+        + `.${funcNameInMessage}(): testId=${this.testId}, `
+        + `neuralOrchestra.alignmentMarkValueArrayArray_swapOk `
+          + `( ${neuralOrchestra.alignmentMarkValueArrayArray_swapOk} ) `
+        + `should be true.` );
+
+    if ( swapOk != neuralOrchestra.alignmentMarkValueArrayArray_swapOk )
+      throw Error( `NeuralOrchestra_tester.TestCase`
+        + `.${funcNameInMessage}(): testId=${this.testId}, `
+        + `swapOk ( ${swapOk} ) `
+        + `should be the same as `
+        + `neuralOrchestra.alignmentMarkValueArrayArray_swapOk `
+          + `( ${neuralOrchestra.alignmentMarkValueArrayArray_swapOk} ).` );
+  }
+
   /**
    *
    */
