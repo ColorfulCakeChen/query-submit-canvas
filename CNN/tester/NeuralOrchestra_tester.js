@@ -163,6 +163,205 @@ class TestCase {
   /**
    *
    */
+  async* test_alignmentMarkValueArrayArray_set_asyncGenerator(
+    neuralOrchestra ) {
+
+    const funcNameInMessage
+      = "test_alignmentMarkValueArrayArray_set_asyncGenerator";
+
+    ++this.testId;
+
+    const output_channelCount = this.init_parameters.output_channelCount;
+
+    let alignmentMarkValueArrayArray;
+    {
+      let alignmentMarkValueArray0
+        = [ ... ( new Array( output_channelCount ) ).keys() ]
+            .map( x => x + 1 );
+
+      let alignmentMarkValueArray1
+        = [ ... ( new Array( output_channelCount ) ).keys() ]
+            .map( x => x + output_channelCount + 1 );
+
+      alignmentMarkValueArrayArray
+        = [ alignmentMarkValueArray0, alignmentMarkValueArray1 ];
+    }
+
+    // 1. Set alignment mark value array array.
+    let delayPromise = PartTime.Promise_resolvable_rejectable_create();
+
+    let setPromise = neuralOrchestra
+      .alignmentMarkValueArrayArray_set_asyncPromise_create(
+        alignmentMarkValueArrayArray, delayPromise );
+
+//!!! ...unfinished... (2023/05/20)
+    if ( neuralOrchestra.TypedArray_process_asyncPromise_running ) {
+      ++this.testId;
+      progressToAdvance.value_advance();
+      yield progressRoot;
+    } else {
+      throw Error( `NeuralOrchestra_tester.TestCase`
+        + `.${funcNameInMessage}(): testId=${this.testId}, `
+        + `neuralOrchestra.TypedArray_process_asyncPromise_running=`
+        + `${neuralOrchestra.TypedArray_process_asyncPromise_running} `
+        + `should be true.` );
+    }
+
+    if ( neuralOrchestra.TypedArray_processOk !== undefined )
+      throw Error( `NeuralOrchestra_tester.TestCase`
+        + `.${funcNameInMessage}(): testId=${this.testId}, `
+        + `neuralOrchestra.TypedArray_process `
+          + `( ${neuralOrchestra.TypedArray_process} ) `
+        + `should be undefined.` );
+
+    // Test: Calling these methods during processing should throw exception.
+    {
+      this.neuralOrchestra_should_throw_exception( neuralOrchestra,
+        "TypedArray_process_asyncPromise_create" );
+
+
+      this.neuralOrchestra_should_throw_exception( neuralOrchestra,
+        "init_asyncGenerator_create" );
+
+      this.neuralOrchestra_should_throw_exception( neuralOrchestra,
+        "init_asyncGenerator_create_with_asyncPromise_progress" );
+
+      this.neuralOrchestra_should_throw_exception( neuralOrchestra,
+        "init_asyncPromise_create" );
+
+    
+      this.neuralOrchestra_should_throw_exception( neuralOrchestra,
+        "versus_load_asyncPromise_create" );
+
+      this.neuralOrchestra_should_throw_exception( neuralOrchestra,
+        "versus_load_asyncGenerator_create_with_asyncPromise_progress" );
+
+      this.neuralOrchestra_should_throw_exception( neuralOrchestra,
+        "versus_load_asyncGenerator_create" );
+    }
+
+    // 2. Wait for image processed.
+    ++this.testId;
+    let Float32ArrayArray;
+    try {
+      delayPromise.resolve();
+      Float32ArrayArray = await processPromise;
+    } catch ( e ) { // Unknown error, said loudly.
+      throw Error( `NeuralOrchestra: testId=${this.testId}. ${e}`, { cause: e } );
+    }
+
+    if ( neuralOrchestra.TypedArray_processOk != true ) // undefined is also not acceptable.
+      throw Error( `NeuralOrchestra_tester.TestCase`
+        + `.${funcNameInMessage}(): testId=${this.testId}, `
+        + `neuralOrchestra.TypedArray_processOk `
+          + `(${neuralOrchestra.TypedArray_processOk}) `
+        + `should be true.` );
+
+    if ( 2 != Float32ArrayArray.length )
+      throw Error( `NeuralOrchestra_tester.TestCase`
+        + `.${funcNameInMessage}(): testId=${this.testId}, `
+        + `Float32ArrayArray.length=${Float32ArrayArray.length} `
+        + `should be 2.` );
+
+    const output_channelCount = this.init_parameters.output_channelCount;
+    if ( Float32ArrayArray[ 0 ].length != output_channelCount )
+      throw Error( `NeuralOrchestra_tester.TestCase`
+        + `.${funcNameInMessage}(): testId=${this.testId}, `
+        + `Float32ArrayArray[ 0 ].length=${Float32ArrayArray[ 0 ].length} `
+        + `should be the same as `
+        + `.output_channelCount ( ${output_channelCount}.` );
+
+    if ( Float32ArrayArray[ 1 ].length != output_channelCount )
+      throw Error( `NeuralOrchestra_tester.TestCase`
+        + `.${funcNameInMessage}(): testId=${this.testId}, `
+        + `Float32ArrayArray[ 1 ].length=${Float32ArrayArray[ 1 ].length} `
+        + `should be the same as `
+        + `.output_channelCount ( ${output_channelCount}.` );
+
+    progressToAdvance.value_advance();
+    yield progressRoot;
+
+    // 3. Submit result.
+    ++this.testId;
+
+    // A random integer between [ -1, +1 ].
+    try {
+      let nNegativeZeroPositive = RandTools.getRandomIntInclusive( -1, 1 );
+      let bWillTrySend;
+
+      // Test: versus expired.
+      {
+        let backupLoadTimestampMilliseconds
+          = neuralOrchestra.versus.loadTimestampMilliseconds;
+
+        { // Fake an older timestamp.
+          neuralOrchestra.versus.loadTimestampMilliseconds
+            = Date.now() - DEvolution.Versus.expireIntervalMilliseconds - 1;
+
+          bWillTrySend = neuralOrchestra.versusResultSender_send(
+            nNegativeZeroPositive );
+
+          if ( bWillTrySend )
+            throw Error( `NeuralOrchestra_tester.TestCase`
+              + `.${funcNameInMessage}(): testId=${this.testId}, `
+              + `.versusResultSender_send() should not try to send the result `
+              + `of an expired versus.` );
+
+          progressToAdvance.value_advance();
+          yield progressRoot;
+        }
+
+        { // Fake an undefined timestamp.
+          neuralOrchestra.versus.loadTimestampMilliseconds = undefined;
+
+          bWillTrySend = neuralOrchestra.versusResultSender_send(
+            nNegativeZeroPositive );
+
+          if ( bWillTrySend )
+            throw Error( `NeuralOrchestra_tester.TestCase`
+              + `.${funcNameInMessage}(): testId=${this.testId}, `
+              + `.versusResultSender_send() should not try to send the result `
+              + `of a versus with undefined timestamp.` );
+
+          progressToAdvance.value_advance();
+          yield progressRoot;
+        }
+
+        { // Normal timestamp.
+          neuralOrchestra.versus.loadTimestampMilliseconds
+            = backupLoadTimestampMilliseconds;
+
+          bWillTrySend = neuralOrchestra.versusResultSender_send(
+            nNegativeZeroPositive );
+
+          if ( !bWillTrySend )
+            throw Error( `NeuralOrchestra_tester.TestCase`
+              + `.${funcNameInMessage}(): testId=${this.testId}, `
+              + `.versusResultSender_send() should try to send the result `
+              + `of an non-expired versus.` );
+
+          progressToAdvance.value_advance();
+          yield progressRoot;
+        }
+      }
+
+    } catch ( e ) {
+      debugger;
+      throw e;
+    }
+
+    if ( 100 !== progressToAdvance.valuePercentage )
+      throw Error( `NeuralOrchestra_tester.TestCase`
+        + `.${funcNameInMessage}(): testId=${this.testId}, `
+        + `progressToAdvance.valuePercentage `
+          +  `( ${progressToAdvance.valuePercentage} ) should 100.` );
+  }
+
+
+//!!!
+  /**
+   *
+   */
   async* test_process_send_asyncGenerator( progressParent, neuralOrchestra ) {
     const funcNameInMessage = "test_process_send_asyncGenerator";
 
