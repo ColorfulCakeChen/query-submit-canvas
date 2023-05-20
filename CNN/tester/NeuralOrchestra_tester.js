@@ -56,7 +56,7 @@ class TestCase {
       explicit_input_channelCount: 4, // RGBA Image.
 
       nNeuralWorker_ImplicitInputModeId:
-        NeuralWorker_ImplicitInputMode.Singleton.Ids
+        NeuralWorker.ImplicitInputMode.Singleton.Ids
           .IMPLICIT_INPUT__FILL_ALIGNMENT_MARK__FILL_PREVIOUS_OUTPUT, // (5)
 
       vocabularyChannelCount: 4, //8, //6,
