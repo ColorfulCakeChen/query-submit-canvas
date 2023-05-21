@@ -422,9 +422,16 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
             + `timeElapsed1=${timeElapsedArray[ 1 ]}`
           );
 
+//!!! ...unfinished... (2023/05/21)
+// should release outputTensor here.
+
         } else {
           sourceTensor = tf.zeros( neuralNet.input_shape, "int32" );
           outputTensor = neuralNet.apply( sourceTensor );
+
+//!!! ...unfinished... (2023/05/21)
+// should release outputTensor here.
+
         }
 
       } catch ( e ) {
