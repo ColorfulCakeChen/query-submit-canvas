@@ -395,12 +395,11 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
       = "NeuralNetArray_compileShaders_uploadTensors_ifWebGL";
 
     try {
-      let neuralNet;
       let sourceTensor;
       let outputTensor;
 
       for ( let i = 0; i < this.neuralNetArray.length; ++i ) {
-        neuralNet = this.neuralNetArray[ i ];
+        let neuralNet = this.neuralNetArray[ i ];
 
         if ( bLogDryRunTime ) {
           const nDryRunTimes = 2;
