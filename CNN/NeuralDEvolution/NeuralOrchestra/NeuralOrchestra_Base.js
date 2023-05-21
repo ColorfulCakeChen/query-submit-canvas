@@ -94,7 +94,7 @@ import * as DEvolution from "../DEvolution.js";
  * Note1: If ( implicit_input_mode
  *          == IMPLICIT_INPUT__FILL_ALIGNMENT_MARK__FILL_PREVIOUS_OUTPUT(5) ):
  *
- *          - input_width = 142
+ *          - input_width will get 142
  *
  *
  * Note2: The ( output_channelCount = 128 ) is important.
