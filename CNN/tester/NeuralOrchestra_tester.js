@@ -758,14 +758,16 @@ class TestCase {
     yield progressRoot;
 
     // 3. Test processing image and sending versus result.
-    yield *this.test_process_send_asyncGenerator(
-      progressProcessSend, neuralOrchestra );
 
-    if ( 100 !== progressToAdvance.valuePercentage )
-      throw Error( `NeuralOrchestra_tester.TestCase`
-        + `.${funcNameInMessage}(): testId=${this.testId}, `
-        + `progressToAdvance.valuePercentage `
-          +  `( ${progressToAdvance.valuePercentage} ) should 100.` );
+//!!! (2023/05/21 Temp Remarked) for finding emory leakage.
+//     yield *this.test_process_send_asyncGenerator(
+//       progressProcessSend, neuralOrchestra );
+//
+//     if ( 100 !== progressToAdvance.valuePercentage )
+//       throw Error( `NeuralOrchestra_tester.TestCase`
+//         + `.${funcNameInMessage}(): testId=${this.testId}, `
+//         + `progressToAdvance.valuePercentage `
+//           +  `( ${progressToAdvance.valuePercentage} ) should 100.` );
   }
 
   /** */
