@@ -85,15 +85,15 @@ class TestCase {
       }
 
       {
-        const output_channelCount = init_parameters.output_channelCount;
+        const input_channelCount = init_parameters.explicit_input_channelCount;
 
         const alignmentMarkValueArray0
-          = [ ... ( new Array( output_channelCount ) ).keys() ]
+          = [ ... ( new Array( input_channelCount ) ).keys() ]
               .map( x => x + 1 );
 
         const alignmentMarkValueArray1
-          = [ ... ( new Array( output_channelCount ) ).keys() ]
-              .map( x => x + output_channelCount + 1 );
+          = [ ... ( new Array( input_channelCount ) ).keys() ]
+              .map( x => x + input_channelCount + 1 );
 
         init_parameters_extra.alignmentMarkValueArrayArray
           = [ alignmentMarkValueArray0, alignmentMarkValueArray1 ];
