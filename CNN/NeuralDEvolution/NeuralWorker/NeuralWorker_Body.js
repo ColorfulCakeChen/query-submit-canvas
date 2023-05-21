@@ -88,7 +88,7 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
         let msg = `NeuralWorker_Body.disposeResources(): `
           + `workerId=${this.workerId}, `
           + `tensorMemoryAfter.numBytes (${tensorMemoryAfter.numBytes}) != `
-          + `tensorMemoryBefore.numBytes (${tensorMemoryBefore.numBytes})`;
+          + `tensorMemoryBefore.numBytes (${this.tensorMemoryBefore.numBytes})`;
 
         console.error( msg );
         debugger;
