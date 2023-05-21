@@ -394,6 +394,9 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
     const funcNameInMessage
       = "NeuralNetArray_compileShaders_uploadTensors_ifWebGL";
 
+//!!! ...unfinished... (2023/05/21)
+// Perhaps, there is memory leakage inside this method.
+
     let neuralNet;
     let sourceTensor;
     let outputTensor;
