@@ -69,8 +69,11 @@ class TestCase {
 
     this.init_parameters_extra = {};
     {
+      const init_parameters = this.init_parameters;
+      const init_parameters_extra = this.init_parameters_extra;
+
       {
-        let feedbackShape = this.init_parameters_extra.feedbackShape
+        let feedbackShape = init_parameters_extra.feedbackShape
           = new NeuralNet.FeedbackShape();
 
         feedbackShape.init(
@@ -82,7 +85,7 @@ class TestCase {
       }
 
       {
-        const output_channelCount = this.init_parameters.output_channelCount;
+        const output_channelCount = init_parameters.output_channelCount;
 
         const alignmentMarkValueArray0
           = [ ... ( new Array( output_channelCount ) ).keys() ]
@@ -92,7 +95,7 @@ class TestCase {
           = [ ... ( new Array( output_channelCount ) ).keys() ]
               .map( x => x + output_channelCount + 1 );
 
-        this.init_parameters_extra.alignmentMarkValueArrayArray
+        init_parameters_extra.alignmentMarkValueArrayArray
           = [ alignmentMarkValueArray0, alignmentMarkValueArray1 ];
       }
     }
