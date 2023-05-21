@@ -394,27 +394,33 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
     const funcNameInMessage
       = "NeuralNetArray_compileShaders_uploadTensors_ifWebGL";
 
-//!!! ...unfinished... (2023/05/21)
-// Perhaps, there is memory leakage inside this method.
+    try {
+      let neuralNet;
+      let sourceTensor;
+      let outputTensor;
 
-    let neuralNet;
-    let sourceTensor;
-    let outputTensor;
-    for ( let i = 0; i < this.neuralNetArray.length; ++i ) {
-      try {
+      for ( let i = 0; i < this.neuralNetArray.length; ++i ) {
         neuralNet = this.neuralNetArray[ i ];
 
         if ( bLogDryRunTime ) {
           const nDryRunTimes = 2;
           let timeElapsedArray = new Array( nDryRunTimes );
           for ( let j = 0; j < nDryRunTimes; ++j ) {
-            sourceTensor = tf.zeros( neuralNet.input_shape, "int32" );
+            try {
+              sourceTensor = tf.zeros( neuralNet.input_shape, "int32" );
 
-            let timeBegin = Date.now();
-            outputTensor = neuralNet.apply( sourceTensor );
-            let timeEnd = Date.now();
-            let timeElapsed = timeEnd - timeBegin;
-            timeElapsedArray[ j ] = timeElapsed;
+              let timeBegin = Date.now();
+              outputTensor = neuralNet.apply( sourceTensor );
+              let timeEnd = Date.now();
+              let timeElapsed = timeEnd - timeBegin;
+              timeElapsedArray[ j ] = timeElapsed;
+
+            } finally {
+              if ( outputTensor ) {
+                outputTensor.dispose();
+                outputTensor = null;
+              }
+            }
           }
           console.log( `NeuralWorker_Body.${funcNameInMessage}(): `
             + `workerId=${this.workerId}, neuralNetIndex=${i}, `
@@ -422,31 +428,24 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
             + `timeElapsed1=${timeElapsedArray[ 1 ]}`
           );
 
-//!!! ...unfinished... (2023/05/21)
-// should release outputTensor here.
-
-        } else {
-          sourceTensor = tf.zeros( neuralNet.input_shape, "int32" );
-          outputTensor = neuralNet.apply( sourceTensor );
-
-//!!! ...unfinished... (2023/05/21)
-// should release outputTensor here.
-
-        }
-
-      } catch ( e ) {
-        let errorMsg = `NeuralWorker_Body.${funcNameInMessage}(): `
-          + `workerId=${this.workerId}. ${e}`;
-        console.error( errorMsg );
-        //debugger;
-        throw e;
-
-      } finally {
-        if ( outputTensor ) {
-          outputTensor.dispose();
-          outputTensor = null;
+        } else { // ( bLogDryRunTime == false )
+          try {
+            sourceTensor = tf.zeros( neuralNet.input_shape, "int32" );
+            outputTensor = neuralNet.apply( sourceTensor );
+          } finally {
+            if ( outputTensor ) {
+              outputTensor.dispose();
+              outputTensor = null;
+            }
+          }
         }
       }
+    } catch ( e ) {
+      let errorMsg = `NeuralWorker_Body.${funcNameInMessage}(): `
+        + `workerId=${this.workerId}. ${e}`;
+      console.error( errorMsg );
+      //debugger;
+      throw e;
     }
   }
 
