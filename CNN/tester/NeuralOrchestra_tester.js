@@ -758,8 +758,6 @@ class TestCase {
     yield progressRoot;
 
     // 3. Test processing image and sending versus result.
-
-//!!! (2023/05/21 Temp Remarked) for finding emory leakage.
     yield *this.test_process_send_asyncGenerator(
       progressProcessSend, neuralOrchestra );
 
