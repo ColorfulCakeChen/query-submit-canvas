@@ -395,8 +395,7 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
       = "NeuralNetArray_compileShaders_uploadTensors_ifWebGL";
 
     try {
-      let sourceTensor;
-      let outputTensor;
+     let outputTensor;
 
       for ( let i = 0; i < this.neuralNetArray.length; ++i ) {
         let neuralNet = this.neuralNetArray[ i ];
@@ -406,7 +405,7 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
           let timeElapsedArray = new Array( nDryRunTimes );
           for ( let j = 0; j < nDryRunTimes; ++j ) {
             try {
-              sourceTensor = tf.zeros( neuralNet.input_shape, "int32" );
+              let sourceTensor = tf.zeros( neuralNet.input_shape, "int32" );
 
               let timeBegin = Date.now();
               outputTensor = neuralNet.apply( sourceTensor );
@@ -429,7 +428,7 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
 
         } else { // ( bLogDryRunTime == false )
           try {
-            sourceTensor = tf.zeros( neuralNet.input_shape, "int32" );
+            let sourceTensor = tf.zeros( neuralNet.input_shape, "int32" );
             outputTensor = neuralNet.apply( sourceTensor );
           } finally {
             if ( outputTensor ) {
