@@ -90,10 +90,12 @@ import * as DEvolution from "../DEvolution.js";
  *   - blockCountTotalRequested = 39
  *   - output_channelCount = 128
  *
+ *
  * Note1: If ( implicit_input_mode
  *          == IMPLICIT_INPUT__FILL_ALIGNMENT_MARK__FILL_PREVIOUS_OUTPUT(5) ):
  *
  *          - input_width = 142
+ *
  *
  * Note2: The ( output_channelCount = 128 ) is important.
  *
@@ -108,7 +110,7 @@ import * as DEvolution from "../DEvolution.js";
  *       more (than 250K).
  *
  *
-!!! * 2.1 Configuration_4_39
+ * 2.1 Configuration_4_39
  *
  *   - vocabularyChannelCount = 4
  *   - blockCountTotalRequested = 39
