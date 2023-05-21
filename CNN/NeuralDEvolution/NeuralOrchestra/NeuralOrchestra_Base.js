@@ -80,47 +80,35 @@ import * as DEvolution from "../DEvolution.js";
  *   - go to 1.1.2 or 1.2.2 (Load another versus)
  *
  *
- * 2. Configuration for 250K filter weights and executing 2 times per second
+ * 2. Configuration for 250K filter weights and execution 2 times per second
  *
-
-!!! ...unfinished... (2023/05/12)
-
- *   - input_height = 72
- *   - input_width = 131 (= 128 + 3)
- *   - output_channelCount???_per_alignment = 64
- *   - (i.e. output_channelCount = 64 * 2 = 128)
+ *   - explicit_input_height = 72
+ *   - explicit_input_width = 128
+ *   - explicit_input_channelCount = 4
+ *   - vocabularyChannelCount = 4
+ *   - vocabularyCountPerInputChannel = 256
+ *   - blockCountTotalRequested = 39
+ *   - output_channelCount = 128
  *
-
-!!! ...unfinished... (2023/04/14)
-// seems have 128 (not 64) output per neural network.
-// perhaps, +4 ?
-
- * The extra + 3 pixels of input_width are used for recurrent feedback
- * (i.e. the neural network output of the previous game tick).
+ * Note1: If ( implicit_input_mode
+ *          == IMPLICIT_INPUT__FILL_ALIGNMENT_MARK__FILL_PREVIOUS_OUTPUT(5) ):
  *
- *   - Enlarging input_width is cheaper than enlarging input_height (because
- *       of increasing less pixels).
+ *          - input_width = 142
  *
- *   - Adding 3 pixels is because depthwise convolution filter size is 3 * 3.
- *     - Separate input_height 72 into top and bottom 36 (= 72 / 2 ) pixels.
- *     - Top ( 36 * 3 ) pixels record previous output of neural network 0.
- *     - Bottom ( 36 * 3 ) pixels record previous output of neural network 1.
+ * Note2: The ( output_channelCount = 128 ) is important.
  *
+ *   - If it is lesser (e.g. 64), the stageCount will also be lesser. Because
+ *       image is shrinked less times, its performance will be slower (i.e. can
+ *       not achieve 2 times per second). Although its filter weights will also
+ *       be lesser.
  *
- * The ( output_channelCount_per_alignment = 64 ) is important.
- *
- *   - If it is lesser (e.g. 32), the stageCount will also be lesser. Because
- *       image is shrinked less times, its performancce is slower (i.e. can not
- *       achieve 2 times per second). Although its filter weights will also be
- *       lesser.
- *
- *   - If it is more (e.g. 128), the stageCount will also be more. Because
- *       image is shrinked more times, its performancce is faster (i.e. can
+ *   - If it is more (e.g. 256), the stageCount will also be more. Because
+ *       image is shrinked more times, its performance will be faster (i.e. can
  *       exceed 2 times per second). However, its filter weights will also be
  *       more (than 250K).
  *
  *
- * 2.1 Configuration_4_39
+!!! * 2.1 Configuration_4_39
  *
  *   - vocabularyChannelCount = 4
  *   - blockCountTotalRequested = 39
