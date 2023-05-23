@@ -1377,6 +1377,9 @@ class NeuralOrchestra_Base extends
   }
 
   /**
+   * When wanting to load the next versus with the
+   * .versus_load_asyncPromise_progress, call this method and await it
+   * resolved.
    *
    * @param {Promise} delayPromise
    *   Mainly used when unit testing. If not null, the async method will
@@ -1458,10 +1461,9 @@ class NeuralOrchestra_Base extends
   }
 
   /**
-   * When wanting to load the next versus with yourself progressParent, call
-   * this method and call .next() until { done: true }.
-   *
-   * The .versus_load_asyncPromise_progress will be used.
+   * When wanting to load the next versus with the
+   * .versus_load_asyncPromise_progress, call this method and call .next()
+   * until { done: true }.
    *
    * @param {Promise} delayPromise
    *   Mainly used when unit testing. If not null, the async generator will
