@@ -81,7 +81,7 @@ import * as DEvolution from "../DEvolution.js";
  *   - call and await .TypedArray_process_asyncPromise_create() repeatedly.
  *   - call and await .alignmentMarkValueArrayArray_swap_asyncPromise_create()
  *   - call and await .TypedArray_process_asyncPromise_create() repeatedly.
- *   - call versusResultSender_send()
+ *   - call .versusResultSender_send()
  *   - go to 1.1.2 or 1.2.2 (Load another versus)
  *
  *
