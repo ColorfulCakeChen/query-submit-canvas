@@ -27,12 +27,15 @@ import * as DEvolution from "../DEvolution.js";
  * 1.1.1 Initialize (and also load one versus)
  *
  *   - call and await .init_asyncPromise_create().
- *   - After it resolved to true, go to 1.1.3
- *
+ *     - await it resolved to true.
+ *   - Or, call .init_asyncGenerator_create_with_asyncPromise_progress()
+ *     - await .next() until { done: true, value: versus_load_asyncGenerator }
+ *   - go to 1.1.3
  *
  * 1.1.2 Load another versus
  *
- *   - call .versus_load_asyncPromise_create()
+ *   - call .versus_load_asyncPromise_create(), or
+ *   - call .versus_load_asyncGenerator_create_with_asyncPromise_progress().
  *   - go to 1.1.3
  *
  *
