@@ -27,10 +27,12 @@ import * as DEvolution from "../DEvolution.js";
  * 1.1.1 Initialize (and also load one versus)
  *
  *   - call and await .init_asyncPromise_create().
- *     - await it resolved to true.
+ *     - await it resolved to versus_load_asyncGenerator or
+ *         { versus_load_asyncPromise }.
  *   - Or, call .init_asyncGenerator_create_with_asyncPromise_progress()
  *     - await .next() until { done: true, value: versus_load_asyncGenerator }
  *   - go to 1.1.3
+ *
  *
  * 1.1.2 Load another versus
  *
@@ -41,10 +43,10 @@ import * as DEvolution from "../DEvolution.js";
  *
  * 1.1.3 Wait for versus loaded and neural networks created
  *
- *   - await versus_load_asyncPromise, or
- *   - await versus_load_asyncGenerator.next() until { done: true, value: true }.
- *     - .versus_loadOk asynchronously should be true.
- *     - .versus_load_asyncPromise_progress.valuePercentage should be 100.
+ *   - await versus_load_asyncPromise until resolved, or await
+ *       versus_load_asyncGenerator.next() until { done: true, value: true }.
+ *   - .versus_loadOk asynchronously should be true.
+ *   - .versus_load_asyncPromise_progress.valuePercentage should be 100.
  *   - go to 1.3
  *
  *
@@ -66,10 +68,10 @@ import * as DEvolution from "../DEvolution.js";
  *
  * 1.2.3 Wait for versus loaded and neural networks created
  *
- *   - await versus_load_asyncPromise, or
- *   - await versus_load_asyncGenerator.next() until { done: true, value: true }.
- *     - .versus_loadOk asynchronously should be true.
- *     - (.versus_load_asyncPromise_progress is not used in this case.)
+ *   - await versus_load_asyncPromise until resolved, or await
+ *       versus_load_asyncGenerator.next() until { done: true, value: true }.
+ *   - .versus_loadOk asynchronously should be true.
+ *   - (.versus_load_asyncPromise_progress is not used in this case.)
  *   - go to 1.3
  *
  *
@@ -260,7 +262,8 @@ import * as DEvolution from "../DEvolution.js";
  * it becoming false if wanting to call .init_asyncGenerator_create() again.
  *
  * @member {boolean} initOk
- *   If true, a .init_async() or .init_asyncGenerator() has been executed
+ *   If true, a .init_async() or .init_asyncGenerator() or
+ * .init_asyncGenerator_create_with_asyncPromise_progress() has been executed
  * and succeeded.
  *
  *
@@ -306,6 +309,7 @@ import * as DEvolution from "../DEvolution.js";
  *
  * @member {boolean} versus_loadOk
  *   If true, a .versus_load_asyncPromise() or .versus_load_asyncGenerator()
+ * or .versus_load_asyncGenerator_create_with_asyncPromise_progress()
  * has been executed and succeeded.
  *
  *
