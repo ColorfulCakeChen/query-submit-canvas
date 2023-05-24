@@ -367,7 +367,8 @@ class NeuralNet_ScaleFiller {
           let sourceTypedArrayAsyncFunction
 
 !!! ...unfinished... (2023/05/24)
-// sourceTensorInt32 may have been clear to null.
+// sourceTensorInt32 may have been cleared to null or been disposed.
+
             = async () => sourceTensorInt32.data();
 
           for ( let i = 0; i < tensorCount; ++i ) {
