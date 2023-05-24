@@ -145,9 +145,6 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
   static Versus_Step_01_DownloadWeights_Loading( runtime ) {
     const base = this.base;
 
-//!!! ...unfinished... (2023/05/24)
-//    base.versus_load_asyncPromise_progress;
-
 
 //!!! ...unfinished... (2022/12/29) AbortSignal.timeout()?
 // If downloading is failed (e.g. timeout), display message and re-try downloading.
@@ -162,9 +159,8 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
 // Update progress to UI. And then, call versus_load_asyncGenerator.next()
 //
 
-//!!! ...unfinished... (2023/04/08)
-// .urlComposer.retryTimes_CurMax_string;
-// .progressPercentage.valuePercentage;
+//!!! ...unfinished... (2023/05/24)
+//    base.versus_load_asyncPromise_progress.valuePercentage;
 
     update_to_UI();
 
