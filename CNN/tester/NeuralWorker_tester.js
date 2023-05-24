@@ -1353,7 +1353,7 @@ function TestButton_onClick( event ) {
     ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
 
   let tester = testerBackendAll( progress_NeuralWorker_tester,
-    largerFactor,
+    numeric_controls_valueObject.largerFactor,
     nNeuralWorker_ImplicitInputModeId,
     numeric_controls_valueObject.explicit_input_height,
     numeric_controls_valueObject.explicit_input_width,
