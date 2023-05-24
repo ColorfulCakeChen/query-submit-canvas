@@ -237,6 +237,8 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
 // Get ImageData from DrawCanvas. Fill recurrent output into
 // ImageData.data (Uint8ClampedArray) directly.
 
+//!!! ...unfinished... (2023/05/24)
+//    let theDrawingCanvas = runtime.objects.DrawingCanvas.getFirstInstance();
   }
 
   /**
