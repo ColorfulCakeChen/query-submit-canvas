@@ -132,8 +132,8 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
   }
 
   /**
-   * When neural networks weights dowloading finished, the following variables will
-   * be set by this method:
+   * When neural networks weights dowloading finished, the following variables
+   * will be set by this method:
    *
    *   - runtime.globalVars.Versus_EntityNo (string)
    *   - runtime.globalVars.Versus_Parent_GenerationNo (string)
@@ -168,9 +168,9 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
 
     update_to_UI();
     if ( this.versus_load_asyncGeneratorTicker.done() ) {
-      return next_state_id; // change to next state.
+      runtime.globalVars.Versus_Step_Current
+        = runtime.globalVars.Versus_Step_Current + 1; // change to next state.
     }
-
   }
 
   /**
