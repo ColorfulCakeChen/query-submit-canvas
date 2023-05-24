@@ -107,7 +107,6 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
    */
   tick( runtime ) {
 
-//!!! ...unfinished... (2022/10/27)
     let pfnStep = NeuralOrchestra_Construct3.Versus_Step_Function_Array[
       runtime.globalVars.Versus_Step_Current ];
 
