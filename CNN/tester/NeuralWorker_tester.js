@@ -517,8 +517,6 @@ class PerformanceTestCase extends Recyclable.Root {
         }
 
         createTensor_asyncGenerator
-//!!! ...unfinished... (2023/05/24 Remarked)
-//          = this.ScaleFiller.createTensor_by_fill_asyncGenerator(
           = this.ScaleFiller.createTensor_by_scale_fill_asyncGenerator(
               input_TypedArray, input_height, input_width,
               bTwoTensors,
