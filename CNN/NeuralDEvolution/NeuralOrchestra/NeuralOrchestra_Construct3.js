@@ -124,9 +124,11 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
   static Versus_Step_00_DownloadWeights_Begin( runtime ) {
     //const base = this.base;
 
-    let versus_load_asyncGenerator = this.versus_load_asyncGenerator;
-    this.versus_load_asyncGeneratorTicker
-      = new PartTime.AsyncGeneratorTicker( versus_load_asyncGenerator );
+    if ( !this.versus_load_asyncGeneratorTicker ) {
+      let versus_load_asyncGenerator = this.versus_load_asyncGenerator;
+      this.versus_load_asyncGeneratorTicker
+        = new PartTime.AsyncGeneratorTicker( versus_load_asyncGenerator );
+    }
   }
 
   /**
@@ -177,8 +179,7 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
   static Versus_Step_02_DownloadWeights_End( runtime ) {
 
 //!!! ...unfinished... (2022/10/27)
-
-
+    this.versus_load_asyncGeneratorTicker = null;
   }
 
   /**
