@@ -39,21 +39,14 @@ class NeuralOrchestra_Construct3 {
   /** @override */
   static setAsConstructor_self() {
     this.base = new NeuralOrchestra_Base();
-
-//!!! ...unfinished... (2022/10/20)
-
   }
 
   /** @override */
   disposeResources() {
-
     if ( this.base ) {
       this.base.disposeResources_and_recycleToPool();
       this.base = undefined;
     }
-
-//!!! ...unfinished... (2022/10/20)
-
     super.disposeResources();
   }
 
@@ -73,10 +66,12 @@ class NeuralOrchestra_Construct3 {
     blockCountTotalRequested,
     output_channelCount
   ) {
+    const base = this.base;
+
     const downloader_apiKey = null;
     const b_return_versus_load_asyncGenerator_instead_of_asyncPromise = false;
 
-    let init_asyncPromise = this.base.init_asyncPromise_create(
+    let init_asyncPromise = base.init_asyncPromise_create(
       downloader_spreadsheetId, downloader_apiKey, bLogFetcherEventToConsole,
       sender_clientId,
 
@@ -95,7 +90,7 @@ class NeuralOrchestra_Construct3 {
 
     this.versus_load_asyncPromise = versus_load_asyncPromise;
 
-    return this.initOk;
+    return base.initOk;
   }
 
   /**
