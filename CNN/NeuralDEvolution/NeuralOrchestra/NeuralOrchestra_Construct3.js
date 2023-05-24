@@ -69,7 +69,7 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
     const base = this.base;
 
     const downloader_apiKey = null;
-    const b_return_versus_load_asyncGenerator_instead_of_asyncPromise = false;
+    const b_return_versus_load_asyncGenerator_instead_of_asyncPromise = true;
 
     let init_asyncPromise = base.init_asyncPromise_create(
       downloader_spreadsheetId, downloader_apiKey, bLogFetcherEventToConsole,
@@ -86,9 +86,8 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
 
     this.init_asyncPromise = init_asyncPromise;
 
-    let { versus_load_asyncPromise } = await init_asyncPromise;
-
-    this.versus_load_asyncPromise = versus_load_asyncPromise;
+    let versus_load_asyncGenerator = await init_asyncPromise;
+    this.versus_load_asyncGenerator = versus_load_asyncGenerator;
 
     return base.initOk;
   }
@@ -130,7 +129,7 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
 //    base.versus_load_asyncPromise_progress;
 
 //!!! ...unfinished... (2023/04/08)
-    // let versus_load_asyncGenerator = this.???;
+    let versus_load_asyncGenerator = this.versus_load_asyncGenerator;
     this.versus_load_asyncGeneratorTicker
       = new PartTime.AsyncGeneratorTicker( versus_load_asyncGenerator );
 
@@ -150,7 +149,11 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
    */
   static Versus_Step_01_DownloadWeights_Loading( runtime ) {
 
-//!!! ...unfinished... (2022/10/27)
+    const base = this.base;
+
+//!!! ...unfinished... (2023/05/24)
+//    base.versus_load_asyncPromise_progress;
+
 
 //!!! ...unfinished... (2022/12/29) AbortSignal.timeout()?
 // If downloading is failed (e.g. timeout), display message and re-try downloading.
