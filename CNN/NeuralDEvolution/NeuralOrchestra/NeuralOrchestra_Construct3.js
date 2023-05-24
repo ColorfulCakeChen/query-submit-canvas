@@ -122,11 +122,7 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
    * @param {NeuralOrchestra_Construct3} this
    */
   static Versus_Step_00_DownloadWeights_Begin( runtime ) {
-
     //const base = this.base;
-
-//!!! ...unfinished... (2023/05/24)
-//    base.versus_load_asyncPromise_progress;
 
     let versus_load_asyncGenerator = this.versus_load_asyncGenerator;
     this.versus_load_asyncGeneratorTicker
@@ -145,7 +141,6 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
    * @param {NeuralOrchestra_Construct3} this
    */
   static Versus_Step_01_DownloadWeights_Loading( runtime ) {
-
     const base = this.base;
 
 //!!! ...unfinished... (2023/05/24)
