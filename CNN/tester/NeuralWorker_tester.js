@@ -723,10 +723,16 @@ class HeightWidthDepth {
     //const input_pixelCount = this.input_pixelCount;
     const input_valueCount = this.input_valueCount;
 
-    const input_height_scaled = input_height * largerFactor;
-    const input_width_scaled = input_width * largerFactor; 
-    const input_valueCount_scaled = input_valueCount
-      * largerFactor * largerFactor; // scaled along both height and width.
+    const input_height_scaled
+      = this.input_height_scaled = input_height * largerFactor;
+
+    const input_width_scaled
+      = this.input_width_scaled = input_width * largerFactor; 
+
+    const input_valueCount_scaled
+      = this.input_valueCount_scaled
+      // scaled along both height and width.
+      = input_valueCount * largerFactor * largerFactor;
 
     const vocabularyCountPerInputChannel = this.vocabularyCountPerInputChannel;
 
@@ -922,13 +928,13 @@ class HeightWidthDepth {
     //       this case's first time testing).
     await testCase.preparePromise;
 
-    const input_height = this.input_height;
-    const input_width = this.input_width;
+    const input_height_scaled = this.input_height_scaled;
+    const input_width_scaled = this.input_width_scaled;
     const input_TypedArray = this.input_TypedArray_clone();
 
     let resultFloat32ArrayArrayPromise
       = neuralWorkerProxies.TypedArray_process_async(
-          input_TypedArray, input_height, input_width );
+          input_TypedArray, input_height_scaled, input_width_scaled );
 
     if ( input_TypedArray.length != 0 )
       throw Error( `NeuralWorker_tester.HeightWidthDepth`
@@ -1106,8 +1112,8 @@ class HeightWidthDepth {
             }
 
             { // Verify neural network result.
-              const input_height = this.input_height;
-              const input_width = this.input_width;
+              const input_height_scaled = this.input_height_scaled;
+              const input_width_scaled = this.input_width_scaled;
 
               const prefixMsg = "NeuralNet";
               const postfixMsg = testCase.testCaseName;
@@ -1135,7 +1141,7 @@ class HeightWidthDepth {
                 // adjusted.
                 let resultFloat32Array = await testCase
                   .NeuralNet_try_result_async(
-                    input_TypedArray, input_height, input_width,
+                    input_TypedArray, input_height_scaled, input_width_scaled,
                     alignmentMarkValueArray, previous_output_TypedArray );
 
                 let lhsNumberArray = resultFloat32ArrayArray[ neuralNetIndex ];

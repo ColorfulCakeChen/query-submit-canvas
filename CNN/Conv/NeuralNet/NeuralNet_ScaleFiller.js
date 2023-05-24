@@ -110,7 +110,7 @@ class NeuralNet_ScaleFiller {
    *     - Downloads data from GPU to CPU for filling alignment mark and
    *         feedback (i.e. previous time output).
    *     - Uploads data from CPU to GPU to create tensor.
-   * 
+   *
    *
    *
    * @param {Uint8ClampedArray|Uint16Array|Uint32Array} source_TypedArray
