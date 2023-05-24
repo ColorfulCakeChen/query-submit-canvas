@@ -20,8 +20,7 @@ import * as HTMLTable from "../Display/HTMLTable.js";
 class UIControls {
 
   controls_all = {
-//!!! ...unfinished... (2023/05/11)
-//  largerFactor_Text: null,
+    largerFactor_Text: null,
 
     explicit_input_height_Number: null,
     explicit_input_width_Number: null,
@@ -600,12 +599,9 @@ class PerformanceTestCase extends Recyclable.Root {
 class HeightWidthDepth {
 
   /**
-
-///!!! ...unfinished... (2023/05/11)
-//    * @param {number} largerFactor
-//    *   Simulate the real input size
-//    * as ( largerFactor * height ) * ( largerFactor * width ).
-
+   * @param {number} largerFactor
+   *   Simulate the real input size
+   * as ( largerFactor * height ) * ( largerFactor * width ).
    *
    * @param {number} nNeuralWorker_ImplicitInputModeId
    *   The numeric identifier of the neural network implicit input mode
@@ -626,8 +622,8 @@ class HeightWidthDepth {
    *   - If false, test from smallest NeuralWorker.Mode.Singleton.Ids.
    */
   constructor(
-//!!! ...unfinished... (2023/05/11)
-//    largerFactor,
+    largerFactor,
+
     nNeuralWorker_ImplicitInputModeId,
 
     explicit_input_height, explicit_input_width, explicit_input_channelCount,
@@ -643,8 +639,7 @@ class HeightWidthDepth {
 
     this.disposeResources();
 
-//!!! ...unfinished... (2023/05/11)
-//    this.largerFactor = largerFactor;
+    this.largerFactor = largerFactor;
 
     this.nNeuralWorker_ImplicitInputModeId = nNeuralWorker_ImplicitInputModeId;
 
@@ -724,6 +719,9 @@ class HeightWidthDepth {
     //const input_pixelCount = this.input_pixelCount;
     const input_valueCount = this.input_valueCount;
 
+    const input_valueCount_scaled = input_valueCount
+      * largerFactor * largerFactor; // scaled along both height and width.
+
     const vocabularyCountPerInputChannel = this.vocabularyCountPerInputChannel;
 
     // Create input data array.
@@ -734,9 +732,9 @@ class HeightWidthDepth {
     //       accepted.
     //
     if ( vocabularyCountPerInputChannel <= ( 2 ** 8 ) ) // 256
-      this.input_TypedArray = new Uint8ClampedArray( input_valueCount );
+      this.input_TypedArray = new Uint8ClampedArray( input_valueCount_scaled );
     else // ( vocabularyCountPerInputChannel > 256 )
-      this.input_TypedArray = new Int32Array( input_valueCount );
+      this.input_TypedArray = new Int32Array( input_valueCount_scaled );
 
     // Fill input data.
     {
@@ -1212,8 +1210,7 @@ class HeightWidthDepth {
  *
  */
 async function* testerBackend( progressParent,
-//!!! (2023/05/11 Remarked)
-//  largerFactor,
+  largerFactor,
 
   nNeuralWorker_ImplicitInputModeId,
 
@@ -1236,8 +1233,7 @@ async function* testerBackend( progressParent,
     // Using mobile phone's resolution ( 1080 * 2160 ) will crash the computer.
     // Using ( 1 / 15 ) of computer screen ( 1080 * 1920 ) (i.e. ( 72 * 128 )).
     testSet = new HeightWidthDepth(
-//!!! (2023/05/11 Remarked)
-//      largerFactor,
+      largerFactor,
       nNeuralWorker_ImplicitInputModeId,
       explicit_input_height, explicit_input_width, explicit_input_channelCount,
       vocabularyChannelCount, vocabularyCountPerInputChannel,
@@ -1270,8 +1266,7 @@ async function* testerBackend( progressParent,
  */
 async function* testerBackendAll( progressParent,
 
-//!!! (2023/05/11 Remarked)
-//  largerFactor = 15,
+  largerFactor = 15,
 
   nNeuralWorker_ImplicitInputModeId,
 
@@ -1297,10 +1292,7 @@ async function* testerBackendAll( progressParent,
     let bAscent_or_Descent;
     bAscent_or_Descent = false; // Descent
     yield* testerBackend( progress_NeuralWorker_tester_webgl,
-
-//!!! (2023/05/11 Remarked)
-//      largerFactor,
-
+      largerFactor,
       nNeuralWorker_ImplicitInputModeId,
       explicit_input_height, explicit_input_width,
       explicit_input_channelCount,
@@ -1312,10 +1304,7 @@ async function* testerBackendAll( progressParent,
 
     bAscent_or_Descent = true; // Ascent
     yield* testerBackend( progress_NeuralWorker_tester_cpu,
-
-//!!! (2023/05/11 Remarked)
-//      largerFactor,
-
+      largerFactor,
       nNeuralWorker_ImplicitInputModeId,
       explicit_input_height, explicit_input_width,
       explicit_input_channelCount,
@@ -1362,10 +1351,7 @@ function TestButton_onClick( event ) {
     ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
 
   let tester = testerBackendAll( progress_NeuralWorker_tester,
-
-//!!! (2023/05/11 Remarked)
-//    largerFactor,
-
+    largerFactor,
     nNeuralWorker_ImplicitInputModeId,
     numeric_controls_valueObject.explicit_input_height,
     numeric_controls_valueObject.explicit_input_width,
