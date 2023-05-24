@@ -91,7 +91,7 @@ class UIControls {
           htmlElement.max = valueRange.max;
 
         } else { // Otherwise, use range in the HTML element.
-          valueRange = new ValueRange( htmlElement.min, htmlElement.max );
+          valueRange = new ValueRange.Int( htmlElement.min, htmlElement.max );
         }
 
         this.numeric_controls_valueRangeArray.push( valueRange );
