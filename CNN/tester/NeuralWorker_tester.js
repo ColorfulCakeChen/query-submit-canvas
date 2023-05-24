@@ -727,6 +727,8 @@ class HeightWidthDepth {
 
   /** Create .input_TypedArray or .input_Canvas */
   input_TypedArray_prepare() {
+    const funcNameInMessage = "input_TypedArray_prepare";
+
     const largerFactor = this.largerFactor;
 
     const input_height = this.input_height;
@@ -745,6 +747,20 @@ class HeightWidthDepth {
       = this.input_valueCount_scaled
       // scaled along both height and width.
       = input_valueCount * largerFactor * largerFactor;
+
+    const input_valueCount_scaled_max = ( 1024 * 1024 * 1024 );
+    if ( input_valueCount_scaled > input_valueCount_scaled_max )
+      throw Error( `NeuralWorker_tester.HeightWidthDepth`
+        + `.${funcNameInMessage}(): `
+        + `.input_valueCount_scaled `
+        + `= ( ( input_height * largerFactor ) * ( input_width * largerFactor ) * input_channelCount ) `
+        + `= ( ( ${input_height} * ${largerFactor} ) * ( ${input_width} * ${largerFactor} ) * ${input_channelCount} ) `
+        + `= ( ${input_height_scaled} * ${input_width_scaled} * ${input_channelCount} ) `
+        + `= ${input_valueCount_scaled} `
+        + `should not exceed `
+        + `.input_valueCount_scaled_max `
+        + `( ${input_valueCount_scaled_max} ).`
+      );
 
     const vocabularyCountPerInputChannel = this.vocabularyCountPerInputChannel;
 
