@@ -167,9 +167,10 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
 // .progressPercentage.valuePercentage;
 
     update_to_UI();
+
+    // If versus loaded, change to the next state.
     if ( this.versus_load_asyncGeneratorTicker.done() ) {
-      runtime.globalVars.Versus_Step_Current
-        = runtime.globalVars.Versus_Step_Current + 1; // change to next state.
+      ++runtime.globalVars.Versus_Step_Current;
     }
   }
 
