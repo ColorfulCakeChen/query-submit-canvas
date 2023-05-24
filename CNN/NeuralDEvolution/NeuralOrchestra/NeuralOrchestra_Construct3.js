@@ -120,7 +120,7 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
   }
 
   /**
-   * @param {NeuralOrchestra_Construct3.Construct3} this
+   * @param {NeuralOrchestra_Construct3} this
    */
   static Versus_Step_00_DownloadWeights_Begin( runtime ) {
 
@@ -141,7 +141,7 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
    *   - runtime.globalVars.Versus_Offspring_GenerationNo (string)
    *   - runtime.globalVars.Versus_Parent_WinCount (number)
    *
-   * @param {NeuralOrchestra_Construct3.Construct3} this
+   * @param {NeuralOrchestra_Construct3} this
    */
   static Versus_Step_01_DownloadWeights_Loading( runtime ) {
 
@@ -172,7 +172,7 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
   }
 
   /**
-   * @param {NeuralOrchestra_Construct3.Construct3} this
+   * @param {NeuralOrchestra_Construct3} this
    */
   static Versus_Step_02_DownloadWeights_End( runtime ) {
 
@@ -182,7 +182,7 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
   }
 
   /**
-   * @param {NeuralOrchestra_Construct3.Construct3} this
+   * @param {NeuralOrchestra_Construct3} this
    */
   static Versus_Step_03_ParentAlignment0_WaitVersusInfo( runtime ) {
 
@@ -192,7 +192,7 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
   }
 
   /**
-   * @param {NeuralOrchestra_Construct3.Construct3} this
+   * @param {NeuralOrchestra_Construct3} this
    */
   static Versus_Step_04_ParentAlignment0_WaitDrawingCanvas( runtime ) {
 
@@ -203,7 +203,7 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
 
 
   /**
-   * @param {NeuralOrchestra_Construct3.Construct3} this
+   * @param {NeuralOrchestra_Construct3} this
    */
   static Versus_Step_05_ParentAlignment0_Fighting( runtime ) {
 
@@ -217,7 +217,7 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
   }
 
   /**
-   * @param {NeuralOrchestra_Construct3.Construct3} this
+   * @param {NeuralOrchestra_Construct3} this
    */
   static Versus_Step_06_ParentAlignment0_End( runtime ) {
 
@@ -227,7 +227,7 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
   }
   
   /**
-   * @param {NeuralOrchestra_Construct3.Construct3} this
+   * @param {NeuralOrchestra_Construct3} this
    */
  static Versus_Step_07_ParentAlignment1_WaitVersusInfo( runtime ) {
 
@@ -237,7 +237,7 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
   }
   
   /**
-   * @param {NeuralOrchestra_Construct3.Construct3} this
+   * @param {NeuralOrchestra_Construct3} this
    */
   static Versus_Step_08_ParentAlignment1_WaitDrawingCanvas( runtime ) {
 
@@ -247,7 +247,7 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
   }
 
   /**
-   * @param {NeuralOrchestra_Construct3.Construct3} this
+   * @param {NeuralOrchestra_Construct3} this
    */
   static Versus_Step_09_ParentAlignment1_Fighting( runtime ) {
 
@@ -275,7 +275,7 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
    *   - runtime.globalVars.Versus_Result_ParentAlignment1
    *       The versus result when Parent personates alignment 1.
    *
-   * @param {NeuralOrchestra_Construct3.Construct3} this
+   * @param {NeuralOrchestra_Construct3} this
    */
   static Versus_Step_10_ParentAlignment1_End( runtime ) {
 
