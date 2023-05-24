@@ -346,66 +346,6 @@ function NonReentrant_asyncPromise_by_asyncGenerator(
       return asyncPromise;
     }
 
-//!!! (2023/04/08 Remarked)
-// Call [ name_of_asyncGenerator_create_with_asyncPromise_progress ]() internally.
-//     /**
-//      * Create Xxx_asyncPromise (an auto-looping instance of guarded underlied
-//      * async generator).
-//      *
-//      * Note: The this[ name_of_asyncPromise_progress ] will record progress of
-//      *       this method.
-//      *
-//      *
-//      * @return {Promise}
-//      *   Return the newly created .guarded_async() promise.
-//      */
-//     [ name_of_asyncPromise_create ]( ...restArgs ) {
-//
-//       // Note: The .throw_if_Xxx() static methods are defined in the parent
-//       //       class.
-//
-//       { // Checking pre-condition.
-//         const funcNameInMessage = name_of_asyncPromise_create;
-//
-//         NonReentrant_asyncPromise_by_asyncGenerator
-//           [ name_of_throw_if_an_old_asyncPromise_still_running ]
-//           .call( this, funcNameInMessage );
-//
-////         NonReentrant_asyncPromise_by_asyncGenerator
-////           .throw_if_an_old_still_running.call( this,
-////            this.#asyncPromise_running, funcNameInMessage );
-//
-//         NonReentrant_asyncPromise_by_asyncGenerator
-//           [ name_of_throw_if_asyncPromise_or_asyncGenerator_running ]
-//           .call( this, funcNameInMessage );
-//       }
-//
-//       // 1.
-//       let asyncGenerator;
-//       {
-//         // Use internal independent progress.
-//         NonReentrant_asyncPromise_by_asyncGenerator
-//           [ name_of_asyncPromise_progress_create ]
-//           .call( this );
-//
-//         // Prepare asyncGenerator
-//         //
-//         // Note: The Xxx_asyncGenerator_create_without_checking_precondition()
-//         //       (which is a static method defined in parent class) will also
-//         //       set this[ name_of_asyncResultOk ] to  undefined.
-//         //
-//         asyncGenerator = NonReentrant_asyncPromise_by_asyncGenerator
-//           [ name_of_asyncGenerator_create_without_checking_precondition ]
-//           .call( this, this[ name_of_asyncPromise_progress ], ...restArgs );
-//       }
-//
-//       // 2.
-//       let asyncPromise = NonReentrant_asyncPromise_by_asyncGenerator
-//         [ name_of_asyncPromise_create_without_checking_precondition ]
-//         .call( this, asyncGenerator );
-//       return asyncPromise;
-//     }
-
     /**
      *
      * @param {NonReentrant_asyncPromise_by_asyncGenerator} this
