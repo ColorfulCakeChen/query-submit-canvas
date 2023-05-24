@@ -723,6 +723,8 @@ class HeightWidthDepth {
     //const input_pixelCount = this.input_pixelCount;
     const input_valueCount = this.input_valueCount;
 
+    const input_height_scaled = input_height * largerFactor;
+    const input_width_scaled = input_width * largerFactor; 
     const input_valueCount_scaled = input_valueCount
       * largerFactor * largerFactor; // scaled along both height and width.
 
@@ -750,7 +752,7 @@ class HeightWidthDepth {
 
       RandTools.fill_numberArray(
         this.input_TypedArray,
-        input_height, input_width, input_channelCount,
+        input_height_scaled, input_width_scaled, input_channelCount,
         input_valueBegin, input_valueStep,
         input_randomOffset.min, input_randomOffset.max,
         input_divisorForRemainder );
@@ -761,13 +763,13 @@ class HeightWidthDepth {
         && ( input_channelCount == 4 ) ) { // Use ImageData.
     
       let imageData = new ImageData(
-        this.input_TypedArray, input_width, input_height );
+        this.input_TypedArray, input_width_scaled, input_height_scaled );
 
       this.input_TypedArray = null; // It has been kept by ImageData directly.
 
       this.input_Canvas = document.createElement( "canvas" );
-      this.input_Canvas.height = input_height;
-      this.input_Canvas.width = input_width;
+      this.input_Canvas.height = input_height_scaled;
+      this.input_Canvas.width = input_width_scaled;
 
       let contextAttributes = { willReadFrequently: true };
       let ctx = this.input_Canvas.getContext( "2d", contextAttributes );
