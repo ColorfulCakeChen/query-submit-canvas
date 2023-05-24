@@ -365,6 +365,9 @@ class NeuralNet_ScaleFiller {
           // is to ensure .data() (which will consume CPU and memory bandwidth
           // a lot) only be called when necessary.
           let sourceTypedArrayAsyncFunction
+
+!!! ...unfinished... (2023/05/24)
+// sourceTensorInt32 may have been clear to null.
             = async () => sourceTensorInt32.data();
 
           for ( let i = 0; i < tensorCount; ++i ) {
