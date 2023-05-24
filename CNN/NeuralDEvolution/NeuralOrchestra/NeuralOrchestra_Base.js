@@ -133,6 +133,15 @@ import * as DEvolution from "../DEvolution.js";
  * than Configuration_4_39.
  *
  *
+ * 2.3 Configuration_4_120
+ *
+ *   - vocabularyChannelCount = 4
+ *   - blockCountTotalRequested = 120
+ *   - output_channelCount = 64
+ *
+ * It will get ( stageCount = 2 ).
+ *
+ *
  *
  * @member {string} downloader_spreadsheetId
  *   The Google Sheets spreadsheetId of neural network weights. The weights
