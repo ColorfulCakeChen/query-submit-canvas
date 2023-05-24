@@ -1217,8 +1217,8 @@ class HeightWidthDepth {
       let msg = `NeuralWorker_tester.HeightWidthDepth`
         + `.${funcNameInMessage}(): `
         + `backendName=${backendName}, `
-        + `testCaseId=${testCase.testCaseId}, `
-        + `testCaseName=${testCase.testCaseName}. `
+        + `testCaseId=${testCase?.testCaseId}, `
+        + `testCaseName=${testCase?.testCaseName}. `
         + `${e}`;
 
       console.log( msg );
