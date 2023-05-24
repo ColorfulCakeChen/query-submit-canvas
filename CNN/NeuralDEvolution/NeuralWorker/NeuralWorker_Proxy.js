@@ -281,8 +281,8 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
    *   An unsigned integer TypedArray which will be processed by the neural
    * worker. For example, ImageData.data which is coming from a canvas.
    *
-   *   - Its shape must match this.neuralNetParamsBase's [ input_height,
-   *       input_width, input_channelCount ].
+   *   - If its shape matches this.neuralNetParamsBase's [ input_height,
+   *       input_width, input_channelCount ], performacne will be better.
    *
    *   - It may be modified by filling with alignment mark and/or feedback
    *       information (i.e. previous time output of the neural network).
@@ -370,8 +370,8 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
    *   An unsigned integer TypedArray which will be processed by the neural
    * worker. For example, ImageData.data which is coming from a canvas.
    *
-   *   - Its shape must match this.neuralNetParamsBase's [ input_height,
-   *       input_width, input_channelCount ].
+   *   - If its shape matches this.neuralNetParamsBase's [ input_height,
+   *       input_width, input_channelCount ], performacne will be better.
    *
    *   - It may be modified by filling with alignment mark and/or feedback
    *       information (i.e. previous time output of the neural network).
@@ -451,8 +451,8 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
    *   An unsigned integer TypedArray which will be processed by the neural
    * worker. For example, ImageData.data which is coming from a canvas.
    *
-   *   - Its shape must match this.neuralNetParamsBase's [ input_height,
-   *       input_width, input_channelCount ].
+   *   - If its shape matches this.neuralNetParamsBase's [ input_height,
+   *       input_width, input_channelCount ], performacne will be better.
    *
    *   - It may be modified by filling with alignment mark and/or feedback
    *       information (i.e. previous time output of the neural network).
