@@ -178,10 +178,11 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
    * @param {NeuralOrchestra_Construct3} this
    */
   static Versus_Step_02_DownloadWeights_End( runtime ) {
-    const base = this.base;
 
-//!!! ...unfinished... (2022/10/27)
+    // So that ticker could be created when the next time downloading.
     this.versus_load_asyncGeneratorTicker = null;
+
+    const base = this.base;
 
     let versus = base.versus;
     if ( !versus )
