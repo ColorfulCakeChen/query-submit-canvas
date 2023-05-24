@@ -164,7 +164,7 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
 //
 
 //!!! ...unfinished... (2023/05/24)
-    update_to_UI();
+    //update_to_UI();
 
     runtime.globalVars.Versus_DownloadWeights_Progress
       = base.versus_load_asyncPromise_progress.valuePercentage;
