@@ -80,7 +80,7 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
       vocabularyChannelCount, vocabularyCountPerInputChannel,
       blockCountTotalRequested,
       output_channelCount,
-  
+
       b_return_versus_load_asyncGenerator_instead_of_asyncPromise
     );
 
