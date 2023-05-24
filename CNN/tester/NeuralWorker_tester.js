@@ -715,6 +715,8 @@ class HeightWidthDepth {
 
   /** Create .input_TypedArray or .input_Canvas */
   input_TypedArray_prepare() {
+    const largerFactor = this.largerFactor;
+
     const input_height = this.input_height;
     const input_width = this.input_width; 
     const input_channelCount = this.input_channelCount;
