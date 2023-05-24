@@ -239,6 +239,11 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
 
 //!!! ...unfinished... (2023/05/24)
 //    let theDrawingCanvas = runtime.objects.DrawingCanvas.getFirstInstance();
+
+//!!! ...unfinished... (2023/05/24)
+// should theDrawingCanvas.PasteInstances()
+// and await ot for getting completed image.
+
   }
 
   /**
