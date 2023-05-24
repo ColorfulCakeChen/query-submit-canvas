@@ -345,7 +345,7 @@ class NeuralOrchestra_Base extends
     "init", relay_init_asyncGenerator,
     "versus_load_asyncPromise_progress", // Use versus_load's progress object.
 
-   Recyclable.Root ) ) ) ) ) {
+  Recyclable.Root ) ) ) ) ) {
 
   /**
    * Used as default NeuralOrchestra.Base provider for conforming to
