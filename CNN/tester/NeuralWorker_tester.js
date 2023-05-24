@@ -756,7 +756,7 @@ class HeightWidthDepth {
         + `= ( ( input_height * largerFactor ) * ( input_width * largerFactor ) * input_channelCount ) `
         + `= ( ( ${input_height} * ${largerFactor} ) * ( ${input_width} * ${largerFactor} ) * ${input_channelCount} ) `
         + `= ( ${input_height_scaled} * ${input_width_scaled} * ${input_channelCount} ) `
-        + `= ${input_valueCount_scaled} `
+        + `= ( ${input_valueCount_scaled} ) `
         + `should not exceed `
         + `.input_valueCount_scaled_max `
         + `( ${input_valueCount_scaled_max} ).`
