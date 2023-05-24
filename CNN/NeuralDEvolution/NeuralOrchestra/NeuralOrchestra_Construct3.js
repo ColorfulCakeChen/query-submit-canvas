@@ -136,19 +136,10 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
    *
    *   - runtime.globalVars.Versus_DownloadWeights_Progress (number)
    *
-   * When neural networks weights dowloading finished, the following variables
-   * will be set by this method:
-   *
-   *   - runtime.globalVars.Versus_EntityNo (string)
-   *   - runtime.globalVars.Versus_Parent_GenerationNo (string)
-   *   - runtime.globalVars.Versus_Offspring_GenerationNo (string)
-   *   - runtime.globalVars.Versus_Parent_WinCount (number)
-   *
    * @param {NeuralOrchestra_Construct3} this
    */
   static Versus_Step_01_DownloadWeights_Loading( runtime ) {
     const base = this.base;
-
 
 //!!! ...unfinished... (2022/12/29) AbortSignal.timeout()?
 // If downloading is failed (e.g. timeout), display message and re-try downloading.
@@ -187,9 +178,29 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
    * @param {NeuralOrchestra_Construct3} this
    */
   static Versus_Step_02_DownloadWeights_End( runtime ) {
+    const base = this.base;
 
 //!!! ...unfinished... (2022/10/27)
     this.versus_load_asyncGeneratorTicker = null;
+
+    let versus = base.versus;
+    if ( !versus )
+      return;
+
+    let versusId = versus.versusId;
+    if ( !versusId )
+      return;
+
+    runtime.globalVars.Versus_EntityNo = versusId.entityNoString; // (string)
+
+    runtime.globalVars.Versus_Parent_GenerationNo
+      = versusId.parentGenerationNoString; // (string)
+
+    runtime.globalVars.Versus_Offspring_GenerationNo
+      = versusId.offspringGenerationNoString; // (string)
+
+    runtime.globalVars.Versus_Parent_WinCount
+      = versusId.parentWinCount; // (number)
   }
 
   /**
