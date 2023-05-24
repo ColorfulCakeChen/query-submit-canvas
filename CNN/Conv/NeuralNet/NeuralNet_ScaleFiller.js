@@ -79,13 +79,14 @@ class NeuralNet_ScaleFiller {
       );
 
     // 2.
-    yield* NeuralNet_ScaleFiller.createTensor_by_scale_fill_asyncGenerator
-      .call( this,
-        source_TypedArray, source_height, source_width,
-        bTwoTensors,
-        feedbackShape,
-        alignmentMarkValueArrayArray, previous_output_Int32ArrayArray
-      );
+    let scale_fill_asyncGenerator = this.createTensor_by_scale_fill_asyncGenerator(
+      source_TypedArray, source_height, source_width,
+      bTwoTensors,
+      feedbackShape,
+      alignmentMarkValueArrayArray, previous_output_Int32ArrayArray
+    );
+
+    yield* scale_fill_asyncGenerator;
   }
 
   /**
@@ -208,7 +209,7 @@ class NeuralNet_ScaleFiller {
    *   Yield a promise resolves to { done: true, value: undefined }.
    *
    */
-  static async* createTensor_by_scale_fill_asyncGenerator(
+  async* createTensor_by_scale_fill_asyncGenerator(
     source_TypedArray, source_height, source_width,
     bTwoTensors,
     feedbackShape,
