@@ -83,7 +83,7 @@ class NeuralOrchestra_Construct3 {
   
       b_return_versus_load_asyncGenerator_instead_of_asyncPromise
     );
-  
+
     this.init_asyncPromise = init_asyncPromise;
 
     let { versus_load_asyncPromise } = await init_asyncPromise;
