@@ -448,12 +448,16 @@ class NeuralNet_ScaleFiller {
    *   The width (in pixels) of the source_TypedArray. For example,
    * ImageData.width.
    *
+   * @param {number} source_channelCount
+   *   The channel count of the source_TypedArray. It should equal to
+   * ( source_TypedArray / source_height / source_width ).
+   *
    * @param {tf.tensor3d}
    *   Return a scaled int32 tensor3d whose depthwise size is [ this.height,
    * this.width ].
    */
   static createTensor_by_scale_TypedArray(
-    source_TypedArray, source_height, source_width ) {
+    source_TypedArray, source_height, source_width, source_channelCount ) {
 
     let source_shape = [ source_height, source_width, source_channelCount ];
     let sourceTensorInt32
