@@ -368,6 +368,7 @@ class NeuralNet_ScaleFiller {
 
 !!! ...unfinished... (2023/05/24)
 // sourceTensorInt32 may have been cleared to null or been disposed.
+// (In NeuralWorker_Body.TWO_WORKER__TWO_NET__step0_TypedArray_process() )
 
             = async () => sourceTensorInt32.data();
 
