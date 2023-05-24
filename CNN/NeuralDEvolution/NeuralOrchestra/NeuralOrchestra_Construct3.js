@@ -131,10 +131,13 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
   }
 
   /**
-   * When neural networks weights dowloading finished, the following variables
+   * When neural networks weights are dowloading, the following variables
    * will be set by this method:
    *
    *   - runtime.globalVars.Versus_DownloadWeights_Progress (number)
+   *
+   * When neural networks weights dowloading finished, the following variables
+   * will be set by this method:
    *
    *   - runtime.globalVars.Versus_EntityNo (string)
    *   - runtime.globalVars.Versus_Parent_GenerationNo (string)
@@ -173,6 +176,14 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
   }
 
   /**
+   * When neural networks weights dowloading finished, the following variables
+   * will be set by this method:
+   *
+   *   - runtime.globalVars.Versus_EntityNo (string)
+   *   - runtime.globalVars.Versus_Parent_GenerationNo (string)
+   *   - runtime.globalVars.Versus_Offspring_GenerationNo (string)
+   *   - runtime.globalVars.Versus_Parent_WinCount (number)
+   *
    * @param {NeuralOrchestra_Construct3} this
    */
   static Versus_Step_02_DownloadWeights_End( runtime ) {
