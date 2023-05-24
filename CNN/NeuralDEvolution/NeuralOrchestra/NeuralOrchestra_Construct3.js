@@ -14,7 +14,7 @@ import { Base as NeuralOrchestra_Base } from "./NeuralOrchestra_Base.js";
  *
  *
  */
-class NeuralOrchestra_Construct3 {
+class NeuralOrchestra_Construct3 extends Recyclable.Root {
 
   /**
    * Used as default NeuralOrchestra.Construct3 provider for conforming to
