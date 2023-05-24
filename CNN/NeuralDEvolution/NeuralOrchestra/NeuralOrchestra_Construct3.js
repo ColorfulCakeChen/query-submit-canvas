@@ -134,6 +134,8 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
    * When neural networks weights dowloading finished, the following variables
    * will be set by this method:
    *
+   *   - runtime.globalVars.Versus_DownloadWeights_Progress (number)
+   *
    *   - runtime.globalVars.Versus_EntityNo (string)
    *   - runtime.globalVars.Versus_Parent_GenerationNo (string)
    *   - runtime.globalVars.Versus_Offspring_GenerationNo (string)
@@ -159,9 +161,10 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
 //
 
 //!!! ...unfinished... (2023/05/24)
-//    base.versus_load_asyncPromise_progress.valuePercentage;
-
     update_to_UI();
+
+    runtime.globalVars.Versus_DownloadWeights_Progress
+      = base.versus_load_asyncPromise_progress.valuePercentage;
 
     // If versus loaded, change to the next state.
     if ( this.versus_load_asyncGeneratorTicker.done() ) {
