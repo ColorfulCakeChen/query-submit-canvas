@@ -365,21 +365,31 @@ class NeuralNet_ScaleFiller {
           // is to ensure .data() (which will consume CPU and memory bandwidth
           // a lot) only be called when necessary.
           let sourceTypedArrayAsyncFunction
-
-!!! ...unfinished... (2023/05/24)
-// sourceTensorInt32 may have been cleared to null or been disposed.
-// (In NeuralWorker_Body.TWO_WORKER__TWO_NET__step0_TypedArray_process() )
-
             = async () => sourceTensorInt32.data();
 
           for ( let i = 0; i < tensorCount; ++i ) {
-            let targetTensorInt32;
-            if ( i < ( tensorCount - 1 ) ) {
-              targetTensorInt32 = sourceTensorInt32.clone();
-            } else { // The final yield.
-              targetTensorInt32 = sourceTensorInt32;
-              sourceTensorInt32 = null;
-            }
+
+//!!! (2023/05/24 Remarked)
+// sourceTensorInt32 should be kept for sourceTypedArrayAsyncFunction().
+// (In NeuralWorker_Body.TWO_WORKER__TWO_NET__step0_TypedArray_process() )
+//
+//             let targetTensorInt32;
+//             if ( i < ( tensorCount - 1 ) ) {
+//               targetTensorInt32 = sourceTensorInt32.clone();
+//             } else { // The final yield.
+//               targetTensorInt32 = sourceTensorInt32;
+//               sourceTensorInt32 = null;
+//             }
+
+            // Note:
+            //
+            // Even if this is the final yield, sourceTensorInt32 should still
+            // be cloned (i.e. should not be cleared to null or disposed).
+            // Otherwise, sourceTypedArrayAsyncFunction() can not download
+            // .data() when called. (For example, in NeuralWorker_Body
+            // .TWO_WORKER__TWO_NET__step0_TypedArray_process(). )
+            let targetTensorInt32 = sourceTensorInt32.clone();
+
             yield [ targetTensorInt32, sourceTypedArrayAsyncFunction ];
           }
 
