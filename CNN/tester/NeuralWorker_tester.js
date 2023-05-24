@@ -20,7 +20,7 @@ import * as HTMLTable from "../Display/HTMLTable.js";
 class UIControls {
 
   controls_all = {
-    largerFactor_Text: null,
+    largerFactor_Number: null,
 
     explicit_input_height_Number: null,
     explicit_input_width_Number: null,
