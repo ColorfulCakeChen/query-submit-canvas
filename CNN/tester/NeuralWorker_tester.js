@@ -748,7 +748,7 @@ class HeightWidthDepth {
       // scaled along both height and width.
       = input_valueCount * largerFactor * largerFactor;
 
-    const input_valueCount_scaled_max = ( 8 * 1024 * 1024 );
+    const input_valueCount_scaled_max = ( 16 * 1024 * 1024 );
     if ( input_valueCount_scaled > input_valueCount_scaled_max )
       throw Error( `NeuralWorker_tester.HeightWidthDepth`
         + `.${funcNameInMessage}(): `
