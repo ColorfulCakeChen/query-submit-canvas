@@ -6,7 +6,7 @@ import * as Recyclable from "../../util/Recyclable.js";
 // import * as ValueDesc from "../../Unpacker/ValueDesc.js";
 // import * as NeuralNet from "../../Conv/NeuralNet.js";
 //import * as DEvolution from "../DEvolution.js";
-import { Base } from "./NeuralOrchestra_Base.js";
+import { Base as NeuralOrchestra_Base } from "./NeuralOrchestra_Base.js";
 
 /**
  * Orchestrate neural networks with differential evolution, and inter-operate
@@ -14,7 +14,7 @@ import { Base } from "./NeuralOrchestra_Base.js";
  *
  *
  */
-class NeuralOrchestra_Construct3 extends Base {
+class NeuralOrchestra_Construct3 {
 
   /**
    * Used as default NeuralOrchestra.Construct3 provider for conforming to
@@ -38,6 +38,7 @@ class NeuralOrchestra_Construct3 extends Base {
 
   /** @override */
   static setAsConstructor_self() {
+    this.base = new NeuralOrchestra_Base();
 
 //!!! ...unfinished... (2022/10/20)
 
@@ -46,9 +47,55 @@ class NeuralOrchestra_Construct3 extends Base {
   /** @override */
   disposeResources() {
 
+    if ( this.base ) {
+      this.base.disposeResources_and_recycleToPool();
+      this.base = undefined;
+    }
+
 //!!! ...unfinished... (2022/10/20)
 
     super.disposeResources();
+  }
+
+  /**
+   * Please call this method in Construct3's runOnStartup().
+   * 
+   * @return {Promise( boolean )}
+   *   Return a promise. It resolves to true, if successful.
+   */
+  async init_for_Construct3_runOnStartup_async(
+    downloader_spreadsheetId, bLogFetcherEventToConsole,
+    sender_clientId,
+
+    explicit_input_height, explicit_input_width, explicit_input_channelCount,
+    nNeuralWorker_ImplicitInputModeId,
+    vocabularyChannelCount, vocabularyCountPerInputChannel,
+    blockCountTotalRequested,
+    output_channelCount
+  ) {
+    const downloader_apiKey = null;
+    const b_return_versus_load_asyncGenerator_instead_of_asyncPromise = false;
+
+    let init_asyncPromise = this.base.init_asyncPromise_create(
+      downloader_spreadsheetId, downloader_apiKey, bLogFetcherEventToConsole,
+      sender_clientId,
+
+      explicit_input_height, explicit_input_width, explicit_input_channelCount,
+      nNeuralWorker_ImplicitInputModeId,
+      vocabularyChannelCount, vocabularyCountPerInputChannel,
+      blockCountTotalRequested,
+      output_channelCount,
+  
+      b_return_versus_load_asyncGenerator_instead_of_asyncPromise
+    );
+  
+    this.init_asyncPromise = init_asyncPromise;
+
+    let { versus_load_asyncPromise } = await init_asyncPromise;
+
+    this.versus_load_asyncPromise = versus_load_asyncPromise;
+
+    return this.initOk;
   }
 
   /**
