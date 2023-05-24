@@ -8,6 +8,7 @@ import * as ScriptLoader from "../util/ScriptLoader.js";
 import * as TensorTools from "../util/TensorTools.js";
 import * as ValueMax from "../util/ValueMax.js";
 import * as ValueDesc from "../Unpacker/ValueDesc.js";
+import * as ValueRange from "../Unpacker/ValueRange.js";
 import * as Weights from "../Unpacker/Weights.js";
 import * as NeuralNet from "../Conv/NeuralNet.js";
 import * as NeuralWorker from "../NeuralDEvolution/NeuralWorker.js";
@@ -46,6 +47,7 @@ class UIControls {
   numeric_controls = {}; // Numeric controls.
   numeric_controls_controlNameArray = [];  // Numeric controls' names.
   numeric_controls_propertyNameArray = [];  // Numeric properties' names.
+  numeric_controls_valueRangeArray = [];  // Numeric properties' value range.
   numeric_controls_valueArray = [];  // Numeric controls' values. (as array)
   numeric_controls_valueObject = {}; // Numeric controls' values. (as object)
 
@@ -63,6 +65,7 @@ class UIControls {
 
     this.numeric_controls_controlNameArray.length = 0;
     this.numeric_controls_propertyNameArray.length = 0;
+    this.numeric_controls_valueRangeArray.length = 0;
 
     for ( let controlName in this.controls_all ) {
       let htmlElement = document.getElementById( controlName );
@@ -78,12 +81,20 @@ class UIControls {
         this.numeric_controls_controlNameArray.push( controlName );
         this.numeric_controls_propertyNameArray.push( propertyName );
 
+        let valueRange;
+
         // If the numeric control represents a NeuralNet.Params, setup range.
         const paramDesc = NeuralNet.Params[ propertyName ];
         if ( paramDesc ) {
-          htmlElement.min = paramDesc.valueDesc.range.min;
-          htmlElement.max = paramDesc.valueDesc.range.max;
+          valueRange = paramDesc.valueDesc.range;
+          htmlElement.min = valueRange.min;
+          htmlElement.max = valueRange.max;
+
+        } else { // Otherwise, use range in the HTML element.
+          valueRange = new ValueRange( htmlElement.min, htmlElement.max );
         }
+
+        this.numeric_controls_valueRangeArray.push( valueRange );
       }
     }
   }
@@ -93,6 +104,7 @@ class UIControls {
     const numeric_controls = this.numeric_controls;
     const numeric_controls_controlNameArray = this.numeric_controls_controlNameArray;
     const numeric_controls_propertyNameArray = this.numeric_controls_propertyNameArray;
+    const numeric_controls_valueRangeArray = this.numeric_controls_valueRangeArray;
     const numeric_controls_valueArray = this.numeric_controls_valueArray;
     const numeric_controls_valueObject = this.numeric_controls_valueObject;
 
@@ -100,15 +112,15 @@ class UIControls {
     for ( let i = 0; i < numeric_controls_controlNameArray.length; ++i ) {
       const controlName = numeric_controls_controlNameArray[ i ];
       const propertyName = numeric_controls_propertyNameArray[ i ];
+      const valueRange = numeric_controls_valueRangeArray[ i ];
 
       const htmlElement = numeric_controls[ controlName ];
       const valueInt = Number.parseInt( htmlElement.value );
 
       let valueIntAdjusted;
-      { // For NeuralNet.Params, restrict it by range.
-        const paramDesc = NeuralNet.Params[ propertyName ];
-        if ( paramDesc )
-          valueIntAdjusted = paramDesc.valueDesc.range.adjust( valueInt );
+      { // Restrict it by range.
+        if ( valueRange )
+          valueIntAdjusted = valueRange.adjust( valueInt );
         else
           valueIntAdjusted = valueInt;
       }
