@@ -89,6 +89,8 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
     let versus_load_asyncGenerator = await init_asyncPromise;
     this.versus_load_asyncGenerator = versus_load_asyncGenerator;
 
+    this.init_asyncPromise = null;
+
     return base.initOk;
   }
 
