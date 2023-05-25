@@ -507,13 +507,16 @@ class NeuralNet_ScaleFiller {
    * (by scaling) to this neural network's acceptable input [ height, width ].
    *
    *
-   * Note: It is more recommended to use Canvas Context drawImage() to scale
-   *       image than this method. The reason is:
+   * Note1: It is more recommended to use Canvas Context drawImage() to scale
+   *        image than this method. The reason is:
    * 
-   *         - drawImage() operates on GPU directly.
+   *          - drawImage() operates on GPU directly.
    * 
-   *         - This method downloads data from GPU to CPU for creating tensor.
-   *             And then, uploads data from CPU to GPU to scale tensor.
+   *          - This method downloads data from GPU to CPU for creating tensor.
+   *              And then, uploads data from CPU to GPU to scale tensor.
+   *
+   * Note2: According to testing, this method may be faster than
+   *        .createTensor_by_scale_TypedArray() especially in backend "webgl".
    *
    *
    * @param {ImageData|ImageBitmap|HTMLImageElement|HTMLCanvasElement|HTMLVideoElement} source_PixelData
