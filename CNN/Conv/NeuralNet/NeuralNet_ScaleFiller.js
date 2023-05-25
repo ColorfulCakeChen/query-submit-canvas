@@ -630,15 +630,12 @@ class NeuralNet_ScaleFiller {
 
   }
 
-//!!!
   /**
+   * Scale ImageData by OffscreenCanvas which is faster than using tf.tensor.
    *
    *
    * @param {ImageData} source_ImageData
-   *   An unsigned integer TypedArray. For example, ImageData.data which is
-   * coming from a canvas. Note that it may be modified by filling with
-   * alignment mark and feedback information (i.e. previous time output of the
-   * neural network).
+   *   An ImageData used as source data.
    *
    * @param {number[]} target_shape_height_width
    *   A number array as [ target_height, target_width ] describing the shape
@@ -653,37 +650,42 @@ class NeuralNet_ScaleFiller {
     source_ImageData,
     target_shape_height_width
   ) {
+    const source_height = source_ImageData.height;
+    const source_width = source_ImageData.width;
 
-  // static testImageScaling_ByOffscreenCanvas_from_ImageData( contextType ) {
-  //   const input_Canvas = this.input_Canvas;
-
-    let input_offscreenCanvas;
+    let source_offscreenCanvas;
     {
-      input_offscreenCanvas
-        = new OffscreenCanvas( this.input_width, this.input_height );
+      source_offscreenCanvas
+        = new OffscreenCanvas( source_width, source_height );
 
-      let input_offscreenCanvas_ctx
-        = input_offscreenCanvas.getContext( contextType );
+      let source_offscreenCanvas_ctx
+        = source_offscreenCanvas.getContext( "2d" );
 
-      input_offscreenCanvas_ctx.putImageData( input_ImageData, 0, 0 );
+      source_offscreenCanvas_ctx.putImageData( source_ImageData, 0, 0 );
     }
 
-    let output_offscreenCanvas;
+    let target_offscreenCanvas;
+    let target_ImageData;
     {
-      output_offscreenCanvas
-        = new OffscreenCanvas( this.output_width, this.output_height );
+      const target_height = target_shape_height_width[ 0 ];
+      const target_width = target_shape_height_width[ 1 ];
 
-      let output_offscreenCanvas_ctx
-        = output_offscreenCanvas.getContext( contextType );
+      target_offscreenCanvas
+        = new OffscreenCanvas( target_width, target_height );
 
-      output_offscreenCanvas_ctx.drawImage( input_offscreenCanvas,
-        0, 0, input_offscreenCanvas.width, input_offscreenCanvas.height,
-        0, 0, this.output_width, this.output_height
+      let target_offscreenCanvas_ctx
+        = target_offscreenCanvas.getContext( "2d" );
+
+        target_offscreenCanvas_ctx.drawImage( input_offscreenCanvas,
+        0, 0, source_width, source_height,
+        0, 0, target_width, target_height
       );
 
-      let output_ImageData = output_offscreenCanvas_ctx.getImageData(
-        0, 0, this.output_width, this.output_height );
+      target_ImageData = target_offscreenCanvas_ctx.getImageData(
+        0, 0, target_width, target_height );
     }
+
+    return target_ImageData;
   }
 
 }
