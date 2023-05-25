@@ -3,7 +3,8 @@ export { init, testCorrectness, disposeResources };
 import * as Pool from "../util/Pool.js";
 import * as Recyclable from "../util/Recyclable.js";
 //import * as RandTools from "../util/RandTools.js";
-import * as BatchIdCalculator from "./BatchIdCalculator.js";
+//import * as BatchIdCalculator from "./BatchIdCalculator.js";
+import * as NeuralNet from "../Conv/NeuralNet.js";
 
 /**
  * Test Image Scaling.
@@ -121,48 +122,38 @@ class HeightWidthDepth {
     let input_ImageData = input_ctx.getImageData(
       0, 0, input_Canvas.width, input_Canvas.height );
 
-    let input_tensor;
+//!!! (2023/05/25 Remarked)
+//    let input_tensor;
+    let output_tensor;
     try {
-      let input_shape = [ input_Canvas.height, input_Canvas.width,
-        this.output_channelCount ];
 
-      input_tensor = tf.tensor3d( input_ImageData, input_shape, "int32" );
+//!!! (2023/05/25 Remarked)
+//       let input_shape = [ input_Canvas.height, input_Canvas.width,
+//         this.output_channelCount ];
+//
+//       input_tensor = tf.tensor3d( input_ImageData, input_shape, "int32" );
+
+      output_tensor
+        = NeuralNet_ScaleFiller.createTensor_by_scale_TypedArray(
+            input_ImageData.data,
+            input_Canvas.height, input_Canvas.width, this.output_channelCount,
+            this.target_shape_height_width );
+
+      let output_TypedArray = output_tensor.dataSync();
 
     } finally {
-      if ( input_tensor ) {
-        input_tensor.dispose();
-        input_tensor = null;
+
+//!!! (2023/05/25 Remarked)
+//       if ( input_tensor ) {
+//         input_tensor.dispose();
+//         input_tensor = null;
+//       }
+
+      if ( output_tensor ) {
+        output_tensor.dispose();
+        output_tensor = null;
       }
     }
-
-//!!!
-    let input_offscreenCanvas;
-    {
-      input_offscreenCanvas
-        = new OffscreenCanvas( this.input_width, this.input_height );
-
-      let input_offscreenCanvas_ctx = offscreenCanvas.getContext( contextType );
-      input_offscreenCanvas_ctx.putImageData( input_ImageData, 0, 0 );
-    }
-
-    let output_offscreenCanvas;
-    {
-      output_offscreenCanvas
-        = new OffscreenCanvas( this.output_width, this.output_height );
-
-      let output_offscreenCanvas_ctx = offscreenCanvas.getContext( contextType );
-        output_offscreenCanvas_ctx.drawImage( input_offscreenCanvas,
-        0, 0, input_offscreenCanvas.width, input_offscreenCanvas.height,
-        0, 0, this.output_width, this.output_height
-      );
-
-      let output_ImageData = output_offscreenCanvas_ctx.getImageData(
-        0, 0, this.output_width, this.output_height );
-    }
-
-//!!!
-    //tf.dispose( outputTensor3d );
-
   }
 
 

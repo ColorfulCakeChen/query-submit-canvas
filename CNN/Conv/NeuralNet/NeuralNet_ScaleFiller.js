@@ -325,7 +325,7 @@ class NeuralNet_ScaleFiller {
 
         // Scale image (do it only once).
         sourceTensorInt32
-          = NeuralNet_ScaleFiller.createTensor_by_scale_TypedArray.call( this,
+          = NeuralNet_ScaleFiller.createTensor_by_scale_TypedArray(
               source_TypedArray,
               source_height, source_width, source_channelCount,
               this.target_shape_height_width );
@@ -436,8 +436,6 @@ class NeuralNet_ScaleFiller {
 
   /**
    *
-   *
-   * @param {NeuralNet_ScaleFiller} this
    *
    * @param {Uint8ClampedArray|Uint16Array|Uint32Array} source_TypedArray
    *   An unsigned integer TypedArray. For example, ImageData.data which is
