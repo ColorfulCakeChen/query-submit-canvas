@@ -63,20 +63,29 @@ class HeightWidthDepth {
     const input_channelCount = this.input_channelCount;
     const input_valueCount = this.input_valueCount;
 
-    this.input_Canvas = document.createElement( "canvas" );
-    this.input_Canvas.height = input_height;
-    this.input_Canvas.width = input_width;
+    let input_Canvas = this.input_Canvas = document.createElement( "canvas" );
+    input_Canvas.height = input_height;
+    input_Canvas.width = input_width;
 
     let input_ImageData;
     {
       let contextAttributes = { willReadFrequently: true };
-      let ctx = this.input_Canvas.getContext( "2d", contextAttributes );
+      let ctx = input_Canvas.getContext( "2d", contextAttributes );
       input_ImageData
         = ctx.getImageData( imageData, 0 , 0, input_width, input_height );
 
       HeightWidthDepth.ImageData_init_fill( input_ImageData );
-      ctx.putImageData( imageData, 0 , 0 );
+      ctx.putImageData( input_ImageData, 0 , 0 );
     }
+
+    const input_OffscreenCanvas = this.input_OffscreenCanvas
+      = new OffscreenCanvas( input_width, input_height );
+
+    {
+      let ctx = input_OffscreenCanvas.getContext( "2d" );
+      ctx.putImageData( input_ImageData, 0 , 0 );
+    }
+
   }
 
   /** Fill input data. */
@@ -99,6 +108,8 @@ class HeightWidthDepth {
 
   /** */
   ImageScaling_PerformanceTest_release() {
+    this.input_OffscreenCanvas = undefined;
+    this.input_Canvas = undefined;
   }
 
 
