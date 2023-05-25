@@ -676,7 +676,7 @@ class NeuralNet_ScaleFiller {
       let target_offscreenCanvas_ctx
         = target_offscreenCanvas.getContext( "2d" );
 
-        target_offscreenCanvas_ctx.drawImage( input_offscreenCanvas,
+      target_offscreenCanvas_ctx.drawImage( source_offscreenCanvas,
         0, 0, source_width, source_height,
         0, 0, target_width, target_height
       );
