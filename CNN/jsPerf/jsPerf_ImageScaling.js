@@ -58,8 +58,8 @@ class HeightWidthDepth {
     this.disposeResources();
 
     this.input_Canvas = document.createElement( "canvas" );
-    this.input_Canvas.height = input_height;
-    this.input_Canvas.width = input_width;
+    this.input_Canvas.height = this.input_height;
+    this.input_Canvas.width = this.input_width;
 
     let contextAttributes = { willReadFrequently: true };
     let ctx = this.input_Canvas.getContext( "2d", contextAttributes );
