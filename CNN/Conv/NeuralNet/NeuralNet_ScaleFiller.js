@@ -437,11 +437,9 @@ class NeuralNet_ScaleFiller {
   /**
    *
    *
-   * @param {Uint8ClampedArray|Uint16Array|Uint32Array} source_TypedArray
+   * @param {Uint8ClampedArray|Int32Array} source_TypedArray
    *   An unsigned integer TypedArray. For example, ImageData.data which is
-   * coming from a canvas. Note that it may be modified by filling with
-   * alignment mark and feedback information (i.e. previous time output of the
-   * neural network).
+   * coming from a canvas.
    *
    * @param {number} source_height
    *   The height (in pixels) of the source_TypedArray. For example,
@@ -516,8 +514,9 @@ class NeuralNet_ScaleFiller {
    *          - This method downloads data from GPU to CPU for creating tensor.
    *              And then, uploads data from CPU to GPU to scale tensor.
    *
-   * Note2: According to testing, this method may be faster than
-   *        .createTensor_by_scale_TypedArray() in backend "webgl".
+   * Note2: According to testing, in backend "webgl", this method may be far
+   *        more faster than .createTensor_by_scale_TypedArray(). But this
+   *        method can only handle image (i.e. not any shape tensor).
    *
    *
    * @param {ImageData|ImageBitmap|HTMLImageElement|HTMLCanvasElement|HTMLVideoElement} source_PixelData
@@ -588,6 +587,102 @@ class NeuralNet_ScaleFiller {
       throw e; // e.g. out of (GPU) memory.
     } finally {
       scaledSourceTensorFloat32.dispose();
+    }
+  }
+
+//!!! ...unfinished... (2023/05/25)
+// from ImageData and from Uint8ClampedArray (or Int32Array)
+// two methods.
+
+  /**
+   *
+   *
+   * @param {Uint8ClampedArray} source_Uint8ClampedArray
+   *   An Uint8ClampedArray. For example, ImageData.data which is
+   * coming from a canvas. Its .length must equal to
+   * ( source_height * source_width * 4 ). It is viewed as
+   * ( source_channelCount == 4 ).
+   *
+   * @param {number} source_height
+   *   The height (in pixels) of the source_TypedArray. For example,
+   * ImageData.height.
+   *
+   * @param {number} source_width
+   *   The width (in pixels) of the source_TypedArray. For example,
+   * ImageData.width.
+   *
+   * @param {number[]} target_shape_height_width
+   *   A number array as [ target_height, target_width ] describing the shape
+   * of the target tensor.
+   *
+   * @param {ImageData}
+   *   Return an ImageData whose shape is
+   * [ target_shape_height_width[ 0 ], target_shape_height_width[ 1 ],
+   * source_channelCount ].
+   */
+  static createImageData_by_scale_Uint8ClampedArray(
+    source_Uint8ClampedArray,
+    source_height, source_width,
+    target_shape_height_width
+  ) {
+
+//!!! ...unfinished... (2023/05/25)
+
+  }
+
+//!!!
+  /**
+   *
+   *
+   * @param {ImageData} source_ImageData
+   *   An unsigned integer TypedArray. For example, ImageData.data which is
+   * coming from a canvas. Note that it may be modified by filling with
+   * alignment mark and feedback information (i.e. previous time output of the
+   * neural network).
+   *
+   * @param {number[]} target_shape_height_width
+   *   A number array as [ target_height, target_width ] describing the shape
+   * of the target tensor.
+   *
+   * @param {ImageData}
+   *   Return an ImageData whose shape is
+   * [ target_shape_height_width[ 0 ], target_shape_height_width[ 1 ],
+   * source_channelCount ].
+   */
+  static createImageData_by_scale_ImageData(
+    source_ImageData,
+    target_shape_height_width
+  ) {
+
+  // static testImageScaling_ByOffscreenCanvas_from_ImageData( contextType ) {
+  //   const input_Canvas = this.input_Canvas;
+
+    let input_offscreenCanvas;
+    {
+      input_offscreenCanvas
+        = new OffscreenCanvas( this.input_width, this.input_height );
+
+      let input_offscreenCanvas_ctx
+        = input_offscreenCanvas.getContext( contextType );
+
+      input_offscreenCanvas_ctx.putImageData( input_ImageData, 0, 0 );
+    }
+
+    let output_offscreenCanvas;
+    {
+      output_offscreenCanvas
+        = new OffscreenCanvas( this.output_width, this.output_height );
+
+      let output_offscreenCanvas_ctx
+        = output_offscreenCanvas.getContext( contextType );
+
+      output_offscreenCanvas_ctx.drawImage( input_offscreenCanvas,
+        0, 0, input_offscreenCanvas.width, input_offscreenCanvas.height,
+        0, 0, this.output_width, this.output_height
+      );
+
+      let output_ImageData = output_offscreenCanvas_ctx.getImageData(
+        0, 0, this.output_width, this.output_height );
     }
   }
 
