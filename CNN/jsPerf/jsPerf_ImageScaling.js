@@ -341,25 +341,22 @@ class HeightWidthDepth {
 
             testCaseName = TestCaseNameArray[ testCaseId ];
 
+            // Every test case should have the same result.
             output_TypedArray = this[ testCaseName ]();
             if ( output_TypedArray_previous ) {
+              let lhsNumberArray = output_TypedArray_previous;
+              let rhsNumberArray = output_TypedArray;
+              let lhsNumberArrayName = `output_of_${TestCaseNameArray[ testCaseId - 1 ]}`;
+              let rhsNumberArrayName = `output_of_${TestCaseNameArray[ testCaseId ]}`;
 
-  //!!! ...unfinished... (2023/05/25)
-  // should compare result all the same.
+              let prefixMsg = "";
+              let postfixMsg = "";
 
-
-                  let lhsNumberArray = resultFloat32ArrayArray[ neuralNetIndex ];
-                  let rhsNumberArray = resultFloat32Array;
-                  let lhsNumberArrayName = `output${neuralNetIndex}`;
-                  let rhsNumberArrayName = `outputRef${neuralNetIndex}`;
-                  let postfixMsg = testCase.testCaseName;
-
-                  asserter_Equal.assert_NumberArray_NumberArray(
-                    lhsNumberArray, rhsNumberArray,
-                    prefixMsg,
-                    lhsNumberArrayName, rhsNumberArrayName,
-                    postfixMsg );
-
+              asserter_Equal.assert_NumberArray_NumberArray(
+                lhsNumberArray, rhsNumberArray,
+                prefixMsg,
+                lhsNumberArrayName, rhsNumberArrayName,
+                postfixMsg );
             }
 
             output_TypedArray_previous = output_TypedArray;
