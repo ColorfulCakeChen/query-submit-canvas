@@ -460,8 +460,9 @@ class NeuralNet_ScaleFiller {
    * of the target tensor.
    *
    * @param {tf.tensor3d}
-   *   Return a scaled int32 tensor3d whose depthwise size is [ this.height,
-   * this.width ].
+   *   Return an int32 tensor3d whose shape is
+   * [ target_shape_height_width[ 0 ], target_shape_height_width[ 1 ],
+   * source_channelCount ].
    */
   static createTensor_by_scale_TypedArray(
     source_TypedArray,
@@ -537,8 +538,9 @@ class NeuralNet_ScaleFiller {
    * embedding layer (which only accepts integer input). Default is true.
    *
    * @return {tf.tensor3d}
-   *   Return the tensor3d which is the scaled image from canvas. Its size will
-   * be [ this.input_height, this.input_width, this.input_channelCount ].
+   *   Return a (possible int32) tensor3d whose shape is
+   * [ target_shape_height_width[ 0 ], target_shape_height_width[ 1 ],
+   * source_channelCount ].
    */
   static createTensor_by_scale_PixelData(
     source_PixelData,
