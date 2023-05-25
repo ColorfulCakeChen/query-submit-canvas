@@ -51,25 +51,50 @@ class HeightWidthDepth {
   ImageScaling_PerformanceTest_init() {
     this.disposeResources();
 
-
     this.input_Canvas = document.createElement( "canvas" );
     this.input_Canvas.height = input_height;
     this.input_Canvas.width = input_width;
 
+    let contextAttributes = { willReadFrequently: true };
+    let ctx = this.input_Canvas.getContext( "2d", contextAttributes );
+    //ctx.putImageData( imageData, 0 , 0 );
   }
 
   ImageScaling_PerformanceTest_release() {
-
   }
 
-  /** Test apply by Xxx */
-  testEmbedding_ByName( testCaseName ) {
+  /** */
+  testImageScaling_ByOffscreenCanvas_2d() {
+
+    let ctx = this.input_Canvas.getContext( "2d" );
+    let imageData = ctx.getImageData(
+      0, 0, this.input_Canvas.width, this.input_Canvas.height );
+
+    let offscreenCanvas
+      = new OffscreenCanvas( this.output_width, this.output_height );
+
 //!!!
     let testCase = this.testCaseMap.get( testCaseName );
     let embedding = testCase.embedding;
     let outputTensor3d = embedding.apply( testCase.inputTensor3d );
     tf.dispose( outputTensor3d );
   }
+
+  /** */
+  testImageScaling_ByOffscreenCanvas_webgl() {
+
+//!!! ...unfinished... (2023/05/25)
+
+  }
+
+
+  /** */
+  testImageScaling_ByOffscreenCanvas_bitmaprenderer() {
+
+//!!! ...unfinished... (2023/05/25)
+
+  }
+
 
   /** Testing whether the results of different implementation are the same. */
   * testCorrectness() {
