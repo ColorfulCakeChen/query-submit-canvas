@@ -301,7 +301,7 @@ class HeightWidthDepth {
   /** Testing whether the results of different implementation are the same. */
   * testCorrectness() {
 
-    {
+    try {
       let pool_all_issuedCount_before = Pool.All.issuedCount;
 
       yield;
@@ -309,15 +309,9 @@ class HeightWidthDepth {
       {
         let memoryInfo_testCorrectness_before = tf.memory(); // Test memory leakage of imageSourceBag.
 
-        // For pre-compiling WebGL shaders.
+        // (Also for pre-compiling WebGL shaders.)
         {
-          try {
-            // After correctness testing done, create all ImageScaling for performance testing.
-            this.ImageScaling_PerformanceTest_init();
-          } catch ( e ) {
-            debugger;
-            throw e;
-          }
+          this.ImageScaling_PerformanceTest_init();
 
 //!!! ...unfinished... (2023/05/25)
 // should compare result all the same.
@@ -348,6 +342,10 @@ class HeightWidthDepth {
         "jsPerf_ImageScaling.HeightWidthDepth.testCorrectness()",
         pool_all_issuedCount_before );
       yield;
+
+    } catch ( e ) {
+      debugger;
+      throw e;
     }
 
     try {
