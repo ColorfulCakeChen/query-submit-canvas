@@ -396,7 +396,7 @@ class HeightWidthDepth {
 
     let neuralNet = testCase.neuralNet;
 
-    let inputTensor3d = neuralNet.create_ScaledSourceTensor_from_PixelData(
+    let inputTensor3d = neuralNet.createTensor_by_scale_PixelData(
       this.testCanvas );
 
     let outputTensor3d;

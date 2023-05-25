@@ -705,7 +705,7 @@ class NeuralNet_Base extends Recyclable.Root {
    *             And then, uploads data from CPU to GPU to scale tensor.
    *
    *
-   * @param {Uint8Array|ImageData|ImageBitmap|HTMLImageElement|HTMLCanvasElement|HTMLVideoElement} source_PixelData
+   * @param {ImageData|ImageBitmap|HTMLImageElement|HTMLCanvasElement|HTMLVideoElement} source_PixelData
    *   The image or canvas which provides image (as RGBA 4-channels Uint8 data).
    *
    * @param {boolean} bForceInt32
@@ -718,11 +718,11 @@ class NeuralNet_Base extends Recyclable.Root {
    *   Return the tensor3d which is the scaled image from canvas. Its size will
    * be [ this.input_height, this.input_width, this.input_channelCount ].
    */
-  create_ScaledSourceTensor_from_PixelData( source_PixelData, bForceInt32 = true ) {
-    return NeuralNet_ScaleFiller
-      .create_ScaledSourceTensor_from_PixelData_height_wdith_channelCount(
+  createTensor_by_scale_PixelData( source_PixelData, bForceInt32 = true ) {
+    return NeuralNet_ScaleFiller.createTensor_by_scale_PixelData(
         source_PixelData,
-        source_height, source_wdith, source_channelCount,
+        this.input_channelCount,
+        this.input_height_width_array,
         bForceInt32 );
   }
 

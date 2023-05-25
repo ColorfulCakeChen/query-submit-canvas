@@ -516,8 +516,16 @@ class NeuralNet_ScaleFiller {
    *             And then, uploads data from CPU to GPU to scale tensor.
    *
    *
-   * @param {Uint8Array|ImageData|ImageBitmap|HTMLImageElement|HTMLCanvasElement|HTMLVideoElement} source_PixelData
+   * @param {ImageData|ImageBitmap|HTMLImageElement|HTMLCanvasElement|HTMLVideoElement} source_PixelData
    *   The image or canvas which provides image (as RGBA 4-channels Uint8 data).
+   *
+   * @param {number} source_channelCount
+   *   The channel count of the source_PixelData. It will also be
+   * target_channelCount.
+   *
+   * @param {number[]} target_shape_height_width
+   *   A number array as [ target_height, target_width ] describing the shape
+   * of the target tensor.
    *
    * @param {boolean} bForceInt32
    *   If true, the dtype of the returned tf.tensor3d will be guaranteed as
@@ -529,9 +537,10 @@ class NeuralNet_ScaleFiller {
    *   Return the tensor3d which is the scaled image from canvas. Its size will
    * be [ this.input_height, this.input_width, this.input_channelCount ].
    */
-  static create_ScaledSourceTensor_from_PixelData_height_wdith_channelCount(
+  static createTensor_by_scale_PixelData(
     source_PixelData,
-    source_height, source_wdith, source_channelCount,
+    source_channelCount,
+    target_shape_height_width,
     bForceInt32 = true ) {
 
     //!!! ...unfinished... (2022/08/15) What about .fromPixelsAsync() ?
@@ -542,8 +551,9 @@ class NeuralNet_ScaleFiller {
       source_PixelData, source_channelCount ); // dtype will be int32.
 
     // If the size ( height x width ) is as expected, use it directly.
-    if (   ( sourceTensor.shape[ 0 ] == source_height )
-        && ( sourceTensor.shape[ 1 ] == source_width  ) )
+    if (   ( sourceTensor.shape[ 0 ] == target_shape_height_width[ 0 ] ) // target_height
+        && ( sourceTensor.shape[ 1 ] == target_shape_height_width[ 1 ] ) // target_width
+       )
       return sourceTensor; // (Note: dtype will still be int32.)
 
     // Otherwise, resize to the default size (height x width) which is the input
@@ -552,7 +562,7 @@ class NeuralNet_ScaleFiller {
     let scaledSourceTensorFloat32;
     try {
       scaledSourceTensorFloat32 = tf.image.resizeBilinear(
-        sourceTensor, this.input_height_width_array,
+        sourceTensor, target_shape_height_width,
         true // ( alignCorners = true ) for visual image resizing.
       );
     } catch ( e ) {
