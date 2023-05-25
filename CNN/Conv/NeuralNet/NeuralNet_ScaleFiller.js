@@ -516,7 +516,7 @@ class NeuralNet_ScaleFiller {
    *              And then, uploads data from CPU to GPU to scale tensor.
    *
    * Note2: According to testing, this method may be faster than
-   *        .createTensor_by_scale_TypedArray() especially in backend "webgl".
+   *        .createTensor_by_scale_TypedArray() in backend "webgl".
    *
    *
    * @param {ImageData|ImageBitmap|HTMLImageElement|HTMLCanvasElement|HTMLVideoElement} source_PixelData
