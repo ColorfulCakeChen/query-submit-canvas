@@ -87,9 +87,19 @@ class HeightWidthDepth {
 
   /** */
   testImageScaling_ByOffscreenCanvas_webgl() {
+    const input_Canvas = this.input_Canvas;
 
-//!!! ...unfinished... (2023/05/25)
+    let offscreenCanvas
+      = new OffscreenCanvas( this.output_width, this.output_height );
 
+    let offscreenCanvas_ctx = offscreenCanvas.getContext( "webgl" );
+    offscreenCanvas_ctx.drawImage( input_Canvas,
+      0, 0, input_Canvas.width, input_Canvas.height,
+      0, 0, this.output_width, this.output_height
+    );
+
+    let output_ImageData = offscreenCanvas_ctx.getImageData(
+      0, 0, this.output_width, this.output_height );
   }
 
   /** */
