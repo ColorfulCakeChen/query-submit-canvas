@@ -102,12 +102,25 @@ class HeightWidthDepth {
       0, 0, this.output_width, this.output_height );
   }
 
-  /** */
-  testImageScaling_ByOffscreenCanvas_bitmaprenderer() {
-
-//!!! ...unfinished... (2023/05/25)
-
-  }
+//!!! ...unfinished... (2023/05/25) need inside async function.
+//   /** */
+//   testImageScaling_ByOffscreenCanvas_bitmaprenderer() {
+//     const input_Canvas = this.input_Canvas;
+//
+//     let input_ImageBitmap = await createImageBitmap( input_Canvas );
+//
+//     let offscreenCanvas
+//       = new OffscreenCanvas( this.output_width, this.output_height );
+//
+//     let offscreenCanvas_ctx = offscreenCanvas.getContext( "bitmaprenderer" );
+//     offscreenCanvas_ctx.transferFromImageBitmap( input_ImageBitmap );
+//
+// //!!! ...unfinished... (2023/05/25) whether necessary?
+//     input_ImageBitmap.close();
+//
+//     let output_ImageData = offscreenCanvas_ctx.getImageData(
+//       0, 0, this.output_width, this.output_height );
+//   }
 
   /** */
   testImageScaling_ByTensor() {
