@@ -493,6 +493,7 @@ class NeuralNet_ScaleFiller {
     let scaledSourceTensorInt32;
     try {
       scaledSourceTensorInt32 = scaledSourceTensorFloat32.cast( "int32" );
+      return scaledSourceTensorInt32;
     } catch ( e ) {
       //debugger;
       throw e; // e.g. out of (GPU) memory.
@@ -500,7 +501,8 @@ class NeuralNet_ScaleFiller {
       scaledSourceTensorFloat32.dispose();
     }
 
-    return scaledSourceTensorInt32;
+//!!! (2023/05/25 Remarked) For test performance.
+//    return scaledSourceTensorInt32;
   }
 
   /**
