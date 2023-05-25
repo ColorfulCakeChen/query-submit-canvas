@@ -65,19 +65,24 @@ class HeightWidthDepth {
 
   /** */
   testImageScaling_ByOffscreenCanvas_2d() {
+    const input_Canvas = this.input_Canvas;
 
-    let ctx = this.input_Canvas.getContext( "2d" );
-    let imageData = ctx.getImageData(
-      0, 0, this.input_Canvas.width, this.input_Canvas.height );
+//!!!
+//     let input_ctx = input_Canvas.getContext( "2d" );
+//     let imageData = input_ctx.getImageData(
+//       0, 0, input_Canvas.width, input_Canvas.height );
 
     let offscreenCanvas
       = new OffscreenCanvas( this.output_width, this.output_height );
 
-//!!!
-    let testCase = this.testCaseMap.get( testCaseName );
-    let embedding = testCase.embedding;
-    let outputTensor3d = embedding.apply( testCase.inputTensor3d );
-    tf.dispose( outputTensor3d );
+    let offscreenCanvas_ctx = offscreenCanvas.getContext( "2d" );
+    offscreenCanvas_ctx.drawImage( input_Canvas,
+      0, 0, input_Canvas.width, input_Canvas.height,
+      0, 0, this.output_width, this.output_height
+    );
+
+    let output_ImageData = offscreenCanvas_ctx.getImageData(
+      0, 0, this.output_width, this.output_height );
   }
 
   /** */
@@ -87,11 +92,20 @@ class HeightWidthDepth {
 
   }
 
-
   /** */
   testImageScaling_ByOffscreenCanvas_bitmaprenderer() {
 
 //!!! ...unfinished... (2023/05/25)
+
+  }
+
+  /** */
+  testImageScaling_ByTensor() {
+
+//!!! ...unfinished... (2023/05/25)
+
+//!!!
+    //tf.dispose( outputTensor3d );
 
   }
 
