@@ -81,18 +81,6 @@ class HeightWidthDepth {
       .call( this, "2d" );
   }
 
-  /** */
-  testImageScaling_ByOffscreenCanvas_webgl_from_Canvas() {
-    HeightWidthDepth.testImageScaling_ByOffscreenCanvas_from_Canvas
-      .call( this, "webgl" );
-  }
-
-  /** */
-  testImageScaling_ByOffscreenCanvas_webgl_from_ImageData() {
-    HeightWidthDepth.testImageScaling_ByOffscreenCanvas_from_ImageData
-      .call( this, "webgl" );
-  }
-
 //!!! ...unfinished... (2023/05/25) need inside async function.
 //   /** */
 //   testImageScaling_ByOffscreenCanvas_bitmaprenderer() {
@@ -160,7 +148,10 @@ class HeightWidthDepth {
   }
 
 
-  /** */
+  /**
+   * Note: "webgl" Rendering Context does not have .drawImage(),
+   *       .getImageData(), .putImageData().
+   */
   static testImageScaling_ByOffscreenCanvas_from_Canvas( contextType ) {
     const input_Canvas = this.input_Canvas;
 
