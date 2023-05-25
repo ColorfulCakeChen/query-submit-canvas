@@ -40,12 +40,13 @@ class HeightWidthDepth {
 
     this.input_height = output_height * largerFactor;
     this.input_width = output_width * largerFactor;
+    this.input_channelCount = output_channelCount;
 
     this.input_shape
-      = [ this.input_height, this.input_width, output_channelCount ];
+      = [ this.input_height, this.input_width, this.input_channelCount ];
 
     this.input_valueCount
-      = this.input_height * this.input_width * output_channelCount;
+      = this.input_height * this.input_width * this.input_channelCount;
   }
 
   /** */
@@ -57,13 +58,43 @@ class HeightWidthDepth {
   ImageScaling_PerformanceTest_init() {
     this.disposeResources();
 
-    this.input_Canvas = document.createElement( "canvas" );
-    this.input_Canvas.height = this.input_height;
-    this.input_Canvas.width = this.input_width;
+    const input_height = this.input_height;
+    const input_width = this.input_width;
+    const input_channelCount = this.input_channelCount;
+    const input_valueCount = this.input_valueCount;
 
-    let contextAttributes = { willReadFrequently: true };
-    let ctx = this.input_Canvas.getContext( "2d", contextAttributes );
-    //ctx.putImageData( imageData, 0 , 0 );
+    this.input_Canvas = document.createElement( "canvas" );
+    this.input_Canvas.height = input_height;
+    this.input_Canvas.width = input_width;
+
+    let input_ImageData;
+    {
+      let contextAttributes = { willReadFrequently: true };
+      let ctx = this.input_Canvas.getContext( "2d", contextAttributes );
+      input_ImageData
+        = ctx.getImageData( imageData, 0 , 0, input_width, input_height );
+
+      HeightWidthDepth.ImageData_init_fill( input_ImageData );
+      ctx.putImageData( imageData, 0 , 0 );
+    }
+  }
+
+  /** Fill input data. */
+  static ImageData_init_fill( theImageData ) {
+
+    // Restrict data value between [ 0, ( vocabularyCountPerChannel - 1 ) ].
+    const input_valueBegin = 10;
+    const input_valueStep = 10; //1;
+    const input_randomOffset = { min: -10, max: +10 };
+    const input_divisorForRemainder = 256; //vocabularyCountPerInputChannel;
+
+    const input_channelCount = 4; // RGBA
+    RandTools.fill_numberArray(
+      theImageData.data,
+      theImageData.height, theImageData.width, input_channelCount,
+      input_valueBegin, input_valueStep,
+      input_randomOffset.min, input_randomOffset.max,
+      input_divisorForRemainder );
   }
 
   /** */
@@ -245,7 +276,7 @@ class HeightWidthDepth {
             debugger;
             throw e;
           }
-      
+
           this.testImageScaling_by_Tensor_from_Canvas();
           this.testImageScaling_by_Tensor_from_Canvas_ImageData();
           this.testImageScaling_by_Tensor_from_Canvas_TypedArray();
