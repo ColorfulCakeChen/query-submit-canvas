@@ -246,9 +246,9 @@ class HeightWidthDepth {
             throw e;
           }
       
-          this.testImageScaling_ByTensor3d_from_Canvas();
-          this.testImageScaling_ByTensor3d_from_ImageData();
-          this.testImageScaling_ByTensor3d_from_TypedArray();
+          this.testImageScaling_by_Tensor_from_Canvas();
+          this.testImageScaling_by_Tensor_from_Canvas_ImageData();
+          this.testImageScaling_by_Tensor_from_Canvas_TypedArray();
         }
 
         let memoryInfo_testCorrectness_after = tf.memory();
