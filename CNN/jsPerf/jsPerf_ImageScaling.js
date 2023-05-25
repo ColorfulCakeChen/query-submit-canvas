@@ -217,7 +217,11 @@ class HeightWidthDepth {
       {
         let memoryInfo_testCorrectness_before = tf.memory(); // Test memory leakage of imageSourceBag.
 
-        // Do nothing.
+        // For pre-compiling WebGL shaders.
+        {
+          this.testImageScaling_ByTensor3d_from_Canvas();
+          this.testImageScaling_ByTensor3d_from_ImageData();
+        }
 
         let memoryInfo_testCorrectness_after = tf.memory();
 
