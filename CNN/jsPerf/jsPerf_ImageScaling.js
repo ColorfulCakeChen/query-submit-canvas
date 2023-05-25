@@ -144,6 +144,37 @@ class HeightWidthDepth {
   }
 
 
+  /** */
+  testImageScaling_by_OffscreenCanvas_from_OffscreenCanvas() {
+    return HeightWidthDepth.scale_by_OffscreenCanvas_from_Canvas
+      .call( this, this.input_OffscreenCanvas );
+  }
+
+  /** */
+  testImageScaling_by_OffscreenCanvas_from_OffscreenCanvas_ImageData() {
+    return HeightWidthDepth.scale_by_OffscreenCanvas_from_Canvas_ImageData
+      .call( this, this.input_OffscreenCanvas );
+  }
+
+  /** */
+  testImageScaling_by_Tensor_from_OffscreenCanvas() {
+    return HeightWidthDepth.scale_by_Tensor_from_Canvas
+      .call( this, this.input_OffscreenCanvas );
+  }
+
+  /** */
+  testImageScaling_by_Tensor_from_OffscreenCanvas_ImageData() {
+    return HeightWidthDepth.scale_by_Tensor_from_Canvas_ImageData
+      .call( this, this.input_OffscreenCanvas );
+  }
+
+  /** */
+  testImageScaling_by_Tensor_from_OffscreenCanvas_TypedArray() {
+    return HeightWidthDepth.scale_by_Tensor_from_Canvas_TypedArray
+      .call( this, this.input_OffscreenCanvas );
+  }
+
+
   /**
    * @return {TypedArray}
    */
