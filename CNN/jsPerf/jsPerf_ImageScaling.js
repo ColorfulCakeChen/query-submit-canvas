@@ -302,6 +302,11 @@ class HeightWidthDepth {
   * testCorrectness() {
     const funcNameInMessage = "testCorrectness";
 
+    const height_original = this.height;
+    const width_original = this.width;
+    const channelCount_original = this.channelCount;
+    const largerFactor_original = this.largerFactor;
+
     const TestCaseNameArray = [
       "testImageScaling_by_OffscreenCanvas_from_Canvas",
       "testImageScaling_by_OffscreenCanvas_from_Canvas_ImageData",
@@ -331,7 +336,15 @@ class HeightWidthDepth {
           asserter_Equal
             = TensorTools.Asserter_Equal.Pool.get_or_create_by( 0.01, 0.005 );
 
-          this.ImageScaling_PerformanceTest_init();
+          // Correctness testing uses smaller shape.
+          {
+            this.height = 1;
+            this.width = 1;
+            this.channelCount = 4;
+            this.largerFactor = 2;
+ 
+            this.ImageScaling_PerformanceTest_init();
+          }
 
           let output_TypedArray_previous;
           let output_TypedArray;
@@ -399,7 +412,11 @@ class HeightWidthDepth {
     }
 
     try {
-      // After correctness testing done, create all ImageScaling for performance testing.
+      // After correctness testing done, use large shape for performance testing.
+      this.height = height_original;
+      this.width = width_original;
+      this.channelCount = channelCount_original;
+      this.largerFactor = largerFactor_original;
       this.ImageScaling_PerformanceTest_init();
     } catch ( e ) {
       debugger;
@@ -417,17 +434,10 @@ function init() {
 
   // Using mobile phone's resolution ( 1080 * 2160 ) will crash the computer.
   // Using ( 1 / 10 ) of computer screen ( 1080 * 1920 ).
-
-//!!! (2023/05/25 Temp Remarked) For Debug.
-//   const height = 108;
-//   const width = 192;
-//   const channelCount = 4;
-//   const largerFactor = 15;
-
-  const height = 1;
-  const width = 1;
+  const height = 108;
+  const width = 192;
   const channelCount = 4;
-  const largerFactor = 2;
+  const largerFactor = 15;
 
   globalThis.testSet_108x192x4
     = new HeightWidthDepth( height, width, channelCount, largerFactor );
