@@ -72,8 +72,7 @@ class HeightWidthDepth {
     {
       let contextAttributes = { willReadFrequently: true };
       let ctx = input_Canvas.getContext( "2d", contextAttributes );
-      input_ImageData
-        = ctx.getImageData( imageData, 0 , 0, input_width, input_height );
+      input_ImageData = ctx.getImageData( 0 , 0, input_width, input_height );
 
       HeightWidthDepth.ImageData_init_fill( input_ImageData );
       ctx.putImageData( input_ImageData, 0 , 0 );
