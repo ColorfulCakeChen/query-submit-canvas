@@ -590,10 +590,6 @@ class NeuralNet_ScaleFiller {
     }
   }
 
-//!!! ...unfinished... (2023/05/25)
-// from ImageData and from Uint8ClampedArray (or Int32Array)
-// two methods.
-
   /**
    *
    *
