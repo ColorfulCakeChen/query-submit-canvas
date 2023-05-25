@@ -9,7 +9,7 @@ import * as NeuralNet from "../Conv/NeuralNet.js";
 /**
  * Test Image Scaling.
  *
- * @see {@link https://www.measurethat.net/Benchmarks/Show/25367/12/colorfulcakechen-image-scaling-bc4ae6f905e0be381f034d5b}
+ * @see {@link https://www.measurethat.net/Benchmarks/Show/25367/16/colorfulcakechen-image-scaling-b0e2b9baeec331784e9d496a}
  */
 
 /**
