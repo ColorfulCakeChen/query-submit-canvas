@@ -17,26 +17,29 @@ import * as BatchIdCalculator from "./BatchIdCalculator.js";
 class HeightWidthDepth {
 
   /**
-   * @param {number} height       target image height
-   * @param {number} width        target image width
-   * @param {number} depth        target image channel count
-   * @param {number} largerFactor input image is how large of target.
+   * @param {number} output_height        output image height
+   * @param {number} output_width         output image width
+   * @param {number} output_channelCount  output image channel count
+   * @param {number} largerFactor  input image is how large of output.
    */
-  constructor( height, width, depth, largerFactor ) {
+  constructor( output_height, output_width, output_channelCount, largerFactor ) {
 
     this.disposeResources();
 
-    this.height = height;
-    this.width = width;
-    this.depth = depth;
+    this.output_height = output_height;
+    this.output_width = output_width;
+    this.output_channelCount = output_channelCount;
 
-    this.valueCount = height * width * depth;
+    this.output_valueCount
+      = output_height * output_width * output_channelCount;
 
     this.largerFactor = largerFactor;
 
-    this.source_height = height * largerFactor;
-    this.source_width = width * largerFactor;
-    this.source_valueCount = this.source_height * this.source_width * depth;
+    this.input_height = height * largerFactor;
+    this.input_width = width * largerFactor;
+
+    this.input_valueCount
+      = this.input_height * this.input_width * channelCount;
   }
 
   /** */
@@ -46,8 +49,12 @@ class HeightWidthDepth {
 
   /** */
   ImageScaling_PerformanceTest_init() {
-
     this.disposeResources();
+
+
+    this.input_Canvas = document.createElement( "canvas" );
+    this.input_Canvas.height = input_height;
+    this.input_Canvas.width = input_width;
 
   }
 
@@ -109,11 +116,11 @@ function init() {
 
   disposeResources();
 
-  let depth = 4;
+  let channelCount = 4;
 
   // Using mobile phone's resolution ( 1080 * 2160 ) will crash the computer.
   // Using ( 1 / 10 ) of computer screen ( 1080 * 1920 ).
-  globalThis.testSet_108x192x4 = new HeightWidthDepth( 108, 192, depth ); // height, width, depth
+  globalThis.testSet_108x192x4 = new HeightWidthDepth( 108, 192, channelCount ); // height, width, channelCount
 
   globalThis.testSet_All = [
     globalThis.testSet_108x192x4
