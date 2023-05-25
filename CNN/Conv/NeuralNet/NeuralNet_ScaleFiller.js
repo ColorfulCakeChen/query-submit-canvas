@@ -500,9 +500,6 @@ class NeuralNet_ScaleFiller {
     } finally {
       scaledSourceTensorFloat32.dispose();
     }
-
-//!!! (2023/05/25 Remarked) For test performance.
-//    return scaledSourceTensorInt32;
   }
 
   /**
