@@ -2,7 +2,8 @@ export { init, testCorrectness, disposeResources };
 
 import * as Pool from "../util/Pool.js";
 import * as Recyclable from "../util/Recyclable.js";
-//import * as RandTools from "../util/RandTools.js";
+import * as RandTools from "../util/RandTools.js";
+import * as TensorTools from "../util/TensorTools.js";
 //import * as BatchIdCalculator from "./BatchIdCalculator.js";
 import * as NeuralNet from "../Conv/NeuralNet.js";
 
@@ -300,6 +301,7 @@ class HeightWidthDepth {
 
   /** Testing whether the results of different implementation are the same. */
   * testCorrectness() {
+    const funcNameInMessage = "testCorrectness";
 
     const TestCaseNameArray = [
       "testImageScaling_by_OffscreenCanvas_from_Canvas",
@@ -315,6 +317,8 @@ class HeightWidthDepth {
       "testImageScaling_by_Tensor_from_OffscreenCanvas_TypedArray",
     ];
 
+    let asserter_Equal;
+    let testCaseId, testCaseName;
     try {
       let pool_all_issuedCount_before = Pool.All.issuedCount;
 
@@ -323,26 +327,43 @@ class HeightWidthDepth {
       {
         let memoryInfo_testCorrectness_before = tf.memory(); // Test memory leakage of imageSourceBag.
 
-        this.ImageScaling_PerformanceTest_init();
-
         // (Also for pre-compiling WebGL shaders.)
+        {
+          asserter_Equal
+            = TensorTools.Asserter_Equal.Pool.get_or_create_by( 0.01, 0.005 );
 
-        let output_TypedArray_previous;
-        let output_TypedArray;
-        for ( let testCaseIndex = 0;
-          testCaseIndex < TestCaseNameArray.length; ++testCaseIndex ) {
+          this.ImageScaling_PerformanceTest_init();
 
-          const testCaseName = TestCaseNameArray[ testCaseIndex ];
+          let output_TypedArray_previous;
+          let output_TypedArray;
+          for ( testCaseId = 0;
+            testCaseId < TestCaseNameArray.length; ++testCaseId ) {
 
-          output_TypedArray = this[ testCaseName ]();
-          if ( output_TypedArray_previous ) {
+            testCaseName = TestCaseNameArray[ testCaseId ];
 
-//!!! ...unfinished... (2023/05/25)
-// should compare result all the same.
+            output_TypedArray = this[ testCaseName ]();
+            if ( output_TypedArray_previous ) {
 
+  //!!! ...unfinished... (2023/05/25)
+  // should compare result all the same.
+
+
+                  let lhsNumberArray = resultFloat32ArrayArray[ neuralNetIndex ];
+                  let rhsNumberArray = resultFloat32Array;
+                  let lhsNumberArrayName = `output${neuralNetIndex}`;
+                  let rhsNumberArrayName = `outputRef${neuralNetIndex}`;
+                  let postfixMsg = testCase.testCaseName;
+
+                  asserter_Equal.assert_NumberArray_NumberArray(
+                    lhsNumberArray, rhsNumberArray,
+                    prefixMsg,
+                    lhsNumberArrayName, rhsNumberArrayName,
+                    postfixMsg );
+
+            }
+
+            output_TypedArray_previous = output_TypedArray;
           }
-
-          output_TypedArray_previous = output_TypedArray;
         }
 
         let memoryInfo_testCorrectness_after = tf.memory();
@@ -360,8 +381,25 @@ class HeightWidthDepth {
       yield;
 
     } catch ( e ) {
+      let backendName = tf.getBackend();
+      let msg = `jsPerf_ImageScaling.HeightWidthDepth`
+        + `.${funcNameInMessage}(): `
+        + `backendName=${backendName}, `
+        + `testCaseId=${testCaseId}, `
+        + `testCaseName=${testCaseName}. `
+        + `${e}`;
+
+      console.log( msg );
+      alert( `${msg}` );
+
       debugger;
       throw e;
+
+    } finally {
+      if ( asserter_Equal ) {
+        asserter_Equal.disposeResources_and_recycleToPool();
+        asserter_Equal = null;
+      }
     }
 
     try {

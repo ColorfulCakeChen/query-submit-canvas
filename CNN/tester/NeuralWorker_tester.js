@@ -1230,9 +1230,8 @@ class HeightWidthDepth {
         asserter_Equal.disposeResources_and_recycleToPool();
         asserter_Equal = null;
       }
-
     }
-  
+
     console.log( `NeuralWorker ( ${backendName} ) testing... Done.` );
   }
 
