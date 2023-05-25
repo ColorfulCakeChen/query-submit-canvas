@@ -9,7 +9,7 @@ import * as NeuralNet from "../Conv/NeuralNet.js";
 /**
  * Test Image Scaling.
  *
-!!! * @see {@link https://www.measurethat.net/Benchmarks/Show/11003/175/colorfulcakechen-cnn-embedding-c5491acc04be23e0d98eb425}
+ * @see {@link https://www.measurethat.net/Benchmarks/Show/25367/12/colorfulcakechen-image-scaling-83af9559b7a4dd96dd0f71cd}
  */
 
 /**
@@ -71,22 +71,26 @@ class HeightWidthDepth {
 
   /** */
   testImageScaling_ByOffscreenCanvas_2d_from_Canvas() {
-    HeightWidthDepth.testImageScaling_ByOffscreenCanvas_from_Canvas( "2d" );
+    HeightWidthDepth.testImageScaling_ByOffscreenCanvas_from_Canvas
+      .call( this, "2d" );
   }
 
   /** */
   testImageScaling_ByOffscreenCanvas_2d_from_ImageData() {
-    HeightWidthDepth.testImageScaling_ByOffscreenCanvas_from_ImageData( "2d" );
+    HeightWidthDepth.testImageScaling_ByOffscreenCanvas_from_ImageData
+      .call( this, "2d" );
   }
 
   /** */
   testImageScaling_ByOffscreenCanvas_webgl_from_Canvas() {
-    HeightWidthDepth.testImageScaling_ByOffscreenCanvas_from_Canvas( "webgl" );
+    HeightWidthDepth.testImageScaling_ByOffscreenCanvas_from_Canvas
+      .call( this, "webgl" );
   }
 
   /** */
   testImageScaling_ByOffscreenCanvas_webgl_from_ImageData() {
-    HeightWidthDepth.testImageScaling_ByOffscreenCanvas_from_ImageData( "webgl" );
+    HeightWidthDepth.testImageScaling_ByOffscreenCanvas_from_ImageData
+      .call( this, "webgl" );
   }
 
 //!!! ...unfinished... (2023/05/25) need inside async function.
