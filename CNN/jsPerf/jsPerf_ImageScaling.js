@@ -152,17 +152,36 @@ class HeightWidthDepth {
     let output_tensor;
     try {
 
-      //!!! (2023/05/25 Temp Test)
       output_tensor = NeuralNet.ScaleFiller.createTensor_by_scale_PixelData(
         input_ImageData,
         this.output_channelCount,
         this.output_shape_height_width );
 
-//!!! (2023/05/25 Temp Remarked) For test .createTensor_by_scale_PixelData( ImageData )
-//       output_tensor = NeuralNet.ScaleFiller.createTensor_by_scale_TypedArray(
-//         input_ImageData.data,
-//         input_ImageData.height, input_ImageData.width, this.output_channelCount,
-//         this.output_shape_height_width );
+      let output_TypedArray = output_tensor.dataSync();
+
+    } finally {
+      if ( output_tensor ) {
+        output_tensor.dispose();
+        output_tensor = null;
+      }
+    }
+  }
+
+  /** */
+  testImageScaling_ByTensor3d_from_TypedArray() {
+    const input_Canvas = this.input_Canvas;
+
+    let input_ctx = input_Canvas.getContext( "2d" );
+    let input_ImageData = input_ctx.getImageData(
+      0, 0, input_Canvas.width, input_Canvas.height );
+
+    let output_tensor;
+    try {
+
+      output_tensor = NeuralNet.ScaleFiller.createTensor_by_scale_TypedArray(
+        input_ImageData.data,
+        input_ImageData.height, input_ImageData.width, this.output_channelCount,
+        this.output_shape_height_width );
 
       let output_TypedArray = output_tensor.dataSync();
 
@@ -198,6 +217,7 @@ class HeightWidthDepth {
       
           this.testImageScaling_ByTensor3d_from_Canvas();
           this.testImageScaling_ByTensor3d_from_ImageData();
+          this.testImageScaling_ByTensor3d_from_TypedArray();
         }
 
         let memoryInfo_testCorrectness_after = tf.memory();
