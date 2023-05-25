@@ -38,8 +38,8 @@ class HeightWidthDepth {
 
     this.largerFactor = largerFactor;
 
-    this.input_height = height * largerFactor;
-    this.input_width = width * largerFactor;
+    this.input_height = output_height * largerFactor;
+    this.input_width = output_width * largerFactor;
 
     this.input_shape
       = [ this.input_height, this.input_width, this.output_channelCount ];
