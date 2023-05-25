@@ -604,16 +604,14 @@ class NeuralNet_ScaleFiller {
    * ( source_channelCount == 4 ).
    *
    * @param {number} source_height
-   *   The height (in pixels) of the source_TypedArray. For example,
-   * ImageData.height.
+   *   The height (in pixels) of the source_Uint8ClampedArray.
    *
    * @param {number} source_width
-   *   The width (in pixels) of the source_TypedArray. For example,
-   * ImageData.width.
+   *   The width (in pixels) of the source_Uint8ClampedArray.
    *
    * @param {number[]} target_shape_height_width
    *   A number array as [ target_height, target_width ] describing the shape
-   * of the target tensor.
+   * of the target ImageData.
    *
    * @param {ImageData}
    *   Return an ImageData whose shape is
@@ -645,7 +643,7 @@ class NeuralNet_ScaleFiller {
    *
    * @param {number[]} target_shape_height_width
    *   A number array as [ target_height, target_width ] describing the shape
-   * of the target tensor.
+   * of the target ImageData.
    *
    * @param {ImageData}
    *   Return an ImageData whose shape is
