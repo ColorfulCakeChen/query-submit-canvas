@@ -115,11 +115,10 @@ class HeightWidthDepth {
 
     let output_tensor;
     try {
-      output_tensor
-        = NeuralNet_ScaleFiller.createTensor_by_scale_PixelData(
-            input_Canvas,
-            this.output_channelCount,
-            this.output_shape_height_width );
+      output_tensor = NeuralNet_ScaleFiller.createTensor_by_scale_PixelData(
+        input_Canvas,
+        this.output_channelCount,
+        this.output_shape_height_width );
 
       let output_TypedArray = output_tensor.dataSync();
 
@@ -139,30 +138,16 @@ class HeightWidthDepth {
     let input_ImageData = input_ctx.getImageData(
       0, 0, input_Canvas.width, input_Canvas.height );
 
-//!!! (2023/05/25 Remarked)
-//    let input_tensor;
     let output_tensor;
     try {
-
-//!!! (2023/05/25 Remarked)
-//       input_tensor = tf.tensor3d( input_ImageData, this.input_shape, "int32" );
-
-      output_tensor
-        = NeuralNet_ScaleFiller.createTensor_by_scale_PixelData(
-            input_ImageData,
-            this.output_channelCount,
-            this.output_shape_height_width );
+      output_tensor = NeuralNet_ScaleFiller.createTensor_by_scale_TypedArray(
+        input_ImageData.data,
+        input_ImageData.height, input_ImageData.width, this.output_channelCount,
+        this.output_shape_height_width );
 
       let output_TypedArray = output_tensor.dataSync();
 
     } finally {
-
-//!!! (2023/05/25 Remarked)
-//       if ( input_tensor ) {
-//         input_tensor.dispose();
-//         input_tensor = null;
-//       }
-
       if ( output_tensor ) {
         output_tensor.dispose();
         output_tensor = null;
