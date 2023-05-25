@@ -206,6 +206,7 @@ class HeightWidthDepth {
     }
   }
 
+
   /** Testing whether the results of different implementation are the same. */
   * testCorrectness() {
 
@@ -251,11 +252,15 @@ function init() {
 
   disposeResources();
 
-  let channelCount = 4;
-
   // Using mobile phone's resolution ( 1080 * 2160 ) will crash the computer.
   // Using ( 1 / 10 ) of computer screen ( 1080 * 1920 ).
-  globalThis.testSet_108x192x4 = new HeightWidthDepth( 108, 192, channelCount ); // height, width, channelCount
+  const height = 108;
+  const width = 192;
+  const channelCount = 4;
+  const largerFactor = 15;
+
+  globalThis.testSet_108x192x4
+    = new HeightWidthDepth( height, width, channelCount, largerFactor );
 
   globalThis.testSet_All = [
     globalThis.testSet_108x192x4
