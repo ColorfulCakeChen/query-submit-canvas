@@ -464,7 +464,8 @@ class NeuralNet_ScaleFiller {
    * this.width ].
    */
   static createTensor_by_scale_TypedArray(
-    source_TypedArray, source_height, source_width, source_channelCount,
+    source_TypedArray,
+    source_height, source_width, source_channelCount,
     target_shape_height_width
   ) {
 

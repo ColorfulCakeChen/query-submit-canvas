@@ -136,9 +136,9 @@ class HeightWidthDepth {
 //       input_tensor = tf.tensor3d( input_ImageData, this.input_shape, "int32" );
 
       output_tensor
-        = NeuralNet_ScaleFiller.createTensor_by_scale_TypedArray(
-            input_ImageData.data,
-            input_Canvas.height, input_Canvas.width, this.output_channelCount,
+        = NeuralNet_ScaleFiller.createTensor_by_scale_PixelData(
+            input_ImageData,
+            this.output_channelCount,
             this.output_shape_height_width );
 
       let output_TypedArray = output_tensor.dataSync();
