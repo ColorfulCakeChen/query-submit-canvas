@@ -77,8 +77,14 @@ class HeightWidthDepth {
 
   /** */
   testImageScaling_ByOffscreenCanvas_2d_from_ImageData() {
-    HeightWidthDepth.testImageScaling_ByOffscreenCanvas_from_ImageData
-      .call( this, "2d" );
+    const input_Canvas = this.input_Canvas;
+
+    let input_ctx = input_Canvas.getContext( "2d" );
+    let input_ImageData = input_ctx.getImageData(
+      0, 0, input_Canvas.width, input_Canvas.height );
+
+    NeuralNet.ScaleFiller.createImageData_by_scale_ImageData(
+      input_ImageData, this.input_shape );
   }
 
 //!!! ...unfinished... (2023/05/25) need inside async function.
@@ -166,43 +172,6 @@ class HeightWidthDepth {
 
     let output_ImageData = offscreenCanvas_ctx.getImageData(
       0, 0, this.output_width, this.output_height );
-  }
-
-  /** */
-  static testImageScaling_ByOffscreenCanvas_from_ImageData( contextType ) {
-    const input_Canvas = this.input_Canvas;
-
-    let input_ctx = input_Canvas.getContext( "2d" );
-    let input_ImageData = input_ctx.getImageData(
-      0, 0, input_Canvas.width, input_Canvas.height );
-
-    let input_offscreenCanvas;
-    {
-      input_offscreenCanvas
-        = new OffscreenCanvas( this.input_width, this.input_height );
-
-      let input_offscreenCanvas_ctx
-        = input_offscreenCanvas.getContext( contextType );
-
-      input_offscreenCanvas_ctx.putImageData( input_ImageData, 0, 0 );
-    }
-
-    let output_offscreenCanvas;
-    {
-      output_offscreenCanvas
-        = new OffscreenCanvas( this.output_width, this.output_height );
-
-      let output_offscreenCanvas_ctx
-        = output_offscreenCanvas.getContext( contextType );
-
-      output_offscreenCanvas_ctx.drawImage( input_offscreenCanvas,
-        0, 0, input_offscreenCanvas.width, input_offscreenCanvas.height,
-        0, 0, this.output_width, this.output_height
-      );
-
-      let output_ImageData = output_offscreenCanvas_ctx.getImageData(
-        0, 0, this.output_width, this.output_height );
-    }
   }
 
 
