@@ -10,6 +10,7 @@ import * as Block from "../Block.js";
 import * as StageParamsCreator from "./NeuralNet_StageParamsCreator.js";
 import { Params } from "./NeuralNet_Params.js";
 import { InferencedParams } from "./NeuralNet_InferencedParams.js";
+import { ScaleFiller as NeuralNet_ScaleFiller } from "./NeuralNet_ScaleFiller.js";
 
 //!!! ...unfinished... (2022/08/05)
 // For neural network with recurrent (i.e. with feedback), perhaps, concatenate
@@ -690,14 +691,6 @@ class NeuralNet_Base extends Recyclable.Root {
     return outputTensor;
   }
 
-//!!! ...unfinished... (2023/04/30)
-  /**
-   * Source image should not be scaled if feedback filling is necessary.
-   * Because scaling let source image become a tf.tensor, filling feedback
-   * needs to download tensor from GPU to CPU which is slow.
-   */
-
-
   /**
    * Create a tensor3d from source (e.g. canvas). Its size will be confirmed
    * (by scaling) to this neural network's acceptable input [ height, width ].
@@ -712,7 +705,7 @@ class NeuralNet_Base extends Recyclable.Root {
    *             And then, uploads data from CPU to GPU to scale tensor.
    *
    *
-   * @param {Uint8Array|ImageData|ImageBitmap|HTMLImageElement|HTMLCanvasElement|HTMLVideoElement} sourcePixelData
+   * @param {Uint8Array|ImageData|ImageBitmap|HTMLImageElement|HTMLCanvasElement|HTMLVideoElement} source_PixelData
    *   The image or canvas which provides image (as RGBA 4-channels Uint8 data).
    *
    * @param {boolean} bForceInt32
@@ -725,48 +718,12 @@ class NeuralNet_Base extends Recyclable.Root {
    *   Return the tensor3d which is the scaled image from canvas. Its size will
    * be [ this.input_height, this.input_width, this.input_channelCount ].
    */
-  create_ScaledSourceTensor_from_PixelData( sourcePixelData, bForceInt32 = true ) {
-
-    //!!! ...unfinished... (2022/08/15) What about .fromPixelsAsync() ?
-
-    // Note: For image coming from canvas, the tf.browser.fromPixels() handle a
-    //       RGBA 4 channels faster than RGB 3 channels input.
-    let sourceTensor = tf.browser.fromPixels(
-      sourcePixelData, this.input_channelCount ); // dtype will be int32.
-
-    // If the size ( height x width ) is as expected, use it directly.
-    if (   ( sourceTensor.shape[ 0 ] == this.input_height )
-        && ( sourceTensor.shape[ 1 ] == this.input_width  ) )
-      return sourceTensor; // (Note: dtype will still be int32.)
-
-    // Otherwise, resize to the default size (height x width) which is the input
-    // image size used for training the neural network.
-    //
-    let scaledSourceTensorFloat32;
-    try {
-      scaledSourceTensorFloat32 = tf.image.resizeBilinear(
-        sourceTensor, this.input_height_width_array,
-        true // ( alignCorners = true ) for visual image resizing.
-      );
-    } catch ( e ) {
-      throw e; // e.g. out of (GPU) memory.
-    } finally {
-      sourceTensor.dispose();
-    }
-
-    if ( !bForceInt32 )
-      return scaledSourceTensorFloat32;
-
-    // Convert to int32 if necessary. (Note: The dtype of tf.image.resizeXxx()'s
-    // result is float32.)
-    try {
-      let scaledSourceTensorInt32 = scaledSourceTensorFloat32.cast( "int32" );
-      return scaledSourceTensorInt32;
-    } catch ( e ) {
-      throw e; // e.g. out of (GPU) memory.
-    } finally {
-      scaledSourceTensorFloat32.dispose();
-    }
+  create_ScaledSourceTensor_from_PixelData( source_PixelData, bForceInt32 = true ) {
+    return NeuralNet_ScaleFiller
+      .create_ScaledSourceTensor_from_PixelData_height_wdith_channelCount(
+        source_PixelData,
+        source_height, source_wdith, source_channelCount,
+        bForceInt32 );
   }
 
   /**
