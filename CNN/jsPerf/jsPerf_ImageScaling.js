@@ -34,6 +34,8 @@ class HeightWidthDepth {
     this.output_valueCount
       = output_height * output_width * output_channelCount;
 
+    this.output_shape_height_width = [ output_height, output_width ];
+
     this.largerFactor = largerFactor;
 
     this.input_height = height * largerFactor;
@@ -137,7 +139,7 @@ class HeightWidthDepth {
         = NeuralNet_ScaleFiller.createTensor_by_scale_TypedArray(
             input_ImageData.data,
             input_Canvas.height, input_Canvas.width, this.output_channelCount,
-            this.target_shape_height_width );
+            this.output_shape_height_width );
 
       let output_TypedArray = output_tensor.dataSync();
 
