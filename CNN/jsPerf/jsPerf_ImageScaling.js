@@ -417,10 +417,17 @@ function init() {
 
   // Using mobile phone's resolution ( 1080 * 2160 ) will crash the computer.
   // Using ( 1 / 10 ) of computer screen ( 1080 * 1920 ).
-  const height = 108;
-  const width = 192;
+
+//!!! (2023/05/25 Temp Remarked) For Debug.
+//   const height = 108;
+//   const width = 192;
+//   const channelCount = 4;
+//   const largerFactor = 15;
+
+  const height = 1;
+  const width = 1;
   const channelCount = 4;
-  const largerFactor = 15;
+  const largerFactor = 2;
 
   globalThis.testSet_108x192x4
     = new HeightWidthDepth( height, width, channelCount, largerFactor );
