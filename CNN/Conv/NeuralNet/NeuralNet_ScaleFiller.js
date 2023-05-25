@@ -323,6 +323,12 @@ class NeuralNet_ScaleFiller {
     try {
       if ( bScale ) {
 
+!!! ...unfinished... (2023/05/25)
+// If source_TypedArray is Uint8ClampedArray with ( input_channelCount == 4 ),
+// call .createTensor_by_scale_PixelData() instead. (need create a temp ImageData.)
+// The reason is .createTensor_by_scale_PixelData() faster than
+// .createTensor_by_scale_TypedArray().
+      
         // Scale image (do it only once).
         sourceTensorInt32
           = NeuralNet_ScaleFiller.createTensor_by_scale_TypedArray(
