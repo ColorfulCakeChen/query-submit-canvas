@@ -219,6 +219,14 @@ class HeightWidthDepth {
 
         // For pre-compiling WebGL shaders.
         {
+          try {
+            // After correctness testing done, create all ImageScaling for performance testing.
+            this.ImageScaling_PerformanceTest_init();
+          } catch ( e ) {
+            debugger;
+            throw e;
+          }
+      
           this.testImageScaling_ByTensor3d_from_Canvas();
           this.testImageScaling_ByTensor3d_from_ImageData();
         }
