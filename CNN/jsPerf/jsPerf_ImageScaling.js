@@ -151,10 +151,18 @@ class HeightWidthDepth {
 
     let output_tensor;
     try {
-      output_tensor = NeuralNet.ScaleFiller.createTensor_by_scale_TypedArray(
-        input_ImageData.data,
-        input_ImageData.height, input_ImageData.width, this.output_channelCount,
+
+      //!!! (2023/05/25 Temp Test)
+      output_tensor = NeuralNet.ScaleFiller.createTensor_by_scale_PixelData(
+        input_ImageData,
+        this.output_channelCount,
         this.output_shape_height_width );
+
+//!!! (2023/05/25 Temp Remarked) For test .createTensor_by_scale_PixelData( ImageData )
+//       output_tensor = NeuralNet.ScaleFiller.createTensor_by_scale_TypedArray(
+//         input_ImageData.data,
+//         input_ImageData.height, input_ImageData.width, this.output_channelCount,
+//         this.output_shape_height_width );
 
       let output_TypedArray = output_tensor.dataSync();
 
