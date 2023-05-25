@@ -71,8 +71,21 @@ class HeightWidthDepth {
 
   /** */
   testImageScaling_ByOffscreenCanvas_2d_from_Canvas() {
-    HeightWidthDepth.testImageScaling_ByOffscreenCanvas_from_Canvas
-      .call( this, "2d" );
+    const input_Canvas = this.input_Canvas;
+
+    let offscreenCanvas
+      = new OffscreenCanvas( this.output_width, this.output_height );
+
+    // Note: "webgl" Rendering Context does not have .drawImage(),
+    //       .getImageData(), .putImageData().
+    let offscreenCanvas_ctx = offscreenCanvas.getContext( "2d" );
+    offscreenCanvas_ctx.drawImage( input_Canvas,
+      0, 0, input_Canvas.width, input_Canvas.height,
+      0, 0, this.output_width, this.output_height
+    );
+
+    let output_ImageData = offscreenCanvas_ctx.getImageData(
+      0, 0, this.output_width, this.output_height );
   }
 
   /** */
@@ -151,27 +164,6 @@ class HeightWidthDepth {
         output_tensor = null;
       }
     }
-  }
-
-
-  /**
-   * Note: "webgl" Rendering Context does not have .drawImage(),
-   *       .getImageData(), .putImageData().
-   */
-  static testImageScaling_ByOffscreenCanvas_from_Canvas( contextType ) {
-    const input_Canvas = this.input_Canvas;
-
-    let offscreenCanvas
-      = new OffscreenCanvas( this.output_width, this.output_height );
-
-    let offscreenCanvas_ctx = offscreenCanvas.getContext( contextType );
-    offscreenCanvas_ctx.drawImage( input_Canvas,
-      0, 0, input_Canvas.width, input_Canvas.height,
-      0, 0, this.output_width, this.output_height
-    );
-
-    let output_ImageData = offscreenCanvas_ctx.getImageData(
-      0, 0, this.output_width, this.output_height );
   }
 
 
