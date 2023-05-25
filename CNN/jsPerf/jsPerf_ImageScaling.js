@@ -64,7 +64,7 @@ class HeightWidthDepth {
   }
 
   /** */
-  testImageScaling_ByOffscreenCanvas_2d() {
+  testImageScaling_ByOffscreenCanvas_2d_from_Canvas() {
     const input_Canvas = this.input_Canvas;
 
 //!!!
@@ -86,7 +86,40 @@ class HeightWidthDepth {
   }
 
   /** */
-  testImageScaling_ByOffscreenCanvas_webgl() {
+  testImageScaling_ByOffscreenCanvas_2d_from_ImageData() {
+    const input_Canvas = this.input_Canvas;
+
+    let input_ctx = input_Canvas.getContext( "2d" );
+    let input_ImageData = input_ctx.getImageData(
+      0, 0, input_Canvas.width, input_Canvas.height );
+
+    let input_offscreenCanvas;
+    {
+      input_offscreenCanvas
+        = new OffscreenCanvas( this.input_width, this.input_height );
+
+      let input_offscreenCanvas_ctx = offscreenCanvas.getContext( "2d" );
+      input_offscreenCanvas_ctx.putImageData( input_ImageData, 0, 0 );
+    }
+
+    let output_offscreenCanvas;
+    {
+      output_offscreenCanvas
+        = new OffscreenCanvas( this.output_width, this.output_height );
+
+      let output_offscreenCanvas_ctx = offscreenCanvas.getContext( "2d" );
+        output_offscreenCanvas_ctx.drawImage( input_offscreenCanvas,
+        0, 0, input_offscreenCanvas.width, input_offscreenCanvas.height,
+        0, 0, this.output_width, this.output_height
+      );
+
+      let output_ImageData = output_offscreenCanvas_ctx.getImageData(
+        0, 0, this.output_width, this.output_height );
+    }
+  }
+
+  /** */
+  testImageScaling_ByOffscreenCanvas_webgl_from_Canvas() {
     const input_Canvas = this.input_Canvas;
 
     let offscreenCanvas
@@ -123,7 +156,17 @@ class HeightWidthDepth {
 //   }
 
   /** */
-  testImageScaling_ByTensor() {
+  testImageScaling_ByTensor3d_from_Canvas() {
+
+//!!! ...unfinished... (2023/05/25)
+
+//!!!
+    //tf.dispose( outputTensor3d );
+
+  }
+
+  /** */
+  testImageScaling_ByTensor3d_from_ImageData() {
 
 //!!! ...unfinished... (2023/05/25)
 
