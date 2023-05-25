@@ -472,8 +472,8 @@ class NeuralNet_ScaleFiller {
     let source_shape = [ source_height, source_width, source_channelCount ];
     let sourceTensorInt32
 //!!! (2023/05/25 Remarked) For test float32 speed.
-//      = tf.tensor3d( source_TypedArray, source_shape, "int32" );
-      = tf.tensor3d( source_TypedArray, source_shape );
+      = tf.tensor3d( source_TypedArray, source_shape, "int32" );
+//      = tf.tensor3d( source_TypedArray, source_shape, "float32" );
 
     // Resize to the target size (height x width) which is the input image
     // size used for training the neural network.
