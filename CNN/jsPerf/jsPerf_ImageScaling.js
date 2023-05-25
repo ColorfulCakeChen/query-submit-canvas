@@ -31,15 +31,18 @@ class HeightWidthDepth {
     this.output_width = output_width;
     this.output_channelCount = output_channelCount;
 
+    this.output_shape_height_width = [ output_height, output_width ];
+
     this.output_valueCount
       = output_height * output_width * output_channelCount;
-
-    this.output_shape_height_width = [ output_height, output_width ];
 
     this.largerFactor = largerFactor;
 
     this.input_height = height * largerFactor;
     this.input_width = width * largerFactor;
+
+    this.input_shape
+      = [ this.input_height, this.input_width, this.output_channelCount ];
 
     this.input_valueCount
       = this.input_height * this.input_width * channelCount;
@@ -130,10 +133,7 @@ class HeightWidthDepth {
     try {
 
 //!!! (2023/05/25 Remarked)
-//       let input_shape = [ input_Canvas.height, input_Canvas.width,
-//         this.output_channelCount ];
-//
-//       input_tensor = tf.tensor3d( input_ImageData, input_shape, "int32" );
+//       input_tensor = tf.tensor3d( input_ImageData, this.input_shape, "int32" );
 
       output_tensor
         = NeuralNet_ScaleFiller.createTensor_by_scale_TypedArray(
