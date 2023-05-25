@@ -45,7 +45,7 @@ class HeightWidthDepth {
       = [ this.input_height, this.input_width, this.output_channelCount ];
 
     this.input_valueCount
-      = this.input_height * this.input_width * channelCount;
+      = this.input_height * this.input_width * output_channelCount;
   }
 
   /** */
