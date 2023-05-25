@@ -204,7 +204,7 @@ class HeightWidthDepth {
 
     let output_ImageData = NeuralNet.ScaleFiller
       .createImageData_by_scale_ImageData(
-        input_ImageData, this.input_shape );
+        input_ImageData, this.output_shape_height_width );
 
     return output_ImageData.data;
   }
