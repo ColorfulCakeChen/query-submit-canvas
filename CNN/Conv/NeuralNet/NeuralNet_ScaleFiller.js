@@ -327,7 +327,8 @@ class NeuralNet_ScaleFiller {
         sourceTensorInt32
           = NeuralNet_ScaleFiller.createTensor_by_scale_TypedArray.call( this,
               source_TypedArray,
-              source_height, source_width, source_channelCount );
+              source_height, source_width, source_channelCount,
+              this.target_shape_height_width );
 
         if ( bFill ) { // 2.1.1 Scale, Fill
 
@@ -456,12 +457,18 @@ class NeuralNet_ScaleFiller {
    *   The channel count of the source_TypedArray. It should equal to
    * ( source_TypedArray / source_height / source_width ).
    *
+   * @param {number[]} target_shape_height_width
+   *   A number array as [ target_height, target_width ] describing the shape
+   * of the target tensor.
+   *
    * @param {tf.tensor3d}
    *   Return a scaled int32 tensor3d whose depthwise size is [ this.height,
    * this.width ].
    */
   static createTensor_by_scale_TypedArray(
-    source_TypedArray, source_height, source_width, source_channelCount ) {
+    source_TypedArray, source_height, source_width, source_channelCount,
+    target_shape_height_width
+  ) {
 
     let source_shape = [ source_height, source_width, source_channelCount ];
     let sourceTensorInt32
@@ -472,7 +479,7 @@ class NeuralNet_ScaleFiller {
     let scaledSourceTensorFloat32;
     try {
       scaledSourceTensorFloat32 = tf.image.resizeBilinear(
-        sourceTensorInt32, this.target_shape_height_width,
+        sourceTensorInt32, target_shape_height_width,
         true // ( alignCorners = true ) for visual image resizing.
       );
     } catch ( e ) {

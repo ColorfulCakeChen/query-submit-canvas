@@ -108,6 +108,13 @@ class HeightWidthDepth {
 
 //!!! ...unfinished... (2023/05/25)
 
+  }
+
+  /** */
+  testImageScaling_ByTensor3d_from_ImageData() {
+
+//!!! ...unfinished... (2023/05/25)
+
     const input_Canvas = this.input_Canvas;
 
     let input_ctx = input_Canvas.getContext( "2d" );
@@ -152,16 +159,6 @@ class HeightWidthDepth {
       let output_ImageData = output_offscreenCanvas_ctx.getImageData(
         0, 0, this.output_width, this.output_height );
     }
-
-//!!!
-    //tf.dispose( outputTensor3d );
-
-  }
-
-  /** */
-  testImageScaling_ByTensor3d_from_ImageData() {
-
-//!!! ...unfinished... (2023/05/25)
 
 //!!!
     //tf.dispose( outputTensor3d );
