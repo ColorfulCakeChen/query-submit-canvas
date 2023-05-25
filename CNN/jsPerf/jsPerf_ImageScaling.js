@@ -111,16 +111,28 @@ class HeightWidthDepth {
 
   /** */
   testImageScaling_ByTensor3d_from_Canvas() {
+    const input_Canvas = this.input_Canvas;
 
-//!!! ...unfinished... (2023/05/25)
+    let output_tensor;
+    try {
+      output_tensor
+        = NeuralNet_ScaleFiller.createTensor_by_scale_PixelData(
+            input_Canvas,
+            this.output_channelCount,
+            this.output_shape_height_width );
 
+      let output_TypedArray = output_tensor.dataSync();
+
+    } finally {
+      if ( output_tensor ) {
+        output_tensor.dispose();
+        output_tensor = null;
+      }
+    }
   }
 
   /** */
   testImageScaling_ByTensor3d_from_ImageData() {
-
-//!!! ...unfinished... (2023/05/25)
-
     const input_Canvas = this.input_Canvas;
 
     let input_ctx = input_Canvas.getContext( "2d" );
