@@ -190,7 +190,9 @@ class HeightWidthDepth {
       input_offscreenCanvas
         = new OffscreenCanvas( this.input_width, this.input_height );
 
-      let input_offscreenCanvas_ctx = offscreenCanvas.getContext( contextType );
+      let input_offscreenCanvas_ctx
+        = input_offscreenCanvas.getContext( contextType );
+
       input_offscreenCanvas_ctx.putImageData( input_ImageData, 0, 0 );
     }
 
@@ -199,8 +201,10 @@ class HeightWidthDepth {
       output_offscreenCanvas
         = new OffscreenCanvas( this.output_width, this.output_height );
 
-      let output_offscreenCanvas_ctx = offscreenCanvas.getContext( contextType );
-        output_offscreenCanvas_ctx.drawImage( input_offscreenCanvas,
+      let output_offscreenCanvas_ctx
+        = output_offscreenCanvas.getContext( contextType );
+
+      output_offscreenCanvas_ctx.drawImage( input_offscreenCanvas,
         0, 0, input_offscreenCanvas.width, input_offscreenCanvas.height,
         0, 0, this.output_width, this.output_height
       );
