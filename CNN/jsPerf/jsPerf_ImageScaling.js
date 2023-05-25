@@ -72,130 +72,36 @@ class HeightWidthDepth {
 
 
   /** */
-  testImageScaling_ByOffscreenCanvas_2d_from_Canvas() {
-    const input_Canvas = this.input_Canvas;
-
-    let offscreenCanvas
-      = new OffscreenCanvas( this.output_width, this.output_height );
-
-    // Note: "webgl" Rendering Context does not have .drawImage(),
-    //       .getImageData(), .putImageData().
-    let offscreenCanvas_ctx = offscreenCanvas.getContext( "2d" );
-    offscreenCanvas_ctx.drawImage( input_Canvas,
-      0, 0, input_Canvas.width, input_Canvas.height,
-      0, 0, this.output_width, this.output_height
-    );
-
-    let output_ImageData = offscreenCanvas_ctx.getImageData(
-      0, 0, this.output_width, this.output_height );
+  testImageScaling_by_OffscreenCanvas_from_Canvas() {
+    return HeightWidthDepth.scale_by_OffscreenCanvas_from_Canvas
+      .call( this, this.input_Canvas );
   }
 
   /** */
-  testImageScaling_ByOffscreenCanvas_2d_from_ImageData() {
-    const input_Canvas = this.input_Canvas;
-
-    let input_ctx = input_Canvas.getContext( "2d" );
-    let input_ImageData = input_ctx.getImageData(
-      0, 0, input_Canvas.width, input_Canvas.height );
-
-    NeuralNet.ScaleFiller.createImageData_by_scale_ImageData(
-      input_ImageData, this.input_shape );
-  }
-
-//!!! ...unfinished... (2023/05/25) need inside async function.
-//   /** */
-//   testImageScaling_ByOffscreenCanvas_bitmaprenderer() {
-//     const input_Canvas = this.input_Canvas;
-//
-//     let input_ImageBitmap = await createImageBitmap( input_Canvas );
-//
-//     let offscreenCanvas
-//       = new OffscreenCanvas( this.output_width, this.output_height );
-//
-//     let offscreenCanvas_ctx = offscreenCanvas.getContext( "bitmaprenderer" );
-//     offscreenCanvas_ctx.transferFromImageBitmap( input_ImageBitmap );
-//
-// //!!! ...unfinished... (2023/05/25) whether necessary?
-//     input_ImageBitmap.close();
-//
-//     let output_ImageData = offscreenCanvas_ctx.getImageData(
-//       0, 0, this.output_width, this.output_height );
-//   }
-
-  /** */
-  testImageScaling_ByTensor3d_from_Canvas() {
-    const input_Canvas = this.input_Canvas;
-
-    let output_tensor;
-    try {
-      output_tensor = NeuralNet.ScaleFiller.createTensor_by_scale_PixelData(
-        input_Canvas,
-        this.output_channelCount,
-        this.output_shape_height_width );
-
-      let output_TypedArray = output_tensor.dataSync();
-
-    } finally {
-      if ( output_tensor ) {
-        output_tensor.dispose();
-        output_tensor = null;
-      }
-    }
+  testImageScaling_by_OffscreenCanvas_from_Canvas_ImageData() {
+    return HeightWidthDepth.scale_by_OffscreenCanvas_from_Canvas_ImageData
+      .call( this, this.input_Canvas );
   }
 
   /** */
-  testImageScaling_ByTensor3d_from_ImageData() {
-    const input_Canvas = this.input_Canvas;
-
-    let input_ctx = input_Canvas.getContext( "2d" );
-    let input_ImageData = input_ctx.getImageData(
-      0, 0, input_Canvas.width, input_Canvas.height );
-
-    let output_tensor;
-    try {
-
-      output_tensor = NeuralNet.ScaleFiller.createTensor_by_scale_PixelData(
-        input_ImageData,
-        this.output_channelCount,
-        this.output_shape_height_width );
-
-      let output_TypedArray = output_tensor.dataSync();
-
-    } finally {
-      if ( output_tensor ) {
-        output_tensor.dispose();
-        output_tensor = null;
-      }
-    }
+  testImageScaling_by_Tensor_from_Canvas() {
+    return HeightWidthDepth.scale_by_Tensor_from_Canvas
+      .call( this, this.input_Canvas );
   }
 
   /** */
-  testImageScaling_ByTensor3d_from_TypedArray() {
-    const input_Canvas = this.input_Canvas;
-
-    let input_ctx = input_Canvas.getContext( "2d" );
-    let input_ImageData = input_ctx.getImageData(
-      0, 0, input_Canvas.width, input_Canvas.height );
-
-    let output_tensor;
-    try {
-
-      output_tensor = NeuralNet.ScaleFiller.createTensor_by_scale_TypedArray(
-        input_ImageData.data,
-        input_ImageData.height, input_ImageData.width, this.output_channelCount,
-        this.output_shape_height_width );
-
-      let output_TypedArray = output_tensor.dataSync();
-
-    } finally {
-      if ( output_tensor ) {
-        output_tensor.dispose();
-        output_tensor = null;
-      }
-    }
+  testImageScaling_by_Tensor_from__Canvas_ImageData() {
+    return HeightWidthDepth.scale_by_Tensor_from_Canvas_ImageData
+      .call( this, this.input_Canvas );
   }
 
-//!!!
+  /** */
+  testImageScaling_by_Tensor_from_Canvas_TypedArray() {
+    return HeightWidthDepth.scale_by_Tensor_from_Canvas_TypedArray
+      .call( this, this.input_Canvas );
+  }
+
+
   /**
    * @return {TypedArray}
    */
@@ -218,7 +124,7 @@ class HeightWidthDepth {
   }
 
   /** */
-  static scale_by_OffscreenCanvas_from_ImageData( input_Canvas ) {
+  static scale_by_OffscreenCanvas_from_Canvas_ImageData( input_Canvas ) {
     let input_ctx = input_Canvas.getContext( "2d" );
     let input_ImageData = input_ctx.getImageData(
       0, 0, input_Canvas.width, input_Canvas.height );
@@ -232,7 +138,7 @@ class HeightWidthDepth {
 
 //!!! ...unfinished... (2023/05/25) need inside async function.
 //   /** */
-//   static scale_by_OffscreenCanvas_from_bitmaprenderer( input_Canvas ) {
+//   static scale_by_OffscreenCanvas_from_Canvas_bitmaprenderer( input_Canvas ) {
 //     let input_ImageBitmap = await createImageBitmap( input_Canvas );
 //
 //     let offscreenCanvas
@@ -271,7 +177,7 @@ class HeightWidthDepth {
   }
 
   /** */
-  static scale_by_Tensor_from_ImageData( input_Canvas ) {
+  static scale_by_Tensor_from_Canvas_ImageData( input_Canvas ) {
     let input_ctx = input_Canvas.getContext( "2d" );
     let input_ImageData = input_ctx.getImageData(
       0, 0, input_Canvas.width, input_Canvas.height );
@@ -295,7 +201,7 @@ class HeightWidthDepth {
   }
 
   /** */
-  static scale_by_Tensor_from_TypedArray( input_Canvas ) {
+  static scale_by_Tensor_from_Canvas_TypedArray( input_Canvas ) {
     let input_ctx = input_Canvas.getContext( "2d" );
     let input_ImageData = input_ctx.getImageData(
       0, 0, input_Canvas.width, input_Canvas.height );
