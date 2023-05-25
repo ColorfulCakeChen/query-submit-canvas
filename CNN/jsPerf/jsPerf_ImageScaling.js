@@ -66,8 +66,10 @@ class HeightWidthDepth {
     //ctx.putImageData( imageData, 0 , 0 );
   }
 
+  /** */
   ImageScaling_PerformanceTest_release() {
   }
+
 
   /** */
   testImageScaling_ByOffscreenCanvas_2d_from_Canvas() {
@@ -184,6 +186,129 @@ class HeightWidthDepth {
         this.output_shape_height_width );
 
       let output_TypedArray = output_tensor.dataSync();
+
+    } finally {
+      if ( output_tensor ) {
+        output_tensor.dispose();
+        output_tensor = null;
+      }
+    }
+  }
+
+//!!!
+  /**
+   * @return {TypedArray}
+   */
+  static scale_by_OffscreenCanvas_from_Canvas( input_Canvas ) {
+    let offscreenCanvas
+      = new OffscreenCanvas( this.output_width, this.output_height );
+
+    // Note: "webgl" Rendering Context does not have .drawImage(),
+    //       .getImageData(), .putImageData().
+    let offscreenCanvas_ctx = offscreenCanvas.getContext( "2d" );
+    offscreenCanvas_ctx.drawImage( input_Canvas,
+      0, 0, input_Canvas.width, input_Canvas.height,
+      0, 0, this.output_width, this.output_height
+    );
+
+    let output_ImageData = offscreenCanvas_ctx.getImageData(
+      0, 0, this.output_width, this.output_height );
+
+    return output_ImageData.data;
+  }
+
+  /** */
+  static scale_by_OffscreenCanvas_from_ImageData( input_Canvas ) {
+    let input_ctx = input_Canvas.getContext( "2d" );
+    let input_ImageData = input_ctx.getImageData(
+      0, 0, input_Canvas.width, input_Canvas.height );
+
+    let output_ImageData = NeuralNet.ScaleFiller
+      .createImageData_by_scale_ImageData(
+        input_ImageData, this.input_shape );
+
+    return output_ImageData.data;
+  }
+
+//!!! ...unfinished... (2023/05/25) need inside async function.
+//   /** */
+//   static scale_by_OffscreenCanvas_from_bitmaprenderer( input_Canvas ) {
+//     let input_ImageBitmap = await createImageBitmap( input_Canvas );
+//
+//     let offscreenCanvas
+//       = new OffscreenCanvas( this.output_width, this.output_height );
+//
+//     let offscreenCanvas_ctx = offscreenCanvas.getContext( "bitmaprenderer" );
+//     offscreenCanvas_ctx.transferFromImageBitmap( input_ImageBitmap );
+//
+// //!!! ...unfinished... (2023/05/25) whether necessary?
+//     input_ImageBitmap.close();
+//
+//     let output_ImageData = offscreenCanvas_ctx.getImageData(
+//       0, 0, this.output_width, this.output_height );
+//
+//     return output_ImageData.data;
+//   }
+
+  /** */
+  static scale_by_Tensor_from_Canvas( input_Canvas ) {
+    let output_tensor;
+    try {
+      output_tensor = NeuralNet.ScaleFiller.createTensor_by_scale_PixelData(
+        input_Canvas,
+        this.output_channelCount,
+        this.output_shape_height_width );
+
+      let output_TypedArray = output_tensor.dataSync();
+      return output_TypedArray;
+
+    } finally {
+      if ( output_tensor ) {
+        output_tensor.dispose();
+        output_tensor = null;
+      }
+    }
+  }
+
+  /** */
+  static scale_by_Tensor_from_ImageData( input_Canvas ) {
+    let input_ctx = input_Canvas.getContext( "2d" );
+    let input_ImageData = input_ctx.getImageData(
+      0, 0, input_Canvas.width, input_Canvas.height );
+
+    let output_tensor;
+    try {
+      output_tensor = NeuralNet.ScaleFiller.createTensor_by_scale_PixelData(
+        input_ImageData,
+        this.output_channelCount,
+        this.output_shape_height_width );
+
+      let output_TypedArray = output_tensor.dataSync();
+      return output_TypedArray;
+
+    } finally {
+      if ( output_tensor ) {
+        output_tensor.dispose();
+        output_tensor = null;
+      }
+    }
+  }
+
+  /** */
+  static scale_by_Tensor_from_TypedArray( input_Canvas ) {
+    let input_ctx = input_Canvas.getContext( "2d" );
+    let input_ImageData = input_ctx.getImageData(
+      0, 0, input_Canvas.width, input_Canvas.height );
+
+    let output_tensor;
+    try {
+      output_tensor = NeuralNet.ScaleFiller.createTensor_by_scale_TypedArray(
+        input_ImageData.data,
+        input_ImageData.height, input_ImageData.width, this.output_channelCount,
+        this.output_shape_height_width );
+
+      let output_TypedArray = output_tensor.dataSync();
+      return output_TypedArray;
 
     } finally {
       if ( output_tensor ) {
