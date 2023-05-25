@@ -349,7 +349,7 @@ class HeightWidthDepth {
               let lhsNumberArrayName = `output_of_${TestCaseNameArray[ testCaseId - 1 ]}`;
               let rhsNumberArrayName = `output_of_${TestCaseNameArray[ testCaseId ]}`;
 
-              let prefixMsg = "";
+              let prefixMsg = `testCaseId=${testCaseId},`;
               let postfixMsg = "";
 
               asserter_Equal.assert_NumberArray_NumberArray(
