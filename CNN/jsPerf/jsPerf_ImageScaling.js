@@ -319,9 +319,20 @@ class HeightWidthDepth {
             throw e;
           }
 
+//!!! ...unfinished... (2023/05/25)
+// should compare result all the same.
+
+          this.testImageScaling_by_OffscreenCanvas_from_Canvas();
+          this.testImageScaling_by_OffscreenCanvas_from_Canvas_ImageData();
           this.testImageScaling_by_Tensor_from_Canvas();
           this.testImageScaling_by_Tensor_from_Canvas_ImageData();
           this.testImageScaling_by_Tensor_from_Canvas_TypedArray();
+
+          this.testImageScaling_by_OffscreenCanvas_from_OffscreenCanvas();
+          this.testImageScaling_by_OffscreenCanvas_from_OffscreenCanvas_ImageData();
+          this.testImageScaling_by_Tensor_from_OffscreenCanvas();
+          this.testImageScaling_by_Tensor_from_OffscreenCanvas_ImageData();
+          this.testImageScaling_by_Tensor_from_OffscreenCanvas_TypedArray();
         }
 
         let memoryInfo_testCorrectness_after = tf.memory();
