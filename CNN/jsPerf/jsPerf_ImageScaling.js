@@ -301,6 +301,20 @@ class HeightWidthDepth {
   /** Testing whether the results of different implementation are the same. */
   * testCorrectness() {
 
+    const TestCaseNameArray = [
+      "testImageScaling_by_OffscreenCanvas_from_Canvas",
+      "testImageScaling_by_OffscreenCanvas_from_Canvas_ImageData",
+      "testImageScaling_by_Tensor_from_Canvas",
+      "testImageScaling_by_Tensor_from_Canvas_ImageData",
+      "testImageScaling_by_Tensor_from_Canvas_TypedArray",
+
+      "testImageScaling_by_OffscreenCanvas_from_OffscreenCanvas",
+      "testImageScaling_by_OffscreenCanvas_from_OffscreenCanvas_ImageData",
+      "testImageScaling_by_Tensor_from_OffscreenCanvas",
+      "testImageScaling_by_Tensor_from_OffscreenCanvas_ImageData",
+      "testImageScaling_by_Tensor_from_OffscreenCanvas_TypedArray",
+    ];
+
     try {
       let pool_all_issuedCount_before = Pool.All.issuedCount;
 
@@ -309,24 +323,26 @@ class HeightWidthDepth {
       {
         let memoryInfo_testCorrectness_before = tf.memory(); // Test memory leakage of imageSourceBag.
 
+        this.ImageScaling_PerformanceTest_init();
+
         // (Also for pre-compiling WebGL shaders.)
-        {
-          this.ImageScaling_PerformanceTest_init();
+
+        let output_TypedArray_previous;
+        let output_TypedArray;
+        for ( let testCaseIndex = 0;
+          testCaseIndex < TestCaseNameArray.length; ++testCaseIndex ) {
+
+          const testCaseName = TestCaseNameArray[ testCaseIndex ];
+
+          output_TypedArray = this[ testCaseName ]();
+          if ( output_TypedArray_previous ) {
 
 //!!! ...unfinished... (2023/05/25)
 // should compare result all the same.
 
-          this.testImageScaling_by_OffscreenCanvas_from_Canvas();
-          this.testImageScaling_by_OffscreenCanvas_from_Canvas_ImageData();
-          this.testImageScaling_by_Tensor_from_Canvas();
-          this.testImageScaling_by_Tensor_from_Canvas_ImageData();
-          this.testImageScaling_by_Tensor_from_Canvas_TypedArray();
+          }
 
-          this.testImageScaling_by_OffscreenCanvas_from_OffscreenCanvas();
-          this.testImageScaling_by_OffscreenCanvas_from_OffscreenCanvas_ImageData();
-          this.testImageScaling_by_Tensor_from_OffscreenCanvas();
-          this.testImageScaling_by_Tensor_from_OffscreenCanvas_ImageData();
-          this.testImageScaling_by_Tensor_from_OffscreenCanvas_TypedArray();
+          output_TypedArray_previous = output_TypedArray;
         }
 
         let memoryInfo_testCorrectness_after = tf.memory();
