@@ -626,8 +626,14 @@ class NeuralNet_ScaleFiller {
     target_shape_height_width
   ) {
 
-//!!! ...unfinished... (2023/05/25)
+    let source_ImageData = new ImageData(
+      source_Uint8ClampedArray, source_height, source_width );
 
+    let target_ImageData
+      = NeuralNet_ScaleFiller.createImageData_by_scale_ImageData(
+          source_ImageData, target_shape_height_width );
+
+    return target_ImageData;
   }
 
   /**
