@@ -463,6 +463,12 @@ class NeuralNet_ScaleFiller {
    *   A number array as [ target_height, target_width ] describing the shape
    * of the target tensor.
    *
+   * @param {boolean} bForceInt32
+   *   If true, the dtype of the returned tf.tensor3d will be guaranteed as
+   * int32. Otherwise, the dtype of the returned tf.tensor3d may be int32 or
+   * float32 (because of resizing). This is useful if the result will be used
+   * by an embedding layer (which only accepts integer input). Default is true.
+   *
    * @param {tf.tensor3d}
    *   Return an int32 tensor3d whose shape is
    * [ target_shape_height_width[ 0 ], target_shape_height_width[ 1 ],
@@ -471,49 +477,56 @@ class NeuralNet_ScaleFiller {
   static createTensor_by_scale_TypedArray(
     source_TypedArray,
     source_height, source_width, source_channelCount,
-    target_shape_height_width
-  ) {
+    target_shape_height_width,
+    bForceInt32 = true ) {
 
     let source_shape = [ source_height, source_width, source_channelCount ];
-    let sourceTensorInt32
+    let source_TensorInt32
       = tf.tensor3d( source_TypedArray, source_shape, "int32" );
 
     // Resize to the target size (height x width) which is the input image
     // size used for training the neural network.
-    let scaledSourceTensorFloat32;
-    try {
+    return NeuralNet_ScaleFiller.createTensor_by_scale_Tensor(
+      source_TensorInt32,
+      target_shape_height_width,
+      bForceInt32
+    );
 
-      // Note:
-      //
-      // ( alignCorners == false ) and ( halfPixelCenters == true ) could
-      // get scaling result similar to CanvasRenderingContext2D.drawImage().
-      //
-      const alignCorners = false;
-      const halfPixelCenters = true;
-
-      scaledSourceTensorFloat32 = tf.image.resizeBilinear(
-        sourceTensorInt32, target_shape_height_width,
-        alignCorners, halfPixelCenters
-      );
-    } catch ( e ) {
-      //debugger;
-      throw e; // e.g. out of (GPU) memory.
-    } finally {
-      sourceTensorInt32.dispose();
-    }
-
-    // Convert to int32. (Note: The dtype of tf.image.resizeXxx()'s result
-    // is float32.)
-    let scaledSourceTensorInt32;
-    try {
-      scaledSourceTensorInt32 = scaledSourceTensorFloat32.cast( "int32" );
-      return scaledSourceTensorInt32;
-    } catch ( e ) {
-      //debugger;
-      throw e; // e.g. out of (GPU) memory.
-    } finally {
-      scaledSourceTensorFloat32.dispose();
-    }
+//!!! (2023/05/26 Remarked) Use .createTensor_by_scale_Tensor() instead.
+//     let scaledSourceTensorFloat32;
+//     try {
+//
+//       // Note:
+//       //
+//       // ( alignCorners == false ) and ( halfPixelCenters == true ) could
+//       // get scaling result similar to CanvasRenderingContext2D.drawImage().
+//       //
+//       const alignCorners = false;
+//       const halfPixelCenters = true;
+//
+//       scaledSourceTensorFloat32 = tf.image.resizeBilinear(
+//         sourceTensorInt32, target_shape_height_width,
+//         alignCorners, halfPixelCenters
+//       );
+//     } catch ( e ) {
+//       //debugger;
+//       throw e; // e.g. out of (GPU) memory.
+//     } finally {
+//       sourceTensorInt32.dispose();
+//     }
+//
+//     // Convert to int32. (Note: The dtype of tf.image.resizeXxx()'s result
+//     // is float32.)
+//     let scaledSourceTensorInt32;
+//     try {
+//       scaledSourceTensorInt32 = scaledSourceTensorFloat32.cast( "int32" );
+//       return scaledSourceTensorInt32;
+//     } catch ( e ) {
+//       //debugger;
+//       throw e; // e.g. out of (GPU) memory.
+//     } finally {
+//       scaledSourceTensorFloat32.dispose();
+//     }
   }
 
   /**
@@ -566,73 +579,62 @@ class NeuralNet_ScaleFiller {
 
     // Note: For image coming from canvas, the tf.browser.fromPixels() handle a
     //       RGBA 4 channels faster than RGB 3 channels input.
-    let sourceTensor = tf.browser.fromPixels(
+    let source_Tensor = tf.browser.fromPixels(
       source_PixelData, source_channelCount ); // dtype will be int32.
 
     // If the size ( height x width ) is as expected, use it directly.
-    if (   ( sourceTensor.shape[ 0 ] == target_shape_height_width[ 0 ] ) // target_height
-        && ( sourceTensor.shape[ 1 ] == target_shape_height_width[ 1 ] ) // target_width
+    if (   ( source_Tensor.shape[ 0 ] == target_shape_height_width[ 0 ] ) // target_height
+        && ( source_Tensor.shape[ 1 ] == target_shape_height_width[ 1 ] ) // target_width
        )
-      return sourceTensor; // (Note: dtype will still be int32.)
+      return source_Tensor; // (Note: dtype will still be int32.)
 
     // Otherwise, resize to the default size (height x width) which is the input
     // image size used for training the neural network.
     //
-    let scaledSourceTensorFloat32;
-    try {
+    return NeuralNet_ScaleFiller.createTensor_by_scale_Tensor(
+      source_Tensor,
+      target_shape_height_width,
+      bForceInt32
+    );
 
-      // Note:
-      //
-      // ( alignCorners == false ) and ( halfPixelCenters == true ) could
-      // get scaling result similar to CanvasRenderingContext2D.drawImage().
-      //
-      const alignCorners = false;
-      const halfPixelCenters = true;
-
-      scaledSourceTensorFloat32 = tf.image.resizeBilinear(
-        sourceTensor, target_shape_height_width,
-        alignCorners, halfPixelCenters
-      );
-    } catch ( e ) {
-      throw e; // e.g. out of (GPU) memory.
-    } finally {
-      sourceTensor.dispose();
-    }
-
-    if ( !bForceInt32 )
-      return scaledSourceTensorFloat32;
-
-    // Convert to int32 if necessary. (Note: The dtype of tf.image.resizeXxx()'s
-    // result is float32.)
-    try {
-      let scaledSourceTensorInt32 = scaledSourceTensorFloat32.cast( "int32" );
-      return scaledSourceTensorInt32;
-    } catch ( e ) {
-      throw e; // e.g. out of (GPU) memory.
-    } finally {
-      scaledSourceTensorFloat32.dispose();
-    }
+//!!! (2023/05/26 Remarked) Use .createTensor_by_scale_Tensor() instead.
+//     let scaledSourceTensorFloat32;
+//     try {
+//
+//       // Note:
+//       //
+//       // ( alignCorners == false ) and ( halfPixelCenters == true ) could
+//       // get scaling result similar to CanvasRenderingContext2D.drawImage().
+//       //
+//       const alignCorners = false;
+//       const halfPixelCenters = true;
+//
+//       scaledSourceTensorFloat32 = tf.image.resizeBilinear(
+//         sourceTensor, target_shape_height_width,
+//         alignCorners, halfPixelCenters
+//       );
+//     } catch ( e ) {
+//       throw e; // e.g. out of (GPU) memory.
+//     } finally {
+//       sourceTensor.dispose();
+//     }
+//
+//     if ( !bForceInt32 )
+//       return scaledSourceTensorFloat32;
+//
+//     // Convert to int32 if necessary. (Note: The dtype of tf.image.resizeXxx()'s
+//     // result is float32.)
+//     try {
+//       let scaledSourceTensorInt32 = scaledSourceTensorFloat32.cast( "int32" );
+//       return scaledSourceTensorInt32;
+//     } catch ( e ) {
+//       throw e; // e.g. out of (GPU) memory.
+//     } finally {
+//       scaledSourceTensorFloat32.dispose();
+//     }
   }
 
-//!!!
-
   /**
-   * Create a tensor3d from source (e.g. canvas). Its size will be confirmed
-   * (by scaling) to this neural network's acceptable input [ height, width ].
-   *
-   *
-   * Note1: It is more recommended to use Canvas Context drawImage() to scale
-   *        image than this method. The reason is:
-   * 
-   *          - drawImage() operates on GPU directly.
-   * 
-   *          - This method downloads data from GPU to CPU for creating tensor.
-   *              And then, uploads data from CPU to GPU to scale tensor.
-   *
-   * Note2: According to testing, in backend "webgl", this method may be far
-   *        more faster than .createTensor_by_scale_TypedArray(). But this
-   *        method can only handle image (i.e. not any shape tensor).
-   *
    *
    * @param {tf.tensor3d} source_Tensor
    *   The source tensor to be scaled. It will be disposed by this method.
@@ -698,8 +700,6 @@ class NeuralNet_ScaleFiller {
       scaledSourceTensorFloat32.dispose();
     }
   }
-
-//!!!
 
   /**
    *
