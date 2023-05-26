@@ -331,8 +331,9 @@ class NeuralNet_ScaleFiller {
 //
 //!!! ...unfinished... (2023/05/26)
 // .createImageData_by_scale_Uint8ClampedArray() or
+// .createTensor_by_scale_PixelData() or
 // .createTensor_by_scale_TypedArray()
-      
+
         // Scale image (do it only once).
         sourceTensorInt32
           = NeuralNet_ScaleFiller.createTensor_by_scale_TypedArray(
