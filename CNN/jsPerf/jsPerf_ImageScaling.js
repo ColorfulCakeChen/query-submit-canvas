@@ -327,14 +327,14 @@ class HeightWidthDepth {
       "testImageScaling_by_Tensor_from_OffscreenCanvas_TypedArray",
     ];
 
-    let asserter_Equal;
     let testCaseId, testCaseName;
     try {
       let pool_all_issuedCount_before = Pool.All.issuedCount;
 
       yield;
 
-      {
+      let asserter_Equal;
+      try {
         let memoryInfo_testCorrectness_before = tf.memory(); // Test memory leakage of imageSourceBag.
 
         // (Also for pre-compiling WebGL shaders.)
@@ -393,6 +393,12 @@ class HeightWidthDepth {
             + `result tensor count (${memoryInfo_testCorrectness_after.numTensors}) `
             + `should be (${memoryInfo_testCorrectness_before.numTensors} `
           );
+
+      } finally {
+        if ( asserter_Equal ) {
+          asserter_Equal.disposeResources_and_recycleToPool();
+          asserter_Equal = null;
+        }
       }
 
       Pool.Asserter.assert_Pool_issuedCount(
@@ -414,12 +420,6 @@ class HeightWidthDepth {
 
       debugger;
       throw e;
-
-    } finally {
-      if ( asserter_Equal ) {
-        asserter_Equal.disposeResources_and_recycleToPool();
-        asserter_Equal = null;
-      }
     }
 
     try {
