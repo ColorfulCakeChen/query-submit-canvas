@@ -681,8 +681,8 @@ class NeuralNet_ScaleFiller {
     source_Canvas,
     target_shape_height_width
   ) {
-    const source_height = source_ImageData.height;
-    const source_width = source_ImageData.width;
+    const source_height = source_Canvas.height;
+    const source_width = source_Canvas.width;
 
     const target_height = target_shape_height_width[ 0 ];
     const target_width = target_shape_height_width[ 1 ];
