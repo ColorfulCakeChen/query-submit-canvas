@@ -482,9 +482,16 @@ class NeuralNet_ScaleFiller {
     // size used for training the neural network.
     let scaledSourceTensorFloat32;
     try {
+
+//!!! ...unfinished... (2023/05/26)
+      //const alignCorners = false;
+      const alignCorners = true; // for visual image resizing.
+      const halfPixelCenters = false;
+      //const halfPixelCenters = true;
+
       scaledSourceTensorFloat32 = tf.image.resizeBilinear(
         sourceTensorInt32, target_shape_height_width,
-        true // ( alignCorners = true ) for visual image resizing.
+        alignCorners, halfPixelCenters
       );
     } catch ( e ) {
       //debugger;
@@ -571,9 +578,16 @@ class NeuralNet_ScaleFiller {
     //
     let scaledSourceTensorFloat32;
     try {
+
+//!!! ...unfinished... (2023/05/26)
+      const alignCorners = false;
+      //const alignCorners = true; // for visual image resizing.
+      const halfPixelCenters = false;
+      //const halfPixelCenters = true;
+
       scaledSourceTensorFloat32 = tf.image.resizeBilinear(
         sourceTensor, target_shape_height_width,
-        true // ( alignCorners = true ) for visual image resizing.
+        alignCorners, halfPixelCenters
       );
     } catch ( e ) {
       throw e; // e.g. out of (GPU) memory.
