@@ -330,8 +330,8 @@ class NeuralNet_ScaleFiller {
 // .createTensor_by_scale_TypedArray().
 //
 //!!! ...unfinished... (2023/05/26)
-// .createImageData_by_scale_Uint8ClampedArray() or
-// .createTensor_by_scale_TypedArray()
+// .createTypedArray_smartly_by_scale_TypedArray_async() or
+// .createTensor_smartly_by_scale_TypedArray()
 
         // Scale image (do it only once).
         sourceTensorInt32
@@ -445,8 +445,6 @@ class NeuralNet_ScaleFiller {
   }
 
 
-//!!!
-
   /**
    * Internally, call .createImageData_by_scale_Uint8ClampedArray() or call
    * .createTensor_by_scale_TypedArray().
@@ -484,7 +482,7 @@ class NeuralNet_ScaleFiller {
 
     let target_Int32Array;
 
-    // 1. RGBA Image data.
+    // 1. RGBA Image data. Use faster scaling method.
     if (   ( source_channelCount == 4 )
         && ( source_TypedArray instanceof Uint8ClampedArray ) ) {
 
@@ -552,7 +550,7 @@ class NeuralNet_ScaleFiller {
 
     let target_TensorInt32;
 
-    // 1. RGBA Image data.
+    // 1. RGBA Image data. Use faster scaling method.
     if (   ( source_channelCount == 4 )
         && ( source_TypedArray instanceof Uint8ClampedArray ) ) {
 
@@ -579,8 +577,6 @@ class NeuralNet_ScaleFiller {
 
     return target_TensorInt32;
   }
-
-//!!!
 
 
   /**
