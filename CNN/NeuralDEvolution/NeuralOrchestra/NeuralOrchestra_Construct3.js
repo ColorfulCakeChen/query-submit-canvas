@@ -246,8 +246,8 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
 // Every tick should theDrawingCanvas.PasteInstances()
 // and await it for getting completed image.
 //
-// But not every tick call neural network's TypedArray_process().
-// Only if:
+// But not every tick call neural network's .TypedArray_process().
+// Call .TypedArray_process() only if:
 //   - theDrawingCanvas.PasteInstances() promise resolved.
 //   - Previous .TypedArray_process() has done.
 //   - A specific elapsed time has gone after the time of the previous
