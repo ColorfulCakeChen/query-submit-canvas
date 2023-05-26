@@ -444,6 +444,94 @@ class NeuralNet_ScaleFiller {
     }
   }
 
+
+//!!!
+
+  /**
+   * Internally, call .createImageData_by_scale_Uint8ClampedArray() or call
+   * .createTensor_by_scale_TypedArray().
+   *
+   *
+   * @param {Uint8ClampedArray|Int32Array} source_TypedArray
+   *   An unsigned integer TypedArray. For example, ImageData.data which is
+   * coming from a canvas.
+   *
+   * @param {number} source_height
+   *   The height (in pixels) of the source_TypedArray. For example,
+   * ImageData.height.
+   *
+   * @param {number} source_width
+   *   The width (in pixels) of the source_TypedArray. For example,
+   * ImageData.width.
+   *
+   * @param {number} source_channelCount
+   *   The channel count of the source_TypedArray. It should equal to
+   * ( source_TypedArray / source_height / source_width ).
+   *
+   * @param {number[]} target_shape_height_width
+   *   A number array as [ target_height, target_width ] describing the shape
+   * of the target tensor.
+   *
+   * @param {Int32Array}
+   *   Return an Int32Array which can be used to create an int32 tf.tensor3d
+   * whose shape is [ target_shape_height_width[ 0 ],
+   * target_shape_height_width[ 1 ], source_channelCount ].
+   */
+  static createTypedArray_by_scale_TypedArray_smartly(
+    source_TypedArray,
+    source_height, source_width, source_channelCount,
+    target_shape_height_width ) {
+
+//!!! ...unfinished... (2023/05/26)
+// .createImageData_by_scale_Uint8ClampedArray() or
+// .createTensor_by_scale_TypedArray()
+
+  }
+
+  /**
+   * Internally, call .createImageData_by_scale_Uint8ClampedArray() or call
+   * .createTensor_by_scale_TypedArray().
+   *
+   *
+   * @param {Uint8ClampedArray|Int32Array} source_TypedArray
+   *   An unsigned integer TypedArray. For example, ImageData.data which is
+   * coming from a canvas.
+   *
+   * @param {number} source_height
+   *   The height (in pixels) of the source_TypedArray. For example,
+   * ImageData.height.
+   *
+   * @param {number} source_width
+   *   The width (in pixels) of the source_TypedArray. For example,
+   * ImageData.width.
+   *
+   * @param {number} source_channelCount
+   *   The channel count of the source_TypedArray. It should equal to
+   * ( source_TypedArray / source_height / source_width ).
+   *
+   * @param {number[]} target_shape_height_width
+   *   A number array as [ target_height, target_width ] describing the shape
+   * of the target tensor.
+   *
+   * @param {tf.tensor3d}
+   *   Return an int32 tf.tensor3d whose shape is
+   * [ target_shape_height_width[ 0 ], target_shape_height_width[ 1 ],
+   * source_channelCount ].
+   */
+  static createTensor_by_scale_TypedArray_smartly(
+    source_TypedArray,
+    source_height, source_width, source_channelCount,
+    target_shape_height_width ) {
+
+//!!! ...unfinished... (2023/05/26)
+// .createImageData_by_scale_Uint8ClampedArray() or
+// .createTensor_by_scale_TypedArray()
+
+  }
+
+//!!!
+
+
   /**
    * Create a tensor3d from source (e.g. canvas). Its size will be confirmed
    * (by scaling) to this neural network's acceptable input [ height, width ].
@@ -654,92 +742,6 @@ class NeuralNet_ScaleFiller {
       scaledSourceTensorFloat32.dispose();
     }
   }
-
-//!!!
-
-  /**
-   * Internally, call .createImageData_by_scale_Uint8ClampedArray() or call
-   * .createTensor_by_scale_TypedArray().
-   *
-   *
-   * @param {Uint8ClampedArray|Int32Array} source_TypedArray
-   *   An unsigned integer TypedArray. For example, ImageData.data which is
-   * coming from a canvas.
-   *
-   * @param {number} source_height
-   *   The height (in pixels) of the source_TypedArray. For example,
-   * ImageData.height.
-   *
-   * @param {number} source_width
-   *   The width (in pixels) of the source_TypedArray. For example,
-   * ImageData.width.
-   *
-   * @param {number} source_channelCount
-   *   The channel count of the source_TypedArray. It should equal to
-   * ( source_TypedArray / source_height / source_width ).
-   *
-   * @param {number[]} target_shape_height_width
-   *   A number array as [ target_height, target_width ] describing the shape
-   * of the target tensor.
-   *
-   * @param {tf.tensor3d}
-   *   Return an int32 tf.tensor3d whose shape is
-   * [ target_shape_height_width[ 0 ], target_shape_height_width[ 1 ],
-   * source_channelCount ].
-   */
-  static createTensor_by_scale_TypedArray_smartly(
-    source_TypedArray,
-    source_height, source_width, source_channelCount,
-    target_shape_height_width ) {
-
-//!!! ...unfinished... (2023/05/26)
-// .createImageData_by_scale_Uint8ClampedArray() or
-// .createTensor_by_scale_TypedArray()
-
-  }
-
-  /**
-   * Internally, call .createImageData_by_scale_Uint8ClampedArray() or call
-   * .createTensor_by_scale_TypedArray().
-   *
-   *
-   * @param {Uint8ClampedArray|Int32Array} source_TypedArray
-   *   An unsigned integer TypedArray. For example, ImageData.data which is
-   * coming from a canvas.
-   *
-   * @param {number} source_height
-   *   The height (in pixels) of the source_TypedArray. For example,
-   * ImageData.height.
-   *
-   * @param {number} source_width
-   *   The width (in pixels) of the source_TypedArray. For example,
-   * ImageData.width.
-   *
-   * @param {number} source_channelCount
-   *   The channel count of the source_TypedArray. It should equal to
-   * ( source_TypedArray / source_height / source_width ).
-   *
-   * @param {number[]} target_shape_height_width
-   *   A number array as [ target_height, target_width ] describing the shape
-   * of the target tensor.
-   *
-   * @param {Int32Array}
-   *   Return an Int32Array which can be used to create an int32 tf.tensor3d
-   * whose shape is [ target_shape_height_width[ 0 ],
-   * target_shape_height_width[ 1 ], source_channelCount ].
-   */
-  static createTypedArray_by_scale_TypedArray_smartly(
-    source_TypedArray,
-    source_height, source_width, source_channelCount,
-    target_shape_height_width ) {
-
-//!!! ...unfinished... (2023/05/26)
-// .createImageData_by_scale_Uint8ClampedArray() or
-// .createTensor_by_scale_TypedArray()
-
-  }
-
-//!!!
 
   /**
    * Scale image by OffscreenCanvas from Canvas (or OffscreenCanvas) directly.
