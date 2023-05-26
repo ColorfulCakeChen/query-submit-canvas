@@ -483,11 +483,13 @@ class NeuralNet_ScaleFiller {
     let scaledSourceTensorFloat32;
     try {
 
-//!!! ...unfinished... (2023/05/26)
-      //const alignCorners = false;
-      const alignCorners = true; // for visual image resizing.
-      const halfPixelCenters = false;
-      //const halfPixelCenters = true;
+      // Note:
+      //
+      // ( alignCorners == false ) and ( halfPixelCenters == true ) could
+      // get scaling result similar to CanvasRenderingContext2D.drawImage().
+      //
+      const alignCorners = false;
+      const halfPixelCenters = true;
 
       scaledSourceTensorFloat32 = tf.image.resizeBilinear(
         sourceTensorInt32, target_shape_height_width,
@@ -579,15 +581,12 @@ class NeuralNet_ScaleFiller {
     let scaledSourceTensorFloat32;
     try {
 
-//!!! ...unfinished... (2023/05/26)
       // Note:
       //
       // ( alignCorners == false ) and ( halfPixelCenters == true ) could
       // get scaling result similar to CanvasRenderingContext2D.drawImage().
       //
       const alignCorners = false;
-      //const alignCorners = true; // for visual image resizing.
-      //const halfPixelCenters = false;
       const halfPixelCenters = true;
 
       scaledSourceTensorFloat32 = tf.image.resizeBilinear(
