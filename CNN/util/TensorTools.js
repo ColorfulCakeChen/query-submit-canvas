@@ -68,7 +68,8 @@ class Asserter_Equal extends Recyclable.Root {
    */
   constructor( acceptableDifferenceRate = 0.01, acceptableDifference = 0.001 ) {
     super();
-    Asserter_Equal.setAsConstructor_self.call( this );
+    Asserter_Equal.setAsConstructor_self.call(
+      this, acceptableDifferenceRate, acceptableDifference );
   }
 
   /** @override */
