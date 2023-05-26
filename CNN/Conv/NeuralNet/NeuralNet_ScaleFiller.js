@@ -582,8 +582,8 @@ class NeuralNet_ScaleFiller {
 //!!! ...unfinished... (2023/05/26)
       const alignCorners = false;
       //const alignCorners = true; // for visual image resizing.
-      const halfPixelCenters = false;
-      //const halfPixelCenters = true;
+      //const halfPixelCenters = false;
+      const halfPixelCenters = true;
 
       scaledSourceTensorFloat32 = tf.image.resizeBilinear(
         sourceTensor, target_shape_height_width,
