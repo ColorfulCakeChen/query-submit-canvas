@@ -441,6 +441,85 @@ class NeuralNet_ScaleFiller {
   }
 
   /**
+   * Create a tensor3d from source (e.g. canvas). Its size will be confirmed
+   * (by scaling) to this neural network's acceptable input [ height, width ].
+   *
+   *
+   * Note1: It is more recommended to use CanvasRenderingContext2D.drawImage()
+   *        to scale image than this method. The reason is:
+   * 
+   *          - CanvasRenderingContext2D.drawImage() operates on GPU directly.
+   *            - .drawImage( Canvas ) is fastest (even faster than
+   *              .drawImage( ImageData ) ).
+   * 
+   *          - This method downloads data from GPU to CPU for creating tensor.
+   *              And then, uploads data from CPU to GPU to scale tensor.
+   *
+!!!   * Note2: According to testing, in backend "webgl", this method:
+   *   - faster than .createTensor_by_scale_TypedArray().
+   *       But this method can only handle image (i.e. not any shape tensor).
+   *
+   *   - .createImageData_by_scale_Canvas( HTMLCanvasElement | OffscreenCanvas )
+   *   - .createTensor_by_scale_PixelData( OffscreenCanvas )
+   *   - .createTensor_by_scale_PixelData( HTMLCanvasElement )
+   *   - .createImageData_by_scale_ImageData()
+   *   - .createTensor_by_scale_PixelData( ImageData )
+   *   - .createTensor_by_scale_TypedArray()
+   *
+   *
+   *
+   * @param {ImageData|ImageBitmap|HTMLImageElement|HTMLCanvasElement|HTMLVideoElement} source_PixelData
+   *   The image or canvas which provides image (as RGBA 4-channels Uint8 data).
+   *
+   * @param {number} source_channelCount
+   *   The channel count of the source_PixelData. It will also be
+   * target_channelCount.
+   *
+   * @param {number[]} target_shape_height_width
+   *   A number array as [ target_height, target_width ] describing the shape
+   * of the target tensor.
+   *
+   * @param {boolean} bForceInt32
+   *   If true, the dtype of the returned tf.tensor3d will be guaranteed as
+   * int32. Otherwise, the dtype of the returned tf.tensor3d may be int32 or
+   * float32 (if resized). This is useful if the result will be used by an
+   * embedding layer (which only accepts integer input). Default is true.
+   *
+   * @return {tf.tensor3d}
+   *   Return a (possible int32) tensor3d whose shape is
+   * [ target_shape_height_width[ 0 ], target_shape_height_width[ 1 ],
+   * source_channelCount ].
+   */
+  static createTensor_by_scale_PixelData(
+    source_PixelData,
+    source_channelCount,
+    target_shape_height_width,
+    bForceInt32 = true ) {
+
+    //!!! ...unfinished... (2022/08/15) What about .fromPixelsAsync() ?
+
+    // Note: For image coming from canvas, the tf.browser.fromPixels() handle a
+    //       RGBA 4 channels faster than RGB 3 channels input.
+    let source_Tensor = tf.browser.fromPixels(
+      source_PixelData, source_channelCount ); // dtype will be int32.
+
+    // If the size ( height x width ) is as expected, use it directly.
+    if (   ( source_Tensor.shape[ 0 ] == target_shape_height_width[ 0 ] ) // target_height
+        && ( source_Tensor.shape[ 1 ] == target_shape_height_width[ 1 ] ) // target_width
+       )
+      return source_Tensor; // (Note: dtype will still be int32.)
+
+    // Otherwise, resize to the default size (height x width) which is the input
+    // image size used for training the neural network.
+    //
+    return NeuralNet_ScaleFiller.createTensor_by_scale_Tensor(
+      source_Tensor,
+      target_shape_height_width,
+      bForceInt32
+    );
+  }
+
+  /**
    * According to testing, in backend "webgl":
    *   - This is the slowest method for scaling data.
    *   - It is far more slower than other .createXxx_by_scale_Xxx() methods.
@@ -493,88 +572,6 @@ class NeuralNet_ScaleFiller {
     // size used for training the neural network.
     return NeuralNet_ScaleFiller.createTensor_by_scale_Tensor(
       source_TensorInt32,
-      target_shape_height_width,
-      bForceInt32
-    );
-  }
-
-  /**
-   * Create a tensor3d from source (e.g. canvas). Its size will be confirmed
-   * (by scaling) to this neural network's acceptable input [ height, width ].
-   *
-   *
-   * Note1: It is more recommended to use CanvasRenderingContext2D.drawImage()
-   *        to scale image than this method. The reason is:
-   * 
-   *          - CanvasRenderingContext2D.drawImage() operates on GPU directly.
-   *            - .drawImage( Canvas ) is fastest (even faster than
-   *              .drawImage( ImageData ) ).
-   * 
-   *          - This method downloads data from GPU to CPU for creating tensor.
-   *              And then, uploads data from CPU to GPU to scale tensor.
-   *
-   * Note2: According to testing, in backend "webgl", this method:
-   *   - faster than .createTensor_by_scale_TypedArray().
-   *       But this method can only handle image (i.e. not any shape tensor).
-   *
-   *   - .createImageData_by_scale_Canvas( HTMLCanvasElement | OffscreenCanvas )
-   *   - .createTensor_by_scale_PixelData( OffscreenCanvas )
-   *   - .createTensor_by_scale_PixelData( HTMLCanvasElement )
-   *   - .createImageData_by_scale_ImageData()
-   *   - .createTensor_by_scale_PixelData( ImageData )
-   *   - .createTensor_by_scale_TypedArray()
-   *
-!!!   * This method is:
-   *   - comparable to .createTensor_by_scale_Xxx()
-   *   - .createTensor_by_scale_PixelData()
-   *
-   *
-   * @param {ImageData|ImageBitmap|HTMLImageElement|HTMLCanvasElement|HTMLVideoElement} source_PixelData
-   *   The image or canvas which provides image (as RGBA 4-channels Uint8 data).
-   *
-   * @param {number} source_channelCount
-   *   The channel count of the source_PixelData. It will also be
-   * target_channelCount.
-   *
-   * @param {number[]} target_shape_height_width
-   *   A number array as [ target_height, target_width ] describing the shape
-   * of the target tensor.
-   *
-   * @param {boolean} bForceInt32
-   *   If true, the dtype of the returned tf.tensor3d will be guaranteed as
-   * int32. Otherwise, the dtype of the returned tf.tensor3d may be int32 or
-   * float32 (if resized). This is useful if the result will be used by an
-   * embedding layer (which only accepts integer input). Default is true.
-   *
-   * @return {tf.tensor3d}
-   *   Return a (possible int32) tensor3d whose shape is
-   * [ target_shape_height_width[ 0 ], target_shape_height_width[ 1 ],
-   * source_channelCount ].
-   */
-  static createTensor_by_scale_PixelData(
-    source_PixelData,
-    source_channelCount,
-    target_shape_height_width,
-    bForceInt32 = true ) {
-
-    //!!! ...unfinished... (2022/08/15) What about .fromPixelsAsync() ?
-
-    // Note: For image coming from canvas, the tf.browser.fromPixels() handle a
-    //       RGBA 4 channels faster than RGB 3 channels input.
-    let source_Tensor = tf.browser.fromPixels(
-      source_PixelData, source_channelCount ); // dtype will be int32.
-
-    // If the size ( height x width ) is as expected, use it directly.
-    if (   ( source_Tensor.shape[ 0 ] == target_shape_height_width[ 0 ] ) // target_height
-        && ( source_Tensor.shape[ 1 ] == target_shape_height_width[ 1 ] ) // target_width
-       )
-      return source_Tensor; // (Note: dtype will still be int32.)
-
-    // Otherwise, resize to the default size (height x width) which is the input
-    // image size used for training the neural network.
-    //
-    return NeuralNet_ScaleFiller.createTensor_by_scale_Tensor(
-      source_Tensor,
       target_shape_height_width,
       bForceInt32
     );
@@ -652,46 +649,6 @@ class NeuralNet_ScaleFiller {
   }
 
   /**
-   *
-   *
-   * @param {Uint8ClampedArray} source_Uint8ClampedArray
-   *   An Uint8ClampedArray. For example, ImageData.data which is
-   * coming from a canvas. Its .length must equal to
-   * ( source_height * source_width * 4 ). It is viewed as
-   * ( source_channelCount == 4 ).
-   *
-   * @param {number} source_height
-   *   The height (in pixels) of the source_Uint8ClampedArray.
-   *
-   * @param {number} source_width
-   *   The width (in pixels) of the source_Uint8ClampedArray.
-   *
-   * @param {number[]} target_shape_height_width
-   *   A number array as [ target_height, target_width ] describing the shape
-   * of the target ImageData.
-   *
-   * @param {ImageData}
-   *   Return an ImageData whose shape is
-   * [ target_shape_height_width[ 0 ], target_shape_height_width[ 1 ],
-   * source_channelCount ].
-   */
-  static createImageData_by_scale_Uint8ClampedArray(
-    source_Uint8ClampedArray,
-    source_height, source_width,
-    target_shape_height_width
-  ) {
-
-    let source_ImageData = new ImageData(
-      source_Uint8ClampedArray, source_height, source_width );
-
-    let target_ImageData
-      = NeuralNet_ScaleFiller.createImageData_by_scale_ImageData(
-          source_ImageData, target_shape_height_width );
-
-    return target_ImageData;
-  }
-
-  /**
    * Scale image by OffscreenCanvas from Canvas (or OffscreenCanvas) directly.
    *
    * This method is:
@@ -736,6 +693,47 @@ class NeuralNet_ScaleFiller {
 
     let target_ImageData = offscreenCanvas_ctx.getImageData(
       0, 0, target_width, target_height );
+
+    return target_ImageData;
+  }
+
+  /**
+   * This method calls .createImageData_by_scale_ImageData() internally.
+   *
+   *
+   * @param {Uint8ClampedArray} source_Uint8ClampedArray
+   *   An Uint8ClampedArray. For example, ImageData.data which is
+   * coming from a canvas. Its .length must equal to
+   * ( source_height * source_width * 4 ). It is viewed as
+   * ( source_channelCount == 4 ).
+   *
+   * @param {number} source_height
+   *   The height (in pixels) of the source_Uint8ClampedArray.
+   *
+   * @param {number} source_width
+   *   The width (in pixels) of the source_Uint8ClampedArray.
+   *
+   * @param {number[]} target_shape_height_width
+   *   A number array as [ target_height, target_width ] describing the shape
+   * of the target ImageData.
+   *
+   * @param {ImageData}
+   *   Return an ImageData whose shape is
+   * [ target_shape_height_width[ 0 ], target_shape_height_width[ 1 ],
+   * source_channelCount ].
+   */
+  static createImageData_by_scale_Uint8ClampedArray(
+    source_Uint8ClampedArray,
+    source_height, source_width,
+    target_shape_height_width
+  ) {
+
+    let source_ImageData = new ImageData(
+      source_Uint8ClampedArray, source_height, source_width );
+
+    let target_ImageData
+      = NeuralNet_ScaleFiller.createImageData_by_scale_ImageData(
+          source_ImageData, target_shape_height_width );
 
     return target_ImageData;
   }
