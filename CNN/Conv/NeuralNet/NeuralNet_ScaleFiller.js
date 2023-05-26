@@ -832,6 +832,8 @@ class NeuralNet_ScaleFiller {
     const target_height = target_shape_height_width[ 0 ];
     const target_width = target_shape_height_width[ 1 ];
 
+    //const contextAttributes = { willReadFrequently: true };
+
     let target_offscreenCanvas
       = new OffscreenCanvas( target_width, target_height );
 
