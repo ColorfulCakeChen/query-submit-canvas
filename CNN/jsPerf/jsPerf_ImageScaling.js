@@ -138,7 +138,7 @@ class HeightWidthDepth {
   }
 
   /** */
-  testImageScaling_by_Tensor_from__Canvas_ImageData() {
+  testImageScaling_by_Tensor_from_Canvas_ImageData() {
     return HeightWidthDepth.scale_by_Tensor_from_Canvas_ImageData
       .call( this, this.input_Canvas );
   }
