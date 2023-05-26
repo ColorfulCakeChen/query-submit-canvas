@@ -672,6 +672,49 @@ class NeuralNet_ScaleFiller {
   }
 
   /**
+   * Scale image by OffscreenCanvas from canvas directly. This is the fastest
+   * method (far more faster than using .createImageData_by_scale_ImageData()).
+   *
+   *
+   * @param {HTMLCanvasElement|OffscreenCanvas} source_Canvas
+   *   A canvas used as source data.
+   *
+   * @param {number[]} target_shape_height_width
+   *   A number array as [ target_height, target_width ] describing the shape
+   * of the target ImageData.
+   *
+   * @param {ImageData}
+   *   Return an ImageData whose shape [ height, width, channelCount ] is
+   * [ target_shape_height_width[ 0 ], target_shape_height_width[ 1 ], 4 ].
+   */
+  static createImageData_by_scale_Canvas(
+    source_Canvas,
+    target_shape_height_width
+  ) {
+    const source_height = source_ImageData.height;
+    const source_width = source_ImageData.width;
+
+    const target_height = target_shape_height_width[ 0 ];
+    const target_width = target_shape_height_width[ 1 ];
+
+    let target_offscreenCanvas
+      = new OffscreenCanvas( target_width, target_height );
+
+    // Note: "webgl" Rendering Context does not have .drawImage(),
+    //       .getImageData(), .putImageData().
+    let target_offscreenCanvas_ctx = target_offscreenCanvas.getContext( "2d" );
+    target_offscreenCanvas_ctx.drawImage( source_Canvas,
+      0, 0, source_width, source_height,
+      0, 0, target_width, target_height
+    );
+
+    let target_ImageData = offscreenCanvas_ctx.getImageData(
+      0, 0, target_width, target_height );
+
+    return target_ImageData;
+  }
+
+  /**
    * Scale ImageData by OffscreenCanvas which is faster than using tf.tensor.
    *
    *
@@ -683,9 +726,8 @@ class NeuralNet_ScaleFiller {
    * of the target ImageData.
    *
    * @param {ImageData}
-   *   Return an ImageData whose shape is
-   * [ target_shape_height_width[ 0 ], target_shape_height_width[ 1 ],
-   * source_channelCount ].
+   *   Return an ImageData whose shape [ height, width, channelCount ] is
+   * [ target_shape_height_width[ 0 ], target_shape_height_width[ 1 ], 4 ].
    */
   static createImageData_by_scale_ImageData(
     source_ImageData,
