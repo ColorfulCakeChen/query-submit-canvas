@@ -347,8 +347,8 @@ class HeightWidthDepth {
 
           // Correctness testing uses smaller shape.
           {
-            const output_height_temp = 1;
-            const output_width_temp = 1;
+            const output_height_temp = 2;
+            const output_width_temp = 2;
             const output_channelCount_temp = 4;
             const largerFactor_temp = 2;
 
