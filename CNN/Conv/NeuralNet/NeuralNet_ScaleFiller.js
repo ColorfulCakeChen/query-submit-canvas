@@ -672,8 +672,12 @@ class NeuralNet_ScaleFiller {
   }
 
   /**
-   * Scale image by OffscreenCanvas from canvas directly. This is the fastest
-   * method (far more faster than using .createImageData_by_scale_ImageData()).
+   * Scale image by OffscreenCanvas from Canvas (or OffscreenCanvas) directly.
+   *
+   * This method is:
+   *   - the fastest method.
+   *   - far more faster than .createImageData_by_scale_ImageData() and
+   *       .createTensor_by_scale_Xxx().
    *
    *
    * @param {HTMLCanvasElement|OffscreenCanvas} source_Canvas
@@ -715,6 +719,14 @@ class NeuralNet_ScaleFiller {
   }
 
   /**
+   * Scale image by OffscreenCanvas from ImageData.
+   *
+   * This method is:
+   *   - slower than .createImageData_by_scale_Canvas()
+   *   - comparable to .createTensor_by_scale_Xxx()
+   *
+!!!   * method (far more faster than using .createImageData_by_scale_ImageData()).
+   * 
    * Scale ImageData by OffscreenCanvas which is faster than using tf.tensor.
    *
    *
