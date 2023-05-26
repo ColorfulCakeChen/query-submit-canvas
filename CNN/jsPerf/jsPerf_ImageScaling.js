@@ -137,21 +137,24 @@ class HeightWidthDepth {
   }
 
   /** */
-  testImageScaling_by_Tensor_from_Canvas() {
-    return HeightWidthDepth.scale_by_Tensor_from_Canvas
-      .call( this, this.input_Canvas );
+  testImageScaling_by_Tensor_from_Canvas(
+    bDownloadFromGPU = this.bDownloadFromGPU_default ) {
+      return HeightWidthDepth.scale_by_Tensor_from_Canvas
+      .call( this, this.input_Canvas, bDownloadFromGPU );
   }
 
   /** */
-  testImageScaling_by_Tensor_from_Canvas_ImageData() {
-    return HeightWidthDepth.scale_by_Tensor_from_Canvas_ImageData
-      .call( this, this.input_Canvas );
+  testImageScaling_by_Tensor_from_Canvas_ImageData(
+    bDownloadFromGPU = this.bDownloadFromGPU_default ) {
+      return HeightWidthDepth.scale_by_Tensor_from_Canvas_ImageData
+      .call( this, this.input_Canvas, bDownloadFromGPU );
   }
 
   /** */
-  testImageScaling_by_Tensor_from_Canvas_TypedArray() {
-    return HeightWidthDepth.scale_by_Tensor_from_Canvas_TypedArray
-      .call( this, this.input_Canvas );
+  testImageScaling_by_Tensor_from_Canvas_TypedArray(
+    bDownloadFromGPU = this.bDownloadFromGPU_default ) {
+      return HeightWidthDepth.scale_by_Tensor_from_Canvas_TypedArray
+      .call( this, this.input_Canvas, bDownloadFromGPU );
   }
 
 
