@@ -742,13 +742,13 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
    *   - Float32Array (if ( neuralNetParams.output_asInputValueRange == false ) )
    *   - Int32Array (if ( neuralNetParams.output_asInputValueRange == true ) )
    */
-  async* TWO_WORKER__TWO_NET__step0_TypedArray_process(
+  async* TWO_WORKER__TWO_NET__step0__TypedArray_process(
     source_TypedArray, source_height, source_width,
     previous_output_TypedArray,
     bApply_or_Applier ) {
 
     const funcNameInMessage
-      = "TWO_WORKER__TWO_NET__step0_TypedArray_process";
+      = "TWO_WORKER__TWO_NET__step0__TypedArray_process";
 
     const bTwoTensors = ( this.neuralNetArray.length > 1 ); // should be false.
 
@@ -928,12 +928,12 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
    *   - Float32Array (if ( neuralNetParams.output_asInputValueRange == false ) )
    *   - Int32Array (if ( neuralNetParams.output_asInputValueRange == true ) )
    */
-  async* TWO_WORKER__TWO_NET__step1_TypedArray_process(
+  async* TWO_WORKER__TWO_NET__step1__TypedArray_process(
     source_TypedArray, source_height, source_width,
     previous_output_TypedArray ) {
 
     const funcNameInMessage
-      = "TWO_WORKER__TWO_NET__step1_TypedArray_process";
+      = "TWO_WORKER__TWO_NET__step1__TypedArray_process";
 
     const bTwoTensors = ( this.neuralNetArray.length > 1 ); // should be false.
 

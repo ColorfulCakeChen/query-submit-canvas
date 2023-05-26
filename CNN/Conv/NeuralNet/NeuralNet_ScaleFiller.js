@@ -386,7 +386,7 @@ class NeuralNet_ScaleFiller {
             // be cloned (i.e. should not be cleared to null or disposed).
             // Otherwise, sourceTypedArrayAsyncFunction() can not download
             // .data() when called. (For example, in NeuralWorker_Body
-            // .TWO_WORKER__TWO_NET__step0_TypedArray_process(). )
+            // .TWO_WORKER__TWO_NET__step0__TypedArray_process(). )
             let targetTensorInt32 = sourceTensorInt32.clone();
 
             yield [ targetTensorInt32, sourceTypedArrayAsyncFunction ];
