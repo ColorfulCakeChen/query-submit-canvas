@@ -242,9 +242,16 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
 //!!! ...unfinished... (2023/05/24)
 //    let theDrawingCanvas = runtime.objects.DrawingCanvas.getFirstInstance();
 
-//!!! ...unfinished... (2023/05/24)
-// should theDrawingCanvas.PasteInstances()
-// and await ot for getting completed image.
+//!!! ...unfinished... (2023/05/26)
+// Every tick should theDrawingCanvas.PasteInstances()
+// and await it for getting completed image.
+//
+// But not every tick call neural network's TypedArray_process().
+// Only if:
+//   - theDrawingCanvas.PasteInstances() promise resolved.
+//   - Previous .TypedArray_process() has done.
+//   - A specific elapsed time has gone after the time of the previous
+//        .TypedArray_process() done.
 
   }
 
