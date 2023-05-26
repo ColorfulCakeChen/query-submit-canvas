@@ -185,19 +185,9 @@ class HeightWidthDepth {
    * @return {TypedArray}
    */
   static scale_by_OffscreenCanvas_from_Canvas( input_Canvas ) {
-    let offscreenCanvas
-      = new OffscreenCanvas( this.output_width, this.output_height );
-
-    // Note: "webgl" Rendering Context does not have .drawImage(),
-    //       .getImageData(), .putImageData().
-    let offscreenCanvas_ctx = offscreenCanvas.getContext( "2d" );
-    offscreenCanvas_ctx.drawImage( input_Canvas,
-      0, 0, input_Canvas.width, input_Canvas.height,
-      0, 0, this.output_width, this.output_height
-    );
-
-    let output_ImageData = offscreenCanvas_ctx.getImageData(
-      0, 0, this.output_width, this.output_height );
+    let output_ImageData = NeuralNet.ScaleFiller
+      .createImageData_by_scale_Canvas(
+        input_Canvas, this.output_shape_height_width );
 
     return output_ImageData.data;
   }
