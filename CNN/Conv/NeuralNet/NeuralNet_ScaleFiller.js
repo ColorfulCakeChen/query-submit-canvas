@@ -455,14 +455,17 @@ class NeuralNet_ScaleFiller {
    *          - This method downloads data from GPU to CPU for creating tensor.
    *              And then, uploads data from CPU to GPU to scale tensor.
    *
-!!!   * Note2: According to testing, in backend "webgl", this method:
+   * Note2: According to testing, in backend "webgl", this method:
    *   - faster than .createTensor_by_scale_TypedArray().
    *       But this method can only handle image (i.e. not any shape tensor).
    *
+   * Note3: According to performance testing, in backend "webgl", the method
+   *        list from fast to slow are:
    *   - .createImageData_by_scale_Canvas( HTMLCanvasElement | OffscreenCanvas )
    *   - .createTensor_by_scale_PixelData( OffscreenCanvas )
    *   - .createTensor_by_scale_PixelData( HTMLCanvasElement )
    *   - .createImageData_by_scale_ImageData()
+   *   - .createImageData_by_scale_Uint8ClampedArray()
    *   - .createTensor_by_scale_PixelData( ImageData )
    *   - .createTensor_by_scale_TypedArray()
    *
