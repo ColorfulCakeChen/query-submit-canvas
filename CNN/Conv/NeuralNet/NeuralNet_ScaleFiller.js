@@ -391,7 +391,6 @@ class NeuralNet_ScaleFiller {
             = async () => sourceTensorInt32.data();
 
           for ( let i = 0; i < tensorCount; ++i ) {
-
             // Note:
             //
             // Even if this is the final yield, sourceTensorInt32 should still
@@ -400,7 +399,6 @@ class NeuralNet_ScaleFiller {
             // .data() when called. (For example, in NeuralWorker_Body
             // .TWO_WORKER__TWO_NET__step0__TypedArray_process(). )
             let targetTensorInt32 = sourceTensorInt32.clone();
-
             yield [ targetTensorInt32, sourceTypedArrayAsyncFunction ];
           }
 
