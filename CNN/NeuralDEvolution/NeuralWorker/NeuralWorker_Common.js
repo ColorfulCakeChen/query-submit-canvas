@@ -2,7 +2,7 @@ export { tensorflowJsVer };
 export { tensorflowJsURL };
 
 /** Define tensorflow.js library version. */
-const tensorflowJsVer = "4.2.0";
+const tensorflowJsVer = "4.6.0";
 
 /** Define tensorflow.js library URL. */
 const tensorflowJsURL
