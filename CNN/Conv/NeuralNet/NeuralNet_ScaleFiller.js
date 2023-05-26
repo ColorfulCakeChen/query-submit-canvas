@@ -323,40 +323,49 @@ class NeuralNet_ScaleFiller {
     try {
       if ( bScale ) {
 
-//!!! ...unfinished... (2023/05/25)
-// If source_TypedArray is Uint8ClampedArray with ( input_channelCount == 4 ),
-// call .createTensor_by_scale_PixelData() instead. (need create a temp ImageData.)
-// The reason is .createTensor_by_scale_PixelData() faster than
-// .createTensor_by_scale_TypedArray().
-//
 //!!! ...unfinished... (2023/05/26)
 // .createTypedArray_smartly_by_scale_TypedArray_async() or
 // .createTensor_smartly_by_scale_TypedArray()
 
-        // Scale image (do it only once).
-        sourceTensorInt32
-          = NeuralNet_ScaleFiller.createTensor_by_scale_TypedArray(
+//!!! (2023/05/26 Remarked) Use
+// .createTypedArray_smartly_by_scale_TypedArray_async() or
+// .createTensor_smartly_by_scale_TypedArray()
+//
+//         // Scale image (do it only once).
+//         sourceTensorInt32
+//           = NeuralNet_ScaleFiller.createTensor_by_scale_TypedArray(
+//               source_TypedArray,
+//               source_height, source_width, source_channelCount,
+//               this.target_shape_height_width );
+
+        if ( bFill ) { // 2.1.1 Scale, Fill
+
+//!!! (2023/05/26 Remarked) Use .createTypedArray_smartly_by_scale_TypedArray_async()
+//           let sourceInt32ArrayPromise;
+//           let sourceInt32Array;
+//           try {
+//             sourceInt32ArrayPromise = sourceTensorInt32.data();
+//             sourceInt32Array = await sourceInt32ArrayPromise;
+//           } catch ( e ) {
+//             //debugger;
+//             throw e; // e.g. out of (GPU) memory.
+//           } finally {
+//             sourceTensorInt32.dispose();
+//             sourceTensorInt32 = null;
+//           }
+//
+//           let sourceTypedArrayAsyncFunction
+//             = async () => sourceInt32ArrayPromise;
+
+          // Scale image (do it only once).
+          let sourceInt32Array = NeuralNet_ScaleFiller
+            .createTypedArray_smartly_by_scale_TypedArray_async(
               source_TypedArray,
               source_height, source_width, source_channelCount,
               this.target_shape_height_width );
 
-        if ( bFill ) { // 2.1.1 Scale, Fill
-
-          let sourceInt32ArrayPromise;
-          let sourceInt32Array;
-          try {
-            sourceInt32ArrayPromise = sourceTensorInt32.data();
-            sourceInt32Array = await sourceInt32ArrayPromise;
-          } catch ( e ) {
-            //debugger;
-            throw e; // e.g. out of (GPU) memory.
-          } finally {
-            sourceTensorInt32.dispose();
-            sourceTensorInt32 = null;
-          }
-
           let sourceTypedArrayAsyncFunction
-            = async () => sourceInt32ArrayPromise;
+            = async () => sourceInt32Array;
 
           for ( let i = 0; i < tensorCount; ++i ) {
             if ( alignmentMarkValueArrayArray_nonEmpty )
