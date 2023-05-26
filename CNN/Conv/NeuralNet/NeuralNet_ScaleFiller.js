@@ -573,7 +573,7 @@ class NeuralNet_ScaleFiller {
       const target_height = target_shape_height_width[ 0 ];
       const target_width = target_shape_height_width[ 1 ];
       
-      let target_shape = [ source_height, source_width, source_channelCount ];
+      let target_shape = [ target_height, target_width, source_channelCount ];
       target_TensorInt32
         = tf.tensor3d( target_ImageData.data, target_shape, "int32" );
 
