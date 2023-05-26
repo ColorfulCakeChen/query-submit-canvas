@@ -523,10 +523,34 @@ class NeuralNet_ScaleFiller {
     source_height, source_width, source_channelCount,
     target_shape_height_width ) {
 
-//!!! ...unfinished... (2023/05/26)
-// .createImageData_by_scale_Uint8ClampedArray() or
-// .createTensor_by_scale_TypedArray()
+    let target_TensorInt32;
 
+    // 1. RGBA Image data.
+    if (   ( source_channelCount == 4 )
+        && ( source_TypedArray instanceof Uint8ClampedArray ) ) {
+
+      let target_ImageData
+        = NeuralNet_ScaleFiller.createImageData_by_scale_Uint8ClampedArray(
+            source_TypedArray,
+            source_height, source_width,
+            target_shape_height_width );
+
+      const target_height = target_shape_height_width[ 0 ];
+      const target_width = target_shape_height_width[ 1 ];
+      
+      let target_shape = [ source_height, source_width, source_channelCount ];
+      target_TensorInt32
+        = tf.tensor3d( target_ImageData.data, target_shape, "int32" );
+
+    } else { // 2. Not RGBA Image data.
+      target_TensorInt32
+        = NeuralNet_ScaleFiller.createTensor_by_scale_TypedArray(
+            source_TypedArray,
+            source_height, source_width, source_channelCount,
+            target_shape_height_width );
+    }
+
+    return target_TensorInt32;
   }
 
 //!!!
