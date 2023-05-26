@@ -25,7 +25,11 @@ class HeightWidthDepth {
    * @param {number} largerFactor  input image is how large of output.
    */
   constructor( output_height, output_width, output_channelCount, largerFactor ) {
+    this.init( output_height, output_width, output_channelCount, largerFactor );
+  }
 
+  /** */
+  init( output_height, output_width, output_channelCount, largerFactor ) {
     this.disposeResources();
 
     this.output_height = output_height;
@@ -302,9 +306,9 @@ class HeightWidthDepth {
   * testCorrectness() {
     const funcNameInMessage = "testCorrectness";
 
-    const height_original = this.height;
-    const width_original = this.width;
-    const channelCount_original = this.channelCount;
+    const output_height_original = this.output_height;
+    const output_width_original = this.output_width;
+    const output_channelCount_original = this.output_channelCount;
     const largerFactor_original = this.largerFactor;
 
     const TestCaseNameArray = [
@@ -338,11 +342,13 @@ class HeightWidthDepth {
 
           // Correctness testing uses smaller shape.
           {
-            this.height = 1;
-            this.width = 1;
-            this.channelCount = 4;
-            this.largerFactor = 2;
- 
+            const output_height_temp = 1;
+            const output_width_temp = 1;
+            const output_channelCount_temp = 4;
+            const largerFactor_temp = 2;
+
+            this.init( output_height_temp, output_width_temp,
+              output_channelCount_temp, largerFactor_temp );
             this.ImageScaling_PerformanceTest_init();
           }
 
@@ -413,10 +419,9 @@ class HeightWidthDepth {
 
     try {
       // After correctness testing done, use large shape for performance testing.
-      this.height = height_original;
-      this.width = width_original;
-      this.channelCount = channelCount_original;
-      this.largerFactor = largerFactor_original;
+      this.init(
+        output_height_original, output_width_original,
+        output_channelCount_original, largerFactor_original );
       this.ImageScaling_PerformanceTest_init();
     } catch ( e ) {
       debugger;
