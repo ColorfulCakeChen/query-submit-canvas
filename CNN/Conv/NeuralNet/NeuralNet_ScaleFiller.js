@@ -477,15 +477,42 @@ class NeuralNet_ScaleFiller {
    * whose shape is [ target_shape_height_width[ 0 ],
    * target_shape_height_width[ 1 ], source_channelCount ].
    */
-  static createTypedArray_by_scale_TypedArray_smartly(
+  static async createTypedArray_smartly_by_scale_TypedArray_async(
     source_TypedArray,
     source_height, source_width, source_channelCount,
     target_shape_height_width ) {
 
-//!!! ...unfinished... (2023/05/26)
-// .createImageData_by_scale_Uint8ClampedArray() or
-// .createTensor_by_scale_TypedArray()
+    let target_Int32Array;
 
+    // 1. RGBA Image data.
+    if (   ( source_channelCount == 4 )
+        && ( source_TypedArray instanceof Uint8ClampedArray ) ) {
+
+      let target_ImageData
+        = NeuralNet_ScaleFiller.createImageData_by_scale_Uint8ClampedArray(
+            source_TypedArray,
+            source_height, source_width,
+            target_shape_height_width );
+
+      target_Int32Array = target_ImageData.data;
+
+    } else { // 2. Not RGBA Image data.
+      let target_TensorInt32;
+      try {
+        target_TensorInt32
+          = NeuralNet_ScaleFiller.createTensor_by_scale_TypedArray(
+              source_TypedArray,
+              source_height, source_width, source_channelCount,
+              target_shape_height_width );
+
+        target_Int32Array = await target_TensorInt32.data();
+
+      } finally {
+        target_TensorInt32.dispose();
+      }
+    }
+
+    return target_Int32Array;
   }
 
   /**
@@ -518,7 +545,7 @@ class NeuralNet_ScaleFiller {
    * [ target_shape_height_width[ 0 ], target_shape_height_width[ 1 ],
    * source_channelCount ].
    */
-  static createTensor_by_scale_TypedArray_smartly(
+  static createTensor_smartly_by_scale_TypedArray(
     source_TypedArray,
     source_height, source_width, source_channelCount,
     target_shape_height_width ) {
