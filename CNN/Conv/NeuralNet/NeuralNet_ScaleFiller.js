@@ -564,6 +564,10 @@ class NeuralNet_ScaleFiller {
     if (   ( source_channelCount == 4 )
         && ( source_TypedArray instanceof Uint8ClampedArray ) ) {
 
+//!!! ...unfinished... (2023/05/26)
+// Perhaps, use .createTensor_by_scale_PixelData() which is faster that
+// .createImageData_by_scale_Uint8ClampedArray() in mobile phone.
+
       let target_ImageData
         = NeuralNet_ScaleFiller.createImageData_by_scale_Uint8ClampedArray(
             source_TypedArray,
