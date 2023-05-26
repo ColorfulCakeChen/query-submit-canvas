@@ -26,6 +26,11 @@ class HeightWidthDepth {
    */
   constructor( output_height, output_width, output_channelCount, largerFactor ) {
     this.init( output_height, output_width, output_channelCount, largerFactor );
+
+
+    //!!! (2023/05/26 Temp Remarked) For test performance if not download from GPU.
+    //this.bDownloadFromGPU_default = true;
+    this.bDownloadFromGPU_default = false;
   }
 
   /** */
@@ -163,21 +168,24 @@ class HeightWidthDepth {
   }
 
   /** */
-  testImageScaling_by_Tensor_from_OffscreenCanvas() {
+  testImageScaling_by_Tensor_from_OffscreenCanvas(
+    bDownloadFromGPU = this.bDownloadFromGPU_default ) {
     return HeightWidthDepth.scale_by_Tensor_from_Canvas
-      .call( this, this.input_OffscreenCanvas );
+      .call( this, this.input_OffscreenCanvas, bDownloadFromGPU );
   }
 
   /** */
-  testImageScaling_by_Tensor_from_OffscreenCanvas_ImageData() {
+  testImageScaling_by_Tensor_from_OffscreenCanvas_ImageData(
+    bDownloadFromGPU = this.bDownloadFromGPU_default ) {
     return HeightWidthDepth.scale_by_Tensor_from_Canvas_ImageData
-      .call( this, this.input_OffscreenCanvas );
+      .call( this, this.input_OffscreenCanvas, bDownloadFromGPU );
   }
 
   /** */
-  testImageScaling_by_Tensor_from_OffscreenCanvas_TypedArray() {
+  testImageScaling_by_Tensor_from_OffscreenCanvas_TypedArray(
+    bDownloadFromGPU = this.bDownloadFromGPU_default ) {
     return HeightWidthDepth.scale_by_Tensor_from_Canvas_TypedArray
-      .call( this, this.input_OffscreenCanvas );
+      .call( this, this.input_OffscreenCanvas, bDownloadFromGPU );
   }
 
 
@@ -226,7 +234,7 @@ class HeightWidthDepth {
 //   }
 
   /** */
-  static scale_by_Tensor_from_Canvas( input_Canvas ) {
+  static scale_by_Tensor_from_Canvas( input_Canvas, bDownloadFromGPU ) {
     let output_tensor;
     try {
       output_tensor = NeuralNet.ScaleFiller.createTensor_by_scale_PixelData(
@@ -234,8 +242,10 @@ class HeightWidthDepth {
         this.output_channelCount,
         this.output_shape_height_width );
 
-      let output_TypedArray = output_tensor.dataSync();
-      return output_TypedArray;
+      if ( bDownloadFromGPU ) {
+        let output_TypedArray = output_tensor.dataSync();
+        return output_TypedArray;
+      }
 
     } finally {
       if ( output_tensor ) {
@@ -246,7 +256,7 @@ class HeightWidthDepth {
   }
 
   /** */
-  static scale_by_Tensor_from_Canvas_ImageData( input_Canvas ) {
+  static scale_by_Tensor_from_Canvas_ImageData( input_Canvas, bDownloadFromGPU ) {
     let input_ctx = input_Canvas.getContext( "2d" );
     let input_ImageData = input_ctx.getImageData(
       0, 0, input_Canvas.width, input_Canvas.height );
@@ -258,8 +268,10 @@ class HeightWidthDepth {
         this.output_channelCount,
         this.output_shape_height_width );
 
-      let output_TypedArray = output_tensor.dataSync();
-      return output_TypedArray;
+      if ( bDownloadFromGPU ) {
+        let output_TypedArray = output_tensor.dataSync();
+        return output_TypedArray;
+      }
 
     } finally {
       if ( output_tensor ) {
@@ -270,7 +282,7 @@ class HeightWidthDepth {
   }
 
   /** */
-  static scale_by_Tensor_from_Canvas_TypedArray( input_Canvas ) {
+  static scale_by_Tensor_from_Canvas_TypedArray( input_Canvas, bDownloadFromGPU ) {
     let input_ctx = input_Canvas.getContext( "2d" );
     let input_ImageData = input_ctx.getImageData(
       0, 0, input_Canvas.width, input_Canvas.height );
@@ -282,8 +294,10 @@ class HeightWidthDepth {
         input_ImageData.height, input_ImageData.width, this.output_channelCount,
         this.output_shape_height_width );
 
-      let output_TypedArray = output_tensor.dataSync();
-      return output_TypedArray;
+      if ( bDownloadFromGPU ) {
+        let output_TypedArray = output_tensor.dataSync();
+        return output_TypedArray;
+      }
 
     } finally {
       if ( output_tensor ) {
@@ -355,7 +369,8 @@ class HeightWidthDepth {
             testCaseName = TestCaseNameArray[ testCaseId ];
 
             // Every test case should have the same result.
-            output_TypedArray = this[ testCaseName ]();
+            const bDownloadFromGPU = true;
+            output_TypedArray = this[ testCaseName ]( bDownloadFromGPU );
             if ( output_TypedArray_previous ) {
               let lhsNumberArray = output_TypedArray_previous;
               let rhsNumberArray = output_TypedArray;
