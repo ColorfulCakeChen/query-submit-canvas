@@ -354,7 +354,7 @@ class NeuralNet_ScaleFiller {
 //             = async () => sourceInt32ArrayPromise;
 
           // Scale image (do it only once).
-          let sourceInt32Array = NeuralNet_ScaleFiller
+          let sourceInt32Array = await NeuralNet_ScaleFiller
             .createTypedArray_smartly_by_scale_TypedArray_async(
               source_TypedArray,
               source_height, source_width, source_channelCount,
