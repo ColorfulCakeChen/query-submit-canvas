@@ -698,7 +698,7 @@ class NeuralNet_ScaleFiller {
       0, 0, target_width, target_height
     );
 
-    let target_ImageData = offscreenCanvas_ctx.getImageData(
+    let target_ImageData = target_offscreenCanvas_ctx.getImageData(
       0, 0, target_width, target_height );
 
     return target_ImageData;
