@@ -328,6 +328,10 @@ class NeuralNet_ScaleFiller {
 // call .createTensor_by_scale_PixelData() instead. (need create a temp ImageData.)
 // The reason is .createTensor_by_scale_PixelData() faster than
 // .createTensor_by_scale_TypedArray().
+//
+//!!! ...unfinished... (2023/05/26)
+// .createImageData_by_scale_Uint8ClampedArray() or
+// .createTensor_by_scale_TypedArray()
       
         // Scale image (do it only once).
         sourceTensorInt32
