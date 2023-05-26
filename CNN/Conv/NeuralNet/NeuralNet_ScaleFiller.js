@@ -807,19 +807,19 @@ class NeuralNet_ScaleFiller {
 
 
 //!!! (2023/05/26 Temp Added) For testing create tensor time.
-      {
-        let test_TensorInt32;
-        try {
-          let test_shape = [ target_height, target_width, 4 ];
-          test_TensorInt32
-            = tf.tensor3d( target_ImageData.data, test_shape, "int32" );
-
-          test_TensorInt32.dataSync();
-
-        } finally {
-          test_TensorInt32.dispose();
-        }
-      }
+//       {
+//         let test_TensorInt32;
+//         try {
+//           let test_shape = [ target_height, target_width, 4 ];
+//           test_TensorInt32
+//             = tf.tensor3d( target_ImageData.data, test_shape, "int32" );
+//
+//           test_TensorInt32.dataSync();
+//
+//         } finally {
+//           test_TensorInt32.dispose();
+//         }
+//       }
 
     }
 
