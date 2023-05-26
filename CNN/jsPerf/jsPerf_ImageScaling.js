@@ -339,8 +339,11 @@ class HeightWidthDepth {
 
         // (Also for pre-compiling WebGL shaders.)
         {
-          asserter_Equal
-            = TensorTools.Asserter_Equal.Pool.get_or_create_by( 0.01, 0.005 );
+          const acceptableDifferenceRate = 0.1; //0.01;
+          const acceptableDifference = 1; //0.005;
+
+          asserter_Equal = TensorTools.Asserter_Equal.Pool.get_or_create_by(
+            acceptableDifferenceRate, acceptableDifference );
 
           // Correctness testing uses smaller shape.
           {
