@@ -77,9 +77,10 @@ class HeightWidthDepth {
     input_Canvas.height = input_height;
     input_Canvas.width = input_width;
 
+    const contextAttributes = { willReadFrequently: true };
+
     let input_ImageData;
     {
-      let contextAttributes = { willReadFrequently: true };
       let ctx = input_Canvas.getContext( "2d", contextAttributes );
       input_ImageData = this.input_ImageData
         = ctx.getImageData( 0 , 0, input_width, input_height );
@@ -92,7 +93,7 @@ class HeightWidthDepth {
       = new OffscreenCanvas( input_width, input_height );
 
     {
-      let ctx = input_OffscreenCanvas.getContext( "2d" );
+      let ctx = input_OffscreenCanvas.getContext( "2d", contextAttributes );
       ctx.putImageData( input_ImageData, 0 , 0 );
     }
 
