@@ -699,11 +699,8 @@ class NeuralNet_ScaleFiller {
   }
 
   /**
-   * According to testing, in backend "webgl":
-   *   - This is the slowest method for scaling data.
-   *   - It is far more slower than other .createXxx_by_scale_Xxx() methods.
-   *   - But this method can handle tf.tensor3d with any channel count. Other
-   *       methods can only handle image (i.e. ( channelCount == 4 )).
+   * Internally, call .createImageData_by_scale_Uint8ClampedArray() or call
+   * .createTensor_by_scale_TypedArray().
    *
    *
    * @param {Uint8ClampedArray|Int32Array} source_TypedArray
@@ -726,10 +723,10 @@ class NeuralNet_ScaleFiller {
    *   A number array as [ target_height, target_width ] describing the shape
    * of the target tensor.
    *
-   * @param {tf.tensor3d}
-   *   Return an int32 tf.tensor3d whose shape is
-   * [ target_shape_height_width[ 0 ], target_shape_height_width[ 1 ],
-   * source_channelCount ].
+   * @param {Int32Array}
+   *   Return an Int32Array which can be used to create an int32 tf.tensor3d
+   * whose shape is [ target_shape_height_width[ 0 ],
+   * target_shape_height_width[ 1 ], source_channelCount ].
    */
   static createTypedArray_by_scale_TypedArray_smartly(
     source_TypedArray,
