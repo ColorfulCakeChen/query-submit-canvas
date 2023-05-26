@@ -614,6 +614,93 @@ class NeuralNet_ScaleFiller {
     }
   }
 
+//!!!
+
+  /**
+   * Create a tensor3d from source (e.g. canvas). Its size will be confirmed
+   * (by scaling) to this neural network's acceptable input [ height, width ].
+   *
+   *
+   * Note1: It is more recommended to use Canvas Context drawImage() to scale
+   *        image than this method. The reason is:
+   * 
+   *          - drawImage() operates on GPU directly.
+   * 
+   *          - This method downloads data from GPU to CPU for creating tensor.
+   *              And then, uploads data from CPU to GPU to scale tensor.
+   *
+   * Note2: According to testing, in backend "webgl", this method may be far
+   *        more faster than .createTensor_by_scale_TypedArray(). But this
+   *        method can only handle image (i.e. not any shape tensor).
+   *
+   *
+   * @param {tf.tensor3d} source_Tensor
+   *   The source tensor to be scaled. It will be disposed by this method.
+   *
+   * @param {number[]} target_shape_height_width
+   *   A number array as [ target_height, target_width ] describing the shape
+   * of the target tensor.
+   *
+   * @param {boolean} bForceInt32
+   *   If true, the dtype of the returned tf.tensor3d will be guaranteed as
+   * int32. Otherwise, the dtype of the returned tf.tensor3d may be int32 or
+   * float32 (because of resizing). This is useful if the result will be used
+   * by an embedding layer (which only accepts integer input). Default is true.
+   *
+   * @return {tf.tensor3d}
+   *   Return a (possible int32) tf.tensor3d whose shape is
+   * [ target_shape_height_width[ 0 ], target_shape_height_width[ 1 ],
+   * source_Tensor.shape[ 2 ] ].
+   */
+  static createTensor_by_scale_Tensor(
+    source_Tensor,
+    target_shape_height_width,
+    bForceInt32 = true ) {
+
+    let scaledSourceTensorFloat32;
+    try {
+
+      // Note:
+      //
+      // ( alignCorners == false ) and ( halfPixelCenters == true ) could
+      // get scaling result similar to CanvasRenderingContext2D.drawImage().
+      //
+      const alignCorners = false;
+      const halfPixelCenters = true;
+
+      scaledSourceTensorFloat32 = tf.image.resizeBilinear(
+        source_Tensor, target_shape_height_width,
+        alignCorners, halfPixelCenters
+      );
+
+    } catch ( e ) {
+      //debugger;
+      throw e; // e.g. out of (GPU) memory.
+
+    } finally {
+      source_Tensor.dispose();
+    }
+
+    if ( !bForceInt32 )
+      return scaledSourceTensorFloat32;
+
+    // Convert to int32 if required. (Note: The dtype of tf.image.resizeXxx()'s
+    // result is float32.)
+    try {
+      let scaledSourceTensorInt32 = scaledSourceTensorFloat32.cast( "int32" );
+      return scaledSourceTensorInt32;
+
+    } catch ( e ) {
+      //debugger;
+      throw e; // e.g. out of (GPU) memory.
+
+    } finally {
+      scaledSourceTensorFloat32.dispose();
+    }
+  }
+
+//!!!
+
   /**
    *
    *
