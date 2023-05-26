@@ -498,10 +498,12 @@ class NeuralNet_ScaleFiller {
    * (by scaling) to this neural network's acceptable input [ height, width ].
    *
    *
-   * Note1: It is more recommended to use Canvas Context drawImage() to scale
-   *        image than this method. The reason is:
+   * Note1: It is more recommended to use CanvasRenderingContext2D.drawImage()
+   *        to scale image than this method. The reason is:
    * 
-   *          - drawImage() operates on GPU directly.
+   *          - CanvasRenderingContext2D.drawImage() operates on GPU directly.
+   *            - .drawImage( Canvas ) is fastest (even faster than
+   *              .drawImage( ImageData ) ).
    * 
    *          - This method downloads data from GPU to CPU for creating tensor.
    *              And then, uploads data from CPU to GPU to scale tensor.
