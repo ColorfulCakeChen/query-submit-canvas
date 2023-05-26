@@ -323,10 +323,6 @@ class NeuralNet_ScaleFiller {
     try {
       if ( bScale ) {
 
-//!!! ...unfinished... (2023/05/26)
-// .createTypedArray_smartly_by_scale_TypedArray_async() or
-// .createTensor_smartly_by_scale_TypedArray()
-
 //!!! (2023/05/26 Remarked) Use
 // .createTypedArray_smartly_by_scale_TypedArray_async() or
 // .createTensor_smartly_by_scale_TypedArray()
@@ -380,6 +376,13 @@ class NeuralNet_ScaleFiller {
           }
 
         } else { // 2.1.2 Scale, No Fill.
+
+          // Scale image (do it only once).
+          sourceTensorInt32 = NeuralNet_ScaleFiller
+            .createTensor_smartly_by_scale_TypedArray(
+              source_TypedArray,
+              source_height, source_width, source_channelCount,
+              this.target_shape_height_width );
 
           // The reason why yield a function (instead of a Promise directly)
           // is to ensure .data() (which will consume CPU and memory bandwidth
