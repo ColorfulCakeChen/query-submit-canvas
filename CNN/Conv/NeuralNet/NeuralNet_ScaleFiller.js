@@ -441,6 +441,11 @@ class NeuralNet_ScaleFiller {
   }
 
   /**
+   * According to testing, in backend "webgl":
+   *   - This is the slowest method for scaling data.
+   *   - It is far more slower than other .createXxx_by_scale_Xxx() methods.
+   *   - But this method can handle tf.tensor3d with any channel count. Other
+   *       methods can only handle image (i.e. ( channelCount == 4 )).
    *
    *
    * @param {Uint8ClampedArray|Int32Array} source_TypedArray
@@ -508,9 +513,20 @@ class NeuralNet_ScaleFiller {
    *          - This method downloads data from GPU to CPU for creating tensor.
    *              And then, uploads data from CPU to GPU to scale tensor.
    *
-   * Note2: According to testing, in backend "webgl", this method may be far
-   *        more faster than .createTensor_by_scale_TypedArray(). But this
-   *        method can only handle image (i.e. not any shape tensor).
+   * Note2: According to testing, in backend "webgl", this method:
+   *   - faster than .createTensor_by_scale_TypedArray().
+   *       But this method can only handle image (i.e. not any shape tensor).
+   *
+   *   - .createImageData_by_scale_Canvas( HTMLCanvasElement | OffscreenCanvas )
+   *   - .createTensor_by_scale_PixelData( OffscreenCanvas )
+   *   - .createTensor_by_scale_PixelData( HTMLCanvasElement )
+   *   - .createImageData_by_scale_ImageData()
+   *   - .createTensor_by_scale_PixelData( ImageData )
+   *   - .createTensor_by_scale_TypedArray()
+   *
+!!!   * This method is:
+   *   - comparable to .createTensor_by_scale_Xxx()
+   *   - .createTensor_by_scale_PixelData()
    *
    *
    * @param {ImageData|ImageBitmap|HTMLImageElement|HTMLCanvasElement|HTMLVideoElement} source_PixelData
@@ -565,6 +581,10 @@ class NeuralNet_ScaleFiller {
   }
 
   /**
+   * Used by the following methods internally:
+   *   - .createTensor_by_scale_PixelData()
+   *   - .createTensor_by_scale_TypedArray()
+   *
    *
    * @param {tf.tensor3d} source_Tensor
    *   The source tensor to be scaled. It will be disposed by this method.
@@ -677,8 +697,9 @@ class NeuralNet_ScaleFiller {
    * This method is:
    *   - the fastest method.
    *   - far more faster than:
-   *     - .createImageData_by_scale_ImageData() and
-   *     - .createTensor_by_scale_Xxx().
+   *     - .createImageData_by_scale_ImageData()
+   *     - .createTensor_by_scale_PixelData()
+   *     - .createTensor_by_scale_TypedArray()
    *
    *
    * @param {HTMLCanvasElement|OffscreenCanvas} source_Canvas
@@ -724,11 +745,8 @@ class NeuralNet_ScaleFiller {
    *
    * This method is:
    *   - slower than .createImageData_by_scale_Canvas()
-   *   - comparable to .createTensor_by_scale_Xxx()
-   *
-!!!   * method (far more faster than using .createImageData_by_scale_ImageData()).
-   * 
-   * Scale ImageData by OffscreenCanvas which is faster than using tf.tensor.
+   *   - comparable to .createTensor_by_scale_PixelData() and
+   *       .createTensor_by_scale_TypedArray()
    *
    *
    * @param {ImageData} source_ImageData
