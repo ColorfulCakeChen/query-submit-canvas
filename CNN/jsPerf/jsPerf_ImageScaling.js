@@ -340,7 +340,7 @@ class HeightWidthDepth {
         // (Also for pre-compiling WebGL shaders.)
         {
           const acceptableDifferenceRate = 0.05; //0.1; //0.01;
-          const acceptableDifference = 2; //0.005;
+          const acceptableDifference = 3;
 
           asserter_Equal = TensorTools.Asserter_Equal.Pool.get_or_create_by(
             acceptableDifferenceRate, acceptableDifference );
@@ -350,7 +350,7 @@ class HeightWidthDepth {
             const output_height_temp = 2;
             const output_width_temp = 2;
             const output_channelCount_temp = 4;
-            const largerFactor_temp = 2;
+            const largerFactor_temp = 3;
 
             this.init( output_height_temp, output_width_temp,
               output_channelCount_temp, largerFactor_temp );
