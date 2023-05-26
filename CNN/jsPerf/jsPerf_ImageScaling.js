@@ -29,8 +29,8 @@ class HeightWidthDepth {
 
 
     //!!! (2023/05/26 Temp Remarked) For test performance if not download from GPU.
-    //this.bDownloadFromGPU_default = true;
-    this.bDownloadFromGPU_default = false;
+    this.bDownloadFromGPU_default = true;
+    //this.bDownloadFromGPU_default = false;
   }
 
   /** */
