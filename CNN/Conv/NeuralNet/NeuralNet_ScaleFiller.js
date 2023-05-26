@@ -491,42 +491,6 @@ class NeuralNet_ScaleFiller {
       target_shape_height_width,
       bForceInt32
     );
-
-//!!! (2023/05/26 Remarked) Use .createTensor_by_scale_Tensor() instead.
-//     let scaledSourceTensorFloat32;
-//     try {
-//
-//       // Note:
-//       //
-//       // ( alignCorners == false ) and ( halfPixelCenters == true ) could
-//       // get scaling result similar to CanvasRenderingContext2D.drawImage().
-//       //
-//       const alignCorners = false;
-//       const halfPixelCenters = true;
-//
-//       scaledSourceTensorFloat32 = tf.image.resizeBilinear(
-//         sourceTensorInt32, target_shape_height_width,
-//         alignCorners, halfPixelCenters
-//       );
-//     } catch ( e ) {
-//       //debugger;
-//       throw e; // e.g. out of (GPU) memory.
-//     } finally {
-//       sourceTensorInt32.dispose();
-//     }
-//
-//     // Convert to int32. (Note: The dtype of tf.image.resizeXxx()'s result
-//     // is float32.)
-//     let scaledSourceTensorInt32;
-//     try {
-//       scaledSourceTensorInt32 = scaledSourceTensorFloat32.cast( "int32" );
-//       return scaledSourceTensorInt32;
-//     } catch ( e ) {
-//       //debugger;
-//       throw e; // e.g. out of (GPU) memory.
-//     } finally {
-//       scaledSourceTensorFloat32.dispose();
-//     }
   }
 
   /**
@@ -596,42 +560,6 @@ class NeuralNet_ScaleFiller {
       target_shape_height_width,
       bForceInt32
     );
-
-//!!! (2023/05/26 Remarked) Use .createTensor_by_scale_Tensor() instead.
-//     let scaledSourceTensorFloat32;
-//     try {
-//
-//       // Note:
-//       //
-//       // ( alignCorners == false ) and ( halfPixelCenters == true ) could
-//       // get scaling result similar to CanvasRenderingContext2D.drawImage().
-//       //
-//       const alignCorners = false;
-//       const halfPixelCenters = true;
-//
-//       scaledSourceTensorFloat32 = tf.image.resizeBilinear(
-//         sourceTensor, target_shape_height_width,
-//         alignCorners, halfPixelCenters
-//       );
-//     } catch ( e ) {
-//       throw e; // e.g. out of (GPU) memory.
-//     } finally {
-//       sourceTensor.dispose();
-//     }
-//
-//     if ( !bForceInt32 )
-//       return scaledSourceTensorFloat32;
-//
-//     // Convert to int32 if necessary. (Note: The dtype of tf.image.resizeXxx()'s
-//     // result is float32.)
-//     try {
-//       let scaledSourceTensorInt32 = scaledSourceTensorFloat32.cast( "int32" );
-//       return scaledSourceTensorInt32;
-//     } catch ( e ) {
-//       throw e; // e.g. out of (GPU) memory.
-//     } finally {
-//       scaledSourceTensorFloat32.dispose();
-//     }
   }
 
   /**
