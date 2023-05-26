@@ -493,7 +493,7 @@ class NeuralNet_ScaleFiller {
    * embedding layer (which only accepts integer input). Default is true.
    *
    * @return {tf.tensor3d}
-   *   Return a (possible int32) tensor3d whose shape is
+   *   Return a (possible int32) tf.tensor3d whose shape is
    * [ target_shape_height_width[ 0 ], target_shape_height_width[ 1 ],
    * source_channelCount ].
    */
@@ -561,7 +561,7 @@ class NeuralNet_ScaleFiller {
    * by an embedding layer (which only accepts integer input). Default is true.
    *
    * @param {tf.tensor3d}
-   *   Return an int32 tensor3d whose shape is
+   *   Return a (possible int32) tf.tensor3d whose shape is
    * [ target_shape_height_width[ 0 ], target_shape_height_width[ 1 ],
    * source_channelCount ].
    */
@@ -657,13 +657,9 @@ class NeuralNet_ScaleFiller {
 
 //!!!
 
-
   /**
-   * According to testing, in backend "webgl":
-   *   - This is the slowest method for scaling data.
-   *   - It is far more slower than other .createXxx_by_scale_Xxx() methods.
-   *   - But this method can handle tf.tensor3d with any channel count. Other
-   *       methods can only handle image (i.e. ( channelCount == 4 )).
+   * Internally, call .createImageData_by_scale_Uint8ClampedArray() or call
+   * .createTensor_by_scale_TypedArray().
    *
    *
    * @param {Uint8ClampedArray|Int32Array} source_TypedArray
@@ -686,22 +682,15 @@ class NeuralNet_ScaleFiller {
    *   A number array as [ target_height, target_width ] describing the shape
    * of the target tensor.
    *
-   * @param {boolean} bForceInt32
-   *   If true, the dtype of the returned tf.tensor3d will be guaranteed as
-   * int32. Otherwise, the dtype of the returned tf.tensor3d may be int32 or
-   * float32 (because of resizing). This is useful if the result will be used
-   * by an embedding layer (which only accepts integer input). Default is true.
-   *
    * @param {tf.tensor3d}
-   *   Return an int32 tensor3d whose shape is
+   *   Return an int32 tf.tensor3d whose shape is
    * [ target_shape_height_width[ 0 ], target_shape_height_width[ 1 ],
    * source_channelCount ].
    */
   static createTensor_by_scale_TypedArray_smartly(
     source_TypedArray,
     source_height, source_width, source_channelCount,
-    target_shape_height_width,
-    bForceInt32 = true ) {
+    target_shape_height_width ) {
 
 //!!! ...unfinished... (2023/05/26)
 // .createImageData_by_scale_Uint8ClampedArray() or
@@ -737,22 +726,15 @@ class NeuralNet_ScaleFiller {
    *   A number array as [ target_height, target_width ] describing the shape
    * of the target tensor.
    *
-   * @param {boolean} bForceInt32
-   *   If true, the dtype of the returned tf.tensor3d will be guaranteed as
-   * int32. Otherwise, the dtype of the returned tf.tensor3d may be int32 or
-   * float32 (because of resizing). This is useful if the result will be used
-   * by an embedding layer (which only accepts integer input). Default is true.
-   *
    * @param {tf.tensor3d}
-   *   Return an int32 tensor3d whose shape is
+   *   Return an int32 tf.tensor3d whose shape is
    * [ target_shape_height_width[ 0 ], target_shape_height_width[ 1 ],
    * source_channelCount ].
    */
   static createTypedArray_by_scale_TypedArray_smartly(
     source_TypedArray,
     source_height, source_width, source_channelCount,
-    target_shape_height_width,
-    bForceInt32 = true ) {
+    target_shape_height_width ) {
 
 //!!! ...unfinished... (2023/05/26)
 // .createImageData_by_scale_Uint8ClampedArray() or
