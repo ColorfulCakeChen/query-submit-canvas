@@ -676,8 +676,9 @@ class NeuralNet_ScaleFiller {
    *
    * This method is:
    *   - the fastest method.
-   *   - far more faster than .createImageData_by_scale_ImageData() and
-   *       .createTensor_by_scale_Xxx().
+   *   - far more faster than:
+   *     - .createImageData_by_scale_ImageData() and
+   *     - .createTensor_by_scale_Xxx().
    *
    *
    * @param {HTMLCanvasElement|OffscreenCanvas} source_Canvas
