@@ -182,9 +182,12 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
     let theDrawingCanvas
      = runtime.objects[ DrawingCanvas_ObjectTypeName ].getFirstInstance();
 
-//   let imageDataPromise = runtime.objects.DrawingCanvas.getFirstInstance()
-//     .getImagePixelData();
-//
+    let imageDataPromise = theDrawingCanvas.getImagePixelData();
+
+    imageDataPromise.then( imageData => {
+
+    } );
+
 //  let imageData = await imageDataPromise;
   }
 
