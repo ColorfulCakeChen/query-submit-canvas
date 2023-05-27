@@ -82,7 +82,7 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
 
     this.Fighter_bManualMode = runtime.globalVars.Fighter_bManualMode;
     if ( this.Fighter_bManualMode )
-      return true; // No neural network.
+      return true; // No neural network. Init still ok.
 
     const base = this.base;
 
@@ -171,7 +171,7 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
 //       still correct.
 //
     if ( this.Fighter_bManualMode )
-      return true; // No neural network.
+      return; // No neural network.
 
     let pfnStep = NeuralOrchestra_Construct3.Versus_Step_Function_Array[
       runtime.globalVars.Versus_Step_Current ];
@@ -188,7 +188,10 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
    */
   static DrawingCanvas_paint_async() {
     if ( !this.DrawingCanvas )
-      return;
+      return; // No canvas to paint.
+
+    if ( this.pasteInstancesPromise )
+      return; // Previous painting has not yet completed. Do not paint again.
 
     const runtime = this.DrawingCanvas.runtime;
     this.DrawingCanvas.clearCanvas( this.DrawingCanvas_clearColor );
@@ -215,13 +218,23 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
       pasteInstanceArray.length = 0; // Reduce memory footprint.
     }
 
-    pasteInstancesPromise.then
+    await pasteInstancesPromise;
+
+// ???
+    this.pasteInstancesPromise = null;
+
+//!!! ...unfinished... (2023/05/27)
+    // After painting compeletd, get the whole image for processing
+    // by neural network.
+
+    if ( this.Fighter_bManualMode )
+      return; // No need to get image since no neural network.
 
     if ( !this.imageDataPromise ) {
       let imageDataPromise = this.imageDataPromise
         = this.DrawingCanvas.getImagePixelData();
 
-  //!!! ...unfinished... (2023/05/27)
+//!!! ...unfinished... (2023/05/27)
       imageDataPromise.then( imageData => {
         imageData;
 
