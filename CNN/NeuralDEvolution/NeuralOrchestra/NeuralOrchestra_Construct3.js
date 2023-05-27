@@ -61,6 +61,9 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
    * @param {Object} runtime
    *   Construct3 game engine runtime.
    *
+   * @param {boolean} runtime.globalVars.Fighter_bManualMode
+   *   If true, there is no neural network be created.
+   *
    * @return {Promise( boolean )}
    *   Return a promise. It resolves to true, if successful.
    */
@@ -77,7 +80,8 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
     output_channelCount
   ) {
 
-    if ( runtime.globalVars.Fighter_bManualMode )
+    this.Fighter_bManualMode = runtime.globalVars.Fighter_bManualMode;
+    if ( this.Fighter_bManualMode )
       return true; // No neural network.
 
     const base = this.base;
@@ -125,8 +129,7 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
 
 //!!! ...unfinished... (2023/05/27)
 // Still draw canvas when ( Fighter_bManualMode == true )
-
-    if ( runtime.globalVars.Fighter_bManualMode )
+    if ( this.Fighter_bManualMode )
       return true; // No neural network.
 
     let pfnStep = NeuralOrchestra_Construct3.Versus_Step_Function_Array[
