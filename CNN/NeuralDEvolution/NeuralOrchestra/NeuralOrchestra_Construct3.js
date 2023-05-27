@@ -186,7 +186,7 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
   /**
    * @param {NeuralOrchestra_Construct3} this
    */
-  static DrawingCanvas_paint_async() {
+  static async DrawingCanvas_paint_async() {
     if ( !this.DrawingCanvas )
       return; // No canvas to paint.
 
