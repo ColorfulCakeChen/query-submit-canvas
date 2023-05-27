@@ -122,6 +122,8 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
 //!!! ...unfinished... (2023/05/27)
     this.configJSONData = aIJSONInstance.getJsonDataCopy();
 
+    const runtime = this.configJSONData.runtime;
+
     {
       const DrawingCanvas_ObjectTypeName
         = this.configJSONData.DrawingCanvas.ObjectTypeName;
