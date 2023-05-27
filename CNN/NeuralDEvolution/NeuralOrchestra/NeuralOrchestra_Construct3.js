@@ -226,9 +226,23 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
 //!!! ...unfinished... (2023/05/27)
     // After painting compeletd, get the whole image for processing
     // by neural network.
+    // NeuralOrchestra_Construct3.DrawingCanvas_getImageData_and_process_async
+    //   .call( this );
 
+  }
+
+  /**
+   * @param {NeuralOrchestra_Construct3} this
+   */
+  static DrawingCanvas_getImageData_and_process_async() {
     if ( this.Fighter_bManualMode )
       return; // No need to get image since no neural network.
+
+//!!! ...unfinished... (2023/05/27)
+// should also check
+//   - previous neural network processing whether done.
+//   - the time elapsed (after the previous neural network processing) whether
+//       greater than specified interval. (e.g. 0.5 seconds)
 
     if ( !this.imageDataPromise ) {
       let imageDataPromise = this.imageDataPromise
