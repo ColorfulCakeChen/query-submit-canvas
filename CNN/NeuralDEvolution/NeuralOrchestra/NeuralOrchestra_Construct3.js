@@ -184,7 +184,9 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
 
     let imageDataPromise = theDrawingCanvas.getImagePixelData();
 
+//!!! ...unfinished... (2023/05/27)
     imageDataPromise.then( imageData => {
+      imageData;
 
     } );
 
