@@ -137,8 +137,8 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
 //
 // So, giving ObjectType name list should be better.
 // Perhaps, in Construct3, use push names (by ObjectClass.ObjectTypeName) of
-// object types (which are wanted to be drawn onto DrawinCanvas) into a JSON object
-// type. Pass the JSON object type instance to method
+// object types (of DrawingCanvas and objects to be drawn onto DrawinCanvas)
+// into a JSON object type. Pass the JSON object type instance to method
 // .init_for_Construct3_runOnStartup_async()
 //
 //   - Advantage: If these object types are renamed, the .ObjectTypeName is
