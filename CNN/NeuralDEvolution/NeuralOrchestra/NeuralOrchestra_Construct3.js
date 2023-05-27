@@ -132,6 +132,9 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
 //
 // Perhaps, specify IWorldInstance to be drawn by layer (e.g. by layer number).
 // Problem: Some instances of the layer is not necessary to be drawn.
+//          Perhaps, use visible flag of every instance. But, what the drawing
+//          order?
+//
 // So, giving ObjectType name list should be better.
 //
     if ( this.Fighter_bManualMode )
