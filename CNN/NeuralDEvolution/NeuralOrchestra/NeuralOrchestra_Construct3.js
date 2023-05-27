@@ -113,6 +113,17 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
   }
 
   /**
+   *
+   * @param {Construct3.IJSONInstance} aIJSONInstance
+   *   A Construct3 JSON plugin define the configuration.
+   */
+  ConfigJSON_set( aIJSONInstance ) {
+
+//!!! ...unfinished... (2023/05/27)
+    this.configJSONData = aIJSONInstance.getJsonDataCopy();
+  }
+
+  /**
    * Called by Construct3 game engine every game tick.
    *
    *   - runtime.globalVars.Versus_Step_X_Yyy: The defined step constants.
@@ -155,6 +166,19 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
 // So that they can determine going to which state.
 // If undefined, means do not change state.
     pfnStep.call( this, runtime );
+  }
+
+  /**
+   * @param {NeuralOrchestra_Construct3} this
+   */
+  static DrawingCanvas_paint( runtime ) {
+
+//!!! ...unfinished... (2023/05/27)
+
+//   let imageDataPromise = runtime.objects.DrawingCanvas.getFirstInstance()
+//     .getImagePixelData();
+//
+//  let imageData = await imageDataPromise;
   }
 
   /**
