@@ -121,6 +121,16 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
 
 //!!! ...unfinished... (2023/05/27)
     this.configJSONData = aIJSONInstance.getJsonDataCopy();
+
+    {
+      const DrawingCanvas_ObjectTypeName
+        = this.configJSONData.DrawingCanvas.ObjectTypeName;
+
+      this.DrawingCanvas // IDrawingCanvasInstance
+        = runtime.objects[ DrawingCanvas_ObjectTypeName ].getFirstInstance();
+
+      this.DrawingCanvas_clearColor = [ 0, 0, 0, 1 ]; // RGBA
+    }
   }
 
   /**
@@ -174,13 +184,13 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
    * @param {NeuralOrchestra_Construct3} this
    */
   static DrawingCanvas_paint( runtime ) {
+    if ( !this.DrawingCanvas )
+      return;
+
+    this.DrawingCanvas.clearCanvas( this.DrawingCanvas_clearColor );
 
 //!!! ...unfinished... (2023/05/27)
-    const DrawingCanvas_ObjectTypeName
-      = this.configJSONData.DrawingCanvas.ObjectTypeName;
-
-    let theDrawingCanvas
-     = runtime.objects[ DrawingCanvas_ObjectTypeName ].getFirstInstance();
+    this.DrawingCanvas.pasteInstances( [] );
 
     if ( !this.imageDataPromise ) {
       let imageDataPromise = this.imageDataPromise
