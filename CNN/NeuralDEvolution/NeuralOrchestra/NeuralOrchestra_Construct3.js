@@ -131,6 +131,8 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
 // Still draw canvas when ( Fighter_bManualMode == true )
 //
 // Perhaps, specify IWorldInstance to be drawn by layer (e.g. by layer number).
+// Problem: Some instances of the layer is not necessary to be drawn.
+// So, giving ObjectType name list should be better.
 //
     if ( this.Fighter_bManualMode )
       return true; // No neural network.
