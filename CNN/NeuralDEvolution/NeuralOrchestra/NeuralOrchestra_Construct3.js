@@ -138,6 +138,8 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
    */
   tick( runtime ) {
 
+    NeuralOrchestra_Construct3.DrawingCanvas_paint.call( this, runtime );
+
 //!!! ...unfinished... (2023/05/27)
 // Still draw canvas when ( Fighter_bManualMode == true )
 //
@@ -174,6 +176,11 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
   static DrawingCanvas_paint( runtime ) {
 
 //!!! ...unfinished... (2023/05/27)
+    const DrawingCanvas_ObjectTypeName
+      = this.configJSONData.DrawingCanvas.ObjectTypeName;
+
+    let theDrawingCanvas
+     = runtime.objects[ DrawingCanvas_ObjectTypeName ].getFirstInstance();
 
 //   let imageDataPromise = runtime.objects.DrawingCanvas.getFirstInstance()
 //     .getImagePixelData();
