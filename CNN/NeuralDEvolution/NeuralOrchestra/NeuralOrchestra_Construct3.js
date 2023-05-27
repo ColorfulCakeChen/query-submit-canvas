@@ -132,6 +132,7 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
         = runtime.objects[ DrawingCanvas_ObjectTypeName ].getFirstInstance();
 
       this.DrawingCanvas_clearColor = [ 0, 0, 0, 1 ]; // RGBA
+      this.DrawingCanvas_pasteInstanceArray = []; // For reducing memory re-allocation.
     }
   }
 
@@ -150,7 +151,7 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
    */
   tick( runtime ) {
 
-    NeuralOrchestra_Construct3.DrawingCanvas_paint.call( this, runtime );
+    NeuralOrchestra_Construct3.DrawingCanvas_paint_async.call( this );
 
 //!!! ...unfinished... (2023/05/27)
 // Still draw canvas when ( Fighter_bManualMode == true )
@@ -185,14 +186,36 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
   /**
    * @param {NeuralOrchestra_Construct3} this
    */
-  static DrawingCanvas_paint( runtime ) {
+  static DrawingCanvas_paint_async() {
     if ( !this.DrawingCanvas )
       return;
 
+    const runtime = this.DrawingCanvas.runtime;
     this.DrawingCanvas.clearCanvas( this.DrawingCanvas_clearColor );
 
 //!!! ...unfinished... (2023/05/27)
-    this.DrawingCanvas.pasteInstances( [] );
+    // Paste all specified ObjectType's instances onto the DrawingCanvas.
+    let pasteInstancesPromise;
+    {
+      const ObjectTypeNameArray
+        = this.configJSONData.DrawingCanvas.ObjectTypeNameArray;
+
+      const pasteInstanceArray = this.DrawingCanvas_pasteInstanceArray;
+
+      pasteInstanceArray.length = 0;
+      for ( let i = 0; i < ObjectTypeNameArray.length; ++i ) {
+        const ObjectTypeName = ObjectTypeNameArray[ i ];
+        const ObjectType = runtime.objects[ ObjectTypeName ];
+        pasteInstanceArray.push( ...ObjectType.instances() );
+      }
+  
+      pasteInstancesPromise = this.pasteInstancesPromise
+        = this.DrawingCanvas.pasteInstances( pasteInstanceArray );
+
+      pasteInstanceArray.length = 0; // Reduce memory footprint.
+    }
+
+    pasteInstancesPromise.then
 
     if ( !this.imageDataPromise ) {
       let imageDataPromise = this.imageDataPromise
