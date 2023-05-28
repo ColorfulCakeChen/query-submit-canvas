@@ -13,6 +13,11 @@ import { Base as NeuralOrchestra_Base } from "./NeuralOrchestra_Base.js";
  * with Construct3 Game Engine.
  *
  *
+ * @member {boolean} Fighter_bManualMode
+ *   If true, there is no neural network be created. (Note: DrawingCanvas will
+ * always be painted no mater how this flag is.)
+ *
+ *
  * @member {Object} configJSONData
  *   A configuration object comes from Construct3 by .ConfigJSON_set().
  *
@@ -26,6 +31,10 @@ import { Base as NeuralOrchestra_Base } from "./NeuralOrchestra_Base.js";
  *   All ObjectType names (in Construct3) whose all instances will be pasted
  * onto the DrawingCanvas every game tick.
  *
+ * @member {number} configJSONData.AI.intervalSeconds
+ *   How many time (in seconds) should be past before the next AI processing.
+ *
+ *
  * @member {Construct3.IDrawingCanvasInstance} DrawingCanvas
  *   The IDrawingCanvasInstance (in Construct3) to be used for painting all
  * game instances which will be seen by the neural network.
@@ -34,6 +43,15 @@ import { Base as NeuralOrchestra_Base } from "./NeuralOrchestra_Base.js";
  *   A four elements number array [ 0, 0, 0, 1 ] representing the RGBA color
  * for clearing the DrawingCanvas before painting any instances.
  *
+ * @member {Construct3.IInstance[]} DrawingCanvas_pasteInstanceArray
+ *   The Construct3 game objects which has been painted recently.
+ *
+ *
+ * @member {number} AI_gameTime_previous_beginSeconds
+ *   The beginning game time (in seconds) of the previous AI processing.
+ *
+ * @member {number} AI_gameTime_previous_endSeconds
+ *   The ending game time (in seconds) of the previous AI processing.
  */
 class NeuralOrchestra_Construct3 extends Recyclable.Root {
 
@@ -64,6 +82,11 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
 
   /** @override */
   disposeResources() {
+
+//!!! ...unfinished... (2023/05/28)
+// should clear all data members.
+
+
     if ( this.base ) {
       this.base.disposeResources_and_recycleToPool();
       this.base = undefined;
@@ -159,11 +182,9 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
       this.DrawingCanvas_clearColor = [ 0, 0, 0, 1 ]; // RGBA. Black opacity.
       this.DrawingCanvas_pasteInstanceArray = []; // For reducing memory re-allocation.
     }
-
+!!!configJSONData.AI.intervalSeconds
     {
-//!!! ...unfinished... (2023/05/28)
-// AI.intervalMilliseconds
-
+      this.AI_intervalSeconds = configJSONData.AI.intervalSeconds;
     }
   }
 
@@ -283,7 +304,7 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
 //!!! ...unfinished... (2023/05/28)
 // check whether has pass enough time (in seconds)
     runtime.gameTime;
-  
+
 //!!! ...unfinished... (2023/05/28)
 
 
