@@ -367,6 +367,7 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
       return; // Previous AI processing has not yet completed. Do not processing again.
 
 //!!! ...unfinished... (2023/05/28)
+// Set KeyDownArray
 
   }
 
