@@ -294,31 +294,23 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
     if ( this.DrawingCanvas_getImagePixelDataPromise )
       return; // Previous getting has not yet completed. Do not get again.
 
-    // const getImagePixelData = this.DrawingCanvas_getImagePixelData;
-    //   let imageDataPromise = this.imageDataPromise
-
 //!!! ...unfinished... (2023/05/28)
 // check whether has pass enough time (in seconds)
     runtime.gameTime;
 
     {
-      this.AI_intervalSeconds = configJSONData.AI.intervalSeconds;
+      const AI_intervalSeconds = this.configJSONData.AI.intervalSeconds;
 
-//      !!!configJSONData.AI.intervalSeconds
-      AI_gameTime_previous_beginSeconds
-      AI_gameTime_previous_endSeconds
-     
+      this.AI_gameTime_previous_beginSeconds;
+      this.AI_gameTime_previous_endSeconds;
     }
 
 //!!! ...unfinished... (2023/05/28)
-// should also check whether is in Fighting state.
-
-
-//!!! ...unfinished... (2023/05/27)
 // should also check
 //   - previous neural network processing whether done.
 //   - the time elapsed (after the previous neural network processing) whether
 //       greater than specified interval. (e.g. 0.5 seconds)
+//   - now is in Fighting state.
 
     let getImagePixelDataPromise = this.DrawingCanvas_getImagePixelDataPromise
       = DrawingCanvas.getImagePixelData();
