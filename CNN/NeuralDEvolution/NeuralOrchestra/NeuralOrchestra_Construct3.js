@@ -224,7 +224,6 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
     // Clear to background color.
     DrawingCanvas.clearCanvas( this.DrawingCanvas_clearColor );
 
-//!!! ...unfinished... (2023/05/27)
     // Paste all specified ObjectType's instances onto the DrawingCanvas.
     let pasteInstancesPromise;
     {
