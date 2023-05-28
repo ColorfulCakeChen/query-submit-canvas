@@ -241,8 +241,6 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
   
       pasteInstancesPromise = this.DrawingCanvas_pasteInstancesPromise
         = DrawingCanvas.pasteInstances( pasteInstanceArray );
-
-      pasteInstanceArray.length = 0; // Reduce memory footprint.
     }
 
     await pasteInstancesPromise;
