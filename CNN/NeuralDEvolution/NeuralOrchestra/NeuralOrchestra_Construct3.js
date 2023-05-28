@@ -212,14 +212,15 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
    * @param {NeuralOrchestra_Construct3} this
    */
   static async DrawingCanvas_paint_async() {
-    if ( !this.DrawingCanvas )
+    const DrawingCanvas = this.DrawingCanvas;
+    if ( !DrawingCanvas )
       return; // No canvas to paint.
 
-    if ( this.pasteInstancesPromise )
+    if ( this.DrawingCanvas_pasteInstancesPromise )
       return; // Previous painting has not yet completed. Do not paint again.
 
-    const runtime = this.DrawingCanvas.runtime;
-    this.DrawingCanvas.clearCanvas( this.DrawingCanvas_clearColor );
+    const runtime = DrawingCanvas.runtime;
+    DrawingCanvas.clearCanvas( this.DrawingCanvas_clearColor );
 
 //!!! ...unfinished... (2023/05/27)
     // Paste all specified ObjectType's instances onto the DrawingCanvas.
@@ -237,8 +238,8 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
         pasteInstanceArray.push( ...ObjectType.instances() );
       }
   
-      pasteInstancesPromise = this.pasteInstancesPromise
-        = this.DrawingCanvas.pasteInstances( pasteInstanceArray );
+      pasteInstancesPromise = this.DrawingCanvas_pasteInstancesPromise
+        = DrawingCanvas.pasteInstances( pasteInstanceArray );
 
       pasteInstanceArray.length = 0; // Reduce memory footprint.
     }
