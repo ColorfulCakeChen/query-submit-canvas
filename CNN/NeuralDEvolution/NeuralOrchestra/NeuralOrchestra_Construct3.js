@@ -277,9 +277,12 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
     this.DrawingCanvas_pasteInstancesPromise = null;
 
 //!!! ...unfinished... (2023/05/28)
+// Perhaps, no need to await process by neural network.
 //     // After ImageData got, process it by neural network.
-//     await NeuralOrchestra_Construct3.DrawingCanvas_process_by_AI_async.call( this );
-//     ???;
+//     ???await NeuralOrchestra_Construct3.DrawingCanvas_process_by_AI_async.call( this );
+
+//!!! ...unfinished... (2023/05/28)
+// apply processing result to KeyDownArray?
 
   }
 
