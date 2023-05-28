@@ -13,6 +13,23 @@ import { Base as NeuralOrchestra_Base } from "./NeuralOrchestra_Base.js";
  * with Construct3 Game Engine.
  *
  *
+ * @member {Object} configJSONData
+ *   A configuration object comes from Construct3 by .ConfigJSON_set().
+ *
+ * @member {Object} configJSONData.DrawingCanvas
+ *   Configuration for DrawingCanvas.
+ *
+ * @member {string} configJSONData.DrawingCanvas.ObjectTypeName
+ *   The IDrawingCanvasInstance's ObjectType name in Construct3.
+ *
+ * @member {string[]} configJSONData.DrawingCanvas.ObjectTypeNameArray
+ *   All ObjectType names (in Construct3) whose all instances will be pasted
+ * onto the DrawingCanvas every game tick.
+ *
+ * @member {Construct3.IDrawingCanvasInstance} DrawingCanvas
+ *   The IDrawingCanvasInstance (in Construct3) to be used for painting all
+ * game instances which will be seen by the neural network.
+ *
  */
 class NeuralOrchestra_Construct3 extends Recyclable.Root {
 
