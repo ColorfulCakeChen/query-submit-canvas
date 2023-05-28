@@ -30,6 +30,10 @@ import { Base as NeuralOrchestra_Base } from "./NeuralOrchestra_Base.js";
  *   The IDrawingCanvasInstance (in Construct3) to be used for painting all
  * game instances which will be seen by the neural network.
  *
+ * @member {number[]} DrawingCanvas_clearColor
+ *   A four elements number array [ 0, 0, 0, 1 ] representing the RGBA color
+ * for clearing the DrawingCanvas before painting any instances.
+ *
  */
 class NeuralOrchestra_Construct3 extends Recyclable.Root {
 
@@ -136,14 +140,14 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
    */
   ConfigJSON_set( aIJSONInstance ) {
 
-//!!! ...unfinished... (2023/05/27)
-    this.configJSONData = aIJSONInstance.getJsonDataCopy();
+    const configJSONData = this.configJSONData
+      = aIJSONInstance.getJsonDataCopy();
 
     const runtime = aIJSONInstance.runtime;
 
     {
       const DrawingCanvas_ObjectTypeName
-        = this.configJSONData.DrawingCanvas.ObjectTypeName;
+        = configJSONData.DrawingCanvas.ObjectTypeName;
 
       this.DrawingCanvas // IDrawingCanvasInstance
         = runtime.objects[ DrawingCanvas_ObjectTypeName ].getFirstInstance();
