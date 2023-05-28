@@ -156,7 +156,7 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
       this.DrawingCanvas // IDrawingCanvasInstance
         = runtime.objects[ DrawingCanvas_ObjectTypeName ].getFirstInstance();
 
-      this.DrawingCanvas_clearColor = [ 0, 0, 0, 1 ]; // RGBA
+      this.DrawingCanvas_clearColor = [ 0, 0, 0, 1 ]; // RGBA. Black opacity.
       this.DrawingCanvas_pasteInstanceArray = []; // For reducing memory re-allocation.
     }
   }
@@ -220,6 +220,8 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
       return; // Previous painting has not yet completed. Do not paint again.
 
     const runtime = DrawingCanvas.runtime;
+
+    // Clear to background color.
     DrawingCanvas.clearCanvas( this.DrawingCanvas_clearColor );
 
 //!!! ...unfinished... (2023/05/27)
