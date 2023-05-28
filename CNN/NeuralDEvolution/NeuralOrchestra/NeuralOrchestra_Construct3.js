@@ -134,6 +134,10 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
   }
 
   /**
+   * Usually, call this method inside Construct3's .OnAfterProjectStart() event
+   * because the ConfigJSON has not been initilized until the Construct3's
+   * "On start of layout" event.
+   *
    *
    * @param {Construct3.IJSONInstance} aIJSONInstance
    *   A Construct3 JSON plugin define the configuration.
