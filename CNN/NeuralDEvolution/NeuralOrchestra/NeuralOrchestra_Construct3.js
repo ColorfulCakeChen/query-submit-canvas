@@ -256,7 +256,7 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
 //!!! ...unfinished... (2023/05/27)
     // After painting compeletd, get the whole image for processing
     // by neural network.
-    // NeuralOrchestra_Construct3.DrawingCanvas_getImageData_and_process_async
+    // NeuralOrchestra_Construct3.DrawingCanvas_getImageData_and_process_by_AI_async
     //   .call( this );
 
   }
@@ -264,9 +264,28 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
   /**
    * @param {NeuralOrchestra_Construct3} this
    */
-  static DrawingCanvas_getImageData_and_process_async() {
+  static DrawingCanvas_getImageData_and_process_by_AI_async() {
     if ( this.Fighter_bManualMode )
       return; // No need to get image since no neural network.
+
+    const DrawingCanvas = this.DrawingCanvas;
+    if ( !DrawingCanvas )
+      return; // No canvas to get image.
+
+    const runtime = DrawingCanvas.runtime;
+
+    if ( this.DrawingCanvas_getImagePixelData )
+      return; // Previous getting has not yet completed. Do not get again.
+
+    // const getImagePixelData = this.DrawingCanvas_getImagePixelData;
+    //   let imageDataPromise = this.imageDataPromise
+
+//!!! ...unfinished... (2023/05/28)
+// check whether has pass enough time (in seconds)
+    runtime.gameTime;
+  
+//!!! ...unfinished... (2023/05/28)
+
 
 //!!! ...unfinished... (2023/05/27)
 // should also check
@@ -287,6 +306,30 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
     }
 
 //  let imageData = await imageDataPromise;
+    NeuralOrchestra_Construct3.DrawingCanvas_process_by_AI_async.call( this );
+    await 
+
+  }
+
+//!!! ...unfinished... (2023/05/28)
+  /**
+   * @param {NeuralOrchestra_Construct3} this
+   */
+  static DrawingCanvas_process_by_AI_async() {
+    if ( this.Fighter_bManualMode )
+      return; // No need to get image since no neural network.
+
+    const DrawingCanvas = this.DrawingCanvas;
+    if ( !DrawingCanvas )
+      return; // No canvas to get image.
+
+    const runtime = DrawingCanvas.runtime;
+
+    if ( this.DrawingCanvas_process_by_AI_Promise )
+      return; // Previous AI processing has not yet completed. Do not processing again.
+
+//!!! ...unfinished... (2023/05/28)
+
   }
 
   /**
