@@ -231,7 +231,6 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
         = this.configJSONData.DrawingCanvas.ObjectTypeNameArray;
 
       const pasteInstanceArray = this.DrawingCanvas_pasteInstanceArray;
-
       pasteInstanceArray.length = 0;
       for ( let i = 0; i < ObjectTypeNameArray.length; ++i ) {
         const ObjectTypeName = ObjectTypeNameArray[ i ];
