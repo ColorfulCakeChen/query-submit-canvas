@@ -250,7 +250,7 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
 
     await pasteInstancesPromise;
 
-    // So that the next painting is allowed.
+    // To allow the next painting.
     this.DrawingCanvas_pasteInstancesPromise = null;
 
 //!!! ...unfinished... (2023/05/27)
@@ -274,7 +274,7 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
 
     const runtime = DrawingCanvas.runtime;
 
-    if ( this.DrawingCanvas_getImagePixelData )
+    if ( this.DrawingCanvas_getImagePixelDataPromise )
       return; // Previous getting has not yet completed. Do not get again.
 
     // const getImagePixelData = this.DrawingCanvas_getImagePixelData;
@@ -307,8 +307,10 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
 
 //  let imageData = await imageDataPromise;
     NeuralOrchestra_Construct3.DrawingCanvas_process_by_AI_async.call( this );
-    await 
+    await ;
 
+    // To allow the next getting.
+    this.DrawingCanvas_getImagePixelDataPromise = null;
   }
 
 //!!! ...unfinished... (2023/05/28)
