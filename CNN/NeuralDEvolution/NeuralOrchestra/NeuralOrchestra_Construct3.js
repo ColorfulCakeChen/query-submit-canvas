@@ -159,6 +159,12 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
       this.DrawingCanvas_clearColor = [ 0, 0, 0, 1 ]; // RGBA. Black opacity.
       this.DrawingCanvas_pasteInstanceArray = []; // For reducing memory re-allocation.
     }
+
+    {
+//!!! ...unfinished... (2023/05/28)
+// AI.intervalMilliseconds
+
+    }
   }
 
   /**
