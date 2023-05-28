@@ -289,17 +289,19 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
     if ( !DrawingCanvas )
       return; // No canvas to get image.
 
-    const runtime = DrawingCanvas.runtime;
-
     if ( this.DrawingCanvas_getImagePixelDataPromise )
       return; // Previous getting has not yet completed. Do not get again.
 
+    const AI_intervalSeconds = this.configJSONData?.AI?.intervalSeconds;
+    if ( !( AI_intervalSeconds >= 0 ) )
+      return; // At least, should be 0.
+
 //!!! ...unfinished... (2023/05/28)
 // check whether has pass enough time (in seconds)
+    const runtime = DrawingCanvas.runtime;
     runtime.gameTime;
 
     {
-      const AI_intervalSeconds = this.configJSONData.AI.intervalSeconds;
 
       this.AI_gameTime_previous_beginSeconds;
       this.AI_gameTime_previous_endSeconds;
