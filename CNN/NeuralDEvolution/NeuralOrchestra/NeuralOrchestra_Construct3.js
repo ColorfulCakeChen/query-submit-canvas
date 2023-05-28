@@ -247,9 +247,7 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
     }
 
     await pasteInstancesPromise;
-
-// ???
-    this.pasteInstancesPromise = null;
+    this.pasteInstancesPromise = null; // So that the next painting is allowed.
 
 //!!! ...unfinished... (2023/05/27)
     // After painting compeletd, get the whole image for processing
