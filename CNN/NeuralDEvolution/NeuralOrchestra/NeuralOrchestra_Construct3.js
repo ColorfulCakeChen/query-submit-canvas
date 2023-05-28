@@ -293,21 +293,15 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
 //   - the time elapsed (after the previous neural network processing) whether
 //       greater than specified interval. (e.g. 0.5 seconds)
 
-    if ( !this.imageDataPromise ) {
-      let imageDataPromise = this.imageDataPromise
-        = this.DrawingCanvas.getImagePixelData();
+    let getImagePixelDataPromise = this.DrawingCanvas_getImagePixelDataPromise
+      = DrawingCanvas.getImagePixelData();
 
-//!!! ...unfinished... (2023/05/27)
-      imageDataPromise.then( imageData => {
-        imageData;
+    await getImagePixelDataPromise;
 
-        this.imageDataPromise = null;
-      } );
-    }
-
-//  let imageData = await imageDataPromise;
-    NeuralOrchestra_Construct3.DrawingCanvas_process_by_AI_async.call( this );
-    await ;
+//!!! ...unfinished... (2023/05/28)
+//     // After ImageData got, process it by neural network.
+//     NeuralOrchestra_Construct3.DrawingCanvas_process_by_AI_async.call( this );
+//     await ???;
 
     // To allow the next getting.
     this.DrawingCanvas_getImagePixelDataPromise = null;
