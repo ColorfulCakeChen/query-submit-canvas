@@ -182,10 +182,6 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
       this.DrawingCanvas_clearColor = [ 0, 0, 0, 1 ]; // RGBA. Black opacity.
       this.DrawingCanvas_pasteInstanceArray = []; // For reducing memory re-allocation.
     }
-!!!configJSONData.AI.intervalSeconds
-    {
-      this.AI_intervalSeconds = configJSONData.AI.intervalSeconds;
-    }
   }
 
   /**
@@ -305,7 +301,17 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
 // check whether has pass enough time (in seconds)
     runtime.gameTime;
 
+    {
+      this.AI_intervalSeconds = configJSONData.AI.intervalSeconds;
+
+//      !!!configJSONData.AI.intervalSeconds
+      AI_gameTime_previous_beginSeconds
+      AI_gameTime_previous_endSeconds
+     
+    }
+
 //!!! ...unfinished... (2023/05/28)
+// should also check whether is in Fighting state.
 
 
 //!!! ...unfinished... (2023/05/27)
@@ -441,7 +447,9 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
    */
   static Versus_Step_03_ParentAlignment0_WaitVersusInfo( runtime ) {
 
-//!!! ...unfinished... (2022/10/27)
+//!!! ...unfinished... (2023/05/28)
+// alignmentMarkArrayArray_set()
+
 
 
   }
@@ -500,7 +508,8 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
    */
  static Versus_Step_07_ParentAlignment1_WaitVersusInfo( runtime ) {
 
-//!!! ...unfinished... (2022/10/28)
+//!!! ...unfinished... (2023/05/28)
+// alignmentMarkArrayArray_swap()
 
 
   }
