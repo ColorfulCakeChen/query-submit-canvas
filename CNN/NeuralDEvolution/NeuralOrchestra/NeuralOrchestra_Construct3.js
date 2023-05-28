@@ -140,7 +140,7 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
    *
    *
    * @param {Construct3.IJSONInstance} aIJSONInstance
-   *   A Construct3 JSON plugin define the configuration.
+   *   A Construct3 JSON plugin which defines the game configuration.
    */
   ConfigJSON_set( aIJSONInstance ) {
 
