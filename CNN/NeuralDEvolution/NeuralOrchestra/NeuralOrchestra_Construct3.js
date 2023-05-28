@@ -294,18 +294,21 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
 
     const AI_intervalSeconds = this.configJSONData?.AI?.intervalSeconds;
     if ( !( AI_intervalSeconds >= 0 ) )
-      return; // At least, should be 0.
+      return; // At least, should be 0 seconds (i.e. no interval).
 
 //!!! ...unfinished... (2023/05/28)
 // check whether has pass enough time (in seconds)
     const runtime = DrawingCanvas.runtime;
-    runtime.gameTime;
 
-    {
+    const gameTime_begin = runtime.gameTime;
+    const gameTime_delta
+      = gameTime_begin - this.AI_gameTime_previous_endSeconds;
 
-      this.AI_gameTime_previous_beginSeconds;
-      this.AI_gameTime_previous_endSeconds;
-    }
+    if ( !( gameTime_delta >= AI_intervalSeconds ) )
+      return; // Need wait for more time elapsed.
+
+    this.AI_gameTime_previous_beginSeconds = gameTime_begin;
+    this.AI_gameTime_previous_endSeconds = undefined;
 
 //!!! ...unfinished... (2023/05/28)
 // should also check
@@ -324,8 +327,16 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
 //     NeuralOrchestra_Construct3.DrawingCanvas_process_by_AI_async.call( this );
 //     await ???;
 
+
+//!!! ...unfinished... (2023/05/28)
+    const gameTime_end = runtime.gameTime;
+    this.AI_gameTime_previous_endSeconds = gameTime_end;
+
     // To allow the next getting.
     this.DrawingCanvas_getImagePixelDataPromise = null;
+
+//!!! ...unfinished... (2023/05/28)
+
   }
 
 //!!! ...unfinished... (2023/05/28)
