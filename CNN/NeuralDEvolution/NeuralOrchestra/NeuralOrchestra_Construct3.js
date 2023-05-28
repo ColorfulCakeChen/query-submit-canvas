@@ -267,14 +267,19 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
 
     await pasteInstancesPromise;
 
-    // To allow the next painting.
-    this.DrawingCanvas_pasteInstancesPromise = null;
-
-//!!! ...unfinished... (2023/05/27)
+//!!! ...unfinished... (2023/05/28)
     // After painting compeletd, get the whole image for processing
     // by neural network.
-    // NeuralOrchestra_Construct3.DrawingCanvas_getImageData_and_process_by_AI_async
+    // await NeuralOrchestra_Construct3.DrawingCanvas_getImageData_and_process_by_AI_async
     //   .call( this );
+
+    // After image got, allow the next painting.
+    this.DrawingCanvas_pasteInstancesPromise = null;
+
+//!!! ...unfinished... (2023/05/28)
+//     // After ImageData got, process it by neural network.
+//     await NeuralOrchestra_Construct3.DrawingCanvas_process_by_AI_async.call( this );
+//     ???;
 
   }
 
