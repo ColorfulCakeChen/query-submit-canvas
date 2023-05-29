@@ -50,25 +50,25 @@ import { Base as NeuralOrchestra_Base } from "./NeuralOrchestra_Base.js";
  * @member {boolean} AI_bTurnOn
  *   Whether activate AI. Only meaningful if ( .Fighter_bManualMode == false ).
  * Usually, it is set to true when in Versus_Step_Xxx_Fighting state.
-!!! * If true, an image data will be got from the DrawingCanvas when:
- *   - DrawingCanvas.pasteInstances() has done. And,
- *   - The previous AI processing has done. And,
- *   - At least configJSONData.AI.intervalSeconds elapsed after the previous
- *      AI processing.
- *
- *
- * Only meaningful if ( .Fighter_bManualMode == false ).
- *  (Note: DrawingCanvas
- *       will always be painted no mater how this flag is.)
- *   - If true, there is no neural network be created. (Note: DrawingCanvas will
- * always be painted no mater how this flag is.)
- *   - If false, there is no neural network be created.
+ * If true,
+ *   - An image data will be got from the DrawingCanvas when:
+ *     - DrawingCanvas.pasteInstances() has done. And,
+ *     - The previous AI processing has done. And,
+ *     - At least configJSONData.AI.intervalSeconds elapsed after the previous
+ *        AI processing.
+ *   - Then, the image data will be sent to the neural network. The result will
+ *       be used to modify KeyDownArray.
  *
  * @member {number} AI_gameTime_previous_beginSeconds
  *   The beginning game time (in seconds) of the previous AI processing.
+ *   - If ( AI_gameTime_previous_beginSeconds == undefined ), it means there is
+ *       no AI processing currently.
  *
  * @member {number} AI_gameTime_previous_endSeconds
  *   The ending game time (in seconds) of the previous AI processing.
+ *   - If ( AI_gameTime_previous_beginSeconds >= 0 ) but
+ *       ( AI_gameTime_previous_endSeconds == undefined ), it means an AI
+ *       processing is still going and has not yet done.
  */
 class NeuralOrchestra_Construct3 extends Recyclable.Root {
 
