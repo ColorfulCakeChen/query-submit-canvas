@@ -296,13 +296,13 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
 
     await pasteInstancesPromise;
 
-//!!! ...unfinished... (2023/05/28)
     // After painting compeletd, get the whole image for processing
     // by neural network.
-    // await NeuralOrchestra_Construct3.DrawingCanvas_getImageData_and_process_by_AI_async
-    //   .call( this );
+    await NeuralOrchestra_Construct3
+      .DrawingCanvas_getImageData_and_process_by_AI_async
+      .call( this );
 
-    // After image data got, allow the next painting.
+    // After image data got, the next painting is allowed.
     //
     // Note: Do not continue to .pasteInstances() when the
     //       .DrawingCanvas_getImagePixelDataPromise is still pending.
@@ -377,10 +377,6 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
     this.AI_gameTime_beginSeconds = gameTime_beginSeconds;
     this.AI_gameTime_endSeconds = undefined;
 
-//!!! ...unfinished... (2023/05/29)
-
-
-//!!! ...unfinished... (2023/05/29)
     // Note:
     //
     // What if DrawingCanvas resolution changed during .getImagePixelData()?
@@ -394,6 +390,9 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
       = DrawingCanvas.getImagePixelData();
 
     await getImagePixelDataPromise;
+
+//!!! ...unfinished... (2023/05/29)
+
 
 //!!! ...unfinished... (2023/05/28)
 //     // After ImageData got, process it by neural network.
