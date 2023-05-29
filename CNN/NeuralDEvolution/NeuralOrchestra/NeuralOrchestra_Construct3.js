@@ -317,10 +317,14 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
     if ( this.DrawingCanvas_getImagePixelDataPromise )
       return; // Previous getting has not yet completed. Do not get again.
 
+    const AI_intervalSeconds = this.configJSONData?.AI?.intervalSeconds;
+    if ( !( AI_intervalSeconds >= 0 ) )
+      return; // No interval means no need. At least, should be 0 seconds.
+
 //!!! ...unfinished... (2023/05/29)
 // should also check the previous AI processing whether has done.
-    //if ( this.AI_processPromise )
-    if ( this.AI_gameTime_previous_endSeconds != undefined )
+    if ( this.AI_processPromise )
+    //if ( this.AI_gameTime_previous_endSeconds != undefined )
       return; // Previous AI processing has not yet completed. No need get again.
 
 //!!! ...unfinished... (2023/05/29)
@@ -340,10 +344,6 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
 //   ( previousValue, currentValue ) => ( previousValue && currentValue ),
 //   true
 // );
-
-    const AI_intervalSeconds = this.configJSONData?.AI?.intervalSeconds;
-    if ( !( AI_intervalSeconds >= 0 ) )
-      return; // At least, should be 0 seconds (i.e. no interval).
 
 //!!! ...unfinished... (2023/05/28)
 // check whether has pass enough time (in seconds)
