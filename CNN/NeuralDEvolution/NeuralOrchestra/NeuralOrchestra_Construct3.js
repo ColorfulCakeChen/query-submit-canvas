@@ -322,12 +322,6 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
       return; // No interval means no need. At least, should be 0 seconds.
 
 //!!! ...unfinished... (2023/05/29)
-// should also check the previous AI processing whether has done.
-    if ( this.AI_processPromise )
-    //if ( this.AI_gameTime_previous_endSeconds != undefined )
-      return; // Previous AI processing has not yet completed. No need get again.
-
-//!!! ...unfinished... (2023/05/29)
 // Perhaps,
 //   AI_promise_all = Promise.all( [
 //     .DrawingCanvas_getImagePixelDataPromise,
@@ -345,6 +339,12 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
 //   true
 // );
 
+//!!! ...unfinished... (2023/05/29)
+// should also check the previous AI processing whether has done.
+    if ( this.AI_processPromise )
+    //if ( this.AI_gameTime_previous_beginSeconds != undefined )
+      return; // Previous AI processing has not yet completed. No need get again.
+
 //!!! ...unfinished... (2023/05/28)
 // check whether has pass enough time (in seconds)
     const runtime = DrawingCanvas.runtime;
@@ -353,6 +353,9 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
     const gameTime_delta
       = gameTime_begin - this.AI_gameTime_previous_endSeconds;
 
+    // Note: This works even if ( .AI_gameTime_previous_endSeconds == undefined ).
+    //       That is, previous AI processing has not done. But it will be wrong
+    //       for the first time AI executes.
     if ( !( gameTime_delta >= AI_intervalSeconds ) )
       return; // Need wait for more time elapsed.
 
