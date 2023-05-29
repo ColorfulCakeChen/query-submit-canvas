@@ -101,8 +101,9 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
   }
 
   get AI_processing() {
-    if ( !( AI_gameTime_endSeconds >= 0 ) )
+    if ( !( this.AI_gameTime_endSeconds >= 0 ) )
       return true;
+    // Note: It works even if ( .AI_gameTime_endSeconds == undefined ).
     return false;
   }
 
