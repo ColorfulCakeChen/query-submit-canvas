@@ -324,6 +324,22 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
 
 //!!! ...unfinished... (2023/05/29)
 // should also check the previous AI processing whether has done.
+// Perhaps,
+//   AI_promise_all = Promise.all( [
+//     .DrawingCanvas_getImagePixelDataPromise,
+//     .alignmentMarkValueArrayArray_Xxx_Promise,
+//     .AI_TypeArray_process_Promise,
+//     .KeyDownArray_set_Promise,
+//   ] );
+//
+// initOkArray = await Promise.all( initPromiseArray );
+// }
+//
+// // Summary workers.
+// let initOk = initOkArray.reduce(
+//   ( previousValue, currentValue ) => ( previousValue && currentValue ),
+//   true
+// );
 
     const AI_intervalSeconds = this.configJSONData?.AI?.intervalSeconds;
     if ( !( AI_intervalSeconds >= 0 ) )
