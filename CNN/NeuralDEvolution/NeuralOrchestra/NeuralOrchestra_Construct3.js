@@ -48,7 +48,7 @@ import { Base as NeuralOrchestra_Base } from "./NeuralOrchestra_Base.js";
  *
  *
  * @member {boolean} AI_bTurnOn
- *   If true, an image data will be got from the DrawingCanvas when:
+!!! *   If true, an image data will be got from the DrawingCanvas when:
  *   - DrawingCanvas.pasteInstances() has done. And,
  *   - The previous AI processing has done. And,
  *   - At least configJSONData.AI.intervalSeconds elapsed after the previous
@@ -502,9 +502,9 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
    */
   static Versus_Step_03_ParentAlignment0_WaitVersusInfo( runtime ) {
 
-//!!! ...unfinished... (2023/05/28)
+//!!! ...unfinished... (2023/05/29)
 // alignmentMarkArrayArray_set()
-
+// Clear KeyDownArray
 
 
   }
@@ -565,7 +565,7 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
 
 //!!! ...unfinished... (2023/05/28)
 // alignmentMarkArrayArray_swap()
-
+// Clear KeyDownArray
 
   }
   
