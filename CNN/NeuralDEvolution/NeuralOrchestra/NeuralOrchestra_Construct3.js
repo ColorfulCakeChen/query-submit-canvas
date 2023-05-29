@@ -47,6 +47,21 @@ import { Base as NeuralOrchestra_Base } from "./NeuralOrchestra_Base.js";
  *   The Construct3 game objects which has been painted recently.
  *
  *
+ * @member {boolean} AI_bTurnOn
+ *   If true, an image data will be got from the DrawingCanvas when:
+ *   - DrawingCanvas.pasteInstances() has done. And,
+ *   - The previous AI processing has done. And,
+ *   - At least configJSONData.AI.intervalSeconds elapsed after the previous
+ *      AI processing.
+ *
+ *
+ * Only meaningful if ( .Fighter_bManualMode == false ).
+ *  (Note: DrawingCanvas
+ *       will always be painted no mater how this flag is.)
+ *   - If true, there is no neural network be created. (Note: DrawingCanvas will
+ * always be painted no mater how this flag is.)
+ *   - If false, there is no neural network be created.
+ *
  * @member {number} AI_gameTime_previous_beginSeconds
  *   The beginning game time (in seconds) of the previous AI processing.
  *
@@ -307,6 +322,9 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
     if ( this.DrawingCanvas_getImagePixelDataPromise )
       return; // Previous getting has not yet completed. Do not get again.
 
+//!!! ...unfinished... (2023/05/29)
+// should also check the previous AI processing whether has done.
+
     const AI_intervalSeconds = this.configJSONData?.AI?.intervalSeconds;
     if ( !( AI_intervalSeconds >= 0 ) )
       return; // At least, should be 0 seconds (i.e. no interval).
@@ -358,7 +376,7 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
   /**
    * @param {NeuralOrchestra_Construct3} this
    */
-  static DrawingCanvas_process_by_AI_async() {
+  static async DrawingCanvas_process_by_AI_async() {
     if ( this.Fighter_bManualMode )
       return; // No need to get image since no neural network.
 
