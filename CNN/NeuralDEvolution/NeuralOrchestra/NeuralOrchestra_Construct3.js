@@ -204,10 +204,9 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
       this.DrawingCanvas_clearColor = [ 0, 0, 0, 1 ]; // RGBA. Black opacity.
       this.DrawingCanvas_pasteInstanceArray = []; // For reducing memory re-allocation.
 
-//!!! ...unfinished... (2023/05/29)
-//       DrawingCanvas.addEventListener( "resolutionchange",
-//        NeuralOrchestra_Construct3.Xxx.bind( this ) )
-     
+      //!!! ...unfinished... (2023/05/29)
+      // DrawingCanvas.addEventListener( "resolutionchange",
+      //  NeuralOrchestra_Construct3.Xxx.bind( this ) )
     }
   }
 
@@ -364,9 +363,15 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
 
 
 //!!! ...unfinished... (2023/05/29)
-// What if DrawingCanvas resolution changed during .getImagePixelData()?
-// Wheteher does the .DrawingCanvas_getImagePixelDataPromise never resolve?
-
+    // Note:
+    //
+    // What if DrawingCanvas resolution changed during .getImagePixelData()?
+    // Wheteher does the .DrawingCanvas_getImagePixelDataPromise never resolve?
+    //
+    // It is very likely that nothing special needs to be taken for resolution
+    // change because DrawingCanvas will be recreated automatically when the
+    // first time painting after resolution changed.
+    //
     let getImagePixelDataPromise = this.DrawingCanvas_getImagePixelDataPromise
       = DrawingCanvas.getImagePixelData();
 
