@@ -273,7 +273,7 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
     // await NeuralOrchestra_Construct3.DrawingCanvas_getImageData_and_process_by_AI_async
     //   .call( this );
 
-    // After image got, allow the next painting.
+    // After image data got, allow the next painting.
     //
     // Note: Do not continue to .pasteInstances() when the
     //       .DrawingCanvas_getImagePixelDataPromise is still pending.
