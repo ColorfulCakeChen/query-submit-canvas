@@ -361,13 +361,13 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
     if ( this.AI_processing )
       return; // Previous AI processing has not yet completed.
 
-//!!! ...unfinished... (2023/05/28)
-// check whether has pass enough time (in seconds)
     const runtime = DrawingCanvas.runtime;
     const gameTime_beginSeconds = runtime.gameTime;
     const gameTime_deltaSeconds
       = gameTime_beginSeconds - this.AI_gameTime_endSeconds;
 
+    // Check whether has pass enough time (in seconds)
+    //
     // Note: This works even if ( .AI_gameTime_endSeconds == undefined ).
     //       It will be viewed as elapsed time is enough to do the next AI
     //       processing.
@@ -377,12 +377,7 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
     this.AI_gameTime_beginSeconds = gameTime_beginSeconds;
     this.AI_gameTime_endSeconds = undefined;
 
-//!!! ...unfinished... (2023/05/28)
-// should also check
-//   - previous neural network processing whether done.
-//   - the time elapsed (after the previous neural network processing) whether
-//       greater than specified interval. (e.g. 0.5 seconds)
-//   - now is in Fighting state.
+//!!! ...unfinished... (2023/05/29)
 
 
 //!!! ...unfinished... (2023/05/29)
