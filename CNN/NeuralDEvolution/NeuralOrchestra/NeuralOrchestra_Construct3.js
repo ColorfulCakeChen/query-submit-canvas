@@ -182,12 +182,12 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
     let versus_load_asyncGenerator = await init_asyncPromise;
     this.versus_load_asyncGenerator = versus_load_asyncGenerator;
 
-    const gameTime_init = runtime.gameTime;
+    const gameTime_initSeconds = runtime.gameTime;
 
 //!!! (2023/05/29 Temp Remarked) This is not necessary.
 //     // So that it looks like that AI is not processing now.
-//     this.AI_gameTime_beginSeconds = gameTime_init;
-//     this.AI_gameTime_endSeconds = gameTime_init;
+//     this.AI_gameTime_beginSeconds = gameTime_initSeconds;
+//     this.AI_gameTime_endSeconds = gameTime_initSeconds;
 
     this.init_asyncPromise = null;
 
@@ -364,20 +364,17 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
 //!!! ...unfinished... (2023/05/28)
 // check whether has pass enough time (in seconds)
     const runtime = DrawingCanvas.runtime;
-
-    const gameTime_begin = runtime.gameTime;
-
-//!!! ...unfinished... (2023/05/29)
-// Perhaps, compare to _beginSeconds instead of _endSeconds.
-    const gameTime_delta = gameTime_begin - this.AI_gameTime_endSeconds;
+    const gameTime_beginSeconds = runtime.gameTime;
+    const gameTime_deltaSeconds
+      = gameTime_beginSeconds - this.AI_gameTime_endSeconds;
 
     // Note: This works even if ( .AI_gameTime_endSeconds == undefined ).
     //       It will be viewed as elapsed time is enough to do the next AI
     //       processing.
-    if ( !( gameTime_delta >= AI_intervalSeconds ) )
+    if ( !( gameTime_deltaSeconds >= AI_intervalSeconds ) )
       return; // Need wait for more time elapsed.
 
-    this.AI_gameTime_beginSeconds = gameTime_begin;
+    this.AI_gameTime_beginSeconds = gameTime_beginSeconds;
     this.AI_gameTime_endSeconds = undefined;
 
 //!!! ...unfinished... (2023/05/28)
@@ -410,8 +407,8 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
 
 
 //!!! ...unfinished... (2023/05/28)
-    const gameTime_end = runtime.gameTime;
-    this.AI_gameTime_endSeconds = gameTime_end;
+    const gameTime_endSeconds = runtime.gameTime;
+    this.AI_gameTime_endSeconds = gameTime_endSeconds;
 
     // To allow the next getting.
     this.DrawingCanvas_getImagePixelDataPromise = null;
