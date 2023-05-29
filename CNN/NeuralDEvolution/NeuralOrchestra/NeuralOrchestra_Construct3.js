@@ -350,7 +350,10 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
     const runtime = DrawingCanvas.runtime;
 
     const gameTime_begin = runtime.gameTime;
-    const gameTime_delta
+
+//!!! ...unfinished... (2023/05/29)
+// Perhaps, compare to _beginSeconds instead of _endSeconds.
+    const gameTime_delta 
       = gameTime_begin - this.AI_gameTime_previous_endSeconds;
 
     // Note: This works even if ( .AI_gameTime_previous_endSeconds == undefined ).
