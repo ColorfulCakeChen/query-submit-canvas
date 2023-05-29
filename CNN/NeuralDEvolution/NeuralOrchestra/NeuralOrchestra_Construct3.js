@@ -61,14 +61,17 @@ import { Base as NeuralOrchestra_Base } from "./NeuralOrchestra_Base.js";
  *
  * @member {number} AI_gameTime_beginSeconds
  *   The beginning game time (in seconds) of the AI processing.
- *   - If ( AI_gameTime_beginSeconds == undefined ), it means there is no AI
- *       processing currently.
- *   - If ( AI_gameTime_beginSeconds >= 0 ) but
- *       ( AI_gameTime_endSeconds == undefined ), it means an AI processing is
- *       still going and has not yet done.
  *
  * @member {number} AI_gameTime_endSeconds
  *   The ending game time (in seconds) of the AI processing.
+ *   - If ( !( AI_gameTime_endSeconds >= 0 ) ), it means an AI processing is
+ *       still going and has not yet done.
+ *   - If ( AI_gameTime_endSeconds >= 0 ), it means there is no AI processing
+ *       currently.
+ *
+ * @member {boolean} AI_processing
+ *   True, if ( !( AI_gameTime_endSeconds >= 0 ) ), it means an AI processing
+ * is still going and has not yet done.
  */
 class NeuralOrchestra_Construct3 extends Recyclable.Root {
 
@@ -97,20 +100,20 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
     this.base = new NeuralOrchestra_Base();
   }
 
-//!!! ...unfinished... (2023/05/29)
-//   get AI_processing_none() {
-//     if ( AI_gameTime_beginSeconds == undefined ), it means there is no AI
-//   *       processing currently.
-//   *   - If ( AI_gameTime_beginSeconds >= 0 ) but
-//   *       ( AI_gameTime_endSeconds == undefined ), it means an AI processing is
-//   *       still going and has not yet done.
- 
+  get AI_processing() {
+    if ( !( AI_gameTime_endSeconds >= 0 ) )
+      return true;
+    return false;
+  }
+
   /** @override */
   disposeResources() {
 
 //!!! ...unfinished... (2023/05/28)
 // should clear all data members.
 
+    this.AI_gameTime_endSeconds = undefined;
+    this.AI_gameTime_beginSeconds = undefined;
 
     if ( this.base ) {
       this.base.disposeResources_and_recycleToPool();
@@ -177,6 +180,12 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
 
     let versus_load_asyncGenerator = await init_asyncPromise;
     this.versus_load_asyncGenerator = versus_load_asyncGenerator;
+
+    const gameTime_init = runtime.gameTime;
+
+    // So that it looks like that AI is not processing now.
+    this.AI_gameTime_beginSeconds = gameTime_init;
+    this.AI_gameTime_endSeconds = gameTime_init;
 
     this.init_asyncPromise = null;
 
