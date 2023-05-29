@@ -358,7 +358,7 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
 // );
 
     if ( this.AI_processing )
-      return; // Previous AI processing has not yet completed. No need get again.
+      return; // Previous AI processing has not yet completed.
 
 //!!! ...unfinished... (2023/05/28)
 // check whether has pass enough time (in seconds)
