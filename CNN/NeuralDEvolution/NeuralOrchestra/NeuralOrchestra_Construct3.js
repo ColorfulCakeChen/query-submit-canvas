@@ -299,7 +299,7 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
     // After painting compeletd, get the whole image for processing
     // by neural network.
     await NeuralOrchestra_Construct3
-      .DrawingCanvas_getImageData_and_process_by_AI_async
+      .DrawingCanvas_getImagePixelData_and_process_by_AI_async
       .call( this );
 
     // After image data got, the next painting is allowed.
@@ -325,7 +325,7 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
   /**
    * @param {NeuralOrchestra_Construct3} this
    */
-  static DrawingCanvas_getImageData_and_process_by_AI_async() {
+  static DrawingCanvas_getImagePixelData_and_process_by_AI_async() {
     if ( !this.AI_bTurnOn )
       return; // No need to get image since AI is not activated.
 
@@ -391,13 +391,19 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
 
     await getImagePixelDataPromise;
 
+    // After ImageData got, process it by neural network.
+
+//!!! ...unfinished... (2023/05/29)
+    // Ensure alignment marks set or swapped. 
+    await this.alignmentMarkArrayArray_operate_asyncPromise;
+
 //!!! ...unfinished... (2023/05/29)
 
 
+
 //!!! ...unfinished... (2023/05/28)
-//     // After ImageData got, process it by neural network.
-//     NeuralOrchestra_Construct3.DrawingCanvas_process_by_AI_async.call( this );
-//     await ???;
+// If still ( this.AI_bTurnOn == true ), Set KeyDownArray
+
 
 
 //!!! ...unfinished... (2023/05/28)
@@ -408,34 +414,6 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
     this.DrawingCanvas_getImagePixelDataPromise = null;
 
 //!!! ...unfinished... (2023/05/28)
-
-  }
-
-//!!! ...unfinished... (2023/05/28)
-  /**
-   * @param {NeuralOrchestra_Construct3} this
-   */
-  static async DrawingCanvas_process_by_AI_async() {
-    if ( !this.AI_bTurnOn )
-      return; // No need to process image since AI is not activated.
-
-    const DrawingCanvas = this.DrawingCanvas;
-    if ( !DrawingCanvas )
-      return; // No canvas to get image.
-
-    const runtime = DrawingCanvas.runtime;
-
-    if ( this.DrawingCanvas_process_by_AI_Promise )
-      return; // Previous AI processing has not yet completed. Do not processing again.
-
-//!!! ...unfinished... (2023/05/29)
-    // Ensure alignment marks set or swapped. 
-    await this.alignmentMarkArrayArray_operate_asyncPromise;
-
-//!!! ...unfinished... (2023/05/29)
-
-//!!! ...unfinished... (2023/05/28)
-// If still ( this.AI_bTurnOn == true ), Set KeyDownArray
 
   }
 
