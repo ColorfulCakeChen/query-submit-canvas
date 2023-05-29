@@ -142,8 +142,10 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
   ) {
 
     this.Fighter_bManualMode = runtime.globalVars.Fighter_bManualMode;
-    if ( this.Fighter_bManualMode )
-      return true; // No neural network. Init still ok.
+    if ( this.Fighter_bManualMode ) {
+      this.AI_bTurnOn = false; // Always no AI because no neural network.
+      return true; // Init still ok.
+    }
 
     const base = this.base;
 
@@ -408,7 +410,7 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
       return; // Previous AI processing has not yet completed. Do not processing again.
 
 //!!! ...unfinished... (2023/05/28)
-// Set KeyDownArray
+// If still ( this.AI_bTurnOn == true ), Set KeyDownArray
 
   }
 
@@ -527,6 +529,10 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
    */
   static Versus_Step_05_ParentAlignment0_Fighting( runtime ) {
 
+//!!! ...unfinished... (2023/05/29)
+    if ( !this.AI_bTurnOn )
+      this.AI_bTurnOn = true;
+
 //!!! ...unfinished... (2023/04/14)
 // Perhaps, use IBinaryDataInstance to recurrent output to game scene.
 // So, set IWorldIntance.colorRga[] of game object.
@@ -555,7 +561,8 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
    */
   static Versus_Step_06_ParentAlignment0_End( runtime ) {
 
-//!!! ...unfinished... (2022/10/27)
+//!!! ...unfinished... (2023/05/29)
+    this.AI_bTurnOn = false;
 
 
   }
@@ -586,6 +593,11 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
    */
   static Versus_Step_09_ParentAlignment1_Fighting( runtime ) {
 
+//!!! ...unfinished... (2023/05/29)
+    if ( !this.AI_bTurnOn )
+      this.AI_bTurnOn = true;
+
+
 //!!! ...unfinished... (2022/10/27)
 
 //!!! ...unfinished... (2023/03/16)
@@ -613,6 +625,9 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
    * @param {NeuralOrchestra_Construct3} this
    */
   static Versus_Step_10_ParentAlignment1_End( runtime ) {
+
+//!!! ...unfinished... (2023/05/29)
+    this.AI_bTurnOn = false;
 
 //!!! ...unfinished... (2022/10/28)
 // Perhaps, start downloading the next versus here, too.
