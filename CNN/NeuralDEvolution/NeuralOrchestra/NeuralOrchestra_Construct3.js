@@ -406,7 +406,7 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
 
 
 
-//!!! ...unfinished... (2023/05/28)
+//!!! ...unfinished... (2023/05/29)
     const gameTime_endSeconds = runtime.gameTime;
     this.AI_gameTime_endSeconds = gameTime_endSeconds;
 
@@ -429,7 +429,7 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
     if ( !DrawingCanvas )
       return; // No canvas to get image.
 
-    if ( this.AI_processing )
+    if ( this.???AI_processing )
       return; // Previous AI processing has not yet completed.
 
 //!!! ...unfinished... (2023/05/29)
@@ -442,6 +442,9 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
 //!!! ...unfinished... (2023/05/28)
 // If still ( this.AI_bTurnOn == true ), Set KeyDownArray
 
+//!!! ...unfinished... (2023/05/29)
+    const gameTime_endSeconds = runtime.gameTime;
+    this.AI_gameTime_endSeconds = gameTime_endSeconds;
   }
 
   /**
