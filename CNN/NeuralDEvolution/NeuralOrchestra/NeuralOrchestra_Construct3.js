@@ -97,6 +97,14 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
     this.base = new NeuralOrchestra_Base();
   }
 
+//!!! ...unfinished... (2023/05/29)
+//   get AI_processing_none() {
+//     if ( AI_gameTime_beginSeconds == undefined ), it means there is no AI
+//   *       processing currently.
+//   *   - If ( AI_gameTime_beginSeconds >= 0 ) but
+//   *       ( AI_gameTime_endSeconds == undefined ), it means an AI processing is
+//   *       still going and has not yet done.
+ 
   /** @override */
   disposeResources() {
 
@@ -342,7 +350,8 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
 //!!! ...unfinished... (2023/05/29)
 // should also check the previous AI processing whether has done.
     //if ( this.AI_processPromise )
-    if ( this.AI_gameTime_endSeconds != undefined )
+    if (   ( this.AI_gameTime_beginSeconds >= 0 )
+        && ( this.AI_gameTime_endSeconds != undefined )
       return; // Previous AI processing has not yet completed. No need get again.
 
 //!!! ...unfinished... (2023/05/28)
