@@ -342,7 +342,7 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
 //!!! ...unfinished... (2023/05/29)
 // should also check the previous AI processing whether has done.
     //if ( this.AI_processPromise )
-    if ( this.AI_gameTime_previous_endSeconds != undefined )
+    if ( this.AI_gameTime_endSeconds != undefined )
       return; // Previous AI processing has not yet completed. No need get again.
 
 //!!! ...unfinished... (2023/05/28)
@@ -353,17 +353,16 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
 
 //!!! ...unfinished... (2023/05/29)
 // Perhaps, compare to _beginSeconds instead of _endSeconds.
-    const gameTime_delta 
-      = gameTime_begin - this.AI_gameTime_previous_endSeconds;
+    const gameTime_delta = gameTime_begin - this.AI_gameTime_endSeconds;
 
-    // Note: This works even if ( .AI_gameTime_previous_endSeconds == undefined ).
+    // Note: This works even if ( .AI_gameTime_endSeconds == undefined ).
     //       That is, previous AI processing has not done. But it will be wrong
     //       for the first time AI executes.
     if ( !( gameTime_delta >= AI_intervalSeconds ) )
       return; // Need wait for more time elapsed.
 
-    this.AI_gameTime_previous_beginSeconds = gameTime_begin;
-    this.AI_gameTime_previous_endSeconds = undefined;
+    this.AI_gameTime_beginSeconds = gameTime_begin;
+    this.AI_gameTime_endSeconds = undefined;
 
 //!!! ...unfinished... (2023/05/28)
 // should also check
@@ -396,7 +395,7 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
 
 //!!! ...unfinished... (2023/05/28)
     const gameTime_end = runtime.gameTime;
-    this.AI_gameTime_previous_endSeconds = gameTime_end;
+    this.AI_gameTime_endSeconds = gameTime_end;
 
     // To allow the next getting.
     this.DrawingCanvas_getImagePixelDataPromise = null;
