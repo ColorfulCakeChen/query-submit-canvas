@@ -191,6 +191,9 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
 
     const runtime = aIJSONInstance.runtime;
 
+    // Note: The reason why to provide ObjectTypeName from Construct3's Event
+    //       Sheet is that here needs not change even if these names are
+    //       changed in Construct3.
     {
       const DrawingCanvas_ObjectTypeName
         = configJSONData.DrawingCanvas.ObjectTypeName;
@@ -218,25 +221,9 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
    */
   tick( runtime ) {
 
+    // Note: Still draw canvas even if ( Fighter_bManualMode == true ).
     NeuralOrchestra_Construct3.DrawingCanvas_paint_async.call( this );
 
-//!!! ...unfinished... (2023/05/27)
-// Still draw canvas when ( Fighter_bManualMode == true )
-//
-// Perhaps, specify IWorldInstance to be drawn by layer (e.g. by layer number).
-// Problem: Some instances of the layer is not necessary to be drawn.
-//          Perhaps, use visible flag of every instance. But, what the drawing
-//          order?
-//
-// So, giving ObjectType name list should be better.
-// Perhaps, in Construct3, use push names (by ObjectClass.ObjectTypeName) of
-// object types (of DrawingCanvas and objects to be drawn onto DrawinCanvas)
-// into a JSON object type. Pass the JSON object type instance to method
-// .init_for_Construct3_runOnStartup_async()
-//
-//   - Advantage: If these object types are renamed, the .ObjectTypeName is
-//       still correct.
-//
     if ( this.Fighter_bManualMode )
       return; // No neural network.
 
