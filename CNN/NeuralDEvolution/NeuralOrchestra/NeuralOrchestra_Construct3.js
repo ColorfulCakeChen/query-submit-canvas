@@ -316,8 +316,8 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
    * @param {NeuralOrchestra_Construct3} this
    */
   static DrawingCanvas_getImageData_and_process_by_AI_async() {
-    if ( this.Fighter_bManualMode )
-      return; // No need to get image since no neural network.
+    if ( !this.AI_bTurnOn )
+      return; // No need to get image since AI is not activated.
 
     const DrawingCanvas = this.DrawingCanvas;
     if ( !DrawingCanvas )
@@ -397,8 +397,8 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
    * @param {NeuralOrchestra_Construct3} this
    */
   static async DrawingCanvas_process_by_AI_async() {
-    if ( this.Fighter_bManualMode )
-      return; // No need to get image since no neural network.
+    if ( !this.AI_bTurnOn )
+      return; // No need to process image since AI is not activated.
 
     const DrawingCanvas = this.DrawingCanvas;
     if ( !DrawingCanvas )
