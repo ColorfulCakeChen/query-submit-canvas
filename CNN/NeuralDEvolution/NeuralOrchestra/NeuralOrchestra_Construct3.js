@@ -198,11 +198,16 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
       const DrawingCanvas_ObjectTypeName
         = configJSONData.DrawingCanvas.ObjectTypeName;
 
-      this.DrawingCanvas // IDrawingCanvasInstance
+      const DrawingCanvas = this.DrawingCanvas // IDrawingCanvasInstance
         = runtime.objects[ DrawingCanvas_ObjectTypeName ].getFirstInstance();
 
       this.DrawingCanvas_clearColor = [ 0, 0, 0, 1 ]; // RGBA. Black opacity.
       this.DrawingCanvas_pasteInstanceArray = []; // For reducing memory re-allocation.
+
+//!!! ...unfinished... (2023/05/29)
+//       DrawingCanvas.addEventListener( "resolutionchange",
+//        NeuralOrchestra_Construct3.Xxx.bind( this ) )
+     
     }
   }
 
@@ -225,7 +230,7 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
     NeuralOrchestra_Construct3.DrawingCanvas_paint_async.call( this );
 
     if ( this.Fighter_bManualMode )
-      return; // No neural network.
+      return; // No neural network to operate.
 
     let pfnStep = NeuralOrchestra_Construct3.Versus_Step_Function_Array[
       runtime.globalVars.Versus_Step_Current ];
