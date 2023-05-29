@@ -274,6 +274,11 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
     //   .call( this );
 
     // After image got, allow the next painting.
+    //
+    // Note: Do not continue to .pasteInstances() when the
+    //       .DrawingCanvas_getImagePixelDataPromise is still pending.
+    //       Otherwise, the promise always will always be pending (i.e.
+    //       never fulfilled).
     this.DrawingCanvas_pasteInstancesPromise = null;
 
 //!!! ...unfinished... (2023/05/28)
