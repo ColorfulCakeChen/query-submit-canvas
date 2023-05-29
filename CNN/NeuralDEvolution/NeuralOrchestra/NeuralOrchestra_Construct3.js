@@ -369,8 +369,8 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
     // Wheteher does the .DrawingCanvas_getImagePixelDataPromise never resolve?
     //
     // It is very likely that nothing special needs to be taken for resolution
-    // change because DrawingCanvas will be recreated automatically when the
-    // first time painting after resolution changed.
+    // change because DrawingCanvas will only be recreated automatically when
+    // the first time painting after resolution changed.
     //
     let getImagePixelDataPromise = this.DrawingCanvas_getImagePixelDataPromise
       = DrawingCanvas.getImagePixelData();
