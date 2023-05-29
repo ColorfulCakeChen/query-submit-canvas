@@ -184,9 +184,10 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
 
     const gameTime_init = runtime.gameTime;
 
-    // So that it looks like that AI is not processing now.
-    this.AI_gameTime_beginSeconds = gameTime_init;
-    this.AI_gameTime_endSeconds = gameTime_init;
+//!!! (2023/05/29 Temp Remarked) This is not necessary.
+//     // So that it looks like that AI is not processing now.
+//     this.AI_gameTime_beginSeconds = gameTime_init;
+//     this.AI_gameTime_endSeconds = gameTime_init;
 
     this.init_asyncPromise = null;
 
@@ -371,8 +372,8 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
     const gameTime_delta = gameTime_begin - this.AI_gameTime_endSeconds;
 
     // Note: This works even if ( .AI_gameTime_endSeconds == undefined ).
-    //       That is, previous AI processing has not done. But it will be wrong
-    //       for the first time AI executes.
+    //       It will be viewed as elapsed time is enough to do the next AI
+    //       processing.
     if ( !( gameTime_delta >= AI_intervalSeconds ) )
       return; // Need wait for more time elapsed.
 
