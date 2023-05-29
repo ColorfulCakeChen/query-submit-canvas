@@ -357,11 +357,7 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
 //   true
 // );
 
-//!!! ...unfinished... (2023/05/29)
-// should also check the previous AI processing whether has done.
-    //if ( this.AI_processPromise )
-    if (   ( this.AI_gameTime_beginSeconds >= 0 )
-        && ( this.AI_gameTime_endSeconds != undefined )
+    if ( this.AI_processing )
       return; // Previous AI processing has not yet completed. No need get again.
 
 //!!! ...unfinished... (2023/05/28)
