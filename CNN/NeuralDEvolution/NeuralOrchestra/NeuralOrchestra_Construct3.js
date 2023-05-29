@@ -526,7 +526,10 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
   static Versus_Step_03_ParentAlignment0_WaitVersusInfo( runtime ) {
 
 //!!! ...unfinished... (2023/05/29)
-// alignmentMarkArrayArray_set()
+// How to await alignment mark setting?
+
+//!!! ...unfinished... (2023/05/29)
+// await alignmentMarkArrayArray_set_asyncPromise_create()
 // Clear KeyDownArray
 
 
@@ -585,14 +588,17 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
 
 
   }
-  
+
   /**
    * @param {NeuralOrchestra_Construct3} this
    */
  static Versus_Step_07_ParentAlignment1_WaitVersusInfo( runtime ) {
 
-//!!! ...unfinished... (2023/05/28)
-// alignmentMarkArrayArray_swap()
+//!!! ...unfinished... (2023/05/29)
+// How to await alignment mark swapping?
+
+//!!! ...unfinished... (2023/05/29)
+// await alignmentMarkArrayArray_swap_asyncPromise_create()
 // Clear KeyDownArray
 
   }
