@@ -417,6 +417,33 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
 
   }
 
+//!!! ...unfinished... (2023/05/28)
+  /**
+   * @param {NeuralOrchestra_Construct3} this
+   */
+  static async DrawingCanvas_process_by_AI_async() {
+    if ( !this.AI_bTurnOn )
+      return; // No need to process image since AI is not activated.
+
+    const DrawingCanvas = this.DrawingCanvas;
+    if ( !DrawingCanvas )
+      return; // No canvas to get image.
+
+    if ( this.AI_processing )
+      return; // Previous AI processing has not yet completed.
+
+//!!! ...unfinished... (2023/05/29)
+    // Ensure alignment marks set or swapped. 
+    await this.alignmentMarkArrayArray_operate_asyncPromise;
+
+//!!! ...unfinished... (2023/05/29)
+    const runtime = DrawingCanvas.runtime;
+
+//!!! ...unfinished... (2023/05/28)
+// If still ( this.AI_bTurnOn == true ), Set KeyDownArray
+
+  }
+
   /**
    * @param {NeuralOrchestra_Construct3} this
    */
