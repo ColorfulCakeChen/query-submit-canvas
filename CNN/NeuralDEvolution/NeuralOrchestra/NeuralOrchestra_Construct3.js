@@ -370,6 +370,11 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
 //       greater than specified interval. (e.g. 0.5 seconds)
 //   - now is in Fighting state.
 
+
+//!!! ...unfinished... (2023/05/29)
+// What if DrawingCanvas resolution changed during .getImagePixelData()?
+// Wheteher does the .DrawingCanvas_getImagePixelDataPromise never resolve?
+
     let getImagePixelDataPromise = this.DrawingCanvas_getImagePixelDataPromise
       = DrawingCanvas.getImagePixelData();
 
