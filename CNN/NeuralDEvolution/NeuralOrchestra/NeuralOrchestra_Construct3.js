@@ -59,16 +59,16 @@ import { Base as NeuralOrchestra_Base } from "./NeuralOrchestra_Base.js";
  *   - Then, the image data will be sent to the neural network. The result will
  *       be used to modify KeyDownArray.
  *
- * @member {number} AI_gameTime_previous_beginSeconds
- *   The beginning game time (in seconds) of the previous AI processing.
- *   - If ( AI_gameTime_previous_beginSeconds == undefined ), it means there is
- *       no AI processing currently.
+ * @member {number} AI_gameTime_beginSeconds
+ *   The beginning game time (in seconds) of the AI processing.
+ *   - If ( AI_gameTime_beginSeconds == undefined ), it means there is no AI
+ *       processing currently.
+ *   - If ( AI_gameTime_beginSeconds >= 0 ) but
+ *       ( AI_gameTime_endSeconds == undefined ), it means an AI processing is
+ *       still going and has not yet done.
  *
- * @member {number} AI_gameTime_previous_endSeconds
- *   The ending game time (in seconds) of the previous AI processing.
- *   - If ( AI_gameTime_previous_beginSeconds >= 0 ) but
- *       ( AI_gameTime_previous_endSeconds == undefined ), it means an AI
- *       processing is still going and has not yet done.
+ * @member {number} AI_gameTime_endSeconds
+ *   The ending game time (in seconds) of the AI processing.
  */
 class NeuralOrchestra_Construct3 extends Recyclable.Root {
 
@@ -342,7 +342,7 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
 //!!! ...unfinished... (2023/05/29)
 // should also check the previous AI processing whether has done.
     //if ( this.AI_processPromise )
-    if ( this.AI_gameTime_previous_beginSeconds != undefined )
+    if ( this.AI_gameTime_previous_endSeconds != undefined )
       return; // Previous AI processing has not yet completed. No need get again.
 
 //!!! ...unfinished... (2023/05/28)
