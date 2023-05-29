@@ -428,6 +428,12 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
     if ( this.DrawingCanvas_process_by_AI_Promise )
       return; // Previous AI processing has not yet completed. Do not processing again.
 
+//!!! ...unfinished... (2023/05/29)
+    // Ensure alignment marks set or swapped. 
+    await this.alignmentMarkArrayArray_operate_asyncPromise;
+
+//!!! ...unfinished... (2023/05/29)
+
 //!!! ...unfinished... (2023/05/28)
 // If still ( this.AI_bTurnOn == true ), Set KeyDownArray
 
@@ -524,12 +530,15 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
    * @param {NeuralOrchestra_Construct3} this
    */
   static Versus_Step_03_ParentAlignment0_WaitVersusInfo( runtime ) {
+    const base = this.base;
 
 //!!! ...unfinished... (2023/05/29)
 // How to await alignment mark setting?
-
+//
+// this.alignmentMarkArrayArray_operate_asyncPromise
+//     = base.alignmentMarkArrayArray_set_asyncPromise_create( ??? );
+     
 //!!! ...unfinished... (2023/05/29)
-// await alignmentMarkArrayArray_set_asyncPromise_create()
 // Clear KeyDownArray
 
 
@@ -596,9 +605,11 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
 
 //!!! ...unfinished... (2023/05/29)
 // How to await alignment mark swapping?
+//
+// this.alignmentMarkArrayArray_operate_asyncPromise
+//     = base.alignmentMarkArrayArray_swap_asyncPromise_create( ??? );
 
 //!!! ...unfinished... (2023/05/29)
-// await alignmentMarkArrayArray_swap_asyncPromise_create()
 // Clear KeyDownArray
 
   }
