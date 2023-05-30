@@ -340,11 +340,6 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
     if ( !DrawingCanvas )
       return; // No canvas to get image.
 
-    // Ensure alignment marks set or swapped.
-    //
-    // Q: Why not await a promise?
-    // A: Because awaiting always pause execution (until next Browser tick)
-    //    which reduces performace a little.
     if ( !this.alignmentMarkArrayArray_operate_done )
       return; // AI can not process if alignment marks has not set or swappped.
 
