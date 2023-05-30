@@ -373,13 +373,10 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
 
     this.DrawingCanvas_imageData = await getImagePixelDataPromise;
 
-//!!! ...unfinished... (2023/05/29)
     // Q: Why not process the image data here before return?
     // A: The caller .DrawingCanvas_paint_async() is waiting for this method
-    //    returning. Since the image data has been got, returning as soon as
-    //    possible could allow DrawingCavas be painted again soon.
-    //
-
+    //    returning. Since the image data has been got, return as soon as
+    //    possible so that DrawingCavas could be painted again soon.
 
     // To allow the next image data getting.
     this.DrawingCanvas_getImagePixelDataPromise = null;
