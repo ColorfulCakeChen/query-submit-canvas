@@ -374,20 +374,17 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
     this.DrawingCanvas_imageData = await getImagePixelDataPromise;
 
 //!!! ...unfinished... (2023/05/29)
-    // Q: Why not process the image data before setting
-    //      .DrawingCanvas_getImagePixelDataPromise to null?
+    // Q: Why not process the image data here before return?
+    // A: The caller .DrawingCanvas_paint_async() is waiting for this method
+    //    returning. Since the image data has been got, returning as soon as
+    //    possible could allow DrawingCavas be painted again soon.
     //
-    // A: 
 
 
     // To allow the next image data getting.
     this.DrawingCanvas_getImagePixelDataPromise = null;
-
-//!!! ...unfinished... (2023/05/28)
-
   }
 
-//!!! ...unfinished... (2023/05/28)
   /**
    * @param {NeuralOrchestra_Construct3} this
    */
