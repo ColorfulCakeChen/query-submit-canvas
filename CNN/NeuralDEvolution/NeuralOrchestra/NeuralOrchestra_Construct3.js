@@ -321,8 +321,23 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
 
     // After painting compeletd, get the whole image for processing
     // by neural network.
-    await NeuralOrchestra_Construct3.DrawingCanvas_getImagePixelData_async
+    let getImagePixelData_asyncPromise = NeuralOrchestra_Construct3
+      .DrawingCanvas_getImagePixelData_asyncPromise_create
       .call( this );
+
+    if ( getImagePixelData_asyncPromise ) {
+      let aImageData = await getImagePixelData_asyncPromise;
+
+      // After ImageData got, process it by neural network.
+      //
+      // Note: Do not await it.
+      //
+      // Q: Why not await image data processing before return?
+      // A: So that the next .DrawingCanvas_paint_async() will not be blocked
+      //    by the image processing.
+      NeuralOrchestra_Construct3.DrawingCanvas_process_by_AI_async
+        .call( this, runtime, aImageData );
+    }
 
     // After image data got, the next painting is allowed.
     //
@@ -333,25 +348,33 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
   }
 
   /**
+   * The following data members might be modified by this method: 
+   *   - .AI_gameTime_beginSeconds
+   *   - .AI_gameTime_endSeconds
+   *
    * @param {NeuralOrchestra_Construct3} this
+   *
+   * @return {Promise( ImageData )}
+   *   Return a promise (resolved to ImageData), if AI can process the image.
+   * Return null, if AI can not or needs not process image.
    */
-  static async DrawingCanvas_getImagePixelData_async() {
+  static DrawingCanvas_getImagePixelData_asyncPromise_create() {
     if ( !this.AI_bTurnOn )
-      return; // No need to get image since AI is not activated.
+      return null; // No need to get image since AI is not activated.
 
     const DrawingCanvas = this.DrawingCanvas;
     if ( !DrawingCanvas )
-      return; // No canvas to get image.
+      return null; // No canvas to get image.
 
     if ( !this.alignmentMarkArrayArray_operate_done )
-      return; // AI can not process image if alignment marks not yet ready.
+      return null; // AI can not process image if alignment marks not yet ready.
 
     const AI_intervalSeconds = this.configJSONData?.AI?.intervalSeconds;
     if ( !( AI_intervalSeconds >= 0 ) )
-      return; // No interval means no need. At least, should be 0 seconds.
+      return null; // No interval means no need. At least, should be 0 seconds.
 
     if ( this.AI_processing )
-      return; // Previous AI processing has not yet completed.
+      return null; // Previous AI processing has not yet completed.
 
     const runtime = DrawingCanvas.runtime;
     const gameTime_beginSeconds = runtime.gameTime;
@@ -364,7 +387,7 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
     //       It will be viewed as elapsed time is enough to do the next AI
     //       processing.
     if ( !( gameTime_deltaSeconds >= AI_intervalSeconds ) )
-      return; // Need wait for more time elapsed.
+      return null; // Need wait for more time elapsed.
 
     this.AI_gameTime_beginSeconds = gameTime_beginSeconds;
     this.AI_gameTime_endSeconds = undefined;
@@ -376,20 +399,8 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
     //    resolution change because DrawingCanvas will only be recreated
     //    automatically when the first time painting after resolution changed.
     //
-    let getImagePixelDataPromise = DrawingCanvas.getImagePixelData();
-    let aImageData = await getImagePixelDataPromise;
-
-    // After ImageData got, process it by neural network.
-    //
-    // Note: Do not await it.
-    //
-    // Q: Why not await image data processing before return?
-    // A: The caller .DrawingCanvas_paint_async() is waiting for this method
-    //    returning. Since the image data has been got, although it has not yet
-    //    been processed, return as soon as possible so that DrawingCavas could
-    //    be painted again soon.
-    NeuralOrchestra_Construct3.DrawingCanvas_process_by_AI_async
-      .call( this, runtime, aImageData );
+    let getImagePixelData_asyncPromise = DrawingCanvas.getImagePixelData();
+    return getImagePixelData_asyncPromise;
   }
 
   /**
