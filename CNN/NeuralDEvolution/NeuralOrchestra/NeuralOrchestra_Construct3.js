@@ -363,7 +363,7 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
     //    been processed, return as soon as possible so that DrawingCavas could
     //    be painted again soon.
     NeuralOrchestra_Construct3.DrawingCanvas_process_by_AI_async
-      .call( this, aImageData );
+      .call( this, runtime, aImageData );
   }
 
   /**
