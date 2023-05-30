@@ -316,6 +316,9 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
 
     await pasteInstancesPromise;
 
+//!!! ...unfinished... (2023/05/30)
+// Whether is possible to reduce the await operation to improve performance.
+
     // After painting compeletd, get the whole image for processing
     // by neural network.
     await NeuralOrchestra_Construct3.DrawingCanvas_getImagePixelData_async
