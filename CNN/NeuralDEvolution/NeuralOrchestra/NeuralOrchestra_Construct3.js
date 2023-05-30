@@ -373,12 +373,14 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
 
     this.DrawingCanvas_imageData = await getImagePixelDataPromise;
 
-    // After ImageData got, process it by neural network.
-
 //!!! ...unfinished... (2023/05/29)
+    // Q: Why not process the image data before setting
+    //      .DrawingCanvas_getImagePixelDataPromise to null?
+    //
+    // A: 
 
 
-    // To allow the next getting.
+    // To allow the next image data getting.
     this.DrawingCanvas_getImagePixelDataPromise = null;
 
 //!!! ...unfinished... (2023/05/28)
