@@ -128,8 +128,12 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
 
     this.configJSONData = undefined;
 
-    this.Fighter_bManualMode = undefined;
+    this.versus_load_asyncGeneratorTicker = undefined;
+    this.versus_load_asyncGenerator = undefined;
+
     this.init_asyncPromise = undefined;
+
+    this.Fighter_bManualMode = undefined;
 
     if ( this.base ) {
       this.base.disposeResources_and_recycleToPool();
