@@ -308,20 +308,6 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
     //       Otherwise, the .DrawingCanvas_getImagePixelDataPromise will
     //       always be pending (i.e. never fulfilled).
     this.DrawingCanvas_pasteInstancesPromise = null;
-
-//!!! ...unfinished... (2023/05/28)
-// Perhaps, no need to await process by neural network.
-// What if process_by_AI not yet done but the next painting comes?
-//
-
-    // After ImageData got, process it by neural network.
-    // await ???
-    NeuralOrchestra_Construct3.DrawingCanvas_process_by_AI_async
-      .call( this );
-
-//!!! ...unfinished... (2023/05/28)
-// apply processing result to KeyDownArray?
-
   }
 
   /**
@@ -334,9 +320,6 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
     const DrawingCanvas = this.DrawingCanvas;
     if ( !DrawingCanvas )
       return; // No canvas to get image.
-
-    if ( this.DrawingCanvas_getImagePixelDataPromise )
-      return; // Previous getting has not yet completed. Do not get again.
 
     const AI_intervalSeconds = this.configJSONData?.AI?.intervalSeconds;
     if ( !( AI_intervalSeconds >= 0 ) )
@@ -362,24 +345,26 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
     this.AI_gameTime_endSeconds = undefined;
 
     // Q: What if DrawingCanvas resolution changed during .getImagePixelData()?
-    //    Wheteher will .DrawingCanvas_getImagePixelDataPromise never resolve?
+    //    Wheteher will getImagePixelDataPromise never resolve?
     //
     // A: It is very likely that nothing special needs to be taken for
     //    resolution change because DrawingCanvas will only be recreated
     //    automatically when the first time painting after resolution changed.
     //
-    let getImagePixelDataPromise = this.DrawingCanvas_getImagePixelDataPromise
-      = DrawingCanvas.getImagePixelData();
-
+    let getImagePixelDataPromise = DrawingCanvas.getImagePixelData();
     this.DrawingCanvas_imageData = await getImagePixelDataPromise;
 
-    // Q: Why not process the image data here before return?
+    // After ImageData got, process it by neural network.
+    //
+    // Note: Do not await here.
+    //
+    // Q: Why not await image data processing before return?
     // A: The caller .DrawingCanvas_paint_async() is waiting for this method
-    //    returning. Since the image data has been got, return as soon as
-    //    possible so that DrawingCavas could be painted again soon.
-
-    // To allow the next image data getting.
-    this.DrawingCanvas_getImagePixelDataPromise = null;
+    //    returning. Since the image data has been got, although it has not yet
+    //    been processed, return as soon as possible so that DrawingCavas could
+    //    be painted again soon.
+    NeuralOrchestra_Construct3.DrawingCanvas_process_by_AI_async
+      .call( this );
   }
 
   /**
@@ -405,19 +390,19 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
 //!!! ...unfinished... (2023/05/30)
 // this.DrawingCanvas_imageData
 
-
 //!!!
     // After image data processed, discard it for preventing from misusing.
     this.DrawingCanvas_imageData = null;
 
 //!!! ...unfinished... (2023/05/28)
-// If still ( this.AI_bTurnOn == true ), Set KeyDownArray
+// If still ( this.AI_bTurnOn == true ), apply processing result to KeyDownArray
 
 
 //!!! ...unfinished... (2023/05/29)
     const runtime = DrawingCanvas.runtime;
 
 //!!! ...unfinished... (2023/05/29)
+    // To allow the next AI processing.
     const gameTime_endSeconds = runtime.gameTime;
     this.AI_gameTime_endSeconds = gameTime_endSeconds;
   }
