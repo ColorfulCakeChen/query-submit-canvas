@@ -417,8 +417,11 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
     const source_height = aImageData.height;
     const source_width = aImageData.width;
 
-    base.TypedArray_process_asyncPromise_create(
-      source_TypedArray, source_height, source_width );
+    let TypedArray_process_asyncPromise
+      = base.TypedArray_process_asyncPromise_create(
+          source_TypedArray, source_height, source_width );
+
+    let Int32ArrayArray = await TypedArray_process_asyncPromise;
 
 //!!! ...unfinished... (2023/05/28)
 // If still ( this.AI_bTurnOn == true ), apply processing result to KeyDownArray
