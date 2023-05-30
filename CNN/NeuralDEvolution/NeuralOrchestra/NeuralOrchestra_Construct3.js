@@ -46,6 +46,10 @@ import { Base as NeuralOrchestra_Base } from "./NeuralOrchestra_Base.js";
  * @member {Construct3.IInstance[]} DrawingCanvas_pasteInstanceArray
  *   The Construct3 game objects which has been painted recently.
  *
+ * @member {Promise( ImageData )} DrawingCanvas_pasteInstancesPromise
+ *   If not null, the DrawingCanvas is still painting (and may be also getting image
+ * data) currently.
+ * 
  *
  * @member {boolean} AI_bTurnOn
  *   Whether activate AI. Only meaningful if ( .Fighter_bManualMode == false ).
@@ -115,6 +119,8 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
 
     this.AI_gameTime_endSeconds = undefined;
     this.AI_gameTime_beginSeconds = undefined;
+
+    this.DrawingCanvas_pasteInstancesPromise = undefined;
 
     if ( this.base ) {
       this.base.disposeResources_and_recycleToPool();
