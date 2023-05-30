@@ -313,8 +313,10 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
 // Perhaps, no need to await process by neural network.
 // What if process_by_AI not yet done but the next painting comes?
 //
-//     // After ImageData got, process it by neural network.
-    ???await NeuralOrchestra_Construct3.DrawingCanvas_process_by_AI_async
+
+    // After ImageData got, process it by neural network.
+    // await ???
+    NeuralOrchestra_Construct3.DrawingCanvas_process_by_AI_async
       .call( this );
 
 //!!! ...unfinished... (2023/05/28)
