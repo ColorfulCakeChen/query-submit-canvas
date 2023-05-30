@@ -415,7 +415,7 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
     //
     // Q: Why not await a promise?
     // A: Because awaiting always pause execution (until next Browser tick)
-    //    which reduces performace a little.
+    //    which reduces performance a little.
     if ( !this.alignmentMarkArrayArray_operate_done )
       return; // AI can not process image if alignment marks not yet ready.
 
