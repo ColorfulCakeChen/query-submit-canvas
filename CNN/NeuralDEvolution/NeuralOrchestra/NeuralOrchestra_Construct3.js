@@ -341,7 +341,7 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
       return; // No canvas to get image.
 
     if ( !this.alignmentMarkArrayArray_operate_done )
-      return; // AI can not process if alignment marks has not set or swappped.
+      return; // AI can not process image if alignment marks not yet ready.
 
     const AI_intervalSeconds = this.configJSONData?.AI?.intervalSeconds;
     if ( !( AI_intervalSeconds >= 0 ) )
@@ -417,7 +417,7 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
     // A: Because awaiting always pause execution (until next Browser tick)
     //    which reduces performace a little.
     if ( !this.alignmentMarkArrayArray_operate_done )
-      return; // AI can not process if alignment marks has not set or swappped.
+      return; // AI can not process image if alignment marks not yet ready.
 
     // Process image data.
     const base = this.base;
