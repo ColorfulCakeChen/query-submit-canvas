@@ -409,8 +409,14 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
     // Ensure alignment marks set or swapped. 
     await this.alignmentMarkArrayArray_operate_asyncPromise;
 
-//!!! ...unfinished... (2023/05/30)
-// aImageData
+    // Process image data.
+    const base = this.base;
+    const source_TypedArray = aImageData.data;
+    const source_height = aImageData.height;
+    const source_width = aImageData.width;
+
+    base.TypedArray_process_asyncPromise_create(
+      source_TypedArray, source_height, source_width );
 
 //!!! ...unfinished... (2023/05/28)
 // If still ( this.AI_bTurnOn == true ), apply processing result to KeyDownArray
