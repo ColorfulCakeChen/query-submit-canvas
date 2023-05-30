@@ -382,7 +382,7 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
     // Note:
     //
     // Q: What if DrawingCanvas resolution changed during .getImagePixelData()?
-    //    Wheteher does the .DrawingCanvas_getImagePixelDataPromise never resolve?
+    //    Wheteher will .DrawingCanvas_getImagePixelDataPromise never resolve?
     //
     // A: It is very likely that nothing special needs to be taken for
     //    resolution change because DrawingCanvas will only be recreated
@@ -391,7 +391,7 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
     let getImagePixelDataPromise = this.DrawingCanvas_getImagePixelDataPromise
       = DrawingCanvas.getImagePixelData();
 
-    await getImagePixelDataPromise;
+    this.DrawingCanvas_imageData = await getImagePixelDataPromise;
 
     // After ImageData got, process it by neural network.
 
@@ -415,7 +415,10 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
 
     const DrawingCanvas = this.DrawingCanvas;
     if ( !DrawingCanvas )
-      return; // No canvas to get image.
+      return; // No canvas to get image data.
+
+    if ( !this.DrawingCanvas_imageData )
+      return; // No image data to process.
 
     if ( !this.AI_processing )
       return; // Must have started a uncompleted AI processing.
@@ -423,15 +426,20 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
     // Ensure alignment marks set or swapped. 
     await this.alignmentMarkArrayArray_operate_asyncPromise;
 
-    let imageData = await this.DrawingCanvas_getImagePixelDataPromise;
+//!!! ...unfinished... (2023/05/30)
+// this.DrawingCanvas_imageData
 
-//!!! ...unfinished... (2023/05/29)
 
-//!!! ...unfinished... (2023/05/29)
-    const runtime = DrawingCanvas.runtime;
+//!!!
+    // After image data processed, discard it for preventing from misusing.
+    this.DrawingCanvas_imageData = null;
 
 //!!! ...unfinished... (2023/05/28)
 // If still ( this.AI_bTurnOn == true ), Set KeyDownArray
+
+
+//!!! ...unfinished... (2023/05/29)
+    const runtime = DrawingCanvas.runtime;
 
 //!!! ...unfinished... (2023/05/29)
     const gameTime_endSeconds = runtime.gameTime;
