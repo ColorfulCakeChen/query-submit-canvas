@@ -316,27 +316,26 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
 
     await pasteInstancesPromise;
 
-//!!! ...unfinished... (2023/05/30)
-// Whether is possible to reduce the await operation to improve performance.
+    // After painting compeletd, get the whole image and process it.
+    {
+      let getImagePixelData_asyncPromise = NeuralOrchestra_Construct3
+        .DrawingCanvas_getImagePixelData_asyncPromise_create
+        .call( this );
 
-    // After painting compeletd, get the whole image for processing
-    // by neural network.
-    let getImagePixelData_asyncPromise = NeuralOrchestra_Construct3
-      .DrawingCanvas_getImagePixelData_asyncPromise_create
-      .call( this );
+      if ( getImagePixelData_asyncPromise ) {
+        // Only if necessary, wait for the image.
+        let aImageData = await getImagePixelData_asyncPromise;
 
-    if ( getImagePixelData_asyncPromise ) {
-      let aImageData = await getImagePixelData_asyncPromise;
-
-      // After ImageData got, process it by neural network.
-      //
-      // Note: Do not await it.
-      //
-      // Q: Why not await image data processing before return?
-      // A: So that the next .DrawingCanvas_paint_async() will not be blocked
-      //    by the image processing.
-      NeuralOrchestra_Construct3.DrawingCanvas_process_by_AI_async
-        .call( this, runtime, aImageData );
+        // After ImageData got, process it by neural network.
+        //
+        // Note: Do not await it.
+        //
+        // Q: Why not await image data processing before return?
+        // A: So that the next .DrawingCanvas_paint_async() will not be blocked
+        //    by the image processing.
+        NeuralOrchestra_Construct3.DrawingCanvas_process_by_AI_async
+          .call( this, runtime, aImageData );
+      }
     }
 
     // After image data got, the next painting is allowed.
