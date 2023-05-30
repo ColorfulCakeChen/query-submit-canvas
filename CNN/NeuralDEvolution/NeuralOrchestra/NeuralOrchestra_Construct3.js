@@ -361,8 +361,6 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
     this.AI_gameTime_beginSeconds = gameTime_beginSeconds;
     this.AI_gameTime_endSeconds = undefined;
 
-    // Note:
-    //
     // Q: What if DrawingCanvas resolution changed during .getImagePixelData()?
     //    Wheteher will .DrawingCanvas_getImagePixelDataPromise never resolve?
     //
