@@ -117,7 +117,7 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
 //!!! ...unfinished... (2023/05/28)
 // should clear all data members.
 
-    this.alignmentMarkArrayArray_operate_asyncPromise = undefined;
+    this.alignmentMarkArrayArray_operate_done = undefined;
 
     this.AI_gameTime_endSeconds = undefined;
     this.AI_gameTime_beginSeconds = undefined;
@@ -340,6 +340,14 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
     if ( !DrawingCanvas )
       return; // No canvas to get image.
 
+    // Ensure alignment marks set or swapped.
+    //
+    // Q: Why not await a promise?
+    // A: Because awaiting always pause execution (until next Browser tick)
+    //    which reduces performace a little.
+    if ( !this.alignmentMarkArrayArray_operate_done )
+      return; // AI can not process if alignment marks has not set or swappped.
+
     const AI_intervalSeconds = this.configJSONData?.AI?.intervalSeconds;
     if ( !( AI_intervalSeconds >= 0 ) )
       return; // No interval means no need. At least, should be 0 seconds.
@@ -408,8 +416,13 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
     if ( !aImageData )
       return; // No image data to process.
 
-    // Ensure alignment marks set or swapped. 
-    await this.alignmentMarkArrayArray_operate_asyncPromise;
+    // Ensure alignment marks set or swapped.
+    //
+    // Q: Why not await a promise?
+    // A: Because awaiting always pause execution (until next Browser tick)
+    //    which reduces performace a little.
+    if ( !this.alignmentMarkArrayArray_operate_done )
+      return; // AI can not process if alignment marks has not set or swappped.
 
     // Process image data.
     const base = this.base;
@@ -532,12 +545,23 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
   static Versus_Step_03_ParentAlignment0_WaitVersusInfo( runtime ) {
     const base = this.base;
 
+    {
 //!!! ...unfinished... (2023/05/29)
 // How to await alignment mark setting?
 //
-// this.alignmentMarkArrayArray_operate_asyncPromise
-//     = base.alignmentMarkArrayArray_set_asyncPromise_create( ??? );
-     
+//     let alignmentMarkArrayArray_set_asyncPromise
+//       = base.alignmentMarkArrayArray_set_asyncPromise_create( ??? );
+
+      // Stop AI processing.
+      this.alignmentMarkArrayArray_operate_done = false;
+
+      alignmentMarkArrayArray_set_asyncPromise.then( bSetOk => {
+
+        // Restart AI processing.
+        this.alignmentMarkArrayArray_operate_done = bSetOk;
+      } );
+    }
+
 //!!! ...unfinished... (2023/05/29)
 // Clear KeyDownArray
 
@@ -603,11 +627,22 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
    */
  static Versus_Step_07_ParentAlignment1_WaitVersusInfo( runtime ) {
 
+    {
 //!!! ...unfinished... (2023/05/29)
 // How to await alignment mark swapping?
 //
-// this.alignmentMarkArrayArray_operate_asyncPromise
+// let alignmentMarkArrayArray_swap_asyncPromise
 //     = base.alignmentMarkArrayArray_swap_asyncPromise_create( ??? );
+
+      // Stop AI processing.
+      this.alignmentMarkArrayArray_operate_done = false;
+
+      alignmentMarkArrayArray_swap_asyncPromise.then( bSwappedOk => {
+
+        // Restart AI processing.
+        this.alignmentMarkArrayArray_operate_done = bSwappedOk;
+      } );
+    }
 
 //!!! ...unfinished... (2023/05/29)
 // Clear KeyDownArray
