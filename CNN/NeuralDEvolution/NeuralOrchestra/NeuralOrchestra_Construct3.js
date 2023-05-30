@@ -352,6 +352,14 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
    *   - .AI_gameTime_beginSeconds
    *   - .AI_gameTime_endSeconds
    *
+   *
+   * Q: Why does this method just return a promise? Why does not it just await
+   *    the promise by itself?
+   * A: So that the caller .DrawingCanvas_paint_async() can use lesser await
+   *    (i.e. use await only if necessary). Lesser await improve performance
+   *    because every await pauses execution to next Browser tick.
+   *
+   *
    * @param {NeuralOrchestra_Construct3} this
    *
    * @return {Promise( ImageData )}
