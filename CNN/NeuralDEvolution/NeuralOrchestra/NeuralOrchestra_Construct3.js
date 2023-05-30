@@ -552,12 +552,8 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
 //     let alignmentMarkArrayArray_set_asyncPromise
 //       = base.alignmentMarkArrayArray_set_asyncPromise_create( ??? );
 
-      // Stop AI processing.
-      this.alignmentMarkArrayArray_operate_done = false;
-
+      this.alignmentMarkArrayArray_operate_done = undefined;
       alignmentMarkArrayArray_set_asyncPromise.then( bSetOk => {
-
-        // Restart AI processing.
         this.alignmentMarkArrayArray_operate_done = bSetOk;
       } );
     }
@@ -634,12 +630,8 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
 // let alignmentMarkArrayArray_swap_asyncPromise
 //     = base.alignmentMarkArrayArray_swap_asyncPromise_create( ??? );
 
-      // Stop AI processing.
-      this.alignmentMarkArrayArray_operate_done = false;
-
+      this.alignmentMarkArrayArray_operate_done = undefined;
       alignmentMarkArrayArray_swap_asyncPromise.then( bSwappedOk => {
-
-        // Restart AI processing.
         this.alignmentMarkArrayArray_operate_done = bSwappedOk;
       } );
     }
