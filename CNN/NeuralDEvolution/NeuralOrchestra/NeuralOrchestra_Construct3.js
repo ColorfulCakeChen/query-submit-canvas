@@ -369,16 +369,18 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
   /**
    * @param {NeuralOrchestra_Construct3} this
    *
+   * @param {Object} runtime
+   *   Construct3 game engine runtime.
+   *
    * @param {ImageData} aImageData
    *   The image data to be processed by neural networks.
    */
-  static async DrawingCanvas_process_by_AI_async( aImageData ) {
+  static async DrawingCanvas_process_by_AI_async( runtime, aImageData ) {
     if ( !this.AI_bTurnOn )
       return; // No need to process image since AI is not activated.
 
-    const DrawingCanvas = this.DrawingCanvas;
-    if ( !DrawingCanvas )
-      return; // No canvas to get image data.
+    if ( !runtime )
+      return; // No Construct3 game engine runtime to report result.
 
     if ( !aImageData )
       return; // No image data to process.
@@ -396,10 +398,7 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
 // If still ( this.AI_bTurnOn == true ), apply processing result to KeyDownArray
 
 
-//!!! ...unfinished... (2023/05/29)
-    const runtime = DrawingCanvas.runtime;
-
-//!!! ...unfinished... (2023/05/29)
+//!!! ...unfinished... (2023/05/30)
     // To allow the next AI processing.
     const gameTime_endSeconds = runtime.gameTime;
     this.AI_gameTime_endSeconds = gameTime_endSeconds;
