@@ -2,6 +2,7 @@ export { NeuralOrchestra_Construct3 as Construct3 };
 
 import * as PartTime from "../../util/PartTime.js";
 import * as Pool from "../../util/Pool.js";
+import * as RandTools from "../../util/RandTools.js";
 import * as Recyclable from "../../util/Recyclable.js";
 // import * as ValueDesc from "../../Unpacker/ValueDesc.js";
 // import * as NeuralNet from "../../Conv/NeuralNet.js";
@@ -33,6 +34,13 @@ import { Base as NeuralOrchestra_Base } from "./NeuralOrchestra_Base.js";
  *
  * @member {number} configJSONData.AI.intervalSeconds
  *   How many time (in seconds) should be past before the next AI processing.
+ *
+ * @member {number[][]} configJSONData.alignmentMarkValueArrayArray
+ *   An array with two sub-arrays. Every sub-array should has 4 elements. Every
+ * element should be non-negative integer between [ 0, 255 ]. That is
+ * [ [ R0, G0, B0, A0 ], [ R1, G1, B1, A1 ] ]. They represent every neural
+ * network personating what alignment initially. A sub-array represents the
+ * RGBA color of the alignment.
  *
  *
  * @member {Construct3.IDrawingCanvasInstance} DrawingCanvas
@@ -224,6 +232,7 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
    *   A Construct3 JSON plugin which defines the game configuration.
    */
   ConfigJSON_set( aIJSONInstance ) {
+    const funcNameInMessage = "ConfigJSON_set";
 
     const configJSONData = this.configJSONData
       = aIJSONInstance.getJsonDataCopy();
@@ -246,6 +255,23 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
       //!!! ...unfinished... (2023/05/29)
       // DrawingCanvas.addEventListener( "resolutionchange",
       //  NeuralOrchestra_Construct3.Xxx.bind( this ) )
+    }
+
+    {
+      const alignmentMarkValueArrayArray
+        = configJSONData.alignmentMarkValueArrayArray;
+
+      if (   ( alignmentMarkValueArrayArray == undefined )
+          || ( alignmentMarkValueArrayArray[ 0 ] == undefined )
+          || ( alignmentMarkValueArrayArray[ 1 ] == undefined )
+          || ( alignmentMarkValueArrayArray[ 0 ].length != 4 )
+          || ( alignmentMarkValueArrayArray[ 1 ].length != 4 ) )
+
+        throw Error( `NeuralOrchestra.Construct3.${funcNameInMessage}(): `
+          + `configJSONData.alignmentMarkValueArrayArray `
+          + `=${RandTools.array_toString( alignmentMarkValueArrayArray )} `
+          + `should be as [ [ R0, G0, B0, A0 ], [ R1, G1, B1, A1 ] ].`
+        );
     }
   }
 
