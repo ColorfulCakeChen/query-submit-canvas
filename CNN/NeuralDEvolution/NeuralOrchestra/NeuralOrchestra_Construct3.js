@@ -379,14 +379,14 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
     if ( !this.AI_bTurnOn )
       return; // No need to process image since AI is not activated.
 
+    if ( !this.AI_processing )
+      return; // Must have started an uncompleted AI processing.
+
     if ( !runtime )
       return; // No Construct3 game engine runtime to report result.
 
     if ( !aImageData )
       return; // No image data to process.
-
-    if ( !this.AI_processing )
-      return; // Must have started a uncompleted AI processing.
 
     // Ensure alignment marks set or swapped. 
     await this.alignmentMarkArrayArray_operate_asyncPromise;
