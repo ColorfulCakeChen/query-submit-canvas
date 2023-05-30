@@ -298,8 +298,7 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
 
     // After painting compeletd, get the whole image for processing
     // by neural network.
-    await NeuralOrchestra_Construct3
-      .DrawingCanvas_getImagePixelData_and_process_by_AI_async
+    await NeuralOrchestra_Construct3.DrawingCanvas_getImagePixelData_async
       .call( this );
 
     // After image data got, the next painting is allowed.
@@ -315,7 +314,8 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
 // What if process_by_AI not yet done but the next painting comes?
 //
 //     // After ImageData got, process it by neural network.
-//     ???await NeuralOrchestra_Construct3.DrawingCanvas_process_by_AI_async.call( this );
+    ???await NeuralOrchestra_Construct3.DrawingCanvas_process_by_AI_async
+      .call( this );
 
 //!!! ...unfinished... (2023/05/28)
 // apply processing result to KeyDownArray?
@@ -325,7 +325,7 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
   /**
    * @param {NeuralOrchestra_Construct3} this
    */
-  static DrawingCanvas_getImagePixelData_and_process_by_AI_async() {
+  static DrawingCanvas_getImagePixelData_async() {
     if ( !this.AI_bTurnOn )
       return; // No need to get image since AI is not activated.
 
@@ -394,21 +394,7 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
     // After ImageData got, process it by neural network.
 
 //!!! ...unfinished... (2023/05/29)
-    // Ensure alignment marks set or swapped. 
-    await this.alignmentMarkArrayArray_operate_asyncPromise;
 
-//!!! ...unfinished... (2023/05/29)
-
-
-
-//!!! ...unfinished... (2023/05/28)
-// If still ( this.AI_bTurnOn == true ), Set KeyDownArray
-
-
-
-//!!! ...unfinished... (2023/05/29)
-    const gameTime_endSeconds = runtime.gameTime;
-    this.AI_gameTime_endSeconds = gameTime_endSeconds;
 
     // To allow the next getting.
     this.DrawingCanvas_getImagePixelDataPromise = null;
@@ -429,12 +415,15 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
     if ( !DrawingCanvas )
       return; // No canvas to get image.
 
-    if ( this.???AI_processing )
-      return; // Previous AI processing has not yet completed.
+    if ( !this.AI_processing )
+      return; // Must have started a uncompleted AI processing.
 
-//!!! ...unfinished... (2023/05/29)
     // Ensure alignment marks set or swapped. 
     await this.alignmentMarkArrayArray_operate_asyncPromise;
+
+    let imageData = await this.DrawingCanvas_getImagePixelDataPromise;
+
+//!!! ...unfinished... (2023/05/29)
 
 //!!! ...unfinished... (2023/05/29)
     const runtime = DrawingCanvas.runtime;
