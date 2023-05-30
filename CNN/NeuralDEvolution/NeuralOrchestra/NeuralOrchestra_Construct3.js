@@ -423,6 +423,7 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
 
     let Int32ArrayArray = await TypedArray_process_asyncPromise;
 
+    // If AI is still turned on,, apply processing result to KeyDownArray.
     if ( this.AI_bTurnOn ) {
 
 //!!! ...unfinished... (2023/05/30)
