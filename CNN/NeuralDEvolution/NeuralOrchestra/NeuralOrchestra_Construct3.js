@@ -121,6 +121,13 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
     this.AI_gameTime_beginSeconds = undefined;
 
     this.DrawingCanvas_pasteInstancesPromise = undefined;
+    this.DrawingCanvas_pasteInstanceArray = undefined;
+    this.DrawingCanvas_clearColor = undefined;
+    this.DrawingCanvas = undefined;
+
+    this.configJSONData = undefined;
+
+    this.init_asyncPromise = undefined;
 
     if ( this.base ) {
       this.base.disposeResources_and_recycleToPool();
@@ -170,20 +177,19 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
     const downloader_apiKey = null;
     const b_return_versus_load_asyncGenerator_instead_of_asyncPromise = true;
 
-    let init_asyncPromise = base.init_asyncPromise_create(
-      downloader_spreadsheetId, downloader_apiKey, bLogFetcherEventToConsole,
-      sender_clientId,
+    let init_asyncPromise = this.init_asyncPromise
+      = base.init_asyncPromise_create(
+        downloader_spreadsheetId, downloader_apiKey, bLogFetcherEventToConsole,
+        sender_clientId,
 
-      explicit_input_height, explicit_input_width, explicit_input_channelCount,
-      nNeuralWorker_ImplicitInputModeId,
-      vocabularyChannelCount, vocabularyCountPerInputChannel,
-      blockCountTotalRequested,
-      output_channelCount,
+        explicit_input_height, explicit_input_width, explicit_input_channelCount,
+        nNeuralWorker_ImplicitInputModeId,
+        vocabularyChannelCount, vocabularyCountPerInputChannel,
+        blockCountTotalRequested,
+        output_channelCount,
 
-      b_return_versus_load_asyncGenerator_instead_of_asyncPromise
-    );
-
-    this.init_asyncPromise = init_asyncPromise;
+        b_return_versus_load_asyncGenerator_instead_of_asyncPromise
+      );
 
     let versus_load_asyncGenerator = await init_asyncPromise;
     this.versus_load_asyncGenerator = versus_load_asyncGenerator;
