@@ -351,7 +351,7 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
     //    automatically when the first time painting after resolution changed.
     //
     let getImagePixelDataPromise = DrawingCanvas.getImagePixelData();
-    this.DrawingCanvas_imageData = await getImagePixelDataPromise;
+    let aImageData = await getImagePixelDataPromise;
 
     // After ImageData got, process it by neural network.
     //
@@ -363,13 +363,16 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
     //    been processed, return as soon as possible so that DrawingCavas could
     //    be painted again soon.
     NeuralOrchestra_Construct3.DrawingCanvas_process_by_AI_async
-      .call( this );
+      .call( this, aImageData );
   }
 
   /**
    * @param {NeuralOrchestra_Construct3} this
+   *
+   * @param {ImageData} aImageData
+   *   The image data to be processed by neural networks.
    */
-  static async DrawingCanvas_process_by_AI_async() {
+  static async DrawingCanvas_process_by_AI_async( aImageData ) {
     if ( !this.AI_bTurnOn )
       return; // No need to process image since AI is not activated.
 
@@ -377,7 +380,7 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
     if ( !DrawingCanvas )
       return; // No canvas to get image data.
 
-    if ( !this.DrawingCanvas_imageData )
+    if ( !aImageData )
       return; // No image data to process.
 
     if ( !this.AI_processing )
@@ -387,11 +390,7 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
     await this.alignmentMarkArrayArray_operate_asyncPromise;
 
 //!!! ...unfinished... (2023/05/30)
-// this.DrawingCanvas_imageData
-
-//!!!
-    // After image data processed, discard it for preventing from misusing.
-    this.DrawingCanvas_imageData = null;
+// aImageData
 
 //!!! ...unfinished... (2023/05/28)
 // If still ( this.AI_bTurnOn == true ), apply processing result to KeyDownArray
