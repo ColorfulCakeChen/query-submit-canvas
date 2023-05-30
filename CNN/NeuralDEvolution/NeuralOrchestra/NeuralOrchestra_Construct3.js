@@ -119,6 +119,7 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
 
     this.AI_gameTime_endSeconds = undefined;
     this.AI_gameTime_beginSeconds = undefined;
+    this.AI_bTurnOn = undefined;    
 
     this.DrawingCanvas_pasteInstancesPromise = undefined;
     this.DrawingCanvas_pasteInstanceArray = undefined;
@@ -127,6 +128,7 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
 
     this.configJSONData = undefined;
 
+    this.Fighter_bManualMode = undefined;
     this.init_asyncPromise = undefined;
 
     if ( this.base ) {
