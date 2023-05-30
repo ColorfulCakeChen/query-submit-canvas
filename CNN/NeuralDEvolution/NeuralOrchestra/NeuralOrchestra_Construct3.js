@@ -423,11 +423,16 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
 
     let Int32ArrayArray = await TypedArray_process_asyncPromise;
 
-//!!! ...unfinished... (2023/05/28)
+    if ( this.AI_bTurnOn ) {
+
+//!!! ...unfinished... (2023/05/30)
 // If still ( this.AI_bTurnOn == true ), apply processing result to KeyDownArray
 
 
-//!!! ...unfinished... (2023/05/30)
+    // Otherwise, the AI has been turned off during the processing (e.g. game
+    // is over). No need to apply to KeyDownArray.
+    }
+
     // To allow the next AI processing.
     const gameTime_endSeconds = runtime.gameTime;
     this.AI_gameTime_endSeconds = gameTime_endSeconds;
