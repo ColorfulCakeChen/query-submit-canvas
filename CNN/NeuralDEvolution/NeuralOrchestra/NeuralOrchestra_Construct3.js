@@ -587,12 +587,16 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
   static Versus_Step_03_ParentAlignment0_WaitVersusInfo( runtime ) {
     const base = this.base;
 
+    // Setup alignment marks.
     {
-//!!! ...unfinished... (2023/05/29)
-// How to await alignment mark setting?
-//
-//     let alignmentMarkArrayArray_set_asyncPromise
-//       = base.alignmentMarkArrayArray_set_asyncPromise_create( ??? );
+      const configJSONData = this.configJSONData;
+
+      const alignmentMarkValueArrayArray
+        = configJSONData.alignmentMarkValueArrayArray;
+
+      let alignmentMarkArrayArray_set_asyncPromise
+        = base.alignmentMarkArrayArray_set_asyncPromise_create(
+            alignmentMarkValueArrayArray );
 
       this.alignmentMarkArrayArray_operate_done = undefined;
       alignmentMarkArrayArray_set_asyncPromise.then( bSetOk => {
@@ -665,12 +669,10 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
    */
  static Versus_Step_07_ParentAlignment1_WaitVersusInfo( runtime ) {
 
+    // Swap alignment marks.
     {
-//!!! ...unfinished... (2023/05/29)
-// How to await alignment mark swapping?
-//
-// let alignmentMarkArrayArray_swap_asyncPromise
-//     = base.alignmentMarkArrayArray_swap_asyncPromise_create( ??? );
+      let alignmentMarkArrayArray_swap_asyncPromise
+        = base.alignmentMarkArrayArray_swap_asyncPromise_create();
 
       this.alignmentMarkArrayArray_operate_done = undefined;
       alignmentMarkArrayArray_swap_asyncPromise.then( bSwappedOk => {
