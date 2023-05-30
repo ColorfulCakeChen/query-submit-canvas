@@ -335,7 +335,7 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
   /**
    * @param {NeuralOrchestra_Construct3} this
    */
-  static DrawingCanvas_getImagePixelData_async() {
+  static async DrawingCanvas_getImagePixelData_async() {
     if ( !this.AI_bTurnOn )
       return; // No need to get image since AI is not activated.
 
