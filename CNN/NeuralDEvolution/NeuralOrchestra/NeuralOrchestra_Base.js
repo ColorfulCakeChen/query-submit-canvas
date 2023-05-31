@@ -226,6 +226,32 @@ import * as DEvolution from "../DEvolution.js";
  *   The input image's width. It exists only after NeuralWorker.Proxies
  * created.
  *
+ * @member {number} input_channelCount
+ *   The input image's channel count. It exists only after NeuralWorker.Proxies
+ * created.
+ *
+ *
+ * @member {number} implicit_input_height
+ *   The implicit input image's height. It exists only after
+ * NeuralWorker.Proxies created.
+ *
+ * @member {number} implicit_input_width
+ *   The implicit input image's width. It exists only after
+ * NeuralWorker.Proxies created.
+ *
+ * @member {number} implicit_input_channelCount
+ *   The implicit input image's channel count. It exists only after
+ * NeuralWorker.Proxies created.
+ *
+ *
+ * @member {number} output_height
+ *   The output image's height. It exists only after NeuralWorker.Proxies
+ * created.
+ *
+ * @member {number} output_width
+ *   The output image's width. It exists only after NeuralWorker.Proxies
+ * created.
+ *
  *
  * @member {string} backendName
  *   Which backend (of tensorflow.js library) is used by web worker. Either

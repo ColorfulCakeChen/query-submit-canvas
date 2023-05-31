@@ -320,7 +320,8 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
     const runtime = DrawingCanvas.runtime;
 
     // Clear to background color.
-    DrawingCanvas.clearCanvas( this.DrawingCanvas_clearColor );
+    const DrawingCanvas_clearColor = this.DrawingCanvas_clearColor;
+    DrawingCanvas.clearCanvas( DrawingCanvas_clearColor );
 
     // Paste all specified ObjectType's instances onto the DrawingCanvas.
     let pasteInstancesPromise;
@@ -342,8 +343,23 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
 
     await pasteInstancesPromise;
 
-//!!! ...unfinished... (2023/05/31)
-// clearRect() the implicit input area.
+    // Ensure the implicit input area is cleared.
+    //
+    // So that neural network will see the filled alignment mark and feedback
+    // information clearly without noise.
+    {
+      const base = this.base;
+
+      const left = 0;
+      const top = 0;
+      const right = base.implicit_input_width;
+
+      // "+1" for larger than DrawingCanvas to ensure clear completely. 
+      const bottom = base.implicit_input_height + 1;
+
+      DrawingCanvas.clearRect(
+        left, top, right, bottom, DrawingCanvas_clearColor );
+    }
 
     // After painting compeletd, get the whole image and process it.
     {
