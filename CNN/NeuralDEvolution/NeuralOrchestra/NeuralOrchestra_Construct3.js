@@ -273,7 +273,9 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
       const DrawingCanvas = this.DrawingCanvas // IDrawingCanvasInstance
         = runtime.objects[ DrawingCanvas_ObjectTypeName ].getFirstInstance();
 
-      this.DrawingCanvas_clearColor = [ 0, 0, 0, 1 ]; // RGBA. Black opacity.
+//!!! (2023/05/31 Temp Test)
+//      this.DrawingCanvas_clearColor = [ 0, 0, 0, 1 ]; // RGBA. Black opacity.
+      this.DrawingCanvas_clearColor = [ 0, 0, 0, 0 ]; // RGBA. Black transparent.
       this.DrawingCanvas_pasteInstanceArray = []; // For reducing memory re-allocation.
 
 

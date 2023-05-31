@@ -65,14 +65,32 @@ import { FeedbackToInput as NeuralNet_FeedbackToInput }
  *         user.
  *
  *       - For example, the left-top corner area of the whole screen image. The
- *           area should always be filled with black non-transparent
- *           ( RGBA = ( 0, 0, 0, 255 ) ).
+
+//!!! (2023/05/31 REmarked)
+//  *           area should always be filled with black non-transparent
+//  *           ( RGBA = ( 0, 0, 0, 255 ) ).
+
+ *           area should always be filled with black transparent
+ *           ( RGBA = ( 0, 0, 0, 0 ) ).
  *
  *         - In Construct3, because DrawingCanvas must be the same size as
  *             viewport (to prevent from painting postion and scale skewed),
- *             keeping the left-top corner area unused (by drawing black
- *             non-transparent rectangle with blend mode "copy") is a practical
- *             way to provide implicit input area.
+ *             keeping the left-top corner area unused is a practical way
+ *             to provide implicit input area.
+ *
+ *           - If there is no blend mode "Additive" inside DrawingCanvas, the
+ *               implicit input area can be achieved by drawing black
+ *               non-transparent ( RGBA = ( 0, 0, 0, 255 ) ) rectangle with
+ *               blend mode "Copy")
+ *
+ *           - If there is blend mode "Additive" inside DrawingCanvas, the
+ *               implicit input area should be achieved by
+ *               DrawingCanvas.clearRect() with black transparent
+ *               ( RGBA = ( 0, 0, 0, 0 ) ).
+ *
+ *           - The reason is that objects with blend mode "Additive" seems
+ *               always painted at the last. So they can not be covered by any
+ *               other painted objects.
  *
  *       - Its main usage is to place the alignement mark (for letting neural
  *           network know who it personates currently) and the feedback
