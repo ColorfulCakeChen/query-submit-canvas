@@ -390,8 +390,9 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
         implicit_input_height = base.implicit_input_height;
       }
 
-      const left = 0;
-      const top = 0;
+      // "-1" for larger than DrawingCanvas to ensure clear completely. 
+      const left = -1;
+      const top = -1;
       const right = implicit_input_width;
 
       // "+1" for larger than DrawingCanvas to ensure clear completely. 
