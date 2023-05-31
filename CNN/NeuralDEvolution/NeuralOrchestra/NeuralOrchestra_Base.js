@@ -462,6 +462,16 @@ class NeuralOrchestra_Base extends
   }
 
 
+!!!
+  get implicit_input_height() {
+    return this.workerProxies?.workerProxyArray?.[ 0 ].input_height;
+  }
+
+  get implicit_input_width() {
+    return this.workerProxies?.workerProxyArray?.[ 0 ].input_width;
+  }
+
+
   get backendName() {
     return this.workerProxies?.backendName;
   }

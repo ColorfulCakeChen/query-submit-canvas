@@ -342,6 +342,9 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
 
     await pasteInstancesPromise;
 
+//!!! ...unfinished... (2023/05/31)
+// clearRect() the implicit input area.
+
     // After painting compeletd, get the whole image and process it.
     {
       let getImagePixelData_asyncPromise = NeuralOrchestra_Construct3

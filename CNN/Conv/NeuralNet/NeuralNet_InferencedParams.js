@@ -130,13 +130,13 @@ class NeuralNet_InferencedParams extends Recyclable.Root {
    * 
    */
   inputShape_dispose() {
-    this.implicit_input_channelCount = undefined;
-    this.implicit_input_width = undefined;
-    this.implicit_input_height = undefined;
-
     this.input_channelCount = undefined;
     this.input_width = undefined;
     this.input_height = undefined;
+
+    this.implicit_input_channelCount = undefined;
+    this.implicit_input_width = undefined;
+    this.implicit_input_height = undefined;
 
     this.feedbackShape = undefined;
   }

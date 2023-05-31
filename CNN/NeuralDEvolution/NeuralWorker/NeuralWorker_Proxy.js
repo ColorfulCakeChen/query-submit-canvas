@@ -42,6 +42,11 @@ import * as NotUsed from "./NeuralWorker_Body.js";
  *       workers.
  *
  *
+ * @member {NeuralNet.ParamsBase[]} neuralNetParamsBaseArray
+ *   An array of configurations for the neural network to be created. These
+ * configurations is come from .NeuralNetArray_create_async() parameters and
+ * is owned (i.e. kept and destroyed)by this NeuralWorker.Proxy.
+ *
  */
 class NeuralWorker_Proxy extends AsyncWorker.Proxy {
 
@@ -68,6 +73,33 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
   /** @override */
   static setAsConstructor_self() {
   }
+
+
+  get input_height() {
+    return this.neuralNetParamsBaseArray?.[ 0 ]?.inferencedParams.input_height;
+  }
+
+  get input_width() {
+    return this.neuralNetParamsBaseArray?.[ 0 ]?.inferencedParams.input_width;
+  }
+
+  get input_channelCount() {
+    return this.neuralNetParamsBaseArray?.[ 0 ]?.inferencedParams.input_channelCount;
+  }
+
+
+  get implicit_input_height() {
+    return this.neuralNetParamsBaseArray?.[ 0 ]?.inferencedParams.implicit_input_height;
+  }
+
+  get implicit_input_width() {
+    return this.neuralNetParamsBaseArray?.[ 0 ]?.inferencedParams.implicit_input_width;
+  }
+
+  get implicit_input_channelCount() {
+    return this.neuralNetParamsBaseArray?.[ 0 ]?.inferencedParams.implicit_input_channelCount;
+  }
+
 
   /** @override */
   disposeResources() {
