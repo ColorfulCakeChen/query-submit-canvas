@@ -345,24 +345,24 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
 
 //!!! ...unfinished... (2023/05/31)
 // base.implicit_input_Xxx only exists if AI is turned on.
-
-    // Ensure the implicit input area is cleared.
-    //
-    // So that neural network will see the filled alignment mark and feedback
-    // information clearly without noise.
-    {
-      const base = this.base;
-
-      const left = 0;
-      const top = 0;
-      const right = base.implicit_input_width;
-
-      // "+1" for larger than DrawingCanvas to ensure clear completely. 
-      const bottom = base.implicit_input_height + 1;
-
-      DrawingCanvas.clearRect(
-        left, top, right, bottom, DrawingCanvas_clearColor );
-    }
+//
+//     // Ensure the implicit input area is cleared.
+//     //
+//     // So that neural network will see the filled alignment mark and feedback
+//     // information clearly without noise.
+//     {
+//       const base = this.base;
+//
+//       const left = 0;
+//       const top = 0;
+//       const right = base.implicit_input_width;
+//
+//       // "+1" for larger than DrawingCanvas to ensure clear completely. 
+//       const bottom = base.implicit_input_height + 1;
+//
+//       DrawingCanvas.clearRect(
+//         left, top, right, bottom, DrawingCanvas_clearColor );
+//     }
 
     // After painting compeletd, get the whole image and process it.
     {
