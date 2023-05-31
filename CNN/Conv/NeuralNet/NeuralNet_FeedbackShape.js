@@ -65,11 +65,6 @@ import { FeedbackToInput as NeuralNet_FeedbackToInput }
  *         user.
  *
  *       - For example, the left-top corner area of the whole screen image. The
-
-//!!! (2023/05/31 REmarked)
-//  *           area should always be filled with black non-transparent
-//  *           ( RGBA = ( 0, 0, 0, 255 ) ).
-
  *           area should always be filled with black transparent
  *           ( RGBA = ( 0, 0, 0, 0 ) ).
  *
@@ -78,19 +73,18 @@ import { FeedbackToInput as NeuralNet_FeedbackToInput }
  *             keeping the left-top corner area unused is a practical way
  *             to provide implicit input area.
  *
- *           - If there is no blend mode "Additive" inside DrawingCanvas, the
- *               implicit input area can be achieved by drawing black
- *               non-transparent ( RGBA = ( 0, 0, 0, 255 ) ) rectangle with
- *               blend mode "Copy")
+ *         - In Construct3, the implicit input area should be achieved by
+ *             DrawingCanvas.clearRect() with black transparent
+ *             ( RGBA = ( 0, 0, 0, 0 ) ).
  *
- *           - If there is blend mode "Additive" inside DrawingCanvas, the
- *               implicit input area should be achieved by
- *               DrawingCanvas.clearRect() with black transparent
- *               ( RGBA = ( 0, 0, 0, 0 ) ).
+ *           - Q: Why not use blend mode "Copy" to draw a black transparent
+ *                ( RGBA = ( 0, 0, 0, 0 ) ) rectangle object inside
+ *                DrawingCanvas at the implicit input area?
  *
- *           - The reason is that objects with blend mode "Additive" seems
- *               always painted at the last. So they can not be covered by any
- *               other painted objects.
+ *           - A: If there is objects with blend mode "Additive"
+ *                (e.g. Particles) inside DrawingCanvas, they seems can not be
+ *                masked out by any other objects. The reason seems that these
+ *                objects will always be painted at the last.
  *
  *       - Its main usage is to place the alignement mark (for letting neural
  *           network know who it personates currently) and the feedback
