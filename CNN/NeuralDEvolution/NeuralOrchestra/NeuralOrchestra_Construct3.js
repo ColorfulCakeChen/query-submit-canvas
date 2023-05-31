@@ -343,6 +343,9 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
 
     await pasteInstancesPromise;
 
+//!!! ...unfinished... (2023/05/31)
+// base.implicit_input_Xxx only exists if AI is turned on.
+
     // Ensure the implicit input area is cleared.
     //
     // So that neural network will see the filled alignment mark and feedback
