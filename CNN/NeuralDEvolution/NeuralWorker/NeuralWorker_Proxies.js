@@ -261,6 +261,59 @@ class NeuralWorker_Proxies extends Recyclable.Root {
   static setAsConstructor_self() {
   }
 
+//!!!
+  get input_height() {
+    return this.workerProxyArray?.[ 0 ]?.input_height;
+  }
+
+  get input_width() {
+    return this.workerProxyArray?.[ 0 ]?.input_width;
+  }
+
+  get input_channelCount() {
+    return this.workerProxyArray?.[ 0 ]?.input_channelCount;
+  }
+
+
+  get implicit_input_height() {
+    return this.workerProxyArray?.[ 0 ]?.implicit_input_height;
+  }
+
+  get implicit_input_width() {
+    return this.workerProxyArray?.[ 0 ]?.implicit_input_width;
+  }
+
+  get implicit_input_channelCount() {
+    return this.workerProxyArray?.[ 0 ]?.implicit_input_channelCount;
+  }
+
+
+  get explicit_input_height() {
+    return this.workerProxyArray?.[ 0 ]?.explicit_input_height;
+  }
+
+  get explicit_input_width() {
+    return this.workerProxyArray?.[ 0 ]?.explicit_input_width;
+  }
+
+  get explicit_input_channelCount() {
+    return this.workerProxyArray?.[ 0 ]?.explicit_input_channelCount;
+  }
+
+
+  get output_height() {
+    return this.workerProxyArray?.[ 0 ]?.output_height;
+  }
+
+  get output_width() {
+    return this.workerProxyArray?.[ 0 ]?.output_width;
+  }
+
+  get output_channelCount() {
+    return this.workerProxyArray?.[ 0 ]?.output_channelCount;
+  }
+
+
   /** @override */
   disposeResources() {
     this.TypedArray_process_async = undefined;

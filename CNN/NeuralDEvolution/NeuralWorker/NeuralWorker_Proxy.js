@@ -101,6 +101,32 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
   }
 
 
+  get explicit_input_height() {
+    return this.neuralNetParamsBaseArray?.[ 0 ]?.explicit_input_height;
+  }
+
+  get explicit_input_width() {
+    return this.neuralNetParamsBaseArray?.[ 0 ]?.explicit_input_width;
+  }
+
+  get explicit_input_channelCount() {
+    return this.neuralNetParamsBaseArray?.[ 0 ]?.explicit_input_channelCount;
+  }
+
+
+  get output_height() {
+    return this.neuralNetParamsBaseArray?.[ 0 ]?.inferencedParams.output_height;
+  }
+
+  get output_width() {
+    return this.neuralNetParamsBaseArray?.[ 0 ]?.inferencedParams.output_width;
+  }
+
+  get output_channelCount() {
+    return this.neuralNetParamsBaseArray?.[ 0 ]?.output_channelCount;
+  }
+
+
   /** @override */
   disposeResources() {
     this.NeuralNetParamsBaseArray_dispose();
