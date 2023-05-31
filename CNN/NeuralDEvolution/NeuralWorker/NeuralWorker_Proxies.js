@@ -261,7 +261,7 @@ class NeuralWorker_Proxies extends Recyclable.Root {
   static setAsConstructor_self() {
   }
 
-//!!!
+
   get input_height() {
     return this.workerProxyArray?.[ 0 ]?.input_height;
   }

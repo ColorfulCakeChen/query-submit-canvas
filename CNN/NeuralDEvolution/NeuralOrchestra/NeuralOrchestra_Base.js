@@ -454,21 +454,37 @@ class NeuralOrchestra_Base extends
 
 
   get input_height() {
-    return this.workerProxies?.workerProxyArray?.[ 0 ].input_height;
+    return this.workerProxies?.input_height;
   }
 
   get input_width() {
-    return this.workerProxies?.workerProxyArray?.[ 0 ].input_width;
+    return this.workerProxies?.input_width;
+  }
+
+  get input_channelCount() {
+    return this.workerProxies?.input_channelCount;
   }
 
 
-!!!
   get implicit_input_height() {
-    return this.workerProxies?.workerProxyArray?.[ 0 ].input_height;
+    return this.workerProxies?.implicit_input_height;
   }
 
   get implicit_input_width() {
-    return this.workerProxies?.workerProxyArray?.[ 0 ].input_width;
+    return this.workerProxies?.implicit_input_width;
+  }
+
+  get implicit_input_channelCount() {
+    return this.workerProxies?.implicit_input_channelCount;
+  }
+
+
+  get output_height() {
+    return this.workerProxies?.output_height;
+  }
+
+  get output_width() {
+    return this.workerProxies?.output_width;
   }
 
 
