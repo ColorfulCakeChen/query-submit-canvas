@@ -32,6 +32,16 @@ import { Base as NeuralOrchestra_Base } from "./NeuralOrchestra_Base.js";
  *   All ObjectType names (in Construct3) whose all instances will be pasted
  * onto the DrawingCanvas every game tick.
  *
+ * @member {number} configJSONData.DrawingCanvas.implicit_input_width
+ *   The implicit input width in DrawingCanvas.
+ *   - The area from ( 0, 0 ) to ( explicit_input_height, implicit_input_width )
+ *       in DrawingCanvas will be cleared (as color DrawingCanvas_clearColor).
+ *   - The purpose is to ensure the area is empty to fill alignment mark and
+ *       feedback for neural network processing.
+ *   - This property is used only if ( .Fighter_bManualMode == true ).
+ *   - If ( .Fighter_bManualMode == false ), the implicit input shape will be
+ *       extracted from the created neural network.
+ *
  * @member {number} configJSONData.AI.intervalSeconds
  *   How many time (in seconds) should be past before the next AI processing.
  *
@@ -50,6 +60,16 @@ import { Base as NeuralOrchestra_Base } from "./NeuralOrchestra_Base.js";
  * @member {number[]} DrawingCanvas_clearColor
  *   A four elements number array [ 0, 0, 0, 1 ] representing the RGBA color
  * for clearing the DrawingCanvas before painting any instances.
+ *
+ * @member {number} DrawingCanvas_implicit_input_height
+ *   The implicit input height in DrawingCanvas. This property is come from the
+ * parameters of .init_for_Construct3_runOnStartup_async(). And it is used only
+ * if ( .Fighter_bManualMode == true ).
+ *
+ * @member {number} DrawingCanvas_implicit_input_width
+ *   The implicit input width in DrawingCanvas. This property is come from the
+ * configJSONData.DrawingCanvas.implicit_input_width. And it is used only if
+ * ( .Fighter_bManualMode == true ).
  *
  * @member {Construct3.IInstance[]} DrawingCanvas_pasteInstanceArray
  *   The Construct3 game objects which has been painted recently.
@@ -133,6 +153,8 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
 
     this.DrawingCanvas_pasteInstancesPromise = undefined;
     this.DrawingCanvas_pasteInstanceArray = undefined;
+    this.DrawingCanvas_implicit_input_width = undefined;
+    this.DrawingCanvas_implicit_input_height = undefined;
     this.DrawingCanvas_clearColor = undefined;
     this.DrawingCanvas = undefined;
 
@@ -182,6 +204,8 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
     output_channelCount
   ) {
 
+    this.DrawingCanvas_implicit_input_height = explicit_input_height;
+
     this.Fighter_bManualMode = runtime.globalVars.Fighter_bManualMode;
     if ( this.Fighter_bManualMode ) {
       this.AI_bTurnOn = false; // Always no AI because no neural network.
@@ -195,17 +219,17 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
 
     let init_asyncPromise = this.init_asyncPromise
       = base.init_asyncPromise_create(
-        downloader_spreadsheetId, downloader_apiKey, bLogFetcherEventToConsole,
-        sender_clientId,
+          downloader_spreadsheetId, downloader_apiKey, bLogFetcherEventToConsole,
+          sender_clientId,
 
-        explicit_input_height, explicit_input_width, explicit_input_channelCount,
-        nNeuralWorker_ImplicitInputModeId,
-        vocabularyChannelCount, vocabularyCountPerInputChannel,
-        blockCountTotalRequested,
-        output_channelCount,
+          explicit_input_height, explicit_input_width, explicit_input_channelCount,
+          nNeuralWorker_ImplicitInputModeId,
+          vocabularyChannelCount, vocabularyCountPerInputChannel,
+          blockCountTotalRequested,
+          output_channelCount,
 
-        b_return_versus_load_asyncGenerator_instead_of_asyncPromise
-      );
+          b_return_versus_load_asyncGenerator_instead_of_asyncPromise
+        );
 
     let versus_load_asyncGenerator = await init_asyncPromise;
     this.versus_load_asyncGenerator = versus_load_asyncGenerator;
@@ -251,6 +275,10 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
 
       this.DrawingCanvas_clearColor = [ 0, 0, 0, 1 ]; // RGBA. Black opacity.
       this.DrawingCanvas_pasteInstanceArray = []; // For reducing memory re-allocation.
+
+
+      this.DrawingCanvas_implicit_input_width
+        = configJSONData.DrawingCanvas.implicit_input_width;
 
       //!!! ...unfinished... (2023/05/29)
       // DrawingCanvas.addEventListener( "resolutionchange",
@@ -317,6 +345,7 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
     if ( this.DrawingCanvas_pasteInstancesPromise )
       return; // Previous painting has not yet completed. Do not paint again.
 
+    const configJSONData = this.configJSONData;
     const runtime = DrawingCanvas.runtime;
 
     // Clear to background color.
@@ -327,7 +356,7 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
     let pasteInstancesPromise;
     {
       const ObjectTypeNameArray
-        = this.configJSONData.DrawingCanvas.ObjectTypeNameArray;
+        = configJSONData.DrawingCanvas.ObjectTypeNameArray;
 
       const pasteInstanceArray = this.DrawingCanvas_pasteInstanceArray;
       pasteInstanceArray.length = 0;
@@ -345,24 +374,35 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
 
 //!!! ...unfinished... (2023/05/31)
 // base.implicit_input_Xxx only exists if AI is turned on.
-//
-//     // Ensure the implicit input area is cleared.
-//     //
-//     // So that neural network will see the filled alignment mark and feedback
-//     // information clearly without noise.
-//     {
-//       const base = this.base;
-//
-//       const left = 0;
-//       const top = 0;
-//       const right = base.implicit_input_width;
-//
-//       // "+1" for larger than DrawingCanvas to ensure clear completely. 
-//       const bottom = base.implicit_input_height + 1;
-//
-//       DrawingCanvas.clearRect(
-//         left, top, right, bottom, DrawingCanvas_clearColor );
-//     }
+
+    // Ensure the implicit input area is cleared.
+    //
+    // So that neural network will see the filled alignment mark and feedback
+    // information clearly without noise.
+    {
+      const base = this.base;
+
+      let implicit_input_height;
+      let implicit_input_width = base.implicit_input_width;
+
+      // If no neural network created, use implicit input shape from other method.
+      if ( implicit_input_width == undefined ) {
+        implicit_input_height = this.DrawingCanvas_implicit_input_height;
+        implicit_input_width = this.DrawingCanvas_implicit_input_width;
+      } else {
+        implicit_input_height = base.implicit_input_height;
+      }
+
+      const left = 0;
+      const top = 0;
+      const right = implicit_input_width;
+
+      // "+1" for larger than DrawingCanvas to ensure clear completely. 
+      const bottom = implicit_input_height + 1;
+
+      DrawingCanvas.clearRect(
+        left, top, right, bottom, DrawingCanvas_clearColor );
+    }
 
     // After painting compeletd, get the whole image and process it.
     {
