@@ -88,7 +88,7 @@ import * as DEvolution from "../DEvolution.js";
  * 2. Configuration for 250K filter weights and execution 2 times per second
  *
  *   - explicit_input_height = 72
- *   - explicit_input_width = 128
+ *   - explicit_input_width = 114
  *   - explicit_input_channelCount = 4
  *   - vocabularyChannelCount = 4
  *   - vocabularyCountPerInputChannel = 256
@@ -99,7 +99,8 @@ import * as DEvolution from "../DEvolution.js";
  * Note1: If ( implicit_input_mode
  *          == IMPLICIT_INPUT__FILL_ALIGNMENT_MARK__FILL_PREVIOUS_OUTPUT(5) ):
  *
- *          - input_width will get 142
+ *          - implicit_input_width will be 14
+ *          - input_width will be 128
  *
  *
  * Note2: The ( output_channelCount = 128 ) is important.
