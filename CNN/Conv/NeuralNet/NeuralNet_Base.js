@@ -857,6 +857,11 @@ class NeuralNet_Base extends Recyclable.Root {
         + `${this.input_width}, `
         + `${this.input_channelCount} ), `
 
+      + `implicit_input_shape=( `
+        + `${this.implicit_input_height}, `
+        + `${this.implicit_input_width}, `
+        + `${this.implicit_input_channelCount} ), `
+  
       + `tensorWeightCount = { `
       + `Extracted: ${this.tensorWeightCountExtracted}, `
       + `Total: ${this.tensorWeightCountTotal} }, `
