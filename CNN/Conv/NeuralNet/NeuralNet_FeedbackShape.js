@@ -73,7 +73,7 @@ import { FeedbackToInput as NeuralNet_FeedbackToInput }
  *             keeping the left-top corner area unused is a practical way
  *             to provide implicit input area.
  *
- *         - In Construct3, the implicit input area should be achieved by
+ *         - In Construct3, the implicit input area could be achieved by
  *             DrawingCanvas.clearRect() with black transparent
  *             ( RGBA = ( 0, 0, 0, 0 ) ).
  *
