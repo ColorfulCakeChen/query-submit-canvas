@@ -370,7 +370,9 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
         = DrawingCanvas.pasteInstances( pasteInstanceArray );
     }
 
-    await pasteInstancesPromise;
+//!!! ...unfinished... (2023/05/31)
+// Moved to after .clearRect()
+//    await pasteInstancesPromise;
 
 //!!! ...unfinished... (2023/05/31)
 // base.implicit_input_Xxx only exists if AI is turned on.
@@ -403,6 +405,9 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
       DrawingCanvas.clearRect(
         left, top, right, bottom, DrawingCanvas_clearColor );
     }
+
+//!!! ...unfinished... (2023/05/31)
+    await pasteInstancesPromise;
 
     // After painting compeletd, get the whole image and process it.
     {
