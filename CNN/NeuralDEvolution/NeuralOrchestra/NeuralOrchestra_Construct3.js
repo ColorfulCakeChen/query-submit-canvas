@@ -348,11 +348,13 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
     const configJSONData = this.configJSONData;
     const runtime = DrawingCanvas.runtime;
 
-    // Clear to background color.
+    // 1. Painting.
+
+    // 1.1 Clear to background color.
     const DrawingCanvas_clearColor = this.DrawingCanvas_clearColor;
     DrawingCanvas.clearCanvas( DrawingCanvas_clearColor );
 
-    // Paste all specified ObjectType's instances onto the DrawingCanvas.
+    // 1.2 Paste all specified ObjectType's instances onto the DrawingCanvas.
     let pasteInstancesPromise;
     {
       const ObjectTypeNameArray
@@ -370,14 +372,7 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
         = DrawingCanvas.pasteInstances( pasteInstanceArray );
     }
 
-//!!! ...unfinished... (2023/05/31)
-// Moved to after .clearRect()
-//    await pasteInstancesPromise;
-
-//!!! ...unfinished... (2023/05/31)
-// base.implicit_input_Xxx only exists if AI is turned on.
-
-    // Ensure the implicit input area is cleared.
+    // 1.3 Ensure the implicit input area is cleared.
     //
     // So that neural network will see the filled alignment mark and feedback
     // information clearly without noise.
@@ -406,10 +401,15 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
         left, top, right, bottom, DrawingCanvas_clearColor );
     }
 
-//!!! ...unfinished... (2023/05/31)
+    // 1.4 Await for painting completed.
+    //
+    // Note: Although the promise is for pasting instances, however, the
+    //       .clearCanvas() and .clearRect() are also placced in the same
+    //       drawing command queue. So, when pasting done, all other drawing
+    //       commands also done.
     await pasteInstancesPromise;
 
-    // After painting compeletd, get the whole image and process it.
+    // 2. After painting compeletd, get the whole image and process it.
     {
       let getImagePixelData_asyncPromise = NeuralOrchestra_Construct3
         .DrawingCanvas_getImagePixelData_asyncPromise_create
@@ -431,7 +431,7 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
       }
     }
 
-    // After image data got, the next painting is allowed.
+    // 3. After image data got, the next painting is allowed.
     //
     // Note: When DrawingCanvas.getImagePixelData() is pending, do not continue
     //       to .pasteInstances(). Otherwise, the .getImagePixelData() will be
