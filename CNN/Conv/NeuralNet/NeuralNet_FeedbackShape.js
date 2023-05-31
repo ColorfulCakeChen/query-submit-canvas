@@ -60,12 +60,19 @@ import { FeedbackToInput as NeuralNet_FeedbackToInput }
  *       neural network.
  *
  *     - Explicit input: It is a part of the input which is visible to user.
- *       - For example, the whole screen image.
  *
  *     - Implicit input: It is a part of the input which is not visible to
  *         user.
  *
- *       - For example, the image which is arranged outside of the screen.
+ *       - For example, the left-top corner area of the whole screen image. The
+ *           area should always be filled with black non-transparent
+ *           ( RGBA = ( 0, 0, 0, 255 ) ).
+ *
+ *         - In Construct3, because DrawingCanvas must be the same size as
+ *             viewport (to prevent from painting postion and scale skewed),
+ *             keeping the left-top corner area unused (by drawing black
+ *             non-transparent rectangle with blend mode "copy") is the only
+ *             way to provide implicit input area.
  *
  *       - Its main usage is to place the alignement mark (for letting neural
  *           network know who it personates currently) and the feedback
