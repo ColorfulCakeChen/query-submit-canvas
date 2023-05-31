@@ -58,8 +58,9 @@ import { Base as NeuralOrchestra_Base } from "./NeuralOrchestra_Base.js";
  * game instances which will be seen by the neural network.
  *
  * @member {number[]} DrawingCanvas_clearColor
- *   A four elements number array [ 0, 0, 0, 1 ] representing the RGBA color
- * for clearing the DrawingCanvas before painting any instances.
+ *   A four elements number array [ 0, 0, 0, 0 ] representing the RGBA color
+ * (Black transparent) for clearing the DrawingCanvas before painting any
+ * instances and for clearing the implicit input area in the DrawingCanvas.
  *
  * @member {number} DrawingCanvas_implicit_input_height
  *   The implicit input height in DrawingCanvas. This property is come from the
@@ -273,11 +274,8 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
       const DrawingCanvas = this.DrawingCanvas // IDrawingCanvasInstance
         = runtime.objects[ DrawingCanvas_ObjectTypeName ].getFirstInstance();
 
-//!!! (2023/05/31 Temp Test)
-//      this.DrawingCanvas_clearColor = [ 0, 0, 0, 1 ]; // RGBA. Black opacity.
       this.DrawingCanvas_clearColor = [ 0, 0, 0, 0 ]; // RGBA. Black transparent.
       this.DrawingCanvas_pasteInstanceArray = []; // For reducing memory re-allocation.
-
 
       this.DrawingCanvas_implicit_input_width
         = configJSONData.DrawingCanvas.implicit_input_width;
