@@ -71,7 +71,7 @@ import { FeedbackToInput as NeuralNet_FeedbackToInput }
  *         - In Construct3, because DrawingCanvas must be the same size as
  *             viewport (to prevent from painting postion and scale skewed),
  *             keeping the left-top corner area unused (by drawing black
- *             non-transparent rectangle with blend mode "copy") is the only
+ *             non-transparent rectangle with blend mode "copy") is a practical
  *             way to provide implicit input area.
  *
  *       - Its main usage is to place the alignement mark (for letting neural
