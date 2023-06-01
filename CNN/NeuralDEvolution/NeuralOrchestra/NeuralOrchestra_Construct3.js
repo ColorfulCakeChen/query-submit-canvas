@@ -301,6 +301,11 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
           + `should be as [ [ R0, G0, B0, A0 ], [ R1, G1, B1, A1 ] ].`
         );
     }
+
+//!!! ...unfinished... (2023/06/01)
+// Fighter_Alignment_Action_InfoArray
+// Fighter_KeyDownArray
+
   }
 
   /**
