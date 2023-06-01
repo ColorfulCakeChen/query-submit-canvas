@@ -306,8 +306,7 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
 // Fighter_Alignment_Action_InfoArray
 // Fighter_KeyDownArray
 //
-// ActionInfoIndex_Xxx list
-//
+// ActionInfoIndex_Xxx list? seems not necessary
 // KeyCode_Xxx list? seems not necessary
 
   }
