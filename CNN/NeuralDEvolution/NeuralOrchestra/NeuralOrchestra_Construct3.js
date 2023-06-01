@@ -303,10 +303,14 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
     }
 
 //!!! ...unfinished... (2023/06/01)
-// Fighter_Alignment_Action_InfoArray
-// Fighter_KeyDownArray
+// 1. Fighter_KeyDownArray
 //
-// Fighter_ActionId_Xxx list
+// 2. Fighter_Alignment_Action_InfoArray
+//
+// seems only need 8 key codes (i.e. 4 per alignment).
+// No need whole Fighter_Alignment_Action_InfoArray.
+//
+// Fighter_ActionId_Xxx list? seems not necessary
 // ActionInfoIndex_Xxx list? (need ActionInfoIndex_KeyCode (0) )
 //
 // KeyCode_Xxx list? seems not necessary
