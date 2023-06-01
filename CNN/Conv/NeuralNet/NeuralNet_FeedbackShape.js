@@ -68,10 +68,10 @@ import { FeedbackToInput as NeuralNet_FeedbackToInput }
  *           area should always be filled with black transparent
  *           ( RGBA = ( 0, 0, 0, 0 ) ).
  *
- *         - In Construct3, because DrawingCanvas must be the same size as
- *             viewport (to prevent from painting postion and scale skewed),
- *             keeping the left-top corner area unused is a practical way
- *             to provide implicit input area.
+ *         - In Construct3, because DrawingCanvas must be the same position and
+ *             size as viewport (to prevent from painting postion and scale
+ *             skewed), keeping the left-top corner area unused is a practical
+ *             way to provide implicit input area.
  *
  *         - In Construct3, the implicit input area could be achieved by
  *             DrawingCanvas.clearRect() with black transparent
