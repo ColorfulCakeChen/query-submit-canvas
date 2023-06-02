@@ -60,8 +60,10 @@ import { Base as NeuralOrchestra_Base } from "./NeuralOrchestra_Base.js";
  *
  * @member {number[][]} configJSONData.Keyboard.KeyCodeValueArrayArray
  *   An array with two sub-arrays. The two sub-arrays should has the same
- * length. Every element of a sub-array represents the keyCode of keyboard.
- * The keyCode is the array index into the .KeyDownArray_IArrayInstance.
+ * length. A sub-array describes all possible key codes which AI can press
+ * when AI personates the alignment. Every element of a sub-array should be
+ * the keyCode of keyboard. The keyCode is the array index into the
+ * .KeyDownArray_IArrayInstance.
  *
  *
  * @member {boolean} alignmentMarkValueArrayArray_operate_done
