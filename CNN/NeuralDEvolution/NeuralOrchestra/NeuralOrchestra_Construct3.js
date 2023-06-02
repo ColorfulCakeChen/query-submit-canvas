@@ -53,6 +53,12 @@ import { Base as NeuralOrchestra_Base } from "./NeuralOrchestra_Base.js";
  * RGBA color of the alignment.
  *
  *
+ * @member {boolean} alignmentMarkValueArrayArray_operate_done
+ *   Whether the alignmentMarkValueArrayArray_set_Xxx() or
+ * alignmentMarkValueArrayArray_swap_Xxx() has completed so that neural network
+ * can be activated to process image.
+ *
+ *
  * @member {Construct3.IDrawingCanvasInstance} DrawingCanvas
  *   The IDrawingCanvasInstance (in Construct3) to be used for painting all
  * game instances which will be seen by the neural network.
@@ -105,6 +111,10 @@ import { Base as NeuralOrchestra_Base } from "./NeuralOrchestra_Base.js";
  * @member {boolean} AI_processing
  *   True, if ( !( AI_gameTime_endSeconds >= 0 ) ), it means an AI processing
  * is still going and has not yet done.
+ *
+ * @member {number[]} AI_decisionArray
+ *   A number array extracted from neural network outputs. It will be applied
+ * to Fighter_KeyDownArray.
  */
 class NeuralOrchestra_Construct3 extends Recyclable.Root {
 
@@ -146,7 +156,7 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
 //!!! ...unfinished... (2023/05/28)
 // should clear all data members.
 
-    this.alignmentMarkArrayArray_operate_done = undefined;
+    this.AI_decisionArray = undefined;
 
     this.AI_gameTime_endSeconds = undefined;
     this.AI_gameTime_beginSeconds = undefined;
@@ -158,6 +168,8 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
     this.DrawingCanvas_implicit_input_height = undefined;
     this.DrawingCanvas_clearColor = undefined;
     this.DrawingCanvas = undefined;
+
+    this.alignmentMarkValueArrayArray_operate_done = undefined;
 
     this.configJSONData = undefined;
 
@@ -302,6 +314,7 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
         );
     }
 
+    {
 //!!! ...unfinished... (2023/06/01)
 // 1. Fighter_KeyDownArray
 //
@@ -315,6 +328,8 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
 //
 // KeyCode_Xxx list? seems not necessary
 
+      this.AI_decisionArray = new Array();
+    }
   }
 
   /**
@@ -481,7 +496,7 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
     if ( !DrawingCanvas )
       return null; // No canvas to get image.
 
-    if ( !this.alignmentMarkArrayArray_operate_done )
+    if ( !this.alignmentMarkValueArrayArray_operate_done )
       return null; // AI can not process image if alignment marks not yet ready.
 
     const AI_intervalSeconds = this.configJSONData?.AI?.intervalSeconds;
@@ -545,7 +560,7 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
     // Q: Why not await a promise?
     // A: Because awaiting always pause execution (until next Browser tick)
     //    which reduces performance a little.
-    if ( !this.alignmentMarkArrayArray_operate_done )
+    if ( !this.alignmentMarkValueArrayArray_operate_done )
       return; // AI can not process image if alignment marks not yet ready.
 
     // Process image data.
@@ -568,24 +583,26 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
 //!!! ...unfinished... (2023/06/02)
 //      const from_output_pixelCount = ???;
 
-      let to_valueArray = new Array( from_output_pixelCount );
+      const AI_decisionArray = this.AI_decisionArray.length
+        = from_output_pixelCount;
 
       // For neural network with implicit input, use feedbackShape to extract
       // output.
       const feedbackShape = base.feedbackShape;
       if ( feedbackShape ) {
         feedbackShape.valueArray_get_from_output_valueArray_1st_channel(
-          to_valueArray, from_output_valueArray,
+          AI_decisionArray, from_output_valueArray,
           from_output_pixelIndexBegin, from_output_pixelCount );
 
       // For neural network without implicit input, use output directly.
       } else {
         for ( let i = 0; i < from_output_pixelCount; ++i )
-          to_valueArray[ i ] = from_output_valueArray[ i ];
+        AI_decisionArray[ i ] = from_output_valueArray[ i ];
       }
 
 //!!! ...unfinished... (2023/06/02)
 // apply extracted result to KeyDownArray
+      // AI_decisionArray;
 
 
     // Otherwise, the AI has been turned off during the processing (e.g. game
@@ -697,13 +714,13 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
       const alignmentMarkValueArrayArray
         = configJSONData.alignmentMarkValueArrayArray;
 
-      let alignmentMarkArrayArray_set_asyncPromise
-        = base.alignmentMarkArrayArray_set_asyncPromise_create(
+      let alignmentMarkValueArrayArray_set_asyncPromise
+        = base.alignmentMarkValueArrayArray_set_asyncPromise_create(
             alignmentMarkValueArrayArray );
 
-      this.alignmentMarkArrayArray_operate_done = undefined;
-      alignmentMarkArrayArray_set_asyncPromise.then( bSetOk => {
-        this.alignmentMarkArrayArray_operate_done = bSetOk;
+      this.alignmentMarkValueArrayArray_operate_done = undefined;
+      alignmentMarkValueArrayArray_set_asyncPromise.then( bSetOk => {
+        this.alignmentMarkValueArrayArray_operate_done = bSetOk;
       } );
     }
 
@@ -774,12 +791,12 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
 
     // Swap alignment marks.
     {
-      let alignmentMarkArrayArray_swap_asyncPromise
-        = base.alignmentMarkArrayArray_swap_asyncPromise_create();
+      let alignmentMarkValueArrayArray_swap_asyncPromise
+        = base.alignmentMarkValueArrayArray_swap_asyncPromise_create();
 
-      this.alignmentMarkArrayArray_operate_done = undefined;
-      alignmentMarkArrayArray_swap_asyncPromise.then( bSwappedOk => {
-        this.alignmentMarkArrayArray_operate_done = bSwappedOk;
+      this.alignmentMarkValueArrayArray_operate_done = undefined;
+      alignmentMarkValueArrayArray_swap_asyncPromise.then( bSwappedOk => {
+        this.alignmentMarkValueArrayArray_operate_done = bSwappedOk;
       } );
     }
 
