@@ -115,6 +115,14 @@ import { Base as NeuralOrchestra_Base } from "./NeuralOrchestra_Base.js";
  * @member {number[]} AI_output_extractedArray
  *   A number array extracted from neural network outputs. It will be applied
  * to Fighter_KeyDownArray.
+ *
+ *
+ * @member {Construct3.IArrayInstance} KeyDownArray_IArrayInstance
+ *   The IArrayInstance (in Construct3) to be used for representing which
+ * key (of keyboard) is pressing.
+ *   - If .KeyDownArray_IArrayInstance.getAt( keyCode ) is truthy, the key (of
+ *       keyCode) is pressed now.
+ *
  */
 class NeuralOrchestra_Construct3 extends Recyclable.Root {
 
@@ -155,6 +163,8 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
 
 //!!! ...unfinished... (2023/05/28)
 // should clear all data members.
+
+    this.KeyDownArray_IArrayInstance = undefined
 
     this.AI_output_extractedArray = undefined;
     this.AI_gameTime_endSeconds = undefined;
@@ -314,6 +324,12 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
     }
 
     {
+      const KeyDownArray_ObjectTypeName
+        = configJSONData.KeyDownArray.ObjectTypeName;
+
+      this.KeyDownArray_IArrayInstance
+        = runtime.objects[ KeyDownArray_ObjectTypeName ].getFirstInstance();
+
 //!!! ...unfinished... (2023/06/01)
 // 1. Fighter_KeyDownArray
 //
