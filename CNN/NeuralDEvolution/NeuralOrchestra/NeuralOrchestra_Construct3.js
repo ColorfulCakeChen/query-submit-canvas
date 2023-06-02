@@ -583,8 +583,8 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
 //!!! ...unfinished... (2023/06/02)
 //      const from_output_pixelCount = ???;
 
-      const AI_output_extractedArray = this.AI_output_extractedArray.length
-        = from_output_pixelCount;
+      const AI_output_extractedArray = this.AI_output_extractedArray;
+      AI_output_extractedArray.length = from_output_pixelCount;
 
       // For neural network with implicit input, use feedbackShape to extract
       // output.
