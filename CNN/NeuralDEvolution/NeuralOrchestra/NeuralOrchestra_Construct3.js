@@ -124,8 +124,9 @@ import { Base as NeuralOrchestra_Base } from "./NeuralOrchestra_Base.js";
  *       keyCode) is pressed now.
  *
  * @member {number} KeyDownArray_thresholdValue
- *   A number for judging whether AI want to press or release a key (of keyboard).
- * It equals ( vocabularyCountPerInputChannel / 2 ).
+ *   A number for judging whether AI want to press or release a key (of
+ * keyboard). It equals ( vocabularyCountPerInputChannel / 2 ) because AI
+ * output's value is between [ 0, vocabularyCountPerInputChannel ).
  * 
  *   - If ( AI_output_extractedArray[ i ] < KeyDownArray_thresholdValue ),
  *       it means AI wants to press the key (of keyboard).
