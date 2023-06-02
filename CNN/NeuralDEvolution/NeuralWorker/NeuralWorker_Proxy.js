@@ -127,6 +127,11 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
   }
 
 
+  get feedbackShape() {
+    return this.neuralNetParamsBaseArray?.[ 0 ]?.inferencedParams.feedbackShape;
+  }
+
+
   /** @override */
   disposeResources() {
     this.NeuralNetParamsBaseArray_dispose();

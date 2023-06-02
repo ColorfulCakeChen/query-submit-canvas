@@ -314,6 +314,11 @@ class NeuralWorker_Proxies extends Recyclable.Root {
   }
 
 
+  get feedbackShape() {
+    return this.workerProxyArray?.[ 0 ]?.feedbackShape;
+  }
+
+
   /** @override */
   disposeResources() {
     this.TypedArray_process_async = undefined;

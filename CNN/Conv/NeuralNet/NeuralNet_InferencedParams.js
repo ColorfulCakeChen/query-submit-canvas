@@ -60,6 +60,10 @@ import { FeedbackShape as NeuralNet_FeedbackShape }
  * @member {number} output_width
  *   The output image's width of this neural network. It should always be 1.
  *
+ * @member {NeuralNet.FeedbackShape} feedbackShape
+ *   The shape of for feedback neural network's previous output to next input.
+ * It exists only if ( neuralNetParamsBase.has_implicit_input == true ).
+ *
  * @see NeuralNet.Params
  */
 class NeuralNet_InferencedParams extends Recyclable.Root {

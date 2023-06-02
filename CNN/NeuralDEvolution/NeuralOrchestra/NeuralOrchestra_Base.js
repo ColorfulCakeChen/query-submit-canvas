@@ -515,6 +515,11 @@ class NeuralOrchestra_Base extends
   }
 
 
+  get feedbackShape() {
+    return this.workerProxies?.feedbackShape;
+  }
+
+
   get backendName() {
     return this.workerProxies?.backendName;
   }
