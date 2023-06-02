@@ -558,32 +558,35 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
       = base.TypedArray_process_asyncPromise_create(
           source_TypedArray, source_height, source_width );
 
-    let Int32ArrayArray = await TypedArray_process_asyncPromise;
+    // Int32ArrayArray
+    let from_output_valueArray = await TypedArray_process_asyncPromise;
 
     // If AI is still turned on, apply processing result to KeyDownArray.
     if ( this.AI_bTurnOn ) {
-      let 
+      const from_output_pixelIndexBegin = 0;
 
-//!!! ...unfinished... (2023/05/30)
-// If still ( this.AI_bTurnOn == true ), apply processing result to KeyDownArray
+//!!! ...unfinished... (2023/06/02)
+//      const from_output_pixelCount = ???;
+
+      let to_valueArray = new Array( from_output_pixelCount );
 
       // For neural network with implicit input, use feedbackShape to extract
       // output.
       const feedbackShape = base.feedbackShape;
       if ( feedbackShape ) {
-
-//!!! ...unfinished... (2023/06/02)
-//         feedbackShape.valueArray_get_from_output_valueArray_1st_channel(
-//           to_valueArray, from_output_valueArray,
-//           from_output_pixelIndexBegin, from_output_pixelCount
-//         );
+        feedbackShape.valueArray_get_from_output_valueArray_1st_channel(
+          to_valueArray, from_output_valueArray,
+          from_output_pixelIndexBegin, from_output_pixelCount );
 
       // For neural network without implicit input, use output directly.
       } else {
+        for ( let i = 0; i < from_output_pixelCount; ++i )
+          to_valueArray[ i ] = from_output_valueArray[ i ];
+      }
 
 //!!! ...unfinished... (2023/06/02)
+// apply extracted result to KeyDownArray
 
-      }
 
     // Otherwise, the AI has been turned off during the processing (e.g. game
     // is over). No need to apply to KeyDownArray.
