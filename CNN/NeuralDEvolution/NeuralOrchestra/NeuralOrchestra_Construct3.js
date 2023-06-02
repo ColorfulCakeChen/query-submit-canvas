@@ -329,8 +329,6 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
 //
 // KeyCode_Xxx list? seems not necessary
 
-      //??? from_output_pixelCount 
-
       this.AI_output_extractedArray = new Array();
     }
   }
@@ -584,7 +582,7 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
       const from_output_pixelIndexBegin = 0;
 
 //!!! ...unfinished... (2023/06/02)
-//      const from_output_pixelCount = ???;
+//      const from_output_pixelCount = ??? Fighter_ActionId_count;
 
       const AI_output_extractedArray = this.AI_output_extractedArray;
       AI_output_extractedArray.length = from_output_pixelCount;
