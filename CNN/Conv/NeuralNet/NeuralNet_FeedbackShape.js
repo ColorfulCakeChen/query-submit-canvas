@@ -557,9 +557,8 @@ class NeuralNet_FeedbackShape extends NeuralNet_FeedbackToInput {
    *   - All other channels of every pixel will be ignored.
    *
    * @param {number} from_output_pixelCount
-   *   The pixel count to stop extracting (non-inclusive). It is a non-negative
-   * integer and ( from_output_pixelIndexBegin + from_output_pixelCount ) must
-   * be between
+   *   The pixel count to be extracted. It is a non-negative integer and
+   * ( from_output_pixelIndexBegin + from_output_pixelCount ) must be between
    * [ 0, ( from_output_valueArray.length / this.input_channelCount ) ).
    */
   valueArray_get_from_output_valueArray_1st_channel(
