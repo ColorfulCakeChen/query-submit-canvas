@@ -162,14 +162,14 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
     this.AI_gameTime_beginSeconds = undefined;
     this.AI_bTurnOn = undefined;    
 
+    this.alignmentMarkValueArrayArray_operate_done = undefined;
+
     this.DrawingCanvas_pasteInstancesPromise = undefined;
     this.DrawingCanvas_pasteInstanceArray = undefined;
     this.DrawingCanvas_implicit_input_width = undefined;
     this.DrawingCanvas_implicit_input_height = undefined;
     this.DrawingCanvas_clearColor = undefined;
     this.DrawingCanvas = undefined;
-
-    this.alignmentMarkValueArrayArray_operate_done = undefined;
 
     this.configJSONData = undefined;
 
