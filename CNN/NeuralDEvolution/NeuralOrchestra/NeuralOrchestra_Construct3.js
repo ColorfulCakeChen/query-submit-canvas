@@ -112,7 +112,7 @@ import { Base as NeuralOrchestra_Base } from "./NeuralOrchestra_Base.js";
  *   True, if ( !( AI_gameTime_endSeconds >= 0 ) ), it means an AI processing
  * is still going and has not yet done.
  *
- * @member {number[]} AI_decisionArray
+ * @member {number[]} AI_output_extractedArray
  *   A number array extracted from neural network outputs. It will be applied
  * to Fighter_KeyDownArray.
  */
@@ -156,7 +156,7 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
 //!!! ...unfinished... (2023/05/28)
 // should clear all data members.
 
-    this.AI_decisionArray = undefined;
+    this.AI_output_extractedArray = undefined;
 
     this.AI_gameTime_endSeconds = undefined;
     this.AI_gameTime_beginSeconds = undefined;
@@ -328,7 +328,7 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
 //
 // KeyCode_Xxx list? seems not necessary
 
-      this.AI_decisionArray = new Array();
+      this.AI_output_extractedArray = new Array();
     }
   }
 
@@ -583,7 +583,7 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
 //!!! ...unfinished... (2023/06/02)
 //      const from_output_pixelCount = ???;
 
-      const AI_decisionArray = this.AI_decisionArray.length
+      const AI_output_extractedArray = this.AI_output_extractedArray.length
         = from_output_pixelCount;
 
       // For neural network with implicit input, use feedbackShape to extract
@@ -591,18 +591,18 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
       const feedbackShape = base.feedbackShape;
       if ( feedbackShape ) {
         feedbackShape.valueArray_get_from_output_valueArray_1st_channel(
-          AI_decisionArray, from_output_valueArray,
+          AI_output_extractedArray, from_output_valueArray,
           from_output_pixelIndexBegin, from_output_pixelCount );
 
       // For neural network without implicit input, use output directly.
       } else {
         for ( let i = 0; i < from_output_pixelCount; ++i )
-        AI_decisionArray[ i ] = from_output_valueArray[ i ];
+        AI_output_extractedArray[ i ] = from_output_valueArray[ i ];
       }
 
 //!!! ...unfinished... (2023/06/02)
 // apply extracted result to KeyDownArray
-      // AI_decisionArray;
+      // AI_output_extractedArray;
 
 
     // Otherwise, the AI has been turned off during the processing (e.g. game
