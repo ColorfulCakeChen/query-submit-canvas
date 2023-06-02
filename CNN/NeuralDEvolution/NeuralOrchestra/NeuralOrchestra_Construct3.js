@@ -560,12 +560,30 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
 
     let Int32ArrayArray = await TypedArray_process_asyncPromise;
 
-    // If AI is still turned on,, apply processing result to KeyDownArray.
+    // If AI is still turned on, apply processing result to KeyDownArray.
     if ( this.AI_bTurnOn ) {
+      let 
 
 //!!! ...unfinished... (2023/05/30)
 // If still ( this.AI_bTurnOn == true ), apply processing result to KeyDownArray
 
+      // For neural network with implicit input, use feedbackShape to extract
+      // output.
+      const feedbackShape = base.feedbackShape;
+      if ( feedbackShape ) {
+
+//!!! ...unfinished... (2023/06/02)
+//         feedbackShape.valueArray_get_from_output_valueArray_1st_channel(
+//           to_valueArray, from_output_valueArray,
+//           from_output_pixelIndexBegin, from_output_pixelCount
+//         );
+
+      // For neural network without implicit input, use output directly.
+      } else {
+
+//!!! ...unfinished... (2023/06/02)
+
+      }
 
     // Otherwise, the AI has been turned off during the processing (e.g. game
     // is over). No need to apply to KeyDownArray.
