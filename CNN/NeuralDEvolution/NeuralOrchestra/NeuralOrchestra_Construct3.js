@@ -123,6 +123,16 @@ import { Base as NeuralOrchestra_Base } from "./NeuralOrchestra_Base.js";
  *   - If .KeyDownArray_IArrayInstance.getAt( keyCode ) is truthy, the key (of
  *       keyCode) is pressed now.
  *
+ * @member {number} KeyDownArray_thresholdValue
+ *   A number for judging whether AI want to press or release a key (of keyboard).
+ * It equals ( vocabularyCountPerInputChannel / 2 ).
+ * 
+ *   - If ( AI_output_extractedArray[ i ] < KeyDownArray_thresholdValue ),
+ *       it means AI wants to press the key (of keyboard).
+ *
+ *   - If ( AI_output_extractedArray[ i ] >= KeyDownArray_thresholdValue ),
+ *       it means AI wants to release the key (of keyboard).
+ *
  */
 class NeuralOrchestra_Construct3 extends Recyclable.Root {
 
@@ -164,7 +174,8 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
 //!!! ...unfinished... (2023/05/28)
 // should clear all data members.
 
-    this.KeyDownArray_IArrayInstance = undefined
+    this.KeyDownArray_thresholdValue = undefined;
+    this.KeyDownArray_IArrayInstance = undefined;
 
     this.AI_output_extractedArray = undefined;
     this.AI_gameTime_endSeconds = undefined;
@@ -227,6 +238,9 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
   ) {
 
     this.DrawingCanvas_implicit_input_height = explicit_input_height;
+
+    this.KeyDownArray_thresholdValue
+      = Math.floor( vocabularyCountPerInputChannel / 2 );
 
     this.Fighter_bManualMode = runtime.globalVars.Fighter_bManualMode;
     if ( this.Fighter_bManualMode ) {
@@ -618,7 +632,17 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
 
 //!!! ...unfinished... (2023/06/02)
 // apply extracted result to KeyDownArray
+//
+KeyDownArray_thresholdValue
+// - If ( AI_output_extractedArray[ i ] < ( vocabularyCountPerInputChannel / 2 ) ),
+//     key is viewed as released.
+//
+// - If ( AI_output_extractedArray[ i ] >= ( vocabularyCountPerInputChannel / 2 ) ),
+//     key is viewed as pressed.
+//
+
       // AI_output_extractedArray;
+      // this.KeyDownArray_IArrayInstance
 
 
     // Otherwise, the AI has been turned off during the processing (e.g. game
