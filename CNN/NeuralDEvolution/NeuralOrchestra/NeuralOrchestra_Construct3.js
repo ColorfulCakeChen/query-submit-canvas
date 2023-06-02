@@ -52,6 +52,17 @@ import { Base as NeuralOrchestra_Base } from "./NeuralOrchestra_Base.js";
  * network personating what alignment initially. A sub-array represents the
  * RGBA color of the alignment.
  *
+ * @member {Object} configJSONData.Keyboard
+ *   Configuration for Keyboard.
+ *
+ * @member {string} configJSONData.Keyboard.KeyDownArray_ObjectTypeName
+ *   The KeyDownArray IArrayInstance's ObjectType name in Construct3.
+ *
+ * @member {number[][]} configJSONData.Keyboard.KeyCodeValueArrayArray
+ *   An array with two sub-arrays. The two sub-arrays should has the same
+ * length. Every element of a sub-array represents the keyCode of keyboard.
+ * The keyCode is the array index into the .KeyDownArray_IArrayInstance.
+ *
  *
  * @member {boolean} alignmentMarkValueArrayArray_operate_done
  *   Whether the alignmentMarkValueArrayArray_set_Xxx() or
@@ -300,6 +311,8 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
 
     const runtime = aIJSONInstance.runtime;
 
+    // 1. DrawingCanvas
+
     // Note: The reason why to provide ObjectTypeName from Construct3's Event
     //       Sheet is that here needs not change even if these names are
     //       changed in Construct3.
@@ -321,6 +334,7 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
       //  NeuralOrchestra_Construct3.Xxx.bind( this ) )
     }
 
+    // 2. alignmentMarkValueArrayArray
     {
       const alignmentMarkValueArrayArray
         = configJSONData.alignmentMarkValueArrayArray;
@@ -338,12 +352,31 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
         );
     }
 
+    // 3. Keyboard
     {
+      // 3.1
       const KeyDownArray_ObjectTypeName
-        = configJSONData.KeyDownArray.ObjectTypeName;
+        = configJSONData.Keyboard.KeyDownArray_ObjectTypeName;
 
       this.KeyDownArray_IArrayInstance
         = runtime.objects[ KeyDownArray_ObjectTypeName ].getFirstInstance();
+
+      // 3.2
+      const KeyCodeValueArrayArray
+        = configJSONData.Keyboard.KeyCodeValueArrayArray;
+
+      if (   ( KeyCodeValueArrayArray == undefined )
+          || ( KeyCodeValueArrayArray[ 0 ] == undefined )
+          || ( KeyCodeValueArrayArray[ 1 ] == undefined )
+          || ( KeyCodeValueArrayArray[ 0 ].length
+                 != KeyCodeValueArrayArray[ 1 ].length ) )
+
+        throw Error( `NeuralOrchestra.Construct3.${funcNameInMessage}(): `
+          + `configJSONData.KeyCodeValueArrayArray `
+          + `=${RandTools.array_toString( KeyCodeValueArrayArray )} `
+          + `should be as [ [ keyCode00, keyCode01, ..., keyCode0N ], `
+          + `[ keyCode10, keyCode11, ..., keyCode1N ] ].`
+        );
 
 //!!! ...unfinished... (2023/06/01)
 // 1. Fighter_KeyDownArray
