@@ -157,7 +157,6 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
 // should clear all data members.
 
     this.AI_output_extractedArray = undefined;
-
     this.AI_gameTime_endSeconds = undefined;
     this.AI_gameTime_beginSeconds = undefined;
     this.AI_bTurnOn = undefined;    
