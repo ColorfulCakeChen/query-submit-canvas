@@ -634,11 +634,10 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
 //!!! ...unfinished... (2023/06/02)
 // apply extracted result to KeyDownArray
 //
-KeyDownArray_thresholdValue
-// - If ( AI_output_extractedArray[ i ] < ( vocabularyCountPerInputChannel / 2 ) ),
+// - If ( AI_output_extractedArray[ i ] < KeyDownArray_thresholdValue ),
 //     key is viewed as released.
 //
-// - If ( AI_output_extractedArray[ i ] >= ( vocabularyCountPerInputChannel / 2 ) ),
+// - If ( AI_output_extractedArray[ i ] >= KeyDownArray_thresholdValue ),
 //     key is viewed as pressed.
 //
 
