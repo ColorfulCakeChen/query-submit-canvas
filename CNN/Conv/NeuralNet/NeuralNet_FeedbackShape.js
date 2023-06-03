@@ -713,7 +713,7 @@ class NeuralNet_FeedbackShape extends NeuralNet_FeedbackToInput {
 
         to_valueIndex_y_begin += input_width_valueCount;
       } // y
-    }
+    } // area
 
     return true;
   }
