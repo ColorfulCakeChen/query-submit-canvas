@@ -639,27 +639,26 @@ class NeuralNet_FeedbackShape extends NeuralNet_FeedbackToInput {
     }
   }
 
-//!!!
   /**
-   * Fill the alignment mark values to the next time input. All pixels
-   * (including every channels) inside implicit input area 0 will be filled
-   * with the alignment mark values.
-   *
    *
    * @param {Uint8ClampedArray|Int32Array} input_TypedArray
    *   The (next time) input of the pair of neural networks. Usually, it is
    * integer typed array. It should large enough to contain both implicit and
    * explicit input.
    *
-   * @param {Uint8ClampedArray|Int32Array|number[]} alignmentMarkValueArray
-   *   A non-negative integer array (as a pixel) representing the neural
-   * network personating which alignment currently. Its .length should be the
-   * same as .input_channelCount becasue it represents a pixel.
+   * @param {Uint8ClampedArray|Int32Array|number[]} pixelValueArray
+   *   A non-negative integer array (as a pixel). Its .length should be
+   * the same as .input_channelCount becasue it represents a pixel.
+   *
+   * @return {boolean}
+   *   Return true, if every pixel (including every channels) inside implicit
+   * input area is filled with the pixel values.
    */
-!!!  implicit_input_is_black_transparent(
-    input_TypedArray, alignmentMarkValueArray ) {
+  implicit_input_is_by_pixel( input_TypedArray, pixelValueArray ) {
 
-    const funcNameInMessage = "implicit_input_set_by_alignmentMarkValueArray";
+//!!! ...unfinished... (2023/06/03)
+
+    const funcNameInMessage = "implicit_input_is_by_pixel";
 
     // Q: Why fill an area pixels? Why not just fill ( 1 * 1 ) pixel?
     // A: NeuralNet mainly uses ( 3 * 3 ) depthwise filter.
