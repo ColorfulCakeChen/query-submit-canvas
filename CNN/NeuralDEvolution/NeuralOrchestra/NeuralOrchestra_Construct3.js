@@ -755,7 +755,7 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
           AI_output_extractedArray[ i ] = from_output_valueArray[ i ];
       }
 
-      // 3. Apply extracted value to KeyDownArray.
+      // 3. Apply extracted output value to KeyDownArray.
 
       // All usable key codes of the alignment.
       const KeyCodeArray = KeyCodeArrayArray[ alignmentId ];
