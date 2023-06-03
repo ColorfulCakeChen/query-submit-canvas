@@ -56,7 +56,9 @@ import { Base as NeuralOrchestra_Base } from "./NeuralOrchestra_Base.js";
  *   Configuration for Keyboard.
  *
  * @member {string} configJSONData.Keyboard.KeyDownArray_ObjectTypeName
- *   The KeyDownArray IArrayInstance's ObjectType name in Construct3.
+ *   The KeyDownArray IArrayInstance's ObjectType name in Construct3. The
+ * KeyDownArray should be a one dimension array (i.e. width is positive value,
+ * height is 1, and depth is 1).
  *
  * @member {number[][]} configJSONData.Keyboard.KeyCodeValueArrayArray
  *   An array with two sub-arrays.
@@ -138,7 +140,9 @@ import { Base as NeuralOrchestra_Base } from "./NeuralOrchestra_Base.js";
  *   The IArrayInstance (in Construct3) to be used for representing which
  * key (of keyboard) is pressing.
  *   - If .KeyDownArray_IArrayInstance.getAt( keyCode ) is truthy, the key (of
- *       keyCode) is pressed now.
+ *       the keyCode) is pressed now.
+ *   - If .KeyDownArray_IArrayInstance.getAt( keyCode ) is falsy, the key (of
+ *       the keyCode) is released now.
  *
  * @member {number} KeyDownArray_thresholdValue
  *   A number for judging whether AI want to press or release a key (of
@@ -647,7 +651,7 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
       const source_height = aImageData.height;
       const source_width = aImageData.width;
 
-  //!!! ...unfinished... (2023/06/03)
+//!!! ...unfinished... (2023/06/03)
       //!!! (2023/06/03 Temp Test) Check implicit input area black transparent.
       NeuralOrchestra_Construct3.DrawingCanvas_implicit_input_check
         .call( this, source_TypedArray );
@@ -666,7 +670,7 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
         return;
 
       // Since AI is still turned on, apply processing result to KeyDownArray.
-      NeuralOrchestra_Construct3.AI_apply_output_to_KeyDownArray
+      NeuralOrchestra_Construct3.KeyDownArray_set_by_output
         .call( this, output_TypedArrayArray );
 
     } finally {
@@ -713,8 +717,8 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
    * @param {Uint32Array[]} from_output_TypedArrayArray
    *   The TypedArrayArray which is generated from the neural networks.
    */
-  static AI_apply_output_to_KeyDownArray( from_output_TypedArrayArray ) {
-    //const funcNameInMessage = "AI_apply_output_to_KeyDownArray";
+  static KeyDownArray_set_by_output( from_output_TypedArrayArray ) {
+    //const funcNameInMessage = "KeyDownArray_set_by_output";
 
     // If the AI has been turned off during the image processing (e.g. game is
     // over). No need to apply to KeyDownArray.
@@ -724,8 +728,19 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
     if ( !this.AI_processing )
       return; // Must have started an uncompleted AI processing.
 
+    const KeyDownArray_IArrayInstance = this.KeyDownArray_IArrayInstance;
+    if ( !KeyDownArray_IArrayInstance )
+      return; // No KeyDownArray could be applied.
+
     const base = this.base;
     const feedbackShape = base.feedbackShape;
+
+    const KeyDownArray_thresholdValue = this.KeyDownArray_thresholdValue;
+    const KeyCodeValueArrayArray
+      = this.configJSONData.Keyboard.KeyCodeValueArrayArray;
+
+    const value_for_KeyReleased = 0;
+    const value_for_KeyPressed = 1;
 
     // Every output pixel represents an action of an alignment.
     const from_output_pixelIndexBegin = 0;
@@ -742,33 +757,38 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
       const from_output_valueArray
         = from_output_TypedArrayArray[ alignmentId ];
 
-      // For neural network with implicit input, use feedbackShape to extract
-      // output.
+      // If has implicit input, use feedbackShape to extract output.
       if ( feedbackShape ) {
         feedbackShape.valueArray_get_from_output_valueArray_1st_channel(
           AI_output_extractedArray, from_output_valueArray,
           from_output_pixelIndexBegin, from_output_pixelCount );
 
-      // For neural network without implicit input, use output directly.
+      // Otherwise, no implicit input, use output continuously.
       } else {
-        for ( let i = 0; i < from_output_pixelCount; ++i )
-        AI_output_extractedArray[ i ] = from_output_valueArray[ i ];
+        for ( let extractedIndex = 0;
+          extractedIndex < from_output_pixelCount; ++extractedIndex )
+          AI_output_extractedArray[ i ] = from_output_valueArray[ i ];
       }
 
-//!!! ...unfinished... (2023/06/03)
-// apply extracted result to KeyDownArray
-//
-// - If ( AI_output_extractedArray[ i ] < KeyDownArray_thresholdValue ),
-//     key is viewed as released.
-//
-// - If ( AI_output_extractedArray[ i ] >= KeyDownArray_thresholdValue ),
-//     key is viewed as pressed.
-//
+      // All usable key codes of the alignment.
+      const KeyCodeValueArray = KeyCodeValueArrayArray[ alignmentId ];
 
-    // AI_output_extractedArray;
-    // this.KeyDownArray_IArrayInstance
+      // Apply extracted value to KeyDownArray.
+      for ( let extractedIndex = 0;
+        extractedIndex < from_output_pixelCount; ++extractedIndex ) {
+        const extractedValue = AI_output_extractedArray[ extractedIndex ];
+        const keyCode = KeyCodeValueArray[ extractedIndex ];
 
+        // key is viewed as released.
+        if ( extractedValue < KeyDownArray_thresholdValue ) {
+          KeyDownArray_IArrayInstance.setAt( value_for_KeyReleased, keyCode );
 
+        // key is viewed as pressed.
+        // ( extractedValue >= KeyDownArray_thresholdValue )
+        } else {
+          KeyDownArray_IArrayInstance.setAt( value_for_KeyPressed, keyCode );
+        }
+      }
     }
   }
 
