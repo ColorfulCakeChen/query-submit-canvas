@@ -200,9 +200,6 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
   /** @override */
   disposeResources() {
 
-//!!! ...unfinished... (2023/05/28)
-// should clear all data members.
-
     this.KeyDownArray_value_for_KeyReleased = undefined;
     this.KeyDownArray_value_for_KeyPressed = undefined;
     this.KeyDownArray_thresholdValue = undefined;
