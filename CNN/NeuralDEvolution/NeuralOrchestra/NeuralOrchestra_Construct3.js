@@ -733,41 +733,44 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
     const AI_output_extractedArray = this.AI_output_extractedArray;
     AI_output_extractedArray.length = from_output_pixelCount;
 
+    // 1.
     // Alignemnt count should be 2.
     const alignmentIdCount = from_output_valueArrayArray.length;
     for ( let alignmentId = 0;
       alignmentId < alignmentIdCount; ++alignmentId ) {
 
+      // 2.
       const from_output_valueArray
         = from_output_TypedArrayArray[ alignmentId ];
 
-      // If has implicit input, use feedbackShape to extract output.
+      // 2.1 If has implicit input, use feedbackShape to extract output.
       if ( feedbackShape ) {
         feedbackShape.valueArray_get_from_output_valueArray_1st_channel(
           AI_output_extractedArray, from_output_valueArray,
           from_output_pixelIndexBegin, from_output_pixelCount );
 
-      // Otherwise, no implicit input, use output continuously.
+      // 2.2 Otherwise, no implicit input, use output continuously.
       } else {
         for ( let extractedIndex = 0;
           extractedIndex < from_output_pixelCount; ++extractedIndex )
           AI_output_extractedArray[ i ] = from_output_valueArray[ i ];
       }
 
+      // 3. Apply extracted value to KeyDownArray.
+
       // All usable key codes of the alignment.
       const KeyCodeArray = KeyCodeArrayArray[ alignmentId ];
 
-      // Apply extracted value to KeyDownArray.
       for ( let extractedIndex = 0;
         extractedIndex < from_output_pixelCount; ++extractedIndex ) {
         const extractedValue = AI_output_extractedArray[ extractedIndex ];
         const keyCode = KeyCodeArray[ extractedIndex ];
 
-        // key is viewed as released.
+        // 3.1 key is viewed as released.
         if ( extractedValue < KeyDownArray_thresholdValue ) {
           KeyDownArray_IArrayInstance.setAt( value_for_KeyReleased, keyCode );
 
-        // key is viewed as pressed.
+        // 3.2 key is viewed as pressed.
         // ( extractedValue >= KeyDownArray_thresholdValue )
         } else {
           KeyDownArray_IArrayInstance.setAt( value_for_KeyPressed, keyCode );
