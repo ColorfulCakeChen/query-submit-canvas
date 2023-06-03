@@ -639,13 +639,11 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
     //!!! (2023/06/03 Temp Test) Check implicit input area black transparent.
     {
       const funcNameInMessage = "DrawingCanvas_process_by_AI_async";
-
       const feedbackShape = base.feedbackShape;
       const pixelValueArray = this.DrawingCanvas_clearColor;
       if ( feedbackShape ) {
         const bBlackTransparentAll = feedbackShape.implicit_input_is_by_pixel(
           source_TypedArray, pixelValueArray );
-
         if ( !bBlackTransparentAll )
           throw Error( `NeuralOrchestra.Construct3.${funcNameInMessage}(): `
             + `bBlackTransparentAll ( ${bBlackTransparentAll} ) `
