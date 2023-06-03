@@ -665,7 +665,7 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
       if ( !this.AI_bTurnOn )
         return;
 
-      // If AI is still turned on, apply processing result to KeyDownArray.
+      // Since AI is still turned on, apply processing result to KeyDownArray.
       const feedbackShape = base.feedbackShape;
 
       // Every output pixel represents an action of an alignment.
