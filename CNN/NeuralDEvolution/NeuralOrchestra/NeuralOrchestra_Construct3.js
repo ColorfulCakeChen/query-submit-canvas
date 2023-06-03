@@ -379,8 +379,7 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
         = runtime.objects[ KeyDownArray_ObjectTypeName ].getFirstInstance();
 
       // 3.2
-      const KeyCodeArrayArray
-        = configJSONData.Keyboard.KeyCodeArrayArray;
+      const KeyCodeArrayArray = configJSONData.Keyboard.KeyCodeArrayArray;
 
       if (   ( KeyCodeArrayArray == undefined )
           || ( KeyCodeArrayArray[ 0 ] == undefined )
@@ -396,21 +395,7 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
           + `with the same length.`
         );
 
-//!!! ...unfinished... (2023/06/01)
-// 1. Fighter_KeyDownArray
-//
-// 2. Fighter_Alignment_Action_InfoArray
-//
-//
-// seems only need 8 key codes (i.e. Fighter_ActionId_count (4) per alignment).
-// No need whole Fighter_Alignment_Action_InfoArray.
-//
-// Fighter_ActionId_Xxx list? seems not necessary
-// ActionInfoIndex_Xxx list? (need ActionInfoIndex_KeyCode (0) )
-//
-// KeyCode_Xxx list? seems not necessary
-
-      this.AI_output_extractedArray = new Array();
+      this.AI_output_extractedArray = new Array(); // For reduce memory re-allocation.
     }
   }
 
@@ -736,8 +721,7 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
     const feedbackShape = base.feedbackShape;
 
     const KeyDownArray_thresholdValue = this.KeyDownArray_thresholdValue;
-    const KeyCodeArrayArray
-      = this.configJSONData.Keyboard.KeyCodeArrayArray;
+    const KeyCodeArrayArray = this.configJSONData.Keyboard.KeyCodeArrayArray;
 
     const value_for_KeyReleased = 0;
     const value_for_KeyPressed = 1;
