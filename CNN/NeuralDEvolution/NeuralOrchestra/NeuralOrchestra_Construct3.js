@@ -666,51 +666,8 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
         return;
 
       // Since AI is still turned on, apply processing result to KeyDownArray.
-      const feedbackShape = base.feedbackShape;
-
-      // Every output pixel represents an action of an alignment.
-      const from_output_pixelIndexBegin = 0;
-      const from_output_pixelCount = this.ActionId_Count_Per_Alignment;
-
-      const AI_output_extractedArray = this.AI_output_extractedArray;
-      AI_output_extractedArray.length = from_output_pixelCount;
-
-      // Alignemnt count should be 2.
-      const alignmentIdCount = from_output_valueArrayArray.length;
-      for ( let alignmentId = 0;
-        alignmentId < alignmentIdCount; ++alignmentId ) {
-
-        const from_output_valueArray = output_TypedArrayArray[ alignmentId ];
-
-        // For neural network with implicit input, use feedbackShape to extract
-        // output.
-        if ( feedbackShape ) {
-          feedbackShape.valueArray_get_from_output_valueArray_1st_channel(
-            AI_output_extractedArray, from_output_valueArray,
-            from_output_pixelIndexBegin, from_output_pixelCount );
-
-        // For neural network without implicit input, use output directly.
-        } else {
-          for ( let i = 0; i < from_output_pixelCount; ++i )
-          AI_output_extractedArray[ i ] = from_output_valueArray[ i ];
-        }
-
-//!!! ...unfinished... (2023/06/03)
-// apply extracted result to KeyDownArray
-//
-// - If ( AI_output_extractedArray[ i ] < KeyDownArray_thresholdValue ),
-//     key is viewed as released.
-//
-// - If ( AI_output_extractedArray[ i ] >= KeyDownArray_thresholdValue ),
-//     key is viewed as pressed.
-//
-
-      // AI_output_extractedArray;
-      // this.KeyDownArray_IArrayInstance
-
-
-      }
-
+      NeuralOrchestra_Construct3.AI_apply_output_to_KeyDownArray
+        .call( this, output_TypedArrayArray );
 
     } finally {
       // To allow the next AI processing.
@@ -746,6 +703,73 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
         + `bBlackTransparentAll ( ${bBlackTransparentAll} ) `
         + `should be as true.`
       );
+  }
+
+  /**
+   * Extract value from output_TypedArrayArray, and apply them to KeyDownArray.
+   *
+   * @param {NeuralOrchestra_Construct3} this
+   *
+   * @param {Uint32Array[]} from_output_TypedArrayArray
+   *   The TypedArrayArray which is generated from the neural networks.
+   */
+  static AI_apply_output_to_KeyDownArray( from_output_TypedArrayArray ) {
+    //const funcNameInMessage = "AI_apply_output_to_KeyDownArray";
+
+    // If the AI has been turned off during the image processing (e.g. game is
+    // over). No need to apply to KeyDownArray.
+    if ( !this.AI_bTurnOn )
+      return;
+
+    if ( !this.AI_processing )
+      return; // Must have started an uncompleted AI processing.
+
+    const base = this.base;
+    const feedbackShape = base.feedbackShape;
+
+    // Every output pixel represents an action of an alignment.
+    const from_output_pixelIndexBegin = 0;
+    const from_output_pixelCount = this.ActionId_Count_Per_Alignment;
+
+    const AI_output_extractedArray = this.AI_output_extractedArray;
+    AI_output_extractedArray.length = from_output_pixelCount;
+
+    // Alignemnt count should be 2.
+    const alignmentIdCount = from_output_valueArrayArray.length;
+    for ( let alignmentId = 0;
+      alignmentId < alignmentIdCount; ++alignmentId ) {
+
+      const from_output_valueArray
+        = from_output_TypedArrayArray[ alignmentId ];
+
+      // For neural network with implicit input, use feedbackShape to extract
+      // output.
+      if ( feedbackShape ) {
+        feedbackShape.valueArray_get_from_output_valueArray_1st_channel(
+          AI_output_extractedArray, from_output_valueArray,
+          from_output_pixelIndexBegin, from_output_pixelCount );
+
+      // For neural network without implicit input, use output directly.
+      } else {
+        for ( let i = 0; i < from_output_pixelCount; ++i )
+        AI_output_extractedArray[ i ] = from_output_valueArray[ i ];
+      }
+
+//!!! ...unfinished... (2023/06/03)
+// apply extracted result to KeyDownArray
+//
+// - If ( AI_output_extractedArray[ i ] < KeyDownArray_thresholdValue ),
+//     key is viewed as released.
+//
+// - If ( AI_output_extractedArray[ i ] >= KeyDownArray_thresholdValue ),
+//     key is viewed as pressed.
+//
+
+    // AI_output_extractedArray;
+    // this.KeyDownArray_IArrayInstance
+
+
+    }
   }
 
   /**
