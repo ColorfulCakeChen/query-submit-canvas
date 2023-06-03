@@ -203,6 +203,8 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
 //!!! ...unfinished... (2023/05/28)
 // should clear all data members.
 
+    this.KeyDownArray_value_for_KeyReleased = undefined;
+    this.KeyDownArray_value_for_KeyPressed = undefined;
     this.KeyDownArray_thresholdValue = undefined;
     this.KeyDownArray_IArrayInstance = undefined;
 
@@ -395,6 +397,11 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
           + `with the same length.`
         );
 
+      // 3.3
+      this.KeyDownArray_value_for_KeyReleased = 0;
+      this.KeyDownArray_value_for_KeyPressed = 1;
+
+      // 3.4
       this.AI_output_extractedArray = new Array(); // For reduce memory re-allocation.
     }
   }
@@ -728,8 +735,8 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
     const KeyDownArray_thresholdValue = this.KeyDownArray_thresholdValue;
     const KeyCodeArrayArray = this.configJSONData.Keyboard.KeyCodeArrayArray;
 
-    const value_for_KeyReleased = 0;
-    const value_for_KeyPressed = 1;
+    const value_for_KeyReleased = this.KeyDownArray_value_for_KeyReleased;
+    const value_for_KeyPressed = this.KeyDownArray_value_for_KeyPressed;
 
     // Every output pixel represents an action of an alignment.
     const from_output_pixelIndexBegin = 0;
@@ -797,8 +804,8 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
 
     const KeyCodeArrayArray = this.configJSONData.Keyboard.KeyCodeArrayArray;
 
-    const value_for_KeyReleased = 0;
-    //const value_for_KeyPressed = 1;
+    const value_for_KeyReleased = this.KeyDownArray_value_for_KeyReleased;
+    //const value_for_KeyPressed = this.KeyDownArray_value_for_KeyPressed;
 
     const alignmentIdCount = KeyCodeArrayArray.length;
     for ( let alignmentId = 0;
