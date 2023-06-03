@@ -302,9 +302,9 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
     const gameTime_initSeconds = runtime.gameTime;
 
 //!!! (2023/05/29 Temp Remarked) This is not necessary.
-//     // So that it looks like that AI is not processing now.
-//     this.AI_gameTime_beginSeconds = gameTime_initSeconds;
-//     this.AI_gameTime_endSeconds = gameTime_initSeconds;
+    // // So that it looks like that AI is not processing now.
+    // this.AI_gameTime_beginSeconds = gameTime_initSeconds;
+    // this.AI_gameTime_endSeconds = gameTime_initSeconds;
 
     this.init_asyncPromise = null;
 
