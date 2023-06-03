@@ -325,7 +325,7 @@ class NeuralNet_FeedbackShape extends NeuralNet_FeedbackToInput {
 
       let to_valueIndex_y_begin
         = ( ( area_position_top * this.input_width ) + area_position_left )
-            * this.input_channelCount;
+            * input_channelCount;
 
       // 4.2
       for ( let y = 0; y < area_height_pixelCount_original; ++y ) {
@@ -426,7 +426,7 @@ class NeuralNet_FeedbackShape extends NeuralNet_FeedbackToInput {
 
       let to_valueIndex_y_begin
         = ( ( area_position_top * this.input_width ) + area_position_left )
-            * this.input_channelCount;
+            * input_channelCount;
 
       let from_valueCount_original_remained_y_begin
         = area_from_valueCount_original;
@@ -570,10 +570,11 @@ class NeuralNet_FeedbackShape extends NeuralNet_FeedbackToInput {
 
     // 1.
     const from_output_valueCount = Math.floor( from_output_valueArray.length );
+    const input_channelCount = this.input_channelCount;
 
     // 2.
     const from_output_pixelCountMax
-      = Math.ceil( from_output_valueCount / this.input_channelCount );
+      = Math.ceil( from_output_valueCount / input_channelCount );
 
     // 3.
 
@@ -591,7 +592,7 @@ class NeuralNet_FeedbackShape extends NeuralNet_FeedbackToInput {
         + `from_output_pixelIndexBegin ( ${from_output_pixelIndexBegin} ) `
         + `should be less than or equal to `
         + `( from_output_valueArray.length / this.input_channelCount ) = `
-        + `( ${from_output_valueArray.length} / ${this.input_channelCount} ) = `
+        + `( ${from_output_valueArray.length} / ${input_channelCount} ) = `
         + `( ${from_output_pixelCountMax} ).`
       );
 
@@ -614,7 +615,7 @@ class NeuralNet_FeedbackShape extends NeuralNet_FeedbackToInput {
         + `from_output_pixelCount ( ${from_output_pixelCount} ) ) `
         + `should be less than or equal to `
         + `( from_output_valueArray.length / this.input_channelCount ) = `
-        + `( ${from_output_valueArray.length} / ${this.input_channelCount} ) = `
+        + `( ${from_output_valueArray.length} / ${input_channelCount} ) = `
         + `( ${from_output_pixelCountMax} ).`
       );
 
@@ -623,7 +624,7 @@ class NeuralNet_FeedbackShape extends NeuralNet_FeedbackToInput {
 
     const from_output_valueIndexBase = 0;
     let from_output_valueIndex = from_output_valueIndexBase
-      + ( from_output_pixelIndex * this.input_channelCount );
+      + ( from_output_pixelIndex * input_channelCount );
 
     // 5. Extract all the 1st channel values of all specified pixels of the
     //    previous time output of a neural network.
@@ -635,7 +636,7 @@ class NeuralNet_FeedbackShape extends NeuralNet_FeedbackToInput {
       to_valueArray[ i ] = pixel_channel_1st;
 
       ++from_output_pixelIndex;
-      from_output_valueIndex += this.input_channelCount;
+      from_output_valueIndex += input_channelCount;
     }
   }
 
@@ -693,7 +694,7 @@ class NeuralNet_FeedbackShape extends NeuralNet_FeedbackToInput {
 
       let to_valueIndex_y_begin
         = ( ( area_position_top * this.input_width ) + area_position_left )
-            * this.input_channelCount;
+            * input_channelCount;
 
 //!!! ...unfinished... (2023/06/03)
 
@@ -706,17 +707,18 @@ class NeuralNet_FeedbackShape extends NeuralNet_FeedbackToInput {
 
           // 4.4
           for ( let c = 0; c < input_channelCount; ++c ) {
-            input_TypedArray[ to_valueIndex ]
-              = alignmentMarkValueArray[ c ];
+            if ( input_TypedArray[ to_valueIndex ] != pixelValueArray[ c ] )
+              return false;
+
             ++to_valueIndex;
           } // c
-
         } // x
 
         to_valueIndex_y_begin += input_width_valueCount;
-
       } // y
-    } // areaIndex
+    }
+
+    return true;
   }
 
   /** @override */
