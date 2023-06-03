@@ -733,13 +733,12 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
     const AI_output_extractedArray = this.AI_output_extractedArray;
     AI_output_extractedArray.length = from_output_pixelCount;
 
-    // 1.
-    // Alignemnt count should be 2.
+    // 1. Two neural networks personate two alignments.
     const alignmentIdCount = from_output_valueArrayArray.length;
     for ( let alignmentId = 0;
       alignmentId < alignmentIdCount; ++alignmentId ) {
 
-      // 2.
+      // 2. One neural network's output.
       const from_output_valueArray
         = from_output_TypedArrayArray[ alignmentId ];
 
