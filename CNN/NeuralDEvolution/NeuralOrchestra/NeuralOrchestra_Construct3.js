@@ -635,6 +635,25 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
     const source_height = aImageData.height;
     const source_width = aImageData.width;
 
+//!!! ...unfinished... (2023/06/03)
+    //!!! (2023/06/03 Temp Test) Check implicit input area black transparent.
+    {
+      const funcNameInMessage = "DrawingCanvas_process_by_AI_async";
+
+      const feedbackShape = base.feedbackShape;
+      const pixelValueArray = this.DrawingCanvas_clearColor;
+      if ( feedbackShape ) {
+        const bBlackTransparentAll = feedbackShape.implicit_input_is_by_pixel(
+          source_TypedArray, pixelValueArray );
+
+        if ( !bBlackTransparentAll )
+          throw Error( `NeuralOrchestra.Construct3.${funcNameInMessage}(): `
+            + `bBlackTransparentAll ( ${bBlackTransparentAll} ) `
+            + `should be as true.`
+          );
+      }      
+    }
+
     let TypedArray_process_asyncPromise
       = base.TypedArray_process_asyncPromise_create(
           source_TypedArray, source_height, source_width );
