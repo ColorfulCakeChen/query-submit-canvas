@@ -982,6 +982,9 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
     this.AI_bTurnOn = false;
 
 
+//!!! ...unfinished... (2023/06/03)
+// Collect win/lose.
+
   }
 
   /**
@@ -1054,6 +1057,13 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
 
 //!!! ...unfinished... (2023/05/29)
     this.AI_bTurnOn = false;
+
+
+//!!! ...unfinished... (2023/06/03)
+// Collect another win/lose.
+// Combine with previous win/lose.
+// Report to server.
+
 
 //!!! ...unfinished... (2022/10/28)
 // Perhaps, start downloading the next versus here, too.
