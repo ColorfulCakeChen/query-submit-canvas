@@ -65,10 +65,10 @@ import { Base as NeuralOrchestra_Base } from "./NeuralOrchestra_Base.js";
  *   - Its two sub-arrays should has the same length. The length represents
  *       the total action count of an alignment
  *       (i.e. ActionId_Count_Per_Alignment).
- *   - Every sub-array describes all possible key codes which AI can press
- *       when AI personates the alignment.
- *   - Every element of a sub-array should be a keyCode of keyboard.
- *   - The keyCode will be used as the array index into the
+ *   - Every sub-array describes all usable key codes which can be pressed by
+ *       AI when AI personates the alignment.
+ *   - Every element of a sub-array should be a key code of keyboard.
+ *   - The key code will be used as the array index into the
  *       .KeyDownArray_IArrayInstance.
  *
  *
