@@ -784,6 +784,37 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
   }
 
   /**
+   * Release (i.e. not pressed) all usable keys of all alignments.
+   *
+   * @param {NeuralOrchestra_Construct3} this
+   */
+  static KeyDownArray_clear() {
+    //const funcNameInMessage = "KeyDownArray_clear";
+
+    const KeyDownArray_IArrayInstance = this.KeyDownArray_IArrayInstance;
+    if ( !KeyDownArray_IArrayInstance )
+      return; // No KeyDownArray could be cleared.
+
+    const KeyCodeArrayArray = this.configJSONData.Keyboard.KeyCodeArrayArray;
+
+    const value_for_KeyReleased = 0;
+    //const value_for_KeyPressed = 1;
+
+    const alignmentIdCount = KeyCodeArrayArray.length;
+    for ( let alignmentId = 0;
+      alignmentId < alignmentIdCount; ++alignmentId ) {
+
+      const KeyCodeArray = KeyCodeArrayArray[ alignmentId ];
+
+      for ( let keyCodeIndex = 0;
+        keyCodeIndex < KeyCodeArray.length; ++keyCodeIndex ) {
+        const keyCode = KeyCodeArray[ keyCodeIndex ];
+        KeyDownArray_IArrayInstance.setAt( value_for_KeyReleased, keyCode );
+      }
+    }
+  }
+
+  /**
    * @param {NeuralOrchestra_Construct3} this
    */
   static Versus_Step_00_DownloadWeights_Begin( runtime ) {
