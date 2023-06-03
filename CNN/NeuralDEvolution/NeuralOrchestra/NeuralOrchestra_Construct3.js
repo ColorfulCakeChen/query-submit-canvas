@@ -60,7 +60,7 @@ import { Base as NeuralOrchestra_Base } from "./NeuralOrchestra_Base.js";
  * KeyDownArray should be a one dimension array (i.e. width is positive value,
  * height is 1, and depth is 1).
  *
- * @member {number[][]} configJSONData.Keyboard.KeyCodeValueArrayArray
+ * @member {number[][]} configJSONData.Keyboard.KeyCodeArrayArray
  *   An array with two sub-arrays.
  *   - Its two sub-arrays should has the same length. The length represents
  *       the total action count of an alignment
@@ -194,7 +194,7 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
   }
 
   get ActionId_Count_Per_Alignment() {
-    return this.configJSONData.Keyboard.KeyCodeValueArrayArray[ 0 ].length;
+    return this.configJSONData.Keyboard.KeyCodeArrayArray[ 0 ].length;
   }
 
   /** @override */
@@ -379,17 +379,17 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
         = runtime.objects[ KeyDownArray_ObjectTypeName ].getFirstInstance();
 
       // 3.2
-      const KeyCodeValueArrayArray
-        = configJSONData.Keyboard.KeyCodeValueArrayArray;
+      const KeyCodeArrayArray
+        = configJSONData.Keyboard.KeyCodeArrayArray;
 
-      if (   ( KeyCodeValueArrayArray == undefined )
-          || ( KeyCodeValueArrayArray[ 0 ] == undefined )
-          || ( KeyCodeValueArrayArray[ 1 ] == undefined )
-          || ( KeyCodeValueArrayArray[ 0 ].length
-                 != KeyCodeValueArrayArray[ 1 ].length ) )
+      if (   ( KeyCodeArrayArray == undefined )
+          || ( KeyCodeArrayArray[ 0 ] == undefined )
+          || ( KeyCodeArrayArray[ 1 ] == undefined )
+          || ( KeyCodeArrayArray[ 0 ].length
+                 != KeyCodeArrayArray[ 1 ].length ) )
         throw Error( `NeuralOrchestra.Construct3.${funcNameInMessage}(): `
-          + `configJSONData.KeyCodeValueArrayArray `
-          + `=${RandTools.array_toString( KeyCodeValueArrayArray )} `
+          + `configJSONData.KeyCodeArrayArray `
+          + `=${RandTools.array_toString( KeyCodeArrayArray )} `
           + `should be as [ [ keyCode00, keyCode01, ..., keyCode0N ], `
           + `[ keyCode10, keyCode11, ..., keyCode1N ] ]. `
           + `That is, it should be an array which has two sub-arrays `
@@ -736,8 +736,8 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
     const feedbackShape = base.feedbackShape;
 
     const KeyDownArray_thresholdValue = this.KeyDownArray_thresholdValue;
-    const KeyCodeValueArrayArray
-      = this.configJSONData.Keyboard.KeyCodeValueArrayArray;
+    const KeyCodeArrayArray
+      = this.configJSONData.Keyboard.KeyCodeArrayArray;
 
     const value_for_KeyReleased = 0;
     const value_for_KeyPressed = 1;
@@ -771,13 +771,13 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
       }
 
       // All usable key codes of the alignment.
-      const KeyCodeValueArray = KeyCodeValueArrayArray[ alignmentId ];
+      const KeyCodeArray = KeyCodeArrayArray[ alignmentId ];
 
       // Apply extracted value to KeyDownArray.
       for ( let extractedIndex = 0;
         extractedIndex < from_output_pixelCount; ++extractedIndex ) {
         const extractedValue = AI_output_extractedArray[ extractedIndex ];
-        const keyCode = KeyCodeValueArray[ extractedIndex ];
+        const keyCode = KeyCodeArray[ extractedIndex ];
 
         // key is viewed as released.
         if ( extractedValue < KeyDownArray_thresholdValue ) {
