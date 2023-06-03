@@ -228,8 +228,8 @@ class NeuralNet_FeedbackShape extends NeuralNet_FeedbackToInput {
   }
 
   /**
-   * Call .set_implicit_input_by_alignmentMarkValueArray() and
-   * .set_implicit_input_by_previousOutputTypedArray().
+   * Call .implicit_input_set_by_alignmentMarkValueArray() and
+   * .implicit_input_set_by_previousOutputTypedArray().
    *
    *
    * @param {Uint8ClampedArray|Int32Array} input_TypedArray
@@ -245,13 +245,13 @@ class NeuralNet_FeedbackShape extends NeuralNet_FeedbackToInput {
    * @param {Int32Array} previous_output_Int32Array
    *   The (previous time) output of the neural networks.
    */
-  set_implicit_input_by_alignmentMarkValueArray_previousOutputTypedArray(
+  implicit_input_set_by_alignmentMarkValueArray_previousOutputTypedArray(
     input_TypedArray, alignmentMarkValueArray, previous_output_Int32Array ) {
 
-    this.set_implicit_input_by_alignmentMarkValueArray(
+    this.implicit_input_set_by_alignmentMarkValueArray(
       input_TypedArray, alignmentMarkValueArray );
 
-    this.set_implicit_input_by_previousOutputTypedArray(
+    this.implicit_input_set_by_previousOutputTypedArray(
       input_TypedArray, previous_output_Int32Array
     );
   }
@@ -272,10 +272,10 @@ class NeuralNet_FeedbackShape extends NeuralNet_FeedbackToInput {
    * network personating which alignment currently. Its .length should be the
    * same as .input_channelCount becasue it represents a pixel.
    */
-  set_implicit_input_by_alignmentMarkValueArray(
+  implicit_input_set_by_alignmentMarkValueArray(
     input_TypedArray, alignmentMarkValueArray ) {
 
-    const funcNameInMessage = "set_implicit_input_by_alignmentMarkValueArray";
+    const funcNameInMessage = "implicit_input_set_by_alignmentMarkValueArray";
 
     // Q: Why fill an area pixels? Why not just fill ( 1 * 1 ) pixel?
     // A: NeuralNet mainly uses ( 3 * 3 ) depthwise filter.
@@ -374,10 +374,10 @@ class NeuralNet_FeedbackShape extends NeuralNet_FeedbackToInput {
    *   The (previous time) output of the neural networks.
    *
    */
-  set_implicit_input_by_previousOutputTypedArray(
+  implicit_input_set_by_previousOutputTypedArray(
     input_TypedArray, previous_output_Int32Array ) {
 
-    const funcNameInMessage = "set_implicit_input_by_previousOutputTypedArray";
+    const funcNameInMessage = "implicit_input_set_by_previousOutputTypedArray";
 
     const input_channelCount = this.input_channelCount;
     const area = this.area;
@@ -637,6 +637,110 @@ class NeuralNet_FeedbackShape extends NeuralNet_FeedbackToInput {
       ++from_output_pixelIndex;
       from_output_valueIndex += this.input_channelCount;
     }
+  }
+
+//!!!
+  /**
+   * Fill the alignment mark values to the next time input. All pixels
+   * (including every channels) inside implicit input area 0 will be filled
+   * with the alignment mark values.
+   *
+   *
+   * @param {Uint8ClampedArray|Int32Array} input_TypedArray
+   *   The (next time) input of the pair of neural networks. Usually, it is
+   * integer typed array. It should large enough to contain both implicit and
+   * explicit input.
+   *
+   * @param {Uint8ClampedArray|Int32Array|number[]} alignmentMarkValueArray
+   *   A non-negative integer array (as a pixel) representing the neural
+   * network personating which alignment currently. Its .length should be the
+   * same as .input_channelCount becasue it represents a pixel.
+   */
+!!!  implicit_input_is_black_transparent(
+    input_TypedArray, alignmentMarkValueArray ) {
+
+    const funcNameInMessage = "implicit_input_set_by_alignmentMarkValueArray";
+
+    // Q: Why fill an area pixels? Why not just fill ( 1 * 1 ) pixel?
+    // A: NeuralNet mainly uses ( 3 * 3 ) depthwise filter.
+    //
+    //   - If alignment mark just occupies ( 1 * 1 ) pixel, it could only be
+    //       detected by a special depthwise filter.
+    //
+    //   - If alignment mark occupies ( 3 * 3 ) pixel, it could be detected by
+    //       most kinds of depthwise filter easily.
+    //
+
+    const input_channelCount = this.input_channelCount;
+    const area = this.area;
+
+    // 1. Check (next time) input shape.
+    if ( input_TypedArray.length != this.input_valueCount )
+      throw Error( `NeuralNet_FeedbackShape.${funcNameInMessage}(): `
+        + `input_TypedArray.length ( ${input_TypedArray.length} ) `
+        + `should be the same as `
+        + `.input_valueCount ( ${this.input_valueCount} ).`
+      );
+
+    // 2. Check alignment mark value array shape.
+    if ( alignmentMarkValueArray.length != input_channelCount )
+      throw Error( `NeuralNet_FeedbackShape.${funcNameInMessage}(): `
+        + `alignmentMarkValueArray.length `
+        + `( ${alignmentMarkValueArray.length} ) `
+        + `should be the same as `
+        + `input_channelCount ( ${input_channelCount} ).`
+      );
+
+    // 3.
+    const input_width_valueCount = this.input_width_valueCount;
+    const area_height_pixelCount_original = area.height_pixelCount_original;
+    const area_height_multiplier = area.height_multiplier;
+    const area_width_pixelCount_original = area.width_pixelCount_original;
+    const area_width_multiplier = area.width_multiplier;
+
+    // 4. Fill alignment mark value to the next time input.
+    let to_valueIndex = 0;
+
+    // 4.1
+    const areaIndex = 0; // Area 0 is for filling alignment mark.
+    {
+      let area_position_left = this.area_position_leftArray[ areaIndex ];
+      let area_position_top = this.area_position_topArray[ areaIndex ];
+
+      let to_valueIndex_y_begin
+        = ( ( area_position_top * this.input_width ) + area_position_left )
+            * this.input_channelCount;
+
+      // 4.2
+      for ( let y = 0; y < area_height_pixelCount_original; ++y ) {
+
+        // 4.3
+        for ( let y_multiplier = 0;
+          y_multiplier < area_height_multiplier; ++y_multiplier ) {
+
+          to_valueIndex = to_valueIndex_y_begin;
+
+          // 4.4
+          for ( let x = 0; x < area_width_pixelCount_original; ++x ) {
+
+            // 4.5
+            for ( let x_multiplier = 0;
+              x_multiplier < area_width_multiplier; ++x_multiplier ) {
+
+              // 4.6
+              for ( let c = 0; c < input_channelCount; ++c ) {
+                input_TypedArray[ to_valueIndex ]
+                  = alignmentMarkValueArray[ c ];
+                ++to_valueIndex;
+              } // c
+
+            } // x_multiplier
+          } // x
+
+          to_valueIndex_y_begin += input_width_valueCount;
+        } // y_multiplier
+      } // y
+    } // areaIndex
   }
 
   /** @override */

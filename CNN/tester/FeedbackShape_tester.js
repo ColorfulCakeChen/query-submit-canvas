@@ -449,7 +449,7 @@ class TestCase {
 
     // fill implicit input.
     feedbackShape
-      .set_implicit_input_by_alignmentMarkValueArray_previousOutputTypedArray(
+      .implicit_input_set_by_alignmentMarkValueArray_previousOutputTypedArray(
         this.nextInputArray,
         this.alignmentMarkValueArray,
         this.from_output_valueArray );

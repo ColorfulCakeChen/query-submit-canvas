@@ -337,10 +337,10 @@ class NeuralNet_ScaleFiller {
 
           for ( let i = 0; i < tensorCount; ++i ) {
             if ( alignmentMarkValueArrayArray_nonEmpty )
-              feedbackShape.set_implicit_input_by_alignmentMarkValueArray(
+              feedbackShape.implicit_input_set_by_alignmentMarkValueArray(
                 sourceInt32Array, alignmentMarkValueArrayArray[ i ] );
             if ( previous_output_Int32ArrayArray_nonEmpty )
-              feedbackShape.set_implicit_input_by_previousOutputTypedArray(
+              feedbackShape.implicit_input_set_by_previousOutputTypedArray(
                 sourceInt32Array, previous_output_Int32ArrayArray[ i ] );
             let targetTensorInt32
               = tf.tensor3d( sourceInt32Array, this.target_shape, "int32" );
@@ -385,10 +385,10 @@ class NeuralNet_ScaleFiller {
 
           for ( let i = 0; i < tensorCount; ++i ) {
             if ( alignmentMarkValueArrayArray_nonEmpty )
-              feedbackShape.set_implicit_input_by_alignmentMarkValueArray(
+              feedbackShape.implicit_input_set_by_alignmentMarkValueArray(
                 source_TypedArray, alignmentMarkValueArrayArray[ i ] );
             if ( previous_output_Int32ArrayArray_nonEmpty )
-              feedbackShape.set_implicit_input_by_previousOutputTypedArray(
+              feedbackShape.implicit_input_set_by_previousOutputTypedArray(
                 source_TypedArray, previous_output_Int32ArrayArray[ i ] );
             let targetTensorInt32
               = tf.tensor3d( source_TypedArray, this.target_shape, "int32" );
