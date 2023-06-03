@@ -59,11 +59,15 @@ import { Base as NeuralOrchestra_Base } from "./NeuralOrchestra_Base.js";
  *   The KeyDownArray IArrayInstance's ObjectType name in Construct3.
  *
  * @member {number[][]} configJSONData.Keyboard.KeyCodeValueArrayArray
- *   An array with two sub-arrays. The two sub-arrays should has the same
- * length. A sub-array describes all possible key codes which AI can press
- * when AI personates the alignment. Every element of a sub-array should be
- * the keyCode of keyboard. The keyCode is the array index into the
- * .KeyDownArray_IArrayInstance.
+ *   An array with two sub-arrays.
+ *   - Its two sub-arrays should has the same length. The length represents
+ *       the total action count of an alignment
+ *       (i.e. ActionId_Count_Per_Alignment).
+ *   - Every sub-array describes all possible key codes which AI can press
+ *       when AI personates the alignment.
+ *   - Every element of a sub-array should be a keyCode of keyboard.
+ *   - The keyCode will be used as the array index into the
+ *       .KeyDownArray_IArrayInstance.
  *
  *
  * @member {boolean} alignmentMarkValueArrayArray_operate_done
@@ -147,6 +151,9 @@ import { Base as NeuralOrchestra_Base } from "./NeuralOrchestra_Base.js";
  *   - If ( AI_output_extractedArray[ i ] >= KeyDownArray_thresholdValue ),
  *       it means AI wants to release the key (of keyboard).
  *
+ * @member {number} ActionId_Count_Per_Alignment
+ *   The total action count of an alignment.
+ *
  */
 class NeuralOrchestra_Construct3 extends Recyclable.Root {
 
@@ -180,6 +187,10 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
       return true;
     // Note: It works even if ( .AI_gameTime_endSeconds == undefined ).
     return false;
+  }
+
+  get ActionId_Count_Per_Alignment() {
+    return this.configJSONData.Keyboard.KeyCodeValueArrayArray[ 0 ].length;
   }
 
   /** @override */
@@ -372,12 +383,13 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
           || ( KeyCodeValueArrayArray[ 1 ] == undefined )
           || ( KeyCodeValueArrayArray[ 0 ].length
                  != KeyCodeValueArrayArray[ 1 ].length ) )
-
         throw Error( `NeuralOrchestra.Construct3.${funcNameInMessage}(): `
           + `configJSONData.KeyCodeValueArrayArray `
           + `=${RandTools.array_toString( KeyCodeValueArrayArray )} `
           + `should be as [ [ keyCode00, keyCode01, ..., keyCode0N ], `
-          + `[ keyCode10, keyCode11, ..., keyCode1N ] ].`
+          + `[ keyCode10, keyCode11, ..., keyCode1N ] ]. `
+          + `That is, it should be an array which has two sub-arrays `
+          + `with the same length.`
         );
 
 //!!! ...unfinished... (2023/06/01)
@@ -645,33 +657,40 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
           source_TypedArray, source_height, source_width );
 
     // Int32ArrayArray
-    let from_output_valueArray = await TypedArray_process_asyncPromise;
+    let output_TypedArrayArray = await TypedArray_process_asyncPromise;
 
     // If AI is still turned on, apply processing result to KeyDownArray.
     if ( this.AI_bTurnOn ) {
-      const from_output_pixelIndexBegin = 0;
+      const feedbackShape = base.feedbackShape;
 
-//!!! ...unfinished... (2023/06/02)
-//      const from_output_pixelCount = ??? Fighter_ActionId_count;
+      // Every output pixel represents an action of an alignment.
+      const from_output_pixelIndexBegin = 0;
+      const from_output_pixelCount = this.ActionId_Count_Per_Alignment;
 
       const AI_output_extractedArray = this.AI_output_extractedArray;
       AI_output_extractedArray.length = from_output_pixelCount;
 
-      // For neural network with implicit input, use feedbackShape to extract
-      // output.
-      const feedbackShape = base.feedbackShape;
-      if ( feedbackShape ) {
-        feedbackShape.valueArray_get_from_output_valueArray_1st_channel(
-          AI_output_extractedArray, from_output_valueArray,
-          from_output_pixelIndexBegin, from_output_pixelCount );
+      // Alignemnt count should be 2.
+      const alignmentIdCount = from_output_valueArrayArray.length;
+      for ( let alignmentId = 0;
+        alignmentId < alignmentIdCount; ++alignmentId ) {
 
-      // For neural network without implicit input, use output directly.
-      } else {
-        for ( let i = 0; i < from_output_pixelCount; ++i )
-        AI_output_extractedArray[ i ] = from_output_valueArray[ i ];
-      }
+        const from_output_valueArray = output_TypedArrayArray[ alignmentId ];
 
-//!!! ...unfinished... (2023/06/02)
+        // For neural network with implicit input, use feedbackShape to extract
+        // output.
+        if ( feedbackShape ) {
+          feedbackShape.valueArray_get_from_output_valueArray_1st_channel(
+            AI_output_extractedArray, from_output_valueArray,
+            from_output_pixelIndexBegin, from_output_pixelCount );
+
+        // For neural network without implicit input, use output directly.
+        } else {
+          for ( let i = 0; i < from_output_pixelCount; ++i )
+          AI_output_extractedArray[ i ] = from_output_valueArray[ i ];
+        }
+
+//!!! ...unfinished... (2023/06/03)
 // apply extracted result to KeyDownArray
 //
 // - If ( AI_output_extractedArray[ i ] < KeyDownArray_thresholdValue ),
@@ -683,6 +702,9 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
 
       // AI_output_extractedArray;
       // this.KeyDownArray_IArrayInstance
+
+
+      }
 
 
     // Otherwise, the AI has been turned off during the processing (e.g. game
