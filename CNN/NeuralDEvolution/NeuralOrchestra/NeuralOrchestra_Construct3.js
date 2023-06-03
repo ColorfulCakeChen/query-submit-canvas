@@ -766,11 +766,11 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
         const extractedValue = AI_output_extractedArray[ extractedIndex ];
         const keyCode = KeyCodeArray[ extractedIndex ];
 
-        // 3.1 key is viewed as released.
+        // 3.1 AI releases the key.
         if ( extractedValue < KeyDownArray_thresholdValue ) {
           KeyDownArray_IArrayInstance.setAt( value_for_KeyReleased, keyCode );
 
-        // 3.2 key is viewed as pressed.
+        // 3.2 AI presses the key.
         // ( extractedValue >= KeyDownArray_thresholdValue )
         } else {
           KeyDownArray_IArrayInstance.setAt( value_for_KeyPressed, keyCode );
