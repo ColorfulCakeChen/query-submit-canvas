@@ -649,14 +649,19 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
       // e.g. Int32ArrayArray
       const output_TypedArrayArray = await TypedArray_process_asyncPromise;
 
-      // If the AI has been turned off during the processing (e.g. game is
-      // over). No need to apply to KeyDownArray.
-      if ( !this.AI_bTurnOn )
-        return;
+      // If AI is still turned on, apply processing result to KeyDownArray.
+      if ( this.AI_bTurnOn ) {
+        NeuralOrchestra_Construct3.KeyDownArray_set_by_output
+          .call( this, output_TypedArrayArray );
 
-      // Since AI is still turned on, apply processing result to KeyDownArray.
-      NeuralOrchestra_Construct3.KeyDownArray_set_by_output
-        .call( this, output_TypedArrayArray );
+      // If the AI has been turned off during the processing (e.g. game is
+      // over). Not only do not let AI apply to KeyDownArray, but also clear
+      // KeyDownArray (i.e. simulate nobody press these keys).
+      } else {
+
+//!!! ...unfinished... (2023/06/03)
+// Clear KeyDownArray
+      }
 
     } finally {
       // To allow the next AI processing.
