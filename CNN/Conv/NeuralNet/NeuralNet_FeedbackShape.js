@@ -678,7 +678,6 @@ class NeuralNet_FeedbackShape extends NeuralNet_FeedbackToInput {
       );
 
     // 3.
-    //const input_width = this.input_width;
     const input_width_valueCount = this.input_width_valueCount;
 
     const implicit_input_height = this.implicit_input_height;
@@ -695,8 +694,6 @@ class NeuralNet_FeedbackShape extends NeuralNet_FeedbackToInput {
       let to_valueIndex_y_begin
         = ( ( area_position_top * this.input_width ) + area_position_left )
             * input_channelCount;
-
-//!!! ...unfinished... (2023/06/03)
 
       // 4.2
       for ( let y = 0; y < implicit_input_height; ++y ) {
