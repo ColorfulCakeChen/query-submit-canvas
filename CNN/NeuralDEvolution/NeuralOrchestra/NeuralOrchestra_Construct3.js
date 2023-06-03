@@ -662,12 +662,10 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
           .call( this, output_TypedArrayArray );
 
       // If the AI has been turned off during the processing (e.g. game is
-      // over). Not only do not let AI apply to KeyDownArray, but also clear
-      // KeyDownArray (i.e. simulate nobody press these keys).
+      // over). Do not let AI apply to KeyDownArray.
       } else {
-
-//!!! ...unfinished... (2023/06/03)
-// Clear KeyDownArray
+        // Ensure all action keys (of keyboard) are not pressed.
+        NeuralOrchestra_Construct3.KeyDownArray_clear.call( this );
       }
 
     } finally {
@@ -931,10 +929,8 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
       } );
     }
 
-//!!! ...unfinished... (2023/05/29)
-// Clear KeyDownArray
-
-
+    // Ensure all action keys (of keyboard) are not pressed.
+    NeuralOrchestra_Construct3.KeyDownArray_clear.call( this );
   }
 
   /**
@@ -1007,9 +1003,8 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
       } );
     }
 
-//!!! ...unfinished... (2023/05/29)
-// Clear KeyDownArray
-
+    // Ensure all action keys (of keyboard) are not pressed.
+    NeuralOrchestra_Construct3.KeyDownArray_clear.call( this );
   }
   
   /**
