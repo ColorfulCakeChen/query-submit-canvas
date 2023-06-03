@@ -637,20 +637,8 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
 
 //!!! ...unfinished... (2023/06/03)
     //!!! (2023/06/03 Temp Test) Check implicit input area black transparent.
-    {
-      const funcNameInMessage = "DrawingCanvas_process_by_AI_async";
-      const feedbackShape = base.feedbackShape;
-      const pixelValueArray = this.DrawingCanvas_clearColor;
-      if ( feedbackShape ) {
-        const bBlackTransparentAll = feedbackShape.implicit_input_is_by_pixel(
-          source_TypedArray, pixelValueArray );
-        if ( !bBlackTransparentAll )
-          throw Error( `NeuralOrchestra.Construct3.${funcNameInMessage}(): `
-            + `bBlackTransparentAll ( ${bBlackTransparentAll} ) `
-            + `should be as true.`
-          );
-      }      
-    }
+    NeuralOrchestra_Construct3.DrawingCanvas_implicit_input_check
+      .call( this, source_TypedArray );
 
     let TypedArray_process_asyncPromise
       = base.TypedArray_process_asyncPromise_create(
@@ -704,6 +692,35 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
     // To allow the next AI processing.
     const gameTime_endSeconds = runtime.gameTime;
     this.AI_gameTime_endSeconds = gameTime_endSeconds;
+  }
+
+  /**
+   * Check the implicit input area of source_TypedArray whether be cleared.
+   *
+   * @param {NeuralOrchestra_Construct3} this
+   *
+   * @param {Uint8ClampedArray|Uint16Array|Uint32Array} source_TypedArray
+   *   An unsigned integer TypedArray which will be processed by the pair of
+   * neural workers. For example, ImageData.data which is coming from a canvas.
+   */
+  static DrawingCanvas_implicit_input_check( source_TypedArray ) {
+    const funcNameInMessage = "DrawingCanvas_implicit_input_check";
+
+    const base = this.base;
+    const feedbackShape = base.feedbackShape;
+    const pixelValueArray = this.DrawingCanvas_clearColor;
+
+    if ( !feedbackShape )
+      return; // No implicit input area could be checked.
+
+    const bBlackTransparentAll = feedbackShape.implicit_input_is_by_pixel(
+      source_TypedArray, pixelValueArray );
+
+    if ( !bBlackTransparentAll )
+      throw Error( `NeuralOrchestra.Construct3.${funcNameInMessage}(): `
+        + `bBlackTransparentAll ( ${bBlackTransparentAll} ) `
+        + `should be as true.`
+      );
   }
 
   /**
