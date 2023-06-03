@@ -641,26 +641,31 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
     if ( !this.alignmentMarkValueArrayArray_operate_done )
       return; // AI can not process image if alignment marks not yet ready.
 
-    // Process image data.
-    const base = this.base;
-    const source_TypedArray = aImageData.data;
-    const source_height = aImageData.height;
-    const source_width = aImageData.width;
+    try {
+      const base = this.base;
+      const source_TypedArray = aImageData.data;
+      const source_height = aImageData.height;
+      const source_width = aImageData.width;
 
-//!!! ...unfinished... (2023/06/03)
-    //!!! (2023/06/03 Temp Test) Check implicit input area black transparent.
-    NeuralOrchestra_Construct3.DrawingCanvas_implicit_input_check
-      .call( this, source_TypedArray );
+  //!!! ...unfinished... (2023/06/03)
+      //!!! (2023/06/03 Temp Test) Check implicit input area black transparent.
+      NeuralOrchestra_Construct3.DrawingCanvas_implicit_input_check
+        .call( this, source_TypedArray );
 
-    let TypedArray_process_asyncPromise
-      = base.TypedArray_process_asyncPromise_create(
-          source_TypedArray, source_height, source_width );
+      // Process image data.
+      const TypedArray_process_asyncPromise
+        = base.TypedArray_process_asyncPromise_create(
+            source_TypedArray, source_height, source_width );
 
-    // Int32ArrayArray
-    let output_TypedArrayArray = await TypedArray_process_asyncPromise;
+      // e.g. Int32ArrayArray
+      const output_TypedArrayArray = await TypedArray_process_asyncPromise;
 
-    // If AI is still turned on, apply processing result to KeyDownArray.
-    if ( this.AI_bTurnOn ) {
+      // If the AI has been turned off during the processing (e.g. game is
+      // over). No need to apply to KeyDownArray.
+      if ( !this.AI_bTurnOn )
+        return;
+
+      // If AI is still turned on, apply processing result to KeyDownArray.
       const feedbackShape = base.feedbackShape;
 
       // Every output pixel represents an action of an alignment.
@@ -707,13 +712,11 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
       }
 
 
-    // Otherwise, the AI has been turned off during the processing (e.g. game
-    // is over). No need to apply to KeyDownArray.
+    } finally {
+      // To allow the next AI processing.
+      const gameTime_endSeconds = runtime.gameTime;
+      this.AI_gameTime_endSeconds = gameTime_endSeconds;
     }
-
-    // To allow the next AI processing.
-    const gameTime_endSeconds = runtime.gameTime;
-    this.AI_gameTime_endSeconds = gameTime_endSeconds;
   }
 
   /**
