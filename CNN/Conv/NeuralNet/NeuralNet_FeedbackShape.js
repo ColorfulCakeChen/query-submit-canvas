@@ -655,23 +655,9 @@ class NeuralNet_FeedbackShape extends NeuralNet_FeedbackToInput {
    * input area is filled with the pixel values.
    */
   implicit_input_is_by_pixel( input_TypedArray, pixelValueArray ) {
-
-//!!! ...unfinished... (2023/06/03)
-
     const funcNameInMessage = "implicit_input_is_by_pixel";
 
-    // Q: Why fill an area pixels? Why not just fill ( 1 * 1 ) pixel?
-    // A: NeuralNet mainly uses ( 3 * 3 ) depthwise filter.
-    //
-    //   - If alignment mark just occupies ( 1 * 1 ) pixel, it could only be
-    //       detected by a special depthwise filter.
-    //
-    //   - If alignment mark occupies ( 3 * 3 ) pixel, it could be detected by
-    //       most kinds of depthwise filter easily.
-    //
-
     const input_channelCount = this.input_channelCount;
-    const area = this.area;
 
     // 1. Check (next time) input shape.
     if ( input_TypedArray.length != this.input_valueCount )
@@ -681,63 +667,54 @@ class NeuralNet_FeedbackShape extends NeuralNet_FeedbackToInput {
         + `.input_valueCount ( ${this.input_valueCount} ).`
       );
 
-    // 2. Check alignment mark value array shape.
-    if ( alignmentMarkValueArray.length != input_channelCount )
+    // 2. Check pixel value array shape.
+    if ( pixelValueArray.length != input_channelCount )
       throw Error( `NeuralNet_FeedbackShape.${funcNameInMessage}(): `
-        + `alignmentMarkValueArray.length `
-        + `( ${alignmentMarkValueArray.length} ) `
+        + `pixelValueArray.length `
+        + `( ${pixelValueArray.length} ) `
         + `should be the same as `
         + `input_channelCount ( ${input_channelCount} ).`
       );
 
     // 3.
+    //const input_width = this.input_width;
     const input_width_valueCount = this.input_width_valueCount;
-    const area_height_pixelCount_original = area.height_pixelCount_original;
-    const area_height_multiplier = area.height_multiplier;
-    const area_width_pixelCount_original = area.width_pixelCount_original;
-    const area_width_multiplier = area.width_multiplier;
 
-    // 4. Fill alignment mark value to the next time input.
+    const implicit_input_height = this.implicit_input_height;
+    const implicit_input_width = this.implicit_input_width;
+
+    // 4. Check every target value of the next time input.
     let to_valueIndex = 0;
 
     // 4.1
-    const areaIndex = 0; // Area 0 is for filling alignment mark.
     {
-      let area_position_left = this.area_position_leftArray[ areaIndex ];
-      let area_position_top = this.area_position_topArray[ areaIndex ];
+      let area_position_left = 0;
+      let area_position_top = 0;
 
       let to_valueIndex_y_begin
         = ( ( area_position_top * this.input_width ) + area_position_left )
             * this.input_channelCount;
 
+//!!! ...unfinished... (2023/06/03)
+
       // 4.2
-      for ( let y = 0; y < area_height_pixelCount_original; ++y ) {
+      for ( let y = 0; y < implicit_input_height; ++y ) {
+        to_valueIndex = to_valueIndex_y_begin;
 
         // 4.3
-        for ( let y_multiplier = 0;
-          y_multiplier < area_height_multiplier; ++y_multiplier ) {
-
-          to_valueIndex = to_valueIndex_y_begin;
+        for ( let x = 0; x < implicit_input_width; ++x ) {
 
           // 4.4
-          for ( let x = 0; x < area_width_pixelCount_original; ++x ) {
+          for ( let c = 0; c < input_channelCount; ++c ) {
+            input_TypedArray[ to_valueIndex ]
+              = alignmentMarkValueArray[ c ];
+            ++to_valueIndex;
+          } // c
 
-            // 4.5
-            for ( let x_multiplier = 0;
-              x_multiplier < area_width_multiplier; ++x_multiplier ) {
+        } // x
 
-              // 4.6
-              for ( let c = 0; c < input_channelCount; ++c ) {
-                input_TypedArray[ to_valueIndex ]
-                  = alignmentMarkValueArray[ c ];
-                ++to_valueIndex;
-              } // c
+        to_valueIndex_y_begin += input_width_valueCount;
 
-            } // x_multiplier
-          } // x
-
-          to_valueIndex_y_begin += input_width_valueCount;
-        } // y_multiplier
       } // y
     } // areaIndex
   }
