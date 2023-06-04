@@ -1055,48 +1055,42 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
    * @param {NeuralOrchestra_Construct3} this
    */
   static Versus_Step_10_ParentAlignment1_End( runtime ) {
-    // Turn off AI because fighting stopped.
+    // 1. Turn off AI because fighting stopped.
     this.AI_bTurnOn = false;
 
-//!!! ...unfinished... (2023/06/03)
-// Collect another win/lose.
-// Combine with previous win/lose.
-// Report to server.
+    // 2. Collect and combine win/draw/lose. Report to server.
 
+    // 2.1
     const Versus_Result_ParentAlignment0
       = runtime.globalVars.Versus_Result_ParentAlignment0;
 
     const Versus_Result_ParentAlignment1
       = runtime.globalVars.Versus_Result_ParentAlignment1;
 
-    let Versus_Result_Summary;
+    const Versus_Result_Sum
+      = Versus_Result_ParentAlignment0 + Versus_Result_ParentAlignment1;
+
+    // 2.2
+    // The lose/draw/win value of the versus. (-1 or 0 or +1)
+    //   - -1 (if parent lose offspring)
+    //   -  0 (if parent draw offspring)
+    //   - +1 (if parent win offspring)
+    let Versus_Result_n1_0_p1;
     {
-      if ( Versus_Result_ParentAlignment0 < 0 ) {
-
-        if ( Versus_Result_ParentAlignment1 < 0 )
-          Versus_Result_Summary = -1;
-        else if ( Versus_Result_ParentAlignment1 == 0 )
-          Versus_Result_Summary = -1;
-        else // ( Versus_Result_ParentAlignment1 > 0 )
-          Versus_Result_Summary = 0;
-    
-    
-      } else if ( Versus_Result_ParentAlignment0 == 0 ) {
-
-      } else { // ( Versus_Result_ParentAlignment0 > 0 )
-
-      }
+      if ( Versus_Result_Sum < 0 )
+        Versus_Result_n1_0_p1 = -1;
+      else if ( Versus_Result_Sum == 0 )
+        Versus_Result_n1_0_p1 = 0;
+      else // ( Versus_Result_Sum > 0 )
+        Versus_Result_n1_0_p1 = +1;
     }
 
-    // Parent lose twice: -1
-    // Parent lose once and win win twice: +1
-    // Parent win twice: +1
-    const Versus_Result_Summary
-      = ( Versus_Result_ParentAlignment0 + Versus_Result_ParentAlignment1 )
-          / 2;
+    // 2.3
+    this.base.versusResultSender_send( Versus_Result_n1_0_p1 );
 
-      versusResultSender_send( n1_0_p1 )
+    // 3.
 
+//!!! ...unfinished... (2023/06/03)
 
 
 //!!! ...unfinished... (2022/10/28)
