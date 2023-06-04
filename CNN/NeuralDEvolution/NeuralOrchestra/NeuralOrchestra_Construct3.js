@@ -984,16 +984,6 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
     if ( !this.AI_bTurnOn )
       this.AI_bTurnOn = true;
 
-//!!! ...unfinished... (2023/04/14)
-// Perhaps, use IBinaryDataInstance to recurrent output to game scene.
-// So, set IWorldIntance.colorRga[] of game object.
-//
-// Get ImageData from DrawCanvas. Fill recurrent output into
-// ImageData.data (Uint8ClampedArray) directly.
-
-//!!! ...unfinished... (2023/05/24)
-//    let theDrawingCanvas = runtime.objects.DrawingCanvas.getFirstInstance();
-
 //!!! ...unfinished... (2023/05/26)
 // Every tick should theDrawingCanvas.PasteInstances()
 // and await it for getting completed image.
