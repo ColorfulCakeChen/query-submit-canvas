@@ -884,16 +884,14 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
 // Perhaps, check this.versus_load_progress
 // (may be loading versusSummary + versus, or loading versus only.)
 
-//!!! ...unfinished... (2023/04/08)
-// Since this should inside a requestAnimationFrame() callback.
-// Update progress to UI. And then, call versus_load_asyncGenerator.next()
-//
-
     // Update progress to game side (and game side will display it to UI).
     runtime.globalVars.Versus_DownloadWeights_Progress
       = base.versus_load_asyncPromise_progress.valuePercentage;
 
     // Ticking the downloading.
+    //
+    // Note: Suppose this method is called inside a requestAnimationFrame()
+    //       callback.
     if ( this.versus_load_asyncGeneratorTicker.done() ) {
       // If versus downloaded, change to the next state.
       ++runtime.globalVars.Versus_Step_Current;
