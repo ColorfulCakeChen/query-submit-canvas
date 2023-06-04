@@ -1805,7 +1805,7 @@ class NeuralOrchestra_Base extends
    *     - Float32Array[ 1 ] (or Int32Array[ 1 ])
    *
    *
-   * @param {number} minusOne_zero_plusOne
+   * @param {number} n1_0_p1
    *   The lose/draw/win value of the versus. (-1 or 0 or +1)
    *     - -1 (if parent lose offspring)
    *     -  0 (if parent draw offspring)
@@ -1823,7 +1823,7 @@ class NeuralOrchestra_Base extends
    *       not be sent. It will be just discarded to prenvent server from
    *       being confused.
    */
-  versusResultSender_send( minusOne_zero_plusOne ) {
+  versusResultSender_send( n1_0_p1 ) {
 
     const funcNameInMessage = "versusResultSender_send";
     { // Checking pre-condition.
@@ -1863,7 +1863,7 @@ class NeuralOrchestra_Base extends
     }
 
     this.versusResultSender.post_by_versusId_NegativeZeroPositive(
-      this.versus.versusId, minusOne_zero_plusOne );
+      this.versus.versusId, n1_0_p1 );
     return true;
   }
 

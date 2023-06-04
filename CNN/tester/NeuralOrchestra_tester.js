@@ -464,7 +464,7 @@ class TestCase {
 
     // A random integer between [ -1, +1 ].
     try {
-      let minusOne_zero_plusOne = RandTools.getRandomIntInclusive( -1, 1 );
+      let n1_0_p1 = RandTools.getRandomIntInclusive( -1, 1 );
       let bWillTrySend;
 
       // Test: versus expired.
@@ -477,7 +477,7 @@ class TestCase {
             = Date.now() - DEvolution.Versus.expireIntervalMilliseconds - 1;
 
           bWillTrySend = neuralOrchestra.versusResultSender_send(
-            minusOne_zero_plusOne );
+            n1_0_p1 );
 
           if ( bWillTrySend )
             throw Error( `NeuralOrchestra_tester.TestCase`
@@ -493,7 +493,7 @@ class TestCase {
           neuralOrchestra.versus.loadTimestampMilliseconds = undefined;
 
           bWillTrySend = neuralOrchestra.versusResultSender_send(
-            minusOne_zero_plusOne );
+            n1_0_p1 );
 
           if ( bWillTrySend )
             throw Error( `NeuralOrchestra_tester.TestCase`
@@ -510,7 +510,7 @@ class TestCase {
             = backupLoadTimestampMilliseconds;
 
           bWillTrySend = neuralOrchestra.versusResultSender_send(
-            minusOne_zero_plusOne );
+            n1_0_p1 );
 
           if ( !bWillTrySend )
             throw Error( `NeuralOrchestra_tester.TestCase`

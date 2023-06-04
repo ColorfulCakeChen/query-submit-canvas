@@ -37,13 +37,13 @@ function test_DEvolution_VersusResultSender_MultiEventName(
       let fake_versusIdString = `${entityNo}_0_0_0`;
       versusId.set_byVersusIdString( fake_versusIdString );
 
-      for ( let minusOne_zero_plusOne = -1;
-            minusOne_zero_plusOne <= 1;
-            ++minusOne_zero_plusOne) {
+      for ( let n1_0_p1 = -1;
+            n1_0_p1 <= 1;
+            ++n1_0_p1) {
 
         versusResultSender
           .post_by_measurementId_versusId_NegativeZeroPositive(
-            sender_measurementId, versusId, minusOne_zero_plusOne );
+            sender_measurementId, versusId, n1_0_p1 );
 
         // Every 4 events, post once more so that the result of every entity
         // could be a little different for helping verifying more easily by eyes.
@@ -53,7 +53,7 @@ function test_DEvolution_VersusResultSender_MultiEventName(
           for ( let i = 0; i < extraCount; ++i ) {
             versusResultSender
               .post_by_measurementId_versusId_NegativeZeroPositive(
-                sender_measurementId, versusId, minusOne_zero_plusOne );
+                sender_measurementId, versusId, n1_0_p1 );
           }
         }
 

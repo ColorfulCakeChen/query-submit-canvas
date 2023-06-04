@@ -1076,8 +1076,9 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
         if ( Versus_Result_ParentAlignment1 < 0 )
           Versus_Result_Summary = -1;
         else if ( Versus_Result_ParentAlignment1 == 0 )
-    
+          Versus_Result_Summary = -1;
         else // ( Versus_Result_ParentAlignment1 > 0 )
+          Versus_Result_Summary = 0;
     
     
       } else if ( Versus_Result_ParentAlignment0 == 0 ) {
@@ -1094,7 +1095,7 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
       = ( Versus_Result_ParentAlignment0 + Versus_Result_ParentAlignment1 )
           / 2;
 
-      versusResultSender_send( minusOne_zero_plusOne )
+      versusResultSender_send( n1_0_p1 )
 
 
 
