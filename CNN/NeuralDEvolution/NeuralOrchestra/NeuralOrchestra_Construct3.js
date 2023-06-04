@@ -879,19 +879,17 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
     //       failed (e.g. timeout). No extra message will be displayed but
     //       the progress (i.e. .valuePercentage) will be backtracked if retry.
 
+
 //!!! ...unfinished... (2023/03/10)
 // Perhaps, check this.versus_load_progress
 // (may be loading versusSummary + versus, or loading versus only.)
-
 
 //!!! ...unfinished... (2023/04/08)
 // Since this should inside a requestAnimationFrame() callback.
 // Update progress to UI. And then, call versus_load_asyncGenerator.next()
 //
 
-//!!! ...unfinished... (2023/05/24)
-    //update_to_UI();
-
+    // Update progress to game side (and game side will display it to UI).
     runtime.globalVars.Versus_DownloadWeights_Progress
       = base.versus_load_asyncPromise_progress.valuePercentage;
 
