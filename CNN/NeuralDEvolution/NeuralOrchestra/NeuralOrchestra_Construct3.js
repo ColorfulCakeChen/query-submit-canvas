@@ -875,8 +875,9 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
   static Versus_Step_01_DownloadWeights_Loading( runtime ) {
     const base = this.base;
 
-//!!! ...unfinished... (2022/12/29) AbortSignal.timeout()?
-// If downloading is failed (e.g. timeout), display message and re-try downloading.
+    // Note: In current design, the downloading will retry automatically if
+    //       failed (e.g. timeout). No extra message will be displayed but
+    //       the progress (i.e. .valuePercentage) will be backtracked if retry.
 
 //!!! ...unfinished... (2023/03/10)
 // Perhaps, check this.versus_load_progress
