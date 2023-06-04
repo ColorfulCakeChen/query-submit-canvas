@@ -872,13 +872,12 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
    * @param {NeuralOrchestra_Construct3} this
    */
   static Versus_Step_00_DownloadWeights_Begin( runtime ) {
-    //const base = this.base;
+    if ( this.versus_load_asyncGeneratorTicker )
+      return; // Prevent re-enter.
 
-    if ( !this.versus_load_asyncGeneratorTicker ) {
-      let versus_load_asyncGenerator = this.versus_load_asyncGenerator;
-      this.versus_load_asyncGeneratorTicker
-        = new PartTime.AsyncGeneratorTicker( versus_load_asyncGenerator );
-    }
+    let versus_load_asyncGenerator = this.versus_load_asyncGenerator;
+    this.versus_load_asyncGeneratorTicker
+      = new PartTime.AsyncGeneratorTicker( versus_load_asyncGenerator );
   }
 
   /**
@@ -928,6 +927,8 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
    * @param {NeuralOrchestra_Construct3} this
    */
   static Versus_Step_02_DownloadWeights_End( runtime ) {
+    if ( !this.versus_load_asyncGeneratorTicker )
+      return; // Prevent re-enter.
 
     // So that ticker could be created when the next time downloading is
     // requested.
