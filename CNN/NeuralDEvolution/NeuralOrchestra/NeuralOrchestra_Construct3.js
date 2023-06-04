@@ -799,6 +799,13 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
 
       // 3. Apply extracted output value to KeyDownArray.
 
+      // Q: How to convert neural network output value to control signal
+      //    (i.e. 0 or 1)?
+      // A: Using remainder operation (e.g. ( output % 2 ) ) seems relying
+      //    the least significant bit (i.e. bit 0) too much. So, using
+      //    threshold (e.g. ( >= 2 ) or ( < 2 ) ) may be better.
+      //
+
       // All usable key codes of the alignment.
       const KeyCodeArray = KeyCodeArrayArray[ alignmentId ];
 
@@ -979,22 +986,9 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
    * @param {NeuralOrchestra_Construct3} this
    */
   static Versus_Step_05_ParentAlignment0_Fighting( runtime ) {
-
-//!!! ...unfinished... (2023/05/29)
+    // Turn on AI so that fighting automatically.
     if ( !this.AI_bTurnOn )
       this.AI_bTurnOn = true;
-
-//!!! ...unfinished... (2023/05/26)
-// Every tick should theDrawingCanvas.PasteInstances()
-// and await it for getting completed image.
-//
-// But not every tick call neural network's .TypedArray_process().
-// Call .TypedArray_process() only if:
-//   - theDrawingCanvas.PasteInstances() promise resolved.
-//   - Previous .TypedArray_process() has done.
-//   - A specific elapsed time has gone after the time of the previous
-//        .TypedArray_process() done.
-
   }
 
   /**
@@ -1045,22 +1039,9 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
    * @param {NeuralOrchestra_Construct3} this
    */
   static Versus_Step_09_ParentAlignment1_Fighting( runtime ) {
-
-//!!! ...unfinished... (2023/05/29)
+    // Turn on AI so that fighting automatically.
     if ( !this.AI_bTurnOn )
       this.AI_bTurnOn = true;
-
-
-//!!! ...unfinished... (2022/10/27)
-
-//!!! ...unfinished... (2023/03/16)
-// Q: How to convert neural network output floating-point number to
-//    control signal (i.e. 0 or 1)?
-// A: Using remainder operation (e.g. ( output % 2 ) ) seems relying
-//    the least significant bit (i.e. bit 0) too much. Perhaps, using
-//    threshold (e.g. ( >= 2 ) or ( < 2 ) ) is better.
-//
-
   }
 
   /**
