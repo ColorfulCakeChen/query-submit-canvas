@@ -56,7 +56,7 @@ class DEvolution_VersusResultSender_MultiEventName
    * event names. So there are at most 9 (= Math.floor( 29 / 3 ) ) entities could
    * be represented.
    *
-   * @param {number} nNegativeZeroPositive
+   * @param {number} minusOne_zero_plusOne
    *   The lose/draw/win value of the versus. (-1 or 0 or +1)
    *     - -1 (if parent lose offspring)
    *     -  0 (if parent draw offspring)
@@ -64,19 +64,19 @@ class DEvolution_VersusResultSender_MultiEventName
    *
    * @return {object}
    *   Return an event object (looked up from .eventObjectTable[]) representing the
-   * versusId.entityNo and nNegativeZeroPositive (-1 or 0 or +1). Its event name
+   * versusId.entityNo and minusOne_zero_plusOne (-1 or 0 or +1). Its event name
    * is important (and its event content is not important).
    */
   static eventObject_get_by_versusId_NegativeZeroPositive(
-    versusId, nNegativeZeroPositive ) {
+    versusId, minusOne_zero_plusOne ) {
 
     // Ensure it is an integer between [ -1, +1 ].
-    nNegativeZeroPositive
-      = Math.min( Math.max( -1, Math.trunc( nNegativeZeroPositive ) ), 1 );
+    minusOne_zero_plusOne
+      = Math.min( Math.max( -1, Math.trunc( minusOne_zero_plusOne ) ), 1 );
 
     const entityNo = versusId.entityNo; // An integer between [ 0, 8 ].
     const NegativeZeroPositiveKinds = 3; // ( -1, 0, +1 ) have 3 kinds.
-    const number_0_1_2 = nNegativeZeroPositive + 1; // An integer between [ 0, 2 ].
+    const number_0_1_2 = minusOne_zero_plusOne + 1; // An integer between [ 0, 2 ].
 
     // The array index into eventObjectTable[].
     let eventObjectTableIndex
@@ -91,7 +91,7 @@ class DEvolution_VersusResultSender_MultiEventName
   }
 
   /**
-   * Every versusId.entityNo and every nNegativeZeroPositive (-1 or 0 or +1) will
+   * Every versusId.entityNo and every minusOne_zero_plusOne (-1 or 0 or +1) will
    * use an different event name (and its event content is not important).
    *
    * Note: The versusId.measurementId and versusId.apiSecret will be used.
@@ -103,25 +103,25 @@ class DEvolution_VersusResultSender_MultiEventName
    * event names. So there are at most 9 (= Math.floor( 29 / 3 ) ) entities could
    * be represented.
    *
-   * @param {number} nNegativeZeroPositive
+   * @param {number} minusOne_zero_plusOne
    *   The lose/draw/win value of the versus. (-1 or 0 or +1)
    *     - -1 (if parent lose offspring)
    *     -  0 (if parent draw offspring)
    *     - +1 (if parent win offspring)
    */
   post_by_versusId_NegativeZeroPositive(
-    versusId, nNegativeZeroPositive ) {
+    versusId, minusOne_zero_plusOne ) {
 
     const eventObject = DEvolution_VersusResultSender_MultiEventName
       .eventObject_get_by_versusId_NegativeZeroPositive(
-        versusId, nNegativeZeroPositive );
+        versusId, minusOne_zero_plusOne );
 
     this.post_by_measurementId_apiSecret_event(
       versusId.measurementId, versusId.apiSecret, eventObject );
   }
 
   /**
-   * Every versusId.entityNo and every nNegativeZeroPositive (-1 or 0 or +1) will
+   * Every versusId.entityNo and every minusOne_zero_plusOne (-1 or 0 or +1) will
    * use an different event name (and its event content is not important).
    *
    * @param {string} measurementId
@@ -136,25 +136,25 @@ class DEvolution_VersusResultSender_MultiEventName
    * event names. So there are at most 9 (= Math.floor( 29 / 3 ) ) entities could
    * be represented.
    *
-   * @param {number} nNegativeZeroPositive
+   * @param {number} minusOne_zero_plusOne
    *   The lose/draw/win value of the versus. (-1 or 0 or +1)
    *     - -1 (if parent lose offspring)
    *     -  0 (if parent draw offspring)
    *     - +1 (if parent win offspring)
    */
   post_by_measurementId_apiSecret_versusId_NegativeZeroPositive(
-    measurementId, apiSecret, versusId, nNegativeZeroPositive ) {
+    measurementId, apiSecret, versusId, minusOne_zero_plusOne ) {
 
     const eventObject = DEvolution_VersusResultSender_MultiEventName
       .eventObject_get_by_versusId_NegativeZeroPositive(
-        versusId, nNegativeZeroPositive );
+        versusId, minusOne_zero_plusOne );
 
     this.post_by_measurementId_apiSecret_event(
       measurementId, apiSecret, eventObject );
   }
 
   /**
-   * Every versusId.entityNo and every nNegativeZeroPositive (-1 or 0 or +1) will
+   * Every versusId.entityNo and every minusOne_zero_plusOne (-1 or 0 or +1) will
    * use an different event name (and its event content is not important).
    *
    * The apiSecret will be looked up from .measurementId_to_apiSecret_map
@@ -169,18 +169,18 @@ class DEvolution_VersusResultSender_MultiEventName
    * event names. So there are at most 9 (= Math.floor( 29 / 3 ) ) entities could
    * be represented.
    *
-   * @param {number} nNegativeZeroPositive
+   * @param {number} minusOne_zero_plusOne
    *   The lose/draw/win value of the versus. (-1 or 0 or +1)
    *     - -1 (if parent lose offspring)
    *     -  0 (if parent draw offspring)
    *     - +1 (if parent win offspring)
    */
   post_by_measurementId_versusId_NegativeZeroPositive(
-    measurementId,  versusId, nNegativeZeroPositive ) {
+    measurementId,  versusId, minusOne_zero_plusOne ) {
 
     const eventObject = DEvolution_VersusResultSender_MultiEventName
       .eventObject_get_by_versusId_NegativeZeroPositive(
-        versusId, nNegativeZeroPositive );
+        versusId, minusOne_zero_plusOne );
 
     this.post_by_measurementId_event(
       measurementId, eventObject );

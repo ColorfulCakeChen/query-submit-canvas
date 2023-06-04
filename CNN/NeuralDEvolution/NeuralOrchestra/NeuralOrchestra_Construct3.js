@@ -995,14 +995,8 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
    * @param {NeuralOrchestra_Construct3} this
    */
   static Versus_Step_06_ParentAlignment0_End( runtime ) {
-
-//!!! ...unfinished... (2023/05/29)
+    // Turn off AI because fighting stopped.
     this.AI_bTurnOn = false;
-
-
-//!!! ...unfinished... (2023/06/03)
-// Collect win/lose.
-
   }
 
   /**
@@ -1045,29 +1039,63 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
   }
 
   /**
-   * This method will send versus result to game server.
+   * This method will read the following variables and send versus result to
+   * game server.
    *
    *   - runtime.globalVars should have Versus result.
+   *
+   *   - runtime.globalVars.Versus_Result_ParentAlignment0 (number)
+   *       The versus result when Parent personates alignment 0.
    *       (-1: Offspring win. 0: Parent and Offspring draw. +1: Parent win.)
    *
-   *   - runtime.globalVars.Versus_Result_ParentAlignment0
-   *       The versus result when Parent personates alignment 0.
-   *
-   *   - runtime.globalVars.Versus_Result_ParentAlignment1
+   *   - runtime.globalVars.Versus_Result_ParentAlignment1 (number)
    *       The versus result when Parent personates alignment 1.
+   *       (-1: Offspring win. 0: Parent and Offspring draw. +1: Parent win.)
    *
    * @param {NeuralOrchestra_Construct3} this
    */
   static Versus_Step_10_ParentAlignment1_End( runtime ) {
-
-//!!! ...unfinished... (2023/05/29)
+    // Turn off AI because fighting stopped.
     this.AI_bTurnOn = false;
-
 
 //!!! ...unfinished... (2023/06/03)
 // Collect another win/lose.
 // Combine with previous win/lose.
 // Report to server.
+
+    const Versus_Result_ParentAlignment0
+      = runtime.globalVars.Versus_Result_ParentAlignment0;
+
+    const Versus_Result_ParentAlignment1
+      = runtime.globalVars.Versus_Result_ParentAlignment1;
+
+    let Versus_Result_Summary;
+    {
+      if ( Versus_Result_ParentAlignment0 < 0 ) {
+
+        if ( Versus_Result_ParentAlignment1 < 0 )
+          Versus_Result_Summary = -1;
+        else if ( Versus_Result_ParentAlignment1 == 0 )
+    
+        else // ( Versus_Result_ParentAlignment1 > 0 )
+    
+    
+      } else if ( Versus_Result_ParentAlignment0 == 0 ) {
+
+      } else { // ( Versus_Result_ParentAlignment0 > 0 )
+
+      }
+    }
+
+    // Parent lose twice: -1
+    // Parent lose once and win win twice: +1
+    // Parent win twice: +1
+    const Versus_Result_Summary
+      = ( Versus_Result_ParentAlignment0 + Versus_Result_ParentAlignment1 )
+          / 2;
+
+      versusResultSender_send( minusOne_zero_plusOne )
+
 
 
 //!!! ...unfinished... (2022/10/28)

@@ -62,13 +62,13 @@ class DEvolution_VersusResultSender_SingleEventName
    * @param {DEvolution.VersusId} versusId
    *   The differential evolution versus id.
    *
-   * @param {number} nNegativeZeroPositive
+   * @param {number} minusOne_zero_plusOne
    *   The lose/draw/win value of the versus. (-1 or 0 or +1)
    *     - -1 (if parent lose offspring)
    *     -  0 (if parent draw offspring)
    *     - +1 (if parent win offspring)
    */
-  post_by_versusId_NegativeZeroPositive( versusId, nNegativeZeroPositive ) {
+  post_by_versusId_NegativeZeroPositive( versusId, minusOne_zero_plusOne ) {
 
     // (e.g. EntityNo_ParentGenerationNo_OffspringGenerationNo).
     let versusIdString = versusId.versusIdString;
@@ -93,7 +93,7 @@ class DEvolution_VersusResultSender_SingleEventName
       item_name: versusIdString.toString(),
 
       // quantity must be a number.
-      quantity: Number.parseInt( nNegativeZeroPositive ),
+      quantity: Number.parseInt( minusOne_zero_plusOne ),
     };
 
     let eventPurchase = {
