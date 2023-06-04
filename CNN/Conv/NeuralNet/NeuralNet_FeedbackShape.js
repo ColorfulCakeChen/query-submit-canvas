@@ -656,66 +656,44 @@ class NeuralNet_FeedbackShape extends NeuralNet_FeedbackToInput {
    * input area is filled with the pixel value.
    */
   implicit_input_is_by_pixel( input_TypedArray, pixelValueArray ) {
-    const funcNameInMessage = "implicit_input_is_by_pixel";
-
-    const input_channelCount = this.input_channelCount;
-
-    // 1. Check (next time) input shape.
-    if ( input_TypedArray.length != this.input_valueCount )
-      throw Error( `NeuralNet_FeedbackShape.${funcNameInMessage}(): `
-        + `input_TypedArray.length ( ${input_TypedArray.length} ) `
-        + `should be the same as `
-        + `.input_valueCount ( ${this.input_valueCount} ).`
-      );
-
-    // 2. Check pixel value array shape.
-    if ( pixelValueArray.length != input_channelCount )
-      throw Error( `NeuralNet_FeedbackShape.${funcNameInMessage}(): `
-        + `pixelValueArray.length `
-        + `( ${pixelValueArray.length} ) `
-        + `should be the same as `
-        + `input_channelCount ( ${input_channelCount} ).`
-      );
-
-    // 3.
-    const input_width_valueCount = this.input_width_valueCount;
-
+    const implicit_input_top = 0;
+    const implicit_input_left = 0;
     const implicit_input_height = this.implicit_input_height;
     const implicit_input_width = this.implicit_input_width;
+    return this.input_area_is_by_pixel(
+      input_TypedArray,
+      implicit_input_top, implicit_input_left,
+      implicit_input_height, implicit_input_width,
+      pixelValueArray
+    );
+  }
 
-    // 4. Check every target value of the next time input.
-    let to_valueIndex = 0;
-
-    // 4.1
-    {
-      let area_position_left = 0;
-      let area_position_top = 0;
-
-      let to_valueIndex_y_begin
-        = ( ( area_position_top * this.input_width ) + area_position_left )
-            * input_channelCount;
-
-      // 4.2
-      for ( let y = 0; y < implicit_input_height; ++y ) {
-        to_valueIndex = to_valueIndex_y_begin;
-
-        // 4.3
-        for ( let x = 0; x < implicit_input_width; ++x ) {
-
-          // 4.4
-          for ( let c = 0; c < input_channelCount; ++c ) {
-            if ( input_TypedArray[ to_valueIndex ] != pixelValueArray[ c ] )
-              return false;
-
-            ++to_valueIndex;
-          } // c
-        } // x
-
-        to_valueIndex_y_begin += input_width_valueCount;
-      } // y
-    } // area
-
-    return true;
+  /**
+   *
+   * @param {Uint8ClampedArray|Int32Array} input_TypedArray
+   *   The (next time) input of the pair of neural networks. Usually, it is
+   * integer typed array. It should large enough to contain both implicit and
+   * explicit input.
+   *
+   * @param {Uint8ClampedArray|Int32Array|number[]} pixelValueArray
+   *   A non-negative integer array (as a pixel). Its .length should be
+   * the same as .input_channelCount becasue it represents a pixel.
+   *
+   * @return {boolean}
+   *   Return true, if every pixel (including every channels) inside explicit
+   * input area is filled with the pixel value.
+   */
+  explicit_input_is_by_pixel( input_TypedArray, pixelValueArray ) {
+    const explicit_input_top = 0;
+    const explicit_input_left = this.implicit_input_width;
+    const explicit_input_height = this.explicit_input_height;
+    const explicit_input_width = this.explicit_input_width;
+    return this.input_area_is_by_pixel(
+      input_TypedArray,
+      explicit_input_top, explicit_input_left,
+      explicit_input_height, explicit_input_width,
+      pixelValueArray
+    );
   }
 
   /**
@@ -773,14 +751,13 @@ class NeuralNet_FeedbackShape extends NeuralNet_FeedbackToInput {
     // 3.
     const input_width_valueCount = this.input_width_valueCount;
 
-    // 4. Check every target value of the next time input.
+    // 4. Check every target value in the (next time) input area.
     let to_valueIndex = 0;
 
     // 4.1
     {
       let to_valueIndex_y_begin
-        = ( ( area_top * this.input_width ) + area_left )
-            * input_channelCount;
+        = ( ( area_top * this.input_width ) + area_left ) * input_channelCount;
 
       // 4.2
       for ( let y = 0; y < area_height; ++y ) {
