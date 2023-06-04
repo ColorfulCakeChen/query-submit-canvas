@@ -570,7 +570,7 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
     if ( !this.alignmentMarkValueArrayArray_operate_done )
       return null; // AI can not process image if alignment marks not yet ready.
 
-    const AI_intervalSeconds = this.configJSONData?.AI?.intervalSeconds;
+    const AI_intervalSeconds = this.configJSONData.AI.intervalSeconds;
     if ( !( AI_intervalSeconds >= 0 ) )
       return null; // No interval means no need. At least, should be 0 seconds.
 
