@@ -72,6 +72,14 @@ import { Base as NeuralOrchestra_Base } from "./NeuralOrchestra_Base.js";
  *       .KeyDownArray_IArrayInstance.
  *
  *
+ * @member {Promise( boolean )} alignmentMarkValueArrayArray_set_asyncPromise
+ *   If not null, the alignmentMarkValueArrayArray setting request has been
+ * issued.
+ *
+ * @member {Promise( boolean )} alignmentMarkValueArrayArray_swap_asyncPromise
+ *   If not null, the alignmentMarkValueArrayArray swapping request has been
+ * issued.
+ *
  * @member {boolean} alignmentMarkValueArrayArray_operate_done
  *   Whether the alignmentMarkValueArrayArray_set_Xxx() or
  * alignmentMarkValueArrayArray_swap_Xxx() has completed so that neural network
@@ -211,6 +219,8 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
     this.AI_bTurnOn = undefined;    
 
     this.alignmentMarkValueArrayArray_operate_done = undefined;
+    this.alignmentMarkValueArrayArray_swap_asyncPromise = undefined;
+    this.alignmentMarkValueArrayArray_set_asyncPromise = undefined;
 
     this.DrawingCanvas_pasteInstancesPromise = undefined;
     this.DrawingCanvas_pasteInstanceArray = undefined;
@@ -948,6 +958,9 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
    * @param {NeuralOrchestra_Construct3} this
    */
   static Versus_Step_03_ParentAlignment0_WaitVersusInfo( runtime ) {
+    if ( this.alignmentMarkValueArrayArray_set_asyncPromise )
+      return; // Do not setting twice.
+
     const base = this.base;
 
     // Setup alignment marks.
@@ -957,12 +970,12 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
       const alignmentMarkValueArrayArray
         = configJSONData.alignmentMarkValueArrayArray;
 
-      let alignmentMarkValueArrayArray_set_asyncPromise
+      this.alignmentMarkValueArrayArray_set_asyncPromise
         = base.alignmentMarkValueArrayArray_set_asyncPromise_create(
             alignmentMarkValueArrayArray );
 
       this.alignmentMarkValueArrayArray_operate_done = undefined;
-      alignmentMarkValueArrayArray_set_asyncPromise.then( bSetOk => {
+      this.alignmentMarkValueArrayArray_set_asyncPromise.then( bSetOk => {
         this.alignmentMarkValueArrayArray_operate_done = bSetOk;
       } );
     }
@@ -975,10 +988,8 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
    * @param {NeuralOrchestra_Construct3} this
    */
   static Versus_Step_04_ParentAlignment0_WaitDrawingCanvas( runtime ) {
-
-//!!! ...unfinished... (2022/10/27)
-
-
+    // So that the next time setting is allowed.
+    this.alignmentMarkValueArrayArray_set_asyncPromise = undefined;
   }
 
 
@@ -1003,14 +1014,22 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
    * @param {NeuralOrchestra_Construct3} this
    */
  static Versus_Step_07_ParentAlignment1_WaitVersusInfo( runtime ) {
+    if ( this.alignmentMarkValueArrayArray_swap_asyncPromise )
+      return; // Do not setting twice.
+
+
+//!!! ...unfinished... (2023/06/03)
+// should prevent re-enter.
+
+    const base = this.base;
 
     // Swap alignment marks.
     {
-      let alignmentMarkValueArrayArray_swap_asyncPromise
+      this.alignmentMarkValueArrayArray_swap_asyncPromise
         = base.alignmentMarkValueArrayArray_swap_asyncPromise_create();
 
       this.alignmentMarkValueArrayArray_operate_done = undefined;
-      alignmentMarkValueArrayArray_swap_asyncPromise.then( bSwappedOk => {
+      this.alignmentMarkValueArrayArray_swap_asyncPromise.then( bSwappedOk => {
         this.alignmentMarkValueArrayArray_operate_done = bSwappedOk;
       } );
     }
@@ -1023,10 +1042,8 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
    * @param {NeuralOrchestra_Construct3} this
    */
   static Versus_Step_08_ParentAlignment1_WaitDrawingCanvas( runtime ) {
-
-//!!! ...unfinished... (2022/10/27)
-
-
+    // So that the next time swapping is allowed.
+    this.alignmentMarkValueArrayArray_swap_asyncPromise = undefined;
   }
 
   /**
@@ -1055,6 +1072,10 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
    * @param {NeuralOrchestra_Construct3} this
    */
   static Versus_Step_10_ParentAlignment1_End( runtime ) {
+
+//!!! ...unfinished... (2023/06/03)
+// should prevent re-enter.
+
     // 1. Turn off AI because fighting stopped.
     this.AI_bTurnOn = false;
 
