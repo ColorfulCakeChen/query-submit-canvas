@@ -884,6 +884,7 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
 // Perhaps, check this.versus_load_progress
 // (may be loading versusSummary + versus, or loading versus only.)
 
+
     // Update progress to game side (and game side will display it to UI).
     runtime.globalVars.Versus_DownloadWeights_Progress
       = base.versus_load_asyncPromise_progress.valuePercentage;
@@ -911,18 +912,18 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
    */
   static Versus_Step_02_DownloadWeights_End( runtime ) {
 
-    // So that ticker could be created when the next time downloading.
+    // So that ticker could be created when the next time downloading is
+    // requested.
     this.versus_load_asyncGeneratorTicker = null;
 
     const base = this.base;
-
-    let versus = base.versus;
+    const versus = base.versus;
     if ( !versus )
-      return;
+      return; // (should not happen since downloading succesfully.)
 
-    let versusId = versus.versusId;
+    const versusId = versus.versusId;
     if ( !versusId )
-      return;
+      return; // (should not happen since downloading succesfully.)
 
     runtime.globalVars.Versus_EntityNo = versusId.entityNoString; // (string)
 
