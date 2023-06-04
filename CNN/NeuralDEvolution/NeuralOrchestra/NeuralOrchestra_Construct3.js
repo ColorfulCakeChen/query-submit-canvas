@@ -1088,9 +1088,6 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
     if ( this.Versus_Result_n1_0_p1 != undefined )
       return; // Prevent re-enter.
 
-//!!! ...unfinished... (2023/06/03)
-// should prevent re-enter.
-
     // 1. Turn off AI because fighting stopped.
     this.AI_bTurnOn = false;
 
