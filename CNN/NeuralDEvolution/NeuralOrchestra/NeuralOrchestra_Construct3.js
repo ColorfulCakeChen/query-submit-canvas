@@ -1070,7 +1070,8 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
     const Versus_Result_Sum
       = Versus_Result_ParentAlignment0 + Versus_Result_ParentAlignment1;
 
-    // 2.2
+    // 2.2 Combine results of two versus.
+    //
     // The lose/draw/win value of the versus. (-1 or 0 or +1)
     //   - -1 (if parent lose offspring)
     //   -  0 (if parent draw offspring)
@@ -1085,7 +1086,7 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
         Versus_Result_n1_0_p1 = +1;
     }
 
-    // 2.3
+    // 2.3 Report to server.
     this.base.versusResultSender_send( Versus_Result_n1_0_p1 );
 
     // 3.
