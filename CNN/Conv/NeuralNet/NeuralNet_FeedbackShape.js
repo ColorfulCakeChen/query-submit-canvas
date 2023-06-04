@@ -653,7 +653,7 @@ class NeuralNet_FeedbackShape extends NeuralNet_FeedbackToInput {
    *
    * @return {boolean}
    *   Return true, if every pixel (including every channels) inside implicit
-   * input area is filled with the pixel values.
+   * input area is filled with the pixel value.
    */
   implicit_input_is_by_pixel( input_TypedArray, pixelValueArray ) {
     const funcNameInMessage = "implicit_input_is_by_pixel";
@@ -701,6 +701,93 @@ class NeuralNet_FeedbackShape extends NeuralNet_FeedbackToInput {
 
         // 4.3
         for ( let x = 0; x < implicit_input_width; ++x ) {
+
+          // 4.4
+          for ( let c = 0; c < input_channelCount; ++c ) {
+            if ( input_TypedArray[ to_valueIndex ] != pixelValueArray[ c ] )
+              return false;
+
+            ++to_valueIndex;
+          } // c
+        } // x
+
+        to_valueIndex_y_begin += input_width_valueCount;
+      } // y
+    } // area
+
+    return true;
+  }
+
+  /**
+   *
+   * @param {Uint8ClampedArray|Int32Array} input_TypedArray
+   *   The (next time) input of the pair of neural networks. Usually, it is
+   * integer typed array. It should large enough to contain both implicit and
+   * explicit input.
+   *
+   * @param {number} area_top
+   *   The area beginning position along the height.
+   *
+   * @param {number} area_left
+   *   The area beginning position along the width.
+   *
+   * @param {number} area_height
+   *   The area height.
+   *
+   * @param {number} area_width
+   *   The area width.
+   *
+   * @param {Uint8ClampedArray|Int32Array|number[]} pixelValueArray
+   *   A non-negative integer array (as a pixel). Its .length should be
+   * the same as .input_channelCount becasue it represents a pixel.
+   *
+   * @return {boolean}
+   *   Return true, if every pixel (including every channels) inside the
+   * specified area is filled with the pixel value.
+   */
+  input_area_is_by_pixel( input_TypedArray,
+    area_top, area_left, area_height, area_width,
+    pixelValueArray ) {
+
+    const funcNameInMessage = "input_area_is_by_pixel";
+
+    const input_channelCount = this.input_channelCount;
+
+    // 1. Check (next time) input shape.
+    if ( input_TypedArray.length != this.input_valueCount )
+      throw Error( `NeuralNet_FeedbackShape.${funcNameInMessage}(): `
+        + `input_TypedArray.length ( ${input_TypedArray.length} ) `
+        + `should be the same as `
+        + `.input_valueCount ( ${this.input_valueCount} ).`
+      );
+
+    // 2. Check pixel value array shape.
+    if ( pixelValueArray.length != input_channelCount )
+      throw Error( `NeuralNet_FeedbackShape.${funcNameInMessage}(): `
+        + `pixelValueArray.length `
+        + `( ${pixelValueArray.length} ) `
+        + `should be the same as `
+        + `input_channelCount ( ${input_channelCount} ).`
+      );
+
+    // 3.
+    const input_width_valueCount = this.input_width_valueCount;
+
+    // 4. Check every target value of the next time input.
+    let to_valueIndex = 0;
+
+    // 4.1
+    {
+      let to_valueIndex_y_begin
+        = ( ( area_top * this.input_width ) + area_left )
+            * input_channelCount;
+
+      // 4.2
+      for ( let y = 0; y < area_height; ++y ) {
+        to_valueIndex = to_valueIndex_y_begin;
+
+        // 4.3
+        for ( let x = 0; x < area_width; ++x ) {
 
           // 4.4
           for ( let c = 0; c < input_channelCount; ++c ) {
