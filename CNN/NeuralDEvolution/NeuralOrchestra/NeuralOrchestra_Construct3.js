@@ -893,8 +893,9 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
     runtime.globalVars.Versus_DownloadWeights_Progress
       = base.versus_load_asyncPromise_progress.valuePercentage;
 
-    // If versus loaded, change to the next state.
+    // Ticking the downloading.
     if ( this.versus_load_asyncGeneratorTicker.done() ) {
+      // If versus downloaded, change to the next state.
       ++runtime.globalVars.Versus_Step_Current;
     }
   }
