@@ -166,6 +166,13 @@ import { Base as NeuralOrchestra_Base } from "./NeuralOrchestra_Base.js";
  * @member {number} ActionId_Count_Per_Alignment
  *   The total action count of an alignment.
  *
+ *
+ * @member {number} Versus_Result_n1_0_p1
+ *   The combined results of two versuses. It must be either undefined or a
+ * number (-1 or 0 or +1) representing the lose/draw/win of two versuses.
+ *   - -1 (if parent lose offspring)
+ *   -  0 (if parent draw offspring)
+ *   - +1 (if parent win offspring)
  */
 class NeuralOrchestra_Construct3 extends Recyclable.Root {
 
@@ -207,6 +214,8 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
 
   /** @override */
   disposeResources() {
+
+    this.Versus_Result_n1_0_p1 = undefined;
 
     this.KeyDownArray_value_for_KeyReleased = undefined;
     this.KeyDownArray_value_for_KeyPressed = undefined;
@@ -875,6 +884,10 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
     if ( this.versus_load_asyncGeneratorTicker )
       return; // Prevent re-enter.
 
+    // So that the next time versus result summary could be calculated.
+    this.Versus_Result_n1_0_p1 = undefined;
+
+    // Begin to download versus weights.
     let versus_load_asyncGenerator = this.versus_load_asyncGenerator;
     this.versus_load_asyncGeneratorTicker
       = new PartTime.AsyncGeneratorTicker( versus_load_asyncGenerator );
@@ -963,7 +976,7 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
    */
   static Versus_Step_03_ParentAlignment0_WaitVersusInfo( runtime ) {
     if ( this.alignmentMarkValueArrayArray_set_asyncPromise )
-      return; // Do not setting twice.
+      return; // Prevent re-enter.
 
     const base = this.base;
 
@@ -1019,11 +1032,7 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
    */
  static Versus_Step_07_ParentAlignment1_WaitVersusInfo( runtime ) {
     if ( this.alignmentMarkValueArrayArray_swap_asyncPromise )
-      return; // Do not setting twice.
-
-
-//!!! ...unfinished... (2023/06/03)
-// should prevent re-enter.
+      return; // Prevent re-enter.
 
     const base = this.base;
 
@@ -1076,6 +1085,8 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
    * @param {NeuralOrchestra_Construct3} this
    */
   static Versus_Step_10_ParentAlignment1_End( runtime ) {
+    if ( this.Versus_Result_n1_0_p1 != undefined )
+      return; // Prevent re-enter.
 
 //!!! ...unfinished... (2023/06/03)
 // should prevent re-enter.
@@ -1096,31 +1107,26 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
       = Versus_Result_ParentAlignment0 + Versus_Result_ParentAlignment1;
 
     // 2.2 Combine results of two versus.
-    //
-    // The lose/draw/win value of the versus. (-1 or 0 or +1)
-    //   - -1 (if parent lose offspring)
-    //   -  0 (if parent draw offspring)
-    //   - +1 (if parent win offspring)
-    let Versus_Result_n1_0_p1;
     {
       if ( Versus_Result_Sum < 0 )
-        Versus_Result_n1_0_p1 = -1;
+        this.Versus_Result_n1_0_p1 = -1;
       else if ( Versus_Result_Sum == 0 )
-        Versus_Result_n1_0_p1 = 0;
+        this.Versus_Result_n1_0_p1 = 0;
       else // ( Versus_Result_Sum > 0 )
-        Versus_Result_n1_0_p1 = +1;
+        this.Versus_Result_n1_0_p1 = +1;
     }
 
     // 2.3 Report to server.
-    this.base.versusResultSender_send( Versus_Result_n1_0_p1 );
+    this.base.versusResultSender_send( this.Versus_Result_n1_0_p1 );
 
     // 3.
 
 //!!! ...unfinished... (2023/06/03)
+// Setup this.versus_load_asyncGenerator to start downloading the next versus.
+//
+// Problem: How to tick the .versus_load_asyncGenerator here?
+// The ticker is in Versus_Step_00_Xxx
 
-
-//!!! ...unfinished... (2022/10/28)
-// Perhaps, start downloading the next versus here, too.
 
 //!!! ...unfinished... (2023/03/10)
 // Perhaps, call this.versus_next_load_async(),
