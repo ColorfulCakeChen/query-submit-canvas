@@ -70,11 +70,30 @@ class DEvolution_VersusResultSender_MultiEventName
   static eventObject_get_by_versusId_NegativeZeroPositive(
     versusId, n1_0_p1 ) {
 
+    const funcNameInMessage = "eventObject_get_by_versusId_NegativeZeroPositive";
+
+//!!! ...unfinished... (2023/06/05)
+// should check whether n1_0_p1 is -1 or 0 or +1.
+
     // Ensure it is an integer between [ -1, +1 ].
     n1_0_p1
       = Math.min( Math.max( -1, Math.trunc( n1_0_p1 ) ), 1 );
 
-    const entityNo = versusId.entityNo; // An integer between [ 0, 8 ].
+    // An integer between [ 0, 8 ].
+    const entityNo = Math.trunc( versusId.entityNo );
+    {
+      const entityNumberCountMax
+        = DEvolution_VersusResultSender_MultiEventName.entityNumberCountMax;
+
+      if ( ( entityNo < 0 ) || ( entityNo > entityNumberCountMax ) )
+        throw Error( `DEvolution_VersusResultSender_MultiEventName`
+          + `.${funcNameInMessage}(): `
+          + `versusId.entityNo ( ${entityNo} ) `
+          + `should be an integer between `
+          + `[ 0, ${( entityNumberCountMax - 1 )} ].`
+        );
+    }
+
     const NegativeZeroPositiveKinds = 3; // ( -1, 0, +1 ) have 3 kinds.
     const number_0_1_2 = n1_0_p1 + 1; // An integer between [ 0, 2 ].
 
@@ -243,3 +262,13 @@ DEvolution_VersusResultSender_MultiEventName.eventObjectTable = [
   // { name: "view_promotion", params: { items: [] } },
   // { name: "view_search_results", params: { items: [] } },
 ];
+
+/**
+ * How many entity numbers could be represented by .eventObjectTable[].
+ *
+ * Because every entity (in a versus) uses 3 event names (to represent: parent
+ * lose, draw, offspring win), there are at most 9 kinds of entity number
+ * (i.e. [ 0, 8 ]).
+ */
+DEvolution_VersusResultSender_MultiEventName.entityNumberCountMax = Math.floor(
+  DEvolution_VersusResultSender_MultiEventName.eventObjectTable.length / 3 );
