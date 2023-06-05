@@ -104,8 +104,8 @@ class DEvolution_VersusResultSender_MultiEventName
     let eventObjectTableIndex
       = ( entityNo * NegativeZeroPositiveKinds ) + number_0_1_2;
 
-    // A (re-used) event object (with correct event name, without any content)
-    // represents the entityNo's versus result (lose, draw, win).
+    // Get the (re-used) event object (with correct event name, without any
+    // content) represents the entityNo's versus result (lose, draw, win).
     let eventObject = DEvolution_VersusResultSender_MultiEventName
       .eventObjectTable[ eventObjectTableIndex ];
 
