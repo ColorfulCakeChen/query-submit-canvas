@@ -66,7 +66,8 @@ class DEvolution_Versus extends
   Recyclable.Root ) {
 
   /**
-   * Used as default DEvolution.Versus provider for conforming to Recyclable interface.
+   * Used as default DEvolution.Versus provider for conforming to Recyclable
+   * interface.
    */
   static Pool = new Pool.Root( "DEvolution.Versus.Pool",
     DEvolution_Versus, DEvolution_Versus.setAsConstructor );
@@ -208,23 +209,6 @@ class DEvolution_Versus extends
 
     let progressForOffspringChromosome = progressForDecoding.child_add(
       ValueMax.Percentage.Aggregate.Pool.get_or_create_by( 2 ) );
-
-// //!!! (2023/04/05 Remarked)
-// // Problem: This will result progressParent backtrack.
-//
-//     // (2023/04/05 Remarked)
-//     // For preventing versusId (whose computation is small) from occupying too
-//     // large portion of progress, let chromosome decoders uses
-//     // progressForDecoding directly.
-//     //
-//     // let progressForParentChromosome = progressForDecoding.child_add(
-//     //   ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
-//     //
-//     // let progressForOffspringChromosome = progressForDecoding.child_add(
-//     //   ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
-//     //
-//     let progressForParentChromosome = progressForDecoding;
-//     let progressForOffspringChromosome = progressForDecoding;
 
     // 1. download from remote.
     let versusArrayArray;
