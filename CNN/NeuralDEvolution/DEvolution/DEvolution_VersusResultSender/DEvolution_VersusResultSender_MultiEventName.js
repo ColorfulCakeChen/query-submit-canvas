@@ -88,7 +88,7 @@ class DEvolution_VersusResultSender_MultiEventName
       const entityNumberCountMax
         = DEvolution_VersusResultSender_MultiEventName.entityNumberCountMax;
 
-      if ( ( entityNo < 0 ) || ( entityNo > entityNumberCountMax ) )
+      if ( !( ( entityNo >= 0 ) && ( entityNo < entityNumberCountMax ) ) )
         throw Error( `DEvolution_VersusResultSender_MultiEventName`
           + `.${funcNameInMessage}(): `
           + `versusId.entityNo ( ${entityNo} ) `
