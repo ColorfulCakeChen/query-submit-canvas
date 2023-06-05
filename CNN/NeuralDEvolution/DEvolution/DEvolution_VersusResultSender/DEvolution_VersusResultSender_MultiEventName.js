@@ -198,7 +198,7 @@ class DEvolution_VersusResultSender_MultiEventName
    *     - +1 (if parent win offspring)
    */
   post_by_measurementId_versusId_NegativeZeroPositive(
-    measurementId,  versusId, n1_0_p1 ) {
+    measurementId, versusId, n1_0_p1 ) {
 
     const eventObject = DEvolution_VersusResultSender_MultiEventName
       .eventObject_get_by_versusId_NegativeZeroPositive(
