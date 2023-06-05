@@ -1678,7 +1678,7 @@ class NeuralOrchestra_Base extends
       // 1. Load versus summary.
       if ( versusSummary_needLoad ) {
 
-//!!! ...unfinished... (2023/06/05)
+!!! ...unfinished... (2023/06/05)
 // If failed, should exponential backoff wait and retry.
 //
 // When DEvolution Sheets is computing, the HttpRequest.Fetcher may be seccessful
@@ -1700,7 +1700,7 @@ class NeuralOrchestra_Base extends
         = yield* this.versusSummary.versus_next_load_asyncGenerator_create(
             progressVersus, this.params_loading_retryWaiting );
 
-//!!! ...unfinished... (2023/06/05)
+!!! ...unfinished... (2023/06/05)
 // If failed, should exponential backoff wait and retry.
 //
 // When DEvolution Sheets is computing, the HttpRequest.Fetcher may be seccessful
