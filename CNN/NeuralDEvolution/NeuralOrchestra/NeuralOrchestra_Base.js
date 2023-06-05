@@ -1683,6 +1683,10 @@ class NeuralOrchestra_Base extends
 //
 // When DEvolution Sheets is computing, the HttpRequest.Fetcher may be seccessful
 // but versusSummary and versus will failed (because of empty content).
+//
+// WRONG: The empty is because the .Exported cells are cleared (manually).
+//        Not because computating not finished.
+// 
 
         let versusSummary_loadOk
           = yield *this.versusSummary.rangeArray_load_asyncGenerator_create(
@@ -1705,6 +1709,10 @@ class NeuralOrchestra_Base extends
 //
 // When DEvolution Sheets is computing, the HttpRequest.Fetcher may be seccessful
 // but versusSummary and versus will failed (because of empty content).
+//
+// WRONG: The empty is because the .Exported cells are cleared (manually).
+//        Not because computating not finished.
+// 
 
       if ( !this.versus )
         throw Error( `NeuralOrchestra.Base.${funcNameInMessage}(): `
