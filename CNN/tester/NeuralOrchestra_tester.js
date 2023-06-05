@@ -64,7 +64,7 @@ class TestCase {
       vocabularyCountPerInputChannel: 256, // ( 2 ** 8 ) for RGBA channel.
 
       blockCountTotalRequested: 39, //84, //144,
-      output_channelCount: 64, //128,
+      output_channelCount: 128, //64,
     };
 
     this.init_parameters_extra = {};
