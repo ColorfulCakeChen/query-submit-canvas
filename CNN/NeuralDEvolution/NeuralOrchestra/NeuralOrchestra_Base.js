@@ -1679,7 +1679,7 @@ class NeuralOrchestra_Base extends
       if ( versusSummary_needLoad ) {
 
 //!!! ...unfinished... (2023/06/05)
-// If failed, should retry.
+// If failed, should wait and retry.
 //
 // When DEvolution Sheets is computing, the HttpRequest.Fetcher may be seccessful
 // but versusSummary and versus will failed (because of empty content).
@@ -1701,7 +1701,7 @@ class NeuralOrchestra_Base extends
             progressVersus, this.params_loading_retryWaiting );
 
 //!!! ...unfinished... (2023/06/05)
-// If failed, should retry.
+// If failed, should wait and retry.
 //
 // When DEvolution Sheets is computing, the HttpRequest.Fetcher may be seccessful
 // but versusSummary and versus will failed (because of empty content).
