@@ -72,14 +72,17 @@ class DEvolution_VersusResultSender_MultiEventName
 
     const funcNameInMessage = "eventObject_get_by_versusId_NegativeZeroPositive";
 
-//!!! ...unfinished... (2023/06/05)
-// should check whether n1_0_p1 is -1 or 0 or +1.
+    // Ensure it is an integer either -1 or 0 or +1.
+    if (   ( n1_0_p1 != -1 )
+        && ( n1_0_p1 !=  0 )
+        && ( n1_0_p1 != +1 ) )
+      throw Error( `DEvolution_VersusResultSender_MultiEventName`
+        + `.${funcNameInMessage}(): `
+        + `n1_0_p1 ( ${n1_0_p1} ) `
+        + `should be either -1 or 0 or +1.`
+      );
 
-    // Ensure it is an integer between [ -1, +1 ].
-    n1_0_p1
-      = Math.min( Math.max( -1, Math.trunc( n1_0_p1 ) ), 1 );
-
-    // An integer between [ 0, 8 ].
+    // Ensure it is an integer between [ 0, 8 ].
     const entityNo = Math.trunc( versusId.entityNo );
     {
       const entityNumberCountMax
