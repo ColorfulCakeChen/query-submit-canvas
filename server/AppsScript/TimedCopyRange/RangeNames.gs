@@ -8,6 +8,15 @@ const RANGE_NAME = {
       COUNTER_DIVISOR: "FC.Timer.CounterDivisor",
       COUNTER_REMAINDER: "FC.Timer.CounterRemainder",
     },
+
+    GENERATION: {
+      SHOULD: {
+        CALCULATE: {
+          RANGE_NAME: "FC.Generation.Should.Calculate.RangeName",
+        },
+      },
+    },
+
     FETCHER: {
       TIMER: {
         AT_REMAINDER: "FC.Fetcher.Timer.AtRemainder",
