@@ -101,14 +101,15 @@ function NamedRange_copy_from_source_to_target_( bCopyOnlyIfTargetBlank ) {
     RANGE_NAME.FC.GENERATION.SHOULD.CALCULATE.RANGE_NAME,
     RANGE_NAME.FC.COPIER.SOURCE.RANGE_NAMES, RANGE_NAME.FC.COPIER.TARGET.RANGE_NAMES );
 
-  // 1. Prevent re-calculation after ranges copied.
-  let generationShouldCalculateRangeNameString
-    = generationShouldCalculateRangeName.getValue();
-
-  let [ generationShouldCalculateRange ] = ranges_getByNames_(
-    generationShouldCalculateRangeNameString );
-
-  generationShouldCalculateRange.setValue( false );
+//!!! (2023/06/06 Remarked) Move to behind of copy.
+//   // 1. Prevent re-calculation after ranges copied.
+//   let generationShouldCalculateRangeNameString
+//     = generationShouldCalculateRangeName.getValue();
+//
+//   let [ generationShouldCalculateRange ] = ranges_getByNames_(
+//     generationShouldCalculateRangeNameString );
+//
+//   generationShouldCalculateRange.setValue( false );
 
   // 2. Copy ranges.
   let sourceRangeNamesString = copierSourceRangeNames.getValue();
@@ -129,6 +130,17 @@ function NamedRange_copy_from_source_to_target_( bCopyOnlyIfTargetBlank ) {
 
     copierSource.copyTo( copierTarget, SpreadsheetApp.CopyPasteType.PASTE_VALUES, false );
   }
+
+//!!! ...unfinished... (2023/06/06)
+  // 3. Prevent re-calculation after ranges copied.
+  let generationShouldCalculateRangeNameString
+    = generationShouldCalculateRangeName.getValue();
+
+  let [ generationShouldCalculateRange ] = ranges_getByNames_(
+    generationShouldCalculateRangeNameString );
+
+  generationShouldCalculateRange.setValue( false );
+
 }
 
 /** Install all triggers of this script. */
