@@ -111,6 +111,16 @@ function NamedRange_copy_from_source_to_target_( bCopyOnlyIfTargetBlank ) {
 //
 //   generationShouldCalculateRange.setValue( false );
 
+//!!! ...unfinished... (2023/06/06)
+// Perhaps, should:
+//   - copy from range to memory.
+//   - generationShouldCalculateRange.setValue( false );
+//   - SpreadsheetApp.flush();
+//   - copy from memory to range.
+//
+// Otherwise, either too early (not yet copy) or too late (has recalculated)
+// to trun off generationShouldCalculateRange.
+
   // 2. Copy ranges.
   let sourceRangeNamesString = copierSourceRangeNames.getValue();
   let sourceRangeNames = sourceRangeNamesString.split( "\," );
@@ -131,8 +141,9 @@ function NamedRange_copy_from_source_to_target_( bCopyOnlyIfTargetBlank ) {
     copierSource.copyTo( copierTarget, SpreadsheetApp.CopyPasteType.PASTE_VALUES, false );
   }
 
-//!!! ...unfinished... (2023/06/06)
+//!!! ...unfinished... (2023/06/06) Too late. The re-calculation is done.
   // 3. Prevent re-calculation after ranges copied.
+
   let generationShouldCalculateRangeNameString
     = generationShouldCalculateRangeName.getValue();
 
@@ -140,7 +151,6 @@ function NamedRange_copy_from_source_to_target_( bCopyOnlyIfTargetBlank ) {
     generationShouldCalculateRangeNameString );
 
   generationShouldCalculateRange.setValue( false );
-
 }
 
 /** Install all triggers of this script. */
