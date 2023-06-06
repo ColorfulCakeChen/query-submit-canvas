@@ -9,17 +9,6 @@ function onOpen() {
     .addItem( "Timer start", "timer_start_" )
     .addItem( "Timer stop", "timer_stop_" )
     .addToUi();
-}/** @OnlyCurrentDoc */
-
-/** */
-function onOpen() {
-  let ui = SpreadsheetApp.getUi();
-  ui.createAddonMenu()
-    .addItem( "Fetch data", "GA4_run_report_" )
-    .addItem( "Copy ranges", "NamedRange_copy_from_source_to_target_" )
-    .addItem( "Timer start", "timer_start_" )
-    .addItem( "Timer stop", "timer_stop_" )
-    .addToUi();
 }
 
 /** When timer triggered. */
@@ -54,50 +43,63 @@ function timer_onTime_( e ) {
 /** When fetcher's timer triggered. */
 function fetcherTimer_onTime_( e ) {
   console.log( `fetcherTimer_onTime_()` );
-//!!! (2023/06/06 Temp Remarked) For Debug.
   EventObject_Timer_recordTo_byRangeName_( e, RANGE_NAME.FC.FETCHER.TIMER.LAST_TIME );
 
-  let [ fetcherTimerCounter, generationShouldCalculateRangeName ]
-   = ranges_getByNames_( RANGE_NAME.FC.FETCHER.TIMER.COUNTER,
-       RANGE_NAME.FC.GENERATION.SHOULD.CALCULATE.RANGE_NAME );
+  let [ fetcherTimerCounter ] = ranges_getByNames_(
+    RANGE_NAME.FC.FETCHER.TIMER.COUNTER );
 
   range_value_inc_( fetcherTimerCounter );
 
-  // 1.
   GA4_run_report_();
+}
+
+/** When copier's timer triggered. */
+function copierTimer_onTime_( e ) {
+  console.log( `copierTimer_onTime_()` );
+  EventObject_Timer_recordTo_byRangeName_( e, RANGE_NAME.FC.COPIER.TIMER.LAST_TIME );
+
+  let [ copierTimerCounter ] = ranges_getByNames_(
+    RANGE_NAME.FC.COPIER.TIMER.COUNTER );
+
+  range_value_inc_( copierTimerCounter );
+
+  NamedRange_copy_from_source_to_target_();
+}
+
+/**
+ * Run a GA4 report to fetch data. And activate re-calculation.
+ */
+function GA4_run_report_() {
+  // 1.
+  //GA4_run_core_report_();
+  GA4_run_realtime_report_()
 
   // 2. Activate re-calculation after GA4 report got.
+
+  let [ generationShouldCalculateRangeName ] = ranges_getByNames_(
+    RANGE_NAME.FC.GENERATION.SHOULD.CALCULATE.RANGE_NAME );
+
   let generationShouldCalculateRangeNameString
     = generationShouldCalculateRangeName.getValue();
 
   let [ generationShouldCalculateRange ] = ranges_getByNames_(
     generationShouldCalculateRangeNameString );
 
-  let generationShouldCalculateRangeValue
-    = generationShouldCalculateRange.getValue();
-  console.log( `generationShouldCalculateRangeValue=`
-    + `${generationShouldCalculateRangeValue}` );
-
-  //generationShouldCalculateRange.setValue( true );
-  generationShouldCalculateRange.setValue( 1 );
-
-  generationShouldCalculateRangeValue
-    = generationShouldCalculateRange.getValue();
-  console.log( `generationShouldCalculateRangeValue=`
-    + `${generationShouldCalculateRangeValue}` );
+  generationShouldCalculateRange.setValue( true );
 }
 
-/** When copier's timer triggered. */
-function copierTimer_onTime_( e ) {
-  console.log( `copierTimer_onTime_()` );
-//!!! (2023/06/06 Temp Remarked) For Debug.
-  EventObject_Timer_recordTo_byRangeName_( e, RANGE_NAME.FC.COPIER.TIMER.LAST_TIME );
-
-  let [ generationShouldCalculateRangeName, copierTimerCounter ]
-    = ranges_getByNames_( RANGE_NAME.FC.GENERATION.SHOULD.CALCULATE.RANGE_NAME,
-        RANGE_NAME.FC.COPIER.TIMER.COUNTER );
-
-  range_value_inc_( copierTimerCounter );
+/**
+ * Deactivate re-calculation. And copy the values from source (NamedRange)
+ * to target (NamedRange).
+ *
+ * @param {boolean} bCopyOnlyIfTargetBlank
+ *   If true, copy a source to a target only if the target is totally blank.
+ */
+function NamedRange_copy_from_source_to_target_( bCopyOnlyIfTargetBlank ) {
+  let [ generationShouldCalculateRangeName,
+    copierSourceRangeNames, copierTargetRangeNames ] = ranges_getByNames_(
+    RANGE_NAME.FC.GENERATION.SHOULD.CALCULATE.RANGE_NAME,
+    RANGE_NAME.FC.COPIER.SOURCE.RANGE_NAMES, RANGE_NAME.FC.COPIER.TARGET.RANGE_NAMES );
 
   // 1. Prevent re-calculation after ranges copied.
   let generationShouldCalculateRangeNameString
@@ -106,39 +108,9 @@ function copierTimer_onTime_( e ) {
   let [ generationShouldCalculateRange ] = ranges_getByNames_(
     generationShouldCalculateRangeNameString );
 
-  let generationShouldCalculateRangeValue
-    = generationShouldCalculateRange.getValue();
-  console.log( `generationShouldCalculateRangeValue=`
-    + `${generationShouldCalculateRangeValue}` );
-
-  //generationShouldCalculateRange.setValue( false );
-  generationShouldCalculateRange.setValue( 0 );
-
-  generationShouldCalculateRangeValue
-    = generationShouldCalculateRange.getValue();
-  console.log( `generationShouldCalculateRangeValue=`
-    + `${generationShouldCalculateRangeValue}` );
+  generationShouldCalculateRange.setValue( false );
 
   // 2. Copy ranges.
-  NamedRange_copy_from_source_to_target_();
-}
-
-/** Run a GA4 report to fetch data. */
-function GA4_run_report_() {
-  //GA4_run_core_report_();
-  GA4_run_realtime_report_()
-}
-
-/**
- * Copy the values from source (NamedRange) to target (NamedRange).
- *
- * @param {boolean} bCopyOnlyIfTargetBlank
- *   If true, copy a source to a target only if the target is totally blank.
- */
-function NamedRange_copy_from_source_to_target_( bCopyOnlyIfTargetBlank ) {
-  let [ copierSourceRangeNames, copierTargetRangeNames ] = ranges_getByNames_(
-    RANGE_NAME.FC.COPIER.SOURCE.RANGE_NAMES, RANGE_NAME.FC.COPIER.TARGET.RANGE_NAMES );
-
   let sourceRangeNamesString = copierSourceRangeNames.getValue();
   let sourceRangeNames = sourceRangeNamesString.split( "\," );
 
@@ -268,7 +240,18 @@ function ranges_getByNames_( ...names ) {
       throw Error( `NamedRange "${names[ i ]}" not found.` );
   return ranges;
 }
+/** @OnlyCurrentDoc */
 
+/** */
+function onOpen() {
+  let ui = SpreadsheetApp.getUi();
+  ui.createAddonMenu()
+    .addItem( "Fetch data", "GA4_run_report_" )
+    .addItem( "Copy ranges", "NamedRange_copy_from_source_to_target_" )
+    .addItem( "Timer start", "timer_start_" )
+    .addItem( "Timer stop", "timer_stop_" )
+    .addToUi();
+}
 
 /** When timer triggered. */
 function timer_onTime_( e ) {
@@ -304,7 +287,9 @@ function fetcherTimer_onTime_( e ) {
   console.log( `fetcherTimer_onTime_()` );
   EventObject_Timer_recordTo_byRangeName_( e, RANGE_NAME.FC.FETCHER.TIMER.LAST_TIME );
 
-  let [ fetcherTimerCounter ] = ranges_getByNames_( RANGE_NAME.FC.FETCHER.TIMER.COUNTER );
+  let [ fetcherTimerCounter ] = ranges_getByNames_(
+    RANGE_NAME.FC.FETCHER.TIMER.COUNTER );
+
   range_value_inc_( fetcherTimerCounter );
 
   GA4_run_report_();
@@ -315,29 +300,59 @@ function copierTimer_onTime_( e ) {
   console.log( `copierTimer_onTime_()` );
   EventObject_Timer_recordTo_byRangeName_( e, RANGE_NAME.FC.COPIER.TIMER.LAST_TIME );
 
-  let [ copierTimerCounter ] = ranges_getByNames_( RANGE_NAME.FC.COPIER.TIMER.COUNTER );
+  let [ copierTimerCounter ] = ranges_getByNames_(
+    RANGE_NAME.FC.COPIER.TIMER.COUNTER );
 
   range_value_inc_( copierTimerCounter );
 
   NamedRange_copy_from_source_to_target_();
 }
 
-/** Run a GA4 report to fetch data. */
+/**
+ * Run a GA4 report to fetch data. And activate re-calculation.
+ */
 function GA4_run_report_() {
+  // 1.
   //GA4_run_core_report_();
   GA4_run_realtime_report_()
+
+  // 2. Activate re-calculation after GA4 report got.
+
+  let [ generationShouldCalculateRangeName ] = ranges_getByNames_(
+    RANGE_NAME.FC.GENERATION.SHOULD.CALCULATE.RANGE_NAME );
+
+  let generationShouldCalculateRangeNameString
+    = generationShouldCalculateRangeName.getValue();
+
+  let [ generationShouldCalculateRange ] = ranges_getByNames_(
+    generationShouldCalculateRangeNameString );
+
+  generationShouldCalculateRange.setValue( true );
 }
 
 /**
- * Copy the values from source (NamedRange) to target (NamedRange).
+ * Deactivate re-calculation. And copy the values from source (NamedRange)
+ * to target (NamedRange).
  *
  * @param {boolean} bCopyOnlyIfTargetBlank
  *   If true, copy a source to a target only if the target is totally blank.
  */
 function NamedRange_copy_from_source_to_target_( bCopyOnlyIfTargetBlank ) {
-  let [ copierSourceRangeNames, copierTargetRangeNames ] = ranges_getByNames_(
+  let [ generationShouldCalculateRangeName,
+    copierSourceRangeNames, copierTargetRangeNames ] = ranges_getByNames_(
+    RANGE_NAME.FC.GENERATION.SHOULD.CALCULATE.RANGE_NAME,
     RANGE_NAME.FC.COPIER.SOURCE.RANGE_NAMES, RANGE_NAME.FC.COPIER.TARGET.RANGE_NAMES );
 
+  // 1. Prevent re-calculation after ranges copied.
+  let generationShouldCalculateRangeNameString
+    = generationShouldCalculateRangeName.getValue();
+
+  let [ generationShouldCalculateRange ] = ranges_getByNames_(
+    generationShouldCalculateRangeNameString );
+
+  generationShouldCalculateRange.setValue( false );
+
+  // 2. Copy ranges.
   let sourceRangeNamesString = copierSourceRangeNames.getValue();
   let sourceRangeNames = sourceRangeNamesString.split( "\," );
 
