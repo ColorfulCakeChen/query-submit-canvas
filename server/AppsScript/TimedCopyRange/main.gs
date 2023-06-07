@@ -222,7 +222,8 @@ function NamedRange_copy_from_source_to_target( bCopyOnlyIfTargetBlank ) {
 
 
 //!!!
-  // It seems Range.copyTo() will not trigger flush. So, call it explicitly.
+  // It seems Range.copyTo() will not trigger flush. So, flush explicitly
+  // to complete the re-calculation.
   SpreadsheetApp.flush();
 
 //!!! ...unfinished... (2023/06/07 Temp Test) Copy directly.
@@ -234,7 +235,8 @@ function NamedRange_copy_from_source_to_target( bCopyOnlyIfTargetBlank ) {
     let targetRange = targetRangeArray[ i ];
     if ( !targetRange )
       continue;
-    sourceRange.copyTo( targetRange, SpreadsheetApp.CopyPasteType.PASTE_VALUES, false );
+    sourceRange.copyTo(
+      targetRange, SpreadsheetApp.CopyPasteType.PASTE_VALUES, false );
   }
 
 //!!!
