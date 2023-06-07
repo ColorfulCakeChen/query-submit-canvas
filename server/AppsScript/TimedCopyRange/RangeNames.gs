@@ -40,7 +40,9 @@ const RANGE_NAME = {
     },
     COPIER: {
       TIMER: {
-        AT_REMAINDER: "FC.Copier.Timer.AtRemainder",
+//!!! (2023/06/07 Remarked) Use FC.Copier.Timer.AfterSeconds instead.
+        //AT_REMAINDER: "FC.Copier.Timer.AtRemainder",
+        AFTER_SECONDS: "FC.Copier.Timer.AfterSeconds",
         LAST_TIME: "FC.Copier.Timer.LastTime",
         COUNTER: "FC.Copier.Timer.Counter",
       },

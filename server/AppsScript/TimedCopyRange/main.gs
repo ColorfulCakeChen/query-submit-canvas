@@ -17,13 +17,15 @@ function timer_onTime_( e ) {
     fetcherCopierTimerCounter,
     fetcherCopierTimerCounterDivisor, fetcherCopierTimerCounterRemainder,
     fetcherTimerAtRemainder,
-    copierTimerAtRemainder,
+//!!! (2023/06/07 Remarked) Use FC.Copier.Timer.AfterSeconds instead.
+//    copierTimerAtRemainder,
   ] = ranges_getByNames_(
       RANGE_NAME.FC.TIMER.COUNTER,
       RANGE_NAME.FC.TIMER.COUNTER_DIVISOR,
       RANGE_NAME.FC.TIMER.COUNTER_REMAINDER,
       RANGE_NAME.FC.FETCHER.TIMER.AT_REMAINDER,
-      RANGE_NAME.FC.COPIER.TIMER.AT_REMAINDER,
+//!!! (2023/06/07 Remarked) Use FC.Copier.Timer.AfterSeconds instead.
+//      RANGE_NAME.FC.COPIER.TIMER.AT_REMAINDER,
     );
 
   EventObject_Timer_recordTo_byRangeName_( e, RANGE_NAME.FC.TIMER.LAST_TIME );
@@ -36,8 +38,9 @@ function timer_onTime_( e ) {
   if ( counterRemainder == fetcherTimerAtRemainder.getValue() )
     fetcherTimer_onTime_( e );
 
-  if ( counterRemainder == copierTimerAtRemainder.getValue() )
-    copierTimer_onTime_( e );
+//!!! (2023/06/07 Remarked) Use FC.Copier.Timer.AfterSeconds instead.
+//   if ( counterRemainder == copierTimerAtRemainder.getValue() )
+//     copierTimer_onTime_( e );
 }
 
 /** When fetcher's timer triggered. */
@@ -45,12 +48,21 @@ function fetcherTimer_onTime_( e ) {
   console.log( `fetcherTimer_onTime_()` );
   EventObject_Timer_recordTo_byRangeName_( e, RANGE_NAME.FC.FETCHER.TIMER.LAST_TIME );
 
-  let [ fetcherTimerCounter ] = ranges_getByNames_(
-    RANGE_NAME.FC.FETCHER.TIMER.COUNTER );
+  let [ fetcherTimerCounter, copierTimerAfterSeconds ] = ranges_getByNames_(
+    RANGE_NAME.FC.FETCHER.TIMER.COUNTER,
+    RANGE_NAME.FC.COPIER.TIMER.AFTER_SECONDS );
 
   range_value_inc_( fetcherTimerCounter );
 
   GA4_run_report_();
+
+  // Create timer for copying ranges.
+  {
+    const afterSeconds = copierTimerAfterSeconds.getValue();
+    const afterMilliseconds = afterSeconds * 1000;
+    let timerBuilder = ScriptApp.newTrigger( "copierTimer_onTime_" ).timeBased();
+      timerBuilder.after( afterMilliseconds ).create();
+  }
 }
 
 /** When copier's timer triggered. */
