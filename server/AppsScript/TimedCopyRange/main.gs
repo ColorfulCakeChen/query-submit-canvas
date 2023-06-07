@@ -203,18 +203,18 @@ function NamedRange_copy_from_source_to_target( bCopyOnlyIfTargetBlank ) {
 */
 
 
-//!!! (2023/06/07 Temp Test) Turn off before copy.
   // 3. Prevent re-calculation after ranges copied.
   //
-  // Because both Range.setValue() and Range.copyTo() seems not trigger
+  // Because both Range.setValue() and Range.copyTo() seem not trigger
   // flush, deactivate calculating before Range.copyTo(). Although this
   // looks strange, it may prevent from unnecessary calculation after
   // ranges copied.
   //
   generationShouldCalculateRange.setValue( false );
-  //SpreadsheetApp.flush();
 
-//!!! ...unfinished... (2023/06/07 Temp Test) Copy directly.
+  // Note: Do not call SpreadsheetApp.flush() here. Otherwise, there
+  //       will be nothing can be copied.
+
   // 4. Copy ranges directly.
   for ( let i = 0; i < sourceRangeArray.length; ++i ) {
     let sourceRange = sourceRangeArray[ i ];
