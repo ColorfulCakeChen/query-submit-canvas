@@ -93,8 +93,9 @@ function GA4_run_report_() {
  * to target (NamedRange).
  *
  * @param {boolean} bCopyOnlyIfTargetBlank
- *   If true, copy a source to a target only if the target is totally blank. It is
- * mainly used by timer_start_().
+ *   If true (mainly used by timer_start_()):
+ *     - Activate calculation before copying.
+ *     - Copy source to target only if the target is totally blank.
  */
 function NamedRange_copy_from_source_to_target_( bCopyOnlyIfTargetBlank ) {
 
@@ -141,12 +142,14 @@ function NamedRange_copy_from_source_to_target_( bCopyOnlyIfTargetBlank ) {
     targetRangeArray[ i ] = copierTarget;
   }
 
-  // 2. Activate calculating just before copying.
-  generationShouldCalculateRange.setValue( true );
+  // 2. If requested, activate calculating just before copying.
+  if ( bCopyOnlyIfTargetBlank ) {
+    generationShouldCalculateRange.setValue( true );
 
-  // Because Range.copyTo() seems not trigger flush, flush explicitly
-  // to complete the recalculation.
-  SpreadsheetApp.flush();
+    // Because Range.copyTo() seems not trigger flush, flush explicitly
+    // to complete the recalculation.
+    SpreadsheetApp.flush();
+  }
 
   // 3. Prevent from recalculation after ranges copied.
   //
@@ -259,11 +262,8 @@ function timer_start_() {
   copierTimerLastTime.clearContent();
   copierTimerCounter.clearContent();
 
-//!!! ...unfinished... (2023/06/07)
-// It seems should Re-calculate and then copy.
-// Otherswise, nothing can be copied.
-
-  // If copier target isBlank, copy from source to target immediately.
+  // If copier target isBlank, activate calculation and copy from source
+  // to target immediately.
   NamedRange_copy_from_source_to_target_( true );
 
   let timerBuilder = ScriptApp.newTrigger( "timer_onTime_" ).timeBased();
