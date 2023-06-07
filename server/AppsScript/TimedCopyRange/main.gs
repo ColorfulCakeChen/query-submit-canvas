@@ -96,24 +96,38 @@ function GA4_run_report_() {
  *   If true, copy a source to a target only if the target is totally blank. It is
  * mainly used by timer_start_().
  */
-function NamedRange_copy_from_source_to_target_( bCopyOnlyIfTargetBlank ) {
+function NamedRange_copy_from_source_to_target( bCopyOnlyIfTargetBlank ) {
   let [ generationShouldCalculateRangeName,
     copierSourceRangeNames, copierTargetRangeNames ] = ranges_getByNames_(
     RANGE_NAME.FC.GENERATION.SHOULD.CALCULATE.RANGE_NAME,
     RANGE_NAME.FC.COPIER.SOURCE.RANGE_NAMES, RANGE_NAME.FC.COPIER.TARGET.RANGE_NAMES );
 
-    // Flag for calculating or not.
-    const generationShouldCalculateRangeNameString
-      = generationShouldCalculateRangeName.getValue();
+  // Note: It seems that SpreadsheetApp.flush() will be called automatically
+  //       whenever Range.getValue() is called.
+  //
+  //(2023/06/07)
 
-    const [ generationShouldCalculateRange ] = ranges_getByNames_(
-      generationShouldCalculateRangeNameString );
+  let sourceRangeNamesString = copierSourceRangeNames.getValue();
+  let sourceRangeNames = sourceRangeNamesString.split( "\," );
+
+  let targetRangeNamesString = copierTargetRangeNames.getValue();
+  let targetRangeNames = targetRangeNamesString.split( "\," );
+
+  // Flag for calculating or not.
+  const generationShouldCalculateRangeNameString
+    = generationShouldCalculateRangeName.getValue();
+
+  const [ generationShouldCalculateRange ] = ranges_getByNames_(
+    generationShouldCalculateRangeNameString );
 
 
 //!!! ...unfinished... (2023/06/07 Temp Test)
 // Test: Start calculating just before copying.
-    generationShouldCalculateRange.setValue( true );
+  generationShouldCalculateRange.setValue( true );
 
+//!!! ...unfinished... (2023/06/07 Temp Test)
+// Test: Turn off immediately
+  generationShouldCalculateRange.setValue( false );
 
 //!!! (2023/06/06 Remarked) Move to behind of copy.
 //   // 1. Prevent re-calculation after ranges copied.
@@ -126,33 +140,29 @@ function NamedRange_copy_from_source_to_target_( bCopyOnlyIfTargetBlank ) {
 //   generationShouldCalculateRange.setValue( false );
 
 //!!! ...unfinished... (2023/06/07 Temp Test) Copy directly.
-  // 2. Copy ranges.
-  let sourceRangeNamesString = copierSourceRangeNames.getValue();
-  let sourceRangeNames = sourceRangeNamesString.split( "\," );
-
-  let targetRangeNamesString = copierTargetRangeNames.getValue();
-  let targetRangeNames = targetRangeNamesString.split( "\," );
-
-  for ( let i = 0; i < sourceRangeNames.length; ++i ) {
-    let sourceRangeName = sourceRangeNames[ i ].trim();
-    let targetRangeName = targetRangeNames[ i ].trim();
-    let [ copierSource, copierTarget ] = ranges_getByNames_(
-      sourceRangeName, targetRangeName );
-
-    if ( bCopyOnlyIfTargetBlank )
-      if ( !copierTarget.isBlank() )
-        continue;
-
-    copierSource.copyTo( copierTarget, SpreadsheetApp.CopyPasteType.PASTE_VALUES, false );
-  }
-
-//!!! ...unfinished... (2023/06/07 Temp Test)
-// Test: Stop calculating just after copying.
-    generationShouldCalculateRange.setValue( false );
+//   // 2. Copy ranges.
+//   let sourceRangeNamesString = copierSourceRangeNames.getValue();
+//   let sourceRangeNames = sourceRangeNamesString.split( "\," );
+//
+//   let targetRangeNamesString = copierTargetRangeNames.getValue();
+//   let targetRangeNames = targetRangeNamesString.split( "\," );
+//
+//   for ( let i = 0; i < sourceRangeNames.length; ++i ) {
+//     let sourceRangeName = sourceRangeNames[ i ].trim();
+//     let targetRangeName = targetRangeNames[ i ].trim();
+//     let [ copierSource, copierTarget ] = ranges_getByNames_(
+//       sourceRangeName, targetRangeName );
+//
+//     if ( bCopyOnlyIfTargetBlank )
+//       if ( !copierTarget.isBlank() )
+//         continue;
+//
+//     copierSource.copyTo( copierTarget, SpreadsheetApp.CopyPasteType.PASTE_VALUES, false );
+//   }
 
 
 
-/*!!! ...unfinished... (2023/06/06)
+//!!! ...unfinished... (2023/06/07)
 // Perhaps, should:
 //   - copy from range to memory.
 //   - generationShouldCalculateRange.setValue( false );
@@ -162,12 +172,10 @@ function NamedRange_copy_from_source_to_target_( bCopyOnlyIfTargetBlank ) {
 // Otherwise, either too early (not yet copy) or too late (has recalculated)
 // to trun off generationShouldCalculateRange.
 
-  let sourceRangeNamesString = copierSourceRangeNames.getValue();
-  let sourceRangeNames = sourceRangeNamesString.split( "\," );
+//!!!
+  SpreadsheetApp.flush();
 
-  let targetRangeNamesString = copierTargetRangeNames.getValue();
-  let targetRangeNames = targetRangeNamesString.split( "\," );
-
+//!!! ...unfinished... (2023/06/07 Temp Remarked)
   // 1. Collect all source and target range.
   let sourceRangeArray = new Array( sourceRangeNames.length );
   let targetRangeArray = new Array( sourceRangeNames.length );
@@ -194,6 +202,9 @@ function NamedRange_copy_from_source_to_target_( bCopyOnlyIfTargetBlank ) {
 
     let sourceColumnsRows = sourceRange.getValues();
 
+//!!! ...unfinished... (2023/06/07 Temp Test) get twice whether different.
+//    sourceColumnsRows = sourceRange.getValues();
+
 //!!! ...unfinished... (2023/06/07)
     { // Check cell content length.
       for ( let rowId= 0; rowId < sourceColumnsRows.length; ++rowId ) {
@@ -218,25 +229,32 @@ function NamedRange_copy_from_source_to_target_( bCopyOnlyIfTargetBlank ) {
     sourceValuesArray[ i ] = sourceColumnsRows;
   }
 
-//!!! ...unfinished... (2023/06/07 Temp Test)
-// Test: Stop calculating just after copying.
-    generationShouldCalculateRange.setValue( false );
 
+//!!! ...unfinished... (2023/06/07 Temp Test) Copy directly.
+  // 2. Copy ranges.
+  for ( let i = 0; i < sourceRangeNames.length; ++i ) {
+    let sourceRangeName = sourceRangeNames[ i ].trim();
+    let targetRangeName = targetRangeNames[ i ].trim();
+    let [ copierSource, copierTarget ] = ranges_getByNames_(
+      sourceRangeName, targetRangeName );
 
-//!!! ...unfinished... (2023/06/07 Temp Remarked) For debug.
-////!!! ...unfinished... (2023/06/06) Too late. The re-calculation is done.
-//   // 3. Prevent re-calculation after ranges copied.
-//   {
-//     let generationShouldCalculateRangeNameString
-//       = generationShouldCalculateRangeName.getValue();
-//
-//     let [ generationShouldCalculateRange ] = ranges_getByNames_(
-//       generationShouldCalculateRangeNameString );
-//
-//     generationShouldCalculateRange.setValue( false );
-//     SpreadsheetApp.flush(); // Ensure no more re-calculation.
-//   }
+    if ( bCopyOnlyIfTargetBlank )
+      if ( !copierTarget.isBlank() )
+        continue;
 
+    copierSource.copyTo( copierTarget, SpreadsheetApp.CopyPasteType.PASTE_VALUES, false );
+  }
+
+//!!!
+  SpreadsheetApp.flush();
+
+  // 3. Prevent re-calculation after ranges copied.
+  generationShouldCalculateRange.setValue( false );
+
+//!!!
+  SpreadsheetApp.flush();
+
+/*!!! ...unfinished... (2023/06/07 Temp Remarked)
   // 4. Copy from memory to source.
   for ( let i = 0; i < targetRangeArray.length; ++i ) {
     let sourceValues = sourceValuesArray[ i ];
