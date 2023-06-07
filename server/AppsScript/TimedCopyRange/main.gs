@@ -129,8 +129,10 @@ function NamedRange_copy_from_source_to_target_( bCopyOnlyIfTargetBlank ) {
   let sourceRangeArray = new Array( sourceRangeNames.length );
   let targetRangeArray = new Array( sourceRangeNames.length );
   for ( let i = 0; i < sourceRangeNames.length; ++i ) {
-    let sourceRangeName = sourceRangeNames[ i ].trim();
-    let targetRangeName = targetRangeNames[ i ].trim();
+    let sourceRangeName = sourceRangeNames[ i ]
+      = sourceRangeNames[ i ].trim();
+    let targetRangeName = targetRangeNames[ i ]
+      = targetRangeNames[ i ].trim();
     let [ sourceRange, targetRange ] = ranges_getByNames_(
       sourceRangeName, targetRangeName );
 
@@ -218,6 +220,10 @@ function NamedRange_copy_from_source_to_target_( bCopyOnlyIfTargetBlank ) {
       continue;
     sourceRange.copyTo(
       targetRange, SpreadsheetApp.CopyPasteType.PASTE_VALUES, false );
+
+    const sourceRangeName = sourceRangeNames[ i ];
+    const targetRangeName = targetRangeNames[ i ];
+    console.log( `Copy from \"${sourceRangeName}\" to \"${targetRangeName}\".` );
   }
 }
 
