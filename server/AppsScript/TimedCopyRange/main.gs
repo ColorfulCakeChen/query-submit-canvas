@@ -245,7 +245,7 @@ function NamedRange_copy_from_source_to_target_( bCopyOnlyIfTargetBlank ) {
 }
 
 /** Install all triggers of this script. */
-function timer_start_() {
+function timer_start() {
   // Note: Although not all range names will be used here, getting them
   //       could confirm whether they are defined.
   let [ fetcherCopierEveryMinutes, fetcherCopierEveryHours,
@@ -271,10 +271,13 @@ function timer_start_() {
       RANGE_NAME.FC.FETCHER.GA4.ITEM_NAME_IN_LIST_FILTER.RANGE_NAME,
       RANGE_NAME.FC.FETCHER.GA4.REPORT.HEADERS.RANGE_NAME,
       RANGE_NAME.FC.FETCHER.GA4.REPORT.ROWS.RANGE_NAME,
-      RANGE_NAME.FC.COPIER.TIMER.AT_REMAINDER,
+//!!! (2023/06/07 Remarked) Use FC.Copier.Timer.AfterSeconds instead.
+//      RANGE_NAME.FC.COPIER.TIMER.AT_REMAINDER,
+      RANGE_NAME.FC.COPIER.TIMER.AFTER_SECONDS,
       RANGE_NAME.FC.COPIER.TIMER.LAST_TIME,
       RANGE_NAME.FC.COPIER.TIMER.COUNTER,
-      RANGE_NAME.FC.COPIER.SOURCE.RANGE_NAMES, RANGE_NAME.FC.COPIER.TARGET.RANGE_NAMES,
+      RANGE_NAME.FC.COPIER.SOURCE.RANGE_NAMES,
+      RANGE_NAME.FC.COPIER.TARGET.RANGE_NAMES,
       RANGE_NAME.FC.GENERATION.SHOULD.CALCULATE.RANGE_NAME );
 
   timer_stop_();
