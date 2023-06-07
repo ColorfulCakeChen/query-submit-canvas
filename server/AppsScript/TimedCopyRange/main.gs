@@ -144,8 +144,8 @@ function NamedRange_copy_from_source_to_target_( bCopyOnlyIfTargetBlank ) {
 
   // 2. If requested, activate calculating just before copying.
   if ( bCopyOnlyIfTargetBlank ) {
-    console.log( `Activate calculation.` );
     generationShouldCalculateRange.setValue( true );
+    console.log( `Calculation activated.` );
 
     // Because Range.copyTo() seems not trigger flush, flush explicitly
     // to complete the recalculation.
@@ -159,8 +159,8 @@ function NamedRange_copy_from_source_to_target_( bCopyOnlyIfTargetBlank ) {
   // looks strange, it may prevent from unnecessary calculation after
   // ranges copied.
   //
-  console.log( `Deactivate calculation.` );
   generationShouldCalculateRange.setValue( false );
+  console.log( `Calculation deactivated.` );
 
   // Note: Do not call SpreadsheetApp.flush() or Range.getValue() or
   //       SpreadsheetApp.getRangeByName() here. Otherwise, there
@@ -275,13 +275,17 @@ function timer_start_() {
   else
     timerBuilder.everyHours( fetcherCopierEveryHours.getValue() )
       .create();
+
+  console.log( `Timer started.` );
 }
 
 /** Uninstall all triggers of this script. */
 function timer_stop_() {
   let triggers = ScriptApp.getUserTriggers( SpreadsheetApp.getActive() );
-  for ( let i = 0; i < triggers.length; ++i )
+  for ( let i = 0; i < triggers.length; ++i ) {
     ScriptApp.deleteTrigger( triggers[ i ] );
+  }
+  console.log( `Timer stopped.` );
 }
 
 /**
