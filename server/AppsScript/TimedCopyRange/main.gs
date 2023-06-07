@@ -108,7 +108,8 @@ function NamedRange_copy_from_source_to_target( bCopyOnlyIfTargetBlank ) {
   let [ generationShouldCalculateRangeName,
     copierSourceRangeNames, copierTargetRangeNames ] = ranges_getByNames_(
     RANGE_NAME.FC.GENERATION.SHOULD.CALCULATE.RANGE_NAME,
-    RANGE_NAME.FC.COPIER.SOURCE.RANGE_NAMES, RANGE_NAME.FC.COPIER.TARGET.RANGE_NAMES );
+    RANGE_NAME.FC.COPIER.SOURCE.RANGE_NAMES,
+    RANGE_NAME.FC.COPIER.TARGET.RANGE_NAMES );
 
   // Flag for calculating or not.
   const generationShouldCalculateRangeNameString
