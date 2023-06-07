@@ -118,7 +118,7 @@ function NamedRange_copy_from_source_to_target_( bCopyOnlyIfTargetBlank ) {
   const [ generationShouldCalculateRange ] = ranges_getByNames_(
     generationShouldCalculateRangeNameString );
 
-  // 1. Collect all source and target range.
+  // 1. Collect all source and target ranges.
   let sourceRangeNamesString = copierSourceRangeNames.getValue();
   let sourceRangeNames = sourceRangeNamesString.split( "\," );
 
@@ -141,12 +141,11 @@ function NamedRange_copy_from_source_to_target_( bCopyOnlyIfTargetBlank ) {
     targetRangeArray[ i ] = copierTarget;
   }
 
-
   // 2. Activate calculating just before copying.
   generationShouldCalculateRange.setValue( true );
 
   // Because Range.copyTo() seems not trigger flush, flush explicitly
-  // to complete the re-calculation.
+  // to complete the recalculation.
   SpreadsheetApp.flush();
 
   // 3. Prevent from recalculation after ranges copied.
@@ -162,19 +161,6 @@ function NamedRange_copy_from_source_to_target_( bCopyOnlyIfTargetBlank ) {
   //       SpreadsheetApp.getRangeByName() here. Otherwise, there
   //       will be nothing can be copied because they all accomplish
   //       the above Range.setValue().
-
-//!!! ...unfinished... (2023/06/07)
-// Perhaps, should:
-//   - copy from range to memory.
-//   - generationShouldCalculateRange.setValue( false );
-//   - SpreadsheetApp.flush();
-//   - copy from memory to range.
-//
-// Otherwise, either too early (not yet copy) or too late (has recalculated)
-// to trun off generationShouldCalculateRange.
-
-//!!!
-  //SpreadsheetApp.flush();
 
 /*!!! ...unfinished... (2023/06/07 Temp Remarked)
   // 2. Copy from source to memory.
@@ -225,28 +211,6 @@ function NamedRange_copy_from_source_to_target_( bCopyOnlyIfTargetBlank ) {
     sourceRange.copyTo(
       targetRange, SpreadsheetApp.CopyPasteType.PASTE_VALUES, false );
   }
-
-/*!!!
-  SpreadsheetApp.flush();
-
-  // 3. Prevent re-calculation after ranges copied.
-  generationShouldCalculateRange.setValue( false );
-
-//!!!
-  //SpreadsheetApp.flush();
-
-//!!! ...unfinished... (2023/06/07 Temp Remarked)
-  // 4. Copy from memory to source.
-  for ( let i = 0; i < targetRangeArray.length; ++i ) {
-    let sourceValues = sourceValuesArray[ i ];
-    if ( !sourceValues )
-      continue;
-    let targetRange = targetRangeArray[ i ];
-    if ( !targetRange )
-      continue;
-    targetRange.setValues( sourceValues );
-  }
-*/
 }
 
 /** Install all triggers of this script. */
