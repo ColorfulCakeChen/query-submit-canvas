@@ -131,15 +131,18 @@ function NamedRange_copy_from_source_to_target_( bCopyOnlyIfTargetBlank ) {
   for ( let i = 0; i < sourceRangeNames.length; ++i ) {
     let sourceRangeName = sourceRangeNames[ i ].trim();
     let targetRangeName = targetRangeNames[ i ].trim();
-    let [ copierSource, copierTarget ] = ranges_getByNames_(
+    let [ sourceRange, targetRange ] = ranges_getByNames_(
       sourceRangeName, targetRangeName );
 
-    if ( bCopyOnlyIfTargetBlank )
-      if ( !copierTarget.isBlank() )
-        continue;
+    if ( sourceRange.isBlank() )
+      continue; // Do not copy from blank.
 
-    sourceRangeArray[ i ] = copierSource;
-    targetRangeArray[ i ] = copierTarget;
+    if ( bCopyOnlyIfTargetBlank )
+      if ( !targetRange.isBlank() )
+        continue; // Do not copy to non-blank.
+
+    sourceRangeArray[ i ] = sourceRange;
+    targetRangeArray[ i ] = targetRange;
   }
 
   // 2. If requested, activate calculating just before copying.
