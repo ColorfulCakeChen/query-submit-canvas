@@ -48,15 +48,15 @@ function fetcherTimer_onTime_( e ) {
   console.log( `fetcherTimer_onTime_()` );
   EventObject_Timer_recordTo_byRangeName_( e, RANGE_NAME.FC.FETCHER.TIMER.LAST_TIME );
 
+//!!! ...unfinished... (2023/06/07)
+// If copierTimer_onTime_() still exists, do not run this fetcherTimer_onTime_() again.
+
   let [ fetcherTimerCounter ] = ranges_getByNames_(
     RANGE_NAME.FC.FETCHER.TIMER.COUNTER );
 
   range_value_inc_( fetcherTimerCounter );
 
   GA4_run_report_();
-
-//!!! ...unfinished... (2023/06/07)
-// should be re-scheduled by copierTimer_onTime_().
 }
 
 /** When copier's timer triggered. */
@@ -74,9 +74,6 @@ function copierTimer_onTime_( e ) {
   range_value_inc_( copierTimerCounter );
 
   NamedRange_copy_from_source_to_target_();
-
-//!!! ...unfinished... (2023/06/07)
-// should re-schedule fetcherTimer_onTime_().  
 }
 
 /**
@@ -307,10 +304,6 @@ function timer_start_() {
   // to target immediately.
   NamedRange_copy_from_source_to_target_( true );
 
-//!!! ...unfinished... (2023/06/07)
-// should only schedule the first time fetcherTimer_onTime_().
-// other times should be re-scheduled by copierTimer_onTime_().
-
   let timerBuilder = ScriptApp.newTrigger( "timer_onTime_" ).timeBased();
   if ( !fetcherCopierEveryMinutes.isBlank() )
     timerBuilder.everyMinutes( fetcherCopierEveryMinutes.getValue() )
@@ -342,6 +335,20 @@ function trigger_delete_by_HandlerFunctionName_( strHandlerFunctionName ) {
     const triggerHandlerFunctionName = trigger.getHandlerFunction();
     if ( strHandlerFunctionName == triggerHandlerFunctionName )
       ScriptApp.deleteTrigger( trigger );
+  }
+
+  //!!! (2023/06/07 Temp Added) For Debug.
+  {
+    let triggers = ScriptApp.getUserTriggers( SpreadsheetApp.getActive() );
+    let triggerNameArray = new Array( triggers.length );
+    for ( let i = 0; i < triggers.length; ++i ) {
+      const trigger = triggers[ i ];
+      const triggerHandlerFunctionName = trigger.getHandlerFunction();
+      triggerNameArray[ i ] = triggerHandlerFunctionName;
+    }
+    const triggerNames = triggerNameArray.join( ", " );
+    console.log( `trigger_delete_by_HandlerFunctionName_(): `
+      + `Remained trigger names: [ ${triggerNames} ].` );
   }
 }
 
