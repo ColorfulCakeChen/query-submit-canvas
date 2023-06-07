@@ -101,7 +101,7 @@ function NamedRange_copy_from_source_to_target_( bCopyOnlyIfTargetBlank ) {
   // Note: It seems SpreadsheetApp.flush() will be called automatically
   //       whenever Range.getValue() or SpreadsheetApp.getRangeByName() is
   //       called. In order to reduce unnecessary recalculation, getting
-  //       these before activating re-calculation.
+  //       these before activating recalculation.
   //
   // (2023/06/07)
 
