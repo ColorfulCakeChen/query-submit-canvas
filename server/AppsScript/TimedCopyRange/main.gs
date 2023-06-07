@@ -58,8 +58,12 @@ function fetcherTimer_onTime_( e ) {
 
 /** When copier's timer triggered. */
 function copierTimer_onTime_( e ) {
-  console.log( `copierTimer_onTime_()` );
+  const funcNameInMessage = "copierTimer_onTime_";
+  console.log( `${funcNameInMessage}()` );
   EventObject_Timer_recordTo_byRangeName_( e, RANGE_NAME.FC.COPIER.TIMER.LAST_TIME );
+
+  // Remove this timer because it is one-time timer.
+  trigger_delete_by_HandlerFunctionName_( funcNameInMessage );
 
   let [ copierTimerCounter ] = ranges_getByNames_(
     RANGE_NAME.FC.COPIER.TIMER.COUNTER );
@@ -67,9 +71,6 @@ function copierTimer_onTime_( e ) {
   range_value_inc_( copierTimerCounter );
 
   NamedRange_copy_from_source_to_target_();
-
-//!!! ...unfinished... (2023/06/07)
-// should ScriptApp.deleteTrigger() this timer.
 }
 
 /**
@@ -318,6 +319,20 @@ function timer_stop_() {
     ScriptApp.deleteTrigger( triggers[ i ] );
   }
   console.log( `Timer stopped.` );
+}
+
+/**
+ * @param {string} strHandlerFunctionName
+ *   The handler function name for triggers to be deleted.
+ */
+function trigger_delete_by_HandlerFunctionName_( strHandlerFunctionName ) {
+  let triggers = ScriptApp.getUserTriggers( SpreadsheetApp.getActive() );
+  for ( let i = 0; i < triggers.length; ++i ) {
+    const trigger = triggers[ i ];
+    const triggerHandlerFunctionName = trigger.getHandlerFunction();
+    if ( strHandlerFunctionName == triggerHandlerFunctionName )
+      ScriptApp.deleteTrigger( trigger );
+  }
 }
 
 /**
