@@ -67,6 +67,9 @@ function copierTimer_onTime_( e ) {
   range_value_inc_( copierTimerCounter );
 
   NamedRange_copy_from_source_to_target_();
+
+//!!! ...unfinished... (2023/06/07)
+// should ScriptApp.deleteTrigger() this timer.
 }
 
 /**
