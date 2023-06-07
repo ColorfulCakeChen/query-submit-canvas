@@ -182,7 +182,7 @@ function NamedRange_copy_from_source_to_target( bCopyOnlyIfTargetBlank ) {
 //!!!
   //SpreadsheetApp.flush();
 
-//!!! ...unfinished... (2023/06/07 Temp Remarked)
+/*!!! ...unfinished... (2023/06/07 Temp Remarked)
   // 2. Copy from source to memory.
   let sourceValuesArray = new Array( sourceRangeArray.length );
   for ( let i = 0; i < sourceRangeArray.length; ++i ) {
@@ -218,7 +218,11 @@ function NamedRange_copy_from_source_to_target( bCopyOnlyIfTargetBlank ) {
 
     sourceValuesArray[ i ] = sourceColumnsRows;
   }
+*/
 
+
+//!!!
+  SpreadsheetApp.flush();
 
 //!!! ...unfinished... (2023/06/07 Temp Test) Copy directly.
   // 2. Copy ranges directly.
