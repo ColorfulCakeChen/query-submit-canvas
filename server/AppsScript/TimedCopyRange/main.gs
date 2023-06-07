@@ -222,6 +222,7 @@ function NamedRange_copy_from_source_to_target( bCopyOnlyIfTargetBlank ) {
 
 
 //!!!
+  // It seems Range.copyTo() will not trigger flush. So, call it explicitly.
   SpreadsheetApp.flush();
 
 //!!! ...unfinished... (2023/06/07 Temp Test) Copy directly.
