@@ -99,9 +99,9 @@ function GA4_run_report_() {
 function NamedRange_copy_from_source_to_target( bCopyOnlyIfTargetBlank ) {
 
   // Note: It seems that SpreadsheetApp.flush() will be called automatically
-  //       whenever Range.getValue() or SpreadsheetApp.getRangeByName() is called.
-  //       In order to reduce unnecessary re-calculation, getting these before
-  //       activating re-calculation.
+  //       whenever Range.getValue() or SpreadsheetApp.getRangeByName() is
+  //       called. In order to reduce unnecessary re-calculation, getting
+  //       these before activating re-calculation.
   //
   // (2023/06/07)
 
