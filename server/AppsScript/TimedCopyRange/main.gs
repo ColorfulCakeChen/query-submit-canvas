@@ -101,6 +101,14 @@ function NamedRange_copy_from_source_to_target( bCopyOnlyIfTargetBlank ) {
     RANGE_NAME.FC.GENERATION.SHOULD.CALCULATE.RANGE_NAME,
     RANGE_NAME.FC.COPIER.SOURCE.RANGE_NAMES, RANGE_NAME.FC.COPIER.TARGET.RANGE_NAMES );
 
+    // Flag for calculating or not.
+    const generationShouldCalculateRangeNameString
+      = generationShouldCalculateRangeName.getValue();
+
+    const [ generationShouldCalculateRange ] = ranges_getByNames_(
+      generationShouldCalculateRangeNameString );
+
+
 //!!! (2023/06/06 Remarked) Move to behind of copy.
 //   // 1. Prevent re-calculation after ranges copied.
 //   let generationShouldCalculateRangeNameString
@@ -132,6 +140,10 @@ function NamedRange_copy_from_source_to_target( bCopyOnlyIfTargetBlank ) {
 //     copierSource.copyTo( copierTarget, SpreadsheetApp.CopyPasteType.PASTE_VALUES, false );
 //   }
 
+
+//!!! ...unfinished... (2023/06/07 Temp Test)
+// Test: Start calculating just before copying.
+    generationShouldCalculateRange.setValue( true );
 
 //!!! ...unfinished... (2023/06/06)
 // Perhaps, should:
@@ -198,6 +210,11 @@ function NamedRange_copy_from_source_to_target( bCopyOnlyIfTargetBlank ) {
 
     sourceValuesArray[ i ] = sourceColumnsRows;
   }
+
+//!!! ...unfinished... (2023/06/07 Temp Test)
+// Test: Stop calculating just after copying.
+    generationShouldCalculateRange.setValue( false );
+
 
 //!!! ...unfinished... (2023/06/07 Temp Remarked) For debug.
 ////!!! ...unfinished... (2023/06/06) Too late. The re-calculation is done.
