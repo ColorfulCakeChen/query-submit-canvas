@@ -98,7 +98,7 @@ function GA4_run_report_() {
  */
 function NamedRange_copy_from_source_to_target( bCopyOnlyIfTargetBlank ) {
 
-  // Note: It seems that SpreadsheetApp.flush() will be called automatically
+  // Note: It seems SpreadsheetApp.flush() will be called automatically
   //       whenever Range.getValue() or SpreadsheetApp.getRangeByName() is
   //       called. In order to reduce unnecessary re-calculation, getting
   //       these before activating re-calculation.
@@ -143,9 +143,12 @@ function NamedRange_copy_from_source_to_target( bCopyOnlyIfTargetBlank ) {
 
 
 //!!! ...unfinished... (2023/06/07 Temp Test)
-// Test: Start calculating just before copying.
+  // 2. Activate calculating just before copying.
   generationShouldCalculateRange.setValue( true );
 
+  // Because Range.copyTo() seems not trigger flush, flush explicitly
+  // to complete the re-calculation.
+  SpreadsheetApp.flush();
 
 
 //!!! ...unfinished... (2023/06/07)
@@ -200,13 +203,19 @@ function NamedRange_copy_from_source_to_target( bCopyOnlyIfTargetBlank ) {
 */
 
 
-//!!!
-  // It seems Range.copyTo() will not trigger flush. So, flush explicitly
-  // to complete the re-calculation.
-  SpreadsheetApp.flush();
+//!!! (2023/06/07 Temp Test) Turn off before copy.
+  // 3. Prevent re-calculation after ranges copied.
+  //
+  // Because both Range.setValue() and Range.copyTo() seems not trigger
+  // flush, deactivate calculating before Range.copyTo(). Although this
+  // looks strange, it may prevent from unnecessary calculation after
+  // ranges copied.
+  //
+  generationShouldCalculateRange.setValue( false );
+  //SpreadsheetApp.flush();
 
 //!!! ...unfinished... (2023/06/07 Temp Test) Copy directly.
-  // 2. Copy ranges directly.
+  // 4. Copy ranges directly.
   for ( let i = 0; i < sourceRangeArray.length; ++i ) {
     let sourceRange = sourceRangeArray[ i ];
     if ( !sourceRange )
@@ -218,8 +227,8 @@ function NamedRange_copy_from_source_to_target( bCopyOnlyIfTargetBlank ) {
       targetRange, SpreadsheetApp.CopyPasteType.PASTE_VALUES, false );
   }
 
-//!!!
-//  SpreadsheetApp.flush();
+/*!!!
+  SpreadsheetApp.flush();
 
   // 3. Prevent re-calculation after ranges copied.
   generationShouldCalculateRange.setValue( false );
@@ -227,7 +236,7 @@ function NamedRange_copy_from_source_to_target( bCopyOnlyIfTargetBlank ) {
 //!!!
   //SpreadsheetApp.flush();
 
-/*!!! ...unfinished... (2023/06/07 Temp Remarked)
+//!!! ...unfinished... (2023/06/07 Temp Remarked)
   // 4. Copy from memory to source.
   for ( let i = 0; i < targetRangeArray.length; ++i ) {
     let sourceValues = sourceValuesArray[ i ];
