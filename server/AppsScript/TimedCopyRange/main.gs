@@ -54,6 +54,9 @@ function fetcherTimer_onTime_( e ) {
   range_value_inc_( fetcherTimerCounter );
 
   GA4_run_report_();
+
+//!!! ...unfinished... (2023/06/07)
+// should be re-scheduled by copierTimer_onTime_().
 }
 
 /** When copier's timer triggered. */
@@ -71,6 +74,9 @@ function copierTimer_onTime_( e ) {
   range_value_inc_( copierTimerCounter );
 
   NamedRange_copy_from_source_to_target_();
+
+//!!! ...unfinished... (2023/06/07)
+// should re-schedule fetcherTimer_onTime_().  
 }
 
 /**
@@ -300,6 +306,10 @@ function timer_start_() {
   // If copier target isBlank, activate calculation and copy from source
   // to target immediately.
   NamedRange_copy_from_source_to_target_( true );
+
+//!!! ...unfinished... (2023/06/07)
+// should only schedule the first time fetcherTimer_onTime_().
+// other times should be re-scheduled by copierTimer_onTime_().
 
   let timerBuilder = ScriptApp.newTrigger( "timer_onTime_" ).timeBased();
   if ( !fetcherCopierEveryMinutes.isBlank() )
