@@ -109,6 +109,11 @@ function NamedRange_copy_from_source_to_target( bCopyOnlyIfTargetBlank ) {
       generationShouldCalculateRangeNameString );
 
 
+//!!! ...unfinished... (2023/06/07 Temp Test)
+// Test: Start calculating just before copying.
+    generationShouldCalculateRange.setValue( true );
+
+
 //!!! (2023/06/06 Remarked) Move to behind of copy.
 //   // 1. Prevent re-calculation after ranges copied.
 //   let generationShouldCalculateRangeNameString
@@ -118,34 +123,35 @@ function NamedRange_copy_from_source_to_target( bCopyOnlyIfTargetBlank ) {
 //     generationShouldCalculateRangeNameString );
 //
 //   generationShouldCalculateRange.setValue( false );
-//
-//   // 2. Copy ranges.
-//   let sourceRangeNamesString = copierSourceRangeNames.getValue();
-//   let sourceRangeNames = sourceRangeNamesString.split( "\," );
-//
-//   let targetRangeNamesString = copierTargetRangeNames.getValue();
-//   let targetRangeNames = targetRangeNamesString.split( "\," );
-//
-//   let sourceValues
-//   for ( let i = 0; i < sourceRangeNames.length; ++i ) {
-//     let sourceRangeName = sourceRangeNames[ i ].trim();
-//     let targetRangeName = targetRangeNames[ i ].trim();
-//     let [ copierSource, copierTarget ] = ranges_getByNames_(
-//       sourceRangeName, targetRangeName );
-//
-//     if ( bCopyOnlyIfTargetBlank )
-//       if ( !copierTarget.isBlank() )
-//         continue;
-//
-//     copierSource.copyTo( copierTarget, SpreadsheetApp.CopyPasteType.PASTE_VALUES, false );
-//   }
 
+//!!! ...unfinished... (2023/06/07 Temp Test) Copy directly.
+  // 2. Copy ranges.
+  let sourceRangeNamesString = copierSourceRangeNames.getValue();
+  let sourceRangeNames = sourceRangeNamesString.split( "\," );
+
+  let targetRangeNamesString = copierTargetRangeNames.getValue();
+  let targetRangeNames = targetRangeNamesString.split( "\," );
+
+  for ( let i = 0; i < sourceRangeNames.length; ++i ) {
+    let sourceRangeName = sourceRangeNames[ i ].trim();
+    let targetRangeName = targetRangeNames[ i ].trim();
+    let [ copierSource, copierTarget ] = ranges_getByNames_(
+      sourceRangeName, targetRangeName );
+
+    if ( bCopyOnlyIfTargetBlank )
+      if ( !copierTarget.isBlank() )
+        continue;
+
+    copierSource.copyTo( copierTarget, SpreadsheetApp.CopyPasteType.PASTE_VALUES, false );
+  }
 
 //!!! ...unfinished... (2023/06/07 Temp Test)
-// Test: Start calculating just before copying.
-    generationShouldCalculateRange.setValue( true );
+// Test: Stop calculating just after copying.
+    generationShouldCalculateRange.setValue( false );
 
-//!!! ...unfinished... (2023/06/06)
+
+
+/*!!! ...unfinished... (2023/06/06)
 // Perhaps, should:
 //   - copy from range to memory.
 //   - generationShouldCalculateRange.setValue( false );
@@ -240,6 +246,7 @@ function NamedRange_copy_from_source_to_target( bCopyOnlyIfTargetBlank ) {
       continue;
     targetRange.setValues( sourceValues );
   }
+*/
 }
 
 /** Install all triggers of this script. */
