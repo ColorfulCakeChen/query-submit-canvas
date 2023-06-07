@@ -48,21 +48,12 @@ function fetcherTimer_onTime_( e ) {
   console.log( `fetcherTimer_onTime_()` );
   EventObject_Timer_recordTo_byRangeName_( e, RANGE_NAME.FC.FETCHER.TIMER.LAST_TIME );
 
-  let [ fetcherTimerCounter, copierTimerAfterSeconds ] = ranges_getByNames_(
-    RANGE_NAME.FC.FETCHER.TIMER.COUNTER,
-    RANGE_NAME.FC.COPIER.TIMER.AFTER_SECONDS );
+  let [ fetcherTimerCounter ] = ranges_getByNames_(
+    RANGE_NAME.FC.FETCHER.TIMER.COUNTER );
 
   range_value_inc_( fetcherTimerCounter );
 
   GA4_run_report_();
-
-  // Create timer for copying ranges.
-  {
-    const afterSeconds = copierTimerAfterSeconds.getValue();
-    const afterMilliseconds = afterSeconds * 1000;
-    let timerBuilder = ScriptApp.newTrigger( "copierTimer_onTime_" ).timeBased();
-      timerBuilder.after( afterMilliseconds ).create();
-  }
 }
 
 /** When copier's timer triggered. */
@@ -79,25 +70,39 @@ function copierTimer_onTime_( e ) {
 }
 
 /**
- * Run a GA4 report to fetch data. And activate recalculation.
+ * - Run a GA4 report to fetch data.
+ * - Activate recalculation.
+ * - Schedule timer for copying ranges.
  */
 function GA4_run_report_() {
+  const [ generationShouldCalculateRangeName,
+    copierTimerAfterSeconds ] = ranges_getByNames_(
+    RANGE_NAME.FC.GENERATION.SHOULD.CALCULATE.RANGE_NAME,
+    RANGE_NAME.FC.COPIER.TIMER.AFTER_SECONDS );
+
+  const generationShouldCalculateRangeNameString
+    = generationShouldCalculateRangeName.getValue();
+
+  const [ generationShouldCalculateRange ] = ranges_getByNames_(
+    generationShouldCalculateRangeNameString );
+
   // 1.
   //GA4_run_core_report_();
   GA4_run_realtime_report_()
 
   // 2. Activate recalculation after GA4 report got.
-
-  let [ generationShouldCalculateRangeName ] = ranges_getByNames_(
-    RANGE_NAME.FC.GENERATION.SHOULD.CALCULATE.RANGE_NAME );
-
-  let generationShouldCalculateRangeNameString
-    = generationShouldCalculateRangeName.getValue();
-
-  let [ generationShouldCalculateRange ] = ranges_getByNames_(
-    generationShouldCalculateRangeNameString );
-
   generationShouldCalculateRange.setValue( true );
+
+  // 3. Create timer for copying ranges.
+  //
+  // Note: Assume the calculation (triggered by the above) will complete after
+  //       specified seconds.
+  {
+    const afterSeconds = copierTimerAfterSeconds.getValue();
+    const afterMilliseconds = afterSeconds * 1000;
+    let timerBuilder = ScriptApp.newTrigger( "copierTimer_onTime_" ).timeBased();
+    timerBuilder.after( afterMilliseconds ).create();
+  }
 }
 
 /**
