@@ -180,7 +180,7 @@ function NamedRange_copy_from_source_to_target( bCopyOnlyIfTargetBlank ) {
 // to trun off generationShouldCalculateRange.
 
 //!!!
-//  SpreadsheetApp.flush();
+  //SpreadsheetApp.flush();
 
 //!!! ...unfinished... (2023/06/07 Temp Remarked)
   // 2. Copy from source to memory.
@@ -221,18 +221,15 @@ function NamedRange_copy_from_source_to_target( bCopyOnlyIfTargetBlank ) {
 
 
 //!!! ...unfinished... (2023/06/07 Temp Test) Copy directly.
-  // 2. Copy ranges.
-  for ( let i = 0; i < sourceRangeNames.length; ++i ) {
-    let sourceRangeName = sourceRangeNames[ i ].trim();
-    let targetRangeName = targetRangeNames[ i ].trim();
-    let [ copierSource, copierTarget ] = ranges_getByNames_(
-      sourceRangeName, targetRangeName );
-
-    if ( bCopyOnlyIfTargetBlank )
-      if ( !copierTarget.isBlank() )
-        continue;
-
-    copierSource.copyTo( copierTarget, SpreadsheetApp.CopyPasteType.PASTE_VALUES, false );
+  // 2. Copy ranges directly.
+  for ( let i = 0; i < sourceRangeArray.length; ++i ) {
+    let sourceRange = sourceRangeArray[ i ];
+    if ( !sourceRange )
+      continue;
+    let targetRange = targetRangeArray[ i ];
+    if ( !targetRange )
+      continue;
+    sourceRange.copyTo( targetRange, SpreadsheetApp.CopyPasteType.PASTE_VALUES, false );
   }
 
 //!!!
