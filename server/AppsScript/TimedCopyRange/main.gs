@@ -142,7 +142,6 @@ function NamedRange_copy_from_source_to_target( bCopyOnlyIfTargetBlank ) {
   }
 
 
-//!!! ...unfinished... (2023/06/07 Temp Test)
   // 2. Activate calculating just before copying.
   generationShouldCalculateRange.setValue( true );
 
@@ -150,6 +149,19 @@ function NamedRange_copy_from_source_to_target( bCopyOnlyIfTargetBlank ) {
   // to complete the re-calculation.
   SpreadsheetApp.flush();
 
+  // 3. Prevent re-calculation after ranges copied.
+  //
+  // Because both Range.setValue() and Range.copyTo() seem not trigger
+  // flush, deactivate calculating before Range.copyTo(). Although this
+  // looks strange, it may prevent from unnecessary calculation after
+  // ranges copied.
+  //
+  generationShouldCalculateRange.setValue( false );
+
+  // Note: Do not call SpreadsheetApp.flush() or Range.getValue() or
+  //       SpreadsheetApp.getRangeByName() here. Otherwise, there
+  //       will be nothing can be copied because they all accomplish
+  //       the above Range.setValue().
 
 //!!! ...unfinished... (2023/06/07)
 // Perhaps, should:
@@ -175,7 +187,7 @@ function NamedRange_copy_from_source_to_target( bCopyOnlyIfTargetBlank ) {
     let sourceColumnsRows = sourceRange.getValues();
 
 //!!! ...unfinished... (2023/06/07 Temp Test) get twice whether different.
-//    sourceColumnsRows = sourceRange.getValues();
+    sourceColumnsRows = sourceRange.getValues();
 
 //!!! ...unfinished... (2023/06/07)
     { // Check cell content length.
@@ -201,19 +213,6 @@ function NamedRange_copy_from_source_to_target( bCopyOnlyIfTargetBlank ) {
     sourceValuesArray[ i ] = sourceColumnsRows;
   }
 */
-
-
-  // 3. Prevent re-calculation after ranges copied.
-  //
-  // Because both Range.setValue() and Range.copyTo() seem not trigger
-  // flush, deactivate calculating before Range.copyTo(). Although this
-  // looks strange, it may prevent from unnecessary calculation after
-  // ranges copied.
-  //
-  generationShouldCalculateRange.setValue( false );
-
-  // Note: Do not call SpreadsheetApp.flush() here. Otherwise, there
-  //       will be nothing can be copied.
 
   // 4. Copy ranges directly.
   for ( let i = 0; i < sourceRangeArray.length; ++i ) {
