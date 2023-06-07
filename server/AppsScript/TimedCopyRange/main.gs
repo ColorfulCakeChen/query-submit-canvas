@@ -97,21 +97,18 @@ function GA4_run_report_() {
  * mainly used by timer_start_().
  */
 function NamedRange_copy_from_source_to_target( bCopyOnlyIfTargetBlank ) {
+
+  // Note: It seems that SpreadsheetApp.flush() will be called automatically
+  //       whenever Range.getValue() or SpreadsheetApp.getRangeByName() is called.
+  //       In order to reduce unnecessary re-calculation, getting these before
+  //       activating re-calculation.
+  //
+  // (2023/06/07)
+
   let [ generationShouldCalculateRangeName,
     copierSourceRangeNames, copierTargetRangeNames ] = ranges_getByNames_(
     RANGE_NAME.FC.GENERATION.SHOULD.CALCULATE.RANGE_NAME,
     RANGE_NAME.FC.COPIER.SOURCE.RANGE_NAMES, RANGE_NAME.FC.COPIER.TARGET.RANGE_NAMES );
-
-  // Note: It seems that SpreadsheetApp.flush() will be called automatically
-  //       whenever Range.getValue() is called.
-  //
-  //(2023/06/07)
-
-  let sourceRangeNamesString = copierSourceRangeNames.getValue();
-  let sourceRangeNames = sourceRangeNamesString.split( "\," );
-
-  let targetRangeNamesString = copierTargetRangeNames.getValue();
-  let targetRangeNames = targetRangeNamesString.split( "\," );
 
   // Flag for calculating or not.
   const generationShouldCalculateRangeNameString
@@ -120,24 +117,34 @@ function NamedRange_copy_from_source_to_target( bCopyOnlyIfTargetBlank ) {
   const [ generationShouldCalculateRange ] = ranges_getByNames_(
     generationShouldCalculateRangeNameString );
 
+  // 1. Collect all source and target range.
+  let sourceRangeNamesString = copierSourceRangeNames.getValue();
+  let sourceRangeNames = sourceRangeNamesString.split( "\," );
+
+  let targetRangeNamesString = copierTargetRangeNames.getValue();
+  let targetRangeNames = targetRangeNamesString.split( "\," );
+
+  let sourceRangeArray = new Array( sourceRangeNames.length );
+  let targetRangeArray = new Array( sourceRangeNames.length );
+  for ( let i = 0; i < sourceRangeNames.length; ++i ) {
+    let sourceRangeName = sourceRangeNames[ i ].trim();
+    let targetRangeName = targetRangeNames[ i ].trim();
+    let [ copierSource, copierTarget ] = ranges_getByNames_(
+      sourceRangeName, targetRangeName );
+
+    if ( bCopyOnlyIfTargetBlank )
+      if ( !copierTarget.isBlank() )
+        continue;
+
+    sourceRangeArray[ i ] = copierSource;
+    targetRangeArray[ i ] = copierTarget;
+  }
+
 
 //!!! ...unfinished... (2023/06/07 Temp Test)
 // Test: Start calculating just before copying.
   generationShouldCalculateRange.setValue( true );
 
-//!!! ...unfinished... (2023/06/07 Temp Test)
-// Test: Turn off immediately
-  generationShouldCalculateRange.setValue( false );
-
-//!!! (2023/06/06 Remarked) Move to behind of copy.
-//   // 1. Prevent re-calculation after ranges copied.
-//   let generationShouldCalculateRangeNameString
-//     = generationShouldCalculateRangeName.getValue();
-//
-//   let [ generationShouldCalculateRange ] = ranges_getByNames_(
-//     generationShouldCalculateRangeNameString );
-//
-//   generationShouldCalculateRange.setValue( false );
 
 //!!! ...unfinished... (2023/06/07 Temp Test) Copy directly.
 //   // 2. Copy ranges.
@@ -173,26 +180,9 @@ function NamedRange_copy_from_source_to_target( bCopyOnlyIfTargetBlank ) {
 // to trun off generationShouldCalculateRange.
 
 //!!!
-  SpreadsheetApp.flush();
+//  SpreadsheetApp.flush();
 
 //!!! ...unfinished... (2023/06/07 Temp Remarked)
-  // 1. Collect all source and target range.
-  let sourceRangeArray = new Array( sourceRangeNames.length );
-  let targetRangeArray = new Array( sourceRangeNames.length );
-  for ( let i = 0; i < sourceRangeNames.length; ++i ) {
-    let sourceRangeName = sourceRangeNames[ i ].trim();
-    let targetRangeName = targetRangeNames[ i ].trim();
-    let [ copierSource, copierTarget ] = ranges_getByNames_(
-      sourceRangeName, targetRangeName );
-
-    if ( bCopyOnlyIfTargetBlank )
-      if ( !copierTarget.isBlank() )
-        continue;
-
-    sourceRangeArray[ i ] = copierSource;
-    targetRangeArray[ i ] = copierTarget;
-  }
-
   // 2. Copy from source to memory.
   let sourceValuesArray = new Array( sourceRangeArray.length );
   for ( let i = 0; i < sourceRangeArray.length; ++i ) {
