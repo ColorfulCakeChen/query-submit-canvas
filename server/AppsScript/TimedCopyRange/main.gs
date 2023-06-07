@@ -240,13 +240,13 @@ function NamedRange_copy_from_source_to_target( bCopyOnlyIfTargetBlank ) {
   }
 
 //!!!
-  SpreadsheetApp.flush();
+//  SpreadsheetApp.flush();
 
   // 3. Prevent re-calculation after ranges copied.
   generationShouldCalculateRange.setValue( false );
 
 //!!!
-  SpreadsheetApp.flush();
+  //SpreadsheetApp.flush();
 
 /*!!! ...unfinished... (2023/06/07 Temp Remarked)
   // 4. Copy from memory to source.
