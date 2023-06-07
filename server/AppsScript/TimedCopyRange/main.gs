@@ -95,7 +95,7 @@ function GA4_run_report_() {
  * @param {boolean} bCopyOnlyIfTargetBlank
  *   If true, copy a source to a target only if the target is totally blank.
  */
-function NamedRange_copy_from_source_to_target_( bCopyOnlyIfTargetBlank ) {
+function NamedRange_copy_from_source_to_target( bCopyOnlyIfTargetBlank ) {
   let [ generationShouldCalculateRangeName,
     copierSourceRangeNames, copierTargetRangeNames ] = ranges_getByNames_(
     RANGE_NAME.FC.GENERATION.SHOULD.CALCULATE.RANGE_NAME,
@@ -172,7 +172,27 @@ function NamedRange_copy_from_source_to_target_( bCopyOnlyIfTargetBlank ) {
     let sourceRange = sourceRangeArray[ i ];
     if ( !sourceRange )
       continue;
-    sourceValuesArray[ i ] = sourceRange.getValues();
+
+    let sourceColumnsRows = sourceRange.getValues();
+
+//!!! ...unfinished... (2023/06/07)
+    { // Check cell content length.
+      for ( let rowId= 0; rowId < sourceColumnsRows.length; ++rowId ) {
+        let sourceColumns = sourceColumnsRows[ rowId ];
+
+        for ( let columndId = 0; columndId < sourceColumns.length; ++columndId ) {
+          let cellValue = sourceColumns[ columndId ];
+          if ( typeof( cellValue ) === "string" ) {
+            if ( cellValue.length > 50000 ) {
+              debugger;
+            }
+          }
+
+        }
+      }
+    }
+
+    sourceValuesArray[ i ] = sourceColumnsRows;
   }
 
 //!!! ...unfinished... (2023/06/06) Too late. The re-calculation is done.
