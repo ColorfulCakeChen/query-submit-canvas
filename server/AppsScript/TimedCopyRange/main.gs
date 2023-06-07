@@ -245,7 +245,7 @@ function NamedRange_copy_from_source_to_target_( bCopyOnlyIfTargetBlank ) {
 }
 
 /** Install all triggers of this script. */
-function timer_start() {
+function timer_start_() {
   // Note: Although not all range names will be used here, getting them
   //       could confirm whether they are defined.
   let [ fetcherCopierEveryMinutes, fetcherCopierEveryHours,
