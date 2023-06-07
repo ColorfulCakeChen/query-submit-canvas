@@ -96,7 +96,7 @@ function GA4_run_report_() {
  *   If true, copy a source to a target only if the target is totally blank. It is
  * mainly used by timer_start_().
  */
-function NamedRange_copy_from_source_to_target( bCopyOnlyIfTargetBlank ) {
+function NamedRange_copy_from_source_to_target_( bCopyOnlyIfTargetBlank ) {
 
   // Note: It seems SpreadsheetApp.flush() will be called automatically
   //       whenever Range.getValue() or SpreadsheetApp.getRangeByName() is
