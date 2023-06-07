@@ -180,10 +180,14 @@ function NamedRange_copy_from_source_to_target( bCopyOnlyIfTargetBlank ) {
       for ( let rowId= 0; rowId < sourceColumnsRows.length; ++rowId ) {
         let sourceColumns = sourceColumnsRows[ rowId ];
 
-        for ( let columndId = 0; columndId < sourceColumns.length; ++columndId ) {
-          let cellValue = sourceColumns[ columndId ];
+        for ( let columnId = 0; columnId < sourceColumns.length; ++columnId ) {
+          let cellValue = sourceColumns[ columnId ];
           if ( typeof( cellValue ) === "string" ) {
-            if ( cellValue.length > 50000 ) {
+            let cellLength = cellValue.length;
+            console.log( `(rowId, columnId)=( ${rowId}, ${columnId} ), `
+              + `cellLength=${cellLength}.` );
+
+            if ( cellLength > 50000 ) {
               debugger;
             }
           }
@@ -195,18 +199,19 @@ function NamedRange_copy_from_source_to_target( bCopyOnlyIfTargetBlank ) {
     sourceValuesArray[ i ] = sourceColumnsRows;
   }
 
-//!!! ...unfinished... (2023/06/06) Too late. The re-calculation is done.
-  // 3. Prevent re-calculation after ranges copied.
-  {
-    let generationShouldCalculateRangeNameString
-      = generationShouldCalculateRangeName.getValue();
-
-    let [ generationShouldCalculateRange ] = ranges_getByNames_(
-      generationShouldCalculateRangeNameString );
-
-    generationShouldCalculateRange.setValue( false );
-    SpreadsheetApp.flush(); // Ensure no more re-calculation.
-  }
+//!!! ...unfinished... (2023/06/07 Temp Remarked) For debug.
+////!!! ...unfinished... (2023/06/06) Too late. The re-calculation is done.
+//   // 3. Prevent re-calculation after ranges copied.
+//   {
+//     let generationShouldCalculateRangeNameString
+//       = generationShouldCalculateRangeName.getValue();
+//
+//     let [ generationShouldCalculateRange ] = ranges_getByNames_(
+//       generationShouldCalculateRangeNameString );
+//
+//     generationShouldCalculateRange.setValue( false );
+//     SpreadsheetApp.flush(); // Ensure no more re-calculation.
+//   }
 
   // 4. Copy from memory to source.
   for ( let i = 0; i < targetRangeArray.length; ++i ) {
