@@ -144,6 +144,7 @@ function NamedRange_copy_from_source_to_target_( bCopyOnlyIfTargetBlank ) {
 
   // 2. If requested, activate calculating just before copying.
   if ( bCopyOnlyIfTargetBlank ) {
+    console.log( `Activate calculation.` );
     generationShouldCalculateRange.setValue( true );
 
     // Because Range.copyTo() seems not trigger flush, flush explicitly
@@ -158,6 +159,7 @@ function NamedRange_copy_from_source_to_target_( bCopyOnlyIfTargetBlank ) {
   // looks strange, it may prevent from unnecessary calculation after
   // ranges copied.
   //
+  console.log( `Deactivate calculation.` );
   generationShouldCalculateRange.setValue( false );
 
   // Note: Do not call SpreadsheetApp.flush() or Range.getValue() or
