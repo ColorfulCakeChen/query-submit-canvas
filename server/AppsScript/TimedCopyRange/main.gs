@@ -74,7 +74,7 @@ function GA4_run_report_() {
   //GA4_run_core_report_();
   GA4_run_realtime_report_()
 
-  // 2. Activate re-calculation after GA4 report got.
+  // 2. Activate recalculation after GA4 report got.
 
   let [ generationShouldCalculateRangeName ] = ranges_getByNames_(
     RANGE_NAME.FC.GENERATION.SHOULD.CALCULATE.RANGE_NAME );
@@ -259,6 +259,7 @@ function timer_start_() {
 //!!! ...unfinished... (2023/06/07)
 // It seems should Re-calculate and then copy.
 // Otherswise, nothing can be copied.
+
   // If copier target isBlank, copy from source to target immediately.
   NamedRange_copy_from_source_to_target_( true );
 
