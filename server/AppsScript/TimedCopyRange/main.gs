@@ -67,7 +67,7 @@ function copierTimer_onTime_( e ) {
 }
 
 /**
- * Run a GA4 report to fetch data. And activate re-calculation.
+ * Run a GA4 report to fetch data. And activate recalculation.
  */
 function GA4_run_report_() {
   // 1.
@@ -89,7 +89,7 @@ function GA4_run_report_() {
 }
 
 /**
- * Deactivate re-calculation. And copy the values from source (NamedRange)
+ * Deactivate recalculation. And copy the values from source (NamedRange)
  * to target (NamedRange).
  *
  * @param {boolean} bCopyOnlyIfTargetBlank
