@@ -147,28 +147,6 @@ function NamedRange_copy_from_source_to_target( bCopyOnlyIfTargetBlank ) {
   generationShouldCalculateRange.setValue( true );
 
 
-//!!! ...unfinished... (2023/06/07 Temp Test) Copy directly.
-//   // 2. Copy ranges.
-//   let sourceRangeNamesString = copierSourceRangeNames.getValue();
-//   let sourceRangeNames = sourceRangeNamesString.split( "\," );
-//
-//   let targetRangeNamesString = copierTargetRangeNames.getValue();
-//   let targetRangeNames = targetRangeNamesString.split( "\," );
-//
-//   for ( let i = 0; i < sourceRangeNames.length; ++i ) {
-//     let sourceRangeName = sourceRangeNames[ i ].trim();
-//     let targetRangeName = targetRangeNames[ i ].trim();
-//     let [ copierSource, copierTarget ] = ranges_getByNames_(
-//       sourceRangeName, targetRangeName );
-//
-//     if ( bCopyOnlyIfTargetBlank )
-//       if ( !copierTarget.isBlank() )
-//         continue;
-//
-//     copierSource.copyTo( copierTarget, SpreadsheetApp.CopyPasteType.PASTE_VALUES, false );
-//   }
-
-
 
 //!!! ...unfinished... (2023/06/07)
 // Perhaps, should:
