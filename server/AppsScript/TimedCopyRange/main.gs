@@ -240,7 +240,7 @@ function NamedRange_copy_from_source_to_target_( bCopyOnlyIfTargetBlank ) {
     const targetRange = targetRangeArray[ i ];
 
     if ( sourceRange.isBlank() )
-      sourceRangeArray[ i ] = null; // Do not copy from blank.
+      sourceRangeArray[ i ] = null; // Do not copy blank source.
 
     if ( bCopyOnlyIfTargetBlank )
       if ( !targetRange.isBlank() )
