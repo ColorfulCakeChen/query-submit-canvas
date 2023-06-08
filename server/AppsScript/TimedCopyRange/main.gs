@@ -2,7 +2,7 @@
 
 /** */
 function forDebug() {
-  //fetcherTimer_onTime_();
+  NamedRange_copy_from_source_to_target_( true );
 }
 
 /** */
@@ -151,33 +151,36 @@ function GA4_run_report_() {
  */
 function NamedRange_copy_from_source_to_target_( bCopyOnlyIfTargetBlank ) {
 
-  // Note: It seems SpreadsheetApp.flush() will be called automatically
-  //       whenever Range.getValue() or SpreadsheetApp.getRangeByName() is
-  //       called. In order to reduce unnecessary recalculation, getting
-  //       these before activating recalculation.
+  // 0.
   //
-  // (2023/06/07)
+  // Note: It seems SpreadsheetApp.flush() will be called automatically
+  //       whenever SpreadsheetApp.getRangeByName() or Range.getValue() (but
+  //       not Range.copyTo()) or Range.isBlank() is called. In order to
+  //       reduce unnecessary recalculation, getting these before activating
+  //       recalculation.
 
+  // 0.1
   let [ generationShouldCalculateRangeName,
     copierSourceRangeNames, copierTargetRangeNames ] = ranges_getByNames_(
     RANGE_NAME.FC.GENERATION.SHOULD.CALCULATE.RANGE_NAME,
     RANGE_NAME.FC.COPIER.SOURCE.RANGE_NAMES,
     RANGE_NAME.FC.COPIER.TARGET.RANGE_NAMES );
 
-  // Flag for calculating or not.
+  // 0.2 Flag for calculating or not.
   const generationShouldCalculateRangeNameString
     = generationShouldCalculateRangeName.getValue();
 
   const [ generationShouldCalculateRange ] = ranges_getByNames_(
     generationShouldCalculateRangeNameString );
 
-  // 1. Collect all source and target ranges.
+  // 0.3 Range names of source and target.
   let sourceRangeNamesString = copierSourceRangeNames.getValue();
   let sourceRangeNames = sourceRangeNamesString.split( "\," );
 
   let targetRangeNamesString = copierTargetRangeNames.getValue();
   let targetRangeNames = targetRangeNamesString.split( "\," );
 
+  // 0.4 Collect all source and target ranges.
   let sourceRangeArray = new Array( sourceRangeNames.length );
   let targetRangeArray = new Array( sourceRangeNames.length );
   for ( let i = 0; i < sourceRangeNames.length; ++i ) {
@@ -187,26 +190,58 @@ function NamedRange_copy_from_source_to_target_( bCopyOnlyIfTargetBlank ) {
       = targetRangeNames[ i ].trim();
     let [ sourceRange, targetRange ] = ranges_getByNames_(
       sourceRangeName, targetRangeName );
-
-    if ( sourceRange.isBlank() )
-      continue; // Do not copy from blank.
-
-    if ( bCopyOnlyIfTargetBlank )
-      if ( !targetRange.isBlank() )
-        continue; // Do not copy to non-blank.
-
     sourceRangeArray[ i ] = sourceRange;
     targetRangeArray[ i ] = targetRange;
   }
 
-  // 2. If requested, activate calculating just before copying.
+  // 1. If requested, activate calculating just before copying.
   if ( bCopyOnlyIfTargetBlank ) {
     generationShouldCalculateRange.setValue( true );
     console.log( `Calculation activated.` );
 
-    // Because Range.copyTo() seems not trigger flush, flush explicitly
-    // to complete the recalculation.
-    SpreadsheetApp.flush();
+//!!! (2023/06/08 Remarked) The following ranges_getByNames_() will flush implicitly.
+//     // Because Range.copyTo() seems not trigger flush, flush explicitly
+//     // to complete the recalculation.
+//     SpreadsheetApp.flush();
+  }
+
+  // 1. Collect all source and target ranges.
+  //
+  // This should be after the (above) recalculation activated because
+  // the recalculation affects whether source range is blank.
+
+//!!! (2023/06/08 Remarked) Check ranges only.
+//   let sourceRangeArray = new Array( sourceRangeNames.length );
+//   let targetRangeArray = new Array( sourceRangeNames.length );
+//   for ( let i = 0; i < sourceRangeNames.length; ++i ) {
+//     let sourceRangeName = sourceRangeNames[ i ]
+//       = sourceRangeNames[ i ].trim();
+//     let targetRangeName = targetRangeNames[ i ]
+//       = targetRangeNames[ i ].trim();
+//     let [ sourceRange, targetRange ] = ranges_getByNames_(
+//       sourceRangeName, targetRangeName );
+//
+//     if ( sourceRange.isBlank() )
+//       continue; // Do not copy from blank.
+//
+//     if ( bCopyOnlyIfTargetBlank )
+//       if ( !targetRange.isBlank() )
+//         continue; // Do not copy to non-blank.
+//
+//     sourceRangeArray[ i ] = sourceRange;
+//     targetRangeArray[ i ] = targetRange;
+//   }
+
+  for ( let i = 0; i < sourceRangeArray.length; ++i ) {
+    const sourceRange = sourceRangeArray[ i ];
+    const targetRange = targetRangeArray[ i ];
+
+    if ( sourceRange.isBlank() )
+      sourceRangeArray[ i ] = null; // Do not copy from blank.
+
+    if ( bCopyOnlyIfTargetBlank )
+      if ( !targetRange.isBlank() )
+        targetRangeArray[ i ] = null; // Do not overwrite non-blank target.
   }
 
   // 3. Prevent from recalculation after ranges copied.
@@ -237,7 +272,8 @@ function NamedRange_copy_from_source_to_target_( bCopyOnlyIfTargetBlank ) {
 
     const sourceRangeName = sourceRangeNames[ i ];
     const targetRangeName = targetRangeNames[ i ];
-    console.log( `Copy from \"${sourceRangeName}\" to \"${targetRangeName}\".` );
+    console.log( `Copy from "${sourceRangeName}" to `
+      + `"${targetRangeName}".` );
   }
 }
 
