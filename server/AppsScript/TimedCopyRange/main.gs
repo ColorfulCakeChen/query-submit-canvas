@@ -2,7 +2,8 @@
 
 /** */
 function forDebug() {
-  NamedRange_copy_from_source_to_target_( true );
+  //NamedRange_copy_from_source_to_target_( true );
+  //NamedRange_copy_from_source_to_target_( false );
 }
 
 /** */
