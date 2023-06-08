@@ -1,10 +1,5 @@
 /** @OnlyCurrentDoc */
 
-//!!!
-// const FUNCTION_NAME = {
-//   copierTimer_onTime: copierTimer_onTime_.name,
-// };
-
 /** */
 function onOpen() {
   let ui = SpreadsheetApp.getUi();
@@ -74,6 +69,21 @@ function fetcherTimer_onTime_( e ) {
   range_value_inc_( fetcherTimerCounter );
 
   GA4_run_report_();
+
+  // Create timer for copying ranges.
+  //
+  // Note: Assume the calculation (triggered by the above) will complete
+  //       after specified seconds.
+  {
+    const triggerHandlerFunctionName = copierTimer_onTime_.name;
+    const afterSeconds = copierTimerAfterSeconds.getValue();
+    const afterMilliseconds = afterSeconds * 1000;
+    let timerBuilder = ScriptApp.newTrigger( triggerHandlerFunctionName )
+      .timeBased();
+    timerBuilder.after( afterMilliseconds ).create();
+    console.log( `Schedule "${triggerHandlerFunctionName}" after `
+      + `${afterMilliseconds} milliseconds.` );
+  }
 }
 
 /** When copier's timer triggered. */
@@ -118,20 +128,21 @@ function GA4_run_report_() {
   // 2. Activate recalculation after GA4 report got.
   generationShouldCalculateRange.setValue( true );
 
-  // 3. Create timer for copying ranges.
-  //
-  // Note: Assume the calculation (triggered by the above) will complete
-  //       after specified seconds.
-  {
-    const triggerHandlerFunctionName = copierTimer_onTime_.name;
-    const afterSeconds = copierTimerAfterSeconds.getValue();
-    const afterMilliseconds = afterSeconds * 1000;
-    let timerBuilder = ScriptApp.newTrigger( triggerHandlerFunctionName )
-      .timeBased();
-    timerBuilder.after( afterMilliseconds ).create();
-    console.log( `Schedule "${triggerHandlerFunctionName}" after `
-      + `${afterMilliseconds} milliseconds.` );
-  }
+//!!! (2023/06/08 Remarked) Moved to fetcherTimer_onTime_().
+//   // 3. Create timer for copying ranges.
+//   //
+//   // Note: Assume the calculation (triggered by the above) will complete
+//   //       after specified seconds.
+//   {
+//     const triggerHandlerFunctionName = copierTimer_onTime_.name;
+//     const afterSeconds = copierTimerAfterSeconds.getValue();
+//     const afterMilliseconds = afterSeconds * 1000;
+//     let timerBuilder = ScriptApp.newTrigger( triggerHandlerFunctionName )
+//       .timeBased();
+//     timerBuilder.after( afterMilliseconds ).create();
+//     console.log( `Schedule "${triggerHandlerFunctionName}" after `
+//       + `${afterMilliseconds} milliseconds.` );
+//   }
 }
 
 /**
@@ -349,6 +360,8 @@ function timer_stop_() {
  * @param {string} rangeName  The target cell to record the time.
  */
 function EventObject_Timer_recordTo_byRangeName_( e, rangeName ) {
+  if ( !e )
+    return; // No (time-driven) event to be recorded.
   let [ range ] = ranges_getByNames_( rangeName );
   let msg = EventObject_Timer_toString_( e );
   range.setValue( msg );
