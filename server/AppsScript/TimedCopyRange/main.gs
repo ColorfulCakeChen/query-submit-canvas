@@ -130,7 +130,7 @@ function GA4_run_report_() {
       .timeBased();
     timerBuilder.after( afterMilliseconds ).create();
     console.log( `Schedule "${triggerHandlerFunctionName}" after `
-      + `${afterMilliseconds} Milliseconds.` );
+      + `${afterMilliseconds} milliseconds.` );
   }
 }
 
