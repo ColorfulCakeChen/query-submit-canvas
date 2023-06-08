@@ -65,13 +65,13 @@ function UserTriggers_delete_all_by_HandlerFunctionName_( strHandlerFunctionName
     }
   }
 
-//!!! (2023/06/07 Temp Added) For Debug whether delete successfully.
-  {
-    const triggerNameArray = UserTriggers_get_all_HandlerFunctionNameArray_();
-    const triggerNames = triggerNameArray.join( ", " );
-    console.log( `trigger_delete_by_HandlerFunctionName_(): `
-      + `Remained trigger names: [ ${triggerNames} ].` );
-  }
+  //!!! (2023/06/07 Temp Added) For Debug whether delete successfully.
+  // {
+  //   const triggerNameArray = UserTriggers_get_all_HandlerFunctionNameArray_();
+  //   const triggerNames = triggerNameArray.join( ", " );
+  //   console.log( `trigger_delete_by_HandlerFunctionName_(): `
+  //     + `Remained trigger names: [ ${triggerNames} ].` );
+  // }
 
   return bFound;
 }
