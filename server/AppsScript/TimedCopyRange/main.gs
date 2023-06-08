@@ -1,5 +1,10 @@
 /** @OnlyCurrentDoc */
 
+//!!!
+// const FUNCTION_NAME = {
+//   copierTimer_onTime: copierTimer_onTime_.name,
+// };
+
 /** */
 function onOpen() {
   let ui = SpreadsheetApp.getUi();
@@ -45,11 +50,23 @@ function timer_onTime_( e ) {
 
 /** When fetcher's timer triggered. */
 function fetcherTimer_onTime_( e ) {
-  console.log( `fetcherTimer_onTime_()` );
-  EventObject_Timer_recordTo_byRangeName_( e, RANGE_NAME.FC.FETCHER.TIMER.LAST_TIME );
+  const funcNameInMessage = fetcherTimer_onTime_.name;
+  console.log( `${funcNameInMessage}()` );
 
-//!!! ...unfinished... (2023/06/07)
-// If copierTimer_onTime_() still exists, do not run this fetcherTimer_onTime_() again.
+  // If copierTimer still exists, do not run this fetcherTimer (which
+  // will generate another copierTimer) again.
+  {
+    const trigger = UserTriggers_get_first_by_HandlerFunctionName_(
+      copierTimer_onTime_.name );
+    if ( trigger ) {
+      console.log( `Do nothing because trigger `
+        + `"${copierTimer_onTime_.name}" not yet executed.` );
+      return;
+    }
+  }
+
+  EventObject_Timer_recordTo_byRangeName_(
+    e, RANGE_NAME.FC.FETCHER.TIMER.LAST_TIME );
 
   let [ fetcherTimerCounter ] = ranges_getByNames_(
     RANGE_NAME.FC.FETCHER.TIMER.COUNTER );
@@ -61,9 +78,10 @@ function fetcherTimer_onTime_( e ) {
 
 /** When copier's timer triggered. */
 function copierTimer_onTime_( e ) {
-  const funcNameInMessage = "copierTimer_onTime_";
+  const funcNameInMessage = copierTimer_onTime_.name;
   console.log( `${funcNameInMessage}()` );
-  EventObject_Timer_recordTo_byRangeName_( e, RANGE_NAME.FC.COPIER.TIMER.LAST_TIME );
+  EventObject_Timer_recordTo_byRangeName_(
+    e, RANGE_NAME.FC.COPIER.TIMER.LAST_TIME );
 
   // Remove this timer because it is one-time timer.
   trigger_delete_by_HandlerFunctionName_( funcNameInMessage );
@@ -102,12 +120,13 @@ function GA4_run_report_() {
 
   // 3. Create timer for copying ranges.
   //
-  // Note: Assume the calculation (triggered by the above) will complete after
-  //       specified seconds.
+  // Note: Assume the calculation (triggered by the above) will complete
+  //       after specified seconds.
   {
     const afterSeconds = copierTimerAfterSeconds.getValue();
     const afterMilliseconds = afterSeconds * 1000;
-    let timerBuilder = ScriptApp.newTrigger( "copierTimer_onTime_" ).timeBased();
+    let timerBuilder = ScriptApp.newTrigger( copierTimer_onTime_.name )
+      .timeBased();
     timerBuilder.after( afterMilliseconds ).create();
   }
 }
@@ -337,13 +356,15 @@ function EventObject_Timer_recordTo_byRangeName_( e, rangeName ) {
  * @return {string} Return the time string.
  */
 function EventObject_Timer_toString_( e ) {
-  let str = `${e.year}/${e.month}/${e['day-of-month']} ${e.hour}:${e.minute}:${e.second}`;
+  let str = `${e.year}/${e.month}/${e['day-of-month']} `
+    + `${e.hour}:${e.minute}:${e.second}`;
   return str;
 }
 
 /**
  * @param {Range} range  The range's value will be increased.
- * @return {number} Increase range's value by one, and return the increased value.
+ * @return {number}
+ *   Increase range's value by one, and return the increased value.
  */
 function range_value_inc_( range ) {
   if ( range.isBlank() )
@@ -359,7 +380,8 @@ function range_value_inc_( range ) {
 /**
  * @param {string[]} names  The names of the NameRange to be found.
  * @throw {Error}           If one of names not found, throw exception.
- * @return {Range[]}        If all names found, return an array of Range object.
+ * @return {Range[]}
+ *   If all names found, return an array of Range object.
  */
 function ranges_getByNames_( ...names ) {
   let spreadsheet = SpreadsheetApp.getActive();
