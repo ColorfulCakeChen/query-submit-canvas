@@ -223,44 +223,6 @@ function NamedRange_copy_from_source_to_target_( bCopyOnlyIfTargetBlank ) {
   //       will be nothing can be copied because they all accomplish
   //       the above Range.setValue().
 
-/*!!! ...unfinished... (2023/06/07 Temp Remarked)
-  // 2. Copy from source to memory.
-  let sourceValuesArray = new Array( sourceRangeArray.length );
-  for ( let i = 0; i < sourceRangeArray.length; ++i ) {
-    let sourceRange = sourceRangeArray[ i ];
-    if ( !sourceRange )
-      continue;
-
-    let sourceColumnsRows = sourceRange.getValues();
-
-//!!! ...unfinished... (2023/06/07 Temp Test) get twice whether different.
-    sourceColumnsRows = sourceRange.getValues();
-
-//!!! ...unfinished... (2023/06/07)
-    { // Check cell content length.
-      for ( let rowId= 0; rowId < sourceColumnsRows.length; ++rowId ) {
-        let sourceColumns = sourceColumnsRows[ rowId ];
-
-        for ( let columnId = 0; columnId < sourceColumns.length; ++columnId ) {
-          let cellValue = sourceColumns[ columnId ];
-          if ( typeof( cellValue ) === "string" ) {
-            let cellLength = cellValue.length;
-            console.log( `(rowId, columnId)=( ${rowId}, ${columnId} ), `
-              + `cellLength=${cellLength}.` );
-
-            if ( cellLength > 50000 ) {
-              debugger;
-            }
-          }
-
-        }
-      }
-    }
-
-    sourceValuesArray[ i ] = sourceColumnsRows;
-  }
-*/
-
   // 4. Copy ranges directly.
   for ( let i = 0; i < sourceRangeArray.length; ++i ) {
     let sourceRange = sourceRangeArray[ i ];
