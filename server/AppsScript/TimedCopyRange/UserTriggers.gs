@@ -13,7 +13,7 @@ function UserTriggers_delete_all_() {
  * @return {string[]}
  *   Return all triggers' handler function names of this script of this user.
  */
-function UserTriggers_get_all_HandlerFunctionNameArray() {
+function UserTriggers_get_all_HandlerFunctionNameArray_() {
   let triggers = ScriptApp.getUserTriggers( SpreadsheetApp.getActive() );
   let triggerNameArray = new Array( triggers.length );
   for ( let i = 0; i < triggers.length; ++i ) {
@@ -67,7 +67,7 @@ function UserTriggers_delete_all_by_HandlerFunctionName_( strHandlerFunctionName
 
 //!!! (2023/06/07 Temp Added) For Debug whether delete successfully.
   {
-    const triggerNameArray = UserTriggers_get_all_HandlerFunctionNameArray();
+    const triggerNameArray = UserTriggers_get_all_HandlerFunctionNameArray_();
     const triggerNames = triggerNameArray.join( ", " );
     console.log( `trigger_delete_by_HandlerFunctionName_(): `
       + `Remained trigger names: [ ${triggerNames} ].` );
