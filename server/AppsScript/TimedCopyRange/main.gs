@@ -83,15 +83,15 @@ function copierTimer_onTime_( e ) {
   EventObject_Timer_recordTo_byRangeName_(
     e, RANGE_NAME.FC.COPIER.TIMER.LAST_TIME );
 
-  // Remove this timer because it is one-time timer.
-  trigger_delete_by_HandlerFunctionName_( funcNameInMessage );
-
   let [ copierTimerCounter ] = ranges_getByNames_(
     RANGE_NAME.FC.COPIER.TIMER.COUNTER );
 
   range_value_inc_( copierTimerCounter );
 
   NamedRange_copy_from_source_to_target_();
+
+  // Remove this timer to avoid this one-time timer left in list.
+  UserTriggers_delete_all_by_HandlerFunctionName_( funcNameInMessage );
 }
 
 /**
