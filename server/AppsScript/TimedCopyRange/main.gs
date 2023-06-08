@@ -1,6 +1,11 @@
 /** @OnlyCurrentDoc */
 
 /** */
+function forDebug() {
+  fetcherTimer_onTime_();
+}
+
+/** */
 function onOpen() {
   let ui = SpreadsheetApp.getUi();
   ui.createAddonMenu()
@@ -383,6 +388,7 @@ function EventObject_Timer_toString_( e ) {
  *   Increase range's value by one, and return the increased value.
  */
 function range_value_inc_( range ) {
+  let value;
   if ( range.isBlank() )
     value = 0;
   else
