@@ -2,7 +2,7 @@
 
 /** */
 function forDebug() {
-  fetcherTimer_onTime_();
+  //fetcherTimer_onTime_();
 }
 
 /** */
@@ -53,8 +53,8 @@ function fetcherTimer_onTime_( e ) {
   const funcNameInMessage = fetcherTimer_onTime_.name;
   console.log( `${funcNameInMessage}()` );
 
-  // If copierTimer still exists, do not run this fetcherTimer (which
-  // will generate another copierTimer) again.
+  // 0. If copierTimer still exists, do not run this fetcherTimer (which
+  //    will generate another copierTimer) again.
   {
     const trigger = UserTriggers_get_first_by_HandlerFunctionName_(
       copierTimer_onTime_.name );
@@ -65,17 +65,21 @@ function fetcherTimer_onTime_( e ) {
     }
   }
 
+  // 1. Record when executed.
   EventObject_Timer_recordTo_byRangeName_(
     e, RANGE_NAME.FC.FETCHER.TIMER.LAST_TIME );
 
-  let [ fetcherTimerCounter ] = ranges_getByNames_(
-    RANGE_NAME.FC.FETCHER.TIMER.COUNTER );
+  const [ fetcherTimerCounter,
+    copierTimerAfterSeconds ] = ranges_getByNames_(
+    RANGE_NAME.FC.FETCHER.TIMER.COUNTER,
+    RANGE_NAME.FC.COPIER.TIMER.AFTER_SECONDS );
 
+  // 2. Record how many times executed.
   range_value_inc_( fetcherTimerCounter );
 
-  GA4_run_report_();
+  GA4_run_report_(); // 3. Generate report.
 
-  // Create timer for copying ranges.
+  // 4. Create timer for copying ranges.
   //
   // Note: Assume the calculation (triggered by the above) will complete
   //       after specified seconds.
@@ -95,17 +99,20 @@ function fetcherTimer_onTime_( e ) {
 function copierTimer_onTime_( e ) {
   const funcNameInMessage = copierTimer_onTime_.name;
   console.log( `${funcNameInMessage}()` );
+
+  // 1. Record when executed.
   EventObject_Timer_recordTo_byRangeName_(
     e, RANGE_NAME.FC.COPIER.TIMER.LAST_TIME );
 
   let [ copierTimerCounter ] = ranges_getByNames_(
     RANGE_NAME.FC.COPIER.TIMER.COUNTER );
 
+  // 2. Record how many times executed.
   range_value_inc_( copierTimerCounter );
 
-  NamedRange_copy_from_source_to_target_();
+  NamedRange_copy_from_source_to_target_(); // 3. Copy ranges.
 
-  // Remove this timer to avoid this one-time timer left in list.
+  // 4. Remove this timer to avoid this one-time timer left in list.
   UserTriggers_delete_all_by_HandlerFunctionName_( funcNameInMessage );
 }
 
@@ -115,10 +122,8 @@ function copierTimer_onTime_( e ) {
  * - Schedule timer for copying ranges.
  */
 function GA4_run_report_() {
-  const [ generationShouldCalculateRangeName,
-    copierTimerAfterSeconds ] = ranges_getByNames_(
-    RANGE_NAME.FC.GENERATION.SHOULD.CALCULATE.RANGE_NAME,
-    RANGE_NAME.FC.COPIER.TIMER.AFTER_SECONDS );
+  const [ generationShouldCalculateRangeName ] = ranges_getByNames_(
+    RANGE_NAME.FC.GENERATION.SHOULD.CALCULATE.RANGE_NAME );
 
   const generationShouldCalculateRangeNameString
     = generationShouldCalculateRangeName.getValue();
@@ -132,22 +137,6 @@ function GA4_run_report_() {
 
   // 2. Activate recalculation after GA4 report got.
   generationShouldCalculateRange.setValue( true );
-
-//!!! (2023/06/08 Remarked) Moved to fetcherTimer_onTime_().
-//   // 3. Create timer for copying ranges.
-//   //
-//   // Note: Assume the calculation (triggered by the above) will complete
-//   //       after specified seconds.
-//   {
-//     const triggerHandlerFunctionName = copierTimer_onTime_.name;
-//     const afterSeconds = copierTimerAfterSeconds.getValue();
-//     const afterMilliseconds = afterSeconds * 1000;
-//     let timerBuilder = ScriptApp.newTrigger( triggerHandlerFunctionName )
-//       .timeBased();
-//     timerBuilder.after( afterMilliseconds ).create();
-//     console.log( `Schedule "${triggerHandlerFunctionName}" after `
-//       + `${afterMilliseconds} milliseconds.` );
-//   }
 }
 
 /**
