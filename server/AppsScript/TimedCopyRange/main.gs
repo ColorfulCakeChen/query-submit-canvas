@@ -137,6 +137,7 @@ function GA4_run_report_() {
 
   // 2. Activate recalculation after GA4 report got.
   generationShouldCalculateRange.setValue( true );
+  console.log( `Calculation activated.` );
 }
 
 /**
