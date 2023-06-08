@@ -123,11 +123,14 @@ function GA4_run_report_() {
   // Note: Assume the calculation (triggered by the above) will complete
   //       after specified seconds.
   {
+    const triggerHandlerFunctionName = copierTimer_onTime_.name;
     const afterSeconds = copierTimerAfterSeconds.getValue();
     const afterMilliseconds = afterSeconds * 1000;
-    let timerBuilder = ScriptApp.newTrigger( copierTimer_onTime_.name )
+    let timerBuilder = ScriptApp.newTrigger( triggerHandlerFunctionName )
       .timeBased();
     timerBuilder.after( afterMilliseconds ).create();
+    console.log( `Schedule "${triggerHandlerFunctionName}" after `
+      + `${afterMilliseconds} Milliseconds.` );
   }
 }
 
