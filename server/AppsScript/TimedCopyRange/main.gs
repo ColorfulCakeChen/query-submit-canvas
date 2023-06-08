@@ -202,40 +202,12 @@ function NamedRange_copy_from_source_to_target_( bCopyOnlyIfTargetBlank ) {
 
     // Note: Here needs not call SpreadsheetApp.flush() because the
     //       following Range.isBlank() will flush automatically.
-
-//!!! (2023/06/08 Remarked) The following ranges_getByNames_() will flush implicitly.
-//     // Because Range.copyTo() seems not trigger flush, flush explicitly
-//     // to complete the recalculation.
-//     SpreadsheetApp.flush();
   }
 
   // 1. Collect all source and target ranges.
   //
   // This should be after the (above) recalculation activated because
   // the recalculation affects whether source range is blank.
-
-//!!! (2023/06/08 Remarked) Check ranges only.
-//   let sourceRangeArray = new Array( sourceRangeNames.length );
-//   let targetRangeArray = new Array( sourceRangeNames.length );
-//   for ( let i = 0; i < sourceRangeNames.length; ++i ) {
-//     let sourceRangeName = sourceRangeNames[ i ]
-//       = sourceRangeNames[ i ].trim();
-//     let targetRangeName = targetRangeNames[ i ]
-//       = targetRangeNames[ i ].trim();
-//     let [ sourceRange, targetRange ] = ranges_getByNames_(
-//       sourceRangeName, targetRangeName );
-//
-//     if ( sourceRange.isBlank() )
-//       continue; // Do not copy from blank.
-//
-//     if ( bCopyOnlyIfTargetBlank )
-//       if ( !targetRange.isBlank() )
-//         continue; // Do not copy to non-blank.
-//
-//     sourceRangeArray[ i ] = sourceRange;
-//     targetRangeArray[ i ] = targetRange;
-//   }
-
   for ( let i = 0; i < sourceRangeArray.length; ++i ) {
     const sourceRange = sourceRangeArray[ i ];
     const targetRange = targetRangeArray[ i ];
