@@ -294,14 +294,15 @@ function timer_start_() {
   NamedRange_copy_from_source_to_target_( true );
 
   let timerBuilder = ScriptApp.newTrigger( "timer_onTime_" ).timeBased();
-  if ( !fetcherCopierEveryMinutes.isBlank() )
-    timerBuilder.everyMinutes( fetcherCopierEveryMinutes.getValue() )
-      .create();
-  else
-    timerBuilder.everyHours( fetcherCopierEveryHours.getValue() )
-      .create();
-
-  console.log( `Timer started.` );
+  if ( !fetcherCopierEveryMinutes.isBlank() ) {
+    const minutes = fetcherCopierEveryMinutes.getValue();
+    timerBuilder.everyMinutes( minutes ).create();
+    console.log( `Timer started: every ${minutes} minutes.` );
+  } else {
+    const hours = fetcherCopierEveryHours.getValue();
+    timerBuilder.everyHours( hours ).create();
+    console.log( `Timer started: every ${hours} hours.` );
+  }
 }
 
 
