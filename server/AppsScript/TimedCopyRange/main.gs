@@ -199,6 +199,9 @@ function NamedRange_copy_from_source_to_target_( bCopyOnlyIfTargetBlank ) {
     generationShouldCalculateRange.setValue( true );
     console.log( `Calculation activated.` );
 
+    // Note: Here needs not call SpreadsheetApp.flush() because the
+    //       following Range.isBlank() will flush automatically.
+
 //!!! (2023/06/08 Remarked) The following ranges_getByNames_() will flush implicitly.
 //     // Because Range.copyTo() seems not trigger flush, flush explicitly
 //     // to complete the recalculation.
@@ -255,9 +258,9 @@ function NamedRange_copy_from_source_to_target_( bCopyOnlyIfTargetBlank ) {
   console.log( `Calculation deactivated.` );
 
   // Note: Do not call SpreadsheetApp.flush() or Range.getValue() or
-  //       SpreadsheetApp.getRangeByName() here. Otherwise, there
-  //       will be nothing can be copied because they all accomplish
-  //       the above Range.setValue().
+  //       Range.isBlank() or SpreadsheetApp.getRangeByName() here.
+  //       Otherwise, there will be nothing can be copied because they
+  //       all accomplish the above Range.setValue().
 
   // 4. Copy ranges directly.
   for ( let i = 0; i < sourceRangeArray.length; ++i ) {
