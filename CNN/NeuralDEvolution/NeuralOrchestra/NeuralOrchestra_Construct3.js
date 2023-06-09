@@ -115,7 +115,7 @@ import { Base as NeuralOrchestra_Base } from "./NeuralOrchestra_Base.js";
  *
  * @member {boolean} AI_bTurnOn
  *   Whether activate AI. Only meaningful if ( .Fighter_bManualMode == false ).
- * Usually, it is set to true when in Versus_Step_Xxx_Fighting state.
+ * Usually, it is only set to true when in Versus_Step_Xxx_Fighting state.
  * If true,
  *   - An image data will be got from the DrawingCanvas when:
  *     - DrawingCanvas.pasteInstances() has done. And,
