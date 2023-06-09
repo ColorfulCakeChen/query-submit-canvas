@@ -542,7 +542,7 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
 
 //!!! ...unfinished... (2023/06/09)
 // Problem: .TypedArray_process_asyncPromise_create() may be still running
-// so that versus_load_asyncGenerator_create failed.
+// so that alignmentMarkValueArrayArray_Xxx or versus_load_asyncGenerator_create failed.
 
         // After ImageData got, process it by neural network.
         //
@@ -1023,6 +1023,10 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
 
     const base = this.base;
 
+//!!! ...unfinished... (2023/06/09)
+// Problem: .TypedArray_process_asyncPromise_create() may be still running
+// so that alignmentMarkValueArrayArray_Xxx or versus_load_asyncGenerator_create failed.
+
     // Setup alignment marks.
     {
       const configJSONData = this.configJSONData;
@@ -1078,6 +1082,12 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
       return; // Prevent re-enter.
 
     const base = this.base;
+
+
+//!!! ...unfinished... (2023/06/09)
+// Problem: .TypedArray_process_asyncPromise_create() may be still running
+// so that alignmentMarkValueArrayArray_Xxx or versus_load_asyncGenerator_create failed.
+
 
     // Swap alignment marks.
     {
@@ -1163,7 +1173,8 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
 
 //!!! ...unfinished... (2023/06/09)
 // Problem: .TypedArray_process_asyncPromise_create() may be still running
-// so that versus_load_asyncGenerator_create failed.
+// so that alignmentMarkValueArrayArray_Xxx or versus_load_asyncGenerator_create failed.
+
     // 3. Start downloading the next versus.
     this.versus_load_asyncGenerator
       = base.versus_load_asyncGenerator_create_with_asyncPromise_progress();
