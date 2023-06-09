@@ -1157,6 +1157,9 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
     // 2.3 Report to server.
     base.versusResultSender_send( this.Versus_Result_n1_0_p1 );
 
+//!!! ...unfinished... (2023/06/09)
+// Problem: .TypedArray_process_asyncPromise_create() may be still running
+// so that versus_load_asyncGenerator_create failed.
     // 3. Start downloading the next versus.
     this.versus_load_asyncGenerator
       = base.versus_load_asyncGenerator_create_with_asyncPromise_progress();
