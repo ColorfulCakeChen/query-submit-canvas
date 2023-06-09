@@ -1016,7 +1016,7 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
    * @param {NeuralOrchestra_Construct3} this
    */
   static Versus_Step_05_ParentAlignment0_Fighting( runtime ) {
-    // Turn on AI so that fighting automatically.
+    // Turn on AI for fighting automatically by AI.
     if ( !this.AI_bTurnOn )
       this.AI_bTurnOn = true;
   }
