@@ -663,7 +663,7 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
 //!!! ...unfinished... (2023/06/04)
       //!!! (2023/06/04 Temp Test) Check input image whether black transparent.
       NeuralOrchestra_Construct3.DrawingCanvas_input_check
-        .call( this, source_TypedArray );
+        .call( this, aImageData );
 
       // Process image data.
       const TypedArray_process_asyncPromise
