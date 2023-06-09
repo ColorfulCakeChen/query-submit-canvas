@@ -71,7 +71,13 @@ import { Base as NeuralOrchestra_Base } from "./NeuralOrchestra_Base.js";
  *   - The key code will be used as the array index into the
  *       .KeyDownArray_IArrayInstance.
  *
+!!! *
+ * @member {AsyncGenerator} versus_load_asyncGenerator
+ *   
+
+ * @member {PartTime.AsyncGeneratorTicker} versus_load_asyncGeneratorTicker
  *
+
  * @member {Promise( boolean )} alignmentMarkValueArrayArray_set_asyncPromise
  *   If not null, the alignmentMarkValueArrayArray setting request has been
  * issued.
@@ -243,8 +249,6 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
     this.versus_load_asyncGeneratorTicker = undefined;
     this.versus_load_asyncGenerator = undefined;
 
-    this.init_asyncPromise = undefined;
-
     this.Fighter_bManualMode = undefined;
 
     if ( this.base ) {
@@ -300,7 +304,7 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
     const downloader_apiKey = null;
     const b_return_versus_load_asyncGenerator_instead_of_asyncPromise = true;
 
-    let init_asyncPromise = this.init_asyncPromise
+    let init_asyncPromise
       = base.init_asyncPromise_create(
           downloader_spreadsheetId, downloader_apiKey, bLogFetcherEventToConsole,
           sender_clientId,
@@ -323,8 +327,6 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
     // // So that it looks like that AI is not processing now.
     // this.AI_gameTime_beginSeconds = gameTime_initSeconds;
     // this.AI_gameTime_endSeconds = gameTime_initSeconds;
-
-    this.init_asyncPromise = null;
 
     return base.initOk;
   }
@@ -1123,11 +1125,6 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
     // 3. Start downloading the next versus.
     this.versus_load_asyncGenerator
       = base.versus_load_asyncGenerator_create_with_asyncPromise_progress();
-
-//!!! ...unfinished... (2023/06/03)
-// Problem: How to tick the .versus_load_asyncGenerator here?
-// The ticker is in Versus_Step_00_Xxx
-
   }
 
 }
