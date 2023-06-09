@@ -687,10 +687,9 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
       const source_height = aImageData.height;
       const source_width = aImageData.width;
 
-//!!! ...unfinished... (2023/06/04)
       //!!! (2023/06/04 Temp Test) Check input image whether black transparent.
-      NeuralOrchestra_Construct3.DrawingCanvas_input_check
-        .call( this, aImageData );
+      // NeuralOrchestra_Construct3.DrawingCanvas_input_check
+      //   .call( this, aImageData );
 
       // Process image data.
       const TypedArray_process_asyncPromise
