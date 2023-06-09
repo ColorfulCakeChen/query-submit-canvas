@@ -71,13 +71,14 @@ import { Base as NeuralOrchestra_Base } from "./NeuralOrchestra_Base.js";
  *   - The key code will be used as the array index into the
  *       .KeyDownArray_IArrayInstance.
  *
-!!! *
- * @member {AsyncGenerator} versus_load_asyncGenerator
- *   
-
- * @member {PartTime.AsyncGeneratorTicker} versus_load_asyncGeneratorTicker
  *
-
+ * @member {AsyncGenerator} versus_load_asyncGenerator
+ *   If not null, a versus downloading is on going.
+ *
+ * @member {PartTime.AsyncGeneratorTicker} versus_load_asyncGeneratorTicker
+ *   If not null, a versus downloading is on going.
+ *
+ *
  * @member {Promise( boolean )} alignmentMarkValueArrayArray_set_asyncPromise
  *   If not null, the alignmentMarkValueArrayArray setting request has been
  * issued.
