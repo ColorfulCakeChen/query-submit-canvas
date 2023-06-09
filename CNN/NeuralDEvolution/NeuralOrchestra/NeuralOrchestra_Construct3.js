@@ -157,7 +157,7 @@ import { Base as NeuralOrchestra_Base } from "./NeuralOrchestra_Base.js";
  *   True, if ( !( AI_gameTime_endSeconds >= 0 ) ), it means an AI processing
  * is still going and has not yet done.
  *
- * @member {number[]} AI_output_extractedArray
+ * @member {number[]} AI_output_extractedValueArray
  *   A number array extracted from neural network outputs. It will be applied
  * to Fighter_KeyDownArray.
  *
@@ -175,10 +175,10 @@ import { Base as NeuralOrchestra_Base } from "./NeuralOrchestra_Base.js";
  * keyboard). It equals ( vocabularyCountPerInputChannel / 2 ) because AI
  * output's value is between [ 0, vocabularyCountPerInputChannel ).
  * 
- *   - If ( AI_output_extractedArray[ i ] < KeyDownArray_thresholdValue ),
+ *   - If ( AI_output_extractedValueArray[ i ] < KeyDownArray_thresholdValue ),
  *       it means AI wants to press the key (of keyboard).
  *
- *   - If ( AI_output_extractedArray[ i ] >= KeyDownArray_thresholdValue ),
+ *   - If ( AI_output_extractedValueArray[ i ] >= KeyDownArray_thresholdValue ),
  *       it means AI wants to release the key (of keyboard).
  *
  * @member {number} ActionId_Count_Per_Alignment
@@ -239,7 +239,7 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
     this.KeyDownArray_thresholdValue = undefined;
     this.KeyDownArray_IArrayInstance = undefined;
 
-    this.AI_output_extractedArray = undefined;
+    this.AI_output_extractedValueArray = undefined;
     this.AI_gameTime_endSeconds = undefined;
     this.AI_gameTime_beginSeconds = undefined;
     this.AI_bTurnOn = undefined;    
@@ -436,7 +436,7 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
       this.KeyDownArray_value_for_KeyPressed = 1;
 
       // 3.4
-      this.AI_output_extractedArray = new Array(); // For reduce memory re-allocation.
+      this.AI_output_extractedValueArray = new Array(); // For reduce memory re-allocation.
     }
   }
 
@@ -854,38 +854,45 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
     const from_output_pixelIndexBegin = 0;
     const from_output_pixelCount = this.ActionId_Count_Per_Alignment;
 
-    const AI_output_extractedArray = this.AI_output_extractedArray;
-    AI_output_extractedArray.length = from_output_pixelCount;
+    const AI_output_extractedValueArray = this.AI_output_extractedValueArray;
+    AI_output_extractedValueArray.length = from_output_pixelCount;
 
     // 1. Two neural networks personate two alignments.
-    const alignmentIdCount = from_output_TypedArrayArray.length;
-    for ( let alignmentId = 0;
-      alignmentId < alignmentIdCount; ++alignmentId ) {
-
-//!!! ...unfinished... (2023/06/09)
-// When alignment marks swapped, the KeyDownArray should also be swapped.
-// Problem: How to know alignment marks swapped?
-//          ( this.alignmentMarkValueArrayArray_swapped )
+    const neuralNetCount = from_output_TypedArrayArray.length;
+    for ( let neuralNetIndex = 0;
+      neuralNetIndex < neuralNetCount; ++neuralNetIndex ) {
 
       // 2. One neural network's output.
       const from_output_valueArray
-        = from_output_TypedArrayArray[ alignmentId ];
+        = from_output_TypedArrayArray[ neuralNetIndex ];
 
       // 2.1 If has implicit input, use feedbackShape to extract output.
       if ( feedbackShape ) {
         feedbackShape.valueArray_get_from_output_valueArray_1st_channel(
-          AI_output_extractedArray, from_output_valueArray,
+          AI_output_extractedValueArray, from_output_valueArray,
           from_output_pixelIndexBegin, from_output_pixelCount );
 
       // 2.2 Otherwise, no implicit input, use output continuously.
       } else {
         for ( let extractedIndex = 0;
           extractedIndex < from_output_pixelCount; ++extractedIndex )
-          AI_output_extractedArray[ i ] = from_output_valueArray[ i ];
+          AI_output_extractedValueArray[ i ] = from_output_valueArray[ i ];
       }
 
-      // 3. Apply extracted output value to KeyDownArray.
+      // 3. Determine alignment id of the neural network.
+      let alignmentId;
+      {
+        // 3.1 alignment marks swapped.
+        if ( this.alignmentMarkValueArrayArray_swapped )
+          alignmentId = neuralNetCount - neuralNetIndex - 1;
 
+        // 3.2 alignment marks not swapped.
+        else
+          alignmentId = neuralNetIndex;
+      }
+
+      // 4. Apply extracted output value to KeyDownArray.
+      //
       // Q: How to convert neural network output value to control signal
       //    (i.e. 0 or 1)?
       // A: Using remainder operation (e.g. ( output % 2 ) ) seems relying
@@ -898,14 +905,14 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
 
       for ( let extractedIndex = 0;
         extractedIndex < from_output_pixelCount; ++extractedIndex ) {
-        const extractedValue = AI_output_extractedArray[ extractedIndex ];
+        const extractedValue = AI_output_extractedValueArray[ extractedIndex ];
         const keyCode = KeyCodeArray[ extractedIndex ];
 
-        // 3.1 AI releases the key.
+        // 4.1 AI releases the key.
         if ( extractedValue < KeyDownArray_thresholdValue ) {
           KeyDownArray_IArrayInstance.setAt( value_for_KeyReleased, keyCode );
 
-        // 3.2 AI presses the key.
+        // 4.2 AI presses the key.
         // ( extractedValue >= KeyDownArray_thresholdValue )
         } else {
           KeyDownArray_IArrayInstance.setAt( value_for_KeyPressed, keyCode );
