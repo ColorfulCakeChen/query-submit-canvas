@@ -546,7 +546,7 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
 
         // After ImageData got, process it by neural network.
         //
-        // Note: Do not await it.
+        // Note: Do not await it here.
         //
         // Q: Why not await image data processing before return?
         // A: So that the next .DrawingCanvas_paint_async() will not be blocked
