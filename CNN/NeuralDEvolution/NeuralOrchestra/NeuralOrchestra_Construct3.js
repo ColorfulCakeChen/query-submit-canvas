@@ -862,21 +862,23 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
     for ( let neuralNetIndex = 0;
       neuralNetIndex < neuralNetCount; ++neuralNetIndex ) {
 
-      // 2. One neural network's output.
-      const from_output_valueArray
-        = from_output_TypedArrayArray[ neuralNetIndex ];
+      // 2. Extract output of one neural network.
+      {
+        const from_output_valueArray
+          = from_output_TypedArrayArray[ neuralNetIndex ];
 
-      // 2.1 If has implicit input, use feedbackShape to extract output.
-      if ( feedbackShape ) {
-        feedbackShape.valueArray_get_from_output_valueArray_1st_channel(
-          AI_output_extractedValueArray, from_output_valueArray,
-          from_output_pixelIndexBegin, from_output_pixelCount );
+        // 2.1 If has implicit input, use feedbackShape to extract output.
+        if ( feedbackShape ) {
+          feedbackShape.valueArray_get_from_output_valueArray_1st_channel(
+            AI_output_extractedValueArray, from_output_valueArray,
+            from_output_pixelIndexBegin, from_output_pixelCount );
 
-      // 2.2 Otherwise, no implicit input, use output continuously.
-      } else {
-        for ( let extractedIndex = 0;
-          extractedIndex < from_output_pixelCount; ++extractedIndex )
-          AI_output_extractedValueArray[ i ] = from_output_valueArray[ i ];
+        // 2.2 Otherwise, no implicit input, use output continuously.
+        } else {
+          for ( let extractedIndex = 0;
+            extractedIndex < from_output_pixelCount; ++extractedIndex )
+            AI_output_extractedValueArray[ i ] = from_output_valueArray[ i ];
+        }
       }
 
       // 3. Determine alignment id of the neural network.
