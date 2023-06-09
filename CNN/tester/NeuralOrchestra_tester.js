@@ -656,7 +656,7 @@ class TestCase {
               progressToBeChecked = progressLoad;
             }
             break;
-  
+
           case asyncType_1_asyncGenerator_with_asyncPromise_progress: // 1
             { // Do not use yield* here. Otherwise, wrong progressRoot (of
               // internal progress) will be yielded to outside caller.
@@ -668,14 +668,14 @@ class TestCase {
               progressToBeChecked = neuralOrchestra.versus_load_asyncPromise_progress;
             }
             break;
-  
+
           case asyncType_2_asyncPromise: // 2
             {
               versus_loadOk = await versus_load_asyncPromise;
               progressToBeChecked = neuralOrchestra.versus_load_asyncPromise_progress;
             }
             break;
-  
+
           default:
             throw Error( `NeuralOrchestra_tester.TestCase`
               + `.${funcNameInMessage}(): testId=${this.testId}, `
@@ -683,7 +683,7 @@ class TestCase {
               + `should be 0 or 1 or 2.` );
             break;
         }
-  
+
       } else {
         // According to which .init_Xxx() (not which .versus_load_Xxx()) is used.
         switch ( n_init_asyncType ) {
@@ -693,7 +693,7 @@ class TestCase {
               progressToBeChecked = progressInit; // (Note: not progressLoad)
             }
             break;
-    
+
           case asyncType_1_asyncGenerator_with_asyncPromise_progress: // 1
             { // Do not use yield* here. Otherwise, wrong progressRoot (of
               // internal progress) will be yielded to outside caller.
@@ -705,14 +705,14 @@ class TestCase {
               progressToBeChecked = neuralOrchestra.versus_load_asyncPromise_progress;
             }
             break;
-    
+
           case asyncType_2_asyncPromise: // 2
             {
               versus_loadOk = await versus_load_asyncPromise;
               progressToBeChecked = neuralOrchestra.versus_load_asyncPromise_progress;
             }
             break;
-    
+
           default:
             throw Error( `NeuralOrchestra_tester.TestCase`
               + `.${funcNameInMessage}(): testId=${this.testId}, `
@@ -1053,20 +1053,38 @@ class TestCase {
         n_init_asyncType, n_load_asyncType,
         progressInit );
 
-      if ( progressInit )
+      if ( progressInit ) {
         if ( 100 !== progressInit.valuePercentage )
           throw Error( `NeuralOrchestra_tester.TestCase`
             + `.${funcNameInMessage}(): testId=${this.testId}, `
             + `progressInit.valuePercentage ( `
             + `${progressInit.valuePercentage} ) `
             + `should be 100.` );
+      }
 
-      // After first time loading (by .init_Xxx()), clear to indicate init done
-      // and need to versus_load.
-      progressInit = null;
-      versus_load_asyncGenerator = null;
-      versus_load_asyncPromise = null;
-      versus_load_asyncGenerator_delayPromise = null;
+      if ( true !== neuralOrchestra.versusSummary.rangeArray_loadOk )
+        throw Error( `NeuralOrchestra_tester.TestCase`
+          + `.${funcNameInMessage}(): testId=${this.testId}, `
+          + `neuralOrchestra.versusSummary.rangeArray_loadOk ( `
+          + `${neuralOrchestra.versusSummary.rangeArray_loadOk} ) `
+          + `should be true.` );
+
+      if ( neuralOrchestra.versusSummary.visitCount != nLoadProcessSendCount )
+        throw Error( `NeuralOrchestra_tester.TestCase`
+          + `.${funcNameInMessage}(): testId=${this.testId}, `
+          + `neuralOrchestra.versusSummary.visitCount ( `
+          + `${neuralOrchestra.versusSummary.visitCount} ) `
+          + `should be the same as `
+          + `nLoadProcessSendCount ( ${nLoadProcessSendCount} ).` );
+
+      if ( nLoadProcessSendCount == 0 ) {
+        // After first time loading (by .init_Xxx()), clear to indicate init done
+        // and need do versus_load.
+        progressInit = null;
+        versus_load_asyncGenerator = null;
+        versus_load_asyncPromise = null;
+        versus_load_asyncGenerator_delayPromise = null;
+      }
     }
 
     if ( 100 !== progressToAdvance.valuePercentage )
