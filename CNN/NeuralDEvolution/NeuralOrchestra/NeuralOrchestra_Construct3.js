@@ -92,6 +92,10 @@ import { Base as NeuralOrchestra_Base } from "./NeuralOrchestra_Base.js";
  * alignmentMarkValueArrayArray_swap_Xxx() has completed so that neural network
  * can be activated to process image.
  *
+ * @member {boolean} alignmentMarkValueArrayArray_swapped
+ *   - If false, configJSONData.alignmentMarkValueArrayArray is used directly.
+ *   - If true, swapped configJSONData.alignmentMarkValueArrayArray is used.
+ *
  *
  * @member {Construct3.IDrawingCanvasInstance} DrawingCanvas
  *   The IDrawingCanvasInstance (in Construct3) to be used for painting all
@@ -240,6 +244,7 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
     this.AI_gameTime_beginSeconds = undefined;
     this.AI_bTurnOn = undefined;    
 
+    this.alignmentMarkValueArrayArray_swapped = undefined;
     this.alignmentMarkValueArrayArray_operate_done = undefined;
     this.alignmentMarkValueArrayArray_swap_asyncPromise = undefined;
     this.alignmentMarkValueArrayArray_set_asyncPromise = undefined;
@@ -860,6 +865,7 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
 //!!! ...unfinished... (2023/06/09)
 // When alignment marks swapped, the KeyDownArray should also be swapped.
 // Problem: How to know alignment marks swapped?
+//          ( this.alignmentMarkValueArrayArray_swapped )
 
       // 2. One neural network's output.
       const from_output_valueArray
@@ -1070,6 +1076,7 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
               alignmentMarkValueArrayArray );
           } );
 
+      this.alignmentMarkValueArrayArray_swapped = false;
       this.alignmentMarkValueArrayArray_operate_done = undefined;
       this.alignmentMarkValueArrayArray_set_asyncPromise.then( bSetOk => {
         this.alignmentMarkValueArrayArray_operate_done = bSetOk;
@@ -1123,6 +1130,7 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
               .alignmentMarkValueArrayArray_swap_asyncPromise_create();
           } );
 
+      this.alignmentMarkValueArrayArray_swapped = true;
       this.alignmentMarkValueArrayArray_operate_done = undefined;
       this.alignmentMarkValueArrayArray_swap_asyncPromise.then( bSwappedOk => {
         this.alignmentMarkValueArrayArray_operate_done = bSwappedOk;
