@@ -954,6 +954,7 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
     // So that ticker could be created when the next time downloading is
     // requested.
     this.versus_load_asyncGeneratorTicker = null;
+    this.versus_load_asyncGenerator = null;
 
     const base = this.base;
     const versus = base.versus;
