@@ -1648,7 +1648,7 @@ class NeuralOrchestra_Base extends
       // 0.1 Determine whether necessary to load versus summary.
       let versusSummary_needLoad;
       if ( this.versusSummary ) {
-        if ( this.versusSummary.loadOk ) {
+        if ( this.versusSummary.rangeArray_load ) {
           versusSummary_needLoad = false; // Already loaded.
         } else {
           versusSummary_needLoad = true;
