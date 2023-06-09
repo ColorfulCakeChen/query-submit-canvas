@@ -1038,11 +1038,9 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
 
     const base = this.base;
 
-    // Setup alignment marks.
+    // Setup alignment marks (after AI image processing completed).
     {
       this.alignmentMarkValueArrayArray_set_asyncPromise
-
-          // Need wait for AI image processing completed.
         = this.DrawingCanvas_process_by_AI_asyncPromise.then( () => {
             const configJSONData = this.configJSONData;
             const alignmentMarkValueArrayArray
@@ -1101,11 +1099,12 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
 // Problem: .TypedArray_process_asyncPromise_create() may be still running
 // so that alignmentMarkValueArrayArray_Xxx or versus_load_asyncGenerator_create failed.
 
-
-    // Swap alignment marks.
+    // Swap alignment marks (after AI image processing completed).
     {
-      this.alignmentMarkValueArrayArray_swap_asyncPromise
-        = base.alignmentMarkValueArrayArray_swap_asyncPromise_create();
+      this.alignmentMarkValueArrayArray_set_asyncPromise
+        = this.DrawingCanvas_process_by_AI_asyncPromise.then( () => {
+            return base.alignmentMarkValueArrayArray_swap_asyncPromise_create();
+          } );
 
       this.alignmentMarkValueArrayArray_operate_done = undefined;
       this.alignmentMarkValueArrayArray_swap_asyncPromise.then( bSwappedOk => {
