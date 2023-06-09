@@ -5,7 +5,7 @@ import * as Pool from "../../util/Pool.js";
 import * as RandTools from "../../util/RandTools.js";
 import * as Recyclable from "../../util/Recyclable.js";
 // import * as ValueDesc from "../../Unpacker/ValueDesc.js";
-// import * as NeuralNet from "../../Conv/NeuralNet.js";
+import * as NeuralNet from "../../Conv/NeuralNet.js";
 //import * as DEvolution from "../DEvolution.js";
 import { Base as NeuralOrchestra_Base } from "./NeuralOrchestra_Base.js";
 
@@ -662,16 +662,8 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
 
 //!!! ...unfinished... (2023/06/04)
       //!!! (2023/06/04 Temp Test) Check input image whether black transparent.
-      if (   ( source_height == base.input_height )
-          && ( source_width == base.input_width ) ) {
-
-        // Check implicit input area black transparent.
-        NeuralOrchestra_Construct3.DrawingCanvas_implicit_input_check
-          .call( this, source_TypedArray );
-        // Check explicit input area not black transparent.
-        NeuralOrchestra_Construct3.DrawingCanvas_explicit_input_check
-          .call( this, source_TypedArray );
-      }
+      NeuralOrchestra_Construct3.DrawingCanvas_input_check
+        .call( this, source_TypedArray );
 
       // Process image data.
       const TypedArray_process_asyncPromise
@@ -698,6 +690,47 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
       const gameTime_endSeconds = runtime.gameTime;
       this.AI_gameTime_endSeconds = gameTime_endSeconds;
     }
+  }
+
+  /**
+   * Check the implicit and explicit input area of source_ImageData.
+   *
+   * @param {NeuralOrchestra_Construct3} this
+   *
+   * @param {ImageData} source_ImageData
+   *   An ImageData which will be processed by the pair of neural workers.
+   */
+  static DrawingCanvas_input_check( source_ImageData ) {
+    const funcNameInMessage = "DrawingCanvas_input_check";
+
+    const base = this.base;
+
+    // 1. Ensure ImageData size as neural network's input size.
+    let source_ImageData_adjusted;
+    if (   ( source_ImageData.height != base.input_height )
+        || ( source_ImageData.width != base.input_width ) ) {
+
+      let target_shape_height_width = [ base.input_height, base.input_width ];
+      source_ImageData_adjusted
+        = NeuralNet.ScaleFiller.createImageData_by_scale_ImageData(
+            source_ImageData,
+            target_shape_height_width );
+
+    } else {
+      source_ImageData_adjusted = source_ImageData;
+    }
+
+    const source_TypedArray = source_ImageData_adjusted.data;
+
+    // 2. Check input area.
+
+    // 2.1 Check implicit input area black transparent.
+    NeuralOrchestra_Construct3.DrawingCanvas_implicit_input_check
+      .call( this, source_TypedArray );
+
+    // 2.2 Check explicit input area not black transparent.
+    NeuralOrchestra_Construct3.DrawingCanvas_explicit_input_check
+      .call( this, source_TypedArray );
   }
 
   /**
