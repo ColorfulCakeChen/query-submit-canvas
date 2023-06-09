@@ -1182,6 +1182,10 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
     // 2.3 Report to server.
     base.versusResultSender_send( this.Versus_Result_n1_0_p1 );
 
+//!!! ...unfinished... (2023/06/09)
+// .DrawingCanvas_process_by_AI_asyncPromise.then() return a promise.
+// However, .versus_load_asyncGenerator should be an asyncGenerator (not a promise).
+
     // 3. Start downloading the next versus (after AI image processing
     //    completed).
     this.versus_load_asyncGenerator
