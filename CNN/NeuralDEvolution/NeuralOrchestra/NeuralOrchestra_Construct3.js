@@ -374,7 +374,7 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
       this.DrawingCanvas_implicit_input_width
         = configJSONData.DrawingCanvas.implicit_input_width;
 
-      //!!! ...unfinished... (2023/05/29)
+      // (2023/05/29 Remarked) Not used.
       // DrawingCanvas.addEventListener( "resolutionchange",
       //  NeuralOrchestra_Construct3.Xxx.bind( this ) )
     }
@@ -634,6 +634,7 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
     // A: It is very likely that nothing special needs to be taken for
     //    resolution change because DrawingCanvas will only be recreated
     //    automatically when the first time painting after resolution changed.
+    //    That is, it can only happen before (not after) .pasteInstances().
     //
     let getImagePixelData_asyncPromise = DrawingCanvas.getImagePixelData();
     return getImagePixelData_asyncPromise;
