@@ -857,6 +857,10 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
     for ( let alignmentId = 0;
       alignmentId < alignmentIdCount; ++alignmentId ) {
 
+//!!! ...unfinished... (2023/06/09)
+// When alignment marks swapped, the KeyDownArray should also be swapped.
+// Problem: How to know alignment marks swapped?
+
       // 2. One neural network's output.
       const from_output_valueArray
         = from_output_TypedArrayArray[ alignmentId ];
