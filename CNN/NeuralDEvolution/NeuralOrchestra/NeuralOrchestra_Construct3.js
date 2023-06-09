@@ -1132,7 +1132,7 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
     // Ensure all action keys (of keyboard) are not pressed.
     NeuralOrchestra_Construct3.KeyDownArray_clear.call( this );
   }
-  
+
   /**
    * @param {NeuralOrchestra_Construct3} this
    */
