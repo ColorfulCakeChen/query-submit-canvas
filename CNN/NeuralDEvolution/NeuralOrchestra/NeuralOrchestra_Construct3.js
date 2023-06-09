@@ -784,7 +784,7 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
     const bBlackTransparentAll = feedbackShape.explicit_input_is_by_pixel(
       source_TypedArray, pixelValueArray );
 
-    if ( !bBlackTransparentAll )
+    if ( bBlackTransparentAll )
       throw Error( `NeuralOrchestra.Construct3.${funcNameInMessage}(): `
         + `bBlackTransparentAll ( ${bBlackTransparentAll} ) `
         + `should be false.`
