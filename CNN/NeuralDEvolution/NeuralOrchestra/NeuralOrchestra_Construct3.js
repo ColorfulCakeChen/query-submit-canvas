@@ -540,6 +540,10 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
         // Only if necessary, wait for the image.
         let aImageData = await getImagePixelData_asyncPromise;
 
+//!!! ...unfinished... (2023/06/09)
+// Problem: .TypedArray_process_asyncPromise_create() may be still running
+// so that versus_load_asyncGenerator_create failed.
+
         // After ImageData got, process it by neural network.
         //
         // Note: Do not await it.
