@@ -549,17 +549,17 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
         // Only if necessary, wait for the image.
         let aImageData = await getImagePixelData_asyncPromise;
 
-//!!! ...unfinished... (2023/06/09)
-// Problem: .TypedArray_process_asyncPromise_create() may be still running
-// so that alignmentMarkValueArrayArray_Xxx or versus_load_asyncGenerator_create failed.
-
         // After ImageData got, process it by neural network.
         //
         // Note: Do not await it here.
         //
-        // Q: Why not await image data processing before return?
-        // A: So that the next .DrawingCanvas_paint_async() will not be blocked
-        //    by the image processing.
+        // Q1: Why not await image data processing before return?
+        // A1: So that the next .DrawingCanvas_paint_async() will not be blocked
+        //     by the image processing.
+        //
+        // Q2: Why does the promise be recorded since it does not awaited here?
+        // A2: Some operations (e.g. alignment marks setting/swapping, versus
+        //     loading) need await for image data processing completed.
         this.DrawingCanvas_process_by_AI_asyncPromise
           = NeuralOrchestra_Construct3.DrawingCanvas_process_by_AI_async
               .call( this, runtime, aImageData );
@@ -651,6 +651,9 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
    *
    * @param {ImageData} aImageData
    *   The image data to be processed by neural networks.
+   *
+   * @return {Promise}
+   *   Return a promise which always resolves to undefined.
    */
   static async DrawingCanvas_process_by_AI_async( runtime, aImageData ) {
     if ( !this.AI_bTurnOn )
