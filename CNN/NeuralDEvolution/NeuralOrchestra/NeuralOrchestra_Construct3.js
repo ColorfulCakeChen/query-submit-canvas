@@ -945,6 +945,9 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
     // So that the next time versus result summary could be calculated.
     this.Versus_Result_n1_0_p1 = undefined;
 
+//!!! ...unfinished... (2023/06/09)
+// Perhaps, should check whether ( .versus_load_asyncGenerator != null )
+
     // Begin to download versus weights.
     let versus_load_asyncGenerator = this.versus_load_asyncGenerator;
     this.versus_load_asyncGeneratorTicker
@@ -968,6 +971,13 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
     //        failed (e.g. timeout). No extra message will be displayed but
     //        the progress (i.e. .valuePercentage) will be backtracked when
     //        retry.
+
+
+//!!! ...unfinished... (2023/06/09)
+// If ( !.versus_load_asyncGeneratorTicker ),
+// wait until ( .versus_load_asyncGenerator != null ) and then
+// create .versus_load_asyncGeneratorTicker
+
 
     const base = this.base;
 
