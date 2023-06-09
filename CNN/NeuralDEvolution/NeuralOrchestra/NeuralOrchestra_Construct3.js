@@ -996,6 +996,10 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
     // Note: Suppose this method is called inside a requestAnimationFrame()
     //       callback.
     if ( this.versus_load_asyncGeneratorTicker.done() ) {
+
+//!!! ...unfinished... (2023/03/10)
+// Perhaps, clear base.versus_load_asyncPromise_progress.valuePercentage to 0.
+
       // If versus downloaded, change to the next state.
       ++runtime.globalVars.Versus_Step_Current;
     }
