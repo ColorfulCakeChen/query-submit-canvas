@@ -1648,7 +1648,7 @@ class NeuralOrchestra_Base extends
       // 0.1 Determine whether necessary to load versus summary.
       let versusSummary_needLoad;
       if ( this.versusSummary ) {
-        if ( this.versusSummary.rangeArray_load ) {
+        if ( this.versusSummary.rangeArray_loadOk ) {
           versusSummary_needLoad = false; // Already loaded.
         } else {
           versusSummary_needLoad = true;
@@ -1677,11 +1677,11 @@ class NeuralOrchestra_Base extends
 
       // 1. Load versus summary.
       if ( versusSummary_needLoad ) {
-        let versusSummary_loadOk
+        let versusSummary_rangeArray_loadOk
           = yield *this.versusSummary.rangeArray_load_asyncGenerator_create(
               progressVersusSummary, this.params_loading_retryWaiting );
 
-        if ( !versusSummary_loadOk )
+        if ( !versusSummary_rangeArray_loadOk )
           throw Error( `NeuralOrchestra.Base.${funcNameInMessage}(): `
             + `Failed to load DEvolution.VersusSummary.rangeArray.`
           );
