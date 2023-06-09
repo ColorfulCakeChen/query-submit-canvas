@@ -118,6 +118,13 @@ import { Base as NeuralOrchestra_Base } from "./NeuralOrchestra_Base.js";
  * @member {Promise( ImageData )} DrawingCanvas_pasteInstancesPromise
  *   If not null, the DrawingCanvas is still painting (and may be also getting image
  * data) currently.
+ *
+ * @member {Promise} DrawingCanvas_process_by_AI_asyncPromise
+ *   If exists and is pending, the AI is still processing the DrawingCanvas.
+ *
+ * @member {boolean} DrawingCanvas_process_by_AI_done
+ *   If true, the AI has completed the DrawingCanvas processeding and
+ * KeyDownArray setting.
  * 
  *
  * @member {boolean} AI_bTurnOn
@@ -237,6 +244,8 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
     this.alignmentMarkValueArrayArray_swap_asyncPromise = undefined;
     this.alignmentMarkValueArrayArray_set_asyncPromise = undefined;
 
+    this.DrawingCanvas_process_by_AI_done = undefined;
+    this.DrawingCanvas_process_by_AI_asyncPromise = undefined;
     this.DrawingCanvas_pasteInstancesPromise = undefined;
     this.DrawingCanvas_pasteInstanceArray = undefined;
     this.DrawingCanvas_implicit_input_width = undefined;
@@ -551,8 +560,14 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
         // Q: Why not await image data processing before return?
         // A: So that the next .DrawingCanvas_paint_async() will not be blocked
         //    by the image processing.
-        NeuralOrchestra_Construct3.DrawingCanvas_process_by_AI_async
-          .call( this, runtime, aImageData );
+        this.DrawingCanvas_process_by_AI_asyncPromise
+          = NeuralOrchestra_Construct3.DrawingCanvas_process_by_AI_async
+              .call( this, runtime, aImageData );
+
+        this.DrawingCanvas_process_by_AI_done = undefined;
+        this.DrawingCanvas_process_by_AI_asyncPromise.then( () => {
+          this.DrawingCanvas_process_by_AI_done = true;
+        } );
       }
     }
 
