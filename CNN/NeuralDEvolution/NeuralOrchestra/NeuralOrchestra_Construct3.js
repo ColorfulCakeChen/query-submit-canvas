@@ -1099,7 +1099,7 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
 
     // Swap alignment marks (after AI image processing completed).
     {
-      this.alignmentMarkValueArrayArray_set_asyncPromise
+      this.alignmentMarkValueArrayArray_swap_asyncPromise
         = this.DrawingCanvas_process_by_AI_asyncPromise.then( () => {
             return base
               .alignmentMarkValueArrayArray_swap_asyncPromise_create();
