@@ -1069,13 +1069,15 @@ class TestCase {
           + `${neuralOrchestra.versusSummary.rangeArray_loadOk} ) `
           + `should be true.` );
 
-      if ( neuralOrchestra.versusSummary.visitCount != nLoadProcessSendCount )
+      if ( neuralOrchestra.versusSummary.visitCount
+             != ( nLoadProcessSendCount + 1 ) )
         throw Error( `NeuralOrchestra_tester.TestCase`
           + `.${funcNameInMessage}(): testId=${this.testId}, `
           + `neuralOrchestra.versusSummary.visitCount ( `
           + `${neuralOrchestra.versusSummary.visitCount} ) `
           + `should be the same as `
-          + `nLoadProcessSendCount ( ${nLoadProcessSendCount} ).` );
+          + `( ${( nLoadProcessSendCount + 1 )} ) = ( `
+          + `nLoadProcessSendCount ( ${nLoadProcessSendCount} ) + 1 ).` );
 
       if ( nLoadProcessSendCount == 0 ) {
         // After first time loading (by .init_Xxx()), clear to indicate init done
