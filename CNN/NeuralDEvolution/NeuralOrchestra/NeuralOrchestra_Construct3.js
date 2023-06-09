@@ -1038,20 +1038,18 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
 
     const base = this.base;
 
-//!!! ...unfinished... (2023/06/09)
-// Problem: .TypedArray_process_asyncPromise_create() may be still running
-// so that alignmentMarkValueArrayArray_Xxx or versus_load_asyncGenerator_create failed.
-
     // Setup alignment marks.
     {
-      const configJSONData = this.configJSONData;
-
-      const alignmentMarkValueArrayArray
-        = configJSONData.alignmentMarkValueArrayArray;
-
       this.alignmentMarkValueArrayArray_set_asyncPromise
-        = base.alignmentMarkValueArrayArray_set_asyncPromise_create(
-            alignmentMarkValueArrayArray );
+
+          // Need wait for AI image processing completed.
+        = this.DrawingCanvas_process_by_AI_asyncPromise.then( () => {
+            const configJSONData = this.configJSONData;
+            const alignmentMarkValueArrayArray
+              = configJSONData.alignmentMarkValueArrayArray;
+            return base.alignmentMarkValueArrayArray_set_asyncPromise_create(
+              alignmentMarkValueArrayArray );
+          } );
 
       this.alignmentMarkValueArrayArray_operate_done = undefined;
       this.alignmentMarkValueArrayArray_set_asyncPromise.then( bSetOk => {
