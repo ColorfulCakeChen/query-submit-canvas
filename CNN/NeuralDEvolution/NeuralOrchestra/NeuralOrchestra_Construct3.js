@@ -902,12 +902,14 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
    * @param {NeuralOrchestra_Construct3} this
    */
   static Versus_Step_01_DownloadWeights_Loading( runtime ) {
+
     // Note1: This method is expected to be re-entered multiple times until
     //        downloading is done.
 
     // Note2: In current design, the downloading will retry automatically if
     //        failed (e.g. timeout). No extra message will be displayed but
-    //        the progress (i.e. .valuePercentage) will be backtracked if retry.
+    //        the progress (i.e. .valuePercentage) will be backtracked when
+    //        retry.
 
     const base = this.base;
 
