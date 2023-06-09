@@ -1094,16 +1094,12 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
 
     const base = this.base;
 
-
-//!!! ...unfinished... (2023/06/09)
-// Problem: .TypedArray_process_asyncPromise_create() may be still running
-// so that alignmentMarkValueArrayArray_Xxx or versus_load_asyncGenerator_create failed.
-
     // Swap alignment marks (after AI image processing completed).
     {
       this.alignmentMarkValueArrayArray_set_asyncPromise
         = this.DrawingCanvas_process_by_AI_asyncPromise.then( () => {
-            return base.alignmentMarkValueArrayArray_swap_asyncPromise_create();
+            return base
+              .alignmentMarkValueArrayArray_swap_asyncPromise_create();
           } );
 
       this.alignmentMarkValueArrayArray_operate_done = undefined;
@@ -1183,13 +1179,13 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
     // 2.3 Report to server.
     base.versusResultSender_send( this.Versus_Result_n1_0_p1 );
 
-//!!! ...unfinished... (2023/06/09)
-// Problem: .TypedArray_process_asyncPromise_create() may be still running
-// so that alignmentMarkValueArrayArray_Xxx or versus_load_asyncGenerator_create failed.
-
-    // 3. Start downloading the next versus.
+    // 3. Start downloading the next versus (after AI image processing
+    //    completed).
     this.versus_load_asyncGenerator
-      = base.versus_load_asyncGenerator_create_with_asyncPromise_progress();
+      = this.DrawingCanvas_process_by_AI_asyncPromise.then( () => {
+          return base
+            .versus_load_asyncGenerator_create_with_asyncPromise_progress();
+        } );
   }
 
 }
