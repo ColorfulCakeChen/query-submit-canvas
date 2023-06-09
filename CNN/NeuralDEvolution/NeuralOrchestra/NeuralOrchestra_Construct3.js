@@ -1090,6 +1090,8 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
     if ( this.Versus_Result_n1_0_p1 != undefined )
       return; // Prevent re-enter.
 
+    const base = this.base;
+
     // 1. Turn off AI because fighting stopped.
     this.AI_bTurnOn = false;
 
@@ -1116,20 +1118,15 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
     }
 
     // 2.3 Report to server.
-    this.base.versusResultSender_send( this.Versus_Result_n1_0_p1 );
+    base.versusResultSender_send( this.Versus_Result_n1_0_p1 );
 
-    // 3.
+    // 3. Start downloading the next versus.
+    this.versus_load_asyncGenerator
+      = base.versus_load_asyncGenerator_create_with_asyncPromise_progress();
 
 //!!! ...unfinished... (2023/06/03)
-// Setup this.versus_load_asyncGenerator to start downloading the next versus.
-//
 // Problem: How to tick the .versus_load_asyncGenerator here?
 // The ticker is in Versus_Step_00_Xxx
-
-
-//!!! ...unfinished... (2023/03/10)
-// Perhaps, call this.versus_next_load_async(),
-// and then change state to Versus_Step_00_DownloadWeights_Begin.
 
   }
 
