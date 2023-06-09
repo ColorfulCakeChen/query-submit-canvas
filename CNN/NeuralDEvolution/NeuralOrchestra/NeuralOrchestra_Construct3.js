@@ -884,11 +884,11 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
       // 3. Determine alignment id of the neural network.
       let alignmentId;
       {
-        // 3.1 alignment marks swapped.
+        // 3.1 Swapped.
         if ( this.alignmentMarkValueArrayArray_swapped )
           alignmentId = neuralNetCount - neuralNetIndex - 1;
 
-        // 3.2 alignment marks not swapped.
+        // 3.2 Not swapped: alignment id is the same as neural network id.
         else
           alignmentId = neuralNetIndex;
       }
