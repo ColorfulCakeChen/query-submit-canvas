@@ -95,7 +95,7 @@ function UserTriggers_delete_all_by_HandlerFunctionName_( strHandlerFunctionName
  *   - Return true if any trigger is removed.
  *   - Return false if no trigger removed.
  */
-function UserTriggers_delete_by_triggerUid_( triggerUid ) {
+function UserTriggers_delete_first_by_triggerUid_( triggerUid ) {
   let triggerArray = UserTriggers_get_all_();
   let triggerFound = triggerArray.find(
     trigger => trigger.getUniqueId() === triggerUid );
