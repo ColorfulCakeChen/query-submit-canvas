@@ -660,6 +660,13 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
    *   Return a promise which always resolves to undefined.
    */
   static async DrawingCanvas_process_by_AI_async( runtime, aImageData ) {
+
+//!!! ...unfinished... (2023/06/10)
+// These return may result in .AI_gameTime_endSeconds undefined
+// although .DrawingCanvas_process_by_AI_asyncPromise fulfilled
+// and ( .DrawingCanvas_process_by_AI_done == true ).
+
+
     if ( !this.AI_bTurnOn )
       return; // No need to process image since AI is not activated.
 
