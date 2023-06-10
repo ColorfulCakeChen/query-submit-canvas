@@ -1062,7 +1062,7 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
 
 //!!! ...unfinished... (2023/03/10)
 // Perhaps, clear base.versus_load_asyncPromise_progress.valuePercentage to 0.
-      globalVars.Versus_DownloadWeights_Progress = 0;
+//      globalVars.Versus_DownloadWeights_Progress = 0;
 
       // So that ticker could be created when the next time downloading is
       // requested.
