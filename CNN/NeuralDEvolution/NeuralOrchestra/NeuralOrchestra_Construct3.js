@@ -621,9 +621,8 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
       return null; // Previous AI processing has not yet completed.
 
     const runtime = DrawingCanvas.runtime;
-    const gameTime_beginSeconds = runtime.gameTime;
-    const gameTime_deltaSeconds
-      = gameTime_beginSeconds - this.AI_gameTime_endSeconds;
+    const gameTime_now = runtime.gameTime;
+    const gameTime_deltaSeconds = gameTime_now - this.AI_gameTime_endSeconds;
 
     // Check whether has pass enough time (in seconds)
     //
@@ -633,7 +632,7 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
     if ( !( gameTime_deltaSeconds >= AI_intervalSeconds ) )
       return null; // Need wait for more time elapsed.
 
-    this.AI_gameTime_beginSeconds = gameTime_beginSeconds;
+    this.AI_gameTime_beginSeconds = gameTime_now;
     this.AI_gameTime_endSeconds = undefined;
 
     // Q: What if DrawingCanvas resolution changed during .getImagePixelData()?
