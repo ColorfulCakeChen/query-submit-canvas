@@ -1002,6 +1002,11 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
   }
 
   /**
+   * When neural networks weights dowloading begins, the following variables
+   * will be set by this method:
+   *
+   *   - runtime.globalVars.Versus_DownloadWeights_Progress (number)
+   *
    * @param {NeuralOrchestra_Construct3} this
    */
   static Versus_Step_00_DownloadWeights_Begin( runtime ) {
@@ -1019,6 +1024,12 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
     let versus_load_asyncGenerator = this.versus_load_asyncGenerator;
     this.versus_load_asyncGeneratorTicker
       = new PartTime.AsyncGeneratorTicker( versus_load_asyncGenerator );
+
+    const base = this.base;
+    const globalVars = runtime.globalVars;
+
+    // Update progress to game side (and game side will display it to UI).
+    globalVars.Versus_DownloadWeights_Progress = 0;
   }
 
   /**
@@ -1059,10 +1070,6 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
     // Note: Suppose this method is called inside a requestAnimationFrame()
     //       callback.
     if ( this.versus_load_asyncGeneratorTicker.done() ) {
-
-//!!! ...unfinished... (2023/03/10)
-// Perhaps, clear base.versus_load_asyncPromise_progress.valuePercentage to 0.
-//      globalVars.Versus_DownloadWeights_Progress = 0;
 
       // So that ticker could be created when the next time downloading is
       // requested.
