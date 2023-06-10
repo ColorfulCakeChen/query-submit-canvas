@@ -665,6 +665,9 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
 // These return may result in .AI_gameTime_endSeconds undefined
 // although .DrawingCanvas_process_by_AI_asyncPromise fulfilled
 // and ( .DrawingCanvas_process_by_AI_done == true ).
+//
+// So .DrawingCanvas_getImagePixelData_asyncPromise_create() will be
+// blocked forever (because ( .AI_processing == true ) ).
 
 
     if ( !this.AI_bTurnOn )
