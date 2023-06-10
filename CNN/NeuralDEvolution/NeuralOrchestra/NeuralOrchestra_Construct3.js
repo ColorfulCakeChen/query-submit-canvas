@@ -1241,7 +1241,6 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
       .call( this );
   }
 
-//!!! ...unfinished... (2023/06/10)
   /**
    * A wrapped versus_load_asyncGenerator which will:
    *   - Await for the AI processing completed.
