@@ -1220,6 +1220,11 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
 // .DrawingCanvas_process_by_AI_asyncPromise.then() return a promise.
 // However, .versus_load_asyncGenerator should be an asyncGenerator (not a promise).
 
+//!!! ...unfinished... (2023/06/10)
+// Perhaps, wrap another asytncGenerator which will await for the 
+// .DrawingCanvas_process_by_AI_asyncPromise and then create the real
+// versus_load_asyncGenerator.
+
     // 3. Start downloading the next versus (after AI image processing
     //    completed).
     this.versus_load_asyncGenerator
