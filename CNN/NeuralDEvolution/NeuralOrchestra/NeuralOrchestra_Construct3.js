@@ -1216,10 +1216,6 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
     // 2.3 Report to server.
     base.versusResultSender_send( this.Versus_Result_n1_0_p1 );
 
-//!!! ...unfinished... (2023/06/09)
-// .DrawingCanvas_process_by_AI_asyncPromise.then() return a promise.
-// However, .versus_load_asyncGenerator should be an asyncGenerator (not a promise).
-
 //!!! ...unfinished... (2023/06/10)
 // Perhaps, wrap another asytncGenerator which will await for the 
 // .DrawingCanvas_process_by_AI_asyncPromise and then create the real
@@ -1230,11 +1226,16 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
 
     // 3. Start downloading the next versus (after AI image processing
     //    completed).
-    this.versus_load_asyncGenerator
-      = this.DrawingCanvas_process_by_AI_asyncPromise.then( () => {
-          return base
-            .versus_load_asyncGenerator_create_with_asyncPromise_progress();
-        } );
+
+//!!! (2023/06/10 Remarked)
+// .DrawingCanvas_process_by_AI_asyncPromise.then() return a promise.
+// However, .versus_load_asyncGenerator should be an asyncGenerator (not a promise).
+//
+//     this.versus_load_asyncGenerator
+//       = this.DrawingCanvas_process_by_AI_asyncPromise.then( () => {
+//           return base
+//             .versus_load_asyncGenerator_create_with_asyncPromise_progress();
+//         } );
 
 //!!! ...unfinished... (2023/06/10)
     this.versus_load_asyncGenerator = ( async () => {
