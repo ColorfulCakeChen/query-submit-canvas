@@ -954,6 +954,48 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
   }
 
   /**
+   * The following variables will be set by this method:
+   *
+   *   - runtime.globalVars.Versus_EntityNo (string)
+   *   - runtime.globalVars.Versus_Parent_GenerationNo (string)
+   *   - runtime.globalVars.Versus_Offspring_GenerationNo (string)
+   *   - runtime.globalVars.Versus_Parent_WinCount (number)
+   *
+   * @param {Object} runtime
+   *   Construct3 game engine runtime.
+   *
+   * @param {DEvolution.Versus} versus
+   *   The downloaded differential evolution versus. If null, the string
+   * information will be set to "(Unknown)".
+   */
+  static VersusInfo_set_by_versus( runtime, versus ) {
+    const globalVars = runtime.globalVars;
+
+    const versusId = versus?.versusId;
+    if ( versusId ) {
+
+      globalVars.Versus_EntityNo
+        = versusId.entityNoString; // (string)
+
+      globalVars.Versus_Parent_GenerationNo
+        = versusId.parentGenerationNoString; // (string)
+
+      globalVars.Versus_Offspring_GenerationNo
+        = versusId.offspringGenerationNoString; // (string)
+
+      globalVars.Versus_Parent_WinCount
+        = versusId.parentWinCount; // (number)
+
+    } else {
+      const strUnknown = "(Unknown)";
+      globalVars.Versus_EntityNo = strUnknown; // (string)
+      globalVars.Versus_Parent_GenerationNo = strUnknown; // (string)
+      globalVars.Versus_Offspring_GenerationNo = strUnknown; // (string)
+      globalVars.Versus_Parent_WinCount = -1; // (number)
+    }
+  }
+
+  /**
    * @param {NeuralOrchestra_Construct3} this
    */
   static Versus_Step_00_DownloadWeights_Begin( runtime ) {
@@ -993,10 +1035,10 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
     // Note1: This method is expected to be re-entered multiple times until
     //        downloading is done.
 
-    // Note2: In current design, the downloading will retry automatically if
-    //        failed (e.g. timeout). No extra message will be displayed but
-    //        the progress (i.e. .valuePercentage) will be backtracked when
-    //        retry.
+    // Note2: In current design, if downloading is failed (e.g. timeout), it
+    //        will retry automatically until succeeded. No extra message will
+    //        be displayed but the progress (i.e. .valuePercentage) will be
+    //        backtracked when retrying.
 
 
 //!!! ...unfinished... (2023/06/09)
