@@ -1036,17 +1036,18 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
       if ( versus ) {
         const versusId = versus.versusId;
         if ( versusId ) {
+          const globalVars = runtime.globalVars;
 
-          runtime.globalVars.Versus_EntityNo
+          globalVars.Versus_EntityNo
             = versusId.entityNoString; // (string)
 
-          runtime.globalVars.Versus_Parent_GenerationNo
+          globalVars.Versus_Parent_GenerationNo
             = versusId.parentGenerationNoString; // (string)
 
-          runtime.globalVars.Versus_Offspring_GenerationNo
+          globalVars.Versus_Offspring_GenerationNo
             = versusId.offspringGenerationNoString; // (string)
 
-          runtime.globalVars.Versus_Parent_WinCount
+          globalVars.Versus_Parent_WinCount
             = versusId.parentWinCount; // (number)
 
         } else {
