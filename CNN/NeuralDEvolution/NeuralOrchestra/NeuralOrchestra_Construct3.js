@@ -1015,9 +1015,6 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
     // So that the next time versus result summary could be calculated.
     this.Versus_Result_n1_0_p1 = undefined;
 
-//!!! ...unfinished... (2023/06/09)
-// Perhaps, should check whether ( .versus_load_asyncGenerator != null )
-
     // Begin to download versus weights.
     let versus_load_asyncGenerator = this.versus_load_asyncGenerator;
     this.versus_load_asyncGeneratorTicker
@@ -1050,21 +1047,8 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
     //        be displayed but the progress (i.e. .valuePercentage) will be
     //        backtracked when retrying.
 
-
-//!!! ...unfinished... (2023/06/09)
-// If ( !.versus_load_asyncGeneratorTicker ),
-// wait until ( .versus_load_asyncGenerator != null ) and then
-// create .versus_load_asyncGeneratorTicker
-
-
     const base = this.base;
     const globalVars = runtime.globalVars;
-
-
-//!!! ...unfinished... (2023/03/10)
-// Perhaps, check this.versus_load_progress
-// (may be loading versusSummary + versus, or loading versus only.)
-
 
     // Update progress to game side (and game side will display it to UI).
     globalVars.Versus_DownloadWeights_Progress
@@ -1094,52 +1078,10 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
   }
 
   /**
-
-//!!! (2023/06/10 Remarked) Moved to Versus_Step_01_DownloadWeights_Loading
-// So that VersusInfo UI can get them.
-//
-//    * When neural networks weights dowloading finished, the following variables
-//    * will be set by this method:
-//    *
-//    *   - runtime.globalVars.Versus_EntityNo (string)
-//    *   - runtime.globalVars.Versus_Parent_GenerationNo (string)
-//    *   - runtime.globalVars.Versus_Offspring_GenerationNo (string)
-//    *   - runtime.globalVars.Versus_Parent_WinCount (number)
    *
    * @param {NeuralOrchestra_Construct3} this
    */
   static Versus_Step_02_DownloadWeights_End( runtime ) {
-
-
-//!!! (2023/06/10 Remarked) Moved to Versus_Step_01_DownloadWeights_Loading
-// So that VersusInfo UI can get them.
-//     if ( !this.versus_load_asyncGeneratorTicker )
-//       return; // Prevent re-enter.
-//
-//     // So that ticker could be created when the next time downloading is
-//     // requested.
-//     this.versus_load_asyncGeneratorTicker = null;
-//     this.versus_load_asyncGenerator = null;
-//
-//     const base = this.base;
-//     const versus = base.versus;
-//     if ( !versus )
-//       return; // (should not happen since downloading succesfully.)
-//
-//     const versusId = versus.versusId;
-//     if ( !versusId )
-//       return; // (should not happen since downloading succesfully.)
-//
-//     runtime.globalVars.Versus_EntityNo = versusId.entityNoString; // (string)
-//
-//     runtime.globalVars.Versus_Parent_GenerationNo
-//       = versusId.parentGenerationNoString; // (string)
-//
-//     runtime.globalVars.Versus_Offspring_GenerationNo
-//       = versusId.offspringGenerationNoString; // (string)
-//
-//     runtime.globalVars.Versus_Parent_WinCount
-//       = versusId.parentWinCount; // (number)
   }
 
   /**
