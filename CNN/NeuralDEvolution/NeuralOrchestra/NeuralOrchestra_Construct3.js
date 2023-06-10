@@ -968,7 +968,7 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
    *   The downloaded differential evolution versus. If null, the string
    * information will be set to "(Unknown)".
    */
-  static VersusInfo_set_by_versus( runtime, versus ) {
+  static VersusInfo_set_by_runtime_versus( runtime, versus ) {
     const globalVars = runtime.globalVars;
 
     const versusId = versus?.versusId;
@@ -1001,6 +1001,10 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
   static Versus_Step_00_DownloadWeights_Begin( runtime ) {
     if ( this.versus_load_asyncGeneratorTicker )
       return; // Prevent re-enter.
+
+    // So that VersusInfo UI will display uknown if something wrong.
+    NeuralOrchestra_Construct3.VersusInfo_set_by_runtime_versus.call( this,
+      runtime, null );
 
     // So that the next time versus result summary could be calculated.
     this.Versus_Result_n1_0_p1 = undefined;
@@ -1075,30 +1079,8 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
       this.versus_load_asyncGenerator = null;
 
       // Extract versus information for UI displaying.
-      const versus = base.versus;
-      if ( versus ) {
-        const versusId = versus.versusId;
-        if ( versusId ) {
-
-          globalVars.Versus_EntityNo
-            = versusId.entityNoString; // (string)
-
-          globalVars.Versus_Parent_GenerationNo
-            = versusId.parentGenerationNoString; // (string)
-
-          globalVars.Versus_Offspring_GenerationNo
-            = versusId.offspringGenerationNoString; // (string)
-
-          globalVars.Versus_Parent_WinCount
-            = versusId.parentWinCount; // (number)
-
-        } else {
-          // (should not happen since downloading succesfully.)
-        }
-
-      } else {
-        // (should not happen since downloading succesfully.)
-      }
+      NeuralOrchestra_Construct3.VersusInfo_set_by_runtime_versus.call( this,
+        runtime, base.versus );
 
       // Since versus downloaded, change to the next state.
       ++runtime.globalVars.Versus_Step_Current;
