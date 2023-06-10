@@ -123,12 +123,13 @@ import { Base as NeuralOrchestra_Base } from "./NeuralOrchestra_Base.js";
  *   If not null, the DrawingCanvas is still painting (and may be also getting image
  * data) currently.
  *
- * @member {Promise} DrawingCanvas_process_by_AI_asyncPromise
- *   If exists and is pending, the AI is still processing the DrawingCanvas.
+ * @member {Promise} DrawingCanvas_try_process_by_AI_asyncPromise
+ *   If exists and is pending, the AI is still trying to process the
+ * DrawingCanvas and set the KeyDownArray.
  *
- * @member {boolean} DrawingCanvas_process_by_AI_done
- *   If true, the AI has completed the DrawingCanvas processeding and
- * KeyDownArray setting.
+ * @member {boolean} DrawingCanvas_try_process_by_AI_done
+ *   If true, the AI is not try to process the DrawingCanvas and set the
+ * KeyDownArray.
  * 
  *
  * @member {boolean} AI_bTurnOn
@@ -156,9 +157,9 @@ import { Base as NeuralOrchestra_Base } from "./NeuralOrchestra_Base.js";
  * @member {boolean} AI_processing
  *   True, if ( !( AI_gameTime_endSeconds >= 0 ) ), it means an AI processing
  * is still going and has not yet done.
- *   - Even if ( .DrawingCanvas_process_by_AI_asyncPromise is fulfilled ) or
- *      ( .DrawingCanvas_process_by_AI_done == true ), this .AI_processing may
- *      still be false.
+ *   - Even if ( .DrawingCanvas_try_process_by_AI_asyncPromise is fulfilled )
+ *      or ( .DrawingCanvas_try_process_by_AI_done == true ), this
+ *      .AI_processing may still be false.
  *
  * @member {number[]} AI_output_extractedValueArray
  *   A number array extracted from neural network outputs. It will be applied
@@ -252,8 +253,8 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
     this.alignmentMarkValueArrayArray_swap_asyncPromise = undefined;
     this.alignmentMarkValueArrayArray_set_asyncPromise = undefined;
 
-    this.DrawingCanvas_process_by_AI_done = undefined;
-    this.DrawingCanvas_process_by_AI_asyncPromise = undefined;
+    this.DrawingCanvas_try_process_by_AI_done = undefined;
+    this.DrawingCanvas_try_process_by_AI_asyncPromise = undefined;
     this.DrawingCanvas_pasteInstancesPromise = undefined;
     this.DrawingCanvas_pasteInstanceArray = undefined;
     this.DrawingCanvas_implicit_input_width = undefined;
@@ -344,7 +345,7 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
     {
       this.AI_gameTime_beginSeconds = gameTime_initSeconds;
       this.AI_gameTime_endSeconds = gameTime_initSeconds;
-      this.DrawingCanvas_process_by_AI_asyncPromise = Promise.resolve();
+      this.DrawingCanvas_try_process_by_AI_asyncPromise = Promise.resolve();
     }
 
     return base.initOk;
@@ -556,24 +557,24 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
         // Only if necessary, wait for the image.
         let aImageData = await getImagePixelData_asyncPromise;
 
-        // After ImageData got, process it by neural network.
+        // After ImageData got, try to process it by neural network.
         //
         // Note: Do not await it here.
         //
-        // Q1: Why not await image data processing before return?
-        // A1: So that the next .DrawingCanvas_paint_async() will not be blocked
-        //     by the image processing.
+        // Q1: Why not await for trying of image data processing before return?
+        // A1: So that the next .DrawingCanvas_paint_async() will not be
+        //     blocked by the image processing trying.
         //
         // Q2: Why does the promise be recorded since it does not awaited here?
         // A2: Some operations (e.g. alignment marks setting/swapping, versus
-        //     loading) need await for image data processing completed.
-        this.DrawingCanvas_process_by_AI_asyncPromise
-          = NeuralOrchestra_Construct3.DrawingCanvas_process_by_AI_async
+        //     loading) need await for image data processing trying completed.
+        this.DrawingCanvas_try_process_by_AI_asyncPromise
+          = NeuralOrchestra_Construct3.DrawingCanvas_try_process_by_AI_async
               .call( this, runtime, aImageData );
 
-        this.DrawingCanvas_process_by_AI_done = undefined;
-        this.DrawingCanvas_process_by_AI_asyncPromise.then( () => {
-          this.DrawingCanvas_process_by_AI_done = true;
+        this.DrawingCanvas_try_process_by_AI_done = undefined;
+        this.DrawingCanvas_try_process_by_AI_asyncPromise.then( () => {
+          this.DrawingCanvas_try_process_by_AI_done = true;
         } );
       }
     }
@@ -651,6 +652,9 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
   }
 
   /**
+   * Try to let neural networks process the DrawingCanvas and set the
+   * KeyDownArray.
+   *
    * @param {NeuralOrchestra_Construct3} this
    *
    * @param {Object} runtime
@@ -662,7 +666,7 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
    * @return {Promise}
    *   Return a promise which always resolves to undefined.
    */
-  static async DrawingCanvas_process_by_AI_async( runtime, aImageData ) {
+  static async DrawingCanvas_try_process_by_AI_async( runtime, aImageData ) {
 
     if ( !this.AI_processing )
       return; // Must have started an uncompleted AI processing.
@@ -1150,7 +1154,7 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
     // Setup alignment marks (after AI image processing completed).
     {
       this.alignmentMarkValueArrayArray_set_asyncPromise
-        = this.DrawingCanvas_process_by_AI_asyncPromise.then( () => {
+        = this.DrawingCanvas_try_process_by_AI_asyncPromise.then( () => {
             const configJSONData = this.configJSONData;
             const alignmentMarkValueArrayArray
               = configJSONData.alignmentMarkValueArrayArray;
@@ -1207,7 +1211,7 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
     // Swap alignment marks (after AI image processing completed).
     {
       this.alignmentMarkValueArrayArray_swap_asyncPromise
-        = this.DrawingCanvas_process_by_AI_asyncPromise.then( () => {
+        = this.DrawingCanvas_try_process_by_AI_asyncPromise.then( () => {
             return base
               .alignmentMarkValueArrayArray_swap_asyncPromise_create();
           } );
@@ -1290,28 +1294,10 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
     // 2.3 Report to server.
     base.versusResultSender_send( this.Versus_Result_n1_0_p1 );
 
-    // 3. Start downloading the next versus (after AI image processing
+    // 3. Start downloading the next versus (after AI image processing trying
     //    completed).
-
-//!!! (2023/06/10 Remarked)
-// .DrawingCanvas_process_by_AI_asyncPromise.then() return a promise.
-// However, .versus_load_asyncGenerator should be an asyncGenerator (not a promise).
-//
-//     this.versus_load_asyncGenerator
-//       = this.DrawingCanvas_process_by_AI_asyncPromise.then( () => {
-//           return base
-//             .versus_load_asyncGenerator_create_with_asyncPromise_progress();
-//         } );
-
-//!!! ...unfinished... (2023/06/10)
-    //
-    // Create a wrapped asytncGenerator which will:
-    //   - Await for the AI processing completed.
-    //   - Create the real versus_load_asyncGenerator.
-    //   - Delegate to the real versus_load_asyncGenerator.
-    //
     this.versus_load_asyncGenerator = NeuralOrchestra_Construct3
-      .versus_load_asyncGenerator__await__DrawingCanvas_process_by_AI_asyncPromise
+      .versus_load_asyncGenerator__await__DrawingCanvas_try_process_by_AI_asyncPromise
       .call( this );
   }
 
@@ -1323,12 +1309,12 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
    *
    * @param {NeuralOrchestra_Construct3} this
    * @param {NeuralOrchestra_Base} this.base
-   * @param {Promise} this.DrawingCanvas_process_by_AI_asyncPromise
+   * @param {Promise} this.DrawingCanvas_try_process_by_AI_asyncPromise
    */
   static async*
-    versus_load_asyncGenerator__await__DrawingCanvas_process_by_AI_asyncPromise() {
+    versus_load_asyncGenerator__await__DrawingCanvas_try_process_by_AI_asyncPromise() {
 
-    await this.DrawingCanvas_process_by_AI_asyncPromise;
+    await this.DrawingCanvas_try_process_by_AI_asyncPromise;
 
     let versus_load_asyncGenerator_real = this.base
       .versus_load_asyncGenerator_create_with_asyncPromise_progress();
