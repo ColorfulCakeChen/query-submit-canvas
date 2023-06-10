@@ -101,20 +101,29 @@ function copierTimer_onTime_( e ) {
   const funcNameInMessage = copierTimer_onTime_.name;
   console.log( `${funcNameInMessage}()` );
 
-  // 1. Record when executed.
-  EventObject_Timer_recordTo_byRangeName_(
-    e, RANGE_NAME.FC.COPIER.TIMER.LAST_TIME );
+  try {
+    // 1. Record when executed.
+    EventObject_Timer_recordTo_byRangeName_(
+      e, RANGE_NAME.FC.COPIER.TIMER.LAST_TIME );
 
-  let [ copierTimerCounter ] = ranges_getByNames_(
-    RANGE_NAME.FC.COPIER.TIMER.COUNTER );
+    let [ copierTimerCounter ] = ranges_getByNames_(
+      RANGE_NAME.FC.COPIER.TIMER.COUNTER );
 
-  // 2. Record how many times executed.
-  range_value_inc_( copierTimerCounter );
+    // 2. Record how many times executed.
+    range_value_inc_( copierTimerCounter );
 
-  NamedRange_copy_from_source_to_target_(); // 3. Copy ranges.
+    NamedRange_copy_from_source_to_target_(); // 3. Copy ranges.
 
-  // 4. Remove this timer to avoid this one-time timer left in list.
-  UserTriggers_delete_all_by_HandlerFunctionName_( funcNameInMessage );
+  } finally {
+    // 4. Remove this timer to avoid this one-time timer left in list.
+    //
+    // Even if some exception happends in the above operations, the removing
+    // should still be done. Otherwise, fetcherTimer_onTime_() will always
+    // be blocked.
+//!!! (2023/06/10 Remakred) Removed bu unique id instead.
+    //UserTriggers_delete_all_by_HandlerFunctionName_( funcNameInMessage );
+    UserTriggers_delete_by_triggerUid_( e?.triggerUid );
+  }
 }
 
 /**

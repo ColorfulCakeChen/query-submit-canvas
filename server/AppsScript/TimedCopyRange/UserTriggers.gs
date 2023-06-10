@@ -1,9 +1,18 @@
 
 /**
+ * @return {Trigger[]}
+ *   Return all triggers of this script of this user.
+ */
+function UserTriggers_get_all_() {
+  let triggerArray = ScriptApp.getUserTriggers( SpreadsheetApp.getActive() );
+  return triggerArray;
+}
+
+/**
  * Remove all triggers of this script of this user.
  */
 function UserTriggers_delete_all_() {
-  let triggers = ScriptApp.getUserTriggers( SpreadsheetApp.getActive() );
+  let triggers = UserTriggers_get_all_();
   for ( let i = 0; i < triggers.length; ++i ) {
     ScriptApp.deleteTrigger( triggers[ i ] );
   }
@@ -14,7 +23,7 @@ function UserTriggers_delete_all_() {
  *   Return all triggers' handler function names of this script of this user.
  */
 function UserTriggers_get_all_HandlerFunctionNameArray_() {
-  let triggers = ScriptApp.getUserTriggers( SpreadsheetApp.getActive() );
+  let triggers = UserTriggers_get_all_();
   let triggerNameArray = new Array( triggers.length );
   for ( let i = 0; i < triggers.length; ++i ) {
     const trigger = triggers[ i ];
@@ -33,7 +42,7 @@ function UserTriggers_get_all_HandlerFunctionNameArray_() {
  * name. Return null if not found.
  */
 function UserTriggers_get_first_by_HandlerFunctionName_( strHandlerFunctionName ) {
-  let triggers = ScriptApp.getUserTriggers( SpreadsheetApp.getActive() );
+  let triggers = UserTriggers_get_all_();
   for ( let i = 0; i < triggers.length; ++i ) {
     const trigger = triggers[ i ];
     const triggerHandlerFunctionName = trigger.getHandlerFunction();
@@ -55,7 +64,7 @@ function UserTriggers_get_first_by_HandlerFunctionName_( strHandlerFunctionName 
  */
 function UserTriggers_delete_all_by_HandlerFunctionName_( strHandlerFunctionName ) {
   let bFound = false;
-  let triggers = ScriptApp.getUserTriggers( SpreadsheetApp.getActive() );
+  let triggers = UserTriggers_get_all_();
   for ( let i = 0; i < triggers.length; ++i ) {
     const trigger = triggers[ i ];
     const triggerHandlerFunctionName = trigger.getHandlerFunction();
@@ -74,4 +83,25 @@ function UserTriggers_delete_all_by_HandlerFunctionName_( strHandlerFunctionName
   // }
 
   return bFound;
+}
+
+/**
+ * Remove the first trigger with the specified triggerUid.
+ *
+ * @param {string} triggerUid
+ *   The unique identifier for trigger to be deleted.
+ *
+ * @return {boolean}
+ *   - Return true if any trigger is removed.
+ *   - Return false if no trigger removed.
+ */
+function UserTriggers_delete_by_triggerUid_( triggerUid ) {
+  let triggerArray = UserTriggers_get_all_();
+  let triggerFound = triggerArray.find(
+    trigger => trigger.getUniqueId() === triggerUid );
+  if ( triggerFound ) {
+    ScriptApp.deleteTrigger( triggerFound );
+    return true;
+  }
+  return false;
 }
