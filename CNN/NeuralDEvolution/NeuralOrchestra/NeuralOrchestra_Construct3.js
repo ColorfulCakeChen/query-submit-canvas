@@ -978,6 +978,14 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
    *
    *   - runtime.globalVars.Versus_DownloadWeights_Progress (number)
    *
+   * When neural networks weights dowloading finished, the following variables
+   * will be set by this method:
+   *
+   *   - runtime.globalVars.Versus_EntityNo (string)
+   *   - runtime.globalVars.Versus_Parent_GenerationNo (string)
+   *   - runtime.globalVars.Versus_Offspring_GenerationNo (string)
+   *   - runtime.globalVars.Versus_Parent_WinCount (number)
+   *
    * @param {NeuralOrchestra_Construct3} this
    */
   static Versus_Step_01_DownloadWeights_Loading( runtime ) {
@@ -1009,7 +1017,7 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
     runtime.globalVars.Versus_DownloadWeights_Progress
       = base.versus_load_asyncPromise_progress.valuePercentage;
 
-    // Ticking the downloading.
+    // Tick the downloading until done.
     //
     // Note: Suppose this method is called inside a requestAnimationFrame()
     //       callback.
@@ -1018,50 +1026,89 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
 //!!! ...unfinished... (2023/03/10)
 // Perhaps, clear base.versus_load_asyncPromise_progress.valuePercentage to 0.
 
-      // If versus downloaded, change to the next state.
+      // So that ticker could be created when the next time downloading is
+      // requested.
+      this.versus_load_asyncGeneratorTicker = null;
+      this.versus_load_asyncGenerator = null;
+
+      // Extract versus information.
+      const versus = base.versus;
+      if ( versus ) {
+        const versusId = versus.versusId;
+        if ( versusId ) {
+
+          runtime.globalVars.Versus_EntityNo
+            = versusId.entityNoString; // (string)
+
+          runtime.globalVars.Versus_Parent_GenerationNo
+            = versusId.parentGenerationNoString; // (string)
+
+          runtime.globalVars.Versus_Offspring_GenerationNo
+            = versusId.offspringGenerationNoString; // (string)
+
+          runtime.globalVars.Versus_Parent_WinCount
+            = versusId.parentWinCount; // (number)
+
+        } else {
+          // (should not happen since downloading succesfully.)
+        }
+
+      } else {
+        // (should not happen since downloading succesfully.)
+      }
+
+      // Since versus downloaded, change to the next state.
       ++runtime.globalVars.Versus_Step_Current;
     }
   }
 
   /**
-   * When neural networks weights dowloading finished, the following variables
-   * will be set by this method:
-   *
-   *   - runtime.globalVars.Versus_EntityNo (string)
-   *   - runtime.globalVars.Versus_Parent_GenerationNo (string)
-   *   - runtime.globalVars.Versus_Offspring_GenerationNo (string)
-   *   - runtime.globalVars.Versus_Parent_WinCount (number)
+
+//!!! (2023/06/10 Remarked) Moved to Versus_Step_01_DownloadWeights_Loading
+// So that VersusInfo UI can get them.
+//
+//    * When neural networks weights dowloading finished, the following variables
+//    * will be set by this method:
+//    *
+//    *   - runtime.globalVars.Versus_EntityNo (string)
+//    *   - runtime.globalVars.Versus_Parent_GenerationNo (string)
+//    *   - runtime.globalVars.Versus_Offspring_GenerationNo (string)
+//    *   - runtime.globalVars.Versus_Parent_WinCount (number)
    *
    * @param {NeuralOrchestra_Construct3} this
    */
   static Versus_Step_02_DownloadWeights_End( runtime ) {
-    if ( !this.versus_load_asyncGeneratorTicker )
-      return; // Prevent re-enter.
 
-    // So that ticker could be created when the next time downloading is
-    // requested.
-    this.versus_load_asyncGeneratorTicker = null;
-    this.versus_load_asyncGenerator = null;
 
-    const base = this.base;
-    const versus = base.versus;
-    if ( !versus )
-      return; // (should not happen since downloading succesfully.)
-
-    const versusId = versus.versusId;
-    if ( !versusId )
-      return; // (should not happen since downloading succesfully.)
-
-    runtime.globalVars.Versus_EntityNo = versusId.entityNoString; // (string)
-
-    runtime.globalVars.Versus_Parent_GenerationNo
-      = versusId.parentGenerationNoString; // (string)
-
-    runtime.globalVars.Versus_Offspring_GenerationNo
-      = versusId.offspringGenerationNoString; // (string)
-
-    runtime.globalVars.Versus_Parent_WinCount
-      = versusId.parentWinCount; // (number)
+//!!! (2023/06/10 Remarked) Moved to Versus_Step_01_DownloadWeights_Loading
+// So that VersusInfo UI can get them.
+//     if ( !this.versus_load_asyncGeneratorTicker )
+//       return; // Prevent re-enter.
+//
+//     // So that ticker could be created when the next time downloading is
+//     // requested.
+//     this.versus_load_asyncGeneratorTicker = null;
+//     this.versus_load_asyncGenerator = null;
+//
+//     const base = this.base;
+//     const versus = base.versus;
+//     if ( !versus )
+//       return; // (should not happen since downloading succesfully.)
+//
+//     const versusId = versus.versusId;
+//     if ( !versusId )
+//       return; // (should not happen since downloading succesfully.)
+//
+//     runtime.globalVars.Versus_EntityNo = versusId.entityNoString; // (string)
+//
+//     runtime.globalVars.Versus_Parent_GenerationNo
+//       = versusId.parentGenerationNoString; // (string)
+//
+//     runtime.globalVars.Versus_Offspring_GenerationNo
+//       = versusId.offspringGenerationNoString; // (string)
+//
+//     runtime.globalVars.Versus_Parent_WinCount
+//       = versusId.parentWinCount; // (number)
   }
 
   /**
