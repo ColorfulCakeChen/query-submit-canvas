@@ -1031,7 +1031,7 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
       this.versus_load_asyncGeneratorTicker = null;
       this.versus_load_asyncGenerator = null;
 
-      // Extract versus information.
+      // Extract versus information for UI displaying.
       const versus = base.versus;
       if ( versus ) {
         const versusId = versus.versusId;
