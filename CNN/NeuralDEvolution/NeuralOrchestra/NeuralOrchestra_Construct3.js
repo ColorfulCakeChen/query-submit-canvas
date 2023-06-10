@@ -1235,7 +1235,32 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
           return base
             .versus_load_asyncGenerator_create_with_asyncPromise_progress();
         } );
+
+//!!! ...unfinished... (2023/06/10)
+    this.versus_load_asyncGenerator = ( async () => {
+
+      await this.DrawingCanvas_process_by_AI_asyncPromise;
+
+      let versus_load_asyncGenerator_real
+        = base.versus_load_asyncGenerator_create_with_asyncPromise_progress();
+
+      let versus_load_asyncGenerator_real_result
+        = yield *versus_load_asyncGenerator_real;
+
+      return versus_load_asyncGenerator_real_result;
+
+    } )();
+
   }
+
+//!!! ...unfinished... (2023/06/10)
+//   /**
+//    * @param {NeuralOrchestra_Construct3} this
+//    * @param {NeuralOrchestra_Base} this.base
+//    * @param {Promise} this.DrawingCanvas_process_by_AI_asyncPromise
+//    * @param {Promise} this.versus_load_asyncGenerator
+//    */
+//   static async 
 
 }
 
