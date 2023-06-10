@@ -120,9 +120,13 @@ function copierTimer_onTime_( e ) {
     // Even if some exception happends in the above operations, the removing
     // should still be done. Otherwise, fetcherTimer_onTime_() will always
     // be blocked.
+
 //!!! (2023/06/10 Remakred) Removed bu unique id instead.
     //UserTriggers_delete_all_by_HandlerFunctionName_( funcNameInMessage );
+
+    const triggerUid = e?.triggerUid;
     UserTriggers_delete_by_triggerUid_( e?.triggerUid );
+    console.log( `Remove trigger with triggerUid ( ${triggerUid} ).` );
   }
 }
 
