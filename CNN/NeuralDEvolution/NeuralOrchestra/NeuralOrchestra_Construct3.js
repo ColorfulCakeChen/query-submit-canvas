@@ -156,6 +156,9 @@ import { Base as NeuralOrchestra_Base } from "./NeuralOrchestra_Base.js";
  * @member {boolean} AI_processing
  *   True, if ( !( AI_gameTime_endSeconds >= 0 ) ), it means an AI processing
  * is still going and has not yet done.
+ *   - Even if ( .DrawingCanvas_process_by_AI_asyncPromise is fulfilled ) or
+ *      ( .DrawingCanvas_process_by_AI_done == true ), this .AI_processing may
+ *      still be false.
  *
  * @member {number[]} AI_output_extractedValueArray
  *   A number array extracted from neural network outputs. It will be applied
