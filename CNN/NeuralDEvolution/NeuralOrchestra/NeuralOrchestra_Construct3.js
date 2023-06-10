@@ -1236,7 +1236,7 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
     //   - Create the real versus_load_asyncGenerator.
     //   - Delegate to the real versus_load_asyncGenerator.
     //
-    this.versus_load_asyncGenerator = ( async () => {
+    this.versus_load_asyncGenerator = ( async* () => {
       await this.DrawingCanvas_process_by_AI_asyncPromise;
       return yield* base
         .versus_load_asyncGenerator_create_with_asyncPromise_progress();
