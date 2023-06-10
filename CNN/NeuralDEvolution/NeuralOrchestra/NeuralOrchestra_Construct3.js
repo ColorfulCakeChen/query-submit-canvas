@@ -661,26 +661,8 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
    */
   static async DrawingCanvas_process_by_AI_async( runtime, aImageData ) {
 
-//!!! ...unfinished... (2023/06/10)
-// These return may result in .AI_gameTime_endSeconds undefined
-// although .DrawingCanvas_process_by_AI_asyncPromise fulfilled
-// and ( .DrawingCanvas_process_by_AI_done == true ).
-//
-// So .DrawingCanvas_getImagePixelData_asyncPromise_create() will be
-// blocked forever (because ( .AI_processing == true ) ).
-
-
-    if ( !this.AI_bTurnOn )
-      return; // No need to process image since AI is not activated.
-
     if ( !this.AI_processing )
       return; // Must have started an uncompleted AI processing.
-
-    if ( !runtime )
-      return; // No Construct3 game engine runtime to report result.
-
-    if ( !aImageData )
-      return; // No image data to process.
 
     // Ensure alignment marks set or swapped.
     //
@@ -691,6 +673,14 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
       return; // AI can not process image if alignment marks not yet ready.
 
     try {
+
+      // Q: Why check AI turned on inside try-finally block?
+      // A: So that it will finish the AI processing (by setting
+      //    .AI_gameTime_endSeconds). Otherwise, it will block AI forever even
+      //    if .AI_bTurnOn become true again.
+      if ( !this.AI_bTurnOn )
+        return; // No need to process image since AI is not activated.
+
       const base = this.base;
       const source_TypedArray = aImageData.data;
       const source_height = aImageData.height;
@@ -722,8 +712,8 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
 
     } finally {
       // To allow the next AI processing.
-      const gameTime_endSeconds = runtime.gameTime;
-      this.AI_gameTime_endSeconds = gameTime_endSeconds;
+      const gameTime_now = runtime.gameTime;
+      this.AI_gameTime_endSeconds = gameTime_now;
     }
   }
 
