@@ -1224,6 +1224,9 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
 // Perhaps, wrap another asytncGenerator which will await for the 
 // .DrawingCanvas_process_by_AI_asyncPromise and then create the real
 // versus_load_asyncGenerator.
+//
+// Perhaps, use PartTime.prepend_asyncGenerator() to create the wrapped
+// asytncGenerator.
 
     // 3. Start downloading the next versus (after AI image processing
     //    completed).
