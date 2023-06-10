@@ -1236,22 +1236,28 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
     //   - Create the real versus_load_asyncGenerator.
     //   - Delegate to the real versus_load_asyncGenerator.
     //
-    this.versus_load_asyncGenerator = ( async* () => {
-      await this.DrawingCanvas_process_by_AI_asyncPromise;
-      return yield* base
-        .versus_load_asyncGenerator_create_with_asyncPromise_progress();
-    } )();
-
+    this.versus_load_asyncGenerator = NeuralOrchestra_Construct3
+      .versus_load_asyncGenerator__await__DrawingCanvas_process_by_AI_asyncPromise
+      .call( this );
   }
 
 //!!! ...unfinished... (2023/06/10)
-//   /**
-//    * @param {NeuralOrchestra_Construct3} this
-//    * @param {NeuralOrchestra_Base} this.base
-//    * @param {Promise} this.DrawingCanvas_process_by_AI_asyncPromise
-//    * @param {Promise} this.versus_load_asyncGenerator
-//    */
-//   static async 
+  /**
+   * A wrapped versus_load_asyncGenerator which will:
+   *   - Await for the AI processing completed.
+   *   - Create the real versus_load_asyncGenerator.
+   *   - Delegate to the real versus_load_asyncGenerator.
+   *
+   * @param {NeuralOrchestra_Construct3} this
+   * @param {NeuralOrchestra_Base} this.base
+   * @param {Promise} this.DrawingCanvas_process_by_AI_asyncPromise
+   */
+  static async*
+    versus_load_asyncGenerator__await__DrawingCanvas_process_by_AI_asyncPromise() {
+      await this.DrawingCanvas_process_by_AI_asyncPromise;
+      return yield* base
+        .versus_load_asyncGenerator_create_with_asyncPromise_progress();
+  }
 
 }
 
