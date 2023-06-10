@@ -1006,6 +1006,7 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
 
 
     const base = this.base;
+    const globalVars = runtime.globalVars;
 
 
 //!!! ...unfinished... (2023/03/10)
@@ -1014,7 +1015,7 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
 
 
     // Update progress to game side (and game side will display it to UI).
-    runtime.globalVars.Versus_DownloadWeights_Progress
+    globalVars.Versus_DownloadWeights_Progress
       = base.versus_load_asyncPromise_progress.valuePercentage;
 
     // Tick the downloading until done.
@@ -1036,7 +1037,6 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
       if ( versus ) {
         const versusId = versus.versusId;
         if ( versusId ) {
-          const globalVars = runtime.globalVars;
 
           globalVars.Versus_EntityNo
             = versusId.entityNoString; // (string)
