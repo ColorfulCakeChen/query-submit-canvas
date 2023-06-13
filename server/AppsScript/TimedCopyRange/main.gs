@@ -78,12 +78,29 @@ function fetcherTimer_onTime_( e ) {
   // 2. Record how many times executed.
   range_value_inc_( fetcherTimerCounter );
 
-  GA4_run_report_(); // 3. Generate report.
+//!!! (2023/06/13 Remarked) Moved to behind copier scheduled.
+//   GA4_run_report_(); // 3. Generate report.
+//
+//   // 4. Create timer for copying ranges.
+//   //
+//   // Note: Assume the calculation (triggered by the above) will complete
+//   //       after specified seconds.
+//   {
+//     const triggerHandlerFunctionName = copierTimer_onTime_.name;
+//     const afterSeconds = copierTimerAfterSeconds.getValue();
+//     const afterMilliseconds = afterSeconds * 1000;
+//     let timerBuilder = ScriptApp.newTrigger( triggerHandlerFunctionName )
+//       .timeBased();
+//     timerBuilder.after( afterMilliseconds ).create();
+//     console.log( `Schedule "${triggerHandlerFunctionName}" after `
+//       + `${afterMilliseconds} milliseconds.` );
+//   }
 
-  // 4. Create timer for copying ranges.
+  // 3. Create timer for copying ranges.
   //
-  // Note: Assume the calculation (triggered by the above) will complete
-  //       after specified seconds.
+  // Note: Assume the heavy calculation (triggered by the report
+  //       generating in the later (i.e. after this copying timer created))
+  //       will complete after the copierTimerAfterSeconds.
   {
     const triggerHandlerFunctionName = copierTimer_onTime_.name;
     const afterSeconds = copierTimerAfterSeconds.getValue();
@@ -94,6 +111,8 @@ function fetcherTimer_onTime_( e ) {
     console.log( `Schedule "${triggerHandlerFunctionName}" after `
       + `${afterMilliseconds} milliseconds.` );
   }
+
+  GA4_run_report_(); // 4. Generate report.
 }
 
 /** When copier's timer triggered. */
