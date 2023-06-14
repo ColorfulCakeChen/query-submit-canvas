@@ -25,7 +25,8 @@ function from_Base64_DecodedValue_Two(
   base64_decodedValue_0, base64_decodedValue_1 ) {
 
   return (
-      ( base64_decodedValue_0 << Uint12_Constant.CoderMostSignificantBitmaskLShiftCount )
+      ( base64_decodedValue_0
+          << Uint12_Constant.CoderMostSignificantBitmaskLShiftCount )
     | ( base64_decodedValue_1 )
   );
 }
@@ -49,9 +50,12 @@ function from_Base64_DecodedValue_Two(
 function from_Base64Char_CodePoint_Two(
   base64Char_codePoint_0, base64Char_codePoint_1 ) {
 
+  const DecodeTable_CharCodePoint_to_Uint6
+    = Base64.Constant.DecodeTable_CharCodePoint_to_Uint6;
+
   return from_Base64_DecodedValue_Two(
-    Base64.Constant.DecodeTable_CharCodePoint_to_Uint6[ base64Char_codePoint_0 ],
-    Base64.Constant.DecodeTable_CharCodePoint_to_Uint6[ base64Char_codePoint_1 ]
+    DecodeTable_CharCodePoint_to_Uint6[ base64Char_codePoint_0 ],
+    DecodeTable_CharCodePoint_to_Uint6[ base64Char_codePoint_1 ]
   );
 }
 
@@ -60,8 +64,8 @@ function from_Base64Char_CodePoint_Two(
  * It will call Uint12.Decoder.from_Base64Char_CodePoint_Two().
  *
  * @param {string} base64String
- *   A BASE64 encoded string (with two charcaters). It represents a BASE64 encoded
- * uint12 (12-bits unsigned integer).
+ *   A BASE64 encoded string (with two charcaters). It represents a BASE64
+ * encoded uint12 (12-bits unsigned integer).
  *
  * @return {integer}
  *   An uint12 (12-bits unsigned integer) value decoded from the base64String.
