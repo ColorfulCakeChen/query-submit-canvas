@@ -33,23 +33,22 @@ import * as Float12_Constant_Coder from "./Float12_Constant_Coder.js";
  * = [ -32 - 5, 31 - 5 ].
  *
  * @param {integer} significand_signed__n63_n32__p32_p63
- *   A signed (i.e. already apply sign bit) integer representing significand value.
- * It should be between either [ -63, -32 ] or [ 32, 63 ] = [
+ *   A signed (i.e. already apply sign bit) integer representing significand
+ * value. It should be between either [ -63, -32 ] or [ 32, 63 ] = [
  * -Float12.Constant.Coder.SignificandUnsignedMax,
  * -Float12.Constant.Coder.SignificandUnsignedMin ] or [
  * Float12.Constant.Coder.SignificandUnsignedMin,
  * Float12.Constant.Coder.SignificandUnsignedMax ].
  *
  * @return {number}
- *   A 12-bits floating-point number by the signed and corrected exponent and the
- * signed significand.
+ *   A 12-bits floating-point number by the signed and corrected exponent and
+ * the signed significand.
  */
 function from_ExponentSignedCorrected_SignificandSigned(
   exponent_signed_corrected_n37_p26, significand_signed__n63_n32__p32_p63 ) {
 
-  return (
-    significand_signed__n63_n32__p32_p63 * ( 2 ** exponent_signed_corrected_n37_p26 )
-  );
+  return ( significand_signed__n63_n32__p32_p63
+    * ( 2 ** exponent_signed_corrected_n37_p26 ) );
 }
 
 /**
@@ -67,14 +66,14 @@ function from_ExponentSignedCorrected_SignificandSigned(
  * Float12.Constant.Coder.ExponentPositiveMax ].
  *
  * @param {integer} significand_unsigned_p32_p63
- *   An unsigned (i.e. already masked out sign bit) integer representing unsigned
- * significand value. It should be between [ 32, 63 ] = [
+ *   An unsigned (i.e. already masked out sign bit) integer representing
+ * unsigned significand value. It should be between [ 32, 63 ] = [
  * Float12.Constant.Coder.SignificandUnsignedMin,
  * Float12.Constant.Coder.SignificandUnsignedMax ].
  *
  * @return {number}
- *   A 12-bits floating-point number by the sign bit, the signed exponent integer
- * and the unsigned significand integer.
+ *   A 12-bits floating-point number by the sign bit, the signed exponent
+ * integer and the unsigned significand integer.
  */
 function from_Sign_ExponentSigned_SignificandUnsigned(
   sign_0_1, exponent_signed_n32_p31, significand_unsigned_p32_p63 ) {
@@ -105,14 +104,14 @@ function from_Sign_ExponentSigned_SignificandUnsigned(
  * Float12.Constant.Coder.ExponentPositiveMax ].
  *
  * @param {integer} fraction_unsigned_0_p31
- *   An unsigned (i.e. already masked out sign bit) integer representing unsigned
- * fraction value. It should be between [ 0, 31 ] = [
+ *   An unsigned (i.e. already masked out sign bit) integer representing
+ * unsigned fraction value. It should be between [ 0, 31 ] = [
  * Float12.Constant.Coder.FractionUnsignedMin,
  * Float12.Constant.Coder.FractionUnsignedMax ].
  *
  * @return {number}
- *   A 12-bits floating-point number by the sign bit, the signed exponent integer
- * and the unsigned fraction integer.
+ *   A 12-bits floating-point number by the sign bit, the signed exponent
+ * integer and the unsigned fraction integer.
  */
 function from_Sign_ExponentSigned_FractionUnsigned(
   sign_0_1, exponent_signed_n32_p31, fraction_unsigned_0_p31 ) {
@@ -136,14 +135,14 @@ function from_Sign_ExponentSigned_FractionUnsigned(
  * 0, Base64.Constant.ValueDecodedMax ].
  *
  * @param {integer} fraction_unsigned_0_p31
- *   An unsigned (i.e. already masked out sign bit) integer representing unsigned
- * fraction value. It should be between [ 0, 31 ] = [
+ *   An unsigned (i.e. already masked out sign bit) integer representing
+ * unsigned fraction value. It should be between [ 0, 31 ] = [
  * Float12.Constant.Coder.FractionUnsignedMin,
  * Float12.Constant.Coder.FractionUnsignedMax ].
  *
  * @return {number}
- *   A 12-bits floating-point number by the sign bit, the unsigned exponent integer
- * and the unsigned fraction integer.
+ *   A 12-bits floating-point number by the sign bit, the unsigned exponent
+ * integer and the unsigned fraction integer.
  */
 function from_Sign_ExponentUnsigned_FractionUnsigned(
   sign_0_1, exponent_unsigned_0_p63, fraction_unsigned_0_p31 ) {
@@ -155,15 +154,16 @@ function from_Sign_ExponentUnsigned_FractionUnsigned(
 }
 
 /**
- * Similar to Float12.Decoder.from_Sign_ExponentUnsigned_FractionUnsigned() but it
- * will return 0 if ( exponent_unsigned_0_p63 = 0 ) and ( fraction_unsigned_0_p31 = 0 )
- * because that is the representable value which is closest to zero.
+ * Similar to Float12.Decoder.from_Sign_ExponentUnsigned_FractionUnsigned() but
+ * it will return 0 if ( exponent_unsigned_0_p63 = 0 ) and
+ * ( fraction_unsigned_0_p31 = 0 ) because that is the representable value
+ * which is closest to zero.
  *
  * It will call Float12.Decoder.from_Sign_ExponentUnsigned_FractionUnsigned().
  *
  * @return {number}
- *   A 12-bits floating-point number by the sign bit, the unsigned exponent integer
- * and the unsigned fraction integer.
+ *   A 12-bits floating-point number by the sign bit, the unsigned exponent
+ * integer and the unsigned fraction integer.
  */
 function from_Sign_ExponentUnsigned_FractionUnsigned_Zeroable(
   sign_0_1, exponent_unsigned_0_p63, fraction_unsigned_0_p31 ) {
@@ -184,8 +184,8 @@ function from_Sign_ExponentUnsigned_FractionUnsigned_Zeroable(
  *   The 12-bits unsigned integer to be viewed as float12.
  *
  * @return {number}
- *   A 12-bits floating-point number by the 12-bits unsigned integer which will be
- * destructured as sign, exponent, fraction of float12.
+ *   A 12-bits floating-point number by the 12-bits unsigned integer which will
+ * be destructured as sign, exponent, fraction of float12.
  */
 function from_Uint12( uint12_value ) {
   return from_Sign_ExponentUnsigned_FractionUnsigned_Zeroable(
@@ -244,11 +244,12 @@ function from_Base64Char_CodePoint_Two(
 /**
  *
  * @param {string} base64String
- *   A Base64 encoded string (with two charcaters). It represents a Base64 encoded
- * float12 (12-bits floating-point number).
+ *   A Base64 encoded string (with two charcaters). It represents a Base64
+ * encoded float12 (12-bits floating-point number).
  *
  * @return {number}
- *   A float12 (12-bits floating-point number) value decoded from the base64String.
+ *   A float12 (12-bits floating-point number) value decoded from the
+ * base64String.
  */
 function from_String( base64String ) {
   let uint12_value = Uint12.Decoder.from_String( base64String );
@@ -256,7 +257,8 @@ function from_String( base64String ) {
 }
 
 /**
- * Generator for Float12 decoding from a Base64 character code point Uint8Array.
+ * Generator for Float12 decoding from a Base64 character code point
+ * Uint8Array.
  *
  * Every 2 elements of the source Uint8Array will be decoded into 1 element
  * (i.e. a float12; 12-bits floating-point number) of the result Float32Array.
@@ -270,19 +272,19 @@ function from_String( base64String ) {
  * The progressParent.root_get() will be returned when every time yield.
  *
  * @param {Uint8Array} source_Base64Char_CodePoint_Uint8Array
- *   The input Base64 encoded value (as a Base64 charcater's code point) data as
- * Uint8Array. If the last bytes not enough 2 bytes, they will be discarded (will
- * not be decoded). If an input byte is not a legal Base64 code (i.e. not A..Z,
- * a..z, 0..9, +, /, -, _), the byte will be skipped (as if it does not exist).
- * So the input bytes can be separated by new line character (which will be skipped
- * and ignored).
+ *   The input Base64 encoded value (as a Base64 charcater's code point) data
+ * as Uint8Array. If the last bytes not enough 2 bytes, they will be discarded
+ * (will not be decoded). If an input byte is not a legal Base64 code (i.e. not
+ * A..Z, a..z, 0..9, +, /, -, _), the byte will be skipped (as if it does not
+ * exist). So the input bytes can be separated by new line character (which
+ * will be skipped and ignored).
  *
  * @param {Uint32} skipLineCount
  *   Skip how many lines in the source before decoding.
  *
  * @param {Uint32} suspendByteCount
- *   Everytime so many bytes decoded, yield for releasing CPU time (and reporting
- * progress). Default is ( 10 * 1024 ) bytes.
+ *   Everytime so many bytes decoded, yield for releasing CPU time (and
+ * reporting progress). Default is ( 10 * 1024 ) bytes.
  *
  * @yield {ValueMax.Percentage.Aggregate}
  *   Yield ( value = progressParent.root_get() ) when ( done = false ).
@@ -298,8 +300,8 @@ function* Base64Char_CodePoint_Uint8Array_to_Float32Array_generator(
 
   // If undefined or null or negative or zero or less than 1, set to default.
   //
-  // Note: Bitwising OR with zero is for converting to integer (if it is undefined
-  //       or null).
+  // Note: Bitwising OR with zero is for converting to integer (if it is
+  //       undefined or null).
   if ( ( suspendByteCount | 0 ) <= 0 )
     suspendByteCount = ( 10 * 1024 );
 
@@ -313,10 +315,11 @@ function* Base64Char_CodePoint_Uint8Array_to_Float32Array_generator(
 
   // 1. Skip specified lines.
 
-  // It is important that the nextYieldByteCount is not greater than source length,
-  // so that it can be used as boundary checking to reduce checking times and increase
-  // performance.
-  let lineSkipper = Base64.Decoder.lineSkipper_from_Uint8Array( progressToAdvance,
+  // It is important that the nextYieldByteCount is not greater than source
+  // length, so that it can be used as boundary checking to reduce checking
+  // times and increase performance.
+  let lineSkipper = Base64.Decoder.lineSkipper_from_Uint8Array(
+    progressToAdvance,
     sourceBytes, skipLineCount, suspendByteCount );
 
   let nextYieldByteCount = yield *lineSkipper;
@@ -339,21 +342,22 @@ function* Base64Char_CodePoint_Uint8Array_to_Float32Array_generator(
 
       nextYieldLoop:
 
-      // (This inner loop combines both source and yield boundary checking. Reducing
-      // checking to increase performance.) 
+      // (This inner loop combines both source and yield boundary checking.
+      // Reducing checking to increase performance.) 
       while ( progressToAdvance.value < nextYieldByteCount ) {
 
-        // Extract 2 source bytes. (A decode unit consists of 2 Base64 encoded source
-        // bytes.)
+        // Extract 2 source bytes. (A decode unit consists of 2 Base64 encoded
+        // source bytes.)
         //
-        // Although it is verbose to loop unrolling manually, it is far more faster
-        // to use 2 local variables than use a 2-element normal array. (Note: the
-        // 2-element normal array is far more faster than a Uint8Array() again).
+        // Although it is verbose to loop unrolling manually, it is far more
+        // faster to use 2 local variables than use a 2-element normal array.
+        // (Note: the 2-element normal array is far more faster than a
+        // Uint8Array() again).
 
         let encoded_0;
         do {
-          // Note: It may exceed the nextYieldByteCount boundary. But it should not
-          //       exceed sourceByteLength.
+          // Note: It may exceed the nextYieldByteCount boundary. But it should
+          //       not exceed sourceByteLength.
           if ( progressToAdvance.value >= sourceByteLength )
             break nextYieldLoop; // Decoding is done. (Ignore last non-4-bytes.)
 
@@ -365,8 +369,8 @@ function* Base64Char_CodePoint_Uint8Array_to_Float32Array_generator(
 
         let encoded_1;
         do {
-          // Note: It may exceed the nextYieldByteCount boundary. But it should not
-          //       exceed sourceByteLength.
+          // Note: It may exceed the nextYieldByteCount boundary. But it should
+          //       not exceed sourceByteLength.
           if ( progressToAdvance.value >= sourceByteLength )
             break nextYieldLoop; // Decoding is done. (Ignore last non-4-bytes.)
 
@@ -382,8 +386,9 @@ function* Base64Char_CodePoint_Uint8Array_to_Float32Array_generator(
 
       // Every suspendByteCount, release CPU time (and report progress).
       if ( progressToAdvance.value >= nextYieldByteCount ) {
-        nextYieldByteCount
-          = Math.min( sourceByteLength, progressToAdvance.value + suspendByteCount );
+        nextYieldByteCount = Math.min(
+          sourceByteLength,
+          progressToAdvance.value + suspendByteCount );
         yield progressRoot;
       }
 
@@ -416,19 +421,19 @@ function* Base64Char_CodePoint_Uint8Array_to_Float32Array_generator(
  * The progressParent.root_get() will be returned when every time yield.
  *
  * @param {string|string[]} source_Base64Char_String_or_StringArray
- *   A string whose content is Base64 encoded text. Or, a string array whose every
- * element is a Base64 encoded text.
+ *   A string whose content is Base64 encoded text. Or, a string array whose
+ * every element is a Base64 encoded text.
  *
  * @param {TextEncoder} textEncoder
- *   This TextEncoder will convert string to Uint8Array so that the Base64 decoder
- * can work.
+ *   This TextEncoder will convert string to Uint8Array so that the Base64
+ * decoder can work.
  *
  * @param {Uint32} skipLineCount
  *   Skip how many lines in the source before decoding.
  *
  * @param {Uint32} suspendByteCount
- *   Everytime so many bytes decoded, yield for releasing CPU time (and reporting
- * progress). Default is ( 10 * 1024 ) bytes.
+ *   Everytime so many bytes decoded, yield for releasing CPU time (and
+ * reporting progress). Default is ( 10 * 1024 ) bytes.
  *
  * @yield {ValueMax.Percentage.Aggregate}
  *   Yield ( value = progressParent.root_get() ) when ( done = false ).
@@ -441,8 +446,8 @@ function* Base64Char_StringOrStringArray_to_Float32Array_generator(
   source_Base64Char_String_or_StringArray, textEncoder,
   skipLineCount, suspendByteCount
 ) {
-  return yield*
-    Base64.Decoder.from_Base64Char_StringOrStringArray_generator_by_GeneratorFunction(
+  return yield* Base64.Decoder
+    .from_Base64Char_StringOrStringArray_generator_by_GeneratorFunction(
       progressParent,
       source_Base64Char_String_or_StringArray, textEncoder,
       skipLineCount, suspendByteCount,
