@@ -970,7 +970,6 @@ const gTestCaseArray = new TestCaseArray();
 async function* tester( progressParent ) {
   console.log( "GSheet download testing..." );
 
-  let spreadsheetId = "18YyEoy-OfSkODfw8wqBRApSrRnBTZpjRpRiwIKy8a0M";
   let spreadsheetId = "1TbZWN4vGQ2SX4LsLCadYqxiJ0Zka8V0Y-ftDH5F5-R4";
   let range = "A:A";
   let apiKey = "AIzaSyDQpdX3Z7297fkZ7M_jWdq7zjv_IIxpArU";
