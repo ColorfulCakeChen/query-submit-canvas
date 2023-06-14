@@ -220,7 +220,7 @@ function NamedRange_copy_from_source_to_target_( bCopyOnlyIfTargetBlank ) {
     //       following Range.isBlank() will flush automatically.
   }
 
-  // 1. Collect all source and target ranges.
+  // 2. Collect all source and target ranges.
   //
   // This should be after the (above) recalculation activated because
   // the recalculation affects whether source range is blank.
