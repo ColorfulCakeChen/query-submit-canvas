@@ -36,7 +36,7 @@ import * as Bitmask from "../Bitmask.js";
  * @file This is a scheme for encoding a floating-point number by 2 Base64
  * (i.e. Uint6 [ 0, 63 ]) characters.
  *
- * Because 12 bits (= 2 * 6 bits ) are used to representing a floating-point
+ * Because 12 bits (= 2 * 6 bits) are used to representing a floating-point
  * number, so called float12.
  *
  *   - sign: 1 bit.
