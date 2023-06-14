@@ -30,13 +30,13 @@ const gTestGeneratorFuncMap = new Map( [
   // [ Float12_tester.tester, true ],
   // [ Uint12_tester.tester, true ],
 
-  [ GSheets_tester.tester, true ],
+  // [ GSheets_tester.tester, true ],
 
   // [ FeedbackShape_tester.tester, true ],
   // [ AsyncWorker_tester.tester, true ],
   // [ DEvolution_tester.tester, true ],
 
-  // [ NeuralOrchestra_tester.tester, true ],
+  [ NeuralOrchestra_tester.tester, true ],
 
 ] );
 
