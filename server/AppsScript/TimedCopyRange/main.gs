@@ -117,14 +117,14 @@ function copierTimer_onTime_( e ) {
     // the writing will trigger another heavy recalculation.
     NamedRange_copy_from_source_to_target_();
 
-    // 1. Record when executed.
+    // 2. Record when executed.
     EventObject_Timer_recordTo_byRangeName_(
       e, RANGE_NAME.FC.COPIER.TIMER.LAST_TIME );
 
     let [ copierTimerCounter ] = ranges_getByNames_(
       RANGE_NAME.FC.COPIER.TIMER.COUNTER );
 
-    // 2. Record how many times executed.
+    // 3. Record how many times executed.
     range_value_inc_( copierTimerCounter );
 
 //!!! (2023/06/15 Remarked)
