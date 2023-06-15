@@ -36,7 +36,7 @@ const gTestGeneratorFuncMap = new Map( [
   // [ AsyncWorker_tester.tester, true ],
   // [ DEvolution_tester.tester, true ],
 
-  [ NeuralOrchestra_tester.tester, true ],
+  // [ NeuralOrchestra_tester.tester, true ],
 
 ] );
 
