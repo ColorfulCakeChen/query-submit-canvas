@@ -6,7 +6,8 @@ export { EncodeTable_Uint6_to_Uint8 };
 export { DecodeTable_CharCodePoint_to_Uint6 };
 
 
-/**The bit count could be encoded by a Base64 character.
+/**
+ * The bit count could be encoded by a Base64 character.
  *
  * It always is 6 (representing an unsigned integer (uint6)).
  */
@@ -25,8 +26,9 @@ const base64String = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz012345
 /** Mapping table for encoding Uint6 (i.e. [ 0, 63 ]) to Base64 character. */
 const EncodeTable_Uint6_to_Char = [ ...base64String ];
 
-/** Mapping table for encoding Uint6 (i.e. [ 0, 63 ]) to Base64 character's code
- *  point (as Uint8).
+/**
+ * Mapping table for encoding Uint6 (i.e. [ 0, 63 ]) to Base64 character's code
+ * point (as Uint8).
  */
 const EncodeTable_Uint6_to_Uint8 = ( new TextEncoder() ).encode( base64String );
 
