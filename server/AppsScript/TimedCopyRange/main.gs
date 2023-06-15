@@ -109,6 +109,14 @@ function copierTimer_onTime_( e ) {
   console.log( `${funcNameInMessage}()` );
 
   try {
+
+//!!! ...unfinished... (2023/06/15)
+    // 1. Copy ranges.
+    //
+    // Copying (and disable recalculation) before any other writing. Otherwise,
+    // the writing will trigger another heavy recalculation.
+    NamedRange_copy_from_source_to_target_();
+
     // 1. Record when executed.
     EventObject_Timer_recordTo_byRangeName_(
       e, RANGE_NAME.FC.COPIER.TIMER.LAST_TIME );
@@ -119,7 +127,11 @@ function copierTimer_onTime_( e ) {
     // 2. Record how many times executed.
     range_value_inc_( copierTimerCounter );
 
-    NamedRange_copy_from_source_to_target_(); // 3. Copy ranges.
+//!!! (2023/06/15 Remarked)
+// Moved to beginning so that extra writing will be done after
+// heavy recalculation has been disable. Otherwise, the writing
+// will trigger another heavy recalculation.
+//    NamedRange_copy_from_source_to_target_(); // 3. Copy ranges.
 
   } finally {
     // 4. Remove this timer to avoid this one-time timer left in list.
