@@ -477,8 +477,8 @@ function* Base64Char_CodePoint_Uint8Array_to_Uint8Array_generator(
 
       // Every suspendByteCount, release CPU time (and report progress).
       if ( progressToAdvance.value >= nextYieldByteCount ) {
-        nextYieldByteCount
-          = Math.min( sourceByteLength, progressToAdvance.value + suspendByteCount );
+        nextYieldByteCount = Math.min(
+          sourceByteLength, progressToAdvance.value + suspendByteCount );
         yield progressRoot;
       }
 
