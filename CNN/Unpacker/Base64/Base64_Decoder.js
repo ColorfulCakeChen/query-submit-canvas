@@ -150,8 +150,8 @@ function* from_Base64Char_CodePoint_ArrayBuffer_generator_by_GeneratorFunction(
 /**
  * Generator for Base64 decoding from an array of Base64 encoded string.
  *
- * Join the string array, convert to Uint8Array, decode as Base64, result in another
- * Uint8Array.
+ * Join the string array, convert to Uint8Array, decode as Base64, result in
+ * another Uint8Array.
  *
  * @param {ValueMax.Percentage.Aggregate} progressParent
  *   Some new progressToAdvance will be created and added to progressParent.
@@ -159,19 +159,19 @@ function* from_Base64Char_CodePoint_ArrayBuffer_generator_by_GeneratorFunction(
  * The progressParent.root_get() will be returned when every time yield.
  *
  * @param {string|string[]} source_Base64Char_String_or_StringArray
- *   A string whose content is Base64 encoded text. Or, a string array whose every
- * element is a Base64 encoded text.
+ *   A string whose content is Base64 encoded text. Or, a string array whose
+ * every element is a Base64 encoded text.
  *
  * @param {TextEncoder} textEncoder
- *   This TextEncoder will convert string to Uint8Array so that the Base64 decoder
- * can work.
+ *   This TextEncoder will convert string to Uint8Array so that the Base64
+ * decoder can work.
  *
  * @param {Uint32} skipLineCount
  *   Skip how many lines in the source before decoding.
  *
  * @param {Uint32} suspendByteCount
- *   Everytime so many bytes decoded, yield for releasing CPU time (and reporting
- * progress). Default is ( 10 * 1024 ) bytes.
+ *   Everytime so many bytes decoded, yield for releasing CPU time (and
+ * reporting progress). Default is ( 10 * 1024 ) bytes.
  *
  * @yield {ValueMax.Percentage.Aggregate}
  *   Yield ( value = progressParent.root_get() ) when ( done = false ).
@@ -184,12 +184,13 @@ function* Base64Char_StringOrStringArray_to_Uint8Array_generator(
   source_Base64Char_String_or_StringArray, textEncoder,
   skipLineCount, suspendByteCount
 ) {
-  return yield* from_Base64Char_StringOrStringArray_generator_by_GeneratorFunction(
-    progressParent,
-    source_Base64Char_String_or_StringArray, textEncoder,
-    skipLineCount, suspendByteCount,
-    Base64Char_CodePoint_Uint8Array_to_Uint8Array_generator
-  );
+  return yield*
+    from_Base64Char_StringOrStringArray_generator_by_GeneratorFunction(
+      progressParent,
+      source_Base64Char_String_or_StringArray, textEncoder,
+      skipLineCount, suspendByteCount,
+      Base64Char_CodePoint_Uint8Array_to_Uint8Array_generator
+    );
 }
 
 /**
