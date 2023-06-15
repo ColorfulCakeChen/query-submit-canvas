@@ -364,8 +364,8 @@ function* Base64Char_CodePoint_Uint8Array_to_Uint8Array_generator(
 
   // If undefined or null or negative or zero or less than 1, set to default.
   //
-  // Note: Bitwising OR with zero is for converting to integer (if it is undefined
-  //       or null).
+  // Note: Bitwising OR with zero is for converting to integer (if it is
+  //       undefined or null).
   if ( ( suspendByteCount | 0 ) <= 0 )
     suspendByteCount = ( 10 * 1024 );
 
@@ -379,9 +379,9 @@ function* Base64Char_CodePoint_Uint8Array_to_Uint8Array_generator(
 
   // 1. Skip specified lines.
 
-  // It is important that the nextYieldByteCount is not greater than source length,
-  // so that it can be used as boundary checking to reduce checking times and increase
-  // performance.
+  // It is important that the nextYieldByteCount is not greater than source
+  // length, so that it can be used as boundary checking to reduce checking
+  // times and increase performance.
   let lineSkipper = lineSkipper_from_Uint8Array( progressToAdvance,
     sourceBytes, skipLineCount, suspendByteCount );
 
