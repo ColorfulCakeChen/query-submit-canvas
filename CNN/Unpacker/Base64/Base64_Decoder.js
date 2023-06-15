@@ -282,8 +282,8 @@ function* lineSkipper_from_Uint8Array( progressToAdvance,
       if ( skippedLineCount >= skipLineCount )
         break;                  // Already skip enough lines.
 
-      // (This inner loop combines both source and yield boundary checking. Reduce
-      // checking to increase performance.) 
+      // (This inner loop combines both source and yield boundary checking.
+      // Reduce checking to increase performance.) 
       while ( progressToAdvance.value < nextYieldByteCount ) {
         if ( skippedLineCount >= skipLineCount )
           break;                // Already skip enough lines.
@@ -294,11 +294,11 @@ function* lineSkipper_from_Uint8Array( progressToAdvance,
         if ( 13 == rawByte ) {  // "\r" (carriage return; CR)
           ++skippedLineCount;   // One line is skipped.
 
-          // If a LF follows a CR, it is considered as CRLF sequence and viewed as
-          // the same one line.
+          // If a LF follows a CR, it is considered as CRLF sequence and viewed
+          // as the same one line.
           //
-          // Note: It may exceed the nextYieldByteCount boundary. But it should not
-          //       exceed sourceByteLength.
+          // Note: It may exceed the nextYieldByteCount boundary. But it should
+          //       not exceed sourceByteLength.
           if (   ( progressToAdvance.value < sourceByteLength )
               && ( 10 == sourceBytes[ progressToAdvance.value ] )
              ) { 
