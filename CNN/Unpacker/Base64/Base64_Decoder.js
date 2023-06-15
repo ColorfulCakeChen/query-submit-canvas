@@ -406,21 +406,22 @@ function* Base64Char_CodePoint_Uint8Array_to_Uint8Array_generator(
 
       nextYieldLoop:
 
-      // (This inner loop combines both source and yield boundary checking. Reducing
-      // checking to increase performance.) 
+      // (This inner loop combines both source and yield boundary checking.
+      // Reducing checking to increase performance.) 
       while ( progressToAdvance.value < nextYieldByteCount ) {
 
-        // Extract 4 source bytes. (A decode unit consists of 4 Base64 encoded source
-        // bytes.)
+        // Extract 4 source bytes. (A decode unit consists of 4 Base64 encoded
+        // source bytes.)
         //
-        // Although it is verbose to loop unrolling manually, it is far more faster
-        // to use 4 local variables than use a 4-element normal array. (Note: the
-        // 4-element normal array is far more faster than a Uint8Array() again).
+        // Although it is verbose to loop unrolling manually, it is far more
+        // faster to use 4 local variables than use a 4-element normal array.
+        // (Note: the 4-element normal array is far more faster than a
+        // Uint8Array() again).
 
         let encoded_0;
         do {
-          // Note: It may exceed the nextYieldByteCount boundary. But it should not
-          //       exceed sourceByteLength.
+          // Note: It may exceed the nextYieldByteCount boundary. But it should
+          //       not exceed sourceByteLength.
           if ( progressToAdvance.value >= sourceByteLength )
             break nextYieldLoop; // Decoding is done. (Ignore last non-4-bytes.)
 
@@ -432,8 +433,8 @@ function* Base64Char_CodePoint_Uint8Array_to_Uint8Array_generator(
 
         let encoded_1;
         do {
-          // Note: It may exceed the nextYieldByteCount boundary. But it should not
-          //       exceed sourceByteLength.
+          // Note: It may exceed the nextYieldByteCount boundary. But it should
+          //       not exceed sourceByteLength.
           if ( progressToAdvance.value >= sourceByteLength )
             break nextYieldLoop; // Decoding is done. (Ignore last non-4-bytes.)
 
@@ -445,8 +446,8 @@ function* Base64Char_CodePoint_Uint8Array_to_Uint8Array_generator(
 
         let encoded_2;
         do {
-          // Note: It may exceed the nextYieldByteCount boundary. But it should not
-          //       exceed sourceByteLength.
+          // Note: It may exceed the nextYieldByteCount boundary. But it should
+          //       not exceed sourceByteLength.
           if ( progressToAdvance.value >= sourceByteLength )
             break nextYieldLoop; // Decoding is done. (Ignore last non-4-bytes.)
 
@@ -458,8 +459,8 @@ function* Base64Char_CodePoint_Uint8Array_to_Uint8Array_generator(
 
         let encoded_3;
         do {
-          // Note: It may exceed the nextYieldByteCount boundary. But it should not
-          //       exceed sourceByteLength.
+          // Note: It may exceed the nextYieldByteCount boundary. But it should
+          //       not exceed sourceByteLength.
           if ( progressToAdvance.value >= sourceByteLength )
             break nextYieldLoop; // Decoding is done. (Ignore last non-4-bytes.)
 
