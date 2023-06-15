@@ -109,7 +109,6 @@ function copierTimer_onTime_( e ) {
   console.log( `${funcNameInMessage}()` );
 
   try {
-
     // 1. Copy ranges.
     //
     // Copying (and disable recalculation) before any other writing. Otherwise,
