@@ -238,9 +238,10 @@ function* Base64Char_CodePoint_ArrayBuffer_to_Uint8Array_generator(
  * Generator for line skipping specified lines from an Uint8Array.
  *
  * @param {ValueMax.Percentage.AggregConcrete} progressToAdvance
- *   This progressToAdvance will be increased when every time an Unit8 advanced.
- * The progressToAdvance.root_get() will be returned when every time yield. The
- * progressToAdvance.max should be the same as sourceUint8Array.length.
+ *   This progressToAdvance will be increased when every time an Unit8
+ * advanced. The progressToAdvance.root_get() will be returned when every time
+ * yield. The progressToAdvance.max should be the same as
+ * sourceUint8Array.length.
  *
  * @param {Uint8Array} sourceUint8Array
  *   The input data as Uint8Array.
@@ -249,8 +250,8 @@ function* Base64Char_CodePoint_ArrayBuffer_to_Uint8Array_generator(
  *   Skip how many lines in the sourceUint8Array.
  *
  * @param {Uint32} suspendByteCount
- *   Everytime so many bytes decoded, yield for releasing CPU time (and reporting
- * progress).
+ *   Everytime so many bytes decoded, yield for releasing CPU time (and
+ * reporting progress).
  *
  * @yield {ValueMax.Percentage.Aggregate}
  *   Yield ( value = progressToAdvance.root_get() ) when ( done = false ).
@@ -267,9 +268,9 @@ function* lineSkipper_from_Uint8Array( progressToAdvance,
   // Initialize progress.
   let progressRoot = progressToAdvance.root_get();
 
-  // It is important that the nextYieldByteCount is not greater than source length,
-  // so that it can be used as boundary checking to reduce checking times and increase
-  // performance.
+  // It is important that the nextYieldByteCount is not greater than source
+  // length, so that it can be used as boundary checking to reduce checking
+  // times and increase performance.
   let nextYieldByteCount
     = Math.min( sourceByteLength, progressToAdvance.value + suspendByteCount );
 
