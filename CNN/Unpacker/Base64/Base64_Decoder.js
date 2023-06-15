@@ -313,8 +313,8 @@ function* lineSkipper_from_Uint8Array( progressToAdvance,
 
       // Every suspendByteCount, release CPU time (and report progress).
       if ( progressToAdvance.value >= nextYieldByteCount ) {
-        nextYieldByteCount
-          = Math.min( sourceByteLength, progressToAdvance.value + suspendByteCount );
+        nextYieldByteCount = Math.min(
+          sourceByteLength, progressToAdvance.value + suspendByteCount );
         yield progressRoot;
       }
     }
@@ -336,19 +336,19 @@ function* lineSkipper_from_Uint8Array( progressToAdvance,
  * The progressParent.root_get() will be returned when every time yield.
  *
  * @param {Uint8Array} source_Base64Char_CodePoint_Uint8Array
- *   The input Base64 encoded value (as a Base64 charcater's code point) data as
- * Uint8Array. If the last bytes not enough 4 bytes, they will be discarded (will
- * not be decoded). If an input byte is not a legal Base64 code (i.e. not A..Z,
- * a..z, 0..9, +, /, -, _), the byte will be skipped (as if it does not exist).
- * So the input bytes can be separated by new line character (which will be skipped
- * and ignored).
+ *   The input Base64 encoded value (as a Base64 charcater's code point) data
+ * as Uint8Array. If the last bytes not enough 4 bytes, they will be discarded
+ * (will not be decoded). If an input byte is not a legal Base64 code (i.e. not
+ * A..Z, a..z, 0..9, +, /, -, _), the byte will be skipped (as if it does not
+ * exist). So the input bytes can be separated by new line character (which
+ * will be skipped and ignored).
  *
  * @param {Uint32} skipLineCount
  *   Skip how many lines in the source before decoding.
  *
  * @param {Uint32} suspendByteCount
- *   Everytime so many bytes decoded, yield for releasing CPU time (and reporting
- * progress). Default is ( 10 * 1024 ) bytes.
+ *   Everytime so many bytes decoded, yield for releasing CPU time (and
+ * reporting progress). Default is ( 10 * 1024 ) bytes.
  *
  * @yield {ValueMax.Percentage.Aggregate}
  *   Yield ( value = progressParent.root_get() ) when ( done = false ).
