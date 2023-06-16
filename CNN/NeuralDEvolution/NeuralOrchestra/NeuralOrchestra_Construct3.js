@@ -1065,6 +1065,10 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
     globalVars.Versus_DownloadWeights_Progress
       = base.versus_load_asyncPromise_progress.valuePercentage;
 
+//!!! ...unfinished... (2023/06/16)
+// Perhaps, use versus_load_asyncPromise.
+// And use ( base.versus_loadOk != undefined ) as done.
+
     // Tick the downloading until done.
     //
     // Note: Suppose this method is called inside a requestAnimationFrame()
