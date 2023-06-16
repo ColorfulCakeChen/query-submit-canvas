@@ -1235,10 +1235,10 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
     {
       if ( Versus_Result_Sum < 0 )
         this.Versus_Result_n1_0_p1 = -1;
-      else if ( Versus_Result_Sum == 0 )
-        this.Versus_Result_n1_0_p1 = 0;
-      else // ( Versus_Result_Sum > 0 )
+      else if ( Versus_Result_Sum > 0 )
         this.Versus_Result_n1_0_p1 = +1;
+      else // ( Versus_Result_Sum == 0 )
+        this.Versus_Result_n1_0_p1 = 0;
     }
 
     // 2.3 Report to server.
