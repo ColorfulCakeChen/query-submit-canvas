@@ -96,11 +96,11 @@ async function* tester( progressParent ) {
     // Note: This is an un-related measurement id for testing purpose only. So that
     //       this testing will not disturbing the real measurement.
     const measurementId_apiSecret_array_array = [
-      [ "G-DSQF4CQ57J", "2hUH_0ZrS0Wk8eTlWqGMyg" ], // DEvolution_tester, 00
-      [ "G-SZ1Z51D157", "oTlC1a7DSsSKFP5-_QaPuw" ], // DEvolution_tester, 01
-      [ "G-BC7FNNFP5B", "aJWWxywJTmKiMqmakqUTfA" ], // DEvolution_tester, 02
-      [ "G-8LKLKP7TT9", "b5_CCDM4QHecR-lVxTjPqw" ], // DEvolution_tester, 03
-      [ "G-T14M8JKR65", "ywGNhxdrTj2zDlMX6gYEiQ" ], // DEvolution_tester, 04
+      [ "G-STKEYMJ1W7", "c24JkVXbR-CXOvByaBL6dA" ], // DEvolution_tester, 00
+      [ "G-597QGC5NYZ", "ly4b5XHDQlGaCpNziDSGUQ" ], // DEvolution_tester, 01
+      [ "G-TJMMMYLBZ5", "q-vMOSKdT2OrvrwQF9cpdA" ], // DEvolution_tester, 02
+      [ "G-0H06Z5Y6MZ", "PC8kkGnzQ1utLTSy1z2nvA" ], // DEvolution_tester, 03
+      [ "G-R38CRGVGL3", "cqPc4HH4TX6uELqSe3shCw" ], // DEvolution_tester, 04
     ];
 
     test_DEvolution_VersusResultSender_MultiEventName(
