@@ -73,16 +73,13 @@ import { Base as NeuralOrchestra_Base } from "./NeuralOrchestra_Base.js";
  *
  *
 
-//!!! ...unfinished... (2023/06/20)
-// should be replaced by .versus_load_asyncPromise
-
- * @member {AsyncGenerator} versus_load_asyncGenerator
- *   If not null, a versus downloading is on going.
- *
- * @member {PartTime.AsyncGeneratorTicker} versus_load_asyncGeneratorTicker
- *   If not null, a versus downloading is on going.
-
-//!!! ...unfinished... (2023/06/20)
+//!!! ...unfinished... (2023/06/20) Replaced by .versus_load_asyncPromise
+//
+//  * @member {AsyncGenerator} versus_load_asyncGenerator
+//  *   If not null, a versus downloading is on going.
+//  *
+//  * @member {PartTime.AsyncGeneratorTicker} versus_load_asyncGeneratorTicker
+//  *   If not null, a versus downloading is on going.
 
  *
  * @member {AsyncGenerator} versus_load_asyncPromise
@@ -1323,29 +1320,29 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
 //!!! (2023/06/20 Remarked)
 // Replaced by 
 // .versus_load_asyncPromise__await__DrawingCanvas_try_process_by_AI_asyncPromise()
-  /**
-   * A wrapped versus_load_asyncGenerator which will:
-   *   - Await for the AI processing completed.
-   *   - Create the real versus_load_asyncGenerator.
-   *   - Delegate to the real versus_load_asyncGenerator.
-   *
-   * @param {NeuralOrchestra_Construct3} this
-   * @param {NeuralOrchestra_Base} this.base
-   * @param {Promise} this.DrawingCanvas_try_process_by_AI_asyncPromise
-   */
-  static async*
-    versus_load_asyncGenerator__await__DrawingCanvas_try_process_by_AI_asyncPromise() {
-
-    await this.DrawingCanvas_try_process_by_AI_asyncPromise;
-
-    let versus_load_asyncGenerator_real = this.base
-      .versus_load_asyncGenerator_create_with_asyncPromise_progress();
-
-    let versus_load_asyncGenerator_real_result
-      = yield* versus_load_asyncGenerator_real;
-
-    return versus_load_asyncGenerator_real_result;
-  }
+//   /**
+//    * A wrapped versus_load_asyncGenerator which will:
+//    *   - Await for the AI processing completed.
+//    *   - Create the real versus_load_asyncGenerator.
+//    *   - Delegate to the real versus_load_asyncGenerator.
+//    *
+//    * @param {NeuralOrchestra_Construct3} this
+//    * @param {NeuralOrchestra_Base} this.base
+//    * @param {Promise} this.DrawingCanvas_try_process_by_AI_asyncPromise
+//    */
+//   static async*
+//     versus_load_asyncGenerator__await__DrawingCanvas_try_process_by_AI_asyncPromise() {
+//
+//     await this.DrawingCanvas_try_process_by_AI_asyncPromise;
+//
+//     let versus_load_asyncGenerator_real = this.base
+//       .versus_load_asyncGenerator_create_with_asyncPromise_progress();
+//
+//     let versus_load_asyncGenerator_real_result
+//       = yield* versus_load_asyncGenerator_real;
+//
+//     return versus_load_asyncGenerator_real_result;
+//   }
 
 //!!! ...unfinished... (2023/06/20)
   /**
