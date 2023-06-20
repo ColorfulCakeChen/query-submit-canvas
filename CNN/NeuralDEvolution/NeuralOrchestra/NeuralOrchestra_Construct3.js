@@ -276,8 +276,8 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
 
     this.configJSONData = undefined;
 
-    this.versus_load_asyncPromise = undefined;
     this.versus_load_progress_displaying = undefined;
+    this.versus_load_asyncPromise = undefined;
 
 //!!! ...unfinished... (2023/06/20)
 // should be replaced by .versus_load_asyncPromise
