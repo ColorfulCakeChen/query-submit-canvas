@@ -339,8 +339,7 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
 
     const downloader_apiKey = null;
 
-//!!! ...unfinished... (2023/06/20)
-// should be replaced by .versus_load_asyncPromise
+//!!! ...unfinished... (2023/06/20) Replaced by .versus_load_asyncPromise
 //
 //    const b_return_versus_load_asyncGenerator_instead_of_asyncPromise = true;
     const b_return_versus_load_asyncGenerator_instead_of_asyncPromise = false;
@@ -359,8 +358,7 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
           b_return_versus_load_asyncGenerator_instead_of_asyncPromise
         );
 
-//!!! ...unfinished... (2023/06/20)
-// should be replaced by .versus_load_asyncPromise
+//!!! ...unfinished... (2023/06/20) Replaced by .versus_load_asyncPromise
 //
 //     let versus_load_asyncGenerator = await init_asyncPromise;
 //     this.versus_load_asyncGenerator = versus_load_asyncGenerator;
@@ -1040,8 +1038,7 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
    */
   static Versus_Step_00_DownloadWeights_Begin( runtime ) {
 
-//!!! ...unfinished... (2023/06/20)
-// should be replaced by .versus_load_asyncPromise
+//!!! ...unfinished... (2023/06/20) Replaced by .versus_load_asyncPromise
 //
 //     if ( this.versus_load_asyncGeneratorTicker )
 //       return; // Prevent re-enter.
@@ -1070,6 +1067,7 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
     // Update progress to game side (and game side will display it to UI).
     globalVars.Versus_DownloadWeights_Progress = 0;
 
+    // Begin to display versus downloading progress.
     this.versus_load_progress_displaying = true;
   }
 
