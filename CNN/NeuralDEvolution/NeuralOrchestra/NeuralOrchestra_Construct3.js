@@ -1117,17 +1117,20 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
     //
     // Note: Suppose this method is called inside a requestAnimationFrame()
     //       callback.
-    if ( this.versus_load_asyncGeneratorTicker.done() ) {
 
-//!!! ...unfinished... (2023/06/20)
-// should be replaced by .versus_load_asyncPromise
-//
+//!!! (2023/06/20 Remarked) Replaced by .versus_load_asyncPromise
+//    if ( this.versus_load_asyncGeneratorTicker.done() ) {
+
+    if ( base.versus_loadOk != undefined ) { // true or false.
 
       // So that ticker could be created when the next time downloading is
       // requested.
-      this.versus_load_asyncGeneratorTicker = null;
-      this.versus_load_asyncGenerator = null;
 
+//!!! (2023/06/20 Remarked) Replaced by .versus_load_asyncPromise
+//       this.versus_load_asyncGeneratorTicker = null;
+//       this.versus_load_asyncGenerator = null;
+
+      this.versus_load_asyncPromise = null;
       this.versus_load_progress_displaying = false;
 
       // Extract versus information for UI displaying.
