@@ -72,10 +72,20 @@ import { Base as NeuralOrchestra_Base } from "./NeuralOrchestra_Base.js";
  *       .KeyDownArray_IArrayInstance.
  *
  *
+
+//!!! ...unfinished... (2023/06/20)
+// should be replaced by .versus_load_asyncPromise
+
  * @member {AsyncGenerator} versus_load_asyncGenerator
  *   If not null, a versus downloading is on going.
  *
  * @member {PartTime.AsyncGeneratorTicker} versus_load_asyncGeneratorTicker
+ *   If not null, a versus downloading is on going.
+
+//!!! ...unfinished... (2023/06/20)
+
+ *
+ * @member {AsyncGenerator} versus_load_asyncPromise
  *   If not null, a versus downloading is on going.
  *
  *
@@ -264,8 +274,13 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
 
     this.configJSONData = undefined;
 
-    this.versus_load_asyncGeneratorTicker = undefined;
-    this.versus_load_asyncGenerator = undefined;
+    this.versus_load_asyncPromise = undefined;
+
+//!!! ...unfinished... (2023/06/20)
+// should be replaced by .versus_load_asyncPromise
+//
+//     this.versus_load_asyncGeneratorTicker = undefined;
+//     this.versus_load_asyncGenerator = undefined;
 
     this.Fighter_bManualMode = undefined;
 
