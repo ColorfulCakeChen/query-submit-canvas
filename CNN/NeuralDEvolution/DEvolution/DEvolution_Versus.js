@@ -236,8 +236,8 @@ class DEvolution_Versus extends
     const Base64_skipLineCount = 0;
 //!!! (2023/06/20 Remarked)
 // Use smaller chunk to reduce stuck feeling when decoding.
-//    const Base64_suspendByteCount = 100 * 1024; //1024 * 1024;
-    const Base64_suspendByteCount = 10 * 1024; //1024 * 1024;
+    const Base64_suspendByteCount = 100 * 1024; //1024 * 1024;
+//    const Base64_suspendByteCount = 10 * 1024; //1024 * 1024;
 
     // 2.1 versusId
     {
