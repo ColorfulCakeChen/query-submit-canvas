@@ -88,6 +88,11 @@ import { Base as NeuralOrchestra_Base } from "./NeuralOrchestra_Base.js";
  * @member {AsyncGenerator} versus_load_asyncPromise
  *   If not null, a versus downloading is on going.
  *
+ * @member {boolean} versus_load_progress_displaying
+ *   If true, the versus downloading progress is displayed. Note: this
+ * .versus_load_progress_displaying may be false even if a versus downloading
+ * is on going.
+ *
  *
  * @member {Promise( boolean )} alignmentMarkValueArrayArray_set_asyncPromise
  *   If not null, the alignmentMarkValueArrayArray setting request has been
@@ -275,6 +280,7 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
     this.configJSONData = undefined;
 
     this.versus_load_asyncPromise = undefined;
+    this.versus_load_progress_displaying = undefined;
 
 //!!! ...unfinished... (2023/06/20)
 // should be replaced by .versus_load_asyncPromise
@@ -1036,7 +1042,14 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
    * @param {NeuralOrchestra_Construct3} this
    */
   static Versus_Step_00_DownloadWeights_Begin( runtime ) {
-    if ( this.versus_load_asyncGeneratorTicker )
+
+//!!! ...unfinished... (2023/06/20)
+// should be replaced by .versus_load_asyncPromise
+//
+//     if ( this.versus_load_asyncGeneratorTicker )
+//       return; // Prevent re-enter.
+
+    if ( this.versus_load_progress_displaying )
       return; // Prevent re-enter.
 
     // So that VersusInfo UI will display uknown if something wrong.
@@ -1046,16 +1059,21 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
     // So that the next time versus result summary could be calculated.
     this.Versus_Result_n1_0_p1 = undefined;
 
-    // Begin to download versus weights.
-    let versus_load_asyncGenerator = this.versus_load_asyncGenerator;
-    this.versus_load_asyncGeneratorTicker
-      = new PartTime.AsyncGeneratorTicker( versus_load_asyncGenerator );
+//!!! ...unfinished... (2023/06/20)
+// should be replaced by .versus_load_asyncPromise
+//
+//     // Begin to download versus weights.
+//     let versus_load_asyncGenerator = this.versus_load_asyncGenerator;
+//     this.versus_load_asyncGeneratorTicker
+//       = new PartTime.AsyncGeneratorTicker( versus_load_asyncGenerator );
 
-    const base = this.base;
+    //const base = this.base;
     const globalVars = runtime.globalVars;
 
     // Update progress to game side (and game side will display it to UI).
     globalVars.Versus_DownloadWeights_Progress = 0;
+
+    this.versus_load_progress_displaying = true;
   }
 
   /**
@@ -1101,10 +1119,16 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
     //       callback.
     if ( this.versus_load_asyncGeneratorTicker.done() ) {
 
+//!!! ...unfinished... (2023/06/20)
+// should be replaced by .versus_load_asyncPromise
+//
+
       // So that ticker could be created when the next time downloading is
       // requested.
       this.versus_load_asyncGeneratorTicker = null;
       this.versus_load_asyncGenerator = null;
+
+      this.versus_load_progress_displaying = false;
 
       // Extract versus information for UI displaying.
       NeuralOrchestra_Construct3.VersusInfo_set_by_runtime_versus.call( this,
