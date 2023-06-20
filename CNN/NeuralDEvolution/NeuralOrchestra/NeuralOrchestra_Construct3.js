@@ -72,16 +72,6 @@ import { Base as NeuralOrchestra_Base } from "./NeuralOrchestra_Base.js";
  *       .KeyDownArray_IArrayInstance.
  *
  *
-
-//!!! ...unfinished... (2023/06/20) Replaced by .versus_load_asyncPromise
-//
-//  * @member {AsyncGenerator} versus_load_asyncGenerator
-//  *   If not null, a versus downloading is on going.
-//  *
-//  * @member {PartTime.AsyncGeneratorTicker} versus_load_asyncGeneratorTicker
-//  *   If not null, a versus downloading is on going.
-
- *
  * @member {AsyncGenerator} versus_load_asyncPromise
  *   If not null, a versus downloading is on going.
  *
@@ -279,12 +269,6 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
     this.versus_load_progress_displaying = undefined;
     this.versus_load_asyncPromise = undefined;
 
-//!!! ...unfinished... (2023/06/20)
-// should be replaced by .versus_load_asyncPromise
-//
-//     this.versus_load_asyncGeneratorTicker = undefined;
-//     this.versus_load_asyncGenerator = undefined;
-
     this.Fighter_bManualMode = undefined;
 
     if ( this.base ) {
@@ -338,10 +322,6 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
     const base = this.base;
 
     const downloader_apiKey = null;
-
-//!!! ...unfinished... (2023/06/20) Replaced by .versus_load_asyncPromise
-//
-//    const b_return_versus_load_asyncGenerator_instead_of_asyncPromise = true;
     const b_return_versus_load_asyncGenerator_instead_of_asyncPromise = false;
 
     let init_asyncPromise
@@ -357,11 +337,6 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
 
           b_return_versus_load_asyncGenerator_instead_of_asyncPromise
         );
-
-//!!! ...unfinished... (2023/06/20) Replaced by .versus_load_asyncPromise
-//
-//     let versus_load_asyncGenerator = await init_asyncPromise;
-//     this.versus_load_asyncGenerator = versus_load_asyncGenerator;
 
     let { versus_load_asyncPromise } = await init_asyncPromise;
     this.versus_load_asyncPromise = versus_load_asyncPromise;
@@ -1037,12 +1012,6 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
    * @param {NeuralOrchestra_Construct3} this
    */
   static Versus_Step_00_DownloadWeights_Begin( runtime ) {
-
-//!!! ...unfinished... (2023/06/20) Replaced by .versus_load_asyncPromise
-//
-//     if ( this.versus_load_asyncGeneratorTicker )
-//       return; // Prevent re-enter.
-
     if ( this.versus_load_progress_displaying )
       return; // Prevent re-enter.
 
@@ -1053,15 +1022,6 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
     // So that the next time versus result summary could be calculated.
     this.Versus_Result_n1_0_p1 = undefined;
 
-//!!! ...unfinished... (2023/06/20)
-// should be replaced by .versus_load_asyncPromise
-//
-//     // Begin to download versus weights.
-//     let versus_load_asyncGenerator = this.versus_load_asyncGenerator;
-//     this.versus_load_asyncGeneratorTicker
-//       = new PartTime.AsyncGeneratorTicker( versus_load_asyncGenerator );
-
-    //const base = this.base;
     const globalVars = runtime.globalVars;
 
     // Update progress to game side (and game side will display it to UI).
@@ -1104,27 +1064,13 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
     globalVars.Versus_DownloadWeights_Progress
       = base.versus_load_asyncPromise_progress.valuePercentage;
 
-//!!! ...unfinished... (2023/06/16)
-// Perhaps, use versus_load_asyncPromise.
-// And use ( base.versus_loadOk != undefined ) as done.
-
     // Tick the downloading until done.
     //
     // Note: Suppose this method is called inside a requestAnimationFrame()
     //       callback.
-
-//!!! (2023/06/20 Remarked) Replaced by .versus_load_asyncPromise
-//    if ( this.versus_load_asyncGeneratorTicker.done() ) {
-
     if ( base.versus_loadOk != undefined ) { // true or false.
 
-      // So that ticker could be created when the next time downloading is
-      // requested.
-
-//!!! (2023/06/20 Remarked) Replaced by .versus_load_asyncPromise
-//       this.versus_load_asyncGeneratorTicker = null;
-//       this.versus_load_asyncGenerator = null;
-
+      // Indicates downloading is done.
       this.versus_load_asyncPromise = null;
       this.versus_load_progress_displaying = false;
 
@@ -1296,52 +1242,20 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
     // 2.3 Report to server.
     base.versusResultSender_send( this.Versus_Result_n1_0_p1 );
 
-//!!! ...unfinished... (2023/06/16)
-// Perhaps, create versus_load_asyncPromise so that
-// the downloading begins at this step (earlier than
-// Versus_Step_00_DownloadWeights_Begin).
-
     // 3. Start downloading the next versus (after AI image processing trying
     //    completed).
-
-//!!! (2023/06/20 Remarked) Replaced by versus_load_asyncPromise
-//     this.versus_load_asyncGenerator = NeuralOrchestra_Construct3
-//       .versus_load_asyncGenerator__await__DrawingCanvas_try_process_by_AI_asyncPromise
-//       .call( this );
-
+    //
+    // Note: Let the downloading begins at this step (earlier than
+    //       Versus_Step_00_DownloadWeights_Begin) so that the downloading
+    //       and decoding can go parallelly when user watches the versus result
+    //       information. This reduces downloading waiting time and improve
+    //       user experience.
+    //
     this.versus_load_asyncPromise = NeuralOrchestra_Construct3
       .versus_load_asyncPromise__await__DrawingCanvas_try_process_by_AI_asyncPromise
       .call( this );
   }
 
-//!!! (2023/06/20 Remarked)
-// Replaced by 
-// .versus_load_asyncPromise__await__DrawingCanvas_try_process_by_AI_asyncPromise()
-//   /**
-//    * A wrapped versus_load_asyncGenerator which will:
-//    *   - Await for the AI processing completed.
-//    *   - Create the real versus_load_asyncGenerator.
-//    *   - Delegate to the real versus_load_asyncGenerator.
-//    *
-//    * @param {NeuralOrchestra_Construct3} this
-//    * @param {NeuralOrchestra_Base} this.base
-//    * @param {Promise} this.DrawingCanvas_try_process_by_AI_asyncPromise
-//    */
-//   static async*
-//     versus_load_asyncGenerator__await__DrawingCanvas_try_process_by_AI_asyncPromise() {
-//
-//     await this.DrawingCanvas_try_process_by_AI_asyncPromise;
-//
-//     let versus_load_asyncGenerator_real = this.base
-//       .versus_load_asyncGenerator_create_with_asyncPromise_progress();
-//
-//     let versus_load_asyncGenerator_real_result
-//       = yield* versus_load_asyncGenerator_real;
-//
-//     return versus_load_asyncGenerator_real_result;
-//   }
-
-//!!! ...unfinished... (2023/06/20)
   /**
    * A wrapped versus_load_asyncPromise which will:
    *   - Await for the AI processing completed.
