@@ -1260,6 +1260,9 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
       .call( this );
   }
 
+//!!! ...unfinished... (2023/06/20)
+// should be replaced by 
+// .versus_load_asyncPromise__await__DrawingCanvas_try_process_by_AI_asyncPromise()
   /**
    * A wrapped versus_load_asyncGenerator which will:
    *   - Await for the AI processing completed.
@@ -1282,6 +1285,28 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
       = yield* versus_load_asyncGenerator_real;
 
     return versus_load_asyncGenerator_real_result;
+  }
+
+//!!! ...unfinished... (2023/06/20)
+  /**
+   * A wrapped versus_load_asyncPromise which will:
+   *   - Await for the AI processing completed.
+   *   - Create the real versus_load_asyncPromise.
+   *   - Delegate to the real versus_load_asyncPromise.
+   *
+   * @param {NeuralOrchestra_Construct3} this
+   * @param {NeuralOrchestra_Base} this.base
+   * @param {Promise} this.DrawingCanvas_try_process_by_AI_asyncPromise
+   */
+  static async*
+    versus_load_asyncPromise__await__DrawingCanvas_try_process_by_AI_asyncPromise() {
+
+    await this.DrawingCanvas_try_process_by_AI_asyncPromise;
+
+    let versus_load_asyncPromise_real = this.base
+      .versus_load_asyncPromise_create();
+
+    return versus_load_asyncPromise_real;
   }
 
 }
