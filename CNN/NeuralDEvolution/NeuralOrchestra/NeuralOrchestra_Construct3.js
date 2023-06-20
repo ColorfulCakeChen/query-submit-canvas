@@ -335,7 +335,12 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
     const base = this.base;
 
     const downloader_apiKey = null;
-    const b_return_versus_load_asyncGenerator_instead_of_asyncPromise = true;
+
+//!!! ...unfinished... (2023/06/20)
+// should be replaced by .versus_load_asyncPromise
+//
+//    const b_return_versus_load_asyncGenerator_instead_of_asyncPromise = true;
+    const b_return_versus_load_asyncGenerator_instead_of_asyncPromise = false;
 
     let init_asyncPromise
       = base.init_asyncPromise_create(
@@ -351,8 +356,14 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
           b_return_versus_load_asyncGenerator_instead_of_asyncPromise
         );
 
-    let versus_load_asyncGenerator = await init_asyncPromise;
-    this.versus_load_asyncGenerator = versus_load_asyncGenerator;
+//!!! ...unfinished... (2023/06/20)
+// should be replaced by .versus_load_asyncPromise
+//
+//     let versus_load_asyncGenerator = await init_asyncPromise;
+//     this.versus_load_asyncGenerator = versus_load_asyncGenerator;
+
+    let { versus_load_asyncPromise } = await init_asyncPromise;
+    this.versus_load_asyncPromise = versus_load_asyncPromise;
 
     const gameTime_initSeconds = runtime.gameTime;
 
