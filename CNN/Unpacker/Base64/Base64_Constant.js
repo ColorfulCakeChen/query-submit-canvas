@@ -40,8 +40,8 @@ const EncodeTable_Uint6_to_Uint8 = ( new TextEncoder() ).encode( base64String );
  */
 const DecodeTable_CharCodePoint_to_Uint6 = new Array( 256 );
 {
-  // For all non-base64 codes, using value greater than 63 (i.e. impossible base64)
-  // for identifying them.
+  // For all non-base64 codes, using value greater than 63 (i.e. impossible
+  // base64) for identifying them.
   DecodeTable_CharCodePoint_to_Uint6.fill( 255 );
 
   // For all legal base64 codes, using value between [ 0, 63 ].
