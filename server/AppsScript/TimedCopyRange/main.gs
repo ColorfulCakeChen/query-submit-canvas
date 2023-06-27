@@ -23,15 +23,11 @@ function timer_onTime_( e ) {
     fetcherCopierTimerCounter,
     fetcherCopierTimerCounterDivisor, fetcherCopierTimerCounterRemainder,
     fetcherTimerAtRemainder,
-//!!! (2023/06/07 Remarked) Use FC.Copier.Timer.AfterSeconds instead.
-//    copierTimerAtRemainder,
   ] = ranges_getByNames_(
       RANGE_NAME.FC.TIMER.COUNTER,
       RANGE_NAME.FC.TIMER.COUNTER_DIVISOR,
       RANGE_NAME.FC.TIMER.COUNTER_REMAINDER,
       RANGE_NAME.FC.FETCHER.TIMER.AT_REMAINDER,
-//!!! (2023/06/07 Remarked) Use FC.Copier.Timer.AfterSeconds instead.
-//      RANGE_NAME.FC.COPIER.TIMER.AT_REMAINDER,
     );
 
   EventObject_Timer_recordTo_byRangeName_( e, RANGE_NAME.FC.TIMER.LAST_TIME );
@@ -43,10 +39,6 @@ function timer_onTime_( e ) {
 
   if ( counterRemainder == fetcherTimerAtRemainder.getValue() )
     fetcherTimer_onTime_( e );
-
-//!!! (2023/06/07 Remarked) Use FC.Copier.Timer.AfterSeconds instead.
-//   if ( counterRemainder == copierTimerAtRemainder.getValue() )
-//     copierTimer_onTime_( e );
 }
 
 /** When fetcher's timer triggered. */
@@ -300,8 +292,6 @@ function timer_start_() {
       RANGE_NAME.FC.FETCHER.GA4.ITEM_NAME_IN_LIST_FILTER.RANGE_NAME,
       RANGE_NAME.FC.FETCHER.GA4.REPORT.HEADERS.RANGE_NAME,
       RANGE_NAME.FC.FETCHER.GA4.REPORT.ROWS.RANGE_NAME,
-//!!! (2023/06/07 Remarked) Use FC.Copier.Timer.AfterSeconds instead.
-//      RANGE_NAME.FC.COPIER.TIMER.AT_REMAINDER,
       RANGE_NAME.FC.COPIER.TIMER.AFTER_SECONDS,
       RANGE_NAME.FC.COPIER.TIMER.LAST_TIME,
       RANGE_NAME.FC.COPIER.TIMER.COUNTER,
