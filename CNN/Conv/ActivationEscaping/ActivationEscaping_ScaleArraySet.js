@@ -287,14 +287,21 @@ class ScaleArraySet extends Recyclable.Root {
   /**
    * The this.length will be modified.
    *
-   * @param {ScaleArraySet} inputScaleArraySet0  The ScaleArraySet of the 1st input.
-   * @param {ScaleArraySet} inputScaleArraySet1  The ScaleArraySet of the 2nd input.
+   * @param {ScaleArraySet} inputScaleArraySet0
+   *   The ScaleArraySet of the 1st input.
+   *
+   * @param {ScaleArraySet} inputScaleArraySet1
+   *   The ScaleArraySet of the 2nd input.
    *
    * @return {ScaleArraySet} Return this (modified) object.
    */
-  set_all_byScaleArraySet_concat_input0_input1( inputScaleArraySet0, inputScaleArraySet1 ) {
-    this.do.set_all_byScaleArray_concat_input0_input1( inputScaleArraySet0.do, inputScaleArraySet1.do );
-    this.undo.set_all_byScaleArray_concat_input0_input1( inputScaleArraySet0.undo, inputScaleArraySet1.undo );
+  set_all_byScaleArraySet_concat_input0_input1(
+    inputScaleArraySet0, inputScaleArraySet1 ) {
+
+    this.do.set_all_byScaleArray_concat_input0_input1(
+      inputScaleArraySet0.do, inputScaleArraySet1.do );
+    this.undo.set_all_byScaleArray_concat_input0_input1(
+      inputScaleArraySet0.undo, inputScaleArraySet1.undo );
     return this;
   }
 
@@ -325,8 +332,10 @@ class ScaleArraySet extends Recyclable.Root {
    * @return {ScaleArraySet} Return this (modified) object.
    */
   set_all_byInterleave_asGrouptTwo_byScaleArraySet( aScaleArraySet ) {
-    this.do.set_all_byInterleave_asGrouptTwo_byScaleArray( aScaleArraySet.do );
-    this.undo.set_all_byInterleave_asGrouptTwo_byScaleArray( aScaleArraySet.undo );
+    this.do.set_all_byInterleave_asGrouptTwo_byScaleArray(
+      aScaleArraySet.do );
+    this.undo.set_all_byInterleave_asGrouptTwo_byScaleArray(
+      aScaleArraySet.undo );
     return this;
   }
 
@@ -340,14 +349,19 @@ class ScaleArraySet extends Recyclable.Root {
    * @return {ScaleArraySet} Return this (modified) object.
    */
   set_all_byInterleave_asGrouptTwo_undo_byScaleArraySet( aScaleArraySet ) {
-    this.do.set_all_byInterleave_asGrouptTwo_undo_byScaleArray( aScaleArraySet.do );
-    this.undo.set_all_byInterleave_asGrouptTwo_undo_byScaleArray( aScaleArraySet.undo );
+    this.do.set_all_byInterleave_asGrouptTwo_undo_byScaleArray(
+      aScaleArraySet.do );
+    this.undo.set_all_byInterleave_asGrouptTwo_undo_byScaleArray(
+      aScaleArraySet.undo );
     return this;
   }
 
   /**
-   * @param {ScaleArraySet} lowerHalfScaleArraySet   The ScaleArraySet of the 1st output. Its .length will be modified.
-   * @param {ScaleArraySet} higherHalfScaleArraySet  The ScaleArraySet of the 2nd output. Its .length will be modified.
+   * @param {ScaleArraySet} lowerHalfScaleArraySet
+   *   The ScaleArraySet of the 1st output. Its .length will be modified.
+   *
+   * @param {ScaleArraySet} higherHalfScaleArraySet
+   *   The ScaleArraySet of the 2nd output. Its .length will be modified.
    *
    * @return {ScaleArraySet} Return this (unmodified) object.
    */
