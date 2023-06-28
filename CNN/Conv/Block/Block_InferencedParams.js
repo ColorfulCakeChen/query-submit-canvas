@@ -103,12 +103,128 @@ class Block_InferencedParams extends Recyclable.Root {
   disposeResources() {
     this.DepthwisePadInfo_dispose();
 
-    this.pointwise1ChannelCount_modified = undefined;
     this.depthwiseFilterHeight_modified = undefined;
     this.depthwiseFilterWidth_modified = undefined;
 
+
 //!!! ...unfinished... (2022/07/18) Other properties?
 
+    this.bLinear_between_depthwise_and_pointwise2 = undefined;
+    this.depthwiseBias = undefined;
+    this.bDepthwiseRequestedAndNeeded = undefined;
+
+    this.inputTensorCount = undefined;
+    this.input1_height = undefined;
+    this.input1_width = undefined;
+    this.input1_channelCount = undefined;
+
+    this.pointwise1Bias = undefined;
+    this.pointwise1ActivationId = undefined;
+
+    this.bLinear_between_pointwise1_and_depthwise = undefined;
+
+    this.bLinear_between_pointwise1_and_pointwise2 = undefined;
+
+    this.squeezeExcitationActivationId = undefined;
+
+    this.pointwise21ChannelCount = undefined;
+    this.pointwise21Bias = undefined;
+    this.pointwise21ActivationId = undefined;
+
+    this.pointwise1ChannelCount_modified = undefined;
+    this.pointwise1_nHigherHalfDifferent = undefined;
+    this.pointwise1_inputChannelCount_lowerHalf = undefined;
+    this.pointwise1_inputChannelCount_higherHalf = undefined;
+    this.pointwise1_outputChannelCount_lowerHalf = undefined;
+
+
+    this.pointwise1_inputChannelCount_lowerHalf = undefined;
+    this.pointwise1_outputChannelCount_lowerHalf = undefined;
+
+    this.pointwise1_outputChannelCount_lowerHalf = undefined;
+    this.pointwise1_outputChannelCount_lowerHalf = undefined;
+
+    this.pointwise1_inputChannelCount_lowerHalf = undefined;
+    this.pointwise1_outputChannelCount_lowerHalf = undefined;
+
+    this.pointwise1_inputChannelCount_lowerHalf = undefined;
+    this.pointwise1_inputChannelCount_higherHalf = undefined;
+    this.pointwise1_inputChannelCount_lowerHalf = undefined;
+    this.depthwise1_nHigherHalfDifferent = undefined;
+    this.depthwise1_nHigherHalfDifferent = undefined;
+    this.depthwise1_nHigherHalfDifferent = undefined;
+
+    this.pointwise20_nHigherHalfDifferent = undefined;
+
+    this.pointwise20_outputChannelCount_lowerHalf = undefined;
+    this.pointwise20_outputChannelCount_lowerHalf = undefined;
+    this.pointwise20_nHigherHalfDifferent = undefined;
+    this.pointwise20_nHigherHalfDifferent = undefined;
+
+    this.pointwise20Bias = undefined;
+
+    this.outputTensorCount = undefined;
+
+    this.bDepthwise2Requested = undefined;
+    this.bConcat1Requested = undefined;
+    this.bAddInputToOutputRequested = undefined;
+    this.bConcat2ShuffleSplitRequested = undefined;
+
+    this.bHigherHalfDifferent = undefined;
+    this.bHigherHalfDepthwise2 = undefined;
+    this.pointwise20_channelShuffler_outputGroupCount = undefined;
+
+    this.pointwise20Bias = undefined;
+
+    this.pointwise1_inputChannelCount_lowerHalf = undefined;
+    this.pointwise1_inputChannelCount_higherHalf = undefined;
+    this.pointwise1_outputChannelCount_lowerHalf = undefined;
+
+
+    this.pointwise1_inputChannelCount_lowerHalf = undefined;
+    this.pointwise1_outputChannelCount_lowerHalf = undefined;
+
+    this.pointwise1_outputChannelCount_lowerHalf = undefined;
+    this.pointwise1_outputChannelCount_lowerHalf = undefined;
+
+    this.pointwise1_outputChannelCount_lowerHalf = undefined;
+
+    this.pointwise1_inputChannelCount_higherHalf = undefined;
+    this.pointwise1_inputChannelCount_lowerHalf = undefined;
+    this.depthwise1_nHigherHalfDifferent = undefined;
+
+    this.pointwise20_nHigherHalfDifferent = undefined;
+
+    this.pointwise20_outputChannelCount_lowerHalf = undefined;
+
+    this.pointwise20Bias = undefined;
+
+    this.outputTensorCount = undefined;
+
+    this.bDepthwise2Requested = undefined;
+    this.bConcat1Requested = undefined;
+    this.bAddInputToOutputRequested = undefined;
+    this.bConcat2ShuffleSplitRequested = undefined;
+
+    this.bHigherHalfDifferent = undefined;
+    this.bHigherHalfDepthwise2 = undefined;
+    this.pointwise20_channelShuffler_outputGroupCount = undefined;
+
+    this.pointwise20Bias = undefined;
+
+
+
+
+
+
+
+
+
+
+
+
+
+//!!!
     super.disposeResources();
   }
 
