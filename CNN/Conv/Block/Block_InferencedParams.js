@@ -776,10 +776,14 @@ class Block_InferencedParams extends Recyclable.Root {
     this.outputTensorCount = infoConvBlockType.outputTensorCount;
 
     // 3.
-    this.bDepthwise2Requested = infoConvBlockType.bDepthwise2Requested;
-    this.bConcat1Requested = infoConvBlockType.bConcat1Requested;
-    this.bAddInputToOutputRequested = infoConvBlockType.bAddInputToOutputRequested;
-    this.bConcat2ShuffleSplitRequested = infoConvBlockType.bConcat2ShuffleSplitRequested;
+    this.bDepthwise2Requested
+       = infoConvBlockType.bDepthwise2Requested;
+    this.bConcat1Requested
+       = infoConvBlockType.bConcat1Requested;
+    this.bAddInputToOutputRequested
+       = infoConvBlockType.bAddInputToOutputRequested;
+    this.bConcat2ShuffleSplitRequested
+       = infoConvBlockType.bConcat2ShuffleSplitRequested;
 
     // 4. Whether manipulate the higher half channel of convolution.
     this.bHigherHalfDifferent = infoConvBlockType.bHigherHalfDifferent;
