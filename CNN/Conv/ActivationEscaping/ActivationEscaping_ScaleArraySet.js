@@ -178,7 +178,9 @@ class ScaleArraySet extends Recyclable.Root {
   }
 
   /**
-   * @return {ScaleArraySet} Return a newly created ScaleArraySet which is a copy of this ScaleArraySet.
+   * @return {ScaleArraySet}
+   *   Return a newly created ScaleArraySet which is a copy of this
+   * ScaleArraySet.
    */
   clone() {
     let result = ScaleArraySet.Pool.get_or_create_by( this.length );
@@ -195,16 +197,17 @@ class ScaleArraySet extends Recyclable.Root {
    * @return {ScaleArraySet} Return this (un-modified) object.
    */
   assert_all_byScaleArraySet_all_equal( aScaleArraySet ) {
+    const funcNameInMessage = "assert_all_byScaleArraySet_all_equal";
 
     if ( this.length != aScaleArraySet.length )
-      throw Error( `ActivationEscaping.ScaleArraySet.assert_all_byScaleArraySet_equal(): `
+      throw Error( `ActivationEscaping.ScaleArraySet.${funcNameInMessage}(): `
         + `length count of this ( ${this.length} ) should be the same as `
         + `length count of aScaleArraySet ( ${aScaleArraySet.length} ).`
       );
 
     for ( let i = 0; i < this.do.length; ++i ) {
       if ( this.do.scales[ i ] != aScaleArraySet.do.scales[ i ] )
-        throw Error( `ActivationEscaping.ScaleArraySet.assert_all_byScaleArraySet_equal(): `
+        throw Error( `ActivationEscaping.ScaleArraySet.${funcNameInMessage}(): `
           + `this.do.scales[ ${i} ] ( ${this.do.scales[ i ]} ) should be the same as `
           + `aScaleArraySet.do.scales[ ${i} ] ( ${aScaleArraySet.do.scales[ i ]} ).`
         );
@@ -212,7 +215,7 @@ class ScaleArraySet extends Recyclable.Root {
 
     for ( let i = 0; i < this.undo.length; ++i ) {
       if ( this.undo[ i ] != aScaleArraySet.undo[ i ] )
-        throw Error( `ActivationEscaping.ScaleArraySet.assert_all_byScaleArraySet_equal(): `
+        throw Error( `ActivationEscaping.ScaleArraySet.${funcNameInMessage}(): `
           + `this.undo.scales[ ${i} ] ( ${this.undo.scales[ i ]} ) should be the same as `
           + `aScaleArraySet.undo.scales[ ${i} ] ( ${aScaleArraySet.undo.scales[ i ]} ).`
         );
@@ -222,22 +225,26 @@ class ScaleArraySet extends Recyclable.Root {
   }
 
   /**
-   * Assert this all have the same value as aScaleArraySet.do.scales[ aIndex ] and aScaleArraySet.undo.scales[ aIndex ].
+   * Assert this all have the same value as aScaleArraySet.do.scales[ aIndex ]
+   * and aScaleArraySet.undo.scales[ aIndex ].
    *
    * @param {ScaleArraySet} aScaleArraySet
-   *   The aScaleArraySet.do.scales[ aIndex ] and aScaleArraySet.undo.scales[ aIndex ] will be used to compare.
+   *   The aScaleArraySet.do.scales[ aIndex ] and
+   * aScaleArraySet.undo.scales[ aIndex ] will be used to compare.
    *
    * @param {number} aIndex
-   *   The array index of aBoundsArray.do.scales[] and aBoundsArray.undo.scales[].
+   *   The array index of aBoundsArray.do.scales[] and
+   * aBoundsArray.undo.scales[].
    *
    * @return {ScaleArraySet}
    *   Return this (un-modified) object.
    */
   assert_all_byScaleArraySet_one_equal( aScaleArraySet, aIndex ) {
+    const funcNameInMessage = "assert_all_byScaleArraySet_one_equal";
 
     for ( let i = 0; i < this.do.length; ++i ) {
       if ( this.do.scales[ i ] != aScaleArraySet.do.scales[ aIndex ] )
-        throw Error( `ActivationEscaping.ScaleArraySet.assert_all_byScaleArraySet_equal(): `
+        throw Error( `ActivationEscaping.ScaleArraySet.${funcNameInMessage}(): `
           + `this.do.scales[ ${i} ] ( ${this.do.scales[ i ]} ) should be the same as `
           + `aScaleArraySet.do.scales[ ${aIndex} ] ( ${aScaleArraySet.do.scales[ aIndex ]} ).`
         );
@@ -245,7 +252,7 @@ class ScaleArraySet extends Recyclable.Root {
 
     for ( let i = 0; i < this.undo.length; ++i ) {
       if ( this.undo[ i ] != aScaleArraySet.undo[ aIndex ] )
-        throw Error( `ActivationEscaping.ScaleArraySet.assert_all_byScaleArraySet_equal(): `
+        throw Error( `ActivationEscaping.ScaleArraySet.${funcNameInMessage}(): `
           + `this.undo.scales[ ${i} ] ( ${this.undo.scales[ i ]} ) should be the same as `
           + `aScaleArraySet.undo.scales[ ${aIndex} ] ( ${aScaleArraySet.undo.scales[ aIndex ]} ).`
         );
