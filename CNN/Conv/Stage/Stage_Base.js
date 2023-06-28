@@ -80,15 +80,18 @@ import { InferencedParams } from "./Stage_InferencedParams.js";
  *   - pointwise1: bias, activation.
  *
  *   - depthwise:  bias, activation.
- *     - In ShuffleNetV2's original design, depthwise has bias but has no activation.
+ *     - In ShuffleNetV2's original design, depthwise has bias but has no
+ *         activation.
  *     - We let depthwise also has activation (just like MobileNetV2_Xxx).
  *
  *   - pointwise2: bias, NO activation.
- *     - In ShuffleNetV2's original design, pointwise2 always has bias and activation.
+ *     - In ShuffleNetV2's original design, pointwise2 always has bias and
+ *         activation.
  *     - We let pointwise2 has no activation (just like MobileNetV2_Xxx).
  *
  *   - postfix squeeze-and-excitation.
- *     - In non-MobileNetV2_Xxx, the squeeze-and-excitation is behind pointwise2.
+ *     - In non-MobileNetV2_Xxx, the squeeze-and-excitation is behind
+ *         pointwise2.
  *     - This is the main different from MobileNetV2_Xxx.
  *     - This prevents pointwise2 and the next stage's pointwise1 from becoming
  *         one affine transformation.
@@ -216,36 +219,36 @@ import { InferencedParams } from "./Stage_InferencedParams.js";
  *
  * tf.batchNorm() has bias intrinsically.
  *
- * In modern deep learning CNN, there is batch normalization after convolution and
- * before activation. The batch normalization has bias internally. We do not have
- * batch normalization in architecture so an explicit bias will be used before every
- * activation function.
+ * In modern deep learning CNN, there is batch normalization after convolution
+ * and before activation. The batch normalization has bias internally. We do
+ * not have batch normalization in architecture so an explicit bias will be
+ * used before every activation function.
  *
  *
  * 6. Activation Escaping
  *
- * Activation function achieve non-linear transformation, but also destroy linear
- * information. In order to escape the activation function's non-linearity two possible
- * solutions are provided.
+ * Activation function achieve non-linear transformation, but also destroy
+ * linear information. In order to escape the activation function's
+ * non-linearity two possible solutions are provided.
  *
  *
  * 6.1 Special activation function
  *
  * For neural network without special mechanism (e.g. MobileNetV1,
- * ShuffleNetv2_ByMobileNetV1), it is better to use
- * a activation function which:
+ * ShuffleNetv2_ByMobileNetV1), it is better to use a activation function
+ * which:
  *   - has both negative and possible value near origin point.
  *   - is linear between these negative and possible value near origin point.
  *
  * For example, CLIP_BY_VALUE_N2_P2 or TANH or SIN.
  *
  * Advantage:
- *   - When neural network want information to keep linear, it could just scale value
- *       (by convolution filter weights) into the linear part.
+ *   - When neural network want information to keep linear, it could just scale
+ *       value (by convolution filter weights) into the linear part.
  *
  * Disadvantage:
- *   - These activation escaping scaling might increase the floating-point accumulated
- *       error.
+ *   - These activation escaping scaling might increase the floating-point
+ *       accumulated error.
  *
  *
  * 6.2 Special connection
