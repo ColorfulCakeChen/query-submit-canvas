@@ -6,30 +6,37 @@ import * as ValueDesc from "../../../Unpacker/ValueDesc.js";
 import { Base } from "./Stage_BlockParamsCreator_Base.js";
 
 /**
- * Provide parameters for MobileNetV1 (i.e. no-add-inut-to-output, pointwise1 is same size of pointwise20).
+ * Provide parameters for MobileNetV1 (i.e. no-add-inut-to-output, pointwise1
+ * is same size of pointwise20).
  *
- * Although this the simplest pointwise1-depthwise-pointwise2 architecture, it may be the most efficient neural network if
- * using CLIP_BY_VALUE_N2_P2 (instead of RELU) as activation function.
+ * Although this the simplest pointwise1-depthwise-pointwise2 architecture, it
+ * may be the most efficient neural network if using CLIP_BY_VALUE_N2_P2
+ * (instead of RELU) as activation function.
  *
  * The reasons are:
  *
- *   - Inference speed faster than MobileNetV2: According to experience of ShuffleNetV2_ByMobileNetV1, the CLIP_BY_VALUE_N2_P2
- *       activation function could achieve skipping connection (i.e. residual connection) without add-input-to-output (i.e MobileNetV2).
+ *   - Inference speed faster than MobileNetV2: According to experience of
+ *       ShuffleNetV2_ByMobileNetV1, the CLIP_BY_VALUE_N2_P2 activation
+ *       function could achieve skipping connection (i.e. residual connection)
+ *       without add-input-to-output (i.e MobileNetV2).
  *
- *   - Inference speed could be faster than ShuffleNetV2_ByMobileNetV1: MobileNetV1_Xxx's all blocks could have no pointwise1.
- *       ShuffleNetV2_ByMobileNetV1's block0 always have pointwise1 (even if ( stageParams.bPointwise1 == false ), it still exists
- *       internally). (But ShuffleNetV2_ByMobileNetV1's learning speed is faster than MobileNetv1 because less filter weights
- *       need to be learned.)
- *
- *
+ *   - Inference speed could be faster than ShuffleNetV2_ByMobileNetV1:
+ *       MobileNetV1_Xxx's all blocks could have no pointwise1.
+ *       ShuffleNetV2_ByMobileNetV1's block0 always have pointwise1 (even if
+ *       ( stageParams.bPointwise1 == false ), it still exists internally).
+ *       (But ShuffleNetV2_ByMobileNetV1's learning speed is faster than
+ *       MobileNetv1 because less filter weights need to be learned.)
  *
  */
 class MobileNetV1 extends Base {
 
   /**
-   * Used as default Stage.BlockParamsCreator.MobileNetV1 provider for conforming to Recyclable interface.
+   * Used as default Stage.BlockParamsCreator.MobileNetV1 provider for
+   * conforming to Recyclable interface.
    */
-  static Pool = new Pool.Root( "Stage.BlockParamsCreator.MobileNetV1.Pool", MobileNetV1, MobileNetV1.setAsConstructor );
+  static Pool = new Pool.Root(
+    "Stage.BlockParamsCreator.MobileNetV1.Pool",
+    MobileNetV1, MobileNetV1.setAsConstructor );
 
   /**
    */
@@ -61,9 +68,11 @@ class MobileNetV1 extends Base {
 
     let stageParams = this.stageParams;
 
-    this.input0_channelCount = stageParams.input_channelCount; // Block0 uses the original input channel count (as input0).
+    // Block0 uses the original input channel count (as input0).
+    this.input0_channelCount = stageParams.input_channelCount;
 
-    this.nConvBlockTypeId = ValueDesc.ConvBlockType.Singleton.Ids.MOBILE_NET_V1_HEAD_BODY_TAIL;
+    this.nConvBlockTypeId = ValueDesc.ConvBlockType.Singleton.Ids
+      .MOBILE_NET_V1_HEAD_BODY_TAIL;
 
     if ( stageParams.bPointwise1 == false ) {
       this.pointwise1ChannelCount = 0;                                  // NoPointwise1.
@@ -76,7 +85,8 @@ class MobileNetV1 extends Base {
 
     // All blocks' output0 is double depth of source input0.
     //
-    // Note: In original MobileNet(V2) design, it is not always "twice". We choose "twice" just for comparing with ShuffleNetV2.
+    // Note: In original MobileNet(V2) design, it is not always "twice". We
+    //       choose "twice" just for comparing with ShuffleNetV2.
     //
     this.pointwise20ChannelCount = stageParams.input_channelCount * 2;
 
@@ -86,9 +96,12 @@ class MobileNetV1 extends Base {
 
   /** @override */
   configTo_beforeBlockN_exceptBlock0( blockIndex, input_height, input_width ) {
-    super.configTo_beforeBlockN_exceptBlock0( blockIndex, input_height, input_width ); // block1, 2, 3, ...'s input0_height, input0_width.
+    // block1, 2, 3, ...'s input0_height, input0_width.
+    super.configTo_beforeBlockN_exceptBlock0(
+      blockIndex, input_height, input_width );
 
-    // The input0 of all blocks (except block0) have the same depth as previous (also block0's) block's output0.
+    // The input0 of all blocks (except block0) have the same depth as previous
+    // (also block0's) block's output0.
     this.input0_channelCount = this.output0_channelCount;
   }
 
@@ -98,4 +111,3 @@ class MobileNetV1 extends Base {
   }
 
 }
-
