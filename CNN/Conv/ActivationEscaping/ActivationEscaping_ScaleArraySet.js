@@ -105,7 +105,8 @@ import * as FloatValue from "../../Unpacker/FloatValue.js";
 
  *
  *
- * 3. What if this pointwise (or depthwise) does not have filter weights ( S1, S2, ... Ss )? (e.g avg/max pooling)
+ * 3. What if this pointwise (or depthwise) does not have filter weights
+ *      ( S1, S2, ... Ss )? (e.g avg/max pooling)
  *
  *
  *
@@ -114,9 +115,12 @@ import * as FloatValue from "../../Unpacker/FloatValue.js";
  *
  *
  * @member {FloatValue.ScaleArray} do
- *   The scale for moving current value bounds into the linear domain of the activation function. That is, for letting
- * ConvBiasActivation.BoundsArraySet.afterBias_beforeActivationEscaping escape from activation function's non-linear domain
- * into linear domain (i.e. generate ConvBiasActivation.BoundsArraySet.afterActivationEscaping_beforeActivation).
+ *   The scale for moving current value bounds into the linear domain of the
+ * activation function. That is, for letting
+ * ConvBiasActivation.BoundsArraySet.afterBias_beforeActivationEscaping escape
+ * from activation function's non-linear domain into linear domain (i.e.
+ * generate
+ * ConvBiasActivation.BoundsArraySet.afterActivationEscaping_beforeActivation).
  *
  * @member {FloatValue.ScaleArray} undo
  *   If apply this.undo, it will have the effect of undoing the this.do.
@@ -124,9 +128,12 @@ import * as FloatValue from "../../Unpacker/FloatValue.js";
 class ScaleArraySet extends Recyclable.Root {
 
   /**
-   * Used as default ActivationEscaping.ScaleArraySet provider for conforming to Recyclable interface.
+   * Used as default ActivationEscaping.ScaleArraySet provider for conforming
+   * to Recyclable interface.
    */
-  static Pool = new Pool.Root( "ActivationEscaping.ScaleArraySet.Pool", ScaleArraySet, ScaleArraySet.setAsConstructor );
+  static Pool = new Pool.Root(
+    "ActivationEscaping.ScaleArraySet.Pool",
+    ScaleArraySet, ScaleArraySet.setAsConstructor );
 
   /**
    */
