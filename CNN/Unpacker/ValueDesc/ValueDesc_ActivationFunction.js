@@ -6,49 +6,54 @@ import * as FloatValue from "../FloatValue.js";
 /**
  * Describe activation function parameter's id, range, name.
  *
- * The activation function ActivationFunction.Info.pfn( x ) is almost linear when x
- * is inside inputDomainLinear. Its output is outputRangeLinear.
+ * The activation function ActivationFunction.Info.pfn( x ) is almost linear
+ * when x is inside inputDomainLinear. Its output is outputRangeLinear.
  *
  *   - CLIP_BY_VALUE_N2_P2( [ -2, +2 ] ) = [ -2, +2 ]
  *   - CLIP_BY_VALUE_N3_P3( [ -3, +3 ] ) = [ -3, +3 ]
  *   - RELU6( [ 0, 6 ] ) = [ 0, 6 ]
  *   - TANH ( [ -0.005, +0.005 ] ) = [ -0.005, +0.005]
  *   - SIN  ( [ -0.005, +0.005 ] ) = [ -0.005, +0.005]
- *   - COS  ( [ -( ( PI / 2 ) + 0.005 ), -( ( PI / 2 ) - 0.005 ) ] ) =  [ -0.005, +0.005 ]
+ *   - COS  ( [ -( ( PI / 2 ) + 0.005 ), -( ( PI / 2 ) - 0.005 ) ] )
+ *       = [ -0.005, +0.005 ]
  *   - SIGMOID ( [ -0.125, +0.125 ] ) = [ +0.468, +0.532 ]
  *   - RELU ( 0, +Infinity ) = [ 0, +Infinity ]
  *   - SOFTPLUS ( +5, +Infinity ) = [ +5, +Infinity ]
  *
  *
  * Note:
- *   - NONE: Beware. It easily results in infinity value because it has no upper bound.
- *   - RELU: Beware. It easily results in infinity value because it has no upper bound.
+ *   - NONE: Beware. It easily results in infinity value because it has no
+ *       upper bound.
+ *   - RELU: Beware. It easily results in infinity value because it has no
+ *       upper bound.
  *   - SOFTPLUS: Avoid. Backend WASM does not support it.
  *   - ERF: Avoid. Backend WASM does not support it.
  *
- *   - CLIP_BY_VALUE, TANH, SIN, ERF are good if pass-through by only scale (i.e.
- *       without translate) is needed. Because the output range of them includes
- *       both negative value and positive value near the origin point. (On the
- *       other hand, RELU, RELU6 are not good for this purpose.)
+ *   - CLIP_BY_VALUE, TANH, SIN, ERF are good if pass-through by only scale
+ *       (i.e. without translate) is needed. Because the output range of them
+ *       includes both negative value and positive value near the origin point.
+ *       (On the other hand, RELU, RELU6 are not good for this purpose.)
  *
  *
  *
- * Q1: Since activation by clipByValue() is enough, why not just using saturated
- *       integer for convolution?
- * A1: Although saturated integer could achieve clipByValue automatically without
- *       activation function (i.e. less computation time). It has some disadvantages:
+ * Q1: Since activation by clipByValue() is enough, why not just using
+ *       saturated integer for convolution?
+ * A1: Although saturated integer could achieve clipByValue automatically
+ *       without activation function (i.e. less computation time). It has some
+ *       disadvantages:
  *
- *      - It can not escape saturation (i.e. escape activation) by scaling. Because
- *          that needs multiply a number less than one which can not be represented
- *          by integer (i.e. floatig-point number is required).
+ *      - It can not escape saturation (i.e. escape activation) by scaling.
+ *          Because that needs multiply a number less than one which can not be
+ *          represented by integer (i.e. floatig-point number is required).
  *
- *      - It may not be saturated (i.e. activated) by bias. When the input value is
- *          the minimum value (e.g. -255), adding a bias (even if adding the maximum
- *          value 255) can not saturate it to maximum value (e.g. +255).
+ *      - It may not be saturated (i.e. activated) by bias. When the input
+ *          value is the minimum value (e.g. -255), adding a bias (even if
+ *          adding the maximum value 255) can not saturate it to maximum value
+ *          (e.g. +255).
  *
- * On the other hand, floating-point number has already been similar to a kind of
- * saturated number (i.e. maximum is saturated to +Infinity, and minimum is saturated
- * to -Infinity).
+ * On the other hand, floating-point number has already been similar to a kind
+ * of saturated number (i.e. maximum is saturated to +Infinity, and minimum is
+ * saturated to -Infinity).
  *
  *
  *
