@@ -263,9 +263,11 @@ class ScaleArraySet extends Recyclable.Root {
 
 
   /**
-   * @param {number} N  Set all scales[] by ( N ). Default are ( N = 1 ) (i.e. no scale).
+   * @param {number} N
+   *   Set all scales[] by ( N ). Default are ( N = 1 ) (i.e. no scale).
    *
-   * @return {ScaleArraySet} Return this (modified) object.
+   * @return {ScaleArraySet}
+   *   Return this (modified) object.
    */
   set_all_byN( N = 1 ) {
     this.do.set_all_byN( N );
@@ -274,9 +276,11 @@ class ScaleArraySet extends Recyclable.Root {
   }
 
   /**
-   * @param {ScaleArraySet} aScaleArraySet  The ScaleArraySet to be copied.
+   * @param {ScaleArraySet} aScaleArraySet
+   *   The ScaleArraySet to be copied.
    *
-   * @return {ScaleArraySet} Return this (modified) object.
+   * @return {ScaleArraySet}
+   *   Return this (modified) object.
    */
   set_all_byScaleArraySet( aScaleArraySet ) {
     this.do.set_all_byScaleArray( aScaleArraySet.do );
@@ -293,7 +297,8 @@ class ScaleArraySet extends Recyclable.Root {
    * @param {ScaleArraySet} inputScaleArraySet1
    *   The ScaleArraySet of the 2nd input.
    *
-   * @return {ScaleArraySet} Return this (modified) object.
+   * @return {ScaleArraySet}
+   *   Return this (modified) object.
    */
   set_all_byScaleArraySet_concat_input0_input1(
     inputScaleArraySet0, inputScaleArraySet1 ) {
@@ -314,7 +319,8 @@ class ScaleArraySet extends Recyclable.Root {
    * Providing this array could reduce memory re-allocation and improve
    * performance.
    *
-   * @return {ScaleArraySet} Return this (modified) object.
+   * @return {ScaleArraySet}
+   *   Return this (modified) object.
    */
   set_all_byInterleave_asGrouptTwo_inPlace( arrayTemp ) {
     this.do.set_all_byInterleave_asGrouptTwo_inPlace( arrayTemp );
@@ -329,7 +335,8 @@ class ScaleArraySet extends Recyclable.Root {
    *   The source ScaleArraySet to be copied from. Its element count must be
    * even (i.e. divisible by 2).
    *
-   * @return {ScaleArraySet} Return this (modified) object.
+   * @return {ScaleArraySet}
+   *   Return this (modified) object.
    */
   set_all_byInterleave_asGrouptTwo_byScaleArraySet( aScaleArraySet ) {
     this.do.set_all_byInterleave_asGrouptTwo_byScaleArray(
@@ -346,7 +353,8 @@ class ScaleArraySet extends Recyclable.Root {
    *   The source ScaleArraySet to be copied from. Its element count must be
    * even (i.e. divisible by 2).
    *
-   * @return {ScaleArraySet} Return this (modified) object.
+   * @return {ScaleArraySet}
+   *   Return this (modified) object.
    */
   set_all_byInterleave_asGrouptTwo_undo_byScaleArraySet( aScaleArraySet ) {
     this.do.set_all_byInterleave_asGrouptTwo_undo_byScaleArray(
@@ -363,9 +371,12 @@ class ScaleArraySet extends Recyclable.Root {
    * @param {ScaleArraySet} higherHalfScaleArraySet
    *   The ScaleArraySet of the 2nd output. Its .length will be modified.
    *
-   * @return {ScaleArraySet} Return this (unmodified) object.
+   * @return {ScaleArraySet}
+   *   Return this (unmodified) object.
    */
-  split_to_lowerHalf_higherHalf( lowerHalfScaleArraySet, higherHalfScaleArraySet ) {
+  split_to_lowerHalf_higherHalf(
+    lowerHalfScaleArraySet, higherHalfScaleArraySet ) {
+
     this.do.split_to_lowerHalf_higherHalf(
       lowerHalfScaleArraySet.do, higherHalfScaleArraySet.do );
     this.undo.split_to_lowerHalf_higherHalf(
@@ -375,9 +386,11 @@ class ScaleArraySet extends Recyclable.Root {
 
   
   /**
-   * @param {ScaleArraySet} aScaleArraySet  The ScaleArraySet to multiply.
+   * @param {ScaleArraySet} aScaleArraySet
+   *   The ScaleArraySet to multiply.
    *
-   * @return {ScaleArraySet} Return this (modified) object.
+   * @return {ScaleArraySet}
+   *   Return this (modified) object.
    */
   multiply_all_byScaleArraySet_all( aScaleArraySet ) {
     this.do.multiply_all_byScaleArray( aScaleArraySet.do );
