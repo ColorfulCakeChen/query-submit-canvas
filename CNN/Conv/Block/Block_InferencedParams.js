@@ -851,8 +851,8 @@ class Block_InferencedParams extends Recyclable.Root {
 
   /** @override */
   toString() {
-    let str = ``
-      + `inputTensorCount=${this.inputTensorCount}, `
+    let str =
+        `inputTensorCount=${this.inputTensorCount}, `
 
       + `input1_height=${this.input1_height}, `
       + `input1_width=${this.input1_width}, `
