@@ -260,16 +260,23 @@ class Block_InferencedParams extends Recyclable.Root {
     }
 
     // depthwisePadInfo
-    if ( bDepthwiseRequestedAndNeeded ) { // When depthwise operation is necessary, infer its information.
-      if ( this.depthwisePadInfo ) { // Re-using (instead of re-creating) may improve runtime speed.
+
+    // When depthwise operation is necessary, infer its information.
+    if ( bDepthwiseRequestedAndNeeded ) {
+      // Re-using (instead of re-creating) may improve runtime speed.
+      if ( this.depthwisePadInfo ) {
         this.depthwisePadInfo.set(
           input0_height, input0_width, input0_channelCount, 
-          depthwise_AvgMax_Or_ChannelMultiplier, this.depthwiseFilterHeight_modified, this.depthwiseFilterWidth_modified,
+          depthwise_AvgMax_Or_ChannelMultiplier,
+          this.depthwiseFilterHeight_modified,
+          this.depthwiseFilterWidth_modified,
           depthwiseStridesPad );
       } else {
         this.depthwisePadInfo = Depthwise.PadInfoCalculatorRoot.Pool.get_or_create_by(
           input0_height, input0_width, input0_channelCount, 
-          depthwise_AvgMax_Or_ChannelMultiplier, this.depthwiseFilterHeight_modified, this.depthwiseFilterWidth_modified,
+          depthwise_AvgMax_Or_ChannelMultiplier,
+          this.depthwiseFilterHeight_modified,
+          this.depthwiseFilterWidth_modified,
           depthwiseStridesPad );
       }
     } else {
