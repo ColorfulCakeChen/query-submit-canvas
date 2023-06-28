@@ -142,9 +142,6 @@ class Block_InferencedParams extends Recyclable.Root {
     this.pointwise20_nHigherHalfDifferent = undefined;
 
     this.pointwise20_outputChannelCount_lowerHalf = undefined;
-    this.pointwise20_outputChannelCount_lowerHalf = undefined;
-    this.pointwise20_nHigherHalfDifferent = undefined;
-    this.pointwise20_nHigherHalfDifferent = undefined;
 
     this.pointwise20Bias = undefined;
 
@@ -158,37 +155,6 @@ class Block_InferencedParams extends Recyclable.Root {
     this.bHigherHalfDifferent = undefined;
     this.bHigherHalfDepthwise2 = undefined;
     this.pointwise20_channelShuffler_outputGroupCount = undefined;
-
-    this.pointwise20Bias = undefined;
-
-    this.pointwise20_nHigherHalfDifferent = undefined;
-
-    this.pointwise20_outputChannelCount_lowerHalf = undefined;
-
-    this.pointwise20Bias = undefined;
-
-    this.outputTensorCount = undefined;
-
-    this.bDepthwise2Requested = undefined;
-    this.bConcat1Requested = undefined;
-    this.bAddInputToOutputRequested = undefined;
-    this.bConcat2ShuffleSplitRequested = undefined;
-
-    this.bHigherHalfDifferent = undefined;
-    this.bHigherHalfDepthwise2 = undefined;
-    this.pointwise20_channelShuffler_outputGroupCount = undefined;
-
-    this.pointwise20Bias = undefined;
-
-
-
-
-
-
-
-
-
-
 
 
 
