@@ -485,10 +485,14 @@ class Block_InferencedParams extends Recyclable.Root {
    *   - this.pointwise21ActivationId
    */
   static set_pointwise21ChannelCount_pointwise21Bias_pointwise21ActivationId_by(
-    nConvBlockTypeId, pointwise20ChannelCount, pointwise20Bias, pointwise20ActivationId ) {
+    nConvBlockTypeId,
+    pointwise20ChannelCount, pointwise20Bias, pointwise20ActivationId ) {
 
-    // Note: Even if ( outputTensorCount == 2 ), it does not means pointwise21 existed.
-    let infoConvBlockType = ValueDesc.ConvBlockType.Singleton.getInfo_byId( nConvBlockTypeId );
+    // Note: Even if ( outputTensorCount == 2 ), it does not means pointwise21
+    //       existed.
+    let infoConvBlockType
+      = ValueDesc.ConvBlockType.Singleton.getInfo_byId( nConvBlockTypeId );
+
     if ( infoConvBlockType.bPointwise21 ) {
       this.pointwise21ChannelCount = pointwise20ChannelCount; // Still may be 0.
     } else {
@@ -512,10 +516,12 @@ class Block_InferencedParams extends Recyclable.Root {
   static set_pointwise1_nHigherHalfDifferent_modify_pointwise1ChannelCount_pointwise1Bias_pointwise1ActivationId_by(
     input0_channelCount, nConvBlockTypeId, pointwise1ChannelCount
   ) {
-    let infoConvBlockType = ValueDesc.ConvBlockType.Singleton.getInfo_byId( nConvBlockTypeId );
+    let infoConvBlockType
+      = ValueDesc.ConvBlockType.Singleton.getInfo_byId( nConvBlockTypeId );
 
     this.pointwise1ChannelCount_modified = undefined;
-    this.pointwise1_nHigherHalfDifferent = ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.NONE;
+    this.pointwise1_nHigherHalfDifferent
+      = ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.NONE;
     this.pointwise1_inputChannelCount_lowerHalf = undefined;
     this.pointwise1_inputChannelCount_higherHalf = undefined;
     this.pointwise1_outputChannelCount_lowerHalf = undefined;
@@ -531,22 +537,34 @@ class Block_InferencedParams extends Recyclable.Root {
         this.pointwise1_inputChannelCount_lowerHalf = input0_channelCount;
 
         if ( pointwise1ChannelCount > 0 ) {
-          this.pointwise1_nHigherHalfDifferent = ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_COPY_LOWER_HALF;
-          this.pointwise1_outputChannelCount_lowerHalf = pointwise1ChannelCount; // For depthwise1 (by specified channel count)
+          this.pointwise1_nHigherHalfDifferent
+            = ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids
+                .HIGHER_HALF_COPY_LOWER_HALF;
+
+          // For depthwise1 (by specified channel count)
+          this.pointwise1_outputChannelCount_lowerHalf
+            = pointwise1ChannelCount;
 
         } else {
 
           this.pointwise1_nHigherHalfDifferent
-            = ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_COPY_LOWER_HALF__LOWER_HALF_PASS_THROUGH;
+            = ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids
+                .HIGHER_HALF_COPY_LOWER_HALF__LOWER_HALF_PASS_THROUGH;
 
-          // Since this is an almost copy operation, bias and activation is not necessary.
+          // Since this is an almost copy operation, bias and activation is not
+          // necessary.
           this.pointwise1Bias = false;
-          this.pointwise1ActivationId = ValueDesc.ActivationFunction.Singleton.Ids.NONE;
+          this.pointwise1ActivationId
+            = ValueDesc.ActivationFunction.Singleton.Ids.NONE;
 
-          this.pointwise1_outputChannelCount_lowerHalf = input0_channelCount; // For depthwise1 (by pass-through-input-to-output)
+          // For depthwise1 (by pass-through-input-to-output)
+          this.pointwise1_outputChannelCount_lowerHalf
+            = input0_channelCount;
         }
 
-        // Enlarge pointwise1 to ( pointwise1_channel_count + input_channel_count ) so that depthwise1 could include depthwise2.
+        // Enlarge pointwise1 to
+        // ( pointwise1_channel_count + input_channel_count ) so that
+        // depthwise1 could include depthwise2.
         this.pointwise1ChannelCount_modified = (
             this.pointwise1_outputChannelCount_lowerHalf // For depthwise1.
           + input0_channelCount                          // For depthwise2 (by depthwise1).
@@ -558,23 +576,30 @@ class Block_InferencedParams extends Recyclable.Root {
       } else {
 
         // So that bHigherHalfPassThrough (or bAllPassThrough).
-        this.pointwise1_nHigherHalfDifferent = ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_PASS_THROUGH;
+        this.pointwise1_nHigherHalfDifferent
+          = ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids
+              .HIGHER_HALF_PASS_THROUGH;
 
-        let pointwise1_higherHalfPassThrough = ChannelCountCalculator.HigherHalfPassThrough.Pool.get_or_create_by(
-          input0_channelCount, pointwise1ChannelCount );
+        let pointwise1_higherHalfPassThrough
+          = ChannelCountCalculator.HigherHalfPassThrough.Pool.get_or_create_by(
+              input0_channelCount, pointwise1ChannelCount );
 
-        this.pointwise1_inputChannelCount_lowerHalf = pointwise1_higherHalfPassThrough.inputChannelCount_lowerHalf;
-        this.pointwise1_outputChannelCount_lowerHalf = pointwise1_higherHalfPassThrough.outputChannelCount_lowerHalf;
+        this.pointwise1_inputChannelCount_lowerHalf
+          = pointwise1_higherHalfPassThrough.inputChannelCount_lowerHalf;
+        this.pointwise1_outputChannelCount_lowerHalf
+          = pointwise1_higherHalfPassThrough.outputChannelCount_lowerHalf;
 
         pointwise1_higherHalfPassThrough.disposeResources_and_recycleToPool();
         pointwise1_higherHalfPassThrough = null;
       }
 
-    // In other cases, Pointwise.Base could handle ( pointwise1ChannelCount == 0 ) correctly.
+    // In other cases, Pointwise.Base could handle
+    // ( pointwise1ChannelCount == 0 ) correctly.
     }
 
     if ( this.pointwise1_inputChannelCount_lowerHalf > 0 )
-      this.pointwise1_inputChannelCount_higherHalf = input0_channelCount - this.pointwise1_inputChannelCount_lowerHalf;
+      this.pointwise1_inputChannelCount_higherHalf
+        = input0_channelCount - this.pointwise1_inputChannelCount_lowerHalf;
   }
 
   /**
