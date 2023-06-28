@@ -3,26 +3,31 @@ export { Pool_Base as Base, Root };
 import { IssuedObjects } from "./Pool_IssuedObjects.js"
 
 /**
- * A pool for recycling (re-using) objects. It collects all recycled (i.e. could be re-issued) objects of Pool.Base.
- * This could improve performance by reducing memory re-allocation.
+ * A pool for recycling (re-using) objects. It collects all recycled (i.e.
+ * could be re-issued) objects of Pool.Base. This could improve performance by
+ * reducing memory re-allocation.
  *
  *
  * @member {string} poolName
  *   The string name of this pool.
  *
  * @member {Class} objectClass
- *   The class for all newly created objects. If the instance of this objectClass has a method .disposeResources(), it will be called
- * when .sessionCall()'s ending (i.e. in .session_pop()) to release more resources.
+ *   The class for all newly created objects. If the instance of this
+ * objectClass has a method .disposeResources(), it will be called when
+ * .sessionCall()'s ending (i.e. in .session_pop()) to release more resources.
  *
  * @member {function} pfn_SetAsConstructor_ReturnObject
- *   A function set contents like its constructor and return an object. Before .get_or_create_by() returns a recycled object,
- * its .pfnSetAsConstructor() method will be called to re-initilaize it. Its return value will be the final returned object.
+ *   A function set contents like its constructor and return an object. Before
+ * .get_or_create_by() returns a recycled object, its .pfnSetAsConstructor()
+ * method will be called to re-initilaize it. Its return value will be the
+ * final returned object.
  *
  * @member {Object} recycledObjectArray
  *   For fetching object efficiently (without creating iterator).
  *
  * @member {Set} recycledObjectSet
- *   The same content as .recycledObjectArray for checking object whether is recycled multiple times.
+ *   The same content as .recycledObjectArray for checking object whether is
+ * recycled multiple times.
  *
  * @member {number} recycledCount
  *   The quantity of recycled objects.
@@ -31,10 +36,12 @@ import { IssuedObjects } from "./Pool_IssuedObjects.js"
 let Pool_Base = ( ParentClass = Object ) => class Pool_Base extends ParentClass {
 
   /**
-   * This constructor will register this object to Pool.All.registeredPoolArray list. And it will never be removed from the list.
-   *
+   * This constructor will register this object to Pool.All.registeredPoolArray
+   * list. And it will never be removed from the list.
    */
-  constructor( poolName, objectClass, pfn_SetAsConstructor_ReturnObject, ...restArgs ) {
+  constructor(
+    poolName, objectClass, pfn_SetAsConstructor_ReturnObject, ...restArgs ) {
+
     super( ...restArgs );
 
     this.poolName = poolName;
@@ -44,14 +51,17 @@ let Pool_Base = ( ParentClass = Object ) => class Pool_Base extends ParentClass 
     this.recycledObjectArray = new Array();
     this.recycledObjectSet = new Set();
 
-    IssuedObjects.Singleton.registeredPoolArray.push( this ); // Register to the only one global All pool list.
+    // Register to the only one global All pool list.
+    IssuedObjects.Singleton.registeredPoolArray.push( this );
   }
 
   /**
    *
    * @return {object}
-   *   An obeject which is an instance of this.ObjectClass. If it is newly created, all RestArgs will be passed into its constructor.
-   * If it is re-used (i.e. from recycled) object, all RestArgs will be passed into its .pfnSetAsConstructor() method.
+   *   An obeject which is an instance of this.ObjectClass. If it is newly
+   * created, all RestArgs will be passed into its constructor. If it is
+   * re-used (i.e. from recycled) object, all RestArgs will be passed into its
+   * .pfnSetAsConstructor() method.
    */
   get_or_create_by( ...restArgs ) {
     let returnedObject;
@@ -60,12 +70,14 @@ let Pool_Base = ( ParentClass = Object ) => class Pool_Base extends ParentClass 
 
     // 1.1 Get recycled object.
     //
-    // Note: candicatedObject and returnedObject may not be the same one object. It is possible the pfn_SetAsConstructor_ReturnObject()
+    // Note: candicatedObject and returnedObject may not be the same one
+    //       object. It is possible the pfn_SetAsConstructor_ReturnObject()
     //       returns a different object.
     //
     let candicatedObject = Pool_Base.recycled_pop.call( this );
     if ( candicatedObject != null ) {
-      returnedObject = this.pfn_SetAsConstructor_ReturnObject.apply( candicatedObject, restArgs );
+      returnedObject = this.pfn_SetAsConstructor_ReturnObject.apply(
+        candicatedObject, restArgs );
 
     // 1.2 Create new object.
     } else {
