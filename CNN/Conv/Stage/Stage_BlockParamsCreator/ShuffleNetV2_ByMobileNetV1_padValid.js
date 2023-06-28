@@ -94,16 +94,19 @@ class ShuffleNetV2_ByMobileNetV1_padValid extends ShuffleNetV2_ByMobileNetV1 {
     super.configTo_beforeBlock0();
 
     // Except padding is "valid" (not "same").
-    this.depthwiseStridesPad = ValueDesc.StridesPad.Singleton.Ids.STRIDES_2_PAD_VALID;
+    this.depthwiseStridesPad
+      = ValueDesc.StridesPad.Singleton.Ids.STRIDES_2_PAD_VALID;
   }
 
   /** @override */
   configTo_beforeBlockN_exceptBlock0( blockIndex, input_height, input_width ) {
     // Block1, 2, 3, ... are almost the same as ShuffleNetV2_ByMobileNetV1.
-    super.configTo_beforeBlockN_exceptBlock0( blockIndex, input_height, input_width );
+    super.configTo_beforeBlockN_exceptBlock0(
+      blockIndex, input_height, input_width );
 
     // Except padding is "valid" (not "same").
-    this.depthwiseStridesPad = ValueDesc.StridesPad.Singleton.Ids.STRIDES_1_PAD_VALID;
+    this.depthwiseStridesPad
+      = ValueDesc.StridesPad.Singleton.Ids.STRIDES_1_PAD_VALID;
   }
 
   /** @override */
@@ -112,4 +115,3 @@ class ShuffleNetV2_ByMobileNetV1_padValid extends ShuffleNetV2_ByMobileNetV1 {
     super.configTo_beforeBlockLast();
   }
 }
-
