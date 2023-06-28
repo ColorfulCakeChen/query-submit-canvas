@@ -189,8 +189,10 @@ class IssuedObjects {
   }
 
   /**
-   * Create a session. Call th function. End the session and recycle all issued
-   * objects (except the returned objects of the function).
+   * Create a session.
+   *   - Call the pfn function.
+   *   - End the session and recycle all issued objects (except the returned
+   *       objects of the function).
    *
    *
    * @param {function} pfn
@@ -236,13 +238,15 @@ class IssuedObjects {
   }
 
   /**
-   * Collect objects which need to be kepy (i.e. not recycled) into .sessionKeptObjectSet
+   * Collect objects which need to be kepy (i.e. not recycled) into
+   * .sessionKeptObjectSet
    *
    * @param {IssuedObjects} this
    *   The list for handling the objects issuing/recycling.
    *
    * @param {Object|Object[]} keptObjectOrArray
-   *   An object or an object array. If the object(s) is not null, they will be kept (i.e. not be recycled) and be moved to parent session.
+   *   An object or an object array. If the object(s) is not null, they will be
+   * kept (i.e. not be recycled) and be moved to parent session.
    */
   static sessionKeptObjectSet_collect_from( keptObjectOrArray ) {
     this.sessionKeptObjectSet.clear();
@@ -252,22 +256,29 @@ class IssuedObjects {
 
     // Note:
     //
-    // In theory, it is possible to collect all nested properties (and skip objects which have already been searched for avoiding
-    // duplication) recursively. In reality, however, this process has some problems:
+    // In theory, it is possible to collect all nested properties (and skip
+    // objects which have already been searched for avoiding duplication)
+    // recursively. In reality, however, this process has some problems:
     //
-    //   - Many iterator objects might be generated for visiting container (e.g. Set, Map). Generating many objects violates this
-    //       recycle pool system's principle (i.e. reducing memory re-allocation).
+    //   - Many iterator objects might be generated for visiting container
+    //       (e.g. Set, Map). Generating many objects violates this recycle
+    //       pool system's principle (i.e. reducing memory re-allocation).
     //
-    //   - Time consuming. For example, if a object property is just pure number Array (e.g. NumberImage.Base.dataArray), visiting
-    //       its every element for finding recyclable object is unnecessary, meaningless and just wasting CPU time.
+    //   - Time consuming. For example, if a object property is just pure
+    //       number Array (e.g. NumberImage.Base.dataArray), visiting its every
+    //       element for finding recyclable object is unnecessary, meaningless
+    //       and just wasting CPU time.
     //
-    //   - And, even if ignoring these above problem, it is still has the problem which the nested children object may be disposed
-    //       before their owner parent object. This will result in recycling the same object duplicately (i.e. Pool.Base.recycled_add()
-    //       is called multiple times with the same object).
+    //   - And, even if ignoring these above problem, it is still has the
+    //       problem which the nested children object may be disposed before
+    //       their owner parent object. This will result in recycling the same
+    //       object duplicately (i.e. Pool.Base.recycled_add() is called
+    //       multiple times with the same object).
     //
     //
-    // Suggestion: Perhaps, caller could use a Recyclabe.OwnerUniqueStack to collect and dispose recyclable objects by caller
-    //             itself. That may be better than using Pool.All.sessionCall().
+    // Suggestion: Perhaps, caller could use a Recyclabe.OwnerUniqueStack to
+    //             collect and dispose recyclable objects by caller itself.
+    //             That may be better than using Pool.All.sessionCall().
     //
 
     if ( keptObjectOrArray instanceof Array ) { // 1.1 An array of objects to be kept.
