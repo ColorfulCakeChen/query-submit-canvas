@@ -560,8 +560,10 @@ class Block_InferencedParams extends Recyclable.Root {
       = ValueDesc.ConvBlockType.Singleton.getInfo_byId( nConvBlockTypeId );
 
     this.pointwise1ChannelCount_modified = undefined;
+
     this.pointwise1_nHigherHalfDifferent
       = ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.NONE;
+
     this.pointwise1_inputChannelCount_lowerHalf = undefined;
     this.pointwise1_inputChannelCount_higherHalf = undefined;
     this.pointwise1_outputChannelCount_lowerHalf = undefined;
