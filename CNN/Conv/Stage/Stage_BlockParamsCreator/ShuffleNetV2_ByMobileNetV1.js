@@ -44,8 +44,8 @@ import { Base } from "./Stage_BlockParamsCreator_Base.js";
  * Just like ShuffleNetV2, The last channel also always stays stationary in
  * ShuffleNetV2_ByMobileNetV1. Even worse, because ShuffleNetV2_ByMobileNetV1
  * uses scaling to achieve activation escaping. The stationary last channel
- * never have chance to be re-calicated (i.e. it will accumulate floating-point
- * error between scaling/un-scaling).
+ * never have chance to be re-calibrated (i.e. it will accumulate
+ * floating-point error between scaling/un-scaling).
  *
  * So, the last channel may be have obvious difference from ShuffleNetV2. A
  * possible workaround may always not use the last channel data of final
