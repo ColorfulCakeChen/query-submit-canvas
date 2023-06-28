@@ -137,21 +137,6 @@ class Block_InferencedParams extends Recyclable.Root {
     this.pointwise1_inputChannelCount_higherHalf = undefined;
     this.pointwise1_outputChannelCount_lowerHalf = undefined;
 
-
-    this.pointwise1_inputChannelCount_lowerHalf = undefined;
-    this.pointwise1_outputChannelCount_lowerHalf = undefined;
-
-    this.pointwise1_outputChannelCount_lowerHalf = undefined;
-    this.pointwise1_outputChannelCount_lowerHalf = undefined;
-
-    this.pointwise1_inputChannelCount_lowerHalf = undefined;
-    this.pointwise1_outputChannelCount_lowerHalf = undefined;
-
-    this.pointwise1_inputChannelCount_lowerHalf = undefined;
-    this.pointwise1_inputChannelCount_higherHalf = undefined;
-    this.pointwise1_inputChannelCount_lowerHalf = undefined;
-    this.depthwise1_nHigherHalfDifferent = undefined;
-    this.depthwise1_nHigherHalfDifferent = undefined;
     this.depthwise1_nHigherHalfDifferent = undefined;
 
     this.pointwise20_nHigherHalfDifferent = undefined;
@@ -175,23 +160,6 @@ class Block_InferencedParams extends Recyclable.Root {
     this.pointwise20_channelShuffler_outputGroupCount = undefined;
 
     this.pointwise20Bias = undefined;
-
-    this.pointwise1_inputChannelCount_lowerHalf = undefined;
-    this.pointwise1_inputChannelCount_higherHalf = undefined;
-    this.pointwise1_outputChannelCount_lowerHalf = undefined;
-
-
-    this.pointwise1_inputChannelCount_lowerHalf = undefined;
-    this.pointwise1_outputChannelCount_lowerHalf = undefined;
-
-    this.pointwise1_outputChannelCount_lowerHalf = undefined;
-    this.pointwise1_outputChannelCount_lowerHalf = undefined;
-
-    this.pointwise1_outputChannelCount_lowerHalf = undefined;
-
-    this.pointwise1_inputChannelCount_higherHalf = undefined;
-    this.pointwise1_inputChannelCount_lowerHalf = undefined;
-    this.depthwise1_nHigherHalfDifferent = undefined;
 
     this.pointwise20_nHigherHalfDifferent = undefined;
 
