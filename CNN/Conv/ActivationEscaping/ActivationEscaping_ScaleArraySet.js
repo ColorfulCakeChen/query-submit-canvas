@@ -81,18 +81,23 @@ import * as FloatValue from "../../Unpacker/FloatValue.js";
  *
  *
  * 2. Problem:
- *   - Every element (not only every channel) needs have itself T' because T' depends on S.
+ *   - Every element (not only every channel) needs have itself T' because T'
+ *       depends on S.
  *     - This is difficult to be implemented.
  *
- *   - However, if the activation escaping could have only scale and without translate (i.e. translate = b = d = 0 ), this issue
- *       could be reduced.
+ *   - However, if the activation escaping could have only scale and without
+ *       translate (i.e. translate = b = d = 0 ), this issue could be reduced.
  *
- *   - This implies the output range of the activation function should include both negative and positive near the origin point.
- *     - So that only scale is enough to escape their non-linear part of these activation function.
+ *   - This implies the output range of the activation function should include
+ *       both negative and positive near the origin point.
+ *     - So that only scale is enough to escape their non-linear part of these
+ *         activation function.
  *
  *   - For example, sin(), tanh(), erf() are feasible.
- *     - But cos(), relu(), relu6(), sigmoid() are not feasible because their output always non-negative near the origin point.
- *         These functions always need bias (i.e. non-zero translate) to escape their non-linear part.
+ *     - But cos(), relu(), relu6(), sigmoid() are not feasible because their
+ *         output always non-negative near the origin point. These functions
+ *         always need bias (i.e. non-zero translate) to escape their
+ *         non-linear part.
  *
  *
 
