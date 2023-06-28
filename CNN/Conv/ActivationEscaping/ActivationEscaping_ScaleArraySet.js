@@ -299,11 +299,13 @@ class ScaleArraySet extends Recyclable.Root {
   }
 
   /**
-   * Rearrange elements by interleaving as ( groupCount == 2 ). This element count must be even (i.e. divisible by 2).
+   * Rearrange elements by interleaving as ( groupCount == 2 ). This element
+   * count must be even (i.e. divisible by 2).
    *
    * @param {Array} arrayTemp
-   *   A temporary array for placing the original elements temporarily. Providing this array could reduce memory re-allocation
-   * and improve performance.
+   *   A temporary array for placing the original elements temporarily.
+   * Providing this array could reduce memory re-allocation and improve
+   * performance.
    *
    * @return {ScaleArraySet} Return this (modified) object.
    */
@@ -317,7 +319,8 @@ class ScaleArraySet extends Recyclable.Root {
    * Rearrange bounds by interleaving as ( groupCount == 2 ).
    *
    * @param {ScaleArraySet} aScaleArraySet
-   *   The source ScaleArraySet to be copied from. Its element count must be even (i.e. divisible by 2).
+   *   The source ScaleArraySet to be copied from. Its element count must be
+   * even (i.e. divisible by 2).
    *
    * @return {ScaleArraySet} Return this (modified) object.
    */
@@ -331,7 +334,8 @@ class ScaleArraySet extends Recyclable.Root {
    * Rearrange bounds by undoing interleaving as ( groupCount == 2 ).
    *
    * @param {ScaleArraySet} aScaleArraySet
-   *   The source ScaleArraySet to be copied from. Its element count must be even (i.e. divisible by 2).
+   *   The source ScaleArraySet to be copied from. Its element count must be
+   * even (i.e. divisible by 2).
    *
    * @return {ScaleArraySet} Return this (modified) object.
    */
@@ -348,8 +352,10 @@ class ScaleArraySet extends Recyclable.Root {
    * @return {ScaleArraySet} Return this (unmodified) object.
    */
   split_to_lowerHalf_higherHalf( lowerHalfScaleArraySet, higherHalfScaleArraySet ) {
-    this.do.split_to_lowerHalf_higherHalf( lowerHalfScaleArraySet.do, higherHalfScaleArraySet.do );
-    this.undo.split_to_lowerHalf_higherHalf( lowerHalfScaleArraySet.undo, higherHalfScaleArraySet.undo );
+    this.do.split_to_lowerHalf_higherHalf(
+      lowerHalfScaleArraySet.do, higherHalfScaleArraySet.do );
+    this.undo.split_to_lowerHalf_higherHalf(
+      lowerHalfScaleArraySet.undo, higherHalfScaleArraySet.undo );
     return this;
   }
 
@@ -367,10 +373,12 @@ class ScaleArraySet extends Recyclable.Root {
 
   /**
    * @param {ScaleArraySet} aScaleArraySet
-   *   The aScaleArraySet.do.scales[ aIndex ] and aScaleArraySet.undo.scales[ aIndex ] will be used to multiply.
+   *   The aScaleArraySet.do.scales[ aIndex ] and
+   * aScaleArraySet.undo.scales[ aIndex ] will be used to multiply.
    *
    * @param {number} aIndex
-   *   The array index of aBoundsArray.do.scales[] and aBoundsArray.undo.scales[].
+   *   The array index of aBoundsArray.do.scales[] and
+   * aBoundsArray.undo.scales[].
    *
    * @return {ScaleArraySet} Return this (modified) object.
    */
