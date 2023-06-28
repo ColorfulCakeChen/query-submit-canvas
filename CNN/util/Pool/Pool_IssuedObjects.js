@@ -19,19 +19,23 @@ export { All };
  *
  * @member {Map} toInSessionArrayIndexMap
  *   Map every issued object to its array index in .inSessionArray[].
- *   - If an issued objects is belong to a session, this map's value is the array index to .inSessionArray[].
- *   - If an issued objects is not belong to any session, this map's value is a negative value (e.g. -1).
+ *   - If an issued objects is belong to a session, this map's value is the
+ *       array index to .inSessionArray[].
+ *   - If an issued objects is not belong to any session, this map's value is a
+ *       negative value (e.g. -1).
  *
  * @member {Pool.Base[]} registeredPoolArray
- *   Every instance of Pool.Base will automatically register itself in this list. This list will never be cleared (i.e. a Pool.Base
- * is never be released).
+ *   Every instance of Pool.Base will automatically register itself in this
+ * list. This list will never be cleared (i.e. a Pool.Base is never be
+ * released).
  *
  * @member {Set} sessionKeptObjectSet
- *   Temporary object list for speeding up searching of whether kept (i.e. not recycled) an object. Internally used by .session_pop().
+ *   Temporary object list for speeding up searching of whether kept (i.e. not
+ * recycled) an object. Internally used by .session_pop().
  *
  * @member {Object[]} movingObjectArray
- *   Temporary object list for moving kept (i.e. not recycled) objects to the parent session when a session is popping. Internally
- * used by .session_pop().
+ *   Temporary object list for moving kept (i.e. not recycled) objects to the
+ * parent session when a session is popping. Internally used by .session_pop().
  *
 
 //!!! ...unfinished... (2022/07/01) seems not necessary. It seems enough by using object.constructor.Pool.
@@ -69,7 +73,8 @@ class IssuedObjects {
 
     this.registeredPoolArray = new Array();
 
-    // For reducing memory re-allocation when handling objects automatic recycling between sessions.
+    // For reducing memory re-allocation when handling objects automatic
+    // recycling between sessions.
     this.sessionKeptObjectSet = new Set();
     this.movingObjectArray = new Array();
 
@@ -82,17 +87,20 @@ class IssuedObjects {
   }
 
   get isCurrentInSession() {
-    // Note: If current is in session, the .inSessionArray will have a SESSION_BORDER_MARK at least.
+    // Note: If current is in session, the .inSessionArray will have a
+    //       SESSION_BORDER_MARK at least.
     if ( this.inSessionArray.length > 0 )
       return true;
     return false;
   }
 
   /**
-   * Every object will be recorded in .toInSessionArrayIndexMap which is fast for removing in the future.
+   * Every object will be recorded in .toInSessionArrayIndexMap which is fast
+   * for removing in the future.
    *
-   * If current is in a session, the object will also be recorded in .inSessionArray which could be visit in sequential when the
-   * session is ended.
+   * If current is in a session, the object will also be recorded in
+   * .inSessionArray which could be visit in sequential when the session is
+   * ended.
    *
    *
    * @param {IssuedObjects} this
@@ -131,13 +139,16 @@ class IssuedObjects {
   }
 
   /**
-   * Removed from this issued object list. (Usually, for preparing to recycle it.)
+   * Removed from this issued object list. (Usually, for preparing to recycle
+   * it.)
    *
-   * - If the object is recorded in a session, the object in .inSessionArray[] will be modified to null. So that it will not be recycled
-   *     (again) wrongly when the session is ended.
+   * - If the object is recorded in a session, the object in .inSessionArray[]
+   *     will be modified to null. So that it will not be recycled (again)
+   *     wrongly when the session is ended.
    *
-   *     - Considering what will happen if it is re-issued again in the other session. If it is not marked as null, it might be recycled
-   *         wrongly when this session is ended.
+   *     - Considering what will happen if it is re-issued again in the other
+   *         session. If it is not marked as null, it might be recycled wrongly
+   *         when this session is ended.
    *
    *
    * @param {IssuedObjects} this
@@ -147,7 +158,8 @@ class IssuedObjects {
    *   The object which will be removed from this issued objects list.
    *
    * @return {boolean}
-   *   Return true, if the object is found and removed. Return false, if the object is not found.
+   *   Return true, if the object is found and removed. Return false, if the
+   * object is not found.
    */
   static issued_remove( issuedObject ) {
     let arrayIndex = this.toInSessionArrayIndexMap.get( issuedObject );
@@ -177,12 +189,14 @@ class IssuedObjects {
   }
 
   /**
-   * Create a session. Call th function. End the session and recycle all issued objects (except the returned objects of the function).
+   * Create a session. Call th function. End the session and recycle all issued
+   * objects (except the returned objects of the function).
    *
    *
    * @param {function} pfn
-   *   A function to be called. It is viewed as a session. All objects the function got by .get_or_create_by() will be recycled
-   * except the objects of the function's returned value (an object or an object array).
+   *   A function to be called. It is viewed as a session. All objects the
+   * function got by .get_or_create_by() will be recycled except the objects of
+   * the function's returned value (an object or an object array).
    *
    * @param {Object} thisArg
    *   The value of this provided for the call to function pfn.
@@ -191,8 +205,10 @@ class IssuedObjects {
    *   All other arguments will be passes into thisArg.pfn().
    *
    * @return {any}
-   *   Return anything which the pfn() returned. If the returned value is an object or an array of object, these objects (if they
-   * inside IssuedObjects) will be kept (i.e. not be recycled) and become belonging to the parent session.
+   *   Return anything which the pfn() returned. If the returned value is an
+   * object or an array of object, these objects (if they inside IssuedObjects)
+   * will be kept (i.e. not be recycled) and become belonging to the parent
+   * session.
    */
   sessionCall( pfn, thisArg, ...restArgs ) {
     IssuedObjects.session_push.call( this );
@@ -206,7 +222,8 @@ class IssuedObjects {
   }
 
   /**
-   * Start a auto-recycling session. This method will append a SESSION_BORDER_MARK to in-session array.
+   * Start a auto-recycling session. This method will append a
+   * SESSION_BORDER_MARK to in-session array.
    *
    * @param {IssuedObjects} this
    *   The list for handling the objects issuing/recycling.
