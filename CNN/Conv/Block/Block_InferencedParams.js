@@ -616,55 +616,76 @@ class Block_InferencedParams extends Recyclable.Root {
    *   - this.pointwise20_outputChannelCount_lowerHalf
    *
    */
-  static set_nHigherHalfDifferent_by( input0_channelCount, nConvBlockTypeId, pointwise1ChannelCount, pointwise20ChannelCount ) {
-    let infoConvBlockType = ValueDesc.ConvBlockType.Singleton.getInfo_byId( nConvBlockTypeId );
+  static set_nHigherHalfDifferent_by(
+    input0_channelCount, nConvBlockTypeId,
+    pointwise1ChannelCount, pointwise20ChannelCount ) {
+
+    let infoConvBlockType
+      = ValueDesc.ConvBlockType.Singleton.getInfo_byId( nConvBlockTypeId );
 
     // pointwise1
-    Block_InferencedParams.set_pointwise1_nHigherHalfDifferent_modify_pointwise1ChannelCount_pointwise1Bias_pointwise1ActivationId_by.call( this,
-      input0_channelCount,
-      nConvBlockTypeId,
-      pointwise1ChannelCount
-    );
+    Block_InferencedParams
+     .set_pointwise1_nHigherHalfDifferent_modify_pointwise1ChannelCount_pointwise1Bias_pointwise1ActivationId_by
+     .call( this,
+       input0_channelCount,
+       nConvBlockTypeId,
+       pointwise1ChannelCount
+     );
 
     // depthwise1
     {
-      this.depthwise1_nHigherHalfDifferent = ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.NONE;
+      this.depthwise1_nHigherHalfDifferent
+        = ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.NONE;
 
       if ( infoConvBlockType.bHigherHalfDifferent == true ) {
 
         // (i.e. ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD (5) )
         // (i.e. bHigherHalfDepthwise2, for depthwise1 of ShuffleNetV2_ByMobileNetV1's head)
         if ( infoConvBlockType.bHigherHalfDepthwise2 == true ) {
-          this.depthwise1_nHigherHalfDifferent = ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_DEPTHWISE2;
+          this.depthwise1_nHigherHalfDifferent
+            = ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids
+                .HIGHER_HALF_DEPTHWISE2;
 
-        // If depthwise1's higher half is responsible for achieving pass-through, it needs height and width of input image.
+        // If depthwise1's higher half is responsible for achieving
+        // pass-through, it needs height and width of input image.
         //
         // (i.e. ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY (6) )
         // (i.e. ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_TAIL (7) )
         // (i.e. bHigherHalfPassThrough, for depthwise1 of ShuffleNetV2_ByMobileNetV1's body/tail)
         } else {
-          this.depthwise1_nHigherHalfDifferent = ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_PASS_THROUGH;
+          this.depthwise1_nHigherHalfDifferent
+            = ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids
+                .HIGHER_HALF_PASS_THROUGH;
         }
       }
     }
 
     // pointwise20
     {
-      this.pointwise20_nHigherHalfDifferent = ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.NONE;
+      this.pointwise20_nHigherHalfDifferent
+        = ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.NONE;
+
       this.pointwise20_outputChannelCount_lowerHalf = undefined;
 
       if ( infoConvBlockType.bHigherHalfDifferent == true ) {
 
-        // In this case, it should be according to half of pointwise20ChannelCount (just like pointwise1).
-        // Note: Unlike pointwise1ChannelCount (which may be zero), pointwise20ChannelCount is always positive.
-        this.pointwise20_outputChannelCount_lowerHalf = Math.ceil( pointwise20ChannelCount / 2 );
+        // In this case, it should be according to half of
+        // pointwise20ChannelCount (just like pointwise1).
+        //
+        // Note: Unlike pointwise1ChannelCount (which may be zero),
+        //       pointwise20ChannelCount is always positive.
+        this.pointwise20_outputChannelCount_lowerHalf
+          = Math.ceil( pointwise20ChannelCount / 2 );
 
-        // For bHigherHalfAnotherPointwise(Shuffle) (i.e. ( pointwise20ChannelCount > 0 ) ).
+        // For bHigherHalfAnotherPointwise(Shuffle) (i.e.
+        // ( pointwise20ChannelCount > 0 ) ).
         //
         // (i.e. ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD (5) )
         // (i.e. pointwise2 of ShuffleNetV2_ByMobileNetV1's head)
         if ( infoConvBlockType.bHigherHalfDepthwise2 == true ) {
-          this.pointwise20_nHigherHalfDifferent = ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_ANOTHER_POINTWISE;
+          this.pointwise20_nHigherHalfDifferent
+            = ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids
+                .HIGHER_HALF_ANOTHER_POINTWISE;
 
         // For bHigherHalfPassThrough(Shuffle) (i.e. ( pointwise20ChannelCount > 0 ) ).
         //
@@ -672,7 +693,9 @@ class Block_InferencedParams extends Recyclable.Root {
         // (i.e. ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_TAIL (7) )
         // (i.e. pointwise2 of ShuffleNetV2_ByMobileNetV1's body/tail)
         } else {
-          this.pointwise20_nHigherHalfDifferent = ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_PASS_THROUGH;
+          this.pointwise20_nHigherHalfDifferent
+            = ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids
+                .HIGHER_HALF_PASS_THROUGH;
         }
       }
     }
