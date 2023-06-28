@@ -191,7 +191,9 @@ class ActivationFunction extends Int {
   }
 
   /**   */
-  static reference_clipByValue_lowerBound_upperBound( x, lowerBound, upperBound ) {
+  static reference_clipByValue_lowerBound_upperBound(
+    x, lowerBound, upperBound ) {
+
     x = Math.fround( x );
     lowerBound = Math.fround( lowerBound );
     upperBound = Math.fround( upperBound );
@@ -204,43 +206,58 @@ class ActivationFunction extends Int {
 
 
   /** */
-  static clipByValue_Negative16_Positive16( x ) { return tf.clipByValue( x, -16, +16 ); }
+  static clipByValue_Negative16_Positive16( x ) {
+    return tf.clipByValue( x, -16, +16 ); }
   static reference_clipByValue_Negative16_Positive16( x ) {
-    return ActivationFunction.reference_clipByValue_lowerBound_upperBound( x, -16, +16 );
+    return ActivationFunction.reference_clipByValue_lowerBound_upperBound(
+      x, -16, +16 );
   }
 
   /** */
-  static clipByValue_Negative8_Positive8( x ) { return tf.clipByValue( x, -8, +8 ); }
+  static clipByValue_Negative8_Positive8( x ) {
+    return tf.clipByValue( x, -8, +8 ); }
   static reference_clipByValue_Negative8_Positive8( x ) {
-    return ActivationFunction.reference_clipByValue_lowerBound_upperBound( x, -8, +8 );
+    return ActivationFunction.reference_clipByValue_lowerBound_upperBound(
+      x, -8, +8 );
   }
 
   /** */
-  static clipByValue_Negative4_Positive4( x ) { return tf.clipByValue( x, -4, +4 ); }
+  static clipByValue_Negative4_Positive4( x ) {
+    return tf.clipByValue( x, -4, +4 ); }
   static reference_clipByValue_Negative4_Positive4( x ) {
-    return ActivationFunction.reference_clipByValue_lowerBound_upperBound( x, -4, +4 );
+    return ActivationFunction.reference_clipByValue_lowerBound_upperBound(
+      x, -4, +4 );
   }
 
   /**
-   * This non-linear function has the a little smaller range (i.e. 5) than RELU6 (i.e. 7), but has both negative and positive value
-   * around zero point.
+   * This non-linear function has the a little smaller range (i.e. 5) than
+   * RELU6 (i.e. 7), but has both negative and positive value around zero
+   * point.
    */
-  static clipByValue_Negative2_Positive2( x ) { return tf.clipByValue( x, -2, +2 ); }
+  static clipByValue_Negative2_Positive2( x ) {
+    return tf.clipByValue( x, -2, +2 ); }
   static reference_clipByValue_Negative2_Positive2( x ) {
-    return ActivationFunction.reference_clipByValue_lowerBound_upperBound( x, -2, +2 );
+    return ActivationFunction.reference_clipByValue_lowerBound_upperBound(
+      x, -2, +2 );
   }
 
   /**
-   * This non-linear function has the same range (i.e. 7) as RELU6, but has both negative and positive value around zero point.
+   * This non-linear function has the same range (i.e. 7) as RELU6, but has
+   * both negative and positive value around zero point.
    */
-  static clipByValue_Negative3_Positive3( x ) { return tf.clipByValue( x, -3, +3 ); }
+  static clipByValue_Negative3_Positive3( x ) {
+    return tf.clipByValue( x, -3, +3 ); }
   static reference_clipByValue_Negative3_Positive3( x ) {
-    return ActivationFunction.reference_clipByValue_lowerBound_upperBound( x, -3, +3 );
+    return ActivationFunction.reference_clipByValue_lowerBound_upperBound(
+      x, -3, +3 );
   }
 
-  static reference_tanh( x ) { return Math.fround( Math.tanh( Math.fround( x ) ) ); }
-  static reference_sin( x )  { return Math.fround( Math.sin( Math.fround( x ) ) );  }
-  static reference_cos( x )  { return Math.fround( Math.cos( Math.fround( x ) ) );  }
+  static reference_tanh( x ) {
+    return Math.fround( Math.tanh( Math.fround( x ) ) ); }
+  static reference_sin( x )  {
+    return Math.fround( Math.sin( Math.fround( x ) ) );  }
+  static reference_cos( x )  {
+    return Math.fround( Math.cos( Math.fround( x ) ) );  }
 
   static reference_relu6( x ) {
     x = Math.fround( x );
@@ -259,11 +276,13 @@ class ActivationFunction extends Int {
   }
 
   static reference_sigmoid( x ) {
-    return Math.fround( 1 / Math.fround( 1 + Math.fround( Math.exp( Math.fround( -x ) ) ) ) );
+    return Math.fround(
+      1 / Math.fround( 1 + Math.fround( Math.exp( Math.fround( -x ) ) ) ) );
   }
 
   static reference_softplus( x ) {
-    return Math.fround( Math.log( Math.fround( 1 + Math.fround( Math.exp( Math.fround( x ) ) ) ) ) );
+    return Math.fround( Math.log(
+      Math.fround( 1 + Math.fround( Math.exp( Math.fround( x ) ) ) ) ) );
   }
 
 }
@@ -274,22 +293,22 @@ class ActivationFunction extends Int {
  *   The activation function id (ValueDesc.ActivationFunction.Singleton.Ids.Xxx).
  *
  * @member {Function} pfn
- *   The activation function by tensorflow.js (e.g. tf.relu6, tf.tanh, tf.sin, tf.cos,
- * tf.sigmoid, tf.relu).
+ *   The activation function by tensorflow.js (e.g. tf.relu6, tf.tanh, tf.sin,
+ * tf.cos, tf.sigmoid, tf.relu).
  *
  * @member {Function} pfnReference
- *   The activation function by CPU. It is used by NumberImage.Base for comparing
- * correctness.
+ *   The activation function by CPU. It is used by NumberImage.Base for
+ * comparing correctness.
  *
  * @member {FloatValue.Bounds} outputRange
- *   The output value lower and upper bounds of the activation function for the whole
- * input domain.
+ *   The output value lower and upper bounds of the activation function for the
+ * whole input domain.
  *
  * @member {FloatValue.Bounds} inputDomainLinear
- *   The input value lower and upper bounds of the activation function for keeping the
- * mapping from input to output almost linear. In general speaking, an activation
- * function is non-linear in the whole domain. However, inside this special part of
- * the domain, it looks almost like a linear function.
+ *   The input value lower and upper bounds of the activation function for
+ * keeping the mapping from input to output almost linear. In general speaking,
+ * an activation function is non-linear in the whole domain. However, inside
+ * this special part of the domain, it looks almost like a linear function.
  *
  * @member {FloatValue.Bounds} outputRangeLinear
  *   The activation function's output range when its input is in domain
