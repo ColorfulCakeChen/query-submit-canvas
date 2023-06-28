@@ -9,7 +9,8 @@ import { IssuedObjects, All } from "./Pool_IssuedObjects.js";
 function assert_Pool_issuedCount( prefixMsg, issuedCount_shouldBe ) {
   if ( All.issuedCount != issuedCount_shouldBe )
     throw Error( `${prefixMsg}: memory leak: `
-      + `Pool.All.issuedCount ( ${All.issuedCount} ) should be ( ${issuedCount_shouldBe} ).` );
+      + `Pool.All.issuedCount ( ${All.issuedCount} ) `
+      + `should be ( ${issuedCount_shouldBe} ).` );
 }
 
 /**
@@ -27,7 +28,9 @@ function assert_Pool_issuedCount( prefixMsg, issuedCount_shouldBe ) {
  * @return {any}
  *   Return the returned value of function pfn().
  */
-function assert_Pool_issuedCount_same_after_as_before( prefixMsg, pfn, thisArg, ...restArgs ) {
+function assert_Pool_issuedCount_same_after_as_before(
+  prefixMsg, pfn, thisArg, ...restArgs ) {
+
   let returnedValue;
 
   try {
