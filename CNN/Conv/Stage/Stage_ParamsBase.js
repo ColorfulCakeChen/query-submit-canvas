@@ -16,9 +16,11 @@ import { InferencedParams } from "./Stage_InferencedParams.js";
  class Stage_ParamsBase extends Recyclable.Root {
 
   /**
-   * Used as default Stage.ParamsBase provider for conforming to Recyclable interface.
+   * Used as default Stage.ParamsBase provider for conforming to Recyclable
+   * interface.
    */
-  static Pool = new Pool.Root( "Stage.ParamsBase.Pool", Stage_ParamsBase, Stage_ParamsBase.setAsConstructor );
+  static Pool = new Pool.Root( "Stage.ParamsBase.Pool",
+    Stage_ParamsBase, Stage_ParamsBase.setAsConstructor );
 
   /**
    */
@@ -128,7 +130,8 @@ import { InferencedParams } from "./Stage_InferencedParams.js";
   }
 
   /**
-   * @return {boolean} Return true, if .inferencedParams will create .blockParamsArray
+   * @return {boolean}
+   *   Return true, if .inferencedParams will create .blockParamsArray
    */
   inferencedParams_blockParamsArray_needed() {
     return true;
@@ -147,7 +150,8 @@ import { InferencedParams } from "./Stage_InferencedParams.js";
   }
 
   get nSqueezeExcitationChannelCountDivisorName() {
-    return ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.getName_byId( this.nSqueezeExcitationChannelCountDivisor );
+    return ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton
+      .getName_byId( this.nSqueezeExcitationChannelCountDivisor );
   }
 
   get nActivationName() {
@@ -164,7 +168,8 @@ import { InferencedParams } from "./Stage_InferencedParams.js";
 
       + `blockCountRequested=${this.blockCountRequested}, `
       + `bPointwise1=${this.bPointwise1}, `
-      + `depthwiseFilterHeight=${this.depthwiseFilterHeight}, depthwiseFilterWidth=${this.depthwiseFilterWidth}, `
+      + `depthwiseFilterHeight=${this.depthwiseFilterHeight}, `
+      + `depthwiseFilterWidth=${this.depthwiseFilterWidth}, `
 
       + `nSqueezeExcitationChannelCountDivisorName=`
         + `${this.nSqueezeExcitationChannelCountDivisorName}`
