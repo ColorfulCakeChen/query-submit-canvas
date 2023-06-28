@@ -306,20 +306,23 @@ class Block_InferencedParams extends Recyclable.Root {
     input0_height, input0_width, input0_channelCount,
     nConvBlockTypeId,
     pointwise1ChannelCount,
-    depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad,
+    depthwise_AvgMax_Or_ChannelMultiplier,
+    depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad,
     depthwiseActivationId,
     pointwise20ChannelCount,
     nSqueezeExcitationChannelCountDivisor, bSqueezeExcitationPrefix,
   ) {
 
     // 1. input tensor count.
-    this.inputTensorCount = ValueDesc.ConvBlockType.inputTensorCount_get( nConvBlockTypeId );
+    this.inputTensorCount
+      = ValueDesc.ConvBlockType.inputTensorCount_get( nConvBlockTypeId );
 
     // 2. depthwise inferenced information.
     Block_InferencedParams.set_depthwise_inferenced_by.call( this,
       input0_height, input0_width, input0_channelCount,
       nConvBlockTypeId,
-      depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad,
+      depthwise_AvgMax_Or_ChannelMultiplier,
+      depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad,
       depthwiseActivationId,
       nSqueezeExcitationChannelCountDivisor, bSqueezeExcitationPrefix,
     );
@@ -334,7 +337,9 @@ class Block_InferencedParams extends Recyclable.Root {
     } else { // 3.2 Has input1 (i.e. two inputs).
 
       // 3.2.1 input1's height and width.
-      if ( this.bDepthwiseRequestedAndNeeded ) { // When depthwise operation existed, it dominates height and width.
+
+      // When depthwise operation existed, it dominates height and width.
+      if ( this.bDepthwiseRequestedAndNeeded ) {
         this.input1_height = this.depthwisePadInfo.outputHeight;
         this.input1_width = this.depthwisePadInfo.outputWidth;
       } else {
@@ -345,18 +350,23 @@ class Block_InferencedParams extends Recyclable.Root {
       // 3.2.2 input1's channel count
       switch ( nConvBlockTypeId ) {
         case ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BODY:
-          // So that concat( pointwise20, input1 )'s output channel could be divisible by 2 (for channel shuffling as two groups).
-          this.input1_channelCount = pointwise20ChannelCount; // (Note: pointwise20 always exists.)
+          // So that concat( pointwise20, input1 )'s output channel could be
+          // divisible by 2 (for channel shuffling as two groups).
+          //
+          // (Note: pointwise20 always exists.)
+          this.input1_channelCount = pointwise20ChannelCount;
           break;
 
         case ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_TAIL:
-          this.input1_channelCount = input0_channelCount; // (Usually, it is also the same as pointwise20ChannelCount.)
+          // (Usually, it is also the same as pointwise20ChannelCount.)
+          this.input1_channelCount = input0_channelCount;
           break;
 
         case ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21_BODY:
         case ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21_TAIL:
           if ( this.bDepthwiseRequestedAndNeeded ) {
-            this.input1_channelCount = this.depthwisePadInfo.outputChannelCount; // i.e. the same as depthwise1's output channel count.
+            // i.e. the same as depthwise1's output channel count.
+            this.input1_channelCount = this.depthwisePadInfo.outputChannelCount;
           } else {
             if ( pointwise1ChannelCount > 0 ) {
               this.input1_channelCount = pointwise1ChannelCount;
@@ -366,14 +376,15 @@ class Block_InferencedParams extends Recyclable.Root {
           }
           break;
 
-        default: // No input1 (i.e. one input; only input0). It should not execute to here.
+        // No input1 (i.e. one input; only input0).
+        default: // (It should not execute to here.)
           this.input1_height = 0;
           this.input1_width = 0;
           this.input1_channelCount = 0;
 
           if ( this.inputTensorCount > 1 )
-            throw Error(
-              `Block.InferencedParams.set_inputTensorCount_input1_height_width_channelCount_bDepthwiseRequestedAndNeeded_depthwisePadInfo_by(): `
+            throw Error( `Block.InferencedParams`
+              + `.set_inputTensorCount_input1_height_width_channelCount_bDepthwiseRequestedAndNeeded_depthwisePadInfo_by(): `
               + `When ( nConvBlockTypeId == `
               + `${ValueDesc.ConvBlockType.Singleton.getNameWithInt_byId( nConvBlockTypeId )}, `
               + `input tensor count ( ${this.inputTensorCount} ) should be one.`
