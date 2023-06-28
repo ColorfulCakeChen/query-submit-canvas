@@ -152,7 +152,8 @@ let PadInfoCalculator = ( ParentClass = Object ) => class PadInfoCalculator
     this.filterWidth = filterWidth;
     this.stridesPad = stridesPad;
 
-//!!! ...unfinished... (2021/03/17) What about ( filterHeight <= 0 ) or ( filterWidth <= 0 )?
+    // Q: What about ( filterHeight <= 0 ) or ( filterWidth <= 0 )?
+    // A: The result is unknown.
 
     this.channelMultiplier = AvgMax_Or_ChannelMultiplier;
     if (   ( ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.AVG
