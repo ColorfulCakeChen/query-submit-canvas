@@ -96,19 +96,23 @@ let Pool_Base = ( ParentClass = Object ) => class Pool_Base extends ParentClass 
 
   /**
    * @param {Object} objectToBeRecycled
-   *   The object (which should be an instance of this.ObjectClass) to be recycled.
+   *   The object (which should be an instance of this.ObjectClass) to be
+   * recycled.
    *
    * @return {boolean}
-   *   Return true, if the object is recycled. Return false, if the object has already been recycled.
+   *   Return true, if the object is recycled. Return false, if the object has
+   * already been recycled.
    */
   recycle( objectToBeRecycled ) {
 
     // 1. Recycle it.
     let bRecycleOk = Pool_Base.recycled_add.call( this, objectToBeRecycled );
 
-    // 2. Removed it from issued object list. Otheriwse, the list will become larger and larger.
+    // 2. Removed it from issued object list. Otheriwse, the list will become
+    //    larger and larger.
     if ( bRecycleOk )
-      IssuedObjects.issued_remove.call( IssuedObjects.Singleton, objectToBeRecycled );
+      IssuedObjects.issued_remove.call(
+        IssuedObjects.Singleton, objectToBeRecycled );
 
     return bRecycleOk;
   }
@@ -121,15 +125,17 @@ let Pool_Base = ( ParentClass = Object ) => class Pool_Base extends ParentClass 
    * @param {Base}
    *   The Pool.Base object for handling the recycled bojects.
    *
-   * @return {boolean} Return true, if the object is recorded in this recycle bin.
+   * @return {boolean}
+   *   Return true, if the object is recorded in this recycle bin.
    */
   recycled_has( object ) {
     return this.recycledObjectSet.has( object );
   }
 
   /**
-   * Discard all recycled objects (in this Pool.Base). (Note: The issued objects list are not influenced.)
-   * This could used if it is neccessary to release the memory used by the recycled objects.
+   * Discard all recycled objects (in this Pool.Base). (Note: The issued
+   * objects list are not influenced.) This could used if it is neccessary to
+   * release the memory used by the recycled objects.
    *
    * @param {Base}
    *   The Pool.Base object for handling the recycled bojects.
@@ -149,7 +155,8 @@ let Pool_Base = ( ParentClass = Object ) => class Pool_Base extends ParentClass 
    *
    * @return {boolean}
    *   - Return true, if the object is recycled.
-   *   - Return false, if the object is null, or has already been a recycled object.
+   *   - Return false, if the object is null, or has already been a recycled
+   *       object.
    *
    * @throws {Error}
    *   If the object has already been a recycled object.
@@ -162,9 +169,11 @@ let Pool_Base = ( ParentClass = Object ) => class Pool_Base extends ParentClass 
     if ( objectToBeRecycled == null )
       return false; // 1. Can not recycle a null object.
 
-    if ( this.recycledObjectSet.has( objectToBeRecycled ) ) { // 2. Avoid recycling one object multiple times (i.e. duplicately).
+    // 2. Avoid recycling one object multiple times (i.e. duplicately).
+    if ( this.recycledObjectSet.has( objectToBeRecycled ) ) {
 
-      //!!! (2022/07/01 Temp Remarked) Otherwise, it is difficult to track exception inside .sessionCall().
+      //!!! (2022/07/01 Temp Remarked) Otherwise, it is difficult to track
+      // exception inside .sessionCall().
       throw Error( `Pool.Base.recycled_add(): `
        + `An object ( ${objectToBeRecycled} ) is recycled multiple times. `
        + `This may imply some problem (e.g. resource not transferred properly).`
@@ -192,7 +201,8 @@ let Pool_Base = ( ParentClass = Object ) => class Pool_Base extends ParentClass 
    *   The Pool.Base object for handling the recycled bojects.
    *
    * @return {Object}
-   *   Pop the last object and return it. Return null, if there is no object in this recycle pool.
+   *   Pop the last object and return it. Return null, if there is no object in
+   * this recycle pool.
    */
   static recycled_pop() {
     let object = this.recycledObjectArray.pop();
@@ -206,8 +216,9 @@ let Pool_Base = ( ParentClass = Object ) => class Pool_Base extends ParentClass 
 
 
 /**
- * Almost the same as Pool.Base class except its parent class is fixed to Object. In other words, caller can not
- * specify the parent class of Pool.Root (so it is named "Root" which can not have parent class).
+ * Almost the same as Pool.Base class except its parent class is fixed to
+ * Object. In other words, caller can not specify the parent class of Pool.Root
+ * (so it is named "Root" which can not have parent class).
  */
 class Root extends Pool_Base() {
 }
