@@ -22,7 +22,7 @@ import { IssuedObjects } from "./Pool_IssuedObjects.js"
  * method will be called to re-initilaize it. Its return value will be the
  * final returned object.
  *
- * @member {Object} recycledObjectArray
+ * @member {Object[]} recycledObjectArray
  *   For fetching object efficiently (without creating iterator).
  *
  * @member {Set} recycledObjectSet
