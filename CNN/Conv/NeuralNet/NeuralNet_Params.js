@@ -173,10 +173,6 @@ class NeuralNet_Params extends Weights.Params( ParamsBase ) {
 
 // Define parameter descriptions.
 
-
-//!!! ...unfinished... (2023/05/06) has_implicit_input
-
-
 NeuralNet_Params.explicit_input_height =       new ParamDesc.Int(  "explicit_input_height",       1, ( 10 * 1024 ) );
 NeuralNet_Params.explicit_input_width =        new ParamDesc.Int(  "explicit_input_width",        1, ( 10 * 1024 ) );
 NeuralNet_Params.explicit_input_channelCount = new ParamDesc.Int(  "explicit_input_channelCount", 1, ( 10 * 1024 ) );
