@@ -492,60 +492,76 @@ class Stage_Base extends Recyclable.Root {
       }
 
       let blockParams, block, blockIniter;
-      let input0_ScaleBoundsArray_or_TensorPlaceholder, input1_ScaleBoundsArray_or_TensorPlaceholder;
+      let input0_ScaleBoundsArray_or_TensorPlaceholder;
+      let input1_ScaleBoundsArray_or_TensorPlaceholder;
       let next_input_height, next_input_width;
 
-      this.blockArray = Recyclable.OwnerArray.Pool.get_or_create_by(); // Note: OwnerArray can not accept length as parameter.
+      // Note: OwnerArray can not accept length as parameter.
+      this.blockArray = Recyclable.OwnerArray.Pool.get_or_create_by();
       this.blockArray.length = blockParamsCreator.blockCount;
 
-      for ( let i = 0; i < this.blockArray.length; ++i ) { // Block0, 1, 2, 3, ..., BlockLast.
+      // Block0, 1, 2, 3, ..., BlockLast.
+      for ( let i = 0; i < this.blockArray.length; ++i ) {
 
         if ( 0 == i ) { // Block0.
           blockParamsCreator.configTo_beforeBlock0();
-          input0_ScaleBoundsArray_or_TensorPlaceholder = input_ScaleBoundsArray_or_TensorPlaceholder;
+          input0_ScaleBoundsArray_or_TensorPlaceholder
+            = input_ScaleBoundsArray_or_TensorPlaceholder;
         } else { // (i.e. block1, 2, 3, ...)
-          blockParamsCreator.configTo_beforeBlockN_exceptBlock0( i, next_input_height, next_input_width );
+          blockParamsCreator.configTo_beforeBlockN_exceptBlock0(
+            i, next_input_height, next_input_width );
         }
 
         // BlockLast. (Note: Block0 may also be BlockLast.) 
         //
         // If this is the last block of this stage (i.e. at-stage-end)
         //   - a different depthwise filter size may be used.
-        //   - a different activation function may be used after pointwise2 convolution.
+        //   - a different activation function may be used after pointwise2
+        //       convolution.
         if ( ( this.blockArray.length - 1 ) == i ) {
           blockParamsCreator.configTo_beforeBlockLast();
         }
 
-        blockParams = blockParamsCreator.create_BlockParams( BlockParamsClass ); // Create current block parameters.
+        // Create current block parameters.
+        blockParams = blockParamsCreator.create_BlockParams( BlockParamsClass );
 
         if ( !this.channelShuffler ) { // If channelShuffler is got first time, keep it.
 
-          // If channelShuffler is not null, keep it so that its tensors could be released.
+          // If channelShuffler is not null, keep it so that its tensors could
+          // be released.
           let channelShuffler = blockParamsCreator.channelShuffler;
           if ( channelShuffler ) {
 
-            if ( ( this.channelShuffler ) && ( this.channelShuffler != channelShuffler ) )
+            if (   ( this.channelShuffler )
+                && ( this.channelShuffler != channelShuffler ) )
               throw Error( `Stage.Base.initer(): `
-                + `At most, only one (and same) channel shuffler could be used (and shared by all blocks of a stage).` );
+                + `At most, only one (and same) channel shuffler could be `
+                + `used (and shared by all blocks of a stage).` );
 
             this.channelShuffler = channelShuffler;
             blockParamsCreator.channelShuffler = null; // (Ownership transferred.)
 
-            this.tensorWeightCountExtracted += channelShuffler.tensorWeightCountExtracted;
-            this.tensorWeightCountTotal += channelShuffler.tensorWeightCountTotal;
+            this.tensorWeightCountExtracted
+              += channelShuffler.tensorWeightCountExtracted;
+            this.tensorWeightCountTotal
+              += channelShuffler.tensorWeightCountTotal;
 
-          // If channelShuffler is null, do not use it. Otherwise, the this.channelShuffler will be cleared and could not be used
-          // for releasing tensors.
+          // If channelShuffler is null, do not use it. Otherwise, the
+          // this.channelShuffler will be cleared and could not be used for
+          // releasing tensors.
           }
 
         // If channelShuffler has ever got, never change it.
         }
 
-        blockParams.channelShuffler = this.channelShuffler; // Block.Params needs channel shuffler info (but does not own it).
+        // Block.Params needs channel shuffler info (but does not own it).
+        blockParams.channelShuffler = this.channelShuffler;
 
         block = this.blockArray[ i ] = Block.Base.Pool.get_or_create_by();
-        blockIniter = block.initer( progressForBlocks.children[ i ], inputWeightArray, this.weightElementOffsetEnd, blockParams,
-          input0_ScaleBoundsArray_or_TensorPlaceholder, input1_ScaleBoundsArray_or_TensorPlaceholder
+        blockIniter = block.initer( progressForBlocks.children[ i ],
+          inputWeightArray, this.weightElementOffsetEnd, blockParams,
+          input0_ScaleBoundsArray_or_TensorPlaceholder,
+          input1_ScaleBoundsArray_or_TensorPlaceholder
         );
 
         this.bInitOk = yield* blockIniter;
