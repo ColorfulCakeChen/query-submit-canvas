@@ -7,25 +7,28 @@ import * as Recyclable from "../../util/Recyclable.js";
 import * as FloatValue from "../FloatValue.js";
 
 /**
- * A base class for weights extracting. It composes of a beninning and an ending array
- * index.
+ * A base class for weights extracting. It composes of a beninning and an
+ * ending array index.
  *
  * @member {number} weightElementOffsetBegin
- *   The beginning position (i.e. array index) to extract from inputWeightArray. If
- * this value is negative, the extraction will fail (i.e. ( bInitOk == false ) ).
+ *   The beginning position (i.e. array index) to extract from
+ * inputWeightArray. If this value is negative, the extraction will fail (i.e.
+ * ( bInitOk == false ) ).
  *
  * @member {number} weightElementOffsetEnd
- *   The ending position (i.e. array index) after extracting from inputWeightArray.
- * It is not inclusive and can be used as the beginning position of next (another)
- * extraction. It is meaningful only if ( bInitOk == true ).
+ *   The ending position (i.e. array index) after extracting from
+ * inputWeightArray. It is not inclusive and can be used as the beginning
+ * position of next (another) extraction. It is meaningful only if
+ * ( bInitOk == true ).
  *
  * @member {number} weightElementExtractedCount
- *   How many weights (i.e. elements) will be extracted from inputWeightArray. It
- * should be a non-negative integer value.
+ *   How many weights (i.e. elements) will be extracted from inputWeightArray.
+ * It should be a non-negative integer value.
  *
- *     - If too many elements need to be extracted (exceeds the inputWeightArray.length)
- *         or weightElementExtractedCount is NaN or weightElementExtractedCount is
- *         negative, the extraction will fail (i.e. ( bInitOk == false ) ).
+ *     - If too many elements need to be extracted (exceeds the
+ *         inputWeightArray.length) or weightElementExtractedCount is NaN or
+ *         weightElementExtractedCount is negative, the extracting will fail
+ *         (i.e. ( bInitOk == false ) ).
  *
  * @member {boolean} bInitOk
  *   If .init() success, it will be true.
