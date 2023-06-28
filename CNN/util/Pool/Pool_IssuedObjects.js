@@ -238,7 +238,7 @@ class IssuedObjects {
   }
 
   /**
-   * Collect objects which need to be kepy (i.e. not recycled) into
+   * Collect objects which need to be kept (i.e. not recycled) into
    * .sessionKeptObjectSet
    *
    * @param {IssuedObjects} this
