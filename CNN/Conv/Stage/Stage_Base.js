@@ -738,32 +738,39 @@ class Stage_Base extends Recyclable.Root {
       yield progressRoot;  // One block executed. Report progress.
     }
 
-    let outputTensor = this.blockLast.output0.realTensor; // Note: The blockLast should only output one tensor.
+    // Note: The blockLast should only output one tensor.
+    let outputTensor = this.blockLast.output0.realTensor;
     return outputTensor;
   }
 
   /** Process input, destroy or keep input, return result.
    *
    * @param {tf.tensor3d} inputTensor
-   *   The source input image ( height x width x channel ) which will be processed. This inputTensor may or may not be disposed
-   * according to init()'s bKeepInputTensor.
+   *   The source input image ( height x width x channel ) which will be
+   * processed. This inputTensor may or may not be disposed according to
+   * init()'s bKeepInputTensor.
    *
    * @return {tf.tensor3d}
    *   Return a new tensor. All other intermediate tensors were disposed.
    */
   apply( inputTensor ) {
-    this.block0.input0.realTensor = inputTensor; // Note: The block0 should only input one tensor.
+    // Note: The block0 should only input one tensor.
+    this.block0.input0.realTensor = inputTensor;
 
     let blockArray = this.blockArray;
     for ( let i = 0; i < blockArray.length; ++i ) {
       blockArray[ i ].apply();
     }
 
-    let outputTensor = this.blockLast.output0.realTensor; // Note: The blockLast should only output one tensor.
+    // Note: The blockLast should only output one tensor.
+    let outputTensor = this.blockLast.output0.realTensor;
     return outputTensor;
   }
 
-  /** How many blocks inside this stage are created. (may different from this.blockCountRequested.) */
+  /**
+   * How many blocks inside this stage are created. (may different from
+   * this.blockCountRequested.)
+   */
   get blockCount() {
     return this.blockArray.length;
   }
@@ -789,27 +796,35 @@ class Stage_Base extends Recyclable.Root {
   }
 
   /**
-   * @return {string} The description string of all (adjusted) parameters of initer().
+   * @return {string}
+   *   The description string of all (adjusted) parameters of initer().
    *
    * @override
    */
   toString() {
     let str =
-        `input_height=${this.input_height}, input_width=${this.input_width}, input_channelCount=${this.input_channelCount}, `
+        `input_height=${this.input_height}, `
+      + `input_width=${this.input_width}, `
+      + `input_channelCount=${this.input_channelCount}, `
+
       + `nConvStageTypeName=${this.nConvStageTypeName}(${this.nConvStageTypeId}), `
-      + `blockCountRequested=${this.blockCountRequested}, blockCount=${this.blockCount}, `
+      + `blockCountRequested=${this.blockCountRequested}, `
+      + `blockCount=${this.blockCount}, `
       + `bPointwise1=${this.bPointwise1}, `
       + `depthwiseFilterHeight=${this.depthwiseFilterHeight}, `
       + `depthwiseFilterWidth=${this.depthwiseFilterWidth}, `
 
-      + `nSqueezeExcitationChannelCountDivisorName=${this.nSqueezeExcitationChannelCountDivisorName}`
+      + `nSqueezeExcitationChannelCountDivisorName=`
+        + `${this.nSqueezeExcitationChannelCountDivisorName}`
         + `(${this.nSqueezeExcitationChannelCountDivisor}), `
 
       + `nActivationName=${this.nActivationName}(${this.nActivationId}), `
       + `bKeepInputTensor=${this.bKeepInputTensor}, `
 
       + `blockCount=${this.blockCount}, `
-      + `output_height=${this.output_height}, output_width=${this.output_width}, output_channelCount=${this.output_channelCount}`
+      + `output_height=${this.output_height}, `
+      + `output_width=${this.output_width}, `
+      + `output_channelCount=${this.output_channelCount}`
     ;
     return str;
   }
