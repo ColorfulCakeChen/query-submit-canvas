@@ -5,7 +5,8 @@ import * as Recyclable from "../../util/Recyclable.js";
 import * as FloatValue from "../../Unpacker/FloatValue.js";
 
 /**
- * Several scale arrays for escaping a value bounds from being activated (i.e. being non-linearized) by activation function.
+ * Several scale arrays for escaping a value bounds from being activated (i.e.
+ * being non-linearized) by activation function.
  *
  *
  * 1. Analysis
@@ -17,18 +18,25 @@ import * as FloatValue from "../../Unpacker/FloatValue.js";
  *     - activation escaping is ( scale = a, translate = b )
  *     - per output channel original is X  = ( x1 , x2 , ..., xq  )
  *     - per output channel modified is X' = ( x1', x2', ..., xq' ) = a * X + b
- *     - f(X') = f( a * X + b ) is guaranteed still kept linear although activation function f() is non-linear.
+ *     - f(X') = f( a * X + b ) is guaranteed still kept linear although
+ *         activation function f() is non-linear.
  *
  *   - This pointwise (or depthwise)
- *     - This pointwise input channel count is s. (Or, this depthwise filter size is s.)
+ *     - This pointwise input channel count is s. (Or, this depthwise filter
+ *         size is s.)
  *     - output channel count is u.
- *     - per output channel filter weights are S = ( S1, S2, ..., Ss ) and will be modified to S' = ( S1', S2', ..., Ss' ).
- *     - per output channel bias weights are T = ( T1, T2, ..., Tu ) and will be modified to T' = ( T1', T2', ..., Tu' ).
+ *     - per output channel filter weights are S = ( S1, S2, ..., Ss ) and will
+ *         be modified to S' = ( S1', S2', ..., Ss' ).
+ *     - per output channel bias weights are T = ( T1, T2, ..., Tu ) and will
+ *         be modified to T' = ( T1', T2', ..., Tu' ).
  *     - activation function is g()
  *     - activation escaping is ( scale = c, translate = d )
- *     - per output channel original is Y  = ( y1 , y2 , ..., yu  ) = S  * X  + T
- *     - per output channel modified is Y' = ( y1', y2', ..., yu' ) = S' * X' + T' = c * Y + d
- *     - g(Y') = g( c * Y + d ) is guaranteed still kept linear although activation function g() is non-linear.
+ *     - per output channel original is
+ *         Y  = ( y1 , y2 , ..., yu  ) = S  * X  + T
+ *     - per output channel modified is
+ *         Y' = ( y1', y2', ..., yu' ) = S' * X' + T' = c * Y + d
+ *     - g(Y') = g( c * Y + d ) is guaranteed still kept linear although
+ *         activation function g() is non-linear.
  *
  * Find out S' and T'.
  *
