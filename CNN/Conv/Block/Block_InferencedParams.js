@@ -208,31 +208,55 @@ class Block_InferencedParams extends Recyclable.Root {
 
     {
       if ( bLinear_between_depthwise_and_pointwise2 )
-        this.depthwiseBias = false; // Because its could be combined into the next operation's (i.e. pointwise2's) bias.
+        // Because its could be combined into the next operation's
+        // (i.e. pointwise2's) bias.
+        this.depthwiseBias = false;
       else
         this.depthwiseBias = true;
     }
 
-    let stridesPadInfo = ValueDesc.StridesPad.Singleton.getInfo_byId( depthwiseStridesPad );
+    let stridesPadInfo
+      = ValueDesc.StridesPad.Singleton.getInfo_byId( depthwiseStridesPad );
 
-    let bChannelCountSame = Depthwise.PadInfoCalculatorRoot.output_channelCount_is_same_as_input( depthwise_AvgMax_Or_ChannelMultiplier );
+    let bChannelCountSame
+      = Depthwise.PadInfoCalculatorRoot.output_channelCount_is_same_as_input(
+          depthwise_AvgMax_Or_ChannelMultiplier );
 
-    let bHeightWidthSame = Depthwise.PadInfoCalculatorRoot.output_height_width_is_same_as_input( input0_height, input0_width,
-      depthwise_AvgMax_Or_ChannelMultiplier, this.depthwiseFilterHeight_modified, this.depthwiseFilterWidth_modified, stridesPadInfo );
+    let bHeightWidthSame
+      = Depthwise.PadInfoCalculatorRoot.output_height_width_is_same_as_input(
+          input0_height, input0_width,
+          depthwise_AvgMax_Or_ChannelMultiplier,
+          this.depthwiseFilterHeight_modified,
+          this.depthwiseFilterWidth_modified,
+          stridesPadInfo );
 
-    let bNoNeighborAnalysis = Depthwise.PadInfoCalculatorRoot.output_height_width_is_no_neighbor_analysis( input0_height, input0_width,
-      depthwise_AvgMax_Or_ChannelMultiplier, this.depthwiseFilterHeight_modified, this.depthwiseFilterWidth_modified );
+    let bNoNeighborAnalysis
+      = Depthwise.PadInfoCalculatorRoot.output_height_width_is_no_neighbor_analysis(
+          input0_height, input0_width,
+          depthwise_AvgMax_Or_ChannelMultiplier,
+          this.depthwiseFilterHeight_modified,
+          this.depthwiseFilterWidth_modified );
 
-    // If a depthwise operation does not change output's ( height, width, channelCount ), does not analyze ( height, width ) neightbors,
-    // does not non-linear, then it is equivalent to do nothing.
+    // If a depthwise operation does not change output's ( height, width,
+    // channelCount ), does not analyze ( height, width ) neightbors, does not
+    // non-linear, then it is equivalent to do nothing.
     //
     let bDepthwiseRequestedAndNeeded;
     {
-      let depthwise_bDoesNothing = ( bChannelCountSame && bHeightWidthSame && bNoNeighborAnalysis && bLinear_between_depthwise_and_pointwise2 );
+      let depthwise_bDoesNothing
+        = (   bChannelCountSame
+           && bHeightWidthSame
+           && bNoNeighborAnalysis
+           && bLinear_between_depthwise_and_pointwise2 );
+
       if ( depthwise_bDoesNothing )
-        bDepthwiseRequestedAndNeeded = this.bDepthwiseRequestedAndNeeded = false; // depthwise is requested, but is not necessary.
+        // depthwise is requested, but is not necessary.
+        bDepthwiseRequestedAndNeeded
+          = this.bDepthwiseRequestedAndNeeded = false;
       else
-        bDepthwiseRequestedAndNeeded = this.bDepthwiseRequestedAndNeeded = true; // depthwise is requested and is necessary.
+        // depthwise is requested and is necessary.
+        bDepthwiseRequestedAndNeeded
+          = this.bDepthwiseRequestedAndNeeded = true;
     }
 
     // depthwisePadInfo
