@@ -187,11 +187,6 @@ class AsyncWorker_Proxy extends Recyclable.Root {
    */
   static WorkerBodyStub_create_Codes_String( workerModuleURL ) {
 
-//!!! ...unfinished... (2022/09/15)
-// What if loading workerModuleURL failed?
-// Re-try (but should inform this WorkerProxy and user).
-
-
     // The codes do the following:
     //
     //   - Import the specified module URL.
@@ -216,6 +211,17 @@ class AsyncWorker_Proxy extends Recyclable.Root {
       + `  AsyncWorker_Body_temporaryMessageQueue.push( e );\n`
       + `}\n`
       ;
+
+
+    // Q: What if import( workerModuleURL ) failed?
+    // A: It will fail forever unless user reload web page.
+    //
+    // Although we can design some mechanism to use (binary) exponential
+    // back-off waiting and retry import(), it seems that retry importing does
+    // not work even network connection has been recovery. (This is according
+    // to experiment.)
+    //
+
 
 
 //!!! (2023/03/22 Added and Remarked) Not workable old codes.
