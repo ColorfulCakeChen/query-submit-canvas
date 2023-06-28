@@ -13,7 +13,8 @@ import * as Depthwise from "../Depthwise.js";
 class Block_InferencedParams extends Recyclable.Root {
 
   /**
-   * Used as default Block.InferencedParams provider for conforming to Recyclable interface.
+   * Used as default Block.InferencedParams provider for conforming to
+   * Recyclable interface.
    */
   static Pool = new Pool.Root( "Block.InferencedParams.Pool",
     Block_InferencedParams, Block_InferencedParams.setAsConstructor );
@@ -25,7 +26,8 @@ class Block_InferencedParams extends Recyclable.Root {
     input0_height, input0_width, input0_channelCount,
     nConvBlockTypeId,
     pointwise1ChannelCount,
-    depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad,
+    depthwise_AvgMax_Or_ChannelMultiplier,
+    depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad,
     depthwiseActivationId,
     pointwise20ChannelCount, pointwise20ActivationId,
     nSqueezeExcitationChannelCountDivisor, bSqueezeExcitationPrefix,
@@ -36,7 +38,8 @@ class Block_InferencedParams extends Recyclable.Root {
       input0_height, input0_width, input0_channelCount,
       nConvBlockTypeId,
       pointwise1ChannelCount,
-      depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad,
+      depthwise_AvgMax_Or_ChannelMultiplier,
+      depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad,
       depthwiseActivationId,
       pointwise20ChannelCount, pointwise20ActivationId,
       nSqueezeExcitationChannelCountDivisor, bSqueezeExcitationPrefix,
@@ -49,7 +52,8 @@ class Block_InferencedParams extends Recyclable.Root {
     input0_height, input0_width, input0_channelCount,
     nConvBlockTypeId,
     pointwise1ChannelCount,
-    depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad,
+    depthwise_AvgMax_Or_ChannelMultiplier,
+    depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad,
     depthwiseActivationId,
     pointwise20ChannelCount, pointwise20ActivationId,
     nSqueezeExcitationChannelCountDivisor, bSqueezeExcitationPrefix,
@@ -60,7 +64,8 @@ class Block_InferencedParams extends Recyclable.Root {
       input0_height, input0_width, input0_channelCount,
       nConvBlockTypeId,
       pointwise1ChannelCount,
-      depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad,
+      depthwise_AvgMax_Or_ChannelMultiplier,
+      depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad,
       depthwiseActivationId,
       pointwise20ChannelCount, pointwise20ActivationId,
       nSqueezeExcitationChannelCountDivisor, bSqueezeExcitationPrefix,
@@ -74,7 +79,8 @@ class Block_InferencedParams extends Recyclable.Root {
     input0_height, input0_width, input0_channelCount,
     nConvBlockTypeId,
     pointwise1ChannelCount,
-    depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad,
+    depthwise_AvgMax_Or_ChannelMultiplier,
+    depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad,
     depthwiseActivationId,
     pointwise20ChannelCount, pointwise20ActivationId,
     nSqueezeExcitationChannelCountDivisor, bSqueezeExcitationPrefix,
@@ -84,7 +90,8 @@ class Block_InferencedParams extends Recyclable.Root {
       input0_height, input0_width, input0_channelCount,
       nConvBlockTypeId,
       pointwise1ChannelCount,
-      depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad,
+      depthwise_AvgMax_Or_ChannelMultiplier,
+      depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad,
       depthwiseActivationId,
       pointwise20ChannelCount, pointwise20ActivationId,
       nSqueezeExcitationChannelCountDivisor, bSqueezeExcitationPrefix,
@@ -122,17 +129,20 @@ class Block_InferencedParams extends Recyclable.Root {
    *   - this.bDepthwiseRequestedAndNeeded
    *   - this.depthwisePadInfo (set if ( this.bDepthwiseRequestedAndNeeded == true ))
    *
-   * When ( bDepthwiseRequestedAndNeeded == false ), the depthwise could be discarded to improve performance.
+   * When ( bDepthwiseRequestedAndNeeded == false ), the depthwise could be
+   * discarded to improve performance.
    */
   static set_depthwise_inferenced_by(
     input0_height, input0_width, input0_channelCount,
     nConvBlockTypeId,
-    depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad,
+    depthwise_AvgMax_Or_ChannelMultiplier,
+    depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad,
     depthwiseActivationId,
     nSqueezeExcitationChannelCountDivisor, bSqueezeExcitationPrefix,
   ) {
 
-    // When pad is "valid", the depthwise (avgPooling/maxPooling/conv)'s filter size could not be larger than input image size.
+    // When pad is "valid", the depthwise (avgPooling/maxPooling/conv)'s filter
+    // size could not be larger than input image size.
     //
     // Note: When pad is "same", this restriction does not exist.
     //
@@ -155,18 +165,23 @@ class Block_InferencedParams extends Recyclable.Root {
     {
       bNoSqueezeExcitation_between_depthwise_and_pointwise2 =
 
-         // no squeeze-and-excitation (so there is no squeeze-and-excitation between depthwise and pointwise2)
-        (   ( nSqueezeExcitationChannelCountDivisor == ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.NONE ) // (-2)
+         // no squeeze-and-excitation (so there is no squeeze-and-excitation
+         // between depthwise and pointwise2)
+        (   ( nSqueezeExcitationChannelCountDivisor
+                == ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.NONE ) // (-2)
 
          // or, has squeeze-and-excitation, but after pointwise2.
          || ( bSqueezeExcitationPrefix == false )
         );
     }
 
-    if ( depthwise_AvgMax_Or_ChannelMultiplier == ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.NONE ) {
+    if ( depthwise_AvgMax_Or_ChannelMultiplier
+           == ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.NONE ) { // (0)
 
-      // Note: Because no depthwise, there is no depthwise activation function necessary to be considered.
-      this.bLinear_between_depthwise_and_pointwise2 = bNoSqueezeExcitation_between_depthwise_and_pointwise2;
+      // Note: Because no depthwise, there is no depthwise activation function
+      //       necessary to be considered.
+      this.bLinear_between_depthwise_and_pointwise2
+        = bNoSqueezeExcitation_between_depthwise_and_pointwise2;
 
       this.depthwiseBias = false;
       this.bDepthwiseRequestedAndNeeded = false; // depthwise is not requested.
@@ -179,9 +194,14 @@ class Block_InferencedParams extends Recyclable.Root {
 
     let bLinear_between_depthwise_and_pointwise2;
     {
-      bLinear_between_depthwise_and_pointwise2 = this.bLinear_between_depthwise_and_pointwise2 =
-         ( depthwiseActivationId == ValueDesc.ActivationFunction.Singleton.Ids.NONE ) // depthwise has no activation function.
-      && ( bNoSqueezeExcitation_between_depthwise_and_pointwise2 ) // no squeeze-and-excitation between depthwise and pointwise2.
+      bLinear_between_depthwise_and_pointwise2
+        = this.bLinear_between_depthwise_and_pointwise2
+        = 
+             // depthwise has no activation function.
+             ( depthwiseActivationId == ValueDesc.ActivationFunction.Singleton.Ids.NONE ) // (0)
+
+             // no squeeze-and-excitation between depthwise and pointwise2.
+          && ( bNoSqueezeExcitation_between_depthwise_and_pointwise2 )
       ;
     }
 
