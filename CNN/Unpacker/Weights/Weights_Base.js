@@ -37,7 +37,8 @@ let Weights_Base = ( ParentClass = Object ) =>
   class Weights_Base extends Recyclable.Base( ParentClass ) {
 
   /**
-   * Used as default Weights.Base provider for conforming to Recyclable interface.
+   * Used as default Weights.Base provider for conforming to Recyclable
+   * interface.
    */
   static Pool = new Pool.Root( "Weights.Base.Pool",
     Weights_Base, Weights_Base.setAsConstructor );
@@ -73,16 +74,19 @@ let Weights_Base = ( ParentClass = Object ) =>
   }
 
   /**
-   * Determine .weightElementOffsetEnd according to the inputWeightArray.lnegth,
-   * .weightElementOffsetBegin and .weightElementExtractedCount.
+   * Determine .weightElementOffsetEnd according to the
+   * inputWeightArray.lnegth, .weightElementOffsetBegin and
+   * .weightElementExtractedCount.
    *
    * @param {number[]|Float32Array} inputWeightArray
-   *   The underlying weights source array to be extracted from. It will not be kept
-   * by this object.
+   *   The underlying weights source array to be extracted from. It will not be
+   * kept by this object.
    *
    * @return {boolean} Return false, if extraction failed.
    */ 
-  init( inputWeightArray, weightElementOffsetBegin, weightElementExtractedCount ) {
+  init(
+    inputWeightArray, weightElementOffsetBegin, weightElementExtractedCount ) {
+
     this.weightElementOffsetBegin = weightElementOffsetBegin;
     this.weightElementExtractedCount = weightElementExtractedCount;
     this.bInitOk = false;
