@@ -95,7 +95,7 @@ import * as FloatValue from "../../Unpacker/FloatValue.js";
  *
  *   - For example, sin(), tanh(), erf() are feasible.
  *     - But cos(), relu(), relu6(), sigmoid() are not feasible because their
- *         output always non-negative near the origin point. These functions
+ *         output is always non-negative near the origin point. These functions
  *         always need bias (i.e. non-zero translate) to escape their
  *         non-linear part.
  *
