@@ -192,19 +192,22 @@ Weights_Base.ValueBounds = new FloatValue.Bounds( -( 2 ** 24 ), +( 2 ** 24 ) );
  */
 class To {
 
-  /** @return {number} Return the absolute value of the trucated value (i.e. integer). */
+  /**
+   * @return {number}
+   *   Return the absolute value of the trucated value (i.e. integer).
+   */
   static IntegerZeroPositive( v ) {
     return Math.abs( Math.trunc( v ) );
   }
 
   /**
    * @param {any[]} lookUpArray
-   *   The value will be converted into an integer between [ 0, lookUpArray.length ).
-   * Use it as array index. Return lookUpArray[ index ].
+   *   The value will be converted into an integer between [ 0,
+   * lookUpArray.length ). Use it as array index. Return lookUpArray[ index ].
    *
    * @return {any}
-   *   Convert number value into an integer between [ 0, lookUpArray.length ). Use it
-   * as array index. Return the looked up element value.
+   *   Convert number value into an integer between [ 0, lookUpArray.length ).
+   * Use it as array index. Return the looked up element value.
    */
   static ArrayElement( value, lookUpArray ) {
     let i = To.IntegerZeroPositive( value ) % lookUpArray.length;
