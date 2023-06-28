@@ -110,7 +110,7 @@ class ActivationFunction extends Int {
           new FloatValue.Bounds( -2, +2 ), new FloatValue.Bounds( -2, +2 ),
           new FloatValue.Bounds( -2, +2 ) ),
 
-          //!!! (2022/08/04 Remarked) Try small range whether reduceing accumulated error.
+          //!!! (2022/08/04 Remarked) Try small range whether reducing accumulated error.
           // ActivationFunction.clipByValue_Negative8_Positive8,
           // ActivationFunction.reference_clipByValue_Negative8_Positive8,
           // new FloatValue.Bounds( -8, +8 ), new FloatValue.Bounds( -8, +8 ),
