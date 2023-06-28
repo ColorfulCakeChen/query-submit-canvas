@@ -23,7 +23,8 @@ import { ParamsBase } from "./Stage_ParamsBase.js";
 class Stage_Params extends Weights.Params( ParamsBase ) {
 
   /**
-   * Used as default Stage.Params provider for conforming to Recyclable interface.
+   * Used as default Stage.Params provider for conforming to Recyclable
+   * interface.
    */
   static Pool = new Pool.Root( "Stage.Params.Pool",
     Stage_Params, Stage_Params.setAsConstructor );
