@@ -6,16 +6,20 @@ import * as ValueDesc from "../../../Unpacker/ValueDesc.js";
 import { MobileNetV2_Thin } from "./MobileNetV2_Thin.js";
 
 /**
- * Provide parameters for MobileNetV2 (i.e. add-inut-to-output, pointwise1 is tiwce size of pointwise20).
+ * Provide parameters for MobileNetV2 (i.e. add-inut-to-output, pointwise1 is
+ * tiwce size of pointwise20).
  *
  *
  */
 class MobileNetV2 extends MobileNetV2_Thin {
 
   /**
-   * Used as default Stage.BlockParamsCreator.MobileNetV2 provider for conforming to Recyclable interface.
+   * Used as default Stage.BlockParamsCreator.MobileNetV2 provider for
+   * conforming to Recyclable interface.
    */
-  static Pool = new Pool.Root( "Stage.BlockParamsCreator.MobileNetV2.Pool", MobileNetV2, MobileNetV2.setAsConstructor );
+  static Pool = new Pool.Root(
+    "Stage.BlockParamsCreator.MobileNetV2.Pool",
+    MobileNetV2, MobileNetV2.setAsConstructor );
 
   /**
    */
@@ -43,7 +47,8 @@ class MobileNetV2 extends MobileNetV2_Thin {
 
   /** @override */
   configTo_beforeBlock0() {
-    super.configTo_beforeBlock0(); // block0's input0_height, input0_width, input0_channelCount, activation.
+    // block0's input0_height, input0_width, input0_channelCount, activation.
+    super.configTo_beforeBlock0();
 
     let stageParams = this.stageParams;
 
@@ -59,7 +64,9 @@ class MobileNetV2 extends MobileNetV2_Thin {
 
   /** @override */
   configTo_beforeBlockN_exceptBlock0( blockIndex, input_height, input_width ) {
-    super.configTo_beforeBlockN_exceptBlock0( blockIndex, input_height, input_width ); // block1, 2, 3, ... are almost the same as MobileNetV2_Thin.
+    // block1, 2, 3, ... are almost the same as MobileNetV2_Thin.
+    super.configTo_beforeBlockN_exceptBlock0(
+      blockIndex, input_height, input_width );
 
     let stageParams = this.stageParams;
 
@@ -80,4 +87,3 @@ class MobileNetV2 extends MobileNetV2_Thin {
   }
 
 }
-
