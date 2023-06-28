@@ -17,21 +17,25 @@ import * as BlockParamsCreator from "./Stage_BlockParamsCreator.js";
  * ( stageParamsBase.inferencedParams_blockParamsArray_needed() == true ).
  *
  * @member {number} output_height
- *   The height of output image. Usually, it is roughly half of the input height
- * (i.e. result of depthwise convolution with ( strides = 2, pad = "same" ) ).
+ *   The height of output image. Usually, it is roughly half of the input
+ * height (i.e. result of depthwise convolution with ( strides = 2,
+ * pad = "same" ) ).
  *
  * @member {number} output_width
- *   The width of output image. Usually, it is roughly half of the input width
- * (i.e. result of depthwise convolution with ( strides = 2, pad = "same" ) ).
+ *   The width of output image. Usually, it is roughly half of the input
+ * width (i.e. result of depthwise convolution with ( strides = 2,
+ * pad = "same" ) ).
  *
  * @member {number} output_channelCount
- *   The channel count of output image. Usually, it is double the input channel count.
+ *   The channel count of output image. Usually, it is double the input channel
+ * count.
  *
  */
 class Stage_InferencedParams extends Recyclable.Root {
 
   /**
-   * Used as default Stage.InferencedParams provider for conforming to Recyclable interface.
+   * Used as default Stage.InferencedParams provider for conforming to
+   * Recyclable interface.
    */
   static Pool = new Pool.Root( "Stage.InferencedParams.Pool",
     Stage_InferencedParams, Stage_InferencedParams.setAsConstructor );
@@ -101,10 +105,12 @@ class Stage_InferencedParams extends Recyclable.Root {
     if ( this.blockParamsArray ) {
       this.blockParamsArray.clear(); // (Re-used if exists.)
     } else {
-      this.blockParamsArray = Recyclable.OwnerArray.Pool.get_or_create_by(); // Note: OwnerArray can not accept length as parameter.
+      // Note: OwnerArray can not accept length as parameter.
+      this.blockParamsArray = Recyclable.OwnerArray.Pool.get_or_create_by();
     }
 
-    this.channelShuffler_dispose(); // So that new channel shuffler (if has) could be owned.
+    // So that new channel shuffler (if has) could be owned.
+    this.channelShuffler_dispose();
 
     if ( !stageParamsBase.inferencedParams_blockParamsArray_needed() )
       return; // No need to create blockParamsArray.
@@ -114,55 +120,69 @@ class Stage_InferencedParams extends Recyclable.Root {
       let BlockParamsClass = stageParamsBase.BlockParamsClass_get();
 
       // Create every block.
-      blockParamsCreator = Stage_InferencedParams.create_BlockParamsCreator_byStageParams( stageParamsBase );
-      blockParamsCreator.determine_blockCount_depthwiseFilterHeightWidth_Default_Last(); // Calculate the real block count.
+      blockParamsCreator = Stage_InferencedParams
+        .create_BlockParamsCreator_byStageParams( stageParamsBase );
+
+      // Calculate the real block count.
+      blockParamsCreator
+        .determine_blockCount_depthwiseFilterHeightWidth_Default_Last();
 
       this.blockCount = blockParamsCreator.blockCount;
       this.blockParamsArray.length = this.blockCount;
 
       let blockParams;
       let next_input_height, next_input_width;
-      for ( let i = 0; i < this.blockCount; ++i ) { // Block0, 1, 2, 3, ..., BlockLast.
+
+      // Block0, 1, 2, 3, ..., BlockLast.
+      for ( let i = 0; i < this.blockCount; ++i ) {
 
         if ( 0 == i ) { // Block0.
           blockParamsCreator.configTo_beforeBlock0();
         } else { // (i.e. block1, 2, 3, ...)
-          blockParamsCreator.configTo_beforeBlockN_exceptBlock0( i, next_input_height, next_input_width );
+          blockParamsCreator.configTo_beforeBlockN_exceptBlock0( i,
+            next_input_height, next_input_width );
         }
 
         // BlockLast. (Note: Block0 may also be BlockLast.) 
         //
         // If this is the last block of this stage (i.e. at-stage-end)
         //   - a different depthwise filter size may be used.
-        //   - a different activation function may be used after pointwise2 convolution.
+        //   - a different activation function may be used after pointwise2
+        //       convolution.
         if ( ( this.blockParamsArray.length - 1 ) == i ) {
           blockParamsCreator.configTo_beforeBlockLast();
         }
 
+        // Create current block.
         blockParams = this.blockParamsArray[ i ]
-          = blockParamsCreator.create_BlockParams( BlockParamsClass ); // Create current block.
+          = blockParamsCreator.create_BlockParams( BlockParamsClass );
 
-        if ( !this.channelShuffler ) { // If channelShuffler is got first time, keep it.
+        // If channelShuffler is got first time, keep it.
+        if ( !this.channelShuffler ) {
 
-          // If channelShuffler is not null, keep it so that its tensors could be released.
+          // If channelShuffler is not null, keep it so that its tensors could
+          // be released.
           let channelShuffler = blockParamsCreator.channelShuffler;
           if ( channelShuffler ) {
 
             if ( ( this.channelShuffler ) && ( this.channelShuffler != channelShuffler ) )
               throw Error( `Stage.ParamsBase.blockParamsArray_create(): `
-                + `At most, only one (and same) channel shuffler could be used (and shared by all blocks of a stage).` );
+                + `At most, only one (and same) channel shuffler could be `
+                + `used (and shared by all blocks of a stage).` );
 
             this.channelShuffler = channelShuffler;
             blockParamsCreator.channelShuffler = null; // (Ownership transferred.)
 
-          // If channelShuffler is null, do not use it. Otherwise, the this.channelShuffler
-          // will be cleared and could not be used for releasing tensors.
+          // If channelShuffler is null, do not use it. Otherwise, the
+          // this.channelShuffler will be cleared and could not be used for
+          // releasing tensors.
           }
 
         // If channelShuffler has ever got, never change it.
         }
 
-        blockParams.channelShuffler = this.channelShuffler; // Block.Params needs channel shuffler info (but does not own it).
+        // Block.Params needs channel shuffler info (but does not own it).
+        blockParams.channelShuffler = this.channelShuffler;
 
         blockParams.inferencedParams_create();
 
@@ -170,8 +190,12 @@ class Stage_InferencedParams extends Recyclable.Root {
         next_input_width = blockParams.output_width;
       }
 
-      this.blockParams0 = this.blockParamsArray[ 0 ]; // Shortcut to the first block.
-      this.blockParamsLast = this.blockParamsArray[ this.blockParamsArray.length - 1 ]; // Shortcut to the last block.
+      // Shortcut to the first block.
+      this.blockParams0 = this.blockParamsArray[ 0 ];
+
+      // Shortcut to the last block.
+      this.blockParamsLast
+        = this.blockParamsArray[ this.blockParamsArray.length - 1 ];
 
       this.output_height = this.blockParamsLast.output_height;
       this.output_width = this.blockParamsLast.output_width;
@@ -179,7 +203,8 @@ class Stage_InferencedParams extends Recyclable.Root {
 
     } finally {
       if ( blockParamsCreator ) {
-        blockParamsCreator.channelShuffler = null; // (Because ownership has been transferred to this Stage object.)
+        // (Because ownership has been transferred to this Stage object.)
+        blockParamsCreator.channelShuffler = null;
         blockParamsCreator.disposeResources_and_recycleToPool();
         blockParamsCreator = null;
       }
@@ -191,24 +216,34 @@ class Stage_InferencedParams extends Recyclable.Root {
    *   The Stage.ParamsBase object to be referenced.
    *
    * @return {Stage.BlockParamsCreator.Base}
-   *   Return newly created Stage.BlockParamsCreator.Xxx object according to stageParams.nConvStageTypeId.
+   *   Return newly created Stage.BlockParamsCreator.Xxx object according to
+   * stageParams.nConvStageTypeId.
    */
    static create_BlockParamsCreator_byStageParams( stageParams ) {
+    const funcNameInMessage = "create_BlockParamsCreator_byStageParams";
 
     if ( stageParams.blockCountRequested < 2 )
-      throw Error( `Stage.InferencedParams.Base.create_BlockParamsCreator_byStageParams(): `
-        + `stageParams.blockCountRequested ( ${stageParams.blockCountRequested} ) must be >= 2.` );
+      throw Error( `Stage.InferencedParams.Base.${funcNameInMessage}(): `
+        + `stageParams.blockCountRequested `
+        + `( ${stageParams.blockCountRequested} ) must be >= 2.` );
+
+    const nConvStageTypeId_to_BlockParamsCreator_ClassArray
+      = Stage_InferencedParams.nConvStageTypeId_to_BlockParamsCreator_ClassArray;
 
     if ( !(   ( stageParams.nConvStageTypeId >= 0 )
-           && ( stageParams.nConvStageTypeId < Stage_InferencedParams.nConvStageTypeId_to_BlockParamsCreator_ClassArray.length )
+           && ( stageParams.nConvStageTypeId < nConvStageTypeId_to_BlockParamsCreator_ClassArray.length )
           ) 
        )
-      throw Error( `Stage.InferencedParams.create_BlockParamsCreator_byStageParams(): `
-        + `unknown stageParams.nConvStageTypeId ( ${stageParams.nConvStageTypeId} ) value.`
+      throw Error( `Stage.InferencedParams.${funcNameInMessage}(): `
+        + `unknown stageParams.nConvStageTypeId `
+        + `( ${stageParams.nConvStageTypeId} ) value.`
       );
 
-    let classBlockParamsCreator = Stage_InferencedParams.nConvStageTypeId_to_BlockParamsCreator_ClassArray[ stageParams.nConvStageTypeId ];
-    let aBlockParamsCreator = classBlockParamsCreator.Pool.get_or_create_by( stageParams );
+    let classBlockParamsCreator = nConvStageTypeId_to_BlockParamsCreator_ClassArray[
+        stageParams.nConvStageTypeId ];
+
+    let aBlockParamsCreator
+      = classBlockParamsCreator.Pool.get_or_create_by( stageParams );
 
     return aBlockParamsCreator;
   }
@@ -227,7 +262,8 @@ class Stage_InferencedParams extends Recyclable.Root {
 }
 
 /**
- * Mapping nConvStageTypeId (number as array index) to BlockParamsCreator class object.
+ * Mapping nConvStageTypeId (number as array index) to BlockParamsCreator class
+ * object.
  */
 Stage_InferencedParams.nConvStageTypeId_to_BlockParamsCreator_ClassArray = [
   BlockParamsCreator.MobileNetV1,                         // ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V1 (0)
