@@ -155,7 +155,7 @@ class Weights_Root extends Weights_Base() {
  *     - Suppose depthwise uses 4x4 (= 2^4) filter for every channel.
  *     - Suppose every convolution does not have activation function (so that
  *         its result is unbounded).
- *     - Note: Perhaps, the squeeze-and-excitation should be considered.
+ *     - Note: Perhaps, the squeeze-and-excitation should also be considered.
  *   - If every element of pointwise1Input is bounds to [ -2^24, +2^24 ].
  *   - If every weights of pointwise1, depthwise, pointwise2 is bounds to
  *       [ -2^24, +2^24 ].
