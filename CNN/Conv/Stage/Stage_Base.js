@@ -259,9 +259,9 @@ import { InferencedParams } from "./Stage_InferencedParams.js";
  *   - ShuffleNetV2 has pass-through channel group. (split-concat)
  *
  * Advantage:
- *   - Because these mechanism, it seems no problem to use any activation function. Even
- *       the activation function will destroy all negative input (e.g. RELU6 or SIGMOID
- *       or COS).
+ *   - Because these mechanism, it seems no problem to use any activation
+ *       function. Even the activation function will destroy all negative input
+ *       (e.g. RELU6 or SIGMOID or COS).
  *
  *   - They could achieve activation escaping without increase floating-point
  *       accumulated error.
@@ -276,12 +276,13 @@ import { InferencedParams } from "./Stage_InferencedParams.js";
  *  If true, this object initialized (i.e. initer()) successfully.
  *
  * @member {number} weightElementOffsetBegin
- *   The position which is started (inclusive) to extract from inputWeightArray by
- * initer().
+ *   The position which is started (inclusive) to extract from inputWeightArray
+ * by initer().
  *
  * @member {number} weightElementOffsetEnd
- *   The position which is ended to (non-inclusive) extract from inputWeightArray by
- * initer(). Where to extract next weights. Only meaningful when ( this.bInitOk == true ).
+ *   The position which is ended to (non-inclusive) extract from
+ * inputWeightArray by initer(). Where to extract next weights. Only meaningful
+ * when ( this.bInitOk == true ).
  *
  * @member {Block.Base[]} blockArray
  *   All computation blocks of this stage.
@@ -290,8 +291,8 @@ import { InferencedParams } from "./Stage_InferencedParams.js";
  *   The first computation block of this stage.
  *
  * @member {Block.Base} blockLast
- *   The last computation block of this stage. It may be the same as this.block0 when
- * there is only one block inside this stage.
+ *   The last computation block of this stage. It may be the same as
+ * this.block0 when there is only one block inside this stage.
  *
  * @member {TensorPlaceholder.Base} input0
  *   The TensorPlaceholder object which represents this stage's input.
@@ -309,22 +310,25 @@ import { InferencedParams } from "./Stage_InferencedParams.js";
  *   The TensorPlaceholder object which represents this stage's output.
  *
  * @member {number} tensorWeightCountTotal
- *   The total wieght count used in tensors. Not including Params, because they are
- * not used in tensors. Including inferenced weights, if they are used in tensors.
+ *   The total wieght count used in tensors. Not including Params, because they
+ * are not used in tensors. Including inferenced weights, if they are used in
+ * tensors.
  *
  * @member {number} tensorWeightCountExtracted
  *   The wieght count extracted from inputWeightArray and used in tensors. Not
- * including Params, because they are not used in tensors. Not including inferenced
- * weights (even if they are used in tensors), because they are not extracted from
- * inputWeightArray.
+ * including Params, because they are not used in tensors. Not including
+ * inferenced weights (even if they are used in tensors), because they are not
+ * extracted from inputWeightArray.
  *
  */
 class Stage_Base extends Recyclable.Root {
 
   /**
-   * Used as default Stage.Base provider for conforming to Recyclable interface.
+   * Used as default Stage.Base provider for conforming to Recyclable
+   * interface.
    */
-  static Pool = new Pool.Root( "Stage.Base.Pool", Stage_Base, Stage_Base.setAsConstructor );
+  static Pool = new Pool.Root( "Stage.Base.Pool",
+    Stage_Base, Stage_Base.setAsConstructor );
 
   /**
    */
@@ -354,18 +358,21 @@ class Stage_Base extends Recyclable.Root {
    * The progressParent.root_get() will be returned when every time yield.
    *
    * @param {number[]|Float32Array} inputWeightArray
-   *   The weights source array to be extracted from. It will not be kept by this object.
+   *   The weights source array to be extracted from. It will not be kept by
+   * this object.
    *
    * @param {number} weightElementOffsetBegin
-   *   The beginning position (i.e. array index) to extract from inputWeightArray.
+   *   The beginning position (i.e. array index) to extract from
+   * inputWeightArray.
    *
    * @param {Params} params
-   *   A Params object. The params.init() will be called to extract parameters. This
-   * params will be owned and destroyed by this .initer(). So caller should not use
-   * it again.
+   *   A Params object. The params.init() will be called to extract parameters.
+   * This params will be owned and destroyed by this .initer(). So caller
+   * should not use it again.
    *
    * @param {ActivationEscaping.ScaleBoundsArray|TensorPlaceholder.Base} input_ScaleBoundsArray_or_TensorPlaceholder
-   *   The element value bounds (per channel) or TensorPlaceholder of this stage's input.
+   *   The element value bounds (per channel) or TensorPlaceholder of this
+   * stage's input.
    *
    * @yield {ValueMax.Percentage.Aggregate}
    *   Yield ( value = progressParent.root_get() ) when ( done = false ).
@@ -384,26 +391,35 @@ class Stage_Base extends Recyclable.Root {
     //   - They all use 1x1 (pointwise) convolution before depthwise convolution.
     //   - They all use activation function after first pointwise convolution.
     //   - They all use depthwise convolution with ( pad = "same" ).
-    //   - They all use depthwise convolution with ( strides = 2 ) for shrinking (halving) height x width.
-    //   - They all do use batch normalization (include bias) after pointwise and depthwise convolution.
+    //   - They all use depthwise convolution with ( strides = 2 ) for
+    //       shrinking (halving) height x width.
+    //   - They all do use batch normalization (include bias) after pointwise
+    //       and depthwise convolution.
     //
     // Inisde one of their stage, three convolutions are used:
     //   A) 1x1 (pointwise) convolution, with activation.
-    //   B) depthwise convolution, (ShuffleNetV2) without or (MobileNetV2) with activation.
-    //   C) 1x1 (pointwise) convolution, (ShuffleNetV2) with or (MobileNetV2) without activation.
+    //   B) depthwise convolution, (ShuffleNetV2) without or (MobileNetV2) with
+    //        activation.
+    //   C) 1x1 (pointwise) convolution, (ShuffleNetV2) with or (MobileNetV2)
+    //        without activation.
     //
-    // In MobileNetV3, convolution A expands channel count (with activation), convolution C shrinks channel count (without activation).
-    // It may use squeeze-and-excitation after convolution B (without activation). When there is necessary to increase output channel
-    // count (usually in block 0 of a stage), the convolution C is responsible for this.
+    // In MobileNetV3, convolution A expands channel count (with activation),
+    // convolution C shrinks channel count (without activation). It may use
+    // squeeze-and-excitation after convolution B (without activation). When
+    // there is necessary to increase output channel count (usually in block 0
+    // of a stage), the convolution C is responsible for this.
     //
-    // In ShuffleNetV2, convolution A (with activation), convolution B (without activation) and convolution C (with activation) never
-    // change channel count. When there is necessary to increase output channel count (usually in block 0 of a stage), it expands channel
-    // count by concatenating two shrinked (halven) height x width.
+    // In ShuffleNetV2, convolution A (with activation), convolution B (without
+    // activation) and convolution C (with activation) never change channel
+    // count. When there is necessary to increase output channel count (usually
+    // in block 0 of a stage), it expands channel count by concatenating two
+    // shrinked (halven) height x width.
 
 
     // 0. Prepare
 
-    this.weightElementOffsetEnd = this.weightElementOffsetBegin = weightElementOffsetBegin;
+    this.weightElementOffsetEnd = this.weightElementOffsetBegin
+      = weightElementOffsetBegin;
     this.bInitOk = false;
 
     // Estimate the maximum value of progress.
@@ -413,11 +429,13 @@ class Stage_Base extends Recyclable.Root {
 
     let progressRoot = progressParent.root_get();
 
+    // For parameters extracting.
     let progressToAdvance = progressParent.child_add(
-      ValueMax.Percentage.Concrete.Pool.get_or_create_by( progressMax ) ); // For parameters extracting.
+      ValueMax.Percentage.Concrete.Pool.get_or_create_by( progressMax ) );
 
+    // For block0, block1, block2, ... 
     let progressForBlocks = progressParent.child_add(
-      ValueMax.Percentage.Aggregate.Pool.get_or_create_by() ); // for block0, block1, block2, ... 
+      ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
 
     let blockParamsCreator;
     try {
