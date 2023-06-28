@@ -744,7 +744,8 @@ class Block_InferencedParams extends Recyclable.Root {
     input0_height, input0_width, input0_channelCount,
     nConvBlockTypeId,
     pointwise1ChannelCount,
-    depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad,
+    depthwise_AvgMax_Or_ChannelMultiplier,
+    depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad,
     depthwiseActivationId,
     pointwise20ChannelCount, pointwise20ActivationId,
     nSqueezeExcitationChannelCountDivisor, bSqueezeExcitationPrefix,
@@ -752,20 +753,24 @@ class Block_InferencedParams extends Recyclable.Root {
   ) {
 
     // 0. Prepare.
-    let infoConvBlockType = ValueDesc.ConvBlockType.Singleton.getInfo_byId( nConvBlockTypeId );
+    let infoConvBlockType
+      = ValueDesc.ConvBlockType.Singleton.getInfo_byId( nConvBlockTypeId );
 
     this.pointwise20Bias = true; // pointwise2 always has bias.
 
     // 1. The input1 channel count.
-    Block_InferencedParams.set_inputTensorCount_input1_height_width_channelCount_depthwise_inferenced_by.call( this,
-      input0_height, input0_width, input0_channelCount,
-      nConvBlockTypeId,
-      pointwise1ChannelCount,
-      depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad,
-      depthwiseActivationId,
-      pointwise20ChannelCount,
-      nSqueezeExcitationChannelCountDivisor, bSqueezeExcitationPrefix,
-    );
+    Block_InferencedParams
+      .set_inputTensorCount_input1_height_width_channelCount_depthwise_inferenced_by
+      .call( this,
+        input0_height, input0_width, input0_channelCount,
+        nConvBlockTypeId,
+        pointwise1ChannelCount,
+        depthwise_AvgMax_Or_ChannelMultiplier,
+        depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad,
+        depthwiseActivationId,
+        pointwise20ChannelCount,
+        nSqueezeExcitationChannelCountDivisor, bSqueezeExcitationPrefix,
+      );
 
     // 2. The output tensor count.
     this.outputTensorCount = infoConvBlockType.outputTensorCount;
@@ -779,22 +784,29 @@ class Block_InferencedParams extends Recyclable.Root {
     // 4. Whether manipulate the higher half channel of convolution.
     this.bHigherHalfDifferent = infoConvBlockType.bHigherHalfDifferent;
     this.bHigherHalfDepthwise2 = infoConvBlockType.bHigherHalfDepthwise2;
-    this.pointwise20_channelShuffler_outputGroupCount = infoConvBlockType.pointwise20_channelShuffler_outputGroupCount;
+    this.pointwise20_channelShuffler_outputGroupCount
+      = infoConvBlockType.pointwise20_channelShuffler_outputGroupCount;
 
     // 5. Pointwise1
-    Block_InferencedParams.set_pointwise1Bias_pointwise1ActivationId_by.call( this,
-      pointwise1ChannelCount,
-      this.bLinear_between_depthwise_and_pointwise2,
-      this.bDepthwiseRequestedAndNeeded,
-      this.depthwisePadInfo,
-      nActivationId,
-    );
+    Block_InferencedParams
+      .set_pointwise1Bias_pointwise1ActivationId_by
+      .call( this,
+        pointwise1ChannelCount,
+        this.bLinear_between_depthwise_and_pointwise2,
+        this.bDepthwiseRequestedAndNeeded,
+        this.depthwisePadInfo,
+        nActivationId,
+      );
 
     // 6. Pointwise21
     //
-    // Note: Even if ( outputTensorCount == 2 ), it does not means pointwise21 existed.
-    Block_InferencedParams.set_pointwise21ChannelCount_pointwise21Bias_pointwise21ActivationId_by.call( this,
-      nConvBlockTypeId, pointwise20ChannelCount, this.pointwise20Bias, pointwise20ActivationId );
+    // Note: Even if ( outputTensorCount == 2 ), it does not means pointwise21
+    //       existed.
+    Block_InferencedParams
+      .set_pointwise21ChannelCount_pointwise21Bias_pointwise21ActivationId_by
+      .call( this,
+        nConvBlockTypeId,
+        pointwise20ChannelCount, this.pointwise20Bias, pointwise20ActivationId );
 
     // 5. squeeze-and-excitation
     Block_InferencedParams.set_squeezeExcitationActivationId_by.call( this,
@@ -803,31 +815,38 @@ class Block_InferencedParams extends Recyclable.Root {
 
     // 6. nHigherHalfDifferent
     Block_InferencedParams.set_nHigherHalfDifferent_by.call( this,
-      input0_channelCount, nConvBlockTypeId, pointwise1ChannelCount, pointwise20ChannelCount );
+      input0_channelCount, nConvBlockTypeId,
+      pointwise1ChannelCount, pointwise20ChannelCount );
   }
 
   get pointwise1ActivationName() {
-    return ValueDesc.ActivationFunction.Singleton.getName_byId( this.pointwise1ActivationId );
+    return ValueDesc.ActivationFunction.Singleton
+      .getName_byId( this.pointwise1ActivationId );
   }
 
   get pointwise1_nHigherHalfDifferent_Name() {
-    return ValueDesc.Pointwise_HigherHalfDifferent.Singleton.getName_byId( this.pointwise1_nHigherHalfDifferent );
+    return ValueDesc.Pointwise_HigherHalfDifferent.Singleton
+      .getName_byId( this.pointwise1_nHigherHalfDifferent );
   }
 
   get depthwise1_nHigherHalfDifferent_Name() {
-    return ValueDesc.Depthwise_HigherHalfDifferent.Singleton.getName_byId( this.depthwise1_nHigherHalfDifferent );
+    return ValueDesc.Depthwise_HigherHalfDifferent.Singleton
+      .getName_byId( this.depthwise1_nHigherHalfDifferent );
   }
 
   get pointwise20_nHigherHalfDifferent_Name() {
-    return ValueDesc.Pointwise_HigherHalfDifferent.Singleton.getName_byId( this.pointwise20_nHigherHalfDifferent );
+    return ValueDesc.Pointwise_HigherHalfDifferent.Singleton
+      .getName_byId( this.pointwise20_nHigherHalfDifferent );
   }
 
   get pointwise21ActivationName() {
-    return ValueDesc.ActivationFunction.Singleton.getName_byId( this.pointwise21ActivationId );
+    return ValueDesc.ActivationFunction.Singleton
+      .getName_byId( this.pointwise21ActivationId );
   }
 
   get squeezeExcitationActivationName() {
-    return ValueDesc.ActivationFunction.Singleton.getName_byId( this.squeezeExcitationActivationId );
+    return ValueDesc.ActivationFunction.Singleton
+      .getName_byId( this.squeezeExcitationActivationId );
   }
 
   /** @override */
@@ -835,7 +854,8 @@ class Block_InferencedParams extends Recyclable.Root {
     let str = ``
       + `inputTensorCount=${this.inputTensorCount}, `
 
-      + `input1_height=${this.input1_height}, input1_width=${this.input1_width}, `
+      + `input1_height=${this.input1_height}, `
+      + `input1_width=${this.input1_width}, `
       + `input1_channelCount=${this.input1_channelCount}, `
 
       + `bHigherHalfDifferent=${this.bHigherHalfDifferent}, `
