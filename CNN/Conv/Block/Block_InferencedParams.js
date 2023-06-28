@@ -198,7 +198,8 @@ class Block_InferencedParams extends Recyclable.Root {
         = this.bLinear_between_depthwise_and_pointwise2
         = 
              // depthwise has no activation function.
-             ( depthwiseActivationId == ValueDesc.ActivationFunction.Singleton.Ids.NONE ) // (0)
+             ( depthwiseActivationId
+                 == ValueDesc.ActivationFunction.Singleton.Ids.NONE ) // (0)
 
              // no squeeze-and-excitation between depthwise and pointwise2.
           && ( bNoSqueezeExcitation_between_depthwise_and_pointwise2 )
