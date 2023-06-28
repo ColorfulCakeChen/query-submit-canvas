@@ -372,8 +372,9 @@ class IssuedObjects {
         }
 
         // Q: Why not just call Pool.Base.recycle()?
-        // A: Because the issued object list has already been processed in the aboved codes, it is not necessary to re-process again.
-        //    Calling .recycled_add() will be more efficient than .recycle().
+        // A: Because the issued object list has already been processed in the
+        //    aboved codes, it is not necessary to re-process again. Calling
+        //    .recycled_add() will be more efficient than .recycle().
         //
 
 //!!! ...unfinished... (2022/07/01) seems not necessary. It seems enough by using object.constructor.Pool.
@@ -394,7 +395,8 @@ class IssuedObjects {
 //       // Moved (i.e. belonged) to parent session. Become an issued object (of different session), again.
 //       IssuedObjects.issued_add.call( this, movingObject, recyclePool );
 
-      // Moved (i.e. belonged) to parent session. Become an issued object (of different session), again.
+      // Moved (i.e. belonged) to parent session. Become an issued object (of
+      // different session), again.
       IssuedObjects.issued_add.call( this, movingObject );
     }
 
@@ -409,8 +411,10 @@ class IssuedObjects {
 //!!! ...unfinished... (2022/07/01) seems not necessary. It seems enough by using object.constructor.Pool.
 // * In the .inSessionArray and .inSessionRecyclePoolArray, this SESSION_BORDER_MARK will be placed between sessions. In fact, it
 
- * In the .inSessionArray and .inSessionRecyclePoolArray, this SESSION_BORDER_MARK will be placed between sessions. In fact, it
- * is just the IssuedObjects class object itself. The reason is that it is impossible to be an legal issued object of itself.
+ * In the .inSessionArray and .inSessionRecyclePoolArray, this
+ * SESSION_BORDER_MARK will be placed between sessions. In fact, it is just the
+ * IssuedObjects class object itself. The reason is that it is impossible to be
+ * an legal issued object of itself.
  */
 IssuedObjects.SESSION_BORDER_MARK = IssuedObjects;
 
