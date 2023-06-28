@@ -190,7 +190,8 @@ class ActivationFunction extends Int {
 
   }
 
-  /**   */
+
+  /** */
   static reference_clipByValue_lowerBound_upperBound(
     x, lowerBound, upperBound ) {
 
