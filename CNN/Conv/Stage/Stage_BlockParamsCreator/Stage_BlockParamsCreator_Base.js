@@ -14,10 +14,13 @@ import * as Block from "../../Block.js";
 class Stage_BlockParamsCreator_Base extends Recyclable.Root {
 
   /**
-   * Used as default Stage.BlockParamsCreator.Base provider for conforming to Recyclable interface.
+   * Used as default Stage.BlockParamsCreator.Base provider for conforming to
+   * Recyclable interface.
    */
-  static Pool = new Pool.Root( "Stage.BlockParamsCreator.Base.Pool",
-    Stage_BlockParamsCreator_Base, Stage_BlockParamsCreator_Base.setAsConstructor );
+  static Pool = new Pool.Root(
+    "Stage.BlockParamsCreator.Base.Pool",
+    Stage_BlockParamsCreator_Base,
+    Stage_BlockParamsCreator_Base.setAsConstructor );
 
   /**
    * @param {Stage.ParamsBase} stageParams
@@ -27,13 +30,15 @@ class Stage_BlockParamsCreator_Base extends Recyclable.Root {
    */
   constructor( stageParams ) {
     super();
-    Stage_BlockParamsCreator_Base.setAsConstructor_self.call( this, stageParams );
+    Stage_BlockParamsCreator_Base.setAsConstructor_self.call( this,
+      stageParams );
   }
 
   /** @override */
   static setAsConstructor( stageParams ) {
     super.setAsConstructor();
-    Stage_BlockParamsCreator_Base.setAsConstructor_self.call( this, stageParams );
+    Stage_BlockParamsCreator_Base.setAsConstructor_self.call( this,
+      stageParams );
     return this;
   }
 
@@ -94,11 +99,15 @@ class Stage_BlockParamsCreator_Base extends Recyclable.Root {
    */
   determine_blockCount_depthwiseFilterHeightWidth_Default_Last() {
     let stageParams = this.stageParams;
-    this.blockCount = stageParams.blockCountRequested; // By default, the block count is just the original block count.
+
+    // By default, the block count is just the original block count.    
+    this.blockCount = stageParams.blockCountRequested;
 
     // By default, all blocks uses the original depthwise filter size.
-    this.depthwiseFilterHeight_Default = this.depthwiseFilterHeight_Last = stageParams.depthwiseFilterHeight;
-    this.depthwiseFilterWidth_Default = this.depthwiseFilterWidth_Last = stageParams.depthwiseFilterWidth;
+    this.depthwiseFilterHeight_Default = this.depthwiseFilterHeight_Last
+      = stageParams.depthwiseFilterHeight;
+    this.depthwiseFilterWidth_Default = this.depthwiseFilterWidth_Last
+      = stageParams.depthwiseFilterWidth;
   }
 
   /**
@@ -124,12 +133,16 @@ class Stage_BlockParamsCreator_Base extends Recyclable.Root {
     this.depthwiseFilterHeight = this.depthwiseFilterHeight_Default;
     this.depthwiseFilterWidth = this.depthwiseFilterWidth_Default;
 
-    // block0 uses depthwise ( strides = 2, pad = "same" ) to halve ( height, width ).
-    this.depthwiseStridesPad = ValueDesc.StridesPad.Singleton.Ids.STRIDES_2_PAD_SAME;
+    // block0 uses depthwise ( strides = 2, pad = "same" ) to halve
+    // ( height, width ).
+    this.depthwiseStridesPad
+      = ValueDesc.StridesPad.Singleton.Ids.STRIDES_2_PAD_SAME;
 
-    this.nSqueezeExcitationChannelCountDivisor = stageParams.nSqueezeExcitationChannelCountDivisor;
+    this.nSqueezeExcitationChannelCountDivisor
+      = stageParams.nSqueezeExcitationChannelCountDivisor;
 
-    this.bKeepInputTensor = stageParams.bKeepInputTensor; // block0 may or may not keep input tensor according to caller's necessary.
+    // block0 may or may not keep input tensor according to caller's necessary.
+    this.bKeepInputTensor = stageParams.bKeepInputTensor;
   }
 
   /**
@@ -160,9 +173,12 @@ class Stage_BlockParamsCreator_Base extends Recyclable.Root {
 
     // All blocks (except block0) uses depthwise ( strides = 1, pad = "same" )
     // to keep ( height, width ).
-    this.depthwiseStridesPad = ValueDesc.StridesPad.Singleton.Ids.STRIDES_1_PAD_SAME;
+    this.depthwiseStridesPad
+      = ValueDesc.StridesPad.Singleton.Ids.STRIDES_1_PAD_SAME;
 
-    this.bKeepInputTensor = false; // No matter bKeepInputTensor, all blocks (except block0) should not keep input tensor.
+    // No matter bKeepInputTensor, all blocks (except block0) should not keep
+    // input tensor.
+    this.bKeepInputTensor = false;
   }
 
   /**
@@ -190,7 +206,8 @@ class Stage_BlockParamsCreator_Base extends Recyclable.Root {
     this.depthwiseActivationId = stageParams.nActivationId;
 
     // 2. pointwise2
-    this.pointwise20ActivationId = ValueDesc.ActivationFunction.Singleton.Ids.NONE;
+    this.pointwise20ActivationId
+      = ValueDesc.ActivationFunction.Singleton.Ids.NONE;
 
     // 3. pointwise1 and squeeze-and-excitation
     this.nActivationId = stageParams.nActivationId;
@@ -215,8 +232,8 @@ class Stage_BlockParamsCreator_Base extends Recyclable.Root {
     let stageParams = this.stageParams;
   }
 
-  // The following read only properties is useful when debugging, although they
-  // are not used in program.
+  // The following read only properties are useful when debugging, although
+  // they are not used in program.
 
   get nConvBlockTypeName() {
     return ValueDesc.ConvBlockType.Singleton.getName_byId( this.nConvBlockTypeId );
@@ -262,7 +279,8 @@ class Stage_BlockParamsCreator_Base extends Recyclable.Root {
       this.nConvBlockTypeId,
       this.pointwise1ChannelCount,
       this.depthwise_AvgMax_Or_ChannelMultiplier,
-      this.depthwiseFilterHeight, this.depthwiseFilterWidth, this.depthwiseStridesPad,
+      this.depthwiseFilterHeight, this.depthwiseFilterWidth,
+      this.depthwiseStridesPad,
       this.depthwiseActivationId,
       this.pointwise20ChannelCount, this.pointwise20ActivationId,
       this.nSqueezeExcitationChannelCountDivisor, this.bSqueezeExcitationPrefix,
