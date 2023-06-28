@@ -62,28 +62,30 @@ import * as FloatValue from "../FloatValue.js";
  *
  * CLIP_BY_VALUE_N3_P3:
  *
- *   - Advantage: It has larger inputDomainLinear so that activation-escaping could
- *       use a larger scale. This reduces floating-point truncation error.
+ *   - Advantage: It has larger inputDomainLinear so that activation-escaping
+ *       could use a larger scale. This reduces floating-point truncation
+ *       error.
  *
- *   - Disadvantage: Its activated value (i.e. 3) seems harder to become any other
- *       value by a floating-point finite scaling. This increases the floating-point
- *       accumulated error. For example, in order to let 3 become 100, a scale 33.333...
- *       should be used. However, 33.3 can not be represented by a finite
- *       floating-point number.
+ *   - Disadvantage: Its activated value (i.e. 3) seems harder to become any
+ *       other value by a floating-point finite scaling. This increases the
+ *       floating-point accumulated error. For example, in order to let 3
+ *       become 100, a scale 33.333... should be used. However, 33.3 can not be
+ *       represented by a finite floating-point number.
  *
  * CLIP_BY_VALUE_N2_P2:
  *
  *   - Disadvantage: It has smaller inputDomainLinear [ -2, +2 ] (than
- *       CLIP_BY_VALUE_N3_P3 [ -3, +3 ]) so that activation-escaping needs use a
- *       smaller scale. This increases floating-point truncation error. Fortunately,
- *       if a just enough input value bounds is used (e.g. for RGBA image, uses 2^8
- *       (instead of 2^24) as every channel's input value bounds), this issue could
- *       be less problematic.
+ *       CLIP_BY_VALUE_N3_P3 [ -3, +3 ]) so that activation-escaping needs use
+ *       a smaller scale. This increases floating-point truncation error.
+ *       Fortunately, if a just enough input value bounds is used (e.g. for
+ *       RGBA image, uses 2^8 (instead of 2^24) as every channel's input value
+ *       bounds), this issue could be less problematic.
  *
- *   - Advantage: Its activated value (i.e. 2) is easier to become any other value
- *       by a floating-point finite scaling. This reduces the floating-point
- *       accumulated error. In this point of view, not only 2, any powers of two
- *       (i.e. 0.25, 0.5, 1, 2, 4, 8, ..., 64, 128, ...) is good enough for this task.
+ *   - Advantage: Its activated value (i.e. 2) is easier to become any other
+ *       value by a floating-point finite scaling. This reduces the
+ *       floating-point accumulated error. In this point of view, not only 2,
+ *       any powers of two (i.e. 0.25, 0.5, 1, 2, 4, 8, ..., 64, 128, ...) is
+ *       good enough for this task.
  *
  *
  */
