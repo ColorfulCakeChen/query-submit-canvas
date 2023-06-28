@@ -478,11 +478,17 @@ class Stage_Base extends Recyclable.Root {
       let BlockParamsClass = params.BlockParamsClass_get();
 
       // 2. Create every blocks.
-      blockParamsCreator = InferencedParams.create_BlockParamsCreator_byStageParams( params );
-      blockParamsCreator.determine_blockCount_depthwiseFilterHeightWidth_Default_Last(); // Calculate the real block count.
+      blockParamsCreator = InferencedParams
+        .create_BlockParamsCreator_byStageParams( params );
 
-      for ( let i = 0; i < blockParamsCreator.blockCount; ++i ) { // Progress for block0, 1, 2, 3, ... 
-        progressForBlocks.child_add( ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
+      // Calculate the real block count.
+      blockParamsCreator
+        .determine_blockCount_depthwiseFilterHeightWidth_Default_Last();
+
+      // Progress for block0, 1, 2, 3, ... 
+      for ( let i = 0; i < blockParamsCreator.blockCount; ++i ) {
+        progressForBlocks.child_add(
+          ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
       }
 
       let blockParams, block, blockIniter;
