@@ -33,7 +33,7 @@ import { Base } from "./Stage_BlockParamsCreator_Base.js";
  *
  * Q1: Why not just use MobileNetV1 instead of ShuffleNetV2, since its
  *       structure is MobileNetV1?
- * A1: The filter weights count is different. MobileNetV1 has more (a lot)
+ * A1: The filter weights count is different. MobileNetV1 has (a lot) more
  *       filter weights needed to be learned than ShuffleNetV2. The learning
  *       (or say, evolving) performance should be faster by using ShuffleNetV2
  *       (rather than MobileNetV1).
