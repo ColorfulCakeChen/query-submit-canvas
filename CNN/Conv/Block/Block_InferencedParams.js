@@ -420,7 +420,8 @@ class Block_InferencedParams extends Recyclable.Root {
         if ( depthwisePadInfo.stridesPadInfo.pad_isValid() ) {
           this.bLinear_between_pointwise1_and_pointwise2 = true;
         } else {
-          this.bLinear_between_pointwise1_and_pointwise2 = false; // depthwise with ( pad = "same" ) should be viewed as non-linear.
+          // depthwise with ( pad = "same" ) should be viewed as non-linear.
+          this.bLinear_between_pointwise1_and_pointwise2 = false;
         }
       } else { // no depthwise.
         if ( bLinear_between_depthwise_and_pointwise2 ) {
@@ -435,8 +436,12 @@ class Block_InferencedParams extends Recyclable.Root {
 
       this.pointwise1ActivationId = nActivationId;
 
-      let bLinear_between_pointwise1_and_depthwise = this.bLinear_between_pointwise1_and_depthwise
-        = ( this.pointwise1ActivationId == ValueDesc.ActivationFunction.Singleton.Ids.NONE ); // pointwise1 has no activation function.
+      let bLinear_between_pointwise1_and_depthwise
+        = this.bLinear_between_pointwise1_and_depthwise
+
+          // pointwise1 has no activation function.
+        = ( this.pointwise1ActivationId
+              == ValueDesc.ActivationFunction.Singleton.Ids.NONE );
 
       if ( bLinear_between_pointwise1_and_depthwise ) {
         if ( bDepthwiseRequestedAndNeeded ) {
@@ -445,7 +450,8 @@ class Block_InferencedParams extends Recyclable.Root {
             this.bLinear_between_pointwise1_and_pointwise2 = true;
           } else {
             this.pointwise1Bias = true;
-            this.bLinear_between_pointwise1_and_pointwise2 = false; // depthwise with ( pad = "same" ) should be viewed as non-linear.
+            // depthwise with ( pad = "same" ) should be viewed as non-linear.
+            this.bLinear_between_pointwise1_and_pointwise2 = false;
           }
         } else { // no depthwise.
           if ( bLinear_between_depthwise_and_pointwise2 ) {
