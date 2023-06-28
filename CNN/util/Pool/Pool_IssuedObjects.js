@@ -269,7 +269,7 @@ class IssuedObjects {
     //       element for finding recyclable object is unnecessary, meaningless
     //       and just wasting CPU time.
     //
-    //   - And, even if ignoring these above problem, it is still has the
+    //   - And, even if ignoring these above problems, it is still has the
     //       problem which the nested children object may be disposed before
     //       their owner parent object. This will result in recycling the same
     //       object duplicately (i.e. Pool.Base.recycled_add() is called
