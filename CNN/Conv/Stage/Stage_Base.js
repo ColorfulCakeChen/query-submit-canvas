@@ -579,18 +579,24 @@ class Stage_Base extends Recyclable.Root {
         next_input_width = block.output_width;
       }
 
-      this.block0 = this.blockArray[ 0 ]; // Shortcut to the first block.
-      this.blockLast = this.blockArray[ this.blockArray.length - 1 ]; // Shortcut to the last block.
+      // Shortcut to the first block.
+      this.block0 = this.blockArray[ 0 ];
+
+      // Shortcut to the last block.
+      this.blockLast = this.blockArray[ this.blockArray.length - 1 ];
 
 //!!! (2022/08/03 Temp Remarked) For debug.
-      this.dispose_intermediate_ScaleBoundsArray(); // Release all intermediate blocks' bounds array set for reducing memory footprint.
+      // Release all intermediate blocks' bounds array set for reducing memory
+      // footprint.
+      this.dispose_intermediate_ScaleBoundsArray();
 
       this.bInitOk = true;
       return this.bInitOk;
 
     } finally {
       if ( blockParamsCreator ) {
-        blockParamsCreator.channelShuffler = null; // (Because ownership has been transferred to this Stage object.)
+        // (Because ownership has been transferred to this Stage object.)
+        blockParamsCreator.channelShuffler = null;
         blockParamsCreator.disposeResources_and_recycleToPool();
         blockParamsCreator = null;
       }
@@ -602,26 +608,36 @@ class Stage_Base extends Recyclable.Root {
   }
 
   /**
-   * Initialize this object by calling initer() and advance the generator by loop
-   * until done.
+   * Initialize this object by calling initer() and advance the generator by
+   * loop until done.
    *
    * @return {boolean}
-   *   - Return true, if succeeded (and progressParent.valuePercentage will be equal
-   *       to 100).
-   *   - Return false, if failed (and progressParent.valuePercentage will be less than
-   *       100).
+   *   - Return true, if succeeded (and progressParent.valuePercentage will be
+   *       equal to 100).
+   *   - Return false, if failed (and progressParent.valuePercentage will be
+   *       less than 100).
    *
    * @see Block.Base.init()
    */
-  init( progressParent, inputWeightArray, weightElementOffsetBegin, params, inputScaleBoundsArray0 ) {
+  init( progressParent,
+    inputWeightArray, weightElementOffsetBegin, params,
+    inputScaleBoundsArray0 ) {
 
-    let initer = this.initer( progressParent, inputWeightArray, weightElementOffsetBegin, params, inputScaleBoundsArray0 );
+    let initer = this.initer( progressParent,
+      inputWeightArray, weightElementOffsetBegin, params,
+      inputScaleBoundsArray0 );
+
     let initerNext;
     do {
       initerNext = initer.next();
-    } while ( ! initerNext.done ); // When ( false == initerNext.done ), the ( initerNext.value ) will be progressParent.root_get().
 
-    let bInitOk = initerNext.value; // When ( true == initerNext.done ), the ( initerNext.value ) will be initialization successfully or failed.
+    // When ( false == initerNext.done ), the ( initerNext.value ) will be
+    // progressParent.root_get().
+    } while ( ! initerNext.done );
+
+    // When ( true == initerNext.done ), the ( initerNext.value ) will be
+    // initialization successfully or failed.
+    let bInitOk = initerNext.value;
     return bInitOk;
   }
 
@@ -657,7 +673,8 @@ class Stage_Base extends Recyclable.Root {
   }
 
   /**
-   * Release all ScaleBoundsArray (inside tensor placeholder) except .block0.inputX and .blockLast.outputX
+   * Release all ScaleBoundsArray (inside tensor placeholder) except
+   * .block0.inputX and .blockLast.outputX
    *
    * This could reduce memory footprint by releasing unused scale bounds array.
    */
@@ -665,12 +682,14 @@ class Stage_Base extends Recyclable.Root {
     if ( !this.blockArray )
       return;
 
-    { // 1. Release blockLast's inputs' ScaleBoundsArray. (Note: .blockLast.outputX are kept.)
+    { // 1. Release blockLast's inputs' ScaleBoundsArray. (Note:
+      //    .blockLast.outputX are kept.)
       this.blockLast.input1?.ScaleBoundsArray_dispose();
       this.blockLast.input0.ScaleBoundsArray_dispose();
     }
 
-    // 2. Release intermediate (i.e. except block0 and blockLast) blocks' inputs' and outputs' ScaleBoundsArray.
+    // 2. Release intermediate (i.e. except block0 and blockLast) blocks'
+    //    inputs' and outputs' ScaleBoundsArray.
     for ( let i = ( this.blockArray.length - 2 ); i >= 1; --i ) {
       let block = this.blockArray[ i ];
       block.output1?.ScaleBoundsArray_dispose();
@@ -679,18 +698,21 @@ class Stage_Base extends Recyclable.Root {
       block.input0.ScaleBoundsArray_dispose();
     }
 
-    { // 3. Release block0's outputs' ScaleBoundsArray. (Note: .block0.inputX are kept.)
+    { // 3. Release block0's outputs' ScaleBoundsArray. (Note:
+      //    .block0.inputX are kept.)
       this.block0.output1?.ScaleBoundsArray_dispose();
       this.block0.output0.ScaleBoundsArray_dispose();
     }
   }
 
   /**
-   * Generator for processing input, destroying or keeping input, returning result.
+   * Generator for processing input, destroying or keeping input, returning
+   * result.
    *
    * @param {tf.tensor3d} inputTensor
-   *   The source input image ( height x width x channel ) which will be processed.
-   * This inputTensor may or may not be disposed according to init()'s bKeepInputTensor.
+   *   The source input image ( height x width x channel ) which will be
+   * processed. This inputTensor may or may not be disposed according to
+   * init()'s bKeepInputTensor.
    *
    * @param {ValueMax.Percentage.Concrete} progressToAdvance
    *   This progressToAdvance will be increased when every time advanced. The
@@ -705,7 +727,8 @@ class Stage_Base extends Recyclable.Root {
   * applier( progressToAdvance, inputTensor ) {
     let progressRoot = progressToAdvance.root_get();
 
-    this.block0.input0.realTensor = inputTensor; // Note: The block0 should only input one tensor.
+    // Note: The block0 should only input one tensor.
+    this.block0.input0.realTensor = inputTensor;
 
     let blockArray = this.blockArray;
     for ( let i = 0; i < blockArray.length; ++i ) {
