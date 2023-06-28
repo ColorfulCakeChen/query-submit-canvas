@@ -313,18 +313,21 @@ class IssuedObjects {
   }
 
   /**
-   * End a auto-recycling session. This method will pop all objects from IssuedObjects.array until encountering SESSION_BORDER_MARK.
+   * End a auto-recycling session. This method will pop all objects from
+   * IssuedObjects.array until encountering SESSION_BORDER_MARK.
    *
-   *   - If the popped objects are not listed in keptObjectArray, they will be recycled.
+   *   - If the popped objects are not listed in keptObjectArray, they will be
+   *       recycled.
    *
-   *   - If the popped objects are listed in keptObjectArray, they will not be recycled and will become belonging to the parent
-   *       session.
+   *   - If the popped objects are listed in keptObjectArray, they will not be
+   *       recycled and will become belonging to the parent session.
    *
    * @param {IssuedObjects} this
    *   The list for handling the objects issuing/recycling.
    *
    * @param {Object|Object[]} keptObjectOrArray
-   *   An object or an object array. If the object(s) is not null, they will be kept (i.e. not be recycled) and be moved to parent session.
+   *   An object or an object array. If the object(s) is not null, they will be
+   * kept (i.e. not be recycled) and be moved to parent session.
    */
   static session_pop( keptObjectOrArray ) {
     const SESSION_BORDER_MARK = IssuedObjects.SESSION_BORDER_MARK;
@@ -332,7 +335,8 @@ class IssuedObjects {
     // 1. Prepare object list to be kept (i.e. not be recycled).
     IssuedObjects.sessionKeptObjectSet_collect_from.call( this );
 
-    // 2. Recycle the last session's issued all objects (except objects should be kept).
+    // 2. Recycle the last session's issued all objects (except objects should
+    //    be kept).
 
     this.movingObjectArray.length = 0;
 
