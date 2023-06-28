@@ -100,19 +100,6 @@ import * as FloatValue from "../../Unpacker/FloatValue.js";
  *         non-linear part.
  *
  *
-
-//!!! ...unfinished... (2022/01/06)
-
- *
- *
- * 3. What if this pointwise (or depthwise) does not have filter weights
- *      ( S1, S2, ... Ss )? (e.g avg/max pooling)
- *
- *
- *
- * 4. What if this pointwise (or depthwise) does not have bias weights T?
- *
- *
  *
  * @member {FloatValue.ScaleArray} do
  *   The scale for moving current value bounds into the linear domain of the
@@ -414,53 +401,6 @@ class ScaleArraySet extends Recyclable.Root {
     this.undo.multiply_all_byN( aScaleArraySet.undo.scales[ aIndex ] );
     return this;
   }
-
-
-//!!! ...unfinished... (2021/12/26)
-/**
- * - For depthwise with ( pad == same ), it seems that the activation escaping
- *     can not be undone completely, because pad is always 0 (can not
- *     scale-translate). Unless, pad can be non-zero?
- *
- *   - Fortunately, this is not a problem for pass-through channels. Because
- *       the pass-through filter value is also 0 in the padded position, the
- *       result is not affected. (But its a big problem for non-pass-through
- *       channels.)
- *
- *   - Perhaps, force use ( pad == valid ) so that the activation escaping
- *       always can be undone completely.
- *
- *     - In original ShuffleNetV2, using ( pad == same ) is necessary for
- *         concatenating ( depthwise1, input1 ).
- *
- *     - In our combined-depthwise1-with-higher-half-pass-through (i.e.
- *         ONE_INPUT_HALF_THROUGH_XXX), the ( depthwise1, input1 ) already
- *         combined together. There is no concatenation issue. So using
- *         ( pad == valid ) is possible.
- *
- *     - However, this is not so good for pass-through channels. Because the
- *         pass-through filter value is 0 at the right-bottom corner, the image
- *         value will be destroyed.
- *
- * - If previous convolution does not have activation escaping .do (i.e. is a
- *     normal convolution without pass-through), this convolution's .do should
- *     be different.
- *
- * - Perhaps, there should be value-bounds and activation-escaping
- *     scale-translate for every single channel (i.e. lower-array,
- *     upper-array, scale-array and translate-array). Even if channels are
- *     shuffled, they could be still tracked correctly.
- *
- * - When extractFilters() and extractBiases(), pre-apply the per channel
- *     undoing scale and translate to filter-value, bias-value, and their
- *     bounds. (The .do and .undo should also affect the value bounds.)
- *
- * - When across Block (i.e. at ShuffleNetV2_ByMobileNetV1's head), the
- *     higher-half-copy-lower-half channels's value bounds does not come from
- *     previous corresponding channels. They comes from the lower-half channels
- *     which they copied from.
- *
- */
 
 }
 

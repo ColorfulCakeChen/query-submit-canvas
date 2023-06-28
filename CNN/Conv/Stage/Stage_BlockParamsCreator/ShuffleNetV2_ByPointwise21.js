@@ -6,7 +6,8 @@ import * as ValueDesc from "../../../Unpacker/ValueDesc.js";
 import { Base } from "./Stage_BlockParamsCreator_Base.js";
 
 /**
- * Provide parameters for ShuffleNetV2_ByPointwise21 (i.e. shuffle channel by pointwise21).
+ * Provide parameters for ShuffleNetV2_ByPointwise21 (i.e. shuffle channel by
+ * pointwise21).
  *
  * 1. ShuffleNetV2_ByPointwise21:
  *
