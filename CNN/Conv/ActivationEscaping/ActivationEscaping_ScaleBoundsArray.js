@@ -233,16 +233,20 @@ class ScaleBoundsArray extends Recyclable.Root {
     {
       let boundsArrayShuffled = FloatValue.BoundsArray.Pool.get_or_create_by(
         this.boundsArray.length );
+
       boundsArrayShuffled.set_all_byInterleave_asGrouptTwo_byBoundsArray(
         this.boundsArray );
+
       this.boundsArray.disposeResources_and_recycleToPool();
       this.boundsArray = boundsArrayShuffled;
     }
     {
       let scaleArraySetShuffled = ScaleArraySet.Pool.get_or_create_by(
         this.scaleArraySet.length );
+
       scaleArraySetShuffled.set_all_byInterleave_asGrouptTwo_byScaleArraySet(
         this.scaleArraySet );
+
       this.scaleArraySet.disposeResources_and_recycleToPool();
       this.scaleArraySet = scaleArraySetShuffled;
     }
