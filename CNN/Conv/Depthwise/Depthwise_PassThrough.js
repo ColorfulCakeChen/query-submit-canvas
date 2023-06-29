@@ -375,27 +375,34 @@ class PassThrough_FiltersArray_BiasesArray_Bag
 /**
  * A depthwise convolution and bias which just pass the input to output.
  *
- * It is usually used in passing the higher half channels of the input to output (for achieving ShuffleNetV2_ByMopbileNetV1's body/tail).
+ * It is usually used in passing the higher half channels of the input to
+ * output (for achieving ShuffleNetV2_ByMopbileNetV1's body/tail).
  *
  *
  * @see PassThrough_FiltersArray_BiasesArray
  * @see PadInfoCalculator
  * @see TwoTensors.filtersTensor4d_biasesTensor3d
  */
-class PassThrough extends PassThrough_FiltersArray_BiasesArray( TwoTensors.filtersTensor4d_biasesTensor3d() ) {
+class PassThrough
+  extends PassThrough_FiltersArray_BiasesArray(
+    TwoTensors.filtersTensor4d_biasesTensor3d() ) {
 
   /**
-   * Used as default Depthwise.PassThrough provider for conforming to Recyclable interface.
+   * Used as default Depthwise.PassThrough provider for conforming to
+   * Recyclable interface.
    */
-  static Pool = new Pool.Root( "Depthwise.PassThrough.Pool", PassThrough, PassThrough.setAsConstructor );
+  static Pool = new Pool.Root( "Depthwise.PassThrough.Pool",
+    PassThrough, PassThrough.setAsConstructor );
 
   /**
    */
   constructor(
-    inputHeight, inputWidth, inputChannelCount, AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad,
+    inputHeight, inputWidth, inputChannelCount,
+    AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad,
     bBias, effectFilterValue = 1, surroundingFilterValue = 0, biasValue = 0 ) {
 
-    super( inputHeight, inputWidth, inputChannelCount, AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad,
+    super( inputHeight, inputWidth, inputChannelCount,
+      AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad,
       bBias, effectFilterValue, surroundingFilterValue, biasValue );
 
     PassThrough.setAsConstructor_self.call( this );
@@ -403,10 +410,12 @@ class PassThrough extends PassThrough_FiltersArray_BiasesArray( TwoTensors.filte
 
   /** @override */
   static setAsConstructor(
-    inputHeight, inputWidth, inputChannelCount, AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad,
+    inputHeight, inputWidth, inputChannelCount,
+    AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad,
     bBias, effectFilterValue = 1, surroundingFilterValue = 0, biasValue = 0 ) {
 
-    super.setAsConstructor( inputHeight, inputWidth, inputChannelCount, AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad,
+    super.setAsConstructor( inputHeight, inputWidth, inputChannelCount,
+      AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad,
       bBias, effectFilterValue, surroundingFilterValue, biasValue );
 
     PassThrough.setAsConstructor_self.call( this );
@@ -429,5 +438,4 @@ class PassThrough extends PassThrough_FiltersArray_BiasesArray( TwoTensors.filte
   }
 
 }
-
 
