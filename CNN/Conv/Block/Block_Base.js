@@ -911,24 +911,29 @@ class Block_Base extends Recyclable.Root {
       // Usually, if no pointwise20, then no addInput0ToPointwise20.
       // Usually, if no pointwise21, then no addInput0ToPointwise21.
       //
-      // However, there is one exception: When both no pointwise20 and no pointwise21, there might be addInput0ToPointwise20.
-      // Fortunately, now pointwise20ChannelCount is always not zero. So this situation will not happen.
+      // However, there is one exception: When both no pointwise20 and no
+      // pointwise21, there might be addInput0ToPointwise20. Fortunately, now
+      // pointwise20ChannelCount is always not zero. So this situation will not
+      // happen.
       //
 
       let addInput0ToPointwise20;
       if ( this.operationArray.endingInput0?.is_height_width_channelCount_same_byTensorPlaceholder( this.input0 ) ) {
-        addInput0ToPointwise20 = Operation.AddTwoTensors.Pool.get_or_create_by( this.input0, this.operationArray.endingInput0 );
+        addInput0ToPointwise20 = Operation.AddTwoTensors.Pool.get_or_create_by(
+          this.input0, this.operationArray.endingInput0 );
         this.bAddInputToOutput0 = true;
       }
 
       // Note: Only input0 (not input1) will be used to add to output.
       let addInput0ToPointwise21;
       if ( this.operationArray.endingInput1?.is_height_width_channelCount_same_byTensorPlaceholder( this.input0 ) ) {
-        addInput0ToPointwise21 = Operation.AddTwoTensors.Pool.get_or_create_by( this.input0, this.operationArray.endingInput1 );
+        addInput0ToPointwise21 = Operation.AddTwoTensors.Pool.get_or_create_by(
+          this.input0, this.operationArray.endingInput1 );
         this.bAddInputToOutput1 = true;
       }
 
-      this.operationArray.operation_append( addInput0ToPointwise20, addInput0ToPointwise21 );
+      this.operationArray.operation_append(
+        addInput0ToPointwise20, addInput0ToPointwise21 );
     }
 
     // 8.2
@@ -944,9 +949,9 @@ class Block_Base extends Recyclable.Root {
         case 2: bShuffleSplit = true;  break;
 
         default:
-          throw Error(
-            `Block.Base.initer(): When concat2-shuffle-split, `
-              + `output channel count ( ${this.outputTensorCount} ) must be either 1 or 2.`
+          throw Error( `Block.Base.initer(): When concat2-shuffle-split, `
+              + `output channel count ( ${this.outputTensorCount} ) `
+              +  `must be either 1 or 2.`
           );
           break;
       }
