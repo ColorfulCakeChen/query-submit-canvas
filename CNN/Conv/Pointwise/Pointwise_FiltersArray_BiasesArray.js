@@ -154,31 +154,39 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
   /**
    */
   constructor(
-    inputChannelCount, outputChannelCount, bBias, nActivationId, nPassThroughStyleId,
-    nHigherHalfDifferent, inputChannelCount_lowerHalf, outputChannelCount_lowerHalf,
+    inputChannelCount, outputChannelCount,
+    bBias, nActivationId, nPassThroughStyleId,
+    nHigherHalfDifferent,
+    inputChannelCount_lowerHalf, outputChannelCount_lowerHalf,
     channelShuffler_inputGroupCount, channelShuffler_outputGroupCount,
     ...restArgs ) {
 
     super( ...restArgs );
       
     FiltersArray_BiasesArray.setAsConstructor_self.call( this,
-      inputChannelCount, outputChannelCount, bBias, nActivationId, nPassThroughStyleId,
-      nHigherHalfDifferent, inputChannelCount_lowerHalf, outputChannelCount_lowerHalf,
+      inputChannelCount, outputChannelCount,
+      bBias, nActivationId, nPassThroughStyleId,
+      nHigherHalfDifferent,
+      inputChannelCount_lowerHalf, outputChannelCount_lowerHalf,
       channelShuffler_inputGroupCount, channelShuffler_outputGroupCount );
   }
 
   /** @override */
   static setAsConstructor(
-    inputChannelCount, outputChannelCount, bBias, nActivationId, nPassThroughStyleId,
-    nHigherHalfDifferent, inputChannelCount_lowerHalf, outputChannelCount_lowerHalf,
+    inputChannelCount, outputChannelCount,
+    bBias, nActivationId, nPassThroughStyleId,
+    nHigherHalfDifferent,
+    inputChannelCount_lowerHalf, outputChannelCount_lowerHalf,
     channelShuffler_inputGroupCount, channelShuffler_outputGroupCount,
     ...restArgs ) {
 
     super.setAsConstructor( ...restArgs );
 
     FiltersArray_BiasesArray.setAsConstructor_self.call( this,
-      inputChannelCount, outputChannelCount, bBias, nActivationId, nPassThroughStyleId,
-      nHigherHalfDifferent, inputChannelCount_lowerHalf, outputChannelCount_lowerHalf,
+      inputChannelCount, outputChannelCount,
+      bBias, nActivationId, nPassThroughStyleId,
+      nHigherHalfDifferent,
+      inputChannelCount_lowerHalf, outputChannelCount_lowerHalf,
       channelShuffler_inputGroupCount, channelShuffler_outputGroupCount );
 
     return this;
@@ -186,8 +194,10 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
 
   /** @override */
   static setAsConstructor_self(
-    inputChannelCount, outputChannelCount, bBias, nActivationId, nPassThroughStyleId,
-    nHigherHalfDifferent, inputChannelCount_lowerHalf, outputChannelCount_lowerHalf,
+    inputChannelCount, outputChannelCount,
+    bBias, nActivationId, nPassThroughStyleId,
+    nHigherHalfDifferent,
+    inputChannelCount_lowerHalf, outputChannelCount_lowerHalf,
     channelShuffler_inputGroupCount, channelShuffler_outputGroupCount ) {
 
     this.inputChannelCount = inputChannelCount;
@@ -224,7 +234,8 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
           + `outputChannelCount ( ${outputChannelCount} ).`
         );
 
-      if ( ( inputChannelCount_lowerHalf > 0 ) != ( outputChannelCount_lowerHalf > 0 ) )
+      if ( ( inputChannelCount_lowerHalf > 0 )
+             != ( outputChannelCount_lowerHalf > 0 ) )
         throw Error( `Pointwise.FiltersArray_BiasesArray.setAsConstructor_self(): `
           + `inputChannelCount_lowerHalf ( ${inputChannelCount_lowerHalf} ) and `
           + `outputChannelCount_lowerHalf ( ${outputChannelCount_lowerHalf} ) `
