@@ -881,7 +881,11 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
 
 
   get bHigherHalfDifferent() {
-    return ( this.nHigherHalfDifferent ) && ( this.nHigherHalfDifferent != ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.NONE );
+    return (
+         ( this.nHigherHalfDifferent )
+      && ( this.nHigherHalfDifferent
+             != ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.NONE )
+    );
   }
 
 }
