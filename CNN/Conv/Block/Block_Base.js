@@ -1285,7 +1285,8 @@ class Block_Base extends Recyclable.Root {
         {
           squeezeDepthwise0 = Operation.Depthwise_ConstantWhenPassThrough.Pool.get_or_create_by(
             this.operationArray.endingInput0,
-            squeezeAvgMax_Or_ChannelMultiplier, squeezeFilterHeight, squeezeFilterWidth, squeezeStridesPad,
+            squeezeAvgMax_Or_ChannelMultiplier,
+            squeezeFilterHeight, squeezeFilterWidth, squeezeStridesPad,
             squeezeBias, squeezeActivationId, squeezeHigherHalfDifferent,
             0, 0, // No channelShuffler_inputGroupCount, No channelShuffler_outputGroupCount. Because avg pooling can not do it.
           );
@@ -1298,7 +1299,8 @@ class Block_Base extends Recyclable.Root {
         if ( this.pointwise21ChannelCount > 0 ) {
           squeezeDepthwise1 = Operation.Depthwise_ConstantWhenPassThrough.Pool.get_or_create_by(
             this.operationArray.endingInput1 ? this.operationArray.endingInput1 : this.operationArray.endingInput0,
-            squeezeAvgMax_Or_ChannelMultiplier, squeezeFilterHeight, squeezeFilterWidth, squeezeStridesPad,
+            squeezeAvgMax_Or_ChannelMultiplier,
+            squeezeFilterHeight, squeezeFilterWidth, squeezeStridesPad,
             squeezeBias, squeezeActivationId, squeezeHigherHalfDifferent,
             0, 0, // No channelShuffler_inputGroupCount, No channelShuffler_outputGroupCount. Because avg pooling can not do it.
           );
@@ -1333,7 +1335,8 @@ class Block_Base extends Recyclable.Root {
         {
           intermediatePointwise0 = Block_Base.SequeezeExcitation_intermediatePointwise_create_init.call( this,
             this.operationArray.endingInput0,
-            this.squeezeExcitationActivationId, nPointwise_HigherHalfDifferent, inputWeightArray,
+            this.squeezeExcitationActivationId,
+            nPointwise_HigherHalfDifferent, inputWeightArray,
             channelShuffler_outputGroupCount );
 
           if ( !intermediatePointwise0 )
@@ -1343,14 +1346,17 @@ class Block_Base extends Recyclable.Root {
         if ( this.pointwise21ChannelCount > 0 ) {
           intermediatePointwise1 = Block_Base.SequeezeExcitation_intermediatePointwise_create_init.call( this,
             this.operationArray.endingInput1 ? this.operationArray.endingInput1 : this.operationArray.endingInput0,
-            this.squeezeExcitationActivationId, nPointwise_HigherHalfDifferent, inputWeightArray,
+            this.squeezeExcitationActivationId,
+            nPointwise_HigherHalfDifferent, inputWeightArray,
             channelShuffler_outputGroupCount );
 
           if ( !intermediatePointwise1 )
             return false;  // e.g. input array does not have enough data.
         }
 
-        this.operationArray.operation_append( intermediatePointwise0, intermediatePointwise1 );
+        this.operationArray.operation_append(
+          intermediatePointwise0, intermediatePointwise1 );
+
         intermediatePointwise0 = null;
         intermediatePointwise1 = null;
 
@@ -1368,24 +1374,29 @@ class Block_Base extends Recyclable.Root {
 
     // 3. excitationPointwise
     {
-      const excitationPointwise_bBias = true; // the ending of squeeze-and-excitation should always have bias (even if no activation).
+      // the ending of squeeze-and-excitation should always have bias (even if
+      // no activation).
+      const excitationPointwise_bBias = true;
 
-      // Since the previous operation's output channels has been shuffled, use the same as shuffler in input channels to neutralize its
-      // effect.
-      const excitationPointwise_channelShuffler_inputGroupCount = channelShuffler_outputGroupCount;
+      // Since the previous operation's output channels has been shuffled, use
+      // the same as shuffler in input channels to neutralize its effect.
+      const excitationPointwise_channelShuffler_inputGroupCount
+        = channelShuffler_outputGroupCount;
 
       let excitationPointwise0;
       let excitationPointwise1;
       try {
         {
-          const excitationPointwise0_outputChannelCount = input0.channelCount; // excitation's output should have same channel count as input.
+          // excitation's output should have same channel count as input.
+          const excitationPointwise0_outputChannelCount = input0.channelCount;
           const excitationPointwise0_outputChannelCount_lowerHalf = input0.channelCount_lowerHalf;
           const excitationPointwise0_nActivationId = this.squeezeExcitationActivationId;
 
           excitationPointwise0 = Operation.Pointwise_ConstantWhenPassThrough.Pool.get_or_create_by(
             this.operationArray.endingInput0,
             excitationPointwise0_outputChannelCount, excitationPointwise_bBias, excitationPointwise0_nActivationId,
-            nPointwise_HigherHalfDifferent, excitationPointwise0_outputChannelCount_lowerHalf,
+            nPointwise_HigherHalfDifferent,
+            excitationPointwise0_outputChannelCount_lowerHalf,
             excitationPointwise_channelShuffler_inputGroupCount,
             channelShuffler_outputGroupCount // Keep the same output channels shuffling.
           );
@@ -1406,7 +1417,8 @@ class Block_Base extends Recyclable.Root {
           excitationPointwise1 = Operation.Pointwise_ConstantWhenPassThrough.Pool.get_or_create_by(
             this.operationArray.endingInput1 ? this.operationArray.endingInput1 : this.operationArray.endingInput0,
             excitationPointwise1_outputChannelCount, excitationPointwise_bBias, excitationPointwise1_nActivationId,
-            nPointwise_HigherHalfDifferent, excitationPointwise1_outputChannelCount_lowerHalf,
+            nPointwise_HigherHalfDifferent,
+            excitationPointwise1_outputChannelCount_lowerHalf,
             excitationPointwise_channelShuffler_inputGroupCount,
             channelShuffler_outputGroupCount // Keep the same output channels shuffling.
           );
@@ -1416,7 +1428,9 @@ class Block_Base extends Recyclable.Root {
           this.weightElementOffsetEnd = excitationPointwise1.weightElementOffsetEnd;
         }
 
-        this.operationArray.operation_append( excitationPointwise0, excitationPointwise1 );
+        this.operationArray.operation_append(
+          excitationPointwise0, excitationPointwise1 );
+
         excitationPointwise0 = null;
         excitationPointwise1 = null;
 
@@ -1434,11 +1448,13 @@ class Block_Base extends Recyclable.Root {
 
     // 4. Mutiply
     {
-      let multiply0 = Operation.MultiplyTwoTensors.Pool.get_or_create_by( input0, this.operationArray.endingInput0 );
+      let multiply0 = Operation.MultiplyTwoTensors.Pool.get_or_create_by(
+        input0, this.operationArray.endingInput0 );
 
       let multiply1;
       if ( this.pointwise21ChannelCount > 0 ) {
-        multiply1 = Operation.MultiplyTwoTensors.Pool.get_or_create_by( input1, this.operationArray.endingInput1 );
+        multiply1 = Operation.MultiplyTwoTensors.Pool.get_or_create_by(
+          input1, this.operationArray.endingInput1 );
       }
 
       this.operationArray.operation_append( multiply0, multiply1 );
