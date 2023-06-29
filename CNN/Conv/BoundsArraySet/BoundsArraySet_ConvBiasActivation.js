@@ -377,8 +377,8 @@ class ConvBiasActivation extends InputsOutputs {
 
             doEscapingScale = this.output0.scaleArraySet.do.scales[ outChannel ];
             if ( Number.isNaN( doEscapingScale ) == true )
-              throw Error( `BoundsArraySet.ConvBiasActivation.`
-                + `adjust_afterFilter_afterBias_set_output0_by_afterBias_bPassThrough_nActivationId_nPassThroughStyleId( `
+              throw Error( `BoundsArraySet.ConvBiasActivation`
+                + `.adjust_afterFilter_afterBias_set_output0_by_afterBias_bPassThrough_nActivationId_nPassThroughStyleId( `
                   + `${ValueDesc.ActivationFunction.Singleton.getNameWithInt_byId( nActivationId )} ): `
                 + `this.output0.scaleArraySet.do.scales[ ${outChannel} ] `
                 + `( ${doEscapingScale} ) should not be NaN. `
