@@ -432,8 +432,11 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
               )
             );
 
-            // Note: If ( HIGHER_HALF_PASS_THROUGH ) with ( inputChannelCount_lowerHalf == 0 ) and ( outputChannelCount_lowerHalf == 0 ),
-            // the result should be the same as AllPassThrough without using special ( outputChannelCount <= 0 ).
+            // Note: If ( HIGHER_HALF_PASS_THROUGH ) with
+            //       ( inputChannelCount_lowerHalf == 0 ) and
+            //       ( outputChannelCount_lowerHalf == 0 ), the result should
+            //       be the same as AllPassThrough without using special
+            //       ( outputChannelCount <= 0 ).
             break;
 
           default:
@@ -444,7 +447,8 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
             break;
         }
 
-        this.filtersShape = Recyclable.Array.Pool.get_or_create_by( 1, 1, this.inputChannelCount, this.outputChannelCount );
+        this.filtersShape = Recyclable.Array.Pool.get_or_create_by(
+          1, 1, this.inputChannelCount, this.outputChannelCount );
 
         if ( this.bBias ) {
           this.biasesShape = Recyclable.Array.Pool.get_or_create_by( 1 );
@@ -456,9 +460,12 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
 
       // Prepare result filters and biases array.
       if ( this.filtersShape )
-        this.filtersArray = Recyclable.Array.Pool.get_or_create_by( tf.util.sizeFromShape( this.filtersShape ) );
+        this.filtersArray = Recyclable.Array.Pool.get_or_create_by(
+          tf.util.sizeFromShape( this.filtersShape ) );
+
       if ( this.biasesShape )
-        this.biasesArray = Recyclable.Array.Pool.get_or_create_by( tf.util.sizeFromShape( this.biasesShape ) );
+        this.biasesArray = Recyclable.Array.Pool.get_or_create_by(
+          tf.util.sizeFromShape( this.biasesShape ) );
 
       // Calculate weights count of filters and biases to be extracted.
       let weightsCount_extracted = 0;
@@ -468,43 +475,55 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
         weightsCount_extracted += biasesWeightCount_extracted;
 
       // Prepare source weights to be extracted.
-      if ( !super.init( inputWeightArray, weightElementOffsetBegin, weightsCount_extracted ) ) { // i.e. Weights.Base.init()
+      if ( !super.init( // i.e. Weights.Base.init()
+              inputWeightArray, weightElementOffsetBegin, weightsCount_extracted ) ) {
         this.bInitOk = false;
         return false;  // e.g. input array does not have enough data.
       }
 
       // filters and bias: weights and value bounds.
       //
-      // It should be better to calculate per channel value bounds by real filter and bias value (i.e. not by an estimated value bounds).
-      // This is especialy important for ActivationEscaping. Because inputDomainLinear of activation function is not wide, using looser
-      // value bounds estimation has higher possibility to lost information.
+      // It should be better to calculate per channel value bounds by real
+      // filter and bias value (i.e. not by an estimated value bounds). This is
+      // especialy important for ActivationEscaping. Because inputDomainLinear
+      // of activation function is not wide, using looser value bounds
+      // estimation has higher possibility to lost information.
       //
       // Two-rounds processing is used:
       //
-      //   - In the 1st round, extracting filter and bias value from sourceWeights[]. At the same time, calculating .afterFilter and
-      //       .afterBias by these extracted values combined with undoPreviousEscapingScale
-      //       (i.e. inputScaleBoundsArray.scaleArraySet.undo.scales[ inChannel ]). And then,
-      //       Find out .activationEscaping_ScaleArraySet, .afterActivationEscaping, .afterActivation.
+      //   - In the 1st round, extracting filter and bias value from
+      //       sourceWeights[]. At the same time, calculating .afterFilter and
+      //       .afterBias by these extracted values combined with
+      //       undoPreviousEscapingScale
+      //       (i.e. inputScaleBoundsArray.scaleArraySet.undo.scales[ inChannel ]).
+      //       And then, find out .activationEscaping_ScaleArraySet,
+      //       .afterActivationEscaping, .afterActivation.
       //
-      //   - In the 2nd round, apply doEscapingScale (i.e. .activationEscaping_ScaleArraySet.do.scales[ outChannel ] )
+      //   - In the 2nd round, apply doEscapingScale (i.e.
+      //       .activationEscaping_ScaleArraySet.do.scales[ outChannel ] )
       //       to filter and bias value (and also .afterFilter and .afterBias).
       //
       {
         // Round 0
         {
-          // Initialize element value bounds (per channel). Determine .input and .afterUndoPreviousActivationEscaping
+          // Initialize element value bounds (per channel). Determine .input
+          // and .afterUndoPreviousActivationEscaping
           this.boundsArraySet = BoundsArraySet.Pointwise.Pool.get_or_create_by(
-            inputScaleBoundsArray, this.outputChannelCount, this.channelShuffler_inputGroupCount );
+            inputScaleBoundsArray,
+            this.outputChannelCount, this.channelShuffler_inputGroupCount );
         }
 
         // Round 1
         {
           this.set_filtersArray_biasesArray_afterFilter_afterBias_apply_undoPreviousEscapingScale(
-            inputWeightArray, weightElementOffsetBegin, inputScaleBoundsArray, aFiltersBiasesPartInfoArray );
+            inputWeightArray, weightElementOffsetBegin, inputScaleBoundsArray,
+            aFiltersBiasesPartInfoArray );
 
-          this.boundsArraySet.set_bPassThrough_all_byChannelPartInfoArray( aFiltersBiasesPartInfoArray );
+          this.boundsArraySet.set_bPassThrough_all_byChannelPartInfoArray(
+            aFiltersBiasesPartInfoArray );
 
-          // Determine .activationEscaping_ScaleArraySet, .afterActivationEscaping, .afterActivation
+          // Determine .activationEscaping_ScaleArraySet, .afterActivationEscaping,
+          // .afterActivation
           this.boundsArraySet.adjust_afterFilter_afterBias_set_output0_by_afterBias_bPassThrough_nActivationId( this.nActivationId );
         }
 
@@ -521,10 +540,12 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
         this.tensorWeightCountTotal_internal = 0;
 
         if ( this.filtersShape )
-          this.tensorWeightCountTotal_internal += tf.util.sizeFromShape( this.filtersShape );
+          this.tensorWeightCountTotal_internal
+            += tf.util.sizeFromShape( this.filtersShape );
 
         if ( this.biasesShape )
-          this.tensorWeightCountTotal_internal += tf.util.sizeFromShape( this.biasesShape );
+          this.tensorWeightCountTotal_internal
+            += tf.util.sizeFromShape( this.biasesShape );
       }
 
       this.bInitOk = true;
@@ -540,22 +561,30 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
 
   /**
    * Extract this.filtersArray and this.biasesArray from sourceWeightArray and
-   * apply inputScaleBoundsArray.scaleArraySet.undo.scales[]. Also set the .afterFilter and .afterBias.
+   * apply inputScaleBoundsArray.scaleArraySet.undo.scales[]. Also set the
+   * .afterFilter and .afterBias.
    *
    * @param {Float32Array} sourceWeightArray
    *   A Float32Array whose values will be interpreted as weights.
    *
    * @param {ActivationEscaping.ScaleBoundsArray} inputScaleBoundsArray
-   *   The element value bounds (per channel) of input. Usually, it is The .output of the previous convolution-bias-activation value bounds
-   * set of this pointwise convolution. It will be kept (not cloned) directly. So caller should not modify them.
+   *   The element value bounds (per channel) of input. Usually, it is the
+   * .output of the previous convolution-bias-activation value bounds set of
+   * this pointwise convolution. It will be kept (not cloned) directly. So
+   * caller should not modify them.
    *
    * @param {Pointwise.FiltersBiasesPartInfo[]} aFiltersBiasesPartInfoArray
-   *   The input channel range array which describe lower/higher half channels index range.
+   *   The input channel range array which describe lower/higher half channels
+   * index range.
    */
   set_filtersArray_biasesArray_afterFilter_afterBias_apply_undoPreviousEscapingScale(
-    sourceWeightArray, weightElementOffsetBegin, inputScaleBoundsArray, aFiltersBiasesPartInfoArray ) {
+    sourceWeightArray, weightElementOffsetBegin,
+    inputScaleBoundsArray, aFiltersBiasesPartInfoArray ) {
 
-    const thePassThroughStyleInfo = ValueDesc.PassThroughStyle.Singleton.getInfo_byId( this.nPassThroughStyleId );
+    const thePassThroughStyleInfo
+      = ValueDesc.PassThroughStyle.Singleton.getInfo_byId(
+          this.nPassThroughStyleId );
+
     let tBounds = FloatValue.Bounds.Pool.get_or_create_by( 0, 0 );
 
     // Init
@@ -563,8 +592,9 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
       this.boundsArraySet.afterFilter.set_all_byN( 0 ); // Init .afterFilter
       this.boundsArraySet.afterBias.set_all_byN( 0 );   // Init .afterBias
 
-      // Because biases is fetched by adding, it should be initialized to zero. (Note: The .filtersArray is fetched by assigning, so
-      // it needs not be initialized.)
+      // Because biases is fetched by adding, it should be initialized to zero.
+      // (Note: The .filtersArray is fetched by assigning, so it needs not be
+      // initialized.)
       //
       if ( this.biasesArray ) {
         this.biasesArray.fill( 0 );
@@ -693,7 +723,8 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
     // Combine .afterFilter to .afterBias.
     //
     // Q: Why not combine when initializing .afterBias ?
-    // A: Because .afterFilter is unknown before FiltersBiasesPartInfoArray has been visited totally.
+    // A: Because .afterFilter is unknown before FiltersBiasesPartInfoArray has
+    //    been visited totally.
     //
     this.boundsArraySet.afterBias.add_all_byBoundsArray( this.boundsArraySet.afterFilter );
 
@@ -716,7 +747,8 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
   }
 
   /**
-   * Apply this.boundsArraySet.output0.scaleArraySet.do.scales[] to this.filtersArray and this.biasesArray.
+   * Apply this.boundsArraySet.output0.scaleArraySet.do.scales[] to
+   * this.filtersArray and this.biasesArray.
    */
   apply_doEscapingScale_to_filtersArray_biasesArray() {
 
@@ -755,30 +787,36 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
   /**
    * Shuffle (.filtersArray, .biasesArray, .boundsArraySet) by interleaving.
    *   - Only ( outputGroupCount == 2 ) is supported.
-   *   - The input channel count must be even (i.e. divisible by 2), if ( .channelShuffler_inputGroupCount > 0 ).
-   *   - The output channel count must be even (i.e. divisible by 2), if ( .channelShuffler_outputGroupCount > 0 ).
+   *   - The input channel count must be even (i.e. divisible by 2), if
+   *       ( .channelShuffler_inputGroupCount > 0 ).
+   *   - The output channel count must be even (i.e. divisible by 2), if
+   *       ( .channelShuffler_outputGroupCount > 0 ).
    */
   set_filters_biases_outputScaleBoundsArray_all_byInterleave_asGrouptTwo() {
+    const funcNameInMessage
+      = "set_filters_biases_outputScaleBoundsArray_all_byInterleave_asGrouptTwo";
     
     // 1.Shuffle along input channels.
     if ( this.channelShuffler_inputGroupCount > 0 ) {
 
       if ( this.channelShuffler_inputGroupCount != 2 )
-        throw Error( `Pointwise.FiltersArray_BiasesArray.set_filters_biases_outputScaleBoundsArray_all_byInterleave_asGrouptTwo(): `
+        throw Error( `Pointwise.FiltersArray_BiasesArray.${funcNameInMessage}(): `
           + `channelShuffler_inputGroupCount ( ${this.channelShuffler_inputGroupCount} ) only 2 is supported.`
         );
 
       if ( ( this.inputChannelCount % 2 ) != 0 )
-        throw Error( `Pointwise.FiltersArray_BiasesArray.set_filters_biases_outputScaleBoundsArray_all_byInterleave_asGrouptTwo(): `
+        throw Error( `Pointwise.FiltersArray_BiasesArray.${funcNameInMessage}(): `
           + `input channel count ( ${this.inputChannelCount} ) must be even (i.e. divisible by 2).`
         );
 
       // Shuffle filters.
       {
-        let filtersArrayShuffled = Recyclable.Array.Pool.get_or_create_by( this.filtersArray.length );
+        let filtersArrayShuffled = Recyclable.Array.Pool.get_or_create_by(
+          this.filtersArray.length );
 
         FloatValue.ArrayInterleaver.interleave_asGrouptTwo_alongLast2ndAxis_from_to(
-          this.filtersArray, filtersArrayShuffled, this.inputChannelCount, this.outputChannelCount );
+          this.filtersArray, filtersArrayShuffled,
+          this.inputChannelCount, this.outputChannelCount );
 
         this.filtersArray.disposeResources_and_recycleToPool();
         this.filtersArray = filtersArrayShuffled;
@@ -795,12 +833,12 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
     if ( this.channelShuffler_outputGroupCount > 0 ) {
 
       if ( this.channelShuffler_outputGroupCount != 2 )
-        throw Error( `Pointwise.FiltersArray_BiasesArray.set_filters_biases_outputScaleBoundsArray_all_byInterleave_asGrouptTwo(): `
+        throw Error( `Pointwise.FiltersArray_BiasesArray.${funcNameInMessage}(): `
           + `channelShuffler_outputGroupCount ( ${this.channelShuffler_outputGroupCount} ) only 2 is supported.`
         );
 
       if ( ( this.outputChannelCount % 2 ) != 0 )
-        throw Error( `Pointwise.FiltersArray_BiasesArray.set_filters_biases_outputScaleBoundsArray_all_byInterleave_asGrouptTwo(): `
+        throw Error( `Pointwise.FiltersArray_BiasesArray.${funcNameInMessage}(): `
           + `output channel count ( ${this.outputChannelCount} ) must be even (i.e. divisible by 2).`
         );
 
