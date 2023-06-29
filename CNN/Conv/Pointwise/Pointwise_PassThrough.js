@@ -13,10 +13,12 @@ import * as MultiLayerMap from "../../util/MultiLayerMap.js";
 /**
  * A pointwise convolution and bias which just pass the input to output.
  *
- * It is usually used in the inferenced higher half channels of the output channel (for achieving ShuffleNetV2_ByMopbileNetV1).
+ * It is usually used in the inferenced higher half channels of the output
+ * channel (for achieving ShuffleNetV2_ByMopbileNetV1).
  *
- * Note: Although depthwise (and pointwise) convolution could be past-through, the activation function will destroy the past-through
- * result. Using Pointwise_FiltersArray_BiasesArray may be better to handle this issue.
+ * Note: Although depthwise (and pointwise) convolution could be past-through,
+ *       the activation function will destroy the past-through result. Using
+ *       Pointwise_FiltersArray_BiasesArray may be better to handle this issue.
  *
  *
  * @member {number} inputChannelCount
@@ -32,18 +34,26 @@ import * as MultiLayerMap from "../../util/MultiLayerMap.js";
  *   Whether generate biases (although all zeros).
  *
  * @member {number} filterValue
- *   The value used as the pass-through pointwise convolution filter. Default is 1. If there will be no activation function after this
- * pass-through operation, value 1 is enough. However, if there wiil be an activation function, this past-through result might be
- * destroyed by the activation function. In order to alleviate this issue, a non-one filter value should be used. For example, if
- * every input value's range is [ 0,255 ] and RELU6 will be used as activation function, using 0.015625 (= 1 / 64 ) as filterValue is
- * appropriate because input values will be shrinked from [ 0, 255 ] into [ 0, 3.984375 ] which will still be kept linear by RELU6.
+ *   The value used as the pass-through pointwise convolution filter. Default
+ * is 1. If there will be no activation function after this pass-through
+ * operation, value 1 is enough. However, if there wiil be an activation
+ * function, this past-through result might be destroyed by the activation
+ * function. In order to alleviate this issue, a non-one filter value should be
+ * used. For example, if every input value's range is [ 0,255 ] and RELU6 will
+ * be used as activation function, using 0.015625 (= 1 / 64 ) as filterValue is
+ * appropriate because input values will be shrinked from [ 0, 255 ] into
+ * [ 0, 3.984375 ] which will still be kept linear by RELU6.
  *
  * @member {number} biasValue
- *   The value used as the pass-through bias (used only if ( bBias == true ) ). Default is 0. If there will be no activation function
- * after this pass-through operation, value 0 is enough. However, if there wiil be an activation function, this past-through result
- * might be destroyed by the activation function. In order to alleviate this issue, a non-zero bias value should be used. For example,
- * if every input value's range is [ -2, +2 ] and RELU6 will be used as activation function, using +2 as biasValue is appropriate
- * because input values will be shifted from [ -2, +2 ] into [ 0, 4 ] which will still be kept linear by RELU6.
+ *   The value used as the pass-through bias (used only if ( bBias == true ) ).
+ * Default is 0. If there will be no activation function after this
+ * pass-through operation, value 0 is enough. However, if there wiil be an
+ * activation function, this past-through result might be destroyed by the
+ * activation function. In order to alleviate this issue, a non-zero bias value
+ * should be used. For example, if every input value's range is [ -2, +2 ] and
+ * RELU6 will be used as activation function, using +2 as biasValue is
+ * appropriate because input values will be shifted from [ -2, +2 ] into
+ * [ 0, 4 ] which will still be kept linear by RELU6.
  *
  * @member {number[]} filtersShape
  *   The shape of the pass-through filters array.
@@ -62,29 +72,43 @@ let PassThrough_FiltersArray_BiasesArray
       extends Recyclable.Base( ParentClass ) {
 
   /**
-   * Used as default Pointwise.PassThrough_FiltersArray_BiasesArray provider for conforming to Recyclable interface.
+   * Used as default Pointwise.PassThrough_FiltersArray_BiasesArray provider
+   * for conforming to Recyclable interface.
    */
-  static Pool = new Pool.Root( "Pointwise.PassThrough_FiltersArray_BiasesArray.Pool",
-    PassThrough_FiltersArray_BiasesArray, PassThrough_FiltersArray_BiasesArray.setAsConstructor );
+  static Pool = new Pool.Root(
+    "Pointwise.PassThrough_FiltersArray_BiasesArray.Pool",
+    PassThrough_FiltersArray_BiasesArray,
+    PassThrough_FiltersArray_BiasesArray.setAsConstructor );
 
   /**
    */
-  constructor( inputChannelCount, outputChannelCount, inputChannelIndexStart, bBias, filterValue = 1, biasValue = 0 ) {
+  constructor(
+    inputChannelCount, outputChannelCount, inputChannelIndexStart,
+    bBias, filterValue = 1, biasValue = 0 ) {
+
     super();
     PassThrough_FiltersArray_BiasesArray.setAsConstructor_self.call( this,
-      inputChannelCount, outputChannelCount, inputChannelIndexStart, bBias, filterValue, biasValue );
+      inputChannelCount, outputChannelCount, inputChannelIndexStart,
+      bBias, filterValue, biasValue );
   }
 
   /** @override */
-  static setAsConstructor( inputChannelCount, outputChannelCount, inputChannelIndexStart, bBias, filterValue = 1, biasValue = 0 ) {
+  static setAsConstructor(
+    inputChannelCount, outputChannelCount, inputChannelIndexStart,
+    bBias, filterValue = 1, biasValue = 0 ) {
+
     super.setAsConstructor();
     PassThrough_FiltersArray_BiasesArray.setAsConstructor_self.call( this,
-      inputChannelCount, outputChannelCount, inputChannelIndexStart, bBias, filterValue, biasValue );
+      inputChannelCount, outputChannelCount, inputChannelIndexStart,
+      bBias, filterValue, biasValue );
     return this;
   }
 
   /** @override */
-  static setAsConstructor_self( inputChannelCount, outputChannelCount, inputChannelIndexStart, bBias, filterValue = 1, biasValue = 0 ) {
+  static setAsConstructor_self(
+    inputChannelCount, outputChannelCount, inputChannelIndexStart,
+    bBias, filterValue = 1, biasValue = 0 ) {
+
     this.inputChannelCount = inputChannelCount;
     this.outputChannelCount = outputChannelCount;
     this.inputChannelIndexStart = inputChannelIndexStart;
@@ -93,10 +117,14 @@ let PassThrough_FiltersArray_BiasesArray
     this.biasValue = biasValue;
 
     if ( inputChannelCount <= 0 )
-      throw `Pointwise.PassThrough.constructor(): inputChannelCount ( ${inputChannelCount} ) must be positive integer.`;
+      throw Error( `Pointwise.PassThrough.constructor(): `
+        + `inputChannelCount ( ${inputChannelCount} ) `
+        + `must be positive integer.` );
 
     if ( outputChannelCount <= 0 )
-      throw `Pointwise.PassThrough.constructor(): outputChannelCount ( ${outputChannelCount} ) must be positive integer.`;
+      throw Error( `Pointwise.PassThrough.constructor(): `
+        + `outputChannelCount ( ${outputChannelCount} ) `
+        + `must be positive integer.` );
 
     // Restrict beginIndex between [ 0, inputChannelCount ).
     let beginIndexMax = ( inputChannelCount - 1 );
@@ -104,12 +132,18 @@ let PassThrough_FiltersArray_BiasesArray
 
     // Restrict endIndex between [ 0, inputChannelIndexStart + outputChannelCount ].
     //
-    // Note: endIndexMax and endIndex need not be minus one, because they are not inclusive.
+    // Note: endIndexMax and endIndex need not be minus one, because they are
+    //       not inclusive.
     let endIndexMax = inputChannelCount;
-    let endIndex = Math.max( 0, Math.min( inputChannelIndexStart + outputChannelCount, endIndexMax ) );
+    let endIndex = Math.max( 0, Math.min(
+      inputChannelIndexStart + outputChannelCount, endIndexMax ) );
 
-    let extractedCount = endIndex - beginIndex; // So many channels will be past-through from input to output.
-    let zerosCount = outputChannelCount - extractedCount; // The output channels which no extracted values could be used will be filled by zeros.
+    // So many channels will be past-through from input to output.
+    let extractedCount = endIndex - beginIndex;
+
+    // The output channels which no extracted values could be used will be
+    // filled by zeros.
+    let zerosCount = outputChannelCount - extractedCount;
 
     this.filtersShape = Recyclable.Array.Pool.get_or_create_by( 4 );
     this.filtersShape[ 0 ] = 1;
@@ -117,7 +151,9 @@ let PassThrough_FiltersArray_BiasesArray
     this.filtersShape[ 2 ] = inputChannelCount;
     this.filtersShape[ 3 ] = outputChannelCount;
 
-    this.filtersArray = Recyclable.Array.Pool.get_or_create_by( inputChannelCount * outputChannelCount );
+    this.filtersArray = Recyclable.Array.Pool.get_or_create_by(
+      inputChannelCount * outputChannelCount );
+
     this.filtersArray.fill( 0 );
 
     for ( let i = 0; i < extractedCount; ++i ) {
@@ -169,26 +205,34 @@ let PassThrough_FiltersArray_BiasesArray
 
 
 /**
- * Almost the same as Pointwise.PassThrough_FiltersArray_BiasesArray class except its parent class is fixed to Object. In other words,
- * caller can not specify the parent class of Pointwise.PassThrough_FiltersArray_BiasesArray_Root (so it is named "Root" which can not
- * have parent class).
+ * Almost the same as Pointwise.PassThrough_FiltersArray_BiasesArray class
+ * except its parent class is fixed to Object. In other words, caller can not
+ * specify the parent class of
+ * Pointwise.PassThrough_FiltersArray_BiasesArray_Root (so it is named "Root"
+ * which can not have parent class).
  */
-class PassThrough_FiltersArray_BiasesArray_Root extends PassThrough_FiltersArray_BiasesArray() {
+class PassThrough_FiltersArray_BiasesArray_Root
+  extends PassThrough_FiltersArray_BiasesArray() {
 }
 
 
 /**
- * A pool for PassThrough_FiltersArray_BiasesArray with various parameters. It could reduce re-creating them of same parameters again
- * and again to improve performance.
+ * A pool for PassThrough_FiltersArray_BiasesArray with various parameters. It
+ * could reduce re-creating them of same parameters again and again to improve
+ * performance.
  *
  */
-class PassThrough_FiltersArray_BiasesArray_Bag extends Recyclable.Base( MultiLayerMap.Base ) {
+class PassThrough_FiltersArray_BiasesArray_Bag
+  extends Recyclable.Base( MultiLayerMap.Base ) {
 
   /**
-   * Used as default Pointwise.PassThrough_FiltersArray_BiasesArray_Bag provider for conforming to Recyclable interface.
+   * Used as default Pointwise.PassThrough_FiltersArray_BiasesArray_Bag
+   * provider for conforming to Recyclable interface.
    */
-  static Pool = new Pool.Root( "Pointwise.PassThrough_FiltersArray_BiasesArray_Bag.Pool",
-    PassThrough_FiltersArray_BiasesArray_Bag, PassThrough_FiltersArray_BiasesArray_Bag.setAsConstructor );
+  static Pool = new Pool.Root(
+    "Pointwise.PassThrough_FiltersArray_BiasesArray_Bag.Pool",
+    PassThrough_FiltersArray_BiasesArray_Bag,
+    PassThrough_FiltersArray_BiasesArray_Bag.setAsConstructor );
 
   /**
    */
@@ -225,24 +269,40 @@ class PassThrough_FiltersArray_BiasesArray_Bag extends Recyclable.Base( MultiLay
   /**
    *
    */
-  get_by_PassThroughStyleId( inputChannelCount, outputChannelCount, inputChannelIndexStart, bBias, nPassThroughStyleId ) {
-    const thePassThroughStyleInfo = ValueDesc.PassThroughStyle.Singleton.getInfo_byId( nPassThroughStyleId );
-    return this.get_by_filterValue_biasValue( inputChannelCount, outputChannelCount, inputChannelIndexStart, bBias,
+  get_by_PassThroughStyleId(
+    inputChannelCount, outputChannelCount, inputChannelIndexStart,
+    bBias, nPassThroughStyleId ) {
+
+    const thePassThroughStyleInfo
+      = ValueDesc.PassThroughStyle.Singleton.getInfo_byId( nPassThroughStyleId );
+
+    return this.get_by_filterValue_biasValue(
+      inputChannelCount, outputChannelCount, inputChannelIndexStart,
+      bBias,
       thePassThroughStyleInfo.filterValue, thePassThroughStyleInfo.biasValue );
   }
 
   /**
    *
    */
-  get_by_filterValue_biasValue( inputChannelCount, outputChannelCount, inputChannelIndexStart, bBias, filterValue = 1, biasValue = 0 ) {
-    return this.get_or_create_by_arguments1_etc( PassThrough_FiltersArray_BiasesArray_Bag.create_by, this,
-      inputChannelCount, outputChannelCount, inputChannelIndexStart, bBias, filterValue, biasValue );
+  get_by_filterValue_biasValue(
+    inputChannelCount, outputChannelCount, inputChannelIndexStart,
+    bBias, filterValue = 1, biasValue = 0 ) {
+
+    return this.get_or_create_by_arguments1_etc(
+      PassThrough_FiltersArray_BiasesArray_Bag.create_by, this,
+      inputChannelCount, outputChannelCount, inputChannelIndexStart,
+      bBias, filterValue, biasValue );
   }
 
   /** */
-  static create_by( inputChannelCount, outputChannelCount, inputChannelIndexStart, bBias, filterValue, biasValue ) {
+  static create_by(
+    inputChannelCount, outputChannelCount, inputChannelIndexStart,
+    bBias, filterValue, biasValue ) {
+
     return PassThrough_FiltersArray_BiasesArray_Root.Pool.get_or_create_by(
-      inputChannelCount, outputChannelCount, inputChannelIndexStart, bBias, filterValue, biasValue );
+      inputChannelCount, outputChannelCount, inputChannelIndexStart,
+      bBias, filterValue, biasValue );
   }
 
 }
@@ -251,28 +311,45 @@ class PassThrough_FiltersArray_BiasesArray_Bag extends Recyclable.Base( MultiLay
 /**
  * A pointwise convolution and bias which just pass the input to output.
  *
- * It is usually used in the inferenced higher half channels of the output channel (for achieving ShuffleNetV2_ByMopbileNetV1).
+ * It is usually used in the inferenced higher half channels of the output
+ * channel (for achieving ShuffleNetV2_ByMopbileNetV1).
  *
  * @see PassThrough_FiltersArray_BiasesArray
  * @see TwoTensors.filtersTensor4d_biasesTensor3d
  */
-class PassThrough extends PassThrough_FiltersArray_BiasesArray( TwoTensors.filtersTensor4d_biasesTensor3d() ) {
+class PassThrough
+  extends PassThrough_FiltersArray_BiasesArray(
+    TwoTensors.filtersTensor4d_biasesTensor3d() ) {
 
   /**
-   * Used as default Pointwise.PassThrough provider for conforming to Recyclable interface.
+   * Used as default Pointwise.PassThrough provider for conforming to
+   * Recyclable interface.
    */
-  static Pool = new Pool.Root( "Pointwise.PassThrough.Pool", PassThrough, PassThrough.setAsConstructor );
+  static Pool = new Pool.Root( "Pointwise.PassThrough.Pool",
+    PassThrough, PassThrough.setAsConstructor );
 
   /**
    */
-  constructor( inputChannelCount, outputChannelCount, inputChannelIndexStart, bBias, filterValue = 1, biasValue = 0 ) {
-    super( inputChannelCount, outputChannelCount, inputChannelIndexStart, bBias, filterValue, biasValue );
+  constructor(
+    inputChannelCount, outputChannelCount, inputChannelIndexStart,
+    bBias, filterValue = 1, biasValue = 0 ) {
+
+    super(
+      inputChannelCount, outputChannelCount, inputChannelIndexStart,
+      bBias, filterValue, biasValue );
+
     PassThrough.setAsConstructor_self.call( this );
   }
 
   /** @override */
-  static setAsConstructor( inputChannelCount, outputChannelCount, inputChannelIndexStart, bBias, filterValue = 1, biasValue = 0 ) {
-    super.setAsConstructor( inputChannelCount, outputChannelCount, inputChannelIndexStart, bBias, filterValue, biasValue );
+  static setAsConstructor(
+    inputChannelCount, outputChannelCount, inputChannelIndexStart,
+    bBias, filterValue = 1, biasValue = 0 ) {
+
+    super.setAsConstructor(
+      inputChannelCount, outputChannelCount, inputChannelIndexStart,
+      bBias, filterValue, biasValue );
+
     PassThrough.setAsConstructor_self.call( this );
     return this;
   }
