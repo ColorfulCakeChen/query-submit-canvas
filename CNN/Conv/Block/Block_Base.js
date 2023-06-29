@@ -1134,12 +1134,16 @@ class Block_Base extends Recyclable.Root {
    *               \- excitationPointwise2 - divide ---/
    *
    * Effects:
-   *  - depthwise separates neighbor pixels into different channels (of same pixel).
-   *  - ( depthwise * excitationPointwise1 ) provides proportional by neighbor pixels.
-   *  - ( ( depthwise * excitationPointwise1 ) / excitationPointwise2 ) provides inversely proportional by neighbor pixels.
+   *  - depthwise separates neighbor pixels into different channels (of same
+   *      pixel).
+   *  - ( depthwise * excitationPointwise1 ) provides proportional by neighbor
+   *      pixels.
+   *  - ( ( depthwise * excitationPointwise1 ) / excitationPointwise2 )
+   *      provides inversely proportional by neighbor pixels.
    *  - pointwise provides summation to neighbor pixels.
    *
-   * To avoid dividing by zero, the division may use tf.div( input, tf.abs( excitationPointwise2 ) + 1 ) instead of
+   * To avoid dividing by zero, the division may use
+   * tf.div( input, tf.abs( excitationPointwise2 ) + 1 ) instead of
    * tf.div( input, excitationPointwise2 ) directly.
    *
    *
@@ -1148,7 +1152,8 @@ class Block_Base extends Recyclable.Root {
    *   depthwise - pointwise
    *
    * Effects:
-   *  - depthwise separates neighbor pixels into different channels (of same pixel).
+   *  - depthwise separates neighbor pixels into different channels (of same
+   *      pixel).
    *  - Can't proportional by neighbor pixels.
    *  - Can't inversely proportional by neighbor pixels.
    *  - pointwise provides summation to neighbor pixels.
@@ -1160,7 +1165,8 @@ class Block_Base extends Recyclable.Root {
    *             \---------------------------/
    *
    * Effects:
-   *  - depthwise separates neighbor pixels into different channels (of same pixel).
+   *  - depthwise separates neighbor pixels into different channels (of same
+   *      pixel).
    *  - ( depthwise * excitation2 ) provides proportional to neighbor pixels.
    *  - Can't inversely proportional by neighbor pixels.
    *  - pointwise provides summation to neighbor pixels.
@@ -1168,7 +1174,8 @@ class Block_Base extends Recyclable.Root {
    *
    *
    * @param {Block.Base} this
-   *   The object to be modified. The .operationArray and .weightElementOffsetEnd will be modified.
+   *   The object to be modified. The .operationArray and
+   * .weightElementOffsetEnd will be modified.
    *
    * @param {ValueDesc.Pointwise_HigherHalfDifferent} nPointwise_HigherHalfDifferent
    *   The HigherHalfDifferent type for squeeze-and-excitation.
@@ -1182,33 +1189,40 @@ class Block_Base extends Recyclable.Root {
     nPointwise_HigherHalfDifferent, inputWeightArray,
     channelShuffler_outputGroupCount ) {
 
-    if ( this.nSqueezeExcitationChannelCountDivisor == ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.NONE ) // (-2)
+    if ( this.nSqueezeExcitationChannelCountDivisor
+           == ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.NONE ) // (-2)
       return true; // No sequeeze-and-excitation.
 
-    // Note1: Inside squeeze-and-excitation, all depthwsie and pointwise convolutions are constant-when-pass-through
-    //        so that the result for pass-through parts will not affect input when multiply to input.
+    // Note1: Inside squeeze-and-excitation, all depthwsie and pointwise
+    //        convolutions are constant-when-pass-through so that the result
+    //        for pass-through parts will not affect input when multiply to
+    //        input.
     //
 
     // 0.
 
-    let input0 = this.operationArray.endingInput0; // will be used for output because output dimension should be the same as input.
+    // Used for output because output dimension should be the same as input.
+    let input0 = this.operationArray.endingInput0;
     let input1 = this.operationArray.endingInput1;
 
     // For
     //   - ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21_HEAD_NO_DEPTHWISE2 (8)
     //   - ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21_HEAD (9)
     //
-    // Although they have pointwise21, however, their squeeze-and-excitation-1 uses .endingInput0 (i.e. not endingInput1) as input.
-    // So, if there is no input1, use input0 instead.
+    // Although they have pointwise21, however, their squeeze-and-excitation-1
+    // uses .endingInput0 (i.e. not endingInput1) as input. So, if there is no
+    // input1, use input0 instead.
     //
     if ( !input1 )
       input1 = input0;
 
-    // Assume .endingInput0 and endingInput1 have the same height and width. So, checking .endingInput0 should be enough.
+    // Assume .endingInput0 and endingInput1 have the same height and width.
+    // So, checking .endingInput0 should be enough.
     let inputHeight = input0.height;
     let inputWidth = input0.width;
 
-    // 0.1 Whether squeeze (i.e. global average pooling) exists. It will be false in the following cases:
+    // 0.1 Whether squeeze (i.e. global average pooling) exists. It will be
+    //     false in the following cases:
     //
     //   - ( nSqueezeExcitationChannelCountDivisor == ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.NONE ) (-2)
     //     - since this object is just a no-op.
@@ -1240,7 +1254,8 @@ class Block_Base extends Recyclable.Root {
  
     // 0.2 Whether intermediate pointwise convolution exists.
     //
-    //   - If ( nSqueezeExcitationChannelCountDivisor <= 0 ), it will be false (i.e. no intermediate pointwise convolution).
+    //   - If ( nSqueezeExcitationChannelCountDivisor <= 0 ), it will be false
+    //       (i.e. no intermediate pointwise convolution).
     //     - ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.NONE (-2)
     //     - ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.EXCITATION (-1)
     //     - ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.SQUEEZE_EXCITATION (0)
