@@ -437,6 +437,9 @@ class ConvBiasActivation extends InputsOutputs {
     {
       let afterFilterShuffled = FloatValue.BoundsArray.Pool.get_or_create_by(
         this.afterFilter.length );
+
+//!!! ...unfinished... (2023/06/29)
+// Is .afterFilter or afterFilterShuffled?
       this.afterFilter.set_all_byInterleave_asGrouptTwo_byBoundsArray( this.afterFilter );
       this.afterFilter.disposeResources_and_recycleToPool();
       this.afterFilter = afterFilterShuffled;
@@ -445,6 +448,9 @@ class ConvBiasActivation extends InputsOutputs {
     {
       let afterBiasShuffled = FloatValue.BoundsArray.Pool.get_or_create_by(
         this.afterBias.length );
+
+//!!! ...unfinished... (2023/06/29)
+// Is .afterBias or afterBiasShuffled?
       this.afterBias.set_all_byInterleave_asGrouptTwo_byBoundsArray( this.afterBias );
       this.afterBias.disposeResources_and_recycleToPool();
       this.afterBias = afterBiasShuffled;
