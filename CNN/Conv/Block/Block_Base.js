@@ -795,7 +795,8 @@ class Block_Base extends Recyclable.Root {
         pointwise20 = Operation.Pointwise_SameWhenPassThrough.Pool.get_or_create_by(
           this.operationArray.endingInput0,
           this.pointwise20ChannelCount, this.pointwise20Bias, this.pointwise20ActivationId,
-          this.pointwise20_nHigherHalfDifferent, this.pointwise20_outputChannelCount_lowerHalf,
+          this.pointwise20_nHigherHalfDifferent,
+          this.pointwise20_outputChannelCount_lowerHalf,
           0, // No channelShuffler_inputGroupCount.
           this.pointwise20_channelShuffler_outputGroupCount
         );
@@ -810,7 +811,8 @@ class Block_Base extends Recyclable.Root {
           let pointwise21_input0;
           {
             if ( this.operationArray.endingInput1 )
-              pointwise21_input0 = this.operationArray.endingInput1; // If there is .endingInput1, use it as pointwise21's input.
+              // If there is .endingInput1, use it as pointwise21's input.
+              pointwise21_input0 = this.operationArray.endingInput1;
             else
               pointwise21_input0 = this.operationArray.endingInput0;
           }
@@ -818,19 +820,24 @@ class Block_Base extends Recyclable.Root {
           pointwise21 = Operation.Pointwise_SameWhenPassThrough.Pool.get_or_create_by(
             pointwise21_input0,
             this.pointwise21ChannelCount, this.pointwise21Bias, this.pointwise21ActivationId,
-            this.pointwise20_nHigherHalfDifferent, this.pointwise20_outputChannelCount_lowerHalf,
+            this.pointwise20_nHigherHalfDifferent,
+            this.pointwise20_outputChannelCount_lowerHalf,
             0, // No channelShuffler_inputGroupCount.
             this.pointwise20_channelShuffler_outputGroupCount
           );
 
-          // Note: Strictly speaking, sometimes pointwise21 is dependent on depthwise2. But it does not matter for BoundsArraySet
-          // because depthwise1 and depthwise2 should have the same output value bounds.
+          // Note: Strictly speaking, sometimes pointwise21 is dependent on
+          //       depthwise2. But it does not matter for BoundsArraySet
+          //       because depthwise1 and depthwise2 should have the same
+          //       output value bounds.
           //
           if ( !pointwise21.init( inputWeightArray, this.weightElementOffsetEnd ) )
             return false;  // e.g. input array does not have enough data.
           this.weightElementOffsetEnd = pointwise21.weightElementOffsetEnd;
 
-        } else { // Since pointwise21 is not requested (i.e. channel count is not positive), do not create the object for saving memory.
+        } else {
+          // Since pointwise21 is not requested (i.e. channel count is not
+          // positive), do not create the object for saving memory.
         }
 
         // 6.3 Pointwise2 (= Pointwise20 + Pointwise21 )
@@ -860,31 +867,40 @@ class Block_Base extends Recyclable.Root {
     if ( !this.bSqueezeExcitationPrefix ) // (i.e. postfix)
       if ( !Block_Base.operationArray_append_SqueezeExcitation.call( this,
               this.pointwise20_nHigherHalfDifferent, inputWeightArray,
-              this.pointwise20_channelShuffler_outputGroupCount // Postfix squeeze-and-excitation's channels are shuffled if pointwise2 did.
+
+              // Postfix squeeze-and-excitation's channels are shuffled if
+              // pointwise2 did.
+              this.pointwise20_channelShuffler_outputGroupCount
             )
          )
         return false;  // e.g. input array does not have enough data.
 
     // 7.2
+    // squeeze-and-excitation (postfix pointwise2) was ready. Report progress.
     progressToAdvance.value_advance();
-    yield progressRoot;  // squeeze-and-excitation (postfix pointwise2) was ready. Report progress.
+    yield progressRoot;
 
     // 8. Add-input-to-output
 
     // 8.1
     //
-    // Although caller could request add-input-to-output, it may or may not doable.
-    // Only if the dimension of output is the same as the dimension of input, it is possible to add-input-to-output.
+    // Although caller could request add-input-to-output, it may or may not
+    // doable. Only if the dimension of output is the same as the dimension
+    // of input, it is possible to add-input-to-output.
     //
-    // Only if depthwise stride is "1" and pad is "same" (or pad is "valid" but filter size 1x1), the dimension 0 (height)
-    // and 1 (width) of the output will be the same as input.
+    // Only if depthwise stride is "1" and pad is "same" (or pad is "valid" but
+    // filter size 1x1), the dimension 0 (height) and 1 (width) of the output
+    // will be the same as input.
     //
-    // Only if output channel is equals to input channel, the dimension 2 (channel) of the output will be the same as input.
+    // Only if output channel is equals to input channel, the dimension 2
+    // (channel) of the output will be the same as input.
     //
     // For example:
-    //   - if MobileNetV2 and not stage's block0, should not destroy input tensor so that can add input to output.
-    //   - However, even if MobileNetV2, only if not block0 (whose strides == ValueDesc.StridesPad.Singleton.Ids.STRIDES_2_PAD_SAME (2))
-    //       of a stage, the add-input-to-output can be done.
+    //   - if MobileNetV2 and not stage's block0, should not destroy input
+    //       tensor so that can add input to output.
+    //   - However, even if MobileNetV2, only if not block0 (whose ( strides ==
+    //       ValueDesc.StridesPad.Singleton.Ids.STRIDES_2_PAD_SAME (2) ) ) of
+    //       a stage, the add-input-to-output can be done.
     //
     this.bAddInputToOutput0 = false;
     this.bAddInputToOutput1 = false;
