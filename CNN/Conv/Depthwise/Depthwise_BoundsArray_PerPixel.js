@@ -191,14 +191,21 @@ class Depthwise_BoundsArray_PerPixel extends FloatValue.BoundsArray {
             ++outX, inX += this.imageInfo.stridesWidth,
               imageOutput_elementIndex += this.imageInfo.outputChannelCount ) {
 
-        if ( inX < 0 )
-          continue; // Never access outside of input image. Continue to find out non-negative input image x position.
-        else if ( inX >= this.imageInfo.inputWidth )
-          break;    // Never access outside of input image. Break because it is impossible to find inside of input image.
+        if ( inX < 0 ) {
+          // Never access outside of input image. Continue to find out
+          // non-negative input image x position.
+          continue;
+
+        } else if ( inX >= this.imageInfo.inputWidth ) {
+          // Never access outside of input image. Break because it is
+          // impossible to find inside of input image.
+          break;
+        }
 
         // It should include filter dilation but exclude input image outside.
         //
-        // This accumulation should be done after confirm ( inY, inX ) is inside the input image.
+        // This accumulation should be done after confirm ( inY, inX ) is
+        // inside the input image.
         ++this.accumulationCounts[ imageOutput_elementIndex ];
 
         this.add_one_byBounds( imageOutput_elementIndex, tBounds );
