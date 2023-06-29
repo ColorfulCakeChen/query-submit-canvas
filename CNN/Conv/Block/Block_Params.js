@@ -346,8 +346,10 @@ class Block_Params extends Weights.Params( ParamsBase ) {
    *
    *     - ( nSqueezeExcitationChannelCountDivisor > 0 )
    *       - has squeeze. 
-   *       - has intermediate excitation. ( intermediate_outputChannelCount = Math.ceil( inputChannelCount / nSqueezeExcitationChannelCountDivisor ) )
-   *       - has two pointwise convolutions (i.e. intermediate pointwise convolution, and excitation pointwise convolution).
+   *       - has intermediate excitation. ( intermediate_outputChannelCount
+   *           = Math.ceil( inputChannelCount / nSqueezeExcitationChannelCountDivisor ) )
+   *       - has two pointwise convolutions (i.e. intermediate pointwise
+   *           convolution, and excitation pointwise convolution).
    *
    * @param {boolean} bSqueezeExcitationPrefix
    *   If true, the squeeze-and-excitation will be before pointwise2. If false,
