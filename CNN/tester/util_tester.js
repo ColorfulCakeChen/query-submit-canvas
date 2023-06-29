@@ -7,6 +7,7 @@ import * as Base64ToUint8Array_tester from "./Base64ToUint8Array_tester.js";
 import * as Float12_tester from "./Float12_tester.js";
 import * as Percentage_tester from "./Percentage_tester.js";
 import * as Uint12_tester from "./Uint12_tester.js";
+import * as BoundsArraySet_tester from "./BoundsArraySet_tester.js";
 import * as GSheets_tester from "./GSheets_tester.js";
 import * as FeedbackShape_tester from "./FeedbackShape_tester.js";
 import * as AsyncWorker_tester from "./AsyncWorker_tester.js";
@@ -30,11 +31,13 @@ const gTestGeneratorFuncMap = new Map( [
   // [ Float12_tester.tester, true ],
   // [ Uint12_tester.tester, true ],
 
+  [ BoundsArraySet_tester.tester, true ],
+
   // [ GSheets_tester.tester, true ],
 
   // [ FeedbackShape_tester.tester, true ],
   // [ AsyncWorker_tester.tester, true ],
-  [ DEvolution_tester.tester, true ],
+  // [ DEvolution_tester.tester, true ],
 
   // [ NeuralOrchestra_tester.tester, true ],
 
