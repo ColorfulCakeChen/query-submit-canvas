@@ -83,10 +83,14 @@ class Depthwise_BoundsArray_PerPixel extends FloatValue.BoundsArray {
   }
 
   /**
-   * @param {number} thisIndex  The array index of this.accumulationCounts[].
-   * @param {number} N          Set ( this.accumulationCounts[ thisIndex ] ) by ( N ).
+   * @param {number} thisIndex
+   *   The array index of this.accumulationCounts[].
    *
-   * @return {Depthwise_BoundsArray_PerPixel} Return this (modified) object.
+   * @param {number} N
+   *   Set ( this.accumulationCounts[ thisIndex ] ) by ( N ).
+   *
+   * @return {Depthwise_BoundsArray_PerPixel}
+   *   Return this (modified) object.
    */
   accumulationCounts_set_one_byN( thisIndex, N ) {
     this.accumulationCounts[ thisIndex ] = N;
@@ -94,11 +98,17 @@ class Depthwise_BoundsArray_PerPixel extends FloatValue.BoundsArray {
   }
 
   /**
-   * @param {number} thisIndex  The array index of this.accumulationCounts[].
-   * @param {number[]} Ns       Set ( this.accumulationCounts[ thisIndex ] ) by ( Ns[ aIndex ] ).
-   * @param {number} aIndex     The array index of Ns[].
+   * @param {number} thisIndex
+   *   The array index of this.accumulationCounts[].
    *
-   * @return {Depthwise_BoundsArray_PerPixel} Return this (modified) object.
+   * @param {number[]} Ns
+   *   Set ( this.accumulationCounts[ thisIndex ] ) by ( Ns[ aIndex ] ).
+   *
+   * @param {number} aIndex
+   *   The array index of Ns[].
+   *
+   * @return {Depthwise_BoundsArray_PerPixel}
+   *   Return this (modified) object.
    */
   accumulationCounts_set_one_byNs( thisIndex, Ns, aIndex ) {
     this.accumulationCounts[ thisIndex ] = Ns[ aIndex ];
@@ -106,9 +116,11 @@ class Depthwise_BoundsArray_PerPixel extends FloatValue.BoundsArray {
   }
 
   /**
-   * @param {number} N          Set ( this.accumulationCounts[] ) by ( N ).
+   * @param {number} N
+   *   Set ( this.accumulationCounts[] ) by ( N ).
    *
-   * @return {Depthwise_BoundsArray_PerPixel} Return this (modified) object.
+   * @return {Depthwise_BoundsArray_PerPixel}
+   *   Return this (modified) object.
    */
   accumulationCounts_set_all_byN( N ) {
     this.accumulationCounts.fill( N );
@@ -116,9 +128,11 @@ class Depthwise_BoundsArray_PerPixel extends FloatValue.BoundsArray {
   }
 
   /**
-   * @param {number[]} Ns  Set all ( this.accumulationCounts[] ) by ( Ns[] ).
+   * @param {number[]} Ns
+   *   Set all ( this.accumulationCounts[] ) by ( Ns[] ).
    *
-   * @return {Depthwise_BoundsArray_PerPixel} Return this (modified) object.
+   * @return {Depthwise_BoundsArray_PerPixel}
+   *   Return this (modified) object.
    */
   accumulationCounts_set_all_byNs( Ns ) {
     for ( let i = 0; i < this.accumulationCounts.length; ++i ) {
@@ -129,9 +143,11 @@ class Depthwise_BoundsArray_PerPixel extends FloatValue.BoundsArray {
 
   /**
    * @param {Depthwise_BoundsArray_PerPixel} aBoundsArray
-   *   Set all ( this.accumulationCounts[] ) by ( aBoundsArray.accumulationCounts[] ).
+   *   Set all ( this.accumulationCounts[] ) by
+   * ( aBoundsArray.accumulationCounts[] ).
    *
-   * @return {Depthwise_BoundsArray_PerPixel} Return this (modified) object.
+   * @return {Depthwise_BoundsArray_PerPixel}
+   *   Return this (modified) object.
    */
   accumulationCounts_set_all_byBoundsArray( aBoundsArray ) {
     return this.accumulationCounts_set_all_byNs(
@@ -156,7 +172,8 @@ class Depthwise_BoundsArray_PerPixel extends FloatValue.BoundsArray {
    *   The value bounds to be added to this BoundsArray_PerPixel for the
    * specified depthwise filter position.
    *
-   * @return {Depthwise_BoundsArray_PerPixel} Return this (modified) object.
+   * @return {Depthwise_BoundsArray_PerPixel}
+   *   Return this (modified) object.
    */
   add_one_outputChannel_byBounds(
     outputChannel,
@@ -217,7 +234,8 @@ class Depthwise_BoundsArray_PerPixel extends FloatValue.BoundsArray {
   /**
    * Divide every value bounds by itself's .accumulationCounts[].
    *
-   * @return {Depthwise_BoundsArray_PerPixel} Return this (modified) object.
+   * @return {Depthwise_BoundsArray_PerPixel}
+   *   Return this (modified) object.
    */
   divide_all_by_accumulationCounts() {
     let imageOutput_elementIndex = 0;
@@ -240,7 +258,8 @@ class Depthwise_BoundsArray_PerPixel extends FloatValue.BoundsArray {
    * @param {FloatValue.BoundsArray} aBoundsArray
    *   The collapsed result will be stored to aBoundsArray.
    *
-   * @return {Depthwise_BoundsArray_PerPixel} Return this (modified) object.
+   * @return {Depthwise_BoundsArray_PerPixel}
+   *   Return this (modified) object.
    */
   collapse_byOutputChannel_toBoundsArray( aBoundsArray ) {
     aBoundsArray.length = this.imageInfo.outputChannelCount;
