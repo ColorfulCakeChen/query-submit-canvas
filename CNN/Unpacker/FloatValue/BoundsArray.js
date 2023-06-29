@@ -503,7 +503,8 @@ class BoundsArray extends Recyclable.Root {
    * Rearrange bounds by interleaving as ( groupCount == 2 ).
    *
    * @param {BoundsArray} aBoundsArray
-   *   The source BoundsArray to be copied from. Its element count must be even (i.e. divisible by 2).
+   *   The source BoundsArray to be copied from. Its element count must be even
+   * (i.e. divisible by 2).
    *
    * @return {BoundsArray} Return this (modified) object.
    */
@@ -511,14 +512,21 @@ class BoundsArray extends Recyclable.Root {
     let elementCount = aBoundsArray.length;
 
     if ( ( elementCount % 2 ) != 0 )
-      throw Error( `FloatValue.BoundsArray.set_all_byInterleave_asGrouptTwo_byBoundsArray(): `
-        + `elementCount ( ${elementCount} ) must be even (i.e. divisible by 2).`
+      throw Error( `FloatValue.BoundsArray`
+        + `.set_all_byInterleave_asGrouptTwo_byBoundsArray(): `
+        + `elementCount ( ${elementCount} ) `
+        + `must be even (i.e. divisible by 2).`
       );
 
     this.length = elementCount;
     let elementCountHalf = ( elementCount / 2 );
-    ArrayInterleaver.interleave_asGrouptTwo_from_to( aBoundsArray.lowers, 0, this.lowers, 0, elementCountHalf );
-    ArrayInterleaver.interleave_asGrouptTwo_from_to( aBoundsArray.uppers, 0, this.uppers, 0, elementCountHalf );
+
+    ArrayInterleaver.interleave_asGrouptTwo_from_to(
+      aBoundsArray.lowers, 0, this.lowers, 0, elementCountHalf );
+
+    ArrayInterleaver.interleave_asGrouptTwo_from_to(
+      aBoundsArray.uppers, 0, this.uppers, 0, elementCountHalf );
+
     return this;
   }
 
