@@ -176,6 +176,7 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
 
       if ( nHigherHalfDifferent
              != ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.NONE ) {
+
         let msg = `Depthwise.FiltersArray_BiasesArray.setAsConstructor_self(): `
           + `nHigherHalfDifferent `
           + `( ${ValueDesc.Depthwise_HigherHalfDifferent.Singleton.getNameWithInt_byId( nHigherHalfDifferent )} ) `
@@ -189,18 +190,20 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
     }
 
     // (2021/07/20)
-    // Note: In backend WASM, when filter width is 1 (note: filter height does not have this issue and could be 1), it seems that
-    // tf.pool() (both AVG and MAX) and tf.depthwiseConv2d() will calculate wrongly. In backend CPU and WebGL, this problem does
-    // not exist.
+    // Note: In backend WASM, when filter width is 1 (note: filter height does
+    //       not have this issue and could be 1), it seems that tf.pool() (both
+    //       AVG and MAX) and tf.depthwiseConv2d() will calculate wrongly. In
+    //       backend CPU and WebGL, this problem does not exist.
     //
     // (2022/05/01)
-    // The tensorflow.js team seems not recognize this issue as a problem and will not fix it. So, we need get around it by
-    // ourselves testing procedure.
+    // The tensorflow.js team seems not recognize this issue as a problem and
+    // will not fix it. So, we need get around it by ourselves testing procedure.
     if ( AvgMax_Or_ChannelMultiplier != 0 ) {
       if ( ( filterWidth == 1 ) && ( tf.getBackend() == "wasm" ) ) {
         throw Error(
           `Depthwise.FiltersArray_BiasesArray.setAsConstructor_self(): `
-            + `In backend WASM, it seems that tf.pool() (both AVG and MAX) and tf.depthwiseConv2d() can not work with filterWidth = 1.`
+            + `In backend WASM, it seems that tf.pool() (both AVG and MAX) `
+            + `and tf.depthwiseConv2d() can not work with filterWidth = 1.`
         );
       }
     }
@@ -208,7 +211,8 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
     if ( this.bHigherHalfDifferent ) {
       if ( inputChannelCount_lowerHalf > inputChannelCount )
         throw Error( `Depthwise.FiltersArray_BiasesArray.setAsConstructor_self(): `
-          + `inputChannelCount_lowerHalf ( ${this.inputChannelCount_lowerHalf} ) can not be larger than `
+          + `inputChannelCount_lowerHalf ( ${this.inputChannelCount_lowerHalf} ) `
+          + `can not be larger than `
           + `inputChannelCount ( ${this.inputChannelCount} ).`
         );
     }
@@ -284,10 +288,10 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
    *   A Float32Array whose values will be interpreted as weights.
    *
    * @param {ActivationEscaping.ScaleBoundsArray} inputScaleBoundsArray
-   *   The element value bounds (per channel) of input. Usually, it is The .output
-   * of the previous convolution-bias-activation value bounds set of this depthwise
-   * convolution. It will be kept (not cloned) directly. So caller should not
-   * modify them.
+   *   The element value bounds (per channel) of input. Usually, it is the
+   * .output of the previous convolution-bias-activation value bounds set of
+   * this depthwise convolution. It will be kept (not cloned) directly. So
+   * caller should not modify them.
    *
    * @return {boolean}
    *   Return true, if succeeded.
@@ -295,8 +299,8 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
   init( inputWeightArray, weightElementOffsetBegin, inputScaleBoundsArray ) {
 
     // Q1: Why is the inputWeightArray not a parameter of constructor?
-    // A1: The reason is to avoid keeping it as this.inputWeightArray so that it
-    //       could be released by memory garbage collector.
+    // A1: The reason is to avoid keeping it as this.inputWeightArray so that
+    //     it could be released by memory garbage collector.
     //
     // Q2: Why is not the sourceWeights kept in this?
     // A2: So that inputWeightArray could be released.
@@ -304,14 +308,16 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
 
     if ( this.inputChannelCount != inputScaleBoundsArray.length )
       throw Error( `Depthwise.FiltersArray_BiasesArray.init(): `
-        + `inputChannelCount ( ${this.inputChannelCount} ) should be the same as `
+        + `inputChannelCount ( ${this.inputChannelCount} ) `
+        + `should be the same as `
         + `outputChannelCount of previous convolution-bias-activation `
         + `( ${inputScaleBoundsArray.length} ).`
       );
 
     if ( this.inputChannelCount != inputScaleBoundsArray.scaleArraySet.undo.length )
       throw Error( `Depthwise.FiltersArray_BiasesArray.init(): `
-        + `inputChannelCount ( ${this.inputChannelCount} ) should be the same as `
+        + `inputChannelCount ( ${this.inputChannelCount} ) `
+        + `should be the same as `
         + `the length of .output.scaleArraySet.undo of previous `
         + `convolution-bias-activation `
         + `( ${inputScaleBoundsArray.scaleArraySet.undo.length} ).`
