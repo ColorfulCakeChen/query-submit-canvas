@@ -186,48 +186,65 @@ let PassThrough_FiltersArray_BiasesArray
    */
   static generate_PassThrough_FiltersArray( effectFilterValue, surroundingFilterValue ) {
 
-    if (   ( ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.AVG === this.AvgMax_Or_ChannelMultiplier )
-        || ( ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.MAX === this.AvgMax_Or_ChannelMultiplier ) ) {
+    if (   ( ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.AVG
+               === this.AvgMax_Or_ChannelMultiplier )
+        || ( ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.MAX
+               === this.AvgMax_Or_ChannelMultiplier ) ) {
 
       if ( this.filtersArray ) {
         this.filtersArray.disposeResources_and_recycleToPool();
         this.filtersArray = null;
       }
 
-      return; // The depthwise filter of AVG pooling and MAX pooling can not be manipulated.
+      // The depthwise filter of AVG pooling and MAX pooling can not be
+      // manipulated.
+      return;
     }
 
     // Make up a depthwise convolution filter.
     this.filtersArray = Recyclable.Array.Pool.get_or_create_by(
-      this.filterHeight * this.filterWidth * this.inputChannelCount * this.channelMultiplier );
+      this.filterHeight * this.filterWidth
+        * this.inputChannelCount * this.channelMultiplier );
 
-    // There is only one position (inside the effect depthwise filter) uses effectFilterValue.
-    // All other positions of the filter should be surroundingFilterValue.
+    // There is only one position (inside the effect depthwise filter) uses
+    // effectFilterValue. All other positions of the filter should be
+    // surroundingFilterValue.
     //
     let oneEffectFilterY = this.padHeightTop;
     let oneEffectFilterX = this.padWidthLeft;
 
-    // Note: Unfortunately, this may not work for ( dilation > 1 ) because the non-zero-filter-value might be just at the dilation
-    //       position which does not exist in a filter. So, only ( dilation == 1 ) is supported.
+    // Note: Unfortunately, this may not work for ( dilation > 1 ) because the
+    //       non-zero-filter-value might be just at the dilation position which
+    //       does not exist in a filter. So, only ( dilation == 1 ) is supported.
 
 
     let filterIndex = 0; // The index in the filter weights array.
 
-    for ( let filterY = 0, effectFilterY = 0; filterY < this.filterHeight; ++filterY ) {
-      for ( let dilationFilterY = 0; dilationFilterY < this.dilationHeight; ++dilationFilterY, ++effectFilterY ) {
+    for ( let filterY = 0, effectFilterY = 0; filterY < this.filterHeight;
+      ++filterY ) {
 
-        for ( let filterX = 0, effectFilterX = 0; filterX < this.filterWidth; ++filterX ) {
-          for ( let dilationFilterX = 0; dilationFilterX < this.dilationWidth; ++dilationFilterX, ++effectFilterX ) {
+      for ( let dilationFilterY = 0; dilationFilterY < this.dilationHeight;
+        ++dilationFilterY, ++effectFilterY ) {
 
-            // The filter's dilation part can not be manipulated. (They are always zero.)
+        for ( let filterX = 0, effectFilterX = 0;
+          filterX < this.filterWidth; ++filterX ) {
+
+          for ( let dilationFilterX = 0; dilationFilterX < this.dilationWidth;
+            ++dilationFilterX, ++effectFilterX ) {
+
+            // The filter's dilation part can not be manipulated. (They are
+            // always zero.)
             if ( ( 0 != dilationFilterY ) || ( 0 != dilationFilterX ) )
               continue;
 
-            for ( let inChannel = 0; inChannel < this.inputChannelCount; ++inChannel ) {
+            for ( let inChannel = 0;
+              inChannel < this.inputChannelCount; ++inChannel ) {
 
-              for ( let outChannelSub = 0; outChannelSub < this.channelMultiplier; ++outChannelSub ) {
+              for ( let outChannelSub = 0;
+                outChannelSub < this.channelMultiplier; ++outChannelSub ) {
 
-                if ( ( effectFilterY == oneEffectFilterY ) && ( effectFilterX == oneEffectFilterX ) ) {
+                if (   ( effectFilterY == oneEffectFilterY )
+                    && ( effectFilterX == oneEffectFilterX ) ) {
                   this.filtersArray[ filterIndex ] = effectFilterValue;
                 } else {
                   this.filtersArray[ filterIndex ] = surroundingFilterValue;
