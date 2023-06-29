@@ -96,9 +96,21 @@ class HigherHalfPassThrough extends Recyclable.Root {
       = this.outputChannelCount_real - this.outputChannelCount_higherHalf;
   }
 
-  ///** @override */
-  //disposeResources() {
-  //  super.disposeResources();
-  //}
+  /** @override */
+  disposeResources() {
+
+    this.outputChannelCount_higherHalf = undefined;
+    this.outputChannelCount_lowerHalf = undefined;
+
+    this.inputChannelCount_higherHalf = undefined;
+    this.inputChannelCount_lowerHalf = undefined;
+
+    this.outputChannelCount_real = undefined;
+
+    this.outputChannelCount = undefined;
+    this.inputChannelCount = undefined;
+
+    super.disposeResources();
+  }
 
 }
