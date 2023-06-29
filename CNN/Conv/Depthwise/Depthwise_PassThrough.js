@@ -13,33 +13,44 @@ import { PadInfoCalculator } from "./Depthwise_PadInfoCalculator.js";
 /**
  * A depthwise convolution and bias which just pass the input to output.
  *
- * It is usually used in passing the higher half channels of the input to output (for achieving ShuffleNetV2_ByMopbileNetV1's body/tail).
+ * It is usually used in passing the higher half channels of the input to
+ * output (for achieving ShuffleNetV2_ByMopbileNetV1's body/tail).
  *
- * Note1: Although depthwise (and pointwise) convolution could be past-through, the activation function will destroy the past-through
- * result. Using Pointwise_FiltersArray_BiasesArray may be better to handle this issue.
+ * Note1: Although depthwise (and pointwise) convolution could be past-through,
+ *        the activation function will destroy the past-through result. Using
+ *        Pointwise_FiltersArray_BiasesArray may be better to handle this issue.
  *
- * Note2: If both effectFilterValue and surroundingFilterValue are the same as ( 1 / ( filterHeight * filter Width ) ), the result filter
- * will have the same effect as average pooling.
+ * Note2: If both effectFilterValue and surroundingFilterValue are the same as
+ *        ( 1 / ( filterHeight * filter Width ) ), the result filter will have
+ *        the same effect as average pooling.
  *
  *
  *
  * @member {number} effectFilterValue
- *   The value used as the effect value of the pass-through depthwise convolution filter. Default is 1. If there will be no activation
- * function after this pass-through operation, value 1 is enough. However, if there wiil be an activation function, this past-through
- * result might be destroyed by the activation function. In order to alleviate this issue, a non-one filter value should be used. For
- * example, if every input value's range is [ 0,255 ] and RELU6 will be used as activation function, using 0.015625 (= 1 / 64 ) as
- * filterValue is appropriate because input values will be shrinked from [ 0, 255 ] into [ 0, 3.984375 ] which will still be kept
- * linear by RELU6.
+ *   The value used as the effect value of the pass-through depthwise
+ * convolution filter. Default is 1. If there will be no activation function
+ * after this pass-through operation, value 1 is enough. However, if there will
+ * be an activation function, this past-through result might be destroyed by
+ * the activation function. In order to alleviate this issue, a non-one filter
+ * value should be used. For example, if every input value's range is [ 0,255 ]
+ * and RELU6 will be used as activation function, using 0.015625 (= 1 / 64 ) as
+ * filterValue is appropriate because input values will be shrinked from
+ * [ 0, 255 ] into [ 0, 3.984375 ] which will still be kept linear by RELU6.
  *
  * @member {number} surroundingFilterValue
- *   The value used as the surrounding value of the pass-through depthwise convolution filter. Default is 0. 
+ *   The value used as the surrounding value of the pass-through depthwise
+ * convolution filter. Default is 0. 
  * 
  * @member {number} biasValue
- *   The value used as the pass-through bias (used only if ( bBias == true ) ). Default is 0. If there will be no activation function
- * after this pass-through operation, value 0 is enough. However, if there wiil be an activation function, this past-through result
- * might be destroyed by the activation function. In order to alleviate this issue, a non-zero bias value should be used. For example,
- * if every input value's range is [ -2, +2 ] and RELU6 will be used as activation function, using +2 as biasValue is appropriate
- * because input values will be shifted from [ -2, +2 ] into [ 0, 4 ] which will still be kept linear by RELU6.
+ *   The value used as the pass-through bias (used only if ( bBias == true ) ).
+ * Default is 0. If there will be no activation function after this
+ * pass-through operation, value 0 is enough. However, if there wiil be an
+ * activation function, this past-through result might be destroyed by the
+ * activation function. In order to alleviate this issue, a non-zero bias value
+ * should be used. For example, if every input value's range is [ -2, +2 ] and
+ * RELU6 will be used as activation function, using +2 as biasValue is
+ * appropriate because input values will be shifted from [ -2, +2 ] into
+ * [ 0, 4 ] which will still be kept linear by RELU6.
  *
  * @member {number[]} filtersShape
  *   The shape of the pass-through filters array.
@@ -60,35 +71,46 @@ let PassThrough_FiltersArray_BiasesArray
       extends PadInfoCalculator( ParentClass ) {
 
   /**
-   * Used as default Depthwise.PassThrough_FiltersArray_BiasesArray provider for conforming to Recyclable interface.
+   * Used as default Depthwise.PassThrough_FiltersArray_BiasesArray provider
+   * for conforming to Recyclable interface.
    */
-  static Pool = new Pool.Root( "Depthwise.PassThrough_FiltersArray_BiasesArray.Pool",
-    PassThrough_FiltersArray_BiasesArray, PassThrough_FiltersArray_BiasesArray.setAsConstructor );
+  static Pool = new Pool.Root(
+    "Depthwise.PassThrough_FiltersArray_BiasesArray.Pool",
+    PassThrough_FiltersArray_BiasesArray,
+    PassThrough_FiltersArray_BiasesArray.setAsConstructor );
 
   /**
    */
   constructor(
-    inputHeight, inputWidth, inputChannelCount, AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad,
+    inputHeight, inputWidth, inputChannelCount,
+    AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad,
     bBias, effectFilterValue = 1, surroundingFilterValue = 0, biasValue = 0 ) {
 
-    super( inputHeight, inputWidth, inputChannelCount, AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad );
+    super( inputHeight, inputWidth, inputChannelCount,
+       AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad );
+
     PassThrough_FiltersArray_BiasesArray.setAsConstructor_self.call( this,
       bBias, effectFilterValue, surroundingFilterValue, biasValue );
   }
 
   /** @override */
   static setAsConstructor(
-    inputHeight, inputWidth, inputChannelCount, AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad,
+    inputHeight, inputWidth, inputChannelCount,
+    AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad,
     bBias, effectFilterValue = 1, surroundingFilterValue = 0, biasValue = 0 ) {
 
-    super.setAsConstructor( inputHeight, inputWidth, inputChannelCount, AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad );
+    super.setAsConstructor( inputHeight, inputWidth, inputChannelCount,
+      AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad );
+
     PassThrough_FiltersArray_BiasesArray.setAsConstructor_self.call( this,
       bBias, effectFilterValue, surroundingFilterValue, biasValue );
     return this;
   }
 
   /** @override */
-  static setAsConstructor_self( bBias, effectFilterValue = 1, surroundingFilterValue = 0, biasValue = 0 ) {
+  static setAsConstructor_self( bBias,
+    effectFilterValue = 1, surroundingFilterValue = 0, biasValue = 0 ) {
+
     this.bBias = bBias;
     this.effectFilterValue = effectFilterValue;
     this.surroundingFilterValue = surroundingFilterValue;
@@ -100,7 +122,8 @@ let PassThrough_FiltersArray_BiasesArray
     this.filtersShape[ 2 ] = this.inputChannelCount;
     this.filtersShape[ 3 ] = this.channelMultiplier;
 
-    PassThrough_FiltersArray_BiasesArray.generate_PassThrough_FiltersArray.call( this, effectFilterValue, surroundingFilterValue );
+    PassThrough_FiltersArray_BiasesArray.generate_PassThrough_FiltersArray
+      .call( this, effectFilterValue, surroundingFilterValue );
 
     if ( this.bBias ) {
       this.biasesShape = Recyclable.Array.Pool.get_or_create_by( 3 );
@@ -108,7 +131,8 @@ let PassThrough_FiltersArray_BiasesArray
       this.biasesShape[ 1 ] = 1;
       this.biasesShape[ 2 ] = this.outputChannelCount;
 
-      this.biasesArray = Recyclable.Array.Pool.get_or_create_by( this.outputChannelCount );
+      this.biasesArray
+        = Recyclable.Array.Pool.get_or_create_by( this.outputChannelCount );
       this.biasesArray.fill( biasValue );
     }
   }
