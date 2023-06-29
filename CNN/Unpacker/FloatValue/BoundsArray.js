@@ -347,7 +347,8 @@ class BoundsArray extends Recyclable.Root {
    * @param {number} thisIndex  The array index of this.lowers[] and this.uppers[].
    * @param {Bounds} aBounds    Set ( this.lowers[ thisIndex ], this.uppers[ thisIndex ] ) by ( aBounds.lower, aBounds.upper ).
    *
-   * @return {BoundsArray} Return this (modified) object whose values are copied from aBounds.
+   * @return {BoundsArray}
+   *   Return this (modified) object whose values are copied from aBounds.
    */
   set_one_byBounds( thisIndex, aBounds ) {
     return this.set_one_byLowerUpper( thisIndex, aBounds.lower, aBounds.upper );
