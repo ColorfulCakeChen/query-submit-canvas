@@ -345,12 +345,13 @@ let PadInfoCalculator = ( ParentClass = Object ) => class PadInfoCalculator
    *   Depthwise operation. (ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.Xxx)
    *
    * @return {boolean}
-   *   If the depthwise operation does not analyze the neighbor in the direction
-   * of height and width, return true.
+   *   If the depthwise operation does not analyze the neighbor in the
+   * direction of height and width, return true.
    */
   static output_height_width_is_no_neighbor_analysis(
     inputHeight, inputWidth,
-    depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth
+    depthwise_AvgMax_Or_ChannelMultiplier,
+    depthwiseFilterHeight, depthwiseFilterWidth
   ) {
     return (
          // (0), no-op
