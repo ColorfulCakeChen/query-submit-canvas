@@ -336,11 +336,12 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
         + `convolution-bias-activation ( ${inputScaleBoundsArray.length} ).`
       );
 
-    if ( this.inputChannelCount != inputScaleBoundsArray.scaleArraySet.undo.length )
+    if ( this.inputChannelCount
+           != inputScaleBoundsArray.scaleArraySet.undo.length )
       throw Error( `Pointwise.FiltersArray_BiasesArray.init(): `
         + `inputChannelCount ( ${this.inputChannelCount} ) `
-        + `should be the same as the length of `
-        + `.output.scaleArraySet.undo of previous convolution-bias-activation `
+        + `should be the same as the length of .output.scaleArraySet.undo `
+        + `of previous convolution-bias-activation `
         + `( ${inputScaleBoundsArray.scaleArraySet.undo.length} ).`
       );
 
@@ -377,7 +378,9 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
           case ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.NONE: // (0)
 
             // Extract all weights as specified input/output channels.          
-            filtersWeightCount_extracted = this.inputChannelCount * this.outputChannelCount;
+            filtersWeightCount_extracted
+              = this.inputChannelCount * this.outputChannelCount;
+
             biasesWeightCount_extracted = this.outputChannelCount;
 
             aFiltersBiasesPartInfoArray = Recyclable.OwnerArray.Pool.get_or_create_by(
@@ -456,7 +459,8 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
           default:
             throw Error(
               `Pointwise.FiltersArray_BiasesArray.init(): `
-                + `nHigherHalfDifferent ( ${this.nHigherHalfDifferent} ) is unknown value.`
+                + `nHigherHalfDifferent ( ${this.nHigherHalfDifferent} ) `
+                + `is unknown value.`
             );
             break;
         }
@@ -489,8 +493,8 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
         weightsCount_extracted += biasesWeightCount_extracted;
 
       // Prepare source weights to be extracted.
-      if ( !super.init( // i.e. Weights.Base.init()
-              inputWeightArray, weightElementOffsetBegin, weightsCount_extracted ) ) {
+      if ( !super.init( inputWeightArray, weightElementOffsetBegin,
+              weightsCount_extracted ) ) { // i.e. Weights.Base.init()
         this.bInitOk = false;
         return false;  // e.g. input array does not have enough data.
       }
@@ -616,11 +620,20 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
     }
 
     let input_scaleArraySet_undo;
-    if ( this.channelShuffler_inputGroupCount > 0 ) { // Use non-channel-shuffled info of previous operation.
-      input_scaleArraySet_undo = FloatValue.ScaleArray.Pool.get_or_create_by( inputScaleBoundsArray.scaleArraySet.undo.length );
-      input_scaleArraySet_undo.set_all_byInterleave_asGrouptTwo_undo_byScaleArray( inputScaleBoundsArray.scaleArraySet.undo );
-    } else {
-      input_scaleArraySet_undo = inputScaleBoundsArray.scaleArraySet.undo; // Use channel-shuffled info of previous operation.
+    {
+      // Use non-channel-shuffled info of previous operation.
+      if ( this.channelShuffler_inputGroupCount > 0 ) {
+        input_scaleArraySet_undo
+          = FloatValue.ScaleArray.Pool.get_or_create_by(
+              inputScaleBoundsArray.scaleArraySet.undo.length );
+        input_scaleArraySet_undo
+          .set_all_byInterleave_asGrouptTwo_undo_byScaleArray(
+            inputScaleBoundsArray.scaleArraySet.undo );
+
+      // Use channel-shuffled info of previous operation.
+      } else {
+        input_scaleArraySet_undo = inputScaleBoundsArray.scaleArraySet.undo;
+      }
     }
 
     // Extracting weights of filters and biases. (Including extra scale.)

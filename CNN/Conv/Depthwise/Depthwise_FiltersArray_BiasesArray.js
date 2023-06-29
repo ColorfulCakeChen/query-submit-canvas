@@ -494,8 +494,8 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
         weightsCount_extracted += biasesWeightCount_extracted
 
       // Prepare source weights to be extracted.
-      if ( !super.init( // i.e. Weights.Base.init()
-             inputWeightArray, weightElementOffsetBegin, weightsCount_extracted ) ) {
+      if ( !super.init( inputWeightArray, weightElementOffsetBegin,
+              weightsCount_extracted ) ) { // i.e. Weights.Base.init()
         this.bInitOk = false;
         return false;  // e.g. input array does not have enough data.
       }
