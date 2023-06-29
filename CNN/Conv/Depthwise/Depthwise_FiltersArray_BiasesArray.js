@@ -169,10 +169,13 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
     this.tensorWeightCountTotal_internal = 0;
 
     // The depthwise filter of AVG pooling and MAX pooling can not be manipulated.
-    if (   ( ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.AVG === AvgMax_Or_ChannelMultiplier )
-        || ( ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.MAX === AvgMax_Or_ChannelMultiplier ) ) {
+    if (   ( ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.AVG
+               === AvgMax_Or_ChannelMultiplier )
+        || ( ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.MAX
+               === AvgMax_Or_ChannelMultiplier ) ) {
 
-      if ( nHigherHalfDifferent != ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.NONE ) {
+      if ( nHigherHalfDifferent
+             != ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.NONE ) {
         let msg = `Depthwise.FiltersArray_BiasesArray.setAsConstructor_self(): `
           + `nHigherHalfDifferent `
           + `( ${ValueDesc.Depthwise_HigherHalfDifferent.Singleton.getNameWithInt_byId( nHigherHalfDifferent )} ) `
@@ -181,7 +184,7 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
           + `( ${ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.getNameWithInt_byId( AvgMax_Or_ChannelMultiplier )} )`
           ;
 
-        throw msg;
+        throw Error( msg );
       }
     }
 
