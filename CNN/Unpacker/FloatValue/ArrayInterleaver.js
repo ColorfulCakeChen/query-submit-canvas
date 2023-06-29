@@ -11,7 +11,8 @@ class ArrayInterleaver {
    *
    * The fromArray and toArray can not be an overlapped array.
    *   - They could be different array. Or,
-   *   - Thay could be the same array but fromArray[ fromIndex ] to
+   *   - Thay could be the same array but
+   *       fromArray[ fromIndex ] to
    *       fromArray[ fromIndex + ( 2 * elementCountHalf ) - 1 ] and
    *       toArray[ toIndex ] to
    *       toArray[ toIndex + ( 2 * elementCountHalf ) - 1 ] can not overlapped.
