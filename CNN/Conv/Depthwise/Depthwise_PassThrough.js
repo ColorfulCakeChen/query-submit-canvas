@@ -166,18 +166,22 @@ let PassThrough_FiltersArray_BiasesArray
    * Determine the following properties:
    *   - this.filtersArray
    *
-   * It is an number array representing the depthwise convolution filters which could pass the input to output unchangely.
+   * It is an number array representing the depthwise convolution filters which
+   * could pass the input to output unchangely.
    *
-   * If both effectFilterValue and otherFilterValue are the same as ( 1 / ( filterHeight * filter Width ) ), the result filter
-   * will have the same effect as average pooling.
+   * If both effectFilterValue and otherFilterValue are the same as
+   * ( 1 / ( filterHeight * filter Width ) ), the result filter will have the
+   * same effect as average pooling.
    *
    *
    * @param {number} effectFilterValue
-   *   The filter value used for the effect input pixel of the depthwise convolution. For pass-through, it is usually 1.
-   * Note: It is not always just at center of filter according to the filter shape and paddding.
+   *   The filter value used for the effect input pixel of the depthwise
+   * convolution. For pass-through, it is usually 1. Note: It is not always
+   * just at center of filter according to the filter shape and paddding.
    *
    * @param {number} surroundingFilterValue
-   *   The filter value used for the surrounding input pixel of the depthwise convolution. For pass-through, it is usually 0.
+   *   The filter value used for the surrounding input pixel of the depthwise
+   * convolution. For pass-through, it is usually 0.
    *
    */
   static generate_PassThrough_FiltersArray( effectFilterValue, surroundingFilterValue ) {
