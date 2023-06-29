@@ -223,8 +223,11 @@ class Depthwise_BoundsArray_PerPixel extends FloatValue.BoundsArray {
     let imageOutput_elementIndex = 0;
     for ( let outY = 0; outY < this.imageInfo.outputHeight; ++outY ) {
       for ( let outX = 0; outX < this.imageInfo.outputWidth; ++outX ) {
-        for ( let outC = 0; outC < this.imageInfo.outputChannelCount; ++outC, ++imageOutput_elementIndex ) {
-          this.divide_one_byNs( imageOutput_elementIndex, this.accumulationCounts, imageOutput_elementIndex );
+        for ( let outC = 0; outC < this.imageInfo.outputChannelCount;
+          ++outC, ++imageOutput_elementIndex ) {
+
+          this.divide_one_byNs( imageOutput_elementIndex,
+            this.accumulationCounts, imageOutput_elementIndex );
         }
       }
     }
@@ -241,13 +244,18 @@ class Depthwise_BoundsArray_PerPixel extends FloatValue.BoundsArray {
    */
   collapse_byOutputChannel_toBoundsArray( aBoundsArray ) {
     aBoundsArray.length = this.imageInfo.outputChannelCount;
-    aBoundsArray.set_all_by_PositiveInfinity_NegativeInfinity(); // (so that could be enlarged.)
+
+    // (so that could be enlarged.)
+    aBoundsArray.set_all_by_PositiveInfinity_NegativeInfinity();
 
     let imageOutput_elementIndex = 0;
     for ( let outY = 0; outY < this.imageInfo.outputHeight; ++outY ) {
       for ( let outX = 0; outX < this.imageInfo.outputWidth; ++outX ) {
-        for ( let outC = 0; outC < this.imageInfo.outputChannelCount; ++outC, ++imageOutput_elementIndex ) {
-          aBoundsArray.enlarge_one_byBoundsArray_one( outC, this, imageOutput_elementIndex );
+        for ( let outC = 0; outC < this.imageInfo.outputChannelCount;
+          ++outC, ++imageOutput_elementIndex ) {
+
+          aBoundsArray.enlarge_one_byBoundsArray_one( outC,
+            this, imageOutput_elementIndex );
         }
       }
     }
