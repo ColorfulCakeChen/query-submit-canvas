@@ -13,81 +13,104 @@ import { ChannelPartInfo, FiltersBiasesPartInfo } from  "./Pointwise_ChannelPart
  *
  *
  * @member {number} weightElementOffsetBegin
- *   The position which is started (inclusive) to extract from inputWeightArray by init().
+ *   The position which is started (inclusive) to extract from inputWeightArray
+ * by init().
  *
  * @member {number} weightElementOffsetEnd
- *   The position which is ended to (non-inclusive) extract from inputWeightArray by init(). Where to extract next weights.
- * Only meaningful if .init() returns true.
+ *   The position which is ended to (non-inclusive) extract from
+ * inputWeightArray by init(). Where to extract next weights. Only meaningful
+ * if .init() returns true.
  *
  * @member {BoundsArraySet.Pointwise} boundsArraySet
  *   The element value bounds (per channel) of this pointwise convolution.
  *
  * @member {number} outputChannelCount
  *   The output channel count of this pointwise convolutiuon.
- *     - Usually, if ( outputChannelCount == 0 ), it means no operation at all (i.e. bPointwise == bExisted == false ).
+ *     - Usually, if ( outputChannelCount == 0 ), it means no operation at all
+ *         (i.e. bPointwise == bExisted == false ).
  *
  * @member {number} nPassThroughStyleId
- *   The pass-through style id (ValueDesc.PassThroughStyle.Singleton.Ids.Xxx) of this convolution. It only affect the channels
- * which need to be pass-through from input to output.
+ *   The pass-through style id (ValueDesc.PassThroughStyle.Singleton.Ids.Xxx)
+ * of this convolution. It only affect the channels which need to be
+ * pass-through from input to output.
  *
  * @member {ValueDesc.Pointwise_HigherHalfDifferent} nHigherHalfDifferent
- *   - 0. If ( nHigherHalfDifferent == ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.NONE ), it is just a normal poitwise convolution.
- *         normal poitwise convolution.
+ *   - 0. If ( nHigherHalfDifferent == ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.NONE ),
+ *         it is just a normal poitwise convolution.
+ *         (i.e. normal poitwise convolution)
  *
  *   - 1. If ( nHigherHalfDifferent == ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_COPY_LOWER_HALF__LOWER_HALF_PASS_THROUGH ):
  *         (i.e. bHigherHalfCopyLowerHalf_LowerHalfPassThrough),
  *         (for pointwise1 of ShuffleNetV2_ByMobileNetV1's head),
- *         the filters for the output channels between 0 and ( outputChannelCount_lowerHalf - 1 ) will just pass
- *         through the input to output. The filters for the output channels between ( outputChannelCount_lowerHalf )
- *         and ( outputChannelCount - 1 ) will just copy the input channels between 0 and ( outputChannelCount_lowerHalf - 1 ).
+ *         the filters for the output channels between 0 and
+ *         ( outputChannelCount_lowerHalf - 1 ) will just pass through the
+ *         input to output. The filters for the output channels between
+ *         ( outputChannelCount_lowerHalf ) and ( outputChannelCount - 1 ) will
+ *         just copy the input channels between 0 and ( outputChannelCount_lowerHalf - 1 ).
  *         In this case, it will always have no biases (no matter how bBias is).
  *
  *   - 2. If ( nHigherHalfDifferent == ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_COPY_LOWER_HALF ):
  *         (i.e. bHigherHalfCopyLowerHalf),
  *         (for pointwise1 of ShuffleNetV2_ByMobileNetV1's head),
- *         the filters for the output channels between ( outputChannelCount_lowerHalf ) and ( outputChannelCount - 1 ) will just copy
- *         the input channels between 0 and ( outputChannelCount_lowerHalf - 1 ).
+ *         the filters for the output channels between ( outputChannelCount_lowerHalf )
+ *         and ( outputChannelCount - 1 ) will just copy the input channels
+ *         between 0 and ( outputChannelCount_lowerHalf - 1 ).
  *
  *   - 3. If ( nHigherHalfDifferent == ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_ANOTHER_POINTWISE ):
  *         (i.e. bHigherHalfAnotherPointwise),
  *         (for pointwise2 of ShuffleNetV2_ByMobileNetV1's head),
- *         the filters for the input channels between 0 and ( inputChannelCount_lowerHalf - 1 ) are pointwise21, between
- *         ( inputChannelCount_lowerHalf ) and ( inputChannelCount - 1 ) are pointwise212. These two filters (and biases)
- *         will be extracted in sequence, but they will be combined into one larger filters (and biases). This makes these
- *         filters' (and biases') weights are arranged the same as pointwise2 of ShuffleNetV2_ByPointwise22's head. So that
- *         the same filters weights could be used in these two architectures for comparing performance and correctness.
+ *         the filters for the input channels between 0 and
+ *         ( inputChannelCount_lowerHalf - 1 ) are pointwise21, between
+ *         ( inputChannelCount_lowerHalf ) and ( inputChannelCount - 1 ) are
+ *         pointwise212. These two filters (and biases) will be extracted in
+ *         sequence, but they will be combined into one larger filters (and
+ *         biases). This makes these filters' (and biases') weights are
+ *         arranged the same as pointwise2 of ShuffleNetV2_ByPointwise22's
+ *         head. So that the same filters weights could be used in these two
+ *         architectures for comparing performance and correctness.
  *
- *     - 3.1 If ( channelShuffler_outputGroupCount <= 0 ), (i.e. bHigherHalfAnotherPointwise).
+ *     - 3.1 If ( channelShuffler_outputGroupCount <= 0 ),
+ *           (i.e. bHigherHalfAnotherPointwise).
  *           (Not used.)
  *
- *     - 3.2 If ( channelShuffler_outputGroupCount > 0 ), (i.e. bHigherHalfAnotherPointwiseShuffle).
+ *     - 3.2 If ( channelShuffler_outputGroupCount > 0 ),
+ *           (i.e. bHigherHalfAnotherPointwiseShuffle).
  *           (for pointwise2 of ShuffleNetV2_ByMobileNetV1's head with channel shuffling)
- *           The output channels will be arranged just like applying channel shuffler on them.
+ *           The output channels will be arranged just like applying channel
+ *           shuffler on them.
  *
  *   - 4. If ( nHigherHalfDifferent == ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_PASS_THROUGH ):
- *        the filters for the output channels between ( outputChannelCount_lowerHalf )
- *        and ( outputChannelCount - 1 ) will just pass through the input to output.
+ *        the filters for the output channels between
+ *        ( outputChannelCount_lowerHalf ) and ( outputChannelCount - 1 ) will
+ *        just pass through the input to output.
  *
- *     - 4.1 If ( channelShuffler_outputGroupCount <= 0 ), (i.e. bHigherHalfPassThrough).
+ *     - 4.1 If ( channelShuffler_outputGroupCount <= 0 ),
+ *           (i.e. bHigherHalfPassThrough).
  *           (for pointwise1 of ShuffleNetV2_ByMobileNetV1's body/tail)
  *
- *     - 4.2 If ( channelShuffler_outputGroupCount > 0 ), (i.e. bHigherHalfPassThroughShuffle).
+ *     - 4.2 If ( channelShuffler_outputGroupCount > 0 ),
+ *           (i.e. bHigherHalfPassThroughShuffle).
  *           (for pointwise2 of ShuffleNetV2_ByMobileNetV1's body/tail)
- *           The output channels will be arranged just like applying channel shuffler on them.
+ *           The output channels will be arranged just like applying channel
+ *           shuffler on them.
  *
  * @member {boolean} bHigherHalfDifferent
- *   It will be false, if ( nHigherHalfDifferent == ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.NONE ).
+ *   It will be false, if
+ * ( nHigherHalfDifferent == ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.NONE ).
  *
  * @member {number} inputChannelCount_lowerHalf
- *   The lower half input channel count when ( bHigherHalfDifferent == true ). It is ignored when ( bHigherHalfDifferent == false ).
+ *   The lower half input channel count when ( bHigherHalfDifferent == true ).
+ * It is ignored when ( bHigherHalfDifferent == false ).
  *
  * @member {number} outputChannelCount_lowerHalf
- *   The lower half output channel count when ( bHigherHalfDifferent == true ). It is ignored when ( bHigherHalfDifferent == false ).
+ *   The lower half output channel count when ( bHigherHalfDifferent == true ).
+ * It is ignored when ( bHigherHalfDifferent == false ).
  *
  * @member {number} channelShuffler_inputGroupCount
- *   The input group count of the channel shuffler. Usually, it is used for undo previous operation's channel shuffling. If 0, the
- * inputScaleBoundsArray will be used. If positive (only 2 is supported currently), the inputScaleBoundsArray.beforeChannelShuffled
- * will be used.
+ *   The input group count of the channel shuffler. Usually, it is used for
+ * undo previous operation's channel shuffling. If 0, the inputScaleBoundsArray
+ * will be used. If positive (only 2 is supported currently), the
+ * inputScaleBoundsArray.beforeChannelShuffled will be used.
  *
  * @member {number} channelShuffler_outputGroupCount
  *   The output group count of the channel shuffler. Usually, it is used when:
@@ -95,8 +118,9 @@ import { ChannelPartInfo, FiltersBiasesPartInfo } from  "./Pointwise_ChannelPart
  *   - ( nHigherHalfDifferent == ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_PASS_THROUGH ).
  *
  * @member {number} tensorWeightCountTotal_internal
- *   The total wieght count used in tensors. Not including Params, because they are not used in tensors. Including inferenced
- * weights, if they are used in tensors.
+ *   The total wieght count used in tensors. Not including Params, because they
+ * are not used in tensors. Including inferenced weights, if they are used in
+ * tensors.
  *
  * @member {number[]} filtersShape
  *   The shape of the pointwise convolution filters array.
@@ -118,9 +142,11 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
   class FiltersArray_BiasesArray extends Weights.Base( ParentClass ) {
 
   /**
-   * Used as default Pointwise.FiltersArray_BiasesArray provider for conforming to Recyclable interface.
+   * Used as default Pointwise.FiltersArray_BiasesArray provider for conforming
+   * to Recyclable interface.
    */
-  static Pool = new Pool.Root( "Pointwise.FiltersArray_BiasesArray.Pool", FiltersArray_BiasesArray, FiltersArray_BiasesArray.setAsConstructor );
+  static Pool = new Pool.Root( "Pointwise.FiltersArray_BiasesArray.Pool",
+    FiltersArray_BiasesArray, FiltersArray_BiasesArray.setAsConstructor );
 
   /**
    */
