@@ -1562,12 +1562,14 @@ class Block_Base extends Recyclable.Root {
       = Operation.Pointwise_ConstantWhenPassThrough.Pool.get_or_create_by(
           inputTensorPlaceholder,
           intermediate_outputChannelCount, intermediate_bBias, intermediate_nActivationId,
-          intermediate_nHigherHalfDifferent, intermediate_outputChannelCount_lowerHalf,
+          intermediate_nHigherHalfDifferent,
+          intermediate_outputChannelCount_lowerHalf,
           intermediate_channelShuffler_inputGroupCount,
           channelShuffler_outputGroupCount // Keep the same output channels shuffling.
         );
 
-    if ( !intermediatePointwise.init( inputWeightArray, this.weightElementOffsetEnd ) ) {
+    if ( !intermediatePointwise.init(
+            inputWeightArray, this.weightElementOffsetEnd ) ) {
       intermediatePointwise.disposeResources_and_recycleToPool();
       intermediatePointwise = null;
       return null;  // e.g. input array does not have enough data.
@@ -1582,7 +1584,10 @@ class Block_Base extends Recyclable.Root {
     this.apply = Block_Base.apply_block;
   }
 
-  /** Call .operationArray.apply() directly. The .input0.realTensor ( and .input1.realTensor) will be used directly. */
+  /**
+   * Call .operationArray.apply() directly. The .input0.realTensor ( and
+   * .input1.realTensor) will be used directly.
+   */
   static apply_block() {
     this.operationArray.apply();
   }
