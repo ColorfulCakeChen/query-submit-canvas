@@ -5,6 +5,11 @@ import * as Recyclable from "../util/Recyclable.js";
 import * as RandTools from "../util/RandTools.js";
 import * as FloatValue from "../Unpacker/FloatValue.js";
 
+
+//!!! ...unfinished... (2023/06/29) should test
+// BoundsArraySet.ConvBiasActivation.set_outputs_all_byInterleave_asGrouptTwo()
+
+
 /**
  * For testing Bounds.
  *
