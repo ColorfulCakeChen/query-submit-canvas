@@ -429,12 +429,15 @@ class Block_Base extends Recyclable.Root {
    */
   * initer(
     progressParent, inputWeightArray, weightElementOffsetBegin, params,
-    input0_ScaleBoundsArray_or_TensorPlaceholder, input1_ScaleBoundsArray_or_TensorPlaceholder,
+    input0_ScaleBoundsArray_or_TensorPlaceholder,
+    input1_ScaleBoundsArray_or_TensorPlaceholder,
   ) {
 
     // 0. Prepare
 
-    this.weightElementOffsetEnd = this.weightElementOffsetBegin = weightElementOffsetBegin;
+    this.weightElementOffsetEnd = this.weightElementOffsetBegin
+      = weightElementOffsetBegin;
+
     this.bInitOk = false;
 
     // 0.1 Estimate the maximum value of progress.
@@ -452,7 +455,8 @@ class Block_Base extends Recyclable.Root {
       ;
 
     let progressRoot = progressParent.root_get();
-    let progressToAdvance = progressParent.child_add( ValueMax.Percentage.Concrete.Pool.get_or_create_by( progressMax ) );
+    let progressToAdvance = progressParent.child_add(
+      ValueMax.Percentage.Concrete.Pool.get_or_create_by( progressMax ) );
 
     // 1. Extract parameters.
     try {
@@ -572,17 +576,24 @@ class Block_Base extends Recyclable.Root {
     // 2.1.1 Prepare input tensor placeholders.
     inputTensorPlaceholder_creator.set_input0_input1_TensorPlaceholder_by.call( this,
       this.inputTensorCount,
-      this.input0_height, this.input0_width, this.input0_channelCount, input0_ScaleBoundsArray_or_TensorPlaceholder,
-      this.input1_height, this.input1_width, this.input1_channelCount, input1_ScaleBoundsArray_or_TensorPlaceholder,
-      this.pointwise1_inputChannelCount_lowerHalf, this.pointwise1_inputChannelCount_higherHalf
+      this.input0_height, this.input0_width, this.input0_channelCount,
+      input0_ScaleBoundsArray_or_TensorPlaceholder,
+      this.input1_height, this.input1_width, this.input1_channelCount,
+      input1_ScaleBoundsArray_or_TensorPlaceholder,
+      this.pointwise1_inputChannelCount_lowerHalf,
+      this.pointwise1_inputChannelCount_higherHalf
     );
 
     // 2.1.2 Create sub operation array.
-    this.operationArray = Operation.TwinArray.Pool.get_or_create_by( this.input0, this.input1, this.outputTensorCount );
+    this.operationArray = Operation.TwinArray.Pool.get_or_create_by(
+      this.input0, this.input1, this.outputTensorCount );
 
-    // Note: Once an operation is created (even if it just do nothing (e.g. ( pointwise1.bExisted == false ) ), it should always
-    //       be appended to this.operationArray. The reason is that a created operation has already registered as the finalOperation
-    //       of .endingInputX. Unless it could be un-registered, otherwise it should always be put into queue.
+    // Note: Once an operation is created (even if it just do nothing (e.g.
+    //       ( pointwise1.bExisted == false ) ), it should always be appended
+    //       to this.operationArray. The reason is that a created operation
+    //       has already registered as the finalOperation of .endingInputX.
+    //       Unless it could be un-registered, otherwise it should always be
+    //       put into queue.
 
 
     // 2.2 The pointwise1 convolution.
@@ -619,9 +630,11 @@ class Block_Base extends Recyclable.Root {
 
     // 3. The depthwise operation.
     //
-    // Note: When ( pad == valid ), it seems that depthwise (avg/max pooling) filter size can not greater than input image size.
+    // Note: When ( pad == valid ), it seems that depthwise (avg/max pooling)
+    //       filter size can not greater than input image size.
 
-    // The depthwise2 processes the input0 directly (i.e. not the pointwise1 result of input0, and not input1).
+    // The depthwise2 processes the input0 directly (i.e. not the pointwise1
+    // result of input0, and not input1).
     let depthwise2_input0 = this.input0; // (Note: Not .endingInput0, Not .input1)
 
     // Only if depthwise operation is requested and necessary, create them.
@@ -634,7 +647,8 @@ class Block_Base extends Recyclable.Root {
         {
           depthwise1 = Operation.Depthwise_SameWhenPassThrough.Pool.get_or_create_by(
             this.operationArray.endingInput0,
-            this.depthwise_AvgMax_Or_ChannelMultiplier, this.depthwiseFilterHeight, this.depthwiseFilterWidth,
+            this.depthwise_AvgMax_Or_ChannelMultiplier,
+            this.depthwiseFilterHeight, this.depthwiseFilterWidth,
             this.depthwiseStridesPad, this.depthwiseBias, this.depthwiseActivationId,
             this.depthwise1_nHigherHalfDifferent,
             0, // No channelShuffler_inputGroupCount.
@@ -656,11 +670,13 @@ class Block_Base extends Recyclable.Root {
         if ( this.bDepthwise2Requested ) {
 
           // Q: Why does depthwise2 use the same configuration as depthwise1?
-          // A: To ensure both result have the same ( height, width ) so that could be inputted to concatenator). This is especially
-          //    true for StridesPad.
+          // A: To ensure both result have the same ( height, width ) so that
+          //    could be inputted to concatenator). This is especially true for
+          //    StridesPad.
           depthwise2 = Operation.Depthwise_SameWhenPassThrough.Pool.get_or_create_by(
             depthwise2_input0,
-            this.depthwise_AvgMax_Or_ChannelMultiplier, this.depthwiseFilterHeight, this.depthwiseFilterWidth,
+            this.depthwise_AvgMax_Or_ChannelMultiplier,
+            this.depthwiseFilterHeight, this.depthwiseFilterWidth,
             this.depthwiseStridesPad, this.depthwiseBias, this.depthwiseActivationId,
             ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.NONE, // depthwise2 never has higher-half-different.
             0, 0 // No channelShuffler_inputGroupCount, No channelShuffler_outputGroupCount.
@@ -671,14 +687,18 @@ class Block_Base extends Recyclable.Root {
           this.weightElementOffsetEnd = depthwise2.weightElementOffsetEnd;
 
           // Note:
-          //   - If ( depthwise2.bExisted == true ), the depthwise2 is requested and created. It means ONE_INPUT_TWO_DEPTHWISE.
+          //   - If ( depthwise2.bExisted == true ), the depthwise2 is
+          //       requested and created. It means ONE_INPUT_TWO_DEPTHWISE.
           //
-          //   - If ( depthwise2.bExisted == false ), the depthwise2 is requested but not created. It means no depthwise operation
-          //     (i.e. ( depthwise_AvgMax_Or_ChannelMultiplier == 0 ). In this case, the depthwise2 should be short circuit to
-          //     inputTensor[ 0 ] (i.e. not inputTensor[ 1 ]).
+          //   - If ( depthwise2.bExisted == false ), the depthwise2 is
+          //       requested but not created. It means no depthwise operation
+          //       (i.e. ( depthwise_AvgMax_Or_ChannelMultiplier == 0 ). In
+          //       this case, the depthwise2 should be short circuit to
+          //       inputTensor[ 0 ] (i.e. not inputTensor[ 1 ]).
 
         } else {
-          // Since the depthwise2 is not requested, it is always short circuit to input1 (i.e. not input0).
+          // Since the depthwise2 is not requested, it is always short circuit
+          // to input1 (i.e. not input0).
         }
 
         this.operationArray.operation_append( depthwise1, depthwise2 );
@@ -696,8 +716,9 @@ class Block_Base extends Recyclable.Root {
         }
       }
 
-    // Otherwise, the depthwise operation is either ( not requested ) or ( requested but not necessary ).
-    // The later case could improve performance.
+    // Otherwise, the depthwise operation is either ( not requested ) or
+    // ( requested but not necessary ). The later case could improve
+    // performance.
     } else {
 
       // (i.e. ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_HEAD (2) )
@@ -705,10 +726,13 @@ class Block_Base extends Recyclable.Root {
       // (i.e. ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21_HEAD (9) )
       // (i.e. ShuffleNetV2_ByPointwise21's head with ( pointwise1ChannelCount >= 1 ))
       //
-      // Even if no depthwise, however, a .endingInput1 is necessary for concat1 to operate on. So create a dummy one.
+      // Even if no depthwise, however, a .endingInput1 is necessary for
+      // concat1 to operate on. So create a dummy one.
       if ( this.bDepthwise2Requested ) {
-        // Note: The two inputs of depthwise12Dummy might be the same one in fact.
-        let depthwise12Dummy = Operation.Dummy.Pool.get_or_create_by( this.operationArray.endingInput0, depthwise2_input0, 2 );
+        // Note: The two inputs of depthwise12Dummy might be the same one in
+        //       fact.
+        let depthwise12Dummy = Operation.Dummy.Pool.get_or_create_by(
+          this.operationArray.endingInput0, depthwise2_input0, 2 );
         this.operationArray.operation_append( depthwise12Dummy );
       }
     }
@@ -718,7 +742,8 @@ class Block_Base extends Recyclable.Root {
 
     // 4. Concat1
     if ( this.bConcat1Requested ) {
-      let concat1 = Operation.ConcatAlongAxisId2.Pool.get_or_create_by( this.operationArray.endingInput0, this.operationArray.endingInput1 );
+      let concat1 = Operation.ConcatAlongAxisId2.Pool.get_or_create_by(
+        this.operationArray.endingInput0, this.operationArray.endingInput1 );
       this.operationArray.operation_append( concat1 );
     }
 
@@ -736,8 +761,9 @@ class Block_Base extends Recyclable.Root {
         return false;  // e.g. input array does not have enough data.
 
     // 5.3
+    // squeeze-and-excitation (prefix pointwise2) was ready. Report progress.
     progressToAdvance.value_advance();
-    yield progressRoot;  // squeeze-and-excitation (prefix pointwise2) was ready. Report progress.
+    yield progressRoot;
 
     // 6. The pointwise2 convolution.
     {
@@ -747,17 +773,24 @@ class Block_Base extends Recyclable.Root {
         // 6.1 Pointwise20
         //
         // Note:
-        //   - When ( bHigherHalfDifferent == true ) and ( channelShuffler_outputGroupCount > 0 ), it means output channels will be shuffled.
+        //   - When ( bHigherHalfDifferent == true ) and
+        //       ( channelShuffler_outputGroupCount > 0 ), it means output
+        //       channels will be shuffled.
         //
-        //   - When ( pointwise20ChannelCount == 0 ), it usually means no pointwise20 (i.e. ( pointwise20.bExisted == false ) ).
+        //   - When ( pointwise20ChannelCount == 0 ), it usually means no
+        //       pointwise20 (i.e. ( pointwise20.bExisted == false ) ).
         //
-        //   - When both ( pointwise20ChannelCount == 0 ) and ( bHigherHalfDifferent == true )
-        //       and ( channelShuffler_outputGroupCount > 0 ), the pointwise20 will exist (i.e. ( pointwise20.bExisted == true ) ).
-        //       Otherwise, the output channels could not be shuffled. In this case, it will pass through all input to output,
-        //       but the output will be channel shuffled.
+        //   - When both ( pointwise20ChannelCount == 0 ) and
+        //       ( bHigherHalfDifferent == true ) and
+        //       ( channelShuffler_outputGroupCount > 0 ), the pointwise20 will
+        //       exist (i.e. ( pointwise20.bExisted == true ) ). Otherwise, the
+        //       output channels could not be shuffled. In this case, it will
+        //       pass through all input to output, but the output will be
+        //       channel shuffled.
         //
-        //       - However, this situation is difficult to be handled. We re-design Params so that the pointwise20ChannelCount is always
-        //           not zero.
+        //       - However, this situation is difficult to be handled. We
+        //           re-design Params so that the pointwise20ChannelCount is
+        //           always not zero.
         //
         pointwise20 = Operation.Pointwise_SameWhenPassThrough.Pool.get_or_create_by(
           this.operationArray.endingInput0,
