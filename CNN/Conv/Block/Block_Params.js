@@ -507,18 +507,21 @@ Block_Params.depthwise_AvgMax_Or_ChannelMultiplier = new ParamDesc.AvgMax_Or_Cha
  *   - ( 0 * 0 ) is meaningless.
  *   - ( 1 * N ) is necessary for processing 1D data (e.g. sound, or text).
  *
- * For avg pooling or max pooling, it is less meaningful if filter size is ( 1 * 1 ) because the result will be the same as input.
+ * For avg pooling or max pooling, it is less meaningful if filter size is
+ * ( 1 * 1 ) because the result will be the same as input.
  *
- * For depthwise convolution, it is still meaningful even if filter size is ( 1 * 1 ) because they still could filter value or
- * be used as simple channel multiplier.
+ * For depthwise convolution, it is still meaningful even if filter size is
+ * ( 1 * 1 ) because they still could filter value or be used as simple channel
+ * multiplier.
  *
  * Avoid too large filter size. Otherwise, performance may be poor.
  *
  *
  * (2021/07/20)
- * Note: In backend WASM, when filter width is 1 (note: filter height does not have this issue and could be 1), it seems that
- * tf.pool() (both AVG and MAX) and tf.depthwiseConv2d() will calculate wrongly. In backend CPU and WebGL, this problem does
- * not exist.
+ * Note: In backend WASM, when filter width is 1 (note: filter height does not
+ *       have this issue and could be 1), it seems that tf.pool() (both AVG and
+ *       MAX) and tf.depthwiseConv2d() will calculate wrongly. In backend CPU
+ *       and WebGL, this problem does not exist.
  *
  */
 Block_Params.depthwiseFilterHeight =    new ParamDesc.Int(                "depthwiseFilterHeight",   1, ( 10 * 1024 ) );
@@ -567,4 +570,3 @@ Block_Params.SequenceArray = new ParamDesc.SequenceArray( [
   Block_Params.nActivationId,
   Block_Params.bKeepInputTensor,
 ] );
-
