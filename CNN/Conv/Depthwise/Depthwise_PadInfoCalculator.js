@@ -6,7 +6,8 @@ import * as Recyclable from "../../util/Recyclable.js";
 import * as ValueDesc from "../../Unpacker/ValueDesc.js";
 
 /**
- * According to input image size and depthwise convolution parameters, calculate the padding information of the depthwise convolution.
+ * According to input image size and depthwise convolution parameters,
+ * calculate the padding information of the depthwise convolution.
  *
  * @member {number} inputHeight           Input image height.
  * @member {number} inputWidth            Input image width.
@@ -260,8 +261,8 @@ let PadInfoCalculator = ( ParentClass = Object ) => class PadInfoCalculator
 
   /**
    * @return {boolean}
-   *   If the ( height, width ) of this depthwise operation's output is the same
-   * as its input, return true.
+   *   If the ( height, width ) of this depthwise operation's output is the
+   * same as its input, return true.
    */
   output_height_width_is_same_as_input() {
     return PadInfoCalculator.output_height_width_is_same_as_input(
@@ -272,8 +273,8 @@ let PadInfoCalculator = ( ParentClass = Object ) => class PadInfoCalculator
 
   /**
    * @return {boolean}
-   *   If this depthwise operation does not analyze the neighbor in the direction
-   * of height and width, return true.
+   *   If this depthwise operation does not analyze the neighbor in the
+   * direction of height and width, return true.
    */
   output_height_width_is_no_neighbor_analysis() {
     return PadInfoCalculator.output_height_width_is_no_neighbor_analysis(
@@ -290,7 +291,9 @@ let PadInfoCalculator = ( ParentClass = Object ) => class PadInfoCalculator
    *   If the channel count of the depthwise operation's output is the same as
    * its input, return true.
    */
-  static output_channelCount_is_same_as_input( depthwise_AvgMax_Or_ChannelMultiplier ) {
+  static output_channelCount_is_same_as_input(
+    depthwise_AvgMax_Or_ChannelMultiplier ) {
+
     // e.g. avg pooling, or max pooling, or none, or ( channelMultipler == 1 ).
     return ( depthwise_AvgMax_Or_ChannelMultiplier <= 1 );
   }
@@ -303,8 +306,8 @@ let PadInfoCalculator = ( ParentClass = Object ) => class PadInfoCalculator
    *   The information of stridesPad.
    *
    * @return {boolean}
-   *   If the ( height, width ) of the depthwise operation's output is the same as
-   * its input, return true.
+   *   If the ( height, width ) of the depthwise operation's output is the same
+   * as its input, return true.
    */
   static output_height_width_is_same_as_input(
     inputHeight, inputWidth,
