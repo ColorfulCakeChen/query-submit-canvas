@@ -251,8 +251,8 @@ class Block_Reference_Base extends Recyclable.Root {
     this.imageInArray_Fake = Recyclable.Array.Pool.get_or_create_by( 2 );
 
 //!!! (2022/08/05 Temp Remarked) For debug floating-point accumulated error
-//    this.asserter_Equal = TensorTools.Asserter_Equal.Pool.get_or_create_by( 0.4, 0.1 ); //2 ); //0.005 );
-    this.asserter_Equal = TensorTools.Asserter_Equal.Pool.get_or_create_by( 0.01, 0.005 ); //2 ); //0.005 );
+    this.asserter_Equal = TensorTools.Asserter_Equal.Pool.get_or_create_by( 0.4, 0.1 ); //2 ); //0.005 );
+    //this.asserter_Equal = TensorTools.Asserter_Equal.Pool.get_or_create_by( 0.01, 0.005 ); //2 ); //0.005 );
 
     this.imageNeedDisposeUniqueStack = Recyclable.OwnerUniqueStack.Pool.get_or_create_by();
   }
