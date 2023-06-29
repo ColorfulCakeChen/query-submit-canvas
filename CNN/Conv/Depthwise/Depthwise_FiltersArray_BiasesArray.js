@@ -975,22 +975,38 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
     if ( this.filtersArray ) {
       let filterIndex = 0;
 
-      for ( let filterY = 0, effectFilterY = 0; filterY < this.filterHeight; ++filterY ) {
-        for ( let dilationFilterY = 0; dilationFilterY < this.dilationHeight; ++dilationFilterY, ++effectFilterY ) {
+      for ( let filterY = 0, effectFilterY = 0;
+        filterY < this.filterHeight; ++filterY ) {
 
-          for ( let filterX = 0, effectFilterX = 0; filterX < this.filterWidth; ++filterX ) {
-            for ( let dilationFilterX = 0; dilationFilterX < this.dilationWidth; ++dilationFilterX, ++effectFilterX ) {
+        for ( let dilationFilterY = 0;
+          dilationFilterY < this.dilationHeight;
+          ++dilationFilterY, ++effectFilterY ) {
 
-              // The filter's dilation part needs not be extracted from weights array. (They are always zero.)
+          for ( let filterX = 0, effectFilterX = 0;
+            filterX < this.filterWidth; ++filterX ) {
+
+            for ( let dilationFilterX = 0;
+              dilationFilterX < this.dilationWidth;
+              ++dilationFilterX, ++effectFilterX ) {
+
+              // The filter's dilation part needs not be extracted from weights
+              // array. (They are always zero.)
               if ( ( 0 != dilationFilterY ) || ( 0 != dilationFilterX ) )
                 continue;
 
               let outChannel = 0;
-              for ( let inChannel = 0; inChannel < this.inputChannelCount; ++inChannel ) {
-                for ( let outChannelSub = 0; outChannelSub < this.channelMultiplier; ++outChannelSub, ++outChannel ) {
+              for ( let inChannel = 0;
+                inChannel < this.inputChannelCount; ++inChannel ) {
 
-                  let doEscapingScale = this.boundsArraySet.output0.scaleArraySet.do.scales[ outChannel ];
-                  this.filtersArray[ filterIndex ] *= doEscapingScale; // filter wieghts scaled.
+                for ( let outChannelSub = 0;
+                  outChannelSub < this.channelMultiplier;
+                  ++outChannelSub, ++outChannel ) {
+
+                  let doEscapingScale
+                    = this.boundsArraySet.output0.scaleArraySet.do.scales[ outChannel ];
+
+                  // filter wieghts scaled.
+                  this.filtersArray[ filterIndex ] *= doEscapingScale;
 
                   ++filterIndex;
 
@@ -1002,18 +1018,26 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
       } // filterY
 
     } else { // ( !this.filtersArray ).
-      // Do nothing. No filters array to be doEscapingScale. (i.e. avg/max pooling)
+      // Do nothing. No filters array to be doEscapingScale. (i.e. avg/max
+      // pooling)
     }
 
     if ( this.biasesArray ) {
       let biasIndex = 0;
 
       let outChannel = 0;
-      for ( let inChannel = 0; inChannel < this.inputChannelCount; ++inChannel ) {
-        for ( let outChannelSub = 0; outChannelSub < this.channelMultiplier; ++outChannelSub, ++outChannel ) {
+      for ( let inChannel = 0;
+        inChannel < this.inputChannelCount; ++inChannel ) {
 
-          let doEscapingScale = this.boundsArraySet.output0.scaleArraySet.do.scales[ outChannel ];
-          this.biasesArray[ biasIndex ] *= doEscapingScale; // bias wieghts scaled.
+        for ( let outChannelSub = 0;
+          outChannelSub < this.channelMultiplier;
+          ++outChannelSub, ++outChannel ) {
+
+          let doEscapingScale
+            = this.boundsArraySet.output0.scaleArraySet.do.scales[ outChannel ];
+
+          // bias wieghts scaled.
+          this.biasesArray[ biasIndex ] *= doEscapingScale;
 
           ++biasIndex;
 
@@ -1027,7 +1051,11 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
 
 
   get bHigherHalfDifferent() {
-    return ( this.nHigherHalfDifferent ) && ( this.nHigherHalfDifferent != ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.NONE );
+    return (
+         ( this.nHigherHalfDifferent )
+      && ( this.nHigherHalfDifferent
+             != ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.NONE )
+    );
   }
 
 }
