@@ -66,14 +66,18 @@ class ConvBiasActivation extends InputsOutputs {
    * currently), the inputScaleBoundsArray.beforeChannelShuffled will be used.
    *
    */
-  constructor( input0, outputChannelCount0, channelShuffler_inputGroupCount ) {
+  constructor(
+    input0, outputChannelCount0, channelShuffler_inputGroupCount ) {
+
     super( input0, undefined, outputChannelCount0, undefined ); // .input0 and .output0
     ConvBiasActivation.setAsConstructor_self.call( this,
       input0, outputChannelCount0, channelShuffler_inputGroupCount );
   }
 
   /** @override */
-  static setAsConstructor( input0, outputChannelCount0, channelShuffler_inputGroupCount ) {
+  static setAsConstructor(
+    input0, outputChannelCount0, channelShuffler_inputGroupCount ) {
+
     super.setAsConstructor( input0, undefined, outputChannelCount0, undefined );
     ConvBiasActivation.setAsConstructor_self.call( this,
       input0, outputChannelCount0, channelShuffler_inputGroupCount );
@@ -84,11 +88,21 @@ class ConvBiasActivation extends InputsOutputs {
   static setAsConstructor_self(
     input0, outputChannelCount0, channelShuffler_inputGroupCount ) {
 
-    this.afterUndoPreviousActivationEscaping = FloatValue.BoundsArray.Pool.get_or_create_by( input0.length ); // channel count same as input0.
-    this.afterFilter = FloatValue.BoundsArray.Pool.get_or_create_by( outputChannelCount0 );
-    this.afterBias = FloatValue.BoundsArray.Pool.get_or_create_by( outputChannelCount0 );
-    this.bPassThrough = Recyclable.Array.Pool.get_or_create_by( outputChannelCount0 );
-    this.set_afterUndoPreviousActivationEscaping_by_input0_undoScales( channelShuffler_inputGroupCount );
+    // channel count same as input0.
+    this.afterUndoPreviousActivationEscaping
+      = FloatValue.BoundsArray.Pool.get_or_create_by( input0.length );
+
+    this.afterFilter
+      = FloatValue.BoundsArray.Pool.get_or_create_by( outputChannelCount0 );
+
+    this.afterBias
+      = FloatValue.BoundsArray.Pool.get_or_create_by( outputChannelCount0 );
+
+    this.bPassThrough
+      = Recyclable.Array.Pool.get_or_create_by( outputChannelCount0 );
+
+    this.set_afterUndoPreviousActivationEscaping_by_input0_undoScales(
+      channelShuffler_inputGroupCount );
   }
 
   /**
@@ -272,7 +286,8 @@ class ConvBiasActivation extends InputsOutputs {
     this.afterFilter                        .set_all_byBoundsArray( aBoundsArraySet.afterFilter );
     this.afterBias                          .set_all_byBoundsArray( aBoundsArraySet.afterBias );
 
-    // .output0.boundsArray (i.e. .afterActivation), .output0.scaleArraySet, .output1.boundsArray, .output1.scaleArraySet
+    // .output0.boundsArray (i.e. .afterActivation), .output0.scaleArraySet,
+    // .output1.boundsArray, .output1.scaleArraySet
     super.set_outputs_all_byBoundsArraySet( aBoundsArraySet );
 
     for ( let i = 0; i < this.bPassThrough.length; ++i ) {
@@ -314,7 +329,8 @@ class ConvBiasActivation extends InputsOutputs {
     let doEscapingScale;
     for ( let outChannel = 0; outChannel < outputChannelCount; ++outChannel ) {
 
-      let bPassThrough = this.bPassThrough[ outChannel ]; // For pass-through half channels.
+      // For pass-through half channels.
+      let bPassThrough = this.bPassThrough[ outChannel ];
 
       // 1. Determine (activationEscaping) .scaleArraySet (of .output0)
       {
@@ -322,7 +338,8 @@ class ConvBiasActivation extends InputsOutputs {
 
         if ( nActivationId == ValueDesc.ActivationFunction.Singleton.Ids.NONE ) {
 
-          // Since no activation function, no need to escape. (i.e. scale = 1 for no scale)
+          // Since no activation function, no need to escape. (i.e. scale = 1
+          // for no scale)
           this.output0.scaleArraySet.do.set_one_byN( outChannel, 1 );
           doEscapingScale = 1;
 
@@ -360,7 +377,7 @@ class ConvBiasActivation extends InputsOutputs {
             if ( Number.isNaN( doEscapingScale ) == true )
               throw Error( `BoundsArraySet.ConvBiasActivation.`
                 + `adjust_afterFilter_afterBias_set_output0_by_afterBias_bPassThrough_nActivationId_nPassThroughStyleId( `
-                  + ` ${ValueDesc.ActivationFunction.Singleton.getNameWithInt_byId( nActivationId )} ): `
+                  + `${ValueDesc.ActivationFunction.Singleton.getNameWithInt_byId( nActivationId )} ): `
                 + `this.output0.scaleArraySet.do.scales[ ${outChannel} ] `
                 + `( ${doEscapingScale} ) should not be NaN. `
                 + `Please use activation function (e.g. clipByValue(), tanh())`
@@ -374,9 +391,10 @@ class ConvBiasActivation extends InputsOutputs {
           }
         }
 
-        // 1.2 Determine .undo (Prepared for the next convolution-bias-activation.
-        //     Not for this.)
-        this.output0.scaleArraySet.undo.set_one_byUndo_N( outChannel, doEscapingScale );
+        // 1.2 Determine .undo (Prepared for the next
+        //     convolution-bias-activation. Not for this.)
+        this.output0.scaleArraySet.undo.set_one_byUndo_N(
+          outChannel, doEscapingScale );
       }
 
       // 2. Adjust .afterFilter and .afterBias
