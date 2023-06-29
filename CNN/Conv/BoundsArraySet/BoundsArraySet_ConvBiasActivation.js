@@ -140,8 +140,10 @@ class ConvBiasActivation extends InputsOutputs {
   set_afterUndoPreviousActivationEscaping_by_Interleave_asGrouptTwo() {
     let unShuffled = FloatValue.BoundsArray.Pool.get_or_create_by(
       this.afterUndoPreviousActivationEscaping.length );
+
     unShuffled.set_all_byInterleave_asGrouptTwo_byBoundsArray(
       this.afterUndoPreviousActivationEscaping );
+
     this.afterUndoPreviousActivationEscaping.disposeResources_and_recycleToPool();
     this.afterUndoPreviousActivationEscaping = unShuffled;
     return this;
@@ -438,9 +440,11 @@ class ConvBiasActivation extends InputsOutputs {
       let afterFilterShuffled = FloatValue.BoundsArray.Pool.get_or_create_by(
         this.afterFilter.length );
 
-!!! ...unfinished... (2023/06/29)
-// Is .afterFilter or afterFilterShuffled?
-      this.afterFilter.set_all_byInterleave_asGrouptTwo_byBoundsArray( this.afterFilter );
+//!!! (2023/06/29 Remarked) should be afterFilterShuffled (rather than .afterFilter).
+//      this.afterFilter.set_all_byInterleave_asGrouptTwo_byBoundsArray( this.afterFilter );
+      afterFilterShuffled.set_all_byInterleave_asGrouptTwo_byBoundsArray(
+        this.afterFilter );
+
       this.afterFilter.disposeResources_and_recycleToPool();
       this.afterFilter = afterFilterShuffled;
     }
@@ -449,9 +453,11 @@ class ConvBiasActivation extends InputsOutputs {
       let afterBiasShuffled = FloatValue.BoundsArray.Pool.get_or_create_by(
         this.afterBias.length );
 
-!!! ...unfinished... (2023/06/29)
-// Is .afterBias or afterBiasShuffled?
-      this.afterBias.set_all_byInterleave_asGrouptTwo_byBoundsArray( this.afterBias );
+//!!! (2023/06/29 Remarked) should be afterBiasShuffled (rather than .afterBias).
+//      this.afterBias.set_all_byInterleave_asGrouptTwo_byBoundsArray( this.afterBias );
+      afterBiasShuffled.set_all_byInterleave_asGrouptTwo_byBoundsArray(
+        this.afterBias );
+
       this.afterBias.disposeResources_and_recycleToPool();
       this.afterBias = afterBiasShuffled;
     }
