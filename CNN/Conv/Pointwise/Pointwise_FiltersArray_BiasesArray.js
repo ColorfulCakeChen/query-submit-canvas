@@ -812,10 +812,11 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
       this.boundsArraySet.afterFilter );
 
     if ( outChannelEnd != this.outputChannelCount )
-      throw Error(
-        `Pointwise.FiltersArray_BiasesArray.set_filtersArray_biasesArray_afterFilter_afterBias_apply_undoPreviousEscapingScale(): `
-          + `aFiltersBiasesPartInfoArray[ inChannelPartInfoArray[] ] total output channel count ( ${outChannelEnd} ) `
-          + `should be ( ${this.outputChannelCount} ).` );
+      throw Error( `Pointwise.FiltersArray_BiasesArray`
+        + `.set_filtersArray_biasesArray_afterFilter_afterBias_apply_undoPreviousEscapingScale(): `
+        + `aFiltersBiasesPartInfoArray[ inChannelPartInfoArray[] ] total `
+        + `output channel count ( ${outChannelEnd} ) `
+        + `should be ( ${this.outputChannelCount} ).` );
 
     // Release temporary resources.
     {
@@ -838,11 +839,17 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
     { // this.filtersArray
       let filterIndex = 0;
 
-      for ( let inChannel = 0; inChannel < this.inputChannelCount; ++inChannel ) {
-        for ( let outChannel = 0; outChannel < this.outputChannelCount; ++outChannel ) {
+      for ( let inChannel = 0;
+        inChannel < this.inputChannelCount; ++inChannel ) {
 
-          let doEscapingScale = this.boundsArraySet.output0.scaleArraySet.do.scales[ outChannel ];
-          this.filtersArray[ filterIndex ] *= doEscapingScale; // filter wieghts scaled.
+        for ( let outChannel = 0;
+          outChannel < this.outputChannelCount; ++outChannel ) {
+
+          let doEscapingScale
+            = this.boundsArraySet.output0.scaleArraySet.do.scales[ outChannel ];
+
+          // filter wieghts scaled.
+          this.filtersArray[ filterIndex ] *= doEscapingScale;
 
           ++filterIndex;
 
@@ -853,10 +860,14 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
     if ( this.biasesArray ) {
       let biasIndex = 0;
 
-      for ( let outChannel = 0; outChannel < this.outputChannelCount; ++outChannel ) {
+      for ( let outChannel = 0;
+        outChannel < this.outputChannelCount; ++outChannel ) {
 
-        let doEscapingScale = this.boundsArraySet.output0.scaleArraySet.do.scales[ outChannel ];
-        this.biasesArray[ biasIndex ] *= doEscapingScale; // bias wieghts scaled.
+        let doEscapingScale
+          = this.boundsArraySet.output0.scaleArraySet.do.scales[ outChannel ];
+
+        // bias wieghts scaled.
+        this.biasesArray[ biasIndex ] *= doEscapingScale;
 
         ++biasIndex;
 
