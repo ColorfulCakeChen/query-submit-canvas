@@ -46,15 +46,17 @@ import { ChannelPartInfo, FiltersBiasesPartInfo } from  "./Pointwise_ChannelPart
  *         ( outputChannelCount_lowerHalf - 1 ) will just pass through the
  *         input to output. The filters for the output channels between
  *         ( outputChannelCount_lowerHalf ) and ( outputChannelCount - 1 ) will
- *         just copy the input channels between 0 and ( outputChannelCount_lowerHalf - 1 ).
- *         In this case, it will always have no biases (no matter how bBias is).
+ *         just copy the input channels between 0 and
+ *         ( outputChannelCount_lowerHalf - 1 ). In this case, it will always
+ *         have no biases (no matter how bBias is).
  *
  *   - 2. If ( nHigherHalfDifferent == ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_COPY_LOWER_HALF ):
  *         (i.e. bHigherHalfCopyLowerHalf),
  *         (for pointwise1 of ShuffleNetV2_ByMobileNetV1's head),
- *         the filters for the output channels between ( outputChannelCount_lowerHalf )
- *         and ( outputChannelCount - 1 ) will just copy the input channels
- *         between 0 and ( outputChannelCount_lowerHalf - 1 ).
+ *         the filters for the output channels between
+ *         ( outputChannelCount_lowerHalf ) and ( outputChannelCount - 1 ) will
+ *         just copy the input channels between 0 and
+ *         ( outputChannelCount_lowerHalf - 1 ).
  *
  *   - 3. If ( nHigherHalfDifferent == ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_ANOTHER_POINTWISE ):
  *         (i.e. bHigherHalfAnotherPointwise),
@@ -75,7 +77,8 @@ import { ChannelPartInfo, FiltersBiasesPartInfo } from  "./Pointwise_ChannelPart
  *
  *     - 3.2 If ( channelShuffler_outputGroupCount > 0 ),
  *           (i.e. bHigherHalfAnotherPointwiseShuffle).
- *           (for pointwise2 of ShuffleNetV2_ByMobileNetV1's head with channel shuffling)
+ *           (for pointwise2 of ShuffleNetV2_ByMobileNetV1's head with channel
+ *              shuffling)
  *           The output channels will be arranged just like applying channel
  *           shuffler on them.
  *
@@ -95,8 +98,8 @@ import { ChannelPartInfo, FiltersBiasesPartInfo } from  "./Pointwise_ChannelPart
  *           shuffler on them.
  *
  * @member {boolean} bHigherHalfDifferent
- *   It will be false, if
- * ( nHigherHalfDifferent == ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.NONE ).
+ *   It will be false, if ( nHigherHalfDifferent
+ * == ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.NONE ).
  *
  * @member {number} inputChannelCount_lowerHalf
  *   The lower half input channel count when ( bHigherHalfDifferent == true ).
