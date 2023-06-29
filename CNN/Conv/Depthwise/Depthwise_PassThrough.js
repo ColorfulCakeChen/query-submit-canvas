@@ -263,26 +263,34 @@ let PassThrough_FiltersArray_BiasesArray
 
 
 /**
- * Almost the same as Depthwise.PassThrough_FiltersArray_BiasesArray class except its parent class is fixed to Object. In other words,
- * caller can not specify the parent class of Depthwise.PassThrough_FiltersArray_BiasesArray_Root (so it is named "Root" which can not
- * have parent class).
+ * Almost the same as Depthwise.PassThrough_FiltersArray_BiasesArray class
+ * except its parent class is fixed to Object. In other words, caller can not
+ * specify the parent class of
+ * Depthwise.PassThrough_FiltersArray_BiasesArray_Root (so it is named "Root"
+ * which can not have parent class).
  */
-class PassThrough_FiltersArray_BiasesArray_Root extends PassThrough_FiltersArray_BiasesArray() {
+class PassThrough_FiltersArray_BiasesArray_Root
+  extends PassThrough_FiltersArray_BiasesArray() {
 }
 
 
 /**
- * A pool for PassThrough_FiltersArray_BiasesArray with various parameters. It could reduce re-creating them of same parameters again
- * and again to improve performance.
+ * A pool for PassThrough_FiltersArray_BiasesArray with various parameters. It
+ * could reduce re-creating them of same parameters again and again to improve
+ * performance.
  *
  */
-class PassThrough_FiltersArray_BiasesArray_Bag extends Recyclable.Base( MultiLayerMap.Base ) {
+class PassThrough_FiltersArray_BiasesArray_Bag
+  extends Recyclable.Base( MultiLayerMap.Base ) {
 
   /**
-   * Used as default Depthwise.PassThrough_FiltersArray_BiasesArray_Bag provider for conforming to Recyclable interface.
+   * Used as default Depthwise.PassThrough_FiltersArray_BiasesArray_Bag
+   * provider for conforming to Recyclable interface.
    */
-  static Pool = new Pool.Root( "Depthwise.PassThrough_FiltersArray_BiasesArray_Bag.Pool",
-    PassThrough_FiltersArray_BiasesArray_Bag, PassThrough_FiltersArray_BiasesArray_Bag.setAsConstructor );
+  static Pool = new Pool.Root(
+    "Depthwise.PassThrough_FiltersArray_BiasesArray_Bag.Pool",
+    PassThrough_FiltersArray_BiasesArray_Bag,
+    PassThrough_FiltersArray_BiasesArray_Bag.setAsConstructor );
 
   /**
    */
@@ -320,34 +328,44 @@ class PassThrough_FiltersArray_BiasesArray_Bag extends Recyclable.Base( MultiLay
    *
    */
   get_by_PassThroughStyleId(
-    inputHeight, inputWidth, inputChannelCount, AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad,
+    inputHeight, inputWidth, inputChannelCount,
+    AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad,
     bBias, nPassThroughStyleId ) {
 
-    const thePassThroughStyleInfo = ValueDesc.PassThroughStyle.Singleton.getInfo_byId( nPassThroughStyleId );
+    const thePassThroughStyleInfo
+      = ValueDesc.PassThroughStyle.Singleton.getInfo_byId( nPassThroughStyleId );
+
     return this.get_by_effectFilterValue_surroundingFilterValue_biasValue(
-      inputHeight, inputWidth, inputChannelCount, AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad,
-      bBias, thePassThroughStyleInfo.filterValue, 0, thePassThroughStyleInfo.biasValue );
+      inputHeight, inputWidth, inputChannelCount,
+      AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad,
+      bBias,
+      thePassThroughStyleInfo.filterValue, 0, thePassThroughStyleInfo.biasValue );
   }
 
   /**
    *
    */
   get_by_effectFilterValue_surroundingFilterValue_biasValue(
-    inputHeight, inputWidth, inputChannelCount, AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad,
+    inputHeight, inputWidth, inputChannelCount,
+    AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad,
     bBias, effectFilterValue = 1, surroundingFilterValue = 0, biasValue = 0 ) {
 
-    return this.get_or_create_by_arguments1_etc( PassThrough_FiltersArray_BiasesArray_Bag.create_by, this,
-      inputHeight, inputWidth, inputChannelCount, AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad,
+    return this.get_or_create_by_arguments1_etc(
+      PassThrough_FiltersArray_BiasesArray_Bag.create_by, this,
+      inputHeight, inputWidth, inputChannelCount,
+      AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad,
       bBias, effectFilterValue, surroundingFilterValue, biasValue );
   }
 
   /** */
   static create_by(
-    inputHeight, inputWidth, inputChannelCount, AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad,
+    inputHeight, inputWidth, inputChannelCount,
+    AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad,
     bBias, effectFilterValue, surroundingFilterValue, biasValue ) {
 
     return PassThrough_FiltersArray_BiasesArray_Root.Pool.get_or_create_by(
-      inputHeight, inputWidth, inputChannelCount, AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad,
+      inputHeight, inputWidth, inputChannelCount,
+      AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad,
       bBias, effectFilterValue, surroundingFilterValue, biasValue );
   }
 
