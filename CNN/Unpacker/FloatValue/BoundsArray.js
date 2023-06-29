@@ -542,14 +542,20 @@ class BoundsArray extends Recyclable.Root {
     let elementCount = aBoundsArray.length;
 
     if ( ( elementCount % 2 ) != 0 )
-      throw Error( `FloatValue.BoundsArray.set_all_byInterleave_asGrouptTwo_undo_byBoundsArray(): `
+      throw Error( `FloatValue.BoundsArray`
+        + `.set_all_byInterleave_asGrouptTwo_undo_byBoundsArray(): `
         + `elementCount ( ${elementCount} ) must be even (i.e. divisible by 2).`
       );
 
     this.length = elementCount;
     let elementCountHalf = ( elementCount / 2 );
-    ArrayInterleaver.interleave_asGrouptTwo_from_to_undo( aBoundsArray.lowers, 0, this.lowers, 0, elementCountHalf );
-    ArrayInterleaver.interleave_asGrouptTwo_from_to_undo( aBoundsArray.uppers, 0, this.uppers, 0, elementCountHalf );
+
+    ArrayInterleaver.interleave_asGrouptTwo_from_to_undo(
+      aBoundsArray.lowers, 0, this.lowers, 0, elementCountHalf );
+
+    ArrayInterleaver.interleave_asGrouptTwo_from_to_undo(
+      aBoundsArray.uppers, 0, this.uppers, 0, elementCountHalf );
+
     return this;
   }
 
