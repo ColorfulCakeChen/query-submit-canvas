@@ -478,45 +478,58 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
 
       // Prepare result filters and biases array.
       if ( this.filtersShape )
-        this.filtersArray = Recyclable.Array.Pool.get_or_create_by( tf.util.sizeFromShape( this.filtersShape ) );
+        this.filtersArray = Recyclable.Array.Pool.get_or_create_by(
+          tf.util.sizeFromShape( this.filtersShape ) );
+
       if ( this.biasesShape )
-        this.biasesArray = Recyclable.Array.Pool.get_or_create_by( tf.util.sizeFromShape( this.biasesShape ) );
+        this.biasesArray = Recyclable.Array.Pool.get_or_create_by(
+          tf.util.sizeFromShape( this.biasesShape ) );
 
       // Calculate weights count of filters and biases to be extracted.
       let weightsCount_extracted = 0;
       if ( filtersWeightCount_extracted )
         weightsCount_extracted += filtersWeightCount_extracted;
+
       if ( biasesWeightCount_extracted )
         weightsCount_extracted += biasesWeightCount_extracted
 
       // Prepare source weights to be extracted.
-      if ( !super.init( inputWeightArray, weightElementOffsetBegin, weightsCount_extracted ) ) { // i.e. Weights.Base.init()
+      if ( !super.init( // i.e. Weights.Base.init()
+             inputWeightArray, weightElementOffsetBegin, weightsCount_extracted ) ) {
         this.bInitOk = false;
         return false;  // e.g. input array does not have enough data.
       }
 
       // filters and bias: weights and value bounds.
       //
-      // It should be better to calculate per channel value bounds by real filter and bias value (i.e. not by an estimated value bounds).
-      // This is especially important for ActivationEscaping. Because inputDomainLinear of activation function is not wide, using looser
-      // value bounds estimation has higher possibility to lost information.
+      // It should be better to calculate per channel value bounds by real
+      // filter and bias value (i.e. not by an estimated value bounds). This is
+      // especially important for ActivationEscaping. Because inputDomainLinear
+      // of activation function is not wide, using looser value bounds
+      // estimation has higher possibility to lost information.
       //
       // Two-rounds processing is used:
       //
-      //   - In the 1st round, extracting filter and bias value from sourceWeights[]. At the same time, calculating .afterFilter and
-      //       .afterBias by these extracted values combined with undoPreviousEscapingScale
-      //       (i.e. inputScaleBoundsArray.scaleArraySet.undo.scales[ inChannel ]). And then,
-      //       Find out .activationEscaping_ScaleArraySet, .afterActivationEscaping, .afterActivation.
+      //   - In the 1st round, extracting filter and bias value from
+      //       sourceWeights[]. At the same time, calculating .afterFilter and
+      //       .afterBias by these extracted values combined with
+      //       undoPreviousEscapingScale
+      //       (i.e. inputScaleBoundsArray.scaleArraySet.undo.scales[ inChannel ]).
+      //       And then, find out .activationEscaping_ScaleArraySet,
+      //      .afterActivationEscaping, .afterActivation.
       //
-      //   - In the 2nd round, apply doEscapingScale (i.e. .activationEscaping_ScaleArraySet.do.scales[ outChannel ] )
-      //       to filter and bias value (and also .afterFilter and .afterBias).
+      //   - In the 2nd round, apply doEscapingScale (i.e.
+      //       .activationEscaping_ScaleArraySet.do.scales[ outChannel ] ) to
+      //       filter and bias value (and also .afterFilter and .afterBias).
       //
       {
         // Round 0
         {
-          // Initialize element value bounds (per channel). Determine .input and .afterUndoPreviousActivationEscaping
+          // Initialize element value bounds (per channel). Determine .input
+          // and .afterUndoPreviousActivationEscaping
           //
-          // Note: Even if avg/max pooling, input value bounds is the same as the previous ooutput value bounds
+          // Note: Even if avg/max pooling, input value bounds is the same as
+          //       the previous ooutput value bounds
           this.boundsArraySet = BoundsArraySet.Depthwise.Pool.get_or_create_by(
             inputScaleBoundsArray, this.outputChannelCount );
         }
@@ -524,11 +537,14 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
         // Round 1
         {
           this.set_filtersArray_biasesArray_afterFilter_afterBias_apply_undoPreviousEscapingScale(
-            inputWeightArray, weightElementOffsetBegin, inputScaleBoundsArray, aFiltersBiasesPartInfoArray );
+            inputWeightArray, weightElementOffsetBegin, inputScaleBoundsArray,
+            aFiltersBiasesPartInfoArray );
 
-          this.boundsArraySet.set_bPassThrough_all_byChannelPartInfoArray( aFiltersBiasesPartInfoArray );
+          this.boundsArraySet.set_bPassThrough_all_byChannelPartInfoArray(
+            aFiltersBiasesPartInfoArray );
 
-          // Determine .activationEscaping_ScaleArraySet, .afterActivationEscaping, .afterActivation
+          // Determine .activationEscaping_ScaleArraySet,
+          // .afterActivationEscaping, .afterActivation
           {
             if (   ( this.AvgMax_Or_ChannelMultiplier < 0 )
                 && (   ( this.bBias == false )
@@ -536,20 +552,24 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
                    )
                ) {
 
-              // For avg/max pooling, if it has no bias and no activation, the value
-              // bounds does not change (i.e. should be the same as input).
+              // For avg/max pooling, if it has no bias and no activation, the
+              // value bounds does not change (i.e. should be the same as
+              // input).
               //
-              // In this case, the previous activation-escaping needs not be undo
-              // (so undoPreviousEscapingScale could be not 1). Using them as this
-              // avg/max pooling's activation-escaping since they can not
-              // be calculated in fact.
+              // In this case, the previous activation-escaping needs not be
+              // undo (so undoPreviousEscapingScale could be not 1). Using them
+              // as this avg/max pooling's activation-escaping since they can
+              // not be calculated in fact.
               //
 
-              // For average pooling, value bounds are re-calculated (but activation
-              // esaping scale is not and still the same as input).
-              if ( this.AvgMax_Or_ChannelMultiplier == ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.AVG ) {
+              // For average pooling, value bounds are re-calculated (but
+              // activation esaping scale is not and still the same as input).
+              if ( this.AvgMax_Or_ChannelMultiplier
+                     == ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.AVG ) {
+
                 this.boundsArraySet.set_outputs_all_byBoundsArray_ScaleArraySet(
-                  this.boundsArraySet.afterBias, this.boundsArraySet.input0.scaleArraySet );
+                  this.boundsArraySet.afterBias,
+                  this.boundsArraySet.input0.scaleArraySet );
 
               // For maximum pooling, value bounds is exactly the same as input.
               } else {
@@ -575,10 +595,12 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
         this.tensorWeightCountTotal_internal = 0;
 
         if ( this.filtersShape )
-          this.tensorWeightCountTotal_internal += tf.util.sizeFromShape( this.filtersShape );
+          this.tensorWeightCountTotal_internal
+            += tf.util.sizeFromShape( this.filtersShape );
 
         if ( this.biasesShape )
-          this.tensorWeightCountTotal_internal += tf.util.sizeFromShape( this.biasesShape );
+          this.tensorWeightCountTotal_internal
+            += tf.util.sizeFromShape( this.biasesShape );
       }
 
       this.bInitOk = true;
