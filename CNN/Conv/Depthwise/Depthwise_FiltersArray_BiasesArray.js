@@ -338,9 +338,12 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
       // still correct.
       //
       if ( this.inputChannelCount_lowerHalf != undefined ) {
-        this.inputChannelCount_higherHalf = this.inputChannelCount - this.inputChannelCount_lowerHalf;
-        this.outputChannelCount_lowerHalf = this.inputChannelCount_lowerHalf * this.channelMultiplier;
-        this.outputChannelCount_higherHalf = this.outputChannelCount - this.outputChannelCount_lowerHalf;
+        this.inputChannelCount_higherHalf
+          = this.inputChannelCount - this.inputChannelCount_lowerHalf;
+        this.outputChannelCount_lowerHalf
+          = this.inputChannelCount_lowerHalf * this.channelMultiplier;
+        this.outputChannelCount_higherHalf
+          = this.outputChannelCount - this.outputChannelCount_lowerHalf;
       } else {
         this.inputChannelCount_higherHalf = undefined;
         this.outputChannelCount_lowerHalf = undefined;
@@ -352,15 +355,19 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
 
       // Set up aFiltersBiasesPartInfoArray and filtersShape and biasesShape.
       {
-        if ( this.AvgMax_Or_ChannelMultiplier < 0 ) { // Depthwise by AVG or MAX pooling (so no channel multiplier).
+        // Depthwise by AVG or MAX pooling (so no channel multiplier).
+        if ( this.AvgMax_Or_ChannelMultiplier < 0 ) {
 
-          // In normal depthwise avg/max pooling, use specified specified channel count as extracted channel count.
-          // Although they are not used to extract avg/max filters, they will be used for extracting bias.
+          // In normal depthwise avg/max pooling, use specified specified
+          // channel count as extracted channel count. Although they are not
+          // used to extract avg/max filters, they will be used for extracting
+          // bias.
           this.inputChannelCount_toBeExtracted = this.inputChannelCount;
           this.outputChannelCount_toBeExtracted = this.outputChannelCount;
 
           // Note: avg/max pooling do not have this.filtersShape to be extracted.
-          this.poolWindowShape = Recyclable.Array.Pool.get_or_create_by( this.filterHeight, this.filterWidth );
+          this.poolWindowShape = Recyclable.Array.Pool.get_or_create_by(
+            this.filterHeight, this.filterWidth );
 
           if ( this.bBias ) {
             this.biasesShape = Recyclable.Array.Pool.get_or_create_by( 1 );
@@ -375,7 +382,8 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
             )
           );
 
-        } else if ( this.AvgMax_Or_ChannelMultiplier >= 1 ) { // Depthwise by convolution (with channel multiplier).
+        // Depthwise by convolution (with channel multiplier).
+        } else if ( this.AvgMax_Or_ChannelMultiplier >= 1 ) {
 
           switch ( this.nHigherHalfDifferent ) {
             case ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.NONE: // (0)
@@ -392,11 +400,14 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
             case ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_DEPTHWISE2: // (1)
 
               if ( !( this.inputChannelCount_lowerHalf > 0 ) )
-                throw Error( `Depthwise.FiltersArray_BiasesArray.extractAs_HigherHalfDepthwise2(): `
-                  + `inputChannelCount_lowerHalf ( ${this.inputChannelCount_lowerHalf} ) must be positive.`
+                throw Error( `Depthwise.FiltersArray_BiasesArray`
+                  + `.extractAs_HigherHalfDepthwise2(): `
+                  + `inputChannelCount_lowerHalf ( ${this.inputChannelCount_lowerHalf} ) `
+                  + `must be positive.`
                 );
 
-              // Extract filters and biases for the specified channel count, but in different sequence.
+              // Extract filters and biases for the specified channel count,
+              // but in different sequence.
               this.inputChannelCount_toBeExtracted = this.inputChannelCount;
               this.outputChannelCount_toBeExtracted = this.outputChannelCount;
 
@@ -413,13 +424,18 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
             case ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_PASS_THROUGH: // (2)
 
               if ( !( this.inputChannelCount_lowerHalf > 0 ) )
-                throw Error( `Depthwise.FiltersArray_BiasesArray.extractAs_HigherHalfPassThrough(): `
-                  + `inputChannelCount_lowerHalf ( ${this.inputChannelCount_lowerHalf} ) must be positive.`
+                throw Error( `Depthwise.FiltersArray_BiasesArray`
+                  + `.extractAs_HigherHalfPassThrough(): `
+                  + `inputChannelCount_lowerHalf ( ${this.inputChannelCount_lowerHalf} ) `
+                  + `must be positive.`
                 );
 
-              // Just extract filters and biases for half of the specified channel count.
-              this.inputChannelCount_toBeExtracted = this.inputChannelCount_lowerHalf;
-              this.outputChannelCount_toBeExtracted = this.outputChannelCount_lowerHalf;
+              // Just extract filters and biases for half of the specified
+              // channel count.
+              this.inputChannelCount_toBeExtracted
+                = this.inputChannelCount_lowerHalf;
+              this.outputChannelCount_toBeExtracted
+                = this.outputChannelCount_lowerHalf;
 
               aFiltersBiasesPartInfoArray = Recyclable.OwnerArray.Pool.get_or_create_by(
                 FiltersBiasesPartInfo.Pool.get_or_create_by(
@@ -432,15 +448,19 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
             default:
               throw Error(
                 `Depthwise.FiltersArray_BiasesArray.init(): `
-                  + `nHigherHalfDifferent ( ${this.nHigherHalfDifferent} ) is unknown value.`
+                  + `nHigherHalfDifferent ( ${this.nHigherHalfDifferent} ) `
+                  + `is unknown value.`
               );
               break;
           }
 
           this.filtersShape = Recyclable.Array.Pool.get_or_create_by(
-            this.filterHeight, this.filterWidth, this.inputChannelCount, this.channelMultiplier );
+            this.filterHeight, this.filterWidth,
+            this.inputChannelCount, this.channelMultiplier );
 
-          filtersWeightCount_extracted = this.filterHeight * this.filterWidth * this.inputChannelCount_toBeExtracted * this.channelMultiplier;
+          filtersWeightCount_extracted
+            = this.filterHeight * this.filterWidth
+                * this.inputChannelCount_toBeExtracted * this.channelMultiplier;
 
           if ( this.bBias ) {
             this.biasesShape = Recyclable.Array.Pool.get_or_create_by( 1 );
@@ -451,7 +471,8 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
 
         } else { // No depthwise (i.e. zero) (so no channel multiplier).
           aFiltersBiasesPartInfoArray = Recyclable.OwnerArray.Pool.get_or_create_by();
-          // Note: In this case, even if ( this.bBias == true ), the biasesArray will still not be extracted.
+          // Note: In this case, even if ( this.bBias == true ), the
+          //       biasesArray will still not be extracted.
         }
       }
 
