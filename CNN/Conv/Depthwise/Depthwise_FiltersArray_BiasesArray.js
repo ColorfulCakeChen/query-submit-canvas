@@ -616,22 +616,29 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
 
   /**
    * Extract this.filtersArray and this.biasesArray from sourceWeightArray and
-   * apply inputScaleBoundsArray.scaleArraySet.undo.scales[]. Also set the .afterFilter and .afterBias.
+   * apply inputScaleBoundsArray.scaleArraySet.undo.scales[]. Also set the
+   * .afterFilter and .afterBias.
    *
    * @param {Float32Array} sourceWeightArray
    *   A Float32Array whose values will be interpreted as weights.
    *
    * @param {ActivationEscaping.ScaleBoundsArray} inputScaleBoundsArray
-   *   The element value bounds (per channel) of input. Usually, it is The .output of the previous convolution-bias-activation value bounds
-   * set of this depthwise convolution. It will be kept (not cloned) directly. So caller should not modify them.
+   *   The element value bounds (per channel) of input. Usually, it is the
+   * .output of the previous convolution-bias-activation value bounds set of
+   * this depthwise convolution. It will be kept (not cloned) directly. So
+   * caller should not modify them.
    *
    * @param {Depthwise.FiltersBiasesPartInfo[]} aFiltersBiasesPartInfoArray
-   *   The input channel range array which describe lower/higher half channels index range.
+   *   The input channel range array which describe lower/higher half channels
+   * index range.
    */
   set_filtersArray_biasesArray_afterFilter_afterBias_apply_undoPreviousEscapingScale(
-    sourceWeightArray, weightElementOffsetBegin, inputScaleBoundsArray, aFiltersBiasesPartInfoArray ) {
+    sourceWeightArray, weightElementOffsetBegin,
+    inputScaleBoundsArray, aFiltersBiasesPartInfoArray ) {
 
-    const thePassThroughStyleInfo = ValueDesc.PassThroughStyle.Singleton.getInfo_byId( this.nPassThroughStyleId );
+    const thePassThroughStyleInfo
+      = ValueDesc.PassThroughStyle.Singleton.getInfo_byId(
+          this.nPassThroughStyleId );
 
     // 0. Init
 
@@ -639,25 +646,27 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
     
     // Virtual input image (for calculating value bounds).
     //
-    // When pad=same, part of filter will be applied to the padded pixels (i.e. zero
-    // value).
+    // When pad=same, part of filter will be applied to the padded pixels (i.e.
+    // zero value).
     //
-    // Although it seems a smaller size ( height, width ) should be just enough,
-    // however, strides also affects the bounds calculating for evey kinds of padded
-    // or non-padded pixel configuration for depthwise convolution.
+    // Although it seems a smaller size ( height, width ) should be just
+    // enough, however, strides also affects the bounds calculating for evey
+    // kinds of padded or non-padded pixel configuration for depthwise
+    // convolution.
     //
     // So, virtual input image should use the same as real input size.
     //
-    // Note: In theroy, for average pooling, value bounds should be the same as input.
-    //       In reality, however, it should also be calculated one by one because of
-    //       floating-point accumulate error.
+    // Note: In theroy, for average pooling, value bounds should be the same as
+    //       input. In reality, however, it should also be calculated one by
+    //       one because of floating-point accumulate error.
     //
     let tBounds;
     let virtualImageInfo;
     let virtualImageOutput_afterFilter_BoundsArray_PerPixel;
 
     // For Average pooling or depthwise convolution.
-    if (   ( this.AvgMax_Or_ChannelMultiplier == ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.AVG )
+    if (   ( this.AvgMax_Or_ChannelMultiplier
+               == ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.AVG )
         || ( this.filtersArray )
        ) {
       tBounds = FloatValue.Bounds.Pool.get_or_create_by( 0, 0 );
@@ -672,8 +681,9 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
     { // 0.2 Init .afterBias
       this.boundsArraySet.afterBias.set_all_byN( 0 );
 
-      // Because biases is fetched by adding, it should be initialized to zero. (Note: The .filtersArray is fetched by assigning, so
-      // it needs not be initialized.)
+      // Because biases is fetched by adding, it should be initialized to zero.
+      // (Note: The .filtersArray is fetched by assigning, so it needs not be
+      // initialized.)
       //
       if ( this.biasesArray ) {
         this.biasesArray.fill( 0 );
@@ -687,20 +697,32 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
         outChannelBegin = 0, outChannelEnd = 0; // [ outChannelBegin, outChannelEnd ) are output channels of the current FiltersBiasesPart.
 
     FiltersBiasesPartIndexLoop:
-    for ( let aFiltersBiasesPartIndex = 0; aFiltersBiasesPartIndex < aFiltersBiasesPartInfoArray.length; ++aFiltersBiasesPartIndex ) {
+    for ( let aFiltersBiasesPartIndex = 0;
+      aFiltersBiasesPartIndex < aFiltersBiasesPartInfoArray.length;
+      ++aFiltersBiasesPartIndex ) {
+
       let aFiltersBiasesPartInfo = aFiltersBiasesPartInfoArray[ aFiltersBiasesPartIndex ];
       let inChannelPartInfoArray = aFiltersBiasesPartInfo;
 
       inChannelBegin = inChannelEnd; // Begin from the ending of the previous FiltersBiasesPart.
       filterIndex = outChannelBegin = outChannelEnd; // Begin from the ending of the previous FiltersBiasesPart.
 
-      for ( let filterY = 0, effectFilterY = 0; filterY < this.filterHeight; ++filterY ) {
-        for ( let dilationFilterY = 0; dilationFilterY < this.dilationHeight; ++dilationFilterY, ++effectFilterY ) {
+      for ( let filterY = 0, effectFilterY = 0;
+        filterY < this.filterHeight; ++filterY ) {
 
-          for ( let filterX = 0, effectFilterX = 0; filterX < this.filterWidth; ++filterX ) {
-            for ( let dilationFilterX = 0; dilationFilterX < this.dilationWidth; ++dilationFilterX, ++effectFilterX ) {
+        for ( let dilationFilterY = 0;
+          dilationFilterY < this.dilationHeight;
+          ++dilationFilterY, ++effectFilterY ) {
 
-              // The filter's dilation part needs not be extracted from weights array. (They are always zero.)
+          for ( let filterX = 0, effectFilterX = 0;
+            filterX < this.filterWidth; ++filterX ) {
+
+            for ( let dilationFilterX = 0;
+              dilationFilterX < this.dilationWidth;
+              ++dilationFilterX, ++effectFilterX ) {
+
+              // The filter's dilation part needs not be extracted from weights
+              // array. (They are always zero.)
               if ( ( 0 != dilationFilterY ) || ( 0 != dilationFilterX ) )
                 continue;
 
@@ -708,19 +730,30 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
               let outChannel = outChannelBegin;
 
               InChannelPartIndexLoop:
-              for ( let inChannelPartIndex = 0; inChannelPartIndex < inChannelPartInfoArray.length; ++inChannelPartIndex ) {
+              for ( let inChannelPartIndex = 0;
+                inChannelPartIndex < inChannelPartInfoArray.length;
+                ++inChannelPartIndex ) {
+
                 let inChannelPartInfo = inChannelPartInfoArray[ inChannelPartIndex ];
 
-                for ( let inChannelSub = 0; inChannelSub < inChannelPartInfo.inputChannelCount; ++inChannelSub, ++inChannel ) {
+                for ( let inChannelSub = 0;
+                  inChannelSub < inChannelPartInfo.inputChannelCount;
+                  ++inChannelSub, ++inChannel ) {
+
                   if ( inChannel >= this.inputChannelCount )
                     break InChannelPartIndexLoop; // Never exceeds the total input channel count.
 
-                  let undoPreviousEscapingScale = inputScaleBoundsArray.scaleArraySet.undo.scales[ inChannel ];
-                  let filterValuePassThrough = thePassThroughStyleInfo.filterValue * undoPreviousEscapingScale;
+                  let undoPreviousEscapingScale
+                     = inputScaleBoundsArray.scaleArraySet.undo.scales[ inChannel ];
+                  let filterValuePassThrough
+                     = thePassThroughStyleInfo.filterValue * undoPreviousEscapingScale;
 
-                  for ( let outChannelSub = 0; outChannelSub < this.channelMultiplier; ++outChannelSub, ++outChannel ) {
+                  for ( let outChannelSub = 0;
+                    outChannelSub < this.channelMultiplier;
+                    ++outChannelSub, ++outChannel ) {
 
-                    // Note: The .afterUndoPreviousActivationEscaping has already been multiplied by undoPreviousEscapingScale.
+                    // Note: The .afterUndoPreviousActivationEscaping has
+                    //       already been multiplied by undoPreviousEscapingScale.
 
                     // 1.1
                     if ( this.filtersArray ) { // 1.1.1
