@@ -801,12 +801,14 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
 
       if ( this.channelShuffler_inputGroupCount != 2 )
         throw Error( `Pointwise.FiltersArray_BiasesArray.${funcNameInMessage}(): `
-          + `channelShuffler_inputGroupCount ( ${this.channelShuffler_inputGroupCount} ) only 2 is supported.`
+          + `channelShuffler_inputGroupCount ( ${this.channelShuffler_inputGroupCount} ) `
+          + `only 2 is supported.`
         );
 
       if ( ( this.inputChannelCount % 2 ) != 0 )
         throw Error( `Pointwise.FiltersArray_BiasesArray.${funcNameInMessage}(): `
-          + `input channel count ( ${this.inputChannelCount} ) must be even (i.e. divisible by 2).`
+          + `input channel count ( ${this.inputChannelCount} ) `
+          + `must be even (i.e. divisible by 2).`
         );
 
       // Shuffle filters.
@@ -822,11 +824,14 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
         this.filtersArray = filtersArrayShuffled;
       }
 
-      // Because its channel shuffling is undone before filters and biases weights extracting, redo it to restore to its original order.
-      this.boundsArraySet.set_afterUndoPreviousActivationEscaping_by_Interleave_asGrouptTwo();
+      // Because its channel shuffling is undone before filters and biases
+      // weights extracting, redo it to restore to its original order.
+      this.boundsArraySet
+        .set_afterUndoPreviousActivationEscaping_by_Interleave_asGrouptTwo();
 
-      // Note: biases and other BoundsArraySet.afterXxx are not affected because they are along output channels (i.e. not
-      //       along input channels).
+      // Note: biases and other BoundsArraySet.afterXxx are not affected
+      //       because they are along output channels (i.e. not along input
+      //       channels).
     }
 
     // 2. Shuffle along output channels.
@@ -834,20 +839,24 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
 
       if ( this.channelShuffler_outputGroupCount != 2 )
         throw Error( `Pointwise.FiltersArray_BiasesArray.${funcNameInMessage}(): `
-          + `channelShuffler_outputGroupCount ( ${this.channelShuffler_outputGroupCount} ) only 2 is supported.`
+          + `channelShuffler_outputGroupCount ( ${this.channelShuffler_outputGroupCount} ) `
+          + `only 2 is supported.`
         );
 
       if ( ( this.outputChannelCount % 2 ) != 0 )
         throw Error( `Pointwise.FiltersArray_BiasesArray.${funcNameInMessage}(): `
-          + `output channel count ( ${this.outputChannelCount} ) must be even (i.e. divisible by 2).`
+          + `output channel count ( ${this.outputChannelCount} ) `
+          + `must be even (i.e. divisible by 2).`
         );
 
       // Shuffle filters.
       {
-        let filtersArrayShuffled = Recyclable.Array.Pool.get_or_create_by( this.filtersArray.length );
+        let filtersArrayShuffled = Recyclable.Array.Pool.get_or_create_by(
+          this.filtersArray.length );
 
         FloatValue.ArrayInterleaver.interleave_asGrouptTwo_alongLastAxis_from_to(
-          this.filtersArray, filtersArrayShuffled, this.inputChannelCount, this.outputChannelCount );
+          this.filtersArray, filtersArrayShuffled,
+          this.inputChannelCount, this.outputChannelCount );
 
         this.filtersArray.disposeResources_and_recycleToPool();
         this.filtersArray = filtersArrayShuffled;
@@ -855,7 +864,8 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
 
       // Shuffle biases.
       if ( this.biasesArray ) {
-        let biasesArrayShuffled = Recyclable.Array.Pool.get_or_create_by( this.biasesArray.length );
+        let biasesArrayShuffled = Recyclable.Array.Pool.get_or_create_by(
+          this.biasesArray.length );
 
         FloatValue.ArrayInterleaver.interleave_asGrouptTwo_alongLastAxis_from_to(
           this.biasesArray, biasesArrayShuffled, this.outputChannelCount );
@@ -864,7 +874,8 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
         this.biasesArray = biasesArrayShuffled;
       }
 
-      this.boundsArraySet.set_outputs_all_byInterleave_asGrouptTwo(); // Shuffle bounds array set of output.
+      // Shuffle bounds array set of output.
+      this.boundsArraySet.set_outputs_all_byInterleave_asGrouptTwo();
     }
   }
 
