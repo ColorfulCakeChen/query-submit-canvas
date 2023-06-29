@@ -201,8 +201,11 @@ class ScaleBoundsArray extends Recyclable.Root {
   /**
    * The this.length will be modified.
    *
-   * @param {ScaleBoundsArray} inputScaleBoundsArray0  The ScaleBoundsArray of the 1st input.
-   * @param {ScaleBoundsArray} inputScaleBoundsArray1  The ScaleBoundsArray of the 2nd input.
+   * @param {ScaleBoundsArray} inputScaleBoundsArray0
+   *   The ScaleBoundsArray of the 1st input.
+   *
+   * @param {ScaleBoundsArray} inputScaleBoundsArray1
+   *   The ScaleBoundsArray of the 2nd input.
    *
    * @return {ScaleBoundsArray} Return this (modified) object.
    */
@@ -360,4 +363,3 @@ class ScaleBoundsArray extends Recyclable.Root {
   }
 
 }
-
