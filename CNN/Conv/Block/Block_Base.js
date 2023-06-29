@@ -1477,18 +1477,25 @@ class Block_Base extends Recyclable.Root {
    *   A Float32Array whose values will be interpreted as weights.
    *
    * @return {Operation.Pointwise}
-   *   Return the created (and initialized) intermediate pointwise of squeeze-and-excitation, if succeeded. Return null, if failed.
+   *   Return the created (and initialized) intermediate pointwise of
+   * squeeze-and-excitation, if succeeded. Return null, if failed.
    */
   static SequeezeExcitation_intermediatePointwise_create_init(
-    inputTensorPlaceholder, nActivationId, nPointwise_HigherHalfDifferent, inputWeightArray,
+    inputTensorPlaceholder,
+    nActivationId,
+    nPointwise_HigherHalfDifferent, inputWeightArray,
     channelShuffler_outputGroupCount ) {
 
     const intermediate_inputChannelCount = inputTensorPlaceholder.channelCount;
-    const intermediate_inputChannelCount_lowerHalf = inputTensorPlaceholder.channelCount_lowerHalf;
-    const intermediate_inputChannelCount_higherHalf = inputTensorPlaceholder.channelCount_higherHalf;
+    const intermediate_inputChannelCount_lowerHalf
+      = inputTensorPlaceholder.channelCount_lowerHalf;
+    const intermediate_inputChannelCount_higherHalf
+      = inputTensorPlaceholder.channelCount_higherHalf;
 
-    if (   ( ( intermediate_inputChannelCount_lowerHalf == undefined ) && ( intermediate_inputChannelCount_higherHalf != undefined ) )
-        || ( ( intermediate_inputChannelCount_lowerHalf != undefined ) && ( intermediate_inputChannelCount_higherHalf == undefined ) )
+    if (   (   ( intermediate_inputChannelCount_lowerHalf == undefined )
+            && ( intermediate_inputChannelCount_higherHalf != undefined ) )
+        || (   ( intermediate_inputChannelCount_lowerHalf != undefined )
+            && ( intermediate_inputChannelCount_higherHalf == undefined ) )
        )
       throw Error( `Block.Base.SequeezeExcitation_intermediatePointwise_create_init(): `
         + `intermediate_inputChannelCount_lowerHalf ( ${intermediate_inputChannelCount_lowerHalf} ) and `
@@ -1498,40 +1505,57 @@ class Block_Base extends Recyclable.Root {
 
     let intermediate_outputChannelCount_lowerHalf;
     if ( intermediate_inputChannelCount_lowerHalf != undefined )
-      intermediate_outputChannelCount_lowerHalf // Note: Using itself input channel count as dividend.
-        = Math.ceil( intermediate_inputChannelCount_lowerHalf / this.nSqueezeExcitationChannelCountDivisor );
+      // Note: Using itself input channel count as dividend.
+      intermediate_outputChannelCount_lowerHalf
+        = Math.ceil( intermediate_inputChannelCount_lowerHalf
+            / this.nSqueezeExcitationChannelCountDivisor );
 
     let intermediate_outputChannelCount_higherHalf;
     if ( intermediate_inputChannelCount_higherHalf != undefined )
-      intermediate_outputChannelCount_higherHalf // Note: Using itself input channel count as dividend.
-        = Math.ceil( intermediate_inputChannelCount_higherHalf / this.nSqueezeExcitationChannelCountDivisor );
+      // Note: Using itself input channel count as dividend.
+      intermediate_outputChannelCount_higherHalf
+        = Math.ceil( intermediate_inputChannelCount_higherHalf
+            / this.nSqueezeExcitationChannelCountDivisor );
 
     let intermediate_outputChannelCount;
     {
-      if ( ( intermediate_outputChannelCount_lowerHalf != undefined ) && ( intermediate_outputChannelCount_higherHalf != undefined ) )
-        intermediate_outputChannelCount = intermediate_outputChannelCount_lowerHalf + intermediate_outputChannelCount_higherHalf;
+      if (   ( intermediate_outputChannelCount_lowerHalf != undefined )
+          && ( intermediate_outputChannelCount_higherHalf != undefined ) )
+        intermediate_outputChannelCount
+          = intermediate_outputChannelCount_lowerHalf
+              + intermediate_outputChannelCount_higherHalf;
       else
-        intermediate_outputChannelCount = Math.ceil( intermediate_inputChannelCount / this.nSqueezeExcitationChannelCountDivisor );
+        intermediate_outputChannelCount = Math.ceil(
+          intermediate_inputChannelCount
+            / this.nSqueezeExcitationChannelCountDivisor );
 
       // Since higher-half is just pass-through, it could be discarded totally.
       //
-      // Note: Only if no channel shuffling (i.e. ( channelShuffler_outputGroupCount != 0 )), this discarding could be done.
+      // Note: Only if no channel shuffling (i.e.
+      // ( channelShuffler_outputGroupCount != 0 )), this discarding could be
+      // done.
       //
-      if ( nPointwise_HigherHalfDifferent == ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_PASS_THROUGH ) // (4)
+      if ( nPointwise_HigherHalfDifferent
+             == ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_PASS_THROUGH ) // (4)
         if ( channelShuffler_outputGroupCount == 0 )
-          intermediate_outputChannelCount = intermediate_outputChannelCount_lowerHalf;
+          intermediate_outputChannelCount
+            = intermediate_outputChannelCount_lowerHalf;
     }
 
     const intermediate_nActivationId = nActivationId;
 
-    // If it has no activation, it could be no bias because the next operation's (i.e. excitationPointwise) bias will achieve it.
-    const intermediate_bBias = ( intermediate_nActivationId == ValueDesc.ActivationFunction.Singleton.Ids.NONE ) ? false : true;
+    // If it has no activation, it could be no bias because the next
+    // operation's (i.e. excitationPointwise) bias will achieve it.
+    const intermediate_bBias
+      = ( intermediate_nActivationId
+            == ValueDesc.ActivationFunction.Singleton.Ids.NONE ) ? false : true;
 
     const intermediate_nHigherHalfDifferent = nPointwise_HigherHalfDifferent;
 
-    // Since the previous operation's output channels has been shuffled, use the same as shuffler in input channels to neutralize its
-    // effect.
-    const intermediate_channelShuffler_inputGroupCount = channelShuffler_outputGroupCount;
+    // Since the previous operation's output channels has been shuffled, use
+    // the same as shuffler in input channels to neutralize its effect.
+    const intermediate_channelShuffler_inputGroupCount
+      = channelShuffler_outputGroupCount;
 
 
     let intermediatePointwise
