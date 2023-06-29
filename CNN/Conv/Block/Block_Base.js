@@ -1631,7 +1631,8 @@ class Block_Base extends Recyclable.Root {
 
 
   /**
-   * @return {string} The description string of all (adjusted) parameters of initer().
+   * @return {string}
+   *   The description string of all (adjusted) parameters of initer().
    *
    * @override
    */
