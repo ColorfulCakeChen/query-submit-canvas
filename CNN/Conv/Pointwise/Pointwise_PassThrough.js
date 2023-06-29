@@ -383,9 +383,11 @@ class PassThrough
 class AllZeros extends Recyclable.Base( TwoTensors.filtersTensor4d_biasesTensor3d() ) {
 
   /**
-   * Used as default Pointwise.AllZeros provider for conforming to Recyclable interface.
+   * Used as default Pointwise.AllZeros provider for conforming to Recyclable
+   * interface.
    */
-  static Pool = new Pool.Root( "Pointwise.AllZeros.Pool", AllZeros, AllZeros.setAsConstructor );
+  static Pool = new Pool.Root( "Pointwise.AllZeros.Pool",
+    AllZeros, AllZeros.setAsConstructor );
 
   /**
    * @param {number}  inputChannelCount      The channel count of input.
@@ -394,13 +396,15 @@ class AllZeros extends Recyclable.Base( TwoTensors.filtersTensor4d_biasesTensor3
    */
   constructor( inputChannelCount, outputChannelCount, bBias ) {
     super();
-    AllZeros.setAsConstructor_self.call( this, inputChannelCount, outputChannelCount, bBias );
+    AllZeros.setAsConstructor_self.call( this,
+      inputChannelCount, outputChannelCount, bBias );
   }
 
   /** @override */
   static setAsConstructor( inputChannelCount, outputChannelCount, bBias ) {
     super.setAsConstructor();
-    AllZeros.setAsConstructor_self.call( this, inputChannelCount, outputChannelCount, bBias );
+    AllZeros.setAsConstructor_self.call( this,
+      inputChannelCount, outputChannelCount, bBias );
     return this;
   }
 
@@ -411,10 +415,14 @@ class AllZeros extends Recyclable.Base( TwoTensors.filtersTensor4d_biasesTensor3
     this.bBias = bBias;
 
     if ( inputChannelCount <= 0 )
-      throw `Pointwise.AllZeros.setAsConstructor_self(): inputChannelCount ( ${inputChannelCount} ) must be positive integer.`;
+      throw Error( `Pointwise.AllZeros.setAsConstructor_self(): `
+        + `inputChannelCount ( ${inputChannelCount} ) `
+        + `must be positive integer.` );
 
     if ( outputChannelCount <= 0 )
-      throw `Pointwise.AllZeros.setAsConstructor_self(): outputChannelCount ( ${outputChannelCount} ) must be positive integer.`;
+      throw Error ( `Pointwise.AllZeros.setAsConstructor_self(): `
+        + `outputChannelCount ( ${outputChannelCount} ) `
+        + `must be positive integer.` );
 
     let filtersShape;
     let biasesShape;
@@ -433,7 +441,8 @@ class AllZeros extends Recyclable.Base( TwoTensors.filtersTensor4d_biasesTensor3
       this.filtersTensor4d = tf.zeros( filtersShape );
 
       if ( this.bBias ) {
-        this.biasesTensor3d = tf.zero( biasesShape );    // Generate bias for just adding zero. (i.e. equals no bias).
+        // Generate bias for just adding zero. (i.e. equals no bias).
+        this.biasesTensor3d = tf.zero( biasesShape );
       }
 
       this.bInitOk = true;
