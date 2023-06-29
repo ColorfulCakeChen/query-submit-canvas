@@ -15,29 +15,31 @@ import { BoundsArray_PerPixel } from "./Depthwise_BoundsArray_PerPixel.js";
  *
  *
  * @member {number} weightElementOffsetBegin
- *   The position which is started (inclusive) to extract from inputWeightArray by init().
+ *   The position which is started (inclusive) to extract from inputWeightArray
+ * by init().
  *
  * @member {number} weightElementOffsetEnd
- *   The position which is ended to (non-inclusive) extract from inputWeightArray by
- * init(). Where to extract next weights. Only meaningful if .init() returns true.
+ *   The position which is ended to (non-inclusive) extract from
+ * inputWeightArray by init(). Where to extract next weights. Only meaningful
+ * if .init() returns true.
  *
  * @member {BoundsArraySet.Depthwise} boundsArraySet
  *   The element value bounds (per channel) of this depthwise convolution.
  *
  * @member {number} inputHeight
- *   The height of input image. When
- * ( nHigherHalfDifferent == ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_PASS_THROUGH ),
+ *   The height of input image. When ( nHigherHalfDifferent ==
+ * ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_PASS_THROUGH ),
  * it will be used to create the higher-half-pass-through depthwise filters.
  *
  * @member {number} inputWidth
- *   The width of input image. When
- * ( nHigherHalfDifferent == ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_PASS_THROUGH ),
+ *   The width of input image. When ( nHigherHalfDifferent ==
+ * ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_PASS_THROUGH ),
  * it will be used to create the higher-half-pass-through depthwise filters.
  *
  * @member {number} nPassThroughStyleId
- *   The pass-through style id (ValueDesc.PassThroughStyle.Singleton.Ids.Xxx) of this
- * convolution. It only affect the channels which need to be pass-through from input
- * to output.
+ *   The pass-through style id (ValueDesc.PassThroughStyle.Singleton.Ids.Xxx)
+ * of this convolution. It only affect the channels which need to be
+ * pass-through from input to output.
  *
  * @member {ValueDesc.Depthwise_HigherHalfDifferent} nHigherHalfDifferent
  *   - If ( nHigherHalfDifferent == ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.NONE ), it is just a normal depthwise convolution.
@@ -49,25 +51,32 @@ import { BoundsArray_PerPixel } from "./Depthwise_BoundsArray_PerPixel.js";
  *       - ( ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.MAX === AvgMax_Or_ChannelMultiplier )
  *
  *     - If ( nHigherHalfDifferent == ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_DEPTHWISE2 ),
- *         (i.e. bHigherHalfDepthwise2, for depthwise1 of ShuffleNetV2_ByMopbileNetV1's head),
- *         the filters for the input channels between 0 and ( inputChannelCount_lowerHalf - 1 ) are depthwise1, between
- *         ( inputChannelCount_lowerHalf ) and ( inputChannelCount - 1 ) are depthwise2. These two filters (and biases) will be
- *         extracted in sequence, but they will be combined into one larger filters (and biases). This makes these filters' weights
- *         are arranged the same as ShuffleNetV2's head. So that the same filters weights could be used in these two architectures
- *         for comparing performance and correctness.
+ *         (i.e. bHigherHalfDepthwise2, for depthwise1 of
+ *           ShuffleNetV2_ByMopbileNetV1's head),
+ *         the filters for the input channels between 0 and
+ *         ( inputChannelCount_lowerHalf - 1 ) are depthwise1, between
+ *         ( inputChannelCount_lowerHalf ) and ( inputChannelCount - 1 ) are
+ *         depthwise2. These two filters (and biases) will be extracted in
+ *         sequence, but they will be combined into one larger filters (and
+ *         biases). This makes these filters' weights are arranged the same as
+ *         ShuffleNetV2's head. So that the same filters weights could be used
+ *         in these two architectures for comparing performance and correctness.
  *
  *     - If ( nHigherHalfDifferent == ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_PASS_THROUGH ),
- *         (i.e. bHigherHalfPassThrough, for depthwise1 of ShuffleNetV2_ByMopbileNetV1's body/tail),
- *         the filters for the input channels between ( inputChannelCount_lowerHalf ) and ( inputChannelCount - 1 ) will just pass
- *         through the input to output.
+ *         (i.e. bHigherHalfPassThrough, for depthwise1 of
+ *           ShuffleNetV2_ByMopbileNetV1's body/tail),
+ *         the filters for the input channels between
+ *         ( inputChannelCount_lowerHalf ) and ( inputChannelCount - 1 ) will
+ *         just pass through the input to output.
  *
  * @member {boolean} bHigherHalfDifferent
- *   It will be false, if ( nHigherHalfDifferent == ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.NONE ).
+ *   It will be false, if ( nHigherHalfDifferent ==
+ * ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.NONE ).
  *
  * @member {number} inputChannelCount_lowerHalf
- *   The lower half channel count of input image. When
- * ( nHigherHalfDifferent != ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.NONE ),
- * it will be used and must be a positive integer.
+ *   The lower half channel count of input image. When ( nHigherHalfDifferent
+ * != ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.NONE ), it will be
+ * used and must be a positive integer.
  *
  * @member {number} tensorWeightCountTotal_internal
  *   The total wieght count used in tensors. Not including Params, because they
