@@ -25,13 +25,13 @@ import { BoundsArray_PerPixel } from "./Depthwise_BoundsArray_PerPixel.js";
  *   The element value bounds (per channel) of this depthwise convolution.
  *
  * @member {number} inputHeight
- *   The height of input image.
- * When ( nHigherHalfDifferent == ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_PASS_THROUGH ),
+ *   The height of input image. When
+ * ( nHigherHalfDifferent == ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_PASS_THROUGH ),
  * it will be used to create the higher-half-pass-through depthwise filters.
  *
  * @member {number} inputWidth
- *   The width of input image.
- * When ( nHigherHalfDifferent == ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_PASS_THROUGH ),
+ *   The width of input image. When
+ * ( nHigherHalfDifferent == ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_PASS_THROUGH ),
  * it will be used to create the higher-half-pass-through depthwise filters.
  *
  * @member {number} nPassThroughStyleId
@@ -65,12 +65,14 @@ import { BoundsArray_PerPixel } from "./Depthwise_BoundsArray_PerPixel.js";
  *   It will be false, if ( nHigherHalfDifferent == ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.NONE ).
  *
  * @member {number} inputChannelCount_lowerHalf
- *   The lower half channel count of input image. When ( nHigherHalfDifferent != ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.NONE ),
+ *   The lower half channel count of input image. When
+ * ( nHigherHalfDifferent != ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.NONE ),
  * it will be used and must be a positive integer.
  *
  * @member {number} tensorWeightCountTotal_internal
- *   The total wieght count used in tensors. Not including Params, because they are not
- * used in tensors. Including inferenced weights, if they are used in tensors.
+ *   The total wieght count used in tensors. Not including Params, because they
+ * are not used in tensors. Including inferenced weights, if they are used in
+ * tensors.
  *
  * @member {number[]} filtersShape
  *   The shape of the depthwise convolution filters array.
@@ -90,41 +92,52 @@ import { BoundsArray_PerPixel } from "./Depthwise_BoundsArray_PerPixel.js";
  * @see PadInfoCalculator
  */
 let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
-  class FiltersArray_BiasesArray extends Weights.Base( PadInfoCalculator( ParentClass ) ) {
+  class FiltersArray_BiasesArray
+    extends Weights.Base( PadInfoCalculator( ParentClass ) ) {
 
   /**
-   * Used as default Depthwise.FiltersArray_BiasesArray provider for conforming to Recyclable interface.
+   * Used as default Depthwise.FiltersArray_BiasesArray provider for conforming
+   * to Recyclable interface.
    */
-  static Pool = new Pool.Root( "Depthwise.FiltersArray_BiasesArray.Pool", FiltersArray_BiasesArray, FiltersArray_BiasesArray.setAsConstructor );
+  static Pool = new Pool.Root( "Depthwise.FiltersArray_BiasesArray.Pool",
+    FiltersArray_BiasesArray, FiltersArray_BiasesArray.setAsConstructor );
 
   /**
    */
   constructor(
-    inputHeight, inputWidth, inputChannelCount, AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad,
+    inputHeight, inputWidth, inputChannelCount,
+    AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad,
     bBias, nActivationId, nPassThroughStyleId,
     nHigherHalfDifferent, inputChannelCount_lowerHalf,
     ...restArgs ) {
 
-    super( inputHeight, inputWidth, inputChannelCount, AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad, ...restArgs );
+    super( inputHeight, inputWidth, inputChannelCount,
+      AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad,
+      ...restArgs );
 
     FiltersArray_BiasesArray.setAsConstructor_self.call( this,
-      inputHeight, inputWidth, inputChannelCount, AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad,
+      inputHeight, inputWidth, inputChannelCount,
+      AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad,
       bBias, nActivationId, nPassThroughStyleId,
       nHigherHalfDifferent, inputChannelCount_lowerHalf );
   }
 
   /** @override */
   static setAsConstructor(
-    inputHeight, inputWidth, inputChannelCount, AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad,
+    inputHeight, inputWidth, inputChannelCount,
+    AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad,
     bBias, nActivationId, nPassThroughStyleId,
     nHigherHalfDifferent, inputChannelCount_lowerHalf,
     ...restArgs ) {
 
     super.setAsConstructor(
-      inputHeight, inputWidth, inputChannelCount, AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad, ...restArgs );
+      inputHeight, inputWidth, inputChannelCount,
+      AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad,
+      ...restArgs );
 
     FiltersArray_BiasesArray.setAsConstructor_self.call( this,
-      inputHeight, inputWidth, inputChannelCount, AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad,
+      inputHeight, inputWidth, inputChannelCount,
+      AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad,
       bBias, nActivationId, nPassThroughStyleId,
       nHigherHalfDifferent, inputChannelCount_lowerHalf );
 
@@ -133,7 +146,8 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
 
   /** @override */
   static setAsConstructor_self(
-    inputHeight, inputWidth, inputChannelCount, AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad,
+    inputHeight, inputWidth, inputChannelCount,
+    AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad,
     bBias, nActivationId, nPassThroughStyleId,
     nHigherHalfDifferent, inputChannelCount_lowerHalf ) {
 
