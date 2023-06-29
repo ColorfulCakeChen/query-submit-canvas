@@ -637,63 +637,100 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
     }
 
     // Extracting weights of filters and biases. (Including extra scale.)
-    let sourceIndex = weightElementOffsetBegin, filterIndex = 0, biasIndex = 0;
+    let sourceIndex = weightElementOffsetBegin;
+    let filterIndex = 0, biasIndex = 0;
 
-    let outChannelBegin = 0, outChannelEnd = 0; // [ outChannelBegin, outChannelEnd ) are output channels of the current FiltersBiasesPart.
+    // [ outChannelBegin, outChannelEnd ) are output channels of the current
+    // FiltersBiasesPart.
+    let outChannelBegin = 0, outChannelEnd = 0;
 
     FiltersBiasesPartIndexLoop:
-    for ( let aFiltersBiasesPartIndex = 0; aFiltersBiasesPartIndex < aFiltersBiasesPartInfoArray.length; ++aFiltersBiasesPartIndex ) {
-      let aFiltersBiasesPartInfo = aFiltersBiasesPartInfoArray[ aFiltersBiasesPartIndex ];
+    for ( let aFiltersBiasesPartIndex = 0;
+      aFiltersBiasesPartIndex < aFiltersBiasesPartInfoArray.length;
+      ++aFiltersBiasesPartIndex ) {
+
+      let aFiltersBiasesPartInfo
+        = aFiltersBiasesPartInfoArray[ aFiltersBiasesPartIndex ];
+
       let inChannelPartInfoArray = aFiltersBiasesPartInfo;
 
-      filterIndex = outChannelBegin = outChannelEnd; // Begin from the ending of the previous FiltersBiasesPart.
+      // Begin from the ending of the previous FiltersBiasesPart.
+      filterIndex = outChannelBegin = outChannelEnd;
 
       { // this.filtersArray
 
-        for ( let inChannel = 0; inChannel < this.inputChannelCount; ++inChannel ) {
-          let undoPreviousEscapingScale = input_scaleArraySet_undo.scales[ inChannel ];
-          let filterValuePassThrough = thePassThroughStyleInfo.filterValue * undoPreviousEscapingScale;
+        for ( let inChannel = 0;
+          inChannel < this.inputChannelCount; ++inChannel ) {
+
+          let undoPreviousEscapingScale
+            = input_scaleArraySet_undo.scales[ inChannel ];
+
+          let filterValuePassThrough
+            = thePassThroughStyleInfo.filterValue * undoPreviousEscapingScale;
+
           let outChannel = outChannelBegin;
 
           InChannelPartIndexLoop:
-          for ( let inChannelPartIndex = 0; inChannelPartIndex < inChannelPartInfoArray.length; ++inChannelPartIndex ) {
+          for ( let inChannelPartIndex = 0;
+            inChannelPartIndex < inChannelPartInfoArray.length;
+            ++inChannelPartIndex ) {
+
             let inChannelPartInfo = inChannelPartInfoArray[ inChannelPartIndex ];
             let inChannelToPartBegin = inChannel - inChannelPartInfo.inChannelBegin;
 
-            for ( let outChannelSub = 0; outChannelSub < inChannelPartInfo.outputChannelCount; ++outChannelSub, ++outChannel ) {
+            for ( let outChannelSub = 0;
+              outChannelSub < inChannelPartInfo.outputChannelCount;
+              ++outChannelSub, ++outChannel ) {
+
               if ( outChannel >= this.outputChannelCount )
-                break InChannelPartIndexLoop; // Never exceeds the total output channel count.
+                // Never exceeds the total output channel count.
+                break InChannelPartIndexLoop;
 
-              // Note: The .afterUndoPreviousActivationEscaping has already been multiplied by undoPreviousEscapingScale.
+              // Note: The .afterUndoPreviousActivationEscaping has already
+              //       been multiplied by undoPreviousEscapingScale.
 
-              if ( ( inChannelToPartBegin >= 0 ) && ( inChannel < inChannelPartInfo.inChannelEnd ) ) {
-                if ( inChannelPartInfo.bPassThrough ) { // For pass-through half channels.
-                  if ( inChannelToPartBegin == outChannelSub ) { // The only one filter position (in the pass-through part) may have non-zero value.
+              if (   ( inChannelToPartBegin >= 0 )
+                  && ( inChannel < inChannelPartInfo.inChannelEnd ) ) {
+
+                // For pass-through half channels.
+                if ( inChannelPartInfo.bPassThrough ) {
+
+                  // The only one filter position (in the pass-through part)
+                  // may have non-zero value.
+                  if ( inChannelToPartBegin == outChannelSub ) {
                     this.filtersArray[ filterIndex ] = filterValuePassThrough;
                     tBounds
                       .set_byBoundsArray( this.boundsArraySet.afterUndoPreviousActivationEscaping, inChannel )
                       .multiply_byN( thePassThroughStyleInfo.filterValue );
 
                   } else {
-                    this.filtersArray[ filterIndex ] = 0; // All other filter positions (in the pass-through part) are zero.
+                    // All other filter positions (in the pass-through part)
+                    // are zero.
+                    this.filtersArray[ filterIndex ] = 0;
                     tBounds.set_byN( 0 );
                   }
 
-                } else { // Non-pass-through half channels.
+                // Non-pass-through half channels.
+                } else {
                   let sourceWeight = sourceWeightArray[ sourceIndex ];
                   ++sourceIndex;
 
-                  this.filtersArray[ filterIndex ] = sourceWeight * undoPreviousEscapingScale;
+                  this.filtersArray[ filterIndex ]
+                    = sourceWeight * undoPreviousEscapingScale;
+
                   tBounds
                     .set_byBoundsArray( this.boundsArraySet.afterUndoPreviousActivationEscaping, inChannel )
                     .multiply_byN( sourceWeight );
                 }
 
                 // Determine .afterFilter
-                this.boundsArraySet.afterFilter.add_one_byBounds( outChannel, tBounds );
+                this.boundsArraySet.afterFilter.add_one_byBounds(
+                  outChannel, tBounds );
 
               } else {
-                this.filtersArray[ filterIndex ] = 0; // All input channels which is not in range use zero filter to ignore the inputs.
+                // All input channels which is not in range use zero filter
+                // to ignore the inputs.
+                this.filtersArray[ filterIndex ] = 0;
               }
 
               ++filterIndex;
@@ -701,8 +738,13 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
             } // outChannelSub, outChannel
           } // inChannelPartIndex
 
-          outChannelEnd = outChannel; // Record the ending output channel index of the current FiltersBiasesPart.
-          filterIndex += ( this.outputChannelCount - outChannel ) + outChannelBegin; // Jump to the outChannelBegin of the next inChannel.
+          // Record the ending output channel index of the current
+          // FiltersBiasesPart.
+          outChannelEnd = outChannel;
+
+          // Jump to the outChannelBegin of the next inChannel.
+          filterIndex
+            += ( this.outputChannelCount - outChannel ) + outChannelBegin;
 
         } // inChannelSub, inChannel
 
