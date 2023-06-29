@@ -76,7 +76,8 @@ class TestCorrectnessInfo extends Recyclable.Root {
       input0_height, input0_width, input0_channelCount,
       nConvBlockTypeId,
       pointwise1ChannelCount,
-      depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight_real, depthwiseFilterWidth_real, depthwiseStridesPad,
+      depthwise_AvgMax_Or_ChannelMultiplier,
+      depthwiseFilterHeight_real, depthwiseFilterWidth_real, depthwiseStridesPad,
       pointwise20ChannelCount,
       bKeepInputTensor,
       inferencedParams
