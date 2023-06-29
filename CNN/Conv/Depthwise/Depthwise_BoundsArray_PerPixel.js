@@ -10,8 +10,8 @@ import * as FloatValue from "../../Unpacker/FloatValue.js";
  * hold every pixel's value bounds.
  *
  * @member {Depthwise.PadInfoCalculator} imageInfo
- *   The input/output image information of the depthwise operation. It is not owned
- * and will not be released by this object.
+ *   The input/output image information of the depthwise operation. It is not
+ * owned and will not be released by this object.
  *
  * @member {number[]} accumulationCounts
  *   Every pixel is added how many times. Usually they are the same as
@@ -22,23 +22,27 @@ import * as FloatValue from "../../Unpacker/FloatValue.js";
 class Depthwise_BoundsArray_PerPixel extends FloatValue.BoundsArray {
 
   /**
-   * Used as default Depthwise.BoundsArray_PerPixel provider for conforming to Recyclable interface.
+   * Used as default Depthwise.BoundsArray_PerPixel provider for conforming to
+   * Recyclable interface.
    */
   static Pool = new Pool.Root( "Depthwise.BoundsArray_PerPixel.Pool",
-    Depthwise_BoundsArray_PerPixel, Depthwise_BoundsArray_PerPixel.setAsConstructor );
+    Depthwise_BoundsArray_PerPixel,
+    Depthwise_BoundsArray_PerPixel.setAsConstructor );
 
   /**
    */
   constructor( imageInfo ) {
-     super();
-     Depthwise_BoundsArray_PerPixel.setAsConstructor_self.call( this, imageInfo );
+    super();
+    Depthwise_BoundsArray_PerPixel.setAsConstructor_self.call( this,
+      imageInfo );
   }
  
   /** @override */
   static setAsConstructor( imageInfo ) {
-     super.setAsConstructor();
-     Depthwise_BoundsArray_PerPixel.setAsConstructor_self.call( this, imageInfo );
-     return this;
+    super.setAsConstructor();
+    Depthwise_BoundsArray_PerPixel.setAsConstructor_self.call( this,
+      imageInfo );
+    return this;
   }
  
   /** @override */
@@ -124,16 +128,20 @@ class Depthwise_BoundsArray_PerPixel extends FloatValue.BoundsArray {
   }
 
   /**
-   * @param {Depthwise_BoundsArray_PerPixel} aBoundsArray  Set all ( this.accumulationCounts[] ) by ( aBoundsArray.accumulationCounts[] ).
+   * @param {Depthwise_BoundsArray_PerPixel} aBoundsArray
+   *   Set all ( this.accumulationCounts[] ) by ( aBoundsArray.accumulationCounts[] ).
    *
    * @return {Depthwise_BoundsArray_PerPixel} Return this (modified) object.
    */
   accumulationCounts_set_all_byBoundsArray( aBoundsArray ) {
-    return this.accumulationCounts_set_all_byNs( aBoundsArray.accumulationCounts_set_all_byNs );
+    return this.accumulationCounts_set_all_byNs(
+      aBoundsArray.accumulationCounts_set_all_byNs );
   }
 
 
-  /** Accumulate value bounds for the filter position (across the whole virtual input image).
+  /**
+   * Accumulate value bounds for the filter position (across the whole virtual
+   * input image).
    *
    * Note: filter dilation is not supported. It is assumed as 1.
    *
@@ -166,10 +174,16 @@ class Depthwise_BoundsArray_PerPixel extends FloatValue.BoundsArray {
           ++outY, inY += this.imageInfo.stridesHeight,
             imageOutput_elementIndexBeginY += this.imageInfo.outputElementCountY ) {
 
-      if ( inY < 0 )
-        continue; // Never access outside of input image. Continue to find out non-negative input image y position.
-      else if ( inY >= this.imageInfo.inputHeight )
-        break;    // Never access outside of input image. Break because it is impossible to find inside of input image.
+      if ( inY < 0 ) {
+        // Never access outside of input image. Continue to find out
+        // non-negative input image y position.
+        continue;
+
+      } else if ( inY >= this.imageInfo.inputHeight ) {
+        // Never access outside of input image. Break because it is impossible
+        // to find inside of input image.
+        break;
+      }
 
       imageOutput_elementIndex = imageOutput_elementIndexBeginY;
       for ( let outX = 0, inX = imageInput_BeginX + filterX;
