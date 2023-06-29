@@ -963,77 +963,94 @@ class Block_Base extends Recyclable.Root {
       this.operationArray.operation_append( concat2ShuffleSplit );
 
     } else {
-      // Since no concat2(-shuffle-split), the final output come from pointwise2 (and add-input-to-output) directly.
+      // Since no concat2(-shuffle-split), the final output come from
+      // pointwise2 (and add-input-to-output) directly.
     }
 
     progressToAdvance.value_advance();
     yield progressRoot;  // concat2-Shuffle-Split was ready. Report progress.
 
-    // 10. Configure correct function pointers according to whether keeping or destroying input tensor.
+    // 10. Configure correct function pointers according to whether keeping
+    //     or destroying input tensor.
 
     // 10.1 Determine which apply_Xxx() function should be used.
     Block_Base.setup_apply_block.call( this );
 
-    // 10.2 Adjust the destroy-or-keep behavior of every tensor according to whether the operation is the final operation of the tensor.
+    // 10.2 Adjust the destroy-or-keep behavior of every tensor according to
+    //      whether the operation is the final operation of the tensor.
     //
-    // When caller requests to keep input tensor, all input tensors should be kept.
+    // When caller requests to keep input tensor, all input tensors should be
+    // kept.
     //
-    this.operationArray.setKeepInputTensor( this.bKeepInputTensor, this.bKeepInputTensor )
+    this.operationArray.setKeepInputTensor(
+      this.bKeepInputTensor, this.bKeepInputTensor )
 
-    // 10.3 Reduce memory footprint by releasing unused (intermediate) bounds array set.
+    // 10.3 Reduce memory footprint by releasing unused (intermediate) bounds
+    //      array set.
 //!!! (2022/08/03 Temp Remarked) For debug.
     this.dispose_intermediate_ScaleBoundsArray();
 
     // 10.4
+    // All pointwise1-depthwise-pointwise2 filters was ready. Report progress.
     progressToAdvance.value_advance();
-    yield progressRoot;  // All pointwise1-depthwise-pointwise2 filters was ready. Report progress.
+    yield progressRoot;
 
     this.bInitOk = true;
     return true;
   }
 
   /**
-   * Initialize this object by calling initer() and advance the generator by loop
-   * until done.
+   * Initialize this object by calling initer() and advance the generator by
+   * loop until done.
    *
    * @return {boolean}
-   *   - Return true, if succeeded (and progressParent.valuePercentage will be equal
-   *       to 100).
-   *   - Return false, if failed (and progressParent.valuePercentage will be less than
-   *       100).
+   *   - Return true, if succeeded (and progressParent.valuePercentage will be
+   *       equal to 100).
+   *   - Return false, if failed (and progressParent.valuePercentage will be
+   *       less than 100).
    *
    * @see this.initer()
    */
   init(
     progressParent, inputWeightArray, weightElementOffsetBegin, params,
-    input0_ScaleBoundsArray_or_TensorPlaceholder, input1_ScaleBoundsArray_or_TensorPlaceholder,
+    input0_ScaleBoundsArray_or_TensorPlaceholder,
+    input1_ScaleBoundsArray_or_TensorPlaceholder,
   ) {
 
     let initer = this.initer(
       progressParent, inputWeightArray, weightElementOffsetBegin, params,
-      input0_ScaleBoundsArray_or_TensorPlaceholder, input1_ScaleBoundsArray_or_TensorPlaceholder,
+      input0_ScaleBoundsArray_or_TensorPlaceholder,
+      input1_ScaleBoundsArray_or_TensorPlaceholder,
     );
 
     let initerNext;
     do {
       initerNext = initer.next();
-    } while ( ! initerNext.done ); // When ( false == initerNext.done ), the ( initerNext.value ) will be progressParent.root_get().
 
-    let bInitOk = initerNext.value; // When ( true == initerNext.done ), the ( initerNext.value ) will be initialization successfully or failed.
+    // When ( false == initerNext.done ), the ( initerNext.value ) will be
+    // progressParent.root_get().
+    } while ( ! initerNext.done );
+
+    // When ( true == initerNext.done ), the ( initerNext.value ) will be
+    // initialization successfully or failed.
+    let bInitOk = initerNext.value;
     return bInitOk;
   }
 
   /**
-   * Sub-class should override this method (and call super.disposeResources() before return).
+   * Sub-class should override this method (and call super.disposeResources()
+   * before return).
    *
    * @override
    */
   disposeResources() {
     this.apply = null;
 
-    // 1. Because .outputX are not created by this block, they should not be released by this block.
+    // 1. Because .outputX are not created by this block, they should not be
+    //    released by this block.
     //
-    // Note: The .outputX are just read only property returning .operationArray.outputX.
+    // Note: The .outputX are just read only property returning
+    //       .operationArray.outputX.
 
     // 2.
     if ( this.operationArray ) {
@@ -1041,15 +1058,18 @@ class Block_Base extends Recyclable.Root {
       this.operationArray = null;
     }
 
-    // 3. The .inputX may or may not be created by this block, they should be released
-    //    by this block according to .Xxx_bOwned flag.
+    // 3. The .inputX may or may not be created by this block, they should be
+    //    released by this block according to .Xxx_bOwned flag.
     {
       if ( this.input1 ) {
         if ( this.input1_bOwned ) {
-          this.input1.scaleBoundsArray = null; // It is referenced to inputScaleBoundsArray0 which should not be released here. So nullify it.
+          // It is referenced to inputScaleBoundsArray0 which should not be
+          // released here. So nullify it.
+          this.input1.scaleBoundsArray = null;
           this.input1.disposeResources_and_recycleToPool();
         } else {
-          // .input1 is totally created by caller. Do not release it (and do not nullify .input1.scaleBoundsArray) here.
+          // .input1 is totally created by caller. Do not release it (and do
+          // not nullify .input1.scaleBoundsArray) here.
         }
         this.input1_bOwned = undefined;
         this.input1 = null;
@@ -1057,10 +1077,13 @@ class Block_Base extends Recyclable.Root {
  
       if ( this.input0 ) {
         if ( this.input0_bOwned ) {
-          this.input0.scaleBoundsArray = null; // It is referenced to inputScaleBoundsArray1 which should not be released here. So nullify it.
+          // It is referenced to inputScaleBoundsArray1 which should not be
+          // released here. So nullify it.
+          this.input0.scaleBoundsArray = null;
           this.input0.disposeResources_and_recycleToPool();
         } else {
-          // .input0 is totally created by caller. Do not release it (and do not nullify .input0.scaleBoundsArray) here.
+          // .input0 is totally created by caller. Do not release it (and do
+          // not nullify .input0.scaleBoundsArray) here.
         }
         this.input0_bOwned = undefined;
         this.input0 = null;
@@ -1069,7 +1092,8 @@ class Block_Base extends Recyclable.Root {
 
     // 4.
     if ( this.channelShuffler_ConcatPointwiseConv ) {
-      this.channelShuffler_ConcatPointwiseConv = null; // Note: Do not dispose the channel shuffler here.
+      // Note: Do not dispose the channel shuffler here.
+      this.channelShuffler_ConcatPointwiseConv = null;
     }
 
     // 5.
@@ -1086,7 +1110,8 @@ class Block_Base extends Recyclable.Root {
   }
 
   /**
-   * Release all ScaleBoundsArray (inside tensor placeholder) except this.inputX and this.outputX
+   * Release all ScaleBoundsArray (inside tensor placeholder) except
+   * this.inputX and this.outputX
    *
    * This could reduce memory footprint by releasing unused scale bounds array.
    */
@@ -1097,8 +1122,9 @@ class Block_Base extends Recyclable.Root {
   /**
    * Append a sequence operations to achieve squeeze-and-excitation.
    *
-   * Since multiplication is useful in squeeze-and-excitation, what about division?
-   * e.g. tf.mul( input, x ) replaced by tf.div( input, tf.abs( x ) + 1 )
+   * Since multiplication is useful in squeeze-and-excitation, what about
+   * division? e.g. tf.mul( input, x ) replaced by
+   * tf.div( input, tf.abs( x ) + 1 )
    *
    *
    * 1. squeeze-and-excitation with multiplication and division:
