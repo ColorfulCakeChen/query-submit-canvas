@@ -636,6 +636,9 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
     sourceWeightArray, weightElementOffsetBegin,
     inputScaleBoundsArray, aFiltersBiasesPartInfoArray ) {
 
+    const funcNameInMessage
+      = "set_filtersArray_biasesArray_afterFilter_afterBias_apply_undoPreviousEscapingScale";
+
     const thePassThroughStyleInfo
       = ValueDesc.PassThroughStyle.Singleton.getInfo_byId(
           this.nPassThroughStyleId );
@@ -758,17 +761,22 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
                     // 1.1
                     if ( this.filtersArray ) { // 1.1.1
 
-                      if ( inChannelPartInfo.bPassThrough ) { // For pass-through half channels.
-                        if ( inChannelPartInfo.isPassThrough_FilterPosition_NonZero( effectFilterY, effectFilterX ) ) {
+                      // For pass-through half channels.
+                      if ( inChannelPartInfo.bPassThrough ) {
 
-                          // The only one filter position (in the pass-through part) may have non-zero value.
+                        if ( inChannelPartInfo.isPassThrough_FilterPosition_NonZero(
+                               effectFilterY, effectFilterX ) ) {
+
+                          // The only one filter position (in the pass-through
+                          // part) may have non-zero value.
                           this.filtersArray[ filterIndex ] = filterValuePassThrough;
                           tBounds
                             .set_byBoundsArray( this.boundsArraySet.afterUndoPreviousActivationEscaping, inChannel )
                             .multiply_byN( thePassThroughStyleInfo.filterValue );
 
                         } else {
-                          // All other filter positions (in the pass-through part) are zero.
+                          // All other filter positions (in the pass-through
+                          // part) are zero.
                           this.filtersArray[ filterIndex ] = 0;
                           tBounds.set_byN( 0 );
                         }
@@ -777,45 +785,57 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
                         let sourceWeight = sourceWeightArray[ sourceIndex ];
                         ++sourceIndex;
 
-                        this.filtersArray[ filterIndex ] = sourceWeight * undoPreviousEscapingScale;
+                        this.filtersArray[ filterIndex ]
+                          = sourceWeight * undoPreviousEscapingScale;
+
                         tBounds
                           .set_byBoundsArray( this.boundsArraySet.afterUndoPreviousActivationEscaping, inChannel )
                           .multiply_byN( sourceWeight );
                       }
 
-                      // Accumulate value bounds for the filter position (across the whole virtual input image).
+                      // Accumulate value bounds for the filter position
+                      // (across the whole virtual input image).
                       virtualImageOutput_afterFilter_BoundsArray_PerPixel
                         .add_one_outputChannel_byBounds(
                           outChannel, filterY, filterX, tBounds );
 
-                    } else { // 1.1.2 ( !this.filtersArray ). No filters array to be extracted. (i.e. avg/max pooling)
+                    // 1.1.2 ( !this.filtersArray ). No filters array to be
+                    //       extracted. (i.e. avg/max pooling)
+                    } else {
 
-                      // For average pooling, value bounds should also be calculated.
-                      if ( this.AvgMax_Or_ChannelMultiplier == ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.AVG ) {
+                      // For average pooling, value bounds should also be
+                      // calculated.
+                      if ( this.AvgMax_Or_ChannelMultiplier
+                             == ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.AVG ) {
 
-                        // (Because avg pooling can not undo previous activation
-                        // escaping scale, use .input0 instead of
-                        // .afterUndoPreviousActivationEscaping to calculate value bounds.)
-                        tBounds.set_byBoundsArray( this.boundsArraySet.input0.boundsArray, inChannel );
+                        // (Because avg pooling can not undo previous
+                        // activation escaping scale, use .input0 instead of
+                        // .afterUndoPreviousActivationEscaping to calculate
+                        // value bounds.)
+                        tBounds.set_byBoundsArray(
+                          this.boundsArraySet.input0.boundsArray, inChannel );
 
-                        // Accumulate value bounds for the filter position (across the whole virtual input image).
+                        // Accumulate value bounds for the filter position
+                        // (across the whole virtual input image).
                         virtualImageOutput_afterFilter_BoundsArray_PerPixel
                           .add_one_outputChannel_byBounds(
                             outChannel, filterY, filterX, tBounds );
 
                       } else {
-                        // For maximum pooling, value bounds is exactly the same as input.
+                        // For maximum pooling, value bounds is exactly the
+                        // same as input.
                       }
 
-                      // Confirm no need to undo previous activaction-escaping (when has bias or has activation), because
-                      // avg/max pooling can not do that in these situations.
+                      // Confirm no need to undo previous activaction-escaping
+                      // (when has bias or has activation), because avg/max
+                      // pooling can not do that in these situations.
                       //
                       if (   ( this.bBias != false )
-                          || ( this.nActivationId != ValueDesc.ActivationFunction.Singleton.Ids.NONE ) ) {
+                          || ( this.nActivationId
+                                 != ValueDesc.ActivationFunction.Singleton.Ids.NONE ) ) {
             
                         if ( undoPreviousEscapingScale != 1 )
-                          throw Error(
-                              `Depthwise.FiltersArray_BiasesArray.set_filtersArray_biasesArray_afterFilter_afterBias_apply_undoPreviousEscapingScale(): `
+                          throw Error( `Depthwise.FiltersArray_BiasesArray.${funcNameInMessage}(): `
                             + `For avg/max pooling, `
                             + `if ( bBias ( ${this.bBias} ) is not false ) or `
                             + `( nActivationId ( ${ValueDesc.ActivationFunction.Singleton.getNameWithInt_byId( this.nActivationId )} ) `
@@ -848,16 +868,26 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
         let outChannel = outChannelBegin;
 
         InChannelPartIndexLoop:
-        for ( let inChannelPartIndex = 0; inChannelPartIndex < inChannelPartInfoArray.length; ++inChannelPartIndex ) {
+        for ( let inChannelPartIndex = 0;
+          inChannelPartIndex < inChannelPartInfoArray.length;
+          ++inChannelPartIndex ) {
+
           let inChannelPartInfo = inChannelPartInfoArray[ inChannelPartIndex ];
 
-          for ( let inChannelSub = 0; inChannelSub < inChannelPartInfo.inputChannelCount; ++inChannelSub, ++inChannel ) {
+          for ( let inChannelSub = 0;
+            inChannelSub < inChannelPartInfo.inputChannelCount;
+            ++inChannelSub, ++inChannel ) {
+
             if ( inChannel >= this.inputChannelCount )
               break InChannelPartIndexLoop; // Never exceeds the total input channel count.
 
-            for ( let outChannelSub = 0; outChannelSub < this.channelMultiplier; ++outChannelSub, ++outChannel ) {
+            for ( let outChannelSub = 0;
+              outChannelSub < this.channelMultiplier;
+              ++outChannelSub, ++outChannel ) {
 
-              // Note: bias is not responsible for undoPreviousEscapingScale. (i.e. the filter already done it)
+              // Note: bias is not responsible for
+              //       undoPreviousEscapingScale. (i.e. the filter already done
+              //       it)
 
               if ( inChannelPartInfo.bPassThrough ) { // For pass-through half channels.
                 biasValue = thePassThroughStyleInfo.biasValue;
@@ -867,10 +897,12 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
                 ++sourceIndex;
               }
 
-              this.biasesArray[ biasIndex ] += biasValue; // Note: Use adding instead of assignment.
+              // Note: Use adding instead of assignment.
+              this.biasesArray[ biasIndex ] += biasValue;
 
               // Determine .afterBias
-              this.boundsArraySet.afterBias.add_one_byN( outChannel, biasValue ); // Shift the value bounds by the bias.
+              // Shift the value bounds by the bias.
+              this.boundsArraySet.afterBias.add_one_byN( outChannel, biasValue );
 
               ++biasIndex;
 
@@ -886,45 +918,57 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
 
     // 2. Determine .afterFilter of all virtual image pixels (of every channel).
     {
-      if ( virtualImageOutput_afterFilter_BoundsArray_PerPixel ) { // For Average pooling or depthwise convolution.
+      // For Average pooling or depthwise convolution.
+      if ( virtualImageOutput_afterFilter_BoundsArray_PerPixel ) {
 
-        // For average pooling, value bounds should be divided by every pixel's accumulation count.
-        if ( this.AvgMax_Or_ChannelMultiplier == ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.AVG ) {
-          virtualImageOutput_afterFilter_BoundsArray_PerPixel.divide_all_by_accumulationCounts();
+        // For average pooling, value bounds should be divided by every pixel's
+        // accumulation count.
+        if ( this.AvgMax_Or_ChannelMultiplier
+               == ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.AVG ) {
+          virtualImageOutput_afterFilter_BoundsArray_PerPixel
+            .divide_all_by_accumulationCounts();
         }
 
         virtualImageOutput_afterFilter_BoundsArray_PerPixel
           .collapse_byOutputChannel_toBoundsArray( this.boundsArraySet.afterFilter );
 
-        virtualImageOutput_afterFilter_BoundsArray_PerPixel.disposeResources_and_recycleToPool();
+        virtualImageOutput_afterFilter_BoundsArray_PerPixel
+          .disposeResources_and_recycleToPool();
+
         virtualImageOutput_afterFilter_BoundsArray_PerPixel = null;
 
-        virtualImageInfo = null; // Just nullify it (because it points to this object self).
+        // Just nullify it (because it points to this object self).
+        virtualImageInfo = null;
 
         tBounds.disposeResources_and_recycleToPool();
         tBounds = null;
 
       } else {
         // For max pooling, the value bounds does not change.
-        this.boundsArraySet.afterFilter.set_all_byBoundsArray( this.boundsArraySet.afterUndoPreviousActivationEscaping );
+        this.boundsArraySet.afterFilter.set_all_byBoundsArray(
+          this.boundsArraySet.afterUndoPreviousActivationEscaping );
       }
     }
 
     // 3. Combine .afterFilter to .afterBias.
     //
     // Q: Why not combine when initializing .afterBias ?
-    // A: Because .afterFilter is unknown before FiltersBiasesPartInfoArray has been visited totally.
+    // A: Because .afterFilter is unknown before FiltersBiasesPartInfoArray
+    //    has been visited totally.
     //
-    this.boundsArraySet.afterBias.add_all_byBoundsArray( this.boundsArraySet.afterFilter );
+    this.boundsArraySet.afterBias.add_all_byBoundsArray(
+      this.boundsArraySet.afterFilter );
 
     if ( inChannelEnd != this.inputChannelCount )
-      throw Error( `Depthwise.FiltersArray_BiasesArray.set_filtersArray_biasesArray_afterFilter_afterBias_apply_undoPreviousEscapingScale(): `
-        + `aFiltersBiasesPartInfoArray[ inChannelPartInfoArray[] ] total input channel count ( ${inChannelEnd} ) `
+      throw Error( `Depthwise.FiltersArray_BiasesArray.${funcNameInMessage}(): `
+        + `aFiltersBiasesPartInfoArray[ inChannelPartInfoArray[] ] `
+        + `total input channel count ( ${inChannelEnd} ) `
         +`should be ( ${this.inputChannelCount} ).` );
   }
 
   /**
-   * Apply this.boundsArraySet.output0.scaleArraySet.do.scales[] to this.filtersArray and this.biasesArray.
+   * Apply this.boundsArraySet.output0.scaleArraySet.do.scales[] to
+   * this.filtersArray and this.biasesArray.
    */
   apply_doEscapingScale_to_filtersArray_biasesArray() {
 
