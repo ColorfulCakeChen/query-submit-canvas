@@ -8,14 +8,15 @@ import { InferencedParams } from "./Block_InferencedParams.js";
 /**
  *
  * @param {ChannelShuffler.Xxx} channelShuffler
- *   The channel shuffler should be used by block. Usually, only ShuffleNetV2 will have
- * it. This Block.ParamsBase dose not own it and will not dispose it (because a channel
- * shuffler usually is shared by multiple blocks).
+ *   The channel shuffler should be used by block. Usually, only ShuffleNetV2
+ * will have it. This Block.ParamsBase dose not own it and will not dispose it
+ * (because a channel shuffler usually is shared by multiple blocks).
  */
 class Block_ParamsBase extends Recyclable.Root {
 
   /**
-   * Used as default Block.ParamsBase provider for conforming to Recyclable interface.
+   * Used as default Block.ParamsBase provider for conforming to Recyclable
+   * interface.
    */
   static Pool = new Pool.Root( "Block.ParamsBase.Pool",
     Block_ParamsBase, Block_ParamsBase.setAsConstructor );
