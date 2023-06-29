@@ -209,13 +209,15 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
     if ( this.bHigherHalfDifferent ) {
       if ( this.inputChannelCount_lowerHalf > inputChannelCount )
         throw Error( `Pointwise.FiltersArray_BiasesArray.setAsConstructor_self(): `
-          + `inputChannelCount_lowerHalf ( ${inputChannelCount_lowerHalf} ) can not be larger than `
+          + `inputChannelCount_lowerHalf ( ${inputChannelCount_lowerHalf} ) `
+          + `can not be larger than `
           + `inputChannelCount ( ${inputChannelCount} ).`
         );
 
       if ( outputChannelCount_lowerHalf > outputChannelCount )
         throw Error( `Pointwise.FiltersArray_BiasesArray.setAsConstructor_self(): `
-          + `outputChannelCount_lowerHalf ( ${outputChannelCount_lowerHalf} ) can not be larger than `
+          + `outputChannelCount_lowerHalf ( ${outputChannelCount_lowerHalf} ) `
+          + `can not be larger than `
           + `outputChannelCount ( ${outputChannelCount} ).`
         );
 
@@ -295,8 +297,10 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
    *   A Float32Array whose values will be interpreted as weights.
    *
    * @param {ActivationEscaping.ScaleBoundsArray} inputScaleBoundsArray
-   *   The element value bounds (per channel) of input. Usually, it is The .output of the previous convolution-bias-activation value bounds
-   * set of this pointwise convolution. It will be kept (not cloned) directly. So caller should not modify them.
+   *   The element value bounds (per channel) of input. Usually, it is the
+   * .output of the previous convolution-bias-activation value bounds set 
+   * of this pointwise convolution. It will be kept (not cloned) directly. So
+   * caller should not modify them.
    *
    * @return {boolean}
    *   Return true, if succeeded.
@@ -304,7 +308,8 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
   init( inputWeightArray, weightElementOffsetBegin, inputScaleBoundsArray ) {
 
     // Q1: Why is the inputWeightArray not a parameter of constructor?
-    // A1: The reason is to avoid keeping it as this.inputWeightArray so that it could be released by memory garbage collector.
+    // A1: The reason is to avoid keeping it as this.inputWeightArray so that
+    //     it could be released by memory garbage collector.
     //
     // Q2: Why is not the sourceWeights kept in this?
     // A2: So that inputWeightArray could be released.
@@ -312,32 +317,38 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
 
     if ( this.inputChannelCount != inputScaleBoundsArray.length )
       throw Error( `Pointwise.FiltersArray_BiasesArray.init(): `
-        + `inputChannelCount ( ${this.inputChannelCount} ) should be the same as `
-        + `outputChannelCount of previous convolution-bias-activation ( ${inputScaleBoundsArray.length} ).`
+        + `inputChannelCount ( ${this.inputChannelCount} ) `
+        + `should be the same as outputChannelCount of previous `
+        + `convolution-bias-activation ( ${inputScaleBoundsArray.length} ).`
       );
 
     if ( this.inputChannelCount != inputScaleBoundsArray.scaleArraySet.undo.length )
       throw Error( `Pointwise.FiltersArray_BiasesArray.init(): `
-        + `inputChannelCount ( ${this.inputChannelCount} ) should be the same as the length of `
+        + `inputChannelCount ( ${this.inputChannelCount} ) `
+        + `should be the same as the length of `
         + `.output.scaleArraySet.undo of previous convolution-bias-activation `
         + `( ${inputScaleBoundsArray.scaleArraySet.undo.length} ).`
       );
 
-    // Note: Even if ( this.outputChannelCount <= 0 ), this function should work correctly as pass-through input to output.
+    // Note: Even if ( this.outputChannelCount <= 0 ), this function should
+    //       work correctly as pass-through input to output.
     //
 
     let aFiltersBiasesPartInfoArray;
     try {
 
-      // Calculate lower half and higher half channel count. (Even if ( bHigherHalfDifferent == false ), these are still correct.)
+      // Calculate lower half and higher half channel count. (Even if
+      // ( bHigherHalfDifferent == false ), these are still correct.)
       {
         if ( this.inputChannelCount_lowerHalf != undefined )
-          this.inputChannelCount_higherHalf = this.inputChannelCount - this.inputChannelCount_lowerHalf;
+          this.inputChannelCount_higherHalf
+            = this.inputChannelCount - this.inputChannelCount_lowerHalf;
         else
           this.inputChannelCount_higherHalf = undefined;
 
         if ( this.outputChannelCount_lowerHalf != undefined )
-          this.outputChannelCount_higherHalf = this.outputChannelCount - this.outputChannelCount_lowerHalf;
+          this.outputChannelCount_higherHalf
+            = this.outputChannelCount - this.outputChannelCount_lowerHalf;
         else
           this.outputChannelCount_higherHalf = undefined;
       }
@@ -357,7 +368,8 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
 
             aFiltersBiasesPartInfoArray = Recyclable.OwnerArray.Pool.get_or_create_by(
               FiltersBiasesPartInfo.Pool.get_or_create_by(
-                ChannelPartInfo.Pool.get_or_create_by( 0, this.inputChannelCount, this.outputChannelCount, false )
+                ChannelPartInfo.Pool.get_or_create_by(
+                  0, this.inputChannelCount, this.outputChannelCount, false )
               )
             );
             break;
