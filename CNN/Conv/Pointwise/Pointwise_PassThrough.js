@@ -380,7 +380,8 @@ class PassThrough
  *
  * @see TwoTensors.filtersTensor4d_biasesTensor3d
  */
-class AllZeros extends Recyclable.Base( TwoTensors.filtersTensor4d_biasesTensor3d() ) {
+class AllZeros
+  extends Recyclable.Base( TwoTensors.filtersTensor4d_biasesTensor3d() ) {
 
   /**
    * Used as default Pointwise.AllZeros provider for conforming to Recyclable
@@ -390,9 +391,14 @@ class AllZeros extends Recyclable.Base( TwoTensors.filtersTensor4d_biasesTensor3
     AllZeros, AllZeros.setAsConstructor );
 
   /**
-   * @param {number}  inputChannelCount      The channel count of input.
-   * @param {number}  outputChannelCount     The channel count of output.
-   * @param {boolean} bBias                  Whether generate biases (although all zeros).
+   * @param {number} inputChannelCount
+   *   The channel count of input.
+   *
+   * @param {number} outputChannelCount
+   *   The channel count of output.
+   *
+   * @param {boolean} bBias
+   *   Whether generate biases (although all zeros).
    */
   constructor( inputChannelCount, outputChannelCount, bBias ) {
     super();
