@@ -756,27 +756,40 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
         let outChannel = outChannelBegin;
 
         InChannelPartIndexLoop:
-        for ( let inChannelPartIndex = 0; inChannelPartIndex < inChannelPartInfoArray.length; ++inChannelPartIndex ) {
-          let inChannelPartInfo = inChannelPartInfoArray[ inChannelPartIndex ];
+        for ( let inChannelPartIndex = 0;
+          inChannelPartIndex < inChannelPartInfoArray.length;
+          ++inChannelPartIndex ) {
 
-          for ( let outChannelSub = 0; outChannelSub < inChannelPartInfo.outputChannelCount; ++outChannelSub, ++outChannel ) {
+          let inChannelPartInfo
+            = inChannelPartInfoArray[ inChannelPartIndex ];
+
+          for ( let outChannelSub = 0;
+            outChannelSub < inChannelPartInfo.outputChannelCount;
+            ++outChannelSub, ++outChannel ) {
+
             if ( outChannel >= this.outputChannelCount )
-              break InChannelPartIndexLoop; // Never exceeds the total output channel count.
+              // Never exceeds the total output channel count.
+              break InChannelPartIndexLoop;
 
-            // Note: bias is not responsible for undoPreviousEscapingScale. (i.e. the filter already done it)
+            // Note: bias is not responsible for undoPreviousEscapingScale.
+            //       (i.e. the filter already done it)
 
-            if ( inChannelPartInfo.bPassThrough ) { // For pass-through half channels.
+            // For pass-through half channels.
+            if ( inChannelPartInfo.bPassThrough ) {
               biasValue = thePassThroughStyleInfo.biasValue;
 
-            } else { // Non-pass-through half channels.
+            // Non-pass-through half channels.
+            } else {
               biasValue = sourceWeightArray[ sourceIndex ];
               ++sourceIndex;
             }
 
-            this.biasesArray[ biasIndex ] += biasValue; // Note: Use adding instead of assignment.
+            // Note: Use adding instead of assignment.
+            this.biasesArray[ biasIndex ] += biasValue;
 
             // Determine .afterBias
-            this.boundsArraySet.afterBias.add_one_byN( outChannel, biasValue ); // Shift the value bounds by the bias.
+            // Shift the value bounds by the bias.
+            this.boundsArraySet.afterBias.add_one_byN( outChannel, biasValue );
 
             ++biasIndex;
 
@@ -795,7 +808,8 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
     // A: Because .afterFilter is unknown before FiltersBiasesPartInfoArray has
     //    been visited totally.
     //
-    this.boundsArraySet.afterBias.add_all_byBoundsArray( this.boundsArraySet.afterFilter );
+    this.boundsArraySet.afterBias.add_all_byBoundsArray(
+      this.boundsArraySet.afterFilter );
 
     if ( outChannelEnd != this.outputChannelCount )
       throw Error(
