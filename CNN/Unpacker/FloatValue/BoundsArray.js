@@ -477,11 +477,13 @@ class BoundsArray extends Recyclable.Root {
 
 
   /**
-   * Set all ( this.lowers[], this.uppers[] ) to ( +Infinity, -Infinity ). This can
-   * not be achieved by set_byLowerUpper() because ( lower > upper ). Usually, this
-   * method is used mainly before calling .enlarge_one_byN() to find out bounds.
+   * Set all ( this.lowers[], this.uppers[] ) to ( +Infinity, -Infinity ). This
+   * can not be achieved by set_byLowerUpper() because ( lower > upper ).
+   * Usually, this method is used mainly before calling .enlarge_one_byN() to
+   * find out bounds.
    *
-   * @return {Bounds} Return this (modified) object which is [ +Infinity, -Infinity ].
+   * @return {Bounds}
+   *   Return this (modified) object which is [ +Infinity, -Infinity ].
    */
    set_all_by_PositiveInfinity_NegativeInfinity() {
     this.lowers.fill( +Infinity );
@@ -490,9 +492,11 @@ class BoundsArray extends Recyclable.Root {
   }
 
   /**
-   * @param {number} N  Set all ( this.lowers[], this.uppers[] ) by ( N, N ).
+   * @param {number} N
+   *   Set all ( this.lowers[], this.uppers[] ) by ( N, N ).
    *
-   * @return {BoundsArray} Return this (modified) object.
+   * @return {BoundsArray}
+   *   Return this (modified) object.
    */
   set_all_byN( N ) {
     N = Math.fround( N );
@@ -502,10 +506,14 @@ class BoundsArray extends Recyclable.Root {
   }
 
   /**
-   * @param {number} aLower  Set all this.lowers[] by aLower.
-   * @param {number} aUpper  Set all this.uppers[] by aUpper.
+   * @param {number} aLower
+   *   Set all this.lowers[] by aLower.
    *
-   * @return {BoundsArray} Return this (modified) object.
+   * @param {number} aUpper
+   *   Set all this.uppers[] by aUpper.
+   *
+   * @return {BoundsArray}
+   *   Return this (modified) object.
    */
   set_all_byLowerUpper( aLower, aUpper ) {
     let lower, upper; // Confirm ( lower <= upper ).
@@ -523,18 +531,23 @@ class BoundsArray extends Recyclable.Root {
   }
 
   /**
-   * @param {Bounds} aBounds  Set all ( this.lowers[], this.uppers[] ) by ( aBounds.lower, aBounds.upper ).
+   * @param {Bounds} aBounds
+   *   Set all ( this.lowers[], this.uppers[] ) by
+   * ( aBounds.lower, aBounds.upper ).
    *
-   * @return {BoundsArray} Return this (modified) object whose values are copied from aBounds.
+   * @return {BoundsArray}
+   *   Return this (modified) object whose values are copied from aBounds.
    */
   set_all_byBounds( aBounds ) {
     return this.set_all_byLowerUpper( aBounds.lower, aBounds.upper );
   }
 
   /**
-   * @param {number[]} Ns  Set all ( this.lowers[], this.uppers[] ) by ( Ns[], Ns[] ).
+   * @param {number[]} Ns
+   *   Set all ( this.lowers[], this.uppers[] ) by ( Ns[], Ns[] ).
    *
-   * @return {BoundsArray} Return this (modified) object.
+   * @return {BoundsArray}
+   *   Return this (modified) object.
    */
   set_all_byNs( Ns ) {
     for ( let i = 0; i < this.lowers.length; ++i ) {
@@ -544,10 +557,14 @@ class BoundsArray extends Recyclable.Root {
   }
 
   /**
-   * @param {number[]} aLowers  Set all this.lowers[] by aLowers[].
-   * @param {number[]} aUppers  Set all this.uppers[] by aUppers[].
+   * @param {number[]} aLowers
+   *   Set all this.lowers[] by aLowers[].
    *
-   * @return {BoundsArray} Return this (modified) object which is [ aLowers, aUppers ].
+   * @param {number[]} aUppers
+   *   Set all this.uppers[] by aUppers[].
+   *
+   * @return {BoundsArray}
+   *   Return this (modified) object which is [ aLowers, aUppers ].
    */
   set_all_byLowersUppers( aLowers, aUppers ) {
     for ( let i = 0; i < this.lowers.length; ++i ) {
@@ -557,25 +574,37 @@ class BoundsArray extends Recyclable.Root {
   }
 
   /**
-   * @param {BoundsArray} aBoundsArray  Set all ( this.lowers[], this.uppers[] ) by ( aBoundsArray.lowers[], aBoundsArray.uppers[] ).
+   * @param {BoundsArray} aBoundsArray
+   *   Set all ( this.lowers[], this.uppers[] ) by
+   * ( aBoundsArray.lowers[], aBoundsArray.uppers[] ).
    *
-   * @return {BoundsArray} Return this (modified) object whose values are copied from aBoundsArray.
+   * @return {BoundsArray}
+   *   Return this (modified) object whose values are copied from aBoundsArray.
    */
   set_all_byBoundsArray( aBoundsArray ) {
-    return this.set_all_byLowersUppers( aBoundsArray.lowers, aBoundsArray.uppers );
+    return this.set_all_byLowersUppers(
+      aBoundsArray.lowers, aBoundsArray.uppers );
   }
 
   /**
    * The this.length will be modified.
    *
-   * @param {BoundsArray} inputBoundsArray0  The BoundsArray of the 1st input.
-   * @param {BoundsArray} inputBoundsArray1  The BoundsArray of the 2nd input.
+   * @param {BoundsArray} inputBoundsArray0
+   *   The BoundsArray of the 1st input.
    *
-   * @return {BoundsArray} Return this (modified) object.
+   * @param {BoundsArray} inputBoundsArray1
+   *   The BoundsArray of the 2nd input.
+   *
+   * @return {BoundsArray}
+   *   Return this (modified) object.
    */
-  set_all_byBoundsArray_concat_input0_input1( inputBoundsArray0, inputBoundsArray1 ) {
+  set_all_byBoundsArray_concat_input0_input1(
+    inputBoundsArray0, inputBoundsArray1 ) {
 
-    let totalLength = ( inputBoundsArray0?.length ?? 0 ) + ( inputBoundsArray1?.length ?? 0 );
+    let totalLength
+      = ( inputBoundsArray0?.length ?? 0 )
+          + ( inputBoundsArray1?.length ?? 0 );
+
     this.length = totalLength;
 
     // Concat value bounds array.
