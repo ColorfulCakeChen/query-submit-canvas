@@ -90,7 +90,7 @@ function assert_ScaleBoundsArray(
  *   The output1's ScaleBoundsArray to be checked. It could be null.
  *
  * @param {NumberImage.Base[]} imageOutReferenceArray
- *   Refernece output Image data.
+ *   Reference output Image data.
  *
  * @param {string} prefixMsg
  *   The text to be displayed at the beginning when comparison failed.
@@ -131,7 +131,7 @@ function assert_ScaleBoundsArray_output0_output1( asserter_Equal,
  *   The bounds array set to be asserted.
  *
  * @param {NumberImage.Base[]} imageOutReferenceArray
- *   Refernece output Image data.
+ *   Reference output Image data.
  *
  * @param {string} prefixMsg
  *   The text to be displayed at the beginning when comparison failed.
