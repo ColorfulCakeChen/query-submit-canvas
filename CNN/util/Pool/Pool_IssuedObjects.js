@@ -126,7 +126,8 @@ class IssuedObjects {
 
       throw Error( `Pool.IssuedObjects.issued_remove(): `
         + `Try to remove an un-issued object ( ${issuedObject} ). `
-        + `This may imply some problem (e.g. recycle a resource multiple times).`
+        + `This may imply some problem `
+        + `(e.g. recycle a resource multiple times).`
       );
 
       return false; // 1. Not a (recorded) issued object.
@@ -234,7 +235,8 @@ class IssuedObjects {
     //             That may be better than using Pool.All.sessionCall().
     //
 
-    if ( keptObjectOrArray instanceof Array ) { // 1.1 An array of objects to be kept.
+    // 1.1 An array of objects to be kept.
+    if ( keptObjectOrArray instanceof Array ) {
       for ( let i = 0; i < keptObjectOrArray.length; ++i ) {
         let keptObject = keptObjectOrArray[ i ];
         if ( keptObject ) {
@@ -242,7 +244,8 @@ class IssuedObjects {
         }
       }
 
-    } else if ( keptObjectOrArray instanceof Object ) { // 1.2 A single object to be kept.
+    // 1.2 A single object to be kept.
+    } else if ( keptObjectOrArray instanceof Object ) {
       this.sessionKeptObjectSet.add( keptObjectOrArray );
     }
   }
@@ -282,20 +285,25 @@ class IssuedObjects {
 
       {
         if ( issuedObject == null )
-          continue; // 2.1.1 The object has been recycled (before this session end).
+          // 2.1.1 The object has been recycled (before this session end).
+          continue;
 
         if ( issuedObject == SESSION_BORDER_MARK )
           break; // 2.1.2 All objects of the last session have been popped.
 
-        this.toInSessionArrayIndexMap.delete( issuedObject ); // 2.1.3 No longer an issued object.
+        // 2.1.3 No longer an issued object.
+        this.toInSessionArrayIndexMap.delete( issuedObject );
       }
 
-      if ( this.sessionKeptObjectSet.has( issuedObject ) ) { // 2.2 Found an object which should not be recycled.
-        this.movingObjectArray.push( issuedObject ); // Collect it temporarily for moving it to parent session later.
+      // 2.2 Found an object which should not be recycled.
+      if ( this.sessionKeptObjectSet.has( issuedObject ) ) {
+        // Collect it temporarily for moving it to parent session later.
+        this.movingObjectArray.push( issuedObject );
 
       } else { // 2.3 Otherwise, recycle it.
         if ( issuedObject.disposeResources instanceof Function ) {
-          issuedObject.disposeResources(); // Dispose its resources before recycle it, if necessary.
+          // Dispose its resources before recycle it, if necessary.
+          issuedObject.disposeResources();
         }
 
         // Q: Why not just call Pool.Base.recycle()?
