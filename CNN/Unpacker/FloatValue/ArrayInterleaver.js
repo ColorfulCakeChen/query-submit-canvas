@@ -312,51 +312,83 @@ class ArrayInterleaver {
    * Rearrange array elements along the last axis by interleaving.
    *   - Only ( groupCount == 2 ) is supported.
    *
-   * @param {Array} fromArray  The source array. It will not be modified. It is the source of copying.
-   * @param {Array} toArray    The destination array. It will be modified (i.e. filled data copied from fromArray).
-   * @param {number[]} shape   The virtual N-dimension array's shape (e.g. [ width ] or [ height, width ] or [ height, width, depth ].
+   * @param {Array} fromArray
+   *   The source array. It will not be modified. It is the source of copying.
+   *
+   * @param {Array} toArray
+   *   The destination array. It will be modified (i.e. filled data copied from
+   * fromArray).
+   *
+   * @param {number[]} shape
+   *   The virtual N-dimension array's shape (e.g. [ width ] or
+   * [ height, width ] or [ height, width, depth ].
    */
-  static interleave_asGrouptTwo_alongLastAxis_from_to( fromArray, toArray, ...shape ) {
+  static interleave_asGrouptTwo_alongLastAxis_from_to(
+    fromArray, toArray, ...shape ) {
+
     ArrayInterleaver.interleave_asGrouptTwo_alongLastAxis_from_to_pfnInterleaver(
-      fromArray, toArray, ArrayInterleaver.interleave_asGrouptTwo_from_to, ...shape );
+      fromArray, toArray,
+      ArrayInterleaver.interleave_asGrouptTwo_from_to, ...shape );
   }
 
   /**
    * Rearrange array elements along the last axis by interleaving.
    *   - Only ( groupCount == 2 ) is supported.
    *
-   * @param {Array} arrayIn   The array to be re-arranged. It is an 1D array but represents a N-dimension array.
-   * @param {number[]} shape  The virtual N-dimension array's shape (e.g. [ width ] or [ height, width ] or [ height, width, depth ].
+   * @param {Array} arrayIn
+   *   The array to be re-arranged. It is an 1D array but represents a
+   * N-dimension array.
+   *
+   * @param {number[]} shape
+   *   The virtual N-dimension array's shape (e.g. [ width ] or
+   * [ height, width ] or [ height, width, depth ].
    *
    * @param {Array} arrayTemp
-   *   A temporary array for placing the original elements (from arrayIn) temporarily. Providing this array could reduce memory
-   * re-allocation and improve performance.
+   *   A temporary array for placing the original elements (from arrayIn)
+   * temporarily. Providing this array could reduce memory re-allocation and
+   * improve performance.
    *
    * @return {Array}
    *   Retrun the (modified) arrayIn itself.
    */
-  static interleave_asGrouptTwo_alongLastAxis_inPlace( arrayIn, arrayTemp, ...shape ) {
+  static interleave_asGrouptTwo_alongLastAxis_inPlace(
+    arrayIn, arrayTemp, ...shape ) {
 
     arrayTemp.length = arrayIn.length;
-    for ( let i = 0; i < arrayIn.length; ++i ) { // Copy the elements to be re-arrange.
+
+    // Copy the elements to be re-arrange.
+    for ( let i = 0; i < arrayIn.length; ++i ) {
       arrayTemp[ i ] = arrayIn[ i ];
     }
 
-    ArrayInterleaver.interleave_asGrouptTwo_alongLastAxis_from_to( arrayTemp, arrayIn, ...shape );
+    ArrayInterleaver.interleave_asGrouptTwo_alongLastAxis_from_to(
+      arrayTemp, arrayIn, ...shape );
+
     return arrayIn;
   }
 
   /**
-   * Rearrange array elements along the last axis so that it undo the .interleave_asGrouptTwo_alongLastAxis_from_to().
+   * Rearrange array elements along the last axis so that it undo the
+   * .interleave_asGrouptTwo_alongLastAxis_from_to().
    *   - Only ( groupCount == 2 ) is supported.
    *
-   * @param {Array} fromArray  The source array. It will not be modified. It is the source of copying.
-   * @param {Array} toArray    The destination array. It will be modified (i.e. filled data copied from fromArray).
-   * @param {number[]} shape   The virtual N-dimension array's shape (e.g. [ width ] or [ height, width ] or [ height, width, depth ].
+   * @param {Array} fromArray
+   *   The source array. It will not be modified. It is the source of copying.
+   *
+   * @param {Array} toArray
+   *   The destination array. It will be modified (i.e. filled data copied from
+   * fromArray).
+   *
+   * @param {number[]} shape
+   *   The virtual N-dimension array's shape (e.g. [ width ] or
+   * [ height, width ] or [ height, width, depth ].
    */
-  static interleave_asGrouptTwo_alongLastAxis_from_to_undo( fromArray, toArray, ...shape ) {
+  static interleave_asGrouptTwo_alongLastAxis_from_to_undo(
+    fromArray, toArray, ...shape ) {
+
     ArrayInterleaver.interleave_asGrouptTwo_alongLastAxis_from_to_pfnInterleaver(
-      fromArray, toArray, ArrayInterleaver.interleave_asGrouptTwo_from_to_undo, ...shape );
+      fromArray, toArray,
+      ArrayInterleaver.interleave_asGrouptTwo_from_to_undo, ...shape );
   }
 
 }
