@@ -145,11 +145,11 @@ import { Base } from "./Weights_Base.js";
           this.finalValueArray[ i ] = undefined;
           ++this.parameterCountExtracted;
 
-        // A non-null value means it is the parameter's value (which should also
-        // be adjusted).
+        // A non-null value means it is the parameter's value (which should
+        // also be adjusted).
         } else {
-          // Mark as undefined to indicate this parameter needs not be extracted
-          // from inputWeightArray.
+          // Mark as undefined to indicate this parameter needs not be
+          // extracted from inputWeightArray.
           this.inputWeightArrayIndexArray[ i ] = undefined;
           let adjustedValue = paramDesc.valueDesc.range.adjust( initValue );
           this.finalValueArray[ i ] = adjustedValue;
@@ -177,7 +177,8 @@ import { Base } from "./Weights_Base.js";
       this.initValueArray = null;
     }
 
-    this.paramDescSequenceArray = null; // Do not release it. Just un-reference it.
+    // Do not release it. Just un-reference it.
+    this.paramDescSequenceArray = null;
 
     super.disposeResources();
   }
@@ -192,25 +193,26 @@ import { Base } from "./Weights_Base.js";
   init( inputWeightArray, weightElementOffsetBegin ) {
 
     // Determine and check input weight array bounds.
-    let bBaseInitOk = super.init(
-      inputWeightArray, weightElementOffsetBegin, this.parameterCountExtracted );
+    let bBaseInitOk = super.init( inputWeightArray, weightElementOffsetBegin,
+      this.parameterCountExtracted );
 
     if ( !bBaseInitOk )
       return false;
 
     // Copy the adjusted extracted weights.
     //
-    // Do not modify the original array data, because the original data is necessary
-    // when backtracking (to try another neural network layer configuration.
+    // Do not modify the original array data, because the original data is
+    // necessary when backtracking (to try another neural network layer
+    // configuration.
 
-    // Extract (by evolution) values from array, convert them, and put back into
-    // copied array and copied map.
+    // Extract (by evolution) values from array, convert them, and put back
+    // into copied array and copied map.
     const parameterCount = this.parameterCount;
     for ( let i = 0; i < parameterCount; ++i ) {
       let inputWeightArrayIndex = this.inputWeightArrayIndexArray[ i ];
 
-      // Since this parameter has a specified value. No need to be extracted from
-      // inputWeightArray. (i.e. not by evolution)
+      // Since this parameter has a specified value. No need to be extracted
+      // from inputWeightArray. (i.e. not by evolution)
       if ( inputWeightArrayIndex == undefined )
         continue;
 
@@ -235,7 +237,8 @@ import { Base } from "./Weights_Base.js";
    *   The aParamDesc.seqId will be used to access .finalValueArray[].
    *
    * @return {number}
-   *   Return the specific ParamDesc's value (no matter by specified or by evolution).
+   *   Return the specific ParamDesc's value (no matter by specified or by
+   * evolution).
    */
   getParamValue_byParamDesc( aParamDesc ) {
     let value = this.finalValueArray[ aParamDesc.seqId ];
