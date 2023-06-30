@@ -163,10 +163,14 @@ class ScaleArray extends Recyclable.Root {
   }
 
   /**
-   * @param {number} thisIndex  The array index of this.scales[].
-   * @param {number} N          Set ( this.scales[ thisIndex ] ) by ( 1 / N ).
+   * @param {number} thisIndex
+   *   The array index of this.scales[].
    *
-   * @return {ScaleArray} Return this (modified) object.
+   * @param {number} N
+   *   Set ( this.scales[ thisIndex ] ) by ( 1 / N ).
+   *
+   * @return {ScaleArray}
+   *   Return this (modified) object.
    */
   set_one_byUndo_N( thisIndex, N ) {
     // Reciprocal will undo the scale. (Note: Not work for zero.)
@@ -175,23 +179,36 @@ class ScaleArray extends Recyclable.Root {
   }
 
   /**
-   * @param {number} thisIndex  The array index of this.scales[].
-   * @param {number[]} Ns       Set ( this.scales[ thisIndex ] ) by ( 1 / Ns[ aIndex ] ).
-   * @param {number} aIndex     The array index of Ns[].
+   * @param {number} thisIndex
+   *   The array index of this.scales[].
    *
-   * @return {ScaleArray} Return this (modified) object.
+   * @param {number[]} Ns
+   *   Set ( this.scales[ thisIndex ] ) by ( 1 / Ns[ aIndex ] ).
+   *
+   * @param {number} aIndex
+   *   The array index of Ns[].
+   *
+   * @return {ScaleArray}
+   *   Return this (modified) object.
    */
   set_one_byUndo_Ns( thisIndex, Ns, aIndex ) {
-    this.scales[ thisIndex ] = Math.fround( 1 / Math.fround( Ns[ aIndex ] ) );  // Reciprocal will undo the scale. (Note: Not work for zero.)
+    // Reciprocal will undo the scale. (Note: Not work for zero.)
+    this.scales[ thisIndex ] = Math.fround( 1 / Math.fround( Ns[ aIndex ] ) );
     return this;
   }
 
   /**
-   * @param {number} thisIndex        The array index of this.scales[].
-   * @param {ScaleArray} aScaleArray  Set ( this.scales[ thisIndex ] ) by ( 1 / aScaleArray.scales[ aIndex ] ).
-   * @param {number} aIndex           The array index of aScaleArray.scales[].
+   * @param {number} thisIndex
+   *   The array index of this.scales[].
    *
-   * @return {ScaleArray} Return this (modified) object.
+   * @param {ScaleArray} aScaleArray
+   *   Set ( this.scales[ thisIndex ] ) by ( 1 / aScaleArray.scales[ aIndex ] ).
+   *
+   * @param {number} aIndex
+   *   The array index of aScaleArray.scales[].
+   *
+   * @return {ScaleArray}
+   *   Return this (modified) object.
    */
   set_one_byUndo_ScaleArray( thisIndex, aScaleArray, aIndex ) {
     return this.set_one_byUndo_Ns( thisIndex, aScaleArray.scales, aIndex );
@@ -199,9 +216,12 @@ class ScaleArray extends Recyclable.Root {
 
 
   /**
-   * @param {number} N  Set all ( this.scales[] ) by ( N ). Default are ( N = 1 ) (i.e. no scale).
+   * @param {number} N
+   *   Set all ( this.scales[] ) by ( N ). Default are ( N = 1 ) (i.e. no
+   * scale).
    *
-   * @return {ScaleArray} Return this (modified) object.
+   * @return {ScaleArray}
+   *   Return this (modified) object.
    */
   set_all_byN( N = 1 ) {
     this.scales.fill( Math.fround( N ) );
@@ -209,9 +229,11 @@ class ScaleArray extends Recyclable.Root {
   }
 
   /**
-   * @param {number[]} Ns  Set all ( this.scales[] ) by ( Ns[] ).
+   * @param {number[]} Ns
+   *   Set all ( this.scales[] ) by ( Ns[] ).
    *
-   * @return {ScaleArray} Return this (modified) object.
+   * @return {ScaleArray}
+   *   Return this (modified) object.
    */
   set_all_byNs( Ns ) {
     for ( let i = 0; i < this.scales.length; ++i ) {
@@ -221,30 +243,37 @@ class ScaleArray extends Recyclable.Root {
   }
 
   /**
-   * @param {ScaleArray} aScaleArray  Set all ( this.scales[] ) by ( aScaleArray.scales[] ).
+   * @param {ScaleArray} aScaleArray
+   *   Set all ( this.scales[] ) by ( aScaleArray.scales[] ).
    *
-   * @return {ScaleArray} Return this (modified) object whose values are copied from aScaleArray.
+   * @return {ScaleArray}
+   *   Return this (modified) object whose values are copied from aScaleArray.
    */
   set_all_byScaleArray( aScaleArray ) {
     return this.set_all_byNs( aScaleArray.scales );
   }
 
   /**
-   * @param {number[]} Ns  Set all ( this.scales[] ) by ( 1 / Ns[] ).
+   * @param {number[]} Ns
+   *   Set all ( this.scales[] ) by ( 1 / Ns[] ).
    *
-   * @return {ScaleArray} Return this (modified) object.
+   * @return {ScaleArray}
+   *   Return this (modified) object.
    */
   set_all_byUndo_Ns( Ns ) {
     for ( let i = 0; i < this.scales.length; ++i ) {
-      this.scales[ i ] = Math.fround( 1 / Math.fround( Ns[ i ] ) );  // Reciprocal will undo the scale. (Note: Not work for zero.)
+      // Reciprocal will undo the scale. (Note: Not work for zero.)
+      this.scales[ i ] = Math.fround( 1 / Math.fround( Ns[ i ] ) );
     }
     return this;
   }
 
   /**
-   * @param {ScaleArray} aScaleArray  Set all ( this.scales[] ) by ( 1 / aScaleArray.scales[] ).
+   * @param {ScaleArray} aScaleArray
+   *   Set all ( this.scales[] ) by ( 1 / aScaleArray.scales[] ).
    *
-   * @return {ScaleArray} Return this (modified) object.
+   * @return {ScaleArray}
+   *   Return this (modified) object.
    */
   set_all_byUndo_ScaleArray( aScaleArray ) {
     return this.set_all_byUndo_Ns( aScaleArray.scales );
@@ -259,22 +288,31 @@ class ScaleArray extends Recyclable.Root {
    *
    * @return {ScaleArray} Return this (modified) object.
    */
-  set_all_byScaleArray_concat_input0_input1( inputScaleArray0, inputScaleArray1 ) {
+  set_all_byScaleArray_concat_input0_input1(
+    inputScaleArray0, inputScaleArray1 ) {
 
-    let totalLength = ( inputScaleArray0?.length ?? 0 ) + ( inputScaleArray1?.length ?? 0 );
+    let totalLength
+      = ( inputScaleArray0?.length ?? 0 ) + ( inputScaleArray1?.length ?? 0 );
+
     this.length = totalLength;
 
     // Concat value scale array.
     let inChannel = 0;
 
     if ( inputScaleArray0 ) {
-      for ( let inChannel0 = 0; inChannel0 < inputScaleArray0.length; ++inChannel0, ++inChannel ) {
+      for ( let inChannel0 = 0;
+        inChannel0 < inputScaleArray0.length;
+        ++inChannel0, ++inChannel ) {
+
         this.set_one_byScaleArray( inChannel, inputScaleArray0, inChannel0 );
       }
     }
 
     if ( inputScaleArray1 ) {
-      for ( let inChannel1 = 0; inChannel1 < inputScaleArray1.length; ++inChannel1, ++inChannel ) {
+      for ( let inChannel1 = 0;
+        inChannel1 < inputScaleArray1.length;
+        ++inChannel1, ++inChannel ) {
+
         this.set_one_byScaleArray( inChannel, inputScaleArray1, inChannel1 );
       }
     }
@@ -284,16 +322,20 @@ class ScaleArray extends Recyclable.Root {
 
 
   /**
-   * Rearrange scales by interleaving as ( groupCount == 2 ). This element count must be even (i.e. divisible by 2).
+   * Rearrange scales by interleaving as ( groupCount == 2 ). This element
+   * count must be even (i.e. divisible by 2).
    *
    * @param {Array} arrayTemp
-   *   A temporary array for placing the original elements temporarily. Providing this array could reduce memory re-allocation
-   * and improve performance.
+   *   A temporary array for placing the original elements temporarily.
+   * Providing this array could reduce memory re-allocation and improve
+   * performance.
    *
-   * @return {ScaleArray} Return this (modified) object.
+   * @return {ScaleArray}
+   *   Return this (modified) object.
    */
   set_all_byInterleave_asGrouptTwo_inPlace( arrayTemp ) {
-    ArrayInterleaver.interleave_asGrouptTwo_alongWidth_inPlace( this.scales, 1, this.scales.length, arrayTemp );
+    ArrayInterleaver.interleave_asGrouptTwo_alongWidth_inPlace(
+      this.scales, 1, this.scales.length, arrayTemp );
     return this;
   }
 
@@ -301,21 +343,26 @@ class ScaleArray extends Recyclable.Root {
    * Rearrange bounds by interleaving as ( groupCount == 2 ).
    *
    * @param {ScaleArray} aScaleArray
-   *   The source ScaleArray to be copied from. Its element count must be even (i.e. divisible by 2).
+   *   The source ScaleArray to be copied from. Its element count must be even
+   * (i.e. divisible by 2).
    *
-   * @return {ScaleArray} Return this (modified) object.
+   * @return {ScaleArray}
+   *   Return this (modified) object.
    */
   set_all_byInterleave_asGrouptTwo_byScaleArray( aScaleArray ) {
     let elementCount = aScaleArray.length;
 
     if ( ( elementCount % 2 ) != 0 )
-      throw Error( `FloatValue.ScaleArray.set_all_byInterleave_asGrouptTwo_byScaleArray(): `
-        + `elementCount ( ${elementCount} ) must be even (i.e. divisible by 2).`
+      throw Error( `FloatValue.ScaleArray`
+        + `.set_all_byInterleave_asGrouptTwo_byScaleArray(): `
+        + `elementCount ( ${elementCount} ) `
+        + `must be even (i.e. divisible by 2).`
       );
 
     this.length = elementCount;
     let elementCountHalf = ( elementCount / 2 );
-    ArrayInterleaver.interleave_asGrouptTwo_from_to( aScaleArray.scales, 0, this.scales, 0, elementCountHalf );
+    ArrayInterleaver.interleave_asGrouptTwo_from_to(
+      aScaleArray.scales, 0, this.scales, 0, elementCountHalf );
     return this;
   }
 
@@ -323,30 +370,39 @@ class ScaleArray extends Recyclable.Root {
    * Rearrange bounds by undoing interleaving as ( groupCount == 2 ).
    *
    * @param {ScaleArray} aScaleArray
-   *   The source ScaleArray to be copied from. Its element count must be even (i.e. divisible by 2).
+   *   The source ScaleArray to be copied from. Its element count must be even
+   * (i.e. divisible by 2).
    *
-   * @return {ScaleArray} Return this (modified) object.
+   * @return {ScaleArray}
+   *   Return this (modified) object.
    */
   set_all_byInterleave_asGrouptTwo_undo_byScaleArray( aScaleArray ) {
     let elementCount = aScaleArray.length;
 
     if ( ( elementCount % 2 ) != 0 )
-      throw Error( `FloatValue.ScaleArray.set_all_byInterleave_asGrouptTwo_undo_byScaleArray(): `
-        + `elementCount ( ${elementCount} ) must be even (i.e. divisible by 2).`
+      throw Error( `FloatValue.ScaleArray`
+        + `.set_all_byInterleave_asGrouptTwo_undo_byScaleArray(): `
+        + `elementCount ( ${elementCount} ) `
+        + `must be even (i.e. divisible by 2).`
       );
 
     this.length = elementCount;
     let elementCountHalf = ( elementCount / 2 );
-    ArrayInterleaver.interleave_asGrouptTwo_from_to_undo( aScaleArray.scales, 0, this.scales, 0, elementCountHalf );
+    ArrayInterleaver.interleave_asGrouptTwo_from_to_undo(
+      aScaleArray.scales, 0, this.scales, 0, elementCountHalf );
     return this;
   }
 
 
   /**
-   * @param {ScaleArray} lowerHalfScaleArray   The ScaleArray of the 1st output. Its .length will be modified.
-   * @param {ScaleArray} higherHalfScaleArray  The ScaleArray of the 2nd output. Its .length will be modified.
+   * @param {ScaleArray} lowerHalfScaleArray
+   *   The ScaleArray of the 1st output. Its .length will be modified.
    *
-   * @return {ScaleArray} Return this (unmodified) object.
+   * @param {ScaleArray} higherHalfScaleArray
+   *   The ScaleArray of the 2nd output. Its .length will be modified.
+   *
+   * @return {ScaleArray}
+   *   Return this (unmodified) object.
    */
   split_to_lowerHalf_higherHalf( lowerHalfScaleArray, higherHalfScaleArray ) {
 
