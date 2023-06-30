@@ -5,10 +5,12 @@ import * as Recyclable from "../../util/Recyclable.js";
 import * as MultiLayerMap from "../../util/MultiLayerMap.js";
 
 /**
- * A container which provides shared channel shufflers. This could simplify memory management.
+ * A container which provides shared channel shufflers. This could simplify
+ * memory management.
  *
  * @member {Pool.Base} channelShufflerPool
- *   The pool object for creating new channel shuffler. It is one of the following:
+ *   The pool object for creating new channel shuffler. It is one of the
+ * following:
  *   - ChannelShuffler.ShuffleInfo.Pool
  *   - ChannelShuffler.ConcatGather.Pool
  *   - ChannelShuffler.SplitConcat.Pool
@@ -17,9 +19,11 @@ import * as MultiLayerMap from "../../util/MultiLayerMap.js";
 class Bag extends Recyclable.Base( MultiLayerMap.Base ) {
 
   /**
-   * Used as default ChannelShuffler.Bag provider for conforming to Recyclable interface.
+   * Used as default ChannelShuffler.Bag provider for conforming to Recyclable
+   * interface.
    */
-  static Pool = new Pool.Root( "ChannelShuffler.Bag.Pool", Bag, Bag.setAsConstructor );
+  static Pool = new Pool.Root( "ChannelShuffler.Bag.Pool",
+    Bag, Bag.setAsConstructor );
 
   /**
    */
@@ -66,33 +70,45 @@ class Bag extends Recyclable.Base( MultiLayerMap.Base ) {
   /**
    *
    * @param {number} concatenatedHeight
-   *   The image height which will be processed by the returned channel shuffler.
+   *   The image height which will be processed by the returned channel
+   * shuffler.
    *
    * @param {number} concatenatedWidth
-   *   The image width which will be processed by the returned channel shuffler.
+   *   The image width which will be processed by the returned channel
+   * shuffler.
    *
    * @param {number} concatenatedDepth
-   *   The image depth which will be processed by the returned channel shuffler.
+   *   The image depth which will be processed by the returned channel
+   * shuffler.
    *
    * @param {number} outputGroupCount
-   *   The outputGroupCount which will be produced by the returned channel shuffler.
+   *   The outputGroupCount which will be produced by the returned channel
+   * shuffler.
    *
    * @param {object}
-   *   A shared channel shuffler which could process the specific concatenatedShape and outputGroupCount.
+   *   A shared channel shuffler which could process the specific
+   * concatenatedShape and outputGroupCount.
    */
-  getChannelShuffler_by( concatenatedHeight, concatenatedWidth, concatenatedDepth, outputGroupCount ) {
+  getChannelShuffler_by(
+    concatenatedHeight, concatenatedWidth, concatenatedDepth,
+    outputGroupCount ) {
+
     return this.get_or_create_by_arguments1_etc( Bag.create_by, this,
-      concatenatedHeight, concatenatedWidth, concatenatedDepth, outputGroupCount );
+      concatenatedHeight, concatenatedWidth, concatenatedDepth,
+      outputGroupCount );
   }
 
   /** */
-  static create_by( concatenatedHeight, concatenatedWidth, concatenatedDepth, outputGroupCount ) {
+  static create_by(
+    concatenatedHeight, concatenatedWidth, concatenatedDepth,
+    outputGroupCount ) {
+
     this.concatenatedShape[ 0 ] = concatenatedHeight;
     this.concatenatedShape[ 1 ] = concatenatedWidth;
     this.concatenatedShape[ 2 ] = concatenatedDepth;
-    let channelShuffler = this.channelShufflerPool.get_or_create_by( this.concatenatedShape, outputGroupCount );
+    let channelShuffler = this.channelShufflerPool.get_or_create_by(
+      this.concatenatedShape, outputGroupCount );
     return channelShuffler;
   }
 
 }
-

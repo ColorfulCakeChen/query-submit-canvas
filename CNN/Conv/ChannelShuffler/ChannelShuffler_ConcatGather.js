@@ -7,8 +7,9 @@ import { ShuffleInfo } from "./ChannelShuffler_ShuffleInfo.js";
 /**
  * Implement the channel shuffler by tf.concat() and tf.gather().
  *
- * When outputGroupCount is smaller (e.g. 2), this may be faster than concat-reshape-transpose-reshape-split and
- * split-concat because the total operations (and memory access) are smaller.
+ * When outputGroupCount is smaller (e.g. 2), this may be faster than
+ * concat-reshape-transpose-reshape-split and split-concat because the total
+ * operations (and memory access) are smaller.
  *
  * The extra cost is a pre-built channel index look up table (with tensor1d).
  *
@@ -23,30 +24,36 @@ import { ShuffleInfo } from "./ChannelShuffler_ShuffleInfo.js";
  *   The information calculated from concatenatedShape and outputGroupCount.
  *
  * @member {tf.tensor1d[]} shuffledChannelIndicesTensor1dArray
- *   The look up table for tf.gather()'s channel index. This table is composed of tensor1d so should be released
- * by calling disposeResources().
+ *   The look up table for tf.gather()'s channel index. This table is composed
+ * of tensor1d so should be released by calling disposeResources().
  *
  * @member {number} tensorWeightCountExtracted
- *   The wieght count extracted from inputWeightArray and used in tensors. Not including Params, because they are not used in
- * tensors. Not including inferenced weights (even if they are used in tensors), because they are not extracted from inputWeightArray.
+ *   The wieght count extracted from inputWeightArray and used in tensors. Not
+ * including Params, because they are not used in tensors. Not including
+ * inferenced weights (even if they are used in tensors), because they are not
+ *  extracted from inputWeightArray.
  *
  * @member {number} tensorWeightCountTotal
- *   The total wieght count used in tensors. Not including Params, because they are not used in tensors. Including inferenced
- * weights, if they are used in tensors.
+ *   The total wieght count used in tensors. Not including Params, because they
+ * are not used in tensors. Including inferenced weights, if they are used in
+ * tensors.
  *
  * @member {function} gather
- *   Permute and split the input tensor by gather. It is a function pointer to one of this.gather_XXX().
+ *   Permute and split the input tensor by gather. It is a function pointer to
+ * one of this.gather_XXX().
  *
  * @member {function} concatGather
- *   Concatenate, permute and split the input tensor by concat-gather. It is a function pointer to one of
- * this.concatGather_XXX().
+ *   Concatenate, permute and split the input tensor by concat-gather. It is a
+ * function pointer to one of this.concatGather_XXX().
  */
 class ConcatGather extends Recyclable.Root {
 
   /**
-   * Used as default ChannelShuffler.ConcatGather provider for conforming to Recyclable interface.
+   * Used as default ChannelShuffler.ConcatGather provider for conforming to
+   * Recyclable interface.
    */
-  static Pool = new Pool.Root( "ChannelShuffler.ConcatGatherPool", ConcatGather, ConcatGather.setAsConstructor );
+  static Pool = new Pool.Root( "ChannelShuffler.ConcatGatherPool",
+    ConcatGather, ConcatGather.setAsConstructor );
 
   /**
    *
@@ -58,13 +65,15 @@ class ConcatGather extends Recyclable.Root {
    */
   constructor( concatenatedShape, outputGroupCount ) {
     super();
-    ConcatGather.setAsConstructor_self.call( this, concatenatedShape, outputGroupCount );
+    ConcatGather.setAsConstructor_self.call( this,
+      concatenatedShape, outputGroupCount );
   }
 
   /** @override */
   static setAsConstructor( concatenatedShape, outputGroupCount ) {
     super.setAsConstructor();
-    ConcatGather.setAsConstructor_self.call( this, concatenatedShape, outputGroupCount );
+    ConcatGather.setAsConstructor_self.call( this,
+      concatenatedShape, outputGroupCount );
     return this;
   }
 
@@ -74,28 +83,39 @@ class ConcatGather extends Recyclable.Root {
     this.tensorWeightCountExtracted = 0;
     this.tensorWeightCountTotal = 0;
 
-    this.shuffleInfo = ShuffleInfo.Pool.get_or_create_by( concatenatedShape, outputGroupCount );
+    this.shuffleInfo = ShuffleInfo.Pool.get_or_create_by(
+      concatenatedShape, outputGroupCount );
 
     // Build shuffled channel index table (as an array of tf.tensor1d).
     //
     // It can be used by algorithm ConcatGather().
     // They should be integers so that can be used as tf.gather()'s index.
     //
-    // Not like SplitConcat, the channel indexes will not be sorted here. According to testing, sorted
-    // channel seems slow down memory access when using them as tf.gather()'s index list.
+    // Not like SplitConcat, the channel indexes will not be sorted here.
+    // According to testing, sorted channel seems slow down memory access when
+    // using them as tf.gather()'s index list.
     {
-      this.shuffledChannelIndicesTensor1dArray
-        = tf.tidy( "ChannelShuffler.ConcatGather.init.shuffledChannelIndicesTensor1dArray", () => {
-          let channelIndices = tf.range( 0, this.shuffleInfo.totalChannelCount, 1, "int32" );
+      this.shuffledChannelIndicesTensor1dArray = tf.tidy(
+        "ChannelShuffler.ConcatGather.init.shuffledChannelIndicesTensor1dArray",
+        () => {
+          let channelIndices
+            = tf.range( 0, this.shuffleInfo.totalChannelCount, 1, "int32" );
           return Pool.All.sessionCall( () => {
-            let channelIndicesShuffleInfo = ShuffleInfo.Pool.get_or_create_by( channelIndices.shape, outputGroupCount );
-            return channelIndicesShuffleInfo.reshapeTransposeReshapeSplit( channelIndices );
+            let channelIndicesShuffleInfo
+              = ShuffleInfo.Pool.get_or_create_by(
+                  channelIndices.shape, outputGroupCount );
+            return channelIndicesShuffleInfo.reshapeTransposeReshapeSplit(
+              channelIndices );
           });
         });
 
       // Calculate total weight count.
-      for ( let i = 0; i < this.shuffledChannelIndicesTensor1dArray.length; ++i ) {
-        let shuffledChannelIndicesTensor1d = this.shuffledChannelIndicesTensor1dArray[ i ];
+      for ( let i = 0;
+        i < this.shuffledChannelIndicesTensor1dArray.length; ++i ) {
+
+        let shuffledChannelIndicesTensor1d
+          = this.shuffledChannelIndicesTensor1dArray[ i ];
+
         if ( shuffledChannelIndicesTensor1d ) {
           this.tensorWeightCountTotal += shuffledChannelIndicesTensor1d.size;
         }
@@ -111,7 +131,8 @@ class ConcatGather extends Recyclable.Root {
   /**
    * Release tf.tensor.
    *
-   * Sub-class should override this method (and call super.disposeResources() before return).
+   * Sub-class should override this method (and call super.disposeResources()
+   * before return).
    *
    * @override
    */
@@ -123,7 +144,9 @@ class ConcatGather extends Recyclable.Root {
     this.tensorWeightCountExtracted = 0;
 
     if ( this.shuffledChannelIndicesTensor1dArray ) {
-      for ( let i = 0; i < this.shuffledChannelIndicesTensor1dArray.length; ++i ) {
+      for ( let i = 0;
+        i < this.shuffledChannelIndicesTensor1dArray.length; ++i ) {
+
         tf.dispose( this.shuffledChannelIndicesTensor1dArray[ i ] );
         this.shuffledChannelIndicesTensor1dArray[ i ] = null;
       }
@@ -151,17 +174,21 @@ class ConcatGather extends Recyclable.Root {
    * Permute and split the input tensor by gather.
    *
    * @param {tf.tensor} concatenatedTensor
-   *   An single tensor (not array) to be processed. It should conform to this.shuffleInfo.concatenatedShape.
+   *   An single tensor (not array) to be processed. It should conform to
+   * this.shuffleInfo.concatenatedShape.
    *
    * @return {tf.tensor[]}
-   *   An array of shuffled tensors. Their total channel count is the same as concatenated tensorArray, but their
-   * last dimensions are shuffled.
+   *   An array of shuffled tensors. Their total channel count is the same as
+   * concatenated tensorArray, but their last dimensions are shuffled.
    */
   gather_loop( concatenatedTensor ) {
-    let shuffledSplitedTensorArray = new Array( this.shuffledChannelIndicesTensor1dArray.length );
+    let shuffledSplitedTensorArray
+      = new Array( this.shuffledChannelIndicesTensor1dArray.length );
     for ( let i = 0; i < shuffledSplitedTensorArray.length; ++i ) {
       // shuffle and split by gather (one operation achieves two operations).
-      shuffledSplitedTensorArray[ i ] = concatenatedTensor.gather( this.shuffledChannelIndicesTensor1dArray[ i ], this.shuffleInfo.lastAxisId );
+      shuffledSplitedTensorArray[ i ] = concatenatedTensor.gather(
+        this.shuffledChannelIndicesTensor1dArray[ i ],
+        this.shuffleInfo.lastAxisId );
     }
     return shuffledSplitedTensorArray;
   }
@@ -170,14 +197,16 @@ class ConcatGather extends Recyclable.Root {
    * Concatenate, permute and split the input tensor by concat-gather.
    *
    * @param {tf.tensor[]} tensorArray
-   *   An array of tensors to be processed. It should conform to this.concatenatedShape.
+   *   An array of tensors to be processed. It should conform to
+   * this.concatenatedShape.
    *
    * @return {tf.tensor[]}
-   *   An array of shuffled tensors. Their total channel count is the same as concatenated tensorArray, but their
-   * last dimensions are shuffled.
+   *   An array of shuffled tensors. Their total channel count is the same as
+   * concatenated tensorArray, but their last dimensions are shuffled.
    */
   concatGather_dispose_finally_call_loop( tensorArray ) {
-    let concatenatedTensor = tf.concat( tensorArray, this.shuffleInfo.lastAxisId );
+    let concatenatedTensor
+      = tf.concat( tensorArray, this.shuffleInfo.lastAxisId );
 
     try {
       return this.gather_loop( concatenatedTensor );
@@ -187,4 +216,3 @@ class ConcatGather extends Recyclable.Root {
     }
   }
 }
-
