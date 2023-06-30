@@ -362,8 +362,8 @@ class ConvBiasActivation extends InputsOutputs {
             //
             // This could happen when filters are all zero for outChannel. This
             // adjustment is necessary because the following
-            // .set_one_by_fromLowerUpper_toLowerUpper() can not work for bounds
-            // [ 0, 0 ].
+            // .set_one_by_fromLowerUpper_toLowerUpper() can not work for
+            // bounds [ 0, 0 ].
             //
             if (   ( this.afterBias.lowers[ outChannel ] == 0 )
                 && ( this.afterBias.uppers[ outChannel ] == 0 ) ) {
