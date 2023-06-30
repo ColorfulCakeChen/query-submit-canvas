@@ -38,7 +38,8 @@ import { Params_loading_retryWaiting as HttpRequest_Params_loading_retryWaiting 
  *
  * @member {number} retryWaitingMillisecondsMax
  *   The maximum time (in milliseconds) of waiting for retry. It is only used
- * if ( .retryTimesMax > 0 ). It is calculated from .retryWaitingSecondsExponentMax.
+ * if ( .retryTimesMax > 0 ). It is calculated from
+ * .retryWaitingSecondsExponentMax.
  *
  * @member {number} retryWaitingMillisecondsCur
  *   The current time (in milliseconds) of waiting for retry. It is only used
@@ -281,7 +282,8 @@ class HttpRequest_Fetcher
       return ""; // Not during retry.
     if ( this.retryTimesMax < 0 )
       return `${this.retryTimesCur}`; // Infinite retry times.
-    return `${this.retryTimesCur}/${this.retryTimesMax}`; // Finite retry times.
+    // Finite retry times.
+    return `${this.retryTimesCur}/${this.retryTimesMax}`;
   }
 
   /** @return {boolean} Return true, if not yet reach maximum retry times. */
@@ -331,7 +333,8 @@ class HttpRequest_Fetcher
    *   Return an async generator for receving result from XMLHttpRequest.
    *
    * @yield {Promise( ValueMax.Percentage.Aggregate )}
-   *   Yield a promise resolves to { done: false, value: progressParent.root_get() }.
+   *   Yield a promise resolves to
+   * { done: false, value: progressParent.root_get() }.
    *
    * @yield {Promise( object )}
    *   Yield a promise resolves to { done: true, value: xhr.response }.
@@ -414,7 +417,8 @@ class HttpRequest_Fetcher
           let responseText
             = yield* HttpRequest_Fetcher.load_asyncGenerator.call( this );
 
-          // No need to retry, since request is succeeded (when executed to here).
+          // No need to retry, since request is succeeded (when executed to
+          // here).
           bRetry = false;
 
           fetchResult = responseText;
@@ -429,20 +433,24 @@ class HttpRequest_Fetcher
             if ( e.type === "abort" ) {
               bRetry = false;
 
-            // 2.2 Retry only if recognized exception and still has retry times.
+            // 2.2 Retry only if recognized exception and still has retry
+            //     times.
             } else if (   ( e.type === "error" )
-                       || ( e.type === "load" ) // ( status != 200 ) (e.g. 404 or 500)
+                          // ( status != 200 ) (e.g. 404 or 500)
+                       || ( e.type === "load" )
                        || ( e.type === "timeout" ) ) { 
 
               let bRetryTimesRunOut = this.retryTimes_isRunOut;
               if ( bRetryTimesRunOut ) {
-                bRetry = false; // 2.2.1 Can not retry, because run out of retry times.
+                // 2.2.1 Can not retry, because run out of retry times.
+                bRetry = false;
 
               } else {
                 bRetry = true; // 2.2.2 Retry one more time.
               }
 
-            } else { // 2.3 Unknown ProgressEvent. (Never retry for unknown error.)
+            // 2.3 Unknown ProgressEvent. (Never retry for unknown error.)
+            } else {
               bRetry = false;
             }
 
@@ -460,7 +468,8 @@ class HttpRequest_Fetcher
 
         // 4.
         if ( bRetry ) {
-          // If retry, waiting before it (i.e. truncated exponential backoff algorithm).
+          // If retry, waiting before it (i.e. truncated exponential backoff
+          // algorithm).
           yield* HttpRequest_Fetcher.retryWait_asyncGenerator.call( this );
         } else {
         }
@@ -627,7 +636,8 @@ class HttpRequest_Fetcher
     try {
       // 2.
       //
-      // Note: .send() seems possible throw exception. Place it inside try-catch.
+      // Note: .send() seems possible throw exception. Place it inside
+      //       try-catch.
       xhr.send( this.body );
 
       // Abort immediately if caller requests. (For example,
@@ -649,7 +659,8 @@ class HttpRequest_Fetcher
         // All succeeded promises resolve to progressRoot.
         //   - Except .loadingTimerPromise resolved to .handle_loadingTimer
         //
-        // All failed promises reject to (i.e. throw exception of) ProgressEvent.
+        // All failed promises reject to (i.e. throw exception of)
+        // ProgressEvent.
         let progressRoot__or__handle_loadingTimer = await allPromiseRace;
 
         // 3.2 Determine whether is done according to .allPromiseSet.
@@ -751,8 +762,8 @@ class HttpRequest_Fetcher
    * @param {HttpRequest_Fetcher} this
    *
    * @param {ValueMax.Percentage.Concrete} this.progressRetryWaiting
-   *   This .progressRetryWaiting will be increased when every time advanced. The
-   * this.progressRoot will be returned when every time yield.
+   *   This .progressRetryWaiting will be increased when every time advanced.
+   * The this.progressRoot will be returned when every time yield.
    *
    * @yield {Promise( ValueMax.Percentage.Aggregate )}
    *   Yield a promise resolves to { done: false, value: this.progressRoot }.
@@ -770,7 +781,8 @@ class HttpRequest_Fetcher
       this.progressLoading.value_max_set( 0, arbitraryNonZero );
     }
 
-    // 0.2 .progressRetryWaiting is only created when first times retry waiting.
+    // 0.2 .progressRetryWaiting is only created when first times retry
+    //     waiting.
     //
     // Note: Although .progressLoading and progressRetryWaiting is recorded in
     //       this, they are not owned by this HttpRequest_Fetcher object. They
@@ -828,7 +840,8 @@ class HttpRequest_Fetcher
 
         // Inform outside caller progress when stopping retry waiting.
         {
-          this.retryWaitingYieldIdFinal = this.retryWaitingYieldIdCurrent; // stopping.
+          // stopping.
+          this.retryWaitingYieldIdFinal = this.retryWaitingYieldIdCurrent;
           yield this.progressRoot;
         }
 
@@ -879,8 +892,8 @@ class HttpRequest_Fetcher
       } while ( notDone ); // Stop if retry waiting completely.
 
     } catch ( e ) {
-      // 3.5
-      this.retryWaitingYieldIdFinal = this.retryWaitingYieldIdCurrent; // stopping.
+      // 3.5 stopping.
+      this.retryWaitingYieldIdFinal = this.retryWaitingYieldIdCurrent;
       throw e;
 
     } finally {
@@ -1081,7 +1094,8 @@ class HttpRequest_Fetcher
       this.allPromiseSet.delete( this.loadPromise );
 
     } else {
-      // Load completely but failed (e.g. ( status == 400 ) or ( status == 500 ) ).
+      // Load completely but failed (e.g. ( status == 400 ) or
+      // ( status == 500 ) ).
       if ( this.bLogEventToConsole )
         console.warn( logMsg );
 
@@ -1275,7 +1289,8 @@ class HttpRequest_Fetcher
       // Before retryWaitingTimer done, its event could happen many times.
       } else {
         // Re-generate a new promise for listening on it.
-        HttpRequest_Fetcher.retryWaitingTimerPromise_create_and_set.call( this );
+        HttpRequest_Fetcher.retryWaitingTimerPromise_create_and_set
+          .call( this );
       }
     }
   }
@@ -1306,7 +1321,8 @@ class HttpRequest_Fetcher
         progressEvent.loaded, progressEvent.total );
 
     } else { // Fake an incremental never-100% progress percentage.
-      let fakeMax = progressEvent.loaded + HttpRequest_Fetcher.progressTotalFakeLarger;
+      let fakeMax
+        = progressEvent.loaded + HttpRequest_Fetcher.progressTotalFakeLarger;
       this.progressLoading.value_max_set( progressEvent.loaded, fakeMax );
     }
   }
@@ -1475,7 +1491,8 @@ class HttpRequest_Fetcher
   static throw_if_loadingStartStopState_not_one_of(
     funcNameInMessage, comparedStartStopStateArray ) {
     HttpRequest_Fetcher.throw_if_StartStopState_not_one_of.call( this,
-      funcNameInMessage, "loadingStartStopState", comparedStartStopStateArray );
+      funcNameInMessage, "loadingStartStopState",
+      comparedStartStopStateArray );
   }
 
   /**
@@ -1484,15 +1501,17 @@ class HttpRequest_Fetcher
   static throw_if_retryWaitingStartStopState_not_one_of(
     funcNameInMessage, comparedStartStopStateArray ) {
     HttpRequest_Fetcher.throw_if_StartStopState_not_one_of.call( this,
-      funcNameInMessage, "retryWaitingStartStopState", comparedStartStopStateArray );
+      funcNameInMessage, "retryWaitingStartStopState",
+      comparedStartStopStateArray );
   }
 
   /**
    * @param {HttpRequest_Fetcher} this
    */
   static throw_if_loadingStartStopState_not_STOPPED( funcNameInMessage ) {
-    HttpRequest_Fetcher.throw_if_loadingStartStopState_not_one_of.call( this,
-      funcNameInMessage, HttpRequest_Fetcher.StartStopStateArray__STOPPED );
+    HttpRequest_Fetcher.throw_if_loadingStartStopState_not_one_of
+      .call( this,
+        funcNameInMessage, HttpRequest_Fetcher.StartStopStateArray__STOPPED );
   }
 
   /**
@@ -1500,9 +1519,10 @@ class HttpRequest_Fetcher
    */
   static throw_if_retryWaitingStartStopState_not_NOT_YET_STARTED_or_not_STOPPED(
     funcNameInMessage ) {
-    HttpRequest_Fetcher.throw_if_retryWaitingStartStopState_not_one_of.call( this,
-      funcNameInMessage,
-      HttpRequest_Fetcher.StartStopStateArray__NOT_YET_STARTED__STOPPED );
+    HttpRequest_Fetcher.throw_if_retryWaitingStartStopState_not_one_of
+      .call( this,
+        funcNameInMessage,
+        HttpRequest_Fetcher.StartStopStateArray__NOT_YET_STARTED__STOPPED );
   }
 
   /**
