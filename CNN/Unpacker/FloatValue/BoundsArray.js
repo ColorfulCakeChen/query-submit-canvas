@@ -143,8 +143,8 @@ class BoundsArray extends Recyclable.Root {
    * and ( .uppers[ thisIndex ] >= aBounds.upper ).
    */
   is_one_contain_Bounds( thisIndex, aBounds ) {
-    return this.is_one_contain_LowerUpper(
-      thisIndex, aBounds.lower, aBounds.upper );
+    return this.is_one_contain_LowerUpper( thisIndex,
+      aBounds.lower, aBounds.upper );
   }
 
   /**
@@ -162,8 +162,8 @@ class BoundsArray extends Recyclable.Root {
    * and ( .uppers[ thisIndex ] >= aBoundsArray.uppers[ aIndex ] ).
    */
   is_one_contain_BoundsArray_one( thisIndex, aBoundsArray, aIndex ) {
-    return this.is_one_contain_LowerUpper(
-      thisIndex, aBoundsArray.lowers[ aIndex ], aBoundsArray.uppers[ aIndex ] );
+    return this.is_one_contain_LowerUpper( thisIndex,
+      aBoundsArray.lowers[ aIndex ], aBoundsArray.uppers[ aIndex ] );
   }
 
   /**
@@ -282,7 +282,8 @@ class BoundsArray extends Recyclable.Root {
    * and ( .uppers[ thisIndex ] <= aBounds.upper ).
    */
   is_one_in_Bounds( thisIndex, aBounds ) {
-    return this.is_one_in_LowerUpper( thisIndex, aBounds.lower, aBounds.upper );
+    return this.is_one_in_LowerUpper( thisIndex,
+      aBounds.lower, aBounds.upper );
   }
 
   /**
@@ -300,8 +301,8 @@ class BoundsArray extends Recyclable.Root {
    * and ( .uppers[ thisIndex ] <= aBoundsArray.uppers[ aIndex ] ).
    */
   is_one_in_BoundsArray_one( thisIndex, aBoundsArray, aIndex ) {
-    return this.is_one_in_LowerUpper(
-      thisIndex, aBoundsArray.lowers[ aIndex ], aBoundsArray.uppers[ aIndex ] );
+    return this.is_one_in_LowerUpper( thisIndex,
+      aBoundsArray.lowers[ aIndex ], aBoundsArray.uppers[ aIndex ] );
   }
 
   /**
@@ -414,7 +415,8 @@ class BoundsArray extends Recyclable.Root {
    *   Return this (modified) object whose values are copied from aBounds.
    */
   set_one_byBounds( thisIndex, aBounds ) {
-    return this.set_one_byLowerUpper( thisIndex, aBounds.lower, aBounds.upper );
+    return this.set_one_byLowerUpper( thisIndex,
+      aBounds.lower, aBounds.upper );
   }
 
   /**
@@ -452,8 +454,8 @@ class BoundsArray extends Recyclable.Root {
    *   Return this (modified) object.
    */
   set_one_byLowersUppers( thisIndex, aLowers, aUppers, aIndex ) {
-    return this.set_one_byLowerUpper(
-      thisIndex, aLowers[ aIndex ], aUppers[ aIndex ] );
+    return this.set_one_byLowerUpper( thisIndex,
+      aLowers[ aIndex ], aUppers[ aIndex ] );
   }
 
   /**
@@ -471,8 +473,8 @@ class BoundsArray extends Recyclable.Root {
    *   Return this (modified) object.
    */
   set_one_byBoundsArray( thisIndex, aBoundsArray, aIndex ) {
-    return this.set_one_byLowersUppers(
-      thisIndex, aBoundsArray.lowers, aBoundsArray.uppers, aIndex );
+    return this.set_one_byLowersUppers( thisIndex,
+      aBoundsArray.lowers, aBoundsArray.uppers, aIndex );
   }
 
 
@@ -776,8 +778,8 @@ class BoundsArray extends Recyclable.Root {
    *   Return this (modified) object.
    */
   enlarge_one_byBounds( thisIndex, aBounds ) {
-    return this.enlarge_one_byLowerUpper(
-      thisIndex, aBounds.lower, aBounds.upper );
+    return this.enlarge_one_byLowerUpper( thisIndex,
+      aBounds.lower, aBounds.upper );
   }
 
   /**
@@ -794,8 +796,8 @@ class BoundsArray extends Recyclable.Root {
    *   Return this (modified) object.
    */
   enlarge_one_byBoundsArray_one( thisIndex, aBoundsArray, aIndex ) {
-    return this.enlarge_one_byLowerUpper(
-      thisIndex, aBoundsArray.lowers[ aIndex ], aBoundsArray.uppers[ aIndex ] );
+    return this.enlarge_one_byLowerUpper( thisIndex,
+      aBoundsArray.lowers[ aIndex ], aBoundsArray.uppers[ aIndex ] );
   }
 
 
@@ -872,8 +874,8 @@ class BoundsArray extends Recyclable.Root {
    *   Return this (modified) object.
    */
   clamp_one_byBounds( thisIndex, aBounds ) {
-    return this.clamp_one_byLowerUpper(
-      thisIndex, aBounds.lower, aBounds.upper );
+    return this.clamp_one_byLowerUpper( thisIndex,
+      aBounds.lower, aBounds.upper );
   }
 
   /**
@@ -893,8 +895,8 @@ class BoundsArray extends Recyclable.Root {
    *   Return this (modified) object.
    */
   clamp_one_byLowersUppers( thisIndex, aLowers, aUppers, aIndex ) {
-    return this.clamp_one_byLowerUpper(
-      thisIndex, aLowers[ aIndex ], aUppers[ aIndex ] );
+    return this.clamp_one_byLowerUpper( thisIndex,
+      aLowers[ aIndex ], aUppers[ aIndex ] );
   }
 
   /**
@@ -912,8 +914,8 @@ class BoundsArray extends Recyclable.Root {
    *   Return this (modified) object.
    */
   clamp_one_byBoundsArray( thisIndex, aBoundsArray, aIndex ) {
-    return this.clamp_one_byLowerUpper(
-      thisIndex, aBoundsArray.lowers[ aIndex ], aBoundsArray.uppers[ aIndex ] );
+    return this.clamp_one_byLowerUpper( thisIndex,
+      aBoundsArray.lowers[ aIndex ], aBoundsArray.uppers[ aIndex ] );
   }
 
   /**
@@ -1079,7 +1081,8 @@ class BoundsArray extends Recyclable.Root {
    *   Return this (modified) object.
    */
   add_one_byBounds( thisIndex, aBounds ) {
-    return this.add_one_byLowerUpper( thisIndex, aBounds.lower, aBounds.upper );
+    return this.add_one_byLowerUpper( thisIndex,
+      aBounds.lower, aBounds.upper );
   }
 
   /**
@@ -1117,8 +1120,8 @@ class BoundsArray extends Recyclable.Root {
    *   Return this (modified) object.
    */
   add_one_byLowersUppers( thisIndex, aLowers, aUppers, aIndex ) {
-    return this.add_one_byLowerUpper(
-      thisIndex, aLowers[ aIndex ], aUppers[ aIndex ] );
+    return this.add_one_byLowerUpper( thisIndex,
+      aLowers[ aIndex ], aUppers[ aIndex ] );
   }
 
   /**
