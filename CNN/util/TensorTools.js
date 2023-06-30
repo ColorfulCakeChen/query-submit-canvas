@@ -123,13 +123,16 @@ class Asserter_Equal extends Recyclable.Root {
    *   The number array to be compared against lhsNumberArray.
    *
    * @param {Object} prefixMsg
-   *   Its .toString() will be displayed at the beginning when comparison failed.
+   *   Its .toString() will be displayed at the beginning when comparison
+   * failed.
    *
    * @param {Object} lhsNumberArrayName
-   *   Its .toString() will be displayed for the lhsNumberArray when comparison failed.
+   *   Its .toString() will be displayed for the lhsNumberArray when comparison
+   * failed.
    *
    * @param {Object} rhsNumberArrayName
-   *   Its .toString() will be displayed for the rhsNumberArray when comparison failed.
+   *   Its .toString() will be displayed for the rhsNumberArray when comparison
+   * failed.
    *
    * @param {Object} postfixMsg
    *   Its .toString() will be displayed at the tail when comparison failed.
@@ -177,19 +180,24 @@ class Asserter_Equal extends Recyclable.Root {
    *   The number to be compared against lhsNumber.
    *
    * @param {Object} prefixMsg
-   *   Its .toString() will be displayed at the beginning when comparison failed.
+   *   Its .toString() will be displayed at the beginning when comparison
+   * failed.
    *
    * @param {Object} lhsNumberName
-   *   Its .toString() will be displayed for the lhsNumber when comparison failed.
+   *   Its .toString() will be displayed for the lhsNumber when comparison
+   * failed.
    *
    * @param {Object} rhsNumberName
-   *   Its .toString() will be displayed for the rhsNumber when comparison failed.
+   *   Its .toString() will be displayed for the rhsNumber when comparison
+   * failed.
    *
    * @param {Object} postfixMsg
    *   Its .toString() will be displayed at the tail when comparison failed.
    */
   assert_Number_Number(
-    lhsNumber, rhsNumber, prefixMsg, lhsNumberName, rhsNumberName, postfixMsg ) {
+    lhsNumber, rhsNumber,
+    prefixMsg, lhsNumberName, rhsNumberName, postfixMsg ) {
+
     this.lhsNumberArrayDefault[ 0 ] = lhsNumber;
     this.rhsNumberArrayDefault[ 0 ] = rhsNumber;
 
@@ -207,13 +215,16 @@ class Asserter_Equal extends Recyclable.Root {
    *   The number to be compared against tensor's data.
    *
    * @param {Object} prefixMsg
-   *   Its .toString() will be displayed at the beginning when comparison failed.
+   *   Its .toString() will be displayed at the beginning when comparison
+   * failed.
    *
    * @param {Object} tensorName
-   *   Its .toString() will be displayed for the tensor when comparison failed.
+   *   Its .toString() will be displayed for the tensor when comparison
+   * failed.
    *
    * @param {Object} numberArrayName
-   *   Its .toString() will be displayed for the numberArray when comparison failed.
+   *   Its .toString() will be displayed for the numberArray when comparison
+   * failed.
    *
    * @param {Object} postfixMsg
    *   Its .toString() will be displayed at the tail when comparison failed.
@@ -233,8 +244,8 @@ class Asserter_Equal extends Recyclable.Root {
 
   /**
    * @param {Asserter_Tensor_NumberArray} this
-   *   - The this.rhsNumberArray[] and this.acceptableDifferenceRate will be read
-   *       by this method.
+   *   - The this.rhsNumberArray[] and this.acceptableDifferenceRate will be
+   *       read by this method.
    *   - The this.elementIndex will be set by this method.
    */
   static ElementComparator( value, index ) {
@@ -243,8 +254,8 @@ class Asserter_Equal extends Recyclable.Root {
 
     // 0. Confirm delta is positive (or zero).
     //
-    // Note: Sometimes, value and valueRef have different sign (i.e. one is positive,
-    //       the other is negative).
+    // Note: Sometimes, value and valueRef have different sign (i.e. one is
+    //       positive, the other is negative).
     let delta;
     if ( value > valueRef ) {
       delta = value - valueRef;
@@ -274,7 +285,8 @@ class Asserter_Equal extends Recyclable.Root {
 
       let deltaRate;
       if ( deltaRateBase > 0 ) // Avoid divided by zero.
-        // Using ratio so that the difference will not too large even if value is large.
+        // Using ratio so that the difference will not too large even if value
+        // is large.
         deltaRate = delta / deltaRateBase;
       else
         deltaRate = delta;
