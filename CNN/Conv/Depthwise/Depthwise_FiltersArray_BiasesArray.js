@@ -548,7 +548,8 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
           {
             if (   ( this.AvgMax_Or_ChannelMultiplier < 0 )
                 && (   ( this.bBias == false )
-                    && ( this.nActivationId == ValueDesc.ActivationFunction.Singleton.Ids.NONE )
+                    && ( this.nActivationId
+                           == ValueDesc.ActivationFunction.Singleton.Ids.NONE )
                    )
                ) {
 

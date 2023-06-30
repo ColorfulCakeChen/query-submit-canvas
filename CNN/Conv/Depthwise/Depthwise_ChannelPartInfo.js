@@ -140,4 +140,3 @@ class FiltersBiasesPartInfo extends Recyclable.OwnerArray {
   }
 
 }
-
