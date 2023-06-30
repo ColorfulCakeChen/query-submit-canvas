@@ -1339,35 +1339,53 @@ class BoundsArray extends Recyclable.Root {
   }
 
   /**
-   * @param {number} thisIndex  The array index of this.lowers[] and this.uppers[].
-   * @param {number[]} aLowers  Multiply ( this.lowers[ thisIndex ], this.uppers[ thisIndex ] ) by ( aLowers[ aIndex ], aUppers[ aIndex ] ).
-   * @param {number[]} aUppers  Multiply ( this.lowers[ thisIndex ], this.uppers[ thisIndex ] ) by ( aLowers[ aIndex ], aUppers[ aIndex ] ).
-   * @param {number} aIndex     The array index of aLowers[] and aUppers[].
+   * @param {number} thisIndex
+   *   The array index of this.lowers[] and this.uppers[].
    *
-   * @return {BoundsArray} Return this (modified) object.
+   * @param {number[]} aLowers
+   *   Multiply ( this.lowers[ thisIndex ], this.uppers[ thisIndex ] ) by
+   * ( aLowers[ aIndex ], aUppers[ aIndex ] ).
+   *
+   * @param {number[]} aUppers
+   *   Multiply ( this.lowers[ thisIndex ], this.uppers[ thisIndex ] ) by
+   * ( aLowers[ aIndex ], aUppers[ aIndex ] ).
+   *
+   * @param {number} aIndex
+   *   The array index of aLowers[] and aUppers[].
+   *
+   * @return {BoundsArray}
+   *   Return this (modified) object.
    */
   multiply_one_byLowersUppers( thisIndex, aLowers, aUppers, aIndex ) {
-    return this.multiply_one_byLowerUpper( thisIndex, aLowers[ aIndex ], aUppers[ aIndex ] );
+    return this.multiply_one_byLowerUpper( thisIndex,
+      aLowers[ aIndex ], aUppers[ aIndex ] );
   }
 
   /**
-   * @param {number} thisIndex  The array index of this.lowers[] and this.uppers[].
+   * @param {number} thisIndex
+   *   The array index of this.lowers[] and this.uppers[].
    *
    * @param {BoundsArray} aBoundsArray
-   *   Multiply ( this.lowers[ thisIndex ], this.uppers[ thisIndex ] ) by ( aBoundsArray.lowers[ aIndex ], aBoundsArray.uppers[ aIndex ] ).
+   *   Multiply ( this.lowers[ thisIndex ], this.uppers[ thisIndex ] ) by
+   * ( aBoundsArray.lowers[ aIndex ], aBoundsArray.uppers[ aIndex ] ).
    *
-   * @param {number} aIndex     The array index of aBoundsArray.lowers[] and aBoundsArray.uppers[].
+   * @param {number} aIndex
+   *   The array index of aBoundsArray.lowers[] and aBoundsArray.uppers[].
    *
-   * @return {BoundsArray} Return this (modified) object.
+   * @return {BoundsArray}
+   *   Return this (modified) object.
    */
   multiply_one_byBoundsArray( thisIndex, aBoundsArray, aIndex ) {
-    return this.multiply_one_byLowersUppers( thisIndex, aBoundsArray.lowers, aBoundsArray.uppers, aIndex );
+    return this.multiply_one_byLowersUppers( thisIndex,
+      aBoundsArray.lowers, aBoundsArray.uppers, aIndex );
   }
 
   /**
-   * @param {number} N  Multiply all ( this.lowers[], this.uppers[] ) by ( N, N ).
+   * @param {number} N
+   *   Multiply all ( this.lowers[], this.uppers[] ) by ( N, N ).
    *
-   * @return {BoundsArray} Return this (modified) object.
+   * @return {BoundsArray}
+   *   Return this (modified) object.
    */
   multiply_all_byN( N ) {
     for ( let i = 0; i < this.lowers.length; ++i ) {
@@ -1377,10 +1395,14 @@ class BoundsArray extends Recyclable.Root {
   }
 
   /**
-   * @param {number} aLower  Multiply all ( this.lowers[], this.uppers[] ) by ( aLower, aUpper ).
-   * @param {number} aUpper  Multiply all ( this.lowers[], this.uppers[] ) by ( aLower, aUpper ).
+   * @param {number} aLower
+   *   Multiply all ( this.lowers[], this.uppers[] ) by ( aLower, aUpper ).
    *
-   * @return {BoundsArray} Return this (modified) object.
+   * @param {number} aUpper
+   *   Multiply all ( this.lowers[], this.uppers[] ) by ( aLower, aUpper ).
+   *
+   * @return {BoundsArray}
+   *   Return this (modified) object.
    */
   multiply_all_byLowerUpper( aLower, aUpper ) {
     for ( let i = 0; i < this.lowers.length; ++i ) {
@@ -1390,18 +1412,23 @@ class BoundsArray extends Recyclable.Root {
   }
 
   /**
-   * @param {Bounds} aBounds  Multiply all ( this.lowers[], this.uppers[] ) by ( aBounds.lower, aBounds.upper ).
+   * @param {Bounds} aBounds
+   *   Multiply all ( this.lowers[], this.uppers[] ) by
+   * ( aBounds.lower, aBounds.upper ).
    *
-   * @return {BoundsArray} Return this (modified) object.
+   * @return {BoundsArray}
+   *   Return this (modified) object.
    */
   multiply_all_byBounds( aBounds ) {
     return this.multiply_all_byLowerUpper( aBounds.lower, aBounds.upper );
   }
 
   /**
-   * @param {number[]} Ns  Multiply all ( this.lowers[], this.uppers[] ) by ( Ns[], Ns[] ).
+   * @param {number[]} Ns
+   *   Multiply all ( this.lowers[], this.uppers[] ) by ( Ns[], Ns[] ).
    *
-   * @return {BoundsArray} Return this (modified) object.
+   * @return {BoundsArray}
+   *   Return this (modified) object.
    */
   multiply_all_byNs( Ns ) {
     for ( let i = 0; i < this.lowers.length; ++i ) {
@@ -1411,10 +1438,16 @@ class BoundsArray extends Recyclable.Root {
   }
 
   /**
-   * @param {number[]} aLowers  Multiply all ( this.lowers[], this.uppers[] ) by ( aLowers[], aUppers[] ).
-   * @param {number[]} aUppers  Multiply all ( this.lowers[], this.uppers[] ) by ( aLowers[], aUppers[] ).
+   * @param {number[]} aLowers
+   *   Multiply all ( this.lowers[], this.uppers[] ) by
+   * ( aLowers[], aUppers[] ).
    *
-   * @return {BoundsArray} Return this (modified) object.
+   * @param {number[]} aUppers
+   *   Multiply all ( this.lowers[], this.uppers[] ) by
+   * ( aLowers[], aUppers[] ).
+   *
+   * @return {BoundsArray}
+   *   Return this (modified) object.
    */
   multiply_all_byLowersUppers( aLowers, aUppers ) {
     for ( let i = 0; i < this.lowers.length; ++i ) {
@@ -1424,34 +1457,49 @@ class BoundsArray extends Recyclable.Root {
   }
 
   /**
-   * @param {BoundsArray} aBoundsArray  Multiply all ( this.lowers[], this.uppers[] ) by ( aBoundsArray.lowers[], aBoundsArray.uppers[] ).
+   * @param {BoundsArray} aBoundsArray
+   *   Multiply all ( this.lowers[], this.uppers[] ) by
+   * ( aBoundsArray.lowers[], aBoundsArray.uppers[] ).
    *
-   * @return {BoundsArray} Return this (modified) object.
+   * @return {BoundsArray}
+   *   Return this (modified) object.
    */
   multiply_all_byBoundsArray( aBoundsArray ) {
-    return this.multiply_all_byLowersUppers( aBoundsArray.lowers, aBoundsArray.uppers );
+    return this.multiply_all_byLowersUppers(
+      aBoundsArray.lowers, aBoundsArray.uppers );
   }
 
   /**
-   * @param {BoundsArray} aBoundsArray  The first multiplier (a BoundsArray).
-   * @param {number[]} Ns               The second multiplier (a number array).
+   * @param {BoundsArray} aBoundsArray
+   *   The first multiplier (a BoundsArray).
    *
-   * @return {BoundsArray} Return this (modified) object.
+   * @param {number[]} Ns
+   *   The second multiplier (a number array).
+   *
+   * @return {BoundsArray}
+   *   Return this (modified) object.
    */
   multiply_all_byBoundsArray_multiply_all_byNs( aBoundsArray, Ns ) {
-    return this.multiply_all_byBoundsArray( aBoundsArray ).multiply_all_byNs( Ns );
+    return ( this.multiply_all_byBoundsArray( aBoundsArray )
+      .multiply_all_byNs( Ns ) );
   }
 
 
   /**
-   * @param {number} thisIndex  The array index of this.lowers[] and this.uppers[].
-   * @param {number} N          Divide ( this.lowers[ thisIndex ], this.uppers[ thisIndex ] ) by ( N, N ).
+   * @param {number} thisIndex
+   *   The array index of this.lowers[] and this.uppers[].
    *
-   * @return {BoundsArray} Return this (modified) object.
+   * @param {number} N
+   *   Divide ( this.lowers[ thisIndex ], this.uppers[ thisIndex ] ) by
+   * ( N, N ).
+   *
+   * @return {BoundsArray}
+   *   Return this (modified) object.
    */
   divide_one_byN( thisIndex, N ) {
     N = Math.fround( N );
-    // Because the different sign of lower and upper, it needs compute all combination to determine the bounds of result.
+    // Because the different sign of lower and upper, it needs compute all
+    // combination to determine the bounds of result.
     let lower_N = Math.fround( this.lowers[ thisIndex ] / N );
     let upper_N = Math.fround( this.uppers[ thisIndex ] / N );
     this.lowers[ thisIndex ] = Math.min( lower_N, upper_N );
@@ -1460,11 +1508,18 @@ class BoundsArray extends Recyclable.Root {
   }
 
   /**
-   * @param {number} thisIndex  The array index of this.lowers[] and this.uppers[].
-   * @param {number[]} Ns       Divide ( this.lowers[ thisIndex ], this.uppers[ thisIndex ] ) by ( Ns[ aIndex ] ).
-   * @param {number} aIndex     The array index of Ns[].
+   * @param {number} thisIndex
+   *   The array index of this.lowers[] and this.uppers[].
    *
-   * @return {BoundsArray} Return this (modified) object.
+   * @param {number[]} Ns
+   *   Divide ( this.lowers[ thisIndex ], this.uppers[ thisIndex ] ) by
+   * ( Ns[ aIndex ] ).
+   *
+   * @param {number} aIndex
+   *   The array index of Ns[].
+   *
+   * @return {BoundsArray}
+   *   Return this (modified) object.
    */
   divide_one_byNs( thisIndex, Ns, aIndex ) {
     return this.divide_one_byN( thisIndex, Ns[ aIndex ] );
@@ -1473,18 +1528,24 @@ class BoundsArray extends Recyclable.Root {
 
   /**
    * @param {ScaleTranslateArray} aScaleTranslateArray
-   *   Multiply all this by aScaleTranslateArray.scales[], and then add all this BoundsArray by aScaleTranslateArray.translates[].
+   *   Multiply all this by aScaleTranslateArray.scales[], and then add all
+   * this BoundsArray by aScaleTranslateArray.translates[].
    *
    * @return {BoundsArray}
    *   Return this (modified) object.
    */
   scaleTranslate_all_byScaleTranslateArray( aScaleTranslateArray ) {
-    return this.multiply_all_byNs( aScaleTranslateArray.scales ).add_all_byNs( aScaleTranslateArray.translates );
+    return ( this.multiply_all_byNs( aScaleTranslateArray.scales )
+      .add_all_byNs( aScaleTranslateArray.translates ) );
   }
 
   /**
-   * @param {number} thisIndex  Use which Bounds of this BoundsArray to clamp the value.
-   * @param {number} value      The value to be clamped. (will be converted to 32-bits floating-point number.)
+   * @param {number} thisIndex
+   *   Use which Bounds of this BoundsArray to clamp the value.
+   *
+   * @param {number} value
+   *   The value to be clamped. (will be converted to 32-bits floating-point
+   * number.)
    *
    * @return {number}
    *   Return value clamped between bounds [ this.lowers[ thisIndex ],
@@ -1496,16 +1557,24 @@ class BoundsArray extends Recyclable.Root {
     value = Math.fround( value );
     if ( Number.isNaN( value ) )
       value = 0; // If NaN, view it as 0.
-    return Math.max( this.lowers[ thisIndex ], Math.min( value, this.uppers[ thisIndex ] ) );
+    return (
+      Math.max(
+        this.lowers[ thisIndex ],
+        Math.min( value, this.uppers[ thisIndex ] ) ) );
   }
 
   /**
-   * @param {BoundsArray} lowerHalfBoundsArray   The BoundsArray of the 1st output. Its .length will be modified.
-   * @param {BoundsArray} higherHalfBoundsArray  The BoundsArray of the 2nd output. Its .length will be modified.
+   * @param {BoundsArray} lowerHalfBoundsArray
+   *   The BoundsArray of the 1st output. Its .length will be modified.
    *
-   * @return {BoundsArray} Return this (unmodified) object.
+   * @param {BoundsArray} higherHalfBoundsArray
+   *   The BoundsArray of the 2nd output. Its .length will be modified.
+   *
+   * @return {BoundsArray}
+   *   Return this (unmodified) object.
    */
-  split_to_lowerHalf_higherHalf( lowerHalfBoundsArray, higherHalfBoundsArray ) {
+  split_to_lowerHalf_higherHalf(
+    lowerHalfBoundsArray, higherHalfBoundsArray ) {
 
     // If not divided by 2, let lower half have one more.
     let length_lowerHalf = Math.ceil( this.length / 2 );
