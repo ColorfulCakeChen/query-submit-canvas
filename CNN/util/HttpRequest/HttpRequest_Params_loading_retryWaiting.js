@@ -1,7 +1,8 @@
 export { HttpRequest_Params_loading_retryWaiting as Params_loading_retryWaiting };
 
 /**
- * The parameters for HttpRequest.Fetcher's loading timeout and retry waiting time.
+ * The parameters for HttpRequest.Fetcher's loading timeout and retry waiting
+ * time.
  *
  *
  * @member {number} loadingMillisecondsMax
@@ -21,10 +22,11 @@ export { HttpRequest_Params_loading_retryWaiting as Params_loading_retryWaiting 
  *       congested or server busy.
  *
  * @member {number} loadingMillisecondsInterval
- *   The interval time (in milliseconds) for advancing the loadingMillisecondsCur.
- * Although smaller interval may provide smoother progress advancing, however, too
- * small interval (relative to loadingMillisecondsMax) may not look good because
- * the progress bar may advance too little to be aware by eyes.
+ *   The interval time (in milliseconds) for advancing the
+ * loadingMillisecondsCur. Although smaller interval may provide smoother
+ * progress advancing, however, too small interval (relative to
+ * loadingMillisecondsMax) may not look good because the progress bar may
+ * advance too little to be aware by eyes.
  *
  * @member {number} retryTimesMax
  *   Retry request so many times at most when request failed (ProgressEvent
@@ -51,10 +53,11 @@ export { HttpRequest_Params_loading_retryWaiting as Params_loading_retryWaiting 
  *   - 6 means ( 2 ** 6 ) = 64 seconds.
  *
  * @member {number} retryWaitingMillisecondsInterval
- *   The interval time (in milliseconds) for advancing retryWaitingMillisecondsCur.
- * Although smaller interval may provide smoother progress advancing, however,
- * too small interval (relative to retryWaitingMillisecondsMax) may not look good
- * because the progress bar may advance too little to be aware by eyes.
+ *   The interval time (in milliseconds) for advancing
+ * retryWaitingMillisecondsCur. Although smaller interval may provide smoother
+ * progress advancing, however, too small interval (relative to
+ * retryWaitingMillisecondsMax) may not look good because the progress bar may
+ * advance too little to be aware by eyes.
  */
 class HttpRequest_Params_loading_retryWaiting {
 
