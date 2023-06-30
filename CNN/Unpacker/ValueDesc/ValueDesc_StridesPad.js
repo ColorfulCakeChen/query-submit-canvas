@@ -15,17 +15,27 @@ class StridesPad extends Int {
   constructor() {
     super( 0, 3,
       {
-        STRIDES_1_PAD_VALID: new StridesPad.Info( 0, "STRIDES_1_PAD_VALID", 1, StridesPad.Info.PAD_VALID ),
-        STRIDES_1_PAD_SAME:  new StridesPad.Info( 1, "STRIDES_1_PAD_SAME",  1, StridesPad.Info.PAD_SAME  ),
-        STRIDES_2_PAD_SAME:  new StridesPad.Info( 2, "STRIDES_2_PAD_SAME",  2, StridesPad.Info.PAD_SAME  ),
-        STRIDES_2_PAD_VALID: new StridesPad.Info( 3, "STRIDES_2_PAD_VALID", 2, StridesPad.Info.PAD_VALID ),
+        STRIDES_1_PAD_VALID: new StridesPad.Info(
+          0, "STRIDES_1_PAD_VALID", 1, StridesPad.Info.PAD_VALID ),
+
+        STRIDES_1_PAD_SAME:  new StridesPad.Info(
+          1, "STRIDES_1_PAD_SAME",  1, StridesPad.Info.PAD_SAME  ),
+
+        STRIDES_2_PAD_SAME:  new StridesPad.Info(
+          2, "STRIDES_2_PAD_SAME",  2, StridesPad.Info.PAD_SAME  ),
+
+        STRIDES_2_PAD_VALID: new StridesPad.Info(
+          3, "STRIDES_2_PAD_VALID", 2, StridesPad.Info.PAD_VALID ),
       },
     );
   }
 
   /**
-   * @param {number} nStridesPadId  The numeric identifier of StridesPad. (StridesPad.Singleton.Ids.Xxx)
-   * @return {number} Return the strides (1 or 2) of the StridesPad.Singleton.Ids.Xxx.
+   * @param {number} nStridesPadId
+   *   The numeric identifier of StridesPad. (StridesPad.Singleton.Ids.Xxx)
+   *
+   * @return {number}
+   *   Return the strides (1 or 2) of the StridesPad.Singleton.Ids.Xxx.
    */
   static strides_get( nStridesPadId ) {
     let info = StridesPad.Singleton.getInfo_byId( nStridesPadId );
@@ -35,8 +45,11 @@ class StridesPad extends Int {
   }
 
   /**
-   * @param {number} nStridesPadId  The numeric identifier of StridesPad. (StridesPad.Singleton.Ids.Xxx)
-   * @return {boolean} Return true, if the pad of the StridesPad.Singleton.Ids.Xxx is "valid".
+   * @param {number} nStridesPadId
+   *   The numeric identifier of StridesPad. (StridesPad.Singleton.Ids.Xxx)
+   *
+   * @return {boolean}
+   *   Return true, if the pad of the StridesPad.Singleton.Ids.Xxx is "valid".
    */
   static pad_isValid( nStridesPadId ) {
     let info = StridesPad.Singleton.getInfo_byId( nStridesPadId );
@@ -46,8 +59,11 @@ class StridesPad extends Int {
   }
 
   /**
-   * @param {number} nStridesPadIds  The numeric identifier of StridesPad. (StridesPad.Singleton.Ids.Xxx)
-   * @return {boolean} Return true, if the pad of the StridesPad.Singleton.Ids.Xxx is "same".
+   * @param {number} nStridesPadIds
+   *   The numeric identifier of StridesPad. (StridesPad.Singleton.Ids.Xxx)
+   *
+   * @return {boolean}
+   *   Return true, if the pad of the StridesPad.Singleton.Ids.Xxx is "same".
    */
   static pad_isSame( nStridesPadId ) {
     let info = StridesPad.Singleton.getInfo_byId( nStridesPadId );
@@ -68,7 +84,8 @@ class StridesPad extends Int {
  *   The strides for strides-pad. Either 1 or 2.
  *
  * @member {string} pad
- *   The type of padding algorithm for the strides-pad. Either "valid" or "same".
+ *   The type of padding algorithm for the strides-pad. Either "valid" or
+ * "same".
  *
  */
 StridesPad.Info = class StridesPad_Info extends Int.Info {
@@ -106,4 +123,3 @@ StridesPad.Info.PAD_SAME = "same";
 
 /** The only one ValueDesc.StridesPad instance. */
 StridesPad.Singleton = new StridesPad;
-
