@@ -20,10 +20,17 @@ class Comparator {
     if ( tensorArray1.length !== tensorArray2.length )
       return false;
 
-    for ( let i = 0; i < tensorArray1.length; ++i ) {  // Compare every element of each tensor.
-      let allElementEqual = tf.tidy( "TensorTools.Comparator.isTensorArrayEqual", () => {
-        let everyElementEqualTensor1d = tensorArray1[ i ].equal( tensorArray2[ i ] );
-        let allElementEqualTensor1d = everyElementEqualTensor1d.all();
+    // Compare every element of each tensor.
+    for ( let i = 0; i < tensorArray1.length; ++i ) {
+      let allElementEqual = tf.tidy(
+        "TensorTools.Comparator.isTensorArrayEqual", () => {
+
+        let everyElementEqualTensor1d
+          = tensorArray1[ i ].equal( tensorArray2[ i ] );
+
+        let allElementEqualTensor1d
+          = everyElementEqualTensor1d.all();
+
         return allElementEqualTensor1d.arraySync(); // 0: false. 1: true.
       });
 
@@ -43,30 +50,33 @@ class Comparator {
 class Asserter_Equal extends Recyclable.Root {
 
   /**
-   * Used as default TensorTools.Asserter_Equal provider for conforming to Recyclable interface.
+   * Used as default TensorTools.Asserter_Equal provider for conforming to
+   * Recyclable interface.
    */
   static Pool = new Pool.Root( "TensorTools.Asserter_Equal.Pool",
     Asserter_Equal, Asserter_Equal.setAsConstructor );
 
   /**
    * If ( differenceRate <= acceptableDifferenceRate )
-   * or ( difference <= acceptableDifference ), two value are viewed as the same.
+   * or ( difference <= acceptableDifference ), two value are viewed as the
+   * same.
    *
-   * Because floating-point accumulated error of float32 (GPU) and float64 (CPU)
-   * is different, a little difference should be allowed. Otherwise, the comparison
-   * may hardly to pass this check.
+   * Because floating-point accumulated error of float32 (GPU) and float64
+   * (CPU) is different, a little difference should be allowed. Otherwise, the
+   * comparison may hardly to pass this check.
    *
    * @param {number} acceptableDifferenceRate
-   *   How many difference (in ratio) between the numberArray and numberArray (per
-   * element) is acceptable. Useful for large value. Default is 0.01 (i.e. 1%
-   * difference is allowed).
+   *   How many difference (in ratio) between the numberArray and numberArray
+   * (per element) is acceptable. Useful for large value. Default is 0.01 (i.e.
+   * 1% difference is allowed).
    *
    * @param {number} acceptableDifference
    *   How many difference (in absolute value) between the numberArray and
    * numberArray (per element) is acceptable. Useful for small value. Default
    * is 0.001.
    */
-  constructor( acceptableDifferenceRate = 0.01, acceptableDifference = 0.001 ) {
+  constructor(
+    acceptableDifferenceRate = 0.01, acceptableDifference = 0.001 ) {
     super();
     Asserter_Equal.setAsConstructor_self.call(
       this, acceptableDifferenceRate, acceptableDifference );
