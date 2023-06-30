@@ -6,7 +6,7 @@ import * as Recyclable from "../../util/Recyclable.js";
 //import { BoundsArray } from "./BoundsArray.js";
 
 /**
- * Describe the [ lower, upper ] bounds of a 32-bits floating-point value
+ * Describe the [ lower, upper ] bounds of a 32-bits floating-point value.
  *
  * @member {number} lower
  *   The lower bound of the range.
@@ -20,9 +20,11 @@ import * as Recyclable from "../../util/Recyclable.js";
 class Bounds extends Recyclable.Root {
 
   /**
-   * Used as default FloatValue.Bounds provider for conforming to Recyclable interface.
+   * Used as default FloatValue.Bounds provider for conforming to Recyclable
+   * interface.
    */
-  static Pool = new Pool.Root( "FloatValue.Bounds.Pool", Bounds, Bounds.setAsConstructor );
+  static Pool = new Pool.Root( "FloatValue.Bounds.Pool",
+    Bounds, Bounds.setAsConstructor );
 
   /**
    */
@@ -65,9 +67,11 @@ class Bounds extends Recyclable.Root {
 
 
   /**
-   * @param {number} N  The value to be compared.
+   * @param {number} N
+   *   The value to be compared.
    *
-   * @return {boolean} Return true, if ( .lower <= N ) and ( .upper >= N ).
+   * @return {boolean}
+   *   Return true, if ( .lower <= N ) and ( .upper >= N ).
    */
   is_contain_N( N ) {
     N = Math.fround( N );
@@ -77,10 +81,14 @@ class Bounds extends Recyclable.Root {
   }
 
   /**
-   * @param {number} aLower  The lower bound to be compared.
-   * @param {number} aUpper  The upper bound to be compared.
+   * @param {number} aLower
+   *   The lower bound to be compared.
    *
-   * @return {boolean} Return true, if ( .lower <= aLower ) and ( .upper >= aUpper ).
+   * @param {number} aUpper
+   *   The upper bound to be compared.
+   *
+   * @return {boolean}
+   *   Return true, if ( .lower <= aLower ) and ( .upper >= aUpper ).
    */
   is_contain_LowerUpper( aLower, aUpper ) {
     let lower, upper; // Confirm ( lower <= upper ).
@@ -98,30 +106,43 @@ class Bounds extends Recyclable.Root {
   }
 
   /**
-   * @param {Bounds} aBounds  The bounds to be compared.
+   * @param {Bounds} aBounds
+   *   The bounds to be compared.
    *
-   * @return {boolean} Return true, if ( .lower <= aBounds.lower ) and ( .upper >= aBounds.upper ).
+   * @return {boolean}
+   *   Return true, if ( .lower <= aBounds.lower ) and
+   * ( .upper >= aBounds.upper ).
    */
   is_contain_Bounds( aBounds ) {
     return this.is_contain_LowerUpper( aBounds.lower, aBounds.upper );
   }
 
   /**
-   * @param {BoundsArray} aBoundsArray  The bounds array to be compared.
-   * @param {number} aIndex             The array index of aBoundsArray.lowers[] and aBoundsArray.uppers[].
+   * @param {BoundsArray} aBoundsArray
+   *   The bounds array to be compared.
    *
-   * @return {boolean} Return true, if ( .lower <= aBounds.lower ) and ( .upper >= aBounds.upper ).
+   * @param {number} aIndex
+   *   The array index of aBoundsArray.lowers[] and aBoundsArray.uppers[].
+   *
+   * @return {boolean}
+   *   Return true, if ( .lower <= aBounds.lower ) and
+   * ( .upper >= aBounds.upper ).
    */
   is_contain_BoundsArray_one( aBoundsArray, aIndex ) {
-    return this.is_contain_LowerUpper( aBoundsArray.lowers[ aIndex ], aBoundsArray.uppers[ aIndex ] );
+    return this.is_contain_LowerUpper(
+      aBoundsArray.lowers[ aIndex ], aBoundsArray.uppers[ aIndex ] );
   }
 
   
  /**
-   * @param {number} aLower  The lower bound to be compared.
-   * @param {number} aUpper  The upper bound to be compared.
+   * @param {number} aLower
+   *   The lower bound to be compared.
    *
-   * @return {boolean} Return true, if ( .lower >= aLower ) and ( .upper <= aUpper ).
+   * @param {number} aUpper
+   *   The upper bound to be compared.
+   *
+   * @return {boolean}
+   *   Return true, if ( .lower >= aLower ) and ( .upper <= aUpper ).
    */
   is_in_LowerUpper( aLower, aUpper ) {
     let lower, upper; // Confirm ( lower <= upper ).
@@ -139,32 +160,41 @@ class Bounds extends Recyclable.Root {
   }
 
   /**
-   * @param {Bounds} aBounds  The bounds to be compared.
+   * @param {Bounds} aBounds
+   *   The bounds to be compared.
    *
-   * @return {boolean} Return true, if ( .lower >= aBounds.lower ) and ( .upper <= aBounds.upper ).
+   * @return {boolean}
+   *   Return true, if ( .lower >= aBounds.lower ) and
+   * ( .upper <= aBounds.upper ).
    */
   is_in_Bounds( aBounds ) {
     return this.is_in_LowerUpper( aBounds.lower, aBounds.upper );
   }
 
   /**
-   * @param {BoundsArray} aBoundsArray  The bounds array to be compared.
-   * @param {number} aIndex             The array index of aBoundsArray.lowers[] and aBoundsArray.uppers[].
+   * @param {BoundsArray} aBoundsArray
+   *   The bounds array to be compared.
    *
-   * @return {boolean} Return true, if ( .lower >= aBoundsArray.lowers[ aIndex ] )
-   *   and ( .upper <= aBoundsArray.uppers[ aIndex ] ).
+   * @param {number} aIndex
+   *   The array index of aBoundsArray.lowers[] and aBoundsArray.uppers[].
+   *
+   * @return {boolean}
+   *   Return true, if ( .lower >= aBoundsArray.lowers[ aIndex ] )
+   * and ( .upper <= aBoundsArray.uppers[ aIndex ] ).
    */
   is_in_BoundsArray_one( aBoundsArray, aIndex ) {
-    return this.is_in_LowerUpper( aBoundsArray.lowers[ aIndex ], aBoundsArray.uppers[ aIndex ] );
+    return this.is_in_LowerUpper(
+      aBoundsArray.lowers[ aIndex ], aBoundsArray.uppers[ aIndex ] );
   }
 
 
   /**
-   * Set ( this.lower, this.upper ) to ( +Infinity, -Infinity ). This can not be
-   * achieved by set_byLowerUpper() because ( lower > upper ). Usually, this method
-   * is used mainly before calling .enlarge_byN() to find out bounds.
+   * Set ( this.lower, this.upper ) to ( +Infinity, -Infinity ). This can not
+   * be achieved by set_byLowerUpper() because ( lower > upper ). Usually, this
+   * method is used mainly before calling .enlarge_byN() to find out bounds.
    *
-   * @return {Bounds} Return this (modified) object which is [ +Infinity, -Infinity ].
+   * @return {Bounds}
+   *   Return this (modified) object which is [ +Infinity, -Infinity ].
    */
   set_by_PositiveInfinity_NegativeInfinity() {
     this.lower = +Infinity;
