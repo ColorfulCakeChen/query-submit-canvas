@@ -75,9 +75,11 @@ function* from_Base64Char_StringOrStringArray_generator_by_GeneratorFunction(
   if ( source_Base64Char_String_or_StringArray instanceof Array )
     // Note: If some element is undefined (or null), the String.join() still
     //       works correctly (i.e. undefined (or null) will be just ignored).
-    base64EncodedStringLong = source_Base64Char_String_or_StringArray.join( "" );
+    base64EncodedStringLong
+      = source_Base64Char_String_or_StringArray.join( "" );
   else
-    base64EncodedStringLong = source_Base64Char_String_or_StringArray;
+    base64EncodedStringLong
+      = source_Base64Char_String_or_StringArray;
 
   progressToAdvance.value_advance(); // 25%
   yield progressRoot;

@@ -1,7 +1,8 @@
 export { filtersTensor4d_biasesTensor3d };
 
 /**
- * A function accepts a Base class and returns its sub-class which contains filtersTensor4d and biasesTensor3d, and a method to dispose them.
+ * A function accepts a Base class and returns its sub-class which contains
+ * filtersTensor4d and biasesTensor3d, and a method to dispose them.
  *
  * @param {Class} ParentClass
  *   The parent class to be inherited. Default is Object.

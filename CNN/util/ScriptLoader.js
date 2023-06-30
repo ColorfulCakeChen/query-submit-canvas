@@ -9,9 +9,9 @@ export { createPromise };
  *   If true, the script will be loaded as javascript module.
  *
  * @param {string} htmlElementId
- *   If specified, it will become the id of the created HTMLScriptElement. And it
- * will be used to determine whether the script has been loaded to prevent loading
- * twice.
+ *   If specified, it will become the id of the created HTMLScriptElement. And
+ * it will be used to determine whether the script has been loaded to prevent
+ * loading twice.
  *
  * @return {Promise}
  *   It resolves when the script is loaded.
@@ -25,7 +25,8 @@ function createPromise( url, isModule, htmlElementId ) {
 
   //console.log( "Loading \"" + url + "\"" );
   return new Promise( ( resolve, reject ) => {
-    let attributes = { src: url, onload: e => resolve( e ), onerror: e => reject( e ) };
+    let attributes
+      = { src: url, onload: e => resolve( e ), onerror: e => reject( e ) };
 
     if ( isModule )
       attributes.type = "module";
@@ -37,4 +38,3 @@ function createPromise( url, isModule, htmlElementId ) {
       Object.assign( document.createElement( "script" ), attributes ) );
   } );
 }
-

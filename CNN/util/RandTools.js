@@ -11,8 +11,11 @@ import * as Recyclable from "./Recyclable.js";
  * Return a random integer between [ minInt, ( minInt + kindsInt - 1 ) ]. (This
  * function comes from MDN's Math.random() example.)
  *
- * @param {integer} minInt   The minimum integer. (inclusive)
- * @param {integer} kindsInt How many kinds between minInt and maxInt (inclusive).
+ * @param {integer} minInt
+ *   The minimum integer. (inclusive)
+ *
+ * @param {integer} kindsInt
+ *   How many kinds between minInt and maxInt (inclusive).
  */
 function getRandomIntInclusive_by_minInt_kindsInt( minInt, kindsInt ) {
   return Math.floor( ( Math.random() * kindsInt ) + minInt );
@@ -22,8 +25,11 @@ function getRandomIntInclusive_by_minInt_kindsInt( minInt, kindsInt ) {
  * Return a random integer between min and max. (This function comes from MDN's
  * Math.random().)
  *
- * @param {number} min The minimum integer. (inclusive)
- * @param {number} max The maximum integer. (inclusive)
+ * @param {number} min
+ *   The minimum integer. (inclusive)
+ *
+ * @param {number} max
+ *   The maximum integer. (inclusive)
  */
 function getRandomIntInclusive( min, max ) {
   let minReal = Math.min( min, max );
@@ -81,11 +87,13 @@ function getRandomInt_TruncatedBinaryExponent( exponent, exponentMax ) {
  *
  * @param {number} randomOffsetMin
  *   Every element of the generated number array will been shifted from the
- * sequence id between [ randomOffsetMin, randomOffsetMax ] (inclusive) randomly.
+ * sequence id between [ randomOffsetMin, randomOffsetMax ] (inclusive)
+ * randomly.
  *
  * @param {number} randomOffsetMax
  *   Every element of the generated number array will been shifted from the
- * sequence id between [ randomOffsetMin, randomOffsetMax ] (inclusive) randomly.
+ * sequence id between [ randomOffsetMin, randomOffsetMax ] (inclusive)
+ * randomly.
  *
  * @param {number} divisorForRemainder
  *   The generated value will be divided by divisorForRemainder. The remainder
@@ -121,7 +129,8 @@ function fill_numberArray( io_numberArray,
   try {
     if ( io_numberArray instanceof Recyclable.NumberArray_withBounds ) {
       io_numberArray.boundsArray_byChannel.length = channelCount;
-      io_numberArray.boundsArray_byChannel.set_all_by_PositiveInfinity_NegativeInfinity();
+      io_numberArray.boundsArray_byChannel
+        .set_all_by_PositiveInfinity_NegativeInfinity();
 
       for ( let h = 0; h < height; ++h ) {
         for ( let w = 0; w < width; ++w ) {
@@ -232,7 +241,8 @@ function shuffle_Array( io_array ) {
 
 /**
  * @param {any[]} anArray
- *   An array to be converted to a string. It can have nested sub-array as element.
+ *   An array to be converted to a string. It can have nested sub-array as
+ * element.
  *
  * @return {string}
  *   Return a string representing the array's content.
