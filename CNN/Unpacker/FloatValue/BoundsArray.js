@@ -602,8 +602,8 @@ class BoundsArray extends Recyclable.Root {
     inputBoundsArray0, inputBoundsArray1 ) {
 
     let totalLength
-      = ( inputBoundsArray0?.length ?? 0 )
-          + ( inputBoundsArray1?.length ?? 0 );
+      =   ( inputBoundsArray0?.length ?? 0 )
+        + ( inputBoundsArray1?.length ?? 0 );
 
     this.length = totalLength;
 
