@@ -415,15 +415,19 @@ class ScaleArray extends Recyclable.Root {
 
     // Note:
     //
-    // When a legal (positive) scale is found. A value of powers of two which is equal to or less than it will be returned instead.
+    // When a legal (positive) scale is found. A value of powers of two which
+    // is equal to or less than it will be returned instead.
     //
     //   scale = 2 ** Math.floor( Math.log2( scale ) )
     //
-    // So the returned scale (if exists) is always powers of two (e.g. 2^(-1), 2^(-2), 2^(-3), ... ) (i.e. 0.5, 0.25, 0.125, ... ).
-    // Although using a smaller scale may increase floating-point truncation error, it may reduce floating-point accumulated error.
-    // Because they can be represented as a finite floating-point number (v.s. if scale is 0.3, it can not be represented as a finite
-    // floating-point number), this reduces floating-point accumulated error when ShuffleNetV2_byMobileNetV2 pass-through do-scale
-    // and undo-scale repeatedly.
+    // So the returned scale (if exists) is always powers of two (e.g. 2^(-1),
+    // 2^(-2), 2^(-3), ... ) (i.e. 0.5, 0.25, 0.125, ... ). Although using a
+    // smaller scale may increase floating-point truncation error, it may
+    // reduce floating-point accumulated error. Because they can be represented
+    // as a finite floating-point number (v.s. if scale is 0.3, it can not be
+    // represented as a finite floating-point number), this reduces
+    // floating-point accumulated error when ShuffleNetV2_byMobileNetV2
+    // pass-through do-scale and undo-scale repeatedly.
     //
     let scale;
 
@@ -440,35 +444,55 @@ class ScaleArray extends Recyclable.Root {
     //
     scale = Math.fround( dstLower / srcLower );
     if ( scale > 1 )
-      scale = 1; // i.e. no need to scale because srcLower is already in bounds [ dstLower, dstUpper ].
+      // i.e. no need to scale because srcLower is already in bounds
+      // [ dstLower, dstUpper ].
+      scale = 1;
 
     // 1.2 Verification.
-    //   - If scale is negative or zero or -Infinity or +Infinity or NaN, it is always failed.
-    //   - If scaled source upper bound is out of destination range, it is also failed.
+    //   - If scale is negative or zero or -Infinity or +Infinity or NaN, it is
+    //       always failed.
+    //   - If scaled source upper bound is out of destination range, it is also
+    //       failed.
     let adjustedUpper = Math.fround( srcUpper * scale );
 
-    if ( ( scale <= 0 ) || ( !Number.isFinite( scale ) ) || ( adjustedUpper < dstLower ) || ( adjustedUpper > dstUpper ) ) {
+    if (   ( scale <= 0 )
+        || ( !Number.isFinite( scale ) )
+        || ( adjustedUpper < dstLower )
+        || ( adjustedUpper > dstUpper ) ) {
 
-      // 2. Try upperer bound, since it is failed to fit [ srcLower, srcUpper ] into [ dstLower, dstUpper ] by scale according to lower bound.
+      // 2. Try upperer bound, since it is failed to fit [ srcLower, srcUpper ]
+      //    into [ dstLower, dstUpper ] by scale according to lower bound.
       scale = Math.fround( dstUpper / srcUpper );
       if ( scale > 1 )
-        scale = 1; // i.e. no need to scale because srcUpper is already in bounds [ dstLower, dstUpper ].
+        // i.e. no need to scale because srcUpper is already in bounds
+        //      [ dstLower, dstUpper ].
+        scale = 1;
 
-      // 2.2 Verification. If scale is zero, it is always failed. Otherwise, check it by lower side.
-      //   - If scale is negative or zero or -Infinity or +Infinity or NaN, it is always failed.
-      //   - If scaled source lower bound is out of destination range, it is also failed.
+      // 2.2 Verification. If scale is zero, it is always failed. Otherwise,
+      //       check it by lower side.
+      //   - If scale is negative or zero or -Infinity or +Infinity or NaN, it
+      //       is always failed.
+      //   - If scaled source lower bound is out of destination range, it is
+      //       also failed.
       let adjustedLower = Math.fround( srcLower * scale );
 
-      if ( ( scale <= 0 ) || ( !Number.isFinite( scale ) ) || ( adjustedLower < dstLower ) || ( adjustedLower > dstUpper ) ) {
-        // 3. It is impossible to fit [ srcLower, srcUpper ] into [ dstLower, dstUpper ] only by scale because all cases are tried and failed.
+      if (   ( scale <= 0 )
+          || ( !Number.isFinite( scale ) )
+          || ( adjustedLower < dstLower )
+          || ( adjustedLower > dstUpper ) ) {
+        // 3. It is impossible to fit [ srcLower, srcUpper ] into
+        //    [ dstLower, dstUpper ] only by scale because all cases are tried
+        //    and failed.
         scale = Number.NaN;
 
-      // 2.3 A legal (positive) scale is found. Make it is a value of powers of two value which is equal to or less than it.
+      // 2.3 A legal (positive) scale is found. Make it is a value of powers of
+      //     two value which is equal to or less than it.
       } else {
         scale = Math.fround( 2 ** Math.floor( Math.log2( scale ) ) );
       }
 
-    // 1.3 A legal (positive) scale is found. Make it is a value of powers of two value which is equal to or less than it.
+    // 1.3 A legal (positive) scale is found. Make it is a value of powers of
+    //     two value which is equal to or less than it.
     } else {
       scale = Math.fround( 2 ** Math.floor( Math.log2( scale ) ) );
     }
@@ -477,4 +501,3 @@ class ScaleArray extends Recyclable.Root {
   }
 
 }
-
