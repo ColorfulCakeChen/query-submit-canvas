@@ -244,7 +244,8 @@ class Block_Reference_Base extends Recyclable.Root {
 
   /** @override */
   static setAsConstructor_self() {
-    this.channelShufflerBag = ChannelShuffler.Bag.Pool.get_or_create_by( ChannelShuffler.ShuffleInfo.Pool );
+    this.channelShufflerBag = ChannelShuffler.Bag.Pool.get_or_create_by(
+      ChannelShuffler.ShuffleInfo.Pool );
 
     // For reducing memory allocation.
     this.testCorrectnessInfo = TestCorrectnessInfo.Pool.get_or_create_by();
