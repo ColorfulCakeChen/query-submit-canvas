@@ -21,7 +21,7 @@ class ObjectPropertyAsserter_Base extends Recyclable.Root {
    *   The object's name for debug easily. 
    *
    * @param {Object} object
-   *   The object whose properties will be asserted by method .propertyXxx(). 
+   *   The object whose properties will be asserted by method .propertyXxx().
    *
    * @param {Object} contextDescription
    *   Its .toString() will become the context message for debug easily. 

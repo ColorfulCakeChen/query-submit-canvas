@@ -12,7 +12,8 @@ export { forOf };
  * A wrapper for setTimeout( , delayMilliseconds ).
  *
  * @param {integer} delayMilliseconds
- *   The delay time (in milliseconds) when the (returned) promise will be resolved.
+ *   The delay time (in milliseconds) when the (returned) promise will be
+ * resolved.
  *
  * @param {any} value
  *   The value which will be returned by the resolved promise.
@@ -49,7 +50,8 @@ function delayedValue( delayMilliseconds, value ) {
  * A wrapper for delayedValue( delayMilliseconds, undefined ).
  *
  * @param {integer} delayMilliseconds
- *   The delay time (in milliseconds) when the (returned) promise will be resolved.
+ *   The delay time (in milliseconds) when the (returned) promise will be
+ * resolved.
  *
  * @return {Promise}
  *   Return a newly created Promise which will be resolved as undefined
@@ -125,22 +127,23 @@ function Promise_create_by_addEventListener_once_executor(
  *    The event type of eventCallback. e.g. "loadstart", "progress", "timeout".
  *
  * @param {function} eventCallback
- *    The event handler function for the event name. It should accept parameters
- * ( resolveFunc, rejectFunc, event ). The resolveFunc and rejectFunc come from
- * the returned Promise. The event come from the eventTarget when event of
- * evenType occurred.
+ *    The event handler function for the event name. It should accept
+ * parameters ( resolveFunc, rejectFunc, event ). The resolveFunc and
+ * rejectFunc come from the returned Promise. The event come from the
+ * eventTarget when event of evenType occurred.
  *
  * @param {any} thisArg
  *    The "this" value when binding eventCallback with
  * ( thisArg, resolveFunc, rejectFunc ).
  *
  * @param {object} options
- *    The options when calling eventTarget.addEventListener(). It could be null.
- * No matter whether it is provided, it will always be set forcibly at least the
- * { once: true } so that the eventCallback will only receive event at most once.
- * This is necessary because a Promise could only be settled once. (So, the same
- * event listenr should be re-registered (to gain another Promise) after event
- * triggered if the event is expected to be happened may times.)
+ *    The options when calling eventTarget.addEventListener(). It could be
+ * null. No matter whether it is provided, it will always be set forcibly at
+ * least the { once: true } so that the eventCallback will only receive event
+ * at most once. This is necessary because a Promise could only be settled
+ * once. (So, the same event listenr should be re-registered (to gain another
+ * Promise) after event triggered if the event is expected to be happened may
+ * times.)
  *
  * @return {Promise}
  *   Return a newly created Promise. It will be settled by the eventCallback
@@ -159,13 +162,14 @@ function Promise_create_by_addEventListener_once(
 /**
  *
  * @param {integer} delayMilliseconds
- *   The delay time (in milliseconds) when the (returned) promise will be resolved.
+ *   The delay time (in milliseconds) when the (returned) promise will be
+ * resolved.
  *
  * @param {function} timeoutCallback
- *    The event handler function for the event name. It should accept parameters
- * ( resolveFunc, rejectFunc, value ). The resolveFunc and rejectFunc come from
- * the returned Promise. The values come from the parameters of this 
- * Promise_create_by_setInterval() function.
+ *    The event handler function for the event name. It should accept
+ * parameters ( resolveFunc, rejectFunc, value ). The resolveFunc and
+ * rejectFunc come from the returned Promise. The values come from the
+ * parameters of this Promise_create_by_setInterval() function.
  *
  * @param {any} thisArg
  *    The "this" value when binding timeoutCallback with
@@ -350,7 +354,8 @@ class AsyncGeneratorTicker {
  * Just like a for..of loop but executes in part-time.
  *
  * This is a little similar to for-await-of. This could accept synchronus or
- * asynchronus generator, while for-await-of only accepts asynchronus generator.
+ * asynchronus generator, while for-await-of only accepts asynchronus
+ * generator.
  *
  *
  * @param {iterator} generator
@@ -371,7 +376,9 @@ class AsyncGeneratorTicker {
  *   A promise resolved with the ( generator.next().value ) when
  * ( generator.next().done == true ).
  */
-async function forOf( generator, callback, callbackDone, delayMilliseconds = 0 ) {
+async function forOf(
+  generator, callback, callbackDone, delayMilliseconds = 0 ) {
+
   let sleepPromise;
   let generatorNext;
   let r;
@@ -381,8 +388,8 @@ async function forOf( generator, callback, callbackDone, delayMilliseconds = 0 )
 
     generatorNext = generator.next();
 
-    // If generatorNext is a promise (i.e. the generator is an async generator).
-    // Wait it resolved, then process it as sync generator.
+    // If generatorNext is a promise (i.e. the generator is an async
+    // generator), wait it resolved and then process it as sync generator.
     if ( generatorNext instanceof Promise ) {
       r = await generatorNext;
 
