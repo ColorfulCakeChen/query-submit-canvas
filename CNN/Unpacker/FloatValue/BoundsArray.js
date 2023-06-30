@@ -1586,12 +1586,18 @@ class BoundsArray extends Recyclable.Root {
     // Split value bounds array.
     let inChannel = 0;
 
-    for ( let outChannel = 0; outChannel < length_lowerHalf; ++outChannel, ++inChannel ) {
-      lowerHalfBoundsArray.set_one_byBoundsArray( outChannel, this, inChannel );
+    for ( let outChannel = 0;
+      outChannel < length_lowerHalf; ++outChannel, ++inChannel ) {
+
+      lowerHalfBoundsArray.set_one_byBoundsArray(
+        outChannel, this, inChannel );
     }
 
-    for ( let outChannel = 0; outChannel < length_higherHalf; ++outChannel, ++inChannel ) {
-      higherHalfBoundsArray.set_one_byBoundsArray( outChannel, this, inChannel );
+    for ( let outChannel = 0;
+      outChannel < length_higherHalf; ++outChannel, ++inChannel ) {
+
+      higherHalfBoundsArray.set_one_byBoundsArray(
+        outChannel, this, inChannel );
     }
 
     return this;
@@ -1604,4 +1610,3 @@ class BoundsArray extends Recyclable.Root {
   }
 
 }
-
