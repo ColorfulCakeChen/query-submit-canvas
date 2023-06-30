@@ -232,7 +232,8 @@ class ConvBiasActivation extends InputsOutputs {
 
   /**
    * Set:
-   *   - this.activationEscaping_ScaleArraySet to scale 1 (i.e. all are no scale).
+   *   - this.activationEscaping_ScaleArraySet to scale 1 (i.e. all are no
+   *       scale).
    *   - this.bPassThrough[] to false (i.e. all are not pass-through).
    *
    * @return {ConvBiasActivation}
@@ -257,7 +258,11 @@ class ConvBiasActivation extends InputsOutputs {
   set_outputs_all_byBounds( aBounds ) {
     this.afterFilter.set_all_byBounds( aBounds );
     this.afterBias.set_all_byBounds( aBounds );
-    super.set_outputs_all_byBounds( aBounds ); // i.e. .output0.boundsArray (i.e. .afterActivation), .output0.scaleArraySet
+
+    // i.e. .output0.boundsArray (i.e. .afterActivation),
+    // .output0.scaleArraySet
+    super.set_outputs_all_byBounds( aBounds );
+
     this.set_bPassThrough_all_none();
     return this;
   }
@@ -284,9 +289,12 @@ class ConvBiasActivation extends InputsOutputs {
       }
     }
 
-    this.afterUndoPreviousActivationEscaping.set_all_byBoundsArray( aBoundsArraySet.afterUndoPreviousActivationEscaping );
-    this.afterFilter                        .set_all_byBoundsArray( aBoundsArraySet.afterFilter );
-    this.afterBias                          .set_all_byBoundsArray( aBoundsArraySet.afterBias );
+    this.afterUndoPreviousActivationEscaping
+      .set_all_byBoundsArray( aBoundsArraySet.afterUndoPreviousActivationEscaping );
+    this.afterFilter
+      .set_all_byBoundsArray( aBoundsArraySet.afterFilter );
+    this.afterBias
+      .set_all_byBoundsArray( aBoundsArraySet.afterBias );
 
     // .output0.boundsArray (i.e. .afterActivation), .output0.scaleArraySet,
     // .output1.boundsArray, .output1.scaleArraySet
