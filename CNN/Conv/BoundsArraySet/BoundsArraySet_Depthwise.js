@@ -17,29 +17,37 @@ import { ChannelPartInfo, FiltersBiasesPartInfo } from  "../Depthwise/Depthwise_
 class Depthwise extends ConvBiasActivation {
 
   /**
-   * Used as default BoundsArraySet.Depthwise provider for conforming to Recyclable interface.
+   * Used as default BoundsArraySet.Depthwise provider for conforming to
+   * Recyclable interface.
    */
-  static Pool = new Pool.Root( "BoundsArraySet.Depthwise.Pool", Depthwise, Depthwise.setAsConstructor );
+  static Pool = new Pool.Root( "BoundsArraySet.Depthwise.Pool",
+    Depthwise, Depthwise.setAsConstructor );
 
   /**
    *   - The .input0 will be set as input0.
-   *   - The .afterUndoPreviousActivationEscaping will be set according to input0 and input0.scaleArraySet.undo.scales.
+   *   - The .afterUndoPreviousActivationEscaping will be set according to
+   *       input0 and input0.scaleArraySet.undo.scales.
    */
-  constructor( input0, outputChannelCount0, channelShuffler_inputGroupCount ) {
-    super( input0, outputChannelCount0, channelShuffler_inputGroupCount );
+  constructor(
+    input0, outputChannelCount0, channelShuffler_inputGroupCount ) {
+    super(
+      input0, outputChannelCount0, channelShuffler_inputGroupCount );
     Depthwise.setAsConstructor_self.call( this, input0, outputChannelCount0 );
   }
 
   /** @override */
-  static setAsConstructor( input0, outputChannelCount0, channelShuffler_inputGroupCount ) {
-    super.setAsConstructor( input0, outputChannelCount0, channelShuffler_inputGroupCount );
+  static setAsConstructor(
+    input0, outputChannelCount0, channelShuffler_inputGroupCount ) {
+    super.setAsConstructor(
+      input0, outputChannelCount0, channelShuffler_inputGroupCount );
     Depthwise.setAsConstructor_self.call( this, input0, outputChannelCount0 );
     return this;
   }
 
   /** @override */
   static setAsConstructor_self( input0, outputChannelCount0 ) {
-    this.channelMultiplier = outputChannelCount0 / input0.channelCount; // Infer channelMultiplier.
+    // Infer channelMultiplier.
+    this.channelMultiplier = outputChannelCount0 / input0.channelCount;
   }
 
   ///** @override */
@@ -51,19 +59,30 @@ class Depthwise extends ConvBiasActivation {
    * Set this.bPassThrough[] according to inChannelPartInfoArray.
    *
    * @param {Depthwise.FiltersBiasesPartInfo[]} aFiltersBiasesPartInfoArray
-   *   The input channel range array which describe lower/higher half channels index range.
+   *   The input channel range array which describe lower/higher half channels
+   * index range.
    *
    * @return {BoundsArraySet.Depthwise}
    *   Return the this object.
    */
   set_bPassThrough_all_byChannelPartInfoArray( aFiltersBiasesPartInfoArray ) {
     
-    let inChannelBegin = 0, inChannelEnd = 0,   // [ inChannelBegin, inChannelEnd ) are input channels of the current FiltersBiasesPart.
-        outChannelBegin = 0, outChannelEnd = 0; // [ outChannelBegin, outChannelEnd ) are output channels of the current FiltersBiasesPart.
+    // [ inChannelBegin, inChannelEnd ) are input channels of the current
+    // FiltersBiasesPart.
+    let inChannelBegin = 0, inChannelEnd = 0;
+
+    // [ outChannelBegin, outChannelEnd ) are output channels of the current
+    // FiltersBiasesPart.
+    let outChannelBegin = 0, outChannelEnd = 0;
 
     FiltersBiasesPartIndexLoop:
-    for ( let aFiltersBiasesPartIndex = 0; aFiltersBiasesPartIndex < aFiltersBiasesPartInfoArray.length; ++aFiltersBiasesPartIndex ) {
-      let aFiltersBiasesPartInfo = aFiltersBiasesPartInfoArray[ aFiltersBiasesPartIndex ];
+    for ( let aFiltersBiasesPartIndex = 0;
+      aFiltersBiasesPartIndex < aFiltersBiasesPartInfoArray.length;
+      ++aFiltersBiasesPartIndex ) {
+
+      let aFiltersBiasesPartInfo
+        = aFiltersBiasesPartInfoArray[ aFiltersBiasesPartIndex ];
+
       let inChannelPartInfoArray = aFiltersBiasesPartInfo;
 
       inChannelBegin = inChannelEnd;
@@ -74,14 +93,24 @@ class Depthwise extends ConvBiasActivation {
         let outChannel = outChannelBegin;
 
         InChannelPartIndexLoop:
-        for ( let inChannelPartIndex = 0; inChannelPartIndex < inChannelPartInfoArray.length; ++inChannelPartIndex ) {
+        for ( let inChannelPartIndex = 0;
+          inChannelPartIndex < inChannelPartInfoArray.length;
+          ++inChannelPartIndex ) {
+
           let inChannelPartInfo = inChannelPartInfoArray[ inChannelPartIndex ];
 
-          for ( let inChannelSub = 0; inChannelSub < inChannelPartInfo.inputChannelCount; ++inChannelSub, ++inChannel ) {
-            if ( inChannel >= this.inputChannelCount0 )
-              break InChannelPartIndexLoop; // Never exceeds the total input channel count.
+          for ( let inChannelSub = 0;
+            inChannelSub < inChannelPartInfo.inputChannelCount;
+            ++inChannelSub, ++inChannel ) {
 
-            for ( let outChannelSub = 0; outChannelSub < this.channelMultiplier; ++outChannelSub, ++outChannel ) {
+            if ( inChannel >= this.inputChannelCount0 )
+              // Never exceeds the total input channel count.
+              break InChannelPartIndexLoop;
+
+            for ( let outChannelSub = 0;
+              outChannelSub < this.channelMultiplier;
+              ++outChannelSub, ++outChannel ) {
+
               this.bPassThrough[ outChannel ] = inChannelPartInfo.bPassThrough;
 
             } // outChannelSub, outChannel
@@ -97,7 +126,9 @@ class Depthwise extends ConvBiasActivation {
     return this;
   }
 
-  /** Accumulate value bounds for the filter position (across the whole virtual input image).
+  /**
+   * Accumulate value bounds for the filter position (across the whole virtual
+   * input image).
    *
    * Note: filter dilation is not supported. It is assumed as 1.
    *
@@ -115,8 +146,9 @@ class Depthwise extends ConvBiasActivation {
    * @param {number} filterX  The X position inside the depthwise filter.
    *
    * @param {FloatValue.Bounds} tBounds
-   *   The value bounds to be added to virtualImageOutput_afterFilter_BoundsArray_perPixel
-   * for the depthwise filter position.
+   *   The value bounds to be added to
+   * virtualImageOutput_afterFilter_BoundsArray_perPixel for the depthwise
+   * filter position.
    *
    */
   static virtualImageOutput_afterFilter_BoundsArray_add_one_byBounds(
@@ -133,9 +165,13 @@ class Depthwise extends ConvBiasActivation {
             virtualImageOutput_elementIndexBeginY += virtualImageInfo.outputElementCountY ) {
 
       if ( inY < 0 )
-        continue; // Never access outside of input image. Continue to find out non-negative input image y position.
+        // Never access outside of input image. Continue to find out
+        // non-negative input image y position.
+        continue;
       else if ( inY >= virtualImageInfo.inputHeight )
-        break;    // Never access outside of input image. Break because it is impossible to find inside of input image.
+        // Never access outside of input image. Break because it is impossible
+        // to find inside of input image.
+        break;
 
       virtualImageOutput_elementIndex = virtualImageOutput_elementIndexBeginY;
       for ( let outX = 0, inX = virtualImageInput_BeginX + filterX;
@@ -144,9 +180,13 @@ class Depthwise extends ConvBiasActivation {
               virtualImageOutput_elementIndex += virtualImageInfo.outputChannelCount ) {
 
         if ( inX < 0 )
-          continue; // Never access outside of input image. Continue to find out non-negative input image x position.
+          // Never access outside of input image. Continue to find out
+          // non-negative input image x position.
+          continue;
         else if ( inX >= virtualImageInfo.inputWidth )
-          break;    // Never access outside of input image. Break because it is impossible to find inside of input image.
+          // Never access outside of input image. Break because it is
+          // impossible to find inside of input image.
+          break;
 
         virtualImageOutput_afterFilter_BoundsArray_perPixel.add_one_byBounds(
           virtualImageOutput_elementIndex, tBounds );
@@ -155,4 +195,3 @@ class Depthwise extends ConvBiasActivation {
   }
 
 }
-
