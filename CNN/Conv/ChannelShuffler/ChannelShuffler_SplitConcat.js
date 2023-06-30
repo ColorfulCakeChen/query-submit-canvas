@@ -109,7 +109,9 @@ class SplitConcat extends Recyclable.Root {
       }
 
       this.shuffleInfo = concatGather.shuffleInfo; // Need the shuffle info.
-      concatGather.shuffleInfo = null; // (Because ownership has been transferred.)
+
+      // (Because ownership has been transferred.)
+      concatGather.shuffleInfo = null;
 
       // Shared pre-allocate memory could speed up the process of splitting.
       this.singleChannelTensorArray = Recyclable.Array.Pool.get_or_create_by(
@@ -231,10 +233,10 @@ class SplitConcat extends Recyclable.Root {
       }
     }
 
-    // Although singleChannelTensorArray[] and tensorArrayForOneGroup[] still have tensors, they are disposed tensors and should not be used.
+    // Although singleChannelTensorArray[] and tensorArrayForOneGroup[] still
+    // have tensors, they are disposed tensors and should not be used.
 
     return resultArray;
   }
 
 }
-

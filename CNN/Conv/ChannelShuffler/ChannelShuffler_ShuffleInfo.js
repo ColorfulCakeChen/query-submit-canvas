@@ -74,8 +74,9 @@ import * as Recyclable from "../../util/Recyclable.js";
  * is a function pointer to one of this.reshapeTransposeReshapeSplit_XXX().
  *
  * @member {function} concatReshapeTransposeReshape
- *   Concatenate and permute the input tensor by concat-reshape-transpose-reshape.
- * It is a function pointer to one of this.concatReshapeTransposeReshape_XXX().
+ *   Concatenate and permute the input tensor by
+ * concat-reshape-transpose-reshape. It is a function pointer to one of
+ * this.concatReshapeTransposeReshape_XXX().
  *
  * @member {function} concatReshapeTransposeReshapeSplit
  *   Concatenate, permute and split the input tensor by
@@ -146,7 +147,9 @@ class ShuffleInfo extends Recyclable.Root {
     let intermediateShape;
     {
       intermediateShape = this.intermediateShape
-        = Recyclable.Array.Pool.get_or_create_by( concatenatedShape.length + 1 );
+        = Recyclable.Array.Pool.get_or_create_by(
+            concatenatedShape.length + 1 );
+
       for ( let i = 0; i < lastAxisId; ++i ) {
         intermediateShape[ i ] = concatenatedShape[ i ];
       }
@@ -177,10 +180,17 @@ class ShuffleInfo extends Recyclable.Root {
     this.tensorWeightCountExtracted = 0;
     this.tensorWeightCountTotal = 0;
 
-    this.reshapeTransposeReshape = this.reshapeTransposeReshape_dispose_finally_calls;
-    this.reshapeTransposeReshapeSplit = this.reshapeTransposeReshapeSplit_dispose_finally_calls;
-    this.concatReshapeTransposeReshape = this.concatReshapeTransposeReshape_dispose_finally_calls;
-    this.concatReshapeTransposeReshapeSplit = this.concatReshapeTransposeReshapeSplit_dispose_finally_calls;
+    this.reshapeTransposeReshape
+      = this.reshapeTransposeReshape_dispose_finally_calls;
+
+    this.reshapeTransposeReshapeSplit
+      = this.reshapeTransposeReshapeSplit_dispose_finally_calls;
+
+    this.concatReshapeTransposeReshape
+      = this.concatReshapeTransposeReshape_dispose_finally_calls;
+
+    this.concatReshapeTransposeReshapeSplit
+      = this.concatReshapeTransposeReshapeSplit_dispose_finally_calls;
   }
 
   /**
@@ -341,4 +351,3 @@ class ShuffleInfo extends Recyclable.Root {
   }
 
 }
-
