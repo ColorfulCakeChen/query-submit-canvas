@@ -52,11 +52,11 @@ class ValueMax_Percentage_Base extends Recyclable.Root {
   /** @override */
   disposeResources() {
 
-    // In theory, here should remove this child object from parent (i.e. Aggregate)
-    // so that the parent will not dispose (and recycle) this child object once
-    // again. In fact, however, this is an expensive action (because a linear
-    // search should be done. So, the better choice is to dispose the whole tree
-    // from root object by caller to avoid this problem.
+    // In theory, here should remove this child object from parent (i.e.
+    // Aggregate) so that the parent will not dispose (and recycle) this child
+    // object once again. In fact, however, this is an expensive action
+    // (because a linear search should be done. So, the better choice is to
+    // dispose the whole tree from root object by caller to avoid this problem.
     //
     //if ( this.parent ) {
     //  if ( this.parent instanceof ValueMax_Percentage_Aggregate ) {
@@ -83,8 +83,8 @@ class ValueMax_Percentage_Base extends Recyclable.Root {
   /**
    * This method will call parent's .valuePercentage_cached_invalidate().
    *
-   * Sub-class should override this method and invalidate .valuePercentage_cached
-   * (i.e. let it become undefined). 
+   * Sub-class should override this method and invalidate
+   * .valuePercentage_cached (i.e. let it become undefined). 
    */
   valuePercentage_cached_invalidate() {
     if ( this.parent )
@@ -106,7 +106,9 @@ class ValueMax_Percentage_Base extends Recyclable.Root {
     return 0;
   }
 
-  /** @return {number} Always 100. Sub-class should NOT override this method. */
+  /**
+   * @return {number} Always 100. Sub-class should NOT override this method.
+   */
   get maxPercentage() {
     return 100;
   }
@@ -137,7 +139,8 @@ class ValueMax_Percentage_Concrete extends ValueMax_Percentage_Base {
    * to Recyclable interface.
    */
   static Pool = new Pool.Root( "ValueMax.Percentage.Concrete.Pool",
-    ValueMax_Percentage_Concrete, ValueMax_Percentage_Concrete.setAsConstructor );
+    ValueMax_Percentage_Concrete,
+    ValueMax_Percentage_Concrete.setAsConstructor );
 
   /**
    * @param {number} max

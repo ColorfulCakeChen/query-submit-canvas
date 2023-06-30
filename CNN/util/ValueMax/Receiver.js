@@ -2,35 +2,45 @@ export { ValueMax_Receiver_Base as Base, HTMLProgress };
 
 /** Do nothing when receives value, max and done. */
 class ValueMax_Receiver_Base {
+
   /**
-   * @param {number} value The current value.
-   * @param {number} max   The maximum value.
+   * @param {number} value
+   *   The current value.
+   *
+   * @param {number} max
+   *   The maximum value.
    */
   setValueMax( value, max ) {}
 
   /**
-   * @return {number} The current value.
+   * @return {number}
+   *   The current value.
    */
   getValue() {}
 
   /**
-   * @param {number} value The current value.
+   * @param {number} value
+   *   The current value.
    */
   setValue( value ) {}
 
   /**
-   * @return {number} The maximum value.
+   * @return {number}
+   *   The maximum value.
    */
   getMax() {}
 
   /**
-   * @param {number} max   The maximum value.
+   * @param {number} max
+   *   The maximum value.
    */
   setMax( max ) {}
 
   /**
    * Inform the process is done.
-   * @param {any} doneValue Any value.
+   *
+   * @param {any} doneValue
+   *   Any value.
    */
   informDone( doneValue ) {}
 }
@@ -62,9 +72,14 @@ class HTMLProgress extends ValueMax_Receiver_Base {
   }
 
   /**
-   * Set HTMLProgressElement.value and HTMLProgressElement.max to value and max.
-   * @param {number} value The current value.
-   * @param {number} max   The maximum value.
+   * Set HTMLProgressElement.value and HTMLProgressElement.max to value and
+   * max.
+   *
+   * @param {number} value
+   *   The current value.
+   *
+   * @param {number} max
+   *   The maximum value.
    */
   setValueMax( value, max ) {
     this.htmlProgress.value = value;
@@ -78,7 +93,9 @@ class HTMLProgress extends ValueMax_Receiver_Base {
 
   /**
    * Set HTMLProgressElement.value to value.
-   * @param {number} value The current value.
+   *
+   * @param {number} value
+   *   The current value.
    */
   setValue( value ) {
     this.htmlProgress.value = value;
@@ -91,7 +108,9 @@ class HTMLProgress extends ValueMax_Receiver_Base {
 
   /**
    * HTMLProgressElement.max max.
-   * @param {number} max   The maximum value.
+   *
+   * @param {number} max
+   *   The maximum value.
    */
   setMax( max ) {
     this.htmlProgress.max = max;
@@ -104,10 +123,13 @@ class HTMLProgress extends ValueMax_Receiver_Base {
 }
 
 /**
- * @param {string} htmlProgressTitle The title of HTMLProgressElement.
- * @return
- *   Return a new ProgressReceiver.HTMLProgress, if found.
- *   Return the shared ProgressReceiver.ValueMax_Receiver_Base.dummy, If not found.
+ * @param {string} htmlProgressTitle
+ *   The title of HTMLProgressElement.
+ *
+ * @return {HTMLProgress | ValueMax_Receiver_Base}
+ *   - Return a new ProgressReceiver.HTMLProgress, if found.
+ *   - Return the shared ProgressReceiver.ValueMax_Receiver_Base.dummy, If not
+ *       found.
  */
 HTMLProgress.createByTitle_or_getDummy = function (htmlProgressTitle) {
   if (htmlProgressTitle) {
