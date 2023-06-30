@@ -28,7 +28,8 @@ import { asyncGenerator as NonReentrant_asyncGenerator }
  * or "workerProxies_init" or "versus_load" or "imageData_process")
  *
  * @param {string} name_of_asyncPromise_progress
- *   The property name for progress to be used by the underlied async generator.
+ *   The property name for progress to be used by the underlied async
+ * generator.
  *   - If null, Xxx_asyncPromise_progress will be used. (Xxx is name_prefix)
  *   - If not null, the specified name will be used. This is especially useful
  *       when the progress object wants to be shared among multiple
@@ -419,7 +420,9 @@ function NonReentrant_asyncPromise_by_asyncGenerator(
 
     /**
      * @param {NonReentrant_asyncPromise_by_asyncGenerator} this
-     * @param {string} funcNameInMessage   The caller function name. (e.g. init_async)
+     *
+     * @param {string} funcNameInMessage
+     *   The caller function name. (e.g. init_async)
      */
     static [ name_of_throw_if_an_old_asyncPromise_still_running ](
       funcNameInMessage ) {

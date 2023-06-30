@@ -87,7 +87,8 @@ function NonReentrant_asyncGenerator(
    * .Xxx_asyncGenerator_create() again. The Xxx is name_prefix (e.g. "init").
    *
    * @member {boolean} XxxOk
-   *   A property recording whether underlied_asyncGenerator_func() is succeeded.
+   *   A property recording whether underlied_asyncGenerator_func() is
+   * succeeded.
    *   - The Xxx is name_prefix (e.g. "init").
    *   - It is not a private read-only property so that
    *       underlied_asyncGenerator_func() can set it value.
@@ -278,7 +279,9 @@ function NonReentrant_asyncGenerator(
 
     /**
      * @param {NonReentrant_asyncGenerator} this
-     * @param {string} funcNameInMessage   The caller function name. (e.g. init_async)
+     *
+     * @param {string} funcNameInMessage
+     *   The caller function name. (e.g. init_async)
      */
     static [ name_of_throw_if_asyncPromise_or_asyncGenerator_running ](
       funcNameInMessage ) {
@@ -302,7 +305,9 @@ function NonReentrant_asyncGenerator(
 
     /**
      * @param {NonReentrant_asyncGenerator} this
-     * @param {string} funcNameInMessage   The caller function name. (e.g. init_async)
+     *
+     * @param {string} funcNameInMessage
+     *   The caller function name. (e.g. init_async)
      */
     static [ name_of_throw_if_asyncPromise_and_asyncGenerator_not_running ](
       funcNameInMessage ) {
@@ -326,8 +331,12 @@ function NonReentrant_asyncGenerator(
 
     /**
      * @param {NonReentrant_asyncGenerator} this
-     * @param {boolean} b_still_running    If true, throw exception.
-     * @param {string} funcNameInMessage   The caller function name. (e.g. init_async)
+     *
+     * @param {boolean} b_still_running
+     *   If true, throw exception.
+     *
+     * @param {string} funcNameInMessage
+     *   The caller function name. (e.g. init_async)
      */
     static throw_if_an_old_still_running( b_still_running, funcNameInMessage ) {
       if ( !b_still_running )
@@ -342,7 +351,9 @@ function NonReentrant_asyncGenerator(
 
     /**
      * @param {NonReentrant_asyncGenerator} this
-     * @param {string} funcNameInMessage   The caller function name. (e.g. init_async)
+     *
+     * @param {string} funcNameInMessage
+     *   The caller function name. (e.g. init_async)
      */
     static [ name_of_throw_if_an_old_asyncGenerator_still_running ](
       funcNameInMessage ) {
@@ -352,10 +363,16 @@ function NonReentrant_asyncGenerator(
 
     /**
      * @param {NonReentrant_asyncGenerator} this
-     * @param {boolean} b                  If false, throw exception.
-     * @param {string} funcNameInMessage   The caller function name. (e.g. init_async)
+     *
+     * @param {boolean} b
+     *   If false, throw exception.
+     *
+     * @param {string} funcNameInMessage
+     *   The caller function name. (e.g. init_async)
+     *
      * @param {string} funcNameShouldBeCalledInMessage
-     *   The function name which should be called instead. (e.g. init_promise_create)
+     *   The function name which should be called instead. (e.g.
+     * init_promise_create)
      */
     static throw_call_another_if_false(
       b, funcNameInMessage, funcNameShouldBeCalledInMessage ) {
@@ -372,7 +389,9 @@ function NonReentrant_asyncGenerator(
 
     /**
      * @param {NonReentrant_asyncGenerator} this
-     * @param {string} funcNameInMessage   The caller function name. (e.g. init_async)
+     *
+     * @param {string} funcNameInMessage
+     *   The caller function name. (e.g. init_async)
      */
     static [ name_of_throw_if_asyncResultOk_undefined ]( funcNameInMessage ) {
       if ( this[ name_of_asyncResultOk ] !== undefined )
@@ -390,7 +409,9 @@ function NonReentrant_asyncGenerator(
 
     /**
      * @param {NonReentrant_asyncGenerator} this
-     * @param {string} funcNameInMessage   The caller function name. (e.g. init_async)
+     *
+     * @param {string} funcNameInMessage
+     *   The caller function name. (e.g. init_async)
      */
     static [ name_of_throw_if_not_asyncResultOk ]( funcNameInMessage ) {
       if ( this[ name_of_asyncResultOk ] )

@@ -235,7 +235,9 @@ function NonReentrant_asyncPromise(
 
     /**
      * @param {NonReentrant_asyncPromise} this
-     * @param {string} funcNameInMessage   The caller function name. (e.g. init_async)
+     *
+     * @param {string} funcNameInMessage
+     *   The caller function name. (e.g. init_async)
      */
     static [ name_of_throw_if_asyncPromise_running ](
       funcNameInMessage ) {
@@ -254,7 +256,9 @@ function NonReentrant_asyncPromise(
 
     /**
      * @param {NonReentrant_asyncGenerator} this
-     * @param {string} funcNameInMessage   The caller function name. (e.g. init_async)
+     *
+     * @param {string} funcNameInMessage
+     *   The caller function name. (e.g. init_async)
      */
     static [ name_of_throw_if_asyncPromise_not_running ](
       funcNameInMessage ) {
@@ -273,10 +277,16 @@ function NonReentrant_asyncPromise(
 
     /**
      * @param {NonReentrant_asyncPromise} this
-     * @param {boolean} b                  If false, throw exception.
-     * @param {string} funcNameInMessage   The caller function name. (e.g. init_async)
+     *
+     * @param {boolean} b
+     *   If false, throw exception.
+     *
+     * @param {string} funcNameInMessage
+     *   The caller function name. (e.g. init_async)
+     *
      * @param {string} funcNameShouldBeCalledInMessage
-     *   The function name which should be called instead. (e.g. init_promise_create)
+     *   The function name which should be called instead. (e.g.
+     * init_promise_create)
      */
     static throw_call_another_if_false(
       b, funcNameInMessage, funcNameShouldBeCalledInMessage ) {
@@ -293,7 +303,9 @@ function NonReentrant_asyncPromise(
 
     /**
      * @param {NonReentrant_asyncGenerator} this
-     * @param {string} funcNameInMessage   The caller function name. (e.g. init_async)
+     *
+     * @param {string} funcNameInMessage
+     *   The caller function name. (e.g. init_async)
      */
     static [ name_of_throw_if_asyncResultOk_undefined ]( funcNameInMessage ) {
       if ( this[ name_of_asyncResultOk ] !== undefined )
@@ -311,7 +323,9 @@ function NonReentrant_asyncPromise(
 
     /**
      * @param {NonReentrant_asyncPromise} this
-     * @param {string} funcNameInMessage   The caller function name. (e.g. init_async)
+     *
+     * @param {string} funcNameInMessage
+     *   The caller function name. (e.g. init_async)
      */
     static [ name_of_throw_if_not_asyncResultOk ]( funcNameInMessage ) {
       if ( this[ name_of_asyncResultOk ] )
