@@ -34,7 +34,7 @@ function assert_ScaleBoundsArray(
       + `lhsName=${lhsName}, rhsName=${rhsName} ): `
       + `aScaleBoundsArray (${aScaleBoundsArray}) and `
       + `refScaleBoundsArray (${refScaleBoundsArray}) `
-      + `must both null or both non-null. ${postfixMsg}` );
+      + `must be both null or both non-null. ${postfixMsg}` );
 
   if ( ( aScaleBoundsArray == null ) || ( refScaleBoundsArray == null ) )
     return;
