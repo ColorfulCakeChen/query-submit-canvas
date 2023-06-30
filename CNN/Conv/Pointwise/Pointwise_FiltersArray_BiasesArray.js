@@ -682,9 +682,10 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
               outChannelSub < inChannelPartInfo.outputChannelCount;
               ++outChannelSub, ++outChannel ) {
 
-              if ( outChannel >= this.outputChannelCount )
-                // Never exceeds the total output channel count.
+              // Never exceeds the total output channel count.
+              if ( outChannel >= this.outputChannelCount ) {
                 break InChannelPartIndexLoop;
+              }
 
               // Note: The .afterUndoPreviousActivationEscaping has already
               //       been multiplied by undoPreviousEscapingScale.
@@ -767,9 +768,10 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
             outChannelSub < inChannelPartInfo.outputChannelCount;
             ++outChannelSub, ++outChannel ) {
 
-            if ( outChannel >= this.outputChannelCount )
-              // Never exceeds the total output channel count.
+            // Never exceeds the total output channel count.
+            if ( outChannel >= this.outputChannelCount ) {
               break InChannelPartIndexLoop;
+            }
 
             // Note: bias is not responsible for undoPreviousEscapingScale.
             //       (i.e. the filter already done it)

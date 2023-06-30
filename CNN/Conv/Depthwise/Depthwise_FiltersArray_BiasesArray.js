@@ -744,8 +744,10 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
                   inChannelSub < inChannelPartInfo.inputChannelCount;
                   ++inChannelSub, ++inChannel ) {
 
-                  if ( inChannel >= this.inputChannelCount )
-                    break InChannelPartIndexLoop; // Never exceeds the total input channel count.
+                  // Never exceeds the total input channel count.
+                  if ( inChannel >= this.inputChannelCount ) {
+                    break InChannelPartIndexLoop;
+                  }
 
                   let undoPreviousEscapingScale
                      = inputScaleBoundsArray.scaleArraySet.undo.scales[ inChannel ];
@@ -879,8 +881,10 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
             inChannelSub < inChannelPartInfo.inputChannelCount;
             ++inChannelSub, ++inChannel ) {
 
-            if ( inChannel >= this.inputChannelCount )
-              break InChannelPartIndexLoop; // Never exceeds the total input channel count.
+            // Never exceeds the total input channel count.
+            if ( inChannel >= this.inputChannelCount ) {
+              break InChannelPartIndexLoop;
+            }
 
             for ( let outChannelSub = 0;
               outChannelSub < this.channelMultiplier;

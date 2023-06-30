@@ -103,9 +103,10 @@ class Depthwise extends ConvBiasActivation {
             inChannelSub < inChannelPartInfo.inputChannelCount;
             ++inChannelSub, ++inChannel ) {
 
-            if ( inChannel >= this.inputChannelCount0 )
-              // Never exceeds the total input channel count.
+            // Never exceeds the total input channel count.
+            if ( inChannel >= this.inputChannelCount0 ) {
               break InChannelPartIndexLoop;
+            }
 
             for ( let outChannelSub = 0;
               outChannelSub < this.channelMultiplier;
@@ -164,14 +165,16 @@ class Depthwise extends ConvBiasActivation {
           ++outY, inY += virtualImageInfo.stridesHeight,
             virtualImageOutput_elementIndexBeginY += virtualImageInfo.outputElementCountY ) {
 
-      if ( inY < 0 )
+      if ( inY < 0 ) {
         // Never access outside of input image. Continue to find out
         // non-negative input image y position.
         continue;
-      else if ( inY >= virtualImageInfo.inputHeight )
+
+      } else if ( inY >= virtualImageInfo.inputHeight ) {
         // Never access outside of input image. Break because it is impossible
         // to find inside of input image.
         break;
+      }
 
       virtualImageOutput_elementIndex = virtualImageOutput_elementIndexBeginY;
       for ( let outX = 0, inX = virtualImageInput_BeginX + filterX;
@@ -179,14 +182,16 @@ class Depthwise extends ConvBiasActivation {
             ++outX, inX += virtualImageInfo.stridesWidth,
               virtualImageOutput_elementIndex += virtualImageInfo.outputChannelCount ) {
 
-        if ( inX < 0 )
+        if ( inX < 0 ) {
           // Never access outside of input image. Continue to find out
           // non-negative input image x position.
           continue;
-        else if ( inX >= virtualImageInfo.inputWidth )
+
+        } else if ( inX >= virtualImageInfo.inputWidth ) {
           // Never access outside of input image. Break because it is
           // impossible to find inside of input image.
           break;
+        }
 
         virtualImageOutput_afterFilter_BoundsArray_perPixel.add_one_byBounds(
           virtualImageOutput_elementIndex, tBounds );

@@ -99,8 +99,9 @@ class Pointwise extends ConvBiasActivation {
             ++outChannelSub, ++outChannel ) {
 
             // Never exceeds the total output channel count.
-            if ( outChannel >= this.outputChannelCount0 )
+            if ( outChannel >= this.outputChannelCount0 ) {
               break InChannelPartIndexLoop;
+            }
 
             this.bPassThrough[ outChannel ] = inChannelPartInfo.bPassThrough;
 
