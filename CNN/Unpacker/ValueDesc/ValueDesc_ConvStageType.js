@@ -30,8 +30,11 @@ class ConvStageType extends Int {
   }
 
   /**
-   * @param {number} nConvStageTypeId  The numeric identifier of ConvStageType. (ConvStageType.Singleton.Ids.Xxx)
-   * @return {boolean} Return true, if it is MOBILE_NET_Xxx.
+   * @param {number} nConvStageTypeId
+   *   The numeric identifier of ConvStageType. (ConvStageType.Singleton.Ids.Xxx)
+   *
+   * @return {boolean}
+   *   Return true, if it is MOBILE_NET_Xxx.
    */
   static isMobileNet( nConvStageTypeId ) {
     switch ( nConvStageTypeId ) {
@@ -46,8 +49,11 @@ class ConvStageType extends Int {
   }
 
   /**
-   * @param {number} nConvStageTypeId  The numeric identifier of ConvStageType. (ConvStageType.Singleton.Ids.Xxx)
-   * @return {boolean} Return true, if it is MOBILE_NET_V2_Xxx.
+   * @param {number} nConvStageTypeId
+   *   The numeric identifier of ConvStageType. (ConvStageType.Singleton.Ids.Xxx)
+   *
+   * @return {boolean}
+   *   Return true, if it is MOBILE_NET_V2_Xxx.
    */
   static isMobileNetV2( nConvStageTypeId ) {
     switch ( nConvStageTypeId ) {
@@ -60,8 +66,11 @@ class ConvStageType extends Int {
   }
 
   /**
-   * @param {number} nConvStageTypeId  The numeric identifier of ConvStageType. (ConvStageType.Singleton.Ids.Xxx)
-   * @return {boolean} Return true, if it is SHUFFLE_NET_Xxx.
+   * @param {number} nConvStageTypeId
+   *   The numeric identifier of ConvStageType. (ConvStageType.Singleton.Ids.Xxx)
+   *
+   * @return {boolean}
+   *   Return true, if it is SHUFFLE_NET_Xxx.
    */
   static isShuffleNet( nConvStageTypeId ) {
     switch ( nConvStageTypeId ) {
@@ -76,8 +85,11 @@ class ConvStageType extends Int {
   }
 
   /**
-   * @param {number} nConvStageTypeId  The numeric identifier of ConvStageType. (ConvStageType.Singleton.Ids.Xxx)
-   * @return {boolean} Return true, if it is SHUFFLE_NET_V2_BY_MOBILE_NET_V1_Xxx.
+   * @param {number} nConvStageTypeId
+   *   The numeric identifier of ConvStageType. (ConvStageType.Singleton.Ids.Xxx)
+   *
+   * @return {boolean}
+   *   Return true, if it is SHUFFLE_NET_V2_BY_MOBILE_NET_V1_Xxx.
    */
   static isShuffleNetV2_ByMobileNetV1( nConvStageTypeId ) {
     switch ( nConvStageTypeId ) {
@@ -90,8 +102,11 @@ class ConvStageType extends Int {
   }
 
   /**
-   * @param {number} nConvStageTypeId  The numeric identifier of ConvStageType. (ConvStageType.Singleton.Ids.Xxx)
-   * @return {boolean} Return true, if it is Xxx_PAD_VALID.
+   * @param {number} nConvStageTypeId
+   *   The numeric identifier of ConvStageType. (ConvStageType.Singleton.Ids.Xxx)
+   *
+   * @return {boolean}
+   *   Return true, if it is Xxx_PAD_VALID.
    */
   static isPadValid( nConvStageTypeId ) {
     switch ( nConvStageTypeId ) {
