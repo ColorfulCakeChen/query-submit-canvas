@@ -367,11 +367,15 @@ class Bounds extends Recyclable.Root {
 
 
   /**
-   * @param {number} aLower   Clamp this.lower by aLower.
-   * @param {number} aUpper   Clamp this.upper by aUpper.
+   * @param {number} aLower
+   *   Clamp this.lower by aLower.
+   *
+   * @param {number} aUpper
+   *   Clamp this.upper by aUpper.
    *
    * @return {Bounds}
-   *   Return this (modified) object which is [ max( this.lower, aLower ), min( this.upper, aUpper ) ].
+   *   Return this (modified) object which is
+   * [ max( this.lower, aLower ), min( this.upper, aUpper ) ].
    */
   clamp_byLowerUpper( aLower, aUpper ) {
     let anotherLower, anotherUpper; // Confirm ( anotherLower <= anotherUpper )
@@ -383,9 +387,13 @@ class Bounds extends Recyclable.Root {
       anotherUpper = Math.fround( aLower );
     }
 
-    // Because two bounds may be totally non-intersected, both thisLower and thisUpper needs be clamped by [ aLower, aUpper ].
-    let lower_clamped = Math.min( Math.max( anotherLower, this.lower ), anotherUpper );
-    let upper_clamped = Math.min( Math.max( anotherLower, this.upper ), anotherUpper );
+    // Because two bounds may be totally non-intersected, both thisLower and
+    // thisUpper needs be clamped by [ aLower, aUpper ].
+    const lower_clamped = Math.min( Math.max(
+      anotherLower, this.lower ), anotherUpper );
+
+    const upper_clamped = Math.min( Math.max(
+      anotherLower, this.upper ), anotherUpper );
 
     if ( lower_clamped < upper_clamped ) { // Confirm ( lower <= upper )
       this.lower = lower_clamped;
@@ -398,34 +406,49 @@ class Bounds extends Recyclable.Root {
   }
 
   /**
-   * @param {Bounds} aBounds   Clamp [ this.lower, this.upper ] by [ aBounds.lower, aBounds.upper ].
+   * @param {Bounds} aBounds
+   *   Clamp [ this.lower, this.upper ] by
+   * [ aBounds.lower, aBounds.upper ].
    *
    * @return {Bounds}
-   *   Return this (modified) object which is [ max( this.lower, aBounds.lower ), min( this.upper, aBounds.upper ) ].
+   *   Return this (modified) object which is
+   * [ max( this.lower, aBounds.lower ), min( this.upper, aBounds.upper ) ].
    */
   clamp_byBounds( aBounds ) {
     return this.clamp_byLowerUpper( aBounds.lower, aBounds.upper );
   }
 
   /**
-   * @param {number[]} aLowers  Clamp this.lower by aLowers[ aIndex ].
-   * @param {number[]} aUppers  Clamp this.upper by aUppers[ aIndex ] ).
-   * @param {number} aIndex     The array index of aLowers[] and aUppers[].
+   * @param {number[]} aLowers
+   *   Clamp this.lower by aLowers[ aIndex ].
    *
-   * @return {Bounds} Return this (modified) object.
+   * @param {number[]} aUppers
+   *   Clamp this.upper by aUppers[ aIndex ] ).
+   *
+   * @param {number} aIndex
+   *   The array index of aLowers[] and aUppers[].
+   *
+   * @return {Bounds}
+   *   Return this (modified) object.
    */
   clamp_byLowersUppers( aLowers, aUppers, aIndex ) {
     return this.clamp_byLowerUpper( aLowers[ aIndex ], aUppers[ aIndex ] );
   }
 
   /**
-   * @param {BoundsArray} aBoundsArray  Clamp ( this.lower, this.upper ) by ( aBoundsArray.lowers[ aIndex ], aBoundsArray.uppers[ aIndex ] ).
-   * @param {number} aIndex             The array index of aBoundsArray.lowers[] and aBoundsArray.uppers[].
+   * @param {BoundsArray} aBoundsArray
+   *   Clamp ( this.lower, this.upper ) by
+   * ( aBoundsArray.lowers[ aIndex ], aBoundsArray.uppers[ aIndex ] ).
    *
-   * @return {Bounds} Return this (modified) object.
+   * @param {number} aIndex
+   *   The array index of aBoundsArray.lowers[] and aBoundsArray.uppers[].
+   *
+   * @return {Bounds}
+   *   Return this (modified) object.
    */
   clamp_byBoundsArray( aBoundsArray, aIndex ) {
-    return this.clamp_byLowerUpper( aBoundsArray.lowers[ aIndex ], aBoundsArray.uppers[ aIndex ] );
+    return this.clamp_byLowerUpper(
+      aBoundsArray.lowers[ aIndex ], aBoundsArray.uppers[ aIndex ] );
   }
 
 
@@ -434,7 +457,8 @@ class Bounds extends Recyclable.Root {
    *   Add this Bounds.lower by N, and also add this Bounds.upper by N.
    *
    * @return {Bounds}
-   *   Return this (modified) object which is the same as this.add_LowerUpper( N, N ).
+   *   Return this (modified) object which is the same as
+   * this.add_LowerUpper( N, N ).
    */
   add_byN( N ) {
     N = Math.fround( N );
@@ -462,7 +486,8 @@ class Bounds extends Recyclable.Root {
    *   Add this Bounds.upper by aUpper.
    *
    * @return {Bounds}
-   *   Return this (modified) object which is added by Bounds [ aLower, aUpper ].
+   *   Return this (modified) object which is added by Bounds
+   * [ aLower, aUpper ].
    */
   add_byLowerUpper( aLower, aUpper ) {
     let lower, upper; // Confirm ( lower <= upper ).
