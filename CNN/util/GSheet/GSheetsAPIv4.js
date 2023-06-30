@@ -7,9 +7,9 @@ import * as Recyclable from "../Recyclable.js";
 import * as ValueMax from "../ValueMax.js";
 
 /**
- * Compose a URL for downloading cells data (as JSON) from a Google Sheets by using
- * Google Sheets API v4. The target spreadsheet should be shared by either "Public
- * on the web" or "Anyone with the link".
+ * Compose a URL for downloading cells data (as JSON) from a Google Sheets by
+ * using Google Sheets API v4. The target spreadsheet should be shared by
+ * either "Public on the web" or "Anyone with the link".
  *
  *
  * The follwoings are some composed examples:
@@ -22,7 +22,8 @@ import * as ValueMax from "../ValueMax.js";
  *
  * @member {string} spreadsheetId
  *   The identifier (the component after the
- * "https://docs.google.com/spreadsheets/d/") of the spreadsheet to be accessed.
+ * "https://docs.google.com/spreadsheets/d/") of the spreadsheet to be
+ * accessed.
  *
  * @member {string} range
  *   The cells' A1 notation. It describes the (name and) range of the sheet
@@ -81,10 +82,12 @@ import * as ValueMax from "../ValueMax.js";
  *
  * @member {string} spreadsheetUrlPrefix
  *   - If null, GVizTQ_UrlComposer.spreadsheetUrlPrefix will be used.
- *   - If not null, it will be used (usually for unit testing ProgressEvent error).
+ *   - If not null, it will be used (usually for unit testing ProgressEvent
+ *       error).
  *
  * @member {boolean} bLogFetcherEventToConsole
- *   If true, some debug messages of HttpRequest.Fetcher will be logged to console.
+ *   If true, some debug messages of HttpRequest.Fetcher will be logged to
+ * console.
  *
  * @member {HttpRequest.Fetcher} httpRequestFetcher
  *   The current (or last) fetcher of the http request. It could be used to
@@ -199,7 +202,8 @@ class GSheetsAPIv4_UrlComposer
    * await it before complete. If null or undefined, no extra delay awaiting.
    *
    * @yield {Promise( ValueMax.Percentage.Aggregate )}
-   *   Yield a promise resolves to { done: false, value: progressParent.root_get() }.
+   *   Yield a promise resolves to
+   * { done: false, value: progressParent.root_get() }.
    *
    * @yield {Promise( Array[] )}
    *   - Yield a promise resolves to { done: true,
@@ -226,7 +230,8 @@ class GSheetsAPIv4_UrlComposer
 
       let responseText;
       {
-        // (Record in this so that its .abort() could be called by outside caller.)
+        // (Record in this so that its .abort() could be called by outside
+        // caller.)
         httpRequestFetcher = this.httpRequestFetcher
           = new HttpRequest.Fetcher( this.bLogFetcherEventToConsole );
 
@@ -337,8 +342,8 @@ class GSheetsAPIv4_UrlComposer
 
   /**
    * @param {string} majorDimension
-   *   The major dimension of the arrangement for the downloaded json data. It could
-   * be "ROWS" or "COLUMNS". If null, the same as "ROWS".
+   *   The major dimension of the arrangement for the downloaded json data. It
+   * could be "ROWS" or "COLUMNS". If null, the same as "ROWS".
    *
    * @return {string} The url for downloading the target as json format.
    */

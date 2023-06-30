@@ -43,7 +43,8 @@ import * as ValueMax from "../ValueMax.js";
  *
  * @member {string} spreadsheetId
  *   The identifier (the component after the
- * "https://docs.google.com/spreadsheets/d/") of the spreadsheet to be accessed.
+ * "https://docs.google.com/spreadsheets/d/") of the spreadsheet to be
+ * accessed.
  *
  * @member {string} range
  *   The cells' A1 notation. It describes the (name and) range of the sheet
@@ -102,10 +103,12 @@ import * as ValueMax from "../ValueMax.js";
  *
  * @member {string} spreadsheetUrlPrefix
  *   - If null, GVizTQ_UrlComposer.spreadsheetUrlPrefix will be used.
- *   - If not null, it will be used (usually for unit testing ProgressEvent error).
+ *   - If not null, it will be used (usually for unit testing ProgressEvent
+ *       error).
  *
  * @member {boolean} bLogFetcherEventToConsole
- *   If true, some debug messages of HttpRequest.Fetcher will be logged to console.
+ *   If true, some debug messages of HttpRequest.Fetcher will be logged to
+ * console.
  *
  * @member {HttpRequest.Fetcher} httpRequestFetcher
  *   The current (or last) fetcher of the http request. It could be used to
@@ -254,7 +257,8 @@ class GVizTQ_UrlComposer
    * await it before complete. If null or undefined, no extra delay awaiting.
    *
    * @yield {Promise( ValueMax.Percentage.Aggregate )}
-   *   Yield a promise resolves to { value: progressParent.root_get(), done: false }.
+   *   Yield a promise resolves to
+   * { value: progressParent.root_get(), done: false }.
    *
    * @yield {Promise( Array[] )}
    *   - Yield a promise resolves to { done: true,
@@ -281,7 +285,8 @@ class GVizTQ_UrlComposer
 
       let responseText;
       {
-        // (Record in this so that its .abort() could be called by outside caller.)
+        // (Record in this so that its .abort() could be called by outside
+        // caller.)
         httpRequestFetcher = this.httpRequestFetcher
           = new HttpRequest.Fetcher( this.bLogFetcherEventToConsole );
 
@@ -394,9 +399,10 @@ class GVizTQ_UrlComposer
 
   /**
    * @param {string} outputFormat
-   *   Specify the data format when downloading the returned url. It should be null or
-   * "json" or "csv" or "html". If null, there will be no format specified in the
-   * generated url (means default format, usually same as "json").
+   *   Specify the data format when downloading the returned url. It should be
+   * null or "json" or "csv" or "html". If null, there will be no format
+   * specified in the generated url (means default format, usually same as
+   * "json").
    *
    * @return {string} The url for downloading the target as specified format.
    */
@@ -411,8 +417,8 @@ class GVizTQ_UrlComposer
 
     // 2. Composite url.
 
-    // Because sheetId could be 0, it should be checked by comparing to null directly
-    // (i.e. should not use ( !this.sheetId )).
+    // Because sheetId could be 0, it should be checked by comparing to null
+    // directly (i.e. should not use ( !this.sheetId )).
     let url = `${spreadsheetUrlPrefix}/${
       encodeURIComponent(this.spreadsheetId)}/${
 
@@ -459,8 +465,8 @@ class GVizTQ_UrlComposer
    * @example
    *   Handler( ... );
    *
-   * This method will find the position of the first "(" and the last ")". Extract
-   * the string between these two positions. Parse it by JSON.parse().
+   * This method will find the position of the first "(" and the last ")".
+   * Extract the string between these two positions. Parse it by JSON.parse().
    *
    * @param {string} strJSONP
    *   The JSONP string to be parsed.
@@ -485,9 +491,10 @@ class GVizTQ_UrlComposer
   }
 
   /**
-   * Collects gvizDataTable.rows[ n ].c[ m ].v into a two dimension (column-major)
-   * array. The outer array has m inner sub-arrays (corresponding to m columns).
-   * Every inner sub-array has n elements (corresponding to n rows).
+   * Collects gvizDataTable.rows[ n ].c[ m ].v into a two dimension
+   * (column-major) array. The outer array has m inner sub-arrays
+   * (corresponding to m columns). Every inner sub-array has n elements
+   * (corresponding to n rows).
    *
    * @param {DataTable} gvizDataTable
    *   The DataTable object of Google Visualization API.
@@ -501,7 +508,9 @@ class GVizTQ_UrlComposer
 
     let columnArray = new Array( gvizDataTable.cols.length );
     for ( let columnNo = 0; columnNo < columnArray.length; ++columnNo ) {
-      let rowArray = columnArray[ columnNo ] = new Array( gvizDataTable.rows.length );
+      let rowArray = columnArray[ columnNo ]
+        = new Array( gvizDataTable.rows.length );
+
       for ( let rowNo = 0; rowNo < rowArray.length; ++rowNo ) {
         // Always value (.v), ignore formatted value string (.f).
         rowArray[ rowNo ] = gvizDataTable.rows[ rowNo ]?.c[ columnNo ]?.v;
