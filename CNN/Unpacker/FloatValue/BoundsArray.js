@@ -766,33 +766,48 @@ class BoundsArray extends Recyclable.Root {
   }
 
   /**
-   * @param {number} thisIndex  The array index of this.lowers[] and this.uppers[].
-   * @param {Bounds} aBounds    The bounds to be contained.
+   * @param {number} thisIndex
+   *   The array index of this.lowers[] and this.uppers[].
    *
-   * @return {BoundsArray} Return this (modified) object.
+   * @param {Bounds} aBounds
+   *   The bounds to be contained.
+   *
+   * @return {BoundsArray}
+   *   Return this (modified) object.
    */
-   enlarge_one_byBounds( thisIndex, aBounds ) {
-    return this.enlarge_one_byLowerUpper( thisIndex, aBounds.lower, aBounds.upper );
+  enlarge_one_byBounds( thisIndex, aBounds ) {
+    return this.enlarge_one_byLowerUpper(
+      thisIndex, aBounds.lower, aBounds.upper );
   }
 
   /**
-   * @param {number} thisIndex          The array index of this.lowers[] and this.uppers[].
-   * @param {BoundsArray} aBoundsArray  The bounds array to be contained.
-   * @param {number} aIndex             The array index of aBoundsArray.lowers[] and aBoundsArray.uppers[].
+   * @param {number} thisIndex
+   *   The array index of this.lowers[] and this.uppers[].
    *
-   * @return {BoundsArray} Return this (modified) object.
+   * @param {BoundsArray} aBoundsArray
+   *   The bounds array to be contained.
+   *
+   * @param {number} aIndex
+   *   The array index of aBoundsArray.lowers[] and aBoundsArray.uppers[].
+   *
+   * @return {BoundsArray}
+   *   Return this (modified) object.
    */
-   enlarge_one_byBoundsArray_one( thisIndex, aBoundsArray, aIndex ) {
-    return this.enlarge_one_byLowerUpper( thisIndex, aBoundsArray.lowers[ aIndex ], aBoundsArray.uppers[ aIndex ] );
+  enlarge_one_byBoundsArray_one( thisIndex, aBoundsArray, aIndex ) {
+    return this.enlarge_one_byLowerUpper(
+      thisIndex, aBoundsArray.lowers[ aIndex ], aBoundsArray.uppers[ aIndex ] );
   }
 
 
   /**
-   * @param {number} N  Enlarge every bounds so that [ this.lowers[], this.uppers[] ] contains N.
+   * @param {number} N
+   *   Enlarge every bounds so that [ this.lowers[], this.uppers[] ]
+   * contains N.
    *
-   * @return {Bounds} Return this (modified) object.
+   * @return {Bounds}
+   *   Return this (modified) object.
    */
-   enlarge_all_byN( N ) {
+  enlarge_all_byN( N ) {
     N = Math.fround( N );
     for ( let i = 0; i < this.lowers.length; ++i ) {
       if ( this.lowers[ i ] > N )
@@ -805,11 +820,17 @@ class BoundsArray extends Recyclable.Root {
 
 
   /**
-   * @param {number} thisIndex  The array index of this.lowers[] and this.uppers[].
-   * @param {number} aLower     Clamp this.lowers[ thisIndex ] by aLower.
-   * @param {number} aUpper     Clamp this.uppers[ thisIndex ] by aUpper.
+   * @param {number} thisIndex
+   *   The array index of this.lowers[] and this.uppers[].
    *
-   * @return {BoundsArray} Return this (modified) object.
+   * @param {number} aLower
+   *   Clamp this.lowers[ thisIndex ] by aLower.
+   *
+   * @param {number} aUpper
+   *   Clamp this.uppers[ thisIndex ] by aUpper.
+   *
+   * @return {BoundsArray}
+   *   Return this (modified) object.
    */
   clamp_one_byLowerUpper( thisIndex, aLower, aUpper ) {
     let anotherLower, anotherUpper; // Confirm ( anotherLower <= anotherUpper )
@@ -821,9 +842,13 @@ class BoundsArray extends Recyclable.Root {
       anotherUpper = Math.fround( aLower );
     }
 
-    // Because two bounds may be totally non-intersected, both thisLower and thisUpper needs be clamped by [ aLower, aUpper ].
-    let lower_clamped = Math.min( Math.max( anotherLower, this.lowers[ thisIndex ] ), anotherUpper );
-    let upper_clamped = Math.min( Math.max( anotherLower, this.uppers[ thisIndex ] ), anotherUpper );
+    // Because two bounds may be totally non-intersected, both thisLower and
+    // thisUpper needs be clamped by [ aLower, aUpper ].
+    let lower_clamped = Math.min( Math.max(
+      anotherLower, this.lowers[ thisIndex ] ), anotherUpper );
+
+    let upper_clamped = Math.min( Math.max(
+      anotherLower, this.uppers[ thisIndex ] ), anotherUpper );
 
     if ( lower_clamped < upper_clamped ) { // Confirm ( lower <= upper )
       this.lowers[ thisIndex ] = lower_clamped;
@@ -836,39 +861,59 @@ class BoundsArray extends Recyclable.Root {
   }
 
   /**
-   * @param {number} thisIndex  The array index of this.lowers[] and this.uppers[].
-   * @param {Bounds} aBounds    Clamp ( this.lowers[ thisIndex ], this.uppers[ thisIndex ] ) by ( aBounds.lower, aBounds.upper ).
+   * @param {number} thisIndex
+   *   The array index of this.lowers[] and this.uppers[].
    *
-   * @return {BoundsArray} Return this (modified) object.
+   * @param {Bounds} aBounds
+   *   Clamp ( this.lowers[ thisIndex ], this.uppers[ thisIndex ] ) by
+   * ( aBounds.lower, aBounds.upper ).
+   *
+   * @return {BoundsArray}
+   *   Return this (modified) object.
    */
   clamp_one_byBounds( thisIndex, aBounds ) {
-    return this.clamp_one_byLowerUpper( thisIndex, aBounds.lower, aBounds.upper );
+    return this.clamp_one_byLowerUpper(
+      thisIndex, aBounds.lower, aBounds.upper );
   }
 
   /**
-   * @param {number} thisIndex  The array index of this.lowers[] and this.uppers[].
-   * @param {number[]} aLowers  Clamp this.lowers[ thisIndex ] by aLowers[ aIndex ].
-   * @param {number[]} aUppers  Clamp this.uppers[ thisIndex ] by aUppers[ aIndex ].
-   * @param {number} aIndex     The array index of aLowers[] and aUppers[].
+   * @param {number} thisIndex
+   *   The array index of this.lowers[] and this.uppers[].
    *
-   * @return {BoundsArray} Return this (modified) object.
+   * @param {number[]} aLowers
+   *   Clamp this.lowers[ thisIndex ] by aLowers[ aIndex ].
+   *
+   * @param {number[]} aUppers
+   *   Clamp this.uppers[ thisIndex ] by aUppers[ aIndex ].
+   *
+   * @param {number} aIndex
+   *   The array index of aLowers[] and aUppers[].
+   *
+   * @return {BoundsArray}
+   *   Return this (modified) object.
    */
   clamp_one_byLowersUppers( thisIndex, aLowers, aUppers, aIndex ) {
-    return this.clamp_one_byLowerUpper( thisIndex, aLowers[ aIndex ], aUppers[ aIndex ] );
+    return this.clamp_one_byLowerUpper(
+      thisIndex, aLowers[ aIndex ], aUppers[ aIndex ] );
   }
 
   /**
-   * @param {number} thisIndex  The array index of this.lowers[] and this.uppers[].
+   * @param {number} thisIndex
+   *   The array index of this.lowers[] and this.uppers[].
    *
    * @param {BoundsArray} aBoundsArray
-   *   Clamp ( this.lowers[ thisIndex ], this.uppers[ thisIndex ] ) by ( aBoundsArray.lowers[ aIndex ], aBoundsArray.uppers[ aIndex ] ).
+   *   Clamp ( this.lowers[ thisIndex ], this.uppers[ thisIndex ] ) by
+   * ( aBoundsArray.lowers[ aIndex ], aBoundsArray.uppers[ aIndex ] ).
    *
-   * @param {number} aIndex     The array index of aBoundsArray.lowers[] and aBoundsArray.uppers[].
+   * @param {number} aIndex
+   *   The array index of aBoundsArray.lowers[] and aBoundsArray.uppers[].
    *
-   * @return {BoundsArray} Return this (modified) object.
+   * @return {BoundsArray}
+   *   Return this (modified) object.
    */
   clamp_one_byBoundsArray( thisIndex, aBoundsArray, aIndex ) {
-    return this.clamp_one_byLowerUpper( thisIndex, aBoundsArray.lowers[ aIndex ], aBoundsArray.uppers[ aIndex ] );
+    return this.clamp_one_byLowerUpper(
+      thisIndex, aBoundsArray.lowers[ aIndex ], aBoundsArray.uppers[ aIndex ] );
   }
 
   /**
