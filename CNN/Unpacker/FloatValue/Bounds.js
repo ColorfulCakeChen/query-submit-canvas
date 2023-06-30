@@ -526,34 +526,52 @@ class Bounds extends Recyclable.Root {
   }
 
   /**
-   * @param {number[]} Ns    Add ( this.lower, this.upper ) by ( Ns[ aIndex ], Ns[ aIndex ] ).
-   * @param {number} aIndex  The array index of aLowers[] and aUppers[].
+   * @param {number[]} Ns
+   *   Add ( this.lower, this.upper ) by ( Ns[ aIndex ], Ns[ aIndex ] ).
    *
-   * @return {Bounds} Return this (modified) object.
+   * @param {number} aIndex
+   *   The array index of aLowers[] and aUppers[].
+   *
+   * @return {Bounds}
+   *   Return this (modified) object.
    */
   add_byNs( Ns, aIndex ) {
     return this.add_byN( Ns[ aIndex ] );
   }
 
   /**
-   * @param {number[]} aLowers  Add ( this.lower, this.upper ) by ( aLowers[ aIndex ], aUppers[ aIndex ] ).
-   * @param {number[]} aUppers  Add ( this.lower, this.upper ) by ( aLowers[ aIndex ], aUppers[ aIndex ] ).
-   * @param {number} aIndex     The array index of aLowers[] and aUppers[].
+   * @param {number[]} aLowers
+   *   Add ( this.lower, this.upper ) by
+   * ( aLowers[ aIndex ], aUppers[ aIndex ] ).
    *
-   * @return {Bounds} Return this (modified) object.
+   * @param {number[]} aUppers
+   *   Add ( this.lower, this.upper ) by
+   * ( aLowers[ aIndex ], aUppers[ aIndex ] ).
+   *
+   * @param {number} aIndex
+   *   The array index of aLowers[] and aUppers[].
+   *
+   * @return {Bounds}
+   *   Return this (modified) object.
    */
   add_byLowersUppers( aLowers, aUppers, aIndex ) {
     return this.add_byLowerUpper( aLowers[ aIndex ], aUppers[ aIndex ] );
   }
 
   /**
-   * @param {BoundsArray} aBoundsArray  Add ( this.lower, this.upper ) by ( aBoundsArray.lowers[ aIndex ], aBoundsArray.uppers[ aIndex ] ).
-   * @param {number} aIndex             The array index of aBoundsArray.lowers[] and aBoundsArray.uppers[].
+   * @param {BoundsArray} aBoundsArray
+   *   Add ( this.lower, this.upper ) by
+   * ( aBoundsArray.lowers[ aIndex ], aBoundsArray.uppers[ aIndex ] ).
    *
-   * @return {Bounds} Return this (modified) object.
+   * @param {number} aIndex
+   *   The array index of aBoundsArray.lowers[] and aBoundsArray.uppers[].
+   *
+   * @return {Bounds}
+   *   Return this (modified) object.
    */
   add_byBoundsArray( aBoundsArray, aIndex ) {
-    return this.add_byLowerUpper( aBoundsArray.lowers[ aIndex ], aBoundsArray.uppers[ aIndex ] );
+    return this.add_byLowerUpper(
+      aBoundsArray.lowers[ aIndex ], aBoundsArray.uppers[ aIndex ] );
   }
 
 
@@ -562,13 +580,16 @@ class Bounds extends Recyclable.Root {
    *   The multiplier of this.lower and this.upper.
    *
    * @return {Bounds}
-   *   Return this (modified) object which is the same as this.multiply_LowerUpper( N, N ) or repeating N times this.add_Bounds( this ).
+   *   Return this (modified) object which is the same as
+   * this.multiply_LowerUpper( N, N ) or repeating N times
+   * this.add_Bounds( this ).
    */
   multiply_byN( N ) {
     N = Math.fround( N );
-    // Because the different sign of lower and upper, it needs compute all combinations to determine the bounds of result.
-    let lower_N = Math.fround( this.lower * N );
-    let upper_N = Math.fround( this.upper * N );
+    // Because the different sign of lower and upper, it needs compute all
+    // combinations to determine the bounds of result.
+    const lower_N = Math.fround( this.lower * N );
+    const upper_N = Math.fround( this.upper * N );
     this.lower = Math.min( lower_N, upper_N );
     this.upper = Math.max( lower_N, upper_N );
     return this;
@@ -582,16 +603,18 @@ class Bounds extends Recyclable.Root {
    *   Multiply this Bounds.upper by aUpper.
    *
    * @return {Bounds}
-   *   Return this (modified) object which is multiplied by Bounds [ aLower, aUpper ].
+   *   Return this (modified) object which is multiplied by Bounds
+   * [ aLower, aUpper ].
    */
   multiply_byLowerUpper( aLower, aUpper ) {
     aLower = Math.fround( aLower );
     aUpper = Math.fround( aUpper );
-    // Because the different sign of lower and upper, it needs compute all combination to determine the bounds of result.
-    let lower_lower = Math.fround( this.lower * aLower );
-    let lower_upper = Math.fround( this.lower * aUpper );
-    let upper_lower = Math.fround( this.upper * aLower );
-    let upper_upper = Math.fround( this.upper * aUpper );
+    // Because the different sign of lower and upper, it needs compute all
+    // combination to determine the bounds of result.
+    const lower_lower = Math.fround( this.lower * aLower );
+    const lower_upper = Math.fround( this.lower * aUpper );
+    const upper_lower = Math.fround( this.upper * aLower );
+    const upper_upper = Math.fround( this.upper * aUpper );
     this.lower = Math.min( lower_lower, lower_upper, upper_lower, upper_upper );
     this.upper = Math.max( lower_lower, lower_upper, upper_lower, upper_upper );
     return this;
@@ -609,34 +632,52 @@ class Bounds extends Recyclable.Root {
   }
 
   /**
-   * @param {number[]} Ns    Multiply ( this.lower, this.upper ) by ( Ns[ aIndex ], Ns[ aIndex ] ).
-   * @param {number} aIndex  The array index of aLowers[] and aUppers[].
+   * @param {number[]} Ns
+   *   Multiply ( this.lower, this.upper ) by ( Ns[ aIndex ], Ns[ aIndex ] ).
    *
-   * @return {Bounds} Return this (modified) object.
+   * @param {number} aIndex
+   *   The array index of aLowers[] and aUppers[].
+   *
+   * @return {Bounds}
+   *   Return this (modified) object.
    */
   multiply_byNs( Ns, aIndex ) {
     return this.multiply_byN( Ns[ aIndex ] );
   }
 
   /**
-   * @param {number[]} aLowers  Multiply ( this.lower, this.upper ) by ( aLowers[ aIndex ], aUppers[ aIndex ] ).
-   * @param {number[]} aUppers  Multiply ( this.lower, this.upper ) by ( aLowers[ aIndex ], aUppers[ aIndex ] ).
-   * @param {number} aIndex     The array index of aLowers[] and aUppers[].
+   * @param {number[]} aLowers
+   *   Multiply ( this.lower, this.upper ) by
+   * ( aLowers[ aIndex ], aUppers[ aIndex ] ).
    *
-   * @return {Bounds} Return this (modified) object.
+   * @param {number[]} aUppers
+   *   Multiply ( this.lower, this.upper ) by
+   * ( aLowers[ aIndex ], aUppers[ aIndex ] ).
+   *
+   * @param {number} aIndex
+   *   The array index of aLowers[] and aUppers[].
+   *
+   * @return {Bounds}
+   *   Return this (modified) object.
    */
   multiply_byLowersUppers( aLowers, aUppers, aIndex ) {
     return this.multiply_byLowerUpper( aLowers[ aIndex ], aUppers[ aIndex ] );
   }
 
   /**
-   * @param {BoundsArray} aBoundsArray  Multiply ( this.lower, this.upper ) by ( aBoundsArray.lowers[ aIndex ], aBoundsArray.uppers[ aIndex ] ).
-   * @param {number} aIndex             The array index of aBoundsArray.lowers[] and aBoundsArray.uppers[].
+   * @param {BoundsArray} aBoundsArray
+   *   Multiply ( this.lower, this.upper ) by
+   * ( aBoundsArray.lowers[ aIndex ], aBoundsArray.uppers[ aIndex ] ).
    *
-   * @return {Bounds} Return this (modified) object.
+   * @param {number} aIndex
+   *   The array index of aBoundsArray.lowers[] and aBoundsArray.uppers[].
+   *
+   * @return {Bounds}
+   *   Return this (modified) object.
    */
   multiply_byBoundsArray( aBoundsArray, aIndex ) {
-    return this.multiply_byLowerUpper( aBoundsArray.lowers[ aIndex ], aBoundsArray.uppers[ aIndex ] );
+    return this.multiply_byLowerUpper(
+      aBoundsArray.lowers[ aIndex ], aBoundsArray.uppers[ aIndex ] );
   }
 
   /**
@@ -647,7 +688,8 @@ class Bounds extends Recyclable.Root {
    *   The second multiplier (a number).
    *
    * @return {Bounds}
-   *   Return this (modified) object which is the sumed Bounds of repeating N times of multiplying this by aBounds.
+   *   Return this (modified) object which is the sumed Bounds of repeating N
+   * times of multiplying this by aBounds.
    */
   multiply_byBounds_multiply_byN( aBounds, N ) {
     return this.multiply_byBounds( aBounds ).multiply_byN( N );
@@ -663,9 +705,10 @@ class Bounds extends Recyclable.Root {
    */
   divide_byN( N ) {
     N = Math.fround( N );
-    // Because the different sign of lower and upper, it needs compute all combinations to determine the bounds of result.
-    let lower_N = Math.fround( this.lower / N );
-    let upper_N = Math.fround( this.upper / N );
+    // Because the different sign of lower and upper, it needs compute all
+    // combinations to determine the bounds of result.
+    const lower_N = Math.fround( this.lower / N );
+    const upper_N = Math.fround( this.upper / N );
     this.lower = Math.min( lower_N, upper_N );
     this.upper = Math.max( lower_N, upper_N );
     return this;
