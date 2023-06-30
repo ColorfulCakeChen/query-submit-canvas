@@ -717,10 +717,12 @@ class Bounds extends Recyclable.Root {
 
   /**
    * @param {ScaleTranslate} aScaleTranslate
-   *   Multiply this Bounds by aScaleTranslate.scale, and then add this Bounds by aScaleTranslate.translate.
+   *   Multiply this Bounds by aScaleTranslate.scale, and then add this Bounds
+   * by aScaleTranslate.translate.
    *
    * @return {Bounds}
-   *   Return this (modified) object which is the same as this.multiply_N( aScaleTranslate.scale ).add_N( aScaleTranslate.translate ).
+   *   Return this (modified) object which is the same as
+   * this.multiply_N( aScaleTranslate.scale ).add_N( aScaleTranslate.translate ).
    */
   scaleTranslate_byScaleTranslate( aScaleTranslate ) {
     return this.multiply_byN( aScaleTranslate.scale ).add_byN( aScaleTranslate.translate );
@@ -728,11 +730,13 @@ class Bounds extends Recyclable.Root {
 
   /**
    * @param {number} value
-   *   The value to be clamped. (will be converted to 32-bits floating-point number)
+   *   The value to be clamped. (will be converted to 32-bits floating-point
+   * number.)
    *
    * @return {number}
-   *   Return value clamped between this Bounds [ this.lower, this.upper ]. If value is NaN, it will become zero first and then be clamped
-   * between this Bounds [ this.lower, this.upper ].
+   *   Return value clamped between this Bounds [ this.lower, this.upper ]. If
+   * value is NaN, it will become zero first and then be clamped between this
+   * Bounds [ this.lower, this.upper ].
    */
   clamp_or_zeroIfNaN( value ) {
     value = Math.fround( value );
@@ -757,7 +761,7 @@ class Bounds extends Recyclable.Root {
   Float32Array_RestrictedClone( sourceArray ) {
     let resultArray = new Float32Array( sourceArray.length );
     for ( let i = 0; i < sourceArray.length; ++i ) {
-      let element = Math.fround( sourceArray[ i ] );
+      const element = Math.fround( sourceArray[ i ] );
       if ( !Number.isNaN( element ) ) {
         resultArray[ i ]
           = Math.max( this.lower, Math.min( element, this.upper ) );
@@ -776,4 +780,3 @@ class Bounds extends Recyclable.Root {
   }
 
 }
-
