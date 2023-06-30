@@ -611,13 +611,15 @@ class BoundsArray extends Recyclable.Root {
     let inChannel = 0;
 
     if ( inputBoundsArray0 ) {
-      for ( let inChannel0 = 0; inChannel0 < inputBoundsArray0.length; ++inChannel0, ++inChannel ) {
+      for ( let inChannel0 = 0;
+        inChannel0 < inputBoundsArray0.length; ++inChannel0, ++inChannel ) {
         this.set_one_byBoundsArray( inChannel, inputBoundsArray0, inChannel0 );
       }
     }
 
     if ( inputBoundsArray1 ) {
-      for ( let inChannel1 = 0; inChannel1 < inputBoundsArray1.length; ++inChannel1, ++inChannel ) {
+      for ( let inChannel1 = 0;
+        inChannel1 < inputBoundsArray1.length; ++inChannel1, ++inChannel ) {
         this.set_one_byBoundsArray( inChannel, inputBoundsArray1, inChannel1 );
       }
     }
@@ -626,17 +628,25 @@ class BoundsArray extends Recyclable.Root {
   }
 
   /**
-   * Rearrange bounds by interleaving as ( groupCount == 2 ). This element count must be even (i.e. divisible by 2).
+   * Rearrange bounds by interleaving as ( groupCount == 2 ). This element
+   * count must be even (i.e. divisible by 2).
    *
    * @param {Array} arrayTemp
-   *   A temporary array for placing the original elements temporarily. Providing this array could reduce memory re-allocation
-   * and improve performance.
+   *   A temporary array for placing the original elements temporarily.
+   * Providing this array could reduce memory re-allocation and improve
+   * performance.
    *
-   * @return {BoundsArray} Return this (modified) object.
+   * @return {BoundsArray}
+   *   Return this (modified) object.
    */
   set_all_byInterleave_asGrouptTwo_inPlace( arrayTemp ) {
-    ArrayInterleaver.interleave_asGrouptTwo_alongWidth_inPlace( this.lowers, 1, this.lowers.length, arrayTemp );
-    ArrayInterleaver.interleave_asGrouptTwo_alongWidth_inPlace( this.uppers, 1, this.uppers.length, arrayTemp );
+
+    ArrayInterleaver.interleave_asGrouptTwo_alongWidth_inPlace(
+      this.lowers, 1, this.lowers.length, arrayTemp );
+
+    ArrayInterleaver.interleave_asGrouptTwo_alongWidth_inPlace(
+      this.uppers, 1, this.uppers.length, arrayTemp );
+
     return this;
   }
 
@@ -647,7 +657,8 @@ class BoundsArray extends Recyclable.Root {
    *   The source BoundsArray to be copied from. Its element count must be even
    * (i.e. divisible by 2).
    *
-   * @return {BoundsArray} Return this (modified) object.
+   * @return {BoundsArray}
+   *   Return this (modified) object.
    */
   set_all_byInterleave_asGrouptTwo_byBoundsArray( aBoundsArray ) {
     let elementCount = aBoundsArray.length;
@@ -675,9 +686,11 @@ class BoundsArray extends Recyclable.Root {
    * Rearrange bounds by undoing interleaving as ( groupCount == 2 ).
    *
    * @param {BoundsArray} aBoundsArray
-   *   The source BoundsArray to be copied from. Its element count must be even (i.e. divisible by 2).
+   *   The source BoundsArray to be copied from. Its element count must be even
+   * (i.e. divisible by 2).
    *
-   * @return {BoundsArray} Return this (modified) object.
+   * @return {BoundsArray}
+   *   Return this (modified) object.
    */
   set_all_byInterleave_asGrouptTwo_undo_byBoundsArray( aBoundsArray ) {
     let elementCount = aBoundsArray.length;
@@ -685,7 +698,8 @@ class BoundsArray extends Recyclable.Root {
     if ( ( elementCount % 2 ) != 0 )
       throw Error( `FloatValue.BoundsArray`
         + `.set_all_byInterleave_asGrouptTwo_undo_byBoundsArray(): `
-        + `elementCount ( ${elementCount} ) must be even (i.e. divisible by 2).`
+        + `elementCount ( ${elementCount} ) `
+        + `must be even (i.e. divisible by 2).`
       );
 
     this.length = elementCount;
@@ -702,10 +716,15 @@ class BoundsArray extends Recyclable.Root {
 
 
   /**
-   * @param {number} thisIndex  The array index of this.lowers[] and this.uppers[].
-   * @param {number} N          Enlarge bounds so that [ this.lowers[ thisIndex ], this.uppers[ thisIndex ] ] contains N.
+   * @param {number} thisIndex
+   *   The array index of this.lowers[] and this.uppers[].
    *
-   * @return {BoundsArray} Return this (modified) object.
+   * @param {number} N
+   *   Enlarge bounds so that [ this.lowers[ thisIndex ],
+   * this.uppers[ thisIndex ] ] contains N.
+   *
+   * @return {BoundsArray}
+   *   Return this (modified) object.
    */
    enlarge_one_byN( thisIndex, N ) {
     N = Math.fround( N );
@@ -717,11 +736,17 @@ class BoundsArray extends Recyclable.Root {
   }
 
   /**
-   * @param {number} thisIndex  The array index of this.lowers[] and this.uppers[].
-   * @param {number} aLower     The lower bound to be contained.
-   * @param {number} aUpper     The upper bound to be contained.
+   * @param {number} thisIndex
+   *   The array index of this.lowers[] and this.uppers[].
    *
-   * @return {BoundsArray} Return this (modified) object.
+   * @param {number} aLower
+   *   The lower bound to be contained.
+   *
+   * @param {number} aUpper
+   *   The upper bound to be contained.
+   *
+   * @return {BoundsArray}
+   *   Return this (modified) object.
    */
    enlarge_one_byLowerUpper( thisIndex, aLower, aUpper ) {
     let lower, upper; // Confirm ( lower <= upper ).
