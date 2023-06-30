@@ -49,26 +49,43 @@ class ArrayInterleaver {
   }
 
   /**
-   * Rearrange array elements so that it undo the .interleave_asGrouptTwo_from_to().
+   * Rearrange array elements so that it undo the
+   * .interleave_asGrouptTwo_from_to().
    *   - Only ( groupCount == 2 ) is supported.
    *
    * The fromArray and toArray can not be an overlapped array.
    *   - They could be different array. Or,
-   *   - Thay could be the same array but fromArray[ fromIndex ] to fromArray[ fromIndex + ( 2 * elementCountHalf ) - 1 ] and
-   *       toArray[ toIndex ] to toArray[ toIndex + ( 2 * elementCountHalf ) - 1 ] can not overlapped.
+   *   - Thay could be the same array but fromArray[ fromIndex ] to
+   *       fromArray[ fromIndex + ( 2 * elementCountHalf ) - 1 ] and
+   *       toArray[ toIndex ] to toArray[ toIndex + ( 2 * elementCountHalf ) - 1 ]
+   *       can not overlapped.
    *
-   * @param {Array} fromArray   The source array. It will not be modified. It is the source of copying.
-   * @param {number} fromIndex  The copying will begin at fromArray[ fromIndex ].
-   * @param {Array} toArray     The destination array. It will be modified (i.e. filled data copied from fromArray).
-   * @param {number} toIndex    The writing will begin at toArray[ toIndex ].
+   * @param {Array} fromArray
+   *   The source array. It will not be modified. It is the source of copying.
+   *
+   * @param {number} fromIndex
+   *   The copying will begin at fromArray[ fromIndex ].
+   *
+   * @param {Array} toArray
+   *   The destination array. It will be modified (i.e. filled data copied from
+   * fromArray).
+   *
+   * @param {number} toIndex
+   *   The writing will begin at toArray[ toIndex ].
    *
    * @param {number} elementCountHalf
-   *   There will be ( 2 * elementCountHalf ) elements copied from fromArray[ fromIndex ] to toArray[ toIndex ] but in a re-arranged
+   *   There will be ( 2 * elementCountHalf ) elements copied from
+   * fromArray[ fromIndex ] to toArray[ toIndex ] but in a re-arranged
    * interleaved-undo order.
    *
    */
-  static interleave_asGrouptTwo_from_to_undo( fromArray, fromIndex, toArray, toIndex, elementCountHalf ) {
-    for ( let i = 0, from = fromIndex, to = toIndex; i < elementCountHalf; ++i, from += 2, ++to ) {
+  static interleave_asGrouptTwo_from_to_undo(
+    fromArray, fromIndex, toArray, toIndex, elementCountHalf ) {
+
+    for ( let i = 0, from = fromIndex, to = toIndex;
+      i < elementCountHalf;
+      ++i, from += 2, ++to ) {
+
       toArray[ to ] = fromArray[ from ];
       toArray[ to + elementCountHalf ] = fromArray[ from + 1 ];
     }
