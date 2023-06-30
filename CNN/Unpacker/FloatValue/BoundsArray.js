@@ -83,8 +83,11 @@ class BoundsArray extends Recyclable.Root {
 
 
   /**
-   * @param {number} thisIndex  The array index of this.lowers[] and this.uppers[].
-   * @param {number} N          The value to be compared.
+   * @param {number} thisIndex
+   *   The array index of this.lowers[] and this.uppers[].
+   *
+   * @param {number} N
+   *   The value to be compared.
    *
    * @return {boolean}
    *   Return true, if ( .lowers[ thisIndex ] <= N ) and
@@ -92,15 +95,21 @@ class BoundsArray extends Recyclable.Root {
    */
   is_one_contain_N( thisIndex, N ) {
     N = Math.fround( N );
-    if ( ( this.lowers[ thisIndex ] <= N ) && ( this.uppers[ thisIndex ] >= N ) )
+    if (   ( this.lowers[ thisIndex ] <= N )
+        && ( this.uppers[ thisIndex ] >= N ) )
       return true;
     return false;
   }
 
   /**
-   * @param {number} thisIndex  The array index of this.lowers[] and this.uppers[].
-   * @param {number} aLower     The lower bound to be compared.
-   * @param {number} aUpper     The upper bound to be compared.
+   * @param {number} thisIndex
+   *   The array index of this.lowers[] and this.uppers[].
+   *
+   * @param {number} aLower
+   *   The lower bound to be compared.
+   *
+   * @param {number} aUpper
+   *   The upper bound to be compared.
    *
    * @return {boolean}
    *   Return true, if ( .lowers[ thisIndex ] <= aLower ) and
@@ -116,27 +125,37 @@ class BoundsArray extends Recyclable.Root {
       upper = Math.fround( aLower );
     }
 
-    if ( ( this.lowers[ thisIndex ] <= lower ) && ( this.uppers[ thisIndex ] >= upper ) )
+    if (   ( this.lowers[ thisIndex ] <= lower )
+        && ( this.uppers[ thisIndex ] >= upper ) )
       return true;
     return false;
   }
 
   /**
-   * @param {number} thisIndex  The array index of this.lowers[] and this.uppers[].
-   * @param {Bounds} aBounds    The bounds to be compared.
+   * @param {number} thisIndex
+   *   The array index of this.lowers[] and this.uppers[].
+   *
+   * @param {Bounds} aBounds
+   *   The bounds to be compared.
    *
    * @return {boolean}
    *   Return true, if ( .lowers[ thisIndex ] <= aBounds.lower )
    * and ( .uppers[ thisIndex ] >= aBounds.upper ).
    */
   is_one_contain_Bounds( thisIndex, aBounds ) {
-    return this.is_one_contain_LowerUpper( thisIndex, aBounds.lower, aBounds.upper );
+    return this.is_one_contain_LowerUpper(
+      thisIndex, aBounds.lower, aBounds.upper );
   }
 
   /**
-   * @param {number} thisIndex          The array index of this.lowers[] and this.uppers[].
-   * @param {BoundsArray} aBoundsArray  The bounds array to be compared.
-   * @param {number} aIndex             The array index of aBoundsArray.lowers[] and aBoundsArray.uppers[].
+   * @param {number} thisIndex
+   *   The array index of this.lowers[] and this.uppers[].
+   *
+   * @param {BoundsArray} aBoundsArray
+   *   The bounds array to be compared.
+   *
+   * @param {number} aIndex
+   *   The array index of aBoundsArray.lowers[] and aBoundsArray.uppers[].
    *
    * @return {boolean}
    *   Return true, if ( .lowers[ thisIndex ] <= aBoundsArray.lowers[ aIndex ] )
@@ -148,9 +167,11 @@ class BoundsArray extends Recyclable.Root {
   }
 
   /**
-   * @param {number} N  The value to be compared.
+   * @param {number} N
+   *   The value to be compared.
    *
-   * @return {boolean} Return true, if ( .lowers[] <= N ) and ( .uppers[] >= N ).
+   * @return {boolean}
+   *   Return true, if ( .lowers[] <= N ) and ( .uppers[] >= N ).
    */
   is_all_contain_N( N ) {
     N = Math.fround( N );
@@ -163,8 +184,11 @@ class BoundsArray extends Recyclable.Root {
   }
 
   /**
-   * @param {number} aLower  The lower bound to be compared.
-   * @param {number} aUpper  The upper bound to be compared.
+   * @param {number} aLower
+   *   The lower bound to be compared.
+   *
+   * @param {number} aUpper
+   *   The upper bound to be compared.
    *
    * @return {boolean}
    *   Return true, if ( .lowers[] <= aLower ) and ( .uppers[] >= aUpper ).
@@ -188,7 +212,8 @@ class BoundsArray extends Recyclable.Root {
   }
 
   /**
-   * @param {Bounds} aBounds  The bounds to be compared.
+   * @param {Bounds} aBounds
+   *   The bounds to be compared.
    *
    * @return {boolean}
    *   Return true, if ( .lowers[] <= aBounds.lower ) and
@@ -199,8 +224,11 @@ class BoundsArray extends Recyclable.Root {
   }
 
   /**
-   * @param {BoundsArray} aBoundsArray  The bounds array to be compared.
-   * @param {number} aIndex             The array index of aBoundsArray.lowers[] and aBoundsArray.uppers[].
+   * @param {BoundsArray} aBoundsArray
+   *   The bounds array to be compared.
+   *
+   * @param {number} aIndex
+   *   The array index of aBoundsArray.lowers[] and aBoundsArray.uppers[].
    *
    * @return {boolean}
    *   Return true, if ( .lowers[] <= aBoundsArray.lowers[ aIndex ] )
@@ -213,9 +241,14 @@ class BoundsArray extends Recyclable.Root {
 
 
   /**
-   * @param {number} thisIndex  The array index of this.lowers[] and this.uppers[].
-   * @param {number} aLower     The lower bound to be compared.
-   * @param {number} aUpper     The upper bound to be compared.
+   * @param {number} thisIndex
+   *   The array index of this.lowers[] and this.uppers[].
+   *
+   * @param {number} aLower
+   *   The lower bound to be compared.
+   *
+   * @param {number} aUpper
+   *   The upper bound to be compared.
    *
    * @return {boolean}
    *   Return true, if ( .lowers[ thisIndex ] >= aLower ) and
@@ -231,7 +264,8 @@ class BoundsArray extends Recyclable.Root {
       upper = Math.fround( aLower );
     }
 
-    if ( ( this.lowers[ thisIndex ] >= lower ) && ( this.uppers[ thisIndex ] <= upper ) )
+    if (   ( this.lowers[ thisIndex ] >= lower )
+        && ( this.uppers[ thisIndex ] <= upper ) )
       return true;
     return false;
   }
