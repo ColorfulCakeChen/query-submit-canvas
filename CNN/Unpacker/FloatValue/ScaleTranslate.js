@@ -1,9 +1,9 @@
 export { ScaleTranslate };
 
 /**
- * Describe a scale (i.e. multiplier) 32-bits floating-point value, and then a translate
- * (i.e. offset; bias) 32-bits floating-point value after the scale. Note that the order
- * is important: scale first, translate second.
+ * Describe a scale (i.e. multiplier) 32-bits floating-point value, and then a
+ * translate (i.e. offset; bias) 32-bits floating-point value after the scale.
+ * Note that the order is important: scale first, translate second.
  *
  * @member {number} scale
  *   The scale (i.e. multiplier) value.
@@ -22,7 +22,10 @@ class ScaleTranslate {
     return new ScaleTranslate( this.scale, this.translate );
   }
 
-  /** (Re)set all scale-translate values. Default is ( scale = 1, translate = 0 ) (i.e. no scale and no translate). */
+  /**
+   * (Re)set all scale-translate values. Default is ( scale = 1, translate = 0 )
+   * (i.e. no scale and no translate).
+   */
   set_by_scale_translate( scale = 1, translate = 0 ) {
     this.scale = Math.fround( scale );
     this.translate = Math.fround( translate );
@@ -39,20 +42,25 @@ class ScaleTranslate {
 
 
   /**
-   * Set this.scale and this.translate so that they could undo the specified previous scale-translate.
+   * Set this.scale and this.translate so that they could undo the specified
+   * previous scale-translate.
    *
    * @param {ScaleTranslate} aScaleTranslate
    *   The scale-translate to be undone.
    */
   set_byUndo_ScaleTranslate( aScaleTranslate ) {
-    this.scale = Math.fround( 1 / aScaleTranslate.scale );  // Reciprocal will undo the scale. (Note: Not work for zero.)
+    // Reciprocal will undo the scale. (Note: Not work for zero.)
+    this.scale = Math.fround( 1 / aScaleTranslate.scale );
 
-    // Negative translate, and multiply by undo-scale because translate comes after scale.
-    this.translate = Math.fround( ( - aScaleTranslate.translate ) * this.scale );
+    // Negative translate, and multiply by undo-scale because translate comes
+    // after scale.
+    this.translate
+      = Math.fround( ( - aScaleTranslate.translate ) * this.scale );
   }
 
   /**
-   * Set this.scale and this.translate for mapping values from source bounds to target bounds.
+   * Set this.scale and this.translate for mapping values from source bounds to
+   * target bounds.
    *
    * @param {Bounds} source
    *   The range of the source value.
@@ -61,7 +69,8 @@ class ScaleTranslate {
    *   The range of the target value.
    */
   set_by_fromBounds_ToBounds( source, target ) {
-    // Suppose x is a value inside the source range. y is the corresponding value inside the target range.
+    // Suppose x is a value inside the source range. y is the corresponding
+    // value inside the target range.
     //
     //   y = target.lower + ( target.difference * ( x - source.lower ) / source.difference )
     //     = target.lower + ( ( ( target.difference * x ) - ( target.difference * source.lower ) ) / source.difference )
@@ -95,9 +104,12 @@ class ScaleTranslate {
    *   The another scale-translate which will be applied on this object.
    */
   scaleTranslate_byScaleTranslate( aScaleTranslate ) {
-   this.scale =     Math.fround( Math.fround( this.scale     * aScaleTranslate.scale ) + aScaleTranslate.translate );
-   this.translate = Math.fround( Math.fround( this.translate * aScaleTranslate.scale ) + aScaleTranslate.translate );
+
+    this.scale = Math.fround( Math.fround(
+      this.scale     * aScaleTranslate.scale ) + aScaleTranslate.translate );
+
+    this.translate = Math.fround( Math.fround(
+      this.translate * aScaleTranslate.scale ) + aScaleTranslate.translate );
   }
 
 }
-
