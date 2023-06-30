@@ -271,8 +271,11 @@ class BoundsArray extends Recyclable.Root {
   }
 
   /**
-   * @param {number} thisIndex  The array index of this.lowers[] and this.uppers[].
-   * @param {Bounds} aBounds    The bounds to be compared.
+   * @param {number} thisIndex
+   *   The array index of this.lowers[] and this.uppers[].
+   *
+   * @param {Bounds} aBounds
+   *   The bounds to be compared.
    *
    * @return {boolean}
    *   Return true, if ( .lowers[ thisIndex ] >= aBounds.lower )
@@ -283,9 +286,14 @@ class BoundsArray extends Recyclable.Root {
   }
 
   /**
-   * @param {number} thisIndex          The array index of this.lowers[] and this.uppers[].
-   * @param {BoundsArray} aBoundsArray  The bounds array to be compared.
-   * @param {number} aIndex             The array index of aBoundsArray.lowers[] and aBoundsArray.uppers[].
+   * @param {number} thisIndex
+   *   The array index of this.lowers[] and this.uppers[].
+   *
+   * @param {BoundsArray} aBoundsArray
+   *   The bounds array to be compared.
+   *
+   * @param {number} aIndex
+   *   The array index of aBoundsArray.lowers[] and aBoundsArray.uppers[].
    *
    * @return {boolean}
    *   Return true, if ( .lowers[ thisIndex ] >= aBoundsArray.lowers[ aIndex ] )
@@ -297,8 +305,11 @@ class BoundsArray extends Recyclable.Root {
   }
 
   /**
-   * @param {number} aLower  The lower bound to be compared.
-   * @param {number} aUpper  The upper bound to be compared.
+   * @param {number} aLower
+   *   The lower bound to be compared.
+   *
+   * @param {number} aUpper
+   *   The upper bound to be compared.
    *
    * @return {boolean}
    *   Return true, if ( .lowers[] >= aLower ) and ( .uppers[] <= aUpper ).
@@ -322,7 +333,8 @@ class BoundsArray extends Recyclable.Root {
   }
 
   /**
-   * @param {Bounds} aBounds  The bounds to be compared.
+   * @param {Bounds} aBounds
+   *   The bounds to be compared.
    *
    * @return {boolean}
    *   Return true, if ( .lowers[] >= aBounds.lower ) and
@@ -333,8 +345,11 @@ class BoundsArray extends Recyclable.Root {
   }
 
   /**
-   * @param {BoundsArray} aBoundsArray  The bounds array to be compared.
-   * @param {number} aIndex             The array index of aBoundsArray.lowers[] and aBoundsArray.uppers[].
+   * @param {BoundsArray} aBoundsArray
+   *   The bounds array to be compared.
+   *
+   * @param {number} aIndex
+   *   The array index of aBoundsArray.lowers[] and aBoundsArray.uppers[].
    *
    * @return {boolean}
    *   Return true, if ( .lowers[] >= aBoundsArray.lowers[ aIndex ] )
@@ -347,10 +362,14 @@ class BoundsArray extends Recyclable.Root {
 
 
   /**
-   * @param {number} thisIndex  The array index of this.lowers[] and this.uppers[].
-   * @param {number} N          Set ( this.lowers[ thisIndex ], this.uppers[ thisIndex ] ) by ( N, N ).
+   * @param {number} thisIndex
+   *   The array index of this.lowers[] and this.uppers[].
    *
-   * @return {BoundsArray} Return this (modified) object.
+   * @param {number} N
+   *   Set ( this.lowers[ thisIndex ], this.uppers[ thisIndex ] ) by ( N, N ).
+   *
+   * @return {BoundsArray}
+   *   Return this (modified) object.
    */
   set_one_byN( thisIndex, N ) {
     N = Math.fround( N );
@@ -360,11 +379,17 @@ class BoundsArray extends Recyclable.Root {
   }
 
   /**
-   * @param {number} thisIndex  The array index of this.lowers[] and this.uppers[].
-   * @param {number} aLower     Set this.lowers[ thisIndex ] by aLower.
-   * @param {number} aUpper     Set this.uppers[ thisIndex ] by aUpper.
+   * @param {number} thisIndex
+   *   The array index of this.lowers[] and this.uppers[].
    *
-   * @return {BoundsArray} Return this (modified) object.
+   * @param {number} aLower
+   *   Set this.lowers[ thisIndex ] by aLower.
+   *
+   * @param {number} aUpper
+   *   Set this.uppers[ thisIndex ] by aUpper.
+   *
+   * @return {BoundsArray}
+   *   Return this (modified) object.
    */
   set_one_byLowerUpper( thisIndex, aLower, aUpper ) {
     if ( aLower < aUpper ) { // Confirm ( lower <= upper ).
@@ -378,8 +403,12 @@ class BoundsArray extends Recyclable.Root {
   }
 
   /**
-   * @param {number} thisIndex  The array index of this.lowers[] and this.uppers[].
-   * @param {Bounds} aBounds    Set ( this.lowers[ thisIndex ], this.uppers[ thisIndex ] ) by ( aBounds.lower, aBounds.upper ).
+   * @param {number} thisIndex
+   *   The array index of this.lowers[] and this.uppers[].
+   *
+   * @param {Bounds} aBounds
+   *   Set ( this.lowers[ thisIndex ], this.uppers[ thisIndex ] ) by
+   * ( aBounds.lower, aBounds.upper ).
    *
    * @return {BoundsArray}
    *   Return this (modified) object whose values are copied from aBounds.
@@ -389,40 +418,61 @@ class BoundsArray extends Recyclable.Root {
   }
 
   /**
-   * @param {number} thisIndex  The array index of this.lowers[] and this.uppers[].
-   * @param {number[]} Ns       Set ( this.lowers[ thisIndex ], this.uppers[ thisIndex ] ) by ( Ns[ aIndex ], Ns[ aIndex ] ).
-   * @param {number} aIndex     The array index of Ns[].
+   * @param {number} thisIndex
+   *   The array index of this.lowers[] and this.uppers[].
    *
-   * @return {BoundsArray} Return this (modified) object.
+   * @param {number[]} Ns
+   *   Set ( this.lowers[ thisIndex ], this.uppers[ thisIndex ] ) by
+   * ( Ns[ aIndex ], Ns[ aIndex ] ).
+   *
+   * @param {number} aIndex
+   *   The array index of Ns[].
+   *
+   * @return {BoundsArray}
+   *   Return this (modified) object.
    */
   set_one_byNs( thisIndex, Ns, aIndex ) {
     return this.set_one_byN( thisIndex, Ns[ aIndex ] );
   }
 
   /**
-   * @param {number} thisIndex  The array index of this.lowers[] and this.uppers[].
-   * @param {number[]} aLowers  Set this.lowers[ thisIndex ] by aLowers[ aIndex ].
-   * @param {number[]} aUppers  Set this.uppers[ thisIndex ] by aUppers[ aIndex ].
-   * @param {number} aIndex     The array index of aLowers[] and aUppers[].
+   * @param {number} thisIndex
+   *   The array index of this.lowers[] and this.uppers[].
    *
-   * @return {BoundsArray} Return this (modified) object.
+   * @param {number[]} aLowers
+   *   Set this.lowers[ thisIndex ] by aLowers[ aIndex ].
+   *
+   * @param {number[]} aUppers
+   *   Set this.uppers[ thisIndex ] by aUppers[ aIndex ].
+   *
+   * @param {number} aIndex
+   *   The array index of aLowers[] and aUppers[].
+   *
+   * @return {BoundsArray}
+   *   Return this (modified) object.
    */
   set_one_byLowersUppers( thisIndex, aLowers, aUppers, aIndex ) {
-    return this.set_one_byLowerUpper( thisIndex, aLowers[ aIndex ], aUppers[ aIndex ] );
+    return this.set_one_byLowerUpper(
+      thisIndex, aLowers[ aIndex ], aUppers[ aIndex ] );
   }
 
   /**
-   * @param {number} thisIndex     The array index of this.lowers[] and this.uppers[].
+   * @param {number} thisIndex
+   *   The array index of this.lowers[] and this.uppers[].
    *
    * @param {Bounds} aBoundsArray
-   *   Set ( this.lowers[ thisIndex ], this.uppers[ thisIndex ] ) by ( aBoundsArray.lowers[ aIndex ], aBoundsArray.uppers[ aIndex ] ).
+   *   Set ( this.lowers[ thisIndex ], this.uppers[ thisIndex ] ) by
+   * ( aBoundsArray.lowers[ aIndex ], aBoundsArray.uppers[ aIndex ] ).
    *
-   * @param {number} aIndex        The array index of aBoundsArray.lowers[] and aBoundsArray.uppers[].
+   * @param {number} aIndex
+   *   The array index of aBoundsArray.lowers[] and aBoundsArray.uppers[].
    *
-   * @return {BoundsArray} Return this (modified) object.
+   * @return {BoundsArray}
+   *   Return this (modified) object.
    */
   set_one_byBoundsArray( thisIndex, aBoundsArray, aIndex ) {
-    return this.set_one_byLowersUppers( thisIndex, aBoundsArray.lowers, aBoundsArray.uppers, aIndex );
+    return this.set_one_byLowersUppers(
+      thisIndex, aBoundsArray.lowers, aBoundsArray.uppers, aIndex );
   }
 
 
