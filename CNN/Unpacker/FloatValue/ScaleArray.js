@@ -16,9 +16,11 @@ import { ArrayInterleaver } from "./ArrayInterleaver.js";
 class ScaleArray extends Recyclable.Root {
 
   /**
-   * Used as default FloatValue.ScaleArray provider for conforming to Recyclable interface.
+   * Used as default FloatValue.ScaleArray provider for conforming to
+   * Recyclable interface.
    */
-  static Pool = new Pool.Root( "FloatValue.ScaleArray.Pool", ScaleArray, ScaleArray.setAsConstructor );
+  static Pool = new Pool.Root( "FloatValue.ScaleArray.Pool",
+    ScaleArray, ScaleArray.setAsConstructor );
 
   /**
    */
@@ -57,7 +59,8 @@ class ScaleArray extends Recyclable.Root {
   }
 
   /**
-   * @return {ScaleArray} Return a newly created ScaleArray which is a copy of this ScaleArray.
+   * @return {ScaleArray}
+   *   Return a newly created ScaleArray which is a copy of this ScaleArray.
    */
   clone() {
     let result = ScaleArray.Pool.get_or_create_by( this.scales.length );
@@ -67,9 +70,11 @@ class ScaleArray extends Recyclable.Root {
 
 
   /**
-   * @param {number} N  The value to be compared.
+   * @param {number} N
+   *   The value to be compared.
    *
-   * @return {boolean} Return true, if all .scales[] equal to N.
+   * @return {boolean}
+   *   Return true, if all .scales[] equal to N.
    */
   is_all_EQ_byN( N = 1 ) {
     N = Math.fround( N );
@@ -82,10 +87,15 @@ class ScaleArray extends Recyclable.Root {
 
 
   /**
-   * @param {number} thisIndex  The array index of this.scales[].
-   * @param {number} N          Set ( this.scales[ thisIndex ] ) by ( N ). Default are ( N = 1 ) (i.e. no scale).
+   * @param {number} thisIndex
+   *   The array index of this.scales[].
    *
-   * @return {ScaleArray} Return this (modified) object.
+   * @param {number} N
+   *   Set ( this.scales[ thisIndex ] ) by ( N ). Default are ( N = 1 ) (i.e.
+   * no scale).
+   *
+   * @return {ScaleArray}
+   *   Return this (modified) object.
    */
   set_one_byN( thisIndex, N = 1 ) {
     this.scales[ thisIndex ] = Math.fround( N );
@@ -93,33 +103,46 @@ class ScaleArray extends Recyclable.Root {
   }
 
   /**
-   * @param {number} thisIndex  The array index of this.scales[].
-   * @param {number[]} Ns       Set ( this.scales[ thisIndex ] ) by ( Ns[ aIndex ] ).
-   * @param {number} aIndex     The array index of Ns[].
+   * @param {number} thisIndex
+   *   The array index of this.scales[].
    *
-   * @return {ScaleArray} Return this (modified) object.
+   * @param {number[]} Ns
+   *   Set ( this.scales[ thisIndex ] ) by ( Ns[ aIndex ] ).
+   *
+   * @param {number} aIndex
+   *   The array index of Ns[].
+   *
+   * @return {ScaleArray}
+   *   Return this (modified) object.
    */
   set_one_byNs( thisIndex, Ns, aIndex ) {
     return this.set_one_byN( thisIndex, Ns[ aIndex ] );
   }
 
   /**
-   * @param {number} thisIndex        The array index of this.scales[].
-   * @param {ScaleArray} aScaleArray  Set ( this.scales[ thisIndex ] ) by ( aScaleArray.scales[ aIndex ] ).
-   * @param {number} aIndex           The array index of aScaleArray.scales[].
+   * @param {number} thisIndex
+   *   The array index of this.scales[].
    *
-   * @return {ScaleArray} Return this (modified) object.
+   * @param {ScaleArray} aScaleArray
+   *   Set ( this.scales[ thisIndex ] ) by ( aScaleArray.scales[ aIndex ] ).
+   *
+   * @param {number} aIndex
+   *   The array index of aScaleArray.scales[].
+   *
+   * @return {ScaleArray}
+   *   Return this (modified) object.
    */
   set_one_byScaleArray( thisIndex, aScaleArray, aIndex ) {
     return this.set_one_byN( thisIndex, aScaleArray.scales[ aIndex ] );
   }
 
   /**
-   * Set this.scales[ thisIndex ] to a scale value which could let source bounds [ fromLower, fromUpper ] completely insides destination
-   * bounds [ toLower, toUpper ].
+   * Set this.scales[ thisIndex ] to a scale value which could let source
+   * bounds [ fromLower, fromUpper ] completely insides destination bounds
+   * [ toLower, toUpper ].
    *
-   * Note: this.scales[ thisIndex ] may become Number.NaN, if it is impossible to let source bounds completely insides destination
-   * bounds.
+   * Note: this.scales[ thisIndex ] may become Number.NaN, if it is impossible
+   *       to let source bounds completely insides destination bounds.
    *
    * @param {number} thisIndex  The array index of this.scales[].
    * @param {number} fromLower  The source bounds [ fromLower, fromUpper ]
@@ -129,8 +152,12 @@ class ScaleArray extends Recyclable.Root {
    *
    * @return {ScaleArray} Return this (modified) object.
    */
-  set_one_by_fromLowerUpper_toLowerUpper( thisIndex, fromLower, fromUpper, toLower, toUpper ) {
-    let aScale = ScaleArray.calc_scale_by_fromLowerUpper_toLowerUpper( fromLower, fromUpper, toLower, toUpper );
+  set_one_by_fromLowerUpper_toLowerUpper(
+    thisIndex, fromLower, fromUpper, toLower, toUpper ) {
+
+    let aScale = ScaleArray.calc_scale_by_fromLowerUpper_toLowerUpper(
+      fromLower, fromUpper, toLower, toUpper );
+
     this.scales[ thisIndex ] = aScale;
     return this;
   }
@@ -142,7 +169,8 @@ class ScaleArray extends Recyclable.Root {
    * @return {ScaleArray} Return this (modified) object.
    */
   set_one_byUndo_N( thisIndex, N ) {
-    this.scales[ thisIndex ] = Math.fround( 1 / Math.fround( N ) );  // Reciprocal will undo the scale. (Note: Not work for zero.)
+    // Reciprocal will undo the scale. (Note: Not work for zero.)
+    this.scales[ thisIndex ] = Math.fround( 1 / Math.fround( N ) );
     return this;
   }
 
