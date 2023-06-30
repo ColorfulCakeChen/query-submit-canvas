@@ -844,10 +844,10 @@ class BoundsArray extends Recyclable.Root {
 
     // Because two bounds may be totally non-intersected, both thisLower and
     // thisUpper needs be clamped by [ aLower, aUpper ].
-    let lower_clamped = Math.min( Math.max(
+    const lower_clamped = Math.min( Math.max(
       anotherLower, this.lowers[ thisIndex ] ), anotherUpper );
 
-    let upper_clamped = Math.min( Math.max(
+    const upper_clamped = Math.min( Math.max(
       anotherLower, this.uppers[ thisIndex ] ), anotherUpper );
 
     if ( lower_clamped < upper_clamped ) { // Confirm ( lower <= upper )
@@ -917,10 +917,14 @@ class BoundsArray extends Recyclable.Root {
   }
 
   /**
-   * @param {number} aLower  Clamp all this.lowers[] by aLower.
-   * @param {number} aUpper  Clamp all this.uppers[] by aUpper.
+   * @param {number} aLower
+   *   Clamp all this.lowers[] by aLower.
    *
-   * @return {BoundsArray} Return this (modified) object.
+   * @param {number} aUpper
+   *   Clamp all this.uppers[] by aUpper.
+   *
+   * @return {BoundsArray}
+   *   Return this (modified) object.
    */
   clamp_all_byLowerUpper( aLower, aUpper ) {
     let anotherLower, anotherUpper; // Confirm ( anotherLower <= anotherUpper )
@@ -932,10 +936,15 @@ class BoundsArray extends Recyclable.Root {
       anotherUpper = Math.fround( aLower );
     }
 
-    // Because two bounds may be totally non-intersected, both thisLower and thisUpper needs be clamped by [ aLower, aUpper ].
+    // Because two bounds may be totally non-intersected, both thisLower and
+    // thisUpper needs be clamped by [ aLower, aUpper ].
     for ( let i = 0; i < this.lowers.length; ++i ) {
-      let lower_clamped = Math.min( Math.max( anotherLower, this.lowers[ i ] ), anotherUpper );
-      let upper_clamped = Math.min( Math.max( anotherLower, this.uppers[ i ] ), anotherUpper );
+
+      const lower_clamped = Math.min( Math.max(
+        anotherLower, this.lowers[ i ] ), anotherUpper );
+
+      const upper_clamped = Math.min( Math.max(
+        anotherLower, this.uppers[ i ] ), anotherUpper );
 
       if ( lower_clamped < upper_clamped ) { // Confirm ( lower <= upper )
         this.lowers[ i ] = lower_clamped;
