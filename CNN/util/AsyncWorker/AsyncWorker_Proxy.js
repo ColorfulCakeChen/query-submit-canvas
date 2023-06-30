@@ -8,8 +8,8 @@ import { Resulter } from "./AsyncWorker_Resulter.js";
 import * as AsyncWorker_Checker from "./AsyncWorker_Checker.js";
 
 /**
- * Hold the worker and its related promise map. It is a wrapper of a neural network
- * web worker for handling and communicating easily.
+ * Hold the worker and its related promise map. It is a wrapper of a neural
+ * network web worker for handling and communicating easily.
  *
  *
  * 1. Web Worker Body Stub

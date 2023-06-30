@@ -6,7 +6,8 @@ export { ImageData_ArrayBuffer_TypedArray_isTransferred };
  *   - If it is ( ImageData or ArrayBuffer or TypedArray ) or array of them:
  *     - If the length of the ( ImageData or ArrayBuffer or TypedArray )
  *         is zero, return true.
- *     - Otherwise (i.e. transferable object has not been transferred), return false.
+ *     - Otherwise (i.e. transferable object has not been transferred), return
+ *         false.
  *   - Otherwise (i.e. not transferable object), return true.
  */
 function ImageData_ArrayBuffer_TypedArray_isTransferred( objectToBeChecked ) {
