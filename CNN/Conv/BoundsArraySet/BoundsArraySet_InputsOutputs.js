@@ -70,14 +70,18 @@ class InputsOutputs extends Recyclable.Root {
    *   The channel count of 2nd output. (If undefined or null or zero or
    * negative, there will be no output1.)
    */
-  constructor( input0, input1, outputChannelCount0, outputChannelCount1 ) {
+  constructor(
+    input0, input1, outputChannelCount0, outputChannelCount1 ) {
+
     super();
     InputsOutputs.setAsConstructor_self.call( this,
       input0, input1, outputChannelCount0, outputChannelCount1 );
   }
 
   /** @override */
-  static setAsConstructor( input0, input1, outputChannelCount0, outputChannelCount1 ) {
+  static setAsConstructor(
+    input0, input1, outputChannelCount0, outputChannelCount1 ) {
+
     super.setAsConstructor();
     InputsOutputs.setAsConstructor_self.call( this,
       input0, input1, outputChannelCount0, outputChannelCount1 );
