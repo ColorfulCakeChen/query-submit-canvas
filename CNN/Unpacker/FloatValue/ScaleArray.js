@@ -387,10 +387,12 @@ class ScaleArray extends Recyclable.Root {
    * @param {number} toUpper    The destination bounds [ toLower, toUpper ]
    *
    * @return {number}
-   *   Return a scale value which could let source bounds [ fromLower, fromUpper ] completely insides destination bounds [ toLower, toUpper ].
-   * Return Number.NaN, if it is impossible to do that.
+   *   Return a scale value which could let source bounds
+   * [ fromLower, fromUpper ] completely insides destination bounds
+   * [ toLower, toUpper ]. Return Number.NaN, if it is impossible to do that.
    */
-  static calc_scale_by_fromLowerUpper_toLowerUpper( fromLower, fromUpper, toLower, toUpper ) {
+  static calc_scale_by_fromLowerUpper_toLowerUpper(
+    fromLower, fromUpper, toLower, toUpper ) {
 
     // Confirm ( lower <= upper ).
     let srcLower, srcUpper;
