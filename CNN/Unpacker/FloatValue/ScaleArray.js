@@ -301,18 +301,14 @@ class ScaleArray extends Recyclable.Root {
 
     if ( inputScaleArray0 ) {
       for ( let inChannel0 = 0;
-        inChannel0 < inputScaleArray0.length;
-        ++inChannel0, ++inChannel ) {
-
+        inChannel0 < inputScaleArray0.length; ++inChannel0, ++inChannel ) {
         this.set_one_byScaleArray( inChannel, inputScaleArray0, inChannel0 );
       }
     }
 
     if ( inputScaleArray1 ) {
       for ( let inChannel1 = 0;
-        inChannel1 < inputScaleArray1.length;
-        ++inChannel1, ++inChannel ) {
-
+        inChannel1 < inputScaleArray1.length; ++inChannel1, ++inChannel ) {
         this.set_one_byScaleArray( inChannel, inputScaleArray1, inChannel1 );
       }
     }
@@ -416,11 +412,13 @@ class ScaleArray extends Recyclable.Root {
     // Split value bounds array.
     let inChannel = 0;
 
-    for ( let outChannel = 0; outChannel < length_lowerHalf; ++outChannel, ++inChannel ) {
+    for ( let outChannel = 0;
+      outChannel < length_lowerHalf; ++outChannel, ++inChannel ) {
       lowerHalfScaleArray.set_one_byScaleArray( outChannel, this, inChannel );
     }
 
-    for ( let outChannel = 0; outChannel < length_higherHalf; ++outChannel, ++inChannel ) {
+    for ( let outChannel = 0;
+      outChannel < length_higherHalf; ++outChannel, ++inChannel ) {
       higherHalfScaleArray.set_one_byScaleArray( outChannel, this, inChannel );
     }
 
@@ -429,9 +427,12 @@ class ScaleArray extends Recyclable.Root {
 
 
   /**
-   * @param {number} N  Set all ( this.scales[] ) by ( N ). Default are ( N = 1 ) (i.e. no scale).
+   * @param {number} N
+   *   Set all ( this.scales[] ) by ( N ). Default are ( N = 1 ) (i.e. no
+   * scale).
    *
-   * @return {ScaleArray} Return this (modified) object whose values are ( this.scales[] * N ).
+   * @return {ScaleArray}
+   *   Return this (modified) object whose values are ( this.scales[] * N ).
    */
   multiply_all_byN( N = 1 ) {
     N = Math.fround( N );
@@ -442,9 +443,11 @@ class ScaleArray extends Recyclable.Root {
   }
 
   /**
-   * @param {number[]} Ns  Set all ( this.scales[] ) by ( this.scales[] * Ns[] ).
+   * @param {number[]} Ns
+   *   Set all ( this.scales[] ) by ( this.scales[] * Ns[] ).
    *
-   * @return {ScaleArray} Return this (modified) object whose values are ( this.scales[] * Ns[] ).
+   * @return {ScaleArray}
+   *   Return this (modified) object whose values are ( this.scales[] * Ns[] ).
    */
   multiply_all_byNs( Ns ) {
     for ( let i = 0; i < this.scales.length; ++i ) {
@@ -454,9 +457,12 @@ class ScaleArray extends Recyclable.Root {
   }
 
   /**
-   * @param {ScaleArray} aScaleArray  Set all ( this.scales[] ) by ( this.scales[] * aScaleArray.scales[] ).
+   * @param {ScaleArray} aScaleArray
+   *   Set all ( this.scales[] ) by ( this.scales[] * aScaleArray.scales[] ).
    *
-   * @return {ScaleArray} Return this (modified) object whose values are ( this.scales[] * aScaleArray.scales[] ).
+   * @return {ScaleArray}
+   *   Return this (modified) object whose values are
+   * ( this.scales[] * aScaleArray.scales[] ).
    */
   multiply_all_byScaleArray( aScaleArray ) {
     return this.multiply_all_byNs( aScaleArray.scales );
