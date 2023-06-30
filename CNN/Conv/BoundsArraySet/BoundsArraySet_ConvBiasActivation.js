@@ -420,9 +420,9 @@ class ConvBiasActivation extends InputsOutputs {
             this.afterBias, outChannel );
 
         } else { // Use activated escaping-scaled afterBias value as output.
-          let lower_activated = theActivationFunctionInfo.pfnReference(
+          const lower_activated = theActivationFunctionInfo.pfnReference(
             this.afterBias.lowers[ outChannel ] );
-          let upper_activated = theActivationFunctionInfo.pfnReference(
+          const upper_activated = theActivationFunctionInfo.pfnReference(
             this.afterBias.uppers[ outChannel ] );
           this.output0.boundsArray.set_one_byLowerUpper( outChannel,
             lower_activated, upper_activated );
