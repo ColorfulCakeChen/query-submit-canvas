@@ -20,7 +20,8 @@ class Recyclable_Array extends Base( Array ) {
   constructor( ...restArgs ) {
     super( ...restArgs );
     // (2022/06/27 Remarked) No need to call .setAsConstructor_self()
-    // because the constructor of parent class (i.e. Array) has already done it.
+    // because the constructor of parent class (i.e. Array) has already done
+    // it.
     //Recyclable_Array.setAsConstructor_self.call( this, ...restArgs );
   }
 
@@ -36,10 +37,12 @@ class Recyclable_Array extends Base( Array ) {
     if ( 0 == restArgs.length ) { // 0. No argument: empty array.
       this.length = 0;
 
-    } else if ( 1 == restArgs.length ) { // 1. One argument: array with specified length.
+    // 1. One argument: array with specified length.
+    } else if ( 1 == restArgs.length ) {
       this.length = restArgs[ 0 ];
 
-    } else { // 2. Two (or more) arguments: array with these specified contents.
+    // 2. Two (or more) arguments: array with these specified contents.
+    } else {
       this.length = restArgs.length;
       for ( let i = 0; i < restArgs.length; ++i ) {
         this[ i ] = restArgs[ i ];

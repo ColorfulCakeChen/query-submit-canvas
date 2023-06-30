@@ -3,8 +3,8 @@ export { Recyclable_Base as Base, Root };
 import * as Pool from "../Pool.js";
 
 /**
- * The base class representing a object could be recycled (i.e. disposed without
- * release its main object memory for re-using in the future).
+ * The base class representing a object could be recycled (i.e. disposed
+ * without release its main object memory for re-using in the future).
  *
  * Every sub-class of this Recyclable.Base MUST define a static propery named
  * Pool which is usually an instance of Pool.Base:
@@ -36,10 +36,10 @@ let Recyclable_Base = ( ParentClass = Object ) => class Recyclable_Base
   extends ParentClass {
 
   /**
-  * Sub-class's constructor could call itself SubClassXxx.setAsConstructor_self()
-  * (i.e. do NOT call .setAsConstructor() because super() will do revursively
-  * already).
-  */
+   * Sub-class's constructor could call itself SubClassXxx.setAsConstructor_self()
+   * (i.e. do NOT call .setAsConstructor() because super() will do revursively
+   * already).
+   */
   constructor( ...restArgs ) {
     super( ...restArgs );
     Recyclable_Base.setAsConstructor_self.call( this );
@@ -49,10 +49,12 @@ let Recyclable_Base = ( ParentClass = Object ) => class Recyclable_Base
    * Setup recursively. This method mimics constructor's behavior.
    *
    * Sub-class should override this static method:
-   *   - Call super.setAsConstructor( ... ) in the beginning of this method. And then,
+   *   - Call super.setAsConstructor( ... ) in the beginning of this method.
+   *       And then,
    *   - Call SelfClassXxx.setAsConstructor_self.call( this, ... ).
    *
-   * Note: This method MUST return "this" because Pool.Base.get_or_create_by() needs it.
+   * Note: This method MUST return "this" because Pool.Base.get_or_create_by()
+   *       needs it.
    *
    *
    * @param {Base} this

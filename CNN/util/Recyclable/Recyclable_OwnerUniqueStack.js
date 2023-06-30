@@ -5,36 +5,44 @@ import { Root } from "./Recyclable_Base.js";
 import { OwnerArray } from "./Recyclable_OwnerArray.js";
 
 /**
- * Similar to Recyclable_Array but it only has push(), pop(), clear() operations. The .push() will prevent the same object be append
- * multiple times
+ * Similar to Recyclable_Array but it only has push(), pop(), clear()
+ * operations. The .push() will prevent the same object be append multiple
+ * times.
  *
- * It is better than pure Set object because you could traverse .array without generating iterator object.
+ * It is better than pure Set object because you could traverse .array without
+ * generating iterator object.
  *
  *
- * Note: The behavior of this class's constructor (and .setAsConstructor()) is different from original Array (and Recyclable.Array).
+ * Note: The behavior of this class's constructor (and .setAsConstructor()) is
+ *       different from original Array (and Recyclable.Array).
  *
  *   - Original Array (and Recyclable.Array):
  *
- *     - If there is only one argument, it is viewed as the length of the newly created array.
+ *     - If there is only one argument, it is viewed as the length of the newly
+ *         created array.
  *
  *   - This Recyclable.OwnerArray and Recyclable.OwnerUniqueStack:
  *
- *     - Even if there is only one argument, all arguments always are viewed as the contents the newly created array.
- *         The reason is for convenient and for avoiding un-initialized element object.
+ *     - Even if there is only one argument, all arguments always are viewed as
+ *         the contents the newly created array. The reason is for convenient
+ *         and for avoiding un-initialized element object.
  *
  */
 class OwnerUniqueStack extends Root {
 
   /**
-   * Used as default Recyclable.OwnerUniqueStack provider for conforming to Recyclable interface.
+   * Used as default Recyclable.OwnerUniqueStack provider for conforming to
+   * Recyclable interface.
    */
-  static Pool = new Pool.Root( "Recyclable.OwnerUniqueStack.Pool", OwnerUniqueStack, OwnerUniqueStack.setAsConstructor );
+  static Pool = new Pool.Root( "Recyclable.OwnerUniqueStack.Pool",
+    OwnerUniqueStack, OwnerUniqueStack.setAsConstructor );
 
   /**
-   * Every element of restArgs should be instance of Recyclable.Base (even if restArgs has only one element).
+   * Every element of restArgs should be instance of Recyclable.Base (even if
+   * restArgs has only one element).
    *
-   * Note: This behavior is different from original Array which will views the argement is length (not element) if only one argument
-   *       is given.
+   * Note: This behavior is different from original Array which will views the
+   *       argement is length (not element) if only one argument is given.
    */
   constructor( ...restArgs ) {
     super();
@@ -42,10 +50,11 @@ class OwnerUniqueStack extends Root {
   }
 
   /**
-   * Every element of restArgs should be instance of ChannelPartInfo (even if restArgs has only one element).
+   * Every element of restArgs should be instance of ChannelPartInfo (even if
+   * restArgs has only one element).
    *
-   * Note: This behavior is different from original Array which will views the argement is length (not element) if only one argument
-   *       is given.
+   * Note: This behavior is different from original Array which will views the
+   *       argement is length (not element) if only one argument is given.
    *
    * @override
    */
@@ -60,7 +69,8 @@ class OwnerUniqueStack extends Root {
     this.array = OwnerArray.Pool.get_or_create_by();
 
     if ( this.set ) {
-      this.set.clear(); // Re-use the Set object for reducing memory re-allocation.
+      // Re-use the Set object for reducing memory re-allocation.
+      this.set.clear();
     } else {
       this.set = new Set();
     }
@@ -89,11 +99,14 @@ class OwnerUniqueStack extends Root {
   }
 
   /**
-   * Append objects to the end of the array. If an object has been added before, the object will not be appended again.
+   * Append objects to the end of the array. If an object has been added
+   * before, the object will not be appended again.
    *
    * @param {Recyclable.Base[]} restArgs
-   *   The recyclable objects to be appended into this container. If an object has already existed, it will not be append again.
-   * Object could be null or undefined (and the null and undefined will be appended if it has never been added before).
+   *   The recyclable objects to be appended into this container. If an object
+   * has already existed, it will not be append again. Object could be null or
+   * undefined (and the null and undefined will be appended if it has never
+   * been added before).
    *
    * @return {number}
    *   Return the this.length.
@@ -111,7 +124,8 @@ class OwnerUniqueStack extends Root {
 
   /**
    * @return {Object}
-   *   Return undefined, if there is no element. Otherwise, return the last obejct of the array.
+   *   Return undefined, if there is no element. Otherwise, return the last
+   * obejct of the array.
    */
   pop() {
     if ( this.array.length <= 0 )
@@ -122,7 +136,8 @@ class OwnerUniqueStack extends Root {
   }
 
   /**
-   * Release all contents (by calling their .disposeResources() and set this container's length to zero).
+   * Release all contents (by calling their .disposeResources() and set this
+   * container's length to zero).
    */
   clear() {
     this.array.clear();
@@ -130,4 +145,3 @@ class OwnerUniqueStack extends Root {
   }
 
 }
-

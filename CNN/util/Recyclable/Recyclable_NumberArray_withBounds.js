@@ -16,16 +16,18 @@ import { Array as Recyclable_Array } from "./Recyclable_Array.js";
 class NumberArray_withBounds extends Recyclable_Array {
 
   /**
-   * Used as default Recyclable.NumberArray_withBounds provider for conforming to Recyclable interface.
+   * Used as default Recyclable.NumberArray_withBounds provider for conforming
+   * to Recyclable interface.
    */
   static Pool = new Pool.Root( "Recyclable.NumberArray_withBounds.Pool",
     NumberArray_withBounds, NumberArray_withBounds.setAsConstructor );
 
   /**
-   * Every element of restArgs should be instance of Recyclable.Base (even if restArgs has only one element).
+   * Every element of restArgs should be instance of Recyclable.Base (even if
+   * restArgs has only one element).
    *
-   * Note: This behavior is different from original Array which will views the argement is length (not element) if only one argument
-   *       is given.
+   * Note: This behavior is different from original Array which will views the
+   *       argement is length (not element) if only one argument is given.
    */
   constructor( ...restArgs ) {
     super( ...restArgs );
@@ -41,7 +43,8 @@ class NumberArray_withBounds extends Recyclable_Array {
 
   /** @override */
   static setAsConstructor_self() {
-    this.boundsArray_byChannel = FloatValue.BoundsArray.Pool.get_or_create_by();
+    this.boundsArray_byChannel
+      = FloatValue.BoundsArray.Pool.get_or_create_by();
   }
 
   /** @override */
@@ -54,4 +57,3 @@ class NumberArray_withBounds extends Recyclable_Array {
   }
 
 }
-

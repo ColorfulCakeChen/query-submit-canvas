@@ -5,35 +5,42 @@ import { Base } from "./Recyclable_Base.js";
 import { Array as Recyclable_Array } from "./Recyclable_Array.js";
 
 /**
- * Similar to Recyclable_Array but it owns its contents (which are instances of Recyclable.Base). It will release its contents
- * (by calling their .disposeResources_and_recycleToPool()) in .disposeResources().
+ * Similar to Recyclable_Array but it owns its contents (which are instances of
+ * Recyclable.Base). It will release its contents (by calling their
+ * .disposeResources_and_recycleToPool()) in .disposeResources().
  *
  *
- * Note: The behavior of this class's constructor (and .setAsConstructor()) is different from original Array (and Recyclable.Array).
+ * Note: The behavior of this class's constructor (and .setAsConstructor()) is
+ *       different from original Array (and Recyclable.Array).
  *
  *   - Original Array (and Recyclable.Array):
  *
- *     - If there is only one argument, it is viewed as the length of the newly created array.
+ *     - If there is only one argument, it is viewed as the length of the newly
+ *         created array.
  *
  *   - This Recyclable.OwnerArray:
  *
- *     - Even if there is only one argument, all arguments always are viewed as the contents the newly created array.
- *         The reason is for convenient and for avoiding un-initialized element object.
+ *     - Even if there is only one argument, all arguments always are viewed as
+ *         the contents the newly created array. The reason is for convenient
+ *         and for avoiding un-initialized element object.
  *
  *
  */
 class OwnerArray extends Recyclable_Array {
 
   /**
-   * Used as default Recyclable.OwnerArray provider for conforming to Recyclable interface.
+   * Used as default Recyclable.OwnerArray provider for conforming to
+   * Recyclable interface.
    */
-  static Pool = new Pool.Root( "Recyclable.OwnerArray.Pool", OwnerArray, OwnerArray.setAsConstructor );
+  static Pool = new Pool.Root( "Recyclable.OwnerArray.Pool",
+    OwnerArray, OwnerArray.setAsConstructor );
 
   /**
-   * Every element of restArgs should be instance of Recyclable.Base (even if restArgs has only one element).
+   * Every element of restArgs should be instance of Recyclable.Base (even if
+   * restArgs has only one element).
    *
-   * Note: This behavior is different from original Array which will views the argement is length (not element) if only one argument
-   *       is given.
+   * Note: This behavior is different from original Array which will views the
+   *       argement is length (not element) if only one argument is given.
    */
   constructor( ...restArgs ) {
     super( restArgs.length );
@@ -41,10 +48,11 @@ class OwnerArray extends Recyclable_Array {
   }
 
   /**
-   * Every element of restArgs should be Recyclable.Base object (even if restArgs has only one element).
+   * Every element of restArgs should be Recyclable.Base object (even if
+   * restArgs has only one element).
    *
-   * Note: This behavior is different from original Array which will views the argement is length (not element)
-   *       if only one argument is given.
+   * Note: This behavior is different from original Array which will views the
+   *       argement is length (not element) if only one argument is given.
    *
    * @override
    */
@@ -70,7 +78,8 @@ class OwnerArray extends Recyclable_Array {
 
   //!!! (2022/07/21 Remarked) Not work. It seems Array.length can not be overrided.
   // /**
-  //  * All contents after this[ newLength ] will also be released (by calling their .disposeResources_and_recycleToPool()).
+  //  * All contents after this[ newLength ] will also be released (by calling
+  //  * their .disposeResources_and_recycleToPool()).
   //  */
   // set length( newLength ) {
   //   OwnerArray.sub_objects_disposeResources_fromIndex.call( this, newLength );
@@ -78,9 +87,12 @@ class OwnerArray extends Recyclable_Array {
   // }
 
   /**
-   * Release all contents (by calling their .disposeResources_and_recycleToPool() and set this container's length to zero).
+   * Release all contents (by calling their
+   * .disposeResources_and_recycleToPool() and set this container's length to
+   * zero).
    *
-   * Note: Set OwnerArray.length = 0 directly will cause memory leak because the contents are not released.
+   * Note: Set OwnerArray.length = 0 directly will cause memory leak because
+   *       the contents are not released.
    */
   clear() {
     OwnerArray.sub_objects_disposeResources_fromIndex.call( this, 0 );
@@ -88,12 +100,15 @@ class OwnerArray extends Recyclable_Array {
   }
 
   /**
-   * Call all contents' .disposeResources(). Set them to null. But does NOT change this container's length.
+   * Call all contents' .disposeResources(). Set them to null. But does NOT
+   * change this container's length.
    *
-   * Note: Contents are disposed in reverse order because they are usually created in forward order.
+   * Note: Contents are disposed in reverse order because they are usually
+   *       created in forward order.
    *
    * @param {number} fromIndex
-   *   Dispose all owned objects between this[ fromIndex ] to this [ this.length - 1 ].
+   *   Dispose all owned objects between this[ fromIndex ] to this
+   * [ this.length - 1 ].
    */
   static sub_objects_disposeResources_fromIndex( fromIndex = 0 ) {
     for ( let i = ( this.length - 1 ); i >= fromIndex; --i ) {
@@ -101,12 +116,17 @@ class OwnerArray extends Recyclable_Array {
       if ( !object )
         continue;
 
-      // Note: ( object instanceof Base ) does not work here because Recyclable.Base is not a class definition (in fact, it
-      //       is a function return a class definition). So check whether .disposeResources_and_recycleToPool() exists instead.
+      // Note: ( object instanceof Base ) does not work here because
+      //       Recyclable.Base is not a class definition (in fact, it is a
+      //       function return a class definition). So check whether
+      //       .disposeResources_and_recycleToPool() exists instead.
       //
       if ( object.disposeResources_and_recycleToPool instanceof Function ) {
         object.disposeResources_and_recycleToPool();
-        this[ i ] = null; // So that it will not become dangling object (since it has already been recycled).
+
+        // So that it will not become dangling object (since it has already
+        // been recycled).
+        this[ i ] = null;
       }
     }
   }
