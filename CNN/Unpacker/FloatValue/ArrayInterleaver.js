@@ -95,22 +95,31 @@ class ArrayInterleaver {
    * Rearrange array elements by interleaving.
    *   - Only ( groupCount == 2 ) is supported.
    *
-   * @param {Array} arrayIn        The array to be re-arranged.
-   * @param {number} indexBegin    Re-arrange the arrayIn from which element.
-   * @param {number} elementCount  How many elements (begin at indexBegin) will be interleaved. It must be even (i.e. divisible by 2).
+   * @param {Array} arrayIn
+   *   The array to be re-arranged.
+   *
+   * @param {number} indexBegin
+   *   Re-arrange the arrayIn from which element.
+   *
+   * @param {number} elementCount
+   *   How many elements (begin at indexBegin) will be interleaved. It must be
+   * even (i.e. divisible by 2).
    *
    * @param {Array} arrayTemp
-   *   A temporary array for placing the original elements (from arrayIn) temporarily. Providing this array could reduce memory
-   * re-allocation and improve performance.
+   *   A temporary array for placing the original elements (from arrayIn)
+   * temporarily. Providing this array could reduce memory re-allocation and
+   * improve performance.
    *
    * @return {Array}
    *   Retrun the (modified) arrayIn itself.
    */
-  static interleave_asGrouptTwo_inPlace( arrayIn, indexBegin, elementCount, arrayTemp ) {
+  static interleave_asGrouptTwo_inPlace(
+    arrayIn, indexBegin, elementCount, arrayTemp ) {
 
     if ( ( elementCount % 2 ) != 0 )
       throw Error( `ArrayInterleaver.interleave_byGrouptTwo(): `
-        + `elementCount ( ${elementCount} ) must be even (i.e. divisible by 2).`
+        + `elementCount ( ${elementCount} ) `
+        + `must be even (i.e. divisible by 2).`
       );
 
     // Copy the elements to be re-arrange.
@@ -121,7 +130,10 @@ class ArrayInterleaver {
 
     // Interleave the elements order.
     let elementCountHalf = Math.floor( elementCount / 2 );
-    ArrayInterleaver.interleave_asGrouptTwo_from_to( arrayTemp, 0, arrayIn, indexBegin, elementCountHalf );
+
+    ArrayInterleaver.interleave_asGrouptTwo_from_to(
+      arrayTemp, 0, arrayIn, indexBegin, elementCountHalf );
+
     return arrayIn;
   }
 
@@ -130,13 +142,23 @@ class ArrayInterleaver {
    * Rearrange array elements along the last 2nd axis by interleaving.
    *   - Only ( groupCount == 2 ) is supported.
    *
-   * @param {Array} fromArray  The source array. It will not be modified. It is the source of copying.
-   * @param {Array} toArray    The destination array. It will be modified (i.e. filled data copied from fromArray).
-   * @param {number[]} shape   The virtual N-dimension array's shape (e.g. [ width ] or [ height, width ] or [ height, width, depth ].
+   * @param {Array} fromArray
+   *   The source array. It will not be modified. It is the source of copying.
+   *
+   * @param {Array} toArray
+   *   The destination array. It will be modified (i.e. filled data copied from
+   * fromArray).
+   *
+   * @param {number[]} shape
+   *   The virtual N-dimension array's shape (e.g. [ width ] or
+   * [ height, width ] or [ height, width, depth ].
    */
-  static interleave_asGrouptTwo_alongLast2ndAxis_from_to( fromArray, toArray, ...shape ) {
+  static interleave_asGrouptTwo_alongLast2ndAxis_from_to(
+    fromArray, toArray, ...shape ) {
+
     if ( shape.length < 2 ) {
-      throw Error( `ArrayInterleaver.interleave_asGrouptTwo_alongLast2ndAxis_from_to(): `
+      throw Error( `ArrayInterleaver`
+        + `.interleave_asGrouptTwo_alongLast2ndAxis_from_to(): `
         + `shape.length ( ${shape.length} ) should be at least 2.`
       );
     }
@@ -148,7 +170,8 @@ class ArrayInterleaver {
 
     if ( elementCount != fromArray.length ) {
       let shapeString = shape.join( " * " );
-      throw Error( `ArrayInterleaver.interleave_asGrouptTwo_alongLast2ndAxis_from_to(): `
+      throw Error( `ArrayInterleaver`
+        + `.interleave_asGrouptTwo_alongLast2ndAxis_from_to(): `
         + `shape ( ${shapeString} ) = ${elementCount} `
         + `should be the same as input array length ( ${fromArray.length} ).`
       );
@@ -157,8 +180,10 @@ class ArrayInterleaver {
     let last2ndAxisId = shape.length - 2;
     let last2ndAxisLength = shape[ last2ndAxisId ];
     if ( ( last2ndAxisLength % 2 ) != 0 )
-      throw Error( `ArrayInterleaver.interleave_asGrouptTwo_alongLast2ndAxis_from_to(): `
-        + `shape's last 2nd axis length ( ${last2ndAxisLength} ) must be even (i.e. divisible by 2).`
+      throw Error( `ArrayInterleaver`
+        + `.interleave_asGrouptTwo_alongLast2ndAxis_from_to(): `
+        + `shape's last 2nd axis length ( ${last2ndAxisLength} ) `
+        + `must be even (i.e. divisible by 2).`
       );
 
     let lastAxisId = shape.length - 1;
