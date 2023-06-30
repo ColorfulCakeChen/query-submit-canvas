@@ -206,7 +206,8 @@ class Bounds extends Recyclable.Root {
    * @param {number} N
    *   Set ( this.lower, this.upper ) by N.
    *
-   * @return {Bounds} Return this (modified) object which is [ n, N ].
+   * @return {Bounds}
+   *   Return this (modified) object which is [ n, N ].
    */
   set_byN( N ) {
     this.lower = this.upper = Math.fround( N );
@@ -246,34 +247,52 @@ class Bounds extends Recyclable.Root {
   }
 
   /**
-   * @param {number[]} Ns    Set ( this.lower, this.upper ) by ( Ns[ aIndex ], Ns[ aIndex ] ).
-   * @param {number} aIndex  The array index of aLowers[] and aUppers[].
+   * @param {number[]} Ns
+   *   Set ( this.lower, this.upper ) by ( Ns[ aIndex ], Ns[ aIndex ] ).
    *
-   * @return {Bounds} Return this (modified) object.
+   * @param {number} aIndex
+   *   The array index of aLowers[] and aUppers[].
+   *
+   * @return {Bounds}
+   *   Return this (modified) object.
    */
   set_byNs( Ns, aIndex ) {
     return this.set_byN( Ns[ aIndex ] );
   }
 
   /**
-   * @param {number[]} aLowers  Set ( this.lower, this.upper ) by ( aLowers[ aIndex ], aUppers[ aIndex ] ).
-   * @param {number[]} aUppers  Set ( this.lower, this.upper ) by ( aLowers[ aIndex ], aUppers[ aIndex ] ).
-   * @param {number} aIndex     The array index of aLowers[] and aUppers[].
+   * @param {number[]} aLowers
+   *   Set ( this.lower, this.upper ) by
+   * ( aLowers[ aIndex ], aUppers[ aIndex ] ).
    *
-   * @return {Bounds} Return this (modified) object.
+   * @param {number[]} aUppers
+   *   Set ( this.lower, this.upper ) by
+   * ( aLowers[ aIndex ], aUppers[ aIndex ] ).
+   *
+   * @param {number} aIndex
+   *   The array index of aLowers[] and aUppers[].
+   *
+   * @return {Bounds}
+   *   Return this (modified) object.
    */
   set_byLowersUppers( aLowers, aUppers, aIndex ) {
     return this.set_byLowerUpper( aLowers[ aIndex ], aUppers[ aIndex ] );
   }
 
   /**
-   * @param {BoundsArray} aBoundsArray  Set ( this.lower, this.upper ) by ( aBoundsArray.lowers[ aIndex ], aBoundsArray.uppers[ aIndex ] ).
-   * @param {number} aIndex             The array index of aBoundsArray.lowers[] and aBoundsArray.uppers[].
+   * @param {BoundsArray} aBoundsArray
+   *   Set ( this.lower, this.upper ) by
+   * ( aBoundsArray.lowers[ aIndex ], aBoundsArray.uppers[ aIndex ] ).
    *
-   * @return {Bounds} Return this (modified) object.
+   * @param {number} aIndex
+   *   The array index of aBoundsArray.lowers[] and aBoundsArray.uppers[].
+   *
+   * @return {Bounds}
+   *   Return this (modified) object.
    */
   set_byBoundsArray( aBoundsArray, aIndex ) {
-    return this.set_byLowerUpper( aBoundsArray.lowers[ aIndex ], aBoundsArray.uppers[ aIndex ] );
+    return this.set_byLowerUpper(
+      aBoundsArray.lowers[ aIndex ], aBoundsArray.uppers[ aIndex ] );
   }
 
 
@@ -281,7 +300,8 @@ class Bounds extends Recyclable.Root {
    * @param {number} N
    *   Enlarge this bounds so that [ this.lower, this.upper ] contains N.
    *
-   * @return {Bounds} Return this (modified) object.
+   * @return {Bounds}
+   *   Return this (modified) object.
    */
   enlarge_byN( N ) {
     N = Math.fround( N );
@@ -293,10 +313,14 @@ class Bounds extends Recyclable.Root {
   }
 
   /**
-   * @param {number} aLower     The lower bound to be contained.
-   * @param {number} aUpper     The upper bound to be contained.
+   * @param {number} aLower
+   *   The lower bound to be contained.
    *
-   * @return {Bounds} Return this (modified) object.
+   * @param {number} aUpper
+   *   The upper bound to be contained.
+   *
+   * @return {Bounds}
+   *   Return this (modified) object.
    */
   enlarge_byLowerUpper( aLower, aUpper ) {
     let lower, upper; // Confirm ( lower <= upper ).
@@ -316,21 +340,29 @@ class Bounds extends Recyclable.Root {
   }
 
   /**
-   * @param {Bounds} aBounds    The bounds to be contained.
+   * @param {Bounds} aBounds
+   *   The bounds to be contained.
    *
-   * @return {Bounds} Return this (modified) object.
+   * @return {Bounds}
+   *   Return this (modified) object.
    */
    enlarge_byBounds( aBounds ) {
     return this.enlarge_byLowerUpper( aBounds.lower, aBounds.upper );
   }
 
   /**
-   * @param {BoundsArray} aBoundsArray  The bounds array to be contained.
-   * @param {number} aIndex             The array index of aBoundsArray.lowers[] and aBoundsArray.uppers[].
+   * @param {BoundsArray} aBoundsArray
+   *   The bounds array to be contained.
    *
+   * @param {number} aIndex
+   *   The array index of aBoundsArray.lowers[] and aBoundsArray.uppers[].
+   *
+   * @return {Bounds}
+   *   Return this (modified) object.
    */
    enlarge_byBoundsArray_one( aBoundsArray, aIndex ) {
-    return this.enlarge_byLowerUpper( aBoundsArray.lowers[ aIndex ], aBoundsArray.uppers[ aIndex ] );
+    return this.enlarge_byLowerUpper(
+      aBoundsArray.lowers[ aIndex ], aBoundsArray.uppers[ aIndex ] );
   }
 
 
