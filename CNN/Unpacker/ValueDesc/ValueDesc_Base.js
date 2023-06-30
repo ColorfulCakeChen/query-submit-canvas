@@ -6,7 +6,8 @@ import * as ValueRange from "../ValueRange.js";
  * Describe some properties of a non-converting parameter.
  *
  * @member {ValueRange.Same} range
- *   The range of the parameter's all possible values. It is a ValueRange.Same object.
+ *   The range of the parameter's all possible values. It is a ValueRange.Same
+ * object.
  *
  */
 class Same {
@@ -29,7 +30,8 @@ Same.Singleton = new Same;
  * Describe some properties of a boolean parameter.
  *
  * @member {ValueRange.Bool} range
- *   The boolean range of the parameter's all possible values. It is a ValueRange.Bool object.
+ *   The boolean range of the parameter's all possible values. It is a
+ * ValueRange.Bool object.
  *
  */
 class Bool {
@@ -138,10 +140,12 @@ class Int {
             + `[ ${this.range.min}, ${this.range.max} ].`
           );
 
-        // This is the name which could be twisted by JavaScript codes compressor.
+        // This is the name which could be twisted by JavaScript codes
+        // compressor.
         let nameForProgram = nameForProgramArray[ i ];
 
-        // This is the name which will not be twisted by JavaScript codes compressor.
+        // This is the name which will not be twisted by JavaScript codes
+        // compressor.
         let nameForMessage = info.nameForMessage;
 
         // Ensure integerId not duplicated.
@@ -202,8 +206,8 @@ class Int {
    *   It should be one of ValueDesc.Yyy.Singleton.Ids.Xxx.
    *
    * @return {Object}
-   *   Return the extra information object of the integerValue. Return undefined,
-   * if not found.
+   *   - Return the extra information object of the integerValue.
+   *   - Return undefined, if not found.
    */
   getInfo_byId( integerValue ) {
     let info = this.integerToInfoMap.get( integerValue );
@@ -221,13 +225,13 @@ Int.Info = class Int_Info {
   /**
    * 
    * @param {number} id
-   *   The number identifier of the integer value. In fact, this is the integer value
-   * itself.
+   *   The number identifier of the integer value. In fact, this is the integer
+   * value itself.
    *
    * @param {string} nameForMessage
-   *   The string name of the integer value. Usually, it is used for debug message.
-   * This is why it is a string (so that it will not be twisted by JavaScript codes
-   * compressor).
+   *   The string name of the integer value. Usually, it is used for debug
+   * message. This is why it is a string (so that it will not be twisted by
+   * JavaScript codes compressor).
    */
   constructor( id, nameForMessage ) {
     this.id = id;
