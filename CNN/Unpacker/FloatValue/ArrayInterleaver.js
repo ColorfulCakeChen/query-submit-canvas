@@ -156,9 +156,10 @@ class ArrayInterleaver {
   static interleave_asGrouptTwo_alongLast2ndAxis_from_to(
     fromArray, toArray, ...shape ) {
 
+    const funcNameInMessage = "interleave_asGrouptTwo_alongLast2ndAxis_from_to";
+
     if ( shape.length < 2 ) {
-      throw Error( `ArrayInterleaver`
-        + `.interleave_asGrouptTwo_alongLast2ndAxis_from_to(): `
+      throw Error( `ArrayInterleaver.${funcNameInMessage}(): `
         + `shape.length ( ${shape.length} ) should be at least 2.`
       );
     }
@@ -170,8 +171,7 @@ class ArrayInterleaver {
 
     if ( elementCount != fromArray.length ) {
       let shapeString = shape.join( " * " );
-      throw Error( `ArrayInterleaver`
-        + `.interleave_asGrouptTwo_alongLast2ndAxis_from_to(): `
+      throw Error( `ArrayInterleaver.${funcNameInMessage}(): `
         + `shape ( ${shapeString} ) = ${elementCount} `
         + `should be the same as input array length ( ${fromArray.length} ).`
       );
@@ -180,8 +180,7 @@ class ArrayInterleaver {
     let last2ndAxisId = shape.length - 2;
     let last2ndAxisLength = shape[ last2ndAxisId ];
     if ( ( last2ndAxisLength % 2 ) != 0 )
-      throw Error( `ArrayInterleaver`
-        + `.interleave_asGrouptTwo_alongLast2ndAxis_from_to(): `
+      throw Error( `ArrayInterleaver.${funcNameInMessage}(): `
         + `shape's last 2nd axis length ( ${last2ndAxisLength} ) `
         + `must be even (i.e. divisible by 2).`
       );
