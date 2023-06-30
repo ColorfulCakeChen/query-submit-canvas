@@ -958,19 +958,26 @@ class BoundsArray extends Recyclable.Root {
   }
 
   /**
-   * @param {Bounds} aBounds  Clamp all ( this.lowers[], this.uppers[] ) by ( aBounds.lower, aBounds.upper ).
+   * @param {Bounds} aBounds
+   *   Clamp all ( this.lowers[], this.uppers[] ) by
+   * ( aBounds.lower, aBounds.upper ).
    *
-   * @return {BoundsArray} Return this (modified) object.
+   * @return {BoundsArray}
+   *   Return this (modified) object.
    */
   clamp_all_byBounds( aBounds ) {
     return this.clamp_all_byLowerUpper( aBounds.lower, aBounds.upper );
   }
 
   /**
-   * @param {number[]} aLowers  Clamp all ( this.lowers[], this.uppers[] ) by ( aLowers[], aUppers[] ).
-   * @param {number[]} aUppers  Clamp all ( this.lowers[], this.uppers[] ) by ( aLowers[], aUppers[] ).
+   * @param {number[]} aLowers
+   *   Clamp all ( this.lowers[], this.uppers[] ) by ( aLowers[], aUppers[] ).
    *
-   * @return {BoundsArray} Return this (modified) object.
+   * @param {number[]} aUppers
+   *   Clamp all ( this.lowers[], this.uppers[] ) by ( aLowers[], aUppers[] ).
+   *
+   * @return {BoundsArray}
+   *   Return this (modified) object.
    */
   clamp_all_byLowersUppers( aLowers, aUppers ) {
     for ( let i = 0; i < this.lowers.length; ++i ) {
@@ -980,21 +987,29 @@ class BoundsArray extends Recyclable.Root {
   }
 
   /**
-   * @param {BoundsArray} aBoundsArray  Clamp all ( this.lowers[], this.uppers[] ) by ( aBoundsArray.lowers[], aBoundsArray.uppers[] ).
+   * @param {BoundsArray} aBoundsArray
+   *   Clamp all ( this.lowers[], this.uppers[] ) by
+   * ( aBoundsArray.lowers[], aBoundsArray.uppers[] ).
    *
-   * @return {BoundsArray} Return this (modified) object.
+   * @return {BoundsArray}
+   *   Return this (modified) object.
    */
   clamp_all_byBoundsArray( aBoundsArray ) {
-    return this.clamp_all_byLowersUppers( aBoundsArray.lowers, aBoundsArray.uppers );
+    return this.clamp_all_byLowersUppers(
+      aBoundsArray.lowers, aBoundsArray.uppers );
   }
 
 
   /**
-   * @param {number} thisIndex  The array index of this.lowers[] and this.uppers[].
-   * @param {number} N          Add ( this.lowers[ thisIndex ], this.uppers[ thisIndex ] ) by ( N, N ).
+   * @param {number} thisIndex
+   *   The array index of this.lowers[] and this.uppers[].
+   *
+   * @param {number} N
+   *   Add ( this.lowers[ thisIndex ], this.uppers[ thisIndex ] ) by ( N, N ).
    *
    * @return {Bounds}
-   *   Return this (modified) object which is the same as this.add_one_byLowerUpper( N, N ).
+   *   Return this (modified) object which is the same as
+   * this.add_one_byLowerUpper( N, N ).
    */
   add_one_byN( thisIndex, N ) {
     N = Math.fround( N );
@@ -1015,11 +1030,17 @@ class BoundsArray extends Recyclable.Root {
   }
 
   /**
-   * @param {number} thisIndex  The array index of this.lowers[] and this.uppers[].
-   * @param {number} aLower     Add this.lowers[ thisIndex ] by aLower.
-   * @param {number} aUpper     Add this.uppers[ thisIndex ] by aUpper.
+   * @param {number} thisIndex
+   *   The array index of this.lowers[] and this.uppers[].
    *
-   * @return {BoundsArray} Return this (modified) object.
+   * @param {number} aLower
+   *   Add this.lowers[ thisIndex ] by aLower.
+   *
+   * @param {number} aUpper
+   *   Add this.uppers[ thisIndex ] by aUpper.
+   *
+   * @return {BoundsArray}
+   *   Return this (modified) object.
    */
   add_one_byLowerUpper( thisIndex, aLower, aUpper ) {
     let lower, upper; // Confirm ( lower <= upper ).
