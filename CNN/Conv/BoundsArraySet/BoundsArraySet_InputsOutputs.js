@@ -123,16 +123,16 @@ class InputsOutputs extends Recyclable.Root {
       if ( this.output0 )
         this.output0.length = outputChannelCount0;
       else
-        this.output0 = ActivationEscaping.ScaleBoundsArray.Pool.get_or_create_by(
-          outputChannelCount0 );
+        this.output0 = ActivationEscaping.ScaleBoundsArray.Pool
+          .get_or_create_by( outputChannelCount0 );
 
       if ( outputChannelCount1 > 0 ) { // Two outputs.
 
         if ( this.output1 )
           this.output1.length = outputChannelCount1;
         else
-          this.output1 = ActivationEscaping.ScaleBoundsArray.Pool.get_or_create_by(
-            outputChannelCount1 );
+          this.output1 = ActivationEscaping.ScaleBoundsArray.Pool
+            .get_or_create_by( outputChannelCount1 );
 
       // ( outputChannelCount1 <= 0 ), One output.
       } else {
@@ -198,7 +198,8 @@ class InputsOutputs extends Recyclable.Root {
    */
   clone() {
     let result = InputsOutputs.Pool.get_or_create_by(
-      this.input0, this.input1, this.outputChannelCount0, this.outputChannelCount1 );
+      this.input0, this.input1,
+      this.outputChannelCount0, this.outputChannelCount1 );
     result.set_outputs_all_byBoundsArraySet( this );
     return result;
   }
@@ -283,8 +284,9 @@ class InputsOutputs extends Recyclable.Root {
    *   - ( this.output0.channelCount == aBoundsArraySet.output0.channelCount ) &&
    *   - ( this.output1.channelCount == aBoundsArraySet.output1.channelCount )
    *
-   * This .input0 (and .input1) are not modified. But this .output0 (, .output1)
-   * will copy from aBoundsArraySet (including (activationEscaping) .scaleArraySet).
+   * This .input0 (and .input1) are not modified. But this .output0
+   * (, .output1) will copy from aBoundsArraySet (including
+   * (activationEscaping) .scaleArraySet).
    *
    *
    * @param {BoundsArraySet.InputsOutputs} aBoundsArraySet
@@ -302,15 +304,20 @@ class InputsOutputs extends Recyclable.Root {
   /**
    * Set .output0 (and .output1) by specified BoundsArray and ScaleArraySet.
    *
-   * @param {FloatValue.BoundsArray} aBoundsArray      The BoundsArray to be copied.
-   * @param {FloatValue.ScaleArraySet} aScaleArraySet  The ScaleArraySet to be copied.
+   * @param {FloatValue.BoundsArray} aBoundsArray
+   *   The BoundsArray to be copied.
+   *
+   * @param {FloatValue.ScaleArraySet} aScaleArraySet
+   *   The ScaleArraySet to be copied.
    *
    * @return {InputsOutputs}
    *   Return this (modified) object.
    */
   set_outputs_all_byBoundsArray_ScaleArraySet( aBoundsArray, aScaleArraySet ) {
-    this.output0.set_all_byBoundsArray_ScaleArraySet( aBoundsArray, aScaleArraySet );
-    this.output1?.set_all_byBoundsArray_ScaleArraySet( aBoundsArray, aScaleArraySet );
+    this.output0.set_all_byBoundsArray_ScaleArraySet(
+      aBoundsArray, aScaleArraySet );
+    this.output1?.set_all_byBoundsArray_ScaleArraySet(
+      aBoundsArray, aScaleArraySet );
     return this;
   }
 
@@ -336,14 +343,18 @@ class InputsOutputs extends Recyclable.Root {
    *   Return this (modified) object.
    */
   set_outputs_all_by_concat_input0_input1() {
-    this.output0.set_all_byScaleBoundsArray_concat_input0_input1( this.input0, this.input1 );
-    this.output1?.set_all_byScaleBoundsArray( this.output0 ); // Note: the same as .output0.
+    this.output0.set_all_byScaleBoundsArray_concat_input0_input1(
+      this.input0, this.input1 );
+
+    // Note: the same as .output0.
+    this.output1?.set_all_byScaleBoundsArray( this.output0 );
     return this;
   }
 
   /**
    * Rearrange this.outputs[] channel information by interleaving as
-   * ( groupCount == 2 ). This channel count must be even (i.e. divisible by 2).
+   * ( groupCount == 2 ). This channel count must be even (i.e.
+   * divisible by 2).
    *
    * @return {InputsOutputs}
    *   Return this (modified) object.
@@ -364,9 +375,12 @@ class InputsOutputs extends Recyclable.Root {
    */
   set_outputs_all_byBoundsArray_split_input0() {
 
-    if ( !this.output1 )
-      this.output1 = ActivationEscaping.ScaleBoundsArray.Pool.get_or_create_by(
-        0 ); // Use ( channelCount == 0 ) temporarily. It will be adjusted later.
+    if ( !this.output1 ) {
+      // Note: Use ( channelCount == 0 ) temporarily because it will be
+      //       adjusted later.
+      this.output1 = ActivationEscaping.ScaleBoundsArray.Pool
+        .get_or_create_by( 0 );
+    }
 
     this.input0.split_to_lowerHalf_higherHalf( this.output0, this.output1 );
     return this;
@@ -407,4 +421,3 @@ class InputsOutputs extends Recyclable.Root {
   get outputChannelCount1() { return this.output1?.length ?? 0; }
 
 }
-
