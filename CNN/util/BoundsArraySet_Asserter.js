@@ -25,9 +25,12 @@ function assert_ScaleBoundsArray(
   lhsName, rhsName,
   prefixMsg, postfixMsg ) {
 
-  if ( !(   ( ( aScaleBoundsArray == null ) && ( refScaleBoundsArray == null ) )
-         || ( ( aScaleBoundsArray != null ) && ( refScaleBoundsArray != null ) ) ) )
-    throw Error( `${prefixMsg}: BoundsArraySet_Asserter.assert_ScaleBoundsArray()( `
+  if ( !(   (   ( aScaleBoundsArray == null )
+             && ( refScaleBoundsArray == null ) )
+         || (   ( aScaleBoundsArray != null )
+             && ( refScaleBoundsArray != null ) ) ) )
+    throw Error( `${prefixMsg}: `
+      + `BoundsArraySet_Asserter.assert_ScaleBoundsArray()( `
       + `lhsName=${lhsName}, rhsName=${rhsName} ): `
       + `aScaleBoundsArray (${aScaleBoundsArray}) and `
       + `refScaleBoundsArray (${refScaleBoundsArray}) `
