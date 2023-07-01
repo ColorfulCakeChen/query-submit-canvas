@@ -87,8 +87,10 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
       if ( tensorMemoryAfter.numBytes != this.tensorMemoryBefore.numBytes ) {
         let msg = `NeuralWorker_Body.disposeResources(): `
           + `workerId=${this.workerId}, `
-          + `tensorMemoryAfter.numBytes (${tensorMemoryAfter.numBytes}) != `
-          + `tensorMemoryBefore.numBytes (${this.tensorMemoryBefore.numBytes})`;
+          + `tensorMemoryAfter.numBytes `
+          + `(${tensorMemoryAfter.numBytes}) != `
+          + `tensorMemoryBefore.numBytes `
+          + `(${this.tensorMemoryBefore.numBytes})`;
 
         console.error( msg );
         debugger;
@@ -386,7 +388,9 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
    *   If true, the neural network dry-run time will be measured twice and
    * logged to console.
    */
-  static NeuralNetArray_compileShaders_uploadTensors_ifWebGL( bLogDryRunTime ) {
+  static NeuralNetArray_compileShaders_uploadTensors_ifWebGL(
+    bLogDryRunTime ) {
+
     let backendName = tf.getBackend();
     if ( backendName != "webgl" )
       return; // Only WebGL needs compile shaders.
@@ -568,8 +572,8 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
    * The value is an array of TypedArray representing all neural networks'
    * result whose length is this.neuralNetArray[].output_channelCount.
    * The TypedArray may be:
-   *   - Float32Array (if ( neuralNetParams.output_asInputValueRange == false ) )
-   *   - Int32Array (if ( neuralNetParams.output_asInputValueRange == true ) )
+   *   - Float32Array (if ( neuralNetParams.output_asInputValueRange == false ))
+   *   - Int32Array (if ( neuralNetParams.output_asInputValueRange == true ))
    */
   async* ONE_WORKER__TWO_NET__TypedArray_process(
     source_TypedArray, source_height, source_width,
@@ -688,8 +692,8 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
    *     - NeuralWorker_Mode.Singleton.Ids.TWO_WORKER__TWO_NET__APPLIER (2)
    *     - The 1st worker calls this method.
    *
-   *   - It will download scaled Int32Array from GPU memory. And post it back to
-   *         WorkerProxy.
+   *   - It will download scaled Int32Array from GPU memory. And post it back
+   *       to WorkerProxy.
    *
    *   - If has alignment mark and/or feedback (i.e. previous time output):
    *
@@ -739,8 +743,8 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
    * transferableObjectArray: [ TypedArray.buffer ] }. The value is a
    * TypedArray representing the neural network's result whose length is
    * this.neuralNet[ 0 ].output_channelCount. The TypedArray may be:
-   *   - Float32Array (if ( neuralNetParams.output_asInputValueRange == false ) )
-   *   - Int32Array (if ( neuralNetParams.output_asInputValueRange == true ) )
+   *   - Float32Array (if ( neuralNetParams.output_asInputValueRange == false ))
+   *   - Int32Array (if ( neuralNetParams.output_asInputValueRange == true ))
    */
   async* TWO_WORKER__TWO_NET__step0__TypedArray_process(
     source_TypedArray, source_height, source_width,
@@ -925,8 +929,8 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
    * transferableObjectArray: [ TypedArray.buffer ] }. The value is a
    * TypedArray representing the neural network's result whose length is
    * this.neuralNet[ 0 ].output_channelCount. The TypedArray may be:
-   *   - Float32Array (if ( neuralNetParams.output_asInputValueRange == false ) )
-   *   - Int32Array (if ( neuralNetParams.output_asInputValueRange == true ) )
+   *   - Float32Array (if ( neuralNetParams.output_asInputValueRange == false ))
+   *   - Int32Array (if ( neuralNetParams.output_asInputValueRange == true ))
    */
   async* TWO_WORKER__TWO_NET__step1__TypedArray_process(
     source_TypedArray, source_height, source_width,

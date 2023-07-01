@@ -117,8 +117,8 @@ class NeuralWorker_ImplicitInputMode extends Int {
    * (NeuralWorker.ImplicitInputMode.Singleton.Ids.Xxx).
    *
    * @return {boolean}
-   *   Return NeuralWorker_ImplicitInputMode.Info.has_implicit_input of the mode
-   * id.
+   *   Return NeuralWorker_ImplicitInputMode.Info.has_implicit_input of the
+   * mode id.
    */
   static has_implicit_input_get( nNeuralWorker_ImplicitInputModeId ) {
     let info = NeuralWorker_ImplicitInputMode.Singleton
@@ -134,8 +134,8 @@ class NeuralWorker_ImplicitInputMode extends Int {
    * (NeuralWorker.ImplicitInputMode.Singleton.Ids.Xxx).
    *
    * @return {boolean}
-   *   Return NeuralWorker_ImplicitInputMode.Info.output_asInputValueRange of the
-   * mode id.
+   *   Return NeuralWorker_ImplicitInputMode.Info.output_asInputValueRange of
+   * the mode id.
    */
    static output_asInputValueRange_get( nNeuralWorker_ImplicitInputModeId ) {
     let info = NeuralWorker_ImplicitInputMode.Singleton

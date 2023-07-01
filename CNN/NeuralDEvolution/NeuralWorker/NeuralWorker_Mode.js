@@ -48,7 +48,8 @@ class NeuralWorker_Mode extends Int {
    * NeuralWorker_Mode.Singleton.Ids.Xxx.
    */
   static workerCount_get( nNeuralWorker_ModeId ) {
-    let info = NeuralWorker_Mode.Singleton.getInfo_byId( nNeuralWorker_ModeId );
+    let info = NeuralWorker_Mode.Singleton.getInfo_byId(
+      nNeuralWorker_ModeId );
     if ( info )
       return info.workerCount;
     return NaN;
@@ -64,7 +65,8 @@ class NeuralWorker_Mode extends Int {
    * NeuralWorker_Mode.Singleton.Ids.Xxx.
    */
   static neuralNetCount_get( nNeuralWorker_ModeId ) {
-    let info = NeuralWorker_Mode.Singleton.getInfo_byId( nNeuralWorker_ModeId );
+    let info = NeuralWorker_Mode.Singleton.getInfo_byId(
+      nNeuralWorker_ModeId );
     if ( info )
       return info.neuralNetCount;
     return NaN;
@@ -81,7 +83,8 @@ class NeuralWorker_Mode extends Int {
    *   - If false, use neuralNet.applier().
    */
    static bApply_or_Applier_get( nNeuralWorker_ModeId ) {
-    let info = NeuralWorker_Mode.Singleton.getInfo_byId( nNeuralWorker_ModeId );
+    let info = NeuralWorker_Mode.Singleton.getInfo_byId(
+      nNeuralWorker_ModeId );
     if ( info )
       return info.bApply_or_Applier;
     return NaN;
