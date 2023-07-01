@@ -316,10 +316,10 @@ let Operation_Base = ( ParentClass = Object ) => class Operation_Base
    * Sub-class should override this property.
    *
    * @return {number}
-   *   The wieght count extracted from inputWeightArray and used in tensors. Not
-   * including Params, because they are not used in tensors. Not including
-   * inferenced weights (even if they are used in tensors), because they are not
-   * extracted from inputWeightArray.
+   *   The wieght count extracted from inputWeightArray and used in tensors.
+   * Not including Params, because they are not used in tensors. Not including
+   * inferenced weights (even if they are used in tensors), because they are
+   * not extracted from inputWeightArray.
    */
   get tensorWeightCountExtracted() {
     return 0;
@@ -329,9 +329,9 @@ let Operation_Base = ( ParentClass = Object ) => class Operation_Base
    * Sub-class should override this property.
    *
    * @return {number}
-   *   The total wieght count used in tensors. Not including Params, because they
-   * are not used in tensors. Including inferenced weights, if they are used in
-   * tensors.
+   *   The total wieght count used in tensors. Not including Params, because
+   * they are not used in tensors. Including inferenced weights, if they are
+   * used in tensors.
    */
   get tensorWeightCountTotal() {
     return 0;
@@ -383,9 +383,9 @@ let Operation_Base = ( ParentClass = Object ) => class Operation_Base
    * modifed by this method.
    *
    * The mehod is used for setting oldTensorPlaceholder (which must be one of
-   * this operation object's input tensor placeholder property, e.g. this.input0)
-   * as newTensorPlaceholder. It will register this operation as the new input
-   * TensorPlaceholder's final operation.
+   * this operation object's input tensor placeholder property, e.g.
+   * this.input0) as newTensorPlaceholder. It will register this operation as
+   * the new input TensorPlaceholder's final operation.
    *
    * If the new input tensor placeholder is undefined (or null), the returned
    * value (will be undefined too) could be used to cleared to no input tensor
@@ -400,7 +400,8 @@ let Operation_Base = ( ParentClass = Object ) => class Operation_Base
    * @param {Operation.Base} this The operation to be modified.
    *
    * @param {TensorPlaceholder.Base} oldTensorPlaceholder
-   *   The TensorPlaceholder object which want to be set as newTensorPlaceholder.
+   *   The TensorPlaceholder object which want to be set as
+   * newTensorPlaceholder.
    *
    * @param {TensorPlaceholder.Base} newTensorPlaceholder
    *   The TensorPlaceholder object which want to replace oldTensorPlaceholder.
@@ -412,7 +413,9 @@ let Operation_Base = ( ParentClass = Object ) => class Operation_Base
     oldTensorPlaceholder, newTensorPlaceholder ) {
 
     let result;
-    if ( oldTensorPlaceholder == undefined ) { // 1. Original does not have input.
+
+    // 1. Original does not have input.
+    if ( oldTensorPlaceholder == undefined ) {
 
       if ( newTensorPlaceholder == undefined ) {
         result = undefined; // 1.1 Keep no input.
@@ -429,8 +432,8 @@ let Operation_Base = ( ParentClass = Object ) => class Operation_Base
 
       } else { // 2.2 Different input.
 
-        // 2.2.0 If this operation is the old tensor placeholder's final operation,
-        //       it has no final operation now.
+        // 2.2.0 If this operation is the old tensor placeholder's final
+        //       operation, it has no final operation now.
         if ( oldTensorPlaceholder.finalOperation == this ) {
           oldTensorPlaceholder.finalOperation = null;
         }
@@ -449,10 +452,10 @@ let Operation_Base = ( ParentClass = Object ) => class Operation_Base
   }
 
   /**
-   * Change this operation's input tensor placeholder. Also, register as the new
-   * input TensorPlaceholder's final user. If the new input tensor placeholder is
-   * undefined (or null), the corresponding this.input will be cleared to no input
-   * tensor placeholder.
+   * Change this operation's input tensor placeholder. Also, register as the
+   * new input TensorPlaceholder's final user. If the new input tensor
+   * placeholder is undefined (or null), the corresponding this.input will be
+   * cleared to no input tensor placeholder.
    *
    * Note: Because changing input tensor placeholder may cause complex effect,
    *       this method should be used carefully.
@@ -462,24 +465,27 @@ let Operation_Base = ( ParentClass = Object ) => class Operation_Base
    *   The operation to be modified.
    *
    * @param {TensorPlaceholder.Base} input0
-   *   The TensorPlaceholder object which will become this operation's 1st input.
+   *   The TensorPlaceholder object which will become this operation's 1st
+   * input.
    *
    * @param {TensorPlaceholder.Base} input1
-   *   The TensorPlaceholder object which will become this operation's 2nd input.
+   *   The TensorPlaceholder object which will become this operation's 2nd
+   * input.
    */
-  static set_inputTensorPlaceholder0_inputTensorPlaceholder1( input0, input1 ) {
+  static set_inputTensorPlaceholder0_inputTensorPlaceholder1(
+    input0, input1 ) {
 
     let newInput0 = Operation_Base
-      .TensorPlaceholder_get_modified_for_set_input_from_old_to_new.call( this,
-        this.input0, input0 );
+      .TensorPlaceholder_get_modified_for_set_input_from_old_to_new
+      .call( this, this.input0, input0 );
 
     // So that it could keep not existed if original does not existed.
     if ( this.input0 != newInput0 )
       this.input0 = newInput0;
 
     let newInput1 = Operation_Base
-      .TensorPlaceholder_get_modified_for_set_input_from_old_to_new.call( this,
-        this.input1, input1 );
+      .TensorPlaceholder_get_modified_for_set_input_from_old_to_new
+      .call( this, this.input1, input1 );
 
     // So that it could keep not existed if original does not existed.
     if ( this.input1 != newInput1 )
@@ -487,11 +493,13 @@ let Operation_Base = ( ParentClass = Object ) => class Operation_Base
   }
 
   /**
-   * Pass the input0 as output0 directly. Used for ( bKeepInputTensor == false ).
+   * Pass the input0 as output0 directly. Used for
+   * ( bKeepInputTensor == false ).
    *
    * @param {Base} this
    *   The this.input0.realTensor should be viewed as already disposed by this
-   * method. However, in fact, it is returned as this.output0.realTensor directly.
+   * method. However, in fact, it is returned as this.output0.realTensor
+   * directly.
    */
   static output0_return_input0_directly() {
     this.output0.realTensor = this.input0.realTensor;
@@ -501,8 +509,8 @@ let Operation_Base = ( ParentClass = Object ) => class Operation_Base
    * Pass the cloned input0 as output0. Used for ( bKeepInputTensor == true ).
    *
    * @param {Base} this
-   *   The this.input0.realTensor should be viewed as kept (i.e. not disposed) by
-   * this method. However, in fact, it is cloned and returned as
+   *   The this.input0.realTensor should be viewed as kept (i.e. not disposed)
+   * by this method. However, in fact, it is cloned and returned as
    * this.output0.realTensor.
    */
   static output0_return_input0_cloned() {
@@ -525,4 +533,3 @@ let Operation_Base = ( ParentClass = Object ) => class Operation_Base
  */
 class Root extends Operation_Base() {
 }
-
