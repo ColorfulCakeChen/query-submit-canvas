@@ -112,7 +112,8 @@ class TwinArray extends Root {
     //
     // When one or twin operations are appended, the newly appende operations'
     // output tensor placeholders will be collected here temporarily. And then
-    // they will be assigned as endingDummyOperation's input tensor placeholder.
+    // they will be assigned as endingDummyOperation's input tensor
+    // placeholder.
     //
     this.tempLastOutputTensorPlaceholderArray
       = Recyclable.Array.Pool.get_or_create_by( 0 );
@@ -123,7 +124,8 @@ class TwinArray extends Root {
   disposeResources() {
 
     if ( this.tempLastOutputTensorPlaceholderArray ) {
-      this.tempLastOutputTensorPlaceholderArray.disposeResources_and_recycleToPool();
+      this.tempLastOutputTensorPlaceholderArray
+        .disposeResources_and_recycleToPool();
       this.tempLastOutputTensorPlaceholderArray = null;
     }
 
@@ -185,19 +187,23 @@ class TwinArray extends Root {
       let operation = this.operationArray[ i ];
 
       if (   ( operation.input0 )
-          && !( this.is_inputs_outputs_byTensorPlaceholder( operation.input0 ) ) )
+          && !( this.is_inputs_outputs_byTensorPlaceholder(
+                  operation.input0 ) ) )
         operation.input0.ScaleBoundsArray_dispose();
 
       if (   ( operation.input1 )
-          && !( this.is_inputs_outputs_byTensorPlaceholder( operation.input1 ) ) )
+          && !( this.is_inputs_outputs_byTensorPlaceholder(
+                  operation.input1 ) ) )
         operation.input1.ScaleBoundsArray_dispose();
 
       if (   ( operation.output0 )
-          && !( this.is_inputs_outputs_byTensorPlaceholder( operation.output0 ) ) )
+          && !( this.is_inputs_outputs_byTensorPlaceholder(
+                  operation.output0 ) ) )
         operation.output0.ScaleBoundsArray_dispose();
 
       if (   ( operation.output1 )
-          && !( this.is_inputs_outputs_byTensorPlaceholder( operation.output1 ) ) )
+          && !( this.is_inputs_outputs_byTensorPlaceholder(
+                  operation.output1 ) ) )
         operation.output1.ScaleBoundsArray_dispose();
     }
   }
@@ -240,7 +246,8 @@ class TwinArray extends Root {
     //
     for ( let i = 0; i < this.operationArray.length; ++i ) {
       let operation = this.operationArray[ i ];
-      operation.setKeepInputTensor_IfNotFinalOperation_Or_In( this.alwaysKeepSet );
+      operation.setKeepInputTensor_IfNotFinalOperation_Or_In(
+        this.alwaysKeepSet );
     }
 
     // 3.
@@ -306,13 +313,15 @@ class TwinArray extends Root {
     //
     let endingInput0_new, endingInput1_new;
     {
-      if ( this.endingDummyOperation.input0?.finalOperation == this.endingDummyOperation )
+      if ( this.endingDummyOperation.input0?.finalOperation
+             == this.endingDummyOperation )
         // Continue to handle it Since it still is its final operation.
         endingInput0_new = this.endingDummyOperation.input0;
       else
         endingInput0_new = null;
 
-      if ( this.endingDummyOperation.input1?.finalOperation == this.endingDummyOperation )
+      if ( this.endingDummyOperation.input1?.finalOperation
+             == this.endingDummyOperation )
         // Continue to handle it Since it still is its final operation.
         endingInput1_new = this.endingDummyOperation.input1;
       else
@@ -401,7 +410,8 @@ class TwinArray extends Root {
   static alwaysKeepSet_collect( bKeepInputTensor0, bKeepInputTensor1 ) {
     let bShouldbKeepInputTensor0 = ( this.input0 && bKeepInputTensor0 );
     let bShouldbKeepInputTensor1 = ( this.input1 && bKeepInputTensor1 );
-    let bShouldbKeepInputTensor = ( bShouldbKeepInputTensor0 || bShouldbKeepInputTensor1 );
+    let bShouldbKeepInputTensor
+      = ( bShouldbKeepInputTensor0 || bShouldbKeepInputTensor1 );
 
     if ( bShouldbKeepInputTensor ) { // 1. Some inputs should be kept.
 
@@ -409,7 +419,8 @@ class TwinArray extends Root {
       if ( this.alwaysKeepSet )
         this.alwaysKeepSet.clear();
       else
-        this.alwaysKeepSet = new Set(); // Create container only if it is indeed necessary.
+        // Create container only if it is indeed necessary.
+        this.alwaysKeepSet = new Set();
 
       if ( bShouldbKeepInputTensor0 ) // 1.2
         this.alwaysKeepSet.add( this.input0 );
@@ -462,4 +473,3 @@ class TwinArray extends Root {
   }
 
 }
-
