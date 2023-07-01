@@ -91,7 +91,8 @@ import { InferencedParams } from "./Stage_InferencedParams.js";
     this.bPointwise1 = bPointwise1;
     this.depthwiseFilterHeight = depthwiseFilterHeight;
     this.depthwiseFilterWidth = depthwiseFilterWidth;
-    this.nSqueezeExcitationChannelCountDivisor = nSqueezeExcitationChannelCountDivisor;
+    this.nSqueezeExcitationChannelCountDivisor
+      = nSqueezeExcitationChannelCountDivisor;
     this.nActivationId = nActivationId;
     this.bKeepInputTensor = bKeepInputTensor;
   }
@@ -146,7 +147,8 @@ import { InferencedParams } from "./Stage_InferencedParams.js";
   }
 
   get nConvStageTypeName() {
-    return ValueDesc.ConvStageType.Singleton.getName_byId( this.nConvStageTypeId );
+    return ValueDesc.ConvStageType.Singleton.getName_byId(
+      this.nConvStageTypeId );
   }
 
   get nSqueezeExcitationChannelCountDivisorName() {
@@ -155,7 +157,8 @@ import { InferencedParams } from "./Stage_InferencedParams.js";
   }
 
   get nActivationName() {
-    return ValueDesc.ActivationFunction.Singleton.getName_byId( this.nActivationId );
+    return ValueDesc.ActivationFunction.Singleton.getName_byId(
+      this.nActivationId );
   }
 
   /** @override */
@@ -164,7 +167,8 @@ import { InferencedParams } from "./Stage_InferencedParams.js";
         `input_height=${this.input_height}, input_width=${this.input_width}, `
       + `input_channelCount=${this.input_channelCount}, `
 
-      + `nConvStageTypeId=${this.nConvStageTypeName}(${this.nConvStageTypeId}), `
+      + `nConvStageTypeId=${this.nConvStageTypeName}`
+        + `(${this.nConvStageTypeId}), `
 
       + `blockCountRequested=${this.blockCountRequested}, `
       + `bPointwise1=${this.bPointwise1}, `

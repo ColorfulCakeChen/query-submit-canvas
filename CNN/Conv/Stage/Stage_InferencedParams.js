@@ -46,13 +46,15 @@ class Stage_InferencedParams extends Recyclable.Root {
    */
   constructor( stageParamsBase ) {
     super();
-    Stage_InferencedParams.setAsConstructor_self.call( this, stageParamsBase );
+    Stage_InferencedParams.setAsConstructor_self.call( this,
+      stageParamsBase );
   }
 
   /** @override */
   static setAsConstructor( stageParamsBase ) {
     super.setAsConstructor();
-    Stage_InferencedParams.setAsConstructor_self.call( this, stageParamsBase );
+    Stage_InferencedParams.setAsConstructor_self.call( this,
+      stageParamsBase );
     return this;
   }
 
@@ -165,13 +167,16 @@ class Stage_InferencedParams extends Recyclable.Root {
           let channelShuffler = blockParamsCreator.channelShuffler;
           if ( channelShuffler ) {
 
-            if ( ( this.channelShuffler ) && ( this.channelShuffler != channelShuffler ) )
+            if (   ( this.channelShuffler )
+                && ( this.channelShuffler != channelShuffler ) )
               throw Error( `Stage.ParamsBase.blockParamsArray_create(): `
                 + `At most, only one (and same) channel shuffler could be `
                 + `used (and shared by all blocks of a stage).` );
 
             this.channelShuffler = channelShuffler;
-            blockParamsCreator.channelShuffler = null; // (Ownership transferred.)
+
+            // (Because ownership transferred.)
+            blockParamsCreator.channelShuffler = null;
 
           // If channelShuffler is null, do not use it. Otherwise, the
           // this.channelShuffler will be cleared and could not be used for
@@ -239,8 +244,9 @@ class Stage_InferencedParams extends Recyclable.Root {
         + `( ${stageParams.nConvStageTypeId} ) value.`
       );
 
-    let classBlockParamsCreator = nConvStageTypeId_to_BlockParamsCreator_ClassArray[
-        stageParams.nConvStageTypeId ];
+    let classBlockParamsCreator
+      = nConvStageTypeId_to_BlockParamsCreator_ClassArray[
+          stageParams.nConvStageTypeId ];
 
     let aBlockParamsCreator
       = classBlockParamsCreator.Pool.get_or_create_by( stageParams );

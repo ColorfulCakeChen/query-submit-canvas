@@ -459,13 +459,16 @@ class Stage_Base extends Recyclable.Root {
       this.bPointwise1 = params.bPointwise1;
       this.depthwiseFilterHeight = params.depthwiseFilterHeight;
       this.depthwiseFilterWidth = params.depthwiseFilterWidth;
-      this.nSqueezeExcitationChannelCountDivisor = params.nSqueezeExcitationChannelCountDivisor;
-      this.nSqueezeExcitationChannelCountDivisorName = params.nSqueezeExcitationChannelCountDivisorName;
+      this.nSqueezeExcitationChannelCountDivisor
+        = params.nSqueezeExcitationChannelCountDivisor;
+      this.nSqueezeExcitationChannelCountDivisorName
+        = params.nSqueezeExcitationChannelCountDivisorName;
       this.nActivationId = params.nActivationId;
       this.nActivationName = params.nActivationName;
       this.bKeepInputTensor = params.bKeepInputTensor;
 
-      // The parameters which are determined (inferenced) from the above parameters.
+      // The parameters which are determined (inferenced) from the above
+      // parameters.
       {
       }
 
@@ -523,9 +526,11 @@ class Stage_Base extends Recyclable.Root {
         }
 
         // Create current block parameters.
-        blockParams = blockParamsCreator.create_BlockParams( BlockParamsClass );
+        blockParams
+          = blockParamsCreator.create_BlockParams( BlockParamsClass );
 
-        if ( !this.channelShuffler ) { // If channelShuffler is got first time, keep it.
+        // If channelShuffler is got first time, keep it.
+        if ( !this.channelShuffler ) {
 
           // If channelShuffler is not null, keep it so that its tensors could
           // be released.
@@ -539,7 +544,9 @@ class Stage_Base extends Recyclable.Root {
                 + `used (and shared by all blocks of a stage).` );
 
             this.channelShuffler = channelShuffler;
-            blockParamsCreator.channelShuffler = null; // (Ownership transferred.)
+
+            // (Because ownership transferred.)
+            blockParamsCreator.channelShuffler = null;
 
             this.tensorWeightCountExtracted
               += channelShuffler.tensorWeightCountExtracted;
@@ -807,7 +814,8 @@ class Stage_Base extends Recyclable.Root {
       + `input_width=${this.input_width}, `
       + `input_channelCount=${this.input_channelCount}, `
 
-      + `nConvStageTypeName=${this.nConvStageTypeName}(${this.nConvStageTypeId}), `
+      + `nConvStageTypeName=${this.nConvStageTypeName}`
+        + `(${this.nConvStageTypeId}), `
       + `blockCountRequested=${this.blockCountRequested}, `
       + `blockCount=${this.blockCount}, `
       + `bPointwise1=${this.bPointwise1}, `
