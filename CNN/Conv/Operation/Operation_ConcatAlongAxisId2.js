@@ -48,7 +48,8 @@ class ConcatAlongAxisId2 extends Root {
     inputTensorPlaceholder0, inputTensorPlaceholder1,
     bKeepInputTensor0, bKeepInputTensor1
   ) {
-    super( inputTensorPlaceholder0, inputTensorPlaceholder1, 1 );
+    super(
+      inputTensorPlaceholder0, inputTensorPlaceholder1, 1 );
     ConcatAlongAxisId2.setAsConstructor_self.call( this,
       inputTensorPlaceholder0, inputTensorPlaceholder1,
       bKeepInputTensor0, bKeepInputTensor1 );
@@ -59,7 +60,8 @@ class ConcatAlongAxisId2 extends Root {
     inputTensorPlaceholder0, inputTensorPlaceholder1,
     bKeepInputTensor0, bKeepInputTensor1
   ) {
-    super.setAsConstructor( inputTensorPlaceholder0, inputTensorPlaceholder1, 1 );
+    super.setAsConstructor(
+      inputTensorPlaceholder0, inputTensorPlaceholder1, 1 );
     ConcatAlongAxisId2.setAsConstructor_self.call( this,
       inputTensorPlaceholder0, inputTensorPlaceholder1,
       bKeepInputTensor0, bKeepInputTensor1 );
@@ -128,7 +130,10 @@ class ConcatAlongAxisId2 extends Root {
   }
 
 
-  /** Set this.apply according to this.bKeepInputTensor0 and this.bKeepInputTensor1. */
+  /**
+   * Set this.apply according to this.bKeepInputTensor0 and
+   * this.bKeepInputTensor1.
+   */
   static adjust_pfn() {
     if ( this.bKeepInputTensor0 ) {
       if ( this.bKeepInputTensor1 ) {
@@ -169,7 +174,8 @@ class ConcatAlongAxisId2 extends Root {
 
         // If both inputs' height are known, they should be the same.
         if ( this.input0.height != this.input1.height )
-          throw Error( `Operation.ConcatAlongAxisId2.setup_output0_TensorPlaceholder(): `
+          throw Error( `Operation.ConcatAlongAxisId2`
+            + `.setup_output0_TensorPlaceholder(): `
             + `input0.height ( ${this.input0.height} ) and `
             + `input1.height ( ${this.input1.height} ) `
             + `should be the same.`
@@ -193,7 +199,8 @@ class ConcatAlongAxisId2 extends Root {
 
         // If both inputs' width are known, they should be the same.
         if ( this.input0.width != this.input1.width )
-          throw Error( `Operation.ConcatAlongAxisId2.setup_output0_TensorPlaceholder(): `
+          throw Error( `Operation.ConcatAlongAxisId2`
+            + `.setup_output0_TensorPlaceholder(): `
             + `input0.width ( ${this.input0.width} ) and `
             + `input1.width ( ${this.input1.width} ) `
             + `should be the same.`
@@ -216,15 +223,20 @@ class ConcatAlongAxisId2 extends Root {
     // Note: After this operation, the lower half and higher half channel count
     //       information will be lost.
 
-    this.output0.channelCount = this.input0.channelCount + this.input1.channelCount;
+    this.output0.channelCount
+      = this.input0.channelCount + this.input1.channelCount;
+
     this.output0.channelCount_lowerHalf = undefined;
     this.output0.channelCount_higherHalf = undefined;
-    this.output0.ScaleBoundsArray_set_without_clone( this.boundsArraySet.output0 );
+
+    this.output0.ScaleBoundsArray_set_without_clone(
+      this.boundsArraySet.output0 );
 
     // Release for reducing memory usage. (Since it has been inside the output
     // tensor placeholder.)
     {
-      // Because it has already been transferred to TensorPlaceholder this.output0
+      // Because it has already been transferred to TensorPlaceholder
+      // this.output0
       this.boundsArraySet.output0 = null;
       this.boundsArraySet.disposeResources_and_recycleToPool();
       this.boundsArraySet = null;
@@ -285,4 +297,3 @@ class ConcatAlongAxisId2 extends Root {
   }
 
 }
-
