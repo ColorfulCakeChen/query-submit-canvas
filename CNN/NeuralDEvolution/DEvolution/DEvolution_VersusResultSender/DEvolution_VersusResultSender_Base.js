@@ -12,8 +12,8 @@ import * as Recyclable from "../../../util/Recyclable.js";
 //!!! ...unfinished... (2023/02/05)
 
  * @member {Map} measurementId_to_apiSecret_map
- *   A Map from measurementId (string) to apiSecret (string). It may not exist. If
- * it exists, it is used only by .post_by_measurementId_eventArray() and
+ *   A Map from measurementId (string) to apiSecret (string). It may not exist.
+ * If it exists, it is used only by .post_by_measurementId_eventArray() and
  * .post_by_measurementId_event() for looking up apiSecret of the specified
  * measurementId of the streams of property of Google Analytics v4.
  */
@@ -119,9 +119,9 @@ class DEvolution_VersusResultSender_Base extends Recyclable.Root {
    *   The measurement api secret of stream of property of Google Analytics v4.
    *
    * @param {object[]} eventArray
-   *   An array of Google Analytics v4 measurement protocol event objects which will
-   * be embeded into a post body object, be converted to string by JSON.stringify()
-   * and then be sent to server by HTTP POST method.
+   *   An array of Google Analytics v4 measurement protocol event objects which
+   * will be embeded into a post body object, be converted to string by
+   * JSON.stringify() and then be sent to server by HTTP POST method.
    */
   post_by_measurementId_apiSecret_eventArray(
     measurementId, apiSecret, eventArray ) {
@@ -130,12 +130,16 @@ class DEvolution_VersusResultSender_Base extends Recyclable.Root {
       // clientId must be a string even if its content is number.
       // (e.g. "XXXXXXXXXX.YYYYYYYYYY")
       client_id: this.clientId.toString(),
-      non_personalized_ads: true, // Because this information is not personalized.
+
+      // Because this information is not personalized.
+      non_personalized_ads: true,
+
       events: eventArray
     };
 
-    DEvolution_VersusResultSender_Base.post_by_measurementId_apiSecret_bodyObject(
-      measurementId, apiSecret, postBody );
+    DEvolution_VersusResultSender_Base
+      .post_by_measurementId_apiSecret_bodyObject(
+        measurementId, apiSecret, postBody );
   }
 
   /**
@@ -148,8 +152,8 @@ class DEvolution_VersusResultSender_Base extends Recyclable.Root {
    *
    * @param {object} event
    *   A Google Analytics v4 measurement protocol event object which will
-   * be embeded into a post body object, be converted to string by JSON.stringify()
-   * and then be sent to server by HTTP POST method.
+   * be embeded into a post body object, be converted to string by
+   * JSON.stringify() and then be sent to server by HTTP POST method.
    */
   post_by_measurementId_apiSecret_event( measurementId, apiSecret, event ) {
     this.post_by_measurementId_apiSecret_eventArray(
@@ -162,9 +166,12 @@ class DEvolution_VersusResultSender_Base extends Recyclable.Root {
    *
    * @param {string[][]} measurementId_apiSecret_array_array
    *   An array of string array. Every string array should have two elements as
-   * [ measurementId, apiSecret ] for the streams of property of Google Analytics v4.
+   * [ measurementId, apiSecret ] for the streams of property of Google
+   * Analytics v4.
    */
-  measurementId_to_apiSecret_map_create( measurementId_apiSecret_array_array ) {
+  measurementId_to_apiSecret_map_create(
+    measurementId_apiSecret_array_array ) {
+
     this.measurementId_to_apiSecret_map = new Map(
       measurementId_apiSecret_array_array );
   }
@@ -176,9 +183,9 @@ class DEvolution_VersusResultSender_Base extends Recyclable.Root {
    *   The measurement id of stream of property of Google Analytics v4.
    *
    * @param {object[]} eventArray
-   *   An array of Google Analytics v4 measurement protocol event objects which will
-   * be embeded into a post body object, be converted to string by JSON.stringify()
-   * and then be sent to server by HTTP POST method.
+   *   An array of Google Analytics v4 measurement protocol event objects which
+   * will be embeded into a post body object, be converted to string by
+   * JSON.stringify() and then be sent to server by HTTP POST method.
    */
   post_by_measurementId_eventArray( measurementId, eventArray ) {
     let apiSecret = this.measurementId_to_apiSecret_map.get( measurementId );
@@ -194,8 +201,8 @@ class DEvolution_VersusResultSender_Base extends Recyclable.Root {
    *
    * @param {object} event
    *   A Google Analytics v4 measurement protocol event object which will
-   * be embeded into a post body object, be converted to string by JSON.stringify()
-   * and then be sent to server by HTTP POST method.
+   * be embeded into a post body object, be converted to string by
+   * JSON.stringify() and then be sent to server by HTTP POST method.
    */
   post_by_measurementId_event( measurementId, event ) {
     this.post_by_measurementId_eventArray( measurementId, [ event ] );

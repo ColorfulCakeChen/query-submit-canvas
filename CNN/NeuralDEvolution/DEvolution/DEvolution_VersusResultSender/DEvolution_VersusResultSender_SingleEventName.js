@@ -78,15 +78,15 @@ class DEvolution_VersusResultSender_SingleEventName
     //   - quantity is -1 or 0 or +1 representing versus result.
     //
     // Q1: Why send item_name (rather than item_id)?
-    // A1: For report viewing convenience. Because in Google Analytics Report UI,
-    //     the default e-commerce report uses itemName (not itemId).
+    // A1: For report viewing convenience. Because in Google Analytics Report
+    //     UI, the default e-commerce report uses itemName (not itemId).
     //
     // Q2: Why send quantity (rather than price)?
-    // A2: According to experiment, The Google Analytics Data report's itemRevenue
-    //     only works if ( quantity, price, currency ) all provided (and some
-    //     floating-point accumulation error might be introduced). However, report's
-    //     itemsPurchased only needs ( quantity ) and no floating-point accumulation
-    //     error (because it is an integer).
+    // A2: According to experiment, The Google Analytics Data report's
+    //     itemRevenue only works if ( quantity, price, currency ) all provided
+    //     (and some floating-point accumulation error might be introduced).
+    //     However, report's itemsPurchased only needs ( quantity ) and no
+    //     floating-point accumulation error (because it is an integer).
     //
     let itemVersusResult = {
       // item_name must be a string even if its content is number.

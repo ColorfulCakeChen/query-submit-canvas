@@ -51,10 +51,10 @@ class DEvolution_VersusResultSender_MultiEventName
    * any content) represents the entityNo's versus result (lose, draw, win).
    *
    * @param {DEvolution.VersusId} versusId
-   *   The differential evolution versus id. The versusId.entityNo should between
-   * [ 0, 8 ] because Google Analytics v4 Measurement Protocol has 29 different
-   * event names. So there are at most 9 (= Math.floor( 29 / 3 ) ) entities could
-   * be represented.
+   *   The differential evolution versus id. The versusId.entityNo should
+   * between [ 0, 8 ] because Google Analytics v4 Measurement Protocol has 29
+   * different event names. So there are at most 9 (= Math.floor( 29 / 3 ) )
+   * entities could be represented.
    *
    * @param {number} n1_0_p1
    *   The lose/draw/win value of the versus. (-1 or 0 or +1)
@@ -63,14 +63,15 @@ class DEvolution_VersusResultSender_MultiEventName
    *     - +1 (if parent win offspring)
    *
    * @return {object}
-   *   Return an event object (looked up from .eventObjectTable[]) representing the
-   * versusId.entityNo and n1_0_p1 (-1 or 0 or +1). Its event name
+   *   Return an event object (looked up from .eventObjectTable[]) representing
+   * the versusId.entityNo and n1_0_p1 (-1 or 0 or +1). Its event name
    * is important (and its event content is not important).
    */
   static eventObject_get_by_versusId_NegativeZeroPositive(
     versusId, n1_0_p1 ) {
 
-    const funcNameInMessage = "eventObject_get_by_versusId_NegativeZeroPositive";
+    const funcNameInMessage
+      = "eventObject_get_by_versusId_NegativeZeroPositive";
 
     // Ensure n1_0_p1 is an integer either -1 or 0 or +1.
     if (   ( n1_0_p1 != -1 )
@@ -120,10 +121,10 @@ class DEvolution_VersusResultSender_MultiEventName
    *
    *
    * @param {DEvolution.VersusId} versusId
-   *   The differential evolution versus id. The versusId.entityNo should between
-   * [ 0, 8 ] because Google Analytics v4 Measurement Protocol has 29 different
-   * event names. So there are at most 9 (= Math.floor( 29 / 3 ) ) entities could
-   * be represented.
+   *   The differential evolution versus id. The versusId.entityNo should
+   * between [ 0, 8 ] because Google Analytics v4 Measurement Protocol has 29
+   * different event names. So there are at most 9 (= Math.floor( 29 / 3 ) )
+   * entities could be represented.
    *
    * @param {number} n1_0_p1
    *   The lose/draw/win value of the versus. (-1 or 0 or +1)
@@ -153,10 +154,10 @@ class DEvolution_VersusResultSender_MultiEventName
    *   The measurement api secret of stream of property of Google Analytics v4.
    *
    * @param {DEvolution.VersusId} versusId
-   *   The differential evolution versus id. The versusId.entityNo should between
-   * [ 0, 8 ] because Google Analytics v4 Measurement Protocol has 29 different
-   * event names. So there are at most 9 (= Math.floor( 29 / 3 ) ) entities could
-   * be represented.
+   *   The differential evolution versus id. The versusId.entityNo should
+   * between [ 0, 8 ] because Google Analytics v4 Measurement Protocol has 29
+   * different event names. So there are at most 9 (= Math.floor( 29 / 3 ) )
+   * entities could be represented.
    *
    * @param {number} n1_0_p1
    *   The lose/draw/win value of the versus. (-1 or 0 or +1)
@@ -186,10 +187,10 @@ class DEvolution_VersusResultSender_MultiEventName
    *   The measurement id of stream of property of Google Analytics v4.
    *
    * @param {DEvolution.VersusId} versusId
-   *   The differential evolution versus id. The versusId.entityNo should between
-   * [ 0, 8 ] because Google Analytics v4 Measurement Protocol has 29 different
-   * event names. So there are at most 9 (= Math.floor( 29 / 3 ) ) entities could
-   * be represented.
+   *   The differential evolution versus id. The versusId.entityNo should
+   * between [ 0, 8 ] because Google Analytics v4 Measurement Protocol has 29
+   * different event names. So there are at most 9 (= Math.floor( 29 / 3 ) )
+   * entities could be represented.
    *
    * @param {number} n1_0_p1
    *   The lose/draw/win value of the versus. (-1 or 0 or +1)
