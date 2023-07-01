@@ -756,7 +756,8 @@ class NeuralOrchestra_Base extends
    *
    *
    * @yield {Promise( ValueMax.Percentage.Aggregate )}
-   *   Yield a promise resolves to { done: false, value: progressParent.root_get() }.
+   *   Yield a promise resolves to
+   * { done: false, value: progressParent.root_get() }.
    *
    * @yield {Promise( AsyncGenerator | { Promise } )}
    *   Yield a promise:
@@ -799,10 +800,12 @@ class NeuralOrchestra_Base extends
       this.downloader_spreadsheetId = downloader_spreadsheetId;
       this.downloader_apiKey = downloader_apiKey;
       this.bLogFetcherEventToConsole = bLogFetcherEventToConsole;
-      this.nNeuralWorker_ImplicitInputModeId = nNeuralWorker_ImplicitInputModeId;
+      this.nNeuralWorker_ImplicitInputModeId
+        = nNeuralWorker_ImplicitInputModeId;
 
       // 0.2
-      // Note: Here should not call .versus_load_asyncPromise_progress_dispose().
+      // Note: Here should not call
+      //       .versus_load_asyncPromise_progress_dispose().
       NeuralOrchestra_Base.versus_dispose.call( this );
       NeuralOrchestra_Base.versusSummary_dispose.call( this );
 
@@ -875,8 +878,8 @@ class NeuralOrchestra_Base extends
 
             // 3.2.1
             // In theory, it should not execute to here because
-            // versus_load_asyncGenerator waits .workerProxies_init_asyncPromise
-            // internally.
+            // versus_load_asyncGenerator waits
+            // .workerProxies_init_asyncPromise internally.
             throw Error( `NeuralOrchestra.Base.${funcNameInMessage}(): `
               + `versus_load_asyncGenerator `
               + `should not be done before `
@@ -897,7 +900,8 @@ class NeuralOrchestra_Base extends
         // 3.3 workerProxies_init_asyncPromise resolved.
         //     (Note: The .workerProxies_initOk will also be set.)
         } else {
-          let workerProxies_initOk = object_or_boolean; // should be a boolean value.
+          // should be a boolean value.
+          let workerProxies_initOk = object_or_boolean;
           if ( workerProxies_initOk != this.workerProxies_initOk )
             throw Error( `NeuralOrchestra.Base.init_asyncGenerator(): `
               + `workerProxies_initOk ( ${workerProxies_initOk} ) `
@@ -946,7 +950,8 @@ class NeuralOrchestra_Base extends
       }
 
       // 4. Create Versus Result Reporter
-      NeuralOrchestra_Base.versusResultSender_create.call( this, sender_clientId );
+      NeuralOrchestra_Base.versusResultSender_create.call( this,
+        sender_clientId );
 
       // 5.
       if ( init_asyncGenerator_delayPromise )
@@ -1033,8 +1038,8 @@ class NeuralOrchestra_Base extends
 
       // 1. Try backend "webgl" first.
       //
-      // Backend "webgl" has best performance with SHUFFLE_NET_V2_BY_MOBILE_NET_V1 (5)
-      // and one web worker.
+      // Backend "webgl" has best performance with
+      // SHUFFLE_NET_V2_BY_MOBILE_NET_V1 (5) and one web worker.
       //
       {
         neuralNetParamsBase
@@ -1048,7 +1053,8 @@ class NeuralOrchestra_Base extends
         initOk = await initOkPromise;
         if ( initOk ) { // For WebGL, compile WebGL shaders in advance.
           let compilePromise
-            = NeuralOrchestra_Base.workerProxies_compileShaders_async.call( this );
+            = NeuralOrchestra_Base.workerProxies_compileShaders_async
+                .call( this );
 
           let compileOk = await compilePromise;
 
@@ -1067,7 +1073,7 @@ class NeuralOrchestra_Base extends
           .nConvStageTypeId_adjust_for_backend_cpu_if_ShuffleNetV2();
 
         initOkPromise = this.workerProxies.init_async( "cpu",
-          NeuralWorker.Mode.Singleton.Ids.TWO_WORKER__TWO_NET__APPLIER, // (2) 
+          NeuralWorker.Mode.Singleton.Ids.TWO_WORKER__TWO_NET__APPLIER, // (2)
           this.nNeuralWorker_ImplicitInputModeId
         );
 
@@ -1126,7 +1132,8 @@ class NeuralOrchestra_Base extends
     ];
 
     // (2022//09/26 Remarked)
-    const bLogDryRunTime = true; // For observing dry-run performance and weight count.
+    // For observing dry-run performance and weight count.
+    const bLogDryRunTime = true;
     //const bLogDryRunTime = false;
     let neuralNet_create_promise
       = NeuralOrchestra_Base.workerProxies_NeuralNetArray_create_async.call(
@@ -1335,8 +1342,8 @@ class NeuralOrchestra_Base extends
    *   Return a promise resolved to an array [ TypedArray, TypedArray ]
    * representing the result of the pair of neural networks. The TypedArray may
    * be:
-   *   - Float32Array (if ( neuralNetParams.output_asInputValueRange == false ) )
-   *   - Int32Array (if ( neuralNetParams.output_asInputValueRange == true ) )
+   *   - Float32Array (if ( neuralNetParams.output_asInputValueRange == false ))
+   *   - Int32Array (if ( neuralNetParams.output_asInputValueRange == true ))
    * The order is:
    *   - TypedArrayArray[ 0 ] is parent (chromosome) neural network's output.
    *   - TypedArrayArray[ 1 ] is offspring (chromosome) neural network's output.
@@ -1474,7 +1481,8 @@ class NeuralOrchestra_Base extends
 
       NeuralOrchestra_Base.throw_if_not_initOk.call( this, funcNameInMessage );
 
-      // Prevent the nueral networks from being changed during they are processing.
+      // Prevent the nueral networks from being changed during they are
+      // processing.
       NeuralOrchestra_Base
         .throw_if_versus_loading_or_workerProxies_busy_except_workerProxies_init
         .call( this, funcNameInMessage );
@@ -1518,7 +1526,8 @@ class NeuralOrchestra_Base extends
 
       NeuralOrchestra_Base.throw_if_not_initOk.call( this, funcNameInMessage );
 
-      // Prevent the nueral networks from being changed during they are processing.
+      // Prevent the nueral networks from being changed during they are
+      // processing.
       NeuralOrchestra_Base
         .throw_if_versus_loading_or_workerProxies_busy_except_workerProxies_init
         .call( this, funcNameInMessage );
@@ -1544,10 +1553,11 @@ class NeuralOrchestra_Base extends
    * await it before complete. If null or undefined, no extra delay awaiting.
    *
    * @return {AsyncGenerator}
-   *   Return a newly created versus_load_asyncGenerator which is an instance of
-   * .versus_load_asyncGenerator().
+   *   Return a newly created versus_load_asyncGenerator which is an instance
+   * of .versus_load_asyncGenerator().
    */
-  versus_load_asyncGenerator_create_with_asyncPromise_progress( delayPromise ) {
+  versus_load_asyncGenerator_create_with_asyncPromise_progress(
+    delayPromise ) {
 
     { // Checking pre-condition.
       const funcNameInMessage
@@ -1558,7 +1568,8 @@ class NeuralOrchestra_Base extends
 
       NeuralOrchestra_Base.throw_if_not_initOk.call( this, funcNameInMessage );
 
-      // Prevent the nueral networks from being changed during they are processing.
+      // Prevent the nueral networks from being changed during they are
+      // processing.
       NeuralOrchestra_Base
         .throw_if_versus_loading_or_workerProxies_busy_except_workerProxies_init
         .call( this, funcNameInMessage );
@@ -1587,7 +1598,8 @@ class NeuralOrchestra_Base extends
    *
    * 2. 
    *
-   *   - Load all differential evolution versus weights ranges (if not yet loaded).
+   *   - Load all differential evolution versus weights ranges (if not yet
+   *       loaded).
    *     - Record in .versusSummary
    *
    *   - Load one versus.
@@ -1625,7 +1637,8 @@ class NeuralOrchestra_Base extends
    * await it before complete. If null or undefined, no extra delay awaiting.
    *
    * @yield {Promise( ValueMax.Percentage.Aggregate )}
-   *   Yield a promise resolves to { done: false, value: progressParent.root_get() }.
+   *   Yield a promise resolves to
+   * { done: false, value: progressParent.root_get() }.
    *
    * @yield {Promise( boolean )}
    *   Yield a promise:
@@ -1733,11 +1746,13 @@ class NeuralOrchestra_Base extends
 
       let bLogDryRunTime;
       {
-        // If log message is required, observe dry-run performance and weight count.
+        // If log message is required, observe dry-run performance and weight
+        // count.
         if ( this.bLogFetcherEventToConsole )
           bLogDryRunTime = true;
 
-        // In real-run, no need to observe dry-run performance and weight count.
+        // In real-run, no need to observe dry-run performance and weight
+        // count.
         else
           bLogDryRunTime = false;
       }
@@ -1761,7 +1776,8 @@ class NeuralOrchestra_Base extends
       if ( neuralNet_createOk ) {
         this.versus_loadOk = true;
 
-        // Only if neural networks created successfully, advance progress to 100%.
+        // Only if neural networks created successfully, advance progress to
+        // 100%.
         progressToAdvance.value_advance();
         yield progressRoot;
 
@@ -1880,7 +1896,8 @@ class NeuralOrchestra_Base extends
 
   /**
    * @param {NeuralOrchestra_Base} this
-   * @param {string} funcNameInMessage   The caller function name. (e.g. init_async)
+   * @param {string} funcNameInMessage
+   *   The caller function name. (e.g. init_async)
    */
   static throw_if_workerProxies_init_asyncPromise_running( funcNameInMessage ) {
     if ( this.workerProxies_init_asyncPromise_running )
@@ -1891,7 +1908,8 @@ class NeuralOrchestra_Base extends
 
   /**
    * @param {NeuralOrchestra_Base} this
-   * @param {string} funcNameInMessage   The caller function name. (e.g. init_async)
+   * @param {string} funcNameInMessage
+   *   The caller function name. (e.g. init_async)
    */
   static throw_if_workerProxies_busy_except_workerProxies_init(
     funcNameInMessage ) {
@@ -1911,7 +1929,8 @@ class NeuralOrchestra_Base extends
 
   /**
    * @param {NeuralOrchestra_Base} this
-   * @param {string} funcNameInMessage   The caller function name. (e.g. init_async)
+   * @param {string} funcNameInMessage
+   *   The caller function name. (e.g. init_async)
    */
   static throw_if_workerProxies_busy( funcNameInMessage ) {
     NeuralOrchestra_Base
@@ -1924,7 +1943,8 @@ class NeuralOrchestra_Base extends
 
   /**
    * @param {NeuralOrchestra_Base} this
-   * @param {string} funcNameInMessage   The caller function name. (e.g. init_async)
+   * @param {string} funcNameInMessage
+   *   The caller function name. (e.g. init_async)
    */
   static throw_if_versus_loading_or_workerProxies_busy_except_workerProxies_init(
     funcNameInMessage ) {
@@ -1939,7 +1959,8 @@ class NeuralOrchestra_Base extends
 
   /**
    * @param {NeuralOrchestra_Base} this
-   * @param {string} funcNameInMessage   The caller function name. (e.g. init_async)
+   * @param {string} funcNameInMessage
+   *   The caller function name. (e.g. init_async)
    */
   static throw_if_versus_loading_or_workerProxies_busy( funcNameInMessage ) {
     NeuralOrchestra_Base
@@ -1952,7 +1973,8 @@ class NeuralOrchestra_Base extends
 
   /**
    * @param {NeuralOrchestra_Base} this
-   * @param {string} funcNameInMessage   The caller function name. (e.g. init_async)
+   * @param {string} funcNameInMessage
+   *   The caller function name. (e.g. init_async)
    */
   static throw_if_not_initOk_or_not_versus_loadOk_or_workerProxies_busy(
     funcNameInMessage ) {
