@@ -93,7 +93,8 @@ class Embedding_AddGatherReshape extends Base {
    *
    * @override
    */
-  * initer( progressParent, inputWeightArray, weightElementOffsetBegin, params ) {
+  * initer(
+    progressParent, inputWeightArray, weightElementOffsetBegin, params ) {
 
     // 0. Prepare
 
@@ -124,14 +125,19 @@ class Embedding_AddGatherReshape extends Base {
         this.bEmbedVocabularyId
       );
 
-      if ( !theFiltersArray_One.init( inputWeightArray, this.weightElementOffsetEnd ) ) {
+      if ( !theFiltersArray_One.init(
+              inputWeightArray, this.weightElementOffsetEnd ) ) {
         this.bInitOk = false;
         return false;  // e.g. input array does not have enough data.
       }
-      this.weightElementOffsetEnd = theFiltersArray_One.weightElementOffsetEnd;
+      this.weightElementOffsetEnd
+        = theFiltersArray_One.weightElementOffsetEnd;
 
-      this.output_scaleBoundsArray = theFiltersArray_One.output_scaleBoundsArray;
-      theFiltersArray_One.output_scaleBoundsArray = null; // (Because ownership transferred.)
+      this.output_scaleBoundsArray
+        = theFiltersArray_One.output_scaleBoundsArray;
+
+      // (Because ownership transferred.)
+      theFiltersArray_One.output_scaleBoundsArray = null;
 
       progressToAdvance.value_advance();
       yield progressRoot;  // filters array extracted. Report progress.
@@ -172,12 +178,13 @@ class Embedding_AddGatherReshape extends Base {
               = i * this.vocabularyCountPerInputChannel;
           }
 
-          this.channelValueOffsetShape = Recyclable.Array.Pool.get_or_create_by(
-            1, 1, this.input_channelCount );
+          this.channelValueOffsetShape
+            = Recyclable.Array.Pool.get_or_create_by(
+                1, 1, this.input_channelCount );
 
           // For one pixel's all input channels.            
           this.channelValueOffsetTensor3d = tf.tensor3d(
-            channelValueOffsetArray, this.channelValueOffsetShape , "int32" );
+            channelValueOffsetArray, this.channelValueOffsetShape, "int32" );
 
           channelValueOffsetArray.disposeResources_and_recycleToPool();
           channelValueOffsetArray = null;
@@ -208,9 +215,11 @@ class Embedding_AddGatherReshape extends Base {
         // throw exception. So, use a normal (non-re-used) array as shape (i.e.
         // shallow copy of .vocabularyTableShape) instead.
         //
-        //this.vocabularyTableTensor2d = tf.tensor2d( theFiltersArray_One.filtersArray, this.vocabularyTableShape );
+        //this.vocabularyTableTensor2d = tf.tensor2d(
+        //  theFiltersArray_One.filtersArray, this.vocabularyTableShape );
         this.vocabularyTableTensor2d = tf.tensor2d(
-          theFiltersArray_One.filtersArray, this.vocabularyTableShape.slice() );
+          theFiltersArray_One.filtersArray,
+          this.vocabularyTableShape.slice() );
 
         // Note: Because .vocabularyTableShape will be kept by
         //       .vocabularyTableTensor2d internally, it can not be released
@@ -266,16 +275,20 @@ class Embedding_AddGatherReshape extends Base {
       // 2.1 No need shift input vhannel value.
       if ( this.input_channelCount == 1 ) {
         if ( this.bKeepInputTensor )
-          this.apply = Embedding_AddGatherReshape.apply_gather_reshape_and_keep;
+          this.apply
+            = Embedding_AddGatherReshape.apply_gather_reshape_and_keep;
         else
-          this.apply = Embedding_AddGatherReshape.apply_gather_reshape_and_destroy;
+          this.apply
+            = Embedding_AddGatherReshape.apply_gather_reshape_and_destroy;
 
       // 2.2 ( input_channelCount > 1 ), Need shift input vhannel value.
       } else {
         if ( this.bKeepInputTensor )
-          this.apply = Embedding_AddGatherReshape.apply_add_gather_reshape_and_keep;
+          this.apply
+            = Embedding_AddGatherReshape.apply_add_gather_reshape_and_keep;
         else
-          this.apply = Embedding_AddGatherReshape.apply_add_gather_reshape_and_destroy;
+          this.apply
+            = Embedding_AddGatherReshape.apply_add_gather_reshape_and_destroy;
       }
     }
   }
@@ -287,7 +300,8 @@ class Embedding_AddGatherReshape extends Base {
 
     // 1. Gather along the first axis (i.e. axis id 0).
     //    tensor2d.gather( tensor3d ) results to tensor4d.
-    let gatherTensor4d = this.vocabularyTableTensor2d.gather( inputTensor3d, 0 );
+    let gatherTensor4d
+      = this.vocabularyTableTensor2d.gather( inputTensor3d, 0 );
 
     // 1.2 Keep input tensor. (i.e. Not release input tensor.)
 
@@ -332,7 +346,7 @@ class Embedding_AddGatherReshape extends Base {
 
     // 0.
 
-    // 0.1 Shifting vocabulary indices by input channel. (Broadcasting is used.)
+    // 0.1 Shift vocabulary indices by input channel. (Broadcasting is used.)
     let vocabularyIndicesTensor3d
       = inputTensor3d.add( this.channelValueOffsetTensor3d );
 
@@ -364,7 +378,7 @@ class Embedding_AddGatherReshape extends Base {
 
     // 0.
 
-    // 0.1 Shifting vocabulary indices by input channel. (Broadcasting is used.)
+    // 0.1 Shift vocabulary indices by input channel. (Broadcasting is used.)
     //     So that a large merged table could be used to improve performance.
     let vocabularyIndicesTensor3d;
     try {
