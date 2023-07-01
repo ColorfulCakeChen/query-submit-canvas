@@ -1633,7 +1633,8 @@ class Block_Base extends Recyclable.Root {
     nPointwise_HigherHalfDifferent, inputWeightArray,
     channelShuffler_outputGroupCount ) {
 
-    const intermediate_inputChannelCount = inputTensorPlaceholder.channelCount;
+    const intermediate_inputChannelCount
+      = inputTensorPlaceholder.channelCount;
     const intermediate_inputChannelCount_lowerHalf
       = inputTensorPlaceholder.channelCount_lowerHalf;
     const intermediate_inputChannelCount_higherHalf
@@ -1644,22 +1645,25 @@ class Block_Base extends Recyclable.Root {
         || (   ( intermediate_inputChannelCount_lowerHalf != undefined )
             && ( intermediate_inputChannelCount_higherHalf == undefined ) )
        )
-      throw Error( `Block.Base.SequeezeExcitation_intermediatePointwise_create_init(): `
-        + `intermediate_inputChannelCount_lowerHalf ( ${intermediate_inputChannelCount_lowerHalf} ) and `
-        + `intermediate_inputChannelCount_higherHalf ( ${intermediate_inputChannelCount_higherHalf} ) `
+      throw Error( `Block.Base`
+        + `.SequeezeExcitation_intermediatePointwise_create_init(): `
+        + `intermediate_inputChannelCount_lowerHalf `
+          + `( ${intermediate_inputChannelCount_lowerHalf} ) and `
+        + `intermediate_inputChannelCount_higherHalf `
+          + `( ${intermediate_inputChannelCount_higherHalf} ) `
         + `should be either both undefined or both non-undefined.`
       );
 
+    // Note: Using itself input channel count as dividend.
     let intermediate_outputChannelCount_lowerHalf;
     if ( intermediate_inputChannelCount_lowerHalf != undefined )
-      // Note: Using itself input channel count as dividend.
       intermediate_outputChannelCount_lowerHalf
         = Math.ceil( intermediate_inputChannelCount_lowerHalf
             / this.nSqueezeExcitationChannelCountDivisor );
 
+    // Note: Using itself input channel count as dividend.
     let intermediate_outputChannelCount_higherHalf;
     if ( intermediate_inputChannelCount_higherHalf != undefined )
-      // Note: Using itself input channel count as dividend.
       intermediate_outputChannelCount_higherHalf
         = Math.ceil( intermediate_inputChannelCount_higherHalf
             / this.nSqueezeExcitationChannelCountDivisor );
@@ -1695,7 +1699,8 @@ class Block_Base extends Recyclable.Root {
     // operation's (i.e. excitationPointwise) bias will achieve it.
     const intermediate_bBias
       = ( intermediate_nActivationId
-            == ValueDesc.ActivationFunction.Singleton.Ids.NONE ) ? false : true;
+            == ValueDesc.ActivationFunction.Singleton.Ids.NONE )
+          ? false : true;
 
     const intermediate_nHigherHalfDifferent = nPointwise_HigherHalfDifferent;
 
@@ -1708,11 +1713,14 @@ class Block_Base extends Recyclable.Root {
     let intermediatePointwise
       = Operation.Pointwise_ConstantWhenPassThrough.Pool.get_or_create_by(
           inputTensorPlaceholder,
-          intermediate_outputChannelCount, intermediate_bBias, intermediate_nActivationId,
+          intermediate_outputChannelCount,
+          intermediate_bBias, intermediate_nActivationId,
           intermediate_nHigherHalfDifferent,
           intermediate_outputChannelCount_lowerHalf,
           intermediate_channelShuffler_inputGroupCount,
-          channelShuffler_outputGroupCount // Keep the same output channels shuffling.
+
+          // Keep the same output channels shuffling.
+          channelShuffler_outputGroupCount
         );
 
     if ( !intermediatePointwise.init(
@@ -1773,8 +1781,10 @@ class Block_Base extends Recyclable.Root {
   get output1() { return this.operationArray.output1; }
 
 
-  get tensorWeightCountExtracted() { return this.operationArray.tensorWeightCountExtracted; }
-  get tensorWeightCountTotal()     { return this.operationArray.tensorWeightCountTotal; }
+  get tensorWeightCountExtracted() {
+    return this.operationArray.tensorWeightCountExtracted; }
+  get tensorWeightCountTotal() {
+    return this.operationArray.tensorWeightCountTotal; }
 
 
   /**
@@ -1787,56 +1797,74 @@ class Block_Base extends Recyclable.Root {
     let str = ``
       + `inputTensorCount=${this.inputTensorCount}, `
 
-      + `input0_height=${this.input0_height}, input0_width=${this.input0_width}, `
+      + `input0_height=${this.input0_height}, `
+      + `input0_width=${this.input0_width}, `
       + `input0_channelCount=${this.input0_channelCount}, `
 
-      + `input1_height=${this.input1_height}, input1_width=${this.input1_width}, `
+      + `input1_height=${this.input1_height}, `
+      + `input1_width=${this.input1_width}, `
       + `input1_channelCount=${this.input1_channelCount}, `
 
-      + `output_height=${this.output_height}, output_width=${this.output_width}, `
-      + `output0_channelCount=${this.output0_channelCount}, output1_channelCount=${this.output1_channelCount}, `
+      + `output_height=${this.output_height}, `
+      + `output_width=${this.output_width}, `
+      + `output0_channelCount=${this.output0_channelCount}, `
+      + `output1_channelCount=${this.output1_channelCount}, `
       + `output_channelCount=${this.output_channelCount}, `
 
-      + `nConvBlockTypeName=${this.nConvBlockTypeName}(${this.nConvBlockTypeId}), `
+      + `nConvBlockTypeName=${this.nConvBlockTypeName}`
+        + `(${this.nConvBlockTypeId}), `
 
       + `bHigherHalfDifferent=${this.bHigherHalfDifferent}, `
       + `bHigherHalfDepthwise2=${this.bHigherHalfDepthwise2}, `
 
       + `pointwise1ChannelCount=${this.pointwise1ChannelCount}, `
       + `pointwise1Bias=${this.pointwise1Bias}, `
-      + `pointwise1ActivationName=${this.pointwise1ActivationName}(${this.pointwise1ActivationId}), `
+      + `pointwise1ActivationName=${this.pointwise1ActivationName}`
+        + `(${this.pointwise1ActivationId}), `
 
       + `bDepthwiseRequestedAndNeeded=${this.bDepthwiseRequestedAndNeeded}, `
       + `bDepthwise2Requested=${this.bDepthwise2Requested}, `
 
-      + `depthwise_AvgMax_Or_ChannelMultiplier=${this.depthwise_AvgMax_Or_ChannelMultiplier_Name}`
+      + `depthwise_AvgMax_Or_ChannelMultiplier=`
+        + `${this.depthwise_AvgMax_Or_ChannelMultiplier_Name}`
         + `(${this.depthwise_AvgMax_Or_ChannelMultiplier}), `
-      + `depthwiseFilterHeight=${this.depthwiseFilterHeight}, depthwiseFilterWidth=${this.depthwiseFilterWidth}, `
-      + `depthwiseStridesPad=${this.depthwiseStridesPadName}(${this.depthwiseStridesPad}), `
+      + `depthwiseFilterHeight=${this.depthwiseFilterHeight}, `
+      + `depthwiseFilterWidth=${this.depthwiseFilterWidth}, `
+      + `depthwiseStridesPad=${this.depthwiseStridesPadName}`
+        + `(${this.depthwiseStridesPad}), `
       + `depthwiseBias=${this.depthwiseBias}, `
-      + `depthwiseActivationName=${this.depthwiseActivationName}(${this.depthwiseActivationId}), `
+      + `depthwiseActivationName=${this.depthwiseActivationName}`
+        + `(${this.depthwiseActivationId}), `
 
       + `bConcat1Requested=${this.bConcat1Requested}, `
 
       + `pointwise20ChannelCount=${this.pointwise20ChannelCount}, `
       + `pointwise20Bias=${this.pointwise20Bias}, `
-      + `pointwise20ActivationName=${this.pointwise20ActivationName}(${this.pointwise20ActivationId}), `
+      + `pointwise20ActivationName=${this.pointwise20ActivationName}`
+        + `(${this.pointwise20ActivationId}), `
 
       + `pointwise21ChannelCount=${this.pointwise21ChannelCount}, `
       + `pointwise21Bias=${this.pointwise21Bias}, `
-      + `pointwise21ActivationName=${this.pointwise21ActivationName}(${this.pointwise21ActivationId}), `
+      + `pointwise21ActivationName=${this.pointwise21ActivationName}`
+        + `(${this.pointwise21ActivationId}), `
 
-      + `nSqueezeExcitationChannelCountDivisorName=${this.nSqueezeExcitationChannelCountDivisorName}`
+      + `nSqueezeExcitationChannelCountDivisorName=`
+        + `${this.nSqueezeExcitationChannelCountDivisorName}`
         + `(${this.nSqueezeExcitationChannelCountDivisor}), `
       + `bSqueezeExcitationPrefix=${this.bSqueezeExcitationPrefix}, `
-      + `squeezeExcitationActivationId=${this.squeezeExcitationActivationName}(${this.squeezeExcitationActivationId}), `
+      + `squeezeExcitationActivationId=`
+        + `${this.squeezeExcitationActivationName}`
+        + `(${this.squeezeExcitationActivationId}), `
 
       + `bAddInputToOutputRequested=${this.bAddInputToOutputRequested}, `
       + `bConcat2ShuffleSplitRequested=${this.bConcat2ShuffleSplitRequested}, `
-      + `pointwise20_channelShuffler_outputGroupCount=${this.pointwise20_channelShuffler_outputGroupCount}, `
+      + `pointwise20_channelShuffler_outputGroupCount=`
+        + `${this.pointwise20_channelShuffler_outputGroupCount}, `
 
       + `channelShuffler_ConcatPointwiseConv.outputGroupCount=`
-        + `${ this.channelShuffler_ConcatPointwiseConv ? this.channelShuffler_ConcatPointwiseConv.outputGroupCount : 0 }, `
+        + `${ this.channelShuffler_ConcatPointwiseConv
+                ? this.channelShuffler_ConcatPointwiseConv.outputGroupCount
+                : 0 }, `
 
       + `outputTensorCount=${this.outputTensorCount}, `
 
@@ -1846,4 +1874,3 @@ class Block_Base extends Recyclable.Root {
   }
 
 }
-
