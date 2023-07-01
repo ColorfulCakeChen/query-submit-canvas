@@ -46,7 +46,8 @@ class AddTwoTensors extends Root {
     inputTensorPlaceholder0, inputTensorPlaceholder1,
     bKeepInputTensor0, bKeepInputTensor1
   ) {
-    super( inputTensorPlaceholder0, inputTensorPlaceholder1, 1 );
+    super(
+      inputTensorPlaceholder0, inputTensorPlaceholder1, 1 );
     AddTwoTensors.setAsConstructor_self.call( this,
       inputTensorPlaceholder0, inputTensorPlaceholder1,
       bKeepInputTensor0, bKeepInputTensor1 );
@@ -57,7 +58,8 @@ class AddTwoTensors extends Root {
     inputTensorPlaceholder0, inputTensorPlaceholder1,
     bKeepInputTensor0, bKeepInputTensor1
   ) {
-    super.setAsConstructor( inputTensorPlaceholder0, inputTensorPlaceholder1, 1 );
+    super.setAsConstructor(
+      inputTensorPlaceholder0, inputTensorPlaceholder1, 1 );
     AddTwoTensors.setAsConstructor_self.call( this,
       inputTensorPlaceholder0, inputTensorPlaceholder1,
       bKeepInputTensor0, bKeepInputTensor1 );
@@ -135,9 +137,11 @@ class AddTwoTensors extends Root {
   }
 
   /** Create this.boundsArraySet. */
-  static setup_BoundsArraySet( inputScaleBoundsArray0, inputScaleBoundsArray1 ) {
+  static setup_BoundsArraySet(
+    inputScaleBoundsArray0, inputScaleBoundsArray1 ) {
 
-    if ( inputScaleBoundsArray0.channelCount != inputScaleBoundsArray1.channelCount )
+    if ( inputScaleBoundsArray0.channelCount
+           != inputScaleBoundsArray1.channelCount )
       throw Error( `AddTwoTensors.setup_BoundsArraySet(): `
         + `input0 channel count ( ${inputScaleBoundsArray0.channelCount} ) `
         + `should be the same as `
@@ -189,9 +193,11 @@ class AddTwoTensors extends Root {
       } else {
         throw Error(
           `Operation.AddTwoTensors.setup_output0_TensorPlaceholder(): `
-            + `input0 ( height, width ) = ( ${this.input0.height}, ${this.input0.width} ) `
+            + `input0 ( height, width ) = `
+            + `( ${this.input0.height}, ${this.input0.width} ) `
             + `and `
-            + `input1 ( height, width ) = ( ${this.input1.height}, ${this.input1.width} ) `
+            + `input1 ( height, width ) = `
+            + `( ${this.input1.height}, ${this.input1.width} ) `
             + `should be either the same or one is ( 1, 1 ) for broadcating.`
         );
       }
@@ -200,25 +206,31 @@ class AddTwoTensors extends Root {
       // same, they are passed through to output. Otherwise, absent them in
       // the output.
       {
-        if ( this.input0.channelCount_lowerHalf == this.input1.channelCount_lowerHalf ) {
-          this.output0.channelCount_lowerHalf = this.input0.channelCount_lowerHalf;
+        if ( this.input0.channelCount_lowerHalf
+               == this.input1.channelCount_lowerHalf ) {
+          this.output0.channelCount_lowerHalf
+            = this.input0.channelCount_lowerHalf;
         } else {
           this.output0.channelCount_lowerHalf = undefined;
         }
 
-        if ( this.input0.channelCount_higherHalf == this.input1.channelCount_higherHalf ) {
-          this.output0.channelCount_higherHalf = this.input0.channelCount_higherHalf;
+        if ( this.input0.channelCount_higherHalf
+               == this.input1.channelCount_higherHalf ) {
+          this.output0.channelCount_higherHalf
+            = this.input0.channelCount_higherHalf;
         } else {
           this.output0.channelCount_higherHalf = undefined;
         }
       }
 
-      this.output0.ScaleBoundsArray_set_without_clone( this.boundsArraySet.output0 );
+      this.output0.ScaleBoundsArray_set_without_clone(
+        this.boundsArraySet.output0 );
 
       // Release for reducing memory usage. (Since it has been transferred to
       // inside the output tensor placeholder.)
       {
-        // Because it has already been transferred to TensorPlaceholder this.output0
+        // Because it has already been transferred to TensorPlaceholder
+        // this.output0
         this.boundsArraySet.output0 = null;
         this.boundsArraySet.disposeResources_and_recycleToPool();
         this.boundsArraySet = null;
@@ -238,7 +250,8 @@ class AddTwoTensors extends Root {
 
   /** Add. (Both the inputTensor0 and inputTensor1 will not be disposed. */
   static Add_and_keep0_keep1() {
-    this.output0.realTensor = tf.add( this.input0.realTensor, this.input1.realTensor );
+    this.output0.realTensor
+      = tf.add( this.input0.realTensor, this.input1.realTensor );
   }
 
   /**
@@ -247,7 +260,8 @@ class AddTwoTensors extends Root {
    */
   static Add_and_keep0_destroy1() {
     try {
-      this.output0.realTensor = tf.add( this.input0.realTensor, this.input1.realTensor );
+      this.output0.realTensor
+        = tf.add( this.input0.realTensor, this.input1.realTensor );
     } finally {
       this.input1.realTensor.dispose();
     }
@@ -259,7 +273,8 @@ class AddTwoTensors extends Root {
    */
   static Add_and_destroy0_keep1() {
     try {
-      this.output0.realTensor = tf.add( this.input0.realTensor, this.input1.realTensor );
+      this.output0.realTensor
+        = tf.add( this.input0.realTensor, this.input1.realTensor );
     } finally {
       this.input0.realTensor.dispose();
     }
@@ -268,7 +283,8 @@ class AddTwoTensors extends Root {
   /** Add. (Both the inputTensor0 and inputTensor1 will be disposed. */
   static Add_and_destroy0_destroy1() {
     try {
-      this.output0.realTensor = tf.add( this.input0.realTensor, this.input1.realTensor );
+      this.output0.realTensor
+        = tf.add( this.input0.realTensor, this.input1.realTensor );
     } finally {
       this.input0.realTensor.dispose();
       this.input1.realTensor.dispose();
@@ -276,4 +292,3 @@ class AddTwoTensors extends Root {
   }
 
 }
-
