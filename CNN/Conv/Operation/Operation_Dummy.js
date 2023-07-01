@@ -78,9 +78,10 @@ class Dummy extends Root {
   }
 
   /**
-   * Determine this.apply data members according to whether .inputX and .outputX
-   * exist and whether they are required to be kept. The .apply will just pass
-   * through from input to output (but handle keep-input-tensor flag correctly).
+   * Determine this.apply data members according to whether .inputX and
+   * .outputX exist and whether they are required to be kept. The .apply will
+   * just pass through from input to output (but handle keep-input-tensor flag
+   * correctly).
    *
    *
    * @param {Dummy} this
@@ -103,8 +104,12 @@ class Dummy extends Root {
       if ( this.input1 ) {
         if ( this.output0 ) {
           if ( this.output1 ) { //  1. ( .input0, .input1 ) => ( .output0, .output1 )
-            this.output0.set_height_width_channelCount_scaleBoundsArray_byTensorPlaceholder( this.input0 );
-            this.output1.set_height_width_channelCount_scaleBoundsArray_byTensorPlaceholder( this.input1 );
+            this.output0
+              .set_height_width_channelCount_scaleBoundsArray_byTensorPlaceholder(
+                this.input0 );
+            this.output1
+              .set_height_width_channelCount_scaleBoundsArray_byTensorPlaceholder(
+                this.input1 );
             if ( bKeepInputTensor0 ) {
               if ( bKeepInputTensor1 )
                 this.apply = Dummy.apply__i0_i1__o0_o1__k0_k1;
@@ -117,7 +122,9 @@ class Dummy extends Root {
                 this.apply = Dummy.apply__i0_i1__o0_o1__d0_d1;
             }
           } else {              //  2. ( .input0, .input1 ) => ( .output0 )
-            this.output0.set_height_width_channelCount_scaleBoundsArray_byTensorPlaceholder( this.input0 );
+            this.output0
+              .set_height_width_channelCount_scaleBoundsArray_byTensorPlaceholder(
+                this.input0 );
             if ( bKeepInputTensor0 ) {
               if ( bKeepInputTensor1 )
                 this.apply = Dummy.apply__i0_i1__o0__k0_k1;
@@ -132,7 +139,9 @@ class Dummy extends Root {
           }
         } else {
           if ( this.output1 ) { //  3. ( .input0, .input1 ) => ( , .output1 )
-            this.output1.set_height_width_channelCount_scaleBoundsArray_byTensorPlaceholder( this.input1 );
+            this.output1
+              .set_height_width_channelCount_scaleBoundsArray_byTensorPlaceholder(
+                this.input1 );
             if ( bKeepInputTensor0 ) {
               if ( bKeepInputTensor1 )
                 this.apply = Dummy.apply__i0_i1__o1__k0_k1;
@@ -161,15 +170,21 @@ class Dummy extends Root {
       } else {
         if ( this.output0 ) {
           if ( this.output1 ) { //  5. ( .input0 ) => ( .output0, .output1 )
-            this.output0.set_height_width_channelCount_scaleBoundsArray_byTensorPlaceholder( this.input0 );
-            this.output1.set_height_width_channelCount_scaleBoundsArray_byTensorPlaceholder( this.input0 );
+            this.output0
+              .set_height_width_channelCount_scaleBoundsArray_byTensorPlaceholder(
+                this.input0 );
+            this.output1
+              .set_height_width_channelCount_scaleBoundsArray_byTensorPlaceholder(
+                this.input0 );
             if ( bKeepInputTensor0 ) {
               this.apply = Dummy.apply__i0__o0_o1__k0;
             } else {
               this.apply = Dummy.apply__i0__o0_o1__d0;
             }
           } else {              //  6. ( .input0 ) => ( .output0 )
-            this.output0.set_height_width_channelCount_scaleBoundsArray_byTensorPlaceholder( this.input0 );
+            this.output0
+              .set_height_width_channelCount_scaleBoundsArray_byTensorPlaceholder(
+                this.input0 );
             if ( bKeepInputTensor0 ) {
               this.apply = Dummy.apply__i0__o0__k0;
             } else {
@@ -178,7 +193,9 @@ class Dummy extends Root {
           }
         } else {
           if ( this.output1 ) { //  7. ( .input0 ) => ( , .output1 )
-            this.output1.set_height_width_channelCount_scaleBoundsArray_byTensorPlaceholder( this.input0 );
+            this.output1
+              .set_height_width_channelCount_scaleBoundsArray_byTensorPlaceholder(
+                this.input0 );
             if ( bKeepInputTensor0 ) {
               this.apply = Dummy.apply__i0__o1__k0;
             } else {
@@ -197,15 +214,21 @@ class Dummy extends Root {
       if ( this.input1 ) {
         if ( this.output0 ) {
           if ( this.output1 ) { //  9. ( , .input1 ) => ( .output0, .output1 )
-            this.output0.set_height_width_channelCount_scaleBoundsArray_byTensorPlaceholder( this.input1 );
-            this.output1.set_height_width_channelCount_scaleBoundsArray_byTensorPlaceholder( this.input1 );
+            this.output0
+              .set_height_width_channelCount_scaleBoundsArray_byTensorPlaceholder(
+                this.input1 );
+            this.output1
+              .set_height_width_channelCount_scaleBoundsArray_byTensorPlaceholder(
+                this.input1 );
             if ( bKeepInputTensor1 ) {
               this.apply = Dummy.apply__i1__o0_o1__k1;
             } else {
               this.apply = Dummy.apply__i1__o0_o1__d1;
             }
           } else {              // 10. ( , .input1 ) => ( .output0 )
-            this.output0.set_height_width_channelCount_scaleBoundsArray_byTensorPlaceholder( this.input1 );
+            this.output0
+              .set_height_width_channelCount_scaleBoundsArray_byTensorPlaceholder(
+                this.input1 );
             if ( bKeepInputTensor1 ) {
               this.apply = Dummy.apply__i1__o0__k1;
             } else {
@@ -214,7 +237,9 @@ class Dummy extends Root {
           }
         } else {
           if ( this.output1 ) { // 11. ( , .input1 ) => ( , .output1 )
-            this.output1.set_height_width_channelCount_scaleBoundsArray_byTensorPlaceholder( this.input1 );
+            this.output1
+              .set_height_width_channelCount_scaleBoundsArray_byTensorPlaceholder(
+                this.input1 );
             if ( bKeepInputTensor1 ) {
               this.apply = Dummy.apply__i1__o1__k1;
             } else {
@@ -231,26 +256,36 @@ class Dummy extends Root {
       } else { // no input0, no input1.
         if ( this.output0 ) {
           if ( this.output1 ) { // 13. (  ) => ( .output0, .output1 )
-            this.output0.set_height_width_channelCount_scaleBoundsArray_byTensorPlaceholder( null );
-            this.output1.set_height_width_channelCount_scaleBoundsArray_byTensorPlaceholder( null );
+            this.output0
+              .set_height_width_channelCount_scaleBoundsArray_byTensorPlaceholder(
+                null );
+            this.output1
+              .set_height_width_channelCount_scaleBoundsArray_byTensorPlaceholder(
+                null );
             this.apply = Dummy.apply__o0_o1;
           } else {              // 14. (  ) => ( .output0 )
-            this.output0.set_height_width_channelCount_scaleBoundsArray_byTensorPlaceholder( null );
+            this.output0
+              .set_height_width_channelCount_scaleBoundsArray_byTensorPlaceholder(
+                null );
             this.apply = Dummy.apply__o0;
           }
         } else {
           if ( this.output1 ) { // 15. (  ) => ( , .output1 )
-            this.output1.set_height_width_channelCount_scaleBoundsArray_byTensorPlaceholder( null );
+            this.output1
+              .set_height_width_channelCount_scaleBoundsArray_byTensorPlaceholder(
+                null );
             this.apply = Dummy.apply__o1;
           } else {              // 16. (  ) => (  )
             this.apply = Dummy.apply__;
           }
         }
 
-        //!!! (2022/06/02 Remarked) It can be supported. Just put null to output should be enough.
+        //!!! (2022/06/02 Remarked) It can be supported. Just put null to
+        // output should be enough.
         //if ( this.input0 == this.input1 )
         //  throw Error( `Operation.Dummy.setup_apply_dummy(): `
-        //    + `input0 ( ${this.input0} ) and input1 ( ${this.input1} ) should at least one is non-null.`
+        //    + `input0 ( ${this.input0} ) and input1 ( ${this.input1} ) `
+        //    + `should at least one is non-null.`
         //  );
       }
     }
@@ -322,4 +357,3 @@ class Dummy extends Root {
   static apply__() {}
 
 }
-
