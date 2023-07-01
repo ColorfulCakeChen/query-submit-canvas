@@ -75,7 +75,8 @@ class ConcatShuffleSplit extends Root {
   ) {
 
     // Want and could do channel shuffling and splitting.
-    let bShouldShuffleSplit = ( ( bShuffleSplit ) && ( channelShuffler != null ) );
+    let bShouldShuffleSplit
+      = ( ( bShuffleSplit ) && ( channelShuffler != null ) );
 
     // Only if splitting is required (and possible), the output1 does exist.
     let outputTensorCount = ( bShouldShuffleSplit ) ? 2 : 1;
@@ -98,7 +99,8 @@ class ConcatShuffleSplit extends Root {
   ) {
 
     // Want and could do channel shuffling and splitting.
-    let bShouldShuffleSplit = ( ( bShuffleSplit ) && ( channelShuffler != null ) );
+    let bShouldShuffleSplit
+      = ( ( bShuffleSplit ) && ( channelShuffler != null ) );
 
     // Only if splitting is required (and possible), the output1 does exist.
     let outputTensorCount = ( bShouldShuffleSplit ) ? 2 : 1;
@@ -122,7 +124,8 @@ class ConcatShuffleSplit extends Root {
   ) {
 
     // Want and could do channel shuffling and splitting.
-    let bShouldShuffleSplit = ( ( bShuffleSplit ) && ( channelShuffler != null ) );
+    let bShouldShuffleSplit
+      = ( ( bShuffleSplit ) && ( channelShuffler != null ) );
 
     this.channelShuffler = channelShuffler;
 
@@ -160,7 +163,9 @@ class ConcatShuffleSplit extends Root {
 
     this.bShouldShuffleSplit = undefined;
     this.bShuffleSplit = undefined;
-    this.channelShuffler = undefined; // ChannelShuffler is not owned by this operation. Just nullify it.
+
+    // ChannelShuffler is not owned by this operation. Just nullify it.
+    this.channelShuffler = undefined;
 
     super.disposeResources();
   }
@@ -195,11 +200,15 @@ class ConcatShuffleSplit extends Root {
   }
 
 
-  /** Set this.pfnShuffleSplit according to this.bShuffleSplit, this.channelShuffler. */
+  /**
+   * Set this.pfnShuffleSplit according to this.bShuffleSplit,
+   * this.channelShuffler.
+   */
   static adjust_pfn() {
     if ( this.bShouldShuffleSplit ) {
 
-      if ( !( this.channelShuffler instanceof ChannelShuffler.ConcatPointwiseConv ) )
+      if ( !( this.channelShuffler
+                instanceof ChannelShuffler.ConcatPointwiseConv ) )
         throw Error( `Operation.ConcatShuffleSplit.adjust_pfn(): `
           + `channelShuffler must be an instance of class `
           + `ChannelShuffler.ConcatPointwiseConv.`
@@ -208,11 +217,15 @@ class ConcatShuffleSplit extends Root {
       // Want and could do channel shuffling and splitting.
       this.pfnShuffleSplit = ConcatShuffleSplit.ShuffleSplit_do;
     } else {
-      this.pfnShuffleSplit = ConcatShuffleSplit.ShuffleSplit_return_input_directly;
+      this.pfnShuffleSplit
+        = ConcatShuffleSplit.ShuffleSplit_return_input_directly;
     }
   }
 
-  /** Set this.apply according to this.bKeepInputTensor0 and this.bKeepInputTensor1. */
+  /**
+   * Set this.apply according to this.bKeepInputTensor0 and
+   * this.bKeepInputTensor1.
+   */
   static adjust_apply() {
     if ( this.bKeepInputTensor0 ) {
       if ( this.bKeepInputTensor1 ) {
@@ -224,7 +237,8 @@ class ConcatShuffleSplit extends Root {
       if ( this.bKeepInputTensor1 ) {
         this.apply = ConcatShuffleSplit.ConcatShuffleSplit_and_destroy0_keep1;
       } else {
-        this.apply = ConcatShuffleSplit.ConcatShuffleSplit_and_destroy0_destroy1;
+        this.apply
+          = ConcatShuffleSplit.ConcatShuffleSplit_and_destroy0_destroy1;
       }
     }
   }
@@ -259,8 +273,10 @@ class ConcatShuffleSplit extends Root {
       if ( this.bShouldShuffleSplit ) {
 
         if ( this.channelShuffler.outputGroupCount != 2 )
-          throw Error( `Operation.ConcatShuffleSplit.setup_BoundsArraySet_internal(): `
-            + `channelShuffler.outputGroupCount ( ${this.channelShuffler.outputGroupCount} ) `
+          throw Error( `Operation.ConcatShuffleSplit`
+            + `.setup_BoundsArraySet_internal(): `
+            + `channelShuffler.outputGroupCount `
+            + `( ${this.channelShuffler.outputGroupCount} ) `
             + `must be 2 ( other outputGroupCount does not supperted ).`
           );
 
@@ -334,7 +350,8 @@ class ConcatShuffleSplit extends Root {
 
         // If both inputs' height are known, they should be the same.
         if ( this.input0.height != this.input1.height )
-          throw Error( `Operation.ConcatShuffleSplit.setup_outputs_TensorPlaceholder(): `
+          throw Error( `Operation.ConcatShuffleSplit`
+            + `.setup_outputs_TensorPlaceholder(): `
             + `input0.height ( ${this.input0.height} ) and `
             + `input1.height ( ${this.input1.height} ) should be the same.`
           );
@@ -357,7 +374,8 @@ class ConcatShuffleSplit extends Root {
 
         // If both inputs' width are known, they should be the same.
         if ( this.input0.width != this.input1.width )
-          throw Error( `Operation.ConcatShuffleSplit.setup_outputs_TensorPlaceholder(): `
+          throw Error( `Operation.ConcatShuffleSplit`
+            + `.setup_outputs_TensorPlaceholder(): `
             + `input0.width ( ${this.input0.width} ) and `
             + `input1.width ( ${this.input1.width} ) should be the same.`
           );
@@ -379,7 +397,8 @@ class ConcatShuffleSplit extends Root {
     //       always lost.
     this.output0.channelCount_lowerHalf = undefined;
     this.output0.channelCount_higherHalf = undefined;
-    this.output0.ScaleBoundsArray_set_without_clone( this.boundsArraySet.output0 );
+    this.output0.ScaleBoundsArray_set_without_clone(
+      this.boundsArraySet.output0 );
 
     // 2.
 
@@ -404,16 +423,19 @@ class ConcatShuffleSplit extends Root {
       this.output1.channelCount_lowerHalf = undefined;
       this.output1.channelCount_higherHalf = undefined;
 
-      this.output1.ScaleBoundsArray_set_without_clone( this.boundsArraySet.output1 );
+      this.output1.ScaleBoundsArray_set_without_clone(
+        this.boundsArraySet.output1 );
 
     } else { // Only concatenation.
-      this.output0.channelCount = this.input0.channelCount + this.input1.channelCount;
+      this.output0.channelCount
+        = this.input0.channelCount + this.input1.channelCount;
     }
 
     // 3. Release for reducing memory usage. (Since it has been inside the
     //    output tensor placeholder.)
     {
-      // Because it has already been transferred to TensorPlaceholder this.output0
+      // Because it has already been transferred to TensorPlaceholder
+      // this.output0
       this.boundsArraySet.output0 = null;
       this.boundsArraySet.output1 = null;
       this.boundsArraySet.disposeResources_and_recycleToPool();
@@ -513,7 +535,9 @@ class ConcatShuffleSplit extends Root {
    * Concatenate along axis id 2. (Both the input0 and input1 will be
    * disposed.)
    */
-  static ConcatShuffleSplit_and_destroy0_destroy1( inputTensors, outputTensors ) {
+  static ConcatShuffleSplit_and_destroy0_destroy1(
+    inputTensors, outputTensors ) {
+
     let t0;
     try {
       this.inputTensors[ 0 ] = this.input0.realTensor;
@@ -528,4 +552,3 @@ class ConcatShuffleSplit extends Root {
   }
 
 }
-
