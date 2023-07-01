@@ -97,14 +97,16 @@ class Block_ParamsBase extends Recyclable.Root {
     this.input0_channelCount = input0_channelCount;
     this.nConvBlockTypeId = nConvBlockTypeId;
     this.pointwise1ChannelCount = pointwise1ChannelCount;
-    this.depthwise_AvgMax_Or_ChannelMultiplier = depthwise_AvgMax_Or_ChannelMultiplier;
+    this.depthwise_AvgMax_Or_ChannelMultiplier
+      = depthwise_AvgMax_Or_ChannelMultiplier;
     this.depthwiseFilterHeight = depthwiseFilterHeight;
     this.depthwiseFilterWidth = depthwiseFilterWidth;
     this.depthwiseStridesPad = depthwiseStridesPad;
     this.depthwiseActivationId = depthwiseActivationId;
     this.pointwise20ChannelCount = pointwise20ChannelCount;
     this.pointwise20ActivationId = pointwise20ActivationId;
-    this.nSqueezeExcitationChannelCountDivisor = nSqueezeExcitationChannelCountDivisor;
+    this.nSqueezeExcitationChannelCountDivisor
+      = nSqueezeExcitationChannelCountDivisor;
     this.bSqueezeExcitationPrefix = bSqueezeExcitationPrefix;
     this.nActivationId = nActivationId;
     this.bKeepInputTensor = bKeepInputTensor;
@@ -156,13 +158,15 @@ class Block_ParamsBase extends Recyclable.Root {
       this.depthwiseFilterHeight, this.depthwiseFilterWidth,
       this.depthwiseStridesPad, this.depthwiseActivationId,
       this.pointwise20ChannelCount, this.pointwise20ActivationId,
-      this.nSqueezeExcitationChannelCountDivisor, this.bSqueezeExcitationPrefix,
+      this.nSqueezeExcitationChannelCountDivisor,
+      this.bSqueezeExcitationPrefix,
       this.nActivationId
     );
   }
 
   get nConvBlockTypeName() {
-    return ValueDesc.ConvBlockType.Singleton.getName_byId( this.nConvBlockTypeId );
+    return ValueDesc.ConvBlockType.Singleton
+      .getName_byId( this.nConvBlockTypeId );
   }
 
   /** The inferencedParams.pointwise1ChannelCount_modified is considered. */
@@ -195,7 +199,8 @@ class Block_ParamsBase extends Recyclable.Root {
   }
 
   get depthwiseStridesPadName() {
-    return ValueDesc.StridesPad.Singleton.getName_byId( this.depthwiseStridesPad );
+    return ValueDesc.StridesPad.Singleton
+      .getName_byId( this.depthwiseStridesPad );
   }
 
   get depthwiseActivationName() {
@@ -209,12 +214,13 @@ class Block_ParamsBase extends Recyclable.Root {
   }
 
   get nSqueezeExcitationChannelCountDivisorName() {
-    return ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.getName_byId(
-      this.nSqueezeExcitationChannelCountDivisor );
+    return ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton
+      .getName_byId( this.nSqueezeExcitationChannelCountDivisor );
   }
 
   get nActivationName() {
-    return ValueDesc.ActivationFunction.Singleton.getName_byId( this.nActivationId );
+    return ValueDesc.ActivationFunction.Singleton.getName_byId(
+      this.nActivationId );
   }
 
   get output_height() {
@@ -303,4 +309,3 @@ class Block_ParamsBase extends Recyclable.Root {
   }
 
 }
-

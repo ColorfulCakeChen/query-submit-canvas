@@ -22,11 +22,12 @@ import { InferencedParams } from "./Block_InferencedParams.js";
  *
  * 1.1 pointwise2 always has bias
  *
- * The pointwise2 is an always existed operation of a block (i.e. a block may not
- * have pointwise1, may not have depthwise, but always has pointwise2). It is also
- * the final opportunity to add bias (i.e. to achieve affine transformation) for
- * a block. It is feasible to always have bias (i.e. ( pointwise20Bias == true )).
- * This ensures a block's output is affine transformed.
+ * The pointwise2 is an always existed operation of a block (i.e. a block may
+ * not have pointwise1, may not have depthwise, but always has pointwise2). It
+ * is also the final opportunity to add bias (i.e. to achieve affine
+ * transformation) for a block. It is feasible to always have bias (i.e.
+ * ( pointwise20Bias == true )). This ensures a block's output is affine
+ * transformed.
  *
  *
  * 1.2 Affine Transformation Combination Rule
@@ -43,8 +44,8 @@ import { InferencedParams } from "./Block_InferencedParams.js";
  *   - pointwise convolution: linear (also affine) along channel axis.
  *   - depthwise convolution with ( pad = "valid" ): linear (also affine) along
  *       ( hieght, width ) plane.
- *   - bias: affine along channel axis (no matter pointwise's bias or depthwise's
- *       bias).
+ *   - bias: affine along channel axis (no matter pointwise's bias or
+ *       depthwise's bias).
  *
  * Which operations are non-linear here?
  *   - activation
@@ -59,10 +60,10 @@ import { InferencedParams } from "./Block_InferencedParams.js";
  * zero for border pixels. The quantity of these padded zero are different
  * according to the input border pixel's position (e.g. at corner, or at edge).
  *
- * If a bias operation before depthwise want to be achieved by the bias operation
- * after depthwise, the varying padded zero quantity results in that varying bias
- * is required. However, varying bias is impossible to be achieved since data in
- * the same channel could only have the same bias.
+ * If a bias operation before depthwise want to be achieved by the bias
+ * operation after depthwise, the varying padded zero quantity results in that
+ * varying bias is required. However, varying bias is impossible to be achieved
+ * since data in the same channel could only have the same bias.
  *
  * On the other hand, the depthwise convolution with ( pad = "valid" ) does not
  * pad any value. The per channel (fixed) bias is sufficient to remedy the
@@ -84,15 +85,15 @@ import { InferencedParams } from "./Block_InferencedParams.js";
  *
  * 1.2.3 For different directions
  *
- * Affine transformation along different directions can be combined, but can not
- * be replaced by each other.
+ * Affine transformation along different directions can be combined, but can
+ * not be replaced by each other.
  *
- *   - The pointwise convolution can not replace depthwise convolution (and vice
- *       versa), because the former processes along depth (i.e. channels) while
- *       the later processes along spatial (i.e. height and width).
+ *   - The pointwise convolution can not replace depthwise convolution (and
+ *       vice versa), because the former processes along depth (i.e. channels)
+ *       while the later processes along spatial (i.e. height and width).
  *
- *   - The bias of pointwise convolution and depthwise convolution can be replaced
- *       by each other, because they all process along channels.
+ *   - The bias of pointwise convolution and depthwise convolution can be
+ *       replaced by each other, because they all process along channels.
  *
  *
  * 1.3 bias flags rules
@@ -102,12 +103,14 @@ import { InferencedParams } from "./Block_InferencedParams.js";
  *   - The pointwise20Bias (and so pointwise21Bias) always is true.
  *
  *   - For depthwise operation's bias, if:
- *      - depthwise operation existed (i.e. ( bDepthwiseRequestedAndNeeded == true )), and
+ *      - depthwise operation existed (i.e.
+ *          ( bDepthwiseRequestedAndNeeded == true )), and
  *      - there are non-linear operations between depthwise and pointwise2.
  *     Then, ( depthwiseBias == true ).
  *
  *   - For pointwise1 operation's bias, if:
- *      - pointwise1 operation existed (i.e. ( pointwise1ChannelCount > 0 )), and
+ *      - pointwise1 operation existed (i.e. ( pointwise1ChannelCount > 0 )),
+ *          and
  *      - there are non-linear operations:
  *         - between pointwise1 and depthwise (if depthwise existed), or
  *         - between pointwise1 and pointwise2 (if depthwise does not exist).
@@ -141,14 +144,14 @@ import { InferencedParams } from "./Block_InferencedParams.js";
  * Block.apply() should match this value.
  *
  * @member {number} input1_channelCount
- *   The channel count of the second input (i.e. input1). If there is no input1,
- * it will be 0. This is inferenced from other parameters. The input1's channel
- * count of Block.apply() should match this value. The Block.input1_channelCount
- * should also the same this value.
+ *   The channel count of the second input (i.e. input1). If there is no
+ * input1, it will be 0. This is inferenced from other parameters. The input1's
+ * channel count of Block.apply() should match this value. The
+ * Block.input1_channelCount should also the same this value.
  *
  * @member {boolean} pointwise1Bias
- *   If true, there will be a bias after pointwise1 convolution. Usually, it will
- * be true because pointwise1 always has bias. However, if
+ *   If true, there will be a bias after pointwise1 convolution. Usually, it
+ * will be true because pointwise1 always has bias. However, if
  * ( pointwise1ChannelCount == 0 ), this flag will be false.
  *
  * @member {number} pointwise1ActivationId
@@ -160,8 +163,8 @@ import { InferencedParams } from "./Block_InferencedParams.js";
  *   The string name of pointwise1ActivationId.
  *
  * @member {boolean} depthwiseBias
- *   If true, there will be a bias after depthwise convolution. It is determined
- * by operations between depthwise and pointwise2.
+ *   If true, there will be a bias after depthwise convolution. It is
+ * determined by operations between depthwise and pointwise2.
  *
  * @member {boolean} bDepthwiseRequestedAndNeeded
  *   Whether depthwise operation is requested and necessary.
@@ -176,31 +179,34 @@ import { InferencedParams } from "./Block_InferencedParams.js";
  *   If true, the concat1 (after depthwise and before pointwise2) is needed.
  *
  * @member {boolean} bConcat2ShuffleSplitRequested
- *   If true, the concat2 (after pointwise2) is needed. It may or may not follow
- * channel shuffling and splitting.
+ *   If true, the concat2 (after pointwise2) is needed. It may or may not
+ * follow channel shuffling and splitting.
  *
  * @member {boolean} bAddInputToOutputRequested
- *   If true, the input (in this case, the main input (i.e. input0)) will be added
- * to the output for achieving skip connection.
+ *   If true, the input (in this case, the main input (i.e. input0)) will be
+ * added to the output for achieving skip connection.
  *
  * @member {boolean} bHigherHalfDifferent
- *   Only if ( channelShuffler != null ), this is meaningful. If true, the higher
- * half input channels are processed differently. For pointwise convolution, the
- * higher half may copy lower half, or the higher half may just pass through the
- * input to output. For depthwise convolution, please see bHigherHalfDepthwise2.
+ *   Only if ( channelShuffler != null ), this is meaningful. If true, the
+ * higher half input channels are processed differently. For pointwise
+ * convolution, the higher half may copy lower half, or the higher half may
+ * just pass through the input to output. For depthwise convolution, please see
+ * bHigherHalfDepthwise2.
  *
  * @member {boolean} bHigherHalfDepthwise2
  *   Only if ( bHigherHalfDifferent == true ), this is meaningful. If true, the
- * depthwise1 will use higher half channels to achieve the depthwise2. If false,
- * the depthwise1's higher half channels just pass through the input to output.
+ * depthwise1 will use higher half channels to achieve the depthwise2. If
+ * false, the depthwise1's higher half channels just pass through the input to
+ * output.
  *
  * @member {boolean} pointwise20Bias
- *   If true, there will be a bias after pointwise20 convolution. It is always true.
+ *   If true, there will be a bias after pointwise20 convolution. It is always
+ * true.
  *
  * @member {number} pointwise20_channelShuffler_outputGroupCount
  *   The output group count of the pointwise20's channel shuffler when
- * ( nHigherHalfDifferent
- * == ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_PASS_THROUGH ).
+ * ( nHigherHalfDifferent ==
+ * ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_PASS_THROUGH ).
  * Either 0 or 2. Usually 2 only if SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD or
  * SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY.
  *
@@ -209,9 +215,9 @@ import { InferencedParams } from "./Block_InferencedParams.js";
  * ( pointwise21ChannelCount == 0 ), it means pointwise21 does not existed.
  *
  * @member {boolean} pointwise21Bias
- *   If true, there will be a bias after pointwise21 (i.e. the second pointwise2
- * convolution). It is always the same as pointwise20Bias. It is only meaningful
- * if ( pointwise21ChannelCount > 0 ).
+ *   If true, there will be a bias after pointwise21 (i.e. the second
+ * pointwise2 convolution). It is always the same as pointwise20Bias. It is
+ * only meaningful if ( pointwise21ChannelCount > 0 ).
  *
  * @member {number} pointwise21ActivationId
  *   The activation function id (ValueDesc.ActivationFunction.Singleton.Ids.Xxx)
@@ -235,7 +241,8 @@ import { InferencedParams } from "./Block_InferencedParams.js";
 class Block_Params extends Weights.Params( ParamsBase ) {
 
   /**
-   * Used as default Block.Params provider for conforming to Recyclable interface.
+   * Used as default Block.Params provider for conforming to Recyclable
+   * interface.
    */
   static Pool = new Pool.Root( "Block.Params.Pool",
     Block_Params, Block_Params.setAsConstructor );
@@ -245,17 +252,19 @@ class Block_Params extends Weights.Params( ParamsBase ) {
    * (i.e. by evolution).
    *
    * @param {number} input0_height
-   *   The height of apply()'s first input image (i.e. inputTensors[ 0 ]; input0).
-   * If null, it will be extracted from inputWeightArray (i.e. by evolution).
-   *
-   * @param {number} input0_width
-   *   The width of apply()'s first input image (i.e. inputTensors[ 0 ]; input0).
-   * If null, it will be extracted from inputWeightArray (i.e. by evolution).
-   *
-   * @param {number} input0_channelCount
-   *   The channel count of apply()'s first input image (i.e. inputTensors[ 0 ];
+   *   The height of apply()'s first input image (i.e. inputTensors[ 0 ];
    * input0). If null, it will be extracted from inputWeightArray (i.e. by
    * evolution).
+   *
+   * @param {number} input0_width
+   *   The width of apply()'s first input image (i.e. inputTensors[ 0 ];
+   * input0). If null, it will be extracted from inputWeightArray (i.e. by
+   * evolution).
+   *
+   * @param {number} input0_channelCount
+   *   The channel count of apply()'s first input image (i.e.
+   * inputTensors[ 0 ]; input0). If null, it will be extracted from
+   * inputWeightArray (i.e. by evolution).
    *
    * @param {number} nConvBlockTypeId
    *   The convolution type id of the block (i.e.
@@ -264,8 +273,8 @@ class Block_Params extends Weights.Params( ParamsBase ) {
    *
    * @param {number} pointwise1ChannelCount
    *   The output channel count of the pointwise1 convolution. If null, it will
-   * be extracted from inputWeightArray (i.e. by evolution). If 0, there will be
-   * no pointwise convolution before depthwise convolution.
+   * be extracted from inputWeightArray (i.e. by evolution). If 0, there will
+   * be no pointwise convolution before depthwise convolution.
    *
    * @param {number} depthwise_AvgMax_Or_ChannelMultiplier
    *   Depthwise operation. If null, it will be extracted from inputWeightArray
@@ -280,45 +289,46 @@ class Block_Params extends Weights.Params( ParamsBase ) {
    *   - Params.depthwise_AvgMax_Or_ChannelMultiplier.valueDesc.Ids.NONE (0):
    *       there will be no depthwise operation.
    *
-   *   - positive integer between [ 1, 32 ]: depthwise convolution and the number
-   *       indicates channel multiplier.
+   *   - positive integer between [ 1, 32 ]: depthwise convolution and the
+   *       number indicates channel multiplier.
    *
    * @param {number} depthwiseFilterHeight
-   *   The height of depthwise convolution's filter. At least 1 (so that 1D data
-   * could be processed). If null, it will be extracted from inputWeightArray
-   * (i.e. by evolution). If ( depthwise_AvgMax_Or_ChannelMultiplier == 0 ),
-   * this will be ignored.
+   *   The height of depthwise convolution's filter. At least 1 (so that 1D
+   * data could be processed). If null, it will be extracted from
+   * inputWeightArray (i.e. by evolution). If
+   * ( depthwise_AvgMax_Or_ChannelMultiplier == 0 ), this will be ignored.
    *
    * @param {number} depthwiseFilterWidth
-   *   The width of depthwise convolution's filter. At least 2 (so that meaningless
-   * ( 1 * 1 ) could be avoided). If null, it will be extracted from inputWeightArray
-   * (i.e. by evolution). If ( depthwise_AvgMax_Or_ChannelMultiplier == 0 ), this
-   * will be ignored.
+   *   The width of depthwise convolution's filter. At least 2 (so that
+   * meaningless ( 1 * 1 ) could be avoided). If null, it will be extracted
+   * from inputWeightArray (i.e. by evolution). If
+   * ( depthwise_AvgMax_Or_ChannelMultiplier == 0 ), this will be ignored.
    *
    * @param {number} depthwiseStridesPad
    *   The strides and padding of depthwise convolution. If null, it will be
    * extracted from inputWeightArray (i.e. by evolution).
-   * If ( depthwise_AvgMax_Or_ChannelMultiplier == 0 ), this depthwiseStridesPad
-   * will be ignored. It could be one of:
+   * If ( depthwise_AvgMax_Or_ChannelMultiplier == 0 ), this
+   * depthwiseStridesPad will be ignored. It could be one of:
    *   - ValueDesc.StridesPad.Singleton.Ids.STRIDES_1_PAD_VALID (0) (strides = 1, pad = "valid")
    *   - ValueDesc.StridesPad.Singleton.Ids.STRIDES_1_PAD_SAME  (1) (strides = 1, pad = "same")
    *   - ValueDesc.StridesPad.Singleton.Ids.STRIDES_2_PAD_SAME  (2) (strides = 2, pad = "same")
    *   - ValueDesc.StridesPad.Singleton.Ids.STRIDES_2_PAD_VALID (3) (strides = 2, pad = "valid")
-   * Default is ValueDesc.StridesPad.Singleton.Ids.STRIDES_1_PAD_SAME (1) because
-   * ( depthwiseStrides == 1 ) and ( depthwisePad == "same" ) is a pre-condition
-   * for ( bAddInputToOutputRequested == true ).
+   * Default is ValueDesc.StridesPad.Singleton.Ids.STRIDES_1_PAD_SAME (1)
+   * because ( depthwiseStrides == 1 ) and ( depthwisePad == "same" ) is a
+   * pre-condition for ( bAddInputToOutputRequested == true ).
    *
    * @param {number} depthwiseActivationId
    *   The activation function id (Params.depthwiseActivationId.valueDesc.Ids.Xxx)
-   * after depthwise convolution. If null, it will be extracted from inputWeightArray
-   * (i.e. by evolution). If ( depthwise_AvgMax_Or_ChannelMultiplier == 0 ), this
-   * activation function will also be ignored.
+   * after depthwise convolution. If null, it will be extracted from
+   * inputWeightArray (i.e. by evolution). If
+   * ( depthwise_AvgMax_Or_ChannelMultiplier == 0 ), this activation function
+   * will also be ignored.
    *
    * @param {number} pointwise20ChannelCount
-   *   The output channel count of the first pointwise2 convolution. If null, it
-   * will be extracted from inputWeightArray (i.e. by evolution). If
-   * ( pointwise20ChannelCount == 0 ) and ( pointwise21ChannelCount == 0 ), there
-   * will be no pointwise convolution after depthwise convolution.
+   *   The output channel count of the first pointwise2 convolution. If null,
+   * it will be extracted from inputWeightArray (i.e. by evolution). If
+   * ( pointwise20ChannelCount == 0 ) and ( pointwise21ChannelCount == 0 ),
+   * there will be no pointwise convolution after depthwise convolution.
    *
    * @param {number} pointwise20ActivationId
    *   The activation function id (Params.pointwise20ActivationId.valueDesc.Ids.Xxx)
@@ -327,8 +337,8 @@ class Block_Params extends Weights.Params( ParamsBase ) {
    * this activation function will also be ignored.
    *
    * @param {number} nSqueezeExcitationChannelCountDivisor
-   *   An integer represents the channel count divisor for squeeze-and-excitation's
-   * intermediate pointwise convolution channel count.
+   *   An integer represents the channel count divisor for
+   * squeeze-and-excitation's intermediate pointwise convolution channel count.
    *
    *     - ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.NONE (-2)
    *       - no squeeze, no excitation, no multiply.
@@ -337,17 +347,20 @@ class Block_Params extends Weights.Params( ParamsBase ) {
    *     - ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.EXCITATION (-1)
    *       - no squeeze.
    *       - no intermediate excitation. ( intermediate_outputChannelCount = 0 )
-   *       - has only one pointwise convolution (i.e. excitation pointwise convolution). 
+   *       - has only one pointwise convolution (i.e. excitation pointwise
+   *           convolution). 
    *
    *     - ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.SQUEEZE_EXCITATION (0)
    *       - has squeeze. 
    *       - no intermediate excitation. ( intermediate_outputChannelCount = 0 )
-   *       - has only one pointwise convolution (i.e. excitation pointwise convolution). 
+   *       - has only one pointwise convolution (i.e. excitation pointwise
+   *           convolution). 
    *
    *     - ( nSqueezeExcitationChannelCountDivisor > 0 )
    *       - has squeeze. 
    *       - has intermediate excitation. ( intermediate_outputChannelCount
-   *           = Math.ceil( inputChannelCount / nSqueezeExcitationChannelCountDivisor ) )
+   *           = Math.ceil( inputChannelCount
+   *               / nSqueezeExcitationChannelCountDivisor ) )
    *       - has two pointwise convolutions (i.e. intermediate pointwise
    *           convolution, and excitation pointwise convolution).
    *
@@ -355,14 +368,16 @@ class Block_Params extends Weights.Params( ParamsBase ) {
    *   If true, the squeeze-and-excitation will be before pointwise2. If false,
    * the squeeze-and-excitation will be after pointwise2. If null, it will be
    * extracted from inputWeightArray (i.e. by evolution). Only used if
-   * ( nSqueezeExcitationChannelCountDivisor
-   * != ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.NONE (-2) ).
+   * ( nSqueezeExcitationChannelCountDivisor !=
+   * ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.NONE (-2) ).
    *
    * @param {number} nActivationId
-   *   The default activation function id (ValueDesc.ActivationFunction.Singleton.Ids.Xxx). If null, it will be extracted from
-   * inputWeightArray (i.e. by evolution). It is used by pointwise1 and
-   * squeeze-and-excitation. pointwise1 and squeeze-and-excitation should have
-   * activvation even if depthwise and pointwise20 do not have.
+   *   The default activation function id
+   * (ValueDesc.ActivationFunction.Singleton.Ids.Xxx). If null, it will be
+   * extracted from inputWeightArray (i.e. by evolution). It is used by
+   * pointwise1 and squeeze-and-excitation. pointwise1 and
+   * squeeze-and-excitation should have activvation even if depthwise and
+   * pointwise20 do not have.
    *
    * @param {boolean} bKeepInputTensor
    *   If true, apply() will not dispose inputTensor (i.e. keep). For example,
@@ -452,22 +467,38 @@ class Block_Params extends Weights.Params( ParamsBase ) {
       return false;
 
     {
-      this.input0_height = this.getParamValue_byParamDesc( Block_Params.input0_height );
-      this.input0_width = this.getParamValue_byParamDesc( Block_Params.input0_width );
-      this.input0_channelCount = this.getParamValue_byParamDesc( Block_Params.input0_channelCount );
-      this.nConvBlockTypeId = this.getParamValue_byParamDesc( Block_Params.nConvBlockTypeId );
-      this.pointwise1ChannelCount = this.getParamValue_byParamDesc( Block_Params.pointwise1ChannelCount );
-      this.depthwise_AvgMax_Or_ChannelMultiplier = this.getParamValue_byParamDesc( Block_Params.depthwise_AvgMax_Or_ChannelMultiplier );
-      this.depthwiseFilterHeight = this.getParamValue_byParamDesc( Block_Params.depthwiseFilterHeight );
-      this.depthwiseFilterWidth = this.getParamValue_byParamDesc( Block_Params.depthwiseFilterWidth );
-      this.depthwiseStridesPad = this.getParamValue_byParamDesc( Block_Params.depthwiseStridesPad );
-      this.depthwiseActivationId = this.getParamValue_byParamDesc( Block_Params.depthwiseActivationId );
-      this.pointwise20ChannelCount = this.getParamValue_byParamDesc( Block_Params.pointwise20ChannelCount );
-      this.pointwise20ActivationId = this.getParamValue_byParamDesc( Block_Params.pointwise20ActivationId );
-      this.nSqueezeExcitationChannelCountDivisor = this.getParamValue_byParamDesc( Block_Params.nSqueezeExcitationChannelCountDivisor );
-      this.bSqueezeExcitationPrefix = this.getParamValue_byParamDesc( Block_Params.bSqueezeExcitationPrefix );
-      this.nActivationId = this.getParamValue_byParamDesc( Block_Params.nActivationId );
-      this.bKeepInputTensor = this.getParamValue_byParamDesc( Block_Params.bKeepInputTensor );
+      this.input0_height
+        = this.getParamValue_byParamDesc( Block_Params.input0_height );
+      this.input0_width
+        = this.getParamValue_byParamDesc( Block_Params.input0_width );
+      this.input0_channelCount
+        = this.getParamValue_byParamDesc( Block_Params.input0_channelCount );
+      this.nConvBlockTypeId
+        = this.getParamValue_byParamDesc( Block_Params.nConvBlockTypeId );
+      this.pointwise1ChannelCount
+        = this.getParamValue_byParamDesc( Block_Params.pointwise1ChannelCount );
+      this.depthwise_AvgMax_Or_ChannelMultiplier
+        = this.getParamValue_byParamDesc( Block_Params.depthwise_AvgMax_Or_ChannelMultiplier );
+      this.depthwiseFilterHeight
+        = this.getParamValue_byParamDesc( Block_Params.depthwiseFilterHeight );
+      this.depthwiseFilterWidth
+        = this.getParamValue_byParamDesc( Block_Params.depthwiseFilterWidth );
+      this.depthwiseStridesPad
+        = this.getParamValue_byParamDesc( Block_Params.depthwiseStridesPad );
+      this.depthwiseActivationId
+        = this.getParamValue_byParamDesc( Block_Params.depthwiseActivationId );
+      this.pointwise20ChannelCount
+        = this.getParamValue_byParamDesc( Block_Params.pointwise20ChannelCount );
+      this.pointwise20ActivationId
+        = this.getParamValue_byParamDesc( Block_Params.pointwise20ActivationId );
+      this.nSqueezeExcitationChannelCountDivisor
+        = this.getParamValue_byParamDesc( Block_Params.nSqueezeExcitationChannelCountDivisor );
+      this.bSqueezeExcitationPrefix
+        = this.getParamValue_byParamDesc( Block_Params.bSqueezeExcitationPrefix );
+      this.nActivationId
+        = this.getParamValue_byParamDesc( Block_Params.nActivationId );
+      this.bKeepInputTensor
+        = this.getParamValue_byParamDesc( Block_Params.bKeepInputTensor );
     }
 
     this.inferencedParams_create();
@@ -492,13 +523,16 @@ Block_Params.pointwise1ChannelCount =  new ParamDesc.Int(                 "point
 
 /** Define depthwise operation's id, range, name.
  *
- * Convert number value into integer between [ -2, 32 ] representing depthwise operation:
+ * Convert number value into integer between [ -2, 32 ] representing depthwise
+ * operation:
  *   - -1: average pooling. (AVG)
  *   - -2: maximum pooling. (MAX)
  *   -  0: no depthwise operation. (NONE)
- *   - [ 1, 32 ]: depthwise convolution with channel multiplier between 1 and 32 (inclusive).
+ *   - [ 1, 32 ]: depthwise convolution with channel multiplier between 1 and
+ *                32 (inclusive).
  */
-Block_Params.depthwise_AvgMax_Or_ChannelMultiplier = new ParamDesc.AvgMax_Or_ChannelMultiplier( "depthwise_AvgMax_Or_ChannelMultiplier" );
+Block_Params.depthwise_AvgMax_Or_ChannelMultiplier
+  = new ParamDesc.AvgMax_Or_ChannelMultiplier( "depthwise_AvgMax_Or_ChannelMultiplier" );
 
 
 /** Define suitable value for depthwise convolution filter size.
@@ -549,8 +583,8 @@ Block_Params.bKeepInputTensor =         new ParamDesc.Bool(                "bKee
 
 
 /**
- * Define the order of these parameters. (Fills ParamDesc.Xxx.seqId according to
- * this array's order.)
+ * Define the order of these parameters. (Fills ParamDesc.Xxx.seqId according
+ * to this array's order.)
  */
 Block_Params.SequenceArray = new ParamDesc.SequenceArray( [
   Block_Params.input0_height,
