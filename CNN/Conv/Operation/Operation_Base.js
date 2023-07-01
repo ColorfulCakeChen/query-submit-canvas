@@ -9,53 +9,59 @@ import * as TensorPlaceholder from "../TensorPlaceholder.js";
  *
  *
  * @member {TensorPlaceholder.Base} input0
- *   The TensorPlaceholder object which represents this operation's first input.
- * It (from constructor) will be kept (not cloned) directly. So caller should not
- * modify them.
+ *   The TensorPlaceholder object which represents this operation's first
+ * input. It (from constructor) will be kept (not cloned) directly. So caller
+ * should not modify them.
  *
  * @member {TensorPlaceholder.Base} input1
- *   The TensorPlaceholder object which represents this operation's second input.
- * It could be null which means this operation does not have second input tensor.
- * It (from constructor) will be kept (not cloned) directly. So caller should not
- * modify them.
+ *   The TensorPlaceholder object which represents this operation's second
+ * input. It could be null which means this operation does not have second
+ * input tensor. It (from constructor) will be kept (not cloned) directly. So
+ * caller should not modify them.
  *
  * @member {TensorPlaceholder.Base} output0
- *   The TensorPlaceholder object which represents this operation's first output.
- * It will be created by constructor if outputTensorCount (of constructor) is >= 1.
+ *   The TensorPlaceholder object which represents this operation's first
+ * output. It will be created by constructor if outputTensorCount (of
+ * constructor) is >= 1.
  *
  * @member {TensorPlaceholder.Base} output1
- *   The TensorPlaceholder object which represents this operation's second output.
- * It is only created by constructor if outputTensorCount (of constructor) is >= 2.
+ *   The TensorPlaceholder object which represents this operation's second
+ * output. It is only created by constructor if outputTensorCount (of
+ * constructor) is >= 2.
  *
  * @member {function} apply
- *   This is a data member which is a pointer to a function. The function processes
- * .input0.realTensor (and .input1.realTensor) as inputTensor(s). It puts to
- * .output0.realTensor as outputTensor. The inputTensors may or may not be disposed
- * according to setKeepInputTensor(). Default is setKeepInputTensor( false, false )
- * which will destroy all inputs. Usually, sub-class should override this data member.
+ *   This is a data member which is a pointer to a function. The function
+ * processes .input0.realTensor (and .input1.realTensor) as inputTensor(s). It
+ * puts to .output0.realTensor as outputTensor. The inputTensors may or may not
+ * be disposed according to setKeepInputTensor(). Default is
+ * setKeepInputTensor( false, false ) which will destroy all inputs. Usually,
+ * sub-class should override this data member.
  *
  */
 let Operation_Base = ( ParentClass = Object ) => class Operation_Base
   extends Recyclable.Base( ParentClass ) {
 
   /**
-   * Used as default Operation.Root provider for conforming to Recyclable interface.
+   * Used as default Operation.Root provider for conforming to Recyclable
+   * interface.
    */
   static Pool = new Pool.Root( "Operation.Base.Pool",
     Operation_Base, Operation_Base.setAsConstructor );
 
   /**
-   * This constructor will register this operation as the input TensorPlaceholder's
-   * final operation. So the construction order is important because the final
-   * constructed Operation object will become the real final operation of the inputs.
+   * This constructor will register this operation as the input
+   * TensorPlaceholder's final operation. So the construction order is
+   * important because the final constructed Operation object will become the
+   * real final operation of the inputs.
    *
    *
    * @param {number} outputTensorCount
-   *   If 0, no this.outputX will be created. If 1, only the this.output0 will be
-   * created. If 2, both the this.output0 and this.output1 will be created.
+   *   If 0, no this.outputX will be created. If 1, only the this.output0 will
+   * be created. If 2, both the this.output0 and this.output1 will be created.
    */
   constructor( input0, input1, outputTensorCount, ...restArgs ) {
-    super( ...restArgs ); // All other arguments passed to parent class's constructor.
+    // All other arguments passed to parent class's constructor.
+    super( ...restArgs );
     Operation_Base.setAsConstructor_self.call( this,
       input0, input1, outputTensorCount, ...restArgs );
   }
@@ -69,11 +75,12 @@ let Operation_Base = ( ParentClass = Object ) => class Operation_Base
   }
 
   /** @override */
-  static setAsConstructor_self( input0, input1, outputTensorCount, ...restArgs ) {
+  static setAsConstructor_self(
+    input0, input1, outputTensorCount, ...restArgs ) {
 
     // 1. Set and register as the input TensorPlaceholder's final user.
-    Operation_Base.set_inputTensorPlaceholder0_inputTensorPlaceholder1.call( this,
-      input0, input1 );
+    Operation_Base.set_inputTensorPlaceholder0_inputTensorPlaceholder1
+      .call( this, input0, input1 );
 
     // 2. Prepare output TensorPlaceholder.
     {
@@ -114,8 +121,8 @@ let Operation_Base = ( ParentClass = Object ) => class Operation_Base
   }
 
   /**
-   * The .input0 and .input1 will be set to null. The .output0 and .output1 will
-   * be recycled and then set to null.
+   * The .input0 and .input1 will be set to null. The .output0 and .output1
+   * will be recycled and then set to null.
    *
    * Sub-class should override this method (and call super.disposeResources()
    * before return).
@@ -125,8 +132,8 @@ let Operation_Base = ( ParentClass = Object ) => class Operation_Base
   disposeResources() {
     this.apply = null;
 
-    // Because outputs are created by this operation, they should be released by
-    // this operation.
+    // Because outputs are created by this operation, they should be released
+    // by this operation.
     {
       if ( this.output1 ) {
         this.output1.disposeResources_and_recycleToPool();
@@ -179,36 +186,39 @@ let Operation_Base = ( ParentClass = Object ) => class Operation_Base
 
   /**
    * This method will call this.setKeepInputTensor() according to：
-   *   - whether the operation is the final operation of the this.input0 / this.input1.
+   *   - whether the operation is the final operation of the this.input0
+   *       / this.input1.
    *   - whether the this.input0 / this.input1 is in alwaysKeepSet.
    *
    * @param {Set<TensorPlaceholder.Base>} alwaysKeepSet
    *   A set object. Its every element is TensorPlaceholder.Base object. They
-   * represent tensors never be disposed. The this.input0 and this.input1 will be
-   * compared with them.
+   * represent tensors never be disposed. The this.input0 and this.input1 will
+   * be compared with them.
    */
   setKeepInputTensor_IfNotFinalOperation_Or_In( alwaysKeepSet ) {
 
     let input0_bKeep = Operation_Base
-      .TensorPlaceholder_shouldKeepInputTensor_IfNotFinalOperation_Or_In.call( this,
-        this.input0, alwaysKeepSet );
+      .TensorPlaceholder_shouldKeepInputTensor_IfNotFinalOperation_Or_In
+      .call( this, this.input0, alwaysKeepSet );
 
     let input1_bKeep = Operation_Base
-      .TensorPlaceholder_shouldKeepInputTensor_IfNotFinalOperation_Or_In.call( this,
-        this.input1, alwaysKeepSet );
+      .TensorPlaceholder_shouldKeepInputTensor_IfNotFinalOperation_Or_In
+      .call( this, this.input1, alwaysKeepSet );
 
     // If two inputs are not null and they are the same one tensor placeholder
     // (i.e. it appears multiple times, i.e. ( this.input0 == this.input1 ) ),
-    // the conatined tensor will be disposed multiple times. In order to alleviate
-    // this problem, here will do some adjust to let .input0 do not dispose it.
+    // the conatined tensor will be disposed multiple times. In order to
+    // alleviate this problem, here will do some adjust to let .input0 do not
+    // dispose it.
     // 
     // Note: If ( this.input0 != this.input1 ) but
     //       ( this.input0.realTensor == this.input1.realTensor ), that will be
-    //       also a problem. But it can not be detected here because .realTensor
-    //       is only known when .apply() is called (i.e. not here).
+    //       also a problem. But it can not be detected here because
+    //       .realTensor is only known when .apply() is called (i.e. not here).
     //
     if (
-           // If both inputs are the same tensor placeholder (so the same tensor).
+           // If both inputs are the same tensor placeholder (so the same
+           // tensor).
            ( this.input0 == this.input1 )
 
            // And they both existed (so has tensor).
@@ -218,15 +228,15 @@ let Operation_Base = ( ParentClass = Object ) => class Operation_Base
         && ( !input0_bKeep ) && ( !input1_bKeep )
        ) {
 
-      // Let one of them do not dispose the tensor to avoid dispose the (same one)
-      // tensor before the operation.apply() done the computation.
+      // Let one of them do not dispose the tensor to avoid dispose the (same
+      // one) tensor before the operation.apply() done the computation.
       //
       // We assume the .input0 might be used before .input1, so choose .input0
       // to be kept.
       //
-      // Note: This assumption is not always correct. If the .input1 is used (and
-      //       will be disposed) before .input0, then a disposed might be used by
-      //       this operation.
+      // Note: This assumption is not always correct. If the .input1 is used
+      //       (and will be disposed) before .input0, then a disposed might be
+      //       used by this operation.
       // 
       input0_bKeep = true;
     }
@@ -238,22 +248,25 @@ let Operation_Base = ( ParentClass = Object ) => class Operation_Base
   /**
    *
    * @param {Base} this
-   *   The operation owns the aTensorPlaceholder as its input tensor placeholder.
+   *   The operation owns the aTensorPlaceholder as its input tensor
+   * placeholder.
    *
    * @param {TensorPlaceholder.Base} aTensorPlaceholder
-   *   The tensor placeholder to be determined whether its contained tensor should
-   * be kept (i.e. not be disposed) by this operation. If this operation is the
-   * final operation of aTensorPlaceholder, this operation is responsible for
-   * disposing its contained tensor.
+   *   The tensor placeholder to be determined whether its contained tensor
+   * should be kept (i.e. not be disposed) by this operation. If this operation
+   * is the final operation of aTensorPlaceholder, this operation is
+   * responsible for disposing its contained tensor.
    *
    * @param {Set<TensorPlaceholder.Base>} alwaysKeepSet
    *   A set object. Its every element is TensorPlaceholder.Base object. They
-   * represent tensors never be disposed. The aTensorPlaceholder will be compared
-   * with them. If ( alwaysKeepSet == null ), it is viewed as empty set.
+   * represent tensors never be disposed. The aTensorPlaceholder will be
+   * compared with them. If ( alwaysKeepSet == null ), it is viewed as empty
+   * set.
    *
    * @retuen {boolean}
-   *   If this operation is the tensor's final operation and the tensor is not in
-   * alwaysKeepSet, return false (i.e. do not keep it and should dispose it).
+   *   If this operation is the tensor's final operation and the tensor is not
+   * in alwaysKeepSet, return false (i.e. do not keep it and should dispose
+   * it).
    */
   static TensorPlaceholder_shouldKeepInputTensor_IfNotFinalOperation_Or_In(
     aTensorPlaceholder, alwaysKeepSet ) {
@@ -267,8 +280,8 @@ let Operation_Base = ( ParentClass = Object ) => class Operation_Base
     // Only if final operation, the input might be destroyed.
 
     if ( alwaysKeepSet?.has( aTensorPlaceholder ) )
-      // tensor placeholder in alwaysKeepSet should always be kept (always not to
-      // be disposed).
+      // tensor placeholder in alwaysKeepSet should always be kept (always not
+      // to be disposed).
       return true;
 
     return false;
