@@ -511,15 +511,20 @@ class Block_Params extends Weights.Params( ParamsBase ) {
 
 // Define parameter descriptions.
 
-Block_Params.input0_height =           new ParamDesc.Int(                 "input0_height",           1, ( 10 * 1024 ) );
-Block_Params.input0_width =            new ParamDesc.Int(                 "input0_width",            1, ( 10 * 1024 ) );
+Block_Params.input0_height
+  = new ParamDesc.Int(                "input0_height",           1, ( 10 * 1024 ) );
+Block_Params.input0_width
+  = new ParamDesc.Int(                "input0_width",            1, ( 10 * 1024 ) );
 
 /** At least, there should be 1 input channel. */
-Block_Params.input0_channelCount =     new ParamDesc.Int(                 "input0_channelCount",     1, ( 10 * 1024 ) );
+Block_Params.input0_channelCount
+  = new ParamDesc.Int(                "input0_channelCount",     1, ( 10 * 1024 ) );
 
-Block_Params.nConvBlockTypeId =        new ParamDesc.ConvBlockType(       "nConvBlockTypeId" );
+Block_Params.nConvBlockTypeId
+  = new ParamDesc.ConvBlockType(      "nConvBlockTypeId" );
 
-Block_Params.pointwise1ChannelCount =  new ParamDesc.Int(                 "pointwise1ChannelCount",  0, ( 10 * 1024 ) );
+Block_Params.pointwise1ChannelCount
+  = new ParamDesc.Int(                "pointwise1ChannelCount",  0, ( 10 * 1024 ) );
 
 /** Define depthwise operation's id, range, name.
  *
@@ -532,7 +537,8 @@ Block_Params.pointwise1ChannelCount =  new ParamDesc.Int(                 "point
  *                32 (inclusive).
  */
 Block_Params.depthwise_AvgMax_Or_ChannelMultiplier
-  = new ParamDesc.AvgMax_Or_ChannelMultiplier( "depthwise_AvgMax_Or_ChannelMultiplier" );
+  = new ParamDesc.AvgMax_Or_ChannelMultiplier(
+                                      "depthwise_AvgMax_Or_ChannelMultiplier" );
 
 
 /** Define suitable value for depthwise convolution filter size.
@@ -558,11 +564,15 @@ Block_Params.depthwise_AvgMax_Or_ChannelMultiplier
  *       and WebGL, this problem does not exist.
  *
  */
-Block_Params.depthwiseFilterHeight =    new ParamDesc.Int(                "depthwiseFilterHeight",   1, ( 10 * 1024 ) );
-Block_Params.depthwiseFilterWidth =     new ParamDesc.Int(                "depthwiseFilterWidth",    1, ( 10 * 1024 ) );
+Block_Params.depthwiseFilterHeight
+  = new ParamDesc.Int(                "depthwiseFilterHeight",   1, ( 10 * 1024 ) );
+Block_Params.depthwiseFilterWidth
+  = new ParamDesc.Int(                "depthwiseFilterWidth",    1, ( 10 * 1024 ) );
 
-Block_Params.depthwiseStridesPad =      new ParamDesc.StridesPad(         "depthwiseStridesPad" );
-Block_Params.depthwiseActivationId =    new ParamDesc.ActivationFunction( "depthwiseActivationId" );
+Block_Params.depthwiseStridesPad
+  = new ParamDesc.StridesPad(         "depthwiseStridesPad" );
+Block_Params.depthwiseActivationId
+  = new ParamDesc.ActivationFunction( "depthwiseActivationId" );
 
 // Note:
 //
@@ -571,15 +581,22 @@ Block_Params.depthwiseActivationId =    new ParamDesc.ActivationFunction( "depth
 //   - ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD (5)
 //   - ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY_TAIL (6)
 //
-Block_Params.pointwise20ChannelCount =  new ParamDesc.Int(                "pointwise20ChannelCount", 1, ( 10 * 1024 ) );
-Block_Params.pointwise20ActivationId =  new ParamDesc.ActivationFunction( "pointwise20ActivationId" );
+Block_Params.pointwise20ChannelCount
+  = new ParamDesc.Int(                "pointwise20ChannelCount", 1, ( 10 * 1024 ) );
+Block_Params.pointwise20ActivationId
+  = new ParamDesc.ActivationFunction( "pointwise20ActivationId" );
 
-Block_Params.nSqueezeExcitationChannelCountDivisor = new ParamDesc.SqueezeExcitationChannelCountDivisor( "nSqueezeExcitationChannelCountDivisor" );
-Block_Params.bSqueezeExcitationPrefix = new ParamDesc.Bool(               "bSqueezeExcitationPrefix" );
+Block_Params.nSqueezeExcitationChannelCountDivisor
+  = new ParamDesc.SqueezeExcitationChannelCountDivisor(
+                                      "nSqueezeExcitationChannelCountDivisor" );
+Block_Params.bSqueezeExcitationPrefix
+  = new ParamDesc.Bool(               "bSqueezeExcitationPrefix" );
 
-Block_Params.nActivationId =            new ParamDesc.ActivationFunction(  "nActivationId" );
+Block_Params.nActivationId
+  = new ParamDesc.ActivationFunction( "nActivationId" );
 
-Block_Params.bKeepInputTensor =         new ParamDesc.Bool(                "bKeepInputTensor" );
+Block_Params.bKeepInputTensor
+  = new ParamDesc.Bool(               "bKeepInputTensor" );
 
 
 /**
