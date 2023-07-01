@@ -5,7 +5,8 @@ import * as TwoTensors from "../../util/TwoTensors.js";
 import * as ValueDesc from "../../Unpacker/ValueDesc.js";
 import * as ReturnOrClone from "../ReturnOrClone.js";
 import * as TensorPlaceholder from "../TensorPlaceholder.js";
-import { FiltersArray_BiasesArray } from "../Depthwise/Depthwise_FiltersArray_BiasesArray.js";
+import { FiltersArray_BiasesArray }
+  from "../Depthwise/Depthwise_FiltersArray_BiasesArray.js";
 import { Base } from "./Operation_Base.js";
 
 /**

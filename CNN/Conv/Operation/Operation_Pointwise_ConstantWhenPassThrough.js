@@ -73,4 +73,3 @@ class Pointwise_ConstantWhenPassThrough extends Pointwise {
   }
 
 }
-

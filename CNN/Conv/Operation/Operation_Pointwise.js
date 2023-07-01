@@ -5,7 +5,8 @@ import * as TwoTensors from "../../util/TwoTensors.js";
 import * as ValueDesc from "../../Unpacker/ValueDesc.js";
 import * as ReturnOrClone from "../ReturnOrClone.js";
 import * as TensorPlaceholder from "../TensorPlaceholder.js";
-import { FiltersArray_BiasesArray } from "../Pointwise/Pointwise_FiltersArray_BiasesArray.js";
+import { FiltersArray_BiasesArray }
+  from "../Pointwise/Pointwise_FiltersArray_BiasesArray.js";
 import { Base } from "./Operation_Base.js";
 
 /**
@@ -68,7 +69,8 @@ class Pointwise extends Base( FiltersArray_BiasesArray(
       inputTensorPlaceholder0.channelCount, outputChannelCount,
       bBias, nActivationId, nPassThroughStyleId,
       nHigherHalfDifferent,
-      inputTensorPlaceholder0.channelCount_lowerHalf, outputChannelCount_lowerHalf,
+      inputTensorPlaceholder0.channelCount_lowerHalf,
+      outputChannelCount_lowerHalf,
       channelShuffler_inputGroupCount, channelShuffler_outputGroupCount );
 
     Pointwise.setAsConstructor_self.call( this );
@@ -86,7 +88,8 @@ class Pointwise extends Base( FiltersArray_BiasesArray(
       inputTensorPlaceholder0.channelCount, outputChannelCount,
       bBias, nActivationId, nPassThroughStyleId,
       nHigherHalfDifferent,
-      inputTensorPlaceholder0.channelCount_lowerHalf, outputChannelCount_lowerHalf,
+      inputTensorPlaceholder0.channelCount_lowerHalf,
+      outputChannelCount_lowerHalf,
       channelShuffler_inputGroupCount, channelShuffler_outputGroupCount );
 
     Pointwise.setAsConstructor_self.call( this );
@@ -125,7 +128,8 @@ class Pointwise extends Base( FiltersArray_BiasesArray(
     if ( !this.bPointwise ) {
       bExtractOk = true; // 2. no operation at all.
 
-      this.weightElementOffsetBegin = this.weightElementOffsetEnd = weightElementOffsetBegin;
+      this.weightElementOffsetBegin = this.weightElementOffsetEnd
+        = weightElementOffsetBegin;
       this.weightElementExtractedCount = 0;
 
       // Bypass previous to next.
@@ -133,8 +137,9 @@ class Pointwise extends Base( FiltersArray_BiasesArray(
       // Note: The .outputX and .inputX should always be different object (but
       //       can have the same content). Otherwise, the apply() will destroy
       //       the content of .inputX (especially when keep-input-tensor).
-      this.output0.set_height_width_channelCount_scaleBoundsArray_byTensorPlaceholder(
-        this.input0 );
+      this.output0
+        .set_height_width_channelCount_scaleBoundsArray_byTensorPlaceholder(
+          this.input0 );
 
     } else { // 3.
 
@@ -144,7 +149,8 @@ class Pointwise extends Base( FiltersArray_BiasesArray(
         try {
 
           if ( this.filtersShape && this.filtersArray ) {
-            this.filtersTensor4d = tf.tensor( this.filtersArray, this.filtersShape );
+            this.filtersTensor4d
+              = tf.tensor( this.filtersArray, this.filtersShape );
 
 //!!! (2022/08/05 Temp Remarked) For debug BoundsArraySet calculation error.
             this.filtersArray.disposeResources_and_recycleToPool();
@@ -155,7 +161,8 @@ class Pointwise extends Base( FiltersArray_BiasesArray(
           }
 
           if ( this.biasesShape && this.biasesArray ) {
-            this.biasesTensor3d = tf.tensor( this.biasesArray, this.biasesShape );
+            this.biasesTensor3d
+              = tf.tensor( this.biasesArray, this.biasesShape );
 
 //!!! (2022/08/05 Temp Remarked) For debug BoundsArraySet calculation error.
             this.biasesArray.disposeResources_and_recycleToPool();
@@ -177,7 +184,8 @@ class Pointwise extends Base( FiltersArray_BiasesArray(
           // Release for reducing memory usage. (Since it has been inside the
           // output tensor placeholder.)
           {
-            // Because it has already been transferred to TensorPlaceholder this.output0
+            // Because it has already been transferred to TensorPlaceholder
+            // this.output0
             this.boundsArraySet.output0 = null;
             this.boundsArraySet.disposeResources_and_recycleToPool();
             this.boundsArraySet = null;
@@ -222,7 +230,8 @@ class Pointwise extends Base( FiltersArray_BiasesArray(
         this.pfnConv = Pointwise.Conv_and_destroy;
       }
     } else {
-      // Since there is no operation at all, let apply ignore pfnConv completely.
+      // Since there is no operation at all, let apply ignore pfnConv
+      // completely.
       if ( bKeepInputTensor ) {
         this.pfnConv = Pointwise.keep_input_return_copy;
         this.apply = Pointwise.output0_return_input0_cloned;
@@ -257,7 +266,8 @@ class Pointwise extends Base( FiltersArray_BiasesArray(
    *   The Base object to be determined and modified.
    */
   static setup_bPointwise_pfn() {
-    // (Because this method will arrange function pointer as not-keep-input-tensor.)
+    // (Because this method will arrange function pointer as
+    // not-keep-input-tensor.)
     this.bKeepInputTensor = false;
 
     // 0. Determine whether pointwise operation should exist.
@@ -271,7 +281,8 @@ class Pointwise extends Base( FiltersArray_BiasesArray(
     this.pfnConv = Pointwise.Conv_and_destroy; // will dispose inputTensor.
 
     // 2.
-    this.pfnActivation = Pointwise.ActivationFunction_get_byId( this.nActivationId );
+    this.pfnActivation
+      = Pointwise.ActivationFunction_get_byId( this.nActivationId );
 
     // 3.
     if ( this.bPointwise ) {
@@ -287,7 +298,8 @@ class Pointwise extends Base( FiltersArray_BiasesArray(
           this.apply = Pointwise.Conv_and_destroy_or_keep;
       }
     } else {
-      // Since there is no operation at all, let apply ignore pfnConv completely.
+      // Since there is no operation at all, let apply ignore pfnConv
+      // completely.
       this.pfnConv = Pointwise.return_input_directly;
       this.apply = Pointwise.output0_return_input0_directly;
     }
@@ -299,7 +311,8 @@ class Pointwise extends Base( FiltersArray_BiasesArray(
    * it can be used for achieving skip connection.)
    */
   static Conv_and_keep( inputTensor ) {
-    return tf.conv2d( inputTensor, this.filtersTensor4d, 1, "valid" ); // 1x1, Stride = 1
+    // 1x1, Stride = 1
+    return tf.conv2d( inputTensor, this.filtersTensor4d, 1, "valid" );
   }
 
   static Conv_and_destroy( inputTensor ) {
@@ -362,4 +375,3 @@ class Pointwise extends Base( FiltersArray_BiasesArray(
   }
 
 }
-

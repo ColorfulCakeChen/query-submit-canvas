@@ -73,4 +73,3 @@ class Pointwise_SameWhenPassThrough extends Pointwise {
   }
 
 }
-
