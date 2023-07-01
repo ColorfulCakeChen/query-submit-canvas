@@ -153,17 +153,25 @@ import { InferencedParams } from "./Embedding_InferencedParams.js";
 
 
 // Define parameter descriptions.
-Embedding_Params.input_height =                   new ParamDesc.Int(  "input_height",                   1, ( 10 * 1024 ) );
-Embedding_Params.input_width =                    new ParamDesc.Int(  "input_width",                    1, ( 10 * 1024 ) );
-Embedding_Params.input_channelCount =             new ParamDesc.Int(  "input_channelCount",             1, ( 10 * 1024 ) );
-Embedding_Params.channelMultiplier =              new ParamDesc.Int(  "channelMultiplier",              1, (  1 * 1024 ) );
-Embedding_Params.vocabularyCountPerInputChannel = new ParamDesc.Int(  "vocabularyCountPerInputChannel", 1, ( 2 ** 24 ) );
-Embedding_Params.bEmbedVocabularyId =             new ParamDesc.Bool( "bEmbedVocabularyId" );
-Embedding_Params.bKeepInputTensor =               new ParamDesc.Bool( "bKeepInputTensor" );
+Embedding_Params.input_height
+  = new ParamDesc.Int(  "input_height",                   1, ( 10 * 1024 ) );
+Embedding_Params.input_width
+  = new ParamDesc.Int(  "input_width",                    1, ( 10 * 1024 ) );
+Embedding_Params.input_channelCount
+  = new ParamDesc.Int(  "input_channelCount",             1, ( 10 * 1024 ) );
+Embedding_Params.channelMultiplier
+  = new ParamDesc.Int(  "channelMultiplier",              1, (  1 * 1024 ) );
+Embedding_Params.vocabularyCountPerInputChannel
+  = new ParamDesc.Int(  "vocabularyCountPerInputChannel", 1, ( 2 ** 24 ) );
+Embedding_Params.bEmbedVocabularyId
+  = new ParamDesc.Bool( "bEmbedVocabularyId" );
+Embedding_Params.bKeepInputTensor
+  = new ParamDesc.Bool( "bKeepInputTensor" );
 
 
 /**
- * Define the order of these parameters. (Fills ParamDesc.Xxx.seqId according to this array's order.)
+ * Define the order of these parameters. (Fills ParamDesc.Xxx.seqId according
+ * to this array's order.)
  */
 Embedding_Params.SequenceArray = new ParamDesc.SequenceArray( [
   Embedding_Params.input_height,
