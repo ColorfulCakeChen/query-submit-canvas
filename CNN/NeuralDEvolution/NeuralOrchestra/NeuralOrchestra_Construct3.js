@@ -122,8 +122,8 @@ import { Base as NeuralOrchestra_Base } from "./NeuralOrchestra_Base.js";
  *   The Construct3 game objects which has been painted recently.
  *
  * @member {Promise( ImageData )} DrawingCanvas_pasteInstancesPromise
- *   If not null, the DrawingCanvas is still painting (and may be also getting image
- * data) currently.
+ *   If not null, the DrawingCanvas is still painting (and may be also getting
+ * image data) currently.
  *
  * @member {Promise} DrawingCanvas_try_process_by_AI_asyncPromise
  *   If exists and is pending, the AI is still trying to process the
@@ -204,8 +204,10 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
    * Used as default NeuralOrchestra.Construct3 provider for conforming to
    * Recyclable interface.
    */
-  static Pool = new Pool.Root( "NeuralOrchestra.Construct3.Pool",
-    NeuralOrchestra_Construct3, NeuralOrchestra_Construct3.setAsConstructor );
+  static Pool = new Pool.Root(
+    "NeuralOrchestra.Construct3.Pool",
+    NeuralOrchestra_Construct3,
+    NeuralOrchestra_Construct3.setAsConstructor );
 
   /** */
   constructor() {
