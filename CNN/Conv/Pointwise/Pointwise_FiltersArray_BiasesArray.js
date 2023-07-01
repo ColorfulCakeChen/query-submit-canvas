@@ -701,7 +701,9 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
                   if ( inChannelToPartBegin == outChannelSub ) {
                     this.filtersArray[ filterIndex ] = filterValuePassThrough;
                     tBounds
-                      .set_byBoundsArray( this.boundsArraySet.afterUndoPreviousActivationEscaping, inChannel )
+                      .set_byBoundsArray(
+                        this.boundsArraySet.afterUndoPreviousActivationEscaping,
+                        inChannel )
                       .multiply_byN( thePassThroughStyleInfo.filterValue );
 
                   } else {
@@ -720,7 +722,9 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
                     = sourceWeight * undoPreviousEscapingScale;
 
                   tBounds
-                    .set_byBoundsArray( this.boundsArraySet.afterUndoPreviousActivationEscaping, inChannel )
+                    .set_byBoundsArray(
+                      this.boundsArraySet.afterUndoPreviousActivationEscaping,
+                      inChannel )
                     .multiply_byN( sourceWeight );
                 }
 
@@ -896,13 +900,16 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
     if ( this.channelShuffler_inputGroupCount > 0 ) {
 
       if ( this.channelShuffler_inputGroupCount != 2 )
-        throw Error( `Pointwise.FiltersArray_BiasesArray.${funcNameInMessage}(): `
-          + `channelShuffler_inputGroupCount ( ${this.channelShuffler_inputGroupCount} ) `
+        throw Error( `Pointwise.FiltersArray_BiasesArray`
+          + `.${funcNameInMessage}(): `
+          + `channelShuffler_inputGroupCount `
+          + `( ${this.channelShuffler_inputGroupCount} ) `
           + `only 2 is supported.`
         );
 
       if ( ( this.inputChannelCount % 2 ) != 0 )
-        throw Error( `Pointwise.FiltersArray_BiasesArray.${funcNameInMessage}(): `
+        throw Error( `Pointwise.FiltersArray_BiasesArray`
+          + `.${funcNameInMessage}(): `
           + `input channel count ( ${this.inputChannelCount} ) `
           + `must be even (i.e. divisible by 2).`
         );
@@ -912,9 +919,10 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
         let filtersArrayShuffled = Recyclable.Array.Pool.get_or_create_by(
           this.filtersArray.length );
 
-        FloatValue.ArrayInterleaver.interleave_asGrouptTwo_alongLast2ndAxis_from_to(
-          this.filtersArray, filtersArrayShuffled,
-          this.inputChannelCount, this.outputChannelCount );
+        FloatValue.ArrayInterleaver
+          .interleave_asGrouptTwo_alongLast2ndAxis_from_to(
+            this.filtersArray, filtersArrayShuffled,
+            this.inputChannelCount, this.outputChannelCount );
 
         this.filtersArray.disposeResources_and_recycleToPool();
         this.filtersArray = filtersArrayShuffled;
@@ -934,13 +942,16 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
     if ( this.channelShuffler_outputGroupCount > 0 ) {
 
       if ( this.channelShuffler_outputGroupCount != 2 )
-        throw Error( `Pointwise.FiltersArray_BiasesArray.${funcNameInMessage}(): `
-          + `channelShuffler_outputGroupCount ( ${this.channelShuffler_outputGroupCount} ) `
+        throw Error( `Pointwise.FiltersArray_BiasesArray`
+          + `.${funcNameInMessage}(): `
+          + `channelShuffler_outputGroupCount `
+          + `( ${this.channelShuffler_outputGroupCount} ) `
           + `only 2 is supported.`
         );
 
       if ( ( this.outputChannelCount % 2 ) != 0 )
-        throw Error( `Pointwise.FiltersArray_BiasesArray.${funcNameInMessage}(): `
+        throw Error( `Pointwise.FiltersArray_BiasesArray`
+          + `.${funcNameInMessage}(): `
           + `output channel count ( ${this.outputChannelCount} ) `
           + `must be even (i.e. divisible by 2).`
         );
@@ -950,9 +961,10 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
         let filtersArrayShuffled = Recyclable.Array.Pool.get_or_create_by(
           this.filtersArray.length );
 
-        FloatValue.ArrayInterleaver.interleave_asGrouptTwo_alongLastAxis_from_to(
-          this.filtersArray, filtersArrayShuffled,
-          this.inputChannelCount, this.outputChannelCount );
+        FloatValue.ArrayInterleaver
+          .interleave_asGrouptTwo_alongLastAxis_from_to(
+            this.filtersArray, filtersArrayShuffled,
+            this.inputChannelCount, this.outputChannelCount );
 
         this.filtersArray.disposeResources_and_recycleToPool();
         this.filtersArray = filtersArrayShuffled;
@@ -963,8 +975,10 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
         let biasesArrayShuffled = Recyclable.Array.Pool.get_or_create_by(
           this.biasesArray.length );
 
-        FloatValue.ArrayInterleaver.interleave_asGrouptTwo_alongLastAxis_from_to(
-          this.biasesArray, biasesArrayShuffled, this.outputChannelCount );
+        FloatValue.ArrayInterleaver
+          .interleave_asGrouptTwo_alongLastAxis_from_to(
+            this.biasesArray, biasesArrayShuffled,
+            this.outputChannelCount );
 
         this.biasesArray.disposeResources_and_recycleToPool();
         this.biasesArray = biasesArrayShuffled;

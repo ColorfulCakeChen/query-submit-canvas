@@ -477,7 +477,8 @@ class ConvBiasActivation extends InputsOutputs {
         this.bPassThrough.length );
 
       FloatValue.ArrayInterleaver.interleave_asGrouptTwo_alongLastAxis_from_to(
-        this.bPassThrough, bPassThroughShuffled, this.bPassThrough.length );
+        this.bPassThrough, bPassThroughShuffled,
+        this.bPassThrough.length );
 
       this.bPassThrough.disposeResources_and_recycleToPool();
       this.bPassThrough = bPassThroughShuffled;

@@ -43,7 +43,8 @@ class ChannelPartInfo extends Recyclable.Root {
     effectFilterX_passThrough = -1 ) {
     super();
     ChannelPartInfo.setAsConstructor_self.call( this,
-      inputChannelCount, effectFilterY_passThrough, effectFilterX_passThrough );
+      inputChannelCount,
+      effectFilterY_passThrough, effectFilterX_passThrough );
   }
 
   /** @override */
@@ -53,7 +54,8 @@ class ChannelPartInfo extends Recyclable.Root {
     effectFilterX_passThrough = -1 ) {
     super.setAsConstructor();
     ChannelPartInfo.setAsConstructor_self.call( this,
-      inputChannelCount, effectFilterY_passThrough, effectFilterX_passThrough );
+      inputChannelCount,
+      effectFilterY_passThrough, effectFilterX_passThrough );
     return this;
   }
 

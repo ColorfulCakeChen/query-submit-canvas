@@ -6,7 +6,7 @@ import * as FloatValue from "../../Unpacker/FloatValue.js";
 import * as ValueDesc from "../../Unpacker/ValueDesc.js";
 import * as Weights from "../../Unpacker/Weights.js";
 import * as BoundsArraySet from "../BoundsArraySet.js";
-import { ChannelPartInfo, FiltersBiasesPartInfo } from  "./Depthwise_ChannelPartInfo.js";
+import { ChannelPartInfo, FiltersBiasesPartInfo } from "./Depthwise_ChannelPartInfo.js";
 import { PadInfoCalculator } from "./Depthwise_PadInfoCalculator.js";
 import { BoundsArray_PerPixel } from "./Depthwise_BoundsArray_PerPixel.js";
 
@@ -168,7 +168,8 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
 
     this.tensorWeightCountTotal_internal = 0;
 
-    // The depthwise filter of AVG pooling and MAX pooling can not be manipulated.
+    // The depthwise filter of AVG pooling and MAX pooling can not be
+    // manipulated.
     if (   ( ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.AVG
                === AvgMax_Or_ChannelMultiplier )
         || ( ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.MAX
@@ -200,18 +201,20 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
     // will not fix it. So, we need get around it by ourselves testing procedure.
     if ( AvgMax_Or_ChannelMultiplier != 0 ) {
       if ( ( filterWidth == 1 ) && ( tf.getBackend() == "wasm" ) ) {
-        throw Error(
-          `Depthwise.FiltersArray_BiasesArray.setAsConstructor_self(): `
-            + `In backend WASM, it seems that tf.pool() (both AVG and MAX) `
-            + `and tf.depthwiseConv2d() can not work with filterWidth = 1.`
+        throw Error( `Depthwise.FiltersArray_BiasesArray`
+          + `.setAsConstructor_self(): `
+          + `In backend WASM, it seems that tf.pool() (both AVG and MAX) `
+          + `and tf.depthwiseConv2d() can not work with filterWidth = 1.`
         );
       }
     }
 
     if ( this.bHigherHalfDifferent ) {
       if ( inputChannelCount_lowerHalf > inputChannelCount )
-        throw Error( `Depthwise.FiltersArray_BiasesArray.setAsConstructor_self(): `
-          + `inputChannelCount_lowerHalf ( ${this.inputChannelCount_lowerHalf} ) `
+        throw Error( `Depthwise.FiltersArray_BiasesArray`
+          + `.setAsConstructor_self(): `
+          + `inputChannelCount_lowerHalf `
+          + `( ${this.inputChannelCount_lowerHalf} ) `
           + `can not be larger than `
           + `inputChannelCount ( ${this.inputChannelCount} ).`
         );
@@ -314,7 +317,8 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
         + `( ${inputScaleBoundsArray.length} ).`
       );
 
-    if ( this.inputChannelCount != inputScaleBoundsArray.scaleArraySet.undo.length )
+    if ( this.inputChannelCount
+           != inputScaleBoundsArray.scaleArraySet.undo.length )
       throw Error( `Depthwise.FiltersArray_BiasesArray.init(): `
         + `inputChannelCount ( ${this.inputChannelCount} ) `
         + `should be the same as `
@@ -334,8 +338,8 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
 
       // Calculate lower half and higher half channel count.
       //
-      // Even if avg/max pooling or ( bHigherHalfDifferent == false ), these are
-      // still correct.
+      // Even if avg/max pooling or ( bHigherHalfDifferent == false ), these
+      // are still correct.
       //
       if ( this.inputChannelCount_lowerHalf != undefined ) {
         this.inputChannelCount_higherHalf
@@ -365,7 +369,8 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
           this.inputChannelCount_toBeExtracted = this.inputChannelCount;
           this.outputChannelCount_toBeExtracted = this.outputChannelCount;
 
-          // Note: avg/max pooling do not have this.filtersShape to be extracted.
+          // Note: avg/max pooling do not have this.filtersShape to be
+          //       extracted.
           this.poolWindowShape = Recyclable.Array.Pool.get_or_create_by(
             this.filterHeight, this.filterWidth );
 
@@ -376,11 +381,12 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
             biasesWeightCount_extracted = this.outputChannelCount;
           }
 
-          aFiltersBiasesPartInfoArray = Recyclable.OwnerArray.Pool.get_or_create_by(
-            FiltersBiasesPartInfo.Pool.get_or_create_by(
-              ChannelPartInfo.Pool.get_or_create_by( this.inputChannelCount )
-            )
-          );
+          aFiltersBiasesPartInfoArray = Recyclable.OwnerArray.Pool
+            .get_or_create_by(
+              FiltersBiasesPartInfo.Pool.get_or_create_by(
+                ChannelPartInfo.Pool.get_or_create_by( this.inputChannelCount )
+              )
+            );
 
         // Depthwise by convolution (with channel multiplier).
         } else if ( this.AvgMax_Or_ChannelMultiplier >= 1 ) {
@@ -390,11 +396,13 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
               this.inputChannelCount_toBeExtracted = this.inputChannelCount;
               this.outputChannelCount_toBeExtracted = this.outputChannelCount;
 
-              aFiltersBiasesPartInfoArray = Recyclable.OwnerArray.Pool.get_or_create_by(
-                FiltersBiasesPartInfo.Pool.get_or_create_by(
-                  ChannelPartInfo.Pool.get_or_create_by( this.inputChannelCount )
-                )
-              );
+              aFiltersBiasesPartInfoArray = Recyclable.OwnerArray.Pool
+                .get_or_create_by(
+                  FiltersBiasesPartInfo.Pool.get_or_create_by(
+                    ChannelPartInfo.Pool.get_or_create_by(
+                      this.inputChannelCount )
+                  )
+                );
               break;
 
             case ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_DEPTHWISE2: // (1)
@@ -402,7 +410,8 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
               if ( !( this.inputChannelCount_lowerHalf > 0 ) )
                 throw Error( `Depthwise.FiltersArray_BiasesArray`
                   + `.extractAs_HigherHalfDepthwise2(): `
-                  + `inputChannelCount_lowerHalf ( ${this.inputChannelCount_lowerHalf} ) `
+                  + `inputChannelCount_lowerHalf `
+                  + `( ${this.inputChannelCount_lowerHalf} ) `
                   + `must be positive.`
                 );
 
@@ -411,14 +420,17 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
               this.inputChannelCount_toBeExtracted = this.inputChannelCount;
               this.outputChannelCount_toBeExtracted = this.outputChannelCount;
 
-              aFiltersBiasesPartInfoArray = Recyclable.OwnerArray.Pool.get_or_create_by(
-                FiltersBiasesPartInfo.Pool.get_or_create_by(
-                  ChannelPartInfo.Pool.get_or_create_by( this.inputChannelCount_lowerHalf )
-                ),
-                FiltersBiasesPartInfo.Pool.get_or_create_by(
-                  ChannelPartInfo.Pool.get_or_create_by( this.inputChannelCount_higherHalf )
-                )
-              );
+              aFiltersBiasesPartInfoArray = Recyclable.OwnerArray.Pool
+                .get_or_create_by(
+                  FiltersBiasesPartInfo.Pool.get_or_create_by(
+                    ChannelPartInfo.Pool.get_or_create_by(
+                      this.inputChannelCount_lowerHalf )
+                  ),
+                  FiltersBiasesPartInfo.Pool.get_or_create_by(
+                    ChannelPartInfo.Pool.get_or_create_by(
+                      this.inputChannelCount_higherHalf )
+                  )
+                );
               break;
 
             case ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_PASS_THROUGH: // (2)
@@ -426,7 +438,8 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
               if ( !( this.inputChannelCount_lowerHalf > 0 ) )
                 throw Error( `Depthwise.FiltersArray_BiasesArray`
                   + `.extractAs_HigherHalfPassThrough(): `
-                  + `inputChannelCount_lowerHalf ( ${this.inputChannelCount_lowerHalf} ) `
+                  + `inputChannelCount_lowerHalf `
+                  + `( ${this.inputChannelCount_lowerHalf} ) `
                   + `must be positive.`
                 );
 
@@ -437,12 +450,16 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
               this.outputChannelCount_toBeExtracted
                 = this.outputChannelCount_lowerHalf;
 
-              aFiltersBiasesPartInfoArray = Recyclable.OwnerArray.Pool.get_or_create_by(
-                FiltersBiasesPartInfo.Pool.get_or_create_by(
-                  ChannelPartInfo.Pool.get_or_create_by( this.inputChannelCount_lowerHalf ),
-                  ChannelPartInfo.Pool.get_or_create_by( this.inputChannelCount_higherHalf, this.padHeightTop, this.padWidthLeft )
-                )
-              );
+              aFiltersBiasesPartInfoArray = Recyclable.OwnerArray.Pool
+                .get_or_create_by(
+                  FiltersBiasesPartInfo.Pool.get_or_create_by(
+                    ChannelPartInfo.Pool.get_or_create_by(
+                      this.inputChannelCount_lowerHalf ),
+                    ChannelPartInfo.Pool.get_or_create_by(
+                      this.inputChannelCount_higherHalf,
+                      this.padHeightTop, this.padWidthLeft )
+                  )
+                );
               break;
 
             default:
@@ -460,17 +477,20 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
 
           filtersWeightCount_extracted
             = this.filterHeight * this.filterWidth
-                * this.inputChannelCount_toBeExtracted * this.channelMultiplier;
+                * this.inputChannelCount_toBeExtracted
+                * this.channelMultiplier;
 
           if ( this.bBias ) {
             this.biasesShape = Recyclable.Array.Pool.get_or_create_by( 1 );
             this.biasesShape[ 0 ] = this.outputChannelCount;
 
-            biasesWeightCount_extracted = this.outputChannelCount_toBeExtracted;
+            biasesWeightCount_extracted
+              = this.outputChannelCount_toBeExtracted;
           }
 
         } else { // No depthwise (i.e. zero) (so no channel multiplier).
-          aFiltersBiasesPartInfoArray = Recyclable.OwnerArray.Pool.get_or_create_by();
+          aFiltersBiasesPartInfoArray
+            = Recyclable.OwnerArray.Pool.get_or_create_by();
           // Note: In this case, even if ( this.bBias == true ), the
           //       biasesArray will still not be extracted.
         }
@@ -568,11 +588,13 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
               if ( this.AvgMax_Or_ChannelMultiplier
                      == ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.AVG ) {
 
-                this.boundsArraySet.set_outputs_all_byBoundsArray_ScaleArraySet(
-                  this.boundsArraySet.afterBias,
-                  this.boundsArraySet.input0.scaleArraySet );
+                this.boundsArraySet
+                  .set_outputs_all_byBoundsArray_ScaleArraySet(
+                    this.boundsArraySet.afterBias,
+                    this.boundsArraySet.input0.scaleArraySet );
 
-              // For maximum pooling, value bounds is exactly the same as input.
+              // For maximum pooling, value bounds is exactly the same as
+              // input.
               } else {
                 this.boundsArraySet.set_outputs_all_by_input0();
               }
@@ -586,7 +608,8 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
                   this.nActivationId );
 
               // Round 2
-              this.apply_doEscapingScale_to_filtersArray_biasesArray(); // Apply doEscapingScale.
+              // Apply doEscapingScale.
+              this.apply_doEscapingScale_to_filtersArray_biasesArray();
             }
           }
         }
@@ -705,11 +728,16 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
       aFiltersBiasesPartIndex < aFiltersBiasesPartInfoArray.length;
       ++aFiltersBiasesPartIndex ) {
 
-      let aFiltersBiasesPartInfo = aFiltersBiasesPartInfoArray[ aFiltersBiasesPartIndex ];
+      let aFiltersBiasesPartInfo
+         = aFiltersBiasesPartInfoArray[ aFiltersBiasesPartIndex ];
+
       let inChannelPartInfoArray = aFiltersBiasesPartInfo;
 
-      inChannelBegin = inChannelEnd; // Begin from the ending of the previous FiltersBiasesPart.
-      filterIndex = outChannelBegin = outChannelEnd; // Begin from the ending of the previous FiltersBiasesPart.
+      // Begin from the ending of the previous FiltersBiasesPart.
+      inChannelBegin = inChannelEnd;
+
+      // Begin from the ending of the previous FiltersBiasesPart.
+      filterIndex = outChannelBegin = outChannelEnd;
 
       for ( let filterY = 0, effectFilterY = 0;
         filterY < this.filterHeight; ++filterY ) {
@@ -738,7 +766,8 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
                 inChannelPartIndex < inChannelPartInfoArray.length;
                 ++inChannelPartIndex ) {
 
-                let inChannelPartInfo = inChannelPartInfoArray[ inChannelPartIndex ];
+                let inChannelPartInfo
+                  = inChannelPartInfoArray[ inChannelPartIndex ];
 
                 for ( let inChannelSub = 0;
                   inChannelSub < inChannelPartInfo.inputChannelCount;
@@ -749,17 +778,20 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
                     break InChannelPartIndexLoop;
                   }
 
-                  let undoPreviousEscapingScale
-                     = inputScaleBoundsArray.scaleArraySet.undo.scales[ inChannel ];
+                  let undoPreviousEscapingScale = inputScaleBoundsArray
+                    .scaleArraySet.undo.scales[ inChannel ];
+
                   let filterValuePassThrough
-                     = thePassThroughStyleInfo.filterValue * undoPreviousEscapingScale;
+                     = thePassThroughStyleInfo.filterValue
+                         * undoPreviousEscapingScale;
 
                   for ( let outChannelSub = 0;
                     outChannelSub < this.channelMultiplier;
                     ++outChannelSub, ++outChannel ) {
 
                     // Note: The .afterUndoPreviousActivationEscaping has
-                    //       already been multiplied by undoPreviousEscapingScale.
+                    //       already been multiplied by
+                    //       undoPreviousEscapingScale.
 
                     // 1.1
                     if ( this.filtersArray ) { // 1.1.1
@@ -767,14 +799,19 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
                       // For pass-through half channels.
                       if ( inChannelPartInfo.bPassThrough ) {
 
-                        if ( inChannelPartInfo.isPassThrough_FilterPosition_NonZero(
-                               effectFilterY, effectFilterX ) ) {
+                        if ( inChannelPartInfo
+                               .isPassThrough_FilterPosition_NonZero(
+                                 effectFilterY, effectFilterX ) ) {
 
                           // The only one filter position (in the pass-through
                           // part) may have non-zero value.
-                          this.filtersArray[ filterIndex ] = filterValuePassThrough;
+                          this.filtersArray[ filterIndex ]
+                            = filterValuePassThrough;
+
                           tBounds
-                            .set_byBoundsArray( this.boundsArraySet.afterUndoPreviousActivationEscaping, inChannel )
+                            .set_byBoundsArray(
+                              this.boundsArraySet.afterUndoPreviousActivationEscaping,
+                              inChannel )
                             .multiply_byN( thePassThroughStyleInfo.filterValue );
 
                         } else {
@@ -792,7 +829,9 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
                           = sourceWeight * undoPreviousEscapingScale;
 
                         tBounds
-                          .set_byBoundsArray( this.boundsArraySet.afterUndoPreviousActivationEscaping, inChannel )
+                          .set_byBoundsArray(
+                            this.boundsArraySet.afterUndoPreviousActivationEscaping,
+                            inChannel )
                           .multiply_byN( sourceWeight );
                       }
 
@@ -838,12 +877,15 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
                                  != ValueDesc.ActivationFunction.Singleton.Ids.NONE ) ) {
             
                         if ( undoPreviousEscapingScale != 1 )
-                          throw Error( `Depthwise.FiltersArray_BiasesArray.${funcNameInMessage}(): `
+                          throw Error( `Depthwise.FiltersArray_BiasesArray`
+                            + `.${funcNameInMessage}(): `
                             + `For avg/max pooling, `
                             + `if ( bBias ( ${this.bBias} ) is not false ) or `
-                            + `( nActivationId ( ${ValueDesc.ActivationFunction.Singleton.getNameWithInt_byId( this.nActivationId )} ) `
+                            + `( nActivationId `
+                              + `( ${ValueDesc.ActivationFunction.Singleton.getNameWithInt_byId( this.nActivationId )} ) `
                               + `is not ValueDesc.ActivationFunction.Singleton.Ids.NONE(0) ), `
-                            + `undoPreviousEscapingScale[ ${inChannelEnd} ] ( ${undoPreviousEscapingScale} ) must be 1 .`
+                            + `undoPreviousEscapingScale[ ${inChannelEnd} ] `
+                              + `( ${undoPreviousEscapingScale} ) must be 1 .`
                           );
                       }
                     }
@@ -854,9 +896,17 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
                 } // inChannelSub, inChannel
               } // inChannelPartIndex
 
-              inChannelEnd = inChannel;   // Record the ending input channel index of the current FiltersBiasesPart.
-              outChannelEnd = outChannel; // Record the ending output channel index of the current FiltersBiasesPart.
-              filterIndex += ( this.outputChannelCount - outChannel ) + outChannelBegin; // Jump to the outChannelBegin of the next inChannel.
+              // Record the ending input channel index of the current
+              // FiltersBiasesPart.
+              inChannelEnd = inChannel;
+
+              // Record the ending output channel index of the current
+              // FiltersBiasesPart.
+              outChannelEnd = outChannel;
+
+              // Jump to the outChannelBegin of the next inChannel.
+              filterIndex
+                += ( this.outputChannelCount - outChannel ) + outChannelBegin;
 
             } // dilationFilterX
           } // filterX
@@ -894,7 +944,8 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
               //       undoPreviousEscapingScale. (i.e. the filter already done
               //       it)
 
-              if ( inChannelPartInfo.bPassThrough ) { // For pass-through half channels.
+              // For pass-through half channels.
+              if ( inChannelPartInfo.bPassThrough ) {
                 biasValue = thePassThroughStyleInfo.biasValue;
 
               } else { // Non-pass-through half channels.
@@ -907,7 +958,8 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
 
               // Determine .afterBias
               // Shift the value bounds by the bias.
-              this.boundsArraySet.afterBias.add_one_byN( outChannel, biasValue );
+              this.boundsArraySet.afterBias.add_one_byN(
+                outChannel, biasValue );
 
               ++biasIndex;
 
@@ -921,7 +973,8 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
 
     } // aFiltersBiasesPartIndex
 
-    // 2. Determine .afterFilter of all virtual image pixels (of every channel).
+    // 2. Determine .afterFilter of all virtual image pixels (of every
+    //    channel).
     {
       // For Average pooling or depthwise convolution.
       if ( virtualImageOutput_afterFilter_BoundsArray_PerPixel ) {
@@ -935,7 +988,8 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
         }
 
         virtualImageOutput_afterFilter_BoundsArray_PerPixel
-          .collapse_byOutputChannel_toBoundsArray( this.boundsArraySet.afterFilter );
+          .collapse_byOutputChannel_toBoundsArray(
+            this.boundsArraySet.afterFilter );
 
         virtualImageOutput_afterFilter_BoundsArray_PerPixel
           .disposeResources_and_recycleToPool();
@@ -965,7 +1019,8 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
       this.boundsArraySet.afterFilter );
 
     if ( inChannelEnd != this.inputChannelCount )
-      throw Error( `Depthwise.FiltersArray_BiasesArray.${funcNameInMessage}(): `
+      throw Error( `Depthwise.FiltersArray_BiasesArray`
+        + `.${funcNameInMessage}(): `
         + `aFiltersBiasesPartInfoArray[ inChannelPartInfoArray[] ] `
         + `total input channel count ( ${inChannelEnd} ) `
         +`should be ( ${this.inputChannelCount} ).` );
@@ -1007,8 +1062,8 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
                   outChannelSub < this.channelMultiplier;
                   ++outChannelSub, ++outChannel ) {
 
-                  let doEscapingScale
-                    = this.boundsArraySet.output0.scaleArraySet.do.scales[ outChannel ];
+                  let doEscapingScale = this.boundsArraySet.output0
+                    .scaleArraySet.do.scales[ outChannel ];
 
                   // filter wieghts scaled.
                   this.filtersArray[ filterIndex ] *= doEscapingScale;
@@ -1038,8 +1093,8 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
           outChannelSub < this.channelMultiplier;
           ++outChannelSub, ++outChannel ) {
 
-          let doEscapingScale
-            = this.boundsArraySet.output0.scaleArraySet.do.scales[ outChannel ];
+          let doEscapingScale = this.boundsArraySet.output0
+            .scaleArraySet.do.scales[ outChannel ];
 
           // bias wieghts scaled.
           this.biasesArray[ biasIndex ] *= doEscapingScale;
