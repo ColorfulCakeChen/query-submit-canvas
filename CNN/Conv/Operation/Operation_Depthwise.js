@@ -18,10 +18,12 @@ import { Base } from "./Operation_Base.js";
  *   If true, this depthwise operation exists. The same as this.bExisted.
  *
  * @member {boolean} bDepthwiseAvg
- *   If true, this depthwise operation exists. And it is depthwise average pooling.
+ *   If true, this depthwise operation exists. And it is depthwise average
+ * pooling.
  *
  * @member {boolean} bDepthwiseMax
- *   If true, this depthwise operation exists. And it is depthwise maximum pooling.
+ *   If true, this depthwise operation exists. And it is depthwise maximum
+ * pooling.
  *
  * @member {boolean} bDepthwiseConv
  *   If true, this depthwise operation exist. And it is depthwise convolution.
@@ -132,7 +134,8 @@ class Depthwise extends Base( FiltersArray_BiasesArray(
       //    (so no channel multiplier, too).
       bExtractOk = true;
 
-      this.weightElementOffsetBegin = this.weightElementOffsetEnd = weightElementOffsetBegin;
+      this.weightElementOffsetBegin = this.weightElementOffsetEnd
+        = weightElementOffsetBegin;
       this.weightElementExtractedCount = 0;
 
       // Bypass previous to next.
@@ -140,8 +143,9 @@ class Depthwise extends Base( FiltersArray_BiasesArray(
       // Note: The .outputX and .inputX should always be different object (but
       //       can have the same content). Otherwise, the apply() will destroy
       //       the content of .inputX (especially when keep-input-tensor).
-      this.output0.set_height_width_channelCount_scaleBoundsArray_byTensorPlaceholder(
-        this.input0 );
+      this.output0
+        .set_height_width_channelCount_scaleBoundsArray_byTensorPlaceholder(
+          this.input0 );
 
     } else { // 3.
 
@@ -151,7 +155,8 @@ class Depthwise extends Base( FiltersArray_BiasesArray(
         try {
 
           if ( this.filtersShape && this.filtersArray ) {
-            this.filtersTensor4d = tf.tensor( this.filtersArray, this.filtersShape );
+            this.filtersTensor4d
+              = tf.tensor( this.filtersArray, this.filtersShape );
             this.filtersArray.disposeResources_and_recycleToPool();
             this.filtersArray = null; // Release for reducing memory usage.
 
@@ -160,7 +165,8 @@ class Depthwise extends Base( FiltersArray_BiasesArray(
           }
 
           if ( this.biasesShape && this.biasesArray ) {
-            this.biasesTensor3d = tf.tensor( this.biasesArray, this.biasesShape );
+            this.biasesTensor3d
+              = tf.tensor( this.biasesArray, this.biasesShape );
             this.biasesArray.disposeResources_and_recycleToPool();
             this.biasesArray = null; // Release for reducing memory usage.
 
@@ -241,11 +247,15 @@ class Depthwise extends Base( FiltersArray_BiasesArray(
         //
         // Note: apply should not be changed here because there might be bias
         //       and activation.
-        case Depthwise.return_input_directly: this.pfnOperation = Depthwise.keep_input_return_copy; break;
+        case Depthwise.return_input_directly:
+          this.pfnOperation = Depthwise.keep_input_return_copy; break;
 
-        case Depthwise.Avg_and_destroy:       this.pfnOperation = Depthwise.Avg_and_keep;  break;
-        case Depthwise.Max_and_destroy:       this.pfnOperation = Depthwise.Max_and_keep;  break;
-        case Depthwise.Conv_and_destroy:      this.pfnOperation = Depthwise.Conv_and_keep; break;
+        case Depthwise.Avg_and_destroy:
+          this.pfnOperation = Depthwise.Avg_and_keep;  break;
+        case Depthwise.Max_and_destroy:
+          this.pfnOperation = Depthwise.Max_and_keep;  break;
+        case Depthwise.Conv_and_destroy:
+          this.pfnOperation = Depthwise.Conv_and_keep; break;
 
         // Just clone input if unknown depthwise operation. Since there is no
         // operation at all, let apply ignore pfnOperation completely.
@@ -266,11 +276,15 @@ class Depthwise extends Base( FiltersArray_BiasesArray(
         //
         // Note: apply should not be changed here because there might be bias
         //       and activation.
-        case Depthwise.keep_input_return_copy: this.pfnOperation = Depthwise.return_input_directly; break;
+        case Depthwise.keep_input_return_copy:
+          this.pfnOperation = Depthwise.return_input_directly; break;
 
-        case Depthwise.Avg_and_keep:           this.pfnOperation = Depthwise.Avg_and_destroy;  break;
-        case Depthwise.Max_and_keep:           this.pfnOperation = Depthwise.Max_and_destroy;  break;
-        case Depthwise.Conv_and_keep:          this.pfnOperation = Depthwise.Conv_and_destroy; break;
+        case Depthwise.Avg_and_keep:
+          this.pfnOperation = Depthwise.Avg_and_destroy;  break;
+        case Depthwise.Max_and_keep:
+          this.pfnOperation = Depthwise.Max_and_destroy;  break;
+        case Depthwise.Conv_and_keep:
+          this.pfnOperation = Depthwise.Conv_and_destroy; break;
 
         // Just return input if unknown depthwise operation. Since there is no
         // operation at all, let apply ignore pfnOperation completely.
@@ -394,14 +408,16 @@ class Depthwise extends Base( FiltersArray_BiasesArray(
 
   /** Depthwise Average Pooling. */
   static Avg_and_keep( inputTensor ) {
+    // dilations = 1
     return tf.pool( inputTensor,
-      this.poolWindowShape, "avg", this.pad, 1, this.strides ); // dilations = 1
+      this.poolWindowShape, "avg", this.pad, 1, this.strides );
   }
 
   static Avg_and_destroy( inputTensor ) {
     try {
+      // dilations = 1
       return tf.pool( inputTensor,
-        this.poolWindowShape, "avg", this.pad, 1, this.strides ); // dilations = 1
+        this.poolWindowShape, "avg", this.pad, 1, this.strides );
     } finally {
       inputTensor.dispose();
     }
@@ -409,14 +425,16 @@ class Depthwise extends Base( FiltersArray_BiasesArray(
 
   /** Depthwise Max Pooling. */
   static Max_and_keep( inputTensor ) {
+    // dilations = 1
     return tf.pool( inputTensor,
-      this.poolWindowShape, "max", this.pad, 1, this.strides ); // dilations = 1
+      this.poolWindowShape, "max", this.pad, 1, this.strides );
   }
 
   static Max_and_destroy( inputTensor ) {
     try {
+      // dilations = 1
       return tf.pool( inputTensor,
-        this.poolWindowShape, "max", this.pad, 1, this.strides ); // dilations = 1
+        this.poolWindowShape, "max", this.pad, 1, this.strides );
     } finally {
       inputTensor.dispose();
     }
@@ -440,11 +458,13 @@ class Depthwise extends Base( FiltersArray_BiasesArray(
 
   /** Depthwise Operation, Bias and Activation. */
   static Operation_and_destroy_or_keep() {
-    this.output0.realTensor = this.pfnOperation( this.input0.realTensor ); // may destroy or keep.
+    // may destroy or keep.
+    this.output0.realTensor = this.pfnOperation( this.input0.realTensor );
   }
 
   static OperationBias_and_destroy_or_keep() {
-    let t0 = this.pfnOperation( this.input0.realTensor ); // may destroy or keep.
+    // may destroy or keep.
+    let t0 = this.pfnOperation( this.input0.realTensor );
 
     let t1;
     try {
@@ -489,4 +509,3 @@ class Depthwise extends Base( FiltersArray_BiasesArray(
   }
 
 }
-

@@ -74,4 +74,3 @@ class Depthwise_ConstantWhenPassThrough extends Depthwise {
   }
 
 }
-

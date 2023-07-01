@@ -21,7 +21,8 @@ class Depthwise_SameWhenPassThrough extends Depthwise {
    * Used as default Operation.Depthwise_SameWhenPassThrough provider for
    * conforming to Recyclable interface.
    */
-  static Pool = new Pool.Root( "Operation.Depthwise_SameWhenPassThrough.Pool",
+  static Pool = new Pool.Root(
+    "Operation.Depthwise_SameWhenPassThrough.Pool",
     Depthwise_SameWhenPassThrough,
     Depthwise_SameWhenPassThrough.setAsConstructor );
 
@@ -72,4 +73,3 @@ class Depthwise_SameWhenPassThrough extends Depthwise {
   }
 
 }
-
