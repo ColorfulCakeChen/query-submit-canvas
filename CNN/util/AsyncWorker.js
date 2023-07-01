@@ -1,4 +1,5 @@
-export { PromiseResolveReject } from "./AsyncWorker/AsyncWorker_PromiseResolveReject.js";
+export { PromiseResolveReject }
+  from "./AsyncWorker/AsyncWorker_PromiseResolveReject.js";
 export { processingId_Resulter_Map }
   from "./AsyncWorker/AsyncWorker_processingId_Resulter_Map.js";
 export { Resulter } from "./AsyncWorker/AsyncWorker_Resulter.js";
