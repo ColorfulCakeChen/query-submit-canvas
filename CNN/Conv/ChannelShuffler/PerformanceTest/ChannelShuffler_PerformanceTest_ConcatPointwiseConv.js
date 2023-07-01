@@ -1,7 +1,8 @@
 export { ConcatPointwiseConv };
 
 import * as Pool from "../../../util/Pool.js";
-import { ConcatPointwiseConv as ChannelShuffler_ConcatPointwiseConv } from "../ChannelShuffler_ConcatPointwiseConv.js";
+import { ConcatPointwiseConv as ChannelShuffler_ConcatPointwiseConv }
+  from "../ChannelShuffler_ConcatPointwiseConv.js";
 
 /**
  *
@@ -9,22 +10,26 @@ import { ConcatPointwiseConv as ChannelShuffler_ConcatPointwiseConv } from "../C
 class ConcatPointwiseConv extends ChannelShuffler_ConcatPointwiseConv {
 
   /**
-   * Used as default ChannelShuffler.PerformanceTest.ConcatPointwiseConv provider for conforming to Recyclable interface.
+   * Used as default ChannelShuffler.PerformanceTest.ConcatPointwiseConv
+   * provider for conforming to Recyclable interface.
    */
   static Pool = new Pool.Root(
-    "ChannelShuffler.PerformanceTest.ConcatPointwiseConvPool", ConcatPointwiseConv, ConcatPointwiseConv.setAsConstructor );
+    "ChannelShuffler.PerformanceTest.ConcatPointwiseConvPool",
+    ConcatPointwiseConv, ConcatPointwiseConv.setAsConstructor );
 
   /**
    */
   constructor( concatenatedShape, outputGroupCount ) {
     super( concatenatedShape, outputGroupCount );
-    ConcatPointwiseConv.setAsConstructor_self.call( this, concatenatedShape, outputGroupCount );
+    ConcatPointwiseConv.setAsConstructor_self.call( this,
+      concatenatedShape, outputGroupCount );
   }
 
   /** @override */
   static setAsConstructor( concatenatedShape, outputGroupCount ) {
     super.setAsConstructor( concatenatedShape, outputGroupCount );
-    ConcatPointwiseConv.setAsConstructor_self.call( this, concatenatedShape, outputGroupCount );
+    ConcatPointwiseConv.setAsConstructor_self.call( this,
+      concatenatedShape, outputGroupCount );
     return this;
   }
 
@@ -38,7 +43,8 @@ class ConcatPointwiseConv extends ChannelShuffler_ConcatPointwiseConv {
   }
 
   gather_map( concatenatedTensor ) {
-    // shuffle and split by pointwise convolution (one operation achieves two operations).
+    // shuffle and split by pointwise convolution (one operation achieves two
+    // operations).
     return this.filtersTensor4dArray.map(
       filtersTensor4d =>
         concatenatedTensor.conv2d( filtersTensor4d, 1, "valid" )
@@ -46,7 +52,8 @@ class ConcatPointwiseConv extends ChannelShuffler_ConcatPointwiseConv {
   }
 
   concatGather_dispose_direct_call_loop( tensorArray ) {
-    let concatenatedTensor = tf.concat( tensorArray, this.shuffleInfo.lastAxisId );
+    let concatenatedTensor
+      = tf.concat( tensorArray, this.shuffleInfo.lastAxisId );
 
     let shuffledSplitedTensorArray = this.gather_loop( concatenatedTensor );
     concatenatedTensor.dispose();
@@ -56,7 +63,8 @@ class ConcatPointwiseConv extends ChannelShuffler_ConcatPointwiseConv {
 
 
   concatGather_dispose_finally_call_map( tensorArray ) {
-    let concatenatedTensor = tf.concat( tensorArray, this.shuffleInfo.lastAxisId );
+    let concatenatedTensor
+      = tf.concat( tensorArray, this.shuffleInfo.lastAxisId );
 
     try {
       return this.gather_map( concatenatedTensor );
@@ -67,7 +75,8 @@ class ConcatPointwiseConv extends ChannelShuffler_ConcatPointwiseConv {
   }
 
   concatGather_dispose_direct_call_map( tensorArray ) {
-    let concatenatedTensor = tf.concat( tensorArray, this.shuffleInfo.lastAxisId );
+    let concatenatedTensor
+      = tf.concat( tensorArray, this.shuffleInfo.lastAxisId );
 
     let shuffledSplitedTensorArray = this.gather_map( concatenatedTensor );
     concatenatedTensor.dispose();
@@ -77,13 +86,17 @@ class ConcatPointwiseConv extends ChannelShuffler_ConcatPointwiseConv {
 
 
   concatGather_dispose_finally_loop( tensorArray ) {
-    let concatenatedTensor = tf.concat( tensorArray, this.shuffleInfo.lastAxisId );
+    let concatenatedTensor
+      = tf.concat( tensorArray, this.shuffleInfo.lastAxisId );
 
     try {
-      // shuffle and split by pointwise convolution (one operation achieves two operations).
-      let shuffledSplitedTensorArray = new Array( this.filtersTensor4dArray.length );
+      // shuffle and split by pointwise convolution (one operation achieves two
+      // operations).
+      let shuffledSplitedTensorArray
+        = new Array( this.filtersTensor4dArray.length );
       for ( let i = 0; i < shuffledSplitedTensorArray.length; ++i ) {
-        shuffledSplitedTensorArray[ i ] = concatenatedTensor.conv2d( this.filtersTensor4dArray[ i ], 1, "valid" );
+        shuffledSplitedTensorArray[ i ] = concatenatedTensor.conv2d(
+          this.filtersTensor4dArray[ i ], 1, "valid" );
       }
 
       return shuffledSplitedTensorArray;
@@ -94,12 +107,16 @@ class ConcatPointwiseConv extends ChannelShuffler_ConcatPointwiseConv {
   }
 
   concatGather_dispose_direct_loop( tensorArray ) {
-    let concatenatedTensor = tf.concat( tensorArray, this.shuffleInfo.lastAxisId );
+    let concatenatedTensor
+      = tf.concat( tensorArray, this.shuffleInfo.lastAxisId );
 
-    // shuffle and split by pointwise convolution (one operation achieves two operations).
-    let shuffledSplitedTensorArray = new Array( this.filtersTensor4dArray.length );
+    // shuffle and split by pointwise convolution (one operation achieves two
+    // operations).
+    let shuffledSplitedTensorArray
+      = new Array( this.filtersTensor4dArray.length );
     for ( let i = 0; i < shuffledSplitedTensorArray.length; ++i ) {
-      shuffledSplitedTensorArray[ i ] = concatenatedTensor.conv2d( this.filtersTensor4dArray[ i ], 1, "valid" );
+      shuffledSplitedTensorArray[ i ] = concatenatedTensor.conv2d(
+        this.filtersTensor4dArray[ i ], 1, "valid" );
     }
 
     concatenatedTensor.dispose();
@@ -109,7 +126,8 @@ class ConcatPointwiseConv extends ChannelShuffler_ConcatPointwiseConv {
 
 
   concatGather_dispose_finally_map( tensorArray ) {
-    let concatenatedTensor = tf.concat( tensorArray, this.shuffleInfo.lastAxisId );
+    let concatenatedTensor
+      = tf.concat( tensorArray, this.shuffleInfo.lastAxisId );
 
     try {
       // shuffle and split by pointwise convolution (one operation achieves two operations).
@@ -124,9 +142,11 @@ class ConcatPointwiseConv extends ChannelShuffler_ConcatPointwiseConv {
   }
 
   concatGather_dispose_direct_map( tensorArray ) {
-    let concatenatedTensor = tf.concat( tensorArray, this.shuffleInfo.lastAxisId );
+    let concatenatedTensor
+      = tf.concat( tensorArray, this.shuffleInfo.lastAxisId );
 
-    // shuffle and split by pointwise convolution (one operation achieves two operations).
+    // shuffle and split by pointwise convolution (one operation achieves two
+    // operations).
     let shuffledSplitedTensorArray = this.filtersTensor4dArray.map(
       filtersTensor4d =>
         concatenatedTensor.conv2d( filtersTensor4d, 1, "valid" )
@@ -139,9 +159,11 @@ class ConcatPointwiseConv extends ChannelShuffler_ConcatPointwiseConv {
 
   concatGather_tidy_map( tensorArray ) {
     return tf.tidy( "ChannelShuffler.PointwiseConv.concatGather", () => {
-      let concatenatedTensor = tf.concat( tensorArray, this.shuffleInfo.lastAxisId );
+      let concatenatedTensor
+        = tf.concat( tensorArray, this.shuffleInfo.lastAxisId );
 
-      // shuffle and split by pointwise convolution (one operation achieves two operations).
+      // shuffle and split by pointwise convolution (one operation achieves two
+      // operations).
       return this.filtersTensor4dArray.map(
         filtersTensor4d =>
           concatenatedTensor.conv2d( filtersTensor4d, 1, "valid" )
@@ -150,4 +172,3 @@ class ConcatPointwiseConv extends ChannelShuffler_ConcatPointwiseConv {
   }
 
 }
-

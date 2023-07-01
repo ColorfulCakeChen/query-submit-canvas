@@ -1,7 +1,8 @@
 export { SplitConcat };
 
 import * as Pool from "../../../util/Pool.js";
-import { SplitConcat as ChannelShuffler_SplitConcat } from "../ChannelShuffler_SplitConcat.js";
+import { SplitConcat as ChannelShuffler_SplitConcat }
+  from "../ChannelShuffler_SplitConcat.js";
 
 /**
  *
@@ -9,21 +10,26 @@ import { SplitConcat as ChannelShuffler_SplitConcat } from "../ChannelShuffler_S
 class SplitConcat extends ChannelShuffler_SplitConcat {
 
   /**
-   * Used as default ChannelShuffler.PerformanceTest.SplitConcat provider for conforming to Recyclable interface.
+   * Used as default ChannelShuffler.PerformanceTest.SplitConcat provider for
+   * conforming to Recyclable interface.
    */
-  static Pool = new Pool.Root( "ChannelShuffler.PerformanceTest.SplitConcatPool", SplitConcat, SplitConcat.setAsConstructor );
+  static Pool = new Pool.Root(
+    "ChannelShuffler.PerformanceTest.SplitConcatPool",
+    SplitConcat, SplitConcat.setAsConstructor );
 
   /**
    */
   constructor( concatenatedShape, outputGroupCount ) {
     super( concatenatedShape, outputGroupCount );
-    SplitConcat.setAsConstructor_self.call( this, concatenatedShape, outputGroupCount );
+    SplitConcat.setAsConstructor_self.call( this,
+      concatenatedShape, outputGroupCount );
   }
 
   /** @override */
   static setAsConstructor( concatenatedShape, outputGroupCount ) {
     super.setAsConstructor( concatenatedShape, outputGroupCount );
-    SplitConcat.setAsConstructor_self.call( this, concatenatedShape, outputGroupCount );
+    SplitConcat.setAsConstructor_self.call( this,
+      concatenatedShape, outputGroupCount );
     return this;
   }
 
@@ -44,12 +50,16 @@ class SplitConcat extends ChannelShuffler_SplitConcat {
       let channelCountPerGroup = this.shuffleInfo.channelCountPerGroup;
 
       // Every element will be a single channel tensor3d.
-      let singleChannelTensorArray = this.singleChannelTensorArray; // Use shared pre-allocate memory for speeding up.
+
+      // Use shared pre-allocate memory for speeding up.
+      let singleChannelTensorArray = this.singleChannelTensorArray;
       singleChannelTensorArray.length = 0; // Empty the array.
 
-      // Split every group (a multiple channels tensor3d) into many single channel tensor3d.
+      // Split every group (a multiple channels tensor3d) into many single
+      // channel tensor3d.
       for ( let tensor of tensorArray ) {
-        singleChannelTensorArray.push( ...tensor.split( channelCountPerGroup, lastAxisId ) );
+        singleChannelTensorArray.push(
+          ...tensor.split( channelCountPerGroup, lastAxisId ) );
       }
 
       // An array for many single channel tensor3d of one group.
@@ -58,7 +68,8 @@ class SplitConcat extends ChannelShuffler_SplitConcat {
       let tensorArrayForOneGroup = this.tensorArrayForOneGroup;
 
       // shuffle and split by concat (one operation achieves two operations).
-      return this.shuffledChannelIndicesArray.map( ( shuffledChannelIndices ) => {
+      return this.shuffledChannelIndicesArray.map(
+        ( shuffledChannelIndices ) => {
 //!!! Using a loop instead. (to reduce function call overhead)
 //         shuffledChannelIndices.forEach( ( channelIndex, i ) => {
 //           tensorArrayForOneGroup[ i ] = singleChannelTensorArray[ channelIndex ];
@@ -88,4 +99,3 @@ class SplitConcat extends ChannelShuffler_SplitConcat {
   }
 
 }
-
