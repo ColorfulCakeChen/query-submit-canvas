@@ -1526,7 +1526,8 @@ class Block_Base extends Recyclable.Root {
                 .get_or_create_by(
                   this.operationArray.endingInput0,
                   excitationPointwise0_outputChannelCount,
-                  excitationPointwise_bBias, excitationPointwise0_nActivationId,
+                  excitationPointwise_bBias,
+                  excitationPointwise0_nActivationId,
                   nPointwise_HigherHalfDifferent,
                   excitationPointwise0_outputChannelCount_lowerHalf,
                   excitationPointwise_channelShuffler_inputGroupCount,
@@ -1536,11 +1537,8 @@ class Block_Base extends Recyclable.Root {
                 );
 
           if ( !excitationPointwise0.init(
-                  inputWeightArray, this.weightElementOffsetEnd ) ) {
-            excitationPointwise0.disposeResources_and_recycleToPool();
-            excitationPointwise0 = null;
+                  inputWeightArray, this.weightElementOffsetEnd ) )
             return false;  // e.g. input array does not have enough data.
-          }
           this.weightElementOffsetEnd
             = excitationPointwise0.weightElementOffsetEnd;
         }
@@ -1560,7 +1558,8 @@ class Block_Base extends Recyclable.Root {
                     ? this.operationArray.endingInput1
                     : this.operationArray.endingInput0,
                   excitationPointwise1_outputChannelCount,
-                  excitationPointwise_bBias, excitationPointwise1_nActivationId,
+                  excitationPointwise_bBias,
+                  excitationPointwise1_nActivationId,
                   nPointwise_HigherHalfDifferent,
                   excitationPointwise1_outputChannelCount_lowerHalf,
                   excitationPointwise_channelShuffler_inputGroupCount,
@@ -1570,14 +1569,8 @@ class Block_Base extends Recyclable.Root {
                 );
 
           if ( !excitationPointwise1.init(
-                  inputWeightArray, this.weightElementOffsetEnd ) ) {
-
-//!!!??? ...unfinished... (2023/07/01 Added)
-            excitationPointwise1.disposeResources_and_recycleToPool();
-            excitationPointwise1 = null;
-        
+                  inputWeightArray, this.weightElementOffsetEnd ) )
             return false;  // e.g. input array does not have enough data.
-          }
           this.weightElementOffsetEnd
             = excitationPointwise1.weightElementOffsetEnd;
         }
