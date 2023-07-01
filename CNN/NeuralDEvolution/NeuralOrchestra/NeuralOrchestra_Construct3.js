@@ -328,10 +328,15 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
 
     let init_asyncPromise
       = base.init_asyncPromise_create(
-          downloader_spreadsheetId, downloader_apiKey, bLogFetcherEventToConsole,
+          downloader_spreadsheetId, downloader_apiKey,
+          bLogFetcherEventToConsole,
+
           sender_clientId,
 
-          explicit_input_height, explicit_input_width, explicit_input_channelCount,
+          explicit_input_height,
+          explicit_input_width,
+          explicit_input_channelCount,
+
           nNeuralWorker_ImplicitInputModeId,
           vocabularyChannelCount, vocabularyCountPerInputChannel,
           blockCountTotalRequested,
@@ -384,8 +389,11 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
       const DrawingCanvas = this.DrawingCanvas // IDrawingCanvasInstance
         = runtime.objects[ DrawingCanvas_ObjectTypeName ].getFirstInstance();
 
-      this.DrawingCanvas_clearColor = [ 0, 0, 0, 0 ]; // RGBA. Black transparent.
-      this.DrawingCanvas_pasteInstanceArray = []; // For reducing memory re-allocation.
+      // RGBA. Black transparent.
+      this.DrawingCanvas_clearColor = [ 0, 0, 0, 0 ];
+
+      // For reducing memory re-allocation.
+      this.DrawingCanvas_pasteInstanceArray = [];
 
       this.DrawingCanvas_implicit_input_width
         = configJSONData.DrawingCanvas.implicit_input_width;
@@ -444,7 +452,8 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
       this.KeyDownArray_value_for_KeyPressed = 1;
 
       // 3.4
-      this.AI_output_extractedValueArray = new Array(); // For reduce memory re-allocation.
+      // For reduce memory re-allocation.
+      this.AI_output_extractedValueArray = new Array();
     }
   }
 
@@ -523,7 +532,8 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
       let implicit_input_height;
       let implicit_input_width = base.implicit_input_width;
 
-      // If no neural network created, use implicit input shape from other method.
+      // If no neural network created, use implicit input shape from other
+      // information.
       if ( implicit_input_width == undefined ) {
         implicit_input_height = this.DrawingCanvas_implicit_input_height;
         implicit_input_width = this.DrawingCanvas_implicit_input_width;
