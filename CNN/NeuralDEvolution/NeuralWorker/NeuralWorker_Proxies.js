@@ -370,18 +370,20 @@ class NeuralWorker_Proxies extends Recyclable.Root {
     this.ImplicitInputModeInfo = NeuralWorker_ImplicitInputMode.Singleton
       .getInfo_byId( nNeuralWorker_ImplicitInputModeId );
 
-    this.hardwareConcurrency = navigator.hardwareConcurrency; // logical CPU count.
+    // logical CPU count.
+    this.hardwareConcurrency = navigator.hardwareConcurrency;
 
     // (At most) Two web workers are sufficient.
     //
-    // Although we might want to create as many web worker as logical CPU count,
-    // it might not be necessary because our neural networks are learning by
-    // differential evolution. Differential evolution evaluates just two entities
-    // every time.
+    // Although we might want to create as many web worker as logical CPU
+    // count, it might not be necessary because our neural networks are
+    // learning by differential evolution. Differential evolution evaluates
+    // just two entities every time.
     //
     // Note: How could two neural networks determine all the actions of so
-    //       many game objects? The method is to let the output of every neural
-    //       network contains all actions of all game objects of all alignments.
+    //       many game objects? The method is to let the output of every
+    //       neural network contains all actions of all game objects of all
+    //       alignments.
     //
     let totalWorkerCount = this.ModeInfo.workerCount;
 
@@ -462,7 +464,8 @@ class NeuralWorker_Proxies extends Recyclable.Root {
         arrayIndex >= newLength;
         --arrayIndex ) {
 
-        this.workerProxyArray[ arrayIndex ].disposeResources_and_recycleToPool();
+        this.workerProxyArray[ arrayIndex ]
+          .disposeResources_and_recycleToPool();
         this.workerProxyArray[ arrayIndex ] = null;
       }
 
@@ -485,12 +488,12 @@ class NeuralWorker_Proxies extends Recyclable.Root {
    *
    * @param {ArrayBuffer[]} weightArrayBufferArray
    *   An array of every neural network's weights. Every element will be
-   * interpreted as Float32Array. Every element will be transferred to web worker
-   * (i.e. their .byteLength will become zero).
+   * interpreted as Float32Array. Every element will be transferred to web
+   * worker (i.e. their .byteLength will become zero).
    *
    * @param {boolean} bLogDryRunTime
-   *   If true, the neural network dry-run time will be measured twice and logged
-   * to console.
+   *   If true, the neural network dry-run time will be measured twice and
+   * logged to console.
    *
    * @return {Promise}
    *   Return a promise:
@@ -504,13 +507,15 @@ class NeuralWorker_Proxies extends Recyclable.Root {
 
     if ( neuralNetParamsBaseArray.length != this.neuralNetCount )
       throw Error( `NeuralWorker.Proxies.${funcNameInMessage}(): `
-        + `neuralNetParamsBaseArray.length ( ${neuralNetParamsBaseArray.length} ) `
+        + `neuralNetParamsBaseArray.length `
+        + `( ${neuralNetParamsBaseArray.length} ) `
         + `should be the same as .neuralNetCount ( ${this.neuralNetCount} ).`
       );
 
     if ( weightArrayBufferArray.length != this.neuralNetCount )
       throw Error( `NeuralWorker.Proxies.${funcNameInMessage}(): `
-        + `weightArrayBufferArray.length ( ${weightArrayBufferArray.length} ) `
+        + `weightArrayBufferArray.length `
+        + `( ${weightArrayBufferArray.length} ) `
         + `should be the same as .neuralNetCount ( ${this.neuralNetCount} ).`
       );
 
@@ -719,8 +724,8 @@ class NeuralWorker_Proxies extends Recyclable.Root {
    * @param {Uint8ClampedArray|Uint16Array|Uint32Array} source_TypedArray
    *   An unsigned integer TypedArray which will be processed by the pair of
    * neural workers. For example, ImageData.data which is coming from a canvas.
-   * Note that it may be modified by filling with alignment mark and/or feedback
-   * information (i.e. previous time output of the neural network).
+   * Note that it may be modified by filling with alignment mark and/or
+   * feedback information (i.e. previous time output of the neural network).
    *
    * @param {number} source_height
    *   The height (in pixels) of the source_TypedArray. For example,
@@ -756,8 +761,8 @@ class NeuralWorker_Proxies extends Recyclable.Root {
    * @param {Uint8ClampedArray|Uint16Array|Uint32Array} source_TypedArray
    *   An unsigned integer TypedArray which will be processed by the pair of
    * neural workers. For example, ImageData.data which is coming from a canvas.
-   * Note that it may be modified by filling with alignment mark and/or feedback
-   * information (i.e. previous time output of the neural network).
+   * Note that it may be modified by filling with alignment mark and/or
+   * feedback information (i.e. previous time output of the neural network).
    *
    * @param {number} source_height
    *   The height (in pixels) of the source_TypedArray. For example,
