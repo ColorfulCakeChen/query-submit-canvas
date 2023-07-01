@@ -20,7 +20,8 @@ import { FeedbackToInput as NeuralNet_FeedbackToInput }
  *       of the same pixel by pointwise and then depthwise convolution filter.
  *
  *   - Different channel of the same pixel can also be moved to neighbor pixels
- *       of the same channel by depthwise and then pointwise convolution filter.
+ *       of the same channel by depthwise and then pointwise convolution
+ *       filter.
  *
  *   - So, it seems both feasible to place recurrent feedback information
  *       either on the neighbor pixels of the same channel or on the different
@@ -139,8 +140,8 @@ import { FeedbackToInput as NeuralNet_FeedbackToInput }
  *
  *     - For example, if there are 64 output channels and input channel count
  *         is 4 (i.e. RGBA), there will be 16 (= ( 64 / 4 ) ) explicit output
- *         data. Every 1 explicit output data accompanies with 3 implicit output
- *         data.
+ *         data. Every 1 explicit output data accompanies with 3 implicit
+ *         output data.
  *
  *   - Let an explicit and implicit output unit become a single pixel when
  *       they are filled into the (next time) implicit input (as feedback
@@ -566,7 +567,8 @@ class NeuralNet_FeedbackShape extends NeuralNet_FeedbackToInput {
     from_output_pixelIndexBegin, from_output_pixelCount
   ) {
 
-    const funcNameInMessage = "valueArray_get_from_output_valueArray_1st_channel";
+    const funcNameInMessage
+      = "valueArray_get_from_output_valueArray_1st_channel";
 
     // 1.
     const from_output_valueCount = Math.floor( from_output_valueArray.length );

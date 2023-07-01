@@ -64,7 +64,8 @@ class NeuralNet_StageParamsCreator_Base extends Recyclable.Root {
 
     this.stageCount = undefined; // How many stage should be in the neuralNet.
 
-    this.neuralNetParams = undefined; // Just nullify it. Do not release it here.
+    // Just nullify it. Do not release it here.
+    this.neuralNetParams = undefined;
 
     super.disposeResources();
   }
@@ -115,9 +116,9 @@ class NeuralNet_StageParamsCreator_Base extends Recyclable.Root {
 
     // 1. stageCount
     //
-    // Because every stage will double output channel count, find out stageCount
-    // so that the stageLast's output channel count is (a little) larger than
-    // the requested output_channelCount.
+    // Because every stage will double output channel count, find out
+    // stageCount so that the stageLast's output channel count is (a little)
+    // larger than the requested output_channelCount.
     {
       let embedding_output_channelCount
         = input_channelCount * neuralNetParams.vocabularyChannelCount;
@@ -193,7 +194,8 @@ class NeuralNet_StageParamsCreator_Base extends Recyclable.Root {
     this.nSqueezeExcitationChannelCountDivisor = 4;
 
     // Always use the only suggested activation function.
-    this.nActivationId = ValueDesc.ActivationFunction.Singleton.Ids.CLIP_BY_VALUE_N2_P2;
+    this.nActivationId
+      = ValueDesc.ActivationFunction.Singleton.Ids.CLIP_BY_VALUE_N2_P2;
 
     // Because NeuralNet always has an embedding layer (in front of stage0),
     // all stages should not keep input tensor (no matter what
@@ -242,9 +244,14 @@ class NeuralNet_StageParamsCreator_Base extends Recyclable.Root {
    * @param {Block.ParamsBase|Block.Params} BlockParamsClass
    *   Which kinds of block parameters object should be created.
    *
-   * @param {number} input_height        The input height of the blockFinal.
-   * @param {number} input_width         The input width of the blockFinal.
-   * @param {number} input_channelCount  The input channel counr of the blockFinal.
+   * @param {number} input_height
+   *   The input height of the blockFinal.
+   *
+   * @param {number} input_width
+   *   The input width of the blockFinal.
+   *
+   * @param {number} input_channelCount
+   *   The input channel counr of the blockFinal.
    */
   configTo_beforeBlockFinal(
     BlockParamsClass,
@@ -256,13 +263,15 @@ class NeuralNet_StageParamsCreator_Base extends Recyclable.Root {
     const input0_width = input_width;
     const input0_channelCount = input_channelCount;
 
-    // Final block uses general pointwise-depthwise-pointwise (i.e. MobileNetV1).
+    // Final block uses general pointwise-depthwise-pointwise (i.e.
+    // MobileNetV1).
     const nConvBlockTypeId
       = ValueDesc.ConvBlockType.Singleton.Ids.MOBILE_NET_V1_HEAD_BODY_TAIL;
 
     const pointwise1ChannelCount = input_channelCount; // (No expanding)
 
-    const depthwise_AvgMax_Or_ChannelMultiplier // (Always global average pooling)
+    // (Always global average pooling)
+    const depthwise_AvgMax_Or_ChannelMultiplier
       = ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.AVG;
 
     const depthwiseFilterHeight = input_height; // (global average pooling)
@@ -276,9 +285,10 @@ class NeuralNet_StageParamsCreator_Base extends Recyclable.Root {
     // pointwise20 uses the requested output channel count.
     const pointwise20ChannelCount = neuralNetParams.output_channelCount;
 
-    // pointwise20 always has no activation function, so that any number could be
-    // generated.
-    const pointwise20ActivationId = ValueDesc.ActivationFunction.Singleton.Ids.NONE;
+    // pointwise20 always has no activation function, so that any number could
+    // be generated.
+    const pointwise20ActivationId
+      = ValueDesc.ActivationFunction.Singleton.Ids.NONE;
 
     const nSqueezeExcitationChannelCountDivisor
       = this.nSqueezeExcitationChannelCountDivisor;
@@ -313,16 +323,18 @@ class NeuralNet_StageParamsCreator_Base extends Recyclable.Root {
   // are not used in program.
 
   get nConvStageTypeName() {
-    return ValueDesc.ConvStageType.Singleton.getName_byId( this.nConvStageTypeId );
+    return ValueDesc.ConvStageType.Singleton.getName_byId(
+      this.nConvStageTypeId );
   }
 
   get nSqueezeExcitationChannelCountDivisorName() {
-    return ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.getName_byId(
-      this.nSqueezeExcitationChannelCountDivisor );
+    return ( ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton
+      .getName_byId( this.nSqueezeExcitationChannelCountDivisor ) );
   }
 
   get nActivationName() {
-    return ValueDesc.ActivationFunction.Singleton.getName_byId( this.nActivationId );
+    return ValueDesc.ActivationFunction.Singleton.getName_byId(
+      this.nActivationId );
   }
 
   /**

@@ -17,8 +17,8 @@ import { ScaleFiller as NeuralNet_ScaleFiller } from "./NeuralNet_ScaleFiller.js
 // the previous NeuralNet output (which is float32) with the current embedding
 // output (which is float32 too).
 //
-// The reason is that NeuralNet input should be int32 (for embedding layer needs)
-// while (previous) NeuralNet output is float32.
+// The reason is that NeuralNet input should be int32 (for embedding layer
+// needs) while (previous) NeuralNet output is float32.
 //
 //
 
@@ -41,17 +41,18 @@ import { ScaleFiller as NeuralNet_ScaleFiller } from "./NeuralNet_ScaleFiller.js
  * by initer().
  *
  * @member {number} weightElementOffsetEnd
- *   The position which is ended to (non-inclusive) extract from inputWeightArray
- * by initer(). Where to extract next weights. Only meaningful when
- * ( this.bInitOk == true ).
+ *   The position which is ended to (non-inclusive) extract from
+ * inputWeightArray by initer(). Where to extract next weights. Only meaningful
+ * when ( this.bInitOk == true ).
  *
  * @member {number[]} input_height_width_array
- *   An array records [ this.input_height, this.input_width ]. It is mainly used when
- * scale input image to correct size.
+ *   An array records [ this.input_height, this.input_width ]. It is mainly
+ * used when scale input image to correct size.
  *
  * @member {number[]} input_shape
- *   An array records [ this.input_height, this.input_width, this.input_channelCount ].
- * It is mainly used when create input image tensor to be applied.
+ *   An array records [ this.input_height, this.input_width,
+ * this.input_channelCount ]. It is mainly used when create input image tensor
+ * to be applied.
  *
  * @member {Embedding.Base} embedding
  *   The embedding layer before all stages of this neuralNet.
@@ -63,20 +64,20 @@ import { ScaleFiller as NeuralNet_ScaleFiller } from "./NeuralNet_ScaleFiller.js
  *   The first computation stage of this neuralNet.
  *
  * @member {Stage.Base} stageLast
- *   The last computation stage of this neuralNet. It may be the same as this.stage0
- * when there is only one stage inside this neuralNet.
+ *   The last computation stage of this neuralNet. It may be the same as
+ * this.stage0 when there is only one stage inside this neuralNet.
  *
  * @member {Block.Base} blockFinal
- *   The final block of this neuralNet. It is responsible for squishing output shape
- * to [ 1, 1, output_channelCount ].
+ *   The final block of this neuralNet. It is responsible for squishing output
+ * shape to [ 1, 1, output_channelCount ].
  *
  * @member {number} stageCount
  *   How many stages inside this neuralNet are created. It is related to
  * ( output_channelCount / ( input_channelCount * vocabularyChannelCount ) ).
  *
  * @member {number} blockCountPerStage
- *   How many blocks inside this neuralNet's stageLast are created. It is related to
- * ( blockCountTotalRequested / stageCount ).
+ *   How many blocks inside this neuralNet's stageLast are created. It is
+ * related to ( blockCountTotalRequested / stageCount ).
  *
  * @member {number} stageLast_output_height
  *   The output image height of this neuralNet's last stage.
@@ -101,14 +102,15 @@ import { ScaleFiller as NeuralNet_ScaleFiller } from "./NeuralNet_ScaleFiller.js
  * range (i.e. non-negative integer which can be used in embedding looking up).
  *
  * @member {number} tensorWeightCountTotal
- *   The total wieght count used in tensors. Not including Params, because they are
- * not used in tensors. Including inferenced weights, if they are used in tensors.
+ *   The total wieght count used in tensors. Not including Params, because
+ * they are not used in tensors. Including inferenced weights, if they are used
+ * in tensors.
  *
  * @member {number} tensorWeightCountExtracted
  *   The wieght count extracted from inputWeightArray and used in tensors. Not
- * including Params, because they are not used in tensors. Not including inferenced
- * weights (even if they are used in tensors), because they are not extracted
- * from inputWeightArray.
+ * including Params, because they are not used in tensors. Not including
+ * inferenced weights (even if they are used in tensors), because they are not
+ * extracted from inputWeightArray.
  *
  * @member {ValueMax.Percentage.Concrete} progressApply
  *   The progressToAdvance when .applier().
@@ -117,7 +119,8 @@ import { ScaleFiller as NeuralNet_ScaleFiller } from "./NeuralNet_ScaleFiller.js
 class NeuralNet_Base extends Recyclable.Root {
 
   /**
-   * Used as default NeuralNet.Base provider for conforming to Recyclable interface.
+   * Used as default NeuralNet.Base provider for conforming to Recyclable
+   * interface.
    */
   static Pool = new Pool.Root( "NeuralNet.Base.Pool",
     NeuralNet_Base, NeuralNet_Base.setAsConstructor );
@@ -154,15 +157,17 @@ class NeuralNet_Base extends Recyclable.Root {
    * The progressParent.root_get() will be returned when every time yield.
    *
    * @param {number[]|Float32Array} inputWeightArray
-   *   The weights source array to be extracted from. It will not be kept by this object.
+   *   The weights source array to be extracted from. It will not be kept by
+   * this object.
    *
    * @param {number} weightElementOffsetBegin
-   *   The beginning position (i.e. array index) to extract from inputWeightArray.
+   *   The beginning position (i.e. array index) to extract from
+   * inputWeightArray.
    *
    * @param {NeuralNet.Params} params
    *   A Params object. The params.init() will be called to extract parameters.
-   * This params will be owned and destroyed by this .initer(). So caller should
-   * not use it again.
+   * This params will be owned and destroyed by this .initer(). So caller
+   * should not use it again.
    *
    * @yield {ValueMax.Percentage.Aggregate}
    *   Yield ( value = progressParent.root_get() ) when ( done = false ).
@@ -172,11 +177,13 @@ class NeuralNet_Base extends Recyclable.Root {
    *   Yield ( value = false ) when ( done = true ) failed.
    *
    */
-  * initer( progressParent, inputWeightArray, weightElementOffsetBegin, params ) {
+  * initer(
+    progressParent, inputWeightArray, weightElementOffsetBegin, params ) {
 
     // 0. Prepare
 
-    this.weightElementOffsetEnd = this.weightElementOffsetBegin = weightElementOffsetBegin;
+    this.weightElementOffsetEnd = this.weightElementOffsetBegin
+      = weightElementOffsetBegin;
     this.bInitOk = false;
 
     // 0.1 Estimate the maximum value of progress.
@@ -199,7 +206,7 @@ class NeuralNet_Base extends Recyclable.Root {
       ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
 
     let progressForBlockFinal = progressParent.child_add(
-      ValueMax.Percentage.Aggregate.Pool.get_or_create_by() ); // for blockFinal.
+      ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
 
     let stageParamsCreator;
     try {
@@ -226,11 +233,15 @@ class NeuralNet_Base extends Recyclable.Root {
       this.output_asInputValueRange = params.output_asInputValueRange;
       this.bKeepInputTensor = params.bKeepInputTensor;
 
-      // The parameters which are determined (inferenced) from the above parameters.
+      // The parameters which are determined (inferenced) from the above
+      // parameters.
       {
-        this.implicit_input_height = params.inferencedParams.implicit_input_height;
-        this.implicit_input_width = params.inferencedParams.implicit_input_width;
-        this.implicit_input_channelCount = params.inferencedParams.implicit_input_channelCount;
+        this.implicit_input_height
+          = params.inferencedParams.implicit_input_height;
+        this.implicit_input_width
+          = params.inferencedParams.implicit_input_width;
+        this.implicit_input_channelCount
+          = params.inferencedParams.implicit_input_channelCount;
 
         this.input_height = params.inferencedParams.input_height;
         this.input_width = params.inferencedParams.input_width;
@@ -288,11 +299,13 @@ class NeuralNet_Base extends Recyclable.Root {
           return false;
         this.weightElementOffsetEnd = this.embedding.weightElementOffsetEnd;
 
-        this.tensorWeightCountTotal += this.embedding.tensorWeightCountTotal;
-        this.tensorWeightCountExtracted += this.embedding.tensorWeightCountExtracted;
+        this.tensorWeightCountTotal
+          += this.embedding.tensorWeightCountTotal;
+        this.tensorWeightCountExtracted
+          += this.embedding.tensorWeightCountExtracted;
 
         next_input_ScaleBoundsArray_or_TensorPlaceholder
-          = this.embedding.output_scaleBoundsArray; // (This is a ScaleBoundsArray.)
+          = this.embedding.output_scaleBoundsArray; // (a ScaleBoundsArray.)
       }
 
       // 2. Create every stages.
@@ -331,7 +344,8 @@ class NeuralNet_Base extends Recyclable.Root {
         }
 
         // Create current stage parameters.
-        stageParams = stageParamsCreator.create_StageParams( StageParamsClass );
+        stageParams
+          = stageParamsCreator.create_StageParams( StageParamsClass );
 
         stage = this.stageArray[ i ] = Stage.Base.Pool.get_or_create_by();
         stageIniter = stage.initer( progressForStages.children[ i ],
@@ -359,7 +373,8 @@ class NeuralNet_Base extends Recyclable.Root {
                  this.nConvStageTypeId ) ) {
             next_input_ScaleBoundsArray_or_TensorPlaceholder
               .channelCount_lowerHalf
-                = next_input_ScaleBoundsArray_or_TensorPlaceholder.channelCount;
+                = next_input_ScaleBoundsArray_or_TensorPlaceholder
+                    .channelCount;
 
             next_input_ScaleBoundsArray_or_TensorPlaceholder
               .channelCount_higherHalf = 0;
@@ -411,8 +426,10 @@ class NeuralNet_Base extends Recyclable.Root {
           return false;
         this.weightElementOffsetEnd = blockFinal.weightElementOffsetEnd;
 
-        this.tensorWeightCountTotal += blockFinal.tensorWeightCountTotal;
-        this.tensorWeightCountExtracted += blockFinal.tensorWeightCountExtracted;
+        this.tensorWeightCountTotal
+          += blockFinal.tensorWeightCountTotal;
+        this.tensorWeightCountExtracted
+          += blockFinal.tensorWeightCountExtracted;
 
         next_input_ScaleBoundsArray_or_TensorPlaceholder
           = blockFinal.output0_scaleBoundsArray;
@@ -431,7 +448,8 @@ class NeuralNet_Base extends Recyclable.Root {
           ;
 
         this.progressApply
-          = ValueMax.Percentage.Concrete.Pool.get_or_create_by( progressApplyMax );
+          = ValueMax.Percentage.Concrete.Pool.get_or_create_by(
+              progressApplyMax );
       }
 
       this.bInitOk = true;
@@ -585,7 +603,8 @@ class NeuralNet_Base extends Recyclable.Root {
   }
 
   /**
-   * Generator for processing input, destroying or keeping input, returning result.
+   * Generator for processing input, destroying or keeping input, returning
+   * result.
    *
    * @param {tf.tensor3d} inputTensor
    *   The source input image (which size should be [ this.input_height,
@@ -630,7 +649,8 @@ class NeuralNet_Base extends Recyclable.Root {
     // 2. Stages
     let stageArray = this.stageArray;
     for ( let i = 0; i < stageArray.length; ++i ) {
-      outputTensor = yield* stageArray[ i ].applier( progressToAdvance, outputTensor );
+      outputTensor
+        = yield* stageArray[ i ].applier( progressToAdvance, outputTensor );
     }
 
     // 3. BlockFinal
@@ -881,4 +901,3 @@ class NeuralNet_Base extends Recyclable.Root {
   }
 
 }
-

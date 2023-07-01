@@ -222,7 +222,8 @@ class NeuralNet_FeedbackToInput_Area extends NeuralNet_FeedbackToInput_from {
  *   There are how many filling areas be put in the (next time) input for a
  * neural network. It is always 2.
  *   - One for alignment mark of the neural network.
- *   - The other for feedback (i.e. previous time output) of the neural network.
+ *   - The other for feedback (i.e. previous time output) of the neural
+ *       network.
  *
  * @member {number} height_areaCount
  *   There are how many feedback areas along the height in the (next time)

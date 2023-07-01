@@ -79,12 +79,13 @@ class NeuralNet_ScaleFiller {
       );
 
     // 2.
-    let scale_fill_asyncGenerator = this.createTensor_by_scale_fill_asyncGenerator(
-      source_TypedArray, source_height, source_width,
-      bTwoTensors,
-      feedbackShape,
-      alignmentMarkValueArrayArray, previous_output_Int32ArrayArray
-    );
+    let scale_fill_asyncGenerator
+      = this.createTensor_by_scale_fill_asyncGenerator(
+          source_TypedArray, source_height, source_width,
+          bTwoTensors,
+          feedbackShape,
+          alignmentMarkValueArrayArray, previous_output_Int32ArrayArray
+        );
 
     yield* scale_fill_asyncGenerator;
   }
@@ -537,7 +538,8 @@ class NeuralNet_ScaleFiller {
         && ( source_TypedArray instanceof Uint8ClampedArray ) ) {
 
       // Note: .createTensor_by_scale_PixelData() is also usable here. Because
-      //       it seems faster than .createImageData_by_scale_Uint8ClampedArray()
+      //       it seems faster than
+      //       .createImageData_by_scale_Uint8ClampedArray()
       //       in mobile phone (Moto e40).
       let target_ImageData
         = NeuralNet_ScaleFiller.createImageData_by_scale_Uint8ClampedArray(
@@ -596,7 +598,8 @@ class NeuralNet_ScaleFiller {
    *
    *
    * @param {ImageData|ImageBitmap|HTMLImageElement|HTMLCanvasElement|HTMLVideoElement} source_PixelData
-   *   The image or canvas which provides image (as RGBA 4-channels Uint8 data).
+   *   The image or canvas which provides image (as RGBA 4-channels Uint8
+   * data).
    *
    * @param {number} source_channelCount
    *   The channel count of the source_PixelData. It will also be
@@ -631,8 +634,10 @@ class NeuralNet_ScaleFiller {
       source_PixelData, source_channelCount ); // dtype will be int32.
 
     // If the size ( height x width ) is as expected, use it directly.
-    if (   ( source_Tensor.shape[ 0 ] == target_shape_height_width[ 0 ] ) // target_height
-        && ( source_Tensor.shape[ 1 ] == target_shape_height_width[ 1 ] ) // target_width
+    if (   ( source_Tensor.shape[ 0 ]
+               == target_shape_height_width[ 0 ] ) // target_height
+        && ( source_Tensor.shape[ 1 ]
+               == target_shape_height_width[ 1 ] ) // target_width
        )
       return source_Tensor; // (Note: dtype will still be int32.)
 

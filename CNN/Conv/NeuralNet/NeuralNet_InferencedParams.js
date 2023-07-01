@@ -40,8 +40,8 @@ import { FeedbackShape as NeuralNet_FeedbackShape }
  * == true ).
  *
  * @member {Block.ParamsBase} blockFinalParams
- *   The parameter of this neural network's final block (for squish output shape
- * to [ 1, 1, output_channelCount ]. It will be created only if
+ *   The parameter of this neural network's final block (for squish output
+ * shape to [ 1, 1, output_channelCount ]. It will be created only if
  * ( neuralNetParamsBase.inferencedParams_embeddingParams_stageParamsArray_needed()
  * == true ).
  *
@@ -73,7 +73,8 @@ class NeuralNet_InferencedParams extends Recyclable.Root {
    * Recyclable interface.
    */
   static Pool = new Pool.Root( "NeuralNet.InferencedParams.Pool",
-    NeuralNet_InferencedParams, NeuralNet_InferencedParams.setAsConstructor );
+    NeuralNet_InferencedParams,
+    NeuralNet_InferencedParams.setAsConstructor );
 
   /**
    *
@@ -286,7 +287,9 @@ class NeuralNet_InferencedParams extends Recyclable.Root {
 
       let stageParams;
       let next_input_height, next_input_width, next_input_channelCount;
-      for ( let i = 0; i < this.stageCount; ++i ) { // Stage0, 1, 2, 3, ..., StageLast.
+
+      // Stage0, 1, 2, 3, ..., StageLast.
+      for ( let i = 0; i < this.stageCount; ++i ) {
 
         if ( 0 == i ) { // Stage0.
 
@@ -314,7 +317,8 @@ class NeuralNet_InferencedParams extends Recyclable.Root {
 
         next_input_height = stageParams.inferencedParams.output_height;
         next_input_width = stageParams.inferencedParams.output_width;
-        next_input_channelCount = stageParams.inferencedParams.output_channelCount;
+        next_input_channelCount
+          = stageParams.inferencedParams.output_channelCount;
       }
 
       // Shortcut to the first stage.
@@ -344,12 +348,16 @@ class NeuralNet_InferencedParams extends Recyclable.Root {
           this.stageLast_output_channelCount );
 
         this.blockFinalParams = stageParamsCreator.blockFinalParams;
-        stageParamsCreator.blockFinalParams = null; // (Because ownship has transferrred.)
+
+        // (Because ownship has transferrred.)
+        stageParamsCreator.blockFinalParams = null;
 
         this.blockFinalParams.inferencedParams_create();
 
-        this.output_height = this.blockFinalParams.output_height; // (should be 1.)
-        this.output_width = this.blockFinalParams.output_width; // (should be 1.)
+        this.output_height
+          = this.blockFinalParams.output_height; // (should be 1.)
+        this.output_width
+          = this.blockFinalParams.output_width; // (should be 1.)
       }
 
     } finally {
@@ -380,12 +388,13 @@ class NeuralNet_InferencedParams extends Recyclable.Root {
   }
 
   get nActivationName() {
-    return ValueDesc.ActivationFunction.Singleton.getName_byId( this.nActivationId );
+    return ValueDesc.ActivationFunction.Singleton.getName_byId(
+      this.nActivationId );
   }
 
   get nSqueezeExcitationChannelCountDivisorName() {
-    return ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.getName_byId(
-      this.nSqueezeExcitationChannelCountDivisor );
+    return ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton
+      .getName_byId( this.nSqueezeExcitationChannelCountDivisor );
   }
 
   /** @override */
