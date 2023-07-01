@@ -46,7 +46,8 @@ class MultiplyTwoTensors extends Root {
     inputTensorPlaceholder0, inputTensorPlaceholder1,
     bKeepInputTensor0, bKeepInputTensor1
   ) {
-    super( inputTensorPlaceholder0, inputTensorPlaceholder1, 1 );
+    super(
+      inputTensorPlaceholder0, inputTensorPlaceholder1, 1 );
     MultiplyTwoTensors.setAsConstructor_self.call( this,
       inputTensorPlaceholder0, inputTensorPlaceholder1,
       bKeepInputTensor0, bKeepInputTensor1 );
@@ -57,7 +58,8 @@ class MultiplyTwoTensors extends Root {
     inputTensorPlaceholder0, inputTensorPlaceholder1,
     bKeepInputTensor0, bKeepInputTensor1
   ) {
-    super.setAsConstructor( inputTensorPlaceholder0, inputTensorPlaceholder1, 1 );
+    super.setAsConstructor(
+      inputTensorPlaceholder0, inputTensorPlaceholder1, 1 );
     MultiplyTwoTensors.setAsConstructor_self.call( this,
       inputTensorPlaceholder0, inputTensorPlaceholder1,
       bKeepInputTensor0, bKeepInputTensor1 );
@@ -114,7 +116,10 @@ class MultiplyTwoTensors extends Root {
   }
 
 
-  /** Set this.apply according to this.bKeepInputTensor0 and this.bKeepInputTensor1. */
+  /**
+   * Set this.apply according to this.bKeepInputTensor0 and
+   * this.bKeepInputTensor1.
+   */
   static adjust_pfn() {
     if ( this.bKeepInputTensor0 ) {
       if ( this.bKeepInputTensor1 ) {
@@ -136,7 +141,8 @@ class MultiplyTwoTensors extends Root {
     let inputScaleBoundsArray0 = this.input0.scaleBoundsArray;
     let inputScaleBoundsArray1 = this.input1.scaleBoundsArray;
 
-    if ( inputScaleBoundsArray0.channelCount != inputScaleBoundsArray1.channelCount )
+    if ( inputScaleBoundsArray0.channelCount
+           != inputScaleBoundsArray1.channelCount )
       throw Error( `MultiplyTwoTensors.setup_BoundsArraySet(): `
         + `input0 channel count ( ${inputScaleBoundsArray0.channelCount} ) `
         + `should be the same as `
@@ -175,22 +181,27 @@ class MultiplyTwoTensors extends Root {
 
       // 1.2 Multiplying by broadcasting input0 to input1. The result dimension
       //     is the same as input1 (the larger one).
-      } else if ( ( this.input0.height == 1 ) && ( this.input0.width == 1 ) ) {
+      } else if (   ( this.input0.height == 1 )
+                 && ( this.input0.width == 1 ) ) {
         this.output0.height = this.input1.height;
         this.output0.width = this.input1.width;
 
       // 1.3 Multiplying by broadcasting input1 to input0. The result dimension
       //     is the same as input0 (the larger one).
-      } else if ( ( this.input1.height == 1 ) && ( this.input1.width == 1 ) ) {
+      } else if (   ( this.input1.height == 1 )
+                 && ( this.input1.width == 1 ) ) {
         this.output0.height = this.input0.height;
         this.output0.width = this.input0.width;
 
       // 1.4 Unsupported multiplying (height and width).
       } else {
-        throw Error( `Operation.MultiplyTwoTensors.setup_output0_TensorPlaceholder(): `
-          + `input0 ( height, width ) = ( ${this.input0.height}, ${this.input0.width} ) `
+        throw Error( `Operation.MultiplyTwoTensors`
+          + `.setup_output0_TensorPlaceholder(): `
+          + `input0 ( height, width ) = `
+          + `( ${this.input0.height}, ${this.input0.width} ) `
           + `and `
-          + `input1 ( height, width ) = ( ${this.input1.height}, ${this.input1.width} ) `
+          + `input1 ( height, width ) = `
+          + `( ${this.input1.height}, ${this.input1.width} ) `
           + `should be either the same or one is ( 1, 1 ) for broadcating.`
         );
       }
@@ -199,25 +210,31 @@ class MultiplyTwoTensors extends Root {
       // same, they are passed through to output. Otherwise, absent them in the
       // output.
       {
-        if ( this.input0.channelCount_lowerHalf == this.input1.channelCount_lowerHalf ) {
-          this.output0.channelCount_lowerHalf = this.input0.channelCount_lowerHalf;
+        if ( this.input0.channelCount_lowerHalf
+               == this.input1.channelCount_lowerHalf ) {
+          this.output0.channelCount_lowerHalf
+            = this.input0.channelCount_lowerHalf;
         } else {
           this.output0.channelCount_lowerHalf = undefined;
         }
 
-        if ( this.input0.channelCount_higherHalf == this.input1.channelCount_higherHalf ) {
-          this.output0.channelCount_higherHalf = this.input0.channelCount_higherHalf;
+        if ( this.input0.channelCount_higherHalf
+               == this.input1.channelCount_higherHalf ) {
+          this.output0.channelCount_higherHalf
+            = this.input0.channelCount_higherHalf;
         } else {
           this.output0.channelCount_higherHalf = undefined;
         }
       }
 
-      this.output0.ScaleBoundsArray_set_without_clone( this.boundsArraySet.output0 );
+      this.output0.ScaleBoundsArray_set_without_clone(
+        this.boundsArraySet.output0 );
 
       // Release for reducing memory usage. (Since it has been transferred to
       // inside the output tensor placeholder.)
       {
-        // Because it has already been transferred to TensorPlaceholder this.output0
+        // Because it has already been transferred to TensorPlaceholder
+        // this.output0
         this.boundsArraySet.output0 = null;
         this.boundsArraySet.disposeResources_and_recycleToPool();
         this.boundsArraySet = null;
@@ -225,7 +242,8 @@ class MultiplyTwoTensors extends Root {
 
     // 2. Unsupported multiplying (different channel count).
     } else {
-      throw Error( `Operation.MultiplyTwoTensors.setup_output0_TensorPlaceholder(): `
+      throw Error( `Operation.MultiplyTwoTensors`
+        + `.setup_output0_TensorPlaceholder(): `
         + `input0 channel count ( ${this.input0.channelCount} ) and `
         + `input1 channel count ( ${this.input1.channelCount} ) `
         + `should be the same.`
@@ -234,9 +252,12 @@ class MultiplyTwoTensors extends Root {
   }
 
 
-  /** Multiply. (Both the inputTensor0 and inputTensor1 will not be disposed. */
+  /**
+   * Multiply. (Both the inputTensor0 and inputTensor1 will not be disposed.
+   */
   static Multiply_and_keep0_keep1() {
-    this.output0.realTensor = tf.mul( this.input0.realTensor, this.input1.realTensor );
+    this.output0.realTensor
+      = tf.mul( this.input0.realTensor, this.input1.realTensor );
   }
 
   /**
@@ -245,7 +266,8 @@ class MultiplyTwoTensors extends Root {
    */
   static Multiply_and_keep0_destroy1() {
     try {
-      this.output0.realTensor = tf.mul( this.input0.realTensor, this.input1.realTensor );
+      this.output0.realTensor
+        = tf.mul( this.input0.realTensor, this.input1.realTensor );
     } finally {
       this.input1.realTensor.dispose();
     }
@@ -257,7 +279,8 @@ class MultiplyTwoTensors extends Root {
    */
   static Multiply_and_destroy0_keep1() {
     try {
-      this.output0.realTensor = tf.mul( this.input0.realTensor, this.input1.realTensor );
+      this.output0.realTensor
+        = tf.mul( this.input0.realTensor, this.input1.realTensor );
     } finally {
       this.input0.realTensor.dispose();
     }
@@ -266,7 +289,8 @@ class MultiplyTwoTensors extends Root {
   /** Multiply. (Both the inputTensor0 and inputTensor1 will be disposed. */
   static Multiply_and_destroy0_destroy1() {
     try {
-      this.output0.realTensor = tf.mul( this.input0.realTensor, this.input1.realTensor );
+      this.output0.realTensor
+        = tf.mul( this.input0.realTensor, this.input1.realTensor );
     } finally {
       this.input0.realTensor.dispose();
       this.input1.realTensor.dispose();
@@ -274,4 +298,3 @@ class MultiplyTwoTensors extends Root {
   }
 
 }
-
