@@ -38,13 +38,17 @@ class inputTensorPlaceholder_creator {
       let inputScaleBoundsArray = input_ScaleBoundsArray_or_TensorPlaceholder;
 
       if ( inputScaleBoundsArray.length != input_channelCount )
-        throw Error( `Block.inputTensorPlaceholder_creator.${funcNameInMessage}(): `
-          + `inputScaleBoundsArray's length ( ${inputScaleBoundsArray.length} ) `
+        throw Error( `Block.inputTensorPlaceholder_creator`
+          + `.${funcNameInMessage}(): `
+          + `inputScaleBoundsArray's length `
+          + `( ${inputScaleBoundsArray.length} ) `
           + `should be the same as `
           + `input's channel count ( ${input_channelCount} ).`
         );
 
-      let inputTensorPlaceholder = TensorPlaceholder.Base.Pool.get_or_create_by();
+      let inputTensorPlaceholder
+        = TensorPlaceholder.Base.Pool.get_or_create_by();
+
       inputTensorPlaceholder.set_height_width_channelCount_scaleBoundsArray(
         input_height, input_width,
         input_channelCount,
@@ -63,21 +67,31 @@ class inputTensorPlaceholder_creator {
       if (   ( inputTensorPlaceholder.height != input_height )
           || ( inputTensorPlaceholder.width != input_width )
           || ( inputTensorPlaceholder.channelCount != input_channelCount )
-          || ( inputTensorPlaceholder.channelCount_lowerHalf != input_channelCount_lowerHalf )
-          || ( inputTensorPlaceholder.channelCount_higherHalf != input_channelCount_higherHalf )
+          || ( inputTensorPlaceholder.channelCount_lowerHalf
+                 != input_channelCount_lowerHalf )
+          || ( inputTensorPlaceholder.channelCount_higherHalf
+                 != input_channelCount_higherHalf )
          )
-        throw Error( `Block.inputTensorPlaceholder_creator.${funcNameInMessage}(): `
-          + `inputTensorPlaceholder's ( height, width, channelCount ( channelCount_lowerHalf, channelCount_higherHalf ) ) = `
-          + `( ${inputTensorPlaceholder.height}, ${inputTensorPlaceholder.width}, ${inputTensorPlaceholder.channelCount} `
-            + `( ${inputTensorPlaceholder.channelCount_lowerHalf}, ${inputTensorPlaceholder.channelCount_higherHalf} ) ) `
+        throw Error( `Block.inputTensorPlaceholder_creator`
+          + `.${funcNameInMessage}(): `
+          + `inputTensorPlaceholder's ( height, width, channelCount ( `
+          + `channelCount_lowerHalf, channelCount_higherHalf ) ) = `
+          + `( ${inputTensorPlaceholder.height}, `
+            + `${inputTensorPlaceholder.width}, `
+            + `${inputTensorPlaceholder.channelCount} `
+            + `( ${inputTensorPlaceholder.channelCount_lowerHalf}, `
+            + `${inputTensorPlaceholder.channelCount_higherHalf} ) ) `
           + `should be `
           + `( ${input_height}, ${input_width}, ${input_channelCount} `
-            + `( ${input_channelCount_lowerHalf}, ${input_channelCount_higherHalf} ) ).`
+            + `( ${input_channelCount_lowerHalf}, `
+            + `${input_channelCount_higherHalf} ) ).`
         );
 
       if ( inputScaleBoundsArray.length != input_channelCount )
-        throw Error( `Block.inputTensorPlaceholder_creator.${funcNameInMessage}(): `
-          + `inputScaleBoundsArray's length ( ${inputScaleBoundsArray.length} ) `
+        throw Error( `Block.inputTensorPlaceholder_creator`
+          + `.${funcNameInMessage}(): `
+          + `inputScaleBoundsArray's length `
+          + `( ${inputScaleBoundsArray.length} ) `
           + `should be the same as `
           + `input's channel count ( ${input_channelCount} ).`
         );
@@ -86,9 +100,12 @@ class inputTensorPlaceholder_creator {
 
     // 3.
     } else {
-      throw Error( `Block.inputTensorPlaceholder_creator.${funcNameInMessage}(): `
-        + `input_ScaleBoundsArray_or_TensorPlaceholder shoulde be an instance of `
-        + `either ActivationEscaping.ScaleBoundsArray or TensorPlaceholder.Base.`
+      throw Error( `Block.inputTensorPlaceholder_creator`
+        + `.${funcNameInMessage}(): `
+        + `input_ScaleBoundsArray_or_TensorPlaceholder `
+        + `shoulde be an instance of `
+        + `either ActivationEscaping.ScaleBoundsArray or `
+        + `TensorPlaceholder.Base.`
       );
     }
   }
@@ -137,12 +154,13 @@ class inputTensorPlaceholder_creator {
   ) {
 
     // 1. input0
-    this.input0 = inputTensorPlaceholder_creator.create_or_check_TensorPlaceholder_by(
-      input0_height, input0_width, input0_channelCount,
-      pointwise1_inputChannelCount_lowerHalf,
-      pointwise1_inputChannelCount_higherHalf,
-      input0_ScaleBoundsArray_or_TensorPlaceholder
-    );
+    this.input0
+      = inputTensorPlaceholder_creator.create_or_check_TensorPlaceholder_by(
+          input0_height, input0_width, input0_channelCount,
+          pointwise1_inputChannelCount_lowerHalf,
+          pointwise1_inputChannelCount_higherHalf,
+          input0_ScaleBoundsArray_or_TensorPlaceholder
+        );
 
     if ( this.input0 == input0_ScaleBoundsArray_or_TensorPlaceholder )
       this.input0_bOwned = false;
@@ -158,11 +176,13 @@ class inputTensorPlaceholder_creator {
     //
     if ( inputTensorCount > 1 ) {
 
-      this.input1 = inputTensorPlaceholder_creator.create_or_check_TensorPlaceholder_by(
-        input1_height, input1_width, input1_channelCount,
-        undefined, undefined, // channelCount_lowerHalf, channelCount_higherHalf
-        input1_ScaleBoundsArray_or_TensorPlaceholder
-      );
+      this.input1
+        = inputTensorPlaceholder_creator.create_or_check_TensorPlaceholder_by(
+            input1_height, input1_width, input1_channelCount,
+            undefined, // channelCount_lowerHalf
+            undefined, // channelCount_higherHalf
+            input1_ScaleBoundsArray_or_TensorPlaceholder
+          );
 
       if ( this.input1 == input1_ScaleBoundsArray_or_TensorPlaceholder )
         this.input1_bOwned = false;

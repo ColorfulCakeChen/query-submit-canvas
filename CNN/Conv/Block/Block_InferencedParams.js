@@ -912,21 +912,24 @@ class Block_InferencedParams extends Recyclable.Root {
       + `pointwise1ActivationName=${this.pointwise1ActivationName}`
         + `(${this.pointwise1ActivationId}), `
 
-      + `pointwise1_nHigherHalfDifferent=${this.pointwise1_nHigherHalfDifferent_Name}`
-        + `${this.pointwise1_nHigherHalfDifferent}, `
+      + `pointwise1_nHigherHalfDifferent=`
+        + `${this.pointwise1_nHigherHalfDifferent_Name}`
+        + `(${this.pointwise1_nHigherHalfDifferent}), `
 
       + `bDepthwiseRequestedAndNeeded=${this.bDepthwiseRequestedAndNeeded}, `
       + `bDepthwise2Requested=${this.bDepthwise2Requested}, `
 
       + `depthwiseBias=${this.depthwiseBias}, `
-      + `depthwise1_nHigherHalfDifferent=${this.depthwise1_nHigherHalfDifferent_Name}`
-        + `${this.depthwise1_nHigherHalfDifferent}, `
+      + `depthwise1_nHigherHalfDifferent=`
+        + `${this.depthwise1_nHigherHalfDifferent_Name}`
+        + `(${this.depthwise1_nHigherHalfDifferent}), `
 
       + `bConcat1Requested=${this.bConcat1Requested}, `
 
       + `pointwise20Bias=${this.pointwise20Bias}, `
-      + `pointwise20_nHigherHalfDifferent=${this.pointwise20_nHigherHalfDifferent_Name}`
-        + `${this.pointwise20_nHigherHalfDifferent}, `
+      + `pointwise20_nHigherHalfDifferent=`
+        + `${this.pointwise20_nHigherHalfDifferent_Name}`
+        + `(${this.pointwise20_nHigherHalfDifferent}), `
 
       + `squeezeExcitationActivationName=`
         + `${this.squeezeExcitationActivationName}`
@@ -934,7 +937,8 @@ class Block_InferencedParams extends Recyclable.Root {
 
       + `bAddInputToOutputRequested=${this.bAddInputToOutputRequested}, `
       + `bConcat2ShuffleSplitRequested=${this.bConcat2ShuffleSplitRequested}, `
-      + `pointwise20_channelShuffler_outputGroupCount=${this.pointwise20_channelShuffler_outputGroupCount}, `
+      + `pointwise20_channelShuffler_outputGroupCount=`
+        + `${this.pointwise20_channelShuffler_outputGroupCount}, `
       + `outputTensorCount=${this.outputTensorCount}, `
     ;
 
