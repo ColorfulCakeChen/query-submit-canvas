@@ -16,17 +16,18 @@ import { Versus as DEvolution_Versus } from "./DEvolution_Versus.js";
  *   The Google Sheets spreadsheetId of neural network weights.
  *
  * @member {string} weightsAPIKey
- *   The API key for accessing the Google Sheets spreadsheet of neural network weights.
- * (Note: api key can not be changed after this object created.)
+ *   The API key for accessing the Google Sheets spreadsheet of neural network
+ * weights. (Note: api key can not be changed after this object created.)
  *   - If null, Google Visualization Table Query API will be used.
  *   - If not null, Google Sheets API v4 will be used.
  *
  * @member {boolean} bLogFetcherEventToConsole
- *   If true, some debug messages of HttpRequest.Fetcher will be logged to console.
+ *   If true, some debug messages of HttpRequest.Fetcher will be logged to
+ * console.
  *
  * @member {string[]} rangeArray
- *   A string array. Every element is the spreadsheet range description string for an
- * evolution versus (i.e. parent versus offspring).
+ *   A string array. Every element is the spreadsheet range description string
+ * for an evolution versus (i.e. parent versus offspring).
  *
  * @member {number[]} visitIndexArray
  *   A number array. Every element is the index into .rangeArray[]. It is used
@@ -60,13 +61,13 @@ import { Versus as DEvolution_Versus } from "./DEvolution_Versus.js";
  *
  * @member {boolean} rangeArray_load_asyncGenerator_running
  *   If true, a rangeArray_load_asyncGenerator is still executing. Please wait
- * it becoming false if wanting to call .rangeArray_load_asyncGenerator_create()
- * again.
+ * it becoming false if wanting to call
+ * .rangeArray_load_asyncGenerator_create() again.
  *
  * @member {ValueMax.Percentage.Aggregate} rangeArray_load_asyncPromise_progress
  *   The progress of rangeArray_load_asyncPromise. If
- * ( .rangeArray_load_asyncPromise_progress.valuePercentage == 100 ), the loading
- * has done.
+ * ( .rangeArray_load_asyncPromise_progress.valuePercentage == 100 ), the
+ * loading has done.
  *   - It is used only if .rangeArray_load_asyncPromise_create() is called.
  *   - It is not used if .rangeArray_load_asyncGenerator_create() is called. In
  *       this case, its progressParent parameter will be used instead.
@@ -216,11 +217,12 @@ class DEvolution_VersusSummary extends
    * The progressParent.root_get() will be returned when every time yield.
    *
    * @param {HttpRequest.Params_loading_retryWaiting} params_loading_retryWaiting
-   *   The parameters for loading timeout and retry waiting time. It will be kept
-   * but not modified by this object.
+   *   The parameters for loading timeout and retry waiting time. It will be
+   * kept but not modified by this object.
    *
    * @yield {Promise( ValueMax.Percentage.Aggregate )}
-   *   Yield a promise resolves to { done: false, value: progressParent.root_get() }.
+   *   Yield a promise resolves to
+   * { done: false, value: progressParent.root_get() }.
    *
    * @yield {Promise( boolean )}
    *   Yield a promise:
@@ -293,14 +295,15 @@ class DEvolution_VersusSummary extends
 
   /**
    * @return {number}
-   *   Return the current visit index (i.e. array index into .visitIndexArray[])
-   * according to .visitCount. It will also prepare .visitIndexArray[] if necessary.
-   * Return negative value if .visitCount is not legal or .rangeArray[] is not ready.
+   *   Return the current visit index (i.e. array index into
+   * .visitIndexArray[]) according to .visitCount. It will also prepare
+   * .visitIndexArray[] if necessary. Return negative value if .visitCount is
+   * not legal or .rangeArray[] is not ready.
    */
   visitIndex_get() {
 
-    // If all versus data are visited (or .visitCount is undefiend), re-prepare a
-    // new random visiting list.
+    // If all versus data are visited (or .visitCount is undefiend), re-prepare
+    // a new random visiting list.
     if (   ( !this.visitIndexArray )
         || ( !( this.visitCount < this.visitIndexArray.length ) )
        ) {
@@ -319,8 +322,8 @@ class DEvolution_VersusSummary extends
   }
 
   /**
-   * An async generator for loading the next versus data of differential evolution
-   * versus weights.
+   * An async generator for loading the next versus data of differential
+   * evolution versus weights.
    *
    * @param {ValueMax.Percentage.Aggregate} progressParent
    *   Some new progressToAdvance will be created and added to progressParent.
@@ -328,11 +331,12 @@ class DEvolution_VersusSummary extends
    * The progressParent.root_get() will be returned when every time yield.
    *
    * @param {HttpRequest.Params_loading_retryWaiting} params_loading_retryWaiting
-   *   The parameters for loading timeout and retry waiting time. It will be kept
-   * but not modified by this object.
+   *   The parameters for loading timeout and retry waiting time. It will be
+   * kept but not modified by this object.
    *
    * @yield {Promise( ValueMax.Percentage.Aggregate )}
-   *   Yield a promise resolves to { done: false, value: progressParent.root_get() }.
+   *   Yield a promise resolves to
+   * { done: false, value: progressParent.root_get() }.
    *
    * @yield {Promise( DEvolution.Versus )}
    *   Yield a promise:

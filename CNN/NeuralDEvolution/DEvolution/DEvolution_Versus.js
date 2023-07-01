@@ -50,7 +50,8 @@ import { VersusId } from "./DEvolution_VersusId.js";
  *
  * @member {ValueMax.Percentage.Aggregate} load_asyncPromise_progress
  *   The progress of load_asyncPromise. If
- * ( .load_asyncPromise_progress.valuePercentage == 100 ), the loading has done.
+ * ( .load_asyncPromise_progress.valuePercentage == 100 ), the loading has
+ * done.
  *   - It is used only if .load_asyncPromise_create() is called.
  *   - It is not used if .load_asyncGenerator_create() is called. In
  *       this case, its progressParent parameter will be used instead.
@@ -159,14 +160,15 @@ class DEvolution_Versus extends
    * (e.g. "Evolution!AH57:AK58")
    *
    * @param {HttpRequest.Params_loading_retryWaiting} params_loading_retryWaiting
-   *   The parameters for loading timeout and retry waiting time. It will be kept
-   * but not modified by this object.
+   *   The parameters for loading timeout and retry waiting time. It will be
+   * kept but not modified by this object.
    *
    * @param {TextEncoder} textEncoder
    *   For converting text string to Uint8Array.
    *
    * @yield {Promise( ValueMax.Percentage.Aggregate )}
-   *   Yield a promise resolves to { done: false, value: progressParent.root_get() }.
+   *   Yield a promise resolves to
+   * { done: false, value: progressParent.root_get() }.
    *
    * @yield {Promise( boolean )}
    *   Yield a promise:
@@ -261,11 +263,14 @@ class DEvolution_Versus extends
         return false; // versusId is illegal.
       }
 
-      // 2.1.2 The 2nd row of the first column should be the GA4 measurement id.
-      let measurementIdString = versusArrayArray?.[ COLUMN_ID_versusId ]?.[ 1 ];
+      // 2.1.2 The 2nd row of the first column should be the GA4 measurement
+      //       id.
+      let measurementIdString
+        = versusArrayArray?.[ COLUMN_ID_versusId ]?.[ 1 ];
       this.versusId.measurementId = measurementIdString; // may be undefined.
 
-      // 2.1.3 The 3rd row of the first column should be the GA4 measurement api secret.
+      // 2.1.3 The 3rd row of the first column should be the GA4 measurement
+      //       api secret.
       let apiSecretString = versusArrayArray?.[ COLUMN_ID_versusId ]?.[ 2 ];
       this.versusId.apiSecret = apiSecretString; // may be undefined.
 

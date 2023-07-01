@@ -19,20 +19,22 @@ import * as NumberTools from "../../util/NumberTools.js";
  *   The parent generation id string of the entity of the versus.
  *
  * @member {number} parentGenerationNo
- *   The parent generation id number of the entity of the versus. It is a 0-base integer.
+ *   The parent generation id number of the entity of the versus. It is a
+ * 0-base integer.
  *
  * @member {string} offspringGenerationNoString
  *   The offspring generation id string of the entity of the versus.
  *
  * @member {number} offspringGenerationNo
- *   The offspring generation id number of the entity of the versus. It is a 0-base
- * integer.
+ *   The offspring generation id number of the entity of the versus. It is a
+ * 0-base integer.
  *
  * @member {string} parentWinCountString
  *   The parent win count string of the entity of the versus.
  *
  * @member {number} parentWinCount
- *   The parent win count number of the entity of the versus. It is a 0-base integer.
+ *   The parent win count number of the entity of the versus. It is a 0-base
+ * integer.
  *
  * @member {string} measurementId
  *   The measurement id of stream of property of Google Analytics v4.
@@ -43,7 +45,8 @@ import * as NumberTools from "../../util/NumberTools.js";
 class DEvolution_VersusId extends Recyclable.Root {
 
   /**
-   * Used as default DEvolution.VersusId provider for conforming to Recyclable interface.
+   * Used as default DEvolution.VersusId provider for conforming to Recyclable
+   * interface.
    */
   static Pool = new Pool.Root( "DEvolution.VersusId.Pool",
     DEvolution_VersusId, DEvolution_VersusId.setAsConstructor );
@@ -105,14 +108,21 @@ class DEvolution_VersusId extends Recyclable.Root {
     );
 
     this.versusIdString = versusIdString;
+
     this.entityNoString = versusId_parts[ 0 ];
     this.entityNo = Number.parseInt( this.entityNoString, 10 );
+
     this.parentGenerationNoString = versusId_parts[ 1 ];
-    this.parentGenerationNo = Number.parseInt( this.parentGenerationNoString, 10 );
+    this.parentGenerationNo
+      = Number.parseInt( this.parentGenerationNoString, 10 );
+
     this.offspringGenerationNoString = versusId_parts[ 2 ];
-    this.offspringGenerationNo = Number.parseInt( this.offspringGenerationNoString, 10 );
+    this.offspringGenerationNo
+      = Number.parseInt( this.offspringGenerationNoString, 10 );
+
     this.parentWinCountString = versusId_parts[ 3 ];
-    this.parentWinCount = Number.parseInt( this.parentWinCountString, 10 );
+    this.parentWinCount
+      = Number.parseInt( this.parentWinCountString, 10 );
   }
 
   /**
