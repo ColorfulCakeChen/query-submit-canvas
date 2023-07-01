@@ -124,11 +124,13 @@ class Stage_BlockParamsCreator_Base extends Recyclable.Root {
   configTo_beforeBlock0() {
     let stageParams = this.stageParams;
 
-    this.input0_height = stageParams.input_height; // block0 inputs the source image size.
+    // block0 inputs the source image size.
+    this.input0_height = stageParams.input_height;
     this.input0_width = stageParams.input_width;
     //this.input0_channelCount; // Sub-class should determine it.
 
-    this.activation_setup_forBlock0(); // activation of depthwise1 and pointwise2.
+    // activation of depthwise1 and pointwise2.
+    this.activation_setup_forBlock0();
 
     this.depthwiseFilterHeight = this.depthwiseFilterHeight_Default;
     this.depthwiseFilterWidth = this.depthwiseFilterWidth_Default;
@@ -192,7 +194,8 @@ class Stage_BlockParamsCreator_Base extends Recyclable.Root {
     this.depthwiseFilterHeight = this.depthwiseFilterHeight_Last;
     this.depthwiseFilterWidth = this.depthwiseFilterWidth_Last;
 
-    this.activation_setup_forBlockLast(); // activation of depthwise1 and pointwise2
+    // activation of depthwise1 and pointwise2
+    this.activation_setup_forBlockLast();
   }
 
   /**
@@ -215,7 +218,8 @@ class Stage_BlockParamsCreator_Base extends Recyclable.Root {
     // 4. squeeze-and-excitation prefix or postfix
     {
       // MobileNetV2_Xxx uses prefix squeeze-and-excitation.
-      if ( ValueDesc.ConvStageType.isMobileNetV2( stageParams.nConvStageTypeId ) ) {
+      if ( ValueDesc.ConvStageType.isMobileNetV2(
+             stageParams.nConvStageTypeId ) ) {
         this.bSqueezeExcitationPrefix = true;
 
       } else { // non-MobileNetV2_Xxx uses postfix squeeze-and-excitation.
@@ -236,7 +240,8 @@ class Stage_BlockParamsCreator_Base extends Recyclable.Root {
   // they are not used in program.
 
   get nConvBlockTypeName() {
-    return ValueDesc.ConvBlockType.Singleton.getName_byId( this.nConvBlockTypeId );
+    return ValueDesc.ConvBlockType.Singleton.getName_byId(
+      this.nConvBlockTypeId );
   }
 
   get depthwise_AvgMax_Or_ChannelMultiplier_Name() {
@@ -255,8 +260,8 @@ class Stage_BlockParamsCreator_Base extends Recyclable.Root {
   }
 
   get nSqueezeExcitationChannelCountDivisorName() {
-    return ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.getName_byId(
-      this.nSqueezeExcitationChannelCountDivisor );
+    return ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton
+      .getName_byId( this.nSqueezeExcitationChannelCountDivisor );
   }
 
   get nActivationName() {
@@ -283,7 +288,8 @@ class Stage_BlockParamsCreator_Base extends Recyclable.Root {
       this.depthwiseStridesPad,
       this.depthwiseActivationId,
       this.pointwise20ChannelCount, this.pointwise20ActivationId,
-      this.nSqueezeExcitationChannelCountDivisor, this.bSqueezeExcitationPrefix,
+      this.nSqueezeExcitationChannelCountDivisor,
+      this.bSqueezeExcitationPrefix,
       this.nActivationId,
       this.bKeepInputTensor
     );

@@ -53,12 +53,16 @@ class MobileNetV2 extends MobileNetV2_Thin {
     let stageParams = this.stageParams;
 
     if ( stageParams.bPointwise1 == false ) {
-      this.pointwise1ChannelCount = 0;                                  // NoPointwise1.
-      this.depthwise_AvgMax_Or_ChannelMultiplier = 4;                   // Quadruple of input0. (Double of pointwise20.)
+      this.pointwise1ChannelCount
+        = 0;                                  // NoPointwise1.
+      this.depthwise_AvgMax_Or_ChannelMultiplier
+        = 4;                                  // Quadruple of input0. (Double of pointwise20.)
 
     } else {
-      this.pointwise1ChannelCount = stageParams.input_channelCount * 4; // Quadruple of input0. (Double of pointwise20.)
-      this.depthwise_AvgMax_Or_ChannelMultiplier = 1;
+      this.pointwise1ChannelCount
+        = stageParams.input_channelCount * 4; // Quadruple of input0. (Double of pointwise20.)
+      this.depthwise_AvgMax_Or_ChannelMultiplier
+        = 1;
     }
   }
 
@@ -72,18 +76,23 @@ class MobileNetV2 extends MobileNetV2_Thin {
 
     // Except
     if ( stageParams.bPointwise1 == false ) {
-      this.pointwise1ChannelCount = 0;                            // NoPointwise1.
-      this.depthwise_AvgMax_Or_ChannelMultiplier = 2;             // Double of pointwise20. (Quadruple of block0's input0.)
+      this.pointwise1ChannelCount
+        = 0;                            // NoPointwise1.
+      this.depthwise_AvgMax_Or_ChannelMultiplier
+        = 2;                            // Double of pointwise20. (Quadruple of block0's input0.)
 
     } else {
-      this.pointwise1ChannelCount = this.input0_channelCount * 2; // Double of pointwise20. (Quadruple of block0's input0.)
-      this.depthwise_AvgMax_Or_ChannelMultiplier = 1;
+      this.pointwise1ChannelCount
+        = this.input0_channelCount * 2; // Double of pointwise20. (Quadruple of block0's input0.)
+      this.depthwise_AvgMax_Or_ChannelMultiplier
+        = 1;
     }
   }
 
   /** @override */
   configTo_beforeBlockLast() {
-    super.configTo_beforeBlockLast(); // blockLast is the same as MobileNetV2_Thin.
+    // blockLast is the same as MobileNetV2_Thin.
+    super.configTo_beforeBlockLast();
   }
 
 }

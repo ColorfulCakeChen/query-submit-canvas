@@ -61,7 +61,8 @@ class ShuffleNetV2_ByMobileNetV1 extends Base {
    */
   static Pool = new Pool.Root(
     "Stage.BlockParamsCreator.ShuffleNetV2_ByMobileNetV1.Pool",
-    ShuffleNetV2_ByMobileNetV1, ShuffleNetV2_ByMobileNetV1.setAsConstructor );
+    ShuffleNetV2_ByMobileNetV1,
+    ShuffleNetV2_ByMobileNetV1.setAsConstructor );
 
   /**
    */
@@ -113,7 +114,8 @@ class ShuffleNetV2_ByMobileNetV1 extends Base {
       // The input0 will also be copied as pointwise1's higher half.
       //
 
-      // NoPointwise1. (Intrinsically, Double of input0. (Same as pointwise20.))
+      // NoPointwise1. (Intrinsically, Double of input0. (Same as
+      // pointwise20.))
       this.pointwise1ChannelCount = 0;
 
     } else {
@@ -175,7 +177,8 @@ class ShuffleNetV2_ByMobileNetV1 extends Base {
     // as twice of block0's input0).
     //
     // The input0's lower half will be processed by pointwise1's lower half.
-    // The input0's higher half will be pass-through as pointwise1's higher half.
+    // The input0's higher half will be pass-through as pointwise1's higher
+    //   half.
     //
     } else {
       this.pointwise1ChannelCount = this.pointwise20ChannelCount;

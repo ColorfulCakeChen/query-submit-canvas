@@ -64,7 +64,8 @@ class MobileNetV1 extends Base {
 
   /** @override */
   configTo_beforeBlock0() {
-    super.configTo_beforeBlock0(); // block0's input0_height, input0_width, activation.
+    // block0's input0_height, input0_width, activation.
+    super.configTo_beforeBlock0();
 
     let stageParams = this.stageParams;
 
@@ -75,12 +76,16 @@ class MobileNetV1 extends Base {
       .MOBILE_NET_V1_HEAD_BODY_TAIL;
 
     if ( stageParams.bPointwise1 == false ) {
-      this.pointwise1ChannelCount = 0;                                  // NoPointwise1.
-      this.depthwise_AvgMax_Or_ChannelMultiplier = 2;                   // Double of input0. (Same as pointwise20.)
+      this.pointwise1ChannelCount
+        = 0;                                  // NoPointwise1.
+      this.depthwise_AvgMax_Or_ChannelMultiplier
+        = 2;                                  // Double of input0. (Same as pointwise20.)
 
     } else {
-      this.pointwise1ChannelCount = stageParams.input_channelCount * 2; // Double of input0. (Same as pointwise20.)
-      this.depthwise_AvgMax_Or_ChannelMultiplier = 1;
+      this.pointwise1ChannelCount
+        = stageParams.input_channelCount * 2; // Double of input0. (Same as pointwise20.)
+      this.depthwise_AvgMax_Or_ChannelMultiplier
+        = 1;
     }
 
     // All blocks' output0 is double depth of source input0.

@@ -91,9 +91,11 @@ class ShuffleNetV2 extends Base {
       .SHUFFLE_NET_V2_HEAD;
 
     if ( stageParams.bPointwise1 == false ) {
-      this.pointwise1ChannelCount = 0; // NoPointwise1.
+      this.pointwise1ChannelCount
+        = 0;                              // NoPointwise1.
     } else {
-      this.pointwise1ChannelCount = stageParams.input_channelCount; // same as input0_channelCount.
+      this.pointwise1ChannelCount
+        = stageParams.input_channelCount; // same as input0_channelCount.
     }
 
     this.depthwise_AvgMax_Or_ChannelMultiplier = 1;
