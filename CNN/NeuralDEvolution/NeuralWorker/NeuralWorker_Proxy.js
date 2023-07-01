@@ -17,7 +17,8 @@ import * as NotUsed from "./NeuralWorker_Body.js";
 // Because here (NeuralWorker_Proxy) usually in inside a javascript
 // module (which can not call importScripts() to prefetch tensorflow.js).
 //
-//importScripts( tensorflowJsURL ); // Load tensorflow.js library in global scope.
+//// Load tensorflow.js library in global scope.
+//importScripts( tensorflowJsURL );
 // because can not executed inside type="module"
 //import { tensorflowJsURL } from "./NeuralWorker_Common.js";
 
@@ -76,59 +77,72 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
 
 
   get input_height() {
-    return this.neuralNetParamsBaseArray?.[ 0 ]?.inferencedParams.input_height;
+    return this.neuralNetParamsBaseArray?.[ 0 ]
+      ?.inferencedParams.input_height;
   }
 
   get input_width() {
-    return this.neuralNetParamsBaseArray?.[ 0 ]?.inferencedParams.input_width;
+    return this.neuralNetParamsBaseArray?.[ 0 ]
+      ?.inferencedParams.input_width;
   }
 
   get input_channelCount() {
-    return this.neuralNetParamsBaseArray?.[ 0 ]?.inferencedParams.input_channelCount;
+    return this.neuralNetParamsBaseArray?.[ 0 ]
+      ?.inferencedParams.input_channelCount;
   }
 
 
   get implicit_input_height() {
-    return this.neuralNetParamsBaseArray?.[ 0 ]?.inferencedParams.implicit_input_height;
+    return this.neuralNetParamsBaseArray?.[ 0 ]
+      ?.inferencedParams.implicit_input_height;
   }
 
   get implicit_input_width() {
-    return this.neuralNetParamsBaseArray?.[ 0 ]?.inferencedParams.implicit_input_width;
+    return this.neuralNetParamsBaseArray?.[ 0 ]
+      ?.inferencedParams.implicit_input_width;
   }
 
   get implicit_input_channelCount() {
-    return this.neuralNetParamsBaseArray?.[ 0 ]?.inferencedParams.implicit_input_channelCount;
+    return this.neuralNetParamsBaseArray?.[ 0 ]
+      ?.inferencedParams.implicit_input_channelCount;
   }
 
 
   get explicit_input_height() {
-    return this.neuralNetParamsBaseArray?.[ 0 ]?.explicit_input_height;
+    return this.neuralNetParamsBaseArray?.[ 0 ]
+      ?.explicit_input_height;
   }
 
   get explicit_input_width() {
-    return this.neuralNetParamsBaseArray?.[ 0 ]?.explicit_input_width;
+    return this.neuralNetParamsBaseArray?.[ 0 ]
+      ?.explicit_input_width;
   }
 
   get explicit_input_channelCount() {
-    return this.neuralNetParamsBaseArray?.[ 0 ]?.explicit_input_channelCount;
+    return this.neuralNetParamsBaseArray?.[ 0 ]
+      ?.explicit_input_channelCount;
   }
 
 
   get output_height() {
-    return this.neuralNetParamsBaseArray?.[ 0 ]?.inferencedParams.output_height;
+    return this.neuralNetParamsBaseArray?.[ 0 ]
+      ?.inferencedParams.output_height;
   }
 
   get output_width() {
-    return this.neuralNetParamsBaseArray?.[ 0 ]?.inferencedParams.output_width;
+    return this.neuralNetParamsBaseArray?.[ 0 ]
+      ?.inferencedParams.output_width;
   }
 
   get output_channelCount() {
-    return this.neuralNetParamsBaseArray?.[ 0 ]?.output_channelCount;
+    return this.neuralNetParamsBaseArray?.[ 0 ]
+      ?.output_channelCount;
   }
 
 
   get feedbackShape() {
-    return this.neuralNetParamsBaseArray?.[ 0 ]?.inferencedParams.feedbackShape;
+    return this.neuralNetParamsBaseArray?.[ 0 ]
+      ?.inferencedParams.feedbackShape;
   }
 
 
@@ -273,7 +287,8 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
    *   - Resolved to true, if succeeded.
    *   - Resolved to false, if failed.
    */
-  async alignmentMarkValueArrayArray_set_async( alignmentMarkValueArrayArray ) {
+  async alignmentMarkValueArrayArray_set_async(
+    alignmentMarkValueArrayArray ) {
 
     // 1. Handle TypedArray.
     let alignmentMarkValueArrayArray_clone;
@@ -366,8 +381,8 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
    * @return {Promise( Float32Array | Int32Array )}
    *   Return a promise resolved to an array [ TypedArray, TypedArray ]
    * representing the neural networks' result. The TypedArray may be:
-   *   - Float32Array (if ( neuralNetParams.output_asInputValueRange == false ) )
-   *   - Int32Array (if ( neuralNetParams.output_asInputValueRange == true ) )
+   *   - Float32Array (if ( neuralNetParams.output_asInputValueRange == false ))
+   *   - Int32Array (if ( neuralNetParams.output_asInputValueRange == true ))
    */
   async ONE_WORKER__TWO_NET__TypedArray_process_async(
     source_TypedArray, source_height, source_width,
@@ -416,8 +431,8 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
    *     - NeuralWorker_Mode.Singleton.Ids.TWO_WORKER__TWO_NET__APPLIER (2)
    *     - The 1st worker calls this method.
    *
-   *   - It will download scaled Int32Array from GPU memory. And post it back to
-   *         WorkerProxy.
+   *   - It will download scaled Int32Array from GPU memory. And post it back
+   *       to WorkerProxy.
    *
    *   - If has alignment mark and/or feedback (i.e. previous time output):
    *
@@ -462,15 +477,16 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
    * Int32Array).
    *
    * @yield {Int32Array}
-   *   Resolve to { done: false, value: Int32Array }. The value is an Int32Array
-   * representing the scaled image data whose shape is this.neuralNetParamsBase's
-   * [ input_height, input_width, input_channelCount ].
+   *   Resolve to { done: false, value: Int32Array }. The value is an
+   * Int32Array representing the scaled image data whose shape is
+   * this.neuralNetParamsBase's [ input_height, input_width,
+   * input_channelCount ].
    *
    * @yield {Float32Array|Int32Array}
    *   Resolve to { done: true, value: TypedArray }. The value is a TypedArray
    * representing the neural network's result. The TypedArray may be:
-   *   - Float32Array (if ( neuralNetParams.output_asInputValueRange == false ) )
-   *   - Int32Array (if ( neuralNetParams.output_asInputValueRange == true ) )
+   *   - Float32Array (if ( neuralNetParams.output_asInputValueRange == false ))
+   *   - Int32Array (if ( neuralNetParams.output_asInputValueRange == true ))
    */
   TWO_WORKER__TWO_NET__step0__TypedArray_process_asyncGenerator(
     source_TypedArray, source_height, source_width,
@@ -540,8 +556,8 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
    * @return {Promise( Float32Array | Int32Array )}
    *   Return a promise resolved to a TypedArray representing the neural
    * network's result. The TypedArray may be:
-   *   - Float32Array (if ( neuralNetParams.output_asInputValueRange == false ) )
-   *   - Int32Array (if ( neuralNetParams.output_asInputValueRange == true ) )
+   *   - Float32Array (if ( neuralNetParams.output_asInputValueRange == false ))
+   *   - Int32Array (if ( neuralNetParams.output_asInputValueRange == true ))
    */
   async TWO_WORKER__TWO_NET__step1__TypedArray_process_async(
     source_TypedArray, source_height, source_width,
