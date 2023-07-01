@@ -6,7 +6,8 @@ import * as FloatValue from "../../Unpacker/FloatValue.js";
 import * as ValueDesc from "../../Unpacker/ValueDesc.js";
 import * as Weights from "../../Unpacker/Weights.js";
 import * as BoundsArraySet from "../BoundsArraySet.js";
-import { ChannelPartInfo, FiltersBiasesPartInfo } from "./Depthwise_ChannelPartInfo.js";
+import { ChannelPartInfo, FiltersBiasesPartInfo }
+  from "./Depthwise_ChannelPartInfo.js";
 import { PadInfoCalculator } from "./Depthwise_PadInfoCalculator.js";
 import { BoundsArray_PerPixel } from "./Depthwise_BoundsArray_PerPixel.js";
 

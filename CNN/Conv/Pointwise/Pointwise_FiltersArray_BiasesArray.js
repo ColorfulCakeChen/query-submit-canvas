@@ -6,7 +6,8 @@ import * as FloatValue from "../../Unpacker/FloatValue.js";
 import * as ValueDesc from "../../Unpacker/ValueDesc.js";
 import * as Weights from "../../Unpacker/Weights.js";
 import * as BoundsArraySet from "../BoundsArraySet.js";
-import { ChannelPartInfo, FiltersBiasesPartInfo } from  "./Pointwise_ChannelPartInfo.js";
+import { ChannelPartInfo, FiltersBiasesPartInfo }
+  from "./Pointwise_ChannelPartInfo.js";
 
 /**
  * Extract pointwise convolution filters and biases.
@@ -215,20 +216,24 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
     this.tensorWeightCountTotal_internal = 0;
 
     if ( inputChannelCount <= 0 )
-      throw Error( `Pointwise.FiltersArray_BiasesArray.setAsConstructor_self(): `
-        + `inputChannelCount ( ${inputChannelCount} ) must be positive integer.`
+      throw Error( `Pointwise.FiltersArray_BiasesArray`
+        + `.setAsConstructor_self(): `
+        + `inputChannelCount ( ${inputChannelCount} ) `
+        + `must be positive integer.`
       );
 
     if ( this.bHigherHalfDifferent ) {
       if ( this.inputChannelCount_lowerHalf > inputChannelCount )
-        throw Error( `Pointwise.FiltersArray_BiasesArray.setAsConstructor_self(): `
+        throw Error( `Pointwise.FiltersArray_BiasesArray`
+          + `.setAsConstructor_self(): `
           + `inputChannelCount_lowerHalf ( ${inputChannelCount_lowerHalf} ) `
           + `can not be larger than `
           + `inputChannelCount ( ${inputChannelCount} ).`
         );
 
       if ( outputChannelCount_lowerHalf > outputChannelCount )
-        throw Error( `Pointwise.FiltersArray_BiasesArray.setAsConstructor_self(): `
+        throw Error( `Pointwise.FiltersArray_BiasesArray`
+          + `.setAsConstructor_self(): `
           + `outputChannelCount_lowerHalf ( ${outputChannelCount_lowerHalf} ) `
           + `can not be larger than `
           + `outputChannelCount ( ${outputChannelCount} ).`
@@ -236,8 +241,10 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
 
       if ( ( inputChannelCount_lowerHalf > 0 )
              != ( outputChannelCount_lowerHalf > 0 ) )
-        throw Error( `Pointwise.FiltersArray_BiasesArray.setAsConstructor_self(): `
-          + `inputChannelCount_lowerHalf ( ${inputChannelCount_lowerHalf} ) and `
+        throw Error( `Pointwise.FiltersArray_BiasesArray`
+          + `.setAsConstructor_self(): `
+          + `inputChannelCount_lowerHalf ( ${inputChannelCount_lowerHalf} ) `
+          + `and `
           + `outputChannelCount_lowerHalf ( ${outputChannelCount_lowerHalf} ) `
           + `should be both positive or both not.`
         );
@@ -383,69 +390,92 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
 
             biasesWeightCount_extracted = this.outputChannelCount;
 
-            aFiltersBiasesPartInfoArray = Recyclable.OwnerArray.Pool.get_or_create_by(
-              FiltersBiasesPartInfo.Pool.get_or_create_by(
-                ChannelPartInfo.Pool.get_or_create_by(
-                  0, this.inputChannelCount, this.outputChannelCount, false )
-              )
-            );
+            aFiltersBiasesPartInfoArray = Recyclable.OwnerArray.Pool
+              .get_or_create_by(
+                FiltersBiasesPartInfo.Pool.get_or_create_by(
+                  ChannelPartInfo.Pool.get_or_create_by(
+                    0, this.inputChannelCount, this.outputChannelCount, false )
+                )
+              );
             break;
 
           // 3.1 bHigherHalfCopyLowerHalf_LowerHalfPassThrough
           case ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_COPY_LOWER_HALF__LOWER_HALF_PASS_THROUGH: // (1)
-            filtersWeightCount_extracted = biasesWeightCount_extracted = 0; // Does not extract any weights.
-            aFiltersBiasesPartInfoArray = Recyclable.OwnerArray.Pool.get_or_create_by(
-              FiltersBiasesPartInfo.Pool.get_or_create_by(
-                ChannelPartInfo.Pool.get_or_create_by( 0, this.inputChannelCount_lowerHalf, this.outputChannelCount_lowerHalf,  true ),
-                ChannelPartInfo.Pool.get_or_create_by( 0, this.inputChannelCount_lowerHalf, this.outputChannelCount_higherHalf, true )
-              )
-            );
+            filtersWeightCount_extracted = 0; // Does not extract any weights.
+            biasesWeightCount_extracted = 0; // Does not extract any weights.
+            aFiltersBiasesPartInfoArray = Recyclable.OwnerArray.Pool
+              .get_or_create_by(
+                FiltersBiasesPartInfo.Pool.get_or_create_by(
+                  ChannelPartInfo.Pool.get_or_create_by(
+                    0, this.inputChannelCount_lowerHalf,
+                    this.outputChannelCount_lowerHalf,  true ),
+                  ChannelPartInfo.Pool.get_or_create_by(
+                    0, this.inputChannelCount_lowerHalf,
+                    this.outputChannelCount_higherHalf, true )
+                )
+              );
             break;
 
           // 3.2 bHigherHalfCopyLowerHalf
           case ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_COPY_LOWER_HALF: // (2)
-            filtersWeightCount_extracted = this.inputChannelCount_lowerHalf * this.outputChannelCount_lowerHalf;
+            filtersWeightCount_extracted
+              = this.inputChannelCount_lowerHalf
+                  * this.outputChannelCount_lowerHalf;
             biasesWeightCount_extracted = this.outputChannelCount_lowerHalf;
 
-            aFiltersBiasesPartInfoArray = Recyclable.OwnerArray.Pool.get_or_create_by(
-              FiltersBiasesPartInfo.Pool.get_or_create_by(
-                ChannelPartInfo.Pool.get_or_create_by( 0, this.inputChannelCount_lowerHalf, this.outputChannelCount_lowerHalf, false ),
-                ChannelPartInfo.Pool.get_or_create_by( 0, this.inputChannelCount_lowerHalf, this.outputChannelCount_higherHalf, true )
-              )
-            );
+            aFiltersBiasesPartInfoArray = Recyclable.OwnerArray.Pool
+              .get_or_create_by(
+                FiltersBiasesPartInfo.Pool.get_or_create_by(
+                  ChannelPartInfo.Pool.get_or_create_by(
+                    0, this.inputChannelCount_lowerHalf,
+                    this.outputChannelCount_lowerHalf, false ),
+                  ChannelPartInfo.Pool.get_or_create_by(
+                    0, this.inputChannelCount_lowerHalf,
+                    this.outputChannelCount_higherHalf, true )
+                )
+              );
             break;
 
           // 3.3 bHigherHalfAnotherPointwise
           case ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_ANOTHER_POINTWISE: // (3)
             filtersWeightCount_extracted =
-                ( this.inputChannelCount_lowerHalf * this.outputChannelCount_lowerHalf )
-              + ( this.inputChannelCount_higherHalf * this.outputChannelCount_higherHalf );
+                ( this.inputChannelCount_lowerHalf
+                    * this.outputChannelCount_lowerHalf )
+              + ( this.inputChannelCount_higherHalf
+                    * this.outputChannelCount_higherHalf );
 
             biasesWeightCount_extracted = this.outputChannelCount;
 
-            aFiltersBiasesPartInfoArray = Recyclable.OwnerArray.Pool.get_or_create_by(
-              FiltersBiasesPartInfo.Pool.get_or_create_by(
-                ChannelPartInfo.Pool.get_or_create_by(
-                                                 0, this.inputChannelCount_lowerHalf, this.outputChannelCount_lowerHalf,  false )
-              ),
-              FiltersBiasesPartInfo.Pool.get_or_create_by(
-                ChannelPartInfo.Pool.get_or_create_by(
-                  this.inputChannelCount_lowerHalf, this.inputChannelCount,           this.outputChannelCount_higherHalf, false )
-              )
-            );
+            aFiltersBiasesPartInfoArray = Recyclable.OwnerArray.Pool
+              .get_or_create_by(
+                FiltersBiasesPartInfo.Pool.get_or_create_by(
+                  ChannelPartInfo.Pool.get_or_create_by(
+                    0, this.inputChannelCount_lowerHalf,
+                    this.outputChannelCount_lowerHalf,  false )
+                ),
+                FiltersBiasesPartInfo.Pool.get_or_create_by(
+                  ChannelPartInfo.Pool.get_or_create_by(
+                    this.inputChannelCount_lowerHalf, this.inputChannelCount,
+                    this.outputChannelCount_higherHalf, false )
+                )
+              );
             break;
 
           // 3.4 bHigherHalfPassThrough
           case ValueDesc.Pointwise_HigherHalfDifferent.Singleton.Ids.HIGHER_HALF_PASS_THROUGH: // (4)
-            filtersWeightCount_extracted = this.inputChannelCount_lowerHalf * this.outputChannelCount_lowerHalf;
+            filtersWeightCount_extracted
+              = this.inputChannelCount_lowerHalf
+                  * this.outputChannelCount_lowerHalf;
             biasesWeightCount_extracted = this.outputChannelCount_lowerHalf;
 
             aFiltersBiasesPartInfoArray = Recyclable.OwnerArray.Pool.get_or_create_by(
               FiltersBiasesPartInfo.Pool.get_or_create_by(
                 ChannelPartInfo.Pool.get_or_create_by(
-                                                 0, this.inputChannelCount_lowerHalf, this.outputChannelCount_lowerHalf,  false ),
+                  0, this.inputChannelCount_lowerHalf,
+                  this.outputChannelCount_lowerHalf,  false ),
                 ChannelPartInfo.Pool.get_or_create_by(
-                  this.inputChannelCount_lowerHalf, this.inputChannelCount,           this.outputChannelCount_higherHalf,  true )
+                  this.inputChannelCount_lowerHalf, this.inputChannelCount,
+                  this.outputChannelCount_higherHalf,  true )
               )
             );
 
@@ -540,13 +570,16 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
           this.boundsArraySet.set_bPassThrough_all_byChannelPartInfoArray(
             aFiltersBiasesPartInfoArray );
 
-          // Determine .activationEscaping_ScaleArraySet, .afterActivationEscaping,
-          // .afterActivation
-          this.boundsArraySet.adjust_afterFilter_afterBias_set_output0_by_afterBias_bPassThrough_nActivationId( this.nActivationId );
+          // Determine .activationEscaping_ScaleArraySet,
+          // .afterActivationEscaping, .afterActivation
+          this.boundsArraySet
+            .adjust_afterFilter_afterBias_set_output0_by_afterBias_bPassThrough_nActivationId(
+              this.nActivationId );
         }
 
         // Round 2
-        this.apply_doEscapingScale_to_filtersArray_biasesArray(); // Apply doEscapingScale.
+        // Apply doEscapingScale.
+        this.apply_doEscapingScale_to_filtersArray_biasesArray();
       }
 
       // Shuffle channels.
@@ -675,8 +708,11 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
             inChannelPartIndex < inChannelPartInfoArray.length;
             ++inChannelPartIndex ) {
 
-            let inChannelPartInfo = inChannelPartInfoArray[ inChannelPartIndex ];
-            let inChannelToPartBegin = inChannel - inChannelPartInfo.inChannelBegin;
+            let inChannelPartInfo
+              = inChannelPartInfoArray[ inChannelPartIndex ];
+
+            let inChannelToPartBegin
+              = inChannel - inChannelPartInfo.inChannelBegin;
 
             for ( let outChannelSub = 0;
               outChannelSub < inChannelPartInfo.outputChannelCount;
@@ -851,8 +887,8 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
         for ( let outChannel = 0;
           outChannel < this.outputChannelCount; ++outChannel ) {
 
-          let doEscapingScale
-            = this.boundsArraySet.output0.scaleArraySet.do.scales[ outChannel ];
+          let doEscapingScale = this.boundsArraySet.output0
+            .scaleArraySet.do.scales[ outChannel ];
 
           // filter wieghts scaled.
           this.filtersArray[ filterIndex ] *= doEscapingScale;
@@ -869,8 +905,8 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
       for ( let outChannel = 0;
         outChannel < this.outputChannelCount; ++outChannel ) {
 
-        let doEscapingScale
-          = this.boundsArraySet.output0.scaleArraySet.do.scales[ outChannel ];
+        let doEscapingScale = this.boundsArraySet.output0
+          .scaleArraySet.do.scales[ outChannel ];
 
         // bias wieghts scaled.
         this.biasesArray[ biasIndex ] *= doEscapingScale;
