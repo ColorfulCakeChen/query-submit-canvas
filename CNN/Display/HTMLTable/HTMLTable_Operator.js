@@ -11,13 +11,14 @@ import * as Recyclable from "../../util/Recyclable.js";
  *   The HTML table element id for displaying data.
  *
  * @member {number} digitsCount
- *   For number data, it will be converted to text by toFix() with digitsCount (i.e.
- * the number of digits to appear after the decimal point).
+ *   For number data, it will be converted to text by toFix() with digitsCount
+ * (i.e. the number of digits to appear after the decimal point).
  */
 class HTMLTable_Operator extends Recyclable.Root {
 
   /**
-   * Used as default HTMLTable.Operator provider for conforming to Recyclable interface.
+   * Used as default HTMLTable.Operator provider for conforming to Recyclable
+   * interface.
    */
   static Pool = new Pool.Root( "HTMLTable.Operator.Pool",
     HTMLTable_Operator, HTMLTable_Operator.setAsConstructor );
@@ -121,8 +122,8 @@ class HTMLTable_Operator extends Recyclable.Root {
 
   /**
    * @param {Node} htmlNode
-   *   The HTML DOM Node which will the new row will be inserted. For HTML table,
-   * it could be .tHead or .tBodies or .tFoot.
+   *   The HTML DOM Node which will the new row will be inserted. For HTML
+   * table, it could be .tHead or .tBodies or .tFoot.
    *
    * @param {string} th_OR_td  "th" for table header, "td" for table body.
    *   "th" for table header cell, "td" for table data cell.
