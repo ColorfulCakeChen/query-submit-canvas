@@ -80,7 +80,8 @@ class Embedding_SplitReshapeGatherConcat extends Base {
     }
 
     if ( this.vocabularyIndicesOneChannelTensor2dArray ) {
-      this.vocabularyIndicesOneChannelTensor2dArray.disposeResources_and_recycleToPool();
+      this.vocabularyIndicesOneChannelTensor2dArray
+        .disposeResources_and_recycleToPool();
       this.vocabularyIndicesOneChannelTensor2dArray = null;
     }
 
@@ -94,7 +95,8 @@ class Embedding_SplitReshapeGatherConcat extends Base {
    *
    * @override
    */
-  * initer( progressParent, inputWeightArray, weightElementOffsetBegin, params ) {
+  * initer(
+    progressParent, inputWeightArray, weightElementOffsetBegin, params ) {
 
     // 0. Prepare
 
@@ -125,13 +127,16 @@ class Embedding_SplitReshapeGatherConcat extends Base {
         this.bEmbedVocabularyId
       );
 
-      if ( !theFiltersArray_Multi.init( inputWeightArray, this.weightElementOffsetEnd ) ) {
+      if ( !theFiltersArray_Multi.init(
+              inputWeightArray, this.weightElementOffsetEnd ) ) {
         this.bInitOk = false;
         return false;  // e.g. input array does not have enough data.
       }
-      this.weightElementOffsetEnd = theFiltersArray_Multi.weightElementOffsetEnd;
+      this.weightElementOffsetEnd
+        = theFiltersArray_Multi.weightElementOffsetEnd;
   
-      this.output_scaleBoundsArray = theFiltersArray_Multi.output_scaleBoundsArray;
+      this.output_scaleBoundsArray
+        = theFiltersArray_Multi.output_scaleBoundsArray;
 
       // (Because ownership transferred.)
       theFiltersArray_Multi.output_scaleBoundsArray = null;
@@ -167,7 +172,8 @@ class Embedding_SplitReshapeGatherConcat extends Base {
         //
         // (Used when vocabulary tables are tensor2d.)
         this.inputTensor2dShape
-          = Recyclable.Array.Pool.get_or_create_by( this.input_height, this.input_width );
+          = Recyclable.Array.Pool.get_or_create_by(
+              this.input_height, this.input_width );
 
         // For collecting the results of every looking (vocabulary table) up.
         // They will be concatenated into one tensor3d as apply()'s result.
@@ -181,11 +187,15 @@ class Embedding_SplitReshapeGatherConcat extends Base {
           this.vocabularyCountPerInputChannel, this.channelMultiplier );
 
         // could be tensor3d or tensor2d.
-        this.vocabularyTablesTensorArray = Recyclable.Array.Pool.get_or_create_by(
-          theFiltersArray_Multi.filtersArrayArray.length );
+        this.vocabularyTablesTensorArray
+           = Recyclable.Array.Pool.get_or_create_by(
+               theFiltersArray_Multi.filtersArrayArray.length );
 
-        for ( let inChannel = 0; inChannel < this.input_channelCount; ++inChannel ) {
-          let filtersArray = theFiltersArray_Multi.filtersArrayArray[ inChannel ];
+        for ( let inChannel = 0;
+          inChannel < this.input_channelCount; ++inChannel ) {
+
+          let filtersArray
+            = theFiltersArray_Multi.filtersArrayArray[ inChannel ];
 
           // (2022/07/29) Note:
           //
@@ -195,7 +205,8 @@ class Embedding_SplitReshapeGatherConcat extends Base {
           // fail and throw exception. So, use a normal (non-re-used) array as
           // shape (i.e. shallow copy of .vocabularyTableShape) instead.
           //
-          //this.vocabularyTablesTensorArray[ inChannel ] = tf.tensor2d( filtersArray, this.vocabularyTableShape );
+          //this.vocabularyTablesTensorArray[ inChannel ] = tf.tensor2d(
+          //  filtersArray, this.vocabularyTableShape );
           this.vocabularyTablesTensorArray[ inChannel ]
             = tf.tensor2d( filtersArray, this.vocabularyTableShape.slice() );
         }
@@ -293,7 +304,8 @@ class Embedding_SplitReshapeGatherConcat extends Base {
     // expanded to tensor3d (multiple channels).
     try {
       for (
-        let channelIndex = ( vocabularyIndicesOneChannelTensor2dArray.length - 1 );
+        let channelIndex
+          = ( vocabularyIndicesOneChannelTensor2dArray.length - 1 );
         channelIndex >= 0;
         --channelIndex ) {
 

@@ -106,7 +106,8 @@ class Embedding_ParamsBase extends Recyclable.Root {
       + `input_width=${this.input_width}, `
       + `input_channelCount=${this.input_channelCount}, `
       + `channelMultiplier=${this.channelMultiplier}, `
-      + `vocabularyCountPerInputChannel=${this.vocabularyCountPerInputChannel}, `
+      + `vocabularyCountPerInputChannel=`
+        + `${this.vocabularyCountPerInputChannel}, `
       + `bEmbedVocabularyId=${this.bEmbedVocabularyId}, `
       + `bKeepInputTensor=${this.bKeepInputTensor}, `
       + `inferencedParams={ ${this.inferencedParams} }`
@@ -115,4 +116,3 @@ class Embedding_ParamsBase extends Recyclable.Root {
   }
 
 }
-

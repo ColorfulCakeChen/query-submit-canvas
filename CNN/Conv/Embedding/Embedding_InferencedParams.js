@@ -46,7 +46,8 @@ class Embedding_InferencedParams extends Recyclable.Root {
    * Recyclable interface.
    */
   static Pool = new Pool.Root( "Embedding.InferencedParams.Pool",
-    Embedding_InferencedParams, Embedding_InferencedParams.setAsConstructor );
+    Embedding_InferencedParams,
+    Embedding_InferencedParams.setAsConstructor );
 
   /**
    *
@@ -145,7 +146,8 @@ class Embedding_InferencedParams extends Recyclable.Root {
       + `output_width=${this.output_width}, `
       + `output_channelCount=${this.output_channelCount}, `
       + `vocabularyIdMax=${this.vocabularyIdMax}, `
-      + `weightCountPerVocabularyTable_extracted=${this.weightCountPerVocabularyTable_extracted}, `
+      + `weightCountPerVocabularyTable_extracted=`
+        + `${this.weightCountPerVocabularyTable_extracted}, `
       + `weightCountPerVocabularyTable=${this.weightCountPerVocabularyTable}, `
       + `tensorWeightCountExtracted=${this.tensorWeightCountExtracted}, `
       + `tensorWeightCountTotal=${this.tensorWeightCountTotal}`

@@ -90,7 +90,9 @@ class Embedding_FiltersArray_One extends FiltersArray_Base {
     else
       outChannelSubBegin = 0;
 
-    this.output_scaleBoundsArray.set_all_by_PositiveInfinity_NegativeInfinity();
+    this.output_scaleBoundsArray
+      .set_all_by_PositiveInfinity_NegativeInfinity();
+
     let outBoundsArray = this.output_scaleBoundsArray.boundsArray;
 
     this.filtersArray
@@ -101,7 +103,9 @@ class Embedding_FiltersArray_One extends FiltersArray_Base {
     let sourceIndex = weightElementOffsetBegin;
 
     let outChannelBegin = 0;
-    for ( let inChannel = 0; inChannel < this.input_channelCount; ++inChannel ) {
+    for ( let inChannel = 0;
+      inChannel < this.input_channelCount; ++inChannel ) {
+
       for (
         let vocabularyId = 0;
         vocabularyId < this.vocabularyCountPerInputChannel;

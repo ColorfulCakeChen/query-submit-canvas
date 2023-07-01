@@ -8,8 +8,8 @@ import { InferencedParams } from "./Embedding_InferencedParams.js";
 
 
 //!!! ...unfinished... (2022/07/25)
-// Perhaps, provide a parameter control whether different input channel uses the same
-// or different look-up (i.e. vocabulary) table.
+// Perhaps, provide a parameter control whether different input channel uses
+// the same or different look-up (i.e. vocabulary) table.
 
 /**
  * This is the base class of Embedding.FiltersArray_One and

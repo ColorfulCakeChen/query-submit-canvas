@@ -9,7 +9,8 @@ import { ParamsBase } from "./Embedding_ParamsBase.js";
 import { InferencedParams } from "./Embedding_InferencedParams.js";
 
 //!!! ...unfinished... (2022/07/26)
-// Perhaps, add parameter bCastToInt32 for controlling whether needs cast input to integer.
+// Perhaps, add parameter bCastToInt32 for controlling whether needs cast input
+// to integer.
 
 /**
  * Embedding parameters.
@@ -127,13 +128,20 @@ import { InferencedParams } from "./Embedding_InferencedParams.js";
       return false;
 
     {
-      this.input_height = this.getParamValue_byParamDesc( Embedding_Params.input_height );
-      this.input_width = this.getParamValue_byParamDesc( Embedding_Params.input_width );
-      this.input_channelCount = this.getParamValue_byParamDesc( Embedding_Params.input_channelCount );
-      this.channelMultiplier = this.getParamValue_byParamDesc( Embedding_Params.channelMultiplier );
-      this.vocabularyCountPerInputChannel = this.getParamValue_byParamDesc( Embedding_Params.vocabularyCountPerInputChannel );
-      this.bEmbedVocabularyId = this.getParamValue_byParamDesc( Embedding_Params.bEmbedVocabularyId );
-      this.bKeepInputTensor = this.getParamValue_byParamDesc( Embedding_Params.bKeepInputTensor );
+      this.input_height
+        = this.getParamValue_byParamDesc( Embedding_Params.input_height );
+      this.input_width
+        = this.getParamValue_byParamDesc( Embedding_Params.input_width );
+      this.input_channelCount
+        = this.getParamValue_byParamDesc( Embedding_Params.input_channelCount );
+      this.channelMultiplier
+        = this.getParamValue_byParamDesc( Embedding_Params.channelMultiplier );
+      this.vocabularyCountPerInputChannel
+        = this.getParamValue_byParamDesc( Embedding_Params.vocabularyCountPerInputChannel );
+      this.bEmbedVocabularyId
+        = this.getParamValue_byParamDesc( Embedding_Params.bEmbedVocabularyId );
+      this.bKeepInputTensor
+        = this.getParamValue_byParamDesc( Embedding_Params.bKeepInputTensor );
     }
 
     this.inferencedParams_create();
@@ -166,4 +174,3 @@ Embedding_Params.SequenceArray = new ParamDesc.SequenceArray( [
   Embedding_Params.bEmbedVocabularyId,
   Embedding_Params.bKeepInputTensor,
 ] );
-

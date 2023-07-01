@@ -25,7 +25,8 @@ import { Params } from "./Embedding_Params.js";
  * It is useful as the first layer of text or image processing because their
  * inputs are all integer (e.g. character codes, word indices, color codes,
  * etc). And, the first layer only needs carry context-independent information
- * (and all the other layers after it will produce context-dependent information).
+ * (and all the other layers after it will produce context-dependent
+ * information).
  *
  * This object always accepts tensor3d (dtype = int32).
  *   - The axis 0 is height. (Image height) (Text lines and usually only 1
@@ -111,11 +112,13 @@ class Embedding_Base extends Recyclable.Base( ReturnOrClone.Root ) {
    *   Yield ( value = false ) when ( done = true ) failed.
    *
    */
-  * initer( progressParent, inputWeightArray, weightElementOffsetBegin, params ) {
+  * initer(
+    progressParent, inputWeightArray, weightElementOffsetBegin, params ) {
 
     // 0. Prepare
 
-    this.weightElementOffsetEnd = this.weightElementOffsetBegin = weightElementOffsetBegin;
+    this.weightElementOffsetEnd = this.weightElementOffsetBegin
+      = weightElementOffsetBegin;
     this.bInitOk = false;
 
     // Estimate the maximum value of progress.
@@ -124,7 +127,9 @@ class Embedding_Base extends Recyclable.Base( ReturnOrClone.Root ) {
       ;
 
     let progressRoot = progressParent.root_get();
-    let progressToAdvance = progressParent.child_add( // For parameters extracting.
+
+    // For parameters extracting.
+    let progressToAdvance = progressParent.child_add(
       ValueMax.Percentage.Concrete.Pool.get_or_create_by( progressMax ) );
 
     // 1. Extract parameters.
@@ -154,10 +159,14 @@ class Embedding_Base extends Recyclable.Base( ReturnOrClone.Root ) {
         this.output_width = params.inferencedParams.output_width;
         this.output_channelCount = params.inferencedParams.output_channelCount;
         this.vocabularyIdMax = params.inferencedParams.vocabularyIdMax;
-        this.weightCountPerVocabularyTable_extracted = params.inferencedParams.weightCountPerVocabularyTable_extracted;
-        this.weightCountPerVocabularyTable = params.inferencedParams.weightCountPerVocabularyTable;
-        this.tensorWeightCountExtracted = params.inferencedParams.tensorWeightCountExtracted;
-        this.tensorWeightCountTotal = params.inferencedParams.tensorWeightCountTotal;
+        this.weightCountPerVocabularyTable_extracted
+          = params.inferencedParams.weightCountPerVocabularyTable_extracted;
+        this.weightCountPerVocabularyTable
+          = params.inferencedParams.weightCountPerVocabularyTable;
+        this.tensorWeightCountExtracted
+          = params.inferencedParams.tensorWeightCountExtracted;
+        this.tensorWeightCountTotal
+          = params.inferencedParams.tensorWeightCountTotal;
       }
 
     } finally {
@@ -238,8 +247,8 @@ class Embedding_Base extends Recyclable.Base( ReturnOrClone.Root ) {
   }
 
   /**
-   * @return {string} The description string of all (adjusted) parameters of
-   * initer().
+   * @return {string}
+   *   The description string of all (adjusted) parameters of initer().
    *
    * @override
    */
@@ -266,4 +275,3 @@ class Embedding_Base extends Recyclable.Base( ReturnOrClone.Root ) {
   }
 
 }
-
