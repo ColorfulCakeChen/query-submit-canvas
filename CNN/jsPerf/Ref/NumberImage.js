@@ -1150,61 +1150,91 @@ class NumberImage_Base extends Recyclable.Root {
   }
 
   /**
-   * Two input dimensions ( height, width, depth ) should be the same, or one should be a scalar ( 1, 1, depth ) value
-   * (i.e. boradcast in the same channel (i.e. not across channels) is supported).
+   * Two input dimensions ( height, width, depth ) should be the same, or one
+   * should be a scalar ( 1, 1, depth ) value (i.e. boradcast in the same
+   * channel (i.e. not across channels) is supported).
    *
-   * @param {NumberImage.Base} this     The first image to be used for adding.
-   * @param {NumberImage.Base} another  The second image to be used for adding.
+   * @param {NumberImage.Base} this
+   *   The first image to be used for adding.
    *
-   * @param {Object}   parametersDesc   Its .toString() for debug message of this block.
-   * @param {string[]} addNames         The strings for debug message of this adding operation.
+   * @param {NumberImage.Base} another
+   *   The second image to be used for adding.
+   *
+   * @param {Object} parametersDesc
+   *   Its .toString() for debug message of this block.
+   *
+   * @param {string[]} addNames
+   *   The strings for debug message of this adding operation.
    *
    * @return {NumberImage.Base}
-   *   Return a newly created object which is the result of adding this and another.
+   *   Return a newly created object which is the result of adding this and
+   * another.
    */
   clone_byAdd( another, parametersDesc, ...addNames ) {
     let rHeight, rWidth, rDepth;
     let imageOutNew;
 
     // Q: Why not just modify this directly?
-    // A: The this might be the original input array which should not be modified at all. (because they might be used in another test.)
+    // A: The this might be the original input array which should not be
+    //    modified at all. (because they might be used in another test.)
 
-    if ( ( another.height == this.height ) && ( another.width == this.width ) && ( another.depth == this.depth ) ) { // Same size.
+    // Same size.
+    if (   ( another.height == this.height )
+        && ( another.width == this.width )
+        && ( another.depth == this.depth ) ) {
 
       rHeight = this.height; rWidth = this.width; rDepth = this.depth;
-      imageOutNew = NumberImage_Base.Pool.get_or_create_by( rHeight, rWidth, rDepth, undefined,
-        this.boundsArraySet.output0, another.boundsArraySet.output0, BoundsArraySet.InputsOutputs, undefined );
+      imageOutNew = NumberImage_Base.Pool.get_or_create_by(
+        rHeight, rWidth, rDepth, undefined,
+        this.boundsArraySet.output0, another.boundsArraySet.output0,
+        BoundsArraySet.InputsOutputs, undefined );
 
       for ( let i = 0; i < this.dataArray.length; ++i ) {
-        imageOutNew.dataArray[ i ] = Math.fround( Math.fround( this.dataArray[ i ] ) + Math.fround( another.dataArray[ i ] ) );
+        imageOutNew.dataArray[ i ] = Math.fround(
+          Math.fround( this.dataArray[ i ] )
+            + Math.fround( another.dataArray[ i ] ) );
       }
 
-    } else if ( ( another.height == 1 ) && ( another.width == 1 ) && ( another.depth == this.depth ) ) { // Broadcast another to this.
+    // Broadcast another to this.
+    } else if (   ( another.height == 1 )
+               && ( another.width == 1 )
+               && ( another.depth == this.depth ) ) {
 
       rHeight = this.height; rWidth = this.width; rDepth = this.depth;
-      imageOutNew = NumberImage_Base.Pool.get_or_create_by( rHeight, rWidth, rDepth, undefined,
-        this.boundsArraySet.output0, another.boundsArraySet.output0, BoundsArraySet.InputsOutputs, undefined );
+      imageOutNew = NumberImage_Base.Pool.get_or_create_by(
+        rHeight, rWidth, rDepth, undefined,
+        this.boundsArraySet.output0, another.boundsArraySet.output0,
+        BoundsArraySet.InputsOutputs, undefined );
 
       let i = 0;
       for ( let y = 0; y < rHeight; ++y ) {
         for ( let x = 0; x < rWidth; ++x ) {
           for ( let c = 0; c < rDepth; ++c, ++i ) {
-            imageOutNew.dataArray[ i ] = Math.fround( Math.fround( this.dataArray[ i ] ) + Math.fround( another.dataArray[ c ] ) );
+            imageOutNew.dataArray[ i ] = Math.fround(
+              Math.fround( this.dataArray[ i ] )
+                + Math.fround( another.dataArray[ c ] ) );
           }
         }
       }
 
-    } else if ( ( this.height == 1 ) && ( this.width == 1 ) && ( this.depth == another.depth ) ) { // Broadcast this to another.
+    // Broadcast this to another.
+    } else if (   ( this.height == 1 )
+               && ( this.width == 1 )
+               && ( this.depth == another.depth ) ) {
 
       rHeight = another.height; rWidth = another.width; rDepth = another.depth;
-      imageOutNew = NumberImage_Base.Pool.get_or_create_by( rHeight, rWidth, rDepth, undefined,
-        this.boundsArraySet.output0, another.boundsArraySet.output0, BoundsArraySet.InputsOutputs, undefined );
+      imageOutNew = NumberImage_Base.Pool.get_or_create_by(
+        rHeight, rWidth, rDepth, undefined,
+        this.boundsArraySet.output0, another.boundsArraySet.output0,
+        BoundsArraySet.InputsOutputs, undefined );
 
       let i = 0;
       for ( let y = 0; y < rHeight; ++y ) {
         for ( let x = 0; x < rWidth; ++x ) {
           for ( let c = 0; c < rDepth; ++c, ++i ) {
-            imageOutNew.dataArray[ i ] = Math.fround( Math.fround( this.dataArray[ c ] ) + Math.fround( another.dataArray[ i ] ) );
+            imageOutNew.dataArray[ i ] = Math.fround(
+              Math.fround( this.dataArray[ c ] )
+                + Math.fround( another.dataArray[ i ] ) );
           }
         }
       }
@@ -1212,10 +1242,13 @@ class NumberImage_Base extends Recyclable.Root {
     } else {
       throw Error(
         `${addNames.join( "_" )}: `
-          + `another ( height, width, depth ) = ( ${another.height}, ${another.width}, ${another.depth} ) `
-          + `this ( height, width, depth ) = ( ${this.height}, ${this.width}, ${this.depth} ) `
+          + `another ( height, width, depth ) = `
+          + `( ${another.height}, ${another.width}, ${another.depth} ) `
+          + `this ( height, width, depth ) = `
+          + `( ${this.height}, ${this.width}, ${this.depth} ) `
           + `and `
-          + `another ( height, width, depth ) = ( ${another.height}, ${another.width}, ${another.depth} ) `
+          + `another ( height, width, depth ) = `
+          + `( ${another.height}, ${another.width}, ${another.depth} ) `
           + `should be either totally the same or one is ( 1, 1, N ). `
           + `(${parametersDesc})` );
     }
@@ -1224,8 +1257,9 @@ class NumberImage_Base extends Recyclable.Root {
       imageOutNew.boundsArraySet.output0
         .set_all_byScaleBoundsArray( this.boundsArraySet.output0 )
 
-         // Note: Not add_all_byScaleBoundsArray_one(). The reason is that it is supported to broadcast in the same channel
-         // (i.e. not across channels).
+         // Note: Not add_all_byScaleBoundsArray_one(). The reason is that it
+         //       is supported to broadcast in the same channel (i.e. not
+         //       across channels).
          //
         .add_all_byScaleBoundsArray_all( another.boundsArraySet.output0 );
 
