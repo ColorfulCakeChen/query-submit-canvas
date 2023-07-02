@@ -439,60 +439,94 @@ class NumberImage_Base extends Recyclable.Root {
 
   /** Call this.clone_byDepthwise() with ( bPassThrough == true ). */
   clone_byDepthwise_PassThrough(
-    depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad,
+    depthwise_AvgMax_Or_ChannelMultiplier,
+    depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad,
     bDepthwiseBias, depthwiseActivationId,
-    aDepthwise_PassThrough_FiltersArray_BiasesArray_Bag, nPassThroughStyleId,
+    aDepthwise_PassThrough_FiltersArray_BiasesArray_Bag,
+    nPassThroughStyleId,
     parametersDesc, ...depthwiseNames ) {
 
     return this.clone_byDepthwise(
-      depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad,
+      depthwise_AvgMax_Or_ChannelMultiplier,
+      depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad,
       null, bDepthwiseBias, null, depthwiseActivationId,
-      true, aDepthwise_PassThrough_FiltersArray_BiasesArray_Bag, nPassThroughStyleId, // (bPassThrough)
+      true, aDepthwise_PassThrough_FiltersArray_BiasesArray_Bag,
+      nPassThroughStyleId, // (bPassThrough)
       parametersDesc, ...depthwiseNames );
   }
 
   /** Call this.clone_byPointwise() with ( bPassThrough == false ). */
   clone_byDepthwise_NonPassThrough(
-    depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad,
-    depthwiseFiltersArray, bDepthwiseBias, depthwiseBiasesArray, depthwiseActivationId,
+    depthwise_AvgMax_Or_ChannelMultiplier,
+    depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad,
+    depthwiseFiltersArray,
+    bDepthwiseBias, depthwiseBiasesArray,
+    depthwiseActivationId,
     parametersDesc, ...depthwiseNames ) {
 
     return this.clone_byDepthwise(
-      depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad,
-      depthwiseFiltersArray, bDepthwiseBias, depthwiseBiasesArray, depthwiseActivationId,
+      depthwise_AvgMax_Or_ChannelMultiplier,
+      depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad,
+      depthwiseFiltersArray,
+      bDepthwiseBias, depthwiseBiasesArray,
+      depthwiseActivationId,
       false, null, null, // (bPassThrough)
       parametersDesc, ...depthwiseNames );
   }
 
   /**
-   * @param {NumberImage.Base} this      The source image to be processed.
+   * @param {NumberImage.Base} this
+   *   The source image to be processed.
    *
-   * @param {number[]} pointwiseFiltersArray  The depthwise convolution filter weights. Only used when ( bPassThrough == false ).
-   * @param {boolean}  bDepthwiseBias         Whether add bias.
-   * @param {number[]} depthwiseBiasesArray   The bias weights. Only used when ( bPassThrough == false ) and ( bDepthwiseBias == true ).
-   * @param {number}   depthwiseActivationId  The activation function id (i.e. ValueDesc.ActivationFunction.Singleton.Ids.Xxx).
+   * @param {number[]} pointwiseFiltersArray
+   *   The depthwise convolution filter weights. Only used when
+   * ( bPassThrough == false ).
+   *
+   * @param {boolean} bDepthwiseBias
+   *   Whether add bias.
+   *
+   * @param {number[]} depthwiseBiasesArray
+   *   The bias weights. Only used when ( bPassThrough == false ) and
+   * ( bDepthwiseBias == true ).
+   *
+   * @param {number} depthwiseActivationId
+   *   The activation function id (i.e.
+   * ValueDesc.ActivationFunction.Singleton.Ids.Xxx).
    *
    * @param {boolean}  bPassThrough
-   *   If true, pass-through filters and biases will be used (i.e. pointwiseFiltersArray and pointwiseBiasesArray will be ignored).
-   * And the output image will be scaled for pass-through activation function (i.e. scale to the linear part).
+   *   If true, pass-through filters and biases will be used (i.e.
+   * pointwiseFiltersArray and pointwiseBiasesArray will be ignored). And the
+   * output image will be scaled for pass-through activation function (i.e.
+   * scale to the linear part).
    *
    * @param {Depthwise.PassThrough_FiltersArray_BiasesArray_Bag} aDepthwise_PassThrough_FiltersArray_BiasesArray_Bag
-   *   A bag for generating pass-through depthwise convolution filters and biases. Only used when ( bPassThrough == true ).
+   *   A bag for generating pass-through depthwise convolution filters and
+   * biases. Only used when ( bPassThrough == true ).
    *
    * @param {number} nPassThroughStyleId
-   *   The pass-through style to be used (i.e. ValueDesc.PassThroughStyle.Singleton.Ids.Xxx) when ( bPassThrough == true ).
+   *   The pass-through style to be used (i.e.
+   * ValueDesc.PassThroughStyle.Singleton.Ids.Xxx) when
+   * ( bPassThrough == true ).
    *
-   * @param {Object} parametersDesc    Its .toString() for debug message of this block.
-   * @param {string[]} depthwiseNames  The strings for debug message of this convolution.
+   * @param {Object} parametersDesc
+   *   Its .toString() for debug message of this block.
+   *
+   * @param {string[]} depthwiseNames
+   *   The strings for debug message of this convolution.
    *
    * @return {NumberImage.Base}
-   *   Return a newly created object which is the result of the depthwise convolution, bias and activation.
+   *   Return a newly created object which is the result of the depthwise
+   * convolution, bias and activation.
    */
   clone_byDepthwise(
-    depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad,
-    depthwiseFiltersArray, bDepthwiseBias, depthwiseBiasesArray, depthwiseActivationId,
+    depthwise_AvgMax_Or_ChannelMultiplier,
+    depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad,
+    depthwiseFiltersArray,
+    bDepthwiseBias, depthwiseBiasesArray,
+    depthwiseActivationId,
     bPassThrough,
-    aDepthwise_PassThrough_FiltersArray_BiasesArray_Bag, nPassThroughStyleId,
+    aDepthwise_PassThrough_FiltersArray_BiasesArray_Bag,
+    nPassThroughStyleId,
     parametersDesc, ...depthwiseNames ) {
 
     let imageIn = this;
