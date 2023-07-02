@@ -997,17 +997,28 @@ class NumberImage_Base extends Recyclable.Root {
   /**
    * Note: This method will also set .boundsArraySet.output0.boundsArray.
    *
-   * @param {NumberImage.Base} this    The source image to be processed.
-   * @param {number}   lowerBound      The lower bound of clamp.
-   * @param {number}   upperBound      The upper bound of clamp.
-   * @param {Object}   parametersDesc  Its .toString() for debug message of this block.
-   * @param {string[]} clampNames      The strings for debug message of this clamp.
+   * @param {NumberImage.Base} this
+   *   The source image to be processed.
+   *
+   * @param {number} lowerBound
+   *   The lower bound of clamp.
+   *
+   * @param {number} upperBound
+   *   The upper bound of clamp.
+   *
+   * @param {Object} parametersDesc
+   *   Its .toString() for debug message of this block.
+   *
+   * @param {string[]} clampNames
+   *   The strings for debug message of this clamp.
    *
    * @return {NumberImage.Base}
    *   Return this which all values are restricted between [ lowerBound,
    * upperBound ] and converted to integers.
    */
-  modify_byClamp_toInt( lowerBound, upperBound, parametersDesc, ...clampNames ) {
+  modify_byClamp_toInt(
+    lowerBound, upperBound, parametersDesc, ...clampNames ) {
+
     let imageIn = this;
 
     imageIn.boundsArraySet.output0.boundsArray.set_all_byLowerUpper(
@@ -1053,15 +1064,24 @@ class NumberImage_Base extends Recyclable.Root {
   /**
    * Note: This method does not adjust any BoundsArraySet.
    *
-   * @param {NumberImage.Base} imageIn          The imageIn.dataArray[] will be multiplied by scaleArray in place.
-   * @param {FloatValue.ScaleArray} scaleArray  The scales for every channel.
-   * @param {Object} parametersDesc             Its .toString() for debug message of this block.
-   * @param {string[]} scaleNames               The strings for debug message of this scaling.
+   * @param {NumberImage.Base} imageIn
+   *   The imageIn.dataArray[] will be multiplied by scaleArray in place.
+   *
+   * @param {FloatValue.ScaleArray} scaleArray
+   *   The scales for every channel.
+   *
+   * @param {Object} parametersDesc
+   *   Its .toString() for debug message of this block.
+   *
+   * @param {string[]} scaleNames
+   *   The strings for debug message of this scaling.
    *
    * @return {NumberImage.Base}
-   *   Return the (modified) image whose every element is scaled according to its channel.
+   *   Return the (modified) image whose every element is scaled according to
+   * its channel.
    */
-  static scale_byChannel_withoutAffect_BoundsArraySet( imageIn, scaleArray, parametersDesc, ...scaleNames ) {
+  static scale_byChannel_withoutAffect_BoundsArraySet(
+    imageIn, scaleArray, parametersDesc, ...scaleNames ) {
 
     if ( scaleArray == null )
       throw Error( `${scaleNames.join( "_" )}: `
@@ -1071,13 +1091,16 @@ class NumberImage_Base extends Recyclable.Root {
     if ( scaleArray.length != imageIn.depth )
       throw Error( `${scaleNames.join( "_" )}: `
         + `shape (${scaleArray.length}) `
-        + `should match input image channel count (${imageIn.depth}). (${parametersDesc})` );
+        + `should match input image channel count (${imageIn.depth}). `
+        + `(${parametersDesc})` );
 
     let index = 0;
     for ( let y = 0; y < imageIn.height; ++y ) {
       for ( let x = 0; x < imageIn.width; ++x ) {
         for ( let channel = 0; channel < imageIn.depth; ++channel ) {
-          imageIn.dataArray[ index ] = Math.fround( Math.fround( imageIn.dataArray[ index ] ) * Math.fround( scaleArray.scales[ channel ] ) );
+          imageIn.dataArray[ index ] = Math.fround(
+            Math.fround( imageIn.dataArray[ index ] )
+              * Math.fround( scaleArray.scales[ channel ] ) );
           ++index;
         }
       }
