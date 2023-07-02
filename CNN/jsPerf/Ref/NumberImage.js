@@ -934,11 +934,20 @@ class NumberImage_Base extends Recyclable.Root {
   /**
    * Note: This method will also set .boundsArraySet.afterBias.
    *
-   * @param {NumberImage.Base} this    The source image to be processed.
-   * @param {boolean}  bBias           Whether add bias.
-   * @param {number[]} biasesArray     The bias values.
-   * @param {Object}   parametersDesc  Its .toString() for debug message of this block.
-   * @param {string[]} biasNames       The strings for debug message of this bias.
+   * @param {NumberImage.Base} this
+   *   The source image to be processed.
+   *
+   * @param {boolean} bBias
+   *   Whether add bias.
+   *
+   * @param {number[]} biasesArray
+   *   The bias values.
+   *
+   * @param {Object} parametersDesc
+   *   Its .toString() for debug message of this block.
+   *
+   * @param {string[]} biasNames
+   *   The strings for debug message of this bias.
    *
    * @return {NumberImage.Base}
    *   Return this which may or may not be added bias (according to bBias).
@@ -946,7 +955,9 @@ class NumberImage_Base extends Recyclable.Root {
   modify_byBias( bBias, biasesArray, parametersDesc, ...biasNames ) {
     let imageIn = this;
 
-    imageIn.boundsArraySet.afterBias.set_all_byBoundsArray( imageIn.boundsArraySet.afterFilter );
+    imageIn.boundsArraySet.afterBias.set_all_byBoundsArray(
+      imageIn.boundsArraySet.afterFilter );
+
     if ( !bBias )
       return imageIn;
 
@@ -958,21 +969,26 @@ class NumberImage_Base extends Recyclable.Root {
     if ( biasesArray.length != imageIn.depth )
       throw Error( `${biasNames.join( "_") }: `
         + `shape (${biasesArray.length}) `
-        + `should match input image channel count (${imageIn.depth}). (${parametersDesc})` );
+        + `should match input image channel count (${imageIn.depth}). `
+        + `(${parametersDesc})` );
 
     let index = 0;
     for ( let y = 0; y < imageIn.height; ++y ) {
       for ( let x = 0; x < imageIn.width; ++x ) {
         for ( let channel = 0; channel < imageIn.depth; ++channel ) {
-          imageIn.dataArray[ index ] = Math.fround( Math.fround( imageIn.dataArray[ index ] ) + Math.fround( biasesArray[ channel ] ) );
+          imageIn.dataArray[ index ] = Math.fround(
+            Math.fround( imageIn.dataArray[ index ] )
+              + Math.fround( biasesArray[ channel ] ) );
           ++index;
         }
       }
     }
 
-    // Calculate value bounds of every output channels (i.e. .afterBias) by shifting as the bias.
+    // Calculate value bounds of every output channels (i.e. .afterBias) by
+    // shifting as the bias.
     for ( let inChannel = 0; inChannel < imageIn.depth; ++inChannel ) {
-      imageIn.boundsArraySet.afterBias.add_one_byN( inChannel, biasesArray[ inChannel ] );
+      imageIn.boundsArraySet.afterBias.add_one_byN(
+        inChannel, biasesArray[ inChannel ] );
     }
 
     return imageIn;
