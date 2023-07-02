@@ -557,8 +557,10 @@ class NumberImage_Base extends Recyclable.Root {
 
 //!!! ...unfinished... (2021/03/17) What about ( depthwiseFilterHeight <= 0 ) or ( depthwiseFilterWidth <= 0 )?
 
-    let padInfo = Depthwise.PadInfoCalculatorRoot.Pool.get_or_create_by( imageIn.height, imageIn.width, imageIn.depth, 
-      depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad );
+    let padInfo = Depthwise.PadInfoCalculatorRoot.Pool.get_or_create_by(
+      imageIn.height, imageIn.width, imageIn.depth, 
+      depthwise_AvgMax_Or_ChannelMultiplier,
+      depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad );
 
     let { channelMultiplier, dilationHeight, dilationWidth,
           stridesHeight, stridesWidth, padHeightTop, padWidthLeft, 
@@ -570,13 +572,17 @@ class NumberImage_Base extends Recyclable.Root {
     padInfo = null;
 
     // For ( pad == "valid" ), negative ( inX, inY ) will never happen.
-    // For ( pad == "same"  ), negative ( inX, inY ) may happen, but those pixels will be viewed as zero value.
+    // For ( pad == "same"  ), negative ( inX, inY ) may happen, but those
+    //   pixels will be viewed as zero value.
     let imageInBeginY = - padHeightTop;
     let imageInBeginX = - padWidthLeft;
 
-    // If not AVG, MAX, NONE, the filters shape should match input image channel count.
+    // If not AVG, MAX, NONE, the filters shape should match input image
+    // channel count.
     if ( depthwise_AvgMax_Or_ChannelMultiplier > 0 ) {
-      let filtersWeightCount = depthwiseFilterHeight * depthwiseFilterWidth * imageIn.depth * channelMultiplier ;
+      const filtersWeightCount
+        = depthwiseFilterHeight * depthwiseFilterWidth
+            * imageIn.depth * channelMultiplier ;
 
       if ( depthwiseFiltersArray.length != filtersWeightCount )
         throw Error( `${depthwiseNames.join( "_" )}: `
@@ -584,16 +590,17 @@ class NumberImage_Base extends Recyclable.Root {
           + `should be ( ${filtersWeightCount} ). (${parametersDesc})` );
     }
 
-    // For normal depthwise convolution and average pooling, value bounds should be
-    // calculated pixel by pixel.
+    // For normal depthwise convolution and average pooling, value bounds
+    // should be calculated pixel by pixel.
     //
-    // Note: In theroy, for average pooling, value bounds should be the same as input.
-    //       In reality, however, it should also be calculated one by one because of
-    //       floating-point accumulate error.
+    // Note: In theroy, for average pooling, value bounds should be the same as
+    //       input. In reality, however, it should also be calculated one by
+    //       one because of floating-point accumulate error.
     //
     let tBounds;
     let afterFilter_BoundsArray_perPixel; // Every output pixels' value bounds.
-    if (   ( depthwise_AvgMax_Or_ChannelMultiplier == ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.AVG )
+    if (   ( depthwise_AvgMax_Or_ChannelMultiplier
+               == ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.AVG )
         || ( depthwise_AvgMax_Or_ChannelMultiplier > 0 )
        ) {
       tBounds = FloatValue.Bounds.Pool.get_or_create_by( 0, 0 );
@@ -609,20 +616,24 @@ class NumberImage_Base extends Recyclable.Root {
         biasesWeightCountInFact = depthwiseBiasesArray.length;
       } else {
         biasesWeightCountShouldBe = 0;
-        biasesWeightCountInFact = ( depthwiseBiasesArray ) ? depthwiseBiasesArray.length : 0;
+        biasesWeightCountInFact
+          = ( depthwiseBiasesArray ) ? depthwiseBiasesArray.length : 0;
       }
 
       if ( biasesWeightCountInFact != biasesWeightCountShouldBe )
         throw Error( `${depthwiseNames.join( "_" )}: `
           + `biases weight count ( ${biasesWeightCountInFact} ) `
-          + `should be ( ${biasesWeightCountShouldBe} ). (${parametersDesc})` );
+          + `should be ( ${biasesWeightCountShouldBe} ). `
+          + `(${parametersDesc})` );
     }
 
     let preFilledValue;
     {
       // Max pooling
-      if ( ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.MAX === depthwise_AvgMax_Or_ChannelMultiplier ) {
-        preFilledValue = Number.NEGATIVE_INFINITY; // So that any value is greater than initialized value.
+      if ( ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.MAX
+             === depthwise_AvgMax_Or_ChannelMultiplier ) {
+        // So that any value is greater than initialized value.
+        preFilledValue = Number.NEGATIVE_INFINITY;
       } else {
         preFilledValue = 0;
       }
