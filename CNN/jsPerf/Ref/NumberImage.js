@@ -796,11 +796,16 @@ class NumberImage_Base extends Recyclable.Root {
             }
 
             // Avg pooling
-            if ( ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.AVG === depthwise_AvgMax_Or_ChannelMultiplier ) {
-              imageOut.dataArray[ outIndex ] = Math.fround(
-                Math.fround( imageOut.dataArray[ outIndex ] ) / Math.fround( avgDivisor ) ); // So that every sum is averaged.
+            if ( ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.AVG
+                   === depthwise_AvgMax_Or_ChannelMultiplier ) {
 
-              afterFilter_BoundsArray_perPixel.divide_one_byN( outIndex, avgDivisor ); // value bounds is also averaged.
+              // So that every sum is averaged.
+              imageOut.dataArray[ outIndex ] = Math.fround(
+                Math.fround( imageOut.dataArray[ outIndex ] )
+                  / Math.fround( avgDivisor ) );
+
+              afterFilter_BoundsArray_perPixel.divide_one_byN(
+                outIndex, avgDivisor ); // value bounds is also averaged.
             }
           }
         }
@@ -813,23 +818,28 @@ class NumberImage_Base extends Recyclable.Root {
     //       already been setup by BoundsArraySet.Depthwise() constructor.
     //
 
-    // For normal depthwise convolution and average pooling, value bounds should
-    // be calculated by accumulation.
+    // For normal depthwise convolution and average pooling, value bounds
+    // should be calculated by accumulation.
     if ( afterFilter_BoundsArray_perPixel ) {
 
       // Q: Why not claculated in the above depthwise convolution for-loop?
-      // A: When pad=same, the calculation may be wrong because the padded pixels
-      //    (especially the right-bottom padded pixles) are not calculated (so the
-      //    value bounds are not calculated).
+      // A: When pad=same, the calculation may be wrong because the padded
+      //    pixels (especially the right-bottom padded pixles) are not
+      //    calculated (so the value bounds are not calculated).
 
-      imageOut.boundsArraySet.afterFilter.set_all_by_PositiveInfinity_NegativeInfinity(); // Init .afterFilter (so that could be enlarged.)
+      // Init .afterFilter (so that could be enlarged.)
+      imageOut.boundsArraySet.afterFilter
+        .set_all_by_PositiveInfinity_NegativeInfinity();
 
       let elementIndex = 0;
       for ( let outY = 0; outY < outputHeight; ++outY ) {
         for ( let outX = 0; outX < outputWidth; ++outX ) {
-          for ( let outC = 0; outC < outputChannelCount; ++outC, ++elementIndex ) {
-            imageOut.boundsArraySet.afterFilter.enlarge_one_byBoundsArray_one( outC,
-              afterFilter_BoundsArray_perPixel, elementIndex );
+          for ( let outC = 0;
+            outC < outputChannelCount; ++outC, ++elementIndex ) {
+
+            imageOut.boundsArraySet.afterFilter
+              .enlarge_one_byBoundsArray_one( outC,
+                afterFilter_BoundsArray_perPixel, elementIndex );
           }
         }
       }
@@ -846,22 +856,28 @@ class NumberImage_Base extends Recyclable.Root {
     }
 
     //!!! (2022/08/06) For debug pixel value bounds.
-    imageOut.assert_pixels_byBoundsArray( imageOut.boundsArraySet.afterFilter );
+    imageOut.assert_pixels_byBoundsArray(
+      imageOut.boundsArraySet.afterFilter );
 
     // Bias
-    imageOut.modify_byBias( bDepthwiseBias, depthwiseBiasesArray, parametersDesc, ...depthwiseNames, "bias" );
+    imageOut.modify_byBias(
+      bDepthwiseBias, depthwiseBiasesArray,
+      parametersDesc, ...depthwiseNames, "bias" );
 
     //!!! (2022/08/06) For debug pixel value bounds.
-    imageOut.assert_pixels_byBoundsArray( imageOut.boundsArraySet.afterBias );
+    imageOut.assert_pixels_byBoundsArray(
+      imageOut.boundsArraySet.afterBias );
 
     // Activation Escaping.
     {
-      // Calculate value bounds of every output channels (i.e. .output0 (.boundsArray, .scaleArraySet.do, .scaleArraySet.undo))
-      // by .afterBias, bPassThrough and activation function's output range.
+      // Calculate value bounds of every output channels (i.e. .output0
+      // (.boundsArray, .scaleArraySet.do, .scaleArraySet.undo)) by .afterBias,
+      // bPassThrough and activation function's output range.
 
       if (   ( depthwise_AvgMax_Or_ChannelMultiplier < 0 )
           && (   ( bDepthwiseBias == false )
-              && ( depthwiseActivationId == ValueDesc.ActivationFunction.Singleton.Ids.NONE )
+              && ( depthwiseActivationId
+                     == ValueDesc.ActivationFunction.Singleton.Ids.NONE )
              )
          ) {
 
@@ -876,9 +892,12 @@ class NumberImage_Base extends Recyclable.Root {
 
         // For average pooling, value bounds are re-calculated (but activation
         // esaping scale is not and still the same as input).
-        if ( depthwise_AvgMax_Or_ChannelMultiplier == ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.AVG ) {
-          imageOut.boundsArraySet.set_outputs_all_byBoundsArray_ScaleArraySet(
-            imageOut.boundsArraySet.afterBias, imageOut.boundsArraySet.input0.scaleArraySet );
+        if ( depthwise_AvgMax_Or_ChannelMultiplier
+               == ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.AVG ) {
+          imageOut.boundsArraySet
+            .set_outputs_all_byBoundsArray_ScaleArraySet(
+              imageOut.boundsArraySet.afterBias,
+              imageOut.boundsArraySet.input0.scaleArraySet );
 
         // For maximum pooling, value bounds is exactly the same as input.
         } else {
@@ -891,14 +910,19 @@ class NumberImage_Base extends Recyclable.Root {
         //          .modify_byActivation_withoutAffect_BoundsArraySet().
 
       } else {
-        imageOut.boundsArraySet.adjust_afterFilter_afterBias_set_output0_by_afterBias_bPassThrough_nActivationId( depthwiseActivationId );
+        imageOut.boundsArraySet
+          .adjust_afterFilter_afterBias_set_output0_by_afterBias_bPassThrough_nActivationId(
+            depthwiseActivationId );
 
-        // Before activation function, scale every element according to its channel.
-        NumberImage_Base.scale_byChannel_withoutAffect_BoundsArraySet( imageOut, imageOut.boundsArraySet.output0.scaleArraySet.do,
+        // Before activation function, scale every element according to its
+        // channel.
+        NumberImage_Base.scale_byChannel_withoutAffect_BoundsArraySet(
+          imageOut, imageOut.boundsArraySet.output0.scaleArraySet.do,
           parametersDesc, ...depthwiseNames, "ActivationEscapingScale" );
 
         // Activation
-        NumberImage_Base.modify_byActivation_withoutAffect_BoundsArraySet( imageOut, depthwiseActivationId, parametersDesc );
+        NumberImage_Base.modify_byActivation_withoutAffect_BoundsArraySet(
+          imageOut, depthwiseActivationId, parametersDesc );
       }
     }
 
