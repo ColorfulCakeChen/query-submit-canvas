@@ -285,9 +285,15 @@ class NumberImage_Base extends Recyclable.Root {
     let pointwisePassThrough;
     if ( bPassThrough ) { // Generate pass-through filters and biases.
 
-      let inputChannelIndexStart = 0; // Pass-through all channels (beginning from channel index 0).
-      pointwisePassThrough = aPointwise_PassThrough_FiltersArray_BiasesArray_Bag.get_by_PassThroughStyleId(
-        imageIn.depth, pointwiseChannelCount, inputChannelIndexStart, bPointwiseBias, nPassThroughStyleId );
+      // Pass-through all channels (beginning from channel index 0).
+      let inputChannelIndexStart = 0;
+
+      pointwisePassThrough
+        = aPointwise_PassThrough_FiltersArray_BiasesArray_Bag
+            .get_by_PassThroughStyleId(
+              imageIn.depth, pointwiseChannelCount,
+              inputChannelIndexStart, bPointwiseBias,
+              nPassThroughStyleId );
 
       pointwiseFiltersArray = pointwisePassThrough.filtersArray;
       pointwiseBiasesArray = pointwisePassThrough.biasesArray;
@@ -307,7 +313,8 @@ class NumberImage_Base extends Recyclable.Root {
         biasesWeightCountInFact = pointwiseBiasesArray.length;
       } else {
         biasesWeightCountShouldBe = 0;
-        biasesWeightCountInFact = ( pointwiseBiasesArray ) ? pointwiseBiasesArray.length : 0;
+        biasesWeightCountInFact
+          = ( pointwiseBiasesArray ) ? pointwiseBiasesArray.length : 0;
       }
 
       if ( biasesWeightCountInFact != biasesWeightCountShouldBe )
