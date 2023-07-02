@@ -531,17 +531,22 @@ class NumberImage_Base extends Recyclable.Root {
 
     let imageIn = this;
 
-    if ( ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.NONE === depthwise_AvgMax_Or_ChannelMultiplier )
+    if ( ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.NONE
+           === depthwise_AvgMax_Or_ChannelMultiplier )
       return imageIn.clone(); // No depthwise operation.
 
     let depthwisePassThrough;
     if ( bPassThrough ) { // Generate pass-through filters and biases.
 
-      depthwisePassThrough = aDepthwise_PassThrough_FiltersArray_BiasesArray_Bag.get_by_PassThroughStyleId(
-        this.height, this.width, this.depth,
-        depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad, bDepthwiseBias,
-        nPassThroughStyleId
-      );
+      depthwisePassThrough
+        = aDepthwise_PassThrough_FiltersArray_BiasesArray_Bag
+           .get_by_PassThroughStyleId(
+              this.height, this.width, this.depth,
+              depthwise_AvgMax_Or_ChannelMultiplier,
+              depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad,
+              bDepthwiseBias,
+              nPassThroughStyleId
+            );
 
       depthwiseFiltersArray = depthwisePassThrough.filtersArray;
       depthwiseBiasesArray = depthwisePassThrough.biasesArray;
