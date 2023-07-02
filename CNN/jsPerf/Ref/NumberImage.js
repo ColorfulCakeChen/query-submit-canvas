@@ -414,17 +414,23 @@ class NumberImage_Base extends Recyclable.Root {
 
     // Activation Escaping.
     {
-      // Calculate value bounds of every output channels (i.e. .output0 (.boundsArray, .scaleArraySet.do, .scaleArraySet.undo))
+      // Calculate value bounds of every output channels (i.e. .output0
+      // (.boundsArray, .scaleArraySet.do, .scaleArraySet.undo))
       // by .afterBias, bPassThrough and activation function's output range.
-      imageOut.boundsArraySet.adjust_afterFilter_afterBias_set_output0_by_afterBias_bPassThrough_nActivationId( pointwiseActivationId );
+      imageOut.boundsArraySet
+        .adjust_afterFilter_afterBias_set_output0_by_afterBias_bPassThrough_nActivationId(
+          pointwiseActivationId );
 
-      // Before activation function, scale every element according to its channel.
-      NumberImage_Base.scale_byChannel_withoutAffect_BoundsArraySet( imageOut, imageOut.boundsArraySet.output0.scaleArraySet.do,
+      // Before activation function, scale every element according to its
+      // channel.
+      NumberImage_Base.scale_byChannel_withoutAffect_BoundsArraySet(
+        imageOut, imageOut.boundsArraySet.output0.scaleArraySet.do,
         parametersDesc, ...pointwiseNames, "ActivationEscapingScale" );
     }
 
     // Activation
-    NumberImage_Base.modify_byActivation_withoutAffect_BoundsArraySet( imageOut, pointwiseActivationId, parametersDesc );
+    NumberImage_Base.modify_byActivation_withoutAffect_BoundsArraySet(
+      imageOut, pointwiseActivationId, parametersDesc );
 
     imageOut.assert_pixels_byBoundsArray_output(); // Verify pixels' bounds.
 
