@@ -728,44 +728,66 @@ class NumberImage_Base extends Recyclable.Root {
                     if ( ( 0 != dilationFilterY ) || ( 0 != dilationFilterX ) )
                       continue;
 
-                    let inIndexBaseC = ( ( inIndexBaseX + inX ) * imageIn.depth );
-                    let inIndex = inIndexBaseC + inChannel;
-                    let filterIndexBaseC = ( ( filterIndexBaseX + filterX ) * outputChannelCount );
-                    let filterIndex = filterIndexBaseC + outChannel;
+                    const inIndexBaseC
+                      = ( ( inIndexBaseX + inX ) * imageIn.depth );
+
+                    const inIndex = inIndexBaseC + inChannel;
+
+                    const filterIndexBaseC
+                       = ( ( filterIndexBaseX + filterX )
+                             * outputChannelCount );
+
+                       const filterIndex = filterIndexBaseC + outChannel;
 
                     switch ( depthwise_AvgMax_Or_ChannelMultiplier ) {
                       case ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.AVG: // Avg pooling
                         imageOut.dataArray[ outIndex ] = Math.fround(
-                          Math.fround( imageOut.dataArray[ outIndex ] ) + Math.fround( imageIn.dataArray[ inIndex ] ) );
+                          Math.fround( imageOut.dataArray[ outIndex ] )
+                            + Math.fround( imageIn.dataArray[ inIndex ] ) );
 
-                        // (Because avg pooling can not undo previous activation
-                        // escaping scale, use .input0 instead of
-                        // .afterUndoPreviousActivationEscaping to calculate value bounds.)
-                        tBounds.set_byBoundsArray( imageOut.boundsArraySet.input0.boundsArray, inChannel );
-                        afterFilter_BoundsArray_perPixel.add_one_byBounds( outIndex, tBounds );
+                        // (Because avg pooling can not undo previous
+                        // activation escaping scale, use .input0 instead of
+                        // .afterUndoPreviousActivationEscaping to calculate
+                        // value bounds.)
+                        tBounds.set_byBoundsArray(
+                          imageOut.boundsArraySet.input0.boundsArray,
+                          inChannel );
+                        afterFilter_BoundsArray_perPixel.add_one_byBounds(
+                          outIndex, tBounds );
                         break;
 
                       case ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.MAX: // Max pooling
-                        imageOut.dataArray[ outIndex ] = Math.max( imageOut.dataArray[ outIndex ], imageIn.dataArray[ inIndex ] );
+                        imageOut.dataArray[ outIndex ] = Math.max(
+                          imageOut.dataArray[ outIndex ],
+                          imageIn.dataArray[ inIndex ] );
                         break;
 
                       default: // Convolution
-                        filterValue = Math.fround( depthwiseFiltersArray[ filterIndex ] );
-                        imageOut.dataArray[ outIndex ] = Math.fround( imageOut.dataArray[ outIndex ]
-                          + Math.fround(
-                              Math.fround(
-                                Math.fround( imageIn.dataArray[ inIndex ] ) * undoPreviousEscapingScale
+                        filterValue = Math.fround(
+                          depthwiseFiltersArray[ filterIndex ] );
+
+                        imageOut.dataArray[ outIndex ] = Math.fround(
+                          imageOut.dataArray[ outIndex ]
+                            + Math.fround(
+                                Math.fround(
+                                  Math.fround( imageIn.dataArray[ inIndex ] )
+                                    * undoPreviousEscapingScale
+                                )
+                                * filterValue
                               )
-                              * filterValue
-                            )
                         );
 
-                        // Note: .afterUndoPreviousActivationEscaping has already been multiplied by undoPreviousEscapingScale.
+                        // Note: .afterUndoPreviousActivationEscaping has
+                        //        already been multiplied by
+                        //        undoPreviousEscapingScale.
                         tBounds
-                          .set_byBoundsArray( imageOut.boundsArraySet.afterUndoPreviousActivationEscaping, inChannel )
+                          .set_byBoundsArray(
+                            imageOut.boundsArraySet.afterUndoPreviousActivationEscaping,
+                            inChannel )
                           .multiply_byN( filterValue );
 
-                        afterFilter_BoundsArray_perPixel.add_one_byBounds( outIndex, tBounds );
+                        afterFilter_BoundsArray_perPixel.add_one_byBounds(
+                          outIndex, tBounds );
                         break;
                     }
                   }
