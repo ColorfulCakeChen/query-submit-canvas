@@ -1112,18 +1112,26 @@ class NumberImage_Base extends Recyclable.Root {
   /**
    * Note: This method does NOT adjust any BoundsArraySet.
    *
-   * @param {NumberImage.Base} imageIn  The source image to be processed.
-   * @param {string} nActivationId      The name string of this activation function.
+   * @param {NumberImage.Base} imageIn
+   *   The source image to be processed.
    *
-   * @param {Object} parametersDesc     Its .toString() for debug message of this block.
+   * @param {string} nActivationId
+   *   The name string of this activation function.
+   *
+   * @param {Object} parametersDesc
+   *   Its .toString() for debug message of this block.
    *
    * @return {NumberImage.Base}
-   *   Return this which may or may not be modified by activation function (according to nActivationId). The this.dataArray will be
-   * just the original this.dataArray directly.
+   *   Return this which may or may not be modified by activation function
+   * (according to nActivationId). The this.dataArray will be just the original
+   * this.dataArray directly.
    */
-  static modify_byActivation_withoutAffect_BoundsArraySet( imageIn, nActivationId, parametersDesc ) {
+  static modify_byActivation_withoutAffect_BoundsArraySet(
+    imageIn, nActivationId, parametersDesc ) {
 
-    let theActivationFunctionInfo = ValueDesc.ActivationFunction.Singleton.getInfo_byId( nActivationId );
+    let theActivationFunctionInfo
+      = ValueDesc.ActivationFunction.Singleton.getInfo_byId( nActivationId );
+
     if ( !theActivationFunctionInfo )
       return imageIn;
 
@@ -1133,7 +1141,8 @@ class NumberImage_Base extends Recyclable.Root {
 
     for ( let i = 0; i < imageIn.dataArray.length; ++i ) {
       // (2022/08/11 Remarked) .pfnReference() has Math.fround() internally.
-      //imageIn.dataArray[ i ] = Math.fround( pfnActivation( Math.fround( imageIn.dataArray[ i ] ) ) );
+      //imageIn.dataArray[ i ] = Math.fround( pfnActivation( Math.fround(
+      //  imageIn.dataArray[ i ] ) ) );
       imageIn.dataArray[ i ] = pfnActivation( imageIn.dataArray[ i ] );
     }
 
