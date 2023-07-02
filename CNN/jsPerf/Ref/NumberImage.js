@@ -170,7 +170,8 @@ class NumberImage_Base extends Recyclable.Root {
   }
 
   clone() {
-    let result = NumberImage_Base.Pool.get_or_create_by( this.height, this.width, this.depth,
+    let result = NumberImage_Base.Pool.get_or_create_by(
+      this.height, this.width, this.depth,
       undefined, // Because .dataArray will be filled by copying.
       this.boundsArraySet.input0, this.boundsArraySet.input1,
       this.boundsArraySet.constructor, // BoundsArraySet class.
@@ -181,61 +182,99 @@ class NumberImage_Base extends Recyclable.Root {
       result.dataArray [ i ] = this.dataArray[ i ];
     }
 
-    result.boundsArraySet.set_outputs_all_byBoundsArraySet_Outputs( this.boundsArraySet ); // Only copy BoundsArraySet.outputX
+    // Only copy BoundsArraySet.outputX
+    result.boundsArraySet
+      .set_outputs_all_byBoundsArraySet_Outputs( this.boundsArraySet );
+
     return result;
   }
 
   /** Call this.clone_byPointwise() with ( bPassThrough == true ). */
   clone_byPointwise_PassThrough(
-    pointwiseChannelCount, bPointwiseBias, pointwiseActivationId,
-    aPointwise_PassThrough_FiltersArray_BiasesArray_Bag, nPassThroughStyleId,
+    pointwiseChannelCount, bPointwiseBias,
+    pointwiseActivationId,
+    aPointwise_PassThrough_FiltersArray_BiasesArray_Bag,
+    nPassThroughStyleId,
     parametersDesc, ...pointwiseNames ) {
 
     return this.clone_byPointwise(
-      pointwiseChannelCount, null, bPointwiseBias, null, pointwiseActivationId,
-      true, aPointwise_PassThrough_FiltersArray_BiasesArray_Bag, nPassThroughStyleId, // (bPassThrough)
+      pointwiseChannelCount, null,
+      bPointwiseBias, null,
+      pointwiseActivationId,
+      true,
+      aPointwise_PassThrough_FiltersArray_BiasesArray_Bag,
+      nPassThroughStyleId, // (bPassThrough)
       parametersDesc, ...pointwiseNames );
   }
 
   /** Call this.clone_byPointwise() with ( bPassThrough == false ). */
   clone_byPointwise_NonPassThrough(
-    pointwiseChannelCount, pointwiseFiltersArray, bPointwiseBias, pointwiseBiasesArray, pointwiseActivationId,
+    pointwiseChannelCount, pointwiseFiltersArray,
+    bPointwiseBias, pointwiseBiasesArray,
+    pointwiseActivationId,
     parametersDesc, ...pointwiseNames ) {
       
     return this.clone_byPointwise(
-      pointwiseChannelCount, pointwiseFiltersArray, bPointwiseBias, pointwiseBiasesArray, pointwiseActivationId,
-      false, null, null, // (bPassThrough)
+      pointwiseChannelCount, pointwiseFiltersArray,
+      bPointwiseBias, pointwiseBiasesArray,
+      pointwiseActivationId,
+      false, // (bPassThrough)
+      null,  // (aPointwise_PassThrough_FiltersArray_BiasesArray_Bag)
+      null,  // (nPassThroughStyleId)
       parametersDesc, ...pointwiseNames );
   }
 
   /**
-   * @param {NumberImage.Base} this           The source image to be processed.
+   * @param {NumberImage.Base} this
+   *   The source image to be processed.
    *
-   * @param {number[]} pointwiseFiltersArray  The pointwise convolution filter weights. Only used when ( bPassThrough == false ).
-   * @param {boolean}  bPointwiseBias         Whether add bias.
-   * @param {number[]} pointwiseBiasesArray   The bias weights. Only used when ( bPassThrough == false ) and ( bPointwiseBias == true ).
-   * @param {number}   pointwiseActivationId  The activation function id (i.e. ValueDesc.ActivationFunction.Singleton.Ids.Xxx).
+   * @param {number[]} pointwiseFiltersArray
+   *   The pointwise convolution filter weights. Only used when
+   * ( bPassThrough == false ).
    *
-   * @param {boolean}  bPassThrough
-   *   If true, pass-through filters and biases will be used (i.e. pointwiseFiltersArray and pointwiseBiasesArray will be ignored).
-   * And the output image will be scaled for pass-through activation function (i.e. scale to the linear part).
+   * @param {boolean} bPointwiseBias
+   *   Whether add bias.
+   *
+   * @param {number[]} pointwiseBiasesArray
+   *   The bias weights. Only used when ( bPassThrough == false ) and
+   * ( bPointwiseBias == true ).
+   *
+   * @param {number} pointwiseActivationId
+   *   The activation function id (i.e.
+   * ValueDesc.ActivationFunction.Singleton.Ids.Xxx).
+   *
+   * @param {boolean} bPassThrough
+   *   If true, pass-through filters and biases will be used (i.e.
+   * pointwiseFiltersArray and pointwiseBiasesArray will be ignored). And the
+   * output image will be scaled for pass-through activation function (i.e.
+   * scale to the linear part).
    *
    * @param {Pointwise.PassThrough_FiltersArray_BiasesArray_Bag} aPointwise_PassThrough_FiltersArray_BiasesArray_Bag
-   *   A bag for generating pass-through pointwise convolution filters and biases. Only used when ( bPassThrough == true ).
+   *   A bag for generating pass-through pointwise convolution filters and
+   * biases. Only used when ( bPassThrough == true ).
    *
    * @param {number} nPassThroughStyleId
-   *   The pass-through style to be used (i.e. ValueDesc.PassThroughStyle.Singleton.Ids.Xxx) when ( bPassThrough == true ).
+   *   The pass-through style to be used (i.e.
+   * ValueDesc.PassThroughStyle.Singleton.Ids.Xxx) when
+   * ( bPassThrough == true ).
    *
-   * @param {Object} parametersDesc    Its .toString() for debug message of this block.
-   * @param {string[]} pointwiseNames  The strings for debug message of this convolution.
+   * @param {Object} parametersDesc
+   *   Its .toString() for debug message of this block.
+   *
+   * @param {string[]} pointwiseNames
+   *   The strings for debug message of this convolution.
    *
    * @return {NumberImage.Base}
-   *   Return a newly created object which is the result of the pointwise convolution, bias and activation.
+   *   Return a newly created object which is the result of the pointwise
+   * convolution, bias and activation.
    */
   clone_byPointwise(
-    pointwiseChannelCount, pointwiseFiltersArray, bPointwiseBias, pointwiseBiasesArray, pointwiseActivationId,
+    pointwiseChannelCount, pointwiseFiltersArray,
+    bPointwiseBias, pointwiseBiasesArray,
+    pointwiseActivationId,
     bPassThrough,
-    aPointwise_PassThrough_FiltersArray_BiasesArray_Bag, nPassThroughStyleId,
+    aPointwise_PassThrough_FiltersArray_BiasesArray_Bag,
+    nPassThroughStyleId,
     parametersDesc, ...pointwiseNames ) {
 
     let imageIn = this;
