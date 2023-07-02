@@ -31,51 +31,65 @@ import * as Depthwise from "../../Conv/Depthwise.js";
 class NumberImage_Base extends Recyclable.Root {
 
   /**
-   * Used as default NumberImage.Base provider for conforming to Recyclable interface.
+   * Used as default NumberImage.Base provider for conforming to Recyclable
+   * interface.
    */
-  static Pool = new Pool.Root( "NumberImage.Base.Pool", NumberImage_Base, NumberImage_Base.setAsConstructor );
+  static Pool = new Pool.Root( "NumberImage.Base.Pool",
+    NumberImage_Base, NumberImage_Base.setAsConstructor );
 
   /**
    *
    * @param {number} preFilledValue
-   *   Use this value to fill the created .dataArray[]. If undefined, the .dataArray will not be pre-filled any value.
+   *   Use this value to fill the created .dataArray[]. If undefined, the
+   * .dataArray will not be pre-filled any value.
    *
    * @param {ActivationEscaping.ScaleBoundsArray} input0_ScaleBoundsArray
-   *   The element value bounds (per channel) of 1st input (can NOT null). It is the domain of the operation. It (from constructor)
-   * will be cloned. This behavior is different from BoundsArraySet.
+   *   The element value bounds (per channel) of 1st input (can NOT null). It
+   * is the domain of the operation. It (from constructor) will be cloned
+   * (note: this behavior is different from BoundsArraySet).
    *
    * @param {ActivationEscaping.ScaleBoundsArray} input1_ScaleBoundsArray
-   *   The element value bounds (per channel) of 2nd input (can null or undefined). It is the domain of the operation. It (from constructor)
-   * will be cloned. This behavior is different from BoundsArraySet.
+   *   The element value bounds (per channel) of 2nd input (can null or
+   * undefined). It is the domain of the operation. It (from constructor) will
+   * be cloned (note: this behavior is different from BoundsArraySet).
    *
    * @param {Objetc} BoundsArraySetClass
-   *   What kinds of BoundsArraySet will be created. It should be one of BoundsArraySet.InputsOutputs, BoundsArraySet.ConvBiasActivation,
+   *   What kinds of BoundsArraySet will be created. It should be one of
+   * BoundsArraySet.InputsOutputs, BoundsArraySet.ConvBiasActivation,
    * BoundsArraySet.Depthwise, BoundsArraySetPointwise.
    *
    * @param {FloatValue.Bounds} aBounds
-   *   The value bounds of all pixels of this image. If undefined, the .boundsArraySet will not be pre-filled any value.
+   *   The value bounds of all pixels of this image. If undefined, the
+   * .boundsArraySet will not be pre-filled any value.
    */
   constructor( height, width, depth, preFilledValue,
-    input0_ScaleBoundsArray, input1_ScaleBoundsArray, BoundsArraySetClass, aBounds ) {
+    input0_ScaleBoundsArray, input1_ScaleBoundsArray,
+    BoundsArraySetClass, aBounds ) {
 
     super();
-    NumberImage_Base.setAsConstructor_self.call( this, height, width, depth, preFilledValue,
-      input0_ScaleBoundsArray, input1_ScaleBoundsArray, BoundsArraySetClass, aBounds );
+    NumberImage_Base.setAsConstructor_self.call( this,
+      height, width, depth, preFilledValue,
+      input0_ScaleBoundsArray, input1_ScaleBoundsArray,
+      BoundsArraySetClass, aBounds );
   }
 
   /** @override */
   static setAsConstructor( height, width, depth, preFilledValue,
-    input0_ScaleBoundsArray, input1_ScaleBoundsArray, BoundsArraySetClass, aBounds ) {
+    input0_ScaleBoundsArray, input1_ScaleBoundsArray,
+    BoundsArraySetClass, aBounds ) {
 
     super.setAsConstructor();
-    NumberImage_Base.setAsConstructor_self.call( this, height, width, depth, preFilledValue,
-      input0_ScaleBoundsArray, input1_ScaleBoundsArray, BoundsArraySetClass, aBounds );
+    NumberImage_Base.setAsConstructor_self.call( this,
+      height, width, depth, preFilledValue,
+      input0_ScaleBoundsArray, input1_ScaleBoundsArray,
+      BoundsArraySetClass, aBounds );
     return this;
   }
 
   /** @override */
   static setAsConstructor_self( height, width, depth, preFilledValue,
-    input0_ScaleBoundsArray, input1_ScaleBoundsArray, BoundsArraySetClass, aBounds ) {
+    input0_ScaleBoundsArray, input1_ScaleBoundsArray,
+    BoundsArraySetClass, aBounds ) {
     this.height = height;
     this.width = width;
     this.depth = depth;
@@ -83,36 +97,44 @@ class NumberImage_Base extends Recyclable.Root {
     // Note: The preFilledValue and aBounds will not be recorded.
 
     let elementCount = height * width * depth;
-    this.dataArray = Recyclable.NumberArray_withBounds.Pool.get_or_create_by( elementCount );
+    this.dataArray = Recyclable.NumberArray_withBounds.Pool.get_or_create_by(
+      elementCount );
+
     if ( preFilledValue != undefined )
       this.dataArray.fill( preFilledValue );
 
-    // Note: NumberImage always owns itself input bounds array. (Although BoundsArraySet does not.)
+    // Note: NumberImage always owns itself input bounds array. (Although
+    //       BoundsArraySet does not own itself input bounds array.)
     this.input0_ScaleBoundsArray = input0_ScaleBoundsArray.clone();
     this.input1_ScaleBoundsArray = input1_ScaleBoundsArray?.clone();
 
     // Note1: Different BoundsArraySet class have different arguments.
-    // Note2: BoundsArraySetClass is class (i.e. not instance). It can not be tested by instanceof.
+    // Note2: BoundsArraySetClass is class (i.e. not instance). It can not be
+    //          tested by instanceof.
     // Note3: NumberImage's BoundsArraySet always has only output0.
     //
     switch ( BoundsArraySetClass ) {
       case BoundsArraySet.InputsOutputs:
         this.boundsArraySet = BoundsArraySetClass.Pool.get_or_create_by(
-          this.input0_ScaleBoundsArray, this.input1_ScaleBoundsArray, depth, undefined );
+          this.input0_ScaleBoundsArray, this.input1_ScaleBoundsArray,
+          depth, undefined );
         break;
 
       case BoundsArraySet.ConvBiasActivation:
       case BoundsArraySet.Depthwise:
       case BoundsArraySet.Pointwise:
-        this.boundsArraySet = BoundsArraySetClass.Pool.get_or_create_by( this.input0_ScaleBoundsArray, depth );
+        this.boundsArraySet = BoundsArraySetClass.Pool.get_or_create_by(
+          this.input0_ScaleBoundsArray, depth );
         break;
 
       default:
-        throw Error( `NumberImage.Base.setAsConstructor_self(): Unknown BoundsArraySetClass ( ${BoundsArraySetClass} ).` );
+        throw Error( `NumberImage.Base.setAsConstructor_self(): `
+          + `Unknown BoundsArraySetClass ( ${BoundsArraySetClass} ).` );
         break;
     }
 
-    // Default value bounds for an image. (Note: Do not use .filledValue as bounds.)
+    // Default value bounds for an image. (Note: Do not use .filledValue as
+    // bounds.)
     if ( aBounds != undefined ) {
       this.boundsArraySet.set_outputs_all_byBounds( aBounds );
     }
