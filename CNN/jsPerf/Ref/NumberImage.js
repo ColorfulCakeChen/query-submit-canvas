@@ -342,16 +342,23 @@ class NumberImage_Base extends Recyclable.Root {
           let inIndex = inIndexBaseC + inChannel;
           let filterIndexBase = ( inChannel * pointwiseChannelCount );
 
-          let undoPreviousEscapingScale = Math.fround( imageIn.boundsArraySet.output0.scaleArraySet.undo.scales[ inChannel ] );
+          let undoPreviousEscapingScale = Math.fround(
+            imageIn.boundsArraySet.output0
+              .scaleArraySet.undo.scales[ inChannel ] );
 
-          for ( let outChannel = 0; outChannel < pointwiseChannelCount; ++outChannel ) {
+          for ( let outChannel = 0;
+            outChannel < pointwiseChannelCount; ++outChannel ) {
+
             let outIndex = outIndexBaseC + outChannel;
             let filterIndex = filterIndexBase + outChannel;
 
-            imageOut.dataArray[ outIndex ] = Math.fround( imageOut.dataArray[ outIndex ]
-              + Math.fround( Math.fround( Math.fround( imageIn.dataArray[ inIndex ] ) * undoPreviousEscapingScale )
-                    * Math.fround( pointwiseFiltersArray[ filterIndex ] )
-                )
+            imageOut.dataArray[ outIndex ] = Math.fround(
+              imageOut.dataArray[ outIndex ] + Math.fround(
+                Math.fround(
+                  Math.fround( imageIn.dataArray[ inIndex ] )
+                    * undoPreviousEscapingScale
+                ) * Math.fround( pointwiseFiltersArray[ filterIndex ] )
+              )
             );
           }
         }
@@ -361,7 +368,9 @@ class NumberImage_Base extends Recyclable.Root {
     {
       // Prepare value bounds of every output channels (i.e. .afterFilter).
       {
-        // Note: imageOut.boundsArraySet.afterUndoPreviousActivationEscaping has already been setup by BoundsArraySet.Pointwise() constructor.
+        // Note: imageOut.boundsArraySet.afterUndoPreviousActivationEscaping
+        //       has already been setup by BoundsArraySet.Pointwise()
+        //       constructor.
 
         imageOut.boundsArraySet.afterFilter.set_all_byN( 0 );
       }
@@ -371,15 +380,21 @@ class NumberImage_Base extends Recyclable.Root {
       for ( let inChannel = 0; inChannel < imageIn.depth; ++inChannel ) {
         let filterIndexBase = ( inChannel * pointwiseChannelCount );
 
-        for ( let outChannel = 0; outChannel < pointwiseChannelCount; ++outChannel ) {
+        for ( let outChannel = 0;
+          outChannel < pointwiseChannelCount; ++outChannel ) {
+
           let filterIndex = filterIndexBase + outChannel;
 
-          // Note: .afterUndoPreviousActivationEscaping has already been multiplied by undoPreviousEscapingScale.
+          // Note: .afterUndoPreviousActivationEscaping has already been
+          //       multiplied by undoPreviousEscapingScale.
           tBounds
-            .set_byBoundsArray( imageOut.boundsArraySet.afterUndoPreviousActivationEscaping, inChannel )
+            .set_byBoundsArray(
+              imageOut.boundsArraySet.afterUndoPreviousActivationEscaping,
+              inChannel )
             .multiply_byN( pointwiseFiltersArray[ filterIndex ] );
 
-          imageOut.boundsArraySet.afterFilter.add_one_byBounds( outChannel, tBounds );
+          imageOut.boundsArraySet.afterFilter.add_one_byBounds(
+            outChannel, tBounds );
         }
       }
       tBounds.disposeResources_and_recycleToPool();
@@ -387,10 +402,12 @@ class NumberImage_Base extends Recyclable.Root {
     }
 
     //!!! (2022/08/08) For debug pixel value bounds.
-    imageOut.assert_pixels_byBoundsArray( imageOut.boundsArraySet.afterFilter );
+    imageOut.assert_pixels_byBoundsArray(
+      imageOut.boundsArraySet.afterFilter );
 
     // Bias
-    imageOut.modify_byBias( bPointwiseBias, pointwiseBiasesArray, parametersDesc, ...pointwiseNames, "bias" );
+    imageOut.modify_byBias( bPointwiseBias, pointwiseBiasesArray,
+      parametersDesc, ...pointwiseNames, "bias" );
 
     //!!! (2022/08/08) For debug pixel value bounds.
     imageOut.assert_pixels_byBoundsArray( imageOut.boundsArraySet.afterBias );
