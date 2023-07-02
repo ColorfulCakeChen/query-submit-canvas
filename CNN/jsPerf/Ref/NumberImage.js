@@ -659,43 +659,72 @@ class NumberImage_Base extends Recyclable.Root {
           let outChannelBase = inChannel * channelMultiplier;
           let outIndexBaseSubC = outIndexBaseC + outChannelBase;
 
-          let undoPreviousEscapingScale = Math.fround( imageIn.boundsArraySet.output0.scaleArraySet.undo.scales[ inChannel ] );
+          let undoPreviousEscapingScale = Math.fround(
+            imageIn.boundsArraySet.output0
+              .scaleArraySet.undo.scales[ inChannel ] );
 
-          for ( let outChannelSub = 0; outChannelSub < channelMultiplier; ++outChannelSub ) {
+          for ( let outChannelSub = 0;
+            outChannelSub < channelMultiplier; ++outChannelSub ) {
+
             let outChannel = outChannelBase + outChannelSub;
             let outIndex = outIndexBaseSubC + outChannelSub;
 
-            // For Avg pooling, the divisor is effect filter size which includes dilation but excludes input image outside.
+            // For Avg pooling, the divisor is effect filter size which
+            // includes dilation but excludes input image outside.
             let avgDivisor = 0;
 
             FilterYLoop:
-            for ( let filterY = 0, inY = inYBase; filterY < depthwiseFilterHeight; ++filterY ) {
-              for ( let dilationFilterY = 0; dilationFilterY < dilationHeight; ++dilationFilterY, ++inY ) {
-                if ( inY < 0 )
-                  continue;          // Never access outside of input image. Continue to find out non-negative input image y position.
-                else if ( inY >= imageIn.height )
-                  break FilterYLoop; // Never access outside of input image. Break because it is impossible to find inside of input image.
+            for ( let filterY = 0, inY = inYBase;
+              filterY < depthwiseFilterHeight; ++filterY ) {
+
+              for ( let dilationFilterY = 0;
+                dilationFilterY < dilationHeight; ++dilationFilterY, ++inY ) {
+
+                // Never access outside of input image. Continue to find out
+                // non-negative input image y position.
+                if ( inY < 0 ) {
+                  continue;
+
+                // Never access outside of input image. Break because it is
+                // impossible to find inside of input image.
+                } else if ( inY >= imageIn.height ) {
+                  break FilterYLoop;
+                }
 
                 let inIndexBaseX = ( inY * imageIn.width );
                 let filterIndexBaseX = ( filterY * depthwiseFilterWidth );
 
                 FilterXLoop:
-                for ( let filterX = 0, inX = inXBase; filterX < depthwiseFilterWidth; ++filterX ) {
-                  for ( let dilationFilterX = 0; dilationFilterX < dilationWidth; ++dilationFilterX, ++inX ) {
-                    if ( inX < 0 )
-                      continue;          // Never access outside of input image. Continue to find out non-negative input image x position.
-                    else if ( inX >= imageIn.width )
-                      break FilterXLoop; // Never access outside of input image. Break because it is impossible to find inside of input image.
+                for ( let filterX = 0, inX = inXBase;
+                  filterX < depthwiseFilterWidth; ++filterX ) {
 
-                    // For Avg pooling, the divisor should include filter dilation but exclude input image outside.
+                  for ( let dilationFilterX = 0;
+                    dilationFilterX < dilationWidth; ++dilationFilterX, ++inX ) {
+
+                    // Never access outside of input image. Continue to find
+                    // out non-negative input image x position.
+                    if ( inX < 0 ) {
+                      continue;
+
+                    // Never access outside of input image. Break because it is
+                    // impossible to find inside of input image.
+                    } else if ( inX >= imageIn.width ) {
+                      break FilterXLoop;
+                    }
+
+                    // For Avg pooling, the divisor should include filter
+                    // dilation but exclude input image outside.
                     //
-                    // This accumulation should be done after confirm ( inY, inX ) is inside the input image.
+                    // This accumulation should be done after confirm
+                    // ( inY, inX ) is inside the input image.
                     ++avgDivisor;
 
-                    // No need to compute the filter's dilation part (because it is always zero).
+                    // No need to compute the filter's dilation part (because
+                    // it is always zero).
                     //
-                    // This shortcut check should be done after avgDivisor has been increased, so that the filter dilation will
-                    // be included by avgDivisor.
+                    // This shortcut check should be done after avgDivisor has
+                    // been increased, so that the filter dilation will be
+                    // included by avgDivisor.
                     if ( ( 0 != dilationFilterY ) || ( 0 != dilationFilterX ) )
                       continue;
 
