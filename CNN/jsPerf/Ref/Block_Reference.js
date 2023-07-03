@@ -220,29 +220,43 @@ class TestCorrectnessInfo extends Recyclable.Root {
     outputTensor3dArray.fill( undefined );
     inputTensor3dArray.fill( undefined );
 
-    inputTensor3dArray[ 0 ] = imageSourceBag.getTensor3d_by( input0_height, input0_width, input0_channelCount );
+    inputTensor3dArray[ 0 ] = imageSourceBag.getTensor3d_by(
+      input0_height, input0_width, input0_channelCount );
+
     if ( bTwoInputs ) { // Pass two input tensors according to parameters.
       inputTensor3dArray[ 1 ] = imageSourceBag.getTensor3d_by(
         input0_height, input0_width, input1_channelCount,
-        depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight_real, depthwiseFilterWidth_real, depthwiseStridesPad );
+        depthwise_AvgMax_Or_ChannelMultiplier,
+        depthwiseFilterHeight_real, depthwiseFilterWidth_real,
+        depthwiseStridesPad );
     }
 
-    let inputTensorDestroyCount; // How many input tensors will be destroyed by Block.apply().
+    // How many input tensors will be destroyed by Block.apply().
+    let inputTensorDestroyCount;
     if ( bKeepInputTensor ) {
-      inputTensorDestroyCount = 0; // Since keep-input, no input tensors will be destroyed.
+      // Since keep-input, no input tensors will be destroyed.
+      inputTensorDestroyCount = 0;
 
     } else {
-      inputTensor3dArray[ 0 ] = inputTensor3dArray[ 0 ].clone(); // Clone for being destroyed. 
-      inputTensorDestroyCount = 1; // Since no keep-input, the input tensor destroyed count will be the same as input tensor count.
+      // Clone for being destroyed. 
+      inputTensor3dArray[ 0 ] = inputTensor3dArray[ 0 ].clone();
+
+      // Since no keep-input, the input tensor destroyed count will be the same
+      // as input tensor count.
+      inputTensorDestroyCount = 1;
 
       if ( bTwoInputs ) { // Pass two input tensors according to parameters.
         inputTensor3dArray[ 1 ] = inputTensor3dArray[ 1 ].clone();
-        inputTensorDestroyCount = 2; // Since no keep-input, the input tensor destroyed count will be the same as input tensor count.
+
+        // Since no keep-input, the input tensor destroyed count will be the
+        // same as input tensor count.
+        inputTensorDestroyCount = 2;
       }
     }
 
     this.input1_channelCount = input1_channelCount;
-    this.channelShuffler_ConcatPointwiseConv = channelShuffler_ConcatPointwiseConv;
+    this.channelShuffler_ConcatPointwiseConv
+      = channelShuffler_ConcatPointwiseConv;
     this.inputTensorDestroyCount = inputTensorDestroyCount;
   }
 
@@ -255,9 +269,11 @@ class TestCorrectnessInfo extends Recyclable.Root {
 class Block_Reference_Base extends Recyclable.Root {
 
   /**
-   * Used as default Block_Reference.Base provider for conforming to Recyclable interface.
+   * Used as default Block_Reference.Base provider for conforming to Recyclable
+   * interface.
    */
-  static Pool = new Pool.Root( "Block_Reference.Base.Pool", Block_Reference_Base, Block_Reference_Base.setAsConstructor );
+  static Pool = new Pool.Root( "Block_Reference.Base.Pool",
+    Block_Reference_Base, Block_Reference_Base.setAsConstructor );
 
   /**
    *
