@@ -446,28 +446,36 @@ class Block_Reference_Base extends Recyclable.Root {
     let testParams = this.testParams;
 
     let {
-      imageInArraySelected, imageOutReferenceArray, inputTensor3dArray, outputTensor3dArray,
-      input1_channelCount, channelShuffler_ConcatPointwiseConv, inputTensorDestroyCount,
+      imageInArraySelected, imageOutReferenceArray,
+      inputTensor3dArray, outputTensor3dArray,
+      input1_channelCount,
+      channelShuffler_ConcatPointwiseConv, inputTensorDestroyCount,
     } = this.testCorrectnessInfo;
 
-    let memoryInfo_beforeCreate = tf.memory(); // Test memory leakage of block create/dispose.
+    // Test memory leakage of block create/dispose.
+    let memoryInfo_beforeCreate = tf.memory();
 
     let block = Block_Reference_Base.block_create( testParams,
       imageInArraySelected[ 0 ].boundsArraySet.output0,
       imageInArraySelected[ 1 ]?.boundsArraySet.output0,
       channelShuffler_ConcatPointwiseConv );
 
-    // Note: Do not generate parameters description string in advance every time.
-    //       Just generate them only if necessary by .toString() for reducing memory re-allocation.
+    // Note: Do not generate parameters description string in advance every
+    //       time. Just generate them only if necessary by .toString() for
+    //       reducing memory re-allocation.
 
     // Test input channel count.
-    Block_Reference_Base.AssertTwoEqualValues( "input1_channelCount", block.input1_channelCount, input1_channelCount, block );
+    Block_Reference_Base.AssertTwoEqualValues( "input1_channelCount",
+      block.input1_channelCount, input1_channelCount, block );
 
-    // The difference tensor count will be the generated tensor count (i.e. outputTensorCount) minus destroyed input
-    // tensor count (i.e. inputTensorDestroyCount).
-    let tensorNumDifference_apply_before_after = block.outputTensorCount - inputTensorDestroyCount;
+    // The difference tensor count will be the generated tensor count (i.e.
+    // outputTensorCount) minus destroyed input tensor count (i.e.
+    // inputTensorDestroyCount).
+    let tensorNumDifference_apply_before_after
+      = block.outputTensorCount - inputTensorDestroyCount;
 
-    let memoryInfo_apply_before = tf.memory(); // Test memory leakage of block apply.
+    // Test memory leakage of block apply.
+    let memoryInfo_apply_before = tf.memory();
     {
       block.input0.realTensor = inputTensor3dArray[ 0 ];
       if ( block.input1 )
@@ -480,33 +488,44 @@ class Block_Reference_Base extends Recyclable.Root {
     }
     let memoryInfo_apply_after = tf.memory();
 
-    if ( memoryInfo_apply_after.numTensors != ( memoryInfo_apply_before.numTensors + tensorNumDifference_apply_before_after ) )
+    if ( memoryInfo_apply_after.numTensors
+           != ( memoryInfo_apply_before.numTensors
+                  + tensorNumDifference_apply_before_after ) )
       throw Error( `Block.apply() memory leak. `
         + `result tensor count ( ${memoryInfo_apply_after.numTensors} ) `
-        + `should be ( ${ ( memoryInfo_apply_before.numTensors + tensorNumDifference_apply_before_after ) } ) `
-        + `${block}` );
+        + `should be ( `
+        + `${ ( memoryInfo_apply_before.numTensors + tensorNumDifference_apply_before_after ) } `
+        + `). ${block}` );
 
     if ( inputTensor3dArray.length != 2 )
-      throw Error( `Block inputTensor3dArray.length ( ${inputTensor3dArray.length} ) should be 2. ${block}` );
+      throw Error( `Block inputTensor3dArray.length `
+        + `( ${inputTensor3dArray.length} ) should be 2. ${block}` );
 
     if ( outputTensor3dArray.length != 2 )
-      throw Error( `Block outputTensor3dArray.length ( ${outputTensor3dArray.length} ) should be 2. ${block}` );
+      throw Error( `Block outputTensor3dArray.length `
+        + `( ${outputTensor3dArray.length} ) should be 2. ${block}` );
 
     { // Test output channel count.
       const CHANNEL_AXIS_ID = 2; // Axis id 2 is depth (i.e. channel) dimension.
       let output0_channelCount = 0, output1_channelCount = 0;
 
-      if ( outputTensor3dArray[ 0 ] && ( outputTensor3dArray[ 0 ].shape.length > CHANNEL_AXIS_ID ) )
+      if (   ( outputTensor3dArray[ 0 ] )
+          && ( outputTensor3dArray[ 0 ].shape.length > CHANNEL_AXIS_ID ) )
         output0_channelCount = outputTensor3dArray[ 0 ].shape[ CHANNEL_AXIS_ID ];
 
-      if ( outputTensor3dArray[ 1 ] && ( outputTensor3dArray[ 1 ].shape.length > CHANNEL_AXIS_ID ) )
+      if (   ( outputTensor3dArray[ 1 ] )
+          && ( outputTensor3dArray[ 1 ].shape.length > CHANNEL_AXIS_ID ) )
         output1_channelCount = outputTensor3dArray[ 1 ].shape[ CHANNEL_AXIS_ID ];
 
-      let output_channelCount = output0_channelCount + output1_channelCount;
+      let output_channelCount
+        = output0_channelCount + output1_channelCount;
 
-      Block_Reference_Base.AssertTwoEqualValues( "output0_channelCount", block.output0_channelCount, output0_channelCount, block );
-      Block_Reference_Base.AssertTwoEqualValues( "output1_channelCount", block.output1_channelCount, output1_channelCount, block );
-      Block_Reference_Base.AssertTwoEqualValues( "output_channelCount", block.output_channelCount, output_channelCount, block );
+      Block_Reference_Base.AssertTwoEqualValues( "output0_channelCount",
+        block.output0_channelCount, output0_channelCount, block );
+      Block_Reference_Base.AssertTwoEqualValues( "output1_channelCount",
+        block.output1_channelCount, output1_channelCount, block );
+      Block_Reference_Base.AssertTwoEqualValues( "output_channelCount",
+        block.output_channelCount, output_channelCount, block );
     }
 
     { // Test output tensor count.
@@ -518,36 +537,48 @@ class Block_Reference_Base extends Recyclable.Root {
       if ( outputTensor3dArray[ 1 ] )
         ++outputTensorCount;
 
-      Block_Reference_Base.AssertTwoEqualValues( "outputTensorCount", block.outputTensorCount, outputTensorCount, block );
+      Block_Reference_Base.AssertTwoEqualValues( "outputTensorCount",
+        block.outputTensorCount, outputTensorCount, block );
     }
 
     // Test correctness of block BoundsArraySet.
-    this.assert_imageOut_BoundsArraySet( block, imageOutReferenceArray, block );
+    this.assert_imageOut_BoundsArraySet(
+      block, imageOutReferenceArray, block );
 
     // Test correctness of block apply.
-    this.assert_imageOut_Tensors_byNumberArrays( outputTensor3dArray, imageOutReferenceArray, block );
+    this.assert_imageOut_Tensors_byNumberArrays(
+      outputTensor3dArray, imageOutReferenceArray, block );
 
     block.disposeResources_and_recycleToPool();
     block = null;
 
     let memoryInfo_afterDispose = tf.memory();
 
-    if ( memoryInfo_afterDispose.numTensors != ( memoryInfo_beforeCreate.numTensors + tensorNumDifference_apply_before_after ) )
+    if ( memoryInfo_afterDispose.numTensors
+           != ( memoryInfo_beforeCreate.numTensors + tensorNumDifference_apply_before_after ) )
       throw Error( `Block create/dispose memory leak. `
         + `result tensor count (${memoryInfo_afterDispose.numTensors}) `
-        + `should be (${ ( memoryInfo_beforeCreate.numTensors + tensorNumDifference_apply_before_after ) } `
-        + `${block}` );
+        + `should be ( `
+        + `${ ( memoryInfo_beforeCreate.numTensors + tensorNumDifference_apply_before_after ) } `
+        + `). ${block}` );
   }
 
   /**
    * Check the Block's output's BoundsArraySet.
    *
-   * @param {Block.Base} block                           The block to be checked.
-   * @param {NumberImage.Base[]} imageOutReferenceArray  Refernece output Image data of the Block_Reference's calcResult().
+   * @param {Block.Base} block
+   *   The block to be checked.
+   *
+   * @param {NumberImage.Base[]} imageOutReferenceArray
+   *   Refernece output Image data of the Block_Reference's calcResult().
    */
-  assert_imageOut_BoundsArraySet( block, imageOutReferenceArray, parametersDescription ) {
-    BoundsArraySet_Asserter.assert_ScaleBoundsArray_output0_output1( this.asserter_Equal,
-      block.output0?.scaleBoundsArray, block.output1?.scaleBoundsArray, imageOutReferenceArray, `Block`, parametersDescription );
+  assert_imageOut_BoundsArraySet(
+    block, imageOutReferenceArray, parametersDescription ) {
+
+    BoundsArraySet_Asserter.assert_ScaleBoundsArray_output0_output1(
+      this.asserter_Equal,
+      block.output0?.scaleBoundsArray, block.output1?.scaleBoundsArray,
+      imageOutReferenceArray, `Block`, parametersDescription );
   }
 
   /**
