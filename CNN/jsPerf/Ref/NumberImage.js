@@ -1990,12 +1990,20 @@ class NumberImage_Base extends Recyclable.Root {
 
   /**
    *
-   * @param {number} height        The height of the generate image.
-   * @param {number} width         The width of the generate image.
-   * @param {number} channelCount  The channel count of the generate image.
+   * @param {number} height
+   *   The height of the generate image.
    *
-   * @param {number} valueBegin    The first value of filled sequence.
-   * @param {number} valueStep     The incremental value of every next filled value in the sequence.
+   * @param {number} width
+   *   The width of the generate image.
+   *
+   * @param {number} channelCount
+   *   The channel count of the generate image.
+   *
+   * @param {number} valueBegin
+   *   The first value of filled sequence.
+   *
+   * @param {number} valueStep
+   *   The incremental value of every next filled value in the sequence.
    *
    * @param {number} randomOffsetMin
    *   Every element of the generated number array will been shifted from the
@@ -2025,8 +2033,11 @@ class NumberImage_Base extends Recyclable.Root {
     // 1.
     let imageNew;
     {
-      const preFilledValue = undefined; // Because it will be filled with generated random values.
-      const aBounds = undefined;        // Because .boundsArraySet will be filled later.
+      // Because it will be filled with generated random values.
+      const preFilledValue = undefined;
+
+      // Because .boundsArraySet will be filled later.
+      const aBounds = undefined;
 
       let inputScaleBoundsArray = ActivationEscaping.ScaleBoundsArray.Pool
         .get_or_create_by( channelCount );
@@ -2057,4 +2068,3 @@ class NumberImage_Base extends Recyclable.Root {
   }
 
 }
- 
