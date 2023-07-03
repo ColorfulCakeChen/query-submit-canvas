@@ -26,9 +26,12 @@ import * as ImageSourceBag from "./ImageSourceBag.js";
 class TestCorrectnessInfo extends Recyclable.Root {
 
   /**
-   * Used as default Block_Reference.TestCorrectnessInfo provider for conforming to Recyclable interface.
+   * Used as default Block_Reference.TestCorrectnessInfo provider for
+   * conforming to Recyclable interface.
    */
-  static Pool = new Pool.Root( "Block_Reference.TestCorrectnessInfo.Pool", TestCorrectnessInfo, TestCorrectnessInfo.setAsConstructor );
+  static Pool = new Pool.Root(
+    "Block_Reference.TestCorrectnessInfo.Pool",
+    TestCorrectnessInfo, TestCorrectnessInfo.setAsConstructor );
 
   /**
    */
@@ -47,7 +50,9 @@ class TestCorrectnessInfo extends Recyclable.Root {
   /** @override */
   static setAsConstructor_self() {
     // For reducing memory allocation.
-    this.imageInArraySelected = Recyclable.Array.Pool.get_or_create_by( 2 ); // imageInArraySelected[ 0 ] is input0, imageInArraySelected[ 1 ] is input1.
+
+    // imageInArraySelected[ 0 ] is input0, imageInArraySelected[ 1 ] is input1.
+    this.imageInArraySelected = Recyclable.Array.Pool.get_or_create_by( 2 );
     this.imageOutReferenceArray = Recyclable.Array.Pool.get_or_create_by( 2 );
     this.inputTensor3dArray = Recyclable.Array.Pool.get_or_create_by( 2 );
     this.outputTensor3dArray = Recyclable.Array.Pool.get_or_create_by( 2 );
@@ -77,13 +82,15 @@ class TestCorrectnessInfo extends Recyclable.Root {
       nConvBlockTypeId,
       pointwise1ChannelCount,
       depthwise_AvgMax_Or_ChannelMultiplier,
-      depthwiseFilterHeight_real, depthwiseFilterWidth_real, depthwiseStridesPad,
+      depthwiseFilterHeight_real, depthwiseFilterWidth_real,
+      depthwiseStridesPad,
       pointwise20ChannelCount,
       bKeepInputTensor,
       inferencedParams
     } = testParams.out;
 
-    let imageInArraySelected = this.imageInArraySelected; // imageInArraySelected[ 0 ] is input0, imageInArraySelected[ 1 ] is input1.
+    // imageInArraySelected[ 0 ] is input0, imageInArraySelected[ 1 ] is input1.
+    let imageInArraySelected = this.imageInArraySelected;
     let imageOutReferenceArray = this.imageOutReferenceArray;
     let inputTensor3dArray = this.inputTensor3dArray;
     let outputTensor3dArray = this.outputTensor3dArray;
@@ -94,10 +101,12 @@ class TestCorrectnessInfo extends Recyclable.Root {
       input1_channelCount = inferencedParams.input1_channelCount;
     }
 
-    let channelShuffler_ConcatPointwiseConv, channelShuffler_concatenatedShape, channelShuffler_outputGroupCount;
+    let channelShuffler_ConcatPointwiseConv, channelShuffler_concatenatedShape,
+        channelShuffler_outputGroupCount;
     {
       imageInArraySelected.fill( undefined );
-      imageInArraySelected[ 0 ] = imageSourceBag.getImage_by( input0_height, input0_width, input0_channelCount );
+      imageInArraySelected[ 0 ] = imageSourceBag.getImage_by(
+        input0_height, input0_width, input0_channelCount );
 
       // Although input1 is only needed when ( bTwoInputs == true ), it is always prepared for calculating the shape of channel shuffler.
       // 
@@ -108,7 +117,9 @@ class TestCorrectnessInfo extends Recyclable.Root {
       //
       let imageIn1 = imageSourceBag.getImage_by(
         input0_height, input0_width, input1_channelCount,
-        depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight_real, depthwiseFilterWidth_real, depthwiseStridesPad );
+        depthwise_AvgMax_Or_ChannelMultiplier,
+        depthwiseFilterHeight_real, depthwiseFilterWidth_real,
+        depthwiseStridesPad );
 
       if ( bTwoInputs ) { // Pass two input images according to parameters.
         imageInArraySelected[ 1 ] = imageIn1;
@@ -117,8 +128,12 @@ class TestCorrectnessInfo extends Recyclable.Root {
                 && ( imageIn1.width == inferencedParams.input1_width )
                 && ( imageIn1.depth == inferencedParams.input1_channelCount ) ) )
           throw Error( `Block_Reference.TestCorrectnessInfo.prepareBy(): `
-            + `input image1's ( height, width, depth ) = ( ${imageIn1.height}, ${imageIn1.width}, ${imageIn1.depth} ) should be `
-            + `( ${inferencedParams.input1_height}, ${inferencedParams.input1_width}, ${inferencedParams.input1_channelCount} ). `
+            + `input image1's ( height, width, depth ) = `
+            + `( ${imageIn1.height}, ${imageIn1.width}, ${imageIn1.depth} ) `
+            + `should be `
+            + `( ${inferencedParams.input1_height}, `
+            + `${inferencedParams.input1_width}, `
+            + `${inferencedParams.input1_channelCount} ). `
             + `( ${testParams} )`
           );
       } else {
@@ -127,14 +142,17 @@ class TestCorrectnessInfo extends Recyclable.Root {
                && ( 0 == inferencedParams.input1_channelCount ) ) )
           throw Error( `Block_Reference.TestCorrectnessInfo.prepareBy(): `
             + `inferenced input1's ( height, width, depth ) = `
-            + `( ${inferencedParams.input1_height}, ${inferencedParams.input1_width}, ${inferencedParams.input1_channelCount} ) `
+            + `( ${inferencedParams.input1_height}, `
+            + `${inferencedParams.input1_width}, `
+            + `${inferencedParams.input1_channelCount} ) `
             + `should be ( 0, 0, 0 ). ( ${testParams} )`
           );
       }
 
       if ( imageInArraySelected.length != 2 )
         throw Error( `Block_Reference.TestCorrectnessInfo.prepareBy(): `
-          + `imageInArraySelected.length ( ${imageInArraySelected.length} ) should be 2. ( ${testParams} )` );
+          + `imageInArraySelected.length ( ${imageInArraySelected.length} ) `
+          + `should be 2. ( ${testParams} )` );
 
       // Prepare channel shuffler.
       const outputGroupCount = 2; // Only use two convolution groups.
@@ -146,10 +164,12 @@ class TestCorrectnessInfo extends Recyclable.Root {
           concatenatedDepth = pointwise20ChannelCount * outputGroupCount;
           break;
 
-          // Because Block_TestParams.generate_Filters_Biases() will double pointwise20ChannelCount, it must be an even number
-          // which could be splitted (into two groups).
+          // Because Block_TestParams.generate_Filters_Biases() will double
+          // pointwise20ChannelCount, it must be an even number which could be
+          // splitted (into two groups).
           //
-          // Note: pointwise20ChannelCount is always positive (never zero or negative).
+          // Note: pointwise20ChannelCount is always positive (never zero or
+          //       negative).
           //
           concatenatedDepth = pointwise20ChannelCount;
           break;
@@ -159,27 +179,39 @@ class TestCorrectnessInfo extends Recyclable.Root {
         channelShuffler_ConcatPointwiseConv = null;
 
       } else {
-        channelShuffler_ConcatPointwiseConv = channelShufflerBag.getChannelShuffler_by(
-          imageIn1.height, imageIn1.width, concatenatedDepth, outputGroupCount );
+        channelShuffler_ConcatPointwiseConv
+          = channelShufflerBag.getChannelShuffler_by(
+              imageIn1.height, imageIn1.width, concatenatedDepth,
+              outputGroupCount );
 
-        if( !(   ( channelShuffler_ConcatPointwiseConv.concatenatedShape[ 0 ] == imageIn1.height )
-              && ( channelShuffler_ConcatPointwiseConv.concatenatedShape[ 1 ] == imageIn1.width )
-              && ( channelShuffler_ConcatPointwiseConv.concatenatedShape[ 2 ] == concatenatedDepth ) ) )
+        if( !(   ( channelShuffler_ConcatPointwiseConv.concatenatedShape[ 0 ]
+                     == imageIn1.height )
+              && ( channelShuffler_ConcatPointwiseConv.concatenatedShape[ 1 ]
+                     == imageIn1.width )
+              && ( channelShuffler_ConcatPointwiseConv.concatenatedShape[ 2 ]
+                     == concatenatedDepth ) ) )
           throw Error( `Block_Reference.TestCorrectnessInfo.prepareBy(): `
-            + `ChannelShuffler concatenatedShape ( ${channelShuffler_ConcatPointwiseConv.concatenatedShape[ 0 ]}, `
+            + `ChannelShuffler concatenatedShape ( `
+            + `${channelShuffler_ConcatPointwiseConv.concatenatedShape[ 0 ]}, `
             + `${channelShuffler_ConcatPointwiseConv.concatenatedShape[ 1 ]}, `
             + `${channelShuffler_ConcatPointwiseConv.concatenatedShape[ 2 ]} ) `
-            + `should be the same as input image1's ( height, width, concatenatedDepth ) = ( `
+            + `should be the same as input image1's `
+            + `( height, width, concatenatedDepth ) = ( `
             + `${imageIn1.height}, ${imageIn1.width}, ${concatenatedDepth} ). `
             + `( ${testParams} )` );
 
-        if ( channelShuffler_ConcatPointwiseConv.outputGroupCount != outputGroupCount )
+        if ( channelShuffler_ConcatPointwiseConv.outputGroupCount
+               != outputGroupCount )
           throw Error( `Block_Reference.TestCorrectnessInfo.prepareBy(): `
-            + `ChannelShuffler outputGroupCount ( ${channelShuffler_ConcatPointwiseConv.outputGroupCount} ) `
-            + `should be the same as image outputGroupCount ( ${outputGroupCount} ). ( ${testParams} )` );
+            + `ChannelShuffler outputGroupCount ( `
+            + `${channelShuffler_ConcatPointwiseConv.outputGroupCount} ) `
+            + `should be the same as image outputGroupCount `
+            + `( ${outputGroupCount} ). ( ${testParams} )` );
 
-        channelShuffler_concatenatedShape = channelShuffler_ConcatPointwiseConv.concatenatedShape;
-        channelShuffler_outputGroupCount = channelShuffler_ConcatPointwiseConv.outputGroupCount;
+        channelShuffler_concatenatedShape
+          = channelShuffler_ConcatPointwiseConv.concatenatedShape;
+        channelShuffler_outputGroupCount
+          = channelShuffler_ConcatPointwiseConv.outputGroupCount;
       }
 
     }
