@@ -1958,8 +1958,8 @@ class NumberImage_Base extends Recyclable.Root {
    *   Assert every pixel whether inside aBoundsArray of its channel.
    */
   assert_pixels_byBoundsArray( aBoundsArray ) {
-//!!! ...unfinished... (2022/08/12) Temp skip checking for finding out real value.
-//    return;
+    //!!! (2022/08/12 Temp Added) Temp skip checking for finding out real value.
+    //return;
 
     let pixelValue;
     let i = 0;
@@ -1984,7 +1984,8 @@ class NumberImage_Base extends Recyclable.Root {
    * Assert every pixel whether inside output bounds array of its channel.
    */
   assert_pixels_byBoundsArray_output() {
-    this.assert_pixels_byBoundsArray( this.boundsArraySet.output0.boundsArray );
+    this.assert_pixels_byBoundsArray(
+      this.boundsArraySet.output0.boundsArray );
   }
 
   /**
