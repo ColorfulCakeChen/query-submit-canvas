@@ -1398,7 +1398,8 @@ class NumberImage_Base extends Recyclable.Root {
       nSqueezeExcitationChannelCountDivisor,
       null, null, null, null,
       nActivationId,
-      true, aPointwise_PassThrough_FiltersArray_BiasesArray_Bag, // (bPassThrough)
+      true, // (bPassThrough)
+      aPointwise_PassThrough_FiltersArray_BiasesArray_Bag,
       parametersDesc, ...squeezeExcitationNames );
   }
 
@@ -1415,35 +1416,57 @@ class NumberImage_Base extends Recyclable.Root {
       intermediateFiltersArray, intermediateBiasesArray,
       excitationFiltersArray, excitationBiasesArray,
       nActivationId,
-      false, null, // (bPassThrough)
+      false, // (bPassThrough)
+      null,
       parametersDesc, ...squeezeExcitationNames );
   }
 
   /**
-   * @param {NumberImage.Base} this      The source image to be processed.
+   * @param {NumberImage.Base} this
+   *   The source image to be processed.
    *
    * @param {number} nSqueezeExcitationChannelCountDivisor
-   *   An integer represents the channel count divisor for squeeze-and-excitation's intermediate pointwise convolution channel count.
+   *   An integer represents the channel count divisor for
+   * squeeze-and-excitation's intermediate pointwise convolution channel count.
    *
-   * @param {number[]} intermediateFiltersArray  The intermediate pointwise convolution filter weights. Only used if ( bPassThrough == false ).
-   * @param {number[]} intermediateBiasesArray   The intermediate bias weights. Only used if ( bPassThrough == false ).
-   * @param {number[]} excitationFiltersArray    The excitation pointwise convolution filter weights. Only used if ( bPassThrough == false ).
-   * @param {number[]} excitationBiasesArray     The excitation bias weights. Only used if ( bPassThrough == false ).
-   * @param {number}   nActivationId  The activation function id (i.e. ValueDesc.ActivationFunction.Singleton.Ids.Xxx).
+   * @param {number[]} intermediateFiltersArray
+   *   The intermediate pointwise convolution filter weights. Only used if
+   * ( bPassThrough == false ).
    *
-   * @param {boolean}  bPassThrough
-   *   If true, pass-through filters and biases will be used (i.e. intermediateFiltersArray, intermediateBiasesArray,
-   * excitationFiltersArray, excitationBiasesArray will be ignored). And the output image will be scaled for pass-through
-   * activation function (i.e. scale to the linear part).
+   * @param {number[]} intermediateBiasesArray
+   *   The intermediate bias weights. Only used if ( bPassThrough == false ).
+   *
+   * @param {number[]} excitationFiltersArray
+   *   The excitation pointwise convolution filter weights. Only used if
+   * ( bPassThrough == false ).
+   *
+   * @param {number[]} excitationBiasesArray
+   *   The excitation bias weights. Only used if ( bPassThrough == false ).
+   *
+   * @param {number} nActivationId
+   *   The activation function id (i.e.
+   * ValueDesc.ActivationFunction.Singleton.Ids.Xxx).
+   *
+   * @param {boolean} bPassThrough
+   *   If true, pass-through filters and biases will be used (i.e.
+   * intermediateFiltersArray, intermediateBiasesArray, excitationFiltersArray,
+   * excitationBiasesArray will be ignored). And the output image will be
+   * scaled for pass-through activation function (i.e. scale to the linear
+   * part).
    *
    * @param {Pointwise.PassThrough_FiltersArray_BiasesArray_Bag} aPointwise_PassThrough_FiltersArray_BiasesArray_Bag
-   *   A bag for generating pass-through pointwise convolution filters and biases. Only used when ( bPassThrough == true ).
+   *   A bag for generating pass-through pointwise convolution filters and
+   * biases. Only used when ( bPassThrough == true ).
    *
-   * @param {Object}   parametersDesc          Its .toString() for debug message of this block.
-   * @param {string[]} squeezeExcitationNames  The strings for debug message of this squeeze-and-excitation.
+   * @param {Object} parametersDesc
+   *   Its .toString() for debug message of this block.
+   *
+   * @param {string[]} squeezeExcitationNames
+   *   The strings for debug message of this squeeze-and-excitation.
    *
    * @return {NumberImage.Base}
-   *   Return a newly created object which is the result of the squeeze-and-excitation.
+   *   Return a newly created object which is the result of the
+   * squeeze-and-excitation.
    */
   clone_bySqueezeExcitation(
     nSqueezeExcitationChannelCountDivisor,
@@ -1455,22 +1478,28 @@ class NumberImage_Base extends Recyclable.Root {
     parametersDesc, ...squeezeExcitationNames ) {
 
     if (   ( nSqueezeExcitationChannelCountDivisor == undefined )
-        || ( nSqueezeExcitationChannelCountDivisor < ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.NONE )
+        || ( nSqueezeExcitationChannelCountDivisor <
+               ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.NONE )
        )
       throw Error( `${squeezeExcitationNames.join( "_" )}: `
-        + `nSqueezeExcitationChannelCountDivisor ( ${nSqueezeExcitationChannelCountDivisor} ) `
+        + `nSqueezeExcitationChannelCountDivisor `
+        + `( ${nSqueezeExcitationChannelCountDivisor} ) `
         + `should be >= `
         + `ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.NONE `
           + `( ${ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.NONE} ) `
         + `(${parametersDesc})` );
 
-    if ( nSqueezeExcitationChannelCountDivisor == ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.NONE ) // (-2)
+    if ( nSqueezeExcitationChannelCountDivisor
+           == ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.NONE ) // (-2)
       return this.clone(); // No squeeze-and-excitation operation.
 
-    // For squeeze-and-excitation, if pass-through is required, the pass-through style is always ( filter = 0, bias = 1 )
-    // (i.e. ConstantWhenPassThrough). So that the final multiplication will not destroy input.
+    // For squeeze-and-excitation, if pass-through is required, the
+    // pass-through style is always ( filter = 0, bias = 1 ) (i.e.
+    // ConstantWhenPassThrough). So that the final multiplication will not
+    // destroy input.
     //
-    const nPassThroughStyleId = ValueDesc.PassThroughStyle.Singleton.Ids.PASS_THROUGH_STYLE_FILTER_0_BIAS_1;
+    const nPassThroughStyleId = ValueDesc.PassThroughStyle.Singleton.Ids
+      .PASS_THROUGH_STYLE_FILTER_0_BIAS_1;
 
     // 1. squeezeDepthwise
     let squeezeOut;
@@ -1480,26 +1509,41 @@ class NumberImage_Base extends Recyclable.Root {
             //
             ( nSqueezeExcitationChannelCountDivisor < 0 )
 
-         || ( ( this.height <= 0 ) || ( this.width <= 0 ) ) // squeeze can not be done.
-         || ( ( this.height == 1 ) && ( this.width == 1 ) ) // squeeze is not necessary. (already squeezed.)
+            // squeeze can not be done.
+         || ( ( this.height <= 0 ) || ( this.width <= 0 ) )
+
+            // squeeze is not necessary. (already squeezed.)
+         || ( ( this.height == 1 ) && ( this.width == 1 ) )
        ) {
 
       // No squeeze. Do nothing.
       squeezeOut = this;
 
     } else {
-      const squeezeAvgMax_Or_ChannelMultiplier =  ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.AVG;
+      const squeezeAvgMax_Or_ChannelMultiplier
+        = ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.AVG;
       const squeezeFilterHeight = this.height;
       const squeezeFilterWidth = this.width; // Global average pooling.
-      const squeezeStridesPad = ValueDesc.StridesPad.Singleton.Ids.STRIDES_1_PAD_VALID; // So that image size could be shrinked to ( 1 * 1 )
+
+      // So that image size could be shrinked to ( 1 * 1 )
+      const squeezeStridesPad
+        = ValueDesc.StridesPad.Singleton.Ids.STRIDES_1_PAD_VALID;
+
       const squeezeFiltersArray = null;
       const squeezeBias = false;
       const squeezeBiasesArray = null;
-      const squeezeActivationId = ValueDesc.ActivationFunction.Singleton.Ids.NONE; // squeeze has no filters weights, no bias, no activation).
 
-      squeezeOut = this.clone_byDepthwise_NonPassThrough( // average pooling can not pass-through. (only convolution could do pass-through.)
-        squeezeAvgMax_Or_ChannelMultiplier, squeezeFilterHeight, squeezeFilterWidth, squeezeStridesPad,
-        squeezeFiltersArray, squeezeBias, squeezeBiasesArray, squeezeActivationId,
+      // squeeze has no filters weights, no bias, no activation.
+      const squeezeActivationId
+        = ValueDesc.ActivationFunction.Singleton.Ids.NONE;
+
+      // average pooling can not pass-through. (only convolution could do
+      // pass-through.)
+      squeezeOut = this.clone_byDepthwise_NonPassThrough(
+        squeezeAvgMax_Or_ChannelMultiplier,
+        squeezeFilterHeight, squeezeFilterWidth, squeezeStridesPad,
+        squeezeFiltersArray,
+        squeezeBias, squeezeBiasesArray, squeezeActivationId,
         parametersDesc, ...squeezeExcitationNames, "squeezeDepthwise" );
     }
 
@@ -1510,12 +1554,14 @@ class NumberImage_Base extends Recyclable.Root {
       if ( nSqueezeExcitationChannelCountDivisor <= 0 ) {
         intermediateChannelCount = 0;
       } else {
-        intermediateChannelCount = Math.ceil( this.depth / nSqueezeExcitationChannelCountDivisor );
+        intermediateChannelCount = Math.ceil(
+          this.depth / nSqueezeExcitationChannelCountDivisor );
       }
 
       if ( intermediateChannelCount > 0 ) {
 
-        // If it has no activation, it could be no bias because the next operation's (i.e. excitationPointwise) bias will achieve it.
+        // If it has no activation, it could be no bias because the next
+        // operation's (i.e. excitationPointwise) bias will achieve it.
         let bBias_intermediatePointwise;
         if ( nActivationId == ValueDesc.ActivationFunction.Singleton.Ids.NONE ) {
           bBias_intermediatePointwise = false;
@@ -1524,8 +1570,11 @@ class NumberImage_Base extends Recyclable.Root {
         }
 
         intermediateOut = squeezeOut.clone_byPointwise(
-          intermediateChannelCount, intermediateFiltersArray, bBias_intermediatePointwise, intermediateBiasesArray, nActivationId,
-          bPassThrough, aPointwise_PassThrough_FiltersArray_BiasesArray_Bag, nPassThroughStyleId,
+          intermediateChannelCount, intermediateFiltersArray,
+          bBias_intermediatePointwise, intermediateBiasesArray, nActivationId,
+          bPassThrough,
+          aPointwise_PassThrough_FiltersArray_BiasesArray_Bag,
+          nPassThroughStyleId,
           parametersDesc, ...squeezeExcitationNames, "intermediatePointwise" );
 
         if ( squeezeOut != this ) {
@@ -1541,12 +1590,18 @@ class NumberImage_Base extends Recyclable.Root {
     // 3. excitationPointwise
     let excitationOut;
     {
-      const excitationChannelCount = this.depth; // excitation output input channel count is the same as original input channel count.
+      // excitation output input channel count is the same as original input
+      // channel count.
+      const excitationChannelCount = this.depth;
       const bBias_excitationPointwise = true; // excitation always has bias.
 
       excitationOut = intermediateOut.clone_byPointwise(
-        excitationChannelCount, excitationFiltersArray, bBias_excitationPointwise, excitationBiasesArray, nActivationId,
-        bPassThrough, aPointwise_PassThrough_FiltersArray_BiasesArray_Bag, nPassThroughStyleId,
+        excitationChannelCount, excitationFiltersArray,
+        bBias_excitationPointwise, excitationBiasesArray,
+        nActivationId,
+        bPassThrough,
+        aPointwise_PassThrough_FiltersArray_BiasesArray_Bag,
+        nPassThroughStyleId,
         parametersDesc, ...squeezeExcitationNames, "excitationPointwise" );
 
       if ( intermediateOut != this ) {
@@ -1558,7 +1613,8 @@ class NumberImage_Base extends Recyclable.Root {
     // 4. multiply
     let multiplyOut;
     {
-      multiplyOut = this.clone_byMultiply( excitationOut, parametersDesc, ...squeezeExcitationNames, "multiply" );
+      multiplyOut = this.clone_byMultiply(
+        excitationOut, parametersDesc, ...squeezeExcitationNames, "multiply" );
 
       if ( excitationOut != this ) {
         excitationOut.disposeResources_and_recycleToPool();
