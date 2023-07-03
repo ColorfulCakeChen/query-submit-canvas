@@ -1778,16 +1778,25 @@ class NumberImage_Base extends Recyclable.Root {
   }
 
   /**
-   * @param {NumberImage.Base} imageIn1   The source image1 to be processed.
-   * @param {NumberImage.Base} imageIn2   The source image2 to be processed.
-   * @param {Object} parametersDesc       Its .toString() for debug message of this block.
-   * @param {string[]} concatNames        The strings for debug message of this concatenation.
+   * @param {NumberImage.Base} imageIn1
+   *   The source image1 to be processed.
+   *
+   * @param {NumberImage.Base} imageIn2
+   *   The source image2 to be processed.
+   *
+   * @param {Object} parametersDesc
+   *   Its .toString() for debug message of this block.
+   *
+   * @param {string[]} concatNames
+   *   The strings for debug message of this concatenation.
    *
    * @return {NumberImage.Base}
-   *   Return concatenated image along the axis id 2. If imageIn1 is null, return imageIn2's copy. If imageIn2 is null, return
-   * imageIn1's copy. If both imageIn1 and imageIn2 is null, return null.
+   *   Return concatenated image along the axis id 2. If imageIn1 is null,
+   * return imageIn2's copy. If imageIn2 is null, return imageIn1's copy. If
+   * both imageIn1 and imageIn2 is null, return null.
    */
-  static calcConcatAlongAxisId2( imageIn1, imageIn2, parametersDesc, ...concatNames ) {
+  static calcConcatAlongAxisId2(
+    imageIn1, imageIn2, parametersDesc, ...concatNames ) {
 
     if ( null == imageIn1 ) {
       if ( null == imageIn2 )
@@ -1804,18 +1813,23 @@ class NumberImage_Base extends Recyclable.Root {
     if ( imageIn1.height != imageIn2.height )
       throw Error( `${concatNames.join( "_" )}: `
         + `shape imageIn1.height (${imageIn1.height}) `
-        + `should match imageIn2.height (${imageIn2.height}). (${parametersDesc})` );
+        + `should match imageIn2.height (${imageIn2.height}). `
+        + `(${parametersDesc})` );
 
     if ( imageIn1.width != imageIn2.width )
       throw Error( `${concatNames.join( "_" )}: `
         + `shape imageIn1.width (${imageIn1.width}) `
-        + `should match imageIn2.width (${imageIn2.width}). (${parametersDesc})` );
+        + `should match imageIn2.width (${imageIn2.width}). `
+        + `(${parametersDesc})` );
 
-    //let imageOutLength = ( imageIn1.height * imageIn1.width * imageIn1.depth ) + ( imageIn2.height * imageIn2.width * imageIn2.depth );
+    //let imageOutLength
+    //  = ( imageIn1.height * imageIn1.width * imageIn1.depth )
+    //      + ( imageIn2.height * imageIn2.width * imageIn2.depth );
     let imageOutDepth = imageIn1.depth + imageIn2.depth;
     let imageOut = NumberImage_Base.Pool.get_or_create_by(
       imageIn1.height, imageIn1.width, imageOutDepth, undefined,
-      imageIn1.boundsArraySet.output0, imageIn2.boundsArraySet.output0, BoundsArraySet.InputsOutputs, undefined
+      imageIn1.boundsArraySet.output0, imageIn2.boundsArraySet.output0,
+      BoundsArraySet.InputsOutputs, undefined
     );
 
     // Concatenate along the image depth.
@@ -1825,13 +1839,17 @@ class NumberImage_Base extends Recyclable.Root {
       for ( let x = 0; x < imageIn1.width; ++x ) {
         let outChannel = 0;
 
-        for ( let in1Channel = 0; in1Channel < imageIn1.depth; ++in1Channel, ++outChannel ) {
+        for ( let in1Channel = 0;
+          in1Channel < imageIn1.depth; ++in1Channel, ++outChannel ) {
+
           imageOut.dataArray[ outIndex ] = imageIn1.dataArray[ in1Index ];
           ++in1Index;
           ++outIndex;
         }
 
-        for ( let in2Channel = 0; in2Channel < imageIn2.depth; ++in2Channel, ++outChannel ) {
+        for ( let in2Channel = 0;
+          in2Channel < imageIn2.depth; ++in2Channel, ++outChannel ) {
+
           imageOut.dataArray[ outIndex ] = imageIn2.dataArray[ in2Index ];
           ++in2Index;
           ++outIndex;
