@@ -1632,10 +1632,14 @@ class NumberImage_Base extends Recyclable.Root {
    *   - Only ( outputGroupCount == 2 ) is supported.
    *   - The channel count must be even (i.e. divisible by 2).
    *
-   * @param {NumberImage.Base} this  The source image to be processed.
+   * @param {NumberImage.Base} this
+   *   The source image to be processed.
    *
-   * @param {Object}   parametersDesc   Its .toString() for debug message of this block.
-   * @param {string[]} interleaveNames  The strings for debug message of this interleaving.
+   * @param {Object} parametersDesc
+   *   Its .toString() for debug message of this block.
+   *
+   * @param {string[]} interleaveNames
+   *   The strings for debug message of this interleaving.
    *
    * @return {NumberImage.Base}
    *   Return this object which has been modifed in place.
@@ -1644,7 +1648,8 @@ class NumberImage_Base extends Recyclable.Root {
 
     // Shuffle dataArray
     {
-      let dataArrayShuffled = Recyclable.Array.Pool.get_or_create_by( this.dataArray.length );
+      let dataArrayShuffled = Recyclable.Array.Pool.get_or_create_by(
+        this.dataArray.length );
 
       FloatValue.ArrayInterleaver.interleave_asGrouptTwo_alongLastAxis_from_to(
         this.dataArray, dataArrayShuffled,
@@ -1663,18 +1668,26 @@ class NumberImage_Base extends Recyclable.Root {
   }
 
   /**
-   * Split image along the axis id 2 (i.e. depth) into imageOutArray as [ imageOut1, imageOut2 ]. If imageIn is null,
-   * return [ null, null ].
+   * Split image along the axis id 2 (i.e. depth) into imageOutArray as
+   * [ imageOut1, imageOut2 ]. If imageIn is null, return [ null, null ].
    *
-   * @param {NumberImage.Base} imageIn  The source image to be processed.
+   * @param {NumberImage.Base} imageIn
+   *   The source image to be processed.
    *
-   * @param {NumberImage.Base} imageOutArray[ 0 ]   The first output image.
-   * @param {NumberImage.Base} imageOutArray[ 1 ]   The second output image.
+   * @param {NumberImage.Base} imageOutArray[ 0 ]
+   *   The first output image.
    *
-   * @param {Object}   parametersDesc  Its .toString() for debug message of this block.
-   * @param {string[]} splitNames      The strings for debug message of this splitting.
+   * @param {NumberImage.Base} imageOutArray[ 1 ]
+   *   The second output image.
+   *
+   * @param {Object} parametersDesc
+   *   Its .toString() for debug message of this block.
+   *
+   * @param {string[]} splitNames
+   *   The strings for debug message of this splitting.
    */
-  static calcSplitAlongAxisId2( imageIn, imageOutArray, parametersDesc, ...splitNames ) {
+  static calcSplitAlongAxisId2(
+    imageIn, imageOutArray, parametersDesc, ...splitNames ) {
 
     imageOutArray.length = 2;
     imageOutArray[ 0 ] = null;
@@ -1684,24 +1697,34 @@ class NumberImage_Base extends Recyclable.Root {
       return;
 
     // Split value bounds array.
-    let rScaleBoundsArray_lowerHalf = ActivationEscaping.ScaleBoundsArray.Pool.get_or_create_by( 0 );
-    let rScaleBoundsArray_higherHalf = ActivationEscaping.ScaleBoundsArray.Pool.get_or_create_by( 0 );
-    imageIn.boundsArraySet.output0.split_to_lowerHalf_higherHalf( rScaleBoundsArray_lowerHalf, rScaleBoundsArray_higherHalf );
+    let rScaleBoundsArray_lowerHalf
+      = ActivationEscaping.ScaleBoundsArray.Pool.get_or_create_by( 0 );
+
+    let rScaleBoundsArray_higherHalf
+      = ActivationEscaping.ScaleBoundsArray.Pool.get_or_create_by( 0 );
+
+    imageIn.boundsArraySet.output0.split_to_lowerHalf_higherHalf(
+      rScaleBoundsArray_lowerHalf, rScaleBoundsArray_higherHalf );
 
     // If not divided by 2, let lower half have one more.
     let imageOutDepth_lowerHalf = rScaleBoundsArray_lowerHalf.length;
     let imageOutDepth_higherHalf = rScaleBoundsArray_higherHalf.length;
 
-    let imageOutLength_lowerHalf = ( imageIn.height * imageIn.width * imageOutDepth_lowerHalf );
-    let imageOutLength_higherHalf = ( imageIn.height * imageIn.width * imageOutDepth_higherHalf );
+    let imageOutLength_lowerHalf = (
+      imageIn.height * imageIn.width * imageOutDepth_lowerHalf );
+
+    let imageOutLength_higherHalf = (
+      imageIn.height * imageIn.width * imageOutDepth_higherHalf );
 
     imageOutArray[ 0 ] = NumberImage_Base.Pool.get_or_create_by(
       imageIn.height, imageIn.width, imageOutDepth_lowerHalf, undefined,
-      imageIn.boundsArraySet.output0, undefined, BoundsArraySet.InputsOutputs, undefined );
+      imageIn.boundsArraySet.output0, undefined,
+      BoundsArraySet.InputsOutputs, undefined );
 
     imageOutArray[ 1 ] = NumberImage_Base.Pool.get_or_create_by(
       imageIn.height, imageIn.width, imageOutDepth_higherHalf, undefined,
-      imageIn.boundsArraySet.output0, undefined, BoundsArraySet.InputsOutputs, undefined );
+      imageIn.boundsArraySet.output0, undefined,
+      BoundsArraySet.InputsOutputs, undefined );
 
     let imageOut0 = imageOutArray[ 0 ];
     let imageOut1 = imageOutArray[ 1 ];
@@ -1713,14 +1736,22 @@ class NumberImage_Base extends Recyclable.Root {
       for ( let x = 0; x < imageIn.width; ++x ) {
         let inChannel = 0;
 
-        for ( let outChannel = 0; outChannel < imageOutDepth_lowerHalf; ++outChannel, ++inChannel ) {
-          imageOut0.dataArray[ outIndex_lowerHalf ] = imageIn.dataArray[ inIndex ];
+        for ( let outChannel = 0;
+          outChannel < imageOutDepth_lowerHalf; ++outChannel, ++inChannel ) {
+
+          imageOut0.dataArray[ outIndex_lowerHalf ]
+            = imageIn.dataArray[ inIndex ];
+
           ++inIndex;
           ++outIndex_lowerHalf;
         }
 
-        for ( let outChannel = 0; outChannel < imageOutDepth_higherHalf; ++outChannel, ++inChannel ) {
-          imageOut1.dataArray[ outIndex_higherHalf ] = imageIn.dataArray[ inIndex ];
+        for ( let outChannel = 0;
+          outChannel < imageOutDepth_higherHalf; ++outChannel, ++inChannel ) {
+
+          imageOut1.dataArray[ outIndex_higherHalf ]
+            = imageIn.dataArray[ inIndex ];
+
           ++inIndex;
           ++outIndex_higherHalf;
         }
@@ -1729,8 +1760,10 @@ class NumberImage_Base extends Recyclable.Root {
     }
 
     // Setup value bounds array.
-    imageOut0.boundsArraySet.set_outputs_all_byScaleBoundsArray( rScaleBoundsArray_lowerHalf );
-    imageOut1.boundsArraySet.set_outputs_all_byScaleBoundsArray( rScaleBoundsArray_higherHalf );
+    imageOut0.boundsArraySet.set_outputs_all_byScaleBoundsArray(
+      rScaleBoundsArray_lowerHalf );
+    imageOut1.boundsArraySet.set_outputs_all_byScaleBoundsArray(
+      rScaleBoundsArray_higherHalf );
 
     {
       rScaleBoundsArray_lowerHalf.disposeResources_and_recycleToPool();
