@@ -1866,22 +1866,33 @@ class NumberImage_Base extends Recyclable.Root {
 
   /**
    *
-   * @param {NumberImage.Base} imageInArray[ 0 ]   The first input image to be processed.
-   * @param {NumberImage.Base} imageInArray[ 1 ]   The second input image to be processed.
+   * @param {NumberImage.Base} imageInArray[ 0 ]
+   *   The first input image to be processed.
    *
-   * @param {NumberImage.Base} imageOutArray[ 0 ]   The first output image.
-   * @param {NumberImage.Base} imageOutArray[ 1 ]   The second output image.
+   * @param {NumberImage.Base} imageInArray[ 1 ]
+   *   The second input image to be processed.
+   *
+   * @param {NumberImage.Base} imageOutArray[ 0 ]
+   *   The first output image.
+   *
+   * @param {NumberImage.Base} imageOutArray[ 1 ]
+   *   The second output image.
    *
    * @param {boolean} bShuffle
    *   Whether shuffle channels (after concatenating before splitting).
    *
    * @param {boolean} bSplit
    *   Whether split channels (after shuffleing).
-   *     - If false, channels will not be splitted. The result will be placed in imageOutArray[ 0 ] and imageOutArray[ 1 ] will be null.
-   *     - If true, channels will be splitted into imageOutArray[ 0 ] and imageOutArray[ 1 ].
+   *     - If false, channels will not be splitted. The result will be placed
+   *         in imageOutArray[ 0 ] and imageOutArray[ 1 ] will be null.
+   *     - If true, channels will be splitted into imageOutArray[ 0 ] and
+   *         imageOutArray[ 1 ].
    *
-   * @param {Object}   parametersDesc           Its .toString() for debug message of this block.
-   * @param {string[]} concatShuffleSplitNames  The strings for debug message of this concatenation-shuffle-split.
+   * @param {Object} parametersDesc
+   *   Its .toString() for debug message of this block.
+   *
+   * @param {string[]} concatShuffleSplitNames
+   *   The strings for debug message of this concatenation-shuffle-split.
    */
   static calcConcatShuffleSplit(
     imageInArray, imageOutArray, bShuffle, bSplit,
@@ -1893,21 +1904,25 @@ class NumberImage_Base extends Recyclable.Root {
         + `(${parametersDesc})`
       );
 
-    // Note: Although different depth is wierd, it might still work. So, allow it.
+    // Note: Although different depth is wierd, it might still work. So, allow
+    //       it.
     if (   ( imageInArray[ 0 ].height != imageInArray[ 1 ].height )
          || ( imageInArray[ 0 ].width !=  imageInArray[ 1 ].width )
          //|| ( imageInArray[ 0 ].depth !=  imageInArray[ 1 ].depth )
        )
       throw Error( `${concatShuffleSplitNames.join( "_" )}: `
         + `The first input image's shape ( height, width, depth ) = `
-        + `( ${imageInArray[ 0 ].height}, ${imageInArray[ 0 ].width}, ${imageInArray[ 0 ].depth} ) `
+        + `( ${imageInArray[ 0 ].height}, ${imageInArray[ 0 ].width}, `
+          + `${imageInArray[ 0 ].depth} ) `
         + `should be the same as the second input image's shape `
-        + `( ${imageInArray[ 1 ].height}, ${imageInArray[ 1 ].width}, ${imageInArray[ 1 ].depth} ). `
+        + `( ${imageInArray[ 1 ].height}, ${imageInArray[ 1 ].width}, `
+          + `${imageInArray[ 1 ].depth} ). `
         + `(${parametersDesc})`
       );
 
     // 1.
-    let concatResult = NumberImage_Base.calcConcatAlongAxisId2( imageInArray[ 0 ], imageInArray[ 1 ],
+    let concatResult = NumberImage_Base.calcConcatAlongAxisId2(
+      imageInArray[ 0 ], imageInArray[ 1 ],
       parametersDesc, "concatShuffleSplitName", "concat" );
 
     // 2.
