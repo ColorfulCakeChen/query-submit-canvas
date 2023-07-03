@@ -300,10 +300,13 @@ class Block_Reference_Base extends Recyclable.Root {
     this.imageInArray_Fake = Recyclable.Array.Pool.get_or_create_by( 2 );
 
 //!!! (2022/08/05 Temp Remarked) For debug floating-point accumulated error
-    this.asserter_Equal = TensorTools.Asserter_Equal.Pool.get_or_create_by( 0.4, 0.1 ); //2 ); //0.005 );
-    //this.asserter_Equal = TensorTools.Asserter_Equal.Pool.get_or_create_by( 0.01, 0.005 ); //2 ); //0.005 );
+    this.asserter_Equal
+      = TensorTools.Asserter_Equal.Pool.get_or_create_by( 0.4, 0.1 ); //2 ); //0.005 );
+    //this.asserter_Equal
+    //  = TensorTools.Asserter_Equal.Pool.get_or_create_by( 0.01, 0.005 ); //2 ); //0.005 );
 
-    this.imageNeedDisposeUniqueStack = Recyclable.OwnerUniqueStack.Pool.get_or_create_by();
+    this.imageNeedDisposeUniqueStack
+      = Recyclable.OwnerUniqueStack.Pool.get_or_create_by();
   }
 
   /** @override */
@@ -333,10 +336,12 @@ class Block_Reference_Base extends Recyclable.Root {
    *   The provider of image and tensor of variable specification for testing.
    *
    * @param {Block_TestParams.Base} testParams
-   *   The test parameters. It is the value of Block_TestParams.Base.ParamsGenerator()'s result.
+   *   The test parameters. It is the value of
+   * Block_TestParams.Base.ParamsGenerator()'s result.
    *
    * @param {ChannelShuffler.Bag} channelShufflerBag
-   *   The channelShufflers provider. It must be initialized with ChannelShuffler.ConcatPointwiseConv as parameter channelShufflerClass.
+   *   The channelShufflers provider. It must be initialized with
+   * ChannelShuffler.ConcatPointwiseConv as parameter channelShufflerClass.
    *
    *     - It is only used when:
    *         - ( nConvBlockTypeId == ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_HEAD (2) )
@@ -350,19 +355,22 @@ class Block_Reference_Base extends Recyclable.Root {
 //!!! (2022/06/10 Remarked) Moved to outter jsPerf_Block to also catch testParamsGenerator's exception.
 //    try {
     {
-      this.testCorrectnessInfo.prepareBy( imageSourceBag, testParams, channelShufflerBag );
+      this.testCorrectnessInfo.prepareBy(
+        imageSourceBag, testParams, channelShufflerBag );
 
 //!!! (2022/07/05 Temp Remarked) For debug whether memory leak.
 //       if (   ( testParams.nConvBlockTypeId__is__SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD() ) // (5)
 //           || ( testParams.nConvBlockTypeId__is__SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY_or_TAIL() ) // (6 or 7)
 //          ) {
-//         // Because these conv-block-type will generate pass-through filters, Pool.All.issuedCount will not be the same.
-//         // So here does not check that.
+//         // Because these conv-block-type will generate pass-through filters,
+//         // Pool.All.issuedCount will not be the same. So here does not check
+//         // that.
 //         Block_Reference_Base.testCorrectness_internal.call( this );
 //
 //       } else
       {
-        Pool.Asserter.assert_Pool_issuedCount_same_after_as_before( "Block_Reference.Base.testCorrectness_internal()",
+        Pool.Asserter.assert_Pool_issuedCount_same_after_as_before(
+          "Block_Reference.Base.testCorrectness_internal()",
           Block_Reference_Base.testCorrectness_internal, this );
       }
 
@@ -393,29 +401,35 @@ class Block_Reference_Base extends Recyclable.Root {
     } = this.testCorrectnessInfo;
 
     {
-      this.calcResult( imageInArraySelected, imageOutReferenceArray ); // Output is an array with two elements.
+      // Output is an array with two elements.
+      this.calcResult( imageInArraySelected, imageOutReferenceArray );
 
       //!!! (2022/07/05 Temp Added) For debug whether memory leak.
       // When     ( testParams.nConvBlockTypeId__is__SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD() ) // (5)
       //       || ( testParams.nConvBlockTypeId__is__SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY_or_TAIL() ) // (6 or 7)
       {
-        testParams.Depthwise_PassThrough_FiltersArray_BiasesArray_Bag.disposeResources();
-        testParams.Pointwise_PassThrough_FiltersArray_BiasesArray_Bag.disposeResources();
+        testParams.Depthwise_PassThrough_FiltersArray_BiasesArray_Bag
+          .disposeResources();
+        testParams.Pointwise_PassThrough_FiltersArray_BiasesArray_Bag
+          .disposeResources();
       }
 
       if ( imageOutReferenceArray.length != 2 )
-        throw Error(
-          `Block_Reference.testCorrectness(): imageOutReferenceArray.length ( ${imageOutReferenceArray.length} ) should be 2. `
+        throw Error( `Block_Reference.testCorrectness(): `
+          + `imageOutReferenceArray.length `
+          + `( ${imageOutReferenceArray.length} ) should be 2. `
           + `( ${testParams} )`
         );
     }
 
-    Pool.Asserter.assert_Pool_issuedCount_same_after_as_before( "Block_Reference.Base.block_create_apply_internal()",
+    Pool.Asserter.assert_Pool_issuedCount_same_after_as_before(
+      "Block_Reference.Base.block_create_apply_internal()",
       Block_Reference_Base.block_create_apply_internal, this );
 
     tf.dispose( outputTensor3dArray );
 
-    for ( let i = 0; i < imageOutReferenceArray.length; ++i ) { // Release output reference images.
+    // Release output reference images.
+    for ( let i = 0; i < imageOutReferenceArray.length; ++i ) {
       if ( imageOutReferenceArray[ i ] ) {
         imageOutReferenceArray[ i ].disposeResources_and_recycleToPool();
         imageOutReferenceArray[ i ] = null;
