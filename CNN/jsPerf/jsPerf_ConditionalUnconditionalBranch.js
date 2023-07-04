@@ -207,7 +207,8 @@ class TestSet {
     }
   }
 
-  // Testing whether the results of different implementation are the same. Also, pre-compile the codes.
+  // Testing whether the results of different implementation are the same.
+  // Also, pre-compile the codes.
   async testCaseLoader() {
     this.test_ConditionalBranch();
     this.test_UnconditionalBranch();
