@@ -278,7 +278,7 @@ class TestCase {
         { cause: e } );
     }
 
-    // undefined is also not acceptable.
+    // Note: undefined is also not acceptable.
     if ( neuralOrchestra.alignmentMarkValueArrayArray_setOk != true )
       throw Error( `NeuralOrchestra_tester.TestCase`
         + `.${funcNameInMessage}(): testId=${this.testId}, `
@@ -345,7 +345,7 @@ class TestCase {
         { cause: e } );
     }
 
-    // undefined is also not acceptable.
+    // Note: undefined is also not acceptable.
     if ( neuralOrchestra.alignmentMarkValueArrayArray_swapOk != true )
       throw Error( `NeuralOrchestra_tester.TestCase`
         + `.${funcNameInMessage}(): testId=${this.testId}, `
@@ -432,7 +432,7 @@ class TestCase {
           { cause: e } );
       }
 
-      // undefined is also not acceptable.
+      // Note: undefined is also not acceptable.
       if ( neuralOrchestra.TypedArray_processOk != true )
         throw Error( `NeuralOrchestra_tester.TestCase`
           + `.${funcNameInMessage}(): testId=${this.testId}, `
@@ -753,14 +753,14 @@ class TestCase {
       throw Error( `NeuralOrchestra: testId=${this.testId}. ${e}`, { cause: e } );
     }
 
-    // undefined is also not acceptable.
+    // Note: undefined is also not acceptable.
     if ( neuralOrchestra.versus_loadOk != true )
       throw Error( `NeuralOrchestra_tester.TestCase`
         + `.${funcNameInMessage}(): testId=${this.testId}, `
         + `neuralOrchestra.versus_loadOk ( ${neuralOrchestra.versus_loadOk} ) `
         + `should be true.` );
 
-    if ( versus_loadOk != true ) // undefined is also not acceptable.
+    if ( versus_loadOk != true ) // Note: undefined is also not acceptable.
       throw Error( `NeuralOrchestra_tester.TestCase`
         + `.${funcNameInMessage}(): testId=${this.testId}, `
         + `versus_loadOk ( ${versus_loadOk} ) should be true.` );
@@ -1024,14 +1024,14 @@ class TestCase {
         { cause: e } );
     }
 
-    // undefined is also not acceptable.
+    // Note: undefined is also not acceptable.
     if ( neuralOrchestra.initOk != true )
       throw Error( `NeuralOrchestra_tester.TestCase`
         + `.${funcNameInMessage}(): testId=${this.testId}, `
         + `neuralOrchestra.initOk ( ${neuralOrchestra.initOk} ) `
         + `should be true.` );
 
-    // undefined is also not acceptable.
+    // Note: undefined is also not acceptable.
     if ( neuralOrchestra.workerProxies_initOk != true )
       throw Error( `NeuralOrchestra_tester.TestCase`
         + `.${funcNameInMessage}(): testId=${this.testId}, `
