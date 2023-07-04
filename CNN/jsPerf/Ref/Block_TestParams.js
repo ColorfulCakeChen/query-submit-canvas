@@ -243,17 +243,23 @@ class Block_TestParams_Base extends TestParams.Base {
       if ( this.out.inferencedParams.bDepthwiseRequestedAndNeeded ) {
 
         // For depthwise1/depthwis2.
-        if ( ( this.out.depthwiseFilterHeight == 1 ) || ( this.out.depthwiseFilterWidth == 1 ) )
+        if (   ( this.out.depthwiseFilterHeight == 1 )
+            || ( this.out.depthwiseFilterWidth == 1 ) )
           return false;
 
-        let pointwise2_inputHeight = this.out.inferencedParams.depthwisePadInfo.outputHeight;
-        let pointwise2_inputWidth = this.out.inferencedParams.depthwisePadInfo.outputWidth;
+        let pointwise2_inputHeight
+          = this.out.inferencedParams.depthwisePadInfo.outputHeight;
+        let pointwise2_inputWidth
+          = this.out.inferencedParams.depthwisePadInfo.outputWidth;
 
         // For squeeze-and-excitation.
         //
-        // (squeeze is an average pooling. Its filter width is the same as inputWidth (i.e. pointwise2_inputWidth).)
-        if (   ( ( pointwise2_inputHeight == 1 ) || ( pointwise2_inputWidth == 1 ) )
-            && ( ValueDesc.SqueezeExcitationChannelCountDivisor.hasSqueeze( this.out.nSqueezeExcitationChannelCountDivisor ) )
+        // (squeeze is an average pooling. Its filter width is the same as
+        // inputWidth (i.e. pointwise2_inputWidth).)
+        if (   (   ( pointwise2_inputHeight == 1 )
+                || ( pointwise2_inputWidth == 1 ) )
+            && ( ValueDesc.SqueezeExcitationChannelCountDivisor.hasSqueeze(
+                   this.out.nSqueezeExcitationChannelCountDivisor ) )
            )
           return false;
       }
@@ -267,9 +273,11 @@ class Block_TestParams_Base extends TestParams.Base {
    */
   onYield_before() {
     // For testing not start at the offset 0.
-    let weightElementOffsetBegin = RandTools.getRandomIntInclusive( 0, 3 ); // Skip a random un-used element count.
+    // Skip a random un-used element count.
+    let weightElementOffsetBegin = RandTools.getRandomIntInclusive( 0, 3 );
 
-    this.set_byParamsNumberArrayObject_ParamsOut( weightElementOffsetBegin, true );
+    this.set_byParamsNumberArrayObject_ParamsOut(
+      weightElementOffsetBegin, true );
   }
 
   /**
@@ -283,7 +291,8 @@ class Block_TestParams_Base extends TestParams.Base {
    *
    *
    * @yield {Base}
-   *   Yield this object itself. The returned object (it is this object itself) should not be modified because it will be re-used.
+   *   Yield this object itself. The returned object (it is this object itself)
+   * should not be modified because it will be re-used.
    */
   * ParamsGenerator() {
 
@@ -291,7 +300,8 @@ class Block_TestParams_Base extends TestParams.Base {
     //let depthwiseFilterMaxSize = 5;
     let depthwiseFilterMaxSize = 3;
 
-    // Restrict some parameter's large kinds. Otherwise, too many combination will be generated.
+    // Restrict some parameter's large kinds. Otherwise, too many combination
+    // will be generated.
     let valueOutMinMax = this.valueOutMinMax = {
       input0_height: [ 3, 3 ],
       // input0_height: [ 2, 2 ],
@@ -348,7 +358,9 @@ class Block_TestParams_Base extends TestParams.Base {
       //   0
       // ],
 
-      // (2021/10/06) Note: WASM seems not correct when tf.pool() or tf.depthwiseConv2d() with ( depthwiseFilterWidth == 1 ).
+      // (2021/10/06)
+      // Note: WASM seems not correct when tf.pool() or
+      //       tf.depthwiseConv2d() with ( depthwiseFilterWidth == 1 ).
 //!!! (2022/08/04 Temp Remarked) For debug neural net (only use 3x3).
       depthwiseFilterHeight: [
         Block.Params.depthwiseFilterHeight.valueDesc.range.min,
@@ -361,10 +373,12 @@ class Block_TestParams_Base extends TestParams.Base {
       // depthwiseFilterHeight: [ 3, 3 ],
       // depthwiseFilterWidth: [ 2, 2 ],
 
-      // (2022/05/02) Note: The right-most pixel of depthwise convolution seems wrong
-      // when ( strides = 1, pad = "same" ) in backend WebGL of some platforms
-      // (e.g. mobile phone Moto e40). But the issue does not exist when
-      // ( strides = 2, pad = "same" ) or ( pad = "valid" ) in those platforms.
+      // (2022/05/02)
+      // Note: The right-most pixel of depthwise convolution seems wrong
+      //       when ( strides = 1, pad = "same" ) in backend WebGL of some
+      //       platforms (e.g. mobile phone Moto e40). But the issue does not
+      //       exist when ( strides = 2, pad = "same" ) or ( pad = "valid" ) in
+      //       those platforms.
       //
 //      depthwiseStridesPad: undefined,
 //!!! (2022/05/01 Temp Remarked) For debug (mobile phone).
@@ -385,14 +399,21 @@ class Block_TestParams_Base extends TestParams.Base {
 
       depthwiseActivationId:
         // undefined,
-        [ ValueDesc.ActivationFunction.Singleton.range.min + 0, ValueDesc.ActivationFunction.Singleton.range.min + 1 ],
-        // [ ValueDesc.ActivationFunction.Singleton.range.min + 0, ValueDesc.ActivationFunction.Singleton.range.min + 0 ],
-        // [ ValueDesc.ActivationFunction.Singleton.range.min + 1, ValueDesc.ActivationFunction.Singleton.range.min + 1 ],
+        [ ValueDesc.ActivationFunction.Singleton.range.min + 0,
+          ValueDesc.ActivationFunction.Singleton.range.min + 1 ],
+        // [ ValueDesc.ActivationFunction.Singleton.range.min + 0,
+        //   ValueDesc.ActivationFunction.Singleton.range.min + 0 ],
+        // [ ValueDesc.ActivationFunction.Singleton.range.min + 1,
+        //   ValueDesc.ActivationFunction.Singleton.range.min + 1 ],
 
-      // bSqueezeExcitationPrefix: undefined,
-      bSqueezeExcitationPrefix: [ ValueDesc.Bool.Singleton.range.min, ValueDesc.Bool.Singleton.range.max ],
-      // bSqueezeExcitationPrefix: [ ValueDesc.Bool.Singleton.range.min, ValueDesc.Bool.Singleton.range.min ],
-      // bSqueezeExcitationPrefix: [ ValueDesc.Bool.Singleton.range.max, ValueDesc.Bool.Singleton.range.max ],
+      bSqueezeExcitationPrefix:
+        // undefined,
+        [ ValueDesc.Bool.Singleton.range.min,
+           ValueDesc.Bool.Singleton.range.max ],
+        // [ ValueDesc.Bool.Singleton.range.min,
+        //   ValueDesc.Bool.Singleton.range.min ],
+        // [ ValueDesc.Bool.Singleton.range.max,
+        //   ValueDesc.Bool.Singleton.range.max ],
 
       // nSqueezeExcitationChannelCountDivisor: undefined,
       nSqueezeExcitationChannelCountDivisor: [
@@ -406,26 +427,36 @@ class Block_TestParams_Base extends TestParams.Base {
 
       pointwise20ActivationId:
         // undefined,
-        [ ValueDesc.ActivationFunction.Singleton.range.min + 0, ValueDesc.ActivationFunction.Singleton.range.min + 1 ],
-        // [ ValueDesc.ActivationFunction.Singleton.range.min + 0, ValueDesc.ActivationFunction.Singleton.range.min + 0 ],
-        // [ ValueDesc.ActivationFunction.Singleton.range.min + 1, ValueDesc.ActivationFunction.Singleton.range.min + 1 ],
+        [ ValueDesc.ActivationFunction.Singleton.range.min + 0,
+          ValueDesc.ActivationFunction.Singleton.range.min + 1 ],
+        // [ ValueDesc.ActivationFunction.Singleton.range.min + 0,
+        //   ValueDesc.ActivationFunction.Singleton.range.min + 0 ],
+        // [ ValueDesc.ActivationFunction.Singleton.range.min + 1,
+        //   ValueDesc.ActivationFunction.Singleton.range.min + 1 ],
 
-      // Because the logic of bias and activation function is simpler than other, it could be just randomly tested once
-      // (i.e. ( undefined )) for speeding up testing.
+      // Because the logic of bias and activation function is simpler than
+      // other, it could be just randomly tested once (i.e. ( undefined )) for
+      // speeding up testing.
  
       nActivationId:
         // undefined,
-        [ ValueDesc.ActivationFunction.Singleton.range.min + 0, ValueDesc.ActivationFunction.Singleton.range.min + 1 ],
-        // [ ValueDesc.ActivationFunction.Singleton.range.min + 0, ValueDesc.ActivationFunction.Singleton.range.min + 0 ],
-        // [ ValueDesc.ActivationFunction.Singleton.range.min + 1, ValueDesc.ActivationFunction.Singleton.range.min + 1 ],
+        [ ValueDesc.ActivationFunction.Singleton.range.min + 0,
+          ValueDesc.ActivationFunction.Singleton.range.min + 1 ],
+        // [ ValueDesc.ActivationFunction.Singleton.range.min + 0,
+        //   ValueDesc.ActivationFunction.Singleton.range.min + 0 ],
+        // [ ValueDesc.ActivationFunction.Singleton.range.min + 1,
+        //   ValueDesc.ActivationFunction.Singleton.range.min + 1 ],
 
-      bKeepInputTensor: undefined,
-//      bKeepInputTensor: [ ValueDesc.Bool.Singleton.range.min, ValueDesc.Bool.Singleton.range.max ],
+      bKeepInputTensor:
+        undefined,
+        // [ ValueDesc.Bool.Singleton.range.min,
+        //   ValueDesc.Bool.Singleton.range.max ],
     };
 
     // All the parameters to be tried.
     //
-    // Note: The order of these element could be adjusted to change testing order. The last element will be tested (changed) first.
+    // Note: The order of these element could be adjusted to change testing
+    //       order. The last element will be tested (changed) first.
     let paramDescConfigArray = [
 
       new TestParams.ParamDescConfig( Block.Params.input0_height,           valueOutMinMax.input0_height ),
