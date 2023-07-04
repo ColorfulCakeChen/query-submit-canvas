@@ -1377,18 +1377,22 @@ class Block_TestParams_Base extends TestParams.Base {
 
     let io_paramsNumberArrayObject = this.in.paramsNumberArrayObject;
 
-    let infoConvBlockType = ValueDesc.ConvBlockType.Singleton.getInfo_byId( paramsAll.nConvBlockTypeId );
+    let infoConvBlockType = ValueDesc.ConvBlockType.Singleton.getInfo_byId(
+      paramsAll.nConvBlockTypeId );
 
 
-    // The following two (ValueDesc.ConvBlockType.Singleton.Ids.Xxx) use similar calculation logic:
+    // The following two (ValueDesc.ConvBlockType.Singleton.Ids.Xxx) use
+    // similar calculation logic:
     //    SHUFFLE_NET_V2_HEAD                    // (2) (ShuffleNetV2's head)
     //    SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD   // (5) (ShuffleNetV2_ByMobileNetV1's head)
     //
-    // The following two (ValueDesc.ConvBlockType.Singleton.Ids.Xxx) use similar calculation logic:
+    // The following two (ValueDesc.ConvBlockType.Singleton.Ids.Xxx) use
+    // similar calculation logic:
     //    SHUFFLE_NET_V2_BODY                    // (3) (ShuffleNetV2's body)
     //    SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY   // (6) (ShuffleNetV2_ByMobileNetV1's body)
     //
-    // The following two (ValueDesc.ConvBlockType.Singleton.Ids.Xxx) use similar calculation logic:
+    // The following two (ValueDesc.ConvBlockType.Singleton.Ids.Xxx) use
+    // similar calculation logic:
     //    SHUFFLE_NET_V2_TAIL                    // (4) (ShuffleNetV2's tail)
     //    SHUFFLE_NET_V2_BY_MOBILE_NET_V1_TAIL   // (7) (ShuffleNetV2_ByMobileNetV1's tail)
 
@@ -1402,28 +1406,35 @@ class Block_TestParams_Base extends TestParams.Base {
     let pointwise1ChannelCount_for_generating = pointwise1ChannelCount_original;
     let pointwise20ChannelCount_for_generating = pointwise20ChannelCount_original;
 
-    // 0.1 For avoiding channel count can not be divisible by 2 when auto generating testing.
+    // 0.1 For avoiding channel count can not be divisible by 2 when auto
+    //     generating testing.
     if ( bDouble_when_ShuffleNetV2_byMobileNetV1 ) {
 
       // In ShuffleNetV2_ByMobileNetV1's head:
       //   - pointwise20ChannelCount.
-      //     - Double it in paramsAll and io_paramsNumberArrayObject (if existed).
-      //   - Use original the above parameters twice to generate filters and biases weights.
+      //     - Double it in paramsAll and io_paramsNumberArrayObject (if
+      //         existed).
+      //   - Use original the above parameters twice to generate filters and
+      //       biases weights.
       //     - pointwise20 and pointwise202
       //
-      // The reason is that Block will only extract filters and biases weights of the above parameters twice in this case.
+      // The reason is that Block will only extract filters and biases weights
+      // of the above parameters twice in this case.
       //
       if ( this.nConvBlockTypeId__is__SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD() ) { // (5)
         this.doubleParamValue( Block.Params.pointwise20ChannelCount );
 
       // In ShuffleNetV2_ByMobileNetV1's body/tail:
       //   - input0_channelCount, pointwise20ChannelCount.
-      //     - Double them in paramsAll and io_paramsNumberArrayObject (if existed).
+      //     - Double them in paramsAll and io_paramsNumberArrayObject (if
+      //         existed).
       //   -  pointwise1ChannelCount.
-      //     - Adjust it in paramsAll and io_paramsNumberArrayObject (if existed).
+      //     - Adjust it in paramsAll and io_paramsNumberArrayObject (if
+      //         existed).
       //   - But use original the above parameters to generate filters weights.
       //
-      // The reason is that Block will only extract filters weights of half the above parameters in this case.
+      // The reason is that Block will only extract filters weights of half the
+      // above parameters in this case.
       //
       } else if ( this.nConvBlockTypeId__is__SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY_or_TAIL() ) { // (6 or 7)
         this.doubleParamValue( Block.Params.input0_channelCount );
