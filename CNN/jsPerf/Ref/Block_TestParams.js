@@ -1081,12 +1081,15 @@ class Block_TestParams_Base extends TestParams.Base {
    * @param {Object[]} propertyNames[ i ].Intermediate.Biases
    * @param {Object[]} propertyNames[ i ].Excitation.Filters
    * @param {Object[]} propertyNames[ i ].Excitation.Biases
-   *   The property names of the result object. It should have three object propertyNames[ 0 ], propertyNames[ 1 ], propertyNames[ 2 ].
+   *   The property names of the result object. It should have three object
+   * propertyNames[ 0 ], propertyNames[ 1 ], propertyNames[ 2 ].
    *
    * @param {object} io_numberArrayObject
-   *   The object will be filled in result data. Every result number array will be set as a property of the object. At most,
-   * four properties may be set: "xxxSEIntermediateFilters", "xxxSEIntermediateBiases", "xxxSEExcitationFilters",
-   * "xxxSEExcitationBiases". The "xxx" is the propertyNamePrefix.
+   *   The object will be filled in result data. Every result number array will
+   * be set as a property of the object. At most, four properties may be set:
+   * "xxxSEIntermediateFilters", "xxxSEIntermediateBiases",
+   * "xxxSEExcitationFilters", "xxxSEExcitationBiases". The "xxx" is the
+   * propertyNamePrefix.
    *
    * @return {undefined}
    *   Does not return anything.
@@ -1112,9 +1115,10 @@ class Block_TestParams_Base extends TestParams.Base {
             bSqueeze = true; bIntermediate = false; bExcitation = true; break;
 
           default:
-            throw Error(
-              `Block_TestParams.Base.generate_squeezeExcitation_filters_biases(): `
-                + `unknown nSqueezeExcitationChannelCountDivisor ( ${nSqueezeExcitationChannelCountDivisor} ) value.` );
+            throw Error( `Block_TestParams.Base`
+              + `.generate_squeezeExcitation_filters_biases(): `
+              + `unknown nSqueezeExcitationChannelCountDivisor `
+              + `( ${nSqueezeExcitationChannelCountDivisor} ) value.` );
             break;
         }
       } else {
@@ -1145,12 +1149,16 @@ class Block_TestParams_Base extends TestParams.Base {
     let intermediate_bBias;
     {
       if ( bIntermediate ) {
-        intermediate_outputChannelCount_A = Math.ceil( intermediate_inputChannelCount_A / nSqueezeExcitationChannelCountDivisor );
-        intermediate_outputChannelCount_B = Math.ceil( intermediate_inputChannelCount_B / nSqueezeExcitationChannelCountDivisor );
-        intermediate_outputChannelCount_C = Math.ceil( intermediate_inputChannelCount_C / nSqueezeExcitationChannelCountDivisor );
+        intermediate_outputChannelCount_A = Math.ceil(
+          intermediate_inputChannelCount_A / nSqueezeExcitationChannelCountDivisor );
+        intermediate_outputChannelCount_B = Math.ceil(
+          intermediate_inputChannelCount_B / nSqueezeExcitationChannelCountDivisor );
+        intermediate_outputChannelCount_C = Math.ceil(
+          intermediate_inputChannelCount_C / nSqueezeExcitationChannelCountDivisor );
 
-        // If intermediatePointwise has no activation, it could be no bias because the next operation's (i.e. excitationPointwise)
-        // bias will achieve it.
+        // If intermediatePointwise has no activation, it could be no bias
+        // because the next operation's (i.e. excitationPointwise) bias will
+        // achieve it.
         if ( nActivationId == ValueDesc.ActivationFunction.Singleton.Ids.NONE ) {
           intermediate_bBias = false;
         } else {
@@ -1163,17 +1171,20 @@ class Block_TestParams_Base extends TestParams.Base {
         intermediate_bBias = false;
       }
 
-      this.generate_pointwise_filters_biases(
-        intermediate_inputChannelCount_A, ( ( bIntermediate ) ? intermediate_outputChannelCount_A : 0 ),
-        intermediate_bBias, propertyNames[ 0 ].Intermediate, io_numberArrayObject );
+      this.generate_pointwise_filters_biases( intermediate_inputChannelCount_A,
+        ( ( bIntermediate ) ? intermediate_outputChannelCount_A : 0 ),
+        intermediate_bBias, propertyNames[ 0 ].Intermediate,
+        io_numberArrayObject );
 
-      this.generate_pointwise_filters_biases(
-        intermediate_inputChannelCount_B, ( ( bIntermediate ) ? intermediate_outputChannelCount_B : 0 ),
-        intermediate_bBias, propertyNames[ 1 ].Intermediate, io_numberArrayObject );
+      this.generate_pointwise_filters_biases( intermediate_inputChannelCount_B,
+        ( ( bIntermediate ) ? intermediate_outputChannelCount_B : 0 ),
+        intermediate_bBias, propertyNames[ 1 ].Intermediate,
+        io_numberArrayObject );
 
-      this.generate_pointwise_filters_biases(
-        intermediate_inputChannelCount_C, ( ( bIntermediate ) ? intermediate_outputChannelCount_C : 0 ),
-        intermediate_bBias, propertyNames[ 2 ].Intermediate, io_numberArrayObject );
+      this.generate_pointwise_filters_biases( intermediate_inputChannelCount_C,
+        ( ( bIntermediate ) ? intermediate_outputChannelCount_C : 0 ),
+        intermediate_bBias, propertyNames[ 2 ].Intermediate,
+        io_numberArrayObject );
     }
 
     // 3. excitation pointwise convolution.
@@ -1188,17 +1199,20 @@ class Block_TestParams_Base extends TestParams.Base {
 
     let excitation_bBias = true; // Always bBias
     {
-      this.generate_pointwise_filters_biases(
-        excitation_inputChannelCount_A, ( ( bExcitation ) ? excitation_outputChannelCount_A : 0 ),
-        excitation_bBias, propertyNames[ 0 ].Excitation, io_numberArrayObject );
+      this.generate_pointwise_filters_biases( excitation_inputChannelCount_A,
+        ( ( bExcitation ) ? excitation_outputChannelCount_A : 0 ),
+        excitation_bBias, propertyNames[ 0 ].Excitation,
+        io_numberArrayObject );
 
-      this.generate_pointwise_filters_biases(
-        excitation_inputChannelCount_B, ( ( bExcitation ) ? excitation_outputChannelCount_B : 0 ),
-        excitation_bBias, propertyNames[ 1 ].Excitation, io_numberArrayObject );
+      this.generate_pointwise_filters_biases( excitation_inputChannelCount_B,
+        ( ( bExcitation ) ? excitation_outputChannelCount_B : 0 ),
+        excitation_bBias, propertyNames[ 1 ].Excitation,
+        io_numberArrayObject );
 
-      this.generate_pointwise_filters_biases(
-        excitation_inputChannelCount_C, ( ( bExcitation ) ? excitation_outputChannelCount_C : 0 ),
-        excitation_bBias, propertyNames[ 2 ].Excitation, io_numberArrayObject );
+      this.generate_pointwise_filters_biases( excitation_inputChannelCount_C,
+        ( ( bExcitation ) ? excitation_outputChannelCount_C : 0 ),
+        excitation_bBias, propertyNames[ 2 ].Excitation,
+        io_numberArrayObject );
     }
   }
 
