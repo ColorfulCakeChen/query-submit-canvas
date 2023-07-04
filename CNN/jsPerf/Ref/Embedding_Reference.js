@@ -433,16 +433,20 @@ class Embedding_Reference_Base extends Recyclable.Root {
   /** */
   static AssertTwoEqualValues( valueName, value1, value2, parametersDescription ) {
     if ( value1 != value2 )
-      throw Error( `Embedding ${valueName} (${value1}) should be (${value2}). ${parametersDescription}` );
+      throw Error( `Embedding ${valueName} (${value1}) should be (${value2}). `
+        + `${parametersDescription}` );
   }
 
 
-  /** According to imageIn and this.testParams.in.paramsNumberArrayObject, calculate imageOut.
+  /**
+   * According to imageIn and this.testParams.in.paramsNumberArrayObject,
+   * calculate imageOut.
    *
    * @param {NumberImage.Base} imageIn
    *   The image to be tested.
    *
-   * @return {NumberImage.Base} Return output image.
+   * @return {NumberImage.Base}
+   *   Return output image.
    */
   calcResult( imageIn ) {
     let testParams = this.testParams;
@@ -454,7 +458,8 @@ class Embedding_Reference_Base extends Recyclable.Root {
       bEmbedVocabularyId
     } = testParams.out;
 
-    let { output_height, output_width, output_channelCount } = testParamsOut.inferencedParams;
+    let { output_height, output_width, output_channelCount
+    } = testParamsOut.inferencedParams;
 
     let imageOut;
     {
