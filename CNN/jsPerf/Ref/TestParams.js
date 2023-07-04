@@ -648,26 +648,33 @@ class TestParams_Base extends Recyclable.Root {
       return;
     }
 
-    // Prepare an re-usable object for placing the value pair of current ParamDesc. (For reducing memory re-allocation.)
+    // Prepare an re-usable object for placing the value pair of current
+    // ParamDesc. (For reducing memory re-allocation.)
     let valuePair;
     {
       if ( !this.config.paramValuePairArray ) {
-        this.config.paramValuePairArray = new Array( this.config.paramDescConfigArray.length );
+        this.config.paramValuePairArray = new Array(
+          this.config.paramDescConfigArray.length );
         for ( let i = 0; i < this.config.paramValuePairArray.length; ++i ) {
           this.config.paramValuePairArray[ i ] = {};
         }
       }
-      valuePair = this.config.paramValuePairArray[ currentParamDescConfigIndex ];
+      valuePair
+        = this.config.paramValuePairArray[ currentParamDescConfigIndex ];
     }
 
     let nextParamDescConfigIndex = currentParamDescConfigIndex + 1;
 
-    let paramDescConfig = this.config.paramDescConfigArray[ currentParamDescConfigIndex ];
+    let paramDescConfig
+      = this.config.paramDescConfigArray[ currentParamDescConfigIndex ];
+
     let paramDesc = paramDescConfig.paramDesc;
-    for ( let pair of paramDesc.valueDesc.range.valueInputOutputGenerator( valuePair, undefined, paramDescConfig.valueOutMinMax ) ) {
+    for ( let pair of paramDesc.valueDesc.range.valueInputOutputGenerator(
+            valuePair, undefined, paramDescConfig.valueOutMinMax ) ) {
 
       //!!! (2021/07/06 Temp Debug) Check the algorithm might be wrong.
-      //if ( paramDesc.valueDesc.range.adjust( pair.valueInput ) != pair.valueOutput )
+      //if ( paramDesc.valueDesc.range.adjust( pair.valueInput )
+      //       != pair.valueOutput )
       //  debugger;
 
       this.out[ paramDesc.paramName ] = pair.valueOutput;
@@ -681,15 +688,23 @@ class TestParams_Base extends Recyclable.Root {
       if ( dice < 0.5 ) {
         // Try parameter value assigned directly (i.e. by specifying).      
         this.in[ paramDesc.paramName ] = pair.valueInput;
-        yield *TestParams_Base.permuteParamRecursively.call( this, nextParamDescConfigIndex );
+        yield *TestParams_Base.permuteParamRecursively.call( this,
+          nextParamDescConfigIndex );
 
       } else {
-        // Try parameter value assigned from inputWeightArray (i.e. by evolution).
+        // Try parameter value assigned from inputWeightArray (i.e. by
+        // evolution).
         this.in[ paramDesc.paramName ] = null;
-        this.in.paramsNumberArrayObject[ paramDesc.paramName ] = pair.valueInput; // (number or number array)
-        yield *TestParams_Base.permuteParamRecursively.call( this, nextParamDescConfigIndex );
 
-        this.in.paramsNumberArrayObject[ paramDesc.paramName ] = undefined; // So that it could be re-tried as by-specifying when backtracking.
+        this.in.paramsNumberArrayObject[ paramDesc.paramName ]
+          = pair.valueInput; // (number or number array)
+
+        yield *TestParams_Base.permuteParamRecursively.call( this,
+          nextParamDescConfigIndex );
+
+        // So that it could be re-tried as by-specifying when backtracking.
+        this.in.paramsNumberArrayObject[ paramDesc.paramName ]
+          = undefined;
       }
     }
   }
