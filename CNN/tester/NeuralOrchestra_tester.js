@@ -27,8 +27,10 @@ const asyncType_1_asyncGenerator_with_asyncPromise_progress = 1;
 const asyncType_2_asyncPromise = 2;
 
 /** async type order. */
-const asyncTypeOrder_0_ascent =  { begin: 0, end:  3, step: +1, count: 3 }; // 0 to 2
-const asyncTypeOrder_1_descent = { begin: 2, end: -1, step: -1, count: 3 }; // 2 to 0
+const asyncTypeOrder_0_ascent
+  =  { begin: 0, end:  3, step: +1, count: 3 }; // 0 to 2
+const asyncTypeOrder_1_descent
+  = { begin: 2, end: -1, step: -1, count: 3 }; // 2 to 0
 
 const asyncTypeOrderArray = [
   asyncTypeOrder_0_ascent,
@@ -157,7 +159,8 @@ class TestCase {
    *
    * @param {string} methodName
    *   neuralOrchestra[ methodName ]() will be called. If it does not throw
-   * exception (whose message should has the `${methodName}():`), throw exception.
+   * exception (whose message should has the `${methodName}():`), throw
+   * exception.
    */
   neuralOrchestra_should_throw_exception( neuralOrchestra, methodName ) {
     try {
@@ -168,7 +171,7 @@ class TestCase {
       );
 
     } catch ( e ) {
-      let decoratedMethodName = `${methodName}():`;
+      const decoratedMethodName = `${methodName}():`;
       if ( e.message.indexOf( decoratedMethodName ) < 0 ) {
         // Unknown error, said loudly.
         throw Error( `NeuralOrchestra: testId=${this.testId}. ${e}`,
@@ -271,10 +274,12 @@ class TestCase {
       delayPromise.resolve();
       setOk = await setOkPromise;
     } catch ( e ) { // Unknown error, said loudly.
-      throw Error( `NeuralOrchestra: testId=${this.testId}. ${e}`, { cause: e } );
+      throw Error( `NeuralOrchestra: testId=${this.testId}. ${e}`,
+        { cause: e } );
     }
 
-    if ( neuralOrchestra.alignmentMarkValueArrayArray_setOk != true ) // undefined is also not acceptable.
+    // undefined is also not acceptable.
+    if ( neuralOrchestra.alignmentMarkValueArrayArray_setOk != true )
       throw Error( `NeuralOrchestra_tester.TestCase`
         + `.${funcNameInMessage}(): testId=${this.testId}, `
         + `neuralOrchestra.alignmentMarkValueArrayArray_setOk `
@@ -336,10 +341,12 @@ class TestCase {
       delayPromise.resolve();
       swapOk = await swapOkPromise;
     } catch ( e ) { // Unknown error, said loudly.
-      throw Error( `NeuralOrchestra: testId=${this.testId}. ${e}`, { cause: e } );
+      throw Error( `NeuralOrchestra: testId=${this.testId}. ${e}`,
+        { cause: e } );
     }
 
-    if ( neuralOrchestra.alignmentMarkValueArrayArray_swapOk != true ) // undefined is also not acceptable.
+    // undefined is also not acceptable.
+    if ( neuralOrchestra.alignmentMarkValueArrayArray_swapOk != true )
       throw Error( `NeuralOrchestra_tester.TestCase`
         + `.${funcNameInMessage}(): testId=${this.testId}, `
         + `neuralOrchestra.alignmentMarkValueArrayArray_swapOk `
@@ -421,10 +428,12 @@ class TestCase {
         delayPromise.resolve();
         Float32ArrayArray = await processPromise;
       } catch ( e ) { // Unknown error, said loudly.
-        throw Error( `NeuralOrchestra: testId=${this.testId}. ${e}`, { cause: e } );
+        throw Error( `NeuralOrchestra: testId=${this.testId}. ${e}`,
+          { cause: e } );
       }
 
-      if ( neuralOrchestra.TypedArray_processOk != true ) // undefined is also not acceptable.
+      // undefined is also not acceptable.
+      if ( neuralOrchestra.TypedArray_processOk != true )
         throw Error( `NeuralOrchestra_tester.TestCase`
           + `.${funcNameInMessage}(): testId=${this.testId}, `
           + `neuralOrchestra.TypedArray_processOk `
@@ -552,7 +561,8 @@ class TestCase {
 
     ++this.testId;
 
-    // Use versus_load_asyncPromise and versus_load_asyncGenerator to define bTryLoad.
+    // Use versus_load_asyncPromise and versus_load_asyncGenerator to define
+    // bTryLoad.
     let bTryLoad;
     if (   ( !versus_load_asyncGenerator ) && ( !versus_load_asyncPromise )
         && ( !versus_load_asyncGenerator_delayPromise ) )
@@ -666,14 +676,16 @@ class TestCase {
                 loaderNext = await versus_load_asyncGenerator.next();
               } while ( !loaderNext.done );
               versus_loadOk = loaderNext.value;
-              progressToBeChecked = neuralOrchestra.versus_load_asyncPromise_progress;
+              progressToBeChecked
+                = neuralOrchestra.versus_load_asyncPromise_progress;
             }
             break;
 
           case asyncType_2_asyncPromise: // 2
             {
               versus_loadOk = await versus_load_asyncPromise;
-              progressToBeChecked = neuralOrchestra.versus_load_asyncPromise_progress;
+              progressToBeChecked
+                = neuralOrchestra.versus_load_asyncPromise_progress;
             }
             break;
 
@@ -686,7 +698,8 @@ class TestCase {
         }
 
       } else {
-        // According to which .init_Xxx() (not which .versus_load_Xxx()) is used.
+        // According to which .init_Xxx() (not which .versus_load_Xxx()) is
+        // used.
         switch ( n_init_asyncType ) {
           case asyncType_0_asyncGenerator: // 0
             {
@@ -703,14 +716,16 @@ class TestCase {
                 loaderNext = await versus_load_asyncGenerator.next();
               } while ( !loaderNext.done );
               versus_loadOk = loaderNext.value;
-              progressToBeChecked = neuralOrchestra.versus_load_asyncPromise_progress;
+              progressToBeChecked
+                = neuralOrchestra.versus_load_asyncPromise_progress;
             }
             break;
 
           case asyncType_2_asyncPromise: // 2
             {
               versus_loadOk = await versus_load_asyncPromise;
-              progressToBeChecked = neuralOrchestra.versus_load_asyncPromise_progress;
+              progressToBeChecked
+                = neuralOrchestra.versus_load_asyncPromise_progress;
             }
             break;
 
@@ -738,7 +753,8 @@ class TestCase {
       throw Error( `NeuralOrchestra: testId=${this.testId}. ${e}`, { cause: e } );
     }
 
-    if ( neuralOrchestra.versus_loadOk != true ) // undefined is also not acceptable.
+    // undefined is also not acceptable.
+    if ( neuralOrchestra.versus_loadOk != true )
       throw Error( `NeuralOrchestra_tester.TestCase`
         + `.${funcNameInMessage}(): testId=${this.testId}, `
         + `neuralOrchestra.versus_loadOk ( ${neuralOrchestra.versus_loadOk} ) `
@@ -753,7 +769,8 @@ class TestCase {
       throw Error( `NeuralOrchestra_tester.TestCase`
         + `.${funcNameInMessage}(): testId=${this.testId}, `
         + `versus_loadOk ( ${versus_loadOk} ) should be same as `
-        + `neuralOrchestra.versus_loadOk ( ${neuralOrchestra.versus_loadOk} ) ` );
+        + `neuralOrchestra.versus_loadOk `
+        + `( ${neuralOrchestra.versus_loadOk} ) ` );
 
     progressToAdvance.value_advance();
     yield progressRoot;
@@ -920,7 +937,8 @@ class TestCase {
         + `neuralOrchestra.initOk ( ${neuralOrchestra.initOk} ) `
         + `should be undefined.` );
 
-    // Test: Calling these methods during versus initializing should throw exception.
+    // Test: Calling these methods during versus initializing should throw
+    //       exception.
     {
       this.neuralOrchestra_should_throw_exception_for_process( neuralOrchestra );
       this.neuralOrchestra_should_throw_exception_for_init( neuralOrchestra );
@@ -1002,16 +1020,19 @@ class TestCase {
 
     } catch ( e ) { // Unknown error, said loudly.
       debugger;
-      throw Error( `NeuralOrchestra: testId=${this.testId}. ${e}`, { cause: e } );
+      throw Error( `NeuralOrchestra: testId=${this.testId}. ${e}`,
+        { cause: e } );
     }
 
-    if ( neuralOrchestra.initOk != true ) // undefined is also not acceptable.
+    // undefined is also not acceptable.
+    if ( neuralOrchestra.initOk != true )
       throw Error( `NeuralOrchestra_tester.TestCase`
         + `.${funcNameInMessage}(): testId=${this.testId}, `
         + `neuralOrchestra.initOk ( ${neuralOrchestra.initOk} ) `
         + `should be true.` );
 
-    if ( neuralOrchestra.workerProxies_initOk != true ) // undefined is also not acceptable.
+    // undefined is also not acceptable.
+    if ( neuralOrchestra.workerProxies_initOk != true )
       throw Error( `NeuralOrchestra_tester.TestCase`
         + `.${funcNameInMessage}(): testId=${this.testId}, `
         + `neuralOrchestra.workerProxies_initOk `
@@ -1081,8 +1102,8 @@ class TestCase {
           + `nLoadProcessSendCount ( ${nLoadProcessSendCount} ) + 1 ).` );
 
       if ( nLoadProcessSendCount == 0 ) {
-        // After first time loading (by .init_Xxx()), clear to indicate init done
-        // and need do versus_load.
+        // After first time loading (by .init_Xxx()), clear to indicate init
+        // done and need do versus_load.
         progressInit = null;
         versus_load_asyncGenerator = null;
         versus_load_asyncPromise = null;
@@ -1115,7 +1136,9 @@ class TestCase {
     // Prepare progress list.
     let progressRoot = progressParent.root_get();
 
-    let progressInitLoadProcessSendArray = new Array( nInitLoadProcessSendMax );
+    let progressInitLoadProcessSendArray
+      = new Array( nInitLoadProcessSendMax );
+
     for ( let i = 0; i < nInitLoadProcessSendMax; ++i ) {
       progressInitLoadProcessSendArray[ i ]
         = progressParent.child_add(
