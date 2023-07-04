@@ -20,7 +20,8 @@ import * as Embedding_TestParams from "./Embedding_TestParams.js";
 class Embedding_Reference_Base extends Recyclable.Root {
 
   /**
-   * Used as default Embedding_Reference.Base provider for conforming to Recyclable interface.
+   * Used as default Embedding_Reference.Base provider for conforming to
+   * Recyclable interface.
    */
   static Pool = new Pool.Root( "Embedding_Reference.Base.Pool",
     Embedding_Reference_Base, Embedding_Reference_Base.setAsConstructor );
@@ -42,7 +43,8 @@ class Embedding_Reference_Base extends Recyclable.Root {
 
   /** @override */
   static setAsConstructor_self() {
-    this.asserter_Equal = TensorTools.Asserter_Equal.Pool.get_or_create_by( 0.01, 0.005 );
+    this.asserter_Equal
+      = TensorTools.Asserter_Equal.Pool.get_or_create_by( 0.01, 0.005 );
   }
 
   /** @override */
@@ -60,7 +62,8 @@ class Embedding_Reference_Base extends Recyclable.Root {
    *   The provider of image and tensor of variable specification for testing.
    *
    * @param {Embedding_TestParams.Base} testParams
-   *   The test parameters. It is the value of Embedding_TestParams.Base.ParamsGenerator()'s result.
+   *   The test parameters. It is the value of
+   * Embedding_TestParams.Base.ParamsGenerator()'s result.
    *
    */
   testCorrectness( imageSourceBag, testParams ) {
@@ -69,10 +72,14 @@ class Embedding_Reference_Base extends Recyclable.Root {
       input_height, input_width, input_channelCount,
     } = testParams.out;
 
-    this.testCorrectness_imageIn = imageSourceBag.getImage_by( input_height, input_width, input_channelCount );
+    this.testCorrectness_imageIn = imageSourceBag.getImage_by(
+      input_height, input_width, input_channelCount );
 
-    Pool.Asserter.assert_Pool_issuedCount_same_after_as_before( "Embedding_Reference.Base.testCorrectness_internal()",
-      Embedding_Reference_Base.testCorrectness_internal, this, imageSourceBag, testParams );
+    Pool.Asserter.assert_Pool_issuedCount_same_after_as_before(
+      "Embedding_Reference.Base.testCorrectness_internal()",
+      Embedding_Reference_Base.testCorrectness_internal,
+      this,
+      imageSourceBag, testParams );
 
     this.testCorrectness_imageIn = null;
   }
@@ -84,17 +91,20 @@ class Embedding_Reference_Base extends Recyclable.Root {
    *   The provider of image and tensor of variable specification for testing.
    *
    * @param {Embedding_TestParams.Base} testParams
-   *   The test parameters. It is the value of Embedding_TestParams.Base.ParamsGenerator()'s result.
+   *   The test parameters. It is the value of
+   * Embedding_TestParams.Base.ParamsGenerator()'s result.
    *
    */
   static testCorrectness_internal( imageSourceBag, testParams ) {
     this.testParams = testParams;
 
-    this.testCorrectness_imageOutReference = this.calcResult( this.testCorrectness_imageIn );
+    this.testCorrectness_imageOutReference = this.calcResult(
+      this.testCorrectness_imageIn );
 
     Pool.Asserter.assert_Pool_issuedCount_same_after_as_before(
       "Embedding_Reference.Base.embedding_create_apply_internal( AddGatherReshape )",
-      Embedding_Reference_Base.embedding_create_apply_internal, this,
+      Embedding_Reference_Base.embedding_create_apply_internal,
+      this,
       Embedding.AddGatherReshape, imageSourceBag, testParams );
 
     Pool.Asserter.assert_Pool_issuedCount_same_after_as_before(
@@ -103,8 +113,12 @@ class Embedding_Reference_Base extends Recyclable.Root {
       Embedding.SplitReshapeGatherConcat, imageSourceBag, testParams );
 
     { // Release output reference images.
-      if ( this.testCorrectness_imageOutReference != this.testCorrectness_imageIn ) { // Do not release image from ImageSourceBag.
-        this.testCorrectness_imageOutReference.disposeResources_and_recycleToPool();
+
+      // Do not release image from ImageSourceBag.
+      if ( this.testCorrectness_imageOutReference
+             != this.testCorrectness_imageIn ) {
+        this.testCorrectness_imageOutReference
+          .disposeResources_and_recycleToPool();
       }
       this.testCorrectness_imageOutReference = null;
     }
@@ -118,7 +132,8 @@ class Embedding_Reference_Base extends Recyclable.Root {
    *   Either Embedding.AddGatherReshape or Embedding.SplitReshapeGatherConcat.
    *
    */
-  static embedding_create_apply_internal( EmbeddingClass, imageSourceBag, testParams ) {
+  static embedding_create_apply_internal(
+    EmbeddingClass, imageSourceBag, testParams ) {
 
     let {
       input_height, input_width, input_channelCount,
