@@ -69,20 +69,24 @@ class NeuralNet_TestParams_Base extends TestParams.Base {
    *   - this.in_weights
    *   - this.out
    *
-   * @param {NeuralNet.ParamsBase} aParamsBase  The parameters of neural network.
+   * @param {NeuralNet.ParamsBase} aParamsBase
+   *   The parameters of neural network.
    *
-   * @return {Base}  Return this object self.
+   * @return {Base}
+   *   Return this object self.
    */
   set_byParamsBase( aParamsBase ) {
     return this.set_byParamsScattered(
-      aParamsBase.explicit_input_height, aParamsBase.explicit_input_width,
+      aParamsBase.explicit_input_height,
+      aParamsBase.explicit_input_width,
       aParamsBase.explicit_input_channelCount,
       aParamsBase.has_implicit_input,
       aParamsBase.vocabularyChannelCount,
       aParamsBase.vocabularyCountPerInputChannel,
       aParamsBase.nConvStageTypeId,
       aParamsBase.blockCountTotalRequested,
-      aParamsBase.output_channelCount, aParamsBase.output_asInputValueRange,
+      aParamsBase.output_channelCount,
+      aParamsBase.output_asInputValueRange,
       aParamsBase.bKeepInputTensor
     );
   }
@@ -125,7 +129,8 @@ class NeuralNet_TestParams_Base extends TestParams.Base {
     Object.assign( this.in, this.out );
 
     let weightElementOffsetBegin = 0;
-    return this.set_byParamsNumberArrayObject_ParamsOut( weightElementOffsetBegin );
+    return this.set_byParamsNumberArrayObject_ParamsOut(
+      weightElementOffsetBegin );
   }
  
   /**
@@ -134,16 +139,16 @@ class NeuralNet_TestParams_Base extends TestParams.Base {
    *   - this.out.inferencedParams
    *
    * @param {object} this.in.paramsNumberArrayObject
-   *   Pass in an object. The result will be put into this object. It is a map from
-   * a string name (e.g. parameter name) to a number array. The name should be one
-   * of Base.paramsNameOrderArray[] elements.
+   *   Pass in an object. The result will be put into this object. It is a map
+   * from a string name (e.g. parameter name) to a number array. The name
+   * should be one of Base.paramsNameOrderArray[] elements.
    *
    * @param {NeuralNet.ParamsBase} this.out
    *   An object which will be the final result of NeuralNet.Params.
    *
    * @param {number} weightElementOffsetBegin
-   *   Offset how many elements (4 bytes per element) at the beginning of the result
-   * inputWeightArray. The this.in.byteOffsetBegin will be
+   *   Offset how many elements (4 bytes per element) at the beginning of the
+   * result inputWeightArray. The this.in.byteOffsetBegin will be
    * ( 4 * weightElementOffsetBegin ).
    *
    * @return {NeuralNet_TestParams_Base}
@@ -159,7 +164,8 @@ class NeuralNet_TestParams_Base extends TestParams.Base {
     // 1. Embedding
     {
       this.embedding?.disposeResources_and_recycleToPool();
-      this.embedding = Embedding_TestParams.Base.Pool.get_or_create_by( this.id );
+      this.embedding
+        = Embedding_TestParams.Base.Pool.get_or_create_by( this.id );
 
       this.embedding.set_byParamsScattered(
         neuralNetParams.inferencedParams.input_height,
@@ -171,7 +177,8 @@ class NeuralNet_TestParams_Base extends TestParams.Base {
         neuralNetParams.bKeepInputTensor
       );
 
-      this.in.paramsNumberArrayObject.push( this.embedding.in_weights.weightArray );
+      this.in.paramsNumberArrayObject.push(
+        this.embedding.in_weights.weightArray );
     }
 
     // 2. Stages
@@ -184,14 +191,17 @@ class NeuralNet_TestParams_Base extends TestParams.Base {
     for ( let i = 0; i < stageParamsArray.length; ++i ) {
       let stageParams = stageParamsArray[ i ];
 
-      let stageTestParams = Stage_TestParams.Base.Pool.get_or_create_by( this.id );
+      let stageTestParams
+        = Stage_TestParams.Base.Pool.get_or_create_by( this.id );
+
       stageTestParams.set_byParamsScattered(
         stageParams.input_height, stageParams.input_width,
         stageParams.input_channelCount,
         stageParams.nConvStageTypeId,
         stageParams.blockCountRequested,
         stageParams.bPointwise1,
-        stageParams.depthwiseFilterHeight, stageParams.depthwiseFilterWidth,
+        stageParams.depthwiseFilterHeight,
+        stageParams.depthwiseFilterWidth,
         stageParams.nSqueezeExcitationChannelCountDivisor,
         stageParams.nActivationId,
         stageParams.bKeepInputTensor
@@ -200,21 +210,25 @@ class NeuralNet_TestParams_Base extends TestParams.Base {
       this.stageArray[ i ] = stageTestParams;
 
       // Place every stage's parameters in sequence.
-      this.in.paramsNumberArrayObject.push( stageTestParams.in_weights.weightArray );
+      this.in.paramsNumberArrayObject.push(
+        stageTestParams.in_weights.weightArray );
     }
 
     // 3. blockFinal
     {
       let blockFinalParams = neuralNetParams.inferencedParams.blockFinalParams;
 
-      let blockTestParams = Block_TestParams.Base.Pool.get_or_create_by( this.id );
+      let blockTestParams
+        = Block_TestParams.Base.Pool.get_or_create_by( this.id );
+
       blockTestParams.set_byParamsBase( blockFinalParams );
 
       this.blockFinal?.disposeResources_and_recycleToPool();
       this.blockFinal = blockTestParams;
 
       // Place final block's parameters in sequence.
-      this.in.paramsNumberArrayObject.push( blockTestParams.in_weights.weightArray );
+      this.in.paramsNumberArrayObject.push(
+        blockTestParams.in_weights.weightArray );
     }
 
     // 4. Pack all parameters, look-up tables weights into a (pre-allocated and
@@ -353,26 +367,38 @@ class NeuralNet_TestParams_Base extends TestParams.Base {
     //
     // Note: The order of these element could be adjusted to change testing order. The last element will be tested (changed) first.
     let paramDescConfigArray = [
-      new TestParams.ParamDescConfig( NeuralNet.Params.explicit_input_height,          valueOutMinMax.explicit_input_height ),
-      new TestParams.ParamDescConfig( NeuralNet.Params.explicit_input_width,           valueOutMinMax.explicit_input_width ),
-      new TestParams.ParamDescConfig( NeuralNet.Params.explicit_input_channelCount,    valueOutMinMax.explicit_input_channelCount ),
+      new TestParams.ParamDescConfig( NeuralNet.Params.explicit_input_height,
+        valueOutMinMax.explicit_input_height ),
+      new TestParams.ParamDescConfig( NeuralNet.Params.explicit_input_width,
+        valueOutMinMax.explicit_input_width ),
+      new TestParams.ParamDescConfig( NeuralNet.Params.explicit_input_channelCount,
+        valueOutMinMax.explicit_input_channelCount ),
 
-      new TestParams.ParamDescConfig( NeuralNet.Params.has_implicit_input,             valueOutMinMax.has_implicit_input ),
+      new TestParams.ParamDescConfig( NeuralNet.Params.has_implicit_input,
+        valueOutMinMax.has_implicit_input ),
 
-      new TestParams.ParamDescConfig( NeuralNet.Params.vocabularyChannelCount,         valueOutMinMax.vocabularyChannelCount ),
-      new TestParams.ParamDescConfig( NeuralNet.Params.vocabularyCountPerInputChannel, valueOutMinMax.vocabularyCountPerInputChannel ),
+      new TestParams.ParamDescConfig( NeuralNet.Params.vocabularyChannelCount,
+        valueOutMinMax.vocabularyChannelCount ),
+      new TestParams.ParamDescConfig( NeuralNet.Params.vocabularyCountPerInputChannel,
+        valueOutMinMax.vocabularyCountPerInputChannel ),
 
-      new TestParams.ParamDescConfig( NeuralNet.Params.nConvStageTypeId,               valueOutMinMax.nConvStageTypeId ),
+      new TestParams.ParamDescConfig( NeuralNet.Params.nConvStageTypeId,
+        valueOutMinMax.nConvStageTypeId ),
 
-      new TestParams.ParamDescConfig( NeuralNet.Params.blockCountTotalRequested,       valueOutMinMax.blockCountTotalRequested ),
+      new TestParams.ParamDescConfig( NeuralNet.Params.blockCountTotalRequested,
+        valueOutMinMax.blockCountTotalRequested ),
 
-      new TestParams.ParamDescConfig( NeuralNet.Params.output_channelCount,            valueOutMinMax.output_channelCount ),
-      new TestParams.ParamDescConfig( NeuralNet.Params.output_asInputValueRange,       valueOutMinMax.output_asInputValueRange ),
+      new TestParams.ParamDescConfig( NeuralNet.Params.output_channelCount,
+        valueOutMinMax.output_channelCount ),
+      new TestParams.ParamDescConfig( NeuralNet.Params.output_asInputValueRange,
+        valueOutMinMax.output_asInputValueRange ),
 
-      new TestParams.ParamDescConfig( NeuralNet.Params.bKeepInputTensor,               valueOutMinMax.bKeepInputTensor ),
+      new TestParams.ParamDescConfig( NeuralNet.Params.bKeepInputTensor,
+        valueOutMinMax.bKeepInputTensor ),
     ];
 
-    yield *NeuralNet_TestParams_Base.ParamsGenerator.call( this, paramDescConfigArray );
+    yield *NeuralNet_TestParams_Base.ParamsGenerator.call( this,
+      paramDescConfigArray );
   }
 
 }
@@ -381,7 +407,8 @@ class NeuralNet_TestParams_Base extends TestParams.Base {
 /**
  * The order when generate inputWeightArray[].
  *
- * This order could not be changed arbitrarily. It must be the same as the parameter extracting order of NeuralNet.initer().
+ * This order could not be changed arbitrarily. It must be the same as the
+ * parameter extracting order of NeuralNet.initer().
  */
 NeuralNet_TestParams_Base.paramsNameOrderArray_Basic = [
   NeuralNet.Params.explicit_input_height.paramName,
