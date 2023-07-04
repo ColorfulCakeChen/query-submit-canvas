@@ -16,12 +16,17 @@ class BatchIdCalculator_Base {
 
   /**
    * @return {boolean}
-   *   Return true, if a batch id section is displayed. Return false, if there is no new batch id section should be displayed.
+   *   Return true, if a batch id section is displayed. Return false, if there
+   * is no new batch id section should be displayed.
    */
   checkAndDisplay( currentTestParamsId ) {
     const batchMessageInterval = this.batchMessageInterval;
 
-    let currentBatchId = ( currentTestParamsId - ( currentTestParamsId % batchMessageInterval ) ) / batchMessageInterval;
+    let currentBatchId
+      = ( currentTestParamsId
+            - ( currentTestParamsId % batchMessageInterval ) )
+        / batchMessageInterval;
+
     if ( this.lastBatchId == currentBatchId )
       return false;
 
@@ -29,7 +34,8 @@ class BatchIdCalculator_Base {
     let endTestParamsId = ( currentBatchId + 1 ) * batchMessageInterval - 1;
 
     console.log( `${tf.getBackend()}, `
-      + `testParams.id between [${beginTestParamsId} - ${endTestParamsId}] ...` );
+      + `testParams.id between `
+      + `[${beginTestParamsId} - ${endTestParamsId}] ...` );
 
     this.lastBatchId = currentBatchId;
     return true;
