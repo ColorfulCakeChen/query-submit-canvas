@@ -19,10 +19,12 @@ import * as Embedding from "../../Conv/Embedding.js";
 class Embedding_TestParams_Base extends TestParams.Base {
 
   /**
-   * Used as default Embedding_TestParams.Base provider for conforming to Recyclable interface.
+   * Used as default Embedding_TestParams.Base provider for conforming to
+   * Recyclable interface.
    */
   static Pool = new Pool.Root( "Embedding_TestParams.Base.Pool",
-    Embedding_TestParams_Base, Embedding_TestParams_Base.setAsConstructor );
+    Embedding_TestParams_Base,
+    Embedding_TestParams_Base.setAsConstructor );
 
   /**
    */
@@ -41,7 +43,9 @@ class Embedding_TestParams_Base extends TestParams.Base {
   /** @override */
   static setAsConstructor_self() {
     this.out = Embedding.ParamsBase.Pool.get_or_create_by();
-    this.out_boundsArray = FloatValue.BoundsArray.Pool.get_or_create_by(); // Every output channel's value bounds.
+
+    // Every output channel's value bounds.
+    this.out_boundsArray = FloatValue.BoundsArray.Pool.get_or_create_by();
   }
 
   /** @override */
@@ -86,10 +90,12 @@ class Embedding_TestParams_Base extends TestParams.Base {
       bKeepInputTensor
     );
 
-    Object.assign( this.in, this.out ); // So that all parameters are by specified (none is by evolution).
+    // So that all parameters are by specified (none is by evolution).
+    Object.assign( this.in, this.out );
 
     let weightElementOffsetBegin = 0;
-    return this.set_byParamsNumberArrayObject_ParamsOut( weightElementOffsetBegin );
+    return this.set_byParamsNumberArrayObject_ParamsOut(
+      weightElementOffsetBegin );
   }
  
   /**
@@ -99,15 +105,17 @@ class Embedding_TestParams_Base extends TestParams.Base {
    *   - this.out_boundsArray
    *
    * @param {object} this.in.paramsNumberArrayObject
-   *   Pass in an object. The result will be put into this object. It is a map from a string name (e.g. parameter name) to a number array.
-   * The name should be one of Base.paramsNameOrderArray[] elements.
+   *   Pass in an object. The result will be put into this object. It is a map
+   * from a string name (e.g. parameter name) to a number array. The name
+   * should be one of Base.paramsNameOrderArray[] elements.
    *
    * @param {Embedding.ParamsBase} this.out
    *   An object which will be the final result of Embedding.Params.
    *
    * @param {number} weightElementOffsetBegin
-   *   Offset how many elements (4 bytes per element) at the beginning of the result inputWeightArray.
-   * The this.in.byteOffsetBegin will be ( 4 * weightElementOffsetBegin ).
+   *   Offset how many elements (4 bytes per element) at the beginning of the
+   * result inputWeightArray. The this.in.byteOffsetBegin will be
+   * ( 4 * weightElementOffsetBegin ).
    *
    * @return {Embedding_TestParams_Base}
    *   Return this object self.
@@ -120,7 +128,8 @@ class Embedding_TestParams_Base extends TestParams.Base {
     let tableChannelCountPerInputChannel;
     let outChannelSubBegin;
     if ( embeddingParams.bEmbedVocabularyId ) {
-      tableChannelCountPerInputChannel = ( embeddingParams.channelMultiplier - 1 );
+      tableChannelCountPerInputChannel
+        = ( embeddingParams.channelMultiplier - 1 );
       outChannelSubBegin = 1;
     } else {
       tableChannelCountPerInputChannel = embeddingParams.channelMultiplier;
@@ -128,19 +137,23 @@ class Embedding_TestParams_Base extends TestParams.Base {
     }
 
     // let tableElementCountPerInputChannel
-    //   = embeddingParams.vocabularyCountPerInputChannel * tableChannelCountPerInputChannel;
+    //   = embeddingParams.vocabularyCountPerInputChannel
+    //       * tableChannelCountPerInputChannel;
 
     let tableChannelCountAll
       = embeddingParams.input_channelCount * tableChannelCountPerInputChannel;
 
     // Generate look-up table of every input channel.
-    this.in.paramsNumberArrayObject.length = embeddingParams.input_channelCount;
+    this.in.paramsNumberArrayObject.length
+      = embeddingParams.input_channelCount;
 
-    this.out_boundsArray.length = embeddingParams.inferencedParams.output_channelCount;
+    this.out_boundsArray.length
+      = embeddingParams.inferencedParams.output_channelCount;
     this.out_boundsArray.set_all_by_PositiveInfinity_NegativeInfinity();
 
     let outChannelBegin = 0;
-    for ( let inChannel = 0; inChannel < embeddingParams.input_channelCount; ++inChannel ) {
+    for ( let inChannel = 0;
+      inChannel < embeddingParams.input_channelCount; ++inChannel ) {
 
       this.fill_object_property_numberArray( this.in.paramsNumberArrayObject,
         inChannel,
@@ -149,11 +162,15 @@ class Embedding_TestParams_Base extends TestParams.Base {
         tableChannelCountPerInputChannel                // (channelCount)
       );
 
-      let vocabularyElementArray = this.in.paramsNumberArrayObject[ inChannel ];
+      let vocabularyElementArray
+        = this.in.paramsNumberArrayObject[ inChannel ];
 
       { // Find out every output channel's value bounds.
         let vocabularyElementIndex = 0;
-        for ( let vocabularyId = 0; vocabularyId < embeddingParams.vocabularyCountPerInputChannel; ++vocabularyId ) {
+        for ( let vocabularyId = 0;
+          vocabularyId < embeddingParams.vocabularyCountPerInputChannel;
+          ++vocabularyId ) {
+
           let outChannel = outChannelBegin;
 
           if ( embeddingParams.bEmbedVocabularyId ) {
@@ -161,11 +178,16 @@ class Embedding_TestParams_Base extends TestParams.Base {
             ++outChannel;
           }
 
-          for ( let outChannelSub = outChannelSubBegin; outChannelSub < embeddingParams.channelMultiplier; ++outChannelSub) {
-            let vocabularyElement = vocabularyElementArray[ vocabularyElementIndex ];
+          for ( let outChannelSub = outChannelSubBegin;
+            outChannelSub < embeddingParams.channelMultiplier;
+            ++outChannelSub ) {
+
+            let vocabularyElement
+              = vocabularyElementArray[ vocabularyElementIndex ];
             ++vocabularyElementIndex;
 
-            this.out_boundsArray.enlarge_one_byN( outChannel, vocabularyElement );
+            this.out_boundsArray.enlarge_one_byN(
+              outChannel, vocabularyElement );
             ++outChannel;
           }
         }
@@ -174,37 +196,51 @@ class Embedding_TestParams_Base extends TestParams.Base {
       { // Verify every output channel's value bounds.
         let bBoundsOk = true;
         let vocabularyElementIndex = 0;
-        for ( let vocabularyId = 0; vocabularyId < embeddingParams.vocabularyCountPerInputChannel; ++vocabularyId ) {
+        for ( let vocabularyId = 0;
+          vocabularyId < embeddingParams.vocabularyCountPerInputChannel;
+          ++vocabularyId ) {
+
           let outChannel = outChannelBegin;
 
           if ( embeddingParams.bEmbedVocabularyId ) {
-            bBoundsOk &&= this.out_boundsArray.is_one_contain_N( outChannel, vocabularyId );
+            bBoundsOk &&= this.out_boundsArray.is_one_contain_N(
+              outChannel, vocabularyId );
             if ( !bBoundsOk )
-              throw Error( `Embedding_TestParams.Base.set_byParamsNumberArrayObject_ParamsOut(): `
+              throw Error( `Embedding_TestParams.Base`
+                + `.set_byParamsNumberArrayObject_ParamsOut(): `
                 + `vocabularyId=${vocabularyId} `
                 + `should be in bounds `
-                + `[ ${this.out_boundsArray.lowers[ outChannel ]}, ${this.out_boundsArray.uppers[ outChannel ]} ].`
+                + `[ ${this.out_boundsArray.lowers[ outChannel ]}, `
+                + `${this.out_boundsArray.uppers[ outChannel ]} ].`
               );
 
             ++outChannel;
           }
 
-          for ( let outChannelSub = outChannelSubBegin; outChannelSub < embeddingParams.channelMultiplier; ++outChannelSub ) {
-            let vocabularyElement = vocabularyElementArray[ vocabularyElementIndex ];
+          for ( let outChannelSub = outChannelSubBegin;
+            outChannelSub < embeddingParams.channelMultiplier;
+            ++outChannelSub ) {
+
+            let vocabularyElement
+              = vocabularyElementArray[ vocabularyElementIndex ];
             ++vocabularyElementIndex;
 
             let tableChannel = outChannelSub - outChannelSubBegin;
-            bBoundsOk &&= this.out_boundsArray.is_one_contain_N( outChannel, vocabularyElement );
-            bBoundsOk &&= this.out_boundsArray.is_one_in_LowerUpper( outChannel,
+            bBoundsOk &&= this.out_boundsArray.is_one_contain_N(
+              outChannel, vocabularyElement );
+            bBoundsOk &&= this.out_boundsArray.is_one_in_LowerUpper(
+              outChannel,
               vocabularyElementArray.boundsArray_byChannel.lowers[ tableChannel ],
               vocabularyElementArray.boundsArray_byChannel.uppers[ tableChannel ] );
             if ( !bBoundsOk )
-              throw Error( `Embedding_TestParams.Base.set_byParamsNumberArrayObject_ParamsOut(): `
+              throw Error( `Embedding_TestParams.Base`
+                + `.set_byParamsNumberArrayObject_ParamsOut(): `
                 + `vocabularyId=${vocabularyId}, `
                 + `vocabularyElementArray=[ ${vocabularyElementArray} ], `
                 + `vocabularyElementArray[ ${outChannel} ]=${vocabularyElement} `
                 + `should be in bounds `
-                + `[ ${this.out_boundsArray.lowers[ outChannel ]}, ${this.out_boundsArray.uppers[ outChannel ]} ] `
+                + `[ ${this.out_boundsArray.lowers[ outChannel ]}, `
+                + `${this.out_boundsArray.uppers[ outChannel ]} ] `
                 + `and bounds `
                 + `[ ${vocabularyElementArray.boundsArray_byChannel.lowers[ tableChannel ]}, `
                 + `${vocabularyElementArray.boundsArray_byChannel.uppers[ tableChannel ]} ].`
@@ -218,7 +254,8 @@ class Embedding_TestParams_Base extends TestParams.Base {
       outChannelBegin += embeddingParams.channelMultiplier;
     }
 
-    // Pack all parameters, look-up tables weights into a (pre-allocated and re-used) NumberArray.
+    // Pack all parameters, look-up tables weights into a (pre-allocated and
+    // re-used) NumberArray.
     this.in_weights.set_byConcat(
       Embedding_TestParams_Base.paramsNameOrderArray_Basic,
       this.in.paramsNumberArrayObject, weightElementOffsetBegin );
@@ -244,7 +281,8 @@ class Embedding_TestParams_Base extends TestParams.Base {
   onYield_before() {
 
     // For testing not start at the offset 0.
-    let weightElementOffsetBegin = RandTools.getRandomIntInclusive( 0, 3 ); // Skip a random un-used element count.
+    // Skip a random un-used element count.
+    let weightElementOffsetBegin = RandTools.getRandomIntInclusive( 0, 3 );
 
     this.set_byParamsNumberArrayObject_ParamsOut( weightElementOffsetBegin );
   }
