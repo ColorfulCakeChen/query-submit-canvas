@@ -1102,8 +1102,12 @@ class Stage_Reference_Base extends Recyclable.Root {
 
       // So that it can debug whether memory leak.
       {
-        blockRef.testParams.Depthwise_PassThrough_FiltersArray_BiasesArray_Bag.disposeResources();
-        blockRef.testParams.Pointwise_PassThrough_FiltersArray_BiasesArray_Bag.disposeResources();
+        blockRef.testParams
+          .Depthwise_PassThrough_FiltersArray_BiasesArray_Bag
+          .disposeResources();
+        blockRef.testParams
+          .Pointwise_PassThrough_FiltersArray_BiasesArray_Bag
+          .disposeResources();
       }
 
       { // Release intermediate input images.
@@ -1123,7 +1127,8 @@ class Stage_Reference_Base extends Recyclable.Root {
       }
     }
 
-    let imageOut = this.imageOutArray[ 0 ]; // The blockLast should have only input0.
+    // The blockLast should have only input0.
+    let imageOut = this.imageOutArray[ 0 ];
 
     // Avoid dangling tensors.
     this.imageInArray[ 0 ] = null;
