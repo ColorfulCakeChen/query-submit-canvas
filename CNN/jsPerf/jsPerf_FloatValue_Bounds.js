@@ -391,48 +391,60 @@ class Cases {
 
       this.bBoundsArray.set_all_byLowersUppers( this.bLowers, this.bUppers );
       this.aBoundsArray.add_one_byBoundsArray( 1, this.bBoundsArray, 1 );
-      this.assert_BoundsArray_one_byArray( "aBoundsArray", 1, this.addedArrayArray[ 1 ] );
+      this.assert_BoundsArray_one_byArray( "aBoundsArray",
+        1, this.addedArrayArray[ 1 ] );
 
       { // Test add_all_byN().
-        this.aBoundsArray.set_all_byLowersUppers( this.aLowers, this.aUppers ).add_all_byN( oneRandCase.N );
+        this.aBoundsArray.set_all_byLowersUppers( this.aLowers, this.aUppers )
+          .add_all_byN( oneRandCase.N );
 
         for ( let i = 0; i < aCaseArray.length; ++i ) {
-          tBounds.set_byLowersUppers( this.aLowers, this.aUppers, i ).add_byN( oneRandCase.N );
+          tBounds.set_byLowersUppers( this.aLowers, this.aUppers, i )
+            .add_byN( oneRandCase.N );
           this.assert_BoundsArray_one_byBounds( "aBoundsArray", i, tBounds );
         }
       }
 
       { // Test add_all_byLowerUpper() and add_all_byBounds().
         this.aBoundsArray.set_all_byLowersUppers( this.aLowers, this.aUppers )
-          .add_all_byLowerUpper( oneRandCase.bBounds.lower, oneRandCase.bBounds.upper );
+          .add_all_byLowerUpper(
+            oneRandCase.bBounds.lower, oneRandCase.bBounds.upper );
 
-        this.bBoundsArray.set_all_byLowersUppers( this.aLowers, this.aUppers ).add_all_byBounds( oneRandCase.bBounds );
+        this.bBoundsArray.set_all_byLowersUppers( this.aLowers, this.aUppers )
+          .add_all_byBounds( oneRandCase.bBounds );
 
         for ( let i = 0; i < aCaseArray.length; ++i ) {
-          tBounds.set_byLowersUppers( this.aLowers, this.aUppers, i ).add_byBounds( oneRandCase.bBounds );
+          tBounds.set_byLowersUppers( this.aLowers, this.aUppers, i )
+            .add_byBounds( oneRandCase.bBounds );
           this.assert_BoundsArray_one_byBounds( "aBoundsArray", i, tBounds );
           this.assert_BoundsArray_one_byBounds( "bBoundsArray", i, tBounds );
         }
       }
 
       { // Test add_all_byNs().
-        this.aBoundsArray.set_all_byLowersUppers( this.aLowers, this.aUppers ).add_all_byNs( this.Ns );
+        this.aBoundsArray.set_all_byLowersUppers( this.aLowers, this.aUppers )
+          .add_all_byNs( this.Ns );
 
         for ( let i = 0; i < aCaseArray.length; ++i ) {
-          tBounds.set_byLowersUppers( this.aLowers, this.aUppers, i ).add_byNs( this.Ns, i );
+          tBounds.set_byLowersUppers( this.aLowers, this.aUppers, i )
+            .add_byNs( this.Ns, i );
           this.assert_BoundsArray_one_byBounds( "aBoundsArray", i, tBounds );
         }
       }
 
       { // Test add_all_byLowersUppers().
-        this.aBoundsArray.set_all_byLowersUppers( this.aLowers, this.aUppers ).add_all_byLowersUppers( this.bLowers, this.bUppers );
-        this.assert_BoundsArray_all_byArrayArray( "aBoundsArray", this.addedArrayArray );
+        this.aBoundsArray.set_all_byLowersUppers( this.aLowers, this.aUppers )
+          .add_all_byLowersUppers( this.bLowers, this.bUppers );
+        this.assert_BoundsArray_all_byArrayArray( "aBoundsArray",
+          this.addedArrayArray );
       }
 
       { // Test add_all_byBoundsArray().
         this.bBoundsArray.set_all_byLowersUppers( this.bLowers, this.bUppers );
-        this.aBoundsArray.set_all_byLowersUppers( this.aLowers, this.aUppers ).add_all_byBoundsArray( this.bBoundsArray );
-        this.assert_BoundsArray_all_byArrayArray( "aBoundsArray", this.addedArrayArray );
+        this.aBoundsArray.set_all_byLowersUppers( this.aLowers, this.aUppers )
+          .add_all_byBoundsArray( this.bBoundsArray );
+        this.assert_BoundsArray_all_byArrayArray( "aBoundsArray",
+          this.addedArrayArray );
       }
     }
 
@@ -441,42 +453,54 @@ class Cases {
       this.aBoundsArray.set_all_byLowersUppers( this.aLowers, this.aUppers );
 
       this.aBoundsArray.multiply_one_byN( 0, this.Ns[ 0 ] );
-      this.assert_BoundsArray_one_byArray( "aBoundsArray", 0, this.aMultipledNArrayArray[ 0 ] );
+      this.assert_BoundsArray_one_byArray( "aBoundsArray",
+        0, this.aMultipledNArrayArray[ 0 ] );
 
-      this.aBoundsArray.multiply_one_byLowerUpper( 1, this.bLowers[ 1 ], this.bUppers[ 1 ] );
-      tBounds.set_byLowersUppers( this.aLowers, this.aUppers, 1 ).multiply_byLowersUppers( this.bLowers, this.bUppers, 1 );
+      this.aBoundsArray.multiply_one_byLowerUpper(
+        1, this.bLowers[ 1 ], this.bUppers[ 1 ] );
+      tBounds.set_byLowersUppers( this.aLowers, this.aUppers, 1 )
+        .multiply_byLowersUppers( this.bLowers, this.bUppers, 1 );
       this.assert_BoundsArray_one_byBounds( "aBoundsArray", 1, tBounds );
 
       this.aBoundsArray.multiply_one_byBounds( 2, aCaseArray[ 2 ].bBounds );
-      tBounds.set_byLowersUppers( this.aLowers, this.aUppers, 2 ).multiply_byBounds( aCaseArray[ 2 ].bBounds );
+      tBounds.set_byLowersUppers( this.aLowers, this.aUppers, 2 )
+        .multiply_byBounds( aCaseArray[ 2 ].bBounds );
       this.assert_BoundsArray_one_byBounds( "aBoundsArray", 2, tBounds );
 
       this.aBoundsArray.multiply_one_byNs( 3, this.Ns, 3 );
-      this.assert_BoundsArray_one_byArray( "aBoundsArray", 3, this.aMultipledNArrayArray[ 3 ] );
+      this.assert_BoundsArray_one_byArray( "aBoundsArray",
+        3, this.aMultipledNArrayArray[ 3 ] );
 
       this.aBoundsArray.set_all_byLowersUppers( this.aLowers, this.aUppers );
 
-      this.aBoundsArray.multiply_one_byLowersUppers( 0, this.bLowers, this.bUppers, 0 );
-      this.assert_BoundsArray_one_byArray( "aBoundsArray", 0, this.multipledArrayArray[ 0 ] );
+      this.aBoundsArray.multiply_one_byLowersUppers(
+        0, this.bLowers, this.bUppers, 0 );
+      this.assert_BoundsArray_one_byArray( "aBoundsArray",
+        0, this.multipledArrayArray[ 0 ] );
 
       this.bBoundsArray.set_all_byLowersUppers( this.bLowers, this.bUppers );
       this.aBoundsArray.multiply_one_byBoundsArray( 1, this.bBoundsArray, 1 );
-      this.assert_BoundsArray_one_byArray( "aBoundsArray", 1, this.multipledArrayArray[ 1 ] );
+      this.assert_BoundsArray_one_byArray( "aBoundsArray",
+        1, this.multipledArrayArray[ 1 ] );
 
       { // Test multiply_all_byN().
-        this.aBoundsArray.set_all_byLowersUppers( this.aLowers, this.aUppers ).multiply_all_byN( oneRandCase.N );
+        this.aBoundsArray.set_all_byLowersUppers( this.aLowers, this.aUppers )
+          .multiply_all_byN( oneRandCase.N );
 
         for ( let i = 0; i < aCaseArray.length; ++i ) {
-          tBounds.set_byLowersUppers( this.aLowers, this.aUppers, i ).multiply_byN( oneRandCase.N );
+          tBounds.set_byLowersUppers( this.aLowers, this.aUppers, i )
+            .multiply_byN( oneRandCase.N );
           this.assert_BoundsArray_one_byBounds( "aBoundsArray", i, tBounds );
         }
       }
 
       { // Test multiply_all_byLowerUpper() and multiply_all_byBounds().
         this.aBoundsArray.set_all_byLowersUppers( this.aLowers, this.aUppers )
-          .multiply_all_byLowerUpper( oneRandCase.bBounds.lower, oneRandCase.bBounds.upper );
+          .multiply_all_byLowerUpper(
+            oneRandCase.bBounds.lower, oneRandCase.bBounds.upper );
 
-        this.bBoundsArray.set_all_byLowersUppers( this.aLowers, this.aUppers ).multiply_all_byBounds( oneRandCase.bBounds );
+        this.bBoundsArray.set_all_byLowersUppers( this.aLowers, this.aUppers )
+          .multiply_all_byBounds( oneRandCase.bBounds );
 
         for ( let i = 0; i < aCaseArray.length; ++i ) {
           tBounds.set_byLowersUppers( this.aLowers, this.aUppers, i )
@@ -487,40 +511,52 @@ class Cases {
       }
 
       { // Test multiply_all_byNs().
-        this.aBoundsArray.set_all_byLowersUppers( this.aLowers, this.aUppers ).multiply_all_byNs( this.Ns );
-        this.assert_BoundsArray_all_byArrayArray( "aBoundsArray", this.aMultipledNArrayArray );
+        this.aBoundsArray.set_all_byLowersUppers( this.aLowers, this.aUppers )
+          .multiply_all_byNs( this.Ns );
+        this.assert_BoundsArray_all_byArrayArray( "aBoundsArray",
+          this.aMultipledNArrayArray );
       }
 
       { // Test multiply_all_byLowersUppers().
-        this.aBoundsArray.set_all_byLowersUppers( this.aLowers, this.aUppers ).multiply_all_byLowersUppers( this.bLowers, this.bUppers );
-        this.assert_BoundsArray_all_byArrayArray( "aBoundsArray", this.multipledArrayArray );
+        this.aBoundsArray.set_all_byLowersUppers( this.aLowers, this.aUppers )
+          .multiply_all_byLowersUppers( this.bLowers, this.bUppers );
+        this.assert_BoundsArray_all_byArrayArray( "aBoundsArray",
+          this.multipledArrayArray );
       }
 
       { // Test multiply_all_byBoundsArray().
         this.bBoundsArray.set_all_byLowersUppers( this.bLowers, this.bUppers );
-        this.aBoundsArray.set_all_byLowersUppers( this.aLowers, this.aUppers ).multiply_all_byBoundsArray( this.bBoundsArray );
-        this.assert_BoundsArray_all_byArrayArray( "aBoundsArray", this.multipledArrayArray );
+        this.aBoundsArray.set_all_byLowersUppers( this.aLowers, this.aUppers )
+          .multiply_all_byBoundsArray( this.bBoundsArray );
+        this.assert_BoundsArray_all_byArrayArray( "aBoundsArray",
+          this.multipledArrayArray );
       }
 
       { // Test multiply_all_byBoundsArray_multiply_all_byNs().
         this.bBoundsArray.set_all_byLowersUppers( this.bLowers, this.bUppers );
         this.aBoundsArray.set_all_byLowersUppers( this.aLowers, this.aUppers )
-          .multiply_all_byBoundsArray_multiply_all_byNs( this.bBoundsArray, this.Ns );
+          .multiply_all_byBoundsArray_multiply_all_byNs(
+            this.bBoundsArray, this.Ns );
 
         for ( let i = 0; i < aCaseArray.length; ++i ) {
           tBounds.set_byLowersUppers( this.aLowers, this.aUppers, i )
-            .multiply_byLowersUppers( this.bLowers, this.bUppers, i ).multiply_byNs( this.Ns, i );
+            .multiply_byLowersUppers( this.bLowers, this.bUppers, i )
+            .multiply_byNs( this.Ns, i );
           this.assert_BoundsArray_one_byBounds( "aBoundsArray", i, tBounds );
         }
       }
     }
 
     { // scaleTranslate_all_byScaleTranslateArray().
-      let aScaleTranslateArray = new FloatValue.ScaleTranslateArray( aCaseArray.length );
+      let aScaleTranslateArray
+        = new FloatValue.ScaleTranslateArray( aCaseArray.length );
       {
-        for ( let i = 0; i < aCaseArray.length; ++i ) { // Random scale-translate.
-          aScaleTranslateArray.scales[ i ] = RandTools.getRandomIntInclusive( -10, +10 );
-          aScaleTranslateArray.translates[ i ] = RandTools.getRandomIntInclusive( -10, +10 );
+        // Random scale-translate.
+        for ( let i = 0; i < aCaseArray.length; ++i ) {
+          aScaleTranslateArray.scales[ i ]
+            = RandTools.getRandomIntInclusive( -10, +10 );
+          aScaleTranslateArray.translates[ i ]
+            = RandTools.getRandomIntInclusive( -10, +10 );
         }
       }
 
