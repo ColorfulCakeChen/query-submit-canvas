@@ -22,7 +22,8 @@ import * as Block from "../../Conv/Block.js";
 class Block_TestParams_Base extends TestParams.Base {
 
   /**
-   * Used as default Block_TestParams.Base provider for conforming to Recyclable interface.
+   * Used as default Block_TestParams.Base provider for conforming to
+   * Recyclable interface.
    */
   static Pool = new Pool.Root( "Block_TestParams.Base.Pool",
     Block_TestParams_Base, Block_TestParams_Base.setAsConstructor );
@@ -43,8 +44,13 @@ class Block_TestParams_Base extends TestParams.Base {
 
   /** @override */
   static setAsConstructor_self() {
-    this.Pointwise_PassThrough_FiltersArray_BiasesArray_Bag = Pointwise.PassThrough_FiltersArray_BiasesArray_Bag.Pool.get_or_create_by();
-    this.Depthwise_PassThrough_FiltersArray_BiasesArray_Bag = Depthwise.PassThrough_FiltersArray_BiasesArray_Bag.Pool.get_or_create_by();
+    this.Pointwise_PassThrough_FiltersArray_BiasesArray_Bag
+      = Pointwise.PassThrough_FiltersArray_BiasesArray_Bag.Pool
+          .get_or_create_by();
+
+    this.Depthwise_PassThrough_FiltersArray_BiasesArray_Bag
+      = Depthwise.PassThrough_FiltersArray_BiasesArray_Bag.Pool
+          .get_or_create_by();
 
     this.out = Block.ParamsBase.Pool.get_or_create_by();
   }
@@ -56,10 +62,12 @@ class Block_TestParams_Base extends TestParams.Base {
       this.out = null;
     }
 
-    this.Depthwise_PassThrough_FiltersArray_BiasesArray_Bag?.disposeResources_and_recycleToPool();
+    this.Depthwise_PassThrough_FiltersArray_BiasesArray_Bag
+      ?.disposeResources_and_recycleToPool();
     this.Depthwise_PassThrough_FiltersArray_BiasesArray_Bag = null;
 
-    this.Pointwise_PassThrough_FiltersArray_BiasesArray_Bag?.disposeResources_and_recycleToPool();
+    this.Pointwise_PassThrough_FiltersArray_BiasesArray_Bag
+      ?.disposeResources_and_recycleToPool();
     this.Pointwise_PassThrough_FiltersArray_BiasesArray_Bag = null;
 
     super.disposeResources();
@@ -109,7 +117,8 @@ class Block_TestParams_Base extends TestParams.Base {
     input0_height, input0_width, input0_channelCount,
     nConvBlockTypeId,
     pointwise1ChannelCount,
-    depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad,
+    depthwise_AvgMax_Or_ChannelMultiplier,
+    depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad,
     depthwiseActivationId,
     pointwise20ChannelCount, pointwise20ActivationId,
     nSqueezeExcitationChannelCountDivisor, bSqueezeExcitationPrefix,
@@ -125,7 +134,8 @@ class Block_TestParams_Base extends TestParams.Base {
       input0_height, input0_width, input0_channelCount,
       nConvBlockTypeId,
       pointwise1ChannelCount,
-      depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad,
+      depthwise_AvgMax_Or_ChannelMultiplier,
+      depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad,
       depthwiseActivationId,
       pointwise20ChannelCount, pointwise20ActivationId,
       nSqueezeExcitationChannelCountDivisor, bSqueezeExcitationPrefix,
@@ -133,10 +143,12 @@ class Block_TestParams_Base extends TestParams.Base {
       bKeepInputTensor
     );
 
-    Object.assign( this.in, this.out ); // So that all parameters are by specified (none is by evolution).
+    // So that all parameters are by specified (none is by evolution).
+    Object.assign( this.in, this.out );
 
     let weightElementOffsetBegin = 0;
-    return this.set_byParamsNumberArrayObject_ParamsOut( weightElementOffsetBegin, false );
+    return this.set_byParamsNumberArrayObject_ParamsOut(
+      weightElementOffsetBegin, false );
   }
  
   /**
@@ -145,15 +157,17 @@ class Block_TestParams_Base extends TestParams.Base {
    *   - this.out.inferencedParams
    *
    * @param {object} this.in.paramsNumberArrayObject
-   *   Pass in an object. The result will be put into this object. It is a map from a string name (e.g. parameter name) to a number array.
-   * The name should be one of Block_TestParams_Base.paramsNameOrderArray[] elements.
+   *   Pass in an object. The result will be put into this object. It is a map
+   * from a string name (e.g. parameter name) to a number array. The name
+   * should be one of Block_TestParams_Base.paramsNameOrderArray[] elements.
    *
    * @param {Block.ParamsBase} this.out
    *   An object which will be the final result of Block.Params.
    *
    * @param {number} weightElementOffsetBegin
-   *   Offset how many elements (4 bytes per element) at the beginning of the result weightsFloat32Array.
-   * The this.in.byteOffsetBegin will be ( 4 * weightElementOffsetBegin ).
+   *   Offset how many elements (4 bytes per element) at the beginning of the
+   * result weightsFloat32Array. The this.in.byteOffsetBegin will be
+   * ( 4 * weightElementOffsetBegin ).
    *
    * @return {Base}
    *   Return this object self.
@@ -164,9 +178,11 @@ class Block_TestParams_Base extends TestParams.Base {
     this.generate_out_inferencedParams();
     this.generate_Filters_Biases( bDouble_when_ShuffleNetV2_byMobileNetV1 );
 
-    // Pack all parameters, filters, biases weights into a (pre-allocated and re-used) NumberArray.
+    // Pack all parameters, filters, biases weights into a (pre-allocated and
+    // re-used) NumberArray.
     this.in_weights.set_byConcat(
-      Block_TestParams_Base.paramsNameOrderArray, this.in.paramsNumberArrayObject, weightElementOffsetBegin );
+      Block_TestParams_Base.paramsNameOrderArray,
+      this.in.paramsNumberArrayObject, weightElementOffsetBegin );
 
     return this;
   }
@@ -181,9 +197,11 @@ class Block_TestParams_Base extends TestParams.Base {
    */
   onYield_isLegal() {
 
-    let infoConvBlockType = ValueDesc.ConvBlockType.Singleton.getInfo_byId( this.out.nConvBlockTypeId );
+    let infoConvBlockType = ValueDesc.ConvBlockType.Singleton.getInfo_byId(
+      this.out.nConvBlockTypeId );
 
-    // The depthwise filter of AVG pooling and MAX pooling can not be manipulated.
+    // The depthwise filter of AVG pooling and MAX pooling can not be
+    // manipulated.
     switch ( this.out.depthwise_AvgMax_Or_ChannelMultiplier ) {
       case ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.AVG:
       case ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.MAX:
@@ -193,29 +211,35 @@ class Block_TestParams_Base extends TestParams.Base {
           case ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY: // (6)
           case ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_TAIL: // (7)
 
-            // Note: Even if no bias and no activation (although avg/max pooling is possible because undo/do activation-escaping could
-            //       be ignored), the higher-half still can not be pass-through.
-            //
+            // Note: Even if no bias and no activation (although avg/max
+            //       pooling is possible because undo/do activation-escaping
+            //       could be ignored), the higher-half still can not be
+            //       pass-through.
             return false;
             break;
         }
     }
 
     // (2022/07/18)
-    // Note: In backend WASM, when filter height is 1 or filter width is 1, it sometimes seems that tf.depthwiseConv2d()
-    // may calculate wrongly. In backend CPU and WebGL, this problem does not exist.
+    // Note: In backend WASM, when filter height is 1 or filter width is 1, it
+    //       sometimes seems that tf.depthwiseConv2d() may calculate wrongly.
+    //       In backend CPU and WebGL, this problem does not exist.
     //
     // (2022/07/18)
-    // Note: In backend WASM, when filter height is 1 and filter width is 1, it seems that tf.pool() (both AVG and MAX)
-    // will calculate wrongly. In backend CPU and WebGL, this problem does not exist.
+    // Note: In backend WASM, when filter height is 1 and filter width is 1, it
+    //       seems that tf.pool() (both AVG and MAX) will calculate wrongly. In
+    //       backend CPU and WebGL, this problem does not exist.
     //
     // (2022/05/01)
-    // The tensorflow.js team seems not recognize this issue as a problem and will not fix it. So, we need get around it by
-    // ourselves testing procedure.
+    // The tensorflow.js team seems not recognize this issue as a problem and
+    // will not fix it. So, we need get around it by ourselves testing
+    // procedure.
     //
     if ( tf.getBackend() == "wasm" ) {
 
-      this.generate_out_inferencedParams(); // So that this.out.inferencedParams and .depthwisePadInfo is usable.
+      // So that this.out.inferencedParams and .depthwisePadInfo is usable.
+      this.generate_out_inferencedParams();
+
       if ( this.out.inferencedParams.bDepthwiseRequestedAndNeeded ) {
 
         // For depthwise1/depthwis2.
