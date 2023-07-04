@@ -27,7 +27,8 @@ class HeightWidthDepth_Base {
    * progressReceiver.setValueMax( progressToYield ) will be called.
    */
   constructor(
-    height, width, depth, progressToYield, progressToAdvance, progressReceiver ) {
+    height, width, depth,
+    progressToYield, progressToAdvance, progressReceiver ) {
 
     let canvasChannelCount = this.canvasChannelCount = 4;
 
@@ -51,8 +52,8 @@ class HeightWidthDepth_Base {
     let targetHeight = this.targetSize[ 0 ];
 
     // The filter size for achieving target size in one step.
-    let filterHeight_OneStep =      ( height - this.targetSize[ 0 ] ) + 1;
-    let filterWidth_OneStep =       ( width - this.targetSize[ 1 ] ) + 1;
+    let filterHeight_OneStep = ( height - this.targetSize[ 0 ] ) + 1;
+    let filterWidth_OneStep =  ( width - this.targetSize[ 1 ] ) + 1;
 
 //!!! Change to create from canvas.
 //     this.dataTensor3d = tf.tidy( () => {

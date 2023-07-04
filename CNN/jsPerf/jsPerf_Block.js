@@ -35,7 +35,8 @@ import * as jsPerf_Operation from "./jsPerf_Operation.js";
  * 
  */
  class PerformanceTestCase {
-  constructor( testCaseId, testCaseName, blockTestParams, block, testCorrectnessInfo ) {
+  constructor(
+    testCaseId, testCaseName, blockTestParams, block, testCorrectnessInfo ) {
     this.testCaseId = testCaseId;
     this.testCaseName = testCaseName;
     this.blockTestParams = blockTestParams;
@@ -76,7 +77,8 @@ class HeightWidthDepth {
    */
   block_PerformanceTest_addCase( testCaseName, blockTestParams ) {
     try {
-      let testCorrectnessInfo = Block_Reference.TestCorrectnessInfo.Pool.get_or_create_by();
+      let testCorrectnessInfo
+        = Block_Reference.TestCorrectnessInfo.Pool.get_or_create_by();
       testCorrectnessInfo.prepareBy(
         this.testPerformance_imageSourceBag,
         blockTestParams,
@@ -92,7 +94,8 @@ class HeightWidthDepth {
         channelShuffler_ConcatPointwiseConv );
 
       let aPerformanceTestCase = new PerformanceTestCase(
-        blockTestParams.id, testCaseName, blockTestParams, block, testCorrectnessInfo );
+        blockTestParams.id, testCaseName,
+        blockTestParams, block, testCorrectnessInfo );
 
       this.testCaseMap.set( testCaseName, aPerformanceTestCase );
 
@@ -108,12 +111,16 @@ class HeightWidthDepth {
 
   block_PerformanceTest_init() {
 
-    // Release dataTensor3d too. Because perofrmance testing uses larger different input image from correctness testing.
+    // Release dataTensor3d too. Because perofrmance testing uses larger
+    // different input image from correctness testing.
     this.disposeResources();
 
     // Larger input image for performance testing.
-    this.testPerformance_imageSourceBag = ImageSourceBag.Base.Pool.get_or_create_by();
-    this.testPerformance_channelShufflerBag = ChannelShuffler.Bag.Pool.get_or_create_by( ChannelShuffler.ConcatPointwiseConv.Pool );
+    this.testPerformance_imageSourceBag
+      = ImageSourceBag.Base.Pool.get_or_create_by();
+    this.testPerformance_channelShufflerBag
+      = ChannelShuffler.Bag.Pool.get_or_create_by(
+          ChannelShuffler.ConcatPointwiseConv.Pool );
 
     if ( this.testCaseMap )
       this.testCaseMap.clear();
@@ -123,7 +130,8 @@ class HeightWidthDepth {
     // input0_height, input0_width, input0_channelCount,
     // nConvBlockTypeId,
     // pointwise1ChannelCount
-    // depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad,
+    // depthwise_AvgMax_Or_ChannelMultiplier,
+    // depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad,
     // depthwiseActivationId,
     // pointwise20ChannelCount, pointwise20ActivationId,
     // nSqueezeExcitationChannelCountDivisor, bSqueezeExcitationPrefix,
@@ -132,7 +140,8 @@ class HeightWidthDepth {
     //
     //
     // The block for performance testing should:
-    //   - ( bKeepInputTensor == true ). Otherwise, the this.dataTensor3d will be destroyed.
+    //   - ( bKeepInputTensor == true ). Otherwise, the this.dataTensor3d will
+    //       be destroyed.
     //
 
 
@@ -348,16 +357,21 @@ class HeightWidthDepth {
 
       if ( outputElement !== verifyElement )
         throw Error( `test_Weights_Float32Array_RestrictedClone(): `
-          + `Weights.Base.ValueBounds.Float32Array_RestrictedClone( inputArray[ ${i} ] = ${inputElement} ) `
-          + `should be ( ${verifyElement} ) but got ( ${outputElement} ).`
+          + `Weights.Base.ValueBounds.Float32Array_RestrictedClone( `
+          + `inputArray[ ${i} ] = ${inputElement} ) `
+          + `should be ( ${verifyElement} ) but got `
+          + `( ${outputElement} ).`
         );
 
-      let outputElementSingle = Weights.Base.ValueBounds.clamp_or_zeroIfNaN( inputElement );
+      let outputElementSingle
+        = Weights.Base.ValueBounds.clamp_or_zeroIfNaN( inputElement );
 
       if ( outputElementSingle !== verifyElement )
         throw Error( `test_Weights_Float32Array_RestrictedClone(): `
-          + `Weights.Base.ValueBounds.clamp_or_zeroIfNaN( inputArray[ ${i} ] = ${inputElement} ) `
-          + `should be ( ${verifyElement} ) but got ( ${outputElementSingle} ).`
+          + `Weights.Base.ValueBounds.clamp_or_zeroIfNaN( `
+          + `inputArray[ ${i} ] = ${inputElement} ) `
+          + `should be ( ${verifyElement} ) but got `
+          + `( ${outputElementSingle} ).`
         );
     }
   }
@@ -369,13 +383,20 @@ class HeightWidthDepth {
     {
       let paramDesc = Block.Params.bKeepInputTensor;
 
-      for ( let offsetMultiplier = -100; offsetMultiplier <= +100; ++offsetMultiplier ) {
-        for ( let pair of paramDesc.valueDesc.range.valueInputOutputGenerator( valuePair, offsetMultiplier ) ) {
-          let adjustedInput = paramDesc.valueDesc.range.adjust( pair.valueInput )
+      for ( let offsetMultiplier = -100;
+        offsetMultiplier <= +100; ++offsetMultiplier ) {
+
+        for ( let pair of paramDesc.valueDesc.range.valueInputOutputGenerator(
+          valuePair, offsetMultiplier ) ) {
+
+          let adjustedInput
+            = paramDesc.valueDesc.range.adjust( pair.valueInput );
 
           if ( adjustedInput != pair.valueOutput )
-            throw Error( `ValueRange.Bool().valueInputOutputGenerator( ${offsetMultiplier} ): `
-              + `this.adjust( ${pair.valueInput} ) return ( ${adjustedInput} ) should be ( ${pair.valueOutput} ).` );
+            throw Error( `ValueRange.Bool()`
+              + `.valueInputOutputGenerator( ${offsetMultiplier} ): `
+              + `this.adjust( ${pair.valueInput} ) return `
+              + `( ${adjustedInput} ) should be ( ${pair.valueOutput} ).` );
         }
       }
     }
@@ -384,25 +405,36 @@ class HeightWidthDepth {
     {
       let paramDesc = Block.Params.pointwise20ChannelCount;
 
-      for ( let offsetMultiplier = -10; offsetMultiplier <= +10; ++offsetMultiplier ) {
+      for ( let offsetMultiplier = -10;
+        offsetMultiplier <= +10; ++offsetMultiplier ) {
         
         let valueOutMinMax;
         {
           let dice = Math.random();
           if ( dice < 0.5 ) {
             valueOutMinMax = [
-              RandTools.getRandomIntInclusive( paramDesc.valueDesc.range.min, paramDesc.valueDesc.range.max ),
-              RandTools.getRandomIntInclusive( paramDesc.valueDesc.range.min, paramDesc.valueDesc.range.max ),
+              RandTools.getRandomIntInclusive(
+                paramDesc.valueDesc.range.min,
+                paramDesc.valueDesc.range.max ),
+              RandTools.getRandomIntInclusive(
+                paramDesc.valueDesc.range.min,
+                paramDesc.valueDesc.range.max ),
             ];
           }
         }
 
-        for ( let pair of paramDesc.valueDesc.range.valueInputOutputGenerator( valuePair, offsetMultiplier, valueOutMinMax ) ) {
-          let adjustedInput = paramDesc.valueDesc.range.adjust( pair.valueInput )
+        for ( let pair of paramDesc.valueDesc.range.valueInputOutputGenerator(
+          valuePair, offsetMultiplier, valueOutMinMax ) ) {
+
+          let adjustedInput
+            = paramDesc.valueDesc.range.adjust( pair.valueInput );
 
           if ( adjustedInput != pair.valueOutput )
-            throw Error( `ValueRange.Int( ${paramDesc.min}, ${paramDesc.max} ).valueInputOutputGenerator( ${offsetMultiplier} ): `
-              + `this.adjust( ${pair.valueInput} ) return ( ${adjustedInput} ) should be ( ${pair.valueOutput} ).` );
+            throw Error( `ValueRange.Int( `
+              + `${paramDesc.min}, ${paramDesc.max} )`
+              + `.valueInputOutputGenerator( ${offsetMultiplier} ): `
+              + `this.adjust( ${pair.valueInput} ) return `
+              + `( ${adjustedInput} ) should be ( ${pair.valueOutput} ).` );
         }
       }
 
@@ -431,13 +463,17 @@ class HeightWidthDepth {
       yield;
 
       {
-        let memoryInfo_testCorrectness_before = tf.memory(); // Test memory leakage of imageSourceBag and channelShufflerBag.
+        // Test memory leakage of imageSourceBag and channelShufflerBag.
+        let memoryInfo_testCorrectness_before = tf.memory();
 
         {
-          // Note: imageSourceBag and channelShufflerBag should not be created outside tidy() because tidy() will dispose tensors
+          // Note: imageSourceBag and channelShufflerBag should not be created
+          //       outside tidy() because tidy() will dispose tensors
           //       dynamically created in them.
           let imageSourceBag = ImageSourceBag.Base.Pool.get_or_create_by();
-          let channelShufflerBag = ChannelShuffler.Bag.Pool.get_or_create_by( ChannelShuffler.ConcatPointwiseConv.Pool );
+          let channelShufflerBag
+            = ChannelShuffler.Bag.Pool.get_or_create_by(
+                ChannelShuffler.ConcatPointwiseConv.Pool );
 
           let testParams = Block_TestParams.Base.Pool.get_or_create_by();
           let testParamsGenerator = testParams.ParamsGenerator();
@@ -448,18 +484,24 @@ class HeightWidthDepth {
           try {
             for ( let testParams of testParamsGenerator ) {
               let bDisplayed = batchIdCalculator.checkAndDisplay( testParams.id );
-              if ( bDisplayed )
-                yield; // Since just entering a new batch section, take a break so that memory garbage collector could be activated to work.
 
-              testReference.testCorrectness( imageSourceBag, testParams, channelShufflerBag );
+              // Since just entering a new batch section, take a break so that
+              // memory garbage collector could be activated to work.
+              if ( bDisplayed )
+                yield;
+
+              testReference.testCorrectness(
+                imageSourceBag, testParams, channelShufflerBag );
             }
 
           // Q: Why not catch exception inside Block_Reference.testCorrectness()?
           // A: To catch testParamsGenerator's exception.
           } catch ( e ) {
             let backendName = tf.getBackend();
-            let msg = `jsPerf_Block.js: testCorrectness(): backendName=${backendName}, `
-              + `Block, (yieldCount == ${testParams.yieldCount}), testParams.id == ${testParams.id}`;
+            let msg = `jsPerf_Block.js: testCorrectness(): `
+              + `backendName=${backendName}, `
+              + `Block, (yieldCount == ${testParams.yieldCount}), `
+              + `testParams.id == ${testParams.id}`;
 
             console.log( msg );
             alert( `${msg}\n${e}` );
@@ -470,28 +512,41 @@ class HeightWidthDepth {
 
           batchIdCalculator.checkAndDisplay( testParams.id );
 
-          testReference.disposeResources_and_recycleToPool(); testReference = null;
-          testParams.disposeResources_and_recycleToPool(); testParams = null;
-          channelShufflerBag.disposeResources_and_recycleToPool(); channelShufflerBag = null;
-          imageSourceBag.disposeResources_and_recycleToPool(); imageSourceBag = null;
+          testReference.disposeResources_and_recycleToPool();
+          testReference = null;
+
+          testParams.disposeResources_and_recycleToPool();
+          testParams = null;
+
+          channelShufflerBag.disposeResources_and_recycleToPool();
+          channelShufflerBag = null;
+
+          imageSourceBag.disposeResources_and_recycleToPool();
+          imageSourceBag = null;
         }
 
         let memoryInfo_testCorrectness_after = tf.memory();
 
-        if ( memoryInfo_testCorrectness_after.numTensors != memoryInfo_testCorrectness_before.numTensors )
+        if ( memoryInfo_testCorrectness_after.numTensors
+               != memoryInfo_testCorrectness_before.numTensors )
           throw Error( `testCorrectness() memory leak. `
-            + `result tensor count ( ${memoryInfo_testCorrectness_after.numTensors} ) `
-            + `should be ( ${memoryInfo_testCorrectness_before.numTensors} ) `
+            + `result tensor count `
+            + `( ${memoryInfo_testCorrectness_after.numTensors} ) `
+            + `should be `
+            + `( ${memoryInfo_testCorrectness_before.numTensors} ) `
           );
       }
 
       Pool.Asserter.assert_Pool_issuedCount(
-        "jsPerf_Block.HeightWidthDepth.testCorrectness()", pool_all_issuedCount_before );
+        "jsPerf_Block.HeightWidthDepth.testCorrectness()",
+        pool_all_issuedCount_before );
+
       yield;
     }
 
     try {
-      // After correctness testing done, create all Block for performance testing.
+      // After correctness testing done, create all Block for performance
+      // testing.
       this.block_PerformanceTest_init();
     } catch ( e ) {
       debugger;
@@ -541,7 +596,8 @@ function init() {
 
   // Using mobile phone's resolution ( 2160 * 1080 ) will crash the computer.
   // Using ( 1 / 10 ) of computer screen ( 1920 * 1080 ).
-  globalThis.testSet_108x192x4 = new HeightWidthDepth( 108, 192, depth ); // height, width, depth
+  globalThis.testSet_108x192x4 = new HeightWidthDepth(
+    108, 192, depth ); // height, width, depth
 
   globalThis.testSet_108x192x4_All = [
     globalThis.testSet_108x192x4

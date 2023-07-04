@@ -8,13 +8,15 @@ import * as ValueMax from "../util/ValueMax.js";
 
 
 //!!! ...unfinished... (2022/09/21)
-// Use ValueMax.Percentage.Xxx.Pool.get_or_create_by() instead of new ValueMax.Percentage.Xxx
+// Use ValueMax.Percentage.Xxx.Pool.get_or_create_by() instead of new
+// ValueMax.Percentage.Xxx
 
 /** Aggregate all progress.  */
 class Progress extends ValueMax.Percentage.Aggregate {
   constructor() {
     let children = [
-      new ValueMax.Percentage.Concrete(), // Increased when parsing the downloaded data to Uint8Array.
+      // Increased when parsing the downloaded data to Uint8Array.
+      new ValueMax.Percentage.Concrete(),
     ];
 
     super(children);
@@ -27,8 +29,10 @@ function byArrayBuffer() {
   let progress = new Progress();
 
   return function (base64_ArrayBuffer) {
-    let suspendByteCount = base64_ArrayBuffer.byteLength + 1; // Large enough to avoid from yield.
-    let decoder = Base64ArrayBufferToUint8Array.decoder(base64_ArrayBuffer, 0, progress, progress.uint8Array, suspendByteCount);
+    // Large enough to avoid from yield.
+    let suspendByteCount = base64_ArrayBuffer.byteLength + 1;
+    let decoder = Base64ArrayBufferToUint8Array.decoder(
+      base64_ArrayBuffer, 0, progress, progress.uint8Array, suspendByteCount );
     for (let p of decoder) {
     }
   }
