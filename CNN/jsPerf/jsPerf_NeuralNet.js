@@ -53,7 +53,9 @@ class PerformanceTestCase extends Recyclable.Root {
   }
 
   /** @override */
-  static setAsConstructor_self( testCaseId, testCaseName, neuralNetParamsBase ) {
+  static setAsConstructor_self(
+    testCaseId, testCaseName, neuralNetParamsBase ) {
+
     this.testCaseId = testCaseId;
     this.testCaseName = testCaseName;
     this.neuralNetParamsBase = neuralNetParamsBase;
@@ -83,7 +85,8 @@ class PerformanceTestCase extends Recyclable.Root {
 
       if ( !PerformanceTestCase.randomTestWeightArray ) {
         const weightArrayLength = ( 100 * 1024 * 1024 );
-        PerformanceTestCase.randomTestWeightArray = new Float32Array( weightArrayLength );
+        PerformanceTestCase.randomTestWeightArray
+          = new Float32Array( weightArrayLength );
 
         RandTools.fill_numberArray(
           PerformanceTestCase.randomTestWeightArray,
@@ -97,8 +100,9 @@ class PerformanceTestCase extends Recyclable.Root {
       }
 
       // Initialize successfully or failed.
-      let neuralNetParams = NeuralNet.Params.get_or_create_by_NeuralNetParamsBase(
-        this.neuralNetParamsBase );
+      let neuralNetParams
+        = NeuralNet.Params.get_or_create_by_NeuralNetParamsBase(
+            this.neuralNetParamsBase );
 
       let progress = ValueMax.Percentage.Aggregate.Pool.get_or_create_by();
       let neuralNet = this.neuralNet = NeuralNet.Base.Pool.get_or_create_by();
@@ -107,14 +111,16 @@ class PerformanceTestCase extends Recyclable.Root {
         PerformanceTestCase.randomTestWeightArray, 0, neuralNetParams );
 
       if ( neuralNet.bInitOk != bInitOk )
-        throw Error( `NeuralNet validation state (${neuralNet.bInitOk}) mismatches initer's result (${bInitOk}). ${neuralNet}` );
+        throw Error( `NeuralNet validation state (${neuralNet.bInitOk}) `
+          + `mismatches initer's result (${bInitOk}). ${neuralNet}` );
 
       if ( false == bInitOk )
         throw Error( `Failed to initialize neuralNet object. ${neuralNet}` );
 
       if ( 100 != progress.valuePercentage )
         throw Error(
-          `Progress (${progress.valuePercentage}) should be 100 when initializing `
+          `Progress ( ${progress.valuePercentage} ) should be `
+          + `100 when initializing `
           + `NeuralNet object successfully. ${neuralNet}`);
 
       progress.disposeResources_and_recycleToPool();
@@ -171,7 +177,9 @@ class HeightWidthDepth {
   /**
    * 
    */
-  neuralNet_PerformanceTest_addCase( testCaseId, testCaseName, neuralNetParamsBase ) {
+  neuralNet_PerformanceTest_addCase(
+    testCaseId, testCaseName, neuralNetParamsBase ) {
+
     let aPerformanceTestCase = PerformanceTestCase.Pool.get_or_create_by(
       testCaseId, testCaseName, neuralNetParamsBase );
 
@@ -180,7 +188,8 @@ class HeightWidthDepth {
 
   neuralNet_PerformanceTest_init() {
 
-    // Release dataTensor3d too. Because perofrmance testing uses larger different input image from correctness testing.
+    // Release dataTensor3d too. Because perofrmance testing uses larger
+    // different input image from correctness testing.
     this.disposeResources();
 
     // Larger input image for performance testing.
@@ -247,8 +256,8 @@ class HeightWidthDepth {
 
     let output_asInputValueRange = true;
 
-    // The neuralNet performance testing should not keep-input-tensor becuse the
-    // input image is created from canvas in real time.
+    // The neuralNet performance testing should not keep-input-tensor because
+    // the input image is created from canvas in real time.
     let bKeepInputTensor = false;
 
     // explicit_input_height, explicit_input_width, explicit_input_channelCount,
@@ -261,7 +270,8 @@ class HeightWidthDepth {
     //
 
     // Test Case 0: (MobileNetV1)
-    this.neuralNet_PerformanceTest_addCase( 0, "MobileNetV1",
+    this.neuralNet_PerformanceTest_addCase( 0,
+      "MobileNetV1",
       NeuralNet.ParamsBase.Pool.get_or_create_by(
         this.height, this.width, this.depth,
         has_implicit_input,
@@ -273,7 +283,8 @@ class HeightWidthDepth {
       ) );
 
     // Test Case 1: (MobileNetV1_padValid)
-    this.neuralNet_PerformanceTest_addCase( 1, "MobileNetV1_padValid",
+    this.neuralNet_PerformanceTest_addCase( 1,
+      "MobileNetV1_padValid",
       NeuralNet.ParamsBase.Pool.get_or_create_by(
         this.height, this.width, this.depth,
         has_implicit_input,
@@ -285,7 +296,8 @@ class HeightWidthDepth {
       ) );
 
     // Test Case 2: (MobileNetV2_Thin)
-    this.neuralNet_PerformanceTest_addCase( 2, "MobileNetV2_Thin",
+    this.neuralNet_PerformanceTest_addCase( 2,
+      "MobileNetV2_Thin",
       NeuralNet.ParamsBase.Pool.get_or_create_by(
         this.height, this.width, this.depth,
         has_implicit_input,
@@ -297,7 +309,8 @@ class HeightWidthDepth {
       ) );
 
     // Test Case 3: (MobileNetV2)
-    this.neuralNet_PerformanceTest_addCase( 3, "MobileNetV2",
+    this.neuralNet_PerformanceTest_addCase( 3,
+      "MobileNetV2",
       NeuralNet.ParamsBase.Pool.get_or_create_by(
         this.height, this.width, this.depth,
         has_implicit_input,
@@ -309,7 +322,8 @@ class HeightWidthDepth {
       ) );
 
     // Test Case 4: (ShuffleNetV2))
-    this.neuralNet_PerformanceTest_addCase( 4, "ShuffleNetV2",
+    this.neuralNet_PerformanceTest_addCase( 4,
+      "ShuffleNetV2",
       NeuralNet.ParamsBase.Pool.get_or_create_by(
         this.height, this.width, this.depth,
         has_implicit_input,
@@ -321,7 +335,8 @@ class HeightWidthDepth {
       ) );
 
     // Test Case 5: (ShuffleNetV2_byPointwise21)
-    this.neuralNet_PerformanceTest_addCase( 5, "ShuffleNetV2_byPointwise21",
+    this.neuralNet_PerformanceTest_addCase( 5,
+      "ShuffleNetV2_byPointwise21",
       NeuralNet.ParamsBase.Pool.get_or_create_by(
         this.height, this.width, this.depth,
         has_implicit_input,
@@ -333,7 +348,8 @@ class HeightWidthDepth {
       ) );
 
     // Test Case 6: (ShuffleNetV2_byMobileNetV1)
-    this.neuralNet_PerformanceTest_addCase( 6, "ShuffleNetV2_byMobileNetV1",
+    this.neuralNet_PerformanceTest_addCase( 6,
+      "ShuffleNetV2_byMobileNetV1",
       NeuralNet.ParamsBase.Pool.get_or_create_by(
         this.height, this.width, this.depth,
         has_implicit_input,
@@ -345,7 +361,8 @@ class HeightWidthDepth {
       ) );
 
     // Test Case 7: (ShuffleNetV2_byMobileNetV1_padValid)
-    this.neuralNet_PerformanceTest_addCase( 7, "ShuffleNetV2_byMobileNetV1_padValid",
+    this.neuralNet_PerformanceTest_addCase( 7,
+      "ShuffleNetV2_byMobileNetV1_padValid",
       NeuralNet.ParamsBase.Pool.get_or_create_by(
         this.height, this.width, this.depth,
         has_implicit_input,
@@ -388,7 +405,8 @@ class HeightWidthDepth {
     let testCase = this.testCaseMap.get( testCaseName );
 
     // First time test this case. Release all other test cases' neural networks
-    // (so that there will be enough memory). Create the specified neural network.
+    // (so that there will be enough memory). Create the specified neural
+    // network.
     if ( !testCase.neuralNet ) {
       this.neuralNet_PerformanceTest_release_neuralNet();
       testCase.prepare();
@@ -405,7 +423,8 @@ class HeightWidthDepth {
   
       if ( 100 != neuralNet.progressApply.valuePercentage )
         throw Error( `testNeuralNet_ByName(): `
-          + `Progress (${neuralNet.progressApply.valuePercentage}) should be 100 `
+          + `Progress ( ${neuralNet.progressApply.valuePercentage} ) `
+          + `should be 100 `
           + `after neuralNet.apply(). ${neuralNet}`);
     }
 
@@ -427,12 +446,14 @@ class HeightWidthDepth {
       yield;
 
       {
-        let memoryInfo_testCorrectness_before = tf.memory(); // Test memory leakage of imageSourceBag.
+        // Test memory leakage of imageSourceBag.
+        let memoryInfo_testCorrectness_before = tf.memory();
 
         {
           // Note: imageSourceBag should not be created outside tidy() because
           //       tidy() will dispose tensors dynamically created in them.
-          let imageSourceBag = ImageSourceBag.Base.Pool.get_or_create_by( "int32" );
+          let imageSourceBag
+            = ImageSourceBag.Base.Pool.get_or_create_by( "int32" );
 
           let testParams = NeuralNet_TestParams.Base.Pool.get_or_create_by();
           let testParamsGenerator = testParams.ParamsGenerator();
@@ -442,7 +463,8 @@ class HeightWidthDepth {
 
           try {
             for ( testParams of testParamsGenerator ) {
-              let bDisplayed = batchIdCalculator.checkAndDisplay( testParams.id );
+              let bDisplayed
+                = batchIdCalculator.checkAndDisplay( testParams.id );
 
               // Since just entering a new batch section, take a break so that
               // memory garbage collector could be activated to work.
@@ -468,9 +490,14 @@ class HeightWidthDepth {
 
           batchIdCalculator.checkAndDisplay( testParams.id );
 
-          testReference.disposeResources_and_recycleToPool(); testReference = null;
-          testParams.disposeResources_and_recycleToPool(); testParams = null;
-          imageSourceBag.disposeResources_and_recycleToPool(); imageSourceBag = null;
+          testReference.disposeResources_and_recycleToPool();
+          testReference = null;
+
+          testParams.disposeResources_and_recycleToPool();
+          testParams = null;
+
+          imageSourceBag.disposeResources_and_recycleToPool();
+          imageSourceBag = null;
         }
 
         let memoryInfo_testCorrectness_after = tf.memory();
@@ -478,8 +505,9 @@ class HeightWidthDepth {
         if ( memoryInfo_testCorrectness_after.numTensors
                != memoryInfo_testCorrectness_before.numTensors )
           throw Error( `testCorrectness() memory leak. `
-            + `result tensor count (${memoryInfo_testCorrectness_after.numTensors}) `
-            + `should be (${memoryInfo_testCorrectness_before.numTensors} `
+            + `result tensor count `
+            + `( ${memoryInfo_testCorrectness_after.numTensors} ) `
+            + `should be (${memoryInfo_testCorrectness_before.numTensors}.`
           );
       }
 
@@ -491,7 +519,8 @@ class HeightWidthDepth {
     }
 
     try {
-      // After correctness testing done, create all NeuralNet for performance testing.
+      // After correctness testing done, create all NeuralNet for performance
+      // testing.
       this.neuralNet_PerformanceTest_init();
     } catch ( e ) {
       debugger;
@@ -511,8 +540,10 @@ function init() {
 
   // Using mobile phone's resolution ( 1080 * 2160 ) will crash the computer.
   // Using ( 1 / 15 ) of computer screen ( 1080 * 1920 ) (i.e. ( 72 * 128 )).
-  globalThis.testSet_72x128x4 = new HeightWidthDepth( 72, 128, depth ); // height, width, depth
-  //globalThis.testSet_72x128x4 = new HeightWidthDepth( 72 * 3, 128 * 3, depth ); // height, width, depth
+  globalThis.testSet_72x128x4 = new HeightWidthDepth(
+    72, 128, depth ); // height, width, depth
+  //globalThis.testSet_72x128x4 = new HeightWidthDepth(
+  //  72 * 3, 128 * 3, depth ); // height, width, depth
  
   globalThis.testSet_All = [
     globalThis.testSet_72x128x4
