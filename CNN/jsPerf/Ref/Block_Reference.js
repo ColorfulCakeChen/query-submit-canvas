@@ -1513,33 +1513,36 @@ class Block_Reference_Base extends Recyclable.Root {
       let bShuffle, bSplit;
       switch ( testParams.out.nConvBlockTypeId ) {
         case ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_HEAD:                       // (2)
-          concat2Name = "Concat2_pointwise20_pointwise21_ShuffleSplit";  bShuffle =  true; bSplit =  true; break;
+          bShuffle =  true; bSplit =  true; concat2Name = "Concat2_pointwise20_pointwise21_ShuffleSplit";  break;
         case ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BODY:                       // (3)
-          concat2Name = "Concat2_pointwise20_input1_ShuffleSplit";       bShuffle =  true; bSplit =  true; break;
+          bShuffle =  true; bSplit =  true; concat2Name = "Concat2_pointwise20_input1_ShuffleSplit";       break;
         case ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_TAIL:                       // (4)
-          concat2Name = "Concat2_pointwise20_input1";                    bShuffle = false; bSplit = false; break;
+          bShuffle = false; bSplit = false; concat2Name = "Concat2_pointwise20_input1";                    break;
         case ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD:      // (5)
-          concat2Name = "Concat2_pointwise20_pointwise202_Shuffle";      bShuffle =  true; bSplit = false; break;
+          bShuffle =  true; bSplit = false; concat2Name = "Concat2_pointwise20_pointwise202_Shuffle";      break;
         case ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY:      // (6)
-          concat2Name = "Concat2_pointwise20_input0_HigherHalf_Shuffle"; bShuffle =  true; bSplit = false; break;
+          bShuffle =  true; bSplit = false; concat2Name = "Concat2_pointwise20_input0_HigherHalf_Shuffle"; break;
         case ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_TAIL:      // (7)
-          concat2Name = "Concat2_pointwise20_input0_HigherHalf";         bShuffle = false; bSplit = false; break;
+          bShuffle = false; bSplit = false; concat2Name = "Concat2_pointwise20_input0_HigherHalf";         break;
         default:
           throw Error( `Block_Reference.Base.calcResult(): `
             + `Concat2ShuffleSplit: Unsupported `
             + `nConvBlockTypeId=`
-            + `${ValueDesc.ConvBlockType.Singleton.getNameWithInt_byId( testParams.out.nConvBlockTypeId )}. `
+            + `${ValueDesc.ConvBlockType.Singleton.getNameWithInt_byId(
+                   testParams.out.nConvBlockTypeId )}. `
             + `${testParams.out}` );
           break;
       }
 
       if ( !imageOutArray[ 1 ] )
         throw Error( `Block_Reference.Base.calcResult(): `
-          + `Concat2ShuffleSplit: imageOutArray[ 1 ] ( ${imageOutArray[ 1 ]} ) `
-            + `should not be null. ${testParams.out}` );
+          + `Concat2ShuffleSplit: `
+          + `imageOutArray[ 1 ] ( ${imageOutArray[ 1 ]} ) `
+          + `should not be null. ${testParams.out}` );
 
-      // Because the following operation uses the input array as output array, collect before the operation. Otherwise,
-      // they will be lost to be disposed.
+      // Because the following operation uses the input array as output array,
+      // collect before the operation. Otherwise, they will be lost to be
+      // disposed.
       this.imageNeedDisposeUniqueStack.push( ...imageOutArray );
 
       NumberImage.Base.calcConcatShuffleSplit(
