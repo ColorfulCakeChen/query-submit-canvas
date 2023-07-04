@@ -1332,21 +1332,26 @@ class Block_TestParams_Base extends TestParams.Base {
 
       } else {
         // Note: if AVG or MAX pooling, this property will be empty array.
-        this.fill_object_property_numberArray( io_numberArrayObject, propertyNames.Filters,
+        this.fill_object_property_numberArray( io_numberArrayObject,
+          propertyNames.Filters,
           1, 1, 0 );
       }
 
-      if ( depthwise_AvgMax_Or_ChannelMultiplier != 0 ) { // Include avgerage pooling, maximum pooling, convolution.
+      // Include avgerage pooling, maximum pooling, convolution.
+      if ( depthwise_AvgMax_Or_ChannelMultiplier != 0 ) {
         if ( bBias ) {
           let biasesWeightsCount = result_outputChannelCount;
-          this.fill_object_property_numberArray( io_numberArrayObject, propertyNames.Biases,
+          this.fill_object_property_numberArray( io_numberArrayObject,
+            propertyNames.Biases,
             1, 1, biasesWeightsCount );
         } else { // No bias.
-          this.fill_object_property_numberArray( io_numberArrayObject, propertyNames.Biases,
+          this.fill_object_property_numberArray( io_numberArrayObject,
+            propertyNames.Biases,
             1, 1, 0 );
         }
       } else { // No depthwise convolution, no avg pooling, no max pooling.
-        this.fill_object_property_numberArray( io_numberArrayObject, propertyNames.Biases,
+        this.fill_object_property_numberArray( io_numberArrayObject,
+          propertyNames.Biases,
           1, 1, 0 );
       }
     }
@@ -1360,8 +1365,9 @@ class Block_TestParams_Base extends TestParams.Base {
    *   The TestParam object to be referenced (and modified).
    *
    * @param {boolean} bDouble_when_ShuffleNetV2_byMobileNetV1
-   *   If true and nConvBlockTypeId is SHUFFLE_NET_V2_BY_MOBILE_NET_V1_Xxx, some channel count will be
-   * doubled. Mainly used for testing Block_TestParams.
+   *   If true and nConvBlockTypeId is SHUFFLE_NET_V2_BY_MOBILE_NET_V1_Xxx,
+   * some channel count will be doubled. Mainly used for testing
+   * Block_TestParams.
    */
   generate_Filters_Biases( bDouble_when_ShuffleNetV2_byMobileNetV1 ) {
 

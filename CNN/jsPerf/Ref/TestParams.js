@@ -415,10 +415,12 @@ class TestParams_Base extends Recyclable.Root {
     randomOffsetMin = 0, randomOffsetMax = 0, divisorForRemainder = ( 2 ** 26 )
   ) {
 
-    io_object[ propertyName ] = this.SequenceRandom_NumberArray_Bag.get_by_elementCount_randomOffsetMin_randomOffsetMax(
-      height, width, channelCount,
-      valueBegin, valueStep,
-      randomOffsetMin, randomOffsetMax, divisorForRemainder );
+    io_object[ propertyName ]
+      = this.SequenceRandom_NumberArray_Bag
+          .get_by_elementCount_randomOffsetMin_randomOffsetMax(
+            height, width, channelCount,
+            valueBegin, valueStep,
+            randomOffsetMin, randomOffsetMax, divisorForRemainder );
   }
 
   /**
@@ -442,19 +444,23 @@ class TestParams_Base extends Recyclable.Root {
   ) {
 
     //!!! (2022/05/23 Remarked)
-    //TestParams_Base.ensure_object_property_numberArray_length_filled( io_object, propertyName,
+    //TestParams_Base.ensure_object_property_numberArray_length_filled(
+    //   io_object, propertyName,
     //   elementCount,
     //   TestParams.Base.weightsValueBegin,
     //   TestParams.Base.weightsValueStep,
-    //   TestParams.Base.weightsRandomOffset.min, TestParams.Base.weightsRandomOffset.max,
+    //   TestParams.Base.weightsRandomOffset.min,
+    //   TestParams.Base.weightsRandomOffset.max,
     //   TestParams.Base.weightsDivisorForRemainder
     // );
 
-    this.ensure_object_property_numberArray_length_existed( io_object, propertyName,
+    this.ensure_object_property_numberArray_length_existed(
+      io_object, propertyName,
       height, width, channelCount,
       TestParams_Base.weightsValueBegin,
       TestParams_Base.weightsValueStep,
-      TestParams_Base.weightsRandomOffset.min, TestParams_Base.weightsRandomOffset.max,
+      TestParams_Base.weightsRandomOffset.min,
+      TestParams_Base.weightsRandomOffset.max,
       TestParams_Base.weightsDivisorForRemainder
     );
   }
