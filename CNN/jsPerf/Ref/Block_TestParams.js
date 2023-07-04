@@ -903,97 +903,160 @@ class Block_TestParams_Base extends TestParams.Base {
    * Pointwise1-Depthwise1-Pointwise2)).
    */
   nConvBlockTypeId__is__ONE_INPUT() {
-    if ( this.out.nConvBlockTypeId == ValueDesc.ConvBlockType.Singleton.Ids.MOBILE_NET_V1_HEAD_BODY_TAIL )
+    if ( this.out.nConvBlockTypeId
+           == ValueDesc.ConvBlockType.Singleton.Ids.MOBILE_NET_V1_HEAD_BODY_TAIL )
       return true;
     return false;
   }
 
-  /** @return {boolean} Return true if this.out.nConvBlockTypeId is (1) (MobileNetV2's body/tail). */
+  /**
+   * @return {boolean}
+   *   Return true if this.out.nConvBlockTypeId is (1) (MobileNetV2's
+   * body/tail).
+   */
   nConvBlockTypeId__is__MOBILE_NET_V2_BODY_TAIL() {
-    if ( this.out.nConvBlockTypeId == ValueDesc.ConvBlockType.Singleton.Ids.MOBILE_NET_V2_BODY_TAIL )
+    if ( this.out.nConvBlockTypeId
+           == ValueDesc.ConvBlockType.Singleton.Ids.MOBILE_NET_V2_BODY_TAIL )
       return true;
     return false;
   }
 
-  /** @return {boolean} Return true if this.out.nConvBlockTypeId is (2) (ShuffleNetV2's head). */
+  /**
+   * @return {boolean}
+   *   Return true if this.out.nConvBlockTypeId is (2) (ShuffleNetV2's head).
+   */
   nConvBlockTypeId__is__SHUFFLE_NET_V2_HEAD() {
-    if ( this.out.nConvBlockTypeId == ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_HEAD )
+    if ( this.out.nConvBlockTypeId
+           == ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_HEAD )
       return true;
     return false;
   }
 
-  /** @return {boolean} Return true if this.out.nConvBlockTypeId is (3 or 4) (ShuffleNetV2's body/tail). */
+  /**
+   * @return {boolean}
+   *   Return true if this.out.nConvBlockTypeId is (3 or 4) (ShuffleNetV2's
+   * body/tail).
+   */
   nConvBlockTypeId__is__SHUFFLE_NET_V2_BODY_or_TAIL() {
-    if ( this.out.nConvBlockTypeId == ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BODY )
+    if ( this.out.nConvBlockTypeId
+           == ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BODY )
       return true;
-    if ( this.out.nConvBlockTypeId == ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_TAIL )
+    if ( this.out.nConvBlockTypeId
+           == ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_TAIL )
       return true;
     return false;
   }
 
-  /** @return {boolean} Return true if this.out.nConvBlockTypeId is (5) (ShuffleNetV2_ByMobileNetV1's head). */
+  /**
+   * @return {boolean}
+   *   Return true if this.out.nConvBlockTypeId is (5)
+   * (ShuffleNetV2_ByMobileNetV1's head).
+   */
   nConvBlockTypeId__is__SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD() {
-    if ( this.out.nConvBlockTypeId == ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD )
+    if ( this.out.nConvBlockTypeId
+           == ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD )
       return true;
     return false;
   }
 
-  /** @return {boolean} Return true if this.out.nConvBlockTypeId is (6) (ShuffleNetV2_ByMobileNetV1's body). */
+  /**
+   * @return {boolean}
+   *   Return true if this.out.nConvBlockTypeId is (6)
+   * (ShuffleNetV2_ByMobileNetV1's body).
+   */
   nConvBlockTypeId__is__SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY() {
-    if ( this.out.nConvBlockTypeId == ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY )
+    if ( this.out.nConvBlockTypeId
+           == ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY )
       return true;
     return false;
   }
 
-  /** @return {boolean} Return true if this.out.nConvBlockTypeId is (7) (ShuffleNetV2_ByMobileNetV1's tail). */
+  /**
+   * @return {boolean}
+   *   Return true if this.out.nConvBlockTypeId is (7)
+   * (ShuffleNetV2_ByMobileNetV1's tail).
+   */
   nConvBlockTypeId__is__SHUFFLE_NET_V2_BY_MOBILE_NET_V1_TAIL() {
-    if ( this.out.nConvBlockTypeId == ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_TAIL )
+    if ( this.out.nConvBlockTypeId
+           == ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_TAIL )
       return true;
     return false;
   }
 
-  /** @return {boolean} Return true if this.out.nConvBlockTypeId is (6 or 7) (ShuffleNetV2_ByMobileNetV1's body/tail). */
+  /**
+   * @return {boolean}
+   *   Return true if this.out.nConvBlockTypeId is (6 or 7)
+   * (ShuffleNetV2_ByMobileNetV1's body/tail).
+   */
   nConvBlockTypeId__is__SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY_or_TAIL() {
-    if ( this.out.nConvBlockTypeId == ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY )
+    if ( this.out.nConvBlockTypeId
+           == ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY )
       return true;
-    if ( this.out.nConvBlockTypeId == ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_TAIL )
+    if ( this.out.nConvBlockTypeId
+           == ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_TAIL )
       return true;
     return false;
   }
 
-  /** @return {boolean} Return true if this.out.nConvBlockTypeId is (8) (ShuffleNetV2_ByPointwise21's head when no pointwise1). */
+  /**
+   * @return {boolean}
+   *   Return true if this.out.nConvBlockTypeId is (8)
+   * (ShuffleNetV2_ByPointwise21's head when no pointwise1).
+   */
   nConvBlockTypeId__is__SHUFFLE_NET_V2_BY_POINTWISE21_HEAD_NO_DEPTHWISE2() {
-    if ( this.out.nConvBlockTypeId == ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21_HEAD_NO_DEPTHWISE2 )
+    if ( this.out.nConvBlockTypeId
+           == ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21_HEAD_NO_DEPTHWISE2 )
       return true;
     return false;
   }
 
-  /** @return {boolean} Return true if this.out.nConvBlockTypeId is (9) (ShuffleNetV2_ByPointwise21's head). */
+  /**
+   * @return {boolean}
+   *   Return true if this.out.nConvBlockTypeId is (9)
+   * (ShuffleNetV2_ByPointwise21's head).
+   */
   nConvBlockTypeId__is__SHUFFLE_NET_V2_BY_POINTWISE21_HEAD() {
-    if ( this.out.nConvBlockTypeId == ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21_HEAD )
+    if ( this.out.nConvBlockTypeId
+           == ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21_HEAD )
       return true;
     return false;
   }
 
-  /** @return {boolean} Return true if this.out.nConvBlockTypeId is (10) (ShuffleNetV2_ByPointwise21's body). */
+  /**
+   * @return {boolean}
+   *   Return true if this.out.nConvBlockTypeId is (10)
+   * (ShuffleNetV2_ByPointwise21's body).
+   */
   nConvBlockTypeId__is__SHUFFLE_NET_V2_BY_POINTWISE21_BODY() {
-    if ( this.out.nConvBlockTypeId == ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21_BODY )
+    if ( this.out.nConvBlockTypeId
+           == ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21_BODY )
       return true;
     return false;
   }
 
-  /** @return {boolean} Return true if this.out.nConvBlockTypeId is (11) (ShuffleNetV2_ByPointwise21's tail). */
+  /**
+   * @return {boolean}
+   *   Return true if this.out.nConvBlockTypeId is (11)
+   * (ShuffleNetV2_ByPointwise21's tail).
+   */
   nConvBlockTypeId__is__SHUFFLE_NET_V2_BY_POINTWISE21_TAIL() {
-    if ( this.out.nConvBlockTypeId == ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21_TAIL )
+    if ( this.out.nConvBlockTypeId
+           == ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21_TAIL )
       return true;
     return false;
   }
 
-  /** @return {boolean} Return true if this.out.nConvBlockTypeId is (10 or 11) (ShuffleNetV2_ByPointwise21's body/tail). */
+  /**
+   * @return {boolean}
+   *   Return true if this.out.nConvBlockTypeId is (10 or 11)
+   * (ShuffleNetV2_ByPointwise21's body/tail).
+   */
   nConvBlockTypeId__is__SHUFFLE_NET_V2_BY_POINTWISE21_BODY_or_TAIL() {
-    if ( this.out.nConvBlockTypeId == ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21_BODY )
+    if ( this.out.nConvBlockTypeId
+           == ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21_BODY )
       return true;
-    if ( this.out.nConvBlockTypeId == ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21_TAIL )
+    if ( this.out.nConvBlockTypeId
+           == ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21_TAIL )
       return true;
     return false;
   }
@@ -1001,11 +1064,14 @@ class Block_TestParams_Base extends TestParams.Base {
 
   /**
    * @member {number} nSqueezeExcitationChannelCountDivisor
-   *   An integer represents the channel count divisor for squeeze-and-excitation's intermediate pointwise convolution channel count.
-   * (Please see also SqueezeExcitation.Base.nSqueezeExcitationChannelCountDivisor explanation.)
+   *   An integer represents the channel count divisor for
+   * squeeze-and-excitation's intermediate pointwise convolution channel count.
+   * (Please see also SqueezeExcitation.Base.nSqueezeExcitationChannelCountDivisor
+   * explanation.)
    *
    * @param {number} nActivationId
-   *   The activation function id (ValueDesc.ActivationFunction.Singleton.Ids.Xxx) of the squeeze-and-excitation.
+   *   The activation function id (ValueDesc.ActivationFunction.Singleton.Ids.Xxx)
+   * of the squeeze-and-excitation.
    *
    * @param {number} inputChannelCount_A
    *   The channel count of the squeeze-and-excitation's input.
