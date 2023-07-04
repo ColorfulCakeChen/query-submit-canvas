@@ -1551,12 +1551,17 @@ class Block_Reference_Base extends Recyclable.Root {
     }
 
     { // Release all intermediate images.
-      for ( let i = 0; i < this.imageNeedDisposeUniqueStack.array.length; ++i ) { 
+      for ( let i = 0;
+        i < this.imageNeedDisposeUniqueStack.array.length; ++i ) {
+
         let imageNeedDispose = this.imageNeedDisposeUniqueStack.array[ i ];
-        if (   ( imageNeedDispose == imageInArray[ 0 ] ) || ( imageNeedDispose == imageInArray[ 1 ] )
-            || ( imageNeedDispose == imageOutArray[ 0 ] ) || ( imageNeedDispose == imageOutArray[ 1 ] )
+        if (   ( imageNeedDispose == imageInArray[ 0 ] )
+            || ( imageNeedDispose == imageInArray[ 1 ] )
+            || ( imageNeedDispose == imageOutArray[ 0 ] )
+            || ( imageNeedDispose == imageOutArray[ 1 ] )
            ) {
-          this.imageNeedDisposeUniqueStack.array[ i ] = null; // So that input/output images of this method will not be disposed.
+          // So that input/output images of this method will not be disposed.
+          this.imageNeedDisposeUniqueStack.array[ i ] = null;
         }
       }
       this.imageNeedDisposeUniqueStack.clear();
