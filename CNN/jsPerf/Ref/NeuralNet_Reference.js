@@ -461,22 +461,29 @@ class NeuralNet_Reference_Base extends Recyclable.Root {
   /**
    * Check the NeuralNet's output's BoundsArraySet.
    *
-   * @param {NeuralNet.Base} neuralNet            The neuralNet to be checked.
-   * @param {NumberImage.Base} imageOutReference  Refernece output Image data of the NeuralNet_Reference's calcResult().
+   * @param {NeuralNet.Base} neuralNet
+   *   The neuralNet to be checked.
+   *
+   * @param {NumberImage.Base} imageOutReference
+   *   Refernece output Image data of the NeuralNet_Reference's calcResult().
    */
   assert_imageOut_BoundsArraySet(
     neuralNet, imageOutReference, parametersDescription ) {
 
     BoundsArraySet_Asserter.assert_ScaleBoundsArray( this.asserter_Equal,
-      neuralNet.output_scaleBoundsArray, imageOutReference.boundsArraySet.output0,
+      neuralNet.output_scaleBoundsArray,
+      imageOutReference.boundsArraySet.output0,
       "output0", "output0_Ref", "NeuralNet", parametersDescription );
   }
 
   /**
    * Check the NeuralNet's output according to input (for correctness testing).
    *
-   * @param {tf.tensor3d} outputTensor            The output tensor of the NeuralNet's apply().
-   * @param {NumberImage.Base} imageOutReference  Refernece output Image data of the NeuralNet_Reference's calcResult().
+   * @param {tf.tensor3d} outputTensor
+   *   The output tensor of the NeuralNet's apply().
+   *
+   * @param {NumberImage.Base} imageOutReference
+   *   Refernece output Image data of the NeuralNet_Reference's calcResult().
    */
   assert_imageOut_Tensors_byNumberArrays(
     outputTensor, imageOutReference, parametersDescription ) {
@@ -484,7 +491,8 @@ class NeuralNet_Reference_Base extends Recyclable.Root {
     let outputArrayRef;
 
     if ( imageOutReference ) {
-      outputArrayRef = imageOutReference.dataArray; // Get referenced result (as number array).
+      // Get referenced result (as number array).
+      outputArrayRef = imageOutReference.dataArray;
     } else {
       outputArrayRef = null;
     }
@@ -516,9 +524,11 @@ class NeuralNet_Reference_Base extends Recyclable.Root {
 
   /**
    * @param {NeuralNet_TestParams.Base} testParams
-   *   The test parameters. It is the value of NeuralNet_TestParams.Base.ParamsGenerator()'s result.
+   *   The test parameters. It is the value of
+   * NeuralNet_TestParams.Base.ParamsGenerator()'s result.
    *
-   * @return {NeuralNet.Base} The created NeuralNet object.
+   * @return {NeuralNet.Base}
+   *   The created NeuralNet object.
    */
   static NeuralNet_create( testParams ) {
 
@@ -528,18 +538,22 @@ class NeuralNet_Reference_Base extends Recyclable.Root {
 
     // Initialize successfully or failed.
     let extractedParams = NeuralNet.Params.Pool.get_or_create_by(
-      testParams.in.explicit_input_height, testParams.in.explicit_input_width,
+      testParams.in.explicit_input_height,
+      testParams.in.explicit_input_width,
       testParams.in.explicit_input_channelCount,
       testParams.in.has_implicit_input,
-      testParams.in.vocabularyChannelCount, testParams.in.vocabularyCountPerInputChannel,
+      testParams.in.vocabularyChannelCount,
+      testParams.in.vocabularyCountPerInputChannel,
       testParams.in.nConvStageTypeId,
       testParams.in.blockCountTotalRequested,
-      testParams.in.output_channelCount, testParams.in.output_asInputValueRange,
+      testParams.in.output_channelCount,
+      testParams.in.output_asInputValueRange,
       testParams.in.bKeepInputTensor
     );
 
     let bInitOk = neuralNet.init( progressInit,
-      testParams.in_weights.weightArray, testParams.in_weights.weightElementOffsetBegin,
+      testParams.in_weights.weightArray,
+      testParams.in_weights.weightElementOffsetBegin,
       extractedParams
     );
 
@@ -563,7 +577,9 @@ class NeuralNet_Reference_Base extends Recyclable.Root {
     progressInit.disposeResources_and_recycleToPool();
     progressInit = null;
 
-    if ( neuralNet.weightElementOffsetEnd != testParams.in_weights.weightArray.length ) { //!!! For Debug. (parsing ending position)
+    //!!! For Debug. (parsing ending position)
+    if ( neuralNet.weightElementOffsetEnd
+           != testParams.in_weights.weightArray.length ) {
       debugger;
     }
 
@@ -579,17 +595,28 @@ class NeuralNet_Reference_Base extends Recyclable.Root {
       testParams.in_weights.weightArray.length, neuralNet );
 
     // parameters.
-    neuralNet_asserter.propertyValue( "explicit_input_height", testParams.out.explicit_input_height );
-    neuralNet_asserter.propertyValue( "explicit_input_width", testParams.out.explicit_input_width );
-    neuralNet_asserter.propertyValue( "explicit_input_channelCount", testParams.out.explicit_input_channelCount );
-    neuralNet_asserter.propertyValue( "has_implicit_input", testParams.out.has_implicit_input );
-    neuralNet_asserter.propertyValue( "vocabularyChannelCount", testParams.out.vocabularyChannelCount );
-    neuralNet_asserter.propertyValue( "vocabularyCountPerInputChannel", testParams.out.vocabularyCountPerInputChannel );
-    neuralNet_asserter.propertyValue( "nConvStageTypeId", testParams.out.nConvStageTypeId );
-    neuralNet_asserter.propertyValue( "blockCountTotalRequested", testParams.out.blockCountTotalRequested );
-    neuralNet_asserter.propertyValue( "nActivationId", testParams.out.nActivationId );
-    neuralNet_asserter.propertyValue( "output_channelCount", testParams.out.output_channelCount );
-    neuralNet_asserter.propertyValue( "output_asInputValueRange", testParams.out.output_asInputValueRange );
+    neuralNet_asserter.propertyValue( "explicit_input_height",
+      testParams.out.explicit_input_height );
+    neuralNet_asserter.propertyValue( "explicit_input_width",
+      testParams.out.explicit_input_width );
+    neuralNet_asserter.propertyValue( "explicit_input_channelCount",
+      testParams.out.explicit_input_channelCount );
+    neuralNet_asserter.propertyValue( "has_implicit_input",
+      testParams.out.has_implicit_input );
+    neuralNet_asserter.propertyValue( "vocabularyChannelCount",
+      testParams.out.vocabularyChannelCount );
+    neuralNet_asserter.propertyValue( "vocabularyCountPerInputChannel",
+      testParams.out.vocabularyCountPerInputChannel );
+    neuralNet_asserter.propertyValue( "nConvStageTypeId",
+      testParams.out.nConvStageTypeId );
+    neuralNet_asserter.propertyValue( "blockCountTotalRequested",
+      testParams.out.blockCountTotalRequested );
+    neuralNet_asserter.propertyValue( "nActivationId",
+      testParams.out.nActivationId );
+    neuralNet_asserter.propertyValue( "output_channelCount",
+      testParams.out.output_channelCount );
+    neuralNet_asserter.propertyValue( "output_asInputValueRange",
+      testParams.out.output_asInputValueRange );
 
     // Inferenced parameters.
     const {
@@ -598,39 +625,58 @@ class NeuralNet_Reference_Base extends Recyclable.Root {
       feedbackShape,
   
       stageCount, blockCountPerStage, blockCountTotal,
-      stageLast_output_height, stageLast_output_width, stageLast_output_channelCount,
+      stageLast_output_height,
+      stageLast_output_width,
+      stageLast_output_channelCount,
       output_height, output_width,
     } = testParams.out.inferencedParams;
 
-    neuralNet_asserter.propertyValue( "implicit_input_height", implicit_input_height );
-    neuralNet_asserter.propertyValue( "implicit_input_width", implicit_input_width );
-    neuralNet_asserter.propertyValue( "implicit_input_channelCount", implicit_input_channelCount );
+    neuralNet_asserter.propertyValue( "implicit_input_height",
+      implicit_input_height );
+    neuralNet_asserter.propertyValue( "implicit_input_width",
+      implicit_input_width );
+    neuralNet_asserter.propertyValue( "implicit_input_channelCount",
+      implicit_input_channelCount );
 
-    neuralNet_asserter.propertyValue( "input_height", input_height );
-    neuralNet_asserter.propertyValue( "input_width", input_width );
-    neuralNet_asserter.propertyValue( "input_channelCount", input_channelCount );
+    neuralNet_asserter.propertyValue( "input_height",
+      input_height );
+    neuralNet_asserter.propertyValue( "input_width",
+      input_width );
+    neuralNet_asserter.propertyValue( "input_channelCount",
+      input_channelCount );
 
     if ( neuralNet.has_implicit_input )
       neuralNet_asserter.propertyValueNE( "feedbackShape", null );
     else // Both null.
       neuralNet_asserter.propertyValue( "feedbackShape", feedbackShape );
 
-    neuralNet_asserter.propertyValue( "stageCount", stageCount );
-    neuralNet_asserter.propertyValue( "stageCount", testParams.stageArray.length );
+    neuralNet_asserter.propertyValue( "stageCount",
+      stageCount );
+    neuralNet_asserter.propertyValue( "stageCount",
+      testParams.stageArray.length );
 
-    neuralNet_asserter.propertyValue( "blockCountPerStage", blockCountPerStage );
-    neuralNet_asserter.propertyValue( "blockCountTotal", blockCountTotal );
-    neuralNet_asserter.propertyValueGE( "blockCountTotal", testParams.out.blockCountTotalRequested );
+    neuralNet_asserter.propertyValue( "blockCountPerStage",
+      blockCountPerStage );
+    neuralNet_asserter.propertyValue( "blockCountTotal",
+      blockCountTotal );
+    neuralNet_asserter.propertyValueGE( "blockCountTotal",
+      testParams.out.blockCountTotalRequested );
 
-    neuralNet_asserter.propertyValue( "stageLast_output_height", stageLast_output_height );
-    neuralNet_asserter.propertyValue( "stageLast_output_width", stageLast_output_width );
-    neuralNet_asserter.propertyValue( "stageLast_output_channelCount", stageLast_output_channelCount );
-    neuralNet_asserter.propertyValueGE( "stageLast_output_channelCount", testParams.out.output_channelCount );
+    neuralNet_asserter.propertyValue( "stageLast_output_height",
+      stageLast_output_height );
+    neuralNet_asserter.propertyValue( "stageLast_output_width",
+      stageLast_output_width );
+    neuralNet_asserter.propertyValue( "stageLast_output_channelCount",
+      stageLast_output_channelCount );
+    neuralNet_asserter.propertyValueGE( "stageLast_output_channelCount",
+      testParams.out.output_channelCount );
 
-    // (2022/08/18 Remarked) Because at least ( stageCount == 1 ), it is possible that
-    // the stageLast_output_channelCount is larger than twice of output_channelCount.
+    // (2022/08/18 Remarked) Because at least ( stageCount == 1 ), it is
+    // possible that the stageLast_output_channelCount is larger than twice of
+    // output_channelCount.
     //
-    //neuralNet_asserter.propertyValueLE( "stageLast_output_channelCount", testParams.out.output_channelCount * 2 );
+    //neuralNet_asserter.propertyValueLE( "stageLast_output_channelCount",
+    //  testParams.out.output_channelCount * 2 );
 
     neuralNet_asserter.propertyValue( "output_height", output_height );
     neuralNet_asserter.propertyValue( "output_height", 1 );
@@ -644,10 +690,13 @@ class NeuralNet_Reference_Base extends Recyclable.Root {
       embedding_output_channelCount * ( 2 ** stageCount ) );
 
     // Other parameters.
-    neuralNet_asserter.propertyValue( "bKeepInputTensor", testParams.out.bKeepInputTensor );
+    neuralNet_asserter.propertyValue( "bKeepInputTensor",
+      testParams.out.bKeepInputTensor );
 
-    NeuralNet_Reference_Base.AssertParameters_NeuralNet_embedding( neuralNet, neuralNet ); // Test embedding 's parameters.
-    NeuralNet_Reference_Base.AssertParameters_NeuralNet_stages( neuralNet, neuralNet ); // Test every stage's parameters.
+    NeuralNet_Reference_Base.AssertParameters_NeuralNet_embedding(
+      neuralNet, neuralNet ); // Test embedding 's parameters.
+    NeuralNet_Reference_Base.AssertParameters_NeuralNet_stages(
+      neuralNet, neuralNet ); // Test every stage's parameters.
 
     {
       let tensorWeightCountTotal = 0;
