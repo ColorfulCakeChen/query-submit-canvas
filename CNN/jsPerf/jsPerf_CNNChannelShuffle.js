@@ -25,7 +25,9 @@ class HeightWidthDepthGroup {
    * @param {number} height      image height
    * @param {number} width       image width
    * @param {number} depth       image channel count
-   * @param {number} groupCount  Split the data into how many groups. ( depth / groupCount ) should be an integer.
+   * @param {number} groupCount
+   *   Split the data into how many groups. ( depth / groupCount ) should be an
+   * integer.
    */
   constructor( height, width, depth, groupCount ) {
 
@@ -41,10 +43,12 @@ class HeightWidthDepthGroup {
     this.asserter_Equal = new TensorTools.Asserter_Equal( 0.4, 0.001 );
 
     this.dataTensor3dArray = tf.tidy( () => {
-      let dataTensor1d = tf.linspace( 0, this.valueCount - 1, this.valueCount );
+      let dataTensor1d
+        = tf.linspace( 0, this.valueCount - 1, this.valueCount );
 
       let dataTensor3d = dataTensor1d.reshape( [ height, width, depth ] );
-      return dataTensor3d.split( groupCount, dataTensor3d.rank - 1 );  // Along the last axis.
+      return dataTensor3d.split(
+        groupCount, dataTensor3d.rank - 1 );  // Along the last axis.
     });
 
   }
@@ -61,17 +65,21 @@ class HeightWidthDepthGroup {
   shufflers_init() {
     this.shufflers_release();
 
-    this.shuffleInfo = ChannelShuffler_PerformanceTest.ShuffleInfo.Pool.get_or_create_by(
-      this.concatenatedShape, this.groupCount );
+    this.shuffleInfo
+      = ChannelShuffler_PerformanceTest.ShuffleInfo.Pool
+          .get_or_create_by( this.concatenatedShape, this.groupCount );
 
-    this.concatGatherUnsorted = ChannelShuffler_PerformanceTest.ConcatGather.Pool.get_or_create_by(
-      this.concatenatedShape, this.groupCount );
+    this.concatGatherUnsorted
+      = ChannelShuffler_PerformanceTest.ConcatGather.Pool
+          .get_or_create_by( this.concatenatedShape, this.groupCount );
 
-    this.splitConcatSortedShared = ChannelShuffler_PerformanceTest.SplitConcat.Pool.get_or_create_by(
-      this.concatenatedShape, this.groupCount );
+    this.splitConcatSortedShared
+      = ChannelShuffler_PerformanceTest.SplitConcat.Pool
+          .get_or_create_by( this.concatenatedShape, this.groupCount );
 
-    this.concatPointwiseConv = ChannelShuffler_PerformanceTest.ConcatPointwiseConv.Pool.get_or_create_by(
-      this.concatenatedShape, this.groupCount );
+    this.concatPointwiseConv
+      = ChannelShuffler_PerformanceTest.ConcatPointwiseConv.Pool
+          .get_or_create_by( this.concatenatedShape, this.groupCount );
   }
 
   shufflers_release() {
@@ -98,25 +106,29 @@ class HeightWidthDepthGroup {
 
   // Test concat-reshape-transpose-reshape-split
   test_ConcatReshapeTransposeReshapeSplit() {
-    let shuffledArray = this.shuffleInfo.concatReshapeTransposeReshapeSplit( this.dataTensor3dArray );
+    let shuffledArray = this.shuffleInfo.concatReshapeTransposeReshapeSplit(
+      this.dataTensor3dArray );
     tf.dispose( shuffledArray );
   }
 
   // Test concat-gather (Unsorted)
   test_ConcatGatherUnsorted() {
-    let shuffledArray = this.concatGatherUnsorted.concatGather( this.dataTensor3dArray );
+    let shuffledArray = this.concatGatherUnsorted.concatGather(
+      this.dataTensor3dArray );
     tf.dispose( shuffledArray );
   }
 
   // Test split-concat (Sorted Shared)
   test_SplitConcatSortedShared() {
-    let shuffledArray = this.splitConcatSortedShared.splitConcat( this.dataTensor3dArray );
+    let shuffledArray = this.splitConcatSortedShared.splitConcat(
+      this.dataTensor3dArray );
     tf.dispose( shuffledArray );
   }
 
   // Test concat-pointwise-convolution
   test_ConcatPointwiseConv() {
-    let shuffledArray = this.concatPointwiseConv.concatGather( this.dataTensor3dArray );
+    let shuffledArray = this.concatPointwiseConv.concatGather(
+      this.dataTensor3dArray );
     tf.dispose( shuffledArray );
   }
 
@@ -179,9 +191,11 @@ class HeightWidthDepthGroup {
   testResultSame() {
     tf.tidy( () => {
 
-      let memoryInfoPre = tf.memory(); // Test memory leakage of channel shufflers.
+      // Test memory leakage of channel shufflers.
+      let memoryInfoPre = tf.memory();
 
-      Pool.Asserter.assert_Pool_issuedCount_same_after_as_before( "jsPerf_CNNChannelShuffle.testResultSame()", () => {
+      Pool.Asserter.assert_Pool_issuedCount_same_after_as_before(
+        "jsPerf_CNNChannelShuffle.testResultSame()", () => {
         this.shufflers_init();
         this.shufflers_release();
       } );
@@ -192,31 +206,41 @@ class HeightWidthDepthGroup {
         throw Error( `Channel shufflers memory leak.` );
     });
 
-    this.shufflers_init();  // (Should outside tidy() for preventing from tensors being disposed.
+    // (Should outside tidy() for preventing from tensors being disposed.
+    this.shufflers_init();
 
     tf.tidy( () => {
-      let memoryInfo_testCorrectness_before = tf.memory(); // Test memory leakage of imageSourceBag.
+      // Test memory leakage of imageSourceBag.
+      let memoryInfo_testCorrectness_before = tf.memory();
 
       let memoryInfo0 = memoryInfo_testCorrectness_before;
 
-      let t1Array = this.shuffleInfo.concatReshapeTransposeReshapeSplit( this.dataTensor3dArray );
+      let t1Array = this.shuffleInfo.concatReshapeTransposeReshapeSplit(
+        this.dataTensor3dArray );
       let memoryInfo1 = tf.memory();
-      if ( memoryInfo1.numTensors != ( memoryInfo0.numTensors + t1Array.length ) )
+      if ( memoryInfo1.numTensors
+             != ( memoryInfo0.numTensors + t1Array.length ) )
         throw Error( `ConcatReshapeTransposeReshapeSplit() memory leak` );
 
-      let t2Array = this.concatGatherUnsorted.concatGather( this.dataTensor3dArray );
+      let t2Array = this.concatGatherUnsorted.concatGather(
+        this.dataTensor3dArray );
       let memoryInfo2 = tf.memory();
-      if ( memoryInfo2.numTensors != ( memoryInfo1.numTensors + t2Array.length ) )
+      if ( memoryInfo2.numTensors
+             != ( memoryInfo1.numTensors + t2Array.length ) )
         throw Error( `ConcatGatherUnsorted() memory leak` );
 
-      let t3Array = this.splitConcatSortedShared.splitConcat( this.dataTensor3dArray );
+      let t3Array = this.splitConcatSortedShared.splitConcat(
+        this.dataTensor3dArray );
       let memoryInfo3 = tf.memory();
-      if ( memoryInfo3.numTensors != ( memoryInfo2.numTensors + t3Array.length ) )
+      if ( memoryInfo3.numTensors
+             != ( memoryInfo2.numTensors + t3Array.length ) )
         throw Error( `SplitConcatSortedShared() memory leak` );
 
-      let t4Array = this.concatPointwiseConv.concatGather( this.dataTensor3dArray );
+      let t4Array = this.concatPointwiseConv.concatGather(
+        this.dataTensor3dArray );
       let memoryInfo4 = tf.memory();
-      if ( memoryInfo4.numTensors != ( memoryInfo3.numTensors + t4Array.length ) )
+      if ( memoryInfo4.numTensors
+             != ( memoryInfo3.numTensors + t4Array.length ) )
         throw Error( `PointwiseConv() memory leak` );
 
 //!!! (2021/10/11 Remarked)
@@ -245,7 +269,8 @@ class HeightWidthDepthGroup {
 //       }
 
       if ( !TensorTools.Comparator.isTensorArrayEqual( t1Array, t2Array ) )
-        throw Error( `ConcatReshapeTransposeReshapeSplit() != ConcatGatherUnsorted()` );
+        throw Error( `ConcatReshapeTransposeReshapeSplit() `
+          + `!= ConcatGatherUnsorted()` );
 
 //!!! Sorted never equal to Unsorted. 
 //       if ( !ChannelShuffler.Layer.isTensorArrayEqual( t2Array, t3Array ) )
@@ -260,7 +285,8 @@ class HeightWidthDepthGroup {
         let t2SumArray = t2Array.map( t => t.sum( lastAxisId ) );
         let t3SumArray = t3Array.map( t => t.sum( lastAxisId ) );
 
-        if ( !TensorTools.Comparator.isTensorArrayEqual( t2SumArray, t3SumArray ) )
+        if ( !TensorTools.Comparator.isTensorArrayEqual(
+                t2SumArray, t3SumArray ) )
           throw Error( `ConcatGatherUnsorted() != SplitConcatSortedShared()` );
       });
 
@@ -274,9 +300,11 @@ class HeightWidthDepthGroup {
 
       let memoryInfo_testCorrectness_after = tf.memory();
 
-      if ( memoryInfo_testCorrectness_after.numTensors != memoryInfo_testCorrectness_before.numTensors )
+      if ( memoryInfo_testCorrectness_after.numTensors
+             != memoryInfo_testCorrectness_before.numTensors )
         throw Error( `testCorrectness() memory leak. `
-          + `result tensor count (${memoryInfo_testCorrectness_after.numTensors}) `
+          + `result tensor count `
+          + `(${memoryInfo_testCorrectness_after.numTensors}) `
           + `should be (${memoryInfo_testCorrectness_before.numTensors} `
         );
 
