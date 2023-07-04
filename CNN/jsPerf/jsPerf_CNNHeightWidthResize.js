@@ -11,14 +11,17 @@ import * as ValueMax from "../util/ValueMax.js";
  */
 
 //!!!
-let testCase_Height = 96 + 1; // 96 divisilbe by 1, 2, 4, 6, 8. // 100 divisilbe by 1, 2, 4, 5, 10.
+// 96 divisilbe by 1, 2, 4, 6, 8.
+// 100 divisilbe by 1, 2, 4, 5, 10.
+let testCase_Height = 96 + 1;
 let testCase_Width =  96 + 1;
 //!!!
 // let testCase_Height = 256;
 // let testCase_Width =  256;
 let testCase_Depth = 24;
 
-//globalThis.testSet_101x101x24 = new HeightWidthDepth.Base( 101, 101, 24 ); // height, width, depth
+//globalThis.testSet_101x101x24 = new HeightWidthDepth.Base(
+//  101, 101, 24 ); // height, width, depth
 
 /** Profile test case.  */
 globalThis.testCaseLoader = async function () {
@@ -35,14 +38,16 @@ globalThis.testCaseLoader = async function () {
     ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
 
   let progressReceiver
-    = new ValueMax.Receiver.HTMLProgress.createByTitle_or_getDummy( "TestProgressBar" );
+    = new ValueMax.Receiver.HTMLProgress.createByTitle_or_getDummy(
+        "TestProgressBar" );
 
   let resultProfilesWebGL;
   {
     await tf.setBackend("webgl");  // WebGL seems crashed jsPerf.
     console.log("library WebGL ready.");
 
-    console.log("library WebGL compiling...");  // For pre-compile tensorflow.js GPU codes. (and Test correctness.)
+    // For pre-compile tensorflow.js GPU codes. (and Test correctness.)
+    console.log("library WebGL compiling...");
 
     globalThis.testCase = new HeightWidthDepth.Base(
       testCase_Height, testCase_Width, testCase_Depth,
@@ -75,7 +80,8 @@ globalThis.testCaseLoader = async function () {
     //await tf.ready();
     console.log("library CPU ready.");
 
-    console.log("library CPU compiling...");  // For pre-compile tensorflow.js CPU codes. (and Test correctness.)
+    // For pre-compile tensorflow.js CPU codes. (and Test correctness.)
+    console.log("library CPU compiling...");
 
     globalThis.testCase = new HeightWidthDepth.Base(
       testCase_Height, testCase_Width, testCase_Depth,
@@ -88,7 +94,8 @@ globalThis.testCaseLoader = async function () {
   }
 
   // Display to web page.
-  publishProfiles( "profilesHTMLTable", resultProfilesWebGL, resultProfilesWASM, resultProfilesCPU );
+  publishProfiles( "profilesHTMLTable",
+    resultProfilesWebGL, resultProfilesWASM, resultProfilesCPU );
 
   // Check memory.
   if ( 100 != progress.valuePercentage )
@@ -99,7 +106,8 @@ globalThis.testCaseLoader = async function () {
   progress.disposeResources_and_recycleToPool();
   progress = null;
 
-  Pool.Asserter.assert_Pool_issuedCount( "jsPerf_CNNHeightWidthResize.testCaseLoader()",
+  Pool.Asserter.assert_Pool_issuedCount(
+    "jsPerf_CNNHeightWidthResize.testCaseLoader()",
     pool_all_issuedCount_before );
 
   console.log( "jsPerf_CNNHeightWidthResize testing... Done." );
@@ -109,12 +117,20 @@ globalThis.testCaseLoader = async function () {
 /**
  * Publish the profiles to HTML table.
  * 
- * @param {string}   strResultHTMLTableName  the HTML table name for display execution time.
- * @param {Object[]} profilesWebGL           the array of profiles for execution time of WebGL.
- * @param {Object[]} profilesWASM            the array of profiles for execution time of WASM.
- * @param {Object[]} profilesCPU             the array of profiles for execution time of CPU.
+ * @param {string} strResultHTMLTableName
+ *   the HTML table name for display execution time.
+ *
+ * @param {Object[]} profilesWebGL
+ *   the array of profiles for execution time of WebGL.
+ *
+ * @param {Object[]} profilesWASM
+ *   the array of profiles for execution time of WASM.
+ *
+ * @param {Object[]} profilesCPU
+ *   the array of profiles for execution time of CPU.
  */
-function publishProfiles( strResultHTMLTableName, profilesWebGL, profilesWASM, profilesCPU ) {
+function publishProfiles(
+  strResultHTMLTableName, profilesWebGL, profilesWASM, profilesCPU ) {
 
   if ( !document )
     return;
@@ -127,9 +143,14 @@ function publishProfiles( strResultHTMLTableName, profilesWebGL, profilesWASM, p
     return;
 
   /**
-   * @param {HTMLNode}         htmlNode The HTML table (or thead, or tbody) as display target.
-   * @param {string}            th_OR_td  "th" for table header, "td" for table body.
-   * @param {string[]|number[]} dataArray The data to be displaye 
+   * @param {HTMLNode} htmlNode
+   *   The HTML table (or thead, or tbody) as display target.
+   *
+   * @param {string} th_OR_td
+   *   "th" for table header, "td" for table body.
+   *
+   * @param {string[]|number[]} dataArray
+   *   The data to be displaye 
    */
   function addOneLineCells( htmlNode, th_OR_td, dataArray ) {
     let cellElementName;
@@ -175,8 +196,10 @@ function publishProfiles( strResultHTMLTableName, profilesWebGL, profilesWASM, p
 
     addOneLineCells( tbody, "td", [
       `(${profileWebGL.backendName}) ${profileWebGL.title}`,
-      profileWebGL.kernelMs.toFixed( digitsCount ), profileWebGL.wallMs.toFixed( digitsCount ),
-      //profileWebGL.newBytes, profileWebGL.newTensors, // If not zero, there is memory leak.
+      profileWebGL.kernelMs.toFixed( digitsCount ),
+      profileWebGL.wallMs.toFixed( digitsCount ),
+      // If not zero, there is memory leak.
+      //profileWebGL.newBytes, profileWebGL.newTensors,
       profileWebGL.peakBytes
     ] );
 
@@ -184,7 +207,8 @@ function publishProfiles( strResultHTMLTableName, profilesWebGL, profilesWASM, p
 
     addOneLineCells( tbody, "td", [
       `(${profileCPU.backendName})`,
-      profileCPU.kernelMs.toFixed( digitsCount ), profileCPU.wallMs.toFixed( digitsCount ),
+      profileCPU.kernelMs.toFixed( digitsCount ),
+      profileCPU.wallMs.toFixed( digitsCount ),
       //"", "",
       ""
     ] );
