@@ -948,44 +948,38 @@ class Block_Reference_Base extends Recyclable.Root {
       //
       } else { // ( 0 == testParams.out.pointwise1ChannelCount )
 
+        // As doubled input channel count.
+        let pointwise1ChannelCount
+          = ( testParams.out.input0_channelCount * 2 );
 
-//!!! (2022/07/13 Remarked) Does not work.
-//         if (   ( bDepthwiseRequestedAndNeeded )
-//             && ( testParams.out.depthwise_AvgMax_Or_ChannelMultiplier == 1 ) ) { // Use depthwise to double channels.
-//
-//           depthwise_AvgMax_Or_ChannelMultiplier_shouldBe = 2;
-//
-//         } else { // Use pointwise1 to double channels.
+        asserter.propertyValue( "pointwise1ChannelCount",
+          pointwise1ChannelCount );
 
-          // As doubled input channel count.
-          let pointwise1ChannelCount
-            = ( testParams.out.input0_channelCount * 2 );
-
-          asserter.propertyValue( "pointwise1ChannelCount",
-            pointwise1ChannelCount );
-
-          pointwise1Bias_shouldBe = false;
-          pointwise1ActivationId_shouldBe
-            = ValueDesc.ActivationFunction.Singleton.Ids.NONE;
-
-//!!! (2022/07/13 Remarked) Does not work.
-//        }
+        pointwise1Bias_shouldBe = false;
+        pointwise1ActivationId_shouldBe
+          = ValueDesc.ActivationFunction.Singleton.Ids.NONE;
       }
 
     } else {
-      asserter.propertyValue( "pointwise1ChannelCount", testParams.out.pointwise1ChannelCount );
+      asserter.propertyValue( "pointwise1ChannelCount",
+        testParams.out.pointwise1ChannelCount );
     }
 
-    asserter.propertyValue( "pointwise1Bias", testParams.out.inferencedParams.pointwise1Bias );
-    asserter.propertyValue( "pointwise1Bias", pointwise1Bias_shouldBe );
-    asserter.propertyValue( "pointwise1ActivationId", pointwise1ActivationId_shouldBe );
-    asserter.propertyValue( "pointwise1ActivationName", pointwise1ActivationName_shouldBe );
+    asserter.propertyValue( "pointwise1Bias",
+      testParams.out.inferencedParams.pointwise1Bias );
+    asserter.propertyValue( "pointwise1Bias",
+      pointwise1Bias_shouldBe );
+    asserter.propertyValue( "pointwise1ActivationId",
+      pointwise1ActivationId_shouldBe );
+    asserter.propertyValue( "pointwise1ActivationName",
+      pointwise1ActivationName_shouldBe );
 
     // depthwise parameters.
 
     let depthwiseBias_shouldBe;
     {
-      if ( testParams.out.depthwise_AvgMax_Or_ChannelMultiplier == ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.NONE ) {
+      if ( testParams.out.depthwise_AvgMax_Or_ChannelMultiplier
+             == ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.NONE ) {
         depthwiseBias_shouldBe = false;
       } else {
         if ( bLinear_between_depthwise_and_pointwise2 )
@@ -995,65 +989,100 @@ class Block_Reference_Base extends Recyclable.Root {
       }
     }
 
-    asserter.propertyValue( "depthwise_AvgMax_Or_ChannelMultiplier", depthwise_AvgMax_Or_ChannelMultiplier_shouldBe );
-    asserter.propertyValue( "depthwiseFilterHeight", testParams.out.depthwiseFilterHeight_real );
-    asserter.propertyValue( "depthwiseFilterWidth", testParams.out.depthwiseFilterWidth_real );
-    asserter.propertyValue( "depthwiseStridesPad", testParams.out.depthwiseStridesPad );
-    asserter.propertyValue( "depthwiseBias", testParams.out.inferencedParams.depthwiseBias );
-    asserter.propertyValue( "depthwiseBias", depthwiseBias_shouldBe );
-    asserter.propertyValue( "bDepthwiseRequestedAndNeeded", bDepthwiseRequestedAndNeeded );
-    asserter.propertyValue( "depthwiseActivationId", testParams.out.depthwiseActivationId );
+    asserter.propertyValue( "depthwise_AvgMax_Or_ChannelMultiplier",
+      depthwise_AvgMax_Or_ChannelMultiplier_shouldBe );
+    asserter.propertyValue( "depthwiseFilterHeight",
+      testParams.out.depthwiseFilterHeight_real );
+    asserter.propertyValue( "depthwiseFilterWidth",
+      testParams.out.depthwiseFilterWidth_real );
+    asserter.propertyValue( "depthwiseStridesPad",
+      testParams.out.depthwiseStridesPad );
+    asserter.propertyValue( "depthwiseBias",
+      testParams.out.inferencedParams.depthwiseBias );
+    asserter.propertyValue( "depthwiseBias",
+      depthwiseBias_shouldBe );
+    asserter.propertyValue( "bDepthwiseRequestedAndNeeded",
+      bDepthwiseRequestedAndNeeded );
+    asserter.propertyValue( "depthwiseActivationId",
+      testParams.out.depthwiseActivationId );
 
-    let depthwiseActivationName = ValueDesc.ActivationFunction.Singleton.getName_byId( testParams.out.depthwiseActivationId );
-    asserter.propertyValue( "depthwiseActivationName", depthwiseActivationName );
+    let depthwiseActivationName
+      = ValueDesc.ActivationFunction.Singleton.getName_byId(
+          testParams.out.depthwiseActivationId );
+
+    asserter.propertyValue( "depthwiseActivationName",
+      depthwiseActivationName );
 
     // pointwise20 parameters.
-    asserter.propertyValue( "pointwise20ChannelCount", testParams.out.pointwise20ChannelCount );
-    asserter.propertyValue( "pointwise20Bias", testParams.out.inferencedParams.pointwise20Bias );
-    asserter.propertyValue( "pointwise20Bias", true ); // pointwise2 should always has bias.
-    asserter.propertyValue( "pointwise20ActivationId", testParams.out.pointwise20ActivationId );
+    asserter.propertyValue( "pointwise20ChannelCount",
+      testParams.out.pointwise20ChannelCount );
+    asserter.propertyValue( "pointwise20Bias",
+      testParams.out.inferencedParams.pointwise20Bias );
+    asserter.propertyValue( "pointwise20Bias",
+      true ); // pointwise2 should always has bias.
+    asserter.propertyValue( "pointwise20ActivationId",
+      testParams.out.pointwise20ActivationId );
 
-    let pointwise20ActivationName = ValueDesc.ActivationFunction.Singleton.getName_byId( testParams.out.pointwise20ActivationId );
-    asserter.propertyValue( "pointwise20ActivationName", pointwise20ActivationName );
+    let pointwise20ActivationName
+      = ValueDesc.ActivationFunction.Singleton.getName_byId(
+          testParams.out.pointwise20ActivationId );
+    asserter.propertyValue( "pointwise20ActivationName",
+      pointwise20ActivationName );
 
     // pointwise21 parameters.
 
     { // Test pointwise21ChannelCount.
 
-      if (   ( testParams.out.nConvBlockTypeId == ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_HEAD ) // (2)
-          || ( testParams.out.nConvBlockTypeId == ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21_HEAD_NO_DEPTHWISE2 ) // (8)
-          || ( testParams.out.nConvBlockTypeId == ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21_HEAD ) // (9)
-          || ( testParams.out.nConvBlockTypeId == ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21_BODY ) // (10)
+      if (   ( testParams.out.nConvBlockTypeId
+                 == ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_HEAD ) // (2)
+          || ( testParams.out.nConvBlockTypeId
+                 == ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21_HEAD_NO_DEPTHWISE2 ) // (8)
+          || ( testParams.out.nConvBlockTypeId
+                 == ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21_HEAD ) // (9)
+          || ( testParams.out.nConvBlockTypeId
+                 == ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21_BODY ) // (10)
          ) {
-        asserter.propertyValue( "pointwise21ChannelCount", testParams.out.pointwise20ChannelCount ); // the same as pointwise20.
+        asserter.propertyValue( "pointwise21ChannelCount",
+          testParams.out.pointwise20ChannelCount ); // the same as pointwise20.
 
       } else { // Otherwise, should be 0.
         asserter.propertyValue( "pointwise21ChannelCount", 0 );
       }
     }
 
-    asserter.propertyValue( "pointwise21Bias", testParams.out.inferencedParams.pointwise20Bias ); // Always same as pointwise20.
-    asserter.propertyValue( "pointwise21ActivationId", testParams.out.pointwise20ActivationId ); // Always same as pointwise20.
-    asserter.propertyValue( "pointwise21ActivationName", pointwise20ActivationName ); // Always same as pointwise20.
+    asserter.propertyValue( "pointwise21Bias",
+      testParams.out.inferencedParams.pointwise20Bias ); // Always same as pointwise20.
+    asserter.propertyValue( "pointwise21ActivationId",
+      testParams.out.pointwise20ActivationId ); // Always same as pointwise20.
+    asserter.propertyValue( "pointwise21ActivationName",
+      pointwise20ActivationName ); // Always same as pointwise20.
 
     // squeeze-and-excitation parameters.
-    asserter.propertyValue( "nSqueezeExcitationChannelCountDivisor", testParams.out.nSqueezeExcitationChannelCountDivisor );
-    asserter.propertyValue( "bSqueezeExcitationPrefix", testParams.out.bSqueezeExcitationPrefix );
+    asserter.propertyValue( "nSqueezeExcitationChannelCountDivisor",
+      testParams.out.nSqueezeExcitationChannelCountDivisor );
+    asserter.propertyValue( "bSqueezeExcitationPrefix",
+      testParams.out.bSqueezeExcitationPrefix );
 
     let squeezeExcitationActivationId_shouldBe = testParams.out.nActivationId;
     let squeezeExcitationActivationName_shouldBe
-      = ValueDesc.ActivationFunction.Singleton.getName_byId( squeezeExcitationActivationId_shouldBe );
+      = ValueDesc.ActivationFunction.Singleton.getName_byId(
+          squeezeExcitationActivationId_shouldBe );
 
-    asserter.propertyValue( "squeezeExcitationActivationId", squeezeExcitationActivationId_shouldBe );
-    asserter.propertyValue( "squeezeExcitationActivationName", squeezeExcitationActivationName_shouldBe );
+    asserter.propertyValue( "squeezeExcitationActivationId",
+      squeezeExcitationActivationId_shouldBe );
+    asserter.propertyValue( "squeezeExcitationActivationName",
+      squeezeExcitationActivationName_shouldBe );
 
     // Default activation
     asserter.propertyValue( "nActivationId", testParams.out.nActivationId );
 
-    let nActivationName = ValueDesc.ActivationFunction.Singleton.getName_byId( testParams.out.nActivationId );
+    let nActivationName
+      = ValueDesc.ActivationFunction.Singleton.getName_byId(
+          testParams.out.nActivationId );
     asserter.propertyValue( "nActivationName", nActivationName );
 
-    // If depthwise does not exist, the output ( height, width ) should be the same as input.
+    // If depthwise does not exist, the output ( height, width ) should be the
+    // same as input.
 
     if ( !bDepthwiseRequestedAndNeeded ) {
       asserter.propertyValue( "output_height", testParams.out.input0_height );
