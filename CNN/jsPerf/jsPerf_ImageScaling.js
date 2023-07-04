@@ -19,13 +19,23 @@ import * as NeuralNet from "../Conv/NeuralNet.js";
 class HeightWidthDepth {
 
   /**
-   * @param {number} output_height        output image height
-   * @param {number} output_width         output image width
-   * @param {number} output_channelCount  output image channel count
-   * @param {number} largerFactor  input image is how large of output.
+   * @param {number} output_height
+   *   output image height
+   *
+   * @param {number} output_width
+   *   output image width
+   *
+   * @param {number} output_channelCount
+   *   output image channel count
+   *
+   * @param {number} largerFactor
+   *   input image is how large of output.
    */
-  constructor( output_height, output_width, output_channelCount, largerFactor ) {
-    this.init( output_height, output_width, output_channelCount, largerFactor );
+  constructor(
+    output_height, output_width, output_channelCount, largerFactor ) {
+
+    this.init(
+      output_height, output_width, output_channelCount, largerFactor );
 
 
     //!!! (2023/05/26 Temp Remarked) For test performance if not download from GPU.
@@ -260,7 +270,9 @@ class HeightWidthDepth {
   }
 
   /** */
-  static scale_by_Tensor_from_Canvas_ImageData( input_Canvas, bDownloadFromGPU ) {
+  static scale_by_Tensor_from_Canvas_ImageData(
+    input_Canvas, bDownloadFromGPU ) {
+
     let input_ctx = input_Canvas.getContext( "2d" );
     let input_ImageData = input_ctx.getImageData(
       0, 0, input_Canvas.width, input_Canvas.height );
@@ -286,7 +298,9 @@ class HeightWidthDepth {
   }
 
   /** */
-  static scale_by_Tensor_from_Canvas_TypedArray( input_Canvas, bDownloadFromGPU ) {
+  static scale_by_Tensor_from_Canvas_TypedArray(
+    input_Canvas, bDownloadFromGPU ) {
+
     let input_ctx = input_Canvas.getContext( "2d" );
     let input_ImageData = input_ctx.getImageData(
       0, 0, input_Canvas.width, input_Canvas.height );
@@ -295,7 +309,9 @@ class HeightWidthDepth {
     try {
       output_tensor = NeuralNet.ScaleFiller.createTensor_by_scale_TypedArray(
         input_ImageData.data,
-        input_ImageData.height, input_ImageData.width, this.output_channelCount,
+        input_ImageData.height,
+        input_ImageData.width,
+        this.output_channelCount,
         this.output_shape_height_width );
 
       if ( bDownloadFromGPU ) {
@@ -343,7 +359,8 @@ class HeightWidthDepth {
 
       let asserter_Equal;
       try {
-        let memoryInfo_testCorrectness_before = tf.memory(); // Test memory leakage of imageSourceBag.
+        // Test memory leakage of imageSourceBag.
+        let memoryInfo_testCorrectness_before = tf.memory();
 
         // (Also for pre-compiling WebGL shaders.)
         {
@@ -378,8 +395,10 @@ class HeightWidthDepth {
             if ( output_TypedArray_previous ) {
               let lhsNumberArray = output_TypedArray_previous;
               let rhsNumberArray = output_TypedArray;
-              let lhsNumberArrayName = `output_of_${TestCaseNameArray[ testCaseId - 1 ]}`;
-              let rhsNumberArrayName = `output_of_${TestCaseNameArray[ testCaseId ]}`;
+              let lhsNumberArrayName
+                = `output_of_${TestCaseNameArray[ testCaseId - 1 ]}`;
+              let rhsNumberArrayName
+                = `output_of_${TestCaseNameArray[ testCaseId ]}`;
 
               let prefixMsg = `testCaseId=${testCaseId},`;
               let postfixMsg = "";
@@ -397,10 +416,12 @@ class HeightWidthDepth {
 
         let memoryInfo_testCorrectness_after = tf.memory();
 
-        if ( memoryInfo_testCorrectness_after.numTensors != memoryInfo_testCorrectness_before.numTensors )
+        if ( memoryInfo_testCorrectness_after.numTensors
+               != memoryInfo_testCorrectness_before.numTensors )
           throw Error( `testCorrectness() memory leak. `
-            + `result tensor count (${memoryInfo_testCorrectness_after.numTensors}) `
-            + `should be (${memoryInfo_testCorrectness_before.numTensors} `
+            + `result tensor count `
+            + `( ${memoryInfo_testCorrectness_after.numTensors} ) `
+            + `should be (${memoryInfo_testCorrectness_before.numTensors}.`
           );
 
       } finally {
