@@ -14,16 +14,19 @@ import * as Block_TestParams from "./Block_TestParams.js";
  *
  *
  * @member {object[]} blockArray
- *   Every element is an Block_TestParams object for the parameters of the block.
+ *   Every element is an Block_TestParams object for the parameters of the
+ * block.
  *
  * @see TestParams.Base
  */
 class Stage_TestParams_Base extends TestParams.Base {
 
   /**
-   * Used as default Stage_TestParams.Base provider for conforming to Recyclable interface.
+   * Used as default Stage_TestParams.Base provider for conforming to
+   * Recyclable interface.
    */
-  static Pool = new Pool.Root( "Stage_TestParams.Base.Pool", Stage_TestParams_Base, Stage_TestParams_Base.setAsConstructor );
+  static Pool = new Pool.Root( "Stage_TestParams.Base.Pool",
+    Stage_TestParams_Base, Stage_TestParams_Base.setAsConstructor );
 
   /**
    */
@@ -68,11 +71,14 @@ class Stage_TestParams_Base extends TestParams.Base {
    */
   set_byParamsBase( aParamsBase ) {
     return this.set_byParamsScattered(
-      aParamsBase.input_height, aParamsBase.input_width, aParamsBase.input_channelCount,
+      aParamsBase.input_height,
+      aParamsBase.input_width,
+      aParamsBase.input_channelCount,
       aParamsBase.nConvStageTypeId,
       aParamsBase.blockCountRequested,
       aParamsBase.bPointwise1,
-      aParamsBase.depthwiseFilterHeight, aParamsBase.depthwiseFilterWidth,
+      aParamsBase.depthwiseFilterHeight,
+      aParamsBase.depthwiseFilterWidth,
       aParamsBase.nSqueezeExcitationChannelCountDivisor,
       aParamsBase.nActivationId,
       aParamsBase.bKeepInputTensor
@@ -114,10 +120,12 @@ class Stage_TestParams_Base extends TestParams.Base {
       bKeepInputTensor
     );
 
-    Object.assign( this.in, this.out ); // So that all parameters are by specified (none is by evolution).
+    // So that all parameters are by specified (none is by evolution).
+    Object.assign( this.in, this.out );
 
     let weightElementOffsetBegin = 0;
-    return this.set_byParamsNumberArrayObject_ParamsOut( weightElementOffsetBegin );
+    return this.set_byParamsNumberArrayObject_ParamsOut(
+      weightElementOffsetBegin );
   }
  
   /**
@@ -126,15 +134,17 @@ class Stage_TestParams_Base extends TestParams.Base {
    *   - this.out.inferencedParams
    *
    * @param {object} this.in.paramsNumberArrayObject
-   *   Pass in an object. The result will be put into this object. It is a map from a string name (e.g. parameter name) to a number array.
-   * The name should be one of Base.paramsNameOrderArray[] elements.
+   *   Pass in an object. The result will be put into this object. It is a map
+   * from a string name (e.g. parameter name) to a number array. The name
+   * should be one of Base.paramsNameOrderArray[] elements.
    *
    * @param {Stage.ParamsBase} this.out
    *   An object which will be the final result of Stage.Params.
    *
    * @param {number} weightElementOffsetBegin
-   *   Offset how many elements (4 bytes per element) at the beginning of the result inputWeightArray.
-   * The this.in.byteOffsetBegin will be ( 4 * weightElementOffsetBegin ).
+   *   Offset how many elements (4 bytes per element) at the beginning of the
+   * result inputWeightArray. The this.in.byteOffsetBegin will be
+   * ( 4 * weightElementOffsetBegin ).
    *
    * @return {Stage_TestParams_Base}
    *   Return this object self.
@@ -152,31 +162,48 @@ class Stage_TestParams_Base extends TestParams.Base {
     this.in.paramsNumberArrayObject.length = 0;
 
     { // 1. Generate every sub block test params.
-      for ( let i = 0; i < blockParamsArray.length; ++i ) { // Block0, 1, 2, 3, ..., BlockLast.
-        let blockParams = blockParamsArray[ i ]; // Get current block parameters.
 
-        let blockTestParams = Block_TestParams.Base.Pool.get_or_create_by( this.id );
+      // Block0, 1, 2, 3, ..., BlockLast.
+      for ( let i = 0; i < blockParamsArray.length; ++i ) {
+
+        // Get current block parameters.
+        let blockParams = blockParamsArray[ i ];
+
+        let blockTestParams
+          = Block_TestParams.Base.Pool.get_or_create_by( this.id );
+
         blockTestParams.set_byParamsScattered(
-          blockParams.input0_height, blockParams.input0_width, blockParams.input0_channelCount,
+          blockParams.input0_height,
+          blockParams.input0_width,
+          blockParams.input0_channelCount,
           blockParams.nConvBlockTypeId,
           blockParams.pointwise1ChannelCount,
-          blockParams.depthwise_AvgMax_Or_ChannelMultiplier, blockParams.depthwiseFilterHeight,
-          blockParams.depthwiseFilterWidth, blockParams.depthwiseStridesPad,
+          blockParams.depthwise_AvgMax_Or_ChannelMultiplier,
+          blockParams.depthwiseFilterHeight,
+          blockParams.depthwiseFilterWidth,
+          blockParams.depthwiseStridesPad,
           blockParams.depthwiseActivationId,
-          blockParams.pointwise20ChannelCount, blockParams.pointwise20ActivationId,
-          blockParams.nSqueezeExcitationChannelCountDivisor, blockParams.bSqueezeExcitationPrefix,
+          blockParams.pointwise20ChannelCount,
+          blockParams.pointwise20ActivationId,
+          blockParams.nSqueezeExcitationChannelCountDivisor,
+          blockParams.bSqueezeExcitationPrefix,
           blockParams.nActivationId,
           blockParams.bKeepInputTensor
         );
 
         this.blockArray[ i ] = blockTestParams;
-        this.in.paramsNumberArrayObject.push( blockTestParams.in_weights.weightArray ); // Place every block's parameters in sequence.
+
+        // Place every block's parameters in sequence.
+        this.in.paramsNumberArrayObject.push(
+          blockTestParams.in_weights.weightArray );
       }
     }
 
-    // 2. Pack all parameters, filters, biases weights into a (pre-allocated and re-used) NumberArray.
+    // 2. Pack all parameters, filters, biases weights into a (pre-allocated
+    //    and re-used) NumberArray.
     this.in_weights.set_byConcat(
-      Stage_TestParams_Base.paramsNameOrderArray_Basic, this.in.paramsNumberArrayObject, weightElementOffsetBegin );
+      Stage_TestParams_Base.paramsNameOrderArray_Basic,
+      this.in.paramsNumberArrayObject, weightElementOffsetBegin );
 
     { // 3. Release temporary intermediate array for reducing memory usage.
       let blockTestParams;
@@ -202,16 +229,20 @@ class Stage_TestParams_Base extends TestParams.Base {
 //!!! ...unfinished... (2022/07/22)
 //
 //     // (2021/07/20)
-//     // Note: In backend WASM, when filter width is 1 (note: filter height does not have this issue and could be 1), it seems that
-//     // tf.pool() (both AVG and MAX) and tf.depthwiseConv2d() will calculate wrongly. In backend CPU and WebGL, this problem does
-//     // not exist.
+//     // Note: In backend WASM, when filter width is 1 (note: filter height
+//     //       does not have this issue and could be 1), it seems that
+//     //       tf.pool() (both AVG and MAX) and tf.depthwiseConv2d() will
+//     //       calculate wrongly. In backend CPU and WebGL, this problem does
+//     //       not exist.
 //     //
 //     // (2022/05/01)
-//     // The tensorflow.js team seems not recognize this issue as a problem and will not fix it. So, we need get around it by
-//     // ourselves testing procedure.
+//     // The tensorflow.js team seems not recognize this issue as a problem
+//     // and will not fix it. So, we need get around it by ourselves testing
+//     // procedure.
 //     if ( tf.getBackend() == "wasm" ) {
 //
-//       this.generate_out_inferencedParams(); // So that this.out.inferencedParams and .depthwisePadInfo is usable.
+//       // So that this.out.inferencedParams and .depthwisePadInfo is usable.
+//       this.generate_out_inferencedParams();
 //
 //       *   - this.depthwiseFilterWidthArray
 //       *   - this.depthwiseFilterHeightArray
@@ -222,13 +253,16 @@ class Stage_TestParams_Base extends TestParams.Base {
 //         if ( this.out.depthwiseFilterWidth == 1 )
 //           return false;
 //
-//         let pointwise2_inputWidth = this.out.inferencedParams.depthwisePadInfo.outputWidth;
+//         let pointwise2_inputWidth
+//           = this.out.inferencedParams.depthwisePadInfo.outputWidth;
 //
 //         // For squeeze-and-excitation.
 //         //
-//         // (squeeze is an average pooling. Its filter width is the same as inputWidth (i.e. pointwise2_inputWidth).)
+//         // (squeeze is an average pooling. Its filter width is the same as
+//         // inputWidth (i.e. pointwise2_inputWidth).)
 //         if (   ( pointwise2_inputWidth == 1 )
-//             && ( ValueDesc.SqueezeExcitationChannelCountDivisor.hasSqueeze( this.out.nSqueezeExcitationChannelCountDivisor ) )
+//             && ( ValueDesc.SqueezeExcitationChannelCountDivisor.hasSqueeze(
+//                    this.out.nSqueezeExcitationChannelCountDivisor ) )
 //            )
 //           return false;
 //       }
@@ -243,7 +277,8 @@ class Stage_TestParams_Base extends TestParams.Base {
   onYield_before() {
 
     // For testing not start at the offset 0.
-    let weightElementOffsetBegin = RandTools.getRandomIntInclusive( 0, 3 ); // Skip a random un-used element count.
+    // Skip a random un-used element count.
+    let weightElementOffsetBegin = RandTools.getRandomIntInclusive( 0, 3 );
 
     this.set_byParamsNumberArrayObject_ParamsOut( weightElementOffsetBegin );
   }
@@ -259,14 +294,16 @@ class Stage_TestParams_Base extends TestParams.Base {
    * Responsible for generating testing paramters combinations.
    *
    * @yield {Base}
-   *   Yield this object itself. The returned object (it is this object itself) should not be modified because it will be re-used.
+   *   Yield this object itself. The returned object (it is this object itself)
+   * should not be modified because it will be re-used.
    */
   * ParamsGenerator() {
     // (2022/04/30 Remarked) For speed up testing by reduce testing space.
     //let depthwiseFilterMaxSize = 5;
     let depthwiseFilterMaxSize = 3;
 
-    // Restrict some parameter's large kinds. Otherwise, too many combination will be generated.
+    // Restrict some parameter's large kinds. Otherwise, too many combination
+    // will be generated.
     let valueOutMinMax = this.valueOutMinMax = {
 //!!! (2022/07/22 Temp Remarked) For test more.
       input_height: [ 3, 3 ],
@@ -380,23 +417,34 @@ class Stage_TestParams_Base extends TestParams.Base {
     // Note: The order of these element could be adjusted to change testing order.
     //       The last element will be tested (changed) first.
     let paramDescConfigArray = [
-      new TestParams.ParamDescConfig( Stage.Params.input_height,          valueOutMinMax.input_height ),
-      new TestParams.ParamDescConfig( Stage.Params.input_width,           valueOutMinMax.input_width ),
-      new TestParams.ParamDescConfig( Stage.Params.input_channelCount,    valueOutMinMax.input_channelCount ),
-      new TestParams.ParamDescConfig( Stage.Params.nConvStageTypeId,      valueOutMinMax.nConvStageTypeId ),
-      new TestParams.ParamDescConfig( Stage.Params.blockCountRequested,   valueOutMinMax.blockCountRequested ),
-      new TestParams.ParamDescConfig( Stage.Params.bPointwise1,           valueOutMinMax.bPointwise1 ),
-      new TestParams.ParamDescConfig( Stage.Params.depthwiseFilterHeight, valueOutMinMax.depthwiseFilterHeight ),
-      new TestParams.ParamDescConfig( Stage.Params.depthwiseFilterWidth,  valueOutMinMax.depthwiseFilterWidth ),
+      new TestParams.ParamDescConfig( Stage.Params.input_height,
+        valueOutMinMax.input_height ),
+      new TestParams.ParamDescConfig( Stage.Params.input_width,
+        valueOutMinMax.input_width ),
+      new TestParams.ParamDescConfig( Stage.Params.input_channelCount,
+        valueOutMinMax.input_channelCount ),
+      new TestParams.ParamDescConfig( Stage.Params.nConvStageTypeId,
+        valueOutMinMax.nConvStageTypeId ),
+      new TestParams.ParamDescConfig( Stage.Params.blockCountRequested,
+        valueOutMinMax.blockCountRequested ),
+      new TestParams.ParamDescConfig( Stage.Params.bPointwise1,
+        valueOutMinMax.bPointwise1 ),
+      new TestParams.ParamDescConfig( Stage.Params.depthwiseFilterHeight,
+        valueOutMinMax.depthwiseFilterHeight ),
+      new TestParams.ParamDescConfig( Stage.Params.depthwiseFilterWidth,
+        valueOutMinMax.depthwiseFilterWidth ),
 
       new TestParams.ParamDescConfig( Stage.Params.nSqueezeExcitationChannelCountDivisor,
-                                                                          valueOutMinMax.nSqueezeExcitationChannelCountDivisor ),
+        valueOutMinMax.nSqueezeExcitationChannelCountDivisor ),
 
-      new TestParams.ParamDescConfig( Stage.Params.nActivationId,         valueOutMinMax.nActivationId ),
-      new TestParams.ParamDescConfig( Stage.Params.bKeepInputTensor,      valueOutMinMax.bKeepInputTensor ),
+      new TestParams.ParamDescConfig( Stage.Params.nActivationId,
+        valueOutMinMax.nActivationId ),
+      new TestParams.ParamDescConfig( Stage.Params.bKeepInputTensor,
+        valueOutMinMax.bKeepInputTensor ),
     ];
 
-    yield *Stage_TestParams_Base.ParamsGenerator.call( this, paramDescConfigArray );
+    yield *Stage_TestParams_Base.ParamsGenerator.call( this,
+      paramDescConfigArray );
   }
 
 }
