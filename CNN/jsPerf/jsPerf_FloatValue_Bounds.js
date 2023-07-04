@@ -764,8 +764,10 @@ function test_enlarge_contain_in() {
           bShouldTrue &&= aBoundsArray.is_one_contain_N( 0, d );
           bShouldTrue &&= aBoundsArray.is_one_contain_Bounds( 0, bBounds );
           bShouldTrue &&= bBounds.is_in_BoundsArray_one( aBoundsArray, 0 );
-          bShouldTrue &&= aBoundsArray.is_one_contain_BoundsArray_one( 0, bBoundsArray, 1 );
-          bShouldTrue &&= bBoundsArray.is_one_in_BoundsArray_one( 1, aBoundsArray, 0 );
+          bShouldTrue &&= aBoundsArray.is_one_contain_BoundsArray_one( 0,
+                            bBoundsArray, 1 );
+          bShouldTrue &&= bBoundsArray.is_one_in_BoundsArray_one( 1,
+                            aBoundsArray, 0 );
 
           if ( !cBoundsArray.is_one_contain_BoundsArray_one( 0, bBoundsArray, 1 ) )
             cBoundsArray.enlarge_one_byBounds( 0, bBounds );
@@ -774,8 +776,10 @@ function test_enlarge_contain_in() {
           bShouldTrue &&= cBoundsArray.is_one_contain_N( 0, d );
           bShouldTrue &&= cBoundsArray.is_one_contain_Bounds( 0, bBounds );
           bShouldTrue &&= bBounds.is_in_BoundsArray_one( cBoundsArray, 0 );
-          bShouldTrue &&= cBoundsArray.is_one_contain_BoundsArray_one( 0, bBoundsArray, 1 );
-          bShouldTrue &&= bBoundsArray.is_one_in_BoundsArray_one( 1, cBoundsArray, 0 );
+          bShouldTrue &&= cBoundsArray.is_one_contain_BoundsArray_one( 0,
+                            bBoundsArray, 1 );
+          bShouldTrue &&= bBoundsArray.is_one_in_BoundsArray_one( 1,
+                            cBoundsArray, 0 );
 
           if ( !dBoundsArray.is_one_contain_BoundsArray_one( 0, bBoundsArray, 1 ) )
             dBoundsArray.enlarge_one_byBoundsArray_one( 0, bBoundsArray, 1 );
@@ -784,10 +788,13 @@ function test_enlarge_contain_in() {
           bShouldTrue &&= dBoundsArray.is_one_contain_N( 0, d );
           bShouldTrue &&= dBoundsArray.is_one_contain_Bounds( 0, bBounds );
           bShouldTrue &&= bBounds.is_in_BoundsArray_one( dBoundsArray, 0 );
-          bShouldTrue &&= dBoundsArray.is_one_contain_BoundsArray_one( 0, bBoundsArray, 1 );
-          bShouldTrue &&= bBoundsArray.is_one_in_BoundsArray_one( 1, dBoundsArray, 0 );
+          bShouldTrue &&= dBoundsArray.is_one_contain_BoundsArray_one( 0,
+                            bBoundsArray, 1 );
+          bShouldTrue &&= bBoundsArray.is_one_in_BoundsArray_one( 1,
+                            dBoundsArray, 0 );
 
-          // PositiveInfinity_NegativeInfinity(), is_all_contain_Xxx(), is_all_in_Xxx()
+          // PositiveInfinity_NegativeInfinity(), is_all_contain_Xxx(),
+          // is_all_in_Xxx()
           {
             aBounds.set_by_PositiveInfinity_NegativeInfinity();
             aBounds.enlarge_byN( a ).enlarge_byN( b );
@@ -796,9 +803,11 @@ function test_enlarge_contain_in() {
             aBoundsArray.enlarge_one_byN( 0, a ).enlarge_one_byN( 0, b );
             aBoundsArray.enlarge_one_byN( 1, a ).enlarge_one_byN( 1, b );
             bShouldTrue &&= aBoundsArray.is_all_contain_Bounds( aBounds );
-            bShouldTrue &&= aBoundsArray.is_all_contain_BoundsArray_one( aBoundsArray, 0 );
+            bShouldTrue &&= aBoundsArray.is_all_contain_BoundsArray_one(
+                              aBoundsArray, 0 );
             bShouldTrue &&= aBoundsArray.is_all_in_Bounds( aBounds );
-            bShouldTrue &&= aBoundsArray.is_all_in_BoundsArray_one( aBoundsArray, 1 );
+            bShouldTrue &&= aBoundsArray.is_all_in_BoundsArray_one(
+                              aBoundsArray, 1 );
           }
 
           {
