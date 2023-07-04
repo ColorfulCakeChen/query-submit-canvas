@@ -358,28 +358,41 @@ class Embedding_Reference_Base extends Recyclable.Root {
       "Embedding", embedding, embedding );
 
     Embedding_Reference_Base.AssertTwoEqualValues( "parsing beginning position",
-      embedding.weightElementOffsetBegin, testParams.in_weights.weightElementOffsetBegin, embedding );
+      embedding.weightElementOffsetBegin,
+      testParams.in_weights.weightElementOffsetBegin, embedding );
 
     Embedding_Reference_Base.AssertTwoEqualValues( "parsing ending position",
-      embedding.weightElementOffsetEnd, testParams.in_weights.weightArray.length, embedding );
+      embedding.weightElementOffsetEnd,
+      testParams.in_weights.weightArray.length, embedding );
 
     // parameters.
-    embedding_asserter.propertyValue( "input_height", testParams.out.input_height );
-    embedding_asserter.propertyValue( "input_width", testParams.out.input_width );
-    embedding_asserter.propertyValue( "input_channelCount", testParams.out.input_channelCount );
-    embedding_asserter.propertyValue( "channelMultiplier", testParams.out.channelMultiplier );
-    embedding_asserter.propertyValue( "vocabularyCountPerInputChannel", testParams.out.vocabularyCountPerInputChannel );
-    embedding_asserter.propertyValue( "bEmbedVocabularyId", testParams.out.bEmbedVocabularyId );
+    embedding_asserter.propertyValue( "input_height",
+      testParams.out.input_height );
+    embedding_asserter.propertyValue( "input_width",
+      testParams.out.input_width );
+    embedding_asserter.propertyValue( "input_channelCount",
+      testParams.out.input_channelCount );
+    embedding_asserter.propertyValue( "channelMultiplier",
+      testParams.out.channelMultiplier );
+    embedding_asserter.propertyValue( "vocabularyCountPerInputChannel",
+      testParams.out.vocabularyCountPerInputChannel );
+    embedding_asserter.propertyValue( "bEmbedVocabularyId",
+      testParams.out.bEmbedVocabularyId );
 
     // Inferenced parameters.
-    let { output_height, output_width, output_channelCount } = testParams.out.inferencedParams;
+    let { output_height, output_width, output_channelCount
+    } = testParams.out.inferencedParams;
 
-    embedding_asserter.propertyValue( "output_height", output_height );
-    embedding_asserter.propertyValue( "output_width", output_width );
-    embedding_asserter.propertyValue( "output_channelCount", output_channelCount );
+    embedding_asserter.propertyValue( "output_height",
+      output_height );
+    embedding_asserter.propertyValue( "output_width",
+      output_width );
+    embedding_asserter.propertyValue( "output_channelCount",
+      output_channelCount );
 
     // Other parameters.
-    embedding_asserter.propertyValue( "bKeepInputTensor", testParams.out.bKeepInputTensor );
+    embedding_asserter.propertyValue( "bKeepInputTensor",
+      testParams.out.bKeepInputTensor );
 
     {
       let tensorWeightCountTotal = 0;
@@ -387,22 +400,28 @@ class Embedding_Reference_Base extends Recyclable.Root {
 
       if ( testParams.out.bEmbedVocabularyId ) {
         tensorWeightCountExtracted
-          = testParams.out.input_channelCount * ( testParams.out.channelMultiplier - 1 )
+          = testParams.out.input_channelCount
+              * ( testParams.out.channelMultiplier - 1 )
               * testParams.out.vocabularyCountPerInputChannel;
       } else {
         tensorWeightCountExtracted
-          = testParams.out.input_channelCount * testParams.out.channelMultiplier
+          = testParams.out.input_channelCount
+              * testParams.out.channelMultiplier
               * testParams.out.vocabularyCountPerInputChannel;
       }
 
-      //!!! (2022/07/27 Remarked) Because embedding may use some extra tensors,
-      // the tensorWeightCountTotal may not the same as tensorWeightCountExtracted.
+      //!!! (2022/07/27 Remarked) Because embedding may use some extra
+      // tensors, the tensorWeightCountTotal may not the same as
+      // tensorWeightCountExtracted.
       //
       // tensorWeightCountTotal = tensorWeightCountExtracted;
-      // embedding_asserter.propertyValue( "tensorWeightCountTotal", tensorWeightCountTotal );
+      // embedding_asserter.propertyValue( "tensorWeightCountTotal",
+      //   tensorWeightCountTotal );
 
-      embedding_asserter.propertyValue( "tensorWeightCountExtracted", tensorWeightCountExtracted );
-      embedding_asserter.propertyValueLE( "tensorWeightCountExtracted", embedding.tensorWeightCountTotal );
+      embedding_asserter.propertyValue( "tensorWeightCountExtracted",
+        tensorWeightCountExtracted );
+      embedding_asserter.propertyValueLE( "tensorWeightCountExtracted",
+        embedding.tensorWeightCountTotal );
     }
 
     embedding_asserter.disposeResources_and_recycleToPool();
