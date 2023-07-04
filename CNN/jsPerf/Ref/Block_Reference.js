@@ -584,21 +584,28 @@ class Block_Reference_Base extends Recyclable.Root {
   /**
    * Check the Block's output according to input (for correctness testing).
    *
-   * @param {tf.tensor3d[]} outputTensors                The output array of the Block's apply_and_destroy_or_keep().
-   * @param {NumberImage.Base[]} imageOutReferenceArray  Refernece output Image data of the Block_Reference's calcResult().
+   * @param {tf.tensor3d[]} outputTensors
+   *   The output array of the Block's apply_and_destroy_or_keep().
+   *
+   * @param {NumberImage.Base[]} imageOutReferenceArray
+   *   Refernece output Image data of the Block_Reference's calcResult().
    */
-  assert_imageOut_Tensors_byNumberArrays( outputTensors, imageOutReferenceArray, parametersDescription ) {
+  assert_imageOut_Tensors_byNumberArrays(
+    outputTensors, imageOutReferenceArray, parametersDescription ) {
+
     let outputArrayRef;
     for ( let i = 0; i < imageOutReferenceArray.length; ++i ) {
 
       let imageOutReference = imageOutReferenceArray[ i ];
       if ( imageOutReference ) {
-        outputArrayRef = imageOutReference.dataArray; // Get referenced result (as number array).
+        // Get referenced result (as number array).
+        outputArrayRef = imageOutReference.dataArray;
       } else {
         outputArrayRef = null;
       }
 
-      let outputTensor = outputTensors[ i ];          // Get real (tested target) result (as typed-array).
+      // Get real (tested target) result (as typed-array).
+      let outputTensor = outputTensors[ i ];
 
       this.asserter_Equal.assert_Tensor_NumberArray(
         outputTensor, outputArrayRef,
@@ -609,20 +616,25 @@ class Block_Reference_Base extends Recyclable.Root {
 
   /**
    * @param {Block_TestParams.Base} testParams
-   *   The test parameters. It is the value of Block_TestParams.Base.ParamsGenerator()'s result.
+   *   The test parameters. It is the value of
+   * Block_TestParams.Base.ParamsGenerator()'s result.
    *
    * @param {ActivationEscaping.ScaleBoundsArray} inputScaleBoundsArray0
-   *   The element value bounds (per channel) of input0. Usually, it is The .output0 of the previous Block value bounds
-   * set. It will be kept (not cloned) directly. So caller should not modify them.
+   *   The element value bounds (per channel) of input0. Usually, it is the
+   * .output0 of the previous Block value bounds set. It will be kept (not
+   * cloned) directly. So caller should not modify them.
    *
    * @param {ActivationEscaping.ScaleBoundsArray} inputScaleBoundsArray1
-   *   The element value bounds (per channel) of input1. Usually, it is The .output1 of the previous Block value bounds
-   * set. It will be kept (not cloned) directly. So caller should not modify them.
+   *   The element value bounds (per channel) of input1. Usually, it is the
+   * .output1 of the previous Block value bounds set. It will be kept (not
+   * cloned) directly. So caller should not modify them.
    *
-   * @return {Block.Base} The created block object.
+   * @return {Block.Base}
+   *   The created block object.
    */
-  static block_create(
-    testParams, inputScaleBoundsArray0, inputScaleBoundsArray1, channelShuffler_ConcatPointwiseConv
+  static block_create( testParams,
+    inputScaleBoundsArray0, inputScaleBoundsArray1,
+    channelShuffler_ConcatPointwiseConv
   ) {
 
     let block = Block.Base.Pool.get_or_create_by();
@@ -632,20 +644,27 @@ class Block_Reference_Base extends Recyclable.Root {
     let bInitOk;
     {
       let extractedParams = Block.Params.Pool.get_or_create_by(
-        testParams.in.input0_height, testParams.in.input0_width, testParams.in.input0_channelCount,
+        testParams.in.input0_height,
+        testParams.in.input0_width,
+        testParams.in.input0_channelCount,
         testParams.in.nConvBlockTypeId,
         testParams.in.pointwise1ChannelCount,
-        testParams.in.depthwise_AvgMax_Or_ChannelMultiplier, testParams.in.depthwiseFilterHeight, testParams.in.depthwiseFilterWidth,
+        testParams.in.depthwise_AvgMax_Or_ChannelMultiplier,
+        testParams.in.depthwiseFilterHeight, testParams.in.depthwiseFilterWidth,
         testParams.in.depthwiseStridesPad, testParams.in.depthwiseActivationId,
-        testParams.in.pointwise20ChannelCount, testParams.in.pointwise20ActivationId,
-        testParams.in.nSqueezeExcitationChannelCountDivisor, testParams.in.bSqueezeExcitationPrefix,
+        testParams.in.pointwise20ChannelCount,
+        testParams.in.pointwise20ActivationId,
+        testParams.in.nSqueezeExcitationChannelCountDivisor,
+        testParams.in.bSqueezeExcitationPrefix,
         testParams.in.nActivationId,
         testParams.in.bKeepInputTensor
       );
 
       extractedParams.channelShuffler = channelShuffler_ConcatPointwiseConv;
 
-      bInitOk = block.init( progress, testParams.in_weights.weightArray, testParams.in_weights.weightElementOffsetBegin, extractedParams,
+      bInitOk = block.init( progress,
+        testParams.in_weights.weightArray,
+        testParams.in_weights.weightElementOffsetBegin, extractedParams,
         inputScaleBoundsArray0, inputScaleBoundsArray1
       );
     }
@@ -658,33 +677,39 @@ class Block_Reference_Base extends Recyclable.Root {
       debugger;
     }
 
-    // Note: Do not generate parameters description string in advance every time.
-    //       Just generate them only if necessary by .toString() for reducing memory re-allocation.
+    // Note: Do not generate parameters description string in advance every
+    //       time. Just generate them only if necessary by .toString() for
+    //       reducing memory re-allocation.
 
     if ( block.bInitOk != bInitOk )
-      throw Error( `Block validation state (${block.bInitOk}) mismatches initer's result (${bInitOk}). ${block}` );
+      throw Error( `Block validation state (${block.bInitOk}) mismatches `
+        + `initer's result (${bInitOk}). ${block}` );
 
     if ( false == bInitOk )
       throw Error( `Failed to initialize block object. ${block}` );
 
     if ( 100 != progress.valuePercentage )
-      throw Error(
-        `Progress (${progress.valuePercentage}) should be 100 when initializing block object successfully. ${block}`);
+      throw Error( `Progress (${progress.valuePercentage}) should be 100 `
+        + `when initializing block object successfully. ${block}`);
 
     progress.disposeResources_and_recycleToPool();
     progress = null;
 
-    if ( block.weightElementOffsetEnd != testParams.in_weights.weightArray.length ) { //!!! For Debug. (parsing ending position)
+    //!!! For Debug. (parsing ending position)
+    if ( block.weightElementOffsetEnd != testParams.in_weights.weightArray.length ) {
       debugger;
     }
 
-    let asserter = ObjectPropertyAsserter.Base.Pool.get_or_create_by( `Block`, block, block );
+    let asserter = ObjectPropertyAsserter.Base.Pool.get_or_create_by( `Block`,
+      block, block );
 
     Block_Reference_Base.AssertTwoEqualValues( "parsing beginning position",
-      block.weightElementOffsetBegin, testParams.in_weights.weightElementOffsetBegin, block );
+      block.weightElementOffsetBegin,
+      testParams.in_weights.weightElementOffsetBegin, block );
 
     Block_Reference_Base.AssertTwoEqualValues( "parsing ending position",
-      block.weightElementOffsetEnd, testParams.in_weights.weightArray.length, block );
+      block.weightElementOffsetEnd,
+      testParams.in_weights.weightArray.length, block );
 
     // Linearity
     let bNoSqueezeExcitation_between_depthwise_and_pointwise2;
@@ -693,17 +718,25 @@ class Block_Reference_Base extends Recyclable.Root {
     let bLinear_between_depthwise_and_pointwise2;
     {
       bNoSqueezeExcitation_between_depthwise_and_pointwise2 = (
-           ( testParams.out.nSqueezeExcitationChannelCountDivisor == ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.NONE ) // (-2)
+           ( testParams.out.nSqueezeExcitationChannelCountDivisor
+               == ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.NONE ) // (-2)
         || ( testParams.out.bSqueezeExcitationPrefix == false )
       );
 
       // Determine bLinear_between_depthwise_and_pointwise2
-      if ( testParams.out.depthwise_AvgMax_Or_ChannelMultiplier == ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.NONE )
-        bLinear_between_depthwise_and_pointwise2 = bNoSqueezeExcitation_between_depthwise_and_pointwise2;
+      if ( testParams.out.depthwise_AvgMax_Or_ChannelMultiplier
+             == ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.NONE )
+        bLinear_between_depthwise_and_pointwise2
+          = bNoSqueezeExcitation_between_depthwise_and_pointwise2;
       else
         bLinear_between_depthwise_and_pointwise2 = (
-             ( testParams.out.depthwiseActivationId == ValueDesc.ActivationFunction.Singleton.Ids.NONE ) // depthwise has no activation function.
-          && ( bNoSqueezeExcitation_between_depthwise_and_pointwise2 ) // no squeeze-and-excitation between depthwise and pointwise2.
+
+             // depthwise has no activation function.
+             ( testParams.out.depthwiseActivationId
+                 == ValueDesc.ActivationFunction.Singleton.Ids.NONE )
+
+             // no squeeze-and-excitation between depthwise and pointwise2.
+          && ( bNoSqueezeExcitation_between_depthwise_and_pointwise2 )
         );
 
       // Determine bLinear_between_pointwise1_and_depthwise
@@ -712,14 +745,16 @@ class Block_Reference_Base extends Recyclable.Root {
           bLinear_between_pointwise1_and_depthwise = true;
         else
           bLinear_between_pointwise1_and_depthwise =
-            ( testParams.out.inferencedParams.pointwise1ActivationId == ValueDesc.ActivationFunction.Singleton.Ids.NONE );
+            ( testParams.out.inferencedParams.pointwise1ActivationId
+                == ValueDesc.ActivationFunction.Singleton.Ids.NONE );
       }
 
       // Determine bLinear_between_pointwise1_and_pointwise2
       {
         if ( bLinear_between_pointwise1_and_depthwise ) {
           if ( testParams.out.inferencedParams.bDepthwiseRequestedAndNeeded ) {
-            if ( testParams.out.inferencedParams.depthwisePadInfo.stridesPadInfo.pad_isValid() ) {
+            if ( testParams.out.inferencedParams.depthwisePadInfo
+                   .stridesPadInfo.pad_isValid() ) {
               bLinear_between_pointwise1_and_pointwise2 = true;
             } else {
               bLinear_between_pointwise1_and_pointwise2 = false;
@@ -735,33 +770,43 @@ class Block_Reference_Base extends Recyclable.Root {
           bLinear_between_pointwise1_and_pointwise2 = false;
         }
 
-        //asserter.propertyValue( "???bLinear_between_depthwise_and_pointwise2", bLinear_between_depthwise_and_pointwise2 );
-        //asserter.propertyValue( "???bLinear_between_pointwise1_and_depthwise", bLinear_between_pointwise1_and_depthwise );
-        //asserter.propertyValue( "???bLinear_between_pointwise1_and_pointwise2", bLinear_between_pointwise1_and_pointwise2 );
+        //asserter.propertyValue( "???bLinear_between_depthwise_and_pointwise2",
+        //  bLinear_between_depthwise_and_pointwise2 );
+        //asserter.propertyValue( "???bLinear_between_pointwise1_and_depthwise",
+        //  bLinear_between_pointwise1_and_depthwise );
+        //asserter.propertyValue( "???bLinear_between_pointwise1_and_pointwise2",
+        //  bLinear_between_pointwise1_and_pointwise2 );
       }
     }
 
     let bDepthwiseRequestedAndNeeded;
     {
-      if ( testParams.out.depthwise_AvgMax_Or_ChannelMultiplier == ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.NONE ) {
+      if ( testParams.out.depthwise_AvgMax_Or_ChannelMultiplier
+             == ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.NONE ) {
         bDepthwiseRequestedAndNeeded = false;
 
       } else {
-        let stridesPadInfo = ValueDesc.StridesPad.Singleton.getInfo_byId( testParams.out.depthwiseStridesPad );
+        let stridesPadInfo = ValueDesc.StridesPad.Singleton.getInfo_byId(
+          testParams.out.depthwiseStridesPad );
 
-        let bChannelCountSame = Depthwise.PadInfoCalculatorRoot.output_channelCount_is_same_as_input(
-          testParams.out.depthwise_AvgMax_Or_ChannelMultiplier );
+        let bChannelCountSame = Depthwise.PadInfoCalculatorRoot
+          .output_channelCount_is_same_as_input(
+            testParams.out.depthwise_AvgMax_Or_ChannelMultiplier );
 
-        let bHeightWidthSame = Depthwise.PadInfoCalculatorRoot.output_height_width_is_same_as_input(
-          testParams.out.input0_height, testParams.out.input0_width,
-          testParams.out.depthwise_AvgMax_Or_ChannelMultiplier,
-          testParams.out.depthwiseFilterHeight_real, testParams.out.depthwiseFilterWidth_real,
-          stridesPadInfo );
+        let bHeightWidthSame = Depthwise.PadInfoCalculatorRoot
+          .output_height_width_is_same_as_input(
+            testParams.out.input0_height, testParams.out.input0_width,
+            testParams.out.depthwise_AvgMax_Or_ChannelMultiplier,
+            testParams.out.depthwiseFilterHeight_real,
+            testParams.out.depthwiseFilterWidth_real,
+            stridesPadInfo );
 
-        let bNoNeighborAnalysis = Depthwise.PadInfoCalculatorRoot.output_height_width_is_no_neighbor_analysis(
-          testParams.out.input0_height, testParams.out.input0_width,
-          testParams.out.depthwise_AvgMax_Or_ChannelMultiplier,
-          testParams.out.depthwiseFilterHeight_real, testParams.out.depthwiseFilterWidth_real );
+        let bNoNeighborAnalysis = Depthwise.PadInfoCalculatorRoot
+          .output_height_width_is_no_neighbor_analysis(
+            testParams.out.input0_height, testParams.out.input0_width,
+            testParams.out.depthwise_AvgMax_Or_ChannelMultiplier,
+            testParams.out.depthwiseFilterHeight_real,
+            testParams.out.depthwiseFilterWidth_real );
 
         if (   ( bChannelCountSame )
             && ( bHeightWidthSame )
@@ -775,49 +820,71 @@ class Block_Reference_Base extends Recyclable.Root {
     }
 
     // input tensor parameters.
-    asserter.propertyValue( "input0_height", testParams.out.input0_height );
-    asserter.propertyValue( "input0_width", testParams.out.input0_width );
-    asserter.propertyValue( "input0_channelCount", testParams.out.input0_channelCount );
-    asserter.propertyValue( "nConvBlockId", testParams.out.nConvBlockId );
+    asserter.propertyValue( "input0_height",
+      testParams.out.input0_height );
+    asserter.propertyValue( "input0_width",
+      testParams.out.input0_width );
+    asserter.propertyValue( "input0_channelCount",
+      testParams.out.input0_channelCount );
+    asserter.propertyValue( "nConvBlockId",
+      testParams.out.nConvBlockId );
 
 //!!! ...unfinished... (2022/06/16) input1_height, input1_width, input1_channelCount
 
-    asserter.propertyValue( "inputTensorCount", inferencedParams.inputTensorCount );
-    asserter.propertyValue( "outputTensorCount", inferencedParams.outputTensorCount );
-    asserter.propertyValue( "bDepthwiseRequestedAndNeeded", bDepthwiseRequestedAndNeeded );
-    asserter.propertyValue( "bDepthwise2Requested", inferencedParams.bDepthwise2Requested );
-    asserter.propertyValue( "bConcat1Requested", inferencedParams.bConcat1Requested );
-    asserter.propertyValue( "bAddInputToOutputRequested", inferencedParams.bAddInputToOutputRequested );
-    asserter.propertyValue( "bConcat2ShuffleSplitRequested", inferencedParams.bConcat2ShuffleSplitRequested );
-    asserter.propertyValue( "bHigherHalfDifferent", inferencedParams.bHigherHalfDifferent );
-    asserter.propertyValue( "bHigherHalfDepthwise2", inferencedParams.bHigherHalfDepthwise2 );
-    asserter.propertyValue( "channelShuffler_outputGroupCount", inferencedParams.channelShuffler_outputGroupCount );
+    asserter.propertyValue( "inputTensorCount",
+      inferencedParams.inputTensorCount );
+    asserter.propertyValue( "outputTensorCount",
+      inferencedParams.outputTensorCount );
+    asserter.propertyValue( "bDepthwiseRequestedAndNeeded",
+      bDepthwiseRequestedAndNeeded );
+    asserter.propertyValue( "bDepthwise2Requested",
+      inferencedParams.bDepthwise2Requested );
+    asserter.propertyValue( "bConcat1Requested",
+      inferencedParams.bConcat1Requested );
+    asserter.propertyValue( "bAddInputToOutputRequested",
+      inferencedParams.bAddInputToOutputRequested );
+    asserter.propertyValue( "bConcat2ShuffleSplitRequested",
+      inferencedParams.bConcat2ShuffleSplitRequested );
+    asserter.propertyValue( "bHigherHalfDifferent",
+      inferencedParams.bHigherHalfDifferent );
+    asserter.propertyValue( "bHigherHalfDepthwise2",
+      inferencedParams.bHigherHalfDepthwise2 );
+    asserter.propertyValue( "channelShuffler_outputGroupCount",
+      inferencedParams.channelShuffler_outputGroupCount );
 
     // The ( block.bConcat2ShuffleSplitRequested == true ) only if ShuffleNetV2.
     if ( block.bConcat2ShuffleSplitRequested ) {
       let bShuffleNetV2 =
-           ( testParams.out.nConvBlockTypeId == ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_HEAD ) // (2)
-        || ( testParams.out.nConvBlockTypeId == ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BODY ) // (3)
-        || ( testParams.out.nConvBlockTypeId == ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_TAIL ) // (4)
+           ( testParams.out.nConvBlockTypeId
+               == ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_HEAD ) // (2)
+        || ( testParams.out.nConvBlockTypeId
+               == ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BODY ) // (3)
+        || ( testParams.out.nConvBlockTypeId
+               == ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_TAIL ) // (4)
       ;
       asserter.propertyValue( "bConcat2ShuffleSplitRequested", bShuffleNetV2 );
     }
 
     // The channelShuffler must not null in these cases.
-    if (   ( testParams.out.nConvBlockTypeId == ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_HEAD ) // (2)
-        || ( testParams.out.nConvBlockTypeId == ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BODY ) // (3)
-        || ( testParams.out.nConvBlockTypeId == ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_TAIL ) // (4)
+    if (   ( testParams.out.nConvBlockTypeId
+               == ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_HEAD ) // (2)
+        || ( testParams.out.nConvBlockTypeId
+               == ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BODY ) // (3)
+        || ( testParams.out.nConvBlockTypeId
+               == ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_TAIL ) // (4)
        ) {
 
       if ( channelShuffler_ConcatPointwiseConv == null )
         throw Error( `Block_Reference.Base.block_create(): `
           + `channelShuffler must NOT null when `
           + `nConvBlockTypeId=`
-          + `${ValueDesc.ConvBlockType.Singleton.getNameWithInt_byId( testParams.out.nConvBlockTypeId )} `
+          + `${ValueDesc.ConvBlockType.Singleton.getNameWithInt_byId(
+                 testParams.out.nConvBlockTypeId )} `
           + `${block}`
       );
 
-      asserter.propertyValue( "channelShuffler_ConcatPointwiseConv", channelShuffler_ConcatPointwiseConv );
+      asserter.propertyValue( "channelShuffler_ConcatPointwiseConv",
+        channelShuffler_ConcatPointwiseConv );
 
     } else {
       asserter.propertyValue( "channelShuffler_ConcatPointwiseConv", null );
@@ -838,30 +905,46 @@ class Block_Reference_Base extends Recyclable.Root {
 
       } else {
         pointwise1Bias_shouldBe = false;
-        pointwise1ActivationId_shouldBe = ValueDesc.ActivationFunction.Singleton.Ids.NONE;
+        pointwise1ActivationId_shouldBe
+          = ValueDesc.ActivationFunction.Singleton.Ids.NONE;
       }
     }
 
-    let pointwise1ActivationName_shouldBe = ValueDesc.ActivationFunction.Singleton.getName_byId( pointwise1ActivationId_shouldBe );
-    let depthwise_AvgMax_Or_ChannelMultiplier_shouldBe = testParams.out.depthwise_AvgMax_Or_ChannelMultiplier;
+    let pointwise1ActivationName_shouldBe
+      = ValueDesc.ActivationFunction.Singleton.getName_byId(
+          pointwise1ActivationId_shouldBe );
+
+    let depthwise_AvgMax_Or_ChannelMultiplier_shouldBe
+      = testParams.out.depthwise_AvgMax_Or_ChannelMultiplier;
       
     // (i.e. ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD (5) )
     //
-    if ( ( block.bHigherHalfDifferent == true ) && ( block.bHigherHalfDepthwise2 == true ) ) {
+    if (   ( block.bHigherHalfDifferent == true )
+        && ( block.bHigherHalfDepthwise2 == true ) ) {
 
-      // In this case (i.e. bHigherHalfCopyLowerHalf), enlarge pointwise1 to ( pointwise1_channel_count + input_channel_count )
-      // so that depthwise1 could include depthwise2.
+      // In this case (i.e. bHigherHalfCopyLowerHalf), enlarge pointwise1 to
+      // ( pointwise1_channel_count + input_channel_count ) so that depthwise1
+      // could include depthwise2.
       //
       if ( testParams.out.pointwise1ChannelCount > 0 ) {
-        let pointwise1ChannelCount = ( testParams.out.pointwise1ChannelCount + testParams.out.input0_channelCount );
-        asserter.propertyValue( "pointwise1ChannelCount", pointwise1ChannelCount );
+        let pointwise1ChannelCount
+          = ( testParams.out.pointwise1ChannelCount
+                + testParams.out.input0_channelCount );
 
-      // However, if ( pointwise1ChannelCount == 0 ), Pointwise.Base can not handle ( pointwise1ChannelCount == 0 ) because
-      // ( inputChannelCount < outputChannelCount == pointwise1ChannelCount == 0 ) is not possible. It will be wrongly recognized
-      // as ( inputChannelCount >= outputChannelCount == pointwise1ChannelCount == 0 ).
+        asserter.propertyValue( "pointwise1ChannelCount",
+          pointwise1ChannelCount );
+
+      // However, if ( pointwise1ChannelCount == 0 ), Pointwise.Base can not
+      // handle ( pointwise1ChannelCount == 0 ) because
+      // ( inputChannelCount < outputChannelCount == pointwise1ChannelCount == 0 )
+      // is not possible. It will be wrongly recognized as
+      // ( inputChannelCount >= outputChannelCount == pointwise1ChannelCount == 0 ).
       //
-      // It should be adjusted forcibly so that ( inputChannelCount < outputChannelCount == pointwise1ChannelCount ) and always
-      // no biases. Not only bHigherHalfCopyLowerHalf, but also bLowerHalfPassThrough. (i.e. bHigherHalfCopyLowerHalf_LowerHalfPassThrough)
+      // It should be adjusted forcibly so that
+      // ( inputChannelCount < outputChannelCount == pointwise1ChannelCount )
+      // and always no biases. Not only bHigherHalfCopyLowerHalf, but also
+      // bLowerHalfPassThrough.
+      // (i.e. bHigherHalfCopyLowerHalf_LowerHalfPassThrough)
       //
       } else { // ( 0 == testParams.out.pointwise1ChannelCount )
 
@@ -874,11 +957,16 @@ class Block_Reference_Base extends Recyclable.Root {
 //
 //         } else { // Use pointwise1 to double channels.
 
-          let pointwise1ChannelCount = ( testParams.out.input0_channelCount * 2 ); // As doubled input channel count.
-          asserter.propertyValue( "pointwise1ChannelCount", pointwise1ChannelCount );
+          // As doubled input channel count.
+          let pointwise1ChannelCount
+            = ( testParams.out.input0_channelCount * 2 );
+
+          asserter.propertyValue( "pointwise1ChannelCount",
+            pointwise1ChannelCount );
 
           pointwise1Bias_shouldBe = false;
-          pointwise1ActivationId_shouldBe = ValueDesc.ActivationFunction.Singleton.Ids.NONE;
+          pointwise1ActivationId_shouldBe
+            = ValueDesc.ActivationFunction.Singleton.Ids.NONE;
 
 //!!! (2022/07/13 Remarked) Does not work.
 //        }
