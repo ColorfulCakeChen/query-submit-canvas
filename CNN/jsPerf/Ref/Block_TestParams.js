@@ -459,40 +459,54 @@ class Block_TestParams_Base extends TestParams.Base {
     //       order. The last element will be tested (changed) first.
     let paramDescConfigArray = [
 
-      new TestParams.ParamDescConfig( Block.Params.input0_height,           valueOutMinMax.input0_height ),
-      new TestParams.ParamDescConfig( Block.Params.input0_width,            valueOutMinMax.input0_width ),
+      new TestParams.ParamDescConfig( Block.Params.input0_height,
+        valueOutMinMax.input0_height ),
+      new TestParams.ParamDescConfig( Block.Params.input0_width,
+        valueOutMinMax.input0_width ),
 
-      new TestParams.ParamDescConfig( Block.Params.pointwise20ChannelCount, valueOutMinMax.pointwise20ChannelCount ),
-      new TestParams.ParamDescConfig( Block.Params.pointwise20ActivationId, valueOutMinMax.pointwise20ActivationId ),
+      new TestParams.ParamDescConfig( Block.Params.pointwise20ChannelCount,
+        valueOutMinMax.pointwise20ChannelCount ),
+      new TestParams.ParamDescConfig( Block.Params.pointwise20ActivationId,
+        valueOutMinMax.pointwise20ActivationId ),
 
-      new TestParams.ParamDescConfig( Block.Params.nActivationId,           valueOutMinMax.nActivationId ),
+      new TestParams.ParamDescConfig( Block.Params.nActivationId,
+        valueOutMinMax.nActivationId ),
 
-      new TestParams.ParamDescConfig( Block.Params.input0_channelCount,     valueOutMinMax.input0_channelCount ),
+      new TestParams.ParamDescConfig( Block.Params.input0_channelCount,
+        valueOutMinMax.input0_channelCount ),
 
       new TestParams.ParamDescConfig( Block.Params.depthwise_AvgMax_Or_ChannelMultiplier,
-                                                                            valueOutMinMax.depthwise_AvgMax_Or_ChannelMultiplier ),
+        valueOutMinMax.depthwise_AvgMax_Or_ChannelMultiplier ),
 
-      new TestParams.ParamDescConfig( Block.Params.depthwiseStridesPad,     valueOutMinMax.depthwiseStridesPad ),
-      new TestParams.ParamDescConfig( Block.Params.depthwiseActivationId,   valueOutMinMax.depthwiseActivationId ),
+      new TestParams.ParamDescConfig( Block.Params.depthwiseStridesPad,
+        valueOutMinMax.depthwiseStridesPad ),
+      new TestParams.ParamDescConfig( Block.Params.depthwiseActivationId,
+        valueOutMinMax.depthwiseActivationId ),
 
-      new TestParams.ParamDescConfig( Block.Params.pointwise1ChannelCount,  valueOutMinMax.pointwise1ChannelCount ),
+      new TestParams.ParamDescConfig( Block.Params.pointwise1ChannelCount,
+        valueOutMinMax.pointwise1ChannelCount ),
 
-      new TestParams.ParamDescConfig( Block.Params.bKeepInputTensor,        valueOutMinMax.bKeepInputTensor ),
+      new TestParams.ParamDescConfig( Block.Params.bKeepInputTensor,
+        valueOutMinMax.bKeepInputTensor ),
 
-      new TestParams.ParamDescConfig( Block.Params.nConvBlockTypeId,        valueOutMinMax.nConvBlockTypeId ),
+      new TestParams.ParamDescConfig( Block.Params.nConvBlockTypeId,
+        valueOutMinMax.nConvBlockTypeId ),
 
       new TestParams.ParamDescConfig( Block.Params.bSqueezeExcitationPrefix,
-                                                                            valueOutMinMax.bSqueezeExcitationPrefix ),
+        valueOutMinMax.bSqueezeExcitationPrefix ),
 
       new TestParams.ParamDescConfig( Block.Params.nSqueezeExcitationChannelCountDivisor,
-                                                                            valueOutMinMax.nSqueezeExcitationChannelCountDivisor ),
+        valueOutMinMax.nSqueezeExcitationChannelCountDivisor ),
 
-      new TestParams.ParamDescConfig( Block.Params.depthwiseFilterHeight,   valueOutMinMax.depthwiseFilterHeight ),
-      new TestParams.ParamDescConfig( Block.Params.depthwiseFilterWidth,    valueOutMinMax.depthwiseFilterWidth ),
+      new TestParams.ParamDescConfig( Block.Params.depthwiseFilterHeight,
+        valueOutMinMax.depthwiseFilterHeight ),
+      new TestParams.ParamDescConfig( Block.Params.depthwiseFilterWidth,
+        valueOutMinMax.depthwiseFilterWidth ),
 
     ];
 
-    yield *Block_TestParams_Base.ParamsGenerator.call( this, paramDescConfigArray );
+    yield *Block_TestParams_Base.ParamsGenerator.call( this,
+      paramDescConfigArray );
   }
 
   /**
