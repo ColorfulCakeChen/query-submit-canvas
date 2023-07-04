@@ -114,8 +114,10 @@ class Stage_Reference_Base extends Recyclable.Root {
       Stage_Reference_Base.stage_create_apply_internal, this, imageSourceBag, testParams );
 
     { // Release output reference images.
-      if ( this.testCorrectness_imageOutReference != this.testCorrectness_imageIn ) { // Do not release image from ImageSourceBag.
+      if ( this.testCorrectness_imageOutReference != this.testCorrectness_imageIn ) {
         this.testCorrectness_imageOutReference.disposeResources_and_recycleToPool();
+
+      // Do not release image from ImageSourceBag.
       }
       this.testCorrectness_imageOutReference = null;
     }
@@ -1106,8 +1108,10 @@ class Stage_Reference_Base extends Recyclable.Root {
 
       { // Release intermediate input images.
         if ( this.imageInArray[ 0 ] ) {
-          if ( this.imageInArray[ 0 ] != imageIn ) { // Do not release image from ImageSourceBag.
+          if ( this.imageInArray[ 0 ] != imageIn ) {
             this.imageInArray[ 0 ].disposeResources_and_recycleToPool();
+
+          // Do not release image from ImageSourceBag.
           }
           this.imageInArray[ 0 ] = null;
         }

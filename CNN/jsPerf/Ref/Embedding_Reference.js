@@ -114,11 +114,12 @@ class Embedding_Reference_Base extends Recyclable.Root {
 
     { // Release output reference images.
 
-      // Do not release image from ImageSourceBag.
       if ( this.testCorrectness_imageOutReference
              != this.testCorrectness_imageIn ) {
         this.testCorrectness_imageOutReference
           .disposeResources_and_recycleToPool();
+
+      // Do not release image from ImageSourceBag.
       }
       this.testCorrectness_imageOutReference = null;
     }

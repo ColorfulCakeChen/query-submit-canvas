@@ -877,7 +877,9 @@ class NeuralNet_Reference_Base extends Recyclable.Root {
 
     // 2. Calculate every stages in sequence.
     let stageRef = this.Stage_Reference;
-    for ( let stageIndex = 0; stageIndex < testParams.stageArray.length; ++stageIndex ) {
+    for ( let stageIndex = 0;
+      stageIndex < testParams.stageArray.length; ++stageIndex ) {
+
       imageToBeProccessed = imageOut;
 
       stageRef.testParams = testParams.stageArray[ stageIndex ];
@@ -885,8 +887,10 @@ class NeuralNet_Reference_Base extends Recyclable.Root {
 
       { // Release intermediate input images.
         if ( imageToBeProccessed ) {
-          if ( imageToBeProccessed != imageIn ) { // Do not release image from ImageSourceBag.
+          if ( imageToBeProccessed != imageIn ) {
             imageToBeProccessed.disposeResources_and_recycleToPool();
+
+          // Do not release image from ImageSourceBag.
           }
           imageToBeProccessed = null;
         }
@@ -907,8 +911,10 @@ class NeuralNet_Reference_Base extends Recyclable.Root {
 
       { // Release intermediate input images.
         if ( this.imageInArray[ 0 ] ) {
-          if ( this.imageInArray[ 0 ] != imageIn ) { // Do not release image from ImageSourceBag.
+          if ( this.imageInArray[ 0 ] != imageIn ) {
             this.imageInArray[ 0 ].disposeResources_and_recycleToPool();
+
+          // Do not release image from ImageSourceBag.
           }
           this.imageInArray[ 0 ] = null;
         }
@@ -919,7 +925,8 @@ class NeuralNet_Reference_Base extends Recyclable.Root {
         }
       }
 
-      imageOut = this.imageOutArray[ 0 ]; // The blockFinal should have only input0.
+      // The blockFinal should have only input0.
+      imageOut = this.imageOutArray[ 0 ];
 
       // Avoid dangling tensors.
       this.imageInArray[ 0 ] = null;
