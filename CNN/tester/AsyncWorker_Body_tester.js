@@ -52,7 +52,8 @@ export default class AsyncWorker_Body_tester extends AsyncWorker.Body {
    *   There will be so many value be generated.
    *
    * @param {number} valueCountPerBoost
-   *   Every so many value, generate so many values without delay intervalMilliseconds.
+   *   Every so many value, generate so many values without delay
+   * intervalMilliseconds.
    */
   async* number_sequence(
     intervalMilliseconds,
@@ -72,7 +73,8 @@ export default class AsyncWorker_Body_tester extends AsyncWorker.Body {
         yield PartTime.delayedValue( intervalMilliseconds, { value: value } );
       }
 
-      // Counting how many number has been generated in the boost (non-boost) block.
+      // Counting how many number has been generated in the boost (non-boost)
+      // block.
       ++countInBlock;
       if ( countInBlock == valueCountPerBoost ) {
         bBoost = !bBoost; // Toogle between boost and non-boost.

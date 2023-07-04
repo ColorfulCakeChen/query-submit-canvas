@@ -6,14 +6,15 @@ import * as AsyncWorker from "../util/AsyncWorker.js";
 //import * as ValueMax from "../util/ValueMax.js";
 
 /**
- * Hold the worker and its related promise map. It is a wrapper of a neural network
- * web worker for handling and communicating easily.
+ * Hold the worker and its related promise map. It is a wrapper of a neural
+ * network web worker for handling and communicating easily.
  *
  */
 class AsyncWorker_Proxy_tester extends AsyncWorker.Proxy {
 
   /**
-   * Used as default AsyncWorker.Proxy provider for conforming to Recyclable interface.
+   * Used as default AsyncWorker.Proxy provider for conforming to Recyclable
+   * interface.
    */
   static Pool = new Pool.Root( "AsyncWorker.Proxy_tester.Pool",
     AsyncWorker_Proxy_tester, AsyncWorker_Proxy_tester.setAsConstructor );
@@ -67,7 +68,8 @@ class AsyncWorker_Proxy_tester extends AsyncWorker.Proxy {
    *   There will be so many value be generated.
    *
    * @param {number} valueCountPerBoost
-   *   Every so many value, generate so many values without delay intervalMilliseconds.
+   *   Every so many value, generate so many values without delay
+   * intervalMilliseconds.
    *
    * @return {AsyncWorker.Resulter}
    *   An async iterator tracking the results of this method.

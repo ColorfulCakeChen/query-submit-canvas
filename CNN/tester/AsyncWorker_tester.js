@@ -84,7 +84,8 @@ async function test_WorkerProxy_processingQueueSize_zero( { workerProxy } ) {
  * 
  * @param {number} nextMilliseconds
  *   - Negative: No await before call numberResulter.next().
- *   - Other value: await so many milliseconds before call numberResulter.next().
+ *   - Other value: await so many milliseconds before call
+ *       numberResulter.next().
  */
 async function test_WorkerProxy_numberSequence(
   {
@@ -99,7 +100,9 @@ async function test_WorkerProxy_numberSequence(
   let numberResulter = workerProxy.number_sequence_asyncGenerator(
     intervalMilliseconds, valueBegin, valueCountTotal, valueCountPerBoost );
 
-  const valueCountPerDelay = Math.ceil( nextMilliseconds / intervalMilliseconds );
+  const valueCountPerDelay
+    = Math.ceil( nextMilliseconds / intervalMilliseconds );
+
   let valueIndex = 0;
   let valueTest = valueBegin;
   let numberResulterNext, done, value;
@@ -119,7 +122,8 @@ async function test_WorkerProxy_numberSequence(
           + `valueCountPerDelay=${valueCountPerDelay}, `
           + `valueCountThisDelay=${valueCountThisDelay}, `
           + `valueIndex=${valueIndex}, `
-          + `value ( ${value} ) should be the same as valueTest ( ${valueTest} ).`
+          + `value ( ${value} ) should be the same as `
+          + `valueTest ( ${valueTest} ).`
         );
 
       ++valueIndex;
@@ -137,7 +141,8 @@ async function test_WorkerProxy_numberSequence(
         + `sequenceName="${sequenceName}", workerId=${workerId}, `
         + `nextMilliseconds=${nextMilliseconds}, `
         + `valueCountPerDelay=${valueCountPerDelay}, `
-        + `value ( ${value} ) should be the same as valueTestFinal ( ${valueTestFinal} ).`
+        + `value ( ${value} ) should be the same as `
+        + `valueTestFinal ( ${valueTestFinal} ).`
     );
 }
 
@@ -148,12 +153,14 @@ async function test_WorkerProxy_numberSequence_multi( aNumberSequenceInfo ) {
   let noMilliseconds = -1;
   let zeroMilliseconds = 0;
   let halfMilliseconds = aNumberSequenceInfo.intervalMilliseconds / 2;
-  let oneHalfMilliseconds = aNumberSequenceInfo.intervalMilliseconds + halfMilliseconds;
+  let oneHalfMilliseconds
+    = aNumberSequenceInfo.intervalMilliseconds + halfMilliseconds;
   let sameMilliseconds = aNumberSequenceInfo.intervalMilliseconds;
   let twoMilliseconds = aNumberSequenceInfo.intervalMilliseconds * 2;
   let fiveMilliseconds = aNumberSequenceInfo.intervalMilliseconds * 5;
   let overMilliseconds
-    = aNumberSequenceInfo.intervalMilliseconds * aNumberSequenceInfo.valueCountTotal;
+    = aNumberSequenceInfo.intervalMilliseconds
+        * aNumberSequenceInfo.valueCountTotal;
 
   return Promise.all( [
     test_WorkerProxy_numberSequence( aNumberSequenceInfo, overMilliseconds ),
