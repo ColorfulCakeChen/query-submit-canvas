@@ -15,16 +15,17 @@ import * as RandTools from "../util/RandTools.js";
  * A test set.
  *
  *
- * (2022/06/08) In summary, fused convolution is a lot slower than depthwise-pointwise convolution.
+ * (2022/06/08) In summary, fused convolution is a lot slower than
+ * depthwise-pointwise convolution.
  *
  *
  */
 class HeightWidthDepth {
 
   /**
-   * @param {number} height            image height
-   * @param {number} width             image width
-   * @param {number} depth             image channel count
+   * @param {number} height  image height
+   * @param {number} width   image width
+   * @param {number} depth   image channel count
    */
   constructor( height, width, depth ) {
 
@@ -35,7 +36,9 @@ class HeightWidthDepth {
     this.depth = depth;
 
     this.inputShape = [ this.height, this.width, this.depth ];
-    this.inputWithBiasShape = [ this.height, this.width, ( this.depth + 1 ) ]; // extra channel as bias.
+
+    // extra channel as bias.
+    this.inputWithBiasShape = [ this.height, this.width, ( this.depth + 1 ) ];
 
     this.inputChannelCount = depth;
     this.outputChannelCount = depth;
@@ -46,19 +49,27 @@ class HeightWidthDepth {
 
     this.depthwiseFilterHeight = 3;
     this.depthwiseFilterWidth = 3;
-    this.depthwiseFiltersShape = [ this.depthwiseFilterHeight, this.depthwiseFilterWidth, this.inputChannelCount, this.channelMultiplier ];
-    this.depthwiseBiasesShape = [ this.inputChannelCount * this.channelMultiplier ];
+    this.depthwiseFiltersShape = [
+      this.depthwiseFilterHeight, this.depthwiseFilterWidth,
+      this.inputChannelCount, this.channelMultiplier ];
+    this.depthwiseBiasesShape
+      = [ this.inputChannelCount * this.channelMultiplier ];
 
     this.pointwiseFilterHeight = 1;
     this.pointwiseFilterWidth = 1;
-    this.pointwiseFiltersShape = [ this.pointwiseFilterHeight, this.pointwiseFilterWidth, this.inputChannelCount, this.outputChannelCount ];
+    this.pointwiseFiltersShape = [
+      this.pointwiseFilterHeight, this.pointwiseFilterWidth,
+      this.inputChannelCount, this.outputChannelCount ];
     this.pointwiseBiasesShape = [ this.outputChannelCount ];
 
-    this.fusedConvFiltersShape = [ this.depthwiseFilterHeight, this.depthwiseFilterWidth, this.inputChannelCount, this.outputChannelCount ];
+    this.fusedConvFiltersShape = [
+      this.depthwiseFilterHeight, this.depthwiseFilterWidth,
+      this.inputChannelCount, this.outputChannelCount ];
     this.fusedConvBiasesShape = [ this.outputChannelCount ];
 
     this.fusedConvWithBiasFiltersShape = [ // extra channel as bias.
-      this.depthwiseFilterHeight, this.depthwiseFilterWidth, ( this.inputChannelCount + 1 ), ( this.outputChannelCount + 1 ) ];
+      this.depthwiseFilterHeight, this.depthwiseFilterWidth,
+      ( this.inputChannelCount + 1 ), ( this.outputChannelCount + 1 ) ];
   }
 
   disposeResources() {
@@ -72,7 +83,8 @@ class HeightWidthDepth {
 
   fusedConv_PerformanceTest_init() {
 
-    // Release dataTensor3d too. Because perofrmance testing uses larger different input image from correctness testing.
+    // Release dataTensor3d too. Because perofrmance testing uses larger
+    // different input image from correctness testing.
     this.disposeResources();
 
     const valueBegin = 0;
@@ -171,17 +183,20 @@ class HeightWidthDepth {
 
 //!!! (2022/06/08 Remarked)
 //   test_depthwise_bias_pointwise_bias_pad_valid() {
-//     HeightWidthDepth.test_depthwise_bias_pointwise_bias.call( this, "valid" );
+//     HeightWidthDepth.test_depthwise_bias_pointwise_bias.call( this,
+//       "valid" );
 //   }
 //
 //   test_depthwise_bias_pointwise_bias_pad_same() {
-//     HeightWidthDepth.test_depthwise_bias_pointwise_bias.call( this, "same" );
+//     HeightWidthDepth.test_depthwise_bias_pointwise_bias.call( this,
+//       "same" );
 //   }
 
 
   test_depthwise_bias_pointwise_bias() {
     let t0, t1;
-    t0 = tf.depthwiseConv2d( this.inputImage, this.depthwiseFilters, this.strides, this.pad );
+    t0 = tf.depthwiseConv2d( this.inputImage,
+      this.depthwiseFilters, this.strides, this.pad );
     t1 = tf.add( t0, this.depthwiseBiases ); t0.dispose();
     t0 = tf.conv2d( t1, this.pointwiseFilters, this.strides, this.pad ); t1.dispose();
     t1 = tf.add( t0, this.pointwiseBiases ); t0.dispose();
@@ -190,7 +205,8 @@ class HeightWidthDepth {
 
   test_depthwise_pointwise_bias() {
     let t0, t1;
-    t0 = tf.depthwiseConv2d( this.inputImage, this.depthwiseFilters, this.strides, this.pad );
+    t0 = tf.depthwiseConv2d( this.inputImage,
+      this.depthwiseFilters, this.strides, this.pad );
     t1 = tf.conv2d( t0, this.pointwiseFilters, this.strides, this.pad ); t0.dispose();
     t0 = tf.add( t1, this.pointwiseBiases ); t1.dispose();
     t0.dispose();
@@ -198,13 +214,15 @@ class HeightWidthDepth {
 
   test_fusedConv_bias() {
     let t0, t1;
-    t0 = tf.conv2d( this.inputImage, this.fusedConvFilters, this.strides, this.pad );
+    t0 = tf.conv2d( this.inputImage,
+      this.fusedConvFilters, this.strides, this.pad );
     t1 = tf.add( t0, this.fusedConvBiases ); t0.dispose();
     t1.dispose();
   }
 
   test_fusedConvWithBias() {
-    let t0 = tf.conv2d( this.inputWithBiasImage, this.fusedConvWithBiasFilters, this.strides, this.pad );
+    let t0 = tf.conv2d( this.inputWithBiasImage,
+      this.fusedConvWithBiasFilters, this.strides, this.pad );
     t0.dispose();
   }
 
@@ -214,7 +232,8 @@ class HeightWidthDepth {
 
     yield;
 
-    // After correctness testing done, create all Block for performance testing.
+    // After correctness testing done, create all Block for performance
+    // testing.
     this.fusedConv_PerformanceTest_init();
   }
 
@@ -231,7 +250,8 @@ function init() {
   // Using ( 1 / 10 ) of computer screen ( 1920 * 1080 ).
 //  globalThis.testSet = new HeightWidthDepth( 108, 192, depth ); // height, width, depth
 //  globalThis.testSet = new HeightWidthDepth( 3, 3, depth ); // height, width, depth
-  globalThis.testSet = new HeightWidthDepth( 5, 5, depth ); // height, width, depth
+  globalThis.testSet = new HeightWidthDepth(
+    5, 5, depth ); // height, width, depth
 
   globalThis.testSet_All = [
     globalThis.testSet
