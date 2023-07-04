@@ -1096,7 +1096,8 @@ class Block_Reference_Base extends Recyclable.Root {
     }
 
     // Other parameters.
-    asserter.propertyValue( "bKeepInputTensor", testParams.out.bKeepInputTensor );
+    asserter.propertyValue( "bKeepInputTensor",
+      testParams.out.bKeepInputTensor );
 
     {
       let tensorWeightCountTotal = 0;  // Not include channel shuffler.
@@ -1108,14 +1109,18 @@ class Block_Reference_Base extends Recyclable.Root {
         if ( operation.biasesTensor3d )
            tensorWeightCountTotal += operation.biasesTensor3d.size;
       }
-      asserter.propertyValue( "tensorWeightCountTotal", tensorWeightCountTotal );
+      asserter.propertyValue( "tensorWeightCountTotal",
+        tensorWeightCountTotal );
 
-      // Exclude parameters weights, all the others should be the extracted weight count.
+      // Exclude parameters weights, all the others should be the extracted
+      // weight count.
       //
-      // (2022/07/04) Because Params will be release by Block.init(), it can not be used here. Use first operation which has beginning
-      // position instead.
+      // (2022/07/04) Because Params will be release by Block.init(), it can
+      // not be used here. Use first operation which has beginning position
+      // instead.
       //
-      //let Params_weightElementOffsetEnd = extractedParams.weightElementOffsetEnd;
+      //let Params_weightElementOffsetEnd
+      //  = extractedParams.weightElementOffsetEnd;
       let Params_weightElementOffsetEnd;
       for ( let i = 0; i < block.operationArray.operationArray.length; ++i ) {
         let operation = block.operationArray.operationArray[ i ];
@@ -1125,10 +1130,14 @@ class Block_Reference_Base extends Recyclable.Root {
         }
       }
 
-      let tensorWeightCountExtracted = ( testParams.in_weights.weightArray.length - Params_weightElementOffsetEnd );
+      let tensorWeightCountExtracted
+        = ( testParams.in_weights.weightArray.length
+              - Params_weightElementOffsetEnd );
 
-      asserter.propertyValue( "tensorWeightCountExtracted", tensorWeightCountExtracted );
-      asserter.propertyValueLE( "tensorWeightCountExtracted", tensorWeightCountTotal );
+      asserter.propertyValue( "tensorWeightCountExtracted",
+        tensorWeightCountExtracted );
+      asserter.propertyValueLE( "tensorWeightCountExtracted",
+        tensorWeightCountTotal );
     }
 
     asserter.disposeResources_and_recycleToPool();
@@ -1138,14 +1147,18 @@ class Block_Reference_Base extends Recyclable.Root {
   }
 
   /**
-   * @param {Object} parametersDesc  Its .toString() for debug message of this block.
+   * @param {Object} parametersDesc
+   *   Its .toString() for debug message of this block.
    */
   static AssertTwoEqualValues( valueName, value1, value2, parametersDesc ) {
     if ( value1 != value2 )
-      throw Error( `Block ${valueName} (${value1}) should be (${value2}). ${parametersDesc}` );
+      throw Error( `Block ${valueName} (${value1}) should be (${value2}). `
+        + `${parametersDesc}` );
   }
 
-  /** According to imageInArray and this.testParams.in.paramsNumberArrayObject, calculate imageOutArray.
+  /**
+   * According to imageInArray and this.testParams.in.paramsNumberArrayObject,
+   * calculate imageOutArray.
    *
    * @param {Block_Reference.Base} this
    *   The referenece object to do the calculate.
@@ -1169,19 +1182,23 @@ class Block_Reference_Base extends Recyclable.Root {
     let inferencedParams = testParams.out.inferencedParams;
     let depthwisePadInfo = inferencedParams.depthwisePadInfo;
 
-    // The following two (ValueDesc.ConvBlockType.Singleton.Ids.Xxx) use similar calculation logic:
+    // The following two (ValueDesc.ConvBlockType.Singleton.Ids.Xxx) use
+    // similar calculation logic:
     //    SHUFFLE_NET_V2_HEAD                    // (2) (ShuffleNetV2's head)
     //    SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD   // (5) (ShuffleNetV2_ByMobileNetV1's head)
     //
-    // The following two (ValueDesc.ConvBlockType.Singleton.Ids.Xxx) use similar calculation logic:
+    // The following two (ValueDesc.ConvBlockType.Singleton.Ids.Xxx) use
+    // similar calculation logic:
     //    SHUFFLE_NET_V2_BODY                    // (3) (ShuffleNetV2's body)
     //    SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY   // (6) (ShuffleNetV2_ByMobileNetV1's body)
     //
-    // The following two (ValueDesc.ConvBlockType.Singleton.Ids.Xxx) use similar calculation logic:
+    // The following two (ValueDesc.ConvBlockType.Singleton.Ids.Xxx) use
+    // similar calculation logic:
     //    SHUFFLE_NET_V2_TAIL                    // (4) (ShuffleNetV2's tail)
     //    SHUFFLE_NET_V2_BY_MOBILE_NET_V1_TAIL   // (7) (ShuffleNetV2_ByMobileNetV1's tail)
 
-    // Collect images which may be necessary to be disposed in every computation operation.
+    // Collect images which may be necessary to be disposed in every
+    // computation operation.
     this.imageNeedDisposeUniqueStack.clear();
 
     let imageIn0, imageIn1;
@@ -1191,25 +1208,29 @@ class Block_Reference_Base extends Recyclable.Root {
     let pointwise1ChannelCount = testParams.out.pointwise1ChannelCount;
     let pointwise20ChannelCount;
 
-    // Note: Block_TestParams.Base.generate_Filters_Biases() double pointwise20ChannelCount. So, halve them here.
+    // Note: Block_TestParams.Base.generate_Filters_Biases() double
+    //       pointwise20ChannelCount. So, halve them here.
     //
     if ( testParams.nConvBlockTypeId__is__SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD() ) { // (5)
-      pointwise20ChannelCount = Math.ceil( testParams.out.pointwise20ChannelCount / 2 );
+      pointwise20ChannelCount
+        = Math.ceil( testParams.out.pointwise20ChannelCount / 2 );
 
       imageIn0 = imageInArray[ 0 ];
       imageIn1 = imageInArray[ 1 ];
 
-    // The imageInArray[ 0 ] should be splitted into imageIn0 and imageIn1, because we:
+    // The imageInArray[ 0 ] should be splitted into imageIn0 and imageIn1,
+    // because we:
     //   - use the logic of SHUFFLE_NET_V2_BODY (3) to handle SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY (6)
     //   - use the logic of SHUFFLE_NET_V2_TAIL (4) to handle SHUFFLE_NET_V2_BY_MOBILE_NET_V1_TAIL (7)
     //
-    // Note: Block_TestParams.Base.generate_Filters_Biases() double input0_channelCount,
-    //       pointwise20ChannelCount. So, halve them here.
+    // Note: Block_TestParams.Base.generate_Filters_Biases() double
+    //       input0_channelCount, pointwise20ChannelCount. So, halve them here.
     //
     } else if ( testParams.nConvBlockTypeId__is__SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY_or_TAIL() ) { // (6 or 7)
 
       NumberImage.Base.calcSplitAlongAxisId2(
-        imageInArray[ 0 ], this.imageInArray_Fake, testParams.out, "Split_imageIn_to_imageInArray_0_1" );
+        imageInArray[ 0 ], this.imageInArray_Fake, testParams.out,
+        "Split_imageIn_to_imageInArray_0_1" );
 
       imageIn0 = this.imageInArray_Fake[ 0 ];
       imageIn1 = this.imageInArray_Fake[ 1 ];
@@ -1217,11 +1238,16 @@ class Block_Reference_Base extends Recyclable.Root {
       if ( pointwise1ChannelCount <= 0 ) {
         // When no pointwise1, just keep it all-pass-through.
 
-      } else { // Otherwise, only the lower half should be processed by pointwise1 convolution.
-        let pointwise1_higherHalfPassThrough = Block.ChannelCountCalculator.HigherHalfPassThrough.Pool.get_or_create_by(
-          testParams.out.input0_channelCount, testParams.out.pointwise1ChannelCount );
+      // Otherwise, only the lower half should be processed by pointwise1
+      // convolution.
+      } else {
+        let pointwise1_higherHalfPassThrough = Block.ChannelCountCalculator
+          .HigherHalfPassThrough.Pool.get_or_create_by(
+            testParams.out.input0_channelCount,
+            testParams.out.pointwise1ChannelCount );
 
-        pointwise1ChannelCount = pointwise1_higherHalfPassThrough.outputChannelCount_lowerHalf;
+        pointwise1ChannelCount
+          = pointwise1_higherHalfPassThrough.outputChannelCount_lowerHalf;
 
         pointwise1_higherHalfPassThrough.disposeResources_and_recycleToPool();
         pointwise1_higherHalfPassThrough = null;
