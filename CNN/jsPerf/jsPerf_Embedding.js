@@ -24,7 +24,9 @@ import * as BatchIdCalculator from "./BatchIdCalculator.js";
  * 
  */
  class PerformanceTestCase {
-  constructor( testCaseId, testCaseName, embeddingTestParams, embedding, inputTensor3d ) {
+  constructor( testCaseId, testCaseName,
+    embeddingTestParams, embedding, inputTensor3d ) {
+
     this.testCaseId = testCaseId;
     this.testCaseName = testCaseName;
     this.embeddingTestParams = embeddingTestParams;
@@ -39,9 +41,9 @@ import * as BatchIdCalculator from "./BatchIdCalculator.js";
 class HeightWidthDepth {
 
   /**
-   * @param {number} height            image height
-   * @param {number} width             image width
-   * @param {number} depth             image channel count
+   * @param {number} height  image height
+   * @param {number} width   image width
+   * @param {number} depth   image channel count
    */
   constructor( height, width, depth ) {
 
@@ -87,7 +89,8 @@ class HeightWidthDepth {
         EmbeddingClass, embeddingTestParams );
 
       let aPerformanceTestCase = new PerformanceTestCase(
-        embeddingTestParams.id, testCaseName, embeddingTestParams, embedding, inputTensor3d );
+        embeddingTestParams.id, testCaseName,
+        embeddingTestParams, embedding, inputTensor3d );
 
       this.testCaseMap.set( testCaseName, aPerformanceTestCase );
 
@@ -103,11 +106,13 @@ class HeightWidthDepth {
 
   embedding_PerformanceTest_init() {
 
-    // Release dataTensor3d too. Because perofrmance testing uses larger different input image from correctness testing.
+    // Release dataTensor3d too. Because perofrmance testing uses larger
+    // different input image from correctness testing.
     this.disposeResources();
 
     // Larger input image for performance testing.
-    this.testPerformance_imageSourceBag = ImageSourceBag.Base.Pool.get_or_create_by( "int32" );
+    this.testPerformance_imageSourceBag
+      = ImageSourceBag.Base.Pool.get_or_create_by( "int32" );
 
     if ( this.testCaseMap )
       this.testCaseMap.clear();
@@ -122,11 +127,13 @@ class HeightWidthDepth {
     // bKeepInputTensor
     //
     // The embedding performance testing should:
-    //   - ( bKeepInputTensor == true ). Otherwise, the this.dataTensor3d will be destroyed.
+    //   - ( bKeepInputTensor == true ). Otherwise, the this.dataTensor3d will
+    //       be destroyed.
     //
 
     // Test Case 0: (AddGatherReshape, ( channelMultiplier == 1 ))
-    this.embedding_PerformanceTest_addCase( "AddGatherReshape_channelMultiplier_1",
+    this.embedding_PerformanceTest_addCase(
+      "AddGatherReshape_channelMultiplier_1",
       ( new Embedding_TestParams.Base( 0 ) ).set_byParamsScattered(
         this.height, this.width, this.depth, 1,
         vocabularyCountPerInputChannel, bEmbedVocabularyId,
@@ -134,7 +141,8 @@ class HeightWidthDepth {
       ) );
 
     // Test Case 1: (SplitReshapeGatherConcat, ( channelMultiplier == 1 ))
-    this.embedding_PerformanceTest_addCase( "SplitReshapeGatherConcat_channelMultiplier_1",
+    this.embedding_PerformanceTest_addCase(
+      "SplitReshapeGatherConcat_channelMultiplier_1",
       ( new Embedding_TestParams.Base( 1 ) ).set_byParamsScattered(
         this.height, this.width, this.depth, 1,
         vocabularyCountPerInputChannel, bEmbedVocabularyId,
@@ -142,7 +150,8 @@ class HeightWidthDepth {
       ) );
 
     // Test Case 2: (AddGatherReshape, ( channelMultiplier == 2 ))
-    this.embedding_PerformanceTest_addCase( "AddGatherReshape_channelMultiplier_2",
+    this.embedding_PerformanceTest_addCase(
+      "AddGatherReshape_channelMultiplier_2",
       ( new Embedding_TestParams.Base( 2 ) ).set_byParamsScattered(
         this.height, this.width, this.depth, 2,
         vocabularyCountPerInputChannel, bEmbedVocabularyId,
@@ -150,7 +159,8 @@ class HeightWidthDepth {
       ) );
 
     // Test Case 3: (SplitReshapeGatherConcat, ( channelMultiplier == 2 ))
-    this.embedding_PerformanceTest_addCase( "SplitReshapeGatherConcat_channelMultiplier_2",
+    this.embedding_PerformanceTest_addCase(
+      "SplitReshapeGatherConcat_channelMultiplier_2",
       ( new Embedding_TestParams.Base( 3 ) ).set_byParamsScattered(
         this.height, this.width, this.depth, 2,
         vocabularyCountPerInputChannel, bEmbedVocabularyId,
@@ -158,7 +168,8 @@ class HeightWidthDepth {
       ) );
 
     // Test Case 4: (AddGatherReshape, ( channelMultiplier == 4 ))
-    this.embedding_PerformanceTest_addCase( "AddGatherReshape_channelMultiplier_4",
+    this.embedding_PerformanceTest_addCase(
+      "AddGatherReshape_channelMultiplier_4",
       ( new Embedding_TestParams.Base( 4 ) ).set_byParamsScattered(
         this.height, this.width, this.depth, 4,
         vocabularyCountPerInputChannel, bEmbedVocabularyId,
@@ -166,7 +177,8 @@ class HeightWidthDepth {
       ) );
 
     // Test Case 5: (SplitReshapeGatherConcat, ( channelMultiplier == 4 ))
-    this.embedding_PerformanceTest_addCase( "SplitReshapeGatherConcat_channelMultiplier_4",
+    this.embedding_PerformanceTest_addCase(
+      "SplitReshapeGatherConcat_channelMultiplier_4",
       ( new Embedding_TestParams.Base( 5 ) ).set_byParamsScattered(
         this.height, this.width, this.depth, 4,
         vocabularyCountPerInputChannel, bEmbedVocabularyId,
@@ -174,7 +186,8 @@ class HeightWidthDepth {
       ) );
 
     // Test Case 6: (AddGatherReshape, ( channelMultiplier == 8 ))
-    this.embedding_PerformanceTest_addCase( "AddGatherReshape_channelMultiplier_8",
+    this.embedding_PerformanceTest_addCase(
+      "AddGatherReshape_channelMultiplier_8",
       ( new Embedding_TestParams.Base( 6 ) ).set_byParamsScattered(
         this.height, this.width, this.depth, 8,
         vocabularyCountPerInputChannel, bEmbedVocabularyId,
@@ -182,7 +195,8 @@ class HeightWidthDepth {
       ) );
 
     // Test Case 7: (SplitReshapeGatherConcat, ( channelMultiplier == 8 ))
-    this.embedding_PerformanceTest_addCase( "SplitReshapeGatherConcat_channelMultiplier_8",
+    this.embedding_PerformanceTest_addCase(
+      "SplitReshapeGatherConcat_channelMultiplier_8",
       ( new Embedding_TestParams.Base( 7 ) ).set_byParamsScattered(
         this.height, this.width, this.depth, 8,
         vocabularyCountPerInputChannel, bEmbedVocabularyId,
@@ -225,12 +239,14 @@ class HeightWidthDepth {
       yield;
 
       {
-        let memoryInfo_testCorrectness_before = tf.memory(); // Test memory leakage of imageSourceBag.
+        // Test memory leakage of imageSourceBag.
+        let memoryInfo_testCorrectness_before = tf.memory();
 
         {
-          // Note: imageSourceBag should not be created outside tidy() because tidy() will dispose tensors
-          //       dynamically created in them.
-          let imageSourceBag = ImageSourceBag.Base.Pool.get_or_create_by( "int32" );
+          // Note: imageSourceBag should not be created outside tidy() because
+          //       tidy() will dispose tensors dynamically created in them.
+          let imageSourceBag
+            = ImageSourceBag.Base.Pool.get_or_create_by( "int32" );
 
           let testParams = Embedding_TestParams.Base.Pool.get_or_create_by();
           let testParamsGenerator = testParams.ParamsGenerator();
@@ -240,17 +256,23 @@ class HeightWidthDepth {
 
           try {
             for ( testParams of testParamsGenerator ) {
-              let bDisplayed = batchIdCalculator.checkAndDisplay( testParams.id );
+              let bDisplayed
+                = batchIdCalculator.checkAndDisplay( testParams.id );
+
+              // Since just entering a new batch section, take a break so that
+              // memory garbage collector could be activated to work.
               if ( bDisplayed )
-                yield; // Since just entering a new batch section, take a break so that memory garbage collector could be activated to work.
+                yield;
 
               testReference.testCorrectness( imageSourceBag, testParams );
             }
 
           } catch ( e ) {
             let backendName = tf.getBackend();
-            let msg = `jsPerf_Embedding.js: testCorrectness(): backendName=${backendName}, `
-              + `Embedding, (yieldCount == ${testParams.yieldCount}), testParams.id == ${testParams.id}`;
+            let msg = `jsPerf_Embedding.js: testCorrectness(): `
+              + `backendName=${backendName}, `
+              + `Embedding, (yieldCount == ${testParams.yieldCount}), `
+              + `testParams.id == ${testParams.id}`;
 
             console.log( msg );
             alert( `${msg}\n${e}` );
@@ -261,27 +283,37 @@ class HeightWidthDepth {
 
           batchIdCalculator.checkAndDisplay( testParams.id );
 
-          testReference.disposeResources_and_recycleToPool(); testReference = null;
-          testParams.disposeResources_and_recycleToPool(); testParams = null;
-          imageSourceBag.disposeResources_and_recycleToPool(); imageSourceBag = null;
+          testReference.disposeResources_and_recycleToPool();
+          testReference = null;
+
+          testParams.disposeResources_and_recycleToPool();
+          testParams = null;
+
+          imageSourceBag.disposeResources_and_recycleToPool();
+          imageSourceBag = null;
         }
 
         let memoryInfo_testCorrectness_after = tf.memory();
 
-        if ( memoryInfo_testCorrectness_after.numTensors != memoryInfo_testCorrectness_before.numTensors )
+        if ( memoryInfo_testCorrectness_after.numTensors
+               != memoryInfo_testCorrectness_before.numTensors )
           throw Error( `testCorrectness() memory leak. `
-            + `result tensor count (${memoryInfo_testCorrectness_after.numTensors}) `
-            + `should be (${memoryInfo_testCorrectness_before.numTensors} `
+            + `result tensor count `
+            + `( ${memoryInfo_testCorrectness_after.numTensors} ) `
+            + `should be (${memoryInfo_testCorrectness_before.numTensors}.`
           );
       }
 
       Pool.Asserter.assert_Pool_issuedCount(
-        "jsPerf_Embedding.HeightWidthDepth.testCorrectness()", pool_all_issuedCount_before );
+        "jsPerf_Embedding.HeightWidthDepth.testCorrectness()",
+        pool_all_issuedCount_before );
+
       yield;
     }
 
     try {
-      // After correctness testing done, create all Embedding for performance testing.
+      // After correctness testing done, create all Embedding for performance
+      // testing.
       this.embedding_PerformanceTest_init();
     } catch ( e ) {
       debugger;
@@ -301,7 +333,8 @@ function init() {
 
   // Using mobile phone's resolution ( 1080 * 2160 ) will crash the computer.
   // Using ( 1 / 10 ) of computer screen ( 1080 * 1920 ).
-  globalThis.testSet_108x192x4 = new HeightWidthDepth( 108, 192, depth ); // height, width, depth
+  globalThis.testSet_108x192x4 = new HeightWidthDepth(
+    108, 192, depth ); // height, width, depth
 
   globalThis.testSet_All = [
     globalThis.testSet_108x192x4
