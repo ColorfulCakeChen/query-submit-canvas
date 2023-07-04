@@ -297,11 +297,13 @@ class Embedding_TestParams_Base extends TestParams.Base {
    * Responsible for generating testing paramters combinations.
    *
    * @yield {Base}
-   *   Yield this object itself. The returned object (it is this object itself) should not be modified because it will be re-used.
+   *   Yield this object itself. The returned object (it is this object itself)
+   * should not be modified because it will be re-used.
    */
   * ParamsGenerator() {
 
-    // Restrict some parameter's large kinds. Otherwise, too many combination will be generated.
+    // Restrict some parameter's large kinds. Otherwise, too many combination
+    // will be generated.
     let valueOutMinMax = this.valueOutMinMax = {
       input_height: [ 1, 5 ],
       input_width: [ 1, 5 ],
@@ -335,18 +337,27 @@ class Embedding_TestParams_Base extends TestParams.Base {
 
     // All the parameters to be tried.
     //
-    // Note: The order of these element could be adjusted to change testing order. The last element will be tested (changed) first.
+    // Note: The order of these element could be adjusted to change testing
+    //       order. The last element will be tested (changed) first.
     let paramDescConfigArray = [
-      new TestParams.ParamDescConfig( Embedding.Params.input_height,                   valueOutMinMax.input_height ),
-      new TestParams.ParamDescConfig( Embedding.Params.input_width,                    valueOutMinMax.input_width ),
-      new TestParams.ParamDescConfig( Embedding.Params.input_channelCount,             valueOutMinMax.input_channelCount ),
-      new TestParams.ParamDescConfig( Embedding.Params.channelMultiplier,              valueOutMinMax.channelMultiplier ),
-      new TestParams.ParamDescConfig( Embedding.Params.vocabularyCountPerInputChannel, valueOutMinMax.vocabularyCountPerInputChannel ),
-      new TestParams.ParamDescConfig( Embedding.Params.bEmbedVocabularyId,             valueOutMinMax.bEmbedVocabularyId ),
-      new TestParams.ParamDescConfig( Embedding.Params.bKeepInputTensor,               valueOutMinMax.bKeepInputTensor ),
+      new TestParams.ParamDescConfig( Embedding.Params.input_height,
+        valueOutMinMax.input_height ),
+      new TestParams.ParamDescConfig( Embedding.Params.input_width,
+        valueOutMinMax.input_width ),
+      new TestParams.ParamDescConfig( Embedding.Params.input_channelCount,
+        valueOutMinMax.input_channelCount ),
+      new TestParams.ParamDescConfig( Embedding.Params.channelMultiplier,
+        valueOutMinMax.channelMultiplier ),
+      new TestParams.ParamDescConfig( Embedding.Params.vocabularyCountPerInputChannel,
+        valueOutMinMax.vocabularyCountPerInputChannel ),
+      new TestParams.ParamDescConfig( Embedding.Params.bEmbedVocabularyId,
+        valueOutMinMax.bEmbedVocabularyId ),
+      new TestParams.ParamDescConfig( Embedding.Params.bKeepInputTensor,
+        valueOutMinMax.bKeepInputTensor ),
     ];
 
-    yield *Embedding_TestParams_Base.ParamsGenerator.call( this, paramDescConfigArray );
+    yield *Embedding_TestParams_Base.ParamsGenerator.call( this,
+      paramDescConfigArray );
   }
 
 }
@@ -355,7 +366,8 @@ class Embedding_TestParams_Base extends TestParams.Base {
 /**
  * The order when generate inputWeightArray[].
  *
- * This order could not be changed arbitrarily. It must be the same as the parameter extracting order of Embedding.initer().
+ * This order could not be changed arbitrarily. It must be the same as the
+ * parameter extracting order of Embedding.initer().
  */
 Embedding_TestParams_Base.paramsNameOrderArray_Basic = [
   Embedding.Params.input_height.paramName,
