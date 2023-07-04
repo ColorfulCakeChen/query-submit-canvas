@@ -468,10 +468,12 @@ class Embedding_Reference_Base extends Recyclable.Root {
       let input1_ScaleBoundsArray = null;
       imageOut = NumberImage.Base.Pool.get_or_create_by(
         output_height, output_width, output_channelCount, preFilledValue,
-        imageIn.boundsArraySet.output0, input1_ScaleBoundsArray, BoundsArraySet.InputsOutputs, preFilledBounds
+        imageIn.boundsArraySet.output0, input1_ScaleBoundsArray,
+        BoundsArraySet.InputsOutputs, preFilledBounds
       );
 
-      imageOut.boundsArraySet.output0.set_all_byBoundsArray( testParams.out_boundsArray );
+      imageOut.boundsArraySet.output0.set_all_byBoundsArray(
+        testParams.out_boundsArray );
     }
 
     let tableChannelCountPerInputChannel;
@@ -492,9 +494,14 @@ class Embedding_Reference_Base extends Recyclable.Root {
 
         //let outChannel = 0;
         for ( let inChannel = 0; inChannel < input_channelCount; ++inChannel ) {
-          let vocabularyTable = testParams.in.paramsNumberArrayObject[ inChannel ];
-          let vocabularyId = imageIn.dataArray[ inElementIndex ]; // should be an integer.
-          let vocabularyElementIndex = vocabularyId * tableChannelCountPerInputChannel;
+          let vocabularyTable
+            = testParams.in.paramsNumberArrayObject[ inChannel ];
+
+          let vocabularyId
+            = imageIn.dataArray[ inElementIndex ]; // should be an integer.
+
+          let vocabularyElementIndex
+            = vocabularyId * tableChannelCountPerInputChannel;
 
           if ( bEmbedVocabularyId ) {
             imageOut.dataArray[ outElementIndex ] = vocabularyId;
@@ -502,8 +509,12 @@ class Embedding_Reference_Base extends Recyclable.Root {
             //++outChannel;
           }
 
-          for ( let outChannelSub = outChannelSubBegin; outChannelSub < channelMultiplier; ++outChannelSub ) {
-            imageOut.dataArray[ outElementIndex ] = vocabularyTable[ vocabularyElementIndex ];
+          for ( let outChannelSub = outChannelSubBegin;
+            outChannelSub < channelMultiplier; ++outChannelSub ) {
+
+            imageOut.dataArray[ outElementIndex ]
+              = vocabularyTable[ vocabularyElementIndex ];
+
             ++vocabularyElementIndex;
             ++outElementIndex;
             //++outChannel;
