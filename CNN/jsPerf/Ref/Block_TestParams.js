@@ -1221,25 +1221,34 @@ class Block_TestParams_Base extends TestParams.Base {
    *   The channel count of the pointwise convolution's input.
    *
    * @param {number} outputChannelCount
-   *   The channel count of the pointwise convolution's output. If ( outputChannelCount <= 0 ), means this pointwise convolution does not exist.
+   *   The channel count of the pointwise convolution's output. If
+   * ( outputChannelCount <= 0 ), means this pointwise convolution does not
+   * exist.
    *
    * @param {boolean} bBias
-   *   If true, the returned array will contain a number array as the bias' weight values. If ( outputChannelCount <= 0 ), this will be ignored.
+   *   If true, the returned array will contain a number array as the bias'
+   * weight values. If ( outputChannelCount <= 0 ), this will be ignored.
    *
    * @param {Object} propertyNames
-   *   The property names of the result object. It should have two property: { Filters, Biases }. For example,
-   * ( propertyNames.Filters == "xxxFilters" ) and ( propertyNames.Biases == "xxxBiases" ). If null, nothing will be filled.
+   *   The property names of the result object. It should have two property:
+   * { Filters, Biases }. For example,
+   * ( propertyNames.Filters == "xxxFilters" ) and
+   * ( propertyNames.Biases == "xxxBiases" ). If null, nothing will be filled.
    *
    * @param {object} io_numberArrayObject
-   *   The object will be filled in result data. Every result number array will be set as a property of the object. At most,
-   * two properties may be set: "xxxFilters", "xxxBiases".
+   *   The object will be filled in result data. Every result number array will
+   * be set as a property of the object. At most, two properties may be set:
+   * "xxxFilters", "xxxBiases".
    *
    * @return {number}
    *   Return the outputChannelCount of this pointwise operation.
    */
-  generate_pointwise_filters_biases( inputChannelCount, outputChannelCount, bBias, propertyNames, io_numberArrayObject ) {
+  generate_pointwise_filters_biases(
+    inputChannelCount, outputChannelCount, bBias,
+    propertyNames, io_numberArrayObject ) {
 
-    // If this pointwise operation does not exist, default outputChannelCount will be inputChannelCount.
+    // If this pointwise operation does not exist, default outputChannelCount
+    // will be inputChannelCount.
     let result_outputChannelCount = inputChannelCount;
 
     if ( propertyNames ) {
@@ -1247,21 +1256,26 @@ class Block_TestParams_Base extends TestParams.Base {
         result_outputChannelCount = outputChannelCount;
 
         //let filtersWeightsCount = inputChannelCount * outputChannelCount;
-        this.fill_object_property_numberArray( io_numberArrayObject, propertyNames.Filters,
+        this.fill_object_property_numberArray( io_numberArrayObject,
+          propertyNames.Filters,
           inputChannelCount, 1, outputChannelCount );
 
         if ( bBias ) {
           let biasesWeightsCount = result_outputChannelCount;
-          this.fill_object_property_numberArray( io_numberArrayObject, propertyNames.Biases,
+          this.fill_object_property_numberArray( io_numberArrayObject,
+            propertyNames.Biases,
             1, 1, biasesWeightsCount );
         } else {
-          this.fill_object_property_numberArray( io_numberArrayObject, propertyNames.Biases,
+          this.fill_object_property_numberArray( io_numberArrayObject,
+            propertyNames.Biases,
             1, 1, 0 );
         }
 
       } else { // No pointwise convolution.
-        this.fill_object_property_numberArray( io_numberArrayObject, propertyNames.Filters, 1, 1, 0 );
-        this.fill_object_property_numberArray( io_numberArrayObject, propertyNames.Biases, 1, 1, 0 );
+        this.fill_object_property_numberArray( io_numberArrayObject,
+          propertyNames.Filters, 1, 1, 0 );
+        this.fill_object_property_numberArray( io_numberArrayObject,
+          propertyNames.Biases, 1, 1, 0 );
       }
     }
 
