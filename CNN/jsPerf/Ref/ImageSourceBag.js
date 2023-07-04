@@ -169,7 +169,8 @@ class ImageSourceBag_Base extends Recyclable.Root {
       return originalTensor;
     }
 
-    // 2. Otherwise, return image tensor which is adjusted by depthwise operation.
+    // 2. Otherwise, return image tensor which is adjusted by depthwise
+    //    operation.
     let tensor = ImageSourceBag_Base.internal_getTensor3d_by.call( this,
       originalHeight, originalWidth, channelCount,
       depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad );
