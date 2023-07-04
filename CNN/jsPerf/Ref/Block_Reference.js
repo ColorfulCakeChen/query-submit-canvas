@@ -1397,8 +1397,12 @@ class Block_Reference_Base extends Recyclable.Root {
     // 4.0.1 add-input-to-output is possible if same ( height, width ).
     let bAddInputToOutputRequested = false;
     if ( testParams.nConvBlockTypeId__is__MOBILE_NET_V2_BODY_TAIL() ) { // (1)
-      if (   ( inferencedParams.bDepthwiseRequestedAndNeeded == false )  // Either no depthwise (so output is same ( height, width )).
-          || ( depthwisePadInfo.output_height_width_is_same_as_input() ) // Or has depthwise and output is same ( height, width ).
+
+             // Either no depthwise (so output is same ( height, width )).
+      if (   ( inferencedParams.bDepthwiseRequestedAndNeeded == false )
+
+             // Or has depthwise and output is same ( height, width ).
+          || ( depthwisePadInfo.output_height_width_is_same_as_input() )
          ) { 
         bAddInputToOutputRequested = true;
       }
@@ -1416,17 +1420,25 @@ class Block_Reference_Base extends Recyclable.Root {
     {
       if ( pointwise20ChannelCount > 0 ) {
         pointwise20Result = imageOutArray[ 0 ] = testParams.use_pointwise20(
-          concat1Result, pointwise20ChannelCount, this.imageNeedDisposeUniqueStack, "Pointwise20", testParams.out );
+          concat1Result, pointwise20ChannelCount,
+          this.imageNeedDisposeUniqueStack, "Pointwise20", testParams.out );
 
         if ( testParams.nConvBlockTypeId__is__SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD() ) { // (5)
           pointwise202Result = imageOutArray[ 1 ] = testParams.use_pointwise202(
-            depthwise2Result, pointwise20ChannelCount, this.imageNeedDisposeUniqueStack, "Pointwise202", testParams.out );
+            depthwise2Result, pointwise20ChannelCount,
+            this.imageNeedDisposeUniqueStack, "Pointwise202", testParams.out );
 
         } else if ( testParams.nConvBlockTypeId__is__SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY_or_TAIL() ) { // (6 or 7)
           imageIn1 = imageOutArray[ 1 ] = testParams.use_pointwise20_PassThrough(
-            imageIn1_beforePointwise20, // pass-through input1 (which is past-through by depthwise1).
-            pointwise20ChannelCount, // So that it could be concatenated with pointwise20Result.
-            this.imageNeedDisposeUniqueStack, "Pointwise20_imageIn1_HigherHalfPassThrough", testParams.out );
+
+            // pass-through input1 (which is pass-through by depthwise1).
+            imageIn1_beforePointwise20,
+
+            // So that it could be concatenated with pointwise20Result.
+            pointwise20ChannelCount,
+
+            this.imageNeedDisposeUniqueStack,
+            "Pointwise20_imageIn1_HigherHalfPassThrough", testParams.out );
         }
 
       } else {
@@ -1435,10 +1447,12 @@ class Block_Reference_Base extends Recyclable.Root {
 
       // Residual Connection.
       if ( bAddInputToOutputRequested )
-        if ( pointwise20Result.depth == testParams.out.input0_channelCount ) { // add-input-to-output is possible if same channel count.
+        // add-input-to-output is possible if same channel count.
+        if ( pointwise20Result.depth == testParams.out.input0_channelCount ) {
           let pointwise20ResultOld = pointwise20Result;
-          pointwise20Result = imageOutArray[ 0 ] = pointwise20ResultOld.clone_byAdd(
-            imageIn0, testParams.out, "Pointwise20_AddInputToOutput" );
+          pointwise20Result = imageOutArray[ 0 ]
+            = pointwise20ResultOld.clone_byAdd(
+                imageIn0, testParams.out, "Pointwise20_AddInputToOutput" );
           this.imageNeedDisposeUniqueStack.push( pointwise20ResultOld );
         }
     }
@@ -1466,16 +1480,20 @@ class Block_Reference_Base extends Recyclable.Root {
       }
 
       pointwise21Result = imageOutArray[ 1 ] = testParams.use_pointwise21(
-        pointwise21_input, pointwise21ChannelCount, this.imageNeedDisposeUniqueStack, "Pointwise21", testParams.out );
+        pointwise21_input, pointwise21ChannelCount,
+        this.imageNeedDisposeUniqueStack, "Pointwise21", testParams.out );
 
       // Residual Connection.
       //
-      // Always using input0 (i.e. imageInArray[ 0 ]). In fact, only if ( inputTensorCount <= 1 ), the residual connection is possible.
+      // Always using input0 (i.e. imageInArray[ 0 ]). In fact, only if
+      // ( inputTensorCount <= 1 ), the residual connection is possible.
       if ( bAddInputToOutputRequested )
-        if ( pointwise21Result.depth == testParams.out.input0_channelCount ) { // add-input-to-output is possible if same channel count.
+        // add-input-to-output is possible if same channel count.
+        if ( pointwise21Result.depth == testParams.out.input0_channelCount ) {
           let pointwise21ResultOld = pointwise21Result;
-          pointwise21Result = imageOutArray[ 1 ] = pointwise21ResultOld.clone_byAdd(
-            imageIn0, testParams.out, "Pointwise21_AddInputToOutput" );
+          pointwise21Result = imageOutArray[ 1 ]
+            = pointwise21ResultOld.clone_byAdd(
+                imageIn0, testParams.out, "Pointwise21_AddInputToOutput" );
           this.imageNeedDisposeUniqueStack.push( pointwise21ResultOld );
         }
 
