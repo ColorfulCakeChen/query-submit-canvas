@@ -15,13 +15,9 @@ class Base {
     this.asserter_Equal = TensorTools.Asserter_Equal.Pool.get_or_create_by();
   }
 
-  assert_PropertyProperty_Value( strThisPropertyName, strThisPropertyPropertyName, rhsValue ) {
+  assert_PropertyProperty_Value(
+    strThisPropertyName, strThisPropertyPropertyName, rhsValue ) {
     let thisValue = this[ strThisPropertyName ][ strThisPropertyPropertyName ];
-
-//!!! (2021/12/31 Remarked)
-//     if ( thisValue != rhsValue )
-//       throw Error( `jsPerf_FloatValue_ScaleTranslate.testCorrectness(): `
-//       + `this.${strThisPropertyName}.${strThisPropertyPropertyName} ( ${thisValue} ) should be ( ${rhsValue} ).` );
 
     this.asserter_Equal.assert_Number_Number( thisValue, rhsValue,
       `jsPerf_FloatValue_ScaleTranslate.testCorrectness(): this.`, // prefixMsg,
@@ -51,43 +47,60 @@ class Case extends Base {
     { // Test ScaleTranslate.setBy_undoScaleTranslate().
       let scale = RandTools.getRandomIntInclusive( -10, +10 );
       if ( 0 == scale ) {
-        scale = 0.05;  // Force to non-zero. (Note: undoScaleTranslate does not work for zero scale.)
+        // Force to non-zero. (Note: undoScaleTranslate does not work for zero
+        // scale.)
+        scale = 0.05;
       }
 
-      let aScaleTranslate = new FloatValue.ScaleTranslate( scale, RandTools.getRandomIntInclusive( -10, +10 ) ); // Random scale-translate.
+      // Random scale-translate.
+      let aScaleTranslate = new FloatValue.ScaleTranslate(
+        scale, RandTools.getRandomIntInclusive( -10, +10 ) );
 
       let undoScaleTranslate = new FloatValue.ScaleTranslate();
       undoScaleTranslate.set_byUndo_ScaleTranslate( aScaleTranslate );
 
-      if ( Number.isNaN( undoScaleTranslate.scale ) || Number.isNaN( undoScaleTranslate.translate ) ) {
+      if (   ( Number.isNaN( undoScaleTranslate.scale ) )
+          || ( Number.isNaN( undoScaleTranslate.translate ) ) ) {
         debugger;
       }
 
       let originalValue = RandTools.getRandomIntInclusive( -10, +10 );
-      let changedValue = ( originalValue * aScaleTranslate.scale ) + aScaleTranslate.translate;
+
+      let changedValue
+        = ( originalValue * aScaleTranslate.scale )
+            + aScaleTranslate.translate;
+
       this.undoTest = {
-        undoChangedValue: ( changedValue * undoScaleTranslate.scale ) + undoScaleTranslate.translate
+        undoChangedValue:
+          ( changedValue * undoScaleTranslate.scale )
+            + undoScaleTranslate.translate
       };
 
-      this.assert_PropertyProperty_Value( "undoTest", "undoChangedValue", originalValue );
+      this.assert_PropertyProperty_Value( "undoTest", "undoChangedValue",
+        originalValue );
     }
 
     { // Test ScaleArray.set_one_byUndo_N().
       let arrayLength = RandTools.getRandomIntInclusive( 1, 5 );
 
-      let aScaleArray = FloatValue.ScaleArray.Pool.get_or_create_by( arrayLength ); // Set up random scales.
+      // Set up random scales.
+      let aScaleArray
+        = FloatValue.ScaleArray.Pool.get_or_create_by( arrayLength );
       {
         for ( let i = 0; i < arrayLength; ++i ) {
           let scale = RandTools.getRandomIntInclusive( -10, +10 );
           if ( 0 == scale ) {
-            scale = 0.05;  // Force to non-zero. (Note: undoScaleTranslate does not work for zero scale.)
+            // Force to non-zero. (Note: undoScaleTranslate does not work for
+            // zero scale.)
+            scale = 0.05;
           }
 
           aScaleArray.set_one_byN( i, scale );
         }
       }
 
-      let undoScaleArray = FloatValue.ScaleArray.Pool.get_or_create_by( arrayLength );
+      let undoScaleArray
+        = FloatValue.ScaleArray.Pool.get_or_create_by( arrayLength );
 
       { // Test .set_all_byUndo_ScaleArray() and .set_one_byUndo_N()
 
