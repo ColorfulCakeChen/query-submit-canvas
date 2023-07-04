@@ -1820,45 +1820,75 @@ class Block_TestParams_Base extends TestParams.Base {
 
 
 Block_TestParams_Base.PropertyNames = {};
-Block_TestParams_Base.PropertyNames.pointwise1 = { Filters: "pointwise1Filters", Biases: "pointwise1Biases" };
-Block_TestParams_Base.PropertyNames.depthwise1 = { Filters: "depthwise1Filters", Biases: "depthwise1Biases" };
-Block_TestParams_Base.PropertyNames.depthwise2 = { Filters: "depthwise2Filters", Biases: "depthwise2Biases" };
+Block_TestParams_Base.PropertyNames.pointwise1 = {
+  Filters: "pointwise1Filters", Biases: "pointwise1Biases" };
+Block_TestParams_Base.PropertyNames.depthwise1 = {
+  Filters: "depthwise1Filters", Biases: "depthwise1Biases" };
+Block_TestParams_Base.PropertyNames.depthwise2 = {
+  Filters: "depthwise2Filters", Biases: "depthwise2Biases" };
 
-Block_TestParams_Base.PropertyNames.pointwise20 =  { Filters: "pointwise20Filters",  Biases: "pointwise20Biases" };
-Block_TestParams_Base.PropertyNames.pointwise202 = { Filters: "pointwise202Filters", Biases: "pointwise202Biases" };
-Block_TestParams_Base.PropertyNames.pointwise21 =  { Filters: "pointwise21Filters",  Biases: "pointwise21Biases" };
+Block_TestParams_Base.PropertyNames.pointwise20 =  {
+  Filters: "pointwise20Filters",  Biases: "pointwise20Biases" };
+Block_TestParams_Base.PropertyNames.pointwise202 = {
+  Filters: "pointwise202Filters", Biases: "pointwise202Biases" };
+Block_TestParams_Base.PropertyNames.pointwise21 =  {
+  Filters: "pointwise21Filters",  Biases: "pointwise21Biases" };
 
 Block_TestParams_Base.PropertyNames.pointwise2PrefixSE = [
   { // pointwise20's prefix squeeze-and-excitation
-    Intermediate: { Filters: "pointwise20PrefixSEIntermediateFilters",  Biases: "pointwise20PrefixSEIntermediateBiases" },
-    Excitation:   { Filters: "pointwise20PrefixSEExcitationFilters",    Biases: "pointwise20PrefixSEExcitationBiases" },
+    Intermediate: {
+      Filters: "pointwise20PrefixSEIntermediateFilters",
+      Biases:  "pointwise20PrefixSEIntermediateBiases" },
+    Excitation:   {
+      Filters: "pointwise20PrefixSEExcitationFilters",
+      Biases:  "pointwise20PrefixSEExcitationBiases" },
   },
 
   { // pointwise202's prefix squeeze-and-excitation
-    Intermediate: { Filters: "pointwise202PrefixSEIntermediateFilters", Biases: "pointwise202PrefixSEIntermediateBiases" },
-    Excitation:   { Filters: "pointwise202PrefixSEExcitationFilters",   Biases: "pointwise202PrefixSEExcitationBiases" },
+    Intermediate: {
+      Filters: "pointwise202PrefixSEIntermediateFilters",
+      Biases:  "pointwise202PrefixSEIntermediateBiases" },
+    Excitation:   {
+      Filters: "pointwise202PrefixSEExcitationFilters",
+      Biases:  "pointwise202PrefixSEExcitationBiases" },
   },
 
   { // pointwise21's prefix squeeze-and-excitation
-    Intermediate: { Filters: "pointwise21PrefixSEIntermediateFilters",  Biases: "pointwise21PrefixSEIntermediateBiases" },
-    Excitation:   { Filters: "pointwise21PrefixSEExcitationFilters",    Biases: "pointwise21PrefixSEExcitationBiases" },
+    Intermediate: {
+      Filters: "pointwise21PrefixSEIntermediateFilters",
+      Biases:  "pointwise21PrefixSEIntermediateBiases" },
+    Excitation:   {
+      Filters: "pointwise21PrefixSEExcitationFilters",
+      Biases:  "pointwise21PrefixSEExcitationBiases" },
   },
 ];
 
 Block_TestParams_Base.PropertyNames.pointwise2PostfixSE = [
   { // pointwise20's postfix squeeze-and-excitation
-    Intermediate: { Filters: "pointwise20PostfixSEIntermediateFilters",  Biases: "pointwise20PostfixSEIntermediateBiases" },
-    Excitation:   { Filters: "pointwise20PostfixSEExcitationFilters",    Biases: "pointwise20PostfixSEExcitationBiases" },
+    Intermediate: {
+      Filters: "pointwise20PostfixSEIntermediateFilters",
+      Biases:  "pointwise20PostfixSEIntermediateBiases" },
+    Excitation:   {
+      Filters: "pointwise20PostfixSEExcitationFilters",
+      Biases:  "pointwise20PostfixSEExcitationBiases" },
   },
 
   { // pointwise202's postfix squeeze-and-excitation
-    Intermediate: { Filters: "pointwise202PostfixSEIntermediateFilters", Biases: "pointwise202PostfixSEIntermediateBiases" },
-    Excitation:   { Filters: "pointwise202PostfixSEExcitationFilters",   Biases: "pointwise202PostfixSEExcitationBiases" },
+    Intermediate: {
+      Filters: "pointwise202PostfixSEIntermediateFilters",
+      Biases:  "pointwise202PostfixSEIntermediateBiases" },
+    Excitation:   {
+      Filters: "pointwise202PostfixSEExcitationFilters",
+      Biases:  "pointwise202PostfixSEExcitationBiases" },
   },
 
   { // pointwise21's postfix squeeze-and-excitation
-    Intermediate: { Filters: "pointwise21PostfixSEIntermediateFilters",  Biases: "pointwise21PostfixSEIntermediateBiases" },
-    Excitation:   { Filters: "pointwise21PostfixSEExcitationFilters",    Biases: "pointwise21PostfixSEExcitationBiases" },
+    Intermediate: {
+      Filters: "pointwise21PostfixSEIntermediateFilters",
+      Biases:  "pointwise21PostfixSEIntermediateBiases" },
+    Excitation:   {
+      Filters: "pointwise21PostfixSEExcitationFilters",
+      Biases:  "pointwise21PostfixSEExcitationBiases" },
   },
 ];
 
@@ -1866,7 +1896,8 @@ Block_TestParams_Base.PropertyNames.pointwise2PostfixSE = [
 /**
  * The order when generate inputWeightArray[].
  *
- * This order could not be changed arbitrarily. It must be the same as the parameter extracting order of Block.initer().
+ * This order could not be changed arbitrarily. It must be the same as the
+ * parameter extracting order of Block.initer().
  */
 Block_TestParams_Base.paramsNameOrderArray = [
   Block.Params.input0_height.paramName,
@@ -1896,22 +1927,28 @@ Block_TestParams_Base.paramsNameOrderArray = [
   Block_TestParams_Base.PropertyNames.depthwise2.Filters,
   Block_TestParams_Base.PropertyNames.depthwise2.Biases,
 
-  Block_TestParams_Base.PropertyNames.pointwise2PrefixSE[ 0 ].Intermediate.Filters, // pointwise20's prefix squeeze-and-excitation's intermediate pointwise
+  // pointwise20's prefix squeeze-and-excitation's intermediate pointwise
+  Block_TestParams_Base.PropertyNames.pointwise2PrefixSE[ 0 ].Intermediate.Filters,
   Block_TestParams_Base.PropertyNames.pointwise2PrefixSE[ 0 ].Intermediate.Biases,
 
-  Block_TestParams_Base.PropertyNames.pointwise2PrefixSE[ 1 ].Intermediate.Filters, // pointwise202's prefix squeeze-and-excitation's intermediate pointwise
+  // pointwise202's prefix squeeze-and-excitation's intermediate pointwise
+  Block_TestParams_Base.PropertyNames.pointwise2PrefixSE[ 1 ].Intermediate.Filters,
   Block_TestParams_Base.PropertyNames.pointwise2PrefixSE[ 1 ].Intermediate.Biases,
 
-  Block_TestParams_Base.PropertyNames.pointwise2PrefixSE[ 2 ].Intermediate.Filters, // pointwise21's prefix squeeze-and-excitation's intermediate pointwise
+  // pointwise21's prefix squeeze-and-excitation's intermediate pointwise
+  Block_TestParams_Base.PropertyNames.pointwise2PrefixSE[ 2 ].Intermediate.Filters,
   Block_TestParams_Base.PropertyNames.pointwise2PrefixSE[ 2 ].Intermediate.Biases,
 
-  Block_TestParams_Base.PropertyNames.pointwise2PrefixSE[ 0 ].Excitation.Filters, // pointwise20's prefix squeeze-and-excitation's excitation pointwise
+  // pointwise20's prefix squeeze-and-excitation's excitation pointwise
+  Block_TestParams_Base.PropertyNames.pointwise2PrefixSE[ 0 ].Excitation.Filters,
   Block_TestParams_Base.PropertyNames.pointwise2PrefixSE[ 0 ].Excitation.Biases,
 
-  Block_TestParams_Base.PropertyNames.pointwise2PrefixSE[ 1 ].Excitation.Filters, // pointwise202's prefix squeeze-and-excitation's excitation pointwise
+  // pointwise202's prefix squeeze-and-excitation's excitation pointwise
+  Block_TestParams_Base.PropertyNames.pointwise2PrefixSE[ 1 ].Excitation.Filters,
   Block_TestParams_Base.PropertyNames.pointwise2PrefixSE[ 1 ].Excitation.Biases,
 
-  Block_TestParams_Base.PropertyNames.pointwise2PrefixSE[ 2 ].Excitation.Filters, // pointwise21's prefix squeeze-and-excitation's excitation pointwise
+  // pointwise21's prefix squeeze-and-excitation's excitation pointwise
+  Block_TestParams_Base.PropertyNames.pointwise2PrefixSE[ 2 ].Excitation.Filters,
   Block_TestParams_Base.PropertyNames.pointwise2PrefixSE[ 2 ].Excitation.Biases,
 
   Block_TestParams_Base.PropertyNames.pointwise20.Filters,
@@ -1923,23 +1960,28 @@ Block_TestParams_Base.paramsNameOrderArray = [
   Block_TestParams_Base.PropertyNames.pointwise21.Filters,
   Block_TestParams_Base.PropertyNames.pointwise21.Biases,
 
-  Block_TestParams_Base.PropertyNames.pointwise2PostfixSE[ 0 ].Intermediate.Filters, // pointwise20's postfix squeeze-and-excitation's intermediate pointwise
+  // pointwise20's postfix squeeze-and-excitation's intermediate pointwise
+  Block_TestParams_Base.PropertyNames.pointwise2PostfixSE[ 0 ].Intermediate.Filters,
   Block_TestParams_Base.PropertyNames.pointwise2PostfixSE[ 0 ].Intermediate.Biases,
 
-  Block_TestParams_Base.PropertyNames.pointwise2PostfixSE[ 1 ].Intermediate.Filters, // pointwise202's postfix squeeze-and-excitation's intermediate pointwise
+  // pointwise202's postfix squeeze-and-excitation's intermediate pointwise
+  Block_TestParams_Base.PropertyNames.pointwise2PostfixSE[ 1 ].Intermediate.Filters,
   Block_TestParams_Base.PropertyNames.pointwise2PostfixSE[ 1 ].Intermediate.Biases,
 
-  Block_TestParams_Base.PropertyNames.pointwise2PostfixSE[ 2 ].Intermediate.Filters, // pointwise21's postfix squeeze-and-excitation's intermediate pointwise
+  // pointwise21's postfix squeeze-and-excitation's intermediate pointwise
+  Block_TestParams_Base.PropertyNames.pointwise2PostfixSE[ 2 ].Intermediate.Filters,
   Block_TestParams_Base.PropertyNames.pointwise2PostfixSE[ 2 ].Intermediate.Biases,
 
-  Block_TestParams_Base.PropertyNames.pointwise2PostfixSE[ 0 ].Excitation.Filters, // pointwise20's postfix squeeze-and-excitation's excitation pointwise
+  // pointwise20's postfix squeeze-and-excitation's excitation pointwise
+  Block_TestParams_Base.PropertyNames.pointwise2PostfixSE[ 0 ].Excitation.Filters,
   Block_TestParams_Base.PropertyNames.pointwise2PostfixSE[ 0 ].Excitation.Biases,
 
-  Block_TestParams_Base.PropertyNames.pointwise2PostfixSE[ 1 ].Excitation.Filters, // pointwise202's postfix squeeze-and-excitation's excitation pointwise
+  // pointwise202's postfix squeeze-and-excitation's excitation pointwise
+  Block_TestParams_Base.PropertyNames.pointwise2PostfixSE[ 1 ].Excitation.Filters,
   Block_TestParams_Base.PropertyNames.pointwise2PostfixSE[ 1 ].Excitation.Biases,
 
-  Block_TestParams_Base.PropertyNames.pointwise2PostfixSE[ 2 ].Excitation.Filters, // pointwise21's postfix squeeze-and-excitation's excitation pointwise
+  // pointwise21's postfix squeeze-and-excitation's excitation pointwise
+  Block_TestParams_Base.PropertyNames.pointwise2PostfixSE[ 2 ].Excitation.Filters,
   Block_TestParams_Base.PropertyNames.pointwise2PostfixSE[ 2 ].Excitation.Biases,
 
 ];
-
