@@ -14,7 +14,7 @@ function test_DEvolution_VersusResultSender_MultiEventName(
   let versusId;
   let versusResultSender;
   try {
-    versusId = DEvolution.VersusId.Pool.get_or_create_by( "0_0_0_0");
+    versusId = DEvolution.VersusId.Pool.get_or_create_by( "0_0_0_0" );
 
     versusResultSender = DEvolution.VersusResultSender
       .MultiEventName.Pool.get_or_create_by(
@@ -46,7 +46,8 @@ function test_DEvolution_VersusResultSender_MultiEventName(
             sender_measurementId, versusId, n1_0_p1 );
 
         // Every 4 events, post once more so that the result of every entity
-        // could be a little different for helping verifying more easily by eyes.
+        // could be a little different for helping verifying more easily by
+        // eyes.
         const MAGIC_DIVISOR = 4;
         if ( ( eventIndex % MAGIC_DIVISOR ) == 0 ) {
           let extraCount = Math.floor( eventIndex / MAGIC_DIVISOR ) + 1;
@@ -93,8 +94,8 @@ async function* tester( progressParent ) {
   let sender_clientId = Date.now();
 
   {
-    // Note: This is an un-related measurement id for testing purpose only. So that
-    //       this testing will not disturbing the real measurement.
+    // Note: This is an un-related measurement id for testing purpose only. So
+    //       that this testing will not disturbing the real measurement.
     const measurementId_apiSecret_array_array = [
       [ "G-STKEYMJ1W7", "c24JkVXbR-CXOvByaBL6dA" ], // DEvolution_tester, 00
       [ "G-597QGC5NYZ", "ly4b5XHDQlGaCpNziDSGUQ" ], // DEvolution_tester, 01

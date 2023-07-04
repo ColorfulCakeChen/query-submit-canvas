@@ -101,23 +101,29 @@ class TestCase {
     // explicit_input: height, width, channelCount, pixelCount, valueCount
     const explicit_input_height
       = ( this.explicit_input_height > 0 ) ? this.explicit_input_height : 1;
-    this.assert_FeedbackShape( "explicit_input_height", explicit_input_height );
+    this.assert_FeedbackShape( "explicit_input_height",
+      explicit_input_height );
 
     const explicit_input_width
       = ( this.explicit_input_width > 0 ) ? this.explicit_input_width : 1;
-    this.assert_FeedbackShape( "explicit_input_width", explicit_input_width );
+    this.assert_FeedbackShape( "explicit_input_width",
+      explicit_input_width );
 
     const explicit_input_channelCount
-      = ( this.explicit_input_channelCount > 0 ) ? this.explicit_input_channelCount : 1;
-    this.assert_FeedbackShape( "explicit_input_channelCount", explicit_input_channelCount );
+      = ( this.explicit_input_channelCount > 0 )
+          ? this.explicit_input_channelCount : 1;
+    this.assert_FeedbackShape( "explicit_input_channelCount",
+      explicit_input_channelCount );
 
     const explicit_input_pixelCount
       = explicit_input_height * explicit_input_width;
-    this.assert_FeedbackShape( "explicit_input_pixelCount", explicit_input_pixelCount );
+    this.assert_FeedbackShape( "explicit_input_pixelCount",
+      explicit_input_pixelCount );
 
     const explicit_input_valueCount
       = explicit_input_pixelCount * explicit_input_channelCount;
-    this.assert_FeedbackShape( "explicit_input_valueCount", explicit_input_valueCount );
+    this.assert_FeedbackShape( "explicit_input_valueCount",
+      explicit_input_valueCount );
 
     //
     const areaCount = 2;
