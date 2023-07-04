@@ -177,14 +177,16 @@ function *testerFloat12Constant( progressParent ) {
     let testCase = Float12_Constant_Table[ i ];
 
 //!!! (2022/12/22 Remarked)
-    //let delta = Math.abs( Float12.Constant[ testCase.name ] - testCase.value )
+    //let delta
+    //  = Math.abs( Float12.Constant[ testCase.name ] - testCase.value )
     //if ( delta <= Number.EPSILON ) {
     if ( Float12.Constant[ testCase.name ] == testCase.value ) {
       continue;
     }
 
     throw Error( `testerFloat12Constant(): `
-      + `Float12.Constant.${testCase.name} ( ${Float12.Constant[ testCase.name ]} ) `
+      + `Float12.Constant.${testCase.name} `
+      + `( ${Float12.Constant[ testCase.name ]} ) `
       + `should be ( ${testCase.value} ).`
     );
   }
@@ -205,10 +207,12 @@ function *testerFloat12EncodeDecode( progressParent ) {
   for ( let i = 0; i < Float12_EncodeDecode_Table.length; ++i ) {
     let testCase = Float12_EncodeDecode_Table[ i ];
 
-    let Float12_encoded_string = Float12.Encoder.to_String( testCase.originalValue,
+    let Float12_encoded_string = Float12.Encoder.to_String(
+      testCase.originalValue,
       g_textDecoder, g_tempUint8Array );
 
-    let Float12_decoded_value = Float12.Decoder.from_String( Float12_encoded_string );
+    let Float12_decoded_value
+      = Float12.Decoder.from_String( Float12_encoded_string );
 
 //!!! (2022/12/22 Remarked)
     // let delta = Math.abs( Float12_decoded_value - testCase.decodedValue )
@@ -219,7 +223,8 @@ function *testerFloat12EncodeDecode( progressParent ) {
     }
 
     throw Error( `testerFlot12EncodeDecode(): `
-      + `( ${testCase.originalValue} ) encoded as ( \"${Float12_encoded_string}\" ), `
+      + `( ${testCase.originalValue} ) encoded as `
+      + `( \"${Float12_encoded_string}\" ), `
       + `decoded as ( ${Float12_decoded_value} ) `
       + `should be ( ${testCase.decodedValue} ).`
     );
@@ -240,16 +245,22 @@ function *testerFloat12DecodeEncode( progressParent ) {
   let progressToAdvance = progressParent.child_add(
     ValueMax.Percentage.Concrete.Pool.get_or_create_by( 1 ) );
 
-  for ( let i = 0; i < Base64.Constant.EncodeTable_Uint6_to_Char.length; ++i ) {
-    for ( let j = 0; j < Base64.Constant.EncodeTable_Uint6_to_Char.length; ++j ) {
+  for ( let i = 0;
+    i < Base64.Constant.EncodeTable_Uint6_to_Char.length; ++i ) {
+
+    for ( let j = 0;
+      j < Base64.Constant.EncodeTable_Uint6_to_Char.length; ++j ) {
 
       let Float12_original_string =
          Base64.Constant.EncodeTable_Uint6_to_Char[ i ]
        + Base64.Constant.EncodeTable_Uint6_to_Char[ j ];
 
-      let Float12_decoded_value = Float12.Decoder.from_String( Float12_original_string );
-      let Float12_encoded_string = Float12.Encoder.to_String( Float12_decoded_value,
-        g_textDecoder, g_tempUint8Array );
+      let Float12_decoded_value
+        = Float12.Decoder.from_String( Float12_original_string );
+
+      let Float12_encoded_string
+        = Float12.Encoder.to_String( Float12_decoded_value,
+            g_textDecoder, g_tempUint8Array );
 
       if ( Float12_encoded_string === Float12_original_string ) {
         continue;
@@ -263,7 +274,8 @@ function *testerFloat12DecodeEncode( progressParent ) {
       }
 
       throw Error( `testerFloat12DecodeEncode(): `
-        + `( \"${Float12_original_string}\" ) decoded as ( ${Float12_decoded_value} ), `
+        + `( \"${Float12_original_string}\" ) decoded as `
+        + `( ${Float12_decoded_value} ), `
         + `encoded as ( \"${Float12_encoded_string}\" ) `
         + `should be the same as original.`
       );
@@ -289,7 +301,8 @@ function *testerFloat12EncodeDecodeArray( progressParent ) {
   let numberArray_original = new Array( numberCount );
   for ( let i = 0; i < numberCount; ++i ) {
 
-    // Between [ Float12.Constant.NegativeMinLess, Float12.Constant.PositiveMaxMore ].
+    // Between
+    // [ Float12.Constant.NegativeMinLess, Float12.Constant.PositiveMaxMore ].
     let randomFloat12
       = ( Math.random() * Float12.Constant.PositiveMaxMore * 2 )
           - Float12.Constant.PositiveMaxMore;
@@ -316,8 +329,9 @@ function *testerFloat12EncodeDecodeArray( progressParent ) {
 
   let progressAggregateArray = new Array( progressAggregateArrayLength );
   for ( let i = 0; i < progressAggregateArrayLength; ++i ) {
-    let progressAggregate = progressAggregateArray[ i ] = progressParent.child_add(
-      ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
+    let progressAggregate = progressAggregateArray[ i ]
+      = progressParent.child_add(
+          ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
 
     // sub progress.
     let progressEncodeArray_original = progressAggregate.child_add(
@@ -344,7 +358,8 @@ function *testerFloat12EncodeDecodeArray( progressParent ) {
       let suspendElementCount = suspendElementCountArray[ j ];
 
       ++progressAggregateArrayIndex;
-      let progressAggregate = progressAggregateArray[ progressAggregateArrayIndex ];
+      let progressAggregate
+        = progressAggregateArray[ progressAggregateArrayIndex ];
 
       // sub progress.
       let progressEncodeArray_original = progressAggregate.children[ 0 ];
@@ -361,10 +376,11 @@ function *testerFloat12EncodeDecodeArray( progressParent ) {
           tempUint8Array );
 
       let Float12_decoded_value_array_original = yield*
-        Float12.Decoder.Base64Char_StringOrStringArray_to_Float32Array_generator(
-          progressDecodeArray_original,
-          Float12_encoded_string_original, textEncoder,
-          skipLineCount, suspendByteCount );
+        Float12.Decoder
+          .Base64Char_StringOrStringArray_to_Float32Array_generator(
+            progressDecodeArray_original,
+            Float12_encoded_string_original, textEncoder,
+            skipLineCount, suspendByteCount );
 
       let Float12_encoded_string_again = yield*
         Float12.Encoder.generator_to_String_from_NumberArray(
@@ -374,10 +390,11 @@ function *testerFloat12EncodeDecodeArray( progressParent ) {
           tempUint8Array );
 
       let Float12_decoded_value_array_again = yield*
-        Float12.Decoder.Base64Char_StringOrStringArray_to_Float32Array_generator(
-          progressDecodeArray_again,
-          Float12_encoded_string_again, textEncoder,
-          skipLineCount, suspendByteCount );
+        Float12.Decoder
+          .Base64Char_StringOrStringArray_to_Float32Array_generator(
+            progressDecodeArray_again,
+            Float12_encoded_string_again, textEncoder,
+            skipLineCount, suspendByteCount );
   
       // Compare
       for ( let k = 0; k < numberCount; ++k ) {
@@ -426,17 +443,17 @@ function* tester( progressParent ) {
 
   // 0. Prepare progressParent for every TestCase.
 
-  let progressConstant
-    = progressParent.child_add( ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
+  let progressConstant = progressParent.child_add(
+    ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
 
-  let progressEncodeDecode
-    = progressParent.child_add( ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
+  let progressEncodeDecode = progressParent.child_add(
+    ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
 
-  let progressDecodeEncode
-    = progressParent.child_add( ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
+  let progressDecodeEncode = progressParent.child_add(
+    ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
 
-  let progressEncodeDecodeArray
-    = progressParent.child_add( ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
+  let progressEncodeDecodeArray = progressParent.child_add(
+    ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
 
   // 1.
   yield *testerFloat12Constant( progressConstant );
