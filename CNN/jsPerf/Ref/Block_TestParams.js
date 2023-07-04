@@ -832,47 +832,64 @@ class Block_TestParams_Base extends TestParams.Base {
   }
 
   /**
-   * @param {NumberImage.Base} inputImage    The source image to be processed.
-   * @param {number} pointwise21ChannelCount The output channel count of the pointwise21 convolution.
-   * @param {string} pointwiseName           A string for debug message of the pointwise21 convolution.
-   * @param {string} parametersDesc          A string for debug message of the point-depth-point.
+   * @param {NumberImage.Base} inputImage
+   *   The source image to be processed.
    *
-   * @return {NumberImage.Base} Return a newly created object which is the result of the pointwise21 convolution, bias and activation.
+   * @param {number} pointwise21ChannelCount
+   *   The output channel count of the pointwise21 convolution.
+   *
+   * @param {string} pointwiseName
+   *   A string for debug message of the pointwise21 convolution.
+   *
+   * @param {string} parametersDesc
+   *   A string for debug message of the point-depth-point.
+   *
+   * @return {NumberImage.Base}
+   *   Return a newly created object which is the result of the pointwise21
+   * convolution, bias and activation.
    */
-  use_pointwise21( inputImage, pointwise21ChannelCount, io_imageNeedDisposeUniqueStack, pointwiseName, parametersDesc ) {
+  use_pointwise21( inputImage, pointwise21ChannelCount,
+    io_imageNeedDisposeUniqueStack, pointwiseName, parametersDesc ) {
     
     let squeezeExcitationPrefixOut = inputImage;
     if ( this.out.bSqueezeExcitationPrefix ) {
-      if ( this.out.nSqueezeExcitationChannelCountDivisor != ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.NONE ) { // (-2)
-        squeezeExcitationPrefixOut = inputImage.clone_bySqueezeExcitation_NonPassThrough(
-          this.out.nSqueezeExcitationChannelCountDivisor,
-          this.in.paramsNumberArrayObject.pointwise21PrefixSEIntermediateFilters,
-          this.in.paramsNumberArrayObject.pointwise21PrefixSEIntermediateBiases,
-          this.in.paramsNumberArrayObject.pointwise21PrefixSEExcitationFilters,
-          this.in.paramsNumberArrayObject.pointwise21PrefixSEExcitationBiases,
-          this.out.inferencedParams.squeezeExcitationActivationId, // (Note: Not pointwise21ActivationId)
-          parametersDesc, pointwiseName, "squeezeExcitationPrefix" );
+      if ( this.out.nSqueezeExcitationChannelCountDivisor
+             != ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.NONE ) { // (-2)
+        squeezeExcitationPrefixOut = inputImage
+          .clone_bySqueezeExcitation_NonPassThrough(
+            this.out.nSqueezeExcitationChannelCountDivisor,
+            this.in.paramsNumberArrayObject.pointwise21PrefixSEIntermediateFilters,
+            this.in.paramsNumberArrayObject.pointwise21PrefixSEIntermediateBiases,
+            this.in.paramsNumberArrayObject.pointwise21PrefixSEExcitationFilters,
+            this.in.paramsNumberArrayObject.pointwise21PrefixSEExcitationBiases,
+            this.out.inferencedParams.squeezeExcitationActivationId, // (Note: Not pointwise21ActivationId)
+            parametersDesc, pointwiseName, "squeezeExcitationPrefix" );
         io_imageNeedDisposeUniqueStack.push( inputImage );
       } // Otherwise, do not clone to improve performance.
     }
 
-    let pointwiseOut = squeezeExcitationPrefixOut.clone_byPointwise_NonPassThrough( pointwise21ChannelCount,
-      this.in.paramsNumberArrayObject.pointwise21Filters, this.out.inferencedParams.pointwise20Bias, // (Note: Not pointwise21Bias)
-      this.in.paramsNumberArrayObject.pointwise21Biases, this.out.pointwise20ActivationId, // (Note: Not pointwise21ActivationId)
-      parametersDesc, pointwiseName );
+    let pointwiseOut = squeezeExcitationPrefixOut
+      .clone_byPointwise_NonPassThrough( pointwise21ChannelCount,
+        this.in.paramsNumberArrayObject.pointwise21Filters,
+        this.out.inferencedParams.pointwise20Bias, // (Note: Not pointwise21Bias)
+        this.in.paramsNumberArrayObject.pointwise21Biases,
+        this.out.pointwise20ActivationId, // (Note: Not pointwise21ActivationId)
+        parametersDesc, pointwiseName );
     io_imageNeedDisposeUniqueStack.push( squeezeExcitationPrefixOut );
 
     let squeezeExcitationPostfixOut = pointwiseOut;
     if ( !this.out.bSqueezeExcitationPrefix ) { // i.e. postfix
-      if ( this.out.nSqueezeExcitationChannelCountDivisor != ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.NONE ) { // (-2)
-        squeezeExcitationPostfixOut = pointwiseOut.clone_bySqueezeExcitation_NonPassThrough(
-          this.out.nSqueezeExcitationChannelCountDivisor,
-          this.in.paramsNumberArrayObject.pointwise21PostfixSEIntermediateFilters,
-          this.in.paramsNumberArrayObject.pointwise21PostfixSEIntermediateBiases,
-          this.in.paramsNumberArrayObject.pointwise21PostfixSEExcitationFilters,
-          this.in.paramsNumberArrayObject.pointwise21PostfixSEExcitationBiases,
-          this.out.inferencedParams.squeezeExcitationActivationId, // (Note: Not pointwise21ActivationId)
-          parametersDesc, pointwiseName, "squeezeExcitationPostfix" );
+      if ( this.out.nSqueezeExcitationChannelCountDivisor
+             != ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.NONE ) { // (-2)
+        squeezeExcitationPostfixOut = pointwiseOut
+          .clone_bySqueezeExcitation_NonPassThrough(
+            this.out.nSqueezeExcitationChannelCountDivisor,
+            this.in.paramsNumberArrayObject.pointwise21PostfixSEIntermediateFilters,
+            this.in.paramsNumberArrayObject.pointwise21PostfixSEIntermediateBiases,
+            this.in.paramsNumberArrayObject.pointwise21PostfixSEExcitationFilters,
+            this.in.paramsNumberArrayObject.pointwise21PostfixSEExcitationBiases,
+            this.out.inferencedParams.squeezeExcitationActivationId, // (Note: Not pointwise21ActivationId)
+            parametersDesc, pointwiseName, "squeezeExcitationPostfix" );
         io_imageNeedDisposeUniqueStack.push( pointwiseOut );
       } // Otherwise, do not clone to improve performance.
     }
@@ -880,7 +897,11 @@ class Block_TestParams_Base extends TestParams.Base {
     return squeezeExcitationPostfixOut;
   }
 
-  /** @return {boolean} Return true if this.out.nConvBlockTypeId is (0) (MobileNetV1 (General Pointwise1-Depthwise1-Pointwise2)). */
+  /**
+   * @return {boolean}
+   *   Return true if this.out.nConvBlockTypeId is (0) (MobileNetV1 (General
+   * Pointwise1-Depthwise1-Pointwise2)).
+   */
   nConvBlockTypeId__is__ONE_INPUT() {
     if ( this.out.nConvBlockTypeId == ValueDesc.ConvBlockType.Singleton.Ids.MOBILE_NET_V1_HEAD_BODY_TAIL )
       return true;
