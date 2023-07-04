@@ -316,30 +316,42 @@ class NeuralNet_Reference_Base extends Recyclable.Root {
     let nConvStageTypeId_toBeCompared;
     switch ( nConvStageTypeId ) {
       case ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2:
-        nConvStageTypeId_toBeCompared = ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1;
+        nConvStageTypeId_toBeCompared
+          = ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1;
         break;
       case ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1:
-        nConvStageTypeId_toBeCompared = ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2;
+        nConvStageTypeId_toBeCompared
+          = ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2;
         break;
     }
 
-    let nConvStageTypeId_original_name = ValueDesc.ConvStageType.Singleton.getName_byId( nConvStageTypeId_original );
-    let nConvStageTypeId_toBeCompared_name = ValueDesc.ConvStageType.Singleton.getName_byId( nConvStageTypeId_toBeCompared );
+    let nConvStageTypeId_original_name
+      = ValueDesc.ConvStageType.Singleton.getName_byId(
+          nConvStageTypeId_original );
+
+    let nConvStageTypeId_toBeCompared_name
+      = ValueDesc.ConvStageType.Singleton.getName_byId(
+          nConvStageTypeId_toBeCompared );
 
     // Modify nConvStageTypeId.
     let nConvStageTypeId_weightElementIndex;
     {
-      if ( testParams.in.nConvStageTypeId == null ) { // i.e. Needs parameter nConvStageTypeId is inside .inputWeightArray.
+      // i.e. Needs parameter nConvStageTypeId is inside .inputWeightArray.
+      if ( testParams.in.nConvStageTypeId == null ) {
         nConvStageTypeId_weightElementIndex
-          = NameNumberArrayObject.weightArray_weightElementOffsetBegin.weightElementIndex_find_byName(
-              NeuralNet_TestParams.Base.paramsNameOrderArray_Basic,
-              testParams.in.paramsNumberArrayObject, testParams.in_weights.weightElementOffsetBegin,
-              NeuralNet.Params.nConvStageTypeId.paramName );
+          = NameNumberArrayObject.weightArray_weightElementOffsetBegin
+              .weightElementIndex_find_byName(
+                NeuralNet_TestParams.Base.paramsNameOrderArray_Basic,
+                testParams.in.paramsNumberArrayObject,
+                testParams.in_weights.weightElementOffsetBegin,
+                NeuralNet.Params.nConvStageTypeId.paramName );
 
-        testParams.in_weights.weightArray[ nConvStageTypeId_weightElementIndex ] = nConvStageTypeId_toBeCompared;
+        testParams.in_weights.weightArray[ nConvStageTypeId_weightElementIndex ]
+          = nConvStageTypeId_toBeCompared;
 
-        // It seems not necessary to re-compose .inputWeightArray because all stages' parameters are generated directly
-        // by NeuralNet_StageParamsCreator (i.e. not in the .inputWeightArray).
+        // It seems not necessary to re-compose .inputWeightArray because all
+        // stages' parameters are generated directly by
+        // NeuralNet_StageParamsCreator (i.e. not in the .inputWeightArray).
 
       } else {
         testParams.in.nConvStageTypeId = nConvStageTypeId_toBeCompared;
@@ -350,24 +362,29 @@ class NeuralNet_Reference_Base extends Recyclable.Root {
 
     // Initialize successfully or failed.
     let extractedParams = NeuralNet.Params.Pool.get_or_create_by(
-      testParams.in.explicit_input_height, testParams.in.explicit_input_width,
+      testParams.in.explicit_input_height,
+      testParams.in.explicit_input_width,
       testParams.in.explicit_input_channelCount,
       testParams.in.has_implicit_input,
-      testParams.in.vocabularyChannelCount, testParams.in.vocabularyCountPerInputChannel,
+      testParams.in.vocabularyChannelCount,
+      testParams.in.vocabularyCountPerInputChannel,
       testParams.in.nConvStageTypeId,
       testParams.in.blockCountTotalRequested,
-      testParams.in.output_channelCount, testParams.in.output_asInputValueRange,
+      testParams.in.output_channelCount,
+      testParams.in.output_asInputValueRange,
       testParams.in.bKeepInputTensor
     );
 
     let progressInit = ValueMax.Percentage.Aggregate.Pool.get_or_create_by();
     let bInitOk = neuralNet_toBeCompared.init( progressInit,
-      testParams.in_weights.weightArray, testParams.in_weights.weightElementOffsetBegin,
+      testParams.in_weights.weightArray,
+      testParams.in_weights.weightElementOffsetBegin,
       extractedParams
     );
 
     if ( false == bInitOk )
-      throw Error( `Failed to initialize neuralNet object. ${neuralNet_toBeCompared}` );
+      throw Error( `Failed to initialize neuralNet object. `
+        + `${neuralNet_toBeCompared}` );
 
     if ( 100 != progressInit.valuePercentage )
       throw Error( `NeuralNet_Reference_Base.`
@@ -382,9 +399,11 @@ class NeuralNet_Reference_Base extends Recyclable.Root {
     // Prepare input tensor.
     let inputTensor3d;
     if ( bKeepInputTensor ) {
-      inputTensor3d = inputTensor3d_fromBag; // The same one because it will not be destroyed. 
+      // The same one because it will not be destroyed. 
+      inputTensor3d = inputTensor3d_fromBag;
     } else {
-      inputTensor3d = inputTensor3d_fromBag.clone(); // Clone for being destroyed. 
+      // Clone for being destroyed.
+      inputTensor3d = inputTensor3d_fromBag.clone();
     }
 
     let outputTensor3d;
@@ -394,7 +413,8 @@ class NeuralNet_Reference_Base extends Recyclable.Root {
       if ( 100 != neuralNet_toBeCompared.progressApply.valuePercentage )
         throw Error( `NeuralNet_Reference_Base`
           + `.neuralNet_compare_ShuffleNetV2_and_ShuffleNetV2_byMobileNetV1(): `
-          + `Progress (${neuralNet_toBeCompared.progressApply.valuePercentage}) `
+          + `Progress `
+          + `( ${neuralNet_toBeCompared.progressApply.valuePercentage} ) `
           + `should be 100 `
           + `after neuralNet.apply(). ${neuralNet_toBeCompared}`);
     }
@@ -429,7 +449,8 @@ class NeuralNet_Reference_Base extends Recyclable.Root {
     // Restore nConvStageTypeId.
     {
       if ( testParams.in.nConvStageTypeId == null ) {
-        // Do nothing. It seems not necessary to re-compose .inputWeightArray because it will not be used again.
+        // Do nothing. It seems not necessary to re-compose .inputWeightArray
+        // because it will not be used again.
       } else {
         testParams.in.nConvStageTypeId = nConvStageTypeId_original;
       }
