@@ -65,28 +65,37 @@ class ParamValueChangeRecord extends Recyclable.Root {
    */
   constructor( paramDesc,
     inValue_original, outValue_original,
-    inValue_new, outValue_new, outValue_specified ) {
+    inValue_new, outValue_new,
+    outValue_specified ) {
 
     super();
     ParamValueChangeRecord.setAsConstructor_self.call( this,
       paramDesc,
-      inValue_original, outValue_original, inValue_new, outValue_new, outValue_specified );
+      inValue_original, outValue_original,
+      inValue_new, outValue_new,
+      outValue_specified );
   }
 
   /** @override */
   static setAsConstructor( paramDesc,
-    inValue_original, outValue_original, inValue_new, outValue_new, outValue_specified ) {
+    inValue_original, outValue_original,
+    inValue_new, outValue_new,
+    outValue_specified ) {
 
     super.setAsConstructor();
     ParamValueChangeRecord.setAsConstructor_self.call( this,
       paramDesc,
-      inValue_original, outValue_original, inValue_new, outValue_new, outValue_specified );
+      inValue_original, outValue_original,
+      inValue_new, outValue_new,
+      outValue_specified );
     return this;
   }
 
   /** @override */
   static setAsConstructor_self( paramDesc,
-    inValue_original, outValue_original, inValue_new, outValue_new, outValue_specified ) {
+    inValue_original, outValue_original,
+    inValue_new, outValue_new,
+    outValue_specified ) {
 
     this.paramDesc = paramDesc;
     this.inValue_original = inValue_original;
@@ -111,7 +120,8 @@ class ParamValueChangeRecord extends Recyclable.Root {
 
 
 /**
- * This is an object { config, id, in, out } which has one number and two sub-objects.
+ * This is an object { config, id, in, out } which has one number and
+ * two sub-objects.
  *
  * @member {object} config
  *   The configuration for generating parameters combination.
@@ -120,37 +130,47 @@ class ParamValueChangeRecord extends Recyclable.Root {
  *   List all the parameters to be used in permutation combination.
  *
  * @member {number} id
- *   The numeric identifier of this testing parameter combination. No matter onYield_isLegal() is true or false, every combination
- * has its own id. The first id is 0 (not 1).
+ *   The numeric identifier of this testing parameter combination. No matter
+ * onYield_isLegal() is true or false, every combination has its own id. The
+ * first id is 0 (not 1).
  *
  * @member {number} yieldCount
- *   How many legal (i.e. ( onYield_isLegal() == true ) ) TestParams are yielded.
+ *   How many legal (i.e. ( onYield_isLegal() == true ) ) TestParams are
+ * yielded.
  *
  * @member {Object} in
- *   The "in" sub-object's data members represent every parameters of some (e.g. Block) Params's constructor. Besides,
- * it also has the following properties:
- *   - paramsNumberArrayObject: All (non-concatenated) parameters (include filters and biases) which will be packed into inputWeightArray.
+ *   The "in" sub-object's data members represent every parameters of some
+ * (e.g. Block) Params's constructor. Besides, it also has the following
+ * properties:
+ *   - paramsNumberArrayObject: All (non-concatenated) parameters (include
+ *       filters and biases) which will be packed into inputWeightArray.
  * 
  * @member {NameNumberArrayObject.weightArray_weightElementOffsetBegin} in_weights
- *   - weightArray: A number array from paramsNumberArrayObject with weightElementOffsetBegin.
- *   - weightElementOffsetBegin: The offset in inputWeightArray to the first parameter.
+ *   - weightArray: A number array from paramsNumberArrayObject with
+ *       weightElementOffsetBegin.
+ *   - weightElementOffsetBegin: The offset in inputWeightArray to the first
+ *       parameter.
  *
  * @member {Object} out
- *   The "out" sub-object's data members represent the "should-be" result of some (e.g. Block) Params.init().
- * That is, it has the data members of this.in except inputWeightArray, weightElementOffsetBegin. Sub class is responsible for
- * creating and releasing it.
+ *   The "out" sub-object's data members represent the "should-be" result of
+ * some (e.g. Block) Params.init(). That is, it has the data members of this.in
+ * except inputWeightArray, weightElementOffsetBegin. Sub class is responsible
+ * for creating and releasing it.
  *
  * @member {ParamValueChangeRecord[]} modifyParamValueHistory
- *   A record will be pushed into this list when calling this.modifyParamValue(). When call this.modifyParamValue_restore_all(),
+ *   A record will be pushed into this list when calling
+ * this.modifyParamValue(). When call this.modifyParamValue_restore_all(),
  * these value will be restored and this list will be cleared to empty.
  *
  */
 class TestParams_Base extends Recyclable.Root {
 
   /**
-   * Used as default TestParams.Base provider for conforming to Recyclable interface.
+   * Used as default TestParams.Base provider for conforming to Recyclable
+   * interface.
    */
-  static Pool = new Pool.Root( "TestParams.Base.Pool", TestParams_Base, TestParams_Base.setAsConstructor );
+  static Pool = new Pool.Root( "TestParams.Base.Pool",
+    TestParams_Base, TestParams_Base.setAsConstructor );
 
   /**
    */
@@ -175,10 +195,13 @@ class TestParams_Base extends Recyclable.Root {
       // Do nothing. Re-use it since it exists.
     } else {
       this.in = {};
-      this.in.paramsNumberArrayObject = new NameNumberArrayObject.Base(); // All parameters which will be packed into weights array.
+      // All parameters which will be packed into weights array.
+      this.in.paramsNumberArrayObject = new NameNumberArrayObject.Base();
     }
 
-    this.in_weights = NameNumberArrayObject.weightArray_weightElementOffsetBegin.Pool.get_or_create_by();
+    this.in_weights
+      = NameNumberArrayObject.weightArray_weightElementOffsetBegin.Pool
+          .get_or_create_by();
 
     // Sub class is responsible for creating and releasing it.
     //this.out = undefined; //{};
@@ -186,10 +209,12 @@ class TestParams_Base extends Recyclable.Root {
     this.modifyParamValueHistory = Recyclable.Array.Pool.get_or_create_by( 0 );
 
     // For reducing same weights array re-generating.
-    this.SequenceRandom_NumberArray_Bag = SequenceRandom_NumberArray.Bag.Pool.get_or_create_by();
+    this.SequenceRandom_NumberArray_Bag
+      = SequenceRandom_NumberArray.Bag.Pool.get_or_create_by();
     
     // For reducing array and object re-generating in .modifyParamValue()
-    this.modifyParamValue_singleMinMax = Recyclable.Array.Pool.get_or_create_by( 2 );
+    this.modifyParamValue_singleMinMax
+      = Recyclable.Array.Pool.get_or_create_by( 2 );
 
     if ( this.modifyParamValue_valuePair ) {
       // Do nothing. Re-use it since it exists.
@@ -239,15 +264,17 @@ class TestParams_Base extends Recyclable.Root {
    * Sub-class should override this method.
    *
    * @return {boolean}
-   *   If return true, the onYield_before() will be called. If return false, it mean this configuration is illegal so that there
-   * is no yield will be done (i.e. onYield_before() and onYield_after() will not be called).
+   *   If return true, the onYield_before() will be called. If return false, it
+   * mean this configuration is illegal so that there is no yield will be done
+   * (i.e. onYield_before() and onYield_after() will not be called).
    */
   onYield_isLegal() {
     return true;
   }
 
   /**
-   * Called by permuteParamRecursively() when a combination of parameters is complete and before this object to be yielded.
+   * Called by permuteParamRecursively() when a combination of parameters is
+   * complete and before this object to be yielded.
    *
    * The the following data should already be ready:
    *   - this.id
@@ -265,7 +292,8 @@ class TestParams_Base extends Recyclable.Root {
   }
 
   /**
-   * Called by permuteParamRecursively() when a combination of parameters is complete and after this object has been yielded.
+   * Called by permuteParamRecursively() when a combination of parameters is
+   * complete and after this object has been yielded.
    *
    * Usually, this method should clear some temperary data members.
    *
@@ -275,7 +303,9 @@ class TestParams_Base extends Recyclable.Root {
   }
 
   /**
-   * Modify specified parameter's value and record in this.modifyParamValueHistory so that they could be restore by modifyParamValue_restore_all().
+   * Modify specified parameter's value and record in
+   * this.modifyParamValueHistory so that they could be restore by
+   * modifyParamValue_restore_all().
    *
    * @param {ParamDesc.Xxx} paramDesc
    *   The parameter to be doubled.
@@ -293,7 +323,8 @@ class TestParams_Base extends Recyclable.Root {
     let valueDesc = paramDesc.valueDesc;
     let valueRange = valueDesc.range;
 
-    let outValue_new = valueRange.adjust( outValue_specified ); // Confirm the new value is legal.
+    // Confirm the new value is legal.
+    let outValue_new = valueRange.adjust( outValue_specified );
 
     // Modify output value.
     this.out[ paramName ] = outValue_new;
@@ -306,7 +337,8 @@ class TestParams_Base extends Recyclable.Root {
       this.modifyParamValue_singleMinMax[ 1 ] = outValue_new;
 
       let valueInputOutputGenerator = valueRange.valueInputOutputGenerator(
-        this.modifyParamValue_valuePair, undefined, this.modifyParamValue_singleMinMax );
+        this.modifyParamValue_valuePair,
+        undefined, this.modifyParamValue_singleMinMax );
 
       for ( let pair of valueInputOutputGenerator ) {
         inValue_new = pair.valueInput;
@@ -317,7 +349,8 @@ class TestParams_Base extends Recyclable.Root {
         }
 
         if ( this.in.paramsNumberArrayObject[ paramName ] != undefined ) {
-          inValue_original = this.in.paramsNumberArrayObject[ paramName ]; // (should be a number (can not be a number array)).
+          // (should be a number (can not be a number array)).
+          inValue_original = this.in.paramsNumberArrayObject[ paramName ];
           this.in.paramsNumberArrayObject[ paramName ] = inValue_new;
         }
       }
@@ -326,16 +359,22 @@ class TestParams_Base extends Recyclable.Root {
     // Record modification (for restoring in the future).
     {
       let changeRecord = ParamValueChangeRecord.Pool.get_or_create_by(
-        paramDesc, inValue_original, outValue_original, inValue_new, outValue_new, outValue_specified );
+        paramDesc,
+        inValue_original, outValue_original,
+        inValue_new, outValue_new,
+        outValue_specified );
 
       this.modifyParamValueHistory.push( changeRecord );
     }
   }
 
   /**
-   * Pop the this.modifyParamValueHistory to restore the last paaram modification.
+   * Pop the this.modifyParamValueHistory to restore the last param
+   * modification.
+   *
    * @return {boolean}
-   *   Return true, if a record has been popped and restored. Return false, if no record could be popped.
+   *   Return true, if a record has been popped and restored. Return false, if
+   * no record could be popped.
    */
   modifyParamValue_pop_and_restore() {
     if ( this.modifyParamValueHistory.length <= 0 )
@@ -352,7 +391,9 @@ class TestParams_Base extends Recyclable.Root {
     }
 
     if ( this.in.paramsNumberArrayObject[ paramName ] != undefined ) {
-      this.in.paramsNumberArrayObject[ paramName ] = changeRecord.inValue_original; // (should be a number (can not be a number array)).
+      // (should be a number (can not be a number array)).
+      this.in.paramsNumberArrayObject[ paramName ]
+        = changeRecord.inValue_original;
     }
 
     changeRecord.disposeResources_and_recycleToPool();
@@ -361,43 +402,74 @@ class TestParams_Base extends Recyclable.Root {
   }
 
   /**
-   * Restore parameters' values according to this.modifyParamValueHistory. And empty this.modifyParamValueHistory.
+   * Restore parameters' values according to this.modifyParamValueHistory. And
+   * empty this.modifyParamValueHistory.
    */
   modifyParamValue_restore_all() {
-    while ( this.modifyParamValue_pop_and_restore() ) { // Restored from the last to first.
+    // Restored from the last to first.    
+    while ( this.modifyParamValue_pop_and_restore() ) {
       // Do nothing.
     }
   }
 
 
   /**
-   * Ensure io_object[ propertyName ] exists as a number array with specified length. It will be filled with random number
-   * as ( sequence_nunmer + random_number_offset ).
+   * Ensure io_object[ propertyName ] exists as a number array with specified
+   * length. It will be filled with random number as
+   * ( sequence_nunmer + random_number_offset ).
    *
-   * @param {object} io_object            The object to be checked and modified.
-   * @param {string} propertyName         The property io_object[ propertyName ] will be ensured as a number array.
-   * @param {number} height               The length of axis0 of the io_object[ propertyName ].
-   * @param {number} width                The length of axis1 of the io_object[ propertyName ].
-   * @param {number} channelCount         The length of axis2 of the io_object[ propertyName ].
-   * @param {number} valueBegin           The first value of filled sequence.
-   * @param {number} valueStep            The incremental value of every next filled value in the sequence.
-   * @param {number} randomOffsetMin      The random number offet lower bound.
-   * @param {number} randomOffsetMax      The random number offet upperer bound.
-   * @param {number} divisorForRemainder  The divisor for restricting value bounds.
+   * @param {object} io_object
+   *   The object to be checked and modified.
+   *
+   * @param {string} propertyName
+   *   The property io_object[ propertyName ] will be ensured as a number
+   * array.
+   *
+   * @param {number} height
+   *   The length of axis0 of the io_object[ propertyName ].
+   *
+   * @param {number} width
+   *   The length of axis1 of the io_object[ propertyName ].
+   *
+   * @param {number} channelCount
+   *   The length of axis2 of the io_object[ propertyName ].
+   *
+   * @param {number} valueBegin
+   *   The first value of filled sequence.
+   *
+   * @param {number} valueStep
+   *   The incremental value of every next filled value in the sequence.
+   *
+   * @param {number} randomOffsetMin
+   *   The random number offet lower bound.
+   *
+   * @param {number} randomOffsetMax
+   *   The random number offet upperer bound.
+   *
+   * @param {number} divisorForRemainder
+   *   The divisor for restricting value bounds.
    */
   static ensure_object_property_numberArray_length_filled(
     io_object, propertyName,
     height, width, channelCount,
     valueBegin = 0, valueStep = 1,
-    randomOffsetMin = 0, randomOffsetMax = 0, divisorForRemainder = ( 2 ** 26 ) ) {
+    randomOffsetMin = 0, randomOffsetMax = 0,
+    divisorForRemainder = ( 2 ** 26 ) ) {
 
-    if (   ( io_object[ propertyName ] == undefined )          // The property does not exist.
-        || ( !( io_object[ propertyName ] instanceof Array ) ) // The property exists but is not an array.
+    if (
+           // The property does not exist.
+           ( io_object[ propertyName ] == undefined )
+
+           // The property exists but is not an array.
+        || ( !( io_object[ propertyName ] instanceof Array ) )
        ) {
-      io_object[ propertyName ] = new Array( elementCount );   // Ensure array with specified length.
+      // Ensure array with specified length.
+      io_object[ propertyName ] = new Array( elementCount );
 
-    } else {                                                   // The property exists and is an array.
-      io_object[ propertyName ].length = elementCount;         // Ensure it with specified length.
+    // The property exists and is an array.
+    } else {
+      // Ensure it with specified length.
+      io_object[ propertyName ].length = elementCount;
     }
 
     RandTools.fill_numberArray( io_object[ propertyName ],
@@ -407,29 +479,53 @@ class TestParams_Base extends Recyclable.Root {
   }
 
   /**
-   * Similar to TestParams_Base.ensure_object_property_numberArray_length_filled(). But the property will be a shared number array. Its value
-   * may be shared with other caller.
+   * Similar to
+   * TestParams_Base.ensure_object_property_numberArray_length_filled(). But
+   * the property will be a shared number array. Its value may be shared with
+   * other caller.
    *
-   * This may have better performance because of number array re-using (instead of re-generating).
+   * This may have better performance because of number array re-using (instead
+   * of re-generating).
    *
    *
-   * @param {object} io_object            The object to be checked and modified.
-   * @param {string} propertyName         The property io_object[ propertyName ] will be ensured as a number array.
-   * @param {number} height               The length of axis0 of the io_object[ propertyName ].
-   * @param {number} width                The length of axis1 of the io_object[ propertyName ].
-   * @param {number} channelCount         The length of axis2 of the io_object[ propertyName ].
-   * @param {number} valueBegin           The first value of filled sequence.
-   * @param {number} valueStep            The incremental value of every next filled value in the sequence.
-   * @param {number} randomOffsetMin      The random number offet lower bound.
-   * @param {number} randomOffsetMax      The random number offet upperer bound.
-   * @param {number} divisorForRemainder  The divisor for restricting value bounds.
+   * @param {object} io_object
+   *   The object to be checked and modified.
+   *
+   * @param {string} propertyName
+   *   The property io_object[ propertyName ] will be ensured as a number
+   * array.
+   *
+   * @param {number} height
+   *   The length of axis0 of the io_object[ propertyName ].
+   *
+   * @param {number} width
+   *   The length of axis1 of the io_object[ propertyName ].
+   *
+   * @param {number} channelCount
+   *   The length of axis2 of the io_object[ propertyName ].
+   *
+   * @param {number} valueBegin
+   *   The first value of filled sequence.
+   *
+   * @param {number} valueStep
+   *   The incremental value of every next filled value in the sequence.
+   *
+   * @param {number} randomOffsetMin
+   *   The random number offet lower bound.
+   *
+   * @param {number} randomOffsetMax
+   *   The random number offet upperer bound.
+   *
+   * @param {number} divisorForRemainder
+   *   The divisor for restricting value bounds.
    *
    */
   ensure_object_property_numberArray_length_existed(
     io_object, propertyName,
     height, width, channelCount,
     valueBegin = 0, valueStep = 1,
-    randomOffsetMin = 0, randomOffsetMax = 0, divisorForRemainder = ( 2 ** 26 )
+    randomOffsetMin = 0, randomOffsetMax = 0,
+    divisorForRemainder = ( 2 ** 26 )
   ) {
 
     io_object[ propertyName ]
@@ -442,19 +538,30 @@ class TestParams_Base extends Recyclable.Root {
 
   /**
    * Fill an object's property as a number array.
-   * Similar to TestParams_Base.ensure_object_property_numberArray_length_filled().
-   * But the property will be a shared number array. Its value may be shared with
+   *
+   * Similar to
+   * TestParams_Base.ensure_object_property_numberArray_length_filled(). But
+   * the property will be a shared number array. Its value may be shared with
    * other caller.
    *
-   * This may have better performance because of number array re-using (instead of
-   * re-generating).
+   * This may have better performance because of number array re-using (instead
+   * of re-generating).
    *
    *
-   * @param {object} io_object     The object to be checked and modified.
-   * @param {string} propertyName  The property io_object[ propertyName ] will be ensured as a number array.
-   * @param {number} height        The length of axis0 of the io_object[ propertyName ].
-   * @param {number} width         The length of axis1 of the io_object[ propertyName ].
-   * @param {number} channelCount  The length of axis2 of the io_object[ propertyName ].
+   * @param {object} io_object
+   *   The object to be checked and modified.
+   *
+   * @param {string} propertyName
+   *   The property io_object[ propertyName ] will be ensured as a number array.
+   * 
+   * @param {number} height
+   *   The length of axis0 of the io_object[ propertyName ].
+   *
+   * @param {number} width
+   *   The length of axis1 of the io_object[ propertyName ].
+   *
+   * @param {number} channelCount
+   *   The length of axis2 of the io_object[ propertyName ].
    */
   fill_object_property_numberArray( io_object, propertyName,
     height, width, channelCount
@@ -490,31 +597,39 @@ class TestParams_Base extends Recyclable.Root {
    *   List all the parameters to be used in permutation combination.
    *
    * @yield {Base}
-   *   Yield this object itself. The returned object (it is this object itself) should not be modified because it will be re-used.
+   *   Yield this object itself. The returned object (it is this object itself)
+   * should not be modified because it will be re-used.
    */
   static * ParamsGenerator( paramDescConfigArray ) {
     this.config = { paramDescConfigArray: paramDescConfigArray };
 
-    // Note: this.in and this.in.paramsNumberArrayObject will not be cleared. They will be reused directly.
+    // Note: this.in and this.in.paramsNumberArrayObject will not be cleared.
+    //       They will be reused directly.
 
     yield *TestParams_Base.permuteParamRecursively.call( this, 0 );
   }
 
   /**
-   * This method will modify this.id and this.in.paramsNumberArrayObject. It also calls itself recursively to permute all parameters.
+   * This method will modify this.id and this.in.paramsNumberArrayObject. It
+   * also calls itself recursively to permute all parameters.
    *
    * @param {number} currentParamDescIndex
-   *   The index into the this.paramDescArray[]. It represents the current parameter to be tried.
+   *   The index into the this.paramDescArray[]. It represents the current
+   * parameter to be tried.
    *
    * @yield {Base}
-   *   Every time one kind of parameters' combination is generated, the this.result will be yielded.
+   *   Every time one kind of parameters' combination is generated, the
+   * this.result will be yielded.
    */
   static * permuteParamRecursively( currentParamDescConfigIndex ) {
 
-    if ( currentParamDescConfigIndex >= this.config.paramDescConfigArray.length ) {
+    if ( currentParamDescConfigIndex
+           >= this.config.paramDescConfigArray.length ) {
       // All parameters are used to be composed as one kind of combination.
 
-      ++this.id; // Every combination has unique id no matter whether is legal to be yielded.
+      // Every combination has unique id no matter whether is legal to be
+      // yielded.
+      ++this.id;
 
       let bLegalToYield = this.onYield_isLegal();
       if ( bLegalToYield ) {
@@ -524,10 +639,13 @@ class TestParams_Base extends Recyclable.Root {
         this.onYield_before();
         yield this;
         this.onYield_after();
-        this.modifyParamValue_restore_all(); // Restore this object because onYield_before() may modify it.
+
+        // Restore this object because onYield_before() may modify it.
+        this.modifyParamValue_restore_all();
       }
 
-      return; // Stop this recusive. Back-track to another parameters combination.
+      // Stop this recusive. Back-track to another parameters combination.
+      return;
     }
 
     // Prepare an re-usable object for placing the value pair of current ParamDesc. (For reducing memory re-allocation.)
