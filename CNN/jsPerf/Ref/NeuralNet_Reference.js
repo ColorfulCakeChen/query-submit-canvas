@@ -703,8 +703,10 @@ class NeuralNet_Reference_Base extends Recyclable.Root {
       let tensorWeightCountExtracted = 0;
 
       if ( neuralNet.embedding ) {
-        tensorWeightCountTotal += neuralNet.embedding.tensorWeightCountTotal;
-        tensorWeightCountExtracted += neuralNet.embedding.tensorWeightCountExtracted;
+        tensorWeightCountTotal
+          += neuralNet.embedding.tensorWeightCountTotal;
+        tensorWeightCountExtracted
+          += neuralNet.embedding.tensorWeightCountExtracted;
       }
 
       for ( let i = 0; i < neuralNet.stageArray.length; ++i ) {
@@ -713,11 +715,15 @@ class NeuralNet_Reference_Base extends Recyclable.Root {
         tensorWeightCountExtracted += stage.tensorWeightCountExtracted;
       }
 
-      tensorWeightCountTotal += neuralNet.blockFinal.tensorWeightCountTotal;
-      tensorWeightCountExtracted += neuralNet.blockFinal.tensorWeightCountExtracted;
+      tensorWeightCountTotal
+        += neuralNet.blockFinal.tensorWeightCountTotal;
+      tensorWeightCountExtracted
+        += neuralNet.blockFinal.tensorWeightCountExtracted;
 
-      neuralNet_asserter.propertyValue( "tensorWeightCountTotal", tensorWeightCountTotal );
-      neuralNet_asserter.propertyValue( "tensorWeightCountExtracted", tensorWeightCountExtracted );
+      neuralNet_asserter.propertyValue( "tensorWeightCountTotal",
+        tensorWeightCountTotal );
+      neuralNet_asserter.propertyValue( "tensorWeightCountExtracted",
+        tensorWeightCountExtracted );
     }
 
     neuralNet_asserter.disposeResources_and_recycleToPool();
@@ -727,14 +733,21 @@ class NeuralNet_Reference_Base extends Recyclable.Root {
   }
 
   /** */
-  static AssertTwoEqualValues( valueName, value1, value2, parametersDescription ) {
+  static AssertTwoEqualValues(
+    valueName, value1, value2, parametersDescription ) {
+
     if ( value1 != value2 )
-      throw Error( `NeuralNet ${valueName} (${value1}) should be (${value2}). ${parametersDescription}` );
+      throw Error( `NeuralNet ${valueName} (${value1}) should be (${value2}). `
+        + `${parametersDescription}` );
   }
 
   /** */
-  static Assert_nConvStageTypeId_Unknown( prefixMsg, nConvStageTypeId, postfixMsg ) {
-    let strUnknownConvStageTypeId = `${prefixMsg} unknown nConvStageTypeId ( ${nConvStageTypeId} ) value. ${postfixMsg}`;
+  static Assert_nConvStageTypeId_Unknown(
+    prefixMsg, nConvStageTypeId, postfixMsg ) {
+
+    let strUnknownConvStageTypeId
+      = `${prefixMsg} unknown nConvStageTypeId ( ${nConvStageTypeId} ) value. `
+        + `${postfixMsg}`;
     throw Error( strUnknownConvStageTypeId );
   }
 
@@ -745,15 +758,20 @@ class NeuralNet_Reference_Base extends Recyclable.Root {
    *   The neuralNet to be checked. It parameters will be checked.
    *
    */
-  static AssertParameters_NeuralNet_embedding( neuralNet, parametersDescription ) {
+  static AssertParameters_NeuralNet_embedding(
+    neuralNet, parametersDescription ) {
+0
     let embedding = neuralNet.embedding;
 
     let embedding_asserter = ObjectPropertyAsserter.Base.Pool.get_or_create_by(
       "`NeuralNet.embedding", embedding, parametersDescription );
 
-    embedding_asserter.propertyValue( "channelMultiplier", neuralNet.vocabularyChannelCount );
-    embedding_asserter.propertyValue( "vocabularyCountPerInputChannel", neuralNet.vocabularyCountPerInputChannel );
-    embedding_asserter.propertyValue( "bKeepInputTensor", neuralNet.bKeepInputTensor );
+    embedding_asserter.propertyValue( "channelMultiplier",
+      neuralNet.vocabularyChannelCount );
+    embedding_asserter.propertyValue( "vocabularyCountPerInputChannel",
+      neuralNet.vocabularyCountPerInputChannel );
+    embedding_asserter.propertyValue( "bKeepInputTensor",
+      neuralNet.bKeepInputTensor );
 
     embedding_asserter.disposeResources_and_recycleToPool();
     embedding_asserter = null;
@@ -772,10 +790,12 @@ class NeuralNet_Reference_Base extends Recyclable.Root {
     let stageCount = stageArray.length;
 
     if ( stageCount <= 0 )
-      throw Error( `NeuralNet stageCount (${stageCount}) should be larger than 0. ${parametersDescription}` );
+      throw Error( `NeuralNet stageCount (${stageCount}) should be `
+        + `larger than 0. ${parametersDescription}` );
 
     if ( stageCount < 1 )
-      throw Error( `NeuralNet stageCount (${stageCount}) should be >= 1. ${parametersDescription}` );
+      throw Error( `NeuralNet stageCount (${stageCount}) should be `
+        + `>= 1. ${parametersDescription}` );
 
     let stageName, stage, stagePrevious;
     for ( let stageIndex = 0; stageIndex < stageCount; ++stageIndex ) {
