@@ -25,7 +25,8 @@ import * as NeuralNet from "../../Conv/NeuralNet.js";
 class NeuralNet_Reference_Base extends Recyclable.Root {
 
   /**
-   * Used as default NeuralNet_Reference.Base provider for conforming to Recyclable interface.
+   * Used as default NeuralNet_Reference.Base provider for conforming to
+   * Recyclable interface.
    */
   static Pool = new Pool.Root( "NeuralNet_Reference.Base.Pool",
     NeuralNet_Reference_Base, NeuralNet_Reference_Base.setAsConstructor );
@@ -47,18 +48,25 @@ class NeuralNet_Reference_Base extends Recyclable.Root {
 
   /** @override */
   static setAsConstructor_self() {
-    this.Embedding_Reference = Embedding_Reference.Base.Pool.get_or_create_by();
+    this.Embedding_Reference
+      = Embedding_Reference.Base.Pool.get_or_create_by();
     this.Stage_Reference = Stage_Reference.Base.Pool.get_or_create_by();
     this.Block_Reference = Block_Reference.Base.Pool.get_or_create_by();
 
 //!!! (2023/04/15)
 // For clamped and integerized output, acceptable delta should be smaller.
-//    this.asserter_Equal = TensorTools.Asserter_Equal.Pool.get_or_create_by( 0.01, 0.005 );
-    this.asserter_Equal = TensorTools.Asserter_Equal.Pool.get_or_create_by( 0.0001, 0.0005 );
+//    this.asserter_Equal
+//      = TensorTools.Asserter_Equal.Pool.get_or_create_by( 0.01, 0.005 );
+    this.asserter_Equal
+      = TensorTools.Asserter_Equal.Pool.get_or_create_by( 0.0001, 0.0005 );
 
     // For reducing memory allocation.
-    this.imageInArray = Recyclable.Array.Pool.get_or_create_by( 2 );  // imageInArray[ 0 ] is input0, imageInArray[ 1 ] is input1.
-    this.imageOutArray = Recyclable.Array.Pool.get_or_create_by( 2 );  // imageOutArray[ 0 ] is output0, imageOutArray[ 1 ] is output1.
+
+    // imageInArray[ 0 ] is input0, imageInArray[ 1 ] is input1.
+    this.imageInArray = Recyclable.Array.Pool.get_or_create_by( 2 );
+
+    // imageOutArray[ 0 ] is output0, imageOutArray[ 1 ] is output1.
+    this.imageOutArray = Recyclable.Array.Pool.get_or_create_by( 2 );
   }
 
   /** @override */
@@ -91,7 +99,8 @@ class NeuralNet_Reference_Base extends Recyclable.Root {
    *   The provider of image and tensor of variable specification for testing.
    *
    * @param {NeuralNet_TestParams.Base} testParams
-   *   The test parameters. It is the value of NeuralNet_TestParams.Base.ParamsGenerator()'s result.
+   *   The test parameters. It is the value of
+   * NeuralNet_TestParams.Base.ParamsGenerator()'s result.
    *
    */
   testCorrectness( imageSourceBag, testParams ) {
@@ -134,8 +143,10 @@ class NeuralNet_Reference_Base extends Recyclable.Root {
       this, imageSourceBag, testParams );
 
     { // Release output reference images.
-      if ( this.testCorrectness_imageOutReference != this.testCorrectness_imageIn ) {
-        this.testCorrectness_imageOutReference.disposeResources_and_recycleToPool();
+      if ( this.testCorrectness_imageOutReference
+             != this.testCorrectness_imageIn ) {
+        this.testCorrectness_imageOutReference
+          .disposeResources_and_recycleToPool();
 
       // Do not release image from ImageSourceBag.      
       }
@@ -159,66 +170,87 @@ class NeuralNet_Reference_Base extends Recyclable.Root {
       input_height, input_width, input_channelCount );
 
     let inputTensor3d;
-    let inputTensorDestroyCount; // How many input tensors will be destroyed by NeuralNet.apply().
+
+    // How many input tensors will be destroyed by NeuralNet.apply().
+    let inputTensorDestroyCount;
+
     if ( bKeepInputTensor ) {
-      inputTensor3d = inputTensor3d_fromBag; // The same one because it will not be destroyed. 
-      inputTensorDestroyCount = 0; // Since keep-input, no input tensors will be destroyed.
+      // The same one because it will not be destroyed. 
+      inputTensor3d = inputTensor3d_fromBag;
+      // Since keep-input, no input tensors will be destroyed.
+      inputTensorDestroyCount = 0;
 
     } else {
-      inputTensor3d = inputTensor3d_fromBag.clone(); // Clone for being destroyed. 
-      inputTensorDestroyCount = 1; // Since no keep-input, the input tensor destroyed count will be the same as input tensor count.
+      // Clone for being destroyed. 
+      inputTensor3d = inputTensor3d_fromBag.clone();
+      // Since no keep-input, the input tensor destroyed count will be the same
+      // as input tensor count.
+      inputTensorDestroyCount = 1;
     }
 
     let tensorNumDifference_apply_before_after;
     let outputTensor3d;
 
-    let memoryInfo_beforeCreate = tf.memory(); // Test memory leakage of stage create/dispose.
+    // Test memory leakage of stage create/dispose.
+    let memoryInfo_beforeCreate = tf.memory();
     {
       let neuralNet = NeuralNet_Reference_Base.NeuralNet_create( testParams );
 
-      // The difference tensor count will be the generated tensor count (i.e. outputTensorCount) minus destroyed input
-      // tensor count (i.e. inputTensorDestroyCount).
+      // The difference tensor count will be the generated tensor count (i.e.
+      // outputTensorCount) minus destroyed input tensor count (i.e.
+      // inputTensorDestroyCount).
       let neuralNet_outputTensorCount = 1;
       tensorNumDifference_apply_before_after
         = neuralNet_outputTensorCount - inputTensorDestroyCount;
 
-      let memoryInfo_apply_before = tf.memory(); // Test memory leakage of NeuralNet.apply.
+      // Test memory leakage of NeuralNet.apply.
+      let memoryInfo_apply_before = tf.memory();
       {
         outputTensor3d = neuralNet.apply( inputTensor3d );
 
         if ( 100 != neuralNet.progressApply.valuePercentage )
-          throw Error( `NeuralNet_Reference_Base.neuralNet_create_apply_internal(): `
-            + `Progress (${neuralNet.progressApply.valuePercentage}) should be 100 `
+          throw Error( `NeuralNet_Reference_Base`
+            + `.neuralNet_create_apply_internal(): `
+            + `Progress ( ${neuralNet.progressApply.valuePercentage} ) `
+            + `should be 100 `
             + `after neuralNet.apply(). ${neuralNet}`);
       }
       let memoryInfo_apply_after = tf.memory();
 
       const numTensors_expected
-        = memoryInfo_apply_before.numTensors + tensorNumDifference_apply_before_after;
+        = memoryInfo_apply_before.numTensors
+            + tensorNumDifference_apply_before_after;
 
       if ( memoryInfo_apply_after.numTensors != numTensors_expected )
         throw Error( `NeuralNet.apply() memory leak. `
-          + `result tensor count (${memoryInfo_apply_after.numTensors}) `
-          + `should be (${numTensors_expected} `
+          + `result tensor count ( ${memoryInfo_apply_after.numTensors} ) `
+          + `should be ( ${numTensors_expected} ) `
           + `${neuralNet}` );
 
       if ( !inputTensor3d )
-        throw Error( `NeuralNet inputTensor3d should not be null. ${neuralNet}` ); // But may be disposed.
+        throw Error( `NeuralNet inputTensor3d should not be null. `
+          + `${neuralNet}` ); // But may be disposed.
 
       if ( !outputTensor3d )
-        throw Error( `NeuralNet outputTensor3d should not be null. ${neuralNet}` );
+        throw Error( `NeuralNet outputTensor3d should not be null. `
+          + `${neuralNet}` );
 
       { // Test output channel count.
-        const CHANNEL_AXIS_ID = 2; // Axis id 2 is depth (i.e. channel) dimension.
+
+        // Axis id 2 is depth (i.e. channel) dimension.
+        const CHANNEL_AXIS_ID = 2;
+
         let outputTensorChannelCount = 0;
 
-        if ( outputTensor3d && ( outputTensor3d.shape.length > CHANNEL_AXIS_ID ) )
+        if (   ( outputTensor3d )
+            && ( outputTensor3d.shape.length > CHANNEL_AXIS_ID ) )
           outputTensorChannelCount = outputTensor3d.shape[ CHANNEL_AXIS_ID ];
 
         // The real channel count of the output tensor should be the same as
         // predicted output channel count.
         NeuralNet_Reference_Base.AssertTwoEqualValues( "output_channelCount",
-          neuralNet.output_channelCount, outputTensorChannelCount, neuralNet );
+          neuralNet.output_channelCount, outputTensorChannelCount,
+          neuralNet );
       }
 
       // Test correctness of NeuralNet BoundsArraySet.
@@ -242,10 +274,11 @@ class NeuralNet_Reference_Base extends Recyclable.Root {
     let memoryInfo_afterDispose = tf.memory();
 
     const numTensors_expected
-      = memoryInfo_beforeCreate.numTensors + tensorNumDifference_apply_before_after;
+      = memoryInfo_beforeCreate.numTensors
+          + tensorNumDifference_apply_before_after;
 
     if ( memoryInfo_afterDispose.numTensors != numTensors_expected )
-      throw Error(  `NeuralNet create/dispose memory leak. `
+      throw Error( `NeuralNet create/dispose memory leak. `
         + `result tensor count (${memoryInfo_afterDispose.numTensors}) `
         + `should be (${numTensors_expected} `
         + `${neuralNet}` );
@@ -254,9 +287,14 @@ class NeuralNet_Reference_Base extends Recyclable.Root {
   }
 
   /**
-   * @param {NeuralNet_TestParams.Base} testParams   The neuralNet's testing parameters.
-   * @param {tf.tensor} inputTensor3d_fromBag    The input tensor from imageSourceBag.
-   * @param {tf.tensor} outputTensor3d_original  The output tensor (from original neuralNet) to be compared.
+   * @param {NeuralNet_TestParams.Base} testParams
+   *   The neuralNet's testing parameters.
+   *
+   * @param {tf.tensor} inputTensor3d_fromBag
+   *   The input tensor from imageSourceBag.
+   *
+   * @param {tf.tensor} outputTensor3d_original
+   *   The output tensor (from original neuralNet) to be compared.
    */
   static neuralNet_compare_ShuffleNetV2_and_ShuffleNetV2_byMobileNetV1(
     testParams,
@@ -267,8 +305,10 @@ class NeuralNet_Reference_Base extends Recyclable.Root {
       bKeepInputTensor,
     } = testParams.out;
 
-    if (   ( nConvStageTypeId != ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2 )
-        && ( nConvStageTypeId != ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1 ) )
+    if (   ( nConvStageTypeId
+               != ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2 )
+        && ( nConvStageTypeId
+               != ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1 ) )
       return; // Only compare ShuffleNetV2 and ShuffleNetV2_byMobileNetV1.
 
     // Determine which ConvStageType will be generate.
