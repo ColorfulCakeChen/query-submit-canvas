@@ -814,11 +814,14 @@ class NeuralNet_Reference_Base extends Recyclable.Root {
       // input0_height, input0_width
       {
         if ( 0 == stageIndex ) { // stage0
-          stage_asserter.propertyValue( "input_height", neuralNet.input_height );
-          stage_asserter.propertyValue( "input_width", neuralNet.input_width );
+          stage_asserter.propertyValue( "input_height",
+            neuralNet.input_height );
+          stage_asserter.propertyValue( "input_width",
+            neuralNet.input_width );
         }
 
-        // Note: NeuralNet.Base does not have information to verify every stage's input height/width.
+        // Note: NeuralNet.Base does not have information to verify every
+        //       stage's input height/width.
       }
 
       // input_channelCount
@@ -827,21 +830,24 @@ class NeuralNet_Reference_Base extends Recyclable.Root {
           neuralNet.input_channelCount * neuralNet.vocabularyChannelCount );
 
       } else { // stage1, 2, 3, ...
-        stage_asserter.propertyValue( "input_channelCount", stagePrevious.output_channelCount );
+        stage_asserter.propertyValue( "input_channelCount",
+          stagePrevious.output_channelCount );
       }
 
       // nConvStageTypeId
-      stage_asserter.propertyValue( "nConvStageTypeId", neuralNet.nConvStageTypeId );
+      stage_asserter.propertyValue( "nConvStageTypeId",
+        neuralNet.nConvStageTypeId );
 
       // output_channelCount
       { // Every stage double its input channel count.
-        stage_asserter.propertyValue( "output_channelCount", stage.input_channelCount * 2 );
+        stage_asserter.propertyValue( "output_channelCount",
+          stage.input_channelCount * 2 );
       }
 
       // bKeepInputTensor
       //
-      // In NeuralNet, only the embedding layer use specified bKeepInputTensor flag.
-      // All stages use ( bKeepInputTensor == false ).
+      // In NeuralNet, only the embedding layer use specified bKeepInputTensor
+      // flag. All stages use ( bKeepInputTensor == false ).
       stage_asserter.propertyValue( "bKeepInputTensor", false );
 
       stage_asserter.disposeResources_and_recycleToPool();
