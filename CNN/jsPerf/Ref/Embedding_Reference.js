@@ -141,75 +141,111 @@ class Embedding_Reference_Base extends Recyclable.Root {
       bKeepInputTensor,
     } = testParams.out;
 
-    let inputTensor3d_fromBag = imageSourceBag.getTensor3d_by( input_height, input_width, input_channelCount );
+    let inputTensor3d_fromBag = imageSourceBag.getTensor3d_by(
+      input_height, input_width, input_channelCount );
 
     let inputTensor3d;
-    let inputTensorDestroyCount; // How many input tensors will be destroyed by Embedding.apply().
+
+    // How many input tensors will be destroyed by Embedding.apply().
+    let inputTensorDestroyCount;
+
     if ( bKeepInputTensor ) {
-      inputTensor3d = inputTensor3d_fromBag; // The same one because it will not be destroyed. 
-      inputTensorDestroyCount = 0; // Since keep-input, no input tensors will be destroyed.
+
+      // The same one because it will not be destroyed. 
+      inputTensor3d = inputTensor3d_fromBag;
+
+      // Since keep-input, no input tensors will be destroyed.
+      inputTensorDestroyCount = 0;
 
     } else {
-      inputTensor3d = inputTensor3d_fromBag.clone(); // Clone for being destroyed. 
-      inputTensorDestroyCount = 1; // Since no keep-input, the input tensor destroyed count will be the same as input tensor count.
+
+      // Clone for being destroyed. 
+      inputTensor3d = inputTensor3d_fromBag.clone();
+
+      // Since no keep-input, the input tensor destroyed count will be the same
+      // as input tensor count.
+      inputTensorDestroyCount = 1;
     }
 
     let tensorNumDifference_apply_before_after;
     let outputTensor3d;
 
-    let memoryInfo_beforeCreate = tf.memory(); // Test memory leakage of block create/dispose.
+    // Test memory leakage of block create/dispose.
+    let memoryInfo_beforeCreate = tf.memory();
     {
       let embedding = Embedding_Reference_Base.Embedding_create(
         EmbeddingClass, testParams );
 
-      // The difference tensor count will be the generated tensor count (i.e. outputTensorCount) minus destroyed input
-      // tensor count (i.e. inputTensorDestroyCount).
+      // The difference tensor count will be the generated tensor count (i.e.
+      // outputTensorCount) minus destroyed input tensor count (i.e.
+      // inputTensorDestroyCount).
       let embedding_outputTensorCount = 1;
-      tensorNumDifference_apply_before_after = embedding_outputTensorCount - inputTensorDestroyCount;
+      tensorNumDifference_apply_before_after
+        = embedding_outputTensorCount - inputTensorDestroyCount;
 
-      let memoryInfo_apply_before = tf.memory(); // Test memory leakage of Embedding.apply.
+      // Test memory leakage of Embedding.apply.
+      let memoryInfo_apply_before = tf.memory();
       outputTensor3d = embedding.apply( inputTensor3d );
       let memoryInfo_apply_after = tf.memory();
 
-      if ( memoryInfo_apply_after.numTensors != ( memoryInfo_apply_before.numTensors + tensorNumDifference_apply_before_after ) )
+      if ( memoryInfo_apply_after.numTensors
+             != ( memoryInfo_apply_before.numTensors
+                    + tensorNumDifference_apply_before_after ) )
         throw Error( `Embedding.apply() memory leak. `
-          + `result tensor count (${memoryInfo_apply_after.numTensors}) `
-          + `should be (${ ( memoryInfo_apply_before.numTensors + tensorNumDifference_apply_before_after ) } `
-          + `${embedding}` );
+          + `result tensor count ( ${memoryInfo_apply_after.numTensors} ) `
+          + `should be ( `
+          + `${ ( memoryInfo_apply_before.numTensors
+                    + tensorNumDifference_apply_before_after ) } `
+          + ` ). ${embedding}` );
 
       if ( !inputTensor3d )
-        throw Error( `Embedding inputTensor3d should not be null. ${embedding}` ); // But may be disposed.
+        throw Error( `Embedding inputTensor3d should not be null. `
+          + `${embedding}` ); // But may be disposed.
 
       if ( !outputTensor3d )
-        throw Error( `Embedding outputTensor3d should not be null. ${embedding}` );
+        throw Error( `Embedding outputTensor3d should not be null. `
+          + `${embedding}` );
 
       { // Test output channel count.
-        const CHANNEL_AXIS_ID = 2; // Axis id 2 is depth (i.e. channel) dimension.
+
+        // Axis id 2 is depth (i.e. channel) dimension.
+        const CHANNEL_AXIS_ID = 2;
+
         let outputTensorChannelCount = 0;
 
-        if ( outputTensor3d && ( outputTensor3d.shape.length > CHANNEL_AXIS_ID ) )
-          outputTensorChannelCount = outputTensor3d.shape[ CHANNEL_AXIS_ID ];
+        if (   ( outputTensor3d )
+            && ( outputTensor3d.shape.length > CHANNEL_AXIS_ID ) )
+          outputTensorChannelCount
+            = outputTensor3d.shape[ CHANNEL_AXIS_ID ];
 
-        // The real channel count of the output tensor should be the same as predicted output channel count.
-        Embedding_Reference_Base.AssertTwoEqualValues( "outputChannelCount", embedding.output_channelCount, outputTensorChannelCount, embedding );
+        // The real channel count of the output tensor should be the same as
+        // predicted output channel count.
+        Embedding_Reference_Base.AssertTwoEqualValues( "outputChannelCount",
+          embedding.output_channelCount, outputTensorChannelCount, embedding );
       }
 
       // Test correctness of Embedding BoundsArraySet.
-      this.assert_imageOut_BoundsArraySet( embedding, this.testCorrectness_imageOutReference, embedding );
+      this.assert_imageOut_BoundsArraySet( embedding,
+        this.testCorrectness_imageOutReference, embedding );
 
       // Test correctness of Embedding.apply.
-      this.assert_imageOut_Tensors_byNumberArrays( outputTensor3d, this.testCorrectness_imageOutReference, embedding );
+      this.assert_imageOut_Tensors_byNumberArrays( outputTensor3d,
+        this.testCorrectness_imageOutReference, embedding );
 
       embedding.disposeResources_and_recycleToPool();
       embedding = null;
     }
     let memoryInfo_afterDispose = tf.memory();
 
-    if ( memoryInfo_afterDispose.numTensors != ( memoryInfo_beforeCreate.numTensors + tensorNumDifference_apply_before_after ) )
+    if ( memoryInfo_afterDispose.numTensors
+           != ( memoryInfo_beforeCreate.numTensors
+                  + tensorNumDifference_apply_before_after ) )
       throw Error(  `Embedding create/dispose memory leak. `
-        + `result tensor count (${memoryInfo_afterDispose.numTensors}) `
-        + `should be (${ ( memoryInfo_beforeCreate.numTensors + tensorNumDifference_apply_before_after ) } `
-        + `${embedding}` );
+        + `result tensor count ( ${memoryInfo_afterDispose.numTensors} ) `
+        + `should be ( `
+        + `${ ( memoryInfo_beforeCreate.numTensors
+                  + tensorNumDifference_apply_before_after ) } `
+        + `). ${embedding}` );
 
     tf.dispose( outputTensor3d );
   }
@@ -217,26 +253,38 @@ class Embedding_Reference_Base extends Recyclable.Root {
   /**
    * Check the Embedding's output's BoundsArraySet.
    *
-   * @param {Embedding.Base} embedding            The embedding to be checked.
-   * @param {NumberImage.Base} imageOutReference  Refernece output Image data of the Embedding_Reference's calcResult().
+   * @param {Embedding.Base} embedding
+   *   The embedding to be checked.
+   *
+   * @param {NumberImage.Base} imageOutReference
+   *   Refernece output Image data of the Embedding_Reference's calcResult().
    */
-  assert_imageOut_BoundsArraySet( embedding, imageOutReference, parametersDescription ) {
+  assert_imageOut_BoundsArraySet(
+    embedding, imageOutReference, parametersDescription ) {
+
     BoundsArraySet_Asserter.assert_ScaleBoundsArray( this.asserter_Equal,
-      embedding.output_scaleBoundsArray, imageOutReference.boundsArraySet.output0,
+      embedding.output_scaleBoundsArray,
+      imageOutReference.boundsArraySet.output0,
       "output0", "output0_Ref", "Embedding", parametersDescription );
   }
 
   /**
    * Check the Embedding's output according to input (for correctness testing).
    *
-   * @param {tf.tensor3d} outputTensor            The output tensor of the Embedding's apply().
-   * @param {NumberImage.Base} imageOutReference  Refernece output Image data of the Embedding_Reference's calcResult().
+   * @param {tf.tensor3d} outputTensor
+   *   The output tensor of the Embedding's apply().
+   *
+   * @param {NumberImage.Base} imageOutReference
+   *   Refernece output Image data of the Embedding_Reference's calcResult().
    */
-  assert_imageOut_Tensors_byNumberArrays( outputTensor, imageOutReference, parametersDescription ) {
+  assert_imageOut_Tensors_byNumberArrays(
+    outputTensor, imageOutReference, parametersDescription ) {
+
     let outputArrayRef;
 
     if ( imageOutReference ) {
-      outputArrayRef = imageOutReference.dataArray; // Get referenced result (as number array).
+      // Get referenced result (as number array).
+      outputArrayRef = imageOutReference.dataArray;
     } else {
       outputArrayRef = null;
     }
@@ -252,9 +300,11 @@ class Embedding_Reference_Base extends Recyclable.Root {
    *   Either Embedding.AddGatherReshape or Embedding.SplitReshapeGatherConcat.
    *
    * @param {Embedding_TestParams.Base} testParams
-   *   The test parameters. It is the value of Embedding_TestParams.Base.ParamsGenerator()'s result.
+   *   The test parameters. It is the value of
+   * Embedding_TestParams.Base.ParamsGenerator()'s result.
    *
-   * @return {Embedding.Base} The created Embedding object.
+   * @return {Embedding.Base}
+   *   The created Embedding object.
    */
   static Embedding_create( EmbeddingClass, testParams ) {
 
@@ -264,19 +314,24 @@ class Embedding_Reference_Base extends Recyclable.Root {
 
     // Initialize successfully or failed.
     let extractedParams = Embedding.Params.Pool.get_or_create_by(
-      testParams.in.input_height, testParams.in.input_width, testParams.in.input_channelCount,
-      testParams.in.channelMultiplier, testParams.in.vocabularyCountPerInputChannel,
+      testParams.in.input_height,
+      testParams.in.input_width,
+      testParams.in.input_channelCount,
+      testParams.in.channelMultiplier,
+      testParams.in.vocabularyCountPerInputChannel,
       testParams.in.bEmbedVocabularyId,
       testParams.in.bKeepInputTensor
     );
 
     let bInitOk = embedding.init( progress,
-      testParams.in_weights.weightArray, testParams.in_weights.weightElementOffsetBegin,
+      testParams.in_weights.weightArray,
+      testParams.in_weights.weightElementOffsetBegin,
       extractedParams
     );
 
     if ( embedding.bInitOk != bInitOk )
-      throw Error( `Embedding validation state (${embedding.bInitOk}) mismatches initer's result (${bInitOk}). ${embedding}` );
+      throw Error( `Embedding validation state ( ${embedding.bInitOk} ) `
+        + `mismatches initer's result ( ${bInitOk} ). ${embedding}` );
 
     if ( !bInitOk ) { //!!! For Debug.
       console.log( "testParams =", testParams );
@@ -287,17 +342,20 @@ class Embedding_Reference_Base extends Recyclable.Root {
       throw Error( `Failed to initialize embedding object. ${embedding}` );
 
     if ( 100 != progress.valuePercentage )
-      throw Error(
-        `Progress (${progress.valuePercentage}) should be 100 when initializing block object successfully. ${embedding}`);
+      throw Error( `Progress (${progress.valuePercentage}) should be 100 `
+        + `when initializing block object successfully. ${embedding}`);
 
     progress.disposeResources_and_recycleToPool();
     progress = null;
 
-    // if ( embedding.weightElementOffsetEnd != testParams.in_weights.weightArray.length ) { //!!! For Debug. (parsing ending position)
+    //!!! For Debug. (parsing ending position)
+    // if ( embedding.weightElementOffsetEnd
+    //        != testParams.in_weights.weightArray.length ) {
     //   debugger;
     // }
 
-    let embedding_asserter = ObjectPropertyAsserter.Base.Pool.get_or_create_by( "Embedding", embedding, embedding );
+    let embedding_asserter = ObjectPropertyAsserter.Base.Pool.get_or_create_by(
+      "Embedding", embedding, embedding );
 
     Embedding_Reference_Base.AssertTwoEqualValues( "parsing beginning position",
       embedding.weightElementOffsetBegin, testParams.in_weights.weightElementOffsetBegin, embedding );
