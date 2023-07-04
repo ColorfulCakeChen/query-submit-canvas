@@ -95,7 +95,8 @@ class AbortTestMode {
 
   /**
    * @return {boolean}
-   *   Return true, if .abort() is wanted to be called during retry waiting phase.
+   *   Return true, if .abort() is wanted to be called during retry waiting
+   * phase.
    */
   get wantAbort_DuringRetryWaiting() {
     if ( this.beforeFetching )
@@ -192,8 +193,8 @@ class TestCase {
   /**
    * 
    * @param {string} spreadsheetUrlPrefix
-   *   The spreadsheet url (for testing ProgressEvent error). If null, use default
-   * (correct) url.
+   *   The spreadsheet url (for testing ProgressEvent error). If null, use
+   * default (correct) url.
    *
    * @param {string} spreadsheetId_postfix
    *   The extra string appended to the end of spreadsheetId.
@@ -211,7 +212,8 @@ class TestCase {
    *   The mode for testing .abort().
    *
    * @param {boolean} bShouldProgress100
-   *   True means the test should result in ( progressParent.valuePercentage == 100 ).
+   *   True means the test should result in
+   * ( progressParent.valuePercentage == 100 ).
    *
    * @param {boolean} bShouldProgress100Default
    *   True means the test is expected to result in
@@ -293,7 +295,8 @@ class TestCase {
       urlComposer.fetch_asyncGenerator_create_with_asyncPromise_progress();
     } catch ( e ) {
       if ( e.message.indexOf(
-             ".fetch_asyncGenerator_create_with_asyncPromise_progress():" ) > 0 ) {
+             ".fetch_asyncGenerator_create_with_asyncPromise_progress():" )
+               > 0 ) {
         // progressToAdvance.value_advance();
         // yield progressRoot;
       } else { // Unknown error, said loudly.
@@ -451,21 +454,6 @@ class TestCase {
     if ( bRetryWaitingCurrent ) {
 
       // 1.1
-
-//!!! (2023/04/04 Remarked) should also be 0.
-//       // 1.1.1
-//       //   - Either both .value and .max are 0 (error, timeout, abort).
-//       //   - Or both .value and .max are non-zero (load, but status 404 File
-//       //       Not Found).
-//       if ( 100 !== progressLoading.valuePercentage )
-//         throw Error( `GSheets_tester.TestCase`
-//           + `.${funcNameInMessage}(): testCaseId=${this.testCaseId}, `
-//           + `When phase changes from loading to retry waiting, `
-//           + `.progressLoading.valuePercentage (`
-//           + `${progressLoading.valuePercentage} ) `
-//           + `should be 100.` );
-
-      // 1.1
       if ( 0 !== progressLoading.valuePercentage )
         throw Error( `GSheets_tester.TestCase`
           + `.${funcNameInMessage}(): testCaseId=${this.testCaseId}, `
@@ -568,13 +556,14 @@ class TestCase {
     let progressFetch = progressParent.child_add(
       ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
 
-    let params_loading_retryWaiting = new HttpRequest.Params_loading_retryWaiting(
-      this.loadingMillisecondsMax,
-      this.loadingMillisecondsInterval,
-      this.retryTimesMax,
-      this.retryWaitingSecondsExponentMax,
-      this.retryWaitingMillisecondsInterval
-    );
+    let params_loading_retryWaiting
+      = new HttpRequest.Params_loading_retryWaiting(
+          this.loadingMillisecondsMax,
+          this.loadingMillisecondsInterval,
+          this.retryTimesMax,
+          this.retryWaitingSecondsExponentMax,
+          this.retryWaitingMillisecondsInterval
+        );
 
     // For test case always is failed (even without aborting), it can test
     // .fetch_asyncPromise_create() (and reenter) before
@@ -625,7 +614,8 @@ class TestCase {
       if ( this.abortTestMode.afterHowManyNext >= 0 ) {
         if ( bRetryWaitingCurrent ) {
           if ( this.abortTestMode.duringRetryWaiting )
-            if ( nextTimes_retryWaiting === this.abortTestMode.afterHowManyNext )
+            if ( nextTimes_retryWaiting
+                   === this.abortTestMode.afterHowManyNext )
               urlComposer.abort();
         } else {
           if ( !this.abortTestMode.duringRetryWaiting )
@@ -787,10 +777,12 @@ class TestCase {
       let newRange = result1[ 0 ][ 0 ];
 
       urlComposer1.range = newRange;
-      let result11 = yield* this.urlComposer_fetcher( urlComposer1, progress11 );
+      let result11
+        = yield* this.urlComposer_fetcher( urlComposer1, progress11 );
 
       urlComposer2.range = newRange;
-      let result21 = yield* this.urlComposer_fetcher( urlComposer2, progress21 );
+      let result21
+        = yield* this.urlComposer_fetcher( urlComposer2, progress21 );
 
       if ( this.bShouldProgress100 ) { // If the request is expected to succeeded,
         if ( result11 == null )        // it should have non-null result.
@@ -857,8 +849,8 @@ class TestCase {
 class TestCaseArray extends Array {
   /**
    * @param {boolean} bShouldProgress100Default
-   *   - True means the test case is expected to be succeeded if .abort() is not
-   *       called.
+   *   - True means the test case is expected to be succeeded if .abort() is
+   *       not called.
    *   - False means the test case is expected to be failed even if .abort() is
    *       not called.
    *
@@ -890,7 +882,8 @@ class TestCaseArray extends Array {
         ++abortTestMode_number ) {
 
         testCaseId = this.length;
-        abortTestMode = AbortTestMode.create_by_number_N1_6( abortTestMode_number );
+        abortTestMode
+          = AbortTestMode.create_by_number_N1_6( abortTestMode_number );
 
         bShouldProgress100
           = abortTestMode.bShouldProgress100_by( bShouldProgress100Default );
@@ -901,8 +894,8 @@ class TestCaseArray extends Array {
           // is not necessary to test it.
           //
           // It means the .abort() has no chance to be called before the test
-          // case succeeded. So, it is just the same as testing without .abort()
-          // which has already been tested by other test case.
+          // case succeeded. So, it is just the same as testing without
+          // .abort() which has already been tested by other test case.
           if ( abortTestMode.wantAbort )
             continue; // Otherwise, the test case will be test duplicately.
 
@@ -1029,7 +1022,8 @@ async function* tester( progressParent ) {
       if ( progressTestCase.valuePercentage != 100 )
         throw Error( `GSheets_tester.tester(): `
           + `testCase={ ${testCase.toString()} }, `
-          + `progressTestCase.valuePercentage ( ${progressTestCase.valuePercentage} ) `
+          + `progressTestCase.valuePercentage `
+          + `( ${progressTestCase.valuePercentage} ) `
           + `should be 100.` );
 
     } else {
@@ -1037,13 +1031,14 @@ async function* tester( progressParent ) {
       if ( progressTestCase.valuePercentage == 100 )
         throw Error( `GSheets_tester.tester(): `
           + `testCase={ ${testCase.toString()} }, `
-          + `progressTestCase.valuePercentage ( ${progressTestCase.valuePercentage} ) `
+          + `progressTestCase.valuePercentage `
+          + `( ${progressTestCase.valuePercentage} ) `
           + `should not be 100.` );
 
       // For failed network request (e.g. abort, error, load without tatus 200,
       // timeout), force its progress to 100% (by replacing all its children
-      // progresses with a 100% progress) so that the total progress could still
-      // 100%.
+      // progresses with a 100% progress) so that the total progress could
+      // still 100%.
       //
       // Note: Another possible solution is dropping the (not 100%) progress
       //       from progressParent. However, When
