@@ -798,19 +798,32 @@ class Block_TestParams_Base extends TestParams.Base {
   }
 
   /**
-   * @param {NumberImage.Base} inputImage    The source image to be processed.
-   * @param {number} pointwise20ChannelCount The output channel count of this pointwise20 pass-through convolution.
-   * @param {string} pointwiseName           A string for debug message of the pointwise1 convolution.
-   * @param {string} parametersDesc          A string for debug message of the point-depth-point.
+   * @param {NumberImage.Base} inputImage
+   *   The source image to be processed.
    *
-   * @return {NumberImage.Base} Return a newly created object which is the result of the pointwise20 pass-through convolution and bias.
+   * @param {number} pointwise20ChannelCount
+   *   The output channel count of this pointwise20 pass-through convolution.
+   *
+   * @param {string} pointwiseName
+   *   A string for debug message of the pointwise1 convolution.
+   *
+   * @param {string} parametersDesc
+   *   A string for debug message of the point-depth-point.
+   *
+   * @return {NumberImage.Base}
+   *   Return a newly created object which is the result of the pointwise20
+   * pass-through convolution and bias.
    */
-  use_pointwise20_PassThrough( inputImage, pointwise20ChannelCount, io_imageNeedDisposeUniqueStack, pointwiseName, parametersDesc ) {
+  use_pointwise20_PassThrough( inputImage, pointwise20ChannelCount,
+    io_imageNeedDisposeUniqueStack, pointwiseName, parametersDesc ) {
 
-    // Note: Since pass-through, the squeeze-and-excitation is not necessary here.
+    // Note: Since pass-through, the squeeze-and-excitation is not necessary
+    //       here.
 
-    let result = inputImage.clone_byPointwise_PassThrough( pointwise20ChannelCount,
-      this.out.inferencedParams.pointwise20Bias, this.out.pointwise20ActivationId,
+    let result = inputImage.clone_byPointwise_PassThrough(
+      pointwise20ChannelCount,
+      this.out.inferencedParams.pointwise20Bias,
+      this.out.pointwise20ActivationId,
       this.Pointwise_PassThrough_FiltersArray_BiasesArray_Bag,
       ValueDesc.PassThroughStyle.Singleton.Ids.PASS_THROUGH_STYLE_FILTER_1_BIAS_0, // SameWhenPassThrough.
       parametersDesc, pointwiseName );
