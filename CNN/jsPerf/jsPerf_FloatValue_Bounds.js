@@ -560,12 +560,16 @@ class Cases {
         }
       }
 
-      this.aBoundsArray.set_all_byLowersUppers( this.aLowers, this.aUppers ).scaleTranslate_all_byScaleTranslateArray( aScaleTranslateArray );
+      this.aBoundsArray.set_all_byLowersUppers( this.aLowers, this.aUppers )
+        .scaleTranslate_all_byScaleTranslateArray( aScaleTranslateArray );
 
       let aScaleTranslate = new FloatValue.ScaleTranslate();
       for ( let i = 0; i < aCaseArray.length; ++i ) {
-        aScaleTranslate.set_by_scale_translate( aScaleTranslateArray.scales[ i ], aScaleTranslateArray.translates[ i ] );
-        tBounds.set_byLowersUppers( this.aLowers, this.aUppers, i ).scaleTranslate_byScaleTranslate( aScaleTranslate );
+        aScaleTranslate.set_by_scale_translate(
+          aScaleTranslateArray.scales[ i ],
+          aScaleTranslateArray.translates[ i ] );
+        tBounds.set_byLowersUppers( this.aLowers, this.aUppers, i )
+          .scaleTranslate_byScaleTranslate( aScaleTranslate );
         this.assert_BoundsArray_one_byBounds( "aBoundsArray", i, tBounds );
       }
     }
@@ -581,11 +585,15 @@ class Cases {
           randValue = RandTools.getRandomIntInclusive( -1000, +1000 );
         }
 
-        let lhsValue = this.aBoundsArray.one_clamp_or_zeroIfNaN( i, randValue );
-        let rhsValue = tBounds.set_byLowersUppers( this.aLowers, this.aUppers, i ).clamp_or_zeroIfNaN( randValue );
+        let lhsValue
+          = this.aBoundsArray.one_clamp_or_zeroIfNaN( i, randValue );
+        let rhsValue
+          = tBounds.set_byLowersUppers( this.aLowers, this.aUppers, i )
+              .clamp_or_zeroIfNaN( randValue );
 
         if ( lhsValue != rhsValue )
-          throw Error( `jsPerf_FloatValue_Bounds.Cases().one_clamp_or_zeroIfNaN(): `
+          throw Error( `jsPerf_FloatValue_Bounds.Cases()`
+            + `.one_clamp_or_zeroIfNaN(): `
             + `lhsValue ( ${lhsValue} ) should be rhsValue ( ${rhsValue} ).` );
       }
     }
@@ -623,31 +631,47 @@ class Cases {
     }
   }
 
-  assert_BoundsArray_all_byArrayArray( strBoundsArrayTestName, rhsArrayArray ) {
+  assert_BoundsArray_all_byArrayArray(
+    strBoundsArrayTestName, rhsArrayArray ) {
     let count = this[ strBoundsArrayTestName ].lowers.length;
     for ( let lhsArrayIndex = 0; lhsArrayIndex < count; ++lhsArrayIndex ) {
-      this.assert_BoundsArray_one_byArray( strBoundsArrayTestName, lhsArrayIndex, rhsArrayArray[ lhsArrayIndex ] );
+      this.assert_BoundsArray_one_byArray( strBoundsArrayTestName,
+        lhsArrayIndex, rhsArrayArray[ lhsArrayIndex ] );
     }
   }
 
-  assert_BoundsArray_one_byBounds( strBoundsArrayTestName, lhsArrayIndex, rhsBounds ) {
-    this.assert_BoundsArray_one_byLowerUpper( strBoundsArrayTestName, lhsArrayIndex, rhsBounds.lower, rhsBounds.upper );
+  assert_BoundsArray_one_byBounds(
+    strBoundsArrayTestName, lhsArrayIndex, rhsBounds ) {
+    this.assert_BoundsArray_one_byLowerUpper( strBoundsArrayTestName,
+      lhsArrayIndex, rhsBounds.lower, rhsBounds.upper );
   }
 
-  assert_BoundsArray_one_byArray( strBoundsArrayTestName, lhsArrayIndex, rhsArray ) {
-    this.assert_BoundsArray_one_byLowerUpper( strBoundsArrayTestName, lhsArrayIndex, rhsArray[ 0 ], rhsArray[ 1 ] );
+  assert_BoundsArray_one_byArray(
+    strBoundsArrayTestName, lhsArrayIndex, rhsArray ) {
+    this.assert_BoundsArray_one_byLowerUpper( strBoundsArrayTestName,
+      lhsArrayIndex, rhsArray[ 0 ], rhsArray[ 1 ] );
   }
 
-  assert_BoundsArray_one_byLowerUpper( strBoundsArrayTestName, lhsArrayIndex, rhsLower, rhsUpper ) {
-    this.assert_lowers_or_uppers( strBoundsArrayTestName, "lowers", lhsArrayIndex, rhsLower );
-    this.assert_lowers_or_uppers( strBoundsArrayTestName, "uppers", lhsArrayIndex, rhsUpper );
+  assert_BoundsArray_one_byLowerUpper(
+    strBoundsArrayTestName, lhsArrayIndex, rhsLower, rhsUpper ) {
+    this.assert_lowers_or_uppers( strBoundsArrayTestName,
+      "lowers", lhsArrayIndex, rhsLower );
+    this.assert_lowers_or_uppers( strBoundsArrayTestName,
+      "uppers", lhsArrayIndex, rhsUpper );
   }
 
-  assert_lowers_or_uppers( strBoundsArrayTestName, lowers_or_uppers_name, lhsArrayIndex, rhsArrayValue ) {
-    let thisValue = this[ strBoundsArrayTestName ][ lowers_or_uppers_name ][ lhsArrayIndex ];
+  assert_lowers_or_uppers(
+    strBoundsArrayTestName,
+    lowers_or_uppers_name, lhsArrayIndex, rhsArrayValue ) {
+
+    let thisValue = this[ strBoundsArrayTestName ]
+      [ lowers_or_uppers_name ][ lhsArrayIndex ];
+
     if ( thisValue != rhsArrayValue )
       throw Error( `jsPerf_FloatValue_Bounds.testCorrectness(): `
-        + `Cases( casesId = ${this.casesId} ).${strBoundsArrayTestName}.${lowers_or_uppers_name}[ ${lhsArrayIndex} ] `
+        + `Cases( casesId = ${this.casesId} )`
+        + `.${strBoundsArrayTestName}.${lowers_or_uppers_name}`
+        + `[ ${lhsArrayIndex} ] `
         + `( ${thisValue} ) should be ( ${rhsArrayValue} ).` );
   }
 
