@@ -4,7 +4,7 @@ import * as Base64 from "../Unpacker/Base64.js";
 import * as RandTools from "../util/RandTools.js";
 import * as ValueMax from "../util/ValueMax.js";
 
-// This string will not fit to ASCII when base64 decoded. So can not be used to test. 
+// This string will not fit to ASCII when base64 decoded. So can not be used to test.
 //const base64EncodedString = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 
 // Use all printable ASCII codes form a string of 3-divisible length.
@@ -17,7 +17,8 @@ let originalArray = [];
   const PRINTABLE_ASCII_MAX = 126;
 
   for (let i = 0; i < ORIGINAL_TEST_STRING_LENGTH; ++i) {
-    let c = RandTools.getRandomIntInclusive( PRINTABLE_ASCII_MIN, PRINTABLE_ASCII_MAX );
+    let c = RandTools.getRandomIntInclusive(
+      PRINTABLE_ASCII_MIN, PRINTABLE_ASCII_MAX );
     originalArray.push( String.fromCodePoint( c ) );
   }
 }
@@ -46,7 +47,8 @@ const base64EncodedStrings_extra = [
   base64EncodedString.slice(0, 3) + "\r\n" + base64EncodedString.slice(3),
   base64EncodedString.slice(0, 3) + "\n\r" + base64EncodedString.slice(3),
 
-  // Test skip 3 lines. Test multiple non-base64 codes. (They should be ignored.)
+  // Test skip 3 lines. Test multiple non-base64 codes. (They should be
+  // ignored.)
   "qwerty5ASDFG7\n\n\r"
     + base64EncodedString.slice(0, 2) + "\n\n\r\r\r\n\r\n"
     + base64EncodedString.slice(2, 7) + "\n\n\r\r\r\n\r\n"
@@ -128,7 +130,8 @@ function* tester( progressParent ) {
 
   // 0. Prepare progressParent for every TestCase.
   for ( let i = 0; i < testCases.length; ++i ) {
-    progressParent.child_add( ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
+    progressParent.child_add(
+      ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
   }
 
   // 1. Run every TestCase.
@@ -160,4 +163,3 @@ function* tester( progressParent ) {
 
   console.log( "Base64 decode testing... Done." );
 }
-
