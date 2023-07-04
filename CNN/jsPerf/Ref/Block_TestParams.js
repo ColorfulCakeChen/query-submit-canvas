@@ -1445,11 +1445,18 @@ class Block_TestParams_Base extends TestParams.Base {
         } else {
           let pointwise1_outputChannelCount_lowerHalf = pointwise1ChannelCount_original;
 
-          // Because input0's channel count has been doubled (in the above), the higher half is just the same as the original input0's channel count.
-          let pointwise1_inputChannelCount_higherHalf = input0_channelCount_original;
+          // Because input0's channel count has been doubled (in the above),
+          // the higher half is just the same as the original input0's channel
+          // count.
+          let pointwise1_inputChannelCount_higherHalf
+            = input0_channelCount_original;
 
-          let pointwise1ChannelCount_enlarged = pointwise1_outputChannelCount_lowerHalf + pointwise1_inputChannelCount_higherHalf;
-          this.modifyParamValue( Block.Params.pointwise1ChannelCount, pointwise1ChannelCount_enlarged );
+          let pointwise1ChannelCount_enlarged
+            = pointwise1_outputChannelCount_lowerHalf
+                + pointwise1_inputChannelCount_higherHalf;
+
+          this.modifyParamValue( Block.Params.pointwise1ChannelCount,
+            pointwise1ChannelCount_enlarged );
         }
 
         this.doubleParamValue( Block.Params.pointwise20ChannelCount );
@@ -1462,10 +1469,12 @@ class Block_TestParams_Base extends TestParams.Base {
         {
           if ( ( pointwise20ChannelCount_original % 2 ) != 0 )
           throw Error( `Block_TestParams.Base.generate_Filters_Biases(): `
-            + `pointwise20ChannelCount_original ( ${pointwise20ChannelCount_original} ) `
+            + `pointwise20ChannelCount_original `
+            + `( ${pointwise20ChannelCount_original} ) `
             + `should be divisible by 2.`
           );
-          pointwise20ChannelCount_for_generating = pointwise20ChannelCount_original / 2;
+          pointwise20ChannelCount_for_generating
+            = pointwise20ChannelCount_original / 2;
         }
 
       } else if ( this.nConvBlockTypeId__is__SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY_or_TAIL() ) { // (6 or 7)
@@ -1473,10 +1482,12 @@ class Block_TestParams_Base extends TestParams.Base {
         {
           if ( ( input0_channelCount_original % 2 ) != 0 )
           throw Error( `Block_TestParams.Base.generate_Filters_Biases(): `
-            + `input0_channelCount_original ( ${input0_channelCount_original} ) `
+            + `input0_channelCount_original `
+            + `( ${input0_channelCount_original} ) `
             + `should be divisible by 2.`
           );
-          input0_channelCount_for_generating = input0_channelCount_original / 2;
+          input0_channelCount_for_generating
+            = input0_channelCount_original / 2;
         }
 
         if ( pointwise1ChannelCount_original == 0 ) {
@@ -1487,38 +1498,55 @@ class Block_TestParams_Base extends TestParams.Base {
           {
             if ( ( pointwise1ChannelCount_original % 2 ) != 0 )
             throw Error( `Block_TestParams.Base.generate_Filters_Biases(): `
-              + `pointwise1ChannelCount_original ( ${pointwise1ChannelCount_original} ) `
+              + `pointwise1ChannelCount_original `
+              + `( ${pointwise1ChannelCount_original} ) `
               + `should be divisible by 2.`
             );
-            pointwise1ChannelCount_for_generating = pointwise1ChannelCount_original / 2;
+            pointwise1ChannelCount_for_generating
+              = pointwise1ChannelCount_original / 2;
           }
 
-          let pointwise1_outputChannelCount_lowerHalf = pointwise1ChannelCount_for_generating; // already halved.
-          let pointwise1_inputChannelCount_higherHalf = input0_channelCount_for_generating; // already halved.
+          let pointwise1_outputChannelCount_lowerHalf
+            = pointwise1ChannelCount_for_generating; // already halved.
 
-          let pointwise1ChannelCount_enlarged = pointwise1_outputChannelCount_lowerHalf + pointwise1_inputChannelCount_higherHalf;
-          if ( pointwise1ChannelCount_enlarged != input0_channelCount_original )
+          let pointwise1_inputChannelCount_higherHalf
+            = input0_channelCount_for_generating; // already halved.
+
+          let pointwise1ChannelCount_enlarged
+            = pointwise1_outputChannelCount_lowerHalf
+                + pointwise1_inputChannelCount_higherHalf;
+
+          if ( pointwise1ChannelCount_enlarged
+                 != input0_channelCount_original )
             throw Error( `Block_TestParams.Base.generate_Filters_Biases(): `
-              + `pointwise1ChannelCount_enlarged ( ${pointwise1ChannelCount_enlarged} ) `
-              + `should be the same as input0_channelCount_original ( ${input0_channelCount_original} ).`
+              + `pointwise1ChannelCount_enlarged `
+              + `( ${pointwise1ChannelCount_enlarged} ) `
+              + `should be the same as input0_channelCount_original `
+              + `( ${input0_channelCount_original} ).`
             );
         }
 
         {
           if ( ( pointwise20ChannelCount_original % 2 ) != 0 )
           throw Error( `Block_TestParams.Base.generate_Filters_Biases(): `
-            + `pointwise20ChannelCount_original ( ${pointwise20ChannelCount_original} ) `
+            + `pointwise20ChannelCount_original `
+            + `( ${pointwise20ChannelCount_original} ) `
             + `should be divisible by 2.`
           );
-          pointwise20ChannelCount_for_generating = pointwise20ChannelCount_original / 2;
+          pointwise20ChannelCount_for_generating
+            = pointwise20ChannelCount_original / 2;
         }
       }
     }
 
     // 1. Pointwise1
-    let pointwise1_resultOutputChannelCount = this.generate_pointwise_filters_biases( input0_channelCount_for_generating,
-      pointwise1ChannelCount_for_generating, paramsAll.inferencedParams.pointwise1Bias,
-      Block_TestParams_Base.PropertyNames.pointwise1, io_paramsNumberArrayObject );
+    let pointwise1_resultOutputChannelCount
+      = this.generate_pointwise_filters_biases(
+          input0_channelCount_for_generating,
+          pointwise1ChannelCount_for_generating,
+          paramsAll.inferencedParams.pointwise1Bias,
+          Block_TestParams_Base.PropertyNames.pointwise1,
+          io_paramsNumberArrayObject );
 
     // 2. Depthwise
     let depthwise1_resultOutputChannelCount;
@@ -1530,13 +1558,22 @@ class Block_TestParams_Base extends TestParams.Base {
 
       // Only if depthwise operation is requested and necessary, create them.
       if ( paramsAll.inferencedParams.bDepthwiseRequestedAndNeeded ) {
-        depthwise1_resultOutputChannelCount = this.generate_depthwise_filters_biases( depthwise1_inputChannelCount,
-          paramsAll.depthwise_AvgMax_Or_ChannelMultiplier, paramsAll.depthwiseFilterHeight_real, paramsAll.depthwiseFilterWidth_real,
-          paramsAll.depthwiseStridesPad, paramsAll.inferencedParams.depthwiseBias,
-          Block_TestParams_Base.PropertyNames.depthwise1, io_paramsNumberArrayObject );
+        depthwise1_resultOutputChannelCount
+          = this.generate_depthwise_filters_biases(
+              depthwise1_inputChannelCount,
+              paramsAll.depthwise_AvgMax_Or_ChannelMultiplier,
+              paramsAll.depthwiseFilterHeight_real,
+              paramsAll.depthwiseFilterWidth_real,
+              paramsAll.depthwiseStridesPad,
+              paramsAll.inferencedParams.depthwiseBias,
+              Block_TestParams_Base.PropertyNames.depthwise1,
+              io_paramsNumberArrayObject );
       } else {
         depthwise1_resultOutputChannelCount = depthwise1_inputChannelCount;
-        this.generate_depthwise_filters_biases( null, 0, null, null, null, null, Block_TestParams_Base.PropertyNames.depthwise1, io_paramsNumberArrayObject );
+        this.generate_depthwise_filters_biases(
+          null, 0, null, null, null, null,
+          Block_TestParams_Base.PropertyNames.depthwise1,
+          io_paramsNumberArrayObject );
       }
     }
 
@@ -1548,31 +1585,47 @@ class Block_TestParams_Base extends TestParams.Base {
           || ( this.nConvBlockTypeId__is__SHUFFLE_NET_V2_BY_POINTWISE21_HEAD() ) // (9)
          ) {
 
-        let depthwise2_inputChannelCount = paramsAll.input0_channelCount; // Use input0.
+        let depthwise2_inputChannelCount
+          = paramsAll.input0_channelCount; // Use input0.
 
         // Only if depthwise operation is requested and necessary, create them.
         if ( paramsAll.inferencedParams.bDepthwiseRequestedAndNeeded ) {
-          depthwise2_resultOutputChannelCount = this.generate_depthwise_filters_biases( depthwise2_inputChannelCount,
-            paramsAll.depthwise_AvgMax_Or_ChannelMultiplier, paramsAll.depthwiseFilterHeight_real, paramsAll.depthwiseFilterWidth_real,
-            paramsAll.depthwiseStridesPad, paramsAll.inferencedParams.depthwiseBias,
-            Block_TestParams_Base.PropertyNames.depthwise2, io_paramsNumberArrayObject );
+          depthwise2_resultOutputChannelCount
+            = this.generate_depthwise_filters_biases(
+                depthwise2_inputChannelCount,
+                paramsAll.depthwise_AvgMax_Or_ChannelMultiplier,
+                paramsAll.depthwiseFilterHeight_real,
+                paramsAll.depthwiseFilterWidth_real,
+                paramsAll.depthwiseStridesPad,
+                paramsAll.inferencedParams.depthwiseBias,
+                Block_TestParams_Base.PropertyNames.depthwise2,
+                io_paramsNumberArrayObject );
         } else {
           depthwise2_resultOutputChannelCount = depthwise2_inputChannelCount;
-          this.generate_depthwise_filters_biases( null, 0, null, null, null, null,
-            Block_TestParams_Base.PropertyNames.depthwise2, io_paramsNumberArrayObject );
+          this.generate_depthwise_filters_biases(
+            null, 0, null, null, null, null,
+            Block_TestParams_Base.PropertyNames.depthwise2,
+            io_paramsNumberArrayObject );
         }
 
       // no depthwise2.
       } else {
-        this.generate_depthwise_filters_biases( null, 0, null, null, null, null, Block_TestParams_Base.PropertyNames.depthwise2, io_paramsNumberArrayObject );
+        this.generate_depthwise_filters_biases(
+          null, 0, null, null, null, null,
+          Block_TestParams_Base.PropertyNames.depthwise2,
+          io_paramsNumberArrayObject );
       }
     }
 
     // 3. Concat
 
     // 3.1 Pointwise2 input/output channel count preparation.
-    let pointwise20_inputChannelCount = 0, pointwise202_inputChannelCount = 0, pointwise21_inputChannelCount = 0;
-    let pointwise20_outputChannelCount = 0, pointwise202_outputChannelCount = 0, pointwise21_outputChannelCount = 0;
+    let pointwise20_inputChannelCount = 0,
+        pointwise202_inputChannelCount = 0,
+        pointwise21_inputChannelCount = 0;
+    let pointwise20_outputChannelCount = 0,
+        pointwise202_outputChannelCount = 0,
+        pointwise21_outputChannelCount = 0;
     {
       switch ( paramsAll.nConvBlockTypeId ) {
         case ValueDesc.ConvBlockType.Singleton.Ids.MOBILE_NET_V1_HEAD_BODY_TAIL: // ( 0)
@@ -1611,21 +1664,27 @@ class Block_TestParams_Base extends TestParams.Base {
           break;
 
         case ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21_HEAD: // ( 9)
-          pointwise20_inputChannelCount = depthwise1_resultOutputChannelCount + depthwise2_resultOutputChannelCount;
+          pointwise20_inputChannelCount
+            = depthwise1_resultOutputChannelCount
+               + depthwise2_resultOutputChannelCount;
           pointwise21_inputChannelCount = pointwise20_inputChannelCount;
           pointwise20_outputChannelCount = pointwise20ChannelCount_for_generating;
           pointwise21_outputChannelCount = pointwise20ChannelCount_for_generating;
           break;
 
         case ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21_BODY: // (10)
-          pointwise20_inputChannelCount = depthwise1_resultOutputChannelCount + inferencedParams.input1_channelCount;
+          pointwise20_inputChannelCount
+            = depthwise1_resultOutputChannelCount
+                + inferencedParams.input1_channelCount;
           pointwise21_inputChannelCount = pointwise20_inputChannelCount;
           pointwise20_outputChannelCount = pointwise20ChannelCount_for_generating;
           pointwise21_outputChannelCount = pointwise20ChannelCount_for_generating;
           break;
 
         case ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21_TAIL: // (11)
-          pointwise20_inputChannelCount = depthwise1_resultOutputChannelCount + inferencedParams.input1_channelCount;
+          pointwise20_inputChannelCount
+            = depthwise1_resultOutputChannelCount
+                + inferencedParams.input1_channelCount;
           pointwise20_outputChannelCount = pointwise20ChannelCount_for_generating;
           break;
 
@@ -1634,15 +1693,17 @@ class Block_TestParams_Base extends TestParams.Base {
             throw Error( `Block_Reference.Base.calcResult(): `
               + `Block.TestParams.Base.generate_Filters_Biases(): Unknown `
               + `nConvBlockTypeId=`
-              + `${ValueDesc.ConvBlockType.Singleton.getNameWithInt_byId( paramsAll.nConvBlockTypeId )}. `
-              + `` );
+              + `${ValueDesc.ConvBlockType.Singleton.getNameWithInt_byId(
+                     paramsAll.nConvBlockTypeId )}. `
+            );
           break;
       }
     }
 
     // 3.2 Pointwise21's Preparation.
     //
-    // pointwise21's bias flag and activation function should always be the same as pointwise20's.
+    // pointwise21's bias flag and activation function should always be the
+    // same as pointwise20's.
     let pointwise21Bias, nPointwise21ActivationId;
     {
       pointwise21Bias = paramsAll.inferencedParams.pointwise20Bias;
@@ -1650,61 +1711,92 @@ class Block_TestParams_Base extends TestParams.Base {
     }
 
     // 4. Pointwise2's prefix squeeze-and-excitation
-    if (   ( paramsAll.nSqueezeExcitationChannelCountDivisor != ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.NONE ) // (-2)
+    if (   ( paramsAll.nSqueezeExcitationChannelCountDivisor
+               != ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.NONE ) // (-2)
         && ( paramsAll.bSqueezeExcitationPrefix )
        ) {
 
       // 4.1 Pointwise20's, Pointwise202's, Pointwise21's prefix squeeze-and-excitation.
       this.generate_squeezeExcitation_filters_biases(
-        paramsAll.nSqueezeExcitationChannelCountDivisor, paramsAll.nActivationId,
-        pointwise20_inputChannelCount, pointwise202_inputChannelCount, pointwise21_inputChannelCount,
-        Block_TestParams_Base.PropertyNames.pointwise2PrefixSE, io_paramsNumberArrayObject );
+        paramsAll.nSqueezeExcitationChannelCountDivisor,
+        paramsAll.nActivationId,
+        pointwise20_inputChannelCount,
+        pointwise202_inputChannelCount,
+        pointwise21_inputChannelCount,
+        Block_TestParams_Base.PropertyNames.pointwise2PrefixSE,
+        io_paramsNumberArrayObject );
 
     } else { // 4.2 Clear all prefix squeeze-and-excitation.
       this.generate_squeezeExcitation_filters_biases(
-        paramsAll.nSqueezeExcitationChannelCountDivisor, paramsAll.nActivationId,
+        paramsAll.nSqueezeExcitationChannelCountDivisor,
+        paramsAll.nActivationId,
         0, 0, 0,
-        Block_TestParams_Base.PropertyNames.pointwise2PrefixSE, io_paramsNumberArrayObject );
+        Block_TestParams_Base.PropertyNames.pointwise2PrefixSE,
+        io_paramsNumberArrayObject );
     }
 
     // 5. Pointwise2
 
     // 5.1 Pointwise20
     //
-    // Note: Even if ( Xxx_outputChannelCount == 0 ), the .generate_pointwise_filters_biases() still needs to be called
-    //       to clear old them (because TestParams.Block_TestParams_Base.permuteParamRecursively() may not know them and may not clear them.
+    // Note: Even if ( Xxx_outputChannelCount == 0 ), the
+    //       .generate_pointwise_filters_biases() still needs to be called to
+    //       clear old them (because
+    //       TestParams.Block_TestParams_Base.permuteParamRecursively() may not
+    //       know them and may not clear them.
     {
-      let pointwise20_resultOutputChannelCount = this.generate_pointwise_filters_biases( pointwise20_inputChannelCount,
-        pointwise20_outputChannelCount, paramsAll.inferencedParams.pointwise20Bias,
-        Block_TestParams_Base.PropertyNames.pointwise20, io_paramsNumberArrayObject );
+      let pointwise20_resultOutputChannelCount
+        = this.generate_pointwise_filters_biases(
+            pointwise20_inputChannelCount,
+            pointwise20_outputChannelCount,
+            paramsAll.inferencedParams.pointwise20Bias,
+            Block_TestParams_Base.PropertyNames.pointwise20,
+            io_paramsNumberArrayObject );
 
-      let pointwise202_resultOutputChannelCount = this.generate_pointwise_filters_biases( pointwise202_inputChannelCount,
-        pointwise202_outputChannelCount, paramsAll.inferencedParams.pointwise20Bias,
-        Block_TestParams_Base.PropertyNames.pointwise202, io_paramsNumberArrayObject );
+      let pointwise202_resultOutputChannelCount
+        = this.generate_pointwise_filters_biases(
+            pointwise202_inputChannelCount,
+            pointwise202_outputChannelCount,
+            paramsAll.inferencedParams.pointwise20Bias,
+            Block_TestParams_Base.PropertyNames.pointwise202,
+            io_paramsNumberArrayObject );
     }
 
     // 5.2 Pointwise21
     {
-      let pointwise21_resultOutputChannelCount = this.generate_pointwise_filters_biases( pointwise21_inputChannelCount,
-        pointwise21_outputChannelCount, pointwise21Bias, Block_TestParams_Base.PropertyNames.pointwise21, io_paramsNumberArrayObject );
+      let pointwise21_resultOutputChannelCount
+        = this.generate_pointwise_filters_biases(
+            pointwise21_inputChannelCount,
+            pointwise21_outputChannelCount,
+            pointwise21Bias,
+            Block_TestParams_Base.PropertyNames.pointwise21,
+            io_paramsNumberArrayObject );
     }
 
     // 6. Pointwise2's postfix squeeze-and-excitation
-    if (   ( paramsAll.nSqueezeExcitationChannelCountDivisor != ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.NONE ) // (-2)
+    if (   ( paramsAll.nSqueezeExcitationChannelCountDivisor
+               != ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.NONE ) // (-2)
         && ( !paramsAll.bSqueezeExcitationPrefix )
        ) {
 
-      // 6.1 Pointwise20's, Pointwise202's, Pointwise21's postfix squeeze-and-excitation.
+      // 6.1 Pointwise20's, Pointwise202's, Pointwise21's postfix
+      //     squeeze-and-excitation.
       this.generate_squeezeExcitation_filters_biases(
-        paramsAll.nSqueezeExcitationChannelCountDivisor, paramsAll.nActivationId,
-        pointwise20_outputChannelCount, pointwise202_outputChannelCount, pointwise21_outputChannelCount,
-        Block_TestParams_Base.PropertyNames.pointwise2PostfixSE, io_paramsNumberArrayObject );
+        paramsAll.nSqueezeExcitationChannelCountDivisor,
+        paramsAll.nActivationId,
+        pointwise20_outputChannelCount,
+        pointwise202_outputChannelCount,
+        pointwise21_outputChannelCount,
+        Block_TestParams_Base.PropertyNames.pointwise2PostfixSE,
+        io_paramsNumberArrayObject );
 
     } else { // 6.2 Clear all postfix squeeze-and-excitation.
       this.generate_squeezeExcitation_filters_biases(
-        paramsAll.nSqueezeExcitationChannelCountDivisor, paramsAll.nActivationId,
+        paramsAll.nSqueezeExcitationChannelCountDivisor,
+        paramsAll.nActivationId,
         0, 0, 0,
-        Block_TestParams_Base.PropertyNames.pointwise2PostfixSE, io_paramsNumberArrayObject );
+        Block_TestParams_Base.PropertyNames.pointwise2PostfixSE,
+        io_paramsNumberArrayObject );
     }
   }
 
