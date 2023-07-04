@@ -510,33 +510,58 @@ class Block_TestParams_Base extends TestParams.Base {
   }
 
   /**
-   * @param {NumberImage.Base} inputImage   The source image to be processed.
-   * @param {number} pointwise1ChannelCount The output channel count of the pointwise1 convolution.
-   * @param {string} pointwiseName          A string for debug message of the pointwise1 convolution.
-   * @param {string} parametersDesc         A string for debug message of the point-depth-point.
+   * @param {NumberImage.Base} inputImage
+   *   The source image to be processed.
    *
-   * @return {NumberImage.Base} Return a newly created object which is the result of the pointwise1 convolution, bias and activation.
+   * @param {number} pointwise1ChannelCount
+   *   The output channel count of the pointwise1 convolution.
+   *
+   * @param {string} pointwiseName
+   *   A string for debug message of the pointwise1 convolution.
+   *
+   * @param {string} parametersDesc
+   *   A string for debug message of the point-depth-point.
+   *
+   * @return {NumberImage.Base}
+   *   Return a newly created object which is the result of the pointwise1
+   * convolution, bias and activation.
    */
-  use_pointwise1( inputImage, pointwise1ChannelCount, io_imageNeedDisposeUniqueStack, pointwiseName, parametersDesc ) {
-    let result = inputImage.clone_byPointwise_NonPassThrough( pointwise1ChannelCount,
-      this.in.paramsNumberArrayObject.pointwise1Filters, this.out.inferencedParams.pointwise1Bias,
-      this.in.paramsNumberArrayObject.pointwise1Biases, this.out.inferencedParams.pointwise1ActivationId,
+  use_pointwise1( inputImage, pointwise1ChannelCount,
+    io_imageNeedDisposeUniqueStack, pointwiseName, parametersDesc ) {
+    let result = inputImage.clone_byPointwise_NonPassThrough(
+      pointwise1ChannelCount,
+      this.in.paramsNumberArrayObject.pointwise1Filters,
+      this.out.inferencedParams.pointwise1Bias,
+      this.in.paramsNumberArrayObject.pointwise1Biases,
+      this.out.inferencedParams.pointwise1ActivationId,
       parametersDesc, pointwiseName );
     io_imageNeedDisposeUniqueStack.push( inputImage );
     return result;
   }
 
   /**
-   * @param {NumberImage.Base} inputImage   The source image to be processed.
-   * @param {number} pointwise1ChannelCount The output channel count of this pointwise1 pass-through convolution.
-   * @param {string} pointwiseName          A string for debug message of the pointwise1 convolution.
-   * @param {string} parametersDesc         A string for debug message of the point-depth-point.
+   * @param {NumberImage.Base} inputImage
+   *   The source image to be processed.
    *
-   * @return {NumberImage.Base} Return a newly created object which is the result of the pointwise1 convolution, bias and activation.
+   * @param {number} pointwise1ChannelCount
+   *   The output channel count of this pointwise1 pass-through convolution.
+   *
+   * @param {string} pointwiseName
+   *   A string for debug message of the pointwise1 convolution.
+   *
+   * @param {string} parametersDesc
+   *   A string for debug message of the point-depth-point.
+   *
+   * @return {NumberImage.Base}
+   *   Return a newly created object which is the result of the pointwise1
+   * convolution, bias and activation.
    */
-  use_pointwise1_PassThrough( inputImage, pointwise1ChannelCount, io_imageNeedDisposeUniqueStack, pointwiseName, parametersDesc ) {
-    let result = inputImage.clone_byPointwise_PassThrough( pointwise1ChannelCount,
-      this.out.inferencedParams.pointwise1Bias, this.out.inferencedParams.pointwise1ActivationId,
+  use_pointwise1_PassThrough( inputImage, pointwise1ChannelCount,
+    io_imageNeedDisposeUniqueStack, pointwiseName, parametersDesc ) {
+    let result = inputImage.clone_byPointwise_PassThrough(
+      pointwise1ChannelCount,
+      this.out.inferencedParams.pointwise1Bias,
+      this.out.inferencedParams.pointwise1ActivationId,
       this.Pointwise_PassThrough_FiltersArray_BiasesArray_Bag,
       ValueDesc.PassThroughStyle.Singleton.Ids.PASS_THROUGH_STYLE_FILTER_1_BIAS_0, // SameWhenPassThrough.
       parametersDesc, pointwiseName );
@@ -545,33 +570,58 @@ class Block_TestParams_Base extends TestParams.Base {
   }
 
   /**
-   * @param {NumberImage.Base} inputImage   The source image to be processed.
-   * @param {string} depthwiseName          A string for debug message of the depthwise1 convolution.
-   * @param {string} parametersDesc         A string for debug message of the point-depth-point.
+   * @param {NumberImage.Base} inputImage
+   *   The source image to be processed.
    *
-   * @return {NumberImage.Base} Return a newly created object which is the result of the depthwise1 convolution, bias and activation.
+   * @param {string} depthwiseName
+   *   A string for debug message of the depthwise1 convolution.
+   *
+   * @param {string} parametersDesc
+   *   A string for debug message of the point-depth-point.
+   *
+   * @return {NumberImage.Base}
+   *   Return a newly created object which is the result of the depthwise1
+   * convolution, bias and activation.
    */
-  use_depthwise1( inputImage, io_imageNeedDisposeUniqueStack, depthwiseName, parametersDesc ) {
-    let result = inputImage.clone_byDepthwise_NonPassThrough( this.out.depthwise_AvgMax_Or_ChannelMultiplier,
-      this.out.depthwiseFilterHeight_real, this.out.depthwiseFilterWidth_real, this.out.depthwiseStridesPad,
-      this.in.paramsNumberArrayObject.depthwise1Filters, this.out.inferencedParams.depthwiseBias,
-      this.in.paramsNumberArrayObject.depthwise1Biases, this.out.depthwiseActivationId,
+  use_depthwise1( inputImage, io_imageNeedDisposeUniqueStack,
+    depthwiseName, parametersDesc ) {
+    let result = inputImage.clone_byDepthwise_NonPassThrough(
+      this.out.depthwise_AvgMax_Or_ChannelMultiplier,
+      this.out.depthwiseFilterHeight_real,
+      this.out.depthwiseFilterWidth_real,
+      this.out.depthwiseStridesPad,
+      this.in.paramsNumberArrayObject.depthwise1Filters,
+      this.out.inferencedParams.depthwiseBias,
+      this.in.paramsNumberArrayObject.depthwise1Biases,
+      this.out.depthwiseActivationId,
       parametersDesc, depthwiseName );
     io_imageNeedDisposeUniqueStack.push( inputImage );
     return result;
   }
 
   /**
-   * @param {NumberImage.Base} inputImage   The source image to be processed.
-   * @param {string} depthwiseName          A string for debug message of the depthwise1 convolution.
-   * @param {string} parametersDesc         A string for debug message of the point-depth-point.
+   * @param {NumberImage.Base} inputImage
+   *   The source image to be processed.
    *
-   * @return {NumberImage.Base} Return a newly created object which is the result of the depthwise1 convolution, bias and activation.
+   * @param {string} depthwiseName
+   *   A string for debug message of the depthwise1 convolution.
+   *
+   * @param {string} parametersDesc
+   *   A string for debug message of the point-depth-point.
+   *
+   * @return {NumberImage.Base}
+   *   Return a newly created object which is the result of the depthwise1
+   * convolution, bias and activation.
    */
-  use_depthwise1_PassThrough( inputImage, io_imageNeedDisposeUniqueStack, depthwiseName, parametersDesc ) {
-    let result = inputImage.clone_byDepthwise_PassThrough( this.out.depthwise_AvgMax_Or_ChannelMultiplier,
-      this.out.depthwiseFilterHeight_real, this.out.depthwiseFilterWidth_real, this.out.depthwiseStridesPad,
-      this.out.inferencedParams.depthwiseBias, this.out.depthwiseActivationId,
+  use_depthwise1_PassThrough( inputImage,
+    io_imageNeedDisposeUniqueStack, depthwiseName, parametersDesc ) {
+    let result = inputImage.clone_byDepthwise_PassThrough(
+      this.out.depthwise_AvgMax_Or_ChannelMultiplier,
+      this.out.depthwiseFilterHeight_real,
+      this.out.depthwiseFilterWidth_real,
+      this.out.depthwiseStridesPad,
+      this.out.inferencedParams.depthwiseBias,
+      this.out.depthwiseActivationId,
       this.Depthwise_PassThrough_FiltersArray_BiasesArray_Bag,
       ValueDesc.PassThroughStyle.Singleton.Ids.PASS_THROUGH_STYLE_FILTER_1_BIAS_0, // SameWhenPassThrough.
       parametersDesc, depthwiseName );
@@ -580,17 +630,30 @@ class Block_TestParams_Base extends TestParams.Base {
   }
 
   /**
-   * @param {NumberImage.Base} inputImage   The source image to be processed.
-   * @param {string} depthwiseName          A string for debug message of the depthwise2 convolution.
-   * @param {string} parametersDesc         A string for debug message of the point-depth-point.
+   * @param {NumberImage.Base} inputImage
+   *   The source image to be processed.
    *
-   * @return {NumberImage.Base} Return a newly created object which is the result of the depthwise2 convolution, bias and activation.
+   * @param {string} depthwiseName
+   *   A string for debug message of the depthwise2 convolution.
+   *
+   * @param {string} parametersDesc
+   *   A string for debug message of the point-depth-point.
+   *
+   * @return {NumberImage.Base}
+   *   Return a newly created object which is the result of the depthwise2
+   * convolution, bias and activation.
    */
-  use_depthwise2( inputImage, io_imageNeedDisposeUniqueStack, depthwiseName, parametersDesc ) {
-    let result = inputImage.clone_byDepthwise_NonPassThrough( this.out.depthwise_AvgMax_Or_ChannelMultiplier,
-      this.out.depthwiseFilterHeight_real, this.out.depthwiseFilterWidth_real, this.out.depthwiseStridesPad,
-      this.in.paramsNumberArrayObject.depthwise2Filters, this.out.inferencedParams.depthwiseBias,
-      this.in.paramsNumberArrayObject.depthwise2Biases, this.out.depthwiseActivationId,
+  use_depthwise2( inputImage,
+    io_imageNeedDisposeUniqueStack, depthwiseName, parametersDesc ) {
+    let result = inputImage.clone_byDepthwise_NonPassThrough(
+      this.out.depthwise_AvgMax_Or_ChannelMultiplier,
+      this.out.depthwiseFilterHeight_real,
+      this.out.depthwiseFilterWidth_real,
+      this.out.depthwiseStridesPad,
+      this.in.paramsNumberArrayObject.depthwise2Filters,
+      this.out.inferencedParams.depthwiseBias,
+      this.in.paramsNumberArrayObject.depthwise2Biases,
+      this.out.depthwiseActivationId,
       parametersDesc, depthwiseName );
     io_imageNeedDisposeUniqueStack.push( inputImage );
     return result;
