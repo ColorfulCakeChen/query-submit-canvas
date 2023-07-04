@@ -163,22 +163,26 @@ class TestCase {
     // from_valueCount_original
     const area_from_valueCount_original
       = ( this.feedback_valueCount > 0 ) ? this.feedback_valueCount : 1;
-    this.assert_Area( "from_valueCount_original", area_from_valueCount_original );
+    this.assert_Area( "from_valueCount_original",
+      area_from_valueCount_original );
 
     // from_valueCount_expanded
     const area_from_valueCount_expanded = area_from_valueCount_original
       * area_height_multiplier * area_width_multiplier;
-    this.assert_Area( "from_valueCount_expanded", area_from_valueCount_expanded );
+    this.assert_Area( "from_valueCount_expanded",
+      area_from_valueCount_expanded );
 
     // from_pixelCount_original
     const area_from_pixelCount_original = Math.ceil(
       area_from_valueCount_original / explicit_input_channelCount );
-    this.assert_Area( "from_pixelCount_original", area_from_pixelCount_original );
+    this.assert_Area( "from_pixelCount_original",
+      area_from_pixelCount_original );
 
     // from_pixelCount_expanded
     const area_from_pixelCount_expanded = area_from_pixelCount_original
       * area_height_multiplier * area_width_multiplier;
-    this.assert_Area( "from_pixelCount_expanded", area_from_pixelCount_expanded );
+    this.assert_Area( "from_pixelCount_expanded",
+      area_from_pixelCount_expanded );
 
     // to height and width
     let area_height_pixelCount_original;
@@ -193,7 +197,8 @@ class TestCase {
         area_height_pixelCount_expanded
           = area_height_pixelCount_original * area_height_multiplier;
 
-        if ( area_height_pixelCount_expanded <= explicit_input_height ) { // square shape.
+        // square shape.
+        if ( area_height_pixelCount_expanded <= explicit_input_height ) {
           area_width_pixelCount_original = area_height_pixelCount_original
 
         } else { // rectangle shape.
@@ -211,16 +216,21 @@ class TestCase {
       area_width_pixelCount_expanded
         = area_width_pixelCount_original * area_width_multiplier;
 
-      this.assert_Area( "height_pixelCount_original", area_height_pixelCount_original );
-      this.assert_Area( "height_pixelCount_expanded", area_height_pixelCount_expanded );
+      this.assert_Area( "height_pixelCount_original",
+        area_height_pixelCount_original );
+      this.assert_Area( "height_pixelCount_expanded",
+        area_height_pixelCount_expanded );
       this.assert_Area( "height_pixelCount_expanded",
         area_height_pixelCount_original * area_height_multiplier );
 
       this.assert_Area_GE( "height_pixelCount_expanded", 1 );
-      this.assert_Area_LE( "height_pixelCount_expanded", explicit_input_height );
+      this.assert_Area_LE( "height_pixelCount_expanded",
+        explicit_input_height );
 
-      this.assert_Area( "width_pixelCount_original", area_width_pixelCount_original );
-      this.assert_Area( "width_pixelCount_expanded", area_width_pixelCount_expanded );
+      this.assert_Area( "width_pixelCount_original",
+        area_width_pixelCount_original );
+      this.assert_Area( "width_pixelCount_expanded",
+        area_width_pixelCount_expanded );
       this.assert_Area( "width_pixelCount_expanded",
         area_width_pixelCount_original * area_width_multiplier );
 
@@ -245,15 +255,19 @@ class TestCase {
     const area_to_pixelCount_expanded
       = area_height_pixelCount_expanded * area_width_pixelCount_expanded;
     {
-      this.assert_Area( "to_pixelCount_original", area_to_pixelCount_original );
-      this.assert_Area( "to_pixelCount_expanded", area_to_pixelCount_expanded );
+      this.assert_Area( "to_pixelCount_original",
+        area_to_pixelCount_original );
+      this.assert_Area( "to_pixelCount_expanded",
+        area_to_pixelCount_expanded );
 
       this.assert_Area_GE( "to_pixelCount_original", 1 );
       this.assert_Area_GE( "to_pixelCount_expanded", 1 );
 
       // target area should be greater than or equal to source.
-      this.assert_Area_LE( "from_pixelCount_original", area_to_pixelCount_original );
-      this.assert_Area_LE( "from_pixelCount_expanded", area_to_pixelCount_expanded );
+      this.assert_Area_LE( "from_pixelCount_original",
+        area_to_pixelCount_original );
+      this.assert_Area_LE( "from_pixelCount_expanded",
+        area_to_pixelCount_expanded );
     }
 
     // height_areaCount and width_areaCount
@@ -279,7 +293,8 @@ class TestCase {
     this.assert_FeedbackShape_LE( "width_areaCount", areaCount );
 
     // ( height_areaCount * width_areaCount ) should be areaCount.
-    this.assert_FeedbackShape( "areaCount", height_areaCount * width_areaCount );
+    this.assert_FeedbackShape( "areaCount",
+      height_areaCount * width_areaCount );
 
     // height_with_internal_gap and width_with_internal_gap
     const height_with_internal_gap_pixelCount_expanded
@@ -299,7 +314,8 @@ class TestCase {
 
     // implicit_input: height, width, channelCount, pixelCount, valueCount
     const implicit_input_height = explicit_input_height;
-    this.assert_FeedbackShape( "implicit_input_height", implicit_input_height );
+    this.assert_FeedbackShape( "implicit_input_height",
+      implicit_input_height );
     this.assert_FeedbackShape_LE( "height_with_internal_gap_pixelCount_expanded",
       implicit_input_height );
 
@@ -323,7 +339,8 @@ class TestCase {
     this.assert_FeedbackShape( "implicit_input_valueCount",
       implicit_input_valueCount );
 
-    // input: height, width, width_valueCount, channelCount, pixelCount, valueCount
+    // input: height, width, width_valueCount, channelCount, pixelCount,
+    //        valueCount
     const input_height = explicit_input_height;
     this.assert_FeedbackShape( "input_height", implicit_input_height );
 
@@ -334,7 +351,8 @@ class TestCase {
     this.assert_FeedbackShape( "input_channelCount", input_channelCount );
 
     const input_width_valueCount = input_width * input_channelCount;
-    this.assert_FeedbackShape( "input_width_valueCount", input_width_valueCount );
+    this.assert_FeedbackShape( "input_width_valueCount",
+      input_width_valueCount );
 
     const input_pixelCount = input_height * input_width;
     this.assert_FeedbackShape( "input_pixelCount", input_pixelCount );
@@ -425,7 +443,8 @@ class TestCase {
 
             for ( let i = 0; i < this.to_valueArray.length; ++i ) {
               if ( this.to_valueArray[ i ] != expectedValue )
-                throw Error( `FeedbackShape_tester.TestCase.${funcNameInMessage}(): `
+                throw Error( `FeedbackShape_tester.TestCase`
+                  + `.${funcNameInMessage}(): `
                   + `to_valueArray[ ${i} ]=${this.to_valueArray[ i ]} `
                   + `should be ( ${expectedValue} ). `
                   + `{ ${this} }.`
@@ -533,7 +552,8 @@ class TestCase {
       for ( let x = 0; x < explicit_input_width; ++x ) {
         for ( let c = 0; c < input_channelCount; ++c ) {
           if ( to_inputArray[ to_valueIndex ] != to_value )
-            throw Error( `FeedbackShape_tester.TestCase.${funcNameInMessage}(): `
+            throw Error( `FeedbackShape_tester.TestCase`
+              + `.${funcNameInMessage}(): `
               + `to_inputArray[ ${to_valueIndex} ]=`
               + `${to_inputArray[ to_valueIndex ]} `
               + `should be ( ${to_value} ). `
@@ -621,7 +641,8 @@ class TestCase {
 
                 if ( to_inputArray[ to_valueIndex ]
                        != alignmentMarkValueArray [ c ] )
-                  throw Error( `FeedbackShape_tester.TestCase.${funcNameInMessage}(): `
+                  throw Error( `FeedbackShape_tester.TestCase`
+                    + `.${funcNameInMessage}(): `
                     + `to_inputArray[ ${to_valueIndex} ]=`
                     + `${to_inputArray[ to_valueIndex ]} `
                     + `should be the same as `
@@ -725,7 +746,8 @@ class TestCase {
 
                 if ( from_valueIndex > from_valueIndex_upper_bound ) {
                   if ( to_inputArray[ to_valueIndex ] != 0 )
-                    throw Error( `FeedbackShape_tester.TestCase.${funcNameInMessage}(): `
+                    throw Error( `FeedbackShape_tester.TestCase`
+                      + `.${funcNameInMessage}(): `
                       + `to_inputArray[ ${to_valueIndex} ]=`
                       + `${to_inputArray[ to_valueIndex ]} `
                       + `should be ( 0 ). `
@@ -738,7 +760,8 @@ class TestCase {
                 } else {
                   if ( to_inputArray[ to_valueIndex ]
                         != from_output_valueArray[ from_valueIndex ] )
-                    throw Error( `FeedbackShape_tester.TestCase.${funcNameInMessage}(): `
+                    throw Error( `FeedbackShape_tester.TestCase`
+                      + `.${funcNameInMessage}(): `
                       + `to_inputArray[ ${to_valueIndex} ]=`
                       + `${to_inputArray[ to_valueIndex ]} `
                       + `should be the same as `
@@ -793,7 +816,9 @@ class TestCase {
     this.assert( "test", this, "feedbackShape", propertyName, value );
   }
 
-  assert_LE( funcNameInMessage, parentObject, objectName, propertyName, value ) {
+  assert_LE(
+    funcNameInMessage, parentObject, objectName, propertyName, value ) {
+
     let lhs = parentObject[ objectName ][ propertyName ];
     if ( !( lhs <= value ) )
       throw Error( `FeedbackShape_tester.TestCase.${funcNameInMessage}(): `
@@ -803,7 +828,9 @@ class TestCase {
       );
   }
 
-  assert_GE( funcNameInMessage, parentObject, objectName, propertyName, value ) {
+  assert_GE(
+    funcNameInMessage, parentObject, objectName, propertyName, value ) {
+
     let lhs = parentObject[ objectName ][ propertyName ];
     if ( !( lhs >= value ) )
       throw Error( `FeedbackShape_tester.TestCase.${funcNameInMessage}(): `
@@ -813,7 +840,9 @@ class TestCase {
       );
   }
 
-  assert( funcNameInMessage, parentObject, objectName, propertyName, value ) {
+  assert(
+    funcNameInMessage, parentObject, objectName, propertyName, value ) {
+
     let lhs = parentObject[ objectName ][ propertyName ];
     if ( lhs != value )
       throw Error( `FeedbackShape_tester.TestCase.${funcNameInMessage}(): `
@@ -935,7 +964,8 @@ async function* tester( progressParent ) {
   if ( progressToAdvance.valuePercentage != 100 )
     throw Error( `FeedbackShape_tester.tester(): `
       + `gTestCases.length=${gTestCases.length}, `
-      + `progressToAdvance.valuePercentage ( ${progressToAdvance.valuePercentage} ) `
+      + `progressToAdvance.valuePercentage `
+      + `( ${progressToAdvance.valuePercentage} ) `
       + `should be 100.` );
 
   console.log( `NeuralNet.FeedbackShape testing... Done. `
