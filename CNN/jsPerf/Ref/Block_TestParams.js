@@ -1287,34 +1287,48 @@ class Block_TestParams_Base extends TestParams.Base {
    *   The channel count of the depthwise convolution's input.
    *
    * @param {boolean} bBias
-   *   If true, the returned array will contain a number array as the bias' weight values. If ( depthwise_AvgMax_Or_ChannelMultiplier == 0 ),
-   * this will be ignored.
+   *   If true, the returned array will contain a number array as the bias'
+   * weight values. If ( depthwise_AvgMax_Or_ChannelMultiplier == 0 ), this
+   * will be ignored.
    *
    * @param {Object} propertyNames
-   *   The property names of the result object. It should have two property: { Filters, Biases }. For example,
-   * ( propertyNames.Filters == "xxxFilters" ) and ( propertyNames.Biases == "xxxBiases" ). If null, nothing will be filled.
+   *   The property names of the result object. It should have two property:
+   * { Filters, Biases }. For example,
+   * ( propertyNames.Filters == "xxxFilters" ) and
+   * ( propertyNames.Biases == "xxxBiases" ). If null, nothing will be filled.
    *
    * @param {object} io_numberArrayObject
-   *   The object will be filled in result data. Every result number array will be set as a property of the object. At most,
-   * two properties may be set: "xxxFilters", "xxxBiases".
+   *   The object will be filled in result data. Every result number array will
+   * be set as a property of the object. At most, two properties may be set:
+   * "xxxFilters", "xxxBiases".
    *
    * @return {number}
    *   Return the outputChannelCount of this depthwise operation.
    */
   generate_depthwise_filters_biases(
-    inputChannelCount, depthwise_AvgMax_Or_ChannelMultiplier, depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad, bBias,
+    inputChannelCount,
+    depthwise_AvgMax_Or_ChannelMultiplier,
+    depthwiseFilterHeight, depthwiseFilterWidth,
+    depthwiseStridesPad,
+    bBias,
     propertyNames, io_numberArrayObject ) {
 
-    // If this depthwise operation does not exist, default outputChannelCount will be inputChannelCount.
+    // If this depthwise operation does not exist, default outputChannelCount
+    // will be inputChannelCount.
     let result_outputChannelCount = inputChannelCount;
 
     if ( propertyNames ) {
       if ( depthwise_AvgMax_Or_ChannelMultiplier > 0 ) {
-        result_outputChannelCount = inputChannelCount * depthwise_AvgMax_Or_ChannelMultiplier;
+        result_outputChannelCount
+          = inputChannelCount * depthwise_AvgMax_Or_ChannelMultiplier;
 
-        //let filtersWeightsCount = result_outputChannelCount * ( depthwiseFilterHeight * depthwiseFilterWidth );
-        this.fill_object_property_numberArray( io_numberArrayObject, propertyNames.Filters,
-          depthwiseFilterHeight, depthwiseFilterWidth, result_outputChannelCount );
+        //let filtersWeightsCount
+        //  = result_outputChannelCount
+        //      * ( depthwiseFilterHeight * depthwiseFilterWidth );
+        this.fill_object_property_numberArray( io_numberArrayObject,
+          propertyNames.Filters,
+          depthwiseFilterHeight, depthwiseFilterWidth,
+          result_outputChannelCount );
 
       } else {
         // Note: if AVG or MAX pooling, this property will be empty array.
