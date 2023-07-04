@@ -14,11 +14,14 @@ import * as SequenceRandom_NumberArray from "./SequenceRandom_NumberArray.js";
  *   Which parameter to be used in the permutation.
  *
  * @member {number[]} valueOutMinMax
- *   An integer array restricts the generator range to [ valueOutMin, valueOutMax ]. Itself will be restricted to
- * [ paramDesc.valueDesc.range.min, paramDesc.valueDesc.range.max ] at most. When this.kinds is large, this parameter
- * could lower the kinds to reduce test cases quantity. If null or undefined, only one value (between
- * [ paramDesc.valueDesc.range.min, paramDesc.valueDesc.range.max ] randomly) will be generated. In fact, this is the
- * valueOutMinMax parameter of ValueRange.XXX.valueInputOutputGenerator().
+ *   An integer array restricts the generator range to
+ * [ valueOutMin, valueOutMax ]. Itself will be restricted to
+ * [ paramDesc.valueDesc.range.min, paramDesc.valueDesc.range.max ] at most.
+ * When this.kinds is large, this parameter could lower the kinds to reduce
+ * test cases quantity. If null or undefined, only one value (between
+ * [ paramDesc.valueDesc.range.min, paramDesc.valueDesc.range.max ] randomly)
+ * will be generated. In fact, this is the valueOutMinMax parameter of
+ * ValueRange.XXX.valueInputOutputGenerator().
  *
  */
 class ParamDescConfig {
@@ -30,17 +33,30 @@ class ParamDescConfig {
 
 
 /**
- * @member {ParamDesc.Xxx} paramDesc    Which parameter is changed.
- * @member {number}  inValue_original   The parameter's original input value.
- * @member {integer} outValue_original  The parameter's original output value.
- * @member {number}  inValue_new        The parameter's new input value.
- * @member {integer} outValue_new       The parameter's new output value. This is adjusted value of outValue_specified.
- * @member {integer} outValue_specified The parameter's output value which is wanted.
+ * @member {ParamDesc.Xxx} paramDesc
+ *   Which parameter is changed.
+ *
+ * @member {number} inValue_original
+ *   The parameter's original input value.
+ *
+ * @member {integer} outValue_original
+ *   The parameter's original output value.
+ *
+ * @member {number} inValue_new
+ *   The parameter's new input value.
+ *
+ * @member {integer} outValue_new
+ *   The parameter's new output value. This is adjusted value of
+ * outValue_specified.
+ *
+ * @member {integer} outValue_specified
+ *  The parameter's output value which is wanted.
  */
 class ParamValueChangeRecord extends Recyclable.Root {
 
   /**
-   * Used as default TestParams.ParamValueChangeRecord provider for conforming to Recyclable interface.
+   * Used as default TestParams.ParamValueChangeRecord provider for
+   * conforming to Recyclable interface.
    */
   static Pool = new Pool.Root( "TestParams.ParamValueChangeRecord.Pool",
     ParamValueChangeRecord, ParamValueChangeRecord.setAsConstructor );
@@ -48,7 +64,8 @@ class ParamValueChangeRecord extends Recyclable.Root {
   /**
    */
   constructor( paramDesc,
-    inValue_original, outValue_original, inValue_new, outValue_new, outValue_specified ) {
+    inValue_original, outValue_original,
+    inValue_new, outValue_new, outValue_specified ) {
 
     super();
     ParamValueChangeRecord.setAsConstructor_self.call( this,
