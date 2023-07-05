@@ -48,14 +48,47 @@ async function test_ConvBiasActivation_async( asserter_Equal ) {
 
     // Test: shuffle output
     {
+      let base;
+
       // Make testing output channel data.
       for ( let c = 0; c < outputChannelCount; ++c ) {
-        a_BoundsArraySet_ConvBiasActivation.afterFilter[ c ]
-          = c;
-        a_BoundsArraySet_ConvBiasActivation.afterBias[ c ]
-          = outputChannelCount + c;
-        a_BoundsArraySet_ConvBiasActivation.output0[ c ]
-          = outputChannelCount + outputChannelCount + c;
+        const afterFilter = a_BoundsArraySet_ConvBiasActivation.afterFilter;
+        {
+          base = 0;
+          afterFilter.lowers[ c ] = base + c;
+
+          base += outputChannelCount;
+          afterFilter.uppers[ c ] = base + c;
+        }
+
+        const afterBias = a_BoundsArraySet_ConvBiasActivation.afterBias;
+        {
+          base += outputChannelCount;
+          afterBias.lowers[ c ] = base + c;
+
+          base += outputChannelCount;
+          afterBias.uppers[ c ] = base + c;
+        }
+
+        const output0_boundsArray
+          = a_BoundsArraySet_ConvBiasActivation.output0.boundsArray;
+        {
+          base += outputChannelCount;
+          output0_boundsArray.lowers[ c ] = base + c;
+
+          base += outputChannelCount;
+          output0_boundsArray.uppers[ c ] = base + c;
+        }
+
+        const output0_scaleArraySet
+          = a_BoundsArraySet_ConvBiasActivation.output0.scaleArraySet;
+        {
+          base += outputChannelCount;
+          output0_scaleArraySet.do.scales[ c ] = base + c;
+
+          base += outputChannelCount;
+          output0_scaleArraySet.undo.scales[ c ] = base + c;
+        }
       }
 
       // Make testing output channel tensors.
@@ -68,6 +101,12 @@ async function test_ConvBiasActivation_async( asserter_Equal ) {
 
         outputTensor
           = tf.tensor1d( a_BoundsArraySet_ConvBiasActivation.output0 );
+
+
+//!!! ...unfinished... (2023/07/05)
+// boundsArray.lowers[], boundsArray.uppers[]
+// scaleArraySet.do.scales[], scaleArraySet.undo.scales[]
+
       }
 
       // Shuffle channel data.
