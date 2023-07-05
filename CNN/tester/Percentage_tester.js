@@ -247,8 +247,10 @@ function *testerPercentageAggregate( progressParent ) {
         throw Error( `Percentage_tester.${funcNameInMessage}(): `
           + `.valuePercentage ( ${aggregate.valuePercentage} ) `
           + `should be 2.5 if `
-          + `concrete1.valuePercentage ( ${concrete1.valuePercentage} ) (1/4), `
-          + `concrete2.valuePercentage ( ${concrete2.valuePercentage} ) (3/4).`
+          + `concrete1.valuePercentage `
+          + `( ${concrete1.valuePercentage} ) (1/4), `
+          + `concrete2.valuePercentage `
+          + `( ${concrete2.valuePercentage} ) (3/4).`
         );
 
       concrete2.value_advance();
@@ -256,8 +258,10 @@ function *testerPercentageAggregate( progressParent ) {
         throw Error( `Percentage_tester.${funcNameInMessage}(): `
           + `.valuePercentage ( ${aggregate.valuePercentage} ) `
           + `should be 10 if `
-          + `concrete1.valuePercentage ( ${concrete1.valuePercentage} ) (1/4), `
-          + `concrete2.valuePercentage ( ${concrete2.valuePercentage} ) (3/4).`
+          + `concrete1.valuePercentage `
+          + `( ${concrete1.valuePercentage} ) (1/4), `
+          + `concrete2.valuePercentage `
+          + `( ${concrete2.valuePercentage} ) (3/4).`
         );
     }
 
@@ -272,10 +276,12 @@ function *testerPercentageAggregate( progressParent ) {
         + `should be 6.`
       );
 
-      let concrete31 = ValueMax.Percentage.Concrete.Pool.get_or_create_by( 10 );
+      let concrete31 = ValueMax.Percentage.Concrete.Pool
+        .get_or_create_by( 10 );
       aggregate3.child_add( concrete31 );
 
-      let concrete32 = ValueMax.Percentage.Concrete.Pool.get_or_create_by( 10 );
+      let concrete32 = ValueMax.Percentage.Concrete.Pool
+        .get_or_create_by( 10 );
       aggregate3.child_add( concrete32 );
 
       aggregate.child_add( aggregate3 );
@@ -290,9 +296,12 @@ function *testerPercentageAggregate( progressParent ) {
         throw Error( `Percentage_tester.${funcNameInMessage}(): `
           + `.valuePercentage ( ${aggregate.valuePercentage} ) `
           + `should be 4 if `
-          + `concrete1.valuePercentage ( ${concrete1.valuePercentage} ) (1/10), `
-          + `concrete2.valuePercentage ( ${concrete2.valuePercentage} ) (3/10), `
-          + `aggregate3.valuePercentage ( ${aggregate3.valuePercentage} ) (6/10).`
+          + `concrete1.valuePercentage `
+          + `( ${concrete1.valuePercentage} ) (1/10), `
+          + `concrete2.valuePercentage `
+          + `( ${concrete2.valuePercentage} ) (3/10), `
+          + `aggregate3.valuePercentage `
+          + `( ${aggregate3.valuePercentage} ) (6/10).`
         );
 
       concrete31.value_advance();
@@ -302,9 +311,12 @@ function *testerPercentageAggregate( progressParent ) {
         throw Error( `Percentage_tester.${funcNameInMessage}(): `
           + `.valuePercentage ( ${aggregate.valuePercentage} ) `
           + `should be 10 if `
-          + `concrete1.valuePercentage ( ${concrete1.valuePercentage} ) (1/10), `
-          + `concrete2.valuePercentage ( ${concrete2.valuePercentage} ) (3/10), `
-          + `aggregate3.valuePercentage ( ${aggregate3.valuePercentage} ) (6/10).`
+          + `concrete1.valuePercentage `
+          + `( ${concrete1.valuePercentage} ) (1/10), `
+          + `concrete2.valuePercentage `
+          + `( ${concrete2.valuePercentage} ) (3/10), `
+          + `aggregate3.valuePercentage `
+          + `( ${aggregate3.valuePercentage} ) (6/10).`
         );
 
       aggregate3.child_dispose( concrete31 );
@@ -314,9 +326,12 @@ function *testerPercentageAggregate( progressParent ) {
         throw Error( `Percentage_tester.${funcNameInMessage}(): `
           + `.valuePercentage ( ${aggregate.valuePercentage} ) `
           + `should be 10 if `
-          + `concrete1.valuePercentage ( ${concrete1.valuePercentage} ) (1/10), `
-          + `concrete2.valuePercentage ( ${concrete2.valuePercentage} ) (3/10), `
-          + `aggregate3.valuePercentage ( ${aggregate3.valuePercentage} ) (6/10).`
+          + `concrete1.valuePercentage `
+          + `( ${concrete1.valuePercentage} ) (1/10), `
+          + `concrete2.valuePercentage `
+          + `( ${concrete2.valuePercentage} ) (3/10), `
+          + `aggregate3.valuePercentage `
+          + `( ${aggregate3.valuePercentage} ) (6/10).`
         );
 
       aggregate3.child_detachAll();
@@ -328,9 +343,12 @@ function *testerPercentageAggregate( progressParent ) {
         throw Error( `Percentage_tester.${funcNameInMessage}(): `
           + `.valuePercentage ( ${aggregate.valuePercentage} ) `
           + `should be 4 if `
-          + `concrete1.valuePercentage ( ${concrete1.valuePercentage} ) (1/10), `
-          + `concrete2.valuePercentage ( ${concrete2.valuePercentage} ) (3/10), `
-          + `aggregate3.valuePercentage ( ${aggregate3.valuePercentage} ) (6/10).`
+          + `concrete1.valuePercentage `
+          + `( ${concrete1.valuePercentage} ) (1/10), `
+          + `concrete2.valuePercentage `
+          + `( ${concrete2.valuePercentage} ) (3/10), `
+          + `aggregate3.valuePercentage `
+          + `( ${aggregate3.valuePercentage} ) (6/10).`
         );
 
       aggregate.child_detach( aggregate3 );
@@ -342,8 +360,10 @@ function *testerPercentageAggregate( progressParent ) {
       throw Error( `Percentage_tester.${funcNameInMessage}(): `
         + `.valuePercentage ( ${aggregate.valuePercentage} ) `
         + `should be 10 if `
-        + `concrete1.valuePercentage ( ${concrete1.valuePercentage} ) (1/4), `
-        + `concrete2.valuePercentage ( ${concrete2.valuePercentage} ) (3/4).`
+        + `concrete1.valuePercentage `
+        + `( ${concrete1.valuePercentage} ) (1/4), `
+        + `concrete2.valuePercentage `
+        + `( ${concrete2.valuePercentage} ) (3/4).`
       );
     }
 
