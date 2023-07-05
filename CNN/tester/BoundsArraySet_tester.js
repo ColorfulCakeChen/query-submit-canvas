@@ -28,6 +28,10 @@ function test_ConvBiasActivation( asserter_Equal ) {
   let afterBiasTensor;
   let outputTensor;
 
+  let afterFilterShuffledTensor;
+  let afterBiasShuffledTensor;
+  let outputShuffledTensor;
+
   try {
     input0 = new ActivationEscaping.ScaleBoundsArray( inputChannelCount );
 
@@ -50,11 +54,34 @@ function test_ConvBiasActivation( asserter_Equal ) {
           = outputChannelCount + outputChannelCount + c;
       }
 
-      tf.tensor1d( a_BoundsArraySet_ConvBiasActivation.afterFilter );
-      channelShuffler.reshapeTransposeReshape( )
+      // Make testing output channel tensors.
+      {
+        afterFilterTensor
+          = tf.tensor1d( a_BoundsArraySet_ConvBiasActivation.afterFilter );
 
+        afterBiasTensor
+          = tf.tensor1d( a_BoundsArraySet_ConvBiasActivation.afterBias );
+
+        outputTensor
+          = tf.tensor1d( a_BoundsArraySet_ConvBiasActivation.output0 );
+      }
+
+      // Shuffle channel data.
       a_BoundsArraySet_ConvBiasActivation
         .set_outputs_all_byInterleave_asGrouptTwo();
+
+      // Shuffle tensors.
+      {
+        afterFilterShuffledTensor
+          = channelShuffler.reshapeTransposeReshape( afterFilterTensor );
+
+        afterBiasShuffledTensor
+          = channelShuffler.reshapeTransposeReshape( afterBiasTensor );
+
+        outputShuffledTensor
+          = channelShuffler.reshapeTransposeReshape( outputTensor );
+      }
+
 
 //!!! ...unfinished... (2023/07/05)
     }
