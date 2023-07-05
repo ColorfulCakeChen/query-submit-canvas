@@ -138,9 +138,9 @@ async function test_ConvBiasActivation_async( asserter_Equal ) {
           afterFilter.uppers );
 
         const afterBias = a_BoundsArraySet_ConvBiasActivation.afterBias;
-        shuffledArrays.afterFilter_lowers = shuffleArray_byChannelShuffler(
+        shuffledArrays.afterBias_lowers = shuffleArray_byChannelShuffler(
           afterBias.lowers );
-        shuffledArrays.afterFilter_uppers = shuffleArray_byChannelShuffler(
+        shuffledArrays.afterBias_uppers = shuffleArray_byChannelShuffler(
           afterBias.uppers );
 
 
