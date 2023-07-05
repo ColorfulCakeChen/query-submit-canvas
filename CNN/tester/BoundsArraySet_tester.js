@@ -24,6 +24,53 @@ async function test_ConvBiasActivation_async( asserter_Equal ) {
   let a_BoundsArraySet_ConvBiasActivation;
   let channelShuffler;
 
+  let shuffledArrays = {
+    afterFilter_lowers: null,
+    afterFilter_uppers: null,
+
+    afterBias_lowers: null,
+    afterBias_uppers: null,
+
+    output_boundsArray_lowers: null,
+    output_boundsArray_uppers: null,
+
+    output_scaleArraySet_do_scales: null,
+    output_scaleArraySet_undo_scales: null,
+  };
+
+  /**
+   * @param {number[]} array1d
+   *   An one dimension number array with even element count.
+   *
+   * @return {number[]}
+   *   Return a new number array which is shuffled from the array1d.
+   */
+  function shuffleArray_byChannelShuffler( array1d ) {
+
+    let tensorOriginal, tensorShuffled;
+    try {
+      tensorOriginal = tf.tensor1d( array1d );
+  
+      tensorShuffled
+        = channelShuffler.reshapeTransposeReshape( tensorOriginal );
+
+      let resultArray = await tensorShuffled.data();
+      return resultArray;
+
+    } finally {
+      if ( tensorShuffled ) {
+        tensorShuffled.dispose();
+        tensorShuffled = null;
+      }
+      if ( tensorOriginal ) {
+        tensorOriginal.dispose();
+        tensorOriginal = null;
+      }
+    }
+  }
+
+
+//!!! ...unfinished... (2023/07/05)
   let afterFilterTensor;
   let afterBiasTensor;
   let outputTensor;
@@ -94,6 +141,8 @@ async function test_ConvBiasActivation_async( asserter_Equal ) {
 
       // Make testing output channel tensors.
       {
+        shuffledArrays.afterFilter_lowers = 
+
         afterFilterTensor
           = tf.tensor1d( a_BoundsArraySet_ConvBiasActivation.afterFilter );
 
@@ -147,18 +196,6 @@ async function test_ConvBiasActivation_async( asserter_Equal ) {
     }
   
   } finally {
-    if ( outputTensor ) {
-      outputTensor.dispose();
-      outputTensor = null;
-    }
-    if ( afterBiasTensor ) {
-      afterBiasTensor.dispose();
-      afterBiasTensor = null;
-    }
-    if ( afterFilterTensor ) {
-      afterFilterTensor.dispose();
-      afterFilterTensor = null;
-    }
     if ( channelShuffler ) {
       channelShuffler.disposeResources_and_recycleToPool();
       channelShuffler = null;
