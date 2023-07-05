@@ -218,14 +218,16 @@ async function load_asyncGenerator_ticker(
 /** */
 async function DownloadSummaryButton_onClick( event ) {
   try {
-    g_Contorls.DownloadSummaryButton.disabled = true; // Prevent from many clicking quickly.
+    // Prevent from many clicking quickly.
+    g_Contorls.DownloadSummaryButton.disabled = true;
     g_Contorls.DownloadSummaryAbortButton.disabled = false;
     g_Contorls.DownloadVersusButton.disabled = true;
     g_Contorls.DownloadVersusAbortButton.disabled = true;
 
     let spreadsheetId = g_Contorls.SpreadsheetIdText.value;
     if ( !g_VersusSummary ) {
-      g_VersusSummary = DEvolution.VersusSummary.Pool.get_or_create_by( spreadsheetId );
+      g_VersusSummary
+        = DEvolution.VersusSummary.Pool.get_or_create_by( spreadsheetId );
     } else {
       g_VersusSummary.weightsSpreadsheetId = spreadsheetId;
     }
@@ -293,8 +295,8 @@ function VersusSummary_onDownload( bDownloadSummaryOk ) {
     {
       const htmlTableId = "VersusSummaryTable";
       const digitsCount = 0; // i.e. integer
-      htmlTableOperator
-        = HTMLTable.Operator.Pool.get_or_create_by( htmlTableId, digitsCount );
+      htmlTableOperator = HTMLTable.Operator.Pool.get_or_create_by(
+        htmlTableId, digitsCount );
     }
 
     htmlTableOperator.Table_clear();
@@ -326,7 +328,8 @@ async function DownloadVersusButton_onClick( event ) {
   try {
     g_Contorls.DownloadSummaryButton.disabled = true;
     g_Contorls.DownloadSummaryAbortButton.disabled = true;
-    g_Contorls.DownloadVersusButton.disabled = true; // Prevent from many clicking quickly.
+    // Prevent from many clicking quickly.
+    g_Contorls.DownloadVersusButton.disabled = true;
     g_Contorls.DownloadVersusAbortButton.disabled = false;
 
     params_loading_retryWaiting_extractFromUI();
@@ -394,9 +397,14 @@ function Versus_onDownload( versus ) {
       return;
     }
 
-    g_Contorls.VersusId.textContent = versus.versusId.versusIdString;
-    g_Contorls.ParentChromosomes.value = versus.parentChromosomeFloat32Array;
-    g_Contorls.OffspringChromosomes.value = versus.offspringChromosomeFloat32Array;
+    g_Contorls.VersusId.textContent
+      = versus.versusId.versusIdString;
+
+    g_Contorls.ParentChromosomes.value
+      = versus.parentChromosomeFloat32Array;
+
+    g_Contorls.OffspringChromosomes.value
+      = versus.offspringChromosomeFloat32Array;
 
   } catch( e ) {
     alert( e );

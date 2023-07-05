@@ -22,7 +22,9 @@ window.addEventListener( "load", event => {
 
 });
 
-/** Map from test generator function to boolean or ValueMax.Percentage.Aggregate */
+/**
+ * Map from test generator function to boolean or ValueMax.Percentage.Aggregate
+ */
 const gTestGeneratorFuncMap = new Map( [
 
   // [ Percentage_tester.tester, true ],
@@ -60,11 +62,12 @@ function test() {
     gTestGeneratorFuncMap.set( testGeneratorFunc, progress_tester );
   }
 
-  let progressReceiver
-    = new ValueMax.Receiver.HTMLProgress.createByTitle_or_getDummy( "TestProgressBar" );
+  let progressReceiver = new ValueMax.Receiver.HTMLProgress
+    .createByTitle_or_getDummy( "TestProgressBar" );
 
   async function* testerAll() {
-    for ( let [ testGeneratorFunc, progress_tester ] of gTestGeneratorFuncMap ) {
+    for ( let [ testGeneratorFunc, progress_tester ]
+      of gTestGeneratorFuncMap ) {
       yield* testGeneratorFunc( progress_tester );
     }
   }
