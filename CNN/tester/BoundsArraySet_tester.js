@@ -171,8 +171,10 @@ async function test_ConvBiasActivation_async( asserter_Equal ) {
 //!!! ...unfinished... (2023/07/05)
 // Use assert_BoundsArray()
         const afterFilter = a_BoundsArraySet_ConvBiasActivation.afterFilter;
-        asserter_Equal.assert_NumberArray_NumberArray(
-          afterFilter.lowers,
+        BoundsArraySet_Asserter.assert_BoundsArray( asserter_Equal,
+          afterFilter,
+//!!! ...unfinished... (2023/07/05)
+// should be an object like { lowers[], uppers[] }
           shuffledArrays.afterFilter_lowers,
           prefixMsg,
           `${lhsName}.afterFilter.lowers`, `${rhsName}.afterFilter.lowers`,
