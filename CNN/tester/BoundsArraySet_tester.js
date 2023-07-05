@@ -22,6 +22,7 @@ async function test_ConvBiasActivation_async( asserter_Equal ) {
 
   let input0;
   let a_BoundsArraySet_ConvBiasActivation;
+  let channelShuffler;
 
   let shuffledArrays = {
     afterFilter_lowers: null,
@@ -36,9 +37,6 @@ async function test_ConvBiasActivation_async( asserter_Equal ) {
     output_scaleArraySet_do_scales: null,
     output_scaleArraySet_undo_scales: null,
   };
-
-  let channelShuffler = new ChannelShuffler.ShuffleInfo(
-    concatenatedShape, outputGroupCount );
 
   /**
    * @param {number[]} array1d
@@ -71,20 +69,6 @@ async function test_ConvBiasActivation_async( asserter_Equal ) {
     }
   }
 
-
-//!!! ...unfinished... (2023/07/05)
-  let afterFilterTensor;
-  let afterBiasTensor;
-  let outputTensor;
-
-  let afterFilterShuffledTensor;
-  let afterBiasShuffledTensor;
-  let outputShuffledTensor;
-
-  let afterFilterShuffledArray;
-  let afterBiasShuffledArray;
-  let outputShuffledArray;
-
   try {
     input0 = new ActivationEscaping.ScaleBoundsArray( inputChannelCount );
 
@@ -92,6 +76,9 @@ async function test_ConvBiasActivation_async( asserter_Equal ) {
       = new BoundsArraySet.ConvBiasActivation(
           input0, outputChannelCount, channelShuffler_inputGroupCount );
 
+    channelShuffler = new ChannelShuffler.ShuffleInfo(
+      concatenatedShape, outputGroupCount );
+        
     // Test: shuffle output
     {
       const value_stride = outputChannelCount;
@@ -138,18 +125,23 @@ async function test_ConvBiasActivation_async( asserter_Equal ) {
         }
       }
 
-      // Make testing output channel tensors.
+      // Shuffle channel data.
+      a_BoundsArraySet_ConvBiasActivation
+        .set_outputs_all_byInterleave_asGrouptTwo();
+
+      // Shuffle by tensors.
       {
-        shuffledArrays.afterFilter_lowers = 
+        const afterFilter = a_BoundsArraySet_ConvBiasActivation.afterFilter;
+        shuffledArrays.afterFilter_lowers = shuffleArray_byChannelShuffler(
+          afterFilter.lowers );
+        shuffledArrays.afterFilter_uppers = shuffleArray_byChannelShuffler(
+          afterFilter.uppers );
 
-        afterFilterTensor
-          = tf.tensor1d( a_BoundsArraySet_ConvBiasActivation.afterFilter );
-
-        afterBiasTensor
-          = tf.tensor1d( a_BoundsArraySet_ConvBiasActivation.afterBias );
-
-        outputTensor
-          = tf.tensor1d( a_BoundsArraySet_ConvBiasActivation.output0 );
+        const afterBias = a_BoundsArraySet_ConvBiasActivation.afterBias;
+        shuffledArrays.afterFilter_lowers = shuffleArray_byChannelShuffler(
+          afterBias.lowers );
+        shuffledArrays.afterFilter_uppers = shuffleArray_byChannelShuffler(
+          afterBias.uppers );
 
 
 //!!! ...unfinished... (2023/07/05)
@@ -158,29 +150,8 @@ async function test_ConvBiasActivation_async( asserter_Equal ) {
 
       }
 
-      // Shuffle channel data.
-      a_BoundsArraySet_ConvBiasActivation
-        .set_outputs_all_byInterleave_asGrouptTwo();
-
-      // Shuffle tensors.
-      {
-        afterFilterShuffledTensor
-          = channelShuffler.reshapeTransposeReshape( afterFilterTensor );
-
-        afterBiasShuffledTensor
-          = channelShuffler.reshapeTransposeReshape( afterBiasTensor );
-
-        outputShuffledTensor
-          = channelShuffler.reshapeTransposeReshape( outputTensor );
-      }
-
-      {
-        afterFilterShuffledArray = await afterFilterShuffledTensor.data();
-        afterBiasShuffledArray = await afterBiasShuffledTensor.data();
-        outputShuffledArray = await outputShuffledTensor.data();
-      }
-
 //!!! ...unfinished... (2023/07/05)
+      // Compare
       {
         BoundsArraySet_Asserter.assert_ScaleBoundsArray(
           asserter_Equal,
