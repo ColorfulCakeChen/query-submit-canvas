@@ -50,6 +50,8 @@ function test() {
   console.log("util testing...");
   let delayMilliseconds = 100;
 
+  let tensorflow_memoryInfo_before = tf.memory();
+
   let pool_all_issuedCount_before = Pool.All.issuedCount;
 
   // Aggregate all progress about util_tester.
@@ -118,6 +120,15 @@ function test() {
 
       Pool.Asserter.assert_Pool_issuedCount( "util_tester.test()",
         pool_all_issuedCount_before );
+
+      let tensorflow_memoryInfo_after = tf.memory();
+      if ( tensorflow_memoryInfo_after.numTensors
+              != tensorflow_memoryInfo_before.numTensors )
+        throw Error( `tensorflow.js memory leak. `
+          + `result tensor count `
+          + `( ${tensorflow_memoryInfo_after.numTensors} ) `
+          + `should be (${tensorflow_memoryInfo_before.numTensors}.`
+        );
     },
     delayMilliseconds
   );
