@@ -159,8 +159,71 @@ async function test_ConvBiasActivation_async( asserter_Equal ) {
       }
 
 //!!! ...unfinished... (2023/07/05)
-      // Compare
+      // Compare.
       {
+        const prefixMsg
+          = "BoundsArraySet_tester.test_ConvBiasActivation_async(): ";
+        const postfixMsg = "";
+
+        const lhsName = "a_BoundsArraySet_ConvBiasActivation";
+        const rhsName = "shuffledArrays";
+
+//!!! ...unfinished... (2023/07/05)
+        const afterFilter = a_BoundsArraySet_ConvBiasActivation.afterFilter;
+        asserter_Equal.assert_NumberArray_NumberArray(
+          afterFilter.lowers,
+          shuffledArrays.afterFilter_lowers,
+          prefixMsg,
+          `${lhsName}.afterFilter.lowers`, `${rhsName}.afterFilter.lowers`,
+          postfixMsg
+        );
+      
+        asserter_Equal.assert_NumberArray_NumberArray(
+          afterFilter.uppers,
+          shuffledArrays.afterFilter.uppers,
+          prefixMsg,
+          `${lhsName}.afterFilter.uppers`, `${rhsName}.afterFilter.uppers`,
+          postfixMsg
+        );
+      
+
+//!!! ...unfinished... (2023/07/05)
+
+        asserter_Equal.assert_NumberArray_NumberArray(
+          aScaleBoundsArray.boundsArray.lowers,
+          refScaleBoundsArray.boundsArray.lowers,
+          prefixMsg,
+          `${lhsName}.boundsArray.lowers`, `${rhsName}.boundsArray.lowers`,
+          postfixMsg
+        );
+      
+        asserter_Equal.assert_NumberArray_NumberArray(
+          aScaleBoundsArray.boundsArray.uppers,
+          refScaleBoundsArray.boundsArray.uppers,
+          prefixMsg,
+          `${lhsName}.boundsArray.uppers`, `${rhsName}.boundsArray.uppers`,
+          postfixMsg
+        );
+      
+        asserter_Equal.assert_NumberArray_NumberArray(
+          aScaleBoundsArray.scaleArraySet.do.scales,
+          refScaleBoundsArray.scaleArraySet.do.scales,
+          prefixMsg,
+          `${lhsName}.scaleArraySet.do.scales`,
+          `${rhsName}.scaleArraySet.do.scales`,
+          postfixMsg
+        );
+      
+        asserter_Equal.assert_NumberArray_NumberArray(
+          aScaleBoundsArray.scaleArraySet.undo.scales,
+          refScaleBoundsArray.scaleArraySet.undo.scales,
+          prefixMsg,
+          `${lhsName}.scaleArraySet.undo.scales`,
+          `${rhsName}.scaleArraySet.undo.scales`,
+          postfixMsg
+        );
+
+//!!!
         BoundsArraySet_Asserter.assert_ScaleBoundsArray(
           asserter_Equal,
           aScaleBoundsArray, refScaleBoundsArray,
@@ -187,11 +250,6 @@ async function test_ConvBiasActivation_async( asserter_Equal ) {
       input0 = null;
     }
   }
-
-  this.boundsArray
-  = FloatValue.BoundsArray.Pool.get_or_create_by( channelCount );
-this.scaleArraySet
-
 }
 
 /**
