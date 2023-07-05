@@ -14,8 +14,46 @@ import * as BoundsArraySet from "../Conv/BoundsArraySet.js";
  */
 function test_ConvBiasActivation( asserter_Equal ) {
 
+  const inputChannelCount = 10;
+  const outputChannelCount = 20;
+  const channelShuffler_inputGroupCount = 2;
+
+  let input0;
+  let a_BoundsArraySet_ConvBiasActivation;
+
+  try {
+    input0 = new ActivationEscaping.ScaleBoundsArray( inputChannelCount );
+
+    a_BoundsArraySet_ConvBiasActivation
+      = new BoundsArraySet.ConvBiasActivation(
+          input0, outputChannelCount, channelShuffler_inputGroupCount );
+
+    for ( let c = 0; c < outputChannelCount; ++c ) {
+      a_BoundsArraySet_ConvBiasActivation.afterFilter[ c ]
+        = c;
+      a_BoundsArraySet_ConvBiasActivation.afterBias[ c ]
+        = outputChannelCount + c;
+    }
+
+    a_BoundsArraySet_ConvBiasActivation
+      .set_outputs_all_byInterleave_asGrouptTwo();
+
 //!!! ...unfinished... (2023/07/05)
 
+  } finally {
+    if ( a_BoundsArraySet_ConvBiasActivation ) {
+      a_BoundsArraySet_ConvBiasActivation.disposeResources_and_recycleToPool();
+      a_BoundsArraySet_ConvBiasActivation = null;
+    }
+    if ( input0 ) {
+      input0.disposeResources_and_recycleToPool();
+      input0 = null;
+    }
+  }
+
+  this.boundsArray
+  = FloatValue.BoundsArray.Pool.get_or_create_by( channelCount );
+this.scaleArraySet
 
 }
 
