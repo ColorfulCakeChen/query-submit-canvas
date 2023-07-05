@@ -1,6 +1,57 @@
+export { assert_BoundsArray };
 export { assert_ScaleBoundsArray };
 export { assert_ScaleBoundsArray_output0_output1 };
 export { assert_BoundsArraySet_Outputs };
+
+//!!! ...unfinished... (2023/07/05)
+
+/**
+ *
+ * @param {TensorTools.Asserter_Equal} asserter_Equal
+ *   The object used to assert number array.
+ *
+ * @param {FloatValue.BoundsArray} aBoundsArray
+ *   The BoundsArray to be checked.
+ *
+ * @param {FloatValue.BoundsArray} refBoundsArray
+ *   The correct BoundsArray.
+ *
+ * @param {string} lhsName     The name of aBoundsArray.
+ * @param {string} rhsName     The name of refBoundsArray.
+ * @param {string} prefixMsg   The debug text prefix error message.
+ * @param {string} postfixMsg  The debug text postfix error message.
+ *
+ */
+function assert_BoundsArray(
+  asserter_Equal,
+  aBoundsArray, refBoundsArray,
+  lhsName, rhsName,
+  prefixMsg, postfixMsg ) {
+
+  if ( !(   (   ( aBoundsArray == null )
+             && ( refBoundsArray == null ) )
+         || (   ( aBoundsArray != null )
+             && ( refBoundsArray != null ) ) ) )
+    throw Error( `${prefixMsg}: `
+      + `BoundsArraySet_Asserter.assert_BoundsArray()( `
+      + `lhsName=${lhsName}, rhsName=${rhsName} ): `
+      + `aBoundsArray (${aBoundsArray}) and `
+      + `refBoundsArray (${refBoundsArray}) `
+      + `must be both null or both non-null. ${postfixMsg}` );
+
+  if ( ( aBoundsArray == null ) || ( refBoundsArray == null ) )
+    return;
+
+  asserter_Equal.assert_NumberArray_NumberArray(
+    aBoundsArray.lowers, refBoundsArray.lowers,
+    prefixMsg, `${lhsName}.lowers`, `${rhsName}.lowers`, postfixMsg
+  );
+
+  asserter_Equal.assert_NumberArray_NumberArray(
+    aBoundsArray.uppers, refBoundsArray.uppers,
+    prefixMsg, `${lhsName}.uppers`, `${rhsName}.uppers`, postfixMsg
+  );
+}
 
 /**
  *
@@ -39,12 +90,26 @@ function assert_ScaleBoundsArray(
   if ( ( aScaleBoundsArray == null ) || ( refScaleBoundsArray == null ) )
     return;
 
-  asserter_Equal.assert_NumberArray_NumberArray(
-    aScaleBoundsArray.boundsArray.lowers,
-    refScaleBoundsArray.boundsArray.lowers,
-    prefixMsg,
-    `${lhsName}.boundsArray.lowers`, `${rhsName}.boundsArray.lowers`,
-    postfixMsg
+//!!! (2023/07/05 Remarked) Use assert_BoundsArray() instead.
+//   asserter_Equal.assert_NumberArray_NumberArray(
+//     aScaleBoundsArray.boundsArray.lowers,
+//     refScaleBoundsArray.boundsArray.lowers,
+//     prefixMsg,
+//     `${lhsName}.boundsArray.lowers`, `${rhsName}.boundsArray.lowers`,
+//     postfixMsg
+//   );
+//
+//   asserter_Equal.assert_NumberArray_NumberArray(
+//     aScaleBoundsArray.boundsArray.uppers,
+//     refScaleBoundsArray.boundsArray.uppers,
+//     prefixMsg,
+//     `${lhsName}.boundsArray.uppers`, `${rhsName}.boundsArray.uppers`,
+//     postfixMsg
+//   );
+
+  assert_BoundsArray( asserter_Equal,
+    aScaleBoundsArray.boundsArray, refScaleBoundsArray.boundsArray,
+    prefixMsg, `${lhsName}.boundsArray`, `${rhsName}.boundsArray`, postfixMsg
   );
 
   asserter_Equal.assert_NumberArray_NumberArray(
@@ -54,6 +119,7 @@ function assert_ScaleBoundsArray(
     `${lhsName}.boundsArray.uppers`, `${rhsName}.boundsArray.uppers`,
     postfixMsg
   );
+
 
   asserter_Equal.assert_NumberArray_NumberArray(
     aScaleBoundsArray.scaleArraySet.do.scales,

@@ -169,7 +169,7 @@ async function test_ConvBiasActivation_async( asserter_Equal ) {
         const rhsName = "shuffledArrays";
 
 //!!! ...unfinished... (2023/07/05)
-// should assign to b_BoundsArraySet_ConvBiasActivation
+// Use assert_BoundsArray()
         const afterFilter = a_BoundsArraySet_ConvBiasActivation.afterFilter;
         asserter_Equal.assert_NumberArray_NumberArray(
           afterFilter.lowers,
