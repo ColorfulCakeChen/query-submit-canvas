@@ -102,13 +102,20 @@ class UIControls {
   /** */
   numeric_controls_collect_values() {
     const numeric_controls = this.numeric_controls;
-    const numeric_controls_controlNameArray = this.numeric_controls_controlNameArray;
-    const numeric_controls_propertyNameArray = this.numeric_controls_propertyNameArray;
-    const numeric_controls_valueRangeArray = this.numeric_controls_valueRangeArray;
-    const numeric_controls_valueArray = this.numeric_controls_valueArray;
-    const numeric_controls_valueObject = this.numeric_controls_valueObject;
+    const numeric_controls_controlNameArray
+      = this.numeric_controls_controlNameArray;
+    const numeric_controls_propertyNameArray
+      = this.numeric_controls_propertyNameArray;
+    const numeric_controls_valueRangeArray
+      = this.numeric_controls_valueRangeArray;
+    const numeric_controls_valueArray
+      = this.numeric_controls_valueArray;
+    const numeric_controls_valueObject
+      = this.numeric_controls_valueObject;
 
-    numeric_controls_valueArray.length = numeric_controls_controlNameArray.length;
+    numeric_controls_valueArray.length
+      = numeric_controls_controlNameArray.length;
+
     for ( let i = 0; i < numeric_controls_controlNameArray.length; ++i ) {
       const controlName = numeric_controls_controlNameArray[ i ];
       const propertyName = numeric_controls_propertyNameArray[ i ];
@@ -146,7 +153,8 @@ class UIControls {
 
     if ( !this.performanceTable_htmlTableOperator ) {
       this.performanceTable_htmlTableOperator
-        = HTMLTable.Operator.Pool.get_or_create_by( htmlTableId, digitsCount );
+        = HTMLTable.Operator.Pool.get_or_create_by(
+            htmlTableId, digitsCount );
     }
 
     // Clear output table.
@@ -172,9 +180,10 @@ window.addEventListener( "load", event => {
   const controls_all = g_Controls.controls_all;
 
   // Note: NeuralWorker_Body will also load tensorflow.js by itself.
-  ScriptLoader.createPromise( NeuralWorker.Common.tensorflowJsURL ).then( () => {
-    controls_all.TestButton.disabled = false;
-  });
+  ScriptLoader.createPromise( NeuralWorker.Common.tensorflowJsURL )
+    .then( () => {
+      controls_all.TestButton.disabled = false;
+    });
 
   controls_all.TestButton.addEventListener( "click", TestButton_onClick );
 });
@@ -494,7 +503,7 @@ class PerformanceTestCase extends Recyclable.Root {
         );
 
       if ( 100 != progress.valuePercentage )
-        throw Error( `Progress (${progress.valuePercentage}) should be 100 `
+        throw Error( `Progress ( ${progress.valuePercentage} ) should be 100 `
           + `when initializing `
           + `NeuralNet object successfully. ${neuralNet}`);
 
@@ -751,9 +760,12 @@ class HeightWidthDepth {
       throw Error( `NeuralWorker_tester.HeightWidthDepth`
         + `.${funcNameInMessage}(): `
         + `.input_valueCount_scaled `
-        + `= ( ( input_height * largerFactor ) * ( input_width * largerFactor ) * input_channelCount ) `
-        + `= ( ( ${input_height} * ${largerFactor} ) * ( ${input_width} * ${largerFactor} ) * ${input_channelCount} ) `
-        + `= ( ${input_height_scaled} * ${input_width_scaled} * ${input_channelCount} ) `
+        + `= ( ( input_height * largerFactor ) `
+          + `* ( input_width * largerFactor ) * input_channelCount ) `
+        + `= ( ( ${input_height} * ${largerFactor} ) * `
+          + `( ${input_width} * ${largerFactor} ) * ${input_channelCount} ) `
+        + `= ( ${input_height_scaled} * ${input_width_scaled} * `
+          + `${input_channelCount} ) `
         + `= ( ${input_valueCount_scaled} ) `
         + `should not exceed `
         + `.input_valueCount_scaled_max `
@@ -860,17 +872,20 @@ class HeightWidthDepth {
 
     // (2023/03/08 Remarked) Use SHUFFLE_NET_V2_BY_MOBILE_NET_V1 instead.
     // const nConvStageType
-    //   = ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID; // (6)
+    //   = ValueDesc.ConvStageType.Singleton.Ids
+    //       .SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID; // (6)
 
     // Use ( pad = same ) so that edge pixels will not be dropped.
     const nConvStageType
       = ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1; // (5)
 
-    // The neuralNet performance testing should not keep-input-tensor because the
-    // input image is created from canvas in real time.
+    // The neuralNet performance testing should not keep-input-tensor because
+    // the input image is created from canvas in real time.
     let bKeepInputTensor = false;
 
-    // explicit_input_height, explicit_input_width, explicit_input_channelCount,
+    // explicit_input_height,
+    // explicit_input_width,
+    // explicit_input_channelCount,
     // has_implicit_input,
     // vocabularyChannelCount, vocabularyCountPerInputChannel,
     // nConvStageTypeId,
@@ -880,12 +895,15 @@ class HeightWidthDepth {
     //
    
     // Create TestCases for every NeuralWorker.Mode
-    for ( let i = 0; i < NeuralWorker.Mode.Singleton.integerToInfoMap.size; ++i ) {
+    for ( let i = 0;
+      i < NeuralWorker.Mode.Singleton.integerToInfoMap.size; ++i ) {
+
       let theModeInfo = NeuralWorker.Mode.Singleton.integerToInfoMap.get( i );
 
       // Must be in the same order.
       if ( i != theModeInfo.id )
-        throw Error( `NeuralWorker_tester.neuralWorker_PerformanceTest_init(): `
+        throw Error( `NeuralWorker_tester`
+          + `.neuralWorker_PerformanceTest_init(): `
           + `theModeInfo.id ( ${theModeInfo.id} ) should be ( ${i} ).`
         );
 
@@ -942,7 +960,8 @@ class HeightWidthDepth {
     let testCase = this.testCaseMap.get( testCaseName );
 
     // First time test this case. Release all other test cases' neural networks
-    // (so that there will be enough memory). Create the specified neural network.
+    // (so that there will be enough memory). Create the specified neural
+    // network.
     if ( !testCase.preparePromise ) {
       this.neuralWorker_PerformanceTest_release_preparePromise();
       testCase.preparePromise = testCase.prepare_async(
@@ -986,9 +1005,9 @@ class HeightWidthDepth {
    * (Called by util_tester.js)
    *
    * @param {ValueMax.Percentage.Aggregate} progressParent
-   *   Some new progressToAdvance will be created and added to progressParent. The
-   * created progressToAdvance will be increased when every time advanced. The
-   * progressParent.root_get() will be returned when every time yield.
+   *   Some new progressToAdvance will be created and added to progressParent.
+   * The created progressToAdvance will be increased when every time advanced.
+   * The progressParent.root_get() will be returned when every time yield.
    */
   async* tester( progressParent ) {
     const funcNameInMessage = "tester";
@@ -1023,7 +1042,9 @@ class HeightWidthDepth {
 
     let progressRoot = progressParent.root_get();
 
-    let progressMax = 10000; // Temporary progress max (because it is unkown here).
+    // Temporary progress max (because it is unkown here).
+    let progressMax = 10000;
+
     let progressToAdvance = progressParent.child_add(
       ValueMax.Percentage.Concrete.Pool.get_or_create_by( progressMax ) );
 
@@ -1079,7 +1100,8 @@ class HeightWidthDepth {
               await testCase.preparePromise;
             }
 
-            progressToAdvance.value_advance(); // Every prepare_async() complete.
+            // Every prepare_async() complete.
+            progressToAdvance.value_advance();
             yield progressRoot;
 
             let resultFloat32ArrayArray;
@@ -1093,7 +1115,9 @@ class HeightWidthDepth {
                 timeTimesIndex < timeInfo.times;
                 ++timeTimesIndex ) {
 
-                if ( this.ImplicitInputModeInfo.implicit_input_bFillAlignmentMark ) {
+                if ( this.ImplicitInputModeInfo
+                       .implicit_input_bFillAlignmentMark ) {
+
                   if ( testCase.neuralNetCount == 2 ) {
                     let swapOk = await this.neuralWorkerProxies
                       .alignmentMarkValueArrayArray_swap_async();
@@ -1127,8 +1151,10 @@ class HeightWidthDepth {
                   }
                 }
 
-                progressToAdvance.value_advance(); // Every performance test complete.
+                // Every performance test complete.
+                progressToAdvance.value_advance();
                 yield progressRoot;
+
               } // timeTimesIndex
 
               performanceTable_htmlTableOperator.Body_addRow( [
@@ -1151,13 +1177,18 @@ class HeightWidthDepth {
                 let alignmentMarkValueArray;
                 let previous_output_TypedArray;
                 {
-                  if ( this.ImplicitInputModeInfo.implicit_input_bFillAlignmentMark )
+                  if ( this.ImplicitInputModeInfo
+                         .implicit_input_bFillAlignmentMark ) {
                     alignmentMarkValueArray
                       = testCase.alignmentMarkValueArrayArray[ neuralNetIndex ];
+                  }
                   
-                  if ( this.ImplicitInputModeInfo.implicit_input_bFillPreviousOutput )
+                  if ( this.ImplicitInputModeInfo
+                         .implicit_input_bFillPreviousOutput ) {
                     previous_output_TypedArray
-                      = previous_output_TypedArrayArray_for_verification[ neuralNetIndex ];
+                      = previous_output_TypedArrayArray_for_verification[
+                          neuralNetIndex ];
+                  }
                 }
 
                 const input_TypedArray = this.input_TypedArray_clone();
@@ -1184,8 +1215,10 @@ class HeightWidthDepth {
               } // neuralNetIndex
             }
 
-            progressToAdvance.value_advance(); // Every NeuralWorker.Mode complete
+            // Every NeuralWorker.Mode complete
+            progressToAdvance.value_advance();
             yield progressRoot;
+
           } // testCaseIndex
 
           this.neuralWorker_PerformanceTest_release();
@@ -1201,8 +1234,9 @@ class HeightWidthDepth {
           throw Error( `NeuralWorker_tester.HeightWidthDepth`
             + `.${funcNameInMessage}(): `
             + `memory leak. `
-            + `result tensor count (${memoryInfo_testCorrectness_after.numTensors}) `
-            + `should be (${memoryInfo_testCorrectness_before.numTensors} `
+            + `result tensor count `
+            + `( ${memoryInfo_testCorrectness_after.numTensors} ) `
+            + `should be ( ${memoryInfo_testCorrectness_before.numTensors} ).`
           );
       }
 
@@ -1241,9 +1275,9 @@ class HeightWidthDepth {
  * (Called by tester())
  *
  * @param {ValueMax.Percentage.Aggregate} progressParent
- *   Some new progressToAdvance will be created and added to progressParent. The
- * created progressToAdvance will be increased when every time advanced. The
- * progressParent.root_get() will be returned when every time yield.
+ *   Some new progressToAdvance will be created and added to progressParent.
+ * The created progressToAdvance will be increased when every time advanced.
+ * The progressParent.root_get() will be returned when every time yield.
  *
  */
 async function* testerBackend( progressParent,
@@ -1296,9 +1330,9 @@ async function* testerBackend( progressParent,
  * (Called by util_tester.js)
  *
  * @param {ValueMax.Percentage.Aggregate} progressParent
- *   Some new progressToAdvance will be created and added to progressParent. The
- * created progressToAdvance will be increased when every time advanced. The
- * progressParent.root_get() will be returned when every time yield.
+ *   Some new progressToAdvance will be created and added to progressParent.
+ * The created progressToAdvance will be increased when every time advanced.
+ * The progressParent.root_get() will be returned when every time yield.
  *
  */
 async function* testerBackendAll( progressParent,
