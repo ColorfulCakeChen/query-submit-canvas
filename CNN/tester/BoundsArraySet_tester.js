@@ -22,7 +22,6 @@ async function test_ConvBiasActivation_async( asserter_Equal ) {
 
   let input0;
   let a_BoundsArraySet_ConvBiasActivation;
-  let channelShuffler;
 
   let shuffledArrays = {
     afterFilter_lowers: null,
@@ -37,6 +36,9 @@ async function test_ConvBiasActivation_async( asserter_Equal ) {
     output_scaleArraySet_do_scales: null,
     output_scaleArraySet_undo_scales: null,
   };
+
+  let channelShuffler = new ChannelShuffler.ShuffleInfo(
+    concatenatedShape, outputGroupCount );
 
   /**
    * @param {number[]} array1d
@@ -89,9 +91,6 @@ async function test_ConvBiasActivation_async( asserter_Equal ) {
     a_BoundsArraySet_ConvBiasActivation
       = new BoundsArraySet.ConvBiasActivation(
           input0, outputChannelCount, channelShuffler_inputGroupCount );
-
-    channelShuffler = new ChannelShuffler.ShuffleInfo(
-      concatenatedShape, outputGroupCount );
 
     // Test: shuffle output
     {
