@@ -279,8 +279,8 @@ class NeuralNet_Reference_Base extends Recyclable.Root {
 
     if ( memoryInfo_afterDispose.numTensors != numTensors_expected )
       throw Error( `NeuralNet create/dispose memory leak. `
-        + `result tensor count (${memoryInfo_afterDispose.numTensors}) `
-        + `should be (${numTensors_expected} `
+        + `result tensor count ( ${memoryInfo_afterDispose.numTensors} ) `
+        + `should be ( ${numTensors_expected} ) `
         + `${neuralNet}` );
 
     tf.dispose( outputTensor3d );

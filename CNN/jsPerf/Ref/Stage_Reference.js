@@ -167,8 +167,8 @@ class Stage_Reference_Base extends Recyclable.Root {
 
       if ( memoryInfo_apply_after.numTensors != ( memoryInfo_apply_before.numTensors + tensorNumDifference_apply_before_after ) )
         throw Error( `Stage.apply() memory leak. `
-          + `result tensor count (${memoryInfo_apply_after.numTensors}) `
-          + `should be (${ ( memoryInfo_apply_before.numTensors + tensorNumDifference_apply_before_after ) } `
+          + `result tensor count ( ${memoryInfo_apply_after.numTensors} ) `
+          + `should be ( ${ ( memoryInfo_apply_before.numTensors + tensorNumDifference_apply_before_after ) } ) `
           + `${stage}` );
 
       if ( !inputTensor3d )
@@ -206,8 +206,8 @@ class Stage_Reference_Base extends Recyclable.Root {
 
     if ( memoryInfo_afterDispose.numTensors != ( memoryInfo_beforeCreate.numTensors + tensorNumDifference_apply_before_after ) )
       throw Error(  `Stage create/dispose memory leak. `
-        + `result tensor count (${memoryInfo_afterDispose.numTensors}) `
-        + `should be (${ ( memoryInfo_beforeCreate.numTensors + tensorNumDifference_apply_before_after ) } `
+        + `result tensor count ( ${memoryInfo_afterDispose.numTensors} ) `
+        + `should be ( ${ ( memoryInfo_beforeCreate.numTensors + tensorNumDifference_apply_before_after ) } ) `
         + `${stage}` );
 
     tf.dispose( outputTensor3d );

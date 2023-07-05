@@ -119,7 +119,7 @@ class Case {
     if ( memoryInfo_apply_after.numTensors
            != ( memoryInfo_apply_before.numTensors + numTensors_delta ) )
       throw Error( `${this.assertPrefix}: memory leak. `
-        + `result tensor count (${memoryInfo_apply_after.numTensors}) `
+        + `result tensor count ( ${memoryInfo_apply_after.numTensors} ) `
         + `should be ( ${numTensors_predicted} ) = `
         + `( ${memoryInfo_apply_before.numTensors} + ${numTensors_delta} ).`
       );

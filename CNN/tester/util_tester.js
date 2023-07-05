@@ -124,10 +124,11 @@ function test() {
       let tensorflow_memoryInfo_after = tf.memory();
       if ( tensorflow_memoryInfo_after.numTensors
               != tensorflow_memoryInfo_before.numTensors )
-        throw Error( `tensorflow.js memory leak. `
+        throw Error( `util_tester.test(): `
+          + `tensorflow.js memory leak. `
           + `result tensor count `
           + `( ${tensorflow_memoryInfo_after.numTensors} ) `
-          + `should be (${tensorflow_memoryInfo_before.numTensors}.`
+          + `should be ( ${tensorflow_memoryInfo_before.numTensors} ).`
         );
     },
     delayMilliseconds

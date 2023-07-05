@@ -324,7 +324,7 @@ class HeightWidthDepth {
           throw Error( `testCorrectness() memory leak. `
             + `result tensor count `
             + `( ${memoryInfo_testCorrectness_after.numTensors} ) `
-            + `should be (${memoryInfo_testCorrectness_before.numTensors}.`
+            + `should be ( ${memoryInfo_testCorrectness_before.numTensors} ).`
           );
       }
 

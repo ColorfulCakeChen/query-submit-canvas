@@ -557,7 +557,7 @@ class Block_Reference_Base extends Recyclable.Root {
     if ( memoryInfo_afterDispose.numTensors
            != ( memoryInfo_beforeCreate.numTensors + tensorNumDifference_apply_before_after ) )
       throw Error( `Block create/dispose memory leak. `
-        + `result tensor count (${memoryInfo_afterDispose.numTensors}) `
+        + `result tensor count ( ${memoryInfo_afterDispose.numTensors} ) `
         + `should be ( `
         + `${ ( memoryInfo_beforeCreate.numTensors + tensorNumDifference_apply_before_after ) } `
         + `). ${block}` );

@@ -304,8 +304,8 @@ class HeightWidthDepthGroup {
              != memoryInfo_testCorrectness_before.numTensors )
         throw Error( `testCorrectness() memory leak. `
           + `result tensor count `
-          + `(${memoryInfo_testCorrectness_after.numTensors}) `
-          + `should be (${memoryInfo_testCorrectness_before.numTensors} `
+          + `( ${memoryInfo_testCorrectness_after.numTensors} ) `
+          + `should be ( ${memoryInfo_testCorrectness_before.numTensors} ).`
         );
 
     });
