@@ -1,6 +1,6 @@
 /**
- * @file This is a classic javascript file. It should be loaded in a HTML web page
- * by a HTML script tag.
+ * @file This is a classic javascript file. It should be loaded in a HTML web
+ * page by a HTML script tag.
  */
 
 window.addEventListener( "load", function ( e ) {

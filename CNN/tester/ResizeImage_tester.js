@@ -16,7 +16,8 @@ function ScriptLoader_createPromise( url, isModule, htmlElementId ) {
 
   console.log( "Loading \"" + url + "\"" );
   return new Promise( ( resolve, reject ) => {
-    let attributes = { src: url, onload: e => resolve(e), onerror: e => reject(e) };
+    let attributes
+      = { src: url, onload: e => resolve(e), onerror: e => reject(e) };
 
     if ( isModule )
       attributes.type = "module";
@@ -24,7 +25,8 @@ function ScriptLoader_createPromise( url, isModule, htmlElementId ) {
     if ( htmlElementId )
       attributes.id = htmlElementId;
 
-    document.head.appendChild( Object.assign( document.createElement("script"), attributes ) );
+    document.head.appendChild( Object.assign(
+      document.createElement("script"), attributes ) );
   });
 }
 
@@ -51,7 +53,8 @@ async function testAll( bDisplayFailedTensor ) {
             inputInfo.inputShape[ 0 ] = inputHeight;
             inputInfo.inputShape[ 1 ] = inputWidth;
             inputInfo.inputShape[ 2 ] = inputDepth;
-            inputInfo.inputArray.length = tf.util.sizeFromShape( inputInfo.inputShape );
+            inputInfo.inputArray.length
+              = tf.util.sizeFromShape( inputInfo.inputShape );
             for ( let i = 0; i < inputInfo.inputArray.length; ++i ) {
               inputInfo.inputArray[ i ] = 1 + i;
             }
@@ -59,11 +62,21 @@ async function testAll( bDisplayFailedTensor ) {
             inputInfo.bDisplayed = false; // Whether this input is showed.
           }
 
-          for ( let outputHeight = 2; outputHeight <= outputHeight_max; ++outputHeight )
-            for ( let outputWidth = 2; outputWidth <= outputWidth_max; ++outputWidth )
-              for ( let alignCorners = 0; alignCorners < alignCorners_max; ++alignCorners )
-                for ( let halfPixelCenters = 0; halfPixelCenters <= halfPixelCenters_max; ++halfPixelCenters )
-                  for ( let resizeOpIndex = 0; resizeOpIndex < resizeOpArray.length; ++resizeOpIndex ) {
+          for ( let outputHeight = 2;
+            outputHeight <= outputHeight_max; ++outputHeight )
+
+            for ( let outputWidth = 2;
+              outputWidth <= outputWidth_max; ++outputWidth )
+
+              for ( let alignCorners = 0;
+                alignCorners < alignCorners_max; ++alignCorners )
+
+                for ( let halfPixelCenters = 0;
+                  halfPixelCenters <= halfPixelCenters_max;
+                  ++halfPixelCenters )
+
+                  for ( let resizeOpIndex = 0;
+                    resizeOpIndex < resizeOpArray.length; ++resizeOpIndex ) {
 
                     outputInfo.size[ 0 ] = outputHeight;
                     outputInfo.size[ 1 ] = outputWidth;
@@ -90,7 +103,9 @@ async function test_by_backendName_all(
 }
 
 /**
- * @return {boolean} Return true, if the result of specified backed is the same as "cpu" backend.
+ * @return {boolean}
+ *   Return true, if the result of specified backed is the same as "cpu"
+ * backend.
  */
 async function test_by_backendName(
   backendNameToBeTested, bDisplayFailedTensor, inputInfo, outputInfo ) {
@@ -99,7 +114,10 @@ async function test_by_backendName(
   let outputShape_cpu, outputArray_cpu;
 
   const backendNameArray = [ "cpu", backendNameToBeTested ];
-  for ( let backendNameArrayIndex = 0; backendNameArrayIndex < backendNameArray.length; ++backendNameArrayIndex ) {
+  for ( let backendNameArrayIndex = 0;
+    backendNameArrayIndex < backendNameArray.length;
+    ++backendNameArrayIndex ) {
+
     const backendName = backendNameArray[ backendNameArrayIndex ];
 
     //console.log( `Change to backend "${backendName}"...` );
@@ -107,7 +125,8 @@ async function test_by_backendName(
     //console.log( `backend now is "${tf.getBackend()}".` );
 
     tf.tidy( () => {
-      let inputTensor = tf.tensor( inputInfo.inputArray, inputInfo.inputShape, inputInfo.dtype );
+      let inputTensor = tf.tensor(
+        inputInfo.inputArray, inputInfo.inputShape, inputInfo.dtype );
 
       let alignCorners = ( outputInfo.alignCorners != 0 );
       let halfPixelCenters = ( outputInfo.halfPixelCenters != 0 );
@@ -116,7 +135,9 @@ async function test_by_backendName(
           outputInfo.size, alignCorners, halfPixelCenters );
 
       let backendName = tf.getBackend();
-      if ( backendName == "cpu" ) { // Record result of cpu backend for comparison.
+
+      // Record result of cpu backend for comparison.
+      if ( backendName == "cpu" ) {
         outputShape_cpu = resultTensor.shape;
         outputArray_cpu = resultTensor.dataSync();
 
@@ -153,7 +174,8 @@ async function test_by_backendName(
 
           if ( bDisplayFailedTensor ) {
             console.log( `cpu` );
-            let resultTensor_cpu = tf.tensor( outputArray_cpu, outputShape_cpu );
+            let resultTensor_cpu
+              = tf.tensor( outputArray_cpu, outputShape_cpu );
             resultTensor_cpu.print();
 
             console.log( `${backendName}` );
