@@ -11,7 +11,7 @@ import * as ChannelShuffler from "../Conv/ChannelShuffler.js";
 /**
  * @param {TensorTools.Asserter_Equal} asserter_Equal
  */
-function test_ConvBiasActivation( asserter_Equal ) {
+async function test_ConvBiasActivation_async( asserter_Equal ) {
 
   const inputChannelCount = 10;
   const outputChannelCount = 20;
@@ -31,6 +31,10 @@ function test_ConvBiasActivation( asserter_Equal ) {
   let afterFilterShuffledTensor;
   let afterBiasShuffledTensor;
   let outputShuffledTensor;
+
+  let afterFilterShuffledArray;
+  let afterBiasShuffledArray;
+  let outputShuffledArray;
 
   try {
     input0 = new ActivationEscaping.ScaleBoundsArray( inputChannelCount );
@@ -82,8 +86,24 @@ function test_ConvBiasActivation( asserter_Equal ) {
           = channelShuffler.reshapeTransposeReshape( outputTensor );
       }
 
+      {
+        afterFilterShuffledArray = await afterFilterShuffledTensor.data();
+        afterBiasShuffledArray = await afterBiasShuffledTensor.data();
+        outputShuffledArray = await outputShuffledTensor.data();
+      }
 
 //!!! ...unfinished... (2023/07/05)
+      {
+        BoundsArraySet_Asserter.assert_ScaleBoundsArray(
+          asserter_Equal,
+          aScaleBoundsArray, refScaleBoundsArray,
+          lhsName, rhsName,
+          prefixMsg, postfixMsg );
+
+      }
+
+//!!! ...unfinished... (2023/07/05)
+
     }
   
   } finally {
@@ -140,7 +160,7 @@ async function* tester( progressParent ) {
 
   try {
 
-    test_ConvBiasActivation( asserter_Equal );
+    await test_ConvBiasActivation_async( asserter_Equal );
 
     progressToAdvance.value_advance();
     yield progressRoot;

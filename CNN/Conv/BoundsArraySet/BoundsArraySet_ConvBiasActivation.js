@@ -69,7 +69,9 @@ class ConvBiasActivation extends InputsOutputs {
   constructor(
     input0, outputChannelCount0, channelShuffler_inputGroupCount ) {
 
-    super( input0, undefined, outputChannelCount0, undefined ); // .input0 and .output0
+    // .input0 and .output0
+    super(
+      input0, undefined, outputChannelCount0, undefined );
     ConvBiasActivation.setAsConstructor_self.call( this,
       input0, outputChannelCount0, channelShuffler_inputGroupCount );
   }
@@ -78,7 +80,8 @@ class ConvBiasActivation extends InputsOutputs {
   static setAsConstructor(
     input0, outputChannelCount0, channelShuffler_inputGroupCount ) {
 
-    super.setAsConstructor( input0, undefined, outputChannelCount0, undefined );
+    super.setAsConstructor(
+      input0, undefined, outputChannelCount0, undefined );
     ConvBiasActivation.setAsConstructor_self.call( this,
       input0, outputChannelCount0, channelShuffler_inputGroupCount );
     return this;
