@@ -48,6 +48,7 @@ async function test_ConvBiasActivation_async( asserter_Equal ) {
 
     // Test: shuffle output
     {
+      const value_stride = outputChannelCount;
       let base;
 
       // Make testing output channel data.
@@ -57,36 +58,36 @@ async function test_ConvBiasActivation_async( asserter_Equal ) {
           base = 0;
           afterFilter.lowers[ c ] = base + c;
 
-          base += outputChannelCount;
+          base += value_stride;
           afterFilter.uppers[ c ] = base + c;
         }
 
         const afterBias = a_BoundsArraySet_ConvBiasActivation.afterBias;
         {
-          base += outputChannelCount;
+          base += value_stride;
           afterBias.lowers[ c ] = base + c;
 
-          base += outputChannelCount;
+          base += value_stride;
           afterBias.uppers[ c ] = base + c;
         }
 
         const output0_boundsArray
           = a_BoundsArraySet_ConvBiasActivation.output0.boundsArray;
         {
-          base += outputChannelCount;
+          base += value_stride;
           output0_boundsArray.lowers[ c ] = base + c;
 
-          base += outputChannelCount;
+          base += value_stride;
           output0_boundsArray.uppers[ c ] = base + c;
         }
 
         const output0_scaleArraySet
           = a_BoundsArraySet_ConvBiasActivation.output0.scaleArraySet;
         {
-          base += outputChannelCount;
+          base += value_stride;
           output0_scaleArraySet.do.scales[ c ] = base + c;
 
-          base += outputChannelCount;
+          base += value_stride;
           output0_scaleArraySet.undo.scales[ c ] = base + c;
         }
       }
