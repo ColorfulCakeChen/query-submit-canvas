@@ -132,22 +132,30 @@ async function test_ConvBiasActivation_async( asserter_Equal ) {
       // Shuffle by tensors.
       {
         const afterFilter = a_BoundsArraySet_ConvBiasActivation.afterFilter;
-        shuffledArrays.afterFilter_lowers = shuffleArray_byChannelShuffler(
-          afterFilter.lowers );
-        shuffledArrays.afterFilter_uppers = shuffleArray_byChannelShuffler(
-          afterFilter.uppers );
+        shuffledArrays.afterFilter_lowers
+          = shuffleArray_byChannelShuffler( afterFilter.lowers );
+        shuffledArrays.afterFilter_uppers
+          = shuffleArray_byChannelShuffler( afterFilter.uppers );
 
         const afterBias = a_BoundsArraySet_ConvBiasActivation.afterBias;
-        shuffledArrays.afterBias_lowers = shuffleArray_byChannelShuffler(
-          afterBias.lowers );
-        shuffledArrays.afterBias_uppers = shuffleArray_byChannelShuffler(
-          afterBias.uppers );
+        shuffledArrays.afterBias_lowers
+          = shuffleArray_byChannelShuffler( afterBias.lowers );
+        shuffledArrays.afterBias_uppers
+          = shuffleArray_byChannelShuffler( afterBias.uppers );
 
+        const output_boundsArray
+          = a_BoundsArraySet_ConvBiasActivation.output0.boundsArray;
+        shuffledArrays.output_boundsArray_lowers
+          = shuffleArray_byChannelShuffler( output_boundsArray.lowers );
+        shuffledArrays.output_boundsArray_uppers
+          = shuffleArray_byChannelShuffler( output_boundsArray.uppers );
 
-//!!! ...unfinished... (2023/07/05)
-// boundsArray.lowers[], boundsArray.uppers[]
-// scaleArraySet.do.scales[], scaleArraySet.undo.scales[]
-
+        const output_scaleArraySet
+          = a_BoundsArraySet_ConvBiasActivation.output0.scaleArraySet;
+        shuffledArrays.output_scaleArraySet_do_scales
+          = shuffleArray_byChannelShuffler( output_scaleArraySet.do.scales );
+        shuffledArrays.output_scaleArraySet_undo_scales
+          = shuffleArray_byChannelShuffler( output_scaleArraySet.undo.scales );
       }
 
 //!!! ...unfinished... (2023/07/05)
