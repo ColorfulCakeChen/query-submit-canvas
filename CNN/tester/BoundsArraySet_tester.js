@@ -54,10 +54,15 @@ async function channelShuffler_shuffleArray_async(
 /**
  * @param {TensorTools.Asserter_Equal} asserter_Equal
  */
-async function
-  test_ConvBiasActivation_set_outputs_all_byInterleave_asGrouptTwo_async(
-    asserter_Equal ) {
+async function*
+  test_ConvBiasActivation_set_outputs_all_byInterleave_asGrouptTwo_asyncGenerator(
+    progressParent, asserter_Equal ) {
 
+  let progressRoot = progressParent.root_get();
+
+  let progressToAdvance = progressParent.child_add(
+    ValueMax.Percentage.Concrete.Pool.get_or_create_by( 1 ) );
+    
   const inputChannelCount = 10;
   const outputChannelCount = 20;
   const channelShuffler_inputGroupCount = 2;
@@ -234,13 +239,17 @@ async function
       input0 = null;
     }
   }
+
+  progressToAdvance.value_advance();
+  yield progressRoot;
 }
 
 /**
  * @param {TensorTools.Asserter_Equal} asserter_Equal
  */
-async function
-  test_ArrayInterleaver_interleave_asGrouptTwo_alongLastAxis_async(
+async* function
+  test_ArrayInterleaver_interleave_asGrouptTwo_alongLastAxis_asyncGenerator(
+    progressParent,
     asserter_Equal ) {
 
   const heightMin = 1, heightMax = 10;
@@ -255,6 +264,17 @@ async function
 
   const lhsName = "shuffledArray_by_ArrayInterleaver";
   const rhsName = "shuffledArray_by_ChannelShuffler";
+
+
+  let progressRoot = progressParent.root_get();
+
+  const testCaseCount
+    = ( heightMax - heightMin + 1 ) * ( widthMax - widthMin + 1 )
+        * ( ( ( channelCountMax - channelCountMin ) / 2 ) + 1 )
+
+  let progressToAdvance = progressParent.child_add(
+    ValueMax.Percentage.Concrete.Pool.get_or_create_by( testCaseCount ) );
+
 
 //!!! ...unfinished... (2023/07/06)
 // should also test 1d, 2d, 3d:
@@ -307,7 +327,10 @@ async function
           shuffledArray_by_ChannelShuffler,
           prefixMsg, `${lhsName}`, `${rhsName}`, postfixMsg
         );
-      
+
+        // 4.
+        progressToAdvance.value_advance();
+        yield progressRoot;
       }
     }
   }
@@ -326,28 +349,26 @@ async function* tester( progressParent ) {
 
   let progressRoot = progressParent.root_get();
 
-  let progressToAdvance = progressParent.child_add(
-    ValueMax.Percentage.Concrete.Pool.get_or_create_by( 2 ) );
+  let progressConvBiasActivation = progressParent.child_add(
+    ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
 
+  let progressArrayInterleaver = progressParent.child_add(
+    ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
+  
   let asserter_Equal
     = TensorTools.Asserter_Equal.Pool.get_or_create_by( 0.01, 0.001 );
 
   try {
 
     // 1.
-    await
-      test_ConvBiasActivation_set_outputs_all_byInterleave_asGrouptTwo_async(
-        asserter_Equal );
-
-    progressToAdvance.value_advance();
-    yield progressRoot;
+    yield*
+      test_ConvBiasActivation_set_outputs_all_byInterleave_asGrouptTwo_asyncGenerator(
+        progressConvBiasActivation, asserter_Equal );
 
     // 2.
-    await test_ArrayInterleaver_interleave_asGrouptTwo_alongLastAxis_async(
-      asserter_Equal );
-
-    progressToAdvance.value_advance();
-    yield progressRoot;
+    yield*
+      test_ArrayInterleaver_interleave_asGrouptTwo_alongLastAxis_asyncGenerator(
+        progressArrayInterleaver, asserter_Equal );
 
   } finally {
     if ( asserter_Equal ) {
