@@ -87,7 +87,7 @@ async function
     return channelShuffler_shuffleArray_async(
       channelShuffler, array1d, concatenatedShape );
   }
-  
+
   try {
     input0 = ActivationEscaping.ScaleBoundsArray.Pool.get_or_create_by(
       inputChannelCount );
