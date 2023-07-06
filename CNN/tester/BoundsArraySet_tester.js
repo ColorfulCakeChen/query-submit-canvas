@@ -1,6 +1,6 @@
 import * as BoundsArraySet_Asserter from "../util/BoundsArraySet_Asserter.js";
 //import * as RandTools from "../util/RandTools.js";
-import * as TensorTools from "../../util/TensorTools.js";
+import * as TensorTools from "../util/TensorTools.js";
 import * as ValueMax from "../util/ValueMax.js";
 import * as BoundsArraySet from "../Conv/BoundsArraySet.js";
 import * as ChannelShuffler from "../Conv/ChannelShuffler.js";
