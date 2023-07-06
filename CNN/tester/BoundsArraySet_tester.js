@@ -275,7 +275,6 @@ async function*
 
     // 0.
     let concatenatedShape;
-    let elementCount;
 
     if ( shape.length == 1 ) { // test 1d
       const channelCount = shape[ 0 ];
