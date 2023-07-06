@@ -363,12 +363,6 @@ async function*
           } else {
             test_by_shape( width, channelCount ); // test 2d, too.
           }
-        } else { // ( 1 != height )
-          if ( 1 == width ) {
-            test_by_shape( height, channelCount ); // test 2d, too.
-          } else {
-            // test 3d, already.
-          }
         }
 
         progressToAdvance.value_advance();
