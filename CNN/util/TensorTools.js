@@ -182,7 +182,7 @@ class Asserter_Equal extends Recyclable.Root {
           + `${lhsNumberArrayName}[ ${this.elementIndex} ] `
           + `( ${lhsNumberArray[ this.elementIndex ]} ) `
           + `should be ( ${rhsNumberArray[ this.elementIndex ]} ). `
-          + `( ${lhsNumberArray} ) should be ( ${rhsNumberArray} ). `
+          + `[ ${lhsNumberArray} ] should be [ ${rhsNumberArray} ]. `
           + `${postfixMsg}` );
     }
   }
