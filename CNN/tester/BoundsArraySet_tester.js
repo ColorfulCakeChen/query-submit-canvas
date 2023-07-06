@@ -71,13 +71,14 @@ async function
   }
 
   try {
-    input0 = new ActivationEscaping.ScaleBoundsArray( inputChannelCount );
+    input0 = ActivationEscaping.ScaleBoundsArray.Pool.get_or_create_by(
+      inputChannelCount );
 
     a_BoundsArraySet_ConvBiasActivation
-      = new BoundsArraySet.ConvBiasActivation(
+      = BoundsArraySet.ConvBiasActivation.Pool.get_or_create_by(
           input0, outputChannelCount, channelShuffler_inputGroupCount );
 
-    channelShuffler = new ChannelShuffler.ShuffleInfo(
+    channelShuffler = ChannelShuffler.ShuffleInfo.Pool.get_or_create_by(
       concatenatedShape, outputGroupCount );
         
     // Test: shuffle output
