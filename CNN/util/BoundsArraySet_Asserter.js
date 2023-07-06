@@ -155,27 +155,37 @@ function assert_ScaleBoundsArray(
 
   assert_BoundsArray( asserter_Equal,
     aScaleBoundsArray.boundsArray, refScaleBoundsArray.boundsArray,
-    prefixMsg, `${lhsName}.boundsArray`, `${rhsName}.boundsArray`, postfixMsg
-  );
-
-
-  asserter_Equal.assert_NumberArray_NumberArray(
-    aScaleBoundsArray.scaleArraySet.do.scales,
-    refScaleBoundsArray.scaleArraySet.do.scales,
     prefixMsg,
-    `${lhsName}.scaleArraySet.do.scales`,
-    `${rhsName}.scaleArraySet.do.scales`,
+    `${lhsName}.boundsArray`, `${rhsName}.boundsArray`,
     postfixMsg
   );
 
-  asserter_Equal.assert_NumberArray_NumberArray(
-    aScaleBoundsArray.scaleArraySet.undo.scales,
-    refScaleBoundsArray.scaleArraySet.undo.scales,
-    prefixMsg,
-    `${lhsName}.scaleArraySet.undo.scales`,
-    `${rhsName}.scaleArraySet.undo.scales`,
-    postfixMsg
-  );
+//!!! (2023/07/06 Remarked) Use assert_ScaleArraySet() instead.
+//   asserter_Equal.assert_NumberArray_NumberArray(
+//     aScaleBoundsArray.scaleArraySet.do.scales,
+//     refScaleBoundsArray.scaleArraySet.do.scales,
+//     prefixMsg,
+//     `${lhsName}.scaleArraySet.do.scales`,
+//     `${rhsName}.scaleArraySet.do.scales`,
+//     postfixMsg
+//   );
+//
+//   asserter_Equal.assert_NumberArray_NumberArray(
+//     aScaleBoundsArray.scaleArraySet.undo.scales,
+//     refScaleBoundsArray.scaleArraySet.undo.scales,
+//     prefixMsg,
+//     `${lhsName}.scaleArraySet.undo.scales`,
+//     `${rhsName}.scaleArraySet.undo.scales`,
+//     postfixMsg
+//   );
+
+    assert_ScaleArraySet( asserter_Equal,
+      aScaleBoundsArray.scaleArraySet,
+      refScaleBoundsArray.scaleArraySet,
+      prefixMsg,
+      `${lhsName}.scaleArraySet`, `${rhsName}.scaleArraySet`,
+      postfixMsg
+    );
 }
 
 /**
