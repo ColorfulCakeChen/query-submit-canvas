@@ -183,8 +183,8 @@ async function
 
       // Check.
       {
-        const prefixMsg
-          = "BoundsArraySet_tester.test_ConvBiasActivation_async(): ";
+        const prefixMsg = "BoundsArraySet_tester"
+          + ".test_ConvBiasActivation_set_outputs_all_byInterleave_asGrouptTwo_async(): ";
         const postfixMsg = "";
 
         const lhsName = "a_BoundsArraySet_ConvBiasActivation";
@@ -249,6 +249,16 @@ async function
 
   const channelShuffler_outputGroupCount = 2;
 
+  const prefixMsg = "BoundsArraySet_tester
+    + ".test_ArrayInterleaver_interleave_asGrouptTwo_alongLastAxis_async(): ";
+  const postfixMsg = "";
+
+  const lhsName = "shuffledArray_by_ArrayInterleaver";
+  const rhsName = "shuffledArray_by_ChannelShuffler";
+
+//!!! ...unfinished... (2023/07/06)
+// should also test 1d, 2d, 3d:
+
   for ( let height = heightMin; height <= heightMax; ++height ) {
     for ( let width = widthMin; width <= widthMax; ++width ) {
 
@@ -257,20 +267,32 @@ async function
         channelCount <= channelCountMax; channelCount+=2 ) {
 
         const concatenatedShape = [ height, width, outputChannelCount ];
+        const elementCount = height * width * outputChannelCount;
 
+        // 0.
+        const originalArray = [ ... ( new Array( elementCount ).keys() ) ];
 
+        // 1.
+        let shuffledArray_by_ArrayInterleaver;
+        {
+          shuffledArray_by_ArrayInterleaver = new Array( elementCount );
+          FloatValue.ArrayInterleaver
+            .interleave_asGrouptTwo_alongLastAxis_from_to(
+              originalArray, shuffledArray_by_ArrayInterleaver,
+              ...concatenatedShape
+            );
+        }
+
+        // 2.
+        let shuffledArray_by_ChannelShuffler;
         let channelShuffler;
         try {
           channelShuffler = ChannelShuffler.ShuffleInfo.Pool.get_or_create_by(
             concatenatedShape, channelShuffler_outputGroupCount );
 
-//!!! ...unfinished... (2023/07/06)
-// should also test 1d, 2d, 3d:
-//    FloatValue.ArrayInterleaver.interleave_asGrouptTwo_alongLastAxis_from_to
-
-
-          let    channelShuffler_shuffleArray_async(
-              channelShuffler, array1d, concatenatedShape );
+          shuffledArray_by_ChannelShuffler
+            = channelShuffler_shuffleArray_async(
+                channelShuffler, originalArray, concatenatedShape );
         
         } finally {
           if ( channelShuffler ) {
@@ -278,15 +300,17 @@ async function
             channelShuffler = null;
           }
         }
+
+        // 3. Check
+        asserter_Equal.assert_NumberArray_NumberArray(
+          shuffledArray_by_ArrayInterleaver,
+          shuffledArray_by_ChannelShuffler,
+          prefixMsg, `${lhsName}`, `${rhsName}`, postfixMsg
+        );
+      
       }
     }
   }
-
-
-//!!! ...unfinished... (2023/07/06)
-// should also test 1d, 2d, 3d:
-//    FloatValue.ArrayInterleaver.interleave_asGrouptTwo_alongLastAxis_from_to
-
 }  
 
 /**
