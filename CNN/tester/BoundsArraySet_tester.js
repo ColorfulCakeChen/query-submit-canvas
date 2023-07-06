@@ -266,8 +266,8 @@ async function
       for ( let channelCount = channelCountMin;
         channelCount <= channelCountMax; channelCount+=2 ) {
 
-        const concatenatedShape = [ height, width, outputChannelCount ];
-        const elementCount = height * width * outputChannelCount;
+        const concatenatedShape = [ height, width, channelCount ];
+        const elementCount = height * width * channelCount;
 
         // 0.
         const originalArray = [ ... ( new Array( elementCount ).keys() ) ];
