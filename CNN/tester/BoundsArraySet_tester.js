@@ -1,5 +1,6 @@
 export { tester };
 
+import * as FloatValue from "../Unpacker/FloatValue.js";
 import * as BoundsArraySet_Asserter from "../util/BoundsArraySet_Asserter.js";
 //import * as RandTools from "../util/RandTools.js";
 import * as TensorTools from "../util/TensorTools.js";
@@ -7,13 +8,6 @@ import * as ValueMax from "../util/ValueMax.js";
 import * as ActivationEscaping from "../Conv/ActivationEscaping.js";
 import * as BoundsArraySet from "../Conv/BoundsArraySet.js";
 import * as ChannelShuffler from "../Conv/ChannelShuffler.js";
-
-/**
- * 
- */
-class ChannelShufflerWrapper {
-
-}
 
 /**
  * Shuffle the number array along the (virtual) last axis.
@@ -243,6 +237,59 @@ async function
 }
 
 /**
+ * @param {TensorTools.Asserter_Equal} asserter_Equal
+ */
+async function
+  test_ArrayInterleaver_interleave_asGrouptTwo_alongLastAxis_async(
+    asserter_Equal ) {
+
+  const heightMin = 1, heightMax = 10;
+  const widthMin = 1, widthMax = 10;
+  const channelCountMin = 2, channelCountMax = 20;
+
+  const channelShuffler_outputGroupCount = 2;
+
+  for ( let height = heightMin; height <= heightMax; ++height ) {
+    for ( let width = widthMin; width <= widthMax; ++width ) {
+
+      // channelCount must be even number.
+      for ( let channelCount = channelCountMin;
+        channelCount <= channelCountMax; channelCount+=2 ) {
+
+        const concatenatedShape = [ height, width, outputChannelCount ];
+
+
+        let channelShuffler;
+        try {
+          channelShuffler = ChannelShuffler.ShuffleInfo.Pool.get_or_create_by(
+            concatenatedShape, channelShuffler_outputGroupCount );
+
+//!!! ...unfinished... (2023/07/06)
+// should also test 1d, 2d, 3d:
+//    FloatValue.ArrayInterleaver.interleave_asGrouptTwo_alongLastAxis_from_to
+
+
+          let    channelShuffler_shuffleArray_async(
+              channelShuffler, array1d, concatenatedShape );
+        
+        } finally {
+          if ( channelShuffler ) {
+            channelShuffler.disposeResources_and_recycleToPool();
+            channelShuffler = null;
+          }
+        }
+      }
+    }
+  }
+
+
+//!!! ...unfinished... (2023/07/06)
+// should also test 1d, 2d, 3d:
+//    FloatValue.ArrayInterleaver.interleave_asGrouptTwo_alongLastAxis_from_to
+
+}  
+
+/**
  *
  * @param {ValueMax.Percentage.Aggregate} progressParent
  *   Some new progressToAdvance will be created and added to progressParent.
@@ -256,13 +303,14 @@ async function* tester( progressParent ) {
   let progressRoot = progressParent.root_get();
 
   let progressToAdvance = progressParent.child_add(
-    ValueMax.Percentage.Concrete.Pool.get_or_create_by( 1 ) );
+    ValueMax.Percentage.Concrete.Pool.get_or_create_by( 2 ) );
 
   let asserter_Equal
     = TensorTools.Asserter_Equal.Pool.get_or_create_by( 0.01, 0.001 );
 
   try {
 
+    // 1.
     await
       test_ConvBiasActivation_set_outputs_all_byInterleave_asGrouptTwo_async(
         asserter_Equal );
@@ -270,9 +318,12 @@ async function* tester( progressParent ) {
     progressToAdvance.value_advance();
     yield progressRoot;
 
-//!!! ...unfinished... (2023/07/06)
-// should also test 1d, 2d, 3d:
-//    FloatValue.ArrayInterleaver.interleave_asGrouptTwo_alongLastAxis_from_to
+    // 2.
+    await test_ArrayInterleaver_interleave_asGrouptTwo_alongLastAxis_async(
+      asserter_Equal );
+
+    progressToAdvance.value_advance();
+    yield progressRoot;
 
   } finally {
     if ( asserter_Equal ) {
