@@ -293,7 +293,7 @@ async function
           shuffledArray_by_ChannelShuffler
             = await channelShuffler_shuffleArray_async(
                 channelShuffler, originalArray, concatenatedShape );
-        
+
         } finally {
           if ( channelShuffler ) {
             channelShuffler.disposeResources_and_recycleToPool();
