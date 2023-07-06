@@ -239,6 +239,10 @@ async function* tester( progressParent ) {
     progressToAdvance.value_advance();
     yield progressRoot;
 
+//!!! ...unfinished... (2023/07/06)
+// should also test 1d, 2d, 3d:
+//    FloatValue.ArrayInterleaver.interleave_asGrouptTwo_alongLastAxis_from_to(
+
   } finally {
     if ( asserter_Equal ) {
       asserter_Equal.disposeResources_and_recycleToPool();
