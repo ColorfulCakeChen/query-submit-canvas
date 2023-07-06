@@ -131,29 +131,29 @@ async function test_ConvBiasActivation_async( asserter_Equal ) {
       // Shuffle by tensors.
       {
         const afterFilter = a_BoundsArraySet_ConvBiasActivation.afterFilter;
-        shuffledArrays.afterFilter_lowers
+        shuffledArrays.afterFilter.lowers
           = shuffleArray_byChannelShuffler( afterFilter.lowers );
-        shuffledArrays.afterFilter_uppers
+        shuffledArrays.afterFilter.uppers
           = shuffleArray_byChannelShuffler( afterFilter.uppers );
 
         const afterBias = a_BoundsArraySet_ConvBiasActivation.afterBias;
-        shuffledArrays.afterBias_lowers
+        shuffledArrays.afterBias.lowers
           = shuffleArray_byChannelShuffler( afterBias.lowers );
-        shuffledArrays.afterBias_uppers
+        shuffledArrays.afterBias.uppers
           = shuffleArray_byChannelShuffler( afterBias.uppers );
 
         const output_boundsArray
           = a_BoundsArraySet_ConvBiasActivation.output0.boundsArray;
-        shuffledArrays.output_boundsArray_lowers
+        shuffledArrays.output.boundsArray.lowers
           = shuffleArray_byChannelShuffler( output_boundsArray.lowers );
-        shuffledArrays.output_boundsArray_uppers
+        shuffledArrays.output.boundsArray.uppers
           = shuffleArray_byChannelShuffler( output_boundsArray.uppers );
 
         const output_scaleArraySet
           = a_BoundsArraySet_ConvBiasActivation.output0.scaleArraySet;
-        shuffledArrays.output_scaleArraySet_do_scales
+        shuffledArrays.output.scaleArraySet.do.scales
           = shuffleArray_byChannelShuffler( output_scaleArraySet.do.scales );
-        shuffledArrays.output_scaleArraySet_undo_scales
+        shuffledArrays.output.scaleArraySet.undo.scales
           = shuffleArray_byChannelShuffler( output_scaleArraySet.undo.scales );
       }
 
@@ -167,84 +167,34 @@ async function test_ConvBiasActivation_async( asserter_Equal ) {
         const lhsName = "a_BoundsArraySet_ConvBiasActivation";
         const rhsName = "shuffledArrays";
 
-//!!! ...unfinished... (2023/07/05)
-// Use assert_BoundsArray()
         const afterFilter = a_BoundsArraySet_ConvBiasActivation.afterFilter;
         BoundsArraySet_Asserter.assert_BoundsArray( asserter_Equal,
           afterFilter,
-//!!! ...unfinished... (2023/07/05)
-// should be an object like { lowers[], uppers[] }
-          shuffledArrays.afterFilter_lowers,
+          shuffledArrays.afterFilter,
           prefixMsg,
-          `${lhsName}.afterFilter.lowers`, `${rhsName}.afterFilter.lowers`,
-          postfixMsg
-        );
-      
-        asserter_Equal.assert_NumberArray_NumberArray(
-          afterFilter.uppers,
-          shuffledArrays.afterFilter.uppers,
-          prefixMsg,
-          `${lhsName}.afterFilter.uppers`, `${rhsName}.afterFilter.uppers`,
-          postfixMsg
-        );
-      
-
-//!!! ...unfinished... (2023/07/05)
-
-        asserter_Equal.assert_NumberArray_NumberArray(
-          aScaleBoundsArray.boundsArray.lowers,
-          refScaleBoundsArray.boundsArray.lowers,
-          prefixMsg,
-          `${lhsName}.boundsArray.lowers`, `${rhsName}.boundsArray.lowers`,
-          postfixMsg
-        );
-      
-        asserter_Equal.assert_NumberArray_NumberArray(
-          aScaleBoundsArray.boundsArray.uppers,
-          refScaleBoundsArray.boundsArray.uppers,
-          prefixMsg,
-          `${lhsName}.boundsArray.uppers`, `${rhsName}.boundsArray.uppers`,
+          `${lhsName}.afterFilter`, `${rhsName}.afterFilter`,
           postfixMsg
         );
 
-//!!! ...unfinished... (2023/07/06)
-//       assert_ScaleArraySet( asserter_Equal,
-//           aScaleBoundsArray.scaleArraySet,
-//           refScaleBoundsArray.scaleArraySet,
-//           prefixMsg,
-//           `${lhsName}.scaleArraySet`, `${rhsName}.scaleArraySet`,
-//           postfixMsg
-//         );
-    
-        asserter_Equal.assert_NumberArray_NumberArray(
-          aScaleBoundsArray.scaleArraySet.do.scales,
-          refScaleBoundsArray.scaleArraySet.do.scales,
+        const afterBias = a_BoundsArraySet_ConvBiasActivation.afterBias;
+        BoundsArraySet_Asserter.assert_BoundsArray( asserter_Equal,
+          afterBias,
+          shuffledArrays.afterBias,
           prefixMsg,
-          `${lhsName}.scaleArraySet.do.scales`,
-          `${rhsName}.scaleArraySet.do.scales`,
-          postfixMsg
-        );
-      
-        asserter_Equal.assert_NumberArray_NumberArray(
-          aScaleBoundsArray.scaleArraySet.undo.scales,
-          refScaleBoundsArray.scaleArraySet.undo.scales,
-          prefixMsg,
-          `${lhsName}.scaleArraySet.undo.scales`,
-          `${rhsName}.scaleArraySet.undo.scales`,
+          `${lhsName}.afterBias`, `${rhsName}.afterBias`,
           postfixMsg
         );
 
-//!!!
-        BoundsArraySet_Asserter.assert_ScaleBoundsArray(
-          asserter_Equal,
-          aScaleBoundsArray, refScaleBoundsArray,
-          lhsName, rhsName,
-          prefixMsg, postfixMsg );
-
+        const output_ScaleBoundsArray
+          = a_BoundsArraySet_ConvBiasActivation.output0;
+        BoundsArraySet_Asserter.assert_ScaleBoundsArray( asserter_Equal,
+          output_ScaleBoundsArray,
+          shuffledArrays.output,
+          prefixMsg,
+          `${lhsName}.output`, `${rhsName}.output`,
+          postfixMsg
+        );
       }
-
-//!!! ...unfinished... (2023/07/05)
-
     }
   
   } finally {
