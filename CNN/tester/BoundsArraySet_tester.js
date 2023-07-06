@@ -127,11 +127,10 @@ async function
         }
       }
 
-      // Shuffle channel data.
-      a_BoundsArraySet_ConvBiasActivation
-        .set_outputs_all_byInterleave_asGrouptTwo();
-
       // Shuffle by tensors.
+      //
+      // Note: This should be done before
+      //       .set_outputs_all_byInterleave_asGrouptTwo() is called.
       {
         const afterFilter = a_BoundsArraySet_ConvBiasActivation.afterFilter;
         shuffledArrays.afterFilter.lowers = await
@@ -159,6 +158,10 @@ async function
         shuffledArrays.output.scaleArraySet.undo.scales = await
           shuffleArray_byChannelShuffler( output_scaleArraySet.undo.scales );
       }
+
+      // Shuffle channel data.
+      a_BoundsArraySet_ConvBiasActivation
+        .set_outputs_all_byInterleave_asGrouptTwo();
 
       // Check.
       {
