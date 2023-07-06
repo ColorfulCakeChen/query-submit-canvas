@@ -43,7 +43,7 @@ async function
    * @return {number[]}
    *   Return a new number array which is shuffled from the array1d.
    */
-  function shuffleArray_byChannelShuffler( array1d ) {
+  async function shuffleArray_byChannelShuffler( array1d ) {
 
     let tensorOriginal, tensorShuffled;
     try {
