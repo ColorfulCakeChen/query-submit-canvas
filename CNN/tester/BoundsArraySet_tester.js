@@ -134,30 +134,30 @@ async function
       // Shuffle by tensors.
       {
         const afterFilter = a_BoundsArraySet_ConvBiasActivation.afterFilter;
-        shuffledArrays.afterFilter.lowers
-          = shuffleArray_byChannelShuffler( afterFilter.lowers );
-        shuffledArrays.afterFilter.uppers
-          = shuffleArray_byChannelShuffler( afterFilter.uppers );
+        shuffledArrays.afterFilter.lowers = await
+          shuffleArray_byChannelShuffler( afterFilter.lowers );
+        shuffledArrays.afterFilter.uppers = await
+          shuffleArray_byChannelShuffler( afterFilter.uppers );
 
         const afterBias = a_BoundsArraySet_ConvBiasActivation.afterBias;
-        shuffledArrays.afterBias.lowers
-          = shuffleArray_byChannelShuffler( afterBias.lowers );
-        shuffledArrays.afterBias.uppers
-          = shuffleArray_byChannelShuffler( afterBias.uppers );
+        shuffledArrays.afterBias.lowers = await
+          shuffleArray_byChannelShuffler( afterBias.lowers );
+        shuffledArrays.afterBias.uppers = await
+          shuffleArray_byChannelShuffler( afterBias.uppers );
 
         const output_boundsArray
           = a_BoundsArraySet_ConvBiasActivation.output0.boundsArray;
-        shuffledArrays.output.boundsArray.lowers
-          = shuffleArray_byChannelShuffler( output_boundsArray.lowers );
-        shuffledArrays.output.boundsArray.uppers
-          = shuffleArray_byChannelShuffler( output_boundsArray.uppers );
+        shuffledArrays.output.boundsArray.lowers = await
+          shuffleArray_byChannelShuffler( output_boundsArray.lowers );
+        shuffledArrays.output.boundsArray.uppers = await
+          shuffleArray_byChannelShuffler( output_boundsArray.uppers );
 
         const output_scaleArraySet
           = a_BoundsArraySet_ConvBiasActivation.output0.scaleArraySet;
-        shuffledArrays.output.scaleArraySet.do.scales
-          = shuffleArray_byChannelShuffler( output_scaleArraySet.do.scales );
-        shuffledArrays.output.scaleArraySet.undo.scales
-          = shuffleArray_byChannelShuffler( output_scaleArraySet.undo.scales );
+        shuffledArrays.output.scaleArraySet.do.scales = await
+          shuffleArray_byChannelShuffler( output_scaleArraySet.do.scales );
+        shuffledArrays.output.scaleArraySet.undo.scales = await
+          shuffleArray_byChannelShuffler( output_scaleArraySet.undo.scales );
       }
 
       // Check.
