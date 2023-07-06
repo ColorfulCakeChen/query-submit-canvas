@@ -150,8 +150,8 @@ class ArrayInterleaver {
    * fromArray).
    *
    * @param {number[]} shape
-   *   The virtual N-dimension array's shape (e.g. [ width ] or
-   * [ height, width ] or [ height, width, depth ].
+   *   The virtual N-dimension array's shape (e.g. [ channelCount ] or
+   * [ width, channelCount ] or [ height, width, channelCount ].
    */
   static interleave_asGrouptTwo_alongLast2ndAxis_from_to(
     fromArray, toArray, ...shape ) {
@@ -221,8 +221,8 @@ class ArrayInterleaver {
    * array.
    *
    * @param {number[]} shape
-   *   The virtual N-dimension array's shape (e.g. [ width ] or
-   * [ height, width ] or [ height, width, depth ].
+   *   The virtual N-dimension array's shape (e.g. [ channelCount ] or
+   * [ width, channelCount ] or [ height, width, channelCount ].
    *
    * @param {Array} arrayTemp
    *   A temporary array for placing the original elements (from arrayIn)
@@ -265,8 +265,8 @@ class ArrayInterleaver {
    * interleave_asGrouptTwo_from_to_undo ).
    *
    * @param {number[]} shape
-   *   The virtual N-dimension array's shape (e.g. [ width ] or
-   * [ height, width ] or [ height, width, depth ].
+   *   The virtual N-dimension array's shape (e.g. [ channelCount ] or
+   * [ width, channelCount ] or [ height, width, channelCount ].
    */
   static interleave_asGrouptTwo_alongLastAxis_from_to_pfnInterleaver(
     fromArray, toArray, pfnInterleaver, ...shape ) {
@@ -320,8 +320,8 @@ class ArrayInterleaver {
    * fromArray).
    *
    * @param {number[]} shape
-   *   The virtual N-dimension array's shape (e.g. [ width ] or
-   * [ height, width ] or [ height, width, depth ].
+   *   The virtual N-dimension array's shape (e.g. [ channelCount ] or
+   * [ width, channelCount ] or [ height, width, channelCount ].
    */
   static interleave_asGrouptTwo_alongLastAxis_from_to(
     fromArray, toArray, ...shape ) {
@@ -340,8 +340,8 @@ class ArrayInterleaver {
    * N-dimension array.
    *
    * @param {number[]} shape
-   *   The virtual N-dimension array's shape (e.g. [ width ] or
-   * [ height, width ] or [ height, width, depth ].
+   *   The virtual N-dimension array's shape (e.g. [ channelCount ] or
+   * [ width, channelCount ] or [ height, width, channelCount ].
    *
    * @param {Array} arrayTemp
    *   A temporary array for placing the original elements (from arrayIn)
@@ -380,8 +380,8 @@ class ArrayInterleaver {
    * fromArray).
    *
    * @param {number[]} shape
-   *   The virtual N-dimension array's shape (e.g. [ width ] or
-   * [ height, width ] or [ height, width, depth ].
+   *   The virtual N-dimension array's shape (e.g. [ channelCount ] or
+   * [ width, channelCount ] or [ height, width, channelCount ].
    */
   static interleave_asGrouptTwo_alongLastAxis_from_to_undo(
     fromArray, toArray, ...shape ) {

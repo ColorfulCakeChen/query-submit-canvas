@@ -266,6 +266,82 @@ async function*
   const rhsName = "shuffledArray_by_ChannelShuffler";
 
 
+  /**
+   * @param {number[]} shape
+   *   The virtual N-dimension array's shape (e.g. [ channelCount ] or
+   * [ width, channelCount ] or [ height, width, channelCount ].
+   */
+  async function test_by_shape( ...shape ) {
+
+    let concatenatedShape;
+    let elementCount;
+
+    if ( shape.length == 1 ) { // test 1d
+      const channelCount = shape[ 0 ];
+      concatenatedShape = [ channelCount ];
+  
+    } else if ( shape.length == 2 ) { // test 2d
+      const width = shape[ 0 ];
+      const channelCount = shape[ 1 ];
+      concatenatedShape = [ width, channelCount ];
+
+    } else if ( shape.length == 3 ) { // test 3d
+      const height = shape[ 0 ];
+      const width = shape[ 1 ];
+      const channelCount = shape[ 2 ];
+      concatenatedShape = [ height, width, channelCount ];
+
+    } else {
+      throw Error( `BoundsArraySet_tester.test_by_shape(): `
+        + `shape.length ( ${shape.length} ) `
+        + `should be 1 or 2 or 3.`
+      );
+    }
+
+//!!!
+//    concatenatedShape = [ height, width, channelCount ];
+    elementCount = tf.util.sizeFromShape( concatenatedShape );
+
+        // 0.
+        const originalArray = [ ... ( new Array( elementCount ).keys() ) ];
+
+        // 1.
+        let shuffledArray_by_ArrayInterleaver;
+        {
+          shuffledArray_by_ArrayInterleaver = new Array( elementCount );
+          FloatValue.ArrayInterleaver
+            .interleave_asGrouptTwo_alongLastAxis_from_to(
+              originalArray, shuffledArray_by_ArrayInterleaver,
+              ...concatenatedShape
+            );
+        }
+
+        // 2.
+        let shuffledArray_by_ChannelShuffler;
+        let channelShuffler;
+        try {
+          channelShuffler = ChannelShuffler.ShuffleInfo.Pool.get_or_create_by(
+            concatenatedShape, channelShuffler_outputGroupCount );
+
+          shuffledArray_by_ChannelShuffler
+            = await channelShuffler_shuffleArray_async(
+                channelShuffler, originalArray, concatenatedShape );
+
+        } finally {
+          if ( channelShuffler ) {
+            channelShuffler.disposeResources_and_recycleToPool();
+            channelShuffler = null;
+          }
+        }
+
+        // 3. Check
+        asserter_Equal.assert_NumberArray_NumberArray(
+          shuffledArray_by_ArrayInterleaver,
+          shuffledArray_by_ChannelShuffler,
+          prefixMsg, `${lhsName}`, `${rhsName}`, postfixMsg
+        );
+  }
+
   let progressRoot = progressParent.root_get();
 
   const testCaseCount
@@ -286,6 +362,10 @@ async function*
       for ( let channelCount = channelCountMin;
         channelCount <= channelCountMax; channelCount+=2 ) {
 
+//!!!
+        let 
+
+//!!!
         const concatenatedShape = [ height, width, channelCount ];
         const elementCount = height * width * channelCount;
 
