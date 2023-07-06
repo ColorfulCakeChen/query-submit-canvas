@@ -247,7 +247,7 @@ async function*
 /**
  * @param {TensorTools.Asserter_Equal} asserter_Equal
  */
-async* function
+async function*
   test_ArrayInterleaver_interleave_asGrouptTwo_alongLastAxis_asyncGenerator(
     progressParent,
     asserter_Equal ) {
