@@ -9,6 +9,55 @@ import * as BoundsArraySet from "../Conv/BoundsArraySet.js";
 import * as ChannelShuffler from "../Conv/ChannelShuffler.js";
 
 /**
+ * 
+ */
+class ChannelShufflerWrapper {
+
+}
+
+/**
+ * Shuffle the number array along the (virtual) last axis.
+ *
+ * @param {ChannelShuffler.ShuffleInfo} channelShuffler
+ *   The channel shuffler. It will be used (but not kept and destroyed) by this
+ * function.
+ *
+ * @param {number[]} numberArray
+ *   An one dimension number array with even element count.
+ *
+ * @param {number[]} numberArrayShape
+ *   An array describe the real dimensions of the numberArray.
+ *
+ * @return {number[]}
+ *   Return a new number array which is shuffled from the array1d.
+ */
+async function channelShuffler_shuffleArray_async(
+  channelShuffler,
+  numberArray, numberArrayShape ) {
+
+  let tensorOriginal, tensorShuffled;
+  try {
+    tensorOriginal = tf.tensor( numberArray, numberArrayShape );
+
+    tensorShuffled
+      = channelShuffler.reshapeTransposeReshape( tensorOriginal );
+
+    let resultArray = await tensorShuffled.data();
+    return resultArray;
+
+  } finally {
+    if ( tensorShuffled ) {
+      tensorShuffled.dispose();
+      tensorShuffled = null;
+    }
+    if ( tensorOriginal ) {
+      tensorOriginal.dispose();
+      tensorOriginal = null;
+    }
+  }
+}
+
+/**
  * @param {TensorTools.Asserter_Equal} asserter_Equal
  */
 async function
@@ -39,37 +88,12 @@ async function
     },
   };
 
-  /**
-   * @param {number[]} array1d
-   *   An one dimension number array with even element count.
-   *
-   * @return {number[]}
-   *   Return a new number array which is shuffled from the array1d.
-   */
+  /** */
   async function shuffleArray_byChannelShuffler( array1d ) {
-
-    let tensorOriginal, tensorShuffled;
-    try {
-      tensorOriginal = tf.tensor1d( array1d );
-  
-      tensorShuffled
-        = channelShuffler.reshapeTransposeReshape( tensorOriginal );
-
-      let resultArray = await tensorShuffled.data();
-      return resultArray;
-
-    } finally {
-      if ( tensorShuffled ) {
-        tensorShuffled.dispose();
-        tensorShuffled = null;
-      }
-      if ( tensorOriginal ) {
-        tensorOriginal.dispose();
-        tensorOriginal = null;
-      }
-    }
+    return channelShuffler_shuffleArray_async(
+      channelShuffler, array1d, concatenatedShape );
   }
-
+  
   try {
     input0 = ActivationEscaping.ScaleBoundsArray.Pool.get_or_create_by(
       inputChannelCount );
@@ -80,7 +104,7 @@ async function
 
     channelShuffler = ChannelShuffler.ShuffleInfo.Pool.get_or_create_by(
       concatenatedShape, outputGroupCount );
-        
+
     // Test: shuffle output
     {
       const value_stride = outputChannelCount;
