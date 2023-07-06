@@ -3,8 +3,6 @@ export { assert_ScaleBoundsArray };
 export { assert_ScaleBoundsArray_output0_output1 };
 export { assert_BoundsArraySet_Outputs };
 
-//!!! ...unfinished... (2023/07/05)
-
 /**
  *
  * @param {TensorTools.Asserter_Equal} asserter_Equal
@@ -50,6 +48,54 @@ function assert_BoundsArray(
   asserter_Equal.assert_NumberArray_NumberArray(
     aBoundsArray.uppers, refBoundsArray.uppers,
     prefixMsg, `${lhsName}.uppers`, `${rhsName}.uppers`, postfixMsg
+  );
+}
+
+/**
+ *
+ * @param {TensorTools.Asserter_Equal} asserter_Equal
+ *   The object used to assert number array.
+ *
+ * @param {ActivationEscaping.ScaleArraySet} aScaleArraySet
+ *   The ScaleArraySet to be checked.
+ *
+ * @param {ActivationEscaping.ScaleArraySet} refScaleArraySet
+ *   The correct ScaleArraySet.
+ *
+ * @param {string} lhsName     The name of aScaleArraySet.
+ * @param {string} rhsName     The name of refScaleArraySet.
+ * @param {string} prefixMsg   The debug text prefix error message.
+ * @param {string} postfixMsg  The debug text postfix error message.
+ *
+ */
+function assert_ScaleArraySet(
+  asserter_Equal,
+  aScaleArraySet, refScaleArraySet,
+  lhsName, rhsName,
+  prefixMsg, postfixMsg ) {
+
+  if ( !(   (   ( aScaleArraySet == null )
+             && ( refScaleArraySet == null ) )
+         || (   ( aScaleArraySet != null )
+             && ( refScaleArraySet != null ) ) ) )
+    throw Error( `${prefixMsg}: `
+      + `BoundsArraySet_Asserter.assert_ScaleArraySet()( `
+      + `lhsName=${lhsName}, rhsName=${rhsName} ): `
+      + `aScaleArraySet (${aScaleArraySet}) and `
+      + `refScaleArraySet (${refScaleArraySet}) `
+      + `must be both null or both non-null. ${postfixMsg}` );
+
+  if ( ( aScaleArraySet == null ) || ( refScaleArraySet == null ) )
+    return;
+
+  asserter_Equal.assert_NumberArray_NumberArray(
+    aScaleArraySet.do.scales, refScaleArraySet.do.scales,
+    prefixMsg, `${lhsName}.do.scales`, `${rhsName}.do.scales`, postfixMsg
+  );
+
+  asserter_Equal.assert_NumberArray_NumberArray(
+    aScaleArraySet.undo.scales, refScaleArraySet.undo.scales,
+    prefixMsg, `${lhsName}.undo.scales`, `${rhsName}.undo.scales`, postfixMsg
   );
 }
 
@@ -110,14 +156,6 @@ function assert_ScaleBoundsArray(
   assert_BoundsArray( asserter_Equal,
     aScaleBoundsArray.boundsArray, refScaleBoundsArray.boundsArray,
     prefixMsg, `${lhsName}.boundsArray`, `${rhsName}.boundsArray`, postfixMsg
-  );
-
-  asserter_Equal.assert_NumberArray_NumberArray(
-    aScaleBoundsArray.boundsArray.uppers,
-    refScaleBoundsArray.boundsArray.uppers,
-    prefixMsg,
-    `${lhsName}.boundsArray.uppers`, `${rhsName}.boundsArray.uppers`,
-    postfixMsg
   );
 
 
