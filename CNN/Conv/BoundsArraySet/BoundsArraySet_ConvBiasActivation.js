@@ -452,9 +452,11 @@ class ConvBiasActivation extends InputsOutputs {
         this.afterFilter.length );
 
 //!!! (2023/06/29 Remarked) should be afterFilterShuffled (rather than .afterFilter).
-//      this.afterFilter.set_all_byInterleave_asGrouptTwo_byBoundsArray( this.afterFilter );
-      afterFilterShuffled.set_all_byInterleave_asGrouptTwo_byBoundsArray(
-        this.afterFilter );
+     this.afterFilter.set_all_byInterleave_asGrouptTwo_byBoundsArray( this.afterFilter );
+
+//!!! (2023/07/06 Temp Remarked) For test.
+//       afterFilterShuffled.set_all_byInterleave_asGrouptTwo_byBoundsArray(
+//         this.afterFilter );
 
       this.afterFilter.disposeResources_and_recycleToPool();
       this.afterFilter = afterFilterShuffled;
@@ -465,9 +467,11 @@ class ConvBiasActivation extends InputsOutputs {
         this.afterBias.length );
 
 //!!! (2023/06/29 Remarked) should be afterBiasShuffled (rather than .afterBias).
-//      this.afterBias.set_all_byInterleave_asGrouptTwo_byBoundsArray( this.afterBias );
-      afterBiasShuffled.set_all_byInterleave_asGrouptTwo_byBoundsArray(
-        this.afterBias );
+      this.afterBias.set_all_byInterleave_asGrouptTwo_byBoundsArray( this.afterBias );
+
+//!!! (2023/07/06 Temp Remarked) For test.
+//       afterBiasShuffled.set_all_byInterleave_asGrouptTwo_byBoundsArray(
+//         this.afterBias );
 
       this.afterBias.disposeResources_and_recycleToPool();
       this.afterBias = afterBiasShuffled;
