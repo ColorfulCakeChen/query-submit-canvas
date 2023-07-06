@@ -291,7 +291,7 @@ async function
             concatenatedShape, channelShuffler_outputGroupCount );
 
           shuffledArray_by_ChannelShuffler
-            = channelShuffler_shuffleArray_async(
+            = await channelShuffler_shuffleArray_async(
                 channelShuffler, originalArray, concatenatedShape );
         
         } finally {
