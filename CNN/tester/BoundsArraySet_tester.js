@@ -265,7 +265,6 @@ async function*
   const lhsName = "shuffledArray_by_ArrayInterleaver";
   const rhsName = "shuffledArray_by_ChannelShuffler";
 
-
   /**
    * @param {number[]} shape
    *   The virtual N-dimension array's shape (e.g. [ channelCount ] or
