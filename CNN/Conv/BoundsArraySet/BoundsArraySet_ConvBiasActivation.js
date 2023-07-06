@@ -418,7 +418,8 @@ class ConvBiasActivation extends InputsOutputs {
       {
         // If no activation function, the output range is determined by
         // adjusted .afterBias.
-        if ( nActivationId == ValueDesc.ActivationFunction.Singleton.Ids.NONE ) {
+        if ( nActivationId
+               == ValueDesc.ActivationFunction.Singleton.Ids.NONE ) {
           this.output0.boundsArray.set_one_byBoundsArray( outChannel,
             this.afterBias, outChannel );
 
@@ -451,10 +452,6 @@ class ConvBiasActivation extends InputsOutputs {
       let afterFilterShuffled = FloatValue.BoundsArray.Pool.get_or_create_by(
         this.afterFilter.length );
 
-//!!! (2023/06/29 Remarked) should be afterFilterShuffled (rather than .afterFilter).
-//     this.afterFilter.set_all_byInterleave_asGrouptTwo_byBoundsArray( this.afterFilter );
-
-//!!! (2023/07/06 Temp Remarked) For test.
       afterFilterShuffled.set_all_byInterleave_asGrouptTwo_byBoundsArray(
         this.afterFilter );
 
@@ -466,10 +463,6 @@ class ConvBiasActivation extends InputsOutputs {
       let afterBiasShuffled = FloatValue.BoundsArray.Pool.get_or_create_by(
         this.afterBias.length );
 
-//!!! (2023/06/29 Remarked) should be afterBiasShuffled (rather than .afterBias).
-//      this.afterBias.set_all_byInterleave_asGrouptTwo_byBoundsArray( this.afterBias );
-
-//!!! (2023/07/06 Temp Remarked) For test.
       afterBiasShuffled.set_all_byInterleave_asGrouptTwo_byBoundsArray(
         this.afterBias );
 
@@ -477,7 +470,8 @@ class ConvBiasActivation extends InputsOutputs {
       this.afterBias = afterBiasShuffled;
     }
 
-    super.set_outputs_all_byInterleave_asGrouptTwo(); // i.e. this.afterActivation
+    // i.e. this.afterActivation
+    super.set_outputs_all_byInterleave_asGrouptTwo();
 
     {
       let bPassThroughShuffled = Recyclable.Array.Pool.get_or_create_by(
@@ -499,4 +493,3 @@ class ConvBiasActivation extends InputsOutputs {
   }
 
 }
-

@@ -165,16 +165,6 @@ class Asserter_Equal extends Recyclable.Root {
     // Note: Array.every() seems faster than for-loop. However, if an element
     //       is empty slot, the element will be skipped (i.e. not checked). So,
     //       use for-loop instead.
-
-//!!! (2023/07/06 Remarked) use for-loop instead.
-//     if ( !lhsNumberArray.every( this.comparator ) )
-//       throw Error( `${prefixMsg} `
-//         + `${lhsNumberArrayName}[ ${this.elementIndex} ] `
-//         + `( ${lhsNumberArray[ this.elementIndex ]} ) `
-//         + `should be ( ${rhsNumberArray[ this.elementIndex ]} ). `
-//         + `( ${lhsNumberArray} ) should be ( ${rhsNumberArray} ). `
-//         + `${postfixMsg}` );
-
     const elementCount = lhsNumberArray.length;
     for ( let i = 0; i < elementCount; ++i ) {
       if ( !( this.comparator( lhsNumberArray[ i ], i ) ) )
