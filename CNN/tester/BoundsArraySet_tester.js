@@ -273,6 +273,7 @@ async function*
    */
   async function test_by_shape( ...shape ) {
 
+    // 0.
     let concatenatedShape;
     let elementCount;
 
@@ -298,48 +299,46 @@ async function*
       );
     }
 
-//!!!
-//    concatenatedShape = [ height, width, channelCount ];
-    elementCount = tf.util.sizeFromShape( concatenatedShape );
+    let elementCount = tf.util.sizeFromShape( concatenatedShape );
 
-        // 0.
-        const originalArray = [ ... ( new Array( elementCount ).keys() ) ];
+    // 1.
+    const originalArray = [ ... ( new Array( elementCount ).keys() ) ];
 
-        // 1.
-        let shuffledArray_by_ArrayInterleaver;
-        {
-          shuffledArray_by_ArrayInterleaver = new Array( elementCount );
-          FloatValue.ArrayInterleaver
-            .interleave_asGrouptTwo_alongLastAxis_from_to(
-              originalArray, shuffledArray_by_ArrayInterleaver,
-              ...concatenatedShape
-            );
-        }
-
-        // 2.
-        let shuffledArray_by_ChannelShuffler;
-        let channelShuffler;
-        try {
-          channelShuffler = ChannelShuffler.ShuffleInfo.Pool.get_or_create_by(
-            concatenatedShape, channelShuffler_outputGroupCount );
-
-          shuffledArray_by_ChannelShuffler
-            = await channelShuffler_shuffleArray_async(
-                channelShuffler, originalArray, concatenatedShape );
-
-        } finally {
-          if ( channelShuffler ) {
-            channelShuffler.disposeResources_and_recycleToPool();
-            channelShuffler = null;
-          }
-        }
-
-        // 3. Check
-        asserter_Equal.assert_NumberArray_NumberArray(
-          shuffledArray_by_ArrayInterleaver,
-          shuffledArray_by_ChannelShuffler,
-          prefixMsg, `${lhsName}`, `${rhsName}`, postfixMsg
+    // 2.
+    let shuffledArray_by_ArrayInterleaver;
+    {
+      shuffledArray_by_ArrayInterleaver = new Array( elementCount );
+      FloatValue.ArrayInterleaver
+        .interleave_asGrouptTwo_alongLastAxis_from_to(
+          originalArray, shuffledArray_by_ArrayInterleaver,
+          ...concatenatedShape
         );
+    }
+
+    // 3.
+    let shuffledArray_by_ChannelShuffler;
+    let channelShuffler;
+    try {
+      channelShuffler = ChannelShuffler.ShuffleInfo.Pool.get_or_create_by(
+        concatenatedShape, channelShuffler_outputGroupCount );
+
+      shuffledArray_by_ChannelShuffler
+        = await channelShuffler_shuffleArray_async(
+            channelShuffler, originalArray, concatenatedShape );
+
+    } finally {
+      if ( channelShuffler ) {
+        channelShuffler.disposeResources_and_recycleToPool();
+        channelShuffler = null;
+      }
+    }
+
+    // 4. Check
+    asserter_Equal.assert_NumberArray_NumberArray(
+      shuffledArray_by_ArrayInterleaver,
+      shuffledArray_by_ChannelShuffler,
+      prefixMsg, `${lhsName}`, `${rhsName}`, postfixMsg
+    );
   }
 
   let progressRoot = progressParent.root_get();
