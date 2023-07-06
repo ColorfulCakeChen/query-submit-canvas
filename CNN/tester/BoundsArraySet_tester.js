@@ -25,17 +25,16 @@ async function test_ConvBiasActivation_async( asserter_Equal ) {
   let channelShuffler;
 
   let shuffledArrays = {
-    afterFilter_lowers: null,
-    afterFilter_uppers: null,
+    afterFilter: { lowers: null, uppers: null },
+    afterBias: { lowers: null, uppers: null },
 
-    afterBias_lowers: null,
-    afterBias_uppers: null,
-
-    output_boundsArray_lowers: null,
-    output_boundsArray_uppers: null,
-
-    output_scaleArraySet_do_scales: null,
-    output_scaleArraySet_undo_scales: null,
+    output: {
+      boundsArray: { lowers: null, uppers: null },
+      scaleArraySet: {
+        do: { scales: null },
+        undo: { scales: null }
+      },
+    },
   };
 
   /**
@@ -207,7 +206,16 @@ async function test_ConvBiasActivation_async( asserter_Equal ) {
           `${lhsName}.boundsArray.uppers`, `${rhsName}.boundsArray.uppers`,
           postfixMsg
         );
-      
+
+//!!! ...unfinished... (2023/07/06)
+//       assert_ScaleArraySet( asserter_Equal,
+//           aScaleBoundsArray.scaleArraySet,
+//           refScaleBoundsArray.scaleArraySet,
+//           prefixMsg,
+//           `${lhsName}.scaleArraySet`, `${rhsName}.scaleArraySet`,
+//           postfixMsg
+//         );
+    
         asserter_Equal.assert_NumberArray_NumberArray(
           aScaleBoundsArray.scaleArraySet.do.scales,
           refScaleBoundsArray.scaleArraySet.do.scales,
