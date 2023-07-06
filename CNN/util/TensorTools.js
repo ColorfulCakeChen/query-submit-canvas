@@ -177,7 +177,7 @@ class Asserter_Equal extends Recyclable.Root {
 
     const elementCount = lhsNumberArray.length;
     for ( let i = 0; i < elementCount; ++i ) {
-      if ( !( this.comparator( lhsNumberArray[ i ] ) ) )
+      if ( !( this.comparator( lhsNumberArray[ i ], i ) ) )
         throw Error( `${prefixMsg} `
           + `${lhsNumberArrayName}[ ${this.elementIndex} ] `
           + `( ${lhsNumberArray[ this.elementIndex ]} ) `
