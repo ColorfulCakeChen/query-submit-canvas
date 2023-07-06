@@ -249,7 +249,7 @@ async function
 
   const channelShuffler_outputGroupCount = 2;
 
-  const prefixMsg = "BoundsArraySet_tester
+  const prefixMsg = "BoundsArraySet_tester"
     + ".test_ArrayInterleaver_interleave_asGrouptTwo_alongLastAxis_async(): ";
   const postfixMsg = "";
 
