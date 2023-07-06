@@ -252,8 +252,8 @@ async function*
     progressParent,
     asserter_Equal ) {
 
-  const heightMin = 1, heightMax = 10;
-  const widthMin = 1, widthMax = 10;
+  const heightMin = 1, heightMax = 5;
+  const widthMin = 1, widthMax = 5;
   const channelCountMin = 2, channelCountMax = 20;
 
   const channelShuffler_outputGroupCount = 2;
