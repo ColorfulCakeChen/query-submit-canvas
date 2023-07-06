@@ -1,3 +1,5 @@
+export { tester };
+
 import * as BoundsArraySet_Asserter from "../util/BoundsArraySet_Asserter.js";
 //import * as RandTools from "../util/RandTools.js";
 import * as TensorTools from "../util/TensorTools.js";
@@ -252,4 +254,3 @@ async function* tester( progressParent ) {
 
   console.log( `BoundsArraySet testing... Done. ` );
 }
-
