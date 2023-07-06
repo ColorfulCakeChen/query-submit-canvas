@@ -349,10 +349,6 @@ async function*
   let progressToAdvance = progressParent.child_add(
     ValueMax.Percentage.Concrete.Pool.get_or_create_by( testCaseCount ) );
 
-
-//!!! ...unfinished... (2023/07/06)
-// should also test 1d, 2d, 3d:
-
   for ( let height = heightMin; height <= heightMax; ++height ) {
     for ( let width = widthMin; width <= widthMax; ++width ) {
 
@@ -360,7 +356,21 @@ async function*
       for ( let channelCount = channelCountMin;
         channelCount <= channelCountMax; channelCount+=2 ) {
 
-        test_by_shape( height, width, channelCount );
+        test_by_shape( height, width, channelCount ); // test 3d.
+
+        if ( 1 == height ) {
+          if ( 1 == width ) {
+            test_by_shape( channelCount ); // test 1d, too.
+          } else {
+            test_by_shape( width, channelCount ); // test 2d, too.
+          }
+        } else { // ( 1 != height )
+          if ( 1 == width ) {
+            test_by_shape( height, channelCount ); // test 2d, too.
+          } else {
+            // test 3d, already.
+          }
+        }
 
         progressToAdvance.value_advance();
         yield progressRoot;
