@@ -5,13 +5,12 @@ import * as ValueMax from "../util/ValueMax.js";
 import * as BoundsArraySet from "../Conv/BoundsArraySet.js";
 import * as ChannelShuffler from "../Conv/ChannelShuffler.js";
 
-//!!! ...unfinished... (2023/06/29) should test
-// BoundsArraySet.ConvBiasActivation.set_outputs_all_byInterleave_asGrouptTwo()
-
 /**
  * @param {TensorTools.Asserter_Equal} asserter_Equal
  */
-async function test_ConvBiasActivation_async( asserter_Equal ) {
+async function
+  test_ConvBiasActivation_set_outputs_all_byInterleave_asGrouptTwo_async(
+    asserter_Equal ) {
 
   const inputChannelCount = 10;
   const outputChannelCount = 20;
@@ -157,8 +156,7 @@ async function test_ConvBiasActivation_async( asserter_Equal ) {
           = shuffleArray_byChannelShuffler( output_scaleArraySet.undo.scales );
       }
 
-//!!! ...unfinished... (2023/07/05)
-      // Compare.
+      // Check.
       {
         const prefixMsg
           = "BoundsArraySet_tester.test_ConvBiasActivation_async(): ";
@@ -234,7 +232,9 @@ async function* tester( progressParent ) {
 
   try {
 
-    await test_ConvBiasActivation_async( asserter_Equal );
+    await
+      test_ConvBiasActivation_set_outputs_all_byInterleave_asGrouptTwo_async(
+        asserter_Equal );
 
     progressToAdvance.value_advance();
     yield progressRoot;
