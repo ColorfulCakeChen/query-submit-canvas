@@ -214,7 +214,7 @@ class Stage_BlockParamsCreator_Base extends Recyclable.Root {
 
     // 3. pointwise1 and squeeze-and-excitation
     this.nActivationId = stageParams.nActivationId;
-    
+
     // 4. squeeze-and-excitation prefix or postfix
     {
       // MobileNetV2_Xxx uses prefix squeeze-and-excitation.
