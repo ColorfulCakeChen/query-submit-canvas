@@ -8,10 +8,6 @@ import * as Weights from "../../Unpacker/Weights.js";
 import { ParamsBase } from "./Embedding_ParamsBase.js";
 import { InferencedParams } from "./Embedding_InferencedParams.js";
 
-//!!! ...unfinished... (2022/07/26)
-// Perhaps, add parameter bCastToInt32 for controlling whether needs cast input
-// to integer.
-
 /**
  * Embedding parameters.
  *
