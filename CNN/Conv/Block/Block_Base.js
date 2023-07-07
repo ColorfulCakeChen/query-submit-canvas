@@ -11,7 +11,8 @@ import * as Operation from "../Operation.js";
 import * as ChannelShuffler from "../ChannelShuffler.js";
 import { Params } from "./Block_Params.js";
 import { InferencedParams } from "./Block_InferencedParams.js";
-import { inputTensorPlaceholder_creator } from "./Block_inputTensorPlaceholder_creator.js";
+import { inputTensorPlaceholder_creator }
+  from "./Block_inputTensorPlaceholder_creator.js";
 
 /**
  * One block of a stage of convolution neural network. Basically, there are
