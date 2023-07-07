@@ -217,13 +217,15 @@ function generate_numberArray(
   height, width, channelCount,
   valueBegin = 0, valueStep = 1,
   randomOffsetMin = 0, randomOffsetMax = 0,
-  divisorForRemainder = ( 2 ** 26 )
+  divisorForRemainder = ( 2 ** 26 ),
+  alwaysFixedRandomMinMax = false
 ) {
   let numberArray = new Array();
   return fill_numberArray( numberArray,
     height, width, channelCount,
     valueBegin, valueStep,
-    randomOffsetMin, randomOffsetMax, divisorForRemainder );
+    randomOffsetMin, randomOffsetMax, divisorForRemainder,
+    alwaysFixedRandomMinMax );
 }
 
 /**
