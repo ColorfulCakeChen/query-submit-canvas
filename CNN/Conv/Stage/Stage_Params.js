@@ -8,14 +8,6 @@ import * as Weights from "../../Unpacker/Weights.js";
 import * as Block from "../Block.js";
 import { ParamsBase } from "./Stage_ParamsBase.js";
 
-//!!! ...unfinished... (2022/05/28)
-//
-// Add parameter bPointwise2SqueezeExcitationAtStageEnd control whether
-// this stage's final block's pointwise2 should have
-// squeeze-and-excitation.
-//
-
-
 /**
  * Convolution stage parameters extracted from inputWeightArray.
  *
