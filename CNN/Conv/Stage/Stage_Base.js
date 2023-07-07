@@ -134,7 +134,7 @@ import { InferencedParams } from "./Stage_InferencedParams.js";
  * 
  * In ShuffleNetV2_Xxx, even if the staeLast's pointwise2 has no activation
  * (i.e. ( bPointwise2ActivatedAtStageEnd == true ) ), the stageLast's output's
- * higher half are still activated (and not usable by caller) because the they
+ * higher half are still activated (and not usable by caller) because they are
  * come from stageLast's previous stage directly.
  *
  *
