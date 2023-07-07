@@ -143,7 +143,7 @@ import { InferencedParams } from "./Stage_InferencedParams.js";
  * Use MobileNetV2's configuration (i.e. depthwise has activation and
  * pointwise2 does not have activation). However, in order to prevent
  * pointwise2 from becoming linear transformation, a squeeze-and-excitation
- * postfix pointwise2 is necessary.
+ * postfix the pointwise2 is necessary.
  *
  * Although this design is mainly for solving ShuffleNetV2_ByMobileNetV1's
  * issue, it does have practical advantage in fact. The output could have any
