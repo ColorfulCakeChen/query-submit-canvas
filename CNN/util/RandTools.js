@@ -99,6 +99,10 @@ function getRandomInt_TruncatedBinaryExponent( exponent, exponentMax ) {
  *   The generated value will be divided by divisorForRemainder. The remainder
  * will be the real output value. This is used for restricted the value bounds.
  *
+ * @param {boolean} alwaysFixedRandomMinMax
+ *   If true, the generated values will be fixed every time (i.e. non-random;
+ * reproducible random). It is mainly used for debug.
+ *
  * @return {number[]|Recyclable.NumberArray_withBounds}
  *   Return the io_numberArray.
  */
@@ -106,7 +110,9 @@ function fill_numberArray( io_numberArray,
   height, width, channelCount,
   valueBegin = 0, valueStep = 1,
   randomOffsetMin = 0, randomOffsetMax = 0,
-  divisorForRemainder = ( 2 ** 26 ) ) {
+  divisorForRemainder = ( 2 ** 26 ),
+  alwaysFixedRandomMinMax = false
+) {
 
   // (Codes copied from getRandomIntInclusive())
   const randomOffsetMinReal = Math.min( randomOffsetMin, randomOffsetMax );
@@ -139,15 +145,16 @@ function fill_numberArray( io_numberArray,
           valueNoRand = valueNoRandBegin;
           for ( let c = 0; c < channelCount; ++c, ++arrayIndex ) {
 
-//!!! (2022/08/04 Temp Remarked) for re-producible random.
-            randomOffset = getRandomIntInclusive_by_minInt_kindsInt(
-              randomOffsetMinInt, randomOffsetKindsInt );
+            if ( !alwaysFixedRandomMinMax ) { // For normal random.
+              randomOffset = getRandomIntInclusive_by_minInt_kindsInt(
+                randomOffsetMinInt, randomOffsetKindsInt );
 
-            //!!! (2022/08/27 Remarked) Used for re-producible random. (For debug.)
-            // if ( ( arrayIndex % 2 ) == 0 )
-            //   randomOffset = randomOffsetMinInt;
-            // else
-            //   randomOffset = randomOffsetMaxInt;
+            } else { // For reproducible random (i.e. non-random).
+                if ( ( arrayIndex % 2 ) == 0 )
+                randomOffset = randomOffsetMinInt;
+              else
+                randomOffset = randomOffsetMaxInt;
+            }
 
             value = ( valueNoRand + randomOffset ) % divisorForRemainder;
             io_numberArray[ arrayIndex ] = value;
@@ -167,15 +174,16 @@ function fill_numberArray( io_numberArray,
           valueNoRand = valueNoRandBegin;
           for ( let c = 0; c < channelCount; ++c, ++arrayIndex ) {
 
-//!!! (2022/08/04 Temp Remarked) for re-producible random.
-            randomOffset = getRandomIntInclusive_by_minInt_kindsInt(
-              randomOffsetMinInt, randomOffsetKindsInt );
+            if ( !alwaysFixedRandomMinMax ) { // For normal random.
+              randomOffset = getRandomIntInclusive_by_minInt_kindsInt(
+                randomOffsetMinInt, randomOffsetKindsInt );
 
-            //!!! (2022/08/27 Remarked) Used for re-producible random. (For debug.)
-            // if ( ( arrayIndex % 2 ) == 0 )
-            //   randomOffset = randomOffsetMinInt;
-            // else
-            //   randomOffset = randomOffsetMaxInt;
+            } else { // For reproducible random (i.e. non-random).
+              if ( ( arrayIndex % 2 ) == 0 )
+                randomOffset = randomOffsetMinInt;
+              else
+                randomOffset = randomOffsetMaxInt;
+            }
 
             value = ( valueNoRand + randomOffset ) % divisorForRemainder;
             io_numberArray[ arrayIndex ] = value;
