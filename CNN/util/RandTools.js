@@ -218,7 +218,7 @@ function generate_numberArray(
   valueBegin = 0, valueStep = 1,
   randomOffsetMin = 0, randomOffsetMax = 0,
   divisorForRemainder = ( 2 ** 26 ),
-  alwaysFixedRandomMinMax = false
+  alwaysFixedRandomMinMax
 ) {
   let numberArray = new Array();
   return fill_numberArray( numberArray,
