@@ -568,8 +568,6 @@ class Block_InferencedParams extends Recyclable.Root {
     this.pointwise1_inputChannelCount_higherHalf = undefined;
     this.pointwise1_outputChannelCount_lowerHalf = undefined;
 
-//!!! ...unfinished... (2021/11/15) What if ( depthwise_AvgMax_Or_ChannelMultiplier > 1 )?
-
     if ( infoConvBlockType.bHigherHalfDifferent == true ) {
 
       // (i.e. ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD (5) )
