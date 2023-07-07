@@ -190,7 +190,7 @@ import { InferencedParams } from "./Stage_InferencedParams.js";
  * previous affine transformation's no-bias.
  *
  * Note: The squeeze (of squeeze-and-excitation) is depthwise (globale average)
- * convolution with ( pad = "valid" ). The excitation (of
+ * convolution with ( pad = "valid" ) in fact. The excitation (of
  * squeeze-and-excitation) is pointwise convolution. So they also meet these
  * criterion.
  *
