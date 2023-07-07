@@ -9,12 +9,6 @@ import { Mode as NeuralWorker_Mode } from "./NeuralWorker_Mode.js";
 import { ImplicitInputMode as NeuralWorker_ImplicitInputMode }
   from "./NeuralWorker_ImplicitInputMode.js";
 
-
-//!!! ...unfinished... (2022/05/25)
-// Perhaps, Using SharedArrayBuffer to pass input image between different web
-// worker.
-//
-
 /**
  * The container of NeuralWorker_Proxy. It orchestrates these
  * NeuralWorker_Proxy. Especially, it transfers (possible scaled) source image
