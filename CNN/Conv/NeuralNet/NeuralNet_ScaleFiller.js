@@ -626,8 +626,6 @@ class NeuralNet_ScaleFiller {
     target_shape_height_width,
     bForceInt32 = true ) {
 
-    //!!! ...unfinished... (2022/08/15) What about .fromPixelsAsync() ?
-
     // Note: For image coming from canvas, the tf.browser.fromPixels() handle a
     //       RGBA 4 channels faster than RGB 3 channels input.
     let source_Tensor = tf.browser.fromPixels(
