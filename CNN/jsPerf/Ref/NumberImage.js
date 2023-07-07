@@ -401,7 +401,7 @@ class NumberImage_Base extends Recyclable.Root {
       tBounds = null;
     }
 
-    //!!! (2022/08/08) For debug pixel value bounds.
+    // For debug pixel value bounds.
     imageOut.assert_pixels_byBoundsArray(
       imageOut.boundsArraySet.afterFilter );
 
@@ -409,7 +409,7 @@ class NumberImage_Base extends Recyclable.Root {
     imageOut.modify_byBias( bPointwiseBias, pointwiseBiasesArray,
       parametersDesc, ...pointwiseNames, "bias" );
 
-    //!!! (2022/08/08) For debug pixel value bounds.
+    // For debug pixel value bounds.
     imageOut.assert_pixels_byBoundsArray( imageOut.boundsArraySet.afterBias );
 
     // Activation Escaping.
@@ -855,7 +855,7 @@ class NumberImage_Base extends Recyclable.Root {
         imageOut.boundsArraySet.afterUndoPreviousActivationEscaping );
     }
 
-    //!!! (2022/08/06) For debug pixel value bounds.
+    // For debug pixel value bounds.
     imageOut.assert_pixels_byBoundsArray(
       imageOut.boundsArraySet.afterFilter );
 
@@ -864,7 +864,7 @@ class NumberImage_Base extends Recyclable.Root {
       bDepthwiseBias, depthwiseBiasesArray,
       parametersDesc, ...depthwiseNames, "bias" );
 
-    //!!! (2022/08/06) For debug pixel value bounds.
+    // For debug pixel value bounds.
     imageOut.assert_pixels_byBoundsArray(
       imageOut.boundsArraySet.afterBias );
 
