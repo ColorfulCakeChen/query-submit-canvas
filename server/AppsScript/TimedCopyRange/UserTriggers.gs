@@ -25,12 +25,12 @@ function UserTriggers_create_by_everyMinutes_or_everyHours_(
   if ( !fetcherCopierEveryMinutes.isBlank() ) {
     const minutes = fetcherCopierEveryMinutes.getValue();
     trigger = timerBuilder.everyMinutes( minutes ).create();
-    console.log( `Timer "${strHandlerFunctionName}" started: `
+    console.log( `Periodic timer "${strHandlerFunctionName}" started: `
       + `every ${minutes} minutes.` );
   } else {
     const hours = fetcherCopierEveryHours.getValue();
     trigger = timerBuilder.everyHours( hours ).create();
-    console.log( `Timer "${strHandlerFunctionName}" started: `
+    console.log( `Periodic timer "${strHandlerFunctionName}" started: `
       + `every ${hours} hours.` );
   }
   return trigger;
@@ -78,7 +78,9 @@ function UserTriggers_get_all_HandlerFunctionNameArray_() {
  *   Return the first found trigger wich has the specified handler function
  * name. Return null if not found.
  */
-function UserTriggers_get_first_by_HandlerFunctionName_( strHandlerFunctionName ) {
+function UserTriggers_get_first_by_HandlerFunctionName_(
+  strHandlerFunctionName ) {
+
   let triggers = UserTriggers_get_all_();
   for ( let i = 0; i < triggers.length; ++i ) {
     const trigger = triggers[ i ];
@@ -99,7 +101,9 @@ function UserTriggers_get_first_by_HandlerFunctionName_( strHandlerFunctionName 
  *   - Return true if any trigger is removed.
  *   - Return false if no trigger removed.
  */
-function UserTriggers_delete_all_by_HandlerFunctionName_( strHandlerFunctionName ) {
+function UserTriggers_delete_all_by_HandlerFunctionName_(
+  strHandlerFunctionName ) {
+
   let bFound = false;
   let triggers = UserTriggers_get_all_();
   for ( let i = 0; i < triggers.length; ++i ) {
@@ -113,7 +117,8 @@ function UserTriggers_delete_all_by_HandlerFunctionName_( strHandlerFunctionName
 
   //!!! (2023/06/07 Temp Added) For Debug whether delete successfully.
   // {
-  //   const triggerNameArray = UserTriggers_get_all_HandlerFunctionNameArray_();
+  //   const triggerNameArray
+  //     = UserTriggers_get_all_HandlerFunctionNameArray_();
   //   const triggerNames = triggerNameArray.join( ", " );
   //   console.log( `trigger_delete_by_HandlerFunctionName_(): `
   //     + `Remained trigger names: [ ${triggerNames} ].` );

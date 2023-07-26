@@ -340,12 +340,8 @@ function timer_start_() {
   NamedRange_copy_from_source_to_target_( true );
 
   // Install trigger fetcherTimer_onTime_().
-  {
-    const triggerHandlerFunctionName = fetcherTimer_onTime_.name;
-    UserTriggers_create_by_everyMinutes_or_everyHours_(
-      fetcherTimer_onTime_.name );
-    console.log( `Periodic timer "${triggerHandlerFunctionName}" created.` );
-  }
+  UserTriggers_create_by_everyMinutes_or_everyHours_(
+    fetcherTimer_onTime_.name );
 
   // Schedule a temporary one time trigger to install copying ranges timer.
   //
@@ -367,10 +363,8 @@ function timer_start_() {
 /** Install trigger copierTimer_onTime_(). */
 function timer_start_for_copier() {
   try {
-    const triggerHandlerFunctionName = copierTimer_onTime_.name;
     UserTriggers_create_by_everyMinutes_or_everyHours_(
-      triggerHandlerFunctionName );
-    console.log( `Periodic timer "${triggerHandlerFunctionName}" created.` );
+      copierTimer_onTime_.name );
 
   } finally {
 
