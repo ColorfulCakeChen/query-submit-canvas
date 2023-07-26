@@ -17,29 +17,31 @@ function onOpen() {
     .addToUi();
 }
 
-/** When timer triggered. */
-function timer_onTime_( e ) {
-  let [
-    fetcherCopierTimerCounter,
-    fetcherCopierTimerCounterDivisor, fetcherCopierTimerCounterRemainder,
-    fetcherTimerAtRemainder,
-  ] = ranges_getByNames_(
-      RANGE_NAME.FC.TIMER.COUNTER,
-      RANGE_NAME.FC.TIMER.COUNTER_DIVISOR,
-      RANGE_NAME.FC.TIMER.COUNTER_REMAINDER,
-      RANGE_NAME.FC.FETCHER.TIMER.AT_REMAINDER,
-    );
-
-  EventObject_Timer_recordTo_byRangeName_( e, RANGE_NAME.FC.TIMER.LAST_TIME );
-
-  let fetcherCopierTimerCounterValue = range_value_inc_( fetcherCopierTimerCounter );
-  let divisor = fetcherCopierTimerCounterDivisor.getValue();
-  let counterRemainder = fetcherCopierTimerCounterValue % divisor;
-  fetcherCopierTimerCounterRemainder.setValue( counterRemainder );
-
-  if ( counterRemainder == fetcherTimerAtRemainder.getValue() )
-    fetcherTimer_onTime_( e );
-}
+//!!! (2023/07/26 Remarked) Use fetcherTimer_onTime_() and copierTimer_onTime_() directly.
+//
+// /** When timer triggered. */
+// function timer_onTime_( e ) {
+//   let [
+//     fetcherCopierTimerCounter,
+//     fetcherCopierTimerCounterDivisor, fetcherCopierTimerCounterRemainder,
+//     fetcherTimerAtRemainder,
+//   ] = ranges_getByNames_(
+//       RANGE_NAME.FC.TIMER.COUNTER,
+//       RANGE_NAME.FC.TIMER.COUNTER_DIVISOR,
+//       RANGE_NAME.FC.TIMER.COUNTER_REMAINDER,
+//       RANGE_NAME.FC.FETCHER.TIMER.AT_REMAINDER,
+//     );
+//
+//   EventObject_Timer_recordTo_byRangeName_( e, RANGE_NAME.FC.TIMER.LAST_TIME );
+//
+//   let fetcherCopierTimerCounterValue = range_value_inc_( fetcherCopierTimerCounter );
+//   let divisor = fetcherCopierTimerCounterDivisor.getValue();
+//   let counterRemainder = fetcherCopierTimerCounterValue % divisor;
+//   fetcherCopierTimerCounterRemainder.setValue( counterRemainder );
+//
+//   if ( counterRemainder == fetcherTimerAtRemainder.getValue() )
+//     fetcherTimer_onTime_( e );
+// }
 
 /** When fetcher's timer triggered. */
 function fetcherTimer_onTime_( e ) {
@@ -270,9 +272,13 @@ function timer_start_() {
   // Note: Although not all range names will be used here, getting them
   //       could confirm whether they are defined.
   let [ fetcherCopierEveryMinutes, fetcherCopierEveryHours,
-    fetcherCopierTimerLastTime, fetcherCopierTimerCounter,
-    fetcherCopierTimerCounterDivisor, fetcherCopierTimerCounterRemainder,
-    fetcherTimerAtRemainder, fetcherTimerLastTime, fetcherTimerCounter,
+
+//!!! (2023/07/26 Remarked) Use fetcherTimer_onTime_() and copierTimer_onTime_() directly.
+//     fetcherCopierTimerLastTime, fetcherCopierTimerCounter,
+//     fetcherCopierTimerCounterDivisor, fetcherCopierTimerCounterRemainder,
+//     fetcherTimerAtRemainder,
+
+    fetcherTimerLastTime, fetcherTimerCounter,
     fetcherGA4PropertyId,
     fetcherGA4ItemNameInListFilterRangeName,
     fetcherGA4ReportHeadersRangeName, fetcherGA4ReportRowsRangeName,
@@ -281,11 +287,14 @@ function timer_start_() {
     generationShouldCalculateRangeName ] = ranges_getByNames_(
       RANGE_NAME.FC.TIMER.EVERY_MINUTES,
       RANGE_NAME.FC.TIMER.EVERY_HOURS,
-      RANGE_NAME.FC.TIMER.LAST_TIME,
-      RANGE_NAME.FC.TIMER.COUNTER,
-      RANGE_NAME.FC.TIMER.COUNTER_DIVISOR,
-      RANGE_NAME.FC.TIMER.COUNTER_REMAINDER,
-      RANGE_NAME.FC.FETCHER.TIMER.AT_REMAINDER,
+
+//!!! (2023/07/26 Remarked) Use fetcherTimer_onTime_() and copierTimer_onTime_() directly.
+//       RANGE_NAME.FC.TIMER.LAST_TIME,
+//       RANGE_NAME.FC.TIMER.COUNTER,
+//       RANGE_NAME.FC.TIMER.COUNTER_DIVISOR,
+//       RANGE_NAME.FC.TIMER.COUNTER_REMAINDER,
+//       RANGE_NAME.FC.FETCHER.TIMER.AT_REMAINDER,
+
       RANGE_NAME.FC.FETCHER.TIMER.LAST_TIME,
       RANGE_NAME.FC.FETCHER.TIMER.COUNTER,
       RANGE_NAME.FC.FETCHER.GA4.PROPERTY_ID,
@@ -301,12 +310,14 @@ function timer_start_() {
 
   timer_stop_();
 
-  fetcherCopierTimerLastTime.clearContent();
+//!!! (2023/07/26 Remarked) Use fetcherTimer_onTime_() and copierTimer_onTime_() directly.
+//   fetcherCopierTimerLastTime.clearContent();
+//
+//   // (2022/09/04 Remarked) Let user can specify its initial value.
+//   //fetcherCopierTimerCounter.clearContent();
+//
+//   fetcherCopierTimerCounterRemainder.clearContent();
 
-  // (2022/09/04 Remarked) Let user can specify its initial value.
-  //fetcherCopierTimerCounter.clearContent();
-
-  fetcherCopierTimerCounterRemainder.clearContent();
   fetcherTimerLastTime.clearContent();
   fetcherTimerCounter.clearContent();
   copierTimerLastTime.clearContent();
@@ -316,16 +327,8 @@ function timer_start_() {
   // to target immediately.
   NamedRange_copy_from_source_to_target_( true );
 
-  let timerBuilder = ScriptApp.newTrigger( "timer_onTime_" ).timeBased();
-  if ( !fetcherCopierEveryMinutes.isBlank() ) {
-    const minutes = fetcherCopierEveryMinutes.getValue();
-    timerBuilder.everyMinutes( minutes ).create();
-    console.log( `Timer started: every ${minutes} minutes.` );
-  } else {
-    const hours = fetcherCopierEveryHours.getValue();
-    timerBuilder.everyHours( hours ).create();
-    console.log( `Timer started: every ${hours} hours.` );
-  }
+  UserTriggers_create_by_everyMinutes_or_everyHours_(
+    fetcherTimer_onTime_.name );
 }
 
 
