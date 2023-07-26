@@ -17,39 +17,37 @@ function onOpen() {
     .addToUi();
 }
 
-//!!! (2023/07/26 Remarked) Use fetcherTimer_onTime_() and copierTimer_onTime_() directly.
-//
-// /** When timer triggered. */
-// function timer_onTime_( e ) {
-//   let [
-//     fetcherCopierTimerCounter,
-//     fetcherCopierTimerCounterDivisor, fetcherCopierTimerCounterRemainder,
-//     fetcherTimerAtRemainder,
-//   ] = ranges_getByNames_(
-//       RANGE_NAME.FC.TIMER.COUNTER,
-//       RANGE_NAME.FC.TIMER.COUNTER_DIVISOR,
-//       RANGE_NAME.FC.TIMER.COUNTER_REMAINDER,
-//       RANGE_NAME.FC.FETCHER.TIMER.AT_REMAINDER,
-//     );
-//
-//   EventObject_Timer_recordTo_byRangeName_( e, RANGE_NAME.FC.TIMER.LAST_TIME );
-//
-//   let fetcherCopierTimerCounterValue = range_value_inc_( fetcherCopierTimerCounter );
-//   let divisor = fetcherCopierTimerCounterDivisor.getValue();
-//   let counterRemainder = fetcherCopierTimerCounterValue % divisor;
-//   fetcherCopierTimerCounterRemainder.setValue( counterRemainder );
-//
-//   if ( counterRemainder == fetcherTimerAtRemainder.getValue() )
-//     fetcherTimer_onTime_( e );
-// }
+/** When timer triggered. */
+function timer_onTime_( e ) {
+  let [
+    fetcherCopierTimerCounter,
+    fetcherCopierTimerCounterDivisor, fetcherCopierTimerCounterRemainder,
+    fetcherTimerAtRemainder,
+  ] = ranges_getByNames_(
+      RANGE_NAME.FC.TIMER.COUNTER,
+      RANGE_NAME.FC.TIMER.COUNTER_DIVISOR,
+      RANGE_NAME.FC.TIMER.COUNTER_REMAINDER,
+      RANGE_NAME.FC.FETCHER.TIMER.AT_REMAINDER,
+    );
+
+  EventObject_Timer_recordTo_byRangeName_( e, RANGE_NAME.FC.TIMER.LAST_TIME );
+
+  let fetcherCopierTimerCounterValue = range_value_inc_( fetcherCopierTimerCounter );
+  let divisor = fetcherCopierTimerCounterDivisor.getValue();
+  let counterRemainder = fetcherCopierTimerCounterValue % divisor;
+  fetcherCopierTimerCounterRemainder.setValue( counterRemainder );
+
+  if ( counterRemainder == fetcherTimerAtRemainder.getValue() )
+    fetcherTimer_onTime_( e );
+}
 
 /** When fetcher's timer triggered. */
 function fetcherTimer_onTime_( e ) {
   const funcNameInMessage = fetcherTimer_onTime_.name;
   console.log( `${funcNameInMessage}()` );
 
-//!!! (2023/07/26 Remarked) Use fetcherTimer_onTime_() and copierTimer_onTime_() directly.
-// And, this check may result in fetcher never works if copier failed.
+//!!! (2023/07/26 Remarked)
+// This check may result in fetcher never works if copier failed to delete itself.
 //
 //   // 0. If copierTimer still exists, do not run this fetcherTimer (which
 //   //    will generate another copierTimer) again.
@@ -67,34 +65,29 @@ function fetcherTimer_onTime_( e ) {
   EventObject_Timer_recordTo_byRangeName_(
     e, RANGE_NAME.FC.FETCHER.TIMER.LAST_TIME );
 
-//!!! (2023/07/26 Remarked) Use fetcherTimer_onTime_() and copierTimer_onTime_() directly.
-//   const [ fetcherTimerCounter,
-//     copierTimerAfterSeconds ] = ranges_getByNames_(
-//     RANGE_NAME.FC.FETCHER.TIMER.COUNTER,
-//     RANGE_NAME.FC.COPIER.TIMER.AFTER_SECONDS );
-
-  const [ fetcherTimerCounter ] = ranges_getByNames_(
-    RANGE_NAME.FC.FETCHER.TIMER.COUNTER );
+  const [ fetcherTimerCounter,
+    copierTimerAfterSeconds ] = ranges_getByNames_(
+    RANGE_NAME.FC.FETCHER.TIMER.COUNTER,
+    RANGE_NAME.FC.COPIER.TIMER.AFTER_SECONDS );
 
   // 2. Record how many times executed.
   range_value_inc_( fetcherTimerCounter );
 
-//!!! (2023/07/26 Remarked) Use fetcherTimer_onTime_() and copierTimer_onTime_() directly.
-//   // 3. Create timer for copying ranges.
-//   //
-//   // Note: Assume the heavy calculation (triggered by the report
-//   //       generating in the later (i.e. after this copying timer created))
-//   //       will complete after the copierTimerAfterSeconds.
-//   {
-//     const triggerHandlerFunctionName = copierTimer_onTime_.name;
-//     const afterSeconds = copierTimerAfterSeconds.getValue();
-//     const afterMilliseconds = afterSeconds * 1000;
-//     let timerBuilder = ScriptApp.newTrigger( triggerHandlerFunctionName )
-//       .timeBased();
-//     timerBuilder.after( afterMilliseconds ).create();
-//     console.log( `Schedule "${triggerHandlerFunctionName}" after `
-//       + `${afterMilliseconds} milliseconds.` );
-//   }
+  // 3. Create timer for copying ranges.
+  //
+  // Note: Assume the heavy calculation (triggered by the report
+  //       generating in the later (i.e. after this copying timer created))
+  //       will complete after the copierTimerAfterSeconds.
+  {
+    const triggerHandlerFunctionName = copierTimer_onTime_.name;
+    const afterSeconds = copierTimerAfterSeconds.getValue();
+    const afterMilliseconds = afterSeconds * 1000;
+    let timerBuilder = ScriptApp.newTrigger( triggerHandlerFunctionName )
+      .timeBased();
+    timerBuilder.after( afterMilliseconds ).create();
+    console.log( `Schedule "${triggerHandlerFunctionName}" after `
+      + `${afterMilliseconds} milliseconds.` );
+  }
 
   // 4. Generate report.
   //
@@ -140,6 +133,21 @@ function copierTimer_onTime_( e ) {
 //     const triggerUid = e?.triggerUid;
 //     UserTriggers_delete_first_by_triggerUid_( triggerUid );
 //     console.log( `Remove trigger with triggerUid ( ${triggerUid} ).` );
+
+    // 4. Remove this timer to avoid this one-time timer left in list.
+    //
+    // Even if some exception happends in the above operations, the removing
+    // should still be done. Otherwise, fetcherTimer_onTime_() will always
+    // be blocked.
+    //
+    // Unfortunately, this removing operation may also be failed by itself.
+    // This is also the reason why deleting by function name (instead of
+    // trigger unique id). The old failed triggers (of same function name)
+    // can also be deleted here.
+    const triggerHandlerFunctionName = copierTimer_onTime_.name;
+    UserTriggers_delete_all_by_HandlerFunctionName_(
+      triggerHandlerFunctionName );
+    console.log( `Remove trigger "${triggerHandlerFunctionName}".` );
   }
 }
 
@@ -284,12 +292,9 @@ function timer_start_() {
   // Note: Although not all range names will be used here, getting them
   //       could confirm whether they are defined.
   let [ fetcherCopierEveryMinutes, fetcherCopierEveryHours,
-
-//!!! (2023/07/26 Remarked) Use fetcherTimer_onTime_() and copierTimer_onTime_() directly.
-//     fetcherCopierTimerLastTime, fetcherCopierTimerCounter,
-//     fetcherCopierTimerCounterDivisor, fetcherCopierTimerCounterRemainder,
-//     fetcherTimerAtRemainder,
-
+    fetcherCopierTimerLastTime, fetcherCopierTimerCounter,
+    fetcherCopierTimerCounterDivisor, fetcherCopierTimerCounterRemainder,
+    fetcherTimerAtRemainder,
     fetcherTimerLastTime, fetcherTimerCounter,
     fetcherGA4PropertyId,
     fetcherGA4ItemNameInListFilterRangeName,
@@ -299,14 +304,11 @@ function timer_start_() {
     generationShouldCalculateRangeName ] = ranges_getByNames_(
       RANGE_NAME.FC.TIMER.EVERY_MINUTES,
       RANGE_NAME.FC.TIMER.EVERY_HOURS,
-
-//!!! (2023/07/26 Remarked) Use fetcherTimer_onTime_() and copierTimer_onTime_() directly.
-//       RANGE_NAME.FC.TIMER.LAST_TIME,
-//       RANGE_NAME.FC.TIMER.COUNTER,
-//       RANGE_NAME.FC.TIMER.COUNTER_DIVISOR,
-//       RANGE_NAME.FC.TIMER.COUNTER_REMAINDER,
-//       RANGE_NAME.FC.FETCHER.TIMER.AT_REMAINDER,
-
+      RANGE_NAME.FC.TIMER.LAST_TIME,
+      RANGE_NAME.FC.TIMER.COUNTER,
+      RANGE_NAME.FC.TIMER.COUNTER_DIVISOR,
+      RANGE_NAME.FC.TIMER.COUNTER_REMAINDER,
+      RANGE_NAME.FC.FETCHER.TIMER.AT_REMAINDER,
       RANGE_NAME.FC.FETCHER.TIMER.LAST_TIME,
       RANGE_NAME.FC.FETCHER.TIMER.COUNTER,
       RANGE_NAME.FC.FETCHER.GA4.PROPERTY_ID,
@@ -322,13 +324,12 @@ function timer_start_() {
 
   timer_stop_();
 
-//!!! (2023/07/26 Remarked) Use fetcherTimer_onTime_() and copierTimer_onTime_() directly.
-//   fetcherCopierTimerLastTime.clearContent();
-//
-//   // (2022/09/04 Remarked) Let user can specify its initial value.
-//   //fetcherCopierTimerCounter.clearContent();
-//
-//   fetcherCopierTimerCounterRemainder.clearContent();
+  fetcherCopierTimerLastTime.clearContent();
+
+  // (2022/09/04 Remarked) Let user can specify its initial value.
+  //fetcherCopierTimerCounter.clearContent();
+
+  fetcherCopierTimerCounterRemainder.clearContent();
 
   fetcherTimerLastTime.clearContent();
   fetcherTimerCounter.clearContent();
@@ -339,40 +340,9 @@ function timer_start_() {
   // to target immediately.
   NamedRange_copy_from_source_to_target_( true );
 
-  // Install trigger fetcherTimer_onTime_().
+  // Install trigger timer_onTime_().
   UserTriggers_create_by_everyMinutes_or_everyHours_(
-    fetcherTimer_onTime_.name );
-
-  // Schedule a temporary one time trigger to install copying ranges timer.
-  //
-  // Note: Assume the heavy calculation (triggered by the report
-  //       generating in the later (i.e. after this copying timer created))
-  //       will complete after the copierTimerAfterSeconds.
-  {
-    const triggerHandlerFunctionName = timer_start_for_copier.name;
-    const afterSeconds = copierTimerAfterSeconds.getValue();
-    const afterMilliseconds = afterSeconds * 1000;
-    let timerBuilder = ScriptApp.newTrigger( triggerHandlerFunctionName )
-      .timeBased();
-    timerBuilder.after( afterMilliseconds ).create();
-    console.log( `Schedule "${triggerHandlerFunctionName}" after `
-      + `${afterMilliseconds} milliseconds.` );
-  }
-}
-
-/** Install trigger copierTimer_onTime_(). */
-function timer_start_for_copier() {
-  try {
-    UserTriggers_create_by_everyMinutes_or_everyHours_(
-      copierTimer_onTime_.name );
-
-  } finally {
-
-    // Remove this one time trigger.
-    const triggerHandlerFunctionName = timer_start_for_copier.name;
-    UserTriggers_delete_all_by_HandlerFunctionName_( triggerHandlerFunctionName );
-    console.log( `Remove trigger "${triggerHandlerFunctionName}".` );
-  }
+    timer_onTime_.name );
 }
 
 /** Uninstall all triggers of this script of this user. */

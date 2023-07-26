@@ -3,12 +3,10 @@ const RANGE_NAME = {
     TIMER: {
       EVERY_MINUTES: "FC.Timer.EveryMinutes",
       EVERY_HOURS: "FC.Timer.EveryHours",
-
-//!!! (2023/07/26 Remarked) Use fetcherTimer_onTime_() and copierTimer_onTime_() directly.
-//       LAST_TIME: "FC.Timer.LastTime",
-//       COUNTER: "FC.Timer.Counter",
-//       COUNTER_DIVISOR: "FC.Timer.CounterDivisor",
-//       COUNTER_REMAINDER: "FC.Timer.CounterRemainder",
+      LAST_TIME: "FC.Timer.LastTime",
+      COUNTER: "FC.Timer.Counter",
+      COUNTER_DIVISOR: "FC.Timer.CounterDivisor",
+      COUNTER_REMAINDER: "FC.Timer.CounterRemainder",
     },
 
     GENERATION: {
@@ -21,10 +19,7 @@ const RANGE_NAME = {
 
     FETCHER: {
       TIMER: {
-
-//!!! (2023/07/26 Remarked) Use fetcherTimer_onTime_() and copierTimer_onTime_() directly.
-//        AT_REMAINDER: "FC.Fetcher.Timer.AtRemainder",
-
+        AT_REMAINDER: "FC.Fetcher.Timer.AtRemainder",
         LAST_TIME: "FC.Fetcher.Timer.LastTime",
         COUNTER: "FC.Fetcher.Timer.Counter",
       },
