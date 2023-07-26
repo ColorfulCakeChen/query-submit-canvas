@@ -61,6 +61,20 @@ function fetcherTimer_onTime_( e ) {
 //     }
 //   }
 
+  // 0. Remove all pending copier.
+  //
+  // Q: Why delete copier here?
+  // A: Sometimes, copier may fail to remove itself. So, here try to delete
+  //    them by function name. Another possible case, the copier is too
+  //    to be excuted. In this case, delete (i.e. give up) the copier, too.
+  {
+    const triggerHandlerFunctionName = copierTimer_onTime_.name;
+    let bRemoved = UserTriggers_delete_all_by_HandlerFunctionName_(
+      triggerHandlerFunctionName );
+    if ( bRemoved )
+      console.log( `Remove trigger "${triggerHandlerFunctionName}".` );
+  }
+
   // 1. Record when executed.
   EventObject_Timer_recordTo_byRangeName_(
     e, RANGE_NAME.FC.FETCHER.TIMER.LAST_TIME );
@@ -122,32 +136,17 @@ function copierTimer_onTime_( e ) {
 
   } finally {
 
-//!!! (2023/07/26 Remarked) Use fetcherTimer_onTime_() and copierTimer_onTime_() directly.
-// No longer need to delete a periodic trigger.
-//
-//     // 4. Remove this timer to avoid this one-time timer left in list.
-//     //
-//     // Even if some exception happends in the above operations, the removing
-//     // should still be done. Otherwise, fetcherTimer_onTime_() will always
-//     // be blocked.
-//     const triggerUid = e?.triggerUid;
-//     UserTriggers_delete_first_by_triggerUid_( triggerUid );
-//     console.log( `Remove trigger with triggerUid ( ${triggerUid} ).` );
-
     // 4. Remove this timer to avoid this one-time timer left in list.
     //
     // Even if some exception happends in the above operations, the removing
     // should still be done. Otherwise, fetcherTimer_onTime_() will always
     // be blocked.
     //
-    // Unfortunately, this removing operation may also be failed by itself.
-    // This is also the reason why deleting by function name (instead of
-    // trigger unique id). The old failed triggers (of same function name)
-    // can also be deleted here.
-    const triggerHandlerFunctionName = copierTimer_onTime_.name;
-    UserTriggers_delete_all_by_HandlerFunctionName_(
-      triggerHandlerFunctionName );
-    console.log( `Remove trigger "${triggerHandlerFunctionName}".` );
+    // Note: Unfortunately, this removing operation may also be failed by
+    //       itself.
+    const triggerUid = e?.triggerUid;
+    UserTriggers_delete_first_by_triggerUid_( triggerUid );
+    console.log( `Remove trigger with triggerUid ( ${triggerUid} ).` );
   }
 }
 
