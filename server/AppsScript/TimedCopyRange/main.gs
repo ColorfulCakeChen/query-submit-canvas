@@ -65,8 +65,9 @@ function fetcherTimer_onTime_( e ) {
   //
   // Q: Why delete copier here?
   // A: Sometimes, copier may fail to remove itself. So, here try to delete
-  //    them by function name. Another possible case, the copier is too
-  //    to be excuted. In this case, delete (i.e. give up) the copier, too.
+  //    them by function name. Another possible case is that the copier is
+  //    too to be executed. In this case, here also deletes (i.e. gives up)
+  //    the copier because a new fetcher begins.
   {
     const triggerHandlerFunctionName = copierTimer_onTime_.name;
     let bRemoved = UserTriggers_delete_all_by_HandlerFunctionName_(
