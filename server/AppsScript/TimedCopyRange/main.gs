@@ -48,45 +48,53 @@ function fetcherTimer_onTime_( e ) {
   const funcNameInMessage = fetcherTimer_onTime_.name;
   console.log( `${funcNameInMessage}()` );
 
-  // 0. If copierTimer still exists, do not run this fetcherTimer (which
-  //    will generate another copierTimer) again.
-  {
-    const trigger = UserTriggers_get_first_by_HandlerFunctionName_(
-      copierTimer_onTime_.name );
-    if ( trigger ) {
-      console.log( `Do nothing because trigger `
-        + `"${copierTimer_onTime_.name}" not yet executed.` );
-      return;
-    }
-  }
+//!!! (2023/07/26 Remarked) Use fetcherTimer_onTime_() and copierTimer_onTime_() directly.
+// And, this check may result in fetcher never works if copier failed.
+//
+//   // 0. If copierTimer still exists, do not run this fetcherTimer (which
+//   //    will generate another copierTimer) again.
+//   {
+//     const trigger = UserTriggers_get_first_by_HandlerFunctionName_(
+//       copierTimer_onTime_.name );
+//     if ( trigger ) {
+//       console.log( `Do nothing because trigger `
+//         + `"${copierTimer_onTime_.name}" not yet executed.` );
+//       return;
+//     }
+//   }
 
   // 1. Record when executed.
   EventObject_Timer_recordTo_byRangeName_(
     e, RANGE_NAME.FC.FETCHER.TIMER.LAST_TIME );
 
-  const [ fetcherTimerCounter,
-    copierTimerAfterSeconds ] = ranges_getByNames_(
-    RANGE_NAME.FC.FETCHER.TIMER.COUNTER,
-    RANGE_NAME.FC.COPIER.TIMER.AFTER_SECONDS );
+//!!! (2023/07/26 Remarked) Use fetcherTimer_onTime_() and copierTimer_onTime_() directly.
+//   const [ fetcherTimerCounter,
+//     copierTimerAfterSeconds ] = ranges_getByNames_(
+//     RANGE_NAME.FC.FETCHER.TIMER.COUNTER,
+//     RANGE_NAME.FC.COPIER.TIMER.AFTER_SECONDS );
+
+  const [ fetcherTimerCounter ] = ranges_getByNames_(
+    RANGE_NAME.FC.FETCHER.TIMER.COUNTER );
 
   // 2. Record how many times executed.
   range_value_inc_( fetcherTimerCounter );
 
-  // 3. Create timer for copying ranges.
-  //
-  // Note: Assume the heavy calculation (triggered by the report
-  //       generating in the later (i.e. after this copying timer created))
-  //       will complete after the copierTimerAfterSeconds.
-  {
-    const triggerHandlerFunctionName = copierTimer_onTime_.name;
-    const afterSeconds = copierTimerAfterSeconds.getValue();
-    const afterMilliseconds = afterSeconds * 1000;
-    let timerBuilder = ScriptApp.newTrigger( triggerHandlerFunctionName )
-      .timeBased();
-    timerBuilder.after( afterMilliseconds ).create();
-    console.log( `Schedule "${triggerHandlerFunctionName}" after `
-      + `${afterMilliseconds} milliseconds.` );
-  }
+//!!! (2023/07/26 Remarked) Use fetcherTimer_onTime_() and copierTimer_onTime_() directly.
+//   // 3. Create timer for copying ranges.
+//   //
+//   // Note: Assume the heavy calculation (triggered by the report
+//   //       generating in the later (i.e. after this copying timer created))
+//   //       will complete after the copierTimerAfterSeconds.
+//   {
+//     const triggerHandlerFunctionName = copierTimer_onTime_.name;
+//     const afterSeconds = copierTimerAfterSeconds.getValue();
+//     const afterMilliseconds = afterSeconds * 1000;
+//     let timerBuilder = ScriptApp.newTrigger( triggerHandlerFunctionName )
+//       .timeBased();
+//     timerBuilder.after( afterMilliseconds ).create();
+//     console.log( `Schedule "${triggerHandlerFunctionName}" after `
+//       + `${afterMilliseconds} milliseconds.` );
+//   }
 
   // 4. Generate report.
   //
@@ -120,14 +128,18 @@ function copierTimer_onTime_( e ) {
     range_value_inc_( copierTimerCounter );
 
   } finally {
-    // 4. Remove this timer to avoid this one-time timer left in list.
-    //
-    // Even if some exception happends in the above operations, the removing
-    // should still be done. Otherwise, fetcherTimer_onTime_() will always
-    // be blocked.
-    const triggerUid = e?.triggerUid;
-    UserTriggers_delete_first_by_triggerUid_( triggerUid );
-    console.log( `Remove trigger with triggerUid ( ${triggerUid} ).` );
+
+//!!! (2023/07/26 Remarked) Use fetcherTimer_onTime_() and copierTimer_onTime_() directly.
+// No longer need to delete a periodic trigger.
+//
+//     // 4. Remove this timer to avoid this one-time timer left in list.
+//     //
+//     // Even if some exception happends in the above operations, the removing
+//     // should still be done. Otherwise, fetcherTimer_onTime_() will always
+//     // be blocked.
+//     const triggerUid = e?.triggerUid;
+//     UserTriggers_delete_first_by_triggerUid_( triggerUid );
+//     console.log( `Remove trigger with triggerUid ( ${triggerUid} ).` );
   }
 }
 
@@ -327,10 +339,38 @@ function timer_start_() {
   // to target immediately.
   NamedRange_copy_from_source_to_target_( true );
 
-  UserTriggers_create_by_everyMinutes_or_everyHours_(
-    fetcherTimer_onTime_.name );
+  // Install trigger fetcherTimer_onTime_().
+  {
+    const triggerHandlerFunctionName = fetcherTimer_onTime_.name;
+    UserTriggers_create_by_everyMinutes_or_everyHours_(
+      fetcherTimer_onTime_.name );
+    console.log( `Periodic timer "${triggerHandlerFunctionName}" created.` );
+  }
+
+  // Schedule a temporary one time trigger to install copying ranges timer.
+  //
+  // Note: Assume the heavy calculation (triggered by the report
+  //       generating in the later (i.e. after this copying timer created))
+  //       will complete after the copierTimerAfterSeconds.
+  {
+    const triggerHandlerFunctionName = timer_start_for_copier.name;
+    const afterSeconds = copierTimerAfterSeconds.getValue();
+    const afterMilliseconds = afterSeconds * 1000;
+    let timerBuilder = ScriptApp.newTrigger( triggerHandlerFunctionName )
+      .timeBased();
+    timerBuilder.after( afterMilliseconds ).create();
+    console.log( `Schedule "${triggerHandlerFunctionName}" after `
+      + `${afterMilliseconds} milliseconds.` );
+  }
 }
 
+/** Install trigger copierTimer_onTime_(). */
+function timer_start_for_copier() {
+  const triggerHandlerFunctionName = copierTimer_onTime_.name;
+  UserTriggers_create_by_everyMinutes_or_everyHours_(
+    triggerHandlerFunctionName );
+  console.log( `Periodic timer "${triggerHandlerFunctionName}" created.` );
+}
 
 /** Uninstall all triggers of this script of this user. */
 function timer_stop_() {
