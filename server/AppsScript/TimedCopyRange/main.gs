@@ -366,10 +366,19 @@ function timer_start_() {
 
 /** Install trigger copierTimer_onTime_(). */
 function timer_start_for_copier() {
-  const triggerHandlerFunctionName = copierTimer_onTime_.name;
-  UserTriggers_create_by_everyMinutes_or_everyHours_(
-    triggerHandlerFunctionName );
-  console.log( `Periodic timer "${triggerHandlerFunctionName}" created.` );
+  try {
+    const triggerHandlerFunctionName = copierTimer_onTime_.name;
+    UserTriggers_create_by_everyMinutes_or_everyHours_(
+      triggerHandlerFunctionName );
+    console.log( `Periodic timer "${triggerHandlerFunctionName}" created.` );
+
+  } finally {
+
+    // Remove this one time trigger.
+    const triggerHandlerFunctionName = timer_start_for_copier.name;
+    UserTriggers_delete_all_by_HandlerFunctionName_( triggerHandlerFunctionName );
+    console.log( `Remove trigger "${triggerHandlerFunctionName}".` );
+  }
 }
 
 /** Uninstall all triggers of this script of this user. */
