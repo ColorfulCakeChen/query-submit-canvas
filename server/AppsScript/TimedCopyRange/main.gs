@@ -294,7 +294,7 @@ function timer_start_() {
     fetcherGA4PropertyId,
     fetcherGA4ItemNameInListFilterRangeName,
     fetcherGA4ReportHeadersRangeName, fetcherGA4ReportRowsRangeName,
-    copierTimerAtRemainder, copierTimerLastTime, copierTimerCounter,
+    copierTimerAfterSeconds, copierTimerLastTime, copierTimerCounter,
     copierSourceRangeNames, copierTargetRangeNames,
     generationShouldCalculateRangeName ] = ranges_getByNames_(
       RANGE_NAME.FC.TIMER.EVERY_MINUTES,
