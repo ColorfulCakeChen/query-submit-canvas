@@ -1,5 +1,42 @@
 
 /**
+ * Create periodic timer trigger according to "FC.Timer.EveryMinutes" and
+ * "FC.Timer.EveryHours".
+ *
+ * @param {string} strHandlerFunctionName
+ *   The handler function name of the trigger to be created.
+ *
+ * @return {Trigger}
+ *   Return the created trigger of this script of this user.
+ */
+function UserTriggers_create_by_everyMinutes_or_everyHours_(
+  strHandlerFunctionName ) {
+
+  let [ fetcherCopierEveryMinutes, fetcherCopierEveryHours
+  ] = ranges_getByNames_(
+    RANGE_NAME.FC.TIMER.EVERY_MINUTES,
+    RANGE_NAME.FC.TIMER.EVERY_HOURS,
+  );
+
+  let timerBuilder
+    = ScriptApp.newTrigger( strHandlerFunctionName ).timeBased();
+
+  let trigger;
+  if ( !fetcherCopierEveryMinutes.isBlank() ) {
+    const minutes = fetcherCopierEveryMinutes.getValue();
+    trigger = timerBuilder.everyMinutes( minutes ).create();
+    console.log( `Timer "${strHandlerFunctionName}" started: `
+      + `every ${minutes} minutes.` );
+  } else {
+    const hours = fetcherCopierEveryHours.getValue();
+    trigger = timerBuilder.everyHours( hours ).create();
+    console.log( `Timer "${strHandlerFunctionName}" started: `
+      + `every ${hours} hours.` );
+  }
+  return trigger;
+}
+
+/**
  * @return {Trigger[]}
  *   Return all triggers of this script of this user.
  */
