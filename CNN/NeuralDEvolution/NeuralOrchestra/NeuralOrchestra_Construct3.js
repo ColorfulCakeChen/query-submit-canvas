@@ -1224,6 +1224,8 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
     if ( this.Versus_Result_n1_0_p1 != undefined )
       return; // Prevent re-enter.
 
+    const funcNameInMessage = "Versus_Step_10_ParentAlignment1_End";
+
     const base = this.base;
 
     // 1. Turn off AI because fighting stopped.
@@ -1252,7 +1254,16 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
     }
 
     // 2.3 Report to server.
-    base.versusResultSender_send( this.Versus_Result_n1_0_p1 );
+    try {
+      base.versusResultSender_send( this.Versus_Result_n1_0_p1 );
+
+    // Catch exception so that the next versus can always be loaded even if
+    // versus result sending failed (e.g. network disconnected).
+    } catch ( e ) {
+      const logMsg
+        = `NeuralOrchestra_Construct3.${funcNameInMessage}(): ${e}.`;
+      console.error( logMsg );
+    }
 
     // 3. Start downloading the next versus (after AI image processing trying
     //    completed).
