@@ -642,7 +642,7 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
     const gameTime_now = runtime.gameTime;
     const gameTime_deltaSeconds = gameTime_now - this.AI_gameTime_endSeconds;
 
-    // Check whether has pass enough time (in seconds)
+    // Check whether has passed enough time (in seconds).
     //
     // Note: This works even if ( .AI_gameTime_endSeconds == undefined ).
     //       It will be viewed as elapsed time is enough to do the next AI
