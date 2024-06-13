@@ -167,9 +167,10 @@ function Promise_create_by_addEventListener_once(
  *
  * @param {function} timeoutCallback
  *    The event handler function for the event name. It should accept
- * parameters ( resolveFunc, rejectFunc, value ). The resolveFunc and
- * rejectFunc come from the returned Promise. The values come from the
- * parameters of this Promise_create_by_setInterval() function.
+ * parameters ( resolveFunc, rejectFunc, value0, value1, ... ). The
+ * resolveFunc and rejectFunc come from the returned Promise. The values
+ * come from the parameters of this Promise_create_by_setInterval()
+ * function.
  *
  * @param {any} thisArg
  *    The "this" value when binding timeoutCallback with
@@ -250,7 +251,7 @@ function Promise_resolvable_rejectable_create() {
  *       then the asyncGenerator will be ignored totally.
  *
  * @param {AsyncGenerator} asyncGenerator
- *   An asynchronous generator which will be used to after prependNextPromise
+ *   An asynchronous generator which will be used after prependNextPromise
  * resolved to { done: false, value }.
  */
 async function* prepend_asyncGenerator( prependNextPromise, asyncGenerator ) {
@@ -284,9 +285,9 @@ async function* prepend_asyncGenerator( prependNextPromise, asyncGenerator ) {
  * let ticker = new PartTime.AsyncGeneratorTicker( asyncGenerator );
  * let result;
  *
- * let intervalId = setInterval( callback, 1000 );
+ * let intervalId = setInterval( periodicCallback, 1000 );
  *
- * function callback() {
+ * function periodicCallback() {
  *   if ( ticker.done() ) {
  *     result = ticker.lastNext.value;
  *     clearInterval( intervalId );
@@ -350,11 +351,11 @@ class AsyncGeneratorTicker {
 
 /**
  * Periodically call generator.next() by setTimeout() until
- * ( generator.next().done == true ). The generator will generate in part-time.
- * Just like a for..of loop but executes in part-time.
+ * ( generator.next().done == true ). The generator will generate in
+ * part-time. Just like a for..of loop but executes in part-time.
  *
- * This is a little similar to for-await-of. This could accept synchronus or
- * asynchronus generator, while for-await-of only accepts asynchronus
+ * This is a little similar to for-await-of. This could accept synchronus
+ * or asynchronus generator, while for-await-of only accepts asynchronus
  * generator.
  *
  *
