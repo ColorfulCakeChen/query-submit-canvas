@@ -327,10 +327,10 @@ class DEvolution_Versus extends
  * be considered as expired.
  *
  * Because Google Analytics Realtime Report can only collect the last
- * half an hour (30 minutes) or one hour (60 minutes; premium vesion) event,
- * A versus downloaded one half hours (90 minutes) ago could be considered
+ * half an hour (30 minutes) or one hour (60 minutes; premium version) events,
+ * a versus downloaded one half hours (90 minutes) ago could be considered
  * as expired definitely.
- * 
+ *
  * Sending result of expired versus to server may confuse server.
  */
 DEvolution_Versus.expireIntervalMilliseconds = 90 * 60 * 1000;
