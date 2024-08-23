@@ -22,7 +22,7 @@ import { InferencedParams } from "./NeuralNet_InferencedParams.js";
  *
  * @member {number} explicit_input_channelCount
  *   The explicit (i.e. user visible) input image's channel count. It is always
- * equal to .inferencedParams.input_channelCount. For RGA input image, it
+ * equal to .inferencedParams.input_channelCount. For RGBA input image, it
  * should be 4.
  *
  *
