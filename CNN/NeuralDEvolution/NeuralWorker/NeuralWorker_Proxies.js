@@ -38,7 +38,7 @@ import { ImplicitInputMode as NeuralWorker_ImplicitInputMode }
  * Every worker handles one neural network. When .TypedArray_process_async() is
  * called, the input (usually a large memory block) will be transffered to the
  * 1st worker to start computing, and then transffered to the 2nd worker to
- * start computing, ... etc.
+ * start another computing, ... etc.
  *
  * When passing large data by Worker.postMessage(), it is preferred by
  * transferring (i.e. by not copying). If the large data wants to be
