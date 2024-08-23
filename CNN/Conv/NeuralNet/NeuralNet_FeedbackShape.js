@@ -82,7 +82,7 @@ import { FeedbackToInput as NeuralNet_FeedbackToInput }
  *                ( RGBA = ( 0, 0, 0, 0 ) ) rectangle object inside
  *                DrawingCanvas at the implicit input area?
  *
- *           - A: If there is objects with blend mode "Additive"
+ *           - A: If there are objects with blend mode "Additive"
  *                (e.g. Particles) inside DrawingCanvas, they seems can not be
  *                masked out by any other objects. The reason seems that these
  *                objects will always be painted at the last.
