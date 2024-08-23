@@ -12,7 +12,7 @@ import { Int } from "../../Unpacker/ValueDesc/ValueDesc_Base.js";
  *          implicit_input_bFillAlignmentMark and
  *          implicit_input_bFillPreviousOutput?
  *
- * Solution1: Let NeuralNet has .TyedArray_process_async() method.
+ * Solution1: Let NeuralNet has .TypedArray_process_async() method.
  *
  * Solution2: Let it become NeuralWorker's parameter
  *            NeuralWorker_ImplicitInputMode.
