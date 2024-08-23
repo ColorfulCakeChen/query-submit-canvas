@@ -74,7 +74,7 @@ import { ImplicitInputMode as NeuralWorker_ImplicitInputMode }
  *       evolution versus) it represents (i.e. personates) currently?
  *
  *     - Please call .alignmentMarkValueArrayArray_set_async() to provide
- *         alignement mark values of both comprtition sides.
+ *         alignement mark values of both competition sides.
  *
  *   - What if a neural network needs itself previous time output as feedback?
  *
