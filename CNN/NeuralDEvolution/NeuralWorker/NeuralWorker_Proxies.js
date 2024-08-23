@@ -97,6 +97,10 @@ import { ImplicitInputMode as NeuralWorker_ImplicitInputMode }
  *     - Or, DrawingCanvas is same size as Viewport and only draw at part of
  *         the canvas.
  *
+ *       - This method is recommended because it avoid image skewed. (It
+ *           seems that image will be skewed when DrawingCanvas and Viewport
+ *           have different size.)
+ *
  *
  * 2.2 Backend "cpu"
  *
