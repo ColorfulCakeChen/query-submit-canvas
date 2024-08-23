@@ -437,7 +437,7 @@ class NeuralWorker_Proxies extends Recyclable.Root {
    * needs not be re-compiled again).
    * 
    * @param {integer} newLength
-   *   The .workerProxyArray will become the speccified length (and have so
+   *   The .workerProxyArray will become the specified length (and have so
    * many NeuralWorker.Proxy).
    */
   workerProxyArray_length_ensure( newLength ) {
