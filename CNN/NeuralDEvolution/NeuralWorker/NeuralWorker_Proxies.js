@@ -665,6 +665,12 @@ class NeuralWorker_Proxies extends Recyclable.Root {
     return resultOk;
   }
 
+//!!! ...unfinished... (2024/08/23)
+// This method should be named as:
+//   "alignmentMarkValueArrayArray_set_as_swap_async()"
+//
+// The reason is that it does not swap again if it is called second times. 
+
   /**
    * Swap .alignmentMarkValueArrayArray[ 0 ] and
    * .alignmentMarkValueArrayArray[ 1 ].
