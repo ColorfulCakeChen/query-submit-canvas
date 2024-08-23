@@ -94,6 +94,9 @@ import { ImplicitInputMode as NeuralWorker_ImplicitInputMode }
  *
  *     - Let DrawingCanvas be larger than Viewport.
  *
+ *     - Or, DrawingCanvas is same size as Viewport and only draw at part of
+ *         the canvas.
+ *
  *
  * 2.2 Backend "cpu"
  *
