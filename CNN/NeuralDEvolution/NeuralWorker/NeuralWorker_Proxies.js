@@ -90,7 +90,7 @@ import { ImplicitInputMode as NeuralWorker_ImplicitInputMode }
  *   - Processing the enlarged input image is usually slower a little.
  *
  *
- * How to provided an enlarged input image?
+ * How to provide an enlarged input image?
  *
  *     - Let DrawingCanvas be larger than Viewport.
  *
