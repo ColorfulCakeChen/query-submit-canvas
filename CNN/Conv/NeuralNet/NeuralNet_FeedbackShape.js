@@ -50,7 +50,7 @@ import { FeedbackToInput as NeuralNet_FeedbackToInput }
  *       - Element 0, 4, 8, 12, 16, 20 are explicit output values.
  *       - Element 1, 2, 3 are implicit output values of element 0.
  *       - Element 5, 6, 7 are implicit output values of element 4.
- *       - ...
+ *       - ... etc.
  *     - Both explicit and implicit output values are used as recurrent
  *         feedback information.
  *
