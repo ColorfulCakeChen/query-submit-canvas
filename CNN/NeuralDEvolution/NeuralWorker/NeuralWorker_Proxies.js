@@ -172,7 +172,7 @@ import { ImplicitInputMode as NeuralWorker_ImplicitInputMode }
  * @member {Uint8ClampedArray[]|Int32Array[]|number[][]} alignmentMarkValueArrayArray
  *   An array with two non-negative integer arrays representing every neural
  * network personating which alignment currently. Every non-negative integer
- * array's .length should be the same as .input_channelCount becasue it
+ * array's .length should be the same as .input_channelCount because it
  * represents a pixel.
  *
  *   - It could be null or undefined or
