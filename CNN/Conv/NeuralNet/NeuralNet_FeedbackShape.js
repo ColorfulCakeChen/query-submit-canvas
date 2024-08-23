@@ -70,7 +70,7 @@ import { FeedbackToInput as NeuralNet_FeedbackToInput }
  *           ( RGBA = ( 0, 0, 0, 0 ) ).
  *
  *         - In Construct3, because DrawingCanvas must be the same position and
- *             size as viewport (to prevent from painting postion and scale
+ *             size as viewport (to prevent from painting position and scale
  *             skewed), keeping the left-top corner area unused is a practical
  *             way to provide implicit input area.
  *
