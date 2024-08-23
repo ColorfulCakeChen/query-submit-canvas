@@ -24,7 +24,7 @@ import { ImplicitInputMode as NeuralWorker_ImplicitInputMode }
  *
  * Since it is slow to transfer data between CPU and GPU (for WebGL), it seems
  * not feasible to use multiple workers (which will transfer data between CPU
- * and GPU multiple times) to process both competition side of a diffential
+ * and GPU multiple times) to process both competition side of a differential
  * evolution iteration.
  *
  * So these ONE_WORKER__Xxx modes combine two neural networks of both
