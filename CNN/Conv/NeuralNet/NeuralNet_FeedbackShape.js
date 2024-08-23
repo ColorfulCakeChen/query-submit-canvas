@@ -88,7 +88,7 @@ import { FeedbackToInput as NeuralNet_FeedbackToInput }
  *                objects will always be painted at the last.
  *
  *       - Its main usage is to place the alignement mark (for letting neural
- *           network know who it personates currently) and the feedback
+ *           network knows who it personates currently) and the feedback
  *           information (i.e. the previous time output of the neural network).
  *
  *       - Note: Implicit input will contain not only alignment mark and the
