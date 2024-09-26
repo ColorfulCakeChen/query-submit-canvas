@@ -129,7 +129,7 @@ class HTMLTable_Operator extends Recyclable.Root {
    *   "th" for table header cell, "td" for table data cell.
    *
    * @param {string[]|number[]} dataArray
-   *   The data to be displaye 
+   *   The data to be displayed.
    */
   static Section_addRow( htmlNode, th_OR_td, dataArray ) {
     let oneLine = document.createElement( "tr" );
