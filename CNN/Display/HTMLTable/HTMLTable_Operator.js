@@ -125,7 +125,7 @@ class HTMLTable_Operator extends Recyclable.Root {
    *   The HTML DOM Node which the new row will be inserted. For HTML
    * table, it could be .tHead or .tBodies[ n ] or .tFoot.
    *
-   * @param {string} th_OR_td  "th" for table header, "td" for table body.
+   * @param {string} th_OR_td
    *   "th" for table header cell, "td" for table data cell.
    *
    * @param {string[]|number[]} dataArray
