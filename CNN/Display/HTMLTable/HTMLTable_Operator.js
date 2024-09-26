@@ -52,7 +52,7 @@ class HTMLTable_Operator extends Recyclable.Root {
     super.disposeResources();
   }
 
-  /** If .htmlTableElement undefined, preare it by .htmlTableElementId. */
+  /** If .htmlTableElement undefined, prepare it by .htmlTableElementId. */
   Table_ensure() {
     if ( this.htmlTableElement )
       return;
