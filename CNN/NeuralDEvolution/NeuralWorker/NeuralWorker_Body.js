@@ -222,7 +222,7 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
     // 0.4
     this.ScaleFiller = undefined;
 
-    // 2. Create every neural network.
+    // 1. Create every neural network.
     let progress;
     try {
       let bAllOk = true;
