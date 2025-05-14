@@ -210,6 +210,10 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
 
         let inputWeightArray;
         {
+//!!! ...unfinished... (2025/05/14)
+// Perhaps, pass weightElementOffsetBegin and weightArrayBuffer.byteLength
+// from caller.
+
           let weightElementOffsetBegin = 0;
           let byteOffset
             = weightElementOffsetBegin * Float32Array.BYTES_PER_ELEMENT;
