@@ -89,6 +89,9 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
   async* disposeResources() {
 
     this.alignmentMarkValueArrayArray_dispose();
+
+    this.ScaleFiller = undefined;
+
     this.NeuralNetArray_dispose();
 
     // Release neural network parameters and weights.
@@ -118,10 +121,46 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
       this.tensorMemoryBefore = undefined;
     }
 
-    this.ScaleFiller = undefined;
     this.workerId = undefined;
 
     yield *super.disposeResources();
+  }
+
+  /**
+   * Modify this.weightArrayBufferArray to ensure there is no NaN value in the
+   * weight array. (Force NaN to 0.)
+   *
+   */
+  static weightArrayBufferArray_ensure_no_NaN() {
+
+    const weightArrayBufferArray = this.weightArrayBufferArray;
+    if ( !weightArrayBufferArray )
+      return;
+
+    for ( let i = 0; i < weightArrayBufferArray.length; ++i ) {
+      let weightArrayBuffer = weightArrayBufferArray[ i ];
+      if ( !weightArrayBuffer )
+        continue;
+
+      {
+        const weightElementOffsetBegin = 0;
+        const byteOffset
+          = weightElementOffsetBegin * Float32Array.BYTES_PER_ELEMENT;
+
+        const elementLength = Math.floor(
+          weightArrayBuffer.byteLength / Float32Array.BYTES_PER_ELEMENT );
+
+        const aFloat32Array
+          = new Float32Array( weightArrayBuffer, byteOffset, elementLength );
+
+        // Ensure there is no NaN value in the weight array.
+        // (Force NaN to 0.)
+        const restrictedWeightArray = Weights.Base.ValueBounds
+          .Float32Array_RestrictedClone( aFloat32Array );
+
+        weightArrayBufferArray[ i ] = restrictedWeightArray;
+      }
+    }
   }
 
   /**
@@ -140,16 +179,25 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
 
     // Clear resources.
     {
+
       // Since (re-)initialization, no alignment marks.
       if ( this.alignmentMarkValueArrayArray )
         this.alignmentMarkValueArrayArray.length = 0;
 
+      if ( this.ScaleFiller )
+        this.ScaleFiller = undefined;
+
       if ( this.neuralNetArray )
         this.neuralNetArray.clear(); // Release old neural networks.
+
+      if ( this.weightArrayBufferArray )
+        this.weightArrayBufferArray = undefined;
+
+      if ( this.neuralNetParamsBaseArray )
+        this.neuralNetParamsBaseArray = undefined;
     }
 
     this.workerId = workerId;
-    this.ScaleFiller = undefined;
 
     let bInitOk = true;
 
@@ -174,12 +222,206 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
 
 
 
-//!!! ...unfinished... (2025/05/14)
-// The this.NeuralNetArray_dispose() shpuld be called
-// when NeuralNetArray_recreate().
+//!!! (Old Codes)
+// (2025/05.14 Remarked) Re-written by NeuralNetArray_recreate()
+//
+//   /**
+//    * Note1: The .ScaleFiller will be re-created.
+//    * Note2: The .alignmentMarkValueArrayArray will be cleared.
+//    *
+//    *
+//    * @param {Object[]} neuralNetParamsBaseArray
+//    *   An array of object. Every element is an object looks like
+//    * NeuralNet.ParamsBase.
+//    *
+//    * @param {ArrayBuffer[]} weightArrayBufferArray
+//    *   An array of every neural network's weights. Every element will be
+//    * interpreted as Float32Array.
+//    *
+//    * @param {boolean} bLogDryRunTime
+//    *   If true, the neural network dry-run time will be measured twice and
+//    * logged to console.
+//    *
+//    * @yield {boolean}
+//    *   - Yield { done: true, value: { value: true } }, if succeeded.
+//    *   - Yield { done: true, value: { value: false } }, if failed.
+//    */
+//   async* NeuralNetArray_create(
+//     neuralNetParamsBaseArray, weightArrayBufferArray, bLogDryRunTime ) {
+//
+//     const funcNameInMessage = "NeuralNetArray_create";
+//
+//     // 0.
+//
+//     // 0.1 Keep neural network parameters and weights so that the neural
+//     //     network(s) can be re-created (perhaps, with different part of the
+//     //     weights ArrayBuffer).
+//     this.neuralNetParamsBaseArray = neuralNetParamsBaseArray;
+//     this.weightArrayBufferArray = weightArrayBufferArray;
+//
+//     // 0.2 Since (re-)creation, no alignment marks.
+//     if ( this.alignmentMarkValueArrayArray )
+//       this.alignmentMarkValueArrayArray.length = 0;
+//
+//     // 0.3 Prepare container for all neural networks.
+//     {
+//       if ( this.neuralNetArray )
+//         this.neuralNetArray.clear(); // Release old neural networks.
+//       else
+//         this.neuralNetArray = Recyclable.OwnerArray.Pool.get_or_create_by();
+//
+//       this.neuralNetArray.length = neuralNetParamsBaseArray.length;
+//     }
+//
+//     // 0.4
+//     this.ScaleFiller = undefined;
+//
+//     // 1. Create every neural network.
+//     let progress;
+//     try {
+//       let bAllOk = true;
+//       for ( let i = 0; i < neuralNetParamsBaseArray.length; ++i ) {
+//         let neuralNetParamsBase = neuralNetParamsBaseArray[ i ];
+//         let weightArrayBuffer = weightArrayBufferArray[ i ];
+//
+//         let inputWeightArray;
+//         {
+// //!!! ...unfinished... (2025/05/14)
+// // Perhaps, pass weightElementOffsetBegin and weightArrayBuffer.byteLength
+// // from caller. (Inside neuralNetParams?)
+// //
+// // Note1: The weightArrayBufferArray should be kept in this NeuralWorker_Body
+// // because it is transferred to this NeuralWorker_Body (no longer accessible
+// // by NeuralWorker_Proxy). So that it can be used to create another neural
+// // network in the future.
+// //
+// // Note2: Perhaps, re-create neural network when alignmentMark swapping.
+// //
+//
+//           let weightElementOffsetBegin = 0;
+//           let byteOffset
+//             = weightElementOffsetBegin * Float32Array.BYTES_PER_ELEMENT;
+//
+//           let elementLength = Math.floor(
+//             weightArrayBuffer.byteLength / Float32Array.BYTES_PER_ELEMENT );
+//
+//           let aFloat32Array
+//             = new Float32Array( weightArrayBuffer, byteOffset, elementLength );
+//
+//           // Ensure there is no NaN value in the weight array.
+//           // (Force NaN to 0.)
+//           inputWeightArray = Weights.Base.ValueBounds
+//             .Float32Array_RestrictedClone( aFloat32Array );
+//         }
+//
+//         // In web worker, the input of neural network will not be used by
+//         // others. Force the neural network release its input tensor.
+//         neuralNetParamsBase.bKeepInputTensor = false;
+//
+//         let neuralNetParams = NeuralNet.Params
+//           .get_or_create_by_NeuralNetParamsBase( neuralNetParamsBase );
+//
+//         progress = ValueMax.Percentage.Aggregate.Pool.get_or_create_by();
+//
+//         // Note: Put into this.neuralNetArray[] so that it could be released
+//         //       even if its .init is failed and throws exception.
+//         let neuralNet = this.neuralNetArray[ i ]
+//           = NeuralNet.Base.Pool.get_or_create_by();
+//
+//         let bInitOk = neuralNet.init( progress,
+//           inputWeightArray, 0, neuralNetParams );
+//
+//         if ( false == bInitOk ) {
+//
+//           // Note1: Because neuralNetParams has been destroyed by
+//           //        NeuralNet.Base.init(), log neuralNetParamsBase instead.
+//           //
+//           // Note2: Because neuralNetParamsBase looks like (but not)
+//           //        NeuralNet.ParamsBase, call .toString explicitly.
+//           let strNeuralNetParamsBase = NeuralNet.ParamsBase.prototype
+//             .toString.call( neuralNetParamsBase );
+//
+//           throw Error( `NeuralWorker_Body.${funcNameInMessage}(): `
+//             + `Failed to initialize neuralNetArray[ ${i} ] object. `
+//             + `progress.valuePercentage=${progress.valuePercentage}, `
+//             + `neuralNetParamsBase={ ${strNeuralNetParamsBase} }, `
+//             + `neuralNet={ ${neuralNet} }.`
+//           );
+//         }
+//
+//         progress.disposeResources_and_recycleToPool();
+//         progress = null;
+//
+//         // Create NeuralNet_ScaleFiller.
+//         if ( this.ScaleFiller ) {
+//           if (   ( neuralNet.input_height
+//                      != this.ScaleFiller.target_height )
+//               || ( neuralNet.input_width
+//                      != this.ScaleFiller.target_width )
+//               || ( neuralNet.input_channelCount
+//                      != this.ScaleFiller.target_channelCount ) )
+//
+//             throw Error( `NeuralWorker_Body.${funcNameInMessage}(): `
+//               + `neuralNetArray[ ${i} ]'s `
+//               + `( input_height, input_width, input_channelCount ) = ( `
+//               + `${neuralNet.input_height}, `
+//               + `${neuralNet.input_width}, `
+//               + `${neuralNet.input_channelCount} ) `
+//               + `should be the same as another neuralNet's ( `
+//               + `${this.ScaleFiller.target_height}, `
+//               + `${this.ScaleFiller.target_width}, `
+//               + `${this.ScaleFiller.target_channelCount} ). `
+//               + `neuralNetParamsBase={ ${strNeuralNetParamsBase} }.`
+//             );
+//
+//         } else {
+//           this.ScaleFiller = new NeuralNet.ScaleFiller(
+//             neuralNet.input_height,
+//             neuralNet.input_width,
+//             neuralNet.input_channelCount
+//           );
+//         }
+//
+//         bAllOk = bAllOk && bInitOk;
+//
+//         // If need log dry-run time, also log neural network weight count.
+//         if ( bLogDryRunTime ) {
+//           let strWeightCountInfo = neuralNet.toString_WeightCount();
+//           let logMsg = `NeuralWorker_Body.${funcNameInMessage}(): `
+//             + `${strWeightCountInfo}.`;
+//           console.log( logMsg );
+//         }
+//       }
+//
+//       // Compile shaders and upload tensor to GPU if backend is webgl.
+//       NeuralWorker_Body.NeuralNetArray_compileShaders_uploadTensors_ifWebGL
+//         .call( this, bLogDryRunTime );
+//
+//       if ( bAllOk )
+//         return { value: true };
+//       else
+//         return { value: false };
+//
+//     } catch ( e ) {
+//       let errorMsg = `NeuralWorker_Body.${funcNameInMessage}(): `
+//         + `workerId=${this.workerId}. ${e}`;
+//       console.error( errorMsg );
+//       //debugger;
+//       throw e;
+//
+//     } finally {
+//       if ( progress ) {
+//         progress.disposeResources_and_recycleToPool();
+//         progress = null;
+//       }
+//     }
+//   }
 
+
+//!!! ...unfinished... (2025/05/14)
   /**
-   * Note: The .alignmentMarkValueArrayArray will be cleared.
+   * Note1: The .ScaleFiller will be re-created.
+   * Note2: The .alignmentMarkValueArrayArray will be cleared.
    *
    *
    * @param {Object[]} neuralNetParamsBaseArray
@@ -211,11 +453,77 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
     this.neuralNetParamsBaseArray = neuralNetParamsBaseArray;
     this.weightArrayBufferArray = weightArrayBufferArray;
 
-    // 0.2 Since (re-)creation, no alignment marks.
-    if ( this.alignmentMarkValueArrayArray )
-      this.alignmentMarkValueArrayArray.length = 0;
+    // Ensure there is no NaN value in the weight array. (Force NaN to 0.)
+    NeuralWorker_Body.weightArrayBufferArray_ensure_no_NaN.call( this );
 
-    // 0.3 Prepare container for all neural networks.
+    // 0.2 Re-create .ScaleFiller.
+    this.ScaleFiller = undefined;
+
+
+    // 1. Create every neural network.
+    try {
+      let bAllOk = true;
+
+//!!! ...unfinished... (2025/05/14) Call NeuralNetArray_recreate().
+
+        bAllOk = bAllOk && bInitOk;
+
+      }
+
+      if ( bAllOk )
+        return { value: true };
+      else
+        return { value: false };
+
+    } catch ( e ) {
+      let errorMsg = `NeuralWorker_Body.${funcNameInMessage}(): `
+        + `workerId=${this.workerId}. ${e}`;
+      console.error( errorMsg );
+      //debugger;
+      throw e;
+
+    } finally {
+    }
+  }
+
+  /**
+   * Note:
+   *   - this.neuralNetParamsBaseArray and this.weightArrayBufferArray
+   *       will be used to re-create neural network(s).
+   * 
+   *   - The created neural network(s) will be placed in this.neuralNetArray[].
+   * 
+   *   - If .ScaleFiller exists, it will NOT be re-created.
+   *     If .ScaleFiller does not exist, it will be created.
+   *
+   *   - The .alignmentMarkValueArrayArray will NOT be cleared (i.e.
+   *       will be kept).
+   *
+   *
+   * @param {number} weightElementOffsetBegin
+   *   The offset (in element count, not byte count) when using
+   * weightArrayBufferArray[] to create the neural network(s).
+   *
+   * @param {boolean} bLogDryRunTime
+   *   If true, the neural network dry-run time will be measured twice and
+   * logged to console.
+   *
+   * @return {boolean}
+   *   - true, if succeeded.
+   *   - false, if failed.
+   */
+  static NeuralNetArray_recreate(
+    weightElementOffsetBegin, bLogDryRunTime ) {
+
+    const funcNameInMessage = "NeuralNetArray_recreate";
+
+    // 0.
+
+    // 0.1 Use kept neural network parameters and weights.
+    const neuralNetParamsBaseArray = this.neuralNetParamsBaseArray;
+    const weightArrayBufferArray = this.weightArrayBufferArray;
+
+    // 0.2 Prepare container for all neural networks.
     {
       if ( this.neuralNetArray )
         this.neuralNetArray.clear(); // Release old neural networks.
@@ -224,9 +532,6 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
 
       this.neuralNetArray.length = neuralNetParamsBaseArray.length;
     }
-
-    // 0.4
-    this.ScaleFiller = undefined;
 
     // 1. Create every neural network.
     let progress;
@@ -250,16 +555,18 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
 // Note2: Perhaps, re-create neural network when alignmentMark swapping.
 //
 
-          let weightElementOffsetBegin = 0;
           let byteOffset
             = weightElementOffsetBegin * Float32Array.BYTES_PER_ELEMENT;
 
           let elementLength = Math.floor(
             weightArrayBuffer.byteLength / Float32Array.BYTES_PER_ELEMENT );
 
+          elementLength -= weightElementOffsetBegin;
+
           let aFloat32Array
             = new Float32Array( weightArrayBuffer, byteOffset, elementLength );
 
+!!! ..unfinished... (2025/05/14) should be done once when first time.
           // Ensure there is no NaN value in the weight array.
           // (Force NaN to 0.)
           inputWeightArray = Weights.Base.ValueBounds
