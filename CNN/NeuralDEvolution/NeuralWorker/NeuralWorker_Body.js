@@ -214,11 +214,11 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
           let byteOffset
             = weightElementOffsetBegin * Float32Array.BYTES_PER_ELEMENT;
 
-          let byteLength = Math.floor(
+          let elementLength = Math.floor(
             weightArrayBuffer.byteLength / Float32Array.BYTES_PER_ELEMENT );
 
           let aFloat32Array
-            = new Float32Array( weightArrayBuffer, byteOffset, byteLength );
+            = new Float32Array( weightArrayBuffer, byteOffset, elementLength );
 
           // Ensure there is no NaN value in the weight array.
           // (Force NaN to 0.)
