@@ -158,7 +158,7 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
         const restrictedWeightArray = Weights.Base.ValueBounds
           .Float32Array_RestrictedClone( aFloat32Array );
 
-        weightArrayBufferArray[ i ] = restrictedWeightArray;
+        weightArrayBufferArray[ i ] = restrictedWeightArray.buffer;
       }
     }
   }
