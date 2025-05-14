@@ -14,6 +14,17 @@ import { tensorflowJsURL } from "./NeuralWorker_Common.js";
  * The implementation of a neural network web worker. It may own one or two
  * neural network(s).
  *
+ *
+ * @param {Object[]} neuralNetParamsBaseArray
+ *   An array of object. Every element is an object looks like
+ * NeuralNet.ParamsBase. It is kept so that the neural network(s) can be
+ * re-created (perhaps, with different part of the weights ArrayBuffer).
+ *
+ * @param {ArrayBuffer[]} weightArrayBufferArray
+ *   An array of every neural network's weights. Every element will be
+ * interpreted as Float32Array. It is kept so that the neural network(s) can
+ * be re-created (perhaps, with different part of the weights ArrayBuffer).
+ * 
  * @member {Uint8ClampedArray[]|Int32Array[]|number[][]} alignmentMarkValueArrayArray
  *   An array with two non-negative integer arrays representing every neural
  * network personating which alignment currently. Every non-negative integer
@@ -79,6 +90,10 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
 
     this.alignmentMarkValueArrayArray_dispose();
     this.NeuralNetArray_dispose();
+
+    // Release neural network parameters and weights.
+    this.weightArrayBufferArray = undefined;
+    this.neuralNetParamsBaseArray = undefined;
 
     // Detect tensor memory leak.
     if ( this.tensorMemoryBefore !== undefined ) {
@@ -184,11 +199,17 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
 
     // 0.
 
-    // 0.1 Since (re-)creation, no alignment marks.
+    // 0.1 Keep neural network parameters and weights so that the neural
+    //     network(s) can be re-created (perhaps, with different part of the
+    //     weights ArrayBuffer).
+    this.neuralNetParamsBaseArray = neuralNetParamsBaseArray;
+    this.weightArrayBufferArray = weightArrayBufferArray;
+
+    // 0.2 Since (re-)creation, no alignment marks.
     if ( this.alignmentMarkValueArrayArray )
       this.alignmentMarkValueArrayArray.length = 0;
 
-    // 0.2 Prepare container for all neural networks.
+    // 0.3 Prepare container for all neural networks.
     {
       if ( this.neuralNetArray )
         this.neuralNetArray.clear(); // Release old neural networks.
