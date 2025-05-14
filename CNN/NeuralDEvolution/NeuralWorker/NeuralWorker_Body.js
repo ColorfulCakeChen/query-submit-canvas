@@ -166,7 +166,7 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
    * NeuralNet.ParamsBase.
    *
    * @param {ArrayBuffer[]} weightArrayBufferArray
-   *   An array of every neural network's weights. Every element  will be
+   *   An array of every neural network's weights. Every element will be
    * interpreted as Float32Array.
    *
    * @param {boolean} bLogDryRunTime
