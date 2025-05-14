@@ -172,6 +172,12 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
     return { value: bInitOk };
   }
 
+
+
+//!!! ...unfinished... (2025/05/14)
+// The this.NeuralNetArray_dispose() shpuld be called
+// when NeuralNetArray_recreate().
+
   /**
    * Note: The .alignmentMarkValueArrayArray will be cleared.
    *
