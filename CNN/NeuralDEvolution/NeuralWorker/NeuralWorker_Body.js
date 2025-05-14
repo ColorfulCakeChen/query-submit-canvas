@@ -418,7 +418,6 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
 //   }
 
 
-//!!! ...unfinished... (2025/05/14)
   /**
    * Note1: The .ScaleFiller will be re-created.
    * Note2: The .alignmentMarkValueArrayArray will be cleared.
@@ -453,22 +452,18 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
     this.neuralNetParamsBaseArray = neuralNetParamsBaseArray;
     this.weightArrayBufferArray = weightArrayBufferArray;
 
-    // Ensure there is no NaN value in the weight array. (Force NaN to 0.)
+    // 0.2 Ensure there is no NaN value in the weight array. (Force NaN to 0.)
     NeuralWorker_Body.weightArrayBufferArray_ensure_no_NaN.call( this );
 
-    // 0.2 Re-create .ScaleFiller.
+    // 0.3 Re-create .ScaleFiller.
     this.ScaleFiller = undefined;
-
 
     // 1. Create every neural network.
     try {
-      let bAllOk = true;
+      const weightElementOffsetBegin = 0;
 
-//!!! ...unfinished... (2025/05/14) Call NeuralNetArray_recreate().
-
-        bAllOk = bAllOk && bInitOk;
-
-      }
+      let bAllOk = NeuralWorker_Body.NeuralNetArray_recreate.call( this,
+        weightElementOffsetBegin, bLogDryRunTime );
 
       if ( bAllOk )
         return { value: true };
