@@ -212,7 +212,7 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
         {
 //!!! ...unfinished... (2025/05/14)
 // Perhaps, pass weightElementOffsetBegin and weightArrayBuffer.byteLength
-// from caller.
+// from caller. (Inside neuralNetParams?)
 
           let weightElementOffsetBegin = 0;
           let byteOffset
