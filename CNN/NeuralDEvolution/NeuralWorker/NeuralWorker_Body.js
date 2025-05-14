@@ -213,6 +213,12 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
 //!!! ...unfinished... (2025/05/14)
 // Perhaps, pass weightElementOffsetBegin and weightArrayBuffer.byteLength
 // from caller. (Inside neuralNetParams?)
+//
+// Note: The weightArrayBufferArray should be kept in this NeuralWorker_Body
+// because it is transferred to this NeuralWorker_Body (no longer accessible
+// by NeuralWorker_Proxy). So that it can be used to create another neural
+// network in the future.
+//
 
           let weightElementOffsetBegin = 0;
           let byteOffset
