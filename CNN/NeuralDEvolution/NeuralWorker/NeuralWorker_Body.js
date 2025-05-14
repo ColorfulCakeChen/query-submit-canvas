@@ -642,9 +642,9 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
         .call( this, bLogDryRunTime );
 
       if ( bAllOk )
-        return { value: true };
+        return true;
       else
-        return { value: false };
+        return false;
 
     } catch ( e ) {
       let errorMsg = `NeuralWorker_Body.${funcNameInMessage}(): `
