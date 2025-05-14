@@ -483,8 +483,8 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
 
   /**
    * Note:
-   *   - this.neuralNetParamsBaseArray and this.weightArrayBufferArray
-   *       will be used to re-create neural network(s).
+   *   - The .neuralNetParamsBaseArray and .weightArrayBufferArray (assumed
+   *       no NaN) will be used to re-create neural network(s).
    * 
    *   - The created neural network(s) will be placed in this.neuralNetArray[].
    * 
@@ -558,14 +558,9 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
 
           elementLength -= weightElementOffsetBegin;
 
-          let aFloat32Array
+          // (Assume there is no NaN values.) 
+          inputWeightArray
             = new Float32Array( weightArrayBuffer, byteOffset, elementLength );
-
-!!! ..unfinished... (2025/05/14) should be done once when first time.
-          // Ensure there is no NaN value in the weight array.
-          // (Force NaN to 0.)
-          inputWeightArray = Weights.Base.ValueBounds
-            .Float32Array_RestrictedClone( aFloat32Array );
         }
 
         // In web worker, the input of neural network will not be used by
