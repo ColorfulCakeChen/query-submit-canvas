@@ -161,11 +161,11 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
         const byteOffset
           = weightElementOffsetBegin * Float32Array.BYTES_PER_ELEMENT;
 
-        const elementLength = Math.floor(
+        const elementCount = Math.floor(
           weightArrayBuffer.byteLength / Float32Array.BYTES_PER_ELEMENT );
 
         const aFloat32Array
-          = new Float32Array( weightArrayBuffer, byteOffset, elementLength );
+          = new Float32Array( weightArrayBuffer, byteOffset, elementCount );
 
         // Ensure there is no NaN value in the weight array.
         // (Force NaN to 0.)
@@ -321,11 +321,11 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
 //           let byteOffset
 //             = weightElementOffsetBegin * Float32Array.BYTES_PER_ELEMENT;
 //
-//           let elementLength = Math.floor(
+//           let elementCount = Math.floor(
 //             weightArrayBuffer.byteLength / Float32Array.BYTES_PER_ELEMENT );
 //
 //           let aFloat32Array
-//             = new Float32Array( weightArrayBuffer, byteOffset, elementLength );
+//             = new Float32Array( weightArrayBuffer, byteOffset, elementCount );
 //
 //           // Ensure there is no NaN value in the weight array.
 //           // (Force NaN to 0.)
@@ -611,14 +611,14 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
           let byteOffset
             = weightElementOffsetBegin * Float32Array.BYTES_PER_ELEMENT;
 
-          let elementLength = Math.floor(
+          let elementCount = Math.floor(
             weightArrayBuffer.byteLength / Float32Array.BYTES_PER_ELEMENT );
 
-          elementLength -= weightElementOffsetBegin;
+          elementCount -= weightElementOffsetBegin;
 
           // (Assume there is no NaN values.) 
           inputWeightArray
-            = new Float32Array( weightArrayBuffer, byteOffset, elementLength );
+            = new Float32Array( weightArrayBuffer, byteOffset, elementCount );
         }
 
         // In web worker, the input of neural network will not be used by
