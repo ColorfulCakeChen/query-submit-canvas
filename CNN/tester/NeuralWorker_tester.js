@@ -335,27 +335,27 @@ class PerformanceTestCase extends Recyclable.Root {
       // Although neural network configuration will be copied (not transferred)
       // to workers, they still need be cloned because NeuralWorker.Proxy will
       // keep (i.e. owned and destroyed) them.
-      let neuralNetParamsBaseArray;
+      let neuralNetParamsBase_Array;
       if ( this.neuralNetCount > 1 ) {
         let neuralNetParams0 = this.neuralNetParamsBase.clone();
         let neuralNetParams1 = this.neuralNetParamsBase.clone();
-        neuralNetParamsBaseArray = [ neuralNetParams0, neuralNetParams1 ];
+        neuralNetParamsBase_Array = [ neuralNetParams0, neuralNetParams1 ];
       } else {
         let neuralNetParams0 = this.neuralNetParamsBase.clone();
-        neuralNetParamsBaseArray = [ neuralNetParams0 ];
+        neuralNetParamsBase_Array = [ neuralNetParams0 ];
       }
 
-      let weightArrayBufferArray;
+      let weightArrayBuffer_Array;
       if ( this.neuralNetCount > 1 ) {
         let weightArray0
           = new Float32Array( PerformanceTestCase.randomTestWeightArray );
         let weightArray1
           = new Float32Array( PerformanceTestCase.randomTestWeightArray );
-        weightArrayBufferArray = [ weightArray0.buffer, weightArray1.buffer ];
+        weightArrayBuffer_Array = [ weightArray0.buffer, weightArray1.buffer ];
       } else {
         let weightArray0
           = new Float32Array( PerformanceTestCase.randomTestWeightArray );
-        weightArrayBufferArray = [ weightArray0.buffer ];
+        weightArrayBuffer_Array = [ weightArray0.buffer ];
       }
 
       let bInitOk = await bInitOkPromise;
@@ -369,7 +369,7 @@ class PerformanceTestCase extends Recyclable.Root {
       //const bLogDryRunTime = true; // For observing dry-run performance.
       const bLogDryRunTime = false;
       let bCreateOkPromise = neuralWorkerProxies.NeuralNetArray_create_async(
-        neuralNetParamsBaseArray, weightArrayBufferArray, bLogDryRunTime );
+        neuralNetParamsBase_Array, weightArrayBuffer_Array, bLogDryRunTime );
 
       let bCreateOk = await bCreateOkPromise;
       if ( !bCreateOk )

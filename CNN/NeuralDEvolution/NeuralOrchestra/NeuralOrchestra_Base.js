@@ -1126,7 +1126,7 @@ class NeuralOrchestra_Base extends
     const weightArrayByteLength
       = weightArrayLength * Float32Array.BYTES_PER_ELEMENT;
 
-    let weightArrayBufferArray = [
+    let weightArrayBuffer_Array = [
       new ArrayBuffer( weightArrayByteLength ),
       new ArrayBuffer( weightArrayByteLength )
     ];
@@ -1137,7 +1137,7 @@ class NeuralOrchestra_Base extends
     //const bLogDryRunTime = false;
     let neuralNet_create_promise
       = NeuralOrchestra_Base.workerProxies_NeuralNetArray_create_async.call(
-          this, weightArrayBufferArray, bLogDryRunTime );
+          this, weightArrayBuffer_Array, bLogDryRunTime );
 
     let createOk = await neuralNet_create_promise;
     if ( !createOk )
@@ -1160,7 +1160,7 @@ class NeuralOrchestra_Base extends
    * @param {NeuralOrchestra_Base} this
    * @param {NeuralNet.ParamsBase} this.neuralNetParamsBase
    *
-   * @param {ArrayBuffer[]} weightArrayBufferArray
+   * @param {ArrayBuffer[]} weightArrayBuffer_Array
    *   An array of every neural network's weights. Every element will be
    * interpreted as Float32Array. Every element will be transferred to web
    * worker (i.e. their .byteLength will become zero).
@@ -1175,7 +1175,7 @@ class NeuralOrchestra_Base extends
    *   - Resolved to false, if failed.
    */
   static async workerProxies_NeuralNetArray_create_async(
-    weightArrayBufferArray, bLogDryRunTime ) {
+    weightArrayBuffer_Array, bLogDryRunTime ) {
 
     { // Checking pre-condition.
       const funcNameInMessage = "workerProxies_NeuralNetArray_create_async";
@@ -1188,16 +1188,16 @@ class NeuralOrchestra_Base extends
     // Although neural network configuration will be copied (not transferred)
     // to workers, they still need be cloned because NeuralWorker.Proxy will
     // keep (i.e. owned and destroyed) them.
-    let neuralNetParamsBaseArray;
+    let neuralNetParamsBase_Array;
     {
       let neuralNetParams0 = this.neuralNetParamsBase.clone();
       let neuralNetParams1 = this.neuralNetParamsBase.clone();
-      neuralNetParamsBaseArray = [ neuralNetParams0, neuralNetParams1 ];
+      neuralNetParamsBase_Array = [ neuralNetParams0, neuralNetParams1 ];
     }
 
     let neuralNet_create_promise
       = this.workerProxies.NeuralNetArray_create_async(
-          neuralNetParamsBaseArray, weightArrayBufferArray, bLogDryRunTime );
+          neuralNetParamsBase_Array, weightArrayBuffer_Array, bLogDryRunTime );
 
     let neuralNet_createOk = await neuralNet_create_promise;
     return neuralNet_createOk;
@@ -1715,7 +1715,7 @@ class NeuralOrchestra_Base extends
 
       // Note: These Float32Array will be transferred to neural web workers
       //       (i.e. their .byteLength will become zero).
-      let weightArrayBufferArray = [
+      let weightArrayBuffer_Array = [
         this.versus.parentChromosomeFloat32Array.buffer,
         this.versus.offspringChromosomeFloat32Array.buffer
       ];
@@ -1759,7 +1759,7 @@ class NeuralOrchestra_Base extends
 
       let neuralNet_create_promise
         = NeuralOrchestra_Base.workerProxies_NeuralNetArray_create_async.call(
-            this, weightArrayBufferArray, bLogDryRunTime );
+            this, weightArrayBuffer_Array, bLogDryRunTime );
 
       neuralNet_createOk = await neuralNet_create_promise;
       if ( !neuralNet_createOk )

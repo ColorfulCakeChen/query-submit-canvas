@@ -43,7 +43,7 @@ import * as NotUsed from "./NeuralWorker_Body.js";
  *       workers.
  *
  *
- * @member {NeuralNet.ParamsBase[]} neuralNetParamsBaseArray
+ * @member {NeuralNet.ParamsBase[]} neuralNetParamsBase_Array
  *   An array of configurations for the neural network to be created. These
  * configurations is come from .NeuralNetArray_create_async() parameters and
  * is owned (i.e. kept and destroyed)by this NeuralWorker.Proxy.
@@ -77,88 +77,88 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
 
 
   get input_height() {
-    return this.neuralNetParamsBaseArray?.[ 0 ]
+    return this.neuralNetParamsBase_Array?.[ 0 ]
       ?.inferencedParams.input_height;
   }
 
   get input_width() {
-    return this.neuralNetParamsBaseArray?.[ 0 ]
+    return this.neuralNetParamsBase_Array?.[ 0 ]
       ?.inferencedParams.input_width;
   }
 
   get input_channelCount() {
-    return this.neuralNetParamsBaseArray?.[ 0 ]
+    return this.neuralNetParamsBase_Array?.[ 0 ]
       ?.inferencedParams.input_channelCount;
   }
 
 
   get implicit_input_height() {
-    return this.neuralNetParamsBaseArray?.[ 0 ]
+    return this.neuralNetParamsBase_Array?.[ 0 ]
       ?.inferencedParams.implicit_input_height;
   }
 
   get implicit_input_width() {
-    return this.neuralNetParamsBaseArray?.[ 0 ]
+    return this.neuralNetParamsBase_Array?.[ 0 ]
       ?.inferencedParams.implicit_input_width;
   }
 
   get implicit_input_channelCount() {
-    return this.neuralNetParamsBaseArray?.[ 0 ]
+    return this.neuralNetParamsBase_Array?.[ 0 ]
       ?.inferencedParams.implicit_input_channelCount;
   }
 
 
   get explicit_input_height() {
-    return this.neuralNetParamsBaseArray?.[ 0 ]
+    return this.neuralNetParamsBase_Array?.[ 0 ]
       ?.explicit_input_height;
   }
 
   get explicit_input_width() {
-    return this.neuralNetParamsBaseArray?.[ 0 ]
+    return this.neuralNetParamsBase_Array?.[ 0 ]
       ?.explicit_input_width;
   }
 
   get explicit_input_channelCount() {
-    return this.neuralNetParamsBaseArray?.[ 0 ]
+    return this.neuralNetParamsBase_Array?.[ 0 ]
       ?.explicit_input_channelCount;
   }
 
 
   get output_height() {
-    return this.neuralNetParamsBaseArray?.[ 0 ]
+    return this.neuralNetParamsBase_Array?.[ 0 ]
       ?.inferencedParams.output_height;
   }
 
   get output_width() {
-    return this.neuralNetParamsBaseArray?.[ 0 ]
+    return this.neuralNetParamsBase_Array?.[ 0 ]
       ?.inferencedParams.output_width;
   }
 
   get output_channelCount() {
-    return this.neuralNetParamsBaseArray?.[ 0 ]
+    return this.neuralNetParamsBase_Array?.[ 0 ]
       ?.output_channelCount;
   }
 
 
   get feedbackShape() {
-    return this.neuralNetParamsBaseArray?.[ 0 ]
+    return this.neuralNetParamsBase_Array?.[ 0 ]
       ?.inferencedParams.feedbackShape;
   }
 
 
   /** @override */
   disposeResources() {
-    this.NeuralNetParamsBaseArray_dispose();
+    this.neuralNetParamsBase_Array_dispose();
     this.neuralNetCount = undefined;
     this.workerId = undefined;
     super.disposeResources();
   }
 
   /** Release the neural network configuration. */
-  NeuralNetParamsBaseArray_dispose() {
-    if ( this.neuralNetParamsBaseArray ) {
-      this.neuralNetParamsBaseArray.disposeResources_and_recycleToPool();
-      this.neuralNetParamsBaseArray = null;
+  neuralNetParamsBase_Array_dispose() {
+    if ( this.neuralNetParamsBase_Array ) {
+      this.neuralNetParamsBase_Array.disposeResources_and_recycleToPool();
+      this.neuralNetParamsBase_Array = null;
     }
   }
 
@@ -194,12 +194,12 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
    * Note: The .alignmentMarkValueArrayArray will be cleared.
    *
    *
-   * @param {NeuralNet.ParamsBase[]} neuralNetParamsBaseArray
+   * @param {NeuralNet.ParamsBase[]} neuralNetParamsBase_Array
    *   An array of configurations for the neural network to be created. These
    * configurations (exclude the array) will be owned (i.e. kept and destroyed)
    * by this NeuralWorker.Proxy.
    *
-   * @param {ArrayBuffer[]} weightArrayBufferArray
+   * @param {ArrayBuffer[]} weightArrayBuffer_Array
    *   An array of every neural network's weights. Every element will be
    * interpreted as Float32Array. Every element will be transferred to web
    * worker (i.e. their .byteLength will become zero).
@@ -214,39 +214,39 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
    *   - Resolved to false, if failed.
    */
   async NeuralNetArray_create_async(
-    neuralNetParamsBaseArray, weightArrayBufferArray, bLogDryRunTime ) {
+    neuralNetParamsBase_Array, weightArrayBuffer_Array, bLogDryRunTime ) {
 
     const funcNameInMessage = "NeuralNetArray_create_async";
 
-    if ( neuralNetParamsBaseArray.length != weightArrayBufferArray.length )
+    if ( neuralNetParamsBase_Array.length != weightArrayBuffer_Array.length )
       throw Error( `NeuralWorker.Proxy.${funcNameInMessage}(): `
-        + `neuralNetParamsBaseArray.length `
-        + `( ${neuralNetParamsBaseArray.length} ) `
+        + `neuralNetParamsBase_Array.length `
+        + `( ${neuralNetParamsBase_Array.length} ) `
         + `should be the same as `
-        + `weightArrayBufferArray.length `
-        + `( ${weightArrayBufferArray.length} ).`
+        + `weightArrayBuffer_Array.length `
+        + `( ${weightArrayBuffer_Array.length} ).`
       );
 
-    this.neuralNetCount = neuralNetParamsBaseArray.length;
+    this.neuralNetCount = neuralNetParamsBase_Array.length;
 
     // 1. Record neural network configuration.
     {
-      if ( this.neuralNetParamsBaseArray )
-        this.neuralNetParamsBaseArray.clear();
+      if ( this.neuralNetParamsBase_Array )
+        this.neuralNetParamsBase_Array.clear();
       else
-        this.neuralNetParamsBaseArray
+        this.neuralNetParamsBase_Array
           = Recyclable.OwnerArray.Pool.get_or_create_by();
 
-      this.neuralNetParamsBaseArray.length = neuralNetParamsBaseArray.length;
-      for ( let i = 0; i < weightArrayBufferArray.length; ++i ) {
-        this.neuralNetParamsBaseArray[ i ] = neuralNetParamsBaseArray[ i ];
+      this.neuralNetParamsBase_Array.length = neuralNetParamsBase_Array.length;
+      for ( let i = 0; i < weightArrayBuffer_Array.length; ++i ) {
+        this.neuralNetParamsBase_Array[ i ] = neuralNetParamsBase_Array[ i ];
       }
     }
 
     // 2. Collect the transferable object array. 
-    let transferableObjectArray = new Array( weightArrayBufferArray.length );
-    for ( let i = 0; i < weightArrayBufferArray.length; ++i ) {
-      transferableObjectArray[ i ] = weightArrayBufferArray[ i ];
+    let transferableObjectArray = new Array( weightArrayBuffer_Array.length );
+    for ( let i = 0; i < weightArrayBuffer_Array.length; ++i ) {
+      transferableObjectArray[ i ] = weightArrayBuffer_Array[ i ];
     }
 
     // 3. Inform web work to create neural networks.
@@ -254,7 +254,7 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
     // 3.1
     let createOkPromise = this.createPromise_by_postCommandArgs(
       [ "NeuralNetArray_create",
-        neuralNetParamsBaseArray, weightArrayBufferArray,
+        neuralNetParamsBase_Array, weightArrayBuffer_Array,
         bLogDryRunTime
       ],
       transferableObjectArray
@@ -268,10 +268,10 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
     //       parameters by itself, there is not necessary to send them to the
     //       neural worker body.
     for ( let neuralNetIndex = 0;
-      neuralNetIndex < neuralNetParamsBaseArray.length;
+      neuralNetIndex < neuralNetParamsBase_Array.length;
       ++neuralNetIndex ) {
 
-      let neuralNetParamsBase = neuralNetParamsBaseArray[ neuralNetIndex ];
+      let neuralNetParamsBase = neuralNetParamsBase_Array[ neuralNetIndex ];
       neuralNetParamsBase.inferencedParams_create();
     }
 
