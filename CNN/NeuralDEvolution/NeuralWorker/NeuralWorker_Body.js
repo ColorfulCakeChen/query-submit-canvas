@@ -15,15 +15,25 @@ import { tensorflowJsURL } from "./NeuralWorker_Common.js";
  * neural network(s).
  *
  *
- * @param {Object[]} neuralNetParamsBaseArray
+ * @member {Object[]} neuralNetParamsBaseArray
  *   An array of object. Every element is an object looks like
  * NeuralNet.ParamsBase. It is kept so that the neural network(s) can be
- * re-created (perhaps, with different part of the weights ArrayBuffer).
+ * re-created (perhaps, with different part of the weightArrayBuffer).
  *
- * @param {ArrayBuffer[]} weightArrayBufferArray
- *   An array of every neural network's weights. Every element will be
+ * @member {ArrayBuffer[]} weightArrayBufferArray
+ *   An array of every neural network's weights. Every element (i.e.
+ * weightArrayBufferArray[ n ] which is a weightArrayBuffer) will be
  * interpreted as Float32Array. It is kept so that the neural network(s) can
- * be re-created (perhaps, with different part of the weights ArrayBuffer).
+ * be re-created (perhaps, with different part of the weightArrayBuffer).
+ *
+ * @member {number} weightArrayBufferPartitionCount
+ *   A positive integer to view a weightArrayBuffer as how many parts. At
+ * least 1. It could be used to create different neural network by using
+ * different part of the weightArrayBuffer.
+ * 
+ * @member {number} weightArrayBufferPartitionId
+ *   An integer between 0 and ( weightArrayBufferPartitionCount - 1 ) means
+ * which part of a weightArrayBuffer is used to create current neural network.
  * 
  * @member {Uint8ClampedArray[]|Int32Array[]|number[][]} alignmentMarkValueArrayArray
  *   An array with two non-negative integer arrays representing every neural
@@ -95,8 +105,12 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
     this.NeuralNetArray_dispose();
 
     // Release neural network parameters and weights.
-    this.weightArrayBufferArray = undefined;
-    this.neuralNetParamsBaseArray = undefined;
+    {
+      this.weightArrayBufferPartitionId = undefined;
+      this.weightArrayBufferPartitionCount = undefined;
+      this.weightArrayBufferArray = undefined;
+      this.neuralNetParamsBaseArray = undefined;
+    }
 
     // Detect tensor memory leak.
     if ( this.tensorMemoryBefore !== undefined ) {
@@ -190,8 +204,13 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
       if ( this.neuralNetArray )
         this.neuralNetArray.clear(); // Release old neural networks.
 
-      if ( this.weightArrayBufferArray )
-        this.weightArrayBufferArray = undefined;
+      {
+        this.weightArrayBufferPartitionId = undefined;
+        this.weightArrayBufferPartitionCount = undefined;
+
+        if ( this.weightArrayBufferArray )
+          this.weightArrayBufferArray = undefined;
+      }
 
       if ( this.neuralNetParamsBaseArray )
         this.neuralNetParamsBaseArray = undefined;
@@ -255,7 +274,7 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
 //
 //     // 0.1 Keep neural network parameters and weights so that the neural
 //     //     network(s) can be re-created (perhaps, with different part of the
-//     //     weights ArrayBuffer).
+//     //     weightArrayBuffer).
 //     this.neuralNetParamsBaseArray = neuralNetParamsBaseArray;
 //     this.weightArrayBufferArray = weightArrayBufferArray;
 //
@@ -431,6 +450,15 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
    *   An array of every neural network's weights. Every element will be
    * interpreted as Float32Array.
    *
+   * @param {number} weightArrayBufferPartitionCount
+   *   A positive integer to view a weightArrayBuffer as how many parts. At
+   * least 1. It could be used to create different neural network by using
+   * different part of the weightArrayBuffer.
+   *
+   * @param {number} weightArrayBufferPartitionId
+   *   An integer between 0 and ( weightArrayBufferPartitionCount - 1 ) means
+   * which part of a weightArrayBuffer is used to create current neural network.
+   * 
    * @param {boolean} bLogDryRunTime
    *   If true, the neural network dry-run time will be measured twice and
    * logged to console.
@@ -440,7 +468,13 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
    *   - Yield { done: true, value: { value: false } }, if failed.
    */
   async* NeuralNetArray_create(
-    neuralNetParamsBaseArray, weightArrayBufferArray, bLogDryRunTime ) {
+    neuralNetParamsBaseArray,
+
+    weightArrayBufferArray,
+    weightArrayBufferPartitionCount,
+    weightArrayBufferPartitionId,
+
+    bLogDryRunTime ) {
 
     const funcNameInMessage = "NeuralNetArray_create";
 
@@ -448,9 +482,19 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
 
     // 0.1 Keep neural network parameters and weights so that the neural
     //     network(s) can be re-created (perhaps, with different part of the
-    //     weights ArrayBuffer).
+    //     weightArrayBuffer).
     this.neuralNetParamsBaseArray = neuralNetParamsBaseArray;
     this.weightArrayBufferArray = weightArrayBufferArray;
+
+    {
+      weightArrayBufferPartitionCount
+        = Math.trunc( weightArrayBufferPartitionCount ); // Ensure integer.
+
+      if ( weightArrayBufferPartitionCount < 1 )
+        weightArrayBufferPartitionCount = 1; // Ensure positive integer.
+
+      this.weightArrayBufferPartitionCount = weightArrayBufferPartitionCount;
+    }
 
     // 0.2 Ensure there is no NaN value in the weight array. (Force NaN to 0.)
     NeuralWorker_Body.weightArrayBufferArray_ensure_no_NaN.call( this );
@@ -463,7 +507,7 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
       const weightElementOffsetBegin = 0;
 
       let bAllOk = NeuralWorker_Body.NeuralNetArray_recreate.call( this,
-        weightElementOffsetBegin, bLogDryRunTime );
+        weightArrayBufferPartitionId, bLogDryRunTime );
 
       if ( bAllOk )
         return { value: true };
@@ -495,10 +539,10 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
    *       will be kept).
    *
    *
-   * @param {number} weightElementOffsetBegin
-   *   The offset (in element count, not byte count) when using
-   * weightArrayBufferArray[] to create the neural network(s).
-   *
+   * @param {number} weightArrayBufferPartitionId
+   *   An integer between 0 and ( weightArrayBufferPartitionCount - 1 ) means
+   * which part of a weightArrayBuffer is used to create current neural network.
+   * 
    * @param {boolean} bLogDryRunTime
    *   If true, the neural network dry-run time will be measured twice and
    * logged to console.
@@ -508,7 +552,8 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
    *   - false, if failed.
    */
   static NeuralNetArray_recreate(
-    weightElementOffsetBegin, bLogDryRunTime ) {
+    weightArrayBufferPartitionId,
+    bLogDryRunTime ) {
 
     const funcNameInMessage = "NeuralNetArray_recreate";
 
@@ -517,6 +562,24 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
     // 0.1 Use kept neural network parameters and weights.
     const neuralNetParamsBaseArray = this.neuralNetParamsBaseArray;
     const weightArrayBufferArray = this.weightArrayBufferArray;
+
+    const weightArrayBufferPartitionCount
+      = this.weightArrayBufferPartitionCount;
+
+    {
+      // Ensure [ 0, ( weightArrayBufferPartitionCount - 1 ) ]
+
+      if ( weightArrayBufferPartitionId < 0 )
+        weightArrayBufferPartitionId = 0;
+
+      const weightArrayBufferPartitionIdMax
+        = weightArrayBufferPartitionCount - 1;
+
+      if ( weightArrayBufferPartitionId > weightArrayBufferPartitionIdMax )
+        weightArrayBufferPartitionId = weightArrayBufferPartitionIdMax;
+
+      this.weightArrayBufferPartitionId = weightArrayBufferPartitionId;
+    }
 
     // 0.2 Prepare container for all neural networks.
     {
@@ -544,6 +607,11 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
 //
 // Note: Perhaps, re-create neural network when alignmentMark swapping.
 //
+
+        // The offset (in element count, not byte count) when using
+        // weightArrayBufferArray[] to create the neural network(s).
+
+!!! let weightElementOffsetBegin = ;
 
           let byteOffset
             = weightElementOffsetBegin * Float32Array.BYTES_PER_ELEMENT;
