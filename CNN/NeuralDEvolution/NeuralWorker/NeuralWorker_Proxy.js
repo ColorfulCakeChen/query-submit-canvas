@@ -46,7 +46,7 @@ import * as NotUsed from "./NeuralWorker_Body.js";
  * @member {NeuralNet.ParamsBase[]} neuralNetParamsBase_Array
  *   An array of configurations for the neural network to be created. These
  * configurations is come from .NeuralNetArray_create_async() parameters and
- * is owned (i.e. kept and destroyed)by this NeuralWorker.Proxy.
+ * is owned (i.e. kept and destroyed) by this NeuralWorker.Proxy.
  *
  * @member {number} weightArrayBuffer_partitionCount
  *   A positive integer to view a weightArrayBuffer as how many parts. At
@@ -161,6 +161,7 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
     this.weightArrayBuffer_partitionCount = undefined;
     this.neuralNetParamsBase_Array_dispose();
     this.neuralNetCount = undefined;
+    this.backendName = undefined;
     this.workerId = undefined;
     super.disposeResources();
   }
@@ -187,15 +188,25 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
    * @param {string} backendName
    *   Specify which backend should be used by tensorflow.js library.
    *
+   * @param {number} weightArrayBuffer_partitionCount
+   *   A positive integer to view a weightArrayBuffer as how many parts. At
+   * least 1. It could be used to create different neural network by using
+   * different part of the weightArrayBuffer.
+   *
    * @return {Promise}
    *   Return a promise:
    *   - Resolved to true, if succeeded.
    *   - Resolved to false, if failed.
    */
-  async initWorker_async( workerId, backendName ) {
+  async initWorker_async(
+    workerId, backendName, weightArrayBuffer_partitionCount ) {
+
     this.workerId = workerId;
+    this.backendName = backendName;
+    this.weightArrayBuffer_partitionCount = weightArrayBuffer_partitionCount;
+
     return this.createPromise_by_postCommandArgs(
-      [ "initWorker", workerId, backendName ]
+      [ "initWorker", workerId, backendName, weightArrayBuffer_partitionCount ]
     );
   }
 
@@ -215,11 +226,6 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
    * interpreted as Float32Array. Every element will be transferred to web
    * worker (i.e. their .byteLength will become zero).
    *
-   * @param {number} weightArrayBuffer_partitionCount
-   *   A positive integer to view a weightArrayBuffer as how many parts. At
-   * least 1. It could be used to create different neural network by using
-   * different part of the weightArrayBuffer.
-   *
    * @param {number} weightArrayBuffer_partitionId
    *   An integer between 0 and ( weightArrayBuffer_partitionCount - 1 ) means
    * which part of a weightArrayBuffer is used to create current neural network.
@@ -237,7 +243,6 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
     neuralNetParamsBase_Array,
 
     weightArrayBuffer_Array,
-    weightArrayBuffer_partitionCount,
     weightArrayBuffer_partitionId,
 
     bLogDryRunTime ) {
@@ -269,7 +274,6 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
       }
     }
 
-    this.weightArrayBuffer_partitionCount = weightArrayBuffer_partitionCount;
     this.weightArrayBuffer_partitionId = weightArrayBuffer_partitionId;
 
     // 2. Collect the transferable object array. 
@@ -286,7 +290,6 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
         neuralNetParamsBase_Array,
 
         weightArrayBuffer_Array,
-        weightArrayBuffer_partitionCount,
         weightArrayBuffer_partitionId,
 
         bLogDryRunTime

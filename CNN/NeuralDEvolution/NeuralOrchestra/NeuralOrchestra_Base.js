@@ -219,6 +219,19 @@ import * as DEvolution from "../DEvolution.js";
  * time input. It should be true if ( has_implicit_input == true ).
  *
  *
+ * @member {number} weightArrayBuffer_partitionCount
+ *   A positive integer to view a weightArrayBuffer as how many parts. At
+ * least 1. It could be used to create different neural network by using
+ * different part of the weightArrayBuffer.
+ * 
+
+!!!??? ...unfinished... (2025/05/15) need recorded here?
+
+ * @member {number} weightArrayBuffer_partitionId
+ *   An integer between 0 and ( weightArrayBuffer_partitionCount - 1 ) means
+ * which part of a weightArrayBuffer is used to create current neural network.
+ * 
+ *
  * @member {number} input_height
  *   The input image's height. It exists only after NeuralWorker.Proxies
  * created.
@@ -520,6 +533,7 @@ class NeuralOrchestra_Base extends
   }
 
 
+//!!!??? ...unfinished... (2025/05/15) may be recorded in this NeuralOrchestra object.
   get weightArrayBuffer_partitionCount() {
     return this.workerProxies?.weightArrayBuffer_partitionCount;
   }
@@ -797,6 +811,9 @@ class NeuralOrchestra_Base extends
     blockCountTotalRequested,
     output_channelCount,
 
+    weightArrayBuffer_partitionCount,
+    weightArrayBuffer_partitionId,
+
     b_return_versus_load_asyncGenerator_instead_of_asyncPromise,
     init_asyncGenerator_delayPromise,
     versus_load_asyncGenerator_delayPromise
@@ -843,6 +860,7 @@ class NeuralOrchestra_Base extends
         allPromiseSet.add( workerProxies_init_asyncPromise );
       }
 
+!!!
       // 2. Load (versus summary and) versus. Create neural networks.
       let versus_load_asyncGenerator = NeuralOrchestra_Base
         .versus_load_asyncGenerator_create_without_checking_precondition
@@ -1756,7 +1774,7 @@ class NeuralOrchestra_Base extends
       //     be ready.
       //
       // Note: This is why versus_load_asyncGenerator is impossible to complete
-      //       before workerProxies_init_asyncPromise complete inside
+      //       before workerProxies_init_asyncPromise completed inside
       //       .init_asyncGenerator().
       let workerProxies_initOk;
       if ( workerProxies_init_asyncPromise ) {

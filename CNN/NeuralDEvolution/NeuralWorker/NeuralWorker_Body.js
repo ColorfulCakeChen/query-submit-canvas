@@ -198,8 +198,14 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
    *
    * @param {string} backendName
    *   Specify which backend should be used by tensorflow.js library.
+   *
+   * @param {number} weightArrayBuffer_partitionCount
+   *   A positive integer to view a weightArrayBuffer as how many parts. At
+   * least 1. It could be used to create different neural network by using
+   * different part of the weightArrayBuffer.
    */
-  async* initWorker( workerId, backendName ) {
+  async* initWorker(
+    workerId, backendName, weightArrayBuffer_partitionCount ) {
 
     // Clear resources.
     {
@@ -217,7 +223,20 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
       {
         this.weightArrayBuffer_partitionId = undefined;
 
-        this.weightArrayBuffer_partitionCount = undefined;
+        {
+          // Ensure integer.
+          //
+          // Note: Bitwising OR with zero is for converting to integer (even if
+          //       it is undefined or null or object).
+          weightArrayBuffer_partitionCount |= 0;
+
+          if ( weightArrayBuffer_partitionCount < 1 )
+            weightArrayBuffer_partitionCount = 1; // Ensure positive integer.
+
+          this.weightArrayBuffer_partitionCount
+            = weightArrayBuffer_partitionCount;
+        }
+
         this.weightArrayBuffer_partitionElementCount = undefined;
 
         this.weightArrayBuffer_elementCount = undefined;
@@ -485,7 +504,6 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
     neuralNetParamsBase_Array,
 
     weightArrayBuffer_Array,
-    weightArrayBuffer_partitionCount,
     weightArrayBuffer_partitionId,
 
     bLogDryRunTime ) {
@@ -509,22 +527,11 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
             weightArrayBuffer[ 0 ].byteLength
               / Float32Array.BYTES_PER_ELEMENT );
 
-      {
-        // Ensure integer.
-        //
-        // Note: Bitwising OR with zero is for converting to integer (even if
-        //       it is undefined or null or object).
-        weightArrayBuffer_partitionCount |= 0;
+      const weightArrayBuffer_partitionCount
+        = this.weightArrayBuffer_partitionCount;
 
-        if ( weightArrayBuffer_partitionCount < 1 )
-          weightArrayBuffer_partitionCount = 1; // Ensure positive integer.
-
-        this.weightArrayBuffer_partitionCount
-          = weightArrayBuffer_partitionCount;
-
-        this.weightArrayBuffer_partitionElementCount = Math.floor(
+      this.weightArrayBuffer_partitionElementCount = Math.floor(
           weightArrayBuffer_elementCount / weightArrayBuffer_partitionCount );
-      }
 
       // 0.2 Ensure there is no NaN value in the weight array. (Force NaN to 0.)
       NeuralWorker_Body.weightArrayBuffer_Array_ensure_no_NaN.call( this );
@@ -598,7 +605,7 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
         = this.weightArrayBuffer_partitionCount;
 
       const weightArrayBuffer_partitionElementCount
-        = this.weightArrayBuffer_partitionElementCount
+        = this.weightArrayBuffer_partitionElementCount;
 
       {
         // Ensure integer.

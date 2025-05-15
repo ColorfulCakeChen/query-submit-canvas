@@ -359,13 +359,19 @@ class NeuralWorker_Proxies extends Recyclable.Root {
    * will be cleared.
    *
    *
+   * @param {number} weightArrayBuffer_partitionCount
+   *   A positive integer to view a weightArrayBuffer as how many parts. At
+   * least 1. It could be used to create different neural network by using
+   * different part of the weightArrayBuffer.
+   *
    * @return {Promise}
    *   Return a promise:
    *   - Resolved to true, if succeeded.
    *   - Resolved to false, if failed.
    */
   async init_async(
-    backendName, nNeuralWorker_ModeId, nNeuralWorker_ImplicitInputModeId ) {
+    backendName, nNeuralWorker_ModeId, nNeuralWorker_ImplicitInputModeId,
+    weightArrayBuffer_partitionCount ) {
 
     // 0.
     this.backendName = backendName;
@@ -415,7 +421,7 @@ class NeuralWorker_Proxies extends Recyclable.Root {
       let initPromiseArray = new Array( totalWorkerCount );
       for ( let i = 0; i < totalWorkerCount; ++i ) {
         initPromiseArray[ i ] = this.workerProxyArray[ i ].initWorker_async(
-          i, backendName );
+          i, backendName, weightArrayBuffer_partitionCount );
       }
 
       initOkArray = await Promise.all( initPromiseArray );
