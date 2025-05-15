@@ -510,8 +510,13 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
               / Float32Array.BYTES_PER_ELEMENT );
 
       {
-        weightArrayBuffer_partitionCount
-          = Math.trunc( weightArrayBuffer_partitionCount ); // Ensure integer.
+!!! ...unfinished... (2025/05/15) undefined ?  object ?
+
+        // Ensure integer.
+        //
+        // Note: Bitwising OR with zero is for converting to integer (even if
+        //       it is undefined or null or object).
+        weightArrayBuffer_partitionCount |= 0;
 
         if ( weightArrayBuffer_partitionCount < 1 )
           weightArrayBuffer_partitionCount = 1; // Ensure positive integer.
@@ -582,45 +587,49 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
 
     const funcNameInMessage = "NeuralNetArray_recreate";
 
-    // 0.
-
-    // 0.1 Use kept neural network parameters and weights.
-    const neuralNetParamsBase_Array = this.neuralNetParamsBase_Array;
-    const weightArrayBuffer_Array = this.weightArrayBuffer_Array;
-
-    const weightArrayBuffer_partitionCount
-      = this.weightArrayBuffer_partitionCount;
-
-    const weightArrayBuffer_partitionElementCount
-      = this.weightArrayBuffer_partitionElementCount
-
-    { // Ensure PartitionId is integer between [ 0, ( PartitionCount - 1 ) ]
-
-      weightArrayBuffer_partitionId
-        = Math.trunc( weightArrayBuffer_partitionId );
-
-      if ( weightArrayBuffer_partitionId < 0 )
-        weightArrayBuffer_partitionId = 0;
-
-      if ( weightArrayBuffer_partitionId >= weightArrayBuffer_partitionCount )
-        weightArrayBuffer_partitionId = weightArrayBuffer_partitionCount - 1;
-
-      this.weightArrayBuffer_partitionId = weightArrayBuffer_partitionId;
-    }
-
-    // 0.2 Prepare container for all neural networks.
-    {
-      if ( this.neuralNetArray )
-        this.neuralNetArray.clear(); // Release old neural networks.
-      else
-        this.neuralNetArray = Recyclable.OwnerArray.Pool.get_or_create_by();
-
-      this.neuralNetArray.length = neuralNetParamsBase_Array.length;
-    }
-
-    // 1. Create every neural network.
     let progress;
     try {
+
+      // 0.
+
+      // 0.1 Use kept neural network parameters and weights.
+      const neuralNetParamsBase_Array = this.neuralNetParamsBase_Array;
+      const weightArrayBuffer_Array = this.weightArrayBuffer_Array;
+
+      const weightArrayBuffer_partitionCount
+        = this.weightArrayBuffer_partitionCount;
+
+      const weightArrayBuffer_partitionElementCount
+        = this.weightArrayBuffer_partitionElementCount
+
+      {
+        // Ensure integer.
+        //
+        // Note: Bitwising OR with zero is for converting to integer (even if
+        //       it is undefined or null or object).
+        weightArrayBuffer_partitionId |= 0;
+
+        // Ensure PartitionId is integer between [ 0, ( PartitionCount - 1 ) ]
+        if ( weightArrayBuffer_partitionId < 0 )
+          weightArrayBuffer_partitionId = 0;
+
+        if ( weightArrayBuffer_partitionId >= weightArrayBuffer_partitionCount )
+          weightArrayBuffer_partitionId = weightArrayBuffer_partitionCount - 1;
+
+        this.weightArrayBuffer_partitionId = weightArrayBuffer_partitionId;
+      }
+
+      // 0.2 Prepare container for all neural networks.
+      {
+        if ( this.neuralNetArray )
+          this.neuralNetArray.clear(); // Release old neural networks.
+        else
+          this.neuralNetArray = Recyclable.OwnerArray.Pool.get_or_create_by();
+
+        this.neuralNetArray.length = neuralNetParamsBase_Array.length;
+      }
+
+      // 1. Create every neural network.
       const weightArrayBuffer_elementOffsetBegin
         = weightArrayBuffer_partitionId
             * weightArrayBuffer_partitionElementCount;
