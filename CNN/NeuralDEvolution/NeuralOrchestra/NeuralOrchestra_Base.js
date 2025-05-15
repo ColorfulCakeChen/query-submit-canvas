@@ -1216,7 +1216,11 @@ class NeuralOrchestra_Base extends
 
     let neuralNet_create_promise
       = this.workerProxies.NeuralNetArray_create_async(
-          neuralNetParamsBase_Array, weightArrayBuffer_Array, bLogDryRunTime );
+          neuralNetParamsBase_Array,
+          weightArrayBuffer_Array,
+          weightArrayBuffer_partitionCount,
+          weightArrayBuffer_partitionId,
+          bLogDryRunTime );
 
     let neuralNet_createOk = await neuralNet_create_promise;
     return neuralNet_createOk;
