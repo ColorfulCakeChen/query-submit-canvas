@@ -26,13 +26,21 @@ import { tensorflowJsURL } from "./NeuralWorker_Common.js";
  * interpreted as Float32Array. It is kept so that the neural network(s) can
  * be re-created (perhaps, with different part of the weightArrayBuffer).
  *
- * @member {number} weightArrayBuffer_PartitionCount
+ * @member {number} weightArrayBuffer_elementCount
+ *   A positive integer (or zero) represents how many elements (Float32)
+ * a weightArrayBuffer (in fact, weightArrayBuffer_Array[ 0 ]) has.
+ *
+ * @member {number} weightArrayBuffer_partitionCount
  *   A positive integer to view a weightArrayBuffer as how many parts. At
  * least 1. It could be used to create different neural network by using
  * different part of the weightArrayBuffer.
  * 
- * @member {number} weightArrayBuffer_PartitionId
- *   An integer between 0 and ( weightArrayBuffer_PartitionCount - 1 ) means
+ * @member {number} weightArrayBuffer_partitionElementCount
+ *   A positive integer (or zero) represents how many elements (Float32)
+ * one partition of weightArrayBuffer has.
+ * 
+ * @member {number} weightArrayBuffer_partitionId
+ *   An integer between 0 and ( weightArrayBuffer_partitionCount - 1 ) means
  * which part of a weightArrayBuffer is used to create current neural network.
  * 
  * @member {Uint8ClampedArray[]|Int32Array[]|number[][]} alignmentMarkValueArrayArray
@@ -106,8 +114,10 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
 
     // Release neural network parameters and weights.
     {
-      this.weightArrayBuffer_PartitionId = undefined;
-      this.weightArrayBuffer_PartitionCount = undefined;
+      this.weightArrayBuffer_partitionId = undefined;
+      this.weightArrayBuffer_partitionCount = undefined;
+      this.weightArrayBuffer_partitionElementCount = undefined;
+      this.weightArrayBuffer_elementCount = undefined;
       this.weightArrayBuffer_Array = undefined;
       this.neuralNetParamsBase_Array = undefined;
     }
@@ -205,8 +215,12 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
         this.neuralNetArray.clear(); // Release old neural networks.
 
       {
-        this.weightArrayBuffer_PartitionId = undefined;
-        this.weightArrayBuffer_PartitionCount = undefined;
+        this.weightArrayBuffer_partitionId = undefined;
+
+        this.weightArrayBuffer_partitionCount = undefined;
+        this.weightArrayBuffer_partitionElementCount = undefined;
+
+        this.weightArrayBuffer_elementCount = undefined;
 
         if ( this.weightArrayBuffer_Array )
           this.weightArrayBuffer_Array = undefined;
@@ -450,13 +464,13 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
    *   An array of every neural network's weights. Every element will be
    * interpreted as Float32Array.
    *
-   * @param {number} weightArrayBuffer_PartitionCount
+   * @param {number} weightArrayBuffer_partitionCount
    *   A positive integer to view a weightArrayBuffer as how many parts. At
    * least 1. It could be used to create different neural network by using
    * different part of the weightArrayBuffer.
    *
-   * @param {number} weightArrayBuffer_PartitionId
-   *   An integer between 0 and ( weightArrayBuffer_PartitionCount - 1 ) means
+   * @param {number} weightArrayBuffer_partitionId
+   *   An integer between 0 and ( weightArrayBuffer_partitionCount - 1 ) means
    * which part of a weightArrayBuffer is used to create current neural network.
    * 
    * @param {boolean} bLogDryRunTime
@@ -471,42 +485,53 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
     neuralNetParamsBase_Array,
 
     weightArrayBuffer_Array,
-    weightArrayBuffer_PartitionCount,
-    weightArrayBuffer_PartitionId,
+    weightArrayBuffer_partitionCount,
+    weightArrayBuffer_partitionId,
 
     bLogDryRunTime ) {
 
     const funcNameInMessage = "NeuralNetArray_create";
 
-    // 0.
-
-    // 0.1 Keep neural network parameters and weights so that the neural
-    //     network(s) can be re-created (perhaps, with different part of the
-    //     weightArrayBuffer).
-    this.neuralNetParamsBase_Array = neuralNetParamsBase_Array;
-    this.weightArrayBuffer_Array = weightArrayBuffer_Array;
-
-    {
-      weightArrayBuffer_PartitionCount
-        = Math.trunc( weightArrayBuffer_PartitionCount ); // Ensure integer.
-
-      if ( weightArrayBuffer_PartitionCount < 1 )
-        weightArrayBuffer_PartitionCount = 1; // Ensure positive integer.
-
-      this.weightArrayBuffer_PartitionCount
-        = weightArrayBuffer_PartitionCount;
-    }
-
-    // 0.2 Ensure there is no NaN value in the weight array. (Force NaN to 0.)
-    NeuralWorker_Body.weightArrayBuffer_Array_ensure_no_NaN.call( this );
-
-    // 0.3 Re-create .ScaleFiller.
-    this.ScaleFiller = undefined;
-
-    // 1. Create every neural network.
     try {
+
+      // 0.
+
+      // 0.1 Keep neural network parameters and weights so that the neural
+      //     network(s) can be re-created (perhaps, with different part of the
+      //     weightArrayBuffer).
+      this.neuralNetParamsBase_Array = neuralNetParamsBase_Array;
+
+      this.weightArrayBuffer_Array = weightArrayBuffer_Array;
+
+      const weightArrayBuffer_elementCount
+        = this.weightArrayBuffer_elementCount
+        = Math.floor(
+            weightArrayBuffer[ 0 ].byteLength
+              / Float32Array.BYTES_PER_ELEMENT );
+
+      {
+        weightArrayBuffer_partitionCount
+          = Math.trunc( weightArrayBuffer_partitionCount ); // Ensure integer.
+
+        if ( weightArrayBuffer_partitionCount < 1 )
+          weightArrayBuffer_partitionCount = 1; // Ensure positive integer.
+
+        this.weightArrayBuffer_partitionCount
+          = weightArrayBuffer_partitionCount;
+
+        this.weightArrayBuffer_partitionElementCount = Math.floor(
+          weightArrayBuffer_elementCount / weightArrayBuffer_partitionCount );
+      }
+
+      // 0.2 Ensure there is no NaN value in the weight array. (Force NaN to 0.)
+      NeuralWorker_Body.weightArrayBuffer_Array_ensure_no_NaN.call( this );
+
+      // 0.3 Re-create .ScaleFiller.
+      this.ScaleFiller = undefined;
+
+      // 1. Create every neural network.
       let bAllOk = NeuralWorker_Body.NeuralNetArray_recreate.call( this,
-        weightArrayBuffer_PartitionId, bLogDryRunTime );
+        weightArrayBuffer_partitionId, bLogDryRunTime );
 
       if ( bAllOk )
         return { value: true };
@@ -538,8 +563,8 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
    *       will be kept).
    *
    *
-   * @param {number} weightArrayBuffer_PartitionId
-   *   An integer between 0 and ( weightArrayBuffer_PartitionCount - 1 ) means
+   * @param {number} weightArrayBuffer_partitionId
+   *   An integer between 0 and ( weightArrayBuffer_partitionCount - 1 ) means
    * which part of a weightArrayBuffer is used to create current neural network.
    * 
    * @param {boolean} bLogDryRunTime
@@ -551,7 +576,7 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
    *   - false, if failed.
    */
   static NeuralNetArray_recreate(
-    weightArrayBuffer_PartitionId,
+    weightArrayBuffer_partitionId,
     bLogDryRunTime ) {
 
     const funcNameInMessage = "NeuralNetArray_recreate";
@@ -562,18 +587,21 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
     const neuralNetParamsBase_Array = this.neuralNetParamsBase_Array;
     const weightArrayBuffer_Array = this.weightArrayBuffer_Array;
 
-    const weightArrayBuffer_PartitionCount
-      = this.weightArrayBuffer_PartitionCount;
+    const weightArrayBuffer_partitionCount
+      = this.weightArrayBuffer_partitionCount;
+
+    const weightArrayBuffer_partitionElementCount
+      = this.weightArrayBuffer_partitionElementCount
 
     { // Ensure PartitionId between [ 0, ( PartitionCount - 1 ) ]
 
-      if ( weightArrayBuffer_PartitionId < 0 )
-        weightArrayBuffer_PartitionId = 0;
+      if ( weightArrayBuffer_partitionId < 0 )
+        weightArrayBuffer_partitionId = 0;
 
-      if ( weightArrayBuffer_PartitionId >= weightArrayBuffer_PartitionCount )
-        weightArrayBuffer_PartitionId = weightArrayBuffer_PartitionCount - 1;
+      if ( weightArrayBuffer_partitionId >= weightArrayBuffer_partitionCount )
+        weightArrayBuffer_partitionId = weightArrayBuffer_partitionCount - 1;
 
-      this.weightArrayBuffer_PartitionId = weightArrayBuffer_PartitionId;
+      this.weightArrayBuffer_partitionId = weightArrayBuffer_partitionId;
     }
 
     // 0.2 Prepare container for all neural networks.
@@ -589,37 +617,30 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
     // 1. Create every neural network.
     let progress;
     try {
+      const weightArrayBuffer_elementOffsetBegin
+        = weightArrayBuffer_partitionId
+            * weightArrayBuffer_partitionElementCount;
+
+      const weightArrayBuffer_byteOffset
+        = weightArrayBuffer_elementOffsetBegin
+            * Float32Array.BYTES_PER_ELEMENT;
+
+
       let bAllOk = true;
       for ( let i = 0; i < neuralNetParamsBase_Array.length; ++i ) {
         let neuralNetParamsBase = neuralNetParamsBase_Array[ i ];
         let weightArrayBuffer = weightArrayBuffer_Array[ i ];
 
-        let inputWeightArray;
-        {
 //!!! ...unfinished... (2025/05/14)
 // Perhaps, pass weightElementOffsetBegin and weightArrayBuffer.byteLength
 // from caller. (Inside neuralNetParams?)
 //
 // Note: Perhaps, re-create neural network when alignmentMark swapping.
 //
-
-        // The offset (in element count, not byte count) when using
-        // weightArrayBuffer_Array[] to create the neural network(s).
-
-!!! let weightElementOffsetBegin = ;
-
-          let byteOffset
-            = weightElementOffsetBegin * Float32Array.BYTES_PER_ELEMENT;
-
-          let elementCount = Math.floor(
-            weightArrayBuffer.byteLength / Float32Array.BYTES_PER_ELEMENT );
-
-          elementCount -= weightElementOffsetBegin;
-
-          // (Assume there is no NaN values.) 
-          inputWeightArray
-            = new Float32Array( weightArrayBuffer, byteOffset, elementCount );
-        }
+        let inputWeightArray = new Float32Array(
+          weightArrayBuffer,
+          weightArrayBuffer_byteOffset,
+          weightArrayBuffer_partitionElementCount );
 
         // In web worker, the input of neural network will not be used by
         // others. Force the neural network release its input tensor.
