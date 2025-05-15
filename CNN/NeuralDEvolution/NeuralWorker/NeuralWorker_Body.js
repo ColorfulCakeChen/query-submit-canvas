@@ -629,7 +629,6 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
         = weightArrayBuffer_elementOffsetBegin
             * Float32Array.BYTES_PER_ELEMENT;
 
-
       let bAllOk = true;
       for ( let i = 0; i < neuralNetParamsBase_Array.length; ++i ) {
         let neuralNetParamsBase = neuralNetParamsBase_Array[ i ];

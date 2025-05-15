@@ -1122,13 +1122,13 @@ class NeuralOrchestra_Base extends
     // Note: The dummy array size should not too large (e.g. larger than
     //       ( 10 * 1024 * 1024 )). Otherwise, it will fail in mobile phone.
     //
-    const weightArrayLength = ( 5 * 1024 * 1024 );
-    const weightArrayByteLength
-      = weightArrayLength * Float32Array.BYTES_PER_ELEMENT;
+    const weightArrayBuffer_elementCount = ( 5 * 1024 * 1024 );
+    const weightArrayBuffer_byteCount
+      = weightArrayBuffer_elementCount * Float32Array.BYTES_PER_ELEMENT;
 
     let weightArrayBuffer_Array = [
-      new ArrayBuffer( weightArrayByteLength ),
-      new ArrayBuffer( weightArrayByteLength )
+      new ArrayBuffer( weightArrayBuffer_byteCount ),
+      new ArrayBuffer( weightArrayBuffer_byteCount )
     ];
 
     // (2022//09/26 Remarked)
@@ -1137,7 +1137,14 @@ class NeuralOrchestra_Base extends
     //const bLogDryRunTime = false;
     let neuralNet_create_promise
       = NeuralOrchestra_Base.workerProxies_NeuralNetArray_create_async.call(
-          this, weightArrayBuffer_Array, bLogDryRunTime );
+          this,
+          weightArrayBuffer_Array,
+
+!!!??? ...unfinished... (2025/05/15)
+          weightArrayBuffer_partitionCount,
+          weightArrayBuffer_partitionId,
+
+          bLogDryRunTime );
 
     let createOk = await neuralNet_create_promise;
     if ( !createOk )
@@ -1165,6 +1172,15 @@ class NeuralOrchestra_Base extends
    * interpreted as Float32Array. Every element will be transferred to web
    * worker (i.e. their .byteLength will become zero).
    *
+   * @param {number} weightArrayBuffer_partitionCount
+   *   A positive integer to view a weightArrayBuffer as how many parts. At
+   * least 1. It could be used to create different neural network by using
+   * different part of the weightArrayBuffer.
+   *
+   * @param {number} weightArrayBuffer_partitionId
+   *   An integer between 0 and ( weightArrayBuffer_partitionCount - 1 ) means
+   * which part of a weightArrayBuffer is used to create current neural network.
+   * 
    * @param {boolean} bLogDryRunTime
    *   If true, the neural network dry-run time will be measured twice and
    * logged to console.
@@ -1175,7 +1191,10 @@ class NeuralOrchestra_Base extends
    *   - Resolved to false, if failed.
    */
   static async workerProxies_NeuralNetArray_create_async(
-    weightArrayBuffer_Array, bLogDryRunTime ) {
+    weightArrayBuffer_Array,
+    weightArrayBuffer_partitionCount,
+    weightArrayBuffer_partitionId,
+    bLogDryRunTime ) {
 
     { // Checking pre-condition.
       const funcNameInMessage = "workerProxies_NeuralNetArray_create_async";
@@ -1759,7 +1778,14 @@ class NeuralOrchestra_Base extends
 
       let neuralNet_create_promise
         = NeuralOrchestra_Base.workerProxies_NeuralNetArray_create_async.call(
-            this, weightArrayBuffer_Array, bLogDryRunTime );
+            this,
+            weightArrayBuffer_Array,
+
+!!!??? ...unfinished... (2025/05/15)
+            weightArrayBuffer_partitionCount,
+            weightArrayBuffer_partitionId,
+
+            bLogDryRunTime );
 
       neuralNet_createOk = await neuralNet_create_promise;
       if ( !neuralNet_createOk )

@@ -369,7 +369,15 @@ class PerformanceTestCase extends Recyclable.Root {
       //const bLogDryRunTime = true; // For observing dry-run performance.
       const bLogDryRunTime = false;
       let bCreateOkPromise = neuralWorkerProxies.NeuralNetArray_create_async(
-        neuralNetParamsBase_Array, weightArrayBuffer_Array, bLogDryRunTime );
+        neuralNetParamsBase_Array,
+        weightArrayBuffer_Array,
+
+!!!??? ...unfinished... (2025/05/15)
+        weightArrayBuffer_partitionCount,
+        weightArrayBuffer_partitionId,
+
+
+        bLogDryRunTime );
 
       let bCreateOk = await bCreateOkPromise;
       if ( !bCreateOk )

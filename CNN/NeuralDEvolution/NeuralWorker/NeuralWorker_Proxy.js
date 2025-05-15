@@ -204,6 +204,15 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
    * interpreted as Float32Array. Every element will be transferred to web
    * worker (i.e. their .byteLength will become zero).
    *
+   * @param {number} weightArrayBuffer_partitionCount
+   *   A positive integer to view a weightArrayBuffer as how many parts. At
+   * least 1. It could be used to create different neural network by using
+   * different part of the weightArrayBuffer.
+   *
+   * @param {number} weightArrayBuffer_partitionId
+   *   An integer between 0 and ( weightArrayBuffer_partitionCount - 1 ) means
+   * which part of a weightArrayBuffer is used to create current neural network.
+   * 
    * @param {boolean} bLogDryRunTime
    *   If true, the neural network dry-run time will be measured twice and
    * logged to console.
@@ -214,7 +223,13 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
    *   - Resolved to false, if failed.
    */
   async NeuralNetArray_create_async(
-    neuralNetParamsBase_Array, weightArrayBuffer_Array, bLogDryRunTime ) {
+    neuralNetParamsBase_Array,
+
+    weightArrayBuffer_Array,
+    weightArrayBuffer_partitionCount,
+    weightArrayBuffer_partitionId,
+
+    bLogDryRunTime ) {
 
     const funcNameInMessage = "NeuralNetArray_create_async";
 
@@ -254,7 +269,12 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
     // 3.1
     let createOkPromise = this.createPromise_by_postCommandArgs(
       [ "NeuralNetArray_create",
-        neuralNetParamsBase_Array, weightArrayBuffer_Array,
+        neuralNetParamsBase_Array,
+
+        weightArrayBuffer_Array,
+        weightArrayBuffer_partitionCount,
+        weightArrayBuffer_partitionId,
+
         bLogDryRunTime
       ],
       transferableObjectArray
