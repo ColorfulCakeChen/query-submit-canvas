@@ -572,11 +572,8 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
       if ( weightArrayBufferPartitionId < 0 )
         weightArrayBufferPartitionId = 0;
 
-      const weightArrayBufferPartitionIdMax
-        = weightArrayBufferPartitionCount - 1;
-
-      if ( weightArrayBufferPartitionId > weightArrayBufferPartitionIdMax )
-        weightArrayBufferPartitionId = weightArrayBufferPartitionIdMax;
+      if ( weightArrayBufferPartitionId >= weightArrayBufferPartitionCount )
+        weightArrayBufferPartitionId = weightArrayBufferPartitionCount - 1;
 
       this.weightArrayBufferPartitionId = weightArrayBufferPartitionId;
     }
