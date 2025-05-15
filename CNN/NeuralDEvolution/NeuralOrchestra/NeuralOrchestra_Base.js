@@ -810,8 +810,6 @@ class NeuralOrchestra_Base extends
     output_channelCount,
 
     weightArrayBuffer_partitionCount,
-//!!! ...unfinished... (2025/05/15)
-//    weightArrayBuffer_partitionId,
 
     b_return_versus_load_asyncGenerator_instead_of_asyncPromise,
     init_asyncGenerator_delayPromise,
@@ -860,7 +858,6 @@ class NeuralOrchestra_Base extends
         allPromiseSet.add( workerProxies_init_asyncPromise );
       }
 
-!!!
       // 2. Load (versus summary and) versus. Create neural networks.
       let versus_load_asyncGenerator = NeuralOrchestra_Base
         .versus_load_asyncGenerator_create_without_checking_precondition
