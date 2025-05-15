@@ -300,9 +300,10 @@ function* Base64Char_CodePoint_Uint8Array_to_Float32Array_generator(
 
   // If undefined or null or negative or zero or less than 1, set to default.
   //
-  // Note: Bitwising OR with zero is for converting to integer (if it is
-  //       undefined or null).
-  if ( ( suspendByteCount | 0 ) <= 0 )
+  // Note: Bitwising OR with zero is for converting to integer (even if
+  //       it is undefined or null or object).
+  suspendByteCount |= 0;
+  if ( suspendByteCount <= 0 )
     suspendByteCount = ( 10 * 1024 );
 
   let sourceByteLength = source_Base64Char_CodePoint_Uint8Array.length;

@@ -376,9 +376,10 @@ function* generator_to_Base64Char_CodePoint_Uint8Array_from_NumberArray(
 
   // If undefined or null or negative or zero or less than 1, set to default.
   //
-  // Note: Bitwising OR with zero is for converting to integer (if it is
-  //       undefined or null).
-  if ( ( suspendElementCount | 0 ) <= 0 )
+  // Note: Bitwising OR with zero is for converting to integer (even if
+  //       it is undefined or null or object).
+  suspendElementCount |= 0;
+  if ( suspendElementCount <= 0 )
     suspendElementCount = ( 10 * 1024 );
 
   let sourceElementCount = source_numberArray.length;

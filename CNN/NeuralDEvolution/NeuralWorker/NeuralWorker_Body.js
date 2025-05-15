@@ -510,8 +510,6 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
               / Float32Array.BYTES_PER_ELEMENT );
 
       {
-!!! ...unfinished... (2025/05/15) undefined ?  object ?
-
         // Ensure integer.
         //
         // Note: Bitwising OR with zero is for converting to integer (even if

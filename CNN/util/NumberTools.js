@@ -10,8 +10,9 @@ export { isInteger };
  *       integer string.)
  */
 function isInteger( value ) {
-  // Note: Bitwising with zero will generate integer.
-  let intValue = ( value | 0 );
+  // Note: Bitwising OR with zero is for converting to integer (even if
+  //       it is undefined or null or object).
+  const intValue = ( value | 0 );
   if ( intValue == value )
     return true; // The value is an intger indeed.
   return false;
