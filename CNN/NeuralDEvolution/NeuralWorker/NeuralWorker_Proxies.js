@@ -370,7 +370,9 @@ class NeuralWorker_Proxies extends Recyclable.Root {
    *   - Resolved to false, if failed.
    */
   async init_async(
-    backendName, nNeuralWorker_ModeId, nNeuralWorker_ImplicitInputModeId,
+    backendName,
+    nNeuralWorker_ModeId,
+    nNeuralWorker_ImplicitInputModeId,
     weightArrayBuffer_partitionCount ) {
 
     // 0.
@@ -529,7 +531,6 @@ class NeuralWorker_Proxies extends Recyclable.Root {
     neuralNetParamsBase_Array,
 
     weightArrayBuffer_Array,
-    weightArrayBuffer_partitionCount,
     weightArrayBuffer_partitionId,
 
     bLogDryRunTime ) {
@@ -589,7 +590,6 @@ class NeuralWorker_Proxies extends Recyclable.Root {
           = this.workerProxyArray[ i ].NeuralNetArray_create_async(
               [ neuralNetParamsBase_Array[ i ] ],
               [ weightArrayBuffer_Array[ i ] ],
-              weightArrayBuffer_partitionCount,
               weightArrayBuffer_partitionId,
               bLogDryRunTime
             );
@@ -607,7 +607,6 @@ class NeuralWorker_Proxies extends Recyclable.Root {
       createOk = await this.workerProxyArray[ 0 ].NeuralNetArray_create_async(
         neuralNetParamsBase_Array,
         weightArrayBuffer_Array,
-        weightArrayBuffer_partitionCount,
         weightArrayBuffer_partitionId,
         bLogDryRunTime
       );

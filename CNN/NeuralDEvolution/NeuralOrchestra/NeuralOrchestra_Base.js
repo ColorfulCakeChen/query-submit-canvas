@@ -224,9 +224,6 @@ import * as DEvolution from "../DEvolution.js";
  * least 1. It could be used to create different neural network by using
  * different part of the weightArrayBuffer.
  * 
-
-!!!??? ...unfinished... (2025/05/15) need recorded here?
-
  * @member {number} weightArrayBuffer_partitionId
  *   An integer between 0 and ( weightArrayBuffer_partitionCount - 1 ) means
  * which part of a weightArrayBuffer is used to create current neural network.
@@ -533,7 +530,6 @@ class NeuralOrchestra_Base extends
   }
 
 
-//!!!??? ...unfinished... (2025/05/15) may be recorded in this NeuralOrchestra object.
   get weightArrayBuffer_partitionCount() {
     return this.workerProxies?.weightArrayBuffer_partitionCount;
   }
@@ -678,6 +674,8 @@ class NeuralOrchestra_Base extends
     blockCountTotalRequested,
     output_channelCount,
 
+    weightArrayBuffer_partitionCount,
+
     b_return_versus_load_asyncGenerator_instead_of_asyncPromise,
     init_asyncGenerator_delayPromise,
     versus_load_asyncGenerator_delayPromise ) {
@@ -812,7 +810,8 @@ class NeuralOrchestra_Base extends
     output_channelCount,
 
     weightArrayBuffer_partitionCount,
-    weightArrayBuffer_partitionId,
+//!!! ...unfinished... (2025/05/15)
+//    weightArrayBuffer_partitionId,
 
     b_return_versus_load_asyncGenerator_instead_of_asyncPromise,
     init_asyncGenerator_delayPromise,
@@ -855,7 +854,8 @@ class NeuralOrchestra_Base extends
         NeuralOrchestra_Base.workerProxies_create.call( this );
 
         workerProxies_init_asyncPromise
-          = NeuralOrchestra_Base.workerProxies_init_async.call( this );
+          = NeuralOrchestra_Base.workerProxies_init_async.call( this,
+              weightArrayBuffer_partitionCount );
 
         allPromiseSet.add( workerProxies_init_asyncPromise );
       }
@@ -1030,6 +1030,11 @@ class NeuralOrchestra_Base extends
    * to which backend (webgl or cpu) is used finally for gaining the best
    * performance.
    *
+   * @param {number} weightArrayBuffer_partitionCount
+   *   A positive integer to view a weightArrayBuffer as how many parts. At
+   * least 1. It could be used to create different neural network by using
+   * different part of the weightArrayBuffer.
+   *
    * @return {Promise}
    *   Return a promise:
    *   - Resolved to true, if succeeded.
@@ -1037,7 +1042,7 @@ class NeuralOrchestra_Base extends
    *         compiled.
    *   - Resolved to false, if failed.
    */
-  static async workerProxies_init_async() {
+  static async workerProxies_init_async( weightArrayBuffer_partitionCount ) {
 
     { // Checking pre-condition.
       const funcNameInMessage = "workerProxies_init_async";
@@ -1074,7 +1079,8 @@ class NeuralOrchestra_Base extends
 
         initOkPromise = this.workerProxies.init_async( "webgl",
           NeuralWorker.Mode.Singleton.Ids.ONE_WORKER__TWO_NET, // (0) 
-          this.nNeuralWorker_ImplicitInputModeId
+          this.nNeuralWorker_ImplicitInputModeId,
+          weightArrayBuffer_partitionCount
         );
 
         initOk = await initOkPromise;
@@ -1101,7 +1107,8 @@ class NeuralOrchestra_Base extends
 
         initOkPromise = this.workerProxies.init_async( "cpu",
           NeuralWorker.Mode.Singleton.Ids.TWO_WORKER__TWO_NET__APPLIER, // (2)
-          this.nNeuralWorker_ImplicitInputModeId
+          this.nNeuralWorker_ImplicitInputModeId,
+          weightArrayBuffer_partitionCount
         );
 
         initOk = await initOkPromise;
@@ -1158,7 +1165,6 @@ class NeuralOrchestra_Base extends
       new ArrayBuffer( weightArrayBuffer_byteCount )
     ];
 
-    const weightArrayBuffer_partitionCount = 1;
     const weightArrayBuffer_partitionId = 0;
 
     // (2022//09/26 Remarked)
@@ -1169,7 +1175,6 @@ class NeuralOrchestra_Base extends
       = NeuralOrchestra_Base.workerProxies_NeuralNetArray_create_async.call(
           this,
           weightArrayBuffer_Array,
-          weightArrayBuffer_partitionCount,
           weightArrayBuffer_partitionId,
           bLogDryRunTime );
 
