@@ -552,7 +552,8 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
   /**
    * Note:
    *   - The .neuralNetParamsBase_Array and .weightArrayBuffer_Array (assumed
-   *       no NaN) will be used to re-create neural network(s).
+   *       no NaN) and weightArrayBuffer_partitionXxx will be used to re-create
+   *       neural network(s).
    * 
    *   - The created neural network(s) will be placed in this.neuralNetArray[].
    * 
@@ -593,7 +594,10 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
     const weightArrayBuffer_partitionElementCount
       = this.weightArrayBuffer_partitionElementCount
 
-    { // Ensure PartitionId between [ 0, ( PartitionCount - 1 ) ]
+    { // Ensure PartitionId is integer between [ 0, ( PartitionCount - 1 ) ]
+
+      weightArrayBuffer_partitionId
+        = Math.trunc( weightArrayBuffer_partitionId );
 
       if ( weightArrayBuffer_partitionId < 0 )
         weightArrayBuffer_partitionId = 0;
