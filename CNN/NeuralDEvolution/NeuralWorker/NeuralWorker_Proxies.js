@@ -315,6 +315,15 @@ class NeuralWorker_Proxies extends Recyclable.Root {
   }
 
 
+  get weightArrayBuffer_partitionCount() {
+    return this.workerProxyArray?.[ 0 ]?.weightArrayBuffer_partitionCount;
+  }
+
+  get weightArrayBuffer_partitionId() {
+    return this.workerProxyArray?.[ 0 ]?.weightArrayBuffer_partitionId;
+  }
+
+
   get feedbackShape() {
     return this.workerProxyArray?.[ 0 ]?.feedbackShape;
   }
