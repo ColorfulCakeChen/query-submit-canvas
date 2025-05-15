@@ -8,7 +8,7 @@ import * as AsyncWorker_Checker from "./AsyncWorker_Checker.js";
  *
  * Its methods (which could be called by AsyncWorker_Proxy by postMessage)
  * should all be async generator (so that they could be handled by
- * AsyncWorker_Body.onmessage_from_AsyncWorker_Proxy() automatically). The
+ * AsyncWorker_Body.onmessage_from_AsyncWorker_Proxy() automatically). This
  * is the reason why its class name is called "Async".
  *
  */
