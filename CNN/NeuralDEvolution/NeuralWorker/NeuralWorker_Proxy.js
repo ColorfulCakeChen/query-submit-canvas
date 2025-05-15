@@ -48,6 +48,15 @@ import * as NotUsed from "./NeuralWorker_Body.js";
  * configurations is come from .NeuralNetArray_create_async() parameters and
  * is owned (i.e. kept and destroyed)by this NeuralWorker.Proxy.
  *
+ * @member {number} weightArrayBuffer_partitionCount
+ *   A positive integer to view a weightArrayBuffer as how many parts. At
+ * least 1. It could be used to create different neural network by using
+ * different part of the weightArrayBuffer.
+ * 
+ * @member {number} weightArrayBuffer_partitionId
+ *   An integer between 0 and ( weightArrayBuffer_partitionCount - 1 ) means
+ * which part of a weightArrayBuffer is used to create current neural network.
+ * 
  */
 class NeuralWorker_Proxy extends AsyncWorker.Proxy {
 
@@ -148,6 +157,8 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
 
   /** @override */
   disposeResources() {
+    this.weightArrayBuffer_partitionId = undefined;
+    this.weightArrayBuffer_partitionCount = undefined;
     this.neuralNetParamsBase_Array_dispose();
     this.neuralNetCount = undefined;
     this.workerId = undefined;
@@ -257,6 +268,9 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
         this.neuralNetParamsBase_Array[ i ] = neuralNetParamsBase_Array[ i ];
       }
     }
+
+    this.weightArrayBuffer_partitionCount = weightArrayBuffer_partitionCount;
+    this.weightArrayBuffer_partitionId = weightArrayBuffer_partitionId;
 
     // 2. Collect the transferable object array. 
     let transferableObjectArray = new Array( weightArrayBuffer_Array.length );
