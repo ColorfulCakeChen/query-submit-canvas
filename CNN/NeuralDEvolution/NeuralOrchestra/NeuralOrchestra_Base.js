@@ -521,11 +521,11 @@ class NeuralOrchestra_Base extends
 
 
   get weightArrayBuffer_partitionCount() {
-    return this.workerProxyArray?.[ 0 ]?.weightArrayBuffer_partitionCount;
+    return this.workerProxies?.weightArrayBuffer_partitionCount;
   }
 
   get weightArrayBuffer_partitionId() {
-    return this.workerProxyArray?.[ 0 ]?.weightArrayBuffer_partitionId;
+    return this.workerProxies?.weightArrayBuffer_partitionId;
   }
 
 
