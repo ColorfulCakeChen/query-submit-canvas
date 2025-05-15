@@ -1126,10 +1126,13 @@ class NeuralOrchestra_Base extends
     const weightArrayBuffer_byteCount
       = weightArrayBuffer_elementCount * Float32Array.BYTES_PER_ELEMENT;
 
-    let weightArrayBuffer_Array = [
+    const weightArrayBuffer_Array = [
       new ArrayBuffer( weightArrayBuffer_byteCount ),
       new ArrayBuffer( weightArrayBuffer_byteCount )
     ];
+
+    const weightArrayBuffer_partitionCount = 1;
+    const weightArrayBuffer_partitionId = 0;
 
     // (2022//09/26 Remarked)
     // For observing dry-run performance and weight count.
@@ -1139,11 +1142,8 @@ class NeuralOrchestra_Base extends
       = NeuralOrchestra_Base.workerProxies_NeuralNetArray_create_async.call(
           this,
           weightArrayBuffer_Array,
-
-!!!??? ...unfinished... (2025/05/15)
           weightArrayBuffer_partitionCount,
           weightArrayBuffer_partitionId,
-
           bLogDryRunTime );
 
     let createOk = await neuralNet_create_promise;
