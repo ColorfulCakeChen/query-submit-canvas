@@ -350,7 +350,7 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
       this.ScaleFiller = undefined;
 
       // 1. Create every neural network.
-      let recreate_result;
+      let recreate_result_value;
       {
         let recreate_asyncGenerator = this.NeuralNetArray_recreate(
           weightArrayBuffer_partitionId, bLogDryRunTime );
@@ -359,20 +359,21 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
           = AsyncWorker.Body.asyncGenerator_loopUntilDone_asyncPromise(
               recreate_asyncGenerator );
 
-        recreate_result = await recreate_asyncPromise;
+        let recreate_result = await recreate_asyncPromise;
+        recreate_result_value = recreate_result.value;
       }
 
       let result;
-      if ( recreate_result.bRecreateOk )
+      if ( recreate_result_value.bRecreateOk )
         result = { value: {
           bCreateOk: true,
           weightArrayBuffer_partitionId:
-            recreate_result.weightArrayBuffer_partitionId } };
+            recreate_result_value.weightArrayBuffer_partitionId } };
       else
         result = { value: {
           bCreateOk: false,
           weightArrayBuffer_partitionId:
-            recreate_result.weightArrayBuffer_partitionId } };
+            recreate_result_value.weightArrayBuffer_partitionId } };
 
       return result;
 
