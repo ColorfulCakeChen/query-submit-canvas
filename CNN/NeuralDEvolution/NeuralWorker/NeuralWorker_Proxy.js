@@ -213,19 +213,11 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
   async initWorker_async(
     workerId, backendName, weightArrayBuffer_partitionCount ) {
 
-//!!! ...unfinished... (2025/05/16)
-// should record parameter in this.xxx_requested before request.
-
     this.workerId = workerId;
     this.backendName = backendName;
 
     this.weightArrayBuffer_partitionCount_want = weightArrayBuffer_partitionCount;
     this.weightArrayBuffer_partitionCount = undefined;
-
-//!!! ...unfinished... (2025/05/16)
-// should await NeuralWorker_Body returned and resolved.
-// record corrected parameter xxx (e.g. backendName, weightArrayBuffer_partitionCount)
-// in this.xxx_result and then return.
 
     const initWorker_promise = this.createPromise_by_postCommandArgs(
       [ "initWorker",
