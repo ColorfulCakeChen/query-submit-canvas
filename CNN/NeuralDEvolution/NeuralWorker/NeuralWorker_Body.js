@@ -742,10 +742,11 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
     return false;
   }
 
-
-//!!! ...unfinished... (2025/05/14)
-// Add alignmentMarkValueArrayArray_swap()
-//
+  // Q: Why not provide alignmentMarkValueArrayArray_swap() here?
+  // A: Because there may be only one neural network per neural worker, here
+  //    does not have the other alignment mark value to be swapped.
+  //
+  // (2025/05/16)
 
   /**
    * The alignmentMarkValueArrayArray will be owned and kept directly.
