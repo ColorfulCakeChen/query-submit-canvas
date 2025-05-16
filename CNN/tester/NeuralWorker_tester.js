@@ -296,6 +296,9 @@ class PerformanceTestCase extends Recyclable.Root {
     const vocabularyCountPerInputChannel
       = this.neuralNetParamsBase.vocabularyCountPerInputChannel;
 
+//!!! ...unfinished... (2025/05/15) Temporarily. should test various cases.
+    const weightArrayBuffer_partitionCount = 1;
+
     try {
       await tf.ready(); // Ensure tf.getBackend() workable.
       let backendName = tf.getBackend();
@@ -310,7 +313,8 @@ class PerformanceTestCase extends Recyclable.Root {
       let bInitOkPromise = neuralWorkerProxies.init_async(
         backendName,
         this.nNeuralWorker_ModeId,
-        this.nNeuralWorker_ImplicitInputModeId );
+        this.nNeuralWorker_ImplicitInputModeId,
+        weightArrayBuffer_partitionCount );
 
       {
         if ( neuralWorkerProxies.alignmentMarkValueArray_nonEmpty )
@@ -365,9 +369,8 @@ class PerformanceTestCase extends Recyclable.Root {
           + `Failed to initialize neuralWorkerProxies object. `
           + `${neuralWorkerProxies}` );
 
-//!!! ...unfinished... (2025/05/15) Temporarily. should test various cases.
-//      const weightArrayBuffer_partitionCount = ???;
-      const weightArrayBuffer_partitionId = 1;
+//!!! ...unfinished... (2025/05/16) Temporarily. should test various cases.
+      const weightArrayBuffer_partitionId = 0;
 
       // (2022//09/26 Remarked)
       //const bLogDryRunTime = true; // For observing dry-run performance.
