@@ -198,8 +198,10 @@ import { ImplicitInputMode as NeuralWorker_ImplicitInputMode }
  *   An array [ TypedArray, TypedArray ] representing the (previous time)
  * output of the (pair of) neural network(s).
  *
- *   - When .init_async() and .NeuralNetArray_create_async() it will be cleared
- *       to undefined.
+ *   - When .init_async() or .NeuralNetArray_create_async() or
+ *       .NeuralNetArray_recreate_async(), it will be cleared to undefined.
+ *       Since there should be no previous output for newly created neural
+ *       network.
  *
  *     - After .TypedArray_process_async() succesfully, it will be non-null and
  *         its .length will be the same as .neuralNetCount.
@@ -212,18 +214,14 @@ import { ImplicitInputMode as NeuralWorker_ImplicitInputMode }
  *
  *     - When .TypedArray_process_async() is called, its content (i.e. the
  *       Float32Array or Int32Array) will become invalid because they will be
- *       transferred (not copied) to the web worker for used as feedback.
+ *       transferred (not copied) to the web worker for being used as feedback.
  *
  *     - The transferred previous_output_TypedArrayArray will be used to fill
  *         (as feedback) into the next time input of the neural networks (i.e.
  *         source TypedArray).
  *
- *   - When .NeuralNetArray_create_async() is called, its content will be
- *       cleared. Since there should be no previous output for newly created
- *       neural network.
- *
  * @member {boolean} previous_output_TypedArrayArray_nonEmpty
- *   Return true, if .previous_output_TypedArrayArray is null or
+ *   Return true, if .previous_output_TypedArrayArray is null or undefined or
  * ( .previous_output_TypedArrayArray.length == 0 ).
  *
  *
@@ -500,7 +498,7 @@ class NeuralWorker_Proxies extends Recyclable.Root {
   }
 
   /**
-   * Create neural networks in all web workers' body.
+   * Create neural network(s) in all web worker(s)' body.
    *
    * The .alignmentMarkValueArrayArray and .previous_output_TypedArrayArray
    * will be cleared.
@@ -607,7 +605,8 @@ class NeuralWorker_Proxies extends Recyclable.Root {
 
     // 2. The only one worker creates all neural networks.
     } else {
-      createOk = await this.workerProxyArray[ 0 ].NeuralNetArray_create_async(
+      const workerProxy = this.workerProxyArray[ 0 ];
+      createOk = await workerProxy.NeuralNetArray_create_async(
         neuralNetParamsBase_Array,
         weightArrayBuffer_Array,
         weightArrayBuffer_partitionId,
@@ -616,6 +615,83 @@ class NeuralWorker_Proxies extends Recyclable.Root {
     }
 
     return createOk;
+  }
+
+  /**
+   * Re-create neural network(s) in all the web worker(s)' body.
+   *
+   * This method should only be called if NeuralNetArray_create_async() has
+   * ever been called.
+   *
+   * Note:
+   *   - The .neuralNetParamsBase_Array, .weightArrayBuffer_Array (assumed
+   *       no NaN) and .weightArrayBuffer_partitionCount will be used to
+   *       re-create neural network(s).
+   *
+   *   - The .alignmentMarkValueArrayArray will NOT be cleared (i.e.
+   *       will be kept).
+   * 
+   *   - The .previous_output_TypedArrayArray will be cleared.
+   *
+   *
+   * @param {number} weightArrayBuffer_partitionId
+   *   An integer between 0 and ( weightArrayBuffer_partitionCount - 1 ) means
+   * which part of a weightArrayBuffer is used to create current neural network.
+   * 
+   * @param {boolean} bLogDryRunTime
+   *   If true, the neural network dry-run time will be measured twice and
+   * logged to console.
+   *
+   * @return {Promise}
+   *   Return a promise:
+   *   - Resolved to true, if succeeded.
+   *   - Resolved to false, if failed.
+   */
+  async NeuralNetArray_recreate_async(
+    weightArrayBuffer_partitionId,
+    bLogDryRunTime ) {
+
+    const funcNameInMessage = "NeuralNetArray_recreate_async";
+
+    // Since re-creation, no previous outputs. (but alignment marks are kept)
+    {
+      // Note: NeuralWorker_Body will keep it, too.
+      //this.alignmentMarkValueArrayArray;
+
+      this.previous_output_TypedArrayArray = undefined;
+    }
+
+    let recreateOk;
+
+    // 1. Every worker creates one neural network.
+    if ( this.workerProxyArray.length > 1 ) { // (i.e. two workers)
+
+      let recreatePromiseArray = new Array( this.workerProxyArray.length );
+      for ( let i = 0; i < this.workerProxyArray.length; ++i ) {
+        recreatePromiseArray[ i ]
+          = this.workerProxyArray[ i ].NeuralNetArray_recreate_async(
+              weightArrayBuffer_partitionId,
+              bLogDryRunTime
+            );
+      }
+
+      let recreateOkArray = await Promise.all( createPromiseArray );
+
+      recreateOk = recreateOkArray.reduce(
+        ( previousValue, currentValue ) => ( previousValue && currentValue ),
+        true
+      );
+
+    // 2. The only one worker creates all neural networks.
+    } else {
+      const workerProxy = this.workerProxyArray[ 0 ];
+      recreateOk = await workerProxy.NeuralNetArray_recreate_async(
+            weightArrayBuffer_partitionId,
+            bLogDryRunTime
+          );
+    }
+
+    return recreateOk;
   }
 
   get alignmentMarkValueArrayArray_nonEmpty() {
