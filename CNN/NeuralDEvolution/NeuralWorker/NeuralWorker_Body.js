@@ -392,9 +392,9 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
    * been called.
    *
    * Note:
-   *   - The .neuralNetParamsBase_Array and .weightArrayBuffer_Array (assumed
-   *       no NaN) and weightArrayBuffer_partitionXxx will be used to re-create
-   *       neural network(s).
+   *   - The .neuralNetParamsBase_Array, .weightArrayBuffer_Array (assumed
+   *       no NaN) and .weightArrayBuffer_partitionCount will be used to
+   *       re-create neural network(s).
    * 
    *   - The created neural network(s) will be placed in this.neuralNetArray[].
    * 

@@ -351,6 +351,70 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
   }
 
   /**
+   * Re-create neural network(s) in the web worker body.
+   *
+   * This method should only be called if NeuralNetArray_create() has ever
+   * been called.
+   *
+   * Note:
+   *   - The .neuralNetParamsBase_Array, .weightArrayBuffer_Array (assumed
+   *       no NaN) and .weightArrayBuffer_partitionCount will be used to
+   *       re-create neural network(s).
+   *
+   *   - The .alignmentMarkValueArrayArray will NOT be cleared (i.e.
+   *       will be kept).
+   *
+   *
+   * @param {number} weightArrayBuffer_partitionId
+   *   An integer between 0 and ( weightArrayBuffer_partitionCount - 1 ) means
+   * which part of a weightArrayBuffer is used to create current neural network.
+   * 
+   * @param {boolean} bLogDryRunTime
+   *   If true, the neural network dry-run time will be measured twice and
+   * logged to console.
+   *
+   * @return {Promise}
+   *   Return a promise:
+   *   - Resolved to true, if succeeded.
+   *   - Resolved to false, if failed.
+   */
+  async NeuralNetArray_recreate_async(
+    weightArrayBuffer_partitionId,
+    bLogDryRunTime ) {
+
+    const funcNameInMessage = "NeuralNetArray_recreate_async";
+
+    // 1. Record neural network configuration.
+    this.weightArrayBuffer_partitionId_want = weightArrayBuffer_partitionId;
+    this.weightArrayBuffer_partitionId = undefined;
+
+    // 2. No transferable object array. 
+    const transferableObjectArray = undefined;
+
+    // 3. Inform web work to re-create neural networks.
+
+    // 3.1
+    const NeuralNetArray_recreate_promise = this.createPromise_by_postCommandArgs(
+      [ "NeuralNetArray_recreate",
+        weightArrayBuffer_partitionId,
+        bLogDryRunTime
+      ],
+      transferableObjectArray
+    );
+
+    // 3.2 Wait result and record (maybe adjusted) partition id.
+    const NeuralNetArray_recreate_result = await NeuralNetArray_recreate_promise;
+
+    let bRecreateOk;
+    ( {
+      bRecreateOk: bRecreateOk,
+      weightArrayBuffer_partitionId: this.weightArrayBuffer_partitionId
+    } = NeuralNetArray_create_result );
+
+    return bRecreateOk;
+  }
+
+  /**
    * 
    * @return {Promise}
    *   Return a promise:
