@@ -778,12 +778,6 @@ class NeuralWorker_Proxies extends Recyclable.Root {
     return resultOk;
   }
 
-//!!! ...unfinished... (2024/08/23)
-// This method should be named as:
-//   "alignmentMarkValueArrayArray_set_as_swap_async()"
-//
-// The reason is that it does not swap again if it is called second times. 
-
   /**
    * Swap .alignmentMarkValueArrayArray[ 0 ] and
    * .alignmentMarkValueArrayArray[ 1 ].
@@ -811,9 +805,17 @@ class NeuralWorker_Proxies extends Recyclable.Root {
         + `should be 2 for swapping.`
       );
 
-    return this.alignmentMarkValueArrayArray_set_async(
-      [ this.alignmentMarkValueArrayArray[ 1 ],
-        this.alignmentMarkValueArrayArray[ 0 ] ] );
+    const swappedArray = [ this.alignmentMarkValueArrayArray[ 1 ],
+        this.alignmentMarkValueArrayArray[ 0 ] ];
+
+    // Note: alignmentMarkValueArrayArray_set_async() will keep and record
+    //       the (newly created) swapped array. So acheive swapping.
+    const setOk_promise
+      = this.alignmentMarkValueArrayArray_set_async( swappedArray );
+
+    const setOk_result = await setOk_promise;
+
+    return setOk_result;
   }
 
   get previous_output_TypedArrayArray_nonEmpty() {
