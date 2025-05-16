@@ -190,8 +190,8 @@ class AsyncWorker_Proxy extends Recyclable.Root {
     // The codes do the following:
     //
     //   - Import the specified module URL.
-    //   - Create a singleton instance of worker body class (which must be
-    //       exported as default).
+    //   - Create a singleton instance of worker body class (which must have
+    //       been exported as default).
     //   - Create a temporary message queue.
     //   - Collect all messages before
     //       AsyncWorker_Proxy.onmessage_from_AsyncWorker_Body() be registered
