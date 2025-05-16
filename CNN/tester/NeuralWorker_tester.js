@@ -316,6 +316,10 @@ class PerformanceTestCase extends Recyclable.Root {
         this.nNeuralWorker_ImplicitInputModeId,
         weightArrayBuffer_partitionCount );
 
+//!!! ...unfinished... (2025/05/16)
+// should check .weightArrayBuffer_partitionCount
+// and .weightArrayBuffer_partitionCount_want
+
       {
         if ( neuralWorkerProxies.alignmentMarkValueArray_nonEmpty )
           throw Error( `NeuralWorker_tester.PerformanceTestCase`
@@ -380,6 +384,10 @@ class PerformanceTestCase extends Recyclable.Root {
         weightArrayBuffer_Array,
         weightArrayBuffer_partitionId,
         bLogDryRunTime );
+
+//!!! ...unfinished... (2025/05/16)
+// should check .weightArrayBuffer_partitionId
+// and .weightArrayBuffer_partitionId_want
 
       let bCreateOk = await bCreateOkPromise;
       if ( !bCreateOk )
