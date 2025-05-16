@@ -532,7 +532,7 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
       const weightArrayBuffer_elementCount
         = this.weightArrayBuffer_elementCount
         = Math.floor(
-            weightArrayBuffer[ 0 ].byteLength
+            weightArrayBuffer_Array[ 0 ].byteLength
               / Float32Array.BYTES_PER_ELEMENT );
 
       const weightArrayBuffer_partitionCount
