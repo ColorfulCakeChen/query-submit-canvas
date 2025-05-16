@@ -356,7 +356,7 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
           weightArrayBuffer_partitionId, bLogDryRunTime );
 
         let recreate_asyncPromise
-          = AsyncWorker_Body.asyncGenerator_loopUntilDone_asyncPromise(
+          = AsyncWorker.Body.asyncGenerator_loopUntilDone_asyncPromise(
               recreate_asyncGenerator );
 
         recreate_result = await recreate_asyncPromise;
