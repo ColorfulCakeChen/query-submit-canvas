@@ -792,7 +792,7 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
         );
       }
 
-      // Hold the received alignment mary value array array directly.
+      // Hold the received alignment mark value array array directly.
       this.alignmentMarkValueArrayArray = alignmentMarkValueArrayArray;
 
     } else { // 2. empty alignment mark value array array.
