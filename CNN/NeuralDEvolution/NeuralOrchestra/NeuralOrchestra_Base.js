@@ -143,6 +143,17 @@ import * as DEvolution from "../DEvolution.js";
  * It will get ( stageCount = 2 ).
  *
  *
+ * 3. Configuration for 125K filter weights and execution 2 times per second
+ *
+ *   - explicit_input_height = 72
+ *   - explicit_input_width = 114
+ *   - explicit_input_channelCount = 4
+ *   - vocabularyChannelCount = 4
+ *   - vocabularyCountPerInputChannel = 256
+ *   - blockCountTotalRequested = 12
+ *   - output_channelCount = 128
+ *
+ *
  *
  * @member {string} downloader_spreadsheetId
  *   The Google Sheets spreadsheetId of neural network weights. The weights
