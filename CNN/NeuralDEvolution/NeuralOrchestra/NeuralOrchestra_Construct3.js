@@ -924,8 +924,8 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
       //
       // Q: How to convert neural network output value to control signal
       //    (i.e. 0 or 1)?
-      // A: Using remainder operation (e.g. ( output % 2 ) ) seems relying
-      //    the least significant bit (i.e. bit 0) too much. So, using
+      // A: Using remainder operation (e.g. ( output % 2 ) ) seems depending
+      //    on the least significant bit (i.e. bit 0) too much. So, using
       //    threshold (e.g. ( >= 2 ) or ( < 2 ) ) may be better.
       //
 
