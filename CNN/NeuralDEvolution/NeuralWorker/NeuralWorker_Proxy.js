@@ -5,7 +5,7 @@ import * as Recyclable from "../../util/Recyclable.js";
 import * as AsyncWorker from "../../util/AsyncWorker.js";
 import * as NeuralNet from "../../Conv/NeuralNet.js";
 
-// Although here (NeuralWorker_Proxy) will not use NeuralWorker_Body directly,
+// Although here (NeuralWorker_Proxy) does not use NeuralWorker_Body directly,
 // prefetching it to cache it in disk is still a good idea. So that the web
 // worker could still be created (from disk cache) even if internet
 // disconnected later.
