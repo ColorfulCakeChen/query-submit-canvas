@@ -518,7 +518,7 @@ class NeuralWorker_Proxies extends Recyclable.Root {
    * @param {number} weightArrayBuffer_partitionId
    *   An integer between 0 and ( weightArrayBuffer_partitionCount - 1 ) means
    * which part of a weightArrayBuffer is used to create current neural network.
-   * 
+   *
    * @param {boolean} bLogDryRunTime
    *   If true, the neural network dry-run time will be measured twice and
    * logged to console.
@@ -637,7 +637,7 @@ class NeuralWorker_Proxies extends Recyclable.Root {
    * @param {number} weightArrayBuffer_partitionId
    *   An integer between 0 and ( weightArrayBuffer_partitionCount - 1 ) means
    * which part of a weightArrayBuffer is used to create current neural network.
-   * 
+   *
    * @param {boolean} bLogDryRunTime
    *   If true, the neural network dry-run time will be measured twice and
    * logged to console.
