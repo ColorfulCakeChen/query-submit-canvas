@@ -203,13 +203,18 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
    *   A positive integer to view a weightArrayBuffer as how many parts. At
    * least 1. It could be used to create different neural network by using
    * different part of the weightArrayBuffer.
+   *
+   * @return {object}
+   *   Return an object { bInitOk, weightArrayBuffer_partitionCount }.
+   *     - bInitOk: true, if success.
+   *     - weightArrayBuffer_partitionCount:
+   *         the adjusted weightArrayBuffer_partitionCount.
    */
   async* initWorker(
     workerId, backendName, weightArrayBuffer_partitionCount ) {
 
     // Clear resources.
     {
-
       // Since (re-)initialization, no alignment marks.
       if ( this.alignmentMarkValueArrayArray )
         this.alignmentMarkValueArrayArray.length = 0;
@@ -269,7 +274,9 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
 //
 // Perhaps, needs a life-cycle manager to handle them gracefully.
 
-    return { value: bInitOk };
+    return { value: {
+      bInitOk: bInitOk,
+      weightArrayBuffer_partitionCount: weightArrayBuffer_partitionCount } };
   }
 
 

@@ -48,10 +48,20 @@ import * as NotUsed from "./NeuralWorker_Body.js";
  * configurations is come from .NeuralNetArray_create_async() parameters and
  * is owned (i.e. kept and destroyed) by this NeuralWorker.Proxy.
  *
+ * @member {number} weightArrayBuffer_partitionCount_want
+ *   The weightArrayBuffer_partitionCount be posted to NeuralWorker_Body. It
+ * may be different from weightArrayBuffer_partitionCount because
+ * NeuralWorker_Body will adjust it.
+ *
  * @member {number} weightArrayBuffer_partitionCount
  *   A positive integer to view a weightArrayBuffer as how many parts. At
  * least 1. It could be used to create different neural network by using
  * different part of the weightArrayBuffer.
+ *
+ * @member {number} weightArrayBuffer_partitionId_want
+ *   The weightArrayBuffer_partitionId be posted to NeuralWorker_Body. It
+ * may be different from weightArrayBuffer_partitionId because
+ * NeuralWorker_Body will adjust it.
  * 
  * @member {number} weightArrayBuffer_partitionId
  *   An integer between 0 and ( weightArrayBuffer_partitionCount - 1 ) means
@@ -157,7 +167,9 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
 
   /** @override */
   disposeResources() {
+    this.weightArrayBuffer_partitionId_want = undefined;
     this.weightArrayBuffer_partitionId = undefined;
+    this.weightArrayBuffer_partitionCount_want = undefined;
     this.weightArrayBuffer_partitionCount = undefined;
     this.neuralNetParamsBase_Array_dispose();
     this.neuralNetCount = undefined;
@@ -206,16 +218,29 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
 
     this.workerId = workerId;
     this.backendName = backendName;
-    this.weightArrayBuffer_partitionCount = weightArrayBuffer_partitionCount;
+
+    this.weightArrayBuffer_partitionCount_want = weightArrayBuffer_partitionCount;
+    this.weightArrayBuffer_partitionCount = undefined;
 
 //!!! ...unfinished... (2025/05/16)
 // should await NeuralWorker_Body returned and resolved.
 // record corrected parameter xxx (e.g. backendName, weightArrayBuffer_partitionCount)
 // in this.xxx_result and then return.
 
-    return this.createPromise_by_postCommandArgs(
-      [ "initWorker", workerId, backendName, weightArrayBuffer_partitionCount ]
+    let initWorker_promise = this.createPromise_by_postCommandArgs(
+      [ "initWorker",
+        workerId, backendName, weightArrayBuffer_partitionCount ]
     );
+
+    let initWorker_result = await initWorker_promise;
+
+    let bInitOk;
+    ( {
+      bInitOk: bInitOk,
+      weightArrayBuffer_partitionCount: this.weightArrayBuffer_partitionCount
+    } = initWorker_result );
+
+    return bInitOk;
   }
 
   /**
