@@ -145,6 +145,9 @@ import * as DEvolution from "../DEvolution.js";
  *
  * 3. Configuration for 125K filter weights and execution 2 times per second
  *
+ *
+ * 3.1 Configuration_3_12
+ *
  *   - explicit_input_height = 72
  *   - explicit_input_width = 114
  *   - explicit_input_channelCount = 4
@@ -152,6 +155,21 @@ import * as DEvolution from "../DEvolution.js";
  *   - vocabularyCountPerInputChannel = 256
  *   - blockCountTotalRequested = 12
  *   - output_channelCount = 128
+ *
+ * It will get ( stageCount = 3 ).
+ *
+ *
+ * 3.2 Configuration_2_42
+ *
+ *   - explicit_input_height = 72
+ *   - explicit_input_width = 114
+ *   - explicit_input_channelCount = 4
+ *   - vocabularyChannelCount = 4
+ *   - vocabularyCountPerInputChannel = 256
+ *   - blockCountTotalRequested = 42
+ *   - output_channelCount = 64
+ *
+ * It will get ( stageCount = 2 ).
  *
  *
  *
