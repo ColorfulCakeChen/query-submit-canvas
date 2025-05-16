@@ -365,18 +365,17 @@ class PerformanceTestCase extends Recyclable.Root {
           + `Failed to initialize neuralWorkerProxies object. `
           + `${neuralWorkerProxies}` );
 
+//!!! ...unfinished... (2025/05/15) Temporarily. should test various cases.
+//      const weightArrayBuffer_partitionCount = ???;
+      const weightArrayBuffer_partitionId = 1;
+
       // (2022//09/26 Remarked)
       //const bLogDryRunTime = true; // For observing dry-run performance.
       const bLogDryRunTime = false;
       let bCreateOkPromise = neuralWorkerProxies.NeuralNetArray_create_async(
         neuralNetParamsBase_Array,
         weightArrayBuffer_Array,
-
-!!!??? ...unfinished... (2025/05/15)
-        weightArrayBuffer_partitionCount,
         weightArrayBuffer_partitionId,
-
-
         bLogDryRunTime );
 
       let bCreateOk = await bCreateOkPromise;
