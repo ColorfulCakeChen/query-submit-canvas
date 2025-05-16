@@ -174,6 +174,23 @@ class AsyncWorker_Body {
       postMessage( resultData );
     }
   }
-  
+
+  /**
+   * A helper function for looping an async generator until done.
+   *
+   * @return {Promise}
+   *   Return a promise resolved as the final (i.e. ( done == true ) ) value
+   * of the asyn generator.
+   */
+  static async asyncGenerator_loopUntilDone_asyncPromise( asyncGenerator ) {
+    let asyncGeneratorNext;
+    do {
+      asyncGeneratorNext = await asyncGenerator.next();
+    } while ( !asyncGeneratorNext.done );
+
+    let resultValue = asyncGeneratorNext.value;
+    return resultValue;
+  }
+
 }
 
