@@ -388,6 +388,9 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
   }
 
   /**
+   * This method should only be called if NeuralNetArray_create() has ever
+   * been called.
+   *
    * Note:
    *   - The .neuralNetParamsBase_Array and .weightArrayBuffer_Array (assumed
    *       no NaN) and weightArrayBuffer_partitionXxx will be used to re-create
