@@ -805,8 +805,9 @@ class NeuralWorker_Proxies extends Recyclable.Root {
         + `should be 2 for swapping.`
       );
 
-    const swappedArray = [ this.alignmentMarkValueArrayArray[ 1 ],
-        this.alignmentMarkValueArrayArray[ 0 ] ];
+    const swappedArray = [
+      this.alignmentMarkValueArrayArray[ 1 ],
+      this.alignmentMarkValueArrayArray[ 0 ] ];
 
     // Note: alignmentMarkValueArrayArray_set_async() will keep and record
     //       the (newly created) swapped array. So acheive swapping.
