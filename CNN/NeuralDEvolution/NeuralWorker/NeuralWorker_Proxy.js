@@ -227,12 +227,12 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
 // record corrected parameter xxx (e.g. backendName, weightArrayBuffer_partitionCount)
 // in this.xxx_result and then return.
 
-    let initWorker_promise = this.createPromise_by_postCommandArgs(
+    const initWorker_promise = this.createPromise_by_postCommandArgs(
       [ "initWorker",
         workerId, backendName, weightArrayBuffer_partitionCount ]
     );
 
-    let initWorker_result = await initWorker_promise;
+    const initWorker_result = await initWorker_promise;
 
     let bInitOk;
     ( {
@@ -307,7 +307,8 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
       }
     }
 
-    this.weightArrayBuffer_partitionId = weightArrayBuffer_partitionId;
+    this.weightArrayBuffer_partitionId_want = weightArrayBuffer_partitionId;
+    this.weightArrayBuffer_partitionId = undefined;
 
     // 2. Collect the transferable object array. 
     let transferableObjectArray = new Array( weightArrayBuffer_Array.length );
@@ -318,7 +319,7 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
     // 3. Inform web work to create neural networks.
 
     // 3.1
-    let createOkPromise = this.createPromise_by_postCommandArgs(
+    const NeuralNetArray_create_promise = this.createPromise_by_postCommandArgs(
       [ "NeuralNetArray_create",
         neuralNetParamsBase_Array,
 
@@ -345,9 +346,16 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
       neuralNetParamsBase.inferencedParams_create();
     }
 
-    // 3.3
-    let createOk = await createOkPromise;
-    return createOk;
+    // 3.3 Wait result and record (maybe adjusted) partition id.
+    const NeuralNetArray_create_result = await NeuralNetArray_create_promise;
+
+    let bCreateOk;
+    ( {
+      bCreateOk: bCreateOk,
+      weightArrayBuffer_partitionId: this.weightArrayBuffer_partitionId
+    } = NeuralNetArray_create_result );
+
+    return bCreateOk;
   }
 
   /**

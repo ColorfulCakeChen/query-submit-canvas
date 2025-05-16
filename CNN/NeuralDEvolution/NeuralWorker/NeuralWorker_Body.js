@@ -204,11 +204,13 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
    * least 1. It could be used to create different neural network by using
    * different part of the weightArrayBuffer.
    *
-   * @return {object}
-   *   Return an object { bInitOk, weightArrayBuffer_partitionCount }.
-   *     - bInitOk: true, if success.
+   * @yield {object}
+   *   Yield { done: true,
+   *           value: {
+   *             value: { bInitOk, weightArrayBuffer_partitionCount } } }.
+   *     - bInitOk: true, if succeeded. false, if failed.
    *     - weightArrayBuffer_partitionCount:
-   *         the adjusted weightArrayBuffer_partitionCount.
+   *         the maybe adjusted weightArrayBuffer_partitionCount.
    */
   async* initWorker(
     workerId, backendName, weightArrayBuffer_partitionCount ) {
@@ -490,11 +492,6 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
    *   An array of every neural network's weights. Every element will be
    * interpreted as Float32Array.
    *
-   * @param {number} weightArrayBuffer_partitionCount
-   *   A positive integer to view a weightArrayBuffer as how many parts. At
-   * least 1. It could be used to create different neural network by using
-   * different part of the weightArrayBuffer.
-   *
    * @param {number} weightArrayBuffer_partitionId
    *   An integer between 0 and ( weightArrayBuffer_partitionCount - 1 ) means
    * which part of a weightArrayBuffer is used to create current neural network.
@@ -503,9 +500,13 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
    *   If true, the neural network dry-run time will be measured twice and
    * logged to console.
    *
-   * @yield {boolean}
-   *   - Yield { done: true, value: { value: true } }, if succeeded.
-   *   - Yield { done: true, value: { value: false } }, if failed.
+   * @yield {object}
+   *   Yield { done: true,
+   *           value: {
+   *             value: { bCreateOk, weightArrayBuffer_partitionId } } }.
+   *     - bCreateOk: true, if succeeded. false, if failed.
+   *     - weightArrayBuffer_partitionId:
+   *         the maybe adjusted weightArrayBuffer_partitionId.
    */
   async* NeuralNetArray_create(
     neuralNetParamsBase_Array,
@@ -550,10 +551,17 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
       let bAllOk = NeuralWorker_Body.NeuralNetArray_recreate.call( this,
         weightArrayBuffer_partitionId, bLogDryRunTime );
 
+      let result;
       if ( bAllOk )
-        return { value: true };
+        result = { value: {
+          bCreateOk: true,
+          weightArrayBuffer_partitionId: weightArrayBuffer_partitionId } };
       else
-        return { value: false };
+        result = { value: {
+          bCreateOk: false,
+          weightArrayBuffer_partitionId: weightArrayBuffer_partitionId } };
+
+      return result;
 
     } catch ( e ) {
       let errorMsg = `NeuralWorker_Body.${funcNameInMessage}(): `
