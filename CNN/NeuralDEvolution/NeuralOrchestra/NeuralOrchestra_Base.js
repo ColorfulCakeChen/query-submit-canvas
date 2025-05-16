@@ -1356,6 +1356,9 @@ class NeuralOrchestra_Base extends
    */
   static async alignmentMarkValueArrayArray_swap_asyncPromise( delayPromise ) {
 
+//!!! ...unfinished... (2025/05/16)
+// should also NeuralNet_recreate_async() with partition id 1 (instead of 0).
+
     try {
       // 1.
       let resultOkPromise
