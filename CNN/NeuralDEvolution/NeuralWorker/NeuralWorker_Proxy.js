@@ -49,8 +49,8 @@ import * as NotUsed from "./NeuralWorker_Body.js";
  * is owned (i.e. kept and destroyed) by this NeuralWorker.Proxy.
  *
  * @member {number} weightArrayBuffer_partitionCount_want
- *   The weightArrayBuffer_partitionCount be posted to NeuralWorker_Body. It
- * may be different from weightArrayBuffer_partitionCount because
+ *   The weightArrayBuffer_partitionCount posted to NeuralWorker_Body. It may
+ * be different from weightArrayBuffer_partitionCount because
  * NeuralWorker_Body will adjust it.
  *
  * @member {number} weightArrayBuffer_partitionCount
@@ -59,8 +59,8 @@ import * as NotUsed from "./NeuralWorker_Body.js";
  * different part of the weightArrayBuffer.
  *
  * @member {number} weightArrayBuffer_partitionId_want
- *   The weightArrayBuffer_partitionId be posted to NeuralWorker_Body. It
- * may be different from weightArrayBuffer_partitionId because
+ *   The weightArrayBuffer_partitionId posted to NeuralWorker_Body. It may
+ * be different from weightArrayBuffer_partitionId because
  * NeuralWorker_Body will adjust it.
  * 
  * @member {number} weightArrayBuffer_partitionId
