@@ -490,8 +490,10 @@ class PerformanceTestCase extends Recyclable.Root {
       progress = ValueMax.Percentage.Aggregate.Pool.get_or_create_by();
       neuralNet = this.neuralNet = NeuralNet.Base.Pool.get_or_create_by();
 
+      const weightElementOffsetBegin = 0;
       let bInitOk = neuralNet.init( progress,
-        PerformanceTestCase.randomTestWeightArray, 0, neuralNetParams );
+        PerformanceTestCase.randomTestWeightArray, weightElementOffsetBegin,
+        neuralNetParams );
 
       let strWeightCountInfo = neuralNet.toString_WeightCount();
       let strWeightCountInfo_withConvType = `${strWeightCountInfo}, `
