@@ -22,6 +22,8 @@ import * as HTMLTable from "../Display/HTMLTable.js";
  */
 class UIControls {
 
+  // (The controls_all's properties' name should be the same as the html
+  // element id on the web page.)
   controls_all = {
     largerFactor_Number: null,
 
