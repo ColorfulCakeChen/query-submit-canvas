@@ -500,6 +500,10 @@ class PerformanceTestCase extends Recyclable.Root {
       progress = ValueMax.Percentage.Aggregate.Pool.get_or_create_by();
       neuralNet = this.neuralNet = NeuralNet.Base.Pool.get_or_create_by();
 
+//!!! ...unfinished... (2025/05/20)
+// How to simulate NeuralNet_recreate().
+// weightArrayBuffer_partitionCount, weightArrayBuffer_partitionId
+
       const weightElementOffsetBegin = 0;
       let bInitOk = neuralNet.init( progress,
         PerformanceTestCase.randomTestWeightArray, weightElementOffsetBegin,
