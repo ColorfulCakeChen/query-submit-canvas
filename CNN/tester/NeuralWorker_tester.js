@@ -506,7 +506,8 @@ class PerformanceTestCase extends Recyclable.Root {
 
       console.log( strWeightCountInfoLong );
 
-      // Display weight count information in UI (if has not yet displayed).
+      // Display weight count information in UI (if has not yet been
+      // displayed).
       const controls_all = g_Controls.controls_all;
       if ( controls_all.Info_TextArea.textContent
               .indexOf( strWeightCountInfo ) < 0 ) {
