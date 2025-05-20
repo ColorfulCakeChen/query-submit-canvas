@@ -159,31 +159,18 @@ import * as DEvolution from "../DEvolution.js";
  * It will get ( stageCount = 3 ).
  *
  *
- * 3.2 Configuration_2_42
+ * 3.2 Configuration_2_34
  *
  *   - explicit_input_height = 72
  *   - explicit_input_width = 114
  *   - explicit_input_channelCount = 4
  *   - vocabularyChannelCount = 4
  *   - vocabularyCountPerInputChannel = 256
- *   - blockCountTotalRequested = 42
+ *   - blockCountTotalRequested = 34
  *   - output_channelCount = 64
  *
- * It will get ( stageCount = 2 ).
- * But it seems get accumulated error in mobile phone. (2025/05/16)
- *
- *
- * 3.3 Configuration_2_36
- *
- *   - explicit_input_height = 72
- *   - explicit_input_width = 114
- *   - explicit_input_channelCount = 4
- *   - vocabularyChannelCount = 4
- *   - vocabularyCountPerInputChannel = 256
- *   - blockCountTotalRequested = 36
- *   - output_channelCount = 64
- *
- * It will get ( stageCount = 2 ).
+ * It will get ( stageCount = 2 ). It is far more slower than
+ * Configuration_3_12.
  *
  *
  *

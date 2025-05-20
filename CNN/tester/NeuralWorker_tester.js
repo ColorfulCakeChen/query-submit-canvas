@@ -1210,18 +1210,14 @@ class HeightWidthDepth {
                 neuralNetIndex < testCase.neuralNetCount;
                 ++neuralNetIndex ) {
 
+//!!! ...unfinished... (2025/05/20)
+// Perhaps, also test NeuralNet_recreate()
+
                 let alignmentMarkValueArray;
                 let previous_output_TypedArray;
                 {
                   if ( this.ImplicitInputModeInfo
                          .implicit_input_bFillAlignmentMark ) {
-
-// (2025/05/20 Remarked)
-// alignmentMarkValueArrayArray should be got from .neuralWorkerProxies
-// because the alignmentMarkValueArrayArray may be swapped.
-//
-//                   alignmentMarkValueArray
-//                     = testCase.alignmentMarkValueArrayArray[ neuralNetIndex ];
 
                     // Note: alignmentMarkValueArrayArray should be got from
                     //       .neuralWorkerProxies (not testCase) because
