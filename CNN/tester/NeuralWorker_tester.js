@@ -1208,7 +1208,7 @@ class HeightWidthDepth {
                     alignmentMarkValueArray
                       = testCase.alignmentMarkValueArrayArray[ neuralNetIndex ];
                   }
-                  
+
                   if ( this.ImplicitInputModeInfo
                          .implicit_input_bFillPreviousOutput ) {
                     previous_output_TypedArray
@@ -1218,6 +1218,9 @@ class HeightWidthDepth {
                 }
 
                 const input_TypedArray = this.input_TypedArray_clone();
+
+//!!! ...unfinished... (2025/05/20)
+// Test: weightArrayBuffer: partitionCount, partitionId
 
                 // NeuralNet_try_result_async() should be called after
                 // prepare_async() so that the nConvStageTypeId has been
