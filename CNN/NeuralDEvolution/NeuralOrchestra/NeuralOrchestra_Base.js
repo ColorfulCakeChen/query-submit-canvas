@@ -116,25 +116,27 @@ import * as DEvolution from "../DEvolution.js";
  *       more (than 250K).
  *
  *
- * 2.1 Configuration_4_39
+ * 2.1 Configuration_4_39_128
  *
  *   - vocabularyChannelCount = 4
  *   - blockCountTotalRequested = 39
+ *   - output_channelCount = 128
  *
  * It will get ( stageCount = 3 ). Its performance in backend webgl is faster
  * than Configuration_2_52.
  *
  *
- * 2.2 Configuration_2_52
+ * 2.2 Configuration_2_52_128
  *
  *   - vocabularyChannelCount = 2
  *   - blockCountTotalRequested = 52
+ *   - output_channelCount = 128
  *
  * It will get ( stageCount = 4 ). Its performance in backend cpu is faster
- * than Configuration_4_39.
+ * than Configuration_4_39_128.
  *
  *
- * 2.3 Configuration_4_120
+ * 2.3 Configuration_4_120_64
  *
  *   - vocabularyChannelCount = 4
  *   - blockCountTotalRequested = 120
@@ -146,31 +148,24 @@ import * as DEvolution from "../DEvolution.js";
  * 3. Configuration for 125K filter weights and execution 2 times per second
  *
  *
- * 3.1 Configuration_3_12
+ * 3.1 Configuration_4_12_128
  *
- *   - explicit_input_height = 72
- *   - explicit_input_width = 114
- *   - explicit_input_channelCount = 4
  *   - vocabularyChannelCount = 4
- *   - vocabularyCountPerInputChannel = 256
  *   - blockCountTotalRequested = 12
  *   - output_channelCount = 128
  *
  * It will get ( stageCount = 3 ).
  *
  *
- * 3.2 Configuration_2_34
+ * 3.2 Configuration_4_34_64
  *
- *   - explicit_input_height = 72
- *   - explicit_input_width = 114
- *   - explicit_input_channelCount = 4
  *   - vocabularyChannelCount = 4
- *   - vocabularyCountPerInputChannel = 256
  *   - blockCountTotalRequested = 34
  *   - output_channelCount = 64
  *
- * It will get ( stageCount = 2 ). It is far more slower than
- * Configuration_3_12.
+ * It will get ( stageCount = 2 ). Its performance is similar to
+ * Configuration_4_39_128 (but in lesser weight count) but is far more
+ * slower than Configuration_4_12_128.
  *
  *
  *
