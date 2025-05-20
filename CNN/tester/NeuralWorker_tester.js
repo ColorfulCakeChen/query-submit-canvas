@@ -317,8 +317,7 @@ class PerformanceTestCase extends Recyclable.Root {
     const vocabularyCountPerInputChannel
       = this.neuralNetParamsBase.vocabularyCountPerInputChannel;
 
-//!!! ...unfinished... (2025/05/15) Temporarily. should test various cases.
-    const weightArrayBuffer_partitionCount = 1;
+    const weightArrayBuffer_partitionCount = this.weightArrayBuffer_partitionCount;
 
     try {
       await tf.ready(); // Ensure tf.getBackend() workable.
@@ -337,10 +336,6 @@ class PerformanceTestCase extends Recyclable.Root {
         this.nNeuralWorker_ImplicitInputModeId,
         weightArrayBuffer_partitionCount );
 
-//!!! ...unfinished... (2025/05/16)
-// should check .weightArrayBuffer_partitionCount
-// and .weightArrayBuffer_partitionCount_want
-
       {
         if ( neuralWorkerProxies.alignmentMarkValueArray_nonEmpty )
           throw Error( `NeuralWorker_tester.PerformanceTestCase`
@@ -357,7 +352,7 @@ class PerformanceTestCase extends Recyclable.Root {
             + `( ${neuralWorkerProxies.previous_output_TypedArrayArray_nonEmpty} ) `
             + `should be false after .init_async() done. `
             + `${neuralWorkerProxies}` );
-          }
+      }
 
       PerformanceTestCase.randomTestWeightArray_create();
 
@@ -393,6 +388,22 @@ class PerformanceTestCase extends Recyclable.Root {
           + `.${funcNameInMessage}(): `
           + `Failed to initialize neuralWorkerProxies object. `
           + `${neuralWorkerProxies}` );
+
+      {
+//!!! ...unfinished... (2025/05/16)
+// should check .weightArrayBuffer_partitionCount
+// and .weightArrayBuffer_partitionCount_want
+
+        if ( neuralWorkerProxies.weightArrayBuffer_partitionCount
+               !== neuralWorkerProxies.weightArrayBuffer_partitionCount_want )
+          throw Error( `NeuralWorker_tester.PerformanceTestCase`
+            + `.${funcNameInMessage}(): `
+            + `.weightArrayBuffer_partitionCount `
+            + `( ${neuralWorkerProxies.weightArrayBuffer_partitionCount} ) `
+            + `should be the same as .weightArrayBuffer_partitionCount_want `
+            + `( ${neuralWorkerProxies.weightArrayBuffer_partitionCount_want} ) `
+            + `${neuralWorkerProxies}` );
+      }
 
 //!!! ...unfinished... (2025/05/16) Temporarily. should test various cases.
       const weightArrayBuffer_partitionId = 0;
