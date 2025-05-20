@@ -1216,12 +1216,22 @@ class HeightWidthDepth {
                   if ( this.ImplicitInputModeInfo
                          .implicit_input_bFillAlignmentMark ) {
 
-//!!! ...unfinished... (2025/05/20)
+// (2025/05/20 Remarked)
 // alignmentMarkValueArrayArray should be got from .neuralWorkerProxies
 // because the alignmentMarkValueArrayArray may be swapped.
+//
+//                   alignmentMarkValueArray
+//                     = testCase.alignmentMarkValueArrayArray[ neuralNetIndex ];
 
-                    alignmentMarkValueArray
-                      = testCase.alignmentMarkValueArrayArray[ neuralNetIndex ];
+                    // Note: alignmentMarkValueArrayArray should be got from
+                    //       .neuralWorkerProxies (not testCase) because
+                    //       the alignmentMarkValueArrayArray may have ever
+                    //       been swapped.
+                    //
+                    // (2025/05/20 Modified)
+                    alignmentMarkValueArray = this.neuralWorkerProxies
+                      .alignmentMarkValueArrayArray[ neuralNetIndex ];
+
                   }
 
                   if ( this.ImplicitInputModeInfo
