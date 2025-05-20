@@ -1220,7 +1220,7 @@ class HeightWidthDepth {
                          .implicit_input_bFillAlignmentMark ) {
 
                     // Note: alignmentMarkValueArrayArray should be got from
-                    //       .neuralWorkerProxies (not testCase) because
+                    //       .neuralWorkerProxies (not from testCase) because
                     //       the alignmentMarkValueArrayArray may have ever
                     //       been swapped.
                     //
