@@ -1151,6 +1151,10 @@ class HeightWidthDepth {
                        .implicit_input_bFillAlignmentMark ) {
 
                   if ( testCase.neuralNetCount == 2 ) {
+
+//!!! ...unfinished... (2025/05/20)
+// Perhaps, also test NeuralNet_recreate()
+
                     let swapOk = await this.neuralWorkerProxies
                       .alignmentMarkValueArrayArray_swap_async();
 
