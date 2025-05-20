@@ -1028,7 +1028,7 @@ class HeightWidthDepth {
   }
 
   /**
-   * (Called by util_tester.js)
+   * (Called by testerBackend())
    *
    * @param {ValueMax.Percentage.Aggregate} progressParent
    *   Some new progressToAdvance will be created and added to progressParent.
@@ -1298,7 +1298,7 @@ class HeightWidthDepth {
 }
 
 /**
- * (Called by tester())
+ * (Called by testerBackendAll())
  *
  * @param {ValueMax.Percentage.Aggregate} progressParent
  *   Some new progressToAdvance will be created and added to progressParent.
@@ -1353,7 +1353,7 @@ async function* testerBackend( progressParent,
 }
 
 /**
- * (Called by util_tester.js)
+ * (Called by TestButton_onClick())
  *
  * @param {ValueMax.Percentage.Aggregate} progressParent
  *   Some new progressToAdvance will be created and added to progressParent.
