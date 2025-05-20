@@ -17,7 +17,9 @@ import * as TestParams from "../jsPerf/Ref/TestParams.js";
 import * as NumberImage from "../jsPerf/Ref/NumberImage.js";
 import * as HTMLTable from "../Display/HTMLTable.js";
 
-/** */
+/**
+ * A helper class for read/write value from/to UI html element in the web page.
+ */
 class UIControls {
 
   controls_all = {
