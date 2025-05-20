@@ -270,11 +270,28 @@ class PerformanceTestCase extends Recyclable.Root {
 
     this.ImplicitInputModeInfo = NeuralWorker.ImplicitInputMode.Singleton
       .getInfo_byId( nNeuralWorker_ImplicitInputModeId );
+
+//!!! ...unfinished... (2025/05/20)
+// Is it necessary to become dynamic _partitionCount and _partitionId?
+
+    this.weightArrayBuffer_partitionCount = 2;
+    this.weightArrayBuffer_partitionId = 0;
   }
 
   /** @override */
   disposeResources() {
     this.preparePromise = undefined;
+
+    this.weightArrayBuffer_partitionId = undefined;
+    this.weightArrayBuffer_partitionCount = undefined;
+
+    this.ImplicitInputModeInfo = undefined;
+    this.neuralNetCount = undefined;
+
+    this.nNeuralWorker_ImplicitInputModeId = undefined;
+    this.nNeuralWorker_ModeId = undefined;
+
+
 
     this.neuralNetParamsBase?.disposeResources_and_recycleToPool();
     this.neuralNetParamsBase = null;
