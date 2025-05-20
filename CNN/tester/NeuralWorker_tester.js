@@ -475,7 +475,10 @@ class PerformanceTestCase extends Recyclable.Root {
     }
   }
 
-  /** Try to compute neural network result in this worker. */
+  /**
+   * Try to compute neural network result in this worker. Mainly for
+   * correctness testing.
+   */
   async NeuralNet_try_result_async(
     input_TypedArray, input_height, input_width,
     alignmentMarkValueArray, previous_output_TypedArray ) {
