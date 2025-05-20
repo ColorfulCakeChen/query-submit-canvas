@@ -1215,6 +1215,11 @@ class HeightWidthDepth {
                 {
                   if ( this.ImplicitInputModeInfo
                          .implicit_input_bFillAlignmentMark ) {
+
+//!!! ...unfinished... (2025/05/20)
+// alignmentMarkValueArrayArray should be got from .neuralWorkerProxies
+// because the alignmentMarkValueArrayArray may be swapped.
+
                     alignmentMarkValueArray
                       = testCase.alignmentMarkValueArrayArray[ neuralNetIndex ];
                   }
