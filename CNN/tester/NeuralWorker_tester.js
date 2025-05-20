@@ -315,6 +315,21 @@ class PerformanceTestCase extends Recyclable.Root {
   async prepare_async( neuralWorkerProxies ) {
     const funcNameInMessage = "prepare_async";
 
+//!!! ...unfinished... (2025/05/20)
+// Is it necessary to become dynamic _partitionCount and _partitionId?
+    {
+      if ( this.weightArrayBuffer_partitionCount === undefined )
+        this.weightArrayBuffer_partitionCount = 2;
+
+      if ( this.weightArrayBuffer_partitionId === undefined )
+        this.weightArrayBuffer_partitionId = 0;
+
+      if ( this.bLogDryRunTime === undefined )
+        // (2022//09/26 Remarked)
+        //this.bLogDryRunTime = true; // For observing dry-run performance.
+        this.bLogDryRunTime = false;
+    }
+
     const input_channelCount
       = this.neuralNetParamsBase.explicit_input_channelCount;
 
@@ -393,24 +408,17 @@ class PerformanceTestCase extends Recyclable.Root {
           + `Failed to initialize neuralWorkerProxies object. `
           + `${neuralWorkerProxies}` );
 
-      {
-//!!! ...unfinished... (2025/05/16)
-// should check .weightArrayBuffer_partitionCount
-// and .weightArrayBuffer_partitionCount_want
+      if ( neuralWorkerProxies.weightArrayBuffer_partitionCount
+              !== neuralWorkerProxies.weightArrayBuffer_partitionCount_want )
+        throw Error( `NeuralWorker_tester.PerformanceTestCase`
+          + `.${funcNameInMessage}(): .neuralWorkerProxies`
+          + `.weightArrayBuffer_partitionCount `
+          + `( ${neuralWorkerProxies.weightArrayBuffer_partitionCount} ) `
+          + `should be the same as .weightArrayBuffer_partitionCount_want `
+          + `( ${neuralWorkerProxies.weightArrayBuffer_partitionCount_want} ) `
+          + `${neuralWorkerProxies}` );
 
-        if ( neuralWorkerProxies.weightArrayBuffer_partitionCount
-               !== neuralWorkerProxies.weightArrayBuffer_partitionCount_want )
-          throw Error( `NeuralWorker_tester.PerformanceTestCase`
-            + `.${funcNameInMessage}(): `
-            + `.weightArrayBuffer_partitionCount `
-            + `( ${neuralWorkerProxies.weightArrayBuffer_partitionCount} ) `
-            + `should be the same as .weightArrayBuffer_partitionCount_want `
-            + `( ${neuralWorkerProxies.weightArrayBuffer_partitionCount_want} ) `
-            + `${neuralWorkerProxies}` );
-      }
-
-//!!! ...unfinished... (2025/05/16) Temporarily. should test various cases.
-      const weightArrayBuffer_partitionId = 0;
+      const weightArrayBuffer_partitionId = this.weightArrayBuffer_partitionId;
 
       const bLogDryRunTime = this.bLogDryRunTime;
       let bCreateOkPromise = neuralWorkerProxies.NeuralNetArray_create_async(
@@ -419,10 +427,6 @@ class PerformanceTestCase extends Recyclable.Root {
         weightArrayBuffer_partitionId,
         bLogDryRunTime );
 
-//!!! ...unfinished... (2025/05/16)
-// should check .weightArrayBuffer_partitionId
-// and .weightArrayBuffer_partitionId_want
-
       let bCreateOk = await bCreateOkPromise;
       if ( !bCreateOk )
         throw Error( `NeuralWorker_tester.PerformanceTestCase`
@@ -430,10 +434,20 @@ class PerformanceTestCase extends Recyclable.Root {
           + `Failed to create neural networks by neuralWorkerProxies. `
           + `${neuralWorkerProxies}` );
 
+      if ( neuralWorkerProxies.weightArrayBuffer_partitionId
+            !== neuralWorkerProxies.weightArrayBuffer_partitionId_want )
+        throw Error( `NeuralWorker_tester.PerformanceTestCase`
+          + `.${funcNameInMessage}(): .neuralWorkerProxies`
+          + `.weightArrayBuffer_partitionId `
+          + `( ${neuralWorkerProxies.weightArrayBuffer_partitionId} ) `
+          + `should be the same as .weightArrayBuffer_partitionId_want `
+          + `( ${neuralWorkerProxies.weightArrayBuffer_partitionId_want} ) `
+          + `${neuralWorkerProxies}` );
+
       {
         if ( neuralWorkerProxies.alignmentMarkValueArray_nonEmpty )
           throw Error( `NeuralWorker_tester.PerformanceTestCase`
-            + `.${funcNameInMessage}(): `
+            + `.${funcNameInMessage}(): .neuralWorkerProxies`
             + `.alignmentMarkValueArray_nonEmpty `
             + `( ${neuralWorkerProxies.alignmentMarkValueArray_nonEmpty} ) `
             + `should be false after .NeuralNetArray_create_async() done. `
@@ -441,7 +455,7 @@ class PerformanceTestCase extends Recyclable.Root {
 
         if ( neuralWorkerProxies.previous_output_TypedArrayArray_nonEmpty )
           throw Error( `NeuralWorker_tester.PerformanceTestCase`
-            + `.${funcNameInMessage}(): `
+            + `.${funcNameInMessage}(): .neuralWorkerProxies`
             + `.previous_output_TypedArrayArray_nonEmpty `
             + `( ${neuralWorkerProxies.previous_output_TypedArrayArray_nonEmpty} ) `
             + `should be false after .NeuralNetArray_create_async() done. `
@@ -527,7 +541,7 @@ class PerformanceTestCase extends Recyclable.Root {
       progress = ValueMax.Percentage.Aggregate.Pool.get_or_create_by();
       neuralNet = this.neuralNet = NeuralNet.Base.Pool.get_or_create_by();
 
-//!!! ...unfinished... (2025/05/20)
+!!! ...unfinished... (2025/05/20)
 // How to simulate NeuralNet_recreate().
 // weightArrayBuffer_partitionCount, weightArrayBuffer_partitionId
 
@@ -1302,12 +1316,6 @@ class HeightWidthDepth {
                 }
 
                 const input_TypedArray = this.input_TypedArray_clone();
-
-//!!! ...unfinished... (2025/05/20)
-// should try test NeuralNet_recreate()
-
-//!!! ...unfinished... (2025/05/20)
-// Test: weightArrayBuffer: partitionCount, partitionId
 
                 // NeuralNet_try_result_async() should be called after
                 // prepare_async() so that the nConvStageTypeId has been
