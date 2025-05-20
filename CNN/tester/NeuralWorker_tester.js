@@ -276,11 +276,17 @@ class PerformanceTestCase extends Recyclable.Root {
 
     this.weightArrayBuffer_partitionCount = 2;
     this.weightArrayBuffer_partitionId = 0;
+
+    // (2022//09/26 Remarked)
+    //this.bLogDryRunTime = true; // For observing dry-run performance.
+    this.bLogDryRunTime = false;
   }
 
   /** @override */
   disposeResources() {
     this.preparePromise = undefined;
+
+    this.bLogDryRunTime = undefined;
 
     this.weightArrayBuffer_partitionId = undefined;
     this.weightArrayBuffer_partitionCount = undefined;
@@ -290,8 +296,6 @@ class PerformanceTestCase extends Recyclable.Root {
 
     this.nNeuralWorker_ImplicitInputModeId = undefined;
     this.nNeuralWorker_ModeId = undefined;
-
-
 
     this.neuralNetParamsBase?.disposeResources_and_recycleToPool();
     this.neuralNetParamsBase = null;
@@ -408,9 +412,7 @@ class PerformanceTestCase extends Recyclable.Root {
 //!!! ...unfinished... (2025/05/16) Temporarily. should test various cases.
       const weightArrayBuffer_partitionId = 0;
 
-      // (2022//09/26 Remarked)
-      //const bLogDryRunTime = true; // For observing dry-run performance.
-      const bLogDryRunTime = false;
+      const bLogDryRunTime = this.bLogDryRunTime;
       let bCreateOkPromise = neuralWorkerProxies.NeuralNetArray_create_async(
         neuralNetParamsBase_Array,
         weightArrayBuffer_Array,
@@ -1144,6 +1146,8 @@ class HeightWidthDepth {
             testCaseIndexStep = -1;
           }
 
+          const neuralWorkerProxies = this.neuralWorkerProxies;
+
           const timeInfo = new ExecutionTimeInfo( ExecutionTimeInfoTimes );
           for ( let testCaseIndex = testCaseIndexBegin;
             testCaseIndex != testCaseIndexEnd;
@@ -1157,7 +1161,7 @@ class HeightWidthDepth {
             if ( !testCase.preparePromise ) {
               this.neuralWorker_PerformanceTest_release_preparePromise();
               testCase.preparePromise
-                = testCase.prepare_async( this.neuralWorkerProxies );
+                = testCase.prepare_async( neuralWorkerProxies );
               await testCase.preparePromise;
             }
 
@@ -1176,15 +1180,49 @@ class HeightWidthDepth {
                 timeTimesIndex < timeInfo.times;
                 ++timeTimesIndex ) {
 
+                // If weightArrayBuffer has multiple partition.
+                if ( testCase.weightArrayBuffer_partitionCount > 1 ) {
+
+                  { // Try next partition.
+                    ++testCase.weightArrayBuffer_partitionId;
+
+                    if ( testCase.weightArrayBuffer_partitionId
+                          >= testCase.weightArrayBuffer_partitionCount )
+                      testCase.weightArrayBuffer_partitionId = 0;
+                  }
+
+                  const bLogDryRunTime = testCase.bLogDryRunTime;
+                  let recreateOk = await neuralWorkerProxies
+                    .NeuralNetArray_recreate_async(
+                      testCase.weightArrayBuffer_partitionId,
+                      bLogDryRunTime );
+
+                  if ( !recreateOk )
+                    throw Error( `NeuralWorker_tester.HeightWidthDepth`
+                      + `.${funcNameInMessage}(): .neuralWorkerProxies`
+                      + `.NeuralNetArray_recreate_async() `
+                      + `result ( ${recreateOk} ) `
+                      + `should be true. `
+                      + `${neuralWorkerProxies}` );
+
+                  if ( neuralWorkerProxies.weightArrayBuffer_partitionId
+                        !== neuralWorkerProxies.weightArrayBuffer_partitionId_want )
+                    throw Error( `NeuralWorker_tester.PerformanceTestCase`
+                      + `.${funcNameInMessage}(): .neuralWorkerProxies`
+                      + `.weightArrayBuffer_partitionId `
+                      + `( ${neuralWorkerProxies.weightArrayBuffer_partitionId} ) `
+                      + `should be the same as .weightArrayBuffer_partitionId_want `
+                      + `( ${neuralWorkerProxies.weightArrayBuffer_partitionId_want} ) `
+                      + `${neuralWorkerProxies}` );
+                }
+
+                // If alignment mark is used, try swap them.
                 if ( this.ImplicitInputModeInfo
                        .implicit_input_bFillAlignmentMark ) {
 
                   if ( testCase.neuralNetCount == 2 ) {
 
-//!!! ...unfinished... (2025/05/20)
-// Perhaps, also test NeuralNet_recreate()
-
-                    let swapOk = await this.neuralWorkerProxies
+                    let swapOk = await neuralWorkerProxies
                       .alignmentMarkValueArrayArray_swap_async();
 
                     if ( !swapOk )
@@ -1193,7 +1231,7 @@ class HeightWidthDepth {
                         + `.alignmentMarkValueArrayArray_swap_async() `
                         + `result ( ${swapOk} ) `
                         + `should be true. `
-                        + `${this.neuralWorkerProxies}` );
+                        + `${neuralWorkerProxies}` );
                   }
                 }
 
@@ -1239,9 +1277,6 @@ class HeightWidthDepth {
                 neuralNetIndex < testCase.neuralNetCount;
                 ++neuralNetIndex ) {
 
-//!!! ...unfinished... (2025/05/20)
-// Perhaps, also test NeuralNet_recreate()
-
                 let alignmentMarkValueArray;
                 let previous_output_TypedArray;
                 {
@@ -1254,7 +1289,7 @@ class HeightWidthDepth {
                     //       been swapped.
                     //
                     // (2025/05/20 Modified)
-                    alignmentMarkValueArray = this.neuralWorkerProxies
+                    alignmentMarkValueArray = neuralWorkerProxies
                       .alignmentMarkValueArrayArray[ neuralNetIndex ];
                   }
 
@@ -1267,6 +1302,9 @@ class HeightWidthDepth {
                 }
 
                 const input_TypedArray = this.input_TypedArray_clone();
+
+//!!! ...unfinished... (2025/05/20)
+// should try test NeuralNet_recreate()
 
 //!!! ...unfinished... (2025/05/20)
 // Test: weightArrayBuffer: partitionCount, partitionId
