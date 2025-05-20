@@ -1231,7 +1231,6 @@ class HeightWidthDepth {
                     // (2025/05/20 Modified)
                     alignmentMarkValueArray = this.neuralWorkerProxies
                       .alignmentMarkValueArrayArray[ neuralNetIndex ];
-
                   }
 
                   if ( this.ImplicitInputModeInfo
