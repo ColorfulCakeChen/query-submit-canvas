@@ -421,9 +421,6 @@ class PerformanceTestCase extends Recyclable.Root {
 // should check .weightArrayBuffer_partitionId
 // and .weightArrayBuffer_partitionId_want
 
-//!!! ...unfinished... (2025/05/20)
-// Test alignmentMarkValueArrayArray_swap()
-
       let bCreateOk = await bCreateOkPromise;
       if ( !bCreateOk )
         throw Error( `NeuralWorker_tester.PerformanceTestCase`
