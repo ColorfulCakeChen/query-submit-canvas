@@ -849,7 +849,7 @@ class PerformanceTestCase extends Recyclable.Root {
       //!!! (2023/05/15 Remarked) For reduce neural network result value.
       //const weightsDivisorForRemainder = 1024;
       //const weightsDivisorForRemainder = 128;
-      const weightsDivisorForRemainder = ( 2 ** 2 ); // = 4
+      const weightsDivisorForRemainder = ( 2 ** 0 ); // = 1
 
       RandTools.fill_numberArray(
         PerformanceTestCase.random_WeightFloat32Array,
