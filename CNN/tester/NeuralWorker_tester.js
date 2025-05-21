@@ -824,7 +824,7 @@ class PerformanceTestCase extends Recyclable.Root {
       PerformanceTestCase.random_WeightFloat32Array
         = new Float32Array( weightArrayLength );
 
-      // Use 1/2, 1/4, 1/8, ..., 1/(2**n) as randome filter weight.
+      // Use 1/2, 1/4, 1/8, ..., 1/(2**n) as random filter weights.
       // So that the result of multiple-add will not too large.
       //
       // (2025/05/21 Modified)
@@ -846,7 +846,7 @@ class PerformanceTestCase extends Recyclable.Root {
         max: +1
       };
 
-      //!!! (2023/05/15 Remarked) For reduce neural network result value.
+      // (2025/05/21 Remarked) For reduce neural network result value.
       //const weightsDivisorForRemainder = 1024;
       //const weightsDivisorForRemainder = 128;
       const weightsDivisorForRemainder = ( 2 ** 0 ); // = 1

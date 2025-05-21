@@ -157,15 +157,18 @@ import * as DEvolution from "../DEvolution.js";
  * It will get ( stageCount = 3 ).
  *
  *
- * 3.2 Configuration_4_34_64
+ * 3.2 Configuration_4_32_64
  *
  *   - vocabularyChannelCount = 4
- *   - blockCountTotalRequested = 34
+ *   - blockCountTotalRequested = 32
  *   - output_channelCount = 64
  *
  * It will get ( stageCount = 2 ). Its performance is similar to
  * Configuration_4_39_128 (but in lesser weight count) but is far more
  * slower than Configuration_4_12_128.
+ *
+ * Note: If increase to Configuration_4_34_64, the neural network calculation
+ *       result seems wrong in mobile phone.
  *
  *
  *
