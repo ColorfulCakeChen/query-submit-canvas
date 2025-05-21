@@ -583,13 +583,59 @@ class PerformanceTestCase extends Recyclable.Root {
 
       if ( !swapOk )
         throw Error( `NeuralWorker_tester.PerformanceTestCase`
-          + `.${funcNameInMessage}(): .neuralWorkerProxies`
+          + `.${funcNameInMessage}(): neuralWorkerProxies`
           + `.alignmentMarkValueArrayArray_swap_async() `
           + `result ( ${swapOk} ) `
           + `should be true. `
           + `${neuralWorkerProxies}` );
 
       return swapOk;
+
+    } catch ( e ) {
+      console.error( e );
+      debugger;
+      throw e;
+    }
+  }
+
+  /**
+   * Call .TypedArray_process_async of .neuralWorkerProxies.
+   *
+   * @param {NeuralWorker.Proxies} neuralWorkerProxies
+   *   The shared neural worker proxies.
+   * 
+   * @return {Promise( Float32ArrayArray )}
+   *   Return the result Float32ArrayArray.
+   */
+  async NeuralWorkerProxies_process_test_async( neuralWorkerProxies,
+    input_TypedArray, input_height_scaled, input_width_scaled ) {
+
+    const funcNameInMessage = "NeuralWorkerProxies_process_test_async";
+
+    try {
+
+      let resultFloat32ArrayArrayPromise
+        = neuralWorkerProxies.TypedArray_process_async(
+            input_TypedArray, input_height_scaled, input_width_scaled );
+
+      if ( input_TypedArray.length != 0 )
+        throw Error( `NeuralWorker_tester.PerformanceTestCase`
+          + `.${funcNameInMessage}(): `
+          + `input_TypedArray.length ( ${input_TypedArray.length} ) should be 0 `
+          + `after transferred to worker. `
+          + `${neuralWorkerProxies}` );
+
+      let resultFloat32ArrayArray = await resultFloat32ArrayArrayPromise;
+
+      if ( !neuralWorkerProxies.previous_output_TypedArrayArray_nonEmpty )
+        throw Error( `NeuralWorker_tester.PerformanceTestCase`
+          + `.${funcNameInMessage}(): neuralWorkerProxies`
+          + `.previous_output_TypedArrayArray_nonEmpty `
+          + `( ${neuralWorkerProxies.previous_output_TypedArrayArray_nonEmpty} ) `
+          + `should be true after .TypedArray_process_async() done. `
+          + `${neuralWorkerProxies}` );
+
+      return resultFloat32ArrayArray;
 
     } catch ( e ) {
       console.error( e );
@@ -1134,26 +1180,11 @@ class HeightWidthDepth {
     const input_TypedArray = this.input_TypedArray_clone();
 
     let resultFloat32ArrayArrayPromise
-      = neuralWorkerProxies.TypedArray_process_async(
+      = await testCase.NeuralWorkerProxies_process_test_async(
+          neuralWorkerProxies,
           input_TypedArray, input_height_scaled, input_width_scaled );
 
-    if ( input_TypedArray.length != 0 )
-      throw Error( `NeuralWorker_tester.HeightWidthDepth`
-        + `.${funcNameInMessage}(): `
-        + `input_TypedArray.length ( ${input_TypedArray.length} ) should be 0 `
-        + `after transferred to worker. `
-        + `${neuralWorkerProxies}` );
-
     let resultFloat32ArrayArray = await resultFloat32ArrayArrayPromise;
-
-    if ( !neuralWorkerProxies.previous_output_TypedArrayArray_nonEmpty )
-      throw Error( `NeuralWorker_tester.HeightWidthDepth`
-        + `.${funcNameInMessage}(): `
-        + `.previous_output_TypedArrayArray_nonEmpty `
-        + `( ${neuralWorkerProxies.previous_output_TypedArrayArray_nonEmpty} ) `
-        + `should be true after .TypedArray_process_async() done. `
-        + `${neuralWorkerProxies}` );
-
     return resultFloat32ArrayArray;
   }
 
