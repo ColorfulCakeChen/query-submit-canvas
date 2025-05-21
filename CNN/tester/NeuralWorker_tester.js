@@ -307,7 +307,7 @@ class PerformanceTestCase extends Recyclable.Root {
   }
 
   /**
-   * Create .neuralWorkerProxies
+   * Initialize .neuralWorkerProxies
    *
    * @param {NeuralWorker.Proxies} neuralWorkerProxies
    *   The shared neural worker proxies.
@@ -502,6 +502,84 @@ class PerformanceTestCase extends Recyclable.Root {
       debugger;
       throw e;
     }
+  }
+
+  /**
+   * Change weightArrayBuffer_partitonId of .neuralWorkerProxies.
+   * (Also recreate neural network in the neural worker.)
+   *
+   * @param {NeuralWorker.Proxies} neuralWorkerProxies
+   *   The shared neural worker proxies.
+   */
+  async NeuralWorkerProxies_paritition_test_async( neuralWorkerProxies ) {
+    const funcNameInMessage = "NeuralWorkerProxies_paritition_test_async";
+
+    // 1. If weightArrayBuffer has only one partition.
+    if ( this.weightArrayBuffer_partitionCount < 1 )
+      return true; // No need to test partition. Always success.
+
+    // 2. If weightArrayBuffer has multiple partition.
+
+    { // Try next partition.
+      ++this.weightArrayBuffer_partitionId;
+
+      if ( this.weightArrayBuffer_partitionId
+            >= this.weightArrayBuffer_partitionCount )
+        this.weightArrayBuffer_partitionId = 0;
+    }
+
+    const bLogDryRunTime = this.bLogDryRunTime;
+    let recreateOk = await neuralWorkerProxies
+      .NeuralNetArray_recreate_async(
+        this.weightArrayBuffer_partitionId,
+        bLogDryRunTime );
+
+    if ( !recreateOk )
+      throw Error( `NeuralWorker_tester.PerformanceTestCase`
+        + `.${funcNameInMessage}(): neuralWorkerProxies`
+        + `.NeuralNetArray_recreate_async() `
+        + `result ( ${recreateOk} ) `
+        + `should be true. `
+        + `${neuralWorkerProxies}` );
+
+    if ( neuralWorkerProxies.weightArrayBuffer_partitionId
+          !== neuralWorkerProxies.weightArrayBuffer_partitionId_want )
+      throw Error( `NeuralWorker_tester.PerformanceTestCase`
+        + `.${funcNameInMessage}(): neuralWorkerProxies`
+        + `.weightArrayBuffer_partitionId `
+        + `( ${neuralWorkerProxies.weightArrayBuffer_partitionId} ) `
+        + `should be the same as .weightArrayBuffer_partitionId_want `
+        + `( ${neuralWorkerProxies.weightArrayBuffer_partitionId_want} ) `
+        + `${neuralWorkerProxies}` );
+
+    return recreateOk;
+  }
+
+  /**
+   * Swap alignmentMarkArrayArray of .neuralWorkerProxies.
+   *
+   * @param {NeuralWorker.Proxies} neuralWorkerProxies
+   *   The shared neural worker proxies.
+   */
+  async NeuralWorkerProxies_alignmentMark_test_async( neuralWorkerProxies ) {
+    const funcNameInMessage = "NeuralWorkerProxies_alignmentMark_test_async";
+
+    // 1. If there is only one alignment.
+    if ( this.neuralNetCount >= 2 )
+      return true; // No need to test alignment swapping. Always success.
+
+    let swapOk = await neuralWorkerProxies
+      .alignmentMarkValueArrayArray_swap_async();
+
+    if ( !swapOk )
+      throw Error( `NeuralWorker_tester.PerformanceTestCase`
+        + `.${funcNameInMessage}(): .neuralWorkerProxies`
+        + `.alignmentMarkValueArrayArray_swap_async() `
+        + `result ( ${swapOk} ) `
+        + `should be true. `
+        + `${neuralWorkerProxies}` );
+
+    return swapOk;
   }
 
   /**
@@ -1154,9 +1232,11 @@ class HeightWidthDepth {
 
             testCase = testCaseArray[ testCaseIndex ];
 
-            // Every test case should be tested from the first
-            // weightArrayBuffer partion.
-            testCase.weightArrayBuffer_partitionId = 0;
+//!!! ...unfinished... (2025/05/21) seems not necessary
+// because TestCase constructor has done it.
+//             // Every test case should be tested from the first
+//             // weightArrayBuffer partion.
+//             testCase.weightArrayBuffer_partitionId = 0;
 
             // First time test the case. Release all other test cases' neural
             // networks (so that there will be enough memory). Create the
@@ -1186,59 +1266,15 @@ class HeightWidthDepth {
                 // Try different partition and alignmentMark after 2nd times.
                 if ( timeTimesIndex > 0 ) {
 
-                  // If weightArrayBuffer has multiple partition.
-                  if ( testCase.weightArrayBuffer_partitionCount > 1 ) {
-
-                    { // Try next partition.
-                      ++testCase.weightArrayBuffer_partitionId;
-
-                      if ( testCase.weightArrayBuffer_partitionId
-                            >= testCase.weightArrayBuffer_partitionCount )
-                        testCase.weightArrayBuffer_partitionId = 0;
-                    }
-
-                    const bLogDryRunTime = testCase.bLogDryRunTime;
-                    let recreateOk = await neuralWorkerProxies
-                      .NeuralNetArray_recreate_async(
-                        testCase.weightArrayBuffer_partitionId,
-                        bLogDryRunTime );
-
-                    if ( !recreateOk )
-                      throw Error( `NeuralWorker_tester.HeightWidthDepth`
-                        + `.${funcNameInMessage}(): .neuralWorkerProxies`
-                        + `.NeuralNetArray_recreate_async() `
-                        + `result ( ${recreateOk} ) `
-                        + `should be true. `
-                        + `${neuralWorkerProxies}` );
-
-                    if ( neuralWorkerProxies.weightArrayBuffer_partitionId
-                          !== neuralWorkerProxies.weightArrayBuffer_partitionId_want )
-                      throw Error( `NeuralWorker_tester.PerformanceTestCase`
-                        + `.${funcNameInMessage}(): .neuralWorkerProxies`
-                        + `.weightArrayBuffer_partitionId `
-                        + `( ${neuralWorkerProxies.weightArrayBuffer_partitionId} ) `
-                        + `should be the same as .weightArrayBuffer_partitionId_want `
-                        + `( ${neuralWorkerProxies.weightArrayBuffer_partitionId_want} ) `
-                        + `${neuralWorkerProxies}` );
-                  }
+                  await testCase.NeuralWorkerProxies_paritition_test_async(
+                    neuralWorkerProxies );
 
                   // If alignment mark is used, try swap them.
                   if ( this.ImplicitInputModeInfo
                         .implicit_input_bFillAlignmentMark ) {
 
-                    if ( testCase.neuralNetCount == 2 ) {
-
-                      let swapOk = await neuralWorkerProxies
-                        .alignmentMarkValueArrayArray_swap_async();
-
-                      if ( !swapOk )
-                        throw Error( `NeuralWorker_tester.HeightWidthDepth`
-                          + `.${funcNameInMessage}(): .neuralWorkerProxies`
-                          + `.alignmentMarkValueArrayArray_swap_async() `
-                          + `result ( ${swapOk} ) `
-                          + `should be true. `
-                          + `${neuralWorkerProxies}` );
-                    }
+                    await testCase.NeuralWorkerProxies_alignmentMark_test_async(
+                      neuralWorkerProxies );
                   }
                 }
 
