@@ -1355,20 +1355,23 @@ class HeightWidthDepth {
 
             // Execution time testing.
             {
+              { // Try different weight partition (for some test cases).
+                if ( ( testCaseIndex % 2 ) > 0 ) {
+                  const parititionOkPromise
+                    = testCase.NeuralWorkerProxies_paritition_test_async(
+                        neuralWorkerProxies );
+                  const parititionOk = await parititionOkPromise;
+                }
+              }
+
               timeInfo.name = testCase.testCaseName;
               timeInfo.elapsedTotal = 0;
               for ( let timeTimesIndex = 0;
                 timeTimesIndex < timeInfo.times;
                 ++timeTimesIndex ) {
 
-                // Try different partition and alignmentMark after 2nd times.
+                // Try different alignmentMark after 2nd times.
                 if ( timeTimesIndex > 0 ) {
-
-                  const parititionOkPromise
-                    = testCase.NeuralWorkerProxies_paritition_test_async(
-                        neuralWorkerProxies );
-
-                  const parititionOk = await parititionOkPromise;
 
                   // If alignment mark is used, try swap them.
                   if ( this.ImplicitInputModeInfo
