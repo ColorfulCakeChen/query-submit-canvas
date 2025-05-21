@@ -464,6 +464,10 @@ class PerformanceTestCase extends Recyclable.Root {
           this.alignmentMarkValueArrayArray // Test Array.
             = [ new Array( input_channelCount ) ];
 
+//!!! ...unffinishd... (2025/05/21)
+// Perhaps, use 1/2, 1/4, 1/8, ..., 1/(2**n) as randome weight.
+// So that the result of multiple-add will not too large.
+
         // between [ 0, ( vocabularyCountPerInputChannel - 1 ) ]
         const markValueBegin = 10;
         const markValueStep = 1;
@@ -819,6 +823,12 @@ class PerformanceTestCase extends Recyclable.Root {
 
       PerformanceTestCase.random_WeightFloat32Array
         = new Float32Array( weightArrayLength );
+
+
+//!!! ...unffinishd... (2025/05/21)
+// Perhaps, use 1/2, 1/4, 1/8, ..., 1/(2**n) as randome filter weight.
+// So that the result of multiple-add will not too large.
+
 
       const weightsValueBegin = 0;
       const weightsValueStep = 10;
