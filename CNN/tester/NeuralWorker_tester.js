@@ -1364,21 +1364,21 @@ class HeightWidthDepth {
                 // Try different partition and alignmentMark after 2nd times.
                 if ( timeTimesIndex > 0 ) {
 
-                  let parititionOkPromise
+                  const parititionOkPromise
                     = testCase.NeuralWorkerProxies_paritition_test_async(
                         neuralWorkerProxies );
 
-                  let parititionOk = await parititionOkPromise;
+                  const parititionOk = await parititionOkPromise;
 
                   // If alignment mark is used, try swap them.
                   if ( this.ImplicitInputModeInfo
                         .implicit_input_bFillAlignmentMark ) {
 
-                    let alignmentMarkOkPromise
+                    const alignmentMarkOkPromise
                       = testCase.NeuralWorkerProxies_alignmentMark_test_async(
                           neuralWorkerProxies );
 
-                    let alignmentMarkOk = await alignmentMarkOkPromise;
+                    const alignmentMarkOk = await alignmentMarkOkPromise;
                   }
                 }
 
