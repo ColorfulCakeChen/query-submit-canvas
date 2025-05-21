@@ -286,6 +286,7 @@ class PerformanceTestCase extends Recyclable.Root {
   disposeResources() {
     this.preparePromise = undefined;
 
+    this.ScaleFiller = undefined;
     this.bLogDryRunTime = undefined;
 
     this.weightArrayBuffer_partitionId = undefined;
@@ -742,11 +743,14 @@ class PerformanceTestCase extends Recyclable.Root {
           + `NeuralNet object successfully. ${neuralNet}`);
 
       {
-        this.ScaleFiller = new NeuralNet.ScaleFiller(
-          this.neuralNet.input_height,
-          this.neuralNet.input_width,
-          this.neuralNet.input_channelCount
-        );
+        if ( !this.ScaleFiller ) {
+          this.ScaleFiller = new NeuralNet.ScaleFiller(
+            this.neuralNet.input_height,
+            this.neuralNet.input_width,
+            this.neuralNet.input_channelCount
+          );
+        }
+        const scaleFiller = this.ScaleFiller;
 
         const bTwoTensors = false;
         let alignmentMarkValueArrayArray;
@@ -760,7 +764,7 @@ class PerformanceTestCase extends Recyclable.Root {
         }
 
         createTensor_asyncGenerator
-          = this.ScaleFiller.createTensor_by_scale_fill_asyncGenerator(
+          = scaleFiller.createTensor_by_scale_fill_asyncGenerator(
               input_TypedArray, input_height, input_width,
               bTwoTensors,
               neuralNet.feedbackShape,
