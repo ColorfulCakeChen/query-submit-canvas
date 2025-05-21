@@ -484,9 +484,6 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
         let neuralNetParamsBase = neuralNetParamsBase_Array[ i ];
         let weightArrayBuffer = weightArrayBuffer_Array[ i ];
 
-//!!! ...unfinished... (2025/05/14)
-// Perhaps, re-create neural network when alignmentMark swapping.
-
         let inputWeightArray = new Float32Array(
           weightArrayBuffer,
           weightArrayBuffer_byteOffset,
