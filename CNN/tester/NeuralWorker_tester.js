@@ -1648,9 +1648,9 @@ async function* testerBackendAll( progressParent,
       blockCountTotalRequested,
       output_channelCount,
 
-      "cpu", bAscent_or_Descent,
+//      "cpu", bAscent_or_Descent,
 //!!! (2025/05/21 Temp Reamrked) For debug mobile phone.
-//      "webgl", bAscent_or_Descent,
+      "webgl", bAscent_or_Descent,
     );
 
     bAscent_or_Descent = true; // Ascent
@@ -1663,9 +1663,9 @@ async function* testerBackendAll( progressParent,
       blockCountTotalRequested,
       output_channelCount,
 
-      "webgl", bAscent_or_Descent,
+//      "webgl", bAscent_or_Descent,
 //!!! (2025/05/21 Temp Reamrked) For debug mobile phone.
-//      "cpu", bAscent_or_Descent,
+      "cpu", bAscent_or_Descent,
     );
   }
 
