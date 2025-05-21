@@ -1216,7 +1216,7 @@ class HeightWidthDepth {
     const input_width_scaled = this.input_width_scaled;
 
     let resultFloat32ArrayArrayPromise
-      = await testCase.NeuralWorkerProxies_process_test_async(
+      = testCase.NeuralWorkerProxies_process_test_async(
           neuralWorkerProxies,
           input_TypedArray, input_height_scaled, input_width_scaled );
 
@@ -1350,15 +1350,21 @@ class HeightWidthDepth {
                 // Try different partition and alignmentMark after 2nd times.
                 if ( timeTimesIndex > 0 ) {
 
-                  await testCase.NeuralWorkerProxies_paritition_test_async(
-                    neuralWorkerProxies );
+                  let parititionOkPromise
+                    = testCase.NeuralWorkerProxies_paritition_test_async(
+                        neuralWorkerProxies );
+
+                  let parititionOk = await parititionOkPromise;
 
                   // If alignment mark is used, try swap them.
                   if ( this.ImplicitInputModeInfo
                         .implicit_input_bFillAlignmentMark ) {
 
-                    await testCase.NeuralWorkerProxies_alignmentMark_test_async(
-                      neuralWorkerProxies );
+                    let alignmentMarkOkPromise
+                      = testCase.NeuralWorkerProxies_alignmentMark_test_async(
+                          neuralWorkerProxies );
+
+                    let alignmentMarkOk = await alignmentMarkOkPromise;
                   }
                 }
 
