@@ -623,7 +623,7 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
    *       They should be in the same web worker. Different web worker uses
    *       itself cache.)
    *
-   *   - Even the sharder has been compiled (i.e. operations with the same
+   *   - Even the shader has been compiled (i.e. operations with the same
    *       input/output tensor shape have been used before), this dry-run will
    *       still improve performance for later real run because the neural
    *       network's filters' tensors will be uploaded to GPU.
