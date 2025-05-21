@@ -828,17 +828,23 @@ class PerformanceTestCase extends Recyclable.Root {
 
       // Use 1/2, 1/4, 1/8, ..., 1/(2**n) as randome filter weight.
       // So that the result of multiple-add will not too large.
-      //
+
       // (2025/05/21 Remarked)
       // const weightsValueBegin = 0;
       // const weightsValueStep = 10;
+      //
+      //// Use larger variation to generate negative result.
+      //const weightsRandomOffset = {
+      //  min: - ( 10 * weightArrayLength ),
+      //  max: +5 };
+
       const weightsValueBegin = 0;
       const weightsValueStep = 1 / ( 2 ** 5 );
 
       // Use larger variation to generate negative result.
       const weightsRandomOffset = {
-        min: - ( 10 * weightArrayLength ),
-        max: +5 };
+        min: - ( 10 * weightsValueStep ),
+        max: + (  5 * weightsValueStep ) };
 
       //!!! (2023/05/15 Remarked) For reduce neural network result value.
       //const weightsDivisorForRemainder = 1024;
