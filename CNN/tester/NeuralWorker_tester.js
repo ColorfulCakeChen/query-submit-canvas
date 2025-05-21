@@ -1374,7 +1374,7 @@ class HeightWidthDepth {
 
             // Execution time testing.
             {
-              
+
 //!!! ...unfinished... (2025/05/21)
 // Whether has other method to determine partition id?
 
