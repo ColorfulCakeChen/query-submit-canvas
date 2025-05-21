@@ -470,6 +470,9 @@ class PerformanceTestCase extends Recyclable.Root {
         const markRandomOffset = { min: -10, max: +1 };
         const markDivisorForRemainder = vocabularyCountPerInputChannel;
 
+        const alwaysFixedRandomMinMax
+          = PerformanceTestCase.alwaysFixedRandomMinMax;
+
         for ( let neuralNetIndex = 0;
           neuralNetIndex < this.neuralNetCount; ++neuralNetIndex ) {
 
@@ -478,7 +481,8 @@ class PerformanceTestCase extends Recyclable.Root {
             1, 1, input_channelCount,
             markValueBegin, markValueStep,
             markRandomOffset.min, markRandomOffset.max,
-            markDivisorForRemainder
+            markDivisorForRemainder,
+            alwaysFixedRandomMinMax
           );
         }
 
@@ -849,9 +853,8 @@ class PerformanceTestCase extends Recyclable.Root {
     //const weightsDivisorForRemainder = 128;
     const weightsDivisorForRemainder = ( 2 ** 0 ); // = 1
 
-    // (For debug. mobile phone.) (2025/05/21)
-    const alwaysFixedRandomMinMax = true;
-    //const alwaysFixedRandomMinMax = false;
+    const alwaysFixedRandomMinMax
+      = PerformanceTestCase.alwaysFixedRandomMinMax;
 
     RandTools.fill_numberArray(
       PerformanceTestCase.random_WeightFloat32Array,
@@ -863,6 +866,10 @@ class PerformanceTestCase extends Recyclable.Root {
       alwaysFixedRandomMinMax
     );
   }
+
+  // (For debug. mobile phone.) (2025/05/21)
+  static alwaysFixedRandomMinMax = true;
+  //static alwaysFixedRandomMinMax = false;
 
   /** A simple longer weights Float32Array instead of NeuralNet_TestParams.
    *
@@ -1053,12 +1060,17 @@ class HeightWidthDepth {
       const input_randomOffset = { min: -10, max: +10 };
       const input_divisorForRemainder = vocabularyCountPerInputChannel;
 
+      const alwaysFixedRandomMinMax
+        = PerformanceTestCase.alwaysFixedRandomMinMax;
+
       RandTools.fill_numberArray(
         this.input_TypedArray,
         input_height_scaled, input_width_scaled, input_channelCount,
         input_valueBegin, input_valueStep,
         input_randomOffset.min, input_randomOffset.max,
-        input_divisorForRemainder );
+        input_divisorForRemainder,
+        alwaysFixedRandomMinMax
+      );
     }
 
     // If ( vocabulary count <= 256 ) and ( channel count == 4 ), use canvas.
