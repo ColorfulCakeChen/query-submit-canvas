@@ -1268,10 +1268,16 @@ class HeightWidthDepth {
   async* tester( progressParent ) {
     const funcNameInMessage = "tester";
 
+// //!!! ...unfinished... (2025/05/21)
+// // Perhaps, always use "cpu" backend in main (UI) thread?
+//     const backendName_mainThread = "cpu";
+//     {
+//     }
+
     // Ensure backend of tensorflow.js
     {
       await tf.ready(); // Ensure tf.getBackend() workable.
-  
+
       let currentBackendName = tf.getBackend();
       if ( currentBackendName != this.backendName ) {
         let setBackendOkPromise = tf.setBackend( this.backendName );
@@ -1647,9 +1653,6 @@ async function* testerBackendAll( progressParent,
       vocabularyChannelCount, vocabularyCountPerInputChannel,
       blockCountTotalRequested,
       output_channelCount,
-
-//      "cpu", bAscent_or_Descent,
-//!!! (2025/05/21 Temp Reamrked) For debug mobile phone.
       "webgl", bAscent_or_Descent,
     );
 
@@ -1662,9 +1665,6 @@ async function* testerBackendAll( progressParent,
       vocabularyChannelCount, vocabularyCountPerInputChannel,
       blockCountTotalRequested,
       output_channelCount,
-
-//      "webgl", bAscent_or_Descent,
-//!!! (2025/05/21 Temp Reamrked) For debug mobile phone.
       "cpu", bAscent_or_Descent,
     );
   }
