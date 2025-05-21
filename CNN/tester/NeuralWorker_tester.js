@@ -824,14 +824,16 @@ class PerformanceTestCase extends Recyclable.Root {
       PerformanceTestCase.random_WeightFloat32Array
         = new Float32Array( weightArrayLength );
 
+//!!! ...unfinishd... (2025/05/21)
 
-//!!! ...unffinishd... (2025/05/21)
-// Perhaps, use 1/2, 1/4, 1/8, ..., 1/(2**n) as randome filter weight.
-// So that the result of multiple-add will not too large.
-
-
+      // Use 1/2, 1/4, 1/8, ..., 1/(2**n) as randome filter weight.
+      // So that the result of multiple-add will not too large.
+      //
+      // (2025/05/21 Remarked)
+      // const weightsValueBegin = 0;
+      // const weightsValueStep = 10;
       const weightsValueBegin = 0;
-      const weightsValueStep = 10;
+      const weightsValueStep = 1 / ( 2 ** 5 );
 
       // Use larger variation to generate negative result.
       const weightsRandomOffset = {
