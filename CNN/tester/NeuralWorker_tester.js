@@ -843,8 +843,8 @@ class PerformanceTestCase extends Recyclable.Root {
 
       // Use larger negative variation to generate negative result.
       const weightsRandomOffset = {
-        min: - ( 10 * weightsValueStep ),
-        max: + (  5 * weightsValueStep ) };
+        min: - ( 100 * weightsValueStep ),
+        max: + (   5 * weightsValueStep ) };
 
       //!!! (2023/05/15 Remarked) For reduce neural network result value.
       //const weightsDivisorForRemainder = 1024;
