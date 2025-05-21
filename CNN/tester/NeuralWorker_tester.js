@@ -1407,10 +1407,10 @@ class HeightWidthDepth {
                   if ( this.ImplicitInputModeInfo
                          .implicit_input_bFillAlignmentMark ) {
 
-                    // Note: alignmentMarkValueArrayArray should be gotten
-                    //       from .neuralWorkerProxies (not from testCase)
-                    //       because the alignmentMarkValueArrayArray may have
-                    //       ever been swapped.
+                    // Note: alignmentMarkValueArray should be gotten from
+                    //       .neuralWorkerProxies (not from testCase) because
+                    //       the alignmentMarkValueArrayArray may have ever
+                    //       been swapped.
                     //
                     // (2025/05/20 Modified)
                     alignmentMarkValueArray = neuralWorkerProxies
