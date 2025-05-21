@@ -750,7 +750,7 @@ class PerformanceTestCase extends Recyclable.Root {
             this.neuralNet.input_channelCount
           );
         }
-        const scaleFiller = this.ScaleFiller;
+        const theScaleFiller = this.ScaleFiller;
 
         const bTwoTensors = false;
         let alignmentMarkValueArrayArray;
@@ -764,7 +764,7 @@ class PerformanceTestCase extends Recyclable.Root {
         }
 
         createTensor_asyncGenerator
-          = scaleFiller.createTensor_by_scale_fill_asyncGenerator(
+          = theScaleFiller.createTensor_by_scale_fill_asyncGenerator(
               input_TypedArray, input_height, input_width,
               bTwoTensors,
               neuralNet.feedbackShape,
