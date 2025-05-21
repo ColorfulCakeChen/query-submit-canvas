@@ -464,10 +464,6 @@ class PerformanceTestCase extends Recyclable.Root {
           this.alignmentMarkValueArrayArray // Test Array.
             = [ new Array( input_channelCount ) ];
 
-//!!! ...unffinishd... (2025/05/21)
-// Perhaps, use 1/2, 1/4, 1/8, ..., 1/(2**n) as randome weight.
-// So that the result of multiple-add will not too large.
-
         // between [ 0, ( vocabularyCountPerInputChannel - 1 ) ]
         const markValueBegin = 10;
         const markValueStep = 1;
@@ -853,13 +849,18 @@ class PerformanceTestCase extends Recyclable.Root {
     //const weightsDivisorForRemainder = 128;
     const weightsDivisorForRemainder = ( 2 ** 0 ); // = 1
 
+    // (For debug. mobile phone.) (2025/05/21)
+    const alwaysFixedRandomMinMax = true;
+    //const alwaysFixedRandomMinMax = false;
+
     RandTools.fill_numberArray(
       PerformanceTestCase.random_WeightFloat32Array,
       pseudo_height, pseudo_width, pseudo_channelCount,
       weightsValueBegin, weightsValueStep,
       weightsRandomOffset.min,
       weightsRandomOffset.max,
-      weightsDivisorForRemainder
+      weightsDivisorForRemainder,
+      alwaysFixedRandomMinMax
     );
   }
 
