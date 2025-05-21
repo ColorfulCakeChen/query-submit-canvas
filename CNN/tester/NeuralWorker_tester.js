@@ -1374,6 +1374,10 @@ class HeightWidthDepth {
 
             // Execution time testing.
             {
+              
+//!!! ...unfinished... (2025/05/21)
+// Whether has other method to determine partition id?
+
               { // Try different weight partition (for some test cases).
                 if ( ( testCaseIndex % 2 ) > 0 ) {
                   const parititionOkPromise
@@ -1472,9 +1476,6 @@ class HeightWidthDepth {
                 }
 
                 const input_TypedArray = this.input_TypedArray_clone();
-
-//!!! ...unfinished... (2025/05/21)
-// How to test partition 0 (not only partition 1)
 
                 // NeuralNet_try_result_async() should be called after
                 // NeuralWorkerProxies_prepare_async() so that the
