@@ -312,8 +312,8 @@ class PerformanceTestCase extends Recyclable.Root {
    * @param {NeuralWorker.Proxies} neuralWorkerProxies
    *   The shared neural worker proxies.
    */
-  async prepare_async( neuralWorkerProxies ) {
-    const funcNameInMessage = "prepare_async";
+  async NeuralWorkerProxies_prepare_async( neuralWorkerProxies ) {
+    const funcNameInMessage = "NeuralWorkerProxies_prepare_async";
 
     const input_channelCount
       = this.neuralNetParamsBase.explicit_input_channelCount;
@@ -514,45 +514,53 @@ class PerformanceTestCase extends Recyclable.Root {
   async NeuralWorkerProxies_paritition_test_async( neuralWorkerProxies ) {
     const funcNameInMessage = "NeuralWorkerProxies_paritition_test_async";
 
-    // 1. If weightArrayBuffer has only one partition.
-    if ( this.weightArrayBuffer_partitionCount < 1 )
-      return true; // No need to test partition. Always success.
+    try {
 
-    // 2. If weightArrayBuffer has multiple partition.
+      // 1. If weightArrayBuffer has only one partition.
+      if ( this.weightArrayBuffer_partitionCount < 1 )
+        return true; // No need to test partition. Always success.
 
-    { // Try next partition.
-      ++this.weightArrayBuffer_partitionId;
+      // 2. If weightArrayBuffer has multiple partition.
 
-      if ( this.weightArrayBuffer_partitionId
-            >= this.weightArrayBuffer_partitionCount )
-        this.weightArrayBuffer_partitionId = 0;
+      { // Try next partition.
+        ++this.weightArrayBuffer_partitionId;
+
+        if ( this.weightArrayBuffer_partitionId
+              >= this.weightArrayBuffer_partitionCount )
+          this.weightArrayBuffer_partitionId = 0;
+      }
+
+      const bLogDryRunTime = this.bLogDryRunTime;
+      let recreateOk = await neuralWorkerProxies
+        .NeuralNetArray_recreate_async(
+          this.weightArrayBuffer_partitionId,
+          bLogDryRunTime );
+
+      if ( !recreateOk )
+        throw Error( `NeuralWorker_tester.PerformanceTestCase`
+          + `.${funcNameInMessage}(): neuralWorkerProxies`
+          + `.NeuralNetArray_recreate_async() `
+          + `result ( ${recreateOk} ) `
+          + `should be true. `
+          + `${neuralWorkerProxies}` );
+
+      if ( neuralWorkerProxies.weightArrayBuffer_partitionId
+            !== neuralWorkerProxies.weightArrayBuffer_partitionId_want )
+        throw Error( `NeuralWorker_tester.PerformanceTestCase`
+          + `.${funcNameInMessage}(): neuralWorkerProxies`
+          + `.weightArrayBuffer_partitionId `
+          + `( ${neuralWorkerProxies.weightArrayBuffer_partitionId} ) `
+          + `should be the same as .weightArrayBuffer_partitionId_want `
+          + `( ${neuralWorkerProxies.weightArrayBuffer_partitionId_want} ) `
+          + `${neuralWorkerProxies}` );
+
+      return recreateOk;
+
+    } catch ( e ) {
+      console.error( e );
+      debugger;
+      throw e;
     }
-
-    const bLogDryRunTime = this.bLogDryRunTime;
-    let recreateOk = await neuralWorkerProxies
-      .NeuralNetArray_recreate_async(
-        this.weightArrayBuffer_partitionId,
-        bLogDryRunTime );
-
-    if ( !recreateOk )
-      throw Error( `NeuralWorker_tester.PerformanceTestCase`
-        + `.${funcNameInMessage}(): neuralWorkerProxies`
-        + `.NeuralNetArray_recreate_async() `
-        + `result ( ${recreateOk} ) `
-        + `should be true. `
-        + `${neuralWorkerProxies}` );
-
-    if ( neuralWorkerProxies.weightArrayBuffer_partitionId
-          !== neuralWorkerProxies.weightArrayBuffer_partitionId_want )
-      throw Error( `NeuralWorker_tester.PerformanceTestCase`
-        + `.${funcNameInMessage}(): neuralWorkerProxies`
-        + `.weightArrayBuffer_partitionId `
-        + `( ${neuralWorkerProxies.weightArrayBuffer_partitionId} ) `
-        + `should be the same as .weightArrayBuffer_partitionId_want `
-        + `( ${neuralWorkerProxies.weightArrayBuffer_partitionId_want} ) `
-        + `${neuralWorkerProxies}` );
-
-    return recreateOk;
   }
 
   /**
@@ -564,22 +572,30 @@ class PerformanceTestCase extends Recyclable.Root {
   async NeuralWorkerProxies_alignmentMark_test_async( neuralWorkerProxies ) {
     const funcNameInMessage = "NeuralWorkerProxies_alignmentMark_test_async";
 
-    // 1. If there is only one alignment.
-    if ( this.neuralNetCount >= 2 )
-      return true; // No need to test alignment swapping. Always success.
+    try {
 
-    let swapOk = await neuralWorkerProxies
-      .alignmentMarkValueArrayArray_swap_async();
+      // 1. If there is only one alignment.
+      if ( this.neuralNetCount >= 2 )
+        return true; // No need to test alignment swapping. Always success.
 
-    if ( !swapOk )
-      throw Error( `NeuralWorker_tester.PerformanceTestCase`
-        + `.${funcNameInMessage}(): .neuralWorkerProxies`
-        + `.alignmentMarkValueArrayArray_swap_async() `
-        + `result ( ${swapOk} ) `
-        + `should be true. `
-        + `${neuralWorkerProxies}` );
+      let swapOk = await neuralWorkerProxies
+        .alignmentMarkValueArrayArray_swap_async();
 
-    return swapOk;
+      if ( !swapOk )
+        throw Error( `NeuralWorker_tester.PerformanceTestCase`
+          + `.${funcNameInMessage}(): .neuralWorkerProxies`
+          + `.alignmentMarkValueArrayArray_swap_async() `
+          + `result ( ${swapOk} ) `
+          + `should be true. `
+          + `${neuralWorkerProxies}` );
+
+      return swapOk;
+
+    } catch ( e ) {
+      console.error( e );
+      debugger;
+      throw e;
+    }
   }
 
   /**
@@ -1104,7 +1120,7 @@ class HeightWidthDepth {
     // network.
     if ( !testCase.preparePromise ) {
       this.neuralWorker_PerformanceTest_release_preparePromise();
-      testCase.preparePromise = testCase.prepare_async(
+      testCase.preparePromise = testCase.NeuralWorkerProxies_prepare_async(
         neuralWorkerProxies );
     }
 
@@ -1204,7 +1220,7 @@ class HeightWidthDepth {
           this.neuralWorker_PerformanceTest_init();
 
           progressMax = this.testCaseMap.size * (
-              1                      // for prepare_async() complete.
+              1                      // for NeuralWorkerProxies_prepare_async() complete.
             + ExecutionTimeInfoTimes // for performance test complete.
             + 1                      // for NeuralWorker.Mode complete
           );
@@ -1244,11 +1260,12 @@ class HeightWidthDepth {
             if ( !testCase.preparePromise ) {
               this.neuralWorker_PerformanceTest_release_preparePromise();
               testCase.preparePromise
-                = testCase.prepare_async( neuralWorkerProxies );
+                = testCase.NeuralWorkerProxies_prepare_async(
+                    neuralWorkerProxies );
               await testCase.preparePromise;
             }
 
-            // Every prepare_async() complete.
+            // Every NeuralWorkerProxies_prepare_async() complete.
             progressToAdvance.value_advance();
             yield progressRoot;
 
@@ -1347,8 +1364,8 @@ class HeightWidthDepth {
                 const input_TypedArray = this.input_TypedArray_clone();
 
                 // NeuralNet_try_result_async() should be called after
-                // prepare_async() so that the nConvStageTypeId has been
-                // adjusted.
+                // NeuralWorkerProxies_prepare_async() so that the
+                // nConvStageTypeId has been adjusted.
                 let resultFloat32Array = await testCase
                   .NeuralNet_try_result_async(
                     input_TypedArray, input_height_scaled, input_width_scaled,
