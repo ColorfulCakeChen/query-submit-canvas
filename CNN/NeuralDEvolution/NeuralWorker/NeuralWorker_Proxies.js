@@ -675,7 +675,7 @@ class NeuralWorker_Proxies extends Recyclable.Root {
             );
       }
 
-      let recreateOkArray = await Promise.all( createPromiseArray );
+      let recreateOkArray = await Promise.all( recreatePromiseArray );
 
       recreateOk = recreateOkArray.reduce(
         ( previousValue, currentValue ) => ( previousValue && currentValue ),
