@@ -824,12 +824,11 @@ class PerformanceTestCase extends Recyclable.Root {
       PerformanceTestCase.random_WeightFloat32Array
         = new Float32Array( weightArrayLength );
 
-//!!! ...unfinishd... (2025/05/21)
-
       // Use 1/2, 1/4, 1/8, ..., 1/(2**n) as randome filter weight.
       // So that the result of multiple-add will not too large.
+      //
+      // (2025/05/21 Modified)
 
-      // (2025/05/21 Remarked)
       // const weightsValueBegin = 0;
       // const weightsValueStep = 10;
       //
@@ -843,7 +842,7 @@ class PerformanceTestCase extends Recyclable.Root {
 
       // Use larger negative variation to generate negative result.
       const weightsRandomOffset = {
-        min: - ( weightArrayLength * 0.25 ),
+        min: - ( weightArrayLength * 0.025 ),
         max: +1
       };
 
