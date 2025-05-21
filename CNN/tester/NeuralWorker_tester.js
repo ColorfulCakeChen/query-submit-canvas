@@ -581,7 +581,7 @@ class PerformanceTestCase extends Recyclable.Root {
     try {
 
       // 1. If there is only one alignment.
-      if ( this.neuralNetCount >= 2 )
+      if ( this.neuralNetCount < 2 )
         return true; // No need to test alignment swapping. Always success.
 
       let swapOk = await neuralWorkerProxies
