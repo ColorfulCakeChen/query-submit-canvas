@@ -1315,12 +1315,6 @@ class HeightWidthDepth {
 
             testCase = testCaseArray[ testCaseIndex ];
 
-//!!! ...unfinished... (2025/05/21) seems not necessary
-// because TestCase constructor has done it.
-//             // Every test case should be tested from the first
-//             // weightArrayBuffer partion.
-//             testCase.weightArrayBuffer_partitionId = 0;
-
             // First time test the case. Release all other test cases' neural
             // networks (so that there will be enough memory). Create the
             // specified neural network.
@@ -1436,6 +1430,9 @@ class HeightWidthDepth {
                 }
 
                 const input_TypedArray = this.input_TypedArray_clone();
+
+//!!! ...unfinished... (2025/05/21)
+// How to test partition 0 (not only partition 1)
 
                 // NeuralNet_try_result_async() should be called after
                 // NeuralWorkerProxies_prepare_async() so that the
