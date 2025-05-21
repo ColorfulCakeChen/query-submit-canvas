@@ -685,8 +685,8 @@ class PerformanceTestCase extends Recyclable.Root {
         const weightArrayBuffer_partitionId
           = this.weightArrayBuffer_partitionId;
 
-        const weightArrayBuffer_elementCount = Math.floor(
-          weightArrayBuffer.byteLength / Float32Array.BYTES_PER_ELEMENT );
+        const weightArrayBuffer_elementCount
+          = PerformanceTestCase.random_WeightFloat32Array.length;
 
         const weightArrayBuffer_partitionElementCount = Math.floor(
           weightArrayBuffer_elementCount / weightArrayBuffer_partitionCount );
