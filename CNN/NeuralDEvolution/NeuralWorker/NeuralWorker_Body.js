@@ -485,11 +485,8 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
         let weightArrayBuffer = weightArrayBuffer_Array[ i ];
 
 //!!! ...unfinished... (2025/05/14)
-// Perhaps, pass weightElementOffsetBegin and weightArrayBuffer.byteLength
-// from caller. (Inside neuralNetParams?)
-//
-// Note: Perhaps, re-create neural network when alignmentMark swapping.
-//
+// Perhaps, re-create neural network when alignmentMark swapping.
+
         let inputWeightArray = new Float32Array(
           weightArrayBuffer,
           weightArrayBuffer_byteOffset,
@@ -509,8 +506,12 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
         let neuralNet = this.neuralNetArray[ i ]
           = NeuralNet.Base.Pool.get_or_create_by();
 
+        // Since the inputWeightArray is created by
+        // weightArrayBuffer_byteOffset, there is no elementOffset here.
+        const weightElementOffsetBegin = 0;
+
         let bInitOk = neuralNet.init( progress,
-          inputWeightArray, 0, neuralNetParams );
+          inputWeightArray, weightElementOffsetBegin, neuralNetParams );
 
         if ( false == bInitOk ) {
 

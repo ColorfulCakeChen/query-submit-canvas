@@ -358,7 +358,7 @@ class PerformanceTestCase extends Recyclable.Root {
             + `${neuralWorkerProxies}` );
       }
 
-      PerformanceTestCase.randomTestWeightArray_create();
+      PerformanceTestCase.random_WeightFloat32Array_create();
 
       // Although neural network configuration will be copied (not transferred)
       // to workers, they still need be cloned because NeuralWorker.Proxy will
@@ -373,17 +373,22 @@ class PerformanceTestCase extends Recyclable.Root {
         neuralNetParamsBase_Array = [ neuralNetParams0 ];
       }
 
+      // Clone the .random_WeightFloat32Array because they will be
+      // transferred to the neural workers (and become zero length here).
       let weightArrayBuffer_Array;
-      if ( this.neuralNetCount > 1 ) {
-        let weightArray0
-          = new Float32Array( PerformanceTestCase.randomTestWeightArray );
-        let weightArray1
-          = new Float32Array( PerformanceTestCase.randomTestWeightArray );
-        weightArrayBuffer_Array = [ weightArray0.buffer, weightArray1.buffer ];
-      } else {
-        let weightArray0
-          = new Float32Array( PerformanceTestCase.randomTestWeightArray );
-        weightArrayBuffer_Array = [ weightArray0.buffer ];
+      {
+        if ( this.neuralNetCount > 1 ) {
+          let weightArray0 = new Float32Array(
+            PerformanceTestCase.random_WeightFloat32Array );
+          let weightArray1 = new Float32Array(
+            PerformanceTestCase.random_WeightFloat32Array );
+          weightArrayBuffer_Array
+            = [ weightArray0.buffer, weightArray1.buffer ];
+        } else {
+          let weightArray0 = new Float32Array(
+            PerformanceTestCase.random_WeightFloat32Array );
+          weightArrayBuffer_Array = [ weightArray0.buffer ];
+        }
       }
 
       let bInitOk = await bInitOkPromise;
@@ -658,7 +663,7 @@ class PerformanceTestCase extends Recyclable.Root {
     let createTensor_asyncGenerator;
     let outputTensor3d;
     try {
-      PerformanceTestCase.randomTestWeightArray_create();
+      PerformanceTestCase.random_WeightFloat32Array_create();
 
       let neuralNetParams = NeuralNet.Params
         .get_or_create_by_NeuralNetParamsBase( this.neuralNetParamsBase );
@@ -666,13 +671,40 @@ class PerformanceTestCase extends Recyclable.Root {
       progress = ValueMax.Percentage.Aggregate.Pool.get_or_create_by();
       neuralNet = this.neuralNet = NeuralNet.Base.Pool.get_or_create_by();
 
-!!! ...unfinished... (2025/05/20)
-// How to simulate NeuralNet_recreate().
-// weightArrayBuffer_partitionCount, weightArrayBuffer_partitionId
+      // Simulate neural worker recreation by calculating element offset
+      // of the weight Float32Array with partition id and partiton count
+      // (of weight array buffer).
+      let weightElementOffsetBegin;
+      {
+        const weightArrayBuffer
+          = PerformanceTestCase.random_WeightFloat32Array.buffer;
 
-      const weightElementOffsetBegin = 0;
+        const weightArrayBuffer_partitionCount
+          = this.weightArrayBuffer_partitionCount;
+
+        const weightArrayBuffer_partitionId
+          = this.weightArrayBuffer_partitionId;
+
+        const weightArrayBuffer_elementCount = Math.floor(
+          weightArrayBuffer.byteLength / Float32Array.BYTES_PER_ELEMENT );
+
+        const weightArrayBuffer_partitionElementCount = Math.floor(
+          weightArrayBuffer_elementCount / weightArrayBuffer_partitionCount );
+
+        const weightArrayBuffer_elementOffsetBegin
+          = weightArrayBuffer_partitionId
+              * weightArrayBuffer_partitionElementCount;
+
+        // const weightArrayBuffer_byteOffset
+        //   = weightArrayBuffer_elementOffsetBegin
+        //       * Float32Array.BYTES_PER_ELEMENT;
+
+        weightElementOffsetBegin = weightArrayBuffer_elementOffsetBegin;
+      }
+
       let bInitOk = neuralNet.init( progress,
-        PerformanceTestCase.randomTestWeightArray, weightElementOffsetBegin,
+        PerformanceTestCase.random_WeightFloat32Array,
+        weightElementOffsetBegin,
         neuralNetParams );
 
       let strWeightCountInfo = neuralNet.toString_WeightCount();
@@ -769,8 +801,8 @@ class PerformanceTestCase extends Recyclable.Root {
   }
 
   /** */
-  static randomTestWeightArray_create() {
-    if ( !PerformanceTestCase.randomTestWeightArray ) {
+  static random_WeightFloat32Array_create() {
+    if ( !PerformanceTestCase.random_WeightFloat32Array ) {
 
       const pseudo_height = 1024;
       const pseudo_width = 1024;
@@ -781,7 +813,7 @@ class PerformanceTestCase extends Recyclable.Root {
       const weightArrayLength
         = pseudo_height * pseudo_width * pseudo_channelCount;
 
-      PerformanceTestCase.randomTestWeightArray
+      PerformanceTestCase.random_WeightFloat32Array
         = new Float32Array( weightArrayLength );
 
       const weightsValueBegin = 0;
@@ -797,7 +829,7 @@ class PerformanceTestCase extends Recyclable.Root {
       const weightsDivisorForRemainder = 128;
 
       RandTools.fill_numberArray(
-        PerformanceTestCase.randomTestWeightArray,
+        PerformanceTestCase.random_WeightFloat32Array,
         pseudo_height, pseudo_width, pseudo_channelCount,
         weightsValueBegin, weightsValueStep,
         weightsRandomOffset.min,
@@ -812,7 +844,7 @@ class PerformanceTestCase extends Recyclable.Root {
    * Because NeuralNet_TestParams and normal Array needs lots of memory when
    * neural network is large.
    */
-  static randomTestWeightArray;
+  static random_WeightFloat32Array;
 
 }
 
@@ -1175,9 +1207,9 @@ class HeightWidthDepth {
     //       this case's first time testing).
     await testCase.preparePromise;
 
+    const input_TypedArray = this.input_TypedArray_clone();
     const input_height_scaled = this.input_height_scaled;
     const input_width_scaled = this.input_width_scaled;
-    const input_TypedArray = this.input_TypedArray_clone();
 
     let resultFloat32ArrayArrayPromise
       = await testCase.NeuralWorkerProxies_process_test_async(
