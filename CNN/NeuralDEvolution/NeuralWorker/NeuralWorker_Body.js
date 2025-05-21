@@ -659,7 +659,7 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
    *       - Note2: The same one NeuralWorker.Proxies and NeuralWorker.Proxy
    *           and NeuralWorker.Body should be used. If the NeuralWorker.Body
    *           are created every time, the shaders will be re-compiled again
-   *           and again.)
+   *           and again (i.e. not cached).
    *
    *
    * @param {boolean} bLogDryRunTime
