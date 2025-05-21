@@ -1108,8 +1108,8 @@ class HeightWidthDepth {
   }
 
   /** Test .TypedArray_process_async by Xxx */
-  async testNeuralWorker_ByName( testCaseName ) {
-    const funcNameInMessage = "testNeuralWorker_ByName";
+  async NeuralWorker_process_test_ByName_async( testCaseName ) {
+    const funcNameInMessage = "NeuralWorker_process_test_ByName_async";
 
     const neuralWorkerProxies = this.neuralWorkerProxies;
 
@@ -1297,7 +1297,8 @@ class HeightWidthDepth {
 
                 timeInfo.begin = Date.now();
                 let testByNamePromise
-                  = this.testNeuralWorker_ByName( testCase.testCaseName );
+                  = this.NeuralWorker_process_test_ByName_async(
+                      testCase.testCaseName );
                 resultFloat32ArrayArray = await testByNamePromise;
                 timeInfo.end = Date.now();
                 timeInfo.elapsed = timeInfo.end - timeInfo.begin;
