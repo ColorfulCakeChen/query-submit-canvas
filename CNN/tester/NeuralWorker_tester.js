@@ -1477,6 +1477,10 @@ class HeightWidthDepth {
 
                 const input_TypedArray = this.input_TypedArray_clone();
 
+//!!! ...unfinished... (2025/05/21)
+// Problem: If fill alignment mark or fill previous output, the results of
+// neural worker and nueral net (local) seems not matching.
+
                 // NeuralNet_try_result_async() should be called after
                 // NeuralWorkerProxies_prepare_async() so that the
                 // nConvStageTypeId has been adjusted.
