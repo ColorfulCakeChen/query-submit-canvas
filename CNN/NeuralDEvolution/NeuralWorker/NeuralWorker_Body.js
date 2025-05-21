@@ -650,7 +650,7 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
    *         displaying).
    *
    *       - This method is still worth to be called (although no WebGL
-   *           sharders needs to be compiled), because it will upload the
+   *           shaders needs to be compiled), because it will upload the
    *           neural network's filters' tensors to GPU.
    *
    *       - Note1: The created neural network must have same input/output
