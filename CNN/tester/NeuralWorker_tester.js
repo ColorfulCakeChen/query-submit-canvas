@@ -808,58 +808,59 @@ class PerformanceTestCase extends Recyclable.Root {
     return resultFloat32Array;
   }
 
-  /** */
+  /** Generate random filter weight for neural network. */
   static random_WeightFloat32Array_create() {
-    if ( !PerformanceTestCase.random_WeightFloat32Array ) {
+    if ( PerformanceTestCase.random_WeightFloat32Array )
+      return; // Already generated. No need to re-generate.
 
-      const pseudo_height = 1024;
-      const pseudo_width = 1024;
-      //!!! (2022/09/25 Remarked) too large for mobile phone.
-      //const pseudo_channelCount = 100;
-      const pseudo_channelCount = 10;
+    const pseudo_height = 1024;
+    const pseudo_width = 1024;
+    //!!! (2022/09/25 Remarked) too large for mobile phone.
+    //const pseudo_channelCount = 100;
+    const pseudo_channelCount = 10;
 
-      const weightArrayLength
-        = pseudo_height * pseudo_width * pseudo_channelCount;
+    const weightArrayLength
+      = pseudo_height * pseudo_width * pseudo_channelCount;
 
-      PerformanceTestCase.random_WeightFloat32Array
-        = new Float32Array( weightArrayLength );
+    PerformanceTestCase.random_WeightFloat32Array
+      = new Float32Array( weightArrayLength );
 
-      // Use 1/2, 1/4, 1/8, ..., 1/(2**n) as random filter weights.
-      // So that the result of multiple-add will not too large.
-      //
-      // (2025/05/21 Modified)
+    // Use 1/2, 1/4, 1/8, ..., 1/(2**n) as random filter weights.
+    // So that the result of multiple-add will not too large.
+    //
+    // (2025/05/21 Modified)
 
-      // const weightsValueBegin = 0;
-      // const weightsValueStep = 10;
-      //
-      //// Use larger variation to generate negative result.
-      //const weightsRandomOffset = {
-      //  min: - ( 10 * weightArrayLength ),
-      //  max: +5 };
+    // const weightsValueBegin = 0;
+    // const weightsValueStep = 10;
+    //
+    //// Use larger variation to generate negative result.
+    //const weightsRandomOffset = {
+    //  min: - ( 10 * weightArrayLength ),
+    //  max: +5 };
 
-      const weightsValueBegin = 0;
-      const weightsValueStep = 1 / ( 2 ** 5 ); // = 1 / 32
+    const weightsValueBegin = 0;
+    const weightsValueStep = 1 / ( 2 ** 5 ); // = 1 / 32
 
-      // Use larger negative variation to generate negative result.
-      const weightsRandomOffset = {
-        min: - ( weightArrayLength * 0.025 ),
-        max: +1
-      };
+    // Use larger negative variation to generate negative result.
+    const weightsRandomOffset = {
+      min: - ( weightArrayLength * 0.025 ),
+      max: +1
+    };
 
-      // (2025/05/21 Remarked) For reduce neural network result value.
-      //const weightsDivisorForRemainder = 1024;
-      //const weightsDivisorForRemainder = 128;
-      const weightsDivisorForRemainder = ( 2 ** 0 ); // = 1
+    // For reduce neural network result value.
+    // (2025/05/21 Modified) 
+    //const weightsDivisorForRemainder = 1024;
+    //const weightsDivisorForRemainder = 128;
+    const weightsDivisorForRemainder = ( 2 ** 0 ); // = 1
 
-      RandTools.fill_numberArray(
-        PerformanceTestCase.random_WeightFloat32Array,
-        pseudo_height, pseudo_width, pseudo_channelCount,
-        weightsValueBegin, weightsValueStep,
-        weightsRandomOffset.min,
-        weightsRandomOffset.max,
-        weightsDivisorForRemainder
-      );
-    }
+    RandTools.fill_numberArray(
+      PerformanceTestCase.random_WeightFloat32Array,
+      pseudo_height, pseudo_width, pseudo_channelCount,
+      weightsValueBegin, weightsValueStep,
+      weightsRandomOffset.min,
+      weightsRandomOffset.max,
+      weightsDivisorForRemainder
+    );
   }
 
   /** A simple longer weights Float32Array instead of NeuralNet_TestParams.
