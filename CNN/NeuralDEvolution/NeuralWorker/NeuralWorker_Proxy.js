@@ -409,7 +409,7 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
     ( {
       bRecreateOk: bRecreateOk,
       weightArrayBuffer_partitionId: this.weightArrayBuffer_partitionId
-    } = NeuralNetArray_create_result );
+    } = NeuralNetArray_recreate_result );
 
     return bRecreateOk;
   }
