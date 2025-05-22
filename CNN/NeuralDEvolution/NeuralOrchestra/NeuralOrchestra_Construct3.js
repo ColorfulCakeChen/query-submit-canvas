@@ -1119,6 +1119,9 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
 
     const base = this.base;
 
+//!!! ...unfinished... (2025/05/22)
+// When versus, parent and offspring should use different weightArrayBuffer_partitionId.
+
     // Setup alignment marks (after AI image processing completed).
     {
       this.alignmentMarkValueArrayArray_set_asyncPromise
@@ -1175,6 +1178,9 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
       return; // Prevent re-enter.
 
     const base = this.base;
+
+//!!! ...unfinished... (2025/05/22)
+// When versus, parent and offspring should use different weightArrayBuffer_partitionId.
 
     // Swap alignment marks (after AI image processing completed).
     {
