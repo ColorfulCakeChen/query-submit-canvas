@@ -88,17 +88,22 @@ class PerformanceTestCase extends Recyclable.Root {
         PerformanceTestCase.randomTestWeightArray
           = new Float32Array( weightArrayLength );
 
-!!! ...unfinished... (2025/05/23)
-// Use neural network specific random weight range.
+        // Use random weight range suitable for neural network filter.
+        const {
+          weightsValueBegin,
+          weightsValueStep,
+          weightsRandomOffset,
+          weightsDivisorForRemainder
+        } = TestParams.Base.filterWeights_numberArray_randomParams;
 
         RandTools.fill_numberArray(
           PerformanceTestCase.randomTestWeightArray,
           1, 1, weightArrayLength, // height, width, channelCount,
-          TestParams.Base.weightsValueBegin,
-          TestParams.Base.weightsValueStep,
-          TestParams.Base.weightsRandomOffset.min,
-          TestParams.Base.weightsRandomOffset.max,
-          TestParams.Base.weightsDivisorForRemainder
+          weightsValueBegin,
+          weightsValueStep,
+          weightsRandomOffset.min,
+          weightsRandomOffset.max,
+          weightsDivisorForRemainder
         );
       }
 
