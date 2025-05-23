@@ -275,7 +275,7 @@ class ImageSourceBag_Base extends Recyclable.Root {
 
 
 /**
- * Image pixel's every channel value should be in [ 0, 256 ].
+ * Image pixel's every channel value should be in [ 0, 255 ].
  *   - ( weightsRandomOffset.min == 0 ) could avoid generate negative pixel
  *       value.
  *   - ( weightsDivisorForRemainder == 256 ) could avoid generate pixel value
