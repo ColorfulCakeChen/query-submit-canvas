@@ -760,7 +760,7 @@ TestParams_Base.filterWeights_numberArray_randomParams = {
   weightsValueBegin: 0,
 //!!! ...unfinished... (2025/05/23 Remarked)
 //  weightsValueStep:  1 / ( 2 ** 5 ), // i.e. ( 1 / 32 )
-  weightsValueStep:  1 / ( 2 ** 4 ), // i.e. ( 1 / 16 )
+  weightsValueStep:  1 / ( 2 ** 3 ), // i.e. ( 1 / 8 )
 
   // Use larger negative variation to generate negative result.
   weightsRandomOffset: {
