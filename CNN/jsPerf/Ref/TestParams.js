@@ -767,7 +767,7 @@ TestParams_Base.filterWeights_numberArray_randomParams = {
 
 //!!! ...unfinished... (2025/05/23 Remarked)
 //    min: - ( 2 ** 18 ),
-    min: -10,
+    min: -100,
     max: +10
   },
 
