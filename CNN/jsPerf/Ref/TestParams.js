@@ -567,25 +567,41 @@ class TestParams_Base extends Recyclable.Root {
     height, width, channelCount
   ) {
 
+    //!!! (2025/05/23 Remarked)
+    // const {
+    //   weightsValueBegin,
+    //   weightsValueStep,
+    //   weightsRandomOffset,
+    //   weightsDivisorForRemainder
+    // } = TestParams.Base.integer_numberArray_randomParams;
+
+    // Use random weight range suitable for neural network filter.
+    const {
+      weightsValueBegin,
+      weightsValueStep,
+      weightsRandomOffset,
+      weightsDivisorForRemainder
+    } = TestParams_Base.filterWeights_numberArray_randomParams;
+
     //!!! (2022/05/23 Remarked)
     //TestParams_Base.ensure_object_property_numberArray_length_filled(
     //   io_object, propertyName,
     //   elementCount,
-    //   TestParams.Base.weightsValueBegin,
-    //   TestParams.Base.weightsValueStep,
-    //   TestParams.Base.weightsRandomOffset.min,
-    //   TestParams.Base.weightsRandomOffset.max,
-    //   TestParams.Base.weightsDivisorForRemainder
+    //   weightsValueBegin,
+    //   weightsValueStep,
+    //   weightsRandomOffset.min,
+    //   weightsRandomOffset.max,
+    //   weightsDivisorForRemainder
     // );
 
     this.ensure_object_property_numberArray_length_existed(
       io_object, propertyName,
       height, width, channelCount,
-      TestParams_Base.weightsValueBegin,
-      TestParams_Base.weightsValueStep,
-      TestParams_Base.weightsRandomOffset.min,
-      TestParams_Base.weightsRandomOffset.max,
-      TestParams_Base.weightsDivisorForRemainder
+      weightsValueBegin,
+      weightsValueStep,
+      weightsRandomOffset.min,
+      weightsRandomOffset.max,
+      weightsDivisorForRemainder
     );
   }
 
@@ -711,21 +727,27 @@ class TestParams_Base extends Recyclable.Root {
 
 }
 
-TestParams_Base.weightsValueBegin = 0;
-TestParams_Base.weightsValueStep = 10;
 
-//!!! (2022/08/03 Temp Remarked) Fixed to non-random to simplify debug.
-//TestParams_Base.weightsRandomOffset = { min: -0, max: +0 };
-//TestParams_Base.weightsRandomOffset = { min: -1, max: +1 };
-TestParams_Base.weightsRandomOffset = { min: -5, max: +5 };
-//TestParams_Base.weightsRandomOffset = { min: -50, max: +50 };
-//TestParams_Base.weightsRandomOffset = { min: -200, max: +200 };
-//TestParams_Base.weightsRandomOffset = { min: -11111, max: 11111 };
-//TestParams_Base.weightsRandomOffset = { min: 11, max: 11 };
+/**
+ * Parameters for generating integer random filter's weights.
+ */
+TestParams_Base.integer_numberArray_randomParams = {
 
-//TestParams_Base.weightsDivisorForRemainder = 4096;
-TestParams_Base.weightsDivisorForRemainder = 1024;
+  weightsValueBegin: 0,
+  weightsValueStep: 10,
 
+  //!!! (2022/08/03 Temp Remarked) Fixed to non-random to simplify debug.
+  //weightsRandomOffset: { min: -0, max: +0 },
+  //weightsRandomOffset = { min: -1, max: +1 },
+  weightsRandomOffset: { min: -5, max: +5 },
+  //weightsRandomOffset: { min: -50, max: +50 },
+  //weightsRandomOffset: { min: -200, max: +200 },
+  //weightsRandomOffset: { min: -11111, max: 11111 },
+  //weightsRandomOffset: { min: 11, max: 11 },
+
+  //weightsDivisorForRemainder: 4096,
+  weightsDivisorForRemainder = 1024,
+};
 
 /**
  * Parameters suitable for generating random (embedding, depthwise, pointwise)
