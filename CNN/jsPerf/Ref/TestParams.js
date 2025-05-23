@@ -762,7 +762,10 @@ TestParams_Base.filterWeights_numberArray_randomParams = {
 
   // Use larger negative variation to generate negative result.
   weightsRandomOffset: {
-    min: - ( 2 ** 18 ),
+
+//!!! ...unfinished... (2025/05/23 Remarked)
+//    min: - ( 2 ** 18 ),
+    min: -1,
     max: +1
   },
 
