@@ -725,3 +725,35 @@ TestParams_Base.weightsRandomOffset = { min: -5, max: +5 };
 
 //TestParams_Base.weightsDivisorForRemainder = 4096;
 TestParams_Base.weightsDivisorForRemainder = 1024;
+
+
+/**
+ * Parameters suitable for generating random (embedding, depthwise, pointwise)
+ * filter's weights.
+ */
+TestParams_Base.filterWeights_numberArray_randomParams = {
+
+  // Use small but expressable floating value (e.g. 1/2, 1/4, 1/8, ...,
+  // 1/(2**n)) so that the result of multiply-add will not be too large.
+  weightsValueBegin: 0,
+  weightsValueStep:  1 / ( 2 ** 5 ), // i.e. ( 1 / 32 )
+
+  // Use larger negative variation to generate negative result.
+  weightsRandomOffset: {
+    min: - ( 2 ** 18 ),
+    max: +1
+  },
+
+  // Smaller divisor for increasing possibility of neural network result
+  // value.
+  //
+  // Consider activation function clamp( -2, +2 ) is used. If filter weight's
+  // absolute value is greater than 1.0, its convolution result's absolute
+  // value might exceed 2.0 easily (since convolution is a kind of operation
+  // with many multiply-add). The neural network result value will easily
+  // become only either -2 or +2 after activation function applied.
+  //
+  // Restrict filter weight's absolute value less than 1.0 so that the neural
+  // network could generate more other result value.
+  weightsDivisorForRemainder: ( 2 ** 0 ), // i.e. 1
+};

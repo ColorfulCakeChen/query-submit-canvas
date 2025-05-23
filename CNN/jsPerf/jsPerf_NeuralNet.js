@@ -88,6 +88,9 @@ class PerformanceTestCase extends Recyclable.Root {
         PerformanceTestCase.randomTestWeightArray
           = new Float32Array( weightArrayLength );
 
+!!! ...unfinished... (2025/05/23)
+// Use neural network specific random weight range.
+
         RandTools.fill_numberArray(
           PerformanceTestCase.randomTestWeightArray,
           1, 1, weightArrayLength, // height, width, channelCount,

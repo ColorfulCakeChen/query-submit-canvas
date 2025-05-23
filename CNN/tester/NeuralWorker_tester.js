@@ -825,8 +825,9 @@ class PerformanceTestCase extends Recyclable.Root {
     PerformanceTestCase.random_WeightFloat32Array
       = new Float32Array( weightArrayLength );
 
-    // Use 1/2, 1/4, 1/8, ..., 1/(2**n) as random filter weights.
-    // So that the result of multiple-add will not too large.
+    // Use 1/2, 1/4, 1/8, ..., 1/(2**n) as (embeding, depthwise, pointwise)
+    // filter's random weights. So that the result of multiply-add will not be
+    // too large.
     //
     // (2025/05/21 Modified)
 
