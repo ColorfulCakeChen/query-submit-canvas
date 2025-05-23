@@ -746,7 +746,7 @@ TestParams_Base.integer_numberArray_randomParams = {
   //weightsRandomOffset: { min: 11, max: 11 },
 
   //weightsDivisorForRemainder: 4096,
-  weightsDivisorForRemainder = 1024,
+  weightsDivisorForRemainder: 1024,
 };
 
 /**
