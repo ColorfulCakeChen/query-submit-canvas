@@ -755,11 +755,12 @@ TestParams_Base.integer_numberArray_randomParams = {
  */
 TestParams_Base.filterWeights_numberArray_randomParams = {
 
+  weightsValueBegin: 0,
+  
   // Use small but expressable floating value (e.g. 1/2, 1/4, 1/8, ...,
   // 1/(2**n)) so that the result of multiply-add will not be too large.
-  weightsValueBegin: 0,
-//!!! ...unfinished... (2025/05/23 Remarked)
-//  weightsValueStep:  1 / ( 2 ** 5 ), // i.e. ( 1 / 32 )
+  //
+  //weightsValueStep:  1 / ( 2 ** 5 ), // i.e. ( 1 / 32 )
   weightsValueStep:  1 / ( 2 ** 3 ), // i.e. ( 1 / 8 )
 
   // Use larger negative variation to generate negative result.
