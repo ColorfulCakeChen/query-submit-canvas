@@ -80,7 +80,7 @@ class PerformanceTestCase {
    */
   disposeResources() {
 
-    if ( testCase.testCorrectnessInfo ) {
+    if ( this.testCorrectnessInfo ) {
       testCase.testCorrectnessInfo.disposeResources_and_recycleToPool();
       testCase.testCorrectnessInfo = undefined;
     }
