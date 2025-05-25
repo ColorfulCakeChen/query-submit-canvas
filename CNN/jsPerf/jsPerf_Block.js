@@ -323,11 +323,6 @@ class HeightWidthDepth {
         this.height, this.width, this.depth,
         ValueDesc.ConvBlockType.Singleton.Ids.MOBILE_NET_V1_HEAD_BODY_TAIL,
             0,
-
-//!!! (2025/05/25 Remarked) too large. GPU memory not enough.
-//          32,     3, 3, 1, Block.Params.depthwiseActivationId.valueDesc.Ids.CLIP_BY_VALUE_N2_P2,
-//          128, Block.Params.pointwise20ActivationId.valueDesc.Ids.NONE,
-
            16,     3, 3, 1, Block.Params.depthwiseActivationId.valueDesc.Ids.CLIP_BY_VALUE_N2_P2,
            64, Block.Params.pointwise20ActivationId.valueDesc.Ids.NONE,
 
@@ -343,12 +338,6 @@ class HeightWidthDepth {
       Block_TestParams.Base.Pool.get_or_create_by( 7 ).set_byParamsScattered(
         this.height, this.width, this.depth,
         ValueDesc.ConvBlockType.Singleton.Ids.MOBILE_NET_V1_HEAD_BODY_TAIL,
-
-//!!! (2025/05/25 Remarked) too large. GPU memory not enough.
-//          128,
-//            0,     3, 3, 1, Block.Params.depthwiseActivationId.valueDesc.Ids.CLIP_BY_VALUE_N2_P2,
-//          128, Block.Params.pointwise20ActivationId.valueDesc.Ids.NONE,
-
            64,
             0,     3, 3, 1, Block.Params.depthwiseActivationId.valueDesc.Ids.CLIP_BY_VALUE_N2_P2,
            64, Block.Params.pointwise20ActivationId.valueDesc.Ids.NONE,
@@ -558,9 +547,12 @@ class HeightWidthDepth {
   // Testing whether the results of different implementation are the same.
   * testCorrectness() {
 
-//!!! (2025/05/25 Temp Not test correctness)
-    if ( 0 ) {
-//    {
+    // (2025/05/25) Control whether test correctness.
+    const shouldCorrectnessTest = true;
+    //const shouldCorrectnessTest = false;
+
+    if ( shouldCorrectnessTest ) {
+
       let pool_all_issuedCount_before = Pool.All.issuedCount;
 
       Pool.Asserter.assert_Pool_issuedCount_same_after_as_before(
