@@ -34,15 +34,67 @@ import * as jsPerf_Operation from "./jsPerf_Operation.js";
 /**
  * 
  */
- class PerformanceTestCase {
+class PerformanceTestCase {
+
   constructor(
-    testCaseId, testCaseName, blockTestParams, block, testCorrectnessInfo ) {
+    testCaseId, testCaseName, blockTestParams, testCorrectnessInfo ) {
     this.testCaseId = testCaseId;
     this.testCaseName = testCaseName;
     this.blockTestParams = blockTestParams;
-    this.block = block;
+    this.block = undefined;
     this.testCorrectnessInfo = testCorrectnessInfo;
   }
+
+  /**
+   * 
+   */
+  prepare() {
+
+    try {
+      const blockTestParams = this.blockTestParams;
+      const testCorrectnessInfo = this.testCorrectnessInfo;
+
+      let {
+        imageInArraySelected, channelShuffler_ConcatPointwiseConv
+      } = testCorrectnessInfo;
+ 
+      let block = Block_Reference.Base.block_create( blockTestParams,
+        imageInArraySelected[ 0 ].boundsArraySet.output0,
+        imageInArraySelected[ 1 ]?.boundsArraySet.output0,
+        channelShuffler_ConcatPointwiseConv );
+
+      this.block = block;
+
+      console.log( `Block.${this.testCaseName}: tensorWeightCount = { `
+        + `Extracted: ${block.tensorWeightCountExtracted}, `
+        + `Total: ${block.tensorWeightCountTotal} }` );
+
+    } catch ( e ) {
+      debugger;
+      throw e;
+    }
+  }
+
+  /**
+   *
+   */
+  disposeResources() {
+
+    if ( testCase.testCorrectnessInfo ) {
+      testCase.testCorrectnessInfo.disposeResources_and_recycleToPool();
+      testCase.testCorrectnessInfo = undefined;
+    }
+
+    if ( this.block ) {
+      this.block.disposeResources_and_recycleToPool();
+      this.block = undefined;
+    }
+
+    this.blockTestParams = blockTestParams;
+    this.testCaseName = testCaseName;
+    this.testCaseId = testCaseId;
+  }
+
 }
 
 /**
@@ -79,29 +131,32 @@ class HeightWidthDepth {
     try {
       let testCorrectnessInfo
         = Block_Reference.TestCorrectnessInfo.Pool.get_or_create_by();
+
       testCorrectnessInfo.prepareBy(
         this.testPerformance_imageSourceBag,
         blockTestParams,
         this.testPerformance_channelShufflerBag );
 
-      let {
-        imageInArraySelected, channelShuffler_ConcatPointwiseConv
-      } = testCorrectnessInfo;
- 
-      let block = Block_Reference.Base.block_create( blockTestParams,
-        imageInArraySelected[ 0 ].boundsArraySet.output0,
-        imageInArraySelected[ 1 ]?.boundsArraySet.output0,
-        channelShuffler_ConcatPointwiseConv );
+//!!! (2025/05/25 Remarked) Moved into PerformanceTestCase.prepare_by()
+//       let {
+//         imageInArraySelected, channelShuffler_ConcatPointwiseConv
+//       } = testCorrectnessInfo;
+//
+//       let block = Block_Reference.Base.block_create( blockTestParams,
+//         imageInArraySelected[ 0 ].boundsArraySet.output0,
+//         imageInArraySelected[ 1 ]?.boundsArraySet.output0,
+//         channelShuffler_ConcatPointwiseConv );
 
       let aPerformanceTestCase = new PerformanceTestCase(
         blockTestParams.id, testCaseName,
-        blockTestParams, block, testCorrectnessInfo );
+        blockTestParams, testCorrectnessInfo );
 
       this.testCaseMap.set( testCaseName, aPerformanceTestCase );
 
-      console.log( `Block.${testCaseName}: tensorWeightCount = { `
-        + `Extracted: ${block.tensorWeightCountExtracted}, `
-        + `Total: ${block.tensorWeightCountTotal} }` );
+//!!! (2025/05/25 Remarked) Moved into PerformanceTestCase.prepare_by()
+//       console.log( `Block.${testCaseName}: tensorWeightCount = { `
+//         + `Extracted: ${block.tensorWeightCountExtracted}, `
+//         + `Total: ${block.tensorWeightCountTotal} }` );
 
     } catch ( e ) {
       debugger;
@@ -269,13 +324,25 @@ class HeightWidthDepth {
 
   }
 
+  /** Release testCase.block, but keep testCase. */
+  block_PerformanceTest_release_block() {
+    if ( this.testCaseMap ) {
+      for ( let testCase of this.testCaseMap.values() ) {
+        if ( testCase.block ) {
+          testCase.block.disposeResources_and_recycleToPool();
+          testCase.block = null;
+        }
+      }
+    }
+  }
+
+  /** */
   block_PerformanceTest_release() {
     if ( this.testCaseMap ) {
       for ( let name_testCase of this.testCaseMap.entries() ) {
         let name = name_testCase[ 0 ];
         let testCase = name_testCase[ 1 ];
-        testCase.block.disposeResources_and_recycleToPool();
-        testCase.testCorrectnessInfo.disposeResources_and_recycleToPool();
+        testCase.disposeResources();
       }
       this.testCaseMap.clear();
     }
@@ -290,6 +357,14 @@ class HeightWidthDepth {
   /** Test apply by Xxx */
   testBlock_ByName( testCaseName ) {
     let testCase = this.testCaseMap.get( testCaseName );
+
+    // First time test this case. Release all other test cases' block
+    // (so that there will be enough memory). Create the specified block.
+    if ( !testCase.block ) {
+      this.block_PerformanceTest_release_block();
+      testCase.prepare();
+    }
+
     let block = testCase.block;
 
     let {
