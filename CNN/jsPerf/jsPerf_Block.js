@@ -81,8 +81,8 @@ class PerformanceTestCase {
   disposeResources() {
 
     if ( this.testCorrectnessInfo ) {
-      testCase.testCorrectnessInfo.disposeResources_and_recycleToPool();
-      testCase.testCorrectnessInfo = undefined;
+      this.testCorrectnessInfo.disposeResources_and_recycleToPool();
+      this.testCorrectnessInfo = undefined;
     }
 
     if ( this.block ) {
