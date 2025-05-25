@@ -303,14 +303,12 @@ class Block_TestParams_Base extends TestParams.Base {
     // Restrict some parameter's large kinds. Otherwise, too many combination
     // will be generated.
     let valueOutMinMax = this.valueOutMinMax = {
-      input0_height: [ 3, 5 ],
-//!!! (2025/05/24 Temp Remarked) For debug.
-//      input0_height: [ 3, 3 ],
+      // input0_height: [ 3, 5 ],
+      input0_height: [ 3, 3 ],
       // input0_height: [ 2, 2 ],
 
-      input0_width: [ 3, 5 ],
-//!!! (2025/05/24 Temp Remarked) For debug.
-//      input0_width: [ 4, 5 ],
+      // input0_width: [ 3, 5 ],
+      input0_width: [ 4, 5 ],
       // input0_width: [ 3, 3 ],
 
       input0_channelCount: [ 2, 4 ],
