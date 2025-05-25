@@ -171,7 +171,7 @@ class HeightWidthDepth {
 //         imageInArraySelected[ 1 ]?.boundsArraySet.output0,
 //         channelShuffler_ConcatPointwiseConv );
 
-      let aPerformanceTestCase = new PerformanceTestCase.Pool.get_or_create_by(
+      let aPerformanceTestCase = PerformanceTestCase.Pool.get_or_create_by(
         blockTestParams.id, testCaseName,
         blockTestParams, testCorrectnessInfo );
 
