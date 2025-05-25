@@ -3,6 +3,13 @@ export { ActivationFunction };
 import { Int } from "./ValueDesc_Base.js";
 import * as FloatValue from "../FloatValue.js";
 
+//!!! ...unfinished... (2025/05/25)
+// CLIP_BY_VALUE_N128_P128 should be considerable if output value of a
+// neural network will be converted to input value range (e.g.
+// [ 0, 255 ] for image processing) because only translating +128
+// (without scaling) is almost enough.
+
+
 /**
  * Describe activation function parameter's id, range, name.
  *
