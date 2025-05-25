@@ -658,9 +658,9 @@ class HeightWidthDepth {
     }
   }
 
-   testDifferentDisposeStrategy_All() {
+  testDifferentDisposeStrategy_All() {
 //     this.testDifferentDisposeStrategy_ConcatReshapeTransposeReshapeSplit();
-   }
+  }
 
 //   testDifferentDisposeStrategy( functionTable, thisArg ) {
 //     tf.tidy( () => {
