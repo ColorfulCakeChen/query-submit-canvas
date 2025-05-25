@@ -34,9 +34,35 @@ import * as jsPerf_Operation from "./jsPerf_Operation.js";
 /**
  * 
  */
-class PerformanceTestCase {
+class PerformanceTestCase extends Recyclable.Root {
+
+  /**
+   * Used as default PerformanceTestCase provider for conforming to Recyclable
+   * interface.
+   */
+  static Pool = new Pool.Root( "PerformanceTestCase.Pool",
+    PerformanceTestCase, PerformanceTestCase.setAsConstructor );
 
   constructor(
+    testCaseId, testCaseName, blockTestParams, testCorrectnessInfo ) {
+    super();
+    PerformanceTestCase.setAsConstructor_self.call( this,
+      testCaseId, testCaseName, blockTestParams, testCorrectnessInfo
+    );
+  }
+
+  /** @override */
+  static setAsConstructor(
+    testCaseId, testCaseName, blockTestParams, testCorrectnessInfo ) {
+    super.setAsConstructor();
+    PerformanceTestCase.setAsConstructor_self.call( this,
+      testCaseId, testCaseName, blockTestParams, testCorrectnessInfo
+    );
+    return this;
+  }
+
+  /** @override */
+  static setAsConstructor_self(
     testCaseId, testCaseName, blockTestParams, testCorrectnessInfo ) {
     this.testCaseId = testCaseId;
     this.testCaseName = testCaseName;
@@ -75,24 +101,22 @@ class PerformanceTestCase {
     }
   }
 
-  /**
-   *
-   */
+  /** @override */
   disposeResources() {
 
-    if ( this.testCorrectnessInfo ) {
-      this.testCorrectnessInfo.disposeResources_and_recycleToPool();
-      this.testCorrectnessInfo = undefined;
-    }
+    this.testCorrectnessInfo?.disposeResources_and_recycleToPool();
+    this.testCorrectnessInfo = null;
 
-    if ( this.block ) {
-      this.block.disposeResources_and_recycleToPool();
-      this.block = undefined;
-    }
+    this.block?.disposeResources_and_recycleToPool();
+    this.block = null;
 
-    this.blockTestParams = blockTestParams;
-    this.testCaseName = testCaseName;
-    this.testCaseId = testCaseId;
+    this.blockTestParams?.disposeResources_and_recycleToPool();
+    this.blockTestParams = null;
+
+    this.testCaseName = undefined;
+    this.testCaseId = undefined;
+
+    super.disposeResources();
   }
 
 }
@@ -147,7 +171,7 @@ class HeightWidthDepth {
 //         imageInArraySelected[ 1 ]?.boundsArraySet.output0,
 //         channelShuffler_ConcatPointwiseConv );
 
-      let aPerformanceTestCase = new PerformanceTestCase(
+      let aPerformanceTestCase = new PerformanceTestCase.Pool.get_or_create_by((
         blockTestParams.id, testCaseName,
         blockTestParams, testCorrectnessInfo );
 
@@ -339,8 +363,8 @@ class HeightWidthDepth {
   /** */
   block_PerformanceTest_release() {
     if ( this.testCaseMap ) {
-      for ( let [ name, testCase ] of this.testCaseMap.entries() ) {
-        testCase.disposeResources();
+      for ( let t of this.testCaseMap.values() ) {
+        testCase.disposeResources_and_recycleToPool();
       }
       this.testCaseMap.clear();
     }
