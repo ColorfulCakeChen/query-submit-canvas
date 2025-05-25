@@ -227,7 +227,7 @@ class HeightWidthDepth {
     // Test Case 0: (pointwise1 (bias, COS), depthwise (channelMultiplier = 1, strides = 1, pad = same, bias, COS), pointwise2 (bias, COS), AddInputToOutput)
     this.block_PerformanceTest_addCase(
       "DConv_1_bias_COS_AddInputToOutput",
-      ( new Block_TestParams.Base( 0 ) ).set_byParamsScattered(
+      Block_TestParams.Base.Pool.get_or_create_by( 0 ).set_byParamsScattered(
         this.height, this.width, this.depth,
         ValueDesc.ConvBlockType.Singleton.Ids.MOBILE_NET_V1_HEAD_BODY_TAIL,
             8,
@@ -242,7 +242,7 @@ class HeightWidthDepth {
     // Test Case 1: (pointwise1 (bias, COS), depthwise (avg pooling, strides = 1, pad = same, bias, COS), pointwise2 (bias, COS), AddInputToOutput)
     this.block_PerformanceTest_addCase(
       "Avg_bias_COS_AddInputToOutput",
-      ( new Block_TestParams.Base( 1 ) ).set_byParamsScattered(
+      Block_TestParams.Base.Pool.get_or_create_by( 1 ).set_byParamsScattered(
         this.height, this.width, this.depth,
         ValueDesc.ConvBlockType.Singleton.Ids.MOBILE_NET_V2_BODY_TAIL,
             8,
@@ -258,7 +258,7 @@ class HeightWidthDepth {
     // Test Case 2: (pointwise1 (bias, COS), depthwise (max pooling, strides = 1, pad = same, bias, COS), pointwise2 (bias, COS), AddInputToOutput)
     this.block_PerformanceTest_addCase(
       "Max_bias_COS_AddInputToOutput",
-      ( new Block_TestParams.Base( 2 ) ).set_byParamsScattered(
+      Block_TestParams.Base.Pool.get_or_create_by( 2 ).set_byParamsScattered(
         this.height, this.width, this.depth,
         ValueDesc.ConvBlockType.Singleton.Ids.MOBILE_NET_V2_BODY_TAIL,
             8,
@@ -274,7 +274,7 @@ class HeightWidthDepth {
     // Test Case 3: (pointwise1 (bias, COS), depthwise (channelMultiplier = 2, strides = 1, pad = same, bias, COS), pointwise2 (bias, COS), AddInputToOutput)
     this.block_PerformanceTest_addCase(
       "DConv_2_bias_COS_AddInputToOutput",
-      ( new Block_TestParams.Base( 3 ) ).set_byParamsScattered(
+      Block_TestParams.Base.Pool.get_or_create_by( 3 ).set_byParamsScattered(
         this.height, this.width, this.depth,
         ValueDesc.ConvBlockType.Singleton.Ids.MOBILE_NET_V2_BODY_TAIL,
             8,
@@ -289,7 +289,7 @@ class HeightWidthDepth {
     // Test Case 4: (pointwise1 (COS), depthwise (channelMultiplier = 2, strides = 1, pad = same, COS), pointwise2 (COS), AddInputToOutput)
     this.block_PerformanceTest_addCase(
       "DConv_2_COS_AddInputToOutput",
-      ( new Block_TestParams.Base( 4 ) ).set_byParamsScattered(
+      Block_TestParams.Base.Pool.get_or_create_by( 4 ).set_byParamsScattered(
         this.height, this.width, this.depth,
         ValueDesc.ConvBlockType.Singleton.Ids.MOBILE_NET_V2_BODY_TAIL,
             8,
@@ -304,7 +304,7 @@ class HeightWidthDepth {
     // Test Case 5: (pointwise1 (COS), depthwise (channelMultiplier = 2, strides = 1, pad = same, COS), pointwise2 (COS))
     this.block_PerformanceTest_addCase(
       "DConv_2_COS",
-      ( new Block_TestParams.Base( 5 ) ).set_byParamsScattered(
+      Block_TestParams.Base.Pool.get_or_create_by( 5 ).set_byParamsScattered(
         this.height, this.width, this.depth,
         ValueDesc.ConvBlockType.Singleton.Ids.MOBILE_NET_V1_HEAD_BODY_TAIL,
             8,
@@ -319,7 +319,7 @@ class HeightWidthDepth {
     // Test Case 6: (pointwise1 (none), depthwise (channelMultiplier = 16, strides = 1, pad = same, bias, COS), pointwise2 (bias))
     this.block_PerformanceTest_addCase(
       "DConv_16_bias_COS_P64_bias",
-      ( new Block_TestParams.Base( 6 ) ).set_byParamsScattered(
+      Block_TestParams.Base.Pool.get_or_create_by( 6 ).set_byParamsScattered(
         this.height, this.width, this.depth,
         ValueDesc.ConvBlockType.Singleton.Ids.MOBILE_NET_V1_HEAD_BODY_TAIL,
             0,
@@ -340,7 +340,7 @@ class HeightWidthDepth {
     // Test Case 7: (pointwise1 (bias, COS), depthwise (none), pointwise2 (bias))
     this.block_PerformanceTest_addCase(
       "P64_bias_COS_P64_bias",
-      ( new Block_TestParams.Base( 7 ) ).set_byParamsScattered(
+      Block_TestParams.Base.Pool.get_or_create_by( 7 ).set_byParamsScattered(
         this.height, this.width, this.depth,
         ValueDesc.ConvBlockType.Singleton.Ids.MOBILE_NET_V1_HEAD_BODY_TAIL,
 
