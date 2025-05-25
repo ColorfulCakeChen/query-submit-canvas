@@ -363,7 +363,7 @@ class HeightWidthDepth {
   /** */
   block_PerformanceTest_release() {
     if ( this.testCaseMap ) {
-      for ( let t of this.testCaseMap.values() ) {
+      for ( let testCase of this.testCaseMap.values() ) {
         testCase.disposeResources_and_recycleToPool();
       }
       this.testCaseMap.clear();
