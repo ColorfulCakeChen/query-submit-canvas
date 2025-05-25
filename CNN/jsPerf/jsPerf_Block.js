@@ -316,15 +316,21 @@ class HeightWidthDepth {
       )
     );
 
-    // Test Case 6: (pointwise1 (none), depthwise (channelMultiplier = 32, strides = 1, pad = same, bias, COS), pointwise2 (bias))
+    // Test Case 6: (pointwise1 (none), depthwise (channelMultiplier = 16, strides = 1, pad = same, bias, COS), pointwise2 (bias))
     this.block_PerformanceTest_addCase(
-      "DConv_32_bias_COS_P128_bias",
+      "DConv_16_bias_COS_P64_bias",
       ( new Block_TestParams.Base( 6 ) ).set_byParamsScattered(
         this.height, this.width, this.depth,
         ValueDesc.ConvBlockType.Singleton.Ids.MOBILE_NET_V1_HEAD_BODY_TAIL,
             0,
-          32,     3, 3, 1, Block.Params.depthwiseActivationId.valueDesc.Ids.CLIP_BY_VALUE_N2_P2,
-          128, Block.Params.pointwise20ActivationId.valueDesc.Ids.NONE,
+
+//!!! (2025/05/25 Remarked) too large. GPU memory not enough.
+//          32,     3, 3, 1, Block.Params.depthwiseActivationId.valueDesc.Ids.CLIP_BY_VALUE_N2_P2,
+//          128, Block.Params.pointwise20ActivationId.valueDesc.Ids.NONE,
+
+           16,     3, 3, 1, Block.Params.depthwiseActivationId.valueDesc.Ids.CLIP_BY_VALUE_N2_P2,
+           64, Block.Params.pointwise20ActivationId.valueDesc.Ids.NONE,
+
         ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.EXCITATION, false,
         ValueDesc.ActivationFunction.Singleton.Ids.CLIP_BY_VALUE_N2_P2,
         true
@@ -333,13 +339,20 @@ class HeightWidthDepth {
 
     // Test Case 7: (pointwise1 (bias, COS), depthwise (none), pointwise2 (bias))
     this.block_PerformanceTest_addCase(
-      "P128_bias_COS_P128_bias",
+      "P64_bias_COS_P64_bias",
       ( new Block_TestParams.Base( 7 ) ).set_byParamsScattered(
         this.height, this.width, this.depth,
         ValueDesc.ConvBlockType.Singleton.Ids.MOBILE_NET_V1_HEAD_BODY_TAIL,
-          128,
+
+//!!! (2025/05/25 Remarked) too large. GPU memory not enough.
+//          128,
+//            0,     3, 3, 1, Block.Params.depthwiseActivationId.valueDesc.Ids.CLIP_BY_VALUE_N2_P2,
+//          128, Block.Params.pointwise20ActivationId.valueDesc.Ids.NONE,
+
+           64,
             0,     3, 3, 1, Block.Params.depthwiseActivationId.valueDesc.Ids.CLIP_BY_VALUE_N2_P2,
-          128, Block.Params.pointwise20ActivationId.valueDesc.Ids.NONE,
+           64, Block.Params.pointwise20ActivationId.valueDesc.Ids.NONE,
+
         ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.EXCITATION, false,
         ValueDesc.ActivationFunction.Singleton.Ids.CLIP_BY_VALUE_N2_P2,
         true
