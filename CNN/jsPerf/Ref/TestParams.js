@@ -528,12 +528,16 @@ class TestParams_Base extends Recyclable.Root {
     divisorForRemainder = ( 2 ** 26 )
   ) {
 
+    const alwaysFixedRandomMinMax = TestParams_Base.alwaysFixedRandomMinMax;
+
     io_object[ propertyName ]
       = this.SequenceRandom_NumberArray_Bag
           .get_by_elementCount_randomOffsetMin_randomOffsetMax(
             height, width, channelCount,
             valueBegin, valueStep,
-            randomOffsetMin, randomOffsetMax, divisorForRemainder );
+            randomOffsetMin, randomOffsetMax, divisorForRemainder,
+            alwaysFixedRandomMinMax
+          );
   }
 
   /**

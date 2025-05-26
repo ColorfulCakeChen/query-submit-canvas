@@ -112,7 +112,9 @@ class Bag extends Recyclable.Base( MultiLayerMap.Base ) {
     height, width, channelCount,
     valueBegin = 0, valueStep = 1,
     randomOffsetMin = 0, randomOffsetMax = 0,
-    divisorForRemainder = ( 2 ** 26 ) ) {
+    divisorForRemainder = ( 2 ** 26 ),
+    alwaysFixedRandomMinMax = undefined
+   ) {
 
     let nRandSpecId = RandTools.getRandomIntInclusive(
       this.nRandSpecIdMin, this.nRandSpecIdMax );
@@ -121,7 +123,9 @@ class Bag extends Recyclable.Base( MultiLayerMap.Base ) {
       Bag.create_by, this,
       height, width, channelCount,
       valueBegin, valueStep,
-      randomOffsetMin, randomOffsetMax, divisorForRemainder, nRandSpecId );
+      randomOffsetMin, randomOffsetMax, divisorForRemainder,
+      alwaysFixedRandomMinMax,
+      nRandSpecId );
 
     return numberArray;
   }
@@ -133,6 +137,7 @@ class Bag extends Recyclable.Base( MultiLayerMap.Base ) {
     height, width, channelCount,
     valueBegin, valueStep,
     randomOffsetMin, randomOffsetMax, divisorForRemainder,
+    alwaysFixedRandomMinMax,
     nRandSpecId ) {
 
     // For debug.
@@ -147,7 +152,9 @@ class Bag extends Recyclable.Base( MultiLayerMap.Base ) {
     RandTools.fill_numberArray( numberArray,
       height, width, channelCount,
       valueBegin, valueStep,
-      randomOffsetMin, randomOffsetMax, divisorForRemainder );
+      randomOffsetMin, randomOffsetMax, divisorForRemainder,
+      alwaysFixedRandomMinMax
+    );
     return numberArray;
   }
 
