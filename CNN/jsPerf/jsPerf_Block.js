@@ -28,7 +28,7 @@ import * as jsPerf_Operation from "./jsPerf_Operation.js";
 /**
  * Test CNN Block.
  *
- * @see {@link https://www.measurethat.net/Benchmarks/Show/11973/1465/colorfulcakechen-cnn-block-4d36f0e2ffd053a25457d9b614c6}
+ * @see {@link https://www.measurethat.net/Benchmarks/Show/11973/1498/colorfulcakechen-cnn-block-cc71efbb11279adbdd81131d91b4}
  */
 
 /**
@@ -43,6 +43,7 @@ class PerformanceTestCase extends Recyclable.Root {
   static Pool = new Pool.Root( "PerformanceTestCase.Pool",
     PerformanceTestCase, PerformanceTestCase.setAsConstructor );
 
+  /** */
   constructor(
     testCaseId, testCaseName, blockTestParams, testCorrectnessInfo ) {
     super();
@@ -161,26 +162,11 @@ class HeightWidthDepth {
         blockTestParams,
         this.testPerformance_channelShufflerBag );
 
-//!!! (2025/05/25 Remarked) Moved into PerformanceTestCase.prepare_by()
-//       let {
-//         imageInArraySelected, channelShuffler_ConcatPointwiseConv
-//       } = testCorrectnessInfo;
-//
-//       let block = Block_Reference.Base.block_create( blockTestParams,
-//         imageInArraySelected[ 0 ].boundsArraySet.output0,
-//         imageInArraySelected[ 1 ]?.boundsArraySet.output0,
-//         channelShuffler_ConcatPointwiseConv );
-
       let aPerformanceTestCase = PerformanceTestCase.Pool.get_or_create_by(
         blockTestParams.id, testCaseName,
         blockTestParams, testCorrectnessInfo );
 
       this.testCaseMap.set( testCaseName, aPerformanceTestCase );
-
-//!!! (2025/05/25 Remarked) Moved into PerformanceTestCase.prepare_by()
-//       console.log( `Block.${testCaseName}: tensorWeightCount = { `
-//         + `Extracted: ${block.tensorWeightCountExtracted}, `
-//         + `Total: ${block.tensorWeightCountTotal} }` );
 
     } catch ( e ) {
       debugger;

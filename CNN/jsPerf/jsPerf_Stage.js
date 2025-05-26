@@ -22,16 +22,126 @@ import * as BatchIdCalculator from "./BatchIdCalculator.js";
 /**
  * 
  */
-class PerformanceTestCase {
-  constructor( testCaseId, testCaseName,
-    stageTestParams, stage, inputTensor3d ) {
+class PerformanceTestCase extends Recyclable.Root {
 
+//!!! (2025/05/26 Remarked)
+//   constructor( testCaseId, testCaseName,
+//     stageTestParams, stage, inputTensor3d ) {
+//
+//     this.testCaseId = testCaseId;
+//     this.testCaseName = testCaseName;
+//     this.stageTestParams = stageTestParams;
+//     this.stage = stage;
+//     this.inputTensor3d = inputTensor3d;
+//   }
+
+  /**
+   * Used as default PerformanceTestCase provider for conforming to Recyclable
+   * interface.
+   */
+  static Pool = new Pool.Root( "PerformanceTestCase.Pool",
+    PerformanceTestCase, PerformanceTestCase.setAsConstructor );
+
+  /**
+   *
+   * @param {ImageSourceBag.Base} imageSourceBag
+   *   The input number image provider. It is just be referenced, and will NOT
+   * be owned by this test case.
+   */
+  constructor(
+    testCaseId, testCaseName, stageTestParams, imageSourceBag ) {
+    super();
+    PerformanceTestCase.setAsConstructor_self.call( this,
+      testCaseId, testCaseName, stageTestParams, imageSourceBag
+    );
+  }
+
+  /** @override */
+  static setAsConstructor(
+    testCaseId, testCaseName, stageTestParams, imageSourceBag ) {
+    super.setAsConstructor();
+    PerformanceTestCase.setAsConstructor_self.call( this,
+      testCaseId, testCaseName, stageTestParams, imageSourceBag
+    );
+    return this;
+  }
+
+  /** @override */
+  static setAsConstructor_self(
+    testCaseId, testCaseName, stageTestParams, imageSourceBag ) {
     this.testCaseId = testCaseId;
     this.testCaseName = testCaseName;
     this.stageTestParams = stageTestParams;
-    this.stage = stage;
-    this.inputTensor3d = inputTensor3d;
+    this.imageSourceBag = imageSourceBag;
+    this.stage = undefined;
+    this.inputTensor3d = undefined;
   }
+
+  /**
+   * 
+   */
+  prepare() {
+
+    try {
+      {
+        this.inputTensor3d?.dispose();
+        this.inputTensor3d = null;
+
+        this.stage?.disposeResources_and_recycleToPool();
+        this.stage = null;
+      }
+
+      const stageTestParams = this.stageTestParams;
+      const imageSourceBag = this.imageSourceBag;
+
+      // Pre-create performance test case's input image.
+      let inputImage = imageSourceBag.getImage_by(
+        stageTestParams.out.input_height,
+        stageTestParams.out.input_width,
+        stageTestParams.out.input_channelCount );
+
+      // Pre-create performance test case's input tensor.
+      let inputTensor3d = imageSourceBag.getTensor3d_by(
+        stageTestParams.out.input_height,
+        stageTestParams.out.input_width,
+        stageTestParams.out.input_channelCount );
+
+      let stage = Stage_Reference.Base.Stage_create(
+        stageTestParams, inputImage.boundsArraySet.output0 );
+
+      this.stage = stage;
+      this.inputTensor3d = inputTensor3d;
+
+      console.log( `Stage.${this.testCaseName}: tensorWeightCount = { `
+        + `Extracted: ${stage.tensorWeightCountExtracted}, `
+        + `Total: ${stage.tensorWeightCountTotal} }` );
+
+    } catch ( e ) {
+      debugger;
+      throw e;
+    }
+  }
+
+  /** @override */
+  disposeResources() {
+
+    this.inputTensor3d?.dispose();
+    this.inputTensor3d = null;
+
+    this.stage?.disposeResources_and_recycleToPool();
+    this.stage = null;
+
+    this.imageSourceBag = null;
+
+    this.stageTestParams?.disposeResources_and_recycleToPool();
+    this.stageTestParams = null;
+
+    this.testCaseName = undefined;
+    this.testCaseId = undefined;
+
+    super.disposeResources();
+  }
+
 }
 
 /**
@@ -65,30 +175,32 @@ class HeightWidthDepth {
   stage_PerformanceTest_addCase( testCaseName, stageTestParams ) {
     try {
 
-      // Pre-create performance test case's input image.
-      let inputImage = this.testPerformance_imageSourceBag.getImage_by(
-        stageTestParams.out.input_height,
-        stageTestParams.out.input_width,
-        stageTestParams.out.input_channelCount );
+//!!! (2025/05/26 Remarked) Moved to PerformanceTestCase.prepare()
+//       // Pre-create performance test case's input image.
+//       let inputImage = this.testPerformance_imageSourceBag.getImage_by(
+//         stageTestParams.out.input_height,
+//         stageTestParams.out.input_width,
+//         stageTestParams.out.input_channelCount );
+//
+//       // Pre-create performance test case's input tensor.
+//       let inputTensor3d = this.testPerformance_imageSourceBag.getTensor3d_by(
+//         stageTestParams.out.input_height,
+//         stageTestParams.out.input_width,
+//         stageTestParams.out.input_channelCount );
+//
+//       let stage = Stage_Reference.Base.Stage_create(
+//         stageTestParams, inputImage.boundsArraySet.output0 );
 
-      // Pre-create performance test case's input tensor.
-      let inputTensor3d = this.testPerformance_imageSourceBag.getTensor3d_by(
-        stageTestParams.out.input_height,
-        stageTestParams.out.input_width,
-        stageTestParams.out.input_channelCount );
-
-      let stage = Stage_Reference.Base.Stage_create(
-        stageTestParams, inputImage.boundsArraySet.output0 );
-
-      let aPerformanceTestCase = new PerformanceTestCase(
+      let aPerformanceTestCase = PerformanceTestCase.Pool.get_or_create_by(
         stageTestParams.id, testCaseName,
-        stageTestParams, stage, inputTensor3d );
+        stageTestParams, this.testPerformance_imageSourceBag );
 
       this.testCaseMap.set( testCaseName, aPerformanceTestCase );
 
-      console.log( `Stage.${testCaseName}: tensorWeightCount = { `
-        + `Extracted: ${stage.tensorWeightCountExtracted}, `
-        + `Total: ${stage.tensorWeightCountTotal} }` );
+//!!! (2025/05/26 Remarked) Moved to PerformanceTestCase.prepare()
+//       console.log( `Stage.${testCaseName}: tensorWeightCount = { `
+//         + `Extracted: ${stage.tensorWeightCountExtracted}, `
+//         + `Total: ${stage.tensorWeightCountTotal} }` );
 
     } catch ( e ) {
       debugger;
@@ -232,6 +344,10 @@ class HeightWidthDepth {
         let testCase = name_testCase[ 1 ];
         if ( testCase.stage ) {
           testCase.stage.disposeResources_and_recycleToPool();
+
+//!!! ...unfinished... (2026/05/26)
+// Release inputTensor3d ?
+
         }
       }
       this.testCaseMap.clear();
