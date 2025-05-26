@@ -147,6 +147,9 @@ class ImageSourceBag_Base extends Recyclable.Root {
   }
 
   /**
+   * (Please do NOT release the returned tensor3d object because it is owned
+   * and managed by this ImageSourceBag.)
+   *
    *
    * @return {tf.tensor3d}
    *   Return a tensor with the specified specification.

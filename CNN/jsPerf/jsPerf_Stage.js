@@ -73,7 +73,8 @@ class PerformanceTestCase extends Recyclable.Root {
 
     try {
       {
-        this.inputTensor3d?.dispose();
+        // Note: Do NOT release the tensor3d because it is owned and manged
+        //       by ImageSourceBag.
         this.inputTensor3d = null;
 
         this.stage?.disposeResources_and_recycleToPool();
@@ -114,7 +115,8 @@ class PerformanceTestCase extends Recyclable.Root {
   /** @override */
   disposeResources() {
 
-    this.inputTensor3d?.dispose();
+    // Note: Do NOT release the tensor3d because it is owned and manged
+    //       by ImageSourceBag.
     this.inputTensor3d = null;
 
     this.stage?.disposeResources_and_recycleToPool();
@@ -330,10 +332,11 @@ class HeightWidthDepth {
   stage_PerformanceTest_release_stage() {
     if ( this.testCaseMap ) {
       for ( let testCase of this.testCaseMap.values() ) {
-        if ( testCase.inputTensor3d ) {
-          testCase.inputTensor3d.dispose();
-          testCase.inputTensor3d = null;
-        }
+
+        // Note: Do NOT release the tensor3d because it is owned and manged
+        //       by ImageSourceBag.
+        testCase.inputTensor3d = null;
+
         if ( testCase.stage ) {
           testCase.stage.disposeResources_and_recycleToPool();
           testCase.stage = null;
