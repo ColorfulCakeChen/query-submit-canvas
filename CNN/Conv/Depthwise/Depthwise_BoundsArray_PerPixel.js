@@ -255,17 +255,17 @@ class Depthwise_BoundsArray_PerPixel extends FloatValue.BoundsArray {
   /**
    * Collapse every pixel's value bounds to per output channel value bounds.
    *
-   * @param {FloatValue.BoundsArray} aBoundsArray
-   *   The collapsed result will be stored to aBoundsArray.
+   * @param {FloatValue.BoundsArray} out_aBoundsArray
+   *   The collapsed result will be stored to out_aBoundsArray.
    *
    * @return {Depthwise_BoundsArray_PerPixel}
-   *   Return this (modified) object.
+   *   Return this (not-modified) object.
    */
-  collapse_byOutputChannel_toBoundsArray( aBoundsArray ) {
-    aBoundsArray.length = this.imageInfo.outputChannelCount;
+  collapse_byOutputChannel_toBoundsArray( out_aBoundsArray ) {
+    out_aBoundsArray.length = this.imageInfo.outputChannelCount;
 
     // (so that could be enlarged.)
-    aBoundsArray.set_all_by_PositiveInfinity_NegativeInfinity();
+    out_aBoundsArray.set_all_by_PositiveInfinity_NegativeInfinity();
 
     let imageOutput_elementIndex = 0;
     for ( let outY = 0; outY < this.imageInfo.outputHeight; ++outY ) {
@@ -273,7 +273,7 @@ class Depthwise_BoundsArray_PerPixel extends FloatValue.BoundsArray {
         for ( let outC = 0; outC < this.imageInfo.outputChannelCount;
           ++outC, ++imageOutput_elementIndex ) {
 
-          aBoundsArray.enlarge_one_byBoundsArray_one( outC,
+          out_aBoundsArray.enlarge_one_byBoundsArray_one( outC,
             this, imageOutput_elementIndex );
         }
       }
