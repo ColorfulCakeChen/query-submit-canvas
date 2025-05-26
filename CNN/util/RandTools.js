@@ -112,9 +112,9 @@ function fill_numberArray( io_numberArray,
   randomOffsetMin = 0, randomOffsetMax = 0,
   divisorForRemainder = ( 2 ** 26 ),
 
-  //!!! (2023/07/07 Temp Remakred) For Debug.
-  alwaysFixedRandomMinMax = false
-  //alwaysFixedRandomMinMax = true
+  //!!! (2025/05/26 Temp Remakred) For Debug.
+  //alwaysFixedRandomMinMax = false
+  alwaysFixedRandomMinMax = true
 ) {
 
   // (Codes copied from getRandomIntInclusive())
