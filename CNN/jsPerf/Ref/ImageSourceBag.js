@@ -301,4 +301,5 @@ ImageSourceBag_Base.weightsDivisorForRemainder = 256;
 
 // (2025/05/26 Temp Remarked) Fixed to non-random to simplify debug.
 //ImageSourceBag_Base.alwaysFixedRandomMinMax = false;
-ImageSourceBag_Base.alwaysFixedRandomMinMax = true;
+//ImageSourceBag_Base.alwaysFixedRandomMinMax = true;
+ImageSourceBag_Base.alwaysFixedRandomMinMax = undefined;

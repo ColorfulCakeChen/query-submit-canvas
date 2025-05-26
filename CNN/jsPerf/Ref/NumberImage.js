@@ -2032,7 +2032,7 @@ class NumberImage_Base extends Recyclable.Root {
     height, width, channelCount,
     valueBegin = 0, valueStep = 1,
     randomOffsetMin = 0, randomOffsetMax = 0, divisorForRemainder = 256,
-    alwaysFixedRandomMinMax = false
+    alwaysFixedRandomMinMax = undefined
   ) {
 
     // 1.

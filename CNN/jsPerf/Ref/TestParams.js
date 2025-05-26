@@ -583,16 +583,7 @@ class TestParams_Base extends Recyclable.Root {
       weightsDivisorForRemainder
     } = TestParams_Base.filterWeights_numberArray_randomParams;
 
-    //!!! (2022/05/23 Remarked)
-    //TestParams_Base.ensure_object_property_numberArray_length_filled(
-    //   io_object, propertyName,
-    //   elementCount,
-    //   weightsValueBegin,
-    //   weightsValueStep,
-    //   weightsRandomOffset.min,
-    //   weightsRandomOffset.max,
-    //   weightsDivisorForRemainder
-    // );
+    const alwaysFixedRandomMinMax = TestParams_Base.alwaysFixedRandomMinMax;
 
     this.ensure_object_property_numberArray_length_existed(
       io_object, propertyName,
@@ -601,7 +592,8 @@ class TestParams_Base extends Recyclable.Root {
       weightsValueStep,
       weightsRandomOffset.min,
       weightsRandomOffset.max,
-      weightsDivisorForRemainder
+      weightsDivisorForRemainder,
+      alwaysFixedRandomMinMax
     );
   }
 
@@ -783,3 +775,8 @@ TestParams_Base.filterWeights_numberArray_randomParams = {
   // network could generate more other result value.
   weightsDivisorForRemainder: ( 2 ** 0 ), // i.e. 1
 };
+
+// (2025/05/26 Temp Remarked) Fixed to non-random to simplify debug.
+//TestParams_Base.alwaysFixedRandomMinMax = false;
+//TestParams_Base.alwaysFixedRandomMinMax = true;
+TestParams_Base.alwaysFixedRandomMinMax = undefined;
