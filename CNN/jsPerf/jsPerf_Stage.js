@@ -327,7 +327,7 @@ class HeightWidthDepth {
   }
 
   /** Release testCase.stage and .inputTensor3d, but keep testCase. */
-  stage_PerformanceTest_release_block() {
+  stage_PerformanceTest_release_stage() {
     if ( this.testCaseMap ) {
       for ( let testCase of this.testCaseMap.values() ) {
         if ( testCase.inputTensor3d ) {
