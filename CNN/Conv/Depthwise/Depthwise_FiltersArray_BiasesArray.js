@@ -671,7 +671,7 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
     // 0. Init
 
     // 0.1 Prepare .afterFilter accumulation.
-    
+
     // Virtual input image (for calculating value bounds).
     //
     // When pad=same, part of filter will be applied to the padded pixels (i.e.
