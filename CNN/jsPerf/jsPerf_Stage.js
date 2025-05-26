@@ -24,17 +24,6 @@ import * as BatchIdCalculator from "./BatchIdCalculator.js";
  */
 class PerformanceTestCase extends Recyclable.Root {
 
-//!!! (2025/05/26 Remarked)
-//   constructor( testCaseId, testCaseName,
-//     stageTestParams, stage, inputTensor3d ) {
-//
-//     this.testCaseId = testCaseId;
-//     this.testCaseName = testCaseName;
-//     this.stageTestParams = stageTestParams;
-//     this.stage = stage;
-//     this.inputTensor3d = inputTensor3d;
-//   }
-
   /**
    * Used as default PerformanceTestCase provider for conforming to Recyclable
    * interface.
@@ -243,7 +232,7 @@ class HeightWidthDepth {
     // Test Case 0: (MobileNetV1, ( bPointwise1 == true ))
     this.stage_PerformanceTest_addCase(
       "MobileNetV1_bPointwise1_true",
-      ( new Stage_TestParams.Base( 0 ) ).set_byParamsScattered(
+      Stage_TestParams.Base.Pool.get_or_create_by( 0 ).set_byParamsScattered(
         this.height, this.width, this.depth,
         ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V1,
         blockCountRequested, true,
@@ -255,7 +244,7 @@ class HeightWidthDepth {
     // Test Case 1: (MobileNetV1_padValid, ( bPointwise1 == true ))
     this.stage_PerformanceTest_addCase(
       "MobileNetV1_padValid_bPointwise1_true",
-      ( new Stage_TestParams.Base( 1 ) ).set_byParamsScattered(
+      Stage_TestParams.Base.Pool.get_or_create_by( 1 ).set_byParamsScattered(
         this.height, this.width, this.depth,
         ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V1_PAD_VALID,
         blockCountRequested, true,
@@ -267,7 +256,7 @@ class HeightWidthDepth {
     // Test Case 2: (MobileNetV2_Thin, ( bPointwise1 == true ))
     this.stage_PerformanceTest_addCase(
       "MobileNetV2_Thin_bPointwise1_true",
-      ( new Stage_TestParams.Base( 2 ) ).set_byParamsScattered(
+      Stage_TestParams.Base.Pool.get_or_create_by( 2 ).set_byParamsScattered(
         this.height, this.width, this.depth,
         ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V2_THIN,
         blockCountRequested, true,
@@ -279,7 +268,7 @@ class HeightWidthDepth {
     // Test Case 3: (MobileNetV2, ( bPointwise1 == true ))
     this.stage_PerformanceTest_addCase(
       "MobileNetV2_bPointwise1_true",
-      ( new Stage_TestParams.Base( 3 ) ).set_byParamsScattered(
+      Stage_TestParams.Base.Pool.get_or_create_by( 3 ).set_byParamsScattered(
         this.height, this.width, this.depth,
         ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V2,
         blockCountRequested, true,
@@ -291,7 +280,7 @@ class HeightWidthDepth {
     // Test Case 4: (ShuffleNetV2, ( bPointwise1 == true ))
     this.stage_PerformanceTest_addCase(
       "ShuffleNetV2_bPointwise1_true",
-      ( new Stage_TestParams.Base( 4 ) ).set_byParamsScattered(
+      Stage_TestParams.Base.Pool.get_or_create_by( 4 ).set_byParamsScattered(
         this.height, this.width, this.depth,
         ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2,
         blockCountRequested, true,
@@ -303,7 +292,7 @@ class HeightWidthDepth {
     // Test Case 5: (ShuffleNetV2_byPointwise21, ( bPointwise1 == true ))
     this.stage_PerformanceTest_addCase(
       "ShuffleNetV2_byPointwise21_bPointwise1_true",
-      ( new Stage_TestParams.Base( 5 ) ).set_byParamsScattered(
+      Stage_TestParams.Base.Pool.get_or_create_by( 5 ).set_byParamsScattered(
         this.height, this.width, this.depth,
         ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21,
         blockCountRequested, true,
@@ -315,7 +304,7 @@ class HeightWidthDepth {
     // Test Case 6: (ShuffleNetV2_byMobileNetV1, ( bPointwise1 == true ))
     this.stage_PerformanceTest_addCase(
       "ShuffleNetV2_byMobileNetV1_bPointwise1_true",
-      ( new Stage_TestParams.Base( 6 ) ).set_byParamsScattered(
+      Stage_TestParams.Base.Pool.get_or_create_by( 6 ).set_byParamsScattered(
         this.height, this.width, this.depth,
         ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1,
         blockCountRequested, true,
@@ -327,7 +316,7 @@ class HeightWidthDepth {
     // Test Case 7: (ShuffleNetV2_byMobileNetV1_padValid, ( bPointwise1 == true ))
     this.stage_PerformanceTest_addCase(
       "ShuffleNetV2_byMobileNetV1_padValid_bPointwise1_true",
-      ( new Stage_TestParams.Base( 7 ) ).set_byParamsScattered(
+      Stage_TestParams.Base.Pool.get_or_create_by( 7 ).set_byParamsScattered(
         this.height, this.width, this.depth,
         ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID,
         blockCountRequested, true,
@@ -337,31 +326,46 @@ class HeightWidthDepth {
       ) );
   }
 
-  stage_PerformanceTest_release() {
+  /** Release testCase.stage and .inputTensor3d, but keep testCase. */
+  stage_PerformanceTest_release_block() {
     if ( this.testCaseMap ) {
-      for ( let name_testCase of this.testCaseMap.entries() ) {
-        let name = name_testCase[ 0 ];
-        let testCase = name_testCase[ 1 ];
+      for ( let testCase of this.testCaseMap.values() ) {
+        if ( testCase.inputTensor3d ) {
+          testCase.inputTensor3d.dispose();
+          testCase.inputTensor3d = null;
+        }
         if ( testCase.stage ) {
           testCase.stage.disposeResources_and_recycleToPool();
-
-//!!! ...unfinished... (2026/05/26)
-// Release inputTensor3d ?
-
+          testCase.stage = null;
         }
+      }
+    }
+  }
+
+  /** */
+  stage_PerformanceTest_release() {
+    if ( this.testCaseMap ) {
+      for ( let testCase of this.testCaseMap.values() ) {
+        testCase.disposeResources_and_recycleToPool();
       }
       this.testCaseMap.clear();
     }
 
-    if ( this.testPerformance_imageSourceBag ) {
-      this.testPerformance_imageSourceBag.disposeResources_and_recycleToPool();
-      this.testPerformance_imageSourceBag = null;
-    }
+    this.testPerformance_imageSourceBag?.disposeResources_and_recycleToPool();
+    this.testPerformance_imageSourceBag = null;
   }
 
   /** Test apply by Xxx */
   testStage_ByName( testCaseName ) {
     let testCase = this.testCaseMap.get( testCaseName );
+
+    // First time test this case. Release all other test cases' stage
+    // (so that there will be enough memory). Create the specified stage.
+    if ( !testCase.stage ) {
+      this.stage_PerformanceTest_release_stage();
+      testCase.prepare();
+    }
+
     let stage = testCase.stage;
     let outputTensor3d = stage.apply( testCase.inputTensor3d );
     tf.dispose( outputTensor3d );
