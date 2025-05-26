@@ -2019,6 +2019,10 @@ class NumberImage_Base extends Recyclable.Root {
    *   To restrict the generated value. Default is 256, because image's evey
    * channel of a pixel should be in [ 0, 255 ].
    *
+   * @param {boolean} alwaysFixedRandomMinMax
+   *   If true, the generated values will be fixed every time (i.e. non-random;
+   * reproducible random). It is mainly used for debug.
+   *
    * @return {NumberImage.Base}
    *   Return a newly generated image. Basically, they are sequential numbers
    * which could be added by random offset between
@@ -2027,7 +2031,8 @@ class NumberImage_Base extends Recyclable.Root {
   static create_bySequenceRandom(
     height, width, channelCount,
     valueBegin = 0, valueStep = 1,
-    randomOffsetMin = 0, randomOffsetMax = 0, divisorForRemainder = 256
+    randomOffsetMin = 0, randomOffsetMax = 0, divisorForRemainder = 256,
+    alwaysFixedRandomMinMax = false
   ) {
 
     // 1.
@@ -2057,7 +2062,9 @@ class NumberImage_Base extends Recyclable.Root {
     RandTools.fill_numberArray( imageNew.dataArray,
       height, width, channelCount,
       valueBegin, valueStep,
-      randomOffsetMin, randomOffsetMax, divisorForRemainder );
+      randomOffsetMin, randomOffsetMax, divisorForRemainder,
+      alwaysFixedRandomMinMax
+    );
 
     // 3. Fill .boundsArraySet
     imageNew.boundsArraySet.set_outputs_all_byBoundsArray(

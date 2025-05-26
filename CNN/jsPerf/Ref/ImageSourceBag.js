@@ -213,7 +213,8 @@ class ImageSourceBag_Base extends Recyclable.Root {
         ImageSourceBag_Base.weightsValueStep,
         ImageSourceBag_Base.weightsRandomOffset.min,
         ImageSourceBag_Base.weightsRandomOffset.max,
-        ImageSourceBag_Base.weightsDivisorForRemainder
+        ImageSourceBag_Base.weightsDivisorForRemainder,
+        ImageSourceBag_Base.alwaysFixedRandomMinMax
       );
 
     // 2. The shrinked image requested.
@@ -297,3 +298,7 @@ ImageSourceBag_Base.weightsRandomOffset = { min: -1, max: +1 };
 //ImageSourceBag_Base.weightsRandomOffset = { min: -0, max: +0 };
 
 ImageSourceBag_Base.weightsDivisorForRemainder = 256;
+
+// (2025/05/26 Temp Remarked) Fixed to non-random to simplify debug.
+//ImageSourceBag_Base.alwaysFixedRandomMinMax = false;
+ImageSourceBag_Base.alwaysFixedRandomMinMax = true;
