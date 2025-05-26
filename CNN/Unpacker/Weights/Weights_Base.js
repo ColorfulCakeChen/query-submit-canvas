@@ -7,7 +7,7 @@ import * as Recyclable from "../../util/Recyclable.js";
 import * as FloatValue from "../FloatValue.js";
 
 /**
- * A base class for weights extracting. It composes of a beninning and an
+ * A base class for weights extracting. It composes of a beginning and an
  * ending array index.
  *
  * @member {number} weightElementOffsetBegin
