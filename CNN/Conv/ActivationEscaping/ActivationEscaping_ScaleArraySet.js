@@ -403,7 +403,6 @@ class ScaleArraySet extends Recyclable.Root {
   }
 
 
-//!!! ...unfinished... (2025/05/28)
 //!!! ...untested... (2025/05/28)
   /**
    * Return strings for all the values displayed in one line (i.e. one row)
