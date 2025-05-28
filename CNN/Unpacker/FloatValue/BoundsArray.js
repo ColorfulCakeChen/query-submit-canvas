@@ -1612,4 +1612,48 @@ class BoundsArray extends Recyclable.Root {
     return str;
   }
 
+//!!! ...unfinished... (2025/05/28)
+  /**
+   * Return strings for all the values should be displayed in one line (i.e.
+   * one row) when logging this object as a table.
+   *
+   * @param {String[]} out_stringArray
+   *   The output string array. All the returned values (i.e. every column of
+   * one row) should be pushed at the end (in order) of this out_stringArray[].
+   *
+   * @param {number} nIndex
+   *   An integer index into .lowers[] and .uppers[]. If negative, the title
+   * string (i.e. [ ".lowers[]", ".uppers[]" ]) should be returned.
+   *
+   * @param {number} characterCountPerField
+   *   Every returned string should be padded so that it length is
+   * so many character.
+   *
+   * @param {number} digitCountAfterDecimalPoint
+   *   Every returned string (if its original value is a number) should be
+   * formatted as so many digits after its decimal point.
+   */
+  TableLogString_get_oneRow_byIndex( out_stringArray, nIndex,
+    characterCountPerField, digitCountAfterDecimalPoint ) {
+
+    if ( nIndex < 0 ) {
+      const title0 = ".lowers[]";
+      const title1 = ".uppers[]";
+      out_stringArray.push(
+        title0.padStart( characterCountPerField ),
+        title1.padStart( characterCountPerField )
+      );
+      return;
+    }
+ 
+    out_stringArray.push(
+      this.lowers[ nIndex ]
+        .toFixed( digitCountAfterDecimalPoint )
+        .padStart( characterCountPerField ),
+      this.uppers[ nIndex ]
+        .toFixed( digitCountAfterDecimalPoint )
+        .padStart( characterCountPerField )
+    );
+  }
+
 }
