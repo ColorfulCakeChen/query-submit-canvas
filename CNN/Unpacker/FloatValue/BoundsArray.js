@@ -1626,7 +1626,15 @@ class BoundsArray extends Recyclable.Root {
    *   Every returned string should be padded so that its length is just
    * so many characters.
    *
-!!!???
+
+//!!! ...unfinished... (2025/05/28)
+// Perhaps, give prefix name and  push to
+// the end of out_stringArrayArray[ ? ] twice.
+// Once for prefix and another for this ".lowers[]" (or ".uppers[]").
+//
+// Problem: do not know how may lines the header has.
+
+
    * @param {number} columnIndex
    *   ???Which line of the log table should be returned. It is an integer index
    * into .lowers[] and .uppers[].
