@@ -516,7 +516,7 @@ class ScaleArray extends Recyclable.Root {
     rowIndex
   ) {
     out_stringArray.push(
-      this.scales[ nIndex ]
+      this.scales[ rowIndex ]
         .toFixed( digitCountAfterDecimalPoint )
         .padStart( characterCountPerField )
     );

@@ -1626,9 +1626,12 @@ class BoundsArray extends Recyclable.Root {
    *   Every returned string should be padded so that its length is just
    * so many characters.
    */
-  TableLog_header_append_oneRow( out_stringArray, characterCountPerField ) {
+  TableLog_header_append_oneRow( ??out_stringArrayArray,
+    characterCountPerField
+  ) {
     const title0 = ".lowers[]";
     const title1 = ".uppers[]";
+!!!???
     out_stringArray.push(
       title0.padStart( characterCountPerField ),
       title1.padStart( characterCountPerField )

@@ -379,10 +379,6 @@ class ScaleBoundsArray extends Recyclable.Root {
    *   The output string array. All the returned values (i.e. every column of
    * one row) should be pushed at its end (in order).
    *
-   * @param {number} nIndex
-   *   An integer index into .lowers[] and .uppers[]. If negative, the title
-   * string (i.e. [ ".lowers[]", ".uppers[]" ]) should be returned.
-   *
    * @param {number} characterCountPerField
    *   Every returned string should be padded so that its length is just
    * so many characters.
@@ -390,11 +386,16 @@ class ScaleBoundsArray extends Recyclable.Root {
    * @param {number} digitCountAfterDecimalPoint
    *   Every returned string (if its original value is a number) should be
    * formatted as so many digits after its decimal point.
+   *
+   * @param {number} rowIndex
+   *   Which line of the log table should be returned. It is an integer index
+   * into .boundsArray[] and .scaleArraySet[].
    */
   TableLog_body_append_oneRow_byIndex( out_stringArray,
-    nIndex,
     characterCountPerField,
-    digitCountAfterDecimalPoint ) {
+    digitCountAfterDecimalPoint,
+    rowIndex
+  ) {
 
 //!!! ...unfinished... (2025/05/28)
 // should display title ".boundsArray" and ".scaleArraySet".
@@ -403,14 +404,14 @@ class ScaleBoundsArray extends Recyclable.Root {
 // should have prefix and postfix string (left and right square bracket)
 
     this.boundsArray.TableLog_append_oneRow_byIndex( out_stringArray,
-      nIndex,
       characterCountPerField,
-      digitCountAfterDecimalPoint );
+      digitCountAfterDecimalPoint,
+      rowIndex );
 
     this.scaleArraySet.TableLog_append_oneRow_byIndex( out_stringArray,
-      nIndex,
       characterCountPerField,
-      digitCountAfterDecimalPoint );
+      digitCountAfterDecimalPoint,
+      rowIndex );
   }
 
 }
