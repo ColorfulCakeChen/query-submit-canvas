@@ -1625,9 +1625,15 @@ class BoundsArray extends Recyclable.Root {
    * @param {number} characterCountPerField
    *   Every returned string should be padded so that its length is just
    * so many characters.
+   *
+!!!???
+   * @param {number} columnIndex
+   *   ???Which line of the log table should be returned. It is an integer index
+   * into .lowers[] and .uppers[].
    */
   TableLog_header_append_oneRow( ??out_stringArrayArray,
-    characterCountPerField
+    characterCountPerField,
+    columnIndex
   ) {
     const title0 = ".lowers[]";
     const title1 = ".uppers[]";
