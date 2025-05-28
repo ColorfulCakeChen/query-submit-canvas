@@ -402,5 +402,44 @@ class ScaleArraySet extends Recyclable.Root {
     return this;
   }
 
+
+//!!! ...unfinished... (2025/05/28)
+//!!! ...untested... (2025/05/28)
+  /**
+   * Return strings for all the values displayed in one line (i.e. one row)
+   * when logging this object as a table.
+   *
+   * @param {String[]} out_stringArray
+   *   The output string array. All the returned values (i.e. every column of
+   * one row) should be pushed at its end (in order).
+   *
+   * @param {number} nIndex
+   *   An integer index into .lowers[] and .uppers[]. If negative, the title
+   * string (i.e. [ ".lowers[]", ".uppers[]" ]) should be returned.
+   *
+   * @param {number} characterCountPerField
+   *   Every returned string should be padded so that its length is just
+   * so many characters.
+   *
+   * @param {number} digitCountAfterDecimalPoint
+   *   Every returned string (if its original value is a number) should be
+   * formatted as so many digits after its decimal point.
+   */
+  TableLog_append_oneRow_byIndex( out_stringArray,
+    nIndex,
+    characterCountPerField,
+    digitCountAfterDecimalPoint ) {
+
+    this.do.TableLog_append_oneRow_byIndex( out_stringArray,
+      nIndex,
+      characterCountPerField,
+      digitCountAfterDecimalPoint );
+
+    this.undo.TableLog_append_oneRow_byIndex( out_stringArray,
+      nIndex,
+      characterCountPerField,
+      digitCountAfterDecimalPoint );
+  }
+
 }
 
