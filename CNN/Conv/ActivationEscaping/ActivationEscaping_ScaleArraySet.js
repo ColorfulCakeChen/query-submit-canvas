@@ -429,6 +429,12 @@ class ScaleArraySet extends Recyclable.Root {
     characterCountPerField,
     digitCountAfterDecimalPoint ) {
 
+//!!! ...unfinished... (2025/05/28)
+// should display ".do" and ".undo" title.
+
+//!!! ...unfinished... (2025/05/28)
+// should have prefix and postfix string (left and right square bracket)
+
     this.do.TableLog_append_oneRow_byIndex( out_stringArray,
       nIndex,
       characterCountPerField,

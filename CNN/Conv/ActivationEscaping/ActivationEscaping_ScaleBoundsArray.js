@@ -396,6 +396,12 @@ class ScaleBoundsArray extends Recyclable.Root {
     characterCountPerField,
     digitCountAfterDecimalPoint ) {
 
+//!!! ...unfinished... (2025/05/28)
+// should display title ".boundsArray" and ".scaleArraySet".
+
+//!!! ...unfinished... (2025/05/28)
+// should have prefix and postfix string (left and right square bracket)
+
     this.boundsArray.TableLog_append_oneRow_byIndex( out_stringArray,
       nIndex,
       characterCountPerField,

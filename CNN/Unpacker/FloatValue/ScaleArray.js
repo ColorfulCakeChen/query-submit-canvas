@@ -495,6 +495,12 @@ class ScaleArray extends Recyclable.Root {
     characterCountPerField,
     digitCountAfterDecimalPoint ) {
 
+
+//!!! ...unfinished... (2025/05/28)
+// should has moore title prefix.
+// Perhaps, placed at ( nIndex == -3 ), ( nIndex == -2 ), ( nIndex == -1 )
+
+
     if ( nIndex < 0 ) {
       const title = ".scales[]";
       out_stringArray.push(
