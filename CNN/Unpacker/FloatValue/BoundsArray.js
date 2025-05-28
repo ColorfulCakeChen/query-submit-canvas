@@ -1633,8 +1633,11 @@ class BoundsArray extends Recyclable.Root {
    *   Every returned string (if its original value is a number) should be
    * formatted as so many digits after its decimal point.
    */
-  TableLogString_get_oneRow_byIndex( out_stringArray, nIndex,
-    characterCountPerField, digitCountAfterDecimalPoint ) {
+  TableLog_append_oneRow_byIndex(
+    out_stringArray,
+    nIndex,
+    characterCountPerField,
+    digitCountAfterDecimalPoint ) {
 
     if ( nIndex < 0 ) {
       const title0 = ".lowers[]";
