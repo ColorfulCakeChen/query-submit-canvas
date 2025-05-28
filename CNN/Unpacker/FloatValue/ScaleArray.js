@@ -471,16 +471,32 @@ class ScaleArray extends Recyclable.Root {
 
 //!!! ...untested... (2025/05/28)
   /**
+   * Return strings for all the headers displayed in one line (i.e. one row)
+   * when logging this object as a table.
+   *
+   * @param {String[]} out_stringArray
+   *   The output string array. All the returned values (i.e. every column
+   * header of one row) should be pushed at its end (in order).
+   *
+   * @param {number} characterCountPerField
+   *   Every returned string should be padded so that its length is just
+   * so many characters.
+   */
+  TableLog_header_append_oneRow( out_stringArray, characterCountPerField ) {
+    const title = ".scales[]";
+    out_stringArray.push(
+      title.padStart( characterCountPerField )
+    );
+  }
+
+//!!! ...untested... (2025/05/28)
+  /**
    * Return strings for all the values displayed in one line (i.e. one row)
    * when logging this object as a table.
    *
    * @param {String[]} out_stringArray
    *   The output string array. All the returned values (i.e. every column of
    * one row) should be pushed at its end (in order).
-   *
-   * @param {number} nIndex
-   *   An integer index into .lowers[] and .uppers[]. If negative, the title
-   * string (i.e. [ ".lowers[]", ".uppers[]" ]) should be returned.
    *
    * @param {number} characterCountPerField
    *   Every returned string should be padded so that its length is just
@@ -489,26 +505,16 @@ class ScaleArray extends Recyclable.Root {
    * @param {number} digitCountAfterDecimalPoint
    *   Every returned string (if its original value is a number) should be
    * formatted as so many digits after its decimal point.
+   *
+   * @param {number} rowIndex
+   *   Which line of the log table should be returned. It is an integer index
+   * into .scales[].
    */
-  TableLog_append_oneRow_byIndex( out_stringArray,
-    nIndex,
+  TableLog_body_append_oneRow_byIndex( out_stringArray,
     characterCountPerField,
-    digitCountAfterDecimalPoint ) {
-
-
-//!!! ...unfinished... (2025/05/28)
-// should has moore title prefix.
-// Perhaps, placed at ( nIndex == -3 ), ( nIndex == -2 ), ( nIndex == -1 )
-
-
-    if ( nIndex < 0 ) {
-      const title = ".scales[]";
-      out_stringArray.push(
-        title.padStart( characterCountPerField )
-      );
-      return;
-    }
- 
+    digitCountAfterDecimalPoint,
+    rowIndex
+  ) {
     out_stringArray.push(
       this.scales[ nIndex ]
         .toFixed( digitCountAfterDecimalPoint )

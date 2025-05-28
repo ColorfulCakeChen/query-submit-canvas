@@ -391,7 +391,7 @@ class ScaleBoundsArray extends Recyclable.Root {
    *   Every returned string (if its original value is a number) should be
    * formatted as so many digits after its decimal point.
    */
-  TableLog_append_oneRow_byIndex( out_stringArray,
+  TableLog_body_append_oneRow_byIndex( out_stringArray,
     nIndex,
     characterCountPerField,
     digitCountAfterDecimalPoint ) {
