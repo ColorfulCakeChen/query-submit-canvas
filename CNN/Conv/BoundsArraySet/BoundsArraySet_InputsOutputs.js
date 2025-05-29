@@ -469,11 +469,10 @@ class InputsOutputs extends Recyclable.Root {
 
     // 2. Log body.
     {
-      stringArray.length = 0;
-
       const rowIndexBound = aScaleBoundsArray.length;
       for ( let rowIndex = 0; rowIndex < rowIndexBound; ++rowIndex ) {
 
+        stringArray.length = 0;
         aScaleBoundsArray.TableLog_body_appendColumns( stringArray,
           characterCountPerField,
           digitCountAfterDecimalPoint,
