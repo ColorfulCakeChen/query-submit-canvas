@@ -419,16 +419,16 @@ class ScaleArraySet extends Recyclable.Root {
    * @param {string} headerPrefix
    *   The string should be concatenated before the returned headers.
    */
-  TableLog_header_append_columns( out_stringArray,
+  TableLog_header_appendColumns( out_stringArray,
     characterCountPerField,
     headerPrefix
   ) {
     const headerPrefix0 = `${headerPrefix}.do`;
     const headerPrefix1 = `${headerPrefix}.undo`;
-    this.do.TableLog_header_append_columns( out_stringArray,
+    this.do.TableLog_header_appendColumns( out_stringArray,
       characterCountPerField,
       headerPrefix0 );
-    this.undo.TableLog_header_append_columns( out_stringArray,
+    this.undo.TableLog_header_appendColumns( out_stringArray,
       characterCountPerField,
       headerPrefix1 );
   }
@@ -454,21 +454,16 @@ class ScaleArraySet extends Recyclable.Root {
    *   Which line of the log table should be returned. It is an integer index
    * into .do.scales[] and .undo.scales[].
    */
-  TableLog_body_append_columns( out_stringArray,
+  TableLog_body_appendColumns( out_stringArray,
     characterCountPerField,
     digitCountAfterDecimalPoint,
     rowIndex
   ) {
-
-//!!! ...unfinished... (2025/05/28)
-// should have prefix and postfix string (left and right square bracket)
-
-    this.do.TableLog_body_append_columns( out_stringArray,
+    this.do.TableLog_body_appendColumns( out_stringArray,
       characterCountPerField,
       digitCountAfterDecimalPoint,
       rowIndex );
-
-    this.undo.TableLog_body_append_columns( out_stringArray,
+    this.undo.TableLog_body_appendColumns( out_stringArray,
       characterCountPerField,
       digitCountAfterDecimalPoint,
       rowIndex );

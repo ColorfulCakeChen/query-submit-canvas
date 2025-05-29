@@ -384,16 +384,16 @@ class ScaleBoundsArray extends Recyclable.Root {
    * @param {string} headerPrefix
    *   The string should be concatenated before the returned headers.
    */
-  TableLog_header_append_columns( out_stringArray,
+  TableLog_header_appendColumns( out_stringArray,
     characterCountPerField,
     headerPrefix
   ) {
     const headerPrefix0 = `${headerPrefix}.boundsArray`;
     const headerPrefix1 = `${headerPrefix}.scaleArraySet`;
-    this.boundsArray.TableLog_header_append_columns( out_stringArray,
+    this.boundsArray.TableLog_header_appendColumns( out_stringArray,
       characterCountPerField,
       headerPrefix0 );
-    this.scaleArraySet.TableLog_header_append_columns( out_stringArray,
+    this.scaleArraySet.TableLog_header_appendColumns( out_stringArray,
       characterCountPerField,
       headerPrefix1 );
   }
@@ -420,24 +420,16 @@ class ScaleBoundsArray extends Recyclable.Root {
    *   Which line of the log table should be returned. It is an integer index
    * into .boundsArray[] and .scaleArraySet[].
    */
-  TableLog_body_append_columns( out_stringArray,
+  TableLog_body_appendColumns( out_stringArray,
     characterCountPerField,
     digitCountAfterDecimalPoint,
     rowIndex
   ) {
-
-//!!! ...unfinished... (2025/05/28)
-// should display title ".boundsArray" and ".scaleArraySet".
-
-//!!! ...unfinished... (2025/05/28)
-// should have prefix and postfix string (left and right square bracket)
-
-    this.boundsArray.TableLog_body_append_columns( out_stringArray,
+    this.boundsArray.TableLog_body_appendColumns( out_stringArray,
       characterCountPerField,
       digitCountAfterDecimalPoint,
       rowIndex );
-
-    this.scaleArraySet.TableLog_body_append_columns( out_stringArray,
+    this.scaleArraySet.TableLog_body_appendColumns( out_stringArray,
       characterCountPerField,
       digitCountAfterDecimalPoint,
       rowIndex );

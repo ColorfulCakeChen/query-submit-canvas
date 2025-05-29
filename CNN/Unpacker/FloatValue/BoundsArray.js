@@ -1629,7 +1629,7 @@ class BoundsArray extends Recyclable.Root {
    * @param {string} headerPrefix
    *   The string should be concatenated before the returned headers.
    */
-  TableLog_header_append_columns( out_stringArray,
+  TableLog_header_appendColumns( out_stringArray,
     characterCountPerField,
     headerPrefix
   ) {
@@ -1662,7 +1662,7 @@ class BoundsArray extends Recyclable.Root {
    *   Which line of the log table should be returned. It is an integer index
    * into .lowers[] and .uppers[].
    */
-  TableLog_body_append_columns( out_stringArray,
+  TableLog_body_appendColumns( out_stringArray,
     characterCountPerField,
     digitCountAfterDecimalPoint,
     rowIndex
