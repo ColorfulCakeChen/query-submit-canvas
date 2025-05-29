@@ -440,35 +440,48 @@ class InputsOutputs extends Recyclable.Root {
       headerPrefixEmpty, characterCountPerField, digitCountAfterDecimalPoint
     } = InputsOutputs.TableLog_params;
 
-//!!! ...unfinished... (2025/05/29)
-// should be in different rows, not in one row.
-
+    let stringArray = new Array();
 
     // 1. Log headers.
     {
-      let stringArray_header_line0 = new Array();
-
       // 1.1 Got the 2nd line of headers. It has all detail fields. 
       aScaleBoundsArray.TableLog_header_appendColumns(
-        stringArray_header_line1,
+        stringArray,
         characterCountPerField,
         headerPrefixEmpty );
 
       // 1.2 Generate the 1st line of headers. It has the same field count as
       //     the 2nd. But its content are all the same as header prefix. (i.e.
       //     place the header prefix in different line of headers.)
-      let stringArray_header_line1
-        = new Array( stringArray_header_line1.length );
+      let stringArray_header_line_1st
+        = new Array( stringArray.length );
 
-      stringArray_header_line0.fill(
+      stringArray_header_line_1st.fill(
         headerPrefix.padStart( characterCountPerField ) );
 
       // 1.3 Write out the headers to log.
-      const header_line0 = stringArray_header_line0.join();
+      const header_line0 = stringArray_header_line_1st.join();
       console.log( header_line0 );
 
-      const header_line1 = stringArray_header_line1.join();
+      const header_line1 = stringArray.join();
       console.log( header_line1 );
+    }
+
+    // 2. Log body.
+    {
+      stringArray.length = 0;
+
+      const rowIndexBound = aScaleBoundsArray.length;
+      for ( let rowIndex = 0; rowIndex < rowIndexBound; ++rowIndex ) {
+
+        aScaleBoundsArray.TableLog_body_appendColumns( stringArray,
+          characterCountPerField,
+          digitCountAfterDecimalPoint,
+          rowIndex );
+
+        const body_line = stringArray.join();
+        console.log( body_line );
+      }
     }
   }
 
