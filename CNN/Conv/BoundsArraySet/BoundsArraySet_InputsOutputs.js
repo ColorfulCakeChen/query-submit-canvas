@@ -484,11 +484,23 @@ class InputsOutputs extends Recyclable.Root {
 
 //!!! ...unfinished... (2025/05/29)
 // should be in different rows, not in one row.
+//   input0
+//   input1
+//
+//   .afterUndoPreviousActivationEscaping
+//   .afterFilter
+//   .afterBias
+//   .afterActivation
+//   .bPassThrough
+//
+//   output0
+//   output1
 
     this.output0.TableLog_body_appendColumns( out_stringArray,
       characterCountPerField,
       digitCountAfterDecimalPoint,
       rowIndex );
+
     this.output1.TableLog_body_appendColumns( out_stringArray,
       characterCountPerField,
       digitCountAfterDecimalPoint,

@@ -492,4 +492,136 @@ class ConvBiasActivation extends InputsOutputs {
     return this.output0.boundsArray;
   }
 
+
+
+
+//!!! ...untested... (2025/05/28)
+  /**
+   * Return strings for all the headers displayed in one line (i.e. one row)
+   * when logging this object as a table.
+   *
+   * @param {String[]} out_stringArray
+   *   The output string array. All the returned values (i.e. every column
+   * header of one row) should be pushed at its end (in order).
+   *
+   * @param {number} characterCountPerField
+   *   Every returned string should be padded so that its length is just
+   * so many characters.
+   *
+   * @param {string} headerPrefix
+   *   The string should be concatenated before the returned headers.
+   */
+  TableLog_header_appendColumns( out_stringArray,
+    characterCountPerField,
+    headerPrefix
+  ) {
+
+//!!! ...unfinished... (2025/05/29)
+// should be in one rows.
+//   .bPassThrough
+//   .afterUndoPreviousActivationEscaping
+//   .afterFilter
+//   .afterBias
+//   .afterActivation
+
+    const headerPrefix0 = `${headerPrefix}.bPassThrough`;
+    const headerPrefix1 = `${headerPrefix}.afterUndoPreviousActivationEscaping`;
+    const headerPrefix2 = `${headerPrefix}.afterFilter`;
+    const headerPrefix3 = `${headerPrefix}.afterBias`;
+    const headerPrefix4 = `${headerPrefix}.afterActivation`;
+
+//!!! ...unfinished... (2025/05/29)
+    out_stringArray.push(
+      headerPrefix0.padStart( characterCountPerField ),
+    );
+
+    this.afterUndoPreviousActivationEscaping.TableLog_header_appendColumns( out_stringArray,
+      characterCountPerField,
+      headerPrefix1 );
+
+    this.afterFilter.TableLog_header_appendColumns( out_stringArray,
+      characterCountPerField,
+      headerPrefix2 );
+
+    this.afterBias.TableLog_header_appendColumns( out_stringArray,
+      characterCountPerField,
+      headerPrefix3 );
+
+    this.afterActivation.TableLog_header_appendColumns( out_stringArray,
+      characterCountPerField,
+      headerPrefix4 );
+  }
+
+//!!! ...untested... (2025/05/28)
+  /**
+   * Return strings for all the values displayed in one line (i.e. one row)
+   * when logging this object as a table.
+   *
+   * @param {String[]} out_stringArray
+   *   The output string array. All the returned values (i.e. every column of
+   * one row) should be pushed at its end (in order).
+   *
+   * @param {number} characterCountPerField
+   *   Every returned string should be padded so that its length is just
+   * so many characters.
+   *
+   * @param {number} digitCountAfterDecimalPoint
+   *   Every returned string (if its original value is a number) should be
+   * formatted as so many digits after its decimal point.
+   *
+   * @param {number} rowIndex
+   *   Which line of the log table should be returned. It is an integer index
+   * into .output0 and .output1.
+   */
+  TableLog_body_appendColumns( out_stringArray,
+    characterCountPerField,
+    digitCountAfterDecimalPoint,
+    rowIndex
+  ) {
+
+//!!! ...unfinished... (2025/05/29)
+// should be in one rows.
+//   .bPassThrough
+//   .afterUndoPreviousActivationEscaping
+//   .afterFilter
+//   .afterBias
+//   .afterActivation
+
+
+//   .bPassThrough
+    {
+      // Decimal point is not necessary. (value is either 0 or 1)
+      const digitCountAfterDecimalPoint_boolean = 0;
+      const characterCountPerField_boolean = 1;
+
+      const bValue = this.bPassThrough[ rowIndex ];
+      out_stringArray.push(
+        bValue
+          .toFixed( digitCountAfterDecimalPoint_boolean )
+          .padStart( characterCountPerField_boolean )
+      );
+    }
+
+
+    this.afterUndoPreviousActivationEscaping.TableLog_body_appendColumns( out_stringArray,
+      characterCountPerField,
+      digitCountAfterDecimalPoint,
+      rowIndex );
+
+    this.afterFilter.TableLog_body_appendColumns( out_stringArray,
+      characterCountPerField,
+      digitCountAfterDecimalPoint,
+      rowIndex );
+
+    this.afterBias.TableLog_body_appendColumns( out_stringArray,
+      characterCountPerField,
+      digitCountAfterDecimalPoint,
+      rowIndex );
+
+    this.afterActivation.TableLog_body_appendColumns( out_stringArray,
+      characterCountPerField,
+      digitCountAfterDecimalPoint,
+      rowIndex );
+  }
+
 }
