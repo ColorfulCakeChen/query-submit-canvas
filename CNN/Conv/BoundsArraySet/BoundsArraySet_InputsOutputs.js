@@ -423,36 +423,94 @@ class InputsOutputs extends Recyclable.Root {
 
 //!!! ...untested... (2025/05/28)
   /**
-   * Return strings for all the headers displayed in one line (i.e. one row)
+   * Log strings for all the headers displayed in one line (i.e. one row)
    * when logging this object as a table.
    *
-   * @param {String[]} out_stringArray
-   *   The output string array. All the returned values (i.e. every column
-   * header of one row) should be pushed at its end (in order).
-   *
-   * @param {number} characterCountPerField
-   *   Every returned string should be padded so that its length is just
-   * so many characters.
-   *
-   * @param {string} headerPrefix
-   *   The string should be concatenated before the returned headers.
    */
-  TableLog_header_appendColumns( out_stringArray,
-    characterCountPerField,
-    headerPrefix
-  ) {
+  TableLog_header() {
+
+    const {
+      headerPrefixEmpty, characterCountPerField, digitCountAfterDecimalPoint
+    } = InputsOutputs.TableLog_params;
+
+
+    let stringArray_header_line0 = new Array();
+    let stringArray_header_line1 = new Array();
 
 //!!! ...unfinished... (2025/05/29)
 // should be in different rows, not in one row.
 
-    const headerPrefix0 = `${headerPrefix}.output0`;
-    const headerPrefix1 = `${headerPrefix}.output1`;
-    this.output0.TableLog_header_appendColumns( out_stringArray,
-      characterCountPerField,
-      headerPrefix0 );
-    this.output1.TableLog_header_appendColumns( out_stringArray,
-      characterCountPerField,
-      headerPrefix1 );
+    // 1.
+    {
+      const headerPrefix_input0 = ".input0";
+      this.input0.TableLog_header_appendColumns( stringArray_header_line1,
+        characterCountPerField,
+        headerPrefixEmpty );
+
+      stringArray_header_line0.length = stringArray_header_line1.length;
+      stringArray_header_line0.fill(
+        headerPrefix_input0.padStart( characterCountPerField ) );
+
+      const header_line0 = stringArray_header_line0.join();
+      const header_line1 = stringArray_header_line1.join();
+
+      console.log( header_line0 );
+      console.log( header_line1 );
+    }
+
+    // 2.
+    if ( this.input1 ) {
+      const headerPrefix_input1 = ".input1";
+      this.input1.TableLog_header_appendColumns( stringArray_header_line1,
+        characterCountPerField,
+        headerPrefixEmpty );
+
+      stringArray_header_line0.length = stringArray_header_line1.length;
+      stringArray_header_line0.fill(
+        headerPrefix_input1.padStart( characterCountPerField ) );
+
+      const header_line0 = stringArray_header_line0.join();
+      const header_line1 = stringArray_header_line1.join();
+
+      console.log( header_line0 );
+      console.log( header_line1 );
+    }
+
+    // 3.
+    {
+      const headerPrefix_output0 = ".output0";
+      this.output0.TableLog_header_appendColumns( stringArray_header_line1,
+        characterCountPerField,
+        headerPrefixEmpty );
+
+      stringArray_header_line0.length = stringArray_header_line1.length;
+      stringArray_header_line0.fill(
+        headerPrefix_output0.padStart( characterCountPerField ) );
+
+      const header_line0 = stringArray_header_line0.join();
+      const header_line1 = stringArray_header_line1.join();
+
+      console.log( header_line0 );
+      console.log( header_line1 );
+    }
+
+    // 4.
+    if ( this.output1 ) {
+      const headerPrefix_output1 = ".output1";
+      this.output1.TableLog_header_appendColumns( stringArray_header_line1,
+        characterCountPerField,
+        headerPrefixEmpty );
+
+      stringArray_header_line0.length = stringArray_header_line1.length;
+      stringArray_header_line0.fill(
+        headerPrefix_output1.padStart( characterCountPerField ) );
+
+      const header_line0 = stringArray_header_line0.join();
+      const header_line1 = stringArray_header_line1.join();
+
+      console.log( header_line0 );
+      console.log( header_line1 );
+    }
   }
 
 //!!! ...untested... (2025/05/28)
@@ -508,3 +566,14 @@ class InputsOutputs extends Recyclable.Root {
   }
 
 }
+
+
+/**
+ * Parameters for TableLog_Xxx().
+ */
+InputsOutputs.TableLog_params = {
+  headerPrefixEmpty:          "",
+  characterCountPerField:      20,
+  digitCountAfterDecimalPoint: 10,
+
+};

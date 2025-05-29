@@ -530,14 +530,24 @@ class ConvBiasActivation extends InputsOutputs {
     const headerPrefix3 = `${headerPrefix}.afterBias`;
     const headerPrefix4 = `${headerPrefix}.afterActivation`;
 
+    //
+    //   - .bPassThrough[] (a boolean 0 or 1) only needs a narrow field width.
+    //   - .afterUndoPreviousActivationEscaping has very long header name.
+    //
+    // So, 
+    //
+    // .bPassThrough .afterUndoPreviousActivationEscaping .afterFilter .afterBias .afterActivation
+    //
+
 //!!! ...unfinished... (2025/05/29)
     out_stringArray.push(
       headerPrefix0.padStart( characterCountPerField ),
     );
 
-    this.afterUndoPreviousActivationEscaping.TableLog_header_appendColumns( out_stringArray,
-      characterCountPerField,
-      headerPrefix1 );
+    this.afterUndoPreviousActivationEscaping
+      .TableLog_header_appendColumns( out_stringArray,
+        characterCountPerField,
+        headerPrefix1 );
 
     this.afterFilter.TableLog_header_appendColumns( out_stringArray,
       characterCountPerField,
