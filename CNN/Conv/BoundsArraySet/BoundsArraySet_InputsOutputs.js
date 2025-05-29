@@ -487,146 +487,37 @@ class InputsOutputs extends Recyclable.Root {
 
 //!!! ...untested... (2025/05/28)
   /**
-   * Log strings for all the headers displayed in one line (i.e. one row)
-   * when logging this object as a table.
-   *
+   * Log .input0, .input1, .output0, .output1 of this object as a table.
    */
-  TableLog_header() {
-
-    const {
-      headerPrefixEmpty, characterCountPerField, digitCountAfterDecimalPoint
-    } = InputsOutputs.TableLog_params;
-
-
-    let stringArray_header_line0 = new Array();
-    let stringArray_header_line1 = new Array();
-
-//!!! ...unfinished... (2025/05/29)
-// should be in different rows, not in one row.
+  TableLog_header_body() {
 
     // 1.
     {
       const headerPrefix_input0 = ".input0";
-      this.input0.TableLog_header_appendColumns( stringArray_header_line1,
-        characterCountPerField,
-        headerPrefixEmpty );
-
-      stringArray_header_line0.length = stringArray_header_line1.length;
-      stringArray_header_line0.fill(
-        headerPrefix_input0.padStart( characterCountPerField ) );
-
-      const header_line0 = stringArray_header_line0.join();
-      const header_line1 = stringArray_header_line1.join();
-
-      console.log( header_line0 );
-      console.log( header_line1 );
+      InputsOutputs.helper_TableLog_ScaleBoundsArray(
+        this.input0, headerPrefix_input0 );
     }
 
     // 2.
     if ( this.input1 ) {
       const headerPrefix_input1 = ".input1";
-      this.input1.TableLog_header_appendColumns( stringArray_header_line1,
-        characterCountPerField,
-        headerPrefixEmpty );
-
-      stringArray_header_line0.length = stringArray_header_line1.length;
-      stringArray_header_line0.fill(
-        headerPrefix_input1.padStart( characterCountPerField ) );
-
-      const header_line0 = stringArray_header_line0.join();
-      const header_line1 = stringArray_header_line1.join();
-
-      console.log( header_line0 );
-      console.log( header_line1 );
+      InputsOutputs.helper_TableLog_ScaleBoundsArray(
+        this.input1, headerPrefix_input1 );
     }
 
     // 3.
     {
       const headerPrefix_output0 = ".output0";
-      this.output0.TableLog_header_appendColumns( stringArray_header_line1,
-        characterCountPerField,
-        headerPrefixEmpty );
-
-      stringArray_header_line0.length = stringArray_header_line1.length;
-      stringArray_header_line0.fill(
-        headerPrefix_output0.padStart( characterCountPerField ) );
-
-      const header_line0 = stringArray_header_line0.join();
-      const header_line1 = stringArray_header_line1.join();
-
-      console.log( header_line0 );
-      console.log( header_line1 );
+      InputsOutputs.helper_TableLog_ScaleBoundsArray(
+        this.output0, headerPrefix_output0 );
     }
 
     // 4.
     if ( this.output1 ) {
       const headerPrefix_output1 = ".output1";
-      this.output1.TableLog_header_appendColumns( stringArray_header_line1,
-        characterCountPerField,
-        headerPrefixEmpty );
-
-      stringArray_header_line0.length = stringArray_header_line1.length;
-      stringArray_header_line0.fill(
-        headerPrefix_output1.padStart( characterCountPerField ) );
-
-      const header_line0 = stringArray_header_line0.join();
-      const header_line1 = stringArray_header_line1.join();
-
-      console.log( header_line0 );
-      console.log( header_line1 );
+      InputsOutputs.helper_TableLog_ScaleBoundsArray(
+        this.output1, headerPrefix_output1 );
     }
-  }
-
-//!!! ...untested... (2025/05/28)
-  /**
-   * Return strings for all the values displayed in one line (i.e. one row)
-   * when logging this object as a table.
-   *
-   * @param {String[]} out_stringArray
-   *   The output string array. All the returned values (i.e. every column of
-   * one row) should be pushed at its end (in order).
-   *
-   * @param {number} characterCountPerField
-   *   Every returned string should be padded so that its length is just
-   * so many characters.
-   *
-   * @param {number} digitCountAfterDecimalPoint
-   *   Every returned string (if its original value is a number) should be
-   * formatted as so many digits after its decimal point.
-   *
-   * @param {number} rowIndex
-   *   Which line of the log table should be returned. It is an integer index
-   * into .output0 and .output1.
-   */
-  TableLog_body_appendColumns( out_stringArray,
-    characterCountPerField,
-    digitCountAfterDecimalPoint,
-    rowIndex
-  ) {
-
-//!!! ...unfinished... (2025/05/29)
-// should be in different rows, not in one row.
-//   input0
-//   input1
-//
-//   .afterUndoPreviousActivationEscaping
-//   .afterFilter
-//   .afterBias
-//   .afterActivation
-//   .bPassThrough
-//
-//   output0
-//   output1
-
-    this.output0.TableLog_body_appendColumns( out_stringArray,
-      characterCountPerField,
-      digitCountAfterDecimalPoint,
-      rowIndex );
-
-    this.output1.TableLog_body_appendColumns( out_stringArray,
-      characterCountPerField,
-      digitCountAfterDecimalPoint,
-      rowIndex );
   }
 
 }
