@@ -474,7 +474,7 @@ class InputsOutputs extends Recyclable.Root {
    *
    * @param {number} rowIndex
    *   Which line of the log table should be returned. It is an integer index
-   * into .boundsArray[] and .scaleArraySet[].
+   * into .output0 and .output1.
    */
   TableLog_body_appendColumns( out_stringArray,
     characterCountPerField,
