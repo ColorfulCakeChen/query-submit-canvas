@@ -368,6 +368,7 @@ class ScaleBoundsArray extends Recyclable.Root {
     return this;
   }
 
+
 //!!! ...untested... (2025/05/28)
   /**
    * Return strings for all the headers displayed in one line (i.e. one row)
@@ -398,7 +399,6 @@ class ScaleBoundsArray extends Recyclable.Root {
       headerPrefix1 );
   }
 
-//!!! ...unfinished... (2025/05/28)
 //!!! ...untested... (2025/05/28)
   /**
    * Return strings for all the values displayed in one line (i.e. one row)

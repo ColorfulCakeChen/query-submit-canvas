@@ -420,4 +420,79 @@ class InputsOutputs extends Recyclable.Root {
   get outputChannelCount0() { return this.output0.length; }
   get outputChannelCount1() { return this.output1?.length ?? 0; }
 
+
+//!!! ...untested... (2025/05/28)
+  /**
+   * Return strings for all the headers displayed in one line (i.e. one row)
+   * when logging this object as a table.
+   *
+   * @param {String[]} out_stringArray
+   *   The output string array. All the returned values (i.e. every column
+   * header of one row) should be pushed at its end (in order).
+   *
+   * @param {number} characterCountPerField
+   *   Every returned string should be padded so that its length is just
+   * so many characters.
+   *
+   * @param {string} headerPrefix
+   *   The string should be concatenated before the returned headers.
+   */
+  TableLog_header_appendColumns( out_stringArray,
+    characterCountPerField,
+    headerPrefix
+  ) {
+
+//!!! ...unfinished... (2025/05/29)
+// should be in different rows, not in one row.
+
+    const headerPrefix0 = `${headerPrefix}.output0`;
+    const headerPrefix1 = `${headerPrefix}.output1`;
+    this.output0.TableLog_header_appendColumns( out_stringArray,
+      characterCountPerField,
+      headerPrefix0 );
+    this.output1.TableLog_header_appendColumns( out_stringArray,
+      characterCountPerField,
+      headerPrefix1 );
+  }
+
+//!!! ...untested... (2025/05/28)
+  /**
+   * Return strings for all the values displayed in one line (i.e. one row)
+   * when logging this object as a table.
+   *
+   * @param {String[]} out_stringArray
+   *   The output string array. All the returned values (i.e. every column of
+   * one row) should be pushed at its end (in order).
+   *
+   * @param {number} characterCountPerField
+   *   Every returned string should be padded so that its length is just
+   * so many characters.
+   *
+   * @param {number} digitCountAfterDecimalPoint
+   *   Every returned string (if its original value is a number) should be
+   * formatted as so many digits after its decimal point.
+   *
+   * @param {number} rowIndex
+   *   Which line of the log table should be returned. It is an integer index
+   * into .boundsArray[] and .scaleArraySet[].
+   */
+  TableLog_body_appendColumns( out_stringArray,
+    characterCountPerField,
+    digitCountAfterDecimalPoint,
+    rowIndex
+  ) {
+
+//!!! ...unfinished... (2025/05/29)
+// should be in different rows, not in one row.
+
+    this.output0.TableLog_body_appendColumns( out_stringArray,
+      characterCountPerField,
+      digitCountAfterDecimalPoint,
+      rowIndex );
+    this.output1.TableLog_body_appendColumns( out_stringArray,
+      characterCountPerField,
+      digitCountAfterDecimalPoint,
+      rowIndex );
+  }
+
 }
