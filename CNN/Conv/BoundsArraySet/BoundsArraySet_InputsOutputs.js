@@ -424,17 +424,18 @@ class InputsOutputs extends Recyclable.Root {
 
 //!!! ...untested... (2025/05/28)
   /**
-   * Log a ScaleBoundsArray (headers and body) as a table.
+   * Log a BoundsArray or ScaleBoundsArray (headers and body) as a table.
    *
-   * @param {ActivationEscaping.ScaleBoundsArray} aScaleBoundsArray
-   *   The ScaleBoundsArray to be logged. (e.g. .input0, .input1, .output0,
-   * .output1 )
+   * @param {FloatValue.BoundsArray|ActivationEscaping.ScaleBoundsArray} aBoundsArray
+   *   The BoundsArray or ScaleBoundsArray (e.g. .input0, .input1, .output0,
+   * .output1 ) to be logged. It must have .TableLog_header_appendColumns()
+   * and .TableLog_body_appendColumns() methods.
    *
    * @param {string} headerPrefix
    *   The name string of the ScaleBoundsArray be logged.
    */
-  static helper_TableLog_ScaleBoundsArray(
-    aScaleBoundsArray, headerPrefix ) {
+  static helper_TableLog_BoundsArray(
+    aBoundsArray, headerPrefix ) {
 
     const {
       headerPrefixEmpty, characterCountPerField, digitCountAfterDecimalPoint
@@ -445,7 +446,7 @@ class InputsOutputs extends Recyclable.Root {
     // 1. Log headers.
     {
       // 1.1 Got the 2nd line of headers. It has all detail fields. 
-      aScaleBoundsArray.TableLog_header_appendColumns(
+      aBoundsArray.TableLog_header_appendColumns(
         stringArray,
         characterCountPerField,
         headerPrefixEmpty );
@@ -471,10 +472,10 @@ class InputsOutputs extends Recyclable.Root {
     {
       stringArray.length = 0;
 
-      const rowIndexBound = aScaleBoundsArray.length;
+      const rowIndexBound = aBoundsArray.length;
       for ( let rowIndex = 0; rowIndex < rowIndexBound; ++rowIndex ) {
 
-        aScaleBoundsArray.TableLog_body_appendColumns( stringArray,
+        aBoundsArray.TableLog_body_appendColumns( stringArray,
           characterCountPerField,
           digitCountAfterDecimalPoint,
           rowIndex );
@@ -494,28 +495,28 @@ class InputsOutputs extends Recyclable.Root {
     // 1.
     {
       const headerPrefix_input0 = ".input0";
-      InputsOutputs.helper_TableLog_ScaleBoundsArray(
+      InputsOutputs.helper_TableLog_BoundsArray(
         this.input0, headerPrefix_input0 );
     }
 
     // 2.
     if ( this.input1 ) {
       const headerPrefix_input1 = ".input1";
-      InputsOutputs.helper_TableLog_ScaleBoundsArray(
+      InputsOutputs.helper_TableLog_BoundsArray(
         this.input1, headerPrefix_input1 );
     }
 
     // 3.
     {
       const headerPrefix_output0 = ".output0";
-      InputsOutputs.helper_TableLog_ScaleBoundsArray(
+      InputsOutputs.helper_TableLog_BoundsArray(
         this.output0, headerPrefix_output0 );
     }
 
     // 4.
     if ( this.output1 ) {
       const headerPrefix_output1 = ".output1";
-      InputsOutputs.helper_TableLog_ScaleBoundsArray(
+      InputsOutputs.helper_TableLog_BoundsArray(
         this.output1, headerPrefix_output1 );
     }
   }
