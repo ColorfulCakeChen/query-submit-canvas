@@ -1626,29 +1626,18 @@ class BoundsArray extends Recyclable.Root {
    *   Every returned string should be padded so that its length is just
    * so many characters.
    *
-
-//!!! ...unfinished... (2025/05/28)
-// Perhaps, give prefix name and  push to
-// the end of out_stringArrayArray[ ? ] twice.
-// Once for prefix and another for this ".lowers[]" (or ".uppers[]").
-//
-// Problem: do not know how may lines the header has.
-
-
-   * @param {number} columnIndex
-   *   ???Which line of the log table should be returned. It is an integer index
-   * into .lowers[] and .uppers[].
+   * @param {string} headerPrefix
+   *   The string should be concatenated before the returned headers.
    */
-  TableLog_header_append_oneRow( ??out_stringArrayArray,
+  TableLog_header_append_columns( out_stringArray,
     characterCountPerField,
-    columnIndex
+    headerPrefix
   ) {
-    const title0 = ".lowers[]";
-    const title1 = ".uppers[]";
-!!!???
+    const header0 = `${headerPrefix}.lowers[]`;
+    const header1 = `${headerPrefix}.uppers[]`;
     out_stringArray.push(
-      title0.padStart( characterCountPerField ),
-      title1.padStart( characterCountPerField )
+      header0.padStart( characterCountPerField ),
+      header1.padStart( characterCountPerField )
     );
   }
 
@@ -1673,7 +1662,7 @@ class BoundsArray extends Recyclable.Root {
    *   Which line of the log table should be returned. It is an integer index
    * into .lowers[] and .uppers[].
    */
-  TableLog_body_append_oneRow_byIndex( out_stringArray,
+  TableLog_body_append_columns( out_stringArray,
     characterCountPerField,
     digitCountAfterDecimalPoint,
     rowIndex

@@ -368,6 +368,35 @@ class ScaleBoundsArray extends Recyclable.Root {
     return this;
   }
 
+//!!! ...untested... (2025/05/28)
+  /**
+   * Return strings for all the headers displayed in one line (i.e. one row)
+   * when logging this object as a table.
+   *
+   * @param {String[]} out_stringArray
+   *   The output string array. All the returned values (i.e. every column
+   * header of one row) should be pushed at its end (in order).
+   *
+   * @param {number} characterCountPerField
+   *   Every returned string should be padded so that its length is just
+   * so many characters.
+   *
+   * @param {string} headerPrefix
+   *   The string should be concatenated before the returned headers.
+   */
+  TableLog_header_append_columns( out_stringArray,
+    characterCountPerField,
+    headerPrefix
+  ) {
+    const headerPrefix0 = `${headerPrefix}.boundsArray`;
+    const headerPrefix1 = `${headerPrefix}.scaleArraySet`;
+    this.boundsArray.TableLog_header_append_columns( out_stringArray,
+      characterCountPerField,
+      headerPrefix0 );
+    this.scaleArraySet.TableLog_header_append_columns( out_stringArray,
+      characterCountPerField,
+      headerPrefix1 );
+  }
 
 //!!! ...unfinished... (2025/05/28)
 //!!! ...untested... (2025/05/28)
@@ -391,7 +420,7 @@ class ScaleBoundsArray extends Recyclable.Root {
    *   Which line of the log table should be returned. It is an integer index
    * into .boundsArray[] and .scaleArraySet[].
    */
-  TableLog_body_append_oneRow_byIndex( out_stringArray,
+  TableLog_body_append_columns( out_stringArray,
     characterCountPerField,
     digitCountAfterDecimalPoint,
     rowIndex
@@ -403,12 +432,12 @@ class ScaleBoundsArray extends Recyclable.Root {
 //!!! ...unfinished... (2025/05/28)
 // should have prefix and postfix string (left and right square bracket)
 
-    this.boundsArray.TableLog_append_oneRow_byIndex( out_stringArray,
+    this.boundsArray.TableLog_body_append_columns( out_stringArray,
       characterCountPerField,
       digitCountAfterDecimalPoint,
       rowIndex );
 
-    this.scaleArraySet.TableLog_append_oneRow_byIndex( out_stringArray,
+    this.scaleArraySet.TableLog_body_append_columns( out_stringArray,
       characterCountPerField,
       digitCountAfterDecimalPoint,
       rowIndex );

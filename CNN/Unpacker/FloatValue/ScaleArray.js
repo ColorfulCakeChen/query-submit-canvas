@@ -481,11 +481,17 @@ class ScaleArray extends Recyclable.Root {
    * @param {number} characterCountPerField
    *   Every returned string should be padded so that its length is just
    * so many characters.
+   *
+   * @param {string} headerPrefix
+   *   The string should be concatenated before the returned headers.
    */
-  TableLog_header_append_oneRow( out_stringArray, characterCountPerField ) {
-    const title = ".scales[]";
+  TableLog_header_append_columns( out_stringArray,
+    characterCountPerField,
+    headerPrefix
+  ) {
+    const header = `${headerPrefix}.scales[]`;
     out_stringArray.push(
-      title.padStart( characterCountPerField )
+      header.padStart( characterCountPerField )
     );
   }
 
@@ -510,7 +516,7 @@ class ScaleArray extends Recyclable.Root {
    *   Which line of the log table should be returned. It is an integer index
    * into .scales[].
    */
-  TableLog_body_append_oneRow_byIndex( out_stringArray,
+  TableLog_body_append_columns( out_stringArray,
     characterCountPerField,
     digitCountAfterDecimalPoint,
     rowIndex
