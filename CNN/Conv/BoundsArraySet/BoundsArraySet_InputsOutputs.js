@@ -421,7 +421,6 @@ class InputsOutputs extends Recyclable.Root {
   get outputChannelCount1() { return this.output1?.length ?? 0; }
 
 
-
 //!!! ...untested... (2025/05/28)
   /**
    * Log a ScaleBoundsArray (headers and body) as a table.
