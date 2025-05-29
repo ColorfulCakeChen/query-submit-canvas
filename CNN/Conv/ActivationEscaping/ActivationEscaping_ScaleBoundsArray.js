@@ -418,7 +418,7 @@ class ScaleBoundsArray extends Recyclable.Root {
    *
    * @param {number} rowIndex
    *   Which line of the log table should be returned. It is an integer index
-   * into .boundsArray.xxx[] and .scaleArraySet.yyy[].
+   * into .boundsArray.xxx[] and .scaleArraySet.yyy.zzz[].
    */
   TableLog_body_appendColumns( out_stringArray,
     characterCountPerField,
