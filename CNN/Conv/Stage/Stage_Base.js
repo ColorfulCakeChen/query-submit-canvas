@@ -205,7 +205,7 @@ import { InferencedParams } from "./Stage_InferencedParams.js";
  * after the depthwise convolution), the depthwise convolution should have bias
  * (and even activation). Since squeeze-and-excitation is non-linear, if it is
  * applied, a bias should be applied (to achieve affine transformation) before
- * it (i.e. the squeeze-and-excitation (a non-linearity operation)).
+ * it (i.e. before the squeeze-and-excitation (a non-linearity operation)).
  *
  * In MobileNetV2_Xxx (whose squeeze-and-excitation is prefix), its depthwise
  * has bias (and activation) for this reason.
