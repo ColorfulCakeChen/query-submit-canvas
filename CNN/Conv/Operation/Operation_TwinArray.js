@@ -274,7 +274,7 @@ class TwinArray extends Root {
    *       them.
    *
    *   - If there too many operationX.outputY needs to be handled, it will be
-   *       asserted failed.
+   *       asserted as failed.
    *
    *
    * Note: After all .operation_append() are called, the .setKeepInputTensor()
