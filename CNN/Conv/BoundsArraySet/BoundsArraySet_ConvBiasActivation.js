@@ -493,7 +493,7 @@ class ConvBiasActivation extends InputsOutputs {
   }
 
 
-// //!!! ...untested... (2025/05/30)
+//!!! ...untested... (2025/05/30 Remarked) seems not used.
 //   /**
 //    * Log a BoundsArray (headers and body) as a table.
 //    *
@@ -523,61 +523,61 @@ class ConvBiasActivation extends InputsOutputs {
 //     io_workingStringArray0 = new Array(),
 //     io_workingStringArray1 = new Array()
 //   ) {
-
+//
 //     const {
 //       headerPrefixEmpty, characterCountPerField, digitCountAfterDecimalPoint,
 //       joinSeparator
 //     } = InputsOutputs.TableLog_params;
-
+//
 //     let stringArray_header_line_1st = io_workingStringArray0;
 //     stringArray_header_line_1st.length = 0;
-
+//
 //     let stringArray = io_workingStringArray1;
 //     stringArray.length = 0;
-
+//
 //     // 1. Log headers.
 //     {
 //       // 1.1 Got the 2nd line of headers. It has all detail field names. 
 //       aBoundsArray.TableLog_header_appendColumns(
 //         stringArray, characterCountPerField, ".boundsArray" );
-
+//
 //       // 1.2 Generate the 1st line of headers.
 //       //
 //       // Its content are all the same as header prefix. (i.e. place the
 //       // header prefix in the 1st line of headers.)
-
+//
 //       // Because a BoundsArray has two data members (i.e. two columns in the
 //       // table log), they can share the same header prefix (so that a very
 //       // long header prefix could be displayed properly).
 //       const headerPrefix_columnCount = Math.floor( stringArray.length / 2 );
 //       stringArray_header_line_1st.length = headerPrefix_columnCount;
-
+//
 //       // Its column width is twice as the detail column (with separator).
 //       const headerPrefix_columnCharacterCount = characterCountPerField
 //         + joinSeparator.length + characterCountPerField;
-
+//
 //       stringArray_header_line_1st.fill(
 //         headerPrefix.padStart( headerPrefix_columnCharacterCount ) );
-
+//
 //       // 1.3 Write out the headers to log.
 //       const header_line0 = stringArray_header_line_1st.join( joinSeparator );
 //       console.log( header_line0 );
-
+//
 //       const header_line1 = stringArray.join( joinSeparator );
 //       console.log( header_line1 );
 //     }
-
+//
 //     // 2. Log body.
 //     {
 //       const rowIndexBound = aBoundsArray.length;
 //       for ( let rowIndex = 0; rowIndex < rowIndexBound; ++rowIndex ) {
-
+//
 //         stringArray.length = 0;
 //         aBoundsArray.TableLog_body_appendColumns( stringArray,
 //           characterCountPerField,
 //           digitCountAfterDecimalPoint,
 //           rowIndex );
-
+//
 //         const body_line = stringArray.join( joinSeparator );
 //         console.log( body_line );
 //       }
@@ -623,8 +623,6 @@ class ConvBiasActivation extends InputsOutputs {
 
 //!!! ...unfinished... (2025/05/30)
 
-
-//!!! ...unfinished... (2025/05/29)
 // should be in one rows.
 //   .bPassThrough
 //   .afterUndoPreviousActivationEscaping
@@ -718,29 +716,23 @@ class ConvBiasActivation extends InputsOutputs {
           stringArray, characterCountPerField, headerPrefix_boundsArray );
       }
 
-//!!! ...unfinished... (2025/05/30)
-
       // 1.2 Generate the 1st line of headers.
       //
       // Place the header prefix (may be very long) in the 1st line of headers.
       {
-        // "-1" for excluding .bPassThrough (which is not a BoundsArray).
-        const boundsArrayCount = ( stringArray.length - 1 );
+//!!! (2025/05/30 Remarked) seems not used.
+//         // "-1" for excluding .bPassThrough (which is not a BoundsArray).
+//         const boundsArrayCount = ( stringArray.length - 1 );
+//         const headerPrefix_columnCount = Math.floor( boundsArrayCount / 2 );
 
         // Because a BoundsArray has two data members (i.e. two columns in the
         // table log), let them share the same header prefix (so that a very
         // long header prefix could be displayed properly).
-
-
-        //const headerPrefix_columnCount = Math.floor( boundsArrayCount / 2 );
-
+        //
         // Its column width is twice as the detail column (with separator).
         const headerPrefix_wideColumn_characterCount = characterCountPerField
           + joinSeparator.length + characterCountPerField;
 
-
-
-//!!!
         // The header of .bPassThrough (which is not a BoundsArray) uses
         // normal (narrow) column width.
         const headerPrefix_bPassThrough = ".bPassThrough";
@@ -770,21 +762,6 @@ class ConvBiasActivation extends InputsOutputs {
         stringArray_header_line_1st.push(
           headerPrefix_afterActivation.padStart(
             headerPrefix_wideColumn_characterCount ) );
-
-
-
-
-//!!!
-
-        const headerPrefix_columnCount = Math.floor( stringArray.length / 2 );
-        stringArray_header_line_1st.length = headerPrefix_columnCount;
-
-        // Its column width is twice as the detail column (with separator).
-        const headerPrefix_columnCharacterCount = characterCountPerField
-          + joinSeparator.length + characterCountPerField;
-
-        stringArray_header_line_1st.fill(
-          headerPrefix.padStart( headerPrefix_columnCharacterCount ) );
       }
 
       // 1.3 Write out the headers to log.
@@ -794,6 +771,9 @@ class ConvBiasActivation extends InputsOutputs {
       const header_line1 = stringArray.join( joinSeparator );
       console.log( header_line1 );
     }
+
+//!!! ...unfinished... (2025/05/30)
+
 
     // 2. Log body.
     {
