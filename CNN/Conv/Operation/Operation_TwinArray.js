@@ -8,8 +8,8 @@ import { Root } from "./Operation_Base.js";
 import { Dummy } from "./Operation_Dummy.js";
 
 /**
- * An array of operations. Every time appending operation, one or parallel twin
- * operations could be appended.
+ * An array of operations. Every time appending operation, one or twin (i.e.
+ * two operations in parallel) operation(s) could be appended.
  *
  * No matter how many sub operations (even no sub operation) are appended, this
  * TwinArray's .output0 and .output1 (tensor placeholder) are always
@@ -256,7 +256,7 @@ class TwinArray extends Root {
   }
 
   /**
-   * Append one or twin (i.e. two operation in parallel) operation(s) into
+   * Append one or twin (i.e. two operations in parallel) operation(s) into
    * this.operationArray[].
    *
    * All of the newly appended operations' .outputX TensorPlaceholders will
