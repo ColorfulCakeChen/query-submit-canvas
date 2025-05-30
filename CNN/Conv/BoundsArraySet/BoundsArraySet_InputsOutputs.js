@@ -433,22 +433,33 @@ class InputsOutputs extends Recyclable.Root {
    * @param {string} headerPrefix
    *   The name string of the ScaleBoundsArray be logged.
    *
-   * @param {string[]} io_workingStringArray
+   * @param {string[]} io_workingStringArray0
    *   A helper string Array. If provided (i.e. not undefined), it will be
    * used as the working buffer (so that array recreation is reduced and
-   * performance will be improved). If undefined, a new string array will
+   * performance might be improved). If undefined, a new string array will
+   * be created.
+   *
+   * @param {string[]} io_workingStringArray1
+   *   A helper string Array. If provided (i.e. not undefined), it will be
+   * used as the working buffer (so that array recreation is reduced and
+   * performance might be improved). If undefined, a new string array will
    * be created.
    */
   static helper_TableLog_ScaleBoundsArray(
     aScaleBoundsArray, headerPrefix,
-    io_workingStringArray = new Array() ) {
+    io_workingStringArray0 = new Array(),
+    io_workingStringArray1 = new Array()
+  ) {
 
     const {
       headerPrefixEmpty, characterCountPerField, digitCountAfterDecimalPoint,
       joinSeparator
     } = InputsOutputs.TableLog_params;
 
-    let stringArray = io_workingStringArray;
+    let stringArray_header_line_1st = io_workingStringArray0;
+    stringArray_header_line_1st.length = 0;
+
+    let stringArray = io_workingStringArray1;
     stringArray.length = 0;
 
     // 1. Log headers.
@@ -460,7 +471,7 @@ class InputsOutputs extends Recyclable.Root {
       // 1.2 Generate the 1st line of headers. It has the same field count as
       //     the 2nd. But its content are all the same as header prefix. (i.e.
       //     place the header prefix in the 1st line of headers.)
-      let stringArray_header_line_1st = new Array( stringArray.length );
+      stringArray_header_line_1st.length = stringArray.length;
 
       stringArray_header_line_1st.fill(
         headerPrefix.padStart( characterCountPerField ) );
@@ -493,36 +504,53 @@ class InputsOutputs extends Recyclable.Root {
 //!!! ...untested... (2025/05/28)
   /**
    * Log .input0, .input1, .output0, .output1 of this object as a table.
+   *
+   * @param {string[]} io_workingStringArray0
+   *   A helper string Array. If provided (i.e. not undefined), it will be
+   * used as the working buffer (so that array recreation is reduced and
+   * performance might be improved). If undefined, a new string array will
+   * be created.
+   *
+   * @param {string[]} io_workingStringArray1
+   *   A helper string Array. If provided (i.e. not undefined), it will be
+   * used as the working buffer (so that array recreation is reduced and
+   * performance might be improved). If undefined, a new string array will
+   * be created.
    */
-  TableLog_header_body() {
-    let stringArray = new Array();
-
+  TableLog_header_body(
+    io_workingStringArray0 = new Array(),
+    io_workingStringArray1 = new Array()
+  ) {
     // 1.
     {
       const headerPrefix_input0 = ".input0";
       InputsOutputs.helper_TableLog_ScaleBoundsArray(
-        this.input0, headerPrefix_input0, stringArray );
+        this.input0, headerPrefix_input0,
+        io_workingStringArray0, io_workingStringArray1 );
     }
 
     // 2.
     if ( this.input1 ) {
       const headerPrefix_input1 = ".input1";
       InputsOutputs.helper_TableLog_ScaleBoundsArray(
-        this.input1, headerPrefix_input1, stringArray );
+        this.input1, headerPrefix_input1,
+        io_workingStringArray0, io_workingStringArray1 );
     }
 
     // 3.
     {
       const headerPrefix_output0 = ".output0";
       InputsOutputs.helper_TableLog_ScaleBoundsArray(
-        this.output0, headerPrefix_output0, stringArray );
+        this.output0, headerPrefix_output0,
+        io_workingStringArray0, io_workingStringArray1 );
     }
 
     // 4.
     if ( this.output1 ) {
       const headerPrefix_output1 = ".output1";
       InputsOutputs.helper_TableLog_ScaleBoundsArray(
-        this.output1, headerPrefix_output1, stringArray );
+        this.output1, headerPrefix_output1,
+        io_workingStringArray0, io_workingStringArray1 );
     }
   }
 

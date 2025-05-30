@@ -506,22 +506,33 @@ class ConvBiasActivation extends InputsOutputs {
    * @param {string} headerPrefix
    *   The name string of the BoundsArray be logged.
    *
-   * @param {string[]} io_workingStringArray
+   * @param {string[]} io_workingStringArray0
    *   A helper string Array. If provided (i.e. not undefined), it will be
    * used as the working buffer (so that array recreation is reduced and
-   * performance will be improved). If undefined, a new string array will
+   * performance might be improved). If undefined, a new string array will
+   * be created.
+   *
+   * @param {string[]} io_workingStringArray1
+   *   A helper string Array. If provided (i.e. not undefined), it will be
+   * used as the working buffer (so that array recreation is reduced and
+   * performance might be improved). If undefined, a new string array will
    * be created.
    */
   static helper_TableLog_BoundsArray(
     aScaleBoundsArray, headerPrefix,
-    io_workingStringArray = new Array() ) {
+    io_workingStringArray0 = new Array(),
+    io_workingStringArray1 = new Array()
+  ) {
 
     const {
       headerPrefixEmpty, characterCountPerField, digitCountAfterDecimalPoint,
       joinSeparator
     } = InputsOutputs.TableLog_params;
 
-    let stringArray = io_workingStringArray;
+    let stringArray_header_line_1st = io_workingStringArray0;
+    stringArray_header_line_1st.length = 0;
+
+    let stringArray = io_workingStringArray1;
     stringArray.length = 0;
 
     // 1. Log headers.
@@ -533,7 +544,7 @@ class ConvBiasActivation extends InputsOutputs {
       // 1.2 Generate the 1st line of headers. It has the same field count as
       //     the 2nd. But its content are all the same as header prefix. (i.e.
       //     place the header prefix in the 1st line of headers.)
-      let stringArray_header_line_1st = new Array( stringArray.length );
+      stringArray_header_line_1st.length = stringArray.length;
 
 //!!! ...unfinished... (2025/05/30)
 
