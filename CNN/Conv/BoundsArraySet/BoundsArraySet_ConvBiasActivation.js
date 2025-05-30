@@ -517,6 +517,10 @@ class ConvBiasActivation extends InputsOutputs {
     io_workingStringArray1 = new Array()
   ) {
 
+    // Log the .inputX and .outputX
+    super.TableLog_header_body(
+      io_workingStringArray0, io_workingStringArray1 );
+
     const {
       headerPrefixEmpty, characterCountPerField, digitCountAfterDecimalPoint,
       joinSeparator
