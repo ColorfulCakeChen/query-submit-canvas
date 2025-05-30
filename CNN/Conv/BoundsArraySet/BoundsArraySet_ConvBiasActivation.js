@@ -493,18 +493,104 @@ class ConvBiasActivation extends InputsOutputs {
   }
 
 
-//!!! ...untested... (2025/05/30)
+// //!!! ...untested... (2025/05/30)
+//   /**
+//    * Log a BoundsArray (headers and body) as a table.
+//    *
+//    * @param {FloatValue.BoundsArray} aBoundsArray
+//    *   The BoundsArray (e.g. .afterUndoPreviousActivationEscaping,
+//    * .afterFilter, .afterBias, .afterActivation) to be logged. It must have
+//    * methods .TableLog_header_appendColumns() and
+//    * .TableLog_body_appendColumns().
+//    *
+//    * @param {string} headerPrefix
+//    *   The name string of the BoundsArray be logged.
+//    *
+//    * @param {string[]} io_workingStringArray0
+//    *   A helper string Array. If provided (i.e. not undefined), it will be
+//    * used as the working buffer (so that array recreation is reduced and
+//    * performance might be improved). If undefined, a new string array will
+//    * be created.
+//    *
+//    * @param {string[]} io_workingStringArray1
+//    *   A helper string Array. If provided (i.e. not undefined), it will be
+//    * used as the working buffer (so that array recreation is reduced and
+//    * performance might be improved). If undefined, a new string array will
+//    * be created.
+//    */
+//   static helper_TableLog_BoundsArray(
+//     aBoundsArray, headerPrefix,
+//     io_workingStringArray0 = new Array(),
+//     io_workingStringArray1 = new Array()
+//   ) {
+
+//     const {
+//       headerPrefixEmpty, characterCountPerField, digitCountAfterDecimalPoint,
+//       joinSeparator
+//     } = InputsOutputs.TableLog_params;
+
+//     let stringArray_header_line_1st = io_workingStringArray0;
+//     stringArray_header_line_1st.length = 0;
+
+//     let stringArray = io_workingStringArray1;
+//     stringArray.length = 0;
+
+//     // 1. Log headers.
+//     {
+//       // 1.1 Got the 2nd line of headers. It has all detail field names. 
+//       aBoundsArray.TableLog_header_appendColumns(
+//         stringArray, characterCountPerField, ".boundsArray" );
+
+//       // 1.2 Generate the 1st line of headers.
+//       //
+//       // Its content are all the same as header prefix. (i.e. place the
+//       // header prefix in the 1st line of headers.)
+
+//       // Because a BoundsArray has two data members (i.e. two columns in the
+//       // table log), they can share the same header prefix (so that a very
+//       // long header prefix could be displayed properly).
+//       const headerPrefix_columnCount = Math.floor( stringArray.length / 2 );
+//       stringArray_header_line_1st.length = headerPrefix_columnCount;
+
+//       // Its column width is twice as the detail column (with separator).
+//       const headerPrefix_columnCharacterCount = characterCountPerField
+//         + joinSeparator.length + characterCountPerField;
+
+//       stringArray_header_line_1st.fill(
+//         headerPrefix.padStart( headerPrefix_columnCharacterCount ) );
+
+//       // 1.3 Write out the headers to log.
+//       const header_line0 = stringArray_header_line_1st.join( joinSeparator );
+//       console.log( header_line0 );
+
+//       const header_line1 = stringArray.join( joinSeparator );
+//       console.log( header_line1 );
+//     }
+
+//     // 2. Log body.
+//     {
+//       const rowIndexBound = aBoundsArray.length;
+//       for ( let rowIndex = 0; rowIndex < rowIndexBound; ++rowIndex ) {
+
+//         stringArray.length = 0;
+//         aBoundsArray.TableLog_body_appendColumns( stringArray,
+//           characterCountPerField,
+//           digitCountAfterDecimalPoint,
+//           rowIndex );
+
+//         const body_line = stringArray.join( joinSeparator );
+//         console.log( body_line );
+//       }
+//     }
+//   }
+
+
+//!!! ...unfinished... (2025/05/30)
+
+//!!! ...untested... (2025/05/28)
   /**
-   * Log a BoundsArray (headers and body) as a table.
-   *
-   * @param {FloatValue.BoundsArray} aBoundsArray
-   *   The BoundsArray (e.g. .afterUndoPreviousActivationEscaping,
-   * .afterFilter, .afterBias, .afterActivation) to be logged. It must have
-   * methods .TableLog_header_appendColumns() and
-   * .TableLog_body_appendColumns().
-   *
-   * @param {string} headerPrefix
-   *   The name string of the BoundsArray be logged.
+   * Log .bPassThrough, .afterUndoPreviousActivationEscaping, .afterFilter,
+   * .afterBias, .afterActivation of this object as a table.
    *
    * @param {string[]} io_workingStringArray0
    *   A helper string Array. If provided (i.e. not undefined), it will be
@@ -518,8 +604,7 @@ class ConvBiasActivation extends InputsOutputs {
    * performance might be improved). If undefined, a new string array will
    * be created.
    */
-  static helper_TableLog_BoundsArray(
-    aBoundsArray, headerPrefix,
+  TableLog_header_body(
     io_workingStringArray0 = new Array(),
     io_workingStringArray1 = new Array()
   ) {
@@ -535,29 +620,172 @@ class ConvBiasActivation extends InputsOutputs {
     let stringArray = io_workingStringArray1;
     stringArray.length = 0;
 
+
+//!!! ...unfinished... (2025/05/30)
+
+
+//!!! ...unfinished... (2025/05/29)
+// should be in one rows.
+//   .bPassThrough
+//   .afterUndoPreviousActivationEscaping
+//   .afterFilter
+//   .afterBias
+//   .afterActivation
+
+    //
+    //   - .bPassThrough[] (a boolean 0 or 1) only needs a narrow field width.
+    //   - .afterUndoPreviousActivationEscaping has very long header name.
+    //
+    // So, 
+    //
+    // .bPassThrough .afterUndoPreviousActivationEscaping .afterFilter .afterBias .afterActivation
+    //
+
+//!!! ...unfinished... (2025/05/30)
+// should be in one rows.
+//   .bPassThrough
+    // 1.
+    {
+      out_stringArray.push(
+        headerPrefix0.padStart( characterCountPerField ),
+      );
+
+
+    }
+
+    // 2.
+    {
+      const headerPrefix_afterUndoPreviousActivationEscaping
+        = ".afterUndoPreviousActivationEscaping";
+      InputsOutputs.helper_TableLog_BoundsArray(
+        this.afterUndoPreviousActivationEscaping,
+        headerPrefix_afterUndoPreviousActivationEscaping,
+        io_workingStringArray0, io_workingStringArray1 );
+    }
+
+    // 3.
+    {
+      const headerPrefix_afterFilter = ".afterFilter";
+      InputsOutputs.helper_TableLog_ScaleBoundsArray(
+        this.afterFilter,
+        headerPrefix_afterFilter,
+        io_workingStringArray0, io_workingStringArray1 );
+    }
+
+    // 4.
+    {
+      const headerPrefix_afterBias = ".afterBias";
+      InputsOutputs.helper_TableLog_ScaleBoundsArray(
+        this.afterBias,
+        headerPrefix_afterBias,
+        io_workingStringArray0, io_workingStringArray1 );
+    }
+
+    // 5.
+    {
+      const headerPrefix_afterActivation = ".afterActivation";
+      InputsOutputs.helper_TableLog_ScaleBoundsArray(
+        this.afterActivation,
+        headerPrefix_afterActivation,
+        io_workingStringArray0, io_workingStringArray1 );
+    }
+
+
+
+//!!!
     // 1. Log headers.
     {
-      // 1.1 Got the 2nd line of headers. It has all detail field names. 
-      aBoundsArray.TableLog_header_appendColumns(
-        stringArray, characterCountPerField, ".boundsArray" );
+      // 1.1 Generate the 2nd line of headers. It has all detail field names. 
+      {
+        // Note: The .bPassThrough does not have 2nd line of headers. So let
+        //       it empty.
+        stringArray.push(
+          headerPrefixEmpty.padStart( characterCountPerField ),
+        );
+
+        const headerPrefix_boundsArray = ".boundsArray";
+
+        this.afterUndoPreviousActivationEscaping.TableLog_header_appendColumns(
+          stringArray, characterCountPerField, headerPrefix_boundsArray );
+
+        this.afterFilter.TableLog_header_appendColumns(
+          stringArray, characterCountPerField, headerPrefix_boundsArray );
+
+        this.afterBias.TableLog_header_appendColumns(
+          stringArray, characterCountPerField, headerPrefix_boundsArray );
+
+        this.afterActivation.TableLog_header_appendColumns(
+          stringArray, characterCountPerField, headerPrefix_boundsArray );
+      }
+
+//!!! ...unfinished... (2025/05/30)
 
       // 1.2 Generate the 1st line of headers.
       //
-      // Its content are all the same as header prefix. (i.e. place the
-      // header prefix in the 1st line of headers.)
+      // Place the header prefix (may be very long) in the 1st line of headers.
+      {
+        // "-1" for excluding .bPassThrough (which is not a BoundsArray).
+        const boundsArrayCount = ( stringArray.length - 1 );
 
-      // Because a BoundsArray has two data members (i.e. two columns in the
-      // table log), they can share the same header prefix (so that a very
-      // long header prefix could be displayed properly).
-      const headerPrefix_columnCount = Math.floor( stringArray.length / 2 );
-      stringArray_header_line_1st.length = headerPrefix_columnCount;
+        // Because a BoundsArray has two data members (i.e. two columns in the
+        // table log), let them share the same header prefix (so that a very
+        // long header prefix could be displayed properly).
 
-      // Its column width is twice as the detail column (with separator).
-      const headerPrefix_columnCharacterCount = characterCountPerField
-        + joinSeparator.length + characterCountPerField;
 
-      stringArray_header_line_1st.fill(
-        headerPrefix.padStart( headerPrefix_columnCharacterCount ) );
+        //const headerPrefix_columnCount = Math.floor( boundsArrayCount / 2 );
+
+        // Its column width is twice as the detail column (with separator).
+        const headerPrefix_wideColumn_characterCount = characterCountPerField
+          + joinSeparator.length + characterCountPerField;
+
+
+
+//!!!
+        // The header of .bPassThrough (which is not a BoundsArray) uses
+        // normal (narrow) column width.
+        const headerPrefix_bPassThrough = ".bPassThrough";
+        stringArray_header_line_1st.push(
+          headerPrefix_bPassThrough.padStart( characterCountPerField ),
+        );
+
+        // All other headers (which are BoundsArray) use wide (twice) column
+        // width.
+        const headerPrefix_afterUndoPreviousActivationEscaping
+          = ".afterUndoPreviousActivationEscaping";
+        stringArray_header_line_1st.push(
+          headerPrefix_afterUndoPreviousActivationEscaping.padStart(
+            headerPrefix_wideColumn_characterCount ) );
+
+        const headerPrefix_afterFilter = ".afterFilter";
+        stringArray_header_line_1st.push(
+          headerPrefix_afterUndoPreviousActivationEscaping.padStart(
+            headerPrefix_wideColumn_characterCount ) );
+
+        const headerPrefix_afterBias = ".afterBias";
+        stringArray_header_line_1st.push(
+          headerPrefix_afterBias.padStart(
+            headerPrefix_wideColumn_characterCount ) );
+
+        const headerPrefix_afterActivation = ".afterActivation";
+        stringArray_header_line_1st.push(
+          headerPrefix_afterActivation.padStart(
+            headerPrefix_wideColumn_characterCount ) );
+
+
+
+
+//!!!
+
+        const headerPrefix_columnCount = Math.floor( stringArray.length / 2 );
+        stringArray_header_line_1st.length = headerPrefix_columnCount;
+
+        // Its column width is twice as the detail column (with separator).
+        const headerPrefix_columnCharacterCount = characterCountPerField
+          + joinSeparator.length + characterCountPerField;
+
+        stringArray_header_line_1st.fill(
+          headerPrefix.padStart( headerPrefix_columnCharacterCount ) );
+      }
 
       // 1.3 Write out the headers to log.
       const header_line0 = stringArray_header_line_1st.join( joinSeparator );
@@ -582,148 +810,6 @@ class ConvBiasActivation extends InputsOutputs {
         console.log( body_line );
       }
     }
-  }
-
-
-//!!! ...unfinished... (2025/05/30)
-
-//!!! ...untested... (2025/05/28)
-  /**
-   * Return strings for all the headers displayed in one line (i.e. one row)
-   * when logging this object as a table.
-   *
-   * @param {String[]} out_stringArray
-   *   The output string array. All the returned values (i.e. every column
-   * header of one row) should be pushed at its end (in order).
-   *
-   * @param {number} characterCountPerField
-   *   Every returned string should be padded so that its length is just
-   * so many characters.
-   *
-   * @param {string} headerPrefix
-   *   The string should be concatenated before the returned headers.
-   */
-  TableLog_header_appendColumns( out_stringArray,
-    characterCountPerField,
-    headerPrefix
-  ) {
-
-//!!! ...unfinished... (2025/05/29)
-// should be in one rows.
-//   .bPassThrough
-//   .afterUndoPreviousActivationEscaping
-//   .afterFilter
-//   .afterBias
-//   .afterActivation
-
-    const headerPrefix0 = `${headerPrefix}.bPassThrough`;
-    const headerPrefix1 = `${headerPrefix}.afterUndoPreviousActivationEscaping`;
-    const headerPrefix2 = `${headerPrefix}.afterFilter`;
-    const headerPrefix3 = `${headerPrefix}.afterBias`;
-    const headerPrefix4 = `${headerPrefix}.afterActivation`;
-
-    //
-    //   - .bPassThrough[] (a boolean 0 or 1) only needs a narrow field width.
-    //   - .afterUndoPreviousActivationEscaping has very long header name.
-    //
-    // So, 
-    //
-    // .bPassThrough .afterUndoPreviousActivationEscaping .afterFilter .afterBias .afterActivation
-    //
-
-//!!! ...unfinished... (2025/05/29)
-    out_stringArray.push(
-      headerPrefix0.padStart( characterCountPerField ),
-    );
-
-    this.afterUndoPreviousActivationEscaping
-      .TableLog_header_appendColumns( out_stringArray,
-        characterCountPerField,
-        headerPrefix1 );
-
-    this.afterFilter.TableLog_header_appendColumns( out_stringArray,
-      characterCountPerField,
-      headerPrefix2 );
-
-    this.afterBias.TableLog_header_appendColumns( out_stringArray,
-      characterCountPerField,
-      headerPrefix3 );
-
-    this.afterActivation.TableLog_header_appendColumns( out_stringArray,
-      characterCountPerField,
-      headerPrefix4 );
-  }
-
-//!!! ...untested... (2025/05/28)
-  /**
-   * Return strings for all the values displayed in one line (i.e. one row)
-   * when logging this object as a table.
-   *
-   * @param {String[]} out_stringArray
-   *   The output string array. All the returned values (i.e. every column of
-   * one row) should be pushed at its end (in order).
-   *
-   * @param {number} characterCountPerField
-   *   Every returned string should be padded so that its length is just
-   * so many characters.
-   *
-   * @param {number} digitCountAfterDecimalPoint
-   *   Every returned string (if its original value is a number) should be
-   * formatted as so many digits after its decimal point.
-   *
-   * @param {number} rowIndex
-   *   Which line of the log table should be returned. It is an integer index
-   * into .output0 and .output1.
-   */
-  TableLog_body_appendColumns( out_stringArray,
-    characterCountPerField,
-    digitCountAfterDecimalPoint,
-    rowIndex
-  ) {
-
-//!!! ...unfinished... (2025/05/29)
-// should be in one rows.
-//   .bPassThrough
-//   .afterUndoPreviousActivationEscaping
-//   .afterFilter
-//   .afterBias
-//   .afterActivation
-
-
-//   .bPassThrough
-    {
-      // Decimal point is not necessary. (value is either 0 or 1)
-      const digitCountAfterDecimalPoint_boolean = 0;
-      const characterCountPerField_boolean = 1;
-
-      const bValue = this.bPassThrough[ rowIndex ];
-      out_stringArray.push(
-        bValue
-          .toFixed( digitCountAfterDecimalPoint_boolean )
-          .padStart( characterCountPerField_boolean )
-      );
-    }
-
-
-    this.afterUndoPreviousActivationEscaping.TableLog_body_appendColumns( out_stringArray,
-      characterCountPerField,
-      digitCountAfterDecimalPoint,
-      rowIndex );
-
-    this.afterFilter.TableLog_body_appendColumns( out_stringArray,
-      characterCountPerField,
-      digitCountAfterDecimalPoint,
-      rowIndex );
-
-    this.afterBias.TableLog_body_appendColumns( out_stringArray,
-      characterCountPerField,
-      digitCountAfterDecimalPoint,
-      rowIndex );
-
-    this.afterActivation.TableLog_body_appendColumns( out_stringArray,
-      characterCountPerField,
-      digitCountAfterDecimalPoint,
-      rowIndex );
   }
 
 }
