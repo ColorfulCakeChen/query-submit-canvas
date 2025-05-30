@@ -493,7 +493,77 @@ class ConvBiasActivation extends InputsOutputs {
   }
 
 
+//!!! ...untested... (2025/05/30)
+  /**
+   * Log a BoundsArray (headers and body) as a table.
+   *
+   * @param {FloatValue.BoundsArray} aBoundsArray
+   *   The BoundsArray (e.g. .afterUndoPreviousActivationEscaping,
+   * .afterFilter, .afterBias, .afterActivation) to be logged. It must have
+   * methods .TableLog_header_appendColumns() and
+   * .TableLog_body_appendColumns().
+   *
+   * @param {string} headerPrefix
+   *   The name string of the BoundsArray be logged.
+   *
+   * @param {string[]} io_workingStringArray
+   *   A helper string Array. If provided (i.e. not undefined), it will be
+   * used as the working buffer (so that array recreation is reduced and
+   * performance will be improved). If undefined, a new string array will
+   * be created.
+   */
+  static helper_TableLog_BoundsArray(
+    aScaleBoundsArray, headerPrefix,
+    io_workingStringArray = new Array() ) {
 
+    const {
+      headerPrefixEmpty, characterCountPerField, digitCountAfterDecimalPoint,
+      joinSeparator
+    } = InputsOutputs.TableLog_params;
+
+    let stringArray = io_workingStringArray;
+    stringArray.length = 0;
+
+    // 1. Log headers.
+    {
+      // 1.1 Got the 2nd line of headers. It has all detail field names. 
+      aScaleBoundsArray.TableLog_header_appendColumns(
+        stringArray, characterCountPerField, headerPrefixEmpty );
+
+      // 1.2 Generate the 1st line of headers. It has the same field count as
+      //     the 2nd. But its content are all the same as header prefix. (i.e.
+      //     place the header prefix in the 1st line of headers.)
+      let stringArray_header_line_1st = new Array( stringArray.length );
+
+//!!! ...unfinished... (2025/05/30)
+
+      stringArray_header_line_1st.fill(
+        headerPrefix.padStart( characterCountPerField ) );
+
+      // 1.3 Write out the headers to log.
+      const header_line0 = stringArray_header_line_1st.join( joinSeparator );
+      console.log( header_line0 );
+
+      const header_line1 = stringArray.join( joinSeparator );
+      console.log( header_line1 );
+    }
+
+    // 2. Log body.
+    {
+      const rowIndexBound = aScaleBoundsArray.length;
+      for ( let rowIndex = 0; rowIndex < rowIndexBound; ++rowIndex ) {
+
+        stringArray.length = 0;
+        aScaleBoundsArray.TableLog_body_appendColumns( stringArray,
+          characterCountPerField,
+          digitCountAfterDecimalPoint,
+          rowIndex );
+
+        const body_line = stringArray.join( joinSeparator );
+        console.log( body_line );
+      }
+    }
+  }
 
 //!!! ...untested... (2025/05/28)
   /**

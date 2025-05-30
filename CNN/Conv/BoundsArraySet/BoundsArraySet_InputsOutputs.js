@@ -425,37 +425,42 @@ class InputsOutputs extends Recyclable.Root {
   /**
    * Log a ScaleBoundsArray (headers and body) as a table.
    *
-   * @param {FloatValue.BoundsArray|ActivationEscaping.ScaleBoundsArray} aBoundsArray
+   * @param {ActivationEscaping.ScaleBoundsArray} aScaleBoundsArray
    *   The ScaleBoundsArray (e.g. .input0, .input1, .output0, .output1 ) to
-   * be logged. It must have  methods .TableLog_header_appendColumns() and
+   * be logged. It must have methods .TableLog_header_appendColumns() and
    * .TableLog_body_appendColumns().
    *
    * @param {string} headerPrefix
    *   The name string of the ScaleBoundsArray be logged.
+   *
+   * @param {string[]} io_workingStringArray
+   *   A helper string Array. If provided (i.e. not undefined), it will be
+   * used as the working buffer (so that array recreation is reduced and
+   * performance will be improved). If undefined, a new string array will
+   * be created.
    */
   static helper_TableLog_ScaleBoundsArray(
-    aScaleBoundsArray, headerPrefix ) {
+    aScaleBoundsArray, headerPrefix,
+    io_workingStringArray = new Array() ) {
 
     const {
       headerPrefixEmpty, characterCountPerField, digitCountAfterDecimalPoint,
       joinSeparator
     } = InputsOutputs.TableLog_params;
 
-    let stringArray = new Array();
+    let stringArray = io_workingStringArray;
+    stringArray.length = 0;
 
     // 1. Log headers.
     {
-      // 1.1 Got the 2nd line of headers. It has all detail fields. 
+      // 1.1 Got the 2nd line of headers. It has all detail field names.
       aScaleBoundsArray.TableLog_header_appendColumns(
-        stringArray,
-        characterCountPerField,
-        headerPrefixEmpty );
+        stringArray, characterCountPerField, headerPrefixEmpty );
 
       // 1.2 Generate the 1st line of headers. It has the same field count as
       //     the 2nd. But its content are all the same as header prefix. (i.e.
-      //     place the header prefix in different line of headers.)
-      let stringArray_header_line_1st
-        = new Array( stringArray.length );
+      //     place the header prefix in the 1st line of headers.)
+      let stringArray_header_line_1st = new Array( stringArray.length );
 
       stringArray_header_line_1st.fill(
         headerPrefix.padStart( characterCountPerField ) );
@@ -490,33 +495,34 @@ class InputsOutputs extends Recyclable.Root {
    * Log .input0, .input1, .output0, .output1 of this object as a table.
    */
   TableLog_header_body() {
+    let stringArray = new Array();
 
     // 1.
     {
       const headerPrefix_input0 = ".input0";
       InputsOutputs.helper_TableLog_ScaleBoundsArray(
-        this.input0, headerPrefix_input0 );
+        this.input0, headerPrefix_input0, stringArray );
     }
 
     // 2.
     if ( this.input1 ) {
       const headerPrefix_input1 = ".input1";
       InputsOutputs.helper_TableLog_ScaleBoundsArray(
-        this.input1, headerPrefix_input1 );
+        this.input1, headerPrefix_input1, stringArray );
     }
 
     // 3.
     {
       const headerPrefix_output0 = ".output0";
       InputsOutputs.helper_TableLog_ScaleBoundsArray(
-        this.output0, headerPrefix_output0 );
+        this.output0, headerPrefix_output0, stringArray );
     }
 
     // 4.
     if ( this.output1 ) {
       const headerPrefix_output1 = ".output1";
       InputsOutputs.helper_TableLog_ScaleBoundsArray(
-        this.output1, headerPrefix_output1 );
+        this.output1, headerPrefix_output1, stringArray );
     }
   }
 
@@ -527,8 +533,15 @@ class InputsOutputs extends Recyclable.Root {
  * Parameters for TableLog_Xxx().
  */
 InputsOutputs.TableLog_params = {
-  headerPrefixEmpty:          "",
-  characterCountPerField:      20,
+
+  // When no header prefix is needed, this string could be used.
+  headerPrefixEmpty: "",
+
+  // The width of a column of the table log.
+  characterCountPerField: 20,
+
+  // How many digits (after the decimal point) should be displayed when
+  // outputting a number to the table log.
   digitCountAfterDecimalPoint: 10,
 
   // The separator string when call Array.join() to generate one line (one
