@@ -519,7 +519,7 @@ class ConvBiasActivation extends InputsOutputs {
    * be created.
    */
   static helper_TableLog_BoundsArray(
-    aScaleBoundsArray, headerPrefix,
+    aBoundsArray, headerPrefix,
     io_workingStringArray0 = new Array(),
     io_workingStringArray1 = new Array()
   ) {
@@ -538,18 +538,26 @@ class ConvBiasActivation extends InputsOutputs {
     // 1. Log headers.
     {
       // 1.1 Got the 2nd line of headers. It has all detail field names. 
-      aScaleBoundsArray.TableLog_header_appendColumns(
-        stringArray, characterCountPerField, headerPrefixEmpty );
+      aBoundsArray.TableLog_header_appendColumns(
+        stringArray, characterCountPerField, ".boundsArray" );
 
-      // 1.2 Generate the 1st line of headers. It has the same field count as
-      //     the 2nd. But its content are all the same as header prefix. (i.e.
-      //     place the header prefix in the 1st line of headers.)
-      stringArray_header_line_1st.length = stringArray.length;
+      // 1.2 Generate the 1st line of headers.
+      //
+      // Its content are all the same as header prefix. (i.e. place the
+      // header prefix in the 1st line of headers.)
 
-//!!! ...unfinished... (2025/05/30)
+      // Because a BoundsArray has two data members (i.e. two columns in the
+      // table log), they can share the same header prefix (so that a very
+      // long header prefix could be displayed properly).
+      const headerPrefix_columnCount = Math.floor( stringArray.length / 2 );
+      stringArray_header_line_1st.length = headerPrefix_columnCount;
+
+      // Its column width is twice as the detail column (with separator).
+      const headerPrefix_columnCharacterCount = characterCountPerField
+        + joinSeparator.length + characterCountPerField;
 
       stringArray_header_line_1st.fill(
-        headerPrefix.padStart( characterCountPerField ) );
+        headerPrefix.padStart( headerPrefix_columnCharacterCount ) );
 
       // 1.3 Write out the headers to log.
       const header_line0 = stringArray_header_line_1st.join( joinSeparator );
@@ -561,11 +569,11 @@ class ConvBiasActivation extends InputsOutputs {
 
     // 2. Log body.
     {
-      const rowIndexBound = aScaleBoundsArray.length;
+      const rowIndexBound = aBoundsArray.length;
       for ( let rowIndex = 0; rowIndex < rowIndexBound; ++rowIndex ) {
 
         stringArray.length = 0;
-        aScaleBoundsArray.TableLog_body_appendColumns( stringArray,
+        aBoundsArray.TableLog_body_appendColumns( stringArray,
           characterCountPerField,
           digitCountAfterDecimalPoint,
           rowIndex );
@@ -575,6 +583,9 @@ class ConvBiasActivation extends InputsOutputs {
       }
     }
   }
+
+
+//!!! ...unfinished... (2025/05/30)
 
 //!!! ...untested... (2025/05/28)
   /**
