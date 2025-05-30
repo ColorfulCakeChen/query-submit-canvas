@@ -82,7 +82,8 @@ class TensorPlaceholder_Base extends Recyclable.Root {
   }
 
   /**
-   * This method will release current ScaleBoundsArray (if exists).
+   * This method will release current ScaleBoundsArray (if exists) before
+   * putting (keeping) the new (specified) ScaleBoundsArray.
    *
    * @param {ActivationEscaping.ScaleBoundsArray} aScaleBoundsArray
    *   This ScaleBoundsArray will be kept directly (without clone).
