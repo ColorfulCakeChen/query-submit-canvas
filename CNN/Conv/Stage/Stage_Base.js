@@ -23,7 +23,7 @@ import { InferencedParams } from "./Stage_InferencedParams.js";
  * of the input image's height and width.
  *
  * They all do it at block0 and by the same method: depthwise convolution with
- * ( strides = 2 ). Most will do it with ( pad = "same" ).  But some will do it
+ * ( strides = 2 ). Most will do it with ( pad = "same" ). But some will do it
  * with ( pad = "valid" ).
  *
  *
