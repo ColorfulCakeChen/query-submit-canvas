@@ -12,7 +12,7 @@ import { Params } from "./Stage_Params.js";
 import { InferencedParams } from "./Stage_InferencedParams.js";
 
 /**
- * Implement a stage of  or MobileNetV1 or MobileNetV2 or ShuffleNetV2 (with 2
+ * Implement a stage of MobileNetV1 or MobileNetV2 or ShuffleNetV2 (with 2
  * output channel groups). It is a sequence of depthwise convolution and
  * pointwise convolution.
  *
