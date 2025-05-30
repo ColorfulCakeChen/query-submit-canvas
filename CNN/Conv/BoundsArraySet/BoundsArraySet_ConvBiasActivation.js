@@ -493,98 +493,6 @@ class ConvBiasActivation extends InputsOutputs {
   }
 
 
-//!!! ...untested... (2025/05/30 Remarked) seems not used.
-//   /**
-//    * Log a BoundsArray (headers and body) as a table.
-//    *
-//    * @param {FloatValue.BoundsArray} aBoundsArray
-//    *   The BoundsArray (e.g. .afterUndoPreviousActivationEscaping,
-//    * .afterFilter, .afterBias, .afterActivation) to be logged. It must have
-//    * methods .TableLog_header_appendColumns() and
-//    * .TableLog_body_appendColumns().
-//    *
-//    * @param {string} headerPrefix
-//    *   The name string of the BoundsArray be logged.
-//    *
-//    * @param {string[]} io_workingStringArray0
-//    *   A helper string Array. If provided (i.e. not undefined), it will be
-//    * used as the working buffer (so that array recreation is reduced and
-//    * performance might be improved). If undefined, a new string array will
-//    * be created.
-//    *
-//    * @param {string[]} io_workingStringArray1
-//    *   A helper string Array. If provided (i.e. not undefined), it will be
-//    * used as the working buffer (so that array recreation is reduced and
-//    * performance might be improved). If undefined, a new string array will
-//    * be created.
-//    */
-//   static helper_TableLog_BoundsArray(
-//     aBoundsArray, headerPrefix,
-//     io_workingStringArray0 = new Array(),
-//     io_workingStringArray1 = new Array()
-//   ) {
-//
-//     const {
-//       headerPrefixEmpty, characterCountPerField, digitCountAfterDecimalPoint,
-//       joinSeparator
-//     } = InputsOutputs.TableLog_params;
-//
-//     let stringArray_header_line_1st = io_workingStringArray0;
-//     stringArray_header_line_1st.length = 0;
-//
-//     let stringArray = io_workingStringArray1;
-//     stringArray.length = 0;
-//
-//     // 1. Log headers.
-//     {
-//       // 1.1 Got the 2nd line of headers. It has all detail field names. 
-//       aBoundsArray.TableLog_header_appendColumns(
-//         stringArray, characterCountPerField, ".boundsArray" );
-//
-//       // 1.2 Generate the 1st line of headers.
-//       //
-//       // Its content are all the same as header prefix. (i.e. place the
-//       // header prefix in the 1st line of headers.)
-//
-//       // Because a BoundsArray has two data members (i.e. two columns in the
-//       // table log), they can share the same header prefix (so that a very
-//       // long header prefix could be displayed properly).
-//       const headerPrefix_columnCount = Math.floor( stringArray.length / 2 );
-//       stringArray_header_line_1st.length = headerPrefix_columnCount;
-//
-//       // Its column width is twice as the detail column (with separator).
-//       const headerPrefix_columnCharacterCount = characterCountPerField
-//         + joinSeparator.length + characterCountPerField;
-//
-//       stringArray_header_line_1st.fill(
-//         headerPrefix.padStart( headerPrefix_columnCharacterCount ) );
-//
-//       // 1.3 Write out the headers to log.
-//       const header_line0 = stringArray_header_line_1st.join( joinSeparator );
-//       console.log( header_line0 );
-//
-//       const header_line1 = stringArray.join( joinSeparator );
-//       console.log( header_line1 );
-//     }
-//
-//     // 2. Log body.
-//     {
-//       const rowIndexBound = aBoundsArray.length;
-//       for ( let rowIndex = 0; rowIndex < rowIndexBound; ++rowIndex ) {
-//
-//         stringArray.length = 0;
-//         aBoundsArray.TableLog_body_appendColumns( stringArray,
-//           characterCountPerField,
-//           digitCountAfterDecimalPoint,
-//           rowIndex );
-//
-//         const body_line = stringArray.join( joinSeparator );
-//         console.log( body_line );
-//       }
-//     }
-//   }
-
-
 //!!! ...unfinished... (2025/05/30)
 
 //!!! ...untested... (2025/05/28)
@@ -620,77 +528,6 @@ class ConvBiasActivation extends InputsOutputs {
     let stringArray = io_workingStringArray1;
     stringArray.length = 0;
 
-
-//!!! ...unfinished... (2025/05/30)
-
-// should be in one rows.
-//   .bPassThrough
-//   .afterUndoPreviousActivationEscaping
-//   .afterFilter
-//   .afterBias
-//   .afterActivation
-
-    //
-    //   - .bPassThrough[] (a boolean 0 or 1) only needs a narrow field width.
-    //   - .afterUndoPreviousActivationEscaping has very long header name.
-    //
-    // So, 
-    //
-    // .bPassThrough .afterUndoPreviousActivationEscaping .afterFilter .afterBias .afterActivation
-    //
-
-//!!! ...unfinished... (2025/05/30)
-// should be in one rows.
-//   .bPassThrough
-    // 1.
-    {
-      out_stringArray.push(
-        headerPrefix0.padStart( characterCountPerField ),
-      );
-
-
-    }
-
-    // 2.
-    {
-      const headerPrefix_afterUndoPreviousActivationEscaping
-        = ".afterUndoPreviousActivationEscaping";
-      InputsOutputs.helper_TableLog_BoundsArray(
-        this.afterUndoPreviousActivationEscaping,
-        headerPrefix_afterUndoPreviousActivationEscaping,
-        io_workingStringArray0, io_workingStringArray1 );
-    }
-
-    // 3.
-    {
-      const headerPrefix_afterFilter = ".afterFilter";
-      InputsOutputs.helper_TableLog_ScaleBoundsArray(
-        this.afterFilter,
-        headerPrefix_afterFilter,
-        io_workingStringArray0, io_workingStringArray1 );
-    }
-
-    // 4.
-    {
-      const headerPrefix_afterBias = ".afterBias";
-      InputsOutputs.helper_TableLog_ScaleBoundsArray(
-        this.afterBias,
-        headerPrefix_afterBias,
-        io_workingStringArray0, io_workingStringArray1 );
-    }
-
-    // 5.
-    {
-      const headerPrefix_afterActivation = ".afterActivation";
-      InputsOutputs.helper_TableLog_ScaleBoundsArray(
-        this.afterActivation,
-        headerPrefix_afterActivation,
-        io_workingStringArray0, io_workingStringArray1 );
-    }
-
-
-
-//!!!
     // 1. Log headers.
     {
       // 1.1 Generate the 2nd line of headers. It has all detail field names. 
@@ -698,8 +535,7 @@ class ConvBiasActivation extends InputsOutputs {
         // Note: The .bPassThrough does not have 2nd line of headers. So let
         //       it empty.
         stringArray.push(
-          headerPrefixEmpty.padStart( characterCountPerField ),
-        );
+          headerPrefixEmpty.padStart( characterCountPerField ) );
 
         const headerPrefix_boundsArray = ".boundsArray";
 
@@ -772,19 +608,36 @@ class ConvBiasActivation extends InputsOutputs {
       console.log( header_line1 );
     }
 
-//!!! ...unfinished... (2025/05/30)
-
-
     // 2. Log body.
     {
+      // Note: The .bPassThrough[] (a boolean 0 or 1) needs not decimal point.
+      const digitCountAfterDecimalPoint_bPassThrough = 0;
+
       const rowIndexBound = aBoundsArray.length;
       for ( let rowIndex = 0; rowIndex < rowIndexBound; ++rowIndex ) {
-
         stringArray.length = 0;
-        aBoundsArray.TableLog_body_appendColumns( stringArray,
-          characterCountPerField,
-          digitCountAfterDecimalPoint,
-          rowIndex );
+
+        stringArray.push(
+          bPassThrough[ rowIndex ]
+            .toFixed( digitCountAfterDecimalPoint_bPassThrough )
+            .padStart( characterCountPerField )
+        );
+
+        this.afterUndoPreviousActivationEscaping.TableLog_body_appendColumns(
+          stringArray,
+          characterCountPerField, digitCountAfterDecimalPoint, rowIndex );
+
+        this.afterFilter.TableLog_body_appendColumns(
+          stringArray,
+          characterCountPerField, digitCountAfterDecimalPoint, rowIndex );
+
+        this.afterBias.TableLog_body_appendColumns(
+          stringArray,
+          characterCountPerField, digitCountAfterDecimalPoint, rowIndex );
+
+        this.afterActivation.TableLog_body_appendColumns(
+          stringArray,
+          characterCountPerField, digitCountAfterDecimalPoint, rowIndex );
 
         const body_line = stringArray.join( joinSeparator );
         console.log( body_line );
