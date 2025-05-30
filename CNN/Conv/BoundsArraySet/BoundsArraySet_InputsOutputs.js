@@ -437,7 +437,8 @@ class InputsOutputs extends Recyclable.Root {
     aScaleBoundsArray, headerPrefix ) {
 
     const {
-      headerPrefixEmpty, characterCountPerField, digitCountAfterDecimalPoint
+      headerPrefixEmpty, characterCountPerField, digitCountAfterDecimalPoint,
+      joinSeparator
     } = InputsOutputs.TableLog_params;
 
     let stringArray = new Array();
@@ -460,10 +461,10 @@ class InputsOutputs extends Recyclable.Root {
         headerPrefix.padStart( characterCountPerField ) );
 
       // 1.3 Write out the headers to log.
-      const header_line0 = stringArray_header_line_1st.join();
+      const header_line0 = stringArray_header_line_1st.join( joinSeparator );
       console.log( header_line0 );
 
-      const header_line1 = stringArray.join();
+      const header_line1 = stringArray.join( joinSeparator );
       console.log( header_line1 );
     }
 
@@ -478,7 +479,7 @@ class InputsOutputs extends Recyclable.Root {
           digitCountAfterDecimalPoint,
           rowIndex );
 
-        const body_line = stringArray.join();
+        const body_line = stringArray.join( joinSeparator );
         console.log( body_line );
       }
     }
@@ -530,4 +531,7 @@ InputsOutputs.TableLog_params = {
   characterCountPerField:      20,
   digitCountAfterDecimalPoint: 10,
 
+  // The separator string when call Array.join() to generate one line (one
+  // row) of the table log.
+  joinSeparator: " ",
 };
