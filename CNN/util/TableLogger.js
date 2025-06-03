@@ -54,7 +54,7 @@ class TableLogger_Base {
    *   A string will be logged before the image header.
    */
   log_tensor3d_along_depth( aTensor3d, imageHeaderPrefix ) {
-    const funcNameInMessage = "log_tensor3d";
+    const funcNameInMessage = "log_tensor3d_along_depth";
 
     const shape = aTensor3d.shape;
     if ( shape.length != 3 )
@@ -99,7 +99,7 @@ class TableLogger_Base {
     imageHeaderPrefix
   ) {
 
-    const funcNameInMessage = "log_array_as_image";
+    const funcNameInMessage = "log_array_as_image_along_depth";
 
     const length = height * width * depth;
     if ( dataArray.length != length )
