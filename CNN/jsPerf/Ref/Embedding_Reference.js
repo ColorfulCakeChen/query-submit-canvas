@@ -168,11 +168,6 @@ class Embedding_Reference_Base extends Recyclable.Root {
       inputTensorDestroyCount = 1;
     }
 
-!!! ...unfinished... (2025/06/03)
-    if ( bTableLog ) {
-
-    }
-
     let tensorNumDifference_apply_before_after;
     let outputTensor3d;
 
@@ -465,7 +460,8 @@ class Embedding_Reference_Base extends Recyclable.Root {
     let {
       input_height, input_width, input_channelCount,
       channelMultiplier,
-      bEmbedVocabularyId
+      bEmbedVocabularyId,
+      bTableLog,
     } = testParams.out;
 
     let { output_height, output_width, output_channelCount
@@ -533,6 +529,12 @@ class Embedding_Reference_Base extends Recyclable.Root {
           ++inElementIndex;
         }
       }
+    }
+
+
+!!! ...unfinished... (2025/06/03)
+    if ( bTableLog ) {
+
     }
 
     return imageOut;

@@ -2,6 +2,7 @@ export { ConvBiasActivation };
 
 import * as Pool from "../../util/Pool.js";
 import * as Recyclable from "../../util/Recyclable.js";
+import * as TableLogger from "../../util/TableLogger.js";
 import * as FloatValue from "../../Unpacker/FloatValue.js";
 import * as ValueDesc from "../../Unpacker/ValueDesc.js";
 import { InputsOutputs } from "./BoundsArraySet_InputsOutputs.js";
@@ -524,7 +525,7 @@ class ConvBiasActivation extends InputsOutputs {
     const {
       headerPrefixEmpty, characterCountPerField, digitCountAfterDecimalPoint,
       joinSeparator
-    } = InputsOutputs.TableLog_params;
+    } = TableLogger.Base.TableLog_params;
 
     let stringArray_header_line_1st = io_workingStringArray0;
     stringArray_header_line_1st.length = 0;

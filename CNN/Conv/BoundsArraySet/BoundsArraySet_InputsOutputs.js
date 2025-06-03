@@ -2,6 +2,7 @@ export { InputsOutputs };
 
 import * as Pool from "../../util/Pool.js";
 import * as Recyclable from "../../util/Recyclable.js";
+import * as TableLogger from "../../util/TableLogger.js";
 import * as ActivationEscaping from "../ActivationEscaping.js";
 
 /**
@@ -454,7 +455,7 @@ class InputsOutputs extends Recyclable.Root {
     const {
       headerPrefixEmpty, characterCountPerField, digitCountAfterDecimalPoint,
       joinSeparator
-    } = InputsOutputs.TableLog_params;
+    } = TableLogger.Base.TableLog_params;
 
     let stringArray_header_line_1st = io_workingStringArray0;
     stringArray_header_line_1st.length = 0;
@@ -555,24 +556,3 @@ class InputsOutputs extends Recyclable.Root {
   }
 
 }
-
-
-/**
- * Parameters for TableLog_Xxx().
- */
-InputsOutputs.TableLog_params = {
-
-  // When no header prefix is needed, this string could be used.
-  headerPrefixEmpty: "",
-
-  // The width of a column of the table log.
-  characterCountPerField: 20,
-
-  // How many digits (after the decimal point) should be displayed when
-  // outputting a number to the table log.
-  digitCountAfterDecimalPoint: 10,
-
-  // The separator string when call Array.join() to generate one line (one
-  // row) of the table log.
-  joinSeparator: " ",
-};
