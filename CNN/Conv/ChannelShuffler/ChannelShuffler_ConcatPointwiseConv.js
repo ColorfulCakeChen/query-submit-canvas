@@ -28,7 +28,8 @@ import { ConcatGather } from "./ChannelShuffler_ConcatGather.js";
  * Another style of this implementation is PointwiseConv-Split (i.e. pointwise
  * convolution by only one 1x1 filter and then split). Its performance,
  * however, is slower than pointwise convolution of multiple 1x1 filters. The
- * reason seems that the tf.split() is a slow operation (especially in mobile).
+ * reason seems that the tf.split() is a slow operation (especially in mobile
+ * phone).
  *
  *
  *
