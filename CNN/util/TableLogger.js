@@ -85,14 +85,22 @@ class TableLogger_Base {
    *
    * @param {number} depth
    *   The number array will be interpreted as an image with depth.
+   *
+   * @param {string} imageHeaderPrefix
+   *   A string will be logged before the image header.
    */
-  log_array_as_image_along_depth( dataArray, height, width, depth ) {
+  log_array_as_image_along_depth(
+    dataArray,
+    height, width, depth,
+    imageHeaderPrefix
+  ) {
+
     const funcNameInMessage = "log_array_as_image";
 
     const length = height * width * depth;
-    if ( aDataArray.length != length )
+    if ( dataArray.length != length )
       throw Error( `TableLogger_Base.${funcNameInMessage}(): `
-        + `aDataArray.length ( ${aDataArray.length} ) `
+        + `dataArray.length ( ${dataArray.length} ) `
         + `should be ( ${length} ) for shape `
         + `( height, width, depth ) = ( ${height}, ${width}, ${depth} ).`
       );
@@ -103,8 +111,8 @@ class TableLogger_Base {
 
     const workingStringArray = this.workingStringArray;
 
-    const imageHeader
-      = `image ( height, width, depth ) = ( ${height}, ${width}, ${depth} )`;
+    const imageHeader = `${imageHeaderPrefix}: image `
+      + `( height, width, depth ) = ( ${height}, ${width}, ${depth} )`;
     console.log( imageHeader );
 
     // Log every channel (i.e. along the depth) because this format is easier
@@ -115,7 +123,7 @@ class TableLogger_Base {
     for ( let c = 0; c < depth; ++c, ++i ) {
 
       // Separate every channel by channel header (with channel index).
-      const channelHeader = `channel (depth) ${c}:`;
+      const channelHeader = `  channel (depth) ${c}:`;
       console.log( channelHeader );
 
       elementIndex = c;
