@@ -29,6 +29,14 @@ class TableLogger_Base {
 
 
   /**
+   * Log a number array (viewed as an 2d image with multiple channels) as a
+   * table.
+   *
+   * For human reading easierly, it is logged by channel (i.e. along the
+   * depth). The 0th channel is logged first. And then, the 1st channel,
+   * the 2nd channel, ...
+   *
+   *
    * @param {number[]} dataArray
    *   A 1d (one-dimension) number array to be logged to console.
    *
@@ -53,6 +61,7 @@ class TableLogger_Base {
    * @param {string} joinSeparator
    *   The separator string when call Array.join() to generate one line (one
    * row) of the table log.
+   *
    *
    * @param {string[]} io_workingStringArray
    *   A helper string Array. If provided (i.e. not undefined), it will be
@@ -83,7 +92,6 @@ class TableLogger_Base {
     // Log every channel (i.e. along the depth) because this format is easier
     // for human reading.
 
-//    const 
     let elementValue;
     let elementIndex;
     for ( let c = 0; c < depth; ++c, ++i ) {
@@ -104,11 +112,12 @@ class TableLogger_Base {
 
         const oneLine = io_workingStringArray.join( joinSeparator );
         console.log( oneLine );
-
-//!!! ...unfinished... (2025/06/03)
-
       }
+
+      console.log( "" ); // Separate every channel by one empty line.
     }
+
+//!!! ...untested... (2025/06/03)
 
   }
 
