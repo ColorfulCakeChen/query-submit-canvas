@@ -24,26 +24,12 @@ class TableLogger_Base {
 
     const [ height, width, depth ] = shape;
     const dataArray = aTensor3d.dataSync();
-
-    let elementValue;
-    let i = 0;
-    for ( let y = 0; y < height; ++y ) {
-      for ( let x = 0; x < width; ++x ) {
-        for ( let c = 0; c < depth; ++c, ++i ) {
-          elementValue = dataArray[ i ];
-
-//!!! ...unfinished... (2025/06/03)
-
-
-        }
-      }
-    }
-
+    TableLogger_Base.log_array_as_image( dataArray, height, width, depth );
   }
 
 
   /**
-   * @param {number[]} aDataArray
+   * @param {number[]} dataArray
    *   A 1d (one-dimension) number array to be logged to console.
    *
    * @param {number} height
@@ -55,7 +41,7 @@ class TableLogger_Base {
    * @param {number} depth
    *   The number array will be interpreted as an image with depth.
    */
-  static log_array_as_image( aDataArray, height, width, depth ) {
+  static log_array_as_image( dataArray, height, width, depth ) {
     const funcNameInMessage = "log_array_as_image";
 
     const length = height * width * depth;
@@ -65,9 +51,6 @@ class TableLogger_Base {
         + `should be ( ${length} ) for `
         + `( height, width, depth ) = ( ${height}, ${width}, ${depth} ).`
       );
-
-    const [ height, width, depth ] = shape;
-    const dataArray = aTensor3d.dataSync();
 
     let elementValue;
     let i = 0;
