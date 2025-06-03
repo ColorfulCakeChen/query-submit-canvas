@@ -1884,7 +1884,7 @@ class NumberImage_Base extends Recyclable.Root {
    * @param {boolean} bSplit
    *   Whether split channels (after shuffling).
    *     - If false, channels will not be splitted. The result will be placed
-   *         in imageOutArray[ 0 ] and imageOutArray[ 1 ] will be null.
+   *         in imageOutArray[ 0 ]. The imageOutArray[ 1 ] will be null.
    *     - If true, channels will be splitted into imageOutArray[ 0 ] and
    *         imageOutArray[ 1 ].
    *
