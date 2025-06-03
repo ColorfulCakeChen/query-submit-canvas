@@ -15,7 +15,7 @@ import { ConcatGather } from "./ChannelShuffler_ConcatGather.js";
  * no matter in WebGL backend or CPU backend.
  *
  * Only when output group is one (i.e. no group; all one group), this
- * pointwise-convolution method may become second fastest.
+ * pointwise-convolution method may become the 2nd fastest.
  *
  * In both WebGL and CPU backend, the less the output group count is, the
  * faster the shuffling is. That is, one output group is faster than two (and
