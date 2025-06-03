@@ -49,8 +49,11 @@ class TableLogger_Base {
   /**
    * @param {tf.tensor3d} aTensor3d
    *   An single tf.tensor3d to be logged to console as a table.
+   *
+   * @param {string} imageHeaderPrefix
+   *   A string will be logged before the image header.
    */
-  log_tensor3d_along_depth( aTensor3d ) {
+  log_tensor3d_along_depth( aTensor3d, imageHeaderPrefix ) {
     const funcNameInMessage = "log_tensor3d";
 
     const shape = aTensor3d.shape;
@@ -62,7 +65,8 @@ class TableLogger_Base {
 
     const [ height, width, depth ] = shape;
     const dataArray = aTensor3d.dataSync();
-    this.log_array_as_image_along_depth( dataArray, height, width, depth );
+    this.log_array_as_image_along_depth(
+      dataArray, height, width, depth, imageHeaderPrefix );
   }
 
   /**
