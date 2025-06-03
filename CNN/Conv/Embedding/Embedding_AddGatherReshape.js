@@ -3,6 +3,7 @@ export { Embedding_AddGatherReshape as AddGatherReshape };
 import * as Pool from "../../util/Pool.js";
 import * as Recyclable from "../../util/Recyclable.js";
 import * as ValueMax from "../../util/ValueMax.js";
+import * as TableLogger from "../../util/TableLogger.js";
 import { FiltersArray_One } from "./Embedding_FiltersArray_One.js";
 import { Base } from "./Embedding_Base.js";
 
@@ -244,6 +245,33 @@ class Embedding_AddGatherReshape extends Base {
     }
   }
 
+
+//!!!
+  /**
+   * 
+   *
+   * @param {Embedding_AddGatherReshape} this
+   *   The Embedding_AddGatherReshape object to be determined and modified.
+   */
+  static helper_TableLog_header_body() {
+
+    // 3.
+    TableLogger.Base.Singleton.log_tensor3d_along_depth(
+      this.dataArray,
+      this.height,
+      this.width,
+      this.depth,
+      imageHeaderPrefix
+    );
+
+    this.boundsArraySet.TableLog_header_body(
+      TableLogger.Base.Singleton.headerStringArray,
+      TableLogger.Base.Singleton.bodyStringArray
+    );
+
+    }
+  }
+
   /** Determine this.apply data members.
    *
    * @param {Embedding_AddGatherReshape} this
@@ -339,6 +367,24 @@ class Embedding_AddGatherReshape extends Base {
       outputTensor3d = gatherTensor4d.reshape( this.outputTensor3dShape );
     } finally {
       gatherTensor4d.dispose();
+    }
+
+    // 3.
+    if ( this.bTableLog ) {
+!!!      
+    TableLogger.Base.Singleton.log_array_as_image_along_depth(
+      this.dataArray,
+      this.height,
+      this.width,
+      this.depth,
+      imageHeaderPrefix
+    );
+
+    this.boundsArraySet.TableLog_header_body(
+      TableLogger.Base.Singleton.headerStringArray,
+      TableLogger.Base.Singleton.bodyStringArray
+    );
+
     }
 
     return outputTensor3d;

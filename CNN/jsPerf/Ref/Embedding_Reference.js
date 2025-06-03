@@ -537,7 +537,6 @@ class Embedding_Reference_Base extends Recyclable.Root {
     if ( bTableLog ) {
       const imageHeaderPrefix = "Embedding_Reference";
       imageOut.TableLog_header_body( imageHeaderPrefix );
-
     }
 
     return imageOut;

@@ -2,6 +2,7 @@ export { ScaleBoundsArray };
 
 import * as Pool from "../../util/Pool.js";
 import * as Recyclable from "../../util/Recyclable.js";
+import * as TableLogger from "../../util/TableLogger.js";
 import * as FloatValue from "../../Unpacker/FloatValue.js";
 import { ScaleArraySet } from "./ActivationEscaping_ScaleArraySet.js";
 
@@ -433,6 +434,81 @@ class ScaleBoundsArray extends Recyclable.Root {
       characterCountPerField,
       digitCountAfterDecimalPoint,
       rowIndex );
+  }
+
+//!!! ...untested... (2025/06/03)
+  /**
+   * Log this ScaleBoundsArray (headers and body) as a table.
+   *
+   * @param {string} headerPrefix
+   *   The name string of the ScaleBoundsArray be logged.
+   *
+   * @param {string[]} io_workingStringArray0
+   *   A helper string Array. If provided (i.e. not undefined), it will be
+   * used as the working buffer (so that array recreation is reduced and
+   * performance might be improved). If undefined, a new string array will
+   * be created and discarded.
+   *
+   * @param {string[]} io_workingStringArray1
+   *   A helper string Array. If provided (i.e. not undefined), it will be
+   * used as the working buffer (so that array recreation is reduced and
+   * performance might be improved). If undefined, a new string array will
+   * be created and discarded.
+   */
+  TableLog_header_body(
+    headerPrefix,
+    io_workingStringArray0 = new Array(),
+    io_workingStringArray1 = new Array()
+  ) {
+
+    const {
+      headerPrefixEmpty, characterCountPerField, digitCountAfterDecimalPoint,
+      joinSeparator
+    } = TableLogger.Base.TableLog_params;
+
+    let stringArray_header_line_1st = io_workingStringArray0;
+    stringArray_header_line_1st.length = 0;
+
+    let stringArray = io_workingStringArray1;
+    stringArray.length = 0;
+
+    // 1. Log headers.
+    {
+      // 1.1 Got the 2nd line of headers. It has all detail field names.
+      this.TableLog_header_appendColumns(
+        stringArray, characterCountPerField, headerPrefixEmpty );
+
+      // 1.2 Generate the 1st line of headers. It has the same field count as
+      //     the 2nd. But its content are all the same as header prefix. (i.e.
+      //     place the header prefix in the 1st line of headers.)
+      stringArray_header_line_1st.length = stringArray.length;
+
+      stringArray_header_line_1st.fill(
+        headerPrefix.padStart( characterCountPerField ) );
+
+      // 1.3 Write out the headers to log.
+      const header_line0 = stringArray_header_line_1st.join( joinSeparator );
+      console.log( header_line0 );
+
+      const header_line1 = stringArray.join( joinSeparator );
+      console.log( header_line1 );
+    }
+
+    // 2. Log body.
+    {
+      const rowIndexBound = this.length;
+      for ( let rowIndex = 0; rowIndex < rowIndexBound; ++rowIndex ) {
+
+        stringArray.length = 0;
+        this.TableLog_body_appendColumns( stringArray,
+          characterCountPerField,
+          digitCountAfterDecimalPoint,
+          rowIndex );
+
+        const body_line = stringArray.join( joinSeparator );
+        console.log( body_line );
+      }
+    }
   }
 
 }

@@ -424,86 +424,6 @@ class InputsOutputs extends Recyclable.Root {
 
 //!!! ...untested... (2025/05/28)
   /**
-   * Log a ScaleBoundsArray (headers and body) as a table.
-   *
-   * @param {ActivationEscaping.ScaleBoundsArray} aScaleBoundsArray
-   *   The ScaleBoundsArray (e.g. .input0, .input1, .output0, .output1 ) to
-   * be logged. It must have methods .TableLog_header_appendColumns() and
-   * .TableLog_body_appendColumns().
-   *
-   * @param {string} headerPrefix
-   *   The name string of the ScaleBoundsArray be logged.
-   *
-   * @param {string[]} io_workingStringArray0
-   *   A helper string Array. If provided (i.e. not undefined), it will be
-   * used as the working buffer (so that array recreation is reduced and
-   * performance might be improved). If undefined, a new string array will
-   * be created and discarded.
-   *
-   * @param {string[]} io_workingStringArray1
-   *   A helper string Array. If provided (i.e. not undefined), it will be
-   * used as the working buffer (so that array recreation is reduced and
-   * performance might be improved). If undefined, a new string array will
-   * be created and discarded.
-   */
-  static helper_TableLog_ScaleBoundsArray(
-    aScaleBoundsArray, headerPrefix,
-    io_workingStringArray0 = new Array(),
-    io_workingStringArray1 = new Array()
-  ) {
-
-    const {
-      headerPrefixEmpty, characterCountPerField, digitCountAfterDecimalPoint,
-      joinSeparator
-    } = TableLogger.Base.TableLog_params;
-
-    let stringArray_header_line_1st = io_workingStringArray0;
-    stringArray_header_line_1st.length = 0;
-
-    let stringArray = io_workingStringArray1;
-    stringArray.length = 0;
-
-    // 1. Log headers.
-    {
-      // 1.1 Got the 2nd line of headers. It has all detail field names.
-      aScaleBoundsArray.TableLog_header_appendColumns(
-        stringArray, characterCountPerField, headerPrefixEmpty );
-
-      // 1.2 Generate the 1st line of headers. It has the same field count as
-      //     the 2nd. But its content are all the same as header prefix. (i.e.
-      //     place the header prefix in the 1st line of headers.)
-      stringArray_header_line_1st.length = stringArray.length;
-
-      stringArray_header_line_1st.fill(
-        headerPrefix.padStart( characterCountPerField ) );
-
-      // 1.3 Write out the headers to log.
-      const header_line0 = stringArray_header_line_1st.join( joinSeparator );
-      console.log( header_line0 );
-
-      const header_line1 = stringArray.join( joinSeparator );
-      console.log( header_line1 );
-    }
-
-    // 2. Log body.
-    {
-      const rowIndexBound = aScaleBoundsArray.length;
-      for ( let rowIndex = 0; rowIndex < rowIndexBound; ++rowIndex ) {
-
-        stringArray.length = 0;
-        aScaleBoundsArray.TableLog_body_appendColumns( stringArray,
-          characterCountPerField,
-          digitCountAfterDecimalPoint,
-          rowIndex );
-
-        const body_line = stringArray.join( joinSeparator );
-        console.log( body_line );
-      }
-    }
-  }
-
-//!!! ...untested... (2025/05/28)
-  /**
    * Log .input0, .input1, .output0, .output1 of this object as a table.
    *
    * @param {string[]} io_workingStringArray0
@@ -525,32 +445,28 @@ class InputsOutputs extends Recyclable.Root {
     // 1.
     {
       const headerPrefix_input0 = ".input0";
-      InputsOutputs.helper_TableLog_ScaleBoundsArray(
-        this.input0, headerPrefix_input0,
+      this.input0.TableLog_header_body( headerPrefix_input0,
         io_workingStringArray0, io_workingStringArray1 );
     }
 
     // 2.
     if ( this.input1 ) {
       const headerPrefix_input1 = ".input1";
-      InputsOutputs.helper_TableLog_ScaleBoundsArray(
-        this.input1, headerPrefix_input1,
+      this.input1.TableLog_header_body( headerPrefix_input1,
         io_workingStringArray0, io_workingStringArray1 );
     }
 
     // 3.
     {
       const headerPrefix_output0 = ".output0";
-      InputsOutputs.helper_TableLog_ScaleBoundsArray(
-        this.output0, headerPrefix_output0,
+      this.output0.TableLog_header_body( headerPrefix_output0,
         io_workingStringArray0, io_workingStringArray1 );
     }
 
     // 4.
     if ( this.output1 ) {
       const headerPrefix_output1 = ".output1";
-      InputsOutputs.helper_TableLog_ScaleBoundsArray(
-        this.output1, headerPrefix_output1,
+      this.output1.TableLog_header_body( headerPrefix_output1,
         io_workingStringArray0, io_workingStringArray1 );
     }
   }
