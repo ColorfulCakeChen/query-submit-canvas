@@ -136,8 +136,10 @@ class TableLogger_Base {
     // Log every channel (i.e. along the depth) because this format is easier
     // for human reading.
 
-    let elementValue;
     let elementIndex;
+    let elementValue;
+    let valueString;
+
     for ( let c = 0; c < depth; ++c ) {
 
       // Separate every channel by channel header (with channel index).
@@ -152,11 +154,17 @@ class TableLogger_Base {
         for ( let x = 0; x < width; ++x, elementIndex += width ) {
           elementValue = dataArray[ elementIndex ];
 
-          bodyStringArray.push(
-            elementValue
-              .toFixed( digitCountAfterDecimalPoint )
-              .padStart( characterCountPerField )
-          );
+          try {
+            valueString
+              = elementValue
+                  .toFixed( digitCountAfterDecimalPoint )
+                  .padStart( characterCountPerField );
+          } catch ( e ) {
+            debugger;
+            throw e;
+          }
+
+          bodyStringArray.push( valueString );
         }
 
         const oneLine = bodyStringArray.join( joinSeparator );
