@@ -266,8 +266,8 @@ class ConcatPointwiseConv extends Recyclable.Root {
     let shuffledSplitedTensorArray
       = new Array( this.filtersTensor4dArray.length );
     for ( let i = 0; i < shuffledSplitedTensorArray.length; ++i ) {
-      // shuffle and split by pointwise convolution (one operation achieves two
-      // operations).
+      // shuffle and split by pointwise convolution (one operation achieves
+      // two operations).
       shuffledSplitedTensorArray[ i ] = concatenatedTensor.conv2d(
         this.filtersTensor4dArray[ i ], 1, "valid" );
     }
