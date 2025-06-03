@@ -27,20 +27,23 @@ class Bag extends Recyclable.Base( MultiLayerMap.Base ) {
 
   /**
    */
-  constructor( channelShufflerPool = ConcatPointwiseConv.Pool ) {
+  constructor(
+    channelShufflerPool = ConcatPointwiseConv.Pool ) {
     super();
     Bag.setAsConstructor_self.call( this, channelShufflerPool );
   }
 
   /** @override */
-  static setAsConstructor( channelShufflerPool = ConcatPointwiseConv.Pool ) {
+  static setAsConstructor(
+    channelShufflerPool = ConcatPointwiseConv.Pool ) {
     super.setAsConstructor();
     Bag.setAsConstructor_self.call( this, channelShufflerPool );
     return this;
   }
 
   /** @override */
-  static setAsConstructor_self( channelShufflerPool = ConcatPointwiseConv.Pool ) {
+  static setAsConstructor_self(
+    channelShufflerPool = ConcatPointwiseConv.Pool ) {
     this.channelShufflerPool = channelShufflerPool;
 
     // A re-used shared array for reducing memory allocation.
