@@ -3,7 +3,6 @@ export { Embedding_AddGatherReshape as AddGatherReshape };
 import * as Pool from "../../util/Pool.js";
 import * as Recyclable from "../../util/Recyclable.js";
 import * as ValueMax from "../../util/ValueMax.js";
-import * as TableLogger from "../../util/TableLogger.js";
 import { FiltersArray_One } from "./Embedding_FiltersArray_One.js";
 import { Base } from "./Embedding_Base.js";
 
@@ -243,29 +242,6 @@ class Embedding_AddGatherReshape extends Base {
         theFiltersArray_One = null;
       }
     }
-  }
-
-
-//!!! ...unfinished... (2025/06/03)
-//!!! ...untested... (2025/06/03)
-  /**
-   * If .bTableLog is true, log the specified output tensor3d and
-   * ScaleBoundsArray as table.
-   *
-   * @param {tf.tensor3d} aTensor3d
-   *   An single tf.tensor3d to be logged to console as a table.
-   */
-  TableLog_output_tensor3d_if_requested( aTensor3d ) {
-    if ( !this.bTableLog )
-      return;
-
-    const imageHeaderPrefix = "Embedding_AddGatherReshape";
-    TableLogger.Base.Singleton.log_tensor3d_along_depth(
-      aTensor3d, imageHeaderPrefix );
-
-    const scaleBoundsArray_HeaderPrefix = ".output";
-    this.output_scaleBoundsArray.TableLog_header_body(
-      scaleBoundsArray_HeaderPrefix );
   }
 
   /** Determine this.apply data members.

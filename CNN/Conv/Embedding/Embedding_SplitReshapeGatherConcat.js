@@ -356,6 +356,10 @@ class Embedding_SplitReshapeGatherConcat extends Base {
       }
     }
 
+//!!! ...untested... (2025/06/03)
+    // Log output as table (if requested).
+    this.TableLog_output_tensor3d_if_requested( outputTensor3d );
+
     return outputTensor3d;
   }
 
