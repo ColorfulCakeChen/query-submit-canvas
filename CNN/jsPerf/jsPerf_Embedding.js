@@ -17,7 +17,7 @@ import * as BatchIdCalculator from "./BatchIdCalculator.js";
 /**
  * Test CNN Embedding.
  *
- * @see {@link https://www.measurethat.net/Benchmarks/Show/11003/175/colorfulcakechen-cnn-embedding-c5491acc04be23e0d98eb425}
+ * @see {@link https://www.measurethat.net/Benchmarks/Show/11003/183/colorfulcakechen-cnn-embedding-c445d35a58d152fea3007eee}
  */
 
 /**
