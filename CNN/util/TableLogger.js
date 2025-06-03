@@ -103,12 +103,21 @@ class TableLogger_Base {
 
     const workingStringArray = this.workingStringArray;
 
+    const imageHeader
+      = `image ( height, width, depth ) = ( ${height}, ${width}, ${depth} )`;
+    console.log( imageHeader );
+
     // Log every channel (i.e. along the depth) because this format is easier
     // for human reading.
 
     let elementValue;
     let elementIndex;
     for ( let c = 0; c < depth; ++c, ++i ) {
+
+      // Separate every channel by channel header (with channel index).
+      const channelHeader = `channel (depth) ${c}:`;
+      console.log( channelHeader );
+
       elementIndex = c;
 
       for ( let y = 0; y < height; ++y ) {
@@ -128,7 +137,7 @@ class TableLogger_Base {
         console.log( oneLine );
       }
 
-      console.log( "" ); // Separate every channel by one empty line.
+//      console.log( "" ); // Separate every channel by one empty line.
     }
 
 //!!! ...untested... (2025/06/03)
