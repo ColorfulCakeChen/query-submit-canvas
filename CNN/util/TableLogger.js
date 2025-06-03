@@ -20,9 +20,15 @@ export { TableLogger_Base as Base };
  * row) of the table log.
  *
  *
- * @member {string[]} workingStringArray
- *   A helper string Array. It will be used as the working buffer (so that
- * array recreation is reduced and performance might be improved).
+ * @member {string[]} headerStringArray
+ *   A helper string Array for generating log table header. It will be used as
+ * the working buffer (so that array recreation is reduced and performance
+ * might be improved).
+ *
+ * @member {string[]} bodyStringArray
+ *   A helper string Array for generating log table body. It will be used as
+ * the working buffer (so that array recreation is reduced and performance
+ * might be improved).
  */
 class TableLogger_Base {
 
@@ -43,9 +49,10 @@ class TableLogger_Base {
     this.characterCountPerField = characterCountPerField;
     this.digitCountAfterDecimalPoint = digitCountAfterDecimalPoint;
     this.joinSeparator = joinSeparator;
-    this.workingStringArray = new Array();
+    this.headerStringArray = new Array();
+    this.bodyStringArray = new Array();
   }
-    
+
   /**
    * @param {tf.tensor3d} aTensor3d
    *   An single tf.tensor3d to be logged to console as a table.
@@ -113,7 +120,7 @@ class TableLogger_Base {
     const digitCountAfterDecimalPoint = this.digitCountAfterDecimalPoint;
     const joinSeparator = this.joinSeparator;
 
-    const workingStringArray = this.workingStringArray;
+    const bodyStringArray = this.bodyStringArray;
 
     const imageHeader = `${imageHeaderPrefix}: image `
       + `( height, width, depth ) = ( ${height}, ${width}, ${depth} )`;
@@ -133,19 +140,19 @@ class TableLogger_Base {
       elementIndex = c;
 
       for ( let y = 0; y < height; ++y ) {
-        workingStringArray.length = 0;
+        bodyStringArray.length = 0;
 
         for ( let x = 0; x < width; ++x, elementIndex += width ) {
           elementValue = dataArray[ elementIndex ];
 
-          workingStringArray.push(
+          bodyStringArray.push(
             elementValue
               .toFixed( digitCountAfterDecimalPoint )
               .padStart( characterCountPerField )
           );
         }
 
-        const oneLine = workingStringArray.join( joinSeparator );
+        const oneLine = bodyStringArray.join( joinSeparator );
         console.log( oneLine );
       }
 
