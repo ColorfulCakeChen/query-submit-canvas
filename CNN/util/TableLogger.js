@@ -12,7 +12,7 @@ class TableLogger_Base {
    * @param {tf.tensor3d} aTensor3d
    *   An single tf.tensor3d to be logged to console.
    */
-  static log_tensor3d( aTensor3d ) {
+  static log_tensor3d_along_depth( aTensor3d ) {
     const funcNameInMessage = "log_tensor3d";
 
     const shape = aTensor3d.shape;
@@ -24,7 +24,7 @@ class TableLogger_Base {
 
     const [ height, width, depth ] = shape;
     const dataArray = aTensor3d.dataSync();
-    TableLogger_Base.log_array_as_image( dataArray, height, width, depth );
+    TableLogger_Base.log_array_as_image_along_depth( dataArray, height, width, depth );
   }
 
 
@@ -69,7 +69,7 @@ class TableLogger_Base {
    * performance might be improved). If undefined, a new string array will
    * be created and discarded.
    */
-  static log_array_as_image(
+  static log_array_as_image_along_depth(
     dataArray,
     height, width, depth,
 
