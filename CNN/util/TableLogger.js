@@ -9,14 +9,36 @@ export { TableLogger_Base as Base };
 class TableLogger_Base {
 
   /**
-   * @param {tf.tensor} aTensor
-   *   An single tensor to be logged to console.
+   * @param {tf.tensor3d} aTensor3d
+   *   An single tf.tensor3d to be logged to console.
    */
-  static TableLog_tensor( aTensor ) {
-    const shape = aTensor.shape;
-    let dataArray = aTensor.dataSync();
+  static TableLog_tensor3d( aTensor3d ) {
+    const funcNameInMessage = "TableLog_tensor";
 
-    for ( )
+    const shape = aTensor3d.shape;
+    if ( shape.length != 3 )
+      throw Error( `TableLogger_Base.${funcNameInMessage}(): `
+        + `aTensor3d.shape ( [ ${shape} ] ) should be `
+        + `Array with ( .length == 3 )`
+      );
+
+    const [ height, width, depth ] = shape;
+    const dataArray = aTensor.dataSync();
+
+    let elementValue;
+    let i = 0;
+    for ( let y = 0; y < height; ++y ) {
+      for ( let x = 0; x < width; ++x ) {
+        for ( let c = 0; c < depth; ++c, ++i ) {
+          elementValue = dataArray[ i ];
+
+//!!! ...unfinished... (2025/06/03)
+
+
+        }
+      }
+    }
+
   }
 
 }
