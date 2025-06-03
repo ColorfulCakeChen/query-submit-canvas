@@ -500,37 +500,21 @@ class ConvBiasActivation extends InputsOutputs {
   /**
    * Log .bPassThrough, .afterUndoPreviousActivationEscaping, .afterFilter,
    * .afterBias, .afterActivation of this object as a table.
-   *
-   * @param {string[]} io_workingStringArray0
-   *   A helper string Array. If provided (i.e. not undefined), it will be
-   * used as the working buffer (so that array recreation is reduced and
-   * performance might be improved). If undefined, a new string array will
-   * be created.
-   *
-   * @param {string[]} io_workingStringArray1
-   *   A helper string Array. If provided (i.e. not undefined), it will be
-   * used as the working buffer (so that array recreation is reduced and
-   * performance might be improved). If undefined, a new string array will
-   * be created and discarded.
    */
-  TableLog_header_body(
-    io_workingStringArray0 = new Array(),
-    io_workingStringArray1 = new Array()
-  ) {
+  TableLog_header_body() {
+    super.TableLog_header_body(); // Log the .inputX and .outputX
 
-    // Log the .inputX and .outputX
-    super.TableLog_header_body(
-      io_workingStringArray0, io_workingStringArray1 );
-
+    const theTableLogger = TableLogger.Base.Singleton;
+  
     const {
       headerPrefixEmpty, characterCountPerField, digitCountAfterDecimalPoint,
       joinSeparator
-    } = TableLogger.Base.TableLog_params;
+    } = theTableLogger;
 
-    let stringArray_header_line_1st = io_workingStringArray0;
+    let stringArray_header_line_1st = theTableLogger.headerStringArray;
     stringArray_header_line_1st.length = 0;
 
-    let stringArray = io_workingStringArray1;
+    let stringArray = theTableLogger.bodyStringArray;
     stringArray.length = 0;
 
     // 1. Log headers.

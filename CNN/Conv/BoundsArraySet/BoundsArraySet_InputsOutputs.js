@@ -425,49 +425,30 @@ class InputsOutputs extends Recyclable.Root {
 //!!! ...untested... (2025/05/28)
   /**
    * Log .input0, .input1, .output0, .output1 of this object as a table.
-   *
-   * @param {string[]} io_workingStringArray0
-   *   A helper string Array. If provided (i.e. not undefined), it will be
-   * used as the working buffer (so that array recreation is reduced and
-   * performance might be improved). If undefined, a new string array will
-   * be created and discarded.
-   *
-   * @param {string[]} io_workingStringArray1
-   *   A helper string Array. If provided (i.e. not undefined), it will be
-   * used as the working buffer (so that array recreation is reduced and
-   * performance might be improved). If undefined, a new string array will
-   * be created and discarded.
    */
-  TableLog_header_body(
-    io_workingStringArray0 = new Array(),
-    io_workingStringArray1 = new Array()
-  ) {
+  TableLog_header_body() {
     // 1.
     {
       const headerPrefix_input0 = ".input0";
-      this.input0.TableLog_header_body( headerPrefix_input0,
-        io_workingStringArray0, io_workingStringArray1 );
+      this.input0.TableLog_header_body( headerPrefix_input0 );
     }
 
     // 2.
     if ( this.input1 ) {
       const headerPrefix_input1 = ".input1";
-      this.input1.TableLog_header_body( headerPrefix_input1,
-        io_workingStringArray0, io_workingStringArray1 );
+      this.input1.TableLog_header_body( headerPrefix_input1 );
     }
 
     // 3.
     {
       const headerPrefix_output0 = ".output0";
-      this.output0.TableLog_header_body( headerPrefix_output0,
-        io_workingStringArray0, io_workingStringArray1 );
+      this.output0.TableLog_header_body( headerPrefix_output0 );
     }
 
     // 4.
     if ( this.output1 ) {
       const headerPrefix_output1 = ".output1";
-      this.output1.TableLog_header_body( headerPrefix_output1,
-        io_workingStringArray0, io_workingStringArray1 );
+      this.output1.TableLog_header_body( headerPrefix_output1 );
     }
   }
 
