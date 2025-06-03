@@ -511,7 +511,7 @@ class ConvBiasActivation extends InputsOutputs {
    *   A helper string Array. If provided (i.e. not undefined), it will be
    * used as the working buffer (so that array recreation is reduced and
    * performance might be improved). If undefined, a new string array will
-   * be created.
+   * be created and discarded.
    */
   TableLog_header_body(
     io_workingStringArray0 = new Array(),
