@@ -4,15 +4,53 @@ export { TableLogger_Base as Base };
 // import * as Recyclable from "./Recyclable.js";
 
 /**
+ * A helper class for log object as table.
  *
+ *
+ * @member {number} characterCountPerField
+ *   Every returned string should be padded so that its length is just
+ * so many characters.
+ *
+ * @member {number} digitCountAfterDecimalPoint
+ *   Every returned string (if its original value is a number) should be
+ * formatted as so many digits after its decimal point.
+ *
+ * @member {string} joinSeparator
+ *   The separator string when call Array.join() to generate one line (one
+ * row) of the table log.
+ *
+ *
+ * @member {string[]} workingStringArray
+ *   A helper string Array. It will be used as the working buffer (so that
+ * array recreation is reduced and performance might be improved).
  */
 class TableLogger_Base {
 
   /**
+   *
+   */
+  constructor(
+    characterCountPerField
+      = TableLogger_Base.defaultParams.characterCountPerField,
+
+    digitCountAfterDecimalPoint
+      = TableLogger_Base.defaultParams.digitCountAfterDecimalPoint,
+
+    joinSeparator
+      = TableLogger_Base.defaultParams.joinSeparator
+  ) {
+
+    this.characterCountPerField = characterCountPerField;
+    this.digitCountAfterDecimalPoint = digitCountAfterDecimalPoint;
+    this.joinSeparator = joinSeparator;
+    this.workingStringArray = new Array();
+  }
+    
+  /**
    * @param {tf.tensor3d} aTensor3d
    *   An single tf.tensor3d to be logged to console as a table.
    */
-  static log_tensor3d_along_depth( aTensor3d ) {
+  log_tensor3d_along_depth( aTensor3d ) {
     const funcNameInMessage = "log_tensor3d";
 
     const shape = aTensor3d.shape;
@@ -24,9 +62,9 @@ class TableLogger_Base {
 
     const [ height, width, depth ] = shape;
     const dataArray = aTensor3d.dataSync();
-    TableLogger_Base.log_array_as_image_along_depth( dataArray, height, width, depth );
+    TableLogger_Base.log_array_as_image_along_depth(
+        dataArray, height, width, depth );
   }
-
 
   /**
    * Log a number array (viewed as an 2d image with multiple channels) as a
@@ -48,36 +86,10 @@ class TableLogger_Base {
    *
    * @param {number} depth
    *   The number array will be interpreted as an image with depth.
-   *
-   *
-   * @param {number} characterCountPerField
-   *   Every returned string should be padded so that its length is just
-   * so many characters.
-   *
-   * @param {number} digitCountAfterDecimalPoint
-   *   Every returned string (if its original value is a number) should be
-   * formatted as so many digits after its decimal point.
-   *
-   * @param {string} joinSeparator
-   *   The separator string when call Array.join() to generate one line (one
-   * row) of the table log.
-   *
-   *
-   * @param {string[]} io_workingStringArray
-   *   A helper string Array. If provided (i.e. not undefined), it will be
-   * used as the working buffer (so that array recreation is reduced and
-   * performance might be improved). If undefined, a new string array will
-   * be created and discarded.
    */
-  static log_array_as_image_along_depth(
+  log_array_as_image_along_depth(
     dataArray,
-    height, width, depth,
-
-    characterCountPerField,
-    digitCountAfterDecimalPoint,
-    joinSeparator,
-
-    io_workingStringArray = new Array()
+    height, width, depth
   ) {
     const funcNameInMessage = "log_array_as_image";
 
@@ -89,6 +101,12 @@ class TableLogger_Base {
         + `( height, width, depth ) = ( ${height}, ${width}, ${depth} ).`
       );
 
+    const characterCountPerField = this.characterCountPerField;
+    const digitCountAfterDecimalPoint = this.digitCountAfterDecimalPoint;
+    const joinSeparator = this.joinSeparator;
+
+    const workingStringArray = this.io_workingStringArray;
+
     // Log every channel (i.e. along the depth) because this format is easier
     // for human reading.
 
@@ -98,19 +116,19 @@ class TableLogger_Base {
       elementIndex = c;
 
       for ( let y = 0; y < height; ++y ) {
-        io_workingStringArray.length = 0;
+        workingStringArray.length = 0;
 
         for ( let x = 0; x < width; ++x, elementIndex += width ) {
           elementValue = dataArray[ elementIndex ];
 
-          io_workingStringArray.push(
+          workingStringArray.push(
             elementValue
               .toFixed( digitCountAfterDecimalPoint )
               .padStart( characterCountPerField )
           );
         }
 
-        const oneLine = io_workingStringArray.join( joinSeparator );
+        const oneLine = workingStringArray.join( joinSeparator );
         console.log( oneLine );
       }
 
@@ -127,7 +145,7 @@ class TableLogger_Base {
 /**
  * Parameters for TableLog_Xxx().
  */
-TableLogger_Base.TableLog_params = {
+TableLogger_Base.defaultParams = {
 
   // When no header prefix is needed, this string could be used.
   headerPrefixEmpty: "",
