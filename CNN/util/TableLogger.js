@@ -10,7 +10,7 @@ class TableLogger_Base {
 
   /**
    * @param {tf.tensor3d} aTensor3d
-   *   An single tf.tensor3d to be logged to console.
+   *   An single tf.tensor3d to be logged to console as a table.
    */
   static log_tensor3d_along_depth( aTensor3d ) {
     const funcNameInMessage = "log_tensor3d";
@@ -119,98 +119,6 @@ class TableLogger_Base {
 
 //!!! ...untested... (2025/06/03)
 
-  }
-
-!!!
-
-//!!! ...untested... (2025/05/28)
-  /**
-   * Log .input0, .input1, .output0, .output1 of this object as a table.
-   *
-   * @param {string[]} io_workingStringArray0
-   *   A helper string Array. If provided (i.e. not undefined), it will be
-   * used as the working buffer (so that array recreation is reduced and
-   * performance might be improved). If undefined, a new string array will
-   * be created.
-   *
-   * @param {string[]} io_workingStringArray1
-   *   A helper string Array. If provided (i.e. not undefined), it will be
-   * used as the working buffer (so that array recreation is reduced and
-   * performance might be improved). If undefined, a new string array will
-   * be created.
-   */
-  TableLog_header_body(
-    io_workingStringArray0 = new Array(),
-    io_workingStringArray1 = new Array()
-  ) {
-    // 1.
-    {
-      const headerPrefix_input0 = ".input0";
-      InputsOutputs.helper_TableLog_ScaleBoundsArray(
-        this.input0, headerPrefix_input0,
-        io_workingStringArray0, io_workingStringArray1 );
-    }
-
-    // 2.
-    if ( this.input1 ) {
-      const headerPrefix_input1 = ".input1";
-      InputsOutputs.helper_TableLog_ScaleBoundsArray(
-        this.input1, headerPrefix_input1,
-        io_workingStringArray0, io_workingStringArray1 );
-    }
-
-    // 3.
-    {
-      const headerPrefix_output0 = ".output0";
-      InputsOutputs.helper_TableLog_ScaleBoundsArray(
-        this.output0, headerPrefix_output0,
-        io_workingStringArray0, io_workingStringArray1 );
-    }
-
-    // 4.
-    if ( this.output1 ) {
-      const headerPrefix_output1 = ".output1";
-      InputsOutputs.helper_TableLog_ScaleBoundsArray(
-        this.output1, headerPrefix_output1,
-        io_workingStringArray0, io_workingStringArray1 );
-    }
-  }
-
-!!!
-//!!! ...untested... (2025/05/28)
-  /**
-   * Return strings for all the values displayed in one line (i.e. one row)
-   * when logging this object as a table.
-   *
-   * @param {String[]} out_stringArray
-   *   The output string array. All the returned values (i.e. every column of
-   * one row) should be pushed at its end (in order).
-   *
-   * @param {number} characterCountPerField
-   *   Every returned string should be padded so that its length is just
-   * so many characters.
-   *
-   * @param {number} digitCountAfterDecimalPoint
-   *   Every returned string (if its original value is a number) should be
-   * formatted as so many digits after its decimal point.
-   *
-   * @param {number} rowIndex
-   *   Which line of the log table should be returned. It is an integer index
-   * into .lowers[] and .uppers[].
-   */
-  TableLog_body_appendColumns( out_stringArray,
-    characterCountPerField,
-    digitCountAfterDecimalPoint,
-    rowIndex
-   ) {
-    out_stringArray.push(
-      this.lowers[ rowIndex ]
-        .toFixed( digitCountAfterDecimalPoint )
-        .padStart( characterCountPerField ),
-      this.uppers[ rowIndex ]
-        .toFixed( digitCountAfterDecimalPoint )
-        .padStart( characterCountPerField )
-    );
   }
 
 }
