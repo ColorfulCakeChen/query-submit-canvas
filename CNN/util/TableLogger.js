@@ -138,7 +138,7 @@ class TableLogger_Base {
 
     let elementValue;
     let elementIndex;
-    for ( let c = 0; c < depth; ++c, ++i ) {
+    for ( let c = 0; c < depth; ++c ) {
 
       // Separate every channel by channel header (with channel index).
       const channelHeader = `  channel (depth) ${c}:`;
