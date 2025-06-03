@@ -11,8 +11,8 @@ import { ConcatGather } from "./ChannelShuffler_ConcatGather.js";
  *
  * Interestingly, although it looks like the most computing intensively
  * (because many multiplications), it is usually the fastest method (faster
- * than concat-reshape-transpose-reshape-split, concat-gather, split-concat) no
- * matter in WebGL backend or CPU backend.
+ * than concat-reshape-transpose-reshape-split, concat-gather, split-concat)
+ * no matter in WebGL backend or CPU backend.
  *
  * Only when output group is one (i.e. no group; all one group), this
  * pointwise-convolution method may become second fastest.
