@@ -52,7 +52,7 @@ import { Params } from "./Embedding_Params.js";
  * by initer().
  *
  * @member {number} weightElementOffsetEnd
- *   The position which is ended to (non-inclusive) extract from
+ *   The position which is ended (non-inclusive) to extract from
  * inputWeightArray by initer(). Where to extract next weights. Only meaningful
  * when ( this.bInitOk == true ).
  * 
