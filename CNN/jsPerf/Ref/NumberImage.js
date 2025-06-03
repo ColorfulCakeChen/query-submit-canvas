@@ -1995,9 +1995,7 @@ class NumberImage_Base extends Recyclable.Root {
    * @param {string} imageHeaderPrefix
    *   A string will be logged before the image header.
    */
-  TableLog_header_body(
-    imageHeaderPrefix
-  ) {
+  TableLog_header_body( imageHeaderPrefix ) {
     TableLogger.Base.Singleton.log_array_as_image_along_depth(
       this.dataArray,
       this.height,

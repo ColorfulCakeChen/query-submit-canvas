@@ -532,10 +532,11 @@ class Embedding_Reference_Base extends Recyclable.Root {
       }
     }
 
-
-!!! ...unfinished... (2025/06/03)
+//!!! ...unfinished... (2025/06/03)
+//!!! ...untested... (2025/06/03)
     if ( bTableLog ) {
-      TableLogger.Base.Singleton.log_array_as_image_along_depth()
+      const imageHeaderPrefix = "Embedding_Reference";
+      imageOut.TableLog_header_body( imageHeaderPrefix );
 
     }
 
