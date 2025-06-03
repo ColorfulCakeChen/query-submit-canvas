@@ -246,6 +246,10 @@ class Embedding_SplitReshapeGatherConcat extends Base {
 //!!! ...unfinished... (2022/07/27)
 // if ( input_channelCount == 1 ), no need split and concat.
 
+
+!!! ...unfinished... (2025/06/03) bTableLog
+
+
     // Using pre-allocated array as local variable to improving performance.
     let vocabularyIndicesOneChannelTensor2dArray
       = this.vocabularyIndicesOneChannelTensor2dArray;

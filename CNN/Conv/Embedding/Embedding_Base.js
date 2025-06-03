@@ -152,6 +152,7 @@ class Embedding_Base extends Recyclable.Base( ReturnOrClone.Root ) {
       this.vocabularyCountPerInputChannel = params.vocabularyCountPerInputChannel;
       this.bEmbedVocabularyId = params.bEmbedVocabularyId;
       this.bKeepInputTensor = params.bKeepInputTensor;
+      this.bTableLog = params.bTableLog;
 
       // The parameters which are determined (inferenced) from the above parameters.
       {
@@ -231,6 +232,7 @@ class Embedding_Base extends Recyclable.Base( ReturnOrClone.Root ) {
     this.output_width = undefined;
     this.output_height = undefined;
 
+    this.bTableLog = undefined;
     this.bKeepInputTensor = undefined;
     this.bEmbedVocabularyId = undefined;
     this.vocabularyCountPerInputChannel = undefined;
@@ -261,6 +263,7 @@ class Embedding_Base extends Recyclable.Base( ReturnOrClone.Root ) {
       + `vocabularyCountPerInputChannel=${this.vocabularyCountPerInputChannel}, `
       + `bEmbedVocabularyId=${this.bEmbedVocabularyId}, `
       + `bKeepInputTensor=${this.bKeepInputTensor}, `
+      + `bTableLog=${this.bTableLog}, `
 
       + `output_height=${this.output_height}, `
       + `output_width=${this.output_width}, `

@@ -22,14 +22,16 @@ class Embedding_ParamsBase extends Recyclable.Root {
     input_height, input_width, input_channelCount,
     channelMultiplier, vocabularyCountPerInputChannel,
     bEmbedVocabularyId,
-    bKeepInputTensor
+    bKeepInputTensor,
+    bTableLog
   ) {
     super();
     Embedding_ParamsBase.setAsConstructor_self.call( this,
       input_height, input_width, input_channelCount,
       channelMultiplier, vocabularyCountPerInputChannel,
       bEmbedVocabularyId,
-      bKeepInputTensor
+      bKeepInputTensor,
+      bTableLog
     );
   }
 
@@ -38,14 +40,16 @@ class Embedding_ParamsBase extends Recyclable.Root {
     input_height, input_width, input_channelCount,
     channelMultiplier, vocabularyCountPerInputChannel,
     bEmbedVocabularyId,
-    bKeepInputTensor
+    bKeepInputTensor,
+    bTableLog
   ) {
     super.setAsConstructor();
     Embedding_ParamsBase.setAsConstructor_self.call( this,
       input_height, input_width, input_channelCount,
       channelMultiplier, vocabularyCountPerInputChannel,
       bEmbedVocabularyId,
-      bKeepInputTensor
+      bKeepInputTensor,
+      bTableLog
     );
     return this;
   }
@@ -55,7 +59,8 @@ class Embedding_ParamsBase extends Recyclable.Root {
     input_height, input_width, input_channelCount,
     channelMultiplier, vocabularyCountPerInputChannel,
     bEmbedVocabularyId,
-    bKeepInputTensor
+    bKeepInputTensor,
+    bTableLog
   ) {
     this.input_height = input_height;
     this.input_width = input_width;
@@ -64,12 +69,14 @@ class Embedding_ParamsBase extends Recyclable.Root {
     this.vocabularyCountPerInputChannel = vocabularyCountPerInputChannel;
     this.bEmbedVocabularyId = bEmbedVocabularyId;
     this.bKeepInputTensor = bKeepInputTensor;
+    this.bTableLog = bTableLog;
   }
 
   /** @override */
   disposeResources() {
     this.inferencedParams_dispose();
 
+    this.bTableLog = undefined;
     this.bKeepInputTensor = undefined;
     this.bEmbedVocabularyId = undefined;
     this.vocabularyCountPerInputChannel = undefined;
@@ -110,6 +117,7 @@ class Embedding_ParamsBase extends Recyclable.Root {
         + `${this.vocabularyCountPerInputChannel}, `
       + `bEmbedVocabularyId=${this.bEmbedVocabularyId}, `
       + `bKeepInputTensor=${this.bKeepInputTensor}, `
+      + `bTableLog=${this.bTableLog}, `
       + `inferencedParams={ ${this.inferencedParams} }`
     ;
     return str;

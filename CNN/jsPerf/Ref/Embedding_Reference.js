@@ -139,7 +139,7 @@ class Embedding_Reference_Base extends Recyclable.Root {
     let {
       input_height, input_width, input_channelCount,
       channelMultiplier, vocabularyCountPerInputChannel, bEmbedVocabularyId,
-      bKeepInputTensor,
+      bKeepInputTensor, bTableLog,
     } = testParams.out;
 
     let inputTensor3d_fromBag = imageSourceBag.getTensor3d_by(
@@ -166,6 +166,11 @@ class Embedding_Reference_Base extends Recyclable.Root {
       // Since no keep-input, the input tensor destroyed count will be the same
       // as input tensor count.
       inputTensorDestroyCount = 1;
+    }
+
+!!! ...unfinished... (2025/06/03)
+    if ( bTableLog ) {
+
     }
 
     let tensorNumDifference_apply_before_after;
@@ -321,7 +326,8 @@ class Embedding_Reference_Base extends Recyclable.Root {
       testParams.in.channelMultiplier,
       testParams.in.vocabularyCountPerInputChannel,
       testParams.in.bEmbedVocabularyId,
-      testParams.in.bKeepInputTensor
+      testParams.in.bKeepInputTensor,
+      testParams.in.bTableLog,
     );
 
     let bInitOk = embedding.init( progress,
@@ -394,6 +400,9 @@ class Embedding_Reference_Base extends Recyclable.Root {
     // Other parameters.
     embedding_asserter.propertyValue( "bKeepInputTensor",
       testParams.out.bKeepInputTensor );
+
+    embedding_asserter.propertyValue( "bTableLog",
+      testParams.out.bTableLog );
 
     {
       let tensorWeightCountTotal = 0;

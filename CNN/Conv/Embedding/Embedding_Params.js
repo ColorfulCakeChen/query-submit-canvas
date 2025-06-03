@@ -47,6 +47,10 @@ import { InferencedParams } from "./Embedding_InferencedParams.js";
  * @member {boolean} bKeepInputTensor
  *   If true, apply() will not dispose inputTensor (i.e. will be kept).
  *
+ * @member {boolean} bTableLog
+ *   If true, the process and result will be log to console as table (for
+ * debug).
+ *
  * @member {InferencedParams} inferencedParams
  *   The inferenced parameters of this embedding parameters.
  *
@@ -71,14 +75,16 @@ import { InferencedParams } from "./Embedding_InferencedParams.js";
     input_height, input_width, input_channelCount,
     channelMultiplier, vocabularyCountPerInputChannel = 256,
     bEmbedVocabularyId = true,
-    bKeepInputTensor
+    bKeepInputTensor,
+    bTableLog
   ) {
     super(
       Embedding_Params.SequenceArray,
       input_height, input_width, input_channelCount,
       channelMultiplier, vocabularyCountPerInputChannel,
       bEmbedVocabularyId,
-      bKeepInputTensor
+      bKeepInputTensor,
+      bTableLog
     );
     Embedding_Params.setAsConstructor_self.call( this );
   }
@@ -88,14 +94,16 @@ import { InferencedParams } from "./Embedding_InferencedParams.js";
     input_height, input_width, input_channelCount,
     channelMultiplier, vocabularyCountPerInputChannel = 256,
     bEmbedVocabularyId = true,
-    bKeepInputTensor
+    bKeepInputTensor,
+    bTableLog
   ) {
     super.setAsConstructor(
       Embedding_Params.SequenceArray,
       input_height, input_width, input_channelCount,
       channelMultiplier, vocabularyCountPerInputChannel,
       bEmbedVocabularyId,
-      bKeepInputTensor
+      bKeepInputTensor,
+      bTableLog
     );
     Embedding_Params.setAsConstructor_self.call( this );
     return this;
@@ -138,6 +146,8 @@ import { InferencedParams } from "./Embedding_InferencedParams.js";
         = this.getParamValue_byParamDesc( Embedding_Params.bEmbedVocabularyId );
       this.bKeepInputTensor
         = this.getParamValue_byParamDesc( Embedding_Params.bKeepInputTensor );
+      this.bTableLog
+        = this.getParamValue_byParamDesc( Embedding_Params.bTableLog );
     }
 
     this.inferencedParams_create();
@@ -163,6 +173,8 @@ Embedding_Params.bEmbedVocabularyId
   = new ParamDesc.Bool( "bEmbedVocabularyId" );
 Embedding_Params.bKeepInputTensor
   = new ParamDesc.Bool( "bKeepInputTensor" );
+Embedding_Params.bTableLog
+  = new ParamDesc.Bool( "bTableLog" );
 
 
 /**
@@ -177,4 +189,5 @@ Embedding_Params.SequenceArray = new ParamDesc.SequenceArray( [
   Embedding_Params.vocabularyCountPerInputChannel,
   Embedding_Params.bEmbedVocabularyId,
   Embedding_Params.bKeepInputTensor,
+  Embedding_Params.bTableLog,
 ] );

@@ -76,7 +76,8 @@ class Embedding_TestParams_Base extends TestParams.Base {
   set_byParamsScattered(
     input_height, input_width, input_channelCount,
     channelMultiplier, vocabularyCountPerInputChannel, bEmbedVocabularyId,
-    bKeepInputTensor
+    bKeepInputTensor,
+    bTableLog
   ) {
 
     if ( this.out ) {
@@ -87,7 +88,8 @@ class Embedding_TestParams_Base extends TestParams.Base {
     this.out = Embedding.ParamsBase.Pool.get_or_create_by(
       input_height, input_width, input_channelCount,
       channelMultiplier, vocabularyCountPerInputChannel, bEmbedVocabularyId,
-      bKeepInputTensor
+      bKeepInputTensor,
+      bTableLog
     );
 
     // So that all parameters are by specified (none is by evolution).
@@ -333,6 +335,12 @@ class Embedding_TestParams_Base extends TestParams.Base {
         Embedding.Params.bKeepInputTensor.valueDesc.range.min,
         Embedding.Params.bKeepInputTensor.valueDesc.range.max
       ],
+
+      bTableLog: [
+        // (2025/06/03 Remarked) For debug.
+        //0, 0
+        1, 1
+      ],
     };
 
     // All the parameters to be tried.
@@ -354,6 +362,8 @@ class Embedding_TestParams_Base extends TestParams.Base {
         valueOutMinMax.bEmbedVocabularyId ),
       new TestParams.ParamDescConfig( Embedding.Params.bKeepInputTensor,
         valueOutMinMax.bKeepInputTensor ),
+      new TestParams.ParamDescConfig( Embedding.Params.bTableLog,
+        valueOutMinMax.bTableLog ),
     ];
 
     yield *Embedding_TestParams_Base.ParamsGenerator.call( this,
@@ -377,4 +387,5 @@ Embedding_TestParams_Base.paramsNameOrderArray_Basic = [
   Embedding.Params.vocabularyCountPerInputChannel.paramName,
   Embedding.Params.bEmbedVocabularyId.paramName,
   Embedding.Params.bKeepInputTensor.paramName,
+  Embedding.Params.bTableLog.paramName,
 ];

@@ -251,6 +251,9 @@ class Embedding_AddGatherReshape extends Base {
    */
   static setup_apply_embedding() {
 
+!!! ...unfinished... (2025/06/03) bTableLog
+
+
     // 1. Shortcut operation.
     if (   // If channelMultiplier is illegal (i.e. zero or negative). (may
            // happen by evolution.)
@@ -272,7 +275,7 @@ class Embedding_AddGatherReshape extends Base {
 
     } else { // 2. channelMultiplier is positive.
 
-      // 2.1 No need shift input vhannel value.
+      // 2.1 No need shift (i.e. add) input channel value.
       if ( this.input_channelCount == 1 ) {
         if ( this.bKeepInputTensor )
           this.apply
