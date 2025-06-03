@@ -246,30 +246,26 @@ class Embedding_AddGatherReshape extends Base {
   }
 
 
-//!!!
+//!!! ...unfinished... (2025/06/03)
+//!!! ...untested... (2025/06/03)
   /**
-   * 
+   * If .bTableLog is true, log the specified output tensor3d and
+   * ScaleBoundsArray as table.
    *
-   * @param {Embedding_AddGatherReshape} this
-   *   The Embedding_AddGatherReshape object to be determined and modified.
+   * @param {tf.tensor3d} aTensor3d
+   *   An single tf.tensor3d to be logged to console as a table.
    */
-  static helper_TableLog_header_body() {
+  TableLog_output_tensor3d_if_requested( aTensor3d ) {
+    if ( !this.bTableLog )
+      return;
 
-    // 3.
+    const imageHeaderPrefix = "Embedding_AddGatherReshape";
     TableLogger.Base.Singleton.log_tensor3d_along_depth(
-      this.dataArray,
-      this.height,
-      this.width,
-      this.depth,
-      imageHeaderPrefix
-    );
+      aTensor3d, imageHeaderPrefix );
 
-    this.boundsArraySet.TableLog_header_body(
-      TableLogger.Base.Singleton.headerStringArray,
-      TableLogger.Base.Singleton.bodyStringArray
-    );
-
-    }
+    const scaleBoundsArray_HeaderPrefix = ".output";
+    this.output_scaleBoundsArray.TableLog_header_body(
+      scaleBoundsArray_HeaderPrefix );
   }
 
   /** Determine this.apply data members.
@@ -278,9 +274,6 @@ class Embedding_AddGatherReshape extends Base {
    *   The Embedding_AddGatherReshape object to be determined and modified.
    */
   static setup_apply_embedding() {
-
-!!! ...unfinished... (2025/06/03) bTableLog
-
 
     // 1. Shortcut operation.
     if (   // If channelMultiplier is illegal (i.e. zero or negative). (may
@@ -344,6 +337,10 @@ class Embedding_AddGatherReshape extends Base {
       gatherTensor4d.dispose();
     }
 
+//!!! ...untested... (2025/06/03)
+    // 3. Log output as table (if requested).
+    this.TableLog_output_tensor3d_if_requested( outputTensor3d );
+
     return outputTensor3d;
   }
 
@@ -369,23 +366,9 @@ class Embedding_AddGatherReshape extends Base {
       gatherTensor4d.dispose();
     }
 
-    // 3.
-    if ( this.bTableLog ) {
-!!!      
-    TableLogger.Base.Singleton.log_array_as_image_along_depth(
-      this.dataArray,
-      this.height,
-      this.width,
-      this.depth,
-      imageHeaderPrefix
-    );
-
-    this.boundsArraySet.TableLog_header_body(
-      TableLogger.Base.Singleton.headerStringArray,
-      TableLogger.Base.Singleton.bodyStringArray
-    );
-
-    }
+//!!! ...untested... (2025/06/03)
+    // 3. Log output as table (if requested).
+    this.TableLog_output_tensor3d_if_requested( outputTensor3d );
 
     return outputTensor3d;
   }
@@ -418,6 +401,10 @@ class Embedding_AddGatherReshape extends Base {
     } finally {
       gatherTensor4d.dispose();
     }
+
+//!!! ...untested... (2025/06/03)
+    // 3. Log output as table (if requested).
+    this.TableLog_output_tensor3d_if_requested( outputTensor3d );
 
     return outputTensor3d;
   }
@@ -459,6 +446,10 @@ class Embedding_AddGatherReshape extends Base {
     } finally {
       gatherTensor4d.dispose();
     }
+
+//!!! ...untested... (2025/06/03)
+    // 3. Log output as table (if requested).
+    this.TableLog_output_tensor3d_if_requested( outputTensor3d );
 
     return outputTensor3d;
   }
