@@ -455,21 +455,18 @@ class ScaleBoundsArray extends Recyclable.Root {
    * performance might be improved). If undefined, a new string array will
    * be created and discarded.
    */
-  TableLog_header_body(
-    headerPrefix,
-    io_workingStringArray0 = new Array(),
-    io_workingStringArray1 = new Array()
-  ) {
-
+  TableLog_header_body( headerPrefix ) {
+    const theTableLogger = TableLogger.Base.Singleton;
+  
     const {
       headerPrefixEmpty, characterCountPerField, digitCountAfterDecimalPoint,
       joinSeparator
-    } = TableLogger.Base.TableLog_params;
+    } = theTableLogger;
 
-    let stringArray_header_line_1st = io_workingStringArray0;
+    let stringArray_header_line_1st = theTableLogger.headerStringArray;
     stringArray_header_line_1st.length = 0;
 
-    let stringArray = io_workingStringArray1;
+    let stringArray = theTableLogger.bodyStringArray;
     stringArray.length = 0;
 
     // 1. Log headers.

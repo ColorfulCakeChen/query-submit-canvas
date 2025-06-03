@@ -7,6 +7,10 @@ export { TableLogger_Base as Base };
  * A helper class for log object as table.
  *
  *
+ * @member {string} headerPrefixEmpty
+ *   When no header prefix is needed, this string could be used.
+ *
+ *
  * @member {number} characterCountPerField
  *   Every returned string should be padded so that its length is just
  * so many characters.
@@ -46,9 +50,12 @@ class TableLogger_Base {
       = TableLogger_Base.defaultParams.joinSeparator
   ) {
 
+    this.headerPrefixEmpty = TableLogger_Base.defaultParams.headerPrefixEmpty;
+
     this.characterCountPerField = characterCountPerField;
     this.digitCountAfterDecimalPoint = digitCountAfterDecimalPoint;
     this.joinSeparator = joinSeparator;
+
     this.headerStringArray = new Array();
     this.bodyStringArray = new Array();
   }
