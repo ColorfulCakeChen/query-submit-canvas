@@ -115,11 +115,11 @@ class TableLogger_Base {
 
     const funcNameInMessage = "log_array_as_image_along_depth";
 
-    const length = height * width * depth;
-    if ( dataArray.length != length )
+    const elementCount = height * width * depth;
+    if ( dataArray.length != elementCount )
       throw Error( `TableLogger_Base.${funcNameInMessage}(): `
         + `dataArray.length ( ${dataArray.length} ) `
-        + `should be ( ${length} ) for shape `
+        + `should be ( ${elementCount} ) for shape `
         + `( height, width, depth ) = ( ${height}, ${width}, ${depth} ).`
       );
 
@@ -151,18 +151,13 @@ class TableLogger_Base {
       for ( let y = 0; y < height; ++y ) {
         bodyStringArray.length = 0;
 
-        for ( let x = 0; x < width; ++x, elementIndex += width ) {
+        for ( let x = 0; x < width; ++x, elementIndex += depth ) {
           elementValue = dataArray[ elementIndex ];
 
-          try {
-            valueString
-              = elementValue
-                  .toFixed( digitCountAfterDecimalPoint )
-                  .padStart( characterCountPerField );
-          } catch ( e ) {
-            debugger;
-            throw e;
-          }
+          valueString
+            = elementValue
+                .toFixed( digitCountAfterDecimalPoint )
+                .padStart( characterCountPerField );
 
           bodyStringArray.push( valueString );
         }
