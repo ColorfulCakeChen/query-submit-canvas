@@ -23,7 +23,7 @@ class TableLogger_Base {
       );
 
     const [ height, width, depth ] = shape;
-    const dataArray = aTensor.dataSync();
+    const dataArray = aTensor3d.dataSync();
 
     let elementValue;
     let i = 0;
