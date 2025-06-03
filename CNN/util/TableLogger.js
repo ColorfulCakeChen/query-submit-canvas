@@ -167,7 +167,7 @@ class TableLogger_Base {
 
 
 /**
- * Parameters for TableLog_Xxx().
+ * Default parameters for TableLog_Xxx().
  */
 TableLogger_Base.defaultParams = {
 
@@ -185,3 +185,13 @@ TableLogger_Base.defaultParams = {
   // row) of the table log.
   joinSeparator: " ",
 };
+
+
+/**
+ * A static singleton TableLogger object.
+ */
+TableLogger_Base.Singleton = new TableLogger_Base(
+  TableLogger_Base.defaultParams.characterCountPerField,
+  TableLogger_Base.defaultParams.digitCountAfterDecimalPoint,
+  TableLogger_Base.defaultParams.joinSeparator
+);

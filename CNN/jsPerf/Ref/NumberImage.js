@@ -1988,6 +1988,30 @@ class NumberImage_Base extends Recyclable.Root {
       this.boundsArraySet.output0.boundsArray );
   }
 
+//!!! ...untested... (2025/06/03)
+  /**
+   * Log .dataArray and .boundsArraySet of this object as a table.
+   *
+   * @param {string} imageHeaderPrefix
+   *   A string will be logged before the image header.
+   */
+  TableLog_header_body(
+    imageHeaderPrefix
+  ) {
+    TableLogger.Base.Singleton.log_array_as_image_along_depth(
+      this.dataArray,
+      this.height,
+      this.width,
+      this.depth,
+      imageHeaderPrefix
+    );
+
+    this.boundsArraySet.TableLog_header_body(
+      TableLogger.Base.Singleton.headerStringArray,
+      TableLogger.Base.Singleton.bodyStringArray
+    );
+  }
+
   /**
    *
    * @param {number} height

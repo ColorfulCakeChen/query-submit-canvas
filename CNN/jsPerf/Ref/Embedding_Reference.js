@@ -6,6 +6,7 @@ import * as TensorTools from "../../util/TensorTools.js";
 import * as ValueMax from "../../util/ValueMax.js";
 import * as BoundsArraySet_Asserter from "../../util/BoundsArraySet_Asserter.js";
 import * as ObjectPropertyAsserter from "../../util/ObjectPropertyAsserter.js";
+import * as TableLogger from "../../util/TableLogger.js";
 import * as ValueDesc from "../../Unpacker/ValueDesc.js";
 //import * as ActivationEscaping from "../../ConvActivationEscaping.js";
 import * as BoundsArraySet from "../../Conv/BoundsArraySet.js";
@@ -534,6 +535,7 @@ class Embedding_Reference_Base extends Recyclable.Root {
 
 !!! ...unfinished... (2025/06/03)
     if ( bTableLog ) {
+      TableLogger.Base.Singleton.log_array_as_image_along_depth()
 
     }
 
