@@ -62,8 +62,7 @@ class TableLogger_Base {
 
     const [ height, width, depth ] = shape;
     const dataArray = aTensor3d.dataSync();
-    TableLogger_Base.log_array_as_image_along_depth(
-        dataArray, height, width, depth );
+    this.log_array_as_image_along_depth( dataArray, height, width, depth );
   }
 
   /**
@@ -87,10 +86,7 @@ class TableLogger_Base {
    * @param {number} depth
    *   The number array will be interpreted as an image with depth.
    */
-  log_array_as_image_along_depth(
-    dataArray,
-    height, width, depth
-  ) {
+  log_array_as_image_along_depth( dataArray, height, width, depth ) {
     const funcNameInMessage = "log_array_as_image";
 
     const length = height * width * depth;
@@ -105,7 +101,7 @@ class TableLogger_Base {
     const digitCountAfterDecimalPoint = this.digitCountAfterDecimalPoint;
     const joinSeparator = this.joinSeparator;
 
-    const workingStringArray = this.io_workingStringArray;
+    const workingStringArray = this.workingStringArray;
 
     // Log every channel (i.e. along the depth) because this format is easier
     // for human reading.
