@@ -516,8 +516,6 @@ class ConvBiasActivation extends InputsOutputs {
     bodyFields.length = 0;
     tableLines.length = 0;
 
-!!! ...unfinished... (2025/06/04)
-
     // 1. Log headers.
     {
       // 1.1 Generate the 2nd line of headers. It has all detail field names. 

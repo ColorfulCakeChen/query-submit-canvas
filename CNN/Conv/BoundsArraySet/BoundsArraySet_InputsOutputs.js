@@ -422,7 +422,6 @@ class InputsOutputs extends Recyclable.Root {
   get outputChannelCount1() { return this.output1?.length ?? 0; }
 
 
-//!!! ...untested... (2025/05/28)
   /**
    * Log .input0, .input1, .output0, .output1 of this object as a table.
    */

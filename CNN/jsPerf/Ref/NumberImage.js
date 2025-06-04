@@ -1989,7 +1989,6 @@ class NumberImage_Base extends Recyclable.Root {
       this.boundsArraySet.output0.boundsArray );
   }
 
-//!!! ...untested... (2025/06/03)
   /**
    * Log .dataArray and .boundsArraySet of this object as a table.
    *
@@ -2005,12 +2004,7 @@ class NumberImage_Base extends Recyclable.Root {
       imageHeaderPrefix
     );
 
-!!! ...unfinished... (2025/06/04)
-
-    this.boundsArraySet.TableLog_header_body(
-      TableLogger.Base.Singleton.headerFields_StringArray,
-      TableLogger.Base.Singleton.bodyStringArray
-    );
+    this.boundsArraySet.TableLog_header_body();
   }
 
   /**
