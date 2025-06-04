@@ -149,9 +149,11 @@ class TableLogger_Base {
     const bodyFields = this.bodyFields;
     const tableLines = this.tableLines;
 
+    tableLines.length = 0;
+
     const imageHeader = `${imageHeaderPrefix}: image `
       + `( height, width, depth ) = ( ${height}, ${width}, ${depth} )`;
-    console.log( imageHeader );
+    tableLines.push( imageHeader );
 
     // Log every channel (i.e. along the depth) because this format is easier
     // for human reading.
@@ -160,7 +162,6 @@ class TableLogger_Base {
     let elementValue;
     let valueString;
 
-    tableLines.length = 0;
     for ( let c = 0; c < depth; ++c ) {
 
       // Separate every channel by channel header (with channel index).

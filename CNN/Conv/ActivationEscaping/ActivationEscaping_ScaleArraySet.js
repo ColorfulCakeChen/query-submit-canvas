@@ -403,7 +403,6 @@ class ScaleArraySet extends Recyclable.Root {
   }
 
 
-//!!! ...untested... (2025/05/28)
   /**
    * Return strings for all the headers displayed in one line (i.e. one row)
    * when logging this object as a table.
@@ -433,7 +432,6 @@ class ScaleArraySet extends Recyclable.Root {
       headerPrefix1 );
   }
 
-//!!! ...untested... (2025/05/28)
   /**
    * Return strings for all the values displayed in one line (i.e. one row)
    * when logging this object as a table.
