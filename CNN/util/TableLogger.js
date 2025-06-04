@@ -193,7 +193,9 @@ class TableLogger_Base {
         const indentCount = 2;
         const indentPrefix = "".repeat( indentCount );
 
-        channelHeader = `${indentPrefix}channel (depth) ${c}:`;
+//!!! (2025/06/04 Remarked) try more clean table log channel format.
+//        channelHeader = `${indentPrefix}channel (depth) ${c}:`;
+        channelHeader = `${indentPrefix}channel ${c}:`;
         if ( imageScaleBoundsArray ) {
           const lower = boundsArray.lowers[ c ];
           const upper = boundsArray.uppers[ c ];
