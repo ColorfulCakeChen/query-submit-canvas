@@ -533,8 +533,9 @@ class Embedding_Reference_Base extends Recyclable.Root {
     }
 
     if ( bTableLog ) {
+      const mostDerivedClassName = this.constructor.name;
       const imageHeaderPrefix
-        = `Embedding_Reference ( testParams.id = ${testParams.id} )` ;
+        = `${mostDerivedClassName} ( testParams.id = ${testParams.id} )` ;
       imageOut.TableLog_header_body( imageHeaderPrefix );
     }
 

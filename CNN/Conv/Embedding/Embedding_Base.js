@@ -261,7 +261,8 @@ class Embedding_Base extends Recyclable.Base( ReturnOrClone.Root ) {
       return;
 
     // Prefix with sub-class name.
-    const imageHeaderPrefix = this.constructor.name;
+    const mostDerivedClassName = this.constructor.name;
+    const imageHeaderPrefix = mostDerivedClassName;
     TableLogger.Base.Singleton.log_tensor3d_along_depth(
       aTensor3d, imageHeaderPrefix );
 
