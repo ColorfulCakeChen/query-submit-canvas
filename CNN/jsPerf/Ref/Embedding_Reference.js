@@ -532,7 +532,6 @@ class Embedding_Reference_Base extends Recyclable.Root {
       }
     }
 
-//!!! ...untested... (2025/06/03)
     if ( bTableLog ) {
       const imageHeaderPrefix
         = `Embedding_Reference ( testParams.id = ${testParams.id} )` ;

@@ -249,7 +249,6 @@ class Embedding_Base extends Recyclable.Base( ReturnOrClone.Root ) {
     super.disposeResources();
   }
 
-//!!! ...untested... (2025/06/03)
   /**
    * If .bTableLog is true, log the specified output tensor3d and
    * ScaleBoundsArray as table.
@@ -261,7 +260,8 @@ class Embedding_Base extends Recyclable.Base( ReturnOrClone.Root ) {
     if ( !this.bTableLog )
       return;
 
-    const imageHeaderPrefix = "Embedding";
+    // Prefix with sub-class name.
+    const imageHeaderPrefix = this.constructor.name;
     TableLogger.Base.Singleton.log_tensor3d_along_depth(
       aTensor3d, imageHeaderPrefix );
 
