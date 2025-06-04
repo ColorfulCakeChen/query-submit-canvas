@@ -177,6 +177,11 @@ class TableLogger_Base {
       + `( height, width, depth ) = ( ${height}, ${width}, ${depth} )`;
     tableLines.push( imageHeader );
 
+    const channelNumberIndentCount = 2;
+    const channelNumberIndentPrefix = "".repeat( indentCount );
+    const channelNumberDigitCountAfterDecimalPoint = 0; // i.e. integer
+    const channelNumberCharacterCount = 2;
+
     // Log every channel (i.e. along the depth) because this format is easier
     // for human reading.
 
@@ -190,12 +195,15 @@ class TableLogger_Base {
       // and { [ lower, upper ], .do.scale, .undo.scale }).
       let channelHeader;
       {
-        const indentCount = 2;
-        const indentPrefix = "".repeat( indentCount );
+        const channelNumber = c
+          .toFixed( channelNumberDigitCountAfterDecimalPoint )
+          .padStart( channelNumberCharacterCount );
 
 //!!! (2025/06/04 Remarked) try more clean table log channel format.
 //        channelHeader = `${indentPrefix}channel (depth) ${c}:`;
-        channelHeader = `${indentPrefix}channel ${c}:`;
+        channelHeader
+          = `${channelNumberIndentPrefix}channel ${channelNumber}:`;
+
         if ( imageScaleBoundsArray ) {
           const lower = boundsArray.lowers[ c ];
           const upper = boundsArray.uppers[ c ];
