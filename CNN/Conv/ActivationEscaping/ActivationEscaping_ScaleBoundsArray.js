@@ -498,7 +498,7 @@ class ScaleBoundsArray extends Recyclable.Root {
       }
     }
 
-    // 3. Write out log.
+    // 3. Write out log table.
     const tableText = tableLines.join( lineJoinSeparator );
     console.log( tableText );
   }

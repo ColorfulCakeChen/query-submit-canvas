@@ -508,15 +508,15 @@ class ConvBiasActivation extends InputsOutputs {
   
     const {
       headerPrefixEmpty, characterCountPerField, digitCountAfterDecimalPoint,
-      fieldJoinSeparator
+      fieldJoinSeparator, lineJoinSeparator,
+      headerFields, bodyFields, tableLines,
     } = theTableLogger;
 
-!!! ...unfinished... (2025/06/04)
-    let stringArray_header_line_1st = theTableLogger.headerFields_StringArray;
-    stringArray_header_line_1st.length = 0;
+    headerFields.length = 0;
+    bodyFields.length = 0;
+    tableLines.length = 0;
 
-    let stringArray = theTableLogger.bodyStringArray;
-    stringArray.length = 0;
+!!! ...unfinished... (2025/06/04)
 
     // 1. Log headers.
     {
@@ -524,22 +524,22 @@ class ConvBiasActivation extends InputsOutputs {
       {
         // Note: The .bPassThrough does not have 2nd line of headers. So let
         //       it empty.
-        stringArray.push(
+        bodyFields.push(
           headerPrefixEmpty.padStart( characterCountPerField ) );
 
         const headerPrefix_boundsArray = ".boundsArray";
 
         this.afterUndoPreviousActivationEscaping.TableLog_header_appendColumns(
-          stringArray, characterCountPerField, headerPrefix_boundsArray );
+          bodyFields, characterCountPerField, headerPrefix_boundsArray );
 
         this.afterFilter.TableLog_header_appendColumns(
-          stringArray, characterCountPerField, headerPrefix_boundsArray );
+          bodyFields, characterCountPerField, headerPrefix_boundsArray );
 
         this.afterBias.TableLog_header_appendColumns(
-          stringArray, characterCountPerField, headerPrefix_boundsArray );
+          bodyFields, characterCountPerField, headerPrefix_boundsArray );
 
         this.afterActivation.TableLog_header_appendColumns(
-          stringArray, characterCountPerField, headerPrefix_boundsArray );
+          bodyFields, characterCountPerField, headerPrefix_boundsArray );
       }
 
       // 1.2 Generate the 1st line of headers.
@@ -548,7 +548,7 @@ class ConvBiasActivation extends InputsOutputs {
       {
 //!!! (2025/05/30 Remarked) seems not used.
 //         // "-1" for excluding .bPassThrough (which is not a BoundsArray).
-//         const boundsArrayCount = ( stringArray.length - 1 );
+//         const boundsArrayCount = ( bodyFields.length - 1 );
 //         const headerPrefix_columnCount = Math.floor( boundsArrayCount / 2 );
 
         // Because a BoundsArray has two data members (i.e. two columns in the
@@ -562,7 +562,7 @@ class ConvBiasActivation extends InputsOutputs {
         // The header of .bPassThrough (which is not a BoundsArray) uses
         // normal (narrow) column width.
         const headerPrefix_bPassThrough = ".bPassThrough";
-        stringArray_header_line_1st.push(
+        headerFields.push(
           headerPrefix_bPassThrough.padStart( characterCountPerField ),
         );
 
@@ -570,32 +570,32 @@ class ConvBiasActivation extends InputsOutputs {
         // width.
         const headerPrefix_afterUndoPreviousActivationEscaping
           = ".afterUndoPreviousActivationEscaping";
-        stringArray_header_line_1st.push(
+        headerFields.push(
           headerPrefix_afterUndoPreviousActivationEscaping.padStart(
             headerPrefix_wideColumn_characterCount ) );
 
         const headerPrefix_afterFilter = ".afterFilter";
-        stringArray_header_line_1st.push(
+        headerFields.push(
           headerPrefix_afterUndoPreviousActivationEscaping.padStart(
             headerPrefix_wideColumn_characterCount ) );
 
         const headerPrefix_afterBias = ".afterBias";
-        stringArray_header_line_1st.push(
+        headerFields.push(
           headerPrefix_afterBias.padStart(
             headerPrefix_wideColumn_characterCount ) );
 
         const headerPrefix_afterActivation = ".afterActivation";
-        stringArray_header_line_1st.push(
+        headerFields.push(
           headerPrefix_afterActivation.padStart(
             headerPrefix_wideColumn_characterCount ) );
       }
 
       // 1.3 Write out the headers to log.
-      const header_line0 = stringArray_header_line_1st.join( fieldJoinSeparator );
-      console.log( header_line0 );
+      const header_line0 = headerFields.join( fieldJoinSeparator );
+      tableLines.push( header_line0 );
 
-      const header_line1 = stringArray.join( fieldJoinSeparator );
-      console.log( header_line1 );
+      const header_line1 = bodyFields.join( fieldJoinSeparator );
+      tableLines.push( header_line1 );
     }
 
     // 2. Log body.
@@ -605,34 +605,38 @@ class ConvBiasActivation extends InputsOutputs {
 
       const rowIndexBound = aBoundsArray.length;
       for ( let rowIndex = 0; rowIndex < rowIndexBound; ++rowIndex ) {
-        stringArray.length = 0;
+        bodyFields.length = 0;
 
-        stringArray.push(
+        bodyFields.push(
           bPassThrough[ rowIndex ]
             .toFixed( digitCountAfterDecimalPoint_bPassThrough )
             .padStart( characterCountPerField )
         );
 
         this.afterUndoPreviousActivationEscaping.TableLog_body_appendColumns(
-          stringArray,
+          bodyFields,
           characterCountPerField, digitCountAfterDecimalPoint, rowIndex );
 
         this.afterFilter.TableLog_body_appendColumns(
-          stringArray,
+          bodyFields,
           characterCountPerField, digitCountAfterDecimalPoint, rowIndex );
 
         this.afterBias.TableLog_body_appendColumns(
-          stringArray,
+          bodyFields,
           characterCountPerField, digitCountAfterDecimalPoint, rowIndex );
 
         this.afterActivation.TableLog_body_appendColumns(
-          stringArray,
+          bodyFields,
           characterCountPerField, digitCountAfterDecimalPoint, rowIndex );
 
-        const body_line = stringArray.join( fieldJoinSeparator );
-        console.log( body_line );
+        const body_line = bodyFields.join( fieldJoinSeparator );
+        tableLines.push( body_line );
       }
     }
+
+    // 3. Write out log table.
+    const tableText = tableLines.join( lineJoinSeparator );
+    console.log( tableText );
   }
 
 }
