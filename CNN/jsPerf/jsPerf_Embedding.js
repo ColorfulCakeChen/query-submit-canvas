@@ -130,6 +130,9 @@ class HeightWidthDepth {
     //   - ( bKeepInputTensor == true ). Otherwise, the this.dataTensor3d will
     //       be destroyed.
     //
+    const bKeepInputTensor = true;
+    const bTableLog = false;
+
 
     // Test Case 0: (AddGatherReshape, ( channelMultiplier == 1 ))
     this.embedding_PerformanceTest_addCase(
@@ -137,7 +140,7 @@ class HeightWidthDepth {
       ( new Embedding_TestParams.Base( 0 ) ).set_byParamsScattered(
         this.height, this.width, this.depth, 1,
         vocabularyCountPerInputChannel, bEmbedVocabularyId,
-        true
+        bKeepInputTensor, bTableLog
       ) );
 
     // Test Case 1: (SplitReshapeGatherConcat, ( channelMultiplier == 1 ))
@@ -146,7 +149,7 @@ class HeightWidthDepth {
       ( new Embedding_TestParams.Base( 1 ) ).set_byParamsScattered(
         this.height, this.width, this.depth, 1,
         vocabularyCountPerInputChannel, bEmbedVocabularyId,
-        true
+        bKeepInputTensor, bTableLog
       ) );
 
     // Test Case 2: (AddGatherReshape, ( channelMultiplier == 2 ))
@@ -155,7 +158,7 @@ class HeightWidthDepth {
       ( new Embedding_TestParams.Base( 2 ) ).set_byParamsScattered(
         this.height, this.width, this.depth, 2,
         vocabularyCountPerInputChannel, bEmbedVocabularyId,
-        true
+        bKeepInputTensor, bTableLog
       ) );
 
     // Test Case 3: (SplitReshapeGatherConcat, ( channelMultiplier == 2 ))
@@ -164,7 +167,7 @@ class HeightWidthDepth {
       ( new Embedding_TestParams.Base( 3 ) ).set_byParamsScattered(
         this.height, this.width, this.depth, 2,
         vocabularyCountPerInputChannel, bEmbedVocabularyId,
-        true
+        bKeepInputTensor, bTableLog
       ) );
 
     // Test Case 4: (AddGatherReshape, ( channelMultiplier == 4 ))
@@ -173,7 +176,7 @@ class HeightWidthDepth {
       ( new Embedding_TestParams.Base( 4 ) ).set_byParamsScattered(
         this.height, this.width, this.depth, 4,
         vocabularyCountPerInputChannel, bEmbedVocabularyId,
-        true
+        bKeepInputTensor, bTableLog
       ) );
 
     // Test Case 5: (SplitReshapeGatherConcat, ( channelMultiplier == 4 ))
@@ -182,7 +185,7 @@ class HeightWidthDepth {
       ( new Embedding_TestParams.Base( 5 ) ).set_byParamsScattered(
         this.height, this.width, this.depth, 4,
         vocabularyCountPerInputChannel, bEmbedVocabularyId,
-        true
+        bKeepInputTensor, bTableLog
       ) );
 
     // Test Case 6: (AddGatherReshape, ( channelMultiplier == 8 ))
@@ -191,7 +194,7 @@ class HeightWidthDepth {
       ( new Embedding_TestParams.Base( 6 ) ).set_byParamsScattered(
         this.height, this.width, this.depth, 8,
         vocabularyCountPerInputChannel, bEmbedVocabularyId,
-        true
+        bKeepInputTensor, bTableLog
       ) );
 
     // Test Case 7: (SplitReshapeGatherConcat, ( channelMultiplier == 8 ))
@@ -200,7 +203,7 @@ class HeightWidthDepth {
       ( new Embedding_TestParams.Base( 7 ) ).set_byParamsScattered(
         this.height, this.width, this.depth, 8,
         vocabularyCountPerInputChannel, bEmbedVocabularyId,
-        true
+        bKeepInputTensor, bTableLog
       ) );
   }
 
