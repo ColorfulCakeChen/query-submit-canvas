@@ -469,12 +469,11 @@ class ScaleArray extends Recyclable.Root {
   }
 
 
-//!!! ...untested... (2025/05/28)
   /**
    * Return strings for all the headers displayed in one line (i.e. one row)
    * when logging this object as a table.
    *
-   * @param {String[]} out_stringArray
+   * @param {String[]} out_headerFields
    *   The output string array. All the returned values (i.e. every column
    * header of one row) should be pushed at its end (in order).
    *
@@ -485,22 +484,21 @@ class ScaleArray extends Recyclable.Root {
    * @param {string} headerPrefix
    *   The string should be concatenated before the returned headers.
    */
-  TableLog_header_appendColumns( out_stringArray,
+  TableLog_header_appendFields( out_headerFields,
     characterCountPerField,
     headerPrefix
   ) {
     const header = `${headerPrefix}.scales[]`;
-    out_stringArray.push(
+    out_headerFields.push(
       header.padStart( characterCountPerField )
     );
   }
 
-//!!! ...untested... (2025/05/28)
   /**
    * Return strings for all the values displayed in one line (i.e. one row)
    * when logging this object as a table.
    *
-   * @param {String[]} out_stringArray
+   * @param {String[]} out_bodyFields
    *   The output string array. All the returned values (i.e. every column of
    * one row) should be pushed at its end (in order).
    *
@@ -516,12 +514,12 @@ class ScaleArray extends Recyclable.Root {
    *   Which line of the log table should be returned. It is an integer index
    * into .scales[].
    */
-  TableLog_body_appendColumns( out_stringArray,
+  TableLog_body_appendFields( out_bodyFields,
     characterCountPerField,
     digitCountAfterDecimalPoint,
     rowIndex
   ) {
-    out_stringArray.push(
+    out_bodyFields.push(
       this.scales[ rowIndex ]
         .toFixed( digitCountAfterDecimalPoint )
         .padStart( characterCountPerField )

@@ -527,16 +527,16 @@ class ConvBiasActivation extends InputsOutputs {
 
         const headerPrefix_boundsArray = ".boundsArray";
 
-        this.afterUndoPreviousActivationEscaping.TableLog_header_appendColumns(
+        this.afterUndoPreviousActivationEscaping.TableLog_header_appendFields(
           bodyFields, characterCountPerField, headerPrefix_boundsArray );
 
-        this.afterFilter.TableLog_header_appendColumns(
+        this.afterFilter.TableLog_header_appendFields(
           bodyFields, characterCountPerField, headerPrefix_boundsArray );
 
-        this.afterBias.TableLog_header_appendColumns(
+        this.afterBias.TableLog_header_appendFields(
           bodyFields, characterCountPerField, headerPrefix_boundsArray );
 
-        this.afterActivation.TableLog_header_appendColumns(
+        this.afterActivation.TableLog_header_appendFields(
           bodyFields, characterCountPerField, headerPrefix_boundsArray );
       }
 
@@ -611,19 +611,19 @@ class ConvBiasActivation extends InputsOutputs {
             .padStart( characterCountPerField )
         );
 
-        this.afterUndoPreviousActivationEscaping.TableLog_body_appendColumns(
+        this.afterUndoPreviousActivationEscaping.TableLog_body_appendFields(
           bodyFields,
           characterCountPerField, digitCountAfterDecimalPoint, rowIndex );
 
-        this.afterFilter.TableLog_body_appendColumns(
+        this.afterFilter.TableLog_body_appendFields(
           bodyFields,
           characterCountPerField, digitCountAfterDecimalPoint, rowIndex );
 
-        this.afterBias.TableLog_body_appendColumns(
+        this.afterBias.TableLog_body_appendFields(
           bodyFields,
           characterCountPerField, digitCountAfterDecimalPoint, rowIndex );
 
-        this.afterActivation.TableLog_body_appendColumns(
+        this.afterActivation.TableLog_body_appendFields(
           bodyFields,
           characterCountPerField, digitCountAfterDecimalPoint, rowIndex );
 

@@ -408,7 +408,7 @@ class ScaleArraySet extends Recyclable.Root {
    * Return strings for all the headers displayed in one line (i.e. one row)
    * when logging this object as a table.
    *
-   * @param {String[]} out_stringArray
+   * @param {String[]} out_headerFields
    *   The output string array. All the returned values (i.e. every column
    * header of one row) should be pushed at its end (in order).
    *
@@ -419,16 +419,16 @@ class ScaleArraySet extends Recyclable.Root {
    * @param {string} headerPrefix
    *   The string should be concatenated before the returned headers.
    */
-  TableLog_header_appendColumns( out_stringArray,
+  TableLog_header_appendFields( out_headerFields,
     characterCountPerField,
     headerPrefix
   ) {
     const headerPrefix0 = `${headerPrefix}.do`;
     const headerPrefix1 = `${headerPrefix}.undo`;
-    this.do.TableLog_header_appendColumns( out_stringArray,
+    this.do.TableLog_header_appendFields( out_headerFields,
       characterCountPerField,
       headerPrefix0 );
-    this.undo.TableLog_header_appendColumns( out_stringArray,
+    this.undo.TableLog_header_appendFields( out_headerFields,
       characterCountPerField,
       headerPrefix1 );
   }
@@ -438,7 +438,7 @@ class ScaleArraySet extends Recyclable.Root {
    * Return strings for all the values displayed in one line (i.e. one row)
    * when logging this object as a table.
    *
-   * @param {String[]} out_stringArray
+   * @param {String[]} out_bodyFields
    *   The output string array. All the returned values (i.e. every column of
    * one row) should be pushed at its end (in order).
    *
@@ -454,16 +454,16 @@ class ScaleArraySet extends Recyclable.Root {
    *   Which line of the log table should be returned. It is an integer index
    * into .do.scales[] and .undo.scales[].
    */
-  TableLog_body_appendColumns( out_stringArray,
+  TableLog_body_appendFields( out_bodyFields,
     characterCountPerField,
     digitCountAfterDecimalPoint,
     rowIndex
   ) {
-    this.do.TableLog_body_appendColumns( out_stringArray,
+    this.do.TableLog_body_appendFields( out_bodyFields,
       characterCountPerField,
       digitCountAfterDecimalPoint,
       rowIndex );
-    this.undo.TableLog_body_appendColumns( out_stringArray,
+    this.undo.TableLog_body_appendFields( out_bodyFields,
       characterCountPerField,
       digitCountAfterDecimalPoint,
       rowIndex );

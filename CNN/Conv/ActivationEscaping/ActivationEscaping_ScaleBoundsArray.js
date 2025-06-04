@@ -375,7 +375,7 @@ class ScaleBoundsArray extends Recyclable.Root {
    * Return strings for all the headers displayed in one line (i.e. one row)
    * when logging this object as a table.
    *
-   * @param {String[]} out_stringArray
+   * @param {String[]} out_headerFields
    *   The output string array. All the returned values (i.e. every column
    * header of one row) should be pushed at its end (in order).
    *
@@ -386,7 +386,7 @@ class ScaleBoundsArray extends Recyclable.Root {
    * @param {string} headerPrefix
    *   The string should be concatenated before the returned headers.
    */
-  TableLog_header_appendColumns( out_stringArray,
+  TableLog_header_appendFields( out_headerFields,
     characterCountPerField,
     headerPrefix
   ) {
@@ -396,20 +396,19 @@ class ScaleBoundsArray extends Recyclable.Root {
     const headerPrefix0 = `${headerPrefix}`;
     const headerPrefix1 = `${headerPrefix}`;
 
-    this.boundsArray.TableLog_header_appendColumns( out_stringArray,
+    this.boundsArray.TableLog_header_appendFields( out_headerFields,
       characterCountPerField,
       headerPrefix0 );
-    this.scaleArraySet.TableLog_header_appendColumns( out_stringArray,
+    this.scaleArraySet.TableLog_header_appendFields( out_headerFields,
       characterCountPerField,
       headerPrefix1 );
   }
 
-//!!! ...untested... (2025/05/28)
   /**
    * Return strings for all the values displayed in one line (i.e. one row)
    * when logging this object as a table.
    *
-   * @param {String[]} out_stringArray
+   * @param {String[]} out_bodyFields
    *   The output string array. All the returned values (i.e. every column of
    * one row) should be pushed at its end (in order).
    *
@@ -425,16 +424,16 @@ class ScaleBoundsArray extends Recyclable.Root {
    *   Which line of the log table should be returned. It is an integer index
    * into .boundsArray.xxx[] and .scaleArraySet.yyy.zzz[].
    */
-  TableLog_body_appendColumns( out_stringArray,
+  TableLog_body_appendFields( out_bodyFields,
     characterCountPerField,
     digitCountAfterDecimalPoint,
     rowIndex
   ) {
-    this.boundsArray.TableLog_body_appendColumns( out_stringArray,
+    this.boundsArray.TableLog_body_appendFields( out_bodyFields,
       characterCountPerField,
       digitCountAfterDecimalPoint,
       rowIndex );
-    this.scaleArraySet.TableLog_body_appendColumns( out_stringArray,
+    this.scaleArraySet.TableLog_body_appendFields( out_bodyFields,
       characterCountPerField,
       digitCountAfterDecimalPoint,
       rowIndex );
@@ -463,7 +462,7 @@ class ScaleBoundsArray extends Recyclable.Root {
     // 1. Log headers.
     {
       // 1.1 Got the 2nd line of headers. It has all detail field names.
-      this.TableLog_header_appendColumns(
+      this.TableLog_header_appendFields(
         bodyFields, characterCountPerField, headerPrefixEmpty );
 
       // 1.2 Generate the 1st line of headers. It has the same field count as
@@ -488,7 +487,7 @@ class ScaleBoundsArray extends Recyclable.Root {
       for ( let rowIndex = 0; rowIndex < rowIndexBound; ++rowIndex ) {
 
         bodyFields.length = 0;
-        this.TableLog_body_appendColumns( bodyFields,
+        this.TableLog_body_appendFields( bodyFields,
           characterCountPerField,
           digitCountAfterDecimalPoint,
           rowIndex );
