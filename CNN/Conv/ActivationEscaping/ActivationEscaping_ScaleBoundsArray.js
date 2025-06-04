@@ -390,8 +390,12 @@ class ScaleBoundsArray extends Recyclable.Root {
     characterCountPerField,
     headerPrefix
   ) {
-    const headerPrefix0 = `${headerPrefix}.boundsArray`;
-    const headerPrefix1 = `${headerPrefix}.scaleArraySet`;
+    //!!! (2025/06/04 Remarked) Reduce the table log header length.
+    // const headerPrefix0 = `${headerPrefix}.boundsArray`;
+    // const headerPrefix1 = `${headerPrefix}.scaleArraySet`;
+    const headerPrefix0 = `${headerPrefix}`;
+    const headerPrefix1 = `${headerPrefix}`;
+
     this.boundsArray.TableLog_header_appendColumns( out_stringArray,
       characterCountPerField,
       headerPrefix0 );
