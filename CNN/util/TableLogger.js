@@ -106,7 +106,10 @@ class TableLogger_Base {
     const [ height, width, depth ] = shape;
     const dataArray = aTensor3d.dataSync();
     this.log_array_as_image_along_depth(
-      dataArray, height, width, depth, imageHeaderPrefix );
+      dataArray,
+      height, width, depth,
+      imageHeaderPrefix,
+      imageScaleBoundsArray );
   }
 
   /**
