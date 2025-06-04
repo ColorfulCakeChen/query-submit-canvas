@@ -2,6 +2,7 @@ export { TableLogger_Base as Base };
 
 // import * as Pool from "./Pool.js";
 // import * as Recyclable from "./Recyclable.js";
+import * as ActivationEscaping from "../Conv/ActivationEscaping.js";
 
 /**
  * A helper class for log object as table.
@@ -82,8 +83,17 @@ class TableLogger_Base {
    *
    * @param {string} imageHeaderPrefix
    *   A string will be logged before the image header.
+   *
+   * @param {ActivationEscaping.ScaleBoundsArray} imageScaleBoundsArray
+   *   The element value bounds (per channel) of the dataArray number array
+   * (viewed as 2d image with multiple channels). It can be null (or
+   * undefined).
    */
-  log_tensor3d_along_depth( aTensor3d, imageHeaderPrefix ) {
+  log_tensor3d_along_depth(
+    aTensor3d,
+    imageHeaderPrefix,
+    imageScaleBoundsArray ) {
+
     const funcNameInMessage = "log_tensor3d_along_depth";
 
     const shape = aTensor3d.shape;
@@ -100,7 +110,7 @@ class TableLogger_Base {
   }
 
   /**
-   * Log a number array (viewed as an 2d image with multiple channels) as a
+   * Log a number array (viewed as 2d image with multiple channels) as a
    * table.
    *
    * For human reading easierly, it is logged by channel (i.e. along the
@@ -122,11 +132,17 @@ class TableLogger_Base {
    *
    * @param {string} imageHeaderPrefix
    *   A string will be logged before the image header.
+   *
+   * @param {ActivationEscaping.ScaleBoundsArray} imageScaleBoundsArray
+   *   The element value bounds (per channel) of the dataArray number array
+   * (viewed as 2d image with multiple channels). It can be null (or
+   * undefined).
    */
   log_array_as_image_along_depth(
     dataArray,
     height, width, depth,
-    imageHeaderPrefix
+    imageHeaderPrefix,
+    imageScaleBoundsArray
   ) {
 
     const funcNameInMessage = "log_array_as_image_along_depth";
@@ -138,6 +154,9 @@ class TableLogger_Base {
         + `should be ( ${elementCount} ) for shape `
         + `( height, width, depth ) = ( ${height}, ${width}, ${depth} ).`
       );
+
+    const boundsArray = imageScaleBoundsArray?.boundsArray;
+    const scaleArraySet = imageScaleBoundsArray?.scaleArraySet;
 
     const {
       characterCountPerField,
@@ -164,9 +183,45 @@ class TableLogger_Base {
 
     for ( let c = 0; c < depth; ++c ) {
 
-      // Separate every channel by channel header (with channel index).
-      const channelHeader = `  channel (depth) ${c}:`;
-      tableLines.push( channelHeader );
+      // Separate every channel by channel header (with channel index
+      // and { [ lower, upper ], .do.scale, .undo.scale }).
+      let channelHeader;
+      {
+        const indentCount = 2;
+        const indentPrefix = "".repeat( indentCount );
+
+        channelHeader = `${indentPrefix}channel (depth) ${c}:`;
+        if ( imageScaleBoundsArray ) {
+          const lower = boundsArray.lowers[ c ];
+          const upper = boundsArray.uppers[ c ];
+
+          const lowerString = lower
+            .toFixed( digitCountAfterDecimalPoint )
+            .padStart( characterCountPerField );
+          const upperString = upper
+            .toFixed( digitCountAfterDecimalPoint )
+            .padStart( characterCountPerField );
+
+          const scaleDo = scaleArraySet.do.scales[ c ];
+          const scaleUndo = scaleArraySet.undo.scales[ c ];
+
+          const scaleDoString = scaleDo
+            .toFixed( digitCountAfterDecimalPoint )
+            .padStart( characterCountPerField );
+          const scaleUndoString = scaleUndo
+            .toFixed( digitCountAfterDecimalPoint )
+            .padStart( characterCountPerField );
+
+          channelHeader += ` { `
+            + `[ .lower, .upper ] = [ ${lowerString}, ${upperString} ], `
+            + `.do.scale=${scaleDoString}, `
+            + `.undo.scale=${scaleUndoString} `
+            + `}`
+            ;
+        }
+
+        tableLines.push( channelHeader );
+      }
 
       elementIndex = c;
 

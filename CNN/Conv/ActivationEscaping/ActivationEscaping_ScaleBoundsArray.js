@@ -370,7 +370,6 @@ class ScaleBoundsArray extends Recyclable.Root {
   }
 
 
-//!!! ...untested... (2025/05/28)
   /**
    * Return strings for all the headers displayed in one line (i.e. one row)
    * when logging this object as a table.
@@ -439,7 +438,6 @@ class ScaleBoundsArray extends Recyclable.Root {
       rowIndex );
   }
 
-//!!! ...untested... (2025/06/03)
   /**
    * Log this ScaleBoundsArray (headers and body) as a table.
    *
@@ -448,7 +446,7 @@ class ScaleBoundsArray extends Recyclable.Root {
    */
   TableLog_header_body( headerPrefix ) {
     const theTableLogger = TableLogger.Base.Singleton;
-  
+
     const {
       headerPrefixEmpty, characterCountPerField, digitCountAfterDecimalPoint,
       fieldJoinSeparator, lineJoinSeparator,
