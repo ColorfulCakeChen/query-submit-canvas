@@ -199,21 +199,17 @@ class TableLogger_Base {
           const upper = boundsArray.uppers[ c ];
 
           const lowerString = lower
-            .toFixed( digitCountAfterDecimalPoint )
-            .padStart( characterCountPerField );
+            .toFixed( digitCountAfterDecimalPoint );
           const upperString = upper
-            .toFixed( digitCountAfterDecimalPoint )
-            .padStart( characterCountPerField );
+            .toFixed( digitCountAfterDecimalPoint );
 
           const scaleDo = scaleArraySet.do.scales[ c ];
           const scaleUndo = scaleArraySet.undo.scales[ c ];
 
           const scaleDoString = scaleDo
-            .toFixed( digitCountAfterDecimalPoint )
-            .padStart( characterCountPerField );
+            .toFixed( digitCountAfterDecimalPoint );
           const scaleUndoString = scaleUndo
-            .toFixed( digitCountAfterDecimalPoint )
-            .padStart( characterCountPerField );
+            .toFixed( digitCountAfterDecimalPoint );
 
           channelHeader += ` `
             + `[ .lower, .upper ] = [ ${lowerString}, ${upperString} ], `
