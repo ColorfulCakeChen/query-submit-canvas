@@ -213,7 +213,7 @@ class TableLogger_Base {
 
           channelHeader += 
               ` { [ .lower, .upper ], .do.scale, .undo.scale } = { `
-            + `{ ${lowerString}, ${upperString} ], `
+            + `[ ${lowerString}, ${upperString} ], `
             + `${scaleDoString}, ${scaleUndoString} `
             + `}`
 
