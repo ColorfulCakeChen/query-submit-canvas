@@ -511,7 +511,8 @@ class ConvBiasActivation extends InputsOutputs {
       fieldJoinSeparator
     } = theTableLogger;
 
-    let stringArray_header_line_1st = theTableLogger.headerStringArray;
+!!! ...unfinished... (2025/06/04)
+    let stringArray_header_line_1st = theTableLogger.headerFields_StringArray;
     stringArray_header_line_1st.length = 0;
 
     let stringArray = theTableLogger.bodyStringArray;

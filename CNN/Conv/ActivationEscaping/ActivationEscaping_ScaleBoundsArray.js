@@ -452,35 +452,34 @@ class ScaleBoundsArray extends Recyclable.Root {
   
     const {
       headerPrefixEmpty, characterCountPerField, digitCountAfterDecimalPoint,
-      fieldJoinSeparator
+      fieldJoinSeparator, lineJoinSeparator,
+      headerFields, bodyFields, tableLines,
     } = theTableLogger;
 
-    let stringArray_header_line_1st = theTableLogger.headerStringArray;
-    stringArray_header_line_1st.length = 0;
-
-    let stringArray = theTableLogger.bodyStringArray;
-    stringArray.length = 0;
+    headerFields.length = 0;
+    bodyFields.length = 0;
+    tableLines.length = 0;
 
     // 1. Log headers.
     {
       // 1.1 Got the 2nd line of headers. It has all detail field names.
       this.TableLog_header_appendColumns(
-        stringArray, characterCountPerField, headerPrefixEmpty );
+        bodyFields, characterCountPerField, headerPrefixEmpty );
 
       // 1.2 Generate the 1st line of headers. It has the same field count as
       //     the 2nd. But its content are all the same as header prefix. (i.e.
       //     place the header prefix in the 1st line of headers.)
-      stringArray_header_line_1st.length = stringArray.length;
+      headerFields.length = bodyFields.length;
 
-      stringArray_header_line_1st.fill(
+      headerFields.fill(
         headerPrefix.padStart( characterCountPerField ) );
 
       // 1.3 Write out the headers to log.
-      const header_line0 = stringArray_header_line_1st.join( fieldJoinSeparator );
-      console.log( header_line0 );
+      const header_line0 = headerFields.join( fieldJoinSeparator );
+      tableLines.push( header_line0 );
 
-      const header_line1 = stringArray.join( fieldJoinSeparator );
-      console.log( header_line1 );
+      const header_line1 = bodyFields.join( fieldJoinSeparator );
+      tableLines.push( header_line1 );
     }
 
     // 2. Log body.
@@ -488,16 +487,20 @@ class ScaleBoundsArray extends Recyclable.Root {
       const rowIndexBound = this.length;
       for ( let rowIndex = 0; rowIndex < rowIndexBound; ++rowIndex ) {
 
-        stringArray.length = 0;
-        this.TableLog_body_appendColumns( stringArray,
+        bodyFields.length = 0;
+        this.TableLog_body_appendColumns( bodyFields,
           characterCountPerField,
           digitCountAfterDecimalPoint,
           rowIndex );
 
-        const body_line = stringArray.join( fieldJoinSeparator );
-        console.log( body_line );
+        const body_line = bodyFields.join( fieldJoinSeparator );
+        tableLines.push( body_line );
       }
     }
+
+    // 3. Write out log.
+    const tableText = tableLines.join( lineJoinSeparator );
+    console.log( tableText );
   }
 
 }

@@ -2005,8 +2005,10 @@ class NumberImage_Base extends Recyclable.Root {
       imageHeaderPrefix
     );
 
+!!! ...unfinished... (2025/06/04)
+
     this.boundsArraySet.TableLog_header_body(
-      TableLogger.Base.Singleton.headerStringArray,
+      TableLogger.Base.Singleton.headerFields_StringArray,
       TableLogger.Base.Singleton.bodyStringArray
     );
   }

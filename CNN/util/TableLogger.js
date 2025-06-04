@@ -28,25 +28,22 @@ export { TableLogger_Base as Base };
  * all lines of the table log.
  *
  *
- * @member {string[]} headerLineStringArray
- *   A helper string Array for generating one line of header of log table. It
- * will be used as the working buffer (so that array recreation is reduced
- * and performance might be improved).
- *
- * @member {string[]} headerStringArray
- *   A helper string Array for generating header of log table. It will be used
- * as the working buffer (so that array recreation is reduced and performance
+ * @member {string[]} headerFields
+ *   A helper string Array for generating one line of log table header. Every
+ * element represents one field of a log table header line. It will be used as
+ * the working buffer (so that array recreation is reduced and performance
  * might be improved).
  *
- * @member {string[]} bodyLineStringArray
- *   A helper string Array for generating one line of body of log table. It
- * will be used as the working buffer (so that array recreation is reduced
- * and performance might be improved).
- *
- * @member {string[]} bodyStringArray
- *   A helper string Array for generating body of log table. It will be used
- * as the working buffer (so that array recreation is reduced and performance
+ * @member {string[]} bodyFields
+ *   A helper string Array for generating one line of log table body. Every
+ * element represents one field of a log table body line. It will be used as
+ * the working buffer (so that array recreation is reduced and performance
  * might be improved).
+ *
+ * @member {string[]} tableLines
+ *   A helper string Array for generating the whole log table. Every element
+ * represents one line of the log table. It will be used as the working buffer
+ * (so that array recreation is reduced and performance might be improved).
  */
 class TableLogger_Base {
 
@@ -74,10 +71,9 @@ class TableLogger_Base {
     this.fieldJoinSeparator = fieldJoinSeparator;
     this.lineJoinSeparator = lineJoinSeparator;
 
-    this.headerLineStringArray = new Array();
-    this.headerStringArray = new Array();
-    this.bodyLineStringArray = new Array();
-    this.bodyStringArray = new Array();
+    this.headerFields = new Array();
+    this.bodyFields = new Array();
+    this.tableLines = new Array();
   }
 
   /**
@@ -150,8 +146,8 @@ class TableLogger_Base {
       lineJoinSeparator
     } = this;
 
-    const bodyLineStringArray = this.bodyLineStringArray;
-    const bodyStringArray = this.bodyStringArray;
+    const bodyFields = this.bodyFields;
+    const tableLines = this.tableLines;
 
     const imageHeader = `${imageHeaderPrefix}: image `
       + `( height, width, depth ) = ( ${height}, ${width}, ${depth} )`;
@@ -164,17 +160,17 @@ class TableLogger_Base {
     let elementValue;
     let valueString;
 
-    bodyStringArray.length = 0;
+    tableLines.length = 0;
     for ( let c = 0; c < depth; ++c ) {
 
       // Separate every channel by channel header (with channel index).
       const channelHeader = `  channel (depth) ${c}:`;
-      bodyStringArray.push( channelHeader );
+      tableLines.push( channelHeader );
 
       elementIndex = c;
 
       for ( let y = 0; y < height; ++y ) {
-        bodyLineStringArray.length = 0;
+        bodyFields.length = 0;
 
         for ( let x = 0; x < width; ++x, elementIndex += depth ) {
           elementValue = dataArray[ elementIndex ];
@@ -184,18 +180,18 @@ class TableLogger_Base {
                 .toFixed( digitCountAfterDecimalPoint )
                 .padStart( characterCountPerField );
 
-          bodyLineStringArray.push( valueString );
+          bodyFields.push( valueString );
         }
 
-        const oneLine = bodyLineStringArray.join( fieldJoinSeparator );
-        bodyStringArray.push( oneLine );
+        const oneLine = bodyFields.join( fieldJoinSeparator );
+        tableLines.push( oneLine );
       }
     }
 
     // Log all lines in one time to avoid logging too quickily. (If log too
     // quickly, some log will be abbreviated.)
-    const bodyText = bodyStringArray.join( lineJoinSeparator );
-    console.log( bodyText );
+    const tableText = tableLines.join( lineJoinSeparator );
+    console.log( tableText );
   }
 
 }
