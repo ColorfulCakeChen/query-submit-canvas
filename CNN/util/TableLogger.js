@@ -178,7 +178,7 @@ class TableLogger_Base {
     tableLines.push( imageHeader );
 
     const channelNumberIndentCount = 2;
-    const channelNumberIndentPrefix = "".repeat( indentCount );
+    const channelNumberIndentPrefix = "".repeat( channelNumberIndentCount );
     const channelNumberDigitCountAfterDecimalPoint = 0; // i.e. integer
     const channelNumberCharacterCount = 2;
 
