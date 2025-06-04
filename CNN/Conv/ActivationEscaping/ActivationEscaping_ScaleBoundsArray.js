@@ -452,7 +452,7 @@ class ScaleBoundsArray extends Recyclable.Root {
   
     const {
       headerPrefixEmpty, characterCountPerField, digitCountAfterDecimalPoint,
-      joinSeparator
+      fieldJoinSeparator
     } = theTableLogger;
 
     let stringArray_header_line_1st = theTableLogger.headerStringArray;
@@ -476,10 +476,10 @@ class ScaleBoundsArray extends Recyclable.Root {
         headerPrefix.padStart( characterCountPerField ) );
 
       // 1.3 Write out the headers to log.
-      const header_line0 = stringArray_header_line_1st.join( joinSeparator );
+      const header_line0 = stringArray_header_line_1st.join( fieldJoinSeparator );
       console.log( header_line0 );
 
-      const header_line1 = stringArray.join( joinSeparator );
+      const header_line1 = stringArray.join( fieldJoinSeparator );
       console.log( header_line1 );
     }
 
@@ -494,7 +494,7 @@ class ScaleBoundsArray extends Recyclable.Root {
           digitCountAfterDecimalPoint,
           rowIndex );
 
-        const body_line = stringArray.join( joinSeparator );
+        const body_line = stringArray.join( fieldJoinSeparator );
         console.log( body_line );
       }
     }

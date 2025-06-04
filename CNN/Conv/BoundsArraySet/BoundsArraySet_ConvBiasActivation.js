@@ -508,7 +508,7 @@ class ConvBiasActivation extends InputsOutputs {
   
     const {
       headerPrefixEmpty, characterCountPerField, digitCountAfterDecimalPoint,
-      joinSeparator
+      fieldJoinSeparator
     } = theTableLogger;
 
     let stringArray_header_line_1st = theTableLogger.headerStringArray;
@@ -556,7 +556,7 @@ class ConvBiasActivation extends InputsOutputs {
         //
         // Its column width is twice as the detail column (with separator).
         const headerPrefix_wideColumn_characterCount = characterCountPerField
-          + joinSeparator.length + characterCountPerField;
+          + fieldJoinSeparator.length + characterCountPerField;
 
         // The header of .bPassThrough (which is not a BoundsArray) uses
         // normal (narrow) column width.
@@ -590,10 +590,10 @@ class ConvBiasActivation extends InputsOutputs {
       }
 
       // 1.3 Write out the headers to log.
-      const header_line0 = stringArray_header_line_1st.join( joinSeparator );
+      const header_line0 = stringArray_header_line_1st.join( fieldJoinSeparator );
       console.log( header_line0 );
 
-      const header_line1 = stringArray.join( joinSeparator );
+      const header_line1 = stringArray.join( fieldJoinSeparator );
       console.log( header_line1 );
     }
 
@@ -628,7 +628,7 @@ class ConvBiasActivation extends InputsOutputs {
           stringArray,
           characterCountPerField, digitCountAfterDecimalPoint, rowIndex );
 
-        const body_line = stringArray.join( joinSeparator );
+        const body_line = stringArray.join( fieldJoinSeparator );
         console.log( body_line );
       }
     }

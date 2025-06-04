@@ -19,19 +19,33 @@ export { TableLogger_Base as Base };
  *   Every returned string (if its original value is a number) should be
  * formatted as so many digits after its decimal point.
  *
- * @member {string} joinSeparator
- *   The separator string when call Array.join() to generate one line (one
- * row) of the table log.
+ * @member {string} fieldJoinSeparator
+ *   The separator string (between field) when call Array.join() to generate
+ * one line (one row) of the table log.
  *
+ * @member {string} lineJoinSeparator
+ *   The separator string (between line) when call Array.join() to generate
+ * all lines of the table log.
+ *
+ *
+ * @member {string[]} headerLineStringArray
+ *   A helper string Array for generating one line of header of log table. It
+ * will be used as the working buffer (so that array recreation is reduced
+ * and performance might be improved).
  *
  * @member {string[]} headerStringArray
- *   A helper string Array for generating log table header. It will be used as
- * the working buffer (so that array recreation is reduced and performance
+ *   A helper string Array for generating header of log table. It will be used
+ * as the working buffer (so that array recreation is reduced and performance
  * might be improved).
  *
+ * @member {string[]} bodyLineStringArray
+ *   A helper string Array for generating one line of body of log table. It
+ * will be used as the working buffer (so that array recreation is reduced
+ * and performance might be improved).
+ *
  * @member {string[]} bodyStringArray
- *   A helper string Array for generating log table body. It will be used as
- * the working buffer (so that array recreation is reduced and performance
+ *   A helper string Array for generating body of log table. It will be used
+ * as the working buffer (so that array recreation is reduced and performance
  * might be improved).
  */
 class TableLogger_Base {
@@ -46,17 +60,23 @@ class TableLogger_Base {
     digitCountAfterDecimalPoint
       = TableLogger_Base.defaultParams.digitCountAfterDecimalPoint,
 
-    joinSeparator
-      = TableLogger_Base.defaultParams.joinSeparator
+    fieldJoinSeparator
+      = TableLogger_Base.defaultParams.fieldJoinSeparator,
+
+    lineJoinSeparator
+      = TableLogger_Base.defaultParams.lineJoinSeparator
   ) {
 
     this.headerPrefixEmpty = TableLogger_Base.defaultParams.headerPrefixEmpty;
 
     this.characterCountPerField = characterCountPerField;
     this.digitCountAfterDecimalPoint = digitCountAfterDecimalPoint;
-    this.joinSeparator = joinSeparator;
+    this.fieldJoinSeparator = fieldJoinSeparator;
+    this.lineJoinSeparator = lineJoinSeparator;
 
+    this.headerLineStringArray = new Array();
     this.headerStringArray = new Array();
+    this.bodyLineStringArray = new Array();
     this.bodyStringArray = new Array();
   }
 
@@ -123,10 +143,14 @@ class TableLogger_Base {
         + `( height, width, depth ) = ( ${height}, ${width}, ${depth} ).`
       );
 
-    const characterCountPerField = this.characterCountPerField;
-    const digitCountAfterDecimalPoint = this.digitCountAfterDecimalPoint;
-    const joinSeparator = this.joinSeparator;
+    const {
+      characterCountPerField,
+      digitCountAfterDecimalPoint,
+      fieldJoinSeparator,
+      lineJoinSeparator
+    } = this;
 
+    const bodyLineStringArray = this.bodyLineStringArray;
     const bodyStringArray = this.bodyStringArray;
 
     const imageHeader = `${imageHeaderPrefix}: image `
@@ -140,16 +164,17 @@ class TableLogger_Base {
     let elementValue;
     let valueString;
 
+    bodyStringArray.length = 0;
     for ( let c = 0; c < depth; ++c ) {
 
       // Separate every channel by channel header (with channel index).
       const channelHeader = `  channel (depth) ${c}:`;
-      console.log( channelHeader );
+      bodyStringArray.push( channelHeader );
 
       elementIndex = c;
 
       for ( let y = 0; y < height; ++y ) {
-        bodyStringArray.length = 0;
+        bodyLineStringArray.length = 0;
 
         for ( let x = 0; x < width; ++x, elementIndex += depth ) {
           elementValue = dataArray[ elementIndex ];
@@ -159,18 +184,18 @@ class TableLogger_Base {
                 .toFixed( digitCountAfterDecimalPoint )
                 .padStart( characterCountPerField );
 
-          bodyStringArray.push( valueString );
+          bodyLineStringArray.push( valueString );
         }
 
-        const oneLine = bodyStringArray.join( joinSeparator );
-        console.log( oneLine );
+        const oneLine = bodyLineStringArray.join( fieldJoinSeparator );
+        bodyStringArray.push( oneLine );
       }
-
-//      console.log( "" ); // Separate every channel by one empty line.
     }
 
-//!!! ...untested... (2025/06/03)
-
+    // Log all lines in one time to avoid logging too quickily. (If log too
+    // quickly, some log will be abbreviated.)
+    const bodyText = bodyStringArray.join( lineJoinSeparator );
+    console.log( bodyText );
   }
 
 }
@@ -191,9 +216,13 @@ TableLogger_Base.defaultParams = {
   // outputting a number to the table log.
   digitCountAfterDecimalPoint: 10,
 
-  // The separator string when call Array.join() to generate one line (one
-  // row) of the table log.
-  joinSeparator: " ",
+  // The separator string (between field) when call Array.join() to generate
+  // one line (one row) of the table log.
+  fieldJoinSeparator: " ",
+
+  // The separator string (between line) when call Array.join() to generate
+  // all lines of the table log.
+  lineJoinSeparator: "\n",
 };
 
 
@@ -203,5 +232,6 @@ TableLogger_Base.defaultParams = {
 TableLogger_Base.Singleton = new TableLogger_Base(
   TableLogger_Base.defaultParams.characterCountPerField,
   TableLogger_Base.defaultParams.digitCountAfterDecimalPoint,
-  TableLogger_Base.defaultParams.joinSeparator
+  TableLogger_Base.defaultParams.fieldJoinSeparator,
+  TableLogger_Base.defaultParams.lineJoinSeparator,
 );
