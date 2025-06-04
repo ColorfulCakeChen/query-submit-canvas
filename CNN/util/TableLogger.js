@@ -212,10 +212,10 @@ class TableLogger_Base {
             .toFixed( digitCountAfterDecimalPoint );
 
           channelHeader += 
-              ` { [ .lower, .upper ], .do.scale, .undo.scale } = { `
-            + `[ ${lowerString}, ${upperString} ], `
-            + `${scaleDoString}, ${scaleUndoString} `
-            + `}`
+              `[ ${lowerString}, ${upperString} ] = `
+            + `[ .lower, .upper ], `
+            + `{ ${scaleDoString}, ${scaleUndoString} }= `
+            + `{ .do.scale, .undo.scale } = `
 
 //!!! (2025/06/04 Remarked) try compact table log channel format.
             // + `[ .lower, .upper ] = [ ${lowerString}, ${upperString} ], `
