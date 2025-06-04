@@ -212,11 +212,10 @@ class TableLogger_Base {
             .toFixed( digitCountAfterDecimalPoint )
             .padStart( characterCountPerField );
 
-          channelHeader += ` { `
+          channelHeader += ` `
             + `[ .lower, .upper ] = [ ${lowerString}, ${upperString} ], `
             + `.do.scale=${scaleDoString}, `
-            + `.undo.scale=${scaleUndoString} `
-            + `}`
+            + `.undo.scale=${scaleUndoString}`
             ;
         }
 

@@ -2001,10 +2001,12 @@ class NumberImage_Base extends Recyclable.Root {
       this.height,
       this.width,
       this.depth,
-      imageHeaderPrefix
+      imageHeaderPrefix,
+      this.boundsArraySet.output0 // Only log .output0 should be enough.
     );
 
-    this.boundsArraySet.TableLog_header_body();
+//!!! (2025/06/04 Remarked) Only log .output0 should be enough.
+//    this.boundsArraySet.TableLog_header_body();
   }
 
   /**
