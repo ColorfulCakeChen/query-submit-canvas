@@ -211,8 +211,8 @@ class TableLogger_Base {
           const scaleUndoString = scaleUndo
             .toFixed( digitCountAfterDecimalPoint );
 
-          channelHeader += 
-              `[ ${lowerString}, ${upperString} ] = `
+          channelHeader += ` `
+            + `[ ${lowerString}, ${upperString} ] = `
             + `[ lower, upper ], `
             + `{ ${scaleDoString}, ${scaleUndoString} } = `
             + `{ do.scale, undo.scale }`
