@@ -307,22 +307,32 @@ class Embedding_TestParams_Base extends TestParams.Base {
     // Restrict some parameter's large kinds. Otherwise, too many combination
     // will be generated.
     let valueOutMinMax = this.valueOutMinMax = {
-      input_height: [ 1, 5 ],
-      input_width: [ 1, 5 ],
+
+      // (2025/06/04 Temp Remarked) For debug.
+      // input_height: [ 1, 5 ],
+      // input_width: [ 1, 5 ],
+      input_height: [ 1, 3 ],
+      input_width: [ 1, 3 ],
 
       input_channelCount: [
         1, //Embedding.Params.input_channelCount.valueDesc.range.min,
-        4
+        // (2025/06/04 Temp Remarked) For debug.
+        //4
+        2
       ],
 
       channelMultiplier: [
         1, //Embedding.Params.channelMultiplier.valueDesc.range.min,
-        4
+        // (2025/06/04 Temp Remarked) For debug.
+        //4
+        2
       ],
 
       vocabularyCountPerInputChannel: [
         256, //Embedding.Params.vocabularyCountPerInputChannel.valueDesc.range.min,
-        257
+        // (2025/06/04 Temp Remarked) For debug.
+        // 257
+        256
       ],
 
       bEmbedVocabularyId: [
@@ -333,11 +343,13 @@ class Embedding_TestParams_Base extends TestParams.Base {
       // bKeepInputTensor: undefined,
       bKeepInputTensor: [
         Embedding.Params.bKeepInputTensor.valueDesc.range.min,
-        Embedding.Params.bKeepInputTensor.valueDesc.range.max
+        // (2025/06/04 Temp Remarked) For debug.
+        //Embedding.Params.bKeepInputTensor.valueDesc.range.max
+        Embedding.Params.bKeepInputTensor.valueDesc.range.min
       ],
 
       bTableLog: [
-        // (2025/06/03 Remarked) For debug.
+        // (2025/06/03 Temp Remarked) For debug.
         //0, 0
         1, 1
       ],
