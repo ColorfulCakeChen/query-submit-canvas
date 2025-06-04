@@ -214,8 +214,8 @@ class TableLogger_Base {
           channelHeader += 
               `[ ${lowerString}, ${upperString} ] = `
             + `[ .lower, .upper ], `
-            + `{ ${scaleDoString}, ${scaleUndoString} }= `
-            + `{ .do.scale, .undo.scale } = `
+            + `{ ${scaleDoString}, ${scaleUndoString} } = `
+            + `{ .do.scale, .undo.scale }`
 
 //!!! (2025/06/04 Remarked) try compact table log channel format.
             // + `[ .lower, .upper ] = [ ${lowerString}, ${upperString} ], `
