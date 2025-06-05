@@ -463,7 +463,7 @@ class Embedding_Reference_Base extends Recyclable.Root {
       channelMultiplier,
       bEmbedVocabularyId,
       bTableLog,
-    } = testParams.out;
+    } = testParamsOut;
 
     let { output_height, output_width, output_channelCount
     } = testParamsOut.inferencedParams;
