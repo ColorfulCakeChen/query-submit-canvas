@@ -662,6 +662,11 @@ class Block_Base extends Recyclable.Root {
 
       let pointwise1;
       try {
+
+
+!!! ...unfinshed... (2025/06/05)
+// Add bTableLog when create every operation.
+
         pointwise1 = Operation.Pointwise_SameWhenPassThrough.Pool
           .get_or_create_by(
             this.operationArray.endingInput0,
