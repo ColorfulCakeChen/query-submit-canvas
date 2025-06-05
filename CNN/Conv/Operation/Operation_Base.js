@@ -325,8 +325,8 @@ let Operation_Base = ( ParentClass = Object ) => class Operation_Base
   }
 
   /**
-   * If .bTableLog is true, log .output0 tensor3d and ScaleBoundsArray as
-   * table.
+   * If .bTableLog is true, log tensor3d and ScaleBoundsArray of .output0
+   * as table.
    */
   TableLog_output0_tensor3d_if_requested() {
     if ( !this.bTableLog )
@@ -336,6 +336,21 @@ let Operation_Base = ( ParentClass = Object ) => class Operation_Base
     const mostDerivedClassName = this.constructor.name;
     const headerPrefix = mostDerivedClassName;
     this.output0.TableLog_header_body( headerPrefix );
+  }
+
+  /**
+   * If .bTableLog is true, log tensor3d and ScaleBoundsArray of .output0
+   * and .output1 as table.
+   */
+  TableLog_output0_output1_tensor3d_if_requested() {
+    if ( !this.bTableLog )
+      return;
+
+    // Prefix with the most derved class name.
+    const mostDerivedClassName = this.constructor.name;
+    const headerPrefix = mostDerivedClassName;
+    this.output0.TableLog_header_body( headerPrefix );
+    this.output1.TableLog_header_body( headerPrefix );
   }
 
 

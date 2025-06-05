@@ -454,7 +454,7 @@ class ConcatShuffleSplit extends Root {
    *   The tensor to be shuffled and splitted.
    */
   static ShuffleSplit_do( inputTensor ) {
-    // Since there is only two output group (i.e. ( outputGroupCount == 2 ) ),
+    // Since there is only two output groups (i.e. ( outputGroupCount == 2 ) ),
     // do not use loop (i.e. use unrolled-loop) so that the performance could
     // be better a little.
 
@@ -465,6 +465,8 @@ class ConcatShuffleSplit extends Root {
       try {
         this.output1.realTensor = tf.conv2d( inputTensor,
           this.channelShuffler.filtersTensor4dArray[ 1 ], 1, "valid" );
+
+        this.TableLog_output0_output1_tensor3d_if_requested();
 
       } catch ( e ) {
         this.output0.realTensor.dispose();
@@ -481,6 +483,7 @@ class ConcatShuffleSplit extends Root {
   /** Just return inputTensor at this.output0.realTensor. */
   static ShuffleSplit_return_input_directly( inputTensor ) {
     this.output0.realTensor = inputTensor;
+    this.TableLog_output0_tensor3d_if_requested(); // Only log .output0
 
     // Do not call inputTensor.dispose(). In fact, because inputTensor is
     // returned directly, it is the same as been disposed already.

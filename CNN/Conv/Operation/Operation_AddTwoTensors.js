@@ -263,10 +263,10 @@ class AddTwoTensors extends Root {
     try {
       this.output0.realTensor
         = tf.add( this.input0.realTensor, this.input1.realTensor );
+      this.TableLog_output0_tensor3d_if_requested();
     } finally {
       this.input1.realTensor.dispose();
     }
-    this.TableLog_output0_tensor3d_if_requested();
   }
 
   /**
@@ -277,10 +277,10 @@ class AddTwoTensors extends Root {
     try {
       this.output0.realTensor
         = tf.add( this.input0.realTensor, this.input1.realTensor );
+      this.TableLog_output0_tensor3d_if_requested();
     } finally {
       this.input0.realTensor.dispose();
     }
-    this.TableLog_output0_tensor3d_if_requested();
   }
 
   /** Add. (Both the inputTensor0 and inputTensor1 will be disposed. */
@@ -288,11 +288,11 @@ class AddTwoTensors extends Root {
     try {
       this.output0.realTensor
         = tf.add( this.input0.realTensor, this.input1.realTensor );
+      this.TableLog_output0_tensor3d_if_requested();
     } finally {
       this.input0.realTensor.dispose();
       this.input1.realTensor.dispose();
     }
-    this.TableLog_output0_tensor3d_if_requested();
   }
 
 }
