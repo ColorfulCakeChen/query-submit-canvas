@@ -56,7 +56,10 @@ let Operation_Base = ( ParentClass = Object ) => class Operation_Base
 // Define class HierarchicalName_Base {
 //      nameParent (to parent HierarchicalName_Base)
 //      name
-//      get name_prefixWith_ParentName_Recursively_cached (concatenated with all container name)
+//      get name_prefixWith_parentName_Recursively_cached (concatenated with all container name)
+//      get name_recursively() { cached }
+//      get name_of_parent() { direct parent name }
+//      get name_of_parent_recursively() { cached }
 // }
 // Let Operation, Block, Stage, NeuralNet iherits from HierarchicalName_Base.
 // Add name, containerBlock ?
