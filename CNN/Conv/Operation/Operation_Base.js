@@ -53,7 +53,8 @@ let Operation_Base = ( ParentClass = Object ) => class Operation_Base
     Operation_Base, Operation_Base.setAsConstructor );
 
 !!! ...unfinshed... (2025/06/05)
-// Add logName, containerBlock ?
+// Add name, containerBlock ?
+// get name_prefixWith_ContainerName_Recursively_cached (concatenated with all container name)
 
   /**
    * This constructor will register this operation as the input
