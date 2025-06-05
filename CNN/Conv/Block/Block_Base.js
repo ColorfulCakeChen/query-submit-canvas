@@ -666,6 +666,7 @@ class Block_Base extends Recyclable.Root {
 
 !!! ...unfinshed... (2025/06/05)
 // Add bTableLog when create every operation.
+// logName, containerBlock ?
 
         pointwise1 = Operation.Pointwise_SameWhenPassThrough.Pool
           .get_or_create_by(
