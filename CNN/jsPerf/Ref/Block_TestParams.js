@@ -537,6 +537,10 @@ class Block_TestParams_Base extends TestParams.Base {
       this.out.inferencedParams.pointwise1ActivationId,
       parametersDesc, pointwiseName );
     io_imageNeedDisposeUniqueStack.push( inputImage );
+
+//!!! ...unfinshed... (2025/06/05)
+// Perhaps, use this.out.bTableLog to log as table.
+
     return result;
   }
 
