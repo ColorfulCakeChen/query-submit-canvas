@@ -70,13 +70,13 @@ class Depthwise extends Base( FiltersArray_BiasesArray(
   /**
    */
   constructor(
-    inputTensorPlaceholder0,
+    inputTensorPlaceholder0, bTableLog,
     AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad,
     bBias, nActivationId, nPassThroughStyleId,
     nHigherHalfDifferent ) {
 
     super(
-      inputTensorPlaceholder0, null, 1,
+      inputTensorPlaceholder0, null, 1, bTableLog,
       inputTensorPlaceholder0.height, inputTensorPlaceholder0.width,
       inputTensorPlaceholder0.channelCount,
       AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad,
@@ -88,13 +88,13 @@ class Depthwise extends Base( FiltersArray_BiasesArray(
 
   /** @override */
   static setAsConstructor(
-    inputTensorPlaceholder0,
+    inputTensorPlaceholder0, bTableLog,
     AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad,
     bBias, nActivationId, nPassThroughStyleId,
     nHigherHalfDifferent ) {
 
     super.setAsConstructor(
-      inputTensorPlaceholder0, null, 1,
+      inputTensorPlaceholder0, null, 1, bTableLog,
       inputTensorPlaceholder0.height, inputTensorPlaceholder0.width,
       inputTensorPlaceholder0.channelCount,
       AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad,

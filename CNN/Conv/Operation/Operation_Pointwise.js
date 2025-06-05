@@ -59,13 +59,13 @@ class Pointwise extends Base( FiltersArray_BiasesArray(
   /**
    */
   constructor(
-    inputTensorPlaceholder0,
+    inputTensorPlaceholder0, bTableLog,
     outputChannelCount, bBias, nActivationId, nPassThroughStyleId,
     nHigherHalfDifferent, outputChannelCount_lowerHalf,
     channelShuffler_inputGroupCount, channelShuffler_outputGroupCount ) {
 
     super(
-      inputTensorPlaceholder0, null, 1,
+      inputTensorPlaceholder0, null, 1, bTableLog,
       inputTensorPlaceholder0.channelCount, outputChannelCount,
       bBias, nActivationId, nPassThroughStyleId,
       nHigherHalfDifferent,
@@ -78,13 +78,13 @@ class Pointwise extends Base( FiltersArray_BiasesArray(
 
   /** @override */
   static setAsConstructor(
-    inputTensorPlaceholder0,
+    inputTensorPlaceholder0, bTableLog,
     outputChannelCount, bBias, nActivationId, nPassThroughStyleId,
     nHigherHalfDifferent, outputChannelCount_lowerHalf,
     channelShuffler_inputGroupCount, channelShuffler_outputGroupCount ) {
 
     super.setAsConstructor(
-      inputTensorPlaceholder0, null, 1,
+      inputTensorPlaceholder0, null, 1, bTableLog,
       inputTensorPlaceholder0.channelCount, outputChannelCount,
       bBias, nActivationId, nPassThroughStyleId,
       nHigherHalfDifferent,

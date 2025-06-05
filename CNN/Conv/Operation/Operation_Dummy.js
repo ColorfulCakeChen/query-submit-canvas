@@ -32,14 +32,20 @@ class Dummy extends Root {
 
   /**
    */
-  constructor( input0, input1, outputTensorCount, ...restArgs ) {
+  constructor(
+    input0, input1, outputTensorCount, bTableLog, ...restArgs ) {
+
     super( input0, input1, outputTensorCount, ...restArgs );
     Dummy.setAsConstructor_self.call( this );
   }
 
   /** @override */
-  static setAsConstructor( input0, input1, outputTensorCount, ...restArgs ) {
-    super.setAsConstructor( input0, input1, outputTensorCount, ...restArgs );
+  static setAsConstructor(
+    input0, input1, outputTensorCount, bTableLog, ...restArgs ) {
+
+    super.setAsConstructor(
+      input0, input1, outputTensorCount, bTableLog, ...restArgs );
+
     Dummy.setAsConstructor_self.call( this );
     return this;
   }

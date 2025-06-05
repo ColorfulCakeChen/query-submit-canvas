@@ -69,7 +69,7 @@ class ConcatShuffleSplit extends Root {
   /**
    */
   constructor(
-    inputTensorPlaceholder0, inputTensorPlaceholder1,
+    inputTensorPlaceholder0, inputTensorPlaceholder1, bTableLog,
     channelShuffler, bShuffleSplit = true,
     bKeepInputTensor0, bKeepInputTensor1
   ) {
@@ -82,10 +82,11 @@ class ConcatShuffleSplit extends Root {
     let outputTensorCount = ( bShouldShuffleSplit ) ? 2 : 1;
 
     super(
-      inputTensorPlaceholder0, inputTensorPlaceholder1, outputTensorCount );
+      inputTensorPlaceholder0, inputTensorPlaceholder1, outputTensorCount,
+      bTableLog );
 
     ConcatShuffleSplit.setAsConstructor_self.call( this,
-      inputTensorPlaceholder0, inputTensorPlaceholder1,
+      inputTensorPlaceholder0, inputTensorPlaceholder1, bTableLog,
       channelShuffler, bShuffleSplit,
       bKeepInputTensor0, bKeepInputTensor1
     );
@@ -93,7 +94,7 @@ class ConcatShuffleSplit extends Root {
 
   /** @override */
   static setAsConstructor(
-    inputTensorPlaceholder0, inputTensorPlaceholder1,
+    inputTensorPlaceholder0, inputTensorPlaceholder1, bTableLog,
     channelShuffler, bShuffleSplit = true,
     bKeepInputTensor0, bKeepInputTensor1
   ) {
@@ -106,10 +107,11 @@ class ConcatShuffleSplit extends Root {
     let outputTensorCount = ( bShouldShuffleSplit ) ? 2 : 1;
 
     super.setAsConstructor(
-      inputTensorPlaceholder0, inputTensorPlaceholder1, outputTensorCount );
+      inputTensorPlaceholder0, inputTensorPlaceholder1, outputTensorCount,
+      bTableLog );
 
     ConcatShuffleSplit.setAsConstructor_self.call( this,
-      inputTensorPlaceholder0, inputTensorPlaceholder1,
+      inputTensorPlaceholder0, inputTensorPlaceholder1, bTableLog,
       channelShuffler, bShuffleSplit,
       bKeepInputTensor0, bKeepInputTensor1
     );
@@ -118,7 +120,7 @@ class ConcatShuffleSplit extends Root {
 
   /** @override */
   static setAsConstructor_self(
-    inputTensorPlaceholder0, inputTensorPlaceholder1,
+    inputTensorPlaceholder0, inputTensorPlaceholder1, bTableLog,
     channelShuffler, bShuffleSplit = true,
     bKeepInputTensor0, bKeepInputTensor1
   ) {

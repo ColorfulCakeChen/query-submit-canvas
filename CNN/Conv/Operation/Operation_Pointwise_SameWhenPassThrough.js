@@ -29,13 +29,13 @@ class Pointwise_SameWhenPassThrough extends Pointwise {
   /**
    */
   constructor(
-    inputTensorPlaceholder0,
+    inputTensorPlaceholder0, bTableLog,
     outputChannelCount, bBias, nActivationId,
     nHigherHalfDifferent, outputChannelCount_lowerHalf,
     channelShuffler_inputGroupCount, channelShuffler_outputGroupCount ) {
 
     super(
-      inputTensorPlaceholder0,
+      inputTensorPlaceholder0, bTableLog,
       outputChannelCount, bBias, nActivationId,
       ValueDesc.PassThroughStyle.Singleton.Ids.PASS_THROUGH_STYLE_FILTER_1_BIAS_0,
       nHigherHalfDifferent, outputChannelCount_lowerHalf,
@@ -46,13 +46,13 @@ class Pointwise_SameWhenPassThrough extends Pointwise {
 
   /** @override */
   static setAsConstructor(
-    inputTensorPlaceholder0,
+    inputTensorPlaceholder0, bTableLog,
     outputChannelCount, bBias, nActivationId,
     nHigherHalfDifferent, outputChannelCount_lowerHalf,
     channelShuffler_inputGroupCount, channelShuffler_outputGroupCount ) {
 
     super.setAsConstructor(
-      inputTensorPlaceholder0,
+      inputTensorPlaceholder0, bTableLog,
       outputChannelCount, bBias, nActivationId,
       ValueDesc.PassThroughStyle.Singleton.Ids.PASS_THROUGH_STYLE_FILTER_1_BIAS_0,
       nHigherHalfDifferent, outputChannelCount_lowerHalf,

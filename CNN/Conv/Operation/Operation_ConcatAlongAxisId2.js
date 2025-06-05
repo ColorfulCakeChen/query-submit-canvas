@@ -45,32 +45,32 @@ class ConcatAlongAxisId2 extends Root {
   /**
    */
   constructor(
-    inputTensorPlaceholder0, inputTensorPlaceholder1,
+    inputTensorPlaceholder0, inputTensorPlaceholder1, bTableLog,
     bKeepInputTensor0, bKeepInputTensor1
   ) {
     super(
-      inputTensorPlaceholder0, inputTensorPlaceholder1, 1 );
+      inputTensorPlaceholder0, inputTensorPlaceholder1, 1, bTableLog );
     ConcatAlongAxisId2.setAsConstructor_self.call( this,
-      inputTensorPlaceholder0, inputTensorPlaceholder1,
+      inputTensorPlaceholder0, inputTensorPlaceholder1, bTableLog,
       bKeepInputTensor0, bKeepInputTensor1 );
   }
 
   /** @override */
   static setAsConstructor(
-    inputTensorPlaceholder0, inputTensorPlaceholder1,
+    inputTensorPlaceholder0, inputTensorPlaceholder1, bTableLog,
     bKeepInputTensor0, bKeepInputTensor1
   ) {
     super.setAsConstructor(
-      inputTensorPlaceholder0, inputTensorPlaceholder1, 1 );
+      inputTensorPlaceholder0, inputTensorPlaceholder1, 1, bTableLog );
     ConcatAlongAxisId2.setAsConstructor_self.call( this,
-      inputTensorPlaceholder0, inputTensorPlaceholder1,
+      inputTensorPlaceholder0, inputTensorPlaceholder1, bTableLog,
       bKeepInputTensor0, bKeepInputTensor1 );
     return this;
   }
 
   /** @override */
   static setAsConstructor_self(
-    inputTensorPlaceholder0, inputTensorPlaceholder1,
+    inputTensorPlaceholder0, inputTensorPlaceholder1, bTableLog,
     bKeepInputTensor0, bKeepInputTensor1
   ) {
     this.bKeepInputTensor0 = bKeepInputTensor0;

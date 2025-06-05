@@ -62,30 +62,40 @@ class TwinArray extends Root {
    */
   constructor(
     inputTensorPlaceholder0, inputTensorPlaceholder1, outputTensorCount,
+    bTableLog,
     ...restArgs ) {
 
     // Note: The real output TensorPlacehoder will be created later as final
     //       operation outputs.
-    super( inputTensorPlaceholder0, inputTensorPlaceholder1, 0, ...restArgs );
+    super( inputTensorPlaceholder0, inputTensorPlaceholder1, 0,
+      bTableLog, ...restArgs );
 
     TwinArray.setAsConstructor_self.call( this,
-      inputTensorPlaceholder0, inputTensorPlaceholder1, outputTensorCount );
+      inputTensorPlaceholder0, inputTensorPlaceholder1, outputTensorCount,
+      bTableLog );
   }
 
   /** @override */
   static setAsConstructor(
     inputTensorPlaceholder0, inputTensorPlaceholder1, outputTensorCount,
+    bTableLog,
     ...restArgs ) {
+
     super.setAsConstructor(
-      inputTensorPlaceholder0, inputTensorPlaceholder1, 0, ...restArgs );
+      inputTensorPlaceholder0, inputTensorPlaceholder1, 0,
+      bTableLog, ...restArgs );
+
     TwinArray.setAsConstructor_self.call( this,
-      inputTensorPlaceholder0, inputTensorPlaceholder1, outputTensorCount );
+      inputTensorPlaceholder0, inputTensorPlaceholder1, outputTensorCount,
+      bTableLog );
+
     return this;
   }
 
   /** @override */
   static setAsConstructor_self(
     inputTensorPlaceholder0, inputTensorPlaceholder1, outputTensorCount,
+    bTableLog,
     ...restArgs ) {
 
     // In order to handle keep-input-flag correctly (even if no sub operation
@@ -213,7 +223,7 @@ class TwinArray extends Root {
    * setKeepInputTensor_IfNotFinalOperation_Or_In() according to
    * bKeepInputTensor0 and bKeepInputTensor1.
    *
-   * Note: After all .operation_append() are called and  before .apply() is
+   * Note: After all .operation_append() are called and before .apply() is
    *       called, this .setKeepInputTensor() should be called to configure
    *       all sub operation's .apply correctly.
    *
