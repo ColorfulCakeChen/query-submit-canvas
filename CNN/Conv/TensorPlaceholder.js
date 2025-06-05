@@ -2,6 +2,7 @@ export { TensorPlaceholder_Base as Base };
 
 import * as Pool from "../util/Pool.js";
 import * as Recyclable from "../util/Recyclable.js";
+import * as TableLogger from "../util/TableLogger.js";
 import * as ActivationEscaping from "./ActivationEscaping.js";
 
 /**
@@ -177,6 +178,20 @@ class TensorPlaceholder_Base extends Recyclable.Root {
       return false;
 
     return true;
+  }
+
+  /**
+   * Log .realTensor and .scaleBoundsArray of this object as a table.
+   *
+   * @param {string} headerPrefix
+   *   A string will be logged before the tensor.
+   */
+  TableLog_header_body( headerPrefix ) {
+    TableLogger.Base.Singleton.log_tensor3d_along_depth(
+      this.realTensor,
+      headerPrefix,
+      this.scaleBoundsArray
+    );
   }
 
 }

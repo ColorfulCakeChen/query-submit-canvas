@@ -592,6 +592,9 @@ class Stage_Base extends Recyclable.Root {
       // Shortcut to the last block.
       this.blockLast = this.blockArray[ this.blockArray.length - 1 ];
 
+//!!! ...unfinished... (2025/06/05)
+// Should only when ( !bTableLog ), dispose intermediate ScaleBoundsArray.
+
 //!!! (2022/08/03 Temp Remarked) For debug.
       // Release all intermediate blocks' bounds array set for reducing memory
       // footprint.

@@ -1079,6 +1079,10 @@ class Block_Base extends Recyclable.Root {
 
     // 10.3 Reduce memory footprint by releasing unused (intermediate) bounds
     //      array set.
+
+//!!! ...unfinished... (2025/06/05)
+// Should only when ( !bTableLog ), dispose intermediate ScaleBoundsArray.
+
 //!!! (2022/08/03 Temp Remarked) For debug.
     this.dispose_intermediate_ScaleBoundsArray();
 

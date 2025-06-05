@@ -48,7 +48,7 @@ import { InferencedParams } from "./Embedding_InferencedParams.js";
  *   If true, apply() will not dispose inputTensor (i.e. will be kept).
  *
  * @member {boolean} bTableLog
- *   If true, the process and result will be log to console as table (for
+ *   If true, the process and result will be logged to console as table (for
  * debug).
  *
  * @member {InferencedParams} inferencedParams

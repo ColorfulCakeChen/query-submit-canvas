@@ -1990,7 +1990,7 @@ class NumberImage_Base extends Recyclable.Root {
   }
 
   /**
-   * Log .dataArray and .boundsArraySet of this object as a table.
+   * Log .dataArray and .boundsArraySet.output0 of this object as a table.
    *
    * @param {string} imageHeaderPrefix
    *   A string will be logged before the image header.

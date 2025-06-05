@@ -435,6 +435,9 @@ class NeuralNet_Base extends Recyclable.Root {
           = blockFinal.output0_scaleBoundsArray;
       }
 
+//!!! ...unfinished... (2025/06/05)
+// Should only when ( !bTableLog ), dispose intermediate ScaleBoundsArray.
+
       // Release all intermediate stages' bounds array set for reducing memory
       // footprint.
       this.dispose_intermediate_ScaleBoundsArray();

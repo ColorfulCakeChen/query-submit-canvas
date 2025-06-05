@@ -29,6 +29,13 @@ import * as TensorPlaceholder from "../TensorPlaceholder.js";
  * output. It is only created by constructor if outputTensorCount (of
  * constructor) is >= 2.
  *
+
+!!! ...unfinished... (2025/06/05)
+
+ * @member {boolean} bTableLog
+ *   If true, the process and result will be logged to console as table (for
+ * debug).
+ *
  * @member {function} apply
  *   This is a data member which is a pointer to a function. The function
  * processes .input0.realTensor (and .input1.realTensor) as inputTensor(s). It
@@ -294,9 +301,10 @@ let Operation_Base = ( ParentClass = Object ) => class Operation_Base
    * always return false.
    *
    * @return {boolean}
-   *   If the aTensorPlaceholder is .input0 or .input1 or .output0 or .output1,
-   * return true. If a .inputX and .outputX is undefined, it will be skipped
-   * (i.e. not be compared).
+   *   - If one of the .input0 or .input1 or .output0 or .output1 (of this
+   *       Operation.Base object) is the aTensorPlaceholder, return true.
+   *   - If a .inputX and .outputX (of this Operation.Base object) is
+   *       undefined, it will be skipped (i.e. not be compared).
    */
   is_inputs_outputs_byTensorPlaceholder( aTensorPlaceholder ) {
     if ( !aTensorPlaceholder )
