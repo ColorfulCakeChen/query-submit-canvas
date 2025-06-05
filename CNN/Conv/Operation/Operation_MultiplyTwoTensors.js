@@ -258,6 +258,7 @@ class MultiplyTwoTensors extends Root {
   static Multiply_and_keep0_keep1() {
     this.output0.realTensor
       = tf.mul( this.input0.realTensor, this.input1.realTensor );
+    this.TableLog_output0_tensor3d_if_requested();
   }
 
   /**
@@ -268,6 +269,7 @@ class MultiplyTwoTensors extends Root {
     try {
       this.output0.realTensor
         = tf.mul( this.input0.realTensor, this.input1.realTensor );
+      this.TableLog_output0_tensor3d_if_requested();
     } finally {
       this.input1.realTensor.dispose();
     }
@@ -281,6 +283,7 @@ class MultiplyTwoTensors extends Root {
     try {
       this.output0.realTensor
         = tf.mul( this.input0.realTensor, this.input1.realTensor );
+      this.TableLog_output0_tensor3d_if_requested();
     } finally {
       this.input0.realTensor.dispose();
     }
@@ -291,6 +294,7 @@ class MultiplyTwoTensors extends Root {
     try {
       this.output0.realTensor
         = tf.mul( this.input0.realTensor, this.input1.realTensor );
+      this.TableLog_output0_tensor3d_if_requested();
     } finally {
       this.input0.realTensor.dispose();
       this.input1.realTensor.dispose();
