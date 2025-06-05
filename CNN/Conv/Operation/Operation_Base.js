@@ -54,9 +54,9 @@ let Operation_Base = ( ParentClass = Object ) => class Operation_Base
 
 !!! ...unfinshed... (2025/06/05)
 // Define class HierarchicalName_Base {
-//      nameContainer (to parent HierarchicalName_Base)
+//      nameOwner (to parent HierarchicalName_Base)
 //      name
-//      get name_prefixWith_ContainerName_Recursively_cached (concatenated with all container name)
+//      get name_prefixWith_OwnerName_Recursively_cached (concatenated with all container name)
 // }
 // Let Operation, Block, Stage, NeuralNet iherits from HierarchicalName_Base.
 // Add name, containerBlock ?
