@@ -29,9 +29,6 @@ import * as TensorPlaceholder from "../TensorPlaceholder.js";
  * output. It is only created by constructor if outputTensorCount (of
  * constructor) is >= 2.
  *
-
-!!! ...unfinished... (2025/06/05)
-
  * @member {boolean} bTableLog
  *   If true, the process and result will be logged to console as table (for
  * debug).
@@ -66,24 +63,28 @@ let Operation_Base = ( ParentClass = Object ) => class Operation_Base
    *   If 0, no this.outputX will be created. If 1, only the this.output0 will
    * be created. If 2, both the this.output0 and this.output1 will be created.
    */
-  constructor( input0, input1, outputTensorCount, ...restArgs ) {
+  constructor(
+    input0, input1, outputTensorCount, bTableLog, ...restArgs ) {
+
     // All other arguments passed to parent class's constructor.
     super( ...restArgs );
     Operation_Base.setAsConstructor_self.call( this,
-      input0, input1, outputTensorCount, ...restArgs );
+      input0, input1, outputTensorCount, bTableLog, ...restArgs );
   }
 
   /** @override */
-  static setAsConstructor( input0, input1, outputTensorCount, ...restArgs ) {
+  static setAsConstructor(
+    input0, input1, outputTensorCount, bTableLog, ...restArgs ) {
+
     super.setAsConstructor.apply( this, restArgs );
     Operation_Base.setAsConstructor_self.call( this,
-      input0, input1, outputTensorCount, ...restArgs );
+      input0, input1, outputTensorCount, bTableLog, ...restArgs );
     return this;
   }
 
   /** @override */
   static setAsConstructor_self(
-    input0, input1, outputTensorCount, ...restArgs ) {
+    input0, input1, outputTensorCount, bTableLog, ...restArgs ) {
 
     // 1. Set and register as the input TensorPlaceholder's final user.
     Operation_Base.set_inputTensorPlaceholder0_inputTensorPlaceholder1
@@ -120,7 +121,10 @@ let Operation_Base = ( ParentClass = Object ) => class Operation_Base
       }
     }
 
-    // 3. this.apply
+    // 3.
+    this.bTableLog = bTableLog;
+
+    // 4. this.apply
     //
     // Note: In this Operation.Base object, there is no this.apply definition.
     //       Sub-class should define it.
