@@ -449,7 +449,7 @@ class Stage_Base extends Recyclable.Root {
 
       // Get parameters' real (adjusted) values.
       //
-      // Do not keep params in this.params for reducing memory usage.
+      // Do not keep params in this.params. Copy them to reduce memory usage.
       this.input_height = params.input_height;
       this.input_width = params.input_width;
       this.input_channelCount = params.input_channelCount;

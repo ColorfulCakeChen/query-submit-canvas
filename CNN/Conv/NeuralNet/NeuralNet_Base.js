@@ -220,7 +220,7 @@ class NeuralNet_Base extends Recyclable.Root {
 
       // Get parameters' real (adjusted) values.
       //
-      // Do not keep params in this.params for reducing memory usage.
+      // Do not keep params in this.params. Copy them to reduce memory usage.
       this.explicit_input_height = params.explicit_input_height;
       this.explicit_input_width = params.explicit_input_width;
       this.explicit_input_channelCount = params.explicit_input_channelCount;

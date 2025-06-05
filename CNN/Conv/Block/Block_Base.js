@@ -478,7 +478,7 @@ class Block_Base extends Recyclable.Root {
 
       // Get parameters' real (adjusted) values.
       //
-      // Do not keep params in this.params for reducing memory usage.
+      // Do not keep params in this.params. Copy them to reduce memory usage.
       this.input0_height = params.input0_height;
       this.input0_width = params.input0_width;
       this.input0_channelCount = params.input0_channelCount;
@@ -548,13 +548,11 @@ class Block_Base extends Recyclable.Root {
       this.bSqueezeExcitationPrefix
         = params.bSqueezeExcitationPrefix;
 
-      this.nActivationId
-        = params.nActivationId;
-      this.nActivationName
-        = params.nActivationName;
+      this.nActivationId = params.nActivationId;
+      this.nActivationName = params.nActivationName;
 
-      this.bKeepInputTensor
-        = params.bKeepInputTensor;
+      this.bKeepInputTensor = params.bKeepInputTensor;
+      this.bTableLog = params.bTableLog;
 
       // The parameters which are inferenced from the above parameters.
       {
@@ -1077,14 +1075,11 @@ class Block_Base extends Recyclable.Root {
     this.operationArray.setKeepInputTensor(
       this.bKeepInputTensor, this.bKeepInputTensor )
 
-    // 10.3 Reduce memory footprint by releasing unused (intermediate) bounds
-    //      array set.
-
-//!!! ...unfinished... (2025/06/05)
-// Should only when ( !bTableLog ), dispose intermediate ScaleBoundsArray.
-
-//!!! (2022/08/03 Temp Remarked) For debug.
-    this.dispose_intermediate_ScaleBoundsArray();
+    // 10.3 If no need for table log (i.e. no need for debug), reduce memory
+    //      footprint by releasing unused (intermediate) bounds array set.
+    if ( !bTableLog ) {
+      this.dispose_intermediate_ScaleBoundsArray();
+    }
 
     // 10.4
     // All pointwise1-depthwise-pointwise2 filters was ready. Report progress.
@@ -1199,6 +1194,82 @@ class Block_Base extends Recyclable.Root {
     }
 
     // 6.
+
+    // The parameters which are inferenced from the other parameters.
+    {
+      this.outputTensorCount = undefined;
+
+      this.squeezeExcitationActivationName = undefined;
+      this.squeezeExcitationActivationId = undefined;
+
+      this.pointwise21ActivationName = undefined;
+      this.pointwise21ActivationId = undefined;
+      this.pointwise21Bias = undefined;
+      this.pointwise21ChannelCount = undefined;
+
+      this.bHigherHalfDepthwise2 = undefined;
+      this.bHigherHalfDifferent = undefined;
+      this.bConcat2ShuffleSplitRequested = undefined;
+      this.bAddInputToOutputRequested = undefined;
+      this.bConcat1Requested = undefined;
+      this.bDepthwise2Requested = undefined;
+
+      this.bDepthwiseRequestedAndNeeded = undefined;
+
+      this.input1_channelCount = undefined;
+      this.input1_width = undefined;
+      this.input1_height = undefined;
+
+      this.inputTensorCount = undefined;
+    }
+
+    this.bTableLog = undefined;
+    this.bKeepInputTensor = undefined;
+
+    this.nActivationName = undefined;
+    this.nActivationId = undefined;
+
+    this.bSqueezeExcitationPrefix = undefined;
+    this.nSqueezeExcitationChannelCountDivisorName = undefined;
+    this.nSqueezeExcitationChannelCountDivisor = undefined;
+
+    this.pointwise20_channelShuffler_outputGroupCount = undefined;
+    this.pointwise20_outputChannelCount_lowerHalf = undefined;
+    this.pointwise20_nHigherHalfDifferent = undefined;
+    this.pointwise20ActivationName = undefined;
+    this.pointwise20ActivationId = undefined;
+    this.pointwise20Bias = undefined;
+    this.pointwise20ChannelCount = undefined;
+
+    this.depthwise1_inputChannelCount_lowerHalf = undefined;
+    this.depthwise1_nHigherHalfDifferent = undefined;
+    this.depthwiseActivationName = undefined;
+    this.depthwiseActivationId = undefined;
+    this.depthwiseBias = undefined;
+    this.depthwiseStridesPadName = undefined;
+    this.depthwiseStridesPad = undefined;
+    this.depthwiseFilterWidth = undefined;
+    this.depthwiseFilterHeight = undefined;
+    this.depthwise_AvgMax_Or_ChannelMultiplier_Name = undefined;
+    this.depthwise_AvgMax_Or_ChannelMultiplier = undefined;
+
+    this.pointwise1_outputChannelCount_lowerHalf = undefined;
+    this.pointwise1_inputChannelCount_higherHalf = undefined;
+    this.pointwise1_inputChannelCount_lowerHalf = undefined;
+    this.pointwise1_nHigherHalfDifferent = undefined;
+    this.pointwise1ActivationName = undefined;
+    this.pointwise1ActivationId = undefined;
+    this.pointwise1Bias = undefined;
+    this.pointwise1ChannelCount = undefined;
+
+    this.nConvBlockTypeName = undefined;
+    this.nConvBlockTypeId = undefined;
+
+    this.input0_channelCount = undefined;
+    this.input0_width = undefined;
+    this.input0_height = undefined;
+
+    // 7.
     this.weightElementOffsetBegin = this.weightElementOffsetEnd = -1;
     this.bInitOk = false;
 
@@ -1873,8 +1944,9 @@ class Block_Base extends Recyclable.Root {
 
       + `outputTensorCount=${this.outputTensorCount}, `
 
-      + `bKeepInputTensor=${this.bKeepInputTensor}`
-    ;
+      + `bKeepInputTensor=${this.bKeepInputTensor}, `
+      + `bTableLog=${this.bTableLog}`
+      ;
     return str;
   }
 
