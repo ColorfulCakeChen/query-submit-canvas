@@ -325,6 +325,21 @@ let Operation_Base = ( ParentClass = Object ) => class Operation_Base
   }
 
   /**
+   * If .bTableLog is true, log .output0 tensor3d and ScaleBoundsArray as
+   * table.
+   */
+  TableLog_output0_tensor3d_if_requested() {
+    if ( !this.bTableLog )
+      return;
+
+    // Prefix with the most derved class name.
+    const mostDerivedClassName = this.constructor.name;
+    const headerPrefix = mostDerivedClassName;
+    this.output0.TableLog_header_body( headerPrefix );
+  }
+
+
+  /**
    * Sub-class should override this property.
    *
    * @return {number}

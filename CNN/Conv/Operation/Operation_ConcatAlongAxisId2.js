@@ -252,6 +252,7 @@ class ConcatAlongAxisId2 extends Root {
     this.inputTensors[ 0 ] = this.input0.realTensor;
     this.inputTensors[ 1 ] = this.input1.realTensor;
     this.output0.realTensor = tf.concat( this.inputTensors, 2 ); // AxisId = 2
+    this.TableLog_output0_tensor3d_if_requested();
   }
 
   /**
@@ -266,6 +267,7 @@ class ConcatAlongAxisId2 extends Root {
     } finally {
       this.input1.realTensor.dispose();
     }
+    this.TableLog_output0_tensor3d_if_requested();
   }
 
   /**
@@ -280,6 +282,7 @@ class ConcatAlongAxisId2 extends Root {
     } finally {
       this.input0.realTensor.dispose();
     }
+    this.TableLog_output0_tensor3d_if_requested();
   }
 
   /**
@@ -294,6 +297,7 @@ class ConcatAlongAxisId2 extends Root {
       this.input0.realTensor.dispose();
       this.input1.realTensor.dispose();
     }
+    this.TableLog_output0_tensor3d_if_requested();
   }
 
 }

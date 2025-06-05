@@ -117,19 +117,6 @@ class AddTwoTensors extends Root {
     AddTwoTensors.adjust_pfn.call( this );
   }
 
-  /**
-   * If .bTableLog is true, log .output0 tensor3d and ScaleBoundsArray as
-   * table.
-   */
-  TableLog_output0_tensor3d_if_requested() {
-    if ( !this.bTableLog )
-      return;
-
-    const mostDerivedClassName = this.constructor.name;
-    const headerPrefix = mostDerivedClassName;
-    this.output0.TableLog_header_body( headerPrefix );
-  }
-
 
   /** Set this.apply according to this.bKeepInputTensor0 and
    * this.bKeepInputTensor1. */
