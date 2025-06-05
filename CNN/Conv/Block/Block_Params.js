@@ -385,6 +385,10 @@ class Block_Params extends Weights.Params( ParamsBase ) {
    * image should be shared across many neural networks. If it is null, it
    * will be extracted from inputWeightArray (i.e. by evolution).
    *
+   * @param {boolean} bTableLog
+   *   If true, the process and result will be logged to console as table (for
+   * debug).
+   *
    */
   constructor(
     input0_height, input0_width, input0_channelCount,
@@ -396,7 +400,8 @@ class Block_Params extends Weights.Params( ParamsBase ) {
     pointwise20ChannelCount, pointwise20ActivationId,
     nSqueezeExcitationChannelCountDivisor, bSqueezeExcitationPrefix,
     nActivationId,
-    bKeepInputTensor
+    bKeepInputTensor,
+    bTableLog
   ) {
     super(
       Block_Params.SequenceArray,
@@ -409,7 +414,8 @@ class Block_Params extends Weights.Params( ParamsBase ) {
       pointwise20ChannelCount, pointwise20ActivationId,
       nSqueezeExcitationChannelCountDivisor, bSqueezeExcitationPrefix,
       nActivationId,
-      bKeepInputTensor
+      bKeepInputTensor,
+      bTableLog
     );
     Block_Params.setAsConstructor_self.call( this );
   }
@@ -425,7 +431,8 @@ class Block_Params extends Weights.Params( ParamsBase ) {
     pointwise20ChannelCount, pointwise20ActivationId,
     nSqueezeExcitationChannelCountDivisor, bSqueezeExcitationPrefix,
     nActivationId,
-    bKeepInputTensor
+    bKeepInputTensor,
+    bTableLog
   ) {
     super.setAsConstructor(
       Block_Params.SequenceArray,
@@ -438,7 +445,8 @@ class Block_Params extends Weights.Params( ParamsBase ) {
       pointwise20ChannelCount, pointwise20ActivationId,
       nSqueezeExcitationChannelCountDivisor, bSqueezeExcitationPrefix,
       nActivationId,
-      bKeepInputTensor
+      bKeepInputTensor,
+      bTableLog
     );
     Block_Params.setAsConstructor_self.call( this );
     return this;
@@ -499,6 +507,8 @@ class Block_Params extends Weights.Params( ParamsBase ) {
         = this.getParamValue_byParamDesc( Block_Params.nActivationId );
       this.bKeepInputTensor
         = this.getParamValue_byParamDesc( Block_Params.bKeepInputTensor );
+      this.bTableLog
+        = this.getParamValue_byParamDesc( Block_Params.bTableLog );
     }
 
     this.inferencedParams_create();
@@ -598,6 +608,9 @@ Block_Params.nActivationId
 Block_Params.bKeepInputTensor
   = new ParamDesc.Bool(               "bKeepInputTensor" );
 
+Block_Params.bTableLog
+  = new ParamDesc.Bool(               "bTableLog" );
+
 
 /**
  * Define the order of these parameters. (Fills ParamDesc.Xxx.seqId according
@@ -620,4 +633,5 @@ Block_Params.SequenceArray = new ParamDesc.SequenceArray( [
   Block_Params.bSqueezeExcitationPrefix,
   Block_Params.nActivationId,
   Block_Params.bKeepInputTensor,
+  Block_Params.bTableLog,
 ] );

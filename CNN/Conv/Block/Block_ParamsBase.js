@@ -33,7 +33,8 @@ class Block_ParamsBase extends Recyclable.Root {
     pointwise20ChannelCount, pointwise20ActivationId,
     nSqueezeExcitationChannelCountDivisor, bSqueezeExcitationPrefix,
     nActivationId,
-    bKeepInputTensor
+    bKeepInputTensor,
+    bTableLog
   ) {
     super();
     Block_ParamsBase.setAsConstructor_self.call( this,
@@ -46,7 +47,8 @@ class Block_ParamsBase extends Recyclable.Root {
       pointwise20ChannelCount, pointwise20ActivationId,
       nSqueezeExcitationChannelCountDivisor, bSqueezeExcitationPrefix,
       nActivationId,
-      bKeepInputTensor
+      bKeepInputTensor,
+      bTableLog
     );
   }
 
@@ -61,7 +63,8 @@ class Block_ParamsBase extends Recyclable.Root {
     pointwise20ChannelCount, pointwise20ActivationId,
     nSqueezeExcitationChannelCountDivisor, bSqueezeExcitationPrefix,
     nActivationId,
-    bKeepInputTensor
+    bKeepInputTensor,
+    bTableLog
   ) {
     super.setAsConstructor();
     Block_ParamsBase.setAsConstructor_self.call( this,
@@ -74,7 +77,8 @@ class Block_ParamsBase extends Recyclable.Root {
       pointwise20ChannelCount, pointwise20ActivationId,
       nSqueezeExcitationChannelCountDivisor, bSqueezeExcitationPrefix,
       nActivationId,
-      bKeepInputTensor
+      bKeepInputTensor,
+      bTableLog
     );
     return this;
   }
@@ -90,7 +94,8 @@ class Block_ParamsBase extends Recyclable.Root {
     pointwise20ChannelCount, pointwise20ActivationId,
     nSqueezeExcitationChannelCountDivisor, bSqueezeExcitationPrefix,
     nActivationId,
-    bKeepInputTensor
+    bKeepInputTensor,
+    bTableLog
   ) {
     this.input0_height = input0_height;
     this.input0_width = input0_width;
@@ -110,6 +115,7 @@ class Block_ParamsBase extends Recyclable.Root {
     this.bSqueezeExcitationPrefix = bSqueezeExcitationPrefix;
     this.nActivationId = nActivationId;
     this.bKeepInputTensor = bKeepInputTensor;
+    this.bTableLog = bTableLog;
   }
 
   /** @override */
@@ -135,6 +141,7 @@ class Block_ParamsBase extends Recyclable.Root {
     this.bSqueezeExcitationPrefix = undefined;
     this.nActivationId = undefined;
     this.bKeepInputTensor = undefined;
+    this.bTableLog = undefined;
 
     super.disposeResources();
   }
@@ -302,6 +309,8 @@ class Block_ParamsBase extends Recyclable.Root {
         + `(${this.nSqueezeExcitationChannelCountDivisor}), `
 
       + `bKeepInputTensor=${this.bKeepInputTensor}, `
+      + `bTableLog=${this.bTableLog}, `
+
       + `inferencedParams={ ${this.inferencedParams} }`
     ;
 
