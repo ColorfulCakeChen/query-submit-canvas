@@ -100,7 +100,8 @@ class Block_TestParams_Base extends TestParams.Base {
       aParamsBase.nSqueezeExcitationChannelCountDivisor,
       aParamsBase.bSqueezeExcitationPrefix,
       aParamsBase.nActivationId,
-      aParamsBase.bKeepInputTensor
+      aParamsBase.bKeepInputTensor,
+      aParamsBase.bTableLog
     );
   }
 
@@ -123,7 +124,8 @@ class Block_TestParams_Base extends TestParams.Base {
     pointwise20ChannelCount, pointwise20ActivationId,
     nSqueezeExcitationChannelCountDivisor, bSqueezeExcitationPrefix,
     nActivationId,
-    bKeepInputTensor
+    bKeepInputTensor,
+    bTableLog
   ) {
     if ( this.out ) {
       this.out.disposeResources_and_recycleToPool();
@@ -140,7 +142,8 @@ class Block_TestParams_Base extends TestParams.Base {
       pointwise20ChannelCount, pointwise20ActivationId,
       nSqueezeExcitationChannelCountDivisor, bSqueezeExcitationPrefix,
       nActivationId,
-      bKeepInputTensor
+      bKeepInputTensor,
+      bTableLog
     );
 
     // So that all parameters are by specified (none is by evolution).
@@ -314,11 +317,6 @@ class Block_TestParams_Base extends TestParams.Base {
       input0_channelCount: [ 2, 4 ],
       // input0_channelCount: [ 3, 3 ], //[ 3, 4 ],
 
-//!!! (2022/07/06 Temp Remarked) For speed-up debug.
-      // nConvBlockTypeId: [
-      //   Block.Params.nConvBlockTypeId.valueDesc.range.min,
-      //   Block.Params.nConvBlockTypeId.valueDesc.range.max
-      // ],
 //!!! (2022/07/06 Temp Added and Remarked) For speed-up debug.
       nConvBlockTypeId: [
         Block.Params.nConvBlockTypeId.valueDesc.range.min,
@@ -343,15 +341,17 @@ class Block_TestParams_Base extends TestParams.Base {
       ],
 
 //!!! (2022/07/11 Temp Remarked) For speed-up debug.
-      pointwise1ChannelCount: [ 0, 2 ],
-      // pointwise1ChannelCount: [ 0, 0 ],
-      // pointwise1ChannelCount: [ 0, 8 ],
-      // pointwise1ChannelCount: [ 1, 1 ],
-      // pointwise1ChannelCount: [ 3, 3 ],
+      pointwise1ChannelCount:
+        [ 0, 2 ],
+      // [ 0, 0 ],
+      // [ 0, 8 ],
+      // [ 1, 1 ],
+      // [ 3, 3 ],
 
-      pointwise20ChannelCount: [ 1, 3 ],
-      // pointwise20ChannelCount: [ 1, 8 ],
-      // pointwise20ChannelCount: [ 2, 2 ],
+      pointwise20ChannelCount:
+        [ 1, 3 ],
+      // [ 1, 8 ],
+      // [ 2, 2 ],
 
 //!!! (2022/07/07 Temp Remarked) For speed up debug.
       depthwise_AvgMax_Or_ChannelMultiplier: [
@@ -369,10 +369,14 @@ class Block_TestParams_Base extends TestParams.Base {
 //!!! (2022/08/04 Temp Remarked) For debug neural net (only use 3x3).
       depthwiseFilterHeight: [
         Block.Params.depthwiseFilterHeight.valueDesc.range.min,
-        depthwiseFilterMaxSize ],
+        depthwiseFilterMaxSize
+      ],
+
       depthwiseFilterWidth: [
         Block.Params.depthwiseFilterWidth.valueDesc.range.min,
-        depthwiseFilterMaxSize ],
+        depthwiseFilterMaxSize
+      ],
+
       // depthwiseFilterHeight: [ 3, 3 ],
       // depthwiseFilterWidth: [ 3, 3 ],
       // depthwiseFilterHeight: [ 3, 3 ],
@@ -385,8 +389,6 @@ class Block_TestParams_Base extends TestParams.Base {
       //       exist when ( strides = 2, pad = "same" ) or ( pad = "valid" ) in
       //       those platforms.
       //
-//      depthwiseStridesPad: undefined,
-//!!! (2022/05/01 Temp Remarked) For debug (mobile phone).
       depthwiseStridesPad: [
         Block.Params.depthwiseStridesPad.valueDesc.range.min,
         Block.Params.depthwiseStridesPad.valueDesc.range.max
@@ -411,51 +413,42 @@ class Block_TestParams_Base extends TestParams.Base {
         // [ ValueDesc.ActivationFunction.Singleton.range.min + 1,
         //   ValueDesc.ActivationFunction.Singleton.range.min + 1 ],
 
-      bSqueezeExcitationPrefix:
-        // undefined,
-        [ ValueDesc.Bool.Singleton.range.min,
-           ValueDesc.Bool.Singleton.range.max ],
-        // [ ValueDesc.Bool.Singleton.range.min,
-        //   ValueDesc.Bool.Singleton.range.min ],
-        // [ ValueDesc.Bool.Singleton.range.max,
-        //   ValueDesc.Bool.Singleton.range.max ],
+      bSqueezeExcitationPrefix: [
+        ValueDesc.Bool.Singleton.range.min,
+        ValueDesc.Bool.Singleton.range.max
+      ],
 
-      // nSqueezeExcitationChannelCountDivisor: undefined,
       nSqueezeExcitationChannelCountDivisor: [
         ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.range.min,
         3
       ],
-      // nSqueezeExcitationChannelCountDivisor: [
-      //   0,
-      //   0
-      // ],
 
-      pointwise20ActivationId:
-        // undefined,
-        [ ValueDesc.ActivationFunction.Singleton.range.min + 0,
-          ValueDesc.ActivationFunction.Singleton.range.min + 1 ],
-        // [ ValueDesc.ActivationFunction.Singleton.range.min + 0,
-        //   ValueDesc.ActivationFunction.Singleton.range.min + 0 ],
-        // [ ValueDesc.ActivationFunction.Singleton.range.min + 1,
-        //   ValueDesc.ActivationFunction.Singleton.range.min + 1 ],
+      pointwise20ActivationId: [
+        ValueDesc.ActivationFunction.Singleton.range.min + 0,
+        ValueDesc.ActivationFunction.Singleton.range.min + 1
+      ],
 
       // Because the logic of bias and activation function is simpler than
       // other, it could be just randomly tested once (i.e. ( undefined )) for
       // speeding up testing.
  
-      nActivationId:
-        // undefined,
-        [ ValueDesc.ActivationFunction.Singleton.range.min + 0,
-          ValueDesc.ActivationFunction.Singleton.range.min + 1 ],
-        // [ ValueDesc.ActivationFunction.Singleton.range.min + 0,
-        //   ValueDesc.ActivationFunction.Singleton.range.min + 0 ],
-        // [ ValueDesc.ActivationFunction.Singleton.range.min + 1,
-        //   ValueDesc.ActivationFunction.Singleton.range.min + 1 ],
+      nActivationId: [
+        ValueDesc.ActivationFunction.Singleton.range.min + 0,
+        ValueDesc.ActivationFunction.Singleton.range.min + 1
+      ],
 
-      bKeepInputTensor:
-        undefined,
-        // [ ValueDesc.Bool.Singleton.range.min,
-        //   ValueDesc.Bool.Singleton.range.max ],
+      bKeepInputTensor: [
+        Block.Params.bKeepInputTensor.valueDesc.range.min,
+        // (2025/06/04 Temp Remarked) For debug.
+        Block.Params.bKeepInputTensor.valueDesc.range.max
+        //Block.Params.bKeepInputTensor.valueDesc.range.min
+      ],
+
+      bTableLog: [
+        // (2025/06/04 Temp Remarked) For debug.
+        //0, 0
+        1, 1
+      ],
     };
 
     // All the parameters to be tried.
@@ -493,6 +486,9 @@ class Block_TestParams_Base extends TestParams.Base {
 
       new TestParams.ParamDescConfig( Block.Params.bKeepInputTensor,
         valueOutMinMax.bKeepInputTensor ),
+
+      new TestParams.ParamDescConfig( Block.Params.bTableLog,
+        valueOutMinMax.bTableLog ),
 
       new TestParams.ParamDescConfig( Block.Params.nConvBlockTypeId,
         valueOutMinMax.nConvBlockTypeId ),
@@ -1922,6 +1918,7 @@ Block_TestParams_Base.paramsNameOrderArray = [
   Block.Params.nActivationId.paramName,
 
   Block.Params.bKeepInputTensor.paramName,
+  Block.Params.bTableLog.paramName,
 
   Block_TestParams_Base.PropertyNames.pointwise1.Filters,
   Block_TestParams_Base.PropertyNames.pointwise1.Biases,

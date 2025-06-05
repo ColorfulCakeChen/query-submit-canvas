@@ -86,6 +86,7 @@ class TestCorrectnessInfo extends Recyclable.Root {
       depthwiseStridesPad,
       pointwise20ChannelCount,
       bKeepInputTensor,
+      bTableLog,
       inferencedParams
     } = testParams.out;
 
@@ -657,7 +658,8 @@ class Block_Reference_Base extends Recyclable.Root {
         testParams.in.nSqueezeExcitationChannelCountDivisor,
         testParams.in.bSqueezeExcitationPrefix,
         testParams.in.nActivationId,
-        testParams.in.bKeepInputTensor
+        testParams.in.bKeepInputTensor,
+        testParams.in.bTableLog
       );
 
       extractedParams.channelShuffler = channelShuffler_ConcatPointwiseConv;
@@ -1098,6 +1100,9 @@ class Block_Reference_Base extends Recyclable.Root {
     // Other parameters.
     asserter.propertyValue( "bKeepInputTensor",
       testParams.out.bKeepInputTensor );
+
+    asserter.propertyValue( "bTableLog",
+      testParams.out.bTableLog );
 
     {
       let tensorWeightCountTotal = 0;  // Not include channel shuffler.

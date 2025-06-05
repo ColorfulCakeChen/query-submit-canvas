@@ -201,14 +201,15 @@ class HeightWidthDepth {
     // pointwise20ChannelCount, pointwise20ActivationId,
     // nSqueezeExcitationChannelCountDivisor, bSqueezeExcitationPrefix,
     // nActivationId,
-    // bKeepInputTensor
+    // bKeepInputTensor, bTableLog
     //
     //
     // The block for performance testing should:
     //   - ( bKeepInputTensor == true ). Otherwise, the this.dataTensor3d will
     //       be destroyed.
     //
-
+    const bKeepInputTensor = true;
+    const bTableLog = false;
 
     // Test Case 0: (pointwise1 (bias, COS), depthwise (channelMultiplier = 1, strides = 1, pad = same, bias, COS), pointwise2 (bias, COS), AddInputToOutput)
     this.block_PerformanceTest_addCase(
@@ -221,7 +222,7 @@ class HeightWidthDepth {
             4, Block.Params.pointwise20ActivationId.valueDesc.Ids.CLIP_BY_VALUE_N2_P2,
         ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.EXCITATION, false,
         ValueDesc.ActivationFunction.Singleton.Ids.CLIP_BY_VALUE_N2_P2,
-        true
+        bKeepInputTensor, bTableLog
       )
     );
 
@@ -237,7 +238,7 @@ class HeightWidthDepth {
             4, Block.Params.pointwise20ActivationId.valueDesc.Ids.CLIP_BY_VALUE_N2_P2,
         ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.EXCITATION, false,
         ValueDesc.ActivationFunction.Singleton.Ids.CLIP_BY_VALUE_N2_P2,
-        true
+        bKeepInputTensor, bTableLog
       )
     );
 
@@ -253,7 +254,7 @@ class HeightWidthDepth {
             4, Block.Params.pointwise20ActivationId.valueDesc.Ids.CLIP_BY_VALUE_N2_P2,
         ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.EXCITATION, false,
         ValueDesc.ActivationFunction.Singleton.Ids.CLIP_BY_VALUE_N2_P2,
-        true
+        bKeepInputTensor, bTableLog
       )
     );
 
@@ -268,7 +269,7 @@ class HeightWidthDepth {
             4, Block.Params.pointwise20ActivationId.valueDesc.Ids.CLIP_BY_VALUE_N2_P2,
         ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.EXCITATION, false,
         ValueDesc.ActivationFunction.Singleton.Ids.CLIP_BY_VALUE_N2_P2,
-        true
+        bKeepInputTensor, bTableLog
       )
     );
 
@@ -283,7 +284,7 @@ class HeightWidthDepth {
             4, Block.Params.pointwise20ActivationId.valueDesc.Ids.CLIP_BY_VALUE_N2_P2,
         ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.EXCITATION, false,
         ValueDesc.ActivationFunction.Singleton.Ids.CLIP_BY_VALUE_N2_P2,
-        true
+        bKeepInputTensor, bTableLog
       )
     );
 
@@ -298,7 +299,7 @@ class HeightWidthDepth {
             4, Block.Params.pointwise20ActivationId.valueDesc.Ids.CLIP_BY_VALUE_N2_P2,
         ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.EXCITATION, false,
         ValueDesc.ActivationFunction.Singleton.Ids.CLIP_BY_VALUE_N2_P2,
-        true
+        bKeepInputTensor, bTableLog
       )
     );
 
@@ -314,7 +315,7 @@ class HeightWidthDepth {
 
         ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.EXCITATION, false,
         ValueDesc.ActivationFunction.Singleton.Ids.CLIP_BY_VALUE_N2_P2,
-        true
+        bKeepInputTensor, bTableLog
       )
     );
 
@@ -330,7 +331,7 @@ class HeightWidthDepth {
 
         ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.EXCITATION, false,
         ValueDesc.ActivationFunction.Singleton.Ids.CLIP_BY_VALUE_N2_P2,
-        true
+        bKeepInputTensor, bTableLog
       )
     );
 
