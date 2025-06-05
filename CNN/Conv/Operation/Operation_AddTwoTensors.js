@@ -117,6 +117,19 @@ class AddTwoTensors extends Root {
     AddTwoTensors.adjust_pfn.call( this );
   }
 
+  /**
+   * If .bTableLog is true, log .output0 tensor3d and ScaleBoundsArray as
+   * table.
+   */
+  TableLog_output0_tensor3d_if_requested() {
+    if ( !this.bTableLog )
+      return;
+
+    const mostDerivedClassName = this.constructor.name;
+    const headerPrefix = mostDerivedClassName;
+    this.output0.TableLog_header_body( headerPrefix );
+  }
+
 
   /** Set this.apply according to this.bKeepInputTensor0 and
    * this.bKeepInputTensor1. */
@@ -252,6 +265,7 @@ class AddTwoTensors extends Root {
   static Add_and_keep0_keep1() {
     this.output0.realTensor
       = tf.add( this.input0.realTensor, this.input1.realTensor );
+    this.TableLog_output0_tensor3d_if_requested();
   }
 
   /**
@@ -265,6 +279,7 @@ class AddTwoTensors extends Root {
     } finally {
       this.input1.realTensor.dispose();
     }
+    this.TableLog_output0_tensor3d_if_requested();
   }
 
   /**
@@ -278,6 +293,7 @@ class AddTwoTensors extends Root {
     } finally {
       this.input0.realTensor.dispose();
     }
+    this.TableLog_output0_tensor3d_if_requested();
   }
 
   /** Add. (Both the inputTensor0 and inputTensor1 will be disposed. */
@@ -289,6 +305,7 @@ class AddTwoTensors extends Root {
       this.input0.realTensor.dispose();
       this.input1.realTensor.dispose();
     }
+    this.TableLog_output0_tensor3d_if_requested();
   }
 
 }
