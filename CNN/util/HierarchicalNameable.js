@@ -177,15 +177,15 @@ let HierarchicalNameable_Base
 //!!!
       const joinSeparator = this.nameJoinSeparatorString;
 
-      const names = this.#nameString_recursively_cache
+      this.#nameString_recursively_cache
         = `${parentNames}${joinSeparator}${nameString}`;
-      return names;
 
-    } else { // No parent, return this object's name.
-      const names = this.#nameString_recursively_cache = nameString;
-      return names;
+      return this.#nameString_recursively_cache;
+
+    } else { // No parent, return this object's name (without separator).
+      this.#nameString_recursively_cache = nameString;
+      return this.#nameString_recursively_cache;
     }
-
   }
 
   /**
@@ -204,10 +204,17 @@ let HierarchicalNameable_Base
    * @return {string}
    *   A string composed of all the names of all parent Nameable (recursively
    * until null (or undefined) encountered) with every parent's (not this
-   * object's) joinSeparator. If .#parentName_recursively_cache exists, it will
-   * be returned directly. Otherwise, it will be created and returned. 
+   * object's) joinSeparator.
+   *   - If .#parentName_recursively_cache exists, it will be returned
+   *       directly. Otherwise, it will be created and returned. 
+   *   - If no parent, return an empty string.
    */
   get parentNameString_recursively() {
+
+//!!! ...unfinished... (2025/06/06)
+// .#parentNameString_recursively_cache seems not necessary
+// because it has been cached in parent's nameString_recursively.
+
     if ( this.#parentNameString_recursively_cache )
       return this.#parentNameString_recursively_cache;
 
@@ -215,13 +222,12 @@ let HierarchicalNameable_Base
     if ( parent ) {
 
       // Note1: Let parent's (not this object's) joinSeparator be used.
-      // Note2: Also lLet parent create itself's cache recursively.
+      // Note2: Also let parent create itself's cache recursively.
       this.#parentNameString_recursively_cache
         = parent.nameString_recursively;
 
     } else {
-      this.#parentNameString_recursively_cache
-        = HierarchicalNameable_Base.defaultParams.NoNameString;
+      this.#parentNameString_recursively_cache = "";
     }
 
     return this.#parentNameString_recursively_cache;
