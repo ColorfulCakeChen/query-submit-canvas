@@ -28,14 +28,10 @@ import * as Recyclable from "../util/Recyclable.js";
  *
  *
  * @member {string} name_recursively
- *   If .name_recursively_cache exists, return it. Otherwise, create and
- * return it. 
- *
- * @member {string} name_recursively_cache
  *   A string composed of all the names of all parent Nameable (recursively
- * until null (or undefined) encountered) and this object .name. It is a cache
- * which only collect all names once. Set it to null if wanting to re-collect
- * all names (e.g. this or some parents' names are changed).
+ * until null (or undefined) encountered) and this object .name. If
+ * .name_recursively_cache exists, return it. Otherwise, create and return
+ * it.
  *
  *
  * @member {string} parentName
@@ -43,23 +39,17 @@ import * as Recyclable from "../util/Recyclable.js";
  * not exist, return an empty string.
  *
  * @member {string} parentName_recursively
- *   If .parentName_recursively_cache exists, return it. Otherwise, create and
- * return it. 
- *
- * @member {string} parentName_recursively_cache
  *   A string composed of all the names of all parent Nameable (recursively
- * until null (or undefined) encountered). It is a cache which only collect
- * parent names once. Set it to null if wanting to re-collect all parent names
- * (e.g. some parents' names are changed).
+ * until null (or undefined) encountered). If .parentName_recursively_cache
+ * exists, return it. Otherwise, create and return it. 
  *
- *
+!!! *
  * @member {string} parentNameArray_recursively_cache
  *   A string array contains all the names of all parent Nameable (recursively
  * until null (or undefined) encountered). It is a cache which only collect
  * parent names once. Set it to null if wanting to re-collect all parent names
  * (e.g. some parents' names are changed).
  *
- * @member {string} parentName_recursively_cache
  *
  * @member {string} parentNameArray_recursively
  *
@@ -131,6 +121,8 @@ let HierarchicalNameable_Base
     this.name = null;
     this.parentNameable = null; // Just nullify it. Do not release it.
 
+    this.nameString_cache_clear();
+
     super.disposeResources();
   }
 
@@ -145,7 +137,35 @@ let HierarchicalNameable_Base
   /**
    * 
    */
-  get name
+//  get name
+
+  /**
+   * Clear .#name_recursively_cache and .#parentName_recursively_cache to
+   * null so that they will be re-created. Usually, call this method if this
+   * or some parents' names are changed.
+   */
+  nameString_cache_clear() {
+    this.#parentName_recursively_cache = null;
+    this.#name_recursively_cache = null;
+  }
+
+
+  /**
+   * A string composed of all the names of all parent Nameable (recursively
+   * until null (or undefined) encountered). It is a cache which only collect
+   * parent names once. Set it to null if wanting to re-collect all parent
+   * names (e.g. some parents' names are changed).
+   */
+  #parentName_recursively_cache;
+
+  /**
+   * A string composed of all the names of all parent Nameable (recursively
+   * until null (or undefined) encountered) and this object .name. It is a
+   * cache which only collect all names once. Set it to null if wanting to
+   * re-collect all names (e.g. this or some parents' names are changed).
+   */
+  #name_recursively_cache;
+
 }
 
 
