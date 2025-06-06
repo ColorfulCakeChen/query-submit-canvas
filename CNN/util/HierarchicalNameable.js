@@ -96,7 +96,7 @@ let HierarchicalNameable_Base
    * re-created. Usually, call this method if this or some parents' names
    * are changed.
    */
-  nameString_cache_clear() {
+  name_related_cache_clear() {
     this.#nameJoinSeparatorString_cache = null;
     this.#nameString_cache = null;
     this.#nameString_recursively_cache = null;
@@ -111,23 +111,21 @@ let HierarchicalNameable_Base
     if ( this.#nameJoinSeparatorString_cache )
       return this.#nameJoinSeparatorString_cache;
 
-    let joinSeparatorString;
-
     // Because null and undefined do not have .toString() to be called,
     // return default joinSeparator in this case.
     const nameJoinSeparator = this.nameJoinSeparator; 
     if (   ( nameJoinSeparator === undefined )
         || ( nameJoinSeparator === null ) ) {
-      joinSeparatorString
+      this.#nameJoinSeparatorString_cache
         = HierarchicalNameable_Base.defaultParams.nameJoinSeparator;
-      return joinSeparatorString;
-    }
 
-    // As long as it is not null or undefined, return its string. This is
-    // workable even if it is not a string (e.g. number or object).
-    joinSeparatorString = this.#nameJoinSeparatorString_cache
-      = nameJoinSeparator.toString();
-    return joinSeparatorString;
+    } else {
+      // As long as it is not null or undefined, return its string. This is
+      // workable even if it is not a string (e.g. number or object).
+      this.#nameJoinSeparatorString_cache
+        = nameJoinSeparator.toString();
+    }
+    return this.#nameJoinSeparatorString_cache;
   }
 
   /**
@@ -175,7 +173,6 @@ let HierarchicalNameable_Base
       const parentNames = parent.nameString_recursively;
 
       const joinSeparator = this.nameJoinSeparatorString;
-
       this.#nameString_recursively_cache
         = `${parentNames}${joinSeparator}${nameString}`;
 
@@ -207,7 +204,7 @@ let HierarchicalNameable_Base
     const parent = this.parentNameable;
     if ( parent ) {
       // Note1: Let parent's (not this object's) joinSeparator be used.
-      // Note2: Also let parent create itself's cache recursively.
+      // Note2: Also let parent create itself's name cache recursively.
       const parentNames = parent.nameString_recursively;
       return parentNames;
     }
