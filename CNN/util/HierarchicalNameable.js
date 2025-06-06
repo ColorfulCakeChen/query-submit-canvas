@@ -35,8 +35,10 @@ import * as Recyclable from "../util/Recyclable.js";
  *
  *
  * @member {string} parentName
- *   The name string of the direct parent nameable. If .parentNameable does
- * not exist, return an empty string.
+ *   The name string of the direct parent nameable.
+ *   - If .parentNameable does not exist, return an empty string.
+ *   - If .parentNameable exists but its .name does not exist, also return an
+ *       empty string.
  *
  * @member {string} parentName_recursively
  *   A string composed of all the names of all parent Nameable (recursively
@@ -118,10 +120,10 @@ let HierarchicalNameable_Base
    * @override
    */
   disposeResources() {
+    this.nameString_cache_clear();
+
     this.name = null;
     this.parentNameable = null; // Just nullify it. Do not release it.
-
-    this.nameString_cache_clear();
 
     super.disposeResources();
   }
@@ -134,10 +136,6 @@ let HierarchicalNameable_Base
 //      get name_of_parent_recursively() { cached }
 // }
 
-  /**
-   * 
-   */
-//  get name
 
   /**
    * Clear .#name_recursively_cache and .#parentName_recursively_cache to
@@ -147,6 +145,15 @@ let HierarchicalNameable_Base
   nameString_cache_clear() {
     this.#parentName_recursively_cache = null;
     this.#name_recursively_cache = null;
+  }
+
+
+  get parentName() {
+    if ( this.parentNameable ) {
+      if ( this.parentNameable.name )
+        return parentNameable.name;
+    }
+    return "";
   }
 
 
