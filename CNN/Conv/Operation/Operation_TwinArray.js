@@ -100,8 +100,8 @@ class TwinArray extends Root {
   /** @override */
   static setAsConstructor_self(
     inputTensorPlaceholder0, inputTensorPlaceholder1, outputTensorCount,
-    bTableLog,
-    ...restArgs ) {
+    bTableLog
+  ) {
 
     // In order to handle keep-input-flag correctly (even if no sub operation
     // at all), an ending dummy operation is used.

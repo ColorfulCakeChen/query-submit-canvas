@@ -1,7 +1,8 @@
 export { HierarchicalNameable_Base as Base, Root };
 
 import * as Pool from "../../util/Pool.js";
-import * as Recyclable from "../../util/Recyclable.js";
+//import * as Recyclable from "../../util/Recyclable.js";
+import { Base } from "./HierarchicalNameable_Base.js";
 
 /**
  * Represents an object which:
@@ -25,52 +26,35 @@ import * as Recyclable from "../../util/Recyclable.js";
  * @member {string} nameJoinSeparator
  *   The separator string used when composing .nameString_recursively.
  */
-let HierarchicalNameable_Base
-  = ( ParentClass = Object ) => class HierarchicalNameable_Base
-      extends Recyclable.Base( ParentClass ) {
+let HierarchicalNameable_SeparatorDot_Base
+  = ( ParentClass = Object ) => class HierarchicalNameable_SeparatorDot_Base
+      extends Base( ParentClass ) {
 
   /**
    * Used as default HierarchicalNameable.Base provider for conforming to
    * Recyclable interface.
    */
-  static Pool = new Pool.Root( "HierarchicalNameable.Base.Pool",
-    HierarchicalNameable_Base, HierarchicalNameable_Base.setAsConstructor );
-
-//!!! ...unfinished... (2025/06/06)
-// Perhaps, only define nameJoinSeparator in the root nameable.
-// It seems not necessary to define it at every level of the hierarchy.
-//
-// Or, define class HierarchicalNameable_SeparatorDot_Base,
-// HierarchicalNameable_SeparatorSlash_Base
+  static Pool = new Pool.Root( "HierarchicalNameable.SeparatorDot.Base.Pool",
+    HierarchicalNameable_SeparatorDot_Base,
+    HierarchicalNameable_SeparatorDot_Base.setAsConstructor );
 
   /**
    */
-  constructor(
-    parentNameable, name, nameJoinSeparator, ...restArgs ) {
-
-    // All other arguments passed to parent class's constructor.
-    super( ...restArgs );
-    HierarchicalNameable_Base.setAsConstructor_self.call( this,
-      parentNameable, name, nameJoinSeparator );
+  constructor( parentNameable, name, ...restArgs ) {
+    super( parentNameable, name, ".", ...restArgs );
+    HierarchicalNameable_SeparatorDot_Base.setAsConstructor_self.call( this );
   }
 
   /** @override */
-  static setAsConstructor(
-    parentNameable, name, nameJoinSeparator, ...restArgs ) {
-
-    super.setAsConstructor( ...restArgs );
-    OperationHierarchicalNameable_Base_Base.setAsConstructor_self.call( this,
-      parentNameable, name, nameJoinSeparator );
+  static setAsConstructor( parentNameable, name, ...restArgs ) {
+    super.setAsConstructor( parentNameable, name, ".", ...restArgs );
+    HierarchicalNameable_SeparatorDot_Base.setAsConstructor_self.call( this );
     return this;
   }
 
   /** @override */
-  static setAsConstructor_self(
-    parentNameable, name, nameJoinSeparator ) {
-
-    this.parentNameable = parentNameable;
-    this.name = name;
-    this.nameJoinSeparator = nameJoinSeparator;
+  static setAsConstructor_self() {
+    // Nothing to do.
   }
 
   /**

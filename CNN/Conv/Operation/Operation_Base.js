@@ -77,7 +77,7 @@ let Operation_Base = ( ParentClass = Object ) => class Operation_Base
       ...restArgs );
 
     Operation_Base.setAsConstructor_self.call( this,
-      input0, input1, outputTensorCount, bTableLog, ...restArgs );
+      input0, input1, outputTensorCount, bTableLog );
   }
 
   /** @override */
@@ -90,13 +90,13 @@ let Operation_Base = ( ParentClass = Object ) => class Operation_Base
       ...restArgs );
 
     Operation_Base.setAsConstructor_self.call( this,
-      input0, input1, outputTensorCount, bTableLog, ...restArgs );
+      input0, input1, outputTensorCount, bTableLog );
     return this;
   }
 
   /** @override */
   static setAsConstructor_self(
-    input0, input1, outputTensorCount, bTableLog, ...restArgs ) {
+    input0, input1, outputTensorCount, bTableLog ) {
 
     // 1. Set and register as the input TensorPlaceholder's final user.
     Operation_Base.set_inputTensorPlaceholder0_inputTensorPlaceholder1
