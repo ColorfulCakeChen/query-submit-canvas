@@ -203,8 +203,9 @@ let HierarchicalNameable_Base
   /**
    * @return {string}
    *   A string composed of all the names of all parent Nameable (recursively
-   * until null (or undefined) encountered). If .#parentName_recursively_cache
-   * exists, return it. Otherwise, create and return it. 
+   * until null (or undefined) encountered) with every parent's (not this
+   * object's) joinSeparator. If .#parentName_recursively_cache exists, it will
+   * be returned directly. Otherwise, it will be created and returned. 
    */
   get parentNameString_recursively() {
     if ( this.#parentNameString_recursively_cache )
@@ -213,42 +214,45 @@ let HierarchicalNameable_Base
     const parent = this.parentNameable;
     if ( parent ) {
 
-      // Note: Let parent's (not this object's) joinSeparator be used.
-      const parentNames
-        = this.#parentNameString_recursively_cache
+      // Note1: Let parent's (not this object's) joinSeparator be used.
+      // Note2: Also lLet parent create itself's cache recursively.
+      this.#parentNameString_recursively_cache
         = parent.nameString_recursively;
 
-      return parentNames;
+    } else {
+      this.#parentNameString_recursively_cache
+        = HierarchicalNameable_Base.defaultParams.NoNameString;
     }
 
-    const NoNameString
-      = this.#parentNameString_recursively_cache
-      = HierarchicalNameable_Base.defaultParams.NoNameString;
-
-    return NoNameString;
+    return this.#parentNameString_recursively_cache;
   }
 
 
   /**
-   * The string of this object .name. It is a cache which only collect name
-   * once. Set it to null if wanting to re-collect name (e.g. .name is
-   * changed).
+   * The string of this object .name.
+   *
+   * It is a cache which only collect name once. Set it to null if wanting to
+   * re-collect name (e.g. .name is changed).
    */
   #nameString_cache;
 
   /**
    * A string composed of all the names of all parent Nameable (recursively
-   * until null (or undefined) encountered) and this object .name. It is a
-   * cache which only collect all names once. Set it to null if wanting to
-   * re-collect all names (e.g. this or some parents' names are changed).
+   * until null (or undefined) encountered) and this object .name.
+   *
+   * It is a cache which only collect all names once. Set it to null if wanting
+   * to re-collect all names (e.g. this or some parents' names are changed).
    */
   #nameString_recursively_cache;
 
   /**
    * A string composed of all the names of all parent Nameable (recursively
-   * until null (or undefined) encountered). It is a cache which only collect
-   * parent names once. Set it to null if wanting to re-collect all parent
-   * names (e.g. some parents' names are changed).
+   * until null (or undefined) encountered) with every parent's (not this
+   * object's) joinSeparator.
+   * 
+   * It is a cache which only collect parent names once. Set it to null if
+   * wanting to re-collect all parent names (e.g. some parents' names are
+   * changed).
    */
   #parentNameString_recursively_cache;
 
