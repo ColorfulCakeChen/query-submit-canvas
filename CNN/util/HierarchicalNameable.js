@@ -82,7 +82,7 @@ let HierarchicalNameable_Base
    * @override
    */
   disposeResources() {
-    this.nameString_cache_clear();
+    this.name_related_cache_clear();
 
     this.nameJoinSeparator = null;
     this.name = null;
