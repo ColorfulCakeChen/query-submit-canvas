@@ -1,5 +1,5 @@
-export { HierarchicalNameable_SeparatorDot_Base as SeparatorDot_Base };
-export { SeparatorDot_Root };
+export { HierarchicalNameable_SeparatorSlash_Base as SeparatorSlash_Base };
+export { SeparatorSlash_Root };
 
 import * as Pool from "../../util/Pool.js";
 import { Base } from "./HierarchicalNameable_Base.js";
@@ -10,8 +10,8 @@ import { Base } from "./HierarchicalNameable_Base.js";
  *
  * @see HierarchicalNameable_Base
  */
-let HierarchicalNameable_SeparatorDot_Base
-  = ( ParentClass = Object ) => class HierarchicalNameable_SeparatorDot_Base
+let HierarchicalNameable_SeparatorSlash_Base
+  = ( ParentClass = Object ) => class HierarchicalNameable_SeparatorSlash_Base
       extends Base( ParentClass ) {
 
   /**
@@ -19,21 +19,21 @@ let HierarchicalNameable_SeparatorDot_Base
    * Recyclable interface.
    */
   static Pool = new Pool.Root(
-    "HierarchicalNameable.SeparatorDot.Base.Pool",
-    HierarchicalNameable_SeparatorDot_Base,
-    HierarchicalNameable_SeparatorDot_Base.setAsConstructor );
+    "HierarchicalNameable.SeparatorSlash.Base.Pool",
+    HierarchicalNameable_SeparatorSlash_Base,
+    HierarchicalNameable_SeparatorSlash_Base.setAsConstructor );
 
   /**
    */
   constructor( parentNameable, name, ...restArgs ) {
     super( parentNameable, name, ".", ...restArgs );
-    HierarchicalNameable_SeparatorDot_Base.setAsConstructor_self.call( this );
+    HierarchicalNameable_SeparatorSlash_Base.setAsConstructor_self.call( this );
   }
 
   /** @override */
   static setAsConstructor( parentNameable, name, ...restArgs ) {
     super.setAsConstructor( parentNameable, name, ".", ...restArgs );
-    HierarchicalNameable_SeparatorDot_Base.setAsConstructor_self.call( this );
+    HierarchicalNameable_SeparatorSlash_Base.setAsConstructor_self.call( this );
     return this;
   }
 
@@ -51,10 +51,10 @@ let HierarchicalNameable_SeparatorDot_Base
 
 
 /**
- * Almost the same as HierarchicalNameable_SeparatorDot_Base class except its
+ * Almost the same as HierarchicalNameable_SeparatorSlash_Base class except its
  * parent class is fixed to object. In other words, caller can not specify the
  * parent class of HierarchicalNameable.Root (so it is named "Root" which can
  * not have parent class).
  */
-class SeparatorDot_Root extends HierarchicalNameable_SeparatorDot_Base() {
+class SeparatorSlash_Root extends HierarchicalNameable_SeparatorSlash_Base() {
 }

@@ -33,15 +33,10 @@ let HierarchicalNameable_Base
    * Used as default HierarchicalNameable.Base provider for conforming to
    * Recyclable interface.
    */
-  static Pool = new Pool.Root( "HierarchicalNameable.Base.Pool",
-    HierarchicalNameable_Base, HierarchicalNameable_Base.setAsConstructor );
-
-//!!! ...unfinished... (2025/06/06)
-// Perhaps, only define nameJoinSeparator in the root nameable.
-// It seems not necessary to define it at every level of the hierarchy.
-//
-// Or, define class HierarchicalNameable_SeparatorDot_Base,
-// HierarchicalNameable_SeparatorSlash_Base
+  static Pool = new Pool.Root(
+    "HierarchicalNameable.Base.Pool",
+    HierarchicalNameable_Base,
+    HierarchicalNameable_Base.setAsConstructor );
 
   /**
    */
