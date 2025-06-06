@@ -46,7 +46,7 @@ let Operation_Base = ( ParentClass = Object ) => class Operation_Base
   extends Recyclable.Base( ParentClass ) {
 
   /**
-   * Used as default Operation.Root provider for conforming to Recyclable
+   * Used as default Operation.Base provider for conforming to Recyclable
    * interface.
    */
   static Pool = new Pool.Root( "Operation.Base.Pool",
