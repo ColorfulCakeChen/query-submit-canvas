@@ -29,12 +29,14 @@ class Depthwise_ConstantWhenPassThrough extends Depthwise {
   /**
    */
   constructor(
+    parentNameable, name, nameJoinSeparator,
     inputTensorPlaceholder0, bTableLog,
     AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad,
     bBias, nActivationId,
     nHigherHalfDifferent ) {
 
     super(
+      parentNameable, name, nameJoinSeparator,
       inputTensorPlaceholder0, bTableLog,
       AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad,
       bBias, nActivationId,
@@ -46,6 +48,7 @@ class Depthwise_ConstantWhenPassThrough extends Depthwise {
 
   /** @override */
   static setAsConstructor(
+    parentNameable, name, nameJoinSeparator,
     inputTensorPlaceholder0, bTableLog,
     AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad,
     bBias, nActivationId,
@@ -53,6 +56,7 @@ class Depthwise_ConstantWhenPassThrough extends Depthwise {
     channelShuffler_inputGroupCount, channelShuffler_outputGroupCount ) {
 
     super.setAsConstructor(
+      parentNameable, name, nameJoinSeparator,
       inputTensorPlaceholder0, bTableLog,
       AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad,
       bBias, nActivationId,
