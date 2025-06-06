@@ -19,7 +19,8 @@ let HierarchicalNameable_SeparatorDot_Base
    * Used as default HierarchicalNameable.Base provider for conforming to
    * Recyclable interface.
    */
-  static Pool = new Pool.Root( "HierarchicalNameable.SeparatorDot.Base.Pool",
+  static Pool = new Pool.Root(
+    "HierarchicalNameable.SeparatorDot.Base.Pool",
     HierarchicalNameable_SeparatorDot_Base,
     HierarchicalNameable_SeparatorDot_Base.setAsConstructor );
 
