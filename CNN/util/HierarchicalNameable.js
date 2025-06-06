@@ -40,6 +40,9 @@ let HierarchicalNameable_Base
 !!! ...unfinished... (2025/06/06)
 // Perhaps, only define nameJoinSeparator in the root nameable.
 // It seems not necessary to define it at every level of the hierarchy.
+//
+// Or, define class HierarchicalNameable_SeparatorDot_Base,
+// HierarchicalNameable_SeparatorSlash_Base
 
   /**
    */
@@ -267,8 +270,8 @@ let HierarchicalNameable_Base
    */
   static defaultParams = {
 
-    // constant string used when there is no name.
-    nameJoinSeparator: ".",
+    // Default separator.
+    nameJoinSeparator: "_",
 
     // A constant string used when there is no name.
     NoNameString: "(No name)",
