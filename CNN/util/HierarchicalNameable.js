@@ -118,6 +118,7 @@ let HierarchicalNameable_Base
     this.#nameJoinSeparatorString_cache = null;
     this.#nameString_cache = null;
     this.#nameString_recursively_cache = null;
+    this.#parentNameStringArray_recursively_cache = null;
     this.#parentNameString_recursively_cache = null;
   }
 
@@ -132,10 +133,11 @@ let HierarchicalNameable_Base
 
     let joinSeparatorString;
 
-    // Because null and undefined do not have .toString() could be called,
-    // return default NoName in this case.
+    // Because null and undefined do not have .toString() to be called,
+    // return default joinSeparator in this case.
     const nameJoinSeparator = this.nameJoinSeparator; 
-    if ( ( nameJoinSeparator === undefined ) || ( nameJoinSeparator === null ) ) {
+    if (   ( nameJoinSeparator === undefined )
+        || ( nameJoinSeparator === null ) ) {
       joinSeparatorString
         = HierarchicalNameable_Base.defaultParams.nameJoinSeparator;
       return joinSeparatorString;
@@ -157,7 +159,7 @@ let HierarchicalNameable_Base
     if ( this.#nameString_cache )
       return this.#nameString_cache;
 
-    // Because null and undefined do not have .toString() could be called,
+    // Because null and undefined do not have .toString() to be called,
     // return default NoName in this case.
     const name = this.name; 
     if ( ( name === undefined ) || ( name === null ) ) {
@@ -176,21 +178,25 @@ let HierarchicalNameable_Base
    * @return {string}
    *   A string composed of all the names of all parent Nameable (recursively
    * until null (or undefined) encountered) and this object .name. If
-   * .name_recursively_cache exists, return it. Otherwise, create and return
+   * .#name_recursively_cache exists, return it. Otherwise, create and return
    * it.
    */
   get nameString_recursively() {
+    if ( this.#nameString_recursively_cache )
+      return this.#nameString_recursively_cache;
 
-!!! ...unfinished... (2025/06/06)
+    const parentNames = this.parentNameString_recursively;
+    const joinSeparator = this.nameJoinSeparatorString;
+    const nameString = this.nameString;
 
+    const names = this.#nameString_recursively_cache
+      = `${parentNames}${joinSeparator}${nameString}`;
+    return names;
   }
 
   /**
    * @return {string}
    *   The name string of the direct parent nameable.
-   *   - If .parentNameable does not exist, return an empty string.
-   *   - If .parentNameable exists but its .name does not exist, also return an
-   *       empty string.
    */
   get parentNameString() {
     const parentNameable = this.parentNameable;
@@ -201,16 +207,46 @@ let HierarchicalNameable_Base
   }
 
   /**
+   * @return {string[]}
+   *   A string array composed of all the names of all parent Nameable
+   * (recursively until null (or undefined) encountered). The root parent name
+   * is at element index 0. If .#parentNameStringArray_recursively_cache
+   * exists, return it. Otherwise, create and return it. 
+   */
+  get parentNameStringArray_recursively() {
+    if ( this.#parentNameStringArray_recursively_cache )
+      return this.#parentNameStringArray_recursively_cache;
+
+    const stringArray
+      = this.#parentNameStringArray_recursively_cache = new Array();
+
+    let parentNameString;
+    let parentNameable = this.parentNameable;
+    while ( parentNameable ) {
+      parentNameString = parentNameable.nameString;
+      stringArray.push( parentNameString );
+    }
+
+    stringArray.reverse();
+    return stringArray;
+  }
+
+  /**
    * @return {string}
    *   A string composed of all the names of all parent Nameable (recursively
-   * until null (or undefined) encountered). If .parentName_recursively_cache
+   * until null (or undefined) encountered). If .#parentName_recursively_cache
    * exists, return it. Otherwise, create and return it. 
    */
   get parentNameString_recursively() {
+    if ( this.#parentNameString_recursively_cache )
+      return this.#parentNameString_recursively_cache;
 
-!!! ...unfinished... (2025/06/06)
-
-
+    const joinSeparator = this.nameJoinSeparatorString;
+    const stringArray = this.parentNameStringArray_recursively;
+    const parentNames
+      = this.#parentNameString_recursively_cache
+      = stringArray.join( joinSeparator );
+    return parentNames;
   }
 
 
@@ -228,6 +264,14 @@ let HierarchicalNameable_Base
    * re-collect all names (e.g. this or some parents' names are changed).
    */
   #nameString_recursively_cache;
+
+  /**
+   * A string array composed of all the names of all parent Nameable
+   * (recursively until null (or undefined) encountered). It is a cache which
+   * only collect parent names once. Set it to null if wanting to re-collect
+   * all parent names (e.g. some parents' names are changed).
+   */
+  #parentNameStringArray_recursively_cache;
 
   /**
    * A string composed of all the names of all parent Nameable (recursively
