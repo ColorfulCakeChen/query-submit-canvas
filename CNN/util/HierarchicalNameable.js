@@ -189,14 +189,14 @@ let HierarchicalNameable_Base
 
   /**
    * @return {string}
-   *   The name string of the direct parent nameable.
+   *   The name string of the direct parent nameable. If no parent, return an
+   * empty string.
    */
   get parentNameString() {
     const parent = this.parentNameable;
     if ( parent )
       return parent.nameString;
-    const NoNameString = HierarchicalNameable_Base.defaultParams.NoNameString;
-    return NoNameString;
+    return "";
   }
 
   /**
@@ -206,14 +206,13 @@ let HierarchicalNameable_Base
    * object's) joinSeparator. If no parent, return an empty string.
    */
   get parentNameString_recursively() {
-    // Note1: Let parent's (not this object's) joinSeparator be used.
-    // Note2: Also let parent create itself's cache recursively.
     const parent = this.parentNameable;
     if ( parent ) {
+      // Note1: Let parent's (not this object's) joinSeparator be used.
+      // Note2: Also let parent create itself's cache recursively.
       const parentNames = parent.nameString_recursively;
       return parentNames;
     }
-
     const parentNames = "";
     return parentNames;
   }
