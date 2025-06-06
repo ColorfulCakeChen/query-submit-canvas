@@ -1,30 +1,15 @@
-export { HierarchicalNameable_Base as Base, Root };
+export { HierarchicalNameable_SeparatorDot_Base as SeparatorDot_Base };
+export { SeparatorDot_Root };
 
 import * as Pool from "../../util/Pool.js";
 //import * as Recyclable from "../../util/Recyclable.js";
 import { Base } from "./HierarchicalNameable_Base.js";
 
 /**
- * Represents an object which:
+ * Just like HierarchicalNameable_Base, but with "." (dot) as
+ * nameJoinSeparator.
  *
- *   - has itself name (so that it is nameable).
- *
- *   - could have parentNameable which must be also a kind of
- *       HierarchicalNameable_Base (so that nameable recursively).
- *
- * All the .name of this object and every parent HierarchicalNameable
- * (recursively) compose a name path.
- *
- *
- * @member {HierarchicalNameable.Base} parentNameable
- *   The parent (nameable) object contains this object. It is only referenced
- * (NOT owned) by this object. It will NOT be released by this object.
- *
- * @member {string} name
- *   The name string of this object.
- *
- * @member {string} nameJoinSeparator
- *   The separator string used when composing .nameString_recursively.
+ * @see HierarchicalNameable_Base
  */
 let HierarchicalNameable_SeparatorDot_Base
   = ( ParentClass = Object ) => class HierarchicalNameable_SeparatorDot_Base
@@ -231,10 +216,10 @@ let HierarchicalNameable_SeparatorDot_Base
 
 
 /**
- * Almost the same as HierarchicalNameable.Base class except its parent class is
- * fixed to object. In other words, caller can not specify the parent
- * class of HierarchicalNameable.Root (so it is named "Root" which can not have
- * parent class).
+ * Almost the same as HierarchicalNameable_SeparatorDot_Base class except its
+ * parent class is fixed to object. In other words, caller can not specify the
+ * parent class of HierarchicalNameable.Root (so it is named "Root" which can
+ * not have parent class).
  */
-class Root extends HierarchicalNameable_Base() {
+class SeparatorDot_Root extends HierarchicalNameable_SeparatorDot_Base() {
 }
