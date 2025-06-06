@@ -11,8 +11,9 @@ import { Base } from "./HierarchicalNameable_Base.js";
  * @see HierarchicalNameable_Base
  */
 let HierarchicalNameable_SeparatorUnderline_Base
-  = ( ParentClass = Object ) => class HierarchicalNameable_SeparatorUnderline_Base
-      extends Base( ParentClass ) {
+  = ( ParentClass = Object ) =>
+      class HierarchicalNameable_SeparatorUnderline_Base
+        extends Base( ParentClass ) {
 
   /**
    * Used as default HierarchicalNameable.Base provider for conforming to
