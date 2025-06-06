@@ -1,7 +1,8 @@
 export { Block_Base as Base };
 
+import * as HierarchicalNameable from "../../util/HierarchicalNameable.js";
 import * as Pool from "../../util/Pool.js";
-import * as Recyclable from "../../util/Recyclable.js";
+//import * as Recyclable from "../../util/Recyclable.js";
 import * as ValueMax from "../../util/ValueMax.js";
 import * as ValueDesc from "../../Unpacker/ValueDesc.js";
 //import * as ParamDesc from "../../Unpacker/ParamDesc.js";
@@ -339,7 +340,7 @@ import { inputTensorPlaceholder_creator }
  * be disposed.
  *
  */
-class Block_Base extends Recyclable.Root {
+class Block_Base extends HierarchicalNameable.Root {
 
   /**
    * Used as default Block.Base provider for conforming to Recyclable
@@ -350,14 +351,14 @@ class Block_Base extends Recyclable.Root {
 
   /**
    */
-  constructor() {
-    super();
+  constructor( parentNameable, name, nameJoinSeparator ) {
+    super( parentNameable, name, nameJoinSeparator );
     Block_Base.setAsConstructor_self.call( this );
   }
 
   /** @override */
-  static setAsConstructor() {
-    super.setAsConstructor();
+  static setAsConstructor( parentNameable, name, nameJoinSeparator ) {
+    super.setAsConstructor( parentNameable, name, nameJoinSeparator );
     Block_Base.setAsConstructor_self.call( this );
     return this;
   }
@@ -647,6 +648,9 @@ class Block_Base extends Recyclable.Root {
 
     // 2.1.2 Create sub operation array.
     this.operationArray = Operation.TwinArray.Pool.get_or_create_by(
+      this,
+      "Operation.TwinArray",
+???      ""
       this.input0, this.input1, this.outputTensorCount );
 
     // Note: Once an operation is created (even if it just do nothing (e.g.

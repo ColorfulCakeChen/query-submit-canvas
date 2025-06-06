@@ -1,7 +1,8 @@
 export { Embedding_Reference_Base as Base };
 
+import * as HierarchicalNameable from "../../util/HierarchicalNameable.js";
 import * as Pool from "../../util/Pool.js";
-import * as Recyclable from "../../util/Recyclable.js";
+//import * as Recyclable from "../../util/Recyclable.js";
 import * as TensorTools from "../../util/TensorTools.js";
 import * as ValueMax from "../../util/ValueMax.js";
 import * as BoundsArraySet_Asserter from "../../util/BoundsArraySet_Asserter.js";
@@ -14,6 +15,12 @@ import * as Embedding from "../../Conv/Embedding.js";
 import * as ImageSourceBag from "./ImageSourceBag.js"; 
 import * as NumberImage from "./NumberImage.js"; 
 import * as Embedding_TestParams from "./Embedding_TestParams.js"; 
+
+
+!!! ...unfinshed... (2025/06/06)
+// Let Operation, Block(_Reference), Stage(_Reference), NeuralNet(_Reference)
+// inherits from HierarchicalName.Base.
+
 
 /**
  * Reference computation of class Embedding.Base.

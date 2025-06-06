@@ -1,7 +1,8 @@
 export { Stage_Reference_Base as Base };
 
+import * as HierarchicalNameable from "../../util/HierarchicalNameable.js";
 import * as Pool from "../../util/Pool.js";
-import * as Recyclable from "../../util/Recyclable.js";
+//import * as Recyclable from "../../util/Recyclable.js";
 import * as NameNumberArrayObject from "../../util/NameNumberArrayObject.js";
 import * as TensorTools from "../../util/TensorTools.js";
 import * as ValueMax from "../../util/ValueMax.js";
@@ -14,6 +15,13 @@ import * as Block_Reference from "./Block_Reference.js";
 import * as Stage_TestParams from "./Stage_TestParams.js"; 
 import * as Block from "../../Conv/Block.js";
 import * as Stage from "../../Conv/Stage.js";
+
+
+!!! ...unfinshed... (2025/06/06)
+// Let Operation, Block(_Reference), Stage(_Reference), NeuralNet(_Reference)
+// inherits from HierarchicalName.Base.
+
+
 
 /**
  * Reference computation of class Stage.Base.

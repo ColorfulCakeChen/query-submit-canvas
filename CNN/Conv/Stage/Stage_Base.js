@@ -323,6 +323,13 @@ import { InferencedParams } from "./Stage_InferencedParams.js";
  */
 class Stage_Base extends Recyclable.Root {
 
+
+!!! ...unfinshed... (2025/06/06)
+// Let Operation, Block(_Reference), Stage(_Reference), NeuralNet(_Reference)
+// inherits from HierarchicalName.Base.
+
+
+
   /**
    * Used as default Stage.Base provider for conforming to Recyclable
    * interface.
