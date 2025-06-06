@@ -648,10 +648,9 @@ class Block_Base extends HierarchicalNameable.SeparatorDot_Root {
 
     // 2.1.2 Create sub operation array.
     this.operationArray = Operation.TwinArray.Pool.get_or_create_by(
-      this,
-      "Operation.TwinArray",
-???      ""
-      this.input0, this.input1, this.outputTensorCount );
+      this, "Operation.TwinArray",
+      this.input0, this.input1, this.outputTensorCount,
+      bTableLog );
 
     // Note: Once an operation is created (even if it just do nothing (e.g.
     //       ( pointwise1.bExisted == false ) ), it should always be appended
@@ -668,12 +667,13 @@ class Block_Base extends HierarchicalNameable.SeparatorDot_Root {
       try {
 
 
-!!! ...unfinshed... (2025/06/05)
-// Add bTableLog when create every operation.
-// logName, containerBlock ?
+!!! ...unfinshed... (2025/06/06)
+// Add parentNameable, name, bTableLog when create every operation.
 
         pointwise1 = Operation.Pointwise_SameWhenPassThrough.Pool
           .get_or_create_by(
+            this, "pointwise1",
+
             this.operationArray.endingInput0,
             this.pointwise1ChannelCount,
             this.pointwise1Bias, this.pointwise1ActivationId,

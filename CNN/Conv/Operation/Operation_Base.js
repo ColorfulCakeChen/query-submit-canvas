@@ -71,6 +71,12 @@ let Operation_Base = ( ParentClass = Object ) => class Operation_Base
     parentNameable, name,
     input0, input1, outputTensorCount, bTableLog, ...restArgs ) {
 
+
+!!! ...unfinshed... (2025/06/06)
+// Perhaps, place bTableLog right after parentNameable, name
+// (instead of outputTensorCount). So looks clearly.
+
+
     // All other arguments passed to parent class's constructor.
     super(
       parentNameable, name,
