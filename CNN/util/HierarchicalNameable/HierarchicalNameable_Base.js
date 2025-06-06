@@ -104,31 +104,6 @@ let HierarchicalNameable_Base
 
   /**
    * @return {string}
-   *   A string representing .nameJoinSeparator even if it does not exist
-   * (i.e. null or undefined).
-   */
-  get nameJoinSeparatorString() {
-    if ( this.#nameJoinSeparatorString_cache )
-      return this.#nameJoinSeparatorString_cache;
-
-    const nameJoinSeparator = this.nameJoinSeparator; 
-    if (   ( nameJoinSeparator !== undefined )
-        && ( nameJoinSeparator !== null ) ) {
-      // Note: workable even if not a string (e.g. number or object).
-      this.#nameJoinSeparatorString_cache
-        = nameJoinSeparator.toString();
-
-    } else {
-      // Because null and undefined do not have .toString() to be called,
-      // return default joinSeparator in this case.
-      this.#nameJoinSeparatorString_cache
-        = HierarchicalNameable_Base.defaultParams.nameJoinSeparator;
-    }
-    return this.#nameJoinSeparatorString_cache;
-  }
-
-  /**
-   * @return {string}
    *   A string representing .name even if it does not exist (i.e. null or
    * undefined).
    */
@@ -209,6 +184,31 @@ let HierarchicalNameable_Base
     return HierarchicalNameable_Base.defaultParams.emptyString;
   }
 
+  /**
+   * @return {string}
+   *   A string representing .nameJoinSeparator even if it does not exist
+   * (i.e. null or undefined).
+   */
+  get nameJoinSeparatorString() {
+    if ( this.#nameJoinSeparatorString_cache )
+      return this.#nameJoinSeparatorString_cache;
+
+    const nameJoinSeparator = this.nameJoinSeparator; 
+    if (   ( nameJoinSeparator !== undefined )
+        && ( nameJoinSeparator !== null ) ) {
+      // Note: workable even if not a string (e.g. number or object).
+      this.#nameJoinSeparatorString_cache
+        = nameJoinSeparator.toString();
+
+    } else {
+      // Because null and undefined do not have .toString() to be called,
+      // return default joinSeparator in this case.
+      this.#nameJoinSeparatorString_cache
+        = HierarchicalNameable_Base.defaultParams.nameJoinSeparator;
+    }
+    return this.#nameJoinSeparatorString_cache;
+  }
+
 
   /**
    * The string of this object .name.
@@ -227,6 +227,15 @@ let HierarchicalNameable_Base
    */
   #nameString_recursively_cache;
 
+  /**
+   * A string representing .nameJoinSeparator even if it does not exist
+   * (i.e. null or undefined).
+   *
+   * It is a cache which only be collected once. Set it to null if wanting to
+   * re-collect it (e.g. .nameJoinSeparator is changed).
+   */
+  #nameJoinSeparatorString_cache;
+  
 
   /**
    * 
