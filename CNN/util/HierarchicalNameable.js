@@ -111,19 +111,18 @@ let HierarchicalNameable_Base
     if ( this.#nameJoinSeparatorString_cache )
       return this.#nameJoinSeparatorString_cache;
 
-    // Because null and undefined do not have .toString() to be called,
-    // return default joinSeparator in this case.
     const nameJoinSeparator = this.nameJoinSeparator; 
-    if (   ( nameJoinSeparator === undefined )
-        || ( nameJoinSeparator === null ) ) {
-      this.#nameJoinSeparatorString_cache
-        = HierarchicalNameable_Base.defaultParams.nameJoinSeparator;
-
-    } else {
-      // As long as it is not null or undefined, return its string. This is
-      // workable even if it is not a string (e.g. number or object).
+    if (   ( nameJoinSeparator !== undefined )
+        && ( nameJoinSeparator !== null ) ) {
+      // Note: workable even if not a string (e.g. number or object).
       this.#nameJoinSeparatorString_cache
         = nameJoinSeparator.toString();
+
+    } else {
+      // Because null and undefined do not have .toString() to be called,
+      // return default joinSeparator in this case.
+      this.#nameJoinSeparatorString_cache
+        = HierarchicalNameable_Base.defaultParams.nameJoinSeparator;
     }
     return this.#nameJoinSeparatorString_cache;
   }
@@ -137,17 +136,16 @@ let HierarchicalNameable_Base
     if ( this.#nameString_cache )
       return this.#nameString_cache;
 
-    // Because null and undefined do not have .toString() to be called,
-    // return default NoName in this case.
     const name = this.name; 
-    if ( ( name === undefined ) || ( name === null ) ) {
-      this.#nameString_cache
-        = HierarchicalNameable_Base.defaultParams.NoNameString;
+    if ( ( name !== undefined ) && ( name !== null ) ) {
+      // Note: workable even if not a string (e.g. number or object).
+      this.#nameString_cache = name.toString();
 
     } else {
-      // As long as it is not null or undefined, return its string. This is
-      // workable even if the it is not a string (e.g. number or object).
-      this.#nameString_cache = name.toString();
+      // Because null and undefined do not have .toString() to be called,
+      // return default NoName in this case.
+      this.#nameString_cache
+        = HierarchicalNameable_Base.defaultParams.NoNameString;
     }
     return this.#nameString_cache;
   }
