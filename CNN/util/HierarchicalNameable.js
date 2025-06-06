@@ -27,6 +27,9 @@ import * as Recyclable from "../util/Recyclable.js";
  * .parentName_recursively.
  *
  *
+!!! * @member {string} nameString
+ *   The name string of this object.
+ *
  * @member {string} name_recursively
  *   A string composed of all the names of all parent Nameable (recursively
  * until null (or undefined) encountered) and this object .name. If
@@ -34,7 +37,7 @@ import * as Recyclable from "../util/Recyclable.js";
  * it.
  *
  *
- * @member {string} parentName
+ * @member {string} parentNameString
  *   The name string of the direct parent nameable.
  *   - If .parentNameable does not exist, return an empty string.
  *   - If .parentNameable exists but its .name does not exist, also return an
@@ -148,12 +151,20 @@ let HierarchicalNameable_Base
   }
 
 
-  get parentName() {
-    if ( this.parentNameable ) {
-      if ( this.parentNameable.name )
-        return parentNameable.name;
-    }
-    return "";
+  get nameString() {
+    const name = this.name; 
+    if ( name )
+      return name.toString();
+    const NoNameString = HierarchicalNameable_Base.defaultParams.NoNameString;
+    return NoNameString;
+  }
+
+  get parentNameString() {
+    const parentNameable = this.parentNameable;
+    if ( parentNameable )
+      return parentNameable.nameString;
+    const NoNameString = HierarchicalNameable_Base.defaultParams.NoNameString;
+    return NoNameString;
   }
 
 
@@ -172,6 +183,20 @@ let HierarchicalNameable_Base
    * re-collect all names (e.g. this or some parents' names are changed).
    */
   #name_recursively_cache;
+
+
+  /**
+   * 
+   */
+  static defaultParams = {
+
+    // constant string used when there is no name.
+    nameJoinSeparator: ".",
+
+    // A constant string used when there is no name.
+    NoNameString: "(No name)",
+
+  };
 
 }
 
