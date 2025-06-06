@@ -340,7 +340,7 @@ import { inputTensorPlaceholder_creator }
  * be disposed.
  *
  */
-class Block_Base extends HierarchicalNameable.Root {
+class Block_Base extends HierarchicalNameable.SeparatorDot_Root {
 
   /**
    * Used as default Block.Base provider for conforming to Recyclable
