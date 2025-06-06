@@ -1,7 +1,8 @@
 export { Operation_Base as Base, Root };
 
+import * as HierarchicalNameable from "../../util/HierarchicalNameable.js";
 import * as Pool from "../../util/Pool.js";
-import * as Recyclable from "../../util/Recyclable.js";
+//import * as Recyclable from "../../util/Recyclable.js";
 import * as TensorPlaceholder from "../TensorPlaceholder.js";
 
 /**
@@ -43,7 +44,10 @@ import * as TensorPlaceholder from "../TensorPlaceholder.js";
  *
  */
 let Operation_Base = ( ParentClass = Object ) => class Operation_Base
-  extends Recyclable.Base( ParentClass ) {
+  extends HierarchicalNameable.Base( ParentClass ) {
+
+//!!! (2025/06/06 Modified) Use HierarchicalNameable instead.
+//  extends Recyclable.Base( ParentClass ) {
 
   /**
    * Used as default Operation.Base provider for conforming to Recyclable
@@ -52,20 +56,9 @@ let Operation_Base = ( ParentClass = Object ) => class Operation_Base
   static Pool = new Pool.Root( "Operation.Base.Pool",
     Operation_Base, Operation_Base.setAsConstructor );
 
-!!! ...unfinshed... (2025/06/05)
-// Define class HierarchicalName_Base {
-//      nameParent (to parent HierarchicalName_Base)
-//      name
-//      get name_prefixWith_parentName_Recursively_cached (concatenated with all container name)
-//      get name_recursively() { cached }
-//      get name_of_parent() { direct parent name }
-//      get name_of_parent_recursively() { cached }
-// }
+//!!! ...unfinshed... (2025/06/06)
 // Let Operation, Block(_Reference), Stage(_Reference), NeuralNet(_Reference)
-// iherits from HierarchicalName_Base.
-//
-// Add name, containerBlock ?
-// get name_prefixWith_ContainerName_Recursively_cached (concatenated with all container name)
+// inherits from HierarchicalName.Base.
 
   /**
    * This constructor will register this operation as the input
@@ -79,19 +72,27 @@ let Operation_Base = ( ParentClass = Object ) => class Operation_Base
    * be created. If 2, both the this.output0 and this.output1 will be created.
    */
   constructor(
+    parentNameable, name, nameJoinSeparator,
     input0, input1, outputTensorCount, bTableLog, ...restArgs ) {
 
     // All other arguments passed to parent class's constructor.
-    super( ...restArgs );
+    super(
+      parentNameable, name, nameJoinSeparator,
+      ...restArgs );
+
     Operation_Base.setAsConstructor_self.call( this,
       input0, input1, outputTensorCount, bTableLog, ...restArgs );
   }
 
   /** @override */
   static setAsConstructor(
+    parentNameable, name, nameJoinSeparator,
     input0, input1, outputTensorCount, bTableLog, ...restArgs ) {
 
-    super.setAsConstructor.apply( this, restArgs );
+    super.setAsConstructor(
+      parentNameable, name, nameJoinSeparator,
+      ...restArgs );
+
     Operation_Base.setAsConstructor_self.call( this,
       input0, input1, outputTensorCount, bTableLog, ...restArgs );
     return this;

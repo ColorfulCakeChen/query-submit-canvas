@@ -67,7 +67,8 @@ class TwinArray extends Root {
 
     // Note: The real output TensorPlacehoder will be created later as final
     //       operation outputs.
-    super( inputTensorPlaceholder0, inputTensorPlaceholder1, 0,
+    super(
+      inputTensorPlaceholder0, inputTensorPlaceholder1, 0,
       bTableLog, ...restArgs );
 
     TwinArray.setAsConstructor_self.call( this,

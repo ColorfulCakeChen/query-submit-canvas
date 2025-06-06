@@ -52,7 +52,7 @@ let HierarchicalNameable_Base
   static setAsConstructor(
     parentNameable, name, nameJoinSeparator, ...restArgs ) {
 
-    super.setAsConstructor.apply( this, restArgs );
+    super.setAsConstructor( ...restArgs );
     OperationHierarchicalNameable_Base_Base.setAsConstructor_self.call( this,
       parentNameable, name, nameJoinSeparator, ...restArgs );
     return this;
