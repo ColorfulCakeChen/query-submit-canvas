@@ -37,21 +37,6 @@ let HierarchicalNameable_Base
   static Pool = new Pool.Root( "HierarchicalNameable.Base.Pool",
     HierarchicalNameable_Base, HierarchicalNameable_Base.setAsConstructor );
 
-//!!! ...unfinshed... (2025/06/05)
-// Define class HierarchicalNameable_Base {
-//      parentNameable (to parent HierarchicalNameable_Base)
-//      name
-//      get name_prefixWith_parentName_Recursively_cached (concatenated with all container name)
-//      get name_recursively() { cached }
-//      get name_of_parent() { direct parent name }
-//      get name_of_parent_recursively() { cached }
-// }
-// Let Operation, Block(_Reference), Stage(_Reference), NeuralNet(_Reference)
-// iherits from HierarchicalNameable_Base.
-//
-// Add name, containerBlock ?
-// get name_prefixWith_ContainerName_Recursively_cached (concatenated with all container name)
-
   /**
    */
   constructor(
@@ -99,15 +84,6 @@ let HierarchicalNameable_Base
 
     super.disposeResources();
   }
-
-//!!! ...unfinshed... (2025/06/05)
-// Define class HierarchicalNameable_Base {
-//      get name_prefixWith_parentName_Recursively_cached (concatenated with all container name)
-//      get name_recursively() { cached }
-//      get name_of_parent() { direct parent name }
-//      get name_of_parent_recursively() { cached }
-// }
-
 
   /**
    * Clear .#xxxString_Xxx_cache to null so that they will be
