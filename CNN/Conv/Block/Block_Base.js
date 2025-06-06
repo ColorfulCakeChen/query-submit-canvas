@@ -351,14 +351,14 @@ class Block_Base extends HierarchicalNameable.SeparatorDot_Root {
 
   /**
    */
-  constructor( parentNameable, name, nameJoinSeparator ) {
-    super( parentNameable, name, nameJoinSeparator );
+  constructor( parentNameable, name ) {
+    super( parentNameable, name );
     Block_Base.setAsConstructor_self.call( this );
   }
 
   /** @override */
-  static setAsConstructor( parentNameable, name, nameJoinSeparator ) {
-    super.setAsConstructor( parentNameable, name, nameJoinSeparator );
+  static setAsConstructor( parentNameable, name ) {
+    super.setAsConstructor( parentNameable, name );
     Block_Base.setAsConstructor_self.call( this );
     return this;
   }

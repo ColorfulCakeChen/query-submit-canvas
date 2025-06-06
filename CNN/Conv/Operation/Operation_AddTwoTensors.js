@@ -43,12 +43,12 @@ class AddTwoTensors extends Root {
   /**
    */
   constructor(
-    parentNameable, name, nameJoinSeparator,
+    parentNameable, name,
     inputTensorPlaceholder0, inputTensorPlaceholder1, bTableLog,
     bKeepInputTensor0, bKeepInputTensor1
   ) {
     super(
-      parentNameable, name, nameJoinSeparator,
+      parentNameable, name,
       inputTensorPlaceholder0, inputTensorPlaceholder1, 1, bTableLog );
     AddTwoTensors.setAsConstructor_self.call( this,
       inputTensorPlaceholder0, inputTensorPlaceholder1, bTableLog,
@@ -57,12 +57,12 @@ class AddTwoTensors extends Root {
 
   /** @override */
   static setAsConstructor(
-    parentNameable, name, nameJoinSeparator,
+    parentNameable, name,
     inputTensorPlaceholder0, inputTensorPlaceholder1, bTableLog,
     bKeepInputTensor0, bKeepInputTensor1
   ) {
     super.setAsConstructor(
-      parentNameable, name, nameJoinSeparator,
+      parentNameable, name,
       inputTensorPlaceholder0, inputTensorPlaceholder1, 1, bTableLog );
     AddTwoTensors.setAsConstructor_self.call( this,
       inputTensorPlaceholder0, inputTensorPlaceholder1, bTableLog,

@@ -29,14 +29,14 @@ class Pointwise_ConstantWhenPassThrough extends Pointwise {
   /**
    */
   constructor(
-    parentNameable, name, nameJoinSeparator,
+    parentNameable, name,
     inputTensorPlaceholder0, bTableLog,
     outputChannelCount, bBias, nActivationId,
     nHigherHalfDifferent, outputChannelCount_lowerHalf,
     channelShuffler_inputGroupCount, channelShuffler_outputGroupCount ) {
 
     super(
-      parentNameable, name, nameJoinSeparator,
+      parentNameable, name,
       inputTensorPlaceholder0, bTableLog,
       outputChannelCount, bBias, nActivationId,
       ValueDesc.PassThroughStyle.Singleton.Ids.PASS_THROUGH_STYLE_FILTER_0_BIAS_1,
@@ -48,14 +48,14 @@ class Pointwise_ConstantWhenPassThrough extends Pointwise {
 
   /** @override */
   static setAsConstructor(
-    parentNameable, name, nameJoinSeparator,
+    parentNameable, name,
     inputTensorPlaceholder0, bTableLog,
     outputChannelCount, bBias, nActivationId,
     nHigherHalfDifferent, outputChannelCount_lowerHalf,
     channelShuffler_inputGroupCount, channelShuffler_outputGroupCount ) {
 
     super.setAsConstructor(
-      parentNameable, name, nameJoinSeparator,
+      parentNameable, name,
       inputTensorPlaceholder0, bTableLog,
       outputChannelCount, bBias, nActivationId,
       ValueDesc.PassThroughStyle.Singleton.Ids.PASS_THROUGH_STYLE_FILTER_0_BIAS_1,

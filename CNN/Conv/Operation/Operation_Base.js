@@ -68,12 +68,12 @@ let Operation_Base = ( ParentClass = Object ) => class Operation_Base
    * be created. If 2, both the this.output0 and this.output1 will be created.
    */
   constructor(
-    parentNameable, name, nameJoinSeparator,
+    parentNameable, name,
     input0, input1, outputTensorCount, bTableLog, ...restArgs ) {
 
     // All other arguments passed to parent class's constructor.
     super(
-      parentNameable, name, nameJoinSeparator,
+      parentNameable, name,
       ...restArgs );
 
     Operation_Base.setAsConstructor_self.call( this,
@@ -82,11 +82,11 @@ let Operation_Base = ( ParentClass = Object ) => class Operation_Base
 
   /** @override */
   static setAsConstructor(
-    parentNameable, name, nameJoinSeparator,
+    parentNameable, name,
     input0, input1, outputTensorCount, bTableLog, ...restArgs ) {
 
     super.setAsConstructor(
-      parentNameable, name, nameJoinSeparator,
+      parentNameable, name,
       ...restArgs );
 
     Operation_Base.setAsConstructor_self.call( this,

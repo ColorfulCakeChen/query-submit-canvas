@@ -33,22 +33,22 @@ class Dummy extends Root {
   /**
    */
   constructor(
-    parentNameable, name, nameJoinSeparator,
+    parentNameable, name,
     input0, input1, outputTensorCount, bTableLog, ...restArgs ) {
 
     super(
-      parentNameable, name, nameJoinSeparator,
+      parentNameable, name,
       input0, input1, outputTensorCount, ...restArgs );
     Dummy.setAsConstructor_self.call( this );
   }
 
   /** @override */
   static setAsConstructor(
-    parentNameable, name, nameJoinSeparator,
+    parentNameable, name,
     input0, input1, outputTensorCount, bTableLog, ...restArgs ) {
 
     super.setAsConstructor(
-      parentNameable, name, nameJoinSeparator,
+      parentNameable, name,
       input0, input1, outputTensorCount, bTableLog, ...restArgs );
 
     Dummy.setAsConstructor_self.call( this );

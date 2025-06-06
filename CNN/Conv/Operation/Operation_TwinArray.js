@@ -61,7 +61,7 @@ class TwinArray extends Root {
    *
    */
   constructor(
-    parentNameable, name, nameJoinSeparator,
+    parentNameable, name,
     inputTensorPlaceholder0, inputTensorPlaceholder1, outputTensorCount,
     bTableLog,
     ...restArgs ) {
@@ -69,7 +69,7 @@ class TwinArray extends Root {
     // Note: The real output TensorPlacehoder will be created later as final
     //       operation outputs.
     super(
-      parentNameable, name, nameJoinSeparator,
+      parentNameable, name,
       inputTensorPlaceholder0, inputTensorPlaceholder1, 0,
       bTableLog, ...restArgs );
 
@@ -80,13 +80,13 @@ class TwinArray extends Root {
 
   /** @override */
   static setAsConstructor(
-    parentNameable, name, nameJoinSeparator,
+    parentNameable, name,
     inputTensorPlaceholder0, inputTensorPlaceholder1, outputTensorCount,
     bTableLog,
     ...restArgs ) {
 
     super.setAsConstructor(
-      parentNameable, name, nameJoinSeparator,
+      parentNameable, name,
       inputTensorPlaceholder0, inputTensorPlaceholder1, 0,
       bTableLog, ...restArgs );
 
