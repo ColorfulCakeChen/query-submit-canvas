@@ -224,6 +224,10 @@ let HierarchicalNameable_Base
     if ( this.#parentNameString_recursively_cache )
       return this.#parentNameString_recursively_cache;
 
+
+!!! ...unfinished... (2025/06/06)
+// Perhaps, should use every parent self's joinSeparator
+
     const joinSeparator = this.nameJoinSeparatorString;
     const stringArray = this.parentNameStringArray_recursively;
     const parentNames
