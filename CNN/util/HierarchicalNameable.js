@@ -100,7 +100,6 @@ let HierarchicalNameable_Base
     this.#nameJoinSeparatorString_cache = null;
     this.#nameString_cache = null;
     this.#nameString_recursively_cache = null;
-    this.#parentNameString_recursively_cache = null;
   }
 
   /**
@@ -204,33 +203,19 @@ let HierarchicalNameable_Base
    * @return {string}
    *   A string composed of all the names of all parent Nameable (recursively
    * until null (or undefined) encountered) with every parent's (not this
-   * object's) joinSeparator.
-   *   - If .#parentName_recursively_cache exists, it will be returned
-   *       directly. Otherwise, it will be created and returned. 
-   *   - If no parent, return an empty string.
+   * object's) joinSeparator. If no parent, return an empty string.
    */
   get parentNameString_recursively() {
-
-//!!! ...unfinished... (2025/06/06)
-// .#parentNameString_recursively_cache seems not necessary
-// because it has been cached in parent's nameString_recursively.
-
-    if ( this.#parentNameString_recursively_cache )
-      return this.#parentNameString_recursively_cache;
-
+    // Note1: Let parent's (not this object's) joinSeparator be used.
+    // Note2: Also let parent create itself's cache recursively.
     const parent = this.parentNameable;
     if ( parent ) {
-
-      // Note1: Let parent's (not this object's) joinSeparator be used.
-      // Note2: Also let parent create itself's cache recursively.
-      this.#parentNameString_recursively_cache
-        = parent.nameString_recursively;
-
-    } else {
-      this.#parentNameString_recursively_cache = "";
+      const parentNames = parent.nameString_recursively;
+      return parentNames;
     }
 
-    return this.#parentNameString_recursively_cache;
+    const parentNames = "";
+    return parentNames;
   }
 
 
@@ -250,17 +235,6 @@ let HierarchicalNameable_Base
    * to re-collect all names (e.g. this or some parents' names are changed).
    */
   #nameString_recursively_cache;
-
-  /**
-   * A string composed of all the names of all parent Nameable (recursively
-   * until null (or undefined) encountered) with every parent's (not this
-   * object's) joinSeparator.
-   * 
-   * It is a cache which only collect parent names once. Set it to null if
-   * wanting to re-collect all parent names (e.g. some parents' names are
-   * changed).
-   */
-  #parentNameString_recursively_cache;
 
 
   /**
