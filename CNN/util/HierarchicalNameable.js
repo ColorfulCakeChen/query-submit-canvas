@@ -23,8 +23,7 @@ import * as Recyclable from "../util/Recyclable.js";
  *   The name string of this object.
  *
  * @member {string} nameJoinSeparator
- *   The separator string used when composing .nameString_recursively and
- * .parentNameString_recursively.
+ *   The separator string used when composing .nameString_recursively.
  */
 let HierarchicalNameable_Base
   = ( ParentClass = Object ) => class HierarchicalNameable_Base
@@ -101,7 +100,6 @@ let HierarchicalNameable_Base
     this.#nameJoinSeparatorString_cache = null;
     this.#nameString_cache = null;
     this.#nameString_recursively_cache = null;
-    this.#parentNameStringArray_recursively_cache = null;
     this.#parentNameString_recursively_cache = null;
   }
 
@@ -168,13 +166,26 @@ let HierarchicalNameable_Base
     if ( this.#nameString_recursively_cache )
       return this.#nameString_recursively_cache;
 
-    const parentNames = this.parentNameString_recursively;
-    const joinSeparator = this.nameJoinSeparatorString;
     const nameString = this.nameString;
 
-    const names = this.#nameString_recursively_cache
-      = `${parentNames}${joinSeparator}${nameString}`;
-    return names;
+    const parent = this.parentNameable;
+    if ( parent ) {
+
+      // So that parent will use itself's (not this object's) joinSeparator.
+      const parentNames = parent.nameString_recursively;
+
+//!!!
+      const joinSeparator = this.nameJoinSeparatorString;
+
+      const names = this.#nameString_recursively_cache
+        = `${parentNames}${joinSeparator}${nameString}`;
+      return names;
+
+    } else { // No parent, return this object's name.
+      const names = this.#nameString_recursively_cache = nameString;
+      return names;
+    }
+
   }
 
   /**
@@ -182,36 +193,11 @@ let HierarchicalNameable_Base
    *   The name string of the direct parent nameable.
    */
   get parentNameString() {
-    const parentNameable = this.parentNameable;
-    if ( parentNameable )
-      return parentNameable.nameString;
+    const parent = this.parentNameable;
+    if ( parent )
+      return parent.nameString;
     const NoNameString = HierarchicalNameable_Base.defaultParams.NoNameString;
     return NoNameString;
-  }
-
-  /**
-   * @return {string[]}
-   *   A string array composed of all the names of all parent Nameable
-   * (recursively until null (or undefined) encountered). The root parent name
-   * is at element index 0. If .#parentNameStringArray_recursively_cache
-   * exists, return it. Otherwise, create and return it. 
-   */
-  get parentNameStringArray_recursively() {
-    if ( this.#parentNameStringArray_recursively_cache )
-      return this.#parentNameStringArray_recursively_cache;
-
-    const stringArray
-      = this.#parentNameStringArray_recursively_cache = new Array();
-
-    let parentNameString;
-    let parentNameable = this.parentNameable;
-    while ( parentNameable ) {
-      parentNameString = parentNameable.nameString;
-      stringArray.push( parentNameString );
-    }
-
-    stringArray.reverse();
-    return stringArray;
   }
 
   /**
@@ -224,16 +210,22 @@ let HierarchicalNameable_Base
     if ( this.#parentNameString_recursively_cache )
       return this.#parentNameString_recursively_cache;
 
+    const parent = this.parentNameable;
+    if ( parent ) {
 
-!!! ...unfinished... (2025/06/06)
-// Perhaps, should use every parent self's joinSeparator
+      // Note: The parent's (not this object's) joinSeparator will be used.
+      const parentNames
+        = this.#parentNameString_recursively_cache
+        = parent.nameString_recursively;
 
-    const joinSeparator = this.nameJoinSeparatorString;
-    const stringArray = this.parentNameStringArray_recursively;
-    const parentNames
+      return parentNames;
+    }
+
+    const NoNameString
       = this.#parentNameString_recursively_cache
-      = stringArray.join( joinSeparator );
-    return parentNames;
+      = HierarchicalNameable_Base.defaultParams.NoNameString;
+
+    return NoNameString;
   }
 
 
@@ -251,14 +243,6 @@ let HierarchicalNameable_Base
    * re-collect all names (e.g. this or some parents' names are changed).
    */
   #nameString_recursively_cache;
-
-  /**
-   * A string array composed of all the names of all parent Nameable
-   * (recursively until null (or undefined) encountered). It is a cache which
-   * only collect parent names once. Set it to null if wanting to re-collect
-   * all parent names (e.g. some parents' names are changed).
-   */
-  #parentNameStringArray_recursively_cache;
 
   /**
    * A string composed of all the names of all parent Nameable (recursively
