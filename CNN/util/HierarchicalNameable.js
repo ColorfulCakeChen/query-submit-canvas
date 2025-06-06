@@ -213,7 +213,7 @@ let HierarchicalNameable_Base
     const parent = this.parentNameable;
     if ( parent ) {
 
-      // Note: The parent's (not this object's) joinSeparator will be used.
+      // Note: Let parent's (not this object's) joinSeparator be used.
       const parentNames
         = this.#parentNameString_recursively_cache
         = parent.nameString_recursively;
