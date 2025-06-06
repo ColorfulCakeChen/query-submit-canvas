@@ -44,7 +44,7 @@ import * as TensorPlaceholder from "../TensorPlaceholder.js";
  *
  */
 let Operation_Base = ( ParentClass = Object ) => class Operation_Base
-  extends HierarchicalNameable.Base( ParentClass ) {
+  extends HierarchicalNameable.SeparatorDot_Base( ParentClass ) {
 
 //!!! (2025/06/06 Modified) Use HierarchicalNameable instead.
 //  extends Recyclable.Base( ParentClass ) {
