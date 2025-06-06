@@ -141,15 +141,15 @@ let HierarchicalNameable_Base
     // return default NoName in this case.
     const name = this.name; 
     if ( ( name === undefined ) || ( name === null ) ) {
-      const NoNameString
+      this.#nameString_cache
         = HierarchicalNameable_Base.defaultParams.NoNameString;
-      return NoNameString;
-    }
 
-    // As long as it is not null or undefined, return its string. This is
-    // workable even if the it is not a string (e.g. number or object).
-    const nameString = this.#nameString_cache = name.toString();
-    return nameString;
+    } else {
+      // As long as it is not null or undefined, return its string. This is
+      // workable even if the it is not a string (e.g. number or object).
+      this.#nameString_cache = name.toString();
+    }
+    return this.#nameString_cache;
   }
 
   /**
