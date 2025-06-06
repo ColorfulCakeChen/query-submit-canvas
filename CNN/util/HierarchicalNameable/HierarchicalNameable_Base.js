@@ -92,9 +92,9 @@ let HierarchicalNameable_Base
    * are changed.
    */
   name_related_cache_clear() {
-    this.#nameJoinSeparatorString_cache = null;
     this.#nameString_cache = null;
     this.#nameString_recursively_cache = null;
+    this.#nameJoinSeparatorString_cache = null;
   }
 
   /**
@@ -238,7 +238,7 @@ let HierarchicalNameable_Base
   static defaultParams = {
 
     // Default separator.
-    nameJoinSeparator: "_",
+    nameJoinSeparator: "",
 
     // A constant string used when there is no name.
     NoNameString: "(No name)",
