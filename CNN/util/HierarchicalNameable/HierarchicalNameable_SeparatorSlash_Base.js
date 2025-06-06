@@ -5,7 +5,7 @@ import * as Pool from "../../util/Pool.js";
 import { Base } from "./HierarchicalNameable_Base.js";
 
 /**
- * Just like HierarchicalNameable_Base, but with "." (dot) as
+ * Just like HierarchicalNameable_Base, but with "/" (slash) as
  * nameJoinSeparator.
  *
  * @see HierarchicalNameable_Base
