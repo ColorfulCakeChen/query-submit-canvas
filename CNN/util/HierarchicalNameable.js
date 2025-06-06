@@ -170,21 +170,19 @@ let HierarchicalNameable_Base
     const parent = this.parentNameable;
     if ( parent ) {
 
-      // So that parent will use itself's (not this object's) joinSeparator.
+      // Q: Why not use this.parentNameString_recursively?
+      // A: To avoid re-check whether parent existence.
       const parentNames = parent.nameString_recursively;
 
-//!!!
       const joinSeparator = this.nameJoinSeparatorString;
 
       this.#nameString_recursively_cache
         = `${parentNames}${joinSeparator}${nameString}`;
 
-      return this.#nameString_recursively_cache;
-
     } else { // No parent, return this object's name (without separator).
       this.#nameString_recursively_cache = nameString;
-      return this.#nameString_recursively_cache;
     }
+    return this.#nameString_recursively_cache;
   }
 
   /**
@@ -196,7 +194,7 @@ let HierarchicalNameable_Base
     const parent = this.parentNameable;
     if ( parent )
       return parent.nameString;
-    return "";
+    return HierarchicalNameable_Base.defaultParams.emptyString;
   }
 
   /**
@@ -213,8 +211,7 @@ let HierarchicalNameable_Base
       const parentNames = parent.nameString_recursively;
       return parentNames;
     }
-    const parentNames = "";
-    return parentNames;
+    return HierarchicalNameable_Base.defaultParams.emptyString;
   }
 
 
@@ -247,6 +244,8 @@ let HierarchicalNameable_Base
     // A constant string used when there is no name.
     NoNameString: "(No name)",
 
+    // A constant empty string.
+    emptyString: "",
   };
 
 }
