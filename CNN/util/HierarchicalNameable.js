@@ -37,6 +37,10 @@ let HierarchicalNameable_Base
   static Pool = new Pool.Root( "HierarchicalNameable.Base.Pool",
     HierarchicalNameable_Base, HierarchicalNameable_Base.setAsConstructor );
 
+!!! ...unfinished... (2025/06/06)
+// Perhaps, only define nameJoinSeparator in the root nameable.
+// It seems not necessary to define it at every level of the hierarchy.
+
   /**
    */
   constructor(
