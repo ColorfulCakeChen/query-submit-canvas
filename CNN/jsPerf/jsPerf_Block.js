@@ -568,7 +568,8 @@ class HeightWidthDepth {
 
           let testParams = Block_TestParams.Base.Pool.get_or_create_by();
           let testParamsGenerator = testParams.ParamsGenerator();
-          let testReference = Block_Reference.Base.Pool.get_or_create_by();
+          let testReference = Block_Reference.Base.Pool.get_or_create_by(
+            null, "Block_Reference" );
 
           let batchIdCalculator = new BatchIdCalculator.Base( 100 * 1000 );
 

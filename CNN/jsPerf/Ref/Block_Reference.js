@@ -275,7 +275,7 @@ class TestCorrectnessInfo extends Recyclable.Root {
 /**
  * Reference computation of class Block.Base.
  */
-class Block_Reference_Base extends Recyclable.Root {
+class Block_Reference_Base extends HierarchicalNameable.SeparatorDot_Root {
 
   /**
    * Used as default Block_Reference.Base provider for conforming to Recyclable
@@ -287,14 +287,14 @@ class Block_Reference_Base extends Recyclable.Root {
   /**
    *
    */
-  constructor() {
-    super();
+  constructor( parentNameable, name ) {
+    super( parentNameable, name );
     Block_Reference_Base.setAsConstructor_self.call( this );
   }
 
   /** @override */
-  static setAsConstructor() {
-    super.setAsConstructor();
+  static setAsConstructor( parentNameable, name ) {
+    super.setAsConstructor( parentNameable, name );
     Block_Reference_Base.setAsConstructor_self.call( this );
     return this;
   }
@@ -624,6 +624,12 @@ class Block_Reference_Base extends Recyclable.Root {
   }
 
   /**
+   * @param {HierarchicalNameable.Base} parentNameable
+   *   The parent (nameable) object contains the created block.
+   *
+   * @param {string} blockName
+   *   The name (for table log) of the created block.
+   *
    * @param {Block_TestParams.Base} testParams
    *   The test parameters. It is the value of
    * Block_TestParams.Base.ParamsGenerator()'s result.
@@ -641,12 +647,14 @@ class Block_Reference_Base extends Recyclable.Root {
    * @return {Block.Base}
    *   The created block object.
    */
-  static block_create( testParams,
+  static block_create(
+    parentNameable, blockName,
+    testParams,
     inputScaleBoundsArray0, inputScaleBoundsArray1,
     channelShuffler_ConcatPointwiseConv
   ) {
 
-    let block = Block.Base.Pool.get_or_create_by();
+    let block = Block.Base.Pool.get_or_create_by( parentNameable, blockName );
 
     let progress = ValueMax.Percentage.Aggregate.Pool.get_or_create_by();
 

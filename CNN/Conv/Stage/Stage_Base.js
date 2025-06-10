@@ -571,7 +571,10 @@ class Stage_Base extends Recyclable.Root {
         // Block.Params needs channel shuffler info (but does not own it).
         blockParams.channelShuffler = this.channelShuffler;
 
-        block = this.blockArray[ i ] = Block.Base.Pool.get_or_create_by();
+        const blockName = `block[ ${i} ]`;
+        block = this.blockArray[ i ] = Block.Base.Pool.get_or_create_by(
+          this, blockName );
+
         blockIniter = block.initer( progressForBlocks.children[ i ],
           inputWeightArray, this.weightElementOffsetEnd, blockParams,
           input0_ScaleBoundsArray_or_TensorPlaceholder,

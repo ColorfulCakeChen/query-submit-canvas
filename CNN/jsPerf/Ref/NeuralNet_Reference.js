@@ -59,7 +59,8 @@ class NeuralNet_Reference_Base extends Recyclable.Root {
     this.Embedding_Reference
       = Embedding_Reference.Base.Pool.get_or_create_by();
     this.Stage_Reference = Stage_Reference.Base.Pool.get_or_create_by();
-    this.Block_Reference = Block_Reference.Base.Pool.get_or_create_by();
+    this.Block_Reference = Block_Reference.Base.Pool.get_or_create_by(
+      this, "Block_Reference_Final" );
 
 //!!! (2023/04/15)
 // For clamped and integerized output, acceptable delta should be smaller.

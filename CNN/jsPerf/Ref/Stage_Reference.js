@@ -51,7 +51,8 @@ class Stage_Reference_Base extends Recyclable.Root {
 
   /** @override */
   static setAsConstructor_self() {
-    this.Block_Reference = Block_Reference.Base.Pool.get_or_create_by();
+    this.Block_Reference = Block_Reference.Base.Pool.get_or_create_by(
+      this, "Block_Reference" );
 
 //!!! (2022/08/05 Temp Remarked) For debug floating-point accumulated error
 //    this.asserter_Equal = TensorTools.Asserter_Equal.Pool.get_or_create_by( 0.4, 0.005 );
