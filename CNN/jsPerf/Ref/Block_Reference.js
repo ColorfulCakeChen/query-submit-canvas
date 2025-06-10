@@ -1283,14 +1283,23 @@ class Block_Reference_Base extends HierarchicalNameable.SeparatorDot_Root {
     if ( pointwise1ChannelCount > 0 ) {
       pointwise1Result = testParams.use_pointwise1(
         imageIn0, pointwise1ChannelCount, this.imageNeedDisposeUniqueStack,
-        "Pointwise1", testParams.out );
+
+!!! ...unfinished... (2025/06/10)
+// should ...xxxNames should include all the parentNameables' names
+
+        testParams.out, "Pointwise1" );
 
       if ( testParams.nConvBlockTypeId__is__SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD() ) { // (5)
         imageIn1 = testParams.use_pointwise1_PassThrough(
           imageIn0_beforePointwise1, // copy input0 (not input1).
           imageIn0_beforePointwise1.depth,
           this.imageNeedDisposeUniqueStack,
-          "Pointwise1_imageIn1_HigherHalfCopyLowerHalf_imageIn0", testParams.out );
+
+!!! ...unfinished... (2025/06/10)
+// should ...xxxNames should include all the parentNameables' names
+
+          testParams.out,
+          "Pointwise1_imageIn1_HigherHalfCopyLowerHalf_imageIn0" );
 
       } else if ( testParams.nConvBlockTypeId__is__SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY_or_TAIL() ) { // (6 or 7)
         imageIn1 = testParams.use_pointwise1_PassThrough(
@@ -1301,7 +1310,13 @@ class Block_Reference_Base extends HierarchicalNameable.SeparatorDot_Root {
           imageIn1_beforePointwise1.depth,
 
           this.imageNeedDisposeUniqueStack,
-          "Pointwise1_imageIn1_HigherHalfPassThrough", testParams.out );
+
+          testParams.out,
+
+!!! ...unfinished... (2025/06/10)
+// should ...xxxNames should include all the parentNameables' names
+
+          "Pointwise1_imageIn1_HigherHalfPassThrough" );
       }
 
     } else {
@@ -1330,7 +1345,12 @@ class Block_Reference_Base extends HierarchicalNameable.SeparatorDot_Root {
     if ( testParams.out.inferencedParams.bDepthwiseRequestedAndNeeded ) {
       depthwise1Result = testParams.use_depthwise1(
         pointwise1Result, this.imageNeedDisposeUniqueStack,
-        "Depthwise1", testParams.out );
+        testParams.out,
+
+!!! ...unfinished... (2025/06/10)
+// should ...xxxNames should include all the parentNameables' names
+
+        "Depthwise1" );
 
       // imageIn1 should be shrinked by depthwise1. Otherwise, its size may be
       // different from pointwise20Result and can not be concatenated together.
@@ -1339,7 +1359,12 @@ class Block_Reference_Base extends HierarchicalNameable.SeparatorDot_Root {
         imageIn1 = testParams.use_depthwise1_PassThrough(
           imageIn1_beforeDepthwise1, // pass-through input1 (not input0).
           this.imageNeedDisposeUniqueStack,
-          "Depthwise1_imageIn1_HigherHalfPassThrough", testParams.out );
+          testParams.out,
+
+!!! ...unfinished... (202/06/10)
+// should ...xxxNames should include all the parentNameables' names
+
+          "Depthwise1_imageIn1_HigherHalfPassThrough" );
       }
 
     } else {
@@ -1357,7 +1382,12 @@ class Block_Reference_Base extends HierarchicalNameable.SeparatorDot_Root {
         depthwise2Result = testParams.use_depthwise2(
           imageIn0, // depthwise2 apply to input0 (not input1).
           this.imageNeedDisposeUniqueStack,
-          "Depthwise2_for_input0", testParams.out );
+          testParams.out,
+
+!!! ...unfinished... (202/06/10)
+// should ...xxxNames should include all the parentNameables' names
+
+          "Depthwise2_for_input0" );
       } else {
         // Since depthwise2 is just no-op, its result is just the same as its
         // input (i.e. input0 (not input1)).
@@ -1372,7 +1402,12 @@ class Block_Reference_Base extends HierarchicalNameable.SeparatorDot_Root {
         // input0 (not original input0, not original input1).
         depthwise2Result = testParams.use_depthwise2(
           imageIn1, this.imageNeedDisposeUniqueStack,
-          "Depthwise2_for_input1", testParams.out );
+          testParams.out,
+
+!!! ...unfinished... (202/06/10)
+// should ...xxxNames should include all the parentNameables' names
+
+          "Depthwise2_for_input1" );
 
       } else {
         // Since depthwise2 is just no-op, its result is just the same as its
@@ -1435,12 +1470,24 @@ class Block_Reference_Base extends HierarchicalNameable.SeparatorDot_Root {
       if ( pointwise20ChannelCount > 0 ) {
         pointwise20Result = imageOutArray[ 0 ] = testParams.use_pointwise20(
           concat1Result, pointwise20ChannelCount,
-          this.imageNeedDisposeUniqueStack, "Pointwise20", testParams.out );
+          this.imageNeedDisposeUniqueStack,
+          testParams.out,
+
+!!! ...unfinished... (202/06/10)
+// should ...xxxNames should include all the parentNameables' names
+
+           "Pointwise20"  );
 
         if ( testParams.nConvBlockTypeId__is__SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD() ) { // (5)
           pointwise202Result = imageOutArray[ 1 ] = testParams.use_pointwise202(
             depthwise2Result, pointwise20ChannelCount,
-            this.imageNeedDisposeUniqueStack, "Pointwise202", testParams.out );
+            this.imageNeedDisposeUniqueStack,
+            testParams.out,
+
+!!! ...unfinished... (202/06/10)
+// should ...xxxNames should include all the parentNameables' names
+
+            "Pointwise202" );
 
         } else if ( testParams.nConvBlockTypeId__is__SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY_or_TAIL() ) { // (6 or 7)
           imageIn1 = imageOutArray[ 1 ] = testParams.use_pointwise20_PassThrough(
@@ -1452,7 +1499,12 @@ class Block_Reference_Base extends HierarchicalNameable.SeparatorDot_Root {
             pointwise20ChannelCount,
 
             this.imageNeedDisposeUniqueStack,
-            "Pointwise20_imageIn1_HigherHalfPassThrough", testParams.out );
+            testParams.out,
+
+!!! ...unfinished... (202/06/10)
+// should ...xxxNames should include all the parentNameables' names
+
+            "Pointwise20_imageIn1_HigherHalfPassThrough" );
         }
 
       } else {
@@ -1466,7 +1518,13 @@ class Block_Reference_Base extends HierarchicalNameable.SeparatorDot_Root {
           let pointwise20ResultOld = pointwise20Result;
           pointwise20Result = imageOutArray[ 0 ]
             = pointwise20ResultOld.clone_byAdd(
-                imageIn0, testParams.out, "Pointwise20_AddInputToOutput" );
+                imageIn0, testParams.out,
+
+!!! ...unfinished... (202/06/10)
+// should ...xxxNames should include all the parentNameables' names
+
+                "Pointwise20_AddInputToOutput" );
+
           this.imageNeedDisposeUniqueStack.push( pointwise20ResultOld );
         }
     }
@@ -1495,7 +1553,13 @@ class Block_Reference_Base extends HierarchicalNameable.SeparatorDot_Root {
 
       pointwise21Result = imageOutArray[ 1 ] = testParams.use_pointwise21(
         pointwise21_input, pointwise21ChannelCount,
-        this.imageNeedDisposeUniqueStack, "Pointwise21", testParams.out );
+        this.imageNeedDisposeUniqueStack,
+        testParams.out,
+
+!!! ...unfinished... (202/06/10)
+// should ...xxxNames should include all the parentNameables' names
+
+         "Pointwise21" );
 
       // Residual Connection.
       //
@@ -1507,7 +1571,13 @@ class Block_Reference_Base extends HierarchicalNameable.SeparatorDot_Root {
           let pointwise21ResultOld = pointwise21Result;
           pointwise21Result = imageOutArray[ 1 ]
             = pointwise21ResultOld.clone_byAdd(
-                imageIn0, testParams.out, "Pointwise21_AddInputToOutput" );
+                imageIn0, testParams.out,
+
+!!! ...unfinished... (202/06/10)
+// should ...xxxNames should include all the parentNameables' names
+
+                "Pointwise21_AddInputToOutput" );
+
           this.imageNeedDisposeUniqueStack.push( pointwise21ResultOld );
         }
 
