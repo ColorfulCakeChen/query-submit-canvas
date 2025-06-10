@@ -338,9 +338,14 @@ let Operation_Base = ( ParentClass = Object ) => class Operation_Base
     if ( !this.bTableLog )
       return;
 
-    // Prefix with the most derved class name.
-    const mostDerivedClassName = this.constructor.name;
-    const headerPrefix = mostDerivedClassName;
+//!!! (2025/06/10 Remarked) Use .nameString_recursively instead. 
+//     // Prefix with the most derved class name.
+//     const mostDerivedClassName = this.constructor.name;
+//     const headerPrefix = mostDerivedClassName;
+
+    // Prefix with the hierarchical name of this operation.
+    const headerPrefix = this.nameString_recursively;
+
     this.output0.TableLog_header_body( headerPrefix );
   }
 
@@ -352,9 +357,14 @@ let Operation_Base = ( ParentClass = Object ) => class Operation_Base
     if ( !this.bTableLog )
       return;
 
-    // Prefix with the most derved class name.
-    const mostDerivedClassName = this.constructor.name;
-    const headerPrefix = mostDerivedClassName;
+//!!! (2025/06/10 Remarked) Use .nameString_recursively instead. 
+//     // Prefix with the most derved class name.
+//     const mostDerivedClassName = this.constructor.name;
+//     const headerPrefix = mostDerivedClassName;
+
+    // Prefix with the hierarchical name of this operation.
+    const headerPrefix = this.nameString_recursively;
+
     this.output0.TableLog_header_body( headerPrefix );
     this.output1.TableLog_header_body( headerPrefix );
   }
