@@ -472,7 +472,7 @@ class Depthwise extends Base( FiltersArray_BiasesArray(
   /** Depthwise Convolution. */
   static Conv_and_keep( inputTensor ) {
 
-!!! ...unfinished... (2025/06/10)
+//!!! ...unfinished... (2025/06/10)
 // Perhaps, should log boundsArraySet.afterUndoPreviousActivationEscaping
 
     const t0 = tf.depthwiseConv2d( inputTensor,
@@ -487,7 +487,7 @@ class Depthwise extends Base( FiltersArray_BiasesArray(
   static Conv_and_destroy( inputTensor ) {
     try {
 
-!!! ...unfinished... (2025/06/10)
+//!!! ...unfinished... (2025/06/10)
 // Perhaps, should log boundsArraySet.afterUndoPreviousActivationEscaping
 
       const t0 = tf.depthwiseConv2d( inputTensor,
@@ -534,6 +534,9 @@ class Depthwise extends Base( FiltersArray_BiasesArray(
     let t1;
     try {
       t1 = this.pfnActivation( t0 );
+
+!!! ...unfinished... (2025/06/10)
+// Perhaps, log activation function name
 
       // Use .output0.scaleBoundsArray instead of .boundsArraySet.output0
       // (because it has been transferred to there).
