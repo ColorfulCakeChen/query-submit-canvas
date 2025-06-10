@@ -29,15 +29,15 @@ class Depthwise_SameWhenPassThrough extends Depthwise {
   /**
    */
   constructor(
-    parentNameable, name,
-    inputTensorPlaceholder0, bTableLog,
+    parentNameable, name, bTableLog,
+    inputTensorPlaceholder0,
     AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad,
     bBias, nActivationId,
     nHigherHalfDifferent ) {
 
     super(
-      parentNameable, name,
-      inputTensorPlaceholder0, bTableLog,
+      parentNameable, name, bTableLog,
+      inputTensorPlaceholder0,
       AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad,
       bBias, nActivationId,
       ValueDesc.PassThroughStyle.Singleton.Ids.PASS_THROUGH_STYLE_FILTER_1_BIAS_0,
@@ -48,15 +48,15 @@ class Depthwise_SameWhenPassThrough extends Depthwise {
 
   /** @override */
   static setAsConstructor(
-    parentNameable, name,
-    inputTensorPlaceholder0, bTableLog,
+    parentNameable, name, bTableLog,
+    inputTensorPlaceholder0,
     AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad,
     bBias, nActivationId,
     nHigherHalfDifferent ) {
 
     super.setAsConstructor(
-      parentNameable, name,
-      inputTensorPlaceholder0, bTableLog,
+      parentNameable, name, bTableLog,
+      inputTensorPlaceholder0,
       AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad,
       bBias, nActivationId,
       ValueDesc.PassThroughStyle.Singleton.Ids.PASS_THROUGH_STYLE_FILTER_1_BIAS_0,

@@ -43,36 +43,36 @@ class MultiplyTwoTensors extends Root {
   /**
    */
   constructor(
-    parentNameable, name,
-    inputTensorPlaceholder0, inputTensorPlaceholder1, bTableLog,
+    parentNameable, name, bTableLog,
+    inputTensorPlaceholder0, inputTensorPlaceholder1,
     bKeepInputTensor0, bKeepInputTensor1
   ) {
     super(
-      parentNameable, name,
-      inputTensorPlaceholder0, inputTensorPlaceholder1, 1, bTableLog );
+      parentNameable, name, bTableLog,
+      inputTensorPlaceholder0, inputTensorPlaceholder1, 1 );
     MultiplyTwoTensors.setAsConstructor_self.call( this,
-      inputTensorPlaceholder0, inputTensorPlaceholder1, bTableLog,
+      inputTensorPlaceholder0, inputTensorPlaceholder1,
       bKeepInputTensor0, bKeepInputTensor1 );
   }
 
   /** @override */
   static setAsConstructor(
-    parentNameable, name,
-    inputTensorPlaceholder0, inputTensorPlaceholder1, bTableLog,
+    parentNameable, name, bTableLog,
+    inputTensorPlaceholder0, inputTensorPlaceholder1,
     bKeepInputTensor0, bKeepInputTensor1
   ) {
     super.setAsConstructor(
-      parentNameable, name,
-      inputTensorPlaceholder0, inputTensorPlaceholder1, 1, bTableLog );
+      parentNameable, name, bTableLog,
+      inputTensorPlaceholder0, inputTensorPlaceholder1, 1 );
     MultiplyTwoTensors.setAsConstructor_self.call( this,
-      inputTensorPlaceholder0, inputTensorPlaceholder1, bTableLog,
+      inputTensorPlaceholder0, inputTensorPlaceholder1,
       bKeepInputTensor0, bKeepInputTensor1 );
     return this;
   }
 
   /** @override */
   static setAsConstructor_self(
-    inputTensorPlaceholder0, inputTensorPlaceholder1, bTableLog,
+    inputTensorPlaceholder0, inputTensorPlaceholder1,
     bKeepInputTensor0, bKeepInputTensor1
   ) {
     this.bKeepInputTensor0 = bKeepInputTensor0;

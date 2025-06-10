@@ -68,8 +68,8 @@ let Operation_Base = ( ParentClass = Object ) => class Operation_Base
    * be created. If 2, both the this.output0 and this.output1 will be created.
    */
   constructor(
-    parentNameable, name,
-    input0, input1, outputTensorCount, bTableLog, ...restArgs ) {
+    parentNameable, name, bTableLog,
+    input0, input1, outputTensorCount, ...restArgs ) {
 
 
 !!! ...unfinshed... (2025/06/06)
@@ -78,39 +78,37 @@ let Operation_Base = ( ParentClass = Object ) => class Operation_Base
 
 
     // All other arguments passed to parent class's constructor.
-    super(
-      parentNameable, name,
-      ...restArgs );
+    super( parentNameable, name, ...restArgs );
 
-    Operation_Base.setAsConstructor_self.call( this,
-      input0, input1, outputTensorCount, bTableLog );
+    Operation_Base.setAsConstructor_self.call( this, bTableLog,
+      input0, input1, outputTensorCount );
   }
 
   /** @override */
   static setAsConstructor(
-    parentNameable, name,
-    input0, input1, outputTensorCount, bTableLog, ...restArgs ) {
+    parentNameable, name, bTableLog,
+    input0, input1, outputTensorCount, ...restArgs ) {
 
-    super.setAsConstructor(
-      parentNameable, name,
-      ...restArgs );
-
-    Operation_Base.setAsConstructor_self.call( this,
-      input0, input1, outputTensorCount, bTableLog );
+    super.setAsConstructor( parentNameable, name, ...restArgs );
+    Operation_Base.setAsConstructor_self.call( this, bTableLog,
+      input0, input1, outputTensorCount );
     return this;
   }
 
   /** @override */
-  static setAsConstructor_self(
-    input0, input1, outputTensorCount, bTableLog ) {
+  static setAsConstructor_self( bTableLog,
+    input0, input1, outputTensorCount ) {
 
-    // 1. Set and register as the input TensorPlaceholder's final user.
+    // 1.
+    this.bTableLog = bTableLog;
+
+    // 2. Set and register as the input TensorPlaceholder's final user.
     Operation_Base.set_inputTensorPlaceholder0_inputTensorPlaceholder1
       .call( this, input0, input1 );
 
-    // 2. Prepare output TensorPlaceholder.
+    // 3. Prepare output TensorPlaceholder.
     {
-      // 2.1 .output0
+      // 3.1 .output0
       if ( outputTensorCount >= 1 ) {
         if ( this.output0 ) {
           // Do nothing. Continue to use the existed .output0 TensorPlaceholder.
@@ -124,7 +122,7 @@ let Operation_Base = ( ParentClass = Object ) => class Operation_Base
         }
       }
 
-      // 2.2 .output1
+      // 3.2 .output1
       if ( outputTensorCount >= 2 ) {
         if ( this.output1 ) {
           // Do nothing. Continue to use the existed .output1 TensorPlaceholder.
@@ -138,9 +136,6 @@ let Operation_Base = ( ParentClass = Object ) => class Operation_Base
         }
       }
     }
-
-    // 3.
-    this.bTableLog = bTableLog;
 
     // 4. this.apply
     //

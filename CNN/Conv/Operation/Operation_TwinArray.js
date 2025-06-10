@@ -61,46 +61,40 @@ class TwinArray extends Root {
    *
    */
   constructor(
-    parentNameable, name,
+    parentNameable, name, bTableLog,
     inputTensorPlaceholder0, inputTensorPlaceholder1, outputTensorCount,
-    bTableLog,
     ...restArgs ) {
 
     // Note: The real output TensorPlacehoder will be created later as final
     //       operation outputs.
     super(
-      parentNameable, name,
-      inputTensorPlaceholder0, inputTensorPlaceholder1, 0,
-      bTableLog, ...restArgs );
+      parentNameable, name, bTableLog,
+      inputTensorPlaceholder0, inputTensorPlaceholder1, 0, ...restArgs );
 
     TwinArray.setAsConstructor_self.call( this,
-      inputTensorPlaceholder0, inputTensorPlaceholder1, outputTensorCount,
-      bTableLog );
+      inputTensorPlaceholder0, inputTensorPlaceholder1, outputTensorCount );
   }
 
   /** @override */
   static setAsConstructor(
-    parentNameable, name,
+    parentNameable, name, bTableLog,
     inputTensorPlaceholder0, inputTensorPlaceholder1, outputTensorCount,
-    bTableLog,
     ...restArgs ) {
 
     super.setAsConstructor(
-      parentNameable, name,
+      parentNameable, name, bTableLog,
       inputTensorPlaceholder0, inputTensorPlaceholder1, 0,
       bTableLog, ...restArgs );
 
     TwinArray.setAsConstructor_self.call( this,
-      inputTensorPlaceholder0, inputTensorPlaceholder1, outputTensorCount,
-      bTableLog );
+      inputTensorPlaceholder0, inputTensorPlaceholder1, outputTensorCount );
 
     return this;
   }
 
   /** @override */
   static setAsConstructor_self(
-    inputTensorPlaceholder0, inputTensorPlaceholder1, outputTensorCount,
-    bTableLog
+    inputTensorPlaceholder0, inputTensorPlaceholder1, outputTensorCount
   ) {
 
     // In order to handle keep-input-flag correctly (even if no sub operation

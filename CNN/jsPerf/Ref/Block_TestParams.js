@@ -541,6 +541,9 @@ class Block_TestParams_Base extends TestParams.Base {
 //!!! ...unfinshed... (2025/06/05)
 // Perhaps, use this.out.bTableLog to log as table.
 
+//!!! ...unfinshed... (2025/06/10)
+// Perhaps, should assert Operation bTableLog flag? name?
+
     return result;
   }
 
