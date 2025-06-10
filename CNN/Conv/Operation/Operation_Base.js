@@ -45,7 +45,6 @@ import * as TensorPlaceholder from "../TensorPlaceholder.js";
  */
 let Operation_Base = ( ParentClass = Object ) => class Operation_Base
   extends HierarchicalNameable.SeparatorDot_Base( ParentClass ) {
-
 //!!! (2025/06/06 Modified) Use HierarchicalNameable instead.
 //  extends Recyclable.Base( ParentClass ) {
 
@@ -70,12 +69,6 @@ let Operation_Base = ( ParentClass = Object ) => class Operation_Base
   constructor(
     parentNameable, name, bTableLog,
     input0, input1, outputTensorCount, ...restArgs ) {
-
-
-!!! ...unfinshed... (2025/06/06)
-// Perhaps, place bTableLog right after parentNameable, name
-// (instead of outputTensorCount). So looks clearly.
-
 
     // All other arguments passed to parent class's constructor.
     super( parentNameable, name, ...restArgs );
