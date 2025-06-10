@@ -316,25 +316,34 @@ class Pointwise extends Base( FiltersArray_BiasesArray(
    * it can be used for achieving skip connection.)
    */
   static Conv_and_keep( inputTensor ) {
-    // 1x1, Stride = 1
-    return tf.conv2d( inputTensor, this.filtersTensor4d, 1, "valid" );
 
-
-
-!!! ...unfinished... (2025/06/10)
-//// boundsArraySet.afterUndoPreviousActivationEscaping
-//// boundsArraySet.afterFilter
-//// boundsArraySet.afterBias
+//!!! ...unfinished... (2025/06/10)
+// Perhaps, should log boundsArraySet.afterUndoPreviousActivationEscaping,
 // boundsArraySet.bPassThrough
-//
-// Use .output0.scaleBoundsArray instead of .boundsArraySet.output0 (because
-// it has been transferred to there).
 
+    // 1x1, Stride = 1
+    const t0 = tf.conv2d( inputTensor, this.filtersTensor4d, 1, "valid" );
+
+    this.TableLog_tensor3d_if_requested(
+      "conv", t0, this.boundsArraySet.afterFilter );
+
+    return t0;
   }
 
   static Conv_and_destroy( inputTensor ) {
     try {
-      return tf.conv2d( inputTensor, this.filtersTensor4d, 1, "valid" );
+
+//!!! ...unfinished... (2025/06/10)
+// Perhaps, should log boundsArraySet.afterUndoPreviousActivationEscaping,
+// boundsArraySet.bPassThrough
+
+      const t0 = tf.conv2d( inputTensor, this.filtersTensor4d, 1, "valid" );
+
+      this.TableLog_tensor3d_if_requested(
+        "conv", t0, this.boundsArraySet.afterFilter );
+
+      return t0;
+
     } finally {
       inputTensor.dispose();
     }
@@ -352,6 +361,10 @@ class Pointwise extends Base( FiltersArray_BiasesArray(
     let t1;
     try {
       t1 = tf.add( t0, this.biasesTensor3d );
+
+      this.TableLog_tensor3d_if_requested(
+        "bias", t1, this.boundsArraySet.afterBias );
+
     } finally {
       t0.dispose();
     }
@@ -365,6 +378,12 @@ class Pointwise extends Base( FiltersArray_BiasesArray(
     let t1;
     try {
       t1 = this.pfnActivation( t0 );
+
+      // Use .output0.scaleBoundsArray instead of .boundsArraySet.output0
+      // (because it has been transferred to there).
+      this.TableLog_tensor3d_activation_if_requested(
+        this.nActivationId, t1, this.output0.scaleBoundsArray );
+
     } finally {
       t0.dispose();
     }
@@ -378,12 +397,22 @@ class Pointwise extends Base( FiltersArray_BiasesArray(
     let t1;
     try {
       t1 = tf.add( t0, this.biasesTensor3d );
+
+      this.TableLog_tensor3d_if_requested(
+        "bias", t1, this.boundsArraySet.afterBias );
+
     } finally {
       t0.dispose();
     }
 
     try {
       t0 = this.pfnActivation( t1 );
+
+      // Use .output0.scaleBoundsArray instead of .boundsArraySet.output0
+      // (because it has been transferred to there).
+      this.TableLog_tensor3d_activation_if_requested(
+        this.nActivationId, t0, this.output0.scaleBoundsArray );
+
     } finally {
       t1.dispose();
     }
