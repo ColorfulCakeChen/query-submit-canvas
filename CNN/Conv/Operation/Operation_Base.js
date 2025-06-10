@@ -331,7 +331,9 @@ let Operation_Base = ( ParentClass = Object ) => class Operation_Base
     return false;
   }
 
-//!!! ...unfinished... (2025/06/10)
+!!! ...unfinished... (2025/06/10)
+// maybe aBoundsArray, not aScaleBoundsArray
+
   /**
    * If .bTableLog is true, log the specified tensor3d and ScaleBoundsArray
    * as table.

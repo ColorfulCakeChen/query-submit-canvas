@@ -414,16 +414,28 @@ class Depthwise extends Base( FiltersArray_BiasesArray(
 
   /** Depthwise Average Pooling. */
   static Avg_and_keep( inputTensor ) {
+
     // dilations = 1
-    return tf.pool( inputTensor,
+    const t0 = tf.pool( inputTensor,
       this.poolWindowShape, "avg", this.pad, 1, this.strides );
+
+    this.TableLog_tensor3d_if_requested(
+      "avg", t0, this.boundsArraySet.afterFilter );
+
+    return t0;
   }
 
   static Avg_and_destroy( inputTensor ) {
     try {
       // dilations = 1
-      return tf.pool( inputTensor,
+      const t0 = tf.pool( inputTensor,
         this.poolWindowShape, "avg", this.pad, 1, this.strides );
+
+      this.TableLog_tensor3d_if_requested(
+        "avg", t0, this.boundsArraySet.afterFilter );
+
+      return t0;
+
     } finally {
       inputTensor.dispose();
     }
@@ -432,15 +444,26 @@ class Depthwise extends Base( FiltersArray_BiasesArray(
   /** Depthwise Max Pooling. */
   static Max_and_keep( inputTensor ) {
     // dilations = 1
-    return tf.pool( inputTensor,
+    const t0 = tf.pool( inputTensor,
       this.poolWindowShape, "max", this.pad, 1, this.strides );
+
+    this.TableLog_tensor3d_if_requested(
+      "max", t0, this.boundsArraySet.afterFilter );
+
+    return t0;
   }
 
   static Max_and_destroy( inputTensor ) {
     try {
       // dilations = 1
-      return tf.pool( inputTensor,
+      const t0 = tf.pool( inputTensor,
         this.poolWindowShape, "max", this.pad, 1, this.strides );
+
+      this.TableLog_tensor3d_if_requested(
+        "max", t0, this.boundsArraySet.afterFilter );
+
+      return t0;
+
     } finally {
       inputTensor.dispose();
     }
@@ -448,14 +471,33 @@ class Depthwise extends Base( FiltersArray_BiasesArray(
 
   /** Depthwise Convolution. */
   static Conv_and_keep( inputTensor ) {
-    return tf.depthwiseConv2d( inputTensor,
+
+!!! ...unfinished... (2025/06/10)
+// Perhaps, should log boundsArraySet.afterUndoPreviousActivationEscaping
+
+    const t0 = tf.depthwiseConv2d( inputTensor,
       this.filtersTensor4d, this.strides, this.pad );
+
+    this.TableLog_tensor3d_if_requested(
+      "conv", t0, this.boundsArraySet.afterFilter );
+
+    return t0;
   }
 
   static Conv_and_destroy( inputTensor ) {
     try {
-      return tf.depthwiseConv2d( inputTensor,
+
+!!! ...unfinished... (2025/06/10)
+// Perhaps, should log boundsArraySet.afterUndoPreviousActivationEscaping
+
+      const t0 = tf.depthwiseConv2d( inputTensor,
         this.filtersTensor4d, this.strides, this.pad );
+
+      this.TableLog_tensor3d_if_requested(
+        "conv", t0, this.boundsArraySet.afterFilter );
+
+      return t0;
+
     } finally {
       inputTensor.dispose();
     }
@@ -475,6 +517,10 @@ class Depthwise extends Base( FiltersArray_BiasesArray(
     let t1;
     try {
       t1 = tf.add( t0, this.biasesTensor3d );
+
+      this.TableLog_tensor3d_if_requested(
+        "bias", t1, this.boundsArraySet.afterBias );
+
     } finally {
       t0.dispose();
     }
@@ -488,6 +534,21 @@ class Depthwise extends Base( FiltersArray_BiasesArray(
     let t1;
     try {
       t1 = this.pfnActivation( t0 );
+
+      // Use .output0.scaleBoundsArray instead of .boundsArraySet.output0
+      // (because it has been transferred to there).
+      this.TableLog_tensor3d_if_requested(
+        "activation", t1, this.output0.scaleBoundsArray );
+
+!!! ...unfinished... (2025/06/10)
+//// boundsArraySet.afterUndoPreviousActivationEscaping
+//// boundsArraySet.afterFilter
+//// boundsArraySet.afterBias
+// boundsArraySet.bPassThrough
+//
+// Use .output0.scaleBoundsArray instead of .boundsArraySet.output0 (because
+// it has been transferred to there).
+
     } finally {
       t0.dispose();
     }

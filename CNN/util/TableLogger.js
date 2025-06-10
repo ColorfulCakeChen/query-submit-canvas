@@ -2,6 +2,7 @@ export { TableLogger_Base as Base };
 
 // import * as Pool from "./Pool.js";
 // import * as Recyclable from "./Recyclable.js";
+import * as FloatValue from "../../Unpacker/FloatValue.js";
 import * as ActivationEscaping from "../Conv/ActivationEscaping.js";
 
 /**
@@ -84,7 +85,7 @@ class TableLogger_Base {
    * @param {tf.tensor3d} aTensor3d
    *   An single tf.tensor3d to be logged to console as a table.
    *
-   * @param {ActivationEscaping.ScaleBoundsArray} imageScaleBoundsArray
+   * @param {FloatValue.BoundsArray|ActivationEscaping.ScaleBoundsArray} aBoundsArray_or_aScaleBoundsArray
    *   The element value bounds (per channel) of the dataArray number array
    * (viewed as 2d image with multiple channels). It can be null (or
    * undefined).
@@ -92,7 +93,7 @@ class TableLogger_Base {
   log_tensor3d_along_depth(
     imageHeaderPrefix,
     aTensor3d,
-    imageScaleBoundsArray ) {
+    aBoundsArray_or_aScaleBoundsArray ) {
 
     const funcNameInMessage = "log_tensor3d_along_depth";
 
@@ -109,8 +110,16 @@ class TableLogger_Base {
       imageHeaderPrefix,
       dataArray,
       height, width, depth,
-      imageScaleBoundsArray );
+      aBoundsArray_or_aScaleBoundsArray );
   }
+
+
+!!! ...unfinished... (2025/06/10)
+// maybe aBoundsArray, not aScaleBoundsArray
+//  * @member {FloatValue.BoundsArray} afterFilter
+//  *   The element value bounds (per channel) after applying the convolution
+//  * filters to this.afterUndoPreviousActivationEscaping. (i.e. beforeBias)
+//  *
 
   /**
    * Log a number array (viewed as 2d image with multiple channels) as a
@@ -136,7 +145,7 @@ class TableLogger_Base {
    * @param {number} depth
    *   The number array will be interpreted as an image with depth.
    *
-   * @param {ActivationEscaping.ScaleBoundsArray} imageScaleBoundsArray
+   * @param {FloatValue.BoundsArray|ActivationEscaping.ScaleBoundsArray} aBoundsArray_or_aScaleBoundsArray
    *   The element value bounds (per channel) of the dataArray number array
    * (viewed as 2d image with multiple channels). It can be null (or
    * undefined).
@@ -145,7 +154,7 @@ class TableLogger_Base {
     imageHeaderPrefix,
     dataArray,
     height, width, depth,
-    imageScaleBoundsArray
+    aBoundsArray_or_aScaleBoundsArray
   ) {
 
     const funcNameInMessage = "log_array_as_image_along_depth";
@@ -158,8 +167,24 @@ class TableLogger_Base {
         + `( height, width, depth ) = ( ${height}, ${width}, ${depth} ).`
       );
 
-    const boundsArray = imageScaleBoundsArray?.boundsArray;
-    const scaleArraySet = imageScaleBoundsArray?.scaleArraySet;
+    // Determine bounds array.
+    let boundsArray;
+    let scaleArraySet;
+
+    let aScaleBoundsArray;
+    let aBoundsArray;
+    if ( aBoundsArray_or_aScaleBoundsArray
+           instanceof ActivationEscaping.ScaleBoundsArray ) {
+      aScaleBoundsArray = aBoundsArray_or_aScaleBoundsArray;
+      boundsArray = aScaleBoundsArray.boundsArray;
+      scaleArraySet = aScaleBoundsArray.scaleArraySet;
+
+    } else if ( aBoundsArray_or_aScaleBoundsArray
+                  instanceof FloatValue.BoundsArray ) {
+      aBoundsArray = aBoundsArray_or_aScaleBoundsArray;
+      boundsArray = aBoundsArray;
+    }
+
 
     const {
       characterCountPerField,
@@ -199,12 +224,10 @@ class TableLogger_Base {
           .toFixed( channelNumberDigitCountAfterDecimalPoint )
           .padStart( channelNumberCharacterCount );
 
-//!!! (2025/06/04 Remarked) try more clean table log channel format.
-//        channelHeader = `${indentPrefix}channel (depth) ${c}:`;
         channelHeader
           = `${channelNumberIndentPrefix}channel ${channelNumber}:`;
 
-        if ( imageScaleBoundsArray ) {
+        if ( boundsArray ) {
           const lower = boundsArray.lowers[ c ];
           const upper = boundsArray.uppers[ c ];
 
@@ -213,6 +236,13 @@ class TableLogger_Base {
           const upperString = upper
             .toFixed( digitCountAfterDecimalPoint );
 
+          channelHeader += ` `
+            + `[ ${lowerString}, ${upperString} ] = `
+            + `[ lower, upper ]`
+            ;
+        }
+
+        if ( scaleArraySet ) {
           const scaleDo = scaleArraySet.do.scales[ c ];
           const scaleUndo = scaleArraySet.undo.scales[ c ];
 
@@ -221,17 +251,9 @@ class TableLogger_Base {
           const scaleUndoString = scaleUndo
             .toFixed( digitCountAfterDecimalPoint );
 
-          channelHeader += ` `
-            + `[ ${lowerString}, ${upperString} ] = `
-            + `[ lower, upper ], `
+          channelHeader += `, `
             + `{ ${scaleDoString}, ${scaleUndoString} } = `
             + `{ do.scale, undo.scale }`
-
-//!!! (2025/06/04 Remarked) try compact table log channel format.
-            // + `[ .lower, .upper ] = [ ${lowerString}, ${upperString} ], `
-            // + `.do.scale=${scaleDoString}, `
-            // + `.undo.scale=${scaleUndoString}`
-
             ;
         }
 
