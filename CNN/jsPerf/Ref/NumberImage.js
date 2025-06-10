@@ -1997,11 +1997,11 @@ class NumberImage_Base extends Recyclable.Root {
    */
   TableLog_header_body( imageHeaderPrefix ) {
     TableLogger.Base.Singleton.log_array_as_image_along_depth(
+      imageHeaderPrefix,
       this.dataArray,
       this.height,
       this.width,
       this.depth,
-      imageHeaderPrefix,
       this.boundsArraySet.output0 // Only log .output0 should be enough.
     );
 

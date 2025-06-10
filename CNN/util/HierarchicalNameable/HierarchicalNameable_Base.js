@@ -98,6 +98,29 @@ let HierarchicalNameable_Base
   }
 
   /**
+   *
+   * @param {string} originalName
+   *   The original string will be used as prefix.  
+   *
+   * @param {string} extraName
+   *   - If null or undefined, the originalName will be returned.
+   *   - If provided, it will be appended to the end of originalName
+   *       with .nameJoinSeparatorString.
+   *
+   * @return {string}
+   *   A string either originalName or originalName with separator and
+   * extraName.
+   */
+  static helper_join_extraName( originalName, extraName ) {
+    if ( ( extraName !== undefined ) && ( extraName !== null ) ) {
+      const joinSeparator = this.nameJoinSeparatorString;
+      const modifiedName = `${originalName}${joinSeparator}${extraName}`;
+      return modifiedName;
+    }
+    return originalName;
+  }
+
+  /**
    * @return {string}
    *   A string representing .name even if it does not exist (i.e. null or
    * undefined).

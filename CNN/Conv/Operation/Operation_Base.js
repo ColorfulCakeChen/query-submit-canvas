@@ -3,6 +3,7 @@ export { Operation_Base as Base, Root };
 import * as HierarchicalNameable from "../../util/HierarchicalNameable.js";
 import * as Pool from "../../util/Pool.js";
 //import * as Recyclable from "../../util/Recyclable.js";
+import * as TableLogger from "../util/TableLogger.js";
 import * as TensorPlaceholder from "../TensorPlaceholder.js";
 
 /**
@@ -330,11 +331,34 @@ let Operation_Base = ( ParentClass = Object ) => class Operation_Base
     return false;
   }
 
+//!!! ...unfinished... (2025/06/10)
+  /**
+   * If .bTableLog is true, log the specified tensor3d and ScaleBoundsArray
+   * as table.
+   *
+   * @param {string} extraLeafName
+   *   - If null or undefined, the .nameString_recursively will be used as
+   *       the header of table log.
+   *   - If provided, it will be appended to the end of .nameString_recursively
+   *       with joinSeparator. And then, be used as the header of table log.
+   */
+  TableLog_tensor3d_if_requested( extraName, aTensor3d, aScaleBoundsArray ) {
+    if ( !this.bTableLog )
+      return;
+
+    // Prefix with the hierarchical name of this operation and extra name.
+    let headerPrefix = this.nameString_recursively;
+    headerPrefix = this.helper_join_extraName( headerPrefix, extraName );
+
+    TableLogger.Base.Singleton.log_tensor3d_along_depth(
+      headerPrefix, aTensor3d, aScaleBoundsArray );
+  }
+
   /**
    * If .bTableLog is true, log tensor3d and ScaleBoundsArray of .output0
    * as table.
    */
-  TableLog_output0_tensor3d_if_requested() {
+  TableLog_output0_if_requested() {
     if ( !this.bTableLog )
       return;
 
@@ -353,7 +377,7 @@ let Operation_Base = ( ParentClass = Object ) => class Operation_Base
    * If .bTableLog is true, log tensor3d and ScaleBoundsArray of .output0
    * and .output1 as table.
    */
-  TableLog_output0_output1_tensor3d_if_requested() {
+  TableLog_output0_output1_if_requested() {
     if ( !this.bTableLog )
       return;
 

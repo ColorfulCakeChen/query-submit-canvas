@@ -78,11 +78,11 @@ class TableLogger_Base {
   }
 
   /**
-   * @param {tf.tensor3d} aTensor3d
-   *   An single tf.tensor3d to be logged to console as a table.
-   *
    * @param {string} imageHeaderPrefix
    *   A string will be logged before the image header.
+   *
+   * @param {tf.tensor3d} aTensor3d
+   *   An single tf.tensor3d to be logged to console as a table.
    *
    * @param {ActivationEscaping.ScaleBoundsArray} imageScaleBoundsArray
    *   The element value bounds (per channel) of the dataArray number array
@@ -90,8 +90,8 @@ class TableLogger_Base {
    * undefined).
    */
   log_tensor3d_along_depth(
-    aTensor3d,
     imageHeaderPrefix,
+    aTensor3d,
     imageScaleBoundsArray ) {
 
     const funcNameInMessage = "log_tensor3d_along_depth";
@@ -106,9 +106,9 @@ class TableLogger_Base {
     const [ height, width, depth ] = shape;
     const dataArray = aTensor3d.dataSync();
     this.log_array_as_image_along_depth(
+      imageHeaderPrefix,
       dataArray,
       height, width, depth,
-      imageHeaderPrefix,
       imageScaleBoundsArray );
   }
 
@@ -120,6 +120,9 @@ class TableLogger_Base {
    * depth). The 0th channel is logged first. And then, the 1st channel,
    * the 2nd channel, ...
    *
+   *
+   * @param {string} imageHeaderPrefix
+   *   A string will be logged before the image header.
    *
    * @param {number[]} dataArray
    *   A 1d (one-dimension) number array to be logged to console.
@@ -133,18 +136,15 @@ class TableLogger_Base {
    * @param {number} depth
    *   The number array will be interpreted as an image with depth.
    *
-   * @param {string} imageHeaderPrefix
-   *   A string will be logged before the image header.
-   *
    * @param {ActivationEscaping.ScaleBoundsArray} imageScaleBoundsArray
    *   The element value bounds (per channel) of the dataArray number array
    * (viewed as 2d image with multiple channels). It can be null (or
    * undefined).
    */
   log_array_as_image_along_depth(
+    imageHeaderPrefix,
     dataArray,
     height, width, depth,
-    imageHeaderPrefix,
     imageScaleBoundsArray
   ) {
 

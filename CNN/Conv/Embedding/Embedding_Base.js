@@ -271,7 +271,7 @@ class Embedding_Base extends Recyclable.Base( ReturnOrClone.Root ) {
     const mostDerivedClassName = this.constructor.name;
     const imageHeaderPrefix = mostDerivedClassName;
     TableLogger.Base.Singleton.log_tensor3d_along_depth(
-      aTensor3d, imageHeaderPrefix, this.output_scaleBoundsArray );
+      imageHeaderPrefix, aTensor3d, this.output_scaleBoundsArray );
 
 //!!! (2025/06/04 Remarked) Only log .output should be enough.
 //     const scaleBoundsArray_HeaderPrefix = ".output";

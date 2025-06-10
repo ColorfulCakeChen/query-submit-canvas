@@ -468,7 +468,7 @@ class ConcatShuffleSplit extends Root {
         this.output1.realTensor = tf.conv2d( inputTensor,
           this.channelShuffler.filtersTensor4dArray[ 1 ], 1, "valid" );
 
-        this.TableLog_output0_output1_tensor3d_if_requested();
+        this.TableLog_output0_output1_if_requested();
 
       } catch ( e ) {
         this.output0.realTensor.dispose();
@@ -485,7 +485,7 @@ class ConcatShuffleSplit extends Root {
   /** Just return inputTensor at this.output0.realTensor. */
   static ShuffleSplit_return_input_directly( inputTensor ) {
     this.output0.realTensor = inputTensor;
-    this.TableLog_output0_tensor3d_if_requested(); // Only log .output0
+    this.TableLog_output0_if_requested(); // Only log .output0
 
     // Do not call inputTensor.dispose(). In fact, because inputTensor is
     // returned directly, it is the same as been disposed already.
