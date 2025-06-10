@@ -331,9 +331,6 @@ let Operation_Base = ( ParentClass = Object ) => class Operation_Base
     return false;
   }
 
-!!! ...unfinished... (2025/06/10)
-// maybe aBoundsArray, not aScaleBoundsArray
-
   /**
    * If .bTableLog is true, log the specified tensor3d and ScaleBoundsArray
    * as table.
@@ -344,7 +341,9 @@ let Operation_Base = ( ParentClass = Object ) => class Operation_Base
    *   - If provided, it will be appended to the end of .nameString_recursively
    *       with joinSeparator. And then, be used as the header of table log.
    */
-  TableLog_tensor3d_if_requested( extraName, aTensor3d, aScaleBoundsArray ) {
+  TableLog_tensor3d_if_requested(
+    extraName, aTensor3d, aBoundsArray_or_aScaleBoundsArray ) {
+
     if ( !this.bTableLog )
       return;
 
@@ -353,7 +352,7 @@ let Operation_Base = ( ParentClass = Object ) => class Operation_Base
     headerPrefix = this.helper_join_extraName( headerPrefix, extraName );
 
     TableLogger.Base.Singleton.log_tensor3d_along_depth(
-      headerPrefix, aTensor3d, aScaleBoundsArray );
+      headerPrefix, aTensor3d, aBoundsArray_or_aScaleBoundsArray );
   }
 
   /**
