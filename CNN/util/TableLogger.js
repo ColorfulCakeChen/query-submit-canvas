@@ -113,14 +113,6 @@ class TableLogger_Base {
       aBoundsArray_or_aScaleBoundsArray );
   }
 
-
-!!! ...unfinished... (2025/06/10)
-// maybe aBoundsArray, not aScaleBoundsArray
-//  * @member {FloatValue.BoundsArray} afterFilter
-//  *   The element value bounds (per channel) after applying the convolution
-//  * filters to this.afterUndoPreviousActivationEscaping. (i.e. beforeBias)
-//  *
-
   /**
    * Log a number array (viewed as 2d image with multiple channels) as a
    * table.
