@@ -111,7 +111,7 @@ let HierarchicalNameable_Base
    *   A string either originalName or originalName with separator and
    * extraName.
    */
-  static helper_join_extraName( originalName, extraName ) {
+  helper_join_extraName( originalName, extraName ) {
     if ( ( extraName !== undefined ) && ( extraName !== null ) ) {
       const joinSeparator = this.nameJoinSeparatorString;
       const modifiedName = `${originalName}${joinSeparator}${extraName}`;
