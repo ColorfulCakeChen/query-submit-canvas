@@ -3,7 +3,8 @@ export { Operation_Base as Base, Root };
 import * as HierarchicalNameable from "../../util/HierarchicalNameable.js";
 import * as Pool from "../../util/Pool.js";
 //import * as Recyclable from "../../util/Recyclable.js";
-import * as TableLogger from "../util/TableLogger.js";
+import * as TableLogger from "../../util/TableLogger.js";
+import * as ValueDesc from "../../Unpacker/ValueDesc.js";
 import * as TensorPlaceholder from "../TensorPlaceholder.js";
 
 /**
@@ -353,6 +354,33 @@ let Operation_Base = ( ParentClass = Object ) => class Operation_Base
 
     TableLogger.Base.Singleton.log_tensor3d_along_depth(
       headerPrefix, aTensor3d, aBoundsArray_or_aScaleBoundsArray );
+  }
+
+  /**
+   * If .bTableLog is true, log the specified activation name, tensor3d and
+   * ScaleBoundsArray as table.
+   *
+   * @param {number} nActivationId
+   *   It should be one of ValueDesc.ActivationFunction.Singleton.Ids.Xxx.
+   * (e.g. ValueDesc.ActivationFunction.Singleton.Ids.NONE,
+   * ValueDesc.ActivationFunction.Singleton.Ids.RELU6,
+   * ValueDesc.ActivationFunction.Singleton.Ids.COS, ...) It will be used
+   * as an extra name for table log.
+   */
+  TableLog_tensor3d_activation_if_requested(
+    nActivationId, aTensor3d, aBoundsArray_or_aScaleBoundsArray ) {
+
+    if ( !this.bTableLog )
+      return;
+
+    const activationFunctionName
+      = ValueDesc.ActivationFunction.Singleton.getName_byId( nActivationId );
+
+    const extraName
+      = `activation( ${activationFunctionName}( ${nActivationId} ) )`;
+
+    this.TableLog_tensor3d_if_requested(
+      extraName, aTensor3d, aBoundsArray_or_aScaleBoundsArray );
   }
 
   /**

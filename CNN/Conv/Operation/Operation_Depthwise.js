@@ -535,13 +535,10 @@ class Depthwise extends Base( FiltersArray_BiasesArray(
     try {
       t1 = this.pfnActivation( t0 );
 
-!!! ...unfinished... (2025/06/10)
-// Perhaps, log activation function name
-
       // Use .output0.scaleBoundsArray instead of .boundsArraySet.output0
       // (because it has been transferred to there).
-      this.TableLog_tensor3d_if_requested(
-        "activation", t1, this.output0.scaleBoundsArray );
+      this.TableLog_tensor3d_activation_if_requested(
+        t1, this.output0.scaleBoundsArray );
 
 !!! ...unfinished... (2025/06/10)
 //// boundsArraySet.afterUndoPreviousActivationEscaping
