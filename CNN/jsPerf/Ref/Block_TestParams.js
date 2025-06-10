@@ -520,8 +520,8 @@ class Block_TestParams_Base extends TestParams.Base {
    * @param {string} pointwiseName
    *   A string for debug message of the pointwise1 convolution.
    *
-   * @param {string} parametersDesc
-   *   A string for debug message of the point-depth-point.
+   * @param {Object} parametersDesc
+   *   Its .toString() will be used for debug message of the block.
    *
    * @return {NumberImage.Base}
    *   Return a newly created object which is the result of the pointwise1
@@ -557,8 +557,8 @@ class Block_TestParams_Base extends TestParams.Base {
    * @param {string} pointwiseName
    *   A string for debug message of the pointwise1 convolution.
    *
-   * @param {string} parametersDesc
-   *   A string for debug message of the point-depth-point.
+   * @param {Object} parametersDesc
+   *   Its .toString() will be used for debug message of the block.
    *
    * @return {NumberImage.Base}
    *   Return a newly created object which is the result of the pointwise1
@@ -584,8 +584,8 @@ class Block_TestParams_Base extends TestParams.Base {
    * @param {string} depthwiseName
    *   A string for debug message of the depthwise1 convolution.
    *
-   * @param {string} parametersDesc
-   *   A string for debug message of the point-depth-point.
+   * @param {Object} parametersDesc
+   *   Its .toString() will be used for debug message of the block.
    *
    * @return {NumberImage.Base}
    *   Return a newly created object which is the result of the depthwise1
@@ -614,8 +614,8 @@ class Block_TestParams_Base extends TestParams.Base {
    * @param {string} depthwiseName
    *   A string for debug message of the depthwise1 convolution.
    *
-   * @param {string} parametersDesc
-   *   A string for debug message of the point-depth-point.
+   * @param {Object} parametersDesc
+   *   Its .toString() will be used for debug message of the block.
    *
    * @return {NumberImage.Base}
    *   Return a newly created object which is the result of the depthwise1
@@ -644,8 +644,8 @@ class Block_TestParams_Base extends TestParams.Base {
    * @param {string} depthwiseName
    *   A string for debug message of the depthwise2 convolution.
    *
-   * @param {string} parametersDesc
-   *   A string for debug message of the point-depth-point.
+   * @param {Object} parametersDesc
+   *   Its .toString() will be used for debug message of the block.
    *
    * @return {NumberImage.Base}
    *   Return a newly created object which is the result of the depthwise2
@@ -677,8 +677,8 @@ class Block_TestParams_Base extends TestParams.Base {
    * @param {string} pointwiseName
    *   A string for debug message of the pointwise20 convolution.
    *
-   * @param {string} parametersDesc
-   *   A string for debug message of the point-depth-point.
+   * @param {Object} parametersDesc
+   *   Its .toString() will be used for debug message of the block.
    *
    * @return {NumberImage.Base}
    *   Return a newly created object which is the result of the pointwise20
@@ -749,8 +749,8 @@ class Block_TestParams_Base extends TestParams.Base {
    * @param {string} pointwiseName
    *   A string for debug message of the pointwise202 convolution.
    *
-   * @param {string} parametersDesc
-   *  A string for debug message of the point-depth-point.
+   * @param {Object} parametersDesc
+   *   Its .toString() will be used for debug message of the block.
    *
    * @return {NumberImage.Base}
    *   Return a newly created object which is the result of the pointwise202
@@ -815,8 +815,8 @@ class Block_TestParams_Base extends TestParams.Base {
    * @param {string} pointwiseName
    *   A string for debug message of the pointwise1 convolution.
    *
-   * @param {string} parametersDesc
-   *   A string for debug message of the point-depth-point.
+   * @param {Object} parametersDesc
+   *   Its .toString() will be used for debug message of the block.
    *
    * @return {NumberImage.Base}
    *   Return a newly created object which is the result of the pointwise20
@@ -849,8 +849,8 @@ class Block_TestParams_Base extends TestParams.Base {
    * @param {string} pointwiseName
    *   A string for debug message of the pointwise21 convolution.
    *
-   * @param {string} parametersDesc
-   *   A string for debug message of the point-depth-point.
+   * @param {Object} parametersDesc
+   *   Its .toString() will be used for debug message of the block.
    *
    * @return {NumberImage.Base}
    *   Return a newly created object which is the result of the pointwise21

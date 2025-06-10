@@ -260,7 +260,7 @@ class NumberImage_Base extends Recyclable.Root {
    * ( bPassThrough == true ).
    *
    * @param {Object} parametersDesc
-   *   Its .toString() for debug message of this block.
+   *   Its .toString() will be used for debug message of this block.
    *
    * @param {string[]} pointwiseNames
    *   The strings for debug message of this convolution.
@@ -510,7 +510,7 @@ class NumberImage_Base extends Recyclable.Root {
    * ( bPassThrough == true ).
    *
    * @param {Object} parametersDesc
-   *   Its .toString() for debug message of this block.
+   *   Its .toString() will be used for debug message of this block.
    *
    * @param {string[]} depthwiseNames
    *   The strings for debug message of this convolution.
