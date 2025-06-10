@@ -189,12 +189,13 @@ class Depthwise extends Base( FiltersArray_BiasesArray(
             this.boundsArraySet.output0
           );
 
-          // Release for reducing memory usage. (Since it has been inside the
-          // output tensor placeholder.)
-          {
-            // Because it has already been transferred to TensorPlaceholder
-            // this.output0
-            this.boundsArraySet.output0 = null;
+          // Because it has already been transferred to TensorPlaceholder
+          // this.output0
+          this.boundsArraySet.output0 = null;
+
+          // If no need for table log (i.e. no need for debug), reduce memory
+          // footprint by releasing unused (intermediate) bounds array set.
+          if ( !bTableLog ) {
             this.boundsArraySet.disposeResources_and_recycleToPool();
             this.boundsArraySet = null;
           }
@@ -540,15 +541,6 @@ class Depthwise extends Base( FiltersArray_BiasesArray(
       this.TableLog_tensor3d_activation_if_requested(
         this.nActivationId, t1, this.output0.scaleBoundsArray );
 
-!!! ...unfinished... (2025/06/10)
-//// boundsArraySet.afterUndoPreviousActivationEscaping
-//// boundsArraySet.afterFilter
-//// boundsArraySet.afterBias
-// boundsArraySet.bPassThrough
-//
-// Use .output0.scaleBoundsArray instead of .boundsArraySet.output0 (because
-// it has been transferred to there).
-
     } finally {
       t0.dispose();
     }
@@ -562,12 +554,22 @@ class Depthwise extends Base( FiltersArray_BiasesArray(
     let t1;
     try {
       t1 = tf.add( t0, this.biasesTensor3d );
+
+      this.TableLog_tensor3d_if_requested(
+        "bias", t1, this.boundsArraySet.afterBias );
+
     } finally {
       t0.dispose();
     }
 
     try {
       t0 = this.pfnActivation( t1 );
+
+      // Use .output0.scaleBoundsArray instead of .boundsArraySet.output0
+      // (because it has been transferred to there).
+      this.TableLog_tensor3d_activation_if_requested(
+        this.nActivationId, t0, this.output0.scaleBoundsArray );
+
     } finally {
       t1.dispose();
     }

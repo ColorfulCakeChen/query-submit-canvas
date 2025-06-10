@@ -185,12 +185,13 @@ class Pointwise extends Base( FiltersArray_BiasesArray(
             this.boundsArraySet.output0
           );
 
-          // Release for reducing memory usage. (Since it has been inside the
-          // output tensor placeholder.)
-          {
-            // Because it has already been transferred to TensorPlaceholder
-            // this.output0
-            this.boundsArraySet.output0 = null;
+          // Because it has already been transferred to TensorPlaceholder
+          // this.output0
+          this.boundsArraySet.output0 = null;
+
+          // If no need for table log (i.e. no need for debug), reduce memory
+          // footprint by releasing unused (intermediate) bounds array set.
+          if ( !bTableLog ) {
             this.boundsArraySet.disposeResources_and_recycleToPool();
             this.boundsArraySet = null;
           }
@@ -317,6 +318,18 @@ class Pointwise extends Base( FiltersArray_BiasesArray(
   static Conv_and_keep( inputTensor ) {
     // 1x1, Stride = 1
     return tf.conv2d( inputTensor, this.filtersTensor4d, 1, "valid" );
+
+
+
+!!! ...unfinished... (2025/06/10)
+//// boundsArraySet.afterUndoPreviousActivationEscaping
+//// boundsArraySet.afterFilter
+//// boundsArraySet.afterBias
+// boundsArraySet.bPassThrough
+//
+// Use .output0.scaleBoundsArray instead of .boundsArraySet.output0 (because
+// it has been transferred to there).
+
   }
 
   static Conv_and_destroy( inputTensor ) {
