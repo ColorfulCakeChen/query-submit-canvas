@@ -144,6 +144,8 @@ let HierarchicalNameable_Base
   /**
    * Clear .#nameString_recursively_cache of this object and all children
    * nameable objects (directly and indirectly).
+   *
+   * Usually, it is called when changing this nameable object's parent.
    */
   nameString_recursively_invalidate_recursively() {
     this.#nameString_recursively_cache = undefined;
@@ -154,16 +156,12 @@ let HierarchicalNameable_Base
     }
   }
 
-  /**
-   * 
-   */
+  /** (Usually called when setting parentNameable.) */
   childrenNameableSet_add( nameable ) {
     this.#childrenNameableSet.add( nameable );
   }
 
-  /**
-   * 
-   */
+  /** (Usually called when setting parentNameable.) */
   childrenNameableSet_remove( nameable ) {
     this.#childrenNameableSet.delete( nameable );
   }
