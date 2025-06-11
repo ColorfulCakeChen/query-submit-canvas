@@ -46,7 +46,9 @@ import * as AsyncWorker_Checker from "./AsyncWorker_Checker.js";
  *
  * @member {number} processingId_next
  *   The next processing id. Zero means no command has been sent. Every
- * postCommand_and_expectResult() call will use a new id.
+ * postCommand_and_expectResult() call will use a new id. (If it becomes too
+ * large, it will be wrapped to 1 (not 0 because 0 means no id has been issued)
+ * to restart counting).
  *
  * @member {processingId_Resulter_Map} the_processingId_Resulter_Map
  *   Every worker has a result pending promise map. The key of the map is
@@ -360,7 +362,11 @@ class AsyncWorker_Proxy extends Recyclable.Root {
    */
   createResulter_by_postCommandArgs( commandArgs, transferableObjectArray ) {
     let processingId = this.processingId_next;
-    ++this.processingId_next;
+
+    if ( this.#processingId_next === Number.MAX_SAFE_INTEGER )
+      this.#processingId_next = 1;
+    else
+      ++this.processingId_next;
 
     // Prepare the processing's result's receiving queue before sending it.
     let resulter = this.the_processingId_Resulter_Map

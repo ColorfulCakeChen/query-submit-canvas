@@ -328,7 +328,7 @@ let HierarchicalNameable_Base
 
 /**
  * Almost the same as HierarchicalNameable.Base class except its parent class is
- * fixed to object. In other words, caller can not specify the parent
+ * fixed to Object. In other words, caller can not specify the parent
  * class of HierarchicalNameable.Root (so it is named "Root" which can not have
  * parent class).
  */
@@ -337,15 +337,17 @@ class Root extends HierarchicalNameable_Base() {
   /**
    * @return {number}
    *   Return the new name version id number. The number could be viewed as an
-   * (almost) globally uniquely number. (If it too large, it will be wrapped
-   * to zero to restart counting).
+   * (almost) globally uniquely number. (If it becomes too large, it will be
+   * wrapped to 1 (not 0 because 0 means no id has been issued) to restart
+   * counting).
    */
   name_version_id_getNext() {
     const next_id = Root.name_version_id_next;
 
-    ++this.#name_version_id_next; 
     if ( this.#name_version_id_next === Number.MAX_SAFE_INTEGER )
-      this.#name_version_id_next = 0;
+      this.#name_version_id_next = 1;
+    else
+      ++this.#name_version_id_next; 
 
     return next_id;
   }
@@ -366,7 +368,7 @@ class Root extends HierarchicalNameable_Base() {
    */
   static defaultParams = {
 
-    // Default separator.
+    // Default separator: no separator.
     nameJoinSeparator: "",
 
     // A constant string used when there is no name.
