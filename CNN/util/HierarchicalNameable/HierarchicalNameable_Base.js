@@ -366,12 +366,13 @@ class Root extends HierarchicalNameable_Base() {
    * counting).
    */
   name_version_id_getNext() {
+    const next_id = Root.name_version_id_next;
+
     if ( this.#name_version_id_next === Number.MAX_SAFE_INTEGER )
       this.#name_version_id_next = 1;
     else
       ++this.#name_version_id_next; 
 
-    const next_id = Root.name_version_id_next;
     return next_id;
   }
 
