@@ -15,17 +15,6 @@ import * as Recyclable from "../../util/Recyclable.js";
  * (recursively) compose a name path.
  *
  *
-//!!! (2025/06/11 Remarked) Use childrenNameableSet instead.
-// !!! * @member {number} name_version_id
-//  *   An integer number represents what version this nameable object has.
-//  *
-//  *     - It should be greater than (or equal to) the name version id of any
-//  *         ancestor nameable object.
-//  *
-//  *     - If it is less than the name version id of some ancestor nameable
-//  *         object, it means some ancestor nameable object has newer name. In
-//  *         this case, the .#nameString_recursively_cache should be cleared so
-//  *         that the recursive name will be re-generated when requested.
  *
  * @member {HierarchicalNameable.Base} parentNameable
  *   The parent (nameable) object contains this object. It is only referenced
@@ -81,12 +70,11 @@ let HierarchicalNameable_Base
   static setAsConstructor_self(
     parentNameable, name, nameJoinSeparator ) {
 
-    this.#name_version_id = Root.name_version_id_getNext();
-
     this.#parentNameable = parentNameable;
 
+    // Re-use children container (if exists), but ensure it is empty.
     if ( this.#childrenNameableSet )
-      this.#childrenNameableSet.clear(); // Re-use container but ensure empty.
+      this.#childrenNameableSet.clear();
     else
       this.#childrenNameableSet = new Set();
 
@@ -95,8 +83,6 @@ let HierarchicalNameable_Base
   }
 
   /**
-   * The .parentNameable and .name will be set to null.
-   *
    * Sub-class should override this method (and call super.disposeResources()
    * before return).
    *
@@ -117,22 +103,20 @@ let HierarchicalNameable_Base
 
     this.#parentNameable = undefined; // Just nullify it. Do not release it.
 
-//!!! (2025/06/11 Remarked) Use childrenNameableSet instead.
-//    this.#name_version_id = undefined;
-
     super.disposeResources();
   }
 
-  /**
-   * Clear all .#xxxString_Xxx_cache to null so that they will be
-   * re-created. Usually, call this method if this or some parents' names
-   * are changed.
-   */
-  name_related_cache_clear() {
-    this.#nameString_cache = undefined;
-    this.#nameString_recursively_cache = undefined;
-    this.#nameJoinSeparatorString_cache = undefined;
-  }
+//!!! (2025/06/11 Remarked) seems not necessary.
+//   /**
+//    * Clear all .#xxxString_Xxx_cache to null so that they will be
+//    * re-created. Usually, call this method if this or some parents' names
+//    * are changed.
+//    */
+//   name_related_cache_clear() {
+//     this.#nameString_cache = undefined;
+//     this.#nameString_recursively_cache = undefined;
+//     this.#nameJoinSeparatorString_cache = undefined;
+//   }
 
   /**
    *
@@ -157,56 +141,49 @@ let HierarchicalNameable_Base
     return originalName;
   }
 
-//!!! (2025/06/11 Remarked) Use childrenNameableSet instead.
-//   /**
-//    * @return {number}
-//    *   - Return parent.name_version_id
-//    *       if ( parent.name_version_id > this.name_version_id ).
-//    *   - Return this.name_version_id
-//    *       if ( parent.name_version_id <= this.name_version_id ).
-//    */
-//   nameString_recursively_ensureValid() {
-//
-//   //parentNameable_isNewerThan( name_version_id ) {
-//     //this.#nameString_recursively_cache;
-//
-//     const name_version_id = this.#name_version_id;
-//
-//     const parent = this.parentNameable;
-//     if ( parent ) {
-//       if ( name_version_id < parent.name_version_id ) {
-//         return true;
-//
-// !!! ...unfinished... (2025/06/11)
-//
-//       } else {
-//
-// !!! ...unfinished... (2025/06/11)
-//
-//       }
-//
-//     } else {
-//
-// !!! ...unfinished... (2025/06/11)
-//      
-//     }
-//
-// !!! ...unfinished... (2025/06/11)
-// // compare name version id?
-//
-//   }
+  /**
+   * Clear .#nameString_recursively_cache of this object and all children
+   * nameable objects (directly and indirectly).
+   */
+  nameString_recursively_invalidate_recursively() {
+    this.#nameString_recursively_cache = undefined;
 
-//!!! (2025/06/11 Remarked) Use childrenNameableSet instead.
-//  get name_version_id() { return this.#name_version_id; }
+    const childrenNameableSet = this.#childrenNameableSet;
+    for ( let childNameable of childrenNameableSet.values() ) {
+      childNameable.nameString_recursively_invalidate_recursively();
+    }
+  }
+
+  /**
+   * 
+   */
+  childrenNameableSet_add( nameable ) {
+    this.#childrenNameableSet.add( nameable );
+  }
+
+  /**
+   * 
+   */
+  childrenNameableSet_remove( nameable ) {
+    this.#childrenNameableSet.delete( nameable );
+  }
 
 
   set parentNameable( parentNameableNew ) {
     if ( this.#parentNameable === parentNameableNew )
       return;
+
+    const parentOld = this.#parentNameable;
+    if ( parentOld ) {
+      parentOld.childrenNameableSet_remove( this );
+    }
+
     this.#parentNameable = parentNameableNew;
-    this.#nameString_recursively_cache = undefined;
-//!!! (2025/06/11 Remarked) Use childrenNameableSet instead.
-//    this.#name_version_id = Root.name_version_id_getNext();
+    if ( parentNameableNew ) {
+      parentNameableNew.childrenNameableSet_add( this );
+    }
+
+    this.nameString_recursively_invalidate_recursively();
   }
 
   get parentNameable() { return this.#parentNameable; }
@@ -217,8 +194,7 @@ let HierarchicalNameable_Base
       return;
     this.#name = nameNew;
     this.#nameString_cache = undefined;
-//!!! (2025/06/11 Remarked) Use childrenNameableSet instead.
-//    this.#name_version_id = Root.name_version_id_getNext();
+    this.nameString_recursively_invalidate_recursively();
   }
 
   get name() { return this.#name; }
@@ -229,8 +205,7 @@ let HierarchicalNameable_Base
       return;
     this.#nameJoinSeparator = nameJoinSeparatorNew;
     this.#nameJoinSeparatorString_cache = undefined;
-//!!! (2025/06/11 Remarked) Use childrenNameableSet instead.
-//    this.#name_version_id = Root.name_version_id_getNext();
+    this.nameString_recursively_invalidate_recursively();
   }
 
   get nameJoinSeparator() { return this.#nameJoinSeparator; }
@@ -266,11 +241,6 @@ let HierarchicalNameable_Base
    * it.
    */
   get nameString_recursively() {
-
-!!! ...unfinished... (2025/06/11)
-// How to invalid this cache when ancestors (i.e. some parents)
-// change themselves names?
-
     if ( this.#nameString_recursively_cache )
       return this.#nameString_recursively_cache;
 
@@ -348,9 +318,6 @@ let HierarchicalNameable_Base
   }
 
 
-//!!! (2025/06/11 Remarked) Use childrenNameableSet instead.
-//  #name_version_id;
-
   #parentNameable;
   #childrenNameableSet;
 
@@ -393,35 +360,6 @@ let HierarchicalNameable_Base
  * parent class).
  */
 class Root extends HierarchicalNameable_Base() {
-
-//!!! (2025/06/11 Remarked) Use childrenNameableSet instead.
-//   /**
-//    * @return {number}
-//    *   Return the new name version id number. The number could be viewed as an
-//    * (almost) globally uniquely number. (If it becomes too large, it will be
-//    * wrapped to 1 (not 0 because 0 means no id has been issued) to restart
-//    * counting).
-//    */
-//   name_version_id_getNext() {
-//     const next_id = Root.name_version_id_next;
-//
-//     if ( this.#name_version_id_next === Number.MAX_SAFE_INTEGER )
-//       this.#name_version_id_next = 1;
-//     else
-//       ++this.#name_version_id_next; 
-//
-//     return next_id;
-//   }
-//
-//   /**
-//    * The next global name version id.
-//    *
-//    * It is globally shared by all kinds of HierarchicalNameable_Base( Xxx )
-//    * classes because this Root class can not inherits from any other class.
-//    * So that it can be used to ditinguish any change of nameable object
-//    * operation.
-//    */
-//   static #name_version_id_next = 0;
 
   /**
    * The default parameters shared by all kinds of
