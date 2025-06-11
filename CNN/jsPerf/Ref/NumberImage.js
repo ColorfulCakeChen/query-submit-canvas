@@ -196,6 +196,7 @@ class NumberImage_Base extends Recyclable.Root {
     pointwiseActivationId,
     aPointwise_PassThrough_FiltersArray_BiasesArray_Bag,
     nPassThroughStyleId,
+    bTableLog,
     parametersDesc, ...pointwiseNames ) {
 
     return this.clone_byPointwise(
@@ -205,6 +206,7 @@ class NumberImage_Base extends Recyclable.Root {
       true,
       aPointwise_PassThrough_FiltersArray_BiasesArray_Bag,
       nPassThroughStyleId, // (bPassThrough)
+      bTableLog,
       parametersDesc, ...pointwiseNames );
   }
 
@@ -213,8 +215,9 @@ class NumberImage_Base extends Recyclable.Root {
     pointwiseChannelCount, pointwiseFiltersArray,
     bPointwiseBias, pointwiseBiasesArray,
     pointwiseActivationId,
+    bTableLog,
     parametersDesc, ...pointwiseNames ) {
-      
+
     return this.clone_byPointwise(
       pointwiseChannelCount, pointwiseFiltersArray,
       bPointwiseBias, pointwiseBiasesArray,
@@ -222,6 +225,7 @@ class NumberImage_Base extends Recyclable.Root {
       false, // (bPassThrough)
       null,  // (aPointwise_PassThrough_FiltersArray_BiasesArray_Bag)
       null,  // (nPassThroughStyleId)
+      bTableLog,
       parametersDesc, ...pointwiseNames );
   }
 
@@ -259,6 +263,10 @@ class NumberImage_Base extends Recyclable.Root {
    * ValueDesc.PassThroughStyle.Singleton.Ids.Xxx) when
    * ( bPassThrough == true ).
    *
+   * @param {boolean} bTableLog
+   *   If true, the process and result will be logged to console as table (for
+   * debug).
+   *
    * @param {Object} parametersDesc
    *   Its .toString() will be used for debug message of this block.
    *
@@ -276,6 +284,7 @@ class NumberImage_Base extends Recyclable.Root {
     bPassThrough,
     aPointwise_PassThrough_FiltersArray_BiasesArray_Bag,
     nPassThroughStyleId,
+    bTableLog,
     parametersDesc, ...pointwiseNames ) {
 
     let imageIn = this;
@@ -445,6 +454,7 @@ class NumberImage_Base extends Recyclable.Root {
     bDepthwiseBias, depthwiseActivationId,
     aDepthwise_PassThrough_FiltersArray_BiasesArray_Bag,
     nPassThroughStyleId,
+    bTableLog,
     parametersDesc, ...depthwiseNames ) {
 
     return this.clone_byDepthwise(
@@ -453,6 +463,7 @@ class NumberImage_Base extends Recyclable.Root {
       null, bDepthwiseBias, null, depthwiseActivationId,
       true, aDepthwise_PassThrough_FiltersArray_BiasesArray_Bag,
       nPassThroughStyleId, // (bPassThrough)
+      bTableLog,
       parametersDesc, ...depthwiseNames );
   }
 
@@ -463,6 +474,7 @@ class NumberImage_Base extends Recyclable.Root {
     depthwiseFiltersArray,
     bDepthwiseBias, depthwiseBiasesArray,
     depthwiseActivationId,
+    bTableLog,
     parametersDesc, ...depthwiseNames ) {
 
     return this.clone_byDepthwise(
@@ -472,6 +484,7 @@ class NumberImage_Base extends Recyclable.Root {
       bDepthwiseBias, depthwiseBiasesArray,
       depthwiseActivationId,
       false, null, null, // (bPassThrough)
+      bTableLog,
       parametersDesc, ...depthwiseNames );
   }
 
@@ -509,6 +522,10 @@ class NumberImage_Base extends Recyclable.Root {
    * ValueDesc.PassThroughStyle.Singleton.Ids.Xxx) when
    * ( bPassThrough == true ).
    *
+   * @param {boolean} bTableLog
+   *   If true, the process and result will be logged to console as table (for
+   * debug).
+   *
    * @param {Object} parametersDesc
    *   Its .toString() will be used for debug message of this block.
    *
@@ -528,6 +545,7 @@ class NumberImage_Base extends Recyclable.Root {
     bPassThrough,
     aDepthwise_PassThrough_FiltersArray_BiasesArray_Bag,
     nPassThroughStyleId,
+    bTableLog,
     parametersDesc, ...depthwiseNames ) {
 
     let imageIn = this;
@@ -1161,6 +1179,10 @@ class NumberImage_Base extends Recyclable.Root {
    * @param {NumberImage.Base} another
    *   The second image to be used for adding.
    *
+   * @param {boolean} bTableLog
+   *   If true, the process and result will be logged to console as table (for
+   * debug).
+   *
    * @param {Object} parametersDesc
    *   Its .toString() for debug message of this block.
    *
@@ -1171,7 +1193,7 @@ class NumberImage_Base extends Recyclable.Root {
    *   Return a newly created object which is the result of adding this and
    * another.
    */
-  clone_byAdd( another, parametersDesc, ...addNames ) {
+  clone_byAdd( another, bTableLog, parametersDesc, ...addNames ) {
     let rHeight, rWidth, rDepth;
     let imageOutNew;
 
@@ -1281,6 +1303,10 @@ class NumberImage_Base extends Recyclable.Root {
    * @param {NumberImage.Base} another
    *   The second image to be used for multiplying.
    *
+   * @param {boolean} bTableLog
+   *   If true, the process and result will be logged to console as table (for
+   * debug).
+   *
    * @param {Object} parametersDesc
    *   Its .toString() for debug message of this block.
    *
@@ -1291,7 +1317,7 @@ class NumberImage_Base extends Recyclable.Root {
    *   Return a newly created object which is the result of multiplying this
    * and another.
    */
-  clone_byMultiply( another, parametersDesc, ...multiplyNames ) {
+  clone_byMultiply( another, bTableLog, parametersDesc, ...multiplyNames ) {
     let rHeight, rWidth, rDepth;
     let imageOutNew;
 
@@ -1393,6 +1419,7 @@ class NumberImage_Base extends Recyclable.Root {
     nSqueezeExcitationChannelCountDivisor,
     nActivationId,
     aPointwise_PassThrough_FiltersArray_BiasesArray_Bag,
+    bTableLog,
     parametersDesc, ...squeezeExcitationNames ) {
 
     return this.clone_bySqueezeExcitation(
@@ -1401,6 +1428,7 @@ class NumberImage_Base extends Recyclable.Root {
       nActivationId,
       true, // (bPassThrough)
       aPointwise_PassThrough_FiltersArray_BiasesArray_Bag,
+      bTableLog,
       parametersDesc, ...squeezeExcitationNames );
   }
 
@@ -1410,6 +1438,7 @@ class NumberImage_Base extends Recyclable.Root {
     intermediateFiltersArray, intermediateBiasesArray,
     excitationFiltersArray, excitationBiasesArray,
     nActivationId,
+    bTableLog,
     parametersDesc, ...squeezeExcitationNames ) {
 
     return this.clone_bySqueezeExcitation(
@@ -1419,6 +1448,7 @@ class NumberImage_Base extends Recyclable.Root {
       nActivationId,
       false, // (bPassThrough)
       null,
+      bTableLog,
       parametersDesc, ...squeezeExcitationNames );
   }
 
@@ -1459,6 +1489,10 @@ class NumberImage_Base extends Recyclable.Root {
    *   A bag for generating pass-through pointwise convolution filters and
    * biases. Only used when ( bPassThrough == true ).
    *
+   * @param {boolean} bTableLog
+   *   If true, the process and result will be logged to console as table (for
+   * debug).
+   *
    * @param {Object} parametersDesc
    *   Its .toString() for debug message of this block.
    *
@@ -1476,6 +1510,7 @@ class NumberImage_Base extends Recyclable.Root {
     nActivationId,
     bPassThrough,
     aPointwise_PassThrough_FiltersArray_BiasesArray_Bag,
+    bTableLog,
     parametersDesc, ...squeezeExcitationNames ) {
 
     if (   ( nSqueezeExcitationChannelCountDivisor == undefined )
@@ -1545,6 +1580,7 @@ class NumberImage_Base extends Recyclable.Root {
         squeezeFilterHeight, squeezeFilterWidth, squeezeStridesPad,
         squeezeFiltersArray,
         squeezeBias, squeezeBiasesArray, squeezeActivationId,
+        bTableLog,
         parametersDesc, ...squeezeExcitationNames, "squeezeDepthwise" );
     }
 
@@ -1576,6 +1612,7 @@ class NumberImage_Base extends Recyclable.Root {
           bPassThrough,
           aPointwise_PassThrough_FiltersArray_BiasesArray_Bag,
           nPassThroughStyleId,
+          bTableLog,
           parametersDesc, ...squeezeExcitationNames, "intermediatePointwise" );
 
         if ( squeezeOut != this ) {
@@ -1603,6 +1640,7 @@ class NumberImage_Base extends Recyclable.Root {
         bPassThrough,
         aPointwise_PassThrough_FiltersArray_BiasesArray_Bag,
         nPassThroughStyleId,
+        bTableLog,
         parametersDesc, ...squeezeExcitationNames, "excitationPointwise" );
 
       if ( intermediateOut != this ) {
@@ -1615,7 +1653,9 @@ class NumberImage_Base extends Recyclable.Root {
     let multiplyOut;
     {
       multiplyOut = this.clone_byMultiply(
-        excitationOut, parametersDesc, ...squeezeExcitationNames, "multiply" );
+        excitationOut,
+        bTableLog,
+        parametersDesc, ...squeezeExcitationNames, "multiply" );
 
       if ( excitationOut != this ) {
         excitationOut.disposeResources_and_recycleToPool();

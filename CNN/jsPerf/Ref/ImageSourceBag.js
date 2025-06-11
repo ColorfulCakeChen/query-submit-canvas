@@ -220,6 +220,8 @@ class ImageSourceBag_Base extends Recyclable.Root {
     // 2. The shrinked image requested.
     } else {
 
+      const bTableLog = false;
+
       // Use original image to create shrinked image.
       let originalImage = ImageSourceBag_Base.internal_getImage_by.call( this,
         originalHeight, originalWidth, channelCount );
@@ -237,6 +239,7 @@ class ImageSourceBag_Base extends Recyclable.Root {
 
         // depthwiseBiasesArray, depthwiseActivationId,
         null, ValueDesc.ActivationFunction.Singleton.Ids.NONE,
+        bTableLog,
         "", "ImageSource.Bag.internal_getImage_by()"
       );
     }

@@ -1196,6 +1196,8 @@ class Block_Reference_Base extends HierarchicalNameable.SeparatorDot_Root {
     let inferencedParams = testParams.out.inferencedParams;
     let depthwisePadInfo = inferencedParams.depthwisePadInfo;
 
+    const bTableLog = testParams.out.bTableLog;
+
     // The following two (ValueDesc.ConvBlockType.Singleton.Ids.Xxx) use
     // similar calculation logic:
     //    SHUFFLE_NET_V2_HEAD                    // (2) (ShuffleNetV2's head)
@@ -1284,6 +1286,7 @@ class Block_Reference_Base extends HierarchicalNameable.SeparatorDot_Root {
       pointwise1Result = testParams.use_pointwise1(
         imageIn0, pointwise1ChannelCount, this.imageNeedDisposeUniqueStack,
         testParams.out,
+        bTableLog,
 
 !!! ...unfinished... (2025/06/10)
 // should ...xxxNames should include all the parentNameables' names
@@ -1295,6 +1298,7 @@ class Block_Reference_Base extends HierarchicalNameable.SeparatorDot_Root {
           imageIn0_beforePointwise1, // copy input0 (not input1).
           imageIn0_beforePointwise1.depth,
           this.imageNeedDisposeUniqueStack,
+          bTableLog,
           testParams.out,
 
 !!! ...unfinished... (2025/06/10)
@@ -1311,6 +1315,7 @@ class Block_Reference_Base extends HierarchicalNameable.SeparatorDot_Root {
           imageIn1_beforePointwise1.depth,
 
           this.imageNeedDisposeUniqueStack,
+          bTableLog,
           testParams.out,
 
 !!! ...unfinished... (2025/06/10)
@@ -1345,6 +1350,7 @@ class Block_Reference_Base extends HierarchicalNameable.SeparatorDot_Root {
     if ( testParams.out.inferencedParams.bDepthwiseRequestedAndNeeded ) {
       depthwise1Result = testParams.use_depthwise1(
         pointwise1Result, this.imageNeedDisposeUniqueStack,
+        bTableLog,
         testParams.out,
 
 !!! ...unfinished... (2025/06/10)
@@ -1359,6 +1365,7 @@ class Block_Reference_Base extends HierarchicalNameable.SeparatorDot_Root {
         imageIn1 = testParams.use_depthwise1_PassThrough(
           imageIn1_beforeDepthwise1, // pass-through input1 (not input0).
           this.imageNeedDisposeUniqueStack,
+          bTableLog,
           testParams.out,
 
 !!! ...unfinished... (202/06/10)
@@ -1382,6 +1389,7 @@ class Block_Reference_Base extends HierarchicalNameable.SeparatorDot_Root {
         depthwise2Result = testParams.use_depthwise2(
           imageIn0, // depthwise2 apply to input0 (not input1).
           this.imageNeedDisposeUniqueStack,
+          bTableLog,
           testParams.out,
 
 !!! ...unfinished... (202/06/10)
@@ -1402,6 +1410,7 @@ class Block_Reference_Base extends HierarchicalNameable.SeparatorDot_Root {
         // input0 (not original input0, not original input1).
         depthwise2Result = testParams.use_depthwise2(
           imageIn1, this.imageNeedDisposeUniqueStack,
+          bTableLog,
           testParams.out,
 
 !!! ...unfinished... (202/06/10)
@@ -1471,6 +1480,7 @@ class Block_Reference_Base extends HierarchicalNameable.SeparatorDot_Root {
         pointwise20Result = imageOutArray[ 0 ] = testParams.use_pointwise20(
           concat1Result, pointwise20ChannelCount,
           this.imageNeedDisposeUniqueStack,
+          bTableLog,
           testParams.out,
 
 !!! ...unfinished... (202/06/10)
@@ -1482,6 +1492,7 @@ class Block_Reference_Base extends HierarchicalNameable.SeparatorDot_Root {
           pointwise202Result = imageOutArray[ 1 ] = testParams.use_pointwise202(
             depthwise2Result, pointwise20ChannelCount,
             this.imageNeedDisposeUniqueStack,
+            bTableLog,
             testParams.out,
 
 !!! ...unfinished... (202/06/10)
@@ -1499,6 +1510,7 @@ class Block_Reference_Base extends HierarchicalNameable.SeparatorDot_Root {
             pointwise20ChannelCount,
 
             this.imageNeedDisposeUniqueStack,
+            bTableLog,
             testParams.out,
 
 !!! ...unfinished... (202/06/10)
@@ -1518,7 +1530,12 @@ class Block_Reference_Base extends HierarchicalNameable.SeparatorDot_Root {
           let pointwise20ResultOld = pointwise20Result;
           pointwise20Result = imageOutArray[ 0 ]
             = pointwise20ResultOld.clone_byAdd(
-                imageIn0, testParams.out,
+                imageIn0,
+
+!!! ...unfinished... (2025/06/11)
+                bTableLog,
+
+                testParams.out,
 
 !!! ...unfinished... (202/06/10)
 // should ...xxxNames should include all the parentNameables' names
@@ -1554,6 +1571,7 @@ class Block_Reference_Base extends HierarchicalNameable.SeparatorDot_Root {
       pointwise21Result = imageOutArray[ 1 ] = testParams.use_pointwise21(
         pointwise21_input, pointwise21ChannelCount,
         this.imageNeedDisposeUniqueStack,
+        bTableLog,
         testParams.out,
 
 !!! ...unfinished... (202/06/10)
@@ -1571,7 +1589,12 @@ class Block_Reference_Base extends HierarchicalNameable.SeparatorDot_Root {
           let pointwise21ResultOld = pointwise21Result;
           pointwise21Result = imageOutArray[ 1 ]
             = pointwise21ResultOld.clone_byAdd(
-                imageIn0, testParams.out,
+                imageIn0,
+
+!!! ...unfinished... (2025/06/11)
+                bTableLog,
+
+                testParams.out,
 
 !!! ...unfinished... (202/06/10)
 // should ...xxxNames should include all the parentNameables' names
