@@ -5,6 +5,33 @@ import * as Pool from "../util/Pool.js";
 import * as Recyclable from "../util/Recyclable.js";
 
 
+/**
+ * 
+ */
+class TestCase {
+
+  constructor( parent, separator, name,
+    parentNameString_shouldBe,
+    parentNameString_recursively_shouldBe,
+    nameJoinSeparatorString_shouldBe,
+    nameString_shouldBe,
+    nameString_recursively_shouldBe,
+
+  ) {
+
+  }
+
+  /** */
+  test() {
+
+    nameJoinSeparator_join_originalName,
+    nameJoinSeparator_join_extraName,
+    nameJoinSeparator_join_shouldBe,  
+  }
+
+}
+
+
 /** */
 function *testerOne( progressParent ) {
 
