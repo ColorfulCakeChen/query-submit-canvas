@@ -93,28 +93,7 @@ let HierarchicalNameable_Base
    * @override
    */
   disposeResources() {
-
-    {
-      const funcNameInMessage = "disposeResources";
-
-      // All children nameable objects should be detached
-      // before releasing this nameable object.
-      //
-      // Note: Usually, this means they should be released before releasing
-      //       this.
-      if ( this.#childrenNameableSet ) {
-        const childrenNameableSet = this.#childrenNameableSet;
-        const childrenNameableCount = childrenNameableSet.size;
-        if ( childrenNameableCount > 0 ) {
-          throw Error( `HierarchicalNameable_Base.${funcNameInMessage}(): `
-            + `.#childrenNameableSet.size ( ${childrenNameableCount} ) `
-            + `should be 0. `
-            + `All children nameable objects should be detached `
-            + `before releasing this nameable object.`
-          );
-        }
-      }
-    }
+    const funcNameInMessage = "disposeResources";
 
 //!!! (2025/06/11 Remarked) seems not necessary.
 //    this.name_related_cache_clear();
@@ -122,12 +101,30 @@ let HierarchicalNameable_Base
     this.#name = undefined;
     this.#nameJoinSeparator = undefined;
 
-    // Just nullify them. Do not release them here.
-    //
-    // Note: Keep the container (i.e. not set to undefined) to reduce memory
-    //       re-allocation.
-    if ( this.#childrenNameableSet )
-      this.#childrenNameableSet.clear();
+    if ( this.#childrenNameableSet ) {
+      const childrenNameableSet = this.#childrenNameableSet;
+
+      // All children nameable objects should be detached
+      // before releasing this nameable object.
+      //
+      // Note: Usually, this means they should be released before releasing
+      //       this.
+      const childrenNameableCount = childrenNameableSet.size;
+      if ( childrenNameableCount > 0 ) {
+        throw Error( `HierarchicalNameable_Base.${funcNameInMessage}(): `
+          + `.#childrenNameableSet.size ( ${childrenNameableCount} ) `
+          + `should be 0. `
+          + `All children nameable objects should be detached `
+          + `before releasing this nameable object.`
+        );
+      }
+
+      // Just nullify them. Do not release them here.
+      //
+      // Note: Keep the container (i.e. not set to undefined) to reduce
+      //       memory re-allocation.
+      childrenNameableSet.clear();
+    }
 
     // Detach from parent nameable object since this nameable object will
     // be released.
