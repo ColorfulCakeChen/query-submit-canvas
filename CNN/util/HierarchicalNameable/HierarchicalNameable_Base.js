@@ -71,6 +71,10 @@ let HierarchicalNameable_Base
     parentNameable, nameJoinSeparator, name ) {
 
     this.#parentNameable = parentNameable;
+    if ( parentNameable ) {
+      HierarchicalNameable_Base.childrenNameableSet_add_internal.call(
+        parentNameable, this );
+    }
 
     // Re-use children container (if exists), but ensure it is empty.
     if ( this.#childrenNameableSet )
