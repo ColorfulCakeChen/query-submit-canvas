@@ -423,7 +423,7 @@ class NeuralNet_Base extends Recyclable.Root {
           .channelCount_higherHalf = undefined;
 
         let blockFinal = this.blockFinal = Block.Base.Pool.get_or_create_by(
-          this, "blockFinal" );
+          this, "block_final" );
 
         let blockIniter = blockFinal.initer( progressForBlockFinal,
           inputWeightArray, this.weightElementOffsetEnd, blockFinalParams,

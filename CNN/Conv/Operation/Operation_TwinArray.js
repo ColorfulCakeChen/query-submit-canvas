@@ -119,7 +119,7 @@ class TwinArray extends Root {
 
     // For reducing memory re-allocation.
     //
-    // When one or twin operations are appended, the newly appende operations'
+    // When one or twin operations are appended, the newly appended operations'
     // output tensor placeholders will be collected here temporarily. And then
     // they will be assigned as endingDummyOperation's input tensor
     // placeholder.

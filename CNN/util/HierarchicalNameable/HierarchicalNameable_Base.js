@@ -87,7 +87,7 @@ let HierarchicalNameable_Base
   }
 
   /**
-   * Clear .#xxxString_Xxx_cache to null so that they will be
+   * Clear all .#xxxString_Xxx_cache to null so that they will be
    * re-created. Usually, call this method if this or some parents' names
    * are changed.
    */
@@ -121,6 +121,16 @@ let HierarchicalNameable_Base
   }
 
   /**
+   * 
+   */
+  parentNameable_isChanged() {
+
+//!!! ...unfinished... (2025/06/11)
+// compare name version id?
+
+  }
+
+  /**
    * @return {string}
    *   A string representing .name even if it does not exist (i.e. null or
    * undefined).
@@ -151,6 +161,11 @@ let HierarchicalNameable_Base
    * it.
    */
   get nameString_recursively() {
+
+//!!! ...unfinished... (2025/06/11)
+// How to invalid this cache when ancestors (i.e. some parents)
+// change themselves names?
+
     if ( this.#nameString_recursively_cache )
       return this.#nameString_recursively_cache;
 
@@ -227,6 +242,12 @@ let HierarchicalNameable_Base
     return this.#nameJoinSeparatorString_cache;
   }
 
+
+//!!! ...unfinished... (2025/06/11)
+  /**
+   * 
+   */
+  #name_version_id;
 
   /**
    * The string of this object .name.

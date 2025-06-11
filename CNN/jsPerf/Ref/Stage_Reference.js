@@ -1108,6 +1108,9 @@ class Stage_Reference_Base extends Recyclable.Root {
       this.imageInArray[ 0 ] = this.imageOutArray[ 0 ];
       this.imageInArray[ 1 ] = this.imageOutArray[ 1 ];
 
+!!! ...unfinished... (2025/06/11)
+// should rename blockRef (nameString)
+
       blockRef.testParams = testParams.blockArray[ blockIndex ];
       blockRef.calcResult( this.imageInArray, this.imageOutArray );
 
