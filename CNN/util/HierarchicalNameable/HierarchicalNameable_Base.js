@@ -26,11 +26,11 @@ import * as Recyclable from "../../util/Recyclable.js";
  * iterating this .childrenNameableSet container). Mainly used for invalidate
  * their .#nameString_recursively_cache.
  *
- * @member {string} name
- *   The name string of this object.
- *
  * @member {string} nameJoinSeparator
  *   The separator string used when composing .nameString_recursively.
+ *
+ * @member {string} name
+ *   The name string of this object.
  */
 let HierarchicalNameable_Base
   = ( ParentClass = Object ) => class HierarchicalNameable_Base
@@ -48,27 +48,27 @@ let HierarchicalNameable_Base
   /**
    */
   constructor(
-    parentNameable, name, nameJoinSeparator, ...restArgs ) {
+    parentNameable, nameJoinSeparator, name, ...restArgs ) {
 
     // All other arguments passed to parent class's constructor.
     super( ...restArgs );
     HierarchicalNameable_Base.setAsConstructor_self.call( this,
-      parentNameable, name, nameJoinSeparator );
+      parentNameable, nameJoinSeparator, name );
   }
 
   /** @override */
   static setAsConstructor(
-    parentNameable, name, nameJoinSeparator, ...restArgs ) {
+    parentNameable, nameJoinSeparator, name, ...restArgs ) {
 
     super.setAsConstructor( ...restArgs );
     OperationHierarchicalNameable_Base_Base.setAsConstructor_self.call( this,
-      parentNameable, name, nameJoinSeparator );
+      parentNameable, nameJoinSeparator, name );
     return this;
   }
 
   /** @override */
   static setAsConstructor_self(
-    parentNameable, name, nameJoinSeparator ) {
+    parentNameable, nameJoinSeparator, name ) {
 
     this.#parentNameable = parentNameable;
 
@@ -78,8 +78,8 @@ let HierarchicalNameable_Base
     else
       this.#childrenNameableSet = new Set();
 
-    this.#name = name;
     this.#nameJoinSeparator = nameJoinSeparator;
+    this.#name = name;
   }
 
   /**
@@ -91,8 +91,8 @@ let HierarchicalNameable_Base
   disposeResources() {
     this.name_related_cache_clear();
 
-    this.#nameJoinSeparator = undefined;
     this.#name = undefined;
+    this.#nameJoinSeparator = undefined;
 
     // Just nullify them. Do not release them here.
     //
@@ -113,9 +113,9 @@ let HierarchicalNameable_Base
 //    * are changed.
 //    */
 //   name_related_cache_clear() {
+//     this.#nameJoinSeparatorString_cache = undefined;
 //     this.#nameString_cache = undefined;
 //     this.#nameString_recursively_cache = undefined;
-//     this.#nameJoinSeparatorString_cache = undefined;
 //   }
 
 
@@ -186,6 +186,17 @@ let HierarchicalNameable_Base
   get parentNameable() { return this.#parentNameable; }
 
 
+  set nameJoinSeparator( nameJoinSeparatorNew ) {
+    if ( this.#nameJoinSeparator === nameJoinSeparatorNew )
+      return;
+    this.#nameJoinSeparator = nameJoinSeparatorNew;
+    this.#nameJoinSeparatorString_cache = undefined;
+    this.nameString_recursively_invalidate_recursively();
+  }
+
+  get nameJoinSeparator() { return this.#nameJoinSeparator; }
+
+
   set name( nameNew ) {
     if ( this.#name === nameNew )
       return;
@@ -197,15 +208,60 @@ let HierarchicalNameable_Base
   get name() { return this.#name; }
 
 
-  set nameJoinSeparator( nameJoinSeparatorNew ) {
-    if ( this.#nameJoinSeparator === nameJoinSeparatorNew )
-      return;
-    this.#nameJoinSeparator = nameJoinSeparatorNew;
-    this.#nameJoinSeparatorString_cache = undefined;
-    this.nameString_recursively_invalidate_recursively();
+  /**
+   * @return {string}
+   *   The name string of the direct parent nameable. If no parent, return an
+   * empty string.
+   */
+  get parentNameString() {
+    const parent = this.#parentNameable;
+    if ( parent )
+      return parent.nameString;
+    return Root.defaultParams.emptyString;
   }
 
-  get nameJoinSeparator() { return this.#nameJoinSeparator; }
+  /**
+   * @return {string}
+   *   A string composed of all the names of all parent Nameable (recursively
+   * until null (or undefined) encountered) with every parent's (not this
+   * object's) joinSeparator. If no parent, return an empty string.
+   */
+  get parentNameString_recursively() {
+    const parent = this.#parentNameable;
+    if ( parent ) {
+      // Note1: Let parent's (not this object's) joinSeparator be used.
+      // Note2: Also let parent create itself's name cache recursively.
+      const parentNames = parent.nameString_recursively;
+      return parentNames;
+    }
+    return Root.defaultParams.emptyString;
+  }
+
+
+  /**
+   * @return {string}
+   *   A string representing .nameJoinSeparator even if it does not exist
+   * (i.e. null or undefined).
+   */
+  get nameJoinSeparatorString() {
+    if ( this.#nameJoinSeparatorString_cache )
+      return this.#nameJoinSeparatorString_cache;
+
+    const nameJoinSeparator = this.#nameJoinSeparator; 
+    if (   ( nameJoinSeparator !== undefined )
+        && ( nameJoinSeparator !== null ) ) {
+      // Note: workable even if not a string (e.g. number or object).
+      this.#nameJoinSeparatorString_cache
+        = nameJoinSeparator.toString();
+
+    } else {
+      // Because null and undefined do not have .toString() to be called,
+      // return default joinSeparator in this case.
+      this.#nameJoinSeparatorString_cache
+        = Root.defaultParams.nameJoinSeparator;
+    }
+    return this.#nameJoinSeparatorString_cache;
+  }
 
 
   /**
@@ -260,66 +316,22 @@ let HierarchicalNameable_Base
     return this.#nameString_recursively_cache;
   }
 
-  /**
-   * @return {string}
-   *   The name string of the direct parent nameable. If no parent, return an
-   * empty string.
-   */
-  get parentNameString() {
-    const parent = this.#parentNameable;
-    if ( parent )
-      return parent.nameString;
-    return Root.defaultParams.emptyString;
-  }
-
-  /**
-   * @return {string}
-   *   A string composed of all the names of all parent Nameable (recursively
-   * until null (or undefined) encountered) with every parent's (not this
-   * object's) joinSeparator. If no parent, return an empty string.
-   */
-  get parentNameString_recursively() {
-    const parent = this.#parentNameable;
-    if ( parent ) {
-      // Note1: Let parent's (not this object's) joinSeparator be used.
-      // Note2: Also let parent create itself's name cache recursively.
-      const parentNames = parent.nameString_recursively;
-      return parentNames;
-    }
-    return Root.defaultParams.emptyString;
-  }
-
-  /**
-   * @return {string}
-   *   A string representing .nameJoinSeparator even if it does not exist
-   * (i.e. null or undefined).
-   */
-  get nameJoinSeparatorString() {
-    if ( this.#nameJoinSeparatorString_cache )
-      return this.#nameJoinSeparatorString_cache;
-
-    const nameJoinSeparator = this.#nameJoinSeparator; 
-    if (   ( nameJoinSeparator !== undefined )
-        && ( nameJoinSeparator !== null ) ) {
-      // Note: workable even if not a string (e.g. number or object).
-      this.#nameJoinSeparatorString_cache
-        = nameJoinSeparator.toString();
-
-    } else {
-      // Because null and undefined do not have .toString() to be called,
-      // return default joinSeparator in this case.
-      this.#nameJoinSeparatorString_cache
-        = Root.defaultParams.nameJoinSeparator;
-    }
-    return this.#nameJoinSeparatorString_cache;
-  }
-
 
   #parentNameable;
   #childrenNameableSet;
 
-  #name;
   #nameJoinSeparator;
+  #name;
+
+
+  /**
+   * A string representing .nameJoinSeparator even if it does not exist
+   * (i.e. null or undefined).
+   *
+   * It is a cache which only be collected once. Set it to null if wanting to
+   * re-collect it (e.g. .nameJoinSeparator is changed).
+   */
+  #nameJoinSeparatorString_cache;
 
   /**
    * The string of this object's name.
@@ -337,15 +349,6 @@ let HierarchicalNameable_Base
    * to re-collect all names (e.g. this or some parents' names are changed).
    */
   #nameString_recursively_cache;
-
-  /**
-   * A string representing .nameJoinSeparator even if it does not exist
-   * (i.e. null or undefined).
-   *
-   * It is a cache which only be collected once. Set it to null if wanting to
-   * re-collect it (e.g. .nameJoinSeparator is changed).
-   */
-  #nameJoinSeparatorString_cache;
 
 
   /** (Internally called when setting parentNameable.) */

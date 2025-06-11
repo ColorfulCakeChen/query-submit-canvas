@@ -5,7 +5,7 @@ import * as Pool from "../../util/Pool.js";
 import { Base } from "./HierarchicalNameable_Base.js";
 
 /**
- * Just like HierarchicalNameable_Base, but with "." (dot) as
+ * Just like HierarchicalNameable_Base, but with " " (space) as
  * nameJoinSeparator.
  *
  * @see HierarchicalNameable_Base
@@ -26,13 +26,13 @@ let HierarchicalNameable_SeparatorSpace_Base
   /**
    */
   constructor( parentNameable, name, ...restArgs ) {
-    super( parentNameable, name, ".", ...restArgs );
+    super( parentNameable, " ", name, ...restArgs );
     HierarchicalNameable_SeparatorSpace_Base.setAsConstructor_self.call( this );
   }
 
   /** @override */
   static setAsConstructor( parentNameable, name, ...restArgs ) {
-    super.setAsConstructor( parentNameable, name, ".", ...restArgs );
+    super.setAsConstructor( parentNameable, " ", name, ...restArgs );
     HierarchicalNameable_SeparatorSpace_Base.setAsConstructor_self.call( this );
     return this;
   }

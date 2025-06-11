@@ -26,13 +26,13 @@ let HierarchicalNameable_SeparatorSlash_Base
   /**
    */
   constructor( parentNameable, name, ...restArgs ) {
-    super( parentNameable, name, "/", ...restArgs );
+    super( parentNameable, "/", name, ...restArgs );
     HierarchicalNameable_SeparatorSlash_Base.setAsConstructor_self.call( this );
   }
 
   /** @override */
   static setAsConstructor( parentNameable, name, ...restArgs ) {
-    super.setAsConstructor( parentNameable, name, "/", ...restArgs );
+    super.setAsConstructor( parentNameable, "/", name, ...restArgs );
     HierarchicalNameable_SeparatorSlash_Base.setAsConstructor_self.call( this );
     return this;
   }
