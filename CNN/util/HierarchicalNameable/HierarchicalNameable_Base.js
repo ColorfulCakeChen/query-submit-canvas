@@ -98,9 +98,6 @@ let HierarchicalNameable_Base
 //!!! (2025/06/11 Remarked) seems not necessary.
 //    this.name_related_cache_clear();
 
-    this.#name = undefined;
-    this.#nameJoinSeparator = undefined;
-
     if ( this.#childrenNameableSet ) {
       const childrenNameableSet = this.#childrenNameableSet;
 
@@ -129,6 +126,9 @@ let HierarchicalNameable_Base
     // Detach from parent nameable object since this nameable object will
     // be released.
     this.parentNameable_set( undefined );
+
+    this.#name = undefined;
+    this.#nameJoinSeparator = undefined;
 
     super.disposeResources();
   }
