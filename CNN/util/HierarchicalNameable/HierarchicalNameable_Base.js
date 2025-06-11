@@ -15,6 +15,17 @@ import * as Recyclable from "../../util/Recyclable.js";
  * (recursively) compose a name path.
  *
  *
+ * @member {number} name_version_id
+ *   An integer number represents what version this nameable object has.
+ *
+ *     - It should be greater than (or equal to) the name version id of any
+ *         ancestor nameable object.
+ *
+ *     - If it is less than the name version id of some ancestor nameable
+ *         object, it means some ancestor nameable object has newer name. In
+ *         this case, the .#nameString_recursively_cache should be cleared so
+ *         that the recursive name will be re-generated when requested.
+ *
  * @member {HierarchicalNameable.Base} parentNameable
  *   The parent (nameable) object contains this object. It is only referenced
  * (NOT owned) by this object. It will NOT be released by this object.
@@ -127,12 +138,36 @@ let HierarchicalNameable_Base
   /**
    * 
    */
-  parentNameable_isChanged() {
+  parentNameable_isNewerThan( name_version_id ) {
+    const name_version_id = this.#name_version_id;
+
+    const parent = this.parentNameable;
+    if ( parent ) {
+      if ( name_version_id < parent.name_version_id ) {
+        return true;
+
+!!! ...unfinished... (2025/06/11)
+
+      } else {
+
+!!! ...unfinished... (2025/06/11)
+
+      }
+
+    } else {
+
+!!! ...unfinished... (2025/06/11)
+        
+    }
+
 
 !!! ...unfinished... (2025/06/11)
 // compare name version id?
 
   }
+
+
+  get name_version_id() { return this.#name_version_id; }
 
 
   set parentNameable( parentNameableNew ) {
@@ -146,10 +181,10 @@ let HierarchicalNameable_Base
   get parentNameable() { return this.#parentNameable; }
 
 
-  set name( newName ) {
-    if ( this.#name === newName )
+  set name( nameNew ) {
+    if ( this.#name === nameNew )
       return;
-    this.#name = newName;
+    this.#name = nameNew;
     this.#nameString_cache = undefined;
     this.#name_version_id = Root.name_version_id_getNext();
   }
@@ -280,17 +315,6 @@ let HierarchicalNameable_Base
   }
 
 
-  /**
-   * An integer number represents what version this nameable object has.
-   *
-   *   - It should be greater than (or equal to) the name version id of any
-   *       ancestor nameable object.
-   *
-   *   - If it is less than the name version id of some ancestor nameable
-   *       object, it means some ancestor nameable object has newer name. In
-   *       this case, the .#nameString_recursively_cache should be cleared so
-   *       that the recursive name will be re-generated when requested.
-   */
   #name_version_id;
 
   #parentNameable;
