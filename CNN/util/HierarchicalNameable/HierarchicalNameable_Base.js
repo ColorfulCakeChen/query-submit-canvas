@@ -99,6 +99,9 @@ let HierarchicalNameable_Base
 
       // All children nameable objects should be detached
       // before releasing this nameable object.
+      //
+      // Note: Usually, this means they should be released before releasing
+      //       this.
       if ( this.#childrenNameableSet ) {
         const childrenNameableSet = this.#childrenNameableSet;
         const childrenNameableCount = childrenNameableSet.size;
