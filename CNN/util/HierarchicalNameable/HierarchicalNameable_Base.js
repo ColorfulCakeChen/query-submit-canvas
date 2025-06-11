@@ -114,12 +114,6 @@ let HierarchicalNameable_Base
           );
         }
       }
-
-      // Detach from parent nameable object since this nameable object
-      // will be released.
-      if ( this.#parentNameable ) {
-        this.parentNameable = undefined;
-      }
     }
 
 //!!! (2025/06/11 Remarked) seems not necessary.
@@ -135,7 +129,9 @@ let HierarchicalNameable_Base
     if ( this.#childrenNameableSet )
       this.#childrenNameableSet.clear();
 
-    this.#parentNameable = undefined; // Just nullify it. Do not release it.
+    // Detach from parent nameable object since this nameable object will
+    // be released.
+    this.parentNameable_set( undefined );
 
     super.disposeResources();
   }
@@ -198,7 +194,7 @@ let HierarchicalNameable_Base
   }
 
 
-  set parentNameable( parentNameableNew ) {
+  parentNameable_set( parentNameableNew ) {
     if ( this.#parentNameable === parentNameableNew )
       return;
 
@@ -217,10 +213,10 @@ let HierarchicalNameable_Base
     this.nameString_recursively_invalidate_recursively();
   }
 
-  get parentNameable() { return this.#parentNameable; }
+  parentNameable_get() { return this.#parentNameable; }
 
 
-  set nameJoinSeparator( nameJoinSeparatorNew ) {
+  nameJoinSeparator_set( nameJoinSeparatorNew ) {
     if ( this.#nameJoinSeparator === nameJoinSeparatorNew )
       return;
     this.#nameJoinSeparator = nameJoinSeparatorNew;
@@ -228,10 +224,10 @@ let HierarchicalNameable_Base
     this.nameString_recursively_invalidate_recursively();
   }
 
-  get nameJoinSeparator() { return this.#nameJoinSeparator; }
+  nameJoinSeparator_get() { return this.#nameJoinSeparator; }
 
 
-  set name( nameNew ) {
+  name_set( nameNew ) {
     if ( this.#name === nameNew )
       return;
     this.#name = nameNew;
@@ -239,7 +235,7 @@ let HierarchicalNameable_Base
     this.nameString_recursively_invalidate_recursively();
   }
 
-  get name() { return this.#name; }
+  name_get() { return this.#name; }
 
 
   /**
@@ -247,7 +243,7 @@ let HierarchicalNameable_Base
    *   The name string of the direct parent nameable. If no parent, return an
    * empty string.
    */
-  get parentNameString() {
+  parentNameString_get() {
     const parent = this.#parentNameable;
     if ( parent )
       return parent.nameString;
@@ -260,7 +256,7 @@ let HierarchicalNameable_Base
    * until null (or undefined) encountered) with every parent's (not this
    * object's) joinSeparator. If no parent, return an empty string.
    */
-  get parentNameString_recursively() {
+  parentNameString_recursively_get() {
     const parent = this.#parentNameable;
     if ( parent ) {
       // Note1: Let parent's (not this object's) joinSeparator be used.
@@ -277,7 +273,7 @@ let HierarchicalNameable_Base
    *   A string representing .nameJoinSeparator even if it does not exist
    * (i.e. null or undefined).
    */
-  get nameJoinSeparatorString() {
+  nameJoinSeparatorString_get() {
     if ( this.#nameJoinSeparatorString_cache )
       return this.#nameJoinSeparatorString_cache;
 
@@ -303,7 +299,7 @@ let HierarchicalNameable_Base
    *   A string representing .name even if it does not exist (i.e. null or
    * undefined).
    */
-  get nameString() {
+  nameString_get() {
     if ( this.#nameString_cache )
       return this.#nameString_cache;
 
@@ -327,7 +323,7 @@ let HierarchicalNameable_Base
    * .#name_recursively_cache exists, return it. Otherwise, create and return
    * it.
    */
-  get nameString_recursively() {
+  nameString_recursively_get() {
     if ( this.#nameString_recursively_cache )
       return this.#nameString_recursively_cache;
 

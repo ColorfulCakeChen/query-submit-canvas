@@ -48,55 +48,55 @@ class TestCaseOne {
       this.parentNameable, this.nameJoinSeparator, this.name );
 
     // 1. Original parameters.
-    if ( a.parentNameable != this.parentNameable )
+    if ( a.parentNameable_get() != this.parentNameable )
       throw Error( `TestCaseOne.${funcNameInMessage}(): `
         + `testCaseId = ${this.testCaseId}, `
-        + `.parentNameable `
+        + `.parentNameable ( ${a.parentNameable_get()} ) `
         + `should be ( ${this.parentNameable} ).` );
 
-    if ( a.nameJoinSeparator != this.nameJoinSeparator )
+    if ( a.nameJoinSeparator_get() != this.nameJoinSeparator )
       throw Error( `TestCaseOne.${funcNameInMessage}(): `
         + `testCaseId = ${this.testCaseId}, `
-        + `.nameJoinSeparator `
+        + `.nameJoinSeparator ( ${a.nameJoinSeparator_get()} )`
         + `should be ( ${this.nameJoinSeparator} ).` );
 
-    if ( a.name != this.name )
+    if ( a.name_get() != this.name )
       throw Error( `TestCaseOne.${funcNameInMessage}(): `
         + `testCaseId = ${this.testCaseId}, `
-        + `.name `
+        + `.name ( ${a.name_get()} )`
         + `should be ( ${this.name} ).` );
 
     // 2. String parameters.
-    if ( a.parentNameString != this.parentNameString_shouldBe )
+    if ( a.parentNameString_get() != this.parentNameString_shouldBe )
       throw Error( `TestCaseOne.${funcNameInMessage}(): `
         + `testCaseId = ${this.testCaseId}, `
-        + `.parentNameString `
+        + `.parentNameString ( ${a.parentNameString_get()} )`
         + `should be ( ${this.parentNameString_shouldBe} ).` );
 
-    if ( a.parentNameString_recursively
+    if ( a.parentNameString_recursively_get()
            != this.parentNameString_recursively_shouldBe )
       throw Error( `TestCaseOne.${funcNameInMessage}(): `
         + `testCaseId = ${this.testCaseId}, `
-        + `.parentNameString_recursively `
+        + `.parentNameString_recursively ( ${a.parentNameString_recursively_get()} )`
         + `should be ( ${this.parentNameString_recursively_shouldBe} ).` );
 
-    if ( a.nameJoinSeparatorString
+    if ( a.nameJoinSeparatorString_get()
            != this.nameJoinSeparatorString_shouldBe )
       throw Error( `TestCaseOne.${funcNameInMessage}(): `
         + `testCaseId = ${this.testCaseId}, `
-        + `.nameJoinSeparatorString `
+        + `.nameJoinSeparatorString ( ${a.nameJoinSeparatorString_get()} )`
         + `should be ( ${this.nameJoinSeparatorString_shouldBe} ).` );
 
-    if ( a.nameString != this.nameString_shouldBe )
+    if ( a.nameString_get() != this.nameString_shouldBe )
       throw Error( `TestCaseOne.${funcNameInMessage}(): `
         + `testCaseId = ${this.testCaseId}, `
-        + `.nameString `
+        + `.nameString ( ${a.nameString_get()} )`
         + `should be ( ${this.nameString_shouldBe} ).` );
 
-    if ( a.nameString_recursively != this.nameString_recursively_shouldBe )
+    if ( a.nameString_recursively_get() != this.nameString_recursively_shouldBe )
       throw Error( `TestCaseOne.${funcNameInMessage}(): `
         + `testCaseId = ${this.testCaseId}, `
-        + `.nameString_recursively `
+        + `.nameString_recursively ( ${a.nameString_recursively_get()} )`
         + `should be ( ${this.nameString_recursively_shouldBe} ).` );
 
     // 3. Test .nameJoinSeparator_join()
