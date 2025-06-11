@@ -44,33 +44,74 @@ class TestCaseOne {
   test() {
     const funcNameInMessage = "test";
 
-    let t = HierarchicalNameable.Pool.get_or_create_by(
+    let a = HierarchicalNameable.Pool.get_or_create_by(
       this.parentNameable, this.nameJoinSeparator, this.name );
 
-    if ( t.parentNameable != this.parentNameable )
+    // 1. Original parameters.
+    if ( a.parentNameable != this.parentNameable )
       throw Error( `TestCaseOne.${funcNameInMessage}(): `
         + `testCaseId = ${this.testCaseId}, `
         + `.parentNameable `
         + `should be ( ${this.parentNameable} ).` );
 
-    if ( t.nameJoinSeparator != this.nameJoinSeparator )
+    if ( a.nameJoinSeparator != this.nameJoinSeparator )
       throw Error( `TestCaseOne.${funcNameInMessage}(): `
         + `testCaseId = ${this.testCaseId}, `
         + `.nameJoinSeparator `
         + `should be ( ${this.nameJoinSeparator} ).` );
 
-    if ( t.name != this.name )
+    if ( a.name != this.name )
       throw Error( `TestCaseOne.${funcNameInMessage}(): `
         + `testCaseId = ${this.testCaseId}, `
         + `.name `
         + `should be ( ${this.name} ).` );
 
-    nameJoinSeparator_join_originalName,
-    nameJoinSeparator_join_extraName,
-    nameJoinSeparator_join_shouldBe,  
+    // 2. String parameters.
+    if ( a.parentNameString != this.parentNameString_shouldBe )
+      throw Error( `TestCaseOne.${funcNameInMessage}(): `
+        + `testCaseId = ${this.testCaseId}, `
+        + `.parentNameString `
+        + `should be ( ${this.parentNameString_shouldBe} ).` );
 
-    t.disposeResources_and_recycleToPool();
-    t = null;
+    if ( a.parentNameString_recursively
+           != this.parentNameString_recursively_shouldBe )
+      throw Error( `TestCaseOne.${funcNameInMessage}(): `
+        + `testCaseId = ${this.testCaseId}, `
+        + `.parentNameString_recursively `
+        + `should be ( ${this.parentNameString_recursively_shouldBe} ).` );
+
+    if ( a.nameJoinSeparatorString
+           != this.nameJoinSeparatorString_shouldBe )
+      throw Error( `TestCaseOne.${funcNameInMessage}(): `
+        + `testCaseId = ${this.testCaseId}, `
+        + `.nameJoinSeparatorString `
+        + `should be ( ${this.nameJoinSeparatorString_shouldBe} ).` );
+
+    if ( a.nameString != this.nameString_shouldBe )
+      throw Error( `TestCaseOne.${funcNameInMessage}(): `
+        + `testCaseId = ${this.testCaseId}, `
+        + `.nameString `
+        + `should be ( ${this.nameString_shouldBe} ).` );
+
+    if ( a.nameString_recursively != this.nameString_recursively_shouldBe )
+      throw Error( `TestCaseOne.${funcNameInMessage}(): `
+        + `testCaseId = ${this.testCaseId}, `
+        + `.nameString_recursively `
+        + `should be ( ${this.nameString_recursively_shouldBe} ).` );
+
+    // 3. Test .nameJoinSeparator_join()
+    {
+      a.nameJoinSeparator_join( "QQ", "WW" );
+//!!!
+      HierarchicalNameable.Root.defaultParams.nameJoinSeparator;
+
+      nameJoinSeparator_join_originalName,
+      nameJoinSeparator_join_extraName,
+      nameJoinSeparator_join_shouldBe,  
+    }
+
+    a.disposeResources_and_recycleToPool();
+    a = null;
   }
 
 }

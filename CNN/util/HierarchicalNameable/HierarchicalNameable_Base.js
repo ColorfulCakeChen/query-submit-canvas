@@ -93,7 +93,38 @@ let HierarchicalNameable_Base
    * @override
    */
   disposeResources() {
-    this.name_related_cache_clear();
+
+    {
+      const funcNameInMessage = "disposeResources";
+
+      // All children nameable objects should be detached
+      // before releasing this nameable object.
+      if ( this.#childrenNameableSet ) {
+        const childrenNameableSet = this.#childrenNameableSet;
+        const childrenNameableCount = childrenNameableSet.size;
+        if ( childrenNameableCount > 0 ) {
+          throw Error( `HierarchicalNameable_Base.${funcNameInMessage}(): `
+            + `.#childrenNameableSet.size ( ${childrenNameableCount} ) `
+            + `should be 0. `
+            + `All children nameable objects should be detached `
+            + `before releasing this nameable object.`
+          );
+        }
+      }
+
+      if ( this.#parentNameable ) {
+
+!!! ...unfinished... (2025/06/11)
+
+        HierarchicalNameable_Base.childrenNameableSet_remove_internal.call(
+          this.#parentNameable, this );
+
+      }
+
+    }
+
+//!!! (2025/06/11 Remarked) seems not necessary.
+//    this.name_related_cache_clear();
 
     this.#name = undefined;
     this.#nameJoinSeparator = undefined;
