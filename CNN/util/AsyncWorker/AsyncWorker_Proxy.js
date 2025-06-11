@@ -356,7 +356,6 @@ class AsyncWorker_Proxy extends Recyclable.Root {
    * processing.
    */
   createResulter_by_postCommandArgs( commandArgs, transferableObjectArray ) {
-    let processingId = this.processingId_next;
 
     // Q: What if processingId become too large (e.g. infinity)?
     // A: Because Number.MAX_SAFE_INTEGER is pretty large (at least, 2 ** 52 ),
@@ -370,6 +369,8 @@ class AsyncWorker_Proxy extends Recyclable.Root {
       this.#processingId_next = 1;
     else
       ++this.processingId_next;
+
+    let processingId = this.processingId_next;
 
     // Prepare the processing's result's receiving queue before sending it.
     let resulter = this.the_processingId_Resulter_Map
