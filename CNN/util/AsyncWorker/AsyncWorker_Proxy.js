@@ -79,11 +79,6 @@ class AsyncWorker_Proxy extends Recyclable.Root {
 
   /** @override */
   static setAsConstructor_self( workerModuleURL ) {
-
-    // Q: What if processingId become too large (e.g. infinity)?
-    // A: Because Number.MAX_SAFE_INTEGER is pretty large (at least, 2 ** 52 ),
-    //    it is not so easy to become out of bounds.
-    //
     this.processingId_next = 0;
 
     if ( this.the_processingId_Resulter_Map )
@@ -363,6 +358,14 @@ class AsyncWorker_Proxy extends Recyclable.Root {
   createResulter_by_postCommandArgs( commandArgs, transferableObjectArray ) {
     let processingId = this.processingId_next;
 
+    // Q: What if processingId become too large (e.g. infinity)?
+    // A: Because Number.MAX_SAFE_INTEGER is pretty large (at least, 2 ** 52 ),
+    //    it is not so easy to become out of bounds.
+    //
+    // (2025/06/11 Modified)
+    // If it becomes too large, it will be wrapped to 1 (not 0 because 0 means
+    // no id has been issued) to restart counting).
+    //
     if ( this.#processingId_next === Number.MAX_SAFE_INTEGER )
       this.#processingId_next = 1;
     else
