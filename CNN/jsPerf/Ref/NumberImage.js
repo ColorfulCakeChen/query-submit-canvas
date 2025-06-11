@@ -287,6 +287,9 @@ class NumberImage_Base extends Recyclable.Root {
     bTableLog,
     parametersDesc, ...pointwiseNames ) {
 
+!!! ...unfinished... (2025/06/11)
+// should use bTableLog
+
     let imageIn = this;
 
     if ( pointwiseChannelCount <= 0 )
@@ -547,6 +550,9 @@ class NumberImage_Base extends Recyclable.Root {
     nPassThroughStyleId,
     bTableLog,
     parametersDesc, ...depthwiseNames ) {
+
+!!! ...unfinished... (2025/06/11)
+// should use bTableLog
 
     let imageIn = this;
 
@@ -1289,6 +1295,10 @@ class NumberImage_Base extends Recyclable.Root {
       imageOutNew.assert_pixels_byBoundsArray_output(); // Verify pixels' bounds.
     }
 
+!!! ...unfinished... (2025/06/11)
+// should use bTableLog
+
+
     return imageOutNew;
   }
 
@@ -1410,6 +1420,10 @@ class NumberImage_Base extends Recyclable.Root {
 
       imageOutNew.assert_pixels_byBoundsArray_output(); // Verify pixels' bounds.
     }
+
+!!! ...unfinished... (2025/06/11)
+// should use bTableLog
+
 
     return imageOutNew;
   }
