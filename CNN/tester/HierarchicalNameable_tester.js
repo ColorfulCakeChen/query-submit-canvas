@@ -4,29 +4,73 @@ import * as HierarchicalNameable from "../util/HierarchicalNameable.js";
 import * as Pool from "../util/Pool.js";
 import * as Recyclable from "../util/Recyclable.js";
 
+let A, B, C, D, E, F;
 
 /**
  * 
  */
-class TestCase {
+class TestCaseOne {
 
-  constructor( parent, separator, name,
+  constructor(
+    testCaseId,
+
+    parentNameable, nameJoinSeparator, name,
+
     parentNameString_shouldBe,
     parentNameString_recursively_shouldBe,
     nameJoinSeparatorString_shouldBe,
     nameString_shouldBe,
-    nameString_recursively_shouldBe,
-
+    nameString_recursively_shouldBe
   ) {
 
+    this.testCaseId = testCaseId;
+
+    this.parentNameable = parentNameable;
+    this.nameJoinSeparator = nameJoinSeparator;
+    this.name = name;
+
+    this.parentNameString_shouldBe = parentNameString_shouldBe;
+    this.parentNameString_recursively_shouldBe
+      = parentNameString_recursively_shouldBe;
+
+    this.nameJoinSeparatorString_shouldBe
+      = nameJoinSeparatorString_shouldBe;
+
+    this.nameString_shouldBe = nameString_shouldBe;
+    this.nameString_recursively_shouldBe = nameString_recursively_shouldBe;
   }
 
   /** */
   test() {
+    const funcNameInMessage = "test";
+
+    let t = HierarchicalNameable.Pool.get_or_create_by(
+      this.parentNameable, this.nameJoinSeparator, this.name );
+
+    if ( t.parentNameable != this.parentNameable )
+      throw Error( `TestCaseOne.${funcNameInMessage}(): `
+        + `testCaseId = ${this.testCaseId}, `
+        + `.parentNameable `
+        + `should be ( ${this.parentNameable} ).` );
+
+    if ( t.nameJoinSeparator != this.nameJoinSeparator )
+      throw Error( `TestCaseOne.${funcNameInMessage}(): `
+        + `testCaseId = ${this.testCaseId}, `
+        + `.nameJoinSeparator `
+        + `should be ( ${this.nameJoinSeparator} ).` );
+
+    if ( t.name != this.name )
+      throw Error( `TestCaseOne.${funcNameInMessage}(): `
+        + `testCaseId = ${this.testCaseId}, `
+        + `.name `
+        + `should be ( ${this.name} ).` );
 
     nameJoinSeparator_join_originalName,
     nameJoinSeparator_join_extraName,
     nameJoinSeparator_join_shouldBe,  
+
+    t.disposeResources_and_recycleToPool();
+    t = null;
   }
 
 }
@@ -167,6 +211,33 @@ function* tester( progressParent ) {
   let progressSix = progressParent.child_add(
     ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
 
+  // 0.1 Prepare test objects.
+
+//!!! ...unfinished... (2025/06/11)
+
+  const nameJoinSeparator = "/";
+  A = HierarchicalNameable.Pool.get_or_create_by(
+    null, nameJoinSeparator, "A" );
+
+  B = HierarchicalNameable.Pool.get_or_create_by(
+    null, nameJoinSeparator, "B" );
+
+  C = HierarchicalNameable.Pool.get_or_create_by(
+    null, nameJoinSeparator, "C" );
+
+  D = HierarchicalNameable.Pool.get_or_create_by(
+    null, nameJoinSeparator, "D" );
+
+  E = HierarchicalNameable.Pool.get_or_create_by(
+    null, nameJoinSeparator, "E" );
+
+  F = HierarchicalNameable.Pool.get_or_create_by(
+    null, nameJoinSeparator, "F" );
+
+  let nameableArray = Recyclable.OwnerArray.Pool.get_or_create_by();
+  nameableArray.push( A, B, C, D, E, F );
+
+
   // 1.
   yield *testerOne( progressOne );
 
@@ -178,6 +249,11 @@ function* tester( progressParent ) {
 
   // 4.
   yield *testerSix( progressSix );
+
+
+  // 5. Release test objects.
+  nameableArray.disposeResources_and_recycleToPool();
+  nameableArray = null;
 
   console.log( "HierarchicalNameable testing... Done." );
 }
