@@ -112,15 +112,11 @@ let HierarchicalNameable_Base
         }
       }
 
+      // Detach from parent nameable object since this nameable object
+      // will be released.
       if ( this.#parentNameable ) {
-
-!!! ...unfinished... (2025/06/11)
-
-        HierarchicalNameable_Base.childrenNameableSet_remove_internal.call(
-          this.#parentNameable, this );
-
+        this.parentNameable = undefined;
       }
-
     }
 
 //!!! (2025/06/11 Remarked) seems not necessary.
