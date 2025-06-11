@@ -350,8 +350,7 @@ let Operation_Base = ( ParentClass = Object ) => class Operation_Base
 
     // Prefix with the hierarchical name of this operation and extra name.
     let headerPrefix = this.nameString_recursively;
-    headerPrefix = this.nameJoinSeparator_join_originalName_extraName(
-      headerPrefix, extraName );
+    headerPrefix = this.nameJoinSeparator_join( headerPrefix, extraName );
 
     TableLogger.Base.Singleton.log_tensor3d_along_depth(
       headerPrefix, aTensor3d, aBoundsArray_or_aScaleBoundsArray );

@@ -120,6 +120,10 @@ let HierarchicalNameable_Base
 
 
   /**
+   * Call this method if wanting to use this nameable object's separator to
+   * join two strings.
+   *
+   * It does NOT modify any data members of this nameable object.
    *
    * @param {string} originalName
    *   The original string will be used as prefix.  
@@ -133,7 +137,7 @@ let HierarchicalNameable_Base
    *   A string either originalName or originalName with separator and
    * extraName.
    */
-  nameJoinSeparator_join_originalName_extraName( originalName, extraName ) {
+  nameJoinSeparator_join( originalName, extraName ) {
     if ( ( extraName !== undefined ) && ( extraName !== null ) ) {
       const joinSeparator = this.nameJoinSeparatorString;
       const modifiedName = `${originalName}${joinSeparator}${extraName}`;
