@@ -356,7 +356,7 @@ class Root extends HierarchicalNameable_Base() {
    * The next global name version id.
    *
    * It is globally shared by all kinds of HierarchicalNameable_Base( Xxx )
-   *  clesses because this Root class can not inherits from any other class.
+   * classes because this Root class can not inherits from any other class.
    * So that it can be used to ditinguish any change of nameable object
    * operation.
    */
@@ -364,7 +364,7 @@ class Root extends HierarchicalNameable_Base() {
 
   /**
    * The default parameters shared by all kinds of
-   * HierarchicalNameable_Base( Xxx ) clesses.
+   * HierarchicalNameable_Base( Xxx ) classes.
    */
   static defaultParams = {
 
