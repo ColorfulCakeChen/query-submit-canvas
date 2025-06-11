@@ -125,6 +125,8 @@ let HierarchicalNameable_Base
 
     // Detach from parent nameable object since this nameable object will
     // be released.
+    //
+    // Just nullify it. Do not release it here.
     this.parentNameable_set( undefined );
 
     // Clear .#name after children and parent clearing. The reason is to
