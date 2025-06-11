@@ -15,20 +15,27 @@ import * as Recyclable from "../../util/Recyclable.js";
  * (recursively) compose a name path.
  *
  *
- * @member {number} name_version_id
- *   An integer number represents what version this nameable object has.
- *
- *     - It should be greater than (or equal to) the name version id of any
- *         ancestor nameable object.
- *
- *     - If it is less than the name version id of some ancestor nameable
- *         object, it means some ancestor nameable object has newer name. In
- *         this case, the .#nameString_recursively_cache should be cleared so
- *         that the recursive name will be re-generated when requested.
+//!!! (2025/06/11 Remarked) Use childrenNameableSet instead.
+// !!! * @member {number} name_version_id
+//  *   An integer number represents what version this nameable object has.
+//  *
+//  *     - It should be greater than (or equal to) the name version id of any
+//  *         ancestor nameable object.
+//  *
+//  *     - If it is less than the name version id of some ancestor nameable
+//  *         object, it means some ancestor nameable object has newer name. In
+//  *         this case, the .#nameString_recursively_cache should be cleared so
+//  *         that the recursive name will be re-generated when requested.
  *
  * @member {HierarchicalNameable.Base} parentNameable
  *   The parent (nameable) object contains this object. It is only referenced
  * (NOT owned) by this object. It will NOT be released by this object.
+ *
+ * @member {Set} childrenNameableSet
+ *   All direct children HierarchicalNameable objects. They are only referenced
+ * by this .childrenNameableSet container (i.e. they will not be released by
+ * iterating this .childrenNameableSet container). Mainly used for invalidate
+ * their .#nameString_recursively_cache.
  *
  * @member {string} name
  *   The name string of this object.
@@ -77,6 +84,12 @@ let HierarchicalNameable_Base
     this.#name_version_id = Root.name_version_id_getNext();
 
     this.#parentNameable = parentNameable;
+
+    if ( this.#childrenNameableSet )
+      this.#childrenNameableSet.clear(); // Re-use container but ensure empty.
+    else
+      this.#childrenNameableSet = new Set();
+
     this.#name = name;
     this.#nameJoinSeparator = nameJoinSeparator;
   }
@@ -94,9 +107,18 @@ let HierarchicalNameable_Base
 
     this.#nameJoinSeparator = undefined;
     this.#name = undefined;
+
+    // Just nullify them. Do not release them here.
+    //
+    // Note: Keep the container (i.e. not set to undefined) to reduce memory
+    //       re-allocation.
+    if ( this.#childrenNameableSet )
+      this.#childrenNameableSet.clear();
+
     this.#parentNameable = undefined; // Just nullify it. Do not release it.
 
-    this.#name_version_id = undefined;
+//!!! (2025/06/11 Remarked) Use childrenNameableSet instead.
+//    this.#name_version_id = undefined;
 
     super.disposeResources();
   }
@@ -135,39 +157,47 @@ let HierarchicalNameable_Base
     return originalName;
   }
 
-  /**
-   * 
-   */
-  parentNameable_isNewerThan( name_version_id ) {
-    const name_version_id = this.#name_version_id;
+//!!! (2025/06/11 Remarked) Use childrenNameableSet instead.
+//   /**
+//    * @return {number}
+//    *   - Return parent.name_version_id
+//    *       if ( parent.name_version_id > this.name_version_id ).
+//    *   - Return this.name_version_id
+//    *       if ( parent.name_version_id <= this.name_version_id ).
+//    */
+//   nameString_recursively_ensureValid() {
+//
+//   //parentNameable_isNewerThan( name_version_id ) {
+//     //this.#nameString_recursively_cache;
+//
+//     const name_version_id = this.#name_version_id;
+//
+//     const parent = this.parentNameable;
+//     if ( parent ) {
+//       if ( name_version_id < parent.name_version_id ) {
+//         return true;
+//
+// !!! ...unfinished... (2025/06/11)
+//
+//       } else {
+//
+// !!! ...unfinished... (2025/06/11)
+//
+//       }
+//
+//     } else {
+//
+// !!! ...unfinished... (2025/06/11)
+//      
+//     }
+//
+// !!! ...unfinished... (2025/06/11)
+// // compare name version id?
+//
+//   }
 
-    const parent = this.parentNameable;
-    if ( parent ) {
-      if ( name_version_id < parent.name_version_id ) {
-        return true;
-
-!!! ...unfinished... (2025/06/11)
-
-      } else {
-
-!!! ...unfinished... (2025/06/11)
-
-      }
-
-    } else {
-
-!!! ...unfinished... (2025/06/11)
-        
-    }
-
-
-!!! ...unfinished... (2025/06/11)
-// compare name version id?
-
-  }
-
-
-  get name_version_id() { return this.#name_version_id; }
+//!!! (2025/06/11 Remarked) Use childrenNameableSet instead.
+//  get name_version_id() { return this.#name_version_id; }
 
 
   set parentNameable( parentNameableNew ) {
@@ -175,7 +205,8 @@ let HierarchicalNameable_Base
       return;
     this.#parentNameable = parentNameableNew;
     this.#nameString_recursively_cache = undefined;
-    this.#name_version_id = Root.name_version_id_getNext();
+//!!! (2025/06/11 Remarked) Use childrenNameableSet instead.
+//    this.#name_version_id = Root.name_version_id_getNext();
   }
 
   get parentNameable() { return this.#parentNameable; }
@@ -186,7 +217,8 @@ let HierarchicalNameable_Base
       return;
     this.#name = nameNew;
     this.#nameString_cache = undefined;
-    this.#name_version_id = Root.name_version_id_getNext();
+//!!! (2025/06/11 Remarked) Use childrenNameableSet instead.
+//    this.#name_version_id = Root.name_version_id_getNext();
   }
 
   get name() { return this.#name; }
@@ -197,7 +229,8 @@ let HierarchicalNameable_Base
       return;
     this.#nameJoinSeparator = nameJoinSeparatorNew;
     this.#nameJoinSeparatorString_cache = undefined;
-    this.#name_version_id = Root.name_version_id_getNext();
+//!!! (2025/06/11 Remarked) Use childrenNameableSet instead.
+//    this.#name_version_id = Root.name_version_id_getNext();
   }
 
   get nameJoinSeparator() { return this.#nameJoinSeparator; }
@@ -315,9 +348,12 @@ let HierarchicalNameable_Base
   }
 
 
-  #name_version_id;
+//!!! (2025/06/11 Remarked) Use childrenNameableSet instead.
+//  #name_version_id;
 
   #parentNameable;
+  #childrenNameableSet;
+
   #name;
   #nameJoinSeparator;
 
@@ -358,33 +394,34 @@ let HierarchicalNameable_Base
  */
 class Root extends HierarchicalNameable_Base() {
 
-  /**
-   * @return {number}
-   *   Return the new name version id number. The number could be viewed as an
-   * (almost) globally uniquely number. (If it becomes too large, it will be
-   * wrapped to 1 (not 0 because 0 means no id has been issued) to restart
-   * counting).
-   */
-  name_version_id_getNext() {
-    const next_id = Root.name_version_id_next;
-
-    if ( this.#name_version_id_next === Number.MAX_SAFE_INTEGER )
-      this.#name_version_id_next = 1;
-    else
-      ++this.#name_version_id_next; 
-
-    return next_id;
-  }
-
-  /**
-   * The next global name version id.
-   *
-   * It is globally shared by all kinds of HierarchicalNameable_Base( Xxx )
-   * classes because this Root class can not inherits from any other class.
-   * So that it can be used to ditinguish any change of nameable object
-   * operation.
-   */
-  static #name_version_id_next = 0;
+//!!! (2025/06/11 Remarked) Use childrenNameableSet instead.
+//   /**
+//    * @return {number}
+//    *   Return the new name version id number. The number could be viewed as an
+//    * (almost) globally uniquely number. (If it becomes too large, it will be
+//    * wrapped to 1 (not 0 because 0 means no id has been issued) to restart
+//    * counting).
+//    */
+//   name_version_id_getNext() {
+//     const next_id = Root.name_version_id_next;
+//
+//     if ( this.#name_version_id_next === Number.MAX_SAFE_INTEGER )
+//       this.#name_version_id_next = 1;
+//     else
+//       ++this.#name_version_id_next; 
+//
+//     return next_id;
+//   }
+//
+//   /**
+//    * The next global name version id.
+//    *
+//    * It is globally shared by all kinds of HierarchicalNameable_Base( Xxx )
+//    * classes because this Root class can not inherits from any other class.
+//    * So that it can be used to ditinguish any change of nameable object
+//    * operation.
+//    */
+//   static #name_version_id_next = 0;
 
   /**
    * The default parameters shared by all kinds of
