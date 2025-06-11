@@ -891,6 +891,9 @@ class NeuralNet_Reference_Base extends Recyclable.Root {
 
       imageToBeProccessed = imageOut;
 
+!!! ...unfinished... (2025/06/11)
+// should rename stageRef (nameString)
+
       stageRef.testParams = testParams.stageArray[ stageIndex ];
       imageOut = stageRef.calcResult( imageToBeProccessed );
 

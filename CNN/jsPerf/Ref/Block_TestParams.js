@@ -538,8 +538,14 @@ class Block_TestParams_Base extends TestParams.Base {
       parametersDesc, ...pointwiseNames );
     io_imageNeedDisposeUniqueStack.push( inputImage );
 
-//!!! ...unfinshed... (2025/06/05)
- Perhaps, use this.out.bTableLog to log as table.
+!!! ...unfinshed... (2025/06/11)
+// table log should be done inside NumberImage.clone_byXxx()
+//     if ( this.out.bTableLog ) {
+//       result.TableLog_header_body( ??? );
+//     }
+
+!!! ...unfinshed... (2025/06/05)
+// Perhaps, use this.out.bTableLog to log as table.
 
 //!!! ...unfinshed... (2025/06/10)
 // Perhaps, should assert Operation bTableLog flag? name?

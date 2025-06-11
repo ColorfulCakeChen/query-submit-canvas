@@ -1283,22 +1283,23 @@ class Block_Reference_Base extends HierarchicalNameable.SeparatorDot_Root {
     if ( pointwise1ChannelCount > 0 ) {
       pointwise1Result = testParams.use_pointwise1(
         imageIn0, pointwise1ChannelCount, this.imageNeedDisposeUniqueStack,
+        testParams.out,
 
 !!! ...unfinished... (2025/06/10)
 // should ...xxxNames should include all the parentNameables' names
 
-        testParams.out, "Pointwise1" );
+        "Pointwise1" );
 
       if ( testParams.nConvBlockTypeId__is__SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD() ) { // (5)
         imageIn1 = testParams.use_pointwise1_PassThrough(
           imageIn0_beforePointwise1, // copy input0 (not input1).
           imageIn0_beforePointwise1.depth,
           this.imageNeedDisposeUniqueStack,
+          testParams.out,
 
 !!! ...unfinished... (2025/06/10)
 // should ...xxxNames should include all the parentNameables' names
 
-          testParams.out,
           "Pointwise1_imageIn1_HigherHalfCopyLowerHalf_imageIn0" );
 
       } else if ( testParams.nConvBlockTypeId__is__SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY_or_TAIL() ) { // (6 or 7)
@@ -1310,7 +1311,6 @@ class Block_Reference_Base extends HierarchicalNameable.SeparatorDot_Root {
           imageIn1_beforePointwise1.depth,
 
           this.imageNeedDisposeUniqueStack,
-
           testParams.out,
 
 !!! ...unfinished... (2025/06/10)
