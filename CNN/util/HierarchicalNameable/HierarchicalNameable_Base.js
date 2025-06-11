@@ -138,7 +138,6 @@ let HierarchicalNameable_Base
   set parentNameable( parentNameableNew ) {
     if ( this.#parentNameable === parentNameableNew )
       return;
-
     this.#parentNameable = parentNameableNew;
     this.#nameString_recursively_cache = undefined;
     this.#name_version_id = Root.name_version_id_getNext();
@@ -150,19 +149,17 @@ let HierarchicalNameable_Base
   set name( newName ) {
     if ( this.#name === newName )
       return;
-
     this.#name = newName;
     this.#nameString_cache = undefined;
     this.#name_version_id = Root.name_version_id_getNext();
   }
 
-  get name() { return this.#name; 
+  get name() { return this.#name; }
 
 
   set nameJoinSeparator( nameJoinSeparatorNew ) {
     if ( this.#nameJoinSeparator === nameJoinSeparatorNew )
       return;
-
     this.#nameJoinSeparator = nameJoinSeparatorNew;
     this.#nameJoinSeparatorString_cache = undefined;
     this.#name_version_id = Root.name_version_id_getNext();
@@ -180,7 +177,7 @@ let HierarchicalNameable_Base
     if ( this.#nameString_cache )
       return this.#nameString_cache;
 
-    const name = this.name; 
+    const name = this.#name; 
     if ( ( name !== undefined ) && ( name !== null ) ) {
       // Note: workable even if not a string (e.g. number or object).
       this.#nameString_cache = name.toString();
@@ -188,8 +185,7 @@ let HierarchicalNameable_Base
     } else {
       // Because null and undefined do not have .toString() to be called,
       // return default NoName in this case.
-      this.#nameString_cache
-        = HierarchicalNameable_Base.defaultParams.NoNameString;
+      this.#nameString_cache = Root.defaultParams.NoNameString;
     }
     return this.#nameString_cache;
   }
@@ -235,10 +231,10 @@ let HierarchicalNameable_Base
    * empty string.
    */
   get parentNameString() {
-    const parent = this.parentNameable;
+    const parent = this.#parentNameable;
     if ( parent )
       return parent.nameString;
-    return HierarchicalNameable_Base.defaultParams.emptyString;
+    return Root.defaultParams.emptyString;
   }
 
   /**
@@ -248,14 +244,14 @@ let HierarchicalNameable_Base
    * object's) joinSeparator. If no parent, return an empty string.
    */
   get parentNameString_recursively() {
-    const parent = this.parentNameable;
+    const parent = this.#parentNameable;
     if ( parent ) {
       // Note1: Let parent's (not this object's) joinSeparator be used.
       // Note2: Also let parent create itself's name cache recursively.
       const parentNames = parent.nameString_recursively;
       return parentNames;
     }
-    return HierarchicalNameable_Base.defaultParams.emptyString;
+    return Root.defaultParams.emptyString;
   }
 
   /**
@@ -267,7 +263,7 @@ let HierarchicalNameable_Base
     if ( this.#nameJoinSeparatorString_cache )
       return this.#nameJoinSeparatorString_cache;
 
-    const nameJoinSeparator = this.nameJoinSeparator; 
+    const nameJoinSeparator = this.#nameJoinSeparator; 
     if (   ( nameJoinSeparator !== undefined )
         && ( nameJoinSeparator !== null ) ) {
       // Note: workable even if not a string (e.g. number or object).
@@ -278,13 +274,12 @@ let HierarchicalNameable_Base
       // Because null and undefined do not have .toString() to be called,
       // return default joinSeparator in this case.
       this.#nameJoinSeparatorString_cache
-        = HierarchicalNameable_Base.defaultParams.nameJoinSeparator;
+        = Root.defaultParams.nameJoinSeparator;
     }
     return this.#nameJoinSeparatorString_cache;
   }
 
 
-!!! ...unfinished... (2025/06/11)
   /**
    * An integer number represents what version this nameable object has.
    *
@@ -303,7 +298,7 @@ let HierarchicalNameable_Base
   #nameJoinSeparator;
 
   /**
-   * The string of this object .name.
+   * The string of this object's name.
    *
    * It is a cache which only collect name once. Set it to null if wanting to
    * re-collect name (e.g. .name is changed).
@@ -312,7 +307,7 @@ let HierarchicalNameable_Base
 
   /**
    * A string composed of all the names of all parent Nameable (recursively
-   * until null (or undefined) encountered) and this object .name.
+   * until null (or undefined) encountered) and this object's name.
    *
    * It is a cache which only collect all names once. Set it to null if wanting
    * to re-collect all names (e.g. this or some parents' names are changed).
@@ -327,22 +322,6 @@ let HierarchicalNameable_Base
    * re-collect it (e.g. .nameJoinSeparator is changed).
    */
   #nameJoinSeparatorString_cache;
-  
-
-  /**
-   * 
-   */
-  static defaultParams = {
-
-    // Default separator.
-    nameJoinSeparator: "",
-
-    // A constant string used when there is no name.
-    NoNameString: "(No name)",
-
-    // A constant empty string.
-    emptyString: "",
-  };
 
 }
 
@@ -375,9 +354,26 @@ class Root extends HierarchicalNameable_Base() {
    * The next global name version id.
    *
    * It is globally shared by all kinds of HierarchicalNameable_Base( Xxx )
-   * because this Root class can not inherits from any other class. So that
-   * it can be used to ditinguish any change of nameable object operation.
+   *  clesses because this Root class can not inherits from any other class.
+   * So that it can be used to ditinguish any change of nameable object
+   * operation.
    */
   static #name_version_id_next = 0;
+
+  /**
+   * The default parameters shared by all kinds of
+   * HierarchicalNameable_Base( Xxx ) clesses.
+   */
+  static defaultParams = {
+
+    // Default separator.
+    nameJoinSeparator: "",
+
+    // A constant string used when there is no name.
+    NoNameString: "(No name)",
+
+    // A constant empty string.
+    emptyString: "",
+  };
 
 }
