@@ -48,55 +48,64 @@ class TestCaseOne {
       this.parentNameable, this.nameJoinSeparator, this.name );
 
     // 1. Original parameters.
-    if ( a.parentNameable_get() != this.parentNameable )
+    const parentNameable = a.parentNameable_get();
+    if ( parentNameable !== this.parentNameable )
       throw Error( `TestCaseOne.${funcNameInMessage}(): `
         + `testCaseId = ${this.testCaseId}, `
-        + `.parentNameable ( ${a.parentNameable_get()} ) `
+        + `.parentNameable ( ${parentNameable} ) `
         + `should be ( ${this.parentNameable} ).` );
 
-    if ( a.nameJoinSeparator_get() != this.nameJoinSeparator )
+    const nameJoinSeparator = a.nameJoinSeparator_get();
+    if ( nameJoinSeparator !== this.nameJoinSeparator )
       throw Error( `TestCaseOne.${funcNameInMessage}(): `
         + `testCaseId = ${this.testCaseId}, `
-        + `.nameJoinSeparator ( ${a.nameJoinSeparator_get()} )`
+        + `.nameJoinSeparator ( ${nameJoinSeparator} )`
         + `should be ( ${this.nameJoinSeparator} ).` );
 
-    if ( a.name_get() != this.name )
+    const name = a.name_get();
+    if ( name !== this.name )
       throw Error( `TestCaseOne.${funcNameInMessage}(): `
         + `testCaseId = ${this.testCaseId}, `
-        + `.name ( ${a.name_get()} )`
+        + `.name ( ${name} )`
         + `should be ( ${this.name} ).` );
 
     // 2. String parameters.
-    if ( a.parentNameString_get() != this.parentNameString_shouldBe )
+    const parentNameString = a.parentNameString_get();
+    if ( parentNameString !== this.parentNameString_shouldBe )
       throw Error( `TestCaseOne.${funcNameInMessage}(): `
         + `testCaseId = ${this.testCaseId}, `
-        + `.parentNameString ( ${a.parentNameString_get()} )`
+        + `.parentNameString ( ${parentNameString} )`
         + `should be ( ${this.parentNameString_shouldBe} ).` );
 
-    if ( a.parentNameString_recursively_get()
-           != this.parentNameString_recursively_shouldBe )
+    const parentNameString_recursively
+      = a.parentNameString_recursively_get();
+    if ( parentNameString_recursively
+          !== this.parentNameString_recursively_shouldBe )
       throw Error( `TestCaseOne.${funcNameInMessage}(): `
         + `testCaseId = ${this.testCaseId}, `
-        + `.parentNameString_recursively ( ${a.parentNameString_recursively_get()} )`
+        + `.parentNameString_recursively ( ${parentNameString_recursively} )`
         + `should be ( ${this.parentNameString_recursively_shouldBe} ).` );
 
-    if ( a.nameJoinSeparatorString_get()
-           != this.nameJoinSeparatorString_shouldBe )
+    const nameJoinSeparatorString = a.nameJoinSeparatorString_get();
+    if ( nameJoinSeparatorString
+           !== this.nameJoinSeparatorString_shouldBe )
       throw Error( `TestCaseOne.${funcNameInMessage}(): `
         + `testCaseId = ${this.testCaseId}, `
-        + `.nameJoinSeparatorString ( ${a.nameJoinSeparatorString_get()} )`
+        + `.nameJoinSeparatorString ( ${nameJoinSeparatorString} )`
         + `should be ( ${this.nameJoinSeparatorString_shouldBe} ).` );
 
-    if ( a.nameString_get() != this.nameString_shouldBe )
+    const nameString = a.nameString_get();
+    if ( nameString !== this.nameString_shouldBe )
       throw Error( `TestCaseOne.${funcNameInMessage}(): `
         + `testCaseId = ${this.testCaseId}, `
-        + `.nameString ( ${a.nameString_get()} )`
+        + `.nameString ( ${nameString} )`
         + `should be ( ${this.nameString_shouldBe} ).` );
 
-    if ( a.nameString_recursively_get() != this.nameString_recursively_shouldBe )
+    const nameString_recursively = a.nameString_recursively_get();
+    if ( nameString_recursively !== this.nameString_recursively_shouldBe )
       throw Error( `TestCaseOne.${funcNameInMessage}(): `
         + `testCaseId = ${this.testCaseId}, `
-        + `.nameString_recursively ( ${a.nameString_recursively_get()} )`
+        + `.nameString_recursively ( ${nameString_recursively} )`
         + `should be ( ${this.nameString_recursively_shouldBe} ).` );
 
     // 3. Test .nameJoinSeparator_join()
