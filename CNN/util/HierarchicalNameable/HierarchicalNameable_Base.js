@@ -145,7 +145,8 @@ let HierarchicalNameable_Base
    * Clear .#nameString_recursively_cache of this object and all children
    * nameable objects (directly and indirectly).
    *
-   * Usually, it is called when changing this nameable object's parent.
+   * Usually, it is called when this nameable object's parent or name or
+   * separator is changed.
    */
   nameString_recursively_invalidate_recursively() {
     this.#nameString_recursively_cache = undefined;
