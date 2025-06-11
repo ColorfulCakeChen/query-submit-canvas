@@ -174,12 +174,12 @@ let HierarchicalNameable_Base
       return;
 
     const parentOld = this.#parentNameable;
-    if ( parentOld ) {
+    if ( parentOld ) { // Remove from the old parent.
       parentOld.childrenNameableSet_remove( this );
     }
 
     this.#parentNameable = parentNameableNew;
-    if ( parentNameableNew ) {
+    if ( parentNameableNew ) { // Add into the new parent.
       parentNameableNew.childrenNameableSet_add( this );
     }
 
