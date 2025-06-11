@@ -118,6 +118,7 @@ let HierarchicalNameable_Base
 //     this.#nameJoinSeparatorString_cache = undefined;
 //   }
 
+
   /**
    *
    * @param {string} originalName
@@ -141,6 +142,7 @@ let HierarchicalNameable_Base
     return originalName;
   }
 
+
   /**
    * Clear .#nameString_recursively_cache of this object and all children
    * nameable objects (directly and indirectly).
@@ -157,16 +159,6 @@ let HierarchicalNameable_Base
     }
   }
 
-  /** (Usually called when setting parentNameable.) */
-  childrenNameableSet_add( nameable ) {
-    this.#childrenNameableSet.add( nameable );
-  }
-
-  /** (Usually called when setting parentNameable.) */
-  childrenNameableSet_remove( nameable ) {
-    this.#childrenNameableSet.delete( nameable );
-  }
-
 
   set parentNameable( parentNameableNew ) {
     if ( this.#parentNameable === parentNameableNew )
@@ -174,12 +166,14 @@ let HierarchicalNameable_Base
 
     const parentOld = this.#parentNameable;
     if ( parentOld ) { // Remove from the old parent.
-      parentOld.childrenNameableSet_remove( this );
+      HierarchicalNameable_Base.childrenNameableSet_remove_internal.call(
+        parentOld, this );
     }
 
     this.#parentNameable = parentNameableNew;
     if ( parentNameableNew ) { // Add into the new parent.
-      parentNameableNew.childrenNameableSet_add( this );
+      HierarchicalNameable_Base.childrenNameableSet_add_internal.call(
+        parentNameableNew, this );
     }
 
     this.nameString_recursively_invalidate_recursively();
@@ -348,6 +342,17 @@ let HierarchicalNameable_Base
    * re-collect it (e.g. .nameJoinSeparator is changed).
    */
   #nameJoinSeparatorString_cache;
+
+
+  /** (Internally called when setting parentNameable.) */
+  static childrenNameableSet_add_internal( nameable ) {
+    this.#childrenNameableSet.add( nameable );
+  }
+
+  /** (Internally called when setting parentNameable.) */
+  static childrenNameableSet_remove_internal( nameable ) {
+    this.#childrenNameableSet.delete( nameable );
+  }
 
 }
 
