@@ -123,7 +123,7 @@ class TestCaseOne {
       this.nameJoinSeparator_join_test( a,      "QQ", undefined );
       this.nameJoinSeparator_join_test( a,      "QQ",      null );
 
-      this.nameJoinSeparator_join_test( a,      null,      "WW" );
+      this.nameJoinSeparator_join_test( a, undefined,      "WW" );
       this.nameJoinSeparator_join_test( a,      null,      "WW" );
 
       this.nameJoinSeparator_join_test( a,      "QQ",      "WW" );
