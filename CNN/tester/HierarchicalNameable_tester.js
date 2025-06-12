@@ -5,9 +5,9 @@ import * as Pool from "../util/Pool.js";
 import * as Recyclable from "../util/Recyclable.js";
 
 // Global HierarchicalNameable test objects.
-const A =     HierarchicalNameable.Base.Pool.get_or_create_by( null, "$", "A" );
-const A_B =   HierarchicalNameable.Base.Pool.get_or_create_by(    A, "_", "B" );
-const A_BvC = HierarchicalNameable.Base.Pool.get_or_create_by(  A_B, "v", "C" );
+const A =     HierarchicalNameable.Root.Pool.get_or_create_by( null, "$", "A" );
+const A_B =   HierarchicalNameable.Root.Pool.get_or_create_by(    A, "_", "B" );
+const A_BvC = HierarchicalNameable.Root.Pool.get_or_create_by(  A_B, "v", "C" );
 
 //
 const gTestCaseOne_Table = [
@@ -111,7 +111,7 @@ class TestCaseOne {
   test() {
     const funcNameInMessage = "test";
 
-    let a = HierarchicalNameable.Base.Pool.get_or_create_by(
+    let a = HierarchicalNameable.Root.Pool.get_or_create_by(
       this.parentNameable, this.nameJoinSeparator, this.name );
 
     // 1. Original parameters.
