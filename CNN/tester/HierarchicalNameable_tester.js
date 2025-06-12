@@ -4,9 +4,14 @@ import * as HierarchicalNameable from "../util/HierarchicalNameable.js";
 import * as Pool from "../util/Pool.js";
 import * as Recyclable from "../util/Recyclable.js";
 
-let A, B, C, D, E, F;
+// Global HierarchicalNameable test objects.
+const A =     HierarchicalNameable.Pool.get_or_create_by( null, "$", "A" );
+const A_B =   HierarchicalNameable.Pool.get_or_create_by(    A, "_", "B" );
+const A_BvC = HierarchicalNameable.Pool.get_or_create_by(  A_B, "v", "C" );
 
+//
 const gTestCaseOne_Table = [
+  // 0. Test null.
   new TestCaseOne( 0,
            null, // parentNameable
            null, // nameJoinSeparator
@@ -18,6 +23,7 @@ const gTestCaseOne_Table = [
     "(No name)", // nameString_recursively_shouldBe
   ),
 
+  // 1. Test undefined.
   new TestCaseOne( 1,
       undefined, // parentNameable
       undefined, // nameJoinSeparator
@@ -29,27 +35,42 @@ const gTestCaseOne_Table = [
     "(No name)", // nameString_recursively_shouldBe
   ),
 
+  // 2. Test one parent.
   new TestCaseOne( 2,
-             "", // parentNameable
-             "", // nameJoinSeparator
-             "", // name
-             "", // parentNameString_shouldBe
-             "", // parentNameString_recursively_shouldBe
-             "", // nameJoinSeparatorString_shouldBe
-             "", // nameString_shouldBe
-             "", // nameString_recursively_shouldBe
+              A, // parentNameable
+            ".", // nameJoinSeparator
+            "x", // name
+            "A", // parentNameString_shouldBe
+            "A", // parentNameString_recursively_shouldBe
+            ".", // nameJoinSeparatorString_shouldBe
+            "x", // nameString_shouldBe
+          "A.x", // nameString_recursively_shouldBe
   ),
-!!!
+
+  // 3. Test two parent.
   new TestCaseOne( 3,
-             "", // parentNameable
-             "", // nameJoinSeparator
-             "", // name
-             "", // parentNameString_shouldBe
-             "", // parentNameString_recursively_shouldBe
-             "", // nameJoinSeparatorString_shouldBe
-             "", // nameString_shouldBe
-             "", // nameString_recursively_shouldBe
+            A_B, // parentNameable
+            ".", // nameJoinSeparator
+            "x", // name
+            "B", // parentNameString_shouldBe
+          "A_B", // parentNameString_recursively_shouldBe
+            ".", // nameJoinSeparatorString_shouldBe
+            "x", // nameString_shouldBe
+        "A_B.x", // nameString_recursively_shouldBe
   ),
+
+  // 4. Test three parent.
+  new TestCaseOne( 4,
+          A_BvC, // parentNameable
+            ".", // nameJoinSeparator
+            "x", // name
+            "C", // parentNameString_shouldBe
+        "A_BvC", // parentNameString_recursively_shouldBe
+            ".", // nameJoinSeparatorString_shouldBe
+            "x", // nameString_shouldBe
+      "A_BvC.x", // nameString_recursively_shouldBe
+  ),
+
 ];
 
 /**
@@ -301,27 +322,28 @@ function* tester( progressParent ) {
 
 //!!! ...unfinished... (2025/06/11)
 
-  const nameJoinSeparator = "/";
-  A = HierarchicalNameable.Pool.get_or_create_by(
-    null, nameJoinSeparator, "A" );
-
-  B = HierarchicalNameable.Pool.get_or_create_by(
-    null, nameJoinSeparator, "B" );
-
-  C = HierarchicalNameable.Pool.get_or_create_by(
-    null, nameJoinSeparator, "C" );
-
-  D = HierarchicalNameable.Pool.get_or_create_by(
-    null, nameJoinSeparator, "D" );
-
-  E = HierarchicalNameable.Pool.get_or_create_by(
-    null, nameJoinSeparator, "E" );
-
-  F = HierarchicalNameable.Pool.get_or_create_by(
-    null, nameJoinSeparator, "F" );
-
-  let nameableArray = Recyclable.OwnerArray.Pool.get_or_create_by();
-  nameableArray.push( A, B, C, D, E, F );
+//!!! (2025/06/12 Remarked) Create them in global.
+//   const nameJoinSeparator = ".";
+//   A = HierarchicalNameable.Pool.get_or_create_by(
+//     null, nameJoinSeparator, "A" );
+//
+//   B = HierarchicalNameable.Pool.get_or_create_by(
+//     null, nameJoinSeparator, "B" );
+//
+//   C = HierarchicalNameable.Pool.get_or_create_by(
+//     null, nameJoinSeparator, "C" );
+//
+//   D = HierarchicalNameable.Pool.get_or_create_by(
+//     null, nameJoinSeparator, "D" );
+//
+//   E = HierarchicalNameable.Pool.get_or_create_by(
+//     null, nameJoinSeparator, "E" );
+//
+//   F = HierarchicalNameable.Pool.get_or_create_by(
+//     null, nameJoinSeparator, "F" );
+//
+//   let nameableArray = Recyclable.OwnerArray.Pool.get_or_create_by();
+//   nameableArray.push( A, B, C, D, E, F );
 
 
   // 1.
@@ -337,9 +359,12 @@ function* tester( progressParent ) {
   yield *testerSix( progressSix );
 
 
-  // 5. Release test objects.
-  nameableArray.disposeResources_and_recycleToPool();
-  nameableArray = null;
+//!!! (2025/06/12 Remarked) Create them in global.
+//   // 5. Release test objects.
+//   A = null; B = null; C = null;
+//   D = null; E = null; F = null;
+//   nameableArray.disposeResources_and_recycleToPool();
+//   nameableArray = null;
 
   console.log( "HierarchicalNameable testing... Done." );
 }
