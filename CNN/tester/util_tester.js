@@ -10,7 +10,8 @@ import * as HierarchicalNameable_tester from "./HierarchicalNameable_tester.js";
 import * as Percentage_tester from "./Percentage_tester.js";
 import * as Uint12_tester from "./Uint12_tester.js";
 import * as BoundsArraySet_tester from "./BoundsArraySet_tester.js";
-import * as GSheets_tester from "./GSheets_tester.js";
+//!!! (2025/06/12 Temp Remarked before modifying completedly)
+//import * as GSheets_tester from "./GSheets_tester.js";
 import * as FeedbackShape_tester from "./FeedbackShape_tester.js";
 import * as AsyncWorker_tester from "./AsyncWorker_tester.js";
 //!!! (2025/06/12 Temp Remarked before modifying completedly)
