@@ -50,21 +50,21 @@ class TestCaseOne {
     // 1. Original parameters.
     const parentNameable = a.parentNameable_get();
     if ( parentNameable !== this.parentNameable )
-      throw Error( `TestCaseOne.${funcNameInMessage}(): `
+      throw Error( `${this.constructor.name}.${funcNameInMessage}(): `
         + `testCaseId = ${this.testCaseId}, `
         + `.parentNameable ( ${parentNameable} ) `
         + `should be ( ${this.parentNameable} ).` );
 
     const nameJoinSeparator = a.nameJoinSeparator_get();
     if ( nameJoinSeparator !== this.nameJoinSeparator )
-      throw Error( `TestCaseOne.${funcNameInMessage}(): `
+      throw Error( `${this.constructor.name}.${funcNameInMessage}(): `
         + `testCaseId = ${this.testCaseId}, `
         + `.nameJoinSeparator ( ${nameJoinSeparator} )`
         + `should be ( ${this.nameJoinSeparator} ).` );
 
     const name = a.name_get();
     if ( name !== this.name )
-      throw Error( `TestCaseOne.${funcNameInMessage}(): `
+      throw Error( `${this.constructor.name}.${funcNameInMessage}(): `
         + `testCaseId = ${this.testCaseId}, `
         + `.name ( ${name} )`
         + `should be ( ${this.name} ).` );
@@ -72,7 +72,7 @@ class TestCaseOne {
     // 2. String parameters.
     const parentNameString = a.parentNameString_get();
     if ( parentNameString !== this.parentNameString_shouldBe )
-      throw Error( `TestCaseOne.${funcNameInMessage}(): `
+      throw Error( `${this.constructor.name}.${funcNameInMessage}(): `
         + `testCaseId = ${this.testCaseId}, `
         + `.parentNameString ( ${parentNameString} )`
         + `should be ( ${this.parentNameString_shouldBe} ).` );
@@ -81,7 +81,7 @@ class TestCaseOne {
       = a.parentNameString_recursively_get();
     if ( parentNameString_recursively
           !== this.parentNameString_recursively_shouldBe )
-      throw Error( `TestCaseOne.${funcNameInMessage}(): `
+      throw Error( `${this.constructor.name}.${funcNameInMessage}(): `
         + `testCaseId = ${this.testCaseId}, `
         + `.parentNameString_recursively ( ${parentNameString_recursively} )`
         + `should be ( ${this.parentNameString_recursively_shouldBe} ).` );
@@ -89,39 +89,75 @@ class TestCaseOne {
     const nameJoinSeparatorString = a.nameJoinSeparatorString_get();
     if ( nameJoinSeparatorString
            !== this.nameJoinSeparatorString_shouldBe )
-      throw Error( `TestCaseOne.${funcNameInMessage}(): `
+      throw Error( `${this.constructor.name}.${funcNameInMessage}(): `
         + `testCaseId = ${this.testCaseId}, `
         + `.nameJoinSeparatorString ( ${nameJoinSeparatorString} )`
         + `should be ( ${this.nameJoinSeparatorString_shouldBe} ).` );
 
     const nameString = a.nameString_get();
     if ( nameString !== this.nameString_shouldBe )
-      throw Error( `TestCaseOne.${funcNameInMessage}(): `
+      throw Error( `${this.constructor.name}.${funcNameInMessage}(): `
         + `testCaseId = ${this.testCaseId}, `
         + `.nameString ( ${nameString} )`
         + `should be ( ${this.nameString_shouldBe} ).` );
 
     const nameString_recursively = a.nameString_recursively_get();
     if ( nameString_recursively !== this.nameString_recursively_shouldBe )
-      throw Error( `TestCaseOne.${funcNameInMessage}(): `
+      throw Error( `${this.constructor.name}.${funcNameInMessage}(): `
         + `testCaseId = ${this.testCaseId}, `
         + `.nameString_recursively ( ${nameString_recursively} )`
         + `should be ( ${this.nameString_recursively_shouldBe} ).` );
 
     // 3. Test .nameJoinSeparator_join()
     {
-      a.nameJoinSeparator_join( "QQ", "WW" );
-//!!!
-      HierarchicalNameable.Root.defaultParams.nameJoinSeparator;
+      this.nameJoinSeparator_join_test( a, undefined, undefined );
+      this.nameJoinSeparator_join_test( a, undefined,      null );
 
-      nameJoinSeparator_join_originalName,
-      nameJoinSeparator_join_extraName,
-      nameJoinSeparator_join_shouldBe,  
+      this.nameJoinSeparator_join_test( a,      null, undefined );
+      this.nameJoinSeparator_join_test( a,      null,      null );
+
+      this.nameJoinSeparator_join_test( a,      "QQ", undefined );
+      this.nameJoinSeparator_join_test( a,      "QQ",      null );
+
+      this.nameJoinSeparator_join_test( a,      null,      "WW" );
+      this.nameJoinSeparator_join_test( a,      null,      "WW" );
+
+      this.nameJoinSeparator_join_test( a,      "QQ",      "WW" );
+      this.nameJoinSeparator_join_test( a,      "QQ",      "WW" );
     }
 
     a.disposeResources_and_recycleToPool();
     a = null;
   }
+
+  nameJoinSeparator_join_test( aHierarchicalNameable,
+    originalName, extraName ) {
+
+    const funcNameInMessage = "nameJoinSeparator_join_test";
+
+    let nameJoinSeparator = this.nameJoinSeparator;
+    if (  ( nameJoinSeparator === undefined )
+       || ( nameJoinSeparator === null ) )
+      nameJoinSeparator
+        = HierarchicalNameable.Root.defaultParams.nameJoinSeparator;
+
+    let modifiedName;
+    if (  ( extraName === undefined )
+       || ( extraName === null ) )
+      modifiedName = originalName;
+    else
+      modifiedName = `${originalName}${nameJoinSeparator}${extraName}`;
+
+    const nameJoinSeparator_join_result
+      = aHierarchicalNameable.nameJoinSeparator_join(
+          originalName, extraName );
+
+    if ( nameJoinSeparator_join_result !== modifiedName  )
+      throw Error( `${this.constructor.name}.${funcNameInMessage}(): `
+        + `testCaseId = ${this.testCaseId}, `
+        + `.nameJoinSeparator_join() result ( ${nameJoinSeparator_join_result} )`
+        + `should be ( ${modifiedName} ).` );
+    }
 
 }
 
