@@ -99,6 +99,11 @@ class TestCaseOne {
     parentNameable, nameJoinSeparator, name,
     shouldBe_StringValues,
 
+//!!! ...unfinished... (2025/06/12)
+    // Note: leafNameable's root will be direct child of test nameable object.
+    leafNameable,
+    leafNameable_shouldBe_StringValues
+
     parentNameable2,
     parentNameable2_shouldBe_StringValues,
 
@@ -109,9 +114,9 @@ class TestCaseOne {
     name2_shouldBe_StringValues
 
 //!!! ...unfinished... (2025/06/12)
-    // Note: leafNameable's root will be direct child of test nameable object.
-    leafNameable,
-    leafNameable_shouldBe_StringValues
+//     // Note: leafNameable's root will be direct child of test nameable object.
+//     leafNameable,
+//     leafNameable_shouldBe_StringValues
 
 //!!! ...unfinished... (2025/06/12)
 //  childNameable,
