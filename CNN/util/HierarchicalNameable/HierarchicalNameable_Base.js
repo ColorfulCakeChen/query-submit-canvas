@@ -98,6 +98,12 @@ let HierarchicalNameable_Base
 //!!! (2025/06/11 Remarked) seems not necessary.
 //    this.name_related_cache_clear();
 
+    { // Clear name related caches.
+      this.#nameJoinSeparatorString_cache = undefined;
+      this.#nameString_cache = undefined;
+      this.#nameString_recursively_cache = undefined;
+    }
+
     if ( this.#childrenNameableSet ) {
       const childrenNameableSet = this.#childrenNameableSet;
 
