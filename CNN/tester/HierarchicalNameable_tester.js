@@ -254,9 +254,7 @@ function *testerOne( progressParent ) {
 function *testerTwo( progressParent ) {
 
 //!!! ...unfinished... (2025/06/11)
-
-
-  let testCaseCount = ?;
+  let testCaseCount = 1;
 
   let progressRoot = progressParent.root_get();
   let progressToAdvance = progressParent.child_add(
@@ -272,8 +270,7 @@ function *testerThree( progressParent ) {
 
 //!!! ...unfinished... (2025/06/11)
 
-
-  const testCaseCount = ?;
+  const testCaseCount = 1;
 
   let progressRoot = progressParent.root_get();
   let progressToAdvance = progressParent.child_add(
@@ -288,9 +285,14 @@ function *testerSix( progressParent ) {
 
 //!!! ...unfinished... (2025/06/11)
 
+  const testCaseCount = 1;
 
+  let progressRoot = progressParent.root_get();
+  let progressToAdvance = progressParent.child_add(
+    ValueMax.Percentage.Concrete.Pool.get_or_create_by( testCaseCount ) );
 
-  //yield progressRoot;
+  progressToAdvance.value_advance();
+  yield progressRoot;
 }
 
 /**
