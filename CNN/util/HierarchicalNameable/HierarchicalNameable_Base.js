@@ -335,7 +335,7 @@ let HierarchicalNameable_Base
     if ( parent ) {
 
       // Q: Why not use this.parentNameString_recursively?
-      // A: To avoid re-check whether parent existence.
+      // A: To avoid re-check whether parent exists.
       const parentNames = parent.nameString_recursively_get();
 
       const joinSeparator = this.nameJoinSeparatorString_get();
