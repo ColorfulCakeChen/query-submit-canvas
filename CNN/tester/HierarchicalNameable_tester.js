@@ -198,36 +198,36 @@ const gTestCaseOne_Table = [
   new TestCaseOne( 2,
               A, // parentNameable
             ".", // nameJoinSeparator
-            "x", // name
+            "2", // name
             "A", // parentNameString_shouldBe
             "A", // parentNameString_recursively_shouldBe
             ".", // nameJoinSeparatorString_shouldBe
-            "x", // nameString_shouldBe
-          "A.x", // nameString_recursively_shouldBe
+            "2", // nameString_shouldBe
+          "A.2", // nameString_recursively_shouldBe
   ),
 
   // 3. Test two parent.
   new TestCaseOne( 3,
             A_B, // parentNameable
             ".", // nameJoinSeparator
-            "x", // name
+            "3", // name
             "B", // parentNameString_shouldBe
           "A_B", // parentNameString_recursively_shouldBe
             ".", // nameJoinSeparatorString_shouldBe
-            "x", // nameString_shouldBe
-        "A_B.x", // nameString_recursively_shouldBe
+            "3", // nameString_shouldBe
+        "A_B.3", // nameString_recursively_shouldBe
   ),
 
   // 4. Test three parent.
   new TestCaseOne( 4,
           A_BvC, // parentNameable
             ".", // nameJoinSeparator
-            "x", // name
+            "4", // name
             "C", // parentNameString_shouldBe
         "A_BvC", // parentNameString_recursively_shouldBe
             ".", // nameJoinSeparatorString_shouldBe
-            "x", // nameString_shouldBe
-      "A_BvC.x", // nameString_recursively_shouldBe
+            "4", // nameString_shouldBe
+      "A_BvC.4", // nameString_recursively_shouldBe
   ),
 
 ];
