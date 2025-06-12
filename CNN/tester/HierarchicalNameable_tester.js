@@ -109,8 +109,9 @@ class TestCaseOne {
     name2_shouldBe_StringValues
 
 //!!! ...unfinished... (2025/06/12)
-    childNameable,
-    childNameable_shouldBe_StringValues
+    // Note: leafNameable's root will be direct child of test nameable object.
+    leafNameable,
+    leafNameable_shouldBe_StringValues
 
 //!!! ...unfinished... (2025/06/12)
 //  childNameable,
@@ -126,7 +127,6 @@ class TestCaseOne {
 //     name3_shouldBe_StringValues
 
   ) {
-
     this.testCaseId = testCaseId;
 
     this.parentNameable = parentNameable;
@@ -157,9 +157,7 @@ class TestCaseOne {
 
     // 1. After created.
     this.testOne( a, "just_created",
-      this.parentNameable,
-      this.nameJoinSeparator,
-      this.name,
+      this.parentNameable, this.nameJoinSeparator, this.name,
       this.shouldBe_StringValues
     );
 
@@ -168,27 +166,21 @@ class TestCaseOne {
     // 2.1 Change to parentNameable2
     a.parentNameable_set( this.parentNameable2 );
     this.testOne( a, "parentNameable2",
-      this.parentNameable2,
-      this.nameJoinSeparator,
-      this.name,
+      this.parentNameable2, this.nameJoinSeparator, this.name,
       this.parentNameable2_shouldBe_StringValues
     );
 
     // 2.2 Change to nameJoinSeparator2
     a.nameJoinSeparator_set( this.nameJoinSeparator2 );
     this.testOne( a, "nameJoinSeparator2",
-      this.parentNameable2,
-      this.nameJoinSeparator2,
-      this.name,
+      this.parentNameable2, this.nameJoinSeparator2, this.name,
       this.nameJoinSeparator2_shouldBe_StringValues
     );
 
     // 2.3 Change to name2
     a.name_set( this.name2 );
     this.testOne( a, "name2",
-      this.parentNameable2,
-      this.nameJoinSeparator2,
-      this.name2,
+      this.parentNameable2, this.nameJoinSeparator2, this.name2,
       this.name2_shouldBe_StringValues
     );
 
@@ -198,6 +190,8 @@ class TestCaseOne {
 //    aShouldBe.test( this.testCaseId, "parentChanged", a );
 //
 // Try add/remove child
+//
+// .rootNameable_get()
 
 
     //
