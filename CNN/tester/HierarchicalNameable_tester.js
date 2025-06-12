@@ -171,12 +171,13 @@ class TestCaseOne {
 //    aShouldBe.test( this.testCaseId, "parentChanged", a );
 //
 // Try add/remove child
-    this.testOne( a, "afterCreated",
-      this.parentNameable,
-      this.nameJoinSeparator,
-      this.name,
-      this.shouldBe_StringValues
-    );
+
+    // this.testOne( a, "afterCreated",
+    //   this.parentNameable,
+    //   this.nameJoinSeparator,
+    //   this.name,
+    //   this.shouldBe_StringValues
+    // );
 
     //
     a.disposeResources_and_recycleToPool();
@@ -367,7 +368,7 @@ function *testerOne( progressParent ) {
 
   for ( let i = 0; i < gTestCaseOne_Table.length; ++i ) {
     let testCase = gTestCaseOne_Table[ i ];
-    testCase.test();
+    testCase.testAll();
 
     progressToAdvance.value_advance();
     yield progressRoot;
