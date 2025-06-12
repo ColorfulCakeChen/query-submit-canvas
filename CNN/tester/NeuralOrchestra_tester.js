@@ -786,7 +786,7 @@ class TestCase {
           +  `( ${progressToAdvance.valuePercentage} ) should 100.` );
   }
 
-!!! ...unfinished... (2025/05/15)
+//!!! ...unfinished... (2025/05/15)
 // Test and check .weightArrayBuffer_partitionCount and .weightArrayBuffer_partitionCount
 
   /** */
