@@ -302,7 +302,7 @@ const gTestCaseOne_Table = [
       undefined, // parentNameable
       undefined, // nameJoinSeparator
       undefined, // name
-    new ShouldBe(
+    new StringValues(
                "", // parentNameString_shouldBe
                "", // parentNameString_recursively_shouldBe
                "", // nameJoinSeparatorString_shouldBe
@@ -316,7 +316,7 @@ const gTestCaseOne_Table = [
               A, // parentNameable
             ".", // nameJoinSeparator
             "2", // name
-    new ShouldBe(
+    new StringValues(
               "A", // parentNameString_shouldBe
               "A", // parentNameString_recursively_shouldBe
               ".", // nameJoinSeparatorString_shouldBe
@@ -330,7 +330,7 @@ const gTestCaseOne_Table = [
             A_B, // parentNameable
             ".", // nameJoinSeparator
             "3", // name
-    new ShouldBe(
+    new StringValues(
               "B", // parentNameString_shouldBe
             "A_B", // parentNameString_recursively_shouldBe
               ".", // nameJoinSeparatorString_shouldBe
@@ -344,7 +344,7 @@ const gTestCaseOne_Table = [
           A_BvC, // parentNameable
             ".", // nameJoinSeparator
             "4", // name
-    new ShouldBe(
+    new StringValues(
               "C", // parentNameString_shouldBe
           "A_BvC", // parentNameString_recursively_shouldBe
               ".", // nameJoinSeparatorString_shouldBe
