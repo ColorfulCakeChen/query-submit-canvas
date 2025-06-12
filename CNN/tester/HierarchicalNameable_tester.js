@@ -288,7 +288,7 @@ const gTestCaseOne_Table = [
            null, // parentNameable
            null, // nameJoinSeparator
            null, // name
-    new ShouldBe(
+    new StringValues(
                "", // parentNameString_shouldBe
                "", // parentNameString_recursively_shouldBe
                "", // nameJoinSeparatorString_shouldBe
