@@ -65,44 +65,43 @@ class StringValues {
 
     const a = aHierarchicalNameable;
 
-    // 2. String parameters.
     const parentNameString = a.parentNameString_get();
-    if ( parentNameString !== this.parentNameString_shouldBe )
+    if ( parentNameString !== this.parentNameString )
       throw Error( `${this.constructor.name}.${funcNameInMessage}(): `
         + `testCaseId = ${testCaseId}, ${extraDescription}, `
         + `.parentNameString ( ${parentNameString} ) `
-        + `should be ( ${this.parentNameString_shouldBe} ).` );
+        + `should be ( ${this.parentNameString} ).` );
 
     const parentNameString_recursively
       = a.parentNameString_recursively_get();
     if ( parentNameString_recursively
-          !== this.parentNameString_recursively_shouldBe )
+          !== this.parentNameString_recursively )
       throw Error( `${this.constructor.name}.${funcNameInMessage}(): `
         + `testCaseId = ${testCaseId}, ${extraDescription}, `
         + `.parentNameString_recursively ( ${parentNameString_recursively} ) `
-        + `should be ( ${this.parentNameString_recursively_shouldBe} ).` );
+        + `should be ( ${this.parentNameString_recursively} ).` );
 
     const nameJoinSeparatorString = a.nameJoinSeparatorString_get();
     if ( nameJoinSeparatorString
-           !== this.nameJoinSeparatorString_shouldBe )
+           !== this.nameJoinSeparatorString )
       throw Error( `${this.constructor.name}.${funcNameInMessage}(): `
         + `testCaseId = ${testCaseId}, ${extraDescription}, `
         + `.nameJoinSeparatorString ( ${nameJoinSeparatorString} ) `
-        + `should be ( ${this.nameJoinSeparatorString_shouldBe} ).` );
+        + `should be ( ${this.nameJoinSeparatorString} ).` );
 
     const nameString = a.nameString_get();
-    if ( nameString !== this.nameString_shouldBe )
+    if ( nameString !== this.nameString )
       throw Error( `${this.constructor.name}.${funcNameInMessage}(): `
         + `testCaseId = ${testCaseId}, ${extraDescription}, `
         + `.nameString ( ${nameString} ) `
-        + `should be ( ${this.nameString_shouldBe} ).` );
+        + `should be ( ${this.nameString} ).` );
 
     const nameString_recursively = a.nameString_recursively_get();
-    if ( nameString_recursively !== this.nameString_recursively_shouldBe )
+    if ( nameString_recursively !== this.nameString_recursively )
       throw Error( `${this.constructor.name}.${funcNameInMessage}(): `
         + `testCaseId = ${testCaseId}, ${extraDescription}, `
         + `.nameString_recursively ( ${nameString_recursively} ) `
-        + `should be ( ${this.nameString_recursively_shouldBe} ).` );
+        + `should be ( ${this.nameString_recursively} ).` );
   }
 
 }
@@ -126,6 +125,20 @@ class TestCaseOne {
 
     name2,
     name2_shouldBe_StringValues
+
+//!!! ...unfinished... (2025/06/12)
+//  childNameable,
+//  childNameable_shouldBe_StringValues
+//
+//     parentNameable3,
+//     parentNameable3_shouldBe_StringValues,
+//
+//     nameJoinSeparator3,
+//     nameJoinSeparator3_shouldBe_StringValues,
+//
+//     name3,
+//     name3_shouldBe_StringValues
+
   ) {
 
     this.testCaseId = testCaseId;
