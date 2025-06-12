@@ -3,6 +3,7 @@ export { tester };
 import * as HierarchicalNameable from "../util/HierarchicalNameable.js";
 import * as Pool from "../util/Pool.js";
 import * as Recyclable from "../util/Recyclable.js";
+import * as ValueMax from "../util/ValueMax.js";
 
 // Global HierarchicalNameable test objects.
 const A =     HierarchicalNameable.Root.Pool.get_or_create_by( null, "$", "A" );
