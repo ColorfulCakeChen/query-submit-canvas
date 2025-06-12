@@ -200,7 +200,7 @@ let HierarchicalNameable_Base
   parentNameString_get() {
     const parent = this.#parentNameable;
     if ( parent )
-      return parent.nameString;
+      return parent.nameString_get();
     return Root.defaultParams.emptyString;
   }
 
@@ -329,7 +329,7 @@ let HierarchicalNameable_Base
     if ( this.#nameString_recursively_cache )
       return this.#nameString_recursively_cache;
 
-    const nameString = this.nameString;
+    const nameString = this.nameString_get();
 
     const parent = this.parentNameable;
     if ( parent ) {
