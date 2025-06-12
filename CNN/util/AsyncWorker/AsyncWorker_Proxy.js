@@ -364,7 +364,7 @@ class AsyncWorker_Proxy extends Recyclable.Root {
     //
     // (2025/06/11 Modified)
     // If it becomes too large, it will be wrapped to 1 (not 0 because 0 means
-    // no id has been issued) to restart counting).
+    // no id has been issued) to restart counting.
     //
     if ( this.processingId_next === Number.MAX_SAFE_INTEGER )
       this.processingId_next = 1;
