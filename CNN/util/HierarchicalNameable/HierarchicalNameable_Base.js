@@ -338,7 +338,7 @@ let HierarchicalNameable_Base
 
     const nameString = this.nameString_get();
 
-    const parent = this.parentNameable;
+    const parent = this.#parentNameable;
     if ( parent ) {
 
       // Q: Why not use this.parentNameString_recursively?
