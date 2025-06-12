@@ -61,7 +61,7 @@ let HierarchicalNameable_Base
     parentNameable, nameJoinSeparator, name, ...restArgs ) {
 
     super.setAsConstructor( ...restArgs );
-    OperationHierarchicalNameable_Base_Base.setAsConstructor_self.call( this,
+    HierarchicalNameable_Base.setAsConstructor_self.call( this,
       parentNameable, nameJoinSeparator, name );
     return this;
   }
