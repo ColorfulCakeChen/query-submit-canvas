@@ -9,70 +9,6 @@ const A =     HierarchicalNameable.Root.Pool.get_or_create_by( null, "$", "A" );
 const A_B =   HierarchicalNameable.Root.Pool.get_or_create_by(    A, "_", "B" );
 const A_BvC = HierarchicalNameable.Root.Pool.get_or_create_by(  A_B, "v", "C" );
 
-//
-const gTestCaseOne_Table = [
-  // 0. Test null.
-  new TestCaseOne( 0,
-           null, // parentNameable
-           null, // nameJoinSeparator
-           null, // name
-             "", // parentNameString_shouldBe
-             "", // parentNameString_recursively_shouldBe
-             "", // nameJoinSeparatorString_shouldBe
-    "(No name)", // nameString_shouldBe
-    "(No name)", // nameString_recursively_shouldBe
-  ),
-
-  // 1. Test undefined.
-  new TestCaseOne( 1,
-      undefined, // parentNameable
-      undefined, // nameJoinSeparator
-      undefined, // name
-             "", // parentNameString_shouldBe
-             "", // parentNameString_recursively_shouldBe
-             "", // nameJoinSeparatorString_shouldBe
-    "(No name)", // nameString_shouldBe
-    "(No name)", // nameString_recursively_shouldBe
-  ),
-
-  // 2. Test one parent.
-  new TestCaseOne( 2,
-              A, // parentNameable
-            ".", // nameJoinSeparator
-            "x", // name
-            "A", // parentNameString_shouldBe
-            "A", // parentNameString_recursively_shouldBe
-            ".", // nameJoinSeparatorString_shouldBe
-            "x", // nameString_shouldBe
-          "A.x", // nameString_recursively_shouldBe
-  ),
-
-  // 3. Test two parent.
-  new TestCaseOne( 3,
-            A_B, // parentNameable
-            ".", // nameJoinSeparator
-            "x", // name
-            "B", // parentNameString_shouldBe
-          "A_B", // parentNameString_recursively_shouldBe
-            ".", // nameJoinSeparatorString_shouldBe
-            "x", // nameString_shouldBe
-        "A_B.x", // nameString_recursively_shouldBe
-  ),
-
-  // 4. Test three parent.
-  new TestCaseOne( 4,
-          A_BvC, // parentNameable
-            ".", // nameJoinSeparator
-            "x", // name
-            "C", // parentNameString_shouldBe
-        "A_BvC", // parentNameString_recursively_shouldBe
-            ".", // nameJoinSeparatorString_shouldBe
-            "x", // nameString_shouldBe
-      "A_BvC.x", // nameString_recursively_shouldBe
-  ),
-
-];
-
 /**
  * 
  */
@@ -230,6 +166,70 @@ class TestCaseOne {
     }
 
 }
+
+/** */
+const gTestCaseOne_Table = [
+  // 0. Test null.
+  new TestCaseOne( 0,
+           null, // parentNameable
+           null, // nameJoinSeparator
+           null, // name
+             "", // parentNameString_shouldBe
+             "", // parentNameString_recursively_shouldBe
+             "", // nameJoinSeparatorString_shouldBe
+    "(No name)", // nameString_shouldBe
+    "(No name)", // nameString_recursively_shouldBe
+  ),
+
+  // 1. Test undefined.
+  new TestCaseOne( 1,
+      undefined, // parentNameable
+      undefined, // nameJoinSeparator
+      undefined, // name
+             "", // parentNameString_shouldBe
+             "", // parentNameString_recursively_shouldBe
+             "", // nameJoinSeparatorString_shouldBe
+    "(No name)", // nameString_shouldBe
+    "(No name)", // nameString_recursively_shouldBe
+  ),
+
+  // 2. Test one parent.
+  new TestCaseOne( 2,
+              A, // parentNameable
+            ".", // nameJoinSeparator
+            "x", // name
+            "A", // parentNameString_shouldBe
+            "A", // parentNameString_recursively_shouldBe
+            ".", // nameJoinSeparatorString_shouldBe
+            "x", // nameString_shouldBe
+          "A.x", // nameString_recursively_shouldBe
+  ),
+
+  // 3. Test two parent.
+  new TestCaseOne( 3,
+            A_B, // parentNameable
+            ".", // nameJoinSeparator
+            "x", // name
+            "B", // parentNameString_shouldBe
+          "A_B", // parentNameString_recursively_shouldBe
+            ".", // nameJoinSeparatorString_shouldBe
+            "x", // nameString_shouldBe
+        "A_B.x", // nameString_recursively_shouldBe
+  ),
+
+  // 4. Test three parent.
+  new TestCaseOne( 4,
+          A_BvC, // parentNameable
+            ".", // nameJoinSeparator
+            "x", // name
+            "C", // parentNameString_shouldBe
+        "A_BvC", // parentNameString_recursively_shouldBe
+            ".", // nameJoinSeparatorString_shouldBe
+            "x", // nameString_shouldBe
+      "A_BvC.x", // nameString_recursively_shouldBe
+  ),
+
+];
 
 
 /** */
