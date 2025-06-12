@@ -139,7 +139,8 @@ let HierarchicalNameable_Base
     this.parentNameable_set( undefined );
 
     // Clear .#name after children and parent clearing. The reason is to
-    // provide more information if children checking assertion failed.
+    // provide more information for debug if children checking assertion
+    // failed.
     this.#name = undefined;
     this.#nameJoinSeparator = undefined;
 
