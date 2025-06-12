@@ -18,7 +18,7 @@ const A_BvC = HierarchicalNameable.Root.Pool.get_or_create_by(  A_B, "v", "C" );
  * Describe Record what the string properties' values of HierarchicalNameable
  * should be.
  */
-class ShouldBe {
+class StringValues {
 
   constructor(
     parentNameString,
@@ -62,6 +62,8 @@ class ShouldBe {
 //         + `testCaseId = ${testCaseId}, ${extraDescription}, `
 //         + `.name ( ${name} ) `
 //         + `should be ( ${this.name} ).` );
+
+    const a = aHierarchicalNameable;
 
     // 2. String parameters.
     const parentNameString = a.parentNameString_get();
@@ -114,16 +116,16 @@ class TestCaseOne {
     testCaseId,
 
     parentNameable, nameJoinSeparator, name,
+    shouldBe_StringValues,
 
-    aShouldBe,
+    parentNameable2,
+    parentNameable2_shouldBe_StringValues,
 
-!!!
-    change_parentNameable,
-    change_parentNameable__nameString_recursively_shouldBe,
+    nameJoinSeparator2,
+    nameJoinSeparator2_shouldBe_StringValues,
 
-    change_nameJoinSeparator__nameJoinSeparatorString_shouldBe,
-    change_nameJoinSeparator__nameString_recursively_shouldBe,
-
+    name2,
+    name2_shouldBe_StringValues
   ) {
 
     this.testCaseId = testCaseId;
@@ -132,87 +134,123 @@ class TestCaseOne {
     this.nameJoinSeparator = nameJoinSeparator;
     this.name = name;
 
-    this.parentNameString_shouldBe = parentNameString_shouldBe;
-    this.parentNameString_recursively_shouldBe
-      = parentNameString_recursively_shouldBe;
+    this.shouldBe_StringValues = shouldBe_StringValues;
 
-    this.nameJoinSeparatorString_shouldBe
-      = nameJoinSeparatorString_shouldBe;
+    this.parentNameable2 = parentNameable2;
+    this.parentNameable2_shouldBe_StringValues
+      = parentNameable2_shouldBe_StringValues;
 
-    this.nameString_shouldBe = nameString_shouldBe;
-    this.nameString_recursively_shouldBe = nameString_recursively_shouldBe;
+    this.nameJoinSeparator2 = nameJoinSeparator2;
+    this.nameJoinSeparator2_shouldBe_StringValues
+      = nameJoinSeparator2_shouldBe_StringValues;
+
+    this.name2 = name2;
+    this.name2_shouldBe_StringValues
+      = name2_shouldBe_StringValues;
   }
 
   /** */
-  test() {
-    const funcNameInMessage = "test";
+  testAll() {
+    const funcNameInMessage = "testAll";
 
     let a = HierarchicalNameable.Root.Pool.get_or_create_by(
       this.parentNameable, this.nameJoinSeparator, this.name );
 
-    // 1. Original parameters.
-    const parentNameable = a.parentNameable_get();
-    if ( parentNameable !== this.parentNameable )
-      throw Error( `${this.constructor.name}.${funcNameInMessage}(): `
-        + `testCaseId = ${this.testCaseId}, `
-        + `.parentNameable ( ${parentNameable} ) `
-        + `should be ( ${this.parentNameable} ).` );
+    // 1. After created.
+    this.testOne( a, "afterCreated",
+      this.parentNameable,
+      this.nameJoinSeparator,
+      this.name,
+      this.shouldBe_StringValues
+    );
 
-    const nameJoinSeparator = a.nameJoinSeparator_get();
-    if ( nameJoinSeparator !== this.nameJoinSeparator )
-      throw Error( `${this.constructor.name}.${funcNameInMessage}(): `
-        + `testCaseId = ${this.testCaseId}, `
-        + `.nameJoinSeparator ( ${nameJoinSeparator} ) `
-        + `should be ( ${this.nameJoinSeparator} ).` );
+    // 2.
 
-    const name = a.name_get();
-    if ( name !== this.name )
-      throw Error( `${this.constructor.name}.${funcNameInMessage}(): `
-        + `testCaseId = ${this.testCaseId}, `
-        + `.name ( ${name} ) `
-        + `should be ( ${this.name} ).` );
-
-    // 2. String parameters.
-    aShouldBe.test( this.testCaseId, "Created", a );
-
-    // 3. Test .nameJoinSeparator_join()
-    this.nameJoinSeparator_join_testAll( a );
-
-
-!!! ...unfinished... (2025/06/12)
+//!!! ...unfinished... (2025/06/12)
 // Try change parentNameable, nameJoinSeparator, name,
 //    aShouldBe.test( this.testCaseId, "parentChanged", a );
+//
+// Try add/remove child
+    this.testOne( a, "afterCreated",
+      this.parentNameable,
+      this.nameJoinSeparator,
+      this.name,
+      this.shouldBe_StringValues
+    );
 
-    // 3. Test .nameJoinSeparator_join(), again.
-    this.nameJoinSeparator_join_testAll( a );
-
+    //
     a.disposeResources_and_recycleToPool();
     a = null;
   }
 
   /** */
-  nameJoinSeparator_join_testAll( aHierarchicalNameable ) {
-    this.nameJoinSeparator_join_testOne( a, undefined, undefined );
-    this.nameJoinSeparator_join_testOne( a, undefined,      null );
+  testOne( aHierarchicalNameable, extraDescription,
+    parentNameable_shouldBe,
+    nameJoinSeparator_shouldBe,
+    name_shouldBe,
+    shouldBe_StringValues
+  ) {
+    const funcNameInMessage = "testOne";
 
-    this.nameJoinSeparator_join_testOne( a,      null, undefined );
-    this.nameJoinSeparator_join_testOne( a,      null,      null );
+    const testCaseId = this.testCaseId;
+    const a = aHierarchicalNameable;
 
-    this.nameJoinSeparator_join_testOne( a,      "QQ", undefined );
-    this.nameJoinSeparator_join_testOne( a,      "QQ",      null );
+    // 1. Original parameters.
+    const parentNameable = a.parentNameable_get();
+    if ( parentNameable !== parentNameable_shouldBe )
+      throw Error( `${this.constructor.name}.${funcNameInMessage}(): `
+        + `testCaseId = ${testCaseId}, ${extraDescription}, `
+        + `.parentNameable ( ${parentNameable} ) `
+        + `should be ( ${parentNameable_shouldBe} ).` );
 
-    this.nameJoinSeparator_join_testOne( a, undefined,      "WW" );
-    this.nameJoinSeparator_join_testOne( a,      null,      "WW" );
+    const nameJoinSeparator = a.nameJoinSeparator_get();
+    if ( nameJoinSeparator !== nameJoinSeparator_shouldBe )
+      throw Error( `${this.constructor.name}.${funcNameInMessage}(): `
+        + `testCaseId = ${testCaseId}, ${extraDescription}, `
+        + `.nameJoinSeparator ( ${nameJoinSeparator} ) `
+        + `should be ( ${nameJoinSeparator_shouldBe} ).` );
 
-    this.nameJoinSeparator_join_testOne( a,      "QQ",      "WW" );
-    this.nameJoinSeparator_join_testOne( a,      "QQ",      "WW" );
+    const name = a.name_get();
+    if ( name !== name_shouldBe )
+      throw Error( `${this.constructor.name}.${funcNameInMessage}(): `
+        + `testCaseId = ${testCaseId}, ${extraDescription}, `
+        + `.name ( ${name} ) `
+        + `should be ( ${name_shouldBe} ).` );
+
+    // 2. String parameters.
+    shouldBe_StringValues.test( this.testCaseId, extraDescription, a );
+
+    // 3. Test .nameJoinSeparator_join()
+    this.nameJoinSeparator_join_testAll( a );
   }
 
   /** */
-  nameJoinSeparator_join_testOne( aHierarchicalNameable,
+  nameJoinSeparator_join_testAll( aHierarchicalNameable, extraDescription ) {
+    const a = aHierarchicalNameable;
+
+    this.nameJoinSeparator_join_testOne( a, extraDescription, undefined, undefined );
+    this.nameJoinSeparator_join_testOne( a, extraDescription, undefined,      null );
+
+    this.nameJoinSeparator_join_testOne( a, extraDescription,      null, undefined );
+    this.nameJoinSeparator_join_testOne( a, extraDescription,      null,      null );
+
+    this.nameJoinSeparator_join_testOne( a, extraDescription,      "QQ", undefined );
+    this.nameJoinSeparator_join_testOne( a, extraDescription,      "QQ",      null );
+
+    this.nameJoinSeparator_join_testOne( a, extraDescription, undefined,      "WW" );
+    this.nameJoinSeparator_join_testOne( a, extraDescription,      null,      "WW" );
+
+    this.nameJoinSeparator_join_testOne( a, extraDescription,      "QQ",      "WW" );
+    this.nameJoinSeparator_join_testOne( a, extraDescription,      "QQ",      "WW" );
+  }
+
+  /** */
+  nameJoinSeparator_join_testOne( aHierarchicalNameable, extraDescription,
     originalName, extraName ) {
 
     const funcNameInMessage = "nameJoinSeparator_join_testOne";
+
+    const testCaseId = this.testCaseId;
 
     let nameJoinSeparator = this.nameJoinSeparator;
     if (  ( nameJoinSeparator === undefined )
@@ -233,7 +271,7 @@ class TestCaseOne {
 
     if ( nameJoinSeparator_join_result !== modifiedName  )
       throw Error( `${this.constructor.name}.${funcNameInMessage}(): `
-        + `testCaseId = ${this.testCaseId}, `
+        + `testCaseId = ${testCaseId}, ${extraDescription}, `
         + `nameJoinSeparator = ${this.nameJoinSeparator}, `
         + `originalName = ${originalName}, `
         + `extraName = ${extraName}, `
