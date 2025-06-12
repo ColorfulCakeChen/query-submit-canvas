@@ -2,7 +2,7 @@ export { TableLogger_Base as Base };
 
 // import * as Pool from "./Pool.js";
 // import * as Recyclable from "./Recyclable.js";
-import * as FloatValue from "../../Unpacker/FloatValue.js";
+import * as FloatValue from "../Unpacker/FloatValue.js";
 import * as ActivationEscaping from "../Conv/ActivationEscaping.js";
 
 /**
