@@ -107,6 +107,9 @@ let HierarchicalNameable_Base
     if ( this.#childrenNameableSet ) {
       const childrenNameableSet = this.#childrenNameableSet;
 
+!!! ...unfinished... (2025/06/12)
+// Perhaps, let all childrenNameable.parentNameable_set( this.#parentNameable )
+
       // All children nameable objects should be detached
       // before releasing this nameable object.
       //
