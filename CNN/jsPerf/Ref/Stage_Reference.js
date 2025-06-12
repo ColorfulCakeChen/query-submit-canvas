@@ -17,7 +17,7 @@ import * as Block from "../../Conv/Block.js";
 import * as Stage from "../../Conv/Stage.js";
 
 
-!!! ...unfinshed... (2025/06/06)
+//!!! ...unfinshed... (2025/06/06)
 // Let Operation, Block(_Reference), Stage(_Reference), NeuralNet(_Reference)
 // inherits from HierarchicalName.Base.
 

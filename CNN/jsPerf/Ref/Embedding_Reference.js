@@ -17,7 +17,7 @@ import * as NumberImage from "./NumberImage.js";
 import * as Embedding_TestParams from "./Embedding_TestParams.js"; 
 
 
-!!! ...unfinshed... (2025/06/06)
+//!!! ...unfinshed... (2025/06/06)
 // Let Operation, Block(_Reference), Stage(_Reference), NeuralNet(_Reference)
 // inherits from HierarchicalName.Base.
 
