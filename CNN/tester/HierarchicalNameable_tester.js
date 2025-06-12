@@ -170,7 +170,7 @@ class TestCaseOne {
       this.parentNameable, this.nameJoinSeparator, this.name );
 
     // 1. After created.
-    this.testOne( a, "afterCreated",
+    this.testOne( a, "just_created",
       this.parentNameable,
       this.nameJoinSeparator,
       this.name,
@@ -179,18 +179,40 @@ class TestCaseOne {
 
     // 2.
 
+    // 2.1 Change to parentNameable2
+    a.parentNameable_set( this.parentNameable2 );
+    this.testOne( a, "parentNameable2",
+      this.parentNameable2,
+      this.nameJoinSeparator,
+      this.name,
+      this.parentNameable2_shouldBe_StringValues
+    );
+
+    // 2.2 Change to nameJoinSeparator2
+    a.nameJoinSeparator_set( this.nameJoinSeparator2 );
+    this.testOne( a, "nameJoinSeparator2",
+      this.parentNameable2,
+      this.nameJoinSeparator2,
+      this.name,
+      this.nameJoinSeparator2_shouldBe_StringValues
+    );
+
+    // 2.3 Change to name2
+    a.name_set( this.name2 );
+    this.testOne( a, "name2",
+      this.parentNameable2,
+      this.nameJoinSeparator2,
+      this.name2,
+      this.name2_shouldBe_StringValues
+    );
+
+
 //!!! ...unfinished... (2025/06/12)
 // Try change parentNameable, nameJoinSeparator, name,
 //    aShouldBe.test( this.testCaseId, "parentChanged", a );
 //
 // Try add/remove child
 
-    // this.testOne( a, "afterCreated",
-    //   this.parentNameable,
-    //   this.nameJoinSeparator,
-    //   this.name,
-    //   this.shouldBe_StringValues
-    // );
 
     //
     a.disposeResources_and_recycleToPool();
@@ -299,72 +321,99 @@ class TestCaseOne {
 const gTestCaseOne_Table = [
   // 0. Test null.
   new TestCaseOne( 0,
-           null, // parentNameable
-           null, // nameJoinSeparator
-           null, // name
+                null, // parentNameable
+                null, // nameJoinSeparator
+                null, // name
     new StringValues(
-               "", // parentNameString_shouldBe
-               "", // parentNameString_recursively_shouldBe
-               "", // nameJoinSeparatorString_shouldBe
-      "(No name)", // nameString_shouldBe
-      "(No name)", // nameString_recursively_shouldBe
+                  "", // parentNameString_shouldBe
+                  "", // parentNameString_recursively_shouldBe
+                  "", // nameJoinSeparatorString_shouldBe
+         "(No name)", // nameString_shouldBe
+         "(No name)", // nameString_recursively_shouldBe
+    ),
+               A_BvC, // parentNameable2
+    new StringValues(
+                 "C", // parentNameString_shouldBe
+             "A_BvC", // parentNameString_recursively_shouldBe
+                  "", // nameJoinSeparatorString_shouldBe
+         "(No name)", // nameString_shouldBe
+    "A_BvC(No name)", // nameString_recursively_shouldBe
+    ),
+                 "~", // nameJoinSeparator2
+    new StringValues(
+                 "C", // parentNameString_shouldBe
+             "A_BvC", // parentNameString_recursively_shouldBe
+                  "", // nameJoinSeparatorString_shouldBe
+         "(No name)", // nameString_shouldBe
+   "A_BvC~(No name)", // nameString_recursively_shouldBe
+    ),
+                 "0", // name2
+    new StringValues(
+                 "C", // parentNameString_shouldBe
+             "A_BvC", // parentNameString_recursively_shouldBe
+                  "", // nameJoinSeparatorString_shouldBe
+                 "0", // nameString_shouldBe
+           "A_BvC~0", // nameString_recursively_shouldBe
     ),
   ),
 
   // 1. Test undefined.
   new TestCaseOne( 1,
-      undefined, // parentNameable
-      undefined, // nameJoinSeparator
-      undefined, // name
+           undefined, // parentNameable
+           undefined, // nameJoinSeparator
+           undefined, // name
     new StringValues(
-               "", // parentNameString_shouldBe
-               "", // parentNameString_recursively_shouldBe
-               "", // nameJoinSeparatorString_shouldBe
-      "(No name)", // nameString_shouldBe
-      "(No name)", // nameString_recursively_shouldBe
+                  "", // parentNameString_shouldBe
+                  "", // parentNameString_recursively_shouldBe
+                  "", // nameJoinSeparatorString_shouldBe
+         "(No name)", // nameString_shouldBe
+         "(No name)", // nameString_recursively_shouldBe
     ),
   ),
 
   // 2. Test one parent.
   new TestCaseOne( 2,
-              A, // parentNameable
-            ".", // nameJoinSeparator
-            "2", // name
+                   A, // parentNameable
+                 ".", // nameJoinSeparator
+                 "2", // name
     new StringValues(
-              "A", // parentNameString_shouldBe
-              "A", // parentNameString_recursively_shouldBe
-              ".", // nameJoinSeparatorString_shouldBe
-              "2", // nameString_shouldBe
-            "A.2", // nameString_recursively_shouldBe
+                 "A", // parentNameString_shouldBe
+                 "A", // parentNameString_recursively_shouldBe
+                 ".", // nameJoinSeparatorString_shouldBe
+                 "2", // nameString_shouldBe
+               "A.2", // nameString_recursively_shouldBe
     ),
   ),
 
   // 3. Test two parent.
   new TestCaseOne( 3,
-            A_B, // parentNameable
-            ".", // nameJoinSeparator
-            "3", // name
+                 A_B, // parentNameable
+                 ".", // nameJoinSeparator
+                 "3", // name
     new StringValues(
-              "B", // parentNameString_shouldBe
-            "A_B", // parentNameString_recursively_shouldBe
-              ".", // nameJoinSeparatorString_shouldBe
-              "3", // nameString_shouldBe
-          "A_B.3", // nameString_recursively_shouldBe
+                 "B", // parentNameString_shouldBe
+               "A_B", // parentNameString_recursively_shouldBe
+                 ".", // nameJoinSeparatorString_shouldBe
+                 "3", // nameString_shouldBe
+             "A_B.3", // nameString_recursively_shouldBe
     ),
   ),
 
   // 4. Test three parent.
   new TestCaseOne( 4,
-          A_BvC, // parentNameable
-            ".", // nameJoinSeparator
-            "4", // name
+               A_BvC, // parentNameable
+                 ".", // nameJoinSeparator
+                 "4", // name
     new StringValues(
-              "C", // parentNameString_shouldBe
-          "A_BvC", // parentNameString_recursively_shouldBe
-              ".", // nameJoinSeparatorString_shouldBe
-              "4", // nameString_shouldBe
-        "A_BvC.4", // nameString_recursively_shouldBe
+                 "C", // parentNameString_shouldBe
+             "A_BvC", // parentNameString_recursively_shouldBe
+                 ".", // nameJoinSeparatorString_shouldBe
+                 "4", // nameString_shouldBe
+           "A_BvC.4", // nameString_recursively_shouldBe
     )
+
+//!!! ...unfinished... (2025/06/12) becomes no parent?
+
   ),
 
 ];
