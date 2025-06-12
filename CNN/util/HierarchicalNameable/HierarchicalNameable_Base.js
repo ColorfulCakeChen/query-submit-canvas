@@ -154,34 +154,6 @@ let HierarchicalNameable_Base
 
 
   /**
-   * Call this method if wanting to use this nameable object's separator to
-   * join two strings.
-   *
-   * It does NOT modify any data members of this nameable object.
-   *
-   * @param {string} originalName
-   *   The original string will be used as prefix.  
-   *
-   * @param {string} extraName
-   *   - If null or undefined, the originalName will be returned.
-   *   - If provided, it will be appended to the end of originalName
-   *       with .nameJoinSeparatorString.
-   *
-   * @return {string}
-   *   A string either originalName or originalName with separator and
-   * extraName.
-   */
-  nameJoinSeparator_join( originalName, extraName ) {
-    if ( ( extraName !== undefined ) && ( extraName !== null ) ) {
-      const joinSeparator = this.nameJoinSeparatorString;
-      const modifiedName = `${originalName}${joinSeparator}${extraName}`;
-      return modifiedName;
-    }
-    return originalName;
-  }
-
-
-  /**
    * Clear .#nameString_recursively_cache of this object and all children
    * nameable objects (directly and indirectly).
    *
@@ -220,28 +192,6 @@ let HierarchicalNameable_Base
   parentNameable_get() { return this.#parentNameable; }
 
 
-  nameJoinSeparator_set( nameJoinSeparatorNew ) {
-    if ( this.#nameJoinSeparator === nameJoinSeparatorNew )
-      return;
-    this.#nameJoinSeparator = nameJoinSeparatorNew;
-    this.#nameJoinSeparatorString_cache = undefined;
-    this.nameString_recursively_invalidate_recursively();
-  }
-
-  nameJoinSeparator_get() { return this.#nameJoinSeparator; }
-
-
-  name_set( nameNew ) {
-    if ( this.#name === nameNew )
-      return;
-    this.#name = nameNew;
-    this.#nameString_cache = undefined;
-    this.nameString_recursively_invalidate_recursively();
-  }
-
-  name_get() { return this.#name; }
-
-
   /**
    * @return {string}
    *   The name string of the direct parent nameable. If no parent, return an
@@ -272,6 +222,16 @@ let HierarchicalNameable_Base
   }
 
 
+  nameJoinSeparator_set( nameJoinSeparatorNew ) {
+    if ( this.#nameJoinSeparator === nameJoinSeparatorNew )
+      return;
+    this.#nameJoinSeparator = nameJoinSeparatorNew;
+    this.#nameJoinSeparatorString_cache = undefined;
+    this.nameString_recursively_invalidate_recursively();
+  }
+
+  nameJoinSeparator_get() { return this.#nameJoinSeparator; }
+
   /**
    * @return {string}
    *   A string representing .nameJoinSeparator even if it does not exist
@@ -296,6 +256,44 @@ let HierarchicalNameable_Base
     }
     return this.#nameJoinSeparatorString_cache;
   }
+
+  /**
+   * Call this method if wanting to use this nameable object's separator to
+   * join two strings.
+   *
+   * It does NOT modify any data members of this nameable object.
+   *
+   * @param {string} originalName
+   *   The original string will be used as prefix.  
+   *
+   * @param {string} extraName
+   *   - If null or undefined, the originalName will be returned.
+   *   - If provided, it will be appended to the end of originalName
+   *       with .nameJoinSeparatorString.
+   *
+   * @return {string}
+   *   A string either originalName or originalName with separator and
+   * extraName.
+   */
+  nameJoinSeparator_join( originalName, extraName ) {
+    if ( ( extraName !== undefined ) && ( extraName !== null ) ) {
+      const joinSeparator = this.nameJoinSeparatorString;
+      const modifiedName = `${originalName}${joinSeparator}${extraName}`;
+      return modifiedName;
+    }
+    return originalName;
+  }
+
+
+  name_set( nameNew ) {
+    if ( this.#name === nameNew )
+      return;
+    this.#name = nameNew;
+    this.#nameString_cache = undefined;
+    this.nameString_recursively_invalidate_recursively();
+  }
+
+  name_get() { return this.#name; }
 
 
   /**

@@ -6,6 +6,52 @@ import * as Recyclable from "../util/Recyclable.js";
 
 let A, B, C, D, E, F;
 
+const gTestCaseOne_Table = [
+  new TestCaseOne( 0,
+           null, // parentNameable
+           null, // nameJoinSeparator
+           null, // name
+             "", // parentNameString_shouldBe
+             "", // parentNameString_recursively_shouldBe
+             "", // nameJoinSeparatorString_shouldBe
+    "(No name)", // nameString_shouldBe
+    "(No name)", // nameString_recursively_shouldBe
+  ),
+
+  new TestCaseOne( 1,
+      undefined, // parentNameable
+      undefined, // nameJoinSeparator
+      undefined, // name
+             "", // parentNameString_shouldBe
+             "", // parentNameString_recursively_shouldBe
+             "", // nameJoinSeparatorString_shouldBe
+    "(No name)", // nameString_shouldBe
+    "(No name)", // nameString_recursively_shouldBe
+  ),
+
+  new TestCaseOne( 2,
+             "", // parentNameable
+             "", // nameJoinSeparator
+             "", // name
+             "", // parentNameString_shouldBe
+             "", // parentNameString_recursively_shouldBe
+             "", // nameJoinSeparatorString_shouldBe
+             "", // nameString_shouldBe
+             "", // nameString_recursively_shouldBe
+  ),
+!!!
+  new TestCaseOne( 3,
+             "", // parentNameable
+             "", // nameJoinSeparator
+             "", // name
+             "", // parentNameString_shouldBe
+             "", // parentNameString_recursively_shouldBe
+             "", // nameJoinSeparatorString_shouldBe
+             "", // nameString_shouldBe
+             "", // nameString_recursively_shouldBe
+  ),
+];
+
 /**
  * 
  */
@@ -168,68 +214,19 @@ class TestCaseOne {
 /** */
 function *testerOne( progressParent ) {
 
-  let testCaseCount = ?;
+  let testCaseCount = gTestCaseOne_Table.length;
 
   let progressRoot = progressParent.root_get();
   let progressToAdvance = progressParent.child_add(
     ValueMax.Percentage.Concrete.Pool.get_or_create_by( testCaseCount ) );
 
-//!!! ...unfinished... (2025/06/11)
-  {
-    let noName = HierarchicalNameable.Base.Pool.get_or_create_by(
-      null, // No parent
-      null, // No separator
-      null  // No name.
-    );
+  for ( let i = 0; i < gTestCaseOne_Table.length; ++i ) {
+    let testCase = gTestCaseOne_Table[ i ];
+    testCase.test();
 
-    let noName.nameJoinSeparator_join( "Q", "W" );
-
-
-//    "A"
-
-
-  // 1.
-  for ( let i = 0; i < Float12_Constant_Coder_Table.length; ++i ) {
-    let testCase = Float12_Constant_Coder_Table[ i ];
-
-//!!! (2022/12/22 Remarked)
-    //let delta = Math.abs( Float12.Constant[ testCase.name ] - testCase.value )
-    //if ( delta <= Number.EPSILON ) {
-    if ( Float12.Constant.Coder[ testCase.name ] == testCase.value ) {
-      continue;
-    }
-
-    throw Error( `testerFloat12Constant(): `
-      + `Float12.Constant.Coder.${testCase.name} `
-      + `( ${Float12.Constant.Coder[ testCase.name ]} ) `
-      + `should be ( ${testCase.value} ).`
-    );
+    progressToAdvance.value_advance();
+    yield progressRoot;
   }
-
-  progressToAdvance.value_advance();
-  yield progressRoot;
-
-  // 2.
-  for ( let i = 0; i < Float12_Constant_Table.length; ++i ) {
-    let testCase = Float12_Constant_Table[ i ];
-
-//!!! (2022/12/22 Remarked)
-    //let delta
-    //  = Math.abs( Float12.Constant[ testCase.name ] - testCase.value )
-    //if ( delta <= Number.EPSILON ) {
-    if ( Float12.Constant[ testCase.name ] == testCase.value ) {
-      continue;
-    }
-
-    throw Error( `testerFloat12Constant(): `
-      + `Float12.Constant.${testCase.name} `
-      + `( ${Float12.Constant[ testCase.name ]} ) `
-      + `should be ( ${testCase.value} ).`
-    );
-  }
-
-  progressToAdvance.value_advance();
-  yield progressRoot;
 }
 
 /** */
