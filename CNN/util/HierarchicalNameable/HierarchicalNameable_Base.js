@@ -215,7 +215,7 @@ let HierarchicalNameable_Base
     if ( parent ) {
       // Note1: Let parent's (not this object's) joinSeparator be used.
       // Note2: Also let parent create itself's name cache recursively.
-      const parentNames = parent.nameString_recursively;
+      const parentNames = parent.nameString_recursively_get();
       return parentNames;
     }
     return Root.defaultParams.emptyString;
@@ -336,7 +336,7 @@ let HierarchicalNameable_Base
 
       // Q: Why not use this.parentNameString_recursively?
       // A: To avoid re-check whether parent existence.
-      const parentNames = parent.nameString_recursively;
+      const parentNames = parent.nameString_recursively_get();
 
       const joinSeparator = this.nameJoinSeparatorString_get();
       this.#nameString_recursively_cache
