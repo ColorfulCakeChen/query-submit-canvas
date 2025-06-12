@@ -177,6 +177,19 @@ let HierarchicalNameable_Base
   }
 
 
+  /**
+   * @return {HierarchicalNameable.Base}
+   *   Return the root nameable object of this nameable object.
+   */
+  rootNameable_get() {
+    const parent = this.#parentNameable;
+    if ( parent )
+      return parent.rootNameable_get();
+    else
+      return this; // The nameable object without parent is the root.
+  }
+
+
   parentNameable_set( parentNameableNew ) {
     if ( this.#parentNameable === parentNameableNew )
       return;

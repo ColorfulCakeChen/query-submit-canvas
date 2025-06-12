@@ -6,9 +6,14 @@ import * as Recyclable from "../util/Recyclable.js";
 import * as ValueMax from "../util/ValueMax.js";
 
 // Global HierarchicalNameable test objects.
-const A =     HierarchicalNameable.Root.Pool.get_or_create_by( null, "$", "A" );
+const A =     HierarchicalNameable.Root.Pool.get_or_create_by( null, "+", "A" );
 const A_B =   HierarchicalNameable.Root.Pool.get_or_create_by(    A, "_", "B" );
 const A_BvC = HierarchicalNameable.Root.Pool.get_or_create_by(  A_B, "v", "C" );
+
+const D =     HierarchicalNameable.Root.Pool.get_or_create_by( null, "$", "D" );
+
+const E =     HierarchicalNameable.Root.Pool.get_or_create_by( null, "/", "E" );
+const EiF =   HierarchicalNameable.Root.Pool.get_or_create_by(    E, "i", "F" );
 
 //!!! ...unfinished... (2025/06/12)
 // Test A_B_C and D_E_F
@@ -39,29 +44,6 @@ class StringValues {
   /** */
   test( testCaseId, extraDescription, aHierarchicalNameable ) {
     const funcNameInMessage = "test";
-
-//!!! ..unfinished... (2025/06/12 Remarked)
-//     // 1. Original parameters.
-//     const parentNameable = a.parentNameable_get();
-//     if ( parentNameable !== this.parentNameable )
-//       throw Error( `${this.constructor.name}.${funcNameInMessage}(): `
-//         + `testCaseId = ${testCaseId}, ${extraDescription}, `
-//         + `.parentNameable ( ${parentNameable} ) `
-//         + `should be ( ${this.parentNameable} ).` );
-//
-//     const nameJoinSeparator = a.nameJoinSeparator_get();
-//     if ( nameJoinSeparator !== this.nameJoinSeparator )
-//       throw Error( `${this.constructor.name}.${funcNameInMessage}(): `
-//         + `testCaseId = ${testCaseId}, ${extraDescription}, `
-//         + `.nameJoinSeparator ( ${nameJoinSeparator} ) `
-//         + `should be ( ${this.nameJoinSeparator} ).` );
-//
-//     const name = a.name_get();
-//     if ( name !== this.name )
-//       throw Error( `${this.constructor.name}.${funcNameInMessage}(): `
-//         + `testCaseId = ${testCaseId}, ${extraDescription}, `
-//         + `.name ( ${name} ) `
-//         + `should be ( ${this.name} ).` );
 
     const a = aHierarchicalNameable;
 
@@ -125,6 +107,10 @@ class TestCaseOne {
 
     name2,
     name2_shouldBe_StringValues
+
+//!!! ...unfinished... (2025/06/12)
+    childNameable,
+    childNameable_shouldBe_StringValues
 
 //!!! ...unfinished... (2025/06/12)
 //  childNameable,
