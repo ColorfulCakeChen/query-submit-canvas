@@ -277,7 +277,7 @@ let HierarchicalNameable_Base
    */
   nameJoinSeparator_join( originalName, extraName ) {
     if ( ( extraName !== undefined ) && ( extraName !== null ) ) {
-      const joinSeparator = this.nameJoinSeparatorString;
+      const joinSeparator = this.nameJoinSeparatorString_get();
       const modifiedName = `${originalName}${joinSeparator}${extraName}`;
       return modifiedName;
     }
@@ -338,7 +338,7 @@ let HierarchicalNameable_Base
       // A: To avoid re-check whether parent existence.
       const parentNames = parent.nameString_recursively;
 
-      const joinSeparator = this.nameJoinSeparatorString;
+      const joinSeparator = this.nameJoinSeparatorString_get();
       this.#nameString_recursively_cache
         = `${parentNames}${joinSeparator}${nameString}`;
 
