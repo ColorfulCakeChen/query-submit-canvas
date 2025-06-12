@@ -2,7 +2,8 @@ import * as ScriptLoader from "../util/ScriptLoader.js";
 import * as ValueMax from "../util/ValueMax.js";
 import * as PartTime from "../util/PartTime.js";
 import * as Pool from "../util/Pool.js";
-import * as NeuralWorker from "../NeuralDEvolution/NeuralWorker.js";
+//!!! (2025/06/12 Temp Remarked before modifying completedly)
+//import * as NeuralWorker from "../NeuralDEvolution/NeuralWorker.js";
 import * as Base64ToUint8Array_tester from "./Base64ToUint8Array_tester.js";
 import * as Float12_tester from "./Float12_tester.js";
 import * as HierarchicalNameable_tester from "./HierarchicalNameable_tester.js";
@@ -12,8 +13,9 @@ import * as BoundsArraySet_tester from "./BoundsArraySet_tester.js";
 import * as GSheets_tester from "./GSheets_tester.js";
 import * as FeedbackShape_tester from "./FeedbackShape_tester.js";
 import * as AsyncWorker_tester from "./AsyncWorker_tester.js";
-import * as DEvolution_tester from "./DEvolution_tester.js";
-import * as NeuralOrchestra_tester from "./NeuralOrchestra_tester.js";
+//!!! (2025/06/12 Temp Remarked before modifying completedly)
+// import * as DEvolution_tester from "./DEvolution_tester.js";
+// import * as NeuralOrchestra_tester from "./NeuralOrchestra_tester.js";
 
 window.addEventListener( "load", event => {
 
