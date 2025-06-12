@@ -155,6 +155,9 @@ class TestCaseOne {
     if ( nameJoinSeparator_join_result !== modifiedName  )
       throw Error( `${this.constructor.name}.${funcNameInMessage}(): `
         + `testCaseId = ${this.testCaseId}, `
+        + `nameJoinSeparator = ${this.nameJoinSeparator}, `
+        + `originalName = ${originalName}, `
+        + `extraName = ${extraName}, `
         + `.nameJoinSeparator_join() result ( ${nameJoinSeparator_join_result} )`
         + `should be ( ${modifiedName} ).` );
     }
