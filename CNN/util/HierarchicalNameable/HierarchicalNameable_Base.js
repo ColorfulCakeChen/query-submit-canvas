@@ -442,13 +442,17 @@ let HierarchicalNameable_Base
 
     const parentNameable = this.#parentNameable;
     const childrenNameableSet = this.#childrenNameableSet;
+
     for ( let childNameable of childrenNameableSet.values() ) {
+
+      // Only this object's child could be modified.
       if ( childNameable.#parentNameable !== this ) {
         throw Error( `HierarchicalNameable_Base.${funcNameInMessage}(): `
           + `childNameable.#parentNameable ( ${childNameable.#parentNameable} ) `
           + `should be this ( ${this} ).`
         );
       }
+
       childNameable.parentNameable_set( parentNameable );
     }
   }
