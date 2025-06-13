@@ -6,14 +6,14 @@ import * as Recyclable from "../util/Recyclable.js";
 import * as ValueMax from "../util/ValueMax.js";
 
 // Global HierarchicalNameable test objects.
-const A =     HierarchicalNameable.Root.Pool.get_or_create_by( null, "+", "A" );
-const A_B =   HierarchicalNameable.Root.Pool.get_or_create_by(    A, "_", "B" );
-const A_BvC = HierarchicalNameable.Root.Pool.get_or_create_by(  A_B, "v", "C" );
+const A =     HierarchicalNameable.Root.Pool.get_or_create_by( null, "a", "A" );
+const AbB =   HierarchicalNameable.Root.Pool.get_or_create_by(    A, "b", "B" );
+const AbBcC = HierarchicalNameable.Root.Pool.get_or_create_by(  A_B, "c", "C" );
 
-const D =     HierarchicalNameable.Root.Pool.get_or_create_by( null, "$", "D" );
+const D =     HierarchicalNameable.Root.Pool.get_or_create_by( null, "d", "D" );
 
-const E =     HierarchicalNameable.Root.Pool.get_or_create_by( null, "/", "E" );
-const EiF =   HierarchicalNameable.Root.Pool.get_or_create_by(    E, "i", "F" );
+const E =     HierarchicalNameable.Root.Pool.get_or_create_by( null, "e", "E" );
+const EfF =   HierarchicalNameable.Root.Pool.get_or_create_by(    E, "f", "F" );
 
 //!!! ...unfinished... (2025/06/12)
 // Test A_B_C and D_E_F
@@ -355,61 +355,61 @@ const gTestCaseOne_Table = [
          "(No name)", // nameString_shouldBe
          "(No name)", // nameString_recursively_shouldBe
     ),
-               A_BvC, // parentNameable2
+               AbBcC, // parentNameable2
     new StringValues(
                  "C", // parentNameString_shouldBe
-             "A_BvC", // parentNameString_recursively_shouldBe
+             "AbBcC", // parentNameString_recursively_shouldBe
                   "", // nameJoinSeparatorString_shouldBe
          "(No name)", // nameString_shouldBe
-    "A_BvC(No name)", // nameString_recursively_shouldBe
+    "AbBcC(No name)", // nameString_recursively_shouldBe
     ),
                  "~", // nameJoinSeparator2
     new StringValues(
                  "C", // parentNameString_shouldBe
-             "A_BvC", // parentNameString_recursively_shouldBe
+             "AbBcC", // parentNameString_recursively_shouldBe
                   "", // nameJoinSeparatorString_shouldBe
          "(No name)", // nameString_shouldBe
-   "A_BvC~(No name)", // nameString_recursively_shouldBe
+   "AbBcC~(No name)", // nameString_recursively_shouldBe
     ),
                  "0", // name2
     new StringValues(
                  "C", // parentNameString_shouldBe
-             "A_BvC", // parentNameString_recursively_shouldBe
+             "AbBcC", // parentNameString_recursively_shouldBe
                   "", // nameJoinSeparatorString_shouldBe
                  "0", // nameString_shouldBe
-           "A_BvC~0", // nameString_recursively_shouldBe
+           "AbBcC~0", // nameString_recursively_shouldBe
     ),
                    D, // leafNameable
     new StringValues(
                  "0", // leaf's parentNameString_shouldBe
-           "A_BvC~0", // leaf's parentNameString_recursively_shouldBe
-                 "$", // leaf's nameJoinSeparatorString_shouldBe
+           "AbBcC~0", // leaf's parentNameString_recursively_shouldBe
+                 "d", // leaf's nameJoinSeparatorString_shouldBe
                  "D", // leaf's nameString_shouldBe
-         "A_BvC~0$D", // leaf's nameString_recursively_shouldBe
+         "AbBcC~0dD", // leaf's nameString_recursively_shouldBe
     ),
-                 A_B, // parentNameable3,
+                 AbB, // parentNameable3,
     new StringValues(
                  "0", // leaf's parentNameString_shouldBe
-             "A_B~0", // leaf's parentNameString_recursively_shouldBe
-                 "$", // leaf's nameJoinSeparatorString_shouldBe
+             "AbB~0", // leaf's parentNameString_recursively_shouldBe
+                 "d", // leaf's nameJoinSeparatorString_shouldBe
                  "D", // leaf's nameString_shouldBe
-           "A_B~0$D", // leaf's nameString_recursively_shouldBe
+           "AbB~0dD", // leaf's nameString_recursively_shouldBe
     ),
                  "=", // nameJoinSeparator3,
     new StringValues(
                  "0", // leaf's parentNameString_shouldBe
-             "A_B~0", // leaf's parentNameString_recursively_shouldBe
-                 "$", // leaf's nameJoinSeparatorString_shouldBe
+             "AbB~0", // leaf's parentNameString_recursively_shouldBe
+                 "d", // leaf's nameJoinSeparatorString_shouldBe
                  "D", // leaf's nameString_shouldBe
-           "A_B=0$D", // leaf's nameString_recursively_shouldBe
+           "AbB=0dD", // leaf's nameString_recursively_shouldBe
     ),
                 "00", // name3,
     new StringValues(
                 "00", // leaf's parentNameString_shouldBe
-            "A_B~00", // leaf's parentNameString_recursively_shouldBe
-                 "$", // leaf's nameJoinSeparatorString_shouldBe
+            "AbB~00", // leaf's parentNameString_recursively_shouldBe
+                 "d", // leaf's nameJoinSeparatorString_shouldBe
                  "D", // leaf's nameString_shouldBe
-          "A_B=00$D", // leaf's nameString_recursively_shouldBe
+          "AbB=00dD", // leaf's nameString_recursively_shouldBe
     ),
   ),
 
@@ -425,10 +425,43 @@ const gTestCaseOne_Table = [
          "(No name)", // nameString_shouldBe
          "(No name)", // nameString_recursively_shouldBe
     ),
+                   D, // parentNameable2
+    new StringValues(
+                 "D", // parentNameString_shouldBe
+                 "D", // parentNameString_recursively_shouldBe
+                  "", // nameJoinSeparatorString_shouldBe
+         "(No name)", // nameString_shouldBe
+        "D(No name)", // nameString_recursively_shouldBe
+    ),
+                 "!", // nameJoinSeparator2
+    new StringValues(
+                 "D", // parentNameString_shouldBe
+                 "D", // parentNameString_recursively_shouldBe
+                 "!", // nameJoinSeparatorString_shouldBe
+         "(No name)", // nameString_shouldBe
+       "D!(No name)", // nameString_recursively_shouldBe
+    ),
+                 "1", // name2
+    new StringValues(
+                 "D", // parentNameString_shouldBe
+                 "D", // parentNameString_recursively_shouldBe
+                 "!", // nameJoinSeparatorString_shouldBe
+                 "1", // nameString_shouldBe
+               "D!1", // nameString_recursively_shouldBe
+    ),
+                 EfF, // leafNameable,
+    new StringValues(
+                 "E", // leaf's parentNameString_shouldBe
+             "D!1eE", // leaf's parentNameString_recursively_shouldBe
+                 "f", // leaf's nameJoinSeparatorString_shouldBe
+                 "F", // leaf's nameString_shouldBe
+           "D!1eEfF", // leaf's nameString_recursively_shouldBe
+    ),
 
-
-    EiF,
-    leafNameable_shouldBe_StringValues,
+//!!! ...unfinished... (2025/06/13)
+                  , // parentNameable3,
+                  , // nameJoinSeparator3,
+                  , // name3,
 
   ),
 
@@ -444,34 +477,65 @@ const gTestCaseOne_Table = [
                  "2", // nameString_shouldBe
                "A.2", // nameString_recursively_shouldBe
     ),
+
+//!!! ...unfinished... (2025/06/13)
+                  , // parentNameable2,
+                  , // nameJoinSeparator2,
+                  , // name2,
+                  , // leafNameable,
+                  , // parentNameable3,
+                  , // nameJoinSeparator3,
+                  , // name3,
+
   ),
 
   // 3. Test two parent.
   new TestCaseOne( 3,
-                 A_B, // parentNameable
+                 AbB, // parentNameable
                  ".", // nameJoinSeparator
                  "3", // name
     new StringValues(
                  "B", // parentNameString_shouldBe
-               "A_B", // parentNameString_recursively_shouldBe
+               "AbB", // parentNameString_recursively_shouldBe
                  ".", // nameJoinSeparatorString_shouldBe
                  "3", // nameString_shouldBe
-             "A_B.3", // nameString_recursively_shouldBe
+             "AbB.3", // nameString_recursively_shouldBe
     ),
+
+//!!! ...unfinished... (2025/06/13)
+                  , // parentNameable2,
+                  , // nameJoinSeparator2,
+                  , // name2,
+                  , // leafNameable,
+                  , // parentNameable3,
+                  , // nameJoinSeparator3,
+                  , // name3,
+
   ),
 
   // 4. Test three parent.
   new TestCaseOne( 4,
-               A_BvC, // parentNameable
+               AbBcC, // parentNameable
                  ".", // nameJoinSeparator
                  "4", // name
     new StringValues(
                  "C", // parentNameString_shouldBe
-             "A_BvC", // parentNameString_recursively_shouldBe
+             "AbBcC", // parentNameString_recursively_shouldBe
                  ".", // nameJoinSeparatorString_shouldBe
                  "4", // nameString_shouldBe
-           "A_BvC.4", // nameString_recursively_shouldBe
-    )
+           "AbBcC.4", // nameString_recursively_shouldBe
+    ),
+
+
+//!!! ...unfinished... (2025/06/13)
+                  , // parentNameable2,
+                  , // nameJoinSeparator2,
+                  , // name2,
+                  , // leafNameable,
+                  , // parentNameable3,
+                  , // nameJoinSeparator3,
+                  , // name3,
+
 
 //!!! ...unfinished... (2025/06/12) becomes no parent?
 
