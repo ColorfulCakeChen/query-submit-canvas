@@ -160,6 +160,8 @@ class TestCaseOne {
   testAll() {
     const funcNameInMessage = "testAll";
 
+    const testCaseId = this.testCaseId;
+
     let a = HierarchicalNameable.Root.Pool.get_or_create_by(
       this.parentNameable, this.nameJoinSeparator, this.name );
 
@@ -215,7 +217,7 @@ class TestCaseOne {
       this.leafNameable_shouldBe_StringValues
     );
 
-    // 4.
+    // 4. Check leafNameable
 
     // 4.1 Change to parentNameable3
     a.parentNameable_set( this.parentNameable3 );
@@ -237,6 +239,10 @@ class TestCaseOne {
       leaf_parentNew, leaf_nameJoinSeparator, leaf_name,
       this.leafNameable_shouldBe_StringValues_after_name3
     );
+
+    // 4.4 After testing, restore the parent of the leaf's root to null (so
+    //     that it is restored as a root).
+    leaf_rootOld.parentNameable_set( null );
 
     // 5.
     a.disposeResources_and_recycleToPool();
