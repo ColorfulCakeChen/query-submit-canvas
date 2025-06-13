@@ -626,29 +626,71 @@ const gTestCaseOne_Table = [
   // 4. Test three parent.
   new TestCaseOne( 4,
                AbBcC, // parentNameable
-                 ".", // nameJoinSeparator
+                 "$", // nameJoinSeparator
                  "4", // name
     new StringValues(
                  "C", // parentNameString_shouldBe
              "AbBcC", // parentNameString_recursively_shouldBe
-                 ".", // nameJoinSeparatorString_shouldBe
+                 "$", // nameJoinSeparatorString_shouldBe
                  "4", // nameString_shouldBe
-           "AbBcC.4", // nameString_recursively_shouldBe
+           "AbBcC$4", // nameString_recursively_shouldBe
     ),
-
-
-//!!! ...unfinished... (2025/06/13)
-                  , // parentNameable2,
-                  , // nameJoinSeparator2,
-                  , // name2,
-                  , // leafNameable,
-                  , // parentNameable3,
-                  , // nameJoinSeparator3,
-                  , // name3,
-
-
-//!!! ...unfinished... (2025/06/12) becomes no parent?
-
+                 AbB, // parentNameable2,
+    new StringValues(
+                 "B", // parentNameString_shouldBe
+               "AbB", // parentNameString_recursively_shouldBe
+                 "$", // nameJoinSeparatorString_shouldBe
+                 "4", // nameString_shouldBe
+             "AbB$4", // nameString_recursively_shouldBe
+    ),
+                "$$", // nameJoinSeparator2,
+    new StringValues(
+                 "B", // parentNameString_shouldBe
+               "AbB", // parentNameString_recursively_shouldBe
+                "$$", // nameJoinSeparatorString_shouldBe
+                 "4", // nameString_shouldBe
+            "AbB$$4", // nameString_recursively_shouldBe
+    ),
+                "44", // name2,
+    new StringValues(
+                 "B", // parentNameString_shouldBe
+               "AbB", // parentNameString_recursively_shouldBe
+                "$$", // nameJoinSeparatorString_shouldBe
+                "44", // nameString_shouldBe
+           "AbB$$44", // nameString_recursively_shouldBe
+    ),
+                 EfF, // leafNameable,
+    new StringValues(
+                 "E", // leaf's parentNameString_shouldBe
+         "AbB$$44eE", // leaf's parentNameString_recursively_shouldBe
+                 "f", // leaf's nameJoinSeparatorString_shouldBe
+                 "F", // leaf's nameString_shouldBe
+       "AbB$$44eEfF", // leaf's nameString_recursively_shouldBe
+    ),
+           undefined, // parentNameable3,
+    new StringValues(
+                 "E", // leaf's parentNameString_shouldBe
+              "44eE", // leaf's parentNameString_recursively_shouldBe
+                 "f", // leaf's nameJoinSeparatorString_shouldBe
+                 "F", // leaf's nameString_shouldBe
+            "44eEfF", // leaf's nameString_recursively_shouldBe
+    ),
+               "###", // nameJoinSeparator3,
+    new StringValues(
+                 "E", // leaf's parentNameString_shouldBe
+              "44eE", // leaf's parentNameString_recursively_shouldBe
+                 "f", // leaf's nameJoinSeparatorString_shouldBe
+                 "F", // leaf's nameString_shouldBe
+            "44eEfF", // leaf's nameString_recursively_shouldBe
+    ),
+               "444", // name3,
+    new StringValues(
+                 "E", // leaf's parentNameString_shouldBe
+             "444eE", // leaf's parentNameString_recursively_shouldBe
+                 "f", // leaf's nameJoinSeparatorString_shouldBe
+                 "F", // leaf's nameString_shouldBe
+           "444eEfF", // leaf's nameString_recursively_shouldBe
+    ),
   ),
 
 ];
