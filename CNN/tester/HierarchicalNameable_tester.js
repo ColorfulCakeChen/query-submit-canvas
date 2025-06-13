@@ -381,27 +381,36 @@ const gTestCaseOne_Table = [
     ),
                    D, // leafNameable
     new StringValues(
-                 "0", // parentNameString_shouldBe
-           "A_BvC~0", // parentNameString_recursively_shouldBe
-                 "$", // nameJoinSeparatorString_shouldBe
-                 "D", // nameString_shouldBe
-         "A_BvC~0$D", // nameString_recursively_shouldBe
+                 "0", // leaf's parentNameString_shouldBe
+           "A_BvC~0", // leaf's parentNameString_recursively_shouldBe
+                 "$", // leaf's nameJoinSeparatorString_shouldBe
+                 "D", // leaf's nameString_shouldBe
+         "A_BvC~0$D", // leaf's nameString_recursively_shouldBe
     ),
-                  // parentNameable3,
-
-
-    EiF,
-    leafNameable_shouldBe_StringValues,
-
-    parentNameable3,
-    parentNameable3_shouldBe_StringValues,
-
-    nameJoinSeparator3,
-    nameJoinSeparator3_shouldBe_StringValues,
-
-    name3,
-    name3_shouldBe_StringValues
-
+                 A_B, // parentNameable3,
+    new StringValues(
+                 "0", // leaf's parentNameString_shouldBe
+             "A_B~0", // leaf's parentNameString_recursively_shouldBe
+                 "$", // leaf's nameJoinSeparatorString_shouldBe
+                 "D", // leaf's nameString_shouldBe
+           "A_B~0$D", // leaf's nameString_recursively_shouldBe
+    ),
+                 "=", // nameJoinSeparator3,
+    new StringValues(
+                 "0", // leaf's parentNameString_shouldBe
+             "A_B~0", // leaf's parentNameString_recursively_shouldBe
+                 "$", // leaf's nameJoinSeparatorString_shouldBe
+                 "D", // leaf's nameString_shouldBe
+           "A_B=0$D", // leaf's nameString_recursively_shouldBe
+    ),
+                "00", // name3,
+    new StringValues(
+                "00", // leaf's parentNameString_shouldBe
+            "A_B~00", // leaf's parentNameString_recursively_shouldBe
+                 "$", // leaf's nameJoinSeparatorString_shouldBe
+                 "D", // leaf's nameString_shouldBe
+          "A_B=00$D", // leaf's nameString_recursively_shouldBe
+    ),
   ),
 
   // 1. Test undefined.
@@ -416,6 +425,11 @@ const gTestCaseOne_Table = [
          "(No name)", // nameString_shouldBe
          "(No name)", // nameString_recursively_shouldBe
     ),
+
+
+    EiF,
+    leafNameable_shouldBe_StringValues,
+
   ),
 
   // 2. Test one parent.
