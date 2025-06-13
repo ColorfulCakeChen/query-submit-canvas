@@ -486,25 +486,71 @@ const gTestCaseOne_Table = [
   // 2. Test one parent.
   new TestCaseOne( 2,
                    A, // parentNameable
-                 ".", // nameJoinSeparator
+                 "@", // nameJoinSeparator
                  "2", // name
     new StringValues(
                  "A", // parentNameString_shouldBe
                  "A", // parentNameString_recursively_shouldBe
-                 ".", // nameJoinSeparatorString_shouldBe
+                 "@", // nameJoinSeparatorString_shouldBe
                  "2", // nameString_shouldBe
-               "A.2", // nameString_recursively_shouldBe
+               "A@2", // nameString_recursively_shouldBe
     ),
-
-//!!! ...unfinished... (2025/06/13)
-                  , // parentNameable2,
-                  , // nameJoinSeparator2,
-                  , // name2,
-                  , // leafNameable,
-                  , // parentNameable3,
-                  , // nameJoinSeparator3,
-                  , // name3,
-
+                 EfF, // parentNameable2,
+    new StringValues(
+                 "F", // parentNameString_shouldBe
+               "EfF", // parentNameString_recursively_shouldBe
+                 "@", // nameJoinSeparatorString_shouldBe
+                 "2", // nameString_shouldBe
+             "EfF@2", // nameString_recursively_shouldBe
+    ),
+                "@@", // nameJoinSeparator2,
+    new StringValues(
+                 "F", // parentNameString_shouldBe
+               "EfF", // parentNameString_recursively_shouldBe
+                "@@", // nameJoinSeparatorString_shouldBe
+                 "2", // nameString_shouldBe
+            "EfF@@2", // nameString_recursively_shouldBe
+    ),
+                "22", // name2,
+    new StringValues(
+                 "F", // parentNameString_shouldBe
+               "EfF", // parentNameString_recursively_shouldBe
+                "@@", // nameJoinSeparatorString_shouldBe
+                "22", // nameString_shouldBe
+           "EfF@@22", // nameString_recursively_shouldBe
+    ),
+                   A, // leafNameable,
+    new StringValues(
+                 "A", // leaf's parentNameString_shouldBe
+           "EfF@@22", // leaf's parentNameString_recursively_shouldBe
+                 "a", // leaf's nameJoinSeparatorString_shouldBe
+                 "A", // leaf's nameString_shouldBe
+         "EfF@@22aA", // leaf's nameString_recursively_shouldBe
+    ),
+                   D, // parentNameable3,
+    new StringValues(
+                 "A", // leaf's parentNameString_shouldBe
+             "D@@22", // leaf's parentNameString_recursively_shouldBe
+                 "a", // leaf's nameJoinSeparatorString_shouldBe
+                 "A", // leaf's nameString_shouldBe
+           "D@@22aA", // leaf's nameString_recursively_shouldBe
+    ),
+               "@@@", // nameJoinSeparator3,
+    new StringValues(
+                 "A", // leaf's parentNameString_shouldBe
+            "D@@@22", // leaf's parentNameString_recursively_shouldBe
+                 "a", // leaf's nameJoinSeparatorString_shouldBe
+                 "A", // leaf's nameString_shouldBe
+          "D@@@22aA", // leaf's nameString_recursively_shouldBe
+    ),
+               "222", // name3,
+    new StringValues(
+                 "A", // leaf's parentNameString_shouldBe
+           "D@@@222", // leaf's parentNameString_recursively_shouldBe
+                 "a", // leaf's nameJoinSeparatorString_shouldBe
+                 "A", // leaf's nameString_shouldBe
+         "D@@@222aA", // leaf's nameString_recursively_shouldBe
+    ),
   ),
 
   // 3. Test two parent.
