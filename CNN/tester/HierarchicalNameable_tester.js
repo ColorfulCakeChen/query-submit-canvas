@@ -281,7 +281,7 @@ class TestCaseOne {
     shouldBe_StringValues.test( this.testCaseId, extraDescription, a );
 
     // 3. Test .nameJoinSeparator_join()
-    this.nameJoinSeparator_join_testAll( a );
+    this.nameJoinSeparator_join_testAll( a, extraDescription );
   }
 
   /** */
