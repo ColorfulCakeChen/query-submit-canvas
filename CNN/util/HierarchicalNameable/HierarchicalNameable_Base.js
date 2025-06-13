@@ -267,31 +267,6 @@ let HierarchicalNameable_Base
   nameJoinSeparator_get() { return this.#nameJoinSeparator; }
 
   /**
-   * @return {string}
-   *   A string representing .nameJoinSeparator even if it does not exist
-   * (i.e. null or undefined).
-   */
-  nameJoinSeparatorString_get() {
-    if ( this.#nameJoinSeparatorString_cache )
-      return this.#nameJoinSeparatorString_cache;
-
-    const nameJoinSeparator = this.#nameJoinSeparator; 
-    if (   ( nameJoinSeparator !== undefined )
-        && ( nameJoinSeparator !== null ) ) {
-      // Note: workable even if not a string (e.g. number or object).
-      this.#nameJoinSeparatorString_cache
-        = nameJoinSeparator.toString();
-
-    } else {
-      // Because null and undefined do not have .toString() to be called,
-      // return default joinSeparator in this case.
-      this.#nameJoinSeparatorString_cache
-        = Root.defaultParams.nameJoinSeparator;
-    }
-    return this.#nameJoinSeparatorString_cache;
-  }
-
-  /**
    * Call this method if wanting to use this nameable object's separator to
    * join two strings.
    *
@@ -316,6 +291,31 @@ let HierarchicalNameable_Base
       return modifiedName;
     }
     return originalName;
+  }
+
+  /**
+   * @return {string}
+   *   A string representing .nameJoinSeparator even if it does not exist
+   * (i.e. null or undefined).
+   */
+  nameJoinSeparatorString_get() {
+    if ( this.#nameJoinSeparatorString_cache )
+      return this.#nameJoinSeparatorString_cache;
+
+    const nameJoinSeparator = this.#nameJoinSeparator; 
+    if (   ( nameJoinSeparator !== undefined )
+        && ( nameJoinSeparator !== null ) ) {
+      // Note: workable even if not a string (e.g. number or object).
+      this.#nameJoinSeparatorString_cache
+        = nameJoinSeparator.toString();
+
+    } else {
+      // Because null and undefined do not have .toString() to be called,
+      // return default joinSeparator in this case.
+      this.#nameJoinSeparatorString_cache
+        = Root.defaultParams.nameJoinSeparator;
+    }
+    return this.#nameJoinSeparatorString_cache;
   }
 
 
