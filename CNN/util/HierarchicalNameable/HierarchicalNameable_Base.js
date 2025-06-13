@@ -123,18 +123,20 @@ let HierarchicalNameable_Base
       //     + `before releasing this nameable object.`
       //   );
       // }
+      //
+      // // Just nullify them. Do not release them here.
+      // //
+      // // Note: Keep the container (i.e. not set to undefined) to reduce
+      // //       memory re-allocation.
+      // childrenNameableSet.clear();
 
       // Since this nameable object will be released, let all children
       // nameable objects (although there should be none at best) belong to
       // this object's parent (i.e. bypass this object).
+      //
+      // (2025/06/13 Modified)
       HierarchicalNameable_Base
         .childrenNameableSet_parentNameable_bypass_internal.call( this );
-
-      // Just nullify them. Do not release them here.
-      //
-      // Note: Keep the container (i.e. not set to undefined) to reduce
-      //       memory re-allocation.
-      childrenNameableSet.clear();
     }
 
 //!!! ...unfinished... (2025/06/11)
@@ -187,14 +189,15 @@ let HierarchicalNameable_Base
 
   /**
    * @return {HierarchicalNameable.Base}
-   *   Return the root nameable object of this nameable object.
+   *   Return the root nameable object of this nameable object. The root is
+   * the nameable object without parent nameable.
    */
   rootNameable_get() {
     const parent = this.#parentNameable;
     if ( parent )
       return parent.rootNameable_get();
     else
-      return this; // The nameable object without parent is the root.
+      return this; // No parent, then this is the root.
   }
 
 
