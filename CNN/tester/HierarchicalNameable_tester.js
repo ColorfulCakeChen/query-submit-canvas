@@ -556,25 +556,71 @@ const gTestCaseOne_Table = [
   // 3. Test two parent.
   new TestCaseOne( 3,
                  AbB, // parentNameable
-                 ".", // nameJoinSeparator
+                 "#", // nameJoinSeparator
                  "3", // name
     new StringValues(
                  "B", // parentNameString_shouldBe
                "AbB", // parentNameString_recursively_shouldBe
-                 ".", // nameJoinSeparatorString_shouldBe
+                 "#", // nameJoinSeparatorString_shouldBe
                  "3", // nameString_shouldBe
-             "AbB.3", // nameString_recursively_shouldBe
+             "AbB#3", // nameString_recursively_shouldBe
     ),
-
-//!!! ...unfinished... (2025/06/13)
-                  , // parentNameable2,
-                  , // nameJoinSeparator2,
-                  , // name2,
-                  , // leafNameable,
-                  , // parentNameable3,
-                  , // nameJoinSeparator3,
-                  , // name3,
-
+                null, // parentNameable2,
+    new StringValues(
+                  "", // parentNameString_shouldBe
+                  "", // parentNameString_recursively_shouldBe
+                 "#", // nameJoinSeparatorString_shouldBe
+                 "3", // nameString_shouldBe
+                 "3", // nameString_recursively_shouldBe
+    ),
+                "##", // nameJoinSeparator2,
+    new StringValues(
+                  "", // parentNameString_shouldBe
+                  "", // parentNameString_recursively_shouldBe
+                "##", // nameJoinSeparatorString_shouldBe
+                 "3", // nameString_shouldBe
+                 "3", // nameString_recursively_shouldBe
+    ),
+                "33", // name2,
+    new StringValues(
+                  "", // parentNameString_shouldBe
+                  "", // parentNameString_recursively_shouldBe
+                "##", // nameJoinSeparatorString_shouldBe
+                "33", // nameString_shouldBe
+                "33", // nameString_recursively_shouldBe
+    ),
+                 AbB, // leafNameable,
+    new StringValues(
+                 "A", // leaf's parentNameString_shouldBe
+              "33aA", // leaf's parentNameString_recursively_shouldBe
+                 "b", // leaf's nameJoinSeparatorString_shouldBe
+                 "B", // leaf's nameString_shouldBe
+            "33aAbB", // leaf's nameString_recursively_shouldBe
+    ),
+                 EfF, // parentNameable3,
+    new StringValues(
+                 "A", // leaf's parentNameString_shouldBe
+         "EfF##33aA", // leaf's parentNameString_recursively_shouldBe
+                 "b", // leaf's nameJoinSeparatorString_shouldBe
+                 "B", // leaf's nameString_shouldBe
+       "EfF##33aAbB", // leaf's nameString_recursively_shouldBe
+    ),
+               "###", // nameJoinSeparator3,
+    new StringValues(
+                 "A", // leaf's parentNameString_shouldBe
+        "EfF###33aA", // leaf's parentNameString_recursively_shouldBe
+                 "b", // leaf's nameJoinSeparatorString_shouldBe
+                 "B", // leaf's nameString_shouldBe
+      "EfF###33aAbB", // leaf's nameString_recursively_shouldBe
+    ),
+               "333", // name3,
+    new StringValues(
+                 "A", // leaf's parentNameString_shouldBe
+       "EfF###333aA", // leaf's parentNameString_recursively_shouldBe
+                 "b", // leaf's nameJoinSeparatorString_shouldBe
+                 "B", // leaf's nameString_shouldBe
+     "EfF###333aAbB", // leaf's nameString_recursively_shouldBe
+    ),
   ),
 
   // 4. Test three parent.
