@@ -408,20 +408,12 @@ let HierarchicalNameable_Base
   #nameString_recursively_cache;
 
 
-  /**
-   * (Internally called when setting parentNameable.)
-   *
-   * @param {HierarchicalNameable_Base} this
-   */
+  /** (Internally called when setting parentNameable.) */
   #childrenNameableSet_add_internal( nameable ) {
     this.#childrenNameableSet.add( nameable );
   }
 
-  /**
-   * (Internally called when setting parentNameable.)
-   *
-   * @param {HierarchicalNameable_Base} this
-   */
+  /** (Internally called when setting parentNameable.) */
   #childrenNameableSet_remove_internal( nameable ) {
     this.#childrenNameableSet.delete( nameable );
   }
@@ -431,8 +423,6 @@ let HierarchicalNameable_Base
    * this object's parent nameable object (i.e. bypass this nameable object).
    *
    * (Internally called when setting parentNameable.)
-   *
-   * @param {HierarchicalNameable_Base} this
    */
   #childrenNameableSet_bypass_internal() {
     const funcNameInMessage = "childrenNameableSet_bypass_internal";
