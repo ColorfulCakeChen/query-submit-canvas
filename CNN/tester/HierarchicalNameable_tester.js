@@ -8,7 +8,7 @@ import * as ValueMax from "../util/ValueMax.js";
 // Global HierarchicalNameable test objects.
 const A =     HierarchicalNameable.Root.Pool.get_or_create_by( null, "a", "A" );
 const AbB =   HierarchicalNameable.Root.Pool.get_or_create_by(    A, "b", "B" );
-const AbBcC = HierarchicalNameable.Root.Pool.get_or_create_by(  A_B, "c", "C" );
+const AbBcC = HierarchicalNameable.Root.Pool.get_or_create_by(  AbB, "c", "C" );
 
 const D =     HierarchicalNameable.Root.Pool.get_or_create_by( null, "d", "D" );
 
