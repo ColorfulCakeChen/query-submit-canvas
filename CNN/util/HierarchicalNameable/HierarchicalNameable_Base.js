@@ -135,8 +135,7 @@ let HierarchicalNameable_Base
       // this object's parent (i.e. bypass this object).
       //
       // (2025/06/13 Modified)
-      HierarchicalNameable_Base
-        .childrenNameableSet_bypass_internal.call( this );
+      this.#childrenNameableSet_bypass_internal();
     }
 
     // Detach from parent nameable object since this nameable object will
@@ -204,14 +203,12 @@ let HierarchicalNameable_Base
 
     const parentOld = this.#parentNameable;
     if ( parentOld ) { // Remove from the old parent.
-      HierarchicalNameable_Base.childrenNameableSet_remove_internal.call(
-        parentOld, this );
+      parentOld.#childrenNameableSet_remove_internal( this );
     }
 
     this.#parentNameable = parentNameableNew;
     if ( parentNameableNew ) { // Add into the new parent.
-      HierarchicalNameable_Base.childrenNameableSet_add_internal.call(
-        parentNameableNew, this );
+      parentNameableNew.#childrenNameableSet_add_internal( this );
     }
 
     this.nameString_recursively_invalidate_recursively();
@@ -416,7 +413,7 @@ let HierarchicalNameable_Base
    *
    * @param {HierarchicalNameable_Base} this
    */
-  static childrenNameableSet_add_internal( nameable ) {
+  #childrenNameableSet_add_internal( nameable ) {
     this.#childrenNameableSet.add( nameable );
   }
 
@@ -425,7 +422,7 @@ let HierarchicalNameable_Base
    *
    * @param {HierarchicalNameable_Base} this
    */
-  static childrenNameableSet_remove_internal( nameable ) {
+  #childrenNameableSet_remove_internal( nameable ) {
     this.#childrenNameableSet.delete( nameable );
   }
 
@@ -437,7 +434,7 @@ let HierarchicalNameable_Base
    *
    * @param {HierarchicalNameable_Base} this
    */
-  static childrenNameableSet_bypass_internal() {
+  #childrenNameableSet_bypass_internal() {
     const funcNameInMessage = "childrenNameableSet_bypass_internal";
 
     const parentNameable = this.#parentNameable;

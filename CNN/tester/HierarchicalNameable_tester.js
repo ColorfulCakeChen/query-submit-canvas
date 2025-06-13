@@ -100,7 +100,8 @@ class TestCaseOne {
     shouldBe_StringValues,
 
 //!!! ...unfinished... (2025/06/12)
-//     // Note: leafNameable's root will be direct child of test nameable object.
+//     // Note: leafNameable's root will become the direct child of the test
+//     //       nameable object.
 //     leafNameable,
 //     leafNameable_shouldBe_StringValues
 
@@ -114,7 +115,8 @@ class TestCaseOne {
     name2_shouldBe_StringValues
 
 //!!! ...unfinished... (2025/06/12)
-//     // Note: leafNameable's root will be direct child of test nameable object.
+//     // Note: leafNameable's root will become the direct child of the test
+//     //       nameable object.
 //     leafNameable,
 //     leafNameable_shouldBe_StringValues
 
