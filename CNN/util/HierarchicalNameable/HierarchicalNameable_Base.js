@@ -56,18 +56,28 @@ let HierarchicalNameable_Base
       parentNameable, nameJoinSeparator, name );
   }
 
+//!!! ...unfinished... (2025/06/13)
+// Can call contructor without new operatior
+// instead of static setAsConstructor()?
+
   /** @override */
   static setAsConstructor(
     parentNameable, nameJoinSeparator, name, ...restArgs ) {
 
     super.setAsConstructor( ...restArgs );
+//!!! ...unfinished... (2025/06/13 Remarked)
     HierarchicalNameable_Base.setAsConstructor_self.call( this,
       parentNameable, nameJoinSeparator, name );
+//!!! ...unfinished... (2025/06/13)
+//     this.#setAsConstructor_self(
+//       parentNameable, nameJoinSeparator, name );
     return this;
   }
 
   /** @override */
   static setAsConstructor_self(
+//!!! ...unfinished... (2025/06/13 Remarked)
+//  #setAsConstructor_self(
     parentNameable, nameJoinSeparator, name ) {
 
     this.#parentNameable = parentNameable;
