@@ -2,6 +2,14 @@ export { Pool_Base as Base, Root };
 
 import { IssuedObjects } from "./Pool_IssuedObjects.js"
 
+//!!! ...unfinished... (2025/06/13)
+// Perhaps,
+//   - Let pfn_SetAsConstructor_ReturnObject become pfn_SetAsConstructor
+//       (i.e. it no longer needs return any object).
+//   - Let setAsConstructor() instance (not class) method.
+//   - Let setAsConstructor_self() private instance (not class) method.
+//       (i.e. #setAsConstructor_self())
+
 /**
  * A pool for recycling (re-using) objects. It collects all recycled (i.e.
  * could be re-issued) objects of Pool.Base. This could improve performance by
@@ -19,7 +27,7 @@ import { IssuedObjects } from "./Pool_IssuedObjects.js"
  * @member {function} pfn_SetAsConstructor_ReturnObject
  *   A function set contents like its constructor and return an object. Before
  * .get_or_create_by() returns a recycled object, its .pfnSetAsConstructor()
- * method will be called to re-initilaize it. Its return value will be the
+ * method will be called to re-initilaize it. Its returned value will be the
  * final returned object.
  *
  * @member {Object[]} recycledObjectArray
