@@ -367,7 +367,7 @@ const gTestCaseOne_Table = [
     new StringValues(
                  "C", // parentNameString_shouldBe
              "AbBcC", // parentNameString_recursively_shouldBe
-                  "", // nameJoinSeparatorString_shouldBe
+                 "~", // nameJoinSeparatorString_shouldBe
          "(No name)", // nameString_shouldBe
    "AbBcC~(No name)", // nameString_recursively_shouldBe
     ),
@@ -375,7 +375,7 @@ const gTestCaseOne_Table = [
     new StringValues(
                  "C", // parentNameString_shouldBe
              "AbBcC", // parentNameString_recursively_shouldBe
-                  "", // nameJoinSeparatorString_shouldBe
+                 "~", // nameJoinSeparatorString_shouldBe
                  "0", // nameString_shouldBe
            "AbBcC~0", // nameString_recursively_shouldBe
     ),
