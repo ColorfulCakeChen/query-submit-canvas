@@ -99,12 +99,6 @@ class TestCaseOne {
     parentNameable, nameJoinSeparator, name,
     shouldBe_StringValues,
 
-//!!! ...unfinished... (2025/06/12)
-//     // Note: leafNameable's root will become the direct child of the test
-//     //       nameable object.
-//     leafNameable,
-//     leafNameable_shouldBe_StringValues
-
     parentNameable2,
     parentNameable2_shouldBe_StringValues,
 
@@ -112,26 +106,21 @@ class TestCaseOne {
     nameJoinSeparator2_shouldBe_StringValues,
 
     name2,
-    name2_shouldBe_StringValues
+    name2_shouldBe_StringValues,
 
-//!!! ...unfinished... (2025/06/12)
-//     // Note: leafNameable's root will become the direct child of the test
-//     //       nameable object.
-//     leafNameable,
-//     leafNameable_shouldBe_StringValues
+    // Note: leafNameable's root will become the direct child of the test
+    //       nameable object.
+    leafNameable,
+    leafNameable_shouldBe_StringValues,
 
-//!!! ...unfinished... (2025/06/12)
-//  childNameable,
-//  childNameable_shouldBe_StringValues
-//
-//     parentNameable3,
-//     parentNameable3_shouldBe_StringValues,
-//
-//     nameJoinSeparator3,
-//     nameJoinSeparator3_shouldBe_StringValues,
-//
-//     name3,
-//     name3_shouldBe_StringValues
+    parentNameable3,
+    parentNameable3_shouldBe_StringValues,
+
+    nameJoinSeparator3,
+    nameJoinSeparator3_shouldBe_StringValues,
+
+    name3,
+    name3_shouldBe_StringValues
 
   ) {
     this.testCaseId = testCaseId;
@@ -143,16 +132,25 @@ class TestCaseOne {
     this.shouldBe_StringValues = shouldBe_StringValues;
 
     this.parentNameable2 = parentNameable2;
-    this.parentNameable2_shouldBe_StringValues
-      = parentNameable2_shouldBe_StringValues;
+    this.parentNameable2_shouldBe_StringValues = parentNameable2_shouldBe_StringValues;
 
     this.nameJoinSeparator2 = nameJoinSeparator2;
-    this.nameJoinSeparator2_shouldBe_StringValues
-      = nameJoinSeparator2_shouldBe_StringValues;
+    this.nameJoinSeparator2_shouldBe_StringValues = nameJoinSeparator2_shouldBe_StringValues;
 
     this.name2 = name2;
-    this.name2_shouldBe_StringValues
-      = name2_shouldBe_StringValues;
+    this.name2_shouldBe_StringValues = name2_shouldBe_StringValues;
+
+    this.leafNameable = leafNameable;
+    this.leafNameable_shouldBe_StringValues = leafNameable_shouldBe_StringValues;
+
+    this.parentNameable3 = parentNameable3;
+    this.parentNameable3_shouldBe_StringValues = parentNameable3_shouldBe_StringValues;
+
+    this.nameJoinSeparator3 = nameJoinSeparator3;
+    this.nameJoinSeparator3_shouldBe_StringValues = nameJoinSeparator3_shouldBe_StringValues;
+
+    this.name3 = name3;
+    this.name3_shouldBe_StringValues = name3_shouldBe_StringValues;
   }
 
   /** */
@@ -191,17 +189,54 @@ class TestCaseOne {
       this.name2_shouldBe_StringValues
     );
 
+    // 3. Let leaf's root as direct child.
+    const leafNameable = this.leafNameable;
+    const leaf_parentOld = leafNameable.parentNameable_get();
+    const leaf_nameJoinSeparator = leafNameable.nameJoinSeparator_get();
+    const leaf_name = leafNameable.name_get();
 
-//!!! ...unfinished... (2025/06/12)
-// Try change parentNameable, nameJoinSeparator, name,
-//    aShouldBe.test( this.testCaseId, "parentChanged", a );
-//
-// Try add/remove child
-//
-// .rootNameable_get()
+    const leaf_rootOld = leafNameable.rootNameable_get();
+    leaf_rootOld.parentNameable_set( a );
+
+    let leaf_parentNew;
+
+    // If the leaf nameable is itself's root, its parent should become the
+    // tested nameable object.
+    if ( leafNameable === leaf_rootOld )
+      leaf_parentNew = a;
+    else // Otherwise, its parent should be the same as original.
+      leaf_parentNew = leaf_parentOld;
+
+    this.testOne( a, "let leaf's root as direct child",
+      leaf_parentNew, leaf_nameJoinSeparator, leaf_name,
+      this.leafNameable_shouldBe_StringValues
+    );
 
 
-    //
+    // 4.
+
+    // 4.1 Change to parentNameable3
+    a.parentNameable_set( this.parentNameable3 );
+    this.testOne( leafNameable, "parentNameable3",
+      leaf_parentNew, leaf_nameJoinSeparator, leaf_name,
+      this.parentNameable3_shouldBe_StringValues
+    );
+
+    // 4.2 Change to nameJoinSeparator3
+    a.nameJoinSeparator_set( this.nameJoinSeparator3 );
+    this.testOne( a, "nameJoinSeparator3",
+      this.parentNameable3, this.nameJoinSeparator3, this.name2,
+      this.nameJoinSeparator3_shouldBe_StringValues
+    );
+
+    // 4.3 Change to name3
+    a.name_set( this.name3 );
+    this.testOne( a, "name3",
+      this.parentNameable3, this.nameJoinSeparator3, this.name3,
+      this.name3_shouldBe_StringValues
+    );
+
+    // 5.
     a.disposeResources_and_recycleToPool();
     a = null;
   }
@@ -342,6 +377,29 @@ const gTestCaseOne_Table = [
                  "0", // nameString_shouldBe
            "A_BvC~0", // nameString_recursively_shouldBe
     ),
+!!!
+                   E, // leafNameable
+    new StringValues(
+                 "C", // parentNameString_shouldBe
+             "A_BvC", // parentNameString_recursively_shouldBe
+                  "", // nameJoinSeparatorString_shouldBe
+                 "0", // nameString_shouldBe
+           "A_BvC~0", // nameString_recursively_shouldBe
+    ),
+
+
+    EiF,
+    leafNameable_shouldBe_StringValues,
+
+    parentNameable3,
+    parentNameable3_shouldBe_StringValues,
+
+    nameJoinSeparator3,
+    nameJoinSeparator3_shouldBe_StringValues,
+
+    name3,
+    name3_shouldBe_StringValues
+
   ),
 
   // 1. Test undefined.
