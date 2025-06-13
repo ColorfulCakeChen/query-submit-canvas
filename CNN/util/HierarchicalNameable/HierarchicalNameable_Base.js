@@ -136,7 +136,7 @@ let HierarchicalNameable_Base
       //
       // (2025/06/13 Modified)
       HierarchicalNameable_Base
-        .childrenNameableSet_parentNameable_bypass_internal.call( this );
+        .childrenNameableSet_bypass_this_internal.call( this );
     }
 
     // Detach from parent nameable object since this nameable object will
@@ -437,8 +437,8 @@ let HierarchicalNameable_Base
    *
    * @param {HierarchicalNameable_Base} this
    */
-  static childrenNameableSet_parentNameable_bypass_internal() {
-    const funcNameInMessage = "childrenNameableSet_parentNameable_bypass_internal";
+  static childrenNameableSet_bypass_this_internal() {
+    const funcNameInMessage = "childrenNameableSet_bypass_this_internal";
 
     const parentNameable = this.#parentNameable;
     const childrenNameableSet = this.#childrenNameableSet;
