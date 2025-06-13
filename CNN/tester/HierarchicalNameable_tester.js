@@ -395,21 +395,21 @@ const gTestCaseOne_Table = [
                  "D", // leaf's nameString_shouldBe
            "AbB~0dD", // leaf's nameString_recursively_shouldBe
     ),
-                 "=", // nameJoinSeparator3,
+                "~~", // nameJoinSeparator3,
     new StringValues(
                  "0", // leaf's parentNameString_shouldBe
-             "AbB~0", // leaf's parentNameString_recursively_shouldBe
+            "AbB~~0", // leaf's parentNameString_recursively_shouldBe
                  "d", // leaf's nameJoinSeparatorString_shouldBe
                  "D", // leaf's nameString_shouldBe
-           "AbB=0dD", // leaf's nameString_recursively_shouldBe
+          "AbB~~0dD", // leaf's nameString_recursively_shouldBe
     ),
                 "00", // name3,
     new StringValues(
                 "00", // leaf's parentNameString_shouldBe
-            "AbB~00", // leaf's parentNameString_recursively_shouldBe
+           "AbB~~00", // leaf's parentNameString_recursively_shouldBe
                  "d", // leaf's nameJoinSeparatorString_shouldBe
                  "D", // leaf's nameString_shouldBe
-          "AbB=00dD", // leaf's nameString_recursively_shouldBe
+         "AbB~~00dD", // leaf's nameString_recursively_shouldBe
     ),
   ),
 
@@ -457,12 +457,30 @@ const gTestCaseOne_Table = [
                  "F", // leaf's nameString_shouldBe
            "D!1eEfF", // leaf's nameString_recursively_shouldBe
     ),
-
-//!!! ...unfinished... (2025/06/13)
-                  , // parentNameable3,
-                  , // nameJoinSeparator3,
-                  , // name3,
-
+                 AbB, // parentNameable3,
+    new StringValues(
+                 "E", // leaf's parentNameString_shouldBe
+           "AbB!1eE", // leaf's parentNameString_recursively_shouldBe
+                 "f", // leaf's nameJoinSeparatorString_shouldBe
+                 "F", // leaf's nameString_shouldBe
+         "AbB!1eEfF", // leaf's nameString_recursively_shouldBe
+    ),
+                "!!", // nameJoinSeparator3,
+    new StringValues(
+                 "E", // leaf's parentNameString_shouldBe
+          "AbB!!1eE", // leaf's parentNameString_recursively_shouldBe
+                 "f", // leaf's nameJoinSeparatorString_shouldBe
+                 "F", // leaf's nameString_shouldBe
+        "AbB!!1eEfF", // leaf's nameString_recursively_shouldBe
+    ),
+                "11", // name3,
+    new StringValues(
+                 "E", // leaf's parentNameString_shouldBe
+         "AbB!!11eE", // leaf's parentNameString_recursively_shouldBe
+                 "f", // leaf's nameJoinSeparatorString_shouldBe
+                 "F", // leaf's nameString_shouldBe
+       "AbB!!11eEfF", // leaf's nameString_recursively_shouldBe
+    ),
   ),
 
   // 2. Test one parent.
