@@ -104,26 +104,31 @@ let HierarchicalNameable_Base
       this.#nameString_recursively_cache = undefined;
     }
 
-    if ( this.#childrenNameableSet ) {
-      const childrenNameableSet = this.#childrenNameableSet;
+    const childrenNameableSet = this.#childrenNameableSet;
+    if ( childrenNameableSet ) {
 
-!!! ...unfinished... (2025/06/12)
-// Perhaps, let all childrenNameable.parentNameable_set( this.#parentNameable )
-
-      // All children nameable objects should be detached
-      // before releasing this nameable object.
+      // (2025/06/13 Remarked) Become bypassing this object to parent.
       //
-      // Note: Usually, this means they should be released before releasing
-      //       this.
-      const childrenNameableCount = childrenNameableSet.size;
-      if ( childrenNameableCount > 0 ) {
-        throw Error( `HierarchicalNameable_Base.${funcNameInMessage}(): `
-          + `.#childrenNameableSet.size ( ${childrenNameableCount} ) `
-          + `should be 0. `
-          + `All children nameable objects should be detached `
-          + `before releasing this nameable object.`
-        );
-      }
+      // // All children nameable objects should be detached before releasing
+      // // this nameable object.
+      // //
+      // // Note: Usually, this means they should be released before releasing
+      // //       this.
+      // const childrenNameableCount = childrenNameableSet.size;
+      // if ( childrenNameableCount > 0 ) {
+      //   throw Error( `HierarchicalNameable_Base.${funcNameInMessage}(): `
+      //     + `.#childrenNameableSet.size ( ${childrenNameableCount} ) `
+      //     + `should be 0. `
+      //     + `All children nameable objects should be detached `
+      //     + `before releasing this nameable object.`
+      //   );
+      // }
+
+      // Since this nameable object will be released, let all children
+      // nameable objects (although there should be none at best) belong to
+      // this object's parent (i.e. bypass this object).
+      HierarchicalNameable_Base
+        .childrenNameableSet_parentNameable_bypass_internal.call( this );
 
       // Just nullify them. Do not release them here.
       //
@@ -414,6 +419,20 @@ let HierarchicalNameable_Base
   /** (Internally called when setting parentNameable.) */
   static childrenNameableSet_remove_internal( nameable ) {
     this.#childrenNameableSet.delete( nameable );
+  }
+
+  /**
+   * Let all (direct) children nameable objects' parent nameable object become
+   * this object's parent nameable object (i.e. bypass this nameable object).
+   *
+   * (Internally called when .disposeResources().)
+   */
+  static childrenNameableSet_parentNameable_bypass_internal() {
+    const parentNameable = this.#parentNameable;
+    const childrenNameableSet = this.#childrenNameableSet;
+    for ( let childNameable of childrenNameableSet.values() ) {
+      childNameable.parentNameable_set( parentNameable );
+    }
   }
 
 }
