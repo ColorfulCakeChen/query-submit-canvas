@@ -210,7 +210,7 @@ class TestCaseOne {
     else // Otherwise, its parent should be the same as original.
       leaf_parentNew = leaf_parentOld;
 
-    this.testOne( a, "let leaf's root as direct child",
+    this.testOne( leafNameable, "let leaf's root as direct child",
       leaf_parentNew, leaf_nameJoinSeparator, leaf_name,
       this.leafNameable_shouldBe_StringValues
     );
@@ -226,14 +226,14 @@ class TestCaseOne {
 
     // 4.2 Change to nameJoinSeparator3
     a.nameJoinSeparator_set( this.nameJoinSeparator3 );
-    this.testOne( a, "nameJoinSeparator3",
+    this.testOne( leafNameable, "nameJoinSeparator3",
       leaf_parentNew, leaf_nameJoinSeparator, leaf_name,
       this.leafNameable_shouldBe_StringValues_after_nameJoinSeparator3
     );
 
     // 4.3 Change to name3
     a.name_set( this.name3 );
-    this.testOne( a, "name3",
+    this.testOne( leafNameable, "name3",
       leaf_parentNew, leaf_nameJoinSeparator, leaf_name,
       this.leafNameable_shouldBe_StringValues_after_name3
     );
