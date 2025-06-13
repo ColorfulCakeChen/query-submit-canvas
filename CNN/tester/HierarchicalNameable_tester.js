@@ -114,13 +114,13 @@ class TestCaseOne {
     leafNameable_shouldBe_StringValues,
 
     parentNameable3,
-    parentNameable3_shouldBe_StringValues,
+    leafNameable_shouldBe_StringValues_after_parentNameable3,
 
     nameJoinSeparator3,
-    nameJoinSeparator3_shouldBe_StringValues,
+    leafNameable_shouldBe_StringValues_after_nameJoinSeparator3,
 
     name3,
-    name3_shouldBe_StringValues
+    leafNameable_shouldBe_StringValues_after_name3,
 
   ) {
     this.testCaseId = testCaseId;
@@ -144,13 +144,16 @@ class TestCaseOne {
     this.leafNameable_shouldBe_StringValues = leafNameable_shouldBe_StringValues;
 
     this.parentNameable3 = parentNameable3;
-    this.parentNameable3_shouldBe_StringValues = parentNameable3_shouldBe_StringValues;
+    this.leafNameable_shouldBe_StringValues_after_parentNameable3
+      = leafNameable_shouldBe_StringValues_after_parentNameable3;
 
     this.nameJoinSeparator3 = nameJoinSeparator3;
-    this.nameJoinSeparator3_shouldBe_StringValues = nameJoinSeparator3_shouldBe_StringValues;
+    this.leafNameable_shouldBe_StringValues_after_nameJoinSeparator3
+      = leafNameable_shouldBe_StringValues_after_nameJoinSeparator3;
 
     this.name3 = name3;
-    this.name3_shouldBe_StringValues = name3_shouldBe_StringValues;
+    this.leafNameable_shouldBe_StringValues_after_name3
+      = leafNameable_shouldBe_StringValues_after_name3;
   }
 
   /** */
@@ -212,28 +215,27 @@ class TestCaseOne {
       this.leafNameable_shouldBe_StringValues
     );
 
-
     // 4.
 
     // 4.1 Change to parentNameable3
     a.parentNameable_set( this.parentNameable3 );
     this.testOne( leafNameable, "parentNameable3",
       leaf_parentNew, leaf_nameJoinSeparator, leaf_name,
-      this.parentNameable3_shouldBe_StringValues
+      this.leafNameable_shouldBe_StringValues_after_parentNameable3
     );
 
     // 4.2 Change to nameJoinSeparator3
     a.nameJoinSeparator_set( this.nameJoinSeparator3 );
     this.testOne( a, "nameJoinSeparator3",
-      this.parentNameable3, this.nameJoinSeparator3, this.name2,
-      this.nameJoinSeparator3_shouldBe_StringValues
+      leaf_parentNew, leaf_nameJoinSeparator, leaf_name,
+      this.leafNameable_shouldBe_StringValues_after_nameJoinSeparator3
     );
 
     // 4.3 Change to name3
     a.name_set( this.name3 );
     this.testOne( a, "name3",
-      this.parentNameable3, this.nameJoinSeparator3, this.name3,
-      this.name3_shouldBe_StringValues
+      leaf_parentNew, leaf_nameJoinSeparator, leaf_name,
+      this.leafNameable_shouldBe_StringValues_after_name3
     );
 
     // 5.
