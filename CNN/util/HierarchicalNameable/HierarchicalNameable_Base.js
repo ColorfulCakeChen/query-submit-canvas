@@ -139,9 +139,6 @@ let HierarchicalNameable_Base
         .childrenNameableSet_parentNameable_bypass_internal.call( this );
     }
 
-//!!! ...unfinished... (2025/06/11)
-// Perhaps, should assert failed if parentNameable is not null.
-
     // Detach from parent nameable object since this nameable object will
     // be released.
     //
