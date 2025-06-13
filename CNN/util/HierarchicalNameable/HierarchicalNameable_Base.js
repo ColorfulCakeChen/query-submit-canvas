@@ -82,7 +82,7 @@ let HierarchicalNameable_Base
 
     this.#parentNameable = parentNameable;
     if ( parentNameable ) {
-      HierarchicalNameable_Base.childrenNameableSet_add_internal.call(
+      HierarchicalNameable_Base.#childrenNameableSet_add_internal.call(
         parentNameable, this );
     }
 
