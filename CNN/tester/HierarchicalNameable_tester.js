@@ -312,7 +312,7 @@ class TestCaseOne {
 
     const testCaseId = this.testCaseId;
 
-    let nameJoinSeparator = aHierarchicalNameable.nameJoinSeparatorString_get();
+    let nameJoinSeparator = aHierarchicalNameable.nameJoinSeparator_get();
     if (  ( nameJoinSeparator === undefined )
        || ( nameJoinSeparator === null ) )
       nameJoinSeparator
