@@ -379,15 +379,15 @@ const gTestCaseOne_Table = [
                  "0", // nameString_shouldBe
            "A_BvC~0", // nameString_recursively_shouldBe
     ),
-!!!
-                   E, // leafNameable
+                   D, // leafNameable
     new StringValues(
-                 "C", // parentNameString_shouldBe
-             "A_BvC", // parentNameString_recursively_shouldBe
-                  "", // nameJoinSeparatorString_shouldBe
-                 "0", // nameString_shouldBe
-           "A_BvC~0", // nameString_recursively_shouldBe
+                 "0", // parentNameString_shouldBe
+           "A_BvC~0", // parentNameString_recursively_shouldBe
+                 "$", // nameJoinSeparatorString_shouldBe
+                 "D", // nameString_shouldBe
+         "A_BvC~0$D", // nameString_recursively_shouldBe
     ),
+                  // parentNameable3,
 
 
     EiF,
@@ -485,15 +485,68 @@ function *testerOne( progressParent ) {
 }
 
 /** */
-function *testerTwo( progressParent ) {
+function *testerCircularly( progressParent ) {
 
-//!!! ...unfinished... (2025/06/11)
-  let testCaseCount = 1;
+  let testCaseCount = 3;
 
   let progressRoot = progressParent.root_get();
   let progressToAdvance = progressParent.child_add(
     ValueMax.Percentage.Concrete.Pool.get_or_create_by( testCaseCount ) );
 
+  const parentNull = null;
+  const nameJoinSeparator = "/";
+
+  // 1. Test: circularly reference self: a and a.
+  {
+    let a = HierarchicalNameable.Root.Pool.get_or_create_by(
+      parentNull, nameJoinSeparator, "a" );
+
+    a.parentNameable_set( a );
+
+    a.disposeResources_and_recycleToPool();
+    a = null;
+  }
+
+  progressToAdvance.value_advance();
+  yield progressRoot;
+
+  // 2. Test: circularly reference: a and b.
+  {
+    let a = HierarchicalNameable.Root.Pool.get_or_create_by(
+      parentNull, nameJoinSeparator, "a" );
+
+    let b = HierarchicalNameable.Root.Pool.get_or_create_by(
+      a, nameJoinSeparator, "b" );
+
+    a.parentNameable_set( b );
+
+    a.disposeResources_and_recycleToPool();
+    a = null;
+
+    b.disposeResources_and_recycleToPool();
+    b = null;
+  }
+
+  progressToAdvance.value_advance();
+  yield progressRoot;
+
+  // 3. Test: circularly reference: a and b (not in constructor).
+  {
+    let a = HierarchicalNameable.Root.Pool.get_or_create_by(
+      parentNull, nameJoinSeparator, "a" );
+
+    let b = HierarchicalNameable.Root.Pool.get_or_create_by(
+      parentNull, nameJoinSeparator, "b" );
+
+    a.parentNameable_set( b );
+    b.parentNameable_set( a );
+
+    a.disposeResources_and_recycleToPool();
+    a = null;
+
+    b.disposeResources_and_recycleToPool();
+    b = null;
+  }
 
   progressToAdvance.value_advance();
   yield progressRoot;
@@ -545,7 +598,7 @@ function* tester( progressParent ) {
   let progressOne = progressParent.child_add(
     ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
 
-  let progressTwo = progressParent.child_add(
+  let progressCircularly = progressParent.child_add(
     ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
 
   let progressThree = progressParent.child_add(
@@ -556,51 +609,19 @@ function* tester( progressParent ) {
 
   // 0.1 Prepare test objects.
 
-//!!! ...unfinished... (2025/06/11)
-
-//!!! (2025/06/12 Remarked) Create them in global.
-//   const nameJoinSeparator = ".";
-//   A = HierarchicalNameable.Pool.get_or_create_by(
-//     null, nameJoinSeparator, "A" );
-//
-//   B = HierarchicalNameable.Pool.get_or_create_by(
-//     null, nameJoinSeparator, "B" );
-//
-//   C = HierarchicalNameable.Pool.get_or_create_by(
-//     null, nameJoinSeparator, "C" );
-//
-//   D = HierarchicalNameable.Pool.get_or_create_by(
-//     null, nameJoinSeparator, "D" );
-//
-//   E = HierarchicalNameable.Pool.get_or_create_by(
-//     null, nameJoinSeparator, "E" );
-//
-//   F = HierarchicalNameable.Pool.get_or_create_by(
-//     null, nameJoinSeparator, "F" );
-//
-//   let nameableArray = Recyclable.OwnerArray.Pool.get_or_create_by();
-//   nameableArray.push( A, B, C, D, E, F );
-
-
   // 1.
   yield *testerOne( progressOne );
 
   // 2.
-  yield *testerTwo( progressTwo );
+  yield *testerCircularly( progressCircularly );
+
+//!!! ...unfinished... (2025/06/11)
 
   // 3.
   yield *testerThree( progressThree );
 
   // 4.
   yield *testerSix( progressSix );
-
-
-//!!! (2025/06/12 Remarked) Create them in global.
-//   // 5. Release test objects.
-//   A = null; B = null; C = null;
-//   D = null; E = null; F = null;
-//   nameableArray.disposeResources_and_recycleToPool();
-//   nameableArray = null;
 
   console.log( "HierarchicalNameable testing... Done." );
 }
