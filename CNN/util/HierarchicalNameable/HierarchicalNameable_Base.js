@@ -428,9 +428,17 @@ let HierarchicalNameable_Base
    * (Internally called when .disposeResources().)
    */
   static childrenNameableSet_parentNameable_bypass_internal() {
+    const funcNameInMessage = "childrenNameableSet_parentNameable_bypass_internal";
+
     const parentNameable = this.#parentNameable;
     const childrenNameableSet = this.#childrenNameableSet;
     for ( let childNameable of childrenNameableSet.values() ) {
+      if ( childNameable.#parentNameable !== this ) {
+        throw Error( `HierarchicalNameable_Base.${funcNameInMessage}(): `
+          + `childNameable.#parentNameable ( ${childNameable.#parentNameable} ) `
+          + `should be this ( ${this} ).`
+        );
+      }
       childNameable.parentNameable_set( parentNameable );
     }
   }
