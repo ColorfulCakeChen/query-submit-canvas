@@ -102,7 +102,6 @@ let HierarchicalNameable_Base
    * @override
    */
   disposeResources() {
-    const funcNameInMessage = "disposeResources";
 
 //!!! (2025/06/11 Remarked) seems not necessary.
 //    this.name_related_cache_clear();
@@ -115,7 +114,8 @@ let HierarchicalNameable_Base
 
     const childrenNameableSet = this.#childrenNameableSet;
     if ( childrenNameableSet ) {
-
+      // const funcNameInMessage = "disposeResources";
+      //
       // (2025/06/13 Remarked) Become bypassing this object to parent.
       //
       // // All children nameable objects should be detached before releasing
@@ -210,25 +210,18 @@ let HierarchicalNameable_Base
     if ( this.#parentNameable === parentNameableNew )
       return;
 
-    const parentOld = this.#parentNameable;
-    if ( parentOld ) { // Remove from the old parent.
-      parentOld.#childrenNameableSet_remove_internal( this );
-    }
-
-    this.#parentNameable = parentNameableNew;
-    if ( parentNameableNew ) { // Add into the new parent.
-      parentNameableNew.#childrenNameableSet_add_internal( this );
-    }
-
     // Detect (and prevent from) circularly self reference.
     //
-    // This checking should be done before
-    // calling .nameString_recursively_invalidate_recursively(). Otherwise,
-    // the calling stack will overflow if circularly self reference happened.
+    // This checking should be done:
+    //   - before changing parent. So that the .disposeResources() could still
+    //       woke correctly with the legal (old) parent.
+    //   - before calling .nameString_recursively_invalidate_recursively(). So
+    //      that the calling stack will not overflow if circularly self
+    //      reference happened.
     {
       const funcNameInMessage = "parentNameable_set";
 
-      let parent = this.#parentNameable;
+      let parent = parentNameableNew;
       while ( parent ) {
         if ( parent === this )
           throw Error( `HierarchicalNameable_Base.${funcNameInMessage}(): `
@@ -238,6 +231,16 @@ let HierarchicalNameable_Base
           );
         parent = parent.#parentNameable;
       }
+    }
+
+    const parentOld = this.#parentNameable;
+    if ( parentOld ) { // Remove from the old parent.
+      parentOld.#childrenNameableSet_remove_internal( this );
+    }
+
+    this.#parentNameable = parentNameableNew;
+    if ( parentNameableNew ) { // Add into the new parent.
+      parentNameableNew.#childrenNameableSet_add_internal( this );
     }
 
     this.nameString_recursively_invalidate_recursively();
