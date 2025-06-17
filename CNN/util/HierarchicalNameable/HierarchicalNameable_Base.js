@@ -232,7 +232,9 @@ let HierarchicalNameable_Base
       while ( parent ) {
         if ( parent === this )
           throw Error( `HierarchicalNameable_Base.${funcNameInMessage}(): `
-            + `Should not circularly self reference. ( ${this} )`
+            + `A hierarchical nameable object `
+            + `should not become self's ancestor. `
+            + `( ${this} )`
           );
         parent = parent.#parentNameable;
       }
