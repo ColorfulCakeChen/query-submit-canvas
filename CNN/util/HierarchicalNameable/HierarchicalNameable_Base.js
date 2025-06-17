@@ -230,7 +230,7 @@ let HierarchicalNameable_Base
 
       let parent = this.#parentNameable;
       while ( parent ) {
-        if ( parent == this )
+        if ( parent === this )
           throw Error( `HierarchicalNameable_Base.${funcNameInMessage}(): `
             + `Should not circularly self reference. ( ${this} )`
           );
