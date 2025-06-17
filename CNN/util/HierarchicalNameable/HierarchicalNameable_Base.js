@@ -220,6 +220,24 @@ let HierarchicalNameable_Base
       parentNameableNew.#childrenNameableSet_add_internal( this );
     }
 
+    // Detect (and prevent from) circularly self reference.
+    //
+    // This checking should be done before
+    // calling .nameString_recursively_invalidate_recursively(). Otherwise,
+    // the calling stack will overflow if circularly self reference happened.
+    {
+      const funcNameInMessage = "parentNameable_set";
+
+      let parent = this.#parentNameable;
+      while ( parent ) {
+        if ( parent == this )
+          throw Error( `HierarchicalNameable_Base.${funcNameInMessage}(): `
+            + `Should not circularly self reference. ( ${this} )`
+          );
+        parent = parent.#parentNameable;
+      }
+    }
+
     this.nameString_recursively_invalidate_recursively();
   }
 
