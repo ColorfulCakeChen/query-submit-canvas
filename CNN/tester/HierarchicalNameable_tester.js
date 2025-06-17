@@ -15,10 +15,6 @@ const D =     HierarchicalNameable.Root.Pool.get_or_create_by( null, "d", "D" );
 const E =     HierarchicalNameable.Root.Pool.get_or_create_by( null, "e", "E" );
 const EfF =   HierarchicalNameable.Root.Pool.get_or_create_by(    E, "f", "F" );
 
-//!!! ...unfinished... (2025/06/12)
-// Test A_B_C and D_E_F
-// Change parent of E_F to A_B so that A_B_E_F
-
 /**
  * Describe Record what the string properties' values of HierarchicalNameable
  * should be.
@@ -91,7 +87,7 @@ class StringValues {
 /**
  * 
  */
-class TestCaseOne {
+class TestCase {
 
   constructor(
     testCaseId,
@@ -348,9 +344,9 @@ class TestCaseOne {
 }
 
 /** */
-const gTestCaseOne_Table = [
+const gTestCase_Table = [
   // 0. Test null.
-  new TestCaseOne( 0,
+  new TestCase( 0,
                 null, // parentNameable
                 null, // nameJoinSeparator
                 null, // name
@@ -420,7 +416,7 @@ const gTestCaseOne_Table = [
   ),
 
   // 1. Test undefined.
-  new TestCaseOne( 1,
+  new TestCase( 1,
            undefined, // parentNameable
            undefined, // nameJoinSeparator
            undefined, // name
@@ -490,7 +486,7 @@ const gTestCaseOne_Table = [
   ),
 
   // 2. Test one parent.
-  new TestCaseOne( 2,
+  new TestCase( 2,
                    A, // parentNameable
                  "@", // nameJoinSeparator
                  "2", // name
@@ -560,7 +556,7 @@ const gTestCaseOne_Table = [
   ),
 
   // 3. Test two parent.
-  new TestCaseOne( 3,
+  new TestCase( 3,
                  AbB, // parentNameable
                  "#", // nameJoinSeparator
                  "3", // name
@@ -630,7 +626,7 @@ const gTestCaseOne_Table = [
   ),
 
   // 4. Test three parent.
-  new TestCaseOne( 4,
+  new TestCase( 4,
                AbBcC, // parentNameable
                  "$", // nameJoinSeparator
                  "4", // name
@@ -705,14 +701,14 @@ const gTestCaseOne_Table = [
 /** */
 function *testerOne( progressParent ) {
 
-  let testCaseCount = gTestCaseOne_Table.length;
+  let testCaseCount = gTestCase_Table.length;
 
   let progressRoot = progressParent.root_get();
   let progressToAdvance = progressParent.child_add(
     ValueMax.Percentage.Concrete.Pool.get_or_create_by( testCaseCount ) );
 
-  for ( let i = 0; i < gTestCaseOne_Table.length; ++i ) {
-    let testCase = gTestCaseOne_Table[ i ];
+  for ( let i = 0; i < gTestCase_Table.length; ++i ) {
+    let testCase = gTestCase_Table[ i ];
     testCase.testAll();
 
     progressToAdvance.value_advance();
