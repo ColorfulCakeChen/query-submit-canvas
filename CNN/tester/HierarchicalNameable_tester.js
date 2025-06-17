@@ -527,7 +527,7 @@ const gTestCaseOne_Table = [
     ),
                    A, // leafNameable,
     new StringValues(
-                 "A", // leaf's parentNameString_shouldBe
+                "22", // leaf's parentNameString_shouldBe
            "EfF@@22", // leaf's parentNameString_recursively_shouldBe
                  "a", // leaf's nameJoinSeparatorString_shouldBe
                  "A", // leaf's nameString_shouldBe
@@ -535,7 +535,7 @@ const gTestCaseOne_Table = [
     ),
                    D, // parentNameable3,
     new StringValues(
-                 "A", // leaf's parentNameString_shouldBe
+                "22", // leaf's parentNameString_shouldBe
              "D@@22", // leaf's parentNameString_recursively_shouldBe
                  "a", // leaf's nameJoinSeparatorString_shouldBe
                  "A", // leaf's nameString_shouldBe
@@ -543,7 +543,7 @@ const gTestCaseOne_Table = [
     ),
                "@@@", // nameJoinSeparator3,
     new StringValues(
-                 "A", // leaf's parentNameString_shouldBe
+                "22", // leaf's parentNameString_shouldBe
             "D@@@22", // leaf's parentNameString_recursively_shouldBe
                  "a", // leaf's nameJoinSeparatorString_shouldBe
                  "A", // leaf's nameString_shouldBe
