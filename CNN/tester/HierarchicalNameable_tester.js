@@ -551,7 +551,7 @@ const gTestCaseOne_Table = [
     ),
                "222", // name3,
     new StringValues(
-                 "A", // leaf's parentNameString_shouldBe
+               "222", // leaf's parentNameString_shouldBe
            "D@@@222", // leaf's parentNameString_recursively_shouldBe
                  "a", // leaf's nameJoinSeparatorString_shouldBe
                  "A", // leaf's nameString_shouldBe
