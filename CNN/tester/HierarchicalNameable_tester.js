@@ -798,8 +798,19 @@ function *testerCircularly( progressParent ) {
     let b = HierarchicalNameable.Root.Pool.get_or_create_by(
       parentNull, nameJoinSeparator, "b" );
 
-    a.parentNameable_set( b );
-    b.parentNameable_set( a );
+    try {
+      a.parentNameable_set( b );
+      b.parentNameable_set( a );
+
+    } catch ( e ) {
+      if ( e.message.indexOf( testMethodName ) < 0 ) {
+        // Unknown error, said loudly.
+        throw Error( `${this.constructor.name}.${funcNameInMessage}(): `
+          + `Unknown error. ${e}`,
+          { cause: e }
+        );
+      }
+    }
 
     a.disposeResources_and_recycleToPool();
     a = null;
