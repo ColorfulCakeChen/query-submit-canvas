@@ -214,7 +214,7 @@ let HierarchicalNameable_Base
     //
     // This checking should be done:
     //   - before changing parent. So that the .disposeResources() could still
-    //       woke correctly with the legal (old) parent.
+    //       work correctly with the legal (old) parent.
     //   - before calling .nameString_recursively_invalidate_recursively(). So
     //      that the calling stack will not overflow if circularly self
     //      reference happened.
@@ -226,7 +226,7 @@ let HierarchicalNameable_Base
         if ( parent === this )
           throw Error( `HierarchicalNameable_Base.${funcNameInMessage}(): `
             + `A hierarchical nameable object `
-            + `should not become self's ancestor. `
+            + `should not become itself's ancestor. `
             + `( ${this} )`
           );
         parent = parent.#parentNameable;
