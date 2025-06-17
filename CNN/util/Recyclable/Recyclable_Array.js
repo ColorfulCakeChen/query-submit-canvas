@@ -22,17 +22,17 @@ class Recyclable_Array extends Base( Array ) {
     // (2022/06/27 Remarked) No need to call .#setAsConstructor_self()
     // because the constructor of parent class (i.e. Array) has already done
     // it.
-    //this.#setAsConstructor_self.apply( this, restArgs );
+    //this.#setAsConstructor_self( restArgs ); // No need to spread restArgs.
   }
 
   /** @override */
   setAsConstructor( ...restArgs ) {
     super.setAsConstructor();
-    this.#setAsConstructor_self.apply( this, restArgs );
+    this.#setAsConstructor_self( restArgs ); // No need to spread restArgs.
   }
 
   /** @override */
-  #setAsConstructor_self( ...restArgs ) {
+  #setAsConstructor_self( restArgs ) {
     if ( 0 == restArgs.length ) { // 0. No argument: empty array.
       this.length = 0;
 
